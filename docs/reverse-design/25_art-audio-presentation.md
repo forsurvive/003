@@ -128,7 +128,7 @@
 ### 2.7 볼트 보이 아이콘 체계
 - **기원**: 폴아웃 1의 레너드 보야스키(Leonard Boyarsky)가 모노폴리 카드와 그 마스코트(리치 엉클 페니백스)에서 착안해 "스킬 가이"를 고안했다. 조지 아먼드(George Almond)가 첫 카드를, 트라멜 레이 아이작(Tramell Ray Isaac)이 오늘날의 모습을 완성했다. 빅보이 햄버거 마스코트와도 닮은 20세기 중반 아메리카나다.
 - **폴아웃 3의 볼트 보이**: 나탈리아 스미르노바(Natalia Smirnova)가 전부 그렸다. 키가 작고 다부지며 눈이 더 작고 동그란 것이 특징이다. 폴아웃 3는 게임 안에서 "볼트 보이"라는 이름을 되살렸다(택틱스가 핍-보이와 혼동했던 것을 바로잡음).
-- **쓰임새**: 퍽·스킬·S.P.E.C.I.A.L. 화면의 일러스트, 업적·트로피 아이콘, 볼트텍 보블헤드(Vault-Tec bobblehead), 포스터·광고, 그림책 *너는 스페셜해!(You're SPECIAL!)*, 로딩 화면. 거의 모든 능력치와 행동을 볼트 보이 한 명의 몸짓으로 표현하는 "아이콘 언어"다.
+- **쓰임새**: 퍽·스킬·S.P.E.C.I.A.L. 화면의 일러스트, 업적·트로피 아이콘, 볼트-텍 보블헤드(Vault-Tec bobblehead), 포스터·광고, 그림책 *너는 스페셜해!(You're SPECIAL!)*, 로딩 화면. 거의 모든 능력치와 행동을 볼트 보이 한 명의 몸짓으로 표현하는 "아이콘 언어"다.
 - **성격 연출**: 늘 낙관적이고 성실한 표정이지만, 그 주변에서 만화적인 신체 훼손이 일어나도 태연하다. 볼트-텍의 가학성을 은근히 드러내는 장치다. 엄지척은 "핵폭발과의 안전거리 측정"이라는 소문과 달리 "괜찮지 않은데도 괜찮다고 말하는 긍정적 태도"를 뜻한다(브라이언 파고, 트라멜 레이 아이작).
 - **삭제된 그림**: 파생 능력치(소지 한도, 근접 피해, 피해 저항, 독 저항, 체력, 회복 속도, 치명타 확률, 행동력)용 볼트 보이 그림이 만들어졌지만, 플레이어가 파생 능력치를 보는 화면이 없어 쓰이지 않았다.
 
@@ -419,7 +419,7 @@
 | 루카스 심즈 | Lucas Simms | 그레고리 L. 윌리엄스 | Gregory L. Williams | - | |
 | 앨리스터 텐페니 | Allistair Tenpenny | 찰리 워런 | Charlie Warren | - | |
 | 베티(스타니슬라우스 브라운 박사의 아바타) | Betty (Dr. Stanislaus Braun) | 코리앤 스타인 | Corrieanne Stein | - | 브라운 본인은 `Fallout 3 voice actors`가 디 브래들리 베이커(Dee Bradley Baker)로 적으나 크레딧 문서에는 없음 |
-| 스탠리 암스트롱, 한니발 햄린, RL-3 하사 | Stanley Armstrong, Hannibal Hamlin, Sergeant RL-3 | 제프 베이커 | Jeff Baker | 미스터 거츠(Mister Gutsy), 라디오 드라마 대부분의 배역, 남성 일반 NPC 다수 | 가장 많은 배역을 맡음 |
+| 스탠리 암스트롱, 한니발 햄린, RL-3 하사 | Stanley Armstrong, Hannibal Hamlin, Sergeant RL-3 | 제프 베이커 | Jeff Baker | 미스터 거스티(Mister Gutsy), 라디오 드라마 대부분의 배역, 남성 일반 NPC 다수 | 가장 많은 배역을 맡음 |
 | 제리코, 율로지 존스, 에드윈 브로치 | Jericho, Eulogy Jones, Edwin Brotch | 제임스 루이스 | James Lewis | 레이더(남) | |
 | 클로버, 루시 웨스트 | Clover, Lucy West | 잰 존스 | Jan Johns | 시에라 페트로비타(Sierra Petrovita), 아메리카 인민공화국 라디오 | |
 | 스타 팔라딘 크로스, 라일리 | Star Paladin Cross, Reilly | 섀리 엘리커 | Shari Elliker | 비어트리스 암스트롱(Beatrice Armstrong), 엘런 들로리아(Ellen DeLoria), 실버(Silver), 여성 일반 NPC 다수 | |

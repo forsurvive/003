@@ -665,7 +665,7 @@ flowchart TD
 | 입구 | 'National Archives Guess and Win!' 터미널(미국사 퀴즈 8문항, 전부 맞히면 상품권 → 한정판 멘타츠 3종 교환). 원형건물 앞 터미널실의 동쪽 문으로 가면 뮤턴트 습격이 일어나지 않음 |
 | 원형건물(헌장 원형건물) | 시드니와 파편 지뢰. 뮤턴트 2파(미니건·미사일 발사기 개체 가능). 시드니의 원격 터미널로 '비밀 엘리베이터'를 부를 수 있음 |
 | 일반 층 | 함정 다수(폭발물, 흔들리는 엔진, 파성추, 황소 머리, 수류탄 꽃다발, 지뢰), 전쟁 전 서적, 서쪽 여자 화장실 감전 함정(활성화 시 25 피해, 수리 20 이상이면 마이크로퓨전 셀 35개를 안전하게 회수) |
-| 지하층 | 첫 방의 고장 난 문(위키: 과학 67로 수리), 매우 어려움 잠금 철문, 가스 누출, 레벨 연동 로봇(프로텍트론, 미스터 거츠(Mister Gutsy), 센트리 봇(Sentry bot), 로보브레인(Robobrain))과 마크 IV 터렛 |
+| 지하층 | 첫 방의 고장 난 문(위키: 과학 67로 수리), 매우 어려움 잠금 철문, 가스 누출, 레벨 연동 로봇(프로텍트론, 미스터 거스티(Mister Gutsy), 센트리 봇(Sentry bot), 로보브레인(Robobrain))과 마크 IV 터렛 |
 | 기록 보안동 동관 | 터렛 발전기 — [수리 60] 이상이면 해당 층 터렛 전부 정지 〔스크립트: MS15TurretGeneratorScript〕. 서쪽 방 금고(보통 잠금 문 2개, 터렛 2기): 권리장전 + 「라잉, 콩그레셔널 스타일」 / 동쪽 방 금고(어려움·보통 문): 마그나 카르타 |
 | 금고실(Archival Strongroom) | 버튼 그윈넷. 선언서는 금고실 보안 터미널로 여는 잠긴 문 뒤 금고에 있음. 버튼의 가발(유니크 모자)과 「정크타운 육포 상인 이야기」 |
 | 유틸리티 구역 | 금고실 서쪽 유틸리티 문(매우 어려움 잠금) → 프로텍트론 보관 포드 방. '백업 프로텍트론'에 토머스 제퍼슨 프로그램(TJEFF002)을 이식할 수 있으나, 전쟁 전 장난으로 음성 모듈이 GNR 라디오로 바뀌어 있음. 리콜 신호는 작동하지 않고 '셧다운'은 폭발함 |
@@ -723,7 +723,7 @@ flowchart TD
 
 ### 6.6 결과와 후일담
 - **전시**: 독립선언서·권리장전·마그나 카르타를 팔면 보존 협회 벽의 금빛 액자에 차례로 걸림.
-- **GNR**: "Huzzah! The time of British oppression is finally over! Now we can finally turn our attention to the Super Mutants, Raiders, and Radscorpions..." — "만세! 마침내 영국의 압제가 끝났습니다! 이제 슈퍼 뮤턴트랑 레이더랑 라드스코피온에 신경 쓸 수 있겠네요..."
+- **GNR**: "Huzzah! The time of British oppression is finally over! Now we can finally turn our attention to the Super Mutants, Raiders, and Radscorpions..." — "만세! 마침내 영국의 압제가 끝났습니다! 이제 슈퍼 뮤턴트랑 레이더랑 방사능전갈에 신경 쓸 수 있겠네요..."
 - **시드니의 행방**: 퀘스트 후 리벳시티 북쪽 아나코스티아 크로싱 역(Anacostia Crossing station)을 거쳐 언더월드 '나인서클(Ninth Circle)'로 가서 무기·탄약 상인이 됨(구울들이 치근대지 않아서라고 함). 언더월드 주민과 싸우면 그들 편에 섬.
 - **아버지 이야기**: 보고 후 "So, whatever happened to your father?"를 물으면 '조그만 달빛(Little Moonbeam)'이라 불렸던 사연을 들려줌. 스테이츠맨 호텔 3층 침대 위 해골 아래의 홀로테이프 '조그만 달빛의 아버지가 남긴 메시지(A note from Little Moonbeam's father)'를 전하면 시드니의 10mm '울트라' SMG(피해 9, 장탄 50, RD-19)를 받음. 이 대화는 반복 가능해 SMG를 무한히 받을 수 있음(설계상 누락).
 - **보복**: 협력을 거절하거나 배신했다면 '자랑할 권리' 인카운터가 발생함.
@@ -1069,7 +1069,7 @@ flowchart TD
 2. 계단을 내려가 **듀코브의 열쇠**로 폭탄 저장고(Bomb Storage) 진입.
 3. 폭탄 저장고 안 잠긴 문 앞의 타라 필즈 시신 → **데이브의 열쇠**로 문을 열고, 다음 방의 정지장(stasis field)을 끄면 T-51b 파워 아머와 헬멧.
 4. 타라의 시신에서 '탄두 보관소 열쇠(Warhead Storage Key)': 근처 계단 위의 고방사능 탄두 보관실, 그리고 지상의 매우 어려움 잠금 폭탄 저장고 문 두 곳을 엶.
-- 기지 안팎에는 센트리 봇·미스터 거츠·로보브레인·프로텍트론과 터렛이 있고, 도착 시 아웃캐스트(Brotherhood Outcasts)가 로봇과 교전 중임.
+- 기지 안팎에는 센트리 봇·미스터 거스티·로보브레인·프로텍트론과 터렛이 있고, 도착 시 아웃캐스트(Brotherhood Outcasts)가 로봇과 교전 중임.
 
 ### 8.6 결과와 후일담
 - **GNR**: "Looks like that loony lass from Vault 101's been busy lately, this time systematically executing some of the Wasteland's most colorful characters." — 비폭력으로 열쇠를 모으고도 크로울리에게 '죽였다'고 거짓말하면 쓰리독이 표적들이 살해됐다고 보도함.
