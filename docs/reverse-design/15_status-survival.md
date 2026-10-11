@@ -400,7 +400,7 @@ flowchart TD
 | 텐페니 타워 스위트 | Tenpenny Tower suite | 메가톤 폭파 노선 보상 등(RD-22) |
 | 모리아티 살롱 대여 침대 | Moriarty's Saloon | 노바(Nova)에게 120캡 |
 | 리벳시티 웨덜리 호텔 | Weatherly Hotel | 120캡 |
-| 언더월드 캐럴의 집 | Carol's Place | 120캡 |
+| 언더월드 캐롤의 집 | Carol's Place | 120캡 |
 | [PL] 케니의 동굴 간이 침대 | Kenny's cave | 화술 판정, 차일드 앳 하트, 또는 케니의 테디 베어 반환 |
 | 기타 임시 거처 | Incidental housing | 위키 '플레이어 거처' 목록(RD-22) |
 
@@ -630,7 +630,7 @@ flowchart TD
 | Cutter / Butcher / Lucy / Sawbones | 커터 / 부처 / 루시 / 소본즈 | 커터·부처·루시는 패치 |
 | Wasteland doctor | 떠돌이 의사 | 랜덤 인카운터 |
 | Ranger Compound | 레인저 본부 | 패치 |
-| Carol's Place | 캐럴의 집 | 패치 |
+| Carol's Place | 캐롤의 집 | 패치 |
 | Kenny's cave | 케니의 동굴 | [PL] |
 | U.S. Army field headquarters | 미 육군 야전 사령부 | [OA] |
 | Monongahela River / The Hole | 모농가헬라 강 / 홀 | [TP] |

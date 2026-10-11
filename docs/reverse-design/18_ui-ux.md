@@ -205,7 +205,7 @@ flowchart TD
 | 읽은 책 | Books Read | 스킬북 1권 사용 |
 | 모은 보블헤드 | Bobbleheads Collected | 보블헤드 1개 획득 |
 | 만든 무기 | Weapons Forged | 제작 무기 1개 제작 |
-| 최면 건 사람 | People Mezzed | 메즈메트론(Mesmetron)으로 1명 |
+| 최면 건 사람 | People Mezzed | 메스메트론(Mesmetron)으로 1명 |
 | 구출한 포로 | Captives Rescued | 슈퍼 뮤턴트(Super mutant)에게 잡힌 포로 1명 |
 | 샌드맨 처치 | Sandman Kills | 미스터 샌드맨(Mister Sandman) 퍽 처치 1회 |
 | 마비 펀치 | Paralyzing Punches | 패럴라이징 팜(Paralyzing Palm) 적중 1회 |

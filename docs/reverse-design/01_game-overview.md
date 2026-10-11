@@ -428,11 +428,11 @@ flowchart TD
 
 ### 8.2 더 피트 [TP]
 - 피츠버그 폐허의 산업 도시 피트(The Pitt)에서 레이더(Raiders) 지배층과 노예의 갈등에 휘말린다. 탈출 노예 베르너(Wernher)의 무선 요청으로 시작하며, 주인공은 장비를 맡기고 노예로 위장해 잠입한다. 돌연변이 질병의 "치료제"를 둘러싸고 지도자 애셔(Ashur)와 노예 반란 세력 중 하나를 고르는, 도덕적으로 회색인 선택이 핵심이다.
-- 지하 철로로 연결된 별도 지도, 투기장 더 홀(The Hole), 강철 주괴 100개 수집, 회전톱 근접 무기 오토 액스(Auto axe), 변이체 트로그(Trogs)가 특징이다. 개발 기간은 약 2개월 반이었고, 리드 아티스트 네이선 퍼키파일은 버닝맨 축제에서 주황빛 대기 색을 착안했다. 상세는 [RD-08b](08b_dlc-the-pitt.md).
+- 지하 철로로 연결된 별도 지도, 투기장 더 홀(The Hole), 강철괴 100개 수집, 회전톱 근접 무기 오토 액스(Auto axe), 변이체 트로그(Trogs)가 특징이다. 개발 기간은 약 2개월 반이었고, 리드 아티스트 네이선 퍼키파일은 버닝맨 축제에서 주황빛 대기 색을 착안했다. 상세는 [RD-08b](08b_dlc-the-pitt.md).
 
 ### 8.3 브로큰 스틸 [BS]
 - 본편 엔딩 2주 뒤 시타델에서 깨어나, BoS와 함께 리버티 프라임을 앞세워 엔클레이브 잔당을 소탕한다. 본편 메인 스토리를 끝내야 새 스토리에 들어갈 수 있다. 정화된 물이 아쿠아 퓨라(Aqua Pura)로 황무지에 보급되며, 본편에서 FEV를 넣었다면 세계 모습과 주민 반응이 달라진다.
-- 레벨 상한이 20 → 30으로 오르고(설치 즉시 적용), 일반 퍽 14개, 새 적(알비노 라드스코피온(Albino radscorpion), 야생 구울 리버(Feral ghoul reaver), 슈퍼 뮤턴트 오버로드(Super mutant overlord), 엔클레이브 헬파이어 트루퍼(Enclave Hellfire trooper))이 추가된다. 엔딩도 바뀌어 주인공이 생존할 수 있고, 방사능 면역 동료가 정화기를 대신 가동할 수 있다. 메인 퀘스트 분량은 [OA]·[TP]와 비슷하며 약 5시간 걸린다. 상세는 [RD-08c](08c_dlc-broken-steel.md).
+- 레벨 상한이 20 → 30으로 오르고(설치 즉시 적용), 일반 퍽 14개, 새 적(알비노 방사능전갈(Albino radscorpion), 야생 구울 리버(Feral ghoul reaver), 슈퍼 뮤턴트 오버로드(Super mutant overlord), 엔클레이브 헬파이어 트루퍼(Enclave Hellfire trooper))이 추가된다. 엔딩도 바뀌어 주인공이 생존할 수 있고, 방사능 면역 동료가 정화기를 대신 가동할 수 있다. 메인 퀘스트 분량은 [OA]·[TP]와 비슷하며 약 5시간 걸린다. 상세는 [RD-08c](08c_dlc-broken-steel.md).
 
 ### 8.4 포인트 룩아웃 [PL]
 - 페리 더치스 갬빗(Duchess Gambit)을 타고 메릴랜드 해안의 늪지 포인트 룩아웃(Point Lookout)으로 건너간다. 폭탄이 떨어지지 않았지만 세상에 버려진 땅이며, 면적은 수도 황무지의 1/6~1/5이다. 구울 데즈먼드 록하트(Desmond Lockheart)와 그의 숙적이 얽힌 이야기, 부족민·늪지 주민(Swampfolk)과 러브크래프트풍 공포가 중심이다. 메인 퀘스트 5개, 사이드 퀘스트 5개로 DLC 중 가장 열린 구조다.
@@ -457,7 +457,7 @@ flowchart TD
 | 퀘스트(허브 표) | 메인 4 | 메인 3, 비표시 3, 반복 1 | 메인 3, 사이드 3, 비표시 2, 반복 2 | 메인 5, 사이드 5, 비표시 2 | 메인 3, 비표시 1 |
 | 퍽 | 커버트 옵스 + 파워 아머 훈련 | 오토 액스퍼트(Auto Axpert), 부스터 샷(Booster Shot), 피트 파이터(Pitt Fighter) | 일반 퍽 14개 | 구울 에콜로지, 펑가 파워!, 슈피리어 디펜더 | 제노테크 엑스퍼트 |
 | 대표 장비 | 가우스 소총(Gauss rifle), 방한 T-51b 파워 아머(Winterized T-51b power armor), 중국군 스텔스 아머(Chinese stealth armor) | 오토 액스, 퍼포레이터(Perforator), 애셔의 파워 아머(Ashur's power armor) | 테슬라 캐논(Tesla cannon), 트라이빔 레이저 소총(Tri-beam laser rifle), 엔클레이브 헬파이어 아머(Enclave Hellfire armor) | 백워터 소총(Backwater rifle), 이중총신 산탄총(Double-barrel shotgun), 마이크로웨이브 이미터(Microwave emitter) | 외계인 분해기, 드론 캐논, 우주복, 사무라이 갑옷 |
-| 신규 적 | 중국군(Chinese soldier), 크림슨 드라군(Crimson Dragoon), 키메라 전차(Chimera tank) | 트로그, 와일드맨(Wildmen), 피트 레이더(Pitt raider) | 헬파이어 트루퍼, 오버로드, 리버, 알비노 라드스코피온 | 늪지 주민, 늪 구울(Swamp ghoul), 스웜프러크(Swamplurk) | 외계인(Alien), 드론(Drone), 어보미네이션(Abomination) |
+| 신규 적 | 중국군(Chinese soldier), 크림슨 드라군(Crimson Dragoon), 키메라 전차(Chimera tank) | 트로그, 와일드맨(Wildmen), 피트 레이더(Pitt raider) | 헬파이어 트루퍼, 오버로드, 리버, 알비노 방사능전갈 | 늪지 주민, 늪 구울(Swamp ghoul), 스웜프러크(Swamplurk) | 외계인(Alien), 드론(Drone), 어보미네이션(Abomination) |
 | 시스템 변화 | 전리품·내구도 없는 전장, 분대 지휘 | 장비 압수 후 맨손 시작, 수집 퀘스트 | 레벨 상한 30, 엔딩 변경, 엔딩 후 플레이 | 페리 왕복(뱃삯), 동료 동행 불가 | 장비 압수 후 시작, 포로 동료 협력 |
 | 업적 | 4개(100점) | 4개(100점) | 6개(150점) | 4개(100점) | 4개(100점) |
 

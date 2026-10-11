@@ -362,7 +362,7 @@
 
 ### 4.5 아가사의 방송국
 - **성격**: 노부인 아가사가 볼트 92(Vault 92)에 있던 집안의 바이올린 "솔 스트라디바리우스(Soil Stradivarius)"를 되찾은 뒤(퀘스트 *아가사의 노래*), 세상을 떠난 남편의 무선 장비로 자신을 찾아 주는 상인들에게 보답하려고 연 방송이다. 모든 곡은 미리 녹음돼 있어, 그녀 앞에 서 있어도 방송이 흐르고 그녀가 죽어도 방송은 계속된다.
-- **헌정 멘트**: 곡 앞에 정신나간 볼프강(Crazy Wolfgang), 닥 호프(Doc Hoff), 상인 크로우(Crow), 주인공, 어머니, 세상을 떠난 남편 등에게 바치는 짧은 말을 한다. 죽은 상인은 더 이상 언급하지 않는다.
+- **헌정 멘트**: 곡 앞에 정신나간 볼프강(Crazy Wolfgang), 호프 박사(Doc Hoff), 상인 크로우(Crow), 주인공, 어머니, 세상을 떠난 남편 등에게 바치는 짧은 말을 한다. 죽은 상인은 더 이상 언급하지 않는다.
 - **대표 멘트**: "Just a word to my Wasteland friends out there. Stay safe, stay healthy and above all, stay happy."(황무지에 있는 여러분들께 한마디 하고 싶군요. 몸 조심하시고, 건강하세요. 그리고 행복하세요. — 한글 패치 번역)
 - 개국하면 쓰리독이 GNR에서 축하하며 "엔클레이브 선전보다 훨씬 낫다"고 반긴다.
 
@@ -432,7 +432,7 @@
 | 치프 구스타보, 팔라딘 바가스 | Chief Gustavo, Paladin Vargas | 피트 파파조지 | Pete Papageorge | 기계박사(Mechanist), 행운의 하리스(Lucky Harith) 등 | |
 | 어린 아마타, 루시, 매기 | Amata (young), Lucy, Maggie | 스테퍼니 조이 | Stephanie Joy | 어린 외로운 방랑자(Lone Wanderer, 여), 램프라잇 아이들(Lamplighters, 여) | |
 | 하든 심즈 등 아이들 | Harden Simms 등 | 숀 매코이 | Sean McCoy | 어린 외로운 방랑자(남), 스콰이어 맥슨(Squire Maxson), 램프라잇 아이들(남) | |
-| 야생 구울 | Feral ghouls | 마크 램퍼트 | Mark Lampert | 그라디(Grady) 등 | 오디오 디렉터 본인 |
+| 야생 구울 | Feral ghouls | 마크 램퍼트 | Mark Lampert | 그레이디(Grady) 등 | 오디오 디렉터 본인 |
 | 중국군 코만도·잔존병 | Chinese commandos, Chinese remnant soldiers | 애슐리 쳉 | Ashley Cheng | - | 프로덕션 디렉터 본인 |
 | 외로운 방랑자(아기) | Lone Wanderer (baby) | 제이크 하워드 | Jake Howard | - | 토드 하워드의 아들 |
 | 티미 노이스바움 | Timmy Neusbaum | 컬런 파글리아룰로 | Cullen Pagliarulo | - | 에밀 파글리아룰로의 아들 |
@@ -600,7 +600,7 @@
 | 백악관 | White House | 방사능 크레이터와 배회하는 글로잉 원 | 국가 권력의 완전한 소멸 | 지형 + 적 배치 |
 | 메가톤 | Megaton | 불발 핵폭탄 둘레의 판자촌, 폭탄을 숭배하는 원자의 자손(Children of Atom) 교회 | 위험과 공존하는 생존자들의 아이러니. 로딩 화면 힌트도 "살아 있는 핵폭탄 옆에서 금속 벽 뒤에 안심하는 아이러니"를 짚는다 | 구조물 + 세력 |
 
-- **이름 있는 해골**: 코퍼스는 이름이 붙은 해골 16구(DLC 포함. 예: 던위치 빌딩(Dunwich Building)의 빌리, 뉴카-콜라 공장(Nuka-Cola plant) 창고의 세스, 그라디)를 기록한다. 노트·홀로테이프와 짝을 이뤄 "누군가의 마지막 순간"을 읽게 한다.
+- **이름 있는 해골**: 코퍼스는 이름이 붙은 해골 16구(DLC 포함. 예: 던위치 빌딩(Dunwich Building)의 빌리, 뉴카-콜라 공장(Nuka-Cola plant) 창고의 세스, 그레이디)를 기록한다. 노트·홀로테이프와 짝을 이뤄 "누군가의 마지막 순간"을 읽게 한다.
 - 장소별 레벨 디자인 패턴과 던전 구조 분석은 [RD-12](12_world-structure-settlements.md), 홀로테이프·노트 분류는 [RD-21](21_consumables-misc-crafting.md)과 [RD-17](17_exploration-interaction.md)을 참조한다.
 
 ## 9. 설계 분석

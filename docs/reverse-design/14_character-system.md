@@ -478,7 +478,7 @@ flowchart TD
 | 아주 어려움 | Very Hard | 100 | 13~15 | 60 |
 
 - 해킹은 단어 맞히기 미니게임이다. 기회는 4번, 실패하면 영구 잠김(컴퓨터 위즈 퍽으로 1회 추가). 괄호 쌍 기호는 오답 제거·기회 회복. 스킬이 난이도보다 높을수록 후보 단어가 적어진다(과학 100이면 보통 터미널 후보 약 5개). 시도 도중 나가면 잠김 없이 초기화된다. 상세 RD-17.
-- **대화·퀘스트 판정**: 황무지 생존 가이드 로브코 생산 시설(RobCo production facility) 메인프레임 해킹(50), [빅타운의 큰 문제] 로봇 재가동(50), [그것들!] 레스코 박사(Doctor Lesko)의 FEV 사용 추궁(60), 노예 목걸이 해제(75), [MZ] 치유 아치(Healing archway)를 완전 회복형으로 개조(75), [BS] 이동 기지 크롤러(mobile base crawler) 메인프레임 해킹(75)·반발장 해제(80), [아메리칸 드림] 이든 대통령(President Eden) 자폭 설득을 과학으로 대체(60).
+- **대화·퀘스트 판정**: 황무지 생존 가이드 로브코 생산 시설(RobCo production facility) 메인프레임 해킹(50), [빅타운의 큰 문제] 로봇 재가동(50), [그것들!] 레스코 박사(Doctor Lesko)의 FEV 사용 추궁(60), 노예 목줄 해제(75), [MZ] 치유 아치(Healing archway)를 완전 회복형으로 개조(75), [BS] 이동 기지 크롤러(mobile base crawler) 메인프레임 해킹(75)·반발장 해제(80), [아메리칸 드림] 이든 대통령(President Eden) 자폭 설득을 과학으로 대체(60).
 - 시타델 소본즈의 진단 선택지는 과학 판정처럼 표시되지만 실제 요구치가 없다.
 - **관련 퍽**: 엔토몰로지스트(40), 너드 레이지!(50), 로보틱스 엑스퍼트(50), 사이보그(60), 컴퓨터 위즈(70), [BS] 퀀텀 케미스트(70), 대디스 보이/걸(+5/랭크), [OA] 코버트 옵스(+3).
 - **일시 상승**: 멘타츠, 엔클레이브 과학자복(Enclave scientist outfit)·과학자복·외과의의 실험복·볼트 연구복(Vault lab uniform)·[BS] 실험복 +5, 레스코의 실험복(Lesko's lab coat) +10.
@@ -810,7 +810,7 @@ flowchart TD
 |---|---|---|---|---|---|---|---|
 | [OA] | 코버트 옵스 | Covert Ops | 특별 | 앵커리지 탈환전 시뮬레이션 | 정보 서류 가방(Intel suitcase) 10개 수집 | 과학·소형 화기·자물쇠 따기 +3 | xx00BF70 |
 | [OA] | 파워 아머 훈련 | Power Armor Training | 특별 | 오퍼레이션: 앵커리지! | 시뮬레이션 완료 | 본편 특별 퍽과 동일 | 058FDF |
-| [TP] | 오토 액스퍼트 | Auto Axpert | 특별 | 위험한 작업 환경(Unsafe Working Conditions) | 제강소에서 강철 주괴(Steel ingot) 10개 수집 | 오토 액스(Auto axe)와 변형(강철 톱(Steel saw), 맨 오프너(Man Opener), 몰러(The Mauler)) 피해 +25% | xx0073E8 |
+| [TP] | 오토 액스퍼트 | Auto Axpert | 특별 | 위험한 작업 환경(Unsafe Working Conditions) | 제강소에서 강철괴(Steel ingot) 10개 수집 | 오토 액스(Auto axe)와 변형(강철 톱(Steel saw), 맨 오프너(Man Opener), 몰러(The Mauler)) 피해 +25% | xx0073E8 |
 | [TP] | 부스터 샷 | Booster Shot | 퀘스트 | 무상 노동(Free Labor) | 퀘스트 완료 | 방사능 저항 +10% | xx007354 |
 | [TP] | 피트 파이터 | Pitt Fighter | 퀘스트 | 위험한 작업 환경 | 홀(The Hole) 전투 전승 | DR +3%, 방사능 저항 +3% | xx0073EA |
 | [PL] | 구울 이콜로지 | Ghoul Ecology | 특별 | 플릭의 사파리(Plik's Safari) | 해안 동굴의 플릭의 일지(Plik's journal) 읽기 | 구울 대상 피해 +5 | xx00D1FE |
@@ -929,7 +929,7 @@ flowchart TD
 | [BS] 엔클레이브 이동 기지 크롤러 폭파 | Who Dares Wins | +500 | |
 | [BS] 에스컬레이터 투 헤븐 퍽 | Escalator to Heaven | +2,000(최댓값으로) | |
 | [PL] 크리브베크니흐(Krivbeknih) 파괴 | The Dark Heart of Blackhall | +500 | |
-| 국가 원수에서 노예 해방론자 편 | Head of State | 증가(수치 미기재) | |
+| 국가 원수에서 노예제 폐지론자 편 | Head of State | 증가(수치 미기재) | |
 | 피의 유대에서 패밀리와 아르푸 휴전 | Blood Ties | 증가(수치 미기재) | |
 
 **감소**
@@ -1467,7 +1467,7 @@ flowchart TD
 | Yew's bear charm | 유의 곰 부적 | 아이템 |
 | Krivbeknih | 크리브베크니흐 | [PL] |
 | Schmault-Tec bubblehead | 슈몰트텍 버블 헤드 | [PL] |
-| Intel suitcase / Steel ingot / Plik's journal | 정보 서류 가방 / 강철 주괴 / 플릭의 일지 | DLC 수집품 |
+| Intel suitcase / Steel ingot / Plik's journal | 정보 서류 가방 / 강철괴 / 플릭의 일지 | DLC 수집품 |
 | Takoma Industrial / RobCo production facility / Chinese intelligence bunker | 타코마 산업단지 / 로브코 생산 시설 / 중국 정보 벙커 | 장소 |
 | Bethesda Offices East / Shalebridge | 베데스다 사무실 동쪽 / 셰일브리지 | 장소(RD-13 표기 우선) |
 | Chop Shop / The Mill / The Hole | 찹 숍 / 밀 / 홀 | 장소. 패치는 Chop Shop을 '춉숖'으로 적음 |

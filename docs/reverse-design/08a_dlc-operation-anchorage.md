@@ -623,7 +623,7 @@ flowchart TD
 | 타격대 척탄병 | Strike team grenadier | 1 | 10mm 기관단총, 파편 수류탄 5 |
 | 타격대 미사일병 | Strike team missile unit | 2 | 미사일 발사기, N99 10mm 권총 |
 | 타격대 저격병 | Strike team sniper | 2 | 저격소총, 트렌치 나이프 |
-| 타격대 미스터 거츠 | Strike team Mister Gutsy | 3 | 방한 도색 미스터 거츠: 플라스마 무기, 화염방사기 |
+| 타격대 미스터 거스티 | Strike team Mister Gutsy | 3 | 방한 도색 미스터 거스티: 플라스마 무기, 화염방사기 |
 | 타격대 센트리 봇 | Strike team sentry bot | 4 | 방한 도색 센트리 봇: 미니건, 미사일 발사기 |
 
 - 총 5포인트로 2~4명을 편성한다. 인간 대원의 성별·인종은 무작위다. 대원에게 말을 걸어 해산할 수 있고, 몽고메리에게 보충을 요청할 수 있다.
