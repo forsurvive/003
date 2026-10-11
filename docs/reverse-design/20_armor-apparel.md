@@ -329,7 +329,7 @@ flowchart TD
 | Chinese jumpsuit | 중국군 점프슈트 | 몸통 | 6 | 2 | 10 | 100 | +5 소형 화기 | 중국군 점프슈트류 | 트랜퀼리티 레인(Tranquility Lane)의 중국군 코만도 착용(기절 처리·시뮬 종료로 획득 불가) | 사실상 획득 불가 |
 | Colonel Autumn's uniform | 어텀 대령의 제복 | 몸통 | 10 | 3 | 12 | 100 | +5 에너지 무기, +5 소형 화기 | 없음 | 「되찾아라!」에서 어텀 처치, 「생명의 물」 중 기절한 어텀 수색 | 유니크(2벌) |
 | Dirty Chinese jumpsuit | 더러운 중국군 점프슈트 | 몸통 | 5 | 2 | 6 | 50 | +5 소형 화기 | 중국군 점프슈트류 | 포토맥 어타이어(Potomac Attire) 판매, 태프트 터널(Taft Tunnel) 침투 청음초, 마마 돌체(Mama Dolce's)의 중국군 잔존병(Chinese remnants) | — |
-| Dirty pre-War businesswear | 더러운 전쟁 전 정장 | 몸통 | 2 | 2 | 8 | 100 | +5 화술 | 전쟁 전 정장류 | 마인필드(Minefield)·아르푸(Arefu) 가옥, 하우스 '러브 머신' 테마, 미스터 버크(Mister Burke) 등 착용 | — |
+| Dirty pre-War businesswear | 더러운 전쟁 전 정장 | 몸통 | 2 | 2 | 8 | 100 | +5 화술 | 전쟁 전 정장류 | 마인필드(Minefield)·아르푸(Arefu) 가옥, 하우스 인테리어 테마 '러브 머신', 미스터 버크(Mister Burke) 등 착용 | — |
 | Dirty pre-War casualwear | 더러운 전쟁 전 평상복 | 몸통 | 3 | 2 | 6 | 100 | +1 민첩성 | 전쟁 전 의복류 | 안데일(Andale) 주민, 마인필드 가옥, 각종 컨테이너 | — |
 | Dirty pre-War kid's outfit | 더러운 전쟁 전 아동복 | 몸통 | 2 | 2 | 30 | 100 | — | 아동복류 | 제니 윌슨(Jenny Wilson)·데릭 파시온(Derek Pacion) 등 아이 NPC(역소매치기) | — |
 | Dirty pre-War parkstroller outfit | 더러운 전쟁 전 산책복 | 몸통 | 3 | 2 | 5 | 100 | +1 민첩성 | 전쟁 전 의복류 | 가옥·컨테이너 | — |
