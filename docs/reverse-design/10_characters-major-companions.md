@@ -461,7 +461,7 @@ flowchart TD
 | 소속 | 라이언의 BoS 엘더 |
 | 위치 | 시타델 연구실, A링, B링 |
 | 성우 | 윌리엄 배싯(William Bassett) |
-| 필수(essential) | 예 ([BS] '도전하는 자가 승리한다'에서 시타델 파괴를 고르면 사망) |
+| 필수(essential) | 예 ([BS] '도전하는 자가 승리한다(Who Dares Wins)'에서 시타델 파괴를 고르면 사망) |
 | 서비스 | 파워 아머 훈련 허가(팔라딘 거니(Paladin Gunny)), 병참장교 두르가(Knight Captain Durga)와 거래 허가, 슈퍼 뮤턴트 정보 1건당 100캡 + 선 카르마 |
 | 카르마·레벨 | 매우 선 · 25 |
 | 대사 파일 | ElderLyons.txt |
@@ -593,7 +593,7 @@ flowchart TD
 
 - **외형·성격·말투**: 저격총을 든 소년 시장. 욕설과 허세, 어른('멍고(mungo)')에 대한 깊은 불신. 거칠지만 마을을 지키는 책임감이 있다.
 - **배경**: 2274년 '공주(Princess)'를 자칭한 앤절라(Angela)를 주먹으로 끌어내리고 투표로 시장이 됐다(앤절라는 '공주'라는 별명이 붙었다). 리틀 램프라잇은 16세가 되면 빅타운(Big Town)으로 떠나야 한다.
-- **역할·관련 퀘스트**: 흔적을 따라서(입구에서 위협. 어려운 화술 판정, 퍽 차일드 앳 하트(Child at Heart), 또는 낙원으로부터의 구출 완료로 통과 → 머더 패스(Murder Pass) 경유 볼트 87 정보), 낙원으로부터의 구출(시작 인물), 버섯 거래(반복), 그것들!(차일드 앳 하트로 브라이언 윌크스(Bryan Wilks) 수용). [RD-04](04_main-story-part2-endings.md), [RD-05](05_side-quests-part1.md), [RD-07](07_misc-quests-encounters.md).
+- **역할·관련 퀘스트**: 흔적을 따라서(입구에서 위협. 어려운 화술 판정, 퍽 차일드 앳 하트(Child at Heart), 또는 낙원으로부터의 구출 완료로 통과 → 머더 패스(Murder Pass) 경유 볼트 87 정보), 낙원으로부터의 구출(시작 인물), 버섯 거래(Fungus Deal, 반복), 그것들!(차일드 앳 하트로 브라이언 윌크스(Bryan Wilks) 수용). [RD-04](04_main-story-part2-endings.md), [RD-05](05_side-quests-part1.md), [RD-07](07_misc-quests-encounters.md).
 - **운명**: 필수. 짧은 시간에 너무 자주 말을 걸면 화를 내며 24시간 동안 대화를 거부한다. 설정상 [FO4]에서 성인 용병 동료로 다시 등장한다.
 - **대사 포인트**
   - "People change when they grow up, and we don't trust mungos living down here." — "사람은 자라게 되면 누구나 변하기 마련이야, 그리고 우린 그렇게 되버린 멍고들을 믿지 않아."(패치 번역)
@@ -1087,7 +1087,7 @@ flowchart TD
 | 위치 | 메레스티 지하철역(Meresti Metro station) 조차장 |
 | 성우 | 그레고리 고턴 |
 | 필수(essential) | 아니오 (일반 NPC보다 훨씬 질기다) |
-| 서비스 | 블러드 팩 매입(네 피를 마시고 싶다, 1개당 15캡), 퍽 헤마토파지(Hematophage) 전수 |
+| 서비스 | 블러드 팩 매입(네 피를 마시고 싶다(I Want to Drink Your Blood), 1개당 15캡), 퍽 헤마토파지(Hematophage) 전수 |
 | 카르마·레벨 | 중립 · 7→14 |
 | 대사 파일 | TheFamilyVance.txt |
 
@@ -1373,7 +1373,7 @@ flowchart TD
 | 리 박사 | Doctor Li | 생명의 물 | 리 박사의 복장 | 나이프 | 3·6·3·4·8·6·5 | 폭발물, 의학, 과학 |
 | 레드 | Red | 빅타운의 큰 문제 | 레드의 점프슈트, 반다나, 돋보기 | 없음 | 4·6·4·6·7·5·4 | 물물교환, 의학, 과학 |
 | 사라 라이언 | Sarah Lyons | 아버지의 발자취(체비 체이스), 되찾아라! | 라이언스 프라이드 파워 아머 | AER9 레이저 소총 | 5·7·6·4·3·6·4 | 중화기, 에너지 무기, 소형 화기 |
-| 스티키 | Sticky | 빅타운의 큰 문제, 생일 축하합니다(비표시) | 황무지 정착민 복장 | .32 권총 | 6·5·4·4·4·6·4 | 물물교환, 소형 화기, 비무장 |
+| 스티키 | Sticky | 빅타운의 큰 문제, 생일 축하합니다(Happy Birthday to You, 비표시) | 황무지 정착민 복장 | .32 권총 | 6·5·4·4·4·6·4 | 물물교환, 소형 화기, 비무장 |
 | 시드니 | Sydney | 독립을 훔쳐라 | 전투 아머 | 시드니의 10mm '울트라' 기관단총 | 6·5·4·4·4·6·4 | 근접 무기, 소형 화기, 은신 |
 | 팔라딘 호스 | Paladin Hoss | 실종된 이니시에이트(비표시) | 브라더후드 파워 아머 | 화염방사기 또는 미사일 발사기 | 5·5·4·5·5·5·4 | 과학, 비무장, 소형 화기 |
 
@@ -1575,7 +1575,7 @@ flowchart TD
 - **전투 특성**: 파워 아머로 적의 공격을 받아 내는 탱커. 근접 지시에 "They shall know the power of my steel!"(적들에게 브라더후드의 힘을 깨닫게 하리!, 패치 번역).
 - **고유 대사·반응**: "Make no mistake; your father would be proud of what you have done."(너의 아버지는 네가 한 일에 대해 자랑스러워 하실게다, 패치 번역). 대기 명령에 "I shall reflect on battles past and battles to come until your return."(돌아올 때까지 지난 전투와 다가올 전투를 되새기겠다). 되찾아라! 시작 후 시타델에서는 "For Elder Lyons!" 같은 짧은 대사만 한다.
 - **관련 퀘스트**: 생명의 물(고용 해금), 아웃캐스트 지원([OA] 아웃캐스트를 공격하는 버그 보고 있음).
-- **엔딩·[BS]**: 정화기 가동은 "this is your fight to finish"라며 본편·[BS] 모두 거절한다. [BS] 도전하는 자가 승리한다에서 시타델을 파괴하면 BoS와 함께 적대한다.
+- **엔딩·[BS]**: 정화기 가동은 "this is your fight to finish"라며 본편·[BS] 모두 거절한다. [BS] '도전하는 자가 승리한다'에서 시타델을 파괴하면 BoS와 함께 적대한다.
 - **디자인 분석**: 아버지의 과거를 아는 '두 번째 증인'을 동료로 만들어, 선 카르마 플레이에 아버지 서사의 정서적 보상을 연결했다.
 
 ### 7.8 버치 들로리아(Butch DeLoria)

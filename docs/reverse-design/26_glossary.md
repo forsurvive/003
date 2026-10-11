@@ -410,7 +410,7 @@
 | Dog / Feral dog | 개 / 들개 | |
 | Brahmin | 브라민 | 머리 둘 달린 소 |
 | Giant ant / Fire ant / Ant queen | 거대 개미 / 화염개미 / 여왕개미 | 패치 |
-| Radscorpion | 라드스코피온 | |
+| Radscorpion | 방사능전갈 | 패치. 다른 표기: 라드스코피온 |
 | Mirelurk | 마이얼럭 | 패치. 다른 표기: 미렐럭 |
 | Mirelurk hunter / Mirelurk king | 마이얼럭 헌터 / 마이얼럭 킹 | 패치 '마이얼럭' 기준 |
 | Yao guai | 야오과이 | 패치 |
@@ -420,7 +420,7 @@
 | Super mutant behemoth | 슈퍼 뮤턴트 베히모스 | 패치 |
 | Feral ghoul roamer / reaver | 야생 구울 로머 / 리버 | 리버는 [BS] |
 | Protectron | 프로텍트론 | |
-| Mister Gutsy | 미스터 거츠 | |
+| Mister Gutsy | 미스터 거스티 | 패치(Mr. 거스티). 다른 표기: 미스터 거츠 |
 | Mister Handy | 미스터 핸디 | |
 | Robobrain | 로보브레인 | |
 | Sentry bot | 센트리 봇 | |
