@@ -1018,7 +1018,7 @@ flowchart TD
 | 종족·성별 | FEV 변이체(나무와 융합)·남, 205세 |
 | 소속 | 트리마인더(Treeminders)의 신 '위대한 자(Great One)' |
 | 위치 | 오아시스(Oasis) 중심의 나무 |
-| 성우 | 스티븐 러셀(Stephen Russell) (폴아웃 1·2는 찰리 애들러) |
+| 성우 | 스티븐 러셀(Stephen Russell) (폴아웃 1·2는 찰리 애들러(Charlie Adler)) |
 | 필수(essential) | 아니오 |
 | 서비스 | 없음 |
 | 대사 파일 | Harold.txt |

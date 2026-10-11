@@ -243,7 +243,7 @@ flowchart TD
 | 셰런 계약(고용된 도움 Hired Help) | 2,000캡 | 50 이상: 1,000캡 | [RD-07](07_misc-quests-encounters.md) |
 | 클로버 구매 | 1,000캡 | 50 이상: 500캡 | [RD-10](10_characters-major-companions.md) |
 | RL-3 하사 구매 | 1,000캡 | 70 이상: 500캡 | [RD-10](10_characters-major-companions.md) |
-| 권리장전·대헌장 매각(아브라함 워싱턴(Abraham Washington)) | 100캡·75캡 | 70 이상: 125캡·100캡 | [RD-06](06_side-quests-part2.md) |
+| 아브라함 워싱턴(Abraham Washington)에게 권리장전·대헌장 매각 | 100캡·75캡 | 70 이상: 125캡·100캡 | [RD-06](06_side-quests-part2.md) |
 | 짚의 뉴카 픽스(Zip's Nuka Fix) | 뉴카-콜라 교환 | 30·50·70 구간마다 보상 상향 | [RD-07](07_misc-quests-encounters.md) |
 | 버섯 거래(Fungus Deal) | 동굴 버섯 ↔ 괴상한 고기 | 75 이상: 더 유리한 교환비 | [RD-07](07_misc-quests-encounters.md) |
 | 링컨의 이윤(Lincoln's Profit Margins) | 유물 매각 | 수치 미상의 물물교환 판정으로 더 높은 가격(최소 10~최대 1,110캡) | [RD-07](07_misc-quests-encounters.md) |
@@ -791,7 +791,7 @@ flowchart TD
 | 장소 | 침대 | 작업대 | 적 없음 | 특징 |
 |---|---|---|---|---|
 | 시타델 | 32 | O | O | 두르가 상점, 소본스, 파워 아머 훈련 |
-| 알링턴 하우스(알링턴 묘지(Arlington Cemetery)) | 3 | O | O(로브링어 시 전더스 플렁킷 등장) | 보블헤드 - 행운, 병뚜껑 지뢰 |
+| 알링턴 묘지(Arlington Cemetery)의 알링턴 하우스 | 3 | O | O(로브링어 시 전더스 플렁킷 등장) | 보블헤드 - 행운, 병뚜껑 지뢰 |
 | 에버그린 밀 바자 | 6 | O | – | 보블헤드 - 물물교환, 스마일링 잭 |
 | 메레스티 지하철역 | 5 | O | 조건부 | 칼 상점, 머피 인근 |
 | 리틀 램프라잇 볼트 87(Vault 87) 원자로실 | 1 | O | – | 닉낵·에클레어 이용 |
