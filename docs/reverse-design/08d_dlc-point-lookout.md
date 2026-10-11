@@ -2,7 +2,7 @@
 
 > **폴아웃 3 역기획서 세트** | 문서 ID: RD-08d | 버전: v1.0 | 작성일: 2026-10-11
 > **범위**: 애드온 [PL] 포인트 룩아웃(Point Lookout)의 개요, 스토리, 퀘스트 12개 상세(메인 5·사이드 5·비표시 2), 맵 전체 구조와 장소, NPC, 장비·아이템, 퍽, 적, 보트 이동·늪지 환경·환각 시퀀스 등 규칙 변화, 업적. 무기·방어구·퍽·적·장소의 전체 수치는 각 카탈로그 정본(RD-19/20/14/24/13)이 다루며 이 문서는 DLC 맥락의 요약만 둔다.
-> **관련 문서**: [RD-01 게임 개요](01_game-overview.md), [RD-02 세계관·설정·연표](02_world-and-lore.md), [RD-09 팩션](09_factions.md), [RD-11 NPC 디렉터리](11_npc-directory.md), [RD-13 장소 카탈로그](13_location-catalog.md), [RD-14 캐릭터 시스템](14_character-system.md), [RD-19 무기·탄약](19_weapons-ammo.md), [RD-20 방어구·의복](20_armor-apparel.md), [RD-21 소모품·잡화·제작](21_consumables-misc-crafting.md), [RD-22 경제·주거](22_economy-housing.md), [RD-23 수집 요소·업적](23_collectibles-achievements.md), [RD-24 크리처·적 도감](24_bestiary.md), [RD-25 아트·오디오·연출](25_art-audio-presentation.md), [RD-08c DLC: 브로큰 스틸](08c_dlc-broken-steel.md)
+> **관련 문서**: [RD-01 게임 개요](01_game-overview.md), [RD-02 세계관·설정·연표](02_world-and-lore.md), [RD-09 팩션](09_factions.md), [RD-11 NPC 디렉터리](11_npc-directory.md), [RD-12 월드 구조·정착지·볼트](12_world-structure-settlements.md), [RD-13 장소 카탈로그](13_location-catalog.md), [RD-14 캐릭터 시스템](14_character-system.md), [RD-15 상태·생존 시스템](15_status-survival.md), [RD-19 무기·탄약](19_weapons-ammo.md), [RD-20 방어구·의복](20_armor-apparel.md), [RD-21 소모품·잡화·제작](21_consumables-misc-crafting.md), [RD-22 경제·주거](22_economy-housing.md), [RD-23 수집 요소·업적](23_collectibles-achievements.md), [RD-24 크리처·적 도감](24_bestiary.md), [RD-25 아트·오디오·연출](25_art-audio-presentation.md), [RD-26 용어집](26_glossary.md), [RD-08c DLC: 브로큰 스틸](08c_dlc-broken-steel.md)
 
 ---
 
