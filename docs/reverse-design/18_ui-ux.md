@@ -674,12 +674,106 @@ flowchart TD
 
 ## 16. UI 설계 분석
 
-(작성 중)
+### 16.1 다이제틱 UI로서의 핍-보이
+- **의도**: 핍-보이 개발 일지(이슈트반 펠리, 2007)는 메뉴를 열어도 몰입이 깨지지 않기를 목표로 함. 원문: "his character has simply paused and looked down to fidget with his personal analog assistant for a moment, still in the wasteland." / "캐릭터는 그저 잠시 멈춰 손목의 개인용 아날로그 단말을 만지작거릴 뿐, 여전히 황무지에 있다."
+- **구현 수단**
+
+| 수단 | 효과 |
+|---|---|
+| 팔을 들어 올리는 실물 모델(별도 모드 없음) | 메뉴 = 게임 속 물건이라는 감각 |
+| 곡면 CRT에 메뉴 투사, 주사선·깜빡임·수직 동기 흔들림(오린 트레스냑(Orin Tresnjak)) | 1970~80년대 단말의 질감 |
+| 숨 쉬는 듯한 대기 흔들림(조시 존스(Josh Jones)) | 시간이 멈춰도 '살아 있는' 느낌. 커서를 방해하지 않게 미세 조정 |
+| 실제 조명 반응, 라이트 기능 | 어두운 곳에서는 화면 빛만으로 장치가 보임 |
+| 기계식 방사능 바늘 | 어느 화면에서도 생존 정보를 유지 |
+| 지문 자국, 닳은 도장 | 200년을 버틴 물건의 사연 |
+| 단색 유지, 1비트 볼트 보이 아이콘(나탈리아 스미르노바 등) | 시리즈 정체성 + 유머 |
+
+- **개발자 평가**: 인터페이스 프로그래머 리카르도 곤살레스(Ricardo E. Gonzalez)는 HUD가 캐릭터 환경의 일부인 몰입형 UI를 선호한다며 "FO3's UI passes my immersion test" / "폴아웃 3의 UI는 내 몰입 기준을 통과한다"고 말함. 반면 오린 트레스냑은 전작 UI에 대해 "아트는 훌륭했지만 사용성 테스트가 있었으면 했다"고 평가해, 폴아웃 3 팀이 '세계관 일체감 + 사용성'을 함께 노렸음을 보여 줌.
+
+### 16.2 장점과 약점
+| 관점 | 장점 | 약점 |
+|---|---|---|
+| 몰입 | 메뉴 조작조차 롤플레이가 됨. 시간 정지가 '전술 판단용 안전 공간'이 됨 | 시간 정지가 곧 전투 중 무한 회복·장비 교체를 허용함 |
+| 정보 구조 | 3탭 × 5하위 탭의 고정된 계층으로 위치를 외우기 쉬움 | 계층이 깊어 자주 쓰는 기능(약 사용·장비 교체)에 여러 번 이동해야 함. 단축키 8칸으로 보완 |
+| 가독성 | 텍스트·숫자 위주의 깔끔한 화면 | 손목 화면 안에 담아 글자가 작음. 밝기가 과해 읽기 어려워지는 버그, 3인칭 초록 발광 버그 |
+| 단색 | 일관된 정체성, 색 의존 없는 레이아웃 | 상태 구분에 색을 쓰지 못함(대신 대괄호·막대·그림으로 해결) |
+| 투명성 | VATS·화술 확률, 아이템 수치, 잠금 등급을 직접 노출해 판단을 도움 | 확률 노출은 세이브·로드 반복을 부추기기도 함 |
+| 하드웨어 설정 | 실물 같은 조작부 | 조작부를 장치를 찬 왼팔 쪽에 둬서 사용 시 화면을 가리는 설계 실수(개발진이 수년 뒤 자인, 폴아웃 4에서 수정) |
+| 확장성 | DLC 지도·신호·노트를 같은 틀에 그대로 수용 | 캡 1,000,000 이상 표시 불가 같은 표시 한계 |
+
+### 16.3 일관된 '단말 문법'
+- HUD의 `[HIDDEN]`, 대화의 `[Speech 45%]`, 터미널의 대괄호 메뉴, 핍-보이의 대괄호 구획이 모두 같은 표기 규칙을 씀. 플레이어는 대괄호를 '시스템이 말하는 부분'으로 학습하게 됨.
+- 로딩 화면은 힌트·통계·퀘스트 목표로 대기 시간을 교육 시간으로 바꾸고, 시뮬레이션 진입 때는 힌트를 시스템 메시지로 바꿔 연출에 녹임.
+
+### 16.4 다른 시스템과의 연계
+| 시스템 | UI 연결점 |
+|---|---|
+| 탐험([RD-17](17_exploration-interaction.md)) | 나침반·지도·빠른 이동·노트·라디오 |
+| 전투([RD-16](16_combat-system.md)) | VATS, AP 바, 수류탄 경고, 은신 표시 |
+| 캐릭터([RD-14](14_character-system.md)) | STATS 탭, 레벨업 화면, 대화 태그 |
+| 생존([RD-15](15_status-survival.md)) | CND·RAD·EFF 화면, 방사능 계기, 스팀팩 부위 지정 |
+| 경제([RD-22](22_economy-housing.md)) | 거래·수리 화면 |
+| 엔딩([RD-04](04_main-story-part2-endings.md)) | 엔딩 슬라이드 |
 
 ## 17. 쯔꾸르 이식 메모
 
-(작성 중)
+### 17.1 보존 필수
+- 핍-보이 3탭 × 5하위 탭 구조와 각 화면의 정보 항목(4.4~4.6), 상단 정보줄, 단색 화면·볼트 보이 아이콘 문법.
+- 열어 둔 동안 시간 정지, 열람 중 저장 불가 규칙.
+- 판정의 숫자 노출: VATS 부위별 확률, `[화술 XX%]`, 태그 선택지, 잠금 등급.
+- HUD 최소 구성(HP·AP·탄약·나침반·은신 표시·피폭 계기·왼쪽 위 알림)과 '위험은 소리, 결과는 알림' 피드백 원칙.
+- 레벨업 2단계 화면(스킬 배분 → 퍽 선택), 로딩 힌트 분류, 강제 저장 지점.
+
+### 17.2 RPG Maker 메뉴로 핍-보이 재현하기
+| 원작 | 쯔꾸르 구현안 |
+|---|---|
+| 핍-보이 전체 | 기본 메뉴(Scene_Menu)를 대체하는 **전용 메뉴 씬**. 손목 장치 테두리는 고정 그림, 안쪽에 창을 배치 |
+| STATS/ITEMS/DATA | 상단 가로 명령 창(3칸) + 그 아래 하위 탭 가로 명령 창(5칸) |
+| 목록·상세 | 왼쪽 선택 창 + 오른쪽 상세 창(볼트 보이 픽셀 아이콘 + 수치). 상단 정보줄은 도움말 창 확장 |
+| 단색 CRT | 창 배경 투명 + 초록 단색 팔레트 글꼴 + 주사선 오버레이 그림. 화면 색 옵션(호박·파랑·초록·흰색)은 팔레트 교체 |
+| World Map·빠른 이동 | 지도 그림 + 발견 마커 아이콘 + 커서 선택 → 장소 이동 이벤트. 미발견 마커는 숨김, 표시만 된 마커는 빈 아이콘 |
+| Notes | 노트는 텍스트 창, 홀로테이프는 텍스트 + 효과음(음성 대체) |
+| Radio | 방송국 목록 + BGM 교체(음원 저작권 주의: 곡 목록은 [RD-25](25_art-audio-presentation.md)) |
+| 단축키 8칸 | 숫자 키·버튼 조합 단축 사용 플러그인 |
+
+### 17.3 화면 해상도 고려
+- RPG Maker MZ·MV의 기본 해상도는 816×624이며 설정으로 1280×720 등으로 바꿀 수 있음(일반 지식). 핍-보이처럼 **정보량이 많은 화면**은 기본 해상도에서 글자가 빽빽해지므로, 메뉴 씬 전용으로 작은 픽셀 글꼴을 쓰거나 해상도를 넓히는 방안을 본기획에서 결정해야 함.
+- 원작 핍-보이는 화면의 일부만 쓰는 '손목 화면'이지만, 도트 게임에서는 **전체 화면 핍-보이**(테두리만 장치 모양)로 바꿔 가독성을 확보하는 편이 현실적임.
+- HUD는 4귀퉁이 소형 창으로 배치하고, 나침반은 화면 상단 가로 띠로 바꾸는 방안을 추천(원작은 하단 왼쪽).
+
+### 17.4 기타 화면
+| 원작 화면 | 구현안 | 주의 |
+|---|---|---|
+| VATS | 전투 단순화와 연동한 '표적·부위 선택 창 + 확률 + AP 게이지 + 대기열' | 확률 최대 95% 규칙 유지 |
+| 대화 | 메시지 창 + 선택지. 태그 문자열을 동적으로 만들어 붙임 | 기본 선택지 수 제한(6개) 초과 시 플러그인 |
+| 거래·컨테이너·소매치기 | 2단 아이템 창(플러그인) | 기본 상점 씬은 '상점 목록 1개' 구조라 부적합 |
+| 자물쇠·해킹 | 미니게임 씬([RD-17 16.3](17_exploration-interaction.md#163-미니게임-재현-제안)) | 터미널 출력 연출(한 글자씩)은 메시지 출력 속도로 재현 |
+| 로딩 화면 | 쯔꾸르는 맵 전환이 빨라 로딩이 거의 없음 → 페이드 중 힌트 1줄 또는 장거리 이동(빠른 이동) 때만 슬라이드 + 힌트 | 지나친 대기 연출 금지 |
+| 세이브 | 맵 이동 시 오토세이브 플러그인 + 이벤트 강제 저장 지점 | 오토세이브 슬롯 분리 |
+| 엔딩 슬라이드 | 그림 + 내레이션 텍스트 연출 | 세그먼트 조건은 RD-04 표를 변수로 이식 |
+
+### 17.5 생략·변형 후보
+- 3D 시네마틱(킬캠·VATS 카메라) → 짧은 컷인 그림·흔들림 연출로 대체.
+- 1인칭·3인칭 전환 → 생략(탑다운 고정).
+- 핍-보이 라이트 → 어두운 맵의 시야 반경 확대 효과로 변형.
+- 팔 들어 올리는 애니메이션·숨 쉬는 흔들림 → 메뉴 진입 시 장치 그림이 아래에서 올라오는 짧은 연출로 축소.
 
 ## 18. 부록 – 출처
 
-(작성 중)
+- 로컬 Nukapedia 코퍼스(2026-08-30 덤프, CC BY-SA)에서 참고한 문서. 대사 번역 예시는 리드가 정리한 한글 패치 병렬 대사(parallel.tsv·topics_parallel.tsv)에서 인용함.
+
+| 분류 | 문서 |
+|---|---|
+| 핍-보이 | Nukapedia: Pip-Boy 3000, Pip-Boy, Design and Development of the Pip-Boy model 3000, Geiger counter, Keyring, Natalia Smirnova |
+| HUD | Nukapedia: Sneak (Fallout 3), Perception (Fallout 3), Radiation, Fallout 3 traps, Fallout 3 loading screens, Recon armor (Fallout 3), Fallout 3 bugs |
+| VATS | Nukapedia: VATS, Action Points, Fallout 3 combat, Gamebryo game settings |
+| 대화·거래 | Nukapedia: Fallout 3 gameplay, Speech (Fallout 3), Following in His Footsteps, Barter (Fallout 3), Fallout 3 companions, Gob.txt·Amata.txt 등 대화 파일 |
+| 컨테이너·소매치기 | Nukapedia: Fallout 3 containers and storage, Planting items, Mister Sandman (Fallout 3), Fallout 3 exploits |
+| 레벨업·수리 | Nukapedia: Level, Experience Points, Fallout 3 character creation, Repair (Fallout 3), Repair list, Fallout 3 patch 1.1 |
+| 미니게임·터미널 | Nukapedia: Lock (Fallout 3), Lock (Fallout: New Vegas), Hacking (Fallout 3), Hacking, Terminal, Terminal commands, Museum of Technology terminal entries |
+| 로딩 | Nukapedia: Fallout 3 loading screens, Loading screen |
+| 메뉴·세이브 | Nukapedia: Fallout 3 patches, Fallout 3 patch 1.5, Fallout 3 patch 1.6, Fallout 3 manual, Gene projector, Vault101ExitScript, MQ11ForceSaveTriggerScript, DLC03PresMetroAutosave01SCRIPT, DLC04LookoutDuchessTravelActivatorSCRIPT, Fallout 3 intro |
+| 카메라·조작 | Nukapedia: Fallout 3 gameplay, Waiting, Grab, Pip-Boy 3000 |
+| 피드백 | Nukapedia: Karma (Fallout 3), Level, Frag mine (Fallout 3), Crippled Limbs, Concussed |
+| 엔딩 | Nukapedia: Fallout 3 endings |
+| 설계 | Nukapedia: Ricardo E. Gonzalez Meet the Fallout 3 devs, Orin Tresnjak Meet the Fallout 3 devs, Gary Noonan Meet the Fallout 3 devs, VATS(이슈트반 펠리 인터뷰 인용), Pip-Boy 3000(조작부 위치에 대한 개발진 발언) |
