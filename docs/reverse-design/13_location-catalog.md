@@ -8,7 +8,42 @@
 
 ## 1. 문서 개요
 
-(작성 중)
+### 1.1 목적과 범위
+
+- 폴아웃 3의 지도 마커 장소를 빠짐없이 한 줄씩 정리한 정본 카탈로그. 팬게임 맵 목록·이벤트 배치·보상 배치 데이터의 근거로 씀
+- 대상: 본편 163곳 + DLC 61곳 = **224곳**(마커 기준), 의미 있는 비표시 장소(퀘스트·이스터에그·고유 보상), 지하철·하수도 내부 구간, [MZ] 마더십 제타의 비표시 구역 전부
+- 제외: 정착지·볼트의 내부 구조·주민·시설 상세(→ [RD-12](12_world-structure-settlements.md)), 퀘스트 진행(→ 각 퀘스트 문서), 적 능력치(→ [RD-24](24_bestiary.md)), 수집 동선(→ [RD-23](23_collectibles-achievements.md))
+
+### 1.2 요약
+
+- 본편 마커 163곳은 [로브링어(Lawbringer)](14_character-system.md) 퍽으로 열리는 감시자 본부(Regulator HQ)를 포함한 수치다. 퍽이 없으면 162곳이고, 볼트 101은 핍-보이(Pip-Boy) '발견한 장소' 통계에서 빠진다
+- DLC 5종은 수도 황무지(Capital Wasteland)에 마커 10곳을 더하고, 별도 월드 맵 4개(앵커리지 시뮬레이션 11·피트 6·애덤스 공군 기지 3·포인트 룩아웃 31)에 51곳을 둔다. 합계 224곳 중 통계에 잡히는 곳은 221곳(볼트 101·케니의 동굴·외계인 유도 신호기 제외)
+- 본편 163곳 중 48곳(29%)이 지하철로만 들어가는 **D.C. 도심 폐허**에 몰려 있다. 나머지 115곳은 수도 황무지 9개 권역에 10~17곳씩 고르게 퍼져 있다
+- 거의 모든 마커에 보상이 붙는다. 보블헤드 20개 중 19개, 본편 뉴카-콜라 퀀텀(Nuka-Cola Quantum) 95병 중 85병, 스킬북 배치 323곳 중 297곳이 마커 장소 안이나 그 바로 옆에 있다
+- 지도 아이콘 유형(15종)과 장소의 실제 기능은 자주 어긋난다(예: 데스클로 보호구역은 '대형 정착지' 아이콘이지만 실제로는 동굴 던전). 그래서 표마다 기능 유형 칼럼을 따로 둔다
+
+### 1.3 표기 메모
+
+| 항목 | 기준 |
+|---|---|
+| 장소 수 | `Fallout 3 locations` 허브의 집계(본편 163, DLC 수도 황무지 10 + 별도 월드 51)를 따름. 개별 마커 목록은 위키 인터랙티브 지도(`Map:FO3 World Map` 외 DLC 4종)를 바탕으로 하고, 허브·정보상자로 오류 두 건을 바로잡음(아래 1.4) |
+| 영문명 | 게임 내 마커 이름. D.C. 도심 구역 행은 하위 마커를 `구역명 (개수: 마커1 / 마커2…)`로 묶음 |
+| 한국어 표기 | 한글 패치 표기를 먼저 따르고(예: 수도 황무지, 리벳시티, 레이븐 락), 없으면 용어집 원칙(지명 음차, 일반 명사형 장소 번역)을 따름. 퀘스트 이름은 용어집 표기를 유지함(예: 퀘스트 〈애거사의 노래〉, 인물 아가사) |
+| 지도 아이콘 | 위키 인터랙티브 지도 카테고리이자 정보상자 `type` 값. 게임의 마커 아이콘 15종에 해당함: 대형·중형·소형 정착지, 볼트, 지하철, 군사 시설, 공장, 오피스 빌딩, 동굴, 기념물, 자연 랜드마크, 마을 폐허, 도시 폐허, 하수도, 해양([PL]만) |
+| 유형 | 장소의 실제 기능(정착지·발전소·레이더 거점 등). 작성자 분류임 |
+| 지역 | 공식 가이드 투어 장의 9개 권역(3×3)과 D.C. 도심. 좌표는 인터랙티브 지도 위치를 가이드 좌표계로 환산한 값으로, X는 동(+)·서(−), Y는 북(+)·남(−)이고 ±1칸 오차가 있음. 권역 경계는 X −13.5 / +3.5, Y +12.5 / −3.5로 나눔(가이드 실측 좌표와 대조해 정함) |
+| 주요 전리품 | `보블헤드(대상)`, `스킬북 N(스킬)`, `퀀텀 N`, `설계도(무기)`, 고유 장비는 `영문 원명[기반 장비]`. 스킬북·퀀텀 수는 각 스킬북 문서와 퀀텀 문서의 '가장 가까운 마커' 표 기준이라 장소 주변 야외 물량을 포함함 |
+| 실내 | 정보상자 `cell name`에서 외부 셀을 뺀 실내 셀 수(추정). 정착지는 허브의 하위 건물 수(`건물 N`) |
+| DLC 태그 | [OA] [TP] [BS] [PL] [MZ] |
+
+스킬북과 스킬 대응(표에서는 스킬 이름만 적음, 책 제목의 한국어 표기는 [RD-23](23_collectibles-achievements.md)을 따름): Big Book of Science=과학, Chinese Army: Special Ops Training Manual=은신, D.C. Journal of Internal Medicine=의학, Dean's Electronics=수리, Duck and Cover!=폭발물, Grognak the Barbarian=근접 무기, Guns and Bullets=소형 화기, Lying, Congressional Style=화술, Nikola Tesla and You=에너지 무기, Pugilism Illustrated=비무장, Tales of a Junktown Jerky Vendor=물물교환, Tumblers Today=자물쇠 따기, U.S. Army: 30 Handy Flamethrower Recipes=중화기, Paradise Lost=화술(1권, 역사 박물관).
+
+### 1.4 자료 정정 메모
+
+- 위키 인터랙티브 지도의 'Platz station' 마커는 실존하지 않는 역이다(Platz Metro station은 노선도에만 나오는 미구현 역). 위치(윌헬름 부두 남쪽)와 문서 기록으로 보아 게임에서 'Flooded Metro'라고 표시되는 **알링턴/웨이스트랜드 역 입구**다. 그래서 'Flooded Metro' 마커는 두 곳(미니트맨 역 쪽, 알링턴/웨이스트랜드 역 쪽)이다
+- 같은 지도의 'Sniper Shack' 마커는 오류다(허브·정보상자 모두 비표시). 이 둘을 바로잡으면 본편 마커가 허브 수치 163곳과 정확히 맞는다
+- [BS] '이동 기지 크롤러(Mobile base crawler)'와 '로코폴리스(Rockopolis)'도 인터랙티브 지도에는 아이콘이 있지만 허브 기준으로 비표시라서 비표시 표에 넣는다
+- 제퍼슨 기념관 마커는 〈생명의 물〉 이후 엔클레이브가 정화 계획(Project Purity)을 점령하면 지도에서 사라진다(허브 각주)
 
 ---
 
@@ -58,7 +93,7 @@
 ### 2.3 권역별 수집품·퀘스트 분포 (본편)
 
 <!-- GEN:agg-loot -->
-| 권역 | 마커 수 | 보블헤드 | 스킬북 | 퀀텀 | 퀘스트 연계 마커 |
+| 권역 | 마커 수 | 보블헤드 | 스킬북 | 퀀텀 | 퀘스트 연계 행 |
 |---|---|---|---|---|---|
 | Z1 북서부 | 16 | 4 | 31 | 3 | 3 |
 | Z2 북부 산악 | 10 | 1 | 14 | 10 | 3 |
@@ -75,21 +110,55 @@
 
 ### 2.4 지역별 분포 분석
 
-(작성 중)
+| 권역 | 성격 | 대표 장소 | 분포 특징 |
+|---|---|---|---|
+| Z1 북서부 | 산악·야생, 엔클레이브 본거지 | 레이븐 락, 콘스탄틴 요새, 데스클로 보호구역, 새트컴 어레이 2기 | 우호 정착지가 없음. 보블헤드 4개(최다)와 고위험 적이 함께 있는 '고위험·고보상' 권역. 랜드마크·폐허가 많음 |
+| Z2 북부 산악 | 협곡·노예 무역 | 파라다이스폴, 오아시스, 새트컴 NN-03d | 마커 10곳에 퀀텀 10(파라다이스폴 5). 노예 사냥꾼 거점이 북쪽 동선을 막음 |
+| Z3 북동부 | 외곽 농촌 | 데이브 공화국, 템플 오브 유니온, 마인필드, 볼트 92, 올드 올니 | 퀀텀 13(최다, 배송 트럭 5). 소규모 공동체와 데스클로 소굴이 섞임 |
+| Z4 서부 평원 | 방사능 평원 | 리틀 램프라잇, 볼트 87, 배니스터 요새 | 보블헤드 0. 메인 퀘스트 후반(볼트 87)과 탈론 컴퍼니 본부가 있음 |
+| Z5 중부 평원 | 포토맥 중류 | 아르푸, 빅타운, 아가사의 집, 볼트 106, 메레스티 조차장 | 시작 지점 북쪽의 사이드 퀘스트 밀집 지대. 지하철 입구 3곳(패밀리 은신처 진입로 2) |
+| Z6 동부 구릉 | D.C. 북동 외곽 | 캔터베리 커먼, 볼트 108, 내셔널 가드 보급창, 베데스다 폐허 | 스킬북 35권(외곽 권역 최다), 보블헤드 3 |
+| Z7 남서부 | 남서 고원 | 텐페니 타워, 에버그린 밀, 다리그늘 마을, 던위치 빌딩, 스미스 케이시의 정비소(볼트 112) | 마커 14곳. 메인 퀘스트(볼트 112)와 사이드 퀘스트(텐페니 타워, 누카콜라 챌린지)가 모임 |
+| Z8 남부 평원 | 시작 지역 | 볼트 101, 메가톤, 스프링베일, 인디펜던스 요새, 뉴카-콜라 공장 | 첫 허브(메가톤)와 볼트 101이 있는 출발점. 스킬북 33권 |
+| Z9 D.C. 외곽 | 포토맥 하류·도시 외곽 | 리벳시티, 시타델, 제퍼슨 기념관, 알링턴 도서관, 수퍼-두퍼 마트 | 메인 퀘스트 2막의 무대. 하수도 아이콘 3곳 전부, 지하철 입구 4곳 |
+| DC D.C. 도심 | 지하철로만 가는 도시 폐허 | 내셔널 몰(박물관·기념물), GNR 방송국, 베논 광장 | 48곳(29%)이 좁은 면적에 모임. 도시 폐허 아이콘 39개 중 27개가 도심 하위 마커 |
+
+- **동심원 구조**: 출발점(Z8)에서 가까운 Z5·Z9에 메인·사이드 퀘스트 허브가 몰리고, 바깥 권역(Z1·Z3·Z4·Z7)에는 고위험 던전과 고유 보상이 놓인다
+- **외곽 권역의 균등 배치**: 수도 황무지 9개 권역은 10~17곳으로 편차가 작다. 반면 D.C. 도심은 구역 하나에 마커 2~9개를 몰아 빠른 이동 지점 구실을 하게 했다
+- **지하철 아이콘의 분포**: 지하철 15곳 중 9곳이 수도 황무지 쪽 도심 진입구이고 6곳이 도심 안 역이다. 도심 48곳은 이 진입구와 내부 터널(6.3)로만 이어진다
+- **반복 템플릿**: 발전소(MDPL 5곳·VAPL 3곳), 방송·통신탑(방송탑 3, 중계탑 1, 새트컴 3, WKML)은 비슷한 구조(울타리·변전소·작업대·신호)를 되풀이하는 소형 장소로 외곽 권역의 빈 곳을 채운다
+
+### 2.6 허브 '정착지' 분류와 지도 아이콘 대조
+
+허브는 기능 기준으로 장소를 '정착지·볼트·지하철·수도 황무지 개별 장소·워싱턴 D.C.'로 나눈다. 게임의 지도 아이콘은 이 분류와 일치하지 않는다. 정착지 상세는 [RD-12](12_world-structure-settlements.md)가 정본이다.
+
+| 허브 '정착지' 장소(마커 있음) | 지도 아이콘 |
+|---|---|
+| 메가톤, 안데일, 레이븐 락, 데이브 공화국 | 대형 정착지 |
+| 리벳시티, 파라다이스폴, 오아시스, 페어팩스 폐허 | 중형 정착지 |
+| 아르푸, 빅타운, 캔터베리 커먼, 에버그린 밀, 다리그늘 마을, 그레이디치, 리틀 램프라잇 | 소형 정착지 |
+| 시타델, 텐페니 타워 | 기념물 |
+| 템플 오브 유니온 | 오피스 빌딩 |
+| 라일리 레인저 기지 | 군사 시설 |
+| 볼트 101 / 볼트 112(스미스 케이시의 정비소 마커) | 볼트 / 마을 폐허 |
+| 윌헬름 부두 | 하수도 |
+
+- 반대로 대형 정착지 아이콘 12개 중 8개(새트컴 어레이 NW-05a, 데스클로 보호구역, MDPL-13 발전소, 셰일브리지, 개미여인의 은신처, 아가사의 집, 코베가 공장, 케일린의 베드 앤드 브렉퍼스트)는 정착지가 아니다
+- 허브 '정착지' 중 언더월드(역사 박물관 안), 섀크타운, 워링턴 역(구울 거처, 마커는 지하철)은 별도 정착지 마커가 없다
 
 ### 2.5 권역별 장소 색인 (본편 + DLC 수도 황무지 마커)
 
 <!-- GEN:agg-index -->
-- **Z1 북서부(Northwest Territories)** — 17곳: 버려진 자동차 요새(Abandoned Car Fort), 방송탑 KB5(Broadcast Tower KB5), 데스클로 보호구역(Deathclaw Sanctuary), 디커슨 성막 예배당(Dickerson Tabernacle Chapel), 익사한 악마의 건널목(Drowned Devil's Crossing), 페이디드 폼프 주택가(Faded Pomp Estates), 콘스탄틴 요새(Fort Constantine), MDPL-05 발전소(MDPL-05 Power Station), 메이슨-딕슨 고물상(Mason Dixon Salvage), 메이블산 캠핑장(Mount Mabel Campground), 레이븐 락(Raven Rock), 루스벨트 아카데미(Roosevelt Academy), 새트컴 어레이 NW-05a(SatCom Array NW-05a), 새트컴 어레이 NW-07c(SatCom Array NW-07c), 실버 라이닝 자동차 극장(The Silver Lining Drive-In), ?(Train Tunnel)[TP], WKML 방송국(WKML Broadcast Station)
-- **Z2 북부 산악(Northern Mountains)** — 12곳: ?(Alien Homing Beacon)[MZ], 방송탑 LP8(Broadcast Tower LP8), 절벽 위 판잣집(Clifftop Shacks), 저먼타운 경찰 본부(Germantown Police HQ), MDPL-13 발전소(MDPL-13 Power Station), MDPL-21 발전소(MDPL-21 Power Station), 몽고메리 카운티 저수지(Montgomery County Reservoir), 오아시스(Oasis), 파라다이스폴(Paradise Falls), ?(Radio Tower)[TP], 리클라이닝 그로브스 리조트 주택가(Reclining Groves Resort Homes), 새트컴 어레이 NN-03d(SatCom Array NN-03d)
+- **Z1 북서부(Northwest Territories)** — 17곳: 버려진 자동차 요새(Abandoned Car Fort), 방송탑 KB5(Broadcast Tower KB5), 데스클로 보호구역(Deathclaw Sanctuary), 디커슨 성막 예배당(Dickerson Tabernacle Chapel), 익사한 악마의 건널목(Drowned Devil's Crossing), 페이디드 폼프 주택가(Faded Pomp Estates), 콘스탄틴 요새(Fort Constantine), MDPL-05 발전소(MDPL-05 Power Station), 메이슨-딕슨 고물상(Mason Dixon Salvage), 메이블산 캠핑장(Mount Mabel Campground), 레이븐 락(Raven Rock), 루스벨트 아카데미(Roosevelt Academy), 새트컴 어레이 NW-05a(SatCom Array NW-05a), 새트컴 어레이 NW-07c(SatCom Array NW-07c), 실버 라이닝 자동차 극장(The Silver Lining Drive-In), 열차 터널(Train Tunnel)[TP], WKML 방송국(WKML Broadcast Station)
+- **Z2 북부 산악(Northern Mountains)** — 12곳: 외계인 유도 신호기(Alien Homing Beacon)[MZ], 방송탑 LP8(Broadcast Tower LP8), 절벽 위 판잣집(Clifftop Shacks), 저먼타운 경찰 본부(Germantown Police HQ), MDPL-13 발전소(MDPL-13 Power Station), MDPL-21 발전소(MDPL-21 Power Station), 몽고메리 카운티 저수지(Montgomery County Reservoir), 오아시스(Oasis), 파라다이스폴(Paradise Falls), 무선탑(Radio Tower)[TP], 리클라이닝 그로브스 리조트 주택가(Reclining Groves Resort Homes), 새트컴 어레이 NN-03d(SatCom Array NN-03d)
 - **Z3 북동부(Northeast Territories)** — 10곳: 체이스트 에이커스 낙농장(Chaste Acres Dairy Farm), 그리너 패스처스 처리장(Greener Pastures Disposal Site), 참혹한 식당(Grisly Diner), MDPL-16 발전소(MDPL-16 Power Station), 마인필드(Minefield), 올드 올니(Old Olney), 중계탑 KX-B8-11(Relay Tower KX-B8-11), 템플 오브 유니온(Temple of the Union), 데이브 공화국(The Republic of Dave), 볼트 92(Vault 92)
 - **Z4 서부 평원(Irradiated Western Plains)** — 11곳: 방송탑 KT8(Broadcast Tower KT8), 에버글로 국립 캠핑장(Everglow National Campground), 파이브 액슬스 휴게소(Five Axles Rest Stop), 배니스터 요새(Fort Bannister), 잘버트 브러더스 폐기물 처리장(Jalbert Brothers Waste Disposal), 리틀 램프라잇(Little Lamplight), MDPL 대형 중계소(MDPL Mass Relay Station), 록브레이커의 마지막 주유소(Rockbreaker's Last Gas), 셰일브리지(Shalebridge), VAPL-58 발전소(VAPL-58 Power Station), 볼트 87(Vault 87)
 - **Z5 중부 평원(Central Plains and Potomac)** — 13곳: 아가사의 집(Agatha's House), 아르푸(Arefu), 빅타운(Big Town), 포덤 플래시 기념 구장(Fordham Flash Memorial Field), 할로드 무어스 묘지(Hallowed Moors Cemetery), 해밀턴의 은신처(Hamilton's hideaway), 주리 스트리트 지하철역(Jury Street Metro Station), 케일린의 베드 앤드 브렉퍼스트(Kaelyn's Bed & Breakfast), 메레스티 조차장(Meresti Trainyard), 문빔 야외극장(Moonbeam Outdoor Cinema), 노스웨스트 세네카 역(Northwest Seneca Station), 스프링베일 학교(Springvale School), 볼트 106(Vault 106)
 - **Z6 동부 구릉(Eastern Hills and D.C. Outskirts)** — 13곳: 개미여인의 은신처(AntAgonizer's Lair), 베데스다 폐허(Bethesda Ruins), 캔터베리 커먼(Canterbury Commons), 크라이슬러스 빌딩(Chryslus Building), 코베가 공장(Corvega Factory), 프렌드십 하이츠(Friendship Heights), 내셔널 가드 보급창(National Guard depot), 감시자 본부(Regulator HQ), 로봇 수리 센터(Robot Repair Center), 록 크리크 동굴(Rock Creek Caverns), 폐차장(Scrapyard), 볼트 108(Vault 108), 휘턴 무기고(Wheaton Armory)
-- **Z7 남서부(Southwest Territories)** — 15곳: 납골당(Charnel House), 던위치 빌딩(Dunwich Building), 에버그린 밀(Evergreen Mills), F. 스콧 키 산책로·캠핑장(F. Scott Key Trail & Campground), 다리그늘 마을(Girdershade), 조코의 팝 앤드 가스(Jocko's Pop & Gas Stop), 로브코 시설(RobCo Facility), ?(Rockland Car Tunnel)[BS], 스미스 케이시의 정비소(Smith Casey's garage), 텐페니 타워(Tenpenny Tower), VAPL-66 발전소(VAPL-66 Power Station), VAPL-84 발전소(VAPL-84 Power Station), 워링턴 역(Warrington Station), 워링턴 조차장(Warrington Trainyard), 야오과이 터널(Yao guai tunnels)
-- **Z8 남부 평원(Southern Plains and D.C. Outskirts)** — 13곳: 안데일(Andale), 절벽 동굴(Cliffside Cavern), 페어팩스 폐허(Fairfax Ruins), 침수된 지하철(미니트맨 역)(Flooded Metro (Minuteman)), 인디펜던스 요새(Fort Independence), ?(Holy Light Monastery)[BS], 메가톤(Megaton), 뉴카-콜라 공장(Nuka-Cola Plant), ?(Outcast Outpost)[OA], 레드 레이서 공장(Red Racer Factory), 스프링베일(Springvale), 오버룩 자동차 극장(The Overlook Drive-In), 볼트 101(Vault 101)
-- **Z9 D.C. 외곽(Exterior D.C. Metropolitan Ruins)** — 19곳: 알렉산드리아 암스(Alexandria Arms), 아나코스티아 크로싱(Anacostia Crossing), 앵커리지 기념관(Anchorage Memorial), 알링턴 도서관(Arlington Library), ?(Bailey's Crossroads)[OA], 듀코브의 거처(Dukov's Place), 패러거트 웨스트 지하철역(Farragut West Metro Station), 침수된 지하철(알링턴/웨이스트랜드 역)(Flooded Metro (Arlington/Wasteland Metro)), 그레이디치(Grayditch), 방사능 지하철(Irradiated Metro), 제퍼슨 기념관(Jefferson Memorial), 마리골드 역(Marigold Station), ?(Riverboat Landing)[PL], 리벳시티(Rivet City), 하수도 중계소(Sewer Waystation), 수퍼-두퍼 마트(Super-Duper Mart), 미지근한 하수도(Tepid Sewers), 시타델(The Citadel), 윌헬름 부두(Wilhelm's Wharf)
-- **DC D.C. 도심(Interior D.C. Metropolitan Ruins)** — 50곳: Arlington Cemetery North, Arlington Cemetery South, Chevy Chase East, Chevy Chase North, Dupont East, Dupont Northeast, 듀퐁 역(Dupont Station), Dupont West, Falls Church East, 폴스 처치 지하철(Falls Church Metro), Falls Church North, GNR 방송국 광장(GNR building plaza), Georgetown East, Georgetown North, Georgetown South, Georgetown West, 휴브리스 코믹스(Hubris Comics), L'Enfant Plaza, L'Enfant South, 링컨 기념관(Lincoln Memorial), Mall Northwest, Mall Southwest, 마마 돌체 식품 공장(Mama Dolce's), 메이슨 디스트릭트 남부(Mason District South), 메트로 센트럴(Metro Central), ?(Museum Authority Building)[BS], 역사 박물관(Museum of History), 기술 박물관(Museum of Technology), 국립 기록 보관소(National Archives), 희망의 성모병원(Our Lady of Hope Hospital), Penn. Ave East, Penn. Ave North, Penn. Ave Northwest, Penn. Ave South, 라일리 레인저 기지(Ranger Compound), 수어드 스퀘어 북부 지하철(Seward Sq. North Metro), Seward Sq. Northwest, Seward Sq. Southeast, 스테이츠맨 호텔(Statesman Hotel), 타코마 인더스트리얼(Takoma Industrial), 타코마 파크(Takoma Park), 국회의사당(The Capitol Building), The Mall Northeast, 볼트-텍 본사(Vault-Tec Headquarters), Vernon Square East, Vernon Square North, Vernon Square Station, 워싱턴 기념비(Washington Monument), 백악관(White House), ?(White House Plaza)[BS]
+- **Z7 남서부(Southwest Territories)** — 15곳: 납골당(Charnel House), 던위치 빌딩(Dunwich Building), 에버그린 밀(Evergreen Mills), F. 스콧 키 산책로·캠핑장(F. Scott Key Trail & Campground), 다리그늘 마을(Girdershade), 조코의 팝 앤드 가스(Jocko's Pop & Gas Stop), 로브코 시설(RobCo Facility), 록랜드 차량 터널(Rockland Car Tunnel)[BS], 스미스 케이시의 정비소(Smith Casey's garage), 텐페니 타워(Tenpenny Tower), VAPL-66 발전소(VAPL-66 Power Station), VAPL-84 발전소(VAPL-84 Power Station), 워링턴 역(Warrington Station), 워링턴 조차장(Warrington Trainyard), 야오과이 터널(Yao guai tunnels)
+- **Z8 남부 평원(Southern Plains and D.C. Outskirts)** — 13곳: 안데일(Andale), 절벽 동굴(Cliffside Cavern), 페어팩스 폐허(Fairfax Ruins), 침수된 지하철(미니트맨 역)(Flooded Metro (Minuteman)), 인디펜던스 요새(Fort Independence), 성스러운 빛 수도원(Holy Light Monastery)[BS], 메가톤(Megaton), 뉴카-콜라 공장(Nuka-Cola Plant), 아웃캐스트 전초기지(Outcast Outpost)[OA], 레드 레이서 공장(Red Racer Factory), 스프링베일(Springvale), 오버룩 자동차 극장(The Overlook Drive-In), 볼트 101(Vault 101)
+- **Z9 D.C. 외곽(Exterior D.C. Metropolitan Ruins)** — 19곳: 알렉산드리아 암스(Alexandria Arms), 아나코스티아 크로싱(Anacostia Crossing), 앵커리지 기념관(Anchorage Memorial), 알링턴 도서관(Arlington Library), 베일리스 크로스로즈(Bailey's Crossroads)[OA], 듀코브의 거처(Dukov's Place), 패러거트 웨스트 지하철역(Farragut West Metro Station), 침수된 지하철(알링턴/웨이스트랜드 역)(Flooded Metro (Arlington/Wasteland Metro)), 그레이디치(Grayditch), 방사능 지하철(Irradiated Metro), 제퍼슨 기념관(Jefferson Memorial), 마리골드 역(Marigold Station), 리버보트 선착장(Riverboat Landing)[PL], 리벳시티(Rivet City), 하수도 중계소(Sewer Waystation), 수퍼-두퍼 마트(Super-Duper Mart), 미지근한 하수도(Tepid Sewers), 시타델(The Citadel), 윌헬름 부두(Wilhelm's Wharf)
+- **DC D.C. 도심(Interior D.C. Metropolitan Ruins)** — 50곳: 알링턴 묘지 북쪽(Arlington Cemetery North), 알링턴 묘지 남쪽(Arlington Cemetery South), 체비 체이스 동쪽(Chevy Chase East), 체비 체이스 북쪽(Chevy Chase North), 듀퐁 광장 동쪽(Dupont East), 듀퐁 광장 북동쪽(Dupont Northeast), 듀퐁 역(Dupont Station), 듀퐁 광장 서쪽(Dupont West), 폴스 처치 동쪽(Falls Church East), 폴스 처치 지하철(Falls Church Metro), 폴스 처치 북쪽(Falls Church North), GNR 방송국 광장(GNR building plaza), 조지타운 동쪽(Georgetown East), 조지타운 북쪽(Georgetown North), 조지타운 남쪽(Georgetown South), 조지타운 서쪽(Georgetown West), 휴브리스 코믹스(Hubris Comics), 랑팡 광장(L'Enfant Plaza), 랑팡 남쪽(L'Enfant South), 링컨 기념관(Lincoln Memorial), 내셔널 몰 북서쪽(Mall Northwest), 내셔널 몰 남서쪽(Mall Southwest), 마마 돌체 식품 공장(Mama Dolce's), 메이슨 디스트릭트 남부(Mason District South), 메트로 센트럴(Metro Central), 박물관 관리청 빌딩(Museum Authority Building)[BS], 역사 박물관(Museum of History), 기술 박물관(Museum of Technology), 국립 기록 보관소(National Archives), 희망의 성모병원(Our Lady of Hope Hospital), 펜실베이니아 애비뉴 동쪽(Penn. Ave East), 펜실베이니아 애비뉴 북쪽(Penn. Ave North), 펜실베이니아 애비뉴 북서쪽(Penn. Ave Northwest), 펜실베이니아 애비뉴 남쪽(Penn. Ave South), 라일리 레인저 기지(Ranger Compound), 수어드 스퀘어 북부 지하철(Seward Sq. North Metro), 수어드 스퀘어 북서쪽(Seward Sq. Northwest), 수어드 스퀘어 남동쪽(Seward Sq. Southeast), 스테이츠맨 호텔(Statesman Hotel), 타코마 인더스트리얼(Takoma Industrial), 타코마 파크(Takoma Park), 국회의사당(The Capitol Building), 내셔널 몰 북동쪽(The Mall Northeast), 볼트-텍 본사(Vault-Tec Headquarters), 베논 광장 동쪽(Vernon Square East), 베논 광장 북쪽(Vernon Square North), 베논 광장 역(Vernon Square Station), 워싱턴 기념비(Washington Monument), 백악관(White House), 백악관 광장(White House Plaza)[BS]
 <!-- /GEN:agg-index -->
 
 ---
@@ -313,41 +382,58 @@
 
 ## 4. 본편 장소 카탈로그 ② D.C. 도심
 
-(작성 중)
+- D.C. 도심 폐허는 수도 황무지와 분리된 공간이라 지하철역·하수도·유틸리티 터널(6.3)을 거쳐서만 들어간다(예외: GNR 방송국 뒷문의 붕괴된 차량 터널). 개발 단계에는 폐쇄 구역이 26개였으나 너무 넓고 헷갈린다는 이유로 12개로 줄였다(`Fallout 3 world map` 문서의 GDC 2009 발언)
+- 허브는 도심을 12개 구역으로 나눈다. 이 장의 표는 **구역 행**(하위 방위 마커를 묶음)과 **건물 행**(박물관·병원 등 개별 마커)으로 이뤄지며 본편 48곳을 모두 담는다. [BS]의 백악관 광장·박물관 관리청 빌딩은 5.1에 있다
+
+| 구역(English) | 마커 수 | 마커 |
+|---|---|---|
+| 체비 체이스(Chevy Chase) | 3 | 북쪽·동쪽, GNR 방송국 광장 |
+| 듀퐁 광장(Dupont Circle) | 4 | 동쪽·북동쪽·서쪽, 듀퐁 역 |
+| 베논 광장(Vernon Square) | 6 | 북쪽·동쪽·역, 희망의 성모병원, 스테이츠맨 호텔, 볼트-텍 본사 |
+| 타코마 파크(Takoma Park) | 2 | 타코마 파크, 타코마 인더스트리얼 |
+| 조지타운(Georgetown) | 4 | 서쪽·북쪽·동쪽·남쪽 |
+| 펜실베이니아 애비뉴(Pennsylvania Avenue) | 6 (+[BS] 1) | 북서쪽·북쪽·남쪽·동쪽, 백악관, 메트로 센트럴 (+백악관 광장) |
+| 내셔널 몰(The Mall) | 9 (+[BS] 1) | 북서쪽·남서쪽·북동쪽, 링컨 기념관, 역사 박물관, 워싱턴 기념비, 기술 박물관, 국회의사당, 국립 기록 보관소 (+박물관 관리청 빌딩) |
+| 수어드 스퀘어(Seward Square) | 4 | 북서쪽·남동쪽, 북부 지하철, 라일리 레인저 기지 |
+| 랑팡(L'Enfant) | 2 | 광장·남쪽 |
+| 폴스 처치(Falls Church) | 3 | 북쪽·동쪽, 폴스 처치 지하철 |
+| 메이슨 디스트릭트(Mason District) | 2 | 남부, 휴브리스 코믹스 |
+| 알링턴 묘지(Arlington Cemetery) | 3 | 북쪽·남쪽, 마마 돌체 식품 공장 |
+| **합계** | **48 (+2)** | |
 
 <!-- GEN:dc -->
 | 영문명 | 한국어 표기 | 유형 | 지역 | 개요 | 주요 적 | 주요 전리품 | 관련 퀘스트 | 실내 |
 |---|---|---|---|---|---|---|---|---|
-| Chevy Chase (2: Chevy Chase North / Chevy Chase East) | 체비 체이스 | 도시 구역(북부) | D.C. 도심·체비 체이스 | D.C. 북부 구역. 텐리타운/프렌드십 역이나 메트로 정션으로 나와 슈퍼 뮤턴트와 싸우며 남쪽 폐허를 지나면 GNR 광장으로 이어짐 | 슈퍼 뮤턴트, 슈퍼 뮤턴트 베히모스 | 파워 아머·헬멧 3세트(BoS 전사자) · 정화수 3(풀라스키 대피소) | 아버지의 발자취 | — |
+| Chevy Chase (2: Chevy Chase North / Chevy Chase East) | 체비 체이스 (북쪽·동쪽) | 도시 구역(북부) | D.C. 도심·체비 체이스 | D.C. 북부 구역. 텐리타운/프렌드십 역이나 메트로 정션으로 나와 슈퍼 뮤턴트와 싸우며 남쪽 폐허를 지나면 GNR 광장으로 이어짐 | 슈퍼 뮤턴트, 슈퍼 뮤턴트 베히모스 | 파워 아머·헬멧 3세트(BoS 전사자) · 정화수 3(풀라스키 대피소) | 아버지의 발자취 | — |
 | GNR building plaza | GNR 방송국 광장 | 방송국(BoS 거점) | D.C. 도심·체비 체이스 | 쓰리독의 갤럭시 뉴스 라디오 방송국이자 BoS 분대가 지키는 거점. 광장 전투에서 슈퍼 뮤턴트 베히모스가 등장함 | 슈퍼 뮤턴트, 슈퍼 뮤턴트 베히모스 | 스킬북 1(과학) · BoS 기사 시신의 팻맨·미니 누크 8(사라 라이언 동행 시) | 아버지의 발자취, 갤럭시 뉴스 라디오 | 2 |
-| Dupont Circle (3: Dupont Northeast / Dupont West / Dupont East) | 듀퐁 광장 | 도시 구역(지뢰 광장) | D.C. 도심·듀퐁 광장 | GNR 뒷문의 붕괴된 차량 터널이나 지하철로 가는 원형 광장. 멈춘 분수 주변에 파편 지뢰 20여 개가 깔렸고 북쪽 침하 도로에 야생 구울이 있음 | 레이더, 야생 구울, 사나운 개, 파편 지뢰 | 스킬북 2(물물교환·중화기) · 스텔스 보이 · 전쟁 전 서적 | — | — |
+| Dupont Circle (3: Dupont Northeast / Dupont West / Dupont East) | 듀퐁 광장 (북동쪽·서쪽·동쪽) | 도시 구역(지뢰 광장) | D.C. 도심·듀퐁 광장 | GNR 뒷문의 붕괴된 차량 터널이나 지하철로 가는 원형 광장. 멈춘 분수 주변에 파편 지뢰 20여 개가 깔렸고 북쪽 침하 도로에 야생 구울이 있음 | 레이더, 야생 구울, 사나운 개, 파편 지뢰 | 스킬북 2(물물교환·중화기) · 스텔스 보이 · 전쟁 전 서적 | — | — |
 | Dupont Station | 듀퐁 역 | 지하철역(레드 라인) | D.C. 도심·듀퐁 광장 | 대부분 무너진 레드 라인 역. 메트로 센트럴로 가려면 레이더 구역을 통과해야 하며 프로텍트론 정비실이 있음 | 레이더, 슈퍼 뮤턴트, 메트로 프로텍트론 | 스킬북 1(화술) | — | 1 |
-| Vernon Square (3: Vernon Square Station / Vernon Square North / Vernon Square East) | 베논 광장 | 도시 구역(중부) | D.C. 도심·베논 광장 | 잔해로 둘러싸인 광장. 방사능 크레이터 속 델타 IX 로켓과 하수구, 지하철 출구 4곳이 있고 병원·호텔·볼트-텍 본사가 모인 구역 | 슈퍼 뮤턴트 | 스킬북 3(의학·수리·근접 무기) · 퀀텀 1 · 스텔스 보이 · 스코프 .44 매그넘(하수도) | — | 2 |
+| Vernon Square (3: Vernon Square Station / Vernon Square North / Vernon Square East) | 베논 광장 (역·북쪽·동쪽) | 도시 구역(중부) | D.C. 도심·베논 광장 | 잔해로 둘러싸인 광장. 방사능 크레이터 속 델타 IX 로켓과 하수구, 지하철 출구 4곳이 있고 병원·호텔·볼트-텍 본사가 모인 구역 | 슈퍼 뮤턴트 | 스킬북 3(의학·수리·근접 무기) · 퀀텀 1 · 스텔스 보이 · 스코프 .44 매그넘(하수도) | — | 2 |
 | Our Lady of Hope Hospital | 희망의 성모병원 | 공공 건물(병원) | D.C. 도심·베논 광장 | 베논 광장 역 근처 병원. 의약품·폭발물이 많고 2층에서 쓰러진 무선탑을 건너 스테이츠맨 호텔로 이어짐 | 슈퍼 뮤턴트, 센타우로스, 터렛, 미스터 핸디 | 스킬북 3(의학×2·수리) · 전쟁 전 서적 | 라일리스 레인저스 | 2 |
 | Statesman Hotel | 스테이츠맨 호텔 | 호텔(고층 폐허) | D.C. 도심·베논 광장 | 12층 호텔. 대부분 구역은 희망의 성모병원 2층에서 쓰러진 무선탑을 건너야 들어가며 옥상에 라일리 레인저가 고립되어 있음 | 슈퍼 뮤턴트, 센타우로스, 정비 프로텍트론 | 스킬북 3(은신·근접 무기·물물교환) · 퀀텀 1 · 테오의 탄약 상자 · 리틀 문빔 아버지의 쪽지(시드니의 SMG 획득 경로) | 라일리스 레인저스 | 3 |
 | Vault-Tec Headquarters | 볼트-텍 본사 | 사무실 빌딩(기업 본사) | D.C. 도심·베논 광장 | 베논 광장 동쪽의 볼트-텍 본사 폐허. 로봇·터렛과 마스터브레인이 지키며 볼트 위치 정보를 찾는 곳 | 로봇 다수, 마스터브레인, 터렛, 외부 슈퍼 뮤턴트 | 스킬북 3(과학·근접 무기·물물교환) · 퀀텀 1 · 슈가 봄 2 · 볼트-텍 도시락 2 | 애거사의 노래(볼트 92 위치) | 3 |
 | Takoma Park | 타코마 파크 | 도시 구역(동쪽 끝) | D.C. 도심·타코마 파크 | 베논 이스트/타코마 파크 지하철로만 가는 동쪽 끝 구역. 오피스 파크·은행·전당포 '니프티 스리프티'와 타운하우스가 있음 | 슈퍼 뮤턴트, 슈퍼 뮤턴트 베히모스 | 타코마 파크 포격 노트 | — | — |
 | Takoma Industrial | 타코마 인더스트리얼 | 공장(폐공장) | D.C. 도심·타코마 파크 | 타코마 파크 끝의 외딴 폐공장. 야생 구울이 있고 아브락소 세제 81상자 등 제작 재료가 많음 | 야생 구울, 외부 슈퍼 뮤턴트 베히모스 | 스킬북 2(화술·중화기) · 퀀텀 1 · 아브락소 세제 81 · 테레빈유 12 | — | 2 |
-| Georgetown (4: Georgetown West / Georgetown North / Georgetown East / Georgetown South) | 조지타운 | 도시 구역(상가·주택가) | D.C. 도심·조지타운 | D.C. 북부 주택가로 지하철로만 진입. 라디에이션 킹·코누코피아 식료품점, 맥클렐런 가족 타운하우스, 라 메종 보르가르가 있고 탈론 컴퍼니와 슈퍼 뮤턴트가 교전 | 슈퍼 뮤턴트, 센타우로스, 탈론 컴퍼니 용병 | 스킬북 4(의학·근접 무기·화술·중화기) · 퀀텀 1 · 스텔스 보이 | 황무지 생존 가이드 | — |
-| Pennsylvania Avenue (4: Penn. Ave Northwest / Penn. Ave North / Penn. Ave South / Penn. Ave East) | 펜실베이니아 애비뉴 | 도시 구역(전선) | D.C. 도심·펜실베이니아 애비뉴 | 백악관 동쪽 대로. BoS가 호텔을 거점으로 슈퍼 뮤턴트와 싸우고 엔클레이브가 주기적으로 병력을 투하함. North 마커는 프리덤 스트리트 역 입구 | 슈퍼 뮤턴트, 엔클레이브(투하), 야생 구울(프리덤 스트리트 역) | 스킬북 3(은신·비무장·자물쇠 따기) · 펜실베이니아 애비뉴 폭발물 노트(가로 연쇄 폭발 스위치) | — | — |
+| Georgetown (4: Georgetown West / Georgetown North / Georgetown East / Georgetown South) | 조지타운 (서쪽·북쪽·동쪽·남쪽) | 도시 구역(상가·주택가) | D.C. 도심·조지타운 | D.C. 북부 주택가로 지하철로만 진입. 라디에이션 킹·코누코피아 식료품점, 맥클렐런 가족 타운하우스, 라 메종 보르가르가 있고 탈론 컴퍼니와 슈퍼 뮤턴트가 교전 | 슈퍼 뮤턴트, 센타우로스, 탈론 컴퍼니 용병 | 스킬북 4(의학·근접 무기·화술·중화기) · 퀀텀 1 · 스텔스 보이 | 황무지 생존 가이드 | — |
+| Pennsylvania Avenue (4: Penn. Ave Northwest / Penn. Ave North / Penn. Ave South / Penn. Ave East) | 펜실베이니아 애비뉴 (북서쪽·북쪽·남쪽·동쪽) | 도시 구역(전선) | D.C. 도심·펜실베이니아 애비뉴 | 백악관 동쪽 대로. BoS가 호텔을 거점으로 슈퍼 뮤턴트와 싸우고 엔클레이브가 주기적으로 병력을 투하함. North 마커는 프리덤 스트리트 역 입구 | 슈퍼 뮤턴트, 엔클레이브(투하), 야생 구울(프리덤 스트리트 역) | 스킬북 3(은신·비무장·자물쇠 따기) · 펜실베이니아 애비뉴 폭발물 노트(가로 연쇄 폭발 스위치) | — | — |
 | Metro Central | 메트로 센트럴 | 지하철역(환승역) | D.C. 도심·펜실베이니아 애비뉴 | 레드·화이트 라인이 만나는 최대 역. 야생 구울과 사나운 개가 들끓고 사무실 단말로 프로텍트론을 깨울 수 있음 | 야생 구울, 사나운 개, 슈퍼 뮤턴트, 메트로 프로텍트론 | 스킬북 2(수리·비무장) | — | 1 |
 | White House | 백악관 | 기념물(벙커) | D.C. 도심·펜실베이니아 애비뉴 | 전쟁 전 대통령 관저 폐허. 펜실베이니아 애비뉴의 맨홀(유틸리티 터널)로 벙커에 진입하며 글로잉 원이 있음. [BS]에서 대통령 지하철로 이어짐 | 글로잉 원 | 팻맨 · 미니 누크 3 · 스킬북 1(비무장, 유틸리티 터널) | — | 1 |
-| The Mall (3: Mall Northwest / Mall Southwest / The Mall Northeast) | 내셔널 몰 | 도시 구역(전장) | D.C. 도심·내셔널 몰 | 워싱턴 기념비 주변엔 BoS 방어선, 서쪽 의사당 쪽에선 탈론 컴퍼니가 슈퍼 뮤턴트를 공격하는 전장. 기념비와 링컨 기념관 사이 연못은 방사능 오염. 슈퍼 뮤턴트 밀집도 2위 | 슈퍼 뮤턴트, 탈론 컴퍼니 용병 | 스킬북 1(은신) · 슈퍼 뮤턴트 벙커·마이얼럭 둥지 구멍(비표시) | — | — |
+| The Mall (3: Mall Northwest / Mall Southwest / The Mall Northeast) | 내셔널 몰 (북서쪽·남서쪽·북동쪽) | 도시 구역(전장) | D.C. 도심·내셔널 몰 | 워싱턴 기념비 주변엔 BoS 방어선, 서쪽 의사당 쪽에선 탈론 컴퍼니가 슈퍼 뮤턴트를 공격하는 전장. 기념비와 링컨 기념관 사이 연못은 방사능 오염. 슈퍼 뮤턴트 밀집도 2위 | 슈퍼 뮤턴트, 탈론 컴퍼니 용병 | 스킬북 1(은신) · 슈퍼 뮤턴트 벙커·마이얼럭 둥지 구멍(비표시) | — | — |
 | Lincoln Memorial | 링컨 기념관 | 기념물(노예 사냥꾼 점거) | D.C. 도심·내셔널 몰 | 몰 서쪽 끝, 머리 잃은 링컨상이 남은 기념관. 르로이 워커의 노예 사냥꾼이 점거해 노예에게 복원을 시키며 〈국가 원수〉로 탈환할 수 있음 | 노예 사냥꾼(르로이 워커·사일러스) | 퀀텀 1 | 국가 원수, 링컨의 이윤(Lincoln's Profit Margins) | 4 |
 | Museum of History | 역사 박물관 | 박물관(언더월드 입구) | D.C. 도심·내셔널 몰 | 몰 북쪽 박물관. 입구 쪽은 야생 구울·글로잉 원이 들끓고 안쪽에 구울 정착지 언더월드가 있음(RD-12). 링컨 유물이 다수 남아 있음 | 야생 구울, 글로잉 원, 터렛 | 스킬북 4(은신·의학·에너지 무기·화술(실낙원)) · 퀀텀 1 · Lincoln's repeater[레버액션 소총] · 링컨 유물 · 설계도(레일웨이 라이플: 언더월드 튤립 판매) | 국가 원수, 링컨의 이윤(Lincoln's Profit Margins), 라일리스 레인저스(언더월드 경유), 머리를 쏴야 해, 이 낡은 집(This Old House, 반복), [BS] 놀라운 아쿠아 큐라! | 2(+언더월드) |
 | Museum of Technology | 기술 박물관 | 박물관 | D.C. 도심·내셔널 몰 | 몰 남쪽 박물관. 슈퍼 뮤턴트와 터렛이 있고 비행기 전시·천체관이 남아 있으며 GNR 안테나용 위성 접시를 회수하는 곳 | 슈퍼 뮤턴트, 터렛 | 스킬북 3(폭발물·소형 화기·에너지 무기) · 퀀텀 1 · 대형 스텔스 보이 전시품 3 | 갤럭시 뉴스 라디오, 직스의 전리품(Jiggs' Loot) | 2 |
 | National Archives | 국립 기록 보관소 | 공공 건물(기록 보관소) | D.C. 도심·내셔널 몰 | 몰 북쪽 기록 보관소. 〈독립을 훔쳐라〉의 무대로, 보안 구역에 로봇·터렛이 있고 금고실에서 독립 선언서를 찾음 | 슈퍼 뮤턴트, 센타우로스, 로봇, 터렛 | 스킬북 4(폭발물×2·화술·물물교환) · 기록 보관소 상품권 6 · 전쟁 전 서적 5 | 독립을 훔쳐라 | 4 |
 | The Capitol Building | 국회의사당 | 기념물(전장) | D.C. 도심·내셔널 몰 | 몰 동쪽 끝 의사당. 서쪽 입구는 몰, 동쪽 입구는 수어드 스퀘어와 이어지고 안에서 탈론 컴퍼니와 슈퍼 뮤턴트가 교전. 생명의 물 이후 엔클레이브 합류 | 슈퍼 뮤턴트, 탈론 컴퍼니 용병, 엔클레이브(생명의 물 이후) | 스킬북 7(은신·의학·화술×2·에너지 무기·물물교환·중화기) · 팻맨 · 미니 누크 2 이상 | — | 4 |
 | Washington Monument | 워싱턴 기념비 | 기념물(GNR 중계탑) | D.C. 도심·내셔널 몰 | 몰 중앙의 오벨리스크. BoS가 지키며 승강기로 꼭대기에 올라 GNR 송신 중계기를 고침 | 사나운 개(외부) | — | 갤럭시 뉴스 라디오 | 2 |
-| Seward Square (2: Seward Sq. Northwest / Seward Sq. Southeast) | 수어드 스퀘어 | 도시 구역(동부) | D.C. 도심·수어드 스퀘어 | 라일리 레인저 기지가 있는 동쪽 구역. 아나코스티아 크로싱 역·펜실베이니아 애비뉴 하수도·의사당으로 진입하며 의사당 계단에서 탈론 컴퍼니와 슈퍼 뮤턴트가 교전함 | 슈퍼 뮤턴트, 센타우로스, 탈론 컴퍼니 용병 | 스킬북 1(자물쇠 따기) · 퀀텀 1 · 미니 누크 5(미친 설교자를 폭파 전에 처치 시) | — | 2 |
+| Seward Square (2: Seward Sq. Northwest / Seward Sq. Southeast) | 수어드 스퀘어 (북서쪽·남동쪽) | 도시 구역(동부) | D.C. 도심·수어드 스퀘어 | 라일리 레인저 기지가 있는 동쪽 구역. 아나코스티아 크로싱 역·펜실베이니아 애비뉴 하수도·의사당으로 진입하며 의사당 계단에서 탈론 컴퍼니와 슈퍼 뮤턴트가 교전함 | 슈퍼 뮤턴트, 센타우로스, 탈론 컴퍼니 용병 | 스킬북 1(자물쇠 따기) · 퀀텀 1 · 미니 누크 5(미친 설교자를 폭파 전에 처치 시) | — | 2 |
 | Ranger Compound | 라일리 레인저 기지 | 용병단 본거지 | D.C. 도심·수어드 스퀘어 | 수어드 스퀘어의 라일리 레인저 본부. 라일리를 구한 뒤 의사(부처)·수리(도노번) 서비스와 지형 측량 의뢰를 이용함 | — | 스킬북 1(수리) · Eugene[미니건](라일리스 레인저스 보상 선택) | 라일리스 레인저스, 라일리와 지형 측량(Geomapping with Reilly, 반복), 셰릴을 찾아서(Searching for Cheryl) | 1 |
 | Seward Sq. North Metro | 수어드 스퀘어 북부 지하철 | 지하철 출구 | D.C. 도심·수어드 스퀘어 | 라일리 레인저 기지 근처의 지하철 출구. 부근에 엔클레이브 버티버드 투하 지점이 있음 | 슈퍼 뮤턴트, 엔클레이브(투하) | 스킬북 1(자물쇠 따기) · 퀀텀 1 | — | — |
-| L'Enfant (2: L'Enfant Plaza / L'Enfant South) | 랑팡 | 도시 구역(남부) | D.C. 도심·랑팡 | 몰 남서쪽 유해물 처리장 L5나 방사능 지하철로 가는 남쪽 구역. 캐피톨 포스트 신문사 사옥과 깁슨의 시신(마인필드 깁슨 집 열쇠)이 있음 | 슈퍼 뮤턴트 | 스킬북 2(과학·중화기) · 저격소총(고가 아래 캠프) · 깁슨 집 열쇠 | 셰릴을 찾아서(Searching for Cheryl) | — |
-| Falls Church (2: Falls Church North / Falls Church East) | 폴스 처치 | 도시 구역(남서부) | D.C. 도심·폴스 처치 | 그레이디치 남쪽, 지하철로만 가는 구역(보통 마리골드 역 경유). 슈퍼 뮤턴트가 점거했고 L.O.B. 엔터프라이즈 사옥이 있음 | 슈퍼 뮤턴트 | 스킬북 1(자물쇠 따기) | 길 잃은 견습생(The Lost Initiate) | — |
+| L'Enfant (2: L'Enfant Plaza / L'Enfant South) | 랑팡 (광장·남쪽) | 도시 구역(남부) | D.C. 도심·랑팡 | 몰 남서쪽 유해물 처리장 L5나 방사능 지하철로 가는 남쪽 구역. 캐피톨 포스트 신문사 사옥과 깁슨의 시신(마인필드 깁슨 집 열쇠)이 있음 | 슈퍼 뮤턴트 | 스킬북 2(과학·중화기) · 저격소총(고가 아래 캠프) · 깁슨 집 열쇠 | 셰릴을 찾아서(Searching for Cheryl) | — |
+| Falls Church (2: Falls Church North / Falls Church East) | 폴스 처치 (북쪽·동쪽) | 도시 구역(남서부) | D.C. 도심·폴스 처치 | 그레이디치 남쪽, 지하철로만 가는 구역(보통 마리골드 역 경유). 슈퍼 뮤턴트가 점거했고 L.O.B. 엔터프라이즈 사옥이 있음 | 슈퍼 뮤턴트 | 스킬북 1(자물쇠 따기) | 길 잃은 견습생(The Lost Initiate) | — |
 | Falls Church Metro | 폴스 처치 지하철 | 지하철 출구 | D.C. 도심·폴스 처치 | 폴스 처치 구역의 역 출구. 메이슨 디스트릭트·알링턴 묘지 방면 지하철과 이어짐 | 슈퍼 뮤턴트 | 스킬북 1(자물쇠 따기) | — | — |
 | Hubris Comics | 휴브리스 코믹스 | 사무실 빌딩(출판사) | D.C. 도심·메이슨 디스트릭트 | 만화 출판사 사옥(출판·인쇄·유틸리티 터널). 함정을 깐 적대 주민 매드 조니 웨스가 인쇄실 감독실에 숨어 있고 터널이 윌헬름 부두로 이어짐 | 매드 조니 웨스, 야생 구울, 터렛 | 스킬북 5(수리×2·근접 무기·소형 화기·물물교환) · 퀀텀 1 · 전쟁 전 서적 | 초인의 도박(관련) | 3 |
 | Mason District South | 메이슨 디스트릭트 남부 | 지하철 출구(삼거리) | D.C. 도심·메이슨 디스트릭트 | 메이슨 디스트릭트 남쪽 삼거리. 남쪽은 잔해로 막혀 북쪽 구역과 침수된 지하철로만 통하며 카르마에 따라 탈론 컴퍼니나 감시자 암살대가 나타남 | 슈퍼 뮤턴트, 탈론 컴퍼니·감시자(카르마) | — | — | — |
-| Arlington Cemetery (2: Arlington Cemetery North / Arlington Cemetery South) | 알링턴 묘지 | 묘지 구역 | D.C. 도심·알링턴 묘지 | 알링턴 구역에 남은 국립묘지. 중앙 알링턴 하우스 지하에 보블헤드가 있고 남쪽 끝은 마마 돌체 공장. 바깥 레이더 3명은 리스폰되지 않음 | 레이더, 준더스 플렁킷(로브링어 퍽 시) | 보블헤드(행운) · 스킬북 2(과학·중화기) · Plunkett's Valid Points[스파이크 너클](로브링어 시) · 현상금 전단 | — | 2 |
+| Arlington Cemetery (2: Arlington Cemetery North / Arlington Cemetery South) | 알링턴 묘지 (북쪽·남쪽) | 묘지 구역 | D.C. 도심·알링턴 묘지 | 알링턴 구역에 남은 국립묘지. 중앙 알링턴 하우스 지하에 보블헤드가 있고 남쪽 끝은 마마 돌체 공장. 바깥 레이더 3명은 리스폰되지 않음 | 레이더, 준더스 플렁킷(로브링어 퍽 시) | 보블헤드(행운) · 스킬북 2(과학·중화기) · Plunkett's Valid Points[스파이크 너클](로브링어 시) · 현상금 전단 | — | 2 |
 | Mama Dolce's | 마마 돌체 식품 공장 | 공장(중국군 거점) | D.C. 도심·알링턴 묘지 | 알링턴 묘지 남쪽의 식품 가공 공장. 중국군 잔존병 부대가 점거했고 하역장에 저격수 둘이 있음 | 중국군 잔존병(대위 포함) | 스킬북 6(은신·수리·소형 화기×2·물물교환·자물쇠 따기) · 퀀텀 1 | — | 3 |
 <!-- /GEN:dc -->
 
@@ -360,16 +446,16 @@
 <!-- GEN:dlc-cw -->
 | 영문명 | 한국어 표기 | 유형 | 지역 | 개요 | 주요 적 | 주요 전리품 | 관련 퀘스트 | 실내 |
 |---|---|---|---|---|---|---|---|---|
-| Bailey's Crossroads [OA] | ? | ? | Z9 D.C. 외곽 (4,-15) | ? | — | — | — | 1 |
-| Outcast Outpost [OA] | ? | ? | Z8 남부 평원 (3,-16) | ? | — | — | — | 1 |
-| Radio Tower [TP] | ? | ? | Z2 북부 산악 (-13,30) | ? | — | — | — | 2 |
-| Train Tunnel [TP] | ? | ? | Z1 북서부 (-19,30) | ? | — | — | — | 1 |
-| Holy Light Monastery [BS] | ? | ? | Z8 남부 평원 (-1,-4) | ? | — | — | — | 1 |
-| Museum Authority Building [BS] | ? | ? | D.C. 도심·내셔널 몰 | ? | — | 퀀텀 1 | — | 1 |
-| Rockland Car Tunnel [BS] | ? | ? | Z7 남서부 (-30,-19) | ? | — | — | — | 1 |
-| White House Plaza [BS] | ? | ? | D.C. 도심·펜실베이니아 애비뉴 | ? | — | 스킬북 2(은신·비무장) | — | 5 |
-| Riverboat Landing [PL] | ? | ? | Z9 D.C. 외곽 (11,-20) | ? | — | — | — | 1 |
-| Alien Homing Beacon [MZ] | ? | ? | Z2 북부 산악 (3,22) | ? | — | — | — | 1 |
+| Bailey's Crossroads [OA] | 베일리스 크로스로즈 | 도시 구역(지하철 경유) | Z9 D.C. 외곽 (4,-15) | 아웃캐스트 구조 신호를 따라 레드 레이서 공장 남동쪽의 베일리스 크로스로즈 역을 지나 도착하는 작은 구역. 슈퍼 뮤턴트가 차지한 건물과 아웃캐스트 전초기지 승강기가 있음 | 슈퍼 뮤턴트(빠른 리스폰) | — | 아웃캐스트 지원(Aiding the Outcasts) | — |
+| Outcast Outpost [OA] | 아웃캐스트 전초기지 | 아웃캐스트 거점(VSS 벙커) | Z8 남부 평원 (3,-16) | 전쟁 전 VSS 사 벙커를 아웃캐스트가 접수한 전초기지. 앵커리지 탈환 시뮬레이션 장치가 있고 시뮬레이션 완료 후 봉인 무기고가 열림 | — (터렛) | 봉인 무기고: Winterized T-51b power armor[파워 아머] · Chinese stealth armor[방어구] · Gauss rifle[고유 무기] · Jingwei's shocksword[중국 장교검] · Trench knife[전투 칼] · 미니 누크 | 아웃캐스트 지원(Aiding the Outcasts), 오퍼레이션: 앵커리지!(Operation: Anchorage!) | 1 |
+| Radio Tower [TP] | 무선탑 | 무선탑(구조 신호) | Z2 북부 산악 (-13,30) | 북쪽 끝 가파른 언덕 위 무선탑. 피트의 베르너가 보내는 구조 신호의 발신지로 근처에 침낭이 있음 | — | — | 피트 속으로(Into The Pitt) | 2 |
+| Train Tunnel [TP] | 열차 터널 | 터널(피트 진입로) | Z1 북서부 (-19,30) | 콘스탄틴 요새 북서쪽의 철도 터널. 노예 사냥꾼과 포로 노예가 있는 바깥 구역을 지나 수동 궤도차로 피트에 들어감 | 노예 사냥꾼 | — | 피트 속으로(Into The Pitt) | 1 |
+| Holy Light Monastery [BS] | 성스러운 빛 수도원 | 정착지(원자 숭배 교단) | Z8 남부 평원 (-1,-4) | 스프링베일 인근의 작은 수도원. 마더 퀴리 3세가 이끄는 '영원한 빛의 사도들'이 살며 지하엔 비적대 야생 구울 '원자의 투사'·'원자의 태양'이 있음 | — (비적대 야생 구울 2) | 성수 2상자 | 성수(Holy Water) | 1 |
+| Museum Authority Building [BS] | 박물관 관리청 빌딩 | 구울 밀매 거점 | D.C. 도심·내셔널 몰 | 내셔널 몰의 중형 건물. 그리폰 일당이 가짜 정화수 '아쿠아 큐라'를 만들어 파는 본거지 | 구울(그리폰 일당) | 퀀텀 1 · 그리폰의 병입 지침 · 희귀 가발 5 | 놀라운 아쿠아 큐라!(The Amazing Aqua Cura!) | 1 |
+| Rockland Car Tunnel [BS] | 록랜드 차량 터널 | BoS 전초(붕괴 터널) | Z7 남서부 (-30,-19) | 남서쪽 구석의 무너진 도로 터널. 엔클레이브가 쓰던 곳을 BoS가 접수했고, 반대편 출구가 엔클레이브 위성 중계소(비표시)로 이어짐 | 터렛(엔클레이브 잔재) | 아쿠아 퓨라 상자(군용 트럭) | 하늘에서 온 죽음(Death From Above) | 1 |
+| White House Plaza [BS] | 백악관 광장 | 광장(대통령 지하 진입로) | D.C. 도심·펜실베이니아 애비뉴 | [BS]에서 생기는 백악관 앞 마커. 유틸리티 터널을 지나 대통령 지하층과 대통령 지하철(애덤스 공군 기지 방면)로 이어짐 | 슈퍼 뮤턴트(구역) | 스킬북 2(은신·비무장) | 대담한 자가 승리한다(Who Dares Wins) | 1 |
+| Riverboat Landing [PL] | 리버보트 선착장 | 선착장(페리) | Z9 D.C. 외곽 (11,-20) | 리벳시티 남쪽 강변 선착장. 외륜선 '더치스 갬빗'호를 타고 포인트 룩아웃으로 건너감 | — | — | 현지의 맛(The Local Flavor), 말괄량이 미행(Tailing the Tomboy) | 1 |
+| Alien Homing Beacon [MZ] | 외계인 유도 신호기 | 외계 우주선 추락지 | Z2 북부 산악 (3,22) | 절벽 위 판잣집과 그리너 패스처스 처리장 사이, 집을 뚫고 절벽에 박힌 외계 정찰선 세타. 본편에선 비표시 장소(외계인 블래스터)이고 [MZ]에선 유도 신호를 따라 오면 마더십 제타로 납치됨. Pip-Boy 발견 통계 제외 | — (죽은 외계인) | Alien blaster[외계인 블래스터] · 외계인 동력 전지 120 | [MZ] 이 세상의 것이 아닌(Not of This World) | 1 |
 <!-- /GEN:dlc-cw -->
 
 ### 5.2 [OA] 앵커리지 탈환 시뮬레이션 (11곳)
@@ -377,17 +463,17 @@
 <!-- GEN:dlc-oa -->
 | 영문명 | 한국어 표기 | 유형 | 지역 | 개요 | 주요 적 | 주요 전리품 | 관련 퀘스트 | 실내 |
 |---|---|---|---|---|---|---|---|---|
-| Abandoned mining town [OA] | ? | ? | OA | ? | — | — | — | 1 |
-| Anchorage Cliffs [OA] | ? | ? | OA | ? | — | — | — | 1 |
-| Artillery overlook [OA] | ? | ? | OA | ? | — | — | — | 2 |
-| Artillery overlook entrance [OA] | ? | ? | OA | ? | — | — | — | 1 |
-| Battlefield trenches [OA] | ? | ? | OA | ? | — | — | — | 1 |
-| Chimera armor depot [OA] | ? | ? | OA | ? | — | — | — | 1 |
-| Chinese Forward Camp Delta [OA] | ? | ? | OA | ? | — | — | — | 1 |
-| Chinese occupied refinery [OA] | ? | ? | OA | ? | — | — | — | 1 |
-| Chinese pulse field [OA] | ? | ? | OA | ? | — | — | — | 1 |
-| Listening post [OA] | ? | ? | OA | ? | — | — | — | 1 |
-| U.S. Army field headquarters [OA] | ? | ? | OA | ? | — | — | — | 2 |
+| Abandoned mining town [OA] | 버려진 광산 마을 | 폐광촌(전장) | 시뮬레이션 남 (17,22) | 미 육군 야전 본부 북동쪽. 폐조차장에 숨은 미군 2명과 만나 중국군 벙커와 폭격 맞은 건물을 지나 감청 초소로 향함 | 중국 인민해방군 | 정보 가방 | 길을 열어라(Paving the Way) | 1 |
+| Anchorage Cliffs [OA] | 앵커리지 절벽 | 절벽(시뮬레이션 시작점) | 시뮬레이션 남동 (28,24) | 시뮬레이션 시작 지점. 몽고메리 중사와 합류해 절벽 통로와 플랫폼을 돌파함 | 중국 인민해방군 | 정보 가방 2 · 앵커리지 침공 홀로테이프 | 앵커리지의 포대(The Guns of Anchorage) | 1 |
+| Artillery overlook [OA] | 포대 전망대 | 포대 진지 | 시뮬레이션 동 (24,19) | 곡사포 3문이 늘어선 중국군 포대. 저격수·인페르노 부대와 벙커를 차례로 돌파하며 포를 파괴함 | 중국 인민해방군(저격수·인페르노 부대) | — | 앵커리지의 포대(The Guns of Anchorage) | 2 |
+| Artillery overlook entrance [OA] | 포대 전망대 입구 | 산악 기지 | 시뮬레이션 동 (26,21) | 앵커리지를 내려다보는 산악 기지 입구. 창고형 내부와 키메라 전차 '전망대'를 지나 포대로 나감 | 중국 인민해방군 | 정보 가방 2 · 스텔스 보이 | 앵커리지의 포대(The Guns of Anchorage) | 1 |
+| Battlefield trenches [OA] | 전장 참호 | 참호(전선) | 시뮬레이션 남 (16,22) | 미 육군 야전 본부 바로 북쪽 참호. 숨어 있던 미군 3명과 함께 중국군을 밀어내고 포로를 구함 | 중국 인민해방군 | 정보 가방 | 오퍼레이션: 앵커리지!(Operation: Anchorage!) | 1 |
+| Chimera armor depot [OA] | 키메라 전차 정비창 | 전차 기지 | 시뮬레이션 중앙 (13,20) | 전진 기지 델타 너머 협곡 끝의 전차 정비창. 감시탑 2기와 가동 중인 키메라 전차가 연료 탱크를 지킴 | 중국 인민해방군, 키메라 전차 | 정보 가방 | 길을 열어라(Paving the Way) | 1 |
+| Chinese Forward Camp Delta [OA] | 중국군 전진 기지 델타 | 야영지(감시탑 캠프) | 시뮬레이션 남 (14,22) | 미 육군 야전 본부 북서쪽. 천막 캠프 두 곳에 중국군과 경비견, 감시탑이 있음 | 중국 인민해방군, 경비견 | 정보 가방 | 길을 열어라(Paving the Way) | 1 |
+| Chinese occupied refinery [OA] | 중국군 점령 정유소 | 최종 전장(정유소) | 시뮬레이션 중앙 (15,19) | 펄스 필드가 꺼진 뒤 미군 T-51b 부대가 팻맨으로 성벽을 뚫고 돌입하는 최종 전장. 징웨이 장군이 미군 포로를 처형하는 장면에서 시작해 결투로 끝남(실내 없음) | 중국 인민해방군, 징웨이 장군 | — | 오퍼레이션: 앵커리지!(Operation: Anchorage!) | — |
+| Chinese pulse field [OA] | 중국군 펄스 필드 | 방어 지대(전극 지뢰밭) | 시뮬레이션 중앙 (15,20) | 펄스 전극이 묻힌 무인지대. 앞쪽 벙커의 중국군·터렛을 뚫고 지휘 센터에서 필드를 끔 | 중국 인민해방군, 터렛 | 정보 가방 | 오퍼레이션: 앵커리지!(Operation: Anchorage!) | 1 |
+| Listening post [OA] | 감청 초소 | 통신 거점 | 시뮬레이션 중앙 (18,20) | 캘리웨이 능선 끝, 버려진 광산 마을을 지나 닿는 중국군 통신 시설. 발전기·무전실을 지나 위층 지휘실을 확보함 | 중국 인민해방군 | 정보 가방 | 길을 열어라(Paving the Way), 오퍼레이션: 앵커리지!(Operation: Anchorage!) | 1 |
+| U.S. Army field headquarters [OA] | 미 육군 야전 본부 | 미군 거점 | 시뮬레이션 남 (16,23) | 체이스 장군이 지휘하는 미군 야전 기지. 지휘 천막·보급관 천막(장비 지급)·군의관 아다미 천막·T-51b 천막이 있고 2·3부의 출발점 | — | — | 길을 열어라(Paving the Way), 오퍼레이션: 앵커리지!(Operation: Anchorage!) | 2 |
 <!-- /GEN:dlc-oa -->
 
 ### 5.3 [TP] 피트 (6곳)
@@ -395,12 +481,12 @@
 <!-- GEN:dlc-tp -->
 | 영문명 | 한국어 표기 | 유형 | 지역 | 개요 | 주요 적 | 주요 전리품 | 관련 퀘스트 | 실내 |
 |---|---|---|---|---|---|---|---|---|
-| Haven [TP] | ? | ? | TP | ? | — | — | — | 2 |
-| Pitt steelyard [TP] | ? | ? | TP | ? | — | — | — | 2 |
-| The Pitt Downtown [TP] | ? | ? | TP | ? | — | — | — | 2 |
-| The Pitt Uptown [TP] | ? | ? | TP | ? | — | — | — | 3 |
-| The Pitt bridge [TP] | ? | ? | TP | ? | — | — | — | 1 |
-| The Pitt train yard [TP] | ? | ? | TP | ? | — | — | — | 1 |
+| Haven [TP] | 헤이븐 | 지배자 요새(타워) | 피트 북동 (27,6) | 피트 지배자 애셔의 타워. 1층은 경비 구역, 승강기로 애셔의 거처에 오름 | — (적대 시 피트 레이더·애셔) | Ashur's power armor[파워 아머] · 애셔의 일기 4 | 자유 노동(Free Labor), 아이들을 위한 장난감(Toys for Tots) | 2 |
+| Pitt steelyard [TP] | 피트 제철 야적장 | 제철소 야적장(트로그 소굴) | 피트 북 (16,8) | 강철 주괴 100개가 흩어진 녹슨 야적장. 트로그가 들끓고 공급 공장·베르너의 은신처·발전소 맨홀이 있음 | 트로그, 야인 | Man Opener[오토 액스](공급 공장) · Wild Bill's Sidearm[.32 권총](와일드 빌 시신) · 강철 주괴 100 | 위험한 작업 환경(Unsafe Working Conditions), 공장 노동자(Mill Worker), 와일드 빌의 마지막 저항(Wild Bill's Last Stand) | 2 |
+| The Pitt Downtown [TP] | 피트 다운타운 | 정착지(노예 작업 구역) | 피트 동 (22,14) | 피트 레이더와 노예가 사는 중간 규모 정착지. 입구 작업장에서 노예가 고철을 자르고 왼쪽은 제철소(더 밀), 오른쪽은 미디아의 거처 | — (적대 시 피트 레이더) | — | 피트 속으로(Into The Pitt), 위험한 작업 환경(Unsafe Working Conditions), 자유 노동(Free Labor), 와일드 빌의 마지막 저항(Wild Bill's Last Stand), 아이들을 위한 장난감(Toys for Tots) | 1 |
+| The Pitt Uptown [TP] | 피트 업타운 | 레이더 거주 구역 | 피트 북동 (23,8) | 피트 레이더가 사는 대형 구역. 아래층은 방사능에 오염됐고 위층이 숙소이며, 헤이븐과 버려진 아파트(비표시)가 이어짐 | — (적대 시 피트 레이더) | — | 자유 노동(Free Labor) | 3 |
+| The Pitt bridge [TP] | 피트 다리 | 다리(관문) | 피트 남 (16,24) | 전쟁 전 와바시 다리. 머논거힐라 강을 건너 피트로 들어가는 관문으로 남쪽 끝에 야인 캠프, 북쪽 탑 위에 저격수 레이더가 있음 | 야인, 땅두더지, 들개, 저격수 레이더 | — | 피트 속으로(Into The Pitt) | 1 |
+| The Pitt train yard [TP] | 피트 조차장 | 조차장(도착 지점) | 피트 남서 (10,30) | 피트 도착 지점. 대화가 끝나면 피트 레이더가 적대하고 북쪽은 산사태로 막혀 좁은 길로만 빠져나감 | 피트 레이더 | — | 피트 속으로(Into The Pitt) | 1 |
 <!-- /GEN:dlc-tp -->
 
 ### 5.4 [BS] 애덤스 공군 기지 (3곳)
@@ -408,9 +494,9 @@
 <!-- GEN:dlc-bs -->
 | 영문명 | 한국어 표기 | 유형 | 지역 | 개요 | 주요 적 | 주요 전리품 | 관련 퀘스트 | 실내 |
 |---|---|---|---|---|---|---|---|---|
-| Adams Air Force Base [BS] | ? | ? | BS | ? | — | 퀀텀 2 | — | 1 |
-| Adams storage facility [BS] | ? | ? | BS | ? | — | — | — | 1 |
-| Air control tower [BS] | ? | ? | BS | ? | — | — | — | 1 |
+| Adams Air Force Base [BS] | 애덤스 공군 기지 | 엔클레이브 최후 기지 | 애덤스 기지 남서 (9,25) | 메릴랜드의 엔클레이브 최후 거점. 대통령 지하철로 들어가 버티버드가 늘어선 활주로를 지나 이동 기지 크롤러(비표시)를 공격하는 [BS] 최종 무대 | 엔클레이브 병사·헬파이어 트루퍼, 데스클로, 터렛 | 퀀텀 2 · 미니 누크 (퀀텀 2 = 관제탑 1 + 저장 시설 1) | 대담한 자가 승리한다(Who Dares Wins) | 1 |
+| Adams storage facility [BS] | 애덤스 저장 시설 | 저장 창고 | 애덤스 기지 남 (21,23) | 활주로 남남동쪽 구석의 창고. 작업실 긴 탁자에 무기와 물자가 모여 있음 | 센트리 봇, 터렛(후버·스파키) | Rapid-torch flamer[화염방사기] · 미니 누크 2 | — | 1 |
+| Air control tower [BS] | 항공 관제탑 | 관제탑 | 애덤스 기지 중앙 (17,12) | 애덤스 공군 기지 관제탑. 엔클레이브 로보브레인이 지킴 | 엔클레이브 로보브레인 | — | 대담한 자가 승리한다(Who Dares Wins) | 1 |
 <!-- /GEN:dlc-bs -->
 
 ### 5.5 [PL] 포인트 룩아웃 (31곳)
@@ -418,37 +504,37 @@
 <!-- GEN:dlc-pl -->
 | 영문명 | 한국어 표기 | 유형 | 지역 | 개요 | 주요 적 | 주요 전리품 | 관련 퀘스트 | 실내 |
 |---|---|---|---|---|---|---|---|---|
-| Ark & Dove resting grounds [PL] | ? | ? | PL | ? | — | — | — | 1 |
-| Beachview campsite [PL] | ? | ? | PL | ? | — | — | — | 1 |
-| Blackhall Manor [PL] | ? | ? | PL | ? | — | — | — | 2 |
-| Calvert Mansion [PL] | ? | ? | PL | ? | — | 퀀텀 1 | — | 5 |
-| Coastal grotto [PL] | ? | ? | PL | ? | — | — | — | 2 |
-| Disaster relief outpost [PL] | ? | ? | PL | ? | — | — | — | 5 |
-| Dove Delta [PL] | ? | ? | PL | ? | — | — | — | 1 |
-| Flooded sinkhole [PL] | ? | ? | PL | ? | — | 퀀텀 2 | — | 1 |
-| Grower's shack [PL] | ? | ? | PL | ? | — | — | — | 1 |
-| Haley's Hardware [PL] | ? | ? | PL | ? | — | — | — | 1 |
-| Herzog Mine [PL] | ? | ? | PL | ? | — | — | — | 3 |
-| House of Wares [PL] | ? | ? | PL | ? | — | — | — | 1 |
-| Jet crash site [PL] | ? | ? | PL | ? | — | — | — | 1 |
-| Kenny's cave [PL] | ? | ? | PL | ? | — | — | — | 3 |
-| Lil' Tyke Playhouse [PL] | ? | ? | PL | ? | — | — | — | — |
-| Marguerite's shack [PL] | ? | ? | PL | ? | — | — | — | 1 |
-| Ofie Clan Plot [PL] | ? | ? | PL | ? | — | — | — | 1 |
-| Pilgrim's Landing [PL] | ? | ? | PL | ? | — | — | — | 4 |
-| Point Lookout Lighthouse [PL] | ? | ? | PL | ? | — | — | — | 2 |
-| Point Lookout Pier [PL] | ? | ? | PL | ? | — | — | — | 4 |
-| Ritual site [PL] | ? | ? | PL | ? | — | 퀀텀 1 | — | 1 |
-| Sacred Bog Entrance [PL] | ? | ? | PL | ? | — | — | — | 1 |
-| Sub Recovery Site [PL] | ? | ? | PL | ? | — | — | — | 1 |
-| The Ark & Dove Cathedral [PL] | ? | ? | PL | ? | — | — | — | 1 |
-| The Homestead Motel [PL] | ? | ? | PL | ? | — | — | — | 4 |
-| Trapper's shack [PL] | ? | ? | PL | ? | — | 퀀텀 1 | — | 2 |
-| Trash heap [PL] | ? | ? | PL | ? | — | — | — | 2 |
-| Truck wreckage [PL] | ? | ? | PL | ? | — | — | — | 1 |
-| Turtledove Detention Camp [PL] | ? | ? | PL | ? | — | — | — | 7 |
-| USS Ozymandias [PL] | ? | ? | PL | ? | — | — | — | 1 |
-| Wrecked Seatub [PL] | ? | ? | PL | ? | — | — | — | 1 |
+| Ark & Dove resting grounds [PL] | 아크 앤드 도브 묘지 | 묘지(구울) | 포인트 룩아웃 북동 (23,5) | 대성당 북동쪽의 작은 묘지. 야생 구울 무리가 있고 앞의 우물이 해식 동굴로 이어짐 | 야생 구울, 늪지 구울, 글로잉 원 | — | — | — |
+| Beachview campsite [PL] | 비치뷰 캠핑장 | 캠핑장(옛 밀수업자 야영지) | 포인트 룩아웃 중앙 (18,18) | 낙서와 오토바이로 보아 밀수업자 야영지였던 버려진 캠핑장. 늪지 주민이 춤추는 전용 애니메이션이 있음 | 늪지 주민 | — | — | — |
+| Blackhall Manor [PL] | 블랙홀 저택 | 저택 | 포인트 룩아웃 서 (5,13) | 오바디아 블랙홀 혼자 사는 저택. 서재의 오바디아가 금서 크리브베크니흐 관련 의뢰를 줌 | — (오바디아 적대 시) | — | 블랙홀의 어두운 심장(The Dark Heart of Blackhall) | 2 |
+| Calvert Mansion [PL] | 캘버트 저택 | 저택(데즈먼드의 거처) | 포인트 룩아웃 중앙 (21,21) | 200살 구울 데즈먼드 록하트가 개 두 마리와 사는 빅토리아풍 저택. 부족민 습격을 막는 메인 퀘스트 거점이며 비밀 패닉룸·첩보 벙커가 있음 | 부족민(습격) | 퀀텀 1 · Desmond's eyeglasses[안경] · 미니어처 퀀텀(패닉룸) | 현지의 맛(The Local Flavor), 영혼과 함께 걷기(Walking with Spirits), 환청(Hearing Voices), 사고 통제(Thought Control), 정신의 만남(A Meeting of the Minds), 벨벳 커튼(The Velvet Curtain) | 5 |
+| Coastal grotto [PL] | 해안 동굴 | 동굴(플릭의 사파리) | 포인트 룩아웃 북동 (26,7) | 플릭이 구울을 사냥감 삼아 '사파리'를 여는 해안 동굴. 사파리 방에 붙잡힌 사람 둘이 있음 | 야생 구울, 늪지 구울, 스왐프러크 | The Dismemberer[도끼](플릭의 사파리 보상) · 미니 누크 | 플릭의 사파리(Plik's Safari) | 2 |
+| Disaster relief outpost [PL] | 재난 구호 전초기지 | 의료 천막 캠프 | 포인트 룩아웃 서 (8,18) | 마르셀라의 천막을 포함한 의료·행정 천막 캠프. 블랙홀 의뢰 중 마르셀라의 마지막 녹음을 찾는 곳 | — | 스텔스 보이 · 전쟁 전 서적 | 블랙홀의 어두운 심장(The Dark Heart of Blackhall) | 5 |
+| Dove Delta [PL] | 도브 삼각주 | 모래톱 지대 | 포인트 룩아웃 서 (3,18) | 남서쪽 모래톱 섬들. 삽으로 파낼 수 있는 흙더미가 있고 늪지 주민과 마이얼럭이 있음 | 늪지 주민, 마이얼럭, 블로트플라이 | '오즈월도에게' 홀로테이프 | — | 1 |
+| Flooded sinkhole [PL] | 침수된 싱크홀 | 호수 | 포인트 룩아웃 북서 (9,8) | 사냥꾼의 오두막과 재배자의 오두막 사이 호수. 바닥에 금고 3개가 있고 잠수하면 물건이 떠오름 | 늪지 주민 | 퀀텀 2 | — | — |
+| Grower's shack [PL] | 재배자의 오두막 | 오두막(펑가 농장) | 포인트 룩아웃 북서 (6,10) | 작은 부두와 흔들다리로 들어가는 펑가 재배지 | 늪지 주민 | 미니 누크 · 1213번 금고 음성 홀로테이프(인민 은행) · 슈가 봄 3 | — | 1 |
+| Haley's Hardware [PL] | 헤일리 철물점 | 상점(수리) | 포인트 룩아웃 중앙 (16,13) | 필그림스 랜딩 북쪽의 철물점. 주인 헤일리가 거래·수리를 함 | — | Handyman jumpsuit[의복] · 병뚜껑 지뢰 | — | 1 |
+| Herzog Mine [PL] | 허조그 광산 | 광산 | 포인트 룩아웃 동 (22,11) | 아크 앤드 도브 묘지 남쪽 바위에 뚫린 광산. 광부 휴게소·블랙댐프 갱도로 이어지며 케니가 숨어 삶 | 마이얼럭류, 케니 | Pint-Sized Slasher 가면 | — | 3 |
+| House of Wares [PL] | 하우스 오브 웨어스 | 상점 | 포인트 룩아웃 중앙 (14,17) | 필그림스 랜딩 안의 잡화점. 마담 파나다가 운영하고 프로텍트론이 있음 | — | — | — | 1 |
+| Jet crash site [PL] | 제트기 추락지 | 추락 현장 | 포인트 룩아웃 북서 (7,5) | 200년간 손대지 않은 전투기 잔해. 야생 구울이 서식함 | 야생 구울 | 블랙박스 녹음(홀로테이프) | — | 1 |
+| Kenny's cave [PL] | 케니의 동굴 | 동굴(허조그 광산 안) | 포인트 룩아웃 북 (19,9) | 허조그 광산 안쪽 광부 휴게소의 케니 거처. 마커는 있지만 Pip-Boy 발견 통계에서 제외됨 | 케니, 스왐프러크 | Pint-Sized Slasher 가면 | — | 3(허조그 광산과 공유) |
+| Lil' Tyke Playhouse [PL] | 릴 타이크 놀이집 | 놀이터 오두막 | 포인트 룩아웃 북 (11,10) | 마르그리트의 오두막 남서쪽 판잣집과 놀이터(로켓 놀이기구·미끄럼틀·그네) | 늪지 주민 | — | — | — |
+| Marguerite's shack [PL] | 마르그리트의 오두막 | 오두막(밀주) | 포인트 룩아웃 북 (15,9) | 트레일러 모양 오두막. 마르그리트가 고장 난 증류기를 고칠 사람을 찾음 | 늪지 주민 | — | 위스키 한 숟가락(A Spoonful of Whiskey) | 1 |
+| Ofie Clan Plot [PL] | 오피 일족 묘지 | 가족 묘지 | 포인트 룩아웃 서 (9,15) | 언덕 위 흰 울타리 묘지(무덤 10기). 한 무덤이 파헤쳐져 곰 인형과 삽이 놓여 있음 | 늪지 구울 | — | — | — |
+| Pilgrim's Landing [PL] | 필그림스 랜딩 | 정착지(유원지 부두) | 포인트 룩아웃 중앙 (14,18) | 페리가 닿는 포인트 룩아웃의 관문 유원지. 잡화점·모텔·인민 은행·창고·관람차가 있음 | 땅두더지, 사나운 개, 부족민(분기) | — | 현지의 맛(The Local Flavor), 벨벳 커튼(The Velvet Curtain), 사고 통제(Thought Control) | 4 |
+| Point Lookout Lighthouse [PL] | 포인트 룩아웃 등대 | 등대(지하 연구소) | 포인트 룩아웃 남동 (22,25) | 나선 계단에 관광객 해골이 늘어선 등대. 지하에 세인트 오빈 의료 시설이 있어 〈정신의 만남〉의 결말 무대가 됨 | — | Microwave emitter[메즈메트론 계열](정신의 만남 보상) · 전쟁 전 서적 3 · 스텔스 보이 | 정신의 만남(A Meeting of the Minds) | 2 |
+| Point Lookout Pier [PL] | 포인트 룩아웃 부두 | 부두(페리 도착) | 포인트 룩아웃 중앙 (13,20) | 더치스 갬빗호가 정박하는 부두로 필그림스 랜딩과 한 구역. 선장 토바르가 페리를 운항함 | — | 미니 누크(페리 앞 부표 아래) · Grifter's Fit[의복](토바르) | — | — |
+| Ritual site [PL] | 의식 장소 | 동굴(의식장) | 포인트 룩아웃 중앙 (18,15) | 늪지 주민이 우그-콸토스 의식을 치르는 동굴. 블랙홀 의뢰를 받기 전엔 판자로 막혀 있음 | 늪지 주민 | 퀀텀 1 · Ritual knife[칼] · 크리브베크니흐 · 스텔스 보이 | 블랙홀의 어두운 심장(The Dark Heart of Blackhall) | 1 |
+| Sacred Bog Entrance [PL] | 성스러운 늪 입구 | 늪(마더 펑가) | 포인트 룩아웃 북서 (4,9) | 서쪽 끝 입구로 들어가는 늪길. 스왐프러크·마이얼럭 헌터·스왐프러크 여왕이 지키는 길 끝에 거대한 '마더 펑가'가 있음 | 스왐프러크, 마이얼럭 헌터, 스왐프러크 여왕 | — | 영혼과 함께 걷기(Walking with Spirits) | 1 |
+| Sub Recovery Site [PL] | 잠수함 인양 현장 | 해양(잠수함) | 포인트 룩아웃 남 (18,25) | 연안 얕은 물에 박힌 중국 잠수함 SSN-37-1A 인양 현장. 내부는 방 하나뿐 | — | 스텔스 보이 · 중국제 권총 | 벨벳 커튼(The Velvet Curtain) | 1 |
+| The Ark & Dove Cathedral [PL] | 아크 앤드 도브 대성당 | 부족민 거주지(성당) | 포인트 룩아웃 북 (21,7) | 부족민이 펑가 열매를 가꾸며 사는 옛 성당. 지도자 잭슨이 의뢰를 주며 앞마당 우물로 해식 동굴과 이어짐 | 부족민(적대 시), 야생 구울, 밀수업자 | Fertilizer shovel[삽](크로아토아) · 스텔스 보이 | 영혼과 함께 걷기(Walking with Spirits), 환청(Hearing Voices), 말괄량이 미행(Tailing the Tomboy) | 1 |
+| The Homestead Motel [PL] | 홈스테드 모텔 | 모텔(첩보 안전가옥) | 포인트 룩아웃 중앙 (13,16) | 사나운 개만 남은 모텔. 객실 3개와 사무실만 열리며 1D호 단말이 〈벨벳 커튼〉의 안전가옥 | 사나운 개 | Cryptochromatic spectacles[안경](1D호 변기 물탱크) · 스텔스 보이 | 벨벳 커튼(The Velvet Curtain) | 4 |
+| Trapper's shack [PL] | 사냥꾼의 오두막 | 오두막(늪지 주민 소굴) | 포인트 룩아웃 북서 (9,7) | 지하실 딸린 오두막에 늪지 주민 6명가량이 살며 함정이 널려 있음. 지하 우리에 스왐프러크 | 늪지 주민, 늪지 구울, 스왐프러크 | 퀀텀 1 · 병뚜껑 지뢰 · 스텔스 보이 · 안데일 밖의 유일한 '이상한 고기 파이' | — | 2 |
+| Trash heap [PL] | 쓰레기 더미 | 쓰레기장 | 포인트 룩아웃 북 (12,7) | 북서쪽 늪 가장자리의 쓰레기 더미(초당 최대 9라드). 북동쪽에 터틀도브 수용소의 탈출 터널 출구가 있음 | 늪지 주민 | 미니 누크 | — | 1 |
+| Truck wreckage [PL] | 트럭 잔해 | 트럭 잔해 | 포인트 룩아웃 북 (18,5) | 언덕길에 넘어진 화물 트럭. 등대 전구와 효모가 실려 있음 | — | 등대 전구 · 효모(위스키 한 숟가락 재료) | — | — |
+| Turtledove Detention Camp [PL] | 터틀도브 수용소 | 군 수용소 | 포인트 룩아웃 북 (16,4) | 전쟁 전 미군 강제 수용소. 숙소·고문실·시체 안치소·사무동과 탈출 터널이 있고 안치소에서 잠수함 자폭 코드를 찾음 | 야생 구울, 늪지 구울, 센트리 봇, 터렛 | Toy knife[칼](남쪽 덤불 상자) · 미니 누크 · 스텔스 보이 | 벨벳 커튼(The Velvet Curtain) | 7 |
+| USS Ozymandias [PL] | USS 오지맨디어스 | 난파선 | 포인트 룩아웃 동 (24,14) | 연안 바위섬에 좌초한 소형선. 갑판 아래 금고는 〈고대의 땅〉을 마친 뒤에만 열림 | — | — | 고대의 땅(An Antique Land) | 1 |
+| Wrecked Seatub [PL] | 난파선 시텁 | 동굴(해식 동굴 입구) | 포인트 룩아웃 북동 (25,5) | 해식 동굴로 들어가는 난파선. 동굴에서 잭슨이 캘버트 교수의 홀로그램과 교신하며 전쟁 전 지폐 39뭉치(게임 최다)가 있음 | 스왐프러크, 마이얼럭 헌터, 스왐프러크 여왕, 부족민 | 전쟁 전 지폐 39 · 남부 연합 모자 11 | 환청(Hearing Voices) | 1 |
 <!-- /GEN:dlc-pl -->
 
 ### 5.6 DLC 비표시 장소
@@ -456,6 +542,28 @@
 <!-- GEN:dlc-um -->
 | 영문명 | 한국어 표기 | DLC·위치 | 개요 | 비고 |
 |---|---|---|---|---|
+| Bailey's Crossroads Metro | 베일리스 크로스로즈 역 | [OA] 레드 레이서 공장 남동쪽 | 막힌 정문 대신 옆 정비 터널로 들어가는 역. 숨은 사격장과 굶겨 죽인 포로 우리 | 야생 구울 · BB건 · 소드오프 산탄총 |
+| Anchorage Reclamation simulation | 앵커리지 탈환 시뮬레이션 | [OA] 아웃캐스트 전초기지의 가상현실 | VSS 사가 미 육군을 위해 만든 앵커리지 탈환전 재현. 별도 월드 맵(마커 11곳)을 가짐 | 시뮬레이션 안 회복은 의료 디스펜서·탄약 디스펜서 |
+| Cave outpost / Cave passage / Calliway Ridge | 동굴 초소 / 동굴 통로 / 캘리웨이 능선 | [OA] 시뮬레이션 | 낙하산병이 사살되는 동굴(가우스 소총 획득), 다리를 우회하는 동굴 통로, 감청 초소가 있는 능선 | Gauss rifle[고유 무기](낙하산병, 시뮬레이션 전용) |
+| Midea's quarters | 미디아의 거처 | [TP] 피트 다운타운 | 노예 지도자 미디아의 작은 집. 마리가 납치되면 이곳에 있음 | 자유 노동, 피트 속으로, 아이들을 위한 장난감 |
+| The Mill / The Hole | 더 밀(제철소) / 더 홀(투기장) | [TP] 피트 다운타운 | 에버렛이 감독하는 제철소와, 애셔의 명으로 노예가 싸우는 투기장 | 위험한 작업 환경, 공장 노동자, 노예 밀고자(Slave Snitch) |
+| Vertigo Bar and Grill | 버티고 바 앤드 그릴 | [TP] 피트 다운타운 북쪽 | 피트 레이더가 음식·술·약물을 사는 옥상 바 | — |
+| Abandoned area | 버려진 구역 | [TP] 더 밀 ↔ 제철 야적장 | 트로그 때문에 버려진 공장 구역. 입구 사물함은 안전한 보관함 | 트로그 · 강철 주괴 3 |
+| Supply plant | 공급 공장 | [TP] 제철 야적장 | 단말을 읽으면 우호 프로텍트론이 돕는 트로그 소굴 | 트로그, 야인 · Man Opener[오토 액스] · 강철 주괴 18 |
+| Wernher's hideout | 베르너의 은신처 | [TP] 제철 야적장 | 베르너가 숨어 지내는 2층 방(연구실) | 발전소 열쇠 |
+| The Pitt underground | 피트 지하 | [TP] 제철 야적장 맨홀 ↔ 헤이븐 앞뜰 | 피트 발전소가 있는 지하. 자유 노동에서 베르너를 도우면 업타운 쪽 문이 열림 | 트로그 · 공장 직원 ID |
+| Abandoned apartments | 버려진 아파트 | [TP] 피트 업타운(헤이븐 맞은편) | 트로그가 들끓는 3층 아파트 | Hat of the People[모자] · 퀀텀 3 · T-45d 파워 아머 한 벌 |
+| Mobile base crawler | 이동 기지 크롤러 | [BS] 애덤스 공군 기지 | 엔클레이브 이동 지휘 차량. 〈대담한 자가 승리한다〉에서 경사로를 내리고 진입하는 최종 던전(위키 인터랙티브 지도엔 군사 마커로 오기) | 데스클로, 센트리 봇 · Precision Gatling laser · Slo-burn flamer · 외계인 블래스터 |
+| Presidential metro / Presidential sub level | 대통령 지하철 / 대통령 지하층 | [BS] 백악관 지하 ↔ 의사당 동관·애덤스 공군 기지 | 관리 AI M.A.R.Go.T.가 통제하는 정부 전용 지하철 | 센트리 봇, 터렛, 야생 구울 · 슬픈 구혼자(The Sorrowful Suitor) · 퀀텀 1 · 미니 누크 2 |
+| Satellite relay station | 위성 중계소 | [BS] 록랜드 차량 터널 너머 | 엔클레이브가 궤도 폭격을 조준하던 시설 | 엔클레이브, 터렛 · 하늘에서 온 죽음(Death From Above) |
+| Olney Powerworks / Old Olney underground / S. Wilson Building | 올니 발전소 / 올드 올니 지하 / S. 윌슨 빌딩 | [BS] 올드 올니 하수도 아래 | 테슬라 코일을 찾아가는 지하 경로(구울 아지트·아동 병원 폐허·사무 빌딩·발전소) | 센트리 봇, 데스클로, 구울 · 테슬라 코일 · 외계인 동력 전지 · 퀀텀 1 · 충격 요법(Shock Value) |
+| Hank's Electrical Supply | 행크 전기 용품점 | [BS] 주리 스트리트 지하철역 옆 | 레이더가 점거한 작은 상점(지붕에 아쿠아 퓨라 통) | 레이더 |
+| Ruzka's lair / Smuggler's shack / Smuggler camp / Covered bridge / Coastal monument | 루즈카의 굴 / 밀수업자 판잣집 / 밀수업자 캠프 / 지붕 덮인 다리 / 해안 기념비 | [PL] 각지 | 고유 야오과이 루즈카의 굴, 등대 남쪽 섬 판잣집, 성당 서쪽 밀수업자 캠프, 늪지 주민의 다리 캠프, 블랙홀 저택 서쪽 오벨리스크 | 루즈카(야오과이), 밀수업자, 늪지 주민 |
+| Chinese intelligence bunker | 중국 첩보 벙커 | [PL] 캘버트 저택 온실 아래 | 특수 코드와 크립토크로매틱 안경으로 비밀 문을 여는 전쟁 전 중국 벙커 | Backwater rifle[레버액션 소총] · 미니 누크 · 스텔스 보이 · 중국제 돌격소총 7 · 벨벳 커튼 |
+| St. Aubin Medical Facility | 세인트 오빈 의료 시설 | [PL] 포인트 룩아웃 등대 지하 | 캘버트 교수의 뇌가 보관된 지하 연구소(게임 내 'underground lab') | 로보브레인, 프로텍트론 · Microwave emitter · 메즈메트론 전지 71 · 정신의 만남 |
+| Naval recruiting center / People's Bank of Point Lookout / Warehouse | 해군 모병소 / 포인트 룩아웃 인민 은행 / 창고 | [PL] 필그림스 랜딩 | 벨벳 커튼의 단서가 있는 모병소, 음성 홀로테이프로 여는 대여 금고 은행, 함정 유모차가 가득한 창고 | 미니 누크 2 · 미사일 14 · 벨벳 커튼 |
+| Excavated muck holes | 파헤친 진흙 구덩이 | [PL] 릴 타이크 놀이집 동쪽 | 바이시 사가 바이오가스를 조사하던 고방사능 구덩이(가스 폭발 주의) | 토양 시료 홀로테이프 · 고대의 땅(An Antique Land) |
+| Submerged T-Rex / Swamplurk hatchery | 물에 잠긴 티라노사우루스 / 스왐프러크 부화장 | [PL] 해안 동굴 남남동쪽 수중 / 해식 동굴 앞바다 | 부표 아래 공룡 뼈 이스터에그와, 스왐프러크 알이 가득한 바위섬 | 레버액션 소총 · 마이얼럭 고기 다수 |
 <!-- /GEN:dlc-um -->
 
 ### 5.7 [MZ] 마더십 제타 구역 (전부 비표시)
@@ -463,6 +571,23 @@
 <!-- GEN:mz -->
 | 영문명 | 한국어 표기 | 개요 | 비고 |
 |---|---|---|---|
+| Holding cells | 수용실 | 납치된 주인공이 깨어나는 감방. 소마·샐리 등 다른 포로와 만남 | 이 세상의 것이 아닌(Not of This World) · 납치 전 소지품 · 포로 녹음 기록 |
+| Steamworks | 증기 기관실 | 수용실과 기관 중심부 사이 구역 | 외계인, 터렛 · 외계인 동력 전지 48 |
+| Engineering core | 기관 중심부 | 배의 중앙 허브. 거의 모든 구역(함교·화물칸·냉동실·감압실·기관실·격납고·정비층·관측 갑판·로봇 조립실·증기 기관실)과 이어짐 | 퀀텀 3 · 이 세상의 것이 아닌, 별들 사이에서(Among the Stars) |
+| Cryo lab / Cryo storage | 냉동 연구실 / 냉동 보관소 | 인간·슈퍼 뮤턴트·야생 구울·레이더를 냉동 보관하는 곳. 엘리엇을 데려가면 부대원 시신을 발견하고 냉동 수류탄·지뢰 재료를 얻으며, 냉동된 부대원 둘의 처분을 고름 | 별들 사이에서 · 방한 의무병 장비 2벌 |
+| Hangar | 격납고 | 정찰선 세타가 보관된 격납고. 파괴할 발전기가 있음 | 별들 사이에서 |
+| Robot assembly | 로봇 조립실 | 드론을 만드는 U자형 2층 조립실 | 지원·수호 드론 · 드론 제어 장치 · 외계인 동력 전지 44 · 별들 사이에서 |
+| Engine room | 기관실 | 원형 기관실과 일자형 복도 | Electro-Suppressor[충격봉] · 별들 사이에서(발전기 파괴) |
+| Decompression chamber / Space walk | 감압실 / 우주 유영 | 배 바깥으로 나가 우주 공간을 걷는 구간 | 별들 사이에서 |
+| Observation deck | 관측 갑판 | 우주 유영 뒤 도착하는 갑판. 무기 연구실·생물 연구실로 이어짐 | 이 은하는 좁아...(This Galaxy Ain't Big Enough...) |
+| Weapons lab | 무기 연구실 | 터렛·드론과 실험 무기 드론이 있는 연구실 | Destabilizer · Drone cannon Ex-B · Atomic pulverizer · 외계인 동력 전지 87 |
+| Experimentation lab | 실험 연구실 | 괴물(어보미네이션)의 기원인 실험실 | 괴물, 외계인 · 포로 녹음 기록 |
+| Biological research | 생물 연구실 | 실험 연구실과 함교 사이의 두 방 | 괴물, 외계인 · 외계인 동력 전지 109 |
+| Death ray hub / Death ray control | 살인 광선 허브 / 살인 광선 제어실 | 살인 광선 발생 구역과 발전기 4기가 있는 제어실 | 외계인, 지원 드론, 터렛 |
+| Living quarters | 거주 구역 | 외계인이 정지 장치에서 자는 3실 구역 | 포로 녹음 기록 23 |
+| Bridge | 함교 | 외계인 선장이 있는 2층 지휘 갑판. 완료 후 수도 황무지로 돌아가는 전송기 | Captain's Sidearm[외계인 블래스터] · 이 은하는 좁아... |
+| Cargo hold / Research lab | 화물칸 / 연구실 | 컨베이어 벨트 화물칸과, 차량·버터컵 공장 물품을 모은 연구실 | MPLX Novasurge[플라스마 권총] · 미니 누크 · 병뚜껑 지뢰 2 |
+| Maintenance level / Waste disposal | 정비층 / 폐기물 처리장 | 샐리가 고치는 '쓰레기통'으로 가는 정비층과 처리장 | Samurai's sword[중국 장교검] · General Chase's overcoat[의복] |
 <!-- /GEN:mz -->
 
 ---
@@ -474,6 +599,70 @@
 <!-- GEN:um-cw -->
 | 영문명 | 한국어 표기 | 위치(인근 마커) | 개요 | 비고(전리품·퀘스트) |
 |---|---|---|---|---|
+| Underworld | 언더월드 | 역사 박물관 안(D.C. 도심·내셔널 몰) | 박물관 안에 자리 잡은 구울 정착지. 술집 나인서클·여관·의원·상점이 있으며 지도 마커 없이 역사 박물관으로 들어감(RD-12) | 설계도(레일웨이 라이플: 튤립 판매) · 머리를 쏴야 해, 라일리스 레인저스, 이 낡은 집(This Old House), 고용된 일손(Hired Help) |
+| Vault 112 | 볼트 112 | 스미스 케이시의 정비소 지하(Z7) | 브라운 박사가 주민을 가상현실 '트랜퀼리티 레인'에 가둔 실험 볼트. 마커는 정비소가 대신함(RD-12) | 트랭퀼리티 레인(퀘스트), 생명의 물 |
+| Tranquility Lane simulation | 트랜퀼리티 레인 시뮬레이션 | 볼트 112 내부(가상 공간) | 1950년대 교외 마을을 재현한 가상 공간. 집 6채와 버려진 집(실패 방지 장치)이 있음 | Slasher knife[칼](분기 보상) · 트랭퀼리티 레인(퀘스트) |
+| Meresti Metro station | 메레스티 지하철역 | 메레스티 조차장·노스웨스트 세네카 역 지하 | 밴스가 이끄는 식인 집단 패밀리의 은신처 | Vampire's Edge[중국 장교검] · 설계도(시시케밥: 밴스) · 미니 누크 · 피의 유대, 네 피를 마시고 싶어(I Want to Drink Your Blood) |
+| Rockopolis | 로코폴리스 | 스미스 케이시의 정비소 서쪽, 다리그늘 마을 북쪽(Z7) | 바위로 위장한 입구 뒤 지하 동굴 왕국의 폐허. 2250년대 노예 사냥꾼에게 함락됨. 위키 인터랙티브 지도엔 비표시 아이콘으로 표기 | 보블헤드(비무장, 아가일 시신 옆) · 학대받은 하인(A Manhandled Manservant) |
+| Taft Tunnel | 태프트 터널 | 제퍼슨 기념관 ↔ 시타델 앞 하수구 | 〈생명의 물〉에서 리 박사 일행과 탈출하는 비상 터널. 야생 구울과 엔클레이브 병사가 있음 | 스킬북 2(은신·에너지 무기) · 퀀텀 1 · 귀한 거북딱지 안경 |
+| Shacktown | 섀크타운 | 잘버트 브러더스 처리장 북쪽(Z4) | 녹슨 판잣집 4채(3채 진입) 마을. 셀 이름 'Shacktown', 공식 가이드 명칭 'Wasteland gypsy village' | 스킬북 3(폭발물·물물교환·자물쇠 따기) · 미니 누크 · 스텔스 보이 |
+| Sniper shack | 저격수 판잣집 | 록브레이커의 마지막 주유소 서쪽 절벽(Z4) | 게임 내 이름은 'abandoned shack'. 이름 붙은 방사능바퀴 플러피·지터스가 우리에 있음. 위키 인터랙티브 지도엔 중형 정착지 마커로 오기 | Victory rifle[저격소총](아주 어려운 사물함) · 스킬북 2 · 켈러 가족 기록 4 · 병뚜껑 지뢰 |
+| Brotherhood Outcast shack | 아웃캐스트 판잣집 | 새트컴 어레이 NN-03d 서쪽 언덕 아래(Z2) | 아웃캐스트 두엇이 머무는 고철 판잣집 | 설계도(시시케밥) · 퀀텀(지붕, 새트컴 NN-03d 항목에 집계) |
+| Alien crash site | 외계인 추락 현장 | 절벽 위 판잣집과 그리너 패스처스 사이(Z2) | 본편에선 비표시. 외계 정찰선 세타의 잔해와 죽은 외계인, 정찰선 세타 신호. [MZ]에선 '외계인 유도 신호기' 마커가 됨 | Alien blaster[외계인 블래스터] · 외계인 동력 전지 120 |
+| Calverton | 캘버턴 | 주리 스트리트 지하철역 남서쪽(Z5) | 예배당과 폐가 6채가 남은 폐허 마을. 월드 확장 때 위치가 옮겨진 장소 | 스킬북 3 · 미니 누크 · 생명의 물 이후 엔클레이브 |
+| Camp RHO | RHO 캠프 | 로봇 수리 센터 남서쪽 교차로(Z6) | 생명의 물 이후 생기는 엔클레이브 실험 캠프(단말 컨테이너, 터렛 4) | 실험체 RHO 신분증(엔클레이브 장교) |
+| Car dealership | 자동차 대리점 | 페어팩스 폐허 북동쪽(Z8) | 플리·코베가 전시 차량이 남은 대리점. 생명의 물 이후 급수탑 아래 엔클레이브 진지 | 스킬북(중화기) |
+| Concrete treehouse | 콘크리트 나무집 | 페어팩스 폐허와 안데일 사이(Z8) | 고물상과 개가 사는 폐건물 위 오두막. 천장 터렛이 레이더를 막음 | 스킬북(물물교환) |
+| Cratered hamlet | 분화구 마을 | 메레스티 조차장 바로 남쪽(Z5) | 폐가 몇 채와 거대한 폭발 구덩이 | 스킬북(자물쇠 따기, 욕조) |
+| D.C. iron statue | D.C. 철제 동상 | 패러거트 웨스트 지하철역 남동쪽 부두(Z9) | 레이더 셋이 진을 친 운하. 맞은편 슈퍼 뮤턴트와 교전 중 | 의약품·탄약 은닉 |
+| Drainage chamber | 배수실(7곳)·밀폐 저수조(2곳) | 각 방송탑·중계탑 부근 | 모스 부호 무선 신호를 따라 찾는 소형 던전 묶음. 대부분 신호 발신기와 물자가 있음 | 보블헤드(폭발물: WKML 저수조) · 각종 스킬북·물자 |
+| Exploding scientist truck | 폭발하는 과학자 트럭 | 방송탑 KB5 서쪽 다리(Z1) | 다가가면 터지는 트럭과 과학자 시신. 아래에 마이얼럭 둥지 | 스킬북 2(과학·폭발물) · 미니 누크 |
+| Festive raider camp | 축제 레이더 캠프 | 듀코브의 거처 바로 남쪽(Z9) | 크리스마스 전구를 단 나무가 있는 레이더 매복지 | 스킬북(폭발물) |
+| Flooded metro raider camp | 침수 지하철 레이더 캠프 | 침수된 지하철(미니트맨) 남동쪽(Z8) | 폭발하는 폐차가 많은 대형 레이더 야영지. 트랜퀼리티 레인 뒤 걸어서 돌아오면 지나게 되는 위험 지역 | 스킬북 2 · 퀀텀 1(침수된 지하철 항목 집계) · 시시케밥 부품 |
+| Bannister crater | 배니스터 크레이터 | 배니스터 요새 동쪽(Z4) | 라드스코피온이 사는 포탄 구덩이 지대. 생명의 물 이후 엔클레이브 캠프(팻맨 병사) | 외계인 동력 전지 96(트럭 아래) |
+| Freeway raider encampment | 고속도로 레이더 야영지 | 볼트 101 바로 북쪽 고가도로(Z8) | 레이더 10명 이상이 폐차로 쌓은 고가 요새. 초반 저레벨에게 위험 | — |
+| Germantown | 저먼타운 | 마인필드 서쪽(Z2) | 슈퍼 뮤턴트가 사는 폐허 소도시. 저먼타운 경찰 본부(마커)와 재난 구호 캠프가 남음 | 빅 타운의 큰 문제 |
+| Ghoul outpost | 구울 초소 | 마리골드 역 남서쪽(Z9) | 적대적인 구울 주민 셋과 감옥에 갇힌 슈퍼 뮤턴트 | 미니 누크 · 퀀텀 1 |
+| Hilltop farm ruins | 언덕 농가 폐허 | 중계탑 KX-B8-11 남쪽(Z3) | 급수탑·사일로·풍차와 방사능 밭이 남은 폐농가 | 스킬북 2(소형 화기·수리) |
+| Hollowed-out rock | 속 빈 바위 | 메가톤 남쪽 성벽 뒤(Z8) | 평범한 바위로 위장한 은닉 상자. '요청하신 대로' 쪽지가 함께 있는 이스터에그성 보급 | 저격소총 · 스텔스 보이 |
+| Irradiated outhouse | 방사능 옥외 변소 | 체이스트 에이커스 남남서쪽(Z3) | 폐차 4대로 덮은 변소와 욕조 | 퀀텀 1(체이스트 에이커스 항목 집계) |
+| Jackknifed freeway truck | 꺾인 고속도로 트럭 | 휘턴 무기고 북동쪽(Z6) | 끊긴 고가도로 끝 트레일러 안의 통신소 | 스킬북(은신) |
+| Gold Ribbon Grocers | 골드 리본 식료품점 | 주리 스트리트 지하철역 북서쪽(Z5) | 가게 전체가 루브 골드버그 장치(압력판·피칭 머신·곰덫·수류탄)로 꾸며진 퍼즐형 이스터에그. 가스 점화에 성공하면 천장에서 보상이 떨어짐 | 스킬북 2(에너지 무기·자물쇠 따기) · 미니 누크 · 미사일 3 · 슈가 봄 8 |
+| Lucky's | 럭키스 | 워링턴 역 남서쪽 맵 남단(Z7) | 고물상이 사는 교역소 | Lucky shades[안경](+1 행운) · 스킬북(비무장) · 퀀텀 1 · 시시케밥 부품 다수 |
+| Riverside raider shacks | 강변 레이더 판잣집 | 메레스티 조차장 서쪽(Z5) | 보트·부두·판잣집 두 채의 레이더 캠프 | — |
+| Military checkpoints | 군 검문소 | 여러 곳(리클라이닝 그로브스 등) | 전쟁 전 미군 검문소. 미스터 거츠나 센트리 봇이 지킴 | 탄약 상자 |
+| Monorail train wreckage | 모노레일 열차 잔해 | 저먼타운 경찰 본부 북동쪽(Z2) | 추락한 모노레일 객차 옆 레이더 캠프 | 스킬북(폭발물) |
+| Mole rat race track | 땅두더지 경주장 | 그레이디치 서남서쪽 고속도로(Z9) | 레이더가 땅두더지 경주를 벌이는 철조망 트랙. 고물상의 다리 아래 | — |
+| Musty caverns | 퀴퀴한 동굴 | 메이슨-딕슨 고물상 동쪽(Z1) | 거대 개미 굴. 구조는 워렌과 거의 같음 | — |
+| Overlook raider shack | 전망대 레이더 판잣집 | 방송탑 KB5 서쪽(Z1) | 레이더 넷이 지키는 낙서투성이 폐가 | 스킬북(자물쇠 따기) · 미니 누크(욕조) |
+| Pirate Pely | 해적 펠리 보트 앤드 베이트 | 방사능 지하철 남쪽, 제퍼슨 기념관 북쪽(Z9) | 보트·미끼 가게 오두막. 리드 아티스트 이스트반 펠리를 기린 이스터에그 | — |
+| Patriotic picnic area | 애국 피크닉장 | 볼트 106 남쪽, 볼트 101 북서쪽(Z5) | 트레일러·놀이터가 있는 피크닉장. 야오과이 출몰, 폭발 유모차 함정 | — |
+| Pylon shack | 철탑 판잣집 | VAPL-58 발전소 북쪽(Z4) | 송전탑 받침을 기둥 삼은 오두막. 적대 구울 둘 | 켈러 가족 기록 1 · 미니 누크 · 전쟁 전 서적 |
+| Raid shack | 레이드 판잣집 | 베데스다 폐허 동쪽(Z6) | 레이더 거점 주택. 북서쪽 전봇대의 'TES-04' 각인은 오블리비언 이스터에그 | Stabhappy[전투 칼](레이더 소지) · 스킬북(물물교환) |
+| Raider farmhouse | 레이더 농가 | 그리너 패스처스 북쪽, 올드 올니 서쪽(Z3) | 사일로에 시체 조각이 든 레이더 농가 | 스킬북(수리) · 미니 누크 |
+| Raider shop | 레이더 상점 | 레드 레이서 공장 동쪽 골목(Z8) | 경비견 셋이 지키는 레이더 상인의 가게 | 스킬북 2(중화기·소형 화기) |
+| Raider wharf | 레이더 부두 | 새트컴 어레이 NW-05a 서쪽(Z1) | 레이더와 마이얼럭이 있는 부두 | 스킬북(에너지 무기) · 미니 누크 |
+| Raider wreckage fortifications | 레이더 폐차 요새 | 방송탑 KB5 남서쪽(Z1) | 폐차 3더미로 쌓은 레이더 망루 | 스킬북(근접 무기) · 스텔스 보이 |
+| The Roach King | 바퀴벌레 왕 | 마인필드 북동쪽(Z3) | 레드 로켓 놀이기구 왕좌의 '바퀴벌레 왕'과 방사능바퀴 6마리로 이뤄진 이스터에그 | 미니 누크(로켓 안) |
+| Internment truck | 수용 트럭 | 새트컴 어레이 NW-07c 동쪽 고속도로(Z1) | 해골이 가득 실린 꺾인 수용 트럭 | 수용 명령(홀로테이프) · 스킬북(비무장) |
+| Scavenger's bridge | 고물상의 다리 | 레드 레이서 공장 북쪽(Z8) | 고물상과 개들이 사는 교역소 | 스킬북 3(은신·폭발물·근접 무기) · 오토바이 핸드브레이크 5 |
+| Scavenger's jetty | 고물상의 부두 | 윌헬름 부두 남쪽(Z9) | 뒤집힌 보트 아래에 차린 고물상 거처 | — |
+| Scavenger shack | 고물상 판잣집 | 아르푸 동쪽 강가(Z5) | 마이얼럭이 들끓는 강가 언덕의 판잣집 | 지뢰·수류탄 상자 |
+| Sewer (Grayditch) | 그레이디치 하수도 | 그레이디치 남쪽(Z9) | 고방사능과 가스 함정이 있는 하수도. 야생 구울 서식 | 미사일 발사기(총기함) |
+| Shelter | 대피소 | 크라이슬러스 빌딩 남쪽 다리 밑(Z6) | 뚫어뻥 49개가 놓인 '뚫어뻥 방'. 원래 메인 퀘스트 경로에 있던 방을 옮겨 놓은 이스터에그 | 미니 누크(동쪽 캠프) |
+| Super mutant bonfire | 슈퍼 뮤턴트 화톳불 | 리벳시티 북서쪽 언덕(Z9) | 슈퍼 뮤턴트 셋과 구출할 수 있는 포로 | 스킬북(화술) |
+| Talon Company camp | 탈론 컴퍼니 캠프 | 하수도 중계소 남서쪽(Z9) | 탈론 컴퍼니 용병 셋의 전방 기지(사무실 건물) | 스킬북(자물쇠 따기) |
+| Talon Company recon camp | 탈론 컴퍼니 정찰 캠프 | 알링턴 도서관 남동쪽(Z9) | 3층 야외 전초기지와 터렛 | 스킬북(에너지 무기) · 스텔스 보이 · 병뚜껑 지뢰 |
+| Wastelander tent and sniper vista | 황무지 주민 천막과 저격 전망대 | 야오과이 터널 남서쪽 맵 끝(Z7) | 절벽에 숨은 천막과 바위 위 저격대. 라디오를 듣는 주민 둘 | — |
+| Willy's grocer | 윌리 식료품점 | 텐페니 타워 동쪽(Z7) | 레드 로켓 주유기가 선 작은 상점(방사능바퀴) | 스킬북 2(물물교환·자물쇠 따기) · 스코프 .44 매그넘 |
+| Minefield power substation | 마인필드 변전소 | 마인필드 남서쪽(Z3) | 철탑에 엉킨 해골 곁에 퀀텀이 놓인 변전소 | 퀀텀 2(마인필드 항목 집계) |
+| Wastelander lake hideout | 황무지 주민 호숫가 은신처 | 오아시스 서북서쪽(Z2) | 방사능 호수 건너 덤프트럭 뒤의 은신처 | 스킬북(의학) |
+| County sewer mainline | 카운티 하수도 본선 | 하수도 중계소 ↔ 프랜시스 스콧 키 다리 서쪽 | 갤로가 사는 하수 터널. 그레이디치·알링턴 묘지 밑을 지나지만 출구는 양 끝뿐 | 퀀텀 1 · 스킬북 2 · 스텔스 보이 |
+| Queen ant's hatchery | 여왕개미 부화장 | 마리골드 역 안 | 마리골드 여왕개미가 있는 동굴. 〈그것들!〉의 최종 무대 | 스킬북·퀀텀(마리골드 역 항목 집계) |
+| Small ranch | 작은 목장 주택 | 스프링베일 | 메가톤 출신 실버가 사는 스프링베일 유일의 집 | 은화 300닢(300 Pieces of Silver) |
+| Enclave outposts and camps | 엔클레이브 전초기지·캠프 | 도로망 곳곳 약 30곳 | 〈생명의 물〉 이후 생기는 엔클레이브 검문소·캠프. 기존 장소 근처에 덧붙음 | 엔클레이브 병사·장교, 데스클로(일부) |
+| Pulowski Preservation shelter | 풀로스키 보존 대피소 | 도심·교외 길모퉁이 다수 | 동전을 넣는 1인용 대피소. 물자 상자·은신처·퀘스트 실마리로 쓰임 | 소량 물자 |
+| Potomac River | 포토맥 강 | 맵 중앙을 남북으로 가로지름 | 방사능에 오염된 강. 마이얼럭이 살고 수중에 퀀텀이 숨어 있음 | 퀀텀 1(스프링베일 학교 동쪽 수중) |
 <!-- /GEN:um-cw -->
 
 ### 6.2 D.C. 도심의 비표시 건물
@@ -481,6 +670,24 @@
 <!-- GEN:um-dc -->
 | 영문명 | 한국어 표기 | 위치(인근 마커) | 개요 | 비고(전리품·퀘스트) |
 |---|---|---|---|---|
+| Arlington House | 알링턴 하우스 | 알링턴 묘지 중앙 | 지하에 링컨 사당이 있는 저택. 로브링어 퍽이면 준더스 플렁킷이 있음 | 보블헤드(행운) · 스킬북(과학) · 병뚜껑 지뢰 · Plunkett's Valid Points |
+| Early Dawn Elementary | 얼리 던 초등학교 | 체비 체이스(GNR 광장 북쪽) | 슈퍼 뮤턴트가 들끓는 불탄 학교. GNR로 가는 길에 반드시 통과 | 아버지의 발자취, 갤럭시 뉴스 라디오 |
+| Lady Frumperton's Fashions | 레이디 프럼퍼턴 의상실 | 듀퐁 광장 동쪽 | 듀퐁 역과 듀퐁 동쪽 사이의 작은 옷가게 | 스킬북(물물교환) |
+| L.O.B. Enterprises | L.O.B. 엔터프라이즈 | 폴스 처치 | 중국 권총 개발 '주룽 프로젝트' 직후 군 로봇에 점거된 기업 사옥(본관·동관·기록 보관소) | Zhu-Rong v418 Chinese pistol[중국제 권총] · 스킬북 3 · 퀀텀 1 |
+| Radiation King | 라디에이션 킹 | 조지타운 서쪽 | 가전 매장. 카르마에 따라 근처에 탈론 컴퍼니·감시자 출현 | — |
+| Townhome | 타운하우스(맥클렐런 가) | 조지타운 | 아직도 가족을 기다리는 미스터 핸디가 지키는 맥클렐런 가족의 3층 주택 | 스킬북(화술) |
+| La Maison Beauregard | 라 메종 보르가르 | 조지타운 남단 | 슈퍼 뮤턴트가 있는 폐호텔. [BS]에서 '슬픈 구혼자' 관련 랙볼트가 나타남 | 미니 누크 · 스텔스 보이 · 퀀텀 1 · [BS] Lag-Bolt's combat armor·shades |
+| C&O Canal | C&O 운하 | 조지타운 서쪽 | 짧은 운하 수로. 포기 보텀 역 서쪽 경사로로 접근 | — |
+| Capitol Post | 캐피톨 포스트 | 랑팡 남쪽 | 전쟁 전 신문사 사옥. 단말에 로딩 화면 기사 원문이 남아 있고 지하에 깁슨의 시신 | 깁슨 집 열쇠(마인필드) |
+| Madame Jealle's / L'Enfant Café / Besnik's Barbershop / Majority Whip's! | 마담 젤의 가게 / 랑팡 카페 / 베스닉 이발소 / 머저리티 휩스! | 랑팡 광장 | 랑팡 광장의 상점가. 일부는 바리케이드·함정으로 막혀 있음 | — |
+| Hotel | 호텔(BoS 거점) | 펜실베이니아 애비뉴 남서쪽 | BoS가 전초로 쓰는 호텔. 천장이 무너져 일부만 진입 | 스킬북(은신) |
+| Utility | 유틸리티 터널 | 펜실베이니아 애비뉴 맨홀 ↔ 백악관 | 백악관 벙커로 가는 지하 통로. [BS]에선 대통령 지하층으로 이어지고 백악관 광장 마커가 생김 | 스킬북(비무장) · 병뚜껑 지뢰 · 작업대 |
+| Francis Scott Key Bridge | 프랜시스 스콧 키 다리 | 시타델 ↔ 워싱턴 기념비 방향 | 시타델로 이어지는 반쯤 무너진 다리. 서쪽 아래에 레이더 야영지 | 셰릴을 찾아서(수색대 기록 3) |
+| Takoma Motor Service and Repair | 타코마 모터 정비소 | 타코마 인더스트리얼 옆 | 주차장에 슈퍼 뮤턴트 베히모스가 있는 작은 정비소 | 스킬북(중화기) |
+| Nifty Thrifty's | 니프티 스리프티 | 타코마 파크 | 큰 간판이 달린 전당포 | Takoma Park Little Leaguer cap[모자] |
+| Mirelurk nesting hole | 마이얼럭 둥지 구멍 | 내셔널 몰 반사 연못 남쪽 하수구 | 방사능 물이 새는 동굴 단지. 피난민은 죽고 마이얼럭이 둥지를 틀었음 | 스킬북(은신) · 퀀텀 1 |
+| Super mutant bunker | 슈퍼 뮤턴트 벙커 | 내셔널 몰 두 참호 사이 | 슈퍼 뮤턴트의 작전 기지. 두 입구 모두 함정 | 스킬북(폭발물) |
+| Sewer entrance / Sewer (Vernon Square) | 하수도 입구 / 베논 광장 하수도 | 베논 광장 | 막다른 골목 맨홀의 작은 하수도와 크레이터 바닥의 슈퍼 뮤턴트 초소 | 스킬북 2(수리·의학) · 스텔스 보이 · 스코프 .44 매그넘 |
 <!-- /GEN:um-dc -->
 
 ### 6.3 지하철·하수도 내부 구간
@@ -488,6 +695,34 @@
 <!-- GEN:metro -->
 | 영문명 | 한국어 표기 | 연결 | 개요 | 비고(전리품·적) |
 |---|---|---|---|---|
+| Anacostia Crossing Station | 아나코스티아 크로싱 역 | 아나코스티아 크로싱 ↔ 박물관 역·수어드 스퀘어 남동쪽 | 레드 라인 남쪽 종점. 경무장 레이더가 진을 침 | 스킬북(비무장) · 찌그러진 깡통 132(게임 최다) |
+| Museum station | 박물관 역 | 아나코스티아 크로싱 역 ↔ 메트로 센트럴, 출구: 역사·기술 박물관 | 내셔널 몰 아래 두 박물관을 잇는 역(스미스소니언) | 레이더, 방사능바퀴 · 스킬북 2(은신·근접 무기) |
+| Farragut West station | 패러거트 웨스트 역 | 패러거트 웨스트 지하철역 ↔ 텐리타운/프렌드십 역 | GNR로 가는 정규 경로의 첫 구간. 단말로 역무 프로텍트론을 깨울 수 있음 | 야생 구울, 땅두더지 · 스킬북 2 · 전쟁 전 서적 3 |
+| Tenleytown/Friendship station | 텐리타운/프렌드십 역 | 프렌드십 하이츠·패러거트 웨스트 역 ↔ 체비 체이스 북쪽 | GNR로 가려면 반드시 지나는 레드 라인 터널 | 야생 구울, 방사능바퀴, 슈퍼 뮤턴트 · 스킬북 2 · 퀀텀 1 |
+| Metro Junction | 메트로 정션 | 체비 체이스 동쪽·듀퐁 북동쪽·베논 광장 북쪽·베논 광장 역 | 도심 북부 마커 넷을 잇는 작은 환승 구간 | 야생 구울 · 스킬북(근접 무기) |
+| Collapsed car tunnel | 붕괴된 차량 터널 | GNR 방송국 뒤 ↔ 듀퐁 광장·듀퐁 역 | 불빛 몇 개뿐인 어두운 도로 터널 | 야생 구울 다수 |
+| Dry sewer | 마른 하수도 | 듀퐁 광장(듀퐁 동쪽) ↔ 희망의 성모병원 | 〈라일리스 레인저스〉에서 병원으로 가는 경로 중 하나 | 탈론 컴퍼니, 슈퍼 뮤턴트, 로봇 · 스킬북(수리) |
+| Sunken sewer | 가라앉은 하수도 | 듀퐁 광장 북쪽 | 초당 최대 20라드의 고방사능 하수도 | 야생 구울, 글로잉 원 · 스킬북(중화기) |
+| Foggy Bottom station | 포기 보텀 역 | 듀퐁 서쪽·조지타운 북쪽 ↔ DCTA 터널·메트로 센트럴 | 화이트 라인 역. 2층 대기실에 레이더 거점 | 레이더 · 스킬북(에너지 무기) · 퀀텀 1 |
+| DCTA tunnel 014-B Potomac | DCTA 터널 014-B 포토맥 | 조지타운 서쪽 ↔ 알링턴 유틸리티·포기 보텀 역 | 하층이 물에 잠긴 터널 | 마이얼럭 · 스킬북(의학) |
+| Arlington utility | 알링턴 유틸리티 | 알링턴 묘지 북쪽 ↔ DCTA 터널 | 무너진 지하 유틸리티 터널과 동굴 | 레이더, 마이얼럭 · 스킬북(중화기) |
+| Arlington/Falls Church Metro | 알링턴/폴스 처치 역 | 알링턴 묘지 남쪽 ↔ 폴스 처치 북쪽 | 붕괴가 심한 화이트 라인 역, 일부 방사능 | 야생 구울 2, 레이더 · 스킬북(중화기, 쓰레기통 안) |
+| Falls Church/Mason Dst Metro | 폴스 처치/메이슨 디스트릭트 역 | 폴스 처치 지하철 ↔ 메이슨 디스트릭트(휴브리스 코믹스) | 블루 라인 '프랭클린 역'. 프랭클린 메트로 유틸리티로 이어짐 | 야생 구울, 방사능바퀴, 땅두더지 · 스킬북 5 |
+| Franklin Metro utility | 프랭클린 메트로 유틸리티 | 폴스 처치/메이슨 디스트릭트 역 아래 | 방사능과 물에 잠긴 순환 유틸리티 터널 | 야생 구울, 글로잉 원 · Burnmaster[화염방사기] · 스텔스 보이 5 · 퀀텀 1 |
+| Minuteman Metro station | 미니트맨 역(침수된 지하철) | 침수된 지하철(미니트맨) ↔ 메이슨 디스트릭트 남부 | 대부분 무너져 마이얼럭이 사는 유틸리티 미로 | 마이얼럭 · 스킬북(소형 화기) · The Shocker(마커 항목) |
+| Georgetown/The Mall Metro | 조지타운/내셔널 몰 역 | 조지타운 남쪽 ↔ 내셔널 몰 북서쪽 | 천장이 무너진 방사능 역 | 야생 구울 · 스킬북(은신) |
+| Penn. Ave/Georgetown Metro | 펜실베이니아 애비뉴/조지타운 역 | 조지타운 동쪽 ↔ 펜실베이니아 애비뉴 북서쪽 | 터널이 무너져 역만 남은 연결 통로 | 레이더, 레이더 경비견 |
+| Penn. Ave/Seward Sq. Metro | 펜실베이니아 애비뉴/수어드 스퀘어 역 | 펜실베이니아 애비뉴 동쪽 ↔ 수어드 스퀘어 북부 지하철 | 무너진 역을 지나는 연결 통로 | 야생 구울 |
+| Penn. Ave/The Mall Metro | 펜실베이니아 애비뉴/내셔널 몰 역 | 펜실베이니아 애비뉴 남쪽 ↔ 내셔널 몰 북동쪽 | 터널이 막힌 단일 역 | 야생 구울 |
+| Sewer (metro) | 하수도(펜실베이니아–수어드) | 펜실베이니아 애비뉴 ↔ 수어드 스퀘어 | 양 끝이 무너져 하수구 맨홀로만 드나드는 연결 하수도 | 슈퍼 뮤턴트, 센타우로스 · 숨긴 물자 쪽지 · 스킬북(자물쇠 따기) |
+| Hazmat disposal site L5 | 유해물 처리장 L5 | 랑팡 ↔ 내셔널 몰 남서쪽 | 방사성 폐기물을 쌓아 둔 동굴망 | 야생 구울, 글로잉 원, 슈퍼 뮤턴트 |
+| Vernon East/Takoma Park | 베논 이스트/타코마 파크 | 베논 광장 동쪽 ↔ 타코마 파크 | 반쯤 무너진 터널(애버내시 역 포함). 타코마 파크로 가는 유일한 길 | 슈퍼 뮤턴트, 마이얼럭 · 스킬북(화술) · 퀀텀 1(베논 광장 항목 집계) |
+| Bethesda underworks | 베데스다 지하 작업장 | 베데스다 폐허 | 표지 오벨리스크가 없는 역. 승강장은 온전하고 하층 창고가 있음 | 야생 구울 · 스킬북 2 · 퀀텀 1(베데스다 폐허 항목 집계) |
+| Fairfax Metro station | 페어팩스 역 | 페어팩스 폐허 | 레이더가 작업장·숙소로 쓰는 역. 입구 지뢰·인계철선 | 레이더 · 스킬북(은신) |
+| Jury St. station / Jury St. tunnels | 주리 스트리트 역 / 주리 스트리트 터널 | 주리 스트리트 지하철역 | 레이더 여섯이 사는 역과 그 안쪽 막다른 터널. 라이언 브리그가 땅두더지 고기를 연구함 | 레이더, 땅두더지 · 라이언 브리그의 원더 미트(Ryan Brigg's Wonder Meat) · 퀀텀 1 |
+| Meresti service tunnel | 메레스티 정비 터널 | 메레스티 조차장·노스웨스트 세네카 역 ↔ 메레스티 지하철역 | 함정(폭발 유모차 등)이 깔린 패밀리 은신처 진입로 | 마이얼럭, 패밀리 경비 · 스킬북(자물쇠 따기) |
+| Northwest Seneca Station | 노스웨스트 세네카 역(내부) | 노스웨스트 세네카 역 ↔ 메레스티 정비 터널 | 화장실 구역과 머피의 실험실만 남은 붕괴 역. 방사능 하수 터널로 이어짐 | 머피의 폭격(Murphy's Bombing Run) |
+| Warrington tunnels / Metro access & generator | 워링턴 터널 / 지하철 진입로·발전기실 | 워링턴 역 ↔ 워링턴 조차장 / 텐페니 타워 | 야생 구울 십여 마리가 있는 터널과, 텐페니 타워 로비로 통하는 잠긴 발전기실 | 야생 구울 · 텐페니 타워(퀘스트) |
 <!-- /GEN:metro -->
 
 ---
@@ -503,9 +738,9 @@
 (작성 중)
 
 <!-- GEN:grades -->
-- **필수** (22): 레이븐 락, 메가톤, 파라다이스폴, 폐차장, 리벳시티, 아르푸, 리틀 램프라잇, 볼트 87, 볼트 101, 수퍼-두퍼 마트, 시타델, 텐페니 타워, 제퍼슨 기념관, 스프링베일, 스미스 케이시의 정비소, 프렌드십 하이츠, 체비 체이스, GNR 방송국 광장, 내셔널 몰, 역사 박물관, 워싱턴 기념비, 기술 박물관
-- **권장** (55): 데이브 공화국, 데스클로 보호구역, MDPL-13 발전소, 개미여인의 은신처, 아가사의 집, 안데일, 오아시스, 캔터베리 커먼, 빅타운, 에버그린 밀, 다리그늘 마을, 그레이디치, 듀코브의 거처, 볼트 92, 볼트 108, 볼트 106, 콘스탄틴 요새, 배니스터 요새, 내셔널 가드 보급창, 인디펜던스 요새, 야오과이 터널, 템플 오브 유니온, 알링턴 도서관, 주리 스트리트 지하철역, 메레스티 조차장, 워링턴 역, 패러거트 웨스트 지하철역, 마리골드 역, MDPL-05 발전소, 새트컴 어레이 NN-03d, 로봇 수리 센터, 로브코 시설, 뉴카-콜라 공장, F. 스콧 키 산책로·캠핑장, 아나코스티아 크로싱, 올드 올니, 디커슨 성막 예배당, 그리너 패스처스 처리장, 저먼타운 경찰 본부, 스프링베일 학교, 조코의 팝 앤드 가스, 던위치 빌딩, WKML 방송국, 마인필드, 베데스다 폐허, 베논 광장, 희망의 성모병원, 스테이츠맨 호텔, 볼트-텍 본사, 조지타운, 메트로 센트럴, 링컨 기념관, 국립 기록 보관소, 라일리 레인저 기지, 알링턴 묘지
-- **선택** (69): 새트컴 어레이 NW-05a, 셰일브리지, 코베가 공장, 케일린의 베드 앤드 브렉퍼스트, 절벽 위 판잣집, 체이스트 에이커스 낙농장, 참혹한 식당, 납골당, 페어팩스 폐허, 록 크리크 동굴, VAPL-84 발전소, 휘턴 무기고, 해밀턴의 은신처, 절벽 동굴, 감시자 본부, 노스웨스트 세네카 역, 침수된 지하철(미니트맨 역), 침수된 지하철(알링턴/웨이스트랜드 역), 방사능 지하철, 몽고메리 카운티 저수지, MDPL-16 발전소, 새트컴 어레이 NW-07c, 방송탑 KB5, MDPL 대형 중계소, 잘버트 브러더스 폐기물 처리장, VAPL-66 발전소, 레드 레이서 공장, 크라이슬러스 빌딩, 앵커리지 기념관, 워링턴 조차장, 알렉산드리아 암스, 메이블산 캠핑장, 익사한 악마의 건널목, 버려진 자동차 요새, 에버글로 국립 캠핑장, 하수도 중계소, 윌헬름 부두, 리클라이닝 그로브스 리조트 주택가, 실버 라이닝 자동차 극장, 페이디드 폼프 주택가, 루스벨트 아카데미, 록브레이커의 마지막 주유소, 할로드 무어스 묘지, 포덤 플래시 기념 구장, 문빔 야외극장, 오버룩 자동차 극장, MDPL-21 발전소, 방송탑 LP8, 메이슨-딕슨 고물상, 중계탑 KX-B8-11, 파이브 액슬스 휴게소, 방송탑 KT8, VAPL-58 발전소, 미지근한 하수도, 듀퐁 광장, 듀퐁 역, 타코마 파크, 타코마 인더스트리얼, 펜실베이니아 애비뉴, 백악관, 국회의사당, 수어드 스퀘어, 수어드 스퀘어 북부 지하철, 랑팡, 폴스 처치, 폴스 처치 지하철, 메이슨 디스트릭트 남부, 휴브리스 코믹스, 마마 돌체 식품 공장
+- **필수** (48): 레이븐 락, 메가톤, 파라다이스폴, 폐차장, 리벳시티, 아르푸, 리틀 램프라잇, 볼트 87, 볼트 101, 수퍼-두퍼 마트, 시타델, 텐페니 타워, 제퍼슨 기념관, 스프링베일, 스미스 케이시의 정비소, 프렌드십 하이츠, 체비 체이스, GNR 방송국 광장, 내셔널 몰, 역사 박물관, 워싱턴 기념비, 기술 박물관, 아웃캐스트 전초기지, 앵커리지 절벽, 포대 전망대 입구, 포대 전망대, 전장 참호, 키메라 전차 정비창, 중국군 전진 기지 델타, 중국군 점령 정유소, 중국군 펄스 필드, 감청 초소, 버려진 광산 마을, 미 육군 야전 본부, 피트 다리, 피트 조차장, 피트 다운타운, 피트 제철 야적장, 피트 업타운, 헤이븐, 애덤스 공군 기지, 아크 앤드 도브 대성당, 캘버트 저택, 필그림스 랜딩, 포인트 룩아웃 부두, 포인트 룩아웃 등대, 성스러운 늪 입구, 난파선 시텁
+- **권장** (73): 데이브 공화국, 데스클로 보호구역, MDPL-13 발전소, 개미여인의 은신처, 아가사의 집, 안데일, 오아시스, 캔터베리 커먼, 빅타운, 에버그린 밀, 다리그늘 마을, 그레이디치, 듀코브의 거처, 볼트 92, 볼트 108, 볼트 106, 콘스탄틴 요새, 배니스터 요새, 내셔널 가드 보급창, 인디펜던스 요새, 야오과이 터널, 템플 오브 유니온, 알링턴 도서관, 주리 스트리트 지하철역, 메레스티 조차장, 워링턴 역, 패러거트 웨스트 지하철역, 마리골드 역, MDPL-05 발전소, 새트컴 어레이 NN-03d, 로봇 수리 센터, 로브코 시설, 뉴카-콜라 공장, F. 스콧 키 산책로·캠핑장, 아나코스티아 크로싱, 올드 올니, 디커슨 성막 예배당, 그리너 패스처스 처리장, 저먼타운 경찰 본부, 스프링베일 학교, 조코의 팝 앤드 가스, 던위치 빌딩, WKML 방송국, 마인필드, 베데스다 폐허, 베논 광장, 희망의 성모병원, 스테이츠맨 호텔, 볼트-텍 본사, 조지타운, 메트로 센트럴, 링컨 기념관, 국립 기록 보관소, 라일리 레인저 기지, 알링턴 묘지, 베일리스 크로스로즈, 무선탑, 열차 터널, 백악관 광장, 리버보트 선착장, 외계인 유도 신호기, 애덤스 저장 시설, 항공 관제탑, 블랙홀 저택, 해안 동굴, 헤일리 철물점, 홈스테드 모텔, 하우스 오브 웨어스, 의식 장소, 잠수함 인양 현장, 터틀도브 수용소, USS 오지맨디어스, 록랜드 차량 터널
+- **선택** (86): 새트컴 어레이 NW-05a, 셰일브리지, 코베가 공장, 케일린의 베드 앤드 브렉퍼스트, 절벽 위 판잣집, 체이스트 에이커스 낙농장, 참혹한 식당, 납골당, 페어팩스 폐허, 록 크리크 동굴, VAPL-84 발전소, 휘턴 무기고, 해밀턴의 은신처, 절벽 동굴, 감시자 본부, 노스웨스트 세네카 역, 침수된 지하철(미니트맨 역), 침수된 지하철(알링턴/웨이스트랜드 역), 방사능 지하철, 몽고메리 카운티 저수지, MDPL-16 발전소, 새트컴 어레이 NW-07c, 방송탑 KB5, MDPL 대형 중계소, 잘버트 브러더스 폐기물 처리장, VAPL-66 발전소, 레드 레이서 공장, 크라이슬러스 빌딩, 앵커리지 기념관, 워링턴 조차장, 알렉산드리아 암스, 메이블산 캠핑장, 익사한 악마의 건널목, 버려진 자동차 요새, 에버글로 국립 캠핑장, 하수도 중계소, 윌헬름 부두, 리클라이닝 그로브스 리조트 주택가, 실버 라이닝 자동차 극장, 페이디드 폼프 주택가, 루스벨트 아카데미, 록브레이커의 마지막 주유소, 할로드 무어스 묘지, 포덤 플래시 기념 구장, 문빔 야외극장, 오버룩 자동차 극장, MDPL-21 발전소, 방송탑 LP8, 메이슨-딕슨 고물상, 중계탑 KX-B8-11, 파이브 액슬스 휴게소, 방송탑 KT8, VAPL-58 발전소, 미지근한 하수도, 듀퐁 광장, 듀퐁 역, 타코마 파크, 타코마 인더스트리얼, 펜실베이니아 애비뉴, 백악관, 국회의사당, 수어드 스퀘어, 수어드 스퀘어 북부 지하철, 랑팡, 폴스 처치, 폴스 처치 지하철, 메이슨 디스트릭트 남부, 휴브리스 코믹스, 마마 돌체 식품 공장, 성스러운 빛 수도원, 박물관 관리청 빌딩, 아크 앤드 도브 묘지, 비치뷰 캠핑장, 재난 구호 전초기지, 도브 삼각주, 침수된 싱크홀, 재배자의 오두막, 허조그 광산, 제트기 추락지, 케니의 동굴, 릴 타이크 놀이집, 마르그리트의 오두막, 오피 일족 묘지, 사냥꾼의 오두막, 쓰레기 더미, 트럭 잔해
 <!-- /GEN:grades -->
 
 ---

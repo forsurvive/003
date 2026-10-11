@@ -19,7 +19,7 @@
 - **아트**: "1950년대 미국이 상상한 원자력 미래"가 핵전쟁으로 무너진 뒤 200년이 지난 모습이다. 오블리비언(Oblivion)과 차별화하려고 채도를 빼고 어둡게 만든 황량한 시각 위에, 진공관·핀·크롬의 레트로 퓨처리즘(Retro-futurism) 산업 디자인과 볼트 보이(Vault Boy)의 명랑한 아이콘을 대비시킨다. 콘셉트는 유일한 콘셉트 아티스트 애덤 애더모위츠(Adam Adamowicz)가 그렸다.
 - **음악**: 이논 주르의 앰비언트 오케스트라 스코어(앨범 29곡)가 탐험·전투·던전·정착지 상황에 맞춰 흐르고, 라디오에서는 1930~50년대 노래가 흐른다.
 - **라디오**: 갤럭시 뉴스 라디오(Galaxy News Radio, GNR)의 쓰리독(Three Dog)이 20곡의 옛 노래와 뉴스·공익광고·라디오 드라마를 틀며 플레이어의 행적을 보도한다. 엔클레이브 라디오(Enclave Radio)는 행진곡과 존 헨리 이든(John Henry Eden) 대통령의 연설을, 아가사의 방송국(Agatha's Station)은 바이올린 클래식을 내보낸다.
-- **연출**: 컷신은 인트로와 엔딩뿐이고, 나머지는 게임 엔진 안에서 벌어지는 장면(출생, 볼트 문 개방, 메가톤 폭발, 트랜퀼리티 레인, 리버티 프라임 진군)과 V.A.T.S. 킬캠이 담당한다.
+- **연출**: 컷신은 인트로와 엔딩뿐이다. 나머지 핵심 순간은 게임 엔진 안에서 벌어지는 장면과 V.A.T.S. 킬캠이 맡는다. 대표 장면은 출생, 볼트 문 개방, 메가톤(Megaton) 폭발, 트랜퀼리티 레인(Tranquility Lane), 리버티 프라임(Liberty Prime) 진군이다.
 - **톤**: 비참한 현실 + 1950년대식 낙관 + 블랙 유머. 이 세 가지의 부조화가 폴아웃다움의 핵심이다.
 
 ### 1.4 표기 메모
@@ -37,7 +37,7 @@
 | 원자력 시대 낙관 | 원자력과 미래 기술에 대한 사회 전체의 열광 | 뉴카-콜라(Nuka-Cola) 광고, 핵분열 엔진 자동차, "Prepare for the Future" |
 | 1950년대 아메리카나 | 소비주의, 애국주의, 반공주의, TV 디너, 교외 주택 | 포스터·광고, 트랜퀼리티 레인(Tranquility Lane) |
 | 황량함과 부패 | 채도를 뺀 갈색 황무지와 회색·청색 도심 | 수도 황무지(Capital Wasteland)의 마른 풀과 불탄 나무 |
-| 스캐빈징 | 전쟁 전 물건을 주워 붙인 생존 미학 | 메가톤(Megaton)의 비행기 잔해 성벽, 레이더 갑옷, 제작 무기 |
+| 스캐빈징 | 전쟁 전 물건을 주워 붙인 생존 미학 | 메가톤(Megaton)의 비행기 잔해 성벽, 레이더(Raiders) 갑옷, 제작 무기 |
 | 오웰풍 권위 | 거대한 강철·콘크리트 관공서, 볼트의 통제 사회 | D.C. 정부 건물, 볼트 점프슈트, "The Overseer's authority is absolute." |
 | 명랑한 잔혹 | 웃는 마스코트와 만화적 고어 | 볼트 보이 아이콘, 블러디 메스(Bloody Mess) |
 | B급 SF·괴수 영화 | "탈 쓴 배우" 같은 괴물, 거대 개미, 외계인 | 마이얼럭(Mirelurk), *그것들!(Those!)*, [MZ] |
@@ -59,8 +59,8 @@
 | 실내(던전·주거) | "전쟁 전 문화의 흔적 + 수년간의 부패와 때 + 현재 생존자의 흔적"이라는 세 겹 레이어 | *The Art of Fallout 3* "The World" |
 | 볼트 내부 | 볼트-텍(Vault-Tec) 상징색인 청색·노란색(볼트 점프슈트, 볼트 내 포스터). 조명·재질 세부는 (코퍼스 미확인) | 포스터 "Children are the Future"의 청색 바탕 노란 글씨, `Vault Boy`의 점프슈트 색 설명 |
 | 트랜퀼리티 레인 | 단색(흑백) 이미지스페이스 효과로 1950년대 TV 시트콤처럼 연출 | `Tranquility Lane` |
-| [TP] 피트 | 주황빛 대기. 네이선 퍼키파일(Nathan Purkeypile)이 버닝맨 축제에서 착안 | `The Pitt (add-on)` |
-| [PL] 포인트 룩아웃 | 어둡고 탁한 늪지 | `Point Lookout (add-on)` |
+| [TP] 피트(The Pitt) | 주황빛 대기. 네이선 퍼키파일(Nathan Purkeypile)이 버닝맨 축제에서 착안 | `The Pitt (add-on)` |
+| [PL] 포인트 룩아웃(Point Lookout) | 어둡고 탁한 늪지 | `Point Lookout (add-on)` |
 | 핍-보이 화면 | 기본 녹색 단색 CRT(뉴베가스는 기본값을 호박색으로 변경). 화면 색은 바꿀 수 있지만 3인칭 시점의 팔 위 핍-보이는 항상 녹색 | `Pip-Boy 3000` |
 
 - 펠리는 폴아웃 3의 어둡고 칙칙한 톤을 "채도 높고 밝은 오블리비언과 달라 보여야 한다는 의식에서 나온, 거의 과잉 교정"이라고 회고했다. 이 결정이 폴아웃 3에 "매우 하드코어한 시각 정체성"을 줬다는 것이 개발진의 평가다.
@@ -68,13 +68,13 @@
 
 ### 2.4 폐허와 D.C. 랜드마크 표현
 - **"남아 있을 만큼만" 파괴**: 실제 핵전쟁이라면 남는 건물이 거의 없다는 조사 결과에도, 탐험할 "거리"를 남기기 위해 파괴 수준을 의도적으로 조절했다. 크게 부서졌지만 형태가 남은 건물이 던전이 된다.
-- **도심 = 거대한 야외 던전**: 도심을 여러 구역(셀)으로 나누고 무너진 건물·콘크리트 잔해·철근 벽으로 막은 뒤 지하철 터널로 잇는 구조다. 로딩 화면 힌트도 "슈퍼 뮤턴트가 점거한 D.C. 폐허에는 대개 버려진 지하철 터널로만 갈 수 있다"고 안내한다.
+- **도심 = 거대한 야외 던전**: 도심을 여러 구역(셀)으로 나누고 무너진 건물·콘크리트 잔해·철근 벽으로 막은 뒤 지하철 터널로 잇는 구조다. 로딩 화면 힌트도 "슈퍼 뮤턴트(Super mutant)가 점거한 D.C. 폐허에는 대개 버려진 지하철 터널로만 갈 수 있다"고 안내한다.
 - **사실적인 오브젝트 밀도**: 멀린스의 페인팅이 월드 아티스트에게 "현실적인 파괴와 부패"의 밀도 기준을 줬고, 엔진에서 원활히 돌리기 위해 여러 기법이 필요했다.
 
 | 랜드마크 | 영문명 | 폐허 표현 | 연출상 역할 |
 |---|---|---|---|
 | 워싱턴 기념비 | Washington Monument | 손상됐지만 서 있음. 입구 문 2개는 무너지고 엘리베이터만 작동. 꼭대기에 GNR 중계 장비, 조지 워싱턴 동상은 사라지고 받침대만 남음 | 도심 어디서나 보이는 길잡이. 유일하게 탑승 중 이동이 보이는 엘리베이터 |
-| 국회의사당 | Capitol Building | 지역 최대급 슈퍼 뮤턴트 거점. 원형 홀 중앙에 슈퍼 뮤턴트 베히모스 | 슈퍼 뮤턴트·탈론 컴퍼니(Talon Company)·(후반) 엔클레이브의 3파전 전장 |
+| 국회의사당 | Capitol Building | 지역 최대급 슈퍼 뮤턴트 거점. 원형 홀 중앙에 슈퍼 뮤턴트 베히모스(Super mutant behemoth) | 슈퍼 뮤턴트·탈론 컴퍼니(Talon Company)·(후반) 엔클레이브의 3파전 전장 |
 | 링컨 기념관 | Lincoln Memorial | 벽이 부식되고 링컨 석상의 머리가 없음 | *국가 원수(Head of State)*에서 머리를 되찾아 복원하는 상징 장면 |
 | 제퍼슨 기념관 | Jefferson Memorial | 정화 계획(Project Purity)의 정화기(Purifier)가 들어선 기념관. 지하에 주인공이 태어난 방이 남아 있음 | 메인 스토리의 시작(출생)과 끝(정화기 가동) |
 | 백악관 | White House | 완전히 파괴된 방사능 크레이터, 글로잉 원(Glowing one)이 배회 | 국가 상징의 완전한 소멸 |
@@ -87,9 +87,9 @@
 ### 2.5 볼트 인테리어
 - **볼트 점프슈트**: 애더모위츠가 가장 많은 스케치를 그린 의상이다. 1950년대 레트로 감각에 디스토피아·오웰풍 통제 사회의 느낌을 섞도록 설계됐다. 핍-보이, BoS 파워 아머와 함께 "가장 먼저 확정해야 할 3대 아이콘"이었다.
 - **볼트 101(Vault 101) 구조**: 입구 동굴 → 거대한 볼트 문 → 아트리움(관리 구역, 사교 공간) → 하층(진료소, 교실, 식당, 주거) → 원자로층. 층마다 서쪽으로 비켜 내려가는 배치이며, 방마다 표지판이 붙어 있다.
-- **입구의 첫인상**: 볼트 문 바로 앞 동굴에는 시위대의 해골과 피켓 3개가 흩어져 있다. 대전쟁 날 볼트에 들어가지 못한 사람들을 말없이 보여 주는 첫 환경 스토리텔링이다.
+- **입구의 첫인상**: 볼트 문 바로 앞 동굴에는 시위대의 해골과 피켓 3개가 흩어져 있다. 대전쟁(The Great War) 날 볼트에 들어가지 못한 사람들을 말없이 보여 주는 첫 환경 스토리텔링이다.
 - **선전 장치**: 볼트 안 포스터("Thank You, Overseer!", "Hard Work is Happy Work", "Children are the Future", "Be Aware Safety Always!")와 PA 방송("Remember: Vault 101 is America.")이 통제된 낙원을 연출한다. 후반 사이드 퀘스트 *고향의 위기(Trouble on the Homefront)*에서는 같은 포스터가 "Fuck You, Overseer!", "Work is Work"로 낙서돼 있어 볼트의 변화를 시각적으로 전달한다.
-- **다른 볼트들**: 버려진 볼트는 지하철과 함께 표준 던전 유형이다. 실험의 흔적(볼트 112의 가상현실 포드 등)이 인테리어로 드러난다. 볼트별 상세는 [RD-12](12_world-structure-settlements.md).
+- **다른 볼트들**: 버려진 볼트는 지하철과 함께 표준 던전 유형이다. 볼트 112(Vault 112)의 가상현실 포드처럼 실험의 흔적이 인테리어로 드러난다. 볼트별 상세는 [RD-12](12_world-structure-settlements.md).
 
 ### 2.6 포스터·광고·그래피티
 
@@ -116,19 +116,19 @@
 | 위치 | 그래피티 | 기능 |
 |---|---|---|
 | 수도 황무지 곳곳 | BoS 표식, 레이더 낙서(버섯구름, BoS 문양 위 덧칠), "FUCK YOU" | 세력권 표시, 거친 분위기 |
-| 패러거트 웨스트 지하철역 | GNR로 가는 길 표시 | 메인 퀘스트 길 안내 |
-| 아르푸 웨스트 저택 | "THE FAMILY" | 퀘스트 *피의 유대(Blood Ties)*의 단서 |
-| 워링턴 역 | "The revolution starts here" + 빨간 화살표 | 로이 필립스(Roy Phillips)의 선전·길 안내 |
-| 알링턴 도서관 아동 열람실 | 대전쟁 그림 | 아이들의 시선으로 본 핵전쟁 |
+| 패러거트 웨스트 지하철역(Farragut West Metro station) | GNR로 가는 길 표시 | 메인 퀘스트 길 안내 |
+| 아르푸(Arefu) 웨스트 저택(West residence) | "THE FAMILY" | 퀘스트 *피의 유대(Blood Ties)*의 단서 |
+| 워링턴 역(Warrington station) | "The revolution starts here" + 빨간 화살표 | 로이 필립스(Roy Phillips)의 선전·길 안내 |
+| 알링턴 도서관(Arlington Library) 아동 열람실 | 대전쟁 그림 | 아이들의 시선으로 본 핵전쟁 |
 | 볼트 101(후반) | "THANK YOU → FUCK YOU OVERSEER" | 볼트 사회의 붕괴 |
-| 레인저 기지 | "Reillys Rangers", 클로버와 교차한 칼 문장 | 용병 분대의 정체성 |
+| 레인저 기지(Ranger compound) | "Reillys Rangers", 클로버와 교차한 칼 문장 | 용병 분대의 정체성 |
 | [TP] 피트 | Uptown, Steelyard, Arena, Downtown, The Mill 방향 표시, 피 | 별도 지도의 길 안내 |
-| [PL] 보드워크 서쪽 | "LUCKY YOU" | 불길한 농담 |
+| [PL] 보드워크(boardwalk) 서쪽 | "LUCKY YOU" | 불길한 농담 |
 
 ### 2.7 볼트 보이 아이콘 체계
 - **기원**: 폴아웃 1의 레너드 보야스키(Leonard Boyarsky)가 모노폴리 카드와 그 마스코트(리치 엉클 페니백스)에서 착안해 "스킬 가이"를 고안했다. 조지 아먼드(George Almond)가 첫 카드를, 트라멜 레이 아이작(Tramell Ray Isaac)이 오늘날의 모습을 완성했다. 빅보이 햄버거 마스코트와도 닮은 20세기 중반 아메리카나다.
 - **폴아웃 3의 볼트 보이**: 나탈리아 스미르노바(Natalia Smirnova)가 전부 그렸다. 키가 작고 다부지며 눈이 더 작고 동그란 것이 특징이다. 폴아웃 3는 게임 안에서 "볼트 보이"라는 이름을 되살렸다(택틱스가 핍-보이와 혼동했던 것을 바로잡음).
-- **쓰임새**: 퍽·스킬·S.P.E.C.I.A.L. 화면의 일러스트, 업적·트로피 아이콘, 볼트텍 보블헤드, 포스터·광고, 그림책 *너는 스페셜해!(You're SPECIAL!)*, 로딩 화면. 거의 모든 능력치와 행동을 볼트 보이 한 명의 몸짓으로 표현하는 "아이콘 언어"다.
+- **쓰임새**: 퍽·스킬·S.P.E.C.I.A.L. 화면의 일러스트, 업적·트로피 아이콘, 볼트텍 보블헤드(Vault-Tec bobblehead), 포스터·광고, 그림책 *너는 스페셜해!(You're SPECIAL!)*, 로딩 화면. 거의 모든 능력치와 행동을 볼트 보이 한 명의 몸짓으로 표현하는 "아이콘 언어"다.
 - **성격 연출**: 늘 낙관적이고 성실한 표정이지만, 그 주변에서 만화적인 신체 훼손이 일어나도 태연하다. 볼트-텍의 가학성을 은근히 드러내는 장치다. 엄지척은 "핵폭발과의 안전거리 측정"이라는 소문과 달리 "괜찮지 않은데도 괜찮다고 말하는 긍정적 태도"를 뜻한다(브라이언 파고, 트라멜 레이 아이작).
 - **삭제된 그림**: 파생 능력치(소지 한도, 근접 피해, 피해 저항, 독 저항, 체력, 회복 속도, 치명타 확률, 행동력)용 볼트 보이 그림이 만들어졌지만, 플레이어가 파생 능력치를 보는 화면이 없어 쓰이지 않았다.
 
@@ -141,16 +141,16 @@
 
 | 분류 | 디자인 키워드 | 근거·예시 |
 |---|---|---|
-| 인간 복장 | 인간 자체는 변형하지 않고 의상·장비로 표현. 원피스 의상 + 별도 모자(모듈식 포기 → 디자인 자유). 전쟁 전 옷 + 주운 잡동사니. "민간 복장에 전투·생존 감각을 결합한, 과거의 잔해를 주워 입는 미학" | 황무지 주민, 레이더, 노예 사냥꾼, 상인. 애더모위츠는 이를 "데이비드 린치가 디자인한 *텍사스 전기톱 학살 3000*"에 빗댐 |
+| 인간 복장 | 인간 자체는 변형하지 않고 의상·장비로 표현. 원피스 의상 + 별도 모자(모듈식 포기 → 디자인 자유). 전쟁 전 옷 + 주운 잡동사니. "민간 복장에 전투·생존 감각을 결합한, 과거의 잔해를 주워 입는 미학" | 황무지 주민, 레이더, 노예 사냥꾼(Slavers), 상인. 애더모위츠는 이를 "데이비드 린치가 디자인한 *텍사스 전기톱 학살 3000*"에 빗댐 |
 | 레이더 | 매드맥스풍 폭주족 패션, 한쪽 소매 가죽 갑옷 | `Fallout 3 cultural references`의 매드맥스 항목 |
 | 악역 | 성격을 먼저 상정하고 의상·소지품·풍화로 페르소나를 구체화. 변화 과정을 기록해 팀과 공유 | 애더모위츠의 작업 원칙 |
 | BoS 파워 아머 | 원작에 충실하되 새롭게. 콘셉트 단계를 건너뛰고 처음부터 3D로 제작한 첫 의상 | T-45d 파워 아머, 인트로의 팔라딘 |
-| 슈퍼 뮤턴트 | *불타는 안장*의 몽고("쏘지 마, 화만 나") 모티브. 나무 파쇄기에 들어갔다 나온 듯한 외형, 고철을 망치로 두드려 만든 흉갑·견갑 | 슈퍼 뮤턴트 전 계열 |
+| 슈퍼 뮤턴트 | *불타는 안장(Blazing Saddles)*의 몽고("쏘지 마, 화만 돋울 뿐이야") 모티브. 나무 파쇄기에 들어갔다 나온 듯한 외형, 고철을 망치로 두드려 만든 흉갑·견갑 | 슈퍼 뮤턴트 전 계열 |
 | 구울 | 방사능에 장기 노출된 피부. 텍스처 아티스트가 미묘한 변이를 칠함 | 구울, 야생 구울(Feral ghoul) |
 | 크리처 | 성격과 진화 경로부터 설계. 해부학을 레고처럼 다룸(종양, 혹, 변색, 추가 부속지). 포식-피식 관계를 보존한 뒤틀린 생태계. B급 영화의 "괴수 탈 쓴 배우" 정서 | 마이얼럭 = 메릴랜드의 꽃게가 변이한 것 |
-| 로봇 | 파글리아룰로의 주문은 "더 로비 더 로봇처럼!". 원작 디자인 계승(미스터 핸디는 본래 용도에 맞게 더 둥글고 친근하게), 소련 우주선 감각, 그리블링(의미심장한 잔디테일) | 프로텍트론(Protectron, 1950년대 로봇의 정수), 센트리 봇(Sentry bot, 삼각대 위 전차) |
+| 로봇 | 파글리아룰로의 주문은 "더 로비 더 로봇처럼!". 원작 디자인 계승(미스터 핸디(Mister Handy)는 본래 용도에 맞게 더 둥글고 친근하게), 소련 우주선 감각, 그리블링(의미심장한 잔디테일) | 프로텍트론(Protectron, 1950년대 로봇의 정수), 센트리 봇(Sentry bot, 삼각대 위 전차) |
 | 리버티 프라임 | *아이언 자이언트*를 떠올린 친근한 거대 로봇, 캡틴 아메리카 같은 성격. 핵탄두 "팻 보이"를 미식축구공처럼 던짐 | 리버티 프라임(Liberty Prime) |
-| 무기 | 평범한 총기는 실존 총의 요소를 조합해 "익숙하지만 새로운" 형태로. 제작·이색 무기는 과감하게, 그러나 기계적으로 그럴듯하게 | 시시케밥·AER9 레이저 소총(애더모위츠가 가장 아낀 디자인) |
+| 무기 | 평범한 총기는 실존 총의 요소를 조합해 "익숙하지만 새로운" 형태로. 제작·이색 무기는 과감하게, 그러나 기계적으로 그럴듯하게 | 시시케밥(Shishkebab)·AER9 레이저 소총(애더모위츠가 가장 아낀 디자인) |
 | 하드웨어 | 1950~60년대 상업·군사 산업 디자인(휴대용 TV, 야전 무전기) | 터미널, 라디오, 핍-보이 |
 
 ### 2.10 콘셉트 아트 제작 과정
@@ -262,7 +262,7 @@
 |---|---|---|---|---|---|
 | 갤럭시 뉴스 라디오 | Galaxy News Radio (GNR) | 쓰리독(에릭 토드 델럼스(Erik Todd Dellums)). 사망 시 기술자 마거릿(Margaret) | GNR 방송국 광장(GNR building plaza) | 1940년대 노래 20곡 + 뉴스 + 공익광고 + 라디오 드라마. "옳은 싸움(the Good Fight)"을 내건 공동체 방송 | 처음엔 약한 신호, 메인 퀘스트 *갤럭시 뉴스 라디오*로 전역 송출 |
 | 엔클레이브 라디오 | Enclave Radio | 존 헨리 이든 대통령(맬컴 맥다월(Malcolm McDowell)) | 레이븐 락(Raven Rock), 아이봇(Eyebot)이 중계 | 애국 행진곡 8곡 + 대통령 담화·연설 + 명언 | 볼트를 나와 처음 잡히는 방송. 레이븐 락 파괴 시 종료 |
-| 아가사의 방송국 | Agatha's Station | 아가사(Agatha)(다이애나 솔(Diana Sowle)). 연주는 헤더 맥아더(Heather MacArthur) | 아가사의 집(Agatha's house) | 클래식 바이올린 5곡 + 즉흥 연주 6곡 + 헌정 멘트 | *애거사의 노래(Agatha's Song)* 완료 후 개국, 전역 송출 |
+| 아가사의 방송국 | Agatha's Station | 아가사(Agatha)(다이애나 솔(Diana Sowle)). 연주는 헤더 맥아더(Heather MacArthur) | 아가사의 집(Agatha's house) | 클래식 바이올린 5곡 + 즉흥 연주 6곡 + 헌정 멘트 | *아가사의 노래(Agatha's Song)* 완료 후 개국, 전역 송출 |
 | 볼트 101 PA 시스템 | Vault 101 PA System | 볼트 안내 방송 | 볼트 101 내부 | 연주곡 6곡 + 볼트-텍 홍보 상식 + 생활 수칙 + 방사능 수치 | 핍-보이를 받는 순간부터 수신. 후반 재방문 시 잡음만 |
 | 아메리카 인민공화국 라디오 | People's Republic of America Radio | 중국 측 선전 방송(목소리 잰 존스(Jan Johns)) | 마마 돌체스(Mama Dolce's) 식품 공장 | 대전쟁 전 중국의 대미 선전을 200년째 반복 | 남부 알링턴 일대의 좁은 범위 |
 | 피트 방송 [TP] | Pitt broadcast | 애셔(Ashur)의 연설 | 피트 다운타운(The Pitt Downtown) | 노동을 찬양하는 선동 연설 14종을 무작위 반복, 사이사이 잡음 | 결말에 따라 잡음만 남음 |
@@ -273,8 +273,8 @@
 - **진행 형식**: 음악 → 진행자 인트로 → 뉴스(일반 뉴스, 퀘스트별 뉴스, 공익광고) → 아웃트로 → 음악. 쓰리독은 거의 모든 방송을 녹음해 내보낸다("녹음으로 전해 드리는 요새 벙커"라는 자기 언급까지 있다).
 - **카르마 칭호로 부르기**: 퀘스트 뉴스 앞에서 쓰리독은 플레이어를 현재 카르마 칭호로 부른다. 예를 들어 칭호가 "팔라딘(Paladin)"이면 BoS 팔라딘이 아니라 "볼트 점프슈트를 입은 빛나는 기사"라고 비튼다.
 - **퀘스트 뉴스**: 퀘스트마다 미해결 / A 결말 / B 결말 버전이 있다. 예를 들어 메가톤 핵폭탄을 해체하면 그 사실을 콕 집어 보도한다. 뉴스 원문 목록은 각 퀘스트 문서([RD-03](03_main-story-part1.md)~[RD-07](07_misc-quests-encounters.md))가 다룬다.
-- **공익광고 주제**: 구울도 사람이다 / 레이더가 오면 숨어라 / 슈퍼 뮤턴트는 사람을 잡아간다 / 무기 정비 / 야오과이에게 먹이 주지 마라 / 방사능 대비(라드어웨이, 라드-X).
-- **라디오 드라마**: *허버트 '대링' 대시우드와 구울 하인 아가일의 모험(The Adventures of Herbert "Daring" Dashwood and his Ghoul Manservant Argyle)*. 전쟁 전 라디오 연속극 형식의 "실화" 모험극으로 4화로 구성된다("Escape from Paradise Falls!", "Super Mutant Mayhem!", "In the Black Widow's Web!", "Between Rockopolis and a Hard Place!"). 에밀 파글리아룰로가 썼고, 제프 베이커(Jeff Baker)가 대부분의 배역을 맡았다. 수록곡 "Jazzy Interlude"를 오프닝·엔딩에 쓴다. 실존 인물 대시우드는 텐페니 타워에 살고 있다.
+- **공익광고 주제**: 구울도 사람이다 / 레이더가 오면 숨어라 / 슈퍼 뮤턴트는 사람을 잡아간다 / 무기 정비 / 야오과이(Yao guai)에게 먹이 주지 마라 / 방사능 대비: 라드어웨이(RadAway)·라드-X(Rad-X).
+- **라디오 드라마**: *허버트 '대링' 대시우드와 구울 하인 아가일의 모험(The Adventures of Herbert "Daring" Dashwood and his Ghoul Manservant Argyle)*. 전쟁 전 라디오 연속극 형식의 "실화" 모험극으로 4화로 구성된다("Escape from Paradise Falls!", "Super Mutant Mayhem!", "In the Black Widow's Web!", "Between Rockopolis and a Hard Place!"). 에밀 파글리아룰로가 썼고, 제프 베이커(Jeff Baker)가 대부분의 배역을 맡았다. 수록곡 "Jazzy Interlude"를 오프닝·엔딩에 쓴다. 극 중 주인공 대시우드는 실제로 텐페니 타워에 사는 NPC다.
 - **쓰리독 사망 시**: 기술자 마거릿이 마지못해 음악만 튼다. 연출상 "진행자 없는 라디오"가 세계의 상실을 전달한다.
 - **[BS] 이후**: 정화된 물 보급, 오염수 의혹(FEV 투입 시), 리버티 프라임 파괴, (플레이어 선택에 따라) 시타델 피격 등 후일담 뉴스가 추가된다.
 - **개발 비화**: 퀘스트 디자이너 프레드 젤레니(Fred Zeleny)가 "플레이어 PC의 음악 파일을 GNR 곡 목록에 넣는 퀘스트"를 제안했으나, 토드 하워드가 음악 라이선스와 게임 톤에 미칠 영향을 우려해 반려했다.
@@ -333,7 +333,7 @@
 
 | 연설 | 원제 | 요지 |
 |---|---|---|
-| 1 | Baseball | 국민 오락 야구, 전쟁 전 각 주의 팀과 "캐피털 콩그레스먼" |
+| 1 | Baseball | 국민 오락 야구, 전쟁 전 각 주의 팀과 "캐피털 콩그레스먼(Capital Congressmen)" |
 | 2 | Rebuild the Capital Wasteland | 수도를 황무지로 만든 전쟁 전 지도자들의 "무능"을 비난 |
 | 3 | My Presidency | 선거는 당연히 있었지만 "국가 안보상" 밝힐 수 없다는 얼버무림 |
 | 4 | Let's Take a Tally | 레이더, BoS 등 "질서를 깨는 선동가" 목록 |
@@ -343,7 +343,7 @@
 | 8 | The Colonel's Restoration | 어텀 대령 소개와 대령의 발언 |
 | 9 | We Are at War | 정화기를 노리는 BoS를 "반역자"로 규정한 전시 연설 |
 
-- **명언 코너**: 에이브러햄 링컨, 마틴 반 뷰렌 등 역대 대통령의 말을 인용한다. 예: "Avoid popularity if you would have peace."(평화를 원하거든 인기를 멀리하라 — 링컨)
+- **명언 코너**: 에이브러햄 링컨(Abraham Lincoln), 마틴 반 뷰렌(Martin Van Buren) 등 역대 대통령의 말을 인용한다. 예: "Avoid popularity if you would have peace."(평화를 원하거든 인기를 멀리하라 — 링컨)
 - **대표 멘트**: "This is President Eden, and you're listening to Enclave Radio -- the Voice of America."(이든 대통령입니다. 여러분은 엔클레이브 라디오, 미국의 목소리를 듣고 계십니다.)
 - **연출 근거**: 이든의 담화는 대공황기 프랭클린 루스벨트의 "노변담화"를 느슨하게 본떴다. "The Stars and Stripes Forever" 위에 대통령이 말하는 연출은 영화 *소년과 개(A Boy and His Dog)*의 장면과 같은 방식이다. 메가톤의 네이선 바르가스(Nathan Vargas)는 이 방송의 팬이라 곡을 흥얼거린다. 일부 NPC는 방송이 녹음 반복인지 의심한다.
 
@@ -361,7 +361,7 @@
 [^bh]: `Fallout 3 soundtrack`은 작자를 Julia Ward Howe(작사자)로 적는다.
 
 ### 4.5 아가사의 방송국
-- **성격**: 노부인 아가사가 볼트 92(Vault 92)에 있던 집안의 바이올린 "솔 스트라디바리우스(Soil Stradivarius)"를 되찾은 뒤(퀘스트 *애거사의 노래*), 세상을 떠난 남편의 무선 장비로 자신을 찾아 주는 상인들에게 보답하려고 연 방송이다. 모든 곡은 미리 녹음돼 있어, 그녀 앞에 서 있어도 방송이 흐르고 그녀가 죽어도 방송은 계속된다.
+- **성격**: 노부인 아가사가 볼트 92(Vault 92)에 있던 집안의 바이올린 "솔 스트라디바리우스(Soil Stradivarius)"를 되찾은 뒤(퀘스트 *아가사의 노래*), 세상을 떠난 남편의 무선 장비로 자신을 찾아 주는 상인들에게 보답하려고 연 방송이다. 모든 곡은 미리 녹음돼 있어, 그녀 앞에 서 있어도 방송이 흐르고 그녀가 죽어도 방송은 계속된다.
 - **헌정 멘트**: 곡 앞에 정신나간 볼프강(Crazy Wolfgang), 닥 호프(Doc Hoff), 상인 크로우(Crow), 주인공, 어머니, 세상을 떠난 남편 등에게 바치는 짧은 말을 한다. 죽은 상인은 더 이상 언급하지 않는다.
 - **대표 멘트**: "Just a word to my Wasteland friends out there. Stay safe, stay healthy and above all, stay happy."(황무지에 있는 여러분들께 한마디 하고 싶군요. 몸 조심하시고, 건강하세요. 그리고 행복하세요. — 한글 패치 번역)
 - 개국하면 쓰리독이 GNR에서 축하하며 "엔클레이브 선전보다 훨씬 낫다"고 반긴다.
@@ -406,11 +406,11 @@
 | 쓰리독 | Three Dog | 에릭 토드 델럼스 | Erik Todd Dellums | - | GNR 진행자 |
 | 아마타 알모도바르 | Amata Almodovar | 오데트 아나블 | Odette Annable | - | 어린 아마타는 스테퍼니 조이 |
 | 어텀 대령 | Colonel Augustus Autumn | 피터 길 | Peter Gil | 크롬웰(Confessor Cromwell) | |
-| 오윈 라이언(엘더 라이언) | Owyn Lyons | 윌리엄 배싯 | William Bassett | - | |
+| 오윈 라이언(엘더 라이언) | Owyn Lyons (Elder Lyons) | 윌리엄 배싯 | William Bassett | - | |
 | 사라 라이언 | Sarah Lyons | 헤더 마리 마스든 | Heather Marie Marsden | - | |
 | 매디슨 리(리 박사) | Madison Li | 제니퍼 매시 | Jennifer Massey | 엔클레이브 장교·과학자(여) | |
 | 캐서린(어머니), 모이라 브라운 | Catherine, Moira Brown | 캐런 카본 | Karen Carbone | 노바(Nova), 시드니(Sydney), 레드(Red), 로보브레인(Robobrain) 등 | |
-| 알폰스 알모도바르(오버시어) | Alphonse Almodovar | 덩컨 후드 | Duncan Hood | 듀코브(Dukov), 레지널드 로스차일드(Reginald Rothchild) | |
+| 알폰스 알모도바르(오버시어) | Alphonse Almodovar (Overseer) | 덩컨 후드 | Duncan Hood | 듀코브(Dukov), 레지널드 로스차일드(Reginald Rothchild) | |
 | 버치 들로리아, 하크니스 | Butch DeLoria, Harkness | 크레이그 세클러 | Craig Sechler | 정신나간 볼프강, 탈론 컴퍼니 용병(남) 등 | 어린 버치는 제이컵 스톨네이커 |
 | 미스터 버크, 폭스 | Mister Burke, Fawkes | 웨스 존슨 | Wes Johnson | 슈퍼 뮤턴트, 프로텍트론, 센트리 봇 | |
 | 콜린 모리아티, 셰런, 괍 | Colin Moriarty, Charon, Gob | 마이크 로슨 | Mike Rosson | 로이 필립스, 미스터 크로울리(Mister Crowley), 구울(남) | |
@@ -418,11 +418,11 @@
 | 아가사, 올드 레이디 파머 | Agatha, Lucy Palmer | 다이애나 솔 | Diana Sowle | 마거릿, 올드 레이디 디더스(Old Lady Dithers) | |
 | 루카스 심즈 | Lucas Simms | 그레고리 L. 윌리엄스 | Gregory L. Williams | - | |
 | 앨리스터 텐페니 | Allistair Tenpenny | 찰리 워런 | Charlie Warren | - | |
-| 베티(스타니슬라우스 브라운 박사의 아바타) | Betty | 코리앤 스타인 | Corrieanne Stein | - | 브라운 본인은 `Fallout 3 voice actors`가 디 브래들리 베이커(Dee Bradley Baker)로 적으나 크레딧 문서에는 없음 |
-| 스탠리, 한니발 햄린, RL-3 하사 | Stanley Armstrong, Hannibal Hamlin, Sergeant RL-3 | 제프 베이커 | Jeff Baker | 미스터 거츠(Mister Gutsy), 라디오 드라마 대부분의 배역, 남성 일반 NPC 다수 | 가장 많은 배역을 맡음 |
-| 제리코, 율로지 존스, 브로치 선생 | Jericho, Eulogy Jones, Edwin Brotch | 제임스 루이스 | James Lewis | 레이더(남) | |
+| 베티(스타니슬라우스 브라운 박사의 아바타) | Betty (Dr. Stanislaus Braun) | 코리앤 스타인 | Corrieanne Stein | - | 브라운 본인은 `Fallout 3 voice actors`가 디 브래들리 베이커(Dee Bradley Baker)로 적으나 크레딧 문서에는 없음 |
+| 스탠리 암스트롱, 한니발 햄린, RL-3 하사 | Stanley Armstrong, Hannibal Hamlin, Sergeant RL-3 | 제프 베이커 | Jeff Baker | 미스터 거츠(Mister Gutsy), 라디오 드라마 대부분의 배역, 남성 일반 NPC 다수 | 가장 많은 배역을 맡음 |
+| 제리코, 율로지 존스, 에드윈 브로치 | Jericho, Eulogy Jones, Edwin Brotch | 제임스 루이스 | James Lewis | 레이더(남) | |
 | 클로버, 루시 웨스트 | Clover, Lucy West | 잰 존스 | Jan Johns | 시에라 페트로비타(Sierra Petrovita), 아메리카 인민공화국 라디오 | |
-| 스타 팔라딘 크로스, 라일리 | Star Paladin Cross, Reilly | 섀리 엘리커 | Shari Elliker | 비어트리스 암스트롱(Beatrice Armstrong), 엘런 들로리아, 실버(Silver), 여성 일반 NPC 다수 | |
+| 스타 팔라딘 크로스, 라일리 | Star Paladin Cross, Reilly | 섀리 엘리커 | Shari Elliker | 비어트리스 암스트롱(Beatrice Armstrong), 엘런 들로리아(Ellen DeLoria), 실버(Silver), 여성 일반 NPC 다수 | |
 | 조나스 파머, 핑커톤, 밴스, 데이브 | Jonas Palmer, Pinkerton, Vance, Dave | 그레고리 고턴 | Gregory Gorton | 리벳시티 프레스턴 박사(Dr. Preston) 등 | |
 | 아브라함 워싱턴, 나무의 아버지 버치, 네이선 바르가스 | Abraham Washington, Tree Father Birch, Nathan Vargas | 폴 아이딩 | Paul Eiding | 짐머(Zimmer), 허버트 대시우드(게임 속 인물) | |
 | 로버트 맥크래디(맥크래디 시장) | Robert MacCready | 제이컵 스톨네이커 | Jakob Stalnaker | 어린 버치 | |
@@ -430,8 +430,8 @@
 | 아미티지, 부처, 거니 | Armitage, Butcher, Gunny | 거스 트래버스 | Gus Travers | BoS·리벳시티 경비(남) | |
 | 툴립, 그레타, 캐롤 | Tulip, Greta, Carol | 오드리 와실루스키 | Audrey Wasilewski | 윌로(Willow), 구울(여) | |
 | 치프 구스타보, 팔라딘 바르가스 | Chief Gustavo, Paladin Vargas | 피트 파파조지 | Pete Papageorge | 기계박사(Mechanist), 행운의 하리스(Lucky Harith) 등 | |
-| 어린 아마타, 루시, 매기 | Amata (young), Lucy, Maggie | 스테퍼니 조이 | Stephanie Joy | 어린 외로운 방랑자(여), 램프라잇 아이들(여) | |
-| 하든 심스 등 아이들 | Harden Simms 등 | 숀 매코이 | Sean McCoy | 어린 외로운 방랑자(남), 스콰이어 맥슨(Squire Maxson), 램프라잇 아이들(남) | |
+| 어린 아마타, 루시, 매기 | Amata (young), Lucy, Maggie | 스테퍼니 조이 | Stephanie Joy | 어린 외로운 방랑자(Lone Wanderer, 여), 램프라잇 아이들(Lamplighters, 여) | |
+| 하든 심즈 등 아이들 | Harden Simms 등 | 숀 매코이 | Sean McCoy | 어린 외로운 방랑자(남), 스콰이어 맥슨(Squire Maxson), 램프라잇 아이들(남) | |
 | 야생 구울 | Feral ghouls | 마크 램퍼트 | Mark Lampert | 그레이디(Grady) 등 | 오디오 디렉터 본인 |
 | 중국군 코만도·잔존병 | Chinese commandos, Chinese remnant soldiers | 애슐리 쳉 | Ashley Cheng | - | 프로덕션 디렉터 본인 |
 | 외로운 방랑자(아기) | Lone Wanderer (baby) | 제이크 하워드 | Jake Howard | - | 토드 하워드의 아들 |
@@ -451,7 +451,7 @@
 | [TP] | 애셔 | Ishmael Ashur | 제임스 루이스 | James Lewis |
 | [TP] | 베르너 | Wernher | 마이크 로슨 | Mike Rosson |
 | [TP] | 샌드라, 피트 노예(여) | Sandra, Pitt slaves | 프랜시 글릭 | Francie Glick |
-| [TP] | 레이더(여), 트로그 | Pitt raiders (female), trogs | 버네사 리처드슨 | Vanessa Richardson |
+| [TP] | 피트 레이더(여), 트로그 | Pitt raiders (female), trogs | 버네사 리처드슨 | Vanessa Richardson |
 | [BS] | 빅슬리 서기 | Scribe Bigsley | 웨스 존슨 | Wes Johnson |
 | [BS] | 래그볼트 | Lag-Bolt | 그레고리 고턴 | Gregory Gorton |
 | [BS] | 마더 퀴리 3세 | Mother Curie III | 캐런 카본 | Karen Carbone |
@@ -465,10 +465,10 @@
 | [MZ] | 폴슨, 하티건 대령 | Paulson, Colonel Hartigan | 제리 휘던 | Jerry Whiddon |
 | [MZ] | 외계인 포로 기록 다수 | Alien captive recorded logs | 마크 램퍼트 | Mark Lampert |
 
-- [MZ]의 소마(Somah), 엘리엇 터코리언, 도시로 카고(Toshiro Kago) 성우는 코퍼스 성우 목록에 없다(코퍼스 미확인).
+- [MZ]의 소마(Somah), 엘리엇 터코리언(Elliott Tercorien), 도시로 카고(Toshiro Kago) 성우는 코퍼스 성우 목록에 없다(코퍼스 미확인).
 
 ### 5.3 캐스팅·녹음 메모
-- **캐스팅·녹음처**: 캐스팅은 레프 차펠스키(Lev Chapelsky)와 블라인드라이트(Blindlight LLC). 녹음은 베데스다 게임 스튜디오(메릴랜드 록빌)를 비롯해 뉴욕·보스턴·노스할리우드·할리우드·산타모니카의 여러 스튜디오에서 진행했다.
+- **캐스팅·녹음처**: 캐스팅은 레프 차펠스키(Lev Chapelsky)와 블라인드라이트(Blindlight LLC). 녹음은 베데스다 게임 스튜디오(Bethesda Game Studios, 메릴랜드 록빌)를 비롯해 뉴욕·보스턴·노스할리우드·할리우드·산타모니카의 여러 스튜디오에서 진행했다.
 - **론 펄먼 녹음**: 펄먼은 로스앤젤레스, 개발진은 록빌에 있어 회의실 전화로 원격 연출했다(파글리아룰로, 하워드, 램퍼트). 인트로와 트레일러 편집을 위해 "War never changes"를 여러 방식으로 수십 번 녹음했고, 펄먼이 "이미 온갖 방식으로 다 해 줬다"고 말하는 클립이 남아 있다(램퍼트 회고).
 - **현지화 내레이터**: 프랑스어 프랑수아 시에너(François Siener), 독일어 틸로 슈미츠(Tilo Schmitz), 스페인어 페페 메디아비야(Pepe Mediavilla). 세 사람 모두 뉴베가스 인트로에서도 같은 역을 맡았다.
 - **보이스 타입 공유**: 일반 NPC는 보이스 타입(GECK voice type ID)을 공유한다. 제프 베이커, 섀리 엘리커, 캐런 카본 등이 수십 명의 배역을 소화한다. 디스크 용량 문제로 대사의 약 30%가 잘렸고, 그중 상당수가 남녀 주인공 분기 대사였다([RD-01](01_game-overview.md) 3.3절).
@@ -510,7 +510,7 @@
 
 ### 6.7 트랜퀼리티 레인
 - **구성**: 볼트 112(Vault 112)의 가상현실 포드에 들어가면 화면이 흑백으로 바뀌고, 1950년대 TV 시트콤 같은 원형 교외 마을이 나타난다. 주인공은 어린아이의 모습이다. 이 세계를 지배하는 소녀 베티(Betty, 실제로는 스타니슬라우스 브라운 박사)는 주민들을 괴롭히는 "놀이"를 시키고, 아버지는 개의 모습으로 갇혀 있다. 주인공은 베티의 잔혹한 지시를 따르거나, 버려진 집의 비상 장치를 작동시켜 중국군을 소환해 시뮬레이션을 끝낼 수 있다. 전용 배경 음악 "Tranquility Lane"이 흐른다.
-- **"꼬마 살인마"**: 악의 길에서 쓰는 가면 의상 "핀트 사이즈 슬래셔(Pint-Sized Slasher)"는 파글리아룰로의 아이디어다. 미국 등급 관행상 게임 속 어린이를 죽일 수 없지만, "시뮬레이션 안의 가짜 아이"라서 이곳에서만 가능했다.
+- **꼬마 살인마**: 악의 길에서 쓰는 가면 의상 꼬마 살인마(Pint-Sized Slasher)는 파글리아룰로의 아이디어다. 미국 등급 관행상 게임 속 어린이를 죽일 수 없지만, "시뮬레이션 안의 가짜 아이"라서 이곳에서만 가능했다.
 - **연출 의도**: 폐허의 갈색 세계에서 갑자기 흑백 TV 속 "완벽한 1950년대"로 들어가는 시각적 충격, 그 낙원이 실은 지옥이라는 반전, 아이의 몸으로 잔혹 행위를 하는 블랙 유머가 겹친다. 프로듀서 제프 가디너와 파글리아룰로가 폴아웃 시리즈 전체에서 가장 좋아하는 퀘스트로 꼽았고, 가디너는 "폴아웃의 블랙 유머를 보여 주는 완벽한 예"라고 했다. 상세는 [RD-03](03_main-story-part1.md).
 
 ### 6.8 제임스의 죽음
@@ -539,19 +539,19 @@
 
 ### 6.13 장면별 요약표
 
-| 장면 | 관련 퀘스트(원제) | 핵심 장치 | 감정 목표 |
+| 장면 | 관련 퀘스트 | 핵심 장치 | 감정 목표 |
 |---|---|---|---|
 | 인트로 | - | 라디오 풀백, 1940년대 노래, 환등기 슬라이드, 펄먼 내레이션 | 아이러니, 세계관 압축 |
-| 출생 | Baby Steps | 1인칭 아기 시점, 마스크를 벗는 아버지 | 유대의 시작, 어머니의 상실 |
-| 성장 몽타주 | Growing Up Fast, Future Imperfect | 시간 점프, 생일 사진 | 고향 만들기 |
-| 볼트 문 개방 | Escape! | 거대한 문, 작별, 시야의 폭발, 전용 곡 | 해방과 상실 |
-| 메가톤 폭발 | The Power of the Atom | 고층 발코니, 직접 누르는 버튼, 버섯구름 | 자유의 무게, 냉소 |
-| GNR 광장 전투 | Galaxy News Radio | 베히모스 대 BoS | 스케일 확장, 세력 소개 |
-| 트랜퀼리티 레인 | Tranquility Lane | 흑백 이미지스페이스, 아이 아바타 | 기괴함, 블랙 유머 |
-| 제임스의 죽음 | The Waters of Life | 막을 수 없는 희생 | 비극, 동기 전환 |
-| 이든의 정체 | The American Dream | 라디오 목소리의 정체 공개 | 반전 |
-| 리버티 프라임 진군 | Take It Back! | 거대 로봇, 반공 구호, Tension 곡 | 카타르시스 |
-| 엔딩 | Take It Back! / Project Impurity | 내레이션, 조건부 슬라이드 | 정리, 수미상관 |
+| 출생 | 첫걸음(Baby Steps) | 1인칭 아기 시점, 마스크를 벗는 아버지 | 유대의 시작, 어머니의 상실 |
+| 성장 몽타주 | 빨리 크는 아이(Growing Up Fast), 불완전한 미래(Future Imperfect) | 시간 점프, 생일 사진 | 고향 만들기 |
+| 볼트 문 개방 | 탈출!(Escape!) | 거대한 문, 작별, 시야의 폭발, 전용 곡 | 해방과 상실 |
+| 메가톤 폭발 | 원자의 힘(The Power of the Atom) | 고층 발코니, 직접 누르는 버튼, 버섯구름 | 자유의 무게, 냉소 |
+| GNR 광장 전투 | 갤럭시 뉴스 라디오(Galaxy News Radio) | 베히모스 대 BoS | 스케일 확장, 세력 소개 |
+| 트랜퀼리티 레인 | 트랜퀼리티 레인(Tranquility Lane) | 흑백 이미지스페이스, 아이 아바타 | 기괴함, 블랙 유머 |
+| 제임스의 죽음 | 생명의 물(The Waters of Life) | 막을 수 없는 희생 | 비극, 동기 전환 |
+| 이든의 정체 | 아메리칸 드림(The American Dream) | 라디오 목소리의 정체 공개 | 반전 |
+| 리버티 프라임 진군 | 되찾아라!(Take It Back!) | 거대 로봇, 반공 구호, Tension 곡 | 카타르시스 |
+| 엔딩 | 되찾아라!(Take It Back!) / 프로젝트 임퓨리티(Project Impurity) | 내레이션, 조건부 슬라이드 | 정리, 수미상관 |
 | 킬캠 | (전투 전반) | 슬로모션 카메라 | 보상감 |
 
 ## 7. 유머와 톤 분석
@@ -570,7 +570,7 @@
 | 블랙 유머 | 잔혹함을 경쾌하게 다룸 | 블러디 메스로 터지는 적, 볼트 보이의 만화적 부상, 트랜퀼리티 레인의 "꼬마 살인마", 구울이 된 걸 즐거워하는 모이라 브라운, 쓰리독의 "신체 절단 가능성이 있는 날씨" |
 | 과장된 캐릭터 | 1950년대 대중문화 원형을 극단까지 밀어붙임 | 반공 구호를 외치는 리버티 프라임, 로봇과 개미로 싸우는 코스튬 "영웅" 기계박사(Mechanist)와 개미여인(AntAgonizer), 데이브 공화국(Republic of Dave), 라디오 드라마의 허세 탐험가 대시우드 |
 | 말장난·패러디 | 문구와 이름의 언어유희, 대중문화 인용 | 병원 구인 포스터의 "Bedpan Unsullification Technician", 쓰리독의 "Ding, dong, the ... Presidential asshole is dead!"(*오즈의 마법사*), "Only you can prevent human flesh fires"(스모키 베어 캠페인), 퀘스트 *그것들!*(영화 *그것들!*), 지도 정중앙 빅타운(Big Town) 성벽 밖 전신주의 "TES-04" 표식(오블리비언 지도 정중앙의 화이트골드 타워를 빗댄 표식) |
-| 시리즈 자기 인용 | 1·2편 팬을 향한 윙크 | 스킬북 *Tales of a Junktown Jerky Vendor*(폴아웃 1의 정크타운), 도그밋이라는 이름(소설 *소년과 개*), 인트로의 잉크 스파츠 |
+| 시리즈 자기 인용 | 1·2편 팬을 향한 윙크 | 스킬북 *Tales of a Junktown Jerky Vendor*(폴아웃 1의 정크타운), 도그밋(Dogmeat)이라는 이름(소설 *소년과 개*), 인트로의 잉크 스파츠 |
 | 메타 유머 | 진행자가 매체 자체를 비틂 | 쓰리독 "'디스크'가 뭐냐고요? 나도 몰라요.", "요새 벙커에서 녹음으로 전해 드립니다" |
 
 - 대표 인용(짧게): 쓰리독 "Hey nifty America. It's me, your president, John Hen... Ahhhh... Gotcha!"(안녕 멋진 미국. 대통령 존 헨… 아… 속았지!) — 경쟁 방송(엔클레이브 라디오)을 흉내 내는 인트로 멘트로, 두 방송국의 대립을 유머로 드러낸다.
@@ -598,9 +598,9 @@
 | 볼트 101(후반) | Vault 101 | "Thank You, Overseer!" → "Fuck You, Overseer!", "Hard Work is Happy Work" → "Work is Work" | 오버시어 체제에 대한 반발과 볼트 사회의 붕괴 | 같은 포스터의 변화 |
 | 링컨 기념관 | Lincoln Memorial | 머리 없는 링컨 석상, 퀘스트 후 머리와 현판 복원 | 국가 상징의 훼손과 회복 | 월드 상태 변화 |
 | 백악관 | White House | 방사능 크레이터와 배회하는 글로잉 원 | 국가 권력의 완전한 소멸 | 지형 + 적 배치 |
-| 메가톤 | Megaton | 불발 핵폭탄 둘레의 판자촌, 폭탄을 숭배하는 원자의 자손 교회 | 위험과 공존하는 생존자들의 아이러니. 로딩 화면 힌트도 "살아 있는 핵폭탄 옆에서 금속 벽 뒤에 안심하는 아이러니"를 짚는다 | 구조물 + 세력 |
+| 메가톤 | Megaton | 불발 핵폭탄 둘레의 판자촌, 폭탄을 숭배하는 원자의 자손(Children of Atom) 교회 | 위험과 공존하는 생존자들의 아이러니. 로딩 화면 힌트도 "살아 있는 핵폭탄 옆에서 금속 벽 뒤에 안심하는 아이러니"를 짚는다 | 구조물 + 세력 |
 
-- **이름 있는 해골**: 코퍼스는 이름이 붙은 해골 16구(DLC 포함. 예: 던위치 빌딩(Dunwich Building)의 빌리, 누카콜라 공장(Nuka-Cola plant) 창고의 세스, 그레이디)를 기록한다. 노트·홀로테이프와 짝을 이뤄 "누군가의 마지막 순간"을 읽게 한다.
+- **이름 있는 해골**: 코퍼스는 이름이 붙은 해골 16구(DLC 포함. 예: 던위치 빌딩(Dunwich Building)의 빌리, 뉴카-콜라 공장(Nuka-Cola plant) 창고의 세스, 그레이디)를 기록한다. 노트·홀로테이프와 짝을 이뤄 "누군가의 마지막 순간"을 읽게 한다.
 - 장소별 레벨 디자인 패턴과 던전 구조 분석은 [RD-12](12_world-structure-settlements.md), 홀로테이프·노트 분류는 [RD-21](21_consumables-misc-crafting.md)과 [RD-17](17_exploration-interaction.md)을 참조한다.
 
 ## 9. 설계 분석
@@ -629,6 +629,44 @@
 - 크리처·로봇 디자인 키워드 ↔ 적 도감([RD-24](24_bestiary.md)).
 - 환경 스토리텔링 ↔ 레벨 디자인([RD-12](12_world-structure-settlements.md)).
 
-<!-- S10 -->
+## 10. 쯔꾸르 이식 메모
 
-<!-- SA -->
+### 10.1 도트 그래픽: 팔레트와 타일 방향
+- **팔레트(보존 필수)**: 황무지는 따뜻한 갈색·황토·회갈색을 낮은 채도로, 녹색은 거의 쓰지 않는다. D.C. 도심은 차가운 청회색과 흐린 하늘. 볼트는 볼트-텍 청·황 + 금속 회색. 이 "따뜻한 황무지 ↔ 차가운 도심 ↔ 깨끗한 볼트" 3색 대비가 지역 정체성이다.
+- **특수 구역**: 트랜퀼리티 레인은 화면 색조를 흑백으로 바꾸는 이벤트 명령으로 구현할 수 있다. [TP]는 주황 대기, [PL]은 어두운 늪 색. 화면 색조 효과는 쯔꾸르 기본 기능이라 원작의 이미지스페이스 연출을 재현하기 쉽다.
+- **타일 방향**: 쯔꾸르 표준인 위에서 비스듬히 내려다보는 탑다운 타일을 유지하고, 폐허 타일셋(무너진 벽, 철근, 콘크리트 잔해, 녹슨 차량)을 레이어로 쌓는다. 원작의 "잔해 벽으로 구역을 나누고 지하철로 잇는" 도심 구조는 쯔꾸르의 맵 분할·이동 구조와 잘 맞는다.
+- **랜드마크**: 워싱턴 기념비, 국회의사당, 제퍼슨 기념관 같은 큰 상징물은 여러 타일 크기의 전용 그래픽이나 원경(패럴랙스)으로 처리해 멀리서도 길잡이가 되게 한다.
+- **UI**: 핍-보이 녹색 단색 CRT 톤의 창 스킨, 볼트 보이풍 아이콘(직접 그린 도트)으로 스테이터스·스킬·퍽 화면을 구성한다. 볼트 보이 원본 일러스트는 그대로 쓰지 않는다(10.3).
+- **단순화 후보**: 크리처 변종은 색 바꾸기(팔레트 스왑)로, 의상은 원작처럼 "원피스 + 모자" 2단 구조로 줄인다.
+
+### 10.2 음악·라디오 재현 시 고려 사항
+- **스코어**: 원곡 대신 자작 BGM으로 대체한다. 구조만 차용한다. 탐험(앰비언트), 전투(전환형), 던전, 정착지(공공), 엔딩 후반, 그리고 특수곡(메인 메뉴, 볼트 탈출, 레벨업 ME, 사망 ME, 트랜퀼리티 레인, 정화기 가동, 텐페니 타워 로비).
+- **환경음(BGS)**: 원작의 고독감은 멜로디보다 앰비언트에서 나온다. 바람·잡음·가이거 계수기 같은 BGS 비중을 높인다.
+- **라디오 시스템**: 핍-보이 메뉴에서 방송국을 고르면 BGM이 라디오 채널로 바뀌는 방식으로 구현할 수 있다. 진행자 멘트는 텍스트 창이나 짧은 효과음으로 처리하고, 퀘스트·카르마 변수에 따라 뉴스 문구를 바꾼다(규칙은 [RD-17](17_exploration-interaction.md)).
+- **방송국 성격 보존**: GNR(대중음악 + 뉴스), 엔클레이브 라디오(행진곡 + 연설), 아가사의 방송국(바이올린)의 삼각 구도와 "진행자가 플레이어를 칭호로 부르는" 피드백은 음원 없이도 재현할 수 있는 핵심이다.
+
+### 10.3 IP 리스크 메모 (법률 자문이 아니다)
+
+| 대상 | 권리 상태(코퍼스 근거) | 팬게임 권장 |
+|---|---|---|
+| GNR 시대곡 12곡 | 크레딧에 작사·작곡 저작권(다수 "Renewed")과 음반사 라이선스가 따로 표기됨. 베데스다도 곡마다 개별 라이선스를 받음. 2019년 바이닐은 라이선스 제한으로 "Easy Living" 다른 녹음을 실음 | 원곡 음원·편곡 사용 금지. 곡명만 텍스트로 언급하거나, 분위기만 닮은 자작곡으로 대체 |
+| GNR 라이브러리 곡 8곡 | APM Music 상업 라이선스 음원 | 사용 금지 |
+| 이논 주르 스코어 | 베데스다 저작물 | 사용 금지, 자작 BGM |
+| 엔클레이브 라디오 행진곡 | 18~20세기 작품이 다수지만 게임 속 녹음은 별개. "Presidential Entrance"(1996)는 현대 라이브러리 곡 | 오래된 작품은 직접 편곡·MIDI 제작을 검토하되 저작권 만료 여부를 곡마다 확인 |
+| 아가사의 방송국 클래식 | 바흐·드보르자크·사라사테 작품, 게임 속 연주는 헤더 맥아더의 녹음 | 작품 자체는 직접 연주·MIDI로 대체 가능. 게임 녹음은 쓰지 않음 |
+| 성우 음성·대사 | 베데스다 저작물(리엄 니슨, 론 펄먼 등의 음성 포함) | 음성 미사용. 대사는 짧은 인용 수준을 넘는 전재 금지 |
+| 볼트 보이·로고·포스터 디자인 | 베데스다 상표·저작물 | 원본 이미지 사용 금지. 재해석한 도트 아트도 권리자 팬 콘텐츠 정책 확인 필요 |
+
+- 비상업 팬게임이라도 음원은 권리자 신고로 배포가 막히기 쉬운 영역이다. 최종 판단은 [RD-27](27_adaptation-notes.md)과 본기획 단계에서 권리자 정책을 확인한 뒤 내린다.
+
+## 부록 A. 출처
+
+Nukapedia(fallout.fandom.com) 2026-08-30 덤프 기반 로컬 코퍼스. CC BY-SA. 일부 대사 번역은 한글 패치 병렬 대사(`esm/parallel.tsv`)를 따랐다.
+
+- 아트 디렉션: `Nukapedia: The Art of Fallout 3`, `Adam Adamowicz`, `Craig Mullins`, `Istvan Pely`, `Natalia Smirnova`, `Fallout setting`, `Fallout 3`, `Vault Boy`, `Pip-Boy 3000`, `Poster (Fallout 3)`, `Fallout 3 loading screens`, `Fallout 3 graffiti`, `Fallout 3 cut content`, `Vault 101`, `Megaton`, `Rivet City`, `Washington Monument`, `The Capitol Building`, `Lincoln Memorial`, `Jefferson Memorial`, `White House`, `The Pitt (add-on)`, `Point Lookout (add-on)`, `Tranquility Lane`
+- 음악: `Nukapedia: Fallout 3 soundtrack`, `Fallout 3 score`, `Inon Zur`, `Mark Lampert`, `Timeline of the music of the Fallout series`, `Fallout 3 developers`(음악 크레딧), `Baby Steps`, `DLC04BogMusicStartSCRIPT`, `Fallout 3 E3 trailer`
+- 라디오: `Nukapedia: Fallout 3 radio stations`, `Galaxy News Radio (radio)`, `The Adventures of Herbert "Daring" Dashwood and his Ghoul Manservant Argyle`, `Enclave Radio`, `Agatha's Station`, `Agatha's Song`, `Vault 101 PA System`, `People's Republic of America Radio`, `Pitt broadcast`, `Tenpenny Tower radio`
+- 성우: `Nukapedia: Fallout 3 voice actors`, `Fallout 3 developers`, `Fallout 3 intro`, `Liberty Prime`
+- 연출: `Nukapedia: Fallout 3 intro`, `James (Fallout 3)`, `Catherine (Fallout 3)`, `Escape!`, `Growing Up Fast`, `The Power of the Atom`, `The Waters of Life`, `Tranquility Lane simulation`, `Liberty Prime`, `Fallout 3 endings`, `Cutscene`, `Emil Pagliarulo`, `Todd Howard`
+- 유머·환경 스토리텔링: `Nukapedia: Fallout 3 cultural references`, `Skeleton (Fallout 3)`, `Townhome`, `Super-Duper Mart (Fallout 3)`(갤러리 설명), `Arlington Library`
+- 보조 스크립트: `agent-scripts/A01/musictimeline.py`(음악 연표 추출), `applyterms.py`(한글 패치 표기 일괄 적용)
