@@ -120,7 +120,7 @@
 | Kill cam | 킬캠 | VATS 마무리 연출 |
 | Mine / Trap | 지뢰 / 함정 | |
 | Companion / Follower | 동료 / 추종자 | |
-| Hit squad | 암살대 | 카르마 수준에 따라 파견되는 레귤레이터·탤런 컴퍼니 |
+| Hit squad | 암살대 | 카르마 수준에 따라 파견되는 감시자·탈론 컴퍼니 |
 
 ## 5. 탐험·상호작용·UI
 

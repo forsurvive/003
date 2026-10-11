@@ -118,7 +118,7 @@
 | 수도 황무지 곳곳 | BoS 표식, 레이더 낙서(버섯구름, BoS 문양 위 덧칠), "FUCK YOU" | 세력권 표시, 거친 분위기 |
 | 패러거트 웨스트 지하철역(Farragut West Metro station) | GNR로 가는 길 표시 | 메인 퀘스트 길 안내 |
 | 아르푸(Arefu) 웨스트 저택(West residence) | "THE FAMILY" | 퀘스트 *피의 유대(Blood Ties)*의 단서 |
-| 워링턴 역(Warrington station) | "The revolution starts here" + 빨간 화살표 | 로이 필립스(Roy Phillips)의 선전·길 안내 |
+| 와링톤 역(Warrington station) | "The revolution starts here" + 빨간 화살표 | 로이 필립스(Roy Phillips)의 선전·길 안내 |
 | 알링턴 도서관(Arlington Library) 아동 열람실 | 대전쟁 그림 | 아이들의 시선으로 본 핵전쟁 |
 | 볼트 101(후반) | "THANK YOU → FUCK YOU OVERSEER" | 볼트 사회의 붕괴 |
 | 레인저 기지(Ranger compound) | "Reillys Rangers", 클로버와 교차한 칼 문장 | 용병 분대의 정체성 |
@@ -260,7 +260,7 @@
 
 | 방송국 | 영문명 | 진행자·목소리 | 송출지 | 콘텐츠 성격 | 비고 |
 |---|---|---|---|---|---|
-| 갤럭시 뉴스 라디오 | Galaxy News Radio (GNR) | 쓰리독(에릭 토드 델럼스(Erik Todd Dellums)). 사망 시 기술자 마거릿(Margaret) | GNR 방송국 광장(GNR building plaza) | 1940년대 노래 20곡 + 뉴스 + 공익광고 + 라디오 드라마. "옳은 싸움(the Good Fight)"을 내건 공동체 방송 | 처음엔 약한 신호, 메인 퀘스트 *갤럭시 뉴스 라디오*로 전역 송출 |
+| 갤럭시 뉴스 라디오 | Galaxy News Radio (GNR) | 쓰리독(에릭 토드 델럼스(Erik Todd Dellums)). 사망 시 기술자 마가렛(Margaret) | GNR 방송국 광장(GNR building plaza) | 1940년대 노래 20곡 + 뉴스 + 공익광고 + 라디오 드라마. "옳은 싸움(the Good Fight)"을 내건 공동체 방송 | 처음엔 약한 신호, 메인 퀘스트 *갤럭시 뉴스 라디오*로 전역 송출 |
 | 엔클레이브 라디오 | Enclave Radio | 존 헨리 이든 대통령(맬컴 맥다월(Malcolm McDowell)) | 레이븐 락(Raven Rock), 아이봇(Eyebot)이 중계 | 애국 행진곡 8곡 + 대통령 담화·연설 + 명언 | 볼트를 나와 처음 잡히는 방송. 레이븐 락 파괴 시 종료 |
 | 아가사의 방송국 | Agatha's Station | 아가사(Agatha)(다이애나 솔(Diana Sowle)). 연주는 헤더 맥아더(Heather MacArthur) | 아가사의 집(Agatha's house) | 클래식 바이올린 5곡 + 즉흥 연주 6곡 + 헌정 멘트 | *아가사의 노래(Agatha's Song)* 완료 후 개국, 전역 송출 |
 | 볼트 101 PA 시스템 | Vault 101 PA System | 볼트 안내 방송 | 볼트 101 내부 | 연주곡 6곡 + 볼트-텍 홍보 상식 + 생활 수칙 + 방사능 수치 | 핍-보이를 받는 순간부터 수신. 후반 재방문 시 잡음만 |
@@ -269,13 +269,13 @@
 | 텐페니 타워 라디오(삭제) | Tenpenny Tower radio | 앨리스터 텐페니(Allistair Tenpenny)의 "텐페니 금언" | 텐페니 타워 | 부자의 자기계발형 격언 | 녹음만 남은 삭제 콘텐츠 |
 
 ### 4.2 갤럭시 뉴스 라디오(GNR)
-- **배경**: 전쟁 전 갤럭시 뉴스 네트워크(Galaxy News Network)의 라디오 자회사(전쟁 전 103.8 FM)였다. 2272년 쓰리독이 기술자 마거릿과 함께 되살렸고, 2277년에는 수도 황무지에서 가장 인기 있는 방송이다. 곡 목록이 20곡뿐인 이유는 "재생 가능한 상태로 찾은 레코드가 그것뿐"이기 때문이다.
+- **배경**: 전쟁 전 갤럭시 뉴스 네트워크(Galaxy News Network)의 라디오 자회사(전쟁 전 103.8 FM)였다. 2272년 쓰리독이 기술자 마가렛과 함께 되살렸고, 2277년에는 수도 황무지에서 가장 인기 있는 방송이다. 곡 목록이 20곡뿐인 이유는 "재생 가능한 상태로 찾은 레코드가 그것뿐"이기 때문이다.
 - **진행 형식**: 음악 → 진행자 인트로 → 뉴스(일반 뉴스, 퀘스트별 뉴스, 공익광고) → 아웃트로 → 음악. 쓰리독은 거의 모든 방송을 녹음해 내보낸다("녹음으로 전해 드리는 요새 벙커"라는 자기 언급까지 있다).
 - **카르마 칭호로 부르기**: 퀘스트 뉴스 앞에서 쓰리독은 플레이어를 현재 카르마 칭호로 부른다. 예를 들어 칭호가 "팔라딘(Paladin)"이면 BoS 팔라딘이 아니라 "볼트 점프슈트를 입은 빛나는 기사"라고 비튼다.
 - **퀘스트 뉴스**: 퀘스트마다 미해결 / A 결말 / B 결말 버전이 있다. 예를 들어 메가톤 핵폭탄을 해체하면 그 사실을 콕 집어 보도한다. 뉴스 원문 목록은 각 퀘스트 문서([RD-03](03_main-story-part1.md)~[RD-07](07_misc-quests-encounters.md))가 다룬다.
 - **공익광고 주제**: 구울도 사람이다 / 레이더가 오면 숨어라 / 슈퍼 뮤턴트는 사람을 잡아간다 / 무기 정비 / 야오과이(Yao guai)에게 먹이 주지 마라 / 방사능 대비: 라드어웨이(RadAway)·라드-X(Rad-X).
-- **라디오 드라마**: *허버트 '대링' 대시우드와 구울 하인 아가일의 모험(The Adventures of Herbert "Daring" Dashwood and his Ghoul Manservant Argyle)*. 전쟁 전 라디오 연속극 형식의 "실화" 모험극으로 4화로 구성된다("Escape from Paradise Falls!", "Super Mutant Mayhem!", "In the Black Widow's Web!", "Between Rockopolis and a Hard Place!"). 에밀 파글리아룰로가 썼고, 제프 베이커(Jeff Baker)가 대부분의 배역을 맡았다. 수록곡 "Jazzy Interlude"를 오프닝·엔딩에 쓴다. 극 중 주인공 대시우드는 실제로 텐페니 타워에 사는 NPC다.
-- **쓰리독 사망 시**: 기술자 마거릿이 마지못해 음악만 튼다. 연출상 "진행자 없는 라디오"가 세계의 상실을 전달한다.
+- **라디오 드라마**: *할버트 '대링' 대시우드와 구울 하인 아가일의 모험(The Adventures of Herbert "Daring" Dashwood and his Ghoul Manservant Argyle)*. 전쟁 전 라디오 연속극 형식의 "실화" 모험극으로 4화로 구성된다("Escape from Paradise Falls!", "Super Mutant Mayhem!", "In the Black Widow's Web!", "Between Rockopolis and a Hard Place!"). 에밀 파글리아룰로가 썼고, 제프 베이커(Jeff Baker)가 대부분의 배역을 맡았다. 수록곡 "Jazzy Interlude"를 오프닝·엔딩에 쓴다. 극 중 주인공 대시우드는 실제로 텐페니 타워에 사는 NPC다.
+- **쓰리독 사망 시**: 기술자 마가렛이 마지못해 음악만 튼다. 연출상 "진행자 없는 라디오"가 세계의 상실을 전달한다.
 - **[BS] 이후**: 정화된 물 보급, 오염수 의혹(FEV 투입 시), 리버티 프라임 파괴, (플레이어 선택에 따라) 시타델 피격 등 후일담 뉴스가 추가된다.
 - **개발 비화**: 퀘스트 디자이너 프레드 젤레니(Fred Zeleny)가 "플레이어 PC의 음악 파일을 GNR 곡 목록에 넣는 퀘스트"를 제안했으나, 토드 하워드가 음악 라이선스와 게임 톤에 미칠 영향을 우려해 반려했다.
 
@@ -285,7 +285,7 @@
 | "People of the Capital Wasteland, you can HEAR MEEEE!!!! Yeeeaa haaaa!!! You can't stop the signal, baby!" | "수도 황무지 여러분, 제 목소리가 들리시죠! 이야호! 이 신호는 못 막아, 베이비!" | 중계 안테나를 고친 직후의 특별 생방송 |
 | "Hey everybody, this is Three Dog, your friendly neighborhood disc jockey. What's a 'disc'? Hell if I know." | "안녕 여러분, 친절한 동네 디스크자키 쓰리독입니다. '디스크'가 뭐냐고요? 나도 몰라요." | 진행자 인트로 |
 | "Today's weather excessively violent, with a chance of dismemberment." | "오늘의 날씨는 지나치게 폭력적이며, 신체 절단 가능성이 있습니다." | 일반 뉴스(블랙 유머) |
-| "If Three Dog were here, he'd say something witty. But he's not. 'Cause somebody killed him." | "쓰리독이 여기 있었으면 재치 있는 말을 했겠죠. 근데 없어요. 누가 죽였거든요." | 쓰리독 사망 후 마거릿 |
+| "If Three Dog were here, he'd say something witty. But he's not. 'Cause somebody killed him." | "쓰리독이 여기 있었으면 재치 있는 말을 했겠죠. 근데 없어요. 누가 죽였거든요." | 쓰리독 사망 후 마가렛 |
 
 ### 4.3 GNR 수록곡 전체 (20곡)
 
@@ -345,7 +345,7 @@
 
 - **명언 코너**: 에이브러햄 링컨(Abraham Lincoln), 마틴 반 뷰렌(Martin Van Buren) 등 역대 대통령의 말을 인용한다. 예: "Avoid popularity if you would have peace."(평화를 원하거든 인기를 멀리하라 — 링컨)
 - **대표 멘트**: "This is President Eden, and you're listening to Enclave Radio -- the Voice of America."(이든 대통령입니다. 여러분은 엔클레이브 라디오, 미국의 목소리를 듣고 계십니다.)
-- **연출 근거**: 이든의 담화는 대공황기 프랭클린 루스벨트의 "노변담화"를 느슨하게 본떴다. "The Stars and Stripes Forever" 위에 대통령이 말하는 연출은 영화 *소년과 개(A Boy and His Dog)*의 장면과 같은 방식이다. 메가톤의 네이선 바르가스(Nathan Vargas)는 이 방송의 팬이라 곡을 흥얼거린다. 일부 NPC는 방송이 녹음 반복인지 의심한다.
+- **연출 근거**: 이든의 담화는 대공황기 프랭클린 루스벨트의 "노변담화"를 느슨하게 본떴다. "The Stars and Stripes Forever" 위에 대통령이 말하는 연출은 영화 *소년과 개(A Boy and His Dog)*의 장면과 같은 방식이다. 메가톤의 네이든 바가스(Nathan Vargas)는 이 방송의 팬이라 곡을 흥얼거린다. 일부 NPC는 방송이 녹음 반복인지 의심한다.
 
 | 곡명(원제) | 뜻풀이(참고) | 작곡(엔클레이브 라디오 문서) | 연도 |
 |---|---|---|---|
@@ -415,7 +415,7 @@
 | 미스터 버크, 폭스 | Mister Burke, Fawkes | 웨스 존슨 | Wes Johnson | 슈퍼 뮤턴트, 프로텍트론, 센트리 봇 | |
 | 콜린 모리아티, 셰런, 괍 | Colin Moriarty, Charon, Gob | 마이크 로슨 | Mike Rosson | 로이 필립스, 미스터 크로울리(Mister Crowley), 구울(남) | |
 | 헤럴드, 앤디 | Harold, Andy | 스티븐 러셀 | Stephen Russell | 미스터 핸디(Mister Handy) 로봇, 엔클레이브 병사(남) | |
-| 아가사, 올드 레이디 파머 | Agatha, Lucy Palmer | 다이애나 솔 | Diana Sowle | 마거릿, 올드 레이디 디더스(Old Lady Dithers) | |
+| 아가사, 노부인 파머 | Agatha, Old Lady Palmer (Lucy Palmer) | 다이애나 솔 | Diana Sowle | 마가렛 프림로즈(Margaret Primrose), 노부인 디터스(Old Lady Dithers) | |
 | 루카스 심즈 | Lucas Simms | 그레고리 L. 윌리엄스 | Gregory L. Williams | - | |
 | 앨리스터 텐페니 | Allistair Tenpenny | 찰리 워런 | Charlie Warren | - | |
 | 베티(스타니슬라우스 브라운 박사의 아바타) | Betty (Dr. Stanislaus Braun) | 코리앤 스타인 | Corrieanne Stein | - | 브라운 본인은 `Fallout 3 voice actors`가 디 브래들리 베이커(Dee Bradley Baker)로 적으나 크레딧 문서에는 없음 |
@@ -424,15 +424,15 @@
 | 클로버, 루시 웨스트 | Clover, Lucy West | 잰 존스 | Jan Johns | 시에라 페트로비타(Sierra Petrovita), 아메리카 인민공화국 라디오 | |
 | 스타 팔라딘 크로스, 라일리 | Star Paladin Cross, Reilly | 섀리 엘리커 | Shari Elliker | 비어트리스 암스트롱(Beatrice Armstrong), 엘런 들로리아(Ellen DeLoria), 실버(Silver), 여성 일반 NPC 다수 | |
 | 조나스 파머, 핑커톤, 밴스, 데이브 | Jonas Palmer, Pinkerton, Vance, Dave | 그레고리 고턴 | Gregory Gorton | 리벳시티 프레스턴 박사(Dr. Preston) 등 | |
-| 아브라함 워싱턴, 나무의 아버지 버치, 네이선 바르가스 | Abraham Washington, Tree Father Birch, Nathan Vargas | 폴 아이딩 | Paul Eiding | 짐머(Zimmer), 허버트 대시우드(게임 속 인물) | |
+| 아브라함 워싱턴, 나무의 아버지 버치, 네이든 바가스 | Abraham Washington, Tree Father Birch, Nathan Vargas | 폴 아이딩 | Paul Eiding | 짐머(Zimmer), 할버트 대시우드(게임 속 인물) | |
 | 로버트 맥크래디(맥크래디 시장) | Robert MacCready | 제이컵 스톨네이커 | Jakob Stalnaker | 어린 버치 | |
 | 그루스 | Grouse | 조니 콘티노 | Johnny Contino | BoS 병사(남), 노예 사냥꾼(남) 등 | |
 | 아미티지, 부처, 거니 | Armitage, Butcher, Gunny | 거스 트래버스 | Gus Travers | BoS·리벳시티 경비(남) | |
-| 툴립, 그레타, 캐롤 | Tulip, Greta, Carol | 오드리 와실루스키 | Audrey Wasilewski | 윌로(Willow), 구울(여) | |
-| 치프 구스타보, 팔라딘 바르가스 | Chief Gustavo, Paladin Vargas | 피트 파파조지 | Pete Papageorge | 기계박사(Mechanist), 행운의 하리스(Lucky Harith) 등 | |
+| 튤립, 그레타, 캐롤 | Tulip, Greta, Carol | 오드리 와실루스키 | Audrey Wasilewski | 윌로(Willow), 구울(여) | |
+| 치프 구스타보, 팔라딘 바가스 | Chief Gustavo, Paladin Vargas | 피트 파파조지 | Pete Papageorge | 기계박사(Mechanist), 행운의 하리스(Lucky Harith) 등 | |
 | 어린 아마타, 루시, 매기 | Amata (young), Lucy, Maggie | 스테퍼니 조이 | Stephanie Joy | 어린 외로운 방랑자(Lone Wanderer, 여), 램프라잇 아이들(Lamplighters, 여) | |
 | 하든 심즈 등 아이들 | Harden Simms 등 | 숀 매코이 | Sean McCoy | 어린 외로운 방랑자(남), 스콰이어 맥슨(Squire Maxson), 램프라잇 아이들(남) | |
-| 야생 구울 | Feral ghouls | 마크 램퍼트 | Mark Lampert | 그레이디(Grady) 등 | 오디오 디렉터 본인 |
+| 야생 구울 | Feral ghouls | 마크 램퍼트 | Mark Lampert | 그라디(Grady) 등 | 오디오 디렉터 본인 |
 | 중국군 코만도·잔존병 | Chinese commandos, Chinese remnant soldiers | 애슐리 쳉 | Ashley Cheng | - | 프로덕션 디렉터 본인 |
 | 외로운 방랑자(아기) | Lone Wanderer (baby) | 제이크 하워드 | Jake Howard | - | 토드 하워드의 아들 |
 | 티미 노이스바움 | Timmy Neusbaum | 컬런 파글리아룰로 | Cullen Pagliarulo | - | 에밀 파글리아룰로의 아들 |
@@ -600,7 +600,7 @@
 | 백악관 | White House | 방사능 크레이터와 배회하는 글로잉 원 | 국가 권력의 완전한 소멸 | 지형 + 적 배치 |
 | 메가톤 | Megaton | 불발 핵폭탄 둘레의 판자촌, 폭탄을 숭배하는 원자의 자손(Children of Atom) 교회 | 위험과 공존하는 생존자들의 아이러니. 로딩 화면 힌트도 "살아 있는 핵폭탄 옆에서 금속 벽 뒤에 안심하는 아이러니"를 짚는다 | 구조물 + 세력 |
 
-- **이름 있는 해골**: 코퍼스는 이름이 붙은 해골 16구(DLC 포함. 예: 던위치 빌딩(Dunwich Building)의 빌리, 뉴카-콜라 공장(Nuka-Cola plant) 창고의 세스, 그레이디)를 기록한다. 노트·홀로테이프와 짝을 이뤄 "누군가의 마지막 순간"을 읽게 한다.
+- **이름 있는 해골**: 코퍼스는 이름이 붙은 해골 16구(DLC 포함. 예: 던위치 빌딩(Dunwich Building)의 빌리, 뉴카-콜라 공장(Nuka-Cola plant) 창고의 세스, 그라디)를 기록한다. 노트·홀로테이프와 짝을 이뤄 "누군가의 마지막 순간"을 읽게 한다.
 - 장소별 레벨 디자인 패턴과 던전 구조 분석은 [RD-12](12_world-structure-settlements.md), 홀로테이프·노트 분류는 [RD-21](21_consumables-misc-crafting.md)과 [RD-17](17_exploration-interaction.md)을 참조한다.
 
 ## 9. 설계 분석

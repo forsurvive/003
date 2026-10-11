@@ -105,7 +105,7 @@ flowchart TD
 - **설계 포인트**: 근접 피해 보너스는 근접 무기 스킬·내구도로 보정된 무기 피해에 **나중에 더해지고**, 엔토몰로지스트 같은 피해 배수 퍽의 영향도 받는다. 그래서 초중반에는 무료 퍽에 가까운 효율을 낸다(무기 피해의 10% 이상).
 - **관련 퍽**: 리틀 리거(Little Leaguer, 힘 4), 아이언 피스트(Iron Fist, 힘 4), 스트롱 백(Strong Back, 힘 5·지구력 5).
 - **영구 상승**: 힘 보블헤드(+1), 개미의 힘(Ant Might, +1), 인텐스 트레이닝(+1/랭크), [BS] 노 위크니스(No Weaknesses, 5 미만이면 5로), [BS] 올모스트 퍼펙트(Almost Perfect, 9 미만이면 9로).
-- **일시 상승**: 파워 아머류 +2(브라더후드(Brotherhood of Steel)·라이언스 프라이드(Lyons' Pride)·아웃캐스트(Outcasts)·일반 파워 아머), 린든의 아웃캐스트 파워 아머(Linden's Outcast power armor)·엔클레이브 파워 아머(Enclave power armor)·[TP] 애셔의 파워 아머(Ashur's power armor)·[TP] 트라이벌 파워 아머(Tribal power armor)·[TP] 노동자 복장(Laborer outfit)·[BS] 헬파이어 아머(Enclave Hellfire armor) +1, 주류(맥주·스카치·보드카·위스키·와인) +1(중첩 불가), [PL] 밀주(Moonshine) +2, 미시시피 퀀텀 파이(Mississippi Quantum pie) +1, 버프아웃(Buffout) +2, 앤트 넥타(Ant nectar) +4, 너드 레이지!(HP 20% 이하일 때 10으로), 솔라 파워드(주간 야외 +2).
+- **일시 상승**: 파워 아머류 +2(브라더후드 오브 스틸(Brotherhood of Steel)·라이언스 프라이드(Lyons' Pride)·아웃캐스트(Outcasts)·일반 파워 아머), 린든의 아웃캐스트 파워 아머(Linden's Outcast power armor)·엔클레이브 파워 아머(Enclave power armor)·[TP] 애셔의 파워 아머(Ashur's power armor)·[TP] 트라이벌 파워 아머(Tribal power armor)·[TP] 노동자 복장(Laborer outfit)·[BS] 헬파이어 아머(Enclave Hellfire armor) +1, 주류(맥주·스카치·보드카·위스키·와인) +1(중첩 불가), [PL] 밀주(Moonshine) +2, 미시시피 퀀텀 파이(Mississippi Quantum pie) +1, 버프아웃(Buffout) +2, 앤트 넥타(Ant nectar) +4, 너드 레이지!(HP 20% 이하일 때 10으로), 솔라 파워드(주간 야외 +2).
 
 #### 2.4.2 인지력(Perception)
 - **효과**: 에너지 무기·폭발물·자물쇠 따기 +2/점, HUD 나침반에 적(빨간 막대)이 표시되는 거리. 높은 인지력은 모이라 브라운(Moira Brown), 멜(Mel), 마체테(Machete) 등과의 대화에서 전용 선택지를 연다. 황무지 생존 가이드(The Wasteland Survival Guide) 퀘스트에서는 인지력 7 이상일 때 '스마트' 답변이 열린다.
@@ -692,7 +692,7 @@ flowchart TD
 | 4 | 차일드 앳 하트 | Child at Heart | CH 4 | 1 | 아이들(리틀 램프라잇(Little Lamplight) 등)과의 전용 대화 선택지 | 일부 어른과 로봇 1기에도 반응. 퀘스트 우회 경로 다수 | 003142 |
 | 4 | 컴프리헨션 | Comprehension | IN 4 | 1 | 스킬북 1권당 +1 추가(총 +2) | 선택 전 읽은 책은 소급 없음 | 031DE1 |
 | 4 | 에듀케이티드 | Educated | IN 4 | 1 | 레벨업당 스킬 포인트 +3 | 일찍 찍을수록 유리(Lv4 선택 시 Lv20까지 +48) | 031DD8 |
-| 4 | 엔토몰로지스트 | Entomologist | IN 4, 과학 40 | 1 | 변이 곤충(방사능바퀴·거대 개미(Giant ant)·블로트플라이(Bloatfly)·라드스코피온(Radscorpion)) 대상 피해 +50% | 그것들! 등에서 대화 선택지. [BS] 알비노 라드스코피온에도 유효 | 031DD9 |
+| 4 | 엔토몰로지스트 | Entomologist | IN 4, 과학 40 | 1 | 변이 곤충(방사능바퀴·거대 개미(Giant ant)·블로트플라이(Bloatfly)·방사능전갈(Radscorpion)) 대상 피해 +50% | 그것들! 등에서 대화 선택지. [BS] 알비노 방사능전갈에도 유효 | 031DD9 |
 | 4 | 아이언 피스트 | Iron Fist | ST 4 | 3 | 랭크당 비무장 피해 +5(최대 +15) | 스킬 수치는 그대로. 맨손·너클·데스클로 건틀릿·파워 피스트 계열 | 031DDB |
 | 4 | 스카운드럴 | Scoundrel | CH 4 | 3 | 랭크당 화술 +5, 물물교환 +5 | 전용 대화 일부 | 044CA6 |
 | 6 | 블러디 메스 | Bloody Mess | – | 1 | 모든 무기 피해 +5%, 처치 시 적이 터지는 연출 | 사지 절단 확률 상승(머리를 쏴야 해 퀘스트 수집에 방해). 1·2편 트레잇 출신 | 094EBA |
