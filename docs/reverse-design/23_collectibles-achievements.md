@@ -678,13 +678,95 @@ flowchart TD
 
 ## 9. 설계 분석
 
-(작성 중)
+### 9.1 수집 요소가 탐험 동기를 만드는 방식
+
+**① 보상의 위계**
+
+| 층위 | 수집 요소 | 희소성 | 보상 크기 | 플레이어가 느끼는 목적 |
+|---|---|---|---|---|
+| 1층 | 보블헤드 | 20개, 장소당 1개 | 매우 큼(S.P.E.C.I.A.L. +1 / 스킬 +10, 영구) | '이 던전 끝에 무엇이 있나' |
+| 2층 | 스킬북 | 약 320권, 흔함 | 작지만 누적(+1, 퍽으로 +2) | '구석을 하나라도 더 뒤진다' |
+| 3층 | 설계도 | 7종 × 3~4부 | 기능 해금 + 품질 향상 | '새 장난감을 만든다' |
+| 4층 | 유니크 장비 | 130종 이상 | 개성 있는 성능 | '이름 붙은 물건을 갖는다' |
+| 5층 | 퀘스트 수집품 | 퀀텀·서적·주괴·녹음 | 캡·장비·업적 | '의뢰를 채운다' |
+
+- 상위층(보블헤드)은 희소하고 강력해 **목적지형 탐험**을 만들고, 하위층(스킬북)은 흔하고 약해 **배회형 탐험**을 보상한다. 두 층이 겹치면서 "어디를 가도 무언가는 있다"는 기대가 유지된다.
+
+**② 배치 원리**
+
+- **던전의 끝·특별한 방**: 보블헤드는 대개 장소의 가장 깊은 곳이나 의미 있는 방(오텀 대령의 침실, CO 숙소 지하 금고, 야오과이 굴, 데스클로 소굴의 브라민 시체 옆)에 놓여 '끝까지 간 보상'이 된다.
+- **주제 일치**: 보블헤드의 스킬과 장소의 성격이 맞물린다. 중화기 → 핵 미사일 기지(콘스탄틴 요새), 과학 → 실험 볼트(볼트 106), 의학 → 진료소, 지능 → 과학 연구소, 화술 → 노예 상인 두목의 방, 물물교환 → 바자, 소형 화기 → 방위군 무기고, 에너지 무기 → 엔클레이브 사령부, 은신 → 야오과이 굴. 수집품이 곧 환경 스토리텔링의 일부다.
+- **안전 지대에도 하나씩**: 메가톤·리벳시티·데이브 공화국·아르푸·볼트 101에도 보블헤드가 있어, 전투 없이 마을을 구석구석 둘러보는 행동에도 보상이 있다.
+- **숨김 장소와 신호**: 비무장 보블헤드는 지도 마커가 없는 로코폴리스, 폭발물 보블헤드는 라디오 신호를 따라 찾는 맨홀 속에 있다. 지도 UI 밖의 단서(밤에 새는 빛, 신호 세기)로 찾게 해 '발견의 쾌감'을 준다.
+- **문서가 보물 지도**: 뉴카-콜라 공장 터미널의 시험 판매지 기록이 퀀텀 최대 저장소(파라다이스폴·체이스트 에이커스)를 가리킨다. 텍스트를 읽는 행위가 수집과 연결된다.
+- **진척의 시각화**: 집의 보블헤드 진열대가 20칸을 채워 가는 모습으로 진척을 보여 주고, 업적 2개가 10개·20개를 목표로 명시한다.
+
+**③ 수집 = 성장**
+
+- 보블헤드·스킬북은 레벨업과 같은 종류의 보상(스킬 포인트)을 준다. 그래서 수집이 '부가 콘텐츠'가 아니라 **캐릭터 성장의 다른 경로**가 된다. 스킬 +10 보블헤드는 레벨업 한 번 분량이고, 스킬북 전부(+컴프리헨션)는 레벨 수십 개 분량의 스킬 포인트다.
+
+**④ 놓칠 수 있음의 효과**
+
+- 볼트 101(의학 보블헤드·그로그낙·록잇 런처 설계도), 레이븐 락(에너지 무기 보블헤드), 메가톤 결말(힘 보블헤드·테마 스킬북), 퍽 선택(로브링어·컨트랙트 킬러 사본)처럼 **시간·선택으로 잠기는 수집품**이 있다. 순간마다 '지금 둘러봐야 한다'는 긴장을 만들고 다회차 동기를 주지만, 모르고 지나치면 되돌릴 수 없는 좌절도 준다.
+
+### 9.2 업적 구조
+
+- **콘텐츠 소비형(60%)**: 본편 점수의 600점이 메인·사이드 퀘스트 완료다. 표시 퀘스트를 모두 끝내는 것이 곧 업적 수집이 되도록 설계했다.
+- **도덕 선택 3×3 매트릭스**: 레벨 8·14·20(+[BS] 30) × 악·중립·선. 한 번의 플레이에서는 한 카르마 구간만 자연스럽게 얻게 되어 다회차 또는 의도적인 카르마 조절을 요구한다.
+- **시스템 사용 장려**: 화술·해킹·자물쇠 따기 각 50회 업적이 비전투 해결을 유도한다. 사이코 장난꾼은 역소매치기라는 숨은 시스템을 발견하게 하는 '유머형 튜토리얼'이다.
+- **월드 이벤트 탐색**: 베히모스 5마리 업적은 지도 곳곳의 고유 적을 찾아다니게 한다.
+- **DLC의 반복 문법**: 각 DLC가 '퀘스트 3개 + 지역 고유 수집·탐험 1개'(강철 주괴, 외계인 녹음, 포인트 룩아웃 장소) 구조를 반복해, DLC마다 작은 수집 루프를 새로 연다.
+- **트로피 등급의 의미**: 골드는 최종 퀘스트와 고난도·장기 목표(베히모스 전멸, 보블헤드 20개, DLC 최종 퀘스트), 실버는 중간 목표, 브론즈는 일반 진행이다.
+
+### 9.3 강점과 약점
+
+- **강점**
+  - 보상이 명확하고 강하다(보블헤드). 수집 행동이 성장에 직결된다.
+  - 배치가 세계관과 맞물려 수집 자체가 탐험 서사의 일부가 된다.
+  - 층위가 다른 수집품이 겹쳐 있어 짧은 탐험에도, 긴 탐험에도 보상이 있다.
+  - 진열대·업적으로 진척이 눈에 보인다.
+- **약점**
+  - 놓칠 수 있는 요소가 사전 경고 없이 잠긴다.
+  - 스킬이 100에 가까워지는 후반에는 스킬북의 가치가 급락한다.
+  - 퀀텀은 목표(30병)에 비해 공급(100병 이상)이 많아, 수집 긴장감보다는 '진행에 따른 자연 달성'에 가깝다.
+  - 유니크 장비 상당수가 NPC 살해·역소매치기에 의존해, 선한 플레이와 수집 욕구가 충돌한다.
+  - 원작 데이터 자체에 수량 불일치가 있다(퀀텀 108 서술 vs 표 합계 111).
+
+### 9.4 다른 시스템과의 연계
+
+| 시스템 | 연계 지점 | 문서 |
+|---|---|---|
+| 캐릭터 성장 | 보블헤드·스킬북·컴프리헨션 퍽 | [RD-14](14_character-system.md) |
+| 주거 | 보블헤드 진열대, 테마 동봉 스킬북 | [RD-22](22_economy-housing.md) |
+| 경제 | 퀀텀·서적 교환, 상인 판매 설계도 | [RD-22](22_economy-housing.md) |
+| 제작 | 설계도·재료·무기 장인 업적 | [RD-21](21_consumables-misc-crafting.md) |
+| 장비 | 유니크 무기·방어구 수치 | [RD-19](19_weapons-ammo.md), [RD-20](20_armor-apparel.md) |
+| 장소 | 수집품 배치 | [RD-13](13_location-catalog.md) |
+| 퀘스트 | 업적의 60%, 퀘스트 보상 유니크 | [RD-03](03_main-story-part1.md)~[RD-08e](08e_dlc-mothership-zeta.md) |
+| 적 | 베히모스 5마리 | [RD-24](24_bestiary.md) |
 
 ---
 
 ## 10. 쯔꾸르 이식 메모
 
-(작성 중)
+- **보존 필수**
+  - 보블헤드 20개와 효과(S.P.E.C.I.A.L. +1, 스킬 +10, 상한 10/100), 집의 진열대. 획득 즉시 영구 적용 규칙.
+  - 스킬북 13종의 '+1(퍽 +2)' 규칙과 '어디를 뒤져도 책이 나온다'는 감각.
+  - 누카콜라 챌린지와 퀀텀 수집, 설계도로 제작 무기를 여는 구조.
+  - 시간·선택으로 잠기는 수집품의 존재(최소한 의학·에너지 무기 보블헤드).
+- **단순화**
+  - 스킬북: 맵 수가 원작보다 적다면 종당 8~12권으로 줄이고, 1권당 효과(+2 등)로 총 성장량을 맞춘다.
+  - 퀀텀: 30병 목표에 맞춰 40~50병 정도로 줄이고, 대량 저장소 2~3곳(공장·파라다이스폴·추락 트럭)은 유지한다.
+  - 설계도 복수 사본 품질 규칙은 '1부 = 제작 가능, 2부 이상 = 상급품' 2단계로 줄여도 된다.
+  - 유니크 장비는 퀘스트 보상·고정 배치 위주로 30~40종을 고르고, 역소매치기 전용 품목은 뺀다.
+  - 업적: 쯔꾸르에는 업적 시스템이 없으므로 '도전 과제' 메뉴(플러그인)로 구현한다. 레벨 × 카르마 업적은 팬게임 레벨 상한에 맞춰 구간을 다시 정한다.
+- **생략·변형 후보**
+  - 콘솔 전용 장비, 버그성 무한 재생성 사본(셰일브리지 연구원, 베데스다 레이더), 반 크기 퀀텀, 플랫폼별 아이콘 오류.
+  - 사이코 장난꾼(역소매치기)과 사람 300명·크리처 300마리 같은 통계 업적은 전투 단순화에 맞춰 수치를 줄이거나 생략한다.
+- **구현 시 주의**
+  - 수집 집계는 '획득 플래그(스위치)' 기반으로 한다. 원작처럼 비정상 획득(콘솔)을 집계하지 않는 규칙이 필요하면 아이템 소지 수가 아니라 이벤트 스위치를 센다.
+  - 도트 맵에서는 작은 수집품이 묻히기 쉽다. 반짝임 연출 등 시인성 장치를 둘지, 원작의 '구석 뒤지기' 감각을 살릴지 기획 단계에서 정한다.
+  - 놓칠 수 있는 수집품은 원작처럼 영구 잠금으로 둘지, 후반 구제 수단(예: 상인 판매)을 둘지 결정한다.
 
 ---
 
@@ -708,4 +790,14 @@ flowchart TD
 
 ## 부록 B – 출처
 
-(작성 중)
+- Nukapedia: Vault-Tec bobblehead (Fallout 3), Vault-Tec bobblehead, Bobblehead collector's stand
+- Nukapedia: Bobblehead - Strength, Bobblehead - Perception, Bobblehead - Endurance, Bobblehead - Charisma, Bobblehead - Intelligence, Bobblehead - Agility, Bobblehead - Luck, Bobblehead - Barter, Bobblehead - Big Guns, Bobblehead - Energy Weapons, Bobblehead - Explosives, Bobblehead - Lockpick, Bobblehead - Medicine, Bobblehead - Melee Weapons, Bobblehead - Repair, Bobblehead - Science, Bobblehead - Small Guns, Bobblehead - Sneak, Bobblehead - Speech, Bobblehead - Unarmed
+- Nukapedia: Fallout 3 skill books, Big Book of Science (Fallout 3), Chinese Army: Special Ops Training Manual (Fallout 3), D.C. Journal of Internal Medicine (Fallout 3), Dean's Electronics (Fallout 3), Duck and Cover! (Fallout 3), Grognak the Barbarian (Fallout 3), Guns and Bullets (Fallout 3), Lying, Congressional Style (Fallout 3), Nikola Tesla and You (Fallout 3), Pugilism Illustrated (Fallout 3), Tales of a Junktown Jerky Vendor (Fallout 3), Tumblers Today (Fallout 3), U.S. Army: 30 Handy Flamethrower Recipes, Paradise Lost, Motivational Secrets of the Stars, You're SPECIAL!, Comprehension (Fallout 3)
+- Nukapedia: Nuka-Cola Quantum (Fallout 3), The Nuka-Cola Challenge, Quantum Chemist
+- Nukapedia: Fallout 3 crafting, Schematics - bottlecap mine, Schematics - dart gun, Schematics - deathclaw gauntlet, Schematics - Nuka grenade, Schematics - railway rifle, Schematics - Rock-It Launcher, Schematics - Shishkebab, Vault 101(Notable loot)
+- Nukapedia: Fallout 3 unique weapons, Fallout 3 armor and clothing, Category: Fallout 3 unique armor and clothing 및 개별 장비 문서(Colonel Autumn's uniform, Composite recon armor, Mayor MacCready's outfit, Mysterious Stranger outfit, Naughty nightwear (Fallout 3), Vault 101 child's jumpsuit, Vault lab uniform (Fallout 3), Repairman jumpsuit (Fallout 3), Scribe robe (Fallout 3), Scientist outfit (Fallout 3) 등)
+- Nukapedia: Fallout 3 stat-raising items
+- Nukapedia: Fallout 3 achievements and trophies, The Bigger They Are..., Weaponsmith, Psychotic Prankster, One-Man Scouting Party, Doesn't Play Well with Others, Slayer of Beasts, Silver-Tongued Devil, Data Miner, Keys are for Cowards, Vault-Tec C.E.O., Bog Walker, Mill Worker, The Legend of Zeta, Alien captive recorded log
+- Nukapedia: Fallout 3 quests, Fallout 3 locations, Fallout 3 world map
+- Nukapedia: 장소 문서(방위 확인용) — Greener Pastures disposal site, Rockopolis, WKML Broadcast Station, Bethesda ruins, Fort Constantine, Deathclaw sanctuary, Vault 108, Vault 106, Yao guai tunnels, Dunwich Building, National Guard depot, Evergreen Mills, Republic of Dave, Arlington Cemetery, Raven Rock, Arefu, Paradise Falls
+- 한글 패치 병렬 대사(리드 정리본): 고유명사 표기 대조용

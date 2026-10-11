@@ -1471,22 +1471,124 @@ flowchart TD
 
 ## 8. 엔딩·후일담 반영
 
-<!-- S8 -->
+엔딩 시스템 전체는 [RD-04](04_main-story-part2-endings.md)가 정본이다. 폴아웃 3의 엔딩은 내레이션이 붙은 영상 세그먼트 26개([BS] 설치 시 29개)를 조건에 따라 이어 붙이는 방식이다. 폴아웃 1·2와 뉴 베가스가 마을·세력마다 후일담 슬라이드를 차례로 보여 주는 것(폴아웃 2는 엔딩 요소 47개, 뉴 베가스는 주제 30개)과 달리, 세력별 결말을 따로 정리하지 않는다. 세력과 관련된 세그먼트는 다음과 같다.
+
+| 세그먼트 | 조건 | 관련 세력 | 장면·내레이션 |
+|---|---|---|---|
+| 2 | 국가 원수를 탈출 노예 편으로 완료 | 노예제 폐지론자 | 한니발 햄린, 링컨 기념관, 복원된 링컨상(내레이션 없음) |
+| 5 | 원자의 힘에서 메가톤 폭파 | 메가톤, 원자의 자손, 텐페니 타워 | 핵폭발 장면(내레이션 없음) |
+| 6 | 카르마 (매우) 악함, 메가톤 미폭파, 오아시스에서 헤럴드를 불태움 | 트리마인더 | 헤럴드 장면(내레이션 없음) |
+| 7 | 리벳시티 주민을 죽였거나 냉정한 거래에서 플랙을 노예로 만듦(위키도 조건이 불확실하다고 적음) | 리벳시티, 노예 사냥꾼 | 플랙 노예화 장면 |
+| 10 | 최종 선택에서 사라 라이언을 통제실로 보냄 | BoS, 라이언스 프라이드 | "진정한 영웅"의 희생 |
+| 12 | FEV를 넣지 않았고 레이븐 락을 파괴하지 않음 | 엔클레이브 | "사악한 대통령의 도구가 되기를 거부했다" |
+| 13 | FEV를 넣지 않았고 레이븐 락을 파괴함 | 엔클레이브 | 12번과 같은 내레이션, 다른 장면 |
+| 14 | FEV를 넣음(프로젝트 임퓨리티) | 엔클레이브(이든의 계획) | "The Capital Wasteland, despite its progress, became a graveyard."(수도 황무지는 발전에도 불구하고 무덤이 되었다.) |
+
+- 그 밖의 세그먼트는 카르마(4·8·17·18번), 최종 선택(9·11번), [BS]의 동료 희생(27~29번: RL-3 하사·셰런·폭스), 성별·인종별 마무리(15·16·19~26번)를 다룬다.
+- **[BS]의 변화**: 엔딩 뒤에도 게임이 이어진다. 방랑자가 정화기에 들어간 경우 9번 세그먼트에서 죽음 장면이 빠지고, 2주 혼수 뒤 시타델에서 깨어난다. 최종전에서 FEV를 넣었다면 메가톤과 언더월드에 병자가 생기고, 영원한 빛의 사도의 성수가 바이러스를 무력화한다는 설정이 붙는 등, 엔딩 선택이 세력의 형편에 이어진다. 세부는 [RD-08c](08c_dlc-broken-steel.md).
+- **위키가 전하는 후일담(게임 밖·후속작 기준)**
+  - BoS: 2278~2279년 라이언 부녀 사망 → 2283년 맥슨의 재통합 → 프리드웬 건조(폴아웃 4로 이어짐).
+  - 엔클레이브: 10년 뒤 '역사의 각주'가 되고 구성원은 사회에 흩어짐.
+  - 메가톤: 정화 계획 가동 뒤 크게 번영하고, 루카스 심즈의 아들 하든이 보안관을 물려받았다는 서술이 있으나 위키도 홍보물 출처로 따로 표시한다.
+  - 리틀 램프라잇: 2287년 상황은 불명.
 
 ---
 
 ## 9. 설계 분석
 
-<!-- S9 -->
+### 9.1 세력 구도가 메인 스토리에서 하는 일
+
+- **대립축 하나, 쟁점 하나**: 메인 스토리의 세력 갈등은 정화 계획이라는 단일 쟁점으로 모인다. BoS(라이언)와 엔클레이브의 어텀 대령은 둘 다 '물을 나눠 사람을 얻으려' 하고, 이든 대통령만이 '물을 이용한 정화'를 원한다. 같은 자원을 두고 동기만 다른 구도라서, 플레이어가 마지막에 고르는 것은 세력이 아니라 **물에 무엇을 넣느냐**다.
+- **거울 세력 배치**: 주요 세력마다 성격을 비춰 주는 짝이 있다.
+
+| 기준 세력 | 거울 세력 | 드러나는 주제 |
+|---|---|---|
+| 라이언의 BoS(주민 보호) | 아웃캐스트(기술 회수 원리주의) | 조직의 사명과 현실 사이의 선택. 개발진도 '고결한 BoS'와 '강경파 BoS'를 의도적으로 나눴다고 밝힘 |
+| 탈론 컴퍼니(선인 사냥) | 감시자(악인 사냥) | 카르마의 대칭 처벌. 어느 쪽으로 치우쳐도 누군가에게 쫓김 |
+| 감시자(손가락) | 리틀혼 앤 어소시에이츠(귀) | 같은 '현상금 사냥'을 선악으로 나눈 퍽 한 쌍 |
+| 노예 사냥꾼(파라다이스폴) | 노예제 폐지론자(템플 오브 유니온) | 링컨의 유산을 두고 다투는 상징 싸움 |
+| 텐페니 타워(인간 특권층) | 언더월드·와링톤 구울 | 차별과 공존 |
+| 원자의 자손(분할) | 영원한 빛의 사도(계몽) | 같은 신앙의 갈라진 해석 |
+
+- **슈퍼 뮤턴트의 기능**: 협상할 수 없는 영구 위협이다. BoS가 원래 임무를 버린 이유이고(라이언의 변절), 도심 탐험의 기본 압력이며, 볼트 87이라는 메인 스토리 목적지로 이어지는 실마리다.
+- **엔클레이브의 늦은 등장**: 생명의 물까지 엔클레이브는 라디오의 목소리일 뿐이다. 이 이야기 중간의 '세계 상태 전환'(검문소 30곳, 버티버드)이 후반부의 긴장을 맵 전체로 넓힌다.
+
+### 9.2 플레이어 정체성과 세력
+
+- **편입되는 주인공**: 플레이어는 볼트 출신 외부인에서 시작해 BoS의 동반자, [BS]의 나이트로 '자리 잡는다'. 이 과정은 선택이 아니라 이야기의 흐름이다. 엔클레이브 편에 설 길은 FEV 투입이라는 한 번의 선택뿐이고, 그것도 세력 가입은 아니다.
+- **카르마가 곧 소속**: 세력 평판이 없으므로 플레이어의 사회적 정체성은 카르마 한 축에 실린다. 세상은 암살대(탈론/감시자), 동료의 합류·이탈, 메가톤의 선물, 쓰리독의 논평으로 그 정체성에 반응한다.
+- **'부업형' 소속**: 감시자(정의 집행자), 리틀혼(청부 살인자), 노예 사냥꾼, 아웃캐스트 기술 수집 요원, 라일리 레인저 측량원, 캐러밴 투자자처럼 작은 세력은 충성 대상이 아니라 '역할 놀이용 부업'을 준다. 대부분 퍽이나 반복 퀘스트와 연결되어 경제적 보상이 따른다.
+- **정착지는 도덕 시험장**: 메가톤(폭탄), 텐페니(구울), 아르푸·패밀리(식인), 오아시스(신의 죽음), 템플 오브 유니온(노예), 피트(노예제와 치료제)는 각각 정착지 세력의 운명을 영구히 바꾸는 선택을 하나씩 들고 있다. 세력 시스템의 깊이가 아니라 **선택의 무게**로 정체성을 만든다.
+
+### 9.3 단순성의 장단점
+
+| 측면 | 장점 | 단점 |
+|---|---|---|
+| 세력 구도 | 대립축이 하나라 이야기 전달이 분명하다 | 진영 선택의 자유가 없다. 엔클레이브·아웃캐스트 루트가 없다 |
+| 관계 처리 | 평판 수치 없이 스크립트 분기로 처리해 결과가 극적이고 이해하기 쉽다 | 중간 상태와 누적 관계가 없어 '관계를 가꾸는' 재미가 약하다 |
+| 카르마 반응 | 대칭 암살대가 선·악 어느 쪽 플레이에도 긴장을 준다 | 카르마가 한 축뿐이라 '선하지만 BoS를 싫어하는' 같은 복합 정체성을 표현할 수 없다. 중립을 유지하면 추적을 모두 피하는 것이 최적해가 된다 |
+| 정착지 반응 | 한 명을 건드리면 전원이 적대하는 규칙이 직관적이다 | 오인 사격 한 번에 공동체 전체가 적이 되고, 되돌릴 수단이 거의 없다(아르푸는 영구) |
+| 엔딩 회수 | 메인 결말에 집중된 짧은 엔딩 | 사이드 퀘스트로 바꾼 세력의 운명이 엔딩에서 거의 회수되지 않는다. 폴아웃 2·뉴 베가스와 가장 크게 다른 점 |
+| 기술 구현 | 한 팩션 레코드가 적대·반응·태그를 모두 맡아 콘텐츠를 빨리 만들 수 있다 | 일회용 팩션과 적대 표식 팩션이 퀘스트마다 늘어나, 같은 집단의 상태가 여러 팩션에 흩어진다(아웃캐스트의 '아군' 대사 버그가 그 예) |
+
+### 9.4 다른 시스템과의 연계
+
+- **캐릭터 시스템**([RD-14](14_character-system.md)): 카르마 구간이 암살대·동료·엔딩을 정한다. 퍽 로브링어·컨트랙트 킬러가 세력 거래를, 파워 아머 훈련이 BoS·[OA] 아웃캐스트 진행을, 헤마토파지가 패밀리를 보상한다.
+- **동료**([RD-10](10_characters-major-companions.md)): 크로스(BoS·선), 폭스(선), 클로버(노예 사냥꾼에게서 구매·악), 제리코(악), 버치(터널스네이크·중립), 셰런(언더월드 계약).
+- **경제**([RD-22](22_economy-housing.md)): 손가락·귀 판매, 아웃캐스트 기술 교환, 상인 제국 투자, 지형 측량, 링컨 유물 판매, 노예 포획 보상.
+- **랜덤 인카운터**([RD-07](07_misc-quests-encounters.md)): 암살대, 히트맨, 경쟁 노예 사냥꾼, 엔클레이브 대 아웃캐스트 등 세력 간 교전 인카운터.
+- **월드 상태**([RD-12](12_world-structure-settlements.md)·[RD-13](13_location-catalog.md)): 생명의 물 이후 엔클레이브 캠프, 메가톤 폐허, 텐페니 주민 교체, 빅타운의 캐러밴 경로 편입.
 
 ---
 
 ## 10. 쯔꾸르 이식 메모
 
-<!-- S10 -->
+- **보존 필수**
+  - BoS 대 엔클레이브의 이항 대립과, 생명의 물 전후로 월드가 바뀌는 구조(검문소·적 구성 교체).
+  - 카르마 대칭 암살대(탈론/감시자)와 퍽 연동 현상금 거래(손가락/귀). 경계값 ±250·±750을 유지한다.
+  - 정착지 단위 집단 적대와 주요 진영 교체 분기(메가톤, 텐페니, 오아시스, 템플 오브 유니온, 피트).
+  - BoS 편입 단계(시타델 출입 → 파워 아머 훈련 → 프라이드 명예 회원 → [BS] 나이트).
+  - 주변 세력 '부업': 아웃캐스트 기술 교환(50포인트), 상인 제국 투자, 지형 측량.
+- **단순화**
+  - 엔진 팩션 → `팩션 테이블(ID, 기본 태도)` + `플레이어 관계 변수(0 적대 / 1 중립 / 2 우호)`. 4단계 반응을 3단계로 줄인다.
+  - 적대 표식·임시 팩션 → 이벤트 스위치. 거리 기반 적대 → 리전 진입 이벤트.
+  - 암살대 → 맵 이동 시 공통 이벤트에서 카르마 변수를 판정하고, 매복 지점마다 1회 스위치. 31곳은 10곳 안팎으로 줄여도 구조는 유지된다.
+  - 병종 레벨 단계(엔클레이브 5단계, 감시자 3단계)는 2~3단계 테이블로.
+- **생략·변형 후보**
+  - 대기 연출·음성용 태그 팩션, 일회용 인카운터 팩션 상당수.
+  - 텐페니의 주석 처리된 '수배 해제' 코드와 미사용 `RaiderFriendFaction`은 원작에 없는 기능이므로 채택 여부를 기획 단계에서 따로 판단한다.
+- **구현 시 주의**
+  - RPG Maker에는 팩션 개념이 없다. 정착지 전체 적대를 공용 스위치 하나로 묶지 않으면 '한 명 공격 → 전원 적대'가 맵마다 어긋난다.
+  - 심볼 인카운터 방식에서는 '적대 = 접촉 시 전투'로 단순 치환되므로, 세력끼리 싸우는 장면(국회의사당 3파전, 엔클레이브 대 레이더)은 이벤트 페이지 조건과 연출 이벤트로 따로 만든다.
+  - 세력명은 한글 패치 기준 표기(감시자, 탈론 컴퍼니, 노예 사냥꾼, 아웃캐스트 등)를 쓴다. 퀘스트 이름은 용어집 표기를 유지한다.
 
 ---
 
 ## 부록 A. 출처
 
-<!-- SA -->
+**허브·개요**
+- Nukapedia: Fallout 3 factions / Template:Navbox factions FO3 / Faction / Fallout 3 Official Game Guide faction profiles (요약만 사용) / Faction Profile – the Brotherhood of Steel (Fallout 3) / Karma (Fallout 3) / Karma / Fallout 3 endings / Broken Steel / Operation: Anchorage (add-on)
+
+**대세력**
+- Nukapedia: Brotherhood of Steel (Fallout 3) / Brotherhood of Steel ranks / Lyons' Pride / 2nd Monument Defense Detachment / The Citadel / Power Armor Training (Fallout 3) / The Lost Initiate / Gallows Humor / Blood Brotherhood / Getting Ready for Prime Time / Who Dares Wins
+- Nukapedia: Enclave / Enclave (Fallout 3) / Enclave Department of the Army / Enclave Squad Sigma / Enclave soldier (Fallout 3) / Fallout 3 Enclave outposts and camps / Eyebot (Fallout 3)
+
+**전역 세력**
+- Nukapedia: Brotherhood Outcasts / Henry Casdin / The Outcast Collection Agent / Aiding the Outcasts / Sibley
+- Nukapedia: Talon Company / Talon Company merc / Private contract / Contract for extermination / Hitman
+- Nukapedia: Regulators (Fallout 3) / Regulator (Fallout 3) / Bounty notice / Lawbringer / Contract Killer / Littlehorn & Associates
+- Nukapedia: Raiders (Fallout 3) / Raiders / Evergreen Mills / Slavers (Fallout 3) / Rescue from Paradise / Super mutant (Fallout 3) / Chinese remnants
+
+**정착지·특수 집단**
+- Nukapedia: The Family / Church of the Children of Atom / Apostles of the Eternal Light / Rivet City / Rivet City Council / Rivet City security force / Saint Monica's Church / Megaton / Megaton settler / Underworld / Underworld resident / Tenpenny Tower / Tenpenny Tower (quest) / Tenpenny resident / Gustavo (Fallout 3) / Little Lamplight / Picking Up the Trail / Big Town / Reilly's Rangers / Geomapping with Reilly / Treeminders / Abolitionists / Republic of Dave / Canterbury Commons / Caravan trade route / Caravan guard (Fallout 3) / Merchant Empire / Arefu / Andale / Girdershade / Grayditch / Vault 101 security / Trouble on the Homefront / Tunnel Snakes / The Railroad / List of Railroad characters / The Institute / Nuka-Cola fan club / Sudden-Death Overtime
+
+**DLC 세력**
+- Nukapedia: Pitt raiders (faction) / Pitt slaves (faction) / Trog / Free Labor / People's Liberation Army / Crimson Dragoons / United States Army / United States Army Corps of Engineers / United States Marine Corps / Bandit (Broken Steel) / Ghoul guard / Tribals (Point Lookout) / Swampfolk / Smuggler / Ug-Qualtoth / Abbey of the Road / Zetan
+
+**엔진·스크립트(코퍼스 전사본)**
+- Nukapedia: Gamebryo console commands / Gamebryo console commands (all)
+- 스크립트 문서: FFERepeatASCRIPT / FFERepeatBSCRIPT / FFOutcastsSCRIPT / DLC03BS3QuestScript / MQ09CrZAXEyeScript / ParadiseFallsAttackTriggerSCRIPT / MS06Script / OasisBranchtenderCypressScript 외 오아시스 신도 스크립트 / MS01TemporaryFriendsTriggerScript / MS12GhoulMaskScript / MS12FinScript / DialogueTenpennyScript / FFEU21EnclaveSCRIPT
+- NPC 정보상자 `factions` 필드 집계(코퍼스 전체, 일부 문서만 기재되어 있어 인원수는 하한값)
+
+**표기 참고**
+- 폴아웃 3 한글 패치 병렬 대사(리드 제공, `FANPATCH_TERMS.md` 및 `parallel.tsv`): 세력명·인명·지명 표기 확인에 사용. 인용 대사의 한국어 번역은 이 문서 작성자의 번역이다.

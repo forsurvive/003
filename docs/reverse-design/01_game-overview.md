@@ -398,7 +398,7 @@ flowchart TD
 | 동료(상시) | 8명(도그밋(Dogmeat) + 인간형 1명 동시 동행) | - | `Fallout 3 companions` |
 | 업적 | 50개(1000점), PS3 트로피 51개 | +22개(550점), 총 72개 | `Fallout 3 achievements and trophies` |
 | 엔딩 영상 구간 | 26개 | 29개([BS]) | `Fallout 3 endings` |
-| 라디오 방송국 | 주요 2(GNR, 엔클레이브 라디오) + 소규모 3(아가사의 방송국, 볼트 101 PA 시스템, 미합중국 인민공화국 라디오) + 임시 신호 | [TP] 피트 방송 + DLC 임시 신호 | `Fallout 3 radio stations` |
+| 라디오 방송국 | 주요 2(GNR, 엔클레이브 라디오) + 소규모 3(아가사의 방송국, 볼트 101 PA 시스템(Vault 101 PA System), 아메리카 인민공화국 라디오(People's Republic of America Radio)) + 임시 신호 | [TP] 피트 방송(Pitt broadcast) + DLC 임시 신호 | `Fallout 3 radio stations` |
 
 [^qcount]: 같은 허브 문서 본문은 "본편 59개(메인·사이드·반복), DLC 35개, 합계 94개"라고 적어 표 행 수와 집계 기준이 다르다. 본 표는 표 행 수를 그대로 센 값이며, 퀘스트별 정본은 RD-03~08이다.
 

@@ -93,7 +93,7 @@
 | Derived statistics | 파생 능력치 | |
 | G.O.A.T. (Generalized Occupational Aptitude Test) | G.O.A.T.(일반 직업 적성 검사) | 볼트 101 진로 시험 |
 | You're SPECIAL! | 너는 스페셜해! | 프롤로그 그림책 |
-| Vault-Tec bobblehead | 볼트텍 보블헤드 | 줄여서 보블헤드 |
+| Vault-Tec bobblehead | 볼트-텍 보블헤드 | 줄여서 보블헤드 |
 | Skill book | 스킬북 | |
 | Intense Training | 인텐스 트레이닝 | 퍽 |
 | Almost Perfect | 올모스트 퍼펙트 | [BS] 퍽 |
@@ -102,7 +102,7 @@
 
 | English | 한국어 표기 | 비고 |
 |---|---|---|
-| V.A.T.S. (Vault-Tec Assisted Targeting System) | V.A.T.S.(볼트텍 보조 조준 시스템) | 줄여서 VATS |
+| V.A.T.S. (Vault-Tec Assisted Targeting System) | V.A.T.S.(볼트-텍 보조 조준 시스템) | 줄여서 VATS |
 | Damage Resistance (DR) | 피해 저항(DR) | % 감소 |
 | Damage Threshold (DT) | 피해 한계치(DT) | 폴아웃 3에는 없음 (NV에서 도입) |
 | Critical hit | 치명타 | |
@@ -348,7 +348,7 @@
 | Vault 92 | 볼트 92 | |
 | Vault 106 | 볼트 106 | |
 | Vault 108 | 볼트 108 | |
-| Vault 112 | 볼트 112 | 트랭퀼리티 레인 |
+| Vault 112 | 볼트 112 | 트랜퀼리티 레인 |
 | Springvale | 스프링베일 | |
 | Springvale school | 스프링베일 학교 | |
 | Megaton | 메가톤 | |
