@@ -136,7 +136,7 @@ flowchart TD
 | 지출 | 교회 헌금 | 10·50·100캡 | 캡 1당 선 카르마 1 | [RD-07](07_misc-quests-encounters.md) |
 | 수입 | 원자의 힘 - 폭탄 해체 | 100캡(화술로 500캡) 또는 카르마 +200, 메가톤 집 | 루카스 심즈(Lucas Simms) | [RD-05](05_side-quests-part1.md) |
 | 수입 | 원자의 힘 - 폭탄 폭파 | 500캡(화술로 1,000캡), 카르마 −1,000, 텐페니 스위트 | 미스터 버크(Mister Burke) | [RD-05](05_side-quests-part1.md) |
-| 수입 | 누카콜라 챌린지 | 1,200~2,400캡(퀀텀 30병 판매 총액) | 시에라 40캡/병, 로널드 40~80캡/병 | [RD-06](06_side-quests-part2.md) |
+| 수입 | 누카콜라 챌린지 | 1,200~2,400캡(퀀텀 30병 판매 총액) | 시에라 40캡/병, 로날드 40~80캡/병 | [RD-06](06_side-quests-part2.md) |
 | 수입 | 노예 포획 | 1명당 250캡 | 그루스, 냉정한 이윤(Strictly Profitable) | [RD-07](07_misc-quests-encounters.md) |
 | 수입 | 전더스 플렁킷(Junders Plunkett)의 손가락 | 1,000캡 | 로브링어 퍽 | [RD-07](07_misc-quests-encounters.md) |
 
@@ -587,7 +587,7 @@ flowchart TD
 | 네 피를 마시고 싶어 | I Want to Drink Your Blood | 메레스티 지하철역 | 밴스(Vance) | 혈액 팩(기본가 5) | **15캡** | 유한 | '피의 유대' 연계 |
 | 라일리와 지형 탐사 | Geomapping with Reilly | 레인저 기지 | 라일리(Reilly) | 발견한 지도 위치 데이터 | **위치당 30캡** | 유한(지도 마커 수) | '라일리스 레인저스' 연계 |
 | 냉정한 이윤 | Strictly Profitable | 파라다이스폴 | 그루스 | 노예(메스메트론으로 기절시켜 목걸이 착용) | **250캡** + 새 노예 목걸이 | 다수의 노예화 가능 NPC | '냉정한 거래' 이후. 메스메트론 동력 전지 10발 200캡 |
-| 누카콜라 챌린지 | The Nuka-Cola Challenge | 다리그늘 마을 | 시에라 / 로널드 | 뉴카-콜라 퀀텀(기본가 30) | **40캡** / **40~80캡**(로널드: 화술 성공 시 80, 카르마 감소) | 유한(30병 목표) | 사이드 퀘스트, [RD-06](06_side-quests-part2.md) |
+| 누카콜라 챌린지 | The Nuka-Cola Challenge | 다리그늘 마을 | 시에라 / 로날드 | 뉴카-콜라 퀀텀(기본가 30) | **40캡** / **40~80캡**(로날드: 화술 성공 시 80, 카르마 감소) | 유한(30병 목표) | 사이드 퀘스트, [RD-06](06_side-quests-part2.md) |
 | 링컨의 이윤 | Lincoln's Profit Margins | 역사 박물관 / 리벳시티 | 아브라함 워싱턴 등 | 링컨 유물 | 총 10~1,110캡 | 유한(유물 수) | [RD-07](07_misc-quests-encounters.md) |
 | [TP] 아이들에게 장난감을 | Toys for Tots | 피트 다운타운·헤이븐 | 미디아(Midea)·샌드라(Sandra) | 테디 베어(기본가 3) | **30캡 + 10 XP** | 유한 | [RD-08b](08b_dlc-the-pitt.md) |
 | [BS] 프라임 타임 준비 | Getting Ready for Prime Time | 시타델 | 로스차일드 서기(Scribe Rothchild) | 카메라(기본가 5) / 센서 모듈(기본가 30) | **100캡 + 25 XP** / **75캡 + 10 XP** | 유한 | [RD-08c](08c_dlc-broken-steel.md) |
