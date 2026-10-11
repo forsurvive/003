@@ -1360,7 +1360,7 @@ flowchart TD
 | 시에라 집 털기 | 퀀텀 케미스트 퍽이 있으면 시에라 집의 뉴카-콜라를 훔쳐 퀀텀으로 바꿀 수 있음(절도 감점) |
 
 **뉴카-콜라 공장과 선적 목록**
-1. 공장 감독관 미스터 핸디 **마일로(Milo)**가 직원 신원을 요구함. 거짓 신원·욕설 등으로 경고(demerit)가 2회를 넘으면 "Expulsion Protocol KL-001"을 발동해 적대함 〔대사〕.
+1. 공장 반장(Foreman)인 미스터 핸디 **마일로(Milo)**가 직원 신원을 요구함. 거짓 신원·욕설 등으로 경고(demerit)가 2회를 넘으면 "Expulsion Protocol KL-001"을 발동해 적대함 〔대사〕.
 2. 터미널 암호 얻기:
    - [화술] "I'm John-Caleb Bradberton. I don't need an ID number. I own this place!" → 경영진 권한 인정 〔대사〕
    - 직원 배지: 쪽지 '뉴카-콜라 가족이 된 것을 환영합니다!(Welcome to the Nuka-Cola family!)'를 찾아 직원으로 인정받음
@@ -1422,7 +1422,7 @@ flowchart TD
 |---|---|---|
 | 시에라 페트로비타 | Sierra Petrovita | 뉴카-콜라 팬클럽 회장이자 유일한 회원. 에버그린 밀(Evergreen Mills)이 위험하다고 알려 줌. 폴아웃 4의 '누카 월드'에도 재등장 |
 | 로널드 래런 | Ronald Laren | 아내를 잃은 홀아비. 비표시 퀘스트 '그레이디의 소포'의 수령인이기도 함 |
-| 마일로 | Milo, shipping foreman | 뉴카-콜라 공장 선적 감독관 미스터 핸디. 전쟁 직전 규정 위반 직원들을 가둬 굶겨 죽인 기록이 있음 |
+| 마일로 | Milo, shipping foreman | 뉴카-콜라 공장의 선적 반장인 미스터 핸디. 전쟁 직전 규정 위반 직원들을 가둬 굶겨 죽인 기록이 있음 |
 | 괄리 레덕스 | Goalie Ledoux | 하키 갱 서든-데스 오버타임의 '주장'. 대사가 하키 용어 범벅 |
 | 뉴카-콜라 퀀텀 | Nuka-Cola Quantum | 라드 +10, AP +20(4분), 무게 1, 가치 30, 중독 확률 10%(RD-21) |
 | 누카 수류탄 설계도 | Schematics - Nuka grenade | 보상. 재료: 깡통·아브락소 세제·테레빈유·퀀텀(RD-21) |
