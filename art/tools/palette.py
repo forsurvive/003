@@ -112,3 +112,33 @@ def allowed_set(*families):
         elif fam in PF:
             out |= {rgb(c) for c in PF[fam]}
     return out
+
+
+# ramps (dark -> light) for one-step shading moves; families with fixed ramps
+_RAMP_LISTS = [[f"P{i:02d}" for i in r] for r in (range(0, 10), range(10, 16), range(16, 23), range(23, 28),
+                                                  range(28, 33), range(33, 38), range(38, 43), range(43, 47),
+                                                  range(47, 51), range(51, 55), range(55, 58), range(58, 61),
+                                                  range(61, 64))]
+_RAMP_POS = {}
+
+
+def _ramp_index():
+    if _RAMP_POS:
+        return _RAMP_POS
+    lists = [[rgb(t) for t in r] for r in _RAMP_LISTS]
+    lists += [[rgb(c) for c in v] for v in list(SKIN.values()) + list(HAIR.values())]
+    lists += [[rgb(c) for c in v[:4]] for v in PF.values()]
+    lists += [[rgb(c) for c in UI_GREEN], [rgb(c) for c in UI_AMBER]]
+    for r in lists:
+        for i, c in enumerate(r):
+            _RAMP_POS.setdefault(c, (r, i))
+    return _RAMP_POS
+
+
+def step(c, k):
+    """move an RGB colour k steps along its own ramp (negative = darker). Unknown colours are returned as is."""
+    pos = _ramp_index()
+    if c not in pos:
+        return c
+    r, i = pos[c]
+    return r[max(0, min(len(r) - 1, i + k))]

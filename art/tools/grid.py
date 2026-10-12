@@ -111,3 +111,36 @@ def check(img, allowed):
     if alpha:
         probs.append(f"partial alpha pixels: {alpha}")
     return probs
+
+
+def thin_outline(img, ink=None, passes=4):
+    """repeat _thin_once until nothing changes (a thinned band can expose the next one)."""
+    for _ in range(passes):
+        nxt = _thin_once(img, ink)
+        if nxt.tobytes() == img.tobytes():
+            break
+        img = nxt
+    return img
+
+
+def _thin_once(img, ink=None):
+    """SD-16 §13.5-3: silhouette outline is exactly 1px of P01. Where the edge ink pixel has a second ink pixel
+    inside it followed by coloured fill, the second one becomes the fill's colour one step darker (a shade, not a
+    line). 3px+ ink masses (gaps between legs, dark hair mass) are left alone. Returns a new image."""
+    ink = ink or palette.rgb("P01")
+    out = img.copy()
+    px, po = img.load(), out.load()
+    w, h = img.size
+    op = lambda x, y: 0 <= x < w and 0 <= y < h and px[x, y][3]
+    for y in range(h):
+        for x in range(w):
+            if not op(x, y) or px[x, y][:3] != ink:
+                continue
+            for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                if op(x + dx, y + dy):
+                    continue
+                ix, iy, jx, jy = x - dx, y - dy, x - 2 * dx, y - 2 * dy
+                if op(ix, iy) and px[ix, iy][:3] == ink and op(jx, jy) and px[jx, jy][:3] != ink:
+                    dk = palette.step(px[jx, jy][:3], -1)
+                    po[ix, iy] = (dk if dk != ink else px[jx, jy][:3]) + (255,)
+    return out

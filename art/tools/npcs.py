@@ -13,7 +13,7 @@ import outfits as O
 import heads as HD
 import weapons as WP
 import creatures as CR
-from grid import upscale, check
+from grid import thin_outline, upscale, check
 
 ROOT = os.path.dirname(os.path.dirname(__file__))
 FONT = ImageFont.truetype(os.path.join(ROOT, "fonts/Galmuri9.ttf"), 10)
@@ -242,6 +242,8 @@ def build(code):
         im = prop(im, v, c["prop"])
         out["idle"][v] = im
         out["walk"][v] = [skin(body(wear(f, v, c["worn"], fit), c["body"]), c["skin"]) for f in sets["walk"][v]]
+        out["idle"][v] = thin_outline(out["idle"][v])                 # body surgery can re-double an edge
+        out["walk"][v] = [thin_outline(f) for f in out["walk"][v]]
     for m, src in (("NW", "NE"), ("W", "E"), ("SW", "SE")):
         out["idle"][m] = out["idle"][src].transpose(Image.FLIP_LEFT_RIGHT)
         out["walk"][m] = [f.transpose(Image.FLIP_LEFT_RIGHT) for f in out["walk"][src]]

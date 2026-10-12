@@ -471,6 +471,11 @@ def build_all(code="T01", faction=None, look=None):
     sets["idle"].update({"W": sets["idle"]["E"].transpose(Image.FLIP_LEFT_RIGHT),
                          "SW": base["SE"].transpose(Image.FLIP_LEFT_RIGHT),
                          "NW": base["NE"].transpose(Image.FLIP_LEFT_RIGHT)})
+    from grid import thin_outline                                   # final pass: 1px outline rule (§13.5-3)
+    for mode in sets:
+        for v in sets[mode]:
+            fr = sets[mode][v]
+            sets[mode][v] = [thin_outline(f) for f in fr] if isinstance(fr, list) else thin_outline(fr)
     return sets, report
 
 

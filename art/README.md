@@ -6,10 +6,12 @@
 |---|---|
 | `tools/` | 팔레트 모듈(`palette.py`), 텍스트 격자 렌더러·검사기(`grid.py`), 미리보기(`preview.py`), 타일·소품 생성기(`tiles_r01.py`, `props_r01.py`), 장면 합성(`scene_bongcheon.py`), 주인공 파츠 리그·걷기·달리기(`rig_pc.py`), 이동 시연(`locomotion_demo.py`), 모바일 HUD(`hud_mobile.py`), 핍-보이 화면(`pipboy.py`), 대표 그림(`keyart.py`), 볼트 S-07 실내(`tiles_s07.py`, `scene_s07.py`), 팔레트 시트(`make_palette_sheet.py`) |
 | `src/` | 원화 소스. 스프라이트는 팔레트 인덱스 텍스트 격자(SD-16 §13.2) |
-| `samples/` | 기준 샘플 출력(원본 크기 + 확대 미리보기) |
+| `samples/` | 기준 샘플 출력(원본 크기 + 확대 미리보기), 비교 시트 `00_reference_compare.png`, 검수 보고 `qa_report.txt` |
+| `out/sheets/` | 엔진용 시트 PNG + JSON (SD-16 §13.3) |
 | `fonts/` | 갈무리(Galmuri) 도트 한글 글꼴, SIL OFL 1.1 (`OFL-Galmuri.md`) |
 
 ## 다시 만들기
+전부 한 번에: `./build.sh` (재현 검사: `./build.sh --check`). 단계 S 마무리 기록은 [STAGE_S.md](STAGE_S.md).
 ```
 python3 tools/make_palette_sheet.py
 python3 tools/tiles_r01.py
@@ -33,6 +35,11 @@ python3 tools/ui_screens.py
 python3 tools/effects.py
 python3 tools/signs.py
 python3 tools/scene_birth.py
+python3 tools/filters.py          # 상황 필터 미리보기
+python3 tools/legibility_test.py  # 1× 판독 시험지
+python3 tools/compare_sheet.py    # 기준 샘플 비교 시트
+python3 tools/pack.py             # 시트 PNG + JSON (out/sheets)
+python3 tools/qa.py               # 자동 검수 (samples/qa_report.txt)
 ```
 
 ## 기준 샘플 진행 (SD-16 §12.3)

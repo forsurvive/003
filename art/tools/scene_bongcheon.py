@@ -41,8 +41,22 @@ ROWS = [
 ]
 
 
+RUNTIME = True      # False = asset-only render for QA: shadows as one palette step, no region tone
+
+
+def _step_region(img, box, mask=None):
+    px = img.load()
+    for y in range(max(0, box[1]), min(img.height, box[3])):
+        for x in range(max(0, box[0]), min(img.width, box[2])):
+            if mask is None or mask.getpixel((x - box[0], y - box[1])):
+                r, g, b, a = px[x, y]
+                px[x, y] = P.step((r, g, b), -1) + (a,)
+
+
 def shade_rect(img, box, k=0.65):
     """Multiply-darken a region (runtime shadow layer, SD-16 §3.9)."""
+    if not RUNTIME:
+        return _step_region(img, box)
     reg = img.crop(box)
     reg = ImageChops.multiply(reg, Image.new("RGBA", reg.size, (int(255 * k),) * 3 + (255,)))
     img.paste(reg, box[:2])
@@ -52,6 +66,8 @@ def shadow_ellipse(img, cx, cy, w, h, k=0.6):
     m = Image.new("L", (w, h), 0)
     ImageDraw.Draw(m).ellipse([0, 0, w - 1, h - 1], fill=255)
     box = (cx - w // 2, cy - h // 2, cx - w // 2 + w, cy - h // 2 + h)
+    if not RUNTIME:
+        return _step_region(img, box, m)
     reg = img.crop(box)
     dark = ImageChops.multiply(reg, Image.new("RGBA", reg.size, (int(255 * k),) * 3 + (255,)))
     reg.paste(dark, (0, 0), m)
@@ -60,6 +76,8 @@ def shadow_ellipse(img, cx, cy, w, h, k=0.6):
 
 def tint(img, r, g, b, grey):
     """Region daytime tone [R,G,B,grey] (SD-16 §4.4): runtime colour grade."""
+    if not RUNTIME:
+        return
     px = img.load()
     for y in range(img.height):
         for x in range(img.width):
