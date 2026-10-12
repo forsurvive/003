@@ -1,0 +1,31 @@
+{
+ "CR-002": {
+  "_src": "14_creatures-enemies.md:264",
+  "attack": "물기 3",
+  "dr": 0,
+  "hp": 8,
+  "id": "CR-002",
+  "level": 0,
+  "name": "큰바퀴 (이질바퀴 변이)",
+  "part_weights": "PW-A",
+  "pattern": "날개를 퍼덕여 위협 → 3타일 안에 2초 머물면 도약 물기. 2~7마리",
+  "radius": 0.2,
+  "speed": 3.0,
+  "tier": "약",
+  "xp": 1
+ },
+ "CR-401": {
+  "_src": "14_creatures-enemies.md:1059",
+  "dr": 18,
+  "hp": 90,
+  "id": "CR-401",
+  "level": 8,
+  "name": "보병 계엄병",
+  "part_weights": "PW-H",
+  "radius": 0.3,
+  "rank": "1",
+  "special": "기절탄 수류탄 1. 왼팔 노란 '계엄' 완장",
+  "weapon_main": "레이저 소총 / 돌격소총",
+  "xp": 20
+ }
+}

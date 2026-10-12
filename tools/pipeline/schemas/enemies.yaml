@@ -1,0 +1,21 @@
+# SD-14 적 표 → game/data/enemies.json (단계 T: 큰바퀴 + 계엄군 보병 1)
+doc: 14_creatures-enemies.md
+id_column: ID
+rows: [CR-002, CR-401]
+columns:
+  ID: {field: id, type: id, pattern: "^CR-\\d{3}$", required: true}
+  이름: {field: name, type: str, required: true}
+  단계: {field: tier, type: str}
+  랭크: {field: rank, type: str}
+  Lv: {field: level, type: int, required: true}
+  HP: {field: hp, type: lead_number, required: true}
+  피해: {field: attack, type: str}
+  DR: {field: dr, type: lead_number, required: true}
+  속도: {field: speed, type: lead_number}
+  공격 패턴: {field: pattern, type: str}
+  주무기: {field: weapon_main, type: str}
+  보조·특수: {field: special, type: str}
+  XP: {field: xp, type: int, required: true}
+gaps:
+  radius: {default: "0.2 if id == 'CR-002' else 0.3", why: "충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다"}
+  part_weights: {default: "'PW-A' if id == 'CR-002' else 'PW-H'", why: "부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')"}

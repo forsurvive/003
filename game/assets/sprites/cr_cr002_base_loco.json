@@ -1,0 +1,33 @@
+{
+ "foot": [
+  16,
+  27
+ ],
+ "frame": [
+  32,
+  32
+ ],
+ "mirror": {
+  "W": "E"
+ },
+ "motions": {
+  "death": {
+   "count": 5,
+   "start": 5
+  },
+  "idle": {
+   "count": 1,
+   "start": 0
+  },
+  "walk": {
+   "count": 4,
+   "drive": "distance",
+   "px_per_frame": 3,
+   "start": 1
+  }
+ },
+ "name": "cr_cr002_base_loco",
+ "rows": [
+  "E"
+ ]
+}

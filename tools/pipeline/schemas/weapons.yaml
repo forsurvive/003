@@ -1,0 +1,27 @@
+# SD-13 무기 표 → game/data/weapons.json (단계 T 추출 대상: 무기 2행, SD-19 §6.12)
+doc: 13_items.md
+id_column: ID
+rows: [W-002, W-041]
+columns:
+  ID: {field: id, type: id, pattern: "^W-\\d{3}$", required: true}
+  이름: {field: name, type: str, required: true}
+  스킬: {field: skill, type: str, required: true}
+  탄약: {field: ammo, type: str}
+  피해: {field: dmg, type: lead_number, required: true}
+  연사(/초): {field: rate, type: float, required: true}
+  사거리(타일): {field: range_eff, type: float, required: true}
+  탄창: {field: mag, type: int_or_none}
+  무게: {field: weight, type: float}
+  가격: {field: price, type: int}
+  내구: {field: durability, type: str, pattern: "^[SABCDE]$"}
+  레이어: {field: layer, type: str}
+  비고: {field: note, type: str}
+derive:
+  range_max: "range_eff * 1.75"          # SD-13 §3.3: 최대 사거리 = 유효 × 1.75
+  kind: "'melee' if skill == '근접 무기' else ('unarmed' if skill == '비무장' else 'ranged')"
+  crit_mult: "note_number('치명 배수 x', 1.0)"
+  falloff_min: "0.7"
+gaps:                                      # 문서에 없는 필드: 기본값을 쓰고 정합 목록에 올린다
+  crit_dmg: {default: "dmg", why: "SD-13 표에 치명 피해 열이 없다(SD-11 부록 C 필드)"}
+  min_spread: {default: "1.0", why: "SD-13 표에 최소 퍼짐 열이 없다(SD-11 §4.1 참고표 가정값 1°)"}
+  ap_cost: {default: "None", why: "SD-13 표에 AP 비용 열이 없다(SD-11 §5.3)"}

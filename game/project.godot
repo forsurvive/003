@@ -8,6 +8,10 @@ config/description="단계 T 기술 시험판 (SD-19 §5.2)"
 run/main_scene="res://scenes/world/test_area.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 
+[autoload]
+
+InputSetup="*res://systems/input/input_setup.gd"
+
 [display]
 
 window/size/viewport_width=640
@@ -24,6 +28,8 @@ window/stretch/scale_mode="integer"
 pointing/emulate_touch_from_mouse=false
 
 [rendering]
+
+environment/defaults/default_clear_color=Color(0.043, 0.039, 0.051, 1)
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"

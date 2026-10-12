@@ -1,0 +1,26 @@
+# SD-10 §2.4 능력치 1~10 수치표 → game/data/special.json
+doc: 10_character-system.md
+id_column: 값
+section: "### 2.4 능력치 1~10 수치표"
+rows: all
+columns:
+  값: {field: value, type: int, required: true}
+  소지 한도(ST): {field: carry, type: int}
+  근접 보너스(ST): {field: melee_bonus, type: int}
+  투척 사거리(ST): {field: throw_range, type: int}
+  HP Lv1(EN): {field: hp_lv1, type: int}
+  독 저항(EN): {field: poison_res, type: percent}
+  방사능 저항(EN): {field: rad_res, type: percent}
+  탐지 반경(PE): {field: detect_radius, type: int}
+  함정 발견(PE): {field: trap_radius, type: int}
+  호감도 상승 보정(CH): {field: affinity_gain, type: mult}
+  지원 병력(CH): {field: support_mult, type: mult}
+  스킬 포인트/Lv(IN): {field: skill_points, type: int}
+  최대 AP(AG): {field: ap_max, type: int}
+  기본 치명타(LK): {field: crit_base, type: percent}
+check:                                     # 같은 표가 §2.3 공식과 맞는지 (문서 안 정합)
+  carry: "150 + value * 10"
+  hp_lv1: "90 + value * 20 + 10"
+  ap_max: "65 + value * 2"
+  detect_radius: "8 + value"
+  skill_points: "10 + value"

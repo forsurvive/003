@@ -1,0 +1,138 @@
+{
+ "asphalt": {
+  "atlas": [
+   4,
+   0
+  ],
+  "cover": 0,
+  "solid": false
+ },
+ "asphalt_lane": {
+  "atlas": [
+   5,
+   0
+  ],
+  "cover": 0,
+  "solid": false
+ },
+ "brick": {
+  "atlas": [
+   12,
+   0
+  ],
+  "cover": 2,
+  "solid": true
+ },
+ "brick_window": {
+  "atlas": [
+   13,
+   0
+  ],
+  "cover": 2,
+  "solid": true
+ },
+ "dirt_a": {
+  "atlas": [
+   0,
+   0
+  ],
+  "cover": 0,
+  "solid": false
+ },
+ "dirt_b": {
+  "atlas": [
+   1,
+   0
+  ],
+  "cover": 0,
+  "solid": false
+ },
+ "dirt_grass_a": {
+  "atlas": [
+   2,
+   0
+  ],
+  "cover": 0,
+  "solid": false
+ },
+ "dirt_grass_b": {
+  "atlas": [
+   3,
+   0
+  ],
+  "cover": 0,
+  "solid": false
+ },
+ "drum": {
+  "atlas": [
+   16,
+   0
+  ],
+  "cover": 1,
+  "solid": true
+ },
+ "granite_rock": {
+  "atlas": [
+   14,
+   0
+  ],
+  "cover": 1,
+  "solid": true
+ },
+ "pavers": {
+  "atlas": [
+   6,
+   0
+  ],
+  "cover": 0,
+  "solid": false
+ },
+ "pavers_b": {
+  "atlas": [
+   7,
+   0
+  ],
+  "cover": 0,
+  "solid": false
+ },
+ "scrap_barrier": {
+  "atlas": [
+   15,
+   0
+  ],
+  "cover": 1,
+  "solid": true
+ },
+ "stairs": {
+  "atlas": [
+   8,
+   0
+  ],
+  "cover": 0,
+  "solid": false
+ },
+ "stairs_rail": {
+  "atlas": [
+   9,
+   0
+  ],
+  "cover": 0,
+  "solid": false
+ },
+ "wall_face": {
+  "atlas": [
+   11,
+   0
+  ],
+  "cover": 2,
+  "solid": true
+ },
+ "wall_face_cap": {
+  "atlas": [
+   10,
+   0
+  ],
+  "cover": 2,
+  "solid": true
+ }
+}
