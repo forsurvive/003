@@ -1,20 +1,43 @@
-## 단계 T 시험 구역: 관악산 비탈 청크 월드 + S-07 정문 실내, 문 전환, 디버그 표시.
-## 인자: -- --autopilot (정해진 입력 순서로 걸어 다닌다: 화면 녹화·회귀 시험용)
+## 단계 T 시험 구역: 관악산 비탈 청크 월드 + S-07 정문 실내, 문 전환, 실시간 전투(권총·진압봉 대 큰바퀴·보병 계엄병).
+## 인자(-- 뒤): --autopilot  정해진 입력으로 걸어서 정문을 드나든다
+##              --combat     적 쪽으로 이동하며 가장 가까운 적을 조준·사격한다(녹화·회귀 시험용)
 extends Node2D
 
 var world: ChunkWorld
 var interior: InteriorRoom
 var player: Actor
+var pc := Combatant.new()
 var cam: Camera2D
 var hud: Label
 var fade: ColorRect
-var area                                      ## 지금 플레이어가 있는 곳(world 또는 interior)
+var area
 var ui_font: FontFile
 var autopilot: Array = []
+var combat_bot := false
 var _ap_t := 0.0
 var _fading := 0.0
 var _fade_to := ""
 var frames := 0
+var shots: Projectiles
+var nav := NavGrid.new()
+var enemies: Array = []
+var weapons: Dictionary
+var weapon_id := "W-002"
+var mag := 12
+var _reload := 0.0
+var _cool := 0.0
+var _nav_dirty := true
+var _nav_t := 0.0
+var _nav_center := Vector2i(-999, -999)
+var _token_t := 0.0
+var ai_usec := 0
+var ai_usec_max := 0
+var _dead_t := 0.0
+var msg := ""
+var passive := false
+var _step_sound_t := 0.0
+var stats := {"enemy_shots": 0, "player_hits_taken": 0, "bites": 0}
+const SKILL := 30.0                           ## 태그 스킬 초기값(SD-10)
 
 
 func _ready() -> void:
@@ -22,14 +45,33 @@ func _ready() -> void:
 	ui_font.antialiasing = TextServer.FONT_ANTIALIASING_NONE
 	ui_font.hinting = TextServer.HINTING_NONE
 	ui_font.subpixel_positioning = TextServer.SUBPIXEL_POSITIONING_DISABLED
+	weapons = JSON.parse_string(FileAccess.get_file_as_string("res://data/weapons.json"))
+	var erows: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/enemies.json"))
 	world = ChunkWorld.new()
 	world.y_sort_enabled = true
 	add_child(world)
+	world.chunk_attached.connect(_on_chunk)
 	area = world
 	var sp: Array = world.index["spawns"]["player"]
 	player = Actor.new()
 	player.setup("pc_comp_t01_pf00_loco", Vector2(sp[0] * 32 + 16, sp[1] * 32 + 16), world)
 	world.add_child(player)
+	pc.actor = player
+	pc.team = "player"
+	pc.max_hp = 200.0                                          # 90 + EN5×20 + Lv1×10 (SD-10 §2.3)
+	pc.hp = pc.max_hp
+	shots = Projectiles.new()
+	shots.world = world
+	world.add_child(shots)
+	shots.combatants.append(pc)
+	for id in ["CR-002", "CR-401"]:
+		for p in world.index["spawns"][id]:
+			var e := Enemy.new()
+			# 보병 계엄병의 주무기(레이저 소총·돌격소총)는 단계 T 무기 범위 밖이라 시험용으로 W-002를 든다
+			e.setup_enemy(erows[id], weapons["W-002"], Vector2(p[0] * 32 + 16, p[1] * 32 + 16), world)
+			world.add_child(e)
+			enemies.append(e)
+			shots.combatants.append(e.cmb)
 	cam = Camera2D.new()
 	add_child(cam)
 	cam.make_current()
@@ -49,15 +91,25 @@ func _ready() -> void:
 	fade.size = Vector2(1280, 720)
 	fade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	layer.add_child(fade)
-	if "--autopilot" in OS.get_cmdline_user_args():
-		# [초, 입력 x, 입력 y, 모드]  봉천 쪽 비탈을 돌아 정문으로 들어갔다가 나온다
+	var args := OS.get_cmdline_user_args()
+	if "--autopilot" in args:
 		autopilot = [[0.5, 0, 0, "run"], [1.0, 1, 0, "run"], [0.8, 1, 1, "run"], [0.6, 0, 1, "walk"],
 			[1.6, -1, 0, "run"], [0.8, -1, -1, "run"], [0.5, 1, 0, "walk"], [0.9, 0, -1, "run"],
 			[0.6, 0, 0, "run"], [0.7, 0, -1, "walk"], [0.5, 0, 0, "run"], [1.2, 0, 1, "run"], [0.6, 0, 1, "walk"],
 			[1.0, 0, 0, "run"]]
+	combat_bot = "--combat" in args
+	passive = "--passive" in args
 
 
 func _input_vector() -> Vector2:
+	if passive:
+		player.mode = "run"
+		var tgt: Array = world.index["spawns"]["CR-401"][0]
+		var front := Vector2(tgt[0] * 32 + 16, (tgt[1] + 6) * 32 + 16)      # 계엄병 정면(남쪽) 6t에 선다
+		var d := front - player.loco.logical
+		return d if d.length() > 8 else Vector2.ZERO
+	if combat_bot:
+		return _bot_move()
 	if not autopilot.is_empty():
 		var t := _ap_t
 		for seg in autopilot:
@@ -66,7 +118,7 @@ func _input_vector() -> Vector2:
 				return Vector2(seg[1], seg[2])
 			t -= seg[0]
 		return Vector2.ZERO
-	player.mode = "walk" if Input.is_action_pressed("walk_hold") else "run"
+	player.mode = "walk" if Input.is_action_pressed("walk_hold") or Input.is_action_pressed("aim") else "run"
 	return Input.get_vector("move_left", "move_right", "move_up", "move_down")
 
 
@@ -76,13 +128,178 @@ func _physics_process(dt: float) -> void:
 	if _fading > 0.0:
 		_fade_step(dt)
 		return
-	player.move(_input_vector(), dt)
+	if pc.dead:
+		_dead_t += dt
+		if _dead_t > 2.0:
+			_respawn()
+	else:
+		player.move(_input_vector(), dt)
+		_player_combat(dt)
+		_step_sound_t -= dt
+		if player.loco.motion != "idle" and _step_sound_t <= 0.0:      # 이동 소음: 달리기 2.0t·걷기 1.5t (§2.4)
+			_step_sound_t = 0.5
+			for e in enemies:
+				e.hear("move" if player.mode == "run" else "sneak", player.loco.logical)
 	area.update_focus(player.loco.logical)
+	if area == world:
+		_combat_tick(dt)
 	cam.position = player.loco.logical.round()
-	_check_door()
+	if not pc.dead:
+		_check_door()
 	_hud()
 
 
+# ---------------------------------------------------------------- combat
+func _combat_tick(dt: float) -> void:
+	_nav_t += dt
+	if world.focus != _nav_center and world.focus.x > -999:
+		_nav_center = world.focus
+		_nav_dirty = true
+	if _nav_dirty and _nav_t >= 0.5 and world.focus.x > -999:
+		nav.rebuild(world, world.focus, world.cs)
+		_nav_dirty = false
+		_nav_t = 0.0
+	nav.new_frame()
+	_token_t += dt
+	if _token_t >= 1.5:                                           # 공격 토큰: 원거리 3 (난이도 보통, §7.4)
+		_token_t = 0.0
+		var cands := enemies.filter(func(e): return e.style == "shooter" and not e.cmb.dead)
+		cands.sort_custom(func(a, b): return a.loco.logical.distance_to(pc.pos()) < b.loco.logical.distance_to(pc.pos()))
+		for i in cands.size():
+			cands[i].has_token = i < 3
+	var t0 := Time.get_ticks_usec()
+	for e in enemies:
+		if absi(world.chunk_of_px(e.loco.logical).x - world.focus.x) <= 1 and absi(world.chunk_of_px(e.loco.logical).y - world.focus.y) <= 1:
+			e.think(dt, pc, nav, shots)
+	ai_usec = Time.get_ticks_usec() - t0
+	ai_usec_max = maxi(ai_usec_max, ai_usec)
+	shots.step(dt)
+	if pc.flash > 0:
+		pc.flash -= 1
+	player.sprite.modulate = Color(4, 4, 4) if pc.flash > 0 else Color(1, 1, 1)
+
+
+func _aim_point() -> Vector2:
+	if combat_bot:
+		var e = _nearest_enemy()
+		return e.loco.logical + Vector2(0, -12) if e != null else player.loco.logical + Vector2(32, 0)
+	return get_global_mouse_position()
+
+
+func _nearest_enemy():
+	var best = null
+	var bd := 1e9
+	for e in enemies:
+		if e.cmb.dead:
+			continue
+		var d: float = e.loco.logical.distance_to(player.loco.logical)
+		if d < bd and world.line_of_sight(player.loco.logical, e.loco.logical):
+			bd = d
+			best = e
+	return best
+
+
+func _player_combat(dt: float) -> void:
+	_cool = maxf(0.0, _cool - dt)
+	if _reload > 0.0:
+		_reload -= dt
+		if _reload <= 0.0:
+			mag = int(weapons["W-002"]["mag"])
+		return
+	if not combat_bot:
+		if Input.is_action_just_pressed("reload") and weapon_id == "W-002":
+			_reload = 1.5
+			return
+		if Input.is_key_pressed(KEY_Q) and _cool <= 0.0:
+			weapon_id = "W-041" if weapon_id == "W-002" else "W-002"
+			_cool = 0.3
+			return
+	var aim_pt := _aim_point()
+	var to := aim_pt - (player.loco.logical + Vector2(0, -14))
+	var aiming := combat_bot or Input.is_action_pressed("aim") or Input.is_action_pressed("fire")
+	player.aim_dir = Locomotion.snap8(to, 0.0) if aiming else -1
+	var want_fire := Input.is_action_pressed("fire") if not combat_bot else (_nearest_enemy() != null and to.length() < 9 * 32)
+	if passive:
+		want_fire = false
+	if not want_fire or _cool > 0.0:
+		return
+	var w: Dictionary = weapons[weapon_id]
+	if w["kind"] == "ranged":
+		if mag <= 0:
+			_reload = 1.5
+			return
+		var stance := "aim" if Input.is_action_pressed("aim") or combat_bot else "stand"
+		var sp := CombatRules.spread(SKILL, stance, player.loco.motion != "idle")
+		var ang := CombatRules.shot_angle(rad_to_deg(to.angle()), sp, shots.rng)
+		var muzzle := player.loco.logical + Vector2(0, -14) + to.normalized() * 10.0
+		if shots.fire(muzzle, ang, 640.0, "player", w, SKILL):
+			mag -= 1
+			_cool = 1.0 / float(w["rate"])
+			for e in enemies:
+				e.hear("pistol", player.loco.logical)
+	else:
+		_cool = 1.0 / float(w["rate"])
+		for e in enemies:                                         # 근접: 호(거리 1t + 반지름, ±60°) 안 충돌체 중심
+			if e.cmb.dead:
+				continue
+			var d: Vector2 = e.loco.logical - player.loco.logical
+			if d.length() <= float(w["range_eff"]) * 32.0 + e.cmb.radius + 8.0 and absf(to.angle_to(d)) <= deg_to_rad(60):
+				var part := CombatRules.pick_part(e.cmb.weights, shots.rng)
+				e.cmb.take(CombatRules.resolve({"weapon": w, "skill": SKILL, "attacker": {"str": 5}, "part": part, "dr": e.cmb.dr}),
+					player.loco.logical)
+				e.hear("melee", player.loco.logical)
+
+
+## 활성 3×3 안의 청크가 붙거나 중심 청크가 바뀌면 경로 격자를 다시 만든다
+func _on_chunk(id: String, _us: int) -> void:
+	var p := id.split("-")
+	var k := Vector2i(int(p[1]), int(p[2]))
+	if absi(k.x - world.focus.x) <= 1 and absi(k.y - world.focus.y) <= 1:
+		_nav_dirty = true
+
+
+func _exit_tree() -> void:
+	if combat_bot or passive:
+		var alive := enemies.filter(func(e): return not e.cmb.dead).size()
+		print("전투 통계: 프레임 %d, 적 생존 %d/%d, 주인공 HP %d, 투사체 발사 %d, 명중 %d, 적 사격 %d, AI 최대 %.2fms, 경로 재구축 %.2fms" % [
+			frames, alive, enemies.size(), int(pc.hp), shots.spawned_total, shots.hits_total,
+			enemies.reduce(func(acc, e): return acc + e.shots_fired, 0),
+			ai_usec_max / 1000.0, nav.last_build_usec / 1000.0])
+		print("경로 질의 최대 %.2fms" % (nav.query_usec_max / 1000.0))
+
+
+func _bot_move() -> Vector2:
+	var e = _nearest_enemy()
+	player.mode = "run"
+	if e == null:
+		var any = null
+		for x in enemies:
+			if not x.cmb.dead:
+				any = x
+				break
+		if any == null:
+			return Vector2.ZERO
+		return (any.loco.logical - player.loco.logical)
+	var d: Vector2 = e.loco.logical - player.loco.logical
+	if d.length() > 7 * 32:
+		return d
+	if d.length() < 3 * 32:
+		return -d                                                 # keep distance, backpedal while shooting
+	player.mode = "walk"
+	return d.orthogonal() * (1.0 if int(_ap_t / 2.0) % 2 == 0 else -1.0)
+
+
+func _respawn() -> void:
+	_dead_t = 0.0
+	pc.dead = false
+	pc.hp = pc.max_hp
+	var sp: Array = world.index["spawns"]["player"]
+	player.loco = Locomotion.new(Vector2(sp[0] * 32 + 16, sp[1] * 32 + 16))
+	player.position = player.loco.render
+	msg = "쓰러졌다 — 시험 구역 처음으로"
+
+
+# ---------------------------------------------------------------- doors
 func _check_door() -> void:
 	var t := Vector2i(floori(player.loco.logical.x / 32), floori(player.loco.logical.y / 32))
 	if area == world:
@@ -144,7 +361,10 @@ func _swap() -> void:
 
 func _hud() -> void:
 	var l := player.loco
-	hud.text = "단계 T 시험 구역  %s\n청크 %d개 · 붙이기 최대 %.2fms · %d fps\n%s %s 프레임 %d  타일 (%d, %d)" % [
-		"관악산 비탈" if area == world else "볼트 S-07 정문 안", world.loaded.size(), world.attach_usec_max / 1000.0,
-		Engine.get_frames_per_second(), l.motion, Locomotion.DIRS[l.facing], l.frame,
-		floori(l.logical.x / 32), floori(l.logical.y / 32)]
+	var alive := enemies.filter(func(e): return not e.cmb.dead).size()
+	var w: Dictionary = weapons[weapon_id]
+	hud.text = "%s · 청크 %d · 붙이기 최대 %.2fms · AI %.2fms · %d fps\nHP %d/%d · %s %s · 적 %d/%d · 탄 %d\n%s %s %d  (%d, %d) %s" % [
+		"관악산 비탈" if area == world else "S-07 정문 안", world.loaded.size(), world.attach_usec_max / 1000.0,
+		ai_usec / 1000.0, Engine.get_frames_per_second(), int(pc.hp), int(pc.max_hp), w["name"],
+		("%d/12" % mag) if w["kind"] == "ranged" else "", alive, enemies.size(), shots.shots.size(),
+		l.motion, Locomotion.DIRS[l.facing], l.frame, floori(l.logical.x / 32), floori(l.logical.y / 32), msg]
