@@ -644,6 +644,121 @@ def foreground(cv):
     return top_rock
 
 
+def vault_exit(cv):
+    """The S-07 gate the protagonist just walked out of (SD-09a L-R01-01 ②): concrete retaining wall with the round
+    portal, the gear door rolled aside inside it, the bronze plate, the 6x4 deck with its far-edge railing,
+    12 steps down the slope and the exit checklist terminal. Seen obliquely from behind-left; sun from the west."""
+    from PIL import ImageDraw
+    d = ImageDraw.Draw(cv.img)
+    T = lambda t: C(t)
+    # retaining wall (옹벽): near and tall at the left, receding to the right
+    wall = [(0, 150), (168, 198), (168, 300), (0, 312)]
+    d.polygon(wall, fill=T("P06"))
+    x, step = 6, 30.0
+    while x < 168:                                          # formwork panel joints, closer together as they recede
+        top = 150 + x * 48 / 168
+        bot = 312 - x * 12 / 168
+        d.line([x, top + 4, x, bot], fill=T("P05"))
+        for k in range(3):                                   # form-tie holes in each panel
+            ty = top + 18 + k * (bot - top - 30) / 2
+            for hx in (x + step * 0.3, x + step * 0.7):
+                if hx < 166:
+                    cv.put(hx, ty, "P04")
+        x += step; step *= 0.86
+    for xx in range(0, 168):                                 # damp, darker lower third
+        bot = 312 - xx * 12 / 168
+        for yy in range(int(bot) - 22, int(bot)):
+            if cv.get(xx, yy)[:3] == P.rgb("P06") and ((xx + yy) % 2 or yy > bot - 10):
+                cv.put(xx, yy, "P05")
+    for xx in range(0, 168):                                 # cap: sunlit top edge + shadow under the lip
+        ty = 150 + xx * 48 / 168
+        cv.put(xx, ty, "P08"); cv.put(xx, ty + 1, "R01.a"); cv.put(xx, ty + 2, "P07"); cv.put(xx, ty + 3, "P05")
+    for sx, ln in ((22, 40), (58, 26), (131, 34), (150, 20)):          # rust/water streaks from the cap
+        ty = 150 + sx * 48 / 168 + 4
+        for k in range(ln):
+            if k % 3 != 2:
+                cv.put(sx, ty + k, "P05" if k < ln * 0.6 else "P06")
+        cv.put(sx, ty, "P24")
+    for xx in range(0, 168, 3):                              # moss at the foot
+        by = 312 - xx * 12 / 168
+        cv.put(xx, by - 1, "P29"); cv.put(xx + 1, by - 2, "P30")
+    # bronze plate '서울 볼트 S-07 관악 / 한결건설 시공'
+    d.polygon([(50, 180), (118, 200), (118, 213), (50, 193)], fill=T("P47"), outline=T("P02"))
+    d.line([(52, 182), (116, 201)], fill=T("P49"))
+    for k in range(3):
+        d.line([(56, 186 + k * 3), (112, 202 + k * 3)], fill=T("P48") if k != 1 else T("P49"))
+    # round portal (oblique ellipse) with the hazard ring, dark tunnel, lamps inside
+    cx, cy, rx, ry = 86, 254, 31, 48
+    d.ellipse([cx - rx - 5, cy - ry - 5, cx + rx + 5, cy + ry + 5], fill=T("P02"))
+    for a in range(0, 360, 12):                              # hazard chevrons
+        ra, rb = math.radians(a), math.radians(a + 6)
+        d.polygon([(cx + (rx + 4) * math.cos(ra), cy + (ry + 4) * math.sin(ra)),
+                   (cx + (rx + 4) * math.cos(rb), cy + (ry + 4) * math.sin(rb)),
+                   (cx + (rx + 1) * math.cos(rb), cy + (ry + 1) * math.sin(rb)),
+                   (cx + (rx + 1) * math.cos(ra), cy + (ry + 1) * math.sin(ra))], fill=T("P48"))
+    d.ellipse([cx - rx, cy - ry, cx + rx, cy + ry], fill=T("P03"))
+    d.ellipse([cx - rx + 6, cy - ry + 6, cx + rx - 2, cy + ry - 4], fill=T("P02"))
+    d.ellipse([cx - rx + 14, cy - ry + 16, cx + rx - 4, cy + ry - 12], fill=T("P01"))
+    for ly in (226, 248, 270):                               # ceiling lamps down the tunnel
+        cv.put(cx + 8, ly, "P15"); cv.put(cx + 9, ly, "P14")
+    d.polygon([(cx - rx + 2, cy + ry - 12), (cx + rx - 2, cy + ry - 18), (cx + rx, cy + ry - 4), (cx - rx, cy + ry)],
+              fill=T("P05"))                                  # tunnel floor grating catching outside light
+    for k in range(4):
+        d.line([(cx - rx + 4 + k * 14, cy + ry - 11), (cx - rx + 8 + k * 14, cy + ry - 2)], fill=T("P04"))
+    # the gear door, rolled aside inside the portal: seen nearly edge-on, teeth on its rim, a sliver of 'S-07'
+    gx, gy, grx, gry = cx - 17, cy - 2, 9, 44
+    d.ellipse([gx - grx - 2, gy - gry - 2, gx + grx + 2, gy + gry + 2], fill=T("P01"))
+    d.ellipse([gx - grx, gy - gry, gx + grx, gy + gry], fill=T("P06"))
+    d.ellipse([gx - grx + 3, gy - gry + 5, gx + grx - 1, gy + gry - 5], fill=T("P45"))
+    d.ellipse([gx - grx + 5, gy - gry + 12, gx + grx - 2, gy + gry - 12], fill=T("P44"))
+    d.rectangle([gx - 1, gy - 6, gx + 3, gy + 6], fill=T("P48"))
+    for a in range(100, 261, 14):                            # teeth on the visible (left) rim
+        ra = math.radians(a)
+        tx, ty = gx + (grx + 2) * math.cos(ra), gy + (gry + 2) * math.sin(ra)
+        d.rectangle([tx - 2, ty - 2, tx + 1, ty + 2], fill=T("P07"), outline=T("P01"))
+    # deck (6x4 tiles), lit by the low western sun; the wall throws a shadow band onto it
+    deck = [(0, 312), (168, 300), (330, 304), (372, 360), (0, 360)]
+    d.polygon(deck, fill=T("P07"))
+    for k in range(1, 5):                                    # expansion joints
+        y0 = 312 + k * 11
+        d.line([(0, y0), (168 + k * 9, 300 + k * 11 - 6)], fill=T("P06"))
+    for jx in (90, 200, 290):
+        d.line([(jx, 305), (jx + 18, 360)], fill=T("P06"))
+    for xx in range(0, 372):                                 # weathered, darker toward the viewer
+        for yy in range(340, 360):
+            if cv.get(xx, yy)[:3] == P.rgb("P07") and ((xx + yy) % 2 or yy > 352):
+                cv.put(xx, yy, "P06")
+    crack = [(120, 330), (128, 334), (131, 340), (140, 343), (146, 351), (150, 359)]
+    for (ax, ay), (bx, by) in zip(crack, crack[1:]):
+        d.line([(ax, ay), (bx, by)], fill=T("P05"))
+        d.line([(ax + 1, ay + 1), (bx + 1, by + 1)], fill=T("P08"))
+    for lx, ly, t in ((60, 334, "P26"), (64, 336, "P27"), (190, 322, "P20"), (280, 346, "P26"), (300, 330, "P21"),
+                      (210, 352, "P25"), (34, 350, "P20")):    # fallen leaves (late October)
+        cv.put(lx, ly, t); cv.put(lx + 1, ly, t); cv.put(lx, ly + 1, "P05")
+    for xx in range(0, 170):                                 # wall shadow
+        top = 312 - xx * 12 / 168
+        for yy in range(int(top), int(top) + 10 - xx // 20):
+            if cv.get(xx, yy)[:3] == P.rgb("P07"):
+                cv.put(xx, yy, "P06")
+    # far-edge railing (galvanised pipe)
+    for k in range(11):
+        t = k / 10
+        x0, y0 = 168 + (330 - 168) * t, 300 + 4 * t
+        d.line([(x0, y0), (x0, y0 - 13)], fill=T("P04")); cv.put(x0 - 1, y0 - 13, "P07")
+    d.line([(168, 287), (330, 291)], fill=T("P05")); d.line([(168, 286), (330, 290)], fill=T("P08"))
+    d.line([(168, 294), (330, 298)], fill=T("P05"))
+    # 12 steps down the slope from the deck's right edge (the nearest 6 are in frame)
+    for i in range(7):
+        x0 = 336 + i * 9; y0 = 306 + i * 8
+        d.polygon([(x0, y0), (x0 + 44, y0 + 2), (x0 + 46, y0 + 5), (x0 + 2, y0 + 3)], fill=T("P07"))
+        d.polygon([(x0 + 2, y0 + 3), (x0 + 46, y0 + 5), (x0 + 46, y0 + 9), (x0 + 2, y0 + 8)], fill=T("P05"))
+        d.line([(x0, y0), (x0 + 44, y0 + 2)], fill=T("P08"))
+    # exit checklist terminal (출구 점검표 단말) at the top of the steps
+    d.rectangle([326, 280, 327, 304], fill=T("P04"))
+    d.rectangle([321, 272, 333, 282], fill=T("P08"), outline=T("P02"))
+    d.rectangle([323, 274, 331, 279], fill=T("P59")); cv.put(324, 275, "P60")
+
+
 def protagonist(cv, x, y):
     """Back-view idle frame (feet at 32,60) placed with its long western-sun shadow cast to the east."""
     fr = parse(os.path.join(ROOT, "src/sprites/pc_s07_jumpsuit_S.txt"))["idleN"]
@@ -733,12 +848,8 @@ def build():
     top_rock = foreground(cv)
     pine(cv, 604, 350, 150, 3, lean=-0.16, pads=[(0.45, -18, 13, 5), (0.58, 12, 15, 6), (0.72, -14, 16, 6),
                                                  (0.84, 8, 18, 6), (0.97, -4, 20, 7)])
-    pine(cv, 12, 312, 120, 8, lean=0.14, pads=[(0.5, 14, 12, 5), (0.66, -8, 13, 5), (0.8, 12, 15, 6),
-                                               (0.96, 2, 17, 6)])
-    signpost(cv, 270, 322)
-    px = 176
-    py = min(y for x, y in top_rock if x == px) + 3
-    protagonist(cv, px, py)
+    vault_exit(cv)
+    protagonist(cv, 236, 330)
     vignette(cv)
     return cv.img
 

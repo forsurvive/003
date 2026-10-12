@@ -344,8 +344,8 @@ def vault_door_gif():
         im = room.copy()
         # door rolls to the right over the first 6 frames
         roll = min(1.0, k / 6)
-        door = TS.gear_door(k % 8)
-        dx = int(roll * 210)
+        dx = int(roll * TS.ROLL_PX)
+        door = TS.gear_door(angle=math.degrees(dx / TS.DOOR_R))      # turns exactly with the distance rolled
         hole = int(roll * 96)
         # light through the opening: white disc growing behind the door
         if k >= 2:

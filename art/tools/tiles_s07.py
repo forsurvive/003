@@ -539,14 +539,22 @@ def planter():
 
 
 # ---------------------------------------------------------------- gear door (192x192, 8 frames)
-def gear_door(frame=0, frames=8, teeth=12):
-    """톱니 방폭문: rolling cog door. One tooth period over 8 frames -> seamless roll loop.
+ROLL_PX = 210            # how far the door rolls aside when it opens (V-00)
+DOOR_R = 92              # rolling radius (tooth tips)
+
+
+def gear_door(frame=0, frames=8, teeth=12, angle=None):
+    """톱니 방폭문: rolling cog door, 8 frames = one opening roll (not a loop). The whole plate - teeth, bolts,
+    hazard ring and the 'S-07' number - turns by the angle that matches the distance rolled
+    (angle = distance / radius), so the number turns exactly with the door.
     Drawn analytically per angle (no runtime rotation, SD-16 §3.8)."""
     S = 192
     img = Image.new("RGBA", (S, S), (0, 0, 0, 0))
     px = img.load()
     cx = cy = 95.5
-    rot = frame * (2 * math.pi / teeth) / frames
+    if angle is None:
+        angle = math.degrees((frame / max(1, frames - 1)) * ROLL_PX / DOOR_R)
+    rot = math.radians(angle)
     R_out, R_root, R_rim, R_hub = 92, 82, 70, 30
     light = (-0.6, -0.8)
     for y in range(S):
@@ -694,14 +702,15 @@ if __name__ == "__main__":
     sheet = sheet.crop((0, 0, W, min(520, y + 200)))
     sheet.save(os.path.join(out, "10_tiles_s07.png"))
     upscale(sheet, 3).save(os.path.join(out, "10_tiles_s07_x3.png"))
-    # gear door roll strip (8 frames)
+    # gear door opening roll: 8 frames, the door travels ROLL_PX to the right while turning distance/radius
     strip = Image.new("RGBA", (8 * 196, 196), C("P10"))
     for f in range(8):
         strip.alpha_composite(gear_door(f), (f * 196 + 2, 2))
     strip.save(os.path.join(out, "10_gear_door_8f.png"))
     frames = []
-    for f in range(8):
-        b = Image.new("RGBA", (196, 196), C("P10")); b.alpha_composite(gear_door(f), (2, 2))
+    for f in list(range(8)) + [7] * 6:
+        b = Image.new("RGBA", (196 + ROLL_PX, 196), C("P10"))
+        b.alpha_composite(gear_door(f), (2 + int(ROLL_PX * f / 7), 2))
         frames.append(upscale(b, 2).convert("P", palette=Image.ADAPTIVE))
-    frames[0].save(os.path.join(out, "10_gear_door.gif"), save_all=True, append_images=frames[1:], duration=80, loop=0)
+    frames[0].save(os.path.join(out, "10_gear_door.gif"), save_all=True, append_images=frames[1:], duration=110, loop=0)
     print("ok")
