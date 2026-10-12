@@ -16,6 +16,9 @@ from PIL import Image
 sys.path.insert(0, os.path.dirname(__file__))
 import palette as P
 from grid import parse, upscale, sheet
+import outfits as O
+
+FIT = O.make("T01")   # current torso-equipment family (set by build_all)
 
 ROOT = os.path.dirname(os.path.dirname(__file__))
 C = lambda t: P.rgb(t) + (255,)
@@ -117,12 +120,24 @@ def leg(hip, foot, lift, planted, near, fwd=(1.0, 0.0), l1=7.6, l2=6.8):
     m = set()
     capsule(m, hip, knee, 2.7)
     capsule(m, knee, ankle, 2.4)
-    paint_mask(img, m, ("P46", "P45", "P44") if near else ("P45", "P44", "P43"))
+    paint_mask(img, m, FIT["leg"] if near else FIT["leg_far"])
+    knee_plate(img, knee)
     b = set()
     a = (round(ankle[0]), round(ankle[1])) if planted else ankle
     boot(b, a, planted, fwd)
-    paint_mask(img, b, ("P05", "P04", "P03") if near else ("P04", "P03", "P02"))
+    paint_mask(img, b, FIT["boot"] if near else FIT["boot_far"])
     return img, b
+
+
+def knee_plate(img, knee):
+    if not FIT.get("knee"):
+        return
+    kx, ky = int(round(knee[0])), int(round(knee[1]))
+    for dx in (-1, 0, 1):
+        for dy in (-1, 0):
+            img.putpixel((kx + dx, ky + dy), C(FIT["knee"][1] if dy == 0 else FIT["knee"][0]))
+    for dx, dy in ((-2, -1), (-2, 0), (2, -1), (2, 0), (-1, -2), (0, -2), (1, -2), (-1, 1), (0, 1), (1, 1)):
+        img.putpixel((kx + dx, ky + dy), OUT)
 
 
 def leg_diag(hip, ankle_t, planted, near, fwd, lift):
@@ -135,10 +150,11 @@ def leg_diag(hip, ankle_t, planted, near, fwd, lift):
     m = set()
     capsule(m, hip, knee, 2.7)
     capsule(m, knee, (ax, ay), 2.4)
-    paint_mask(img, m, ("P46", "P45", "P44") if near else ("P45", "P44", "P43"))
+    paint_mask(img, m, FIT["leg"] if near else FIT["leg_far"])
+    knee_plate(img, knee)
     b = set()
     boot(b, (round(ax), round(ay)) if planted else (ax, ay), planted, fwd, toe=2.5)
-    paint_mask(img, b, ("P05", "P04", "P03") if near else ("P04", "P03", "P02"))
+    paint_mask(img, b, FIT["boot"] if near else FIT["boot_far"])
     return img, b
 
 
@@ -151,9 +167,11 @@ def arm(sh, swing, bend=6, near=True):
     m = set()
     capsule(m, sh, elbow, 1.9)
     capsule(m, elbow, wrist, 1.7)
-    paint_mask(img, m, ("P46", "P45", "P44") if near else ("P45", "P44", "P43"))
+    paint_mask(img, m, FIT["sleeve"] if near else FIT["sleeve_far"])
     hx, hy = int(round(wrist[0])), int(round(wrist[1]))
-    for dx, dy, col in [(0, -1, "P49"), (-1, -1, "P49"), (0, 0, "P41"), (-1, 0, "P40"), (0, 1, "P40"), (-1, 1, "P39")]:
+    cuff = FIT["cuff"]
+    hand = ("P03", "P02", "P02", "P01") if FIT["gloves"] else ("P41", "P40", "P40", "P39")
+    for dx, dy, col in [(0, -1, cuff), (-1, -1, cuff), (0, 0, hand[0]), (-1, 0, hand[1]), (0, 1, hand[2]), (-1, 1, hand[3])]:
         img.putpixel((hx + dx, hy + dy), C(col))
     for dx, dy in [(1, 0), (1, 1), (0, 2), (-1, 2), (-2, 0), (-2, 1), (1, -1), (-2, -1)]:
         if img.getpixel((hx + dx, hy + dy))[3] == 0:
@@ -206,6 +224,11 @@ def walk_side(upper, mode="walk"):
         fr.alpha_composite(near_img)
         bend = 6 if mode == "walk" else 50
         fr.alpha_composite(arm((32 + lean // 2, 38 + hipdy[f]), armsw[f], bend))
+        if FIT["pads"]:
+            from PIL import ImageDraw
+            e = FIT["pads"]
+            sx_, sy_ = 32 + lean // 2, 38 + hipdy[f]
+            O._box(ImageDraw.Draw(fr), sx_ - 2 - e, sy_ - 2 - e // 2, sx_ + 2 + e, sy_ + 2, FIT["pad_ramp"])
         frames.append(fr)
         feet.append({"near": (fa[2], near_b), "far": (fb[2], far_b)})
     return frames, feet
@@ -319,24 +342,44 @@ def gif(frames, path, scale=4, ms=100, bg="P19"):
     out[0].save(path, save_all=True, append_images=out[1:], duration=ms, loop=0, disposal=2)
 
 
-def build_all():
+def build_all(code="T01", faction=None):
+    global FIT
+    FIT = O.make(code, faction)
     src = parse(os.path.join(ROOT, "src/sprites/pc_s07_jumpsuit_S.txt"))
     up = parse(os.path.join(ROOT, "src/sprites/pc_s07_upper_E.txt"))["upperE"]
     dg = parse(os.path.join(ROOT, "src/sprites/pc_s07_jumpsuit_diag.txt"))
+    base = {"S": O.dress(src["idle0"], FIT, "S"), "N": O.dress(src["idleN"], FIT, "N"),
+            "SE": O.dress(dg["idleSE"], FIT, "SE"), "NE": O.dress(dg["idleNE"], FIT, "NE"),
+            "E": O.dress(up, FIT, "E")}
     fl = lambda seq: [f.transpose(Image.FLIP_LEFT_RIGHT) for f in seq]
     sets, report = {}, []
     for mode in ("walk", "run"):
-        S = walk_frontback(src["idle0"], mode)
-        N = walk_frontback(src["idleN"], mode)
-        E, fe = walk_side(up, mode)
-        SE, fse = walk_diag(dg["idleSE"], mode)
-        NE, fne = walk_diag(dg["idleNE"], mode, back=True)
+        S = walk_frontback(base["S"], mode)
+        N = walk_frontback(base["N"], mode)
+        E, fe = walk_side(base["E"], mode)
+        SE, fse = walk_diag(base["SE"], mode)
+        NE, fne = walk_diag(base["NE"], mode, back=True)
         dx, dy = STEP[mode][1]
         for seq_feet, lab, st in ((fe, "E", STEP[mode][0]), (fse, "SE", (dx, dy)), (fne, "NE", (dx, -dy))):
-            lines, worst = footlock_report(seq_feet, st, f"{mode} {lab}")
+            lines, worst = footlock_report(seq_feet, st, f"{code} {mode} {lab}")
             report += lines
         sets[mode] = {"S": S, "SE": SE, "E": E, "NE": NE, "N": N, "NW": fl(NE), "W": fl(E), "SW": fl(SE)}
+    sets["idle"] = {"S": base["S"], "N": base["N"], "SE": base["SE"], "NE": base["NE"],
+                    "E": E_idle(O.dress(src["idleE"], FIT, "E")), }
+    sets["idle"].update({"W": sets["idle"]["E"].transpose(Image.FLIP_LEFT_RIGHT),
+                         "SW": base["SE"].transpose(Image.FLIP_LEFT_RIGHT),
+                         "NW": base["NE"].transpose(Image.FLIP_LEFT_RIGHT)})
     return sets, report
+
+
+def E_idle(full):
+    """Side idle = the hand-drawn idleE dressed, plus the shoulder pad over the near arm."""
+    fr = full.copy()
+    if FIT["pads"]:
+        from PIL import ImageDraw
+        e = FIT["pads"]
+        O._box(ImageDraw.Draw(fr), 30 - e, 36 - e // 2, 34 + e, 40, FIT["pad_ramp"])
+    return fr
 
 
 ORDER = ("S", "SE", "E", "NE", "N", "NW", "W", "SW")

@@ -1,0 +1,60 @@
+T01 walk E near frames [0, 1, 2]: world heel x [36, 36, 36], world sole y [60, 60, 60], slip 0px
+T01 walk E far frames [3, 4, 5]: world heel x [52, 52, 52], world sole y [60, 60, 60], slip 0px
+T01 walk SE near frames [0, 1, 2]: world heel x [32, 32, 32], world sole y [63, 63, 63], slip 0px
+T01 walk SE far frames [3, 4, 5]: world heel x [49, 49, 49], world sole y [75, 75, 75], slip 0px
+T01 walk NE near frames [0, 1, 2]: world heel x [37, 37, 37], world sole y [55, 55, 55], slip 0px
+T01 walk NE far frames [3, 4, 5]: world heel x [44, 44, 44], world sole y [43, 43, 43], slip 0px
+T01 run E near frames [0, 1]: world heel x [34, 34], world sole y [60, 60], slip 0px
+T01 run E far frames [3, 4]: world heel x [56, 56], world sole y [60, 60], slip 0px
+T01 run SE near frames [0, 1]: world heel x [31, 31], world sole y [62, 62], slip 0px
+T01 run SE far frames [3, 4]: world heel x [54, 54], world sole y [80, 80], slip 0px
+T01 run NE near frames [0, 1]: world heel x [36, 36], world sole y [56, 56], slip 0px
+T01 run NE far frames [3, 4]: world heel x [49, 49], world sole y [38, 38], slip 0px
+T02 walk E near frames [0, 1, 2]: world heel x [36, 36, 36], world sole y [60, 60, 60], slip 0px
+T02 walk E far frames [3, 4, 5]: world heel x [52, 52, 52], world sole y [60, 60, 60], slip 0px
+T02 walk SE near frames [0, 1, 2]: world heel x [32, 32, 32], world sole y [63, 63, 63], slip 0px
+T02 walk SE far frames [3, 4, 5]: world heel x [49, 49, 49], world sole y [75, 75, 75], slip 0px
+T02 walk NE near frames [0, 1, 2]: world heel x [37, 37, 37], world sole y [55, 55, 55], slip 0px
+T02 walk NE far frames [3, 4, 5]: world heel x [44, 44, 44], world sole y [43, 43, 43], slip 0px
+T02 run E near frames [0, 1]: world heel x [34, 34], world sole y [60, 60], slip 0px
+T02 run E far frames [3, 4]: world heel x [56, 56], world sole y [60, 60], slip 0px
+T02 run SE near frames [0, 1]: world heel x [31, 31], world sole y [62, 62], slip 0px
+T02 run SE far frames [3, 4]: world heel x [54, 54], world sole y [80, 80], slip 0px
+T02 run NE near frames [0, 1]: world heel x [36, 36], world sole y [56, 56], slip 0px
+T02 run NE far frames [3, 4]: world heel x [49, 49], world sole y [38, 38], slip 0px
+T03 walk E near frames [0, 1, 2]: world heel x [36, 36, 36], world sole y [60, 60, 60], slip 0px
+T03 walk E far frames [3, 4, 5]: world heel x [52, 52, 52], world sole y [60, 60, 60], slip 0px
+T03 walk SE near frames [0, 1, 2]: world heel x [32, 32, 32], world sole y [63, 63, 63], slip 0px
+T03 walk SE far frames [3, 4, 5]: world heel x [49, 49, 49], world sole y [75, 75, 75], slip 0px
+T03 walk NE near frames [0, 1, 2]: world heel x [37, 37, 37], world sole y [55, 55, 55], slip 0px
+T03 walk NE far frames [3, 4, 5]: world heel x [44, 44, 44], world sole y [43, 43, 43], slip 0px
+T03 run E near frames [0, 1]: world heel x [34, 34], world sole y [60, 60], slip 0px
+T03 run E far frames [3, 4]: world heel x [56, 56], world sole y [60, 60], slip 0px
+T03 run SE near frames [0, 1]: world heel x [31, 31], world sole y [62, 62], slip 0px
+T03 run SE far frames [3, 4]: world heel x [54, 54], world sole y [80, 80], slip 0px
+T03 run NE near frames [0, 1]: world heel x [36, 36], world sole y [56, 56], slip 0px
+T03 run NE far frames [3, 4]: world heel x [49, 49], world sole y [38, 38], slip 0px
+T06 walk E near frames [0, 1, 2]: world heel x [36, 36, 36], world sole y [60, 60, 60], slip 0px
+T06 walk E far frames [3, 4, 5]: world heel x [52, 52, 52], world sole y [60, 60, 60], slip 0px
+T06 walk SE near frames [0, 1, 2]: world heel x [32, 32, 32], world sole y [63, 63, 63], slip 0px
+T06 walk SE far frames [3, 4, 5]: world heel x [49, 49, 49], world sole y [75, 75, 75], slip 0px
+T06 walk NE near frames [0, 1, 2]: world heel x [37, 37, 37], world sole y [55, 55, 55], slip 0px
+T06 walk NE far frames [3, 4, 5]: world heel x [44, 44, 44], world sole y [43, 43, 43], slip 0px
+T06 run E near frames [0, 1]: world heel x [34, 34], world sole y [60, 60], slip 0px
+T06 run E far frames [3, 4]: world heel x [56, 56], world sole y [60, 60], slip 0px
+T06 run SE near frames [0, 1]: world heel x [31, 31], world sole y [62, 62], slip 0px
+T06 run SE far frames [3, 4]: world heel x [54, 54], world sole y [80, 80], slip 0px
+T06 run NE near frames [0, 1]: world heel x [36, 36], world sole y [56, 56], slip 0px
+T06 run NE far frames [3, 4]: world heel x [49, 49], world sole y [38, 38], slip 0px
+T06 walk E near frames [0, 1, 2]: world heel x [36, 36, 36], world sole y [60, 60, 60], slip 0px
+T06 walk E far frames [3, 4, 5]: world heel x [52, 52, 52], world sole y [60, 60, 60], slip 0px
+T06 walk SE near frames [0, 1, 2]: world heel x [32, 32, 32], world sole y [63, 63, 63], slip 0px
+T06 walk SE far frames [3, 4, 5]: world heel x [49, 49, 49], world sole y [75, 75, 75], slip 0px
+T06 walk NE near frames [0, 1, 2]: world heel x [37, 37, 37], world sole y [55, 55, 55], slip 0px
+T06 walk NE far frames [3, 4, 5]: world heel x [44, 44, 44], world sole y [43, 43, 43], slip 0px
+T06 run E near frames [0, 1]: world heel x [34, 34], world sole y [60, 60], slip 0px
+T06 run E far frames [3, 4]: world heel x [56, 56], world sole y [60, 60], slip 0px
+T06 run SE near frames [0, 1]: world heel x [31, 31], world sole y [62, 62], slip 0px
+T06 run SE far frames [3, 4]: world heel x [54, 54], world sole y [80, 80], slip 0px
+T06 run NE near frames [0, 1]: world heel x [36, 36], world sole y [56, 56], slip 0px
+T06 run NE far frames [3, 4]: world heel x [49, 49], world sole y [38, 38], slip 0px
