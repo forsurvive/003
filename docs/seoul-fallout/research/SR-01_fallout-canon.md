@@ -113,7 +113,7 @@
 | 2059 | **앵커리지 전선(Anchorage Front Line) 설치**: 알래스카 유전 방어를 위해 미군 증강. 송유관 경비를 이유로 캐나다에 미군 주둔 압박 | Resource Wars, United States annexation of Canada · 바이블 0 | [D] |
 | 2059 | 첫 인공지능 탄생(메모리 한계로 확장 중단) | Timeline (2050-2099) | [D] |
 | 2060 | 중동 유전 고갈로 유럽-중동 전쟁 종결(양쪽 모두 폐허). **유럽 공동체 붕괴 → 유럽 내전**. 세계적으로 연료 부족, 거리에서 차가 사라짐 | European Commonwealth, European Civil War · FO1 인트로+바이블 0 | [G:FO1]/[D] |
-| 2062 | 신종 역병 재확산, 국가적 편집증. 나이아가라 사보타주 사건으로 중국 첩보원 완 양 체포 | Sino-American War · 터틀도브 수용소 터미널 | [G:FO76]/[D] |
+| 2062 | 신종 역병 재확산, 국가적 편집증. 나이아가라 사보타주 사건으로 중국 첩보원 완 양 체포 | Sino-American War · 터틀도브 수용소 터미널 | [G:FO3 PL]/[D] |
 | 2063-08 | 대부분의 볼트 완공. 잦은 대피 훈련으로 '양치기 소년' 효과 | Vault-Tec Corporation · 바이블 0 | [D] |
 | 2065-08 | 기계화 기병의 기동성 문제로 **파워 아머 개발 착수** | Power armor · 바이블 0 | [D] |
 | 2066 봄 | 석유 의존도 높은 중국이 에너지 위기로 붕괴 직전. 대미 무역 협상 강경화 → 결렬. 태평양 심해 유전을 중국이 확보하려다 '미국 특수요원의 사보타주 의혹' | China · 바이블 0, 『폴아웃 3 공식 가이드』 p.43 | [D] |
@@ -222,7 +222,7 @@
 | 다른 지도자명 | '신 주석(President Xin)'은 FO2의 신뢰 불가 GNN 녹취록에만 등장. 후속작은 청 주석만 사용 | Xin | [G:FO2 신뢰 불가] |
 | 수도 | 베이징 | Beijing | [G:FO76] |
 | 통화 | 위안. 미국에서 위안화 지폐는 첩보원 식별 단서 | Chinese yuan, China | [G:FO3 포인트 룩아웃] |
-| 정부 조직 | 부(部) 체제. 알려진 것은 '중국 정보부(Chinese Intelligence Ministry)'뿐 | China(홈스테드 모텔 터미널) | [G:FO76] |
+| 정부 조직 | 부(部) 체제. 알려진 것은 '중국 정보부(Chinese Intelligence Ministry)'뿐 | China(홈스테드 모텔 터미널) | [G:FO3 PL] |
 | 외교 | 전쟁 중에도 워싱턴 D.C. 주미 중국 대사관 유지. 마지막 대사 '샤오링(Xiu-Ling)'과의 상원 오찬이 10월 31일로 잡혔다가 무기한 연기 | China(M.A.R.Go.T. 대사) | [G:FO3 브로큰 스틸] |
 | 경제 | 화석연료 의존이 커서 자원 전쟁 타격이 가장 큼. 2077년엔 식량 배급을 **추첨**으로 나누고 충성에 따라 조작할 정도로 궁핍 | China(중국 정보 벙커 탈출 터미널) | [G:FO3 PL] |
 | 인명 경시 | 고위 공작원도 탈출이 어려우면 제거되거나 자살이 요구됨 | China | [G:FO3 PL] |
@@ -421,3 +421,136 @@
 - 텐페니(영국 난민) 사례는 '바다 건너 온 이방인'을 소수 인물 단위로는 둘 수 있다는 근거가 된다. 대규모 해외 세력은 피하고, 일본·중국에서 흘러온 개인·소집단 정도가 공식 톤에 맞다.
 
 ---
+## 7. '2077년 한국' 설계 체크리스트
+
+### 7.1 캐논 충돌 체크리스트(반드시 지킬 것)
+
+> '근거'가 [G]인 항목은 어기면 정사와 정면 충돌한다. [D] 항목은 어겨도 게임 안 근거와 직접 부딪히지는 않지만, 팬이 아는 표준 연표이므로 지키는 것을 권한다.
+
+| # | 제약 | 근거(Nukapedia) | 등급 | 서울판에서 흔히 생길 위반 예 |
+|---|---|---|---|---|
+| C1 | **대전쟁은 2077-10-23(미국 동부 09:42~09:47 전후) 하루, 약 2시간**의 전 세계 핵 교전이다 | Great War, The Switchboard terminal entries | [G] | 서울만 다른 날 피폭, 몇 주에 걸친 핵전쟁 |
+| C2 | 대전쟁은 **중미 전쟁의 귀결**이다. 주된 교전국은 미국과 중국 | Great War, Sino-American War | [G] | 한국·일본·북한이 핵전쟁을 시작했다는 설정 |
+| C3 | **누가 먼저 쐈는지는 확정하지 않는다** | Fallout Bible 0, The Switchboard terminal entries | [D]/[G] | "중국이 먼저 쐈다"를 서울판의 확정 사실로 서술 |
+| C4 | 중미 전쟁 연표: 2066 겨울 알래스카 침공 → 2067 T-45 → 2072 캐나다 병합 발표 → **2074 미군 중국 본토 침공** → 2076-06 T-51 → **2077-01 앵커리지 탈환** → 2077 본토 교착 | Sino-American War, Battle of Anchorage, Capitol Post terminal entries | [G]+[D] | 2077년에 막 전쟁이 시작됐다는 설정(FO2 GNN 녹취록식 오류) |
+| C5 | 중국은 **청 주석이 이끄는 공산 일당 체제**, 마오 시대식으로 개혁·개방이 없었다 | China, Cheng (Chairman), Divergence | [G]/[W] | 현실 21세기 중국(시장경제·IT 대국)을 그대로 투영 |
+| C6 | 2077년 중국은 **자원 고갈로 배급 추첨을 할 만큼 궁핍**, 그러나 군은 여전히 강하고 **스텔스 기술은 미국보다 앞섬**. 파워 아머는 뒤처짐 | China, People's Liberation Army, Stealth technology | [G] | 중국군이 미국급 파워 아머 대군을 운용 |
+| C7 | **기술 규칙**: 소형 디지털 전자기기·GUI·평면 디스플레이·휴대전화·인터넷 대중화 없음. 핵분열·핵융합 소형 동력, 로봇, 에너지 무기, 파워 아머(미국 독점에 가까움), 플라스틱 희소 | Divergence | [G] 다수 | 스마트폰, 인터넷 강국 한국, 반도체 산업 |
+| C8 | 파워 아머 계보: T-45(2067)·T-51(2076)·T-60(전쟁 직전)은 **미국 웨스트 텍 프레임 계열**. 중국은 소량의 자체 공산 파워 아머 | Power armor, Communist power armor | [G] | 한국군 독자 대량생산 파워 아머(만들려면 '미국 대여품'이나 소량 시제품으로) |
+| C9 | 볼트-텍 볼트(1~122)는 **미국 연방 사업**, 확인된 해외는 병합 캐나다뿐 | Vault, Letter from Vault-Tec (Fallout 3) | [G]/[D] | 서울에 '볼트 23' 같은 정사 번호의 볼트 |
+| C10 | **유엔은 2052년 해체**, 유럽 공동체는 2060년 이후 내전 | Capitol Post terminal entries, European Commonwealth | [G]/[D] | 2077년 유엔군·유엔 안보리 등장 |
+| C11 | 소련은 2077년까지 존속(미국과 중국보다는 덜 적대) | Soviet Union | [G] | 2077년 러시아 연방 |
+| C12 | 미국은 13개 연방 체제, 13개 별 성조기, 계엄·식량 폭동·반공 광풍 중 | Commonwealths, United States of America | [G] | 50개 별 성조기를 단 주한미군 |
+| C13 | 1945년(2차 대전 종전)까지는 현실 역사와 같다. 일본의 패전·원폭은 정사 | Divergence, Japan | [G] | 일본 식민 지배·해방 이전 역사를 바꾸는 설정 |
+| C14 | 미 본토의 공식 연표·인물·장소(체이스 장군, 징웨이, 리버티 프라임, 앵커리지 기념관 등)를 바꾸지 않는다 | 각 문서 | [G] | 체이스 장군이 서울에서 지휘 |
+| C15 | 핵탄두는 200~750킬로톤 다수 탄두, 낙진이 많다. 생물·화학무기 피해도 겹친다 | Nuclear weapons, Great War | [D]/[G] | 단일 초대형 폭탄 한 발로 서울 전체 증발 |
+| C16 | 대전쟁 뒤 각국 정부는 사실상 소멸, 생존자는 부족·정착지·약탈자로 재편 | Great War | [G] | 2277년에 '대한민국 정부'가 온전히 존속 |
+
+### 7.2 공식 설정이 비어 있어 자유롭게 설계할 수 있는 영역
+
+| 영역 | 공식 상태 | 설계 자유도 | 메모 |
+|---|---|---|---|
+| 한국전쟁(1950~53)의 발생 여부·결과 | 없음 | 매우 큼 | 분기가 1945~1950 사이라 '일어났다/안 일어났다/다르게 끝났다' 모두 가능 |
+| 분단 여부, 북한의 존재 | 없음(취소된 영화 각본에만 '북한' 언급, 비정사) | 매우 큼 | 통일 한국·분단 지속·중국 병합 북부 등 |
+| 1950~2077년 한국 체제·경제·도시 발전 | 없음 | 매우 큼 | 폴아웃 기술 규칙(C7) 안에서 |
+| 한국의 진영(미국 동맹/중립/중국 병합) | 없음. 중국의 '병합국'은 이름 미상([D]) | 큼 | 8장에서 비교 |
+| 한국의 중미 전쟁 참전 여부·역할 | 없음 | 큼 | 미군 본토 진격 경로가 비어 있음 |
+| 2077-10-23 한반도 피해 양상 | 없음(전 세계 피폭만 공식) | 큼 | 시각은 C1과 맞출 것 |
+| 한국의 대피 시설 체계 | 없음 | 큼 | 볼트-텍 사용 시 C9 주의 |
+| 대전쟁 후 200년간 한반도 역사(2078~2277) | 없음 | 매우 큼 | 바이블 작가가 '미래 작품을 위해 비워 둔다'고 명시 |
+| 한반도 변이 생물 | 없음(FEV·방사능 변이의 일반 원리만 공식) | 큼 | FEV는 미국 국내 유출 중심이므로 한반도 FEV는 설명 필요 |
+| 중국 잔존 세력의 한반도 활동 | 없음(미국 내 잔존병만 공식) | 큼 | 마마 돌체·후지니야의 변주로 정당화 가능 |
+| 일본의 2077년 상태 | 미상(관광 가능 정황만) | 중간 | '미국 쪽 또는 중립'으로 두면 와토가 수학여행과 어울림 |
+| 대만·필리핀의 진영 | 미상(파스칼 사건, 맘바하오 주둔만) | 중간 | 필리핀은 미군 주둔지로 두는 것이 자연스러움 |
+| 소련 극동의 역할 | 미상 | 중간 | 2077년 소련 존속은 지킬 것(C11) |
+
+**기획 활용 포인트**
+- 컨셉 기획서에 이 두 표를 그대로 옮겨 **'정사 고정값'과 '우리 결정값'** 을 나란히 관리하면 상세 기획 단계의 충돌 검토가 쉬워진다.
+- 가장 큰 결정은 **분단 여부**다. 분단을 유지하면 DMZ·북쪽 공산권·중국 병합이라는 강한 소재가 생기지만 현실 정치 민감도가 높다. 통일 한국을 택하면 민감도는 낮아지지만 '중국과 국경을 맞댄 미국 동맹국'이라는 더 직접적인 긴장 구도가 된다. 어느 쪽이든 공식과는 충돌하지 않는다.
+
+---
+
+## 8. 기획 활용: '한반도 = 미군의 중국 본토 진격 전진기지' 설정 검토
+
+### 8.1 공식 연표와의 맞물림
+
+| 공식 사건(연도) | 한반도 전진기지 설정에서의 대응(제안) | 공식 근거 정도 |
+|---|---|---|
+| 2052 유엔 해체, 자원 전쟁 시작 | 동아시아 질서 붕괴, 한미 양자 동맹 강화 | 공식: 유엔 해체 [G] / 한반도: 창작 |
+| 2059 앵커리지 전선 설치, 캐나다에 기지 압박 | 미국이 송유관 경비를 이유로 캐나다를 압박했듯, 한국에도 기지 확대·자원 협력 압박(캐나다 사례의 거울) | 패턴: [D] / 한반도: 창작 |
+| 2066 중국의 알래스카 침공 | 한반도는 중국과 가장 가까운 미국 쪽 땅 → 해상·항공 감시 거점, 중국군의 견제 공격 대상 | 창작 |
+| 2067 파스칼 사건과 P.A.M.의 '교정 조치' | 미국 정보기관이 동아시아(대만 해협)에 개입하는 정사 선례 → 한국판 정보 공작의 근거 | [G:FO4] |
+| **2074 미군 중국 본토 침공**('태평양을 건너', 산터우·양쯔강) | **인천·평택·부산 등 항구와 비행장이 상륙 병력·보급의 집결지**가 되고, 서해를 건너 산둥·상하이·양쯔강 하구로 가는 최단 경로 | 공식: 침공 [D]·전투 [G] / 경로: **공식 공백** |
+| 2076-06 T-51 투입 | 미국 본토 → 한반도 정비창 → 중국 전선의 파워 아머 수송·정비 거점 | 공식: T-51 [G]/[D] / 한반도: 창작 |
+| 2076-08 미국 식량 폭동·계엄 | 한국에서도 전쟁 동원·물자 징발·반전 시위·계엄(미국 사례의 거울) | 창작 |
+| 2077-01 앵커리지 탈환, 본토 공세 재개 | "다음은 상하이"(OA 대사) → 상하이·난징으로 가는 병력이 한반도를 거침 | 대사 [G:OA] / 경유: 창작 |
+| 2077-10 본토 교착, 중국 위성 활동 증가, 22일 '공격 임박' | 한반도 최고 경계, 중국 스텔스 부대(헤이구이) 침투, 잠수함 출몰 | 공식: [G:FNV·FO3·FO4] / 한반도: 창작 |
+| 2077-10-23 대전쟁 | 전진기지라면 **중국의 1순위 표적**. 미국 동부보다 먼저 맞았을 수도 있음(발사 순서는 공식 미상) | 창작(C1·C3 준수) |
+
+### 8.2 설정의 근거(정당화 논리)
+
+1. **공식 공백**: 미군이 중국 본토로 들어간 경로·기지는 정사에 없다(5.3). 필리핀 맘바하오 주둔만 확인되므로, 북쪽 축(서해 횡단)을 한반도로 채우는 것은 빈칸 메우기다.
+2. **지리적 개연성**: 공식 전투지 상하이·난징·양쯔강·산터우는 모두 중국 동부 해안이다. 한반도 서해안은 그 북쪽 축에서 가장 가까운 비중국 영토다(지리 자체는 현실 사실. 구체 거리는 다른 SR 문서에서 확인 필요).
+3. **정사 패턴의 반복**: 미국은 자원·전선을 위해 캐나다를 압박하다 병합했다. **동맹국을 전쟁 수행 기지로 쥐어짜는 미국**은 폴아웃이 이미 쓴 주제다(캐나다 = '리틀 아메리카').
+4. **아시아 첩보전 선례**: P.A.M.의 대만 해협 '교정', 해외 공작원 보고, 힌두쿠시 감청(스위치보드) → 미 정보기관의 아시아 활동은 정사다.
+
+### 8.3 위험 요소
+
+| 위험 | 내용 | 완화 방안 |
+|---|---|---|
+| 근거 등급 | 한반도 관련 부분은 전부 [창작]. 팬이 "정사 근거 있나?"라고 물으면 '없다'가 정답 | 기획서·게임 텍스트에서 '공식 연표의 공백을 채운 설정'임을 숨기지 않는다. 게임 안에서는 단정 대신 기록·증언으로 |
+| 캐나다 복제의 함정 | 캐나다처럼 '병합'까지 가면 미국 정사 연표(병합국 목록 = 캐나다)와 어긋날 위험 | 병합이 아니라 **동맹·주둔·종속 심화** 수준으로 멈춘다 |
+| 현실 정치 민감도 | 주한미군·한미동맹·중국과의 갈등은 현실 쟁점. 특정 국가·민족 비하로 읽힐 수 있음(정사의 반중 선전도 '풍자 대상'임을 유의) | 원작처럼 **전쟁 선전 자체를 풍자**하는 시선을 유지. 실존 정치인·부대명·기지명은 가상화 |
+| 실존 군사 시설 | 실제 미군 기지·한국군 시설을 그대로 재현하면 민감 | 공개 정보 수준, 가상 명칭(예: '서해 전진 보급창')으로 |
+| 피해 규모 | 전진기지 = 1순위 표적이면 서울이 '완전 소멸'해 게임 공간이 없어질 수 있음 | 원작 D.C.처럼 '심하게 파괴됐지만 폐허가 남은' 수준. 표적을 항구·비행장에 집중시키고 도심은 2차 피해로 |
+| FEV·변이 근거 | FEV는 미국 국내(웨스트 텍·마리포사) 중심. 한반도 FEV는 정사 근거가 없음 | 변이 원인을 **방사능 + 생물·화학무기(중미 전쟁 중 중국 생물무기 사용은 [G:FO1])** 로 두고, FEV는 쓰더라도 '미군이 가져온 시료' 수준으로 제한 |
+| 미국 세력의 2277년 재등장 | 브라더후드·엔클레이브의 태평양 횡단은 근거 없음 | '현지 미군 후예' 같은 현지 세력으로 변주 |
+
+### 8.4 변형안 비교(컨셉 기획용)
+
+| 안 | 2077년 한국의 위치 | 장점 | 위험 |
+|---|---|---|---|
+| A. 미국 동맹 전진기지(통일 또는 남한 단독) | 미군 집결·정비 거점, 한국군도 본토전에 일부 참전 | 공식 연표와 가장 매끄럽게 맞물림. 미국식 레트로 퓨처 소재(로봇·파워 아머·볼트)를 들여올 명분 | 현실 한미동맹·반중 정서와 겹치는 민감도 |
+| B. 중국에 병합된 나라 | 중국 '병합국' 중 하나, 2076년 보급선 붕괴 때 반란 | 바이블의 '병합국 반란'([D])을 정면 활용. 공산 통치·저항군 서사 | 현실 한중 관계 민감도 매우 큼. 미국 소재 사용 명분 약함 |
+| C. 남북 분단 최전선(남=미국 동맹, 북=중국 병합) | 한반도 자체가 중미 전쟁의 지상 전선 | 가장 극적. DMZ를 '폴아웃식 참호전'(알래스카 참호전의 거울)으로 | 실제 분단 현실과 겹쳐 가장 민감. 사용자 지시('현실적으로')와도 무게가 큼 |
+| D. 무장 중립 완충국 | 양쪽의 압박을 받는 중립국 | 정치 민감도 최소 | 공식 연표와 맞물리는 사건이 적어 밋밋함 |
+
+- 조사자 의견: **A안(미국 동맹 전진기지)** 이 공식 연표의 빈칸(본토 진격 경로)을 가장 자연스럽게 채우고, 원작 폴아웃 3의 소재(미국식 기술·볼트·브라더후드 계열 유물)를 서울에 들여올 명분을 준다. 결정은 컨셉 단계 몫이다.
+
+---
+
+## 9. 미확인·불일치 메모
+
+| # | 내용 | 상태 |
+|---|---|---|
+| U1 | 앵커리지 탈환일: 바이블 0은 01-10, 캐피털 포스트 기사는 01-11자, 스위치보드는 01-28 '이상 없음·DEFCON 3', 위키 '자원 전쟁' 문서는 '01-28 완료'라고 씀 | 문서 간 불일치. 이 문서는 '01-10~11 탈환, 01-28 DEFCON 하향'으로 정리 |
+| U2 | 미군 중국 본토 침공 연도: 바이블 0은 2074, 위키 '고비 작전' 문서는 '2073년부터'라고 씀 | 2074를 표준으로 |
+| U3 | 미군의 베이징 외곽 도달(2077-10-22)은 FO2의 신뢰 불가 GNN 녹취록뿐(같은 녹취록은 전쟁 시작을 2077-10-10, 캐나다 병합을 2075로 적는 등 정사와 크게 어긋남) | 인용 금지 |
+| U4 | TV 시즌 1 각본의 '코리아타운' 지문이 화면 자막·대사로도 나오는지 | (미확인) |
+| U5 | 대니얼 신이 한국계라는 공식 언급 | (미확인). 위키 해설뿐 |
+| U6 | 위키 '분기' 문서의 "1951년 이전 분기 불가" 추론 | [W] 추론. 공식 아님 |
+| U7 | 중국의 '병합국' 목록 | 공식 미상 |
+| U8 | 대전쟁 당일 미국 밖 피격 시각·순서 | 공식 미상. 서울 시각 환산(23:42 KST 전후)은 미국 동부 피격 시각을 단순 환산한 참고값 |
+| U9 | 웹 교차 검증 | 이번 조사는 **Nukapedia 공식 덤프(2026-08-30자 파일)와 RD-02만으로** 수행했다. 웹 검색 한도 소진으로 외부 기사(팀 케인 인터뷰 등)를 직접 재확인하지 못했고, 해당 내용은 위키 인용을 그대로 옮겼다 |
+
+---
+
+## 출처
+
+**Nukapedia(폴아웃 위키) 문서** — 공식 덤프에서 직접 읽음. URL은 `https://fallout.fandom.com/wiki/<문서명>` 형식이다.
+
+- 세계·연표: [Divergence](https://fallout.fandom.com/wiki/Divergence), [Timeline (2050-2099)](https://fallout.fandom.com/wiki/Timeline_(2050-2099)), [Timeline (2100-2149)](https://fallout.fandom.com/wiki/Timeline_(2100-2149)), [Timeline (2250-2300)](https://fallout.fandom.com/wiki/Timeline_(2250-2300)), [Resource Wars](https://fallout.fandom.com/wiki/Resource_Wars), [Sino-American War](https://fallout.fandom.com/wiki/Sino-American_War), [Great War](https://fallout.fandom.com/wiki/Great_War), [Battle of Anchorage](https://fallout.fandom.com/wiki/Battle_of_Anchorage), [United States annexation of Canada](https://fallout.fandom.com/wiki/United_States_annexation_of_Canada), [European Commonwealth](https://fallout.fandom.com/wiki/European_Commonwealth), [Middle East](https://fallout.fandom.com/wiki/Middle_East), [New Plague](https://fallout.fandom.com/wiki/New_Plague), [Commonwealths](https://fallout.fandom.com/wiki/Commonwealths), [Military conflicts](https://fallout.fandom.com/wiki/Military_conflicts), [Cold War](https://fallout.fandom.com/wiki/Cold_War)
+- 국가·지역: [China](https://fallout.fandom.com/wiki/China), [Japan](https://fallout.fandom.com/wiki/Japan), [Taiwan](https://fallout.fandom.com/wiki/Taiwan), [Taiwan Strait](https://fallout.fandom.com/wiki/Taiwan_Strait), [Pascale Incident](https://fallout.fandom.com/wiki/Pascale_Incident), [Shanghai](https://fallout.fandom.com/wiki/Shanghai), [Beijing](https://fallout.fandom.com/wiki/Beijing), [Nanjing](https://fallout.fandom.com/wiki/Nanjing), [Shantou](https://fallout.fandom.com/wiki/Shantou), [Yangtze Campaign](https://fallout.fandom.com/wiki/Yangtze_Campaign), [Gobi Campaign](https://fallout.fandom.com/wiki/Gobi_Campaign), [Gobi Desert](https://fallout.fandom.com/wiki/Gobi_Desert), [Shaanxi Province](https://fallout.fandom.com/wiki/Shaanxi_Province), [Mambajao](https://fallout.fandom.com/wiki/Mambajao), [Bohol Sea](https://fallout.fandom.com/wiki/Bohol_Sea), [5th Infantry](https://fallout.fandom.com/wiki/5th_Infantry), [Okinawa](https://fallout.fandom.com/wiki/Okinawa), [Soviet Union](https://fallout.fandom.com/wiki/Soviet_Union), [Trans-Siberian Railway](https://fallout.fandom.com/wiki/Trans-Siberian_Railway), [Mongolia](https://fallout.fandom.com/wiki/Mongolia), [India](https://fallout.fandom.com/wiki/India), [Vietnam](https://fallout.fandom.com/wiki/Vietnam), [Vietnam War](https://fallout.fandom.com/wiki/Vietnam_War), [Australia](https://fallout.fandom.com/wiki/Australia), [Canada](https://fallout.fandom.com/wiki/Canada), [Mexico](https://fallout.fandom.com/wiki/Mexico), [United Kingdom](https://fallout.fandom.com/wiki/United_Kingdom), [Pre-War countries](https://fallout.fandom.com/wiki/Pre-War_countries), [Pacific Ocean](https://fallout.fandom.com/wiki/Pacific_Ocean)
+- 군·정부·조직: [United States of America](https://fallout.fandom.com/wiki/United_States_of_America), [United States Army](https://fallout.fandom.com/wiki/United_States_Army), [United States Pacific Fleet](https://fallout.fandom.com/wiki/United_States_Pacific_Fleet), [Department of Defense](https://fallout.fandom.com/wiki/Department_of_Defense), [Enclave](https://fallout.fandom.com/wiki/Enclave), [People's Liberation Army](https://fallout.fandom.com/wiki/People%27s_Liberation_Army), [Cheng (Chairman)](https://fallout.fandom.com/wiki/Cheng_(Chairman)), [Xin](https://fallout.fandom.com/wiki/Xin), [Chinese remnants](https://fallout.fandom.com/wiki/Chinese_remnants), [Ghost Fleet](https://fallout.fandom.com/wiki/Ghost_Fleet), [Stealth technology](https://fallout.fandom.com/wiki/Stealth_technology), [Communist power armor](https://fallout.fandom.com/wiki/Communist_power_armor), [Liberator](https://fallout.fandom.com/wiki/Liberator), [Shi](https://fallout.fandom.com/wiki/Shi), [Yangtze](https://fallout.fandom.com/wiki/Yangtze), [Executive Order 99066](https://fallout.fandom.com/wiki/Executive_Order_99066), [R.B. Vickers](https://fallout.fandom.com/wiki/R.B._Vickers)
+- 볼트·기술: [Vault](https://fallout.fandom.com/wiki/Vault), [Vault-Tec Corporation](https://fallout.fandom.com/wiki/Vault-Tec_Corporation), [Letter from Vault-Tec (Fallout 3)](https://fallout.fandom.com/wiki/Letter_from_Vault-Tec_(Fallout_3)), [Societal Preservation Program](https://fallout.fandom.com/wiki/Societal_Preservation_Program), [Power armor](https://fallout.fandom.com/wiki/Power_armor), [Nuclear weapons](https://fallout.fandom.com/wiki/Nuclear_weapons), [Forced Evolutionary Virus](https://fallout.fandom.com/wiki/Forced_Evolutionary_Virus), [Fusion core](https://fallout.fandom.com/wiki/Fusion_core), [RobCo Industries](https://fallout.fandom.com/wiki/RobCo_Industries), [General Atomics International](https://fallout.fandom.com/wiki/General_Atomics_International)
+- 게임 내 기록: [The Switchboard terminal entries](https://fallout.fandom.com/wiki/The_Switchboard_terminal_entries), [Boston Bugle building terminal entries](https://fallout.fandom.com/wiki/Boston_Bugle_building_terminal_entries), [Capitol Post terminal entries](https://fallout.fandom.com/wiki/Capitol_Post_terminal_entries), [Black Mountain terminal entries](https://fallout.fandom.com/wiki/Black_Mountain_terminal_entries), [Germantown Police HQ terminal entries](https://fallout.fandom.com/wiki/Germantown_Police_HQ_terminal_entries), [Sierra Depot GNN transcript](https://fallout.fandom.com/wiki/Sierra_Depot_GNN_transcript), [Newscaster](https://fallout.fandom.com/wiki/Newscaster), [People's Republic of America Radio](https://fallout.fandom.com/wiki/People%27s_Republic_of_America_Radio), [Allistair Tenpenny](https://fallout.fandom.com/wiki/Allistair_Tenpenny), [MARGoT](https://fallout.fandom.com/wiki/MARGoT)
+- 한국 관련: [Windy Park](https://fallout.fandom.com/wiki/Windy_Park), [Windy Park/Dialogue](https://fallout.fandom.com/wiki/Windy_Park/Dialogue), [Special order](https://fallout.fandom.com/wiki/Special_order), [Hunter's hanbok outfit](https://fallout.fandom.com/wiki/Hunter%27s_hanbok_outfit), [Daniel Shin](https://fallout.fandom.com/wiki/Daniel_Shin), [Los Angeles](https://fallout.fandom.com/wiki/Los_Angeles), [The End script](https://fallout.fandom.com/wiki/The_End_script), [Tank](https://fallout.fandom.com/wiki/Tank), [Main battle tank](https://fallout.fandom.com/wiki/Main_battle_tank), [A Dear John Letter](https://fallout.fandom.com/wiki/A_Dear_John_Letter), [Crashed B-29](https://fallout.fandom.com/wiki/Crashed_B-29), [Fallout 76 patch 1.0.3.17](https://fallout.fandom.com/wiki/Fallout_76_patch_1.0.3.17)
+- 개발 자료·비정사: [Fallout Bible 0](https://fallout.fandom.com/wiki/Fallout_Bible_0), [Fallout Bible 6](https://fallout.fandom.com/wiki/Fallout_Bible_6), [Fallout film treatment](https://fallout.fandom.com/wiki/Fallout_film_treatment), [Fallout Extreme](https://fallout.fandom.com/wiki/Fallout_Extreme), [Chinese Emperor](https://fallout.fandom.com/wiki/Chinese_Emperor), [Siberian Cossacks](https://fallout.fandom.com/wiki/Siberian_Cossacks), [Fallout Shelter Online](https://fallout.fandom.com/wiki/Fallout_Shelter_Online), [Fallout Tactics intro](https://fallout.fandom.com/wiki/Fallout_Tactics_intro)
+
+**위키가 인용한 외부 자료(이번 조사에서 직접 재확인하지 못함)**
+- 팀 케인 인터뷰(누가 먼저 쐈나): https://www.gamesradar.com/26-years-later-original-fallout-co-creator-settles-the-rpgs-biggest-debate-who-dropped-the-first-nuke-and-why/
+- 『폴아웃 3』 회고(에밀 파글리아룰로, 텐페니와 세계의 나머지): https://web.archive.org/web/20120711053239/http://www.1up.com/do/feature?pager.offset=2&cId=3172024
+- TV 시리즈 제작진 인터뷰(베트남전 없는 미국): https://web.archive.org/web/20231213094958/https://screenrant.com/fallout-show-jonathan-nolan-ella-purnell-aaron-moten-ccxp-interview/
+
+**프로젝트 내부 문서**
+- [RD-02 세계관·설정·연표](../../reverse-design/02_world-and-lore.md), [RD-26 용어집](../../reverse-design/26_glossary.md)
