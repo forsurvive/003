@@ -35,6 +35,14 @@ var ai_usec_max := 0
 var _dead_t := 0.0
 var msg := ""
 var passive := false
+var save_rt := false
+var touch: TouchUI
+var touch_demo := false
+var _touch_shot := false
+var _touch_last := Vector2.RIGHT
+var _demo_t := 0.0
+var soak := false
+var soak_stats := {"waves": 0, "saves": 0, "save_diffs": 0, "deaths": 0}
 var _step_sound_t := 0.0
 var stats := {"enemy_shots": 0, "player_hits_taken": 0, "bites": 0}
 const SKILL := 30.0                           ## 태그 스킬 초기값(SD-10)
@@ -97,7 +105,17 @@ func _ready() -> void:
 			[1.6, -1, 0, "run"], [0.8, -1, -1, "run"], [0.5, 1, 0, "walk"], [0.9, 0, -1, "run"],
 			[0.6, 0, 0, "run"], [0.7, 0, -1, "walk"], [0.5, 0, 0, "run"], [1.2, 0, 1, "run"], [0.6, 0, 1, "walk"],
 			[1.0, 0, 0, "run"]]
-	combat_bot = "--combat" in args
+	combat_bot = "--combat" in args or "--save-roundtrip" in args
+	touch_demo = "--touch-demo" in args
+	if "--touch" in args or touch_demo or DisplayServer.is_touchscreen_available():
+		touch = TouchUI.new()
+		add_child(touch)
+		touch.fire_released.connect(_touch_fire)
+		Input.emulate_touch_from_mouse = true
+	save_rt = "--save-roundtrip" in args
+	soak = "--soak" in args
+	if soak:
+		combat_bot = true
 	passive = "--passive" in args
 
 
@@ -118,6 +136,9 @@ func _input_vector() -> Vector2:
 				return Vector2(seg[1], seg[2])
 			t -= seg[0]
 		return Vector2.ZERO
+	if touch != null and (touch.move != Vector2.ZERO or touch_demo):
+		player.mode = "run" if touch.move.length() > 0.9 else "walk"           # 끝까지 밀면 달리기
+		return touch.move
 	player.mode = "walk" if Input.is_action_pressed("walk_hold") or Input.is_action_pressed("aim") else "run"
 	return Input.get_vector("move_left", "move_right", "move_up", "move_down")
 
@@ -146,6 +167,20 @@ func _physics_process(dt: float) -> void:
 	cam.position = player.loco.logical.round()
 	if not pc.dead:
 		_check_door()
+	if touch_demo:
+		_touch_demo_step(dt)
+	if save_rt and frames == 300:
+		_save_roundtrip()
+	if soak:
+		_soak_step()
+	if not combat_bot and Input.is_action_just_pressed("save"):
+		SaveGame.write_atomic("user://quick.sav", SaveGame.encode({"name": "빠른 저장"}, capture()))
+		msg = "빠른 저장"
+	if not combat_bot and Input.is_action_just_pressed("load"):
+		var r := SaveGame.read("user://quick.sav")
+		if r["ok"]:
+			apply(r["world"])
+			msg = "불러오기"
 	_hud()
 
 
@@ -179,7 +214,31 @@ func _combat_tick(dt: float) -> void:
 	player.sprite.modulate = Color(4, 4, 4) if pc.flash > 0 else Color(1, 1, 1)
 
 
+## 터치 사격: 오른쪽 스틱을 놓는 순간 쏜다. 조준 보정: 스틱 방향 반각 12° 안의 가장 가까운 적(SD-19 §6.13)
+func _touch_fire() -> void:
+	_touch_shot = true
+
+
+func _touch_aim_point() -> Vector2:
+	var dir: Vector2 = touch.aim if touch.aim != Vector2.ZERO else _touch_last
+	_touch_last = dir
+	var best = null
+	var bd := 1e9
+	for e in enemies:
+		if e.cmb.dead:
+			continue
+		var d: Vector2 = e.loco.logical - player.loco.logical
+		if absf(dir.angle_to(d)) <= deg_to_rad(12) and d.length() < bd:
+			bd = d.length()
+			best = e
+	if best != null:
+		return best.loco.logical + Vector2(0, -12)
+	return player.loco.logical + Vector2(0, -14) + dir.normalized() * 200.0
+
+
 func _aim_point() -> Vector2:
+	if touch != null and (touch.aim != Vector2.ZERO or _touch_shot):
+		return _touch_aim_point()
 	if combat_bot:
 		var e = _nearest_enemy()
 		return e.loco.logical + Vector2(0, -12) if e != null else player.loco.logical + Vector2(32, 0)
@@ -216,11 +275,15 @@ func _player_combat(dt: float) -> void:
 			return
 	var aim_pt := _aim_point()
 	var to := aim_pt - (player.loco.logical + Vector2(0, -14))
-	var aiming := combat_bot or Input.is_action_pressed("aim") or Input.is_action_pressed("fire")
+	var aiming := combat_bot or Input.is_action_pressed("aim") or Input.is_action_pressed("fire") \
+		or (touch != null and touch.aim != Vector2.ZERO)
 	player.aim_dir = Locomotion.snap8(to, 0.0) if aiming else -1
 	var want_fire := Input.is_action_pressed("fire") if not combat_bot else (_nearest_enemy() != null and to.length() < 9 * 32)
 	if passive:
 		want_fire = false
+	if _touch_shot:
+		want_fire = true
+		_touch_shot = false
 	if not want_fire or _cool > 0.0:
 		return
 	var w: Dictionary = weapons[weapon_id]
@@ -228,7 +291,7 @@ func _player_combat(dt: float) -> void:
 		if mag <= 0:
 			_reload = 1.5
 			return
-		var stance := "aim" if Input.is_action_pressed("aim") or combat_bot else "stand"
+		var stance := "aim" if Input.is_action_pressed("aim") or combat_bot or (touch != null and touch.aim_full >= 0.3) else "stand"
 		var sp := CombatRules.spread(SKILL, stance, player.loco.motion != "idle")
 		var ang := CombatRules.shot_angle(rad_to_deg(to.angle()), sp, shots.rng)
 		var muzzle := player.loco.logical + Vector2(0, -14) + to.normalized() * 10.0
@@ -258,7 +321,124 @@ func _on_chunk(id: String, _us: int) -> void:
 		_nav_dirty = true
 
 
+# ---------------------------------------------------------------- save (SD-19 §6.10)
+func capture() -> Dictionary:
+	var es := []
+	for e in enemies:
+		es.append({"id": e.row["id"], "home": e.brain.home, "pos": e.loco.logical, "render": e.loco.render,
+			"hp": e.cmb.hp, "dead": e.cmb.dead, "state": e.brain.state, "gauge": e.brain.gauge, "facing": e.loco.facing})
+	return {"area": "world" if area == world else "interior", "frames": frames,
+		"player": {"pos": player.loco.logical, "render": player.loco.render, "hp": pc.hp, "mag": mag,
+			"weapon": weapon_id, "facing": player.loco.facing},
+		"enemies": es, "rng": shots.rng.state, "chunk_changes": {}}
+
+
+func apply(st: Dictionary) -> void:
+	var p: Dictionary = st["player"]
+	player.loco = Locomotion.new(p["pos"])
+	player.loco.render = p["render"]
+	player.loco.facing = p["facing"]
+	player.position = player.loco.render
+	pc.hp = p["hp"]
+	pc.dead = pc.hp <= 0.0
+	mag = p["mag"]
+	weapon_id = p["weapon"]
+	for i in enemies.size():
+		var e: Enemy = enemies[i]
+		var d: Dictionary = st["enemies"][i]
+		e.loco = Locomotion.new(d["pos"])
+		e.loco.render = d["render"]
+		e.loco.facing = d["facing"]
+		e.position = e.loco.render
+		e.cmb.hp = d["hp"]
+		e.cmb.dead = d["dead"]
+		e.brain.state = d["state"]
+		e.brain.gauge = d["gauge"]
+		e.brain.home = d["home"]
+	shots.rng.state = st["rng"]
+	frames = st["frames"]
+
+
+func _save_roundtrip() -> void:
+	var slot := {"name": "시험", "level": 1, "act": "단계 T", "where": "관악산 비탈"}
+	var a := SaveGame.encode(slot, capture())
+	var d := SaveGame.decode(a)
+	apply(d["world"])
+	var b := SaveGame.encode(slot, capture())
+	print("저장 왕복: %s (%d바이트, 적 %d, 프레임 %d)" % ["바이트 동일" if a == b else "차이 있음", a.size(), enemies.size(), frames])
+
+
+## 측정 항목 6 시스템 통합 시험: 스트리밍·전투·저장이 한 씬에서 계속 돈다. 적이 다 쓰러지면 다시 놓고,
+## 게임 시간 5분마다 저장 왕복을 비교한다. 끝에 오류 수를 출력한다.
+func _soak_step() -> void:
+	if enemies.all(func(e): return e.cmb.dead):
+		soak_stats["waves"] += 1
+		var i := 0
+		for id in ["CR-002", "CR-401"]:
+			for p in world.index["spawns"][id]:
+				var e: Enemy = enemies[i]
+				var at := Vector2(p[0] * 32 + 16, p[1] * 32 + 16)
+				e.loco = Locomotion.new(at)
+				if e.style == "swarm":
+					e.loco.custom = enemies[0].loco.custom if enemies[0].style == "swarm" else {}
+				e.position = e.loco.render
+				e.cmb.dead = false
+				e.cmb.hp = e.cmb.max_hp
+				e.brain = AIBrain.new(at, e.per, e.brain.kind)
+				e._dead_t = 0.0
+				e.sprite.modulate = Color(1, 1, 1)
+				i += 1
+	if pc.dead and _dead_t < 0.02:
+		soak_stats["deaths"] += 1
+	if frames % (60 * 300) == 0:
+		var slot := {"name": "소크"}
+		var a := SaveGame.encode(slot, capture())
+		apply(SaveGame.decode(a)["world"])
+		soak_stats["saves"] += 1
+		if SaveGame.encode(slot, capture()) != a:
+			soak_stats["save_diffs"] += 1
+
+
+## 녹화용 터치 시연: 왼쪽 스틱으로 적 쪽으로 걷고, 오른쪽 스틱으로 조준했다가 놓아 쏜다
+func _touch_demo_step(dt: float) -> void:
+	_demo_t += dt
+	var phase := fmod(_demo_t, 1.2)
+	var e = _nearest_enemy()
+	if e == null:
+		var tgt: Array = world.index["spawns"]["CR-002"][0]
+		_send_drag(0, Vector2(90, 280), (Vector2(tgt[0], tgt[1]) * 32.0 - player.loco.logical).normalized() * 34.0)
+		return
+	_send_drag(0, Vector2(90, 280), Vector2.ZERO if phase > 0.5 else (e.loco.logical - player.loco.logical).orthogonal().normalized() * 20.0)
+	var aim_v: Vector2 = (e.loco.logical - player.loco.logical).normalized() * 30.0
+	if phase < 0.9:
+		_send_drag(1, Vector2(520, 280), aim_v)
+	elif touch._right["id"] >= 0:
+		var up := InputEventScreenTouch.new()
+		up.index = 1
+		up.pressed = false
+		up.position = Vector2(520, 280) * 2.0
+		Input.parse_input_event(up)
+
+
+func _send_drag(idx: int, centre: Vector2, off: Vector2) -> void:
+	var side: Dictionary = touch._left if idx == 0 else touch._right
+	if side["id"] < 0:
+		var down := InputEventScreenTouch.new()
+		down.index = idx
+		down.pressed = true
+		down.position = centre * 2.0
+		Input.parse_input_event(down)
+	var dr := InputEventScreenDrag.new()
+	dr.index = idx
+	dr.position = (centre + off) * 2.0
+	Input.parse_input_event(dr)
+
+
 func _exit_tree() -> void:
+	if soak:
+		print("통합 시험: 게임 시간 %.1f분, 적 물결 %d, 저장 왕복 %d회(차이 %d), 주인공 쓰러짐 %d, AI 최대 %.2fms, 붙이기 최대 %.2fms" % [
+			frames / 3600.0, soak_stats["waves"], soak_stats["saves"], soak_stats["save_diffs"], soak_stats["deaths"],
+			ai_usec_max / 1000.0, world.attach_usec_max / 1000.0])
 	if combat_bot or passive:
 		var alive := enemies.filter(func(e): return not e.cmb.dead).size()
 		print("전투 통계: 프레임 %d, 적 생존 %d/%d, 주인공 HP %d, 투사체 발사 %d, 명중 %d, 적 사격 %d, AI 최대 %.2fms, 경로 재구축 %.2fms" % [
