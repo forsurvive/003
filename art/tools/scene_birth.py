@@ -319,8 +319,8 @@ def balloon(img, x, y, kind, frame=0):
 
 def portrait_of(who):
     if who == "윤정인":
-        p = dict(skin="S2", hair="HR06", hair_color="H1", female=True, tired=True, torso="T01", jaw=0.15, age=23,
-                 mole=(57, 52))
+        p = dict(skin="S2", hair="HR06", hair_color="H1", female=True, tired=True, torso="GOWN", jaw=0.15, age=23,
+                 mole=(57, 52))                                      # 환자복 얼굴 그림 (병상 장면 전용 의상)
     elif who == "신혜령":
         p = PT.from_code(HYERYEONG, dict(mole=(55, 47)))
         p["age"] = 34

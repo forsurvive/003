@@ -401,6 +401,8 @@ def clothing(f, p):
         main = ["P06", "P07", "P08", "P09"]
     if t == "T11" and not pf:
         main = ["P02", "P03", "P04", "P05"]
+    if t == "GOWN":                                              # 환자복 (의무과 병상): pale grey-blue print cotton
+        main = ["P12", "P13", "P14", "P15"]
     if p.get("child"):
         body = poly_mask([(18, 96), (20, 80), (30, 71), (40, 68), (52, 68), (62, 71), (72, 80), (76, 96)])
     else:
@@ -418,6 +420,21 @@ def clothing(f, p):
     for y in range(78, 96):
         f.put(24 + (y - 78) * 0.2, y, main[1]); f.put(68 - (y - 78) * 0.25, y, main[0])
     d = ImageDraw.Draw(f.img)
+    if t == "GOWN":                                               # round neckline, collarbone skin, shoulder ties
+        sk = P.SKIN[p.get("skin", "S3")]
+        neck = poly_mask([(35, 69), (57, 69), (55, 75), (46, 79), (37, 75)])
+        for x, y in neck:
+            f.put(x, y, sk[2] if x < 48 else sk[1])
+        for x in range(39, 46):
+            f.put(x, 73 + (x - 39) // 4, sk[3])                         # collarbone catch
+        d.arc([33, 62, 59, 80], 20, 160, fill=C("P12"))
+        d.arc([33, 63, 59, 81], 20, 160, fill=C(main[3]))
+        for y in range(82, 96, 6):                                       # small print
+            for x in range(14 + (y // 6 % 2) * 3, 82, 6):
+                if f.get(x, y)[:3] == P.rgb(main[2]):
+                    f.put(x, y, main[1])
+        d.line([22, 72, 25, 79], fill=C("P12")); d.line([24, 72, 22, 79], fill=C("P12"))   # shoulder tie
+        d.point((23, 75), fill=C(main[3]))
     if t in ("T01", "T02"):                                       # jumpsuit: high collar + yellow zip stripe
         d.polygon([(36, 70), (46, 76), (56, 70), (56, 74), (46, 80), (36, 74)], fill=C(main[3]), outline=C("P01"))
         d.rectangle([44, 79, 47, 95], fill=C(acc[0])); d.line([44, 79, 44, 95], fill=C(acc[1]))
