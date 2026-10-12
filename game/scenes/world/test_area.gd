@@ -1,6 +1,7 @@
 ## 단계 T 시험 구역: 관악산 비탈 청크 월드 + S-07 정문 실내, 문 전환, 실시간 전투(권총·진압봉 대 큰바퀴·보병 계엄병).
 ## 인자(-- 뒤): --autopilot  정해진 입력으로 걸어서 정문을 드나든다
-##              --combat     적 쪽으로 이동하며 가장 가까운 적을 조준·사격한다(녹화·회귀 시험용)
+##              --combat     적 쪽으로 이동하며 가장 가까운 적을 조준·사격한다(녹화·회귀 시험용).
+##                           멀면 질주, 가까우면 4초마다 옆으로 구르기, AP가 남으면 집중 사격
 extends Node2D
 
 var world: ChunkWorld
@@ -46,6 +47,17 @@ var soak_stats := {"waves": 0, "saves": 0, "save_diffs": 0, "deaths": 0}
 var _step_sound_t := 0.0
 var stats := {"enemy_shots": 0, "player_hits_taken": 0, "bites": 0}
 const SKILL := 30.0                           ## 태그 스킬 초기값(SD-10)
+const PER := 5
+const FOCUS_AIM := 0.3                        ## 집중 사격 조준 시간(SD-11 §5.3), 그동안 이동 50%
+const FOCUS_COST_DEFAULT := 17.0              ## SD-13에 AP 비용 열이 없을 때(정합 목록): §5.3 예산표의 경권총 17
+var ap := APPool.new(5)
+var _walk := false
+var _sprint_latch := false                    ## AP 0으로 질주가 끝나면 Shift를 뗐다 눌러야 다시 질주
+var sprinting := false
+var _focus_t := -1.0                          ## 집중 사격 조준 중이면 0 이상
+var _bot_roll_t := 0.0
+var ap_stats := {"sprint_s": 0.0, "rolls": 0, "focused": 0, "winded": 0}
+var _apbar: Control
 
 
 func _ready() -> void:
@@ -99,6 +111,10 @@ func _ready() -> void:
 	fade.size = Vector2(1280, 720)
 	fade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	layer.add_child(fade)
+	_apbar = Control.new()
+	_apbar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_apbar.draw.connect(_draw_ap)
+	layer.add_child(_apbar)
 	var args := OS.get_cmdline_user_args()
 	if "--autopilot" in args:
 		autopilot = [[0.5, 0, 0, "run"], [1.0, 1, 0, "run"], [0.8, 1, 1, "run"], [0.6, 0, 1, "walk"],
@@ -111,6 +127,8 @@ func _ready() -> void:
 		touch = TouchUI.new()
 		add_child(touch)
 		touch.fire_released.connect(_touch_fire)
+		touch.buttons["회피"] = Rect2(560, 256, 48, 48)
+		touch.buttons["집중"] = Rect2(500, 176, 48, 48)
 		Input.emulate_touch_from_mouse = true
 	save_rt = "--save-roundtrip" in args
 	soak = "--soak" in args
@@ -137,9 +155,11 @@ func _input_vector() -> Vector2:
 			t -= seg[0]
 		return Vector2.ZERO
 	if touch != null and (touch.move != Vector2.ZERO or touch_demo):
-		player.mode = "run" if touch.move.length() > 0.9 else "walk"           # 끝까지 밀면 달리기
+		player.mode = "run" if touch.move.length() >= 0.25 else "walk"         # 반경 25% 안쪽 = 걷기(SD-11 §15.5)
 		return touch.move
-	player.mode = "walk" if Input.is_action_pressed("walk_hold") or Input.is_action_pressed("aim") else "run"
+	if Input.is_action_just_pressed("walk_toggle"):
+		_walk = not _walk
+	player.mode = "walk" if _walk or Input.is_action_pressed("aim") else "run"
 	return Input.get_vector("move_left", "move_right", "move_up", "move_down")
 
 
@@ -154,13 +174,14 @@ func _physics_process(dt: float) -> void:
 		if _dead_t > 2.0:
 			_respawn()
 	else:
-		player.move(_input_vector(), dt)
+		_player_move(dt)
 		_player_combat(dt)
 		_step_sound_t -= dt
-		if player.loco.motion != "idle" and _step_sound_t <= 0.0:      # 이동 소음: 달리기 2.0t·걷기 1.5t (§2.4)
+		if player.loco.motion != "idle" and _step_sound_t <= 0.0:      # 이동 소음: 질주 5t·달리기 2.0t·걷기 1.5t (§2.4)
 			_step_sound_t = 0.5
+			var snd := "sprint" if sprinting else ("move" if player.mode == "run" else "sneak")
 			for e in enemies:
-				e.hear("move" if player.mode == "run" else "sneak", player.loco.logical)
+				e.hear(snd, player.loco.logical)
 	area.update_focus(player.loco.logical)
 	if area == world:
 		_combat_tick(dt)
@@ -182,6 +203,90 @@ func _physics_process(dt: float) -> void:
 			apply(r["world"])
 			msg = "불러오기"
 	_hud()
+
+
+# ---------------------------------------------------------------- AP 행동 (SD-11 §5): 질주·회피 구르기·집중 사격
+func _player_move(dt: float) -> void:
+	player.roll_cool = maxf(0.0, player.roll_cool - dt)
+	if player.rolling():
+		player.roll_step(dt)
+		pc.invuln = player.rolling() and player.roll_frame() in [1, 2, 3]      # 5컷 중 2~4번째
+		ap.tick(dt, false)
+		return
+	pc.invuln = false
+	var inp := _input_vector()
+	if _want("dodge") and player.roll_cool <= 0.0:
+		if ap.spend(APPool.DODGE):
+			_focus_t = -1.0
+			_reload = 0.0                                             # 구르면 재장전이 끊긴다
+			player.aim_dir = -1
+			player.start_roll(inp)
+			ap_stats["rolls"] += 1
+			sprinting = false
+			return
+		msg = "숨참 — AP 부족"
+	var key := _sprint_key(inp)
+	if not key:
+		_sprint_latch = false
+	var moving := inp.length() > 0.2
+	var was := sprinting
+	sprinting = ap.tick(dt, key and moving and not _sprint_latch and _focus_t < 0.0)
+	if key and moving and not sprinting and was and ap.winded():
+		_sprint_latch = true
+		ap_stats["winded"] += 1
+		msg = "숨참 — 질주 끝"
+	if sprinting:
+		player.mode = "sprint"
+		player.aim_dir = -1
+		ap_stats["sprint_s"] += dt
+	player.move(inp, dt * (0.5 if _focus_t >= 0.0 else 1.0))     # 집중 조준 중 이동 50%: 거리 구동이라 보폭은 그대로
+
+
+func _want(action: String) -> bool:
+	if combat_bot:
+		return action == "dodge" and _bot_wants_roll()
+	if touch != null and touch.take({"dodge": "회피", "focus": "집중", "reload": "재장전", "swap": "교체"}[action]):
+		return true
+	return action != "swap" and Input.is_action_just_pressed(action)
+
+
+func _sprint_key(inp: Vector2) -> bool:
+	if combat_bot:
+		var e = _nearest_enemy()
+		return e == null or e.loco.logical.distance_to(player.loco.logical) > 9 * 32
+	if touch != null and touch.move != Vector2.ZERO:
+		return touch.move_full >= 0.3                                    # 질주 링 밖 0.3초(SD-11 §15.5)
+	return Input.is_action_pressed("sprint")
+
+
+## 시험 봇: 적이 7t 안에 있으면 4초마다 옆으로 구른다(무적 프레임으로 탄을 흘리는지 센다)
+func _bot_wants_roll() -> bool:
+	_bot_roll_t += get_physics_process_delta_time()
+	var e = _nearest_enemy()
+	if e == null or _bot_roll_t < 4.0 or e.loco.logical.distance_to(player.loco.logical) > 7 * 32:
+		return false
+	_bot_roll_t = 0.0
+	return true
+
+
+func _focus_cost(w: Dictionary) -> float:
+	return FOCUS_COST_DEFAULT if w.get("ap_cost") == null else float(w["ap_cost"])
+
+
+func _draw_ap() -> void:
+	var x0 := 6.0
+	var y0 := 54.0
+	var full := ap.max_ap
+	_apbar.draw_rect(Rect2(x0 - 1, y0 - 1, full + 2, 5), Color("0b0a0d"))
+	var col := Color("e8c23a") if not ap.winded() else (Color("e04a35") if frames % 20 < 10 else Color("6e6966"))
+	_apbar.draw_rect(Rect2(x0, y0, floorf(ap.ap), 3), col)
+	var w: Dictionary = weapons[weapon_id]
+	for c in [APPool.DODGE, _focus_cost(w)]:                        # 비용 눈금: 회피 20, 집중 사격
+		_apbar.draw_rect(Rect2(x0 + c, y0 - 1, 1, 5), Color("e9e4d8"))
+	_apbar.draw_string(ui_font, Vector2(x0 + full + 5, y0 + 5), "AP %d%s" % [int(ap.ap), " 숨참" if ap.winded() else ""],
+		HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("e9e4d8"))
+	if _focus_t >= 0.0:                                                # 집중 조준 진행
+		_apbar.draw_rect(Rect2(x0, y0 + 5, floorf(full * _focus_t / FOCUS_AIM), 1), Color("e9e4d8"))
 
 
 # ---------------------------------------------------------------- combat
@@ -237,7 +342,7 @@ func _touch_aim_point() -> Vector2:
 
 
 func _aim_point() -> Vector2:
-	if touch != null and (touch.aim != Vector2.ZERO or _touch_shot):
+	if touch != null and (touch.aim != Vector2.ZERO or _touch_shot or _focus_t >= 0.0):
 		return _touch_aim_point()
 	if combat_bot:
 		var e = _nearest_enemy()
@@ -260,25 +365,60 @@ func _nearest_enemy():
 
 func _player_combat(dt: float) -> void:
 	_cool = maxf(0.0, _cool - dt)
+	if player.rolling() or sprinting:                                 # 구르기·질주 중에는 쏘지도 재장전하지도 않는다
+		return
 	if _reload > 0.0:
 		_reload -= dt
 		if _reload <= 0.0:
 			mag = int(weapons["W-002"]["mag"])
 		return
 	if not combat_bot:
-		if Input.is_action_just_pressed("reload") and weapon_id == "W-002":
+		if _want("reload") and weapon_id == "W-002" and _focus_t < 0.0:
 			_reload = 1.5
 			return
 		_equip_keys()
-		if Input.is_key_pressed(KEY_Q) and _cool <= 0.0:
-			weapon_id = "W-041" if weapon_id == "W-002" else "W-002"
+		var pick := ""
+		if Input.is_action_just_pressed("slot_1"):
+			pick = "W-002"
+		elif Input.is_action_just_pressed("slot_2"):
+			pick = "W-041"
+		elif _want("swap"):
+			pick = "W-041" if weapon_id == "W-002" else "W-002"
+		if pick != "" and pick != weapon_id and _focus_t < 0.0:
+			weapon_id = pick
 			_cool = 0.3
+			msg = weapons[pick]["name"]
 			return
 	var aim_pt := _aim_point()
 	var to := aim_pt - (player.loco.logical + Vector2(0, -14))
 	var aiming := combat_bot or Input.is_action_pressed("aim") or Input.is_action_pressed("fire") \
-		or (touch != null and touch.aim != Vector2.ZERO)
+		or (touch != null and touch.aim != Vector2.ZERO) or _focus_t >= 0.0
 	player.aim_dir = Locomotion.snap8(to, 0.0) if aiming else -1
+	var w0: Dictionary = weapons[weapon_id]
+	if _focus_t >= 0.0:                                               # 집중 사격: 0.3초 조준 뒤 발사
+		_focus_t += dt
+		if _focus_t >= FOCUS_AIM:
+			_focus_t = -1.0
+			var ang0 := CombatRules.shot_angle(rad_to_deg(to.angle()), float(w0.get("min_spread", 1.0)), shots.rng)
+			if shots.fire(player.loco.logical + Vector2(0, -14) + to.normalized() * 10.0, ang0, 640.0, "player", w0, SKILL, true, PER):
+				mag -= 1
+				_cool = 1.0 / float(w0["rate"])
+				ap_stats["focused"] += 1
+				for e in enemies:
+					e.hear("pistol", player.loco.logical)
+		return
+	var want_focus := _want("focus") if not combat_bot else (_nearest_enemy() != null and to.length() < 8 * 32
+		and ap.ap >= _focus_cost(w0) + APPool.DODGE)                  # 봇: 구르기 몫을 남기고 집중 사격
+	if want_focus and _cool <= 0.0:
+		if w0["kind"] != "ranged":
+			msg = "근접 파워 공격은 단계 0"
+		elif mag <= 0:
+			_reload = 1.5
+		elif ap.spend(_focus_cost(w0)):
+			_focus_t = 0.0
+			return
+		else:
+			msg = "숨참 — AP 부족"
 	var want_fire := Input.is_action_pressed("fire") if not combat_bot else (_nearest_enemy() != null and to.length() < 9 * 32)
 	if passive:
 		want_fire = false
@@ -330,7 +470,7 @@ func capture() -> Dictionary:
 			"hp": e.cmb.hp, "dead": e.cmb.dead, "state": e.brain.state, "gauge": e.brain.gauge, "facing": e.loco.facing})
 	return {"area": "world" if area == world else "interior", "frames": frames,
 		"player": {"pos": player.loco.logical, "render": player.loco.render, "hp": pc.hp, "mag": mag,
-			"weapon": weapon_id, "facing": player.loco.facing},
+			"weapon": weapon_id, "facing": player.loco.facing, "ap": ap.ap},
 		"enemies": es, "rng": shots.rng.state, "chunk_changes": {}}
 
 
@@ -343,6 +483,7 @@ func apply(st: Dictionary) -> void:
 	pc.hp = p["hp"]
 	pc.dead = pc.hp <= 0.0
 	mag = p["mag"]
+	ap.ap = p.get("ap", ap.max_ap)
 	weapon_id = p["weapon"]
 	for i in enemies.size():
 		var e: Enemy = enemies[i]
@@ -447,18 +588,22 @@ func _exit_tree() -> void:
 			enemies.reduce(func(acc, e): return acc + e.shots_fired, 0),
 			ai_usec_max / 1000.0, nav.last_build_usec / 1000.0])
 		print("경로 질의 최대 %.2fms" % (nav.query_usec_max / 1000.0))
+		print("AP 행동: 질주 %.1f초, 구르기 %d회(무적 중 흘린 탄 %d), 집중 사격 %d발(명중 부위 %s), 숨참 %d회" % [
+			ap_stats["sprint_s"], ap_stats["rolls"], shots.ghosted_total, ap_stats["focused"],
+			JSON.stringify(_count(shots.focused_hits)), ap_stats["winded"]])
 
 
-## 장비 교체 시험(P9 즉시 반영): 1 몸통 2 머리카락 3 머리 장비 4 눈 장비 5 세력 6 피부·머리색
+## 장비 교체 시험(P9 즉시 반영): Alt + 1 몸통 2 머리카락 3 머리 장비 4 눈 장비 5 세력 6 피부·머리색
 const CYCLE := {KEY_1: ["torso", ["T01", "T02", "T03", "T06"]], KEY_2: ["hair", ["HR03", "HR05", "HR07", "HR08", "HR09"]],
 	KEY_3: ["gear", ["", "HD02", "HD03", "HD04", "HD05"]], KEY_4: ["eyes", ["", "EY01", "EY05"]],
 	KEY_5: ["faction", ["", "PF-01", "PF-05", "PF-11", "PF-12"]], KEY_6: ["skin", ["S3", "S1", "S5", "SG1"]]}
 var _equip_down := {}
 
 
+## Alt + 1~6 (1·2는 무기 단축키라 Alt를 함께 누른다)
 func _equip_keys() -> void:
 	for k in CYCLE:
-		var down := Input.is_key_pressed(k)
+		var down := Input.is_key_pressed(k) and Input.is_key_pressed(KEY_ALT)
 		if down and not _equip_down.get(k, false):
 			var slot: String = CYCLE[k][0]
 			var opts: Array = CYCLE[k][1]
@@ -466,6 +611,13 @@ func _equip_keys() -> void:
 			player.doll.set_look({slot: opts[(opts.find(cur) + 1) % opts.size()]})
 			msg = "%s → %s" % [slot, player.doll.look[slot]]
 		_equip_down[k] = down
+
+
+static func _count(a: Array) -> Dictionary:
+	var d := {}
+	for x in a:
+		d[x] = d.get(x, 0) + 1
+	return d
 
 
 func _bot_move() -> Vector2:
@@ -496,6 +648,8 @@ func _respawn() -> void:
 	var sp: Array = world.index["spawns"]["player"]
 	player.loco = Locomotion.new(Vector2(sp[0] * 32 + 16, sp[1] * 32 + 16))
 	player.position = player.loco.render
+	ap = APPool.new(5)
+	_focus_t = -1.0
 	msg = "쓰러졌다 — 시험 구역 처음으로"
 
 
@@ -560,6 +714,10 @@ func _swap() -> void:
 
 
 func _hud() -> void:
+	_apbar.queue_redraw()
+	if touch != null:
+		touch.dim["회피"] = not ap.can(APPool.DODGE)
+		touch.dim["집중"] = not ap.can(_focus_cost(weapons[weapon_id]))
 	var l := player.loco
 	var alive := enemies.filter(func(e): return not e.cmb.dead).size()
 	var w: Dictionary = weapons[weapon_id]

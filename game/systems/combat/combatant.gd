@@ -13,6 +13,7 @@ var weights: Dictionary = CombatRules.HUMANOID_WEIGHTS
 var dead := false
 var last_hit_from := Vector2.ZERO
 var flash := 0
+var invuln := false                           ## 구르기 무적 프레임: 투사체·근접·폭발 모두 무시(SD-11 §5.3)
 
 
 func pos() -> Vector2:
@@ -20,7 +21,7 @@ func pos() -> Vector2:
 
 
 func take(result: Dictionary, from: Vector2) -> void:
-	if dead:
+	if dead or invuln:
 		return
 	hp -= float(result["hp"])
 	last_hit_from = from

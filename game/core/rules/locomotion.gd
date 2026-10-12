@@ -14,6 +14,8 @@ const VEC := [Vector2(1, 0), Vector2(1, 1), Vector2(0, 1), Vector2(-1, 1), Vecto
 const MOTIONS := {
 	"walk": {"frames": 6, "px": 6.0, "diag": 4.0, "contact": [0, 3], "speed_t": 3.0},
 	"run": {"frames": 6, "px": 8.0, "diag": 6.0, "contact": [0, 3], "speed_t": 4.5},
+	# 질주 6.5t/s(SD-11 §2.4): 전용 그림 전까지 달리기 컷을 같은 보폭으로 더 빨리 넘긴다(거리 구동이라 미끄러지지 않는다)
+	"sprint": {"frames": 6, "px": 8.0, "diag": 6.0, "contact": [0, 3], "speed_t": 6.5, "anim": "run"},
 }
 const TILE := 32.0
 const STOP_TICKS := 4
@@ -120,6 +122,23 @@ func _stop() -> void:
 	frame = 0
 	_acc = 0.0
 	_move_dir = -1
+
+
+## 그림 모션 이름(질주는 달리기 컷을 쓴다)
+func anim_motion() -> String:
+	var m: Dictionary = custom.get(motion, MOTIONS.get(motion, {}))
+	return m.get("anim", motion)
+
+
+## 발이 땅에서 떨어진 동안의 이동(구르기·넉백, SD-16 §5.4 ⑦)이 끝난 자리에 선다: 판정·그림 위치를 맞추고 대기로
+func place(p: Vector2) -> void:
+	logical = p
+	render = p.round()
+	motion = "idle"
+	frame = 0
+	_acc = 0.0
+	_move_dir = -1
+	_stop_left = 0
 
 
 static func _angle_between(a: int, b: int) -> int:

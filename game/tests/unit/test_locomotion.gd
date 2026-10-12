@@ -86,3 +86,26 @@ func test_backpedal(t) -> void:
 	t.near(-l.logical.x, 3.0 * 32.0 * 0.85, 0.01, "뒷걸음 85%")
 	var a := Locomotion.anim_for("walk", 4)
 	t.eq(a, ["walk_E", true], "W = E 반전")
+
+
+## 질주(SD-11 §2.4 6.5t/s): 달리기 컷·보폭 그대로 빈도만 오른다. 그림 위치는 언제나 프레임 거리 단위.
+func test_sprint_same_stride(t) -> void:
+	var a := Locomotion.new()
+	for i in 60:
+		a.step(Vector2(1, 0), 1.0 / 60.0, "sprint")
+	t.near(a.logical.x, 6.5 * 32.0, 0.01, "1초에 6.5t")
+	t.eq(a.anim_motion(), "run", "그림은 달리기 컷")
+	t.near(float(a.frames_advanced), 6.5 * 32.0 / 8.0, 1.0, "8px마다 1컷(달리기 보폭, 마지막 컷은 경계 오차)")
+	t.eq(fmod(a.render.x, 8.0), 0.0, "그림 위치는 보폭 단위")
+
+
+## 구르기·넉백 뒤 그 자리에 선다: 판정 = 그림, 대기 상태, 다음 걸음은 새 보폭에서 시작
+func test_place_after_airborne(t) -> void:
+	var a := Locomotion.new()
+	for i in 10:
+		a.step(Vector2(1, 0), 1.0 / 60.0, "run")
+	a.place(Vector2(100.4, 50.6))
+	t.eq(a.render, Vector2(100, 51), "그림 위치는 정수")
+	t.eq(a.motion, "idle", "대기")
+	a.step(Vector2(0, 1), 1.0 / 60.0, "run")
+	t.eq(a.render.x, 100.0, "새 걸음은 선 자리에서")

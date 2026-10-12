@@ -469,9 +469,9 @@ def snap8(dx, dy):
     return min(ANG, key=lambda k: min(abs(ANG[k] - a), 360 - abs(ANG[k] - a)))
 
 
-def lower_sets(code, mode="walk"):
+def lower_sets(code, mode="walk", faction=None):
     """Leg frames without arms (the posed upper body supplies them)."""
-    R.build_all(code)
+    R.build_all(code, faction)
     src = parse(os.path.join(ROOT, "src/sprites/pc_s07_jumpsuit_S.txt"))
     up = parse(os.path.join(ROOT, "src/sprites/pc_s07_upper_E.txt"))["upperE"]
     dg = parse(os.path.join(ROOT, "src/sprites/pc_s07_jumpsuit_diag.txt"))
@@ -492,8 +492,8 @@ def lower_sets(code, mode="walk"):
     return sets, bob
 
 
-def upper_sets(weapon, code, look=None):
-    ups, _ = bases(code, look)
+def upper_sets(weapon, code, look=None, faction=None):
+    ups, _ = bases(code, look, faction)
     out = {}
     for v in ("S", "SE", "E", "NE", "N"):
         out[v] = (front_compose(upper_only(ups[v], 45), v, 0, weapon) if v in ("S", "SE")

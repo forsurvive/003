@@ -15,6 +15,8 @@ var combatants: Array = []
 var _buckets := {}
 var hits_total := 0
 var spawned_total := 0
+var ghosted_total := 0                   ## 무적 프레임에 몸을 지나간 탄 수
+var focused_hits: Array = []             ## 집중 사격 명중 부위 기록(시험·HUD용)
 
 
 func _ready() -> void:
@@ -22,12 +24,14 @@ func _ready() -> void:
 	z_index = 5
 
 
-func fire(origin: Vector2, angle_deg: float, speed: float, team: String, weapon: Dictionary, skill: float) -> bool:
+## focused: 집중 사격(SD-11 §5.3) — 치명타 +15%p, 머리 가중치 + 2 × 인지력, 무기 부위 활성
+func fire(origin: Vector2, angle_deg: float, speed: float, team: String, weapon: Dictionary, skill: float,
+		focused: bool = false, per: int = 5) -> bool:
 	if shots.size() >= MAX:
 		return false
 	var dir := Vector2.RIGHT.rotated(deg_to_rad(angle_deg))
 	shots.append({"p": origin, "v": dir * speed, "life": weapon["range_max"] * 32.0 / speed, "team": team,
-		"weapon": weapon, "skill": skill, "origin": origin})
+		"weapon": weapon, "skill": skill, "origin": origin, "focused": focused, "per": per})
 	flashes.append([origin, 2])
 	spawned_total += 1
 	return true
@@ -85,6 +89,11 @@ func _segment_hit(a: Vector2, b: Vector2, s: Dictionary):
 					continue
 				var ctr: Vector2 = c.pos() + Vector2(0, -12)          # torso centre above the feet
 				var tt := _seg_circle(a, b, ctr, c.radius)
+				if c.invuln:                                          # 구르기 무적: 탄이 지나간다
+					if tt >= 0.0 and not s.has("ghost"):
+						s["ghost"] = true
+						ghosted_total += 1
+					continue
 				if tt >= 0.0 and tt < best_t:
 					best_t = tt
 					best = c
@@ -132,12 +141,16 @@ func _blocked(a: Vector2, b: Vector2, s: Dictionary) -> Vector2:
 
 func _apply(c: Combatant, s: Dictionary, at: Vector2) -> void:
 	var w: Dictionary = s["weapon"]
-	var crit := rng.randf() * 100.0 < CombatRules.crit_chance(5, float(w.get("crit_mult", 1.0)))
-	var part := CombatRules.pick_part(c.weights, rng)
+	var focused: bool = s.get("focused", false)
+	var crit := rng.randf() * 100.0 < CombatRules.crit_chance(5, float(w.get("crit_mult", 1.0)), "new", 0.0, focused)
+	var part := CombatRules.pick_part(CombatRules.part_weights(c.weights, {"focused": focused, "per": s.get("per", 5)}) if focused
+		else c.weights, rng)
 	var r := CombatRules.resolve({"weapon": w, "skill": s["skill"], "dist": s["origin"].distance_to(at) / 32.0,
 		"crit": crit, "part": part, "dr": c.dr})
 	c.take(r, s["origin"])
 	hits_total += 1
+	if focused:
+		focused_hits.append(part)
 	marks.append([at, 6])
 
 
