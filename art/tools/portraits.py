@@ -109,17 +109,24 @@ def draw_face(f, p, skin):
         f.put(x, 48 + (x - 36) // 3, sk[4])
     for x, y in ellipse_mask(36, 24, 3, 2) & face:              # forehead catch
         f.put(x, y, sk[4])
-    # nose: bridge catch, shadow on its far side, tip, nostril
-    for y in range(42 if p.get("child") else 38, 49):
-        x = 55 + (y - 38) * 0.45
-        f.put(x, y, sk[4] if y < 44 else sk[3])
+    # nose (3/4 right): bridge starts between the eyes and runs down toward the far cheek, tip stays inside
+    # the contour; lit left edge, shadow on its far side, shadow under the tip, one nostril
+    top = 43 if p.get("child") else 40
+    for y in range(top, 49):
+        x = 50 + (y - 40) * 0.55
+        f.put(x, y, sk[4] if y < 46 else sk[3])                   # lit ridge
         f.put(x + 1, y, sk[2])
-    for x, y in ellipse_mask(60, 48, 2.6, 1.8):
+        if y >= 43:
+            f.put(x + 2, y, sk[1])                                 # far-side plane of the nose
+        if y >= 46:
+            f.put(x + 3, y, sk[2])
+    for x, y in ellipse_mask(54, 48, 2.6, 1.7):
         f.put(x, y, sk[3])
-    f.put(61, 47, sk[4])
-    for x in range(56, 62):
-        f.put(x, 50, sk[1] if x > 57 else sk[2])
-    f.put(58, 49, sk[0])
+    f.put(53, 47, sk[4]); f.put(54, 47, sk[4])                    # tip catch
+    for x in range(51, 58):
+        f.put(x, 50, sk[1])                                        # shadow under the tip
+    f.put(51, 50, sk[2])
+    f.put(55, 49, sk[0]); f.put(56, 49, sk[0]); f.put(57, 49, sk[1])   # nostril + wing
     # eye sockets
     for x, y in ellipse_mask(42, 41, 5.5, 2.2) | ellipse_mask(56, 40.5, 3.5, 2):
         if (x, y) in face:
@@ -127,9 +134,6 @@ def draw_face(f, p, skin):
     # contour: light side in dark skin, shadow side and jaw in ink
     for x, y in outline_of(face):
         f.put(x, y, sk[1] if (x < 40 and y < 50) else "P01")
-    for x, y in [(62, 46), (63, 47), (63, 48), (62, 49), (61, 50)]:
-        if (x, y) not in face:
-            f.put(x, y, "P01")
     return face
 
 
@@ -263,7 +267,7 @@ def features(f, p, skin, expr):
     if p.get("tired"):                                          # 지친 눈가
         for x in range(39, 46):
             f.put(x, ey + 2, sk[1] if x % 2 else sk[2])
-    mouth(f, 51 + p.get("mouth_dx", 0), 55 + p.get("mouth_dy", 0), e["mouth"], sk)
+    mouth(f, 52 + p.get("mouth_dx", 0), 55 + p.get("mouth_dy", 0), e["mouth"], sk)
     if p.get("age", 30) >= 55:                                  # wrinkles: brow, crow's feet, nasolabial
         for x in range(36, 50, 1):
             if x % 3:
