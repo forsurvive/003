@@ -89,6 +89,8 @@ def ik(hip, ankle, l1, l2, bend=1):
     ax, ay = ankle
     dx, dy = ax - hx, ay - hy
     d = math.hypot(dx, dy)
+    if d < 0.5:                                     # degenerate (foot under the joint): fold the limb
+        dy, d = 0.5, 0.5
     reach = l1 + l2 - 0.05
     if d > reach:
         ax, ay = hx + dx * reach / d, hy + dy * reach / d
