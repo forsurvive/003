@@ -232,6 +232,102 @@ def pads(img, shoulders):
             O._box(d, sx - 1, y0, sx + 2 + e, y1, R.FIT["pad_ramp"])
 
 
+# ---------------------------------------------------------------- front (S / SE) poses, explicit joints
+# Each arm = (shoulder, elbow, hand). Arms reaching toward the camera are foreshortened: short forearms,
+# hands meeting in front of the chest, the weapon seen muzzle-on. Drawn over the torso.
+FRONT = {
+    "pistol": [   # V-shaped arms, elbows outside the torso, hands together at the belly, gun muzzle-on
+        dict(L=((26, 38), (24, 42), (29, 45)), R=((37, 38), (39, 42), (34, 45)), gun=(31, 41), grip=(30, 45, 33, 46)),
+        dict(L=((26, 38), (24, 41), (29, 44)), R=((37, 38), (39, 41), (34, 44)), gun=(31, 39), grip=(30, 44, 33, 45)),
+    ],
+    "airgun": [   # stock in the right shoulder (screen-left), barrel slanting to the camera
+        dict(L=((26, 38), (23, 42), (27, 43)), R=((37, 38), (39, 43), (33, 46)), rifle=((27, 37), (32, 48))),
+        dict(L=((26, 38), (23, 41), (27, 42)), R=((37, 38), (39, 42), (33, 45)), rifle=((27, 36), (32, 47))),
+    ],
+    "baton": [
+        dict(L=((26, 38), (23, 41), (24, 37)), R=((37, 38), (39, 42), (36, 45)), baton=((24, 37), (21, 28))),
+        dict(L=((26, 38), (23, 37), (25, 33)), R=((37, 38), (39, 42), (36, 45)), baton=((25, 33), (32, 27))),
+        dict(L=((26, 38), (25, 42), (30, 46)), R=((37, 38), (39, 42), (36, 45)), baton=((30, 46), (33, 52))),
+    ],
+    "fist": [     # guard: forearms up, fists at the chin
+        dict(L=((26, 38), (24, 44), (28, 40)), R=((37, 38), (39, 44), (35, 40)), fists=True),
+        dict(L=((26, 38), (25, 42), (30, 45)), R=((37, 38), (39, 44), (35, 40)), fists=True, jab=0),
+    ],
+}
+FRONT["rifle"] = FRONT["airgun"]
+
+
+def jointed_arm(layer, pts, ramp):
+    sh, el, hd = pts
+    m = set()
+    R.capsule(m, sh, el, 1.9)
+    R.capsule(m, el, hd, 1.6)
+    R.paint_mask(layer, m, ramp)
+
+
+def hand_block(d, x0, y0, x1, y1):
+    """Hand/fist: skin block with ink only below and at the outer sides (no heavy ring)."""
+    skin = ("P02", "P03") if R.FIT["gloves"] else ("P40", "P41")
+    d.rectangle([x0, y0, x1, y1], fill=C(skin[0]))
+    d.line([x0, y0, x1, y0], fill=C(skin[1]))
+    d.line([x0, y1 + 1, x1, y1 + 1], fill=C("P01"))
+    d.line([x0 - 1, y0, x0 - 1, y1], fill=C("P01")); d.line([x1 + 1, y0, x1 + 1, y1], fill=C("P01"))
+
+
+def front_compose(upper, view, f, weapon):
+    dx = 1 if view == "SE" else 0
+    pose = FRONT[weapon][f % len(FRONT[weapon])]
+    mv = lambda pts: tuple((x + dx, y) for x, y in pts)
+    out = Image.new("RGBA", (64, 64), CLEAR)
+    out.alpha_composite(upper)
+    layer = Image.new("RGBA", (64, 64), CLEAR)
+    d = ImageDraw.Draw(layer)
+    L, Rr = mv(pose["L"]), mv(pose["R"])
+    jointed_arm(layer, L, R.FIT["sleeve"])
+    if "rifle" in pose:                                 # stock in the right shoulder, muzzle toward camera
+        a, b = mv(pose["rifle"])
+        sk = SKINS[weapon]
+        d.line([a, b], fill=C("P01"), width=5)
+        d.line([a, b], fill=C(sk["body"][1]), width=3)
+        d.line([(a[0] - 1, a[1] + 1), (b[0] - 1, b[1])], fill=C(sk["body"][0]), width=1)
+        d.rectangle([a[0] - 1, a[1], a[0] + 1, a[1] + 2], fill=C(sk["stock"][1]))   # butt against the shoulder
+        d.point((a[0] - 1, a[1]), fill=C(sk["stock"][0]))
+        d.ellipse([b[0] - 2, b[1] - 1, b[0] + 2, b[1] + 2], fill=C("P01"))
+        d.point((b[0], b[1]), fill=C(sk["body"][0]))
+        if weapon == "rifle":
+            mx, my = (a[0] + b[0]) // 2 + 2, (a[1] + b[1]) // 2 - 1
+            d.rectangle([mx, my, mx + 2, my + 4], fill=C("P01"))
+    jointed_arm(layer, Rr, R.FIT["sleeve"])
+    hx, hy = L[2]; hand_block(d, hx - 1, hy - 1, hx, hy)
+    hx, hy = Rr[2]; hand_block(d, hx - 1, hy - 1, hx, hy)
+    if "gun" in pose:                                   # pistol seen muzzle-on, held in both hands
+        gx, gy = pose["gun"][0] + dx, pose["gun"][1]
+        x0, y0, x1, y1 = pose["grip"]
+        hand_block(d, x0 + dx, y0, x1 + dx, y1)
+        d.rectangle([gx - 1, gy - 1, gx + 2, gy + 3], fill=C("P01"))
+        d.rectangle([gx, gy, gx + 1, gy + 2], fill=C("P05")); d.line([gx, gy, gx + 1, gy], fill=C("P07"))
+        d.point((gx + 1, gy + 1), fill=C("P01"))
+    if "baton" in pose:
+        a, b = mv(pose["baton"])
+        d.line([a, b], fill=C("P01"), width=3)
+        d.line([a, b], fill=C("P02"), width=1)
+        d.point((round(b[0]), round(b[1])), fill=C("P05"))
+        hx, hy = L[2]; hand_block(d, hx - 1, hy - 1, hx, hy)
+    if pose.get("fists"):
+        for k, (hx, hy) in enumerate((L[2], Rr[2])):
+            big = 1 if pose.get("jab") == k else 0      # the punching fist comes toward the camera: 1px bigger
+            hand_block(d, hx - 1 - big, hy - 1 - big, hx + big, hy)
+    out.alpha_composite(layer)
+    if R.FIT["pads"]:
+        e = R.FIT["pads"]
+        g = O.GEOM[view]
+        lx, ly, lx1 = g["lsh"]; rx, ry, rx1 = g["rsh"]
+        dd = ImageDraw.Draw(out)
+        O._box(dd, lx - e, ly - (e - 1), lx1 + 1, ly + 3 + e, R.FIT["pad_ramp"])
+        O._box(dd, rx - 1, ry - (e - 1), rx1 + e, ry + 3 + e, R.FIT["pad_ramp"])
+    return out
+
+
 # ---------------------------------------------------------------- bases
 def bases(code="T01", look=None):
     R.build_all(code, None, look)
@@ -241,7 +337,7 @@ def bases(code="T01", look=None):
     look = look or {}
     raw = {"S": src["idle0"], "N": src["idleN"], "SE": dg["idleSE"], "NE": dg["idleNE"]}
     nopad = dict(R.FIT, pads=0)                     # pads are re-drawn over the posed arms
-    up_ = {v: HD.head(torso(O.dress(im, nopad, v), v), v, **look) for v, im in raw.items()}
+    up_ = {v: HD.head(O.dress(R.strip_arms(im, v), nopad, v), v, **look) for v, im in raw.items()}
     up_["E"] = HD.head(O.dress(up, nopad, "E"), "E", **look)
     full = {"S": O.dress(src["idle0"], R.FIT, "S"), "N": O.dress(src["idleN"], R.FIT, "N"),
             "SE": O.dress(dg["idleSE"], R.FIT, "SE"), "NE": O.dress(dg["idleNE"], R.FIT, "NE"),
@@ -262,10 +358,13 @@ WEAPONS = [("pistol", "A 권총", "T01", None), ("airgun", "B 사격장 공기�
 
 
 def aim_frame(weapon, view, f, ups, fulls):
-    fr = poses(weapon, view)[f % len(poses(weapon, view))]
     legs = legs_part(fulls[view])
     img = Image.new("RGBA", (64, 64), CLEAR)
     img.alpha_composite(legs)
+    if view in ("S", "SE"):
+        img.alpha_composite(front_compose(upper_only(ups[view]), view, f, weapon))
+        return img
+    fr = poses(weapon, view)[f % len(poses(weapon, view))]
     img.alpha_composite(compose(upper_only(ups[view]), view, fr, weapon))
     return img
 
@@ -292,7 +391,7 @@ def main():
             bad += check(im, allowed)
             sheet.alpha_composite(im.crop((10, 4, 54, 62)), (LW + col * 44, i * 56)); col += 1
         anim[w] = ([aim_frame(w, "E", f, ups, fulls) for f in range(len(poses(w, "E")))],
-                   [aim_frame(w, "S", f, ups, fulls) for f in range(len(poses(w, "S")))])
+                   [aim_frame(w, "S", f, ups, fulls) for f in range(len(FRONT[w]))])
     upscale(sheet, 4).save(os.path.join(out, "14_weapons_x4.png"))
     # attack loop gif: each weapon E + S side by side
     frames = []
@@ -350,7 +449,8 @@ def upper_sets(weapon, code, look=None):
     ups, _ = bases(code, look)
     out = {}
     for v in ("S", "SE", "E", "NE", "N"):
-        out[v] = compose(upper_only(ups[v], 45), v, poses(weapon, v)[0], weapon)
+        out[v] = (front_compose(upper_only(ups[v], 45), v, 0, weapon) if v in ("S", "SE")
+                  else compose(upper_only(ups[v], 45), v, poses(weapon, v)[0], weapon))
     for m, src in MIRROR.items():
         out[m] = out[src].transpose(Image.FLIP_LEFT_RIGHT)
     return out

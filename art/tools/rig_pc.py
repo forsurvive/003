@@ -244,7 +244,7 @@ def strip_legs(img, y0):
     return out
 
 
-def walk_diag(full, mode="walk", back=False):
+def walk_diag(full, mode="walk", back=False, arms=False):
     """SE (back=False) / NE (back=True) locomotion. Legs re-solved by IK under the idle torso.
     Both stance components are exact: the forward foot sits lower on screen (oblique 3/4 projection), so
     the planted boot moves (-4,-4)/(-6,-6) px per frame against a body that steps (+4,+4)/(+6,+6)."""
@@ -273,17 +273,86 @@ def walk_diag(full, mode="walk", back=False):
         fr.alpha_composite(layers[order[0]][0])
         up = upper.copy()
         sw = (1 if mode == "walk" else 2) * (1 if A[f][0] > 0 else -1 if A[f][0] < 0 or A[f][1] > 4 else 0)
-        if sw:
-            shift_region(up, (24, 36, 30, 48), dy=sw)       # screen-left arm
+        if sw and not arms:
+            shift_region(up, (24, 36, 30, 48), dy=sw)       # screen-left arm (legacy baked arms)
             shift_region(up, (36, 36, 41, 48), dy=-sw)      # screen-right arm
         fr.alpha_composite(up, (0, hipdy[f]))
         fr.alpha_composite(layers[order[1]][0])
+        if arms:
+            k = 2.0 if mode == "walk" else 2.5
+            front_arms(fr, "NE" if back else "SE", -sw / max(1, abs(sw)) * k if sw else 0,
+                       sw / max(1, abs(sw)) * k if sw else 0, mode, hipdy[f])
         frames.append(fr)
         feet.append({k: (v[2], v[1]) for k, v in layers.items()})
     return frames, feet
 
 
-def walk_frontback(idle, mode="walk", arm_l=(23, 36, 27, 51), arm_r=(37, 36, 42, 51), leg_l=(26, 32), leg_r=(32, 38), knee=54):
+# ---------------------------------------------------------------- front / back / diagonal arms
+ARMCUT = {"S": (26, 37), "N": (26, 37), "SE": (27, 37), "NE": (27, 37)}   # arm columns: x <= a or x >= b
+FRONT_ARMS = {  # shoulder joints, resting hand centres, screen direction of a forward swing
+    "S": (((26, 38), (37, 38)), ((25, 45), (38, 45)), (0.0, 1.0)),
+    "N": (((26, 38), (37, 38)), ((25, 45), (38, 45)), (0.0, -1.0)),
+    "SE": (((27, 38), (37, 38)), ((26, 45), (38, 45)), (0.7, 0.7)),
+    "NE": (((27, 38), (37, 38)), ((26, 45), (38, 45)), (0.7, -0.7)),
+}
+
+
+def strip_arms(img, view):
+    """Remove the baked arms (rows 36..47) and close the torso sides with a 1px ink edge."""
+    a, b = ARMCUT[view]
+    out = img.copy()
+    px = out.load()
+    for y in range(36, 48):
+        for x in range(64):
+            if (x <= a or x >= b) and px[x, y][3]:
+                px[x, y] = CLEAR
+    for y in range(37, 47):
+        for x in (a, b):
+            px[x, y] = OUT
+    return out
+
+
+def hang_arm(img, sh, hand, outward, near=True):
+    """Front-view arm: short foreshortened segments, elbow bending outward; cuff + 2px hand."""
+    # seen from the front the elbow bends toward/away from the camera, so the arm reads as a straight,
+    # foreshortened limb: shoulder -> wrist, tapering
+    wrist = hand
+    elbow = ((sh[0] + hand[0]) / 2, (sh[1] + hand[1]) / 2)
+    m = set()
+    capsule(m, sh, elbow, 1.9)
+    capsule(m, elbow, wrist, 1.6)
+    paint_mask(img, m, FIT["sleeve"] if near else FIT["sleeve_far"])
+    hx, hy = int(round(wrist[0])), int(round(wrist[1]))
+    skin = ("P02", "P03") if FIT["gloves"] else ("P40", "P41")
+    for dx in (-1, 0, 1, 2):
+        for dy in (-1, 0, 1, 2):
+            if img.getpixel((hx + dx - 1, hy + dy))[3] == 0 or dy == 2 or dx in (-1, 2):
+                img.putpixel((hx + dx - 1, hy + dy), OUT)
+    img.putpixel((hx - 1, hy - 1), C(FIT["cuff"])); img.putpixel((hx, hy - 1), C(FIT["cuff"]))
+    img.putpixel((hx - 1, hy), C(skin[0])); img.putpixel((hx, hy), C(skin[1]))
+    img.putpixel((hx - 1, hy + 1), C(skin[0])); img.putpixel((hx, hy + 1), C(skin[0]))
+
+
+def front_arms(fr, view, s_l, s_r, mode, bob):
+    """Draw both arms swinging by s (px, + = forward) along the view's forward screen direction."""
+    (sl, sr), (rl, rr), (fx, fy) = FRONT_ARMS[view]
+    lift = -2 if mode == "run" else 0                    # running: elbows bent, hands carried higher
+    layer = Image.new("RGBA", (64, 64), CLEAR)
+    for (sx, sy), (hx, hy), sw, out in (((sl), (rl), s_l, -1), ((sr), (rr), s_r, 1)):
+        hand = (hx + fx * sw - out * (1 if mode == "run" else 0), hy + fy * sw + lift + bob)
+        hang_arm(layer, (sx, sy + bob), hand, out)
+    fr.alpha_composite(layer)
+    if FIT["pads"]:
+        from PIL import ImageDraw
+        d = ImageDraw.Draw(fr)
+        e = FIT["pads"]
+        g = O.GEOM[view]
+        lx, ly, lx1 = g["lsh"]; rx, ry, rx1 = g["rsh"]
+        O._box(d, lx - e, ly - (e - 1) + bob, lx1 + 1, ly + 3 + e + bob, FIT["pad_ramp"])
+        O._box(d, rx - 1, ry - (e - 1) + bob, rx1 + e, ry + 3 + e + bob, FIT["pad_ramp"])
+
+
+def walk_frontback(idle, mode="walk", view=None, arm_l=(23, 36, 27, 51), arm_r=(37, 36, 42, 51), leg_l=(26, 32), leg_r=(32, 38), knee=54):
     """S/N locomotion from the idle frame. Cadence is distance-locked; foot lift and bob follow the same
     contact/passing timing as the side gait."""
     if mode == "walk":
@@ -295,14 +364,21 @@ def walk_frontback(idle, mode="walk", arm_l=(23, 36, 27, 51), arm_r=(37, 36, 42,
         f = idle.copy()
         lift_leg(f, leg_l[0], leg_l[1], knee, ll)
         lift_leg(f, leg_r[0], leg_r[1], knee, rl)
-        if la:
-            shift_region(f, arm_l, dy=la)
-        if ra:
-            shift_region(f, arm_r, dy=ra)
+        if view is None:                                 # legacy path (baked arms): block shift
+            if la:
+                shift_region(f, arm_l, dy=la)
+            if ra:
+                shift_region(f, arm_r, dy=ra)
         if bob:
             upper = f.crop((0, 0, 64, 51))
             f.paste(Image.new("RGBA", (64, 51), CLEAR), (0, 0))
             f.alpha_composite(upper, (0, bob))
+            if bob < 0:                                  # fill the waist gap left by rising: stretch the hip row
+                for r in range(51 + bob, 51):
+                    f.paste(f.crop((0, 51, 64, 52)), (0, r))
+        if view is not None:                             # arms re-drawn as jointed limbs
+            k = 2 if mode == "walk" else 1.5
+            front_arms(f, view, la * k, ra * k, mode, bob)
         frames.append(f)
     return frames
 
@@ -356,14 +432,17 @@ def build_all(code="T01", faction=None, look=None):
             "SE": O.dress(dg["idleSE"], FIT, "SE"), "NE": O.dress(dg["idleNE"], FIT, "NE"),
             "E": O.dress(up, FIT, "E")}
     base = {v: HD.head(im, v, **look) for v, im in base.items()}
+    nopad = dict(FIT, pads=0)
+    raw = {"S": src["idle0"], "N": src["idleN"], "SE": dg["idleSE"], "NE": dg["idleNE"]}
+    walkbase = {v: HD.head(O.dress(strip_arms(im, v), nopad, v), v, **look) for v, im in raw.items()}
     fl = lambda seq: [f.transpose(Image.FLIP_LEFT_RIGHT) for f in seq]
     sets, report = {}, []
     for mode in ("walk", "run"):
-        S = walk_frontback(base["S"], mode)
-        N = walk_frontback(base["N"], mode)
+        S = walk_frontback(walkbase["S"], mode, view="S")
+        N = walk_frontback(walkbase["N"], mode, view="N")
         E, fe = walk_side(base["E"], mode)
-        SE, fse = walk_diag(base["SE"], mode)
-        NE, fne = walk_diag(base["NE"], mode, back=True)
+        SE, fse = walk_diag(walkbase["SE"], mode, arms=True)
+        NE, fne = walk_diag(walkbase["NE"], mode, back=True, arms=True)
         dx, dy = STEP[mode][1]
         for seq_feet, lab, st in ((fe, "E", STEP[mode][0]), (fse, "SE", (dx, dy)), (fne, "NE", (dx, -dy))):
             lines, worst = footlock_report(seq_feet, st, f"{code} {mode} {lab}")
