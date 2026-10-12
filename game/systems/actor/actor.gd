@@ -11,6 +11,18 @@ var world                                    ## ChunkWorld 또는 InteriorRoom (
 var mode := "run"                             ## 기본 이동 = 달리기 4.5t/s (SD-11 §2.4)
 var aim_dir := -1
 var sheet := ""
+var doll: Paperdoll                           ## 주인공: 실행 중 페이퍼돌(장비 즉시 반영). 없으면 굽은 시트
+
+
+func setup_doll(look: Dictionary, pos: Vector2, w) -> void:
+	world = w
+	loco = Locomotion.new(pos)
+	doll = Paperdoll.new()
+	doll.set_look(look)
+	add_child(doll)
+	meta = {"foot": [32, 60], "rows": ["S", "SE", "E", "NE", "N"]}
+	position = loco.render
+	_show()
 
 
 func setup(sheet_name: String, pos: Vector2, w) -> void:
@@ -39,6 +51,9 @@ func move(input: Vector2, dt: float) -> void:
 func _show() -> void:
 	var motion := "idle" if loco.motion == "idle" else loco.motion
 	var dir := loco.facing if loco.motion != "idle" or aim_dir < 0 else aim_dir
+	if doll != null:
+		doll.show_frame(motion, dir, loco.frame if motion != "idle" else 0)
+		return
 	if meta.get("rows", []) == ["E"]:                                 # side-only sheets (creatures): E or mirrored W
 		dir = 4 if Locomotion.VEC[dir].x < 0 else 0
 	var a: Array = Locomotion.anim_for(motion, dir)

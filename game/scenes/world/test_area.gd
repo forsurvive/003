@@ -62,7 +62,7 @@ func _ready() -> void:
 	area = world
 	var sp: Array = world.index["spawns"]["player"]
 	player = Actor.new()
-	player.setup("pc_comp_t01_pf00_loco", Vector2(sp[0] * 32 + 16, sp[1] * 32 + 16), world)
+	player.setup_doll({"torso": "T01"}, Vector2(sp[0] * 32 + 16, sp[1] * 32 + 16), world)
 	world.add_child(player)
 	pc.actor = player
 	pc.team = "player"
@@ -211,7 +211,7 @@ func _combat_tick(dt: float) -> void:
 	shots.step(dt)
 	if pc.flash > 0:
 		pc.flash -= 1
-	player.sprite.modulate = Color(4, 4, 4) if pc.flash > 0 else Color(1, 1, 1)
+	player.doll.set_flash(1.0 if pc.flash > 0 else 0.0)
 
 
 ## 터치 사격: 오른쪽 스틱을 놓는 순간 쏜다. 조준 보정: 스틱 방향 반각 12° 안의 가장 가까운 적(SD-19 §6.13)
@@ -269,6 +269,7 @@ func _player_combat(dt: float) -> void:
 		if Input.is_action_just_pressed("reload") and weapon_id == "W-002":
 			_reload = 1.5
 			return
+		_equip_keys()
 		if Input.is_key_pressed(KEY_Q) and _cool <= 0.0:
 			weapon_id = "W-041" if weapon_id == "W-002" else "W-002"
 			_cool = 0.3
@@ -446,6 +447,25 @@ func _exit_tree() -> void:
 			enemies.reduce(func(acc, e): return acc + e.shots_fired, 0),
 			ai_usec_max / 1000.0, nav.last_build_usec / 1000.0])
 		print("경로 질의 최대 %.2fms" % (nav.query_usec_max / 1000.0))
+
+
+## 장비 교체 시험(P9 즉시 반영): 1 몸통 2 머리카락 3 머리 장비 4 눈 장비 5 세력 6 피부·머리색
+const CYCLE := {KEY_1: ["torso", ["T01", "T02", "T03", "T06"]], KEY_2: ["hair", ["HR03", "HR05", "HR07", "HR08", "HR09"]],
+	KEY_3: ["gear", ["", "HD02", "HD03", "HD04", "HD05"]], KEY_4: ["eyes", ["", "EY01", "EY05"]],
+	KEY_5: ["faction", ["", "PF-01", "PF-05", "PF-11", "PF-12"]], KEY_6: ["skin", ["S3", "S1", "S5", "SG1"]]}
+var _equip_down := {}
+
+
+func _equip_keys() -> void:
+	for k in CYCLE:
+		var down := Input.is_key_pressed(k)
+		if down and not _equip_down.get(k, false):
+			var slot: String = CYCLE[k][0]
+			var opts: Array = CYCLE[k][1]
+			var cur: String = player.doll.look[slot]
+			player.doll.set_look({slot: opts[(opts.find(cur) + 1) % opts.size()]})
+			msg = "%s → %s" % [slot, player.doll.look[slot]]
+		_equip_down[k] = down
 
 
 func _bot_move() -> Vector2:

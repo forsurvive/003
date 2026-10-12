@@ -86,26 +86,18 @@ func _begin(stage: int) -> void:
 				_actors.append(e)
 		2:                                                          # ③ 경로 64×64 구역 1건
 			_clear_actors()
-		3:                                                          # ④ 페이퍼돌 6슬롯 × 24명 (실행 중 레이어 겹치기)
+		3:                                                          # ④ 페이퍼돌 × 24명: 몸·몸통 인덱스 시트 + 머리 앵커 층 3 + 팔레트 셰이더
+			var looks := [{"hair": "HR05", "gear": "HD05", "eyes": "EY01"}, {"torso": "T06", "gear": "HD04", "faction": "PF-01", "eyes": "EY05"},
+				{"torso": "T02", "hair": "HR08", "gear": "HD03", "eyes": "EY01"}, {"torso": "T03", "hair": "HR09", "gear": "HD02", "eyes": "EY05"}]
 			for i in 24:
-				var root := Node2D.new()
-				root.position = c + Vector2(-280 + (i % 8) * 70, -100 + (i / 8) * 90)
-				world.add_child(root)
-				var layers := []
-				for k in 6:
-					var s := AnimatedSprite2D.new()
-					s.sprite_frames = load("res://assets/sprites/%s.tres" % ["pc_comp_t01_pf00_loco", "pc_comp_t02_pf00_loco",
-						"pc_comp_t03_pf00_loco", "pc_comp_t06_pf01_loco", "pc_comp_t01_pf00_loco", "pc_comp_t02_pf00_loco"][k])
-					s.centered = false
-					s.offset = Vector2(-32, -60)
-					s.animation = "walk_E"
-					s.modulate.a = 1.0 if k == 0 else 0.0
-					root.add_child(s)
-					layers.append(s)
-				_dolls.append(layers)
+				var d := Paperdoll.new()
+				d.set_look(looks[i % 4])
+				d.position = c + Vector2(-280 + (i % 8) * 70, -100 + (i / 8) * 90)
+				world.add_child(d)
+				_dolls.append(d)
 		4:                                                          # ⑤ 청크 경계 교전 추격
 			for d in _dolls:
-				d[0].get_parent().queue_free()
+				d.queue_free()
 			_dolls.clear()
 			var b := (world.chunk_of_px(cam.position).x + 1) * world.cs * 32.0
 			_chase_x = b - 6.0 * 32.0                                  # 경계 6타일 앞에서 출발, 왕복마다 경계를 넘는다
@@ -163,11 +155,12 @@ func _process(dt: float) -> void:
 					g.get_point_path(Vector2i(0, 0), Vector2i(63, 63), true)
 					_work_us.append(Time.get_ticks_usec() - t0)
 				_t = SECS
-		3:
+		3:                                                         # 매 프레임 프레임·방향 갱신 + 2초마다 1명 장비 교체
 			var f := int(Engine.get_process_frames() / 4) % 6
-			for layers in _dolls:
-				for s in layers:
-					s.frame = f
+			for i in _dolls.size():
+				_dolls[i].show_frame("walk", (i + int(_t)) % 8, f)
+			if Engine.get_process_frames() % 120 == 0:
+				_dolls[_rng.randi() % 24].set_look({"hair_color": ["H1", "H4", "H6"][_rng.randi() % 3]})
 		4:
 			_chase_x += 6.5 * 32.0 * dt * (1.0 if int(_t / 1.5) % 2 == 0 else -1.0)   # 질주 속도로 청크 경계 왕복
 			cam.position.x = _chase_x
