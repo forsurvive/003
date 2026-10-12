@@ -1,0 +1,245 @@
+# Head slots for the head-anchor composite (SD-16 §5.1, §5.5, §12.3 #6). Overlays on the PC head, 5 views.
+# Frame names: <part>_<view>. Hair keys q w e r = hair ramp (H1, swapped to Hx at composite time).
+# hair: HR02 bob (단발), HR03 bun (똥머리, hidden under hats), HR04 buzz = recolour only (no grid).
+# head gear: HG01 security helmet (경비 헬멧, visor up), HG02 baseball cap (야구모자). eye: EY01 glasses (안경).
+@size 64 64
+@origin 32 60
+@key o P01
+@key q H1.1
+@key w H1.2
+@key e H1.3
+@key r H1.4
+@key A P08
+@key B P06
+@key C P05
+@key D P04
+@key V P14
+@key Y P48
+@key F P54
+@key G P53
+@key H P52
+@key I P51
+@key g P02
+@key h P15
+
+# ---------------- HR02 bob
+@frame HR02_S 25 23
+...oooooooo...
+..oerrrrrreo..
+.oeerrrrrreeo.
+oweeeeeeeeeewo
+oweweeeeeewewo
+oww........wwo
+oww........wwo
+oqw........wqo
+oqw........wqo
+oqq........qqo
+.oqo......oqo.
+..oo......oo..
+@frame HR02_N 25 23
+...oooooooo...
+..oerrrrrreo..
+.oeerrrrrreeo.
+oweeeeeeeeeewo
+oweeeeeeeeeewo
+owweeeeeeeewwo
+owwweeeeeewwwo
+owwwweeeewwwwo
+owwwwwwwwwwwwo
+oqwwwwwwwwwwqo
+oqqwwwwwwwwqqo
+.oqqqqqqqqqqo.
+..oooooooooo..
+@frame HR02_E 25 23
+...oooooo.....
+..oerrrrro....
+.oeerrrrreo...
+oweeeeeeeewo..
+owwweeeewwwwo.
+owwwwwww......
+owwwwwww......
+oqwwwwww......
+oqqwwwww......
+.oqqwwww......
+.oqqqqqo......
+..ooooo.......
+@frame HR02_SE 25 23
+...oooooo.....
+..oerrrrro....
+.oeerrrrreo...
+oweeeeeeeewo..
+owweewweewwwo.
+owwww......wo.
+owwww.........
+oqwww.........
+oqqww.........
+.oqqo.........
+..oo..........
+@frame HR02_NE 25 23
+....oooooo....
+...oerrrrro...
+..oeerrrrreo..
+oweeeeeeeeewo.
+owweeeeeeeewo.
+owwweeeeeewwo.
+owwwweeeewwwo.
+owwwwwwwwww...
+oqwwwwwwwww...
+oqqwwwwwwwwo..
+.oqqqwwwwwqo..
+..oqqqqqqqo...
+...ooooooo....
+
+# ---------------- HR03 bun (top knot)
+@frame HR03_S 29 18
+.oooo.
+orrreo
+oreewo
+oeewwo
+.owwo.
+@frame HR03_N 29 18
+.oooo.
+orrreo
+oreewo
+oeewwo
+.owwo.
+@frame HR03_E 27 18
+.oooo.
+orrreo
+oreewo
+oeewwo
+.owwo.
+@frame HR03_SE 28 18
+.oooo.
+orrreo
+oreewo
+oeewwo
+.owwo.
+@frame HR03_NE 29 18
+.oooo.
+orrreo
+oreewo
+oeewwo
+.owwo.
+
+# ---------------- HG01 security helmet (visor raised)
+@frame HG01_S 25 21
+....oooooo....
+..ooABBBBBoo..
+.oABBBBBBBBCo.
+oABBBBYYBBBCCo
+oABBBBYYBBBCCo
+oBBBBBYYBBCCCo
+oCVVVVVVVVVVCo
+oDooooooooooDo
+oDo........oDo
+oDo........oDo
+.o..........o.
+@frame HG01_N 25 21
+....oooooo....
+..ooABBBBBoo..
+.oABBBBBBBBCo.
+oABBBBYYBBBCCo
+oABBBBYYBBBCCo
+oBBBBBYYBBCCCo
+oCCCCCCCCCCCDo
+oDDDDDDDDDDDDo
+oDDDDDDDDDDDDo
+.oooooooooooo.
+@frame HG01_E 25 21
+...oooooo.....
+.ooABBBBBoo...
+oABBBBBBBBBo..
+oABBBBBBYYBCo.
+oABBBBBBYYBCo.
+oBBBBBBBYYCCCo
+oCCCCCCCVVVVVo
+oDDDDDDooooooo
+oDDDDDo.......
+.ooooo........
+@frame HG01_SE 25 21
+....oooooo....
+..ooABBBBBoo..
+.oABBBBBBBBCo.
+oABBBBBYYBBCCo
+oABBBBBYYBBCCo
+oBBBBBBYYBCCCo
+oCCCCVVVVVVVCo
+oDDoooooooooDo
+oDDo..........
+oDDo..........
+.oo...........
+@frame HG01_NE 25 21
+....oooooo....
+..ooABBBBBoo..
+.oABBBBBBBBCo.
+oABBBBYYBBBCCo
+oABBBBYYBBBCCo
+oBBBBBYYBBCCCo
+oCCCCCCCCCCCDo
+oDDDDDDDDDDDo.
+oDDDDDDDDDDo..
+.oooooooooo...
+
+# ---------------- HG02 baseball cap (faded red)
+@frame HG02_S 25 21
+....oooooo....
+...oFGGGGGo...
+..oFGGGGGGGo..
+.oFGGGGHGGGHo.
+.oGGGGGHGGGHo.
+.oHHHHHHHHHHo.
+oGGGGGGGGGGGGo
+oIIIIIIIIIIIIo
+.oooooooooooo.
+@frame HG02_N 25 21
+....oooooo....
+...oFGGGGGo...
+..oFGGGGGGGo..
+.oFGGGGHGGGHo.
+.oGGGGGHGGGHo.
+.oHHHHHHHHHHo.
+.oHHHowwoHHHo.
+..ooo....ooo..
+@frame HG02_E 25 21
+...oooooo.......
+..oFGGGGGo......
+.oFGGGGGGGo.....
+oFGGGGGHGGGo....
+oGGGGGGHGGGo....
+oHHHHHHHHHHGGGo.
+.ooooooooooIIIo.
+..........ooo...
+@frame HG02_SE 25 21
+....oooooo......
+...oFGGGGGo.....
+..oFGGGGGGGo....
+.oFGGGGGHGGGo...
+.oGGGGGGHGGGo...
+.oHHHHHHHHHHo...
+.oooGGGGGGGGGo..
+....oIIIIIIIIo..
+.....ooooooooo..
+@frame HG02_NE 25 21
+....oooooo......
+...oFGGGGGo.....
+..oFGGGGGGGo....
+.oFGGGGGHGGGo...
+.oGGGGGGHGGGoo..
+.oHHHHHHHHHHGGo.
+.oHHowwoHHHHoo..
+..ooo..ooooo....
+
+# ---------------- EY01 glasses (hidden on N / NE: §5.3)
+@frame EY01_S 28 29
+ggg..ggg
+g.h..h.g
+g.h..h.g
+@frame EY01_E 29 29
+....ggg
+ggggg.h
+....g.h
+@frame EY01_SE 29 29
+..gggggg
+ggg.hg.h
+..g.h..h

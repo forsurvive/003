@@ -17,6 +17,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 import palette as P
 from grid import parse, upscale, sheet
 import outfits as O
+import heads as HD
 
 FIT = O.make("T01")   # current torso-equipment family (set by build_all)
 
@@ -342,15 +343,17 @@ def gif(frames, path, scale=4, ms=100, bg="P19"):
     out[0].save(path, save_all=True, append_images=out[1:], duration=ms, loop=0, disposal=2)
 
 
-def build_all(code="T01", faction=None):
+def build_all(code="T01", faction=None, look=None):
     global FIT
     FIT = O.make(code, faction)
+    look = look or {}
     src = parse(os.path.join(ROOT, "src/sprites/pc_s07_jumpsuit_S.txt"))
     up = parse(os.path.join(ROOT, "src/sprites/pc_s07_upper_E.txt"))["upperE"]
     dg = parse(os.path.join(ROOT, "src/sprites/pc_s07_jumpsuit_diag.txt"))
     base = {"S": O.dress(src["idle0"], FIT, "S"), "N": O.dress(src["idleN"], FIT, "N"),
             "SE": O.dress(dg["idleSE"], FIT, "SE"), "NE": O.dress(dg["idleNE"], FIT, "NE"),
             "E": O.dress(up, FIT, "E")}
+    base = {v: HD.head(im, v, **look) for v, im in base.items()}
     fl = lambda seq: [f.transpose(Image.FLIP_LEFT_RIGHT) for f in seq]
     sets, report = {}, []
     for mode in ("walk", "run"):
@@ -365,7 +368,7 @@ def build_all(code="T01", faction=None):
             report += lines
         sets[mode] = {"S": S, "SE": SE, "E": E, "NE": NE, "N": N, "NW": fl(NE), "W": fl(E), "SW": fl(SE)}
     sets["idle"] = {"S": base["S"], "N": base["N"], "SE": base["SE"], "NE": base["NE"],
-                    "E": E_idle(O.dress(src["idleE"], FIT, "E")), }
+                    "E": E_idle(HD.head(O.dress(src["idleE"], FIT, "E"), "E", **look)), }
     sets["idle"].update({"W": sets["idle"]["E"].transpose(Image.FLIP_LEFT_RIGHT),
                          "SW": base["SE"].transpose(Image.FLIP_LEFT_RIGHT),
                          "NW": base["NE"].transpose(Image.FLIP_LEFT_RIGHT)})
