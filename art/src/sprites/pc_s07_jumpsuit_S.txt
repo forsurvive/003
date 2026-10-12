@@ -1,0 +1,141 @@
+# PC body (skin S3, hair H1 short) + T01 S-07 jumpsuit, direction S (front). Rows = left half, mirrored.
+@size 64 64
+@origin 32 60
+@key o P01
+@key k P02
+@key l P03
+@key m P04
+@key n P05
+@key q H1.1
+@key w H1.2
+@key e H1.3
+@key r H1.4
+@key 1 P38
+@key 2 P39
+@key 3 P40
+@key 4 P41
+@key 5 P42
+@key a P43
+@key b P44
+@key c P45
+@key d P46
+@key Y P48
+@key y P49
+@key z P50
+@frame idle0 22 19 mirror
+......oooo
+.....oerrr
+....oeerrr
+....oweeee
+....owewee
+....ow4555
+....o14444
+....o44o44
+....o43o44
+....o34444
+.....o3444
+......o333
+.......o22
+...ooddddY
+..odccccdy
+..odcbcccy
+..occbcccy
+..ocbkcccy
+..ocbkbccy
+..ocbkbccy
+..oyykbbcy
+..o44kbbcy
+..o43kllly
+..o33okllz
+...oo.obbb
+.....obbcc
+.....obcco
+.....obcco
+.....obcco
+.....obcco
+.....obcco
+.....obbco
+....okmmmo
+....oklmmo
+....oklmmo
+....okllmo
+....okklmo
+....oooooo
+@frame idleE 22 19
+......oooooo........
+.....oerrrrro.......
+....oeerrrrreo......
+....oeeeeeeeewo.....
+....owweeeewww4o....
+....owwwee44445o....
+....owwwe234444o....
+....owww2344o44o....
+....oqww2344o445o...
+.....oqw34444444o...
+.....oq344444443o...
+......oo3333333o....
+........o3222o......
+......ooddddYyo.....
+.....odccddddyo.....
+.....occodccdoyo....
+.....obcodcccoyo....
+.....obcocccbobo....
+.....obcocccbobo....
+.....obcocbcbobo....
+.....obcoyyyobyo....
+.....obco444obyo....
+.....okloo43ollzo...
+.....oklllo3olllo...
+......obbbooobbbo...
+.......obbccccbo....
+.......obbcccco.....
+.......obbcccco.....
+.......obbcccco.....
+.......obbcccco.....
+.......obbcccco.....
+.......obbbccco.....
+.......okmmmmmo.....
+.......oklmmmmmo....
+.......oklmmmmmmo...
+.......okllmmmmmo...
+.......okkllllmmo...
+.......oooooooooo...
+@frame idleN 22 19 mirror
+......oooo
+.....oerrr
+....oeerrr
+....oweeee
+....oweeee
+....owweee
+....owwwee
+....owwwwe
+....owwwww
+....oqwwww
+.....oqwww
+......oqqq
+.......o22
+...oodddcc
+..odccccbb
+..odcbcccb
+..occbcccb
+..ocbkcccb
+..ocbkbccb
+..ocbkbccb
+..oyykbbcb
+..o44kbbcb
+..o43kllll
+..o33oklll
+...oo.obbb
+.....obbcc
+.....obcco
+.....obcco
+.....obcco
+.....obcco
+.....obcco
+.....obbco
+....okmmmo
+....oklmmo
+....oklmmo
+....okllmo
+....okklmo
+....oooooo
