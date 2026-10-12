@@ -705,17 +705,38 @@ def vault_exit(cv):
               fill=T("P05"))                                  # tunnel floor grating catching outside light
     for k in range(4):
         d.line([(cx - rx + 4 + k * 14, cy + ry - 11), (cx - rx + 8 + k * 14, cy + ry - 2)], fill=T("P04"))
-    # the gear door, rolled aside inside the portal: seen nearly edge-on, teeth on its rim, a sliver of 'S-07'
-    gx, gy, grx, gry = cx - 17, cy - 2, 9, 44
-    d.ellipse([gx - grx - 2, gy - gry - 2, gx + grx + 2, gy + gry + 2], fill=T("P01"))
-    d.ellipse([gx - grx, gy - gry, gx + grx, gy + gry], fill=T("P06"))
-    d.ellipse([gx - grx + 3, gy - gry + 5, gx + grx - 1, gy + gry - 5], fill=T("P45"))
-    d.ellipse([gx - grx + 5, gy - gry + 12, gx + grx - 2, gy + gry - 12], fill=T("P44"))
-    d.rectangle([gx - 1, gy - 6, gx + 3, gy + 6], fill=T("P48"))
-    for a in range(100, 261, 14):                            # teeth on the visible (left) rim
-        ra = math.radians(a)
-        tx, ty = gx + (grx + 2) * math.cos(ra), gy + (gry + 2) * math.sin(ra)
-        d.rectangle([tx - 2, ty - 2, tx + 1, ty + 2], fill=T("P07"), outline=T("P01"))
+    # the gear door after its opening roll: it rolled along the track and now stands flush against the wall face
+    # beside the opening, turned by the roll angle (the same door image the opening animation ends on)
+    import tiles_s07 as TS
+    door = TS.gear_door(angle=math.degrees(TS.ROLL_PX / TS.DOOR_R))
+    dpx = door.load()
+    dcx, dcy, drx, dry = 26, 254, 25, 47             # same obliquity as the portal (wall plane)
+    dmask = set()
+    for y in range(int(dcy - dry) - 1, int(dcy + dry) + 2):
+        for x in range(int(dcx - drx) - 1, int(dcx + drx) + 2):
+            u = (x + 0.5 - dcx) / drx * 96 + 95.5
+            v = (y + 0.5 - dcy) / dry * 96 + 95.5
+            if 0 <= u < 192 and 0 <= v < 192 and 0 <= x < 640:
+                p_ = dpx[int(u), int(v)]
+                if p_[3]:
+                    if p_[:3] == P.rgb("P01"):                  # thin ink lost in the squash: use the rim steel
+                        p_ = C("P05")
+                    cv.px[x, y] = p_
+                    dmask.add((x, y))
+    for x, y in dmask:                                       # solid ink outline around the teeth
+        for ax, ay in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            if (x + ax, y + ay) not in dmask and 0 <= x + ax < 640:
+                cv.put(x + ax, y + ay, "P01")
+    for y in range(int(dcy - dry * 0.9), int(dcy + dry * 0.9)):      # door thickness: the rim edge facing the opening
+        t = (y - dcy) / (dry * 0.95)
+        ex = dcx + drx * math.sqrt(max(0, 1 - t * t))
+        for k in range(1, 4):
+            if 0 <= ex + k < 640:
+                cv.put(ex + k, y, "P05" if k < 3 else "P01")
+    # rail groove the door rolled along, from under the opening to under the door
+    d.line([(4, cy + ry + 3), (cx + 20, cy + ry + 1)], fill=T("P02"))
+    d.line([(4, cy + ry + 4), (cx + 20, cy + ry + 2)], fill=T("P07"))
+
     # deck (6x4 tiles), lit by the low western sun; the wall throws a shadow band onto it
     deck = [(0, 312), (168, 300), (330, 304), (372, 360), (0, 360)]
     d.polygon(deck, fill=T("P07"))
