@@ -688,7 +688,7 @@ def vault_exit(cv):
     for k in range(3):
         d.line([(56, 186 + k * 3), (112, 202 + k * 3)], fill=T("P48") if k != 1 else T("P49"))
     # round portal (oblique ellipse) with the hazard ring, dark tunnel, lamps inside
-    cx, cy, rx, ry = 86, 254, 31, 48
+    cx, cy, rx, ry = 86, 250, 31, 48
     d.ellipse([cx - rx - 5, cy - ry - 5, cx + rx + 5, cy + ry + 5], fill=T("P02"))
     for a in range(0, 360, 12):                              # hazard chevrons
         ra, rb = math.radians(a), math.radians(a + 6)
@@ -701,10 +701,6 @@ def vault_exit(cv):
     d.ellipse([cx - rx + 14, cy - ry + 16, cx + rx - 4, cy + ry - 12], fill=T("P01"))
     for ly in (226, 248, 270):                               # ceiling lamps down the tunnel
         cv.put(cx + 8, ly, "P15"); cv.put(cx + 9, ly, "P14")
-    d.polygon([(cx - rx + 2, cy + ry - 12), (cx + rx - 2, cy + ry - 18), (cx + rx, cy + ry - 4), (cx - rx, cy + ry)],
-              fill=T("P05"))                                  # tunnel floor grating catching outside light
-    for k in range(4):
-        d.line([(cx - rx + 4 + k * 14, cy + ry - 11), (cx - rx + 8 + k * 14, cy + ry - 2)], fill=T("P04"))
     # the gear door rolled aside INSIDE the vault (its recess is behind the wall), so from outside only the empty
     # round portal and the dim gate corridor are visible
 
