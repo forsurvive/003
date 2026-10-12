@@ -4,7 +4,7 @@
 
 | 폴더 | 내용 |
 |---|---|
-| `tools/` | 팔레트 모듈(`palette.py`), 텍스트 격자 렌더러·검사기(`grid.py`), 미리보기(`preview.py`), 타일·소품 생성기(`tiles_r01.py`, `props_r01.py`), 장면 합성(`scene_bongcheon.py`), 주인공 파츠 리그·걷기·달리기(`rig_pc.py`), 이동 시연(`locomotion_demo.py`), 모바일 HUD(`hud_mobile.py`), 핍-보이 화면(`pipboy.py`), 대표 그림(`keyart.py`), 팔레트 시트(`make_palette_sheet.py`) |
+| `tools/` | 팔레트 모듈(`palette.py`), 텍스트 격자 렌더러·검사기(`grid.py`), 미리보기(`preview.py`), 타일·소품 생성기(`tiles_r01.py`, `props_r01.py`), 장면 합성(`scene_bongcheon.py`), 주인공 파츠 리그·걷기·달리기(`rig_pc.py`), 이동 시연(`locomotion_demo.py`), 모바일 HUD(`hud_mobile.py`), 핍-보이 화면(`pipboy.py`), 대표 그림(`keyart.py`), 볼트 S-07 실내(`tiles_s07.py`, `scene_s07.py`), 팔레트 시트(`make_palette_sheet.py`) |
 | `src/` | 원화 소스. 스프라이트는 팔레트 인덱스 텍스트 격자(SD-16 §13.2) |
 | `samples/` | 기준 샘플 출력(원본 크기 + 확대 미리보기) |
 | `fonts/` | 갈무리(Galmuri) 도트 한글 글꼴, SIL OFL 1.1 (`OFL-Galmuri.md`) |
@@ -20,12 +20,15 @@ python3 tools/locomotion_demo.py
 python3 tools/hud_mobile.py
 python3 tools/pipboy.py
 python3 tools/keyart.py
+python3 tools/tiles_s07.py
+python3 tools/scene_s07.py
 ```
 
 ## 기준 샘플 진행 (SD-16 §12.3)
 | # | 샘플 | 상태 |
 |---|---|---|
 | 1 | 팔레트 시트 | 1차 완료 |
+| 2 | 볼트 S-07 실내 | 1차: 바닥 12·벽 9·문 2·벽걸이 7(성적 순위 게시판 앵커, 표어 CRT, 칠판, 배급과 창구)·바닥 소품 12·톱니 방폭문 192×192 8프레임(`10_*`), 아트리움 + 적성 평가 교실 장면(`11_*`) |
 | 3 | 관악·봉천 외부 타일·소품 | 1차(타일 17종, 빌라·전신주·고무 대야 화분·간판·포스터) |
 | 4·5 | 주인공 몸 + S-07 점프슈트 | 대기 5방향 원화 + 반전 = 8방향. 걷기·달리기 6프레임 × 8방향 2차: 디딤발 고정 IK(측면·대각선, 검사 0px, `04_pc_footlock.txt`), 실제 속도 이동 시연(`04_pc_locomotion_demo.gif`) |
 | 8 | 크리처 | 변이 바퀴벌레 측면 1차 |
