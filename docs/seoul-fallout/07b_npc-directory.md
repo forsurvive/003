@@ -1454,7 +1454,7 @@ PR001 장부(16) · PR002 클립보드(15) · PR003 확성기(6) · PR004 공구
   4. **같은 역할의 다른 이름**: SD-04d가 장소 문서에 이미 있는 자리에 새 이름을 붙였다(기록관 오웬 진(SD-04d)·에스더 남(SD-15) = 에밀리 차, 남산 분견대장 케빈 남 = 제이슨 임, 노들섬 부조합장 여강호 = 염재윤, 위조상 진이 = 염희정, 회전익 조종사 하윤슬 = 정한솔, 강등 사무관 문서진 = 원재현, 인솔조장 방기태 = 갈고리, 회수조장 데릭 하 = 케일럽 오코너, 해나 장 = 한나 장). SD-15 가칭 상인 39명도 같은 경우다.
   5. **신앙 번호 중복**: '대기 7731'을 4명, '대기 7702'를 2명이 쓴다. 신앙 번호는 한 사람만 쓴다(SD-18).
   6. **오버시어 이름 재사용**: 비상정부 국무위원 권도현(N-R11-007)이 S-07 오버시어 권도현과 같은 성명이다. SD-15 V21 고은비(4대 오버시어)는 상인 대응으로 사라진다.
-  7. **실존 인물 가능성**: 차민규(C-035), 왕하오(C-056), 최가온, 박지민, 홍경민, 심재민. 같은 성명의 유명 운동선수·가수가 있다.
+  7. **실존 인물 가능성**: 차민규(C-035), 왕하오(C-056), 최가온, 박지민, 홍경민, 심재민. 같은 성명의 유명 운동선수·가수가 있다(v1.1 개명: 차민혁·왕융성·최보미·박예린·홍민준·심의진, RECON_SPEC §2.1).
   8. **퀘스트 문서끼리의 겹침**: 방석구(CR-510)를 SD-04a SQ-S20과 SD-04c SQ-N17이 모두 보스로 처리한다. 진도겸 구출(UG-H09)은 SD-04c가 SD-04a 몫으로 넘겼지만 SD-04a에 없다. 둘 다 정정 목록 I에 처리 규칙을 넣었다.
   9. **SD-18 자체 모순**: 이름 풀(P5 정규 40개)과 D2(3회 상한)를 함께 지킬 수 없다. 3회를 넘는 이름이 35개다(§7.5 개정안).
 
@@ -1979,7 +1979,7 @@ PR001 장부(16) · PR002 클립보드(15) · PR003 확성기(6) · PR004 공구
 - 세력·경제: [SD-06](06_factions.md) §2.2·§8·§10, [SD-15](15_economy.md) §4·§5·§7
 - 퀘스트: [SD-04a](04a_side-quests-south.md), [SD-04b](04b_side-quests-west-river.md), [SD-04c](04c_side-quests-north-east-center.md), [SD-04d](04d_faction-questlines.md) 부록 A, [SD-05](05_misc-quests-encounters.md)
 - 그래픽·명명: [SD-14](14_creatures-enemies.md) §10, [SD-16](16_art-direction.md) §4·§5·§7·§8, [SD-18](18_naming-terms.md) §3
-- 원작: [RD-10](../reverse-design/10_characters.md), [RD-22](../reverse-design/22_economy.md), [RD-27](../reverse-design/27_adaptation-notes.md)
+- 원작: [RD-10](../reverse-design/10_characters-major-companions.md), [RD-22](../reverse-design/22_economy-housing.md), [RD-27](../reverse-design/27_adaptation-notes.md)
 
 ---
 
