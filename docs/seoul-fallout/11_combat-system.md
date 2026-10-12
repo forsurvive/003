@@ -1,6 +1,6 @@
 # SD-11. 전투·상태 시스템
 
-> **서울 폴아웃 상세 기획서 세트** | 문서 ID: SD-11 | 버전: v1.0 | 작성일: 2026-10-12
+> **서울 폴아웃 상세 기획서 세트** | 문서 ID: SD-11 | 버전: v1.1 | 작성일: 2026-10-12
 > **범위**: 맵 위 실시간 전투의 조작·카메라·전투 진입과 이탈, 무기 계열 8종의 공격 자세와 사격 규격, 명중·피해·치명타·기습·DR·부위 판정·부위 손상·넉다운·사망 연출, AP 용도와 수치(확정), V.A.T.S. 축약형(선택 과제) 설계안, 적 AI(상태 머신·인지·엄폐·도주·무리·세력 간 교전·계열별 패턴), 일시 동행 NPC와 세력 지원 병력의 전투 AI, 5~7막 대규모 교전, 세력 호감도와 전투의 연동(오사·적대 전환·변장), 은신 전투·폭발물·지뢰·함정·환경 폭발·파워 아머·에너지 무기, 난이도·TTK·레벨 스케일링, 상태·생존(HP·방사능·중독·부위 손상·수면·음식과 물·소지 무게·내구도), 피격 피드백과 전투 HUD / **다루지 않음**: S.P.E.C.I.A.L.·스킬·퍽의 정본과 퍽 ID(SD-10), 무기·방어구·소모품 개별 수치와 ID(SD-13), 크리처·적 개체 수치와 ID(SD-14), 핍-보이 메뉴와 HUD의 화면 디자인(SD-12), 도트 규격과 모션 그림(SD-16), 효과음 제작(SD-17), 의사·수리 요금(SD-15)
 > **관련 문서**: [SC-00 컨셉](00_concept.md), [SD-01 게임 개요](01_game-overview.md), [SD-06 세력](06_factions.md), [SD-03a 메인 스토리 1부](03a_main-story-part1.md), [SD-03b 메인 스토리 2부](03b_main-story-part2.md), [SD-04d 세력 퀘스트 라인](04d_faction-questlines.md), [SD-05 비표시·반복·인카운터](05_misc-quests-encounters.md), [SD-07a 주요 인물](07a_characters-major.md), [SD-08 월드·권역](08_world-regions.md), [SD-09a~f 장소 카탈로그](09a_locations-r01-r02.md), [SD-10 캐릭터 시스템](10_character-system.md), [SD-12 탐험·UI](12_exploration-ui.md), [SD-13 아이템](13_items.md), [SD-14 크리처·적](14_creatures-enemies.md), [SD-15 경제](15_economy.md), [SD-16 아트 디렉션](16_art-direction.md), [SD-17 사운드](17_sound.md), 원작 [RD-14 캐릭터 시스템](../reverse-design/14_character-system.md), [RD-15 상태·생존](../reverse-design/15_status-survival.md), [RD-16 전투 시스템](../reverse-design/16_combat-system.md), [RD-19 무기·탄약](../reverse-design/19_weapons-ammo.md), [RD-20 방어구·의복](../reverse-design/20_armor-apparel.md), [RD-27 쯔꾸르 이식 시사점](../reverse-design/27_adaptation-notes.md)
 
@@ -1720,3 +1720,10 @@ HUD의 화면 디자인과 배치는 [SD-12](12_exploration-ui.md), 그림은 SD
 - 원작: [RD-14](../reverse-design/14_character-system.md), [RD-15](../reverse-design/15_status-survival.md), [RD-16](../reverse-design/16_combat-system.md), [RD-19](../reverse-design/19_weapons-ammo.md), [RD-20](../reverse-design/20_armor-apparel.md), [RD-24](../reverse-design/24_bestiary.md), [RD-26](../reverse-design/26_glossary.md), [RD-27](../reverse-design/27_adaptation-notes.md)
 - 조사: [SR-01 공식 설정](research/SR-01_fallout-canon.md)(C6·C8 파워 아머), [SR-03 인프라·군사](research/SR-03_seoul-infrastructure.md)(용산 오염 토양, 하저 터널), [SR-04 생물](research/SR-04_korean-fauna.md)
 - 세트 내 접점: [SD-06](06_factions.md)(호감도·관계·지원 병력), [SD-10](10_character-system.md)(파생 수치·퍽), [SD-13](13_items.md)(무기·내구 단계), [SD-14](14_creatures-enemies.md)(TTK·HP 압축·방향 DR·상태 이상), [SD-16](16_art-direction.md)(타일 32px·8방향·모션 135프레임·카메라 리드)
+
+## 버전 이력
+
+| 버전 | 날짜 | 내용 |
+|---|---|---|
+| v1.0 | 2026-10-12 | 최초 작성 |
+| v1.1 | 2026-10-12 | 세트 정합 반영(RECON_SPEC) |

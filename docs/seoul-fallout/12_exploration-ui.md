@@ -1,6 +1,6 @@
 # SD-12. 탐험·상호작용·UI
 
-> **서울 폴아웃 상세 기획서 세트** | 문서 ID: SD-12 | 버전: v1.0 | 작성일: 2026-10-12
+> **서울 폴아웃 상세 기획서 세트** | 문서 ID: SD-12 | 버전: v1.1 | 작성일: 2026-10-12
 > **범위**: 핍-보이 3000(메뉴 구조·화면 배치·관리자 코드 표시·세력 호감도 화면·인물 수첩·다중 경로 퀘스트 기록), HUD(체력·AP·방사능·방위 링·탐지 표시·퀘스트 마커), 월드 지도·장소 발견·빠른 이동(한강 횡단 제한), 대화창(얼굴 그래픽·판정 태그·대화 기록·말씨), 상호작용 대상(문·컨테이너·터미널·노트·홀로테이프·침대·작업대·정수기·관제망 장치), 미니게임(자물쇠 따기·해킹), 은신·범죄·현상금, 라디오, 거래·수리·제작 UI, 세력 지원 병력 호출·일시 동행 NPC 표시, 함정·환경 위험·지형과 층 이동, 저장·옵션·접근성·조작, 한국어 텍스트 규칙(조사 자동 처리·줄바꿈·도트 한글 폰트).
 > **다루지 않는 것**: 전투 판정·AP 용도·피해 수치(→ SD-11), 능력치·스킬·퍽·카르마 수치(→ SD-10), 아이템 데이터(→ SD-13), 가격·상인(→ SD-15), 권역·다리·지하철 노선 배치(→ SD-08), 장소 목록(→ SD-09a~f), 도트 규격·팔레트(→ SD-16), BGM·효과음 목록(→ SD-17), 명명 표기 원칙(→ SD-18).
 > **관련 문서**: [SC-00 컨셉](00_concept.md), [SD-01 게임 개요](01_game-overview.md), [SD-03a 메인 스토리 1부](03a_main-story-part1.md), [SD-03b 메인 스토리 2부](03b_main-story-part2.md), [SD-04a~04c 사이드 퀘스트](04a_side-quests-south.md), [SD-04d 세력 퀘스트 라인](04d_faction-questlines.md), [SD-05 비표시·반복·인카운터](05_misc-quests-encounters.md), [SD-06 세력](06_factions.md), [SD-07a 주요 인물](07a_characters-major.md), [SD-07b NPC 디렉터리](07b_npc-directory.md), [SD-08 월드·권역](08_world-regions.md), [SD-09a~09f 장소](09a_locations-r01-r02.md), [SD-10 캐릭터 시스템](10_character-system.md), [SD-11 전투](11_combat-system.md), [SD-13 아이템](13_items.md), [SD-15 경제](15_economy.md), [SD-16 아트](16_art-direction.md), [SD-17 사운드](17_sound.md), [SD-18 용어·명명](18_naming-terms.md), 원작 [RD-17 탐험·상호작용](../reverse-design/17_exploration-interaction.md), [RD-18 UI/UX](../reverse-design/18_ui-ux.md), [RD-27 이식 시사점](../reverse-design/27_adaptation-notes.md)
@@ -1948,3 +1948,10 @@ stateDiagram-v2
 - 바이블: [SC-00 컨셉 v0.4](00_concept.md) §4.1, §5.3~5.8, §6.2, §8, §11
 - 원작: [RD-17 탐험·상호작용](../reverse-design/17_exploration-interaction.md), [RD-18 UI/UX](../reverse-design/18_ui-ux.md), [RD-27 이식 시사점](../reverse-design/27_adaptation-notes.md) §2·§5·§9, [RD-26 용어집](../reverse-design/26_glossary.md)
 - 조사: [SR-02 서울 지리](research/SR-02_seoul-geography.md) §3(한강 다리·하저 터널), [SR-03 인프라](research/SR-03_seoul-infrastructure.md) §4.5·§7.3(대피소 표지, 남산 송신탑), [SR-05 국가·사회](research/SR-05_korea-state-society.md) §6(한국어 표기 관습, 공문 개조식)
+
+## 버전 이력
+
+| 버전 | 날짜 | 내용 |
+|---|---|---|
+| v1.0 | 2026-10-12 | 최초 작성 |
+| v1.1 | 2026-10-12 | 세트 정합 반영(RECON_SPEC) |
