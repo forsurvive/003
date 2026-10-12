@@ -1208,6 +1208,8 @@ function josa(word, pair):            # pair 예: ("은","는"), ("으로","로"
 | `cr_` | 크리처·적 | `cr_byeoni_metdwaeji` |
 | `brd_` | 브랜드·제품 라인 | `brd_beongae_cider` |
 | `trm_` | 시스템·세계관 용어 | `trm_gwanjemang` |
+| `act_` | 막(프롤로그·1~7막·에필로그) | `act_3_se_gaeui_yeolsoe` |
+| `radio_` | 라디오 방송국 | `radio_namsan_bangsong` |
 | `dlg_`, `ui_`, `log_` | 대사·UI·퀘스트 로그 문자열 | `dlg_chr_jo_manseok_mq101_010` |
 
 #### 9.5.2 본체 변환 규칙
@@ -1230,5 +1232,223 @@ function josa(word, pair):            # pair 예: ("은","는"), ("으로","로"
 `[에셋 종류]_[키]_[변형]_[번호 2자리].[확장자]`
 - 예: `face_chr_yun_jeongin_angry_01.png`, `map_loc_r03_tank_maeul_ext_01.json`, `bgm_loc_r06_namsan_bangsong_01.ogg`, `sign_brd_beongae24_01.png`.
 - 에셋 종류 접두(face, sprite, tile, map, sign, icon, bgm, se)는 SD-16·SD-17과 맞춘다.
+
+---
+
+## 10. 통합 용어집
+- **열 설명**: 한국어(게임·기획서 표기) / 영문 키(개발 내부용, §9.5) / 분류 / 정의 / 출처 문서.
+- 분류 순서: 무대 → 핵심 장치·제도 → 진행·시스템(v0.3~0.4) → 막 → 볼트 → 재벌·브랜드 → 세력 → 정착지·장소 → 인물 → 방송·화폐 → 원작 계승 용어 → 캐릭터 시스템 → 전투·탐험 시스템 → 크리처 → ID 체계.
+- 출처 약어: SC = [SC-00](00_concept.md), RD-26 = [원작 용어집](../reverse-design/26_glossary.md), RD-14 = [원작 캐릭터 시스템](../reverse-design/14_character-system.md), SD-18 = 이 문서.
+
+| 한국어 | 영문 키 | 분류 | 정의 | 출처 |
+|---|---|---|---|---|
+| 서울 수도 황무지 | `trm_seoul_sudo_hwangmuji` | 무대 | 2277년 서울 전역의 정식 무대 이름. 약칭 수도 황무지 | SC §11 |
+| 수도 황무지 | `trm_sudo_hwangmuji` | 무대 | 약칭. 원작 Capital Wasteland의 한글 패치 표기와 같다 | SC §1, RD-26 §7 |
+| 황무지 | `trm_wasteland` | 무대 | 대전쟁 뒤의 폐허 세계 일반 | RD-26 §7 |
+| 도심 밀폐 구역 | `reg_r05_dosim_milpye_guyeok` | 무대 | 한양도성 안 도심(R05). 잔해·성곽·차단벽으로 막혀 지하철 등으로만 출입 | SC §4.1, §11 |
+| 사대문 안 | `trm_sadaemun_an` | 무대(통칭) | 황무지 사람들이 도심 밀폐 구역을 부르는 말. 6막 이름 | SC §5.4, SD-18 §4.5 |
+| 북방 병합지 | `trm_bukbang_byeonghapji` | 무대 | 2060년대 중국에 병합된 한반도 북쪽. 현실 북한 정권으로 그리지 않는다 | SC §3.2, §11 |
+| 권역 | `reg_r01_gwanak`~`reg_r11_cheonggyesan`, `reg_ug_jihacheol`, `reg_hr_hangang` | 무대 | R01 관악, R02 여의도·영등포, R03 마포·상암, R04 서강·선유도, R05 도심, R06 용산·남산, R07 강남, R08 동부, R09 북부 산악, R10 서부 평야, R11 청계산, UG 지하, HR 한강 | SC §4.2, 브리프 §6 |
+| 대전쟁 | `trm_great_war` | 세계관 | 2077-10-23 약 2시간의 전 세계 핵 교전 | RD-26 §7, SC §3.1 |
+| 자원 전쟁 | `trm_resource_wars` | 세계관 | 2052년 시작된 자원 쟁탈 전쟁 | RD-26 §7 |
+| 중미 전쟁 | `trm_sino_american_war` | 세계관 | 2066~2077 미국·중국 전쟁. 한반도는 미군 전진기지 | RD-26 §7, SC §3.2 |
+| 전쟁 전 | `trm_prewar` | 세계관 | 대전쟁 이전 시대. 아이템 접두(전쟁 전 지폐) | RD-26 §7 |
+| 수도 관제망 | `trm_sudo_gwanjemang` | 핵심 장치 | 세진전자가 2070년대에 깐 서울 전시 치안 체계. 경비 로봇·포탑·차단벽·대피소 문·방송망을 지휘. 약칭 관제망 | SC §5.2, §11 |
+| 관제망 | `trm_gwanjemang` | 핵심 장치 | 수도 관제망의 약칭 | SC §11 |
+| 관제 본부 | `loc_r05_gwanje_bonbu` | 핵심 장치·장소 | 광화문 지하의 관제망 중앙 진공관 컴퓨터 시설. 최종 던전 | SC §5.2, §11 |
+| 등록 관리자 | `trm_deungnok_gwallija` | 핵심 장치 | 관제망 명령 권한을 여는 생체 인증 대상. 2277년에는 주인공 | SC §5.2, §11 |
+| 관리자 코드 | `trm_gwallija_code` | 핵심 장치 | 주인공 핍-보이에 뜬 정체불명의 코드. 1막 목표 | SC §5.4 |
+| 비상 주민 분류 지침 | `trm_bisang_jumin_bullyu_jichim` | 제도 | 2075년 시행된 주민 분류 제도이자 관제망 기본 프로토콜. 별칭 계엄 프로토콜 | SC §3.3, §11 |
+| 계엄 프로토콜 | `trm_gyeeom_protocol` | 핵심 장치 | 비상 주민 분류 지침의 관제망 운용 이름. E1 결말 이름 | SC §11, §5.5 |
+| 시민 보호 프로토콜 | `trm_simin_boho_protocol` | 핵심 장치 | 한유리 박사가 남긴 대안 프로토콜(테이프). E3 조건 | SC §5.2, §11 |
+| 충성 등급 | `trm_chungseong_deunggeup` | 제도 | 2077년 주민등록증에 찍힌 등급. 단계명은 SD-02 | SC §3.3 |
+| 적성 분자 | `trm_jeokseong_bunja` | 제도 | 지침상 미등록자·국경 이탈자·반전 시위자 분류 | SC §3.3 |
+| 미등록자 | `trm_mideungnokja` | 제도 | 등록되지 않은 사람. 볼트 밖 거의 모든 서울 사람. 1막 이름 | SC §3.3, §5.4 |
+| 호감도 | `trm_hogamdo` | 시스템 | 세력별 주인공에 대한 태도(-100~+100, 내부 값). 화면에는 숫자 대신 서술 | SC §6.2, SD-18 §8.8 |
+| 적대 | `trm_hogamdo_jeokdae` | 호감도 단계 | -100~-60. 보면 공격, 영역 출입 불가 | SC §6.2 |
+| 경계 | `trm_hogamdo_gyeonggye` | 호감도 단계 | -59~-20. 대화는 하나 거래·퀘스트 제한, 감시 | SC §6.2 |
+| 중립 | `trm_hogamdo_jungnip` | 호감도 단계 | -19~+19. 기본 상태 | SC §6.2 |
+| 우호 | `trm_hogamdo_uho` | 호감도 단계 | +20~+49. 할인, 세력 퀘스트 라인, 안전 가옥 | SC §6.2 |
+| 신뢰 | `trm_hogamdo_silloe` | 호감도 단계 | +50~+79. 세력 장비·계급, 지원 병력 호출, 협력자 후보 | SC §6.2 |
+| 동맹 | `trm_hogamdo_dongmaeng` | 호감도 단계 | +80~+100. 세력 고유 보상, 7막 관제 본부 동행 | SC §6.2 |
+| 서울의 판도 | `trm_seoul_pando` | 시스템 | 권역·정착지마다 어느 세력의 영향력이 큰지를 나타내는 값. 깃발·검문소·순찰·상점·인카운터로 드러나고 핍-보이 지도에 표시 | SC §6.2, SD-18 §8.8.4 |
+| 기울기 | `trm_giulgi` | 설계 원칙 | 플레이어의 누적 행동(부탁 수행, 물건 인도, 살해·구조, 거래, 방송)이 호감도·판도·결말 조건을 한쪽으로 기울이는 것. 진영을 메뉴·양자택일로 고르지 않는다 | SC §5.8 |
+| 정착지 연합 | `fac_jeongchakji_yeonhap` | 호감도 대상 | 봉천 계단마을·탱크마을·노들섬·선유도·뚝섬 장터·세이프빌 등 정착지별 호감도의 합산 단위 | SC §6.2 |
+| 지원 병력 호출 | `trm_jiwon_byeongnyeok_hochul` | 시스템 | 호감도 '신뢰' 이상 세력의 병력을 일시 호출하는 기능 | SC §6.2 |
+| 일시 동행 NPC | `trm_ilsi_donghaeng_npc` | 시스템 | 특정 퀘스트 동안만 함께 움직이는 NPC. 끝나면 돌아간다 | SC §6.2, K7 |
+| 이름 있는 NPC | `trm_ireum_inneun_npc` | 시스템 | 이름과 대화가 있는 상호작용 NPC. 500명 이상 목표. v0.2 동료 후보 7명 포함 | SC §5.7, §11 |
+| 동료 | (사용 안 함) | 삭제 | 서울판에는 동료 시스템이 없다(K7). 화면·기획서에 '동료'를 시스템 용어로 쓰지 않는다 | SC §10 K7 |
+| 서울 회의 | `trm_seoul_hoeui` | 사건 | 5막 노들섬에서 열리는 세력 회의. 5막 이름 | SC §5.4 |
+| 경로 퀘스트 | `trm_gyeongno_quest` | 시스템 | 한 막의 목표에 이르는 여러 퀘스트 중 하나. 하나만 해도 막이 진행된다 | SC §5.3 |
+| 프롤로그 「S-07」 | `act_p_s07` | 막 | 볼트에서 자라고 탈출한다(MQ-P1~P4) | SC §5.4 |
+| 1막 「미등록자」 | `act_1_mideungnokja` | 막 | 관리자 코드의 정체, 현상금 추적(MQ-101~106) | SC §5.4 |
+| 2막 「강」 | `act_2_gang` | 막 | 한강 횡단과 세력 접촉(MQ-201~207) | SC §5.4 |
+| 3막 「세 개의 열쇠」 | `act_3_se_gaeui_yeolsoe` | 막 | 전원·프로토콜·길 중 둘 이상 확보(MQ-301~304) | SC §5.4 |
+| 4막 「개방의 대가」 | `act_4_gaebangui_daega` | 막 | 볼트 S-07과 청계산(MQ-401~403) | SC §5.4 |
+| 5막 「서울 회의」 | `act_5_seoul_hoeui` | 막 | 계엄 선포와 서울 회의, 세력 위기(MQ-501~508) | SC §5.4 |
+| 6막 「사대문 안」 | `act_6_sadaemun_an` | 막 | 도심 진입과 탐사(MQ-601~605) | SC §5.4 |
+| 7막 「종전」 | `act_7_jongjeon` | 막 | 관제 본부와 콘솔 앞의 행동(MQ-701~702) | SC §5.4 |
+| 에필로그 | `act_e_epilogue` | 막 | 그 후의 서울, 계속 플레이(MQ-E1) | SC §5.4 |
+| 종전 | `mq_702` | 메인 퀘스트 | 마지막 퀘스트. 결말이 남산 방송으로 방송된다 | SC §5.1, §5.4 |
+| 서울 볼트 S-01~S-12 | `loc_vault_s01`~`loc_vault_s12` | 볼트 | 한결건설이 볼트-텍 면허로 지은 서울 계열 볼트. 정사 번호 1~122는 쓰지 않는다 | SC §3.4, §11 |
+| 볼트 S-07(관악) | `loc_vault_s07` | 볼트 | 주인공의 볼트. 재건 행정 요원 양성 볼트, 적성 평가 사회 | SC §3.4, §11 |
+| 볼트 | `trm_vault` | 원작 계승 | 핵 대피소 | RD-26 §7 |
+| 오버시어 | `trm_overseer` | 원작 계승 | 볼트 책임자. S-07은 윤정인 | RD-26 §7, SC §11 |
+| 생활기록부 | `trm_saenghwal_girokbu` | 볼트 | S-07에서 S.P.E.C.I.A.L. 배분을 담는 문서 틀(MQ-P2) | SC §5.4 |
+| 적성 평가 | `trm_jeokseong_pyeongga` | 볼트 | S-07의 진로 시험. 태그 스킬 결정(MQ-P3). 원작 G.O.A.T. 대응 | SC §5.4, RD-26 §3 |
+| 등록 번호 | `trm_deungnok_beonho` | 볼트 | `S07-출생연도-일련3` 형식의 볼트 주민 번호 | SD-18 §3.3 |
+| 등록 성명 표준 목록 | `trm_deungnok_seongmyeong_pyojun_mongnok` | 볼트 | S-07 신생아 이름을 고르는 목록(2077년 입주자 명부 기반) | SD-18 §3.3 |
+| 태성그룹 | `brd_taeseong_group` | 재벌 | 원자력·에너지·중공업·군수. 소형 원자로, 원자력 차량, 무기, 파워 아머 면허 정비 | SC §3.3, §11 |
+| 세진전자 | `brd_sejin_jeonja` | 재벌 | 로봇·진공관 터미널·수도 관제망 설계 시공 | SC §3.3, §11 |
+| 한결건설 | `brd_hangyeol_geonseol` | 재벌 | 대피 시설·건설. 서울 볼트 시공, 아파트 브랜드 세이프빌 | SC §3.3, §11 |
+| 세이프빌(브랜드) | `brd_safeville` | 브랜드 | 한결건설 아파트 브랜드 | SC §11 |
+| 청솔식품 | `brd_cheongsol_sikpum` | 재벌 | 음료·식품·편의점 | SC §3.3, §11 |
+| 번개사이다 | `brd_beongae_cider` | 브랜드 | 청솔식품 탄산음료. 수입 뉴카-콜라와 경쟁 | SC §11 |
+| 번개24 | `brd_beongae24` | 브랜드 | 청솔식품 편의점 체인 | SC §11 |
+| 볼트-텍 | `brd_vault_tec` | 원작 계승 | 볼트 설계 면허 원천(미국) | RD-26 §7, SC §11 |
+| 웨스트 텍 | `brd_west_tek` | 원작 계승 | 파워 아머 프레임 원천(미국) | RD-26 §7, SC §3.3 |
+| 뉴카-콜라 | `brd_nuka_cola` | 원작 계승 | 수입 탄산음료 | RD-26 §6, SC §11 |
+| 비상정부 | `fac_bisang_jeongbu` | 세력 | 청계산 심층 벙커의 국가 지도부·재벌 후예. '정통 대한민국'을 자처. 수장 권한대행 남궁혁. 원작 엔클레이브 대응 | SC §6.1, §11 |
+| 계엄군 | `fac_gyeeomgun` | 세력(하위) | 비상정부의 지상군. 면허 생산 파워 아머, 버티버드 | SC §6.1, §11 |
+| 연합단 | `fac_yeonhapdan` | 세력 | 용산 한미 연합 기지 생존자 후손의 기술 군사 집단. '기지를 지켜라'. 원작 BoS 대응 | SC §6.1, §11 |
+| 원칙파 | `fac_wonchikpa` | 세력 | 연합단 분파. 기술 회수만 고집. 원작 아웃캐스트 대응 | SC §6.1, §11 |
+| 약탈자 | `fac_yaktalja` | 세력 | 폐허의 무장 집단. 기본 적대. 원작 레이더 대응 | SC §6.1, §11 |
+| 새벽인력 | `fac_saebyeok_illyeok` | 세력 | 인력사무소 장부를 쓰는 인신매매단. 원작 노예 사냥꾼 대응 | SC §6.1, §11 |
+| 철벽경호 | `fac_cheolbyeok_gyeongho` | 세력 | 선한 카르마 주인공을 노리는 용병 회사. 원작 탈론 컴퍼니 대응 | SC §6.1, §11 |
+| 자율방범대 | `fac_jayul_bangbeomdae` | 세력 | 악한 카르마 주인공을 노리는 자경단. 원작 감시자 대응 | SC §6.1, §11 |
+| 중국군 잔존병 | `fac_junggukgun_janjonbyeong` | 세력 | 2077년 침투 특수부대의 구울 생존자. 북한산 지하. '명령에 갇힌 병사' | SC §6.1, §11 |
+| 변종 | `fac_byeonjong` | 세력·크리처 | 미군 생물 연구 시료와 방사능으로 생긴 거대 변이 인간. 원작 슈퍼 뮤턴트 대응 | SC §6.1, §7 |
+| 지하시장 | `fac_jiha_sijang` | 세력 | 영등포 지하상가의 구울 사회. 원작 언더월드 대응 | SC §6.1, §11 |
+| 각성회 | `fac_gakseonghoe` | 세력 | 잠든 관제망을 수호자로 믿는 신앙 공동체. 원작 원자의 자손 대응. 실제 교단 풍자 아님 | SC §6.1, §11 |
+| 봉천 계단마을 | `loc_r01_bongcheon_gyedan_maeul` | 정착지 | 관악 봉천동 언덕의 첫 정착지. 이장 조만석 | SC §4.3, §11 |
+| 탱크마을 | `loc_r03_tank_maeul` | 정착지 | 마포 석유비축기지 탱크 안 정착지. 대표 민경자 | SC §4.3, §11 |
+| 노들섬 | `loc_hr_nodeulseom` | 정착지 | 한강대교 위 교역 도시. 선주 조합장 백인하. 서울 회의 장소 | SC §4.3, §11 |
+| 선유도 | `loc_r04_seonyudo` | 정착지 | 옛 정수장 섬의 물 농사 정착지. 물 상인 조합이 캡을 보증 | SC §4.3, §11 |
+| 뚝섬 장터 | `loc_r08_ttukseom_jangteo` | 정착지 | 동부 강변의 장터 | SC §11 |
+| 세이프빌(정착지) | `loc_r07_safeville` | 정착지 | 강남 아파트 요새 | SC §6.1, §11 |
+| 여의도 지하 벙커 | `loc_r02_yeouido_jiha_bunker` | 장소 | 2077년 비상 집결지 기록이 남은 벙커(MQ-104) | SC §4.3, §11 |
+| 영등포 지하상가 | `loc_r02_yeongdeungpo_jihasangga` | 장소 | 지하시장 사회가 있는 지하상가 | SC §4.3, §11 |
+| 용산 요새 | `loc_r06_yongsan_yosae` | 장소 | 연합단 본거지(옛 용산 한미 연합 기지) | SC §11 |
+| 남산 방송 | `loc_r06_namsan_bangsong` | 장소 | 남산 송신탑의 방송국. 방송 이름은 `radio_namsan_bangsong` | SC §11 |
+| 세진전자 타워 | `loc_r07_sejin_jeonja_tower` | 장소 | 강남 초고층 수직 던전. 시민 보호 프로토콜(MQ-302) | SC §4.3, §11 |
+| 청계산 벙커 | `loc_r11_cheonggyesan_bunker` | 장소 | 비상정부 심층 벙커(MQ-402) | SC §11 |
+| 북한산 | `loc_r09_bukhansan` | 장소 | 중국군 잔존병 거점 산악(MQ-303) | SC §11 |
+| 당인리 지하 원자력 발전소 | `loc_r03_danginri_jiha_wonjaryeok_baljeonso` | 장소 | 관제망 전원. 2060년대 소형 원자로로 바뀐 가상 시설(MQ-301) | SC §4.3, §11 |
+| 양화 나루 | `loc_hr_yanghwa_naru` | 장소 | 선유도 물 상인 조합의 배가 뜨는 나루(MQ-202) | SC §5.4 |
+| 하저 터널 | `loc_ug_hajeo_tunnel` | 장소 | 침수된 5호선 강 밑 구간(MQ-203) | SC §5.4 |
+| 침투 터널 | `loc_r09_chimtu_tunnel` | 장소 | 중국군 잔존병이 2077년에 판 도심 침투로(MQ-602) | SC §5.4 |
+| 윤정인 | `chr_yun_jeongin` | 핵심 인물 | S-07 오버시어, 주인공의 어머니 | SC §11 |
+| 하도윤 | `chr_ha_doyun` | 핵심 인물 | S-07 친구. 탈출 방법 중 하나 | SC §11 |
+| 남궁혁 | `chr_namgung_hyeok` | 핵심 인물 | 비상정부 권한대행, 2077년 행정안전부 장관, 구울 | SC §11 |
+| 강태오 | `chr_gang_taeo` | 주요 인물 | 대령, 계엄사령관(비상정부 지상군 지휘관). 동명 검사 §3.11 | SC §11 |
+| 다니엘 서 | `chr_daniel_seo` | 주요 인물 | 연합단 단장 | SC §11 |
+| 마영식 | `chr_ma_yeongsik` | 주요 인물 | 지하시장 구울 기술자, 2077년 세진전자 하청 기술자 | SC §11 |
+| 천웨이 | `chr_chen_wei` | 주요 인물 | 상위, 중국군 잔존병 지휘관, 구울. 한자 陳偉. 동명 검사 §3.11 | SC §11 |
+| 송미래 | `chr_song_mirae` | 주요 인물 | 남산 방송 진행자 | SC §11 |
+| 한유리 | `chr_han_yuri` | 주요 인물 | 박사, 세진전자 수석 기술자, 관제망 설계자(2077년 사망) | SC §11 |
+| 조만석 | `chr_jo_manseok` | 주요 인물 | 봉천 계단마을 이장 | SC §11 |
+| 백인하 | `chr_baek_inha` | 주요 인물 | 노들섬 선주 조합장 | SC §11 |
+| 민경자 | `chr_min_gyeongja` | 주요 인물 | 탱크마을 대표 | SC §11 |
+| 황두칠 | `chr_hwang_duchil` | 주요 인물 | 새벽인력 소장 | SC §11 |
+| 류정 | `chr_ryu_jeong` | 주요 인물 | 각성회 안내자 | SC §11 |
+| 백구 | `chr_baekgu` | 이름 있는 NPC | 봉천 계단마을의 진돗개 | SC §7, §11 |
+| 큰돌 | `chr_keundol` | 이름 있는 NPC | 평화적인 변종 | SC §11 |
+| 제이슨 임 | `chr_jason_im` | 이름 있는 NPC | 연합단 기사 | SC §11 |
+| 박춘삼 | `chr_bak_chunsam` | 이름 있는 NPC | 지하시장의 계약 구울 경호원 | SC §11 |
+| 파수-3 | `chr_pasu3` | 이름 있는 NPC | 세진전자 경비 로봇 개체 | SC §11 |
+| 진세라 | `chr_jin_sera` | 이름 있는 NPC | 철벽경호 용병 | SC §11 |
+| 독사 | `chr_doksa` | 이름 있는 NPC | 새벽인력 추심원 | SC §11 |
+| 남산 방송(라디오) | `radio_namsan_bangsong` | 라디오 | 송미래의 방송. 원작 GNR 역할 | SC §11 |
+| 국민방송 | `radio_gungmin_bangsong` | 라디오 | 비상정부 방송, 권한대행 연설 | SC §11 |
+| 캡 | `trm_caps` | 화폐 | 병뚜껑 화폐. 선유도 물 상인 조합이 물과 교환을 보증 | SC §11, RD-26 §6 |
+| 핍-보이 | `trm_pipboy` | 원작 계승 | 볼트 주민 손목 단말. 이형 표기 금지 | RD-26 §5, SC §11 |
+| 스팀팩 | `csm_stimpak` | 원작 계승 | 체력 회복 주사 | RD-26 §6 |
+| 라드어웨이 | `csm_radaway` | 원작 계승 | 방사능 제거 약품 | RD-26 §6 |
+| 라드-X | `csm_rad_x` | 원작 계승 | 방사능 저항 약품 | RD-26 §6 |
+| 메드-X, 버프아웃, 멘타츠, 사이코, 제트 | `csm_med_x`, `csm_buffout`, `csm_mentats`, `csm_psycho`, `csm_jet` | 원작 계승 | 원작 약물. 서울판 계승 여부는 SD-13 | RD-26 §6 |
+| 구울 | `cr_ghoul` | 원작 계승 | 방사능으로 변한 장수 인간. 2077년 이름 유지 | RD-26 §7, SC §11 |
+| 야생 구울 | `cr_feral_ghoul` | 원작 계승 | 이성을 잃은 구울 | RD-26 §7, SC §11 |
+| 파워 아머 | `arm_power_armor` | 원작 계승 | 웨스트 텍 프레임. 한국은 면허 생산·정비 | RD-26 §6, SC §3.3 |
+| 버티버드 | `trm_vertibird` | 원작 계승 | 비상정부 수직 이착륙기(MQ-604) | RD-26 §7, SC §11 |
+| 홀로테이프 | `msc_holotape` | 원작 계승 | 기록 매체 | RD-26 §5 |
+| 터미널 | `trm_terminal` | 원작 계승 | 진공관 단말기. 서울판은 세진 SJ-T 계열 | RD-26 §5 |
+| 머리핀 | `msc_bobby_pin` | 원작 계승 | 자물쇠 따기 소모품 | RD-26 §5 |
+| 핵분열 배터리 | `msc_fission_battery` | 원작 계승 | 소형 동력원 | RD-26 §6 |
+| S.P.E.C.I.A.L. | `trm_special` | 캐릭터 시스템 | 7대 기본 능력치. S-07에서는 생활기록부로 배분 | RD-26 §3, SC §11 |
+| 힘 | `trm_strength` | 능력치(ST) | 근력·소지 한도·근접 피해 | RD-26 §3 |
+| 인지력 | `trm_perception` | 능력치(PE) | 감지·명중 | RD-26 §3 |
+| 지구력 | `trm_endurance` | 능력치(EN) | 체력·저항 | RD-26 §3 |
+| 카리스마 | `trm_charisma` | 능력치(CH) | 화술·물물교환 | RD-26 §3 |
+| 지능 | `trm_intelligence` | 능력치(IN) | 스킬 포인트·과학·의학 | RD-26 §3 |
+| 민첩성 | `trm_agility` | 능력치(AG) | 행동력·소형 화기·은신 | RD-26 §3 |
+| 행운 | `trm_luck` | 능력치(LK) | 치명타·전 스킬 소폭 | RD-26 §3 |
+| 스킬 | `trm_skill` | 캐릭터 시스템 | 13개 숙련치 | RD-26 §3 |
+| 물물교환 | `trm_barter` | 스킬 | 거래 가격 | RD-26 §3 |
+| 중화기 | `trm_big_guns` | 스킬 | 중화기 명중·피해 | RD-26 §3 |
+| 에너지 무기 | `trm_energy_weapons` | 스킬 | 에너지 무기 명중·피해 | RD-26 §3 |
+| 폭발물 | `trm_explosives` | 스킬 | 수류탄·지뢰 | RD-26 §3 |
+| 자물쇠 따기 | `trm_lockpick` | 스킬 | 잠긴 문·상자 | RD-26 §3 |
+| 의학 | `trm_medicine` | 스킬 | 치료 효율 | RD-26 §3 |
+| 근접 무기 | `trm_melee_weapons` | 스킬 | 근접 무기 | RD-26 §3 |
+| 수리 | `trm_repair` | 스킬 | 장비 수리 | RD-26 §3 |
+| 과학 | `trm_science` | 스킬 | 터미널 해킹 | RD-26 §3 |
+| 소형 화기 | `trm_small_guns` | 스킬 | 권총·소총·산탄총 | RD-26 §3 |
+| 은신 | `trm_sneak` | 스킬 | 들키지 않기·기습 | RD-26 §3 |
+| 화술 | `trm_speech` | 스킬 | 설득. 화술 판정 | RD-26 §3 |
+| 비무장 | `trm_unarmed` | 스킬 | 맨손·격투 무기 | RD-26 §3 |
+| 태그 스킬 | `trm_tag_skill` | 캐릭터 시스템 | 시작 보너스 스킬 3개. 적성 평가로 정한다 | RD-26 §3, SC §5.4 |
+| 퍽 | `trm_perk` | 캐릭터 시스템 | 레벨업 특성. 원작 계승 퍽은 음차, 서울판 퍽은 한국어(§7.2) | RD-26 §3, SD-18 §7.2 |
+| 퀘스트 퍽 | `trm_quest_perk` | 캐릭터 시스템 | 퀘스트 결과로 받는 퍽 | RD-26 §3 |
+| 카르마 | `trm_karma` | 캐릭터 시스템 | 주인공의 선악 수치. 호감도와 별개 | RD-26 §3, SC §6.2 |
+| 카르마 칭호 | `trm_karma_title` | 캐릭터 시스템 | 레벨 × 카르마 칭호. 서울판 칭호는 SD-10 | RD-14 §7.2 |
+| 경험치(XP) | `trm_xp` | 캐릭터 시스템 | 레벨업 수치 | RD-26 §3 |
+| 레벨 | `trm_level` | 캐릭터 시스템 | 성장 단계 | RD-26 §3 |
+| 체력(HP) | `trm_hp` | 캐릭터 시스템 | 생명력 | RD-26 §3 |
+| 행동력(AP) | `trm_ap` | 캐릭터 시스템 | 실시간 전투에서의 용도는 SD-11 | RD-26 §3, RD-27 §14.2 |
+| 소지 한도 / 과적 | `trm_carry_weight`, `trm_encumbered` | 캐릭터 시스템 | 들 수 있는 무게, 넘었을 때 상태 | RD-26 §3 |
+| 피해 저항(DR) | `trm_dr` | 전투 | 피해 감소 % | RD-26 §4 |
+| 방사능 / 라드 | `trm_radiation`, `trm_rad` | 전투·생존 | 피폭과 단위 | RD-26 §4 |
+| 방사능 저항 | `trm_rad_resistance` | 전투·생존 | 피폭 감소 | RD-26 §4 |
+| 치명타 | `trm_critical_hit` | 전투 | 추가 피해 공격 | RD-26 §4 |
+| 기습 공격 | `trm_sneak_attack` | 전투 | 은신 중 공격 | RD-26 §4 |
+| 부위 손상 | `trm_limb_damage` | 전투 | 머리·몸통·팔·다리의 손상 상태. **RD-26 '불구'를 바꾼 서울판 표기** | SD-18 §11.4 |
+| 중독 / 금단 증상 | `trm_addiction`, `trm_withdrawal` | 생존 | 약물 부작용 | RD-26 §4 |
+| V.A.T.S. | `trm_vats` | 원작 계승 | 볼트-텍 보조 조준 시스템. 1차 범위 제외, 축약형은 선택 과제 | RD-26 §4, RD-27 §14.1 |
+| 화술 판정 | `trm_speech_check` | 탐험 | 대화 선택지의 스킬 판정 | RD-26 §5 |
+| 해킹 | `trm_hacking` | 탐험 | 터미널 단어 맞히기 미니게임. 한국어 단어 규칙은 SD-12 | RD-26 §5 |
+| 빠른 이동 | `trm_fast_travel` | 탐험 | 발견 장소 사이 이동 | RD-26 §5 |
+| 지도 마커 | `trm_map_marker` | 탐험 | 지도 위 장소 표시. 황무지 통칭 우선(§4.3) | RD-26 §5, SD-18 §4.3 |
+| 작업대 / 설계도 | `trm_workbench`, `trm_schematics` | 제작 | 제작 무기 제작 | RD-26 §5 |
+| 암살대 | `trm_hit_squad` | 시스템 | 카르마·호감도에 따라 파견되는 추적자(철벽경호·자율방범대, 적대 세력) | RD-26 §4, SC §6.2 |
+| 결말 | `trm_ending` | 결말 | E1~E5. 콘솔 앞 행동으로 정해진다 | SC §5.5 |
+| 결말 슬라이드 | `trm_ending_slide` | 결말 | 결말 + 카르마 + 세력별 호감도 + 판도 + 사이드 결과의 조합 슬라이드(ES-) | SC §5.5 |
+| 계엄 프로토콜 가동 | `ending_e1` | 결말 | E1 | SC §5.5 |
+| 연합단에 지휘권 이양 | `ending_e2` | 결말 | E2 | SC §5.5 |
+| 시민 등록 | `ending_e3` | 결말 | E3(새 주민등록) | SC §5.5 |
+| 관제망 영구 정지 | `ending_e4` | 결말 | E4(종전 선언) | SC §5.5 |
+| 관리자 군림 | `ending_e5` | 결말 | E5 | SC §5.5 |
+| 변이 바퀴벌레 | `cr_byeoni_bakwibeolle` | 크리처 | 원작 방사능바퀴 대응 | SC §7 |
+| 변이 하루살이·러브버그 | `cr_byeoni_harusari`, `cr_byeoni_lovebug` | 크리처 | 원작 블로트플라이 대응 | SC §7 |
+| 변이 시궁쥐 | `cr_byeoni_sigungjwi` | 크리처 | 원작 땅두더지 대응 | SC §7 |
+| 변이 들개 | `cr_byeoni_deulgae` | 크리처 | 무리 생활 | SC §7 |
+| 변이 반달가슴곰 | `cr_byeoni_bandalgaseumgom` | 크리처 | 원작 야오과이 대응 | SC §7 |
+| 변이 외래 거북·참게 | `cr_byeoni_oerae_geobuk`, `cr_byeoni_chamge` | 크리처 | 원작 마이얼럭 대응 | SC §7 |
+| 변이 왕지네·장수말벌 | `cr_byeoni_wangjine`, `cr_byeoni_jangsumalbeol` | 크리처 | 원작 방사능전갈 대응 | SC §7 |
+| 변이 붉은불개미 | `cr_byeoni_bulgeunbulgaemi` | 크리처 | 원작 화염개미 대응 | SC §7 |
+| 두 머리 한우 | `cr_du_meori_hanu` | 크리처 | 원작 브라민 대응 가축 | SC §7 |
+| 변이 멧돼지 | `cr_byeoni_metdwaeji` | 크리처 | 서울판 신규 | SC §7 |
+| 변이 수달·뉴트리아 | `cr_byeoni_sudal`, `cr_byeoni_nutria` | 크리처 | 한강 생태 | SC §7 |
+| 진돗개 | `cr_jindotgae` | 크리처(NPC 개) | 실제 한국 토종견. 백구 등 | SC §7 |
+| 세진 로봇 | `cr_sejin_robot` | 크리처 | 가정용·보안·군용 로봇. 애칭 체계 §5.3 | SC §7, SD-18 §5.3 |
+| 관제망 경비 로봇 | `cr_gwanje_robot` | 크리처 | 관제망에 묶인 로봇. 계엄 프로토콜 집행 | SC §7 |
+| 메인 퀘스트 ID | `mq_p1`~`mq_p4`, `mq_101`~, `mq_e1` | ID | MQ-P1~P4, MQ-<막><순번>(MQ-101), MQ-E1 | SC §5.4, 브리프 §6 |
+| 사이드 퀘스트 ID | `sq_s01`~, `sq_w01`~, `sq_n01`~ | ID | SQ-S(남부) / SQ-W(서부·한강) / SQ-N(북부·동부·도심) | 브리프 §6 |
+| 세력 퀘스트 ID | `fq_yh_01` 등 | ID | FQ-<세력 약호>-nn. 약호는 SD-06 확정(제안 §6.2) | 브리프 §6 |
+| 비표시·반복·인카운터 ID | `uq_01`, `rq_01`, `re_001` | ID | UQ-01~ / RQ-01~ / RE-001~ | 브리프 §6 |
+| 세력 ID | `fac_` + 키(F-01~은 SD-06) | ID | F-01~ | 브리프 §6 |
+| 인물 ID | `chr_` / `npc_` | ID | 주요 인물 C-001~, 일반 NPC N-<권역>-001(N-R01-001) | 브리프 §6 |
+| 장소 ID | `loc_` | ID | L-R01-01, 지하 L-UG-01, 한강 L-HR-01 | 브리프 §6 |
+| 아이템·퍽·크리처 ID | `wpn_` `arm_` `csm_` `msc_` `pk_` `cr_` | ID | W-001~ / A-001~ / I-001~ / M-001~ / PK-001~ / CR-001~ | 브리프 §6 |
+| 결말 ID | `ending_e1`~`e5`, `es_01`~ | ID | E1~E5 / ES-01~ | 브리프 §6 |
 
 ---
