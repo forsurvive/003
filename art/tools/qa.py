@@ -147,7 +147,8 @@ def main():
     for f in sorted(glob.glob(os.path.join(ROOT, "samples", "*.png"))):
         b = os.path.basename(f)
         # exempt: comparison/filter previews, translucent UI layers, preview sheets on a neutral backdrop
-        if any(b.startswith(p) for p in ("00_", "03_tiles_r01", "05_scene", "06_hud", "07_pip", "18_", "21_scene_birth", "22_", "23_")):
+        # t_: 단계 T 기술 출력(지도 1px 미리보기, 엔진 화면 캡처)은 그림 원본이 아니다
+        if any(b.startswith(p) for p in ("00_", "03_tiles_r01", "05_scene", "06_hud", "07_pip", "18_", "21_scene_birth", "22_", "23_", "t_")):
             continue
         if "_x" in b or "strip" in b:
             continue

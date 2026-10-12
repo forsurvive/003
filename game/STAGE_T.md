@@ -71,6 +71,14 @@
 - 서서 조준하는 적이 바라보는 방향을 갱신하지 않아 시야각에서 표적을 놓치던 문제(교전 중에는 표적을 계속 본다).
 - 정문 통로 1타일 → 3타일(반지름 0.3t 충돌체가 정렬 없이 지나가게).
 
+## 5b. 그림체 비교 샘플: 아이작풍 (리드 판정용, 채택 아님)
+
+- 같은 장소(볼트 S-07 정문 앞)를 '바인딩 오브 아이작'풍(2~2.5등신, 큰 머리, 굵은 먹선, 방 한 칸 화면)으로 다시 그렸다. 원작 캐릭터·몬스터·그림은 베끼지 않았다.
+- 그림: `art/tools/style_isaac.py` → `art/samples/17_isaac_chars*.png`·`17_isaac_room*.png`(QA 위반 0, 팔레트 안), 게임용 `game/assets/style_isaac/`.
+- 실행: `godot --path game res://scenes/style/isaac_room.tscn`(WASD·마우스·클릭, `-- --demo` 자동). 이동은 본편 Locomotion 그대로(미끄러짐 금지, 몸 = 이동 방향, 머리 = 조준 방향).
+- 비교: `python3 tools/screens/style_compare.py` → `game/reports/style_isaac_compare.png`, `style_isaac_demo.gif`.
+- 짧은 다리 때문에 보폭이 컷당 4px(현행 달리기 8px)라, 같은 4.5t/s에서 다리 컷이 초당 36장으로 두 배 빨리 넘어간다. 발은 고정되지만 종종걸음으로 보인다.
+
 ## 6. G-T까지 남은 일
 
 1. **실기기 측정**: Windows(D-P2), Android(D-A2), iOS(D-I2). Android는 네트워크 허용(dl.google.com) 뒤 이 환경에서 빌드 가능, iOS는 macOS 환경 필요(H-10).

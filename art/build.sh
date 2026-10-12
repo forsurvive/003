@@ -30,6 +30,7 @@ run() {
   python3 tools/scene_birth.py
   python3 tools/filters.py
   python3 tools/legibility_test.py
+  python3 tools/style_isaac.py
   python3 tools/compare_sheet.py
   python3 tools/pack.py
   python3 tools/qa.py
