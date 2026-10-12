@@ -1,6 +1,6 @@
 # SD-09d. 장소 카탈로그: R07 강남, R11 청계산
 
-> **서울 폴아웃 상세 기획서 세트** | 문서 ID: SD-09d | 버전: v1.1 | 작성일: 2026-10-12
+> **서울 폴아웃 상세 기획서 세트** | 문서 ID: SD-09d | 버전: v1.2 | 작성일: 2026-10-12
 > **범위**: SD-08 §11.8(R07 강남 33곳)과 §11.12(R11 청계산 21곳) 장소 시드 54곳 전부의 L-ID·좌표·등급·판도·음향 배정, 장소 상세(S·A 상세, B·C 간결), S등급 5곳 심층 설계(세진전자 타워 수직 던전 15장, 세이프빌, 고속터미널 지하상가, 양재 온실촌, 청계산 벙커), 권역별 이름 있는 NPC(R07 59명, R11 46명), 사이드 퀘스트 훅(주 훅 R07 15개·R11 13개, R07 소형 훅 12개), 수집품·기록물 배치, 랜덤 인카운터 지점과 이동 경로. **다루지 않는 것**: 퀘스트 본문(→ SD-03a·03b·04a·04d), 지하철역·대심도 선로 실내(→ SD-09f, 이 문서는 연결부만), 적 수치(→ SD-14), 아이템 수치(→ SD-13)
 > **관련 문서**: [SC-00 컨셉](00_concept.md), [SD-02 세계관](02_world-and-lore.md), [SD-03a 메인 1부](03a_main-story-part1.md), [SD-03b 메인 2부](03b_main-story-part2.md), [SD-04a 사이드(남부)](04a_side-quests-south.md), [SD-04d 세력 퀘스트](04d_faction-questlines.md), [SD-05 비표시·인카운터](05_misc-quests-encounters.md), [SD-06 세력](06_factions.md), [SD-07a 주요 인물](07a_characters-major.md), [SD-07b NPC 디렉터리](07b_npc-directory.md), [SD-08 월드·권역](08_world-regions.md), [SD-09f 지하·한강](09f_locations-underground-river.md), [SD-10 캐릭터](10_character-system.md), [SD-12 탐험·UI](12_exploration-ui.md), [SD-13 아이템](13_items.md), [SD-14 크리처·적](14_creatures-enemies.md), [SD-15 경제](15_economy.md), [SD-16 아트](16_art-direction.md), [SD-17 사운드](17_sound.md), [SD-18 명명](18_naming-terms.md), 원작 [RD-12](../reverse-design/12_world-structure-settlements.md)·[RD-13](../reverse-design/13_location-catalog.md)·[RD-27](../reverse-design/27_adaptation-notes.md)
 
@@ -13,7 +13,7 @@
 3. [R11 청계산](#3-r11-청계산)
 4. [권역 사이의 길: 강남에서 청계산까지](#4-권역-사이의-길-강남에서-청계산까지)
 5. [원작 대응](#5-원작-대응)
-6. [쯔꾸르 제작 메모](#6-쯔꾸르-제작-메모)
+6. [제작 메모 (엔진: 범용 2D)](#6-제작-메모-엔진-범용-2d)
 7. [미결 사항](#7-미결-사항)
 8. [부록](#8-부록)
 
@@ -1038,7 +1038,7 @@ flowchart TD
 
 ---
 
-## 6. 쯔꾸르 제작 메모
+## 6. 제작 메모 (엔진: 범용 2D)
 | 항목 | R07 | R11 |
 |---|---|---|
 | 타일셋 | TS-O02 아파트, TS-O03 상가·학원가, TS-O10 초고층 저층부, TS-O05 고가, TS-I09 초고층 실내, TS-I03 지하상가, TS-I05 학원 실내, TS-I01 볼트(S-03) | TS-O07 산지, TS-O05 고가(경부), TS-O13 정착지 고철, TS-I07 벙커·군사 실내, TS-I02 지하철(수서) |
@@ -1120,3 +1120,4 @@ flowchart TD
 |---|---|---|
 | v1.0 | 2026-10-12 | 최초 작성 |
 | v1.1 | 2026-10-12 | 세트 정합 반영(RECON_SPEC). 세진전자 타워 지상 101층 정본(H-02)으로 층 배치 수정, 스킬북 배치 ID `BK-<종>-<권역>-<nn>`, 외형 코드 SD-07b 통일안, 마커 Y/N |
+| v1.2 | 2026-10-12 | 엔진(범용 2D, Godot 4 권장)·모바일 지원·범위 조정(K9~K11) 반영: 제작 메모 절 제목 정리 |

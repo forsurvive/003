@@ -1,6 +1,6 @@
 # SD-02. 세계관·연표
 
-> **서울 폴아웃 상세 기획서 세트** | 문서 ID: SD-02 | 버전: v1.1 | 작성일: 2026-10-12
+> **서울 폴아웃 상세 기획서 세트** | 문서 ID: SD-02 | 버전: v1.2 | 작성일: 2026-10-12
 > **범위**: 정사 고정값과 서울판 결정값 대조, 1945~2077 한국사 연표(2052~2077 연 단위, 2077-10-23 시각 단위), 2077년 대한민국의 체제·사회·기술, 가상 재벌 4곳, 수도 관제망의 기술·역사·규칙, 서울 볼트 S-01~S-12, 생물 시료·중국군 침투조·세력의 기원 연대, 전후 200년 연표(2078~2277)와 2277년 정세, 환경 스토리텔링 기록물 목록, 주제와 미스터리
 > **관련 문서**: [SC-00 컨셉](00_concept.md), [SD-03a 메인 스토리 1부](03a_main-story-part1.md), [SD-03b 메인 스토리 2부](03b_main-story-part2.md), [SD-04a~d 사이드·세력 퀘스트](04d_faction-questlines.md), [SD-06 세력](06_factions.md), [SD-07a 주요 인물](07a_characters-major.md), [SD-08 월드·권역](08_world-regions.md), [SD-09a~f 장소 카탈로그](09f_locations-underground-river.md), [SD-12 탐험·UI](12_exploration-ui.md), [SD-13 아이템](13_items.md), [SD-14 크리처·적](14_creatures-enemies.md), [SD-16 아트 디렉션](16_art-direction.md), [SD-18 용어·명명](18_naming-terms.md)
 > **근거 자료**: [SR-01 공식 설정](research/SR-01_fallout-canon.md), [SR-02 서울 지리](research/SR-02_seoul-geography.md), [SR-03 인프라·군사](research/SR-03_seoul-infrastructure.md), [SR-04 생물](research/SR-04_korean-fauna.md), [SR-05 국가·사회](research/SR-05_korea-state-society.md), 원작 [RD-02 세계관·설정·연표](../reverse-design/02_world-and-lore.md), [RD-26 용어집](../reverse-design/26_glossary.md), [RD-27 이식 메모](../reverse-design/27_adaptation-notes.md)
@@ -1243,7 +1243,7 @@ flowchart LR
 
 ---
 
-## 13. 쯔꾸르 제작 메모
+## 13. 제작 메모 (엔진: 범용 2D)
 
 ### 13.1 설정 데이터 관리
 - RD-02 §13.2의 권고대로 설정을 **데이터베이스**로 관리한다. 열: `LR-ID / 연도·시각 / 형식 / 화자 / 노출 장소(L-ID) / 해금 조건(퀘스트·플래그) / 연결 미스터리`. 이 문서 §10.1이 초기 데이터다.
@@ -1391,3 +1391,4 @@ flowchart LR
 |---|---|---|
 | v1.0 | 2026-10-12 | 최초 완성본 |
 | v1.1 | 2026-10-12 | 세트 정합 반영(RECON_SPEC) |
+| v1.2 | 2026-10-12 | 엔진(범용 2D, Godot 4 권장)·모바일 지원·범위 조정(K9~K11) 반영: 제작 메모 절 제목 정리 |

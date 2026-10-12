@@ -1,6 +1,6 @@
 # SD-04d. 세력 퀘스트 라인
 
-> **서울 폴아웃 상세 기획서 세트** | 문서 ID: SD-04d | 버전: v1.1 | 작성일: 2026-10-12
+> **서울 폴아웃 상세 기획서 세트** | 문서 ID: SD-04d | 버전: v1.2 | 작성일: 2026-10-12
 > **범위**: 호감도 대상 10개 세력(BJ 비상정부, YH 연합단, WP 원칙파, SB 새벽인력, JG 중국군 잔존병, JH 지하시장, GS 각성회, JC 정착지 연합, NJ 난지 고철단, KD 큰돌 무리)의 **세력 퀘스트 69편(FQ-BJ-01~FQ-KD-05) 상세 설계**. 라인별 주제·단계 배치·메인 막 연동·라인 끝 결과·흐름도, 퀘스트별 발동 조건·제공자·장소·단계별 목표(퀘스트 로그 문구)·다중 해법·결과 분기·호감도(직접값과 연동값)·판도·카르마·XP와 보상(아이템 ID)·정보 전파·실패와 시간 제한·핵심 대사·메인과 사이드 연계, 경쟁 세력 퀘스트가 같은 물건·같은 거점에서 부딪치는 지점의 처리('누구에게 실제로 넘기는가'), 세력 간 교차표, 속죄 의뢰와 화해. / 다루지 않는 것: 호감도·판도·정보 전파 시스템 본체(SD-06), 메인 퀘스트 진행(SD-03a·03b), 사이드 퀘스트(SD-04a~c), 반복·비표시 퀘스트와 랜덤 인카운터 ID(SD-05), 인물 프로필과 C·N-ID(SD-07a·07b), 장소 상세와 좌표 보정(SD-09a~f), 아이템·적 수치(SD-13·SD-14).
 > **관련 문서**: [SC-00 컨셉 v0.4](00_concept.md), [SD-02 세계관·연표](02_world-and-lore.md), [SD-03a 메인 스토리 1](03a_main-story-part1.md), [SD-03b 메인 스토리 2](03b_main-story-part2.md), [SD-04a 사이드(남부)](04a_side-quests-south.md), [SD-04b 사이드(서부·한강)](04b_side-quests-west-river.md), [SD-04c 사이드(북부·동부·도심)](04c_side-quests-north-east-center.md), [SD-05 비표시·반복·인카운터](05_misc-quests-encounters.md), [SD-06 세력](06_factions.md), [SD-07a 주요 인물](07a_characters-major.md), [SD-07b NPC 디렉터리](07b_npc-directory.md), [SD-08 월드·권역](08_world-regions.md), [SD-09a 장소 R01·R02](09a_locations-r01-r02.md), [SD-09b 장소 R03·R04·R10](09b_locations-r03-r04-r10.md), [SD-09d 장소 R07·R11](09d_locations-r07-r11.md), [SD-09e 장소 R08·R09](09e_locations-r08-r09.md), [SD-10 캐릭터 시스템](10_character-system.md), [SD-11 전투](11_combat-system.md), [SD-12 탐험·UI](12_exploration-ui.md), [SD-13 아이템](13_items.md), [SD-14 크리처·적](14_creatures-enemies.md), [SD-15 경제](15_economy.md), [SD-17 사운드](17_sound.md), [SD-18 용어·명명](18_naming-terms.md), 원작 [RD-05 사이드 퀘스트 1](../reverse-design/05_side-quests-part1.md), [RD-06 사이드 퀘스트 2](../reverse-design/06_side-quests-part2.md), [RD-09 팩션](../reverse-design/09_factions.md), [RD-27 이식 시사점](../reverse-design/27_adaptation-notes.md)
 
@@ -23,7 +23,7 @@
 14. 양다리 충돌 지점 총괄
 15. 속죄 의뢰와 화해
 16. 원작 대응
-17. 쯔꾸르 제작 메모
+17. 제작 메모 (엔진: 범용 2D)
 18. 미결 사항
 - 부록 A. 신규 고유명사 / 부록 B. 참고 문서 / 버전 이력
 
@@ -1610,7 +1610,7 @@ flowchart LR
 
 ---
 
-## 17. 쯔꾸르 제작 메모
+## 17. 제작 메모 (엔진: 범용 2D)
 
 ### 17.1 변수
 | 종류 | 이름 | 수 | 비고 |
@@ -1737,3 +1737,4 @@ flowchart LR
 |---|---|---|
 | v1.0 | 2026-10-12 | 최초 작성 |
 | v1.1 | 2026-10-12 | 세트 정합 반영(RECON_SPEC) |
+| v1.2 | 2026-10-12 | 엔진(범용 2D, Godot 4 권장)·모바일 지원·범위 조정(K9~K11) 반영: 제작 메모 절 제목 정리 |
