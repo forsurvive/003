@@ -124,6 +124,26 @@ def long_gun(d, view, rear, front, kind, recoil=0):
         d.line([(fx, fy), (fx + 2, fy - 9)], fill=C(s["body"][1]), width=1)
 
 
+def smear(img, sh, hand, path, length=12):
+    """Swept area of the baton between the previous and the current pose: the in-between batons are
+    filled pale (P08) with a bright tip edge (P09), drawn under the real baton (FX preview, SD-16 §10)."""
+    d = ImageDraw.Draw(img)
+    (h0, a0), (h1, a1) = path
+    steps = max(10, int(abs(a1 - a0) / 3))
+    tips = []
+    for i in range(steps):                          # stop short of the current pose (the baton covers it)
+        t = i / steps
+        hx = h0[0] + (h1[0] - h0[0]) * t
+        hy = h0[1] + (h1[1] - h0[1]) * t
+        a = math.radians(a0 + (a1 - a0) * t)
+        base = (hx + (length - 4) * math.cos(a), hy + (length - 4) * math.sin(a))
+        tip = (hx + length * math.cos(a), hy + length * math.sin(a))
+        d.line([base, tip], fill=C("P08" if t > 0.35 else "P07"), width=2)
+        tips.append(tip)
+    for p, q in zip(tips, tips[1:]):
+        d.line([p, q], fill=C("P09"), width=1)
+
+
 def baton(d, hand, angle_deg, length=11):
     """Baton from the fist along angle (0 = east, -90 = up)."""
     s = SKINS["baton"]
@@ -147,10 +167,15 @@ def poses(weapon, view):
         if weapon in ("airgun", "rifle"):
             return [dict(h=((35, 40), (42, 40)), w=(weapon, 0)), dict(h=((34, 40), (41, 40)), w=(weapon, 1)),
                     dict(h=((35, 40), (42, 40)), w=(weapon, 0)), dict(h=((35, 40), (42, 40)), w=(weapon, 0))]
-        if weapon == "baton":   # ready, wind-up, swing, follow-through, recover
-            return [dict(h=((37, 40), (35, 42)), w=("baton", -70)), dict(h=((34, 36), (35, 42)), w=("baton", -140)),
-                    dict(h=((40, 37), (35, 42)), w=("baton", -20)), dict(h=((40, 43), (35, 43)), w=("baton", 60)),
-                    dict(h=((37, 41), (35, 42)), w=("baton", -40))]
+        if weapon == "baton":   # ready, wind-up (overhead, lean back), arc, impact, follow-through, recover
+            return [dict(h=((37, 41), (37, 43)), w=("baton", -65), lean=0),
+                    dict(h=((31, 28), (38, 41)), w=("baton", 150), lean=-1, over=True),
+                    dict(h=((37, 30), (36, 43)), w=("baton", -50), lean=1, over=True,
+                         smear=(((31, 28), 150), ((37, 30), -50 + 360))),
+                    dict(h=((42, 38), (34, 44)), w=("baton", 25), lean=2,
+                         smear=(((37, 30), -50), ((42, 38), 25))),
+                    dict(h=((40, 44), (33, 44)), w=("baton", 80), lean=2),
+                    dict(h=((37, 41), (36, 43)), w=("baton", -65), lean=1)]
         if weapon == "fist":    # guard, jab, guard, straight
             return [dict(h=((38, 38), (37, 36)), w=None, fist=True), dict(h=((44, 37), (37, 36)), w=None, fist=True),
                     dict(h=((38, 38), (37, 36)), w=None, fist=True), dict(h=((38, 38), (43, 36)), w=None, fist=True)]
@@ -188,17 +213,34 @@ def compose(upper, view, frame, weapon):
     h0, h1 = frame["h"]
     wd = ImageDraw.Draw(layer_front)
     if view == "E":
+        lean = frame.get("lean", 0)
+        if lean:
+            upper = R.shear(upper, lean)
+            sh_l = (sh_l[0] + lean // 2 + (1 if lean > 0 else 0), sh_l[1])
+            sh_r = (sh_r[0] + lean // 2, sh_r[1])
         draw_arm(layer_back, sh_r, h1, near=False, bend=-1, fist=fist)        # far support arm
         if frame["w"] and frame["w"][0] in ("airgun", "rifle"):
             long_gun(wd, "E", h0, h1, frame["w"][0], frame["w"][1])
-        hand = draw_arm(layer_front, sh_l, h0, near=True, bend=-1, fist=fist)
+        if frame.get("smear"):                      # swing trail behind the body (FX preview, SD-16 §10)
+            smear(out, sh_l, h0, frame["smear"])
+        out.alpha_composite(layer_back); out.alpha_composite(upper)
+        if frame.get("over"):                       # arm raised above the shoulder: pad first, arm over it
+            pads(out, [sh_l])
+        hand = draw_arm(layer_front, sh_l, h0, near=True, bend=-1 if not frame.get("over") else 1, fist=fist)
         if frame["w"] and frame["w"][0] == "pistol":
             pistol(wd, "E", hand, frame["w"][1])
         if frame["w"] and frame["w"][0] == "baton":
-            baton(wd, hand, frame["w"][1])
-            draw_arm(layer_front, sh_l, h0, near=True, bend=-1, fist=True)  # fist over the grip
-        out.alpha_composite(layer_back); out.alpha_composite(upper); out.alpha_composite(layer_front)
-        pads(out, [sh_l])
+            baton(wd, hand, frame["w"][1], length=12)
+            fx, fy = hand
+            for dx in (-1, 0, 1):                   # fist wrapped round the grip, over the baton
+                for dy in (-1, 0, 1):
+                    layer_front.putpixel((fx + dx, fy + dy), C("P01"))
+            skin = ("P02", "P03") if R.FIT["gloves"] else ("P40", "P41")
+            layer_front.putpixel((fx, fy), C(skin[1])); layer_front.putpixel((fx - 1, fy), C(skin[0]))
+            layer_front.putpixel((fx, fy - 1), C(skin[0]))
+        out.alpha_composite(layer_front)
+        if not frame.get("over"):
+            pads(out, [sh_l])
         return out
     behind = frame.get("behind", False)
     tgt = layer_back if behind else layer_front
@@ -247,7 +289,8 @@ FRONT = {
     "baton": [
         dict(L=((26, 38), (23, 41), (24, 37)), R=((37, 38), (39, 42), (36, 45)), baton=((24, 37), (21, 28))),
         dict(L=((26, 38), (23, 37), (25, 33)), R=((37, 38), (39, 42), (36, 45)), baton=((25, 33), (32, 27))),
-        dict(L=((26, 38), (25, 42), (30, 46)), R=((37, 38), (39, 42), (36, 45)), baton=((30, 46), (33, 52))),
+        dict(L=((26, 38), (25, 42), (30, 46)), R=((37, 38), (39, 42), (36, 45)), baton=((30, 46), (33, 52)),
+             smear=(((25, 33), -40), ((30, 46), 63))),
     ],
     "fist": [     # guard: forearms up, fists at the chin
         dict(L=((26, 38), (24, 44), (28, 40)), R=((37, 38), (39, 44), (35, 40)), fists=True),
@@ -308,6 +351,10 @@ def front_compose(upper, view, f, weapon):
         d.rectangle([gx, gy, gx + 1, gy + 2], fill=C("P05")); d.line([gx, gy, gx + 1, gy], fill=C("P07"))
         d.point((gx + 1, gy + 1), fill=C("P01"))
     if "baton" in pose:
+        if "smear" in pose:
+            (h0, a0), (h1, a1) = pose["smear"]
+            smear(layer, None, None, (((h0[0] + dx, h0[1]), a0), ((h1[0] + dx, h1[1]), a1)), length=9)
+            jointed_arm(layer, L, R.FIT["sleeve"])
         a, b = mv(pose["baton"])
         d.line([a, b], fill=C("P01"), width=3)
         d.line([a, b], fill=C("P02"), width=1)
