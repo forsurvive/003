@@ -22,7 +22,7 @@
 @key Y P48
 @key y P49
 @key z P50
-@frame idle0 22 19 mirror
+@frame idle0 22 23 mirror
 ......oooo
 .....oerrr
 ....oeerrr
@@ -61,7 +61,7 @@
 ....okllmo
 ....okklmo
 ....oooooo
-@frame idleE 22 19
+@frame idleE 22 23
 ......oooooo........
 .....oerrrrro.......
 ....oeerrrrreo......
@@ -100,7 +100,7 @@
 .......okllmmmmmo...
 .......okkllllmmo...
 .......oooooooooo...
-@frame idleN 22 19 mirror
+@frame idleN 22 23 mirror
 ......oooo
 .....oerrr
 ....oeerrr
