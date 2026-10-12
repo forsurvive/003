@@ -376,8 +376,8 @@ def front_compose(upper, view, f, weapon):
 
 
 # ---------------------------------------------------------------- bases
-def bases(code="T01", look=None):
-    R.build_all(code, None, look)
+def bases(code="T01", look=None, faction=None):
+    R.build_all(code, faction, look)
     src = parse(os.path.join(ROOT, "src/sprites/pc_s07_jumpsuit_S.txt"))
     up = parse(os.path.join(ROOT, "src/sprites/pc_s07_upper_E.txt"))["upperE"]
     dg = parse(os.path.join(ROOT, "src/sprites/pc_s07_jumpsuit_diag.txt"))
@@ -400,8 +400,8 @@ def upper_only(img, y1=47):
 
 VIEWS = ("S", "SE", "E", "NE", "N")
 WEAPONS = [("pistol", "A 권총", "T01", None), ("airgun", "B 사격장 공기총", "T01", None),
-           ("rifle", "B 계엄군 소총", "T06", None), ("baton", "E 경봉", "T02", {"gear": "HG01", "hair": "HR01"}),
-           ("fist", "G 비무장", "T03", {"hair": "HR03", "color": "H2"})]
+           ("rifle", "B 계엄군 소총", "T06", None), ("baton", "E 경봉", "T02", {"gear": "HD03", "hair": "HR03"}),
+           ("fist", "G 비무장", "T03", {"hair": "HR07", "color": "H2"})]
 
 
 def aim_frame(weapon, view, f, ups, fulls):

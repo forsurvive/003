@@ -95,7 +95,7 @@ RAT = dict(
 
 # gait: per foot (x offset in steps, lift, planted). Diagonal pairs: near-front + far-hind, far-front + near-hind.
 def gait(species):
-    if species is DOG:      # flying trot, 6 frames, 8 px/frame
+    if species["size"] == 64:      # flying trot, 6 frames, 8 px/frame
         A = [(+0.5, 0, True), (-0.5, 0, True), (-1.2, 2, False), (-0.4, 5, False), (+0.5, 4, False), (+1.1, 1, False)]
         bob = [1, 0, -1, 1, 0, -1]
     else:                   # scurry, 4 frames, 4 px/frame
@@ -134,7 +134,7 @@ def draw(sp, pose):
     body = Image.new("RGBA", (S, S), CLEAR)
     t0, t1, t2 = sp["tail"]
     td = pose.get("tail_dy", 0)
-    tail_ramp = sp["skin"] if sp is RAT else sp["fur"]
+    tail_ramp = sp["skin"] if sp["size"] == 32 else sp["fur"]
     m = set()
     R.capsule(m, (t0[0] + L, t0[1] + b), (t1[0] + L, t1[1] + b + td // 2), 1.3 if S == 64 else 0.6)
     R.capsule(m, (t1[0] + L, t1[1] + b + td // 2), (t2[0] + L, t2[1] + b + td), 1.0 if S == 64 else 0.4)
@@ -164,7 +164,8 @@ def draw(sp, pose):
     for ex, ey in sp["ear"]:                               # ears: upright triangles (dog) / round (rat)
         ex, ey = ex + L, ey + b + hd
         if S == 64:
-            ep = {(ex + dx, ey + dy) for dy in range(0, 6) for dx in range(0, max(1, dy // 2 + 1))}
+            eh = 6 if sp["l1"] > 6 else 4
+            ep = {(ex + dx, ey + dy) for dy in range(0, eh) for dx in range(0, max(1, dy // 2 + 1))}
         else:
             ep = {(ex, ey), (ex + 1, ey), (ex, ey + 1), (ex + 1, ey + 1)}
         for p in ep:
@@ -211,7 +212,7 @@ def move_frames(sp):
         for key, (u, lift, planted) in pairs.items():
             root_x = (sp["shoulder"][0] if key in ("nf", "ff") else sp["hip"][0]) + (1 if key[0] == "n" else -1)
             fe[key] = (root_x + round(u * st), lift, planted)
-        img, paws = draw(sp, dict(bob=bob[f], feet=fe, tail_dy=(f % 2) * (2 if sp is DOG else 1)))
+        img, paws = draw(sp, dict(bob=bob[f], feet=fe, tail_dy=(f % 2) * (2 if sp["size"] == 64 else 1)))
         frames.append(img); feet.append(paws)
     return frames, feet
 
@@ -225,13 +226,13 @@ def stand(sp, **kw):
 
 
 def idle_frames(sp):
-    if sp is DOG:   # breathing + tail swish, head turn
+    if sp["size"] == 64:   # breathing + tail swish, head turn
         return [stand(sp), stand(sp, bob=0, tail_dy=-2), stand(sp, bob=1, head_dy=1), stand(sp, tail_dy=2)]
     return [stand(sp), stand(sp, head_dy=1)]
 
 
 def attack_frames(sp):
-    if sp is DOG:   # crouch, lunge (front paws up), bite (jaw open), recover
+    if sp["size"] == 64:   # crouch, lunge (front paws up), bite (jaw open), recover
         return [stand(sp, bob=2, head_dy=2, nh_dx=2, fh_dx=2),
                 stand(sp, lunge=4, bob=-2, head_dy=-1, jaw=2, nf_dx=6, ff_dx=5, nf_lift=4, ff_lift=3),
                 stand(sp, lunge=6, bob=0, head_dy=2, jaw=3, nf_dx=6, ff_dx=6),
@@ -242,7 +243,7 @@ def attack_frames(sp):
 
 
 def hit_frames(sp):
-    if sp is DOG:
+    if sp["size"] == 64:
         return [stand(sp, lunge=-2, bob=1, head_dy=2, jaw=1), stand(sp, lunge=-1, bob=0)]
     return [stand(sp, lunge=-1, bob=1, head_dy=1)]
 
@@ -253,7 +254,7 @@ def death_frames(sp):
     out = [stand(sp, lunge=-1, bob=2, head_dy=3, nf_dx=-1)]
     base = stand(sp, bob=0)
     for k, (ang, drop) in enumerate(((-25, 2), (-60, 4), (-90, 6), (-90, 6))):
-        if sp is RAT and k == 3:
+        if sp["size"] == 32 and k == 3:
             break
         rot = Image.new("RGBA", (S, S), CLEAR)
         # pre-baked fall: rotate the standing silhouette about the far paws in 90-degree steps only at the end

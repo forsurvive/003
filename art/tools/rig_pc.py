@@ -225,6 +225,10 @@ def walk_side(upper, mode="walk"):
         fr.alpha_composite(far_img)
         fr.alpha_composite(shear(upper, lean), (0, hipdy[f]))
         fr.alpha_composite(near_img)
+        if FIT.get("skirt"):                             # coat / gown hangs over the thighs
+            y0, y1 = FIT["skirt"]
+            sk = shear(upper, lean).crop((0, y0, 64, y1 + 1))
+            fr.alpha_composite(sk, (0, y0 + hipdy[f]))
         bend = 6 if mode == "walk" else 50
         fr.alpha_composite(arm((32 + lean // 2, 38 + hipdy[f]), armsw[f], bend))
         if FIT["pads"]:
@@ -242,6 +246,10 @@ def strip_legs(img, y0):
     out = img.copy()
     out.paste(Image.new("RGBA", (64, 64 - y0), CLEAR), (0, y0))
     return out
+
+
+def SKIRT_RGB():
+    return {P.rgb(t) for t in FIT.get("coat", ())} | {P.rgb("P01")}
 
 
 def walk_diag(full, mode="walk", back=False, arms=False):
@@ -278,6 +286,16 @@ def walk_diag(full, mode="walk", back=False, arms=False):
             shift_region(up, (36, 36, 41, 48), dy=-sw)      # screen-right arm
         fr.alpha_composite(up, (0, hipdy[f]))
         fr.alpha_composite(layers[order[1]][0])
+        if FIT.get("skirt"):
+            y0, y1 = FIT["skirt"]
+            sk = full.crop((0, y0, 64, y1 + 1))
+            px_ = sk.load()
+            for yy in range(sk.height):                  # only the coat cloth, not the legs baked under it
+                for xx in range(64):
+                    if px_[xx, yy][3] and px_[xx, yy][:3] in SKIRT_RGB():
+                        continue
+                    px_[xx, yy] = CLEAR
+            fr.alpha_composite(sk, (0, y0 + hipdy[f]))
         if arms:
             k = 2.0 if mode == "walk" else 2.5
             front_arms(fr, "NE" if back else "SE", -sw / max(1, abs(sw)) * k if sw else 0,

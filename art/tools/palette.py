@@ -55,8 +55,17 @@ REGION = {
 UI_GREEN = ["#050A06", "#0B1F10", "#123A1C", "#1C5E2C", "#2D8C42", "#46C25E", "#7CF08E", "#D2FFD8"]
 UI_AMBER = ["#0D0702", "#2A1604", "#4A2A06", "#7A4A0C", "#B06E12", "#E09A1E", "#FFC24A", "#FFE9B0"]
 
-PF = {  # faction swap: main 1-4, accent 1-2 (SD-16 §4.5)
+PF = {  # faction swap: main 1-4, accent 1-2 (SD-16 §4.5). '#...' = swap-only colours outside the master
     "PF-01": ["#1C2230", "#2A3346", "#3E4A62", "#5A6A86", NAMED["P48"], NAMED["P49"]],
+    "PF-02": [NAMED["P28"], NAMED["P29"], NAMED["P30"], NAMED["P31"], NAMED["P08"], "#8C3B32"],
+    "PF-03": [NAMED["P28"], NAMED["P29"], NAMED["P30"], NAMED["P31"], NAMED["P53"], NAMED["P54"]],
+    "PF-04": [NAMED["P23"], NAMED["P24"], NAMED["P25"], NAMED["P26"], NAMED["P53"], "#E8682A"],
+    "PF-05": [NAMED["P03"], NAMED["P04"], NAMED["P05"], NAMED["P06"], "#FF7A1C", "#FFB066"],
+    "PF-06": [NAMED["P00"], NAMED["P01"], NAMED["P02"], NAMED["P03"], NAMED["P14"], NAMED["P15"]],
+    "PF-07": [NAMED["P43"], NAMED["P44"], NAMED["P12"], NAMED["P13"], "#C8E62A", "#EEFF7A"],
+    "PF-08": ["#141E18", "#22301F", "#34452C", "#4C5E3C", NAMED["P53"], NAMED["P54"]],
+    "PF-09": ["#2A3226", "#465240", "#667458", "#8C9A78", "#B4BE9C", NAMED["P23"]],
+    "PF-10": [NAMED["P06"], NAMED["P07"], NAMED["P08"], NAMED["P09"], NAMED["P59"], NAMED["P60"]],
     "PF-11": [NAMED["P43"], NAMED["P44"], NAMED["P45"], NAMED["P46"], NAMED["P48"], NAMED["P49"]],
     "PF-12": [NAMED["P17"], NAMED["P18"], NAMED["P19"], NAMED["P20"], NAMED["P27"], NAMED["P45"]],
 }

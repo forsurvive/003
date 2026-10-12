@@ -1,7 +1,8 @@
 # Head slots for the head-anchor composite (SD-16 §5.1, §5.5, §12.3 #6). Overlays on the PC head, 5 views.
 # Frame names: <part>_<view>. Hair keys q w e r = hair ramp (H1, swapped to Hx at composite time).
-# hair: HR02 bob (단발), HR03 bun (똥머리, hidden under hats), HR04 buzz = recolour only (no grid).
-# head gear: HG01 security helmet (경비 헬멧, visor up), HG02 baseball cap (야구모자). eye: EY01 glasses (안경).
+# Codes follow SD-07b §3 (canonical): HR03 short cut = the base sprite, HR05 bob, HR07 top knot; HR00/HR01/HR02/HR11
+# are recolours or generated in heads.py. Head gear HD03 security helmet (visor up), HD05 cap. Eye EY01 round glasses.
+# More hair (HR06 HR08 HR09), head gear (HD15) and eye gear (EY05 EY06) follow at the end of the file.
 @size 64 64
 @origin 32 60
 @key o P01
@@ -21,9 +22,17 @@
 @key I P51
 @key g P02
 @key h P15
+@key l P03
+@key s P03
+@key S P06
+@key J PF-01.3
+@key K PF-01.2
+@key L PF-01.1
+@key M PF-01.0
+@key y P49
 
-# ---------------- HR02 bob
-@frame HR02_S 25 23
+# ---------------- HR05 단발 (bob)
+@frame HR05_S 25 23
 ...oooooooo...
 ..oerrrrrreo..
 .oeerrrrrreeo.
@@ -36,7 +45,7 @@ oqw........wqo
 oqq........qqo
 .oqo......oqo.
 ..oo......oo..
-@frame HR02_N 25 23
+@frame HR05_N 25 23
 ...oooooooo...
 ..oerrrrrreo..
 .oeerrrrrreeo.
@@ -50,7 +59,7 @@ oqwwwwwwwwwwqo
 oqqwwwwwwwwqqo
 .oqqqqqqqqqqo.
 ..oooooooooo..
-@frame HR02_E 25 23
+@frame HR05_E 25 23
 ...oooooo.....
 ..oerrrrro....
 .oeerrrrreo...
@@ -63,7 +72,7 @@ oqqwwwww......
 .oqqwwww......
 .oqqqqqo......
 ..ooooo.......
-@frame HR02_SE 25 23
+@frame HR05_SE 25 23
 ...oooooo.....
 ..oerrrrro....
 .oeerrrrreo...
@@ -75,7 +84,7 @@ oqwww.........
 oqqww.........
 .oqqo.........
 ..oo..........
-@frame HR02_NE 25 23
+@frame HR05_NE 25 23
 ....oooooo....
 ...oerrrrro...
 ..oeerrrrreo..
@@ -90,40 +99,40 @@ oqqwwwwwwwwo..
 ..oqqqqqqqo...
 ...ooooooo....
 
-# ---------------- HR03 bun (top knot)
-@frame HR03_S 29 18
+# ---------------- HR07 쪽머리·올림 묶음 (top knot)
+@frame HR07_S 29 18
 .oooo.
 orrreo
 oreewo
 oeewwo
 .owwo.
-@frame HR03_N 29 18
+@frame HR07_N 29 18
 .oooo.
 orrreo
 oreewo
 oeewwo
 .owwo.
-@frame HR03_E 27 18
+@frame HR07_E 27 18
 .oooo.
 orrreo
 oreewo
 oeewwo
 .owwo.
-@frame HR03_SE 28 18
+@frame HR07_SE 28 18
 .oooo.
 orrreo
 oreewo
 oeewwo
 .owwo.
-@frame HR03_NE 29 18
+@frame HR07_NE 29 18
 .oooo.
 orrreo
 oreewo
 oeewwo
 .owwo.
 
-# ---------------- HG01 security helmet (visor raised)
-@frame HG01_S 25 21
+# ---------------- HD03 철모·경비 헬멧 (visor raised)
+@frame HD03_S 25 21
 ....oooooo....
 ..ooABBBBBoo..
 .oABBBBBBBBCo.
@@ -135,7 +144,7 @@ oDooooooooooDo
 oDo........oDo
 oDo........oDo
 .o..........o.
-@frame HG01_N 25 21
+@frame HD03_N 25 21
 ....oooooo....
 ..ooABBBBBoo..
 .oABBBBBBBBCo.
@@ -146,7 +155,7 @@ oCCCCCCCCCCCDo
 oDDDDDDDDDDDDo
 oDDDDDDDDDDDDo
 .oooooooooooo.
-@frame HG01_E 25 21
+@frame HD03_E 25 21
 ...oooooo.....
 .ooABBBBBoo...
 oABBBBBBBBBo..
@@ -157,7 +166,7 @@ oCCCCCCCVVVVVo
 oDDDDDDooooooo
 oDDDDDo.......
 .ooooo........
-@frame HG01_SE 25 21
+@frame HD03_SE 25 21
 ....oooooo....
 ..ooABBBBBoo..
 .oABBBBBBBBCo.
@@ -169,7 +178,7 @@ oDDoooooooooDo
 oDDo..........
 oDDo..........
 .oo...........
-@frame HG01_NE 25 21
+@frame HD03_NE 25 21
 ....oooooo....
 ..ooABBBBBoo..
 .oABBBBBBBBCo.
@@ -181,8 +190,8 @@ oDDDDDDDDDDDo.
 oDDDDDDDDDDo..
 .oooooooooo...
 
-# ---------------- HG02 baseball cap (faded red)
-@frame HG02_S 25 21
+# ---------------- HD05 챙모자 (faded red)
+@frame HD05_S 25 21
 ....oooooo....
 ...oFGGGGGo...
 ..oFGGGGGGGo..
@@ -192,7 +201,7 @@ oDDDDDDDDDDo..
 oGGGGGGGGGGGGo
 oIIIIIIIIIIIIo
 .oooooooooooo.
-@frame HG02_N 25 21
+@frame HD05_N 25 21
 ....oooooo....
 ...oFGGGGGo...
 ..oFGGGGGGGo..
@@ -201,7 +210,7 @@ oIIIIIIIIIIIIo
 .oHHHHHHHHHHo.
 .oHHHowwoHHHo.
 ..ooo....ooo..
-@frame HG02_E 25 21
+@frame HD05_E 25 21
 ...oooooo.......
 ..oFGGGGGo......
 .oFGGGGGGGo.....
@@ -210,7 +219,7 @@ oGGGGGGHGGGo....
 oHHHHHHHHHHGGGo.
 .ooooooooooIIIo.
 ..........ooo...
-@frame HG02_SE 25 21
+@frame HD05_SE 25 21
 ....oooooo......
 ...oFGGGGGo.....
 ..oFGGGGGGGo....
@@ -220,7 +229,7 @@ oHHHHHHHHHHGGGo.
 .oooGGGGGGGGGo..
 ....oIIIIIIIIo..
 .....ooooooooo..
-@frame HG02_NE 25 21
+@frame HD05_NE 25 21
 ....oooooo......
 ...oFGGGGGo.....
 ..oFGGGGGGGo....
@@ -243,3 +252,286 @@ ggggg.h
 ..gggggg
 ggg.hg.h
 ..g.h..h
+
+# ---------------- HR06 긴 생머리 (long straight, to the shoulders)
+@frame HR06_S 25 23
+...oooooooo...
+..oerrrrrreo..
+.oeerrrrrreeo.
+oweeeeeeeeeewo
+owewweeeewwewo
+oww........wwo
+oww........wwo
+oqw........wqo
+oqw........wqo
+oqw........wqo
+oqw........wqo
+oqwo......owqo
+oqwo......owqo
+oqqo......oqqo
+oqqo......oqqo
+.oo........oo.
+@frame HR06_N 25 23
+...oooooooo...
+..oerrrrrreo..
+.oeerrrrrreeo.
+oweeeeeeeeeewo
+oweeeeeeeeeewo
+owweeeeeeeewwo
+owwweeeeeewwwo
+owwwweeeewwwwo
+owwwwwwwwwwwwo
+owwwwwwwwwwwwo
+oqwwwwwwwwwwqo
+oqwwwwwwwwwwqo
+oqqwwwwwwwwqqo
+oqqwwwwwwwwqqo
+.oqqqqqqqqqqo.
+..oooooooooo..
+@frame HR06_E 25 23
+...oooooo.....
+..oerrrrro....
+.oeerrrrreo...
+oweeeeeeeewo..
+owwweeeewwwwo.
+owwwwwww......
+owwwwwww......
+oqwwwwww......
+oqwwwww.......
+oqwwwwo.......
+oqwwwwo.......
+oqwwwwo.......
+oqqwwo........
+oqqwwo........
+oqqqqo........
+.oooo.........
+@frame HR06_SE 25 23
+...oooooo.....
+..oerrrrro....
+.oeerrrrreo...
+oweeeeeeeewo..
+owweewweewwwo.
+owwww......wo.
+owwww.........
+oqwww.........
+oqwww.........
+oqwwo.........
+oqwwo.........
+oqwwo.........
+oqqwo.........
+oqqwo.........
+oqqqo.........
+.ooo..........
+@frame HR06_NE 25 23
+....oooooo....
+...oerrrrro...
+..oeerrrrreo..
+oweeeeeeeeewo.
+owweeeeeeeewo.
+owwweeeeeewwo.
+owwwweeeewwwo.
+owwwwwwwwww...
+oqwwwwwwwww...
+oqwwwwwwwwwo..
+oqwwwwwwwwwo..
+oqqwwwwwwwwo..
+oqqwwwwwwwqo..
+oqqqwwwwwqqo..
+.oqqqqqqqqo...
+..oooooooo....
+
+# ---------------- HR08 헝클어진 앞머리·덥수룩 (shaggy fringe, side tufts)
+@frame HR08_S 25 26
+oweeeeeeeeeewo
+oweweewewweewo
+owwewwewwewwwo
+oww.w.ww.w.wwo
+.o..........o.
+@frame HR08_N 25 31
+owwwwwwwwwwwwo
+oqwwwwwwwwwwqo
+.oqwwqwwqwwqo.
+..oo.oo.oo.o..
+@frame HR08_E 25 26
+oweeeeeeeewo..
+owwweeeewwwwo.
+owwwwwwwww.wo.
+owww.....w....
+oqw...........
+oqw...........
+oqqo..........
+.oo...........
+@frame HR08_SE 25 26
+oweeeeeeeewo..
+owweewweewwwo.
+owwwwwwww.wwo.
+owww.w..w.w...
+oqw...........
+oqw...........
+.oo...........
+@frame HR08_NE 25 26
+oweeeeeeeeewo.
+owweeeeeeeewo.
+owwweeeeeewwo.
+owwwweeeewwwo.
+owwwwwwwwww...
+oqwwwwwwwww...
+oqqwwwwwwwwo..
+.oqwqwwqwwqo..
+..oo.oo.oo....
+
+# ---------------- HR09 장발 묶음 (long ponytail; base short cut + tail)
+@frame HR09_N 29 32
+.oooo.
+oweewo
+owewwo
+.owwo.
+.oqwo.
+.owqo.
+.oqwo.
+.owqo.
+.oqqo.
+..oo..
+@frame HR09_E 21 26
+...oo.
+..oweo
+.oweeo
+.owwo.
+oqwo..
+oqwo..
+oqwo..
+oqqo..
+.oo...
+@frame HR09_SE 21 26
+...oo.
+..oweo
+.oweeo
+.owwo.
+oqwo..
+oqwo..
+oqqo..
+.oo...
+@frame HR09_NE 28 32
+.oooo.
+oweewo
+owewwo
+.owwo.
+.oqwo.
+.owqo.
+.oqwo.
+.oqqo.
+..oo..
+
+# ---------------- HD15 장교 정모 (peaked officer cap, PF-01 navy, gold band)
+@frame HD15_S 24 18
+...oooooooooo...
+..oJJJKKKKKKKo..
+.oJJKKKKKKKKKLo.
+.oJKKKKyyKKKKLo.
+.oKKKKKyyKKKLLo.
+.oLLLLLLLLLLLMo.
+.oYYYYYYYYYYYYo.
+oggggggggggggggo
+.oooooooooooooo.
+@frame HD15_N 24 18
+...oooooooooo...
+..oJJJKKKKKKKo..
+.oJJKKKKKKKKKLo.
+.oJKKKKKKKKKKLo.
+.oKKKKKKKKKKLLo.
+.oLLLLLLLLLLLMo.
+.oYYYYYYYYYYYYo.
+..oooooooooooo..
+@frame HD15_E 24 18
+...oooooooooo.....
+..oJJJKKKKKKKo....
+.oJJKKKKKKKKKKo...
+.oJKKKKKKKKKyyo...
+.oKKKKKKKKKKyyo...
+.oLLLLLLLLLLLLo...
+.oYYYYYYYYYYYYoo..
+..ooooooooggggggo.
+..........ooooo...
+@frame HD15_SE 24 18
+...oooooooooo.....
+..oJJJKKKKKKKo....
+.oJJKKKKKKKKKLo...
+.oJKKKKKyyKKKLo...
+.oKKKKKKyyKKLLo...
+.oLLLLLLLLLLLMo...
+.oYYYYYYYYYYYYo...
+..oggggggggggggo..
+...ooooooooooooo..
+@frame HD15_NE 24 18
+...oooooooooo.....
+..oJJJKKKKKKKo....
+.oJJKKKKKKKKKLo...
+.oJKKKKKKKKKKLo...
+.oKKKKKKKKKKLLo...
+.oLLLLLLLLLLLMo...
+.oYYYYYYYYYYYYoo..
+..ooooooooooogggo.
+.............ooo..
+
+# ---------------- EY02 각진 안경 (square rims, P03)
+@frame EY02_S 28 29
+lll..lll
+l.llll.l
+l.l..l.l
+lll..lll
+@frame EY02_E 29 29
+....lll
+lllll.l
+....l.l
+....lll
+@frame EY02_SE 29 29
+..llllll
+lll.ll.l
+..l.ll.l
+..llllll
+
+# ---------------- EY03 돋보기 (half-moon readers, low on the nose)
+@frame EY03_S 28 31
+g.gggg.g
+ggg..ggg
+@frame EY03_E 29 31
+ggggg.g
+....ggg
+@frame EY03_SE 29 31
+ggg.gg.g
+..gggggg
+
+# ---------------- EY05 색안경 (sunglasses: dark lenses hide the eyes)
+@frame EY05_S 28 29
+oooooooo
+oSsooSso
+.oo..oo.
+@frame EY05_E 29 29
+....ooo
+ooooSso
+.....oo
+@frame EY05_SE 29 29
+..oooooo
+ooSsoSso
+..oo.oo.
+
+# ---------------- EY06 작업 고글 (work goggles + strap)
+@frame EY06_S 25 28
+..oooo..oooo..
+oooVVVooooVVVo
+..oVhVo.oVhVo.
+...ooo...ooo..
+@frame EY06_N 25 29
+oooooooooooooo
+@frame EY06_E 26 28
+........ooo.
+ooooooooVVVo
+........VhVo
+........ooo.
+@frame EY06_SE 26 28
+....ooo.ooo.
+oooooVVooVVo
+....oVhooVho
+.....oo..oo.
+@frame EY06_NE 25 29
+ooooooooooooo

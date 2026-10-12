@@ -61,6 +61,36 @@ def make(code, faction=None):
                 "boot": ("P03", "P02", "P01"), "boot_far": ("P02", "P01", "P01"),
                 "pads": 2, "pad_ramp": (main[3], main[2], main[1], main[0]), "chest": (main[3], main[2], main[1]),
                 "badge": acc[1], "knee": (main[3], main[1]), "pouch": (main[1], main[0])}
+    if code in ("T08", "T11", "T12", "T13"):
+        if code == "T13":                                   # 의료 가운: white, knee length
+            main, acc = ["P06", "P07", "P08", "P09"], ["P46", "P45"]
+        elif faction:
+            main, acc = pf(faction)
+        else:
+            main, acc = ["P02", "P03", "P04", "P05"], ["P48", "P49"]
+        if code == "T12":                                   # shirt under the vest is the faction main ramp
+            hivis = faction in ("PF-05", "PF-07")
+            vest = (acc[1], acc[0], acc[0]) if hivis else ("P06", "P05", "P04")
+        m = dict(zip("abcd", main))
+        torso = dict(m, Y=main[1], y=main[2], z=main[3])
+        pants = dict(zip("abcd", ["P02", "P03", "P04", "P05"])) if code in ("T08", "T11") else m
+        if code == "T13":
+            pants = dict(zip("abcd", ["P43", "P44", "P45", "P46"]))    # scrubs under the gown
+        spec = {"code": code, "torso": torso, "pants": pants, "boots": {}, "gloves": code == "T08",
+                "sleeve": (main[3], main[2], main[1]), "sleeve_far": (main[2], main[1], main[0]), "cuff": main[0],
+                "leg": (pants["d"], pants["c"], pants["b"]) if isinstance(pants, dict) else (main[3], main[2], main[1]),
+                "leg_far": (pants["c"], pants["b"], pants["a"]),
+                "boot": ("P05", "P04", "P03"), "boot_far": ("P04", "P03", "P02"), "pads": 0, "knee": None,
+                "accent": acc}
+        if code == "T08":                                   # 장교 외투: knee-length skirts, wide lapels, gold buttons
+            spec.update(coat=(main[3], main[2], main[1], main[0]), skirt=(46, 53), buttons=acc[1])
+        if code == "T13":
+            spec.update(coat=("P09", "P08", "P07", "P06"), skirt=(46, 54))
+        if code == "T11":                                   # 정장: V lapels, shirt, tie
+            spec.update(lapels=("P09", "P08"), tie=acc[0])
+        if code == "T12":
+            spec.update(vest=vest)
+        return spec
     raise KeyError(code)
 
 
@@ -114,6 +144,25 @@ def dress(img, fit, view):
     d = ImageDraw.Draw(out)
     code = fit["code"]
     if view == "E":
+        if fit.get("coat"):                                   # coat / gown tail hanging past the hip
+            c = fit["coat"]
+            y0, y1 = fit["skirt"]
+            d.rectangle([27, y0, 35, y1], fill=C("P01"))
+            d.rectangle([28, y0, 34, y1 - 1], fill=C(c[1]))
+            d.line([28, y0, 28, y1 - 1], fill=C(c[0])); d.line([34, y0, 34, y1 - 1], fill=C(c[2]))
+            d.line([28, y1 - 1, 34, y1 - 1], fill=C(c[3]))
+            if fit.get("buttons"):
+                for y in (38, 41, 44):
+                    d.point((36, y), fill=C(fit["buttons"]))
+        if fit.get("vest"):
+            v = fit["vest"]
+            d.rectangle([30, 37, 36, 46], fill=C(v[1])); d.line([30, 37, 36, 37], fill=C(v[0]))
+            if v[1] in ("PF-05.4", "PF-07.4"):
+                d.line([30, 40, 36, 40], fill=C("P08"))
+            d.line([30, 46, 36, 46], fill=C("P01")); d.rectangle([33, 41, 35, 43], fill=C(v[2]))
+            d.line([33, 41, 35, 41], fill=C("P01"))
+        if fit.get("lapels"):
+            d.line([35, 37, 36, 40], fill=C(fit["lapels"][0])); d.point((36, 41), fill=C(fit["tie"]))
         if fit.get("chest"):                                  # chest plate bulges past the profile
             bulge = 1 if fit["pads"] == 1 else 2
             _box(d, 33, 37, 37 + bulge, 44, fit["chest"])
@@ -168,6 +217,41 @@ def dress(img, fit, view):
         if back:
             d.rectangle([x0 - 1, 45, x1 + 1, 49], fill=C("P01"))
             d.rectangle([x0, 45, x1, 48], fill=C(h[1])); d.line([x0, 45, x1, 45], fill=C(h[0]))
+    if fit.get("coat"):                                       # long coat / gown over the thighs
+        x0, y0c, x1, y1c = g["chest"]
+        c = fit["coat"]
+        ya, yb = fit["skirt"]
+        L, Rr = x0 - 1, x1 + 1
+        d.rectangle([L - 1, ya, Rr + 1, yb], fill=C("P01"))
+        d.rectangle([L, ya, Rr, yb - 1], fill=C(c[1]))
+        d.line([L, ya, L, yb - 1], fill=C(c[0])); d.line([Rr, ya, Rr, yb - 1], fill=C(c[2]))
+        d.line([L, yb - 1, Rr, yb - 1], fill=C(c[3]))
+        if not back:
+            mid = (L + Rr) // 2
+            d.line([mid, ya + 1, mid, yb], fill=C("P01"))             # front opening
+            d.line([x0 + 1, 36, mid, 41], fill=C(c[0])); d.line([x1 - 1, 36, mid + 1, 41], fill=C(c[0]))  # lapels
+            if fit.get("buttons"):
+                for y in (39, 42, 45, 48):
+                    d.point((mid - 2, y), fill=C(fit["buttons"])); d.point((mid + 2, y), fill=C(fit["buttons"]))
+        else:
+            mid = (L + Rr) // 2
+            d.line([mid, yb - 3, mid, yb], fill=C("P01"))             # back vent
+    if fit.get("vest") and view in GEOM:
+        x0, y0, x1, y1 = g["chest"]
+        v = fit["vest"]
+        for (a, b) in ((x0 - 1, x0 + 2), (x1 - 2, x1 + 1)) if not back else ((x0 - 1, x1 + 1),):
+            d.rectangle([a, 37, b, 46], fill=C(v[1])); d.line([a, 37, b, 37], fill=C(v[0]))
+            d.line([a, 47, b, 47], fill=C("P01"))                     # angular hem below the belt
+            if fit.get("code") == "T12" and v[1].startswith("PF-0") and v[1] in ("PF-05.4", "PF-07.4", "PF-05.5", "PF-07.5"):
+                d.line([a, 40, b, 40], fill=C("P08"))                 # reflective stripe (형광 조끼)
+        if not back:
+            for px_ in (x0, x1 - 1):
+                d.rectangle([px_ - 1, 42, px_ + 1, 44], fill=C(v[2])); d.line([px_ - 1, 42, px_ + 1, 42], fill=C("P01"))
+    if fit.get("lapels") and view in ("S", "SE"):
+        x0, y0, x1, y1 = g["chest"]
+        mid = (x0 + x1) // 2
+        d.polygon([(mid - 2, 36), (mid + 3, 36), (mid + 1, 41), (mid, 41)], fill=C(fit["lapels"][0]))
+        d.line([mid, 37, mid, 43], fill=C(fit["tie"])); d.line([mid + 1, 37, mid + 1, 42], fill=C(fit["tie"]))
     if fit.get("knee") and view in ("S", "N"):
         for kx in (27, 33):
             d.rectangle([kx, 50, kx + 3, 52], fill=C(fit["knee"][1]))
