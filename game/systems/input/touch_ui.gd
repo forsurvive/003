@@ -12,6 +12,8 @@ var aim_full := 0.0                       ## 끝까지 기울인 시간(초) →
 var move_full := 0.0                      ## 이동 스틱을 질주 링(바깥 끝)까지 민 시간 → 0.3 이상이면 질주
 var buttons := {"재장전": Rect2(560, 196, 48, 48), "교체": Rect2(500, 236, 48, 48), "문": Rect2(560, 136, 48, 48)}
 var dim := {}                             ## 회색으로 그릴 버튼(AP 부족 등)
+var _base := {}                           ## 640×360 기준 버튼 자리: 화면이 넓어지면 오른쪽·아래 가장자리에 붙인다(SD-12 §17.3)
+var _half := 320.0
 var pressed := {}
 var _taps := {}                           ## 누른 순간 한 번만: take()로 꺼낸다
 const R := 34.0
@@ -29,6 +31,23 @@ func _ready() -> void:
 	_pad.draw.connect(_draw_pad)
 	add_child(_pad)
 	font = load("res://assets/fonts/Galmuri9.ttf")
+	var fit := get_node_or_null("/root/ScreenFit")
+	if fit != null:
+		fit.changed.connect(layout)
+		layout.call_deferred(fit.logical)
+
+
+## 논리 해상도가 바뀌면 버튼을 오른쪽 아래 가장자리 기준으로 다시 놓는다. 스틱 구역 경계는 화면 가운데.
+func layout(logical: Vector2i) -> void:
+	for k in buttons:
+		if not _base.has(k):
+			_base[k] = buttons[k]
+	var d := Vector2(logical - Vector2i(640, 360))
+	for k in _base:
+		buttons[k] = Rect2(_base[k].position + d, _base[k].size)
+	_pad.size = Vector2(logical)
+	_half = logical.x / 2.0
+	_pad.queue_redraw()
 
 
 func _input(e: InputEvent) -> void:
@@ -40,7 +59,7 @@ func _input(e: InputEvent) -> void:
 					pressed[k] = true
 					_taps[k] = true
 					return
-			var side := _left if p.x < 320 else _right
+			var side := _left if p.x < _half else _right
 			if side["id"] < 0:
 				side["id"] = e.index
 				side["c"] = p

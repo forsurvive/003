@@ -108,6 +108,24 @@ func _attach_one() -> void:
 	chunk_attached.emit(data["id"], us)
 
 
+## 순간 이동·불러오기용: p 둘레 3×3을 지금 붙인다(끊김을 감수하는 경로 — 화면이 페이드로 가려질 때만 쓴다).
+func load_now(p: Vector2) -> void:
+	update_focus(p)
+	var c := chunk_of_px(p)
+	var t_end := Time.get_ticks_msec() + 3000
+	while Time.get_ticks_msec() < t_end:
+		var missing := false
+		for dy in range(-1, 2):
+			for dx in range(-1, 2):
+				var k := c + Vector2i(dx, dy)
+				if in_world(k) and not loaded.has(k):
+					missing = true
+		if not missing:
+			return
+		_attach_one()
+		OS.delay_msec(1)
+
+
 func _detach(k: Vector2i) -> void:
 	var c: Dictionary = loaded[k]
 	c["ground"].queue_free()

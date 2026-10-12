@@ -71,6 +71,11 @@ def bake(seed=1023):
               "CR-002": [[gx + 20 + k, gy + 16 + (k % 3)] for k in range(5)],
               "CR-401": [[gx - 18, gy + 24]]}
     objects = [{"type": "door", "x": door[0], "y": door[1], "w": 3, "to": "int_s07_gate", "label": "S-07 정문"}]
+    # 디버그 콘솔 순간 이동용 장소(SD-09a 장소 ID. T-로 시작하는 것은 시험 구역 전용)
+    spawns["places"] = {"L-R01-03": {"name": "전망바위 아래 비탈(시험 구역 시작)", "tile": spawns["player"]},
+                        "L-R01-01": {"name": "볼트 S-07 정문 앞", "tile": [door[0], door[1] + 2]},
+                        "T-NEST": {"name": "큰바퀴 떼", "tile": [gx + 16, gy + 16]},
+                        "T-POST": {"name": "계엄병 초소", "tile": [gx - 18, gy + 18]}}
     return ground, deco, spawns, objects
 
 
@@ -87,7 +92,8 @@ def main():
             data = {"id": cid, "origin": [cx * CS, cy * CS], "size": CS, "tileset": "ts_r01_ext",
                     "ground": sum(g, []), "deco": sum(d, []), "objects": obj}
             json.dump(data, open(os.path.join(OUT, cid + ".json"), "w"), separators=(",", ":"))
-    json.dump({"chunk_size": CS, "chunks": [N, N], "tile": 32, "spawns": spawns, "solid_atlas": sorted(solid_ids)},
+    places = spawns.pop("places")
+    json.dump({"chunk_size": CS, "chunks": [N, N], "tile": 32, "spawns": spawns, "places": places, "solid_atlas": sorted(solid_ids)},
               open(os.path.join(OUT, "_index.json"), "w"), indent=1, sort_keys=True)
     # preview: 1px per tile
     from PIL import Image

@@ -36,3 +36,24 @@ func test_corruption_and_atomic(t) -> void:
 	t.ok(not FileAccess.file_exists(path + ".tmp"), "임시 파일 남지 않음")
 	t.eq(SaveGame.read(path)["world"], _sample(), "파일 왕복")
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+
+
+## 자동 저장 3칸 순환: 빈 칸부터 채우고, 가득 차면 가장 오래된 칸에 쓴다. 손상된 칸은 최신 판정에서 빠진다.
+func test_autosave_rotation(t) -> void:
+	for p in SaveGame.auto_paths():
+		if FileAccess.file_exists(p):
+			DirAccess.remove_absolute(p)
+	var order := []
+	for i in 5:
+		var nx := SaveGame.next_auto()
+		SaveGame.write_atomic(nx[0], SaveGame.encode({"seq": nx[1]}, {"i": i}))
+		order.append((nx[0] as String).get_file())
+	t.eq(order, ["auto_0.sav", "auto_1.sav", "auto_2.sav", "auto_0.sav", "auto_1.sav"], "순환 순서")
+	t.eq(SaveGame.latest_auto().get_file(), "auto_1.sav", "최신 = seq 5")
+	var f := FileAccess.open(SaveGame.AUTO % 1, FileAccess.READ_WRITE)
+	f.seek(f.get_length() - 3)
+	f.store_8(0x5A)
+	f.close()
+	t.eq(SaveGame.latest_auto().get_file(), "auto_0.sav", "손상된 최신 칸은 건너뛰고 그다음(seq 4)")
+	for p in SaveGame.auto_paths():
+		DirAccess.remove_absolute(p)

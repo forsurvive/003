@@ -74,3 +74,38 @@ static func _u32(v: int) -> PackedByteArray:
 	b.resize(4)
 	b.encode_u32(0, v)
 	return b
+
+
+## 자동 저장 3칸 순환(SD-12 §13.1, SD-19 §6.10). 머리의 seq가 가장 큰 칸이 최신, 가장 작은(또는 빈) 칸에 덮어쓴다.
+const AUTO := "user://auto_%d.sav"
+
+
+static func auto_paths() -> Array:
+	return [AUTO % 0, AUTO % 1, AUTO % 2]
+
+
+## 반환: [쓸 경로, 다음 seq]
+static func next_auto() -> Array:
+	var best := ""
+	var low := 1 << 62
+	var high := 0
+	for p in auto_paths():
+		var r := read(p)
+		var s: int = int(r["slot"].get("seq", 0)) if r["ok"] else -1
+		high = maxi(high, s)
+		if s < low:
+			low = s
+			best = p
+	return [best, high + 1]
+
+
+## 가장 최근의 온전한 자동 저장(없으면 빈 문자열). 손상된 칸은 건너뛴다.
+static func latest_auto() -> String:
+	var best := ""
+	var high := -1
+	for p in auto_paths():
+		var r := read(p)
+		if r["ok"] and int(r["slot"].get("seq", 0)) > high:
+			high = int(r["slot"]["seq"])
+			best = p
+	return best

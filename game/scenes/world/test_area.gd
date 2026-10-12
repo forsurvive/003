@@ -59,6 +59,18 @@ var _bot_roll_t := 0.0
 var ap_stats := {"sprint_s": 0.0, "rolls": 0, "focused": 0, "winded": 0}
 var _apbar: Control
 var _prof_frames: Array = []
+var _shot := ""
+var console: DebugConsole
+var overlay: DebugOverlay
+var god := false
+var game_minutes := 8.0 * 60.0               ## 게임 시각(분). 시간 체계는 단계 0 — 여기서는 원작 기본 배율 30배로 흐른다
+const TIMESCALE := 30.0
+var _combat_snapshot := {}                    ## 교전 시작 직전 상태(교전 중 자동 저장은 이것을 쓴다, SD-19 §6.10)
+var _in_combat := false
+var _save_task := -1
+var autosave_stats := {"count": 0, "main_ms_max": 0.0}
+var _pause_layer: PauseOverlay
+var _autosave_test := false
 
 
 func _ready() -> void:
@@ -130,6 +142,7 @@ func _ready() -> void:
 		touch.fire_released.connect(_touch_fire)
 		touch.buttons["회피"] = Rect2(560, 256, 48, 48)
 		touch.buttons["집중"] = Rect2(500, 176, 48, 48)
+		touch.layout(ScreenFit.logical)
 		Input.emulate_touch_from_mouse = true
 	save_rt = "--save-roundtrip" in args
 	soak = "--soak" in args
@@ -137,9 +150,34 @@ func _ready() -> void:
 		combat_bot = true
 	passive = "--passive" in args
 	Enemy.profiling = "--ai-profile" in args
+	_autosave_test = "--autosave-test" in args
+	overlay = DebugOverlay.new()
+	overlay.world = world
+	overlay.enemies = enemies
+	overlay.nav = nav
+	world.add_child(overlay)
+	console = DebugConsole.new()
+	console.host = self
+	add_child(console)
+	_make_pause_layer()
+	if "--continue" in args:
+		var path := SaveGame.latest_auto()
+		var r := SaveGame.read(path) if path != "" else {"ok": false}
+		if r["ok"]:
+			apply(r["world"])
+			print("이어하기: %s (seq %d, %s)" % [path, int(r["slot"]["seq"]), r["slot"].get("why", "")])
+		else:
+			print("이어하기: 자동 저장 없음")
+	for a in args:
+		if a.begins_with("--shot="):
+			_shot = a.substr(7)
+		elif a.begins_with("--cmd="):
+			console.run_script.call_deferred(a.substr(6))
 
 
 func _input_vector() -> Vector2:
+	if console.opened:
+		return Vector2.ZERO
 	if passive:
 		player.mode = "run"
 		var tgt: Array = world.index["spawns"]["CR-401"][0]
@@ -168,6 +206,13 @@ func _input_vector() -> Vector2:
 func _physics_process(dt: float) -> void:
 	frames += 1
 	_ap_t += dt
+	game_minutes += dt * TIMESCALE / 60.0
+	overlay.view_center = player.loco.logical
+	if god:
+		pc.hp = pc.max_hp
+	_track_combat()
+	if _autosave_test:
+		_autosave_test_step()
 	if _fading > 0.0:
 		_fade_step(dt)
 		return
@@ -192,14 +237,18 @@ func _physics_process(dt: float) -> void:
 		_check_door()
 	if touch_demo:
 		_touch_demo_step(dt)
+	if _shot != "" and frames == 150:                                 # 비교 화면(H-11): 논리 해상도 화면을 그대로 저장
+		get_viewport().get_texture().get_image().save_png(_shot)
+		print("화면 저장: %s %s" % [_shot, ScreenFit.logical])
+		get_tree().quit()
 	if save_rt and frames == 300:
 		_save_roundtrip()
 	if soak:
 		_soak_step()
-	if not combat_bot and Input.is_action_just_pressed("save"):
+	if not combat_bot and not console.opened and Input.is_action_just_pressed("save"):
 		SaveGame.write_atomic("user://quick.sav", SaveGame.encode({"name": "빠른 저장"}, capture()))
 		msg = "빠른 저장"
-	if not combat_bot and Input.is_action_just_pressed("load"):
+	if not combat_bot and not console.opened and Input.is_action_just_pressed("load"):
 		var r := SaveGame.read("user://quick.sav")
 		if r["ok"]:
 			apply(r["world"])
@@ -245,6 +294,8 @@ func _player_move(dt: float) -> void:
 
 
 func _want(action: String) -> bool:
+	if console.opened:
+		return false
 	if combat_bot:
 		return action == "dodge" and _bot_wants_roll()
 	if touch != null and touch.take({"dodge": "회피", "focus": "집중", "reload": "재장전", "swap": "교체"}[action]):
@@ -381,6 +432,8 @@ func _nearest_enemy():
 
 func _player_combat(dt: float) -> void:
 	_cool = maxf(0.0, _cool - dt)
+	if console.opened:
+		return
 	if player.rolling() or sprinting:                                 # 구르기·질주 중에는 쏘지도 재장전하지도 않는다
 		return
 	if _reload > 0.0:
@@ -756,14 +809,192 @@ func _swap() -> void:
 
 func _hud() -> void:
 	_apbar.queue_redraw()
+	if Input.is_action_just_pressed("debug") and not console.opened:          # F3: 디버그 표시 전부 켜고 끄기
+		dbg_show(["off" if overlay.any() else "all"])
 	if touch != null:
 		touch.dim["회피"] = not ap.can(APPool.DODGE)
 		touch.dim["집중"] = not ap.can(_focus_cost(weapons[weapon_id]))
 	var l := player.loco
 	var alive := enemies.filter(func(e): return not e.cmb.dead).size()
 	var w: Dictionary = weapons[weapon_id]
-	hud.text = "%s · 청크 %d · 붙이기 최대 %.2fms · AI %.2fms · %d fps\nHP %d/%d · %s %s · 적 %d/%d · 탄 %d\n%s %s %d  (%d, %d) %s" % [
-		"관악산 비탈" if area == world else "S-07 정문 안", world.loaded.size(), world.attach_usec_max / 1000.0,
+	hud.text = "%02d:%02d · %s · 청크 %d · 붙이기 최대 %.2fms · AI %.2fms · %d fps\nHP %d/%d · %s %s · 적 %d/%d · 탄 %d\n%s %s %d  (%d, %d) %s" % [
+		int(game_minutes / 60.0) % 24, int(game_minutes) % 60, "관악산 비탈" if area == world else "S-07 정문 안", world.loaded.size(), world.attach_usec_max / 1000.0,
 		ai_usec / 1000.0, Engine.get_frames_per_second(), int(pc.hp), int(pc.max_hp), w["name"],
 		("%d/12" % mag) if w["kind"] == "ranged" else "", alive, enemies.size(), shots.shots.size(),
-		l.motion, Locomotion.DIRS[l.facing], l.frame, floori(l.logical.x / 32), floori(l.logical.y / 32), msg]
+		l.motion, Locomotion.DIRS[l.facing], l.frame, floori(l.logical.x / 32), floori(l.logical.y / 32),
+		("무적 · " if god else "") + msg]
+
+
+# ---------------------------------------------------------------- 디버그 콘솔 명령 (DebugConsole이 부른다)
+func dbg_set(a: Array) -> String:
+	var v: String = a[1]
+	match a[0]:
+		"hp":
+			pc.hp = pc.max_hp if v == "max" else clampf(float(v), 1.0, pc.max_hp)
+			pc.dead = false
+			return "HP %d" % int(pc.hp)
+		"ap":
+			ap.ap = ap.max_ap if v == "max" else clampf(float(v), 0.0, ap.max_ap)
+			return "AP %d" % int(ap.ap)
+		"mag":
+			mag = int(weapons["W-002"]["mag"]) if v == "max" else clampi(int(v), 0, 99)
+			return "탄 %d" % mag
+		"skill":
+			return "스킬은 시험판에서 상수(%d) — 능력치 체계와 함께 단계 0" % int(SKILL)
+	return ""
+
+
+func dbg_places(_a: Array) -> String:
+	var out := []
+	for id in world.index.get("places", {}):
+		out.append("%s %s" % [id, world.index["places"][id]["name"]])
+	return ", ".join(out) + ", L-R01-01-IN 볼트 S-07 정문 안"
+
+
+func dbg_tp(a: Array) -> String:
+	var tile: Vector2i
+	if a.size() == 2:
+		tile = Vector2i(int(a[0]), int(a[1]))
+	else:
+		var id: String = (a[0] as String).to_upper()
+		if id == "L-R01-01-IN":
+			if area == world:
+				_start_fade("in")
+			return "볼트 S-07 정문 안으로"
+		var places: Dictionary = world.index.get("places", {})
+		if not places.has(id):
+			return "없는 장소: %s (places)" % id
+		tile = Vector2i(places[id]["tile"][0], places[id]["tile"][1])
+	if area != world:
+		return "실내에서는 tp L-R01-01-IN 밖으로 나간 뒤 쓴다"
+	world.load_now(Vector2(tile) * 32.0)                              # 아직 안 붙은 청크면 먼저 붙인다(막힘 판정용)
+	var free := tile
+	for r in 4:                                                     # 막힌 칸이면 가까운 열린 칸(반경 3)
+		var found := false
+		for dy in range(-r, r + 1):
+			for dx in range(-r, r + 1):
+				if not found and not world.is_solid(tile + Vector2i(dx, dy)):
+					free = tile + Vector2i(dx, dy)
+					found = true
+		if found:
+			break
+	if world.is_solid(free):
+		return "막힌 칸: %s" % tile
+	tile = free
+	var at := Vector2(tile) * 32.0 + Vector2(16, 16)
+	player.loco.place(at)
+	player.position = player.loco.render
+	world.update_focus(at)
+	_nav_dirty = true
+	return "순간 이동 %s" % tile
+
+
+func dbg_show(a: Array) -> String:
+	var k: String = a[0]
+	if k == "all" or k == "off":
+		for x in overlay.show:
+			overlay.show[x] = k == "all"
+	else:
+		overlay.show[k] = not overlay.show[k]
+	var on := []
+	for x in overlay.show:
+		if overlay.show[x]:
+			on.append(x)
+	return "표시: " + (", ".join(on) if on.size() > 0 else "없음")
+
+
+func dbg_skip(a: Array) -> String:
+	game_minutes += float(a[0])
+	return "게임 시각 %02d:%02d (+%s분)" % [int(game_minutes / 60.0) % 24, int(game_minutes) % 60, a[0]]
+
+
+func dbg_god(_a: Array) -> String:
+	god = not god
+	return "무적 " + ("켬" if god else "끔")
+
+
+func dbg_kill(_a: Array) -> String:
+	var n := 0
+	for e in enemies:
+		if not e.cmb.dead and absi(world.chunk_of_px(e.loco.logical).x - world.focus.x) <= 1 \
+				and absi(world.chunk_of_px(e.loco.logical).y - world.focus.y) <= 1:
+			e.cmb.take({"hp": e.cmb.hp + 1.0}, player.loco.logical)
+			n += 1
+	return "적 %d 쓰러뜨림" % n
+
+
+func dbg_heal(_a: Array) -> String:
+	pc.hp = pc.max_hp
+	pc.dead = false
+	ap.ap = ap.max_ap
+	return "HP·AP 가득"
+
+
+# ---------------------------------------------------------------- 자동 저장 (SD-19 §6.10·A7: 일시 정지 알림 → 즉시 자동 저장)
+## 교전에 들어가는 순간의 상태를 기억해 둔다. 교전 중에 앱이 내려가면 그 상태를 저장한다(전투 한가운데서 이어하지 않게).
+func _track_combat() -> void:
+	var now: bool = enemies.any(func(e): return not e.cmb.dead and e.brain.state == AIBrain.S.COMBAT)
+	if now and not _in_combat:
+		_combat_snapshot = capture()
+	_in_combat = now
+
+
+## 본 스레드는 상태를 모으기만 하고(capture), 직렬화·검사합·쓰기는 작업 스레드가 한다. 반환: 본 스레드 정지 ms.
+func autosave(why: String) -> float:
+	var t0 := Time.get_ticks_usec()
+	if _save_task >= 0:
+		WorkerThreadPool.wait_for_task_completion(_save_task)
+		_save_task = -1
+	var st: Dictionary = _combat_snapshot if _in_combat and not _combat_snapshot.is_empty() else capture()
+	var nx := SaveGame.next_auto()
+	var slot := {"name": "자동 저장", "why": why, "seq": nx[1], "combat": _in_combat, "where": "관악산 비탈" if area == world else "S-07 정문 안"}
+	_save_task = WorkerThreadPool.add_task(func(): SaveGame.write_atomic(nx[0], SaveGame.encode(slot, st)))
+	var ms := (Time.get_ticks_usec() - t0) / 1000.0
+	autosave_stats["count"] += 1
+	autosave_stats["main_ms_max"] = maxf(autosave_stats["main_ms_max"], ms)
+	return ms
+
+
+func finish_saves() -> void:
+	if _save_task >= 0:
+		WorkerThreadPool.wait_for_task_completion(_save_task)
+		_save_task = -1
+
+
+func _notification(what: int) -> void:
+	match what:
+		NOTIFICATION_APPLICATION_PAUSED, NOTIFICATION_APPLICATION_FOCUS_OUT:
+			if get_tree() != null and not get_tree().paused and not combat_bot:
+				autosave("일시 정지 알림")
+				_pause(true)
+		NOTIFICATION_WM_GO_BACK_REQUEST:                              # Android 뒤로 가기 = 일시 정지 메뉴
+			_pause(not _pause_layer.visible)
+		NOTIFICATION_WM_CLOSE_REQUEST:
+			autosave("종료")
+			finish_saves()
+
+
+func _make_pause_layer() -> void:
+	_pause_layer = PauseOverlay.new(ui_font)
+	add_child(_pause_layer)
+
+
+func _pause(on: bool) -> void:
+	if on:
+		_pause_layer.open("일시 정지 — 자동 저장했다\n아무 키나 누르거나 화면을 누르면 계속")
+	else:
+		_pause_layer.close()
+
+
+## 자동 저장 시험: 교전 전·교전 중 일시 정지 알림을 흉내 내고, 저장된 칸을 읽어 되돌린 뒤 같은지 본다.
+func _autosave_test_step() -> void:
+	if frames == 120 or frames == 900:
+		var before: Dictionary = _combat_snapshot if _in_combat else capture()
+		var ms := autosave("시험 %d" % frames)
+		finish_saves()
+		var r := SaveGame.read(SaveGame.latest_auto())
+		var same: bool = r["ok"] and var_to_bytes(r["world"]) == var_to_bytes(before)
+		print("자동 저장 시험 %d: 본 스레드 %.2fms, 칸 %s, seq %d, 교전 중 %s, %s" % [frames, ms, SaveGame.latest_auto().get_file(),
+			int(r["slot"]["seq"]), r["slot"]["combat"], "상태 동일" if same else "차이 있음"])
+	if frames == 1000:
+		get_tree().quit()

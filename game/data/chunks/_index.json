@@ -4,6 +4,36 @@
   9,
   9
  ],
+ "places": {
+  "L-R01-01": {
+   "name": "\ubcfc\ud2b8 S-07 \uc815\ubb38 \uc55e",
+   "tile": [
+    179,
+    173
+   ]
+  },
+  "L-R01-03": {
+   "name": "\uc804\ub9dd\ubc14\uc704 \uc544\ub798 \ube44\ud0c8(\uc2dc\ud5d8 \uad6c\uc5ed \uc2dc\uc791)",
+   "tile": [
+    179,
+    175
+   ]
+  },
+  "T-NEST": {
+   "name": "\ud070\ubc14\ud034 \ub5bc",
+   "tile": [
+    190,
+    186
+   ]
+  },
+  "T-POST": {
+   "name": "\uacc4\uc5c4\ubcd1 \ucd08\uc18c",
+   "tile": [
+    156,
+    188
+   ]
+  }
+ },
  "solid_atlas": [
   10,
   11,
