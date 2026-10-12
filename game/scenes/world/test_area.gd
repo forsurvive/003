@@ -58,6 +58,7 @@ var _focus_t := -1.0                          ## 집중 사격 조준 중이면 
 var _bot_roll_t := 0.0
 var ap_stats := {"sprint_s": 0.0, "rolls": 0, "focused": 0, "winded": 0}
 var _apbar: Control
+var _prof_frames: Array = []
 
 
 func _ready() -> void:
@@ -135,6 +136,7 @@ func _ready() -> void:
 	if soak:
 		combat_bot = true
 	passive = "--passive" in args
+	Enemy.profiling = "--ai-profile" in args
 
 
 func _input_vector() -> Vector2:
@@ -308,11 +310,25 @@ func _combat_tick(dt: float) -> void:
 		for i in cands.size():
 			cands[i].has_token = i < 3
 	var t0 := Time.get_ticks_usec()
+	if Enemy.profiling:
+		for k in Enemy.prof:
+			Enemy.prof[k] = 0
 	for e in enemies:
 		if absi(world.chunk_of_px(e.loco.logical).x - world.focus.x) <= 1 and absi(world.chunk_of_px(e.loco.logical).y - world.focus.y) <= 1:
 			e.think(dt, pc, nav, shots)
 	ai_usec = Time.get_ticks_usec() - t0
 	ai_usec_max = maxi(ai_usec_max, ai_usec)
+	if Enemy.profiling:
+		var rec := Enemy.prof.duplicate()
+		rec["total"] = ai_usec
+		rec["frame"] = frames
+		rec["active"] = enemies.filter(func(e): return not e.cmb.dead).size()
+		var c0 := Time.get_ticks_usec()                                # 대조군: 매 프레임 같은 양의 계산(AI와 무관)
+		var acc := Vector2.ZERO
+		for i in 1500:
+			acc += Vector2(i, 1).rotated(0.01 * i).normalized()
+		rec["control"] = Time.get_ticks_usec() - c0 + int(acc.x) * 0
+		_prof_frames.append(rec)
 	shots.step(dt)
 	if pc.flash > 0:
 		pc.flash -= 1
@@ -577,6 +593,8 @@ func _send_drag(idx: int, centre: Vector2, off: Vector2) -> void:
 
 
 func _exit_tree() -> void:
+	if Enemy.profiling and not _prof_frames.is_empty():
+		_prof_report()
 	if soak:
 		print("통합 시험: 게임 시간 %.1f분, 적 물결 %d, 저장 왕복 %d회(차이 %d), 주인공 쓰러짐 %d, AI 최대 %.2fms, 붙이기 최대 %.2fms" % [
 			frames / 3600.0, soak_stats["waves"], soak_stats["saves"], soak_stats["save_diffs"], soak_stats["deaths"],
@@ -611,6 +629,29 @@ func _equip_keys() -> void:
 			player.doll.set_look({slot: opts[(opts.find(cur) + 1) % opts.size()]})
 			msg = "%s → %s" % [slot, player.doll.look[slot]]
 		_equip_down[k] = down
+
+
+## AI 스파이크 분석(T8): 프레임별 AI 시간 분포와 상위 프레임의 층별 구성
+func _prof_report() -> void:
+	var tot: Array = _prof_frames.map(func(r): return r["total"])
+	tot.sort()
+	var n := tot.size()
+	var pct := func(q: float) -> float: return tot[mini(n - 1, int(n * q))] / 1000.0
+	print("AI 분포(ms): 프레임 %d, 중앙 %.3f, 99%% %.3f, 99.9%% %.3f, 최대 %.3f, 3ms 초과 %d, 2ms 초과 %d" % [
+		n, pct.call(0.5), pct.call(0.99), pct.call(0.999), tot[n - 1] / 1000.0,
+		tot.filter(func(x): return x > 3000).size(), tot.filter(func(x): return x > 2000).size()])
+	var ctl: Array = _prof_frames.map(func(r): return r["control"])
+	ctl.sort()
+	print("대조군(같은 계산 매 프레임, ms): 중앙 %.3f, 99.9%% %.3f, 최대 %.3f, 중앙+1.5ms 초과 %d회" % [
+		ctl[n / 2] / 1000.0, ctl[mini(n - 1, int(n * 0.999))] / 1000.0, ctl[n - 1] / 1000.0,
+		ctl.filter(func(x): return x > ctl[n / 2] + 1500).size()])
+	var top := _prof_frames.duplicate()
+	top.sort_custom(func(a, b): return a["total"] > b["total"])
+	for r in top.slice(0, 8):
+		var acc: int = r["per"] + r["tac"] + r["act"]
+		print("  프레임 %d: 합 %.2fms (인지 %.2f ×%d, 전술 %.2f ×%d [경로 %.2f ×%d], 행동 %.2f, 층 밖 %.2f), 활성 %d" % [
+			r["frame"], r["total"] / 1000.0, r["per"] / 1000.0, r["n_per"], r["tac"] / 1000.0, r["n_tac"],
+			r["path"] / 1000.0, r["n_path"], r["act"] / 1000.0, (r["total"] - acc) / 1000.0, r["active"]])
 
 
 static func _count(a: Array) -> Dictionary:

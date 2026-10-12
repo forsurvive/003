@@ -30,6 +30,9 @@ var ui_font: Font
 var shots_fired := 0
 var _wander_t := 0.0
 var _rng := RandomNumberGenerator.new()
+## 측정용(--ai-profile): 이번 프레임 층별 시간(마이크로초)과 횟수. 측정을 켜지 않으면 시계를 읽지 않는다.
+static var profiling := false
+static var prof := {"per": 0, "tac": 0, "act": 0, "n_per": 0, "n_tac": 0, "n_path": 0, "path": 0}
 
 
 func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w) -> void:
@@ -76,7 +79,10 @@ func think(dt: float, target: Combatant, nav: NavGrid, shots: Projectiles) -> vo
 	while _hist.size() > 2 and _clock - float(_hist[0][0]) > react + 0.1:
 		_hist.pop_front()
 	_t_per += dt
+	var t0 := Time.get_ticks_usec() if profiling else 0
 	if _t_per >= 0.1:                                              # 인지 + 상태 층
+		if profiling:
+			prof["n_per"] += 1
 		var step := _t_per
 		_t_per = 0.0
 		var to := target.pos() - loco.logical
@@ -90,12 +96,21 @@ func think(dt: float, target: Combatant, nav: NavGrid, shots: Projectiles) -> vo
 		_intent = brain.tick(step, {"sees": sees and (fov or dist_t <= 3.0), "rate": rate, "target": target.pos(),
 			"hit": hit, "sound": _heard, "sound_at": _heard_at, "at_home": loco.logical.distance_to(brain.home) < 24.0})
 		_heard = 0.0
+	var t1 := Time.get_ticks_usec() if profiling else 0
 	_t_tac += dt
 	if _t_tac >= 0.5:                                              # 전술 층
 		_t_tac = 0.0
 		_tactics(target, nav)
+		if profiling:
+			prof["n_tac"] += 1
+	var t2 := Time.get_ticks_usec() if profiling else 0
 	_act(dt, target, shots)
 	queue_redraw()
+	if profiling:
+		var t3 := Time.get_ticks_usec()
+		prof["per"] += t1 - t0
+		prof["tac"] += t2 - t1
+		prof["act"] += t3 - t2
 
 
 func _tactics(target: Combatant, nav: NavGrid) -> void:

@@ -37,8 +37,17 @@ func _ready() -> void:
 	cam.make_current()
 	var c: Vector2 = Vector2(world.index["spawns"]["player"][0], world.index["spawns"]["player"][1]) * 32.0
 	cam.position = c
-	for i in 30:                                                    # warm up: let the 5×5 chunks attach
+	var need := 0                                                   # 준비: 5×5 사전 로드 청크가 다 붙을 때까지(최대 10초)
+	var fc := world.chunk_of_px(c)
+	for dy in range(-2, 3):
+		for dx in range(-2, 3):
+			if world.in_world(fc + Vector2i(dx, dy)):
+				need += 1
+	var t_end := Time.get_ticks_msec() + 10000
+	while world.loaded.size() < need and Time.get_ticks_msec() < t_end:
 		world.update_focus(c)
+		OS.delay_msec(1)
+	print("벤치 준비: 청크 %d/%d 붙음" % [world.loaded.size(), need])
 	var layer := CanvasLayer.new()
 	add_child(layer)
 	label = Label.new()
@@ -154,6 +163,7 @@ func _process(dt: float) -> void:
 					var t0 := Time.get_ticks_usec()
 					g.get_point_path(Vector2i(0, 0), Vector2i(63, 63), true)
 					_work_us.append(Time.get_ticks_usec() - t0)
+				_real_paths()
 				_t = SECS
 		3:                                                         # 매 프레임 프레임·방향 갱신 + 2초마다 1명 장비 교체
 			var f := int(Engine.get_process_frames() / 4) % 6
@@ -170,6 +180,88 @@ func _process(dt: float) -> void:
 	label.text = "벤치 %d/5  %.1f초" % [_stage + 1, _t]
 	if _t >= SECS:
 		_finish()
+
+
+## ③b~e 실제 지형(활성 3×3청크 = 120×120타일 경로 격자). b: 64×64 창 모서리 근처끼리, b32: 28~32타일,
+## c: 60타일 이상을 타일 격자 한 번에(2단 없이, 비교용), d: 같은 거리를 NavGrid.path(2단), e: 2단 경로를 따라가 도착하는지
+func _real_paths() -> void:
+	var g: AStarGrid2D = nav.astar
+	var r := g.region
+	var free := func(p: Vector2i) -> bool: return g.is_in_boundsv(p) and not g.is_point_solid(p)
+	var us64: Array = []
+	var us_far: Array = []
+	var us32: Array = []
+	var tries := 0
+	while (us64.size() < 200 or us_far.size() < 200 or us32.size() < 200) and tries < 20000:
+		tries += 1
+		var o := r.position + Vector2i(_rng.randi_range(0, r.size.x - 64), _rng.randi_range(0, r.size.y - 64))
+		var a := o + Vector2i(_rng.randi_range(0, 4), _rng.randi_range(0, 4))
+		var b := o + Vector2i(63 - _rng.randi_range(0, 4), 63 - _rng.randi_range(0, 4))
+		if us64.size() < 200 and free.call(a) and free.call(b):     # 실제 질의 함수(NavGrid.path: 32타일 넘으면 2단)
+			nav.new_frame()
+			var t0 := Time.get_ticks_usec()
+			var p := nav.path(Vector2(a) * 32.0 + Vector2(16, 16), Vector2(b) * 32.0 + Vector2(16, 16))
+			if p.size() > 0:
+				us64.append(Time.get_ticks_usec() - t0)
+		var e := o + Vector2i(_rng.randi_range(0, 3), _rng.randi_range(0, 3))   # 2단으로 넘어가기 직전 거리(28~32타일)
+		var f := e + Vector2i(32 - _rng.randi_range(0, 4), 32 - _rng.randi_range(0, 4))
+		if us32.size() < 200 and free.call(e) and free.call(f):
+			nav.new_frame()
+			var t3 := Time.get_ticks_usec()
+			var p3 := nav.path(Vector2(e) * 32.0 + Vector2(16, 16), Vector2(f) * 32.0 + Vector2(16, 16))
+			if p3.size() > 0:
+				us32.append(Time.get_ticks_usec() - t3)
+		var c := r.position + Vector2i(_rng.randi_range(0, r.size.x - 1), _rng.randi_range(0, r.size.y - 1))
+		var d := r.position + Vector2i(_rng.randi_range(0, r.size.x - 1), _rng.randi_range(0, r.size.y - 1))
+		if us_far.size() < 200 and free.call(c) and free.call(d) and (c - d).length() >= 60:
+			var t1 := Time.get_ticks_usec()
+			var q := g.get_point_path(c, d, true)
+			if q.size() > 0:
+				us_far.append(Time.get_ticks_usec() - t1)
+	var us_h: Array = []                                           # ③d 같은 먼 쌍을 2단 경로(NavGrid.path)로
+	var hops: Array = []
+	tries = 0
+	while us_h.size() < 200 and tries < 20000:
+		tries += 1
+		var c := r.position + Vector2i(_rng.randi_range(0, r.size.x - 1), _rng.randi_range(0, r.size.y - 1))
+		var d := r.position + Vector2i(_rng.randi_range(0, r.size.x - 1), _rng.randi_range(0, r.size.y - 1))
+		if free.call(c) and free.call(d) and (c - d).length() >= 60 and g.get_id_path(c, d).size() > 0:
+			nav.new_frame()
+			var t2 := Time.get_ticks_usec()
+			nav.path(Vector2(c) * 32.0 + Vector2(16, 16), Vector2(d) * 32.0 + Vector2(16, 16))
+			us_h.append(Time.get_ticks_usec() - t2)
+			hops.append(_follow(c, d))
+	var ok := hops.filter(func(h): return h >= 0)
+	print("3e_hier_follow: 2단 경로를 0.5초마다 다시 물으며 따라가 도착 %d/%d, 평균 재질의 %.1f회" % [ok.size(), hops.size(),
+		ok.reduce(func(a, b): return a + b, 0) / maxf(1.0, ok.size())])
+	for pair in [["3b_real_64x64", us64], ["3b_real_32", us32], ["3c_real_far60_flat", us_far], ["3d_real_far60", us_h]]:
+		var a: Array = pair[1]
+		a.sort()
+		var avg := 0.0
+		for x in a:
+			avg += x
+		avg /= maxi(1, a.size())
+		report[pair[0]] = {"queries": a.size(), "avg_ms": snappedf(avg / 1000.0, 0.001),
+			"p99_ms": snappedf(a[int(a.size() * 0.99)] / 1000.0 if a.size() > 0 else 0.0, 0.001),
+			"max_ms": snappedf(a[a.size() - 1] / 1000.0 if a.size() > 0 else 0.0, 0.001)}
+		print("%s: %s" % [pair[0], JSON.stringify(report[pair[0]])])
+
+
+## 2단 경로를 받은 대로 따라 걷고(타일 단위) 끝나면 다시 묻는다. 도착까지 질의 수, 실패하면 -1.
+func _follow(a: Vector2i, b: Vector2i) -> int:
+	var at := a
+	for q in 40:
+		if at == b:
+			return q
+		nav.new_frame()
+		var p := nav.path(Vector2(at) * 32.0 + Vector2(16, 16), Vector2(b) * 32.0 + Vector2(16, 16))
+		if p.size() < 2:
+			return -1
+		var nxt := Vector2i(floori(p[p.size() - 1].x / 32), floori(p[p.size() - 1].y / 32))
+		if nxt == at:
+			return -1
+		at = nxt
+	return -1
 
 
 func _draw() -> void:
