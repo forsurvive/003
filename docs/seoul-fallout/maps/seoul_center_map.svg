@@ -2655,6 +2655,8 @@
 <text x="723" y="1549" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">시흥 고개 초소</text>
 <circle cx="868" cy="1581" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-R01-31 삼성산 능선 캠프 (야영지, 위협 3)</title></circle>
 <text x="876" y="1585" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">삼성산 능선 캠프</text>
+<circle cx="906" cy="1349" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-R01-32 봉천 동 주민센터 (폐허, 위협 1)</title></circle>
+<text x="914" y="1353" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">봉천 동 주민센터</text>
 <circle cx="758" cy="1057" r="5" fill="#5a4a3a" stroke="#fff" stroke-width="1.5"><title>L-R02-01 무너진 국회 (던전, 위협 3)</title></circle>
 <text x="766" y="1061" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">무너진 국회</text>
 <circle cx="806" cy="1091" r="5" fill="#5a4a3a" stroke="#fff" stroke-width="1.5"><title>L-R02-02 여의도 지하 벙커 (던전, 위협 3)</title></circle>
@@ -2709,6 +2711,10 @@
 <text x="485" y="1282" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">개봉 빌라 미로</text>
 <circle cx="334" cy="1293" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-R02-27 온수 경계 둑 (경계, 위협 4)</title></circle>
 <text x="342" y="1297" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">온수 경계 둑</text>
+<circle cx="812" cy="1084" r="5" fill="#a8321d" stroke="#fff" stroke-width="1.5"><title>L-R02-28 여의도 환승센터 터 (세력 거점, 위협 3)</title></circle>
+<text x="820" y="1088" font-size="11" font-weight="700" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">여의도 환승센터 터</text>
+<circle cx="700" cy="1105" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-R02-29 영등포 경찰서 폐허 (폐허, 위협 2)</title></circle>
+<text x="708" y="1109" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">영등포 경찰서 폐허</text>
 <circle cx="778" cy="986" r="5" fill="#5a4a3a" stroke="#fff" stroke-width="1.5"><title>L-R03-01 당인리 지하 원자력 발전소 (던전, 위협 4)</title></circle>
 <text x="786" y="990" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">당인리 지하 원자력 발전소</text>
 <circle cx="792" cy="977" r="5" fill="#7b3fa0" stroke="#fff" stroke-width="1.5"><title>L-R03-02 당인리 굴뚝 공원 (랜드마크, 위협 3)</title></circle>
@@ -2763,6 +2769,8 @@
 <text x="948" y="988" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">공덕 오거리 고층가</text>
 <circle cx="995" cy="888" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-R03-27 충정로 관공서 거리 (폐허, 위협 3)</title></circle>
 <text x="1003" y="892" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">충정로 관공서 거리</text>
+<circle cx="928" cy="958" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-R03-28 마포 소방서 차고 (폐허, 위협 3)</title></circle>
+<text x="936" y="962" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">마포 소방서 차고</text>
 <circle cx="687" cy="987" r="7" fill="#1b7f3b" stroke="#fff" stroke-width="1.5"><title>L-R04-01 선유도 (정착지, 위협 1)</title></circle>
 <text x="695" y="991" font-size="11" font-weight="700" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">선유도</text>
 <circle cx="677" cy="993" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-R04-02 선유도 침전지 농장 (기반 시설, 위협 1)</title></circle>
@@ -2873,6 +2881,8 @@
 <text x="1203" y="772" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">낙산 성곽 전망대</text>
 <circle cx="1180" cy="723" r="5" fill="#7b3fa0" stroke="#fff" stroke-width="1.5"><title>L-R05-35 혜화문 차단벽 (랜드마크, 위협 4)</title></circle>
 <text x="1188" y="727" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">혜화문 차단벽</text>
+<circle cx="1171" cy="837" r="5" fill="#5a4a3a" stroke="#fff" stroke-width="1.5"><title>L-R05-36 방산동 의무 분소 (던전, 위협 5)</title></circle>
+<text x="1179" y="841" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">방산동 의무 분소</text>
 <circle cx="1097" cy="1026" r="5" fill="#a8321d" stroke="#fff" stroke-width="1.5"><title>L-R06-01 용산 요새 (세력 거점, 위협 2)</title></circle>
 <text x="1105" y="1030" font-size="11" font-weight="700" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">용산 요새</text>
 <circle cx="1058" cy="1055" r="5" fill="#a8321d" stroke="#fff" stroke-width="1.5"><title>L-R06-02 용산 국방 청사 (세력 거점, 위협 2)</title></circle>
@@ -2929,6 +2939,10 @@
 <text x="995" y="1018" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">원효로 철로 둑</text>
 <circle cx="1035" cy="984" r="5" fill="#1b7f3b" stroke="#fff" stroke-width="1.5"><title>L-R06-28 남영 장터 (교역소, 위협 2)</title></circle>
 <text x="1043" y="988" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">남영 장터</text>
+<circle cx="1098" cy="927" r="5" fill="#a8321d" stroke="#fff" stroke-width="1.5"><title>L-R06-29 남산 북사면 배수 터널 (세력 거점, 위협 2)</title></circle>
+<text x="1106" y="931" font-size="11" font-weight="700" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">남산 북사면 배수 터널</text>
+<circle cx="1152" cy="1018" r="5" fill="#a8321d" stroke="#fff" stroke-width="1.5"><title>L-R06-30 이태원 고개 초소 (검문소, 위협 2)</title></circle>
+<text x="1160" y="1022" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">이태원 고개 초소</text>
 <circle cx="1657" cy="1172" r="5" fill="#5a4a3a" stroke="#fff" stroke-width="1.5"><title>L-R07-01 세진전자 타워 (던전, 위협 4)</title></circle>
 <text x="1665" y="1176" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">세진전자 타워</text>
 <circle cx="1636" cy="1181" r="5" fill="#5a4a3a" stroke="#fff" stroke-width="1.5"><title>L-R07-02 원자랜드 (던전, 위협 4)</title></circle>
@@ -3061,6 +3075,8 @@
 <text x="1830" y="1084" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">둔촌 대단지</text>
 <circle cx="1979" cy="858" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-R08-33 강일 경계 고가 (경계, 위협 4)</title></circle>
 <text x="1987" y="862" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">강일 경계 고가</text>
+<circle cx="1846" cy="930" r="5" fill="#a8321d" stroke="#fff" stroke-width="1.5"><title>L-R08-34 암사 나들목 버스 요새 (세력 거점, 위협 3)</title></circle>
+<text x="1854" y="934" font-size="11" font-weight="700" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">암사 나들목 버스 요새</text>
 <circle cx="1025" cy="540" r="5" fill="#a8321d" stroke="#fff" stroke-width="1.5"><title>L-R09-01 북한산 굴진 기지 (세력 거점, 위협 4)</title></circle>
 <text x="1033" y="544" font-size="11" font-weight="700" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">북한산 굴진 기지</text>
 <circle cx="1049" cy="492" r="5" fill="#7b3fa0" stroke="#fff" stroke-width="1.5"><title>L-R09-02 북한산성 성문 터 (랜드마크, 위협 4)</title></circle>
@@ -3127,6 +3143,10 @@
 <text x="843" y="562" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">불광천 상류 캠프</text>
 <circle cx="835" cy="618" r="5" fill="#c08a00" stroke="#fff" stroke-width="1.5"><title>L-R09-33 은평 관제 중계소 (관제망 시설, 위협 3)</title></circle>
 <text x="843" y="622" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">은평 관제 중계소</text>
+<circle cx="1405" cy="85" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-R09-34 도봉 북방 경계 (경계, 위협 5)</title></circle>
+<text x="1413" y="89" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">도봉 북방 경계</text>
+<circle cx="1524" cy="384" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-R09-35 중계 학원가 (폐허, 위협 3)</title></circle>
+<text x="1532" y="388" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">중계 학원가</text>
 <circle cx="170" cy="898" r="5" fill="#5a4a3a" stroke="#fff" stroke-width="1.5"><title>L-R10-01 김포공항 크레이터 (던전, 위협 5)</title></circle>
 <text x="178" y="902" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">김포공항 크레이터</text>
 <circle cx="215" cy="858" r="5" fill="#a8321d" stroke="#fff" stroke-width="1.5"><title>L-R10-02 김포 활주로 (세력 거점, 위협 4)</title></circle>
@@ -3181,6 +3201,16 @@
 <text x="604" y="1102" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">오목교 안양천 둔치</text>
 <circle cx="563" cy="960" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-R10-27 염창 둑 (경계, 위협 3)</title></circle>
 <text x="571" y="964" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">염창 둑</text>
+<circle cx="252" cy="948" r="5" fill="#5a4a3a" stroke="#fff" stroke-width="1.5"><title>L-R10-28 김포 전진 보급 야적장 (던전, 위협 4)</title></circle>
+<text x="260" y="952" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">김포 전진 보급 야적장</text>
+<circle cx="205" cy="812" r="5" fill="#5a4a3a" stroke="#fff" stroke-width="1.5"><title>L-R10-29 개화 방역 매몰지 (던전, 위협 4)</title></circle>
+<text x="213" y="816" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">개화 방역 매몰지</text>
+<circle cx="128" cy="935" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-R10-30 오곡 곰 사육 농장 터 (크리처 둥지, 위협 5)</title></circle>
+<text x="136" y="939" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">오곡 곰 사육 농장 터</text>
+<circle cx="268" cy="806" r="5" fill="#a8321d" stroke="#fff" stroke-width="1.5"><title>L-R10-31 개화산 탄약고 (세력 거점, 위협 4)</title></circle>
+<text x="276" y="810" font-size="11" font-weight="700" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">개화산 탄약고</text>
+<circle cx="300" cy="820" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-R10-32 개화 갈대밭 목동 야영지 (야영지, 위협 4)</title></circle>
+<text x="308" y="824" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">개화 갈대밭 목동 야영지</text>
 <circle cx="1388" cy="1566" r="5" fill="#a8321d" stroke="#fff" stroke-width="1.5"><title>L-R11-01 청계산 벙커 (세력 거점, 위협 5)</title></circle>
 <text x="1396" y="1570" font-size="11" font-weight="700" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">청계산 벙커</text>
 <circle cx="1369" cy="1584" r="5" fill="#5a4a3a" stroke="#fff" stroke-width="1.5"><title>L-R11-02 청계산 위장 환기탑 (던전, 위협 5)</title></circle>
@@ -3223,126 +3253,132 @@
 <text x="1487" y="1564" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">옛골 계곡 캠프</text>
 <circle cx="1445" cy="1548" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-R11-21 청계산 등산로 계단 (자연, 위협 4)</title></circle>
 <text x="1453" y="1552" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">청계산 등산로 계단</text>
-<circle cx="1081" cy="1389" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="943" cy="1361" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="833" cy="1343" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1074" cy="1232" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1115" cy="1464" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="715" cy="1112" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="807" cy="1118" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="848" cy="1085" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="880" cy="1047" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="910" cy="1011" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="938" cy="987" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="699" cy="1337" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="672" cy="1099" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="758" cy="950" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="808" cy="905" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="868" cy="917" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="995" cy="888" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="967" cy="802" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1010" cy="853" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1056" cy="822" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1042" cy="794" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1099" cy="789" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1058" cy="854" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1088" cy="827" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1129" cy="820" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1084" cy="852" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1126" cy="850" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1141" cy="881" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1103" cy="883" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1065" cy="897" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1215" cy="820" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1206" cy="857" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1178" cy="755" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1029" cy="920" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1033" cy="924" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1040" cy="1040" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1045" cy="1115" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1304" cy="1086" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1192" cy="1219" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1236" cy="1287" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1300" cy="1260" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1469" cy="1195" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1645" cy="1168" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1334" cy="1343" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1654" cy="1324" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1526" cy="1458" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1345" cy="881" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1288" cy="797" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1393" cy="767" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1758" cy="1016" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1661" cy="977" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1199" cy="717" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="792" cy="534" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="221" cy="874" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="336" cy="887" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="522" cy="1091" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="429" cy="1128" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1064" cy="648" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1312" cy="840" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1116" cy="930" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1107" cy="851" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="1087" cy="873" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"/>
-<circle cx="973" cy="1143" r="7" fill="#1b7f3b" stroke="#fff" stroke-width="1.5"><title>L-HR-01 노들섬 (정착지, 위협 1)</title></circle>
+<circle cx="1081" cy="1389" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-01 사당역 승강장</title></circle>
+<circle cx="943" cy="1361" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-02 서울대입구역</title></circle>
+<circle cx="833" cy="1343" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-03 신림역</title></circle>
+<circle cx="1074" cy="1232" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-04 동작역</title></circle>
+<circle cx="1115" cy="1464" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-05 남태령역</title></circle>
+<circle cx="715" cy="1112" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-06 영등포시장역</title></circle>
+<circle cx="807" cy="1118" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-07 여의도역</title></circle>
+<circle cx="848" cy="1085" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-08 여의나루역</title></circle>
+<circle cx="880" cy="1047" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-09 하저 터널</title></circle>
+<circle cx="910" cy="1011" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-10 마포역</title></circle>
+<circle cx="938" cy="987" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-11 공덕역</title></circle>
+<circle cx="699" cy="1337" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-12 구로디지털단지역</title></circle>
+<circle cx="672" cy="1099" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-13 영등포구청역</title></circle>
+<circle cx="758" cy="950" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-14 합정역</title></circle>
+<circle cx="808" cy="905" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-15 홍대입구역</title></circle>
+<circle cx="868" cy="917" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-16 신촌역</title></circle>
+<circle cx="995" cy="888" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-17 충정로역</title></circle>
+<circle cx="967" cy="802" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-18 독립문역</title></circle>
+<circle cx="1010" cy="853" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-19 서대문역</title></circle>
+<circle cx="1056" cy="822" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-20 광화문역</title></circle>
+<circle cx="1042" cy="794" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-21 경복궁역</title></circle>
+<circle cx="1099" cy="789" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-22 안국역</title></circle>
+<circle cx="1058" cy="854" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-23 시청역</title></circle>
+<circle cx="1088" cy="827" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-24 종각역</title></circle>
+<circle cx="1129" cy="820" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-25 종로3가역</title></circle>
+<circle cx="1084" cy="852" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-26 을지로입구역</title></circle>
+<circle cx="1126" cy="850" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-27 을지로3가역</title></circle>
+<circle cx="1141" cy="881" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-28 충무로역</title></circle>
+<circle cx="1103" cy="883" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-29 명동역</title></circle>
+<circle cx="1065" cy="897" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-30 회현역</title></circle>
+<circle cx="1215" cy="820" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-31 동대문역</title></circle>
+<circle cx="1206" cy="857" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-32 동대문역사문화공원역</title></circle>
+<circle cx="1178" cy="755" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-33 혜화역</title></circle>
+<circle cx="1029" cy="920" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-34 서울역 지하 교차역</title></circle>
+<circle cx="1033" cy="924" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-35 볼트 S-12</title></circle>
+<circle cx="1040" cy="1040" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-36 삼각지역</title></circle>
+<circle cx="1045" cy="1115" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-37 이촌역</title></circle>
+<circle cx="1304" cy="1086" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-38 압구정역</title></circle>
+<circle cx="1192" cy="1219" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-39 고속터미널 지하상가</title></circle>
+<circle cx="1236" cy="1287" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-40 교대역</title></circle>
+<circle cx="1300" cy="1260" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-41 강남역</title></circle>
+<circle cx="1469" cy="1195" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-42 삼성역·무역센터 지하몰</title></circle>
+<circle cx="1645" cy="1168" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-43 잠실역</title></circle>
+<circle cx="1334" cy="1343" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-44 양재역</title></circle>
+<circle cx="1654" cy="1324" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-45 수서역</title></circle>
+<circle cx="1526" cy="1458" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-46 정부 전용 대심도 선로</title></circle>
+<circle cx="1345" cy="881" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-47 왕십리역</title></circle>
+<circle cx="1288" cy="797" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-48 신설동역</title></circle>
+<circle cx="1393" cy="767" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-49 청량리역</title></circle>
+<circle cx="1758" cy="1016" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-50 천호역</title></circle>
+<circle cx="1661" cy="977" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-51 광나루역</title></circle>
+<circle cx="1199" cy="717" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-52 한성대입구역</title></circle>
+<circle cx="792" cy="534" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-53 연신내역</title></circle>
+<circle cx="221" cy="874" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-54 김포공항역</title></circle>
+<circle cx="336" cy="887" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-55 마곡역</title></circle>
+<circle cx="522" cy="1091" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-56 목동역</title></circle>
+<circle cx="429" cy="1128" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-57 신월 빗물터널 본관</title></circle>
+<circle cx="1064" cy="648" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-58 침투 터널</title></circle>
+<circle cx="1312" cy="840" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-59 청계천 복개 하수로</title></circle>
+<circle cx="1116" cy="930" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-60 남산 대피 터널</title></circle>
+<circle cx="1107" cy="851" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-61 을지로 지하 회랑</title></circle>
+<circle cx="1087" cy="873" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-62 명동 지하상가</title></circle>
+<circle cx="1041" cy="934" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-63 서울역 녹수조</title></circle>
+<circle cx="1043" cy="887" r="4" fill="none" stroke="#6a3d9a" stroke-width="2"><title>L-UG-64 1호선 도심 구간</title></circle>
+<circle cx="973" cy="1143" r="7" fill="#2e6f95" stroke="#fff" stroke-width="1.5"><title>L-HR-01 노들섬 (정착지, 위협 1)</title></circle>
 <text x="981" y="1147" font-size="11" font-weight="700" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">노들섬</text>
-<circle cx="973" cy="1146" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-HR-02 노들섬 다리 (횡단로, 위협 1)</title></circle>
+<circle cx="973" cy="1146" r="5" fill="#2e6f95" stroke="#fff" stroke-width="1.5"><title>L-HR-02 노들섬 다리 (횡단로, 위협 1)</title></circle>
 <text x="981" y="1150" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">노들섬 다리</text>
-<circle cx="944" cy="1134" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-HR-03 한강철교 (횡단로, 위협 3)</title></circle>
+<circle cx="944" cy="1134" r="5" fill="#2e6f95" stroke="#fff" stroke-width="1.5"><title>L-HR-03 한강철교 (횡단로, 위협 3)</title></circle>
 <text x="952" y="1138" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">한강철교</text>
-<circle cx="1078" cy="1188" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-HR-04 동작대교 (횡단로, 위협 3)</title></circle>
+<circle cx="1078" cy="1188" r="5" fill="#2e6f95" stroke="#fff" stroke-width="1.5"><title>L-HR-04 동작대교 (횡단로, 위협 3)</title></circle>
 <text x="1086" y="1192" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">동작대교</text>
-<circle cx="1035" cy="1149" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-HR-05 이촌 폭심 수면 (자연, 위협 4)</title></circle>
+<circle cx="1035" cy="1149" r="5" fill="#2e6f95" stroke="#fff" stroke-width="1.5"><title>L-HR-05 이촌 폭심 수면 (자연, 위협 4)</title></circle>
 <text x="1043" y="1153" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">이촌 폭심 수면</text>
-<circle cx="1149" cy="1170" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-HR-06 잠수교 (횡단로, 위협 3)</title></circle>
+<circle cx="1149" cy="1170" r="5" fill="#2e6f95" stroke="#fff" stroke-width="1.5"><title>L-HR-06 잠수교 (횡단로, 위협 3)</title></circle>
 <text x="1157" y="1174" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">잠수교</text>
-<circle cx="1142" cy="1179" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-HR-07 반포 부유섬 (크리처 둥지, 위협 3)</title></circle>
+<circle cx="1142" cy="1179" r="5" fill="#2e6f95" stroke="#fff" stroke-width="1.5"><title>L-HR-07 반포 부유섬 (크리처 둥지, 위협 3)</title></circle>
 <text x="1150" y="1183" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">반포 부유섬</text>
-<circle cx="1121" cy="1188" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-HR-08 서래섬 나루 (나루, 위협 2)</title></circle>
+<circle cx="1121" cy="1188" r="5" fill="#2e6f95" stroke="#fff" stroke-width="1.5"><title>L-HR-08 서래섬 나루 (나루, 위협 2)</title></circle>
 <text x="1129" y="1192" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">서래섬 나루</text>
-<circle cx="706" cy="990" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-HR-09 양화대교 (횡단로, 위협 1)</title></circle>
+<circle cx="706" cy="990" r="5" fill="#2e6f95" stroke="#fff" stroke-width="1.5"><title>L-HR-09 양화대교 (횡단로, 위협 1)</title></circle>
 <text x="714" y="994" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">양화대교</text>
-<circle cx="701" cy="984" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-HR-10 양화 나룻배 (횡단로, 위협 1)</title></circle>
+<circle cx="701" cy="984" r="5" fill="#2e6f95" stroke="#fff" stroke-width="1.5"><title>L-HR-10 양화 나룻배 (횡단로, 위협 1)</title></circle>
 <text x="709" y="988" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">양화 나룻배</text>
-<circle cx="930" cy="1098" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-HR-11 노들 나룻배 (횡단로, 위협 2)</title></circle>
+<circle cx="930" cy="1098" r="5" fill="#2e6f95" stroke="#fff" stroke-width="1.5"><title>L-HR-11 노들 나룻배 (횡단로, 위협 2)</title></circle>
 <text x="938" y="1102" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">노들 나룻배</text>
-<circle cx="730" cy="1002" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-HR-12 당산철교 (횡단로, 위협 2)</title></circle>
+<circle cx="730" cy="1002" r="5" fill="#2e6f95" stroke="#fff" stroke-width="1.5"><title>L-HR-12 당산철교 (횡단로, 위협 2)</title></circle>
 <text x="738" y="1006" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">당산철교</text>
-<circle cx="863" cy="1050" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-HR-13 마포대교 (횡단로, 위협 3)</title></circle>
+<circle cx="863" cy="1050" r="5" fill="#2e6f95" stroke="#fff" stroke-width="1.5"><title>L-HR-13 마포대교 (횡단로, 위협 3)</title></circle>
 <text x="871" y="1054" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">마포대교</text>
-<circle cx="849" cy="1080" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-HR-14 여의도 나루 (나루, 위협 2)</title></circle>
+<circle cx="849" cy="1080" r="5" fill="#2e6f95" stroke="#fff" stroke-width="1.5"><title>L-HR-14 여의도 나루 (나루, 위협 2)</title></circle>
 <text x="857" y="1084" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">여의도 나루</text>
-<circle cx="906" cy="1023" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-HR-15 마포 나루 (나루, 위협 2)</title></circle>
+<circle cx="906" cy="1023" r="5" fill="#2e6f95" stroke="#fff" stroke-width="1.5"><title>L-HR-15 마포 나루 (나루, 위협 2)</title></circle>
 <text x="914" y="1027" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">마포 나루</text>
-<circle cx="820" cy="1002" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-HR-16 서강대교 잔해 (횡단로, 위협 4)</title></circle>
+<circle cx="820" cy="1002" r="5" fill="#2e6f95" stroke="#fff" stroke-width="1.5"><title>L-HR-16 서강대교 잔해 (횡단로, 위협 4)</title></circle>
 <text x="828" y="1006" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">서강대교 잔해</text>
-<circle cx="911" cy="1092" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-HR-17 원효대교 잔해 (횡단로, 위협 3)</title></circle>
+<circle cx="911" cy="1092" r="5" fill="#2e6f95" stroke="#fff" stroke-width="1.5"><title>L-HR-17 원효대교 잔해 (횡단로, 위협 3)</title></circle>
 <text x="919" y="1096" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">원효대교 잔해</text>
-<circle cx="1226" cy="1098" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-HR-18 한남대교 잔해 (횡단로, 위협 3)</title></circle>
+<circle cx="1226" cy="1098" r="5" fill="#2e6f95" stroke="#fff" stroke-width="1.5"><title>L-HR-18 한남대교 잔해 (횡단로, 위협 3)</title></circle>
 <text x="1234" y="1102" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">한남대교 잔해</text>
-<circle cx="1269" cy="1050" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-HR-19 동호대교 (횡단로, 위협 3)</title></circle>
+<circle cx="1269" cy="1050" r="5" fill="#2e6f95" stroke="#fff" stroke-width="1.5"><title>L-HR-19 동호대교 (횡단로, 위협 3)</title></circle>
 <text x="1277" y="1054" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">동호대교</text>
-<circle cx="1445" cy="1062" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-HR-20 영동대교 (횡단로, 위협 3)</title></circle>
+<circle cx="1445" cy="1062" r="5" fill="#2e6f95" stroke="#fff" stroke-width="1.5"><title>L-HR-20 영동대교 (횡단로, 위협 3)</title></circle>
 <text x="1453" y="1066" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">영동대교</text>
-<circle cx="1588" cy="1089" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-HR-21 잠실대교 (횡단로, 위협 2)</title></circle>
+<circle cx="1588" cy="1089" r="5" fill="#2e6f95" stroke="#fff" stroke-width="1.5"><title>L-HR-21 잠실대교 (횡단로, 위협 2)</title></circle>
 <text x="1596" y="1093" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">잠실대교</text>
-<circle cx="1626" cy="1068" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-HR-22 잠실철교 (횡단로, 위협 3)</title></circle>
+<circle cx="1626" cy="1068" r="5" fill="#2e6f95" stroke="#fff" stroke-width="1.5"><title>L-HR-22 잠실철교 (횡단로, 위협 3)</title></circle>
 <text x="1634" y="1072" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">잠실철교</text>
-<circle cx="1698" cy="984" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-HR-23 광진교 (횡단로, 위협 2)</title></circle>
+<circle cx="1698" cy="984" r="5" fill="#2e6f95" stroke="#fff" stroke-width="1.5"><title>L-HR-23 광진교 (횡단로, 위협 2)</title></circle>
 <text x="1706" y="988" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">광진교</text>
-<circle cx="1665" cy="1044" r="5" fill="#7b3fa0" stroke="#fff" stroke-width="1.5"><title>L-HR-24 올림픽대교 주탑 (랜드마크, 위협 3)</title></circle>
+<circle cx="1665" cy="1044" r="5" fill="#2e6f95" stroke="#fff" stroke-width="1.5"><title>L-HR-24 올림픽대교 주탑 (랜드마크, 위협 3)</title></circle>
 <text x="1673" y="1048" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">올림픽대교 주탑</text>
-<circle cx="501" cy="828" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-HR-25 가양대교 (횡단로, 위협 4)</title></circle>
+<circle cx="501" cy="828" r="5" fill="#2e6f95" stroke="#fff" stroke-width="1.5"><title>L-HR-25 가양대교 (횡단로, 위협 4)</title></circle>
 <text x="509" y="832" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">가양대교</text>
-<circle cx="658" cy="936" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-HR-26 성산대교 잔해 (횡단로, 위협 3)</title></circle>
+<circle cx="658" cy="936" r="5" fill="#2e6f95" stroke="#fff" stroke-width="1.5"><title>L-HR-26 성산대교 잔해 (횡단로, 위협 3)</title></circle>
 <text x="666" y="940" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">성산대교 잔해</text>
-<circle cx="1731" cy="990" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-HR-27 천호대교 잔해 (횡단로, 위협 3)</title></circle>
+<circle cx="1731" cy="990" r="5" fill="#2e6f95" stroke="#fff" stroke-width="1.5"><title>L-HR-27 천호대교 잔해 (횡단로, 위협 3)</title></circle>
 <text x="1739" y="994" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">천호대교 잔해</text>
-<circle cx="258" cy="660" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-HR-28 행주대교 잔해 (경계, 위협 4)</title></circle>
+<circle cx="258" cy="660" r="5" fill="#2e6f95" stroke="#fff" stroke-width="1.5"><title>L-HR-28 행주대교 잔해 (경계, 위협 4)</title></circle>
 <text x="266" y="664" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">행주대교 잔해</text>
-<circle cx="1025" cy="1158" r="5" fill="#666" stroke="#fff" stroke-width="1.5"><title>L-HR-29 한강 본류 (자연, 위협 3)</title></circle>
+<circle cx="1025" cy="1158" r="5" fill="#2e6f95" stroke="#fff" stroke-width="1.5"><title>L-HR-29 한강 본류 (자연, 위협 3)</title></circle>
 <text x="1033" y="1162" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">한강 본류</text>
+<circle cx="845" cy="1062" r="5" fill="#2e6f95" stroke="#fff" stroke-width="1.5"><title>L-HR-30 여의도 요트 계류장 터 (나루, 위협 3)</title></circle>
+<text x="853" y="1066" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">여의도 요트 계류장 터</text>
+<circle cx="1058" cy="1132" r="5" fill="#2e6f95" stroke="#fff" stroke-width="1.5"><title>L-HR-31 이촌 수난 구조대 초소 터 (기반 시설, 위협 3)</title></circle>
+<text x="1066" y="1136" font-size="11" fill="#222" stroke="#f4f2ec" stroke-width="3" paint-order="stroke">이촌 수난 구조대 초소 터</text>
 <circle cx="16" cy="1738" r="6" fill="#1b7f3b"/><text x="26" y="1743" font-size="14">정착지·교역소</text>
 <circle cx="186" cy="1738" r="6" fill="#1d4fa8"/><text x="196" y="1743" font-size="14">볼트</text>
 <circle cx="356" cy="1738" r="6" fill="#a8321d"/><text x="366" y="1743" font-size="14">세력 거점·검문소</text>
@@ -3355,5 +3391,5 @@
 <line x1="160" y1="1768" x2="200" y2="1768" stroke="#c0392b" stroke-width="4" stroke-dasharray="4 4"/><text x="206" y="1773" font-size="14">붕괴 다리</text>
 <line x1="310" y1="1768" x2="350" y2="1768" stroke="#8a2a1a" stroke-width="4"/><text x="356" y="1773" font-size="14">한양도성(도심 밀폐 경계)</text>
 <line x1="560" y1="1768" x2="600" y2="1768" stroke="#b08a5a" stroke-width="3" stroke-dasharray="10 4"/><text x="606" y="1773" font-size="14">간선도로·고가</text>
-<text x="2110" y="1773" font-size="14" text-anchor="end">서울 수도 황무지 월드 개요도 · SD-08 좌표계(1타일 = 18.5m, 청크 40×40타일 = 53×43청크) · 장소 시드 406곳</text>
+<text x="2110" y="1773" font-size="14" text-anchor="end">서울 수도 황무지 월드 개요도 · SD-08 좌표계(1타일 = 18.5m, 청크 40×40타일 = 53×43청크) · 장소 425곳</text>
 </svg>
