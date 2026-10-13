@@ -39,7 +39,7 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w)
 	row = enemy_row
 	weapon = weapon_row
 	var is_roach: bool = row["id"] == "CR-002"
-	setup("cr_cr002_base_loco" if is_roach else "pc_comp_t06_pf01_loco", pos, w)
+	setup("cr_cr002_base_loco" if is_roach else "en_cr401_loco", pos, w)
 	style = "swarm" if is_roach else "shooter"
 	cmb.actor = self
 	cmb.team = "enemy"
@@ -52,8 +52,8 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w)
 	per = 3.0 if is_roach else 5.0
 	brain = AIBrain.new(pos, per, "insect" if is_roach else "human")
 	if is_roach:
-		loco.custom = {"run": {"frames": 4, "px": 3.0, "diag": 2.0, "contact": [0, 2], "speed_t": float(row["speed"])},
-			"walk": {"frames": 4, "px": 3.0, "diag": 2.0, "contact": [0, 2], "speed_t": float(row["speed"]) * 0.5}}
+		loco.custom = {"run": {"frames": 4, "px": 3.0, "diag": 3.0, "contact": [0, 2], "speed_t": float(row["speed"])},
+			"walk": {"frames": 4, "px": 3.0, "diag": 3.0, "contact": [0, 2], "speed_t": float(row["speed"]) * 0.5}}
 	ui_font = load("res://assets/fonts/Galmuri9.ttf")
 	_rng.seed = int(pos.x * 7 + pos.y * 13)
 	_t_tac = _rng.randf() * 0.5                                    # 전술 갱신을 개체마다 엇갈리게(한 프레임 몰림 방지)

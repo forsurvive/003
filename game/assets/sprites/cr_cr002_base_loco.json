@@ -1,11 +1,11 @@
 {
  "foot": [
-  16,
-  27
+  18,
+  21
  ],
  "frame": [
-  32,
-  32
+  44,
+  24
  ],
  "mirror": {
   "W": "E"
@@ -29,5 +29,6 @@
  "name": "cr_cr002_base_loco",
  "rows": [
   "E"
- ]
+ ],
+ "style": "isaac"
 }

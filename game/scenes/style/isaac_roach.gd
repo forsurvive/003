@@ -13,7 +13,7 @@ var flash := 0.0
 func setup(pos: Vector2, r) -> void:
 	room = r
 	loco = Locomotion.new(pos)
-	loco.custom = {"run": {"frames": 3, "px": 3.0, "diag": 2.0, "contact": [0, 0], "speed_t": 2.4}}
+	loco.custom = {"run": {"frames": 3, "px": 3.0, "diag": 3.0, "contact": [0, 0], "speed_t": 2.4}}
 	spr = Sprite2D.new()
 	spr.texture = load("res://assets/style_isaac/roach.png")
 	spr.hframes = 4

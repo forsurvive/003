@@ -1,4 +1,5 @@
-"""시트 패킹 v0 (SD-16 §13.3·§13.4·§5.4): 인물 레이어 → 시트 PNG + 같은 이름 JSON.
+"""시트 패킹 v1 (SD-16 §13.3·§13.4·§5.4): 인물 합성본 → 시트 PNG + 같은 이름 JSON.
+v1(아이작풍, chibi.py): 칸 40×48, 발 기준점 (20, 44), 모션 대기 1·걷기 6·달리기 6. 보폭은 chibi.STRIDE(= Locomotion 표).
 행 = 방향 S·SE·E·NE·N(반전 W·SW·NW는 파일로 만들지 않고 JSON mirror로 적는다), 열 = 모션을 순서대로 이어 붙임.
 프레임 64×64, 발 기준점 (32, 60). 모션은 거리 구동(§3.6.5)이라 틱 대신 px_per_frame을 적는다.
 프레임 메타: head (x, y, 상태) = 머리 윗줄 중심·위+16, hitbox = 불투명 상자. 손 앵커·무기 각도는 단계 T에서 포즈 표로 채운다.
@@ -14,15 +15,18 @@ ROWS = ("S", "SE", "E", "NE", "N")
 MIRROR = {"W": "E", "SW": "SE", "NW": "NE"}
 
 
+FW, FH, FOOT = 40, 48, (20, 44)
+
+
 def meta(f):
     px = f.load()
-    m = [(x, y) for y in range(64) for x in range(64) if px[x, y][3]]
+    m = [(x, y) for y in range(f.height) for x in range(f.width) if px[x, y][3]]
     if not m:
         return {}
     top = min(y for _, y in m)
     xs = [x for x, y in m if y <= top + 6]
     x0, x1 = min(x for x, _ in m), max(x for x, _ in m)
-    return {"head": [round(sum(xs) / len(xs)), top + 16, 0], "hitbox": [x0, top, x1 - x0 + 1, 60 - top + 1]}
+    return {"head": [round(sum(xs) / len(xs)), top + 10, 0], "hitbox": [x0, top, x1 - x0 + 1, FOOT[1] - top + 1]}
 
 
 def pack(name, sets, motions, steps):
@@ -30,19 +34,20 @@ def pack(name, sets, motions, steps):
     for mo in motions:
         n = len(sets[mo]["S"]) if isinstance(sets[mo]["S"], list) else 1
         cols.append((mo, n))
-    W = sum(n for _, n in cols) * 64
-    sheet = Image.new("RGBA", (W, 64 * len(ROWS)), (0, 0, 0, 0))
-    j = {"name": name, "frame": [64, 64], "foot": [32, 60], "rows": list(ROWS), "mirror": MIRROR, "motions": {},
-         "frames": {}}
+    W = sum(n for _, n in cols) * FW
+    sheet = Image.new("RGBA", (W, FH * len(ROWS)), (0, 0, 0, 0))
+    j = {"name": name, "frame": [FW, FH], "foot": list(FOOT), "rows": list(ROWS), "mirror": MIRROR, "motions": {},
+         "frames": {}, "style": "isaac"}
     c = 0
     for mo, n in cols:
         j["motions"][mo] = {"start": c, "count": n}
         if mo in steps:
-            j["motions"][mo].update({"px_per_frame": steps[mo][0], "diag_step": list(steps[mo][1]), "drive": "distance"})
+            j["motions"][mo].update({"px_per_frame": steps[mo]["E"], "px_vertical": steps[mo]["V"], "diag_step": [steps[mo]["D"]] * 2,
+                                     "drive": "distance"})
         for r, v in enumerate(ROWS):
             seq = sets[mo][v] if isinstance(sets[mo][v], list) else [sets[mo][v]]
             for i, f in enumerate(seq):
-                sheet.alpha_composite(f, ((c + i) * 64, r * 64))
+                sheet.alpha_composite(f, ((c + i) * FW, r * FH))
                 j["frames"][f"{v}:{mo}:{i}"] = meta(f)
         c += n
     os.makedirs(OUT, exist_ok=True)
@@ -52,18 +57,34 @@ def pack(name, sets, motions, steps):
     return name
 
 
+def chibi_sets(look, weapon=None, motions=("idle", "walk", "run")):
+    import chibi as K
+    sets = {}
+    for mo in motions:
+        n = 1 if mo == "idle" else 6
+        sets[mo] = {v: [K.actor(look, v, mo, f, weapon=weapon) for f in range(n)] for v in ROWS}
+    return sets
+
+
+# 적으로 쓰는 외형(SD-14 CR-401 보병 계엄병 = SD-07b 계엄군 분대 표준 외형 + 소총)
+ENEMIES = [("en_cr401_loco", "M1-S4-HR02-H1-T06-1-PF01-HD04-EY00-PR034", "rifle")]
+
+
 def main():
-    import rig_pc as R
+    import chibi as K
     import npcs as NP
     made = []
+    for f in os.listdir(OUT) if os.path.isdir(OUT) else []:
+        os.remove(os.path.join(OUT, f))
     for code, pf in (("T01", None), ("T02", None), ("T03", None), ("T06", "PF-01")):
-        sets, _ = R.build_all(code, pf)
+        lk = K.Look(torso=code, faction=pf)
         nm = f"pc_comp_{code.lower()}_{(pf or 'PF-00').replace('-', '').lower()}_loco"
-        made.append(pack(nm, sets, ("idle", "walk", "run"), R.STEP))
+        made.append(pack(nm, chibi_sets(lk), ("idle", "walk", "run"), K.STRIDE))
+    for nm, code, weapon in ENEMIES:
+        made.append(pack(nm, chibi_sets(K.Look.parse(code), weapon), ("idle", "walk", "run"), K.STRIDE))
     for grp, name, role, code in NP.NPCS:
-        b = NP.build(code)
         nm = "np_" + code.lower().replace("-", "_") + "_loco"
-        made.append(pack(nm, {"idle": b["idle"], "walk": b["walk"]}, ("idle", "walk"), {"walk": R.STEP["walk"]}))
+        made.append(pack(nm, chibi_sets(K.Look.parse(code), None, ("idle", "walk")), ("idle", "walk"), K.STRIDE))
     print("packed:", len(made), "sheets ->", os.path.relpath(OUT, ROOT))
 
 

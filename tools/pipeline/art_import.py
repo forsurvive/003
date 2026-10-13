@@ -38,6 +38,9 @@ def spriteframes_tres(png_res, fw, fh, anims):
 def import_sheets():
     src = os.path.join(ART, "out", "sheets")
     os.makedirs(SPR, exist_ok=True)
+    for fn in os.listdir(SPR):                                      # 지난 그림체의 시트를 지운다(이름이 바뀐 것까지)
+        if fn.split(".")[0].endswith("_loco") and not fn.endswith(".import"):
+            os.remove(os.path.join(SPR, fn))
     n = 0
     for fn in sorted(os.listdir(src)):
         if not fn.endswith(".json"):
@@ -59,42 +62,21 @@ def import_sheets():
 
 
 def roach_sheet():
-    """CR-002 큰바퀴 32×32, 측면(E)만: idle 1, walk 4(다리 번갈아), death 5(점액). 발 기준점 (16, 28)."""
-    import effects as FX
-    from grid import parse
-    base = parse(os.path.join(ART, "src/sprites/cr_roach.txt"))["E_idle0"]
-    px = base.load()
-    ys = [y for y in range(32) for x in range(32) if px[x, y][3]]
-    legs_y0 = max(ys) - 2                              # legs live in the lowest three rows
-    leg = [(x, y) for y in range(legs_y0, max(ys) + 1) for x in range(32) if px[x, y][3]]
-    walk = []
-    for k in range(4):
-        f = base.copy()
-        fp = f.load()
-        if k % 2 == 1:
-            for x, y in leg:
-                fp[x, y] = (0, 0, 0, 0)
-            for x, y in leg:
-                side = 1 if (x // 3 + (k // 2)) % 2 == 0 else -1   # alternate tripods
-                nx = x + side
-                if 0 <= nx < 32:
-                    fp[nx, y] = px[x, y]
-        walk.append(f)
-    death = FX.slime_death()
-    death = [d if d.size == (32, 32) else _pad32(d) for d in death]
-    frames = [base] + walk + death
-    sheet = Image.new("RGBA", (32 * len(frames), 32), (0, 0, 0, 0))
+    """CR-002 큰바퀴(아이작풍, art/tools/chibi_creatures.py): 옆(E)만 — idle 1, walk 4(삼각 보행, 컷당 3px), death 5."""
+    import chibi_creatures as CC
+    frames, meta = CC.roach_sheet()
+    fw, fh = meta["frame"]
+    sheet = Image.new("RGBA", (fw * len(frames), fh), (0, 0, 0, 0))
     for i, f in enumerate(frames):
-        sheet.alpha_composite(f, (i * 32, 0))
+        sheet.alpha_composite(f, (i * fw, 0))
     name = "cr_cr002_base_loco"
     sheet.save(os.path.join(SPR, name + ".png"))
-    anims = [("idle_E", [(0, 0)], True), ("walk_E", [(1 + i, 0) for i in range(4)], True),
-             ("death_E", [(5 + i, 0) for i in range(len(death))], False)]
+    mo = meta["motions"]
+    anims = [("idle_E", [(0, 0)], True), ("walk_E", [(mo["walk"]["start"] + i, 0) for i in range(mo["walk"]["count"])], True),
+             ("death_E", [(mo["death"]["start"] + i, 0) for i in range(mo["death"]["count"])], False)]
     open(os.path.join(SPR, name + ".tres"), "w", encoding="utf-8").write(
-        spriteframes_tres(f"res://assets/sprites/{name}.png", 32, 32, anims))
-    meta = {"name": name, "frame": [32, 32], "foot": [16, max(ys)], "rows": ["E"], "mirror": {"W": "E"},
-            "motions": {"idle": {"start": 0, "count": 1}, "walk": {"start": 1, "count": 4, "px_per_frame": 3, "drive": "distance"},
-                        "death": {"start": 5, "count": len(death)}}}
+        spriteframes_tres(f"res://assets/sprites/{name}.png", fw, fh, anims))
+    meta["name"] = name
     json.dump(meta, open(os.path.join(SPR, name + ".json"), "w"), ensure_ascii=False, sort_keys=True, indent=1)
 
 
