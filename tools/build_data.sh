@@ -7,3 +7,4 @@ python3 tools/pipeline/extract.py
 python3 tools/pipeline/extract_story.py
 python3 tools/pipeline/script_compile.py
 python3 tools/pipeline/expr_cases.py
+python3 tools/pipeline/portrait_export.py

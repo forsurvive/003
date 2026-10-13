@@ -6,7 +6,7 @@
 class_name TextFmt
 extends RefCounted
 
-const NBSP := " "
+const NBSP := "\u00a0"                ## 줄바꿈 금지 공백(원고 \.)
 
 
 static func format(src: String, st: Object = null) -> Dictionary:

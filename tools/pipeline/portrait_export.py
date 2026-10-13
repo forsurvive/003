@@ -1,0 +1,62 @@
+"""대화 초상화 내보내기 (SD-16 §8, 아이작풍 v2.0): 원고에 나오는 화자마다 표정 8종 96×96(투명 바탕) → game/assets/portraits/.
+외형은 SD-07b 외형 코드(npcs.json look)를 chibi.Look.parse로 읽는다. 사람이 아닌 화자(진돗개 AN-·로봇 RB-·변종 BY-)는 건너뛴다.
+이미 같은 그림이 있으면 다시 쓰지 않는다(빌드 시간). 팔레트 밖 색이 나오면 실패."""
+import os, sys, json, glob
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.join(ROOT, "art", "tools"))
+import chibi as K
+import palette as P
+
+OUT = os.path.join(ROOT, "game", "assets", "portraits")
+DATA = os.path.join(ROOT, "game", "data")
+EMOS = list(K.PORTRAIT_EXPR)
+ALLOWED = None
+
+
+def main():
+    global ALLOWED
+    os.makedirs(OUT, exist_ok=True)
+    npcs = json.load(open(os.path.join(DATA, "npcs.json")))["npcs"]
+    speakers = set()
+    for f in glob.glob(os.path.join(DATA, "dialogue", "*.json")):
+        if os.path.basename(f).startswith("_"):
+            continue
+        for op in json.load(open(f))["ops"]:
+            if op["op"] == "line" and op["who"] != "SYS":
+                speakers.add(op["who"])
+    made, skipped, index = 0, [], {}
+    for sid in sorted(speakers):
+        look = npcs.get(sid, {}).get("look", "")
+        if not look or look.split("-")[0] in ("AN", "RB", "BY", "OBJ") or "·" in look:
+            skipped.append(sid)
+            continue
+        lk = K.Look.parse(look)
+        index[sid] = {}
+        for emo in EMOS:
+            name = f"{sid}_{K.PORTRAIT_EXPR[emo]}.png"                # 파일 이름은 영문(모바일 내보내기에서 한글 경로 문제를 피한다)
+            path = os.path.join(OUT, name)
+            if not os.path.exists(path):
+                img = K.portrait(lk, emo)
+                bad = {px[:3] for px in img.getdata() if px[3] and px[:3] not in ALLOWED_SET()}
+                if bad:
+                    raise SystemExit(f"{name}: 팔레트 밖 색 {sorted(bad)[:4]}")
+                img.save(path)
+                made += 1
+            index[sid][emo] = name
+    json.dump({"portraits": index}, open(os.path.join(OUT, "portraits.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1,
+              sort_keys=True)
+    print(f"초상화: 화자 {len(index)}명 × 표정 {len(EMOS)} (새로 그림 {made}), 건너뜀 {skipped}")
+
+
+_AL = None
+
+
+def ALLOWED_SET():
+    global _AL
+    if _AL is None:
+        _AL = set(P.allowed_set("UI", *P.SKIN.keys(), *P.HAIR.keys(), *P.PF.keys()))
+    return _AL
+
+
+if __name__ == "__main__":
+    main()

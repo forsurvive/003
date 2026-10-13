@@ -18,7 +18,7 @@
 자동 검사(불합격이면 종료 코드 1): 토큰 문법·변수 선언·조사 짝, 화자 ID(SD-07b), 표정 키, 라벨, 식 구문·변수·함수,
 창별 글자 수(SD-12 §14.5: 대사 1쪽 160자·2쪽 넘으면 오류, 선택지 80자), 금칙 명칭(SD-18 §2.3·§11.7, 옛 이름),
 진영 결정 질문 문형(바이블 §5.8), 연출 명령 이름."""
-import os, re, sys, json, glob
+import os, re, sys, json, glob, shlex
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import story_expr as SE
@@ -97,8 +97,8 @@ class Ctx:
 
 def conv_text(text, where, cx):
     """원고 문장 → 엔진 문장(제어 코드). 반환: (문장, 화면 길이 추정)."""
-    if "\\" in text:
-        cx.rep.err(where, "원고에 역슬래시 제어 코드를 직접 쓰지 않는다(토큰 {..|..}을 쓴다)")
+    if "\\" in text.replace("\\.", ""):
+        cx.rep.err(where, "원고에 역슬래시 제어 코드를 직접 쓰지 않는다(토큰 {..|..}을 쓴다. 줄바꿈 금지 공백 \\.만 허용)")
     out, est, pos = "", 0, 0
     for m in TOKEN.finditer(text):
         out += text[pos:m.start()]
@@ -250,7 +250,11 @@ def compile_file(path, cx):
             sc["cond"] = line.split(None, 1)[1].strip()
             check_expr(sc["cond"], where, cx)
         elif line.startswith("@cmd"):
-            parts = line.split()[1:]
+            try:
+                parts = shlex.split(line)[1:]                       # "따옴표 안 공백"은 인자 하나
+            except ValueError as e:
+                cx.rep.err(where, f"연출 명령 인자: {e}")
+                continue
             if not parts or parts[0] not in CMDS:
                 cx.rep.err(where, f"알 수 없는 연출 명령: {parts[:1]}")
             sc["ops"].append({"op": "cmd", "name": parts[0] if parts else "", "args": parts[1:]})

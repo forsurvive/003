@@ -209,5 +209,5 @@ func _visible(opts: Array) -> Array:
 
 func _log(line: String) -> void:
 	log.append(line)
-	if log.size() > LOG_MAX:
-		log = log.slice(log.size() - LOG_MAX)
+	while log.size() > LOG_MAX:                                   # 같은 배열을 유지한다(대화 창의 기록과 공유)
+		log.remove_at(0)
