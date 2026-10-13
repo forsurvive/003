@@ -342,6 +342,8 @@ func _draw_view() -> void:
 	if log_open:
 		_draw_log(o)
 		return
+	if t == "cmd" or t == "":
+		return                                                    # 연출 명령 중에는 창을 닫는다(쯔꾸르식)
 	if t == "choices":
 		_draw_choices(o)
 	# 대사 상자

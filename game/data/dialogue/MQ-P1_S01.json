@@ -14,6 +14,40 @@
   },
   {
    "op": "cmd",
+   "name": "show",
+   "args": [
+    "C-001",
+    "bed",
+    "S"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "show",
+   "args": [
+    "C-025",
+    "nurse",
+    "E"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "show",
+   "args": [
+    "C-024",
+    "door",
+    "N"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "cam",
+   "args": [
+    "bed"
+   ]
+  },
+  {
+   "op": "cmd",
    "name": "fade_in",
    "args": [
     "white",
@@ -44,6 +78,14 @@
    "args": [
     "C-024",
     "bed_side"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "face",
+   "args": [
+    "C-024",
+    "C-001"
    ]
   },
   {
@@ -83,6 +125,14 @@
   },
   {
    "op": "cmd",
+   "name": "face",
+   "args": [
+    "C-024",
+    "terminal"
+   ]
+  },
+  {
+   "op": "cmd",
    "name": "balloon",
    "args": [
     "C-024",
@@ -112,7 +162,7 @@
    "name": "face",
    "args": [
     "C-024",
-    "bed"
+    "C-001"
    ]
   },
   {

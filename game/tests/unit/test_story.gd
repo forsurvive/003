@@ -215,3 +215,13 @@ func test_state_roundtrip(t) -> void:
 	t.eq(int(st2.vars.get_v("AFF_BJ")), -30, "세력 시작값(SD-06)")
 	var bytes := var_to_bytes(d)
 	t.eq(bytes_to_var(bytes), d, "엔진 이진 변환 왕복")
+
+
+func test_event_dirs(t) -> void:
+	# 바라보기(face ID 인물)·이동 방향 스냅: Locomotion.DIRS 순서(E SE S SW W NW N NE)
+	t.eq(EventRunner._dir_to(Vector2.ZERO, Vector2(10, 0)), 0, "동")
+	t.eq(EventRunner._dir_to(Vector2.ZERO, Vector2(0, 10)), 2, "남")
+	t.eq(EventRunner._dir_to(Vector2.ZERO, Vector2(-10, -10)), 5, "북서")
+	t.eq(EventRunner._dir_to(Vector2.ZERO, Vector2.ZERO), 2, "같은 자리면 남")
+	t.eq(EventRunner._dir8(Vector2(10, 3)), Vector2(1, 0), "가까운 8방향(동)")
+	t.ok(EventRunner._dir8(Vector2(10, 9)).is_equal_approx(Vector2(1, 1).normalized()), "가까운 8방향(남동)")

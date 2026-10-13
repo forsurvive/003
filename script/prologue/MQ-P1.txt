@@ -4,21 +4,27 @@
 @scene MQ-P1_S01  의무실 — 출생신고  (L-R01-01)
 @npc   C-024
 ! quest("MQ-P1", 10)
+@cmd show C-001 bed S
+@cmd show C-025 nurse E
+@cmd show C-024 door N
+@cmd cam bed
 @cmd fade_in white 40
 C-025 [미소] 건강해요. 울음소리 좋네.
 C-001 [피곤] 손가락, 발가락… 다 있어요?
 C-025 [미소] 열 개, 열 개. 오버시어님 닮아서 고집 세겠어요.
 @cmd move C-024 bed_side
+@cmd face C-024 C-001
 C-024 [기본] 등록 단말 들어갑니다. 이름 칸부터 채워 주세요, 오버시어님.
 @cmd doc birth
 @cmd sfx beep
 @cmd lamp terminal green
 @cmd sfx beep
+@cmd face C-024 terminal
 @cmd balloon C-024 !
 C-024 [놀람] 이 칸은… 내가 서기 된 뒤로 한 번도 대답한 적이 없는데.
 C-024 [놀람] 회선 확인 칸에 불 들어오는 거, 처음 봐요.
 C-001 [피곤] 200년 된 기계예요. 서류 넣어 주세요.
-@cmd face C-024 bed
+@cmd face C-024 C-001
 C-024 [기본] …네. 등록 번호 {P_REGNO}. 접수했습니다.
 C-001 [미소] 여기서 태어났으니까 여기서 잘 살면 돼. 엄마가 지킬게.
 @cmd balloon C-001 heart

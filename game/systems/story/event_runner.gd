@@ -1,0 +1,337 @@
+## 이벤트 실행기 v1 (SD-16 §13.6 '인게임 컷신', SD-03a 연출 메모): 대화 창의 연출 명령(cmd)을 맵 위 진짜 인물로 무대에 올린다.
+## 쯔꾸르식: 인물은 걸음 단위로 걷고(Locomotion, 미끄러짐 없음), 말풍선(! ? ♥ …)이 뜨고, 화면은 디더로 페이드한다.
+## 명령은 차례로 하나씩, 끝날 때까지 기다린다(쯔꾸르 기본 '완료까지 대기').
+##   show ID 표지 [방향]   hide ID   move ID 표지 [walk|run]   face ID 방향|인물ID   balloon ID ! | ? | heart | ... | note | sweat | anger
+##   wait n(1/10초)   fade_in 색 n   fade_out 색 n   flash 색   shake n   cam 표지   year_card 연도 "문장"   title_card "제목" "문장"
+##   sfx·bgm 이름(소리는 납품 뒤 — 지금은 기록만)   lamp 표지 색(장치 램프 깜박임)   doc 이름(서류 UI, 0-4)   pose ID 이름(0-5)
+## 표지(mark)는 맵 자료(game/data/maps/<맵>.json의 marks: 이름 → [타일 x, 타일 y, 방향])다. "x,y" 숫자도 받는다.
+class_name EventRunner
+extends Node2D
+
+signal doc_requested(name: String, done: Callable)
+
+const COLORS := {"white": Color("E9E4D8"), "black": Color("0B0A0D"), "green": Color("7CD62B"), "red": Color("E04A35"),
+	"amber": Color("FFC24A")}
+const DIR_IDX := {"E": 0, "SE": 1, "S": 2, "SW": 3, "W": 4, "NW": 5, "N": 6, "NE": 7}
+
+var world                                     ## InteriorRoom 또는 ChunkWorld(충돌 API)
+var marks := {}
+var actors := {}                              ## 인물 ID -> Actor
+var cast_sheets := {}                         ## 인물 ID -> 시트 이름(story_cast.json)
+var cam: Camera2D
+var overlay: CanvasLayer
+var fade_rect: ColorRect
+var fade_mat: ShaderMaterial
+var card: Control
+var card_lines: Array = []
+var font_big: Font
+var font: Font
+var balloons: Array = []                      ## [{"actor", "kind", "t"}]
+var lamps: Array = []                         ## [{"pos", "color", "t"}]
+var _job: Dictionary = {}                     ## 진행 중 명령(move·wait·fade·card·shake·cam)
+var log: Array[String] = []
+
+
+func _init() -> void:
+	font = load("res://assets/fonts/Galmuri11.ttf")
+	font_big = load("res://assets/fonts/NeoDunggeunmoPro.ttf")
+	if FileAccess.file_exists("res://assets/sprites/story_cast.json"):
+		cast_sheets = JSON.parse_string(FileAccess.get_file_as_string("res://assets/sprites/story_cast.json"))["sheets"]
+	overlay = CanvasLayer.new()
+	overlay.layer = 12
+	add_child(overlay)
+	fade_rect = ColorRect.new()
+	fade_rect.size = Vector2(854, 480)
+	fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	fade_mat = ShaderMaterial.new()
+	fade_mat.shader = load("res://systems/story/dither_fade.gdshader")
+	fade_mat.set_shader_parameter("amount", 0.0)
+	fade_rect.material = fade_mat
+	overlay.add_child(fade_rect)
+	card = Control.new()
+	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	card.size = Vector2(854, 480)
+	card.draw.connect(_draw_card)
+	overlay.add_child(card)
+	z_index = 50
+
+
+## w: 무대 맵(충돌), map_id: game/data/maps/<map_id>.json(표지)
+func setup(w, map_id: String, camera: Camera2D = null) -> void:
+	world = w
+	var p := "res://data/maps/%s.json" % map_id
+	if FileAccess.file_exists(p):
+		marks = JSON.parse_string(FileAccess.get_file_as_string(p))["marks"]
+	cam = camera
+	if cam == null:
+		cam = Camera2D.new()
+		add_child(cam)
+		cam.make_current()
+
+
+## 대화 창에 연결: box.command → 실행 → 끝나면 box.resume()
+func attach(box: DialogueBox) -> void:
+	box.command.connect(func(n: String, a: Array) -> void: run(n, a, box.resume))
+
+
+func busy() -> bool:
+	return not _job.is_empty()
+
+
+func run(name: String, args: Array, done: Callable) -> void:
+	log.append("%s %s" % [name, " ".join(args)])
+	match name:
+		"show":
+			_show_actor(str(args[0]), _mark(str(args[1])), str(args[2]) if args.size() > 2 else _mark_dir(str(args[1])))
+			done.call()
+		"hide":
+			if actors.has(str(args[0])):
+				actors[str(args[0])].queue_free()
+				actors.erase(str(args[0]))
+			done.call()
+		"move":
+			var a: Actor = actors.get(str(args[0]))
+			if a == null:
+				push_warning("move: 무대에 없는 인물 " + str(args[0]))
+				done.call()
+				return
+			a.mode = str(args[2]) if args.size() > 2 else "walk"
+			_job = {"kind": "move", "actor": a, "to": _mark(str(args[1])), "done": done, "t": 0.0}
+		"face":
+			var a: Actor = actors.get(str(args[0]))
+			if a != null:
+				var tgt := str(args[1])
+				var d := -1
+				if DIR_IDX.has(tgt):
+					d = DIR_IDX[tgt]
+				elif actors.has(tgt):
+					d = _dir_to(a.loco.logical, actors[tgt].loco.logical)
+				elif marks.has(tgt):
+					d = _dir_to(a.loco.logical, _mark(tgt))
+				if d >= 0:
+					a.loco.facing = d
+					a._show()
+			done.call()
+		"balloon":
+			var a: Actor = actors.get(str(args[0]))
+			if a != null:
+				balloons.append({"actor": a, "kind": str(args[1]), "t": 0.0})
+				queue_redraw()
+				_job = {"kind": "wait", "left": 0.7, "done": done}
+			else:
+				done.call()
+		"wait":
+			_job = {"kind": "wait", "left": float(args[0]) / 10.0, "done": done}
+		"fade_in", "fade_out":
+			var col: Color = COLORS.get(str(args[0]) if args.size() > 0 else "black", Color.BLACK)
+			var secs := float(args[1]) / 10.0 if args.size() > 1 else 0.6
+			fade_mat.set_shader_parameter("fill", col)
+			var from := 1.0 if name == "fade_in" else 0.0
+			fade_mat.set_shader_parameter("amount", from)
+			_job = {"kind": "fade", "from": from, "to": 1.0 - from, "len": secs, "t": 0.0, "done": done}
+		"flash":
+			fade_mat.set_shader_parameter("fill", COLORS.get(str(args[0]) if args.size() > 0 else "white", Color.WHITE))
+			_job = {"kind": "fade", "from": 0.75, "to": 0.0, "len": 0.25, "t": 0.0, "done": done}
+		"shake":
+			_job = {"kind": "shake", "left": float(args[0]) / 10.0 if args.size() > 0 else 0.4, "done": done}
+		"cam":
+			_job = {"kind": "cam", "from": cam.position, "to": _mark(str(args[0])) + Vector2(0, -20), "len": 0.6, "t": 0.0, "done": done}
+		"year_card", "title_card":
+			card_lines = args.map(func(x): return str(x))
+			fade_mat.set_shader_parameter("fill", COLORS["white"] if name == "year_card" else COLORS["black"])
+			_job = {"kind": "card", "t": 0.0, "dark": name == "title_card", "done": done}
+		"lamp":
+			lamps.append({"pos": _mark(str(args[0])) + Vector2(0, -22), "color": COLORS.get(str(args[1]) if args.size() > 1 else "green",
+				Color.GREEN), "t": 0.0})
+			_job = {"kind": "wait", "left": 0.5, "done": done}
+		"doc":
+			if doc_requested.get_connections().is_empty():
+				done.call()
+			else:
+				doc_requested.emit(str(args[0]), done)
+		_:
+			done.call()                                           # sfx·bgm·pose: 아직 자원 없음(기록만)
+
+
+func _show_actor(id: String, pos: Vector2, dir: String) -> void:
+	if actors.has(id):
+		actors[id].queue_free()
+	var a := Actor.new()
+	var sheet: String = cast_sheets.get(id, "")
+	if sheet == "":
+		push_warning("show: 시트 없는 인물 " + id)
+		return
+	a.setup(sheet, pos, world)
+	a.mode = "walk"
+	a.loco.facing = DIR_IDX.get(dir, 2)
+	a._show()
+	get_parent().add_child(a)
+	actors[id] = a
+
+
+func _mark(m: String) -> Vector2:
+	var tx := 0
+	var ty := 0
+	if marks.has(m):
+		tx = int(marks[m][0])
+		ty = int(marks[m][1])
+	elif "," in m:
+		tx = int(m.get_slice(",", 0))
+		ty = int(m.get_slice(",", 1))
+	else:
+		push_warning("없는 표지: " + m)
+	return Vector2(tx * 32 + 16, ty * 32 + 20)
+
+
+func _mark_dir(m: String) -> String:
+	return str(marks[m][2]) if marks.has(m) and marks[m].size() > 2 else "S"
+
+
+static func _dir_to(a: Vector2, b: Vector2) -> int:
+	var v := b - a
+	if v.length() < 0.5:
+		return 2
+	return posmod(int(round(v.angle() / (PI / 4.0))), 8)
+
+
+func _process(dt: float) -> void:
+	for b in balloons:
+		b["t"] += dt
+	balloons = balloons.filter(func(b): return b["t"] < 1.2)
+	for l in lamps:
+		l["t"] += dt
+	lamps = lamps.filter(func(l): return l["t"] < 1.0)
+	if not balloons.is_empty() or not lamps.is_empty():
+		queue_redraw()
+	if _job.is_empty():
+		for a in actors.values():
+			if a.loco.motion != "idle":
+				a.move(Vector2.ZERO, dt)
+		return
+	var j := _job
+	match j["kind"]:
+		"move":
+			var a: Actor = j["actor"]
+			var to: Vector2 = j["to"]
+			var d := to - a.loco.logical
+			j["t"] += dt
+			var stride := 4.0
+			if d.length() <= stride * 0.6 or j["t"] > 20.0:
+				a.move(Vector2.ZERO, dt)
+				if a.loco.motion == "idle" or j["t"] > 20.0:
+					_finish()
+				return
+			a.move(_dir8(d), dt)
+		"wait":
+			j["left"] -= dt
+			if j["left"] <= 0.0:
+				_finish()
+		"fade":
+			j["t"] += dt
+			var k := clampf(j["t"] / maxf(j["len"], 0.001), 0.0, 1.0)
+			fade_mat.set_shader_parameter("amount", lerpf(j["from"], j["to"], k))
+			if k >= 1.0:
+				_finish()
+		"shake":
+			j["left"] -= dt
+			cam.offset = Vector2(randi_range(-2, 2), randi_range(-1, 1)) if j["left"] > 0.0 else Vector2.ZERO
+			if j["left"] <= 0.0:
+				_finish()
+		"cam":
+			j["t"] += dt
+			var k := clampf(j["t"] / j["len"], 0.0, 1.0)
+			cam.position = (j["from"] as Vector2).lerp(j["to"], k * k * (3.0 - 2.0 * k)).round()
+			if k >= 1.0:
+				_finish()
+		"card":
+			j["t"] += dt
+			var t: float = j["t"]
+			var amt := clampf(t / 0.5, 0.0, 1.0) if t < 3.0 else clampf(1.0 - (t - 3.0) / 0.6, 0.0, 1.0)
+			fade_mat.set_shader_parameter("amount", amt)
+			card.queue_redraw()
+			if t >= 3.6:
+				card_lines = []
+				card.queue_redraw()
+				_finish()
+
+
+func _finish() -> void:
+	var done: Callable = _job["done"]
+	_job = {}
+	done.call()
+
+
+## 8방향으로 맞춘 입력(이동 방향 스냅, SD-16 §3.6.5 ①)
+static func _dir8(v: Vector2) -> Vector2:
+	var i := posmod(int(round(v.angle() / (PI / 4.0))), 8)
+	return Locomotion.VEC[i].normalized()
+
+
+# ---------------------------------------------------------------- 그리기: 말풍선·램프(맵 좌표), 연도 카드(화면)
+func _draw() -> void:
+	for b in balloons:
+		var a: Actor = b["actor"]
+		if not is_instance_valid(a):
+			continue
+		var t: float = b["t"]
+		var pop := 2 if t < 0.08 else 0                               # 처음 두 프레임은 2px 커졌다가
+		var c := a.position + Vector2(6, -50)
+		var r := Rect2(c - Vector2(8 + pop, 8 + pop), Vector2(16 + pop * 2, 15 + pop * 2))
+		draw_rect(r, Color("1A181D"))
+		draw_rect(r.grow(-1), Color("E9E4D8"))
+		draw_colored_polygon(PackedVector2Array([c + Vector2(-4, 7 + pop), c + Vector2(0, 7 + pop), c + Vector2(-5, 11 + pop)]), Color("1A181D"))
+		draw_colored_polygon(PackedVector2Array([c + Vector2(-3, 6 + pop), c + Vector2(-1, 6 + pop), c + Vector2(-4, 9 + pop)]), Color("E9E4D8"))
+		_draw_glyph(str(b["kind"]), c)
+	for l in lamps:
+		if fmod(l["t"], 0.25) < 0.15:
+			draw_rect(Rect2(l["pos"] - Vector2(2, 2), Vector2(4, 4)), l["color"])
+			draw_rect(Rect2(l["pos"] - Vector2(1, 3), Vector2(2, 6)), l["color"])
+
+
+func _draw_glyph(kind: String, c: Vector2) -> void:
+	var ink := Color("1A181D")
+	match kind:
+		"!":
+			draw_rect(Rect2(c + Vector2(-1, -5), Vector2(2, 6)), Color("E04A35"))
+			draw_rect(Rect2(c + Vector2(-1, 3), Vector2(2, 2)), Color("E04A35"))
+		"?":
+			draw_string(font, c + Vector2(-3, 5), "?", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, ink)
+		"heart":
+			for p in [Vector2(-4, -3), Vector2(-3, -4), Vector2(-2, -4), Vector2(1, -4), Vector2(2, -4), Vector2(3, -3)]:
+				draw_rect(Rect2(c + p, Vector2(1, 1)), Color("E04A35"))
+			draw_rect(Rect2(c + Vector2(-4, -2), Vector2(8, 3)), Color("E04A35"))
+			draw_rect(Rect2(c + Vector2(-3, 1), Vector2(6, 1)), Color("E04A35"))
+			draw_rect(Rect2(c + Vector2(-2, 2), Vector2(4, 1)), Color("E04A35"))
+			draw_rect(Rect2(c + Vector2(-1, 3), Vector2(2, 1)), Color("E04A35"))
+		"...":
+			for k in 3:
+				draw_rect(Rect2(c + Vector2(-5 + k * 4, 1), Vector2(2, 2)), ink)
+		"note":
+			draw_rect(Rect2(c + Vector2(1, -5), Vector2(1, 7)), ink)
+			draw_rect(Rect2(c + Vector2(-2, 1), Vector2(3, 3)), ink)
+			draw_rect(Rect2(c + Vector2(2, -5), Vector2(2, 1)), ink)
+		"sweat":
+			draw_rect(Rect2(c + Vector2(-1, -4), Vector2(2, 3)), Color("4C7DC8"))
+			draw_rect(Rect2(c + Vector2(-2, -1), Vector2(4, 4)), Color("4C7DC8"))
+		"anger":
+			for p in [Vector2(-4, -4), Vector2(1, -4), Vector2(-4, 1), Vector2(1, 1)]:
+				draw_rect(Rect2(c + p, Vector2(3, 1)), Color("E04A35"))
+				draw_rect(Rect2(c + p + (Vector2(2, 0) if p.x > 0 else Vector2.ZERO), Vector2(1, 3)), Color("E04A35"))
+
+
+func _draw_card() -> void:
+	if card_lines.is_empty() or _job.get("kind", "") != "card":
+		return
+	var t: float = _job["t"]
+	if t < 0.5 or t > 3.0:
+		return
+	var vs := card.get_viewport_rect().size
+	var ink := Color("E9E4D8") if _job["dark"] else Color("1A181D")
+	var big: String = card_lines[0]
+	var w := font_big.get_string_size(big, HORIZONTAL_ALIGNMENT_LEFT, -1, 32).x
+	card.draw_string(font_big, Vector2(floorf((vs.x - w) / 2.0), floorf(vs.y / 2.0) - 4), big, HORIZONTAL_ALIGNMENT_LEFT, -1, 32, ink)
+	if card_lines.size() > 1:
+		var s: String = card_lines[1]
+		var w2 := font.get_string_size(s, HORIZONTAL_ALIGNMENT_LEFT, -1, 12).x
+		card.draw_string(font, Vector2(floorf((vs.x - w2) / 2.0), floorf(vs.y / 2.0) + 24), s, HORIZONTAL_ALIGNMENT_LEFT, -1, 12,
+			ink.darkened(0.15))
