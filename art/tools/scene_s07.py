@@ -1,12 +1,15 @@
 """Vault S-07 interior reference scene (SD-16 §12.3 #2): V-01 아트리움 west half + V-03 적성 평가 교실,
 joined by a doorway in the dividing wall. 640x360, 32px grid, interior walls 2 tiles (atrium 3 tiles).
 Even ceiling light: no directional cast shadows, only 2px contact shadows under floor props (SD-16 §2.6).
+v2(아이작풍): 바닥·벽은 tiles_isaac, 소품은 굵은 먹선, 주인공은 chibi(16세 연습 시험 날, 성적표 앞).
 Writes samples/11_scene_s07(.png, _x2) and samples/11_scene_s07_grid_x2.png (tile grid overlay)."""
 import os, sys
 from PIL import Image, ImageDraw
 sys.path.insert(0, os.path.dirname(__file__))
 import palette as P
 import tiles_s07 as S
+import tiles_isaac as TI
+import chibi as K
 from grid import parse, upscale, check
 
 ROOT = os.path.dirname(os.path.dirname(__file__))
@@ -22,13 +25,13 @@ RGB2TOK = {P.rgb(f"P{i:02d}"): f"P{i:02d}" for i in range(64)}
 def floor_tile(c, r):
     if c <= 12:
         if r == 3 or c == 0:
-            return S.grate((c + r) % 3)
+            return TI.grate((c + r) % 3)
         if r == 7:
-            return S.guide_line("h")
+            return TI.guide_line("h")
         if c == 6 and r in (4, 5, 6):
-            return S.guide_line("v")
-        return S.panel_floor((c * 7 + r) % 5, sheen=(c + r) % 6 == 0)
-    return S.lino((c + r) % 3)
+            return TI.guide_line("v")
+        return TI.panel_floor((c * 7 + r) % 5, sheen=(c + r) % 6 == 0)
+    return TI.lino((c + r) % 3)
 
 
 def contact_shadow(img, x0, x1, y, h=2):
@@ -48,30 +51,30 @@ def build():
         for c in range(COLS):
             x, y = c * T, r * T
             if r >= 10:                                              # south wall top
-                img.alpha_composite(S.wall_top({"n"} if r == 10 and c != 13 else set()), (x, y))
+                img.alpha_composite(TI.wall_top({"n"} if r == 10 and c != 13 else set()), (x, y))
             elif c == 13:                                            # dividing wall with a doorway at rows 6-7
                 if r <= 3:
-                    img.alpha_composite(S.wall_top({"w", "e"} if r >= 3 else {"w"} if r >= 1 else set()), (x, y))
+                    img.alpha_composite(TI.wall_top({"w", "e"} if r >= 3 else {"w"} if r >= 1 else set()), (x, y))
                 elif r in (4, 5):
-                    img.alpha_composite(S.wall_face("top" if r == 4 else "bot"), (x, y))
+                    img.alpha_composite(TI.wall_face_in("top" if r == 4 else "bot"), (x, y))
                 elif r in (6, 7):
-                    img.alpha_composite(S.panel_floor(1) if r == 6 else S.guide_line("h"), (x, y))
+                    img.alpha_composite(TI.panel_floor(1) if r == 6 else TI.guide_line("h"), (x, y))
                 else:
-                    img.alpha_composite(S.wall_top({"w", "e", "n"} if r == 8 else {"w", "e"}), (x, y))
+                    img.alpha_composite(TI.wall_top({"w", "e", "n"} if r == 8 else {"w", "e"}), (x, y))
             elif c <= 12 and r <= 2:                                 # atrium north wall: balcony + 2 face tiles
                 if r == 0:
-                    img.alpha_composite(S.balcony_band(c, door=c in (4, 10), num={4: "2-04", 10: "2-07"}.get(c)), (x, y))
+                    img.alpha_composite(TI.balcony_band(c, door=c in (4, 10), num={4: "2-04", 10: "2-07"}.get(c)), (x, y))
                 elif r == 1:
-                    img.alpha_composite(S.wall_face("top", "pipe" if c in (12,) else "plain", c), (x, y))
+                    img.alpha_composite(TI.wall_face_in("top", "pipe" if c in (12,) else "plain", c), (x, y))
                 else:
-                    img.alpha_composite(S.wall_face("bot", "outlet" if c == 12 else "plain", c), (x, y))
+                    img.alpha_composite(TI.wall_face_in("bot", "outlet" if c == 12 else "plain", c), (x, y))
             elif c >= 14 and r <= 2:                                 # classroom north wall
                 if r == 0:
-                    img.alpha_composite(S.wall_top({"s", "w"} if c == 14 else {"s"}), (x, y))
+                    img.alpha_composite(TI.wall_top({"s", "w"} if c == 14 else {"s"}), (x, y))
                 elif r == 1:
-                    img.alpha_composite(S.wall_face("top", "vent" if c == 19 else "plain", c), (x, y))
+                    img.alpha_composite(TI.wall_face_in("top", "vent" if c == 19 else "plain", c), (x, y))
                 else:
-                    img.alpha_composite(S.wall_face("bot", "plain", c), (x, y))
+                    img.alpha_composite(TI.wall_face_in("bot", "plain", c), (x, y))
             else:
                 img.alpha_composite(floor_tile(c, r), (x, y))
     # doorway: yellow jamb marks on the floor and the wall stub's face edges
@@ -83,12 +86,12 @@ def build():
     contact_shadow(img, 14 * T, W, 3 * T, 2)
     contact_shadow(img, 13 * T, 14 * T, 6 * T, 2)
     # --- wall-mounted props
-    img.alpha_composite(S.ration_window(), (0, 1 * T))
-    img.alpha_composite(S.emblem(), (2 * T, 1 * T + 6))
-    img.alpha_composite(S.rank_board(), (3 * T, 1 * T + 4))
-    img.alpha_composite(S.slogan_crt("성적이 곧 미래다", 3), (9 * T, 1 * T + 6))
-    img.alpha_composite(S.blackboard(), (15 * T, 1 * T + 6))
-    img.alpha_composite(S.wall_clock(10, 12), (14 * T + 8, 1 * T + 8))
+    img.alpha_composite(TI.outline(S.ration_window()), (0, 1 * T))
+    img.alpha_composite(TI.outline(S.emblem()), (2 * T, 1 * T + 6))
+    img.alpha_composite(TI.outline(S.rank_board()), (3 * T, 1 * T + 4))
+    img.alpha_composite(TI.outline(S.slogan_crt("성적이 곧 미래다", 3)), (9 * T, 1 * T + 6))
+    img.alpha_composite(TI.outline(S.blackboard()), (15 * T, 1 * T + 6))
+    img.alpha_composite(TI.outline(S.wall_clock(10, 12)), (14 * T + 8, 1 * T + 8))
     # --- floor props (drawn north to south)
     props = []
     # atrium: 돌잔치 long table with stools, planters, the rank board onlookers' spot
@@ -105,15 +108,16 @@ def build():
     for rr in (5, 7):
         for cc in (14, 16, 18):
             props.append((S.exam_desk(), cc * T + (8 if cc == 14 else 0), rr * T - 4))
+    props = [(TI.outline(im), x, y) for im, x, y in props]                 # 아이작풍 굵은 먹선
     props.sort(key=lambda p: p[2] + p[0].height)
     for im, x, y in props:
         contact_shadow(img, x + 2, x + im.width - 2, y + im.height, 2)
         img.alpha_composite(im, (x, y))
     # --- the protagonist (age 16, MQ-P3 rehearsal) reading the ranking board
-    pc = parse(os.path.join(ROOT, "src/sprites/pc_s07_jumpsuit_S.txt"))["idleN"]
+    pc = K.actor(K.Look(), "N", "idle")
     fx, fy = 6 * T + 16, 4 * T + 22
     contact_shadow(img, fx - 7, fx + 8, fy - 1, 2)
-    img.alpha_composite(pc, (fx - 32, fy - 60))
+    img.alpha_composite(pc, (fx - 20, fy - 44))
     return img
 
 

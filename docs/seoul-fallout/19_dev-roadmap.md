@@ -1,6 +1,6 @@
 # SD-19. 개발 로드맵
 
-> **서울 폴아웃 상세 기획서 세트** | 문서 ID: SD-19 | 버전: v1.0 | 작성일: 2026-10-12
+> **서울 폴아웃 상세 기획서 세트** | 문서 ID: SD-19 | 버전: v1.1 | 작성일: 2026-10-12 (v1.1 2026-10-13)
 > **범위**: 세트의 **개발 로드맵 정본**. 2026-10-12 사용자 결정(Godot 4, PC·Android·iOS, 라디오 수록곡 없음, 크리처 컨셉 아트 없음, 그래픽 Claude 전담, 사운드는 BGM·효과음만) 반영. 로드맵 원칙, 추정 모델(1인 + Claude), 단계 S·T·0~7과 P1의 목표·범위·완료 기준·게이트·기간, 기술(Godot 4)·아트·사운드·콘텐츠 로드맵, QA(분기 자동 검증·기기 매트릭스·성능 예산), 마일스톤·Gantt, 남은 결정, 리스크, 다음 4주 계획. **다루지 않는 것**: 각 콘텐츠·시스템의 설계 수치와 문안(각 정본 문서), 그래픽 규격(SD-16), 큐별 음악 사양(SD-17).
 > **관련 문서**: [SC-00 컨셉](00_concept.md), [SD-01 게임 개요](01_game-overview.md), [SD-03a 메인 1부](03a_main-story-part1.md), [SD-03b 메인 2부](03b_main-story-part2.md), [SD-04a](04a_side-quests-south.md)·[04b](04b_side-quests-west-river.md)·[04c](04c_side-quests-north-east-center.md) 사이드, [SD-04d 세력 퀘스트](04d_faction-questlines.md), [SD-05 기타 퀘스트·인카운터](05_misc-quests-encounters.md), [SD-06 세력](06_factions.md), [SD-07b NPC](07b_npc-directory.md), [SD-08 월드·권역](08_world-regions.md), [SD-09a~f 장소](09a_locations-r01-r02.md), [SD-10 캐릭터](10_character-system.md), [SD-11 전투](11_combat-system.md), [SD-12 탐험·UI](12_exploration-ui.md), [SD-13 아이템](13_items.md), [SD-14 크리처](14_creatures-enemies.md), [SD-15 경제](15_economy.md), [SD-16 아트](16_art-direction.md), [SD-17 사운드](17_sound.md), [SD-18 용어](18_naming-terms.md)
 > **근거 자료**: 원작 [RD-27 이식 시사점](../reverse-design/27_adaptation-notes.md) §8·§9·§11·§13, 지도 [maps/locations.csv](maps/locations.csv)
@@ -1565,3 +1565,4 @@ H 항목(§11.2·§11.3) 외에 이 문서가 남기는 정합·확인 항목이
 | 버전 | 날짜 | 내용 |
 |---|---|---|
 | v1.0 | 2026-10-12 | 최초 작성. 세트의 개발 로드맵 정본. 2026-10-12 사용자 결정(Godot 4, PC·Android·iOS, 동명 확인 생략, 라디오 수록곡 없음, 크리처 컨셉 아트 없음, 그래픽 Claude 전담, BGM·효과음만) 반영. 단계 S·P1 신설, 추정 모델, 단계별 상세, 기술·아트·사운드·콘텐츠 로드맵, QA, 게이트·H 항목, 리스크, 다음 4주 계획 |
+| v1.1 | 2026-10-13 | 리드 결정 반영: 그림체를 아이작풍(SD-16 §3.11 v2.0)으로 전환. 맵 구성·시스템·일정 구조는 그대로. 단계 S 기준 샘플과 단계 T 실행 중 그림(페이퍼돌 v2·NPC·적·타일·탄생 컷신·초상화)을 새 그림체로 다시 굽고 `art/build.sh`를 새 생성기로 교체. 키 아트는 단계 0에서 다시 그린다 |

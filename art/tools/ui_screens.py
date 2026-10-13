@@ -191,20 +191,19 @@ def legend(s):
 # ---------------------------------------------------------------- dialogue window
 def dialogue():
     import scene_bongcheon as SB
-    import portraits as PT
-    import npcs as NP
-    import rig_pc as R
+    import chibi as K
     base = SB.build(hud=False).convert("RGBA")
-    # the two speakers, facing each other above the box (camera sits at their midpoint)
-    zm = NP.build("E1-S4-HR01-H5-T03-2-PF12-HD00-EY00-PR006")["idle"]["W"]
-    pc = R.build_all("T01", None, {"hair": "HR05", "color": "H2"})[0]["idle"]["E"]
+    # the two speakers, facing each other above the box (camera sits at their midpoint) — 아이작풍(chibi)
+    zm_look = K.Look.parse("E1-S4-HR01-H5-T03-2-PF12-HD00-EY00-PR006")
+    zm = K.actor(zm_look, "W", "idle", 0, "talk")
+    pc = K.actor(K.Look(body="F1", hair="HR05", color="H2"), "E")
     for spr, fx in ((pc, 296), (zm, 340)):
         for ddx in range(-7, 8):
             for ddy in (-1, 0, 1):
                 if (ddx / 7.5) ** 2 + (ddy / 1.6) ** 2 <= 1:
                     r_, g_, b_, a_ = base.getpixel((fx + ddx, 226 + ddy))
                     base.putpixel((fx + ddx, 226 + ddy), (r_ * 2 // 3, g_ * 2 // 3, b_ * 2 // 3, 255))
-        base.alpha_composite(spr, (fx - 32, 226 - 60))
+        base.alpha_composite(spr, (fx - 20, 226 - 44))
     d = ImageDraw.Draw(base); d.fontmode = "1"
     # choices window (above the dialogue box)
     ch = Image.new("RGBA", (488, 6 + 4 * 18 + 6), (0, 0, 0, 0))
@@ -228,8 +227,7 @@ def dialogue():
     box = Image.new("RGBA", (608, 104), Cr("P01") + (217,))
     ImageDraw.Draw(box).rectangle([0, 0, 607, 103], outline=Cr("P07") + (255,))
     base.alpha_composite(box, (16, 248))
-    p = PT.UNIQUE[3][2]
-    face = PT.portrait(p, "결의")
+    face = K.portrait(zm_look, "분노")
     plate = Image.new("RGBA", (96, 96), Cr("P17") + (255,))
     plate.alpha_composite(face)
     base.alpha_composite(plate, (24, 252))
@@ -271,8 +269,7 @@ def amber(img):
 
 
 def birth_terminal():
-    import rig_pc as R
-    import portraits as PT
+    import chibi as K
     W, H = 640, 360
     im = Image.new("RGB", (W, H), Cr("P08"))
     d = ImageDraw.Draw(im); d.fontmode = "1"
@@ -306,15 +303,15 @@ def birth_terminal():
     s.rectangle([96, 168, 196, 186], fill=A(6)); t(104, 171, "[성장 예측]", F12, 0)
     t(206, 171, "19세 모습을 미리 봅니다", F10, 4)
     # preview: map sprite (4 directions) + face, rendered monochrome on the amber tube
-    sets, _ = R.build_all("T01", None, {"hair": "HR05", "color": "H2"})
+    lk = K.Look(body="F1", hair="HR05", color="H2")
     pv = Image.new("RGBA", (232, 132), A(1) + (255,))
     pd = ImageDraw.Draw(pv); pd.fontmode = "1"
     pd.rectangle([0, 0, 231, 131], outline=A(4))
     pd.text((6, 3), "세진 성장 예측기", font=F10, fill=A(6))
     for k, v in enumerate(("S", "E", "N", "W")):
-        spr = amber(sets["idle"][v].crop((14, 18, 50, 62)))
+        spr = amber(K.actor(lk, v).crop((4, 6, 36, 48)))
         pv.alpha_composite(spr, (4 + k * 30, 40))
-    face = PT.portrait(dict(skin="S3", hair="HR05", hair_color="H2", female=True, torso="T01", faction="PF-11", jaw=0.15), "기본")
+    face = K.portrait(lk, "기본")
     pv.alpha_composite(amber(face.crop((14, 8, 82, 92))), (152 - 26, 30))
     pd.text((6, 116), "◀ 회전 ▶   머리 HR05   피부 S3", font=F10, fill=A(5))
     scr_rgba = scr.convert("RGBA"); scr_rgba.alpha_composite(pv, (350, 36)); scr = scr_rgba.convert("RGB")

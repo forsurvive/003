@@ -285,15 +285,16 @@ def sheet():
 
 def combat_gif():
     """PC fires the pistol at a roach on the S-07 floor: flash, bullet, hit, slime death."""
-    import tiles_s07 as TS
-    import weapons as WP
+    import tiles_isaac as TS
+    import chibi as K
+    import chibi_creatures as CC
     floor = Image.new("RGBA", (192, 80))
     for tx in range(6):
         for ty in range(3):
             floor.alpha_composite(TS.panel_floor((tx + ty) % 5), (tx * 32, ty * 32))
-    ups, fulls = WP.bases("T01", None)
-    shooter = [WP.aim_frame("pistol", "E", f, ups, fulls) for f in range(4)]
-    rch = roach(); death = slime_death()
+    pc = K.Look()
+    shooter = [K.actor(pc, "E", "idle", 0, "idle", weapon="pistol"), K.actor(pc, "E", "idle", 0, "fire", weapon="pistol")]
+    rch = CC.roach(0); death = [d.crop((4, 0, 40, 24)).resize((32, 22), Image.NEAREST) for d in CC.roach_death()][:5]
     frames, durs = [], []
     hand = (52, 24)                                              # muzzle point in scene coords
     tx, ty = 150, 52
@@ -302,15 +303,15 @@ def combat_gif():
     for i, (st, ms) in enumerate(timeline):
         fr = floor.copy()
         sf = shooter[1] if st in ("fire0", "fire1") else shooter[0]
-        fr.alpha_composite(sf, (0, 66 - 60))
+        fr.alpha_composite(sf, (12, 66 - 44))
         if st.startswith("d"):
             k = int(st[1])
-            fr.alpha_composite(death[k], (tx - 16, ty - 26))
+            fr.alpha_composite(death[min(k, len(death) - 1)], (tx - 16, ty - 20))
         elif st == "hit":
-            fr.alpha_composite(death[0], (tx - 16, ty - 26))
+            fr.alpha_composite(death[0], (tx - 16, ty - 20))
         else:
-            fr.alpha_composite(rch, (tx - 16, ty - 26))
-        mx, my = 48, 43 - (1 if st in ("fire0", "fire1") else 0)    # pistol muzzle tip (E pose, scene coords)
+            fr.alpha_composite(rch, (tx - 18, ty - 21))
+        mx, my = 12 + 20 + 7 + 5, 66 - 9 - 1                          # 권총 총구(아이작풍 E 손 위치 + 총 길이)
         if st == "fire0":
             fr = add(fr, muzzle(0, 0), (mx - 7, my - 7))
         if st == "fire1":

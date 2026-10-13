@@ -121,6 +121,82 @@ def roach_sheet():
     return frames, meta
 
 
+# ---------------------------------------------------------------- 네발짐승(변이 들개·변이 시궁쥐): 큰 머리 + 작은 몸 + 짧은 다리
+QUAD = {
+    "dog": dict(w=44, h=32, foot=(20, 29), px=4, body=(19, 18, 10, 6.5), head=(32, 13, 7.5, 6.5), leg=5, fur=["P17", "P18", "P19", "P20"],
+                skin=["P39", "P40", "P41"], eye="P54", tail="up", ears=True, mange=True),
+    "rat": dict(w=40, h=22, foot=(18, 19), px=2, body=(17, 13, 9, 5), head=(27, 12, 5, 4.5), leg=3, fur=["P03", "P04", "P05", "P06"],
+                skin=["P40", "P41", "P42"], eye="P54", tail="long", ears=True, mange=False),
+}
+
+
+def quad(kind, frame=0, pose="walk"):
+    """4컷 종종걸음(대각 다리 짝이 번갈아 2컷씩 딛는다, 디딘 발은 컷마다 -px = 세계에서 고정)."""
+    q = QUAD[kind]
+    img = Image.new("RGBA", (q["w"], q["h"]), CLEAR)
+    d = ImageDraw.Draw(img)
+    fur = ramp(q["fur"])
+    p = q["px"]
+    u0 = (p + 1) // 2
+    table = [(u0, 0), (u0 - p, 0), (u0 - p, 2), (0, 2)]               # 디딤 0·1, 띄움 2·3
+    bx, by, brx, bry = q["body"]
+    bob = 1 if pose == "walk" and frame % 2 else 0
+    hips = {"front": bx + brx * 0.55, "back": bx - brx * 0.6}
+    for far in (1, 0):
+        for end in ("back", "front"):
+            pair = (0 if (end == "front") == (far == 0) else 2)            # 대각 짝
+            ph = (frame + pair) % 4 if pose == "walk" else 0
+            u, lift = table[ph] if pose == "walk" else (0, 0)
+            hx = round(hips[end]) - far
+            fx, fy = hx + u, q["foot"][1] - far * 2 - lift
+            col = fur[0] if far else fur[1]
+            d.line([hx, by + 2 - bob, fx, fy - 1], fill=col, width=2)
+            d.point((fx + 1, fy - 1), fill=C("P02"))
+    body = Image.new("RGBA", img.size, CLEAR)
+
+    def mange(nx, ny, col):
+        if q["mange"] and math.sin(nx * 7 + 2) * math.sin(ny * 6 - 1) > 0.6:
+            return ramp(q["skin"])[1]
+        if q["mange"] and ny > 0.1 and abs((nx * 6) % 1 - 0.5) < 0.12:
+            return fur[0]                                                  # 드러난 갈비
+        return None
+    _ellipse(body, bx, by - bob, brx, bry, fur, extra=mange)
+    hxc, hyc, hrx, hry = q["head"]
+    _ellipse(body, hxc, hyc - bob, hrx, hry, fur)
+    bd = ImageDraw.Draw(body)
+    hyb = round(hyc - bob)
+    if kind == "dog":
+        ex = round(hxc - hrx * 0.45)                                       # 늘어진 귀
+        bd.polygon([(ex - 2, hyb - 5), (ex + 3, hyb - 6), (ex - 3, hyb + 1)], fill=fur[0])
+        sx = round(hxc + hrx - 2)                                          # 긴 주둥이 + 검은 코 + 이빨
+        bd.ellipse([sx - 1, hyb - 1, sx + 6, hyb + 4], fill=fur[2])
+        bd.line([sx, hyb + 3, sx + 5, hyb + 3], fill=fur[0])
+        bd.point((sx + 6, hyb), fill=C("P01")); bd.point((sx + 5, hyb), fill=C("P01"))
+        bd.point((sx + 2, hyb + 4), fill=C("P09")); bd.point((sx + 4, hyb + 4), fill=C("P09"))
+        bd.point((round(hxc + 1), hyb - 2), fill=C(q["eye"]))
+    else:
+        ex = round(hxc - 1)                                                # 동그란 귀(안쪽 분홍)
+        bd.ellipse([ex - 2, hyb - 7, ex + 2, hyb - 3], fill=fur[2])
+        bd.point((ex, hyb - 5), fill=ramp(q["skin"])[1])
+        sx = round(hxc + hrx - 1)
+        bd.ellipse([sx - 1, hyb - 1, sx + 3, hyb + 2], fill=fur[2])
+        bd.point((sx + 3, hyb), fill=ramp(q["skin"])[2])
+        bd.point((round(hxc + 1), hyb - 1), fill=C(q["eye"]))
+    img.alpha_composite(body)
+    img = outline(img)
+    d = ImageDraw.Draw(img)
+    tx = round(bx - brx)
+    if kind == "rat":                                                     # 수염(먹선 밖)
+        sx2, sy2 = round(q["head"][0] + q["head"][2] + 2), round(q["head"][1] - bob)
+        d.line([sx2, sy2, sx2 + 3, sy2 - 1], fill=C("P07")); d.line([sx2, sy2 + 1, sx2 + 3, sy2 + 2], fill=C("P07"))
+    if q["tail"] == "up":
+        d.line([(tx, by - 2 - bob), (tx - 3, by - 6 - bob), (tx - 4, by - 9 - bob + (frame % 2))], fill=fur[0], width=2)
+    else:
+        pts = [(tx, by + 1 - bob), (tx - 5, by + 3), (tx - 10, by + 2 + (frame % 2)), (tx - 14, by + 4)]
+        d.line(pts, fill=ramp(q["skin"])[1])
+    return img
+
+
 def footlock_report():
     """디딘 다리 끝의 세계 x: 그림이 컷마다 3px 앞으로 갈 때 디딘 동안 그대로인가."""
     worst = 0
@@ -136,6 +212,15 @@ def footlock_report():
                 worst = max(worst, abs(a - b)) if abs(a - b) < 6 else worst
     return worst
 
+
+if __name__ == "__main__" and len(sys.argv) > 2 and sys.argv[2] == "quad":
+    out = sys.argv[1]
+    sheet = Image.new("RGBA", (46 * 8, 34 * 2), C("P19"))
+    for r, k in enumerate(("dog", "rat")):
+        for f in range(4):
+            sheet.alpha_composite(quad(k, f), (f * 46, r * 34))
+    sheet.resize((sheet.width * 4, sheet.height * 4), Image.NEAREST).save(out)
+    sys.exit()
 
 if __name__ == "__main__":
     out = sys.argv[1]

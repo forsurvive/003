@@ -392,7 +392,7 @@ def guide_line(axis="h"):
 
 def lino(seed=0):
     img = new()
-    mottle(img, ["P19", "P20", "P21"], 80 + seed, lo=0.24, hi=0.84, fine=0.4)
+    mottle(img, ["P19", "P20", "P21"], 80 + seed, lo=0.08, hi=0.92, fine=0.5)
     d = ImageDraw.Draw(img)
     for x in (0, 16):
         d.line([x, 0, x, 31], fill=C("P18"))
@@ -511,9 +511,44 @@ def sheet(tiles, cols=9, bg="P19"):
     return out
 
 
+def samples():
+    """samples/03_tiles_r01(·_x4), 10_tiles_s07(·_x3), 10_gear_door(.gif·_8f) — 아이작풍 판."""
+    import tiles_s07 as S
+    from grid import upscale
+    out = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "samples")
+    a = sheet(r01_tiles(), 9)
+    a.save(os.path.join(out, "03_tiles_r01.png"))
+    upscale(a, 4).save(os.path.join(out, "03_tiles_r01_x4.png"))
+    props = [S.door_slide("closed", "교무"), S.door_slide("open"), S.slogan_crt("성적이 곧 미래다", 3), S.rank_board(), S.wall_clock(),
+             S.blackboard(), S.ration_window(), S.emblem(), S.canteen_table(3), S.stool(), S.exam_desk(), S.teacher_desk(),
+             S.bunk(), S.locker_row(2), S.exam_bed(), S.med_cabinet(), S.overseer_desk(), S.safe(), S.planter()]
+    tiles = sheet(s07_tiles(), 12)
+    W = max(tiles.width, 640)
+    b = Image.new("RGBA", (W, 520), C("P19"))
+    b.alpha_composite(tiles, (0, 0))
+    x, y, rowh = 8, tiles.height + 10, 0
+    for im in props:
+        im = outline(im)
+        if x + im.width + 6 > W:
+            x, y, rowh = 8, y + rowh + 8, 0
+        b.alpha_composite(im, (x, y))
+        x += im.width + 8
+        rowh = max(rowh, im.height)
+    b = b.crop((0, 0, W, y + rowh + 8))
+    b.save(os.path.join(out, "10_tiles_s07.png"))
+    upscale(b, 3).save(os.path.join(out, "10_tiles_s07_x3.png"))
+    strip = Image.new("RGBA", (8 * 198, 198), C("P10"))
+    frames = []
+    for f in range(8):
+        g = outline(S.gear_door(f))
+        strip.alpha_composite(g, (f * 198 + 2, 2))
+    strip.save(os.path.join(out, "10_gear_door_8f.png"))
+    for f in list(range(8)) + [7] * 6:
+        bg = Image.new("RGBA", (198 + S.ROLL_PX, 198), C("P10"))
+        bg.alpha_composite(outline(S.gear_door(f)), (2 + int(S.ROLL_PX * f / 7), 2))
+        frames.append(upscale(bg, 2).convert("P", palette=Image.ADAPTIVE))
+    frames[0].save(os.path.join(out, "10_gear_door.gif"), save_all=True, append_images=frames[1:], duration=110, loop=0)
+
+
 if __name__ == "__main__":
-    o = sys.argv[1] if len(sys.argv) > 1 else "/tmp"
-    a = sheet(r01_tiles())
-    b = sheet(s07_tiles(), 12)
-    a.resize((a.width * 4, a.height * 4), Image.NEAREST).save(o + "_r01.png")
-    b.resize((b.width * 3, b.height * 3), Image.NEAREST).save(o + "_s07.png")
+    samples()

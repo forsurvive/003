@@ -1,12 +1,22 @@
-T01 walk E near frames [0, 1, 2]: world heel x [36, 36, 36], world sole y [60, 60, 60], slip 0px
-T01 walk E far frames [3, 4, 5]: world heel x [52, 52, 52], world sole y [60, 60, 60], slip 0px
-T01 walk SE near frames [0, 1, 2]: world heel x [32, 32, 32], world sole y [63, 63, 63], slip 0px
-T01 walk SE far frames [3, 4, 5]: world heel x [49, 49, 49], world sole y [75, 75, 75], slip 0px
-T01 walk NE near frames [0, 1, 2]: world heel x [37, 37, 37], world sole y [55, 55, 55], slip 0px
-T01 walk NE far frames [3, 4, 5]: world heel x [44, 44, 44], world sole y [43, 43, 43], slip 0px
-T01 run E near frames [0, 1]: world heel x [34, 34], world sole y [60, 60], slip 0px
-T01 run E far frames [3, 4]: world heel x [56, 56], world sole y [60, 60], slip 0px
-T01 run SE near frames [0, 1]: world heel x [31, 31], world sole y [62, 62], slip 0px
-T01 run SE far frames [3, 4]: world heel x [54, 54], world sole y [80, 80], slip 0px
-T01 run NE near frames [0, 1]: world heel x [36, 36], world sole y [56, 56], slip 0px
-T01 run NE far frames [3, 4]: world heel x [49, 49], world sole y [38, 38], slip 0px
+디딤발 세계 좌표 어긋남(아이작풍 종종걸음, 한 발 2컷 디딤)
+walk S 발0: 디딤 2컷, 어긋남 0px
+walk S 발1: 디딤 2컷, 어긋남 0px
+walk SE 발0: 디딤 2컷, 어긋남 0px
+walk SE 발1: 디딤 2컷, 어긋남 0px
+walk E 발0: 디딤 2컷, 어긋남 0px
+walk E 발1: 디딤 2컷, 어긋남 0px
+walk NE 발0: 디딤 2컷, 어긋남 0px
+walk NE 발1: 디딤 2컷, 어긋남 0px
+walk N 발0: 디딤 2컷, 어긋남 0px
+walk N 발1: 디딤 2컷, 어긋남 0px
+run S 발0: 디딤 2컷, 어긋남 0px
+run S 발1: 디딤 2컷, 어긋남 0px
+run SE 발0: 디딤 2컷, 어긋남 0px
+run SE 발1: 디딤 2컷, 어긋남 0px
+run E 발0: 디딤 2컷, 어긋남 0px
+run E 발1: 디딤 2컷, 어긋남 0px
+run NE 발0: 디딤 2컷, 어긋남 0px
+run NE 발1: 디딤 2컷, 어긋남 0px
+run N 발0: 디딤 2컷, 어긋남 0px
+run N 발1: 디딤 2컷, 어긋남 0px
+최대 0px

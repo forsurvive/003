@@ -4,15 +4,18 @@ import os, sys
 from PIL import Image, ImageDraw, ImageFont, ImageChops
 sys.path.insert(0, os.path.dirname(__file__))
 import palette as P
-import tiles_r01 as TR
+import tiles_isaac as TR                                             # v2(아이작풍): 같은 이름의 타일 함수
 import props_r01 as PR
+import chibi as K
+import chibi_creatures as CC
 from grid import parse, upscale
 
 ROOT = os.path.dirname(os.path.dirname(__file__))
 C = P.rgb
 T = 32
 W, H = 640, 360
-tiles = TR.all_tiles()
+tiles = TR.r01_tiles()
+INK = lambda im: TR.outline(im)                                       # 소품 굵은 먹선
 
 
 def tile_at(kind, tx, ty):
@@ -95,16 +98,16 @@ def build(hud=True):
 
     # stepped alleys in the gaps between villas (climb further uphill)
     for gx, gw in ((104, 32), (264, 80), (472, 32)):
-        base.alpha_composite(PR.gap_stairs(gw, 96), (gx, 0))
+        base.alpha_composite(INK(PR.gap_stairs(gw, 96)), (gx, 0))
         shade_rect(base, (gx, 0, gx + 8, 96), 0.7)
     # villas (ground line y=96)
     for i, vx in enumerate([-24, 136, 344, 504]):
         v = PR.villa(seed=i * 7 + 3, door_at=(1, 2, 0, 3)[i])
         base.alpha_composite(v, (vx, 96 - v.height))
         shade_rect(base, (max(0, vx + 8), 96, min(W, vx + 136), 104), 0.72)
-    base.alpha_composite(PR.store_sign(), (344 + 4, 96 - 30))      # 번개24 fascia over villa 3 ground floor
-    base.alpha_composite(PR.poster(), (200, 140))                 # 2077 loyalty-registration poster
-    base.alpha_composite(PR.poster(), (520, 146))
+    base.alpha_composite(INK(PR.store_sign()), (344 + 4, 96 - 30))      # 번개24 fascia over villa 3 ground floor
+    base.alpha_composite(INK(PR.poster()), (200, 140))                 # 2077 loyalty-registration poster
+    base.alpha_composite(INK(PR.poster()), (520, 146))
     shade_rect(base, (0, 192, 288, 200), 0.75)       # retaining wall shadow on terrace
     shade_rect(base, (352, 192, W, 200), 0.75)
     shade_rect(base, (352, 128, 360, 192), 0.8)      # stair cheek
@@ -118,7 +121,7 @@ def build(hud=True):
     items += [(392, 200, 40, "leaf"), (424, 200, 41, "leaf"), (456, 200, 42, "chili")]
     for x, y, s, crop in sorted(items, key=lambda k: k[1]):
         shadow_ellipse(base, x + 12, y + 20, 22, 5, 0.7)
-        base.alpha_composite(PR.basin_planter(s, crop), (x, y))
+        base.alpha_composite(INK(PR.basin_planter(s, crop)), (x, y))
     for x in (504, 536, 568, 600):
         base.alpha_composite(tiles["scrap_barrier"], (x, 210))
     for name, x, y in [("granite_rock", 470, 222), ("drum", 8, 258), ("drum", 30, 264)]:
@@ -126,20 +129,20 @@ def build(hud=True):
         base.alpha_composite(tiles[name], (x, y))
 
     # characters
-    pc = parse(os.path.join(ROOT, "src/sprites/pc_s07_jumpsuit_S.txt"))
-    roach = parse(os.path.join(ROOT, "src/sprites/cr_roach.txt"))["E_idle0"].transpose(Image.FLIP_LEFT_RIGHT)
+    pc = K.actor(K.Look(), "E", "idle", weapon="pistol")
+    roach = CC.roach(1).transpose(Image.FLIP_LEFT_RIGHT)
     px, py = 300, 284
-    shadow_ellipse(base, px, py, 14, 5, 0.6)
-    base.alpha_composite(pc["idleE"], (px - 32, py - 60))
+    shadow_ellipse(base, px, py, 12, 4, 0.6)
+    base.alpha_composite(pc, (px - 20, py - 44))
     rx, ry = 384, 292
-    shadow_ellipse(base, rx, ry, 12, 4, 0.6)
-    base.alpha_composite(roach, (rx - 16, ry - 26))
+    shadow_ellipse(base, rx, ry, 14, 4, 0.6)
+    base.alpha_composite(roach, (rx - (44 - 18), ry - 21))
 
     # poles (in front of villas) + sagging wires over everything
     for x, y in [(120, 100), (456, 100)]:
         pole = PR.utility_pole()
         shadow_ellipse(base, x, y, 10, 4, 0.6)
-        base.alpha_composite(pole, (x - 20, y - pole.height))
+        base.alpha_composite(INK(pole), (x - 20, y - pole.height))
     PR.wires(base, [(-10, -2), (102, 0), (138, -2), (436, -4), (474, -2), (650, 2)], sag=14)
 
     tint(base, 8, 4, -8, 10)
