@@ -95,6 +95,11 @@ func test_follow_rules(t) -> void:
 
 ## 맵마다 인물 일과를 실제로 걸려 본다: 정해진 시간 안에 모든 일과 지점을 한 바퀴 돈다(막힘·맴돌기 없음)
 func test_routines_walk(t) -> void:
+	for step in [1.0 / 60.0, 0.1]:                                     # 0.1초 프레임(녹화·느린 기기)에서도 맴돌지 않는다
+		_routines_walk(t, step)
+
+
+func _routines_walk(t, step: float) -> void:
 	var cast: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://assets/sprites/story_cast.json"))["sheets"]
 	var total := 0
 	for id in S07:
@@ -110,13 +115,41 @@ func test_routines_walk(t) -> void:
 				p[3] = 0.05                                          # 머무는 시간은 줄여서 걷기만 본다
 			var seen := {}
 			var steps := 0
-			while seen.size() < n["route"].size() and steps < 60 * 120:
-				r.tick(1.0 / 60.0, Vector2(-999, -999))
+			while seen.size() < n["route"].size() and steps * step < 120.0:
+				r.tick(step, Vector2(-999, -999))
 				steps += 1
 				if r.wait_t > 0.0:
 					seen[r.idx] = true
-			t.eq(seen.size(), n["route"].size(), "%s %s 일과 지점 %d곳 모두 도착(%.1f초)" % [id, n["id"], n["route"].size(), steps / 60.0])
+			t.eq(seen.size(), n["route"].size(), "%s %s 일과 지점 %d곳 모두 도착(%.1f초, 프레임 %.3f)" % [id, n["id"],
+				n["route"].size(), steps * step, step])
 			total += 1
 			a.free()
 		m.free()
 	t.ok(total >= 15, "일과 인물 %d명" % total)
+
+
+## 컷신 move: 문에서 침대 옆까지 소품(아기 바구니·진찰대)을 돌아 걸어간다 — 곧장 걸으면 끼어 제자리에서 버둥거렸다.
+## 프레임 길이 1/60초와 0.1초(녹화 10fps) 둘 다: 긴 프레임에서 칸 가운데를 지나쳤다 되돌아오기를 되풀이했다
+func test_cutscene_move_paths(t) -> void:
+	for step in [1.0 / 60.0, 0.1]:
+		_move_once(t, step)
+
+
+func _move_once(t, step: float) -> void:
+	var m := _load("V-08")
+	var ev := EventRunner.new()
+	ev.setup(m, "V-08", Camera2D.new())
+	var done := [false]
+	ev.run("show", ["C-024", "door", "N"], func() -> void: pass)
+	t.ok(ev.actors.has("C-024"), "방금례 무대에 섬")
+	ev.run("move", ["C-024", "bed_side"], func() -> void: done[0] = true)
+	var secs := 0.0
+	while not done[0] and secs < 25.0:
+		ev._process(step)
+		secs += step
+	var a: Actor = ev.actors["C-024"]
+	t.ok(done[0] and secs < 8.0, "프레임 %.3f초: 침대 옆에 %.1f초 만에 도착(8초 안)" % [step, secs])
+	t.ok(a.loco.render.distance_to(m.mark_pos("bed_side")) < 6.0, "표지 자리에 섰다: %s" % str(a.loco.render))
+	a.free()
+	ev.free()
+	m.free()

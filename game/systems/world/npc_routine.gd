@@ -52,16 +52,16 @@ func tick(dt: float, player_pos: Vector2) -> void:
 				_arrive()                                               # 갈 수 없으면 그 자리에서 머문다
 		actor.move(Vector2.ZERO, dt)
 		return
-	if arrived(actor.loco.render, path[0]):
+	while not path.is_empty() and arrived(actor.loco.render, path[0]):
 		path.remove_at(0)
-		if path.is_empty():
-			actor.move(Vector2.ZERO, dt)
-			return
+	if path.is_empty():
+		actor.move(Vector2.ZERO, dt)
+		return
 	var dir: Vector2 = step_dir(actor.loco.render, path[0])
 	if (actor.loco.logical + dir * BLOCK_R).distance_to(player_pos) < BLOCK_R:
 		actor.move(Vector2.ZERO, dt)                                # 주인공이 길을 막았다: 서서 기다린다
 		return
-	actor.move(dir, dt)
+	path = walk_path(actor, path, dt)
 	_stuck_t = _stuck_t + dt if actor.loco.logical.distance_to(_last) < 0.5 else 0.0
 	_last = actor.loco.logical
 	if _stuck_t > 2.0:
@@ -103,6 +103,19 @@ static func with_start(m, from: Vector2, to: Vector2) -> PackedVector2Array:
 		fix.x = c.x
 	if fix != from:
 		p.insert(0, fix)
+	return p
+
+
+## 길을 dt만큼 걷는다. 1/60초씩 잘라 매번 방향을 다시 정한다 — 프레임이 길면(녹화 10fps·느린 기기) 한 번에 보폭 여러 개를
+## 가서 칸 가운데를 지나쳤다 되돌아오기를 되풀이했다. 돌려줌: 남은 길
+static func walk_path(a: Actor, p: PackedVector2Array, dt: float) -> PackedVector2Array:
+	var left := dt
+	while left > 0.0001:
+		var h := minf(left, 1.0 / 60.0)
+		left -= h
+		while not p.is_empty() and arrived(a.loco.render, p[0]):
+			p.remove_at(0)
+		a.move(Vector2.ZERO if p.is_empty() else step_dir(a.loco.render, p[0]), h)
 	return p
 
 

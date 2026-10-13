@@ -97,7 +97,9 @@ func run(name: String, args: Array, done: Callable) -> void:
 				done.call()
 				return
 			a.mode = str(args[2]) if args.size() > 2 else "walk"
-			_job = {"kind": "move", "actor": a, "to": _mark(str(args[1])), "done": done, "t": 0.0}
+			var to := _mark(str(args[1]))
+			_job = {"kind": "move", "actor": a, "to": to, "done": done, "t": 0.0, "path": _route(a, to), "still": 0.0,
+				"last": a.loco.render}
 		"face":
 			var a: Actor = actors.get(str(args[0]))
 			if a != null:
@@ -184,6 +186,16 @@ func _show_actor(id: String, pos: Vector2, dir: String) -> void:
 	actors[id] = a
 
 
+## 실내 맵이면 칸 길찾기(소품·벽을 돌아간다, 인물 일과와 같은 칸 가운데 따라가기). 길이 없으면 빈 배열
+func _route(a: Actor, to: Vector2) -> PackedVector2Array:
+	if world == null or not world.has_method("path"):
+		return PackedVector2Array()
+	var p := NpcRoutine.with_start(world, a.loco.render, to)
+	if p.is_empty() and world.tile_of(a.loco.render) == world.tile_of(to) and not NpcRoutine.arrived(a.loco.render, to):
+		p.append(to)                                                          # 같은 칸 안: 표지 자리로만 맞춘다
+	return p
+
+
 func _mark(m: String) -> Vector2:
 	var tx := 0
 	var ty := 0
@@ -228,15 +240,34 @@ func _process(dt: float) -> void:
 		"move":
 			var a: Actor = j["actor"]
 			var to: Vector2 = j["to"]
-			var d := to - a.loco.logical
 			j["t"] += dt
-			var stride := 4.0
-			if d.length() <= stride * 0.6 or j["t"] > 20.0:
+			var p: PackedVector2Array = j["path"]
+			if p.is_empty() and not world.has_method("path"):                 # 길찾기가 없는 맵(청크 월드): 곧장 걷는다
+				var d := to - a.loco.logical
+				if d.length() <= 2.4 or j["t"] > 20.0:
+					a.move(Vector2.ZERO, dt)
+					if a.loco.motion == "idle" or j["t"] > 20.0:
+						_finish()
+					return
+				a.move(_dir8(d), dt)
+				return
+			while not p.is_empty() and NpcRoutine.arrived(a.loco.render, p[0]):
+				p.remove_at(0)
+			j["path"] = p
+			if p.is_empty() or j["t"] > 20.0:
 				a.move(Vector2.ZERO, dt)
-				if a.loco.motion == "idle" or j["t"] > 20.0:
+				if a.loco.motion == "idle":
 					_finish()
 				return
-			a.move(_dir8(d), dt)
+			j["path"] = NpcRoutine.walk_path(a, p, dt)
+			j["still"] = j["still"] + dt if a.loco.render == j["last"] else 0.0  # 막혀 서 있으면(다른 인물 등) 길을 다시 찾는다
+			j["last"] = a.loco.render
+			if j["still"] > 1.0:
+				j["still"] = 0.0
+				j["path"] = _route(a, to)
+				if (j["path"] as PackedVector2Array).is_empty():
+					push_warning("move: 길이 없다 %s → %s" % [str(a.loco.render), str(to)])
+					j["t"] = 99.0
 		"wait":
 			j["left"] -= dt
 			if j["left"] <= 0.0:
