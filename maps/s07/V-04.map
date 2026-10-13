@@ -89,6 +89,10 @@ exit 63 26 V-10 from_V-04
 mark from_V-10 62 26 W
 mark home_bed 9 4 S
 mark home_door 9 5 N
+mark p4_room 16 4 E
+mark p4_dy_in 17 5 N
+mark p4_dy 18 4 W
+mark p4_dy_out 17 9 S
 prop bunk 1 3
 prop bunk 5 3
 prop bunk 8 3

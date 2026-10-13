@@ -11,6 +11,66 @@
   "value": 0,
   "weight": 0
  },
+ "M-202": {
+  "_src": "13_items.md:1139",
+  "cat": "misc",
+  "desc": "기념품",
+  "id": "M-202",
+  "name": "적성 평가 결과지",
+  "quest": "MQ-P3",
+  "source": "평가 직후",
+  "tag": "퀘스트",
+  "value": 0,
+  "weight": 0
+ },
+ "M-203": {
+  "_src": "13_items.md:1140",
+  "cat": "misc",
+  "desc": "MQ-P4 설득 경로 [증거]",
+  "id": "M-203",
+  "name": "관리 후보 지정 통지서",
+  "quest": "MQ-P3·MQ-P4",
+  "source": "평가 뒤 오버시어실",
+  "tag": "퀘스트",
+  "value": 0,
+  "weight": 0
+ },
+ "M-204": {
+  "_src": "13_items.md:1141",
+  "cat": "misc",
+  "desc": "MQ-104 단서, K_RALLY",
+  "id": "M-204",
+  "name": "오버시어실 기록 사본(비상 집결지 기록 외 1종)",
+  "quest": "MQ-P4",
+  "source": "오버시어 단말 복사(선택)",
+  "tag": "퀘스트",
+  "value": 0,
+  "weight": 0
+ },
+ "M-205": {
+  "_src": "13_items.md:1142",
+  "cat": "misc",
+  "desc": "볼트 외부 문 개방(제안)",
+  "id": "M-205",
+  "name": "하도윤의 보안 카드",
+  "quest": "MQ-P4",
+  "source": "'하도윤의 도움' 탈출 경로",
+  "tag": "퀘스트",
+  "value": 0,
+  "weight": 0
+ },
+ "M-229": {
+  "_src": "13_items.md:1166",
+  "cat": "misc",
+  "desc": "V_RECORDS +1, K_LINEAGE",
+  "id": "M-229",
+  "name": "S-07 계보 설계 메모(LR-18)",
+  "quest": "MQ-304 기록 4",
+  "source": "볼트 S-07 오버시어 금고(R01, MQ-P4·MQ-401)",
+  "tag": "퀘스트",
+  "value": 0,
+  "weight": 0
+ },
  "M-247": {
   "_src": "13_items.md:1184",
   "cat": "misc",
@@ -31,6 +91,30 @@
   "name": "지우의 배급 카드",
   "quest": "프롤로그 MQ-P2",
   "source": "배급소 바닥 틈([인지력 5] 또는 조사 3회)",
+  "tag": "퀘스트",
+  "value": 0,
+  "weight": 0
+ },
+ "M-249": {
+  "_src": "13_items.md:1186",
+  "cat": "misc",
+  "desc": "1장에 한 끼(볼트 배급소). 프롤로그에서는 쓸 곳이 없는 기념품",
+  "id": "M-249",
+  "name": "배급 쿠폰",
+  "quest": "프롤로그 MQ-P3",
+  "source": "복도 소동에서 하도윤을 고발하면 나채윤이 몰래 5장을 준다",
+  "tag": "퀘스트",
+  "value": 0,
+  "weight": 0
+ },
+ "M-250": {
+  "_src": "13_items.md:1187",
+  "cat": "misc",
+  "desc": "기념품. 맨 아래 칸 '배정: 관리동 — 관리 후보 1순위'(SD-03a §7.3)",
+  "id": "M-250",
+  "name": "적성 평가 결과 통지서",
+  "quest": "프롤로그 MQ-P3",
+  "source": "평가관 차명수(결과지 면담)",
   "tag": "퀘스트",
   "value": 0,
   "weight": 0

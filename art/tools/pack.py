@@ -18,7 +18,7 @@ MIRROR = {"W": "E", "SW": "SE", "NW": "NE"}
 FW, FH, FOOT = 40, 48, (20, 44)
 
 
-def meta(f):
+def meta(f, foot=FOOT):
     px = f.load()
     m = [(x, y) for y in range(f.height) for x in range(f.width) if px[x, y][3]]
     if not m:
@@ -26,17 +26,19 @@ def meta(f):
     top = min(y for _, y in m)
     xs = [x for x, y in m if y <= top + 6]
     x0, x1 = min(x for x, _ in m), max(x for x, _ in m)
-    return {"head": [round(sum(xs) / len(xs)), top + 10, 0], "hitbox": [x0, top, x1 - x0 + 1, FOOT[1] - top + 1]}
+    return {"head": [round(sum(xs) / len(xs)), top + 10, 0], "hitbox": [x0, top, x1 - x0 + 1, foot[1] - top + 1]}
 
 
-def pack(name, sets, motions, steps):
+def pack(name, sets, motions, steps, frame=(FW, FH), foot=FOOT):
+    """frame·foot: 칸 크기·발 기준점(기본 40×48·(20, 44). 파워 아머 리그는 48×56·(24, 52), SD-16 §5.7)."""
+    fw, fh = frame
     cols = []
     for mo in motions:
         n = len(sets[mo]["S"]) if isinstance(sets[mo]["S"], list) else 1
         cols.append((mo, n))
-    W = sum(n for _, n in cols) * FW
-    sheet = Image.new("RGBA", (W, FH * len(ROWS)), (0, 0, 0, 0))
-    j = {"name": name, "frame": [FW, FH], "foot": list(FOOT), "rows": list(ROWS), "mirror": MIRROR, "motions": {},
+    W = sum(n for _, n in cols) * fw
+    sheet = Image.new("RGBA", (W, fh * len(ROWS)), (0, 0, 0, 0))
+    j = {"name": name, "frame": [fw, fh], "foot": list(foot), "rows": list(ROWS), "mirror": MIRROR, "motions": {},
          "frames": {}, "style": "isaac"}
     c = 0
     for mo, n in cols:
@@ -47,8 +49,8 @@ def pack(name, sets, motions, steps):
         for r, v in enumerate(ROWS):
             seq = sets[mo][v] if isinstance(sets[mo][v], list) else [sets[mo][v]]
             for i, f in enumerate(seq):
-                sheet.alpha_composite(f, ((c + i) * FW, r * FH))
-                j["frames"][f"{v}:{mo}:{i}"] = meta(f)
+                sheet.alpha_composite(f, ((c + i) * fw, r * fh))
+                j["frames"][f"{v}:{mo}:{i}"] = meta(f, foot)
         c += n
     os.makedirs(OUT, exist_ok=True)
     sheet.save(os.path.join(OUT, name + ".png"))
@@ -67,7 +69,10 @@ def chibi_sets(look, weapon=None, motions=("idle", "walk", "run")):
 
 
 # 적으로 쓰는 외형(SD-14 CR-401 보병 계엄병 = SD-07b 계엄군 분대 표준 외형 + 소총)
-ENEMIES = [("en_cr401_loco", "M1-S4-HR02-H1-T06-1-PF01-HD04-EY00-PR034", "rifle")]
+ENEMIES = [("en_cr401_loco", "M1-S4-HR02-H1-T06-1-PF01-HD04-EY00-PR034", "rifle"),
+           # CR-473 S-07 보안요원(SD-14 §9.4, 단계 0-9): 보안 제복 T02 + 헬멧 HD03. 진압봉 / 권총 두 벌
+           ("en_cr473_baton_loco", "M1-S3-HR03-H1-T02-1-PF11-HD03-EY00", "baton"),
+           ("en_cr473_pistol_loco", "F1-S4-HR02-H2-T02-1-PF11-HD03-EY00", "pistol")]
 
 
 def main():
@@ -82,6 +87,8 @@ def main():
         made.append(pack(nm, chibi_sets(lk), ("idle", "walk", "run"), K.STRIDE))
     for nm, code, weapon in ENEMIES:
         made.append(pack(nm, chibi_sets(K.Look.parse(code), weapon), ("idle", "walk", "run"), K.STRIDE))
+    import power_armor as PA                             # CR-405 파워 아머(구형, SD-16 §5.7): 48×56 칸
+    made.append(pack("en_cr405_loco", PA.sets(), ("idle", "walk", "run"), PA.STRIDE, frame=(PA.W, PA.H), foot=(PA.FX, PA.FY)))
     for grp, name, role, code in NP.NPCS:
         nm = "np_" + code.lower().replace("-", "_") + "_loco"
         made.append(pack(nm, chibi_sets(K.Look.parse(code), None, ("idle", "walk")), ("idle", "walk"), K.STRIDE))

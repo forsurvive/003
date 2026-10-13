@@ -18,6 +18,8 @@
   sign x y "글자"                벽면 윗칸에 붙는 문패(그림은 게임이 그린다).
   trigger x y scene=장면 [w= h=] [cond="식"] [once]
                                  밟으면 대화 장면을 연다(cond가 참일 때, once면 한 번만).
+  enemy ID x y [cond="식"] [arm=baton|pistol] [who=인물ID] [dir=방향] [stance=hold] [route=x,y,초;…]
+                                 적(SD-14). route면 순찰(닿으면 그 초만큼 서서 둘러본다), stance=hold면 제자리 경계(0-9).
   prop·sign·npc에도 cond="식"을 붙일 수 있다(시대·퀘스트에 따라 있다 없다 — 예: year() == 2259).
   npc에 look=외형코드(SD-07b)를 주면 그 모습 시트로 선다(예: 2259년의 아기 하도윤).
 검사: 격자 폭·글자, 벽 두께(위아래 방 사이 3칸), 소품 발 칸이 바닥·겹침 없음, 벽 소품은 벽면 윗칸, 문 자리, 출구 칸이
@@ -280,6 +282,19 @@ def compile_map(m, prop_meta, known_vars, known_fns, scenes=()):
                 e = {"id": eid, "x": x, "y": y, "cond": opt.get("cond", "")}
                 if e["cond"]:
                     check_cond(e["cond"], known_vars, known_fns)
+                for k in ("arm", "who", "dir", "stance"):              # 0-9: 든 무기(baton|pistol) · 인물 ID(이름표) · 처음 방향 · hold(제자리)
+                    if opt.get(k):
+                        e[k] = opt[k]
+                if opt.get("route"):                                   # 순찰 경로: x,y,초;… (닿으면 그 초만큼 서서 둘러본다)
+                    e["route"] = []
+                    for part in [p for p in opt["route"].split(";") if p]:
+                        mm = re.match(r"^(\d+),(\d+)(?:,(\d+(?:\.\d+)?))?$", part)
+                        if not mm:
+                            raise Err(f"순찰 route 형식 'x,y,초' 아님: {part}")
+                        rx, ry = int(mm.group(1)), int(mm.group(2))
+                        if not floor(rx, ry) or solid[ry][rx]:
+                            raise Err(f"순찰 지점 ({rx},{ry})가 빈 바닥이 아니다")
+                        e["route"].append([rx, ry, float(mm.group(3) or 2)])
                 out["enemies"].append(e)
             elif c == "text":
                 x, y, txt = int(pos[0]), int(pos[1]), pos[2]
@@ -369,7 +384,8 @@ def alias_of(npcs):
 
 def main():
     prop_meta = json.load(open(os.path.join(PROPS, "s07_props.json")))["props"]
-    known_vars = set(json.load(open(os.path.join(ROOT, "game", "data", "vars.json")))["vars"])
+    from script_compile import ENGINE_VARS                                 # 엔진이 선언하는 변수(PC_·MQP4_ 진행 표시 등)
+    known_vars = set(json.load(open(os.path.join(ROOT, "game", "data", "vars.json")))["vars"]) | ENGINE_VARS
     for q in json.load(open(os.path.join(ROOT, "game", "data", "quests.json")))["quests"]:
         known_vars |= {q.replace("-", "") + s for s in ("_STAGE", "_RESULT", "_SKIP")}
     known_fns = {"karma", "aff", "quest", "stage", "result", "give", "take", "has", "caps", "xp", "wanted", "stat", "skill", "year"}

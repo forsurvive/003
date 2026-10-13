@@ -1,5 +1,9 @@
 ## 적 v0: 인지(0.1초)·상태(0.1초)·전술(0.5초)·행동(매 프레임) 4층 (SD-11 §7.1).
-## 성향: 'swarm'(큰바퀴: 둘러싸고 3t 안 2초 머물면 도약 물기) / 'shooter'(보병 계엄병: 유효 사거리 60~90% 유지, 공격 토큰).
+## 성향: 'swarm'(큰바퀴: 둘러싸고 3t 안 2초 머물면 도약 물기) / 'shooter'(보병 계엄병: 유효 사거리 60~90% 유지, 공격 토큰)
+##       / 'melee'(S-07 보안요원 진압봉: 다가가서 휘두른다, 단계 0-9).
+## 단계 0-9(MQ-P4): 순찰 경로(route: 지점마다 서서 좌우를 둘러본다) · 제자리 경계(stance hold) · 기절(비살상 무기로 HP 0 → 누웠다가
+##   25초 뒤 깨어나 수색) · 체력 하한(CR-405 파워 아머는 1 밑으로 안 내려가고 체력 막대도 없다) · 생포 사격(주인공을 죽이지 않는다:
+##   피해는 HP에만, 0이 되면 진행기가 '붙잡힘'으로 처리).
 class_name Enemy
 extends Actor
 
@@ -29,20 +33,53 @@ var _heard_at := Vector2.ZERO
 var ui_font: Font
 var shots_fired := 0
 var _wander_t := 0.0
+var route: Array = []                         ## 순찰: [[위치, 머무는 초], …] — 비면 배회(반경 4t)
+var _route_i := 0
+var _route_wait := 0.0
+var _look_base := 2
+var stance := ""                              ## "hold": 제자리 경계(정문 계엄군)
+var hold_dir := 2                             ## 제자리 경계 방향
+var arm := ""                                 ## 보안요원 무기: baton | pistol
+var who := ""                                 ## 이름 있는 경비(N-R01-018 권서준 등) — 이름표·대사
+var hp_floor := 0.0                           ## 이 밑으로 HP가 내려가지 않는다(CR-405, '못 이기는 적')
+var hide_bar := false
+var ko_t := 0.0                               ## 기절해 누운 남은 초
+const KO_SECS := 25.0
 var _rng := RandomNumberGenerator.new()
 ## 측정용(--ai-profile): 이번 프레임 층별 시간(마이크로초)과 횟수. 측정을 켜지 않으면 시계를 읽지 않는다.
 static var profiling := false
 static var prof := {"per": 0, "tac": 0, "act": 0, "n_per": 0, "n_tac": 0, "n_path": 0, "path": 0}
 
 
-func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w) -> void:
+func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w, opts: Dictionary = {}) -> void:
 	row = enemy_row
 	weapon = weapon_row
+	arm = str(opts.get("arm", "baton" if row["id"] == "CR-473" else ""))
+	who = str(opts.get("who", ""))
+	stance = str(opts.get("stance", ""))
 	var is_roach: bool = row["id"] == "CR-002"
-	setup("cr_cr002_base_loco" if is_roach else "en_cr401_loco", pos, w)
-	style = "swarm" if is_roach else "shooter"
+	var sheet := "en_cr401_loco"
+	match str(row["id"]):
+		"CR-002":
+			sheet = "cr_cr002_base_loco"
+		"CR-405":
+			sheet = "en_cr405_loco"
+		"CR-473":
+			sheet = "en_cr473_%s_loco" % arm
+	setup(sheet, pos, w)
+	style = "swarm" if is_roach else ("melee" if arm == "baton" else "shooter")
+	if row["id"] == "CR-405":                                       # 파워 아머: 느리고 무겁다(보폭 6·4px, 2.4t/초). 넉다운 면역
+		loco.custom = {"run": {"frames": 6, "px": 6.0, "px_v": 4.0, "diag": 4.0, "contact": [0, 3], "speed_t": 2.4},
+			"walk": {"frames": 6, "px": 6.0, "px_v": 4.0, "diag": 4.0, "contact": [0, 3], "speed_t": 2.4}}
+	hold_dir = EventRunner.DIR_IDX.get(str(opts.get("dir", "S")), 2)
+	if stance == "hold":                                            # 제자리 경계병(정문 데크): 한 곳만 보고 있어 더 멀리, 더 빨리 본다
+		per = 7.0
+	loco.facing = hold_dir
+	for r in opts.get("route", []):
+		route.append([Vector2(int(r[0]) * 32 + 16, int(r[1]) * 32 + 16), float(r[2])])
 	cmb.actor = self
 	cmb.team = "enemy"
+	cmb.can_ko = not is_roach
 	cmb.hp = float(row["hp"])
 	cmb.max_hp = cmb.hp
 	cmb.dr = float(row["dr"])
@@ -51,6 +88,8 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w)
 	cmb.weights = {"head": 15, "torso": 55, "leg": 30} if is_roach else CombatRules.HUMANOID_WEIGHTS
 	per = 3.0 if is_roach else 5.0
 	brain = AIBrain.new(pos, per, "insect" if is_roach else "human")
+	if stance == "hold":
+		brain.per = 7.0
 	if is_roach:
 		loco.custom = {"run": {"frames": 4, "px": 3.0, "diag": 3.0, "contact": [0, 2], "speed_t": float(row["speed"])},
 			"walk": {"frames": 4, "px": 3.0, "diag": 3.0, "contact": [0, 2], "speed_t": float(row["speed"]) * 0.5}}
@@ -70,6 +109,9 @@ func hear(kind: String, at: Vector2) -> void:
 
 func think(dt: float, target: Combatant, nav, shots: Projectiles) -> void:   ## nav: NavGrid(청크 월드) 또는 InteriorNav(실내) — 같은 path()
 	_clock += dt
+	if cmb.ko:
+		_ko_step(dt)
+		return
 	if cmb.dead:
 		_die_step(dt)
 		return
@@ -90,7 +132,8 @@ func think(dt: float, target: Combatant, nav, shots: Projectiles) -> void:   ## 
 		var fwd: Vector2 = Locomotion.VEC[loco.facing].normalized()
 		var fov := brain.state == AIBrain.S.COMBAT or Perception.in_fov(fwd, to, brain.kind)   # 교전 중에는 표적을 계속 본다
 		var sees: bool = not target.dead and dist_t <= Perception.sight_range(per) and world.line_of_sight(loco.logical, target.pos())
-		var rate: float = Perception.detect_rate(dist_t, per, {"movement": "move", "alert": brain.alert(), "in_fov": fov}) if sees else 0.0
+		var rate: float = Perception.detect_rate(dist_t, per, {"movement": target.movement, "posture": target.posture,
+			"sneak_skill": target.sneak, "alert": brain.alert(), "in_fov": fov}) if sees else 0.0
 		var hit: bool = cmb.last_hit_from != Vector2.ZERO
 		cmb.last_hit_from = Vector2.ZERO
 		_intent = brain.tick(step, {"sees": sees and (fov or dist_t <= 3.0), "rate": rate, "target": target.pos(),
@@ -120,7 +163,7 @@ func _tactics(target: Combatant, nav) -> void:
 	if goal == "engage":
 		var d := loco.logical.distance_to(target.pos()) / 32.0
 		var los: bool = world.line_of_sight(loco.logical, target.pos())
-		if style == "swarm":
+		if style == "swarm" or style == "melee":
 			_repath(nav, target.pos())
 		else:
 			var lo: float = float(weapon["range_eff"]) * 0.6
@@ -132,8 +175,33 @@ func _tactics(target: Combatant, nav) -> void:
 				_move = (loco.logical - target.pos()).normalized()       # back off to the preferred band
 			else:
 				_path = PackedVector2Array()
+	elif goal == "home" and not route.is_empty():                  # 귀환: 가장 가까운 순찰 지점으로
+		var best := 0
+		for i in route.size():
+			if loco.logical.distance_to(route[i][0]) < loco.logical.distance_to(route[best][0]):
+				best = i
+		_route_i = best
+		_repath(nav, route[best][0])
 	elif goal == "walk_to" or goal == "home":
 		_repath(nav, at)
+	elif stance == "hold":                                         # 제자리 경계: 자리로 돌아가 정해진 쪽을 본다
+		if loco.logical.distance_to(brain.home) > 8.0:
+			_repath(nav, brain.home)
+		else:
+			_path = PackedVector2Array()
+	elif not route.is_empty():                                     # 순찰: 지점에 닿으면 머물며 둘러보고 다음 지점으로
+		var wp: Vector2 = route[_route_i][0]
+		if loco.logical.distance_to(wp) < 10.0:
+			_path = PackedVector2Array()
+			if _route_wait == 0.0:
+				_look_base = loco.facing
+			_route_wait += 0.5
+			if _route_wait >= float(route[_route_i][1]):
+				_route_wait = 0.0
+				_route_i = (_route_i + 1) % route.size()
+				_repath(nav, route[_route_i][0])
+		elif _path.is_empty() or _path_i >= _path.size():
+			_repath(nav, wp)
 	else:                                                          # 대기: 배회 반경 4t (§7.2)
 		_wander_t -= 0.5
 		if _wander_t <= 0.0:
@@ -169,11 +237,23 @@ func _act(dt: float, target: Combatant, shots: Projectiles) -> void:
 			return
 		if to_t.length() < cmb.radius + target.radius + 2.0:
 			input = Vector2.ZERO
+	if style == "melee" and goal == "engage" and to_t.length() < float(weapon.get("range_eff", 1.0)) * 32.0 + target.radius:
+		input = Vector2.ZERO                                       # 닿는 거리면 서서 휘두른다
 	move(steer(input), dt)
 	if aim_dir >= 0 and loco.motion == "idle":
 		loco.facing = aim_dir                                       # 서서 조준하면 그쪽을 본다(시야각 기준)
 	if goal == "engage" and style == "shooter":
 		_shoot(dt, target, shots)
+	elif goal == "engage" and style == "melee":
+		_swing(dt, target)
+	elif goal == "hold" and loco.motion == "idle":
+		if stance == "hold":
+			loco.facing = hold_dir
+			_show()
+		elif not route.is_empty() and _route_wait > 0.0:            # 순찰 지점에서 둘러보기: 1초마다 좌우로 45도
+			var base: int = _look_base
+			loco.facing = posmod(base + [0, 1, 0, -1][int(_route_wait) % 4], 8)
+			_show()
 
 
 func _swarm(dt: float, target: Combatant, to_t: Vector2) -> void:
@@ -206,11 +286,56 @@ func _shoot(dt: float, target: Combatant, shots: Projectiles) -> void:
 		return
 	var seen: Vector2 = _hist[0][1] if not _hist.is_empty() else target.pos()     # aim lags by the reaction delay
 	var aim := rad_to_deg((seen - loco.logical).angle())
+	if row["id"] == "CR-473":                                       # 보안요원 권총: 위협 사격만(어깨 너머로 빗나가게, SD-14 §9.12.1)
+		aim += (10.0 + shots.rng.randf() * 6.0) * (1.0 if shots.rng.randf() < 0.5 else -1.0)
 	var sp := CombatRules.spread(skill, "stand", loco.motion != "idle")
 	var ang := CombatRules.shot_angle(aim, sp, shots.rng)
 	if shots.fire(loco.logical + Vector2(0, -14) + Vector2.RIGHT.rotated(deg_to_rad(aim)) * 10.0, ang, 640.0, "enemy", weapon, skill):
 		_cool = 1.0 / (float(weapon["rate"]) * 0.6)                  # semi-auto: 60% of max rate
 		shots_fired += 1
+
+
+## 진압봉(보안요원): 닿는 거리에서 반응 지연 뒤 휘두른다. 주인공에게는 HP 피해만(붙잡힘 판정은 진행기)
+var swing_t := 0.0                            ## 휘두르는 그림 남은 초(그리기)
+
+
+func _swing(dt: float, target: Combatant) -> void:
+	_cool = maxf(0.0, _cool - dt)
+	swing_t = maxf(0.0, swing_t - dt)
+	var to_t := target.pos() - loco.logical
+	if _cool > 0.0 or target.dead or to_t.length() > float(weapon.get("range_eff", 1.0)) * 32.0 + target.radius + cmb.radius:
+		return
+	loco.facing = Locomotion.snap8(to_t, 0.0)
+	_show()
+	_cool = 1.0 / maxf(0.1, float(weapon.get("rate", 1.0)))
+	swing_t = 0.2
+	var r := CombatRules.resolve({"weapon": weapon, "skill": skill, "attacker": {"str": 5}, "part": "torso", "dr": target.dr})
+	target.take(r, loco.logical)
+
+
+## 기절: 누운 채 KO_SECS초 → 일어나 마지막으로 본 자리를 수색한다(경보)
+func _ko_step(dt: float) -> void:
+	if sprite.rotation_degrees != -90.0:
+		sprite.rotation_degrees = -90.0
+		sprite.position = Vector2(-4, -8)
+		sprite.modulate = Color(0.75, 0.75, 0.8)
+		z_index = -1
+		queue_redraw()
+	ko_t -= dt
+	if ko_t <= 0.0:
+		cmb.ko = false
+		cmb.dead = false
+		cmb.hp = cmb.max_hp * 0.5
+		sprite.rotation_degrees = 0.0
+		sprite.position = Vector2.ZERO
+		sprite.modulate = Color(1, 1, 1)
+		z_index = 0
+		brain.state = AIBrain.S.SEARCH
+		brain.gauge = AIBrain.SUSPECT_AT
+		woke.emit()
+
+
+signal woke
 
 
 func _die_step(dt: float) -> void:
@@ -232,9 +357,15 @@ func _show() -> void:
 
 
 func _draw() -> void:
-	if cmb.dead:
+	if cmb.dead and not cmb.ko:
 		return
-	var top := -float(meta["foot"][1]) + (14.0 if style == "shooter" else 6.0)
+	if cmb.ko:
+		draw_string(ui_font, Vector2(-8, -24), "zZ", HORIZONTAL_ALIGNMENT_LEFT, -1, 9, Color("8e9ba8"))
+		return
+	if swing_t > 0.0:                                              # 진압봉 휘두름: 앞쪽 호 한 획
+		var f: Vector2 = Locomotion.VEC[loco.facing].normalized()
+		draw_arc(Vector2(0, -12) + f * 8.0, 10.0, f.angle() - 0.9, f.angle() + 0.9, 6, Color("E9E4D8"), 2.0)
+	var top := -float(meta["foot"][1]) + (14.0 if style != "swarm" else 6.0)
 	match brain.state:
 		AIBrain.S.SUSPICIOUS, AIBrain.S.SEARCH:
 			draw_string(ui_font, Vector2(-3, top - 2), "?", HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("e8c23a"))
@@ -243,7 +374,7 @@ func _draw() -> void:
 		AIBrain.S.COMBAT:
 			if brain._t_state < 0.8:
 				draw_string(ui_font, Vector2(-2, top - 2), "!", HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("e04a35"))
-			elif cmb.hp < cmb.max_hp:
+			elif cmb.hp < cmb.max_hp and not hide_bar:
 				var w := 16.0
 				draw_rect(Rect2(-w / 2, top + 2, w, 2), Color("1a181d"))
 				draw_rect(Rect2(-w / 2, top + 2, w * cmb.hp / cmb.max_hp, 2), Color("e04a35"))

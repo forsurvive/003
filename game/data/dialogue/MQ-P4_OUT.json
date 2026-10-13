@@ -1,0 +1,149 @@
+{
+ "id": "MQ-P4_OUT",
+ "title": "문밖",
+ "loc": "L-R01-01",
+ "npc": "",
+ "cond": "MQP4_STAGE >= 40 and MQP4_STAGE < 60",
+ "labels": {
+  "START": 0,
+  "M1": 13,
+  "M2": 16,
+  "M3": 18
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "V_ESCAPE == 1",
+   "to": "M1"
+  },
+  {
+   "op": "if",
+   "cond": "V_ESCAPE == 2",
+   "to": "M2"
+  },
+  {
+   "op": "if",
+   "cond": "V_ESCAPE == 3",
+   "to": "M3"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "철문 틈으로 돌아본다. 하도윤이 안에서 바퀴를 다시 감고 있다."
+  },
+  {
+   "op": "cmd",
+   "name": "show",
+   "args": [
+    "BJ1",
+    "60,14",
+    "N",
+    "en_cr401_loco"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "show",
+   "args": [
+    "BJ2",
+    "61,14",
+    "N",
+    "en_cr401_loco"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "go",
+   "args": [
+    "BJ1",
+    "61,7"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "go",
+   "args": [
+    "BJ2",
+    "63,8"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "통로 저쪽에서 손전등 불빛 여럿이 다가온다. 하도윤은 돌아보지 않는다."
+  },
+  {
+   "op": "line",
+   "who": "C-002",
+   "emo": "말함",
+   "text": "가!"
+  },
+  {
+   "op": "cmd",
+   "name": "wait",
+   "args": [
+    "go"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "balloon",
+   "args": [
+    "BJ1",
+    "!"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "계엄군 사이를 뚫고 방폭문 밖 계단으로 달린다. 등 뒤에서 육지환의 목소리가 멀어진다."
+  },
+  {
+   "op": "line",
+   "who": "C-004",
+   "emo": "기본",
+   "text": "사격 중지. 후보는 산 채로다. …2순위부터 찾아."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "배수 갱도를 기어서 지나간다. 아무도 다치지 않았다. 등 뒤에서는 아무 소리도 들리지 않는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "엄마가 비상문 바퀴를 직접 돌린다. 문이 닫히기 전, 무전기에 대고 말하는 엄마의 목소리가 들린다."
+  },
+  {
+   "op": "line",
+   "who": "C-001",
+   "emo": "기본",
+   "text": "(무전) 아이는 이미 배수로로 나갔어요. 농장 쪽을 보세요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/prologue/MQ-P4.txt"
+}

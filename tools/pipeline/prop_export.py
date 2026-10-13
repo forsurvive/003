@@ -30,7 +30,7 @@ def main():
     for n, r in R.PROPS.items():
         if n == "gear_door":
             for f in range(R.GEAR_FRAMES):
-                items.append((f"gear_door#{f}", outlined(R.S.gear_door(f))))
+                items.append((f"gear_door#{f}", outlined(R.S.gear_door(f, R.GEAR_FRAMES))))
             continue
         items.append((n, outlined(r["fn"]())))
         if n in R.DOOR_OPEN:

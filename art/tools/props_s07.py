@@ -97,7 +97,7 @@ def lever_panel():
 
 
 def gear_door(frame=0):
-    return S.gear_door(frame)
+    return S.gear_door(frame, GEAR_FRAMES)
 
 
 # ================================================================ 벽 소품
@@ -815,7 +815,7 @@ PROPS = {
     "door_slide": _r(lambda: door(None), 1, 2, "door"),
     "door_hatch": _r(lambda: door(None, kind="hatch"), 1, 2, "door"),
     "door_iron": _r(lambda: door(None, kind="iron"), 1, 2, "door"),
-    "gear_door": _r(lambda: gear_door(0), 6, 0, "wall", dx=0, dy=-128),
+    "gear_door": _r(lambda: gear_door(0), 6, 0, "wall", dx=-16, dy=-128),          # 문틀(8칸) 구멍 가운데에 맞춘다(0-9)
     "gear_frame": _r(lambda: S.gear_door_frame(), 7, 0, "wall", dx=-16, dy=-136),
     # 벽 소품(벽면 윗칸 기준 위치)
     "rank_board": _r(S.rank_board, 6, 0, "wall", dy=4),
@@ -915,7 +915,7 @@ PROP_STATES = {
 # 문 열린 그림(문 소품의 둘째 칸)
 DOOR_OPEN = {"door_slide": lambda: door(None, "open"), "door_hatch": lambda: door(None, "open", "hatch"),
              "door_iron": lambda: door(None, "open", "iron")}
-GEAR_FRAMES = 8
+GEAR_FRAMES = 22                                     # 굴러 열리는 컷: 컷마다 10px(210/21) — 회전각 = 거리/반지름이라 미끄러지지 않는다
 
 
 def sheet_sample(path):

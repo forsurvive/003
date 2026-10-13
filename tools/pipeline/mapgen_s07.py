@@ -229,7 +229,20 @@ def v01():
     m.c('text 52 31 "구내방송 송출기 ST-11. 진공관이 데워지는 냄새가 난다."')
     m.c('npc N-R01-011 40 36 S route=창구:35,32,8;창고:44,35,4 bark="배급 카드부터 보여 주세요."')
     m.c('npc N-R01-013 51 38 N route=송출기:52,33,10;문:53,30,4;게시판:42,14,5 bark="S-07 구내방송입니다. 오늘의 평가 일정을 알려 드립니다."')
-    m.c('npc N-R01-023 14 20 E route=광장:14,20,10;식당:8,36,8 bark="2196년 겨울에는 이 광장에 침대가 놓였지."')
+    m.c('npc N-R01-023 14 20 E route=광장:14,20,10;식당:8,36,8 cond="year() == 2277 and MQP4_STAGE >= 20" bark="2196년 겨울에는 이 광장에 침대가 놓였지."')
+    # 2277 개방의 날(MQ-P4 S1): 공동 식당 주민 회의. 앞(북쪽)에 윤정인·도경철, 주민은 탁자 사이 줄에서 북쪽을 본다. 아치를 지나면 회의가 열린다
+    y77 = 'year() == 2277 and MQP4_STAGE <= 10'
+    m.c("mark p4_meet 14 35 N")
+    m.c(f'npc C-001 20 31 S cond="{y77}" bark="정오에 정문으로 모여 주세요."')
+    m.c(f'npc C-022 23 31 S cond="{y77}" bark="…"')
+    m.c(f'npc C-002 15 35 N cond="{y77}" bark="야, 이거 무슨 회의래?"')
+    for nid, x, y in (("N-R01-023", 3, 35), ("N-R01-007", 6, 35), ("N-R01-008", 9, 35), ("N-R01-010", 19, 35),
+                      ("N-R01-009", 22, 35), ("N-R01-020", 25, 35), ("N-R01-012", 5, 39), ("C-023", 11, 39),
+                      ("C-026", 17, 39), ("C-025", 23, 39), ("N-R01-024", 27, 39)):
+        m.c(f'npc {nid} {x} {y} N cond="{y77}"')
+    m.c('trigger 12 28 w=5 h=2 scene=MQ-P4_S01 cond="MQP4_STAGE == 10" once')
+    m.c('trigger 1 38 w=29 h=1 scene=MQ-P4_S01 cond="MQP4_STAGE == 10" once')               # 거주동 쪽(남서 계단)으로 들어와도
+    m.c('enemy CR-473 10 15 arm=baton dir=E route=10,15,3;48,15,3;48,22,2;10,22,2 cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60"')       # 탈출: 광장 순찰(순찰 1)
     m.c('npc N-R01-021 31 15 S route=놀이:31,15,4;게시판:24,4,3;화분:38,9,3 bark="게시판 맨 위 이름은 누구야?"')
     return m
 
@@ -262,7 +275,27 @@ def v00():
     m.c('text 10 12 "출입 대장. 마지막 줄 날짜가 2077년이다." w=2')
     m.p("sink", 2, 24); m.p("sink", 3, 24); m.p("curtain", 30, 24); m.p("locker_row3", 7, 24); m.p("locker_row2", 33, 24)
     m.p("quarantine_sign", 12, 22); m.p("slogan_crt2", 24, 22); m.p("notice_board", 14, 22)
-    m.c('npc N-R01-019 19 13 S route=정문:19,13,12;검역실:15,25,6 bark="정문 근처는 출입 금지 구역이야."')
+    m.c('npc N-R01-019 19 13 S route=정문:19,13,12;검역실:15,25,6 cond="year() == 2277 and MQP4_STAGE < 20" bark="정문 근처는 출입 금지 구역이야."')
+    # 2277 개방식(MQ-P4 S2): 데크 앞줄 윤정인·도경철, 제어실 레버의 최보미, 주민 줄. 계엄군은 연출(show)로 문에서 걸어 들어온다
+    y77 = 'year() == 2277 and MQP4_STAGE == 20'
+    m.c("mark p4_gate 19 15 N"); m.c("mark p4_crowd 19 13 N"); m.c("mark p4_lever 34 3 N"); m.c("mark p4_in 19 9 S")
+    m.c("mark p4_yuk 19 11 S"); m.c("mark p4_pa 24 10 S"); m.c("mark p4_out 3 11 W")
+    for i, (x, y) in enumerate(((12, 10), (14, 11), (16, 10), (22, 10), (26, 11), (28, 10))):
+        m.c(f"mark p4_bj{i + 1} {x} {y} S")
+    m.c(f'npc C-001 17 12 S cond="{y77}"'); m.c(f'npc C-022 21 12 S cond="{y77}"')
+    m.c(f'npc N-R01-019 35 3 N cond="{y77}"')
+    m.c(f'npc C-002 20 15 N cond="{y77}" bark="맨 앞자리 맞지?"')
+    # 2277 탈출(MQ-P4 S4 ①): 데크를 지키는 계엄군 6(제자리 경계, 생포 사격) · 파워 아머 1(정문 옆, 못 이기는 적) · 육지환 · 검역실 최보미(권총 위협 사격)
+    for x, y, d in ((13, 10, "S"), (16, 11, "S"), (23, 11, "S"), (26, 10, "S"), (11, 15, "E"), (28, 15, "W")):
+        m.c(f'enemy CR-401 {x} {y} dir={d} stance=hold cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60"')
+    m.c('enemy CR-405 22 9 dir=S stance=hold cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60"')
+    m.c('npc C-004 15 9 S cond="year() == 2277 and MQP4_STAGE >= 30 and MQP4_STAGE < 60" bark="후보는 다치게 하지 마라."')
+    m.c('enemy CR-473 15 25 arm=pistol who=N-R01-019 dir=E route=15,25,3;25,26,3 cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60"')
+    m.c('trigger 17 9 w=4 h=1 scene=MQ-P4_GATE cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60" once')
+    for nid, x, y in (("N-R01-023", 12, 14), ("N-R01-007", 14, 15), ("N-R01-008", 16, 14), ("N-R01-010", 23, 14),
+                      ("N-R01-009", 25, 15), ("N-R01-020", 27, 14), ("N-R01-012", 13, 17), ("C-023", 16, 17),
+                      ("C-026", 22, 17), ("C-025", 25, 17), ("N-R01-013", 19, 18), ("N-R01-021", 28, 17)):
+        m.c(f'npc {nid} {x} {y} N cond="{y77}"')
     return m
 
 
@@ -306,7 +339,12 @@ def v02():
     m.c('npc C-002 7 9 W look=K1-S3-HR08-H2-T01-1-PF11-HD00-EY00 cond="year() == 2268 and MQP2_STAGE == 30" bark="나 아직 내 거 안 열어 봤어."')
     m.c("mark p2_window 4 8 N")
     m.c('trigger 2 8 w=5 h=2 scene=MQ-P2_S03 cond="MQP2_STAGE == 30" once')
-    m.c('npc C-001 36 8 S route=책상:36,8,14;창:44,9,5;복도:37,17,4 bark="일 끝나면 들를게. 밥은 꼭 먹고."')
+    m.c('npc C-001 36 8 S route=책상:36,8,14;창:44,9,5;복도:37,17,4 cond="year() == 2277 and MQP4_STAGE >= 100" bark="일 끝나면 들를게. 밥은 꼭 먹고."')
+    # 2277 거래 뒤(MQ-P4 S3~S4): 결재 책상 뒤의 윤정인(설득 경로 ③). 덕트 엿듣기 컷은 육지환을 연출로 세운다
+    m.c("mark p4_ovs 34 8 N"); m.c("mark p4_ovs_yuk 34 7 N")
+    m.c('npc C-001 37 7 W cond="year() == 2277 and MQP4_STAGE >= 30 and MQP4_STAGE < 100" bark="…왔구나."')
+    m.c('enemy CR-473 6 17 arm=baton dir=E route=6,17,3;46,17,4 cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60"')                      # 탈출: 관리동 복도 순찰(순찰 2)
+    m.c('text 33 5 "결재 책상. 오버시어 단말이 켜져 있다." w=3 scene=MQ-P4_S05 cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60 and K_RALLY == 0"')
     # 2274 같은 날 오버시어실(MQ-P3 S4, 주인공은 보지 못한다): 단말 앞의 윤정인(39세)
     m.c("mark p3_ovs 34 6 N")
     m.c('npc C-001 34 4 S cond="year() == 2274 and MQP3_STAGE >= 100"')
@@ -412,6 +450,7 @@ def v04():
     m.exit_n(31, 3, "V-01", label="아트리움")
     m.exit_w(10, 1, "V-09"); m.exit_e(26, 62, "V-10")
     m.c("mark home_bed 9 4 S"); m.c("mark home_door 9 5 N")
+    m.c("mark p4_room 16 4 E"); m.c("mark p4_dy_in 17 5 N"); m.c("mark p4_dy 18 4 W"); m.c("mark p4_dy_out 17 9 S")   # A-07(MQ-P4 S3)
     # A동: 침대·사물함, A-07 = 주인공 가족 방(x0=15)
     for x0 in range(1, 29, 7):
         m.p("bunk", x0, 3); m.p("bunk", x0 + 4, 3)
@@ -482,7 +521,9 @@ def v06():
     m.c('text 24 1 "수경 농장 단말: 2276 곰팡이병 보고 — 2동·3동 수확량 41% 감소."')
     m.c('text 13 35 "농장 배수로. 허리를 숙이면 지나갈 수 있다." w=4')
     m.c('npc N-R01-010 10 15 S route=1동:10,15,8;2동:30,12,8;탱크:9,6,4 bark="잎 만지지 마. 곰팡이는 손으로 옮아."')
-    m.c('npc N-R01-008 49 20 W route=3동:49,20,8;배수로:40,36,5 bark="2동은 이번 주에 갈아엎어야 해."')
+    m.c('npc N-R01-008 49 20 W route=3동:49,20,8;배수로:40,36,5 cond="year() == 2277 and (MQP4_STAGE < 30 or MQP4_STAGE >= 60)" bark="2동은 이번 주에 갈아엎어야 해."')
+    m.c('enemy CR-473 40 36 arm=baton dir=W route=40,36,5;18,36,5 cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60"')                     # 탈출: 배수로 순찰(순찰 3)
+    m.c('trigger 1 35 w=2 h=3 scene=MQ-P4_DRAIN cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60" once')
     return m
 
 
@@ -528,7 +569,7 @@ def v09():
     m.c('text 29 3 "사격장 기록판: 표적 10, 은신 표적 2. 엎드려 다가가면 들키지 않는다." w=2')
     m.p("cell_bars", 1, 22); m.p("cell_bars", 8, 22); m.p("bench", 3, 27); m.p("cell_bars", 10, 22); m.p("cell_bars", 17, 22)
     m.p("bench", 12, 27); m.p("bench", 20, 24)
-    m.c('npc C-022 6 8 S route=사무실:6,8,10;사격장:32,15,10;복도:12,16,4 bark="보안부는 명령대로 쏜다. 명령 없이는 안 쏜다."')
+    m.c('npc C-022 6 8 S route=사무실:6,8,10;사격장:32,15,10;복도:12,16,4 cond="year() == 2277 and MQP4_STAGE >= 30" bark="보안부는 명령대로 쏜다. 명령 없이는 안 쏜다."')
     # 2268 사격 교습(MQ-P2 S5): 도경철(45세). 사대 = 입구 쪽 x 29~30. 은신 표적 앞 모래주머니 두 무더기(낮은 엄폐 — 웅크리면 표적이 못 본다)
     for y in (11, 12, 13, 19, 20, 21):
         m.p("sandbag", 31, y)
@@ -536,7 +577,11 @@ def v09():
     m.c('npc C-022 29 14 S look=M2-S4-HR02-H1-T02-1-PF11-HD03-EY00 cond="year() == 2268" bark="보안부는 명령대로 쏜다. 명령 없이는 안 쏜다. 그게 다야."')
     m.c('npc C-002 29 24 N look=K1-S3-HR08-H2-T01-1-PF11-HD00-EY00 cond="year() == 2268 and MQP2_STAGE >= 50" bark="다 맞혔어? 나 기다리는 중."')
     m.c('trigger 27 15 w=2 h=4 scene=MQ-P2_S05 cond="MQP2_STAGE == 40" once')
-    m.c('npc N-R01-018 21 15 S route=무기고앞:22,15,10;복도:3,16,5 bark="무기고는 부장님 열쇠로만 열려."')
+    m.c('npc N-R01-018 21 15 S route=무기고앞:22,15,10;복도:3,16,5 cond="year() == 2277 and MQP4_STAGE < 30" bark="무기고는 부장님 열쇠로만 열려."')
+    # 2277 탈출(MQ-P4 S4 ① 전투): 무기고 앞을 도는 권서준(보안요원, 진압봉). 무기고 문 = [자물쇠 따기 25] · 열쇠
+    m.c('enemy CR-473 22 15 arm=baton who=N-R01-018 dir=N route=22,15,4;12,16,2;24,16,3 cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60"')
+    m.c('text 22 14 "무기고 철문." scene=MQ-P4_ARMORY cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60 and MQP4_ARMORY == 0"')
+    m.c('text 22 3 "총기 거치대." scene=MQ-P4_GUNS cond="MQP4_ARMORY == 1"')
     return m
 
 
@@ -596,6 +641,9 @@ def v11():
     m.p("wall_pipes", 54, 1); m.p("wall_pipes", 58, 1); m.p("crate", 66, 12)
     m.p("duct_grille", 62, 1)
     m.c('text 64 3 "비상 배수 갱도 철문(원형). 녹이 슬어 바퀴가 꿈쩍하지 않는다." w=3')
+    m.c("mark p4_gate11 64 4 N")
+    m.c('npc C-002 62 5 E cond="year() == 2277 and MQP4_STAGE >= 30 and MQP4_STAGE < 60 and MQP4_FOLLOW == 0" bark="왔네."')         # 탈출 ④: 혼자 왔을 때 기다리는 하도윤
+    m.c('trigger 62 4 w=5 h=3 scene=MQ-P4_DOYUN cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60 and MQP4_FOLLOW == 1" once')
     m.c('text 27 3 "환기 덕트. 위로 올라가면 관리동 화장실이다."')
     m.p("wall_pipes", 3, 22); m.p("wall_pipes", 34, 22); m.p("wall_pipes", 50, 22)
     return m

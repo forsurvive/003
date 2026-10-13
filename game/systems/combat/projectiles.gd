@@ -187,6 +187,7 @@ func _apply(c: Combatant, s: Dictionary, at: Vector2) -> void:
 	c.last_sneak = sneak
 	var r := CombatRules.resolve({"weapon": w, "skill": s["skill"], "dist": s["origin"].distance_to(at) / 32.0,
 		"crit": crit or sneak, "part": part, "dr": c.dr, "sneak": sneak})
+	r["nonlethal"] = w.get("sound", "") == "suppressed" or w.get("kind", "ranged") != "ranged"   # 공기총·근접 = 비살상(기절, 0-9)
 	c.take(r, s["origin"])
 	hits_total += 1
 	if focused:

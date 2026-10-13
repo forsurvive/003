@@ -1,0 +1,97 @@
+{
+ "id": "MQ-P4_ARMORY",
+ "title": "보안과 — 무기고 문",
+ "loc": "L-R01-01",
+ "npc": "",
+ "cond": "MQP4_STAGE >= 30 and MQP4_STAGE < 60 and MQP4_ARMORY == 0",
+ "labels": {
+  "START": 0,
+  "KEY": 3,
+  "PICK": 5,
+  "OPEN": 6
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "MQP4_KEY == 1",
+   "to": "KEY"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "무기고 철문. 자물쇠는 보안부 열쇠 하나로만 열린다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "머리핀으로 자물쇠를 딴다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "자물쇠 따기",
+       "min": 25
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PICK",
+     "id": "MQ-P4_ARMORY:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "MQ-P4_ARMORY:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빼앗은 열쇠가 자물쇠에 꼭 맞는다."
+  },
+  {
+   "op": "goto",
+   "to": "OPEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "핀 두 개를 차례로 밀어 올린다. 딸깍."
+  },
+  {
+   "op": "cmd",
+   "name": "unlock",
+   "args": [
+    "22",
+    "13"
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "MQP4_ARMORY = 1; quest(\"MQ-P4\", 40)"
+  },
+  {
+   "op": "cmd",
+   "name": "hint",
+   "args": [
+    "무기고: 안쪽 총기 거치대를 조사하기",
+    "5"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/prologue/MQ-P4.txt"
+}

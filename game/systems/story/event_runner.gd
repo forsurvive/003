@@ -1,9 +1,10 @@
 ## 이벤트 실행기 v1 (SD-16 §13.6 '인게임 컷신', SD-03a 연출 메모): 대화 창의 연출 명령(cmd)을 맵 위 진짜 인물로 무대에 올린다.
 ## 쯔꾸르식: 인물은 걸음 단위로 걷고(Locomotion, 미끄러짐 없음), 말풍선(! ? ♥ …)이 뜨고, 화면은 디더로 페이드한다.
 ## 명령은 차례로 하나씩, 끝날 때까지 기다린다(쯔꾸르 기본 '완료까지 대기').
-##   show ID 표지 [방향]   hide ID   move ID 표지 [walk|run]   face ID 방향|인물ID   balloon ID ! | ? | heart | ... | note | sweat | anger
-##   wait n(1/10초)   fade_in 색 n   fade_out 색 n   flash 색   shake n   cam 표지   year_card 연도 "문장"   title_card "제목" "문장"
+##   show ID 표지 [방향 [시트]](시트: 이름 없는 단역 — 계엄병 en_cr401_loco 등)   hide ID   move ID 표지 [walk|run]   face ID 방향|인물ID   balloon ID ! | ? | heart | ... | note | sweat | anger
+##   go ID 표지 [walk|run](기다리지 않는 이동, 0-9)   wait n(1/10초) | wait go(go로 걷는 사람이 다 설 때까지)   fade_in 색 n   fade_out 색 n   flash 색   shake n   cam 표지   year_card 연도 "문장"   title_card "제목" "문장"
 ##   sfx·bgm 이름(소리는 납품 뒤 — 지금은 기록만)   lamp 표지 색(장치 램프 깜박임)   doc 이름(서류 UI, 0-4)
+##   gate open|close [n](톱니 방폭문 굴리기, 0-9)
 ##   pose ID stand|lie|sit|in_bed(0-5: lie 몸을 90도 눕힘 · in_bed 그 칸 침대가 '누운 사람' 그림으로 바뀌고 몸은 숨는다)
 ## 표지(mark)는 맵 자료(game/data/maps/<맵>.json의 marks: 이름 → [타일 x, 타일 y, 방향])다. "x,y" 숫자도 받는다.
 class_name EventRunner
@@ -31,6 +32,8 @@ var font: Font
 var balloons: Array = []                      ## [{"actor", "kind", "t"}]
 var lamps: Array = []                         ## [{"pos", "color", "t"}]
 var _job: Dictionary = {}                     ## 진행 중 명령(move·wait·fade·card·shake·cam)
+var cam_locked := false                      ## cam 명령이 카메라를 쥐고 있다(진행기가 주인공을 따라가지 않는다). 대화가 끝나면 놓는다
+var _bg: Array = []                           ## 기다리지 않는 이동(go): [{"actor", "to", "path", "t", "still", "last"}] — 군중·분대가 함께 걷는다
 var log: Array[String] = []
 
 
@@ -80,14 +83,22 @@ func busy() -> bool:
 	return not _job.is_empty()
 
 
+## 기다리지 않는 이동이 남았나(장면 끝에서 다 걸을 때까지 기다리는 `wait_go`)
+func walking() -> bool:
+	return not _bg.is_empty()
+
+
 func run(name: String, args: Array, done: Callable) -> void:
 	log.append("%s %s" % [name, " ".join(args)])
 	match name:
 		"show":
-			_show_actor(str(args[0]), _mark(str(args[1])), str(args[2]) if args.size() > 2 else _mark_dir(str(args[1])))
+			_show_actor(str(args[0]), _mark(str(args[1])), str(args[2]) if args.size() > 2 else _mark_dir(str(args[1])),
+				str(args[3]) if args.size() > 3 else "")
 			done.call()
 		"hide":
 			if actors.has(str(args[0])):
+				var ha = actors[str(args[0])]
+				_bg = _bg.filter(func(b): return is_instance_valid(b["actor"]) and b["actor"] != ha)
 				actors[str(args[0])].queue_free()
 				actors.erase(str(args[0]))
 			done.call()
@@ -101,6 +112,14 @@ func run(name: String, args: Array, done: Callable) -> void:
 			var to := _mark(str(args[1]))
 			_job = {"kind": "move", "actor": a, "to": to, "done": done, "t": 0.0, "path": _route(a, to), "still": 0.0,
 				"last": a.loco.render}
+		"go":                                                             # 기다리지 않는 이동: 걷기 시작만 시키고 다음 명령으로
+			var a: Actor = actors.get(str(args[0]))
+			if a != null:
+				a.mode = str(args[2]) if args.size() > 2 else "walk"
+				var to := _mark(str(args[1]))
+				_bg = _bg.filter(func(b): return is_instance_valid(b["actor"]) and b["actor"] != a)
+				_bg.append({"actor": a, "to": to, "path": _route(a, to), "t": 0.0, "still": 0.0, "last": a.loco.render})
+			done.call()
 		"face":
 			var a: Actor = actors.get(str(args[0]))
 			if a != null:
@@ -125,7 +144,10 @@ func run(name: String, args: Array, done: Callable) -> void:
 			else:
 				done.call()
 		"wait":
-			_job = {"kind": "wait", "left": float(args[0]) / 10.0, "done": done}
+			if args.size() > 0 and str(args[0]) == "go":                        # wait go: 걷는 사람이 다 설 때까지
+				_job = {"kind": "wait_go", "done": done, "t": 0.0}
+			else:
+				_job = {"kind": "wait", "left": float(args[0]) / 10.0, "done": done}
 		"fade_in", "fade_out":
 			var col: Color = COLORS.get(str(args[0]) if args.size() > 0 else "black", Color.BLACK)
 			var secs := float(args[1]) / 10.0 if args.size() > 1 else 0.6
@@ -138,8 +160,13 @@ func run(name: String, args: Array, done: Callable) -> void:
 			_job = {"kind": "fade", "from": 0.75, "to": 0.0, "len": 0.25, "t": 0.0, "done": done}
 		"shake":
 			_job = {"kind": "shake", "left": float(args[0]) / 10.0 if args.size() > 0 else 0.4, "done": done}
-		"cam":
-			_job = {"kind": "cam", "from": cam.position, "to": _mark(str(args[0])) + Vector2(0, -20), "len": 0.6, "t": 0.0, "done": done}
+		"cam":                                                            # cam 표지 [n]: 카메라를 붙잡아 옮긴다 · cam player: 놓아준다
+			if str(args[0]) == "player":
+				cam_locked = false
+				done.call()
+				return
+			cam_locked = true
+			_job = {"kind": "cam", "len": float(args[1]) / 10.0 if args.size() > 1 else 0.6, "from": cam.position, "to": _mark(str(args[0])) + Vector2(0, -20), "t": 0.0, "done": done}
 		"year_card", "title_card":
 			card_lines = args.map(func(x): return str(x))
 			fade_mat.set_shader_parameter("fill", COLORS["white"] if name == "year_card" else COLORS["black"])
@@ -150,6 +177,13 @@ func run(name: String, args: Array, done: Callable) -> void:
 			lamps.append({"pos": _mark(str(args[0])) + Vector2(0, -22), "color": COLORS.get(str(args[1]) if args.size() > 1 else "green",
 				Color.GREEN), "t": 0.0})
 			_job = {"kind": "wait", "left": 0.5, "done": done}
+		"gate":                                                           # 톱니 방폭문(V-00): gate open|close [n 1/10초]
+			var to := 1.0 if str(args[0]) == "open" else 0.0
+			if world == null or not world.has_method("set_gate"):
+				done.call()
+				return
+			_job = {"kind": "gate", "from": float(world.gate_k), "to": to, "len": float(args[1]) / 10.0 if args.size() > 1 else 4.0,
+				"t": 0.0, "done": done}
 		"doc":
 			if doc_requested.get_connections().is_empty():
 				done.call()
@@ -171,11 +205,11 @@ func run(name: String, args: Array, done: Callable) -> void:
 				done.call()                                       # sfx·bgm: 아직 자원 없음(기록만)
 
 
-func _show_actor(id: String, pos: Vector2, dir: String) -> void:
+func _show_actor(id: String, pos: Vector2, dir: String, sheet_name := "") -> void:
 	if actors.has(id):
 		actors[id].queue_free()
 	var a := Actor.new()
-	var sheet: String = cast_sheets.get(id, "")
+	var sheet: String = sheet_name if sheet_name != "" else cast_sheets.get(id, "")
 	if sheet == "":
 		push_warning("show: 시트 없는 인물 " + id)
 		return
@@ -232,9 +266,31 @@ func _process(dt: float) -> void:
 	lamps = lamps.filter(func(l): return l["t"] < 1.0)
 	if had:
 		queue_redraw()                                                  # 마지막 말풍선이 사라진 프레임에도 한 번 더 그려 지운다
+	var moving := {}
+	for b in _bg.duplicate():
+		if not is_instance_valid(b["actor"]):                           # 걷는 중에 hide(치움)된 인물
+			_bg.erase(b)
+			continue
+		var a: Actor = b["actor"]
+		moving[a] = true
+		b["t"] += dt
+		var p: PackedVector2Array = b["path"]
+		while not p.is_empty() and NpcRoutine.arrived(a.loco.render, p[0]):
+			p.remove_at(0)
+		if p.is_empty() or b["t"] > 20.0:
+			a.move(Vector2.ZERO, dt)
+			if a.loco.motion == "idle":
+				_bg.erase(b)
+			continue
+		b["path"] = NpcRoutine.walk_path(a, p, dt)
+		b["still"] = b["still"] + dt if a.loco.render == b["last"] else 0.0
+		b["last"] = a.loco.render
+		if b["still"] > 1.0:
+			b["still"] = 0.0
+			b["path"] = _route(a, b["to"])
 	if _job.is_empty():
 		for a in actors.values():
-			if a.loco.motion != "idle":
+			if is_instance_valid(a) and not moving.has(a) and a.loco.motion != "idle":
 				a.move(Vector2.ZERO, dt)
 		return
 	var j := _job
@@ -274,6 +330,10 @@ func _process(dt: float) -> void:
 			j["left"] -= dt
 			if j["left"] <= 0.0:
 				_finish()
+		"wait_go":
+			j["t"] += dt
+			if _bg.is_empty() or j["t"] > 20.0:
+				_finish()
 		"fade":
 			j["t"] += dt
 			var k := clampf(j["t"] / maxf(j["len"], 0.001), 0.0, 1.0)
@@ -290,6 +350,14 @@ func _process(dt: float) -> void:
 			var k := clampf(j["t"] / j["len"], 0.0, 1.0)
 			cam.position = (j["from"] as Vector2).lerp(j["to"], k * k * (3.0 - 2.0 * k)).round()
 			if k >= 1.0:
+				_finish()
+		"gate":
+			j["t"] += dt
+			var k := clampf(j["t"] / maxf(j["len"], 0.001), 0.0, 1.0)
+			world.set_gate(lerpf(j["from"], j["to"], k * k * (3.0 - 2.0 * k)))
+			cam.offset = Vector2(randi_range(-1, 1), 0) if k < 1.0 and int(j["t"] * 20.0) % 3 == 0 else Vector2.ZERO
+			if k >= 1.0:
+				cam.offset = Vector2.ZERO
 				_finish()
 		"card":
 			j["t"] += dt

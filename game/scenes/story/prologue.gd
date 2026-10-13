@@ -4,10 +4,12 @@
 ##          → S5 사격장(BB총: 표적 10 → 은신 표적 2) → S6 배관실(하도윤 동행, 증기 분출·스팀팩, 큰바퀴 6) → '2274'
 ##   MQ-P3: S1 사물함 복도 소동(카르마 6갈래, V_DY_P3) → S2 적성 평가 교실(시험·건너뛰기·대리 작성, 10번 문항) → S3 평가관실
 ##          결과 통지서·태그 확정(등록 카드 단계 1) → S4 같은 날 오버시어실(주인공 없음, V-02) → '2277'
+##   MQ-P4: S1 식당 주민 회의 → S2 정문 개방식(방폭문이 굴러 열리고 계엄군·파워 아머가 들어온다) → S3 A-07 거래(하도윤의 전언 또는
+##          [은신] 덕트 엿듣기 V-02 컷) → 관리동 호출 = 탈출 시작(0-9c)
 ##   사격장 단계 넘김·바퀴 전멸 장면은 여기서 연다(전투 신호). 주인공이 쓰러지면(프롤로그 특례, 정합): 하도윤이 끌어내
 ##   배관실 입구에서 HP 가득으로 깨어난다(바퀴는 그대로).
 ## 실행: godot --path game res://scenes/story/prologue.tscn [-- --auto --pick=N --jiwoo=N --dy=N --exam=test|skip|proxy --q10=N
-##        --from=p2|range|pipe|p3 --shots=디렉터리 --log]
+##        --from=p2|range|pipe|p3|p4|p4e --duct=1 --esc=1~4 --shots=디렉터리 --log]
 ##   --auto: 대사를 넘기고 서류를 내고 길을 찾아 걸어가며(맵을 넘어) 사격·은신·근접·스팀팩까지 하는 봇.
 ##   --pick: 돌잡이 1~6(기본 2 청진기) · --jiwoo: 지우 장면 선택 1~6(기본 3 [인지력 5] 카드 찾기) · --from=p2: MQ-P2부터
 ##   --dy: 복도 소동 1 잉크 · 2 출입 기록 · 3 설득 · 4 막아섬 · 5 고발 · 6 지나침(기본 1) · --exam: 응시 방법(기본 test) · --q10: 10번 답
@@ -31,6 +33,8 @@ var talked := false
 var stealth_started := false
 var _re_t := 0.0
 var _pip_t := 0.0
+var duct := 0                                   ## --duct=1: 거래 장면에서 [은신 25] 덕트로 직접 엿듣는다(봇)
+var esc := 4                                    ## --esc: 탈출 1 전투 · 2 은신 · 3 설득 · 4 하도윤(봇, 기본 4)
 var log_on := false                             ## --log: 5초마다 진행 상태 한 줄(봇·녹화 점검)
 
 
@@ -52,6 +56,10 @@ func _ready() -> void:
 			exam = a.substr(7)
 		elif a.begins_with("--q10="):
 			q10 = clampi(int(a.substr(6)), 1, 4)
+		elif a.begins_with("--duct="):
+			duct = int(a.substr(7))
+		elif a.begins_with("--esc="):
+			esc = clampi(int(a.substr(6)), 1, 4)
 		elif a == "--log":
 			log_on = true
 		elif a.begins_with("--shots="):
@@ -78,6 +86,24 @@ func _ready() -> void:
 		host.st.call_fn("give", ["W-067"])
 		host.pipboy_ok = true
 		_start_p3.call_deferred()
+		return
+	if from in ["p4", "p4e"]:                                  # 개발용: 개방의 날부터(MQ-P3까지 끝낸 상태) · p4e: 호출 직후(탈출)부터
+		_quick_p1()
+		host.st.quests.set_stage("MQ-P2", 100)
+		host.st.quests.set_stage("MQ-P3", 100)
+		for c in ["PE", "EN", "IN", "AG", "LK"]:
+			host.st.vars.set_v("PC_" + c, 6)
+		host.st.vars.set_v("V_DY_P3", 1)
+		host.st.vars.set_v("V_REGCARD", 1)
+		for i in 3:
+			host.st.vars.set_v("PC_TAG%d" % (i + 1), ["SNEAK", "LOCKPICK", "SMALL_GUNS"][i])
+		host.st.call_fn("give", ["W-065"])
+		host.st.call_fn("give", ["W-067"])
+		host.pipboy_ok = true
+		if from == "p4e":
+			_start_p4e.call_deferred()
+		else:
+			_start_p4.call_deferred()
 		return
 	if from in ["range", "pipe"]:                              # 개발용: 사격장·배관실부터
 		_quick_p1()
@@ -175,9 +201,10 @@ func _on_dialogue_done() -> void:
 			int(st.vars.get_v("V_KARMA")), int(st.vars.get_v("MQP3_RESULT")), int(st.vars.get_v("V_DY_P3")),
 			"대리 %d" % CharDocs.proxy_type(st) if CharDocs.proxy_type(st) > 0 else ("응시" if CharDocs.aptitude_of(st).size() > 0 else "미응시"),
 			int(st.vars.get_v("V_Q10")), ",".join(CharDocs.tags_of(st)), int(st.vars.get_v("V_REGCARD")), int(st.vars.get_v("PC_XP"))])
-		_shot("end")
-		if auto:
-			get_tree().create_timer(0.5).timeout.connect(get_tree().quit)
+		_shot("p3_end")
+		_start_p4()
+	elif phase.begins_with("P4"):
+		_p4_done()
 
 
 func _start_p2() -> void:
@@ -190,6 +217,257 @@ func _start_p2() -> void:
 	host.ev.run("fade_in", ["white", "8"], func() -> void:
 		host.busy = false
 		host.play_scene("MQ-P2_S01"))
+
+
+## MQ-P4 시작(2277-10-23, 열아홉): A-07 방에서. 식당에 들어서면 주민 회의(트리거)
+func _start_p4() -> void:
+	phase = "P4"
+	host.busy = true
+	host.body = "adult"
+	host.hud_on = true
+	host.pipboy_ok = true
+	host.date_text = "2277. 10. 23.  09:00"
+	host.combat.buddy = null
+	host.combat.equip("", host.st)
+	host.st.quests.set_stage("MQ-P4", 10)                     # 2277년(year())으로 맵을 연다
+	host.enter("V-04", "p4_room")
+	host.ev.handlers["escape"] = _escape_cmd
+	host.ev.run("fade_in", ["white", "8"], func() -> void:
+		host.busy = false
+		host.hint("주민 회의: 아트리움 남서쪽 공동 식당", 6.0))
+
+
+## 개발용(--from=p4e): 호출 직후 A-07에서 탈출만. --esc=4면 하도윤이 동행으로 붙는다
+func _start_p4e() -> void:
+	_start_p4()
+	host.hints.clear()
+	host.hint("관리동 호출 — 무기고 · 화장실 덕트 · 오버시어실 · 하층 갱도 철문, 어디로든", 8.0)
+	var st := host.st
+	st.quests.set_stage("MQ-P4", 30)
+	host.date_text = "2277. 10. 23.  13:30"
+	host.enter("V-04", "p4_room")
+	if esc == 4:
+		st.vars.set_v("MQP4_FOLLOW", 1)
+		host.ev._show_actor("C-002", host.map.mark_pos("p4_dy"), "W")
+		host.ev.handlers["buddy"].call(["C-002"], func() -> void: pass)
+	phase = "P4E"
+	_bot_skills()
+
+
+## 봇 준비: 갈래마다 필요한 스킬을 넉넉히(판정 운에 흔들리지 않게)
+func _bot_skills() -> void:
+	if not auto:
+		return
+	var st := host.st
+	match esc:
+		1:
+			st.vars.set_v("PC_SKP_LOCKPICK", 20)
+		2:
+			st.vars.set_v("PC_SKP_SNEAK", 40)
+		3:
+			st.vars.set_v("PC_SKP_SPEECH", 50)
+
+
+## MQ-P4 장면이 끝날 때마다: 회의 → 개방식(V-00) → A-07 거래 → (덕트 엿듣기 V-02 컷 → A-07) → 탈출
+func _p4_done() -> void:
+	var st := host.st
+	var s := st.quests.stage("MQ-P4")
+	if phase in ["P4E", "P4S5", "P4OUT", "P4S6", "P4S7"]:
+		_p4_escape_done()
+		return
+	if phase == "P4" and s == 20:
+		phase = "P4S2"
+		_shot("p4_meeting")
+		_cut("white", "V-00", "p4_gate", "2277. 10. 23.  12:00", "MQ-P4_S02")
+	elif phase == "P4S2" and s == 30:
+		phase = "P4S3"
+		_shot("p4_gate")
+		_cut("black", "V-04", "p4_room", "2277. 10. 23.  13:10", "MQ-P4_S03")
+	elif phase == "P4S3" and int(st.vars.get_v("MQP4_DUCT")) == 1:
+		phase = "P4S3B"
+		host.body = "hidden"
+		_cut("", "V-02", "p4_ovs", "", "MQ-P4_S03B")
+	elif phase == "P4S3B":
+		phase = "P4S3"
+		host.body = "adult"
+		st.vars.set_v("MQP4_DUCT", 2)                             # 엿들었다(다시 열지 않는다)
+		_cut("", "V-04", "p4_room", "", "MQ-P4_S03", "DUCT_BACK")
+
+
+## 장면 사이 전환: (색이 있으면) 페이드 아웃 → 맵 → 장면(장면이 스스로 페이드 인한다)
+func _cut(color: String, map_id: String, mark: String, date: String, scene: String, label := "START") -> void:
+	host.busy = true
+	var go := func() -> void:
+		if date != "":
+			host.date_text = date
+		host.enter(map_id, mark)
+		host.banner_t = 0.0
+		host.busy = false
+		host.play_scene(scene, label)
+	if color == "":
+		go.call()
+	else:
+		host.ev.run("fade_out", [color, "6"], go)
+
+
+## 원고의 탈출 진행기 명령(0-9c): escape start(호출 = 탈출 시작) · office(도경철을 따라 오버시어실) · alarm(경보: 이 맵의 경비가
+## 주인공 쪽을 수색) · done N(출구 도달: 1 전투 · 2 은신 · 3 설득 · 4 하도윤). 장면이 끝나면 _p4_done이 다음으로 넘긴다
+var p4_next := ""
+
+
+func _escape_cmd(a: Array, done: Callable) -> void:
+	var st := host.st
+	match str(a[0]):
+		"start":
+			phase = "P4E"
+			_bot_skills()
+			print("MQ-P4 호출: 덕트 %d · 동행 %d · 단계 %d" % [int(st.vars.get_v("MQP4_DUCT")), int(st.vars.get_v("MQP4_FOLLOW")),
+				st.quests.stage("MQ-P4")])
+		"office":
+			p4_next = "office"
+		"alarm":
+			for e in host.combat.enemies:
+				if is_instance_valid(e) and not e.cmb.dead:
+					e.brain.gauge = maxf(e.brain.gauge, AIBrain.SUSPECT_AT + 20.0)
+					e.brain.last_seen = host.player.loco.logical
+					e.brain._go(AIBrain.S.SEARCH)
+		"done":
+			_escape_result(int(a[1]))
+			p4_next = "out"
+	done.call()
+
+
+## 탈출 결과(SD-03a §7.4 표): V_ESCAPE · 하도윤 억류 · 비상정부 호감도 보정(SD-06 §3.2.1) · XP
+func _escape_result(n: int) -> void:
+	var st := host.st
+	st.vars.set_v("V_ESCAPE", n)
+	st.vars.set_v("V_DOYUN", 1)                                    # 어느 방법이든 하도윤은 붙잡힌다
+	if st.quests.stage("MQ-P4") < 40:
+		st.quests.set_stage("MQ-P4", 40)
+	st.call_fn("xp", [100])
+	var aff := 0
+	if n == 3:
+		aff = 10
+	elif n == 1:
+		aff = -10 - mini(15, 5 * int(st.vars.get_v("MQP4_BJ_KO")))
+	if aff != 0:
+		st.call_fn("aff", ["BJ", aff])
+	host.combat.buddy = null
+	host.buddy_name = ""
+	host.buddy_id = ""
+	for e in host.combat.enemies:                                  # 문밖 컷 동안 쏘지 않는다
+		if is_instance_valid(e):
+			e.set_physics_process(false)
+	host.combat.enemies = host.combat.enemies.filter(func(e): return false)
+
+
+func _p4_escape_done() -> void:
+	var st := host.st
+	match p4_next:
+		"office":
+			p4_next = ""
+			_cut("black", "V-02", "p4_ovs", "", "MQ-P4_S04_TALK")
+			return
+		"out":
+			p4_next = ""
+			if int(st.vars.get_v("V_ESCAPE")) == 3 and int(st.vars.get_v("K_RALLY")) == 0:   # 설득 경로: 엄마가 단말을 열어 준다(S5 자동)
+				phase = "P4S5"
+				host.play_scene("MQ-P4_S05")
+				return
+			phase = "P4OUT"
+			_shot("p4_escape_%d" % int(st.vars.get_v("V_ESCAPE")))
+			host.play_scene("MQ-P4_OUT")
+			return
+	if phase == "P4S5":
+		phase = "P4OUT"
+		host.play_scene("MQ-P4_OUT")
+	elif phase == "P4OUT":
+		phase = "P4S6"
+		host.play_scene("MQ-P4_S06")
+	elif phase == "P4S6" and st.quests.stage("MQ-P4") >= 60:
+		phase = "P4S7"
+		_first_view()
+	elif phase == "P4S7" and st.quests.stage("MQ-P4") >= 100:
+		phase = "end"
+		print("MQ-P4 완료: 탈출 %d · 카르마 %d · 비상정부 %d · 하도윤 %d · 붙잡힘 %d · 보안요원 사살 %d · 계엄병 사망 %d · K_RALLY %d · 막 %d · XP %d" % [
+			int(st.vars.get_v("V_ESCAPE")), int(st.vars.get_v("V_KARMA")), int(st.vars.get_v("AFF_BJ")), int(st.vars.get_v("V_DOYUN")),
+			int(st.vars.get_v("MQP4_CAUGHT")), int(st.vars.get_v("MQP4_SEC_KO")), int(st.vars.get_v("MQP4_BJ_KO")),
+			int(st.vars.get_v("K_RALLY")), int(st.vars.get_v("V_ACT")), int(st.vars.get_v("PC_XP"))])
+		_shot("end")
+		if auto:
+			get_tree().create_timer(0.5).timeout.connect(get_tree().quit)
+
+
+## S7 첫 풍경(SD-03a §7.4): 흰 빛 → 관악산 북쪽 비탈. 그림(640×400)이 아래에서 위로 40px 천천히 미끄러지고(북쪽으로),
+## 자막 "2277년, 서울."이 뜬 뒤 공보방송(S07 장면)이 흐른다. 대화 창(10층)은 그림(9층) 위에 뜬다
+var view_layer: CanvasLayer
+var view_tex: TextureRect
+var view_cap: Control
+var view_t := -1.0
+var view_title := 0.0
+const VIEW_PAN := 40.0
+const VIEW_SECS := 6.0
+
+
+func _first_view() -> void:
+	host.busy = true
+	host.ev.run("fade_out", ["white", "10"], func() -> void:
+		host.hud_on = false
+		host.body = "hidden"
+		host.player.visible = false
+		view_layer = CanvasLayer.new()
+		view_layer.layer = 9
+		add_child(view_layer)
+		view_tex = TextureRect.new()
+		view_tex.texture = load("res://assets/ui/first_seoul.png")
+		view_tex.position = Vector2(0, -VIEW_PAN)
+		var back := ColorRect.new()                                         # 화면이 그림보다 넓으면(모바일 높이 맞춤) 양옆은 어둡게
+		back.color = Color("0B0A0D")
+		back.size = Vector2(2000, 1000)
+		view_layer.add_child(back)
+		view_layer.move_child(back, 0)
+		view_layer.add_child(view_tex)
+		view_cap = Control.new()
+		view_cap.size = Vector2(640, 360)
+		view_cap.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		view_cap.draw.connect(_draw_view_title)
+		view_layer.add_child(view_cap)
+		view_t = 0.0
+		host.ev.run("fade_in", ["white", "14"], func() -> void: pass))
+
+
+func _view_tick(dt: float) -> void:
+	if view_t < 0.0:
+		return
+	view_t += dt
+	var k := clampf(view_t / VIEW_SECS, 0.0, 1.0)
+	view_tex.position.y = roundf(-VIEW_PAN * (1.0 - k * k * (3.0 - 2.0 * k)))         # 1px 단위로(반 픽셀 없이)
+	view_tex.position.x = floorf((view_cap.get_viewport_rect().size.x - 640.0) / 2.0)
+	if view_t >= VIEW_SECS and view_title == 0.0:
+		view_title = 0.01
+	if view_title > 0.0:
+		view_title += dt
+		view_cap.queue_redraw()
+		if view_title >= 3.5 and phase == "P4S7" and not host.box.active and host.st.quests.stage("MQ-P4") < 100:
+			view_title = -1.0
+			_shot("first_view")
+			host.busy = false
+			host.play_scene("MQ-P4_S07")
+
+
+func _draw_view_title() -> void:
+	if view_title <= 0.0:
+		return
+	if view_title < 0.3 and int(view_title * 20.0) % 2 == 0:                     # 반투명 없이: 두 번 깜박이며 켜진다
+		return
+	var f: Font = host.ev.font_big
+	var t := "2277년, 서울."
+	var vs := view_cap.get_viewport_rect().size
+	var w := f.get_string_size(t, HORIZONTAL_ALIGNMENT_LEFT, -1, 32).x
+	var p := Vector2(floorf((vs.x - w) / 2.0), floorf(vs.y * 0.86))
+	for o in [Vector2(-2, 0), Vector2(2, 0), Vector2(0, -2), Vector2(0, 2)]:
+		view_cap.draw_string(f, p + o, t, HORIZONTAL_ALIGNMENT_LEFT, -1, 32, Color("1A181D"))
+	view_cap.draw_string(f, p, t, HORIZONTAL_ALIGNMENT_LEFT, -1, 32, Color("E9E4D8"))
 
 
 ## MQ-P3 시작(2274, 열여섯): 무기는 넣어 두고 교무 구역 동쪽 입구에서. 복도에 들어서면 소동이 열린다(트리거)
@@ -235,6 +513,9 @@ func _scene_soon(id: String) -> void:
 
 ## 프롤로그 특례(정합 — 문서에 없음): 쓰러지면 하도윤이 끌어내고, 배관실 입구에서 HP 가득으로 깨어난다
 func _on_player_down() -> void:
+	if phase == "P4E":
+		_caught()
+		return
 	host.busy = true
 	host.ev.run("fade_out", ["black", "6"], func() -> void:
 		var c := host.combat
@@ -246,6 +527,22 @@ func _on_player_down() -> void:
 			host.say_text("정신이 들었다. 하도윤이 통로까지 끌고 나왔다. 스팀팩을 쓰고 다시 가자.")))
 
 
+## 붙잡힘(MQ-P4 탈출 중 HP 0, SD-14 §9.12.1 정합): A-07로 끌려와 HP 가득으로 다시 시작. 맵의 경비·계엄군은 제자리로
+func _caught() -> void:
+	var st := host.st
+	st.vars.set_v("MQP4_CAUGHT", int(st.vars.get_v("MQP4_CAUGHT")) + 1)
+	host.busy = true
+	host.ev.run("fade_out", ["black", "6"], func() -> void:
+		var c := host.combat
+		c.pc.hp = c.pc.max_hp
+		c.pc.dead = false
+		c.crouch = false
+		host.enter("V-04", "p4_room")
+		host.ev.run("fade_in", ["black", "6"], func() -> void:
+			host.busy = false
+			host.say_text("보안부에 붙잡혀 A-07로 끌려왔다. 문 앞 경비가 교대하는 틈이다. 다시 나가자.")))
+
+
 func _shot(tag: String) -> void:
 	if shots == "":
 		return
@@ -255,14 +552,19 @@ func _shot(tag: String) -> void:
 
 # ---------------------------------------------------------------- 자동 진행
 func _process(dt: float) -> void:
+	_view_tick(dt)
+	if phase == "P4E" and host.map != null and host.map.id != "V-04" and host.st.quests.stage("MQ-P4") == 30:
+		host.st.quests.set_stage("MQ-P4", 40)                    # 방을 나서면 '볼트를 빠져나간다'
 	if not auto:
 		return
 	t += dt
 	if log_on and int(t) % 5 == 0 and int(t - dt) % 5 != 0:
 		var c := host.combat
 		print("[%3.0f초] %s %s 단계 %d HP %.0f 무기 %s 대화 %s 바쁨 %s 표적 %d/%d 바퀴 %d" % [t, host.map.id, host.player.loco.render,
-			host.st.quests.stage("MQ-P3" if phase.begins_with("P3") else "MQ-P2"), c.pc.hp, c.weapon_id, host.box.active, host.busy or host.ev.busy(),
+			host.st.quests.stage("MQ-P4" if phase.begins_with("P4") else ("MQ-P3" if phase.begins_with("P3") else "MQ-P2")), c.pc.hp, c.weapon_id, host.box.active, host.busy or host.ev.busy(),
 			c.targets_left("target"), c.targets_left("stealth"), c.alive_enemies()])
+		if host.box.active:
+			print("        대화: %s %s" % [host.box.state.get("who", ""), str(host.box.state.get("text", host.box.state.get("type", ""))).left(40)])
 	var box := host.box
 	if host.pipboy != null:
 		_pip_bot(dt)
@@ -287,6 +589,8 @@ func _process(dt: float) -> void:
 					var opts: Array = box.state.get("opts", [])
 					if phase == "P3":
 						box.pick(_p3_choice(opts))
+					elif phase.begins_with("P4"):
+						box.pick(_p4_choice(opts))
 					elif host.st.quests.stage("MQ-P2") == 40:
 						box.pick(_by_text(opts, JIWOO_KEYS[jiwoo - 1]))
 					else:
@@ -300,6 +604,10 @@ func _process(dt: float) -> void:
 		_p2_bot()
 	elif phase == "P3":
 		_p3_bot()
+	elif phase == "P4":
+		_p4_bot()
+	elif phase == "P4E":
+		_p4e_bot()
 
 
 ## MQ-P3 봇 선택: 복도 소동(--dy), 응시 방법(--exam), 대리 작성 유형(돌잡이에 맞춘 칸), 10번(--q10)
@@ -331,6 +639,119 @@ func _p3_bot() -> void:
 			_talk_to("C-023", Vector2(0, 32), 6)
 		40:
 			_talk_to("C-023", Vector2(0, 32), 6)
+
+
+## MQ-P4 봇 선택: 회의(찬성), 거래(--duct), 동행(--esc 4면 따라간다)
+func _p4_choice(opts: Array) -> int:
+	var texts := opts.map(func(o): return str(o["text"]))
+	if texts.any(func(x): return x.contains("하도윤에게 듣는다")):
+		return _by_text(opts, "덕트로" if duct == 1 else "하도윤에게 듣는다")
+	if texts.any(func(x): return x.contains("하도윤을 따라간다")):
+		return _by_text(opts, "하도윤을 따라간다" if esc == 4 else "혼자")
+	if texts.any(func(x): return x.contains("머리핀")):
+		return _by_text(opts, "머리핀")
+	if texts.any(func(x): return x.contains("서명만 하면")):
+		return _by_text(opts, "서명만 하면")
+	return 0
+
+
+## MQ-P4 봇: 방에서 식당까지(회의 트리거)
+func _p4_bot() -> void:
+	host.combat.bot = {"walk": true}
+	if host.st.quests.stage("MQ-P4") == 10:
+		_go("V-01", "p4_meet")
+
+
+## 탈출 봇(--esc): 1 무기고(자물쇠) → 권총 → 정문 데크를 달려 지나간다 · 2 웅크려 관리동 화장실 덕트 → 하층 → 농장 배수로 서쪽 끝
+##   · 3 오버시어실의 엄마를 설득 · 4 하도윤을 따라(또는 혼자) 하층 갱도 철문
+func _p4e_bot() -> void:
+	var st := host.st
+	var c := host.combat
+	var m := host.map.id
+	c.bot = {"walk": true}
+	match esc:
+		1:
+			var need_gun := int(st.items.get("W-002", 0)) == 0
+			var near := _threat(4.0)
+			if need_gun and near != null:                                      # 총이 없으면 대걸레 자루로 기절시킨다(비살상)
+				if c.weapon_id != "W-067":
+					c.equip("W-067", st)
+				if near.loco.logical.distance_to(host.player.loco.logical) > 40.0:
+					_move_to(near.loco.logical)
+					c.bot = {"aim": near.loco.logical + Vector2(0, -6)}
+				else:
+					_stop()
+					c.bot = {"aim": near.loco.logical + Vector2(0, -6), "fire": true}
+			elif need_gun and m != "V-09":
+				_go("V-09", "")
+			elif int(st.vars.get_v("MQP4_ARMORY")) == 0:
+				_use(Vector2i(22, 15), 6)
+			elif need_gun:
+				_use(Vector2i(22, 4), 6)
+			else:
+				if c.weapon_id != "W-002":
+					c.equip("W-002", st)
+				var foe := _threat(7.0)
+				if foe != null:                                              # 막아서는 보안요원: 서서 쏜다(계엄군·파워 아머는 지나친다)
+					_stop()
+					c.bot = {"aim": foe.loco.logical + Vector2(0, -10), "fire": true, "aimed": true}
+				elif m != "V-00":
+					_go("V-00", "")
+				else:
+					_move_to(Vector2(19 * 32 + 16, 9 * 32 + 16))
+		2:                                                                    # 설비 구역 → 하층 → 농장 3동·2동·1동을 돌아 배수로 순찰을 피한다
+			c.bot = {"walk": true, "crouch": true}
+			if m in ["V-04", "V-10"]:
+				_go("V-11", "")
+			elif m == "V-11":
+				_go("V-06", "")
+			elif m == "V-06":
+				var pts := [Vector2i(45, 31), Vector2i(40, 16), Vector2i(19, 16), Vector2i(5, 31), Vector2i(1, 36)]
+				var me := host.map.tile_of(host.player.loco.logical)
+				if me.y >= 35 and me.x > 10 and stealth_wp == 0:
+					stealth_wp = 0
+				var wp: Vector2i = pts[mini(stealth_wp, pts.size() - 1)]
+				if me == wp and stealth_wp < pts.size() - 1:
+					stealth_wp += 1
+				_move_to(Vector2(wp.x * 32 + 16, wp.y * 32 + 16))
+			else:
+				_go("V-04", "")
+		3:
+			if m != "V-02":
+				_go("V-02", "")
+			else:
+				_talk_to("C-001", Vector2(-32, 0), 0)
+		4:
+			if m != "V-11":
+				_go("V-11", "p4_gate11")
+			elif int(st.vars.get_v("MQP4_FOLLOW")) == 1:
+				_move_to(host.map.mark_pos("p4_gate11"))
+			else:
+				_talk_to("C-002", Vector2(0, 32), 6)
+
+
+var stealth_wp := 0
+
+
+## 가까이서 주인공과 교전 중인 보안요원(전투 봇이 쏠 상대)
+func _threat(r_t: float) -> Enemy:
+	for e in host.combat.enemies:
+		if is_instance_valid(e) and not e.cmb.dead and e.get_meta("enemy_id") == "CR-473" and e.brain.state == AIBrain.S.COMBAT \
+				and e.loco.logical.distance_to(host.player.loco.logical) < r_t * 32.0 and host.map.line_of_sight(host.player.loco.logical, e.loco.logical):
+			return e
+	return null
+
+
+## 칸 at에 서서 facing 쪽을 조사한다(무기고 문·총기 거치대)
+func _use(at: Vector2i, facing: int) -> void:
+	var to := Vector2(at.x * 32 + 16, at.y * 32 + 16)
+	if NpcRoutine.arrived(host.player.loco.render, to):
+		_stop()
+		host.player.loco.facing = facing
+		host.player._show()
+		host.interact()
+	else:
+		_move_to(to)
 
 
 ## 인물 앞(off만큼 떨어진 자리)으로 가서 그쪽을 보고 말을 건다

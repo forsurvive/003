@@ -1,0 +1,87 @@
+{
+ "id": "MQ-P4_DOYUN",
+ "title": "하층 갱도 철문 — 하도윤",
+ "loc": "L-R01-01",
+ "npc": "C-002",
+ "cond": "MQP4_STAGE >= 30 and MQP4_STAGE < 60",
+ "labels": {
+  "START": 0,
+  "BETRAYED": 7,
+  "GIVE": 8
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "C-002",
+   "emo": "미소",
+   "text": "왔네. 이 바퀴, 반 바퀴 돌리고 발로 차야 해. 내가 할게."
+  },
+  {
+   "op": "cmd",
+   "name": "sfx",
+   "args": [
+    "gate_rust"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "shake",
+   "args": [
+    "3"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "녹슨 원형 철문이 비명을 지르며 한 뼘씩 열린다. 틈으로 젖은 흙냄새가 들어온다."
+  },
+  {
+   "op": "if",
+   "cond": "V_DY_P3 == 3",
+   "to": "BETRAYED"
+  },
+  {
+   "op": "line",
+   "who": "C-002",
+   "emo": "기본",
+   "text": "먼저 가. 금방 따라갈게."
+  },
+  {
+   "op": "goto",
+   "to": "GIVE"
+  },
+  {
+   "op": "line",
+   "who": "C-002",
+   "emo": "기본",
+   "text": "너 때문이 아니라 내가 나가고 싶어서야. 먼저 가."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "하도윤이 보안 카드를 손에 쥐여 준다. 바깥 문 어딘가에 쓸 데가 있을 거라고."
+  },
+  {
+   "op": "do",
+   "fx": "give(\"M-205\")"
+  },
+  {
+   "op": "cmd",
+   "name": "escape",
+   "args": [
+    "done",
+    "4"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/prologue/MQ-P4.txt"
+}

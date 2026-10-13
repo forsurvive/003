@@ -2,7 +2,7 @@
  "id": "MQ-P3_S04",
  "title": "같은 날, 오버시어실",
  "loc": "L-R01-01",
- "npc": "C-001",
+ "npc": "",
  "cond": "MQP3_STAGE == 100",
  "labels": {
   "START": 0

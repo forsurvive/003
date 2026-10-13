@@ -1,0 +1,49 @@
+{
+ "id": "MQ-P4_S07",
+ "title": "관악산 북쪽 비탈",
+ "loc": "L-R01-01",
+ "npc": "",
+ "cond": "MQP4_STAGE == 60",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "cmd",
+   "name": "sfx",
+   "args": [
+    "radio"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "(핍-보이 라디오) 알 수 없는 신호를 수신했습니다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "(공보방송) …관리 후보 2순위 확보. 이상."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "(공보방송) 관악 볼트 이탈자는 가까운 계엄군 초소로 출두 바랍니다. 출두자는 1등급 시민으로 대우합니다."
+  },
+  {
+   "op": "do",
+   "fx": "quest(\"MQ-P4\", 100); V_ACT = 1"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/prologue/MQ-P4.txt"
+}

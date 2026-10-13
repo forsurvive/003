@@ -1,0 +1,141 @@
+{
+ "id": "MQ-P4_DO",
+ "title": "보안과 — 도경철",
+ "loc": "L-R01-01",
+ "npc": "C-022",
+ "cond": "MQP4_STAGE >= 30 and MQP4_STAGE < 60",
+ "labels": {
+  "START": 0,
+  "STEAL": 3,
+  "NOKEY": 7,
+  "FOLLOW": 8,
+  "RUN": 11
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "C-022",
+   "emo": "기본",
+   "text": "여기 있었구나. 관리동으로 가자. 명령이다."
+  },
+  {
+   "op": "if",
+   "cond": "MQP4_KEY == 1",
+   "to": "NOKEY"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "따라가는 척하며 허리춤의 무기고 열쇠를 슬쩍한다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "은신",
+       "min": 25
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "STEAL",
+     "id": "MQ-P4_DO:1:0"
+    },
+    {
+     "text": "따라간다(오버시어실로)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "FOLLOW",
+     "id": "MQ-P4_DO:1:1"
+    },
+    {
+     "text": "뒷걸음질 쳐 달아난다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "RUN",
+     "id": "MQ-P4_DO:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "도경철이 앞장서 돌아서는 사이, 열쇠고리가 소리 없이 손바닥에 들어온다."
+  },
+  {
+   "op": "do",
+   "fx": "MQP4_KEY = 1"
+  },
+  {
+   "op": "line",
+   "who": "C-022",
+   "emo": "피곤",
+   "text": "…왜 안 따라와. 천천히 와라. 나는 먼저 간다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "따라간다(오버시어실로)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "FOLLOW",
+     "id": "MQ-P4_DO:2:0"
+    },
+    {
+     "text": "뒷걸음질 쳐 달아난다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "RUN",
+     "id": "MQ-P4_DO:2:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-022",
+   "emo": "기본",
+   "text": "그래. …미안하다."
+  },
+  {
+   "op": "cmd",
+   "name": "escape",
+   "args": [
+    "office"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-022",
+   "emo": "분노",
+   "text": "서! …보안부, 저 애 잡아. 다치게 하지는 말고."
+  },
+  {
+   "op": "cmd",
+   "name": "escape",
+   "args": [
+    "alarm"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/prologue/MQ-P4.txt"
+}

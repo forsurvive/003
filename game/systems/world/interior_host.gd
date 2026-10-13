@@ -95,6 +95,7 @@ func _index_scenes() -> void:
 
 ## 맵을 연다. mark: 주인공이 설 표지(없으면 첫 표지)
 func enter(map_id: String, mark: String = "", look: Dictionary = {}) -> void:
+	var keep_buddy := buddy_id if combat.buddy != null and is_instance_valid(combat.buddy) else ""   # 일시 동행은 맵을 넘어 따라온다(0-9)
 	if map != null:
 		for n in npcs:
 			if is_instance_valid(n["actor"]):
@@ -108,6 +109,8 @@ func enter(map_id: String, mark: String = "", look: Dictionary = {}) -> void:
 		if is_instance_valid(a) and a != player:
 			a.queue_free()
 	ev.actors.clear()
+	ev._bg.clear()
+	ev.cam_locked = false
 	map = InteriorMap.new()
 	map.load_map(map_id, st)
 	add_child(map)
@@ -137,8 +140,12 @@ func enter(map_id: String, mark: String = "", look: Dictionary = {}) -> void:
 	player._show()
 	_last_tile = map.tile_of(player.loco.logical)
 	_spawn_npcs()
+	if map_id == "V-00" and st.quests.stage("MQ-P4") >= 30:               # 개방식 뒤: 방폭문은 열린 채(맵을 다시 열 때마다)
+		map.set_gate(1.0)
 	combat.on_map(map, player, st)
 	ev.setup(map, map_id, cam)
+	if keep_buddy != "":
+		_bring_buddy(keep_buddy)
 	cam.limit_left = 0
 	cam.limit_top = 0
 	cam.limit_right = map.size.x * 32
@@ -255,7 +262,28 @@ func _physics_process(dt: float) -> void:
 	if combat.armed() and combat.weapon()["kind"] == "ranged" and not talking:
 		want = ((combat._aim_point(player) - player.loco.logical) * 0.4).limit_length(96.0)
 	cam_lead = cam_lead.lerp(want, 1.0 - exp(-dt * 5.0))
-	cam.position = (player.loco.logical + cam_lead).round()
+	if not ev.cam_locked:
+		cam.position = (player.loco.logical + cam_lead).round()
+
+
+## 맵을 옮긴 뒤 동행을 주인공 등 뒤(바라보는 반대쪽) 가장 가까운 빈 칸에 세운다
+func _bring_buddy(id: String) -> void:
+	var back: Vector2 = -Locomotion.VEC[player.loco.facing].normalized()
+	var at := player.loco.logical
+	for r in [1, 2, 3]:
+		for off in [back, back.rotated(PI / 4.0), back.rotated(-PI / 4.0), back.rotated(PI / 2.0), back.rotated(-PI / 2.0)]:
+			var c := map.tile_of(player.loco.logical + off * 32.0 * r)
+			if not map.is_solid(c):
+				at = Vector2(c.x * 32 + 16, c.y * 32 + 16)
+				break
+		if at != player.loco.logical:
+			break
+	ev._show_actor(id, at, "S")
+	if ev.actors.has(id):
+		var b: Actor = ev.actors[id]
+		b.loco.facing = player.loco.facing
+		b._show()
+		combat.buddy = b
 
 
 func _check_exit() -> void:
@@ -329,6 +357,9 @@ func interact() -> bool:
 			var m: Dictionary = map.text_meta.get(cc, {})
 			if not m.is_empty():
 				if not InteriorMap._cond_ok(str(m["cond"]), st):
+					if str(m.get("plain", "")) != "":                         # 장면 조건이 아니면 그 자리의 보통 글(0-9)
+						say_text(m["plain"])
+						return true
 					continue
 				var n := int(text_seen.get(m["key"], 0))
 				if n < m["seq"].size():                                      # 여러 번 조사: 차례로 다른 글, 다 읽으면 장면
@@ -387,6 +418,7 @@ const HU := DocScreen.GREEN
 const HUD_RED := Color("E04A35")
 var hud_on := false                              ## 핍-보이를 받으면 켠다(HUD = 핍-보이 표시)
 var buddy_name := ""                             ## 일시 동행 이름(HUD 동행 칸)
+var buddy_id := ""                               ## 일시 동행 인물 ID(맵을 옮기면 주인공 뒤 빈 칸에 다시 세운다)
 var _hurt_t := 0.0
 var _hud_t := 0.0
 var font_s: Font
@@ -503,6 +535,7 @@ func _handlers() -> void:
 		if id == "off":
 			combat.buddy = null
 			buddy_name = ""
+			buddy_id = ""
 		elif ev.actors.has(id):
 			var b: Actor = ev.actors[id]
 			map.blockers.erase(b)                                              # 동행은 길을 막지 않는다
@@ -510,6 +543,7 @@ func _handlers() -> void:
 				if n["actor"] == b:
 					n["routine"] = null
 			combat.buddy = b
+			buddy_id = id
 			buddy_name = st.npc_name(id).get_slice("(", 0).strip_edges()
 		done.call()
 	ev.handlers["refresh"] = func(_a: Array, done: Callable) -> void:   # 맵 인물을 지금 조건대로 다시 세운다(0-8)
@@ -517,6 +551,18 @@ func _handlers() -> void:
 		done.call()
 	ev.handlers["range"] = func(a: Array, done: Callable) -> void:     # 사격장 단계: stealth = 은신 표적을 세운다
 		combat.set_stealth_live(str(a[0]) == "stealth")
+		done.call()
+	ev.handlers["pc"] = func(a: Array, done: Callable) -> void:         # 주인공 자리 옮기기(페이드 사이, 0-9): pc 표지 [방향]
+		player.loco.place(map.mark_pos(str(a[0])))
+		player.loco.facing = EventRunner.DIR_IDX.get(str(a[1]) if a.size() > 1 else map.mark_dir(str(a[0])), 2)
+		player.position = player.loco.render
+		player._show()
+		_last_tile = map.tile_of(player.loco.logical)
+		cam.position = player.loco.logical.round()
+		done.call()
+	ev.handlers["unlock"] = func(a: Array, done: Callable) -> void:     # 잠긴 문 열기: unlock x y(0-9 무기고)
+		map.unlock_door(int(a[0]), int(a[1]))
+		combat.nav = InteriorNav.new(map)                                  # 길찾기 격자를 다시 만든다
 		done.call()
 	ev.handlers["hint"] = func(a: Array, done: Callable) -> void:
 		hint(str(a[0]), float(a[1]) if a.size() > 1 else 6.0)
@@ -638,6 +684,7 @@ func _pip_action(kind: String, id: String) -> void:
 
 
 func _on_dialogue_done() -> void:
+	ev.cam_locked = false
 	if not _talking.is_empty() and _talking["routine"] != null:
 		_talking["routine"].resume()
 	_talking = {}

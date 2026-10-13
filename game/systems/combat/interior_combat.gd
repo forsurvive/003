@@ -121,7 +121,7 @@ func on_map(map: InteriorMap, player: Actor, st: StoryState) -> void:
 	set_stealth_live(stealth_live)
 	for row in map.data.get("enemies", []):
 		if InteriorMap._cond_ok(str(row.get("cond", "")), st):
-			spawn(str(row["id"]), Vector2(int(row["x"]) * 32 + 16, int(row["y"]) * 32 + 16), map, st)
+			spawn(str(row["id"]), Vector2(int(row["x"]) * 32 + 16, int(row["y"]) * 32 + 16), map, st, row)
 	_rebuild_list()
 	_doll()
 
@@ -137,19 +137,46 @@ func set_stealth_live(on: bool) -> void:
 			_prop_state(t, "" if on else "duck")
 
 
-func spawn(enemy_id: String, pos: Vector2, map: InteriorMap, st: StoryState = null) -> Enemy:
+## 적 무기(정합, 0-9): 보안요원 진압봉 W-041 · 권총 W-002, 계엄군은 생포 사격(W-002 판정을 빌린다), 파워 아머는 그 세 배 연사
+func _enemy_weapon(enemy_id: String, arm: String) -> Dictionary:
+	if enemy_id == "CR-002":
+		return {}
+	var w: Dictionary = weapons.get("W-041" if arm == "baton" else "W-002", {}).duplicate()
+	if enemy_id == "CR-405":
+		w["rate"] = float(w.get("rate", 2.0)) * 3.0
+	return w
+
+
+func spawn(enemy_id: String, pos: Vector2, map: InteriorMap, st: StoryState = null, opts: Dictionary = {}) -> Enemy:
 	var e := Enemy.new()
-	e.setup_enemy(enemy_rows[enemy_id], {}, pos, map)
+	var arm := str(opts.get("arm", "baton" if enemy_id == "CR-473" else ""))
+	e.setup_enemy(enemy_rows[enemy_id], _enemy_weapon(enemy_id, arm), pos, map, opts)
 	e.set_meta("enemy_id", enemy_id)
 	e.cmb.unaware = func() -> bool: return e.brain.state != AIBrain.S.COMBAT and e.brain.gauge < 100.0
+	if enemy_id == "CR-405":                                            # '못 이기는 적'(SD-03a §7.4 연출 메모): HP 하한 1, 체력 표시 없음
+		e.cmb.hp_floor = 1.0
+		e.hide_bar = true
 	map.objects.add_child(e)
 	enemies.append(e)
 	e.cmb.died.connect(func() -> void:
 		stats["downs"] += 1
 		if st != null:
-			st.call_fn("xp", [int(enemy_rows[enemy_id]["xp"])])
+			if not e.has_meta("xp_given"):
+				e.set_meta("xp_given", true)
+				st.call_fn("xp", [int(enemy_rows[enemy_id]["xp"])])
 			if enemy_id == "CR-002":
 				st.call_fn("give", ["I-036", 1])                         # 바퀴 고기 100%(SD-14 §3.1)
+			if e.cmb.killed_lethal and enemy_id == "CR-473":             # 보안요원 사살: 카르마 -25(기절은 0, SD-03a §7.4)
+				st.call_fn("karma", [-25])
+				st.vars.set_v("MQP4_SEC_KO", int(st.vars.get_v("MQP4_SEC_KO")) + 1)
+			elif e.cmb.killed_lethal and enemy_id == "CR-401":
+				st.vars.set_v("MQP4_BJ_KO", int(st.vars.get_v("MQP4_BJ_KO")) + 1)
+		if e.cmb.ko:
+			e.ko_t = Enemy.KO_SECS
+			_pop("기절", e.loco.logical + Vector2(0, -26), Color("8E9BA8"))
+		if e.who == "N-R01-018" and st != null and int(st.vars.get_v("MQP4_KEY")) == 0:   # 무기고 담당 권서준: 무기고 열쇠(0-9 정합)
+			st.vars.set_v("MQP4_KEY", 1)
+			message.emit("권서준의 허리춤에서 무기고 열쇠를 빼앗았다.")
 		enemy_killed.emit(enemy_id, alive_enemies()))
 	_rebuild_list()
 	return e
@@ -249,6 +276,9 @@ func tick(dt: float, free: bool, st: StoryState) -> void:
 	nav.new_frame()
 	if st != null:
 		sneak_skill = float(st.skill("SNEAK"))
+	pc.posture = "crouch" if crouch else "stand"                          # 적의 탐지식 입력(SD-11 §7.3, 0-9)
+	pc.movement = "still" if player.loco.motion == "idle" else ("sneak" if crouch else "move")
+	pc.sneak = sneak_skill
 	cool = maxf(0.0, cool - dt)
 	if pc.flash > 0:
 		pc.flash -= 1
@@ -388,6 +418,7 @@ func _melee(player: Actor, w: Dictionary, to: Vector2, st: StoryState) -> void:
 			var part := CombatRules.pick_part(e.cmb.weights, shots.rng)
 			var r := CombatRules.resolve({"weapon": w, "skill": float(st.skill("MELEE")) if st != null else 15.0,
 				"attacker": {"str": st.stat("ST") if st != null else 5}, "part": part, "dr": e.cmb.dr, "sneak": sneak, "crit": sneak})
+			r["nonlethal"] = true                                       # 근접 = 비살상(사람은 기절, 0-9)
 			e.cmb.take(r, player.loco.logical)
 			e.hear("melee", player.loco.logical)
 			stats["hits"] += 1

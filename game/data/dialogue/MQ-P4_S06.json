@@ -1,0 +1,37 @@
+{
+ "id": "MQ-P4_S06",
+ "title": "출구 점검표",
+ "loc": "L-R01-01",
+ "npc": "",
+ "cond": "MQP4_STAGE >= 40 and MQP4_STAGE < 100",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "바깥으로 나가는 마지막 문 옆에 낡은 단말이 하나 붙어 있다. '볼트 출입 점검표 — 전출 신고서 서식 제9호'."
+  },
+  {
+   "op": "cmd",
+   "name": "doc",
+   "args": [
+    "exit"
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "quest(\"MQ-P4\", 60); xp(25)"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/prologue/MQ-P4.txt"
+}

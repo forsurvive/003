@@ -1,0 +1,51 @@
+{
+ "id": "MQ-P4_GATE",
+ "title": "정문 — 방폭문 밖",
+ "loc": "L-R01-01",
+ "npc": "",
+ "cond": "MQP4_STAGE >= 30 and MQP4_STAGE < 60",
+ "labels": {
+  "START": 0,
+  "PASS": 3,
+  "OUT": 4
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "MQP4_BJ_KO == 0",
+   "to": "PASS"
+  },
+  {
+   "op": "line",
+   "who": "C-004",
+   "emo": "아픔",
+   "text": "(무릎을 꿇은 채) …다시 만난다."
+  },
+  {
+   "op": "goto",
+   "to": "OUT"
+  },
+  {
+   "op": "line",
+   "who": "C-004",
+   "emo": "기본",
+   "text": "쏘지 마! 후보다. …다시 만난다."
+  },
+  {
+   "op": "cmd",
+   "name": "escape",
+   "args": [
+    "done",
+    "1"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/prologue/MQ-P4.txt"
+}

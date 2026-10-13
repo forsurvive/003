@@ -1,0 +1,38 @@
+{
+ "id": "MQ-P4_GUNS",
+ "title": "무기고 — 총기 거치대",
+ "loc": "L-R01-01",
+ "npc": "",
+ "cond": "MQP4_ARMORY == 1 and has(\"W-002\") == 0",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "보안부 권총이 한 정 남아 있다. 탄 상자도 하나."
+  },
+  {
+   "op": "do",
+   "fx": "give(\"W-002\"); give(\"10mm 탄\", 36)"
+  },
+  {
+   "op": "cmd",
+   "name": "hint",
+   "args": [
+    "숫자 키로 무기 고르기 · 정문은 아트리움 북쪽 — 계엄군 사이를 지나 문밖으로",
+    "7"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/prologue/MQ-P4.txt"
+}

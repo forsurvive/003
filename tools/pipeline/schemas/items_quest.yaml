@@ -2,7 +2,7 @@
 doc: 13_items.md
 id_column: ID
 section: "### 7.7 퀘스트 아이템 (M-201~M-250, 메인 퀘스트)"
-rows: [M-201, M-247, M-248]
+rows: [M-201, M-202, M-203, M-204, M-205, M-229, M-247, M-248, M-249, M-250]
 columns:
   ID: {field: id, type: id, pattern: "^M-\\d{3}$", required: true}
   이름: {field: name, type: str, required: true}

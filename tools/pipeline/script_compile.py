@@ -2,7 +2,7 @@
 
 원고 형식(한 줄 = 한 명령. 빈 줄·`#`으로 시작하는 줄은 무시)
   @scene MQ-P1_S01  의무실  (L-R01-01)       장면 시작(ID · 제목 · 장소)
-  @npc   C-025                                화술 판정 대상(없으면 그 장면 첫 화자)
+  @npc   C-025                                화술 판정 대상(없으면 그 장면 첫 화자). `@npc -` = 진행기·밟는 칸 장면(인물에 묶지 않는다)
   @cond  MQP1_STAGE == 10                     장면이 열리는 조건
   C-025 [미소] 건강해요. 울음소리 좋네.       대사: 화자 ID [표정] 문장   (화자 SYS = 해설, 표정 생략 = 기본)
   * 라벨                                      라벨(장면 첫 줄은 START)
@@ -41,9 +41,11 @@ FNS = {"karma", "aff", "quest", "stage", "result", "give", "take", "has", "caps"
 CMDS = {"wait", "fade_in", "fade_out", "balloon", "move", "face", "shake", "year_card", "title_card", "sfx", "bgm", "cam", "show",
         "hide", "pose", "doc", "flash", "lamp",
         "pipboy", "equip", "hurt", "buddy", "range", "hint", "hud",          # 0-7: 핍-보이·무기·연출 피해·일시 동행·사격장 단계·안내 띠
-        "refresh"}                                                           # 0-8: 맵 인물을 지금 조건대로 다시 세운다
+        "refresh",                                                           # 0-8: 맵 인물을 지금 조건대로 다시 세운다
+        "gate", "go", "pc", "escape", "unlock"}                              # 0-9: 방폭문 · 기다리지 않는 이동 · 주인공 자리 · 탈출 진행기 · 문 열기
 ENGINE_VARS = {"PC_ST", "PC_PE", "PC_EN", "PC_CH", "PC_IN", "PC_AG", "PC_LK", "PC_TAG1", "PC_TAG2", "PC_TAG3", "PC_CAPS", "PC_XP",
-               "PC_SEX", "PC_APT_PROXY"}
+               "PC_SEX", "PC_APT_PROXY",
+               "MQP4_DUCT", "MQP4_FOLLOW", "MQP4_KEY", "MQP4_ARMORY", "MQP4_TALK", "MQP4_BJ_KO", "MQP4_SEC_KO", "MQP4_CAUGHT"}
 DECISION = ["어느 편에 서겠", "편에 서겠습니까", "제안을 수락", "받아들이겠습니까", "어느 쪽을 택하", "누구 편이"]
 OLD_NAMES = ["강태오", "천웨이", "국민방송"]
 PAGE = 160
@@ -246,7 +248,10 @@ def compile_file(path, cx):
             continue
         if line.startswith("@npc"):
             sc["npc"] = line.split(None, 1)[1].strip()
-            if sc["npc"] not in cx.npcs:
+            if sc["npc"] == "-":                                   # 0-9: 진행기·밟는 칸 장면 — 어느 인물에게도 묶지 않는다
+                sc["npc"] = ""
+                sc["_nonpc"] = True
+            elif sc["npc"] not in cx.npcs:
                 cx.rep.err(where, f"없는 인물 ID: {sc['npc']}")
         elif line.startswith("@cond"):
             sc["cond"] = line.split(None, 1)[1].strip()
@@ -337,7 +342,7 @@ def compile_file(path, cx):
             if to != "END" and to not in s["labels"]:
                 cx.rep.err(where, f"없는 라벨: {to}")
         first = s.pop("_first")
-        if not s["npc"]:
+        if not s["npc"] and not s.pop("_nonpc", False):
             s["npc"] = first
         if not s["cond"]:                                          # 0-8: 2268 장면이 2274년 차명수에게 다시 열렸다
             cx.rep.err(f"{s['src']} {s['id']}", "@cond가 없다 — 그 인물에게 말을 걸면 어느 시대든 이 장면이 다시 열린다")

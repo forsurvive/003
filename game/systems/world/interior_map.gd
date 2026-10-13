@@ -110,15 +110,19 @@ func load_map(map_id: String, st: StoryState = null) -> void:
 	for e in data["exits"]:
 		exits[Vector2i(int(e["x"]), int(e["y"]))] = {"to": e["to"], "mark": e["mark"]}
 	for t in data["texts"]:
-		if not _cond_ok(t.get("cond", ""), st):
+		var live := _cond_ok(t.get("cond", ""), st)
+		var staged: bool = t.has("scene") or t.has("seq")              # 장면이 달린 글: 조건은 조사하는 순간에 본다(무기고를 연 뒤의 총기 거치대 등, 0-9)
+		if not live and not staged:
 			continue
 		for j in int(t["h"]):
 			for i in int(t["w"]):
 				var c := Vector2i(int(t["x"]) + i, int(t["y"]) + j)
-				texts[c] = t["text"]
-				if t.has("seq") or t.has("scene") or t.has("cond"):
+				var plain: String = texts.get(c, "")
+				if live or not texts.has(c):
+					texts[c] = t["text"]
+				if staged or t.has("cond"):
 					text_meta[c] = {"cond": t.get("cond", ""), "seq": t.get("seq", []), "scene": t.get("scene", ""),
-						"key": "%s:%d,%d" % [map_id, int(t["x"]), int(t["y"])]}
+						"key": "%s:%d,%d" % [map_id, int(t["x"]), int(t["y"])], "plain": plain}
 
 
 static func _cond_ok(cond: String, st: StoryState) -> bool:
@@ -166,6 +170,84 @@ func set_prop_state(cell: Vector2i, state: String) -> String:
 				(p["node"].texture as AtlasTexture).region = _r(rect)
 				return p["name"]
 	return ""
+
+
+## 톱니 방폭문(V-00, 단계 0-9 개방식): k 0 닫힘 → 1 열림. 문은 오른쪽으로 210px 굴러가며 컷마다 정확히 10px·거리/반지름만큼 돈다
+## (그림이 그 각도로 구워져 있어 미끄러지지 않는다 — props_s07.GEAR_FRAMES). 빈 구멍에는 바깥의 흰 빛과 바닥에 번지는 빛줄기.
+const GATE_ROLL := 210.0
+var gate_k := 0.0
+var _gate_light: Node2D
+
+
+func set_gate(k: float) -> void:
+	gate_k = clampf(k, 0.0, 1.0)
+	var door: Dictionary = {}
+	var frame: Dictionary = {}
+	for p in props:
+		if p["name"] == "gear_door":
+			door = p
+		elif p["name"] == "gear_frame":
+			frame = p
+	if door.is_empty():
+		return
+	var fr: Array = prop_meta["gear_door"]["frames"]
+	var f := int(round(gate_k * (fr.size() - 1)))
+	var node: Sprite2D = door["node"]
+	(node.texture as AtlasTexture).region = _r(fr[f])
+	if not door.has("x0"):
+		door["x0"] = node.position.x
+	node.position.x = float(door["x0"]) + roundf(GATE_ROLL * f / float(fr.size() - 1))   # 컷과 같은 거리만(미끄러짐 없음)
+	if _gate_light == null and not frame.is_empty():
+		_gate_light = Node2D.new()
+		_gate_light.draw.connect(_draw_gate_light.bind(node))
+		(frame["node"] as Node2D).add_child(_gate_light)                       # 문틀 바로 위·문 아래에 그린다
+		_gate_light.position = -(frame["node"] as Node2D).position
+		door["c"] = Vector2(float(door["x0"]) + 96.0, node.position.y + node.offset.y + 96.0)
+		_gate_light.set_meta("c", door["c"])
+	if _gate_light != null:
+		_gate_light.queue_redraw()
+
+
+func _draw_gate_light(_door: Sprite2D) -> void:
+	if gate_k <= 0.0:
+		return
+	var c: Vector2 = _gate_light.get_meta("c")
+	var k := gate_k
+	var white := Color("E9E4D8")
+	var pale := Color("CBC5B9")
+	var pale2 := Color("ABA49A")
+	_gate_light.draw_circle(c, 96.0, white)                                   # 구멍 = 바깥 하늘(흰 빛)
+	for y in range(-96, 97, 2):                                                # 가장자리 디더(빛이 문틀을 먹는다)
+		var hw := sqrt(maxf(0.0, 96.0 * 96.0 - y * y))
+		for s in [-1, 1]:
+			var x: float = c.x + s * hw
+			_gate_light.draw_rect(Rect2(Vector2(roundf(x), c.y + y), Vector2(2, 2)), pale if (y / 2) % 2 == 0 else white)
+	var reach := 220.0 * k                                                    # 바닥 빛줄기: 문이 열린 만큼 앞으로 번진다. 단색 면 없이 디더 밀도로만
+	var top := c.y + 96.0                                                     # (구멍 아래 끝 = 데크 첫 줄)
+	var y0 := int(top)
+	while float(y0) < top + reach:
+		var t := (float(y0) - top) / maxf(1.0, reach)
+		var hw := 44.0 + 96.0 * t
+		var row := (y0 - int(top)) / 2
+		var every := 2 if t < 0.2 else (3 if t < 0.45 else (4 if t < 0.75 else 6))   # 2칸마다 1 → 6칸마다 1
+		var col := pale if t < 0.45 else pale2
+		if row % (1 if every <= 2 else 2) == 0:
+			var x := int(c.x - hw) + (row % every) * 2
+			while x < int(c.x + hw):
+				_gate_light.draw_rect(Rect2(Vector2(x, y0), Vector2(2, 2)), col)
+				x += every * 2
+		y0 += 2
+
+
+func unlock_door(x: int, y: int) -> bool:
+	for d in doors:
+		if int(d["x"]) == x and int(d["y"]) == y:
+			d["locked"] = false
+			for yy in [y, y + 1]:
+				solid[yy * size.x + x] = 0
+			texts.erase(Vector2i(x, y + 1))
+			return true
+	return false
 
 
 func add_actor(a: Node2D) -> void:

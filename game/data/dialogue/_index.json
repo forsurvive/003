@@ -22,6 +22,21 @@
   "MQ-P3_S01",
   "MQ-P3_S02",
   "MQ-P3_S03",
-  "MQ-P3_S04"
+  "MQ-P3_S04",
+  "MQ-P4_ARMORY",
+  "MQ-P4_DO",
+  "MQ-P4_DOYUN",
+  "MQ-P4_DRAIN",
+  "MQ-P4_GATE",
+  "MQ-P4_GUNS",
+  "MQ-P4_OUT",
+  "MQ-P4_S01",
+  "MQ-P4_S02",
+  "MQ-P4_S03",
+  "MQ-P4_S03B",
+  "MQ-P4_S04_TALK",
+  "MQ-P4_S05",
+  "MQ-P4_S06",
+  "MQ-P4_S07"
  ]
 }

@@ -1,0 +1,82 @@
+{
+ "id": "MQ-P4_S05",
+ "title": "오버시어 단말",
+ "loc": "L-R01-01",
+ "npc": "",
+ "cond": "MQP4_STAGE >= 30 and MQP4_STAGE < 60 and has(\"M-204\") == 0",
+ "labels": {
+  "START": 0,
+  "COPY": 3
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "오버시어 단말. 기록 목록 맨 위에 두 줄이 있다. '비상 집결지 — 관리 요원 인수 절차', '계보 대장 사본 — 첨부 메모 1'."
+  },
+  {
+   "op": "if",
+   "cond": "MQP4_TALK == 1",
+   "to": "COPY"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "핍-보이를 단말에 물려 기록을 복사한다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "과학",
+       "min": 25
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "COPY",
+     "id": "MQ-P4_S05:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "MQ-P4_S05:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "sfx",
+   "args": [
+    "data"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "핍-보이에 기록이 들어온다. 여의도 지하 벙커 좌표와, 계보 규칙 4조가 적힌 2076년 메모. 서명은 '세진전자 설계실 한'."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "결재 서류 맨 위의 '관리 후보 지정 통지서'도 함께 챙긴다."
+  },
+  {
+   "op": "do",
+   "fx": "give(\"M-204\"); give(\"M-229\"); give(\"M-203\"); K_RALLY = 1; xp(25)"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/prologue/MQ-P4.txt"
+}

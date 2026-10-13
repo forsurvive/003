@@ -40,6 +40,10 @@ func _init() -> void:
 		vars.declare("PC_SKP_" + k, "int", 0)         # 레벨업·책 등으로 더한 영구 증가분
 	for k in ["PC_CAPS", "PC_XP", "PC_SEX", "PC_APT_PROXY"]:   # PC_APT_PROXY: 적성 평가 대리 작성 유형 1~4(0 = 아님, 단계 0-8)
 		vars.declare(k, "int", 0)
+	# MQ-P4 진행 표시(단계 0-9, 정합): DUCT 덕트 엿듣기 1 · FOLLOW 하도윤 동행 1 · KEY 무기고 열쇠 1 · ARMORY 무기고 열림 1 ·
+	# TALK 설득 1 성공 2 실패 · BJ_KO 계엄병 사망 수 · SEC_KO 보안요원 사살 수 · CAUGHT 붙잡힌 횟수
+	for k in ["MQP4_DUCT", "MQP4_FOLLOW", "MQP4_KEY", "MQP4_ARMORY", "MQP4_TALK", "MQP4_BJ_KO", "MQP4_SEC_KO", "MQP4_CAUGHT"]:
+		vars.declare(k, "int", 0)
 	for k in ["P_SURNAME", "P_GIVEN", "P_FULL", "P_REGNO", "PC_APT"]:   # PC_APT: 적성 평가 답 10개(결과지 다시 보기)
 		vars.declare(k, "str", "")
 	for kv in [["PC_HAIR", "HR05"], ["PC_HCOL", "H1"], ["PC_SKIN", "S3"]]:   # 외형(SD-10 §8.3). PC_SEX 1 남 · 2 여

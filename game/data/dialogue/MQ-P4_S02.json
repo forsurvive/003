@@ -1,0 +1,540 @@
+{
+ "id": "MQ-P4_S02",
+ "title": "정문 구역 — 개방식",
+ "loc": "L-R01-01",
+ "npc": "",
+ "cond": "MQP4_STAGE == 20",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "cmd",
+   "name": "cam",
+   "args": [
+    "p4_crowd",
+    "1"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "fade_in",
+   "args": [
+    "white",
+    "8"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "정오. 정문 구역 데크에 볼트 사람 백구십두 명이 섰다."
+  },
+  {
+   "op": "cmd",
+   "name": "sfx",
+   "args": [
+    "chime"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "(구내방송) 개방을 축하합니다. 개방을 축하합니다. 개방을 축하ㅎ—"
+  },
+  {
+   "op": "cmd",
+   "name": "sfx",
+   "args": [
+    "static"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "녹음 방송이 지직거리며 끊긴다. 200년 전에 녹음해 둔 방송이다."
+  },
+  {
+   "op": "line",
+   "who": "C-001",
+   "emo": "기본",
+   "text": "이 문은 2077년 10월 23일 밤에 닫혔습니다. 오늘이 꼭 200년 되는 날입니다."
+  },
+  {
+   "op": "line",
+   "who": "C-001",
+   "emo": "기본",
+   "text": "최보미 요원, 레버."
+  },
+  {
+   "op": "cmd",
+   "name": "cam",
+   "args": [
+    "19,7",
+    "10"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "lamp",
+   "args": [
+    "p4_lever",
+    "amber"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "sfx",
+   "args": [
+    "gate_alarm"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "shake",
+   "args": [
+    "4"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "gate",
+   "args": [
+    "open",
+    "60"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "flash",
+   "args": [
+    "white"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "흰 빛. 문 너머에서 들어온 바람이 데크의 먼지를 한꺼번에 들어 올린다."
+  },
+  {
+   "op": "cmd",
+   "name": "balloon",
+   "args": [
+    "C-002",
+    "!"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "wait",
+   "args": [
+    "8"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빛 속에서 사람 그림자가 걸어 들어온다. 상인이 아니다. 같은 걸음, 같은 철모."
+  },
+  {
+   "op": "cmd",
+   "name": "show",
+   "args": [
+    "C-004",
+    "p4_in",
+    "S"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "go",
+   "args": [
+    "C-004",
+    "p4_yuk"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "wait",
+   "args": [
+    "6"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "show",
+   "args": [
+    "BJ1",
+    "p4_in",
+    "S",
+    "en_cr401_loco"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "go",
+   "args": [
+    "BJ1",
+    "p4_bj1"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "wait",
+   "args": [
+    "4"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "show",
+   "args": [
+    "BJ2",
+    "p4_in",
+    "S",
+    "en_cr401_loco"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "go",
+   "args": [
+    "BJ2",
+    "p4_bj2"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "wait",
+   "args": [
+    "4"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "show",
+   "args": [
+    "BJ3",
+    "p4_in",
+    "S",
+    "en_cr401_loco"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "go",
+   "args": [
+    "BJ3",
+    "p4_bj3"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "wait",
+   "args": [
+    "4"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "show",
+   "args": [
+    "BJ4",
+    "p4_in",
+    "S",
+    "en_cr401_loco"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "go",
+   "args": [
+    "BJ4",
+    "p4_bj4"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "wait",
+   "args": [
+    "4"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "show",
+   "args": [
+    "BJ5",
+    "p4_in",
+    "S",
+    "en_cr401_loco"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "go",
+   "args": [
+    "BJ5",
+    "p4_bj5"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "wait",
+   "args": [
+    "4"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "show",
+   "args": [
+    "BJ6",
+    "p4_in",
+    "S",
+    "en_cr401_loco"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "go",
+   "args": [
+    "BJ6",
+    "p4_bj6"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "wait",
+   "args": [
+    "5"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "sfx",
+   "args": [
+    "heavy_step"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "show",
+   "args": [
+    "PA",
+    "p4_in",
+    "S",
+    "en_cr405_loco"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "go",
+   "args": [
+    "PA",
+    "p4_pa"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "shake",
+   "args": [
+    "2"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "wait",
+   "args": [
+    "go"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "cam",
+   "args": [
+    "p4_yuk",
+    "6"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "맨 앞의 장교가 종이 한 장을 꺼낸다. 철모 아래 얼굴에는 아무 표정이 없다."
+  },
+  {
+   "op": "line",
+   "who": "C-004",
+   "emo": "기본",
+   "text": "계엄사령부 대령 육지환. 2077년 행정안전부 관제망 지령 제7호에 따라, 볼트 S-07은 등록 관리자 후보를 정부에 인도한다."
+  },
+  {
+   "op": "cmd",
+   "name": "balloon",
+   "args": [
+    "N-R01-023",
+    "?"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "balloon",
+   "args": [
+    "N-R01-008",
+    "?"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "balloon",
+   "args": [
+    "C-023",
+    "..."
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "사람들이 웅성인다. 교역 이야기는 한 줄도 없다."
+  },
+  {
+   "op": "line",
+   "who": "C-001",
+   "emo": "놀람",
+   "text": "…관리자 후보요? 우리는 교역을—"
+  },
+  {
+   "op": "line",
+   "who": "C-004",
+   "emo": "기본",
+   "text": "교역은 인도가 끝난 뒤에 논의한다. 서류가 그렇게 돼 있다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "육지환이 철끈으로 묶은 대장 사본을 넘긴다. 'S-07 관리 계보 대장 — 사본'."
+  },
+  {
+   "op": "line",
+   "who": "C-004",
+   "emo": "기본",
+   "text": "1순위 승계 기록: 2274년, 오버시어 윤정인에서 그 자녀에게."
+  },
+  {
+   "op": "cmd",
+   "name": "face",
+   "args": [
+    "C-001",
+    "S"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "balloon",
+   "args": [
+    "C-001",
+    "..."
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "윤정인의 얼굴이 굳는다. 2274년. 적성 평가가 있던 해다."
+  },
+  {
+   "op": "line",
+   "who": "C-001",
+   "emo": "슬픔",
+   "text": "……3년 전까지는, 제가."
+  },
+  {
+   "op": "line",
+   "who": "C-004",
+   "emo": "기본",
+   "text": "개인 감정은 없다. 서류가 그렇게 돼 있다."
+  },
+  {
+   "op": "line",
+   "who": "C-001",
+   "emo": "기본",
+   "text": "오버시어실로 가시죠. 거기서 얘기합시다. …도 부장, 사람들 해산시켜요."
+  },
+  {
+   "op": "cmd",
+   "name": "go",
+   "args": [
+    "C-001",
+    "p4_out"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "go",
+   "args": [
+    "C-004",
+    "p4_out"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "wait",
+   "args": [
+    "14"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "hide",
+   "args": [
+    "C-001"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "hide",
+   "args": [
+    "C-004"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "face",
+   "args": [
+    "C-002",
+    "W"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-002",
+   "emo": "놀람",
+   "text": "(귓속말) 야. 저거… 너 얘기야."
+  },
+  {
+   "op": "line",
+   "who": "C-022",
+   "emo": "기본",
+   "text": "해산. 각자 방으로. 계엄군 분대는 정문 데크에 남는다."
+  },
+  {
+   "op": "do",
+   "fx": "quest(\"MQ-P4\", 30); xp(30)"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/prologue/MQ-P4.txt"
+}

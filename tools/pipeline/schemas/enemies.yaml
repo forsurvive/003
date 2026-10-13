@@ -1,7 +1,7 @@
-# SD-14 적 표 → game/data/enemies.json (단계 T: 큰바퀴 + 계엄군 보병 1)
+# SD-14 적 표 → game/data/enemies.json (단계 T: 큰바퀴 + 계엄군 보병 1, 단계 0-9: 기갑 계엄병 · S-07 보안요원)
 doc: 14_creatures-enemies.md
 id_column: ID
-rows: [CR-002, CR-401]
+rows: [CR-002, CR-401, CR-405, CR-473]
 columns:
   ID: {field: id, type: id, pattern: "^CR-\\d{3}$", required: true}
   이름: {field: name, type: str, required: true}
