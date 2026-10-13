@@ -87,7 +87,7 @@ func _ready() -> void:
 	area = world
 	var sp: Array = world.index["spawns"]["player"]
 	player = Actor.new()
-	player.setup_doll({"torso": "T01"}, Vector2(sp[0] * 32 + 16, sp[1] * 32 + 16), world)
+	player.setup_doll({"torso": "T01", "weapon": "pistol"}, Vector2(sp[0] * 32 + 16, sp[1] * 32 + 16), world)
 	world.add_child(player)
 	pc.actor = player
 	pc.team = "player"
@@ -384,6 +384,8 @@ func _combat_tick(dt: float) -> void:
 	if pc.flash > 0:
 		pc.flash -= 1
 	player.doll.set_flash(1.0 if pc.flash > 0 else 0.0)
+	if pc.flash == 2:
+		player.doll.flash_face("hurt", 0.3)                            # 맞으면 찡그린다
 
 
 ## 터치 사격: 오른쪽 스틱을 놓는 순간 쏜다. 조준 보정: 스틱 방향 반각 12° 안의 가장 가까운 적(SD-19 §6.13)
@@ -455,6 +457,7 @@ func _player_combat(dt: float) -> void:
 			pick = "W-041" if weapon_id == "W-002" else "W-002"
 		if pick != "" and pick != weapon_id and _focus_t < 0.0:
 			weapon_id = pick
+			player.doll.set_look({"weapon": _doll_weapon()})
 			_cool = 0.3
 			msg = weapons[pick]["name"]
 			return
@@ -472,6 +475,7 @@ func _player_combat(dt: float) -> void:
 			if shots.fire(player.loco.logical + Vector2(0, -14) + to.normalized() * 10.0, ang0, 640.0, "player", w0, SKILL, true, PER):
 				mag -= 1
 				_cool = 1.0 / float(w0["rate"])
+				player.doll.flash_face("fire", 0.2)
 				ap_stats["focused"] += 1
 				for e in enemies:
 					e.hear("pistol", player.loco.logical)
@@ -508,6 +512,7 @@ func _player_combat(dt: float) -> void:
 		if shots.fire(muzzle, ang, 640.0, "player", w, SKILL):
 			mag -= 1
 			_cool = 1.0 / float(w["rate"])
+			player.doll.flash_face("fire", 0.14)
 			for e in enemies:
 				e.hear("pistol", player.loco.logical)
 	else:
@@ -668,14 +673,17 @@ func _exit_tree() -> void:
 			JSON.stringify(_count(shots.focused_hits)), ap_stats["winded"]])
 
 
-## 장비 교체 시험(P9 즉시 반영): Alt + 1 몸통 2 머리카락 3 머리 장비 4 눈 장비 5 세력 6 피부·머리색
-const CYCLE := {KEY_1: ["torso", ["T01", "T02", "T03", "T06"]], KEY_2: ["hair", ["HR03", "HR05", "HR07", "HR08", "HR09"]],
+## 장비 교체 시험(P9 즉시 반영): Alt + 1 몸통 2 머리카락 3 머리 장비 4 눈 장비 5 세력 6 피부 7 몸(남·여) 8 머리색
+const CYCLE := {KEY_1: ["torso", ["T01", "T02", "T03", "T04", "T05", "T06", "T07", "T08", "T09", "T10", "T11", "T12", "T13", "T14",
+		"T15", "T16", "GOWN"]],
+	KEY_2: ["hair", ["HR03", "HR00", "HR01", "HR02", "HR04", "HR05", "HR06", "HR07", "HR08", "HR09", "HR10", "HR11"]],
 	KEY_3: ["gear", ["", "HD02", "HD03", "HD04", "HD05"]], KEY_4: ["eyes", ["", "EY01", "EY05"]],
-	KEY_5: ["faction", ["", "PF-01", "PF-05", "PF-11", "PF-12"]], KEY_6: ["skin", ["S3", "S1", "S5", "SG1"]]}
+	KEY_5: ["faction", ["", "PF-01", "PF-05", "PF-11", "PF-12"]], KEY_6: ["skin", ["S3", "S1", "S2", "S4", "S5", "S6", "SG1", "SG2"]],
+	KEY_7: ["body", ["M1", "F1"]], KEY_8: ["hair_color", ["H1", "H2", "H3", "H4", "H5", "H6", "H7", "H8"]]}
 var _equip_down := {}
 
 
-## Alt + 1~6 (1·2는 무기 단축키라 Alt를 함께 누른다)
+## Alt + 1~8 (1·2는 무기 단축키라 Alt를 함께 누른다)
 func _equip_keys() -> void:
 	for k in CYCLE:
 		var down := Input.is_key_pressed(k) and Input.is_key_pressed(KEY_ALT)
@@ -709,6 +717,10 @@ func _prof_report() -> void:
 		print("  프레임 %d: 합 %.2fms (인지 %.2f ×%d, 전술 %.2f ×%d [경로 %.2f ×%d], 행동 %.2f, 층 밖 %.2f), 활성 %d" % [
 			r["frame"], r["total"] / 1000.0, r["per"] / 1000.0, r["n_per"], r["tac"] / 1000.0, r["n_tac"],
 			r["path"] / 1000.0, r["n_path"], r["act"] / 1000.0, (r["total"] - acc) / 1000.0, r["active"]])
+
+
+func _doll_weapon() -> String:
+	return "pistol" if weapon_id == "W-002" else "baton"
 
 
 static func _count(a: Array) -> Dictionary:
