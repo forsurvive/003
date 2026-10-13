@@ -128,10 +128,10 @@ def tileset(name, tiles, floor_bg=None):
 def main():
     n = import_sheets()
     roach_sheet()
-    import tiles_r01, tiles_s07
-    r01 = tiles_r01.all_tiles()
+    import tiles_isaac                                             # 아이작풍 타일(이름·순서는 이전 판과 같다)
+    r01 = tiles_isaac.r01_tiles()
     nt = tileset("ts_r01_ext", r01, floor_bg=r01["dirt_a"])
-    ns = tileset("ts_s07_int", tiles_s07.all_tiles())
+    ns = tileset("ts_s07_int", tiles_isaac.s07_tiles())
     print(f"sprites: {n} sheets + cr_cr002 | tiles: r01 {nt}, s07 {ns}")
 
 
