@@ -171,9 +171,11 @@ func _place(motion: String, body_dir: int, frame: int, head_dir: int) -> void:
 	_update_head()
 	if gun.visible:
 		var g: Array = meta["gun_at"][hv[0]]
+		var go: Array = fam.get("gun_off", [0, 0])                      # 몸마다 손 위치(아이 K1은 낮고 안쪽)
+		var gx: float = g[0] + go[0]
 		gun.frame = _head_view
 		gun.flip_h = hv[1]
-		gun.position = Vector2((-g[0] if hv[1] else g[0]) - 10, g[1] - 8)
+		gun.position = Vector2((-gx if hv[1] else gx) - 10, g[1] + go[1] - 8)
 		gun.z_index = -1 if hv[0] in ["N", "NE"] else 1
 
 

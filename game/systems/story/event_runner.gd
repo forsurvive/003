@@ -26,6 +26,7 @@ var fade_mat: ShaderMaterial
 var card: Control
 var card_lines: Array = []
 var font_big: Font
+var handlers := {}                            ## 진행기가 붙이는 명령(0-7: pipboy·equip·hurt·buddy·range·hint·hud): 이름 -> Callable(args, done)
 var font: Font
 var balloons: Array = []                      ## [{"actor", "kind", "t"}]
 var lamps: Array = []                         ## [{"pos", "color", "t"}]
@@ -164,7 +165,10 @@ func run(name: String, args: Array, done: Callable) -> void:
 				a.set_pose(pz)
 			done.call()
 		_:
-			done.call()                                           # sfx·bgm: 아직 자원 없음(기록만)
+			if handlers.has(name):
+				(handlers[name] as Callable).call(args, done)
+			else:
+				done.call()                                       # sfx·bgm: 아직 자원 없음(기록만)
 
 
 func _show_actor(id: String, pos: Vector2, dir: String) -> void:

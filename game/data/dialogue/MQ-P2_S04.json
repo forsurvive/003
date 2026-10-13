@@ -1,0 +1,263 @@
+{
+ "id": "MQ-P2_S04",
+ "title": "배급소 — 지우",
+ "loc": "L-R01-01",
+ "npc": "N-R01-011",
+ "cond": "MQP2_STAGE == 40 and MQP2_RESULT == 0",
+ "labels": {
+  "START": 0,
+  "GIVE": 5,
+  "TALK_OK": 9,
+  "TALK_NG": 13,
+  "FOUND": 16,
+  "LOOK": 18,
+  "PASS": 21,
+  "TAKE": 24,
+  "CARD": 28,
+  "DONE": 31
+ },
+ "ops": [
+  {
+   "op": "cmd",
+   "name": "balloon",
+   "args": [
+    "C-027",
+    "sweat"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "배급 창구 앞에서 꼬마 하나가 운다. 지우다. 여섯 살."
+  },
+  {
+   "op": "line",
+   "who": "C-027",
+   "emo": "슬픔",
+   "text": "배급 카드가 없어. 오늘 못 받으면 사흘 굶는대."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-011",
+   "emo": "기본",
+   "text": "카드 없으면 못 드려요. 규정이에요. 다음 분."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "내 간식 쿠폰을 준다",
+     "tags": [],
+     "cond": "has(\"M-247\")",
+     "fx": "",
+     "to": "GIVE",
+     "id": "MQ-P2_S04:1:0"
+    },
+    {
+     "text": "직원에게 재발급을 부탁한다",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "아주 쉬움"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "TALK_OK",
+     "id": "MQ-P2_S04:1:1",
+     "fail": "TALK_NG"
+    },
+    {
+     "text": "바닥 틈에서 카드를 찾아 준다",
+     "tags": [
+      {
+       "k": "stat",
+       "name": "인지력",
+       "min": 5
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "FOUND",
+     "id": "MQ-P2_S04:1:2"
+    },
+    {
+     "text": "주변을 찾아본다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "LOOK",
+     "id": "MQ-P2_S04:1:3"
+    },
+    {
+     "text": "지나친다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "PASS",
+     "id": "MQ-P2_S04:1:4"
+    },
+    {
+     "text": "지우의 남은 쿠폰까지 가져간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TAKE",
+     "id": "MQ-P2_S04:1:5"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "take(\"M-247\"); karma(50); MQP2_RESULT = 1"
+  },
+  {
+   "op": "line",
+   "who": "C-027",
+   "emo": "미소",
+   "text": "진짜? 고마워!"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "생일 간식은 없어졌지만, 지우가 쿠폰을 꼭 쥐고 웃는다."
+  },
+  {
+   "op": "goto",
+   "to": "DONE"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-011",
+   "emo": "피곤",
+   "text": "알았어요. 재발급 한 장. 이번만이에요."
+  },
+  {
+   "op": "line",
+   "who": "C-027",
+   "emo": "미소",
+   "text": "고맙습니다!"
+  },
+  {
+   "op": "do",
+   "fx": "karma(25); MQP2_RESULT = 2"
+  },
+  {
+   "op": "goto",
+   "to": "DONE"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-011",
+   "emo": "기본",
+   "text": "규정은 규정이에요. 다음 분."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "지우가 다시 운다. 창구 옆 바닥을 살펴보면 뭔가 있을지도 모른다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "창구 옆 바닥 타일 틈에서 반짝이는 것이 보인다. 손가락을 넣어 꺼낸다. 지우의 배급 카드다."
+  },
+  {
+   "op": "goto",
+   "to": "CARD"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "지우가 울면서 창구 옆 바닥을 가리킨다. 저기서 떨어뜨렸나 보다."
+  },
+  {
+   "op": "cmd",
+   "name": "hint",
+   "args": [
+    "바닥 틈을 조사해 보자 (E·Enter)",
+    "6"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "못 본 척 지나친다. 등 뒤에서 울음소리가 커진다."
+  },
+  {
+   "op": "do",
+   "fx": "MQP2_RESULT = 4"
+  },
+  {
+   "op": "goto",
+   "to": "DONE"
+  },
+  {
+   "op": "line",
+   "who": "C-027",
+   "emo": "슬픔",
+   "text": "그건 엄마가 준 건데…"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "지우 손에서 간식 쿠폰 두 장을 빼 든다."
+  },
+  {
+   "op": "do",
+   "fx": "give(\"M-247\", 2); karma(-50); MQP2_RESULT = 5"
+  },
+  {
+   "op": "goto",
+   "to": "DONE"
+  },
+  {
+   "op": "line",
+   "who": "C-027",
+   "emo": "미소",
+   "text": "내 카드! 찾았다!"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-011",
+   "emo": "기본",
+   "text": "카드 확인했어요. 다음 분."
+  },
+  {
+   "op": "do",
+   "fx": "karma(25); MQP2_RESULT = 3"
+  },
+  {
+   "op": "cmd",
+   "name": "hint",
+   "args": [
+    "사격장: 아트리움 오른쪽 아래 문 → 보안과",
+    "6"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/prologue/MQ-P2.txt"
+}

@@ -1007,6 +1007,8 @@ def portrait(look, expr="기본", bg=None):
 
 # 손 무기(머리·조준 방향을 따른다). 손 위치는 발 기준점 기준.
 GUN_AT = {"E": (7, -9), "SE": (7, -6), "S": (6, -4), "NE": (6, -13), "N": (4, -15)}
+# 몸마다 손 위치 보정(dx, dy): 아이(K1)는 몸통이 4px 낮고 2px 좁다
+GUN_BODY = {"K1": (-1, 3)}
 
 
 def gun(view, kind="pistol", hand=None):
@@ -1014,12 +1016,23 @@ def gun(view, kind="pistol", hand=None):
     img = Image.new("RGBA", (20, 16), CLEAR)
     metal = [C("P02"), C("P03"), C("P04"), C("P06")]
     wood = [C("P17"), C("P18")]
-    n = {"pistol": 7, "rifle": 13, "smg": 9, "baton": 10}[kind]
+    n = {"pistol": 7, "rifle": 13, "smg": 9, "baton": 10, "bb": 11, "pole": 15}[kind]
     if view in ("E", "SE", "NE"):
         t = Image.new("RGBA", (20, 16), CLEAR)
         g = ImageDraw.Draw(t)
         x0 = 10 - n // 2
-        if kind == "baton":
+        if kind == "pole":                                   # 대걸레 자루: 밝은 나무 막대, 끝에 쇠 물림
+            g.line([x0, 8, x0 + n - 1, 8], fill=wood[1])
+            g.line([x0 + 2, 7, x0 + n - 2, 7], fill=C("P19"))
+            g.rectangle([x0 + n - 2, 7, x0 + n - 1, 8], fill=metal[3])
+        elif kind == "bb":                                   # BB총: 짧은 공기총, 나무 개머리·가는 총열·펌프
+            g.rectangle([x0 - 2, 8, x0 + 2, 9], fill=wood[1])
+            g.line([x0 - 2, 10, x0, 10], fill=wood[0])
+            g.rectangle([x0 + 3, 7, x0 + n - 1, 7], fill=metal[2])
+            g.line([x0 + 3, 8, x0 + 8, 8], fill=metal[1])
+            g.point((x0 + n - 1, 6), fill=metal[3])
+            g.rectangle([x0 + 5, 9, x0 + 6, 9], fill=wood[0])
+        elif kind == "baton":
             g.rectangle([x0, 7, x0 + n - 1, 8], fill=C("P02"))
             g.line([x0, 7, x0 + n - 1, 7], fill=C("P04"))
         else:
@@ -1035,7 +1048,14 @@ def gun(view, kind="pistol", hand=None):
         img = t
     elif view == "S":
         g = ImageDraw.Draw(img)
-        if kind == "baton":
+        if kind == "pole":
+            g.rectangle([9, 0, 9, 13], fill=wood[1])
+            g.point((9, 0), fill=metal[3])
+        elif kind == "bb":
+            g.rectangle([9, 3, 10, 9], fill=metal[2])
+            g.point((9, 3), fill=metal[3])
+            g.rectangle([8, 8, 11, 10], fill=wood[1])
+        elif kind == "baton":
             g.rectangle([9, 2, 10, 10], fill=C("P02"))
         else:
             g.rectangle([8, 6, 11, 9 if kind == "pistol" else 10], fill=metal[2])
@@ -1043,7 +1063,7 @@ def gun(view, kind="pistol", hand=None):
         g.rectangle([8, 10 if kind == "pistol" else 11, 11, 11 if kind == "pistol" else 12], fill=hand)
     else:
         g = ImageDraw.Draw(img)
-        g.rectangle([9, 3, 10, 3 + n // 2], fill=metal[2] if kind != "baton" else C("P02"))
+        g.rectangle([9, 3, 10, 3 + n // 2], fill=wood[1] if kind in ("pole",) else metal[2] if kind != "baton" else C("P02"))
         g.rectangle([9, 4 + n // 2, 10, 5 + n // 2], fill=hand)
     return outline(img, thick_bottom=False)
 
@@ -1090,6 +1110,8 @@ def actor(look, view, mode="idle", frame=0, face="idle", aim=None, weapon=None):
         if flip_a:
             g = g.transpose(Image.FLIP_LEFT_RIGHT)
         gx, gy = GUN_AT[av]
+        bdx, bdy = GUN_BODY.get(look.body, (0, 0))
+        gx, gy = gx + bdx, gy + bdy
         gpos = (ox + 16 + (-gx if flip_a else gx) - 10, oy + 30 + gy - 8)
         if av in ("N", "NE"):
             img.alpha_composite(g, gpos)

@@ -13,6 +13,7 @@ var flashes: Array = []                  ## [pos, ttl]
 var marks: Array = []                    ## 탄흔 [pos, ttl]
 var combatants: Array = []
 var _buckets := {}
+var _occupied := {}                      ## 산 전투 참가자가 선 칸: 그 칸의 엄폐(표적 받침·소품)는 그 사람을 겨눈 탄을 막지 않는다
 var hits_total := 0
 var spawned_total := 0
 var ghosted_total := 0                   ## 무적 프레임에 몸을 지나간 탄 수
@@ -39,9 +40,11 @@ func fire(origin: Vector2, angle_deg: float, speed: float, team: String, weapon:
 
 func _rebucket() -> void:
 	_buckets.clear()
+	_occupied.clear()
 	for c in combatants:
 		if c.dead:
 			continue
+		_occupied[Vector2i(floori(c.pos().x / 32), floori(c.pos().y / 32))] = c.team
 		var k := Vector2i(floori(c.pos().x / BUCKET), floori(c.pos().y / BUCKET))
 		if not _buckets.has(k):
 			_buckets[k] = []
@@ -122,15 +125,20 @@ static func _seg_circle(a: Vector2, b: Vector2, c: Vector2, r: float) -> float:
 
 
 ## 엄폐 타일 통과 판정. 막히면 막힌 지점, 아니면 (-1, -1).
+## 쏜 사람 칸에서 한 칸 안의 낮은 엄폐는 자기 탄을 막지 않는다(SD-11 §4.2 '내 엄폐는 나를 막지 않는다').
 func _blocked(a: Vector2, b: Vector2, s: Dictionary) -> Vector2:
 	var n := int(ceil(a.distance_to(b) / 8.0)) + 1
+	var o: Vector2 = s["origin"]
+	var ot := Vector2i(floori(o.x / 32), floori(o.y / 32))
 	for i in n + 1:
 		var p := a.lerp(b, float(i) / n)
 		var t := Vector2i(floori(p.x / 32), floori(p.y / 32))
 		var cov: int = world.cover_at(t)
 		if cov == 0:
 			continue
-		if p.distance_to(s["origin"]) <= 32.0:                          # own cover never blocks own shots
+		if p.distance_to(o) <= 32.0 or (cov == 1 and maxi(absi(t.x - ot.x), absi(t.y - ot.y)) <= 1):
+			continue
+		if cov == 1 and _occupied.get(t, s["team"]) != s["team"]:      # 표적이 선 칸(받침대·낮은 소품)
 			continue
 		if cov >= 2:
 			return p
@@ -145,8 +153,10 @@ func _apply(c: Combatant, s: Dictionary, at: Vector2) -> void:
 	var crit := rng.randf() * 100.0 < CombatRules.crit_chance(5, float(w.get("crit_mult", 1.0)), "new", 0.0, focused)
 	var part := CombatRules.pick_part(CombatRules.part_weights(c.weights, {"focused": focused, "per": s.get("per", 5)}) if focused
 		else c.weights, rng)
+	var sneak: bool = s.get("sneak_ok", false) and c.unaware.is_valid() and c.unaware.call()
+	c.last_sneak = sneak
 	var r := CombatRules.resolve({"weapon": w, "skill": s["skill"], "dist": s["origin"].distance_to(at) / 32.0,
-		"crit": crit, "part": part, "dr": c.dr})
+		"crit": crit or sneak, "part": part, "dr": c.dr, "sneak": sneak})
 	c.take(r, s["origin"])
 	hits_total += 1
 	if focused:

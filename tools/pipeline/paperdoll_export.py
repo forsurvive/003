@@ -18,19 +18,21 @@ import chibi as K
 OUT = os.path.join(ROOT, "game", "assets", "paperdoll")
 ROWS = K.VIEWS
 FAMS = ["T01", "T02", "T03", "T04", "T05", "T06", "T07", "T08", "T09", "T10", "T11", "T12", "T13", "T14", "T15", "T16", "GOWN"]
-BODIES = ["M1", "F1"]
+BODIES = ["M1", "F1", "K1"]
+KID_FAMS = ["T01"]                                    # 아이 몸(K1, MQ-P2 열 살)은 볼트 작업복만
 HAIRS = ["HR00", "HR01", "HR02", "HR03", "HR04", "HR05", "HR06", "HR07", "HR08", "HR09", "HR10", "HR11"]
 GEARS = ["HD01", "HD02", "HD03", "HD04", "HD05", "HD06", "HD07", "HD08", "HD09", "HD10", "HD11", "HD12",
          "HD13", "HD14", "HD15", "HD16", "HD17", "HD18"]
 EYES = ["EY01", "EY02", "EY03", "EY04", "EY05", "EY06", "EY07", "EY08"]
-WEAPONS = ["pistol", "rifle", "smg", "baton"]
+WEAPONS = ["pistol", "rifle", "smg", "baton", "bb", "pole"]
 MOTIONS = [("idle", 1), ("walk", 6), ("run", 6), ("roll", 5)]
 PF = "PF-01"                                         # 세력 슬롯 자리표시(색은 실행 중 팔레트가 정한다)
 DIR8 = {"E": 0, "SE": 1, "S": 2, "SW": 3, "W": 4, "NW": 5, "N": 6, "NE": 7}
 REF_CASES = [("M1", "T01", "HR03", "", "", "", "idle", "S", 0, None), ("M1", "T01", "HR03", "", "", "", "walk", "E", 2, None),
              ("M1", "T01", "HR05", "", "EY01", "", "run", "SE", 4, None), ("F1", "T03", "HR06", "", "", "", "walk", "NE", 1, None),
              ("M1", "T06", "HR03", "HD04", "", "rifle", "run", "W", 3, "E"), ("M1", "T02", "HR07", "HD03", "", "pistol", "idle", "N", 0, "N"),
-             ("F1", "T13", "HR09", "", "EY02", "", "walk", "SW", 5, None), ("M1", "T08", "HR01", "HD15", "", "pistol", "walk", "S", 3, "SE")]
+             ("F1", "T13", "HR09", "", "EY02", "", "walk", "SW", 5, None), ("M1", "T08", "HR01", "HD15", "", "pistol", "walk", "S", 3, "SE"),
+             ("K1", "T01", "HR09", "", "", "bb", "walk", "E", 2, "E"), ("K1", "T01", "HR03", "", "", "pole", "run", "SW", 4, "SE")]
 
 
 def slot_map():
@@ -124,20 +126,20 @@ def main():
             "head_cell": [40, 40], "head_center": [K.HC, 22], "gun_cell": [20, 16], "gun_at": K.GUN_AT,
             "stride": K.STRIDE, "families": {}, "heads": {}, "overlays": {}, "weapons": {}, "palettes": {}}
     for bt in BODIES:
-        for fam in FAMS:
+        for fam in (KID_FAMS if bt == "K1" else FAMS):
             sheet, starts, anchors = body_sheet(fam, bt)
             name = f"pd_body_{bt.lower()}_{fam.lower()}.png"
             to_index(sheet, name).save(os.path.join(OUT, name))
             o = K.outfit(K.Look(body=bt, torso=fam, faction=PF))
             meta["families"][f"{bt}:{fam}"] = {"sheet": name, "motions": starts, "head": anchors,
                                                "faction_slots": bool(o["faction"]), "gloved": o["hand"] is not None,
-                                               "hood": fam in ("T10", "T15")}
+                                               "hood": fam in ("T10", "T15"), "gun_off": list(K.GUN_BODY.get(bt, (0, 0)))}
         for hr in HAIRS + ["HR07h"]:
             look = K.Look(body=bt, hair=hr[:4], gear="_HAT" if hr.endswith("h") else None)
             name = f"pd_head_{bt.lower()}_{hr.lower()}.png"
             to_index(head_sheet(look), name).save(os.path.join(OUT, name))
             meta["heads"][f"{bt}:{hr}"] = name
-        for fam in ("T10", "T15"):
+        for fam in (("T10", "T15") if bt != "K1" else ()):
             name = f"pd_head_{bt.lower()}_hood_{fam.lower()}.png"
             to_index(head_sheet(K.Look(body=bt, torso=fam)), name).save(os.path.join(OUT, name))
             meta["heads"][f"{bt}:HOOD_{fam}"] = name

@@ -194,6 +194,22 @@ npc N-R01-011 22 35 S cond="year() == 2259" bark="배급과에서 떡 쌀 두 �
 npc N-R01-013 28 42 N look=K1-S1-HR09-H2-T01-0-PF11-HD00-EY00 cond="year() == 2259" bark="나 이따 방송실에서 축하 방송 할 거야!"
 trigger 7 39 w=2 h=4 scene=MQ-P1_S02_DOYUN cond="MQP1_STAGE == 20" once
 trigger 22 39 w=6 h=4 scene=MQ-P1_S03 cond="MQP1_STAGE == 20"
+prop bday_banner 9 28 cond="year() == 2268"
+mark bday_front 13 40 E
+mark p2_canteen 14 31 S
+npc C-001 15 40 W look=F1-S2-HR04-H1-T01-1-PF11-HD00-EY00 cond="year() == 2268" bark="열 살 생일 축하해."
+npc C-002 11 40 E look=K1-S3-HR08-H2-T01-1-PF11-HD00-EY00 cond="year() == 2268 and MQP2_STAGE == 20" bark="생일이다! 간식 쿠폰 받았어?"
+npc N-R01-007 6 39 E cond="year() == 2268" bark="도윤이 생일이랑 날이 같았지. 십 년 됐네."
+npc N-R01-008 7 41 E cond="year() == 2268" bark="콩떡 남았다. 하나 더 가져가렴."
+npc N-R01-010 19 39 W cond="year() == 2268" bark="축하해! 이제 핍-보이 차는 나이네."
+npc C-025 18 41 W cond="year() == 2268" bark="열 살 검진표는 다음 주에 와서 받아 가."
+trigger 11 38 w=8 h=5 scene=MQ-P2_S02 cond="MQP2_STAGE == 20" once
+npc N-R01-011 35 30 S look=M1-S3-HR04-H1-T11-0-PF11-HD00-EY00 cond="year() == 2268" bark="배급 카드부터 보여 주세요."
+npc C-027 40 35 S look=K1-S3-HR07-H2-T01-1-PF11-HD00-EY00 cond="year() == 2268 and MQP2_RESULT == 0" bark="흐윽… 카드가 없어…"
+mark p2_ration 39 33 S
+mark jiwoo_front 40 34 S
+trigger 37 30 w=5 h=2 scene=MQ-P2_S04 cond="MQP2_STAGE == 40 and MQP2_RESULT == 0" once
+text 37 39 "바닥 타일 사이가 벌어져 있다." w=2 seq="바닥 타일 사이에 틈이 있다. 어두워서 잘 안 보인다.|틈 속에서 뭔가 반짝였다. 손가락을 넣어 본다." scene=MQ-P2_S04_CARD cond="MQP2_STAGE == 40 and MQP2_RESULT == 0"
 prop ration_window 34 28
 prop counter_ration 34 31
 prop crate_metal 45 33
@@ -203,7 +219,8 @@ prop notice_board 43 28
 prop bench 33 41
 prop bench 43 41
 prop bench 38 37
-text 34 31 "배급 창구: 이번 주부터 배급 반감 — 수경 농장 2·3동 곰팡이병." w=3
+text 34 31 "배급 창구: 이번 주부터 배급 반감 — 수경 농장 2·3동 곰팡이병." w=3 cond="year() == 2277"
+text 34 31 "배급 창구: 이번 주 배급 — 콩죽, 상추. 생일자 간식 쿠폰 1장." w=3 cond="year() == 2268"
 prop terminal_desk 52 31
 prop desk 49 31
 prop bookshelf 56 30

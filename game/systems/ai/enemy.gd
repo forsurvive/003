@@ -68,7 +68,7 @@ func hear(kind: String, at: Vector2) -> void:
 		_heard_at = at
 
 
-func think(dt: float, target: Combatant, nav: NavGrid, shots: Projectiles) -> void:
+func think(dt: float, target: Combatant, nav, shots: Projectiles) -> void:   ## nav: NavGrid(청크 월드) 또는 InteriorNav(실내) — 같은 path()
 	_clock += dt
 	if cmb.dead:
 		_die_step(dt)
@@ -113,7 +113,7 @@ func think(dt: float, target: Combatant, nav: NavGrid, shots: Projectiles) -> vo
 		prof["act"] += t3 - t2
 
 
-func _tactics(target: Combatant, nav: NavGrid) -> void:
+func _tactics(target: Combatant, nav) -> void:
 	var goal: String = _intent.get("goal", "hold")
 	var at: Vector2 = _intent.get("at", loco.logical)
 	_move = Vector2.ZERO
@@ -142,8 +142,8 @@ func _tactics(target: Combatant, nav: NavGrid) -> void:
 			_repath(nav, p)
 
 
-func _repath(nav: NavGrid, to: Vector2) -> void:
-	var p := nav.path(loco.logical, to)
+func _repath(nav, to: Vector2) -> void:
+	var p: PackedVector2Array = nav.path(loco.logical, to)
 	if p.size() > 0:
 		_path = p
 		_path_i = 1
@@ -181,7 +181,8 @@ func _swarm(dt: float, target: Combatant, to_t: Vector2) -> void:
 	if _leap > 0.0:                                               # leap: airborne frames only, then bite
 		_leap -= dt
 		var blocked := func(a: Vector2, b: Vector2) -> Vector2: return world.move_circle(a, b, radius_px)
-		loco.logical = blocked.call(loco.logical, loco.logical + to_t.normalized() * 160.0 * dt)
+		var room := maxf(0.0, to_t.length() - (cmb.radius + target.radius))     # 닿는 자리에서 멈춘다(겹쳐 올라타지 않는다)
+		loco.logical = blocked.call(loco.logical, loco.logical + to_t.normalized() * minf(160.0 * dt, room))
 		loco.render = loco.logical.round()
 		position = loco.render
 		if _leap <= 0.0 and loco.logical.distance_to(target.pos()) <= 32.0 + target.radius:

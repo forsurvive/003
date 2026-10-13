@@ -88,7 +88,10 @@ def extract_npcs():
                 continue
             sexage = cells[hi["성·나이"]]
             m = re.match(r"(남|여|수컷|암컷)?\s*(\d+)?", sexage)
-            rec = {"name": cells[hi["이름"]].replace("**", "").strip(), "ids": ids,
+            raw = cells[hi["이름"]].replace("**", "").strip()
+            disp = raw.split("←")[0].strip()                         # '←옛 이름' 주석은 표시 이름에서 뺀다
+            nick = re.match(r"^(.+?)\('(.+?)'\)$", disp)                 # 등록 성명('통칭') → 화면에는 통칭(SD-07a C-027 '지우')
+            rec = {"name": nick.group(2) if nick else disp, "name_full": nick.group(1) if nick else disp, "ids": ids,
                    "sex": (m.group(1) or "") if m else "", "age": int(m.group(2)) if m and m.group(2) else 0,
                    "species": cells[hi["종"]], "faction": cells[hi["세력"]].split("·")[0].strip(),
                    "place": cells[hi["장소"]], "role": cells[hi["역할"]], "look": cells[hi["외형 코드(통일안)"]],

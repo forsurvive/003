@@ -1,0 +1,11 @@
+# SD-10 §2.2 능력치별 정의 → game/data/stats_text.json (핍-보이 능력치 > S.P.E.C.I.A.L. 설명)
+doc: 10_character-system.md
+id_column: 약어
+section: "### 2.2 능력치별 정의와 효과"
+rows: all
+columns:
+  약어: {field: code, type: str, pattern: "^(ST|PE|EN|CH|IN|AG|LK)$", required: true}
+  능력치: {field: name, type: str, required: true}
+  서울판 정의: {field: desc, type: str, required: true}
+  연관 스킬(1점당 +2): {field: skills, type: str}
+  파생 효과(§2.3): {field: effects, type: str}

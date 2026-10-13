@@ -549,10 +549,27 @@ def battery_rack():
     return im
 
 
-def target(hidden=False):
-    """사격장 표적(1칸): 받침대 + 둥근 과녁. hidden: 낮게 엎드린 은신 표적."""
+def target(hidden=False, state=""):
+    """사격장 표적(1칸): 받침대 + 둥근 과녁. hidden: 낮게 엎드린 은신 표적.
+    state: down = 맞아 뒤로 넘어간 과녁(납작한 타원), duck = 들켜서 받침 뒤로 숨은 은신 표적(테두리만 보인다)."""
     im = img(T, 40 if not hidden else 22)
     d = ImageDraw.Draw(im)
+    if state in ("down", "duck"):
+        if not hidden:
+            d.rectangle([14, 30, 17, 39], fill=C("P18"))
+            d.rectangle([6, 36, 25, 39], fill=C("P17"))
+            d.ellipse([5, 27, 26, 33], fill=C("P07"), outline=C("P02"))          # 뒤로 넘어간 과녁(뒷면 회색)
+            d.line([8, 29, 23, 29], fill=C("P08"))
+        else:
+            d.rectangle([4, 16, 27, 21], fill=C("P17"))
+            if state == "down":
+                d.ellipse([5, 12, 26, 17], fill=C("P07"), outline=C("P02"))
+            else:
+                d.chord([6, 10, 25, 26], 180, 360, fill=C("P53"), outline=C("P02"))   # 받침 위로 테두리만
+                d.line([9, 15, 22, 15], fill=C("P09"))
+            d.rectangle([4, 16, 27, 21], fill=C("P17"))
+            d.line([4, 16, 27, 16], fill=C("P18"))
+        return im
     if not hidden:
         d.rectangle([14, 20, 17, 39], fill=C("P18"))
         d.rectangle([6, 36, 25, 39], fill=C("P17"))
@@ -757,8 +774,8 @@ def dol_table():
     return im
 
 
-def dol_banner():
-    """'축 첫돌' 현수막(벽 3칸): 흰 천 + 붉은 글씨 + 양 끝 끈."""
+def dol_banner(label="축 첫돌"):
+    """'축 첫돌' 현수막(벽 3칸): 흰 천 + 붉은 글씨 + 양 끝 끈. label을 바꿔 생일 현수막(MQ-P2)에도 쓴다."""
     w = 3 * T
     im = img(w, 22)
     d = ImageDraw.Draw(im)
@@ -767,7 +784,23 @@ def dol_banner():
     d.line([6, 19, w - 7, 19], fill=C("P07"))
     for x in range(8, w - 8, 9):
         d.point((x, 5), fill=C("P53"))
-    text(d, (w // 2, 6), "축 첫돌", F9, "P53", anchor="ma")
+    text(d, (w // 2, 6), label, F9, "P53", anchor="ma")
+    return im
+
+
+def sandbag():
+    """보안부 사격장 모래주머니(1칸, 낮은 엄폐): 마대 세 단을 엇갈려 쌓았다. 묶은 끈·접힌 자락."""
+    im = img(T, 30)
+    d = ImageDraw.Draw(im)
+    rows = ((2, 20, (1, 16), (16, 31)), (2, 12, (4, 18), (17, 29)), (1, 4, (7, 25),))
+    for row in rows:
+        h, y = 9, row[1]
+        for x0, x1 in row[2:]:
+            d.rounded_rectangle([x0, y, x1 - 1, y + h], radius=3, fill=C("P19"), outline=C("P17"))
+            d.line([x0 + 2, y + 1, x1 - 3, y + 1], fill=C("P20"))
+            d.line([x0 + 2, y + h - 1, x1 - 3, y + h - 1], fill=C("P18"))
+            d.point(((x0 + x1) // 2, y + 4), fill=C("P17")); d.point(((x0 + x1) // 2, y + 5), fill=C("P17"))
+    d.line([3, 29, 29, 29], fill=C("P02"))
     return im
 
 
@@ -869,11 +902,15 @@ PROPS = {
     # 돌잔치
     "dol_table": _r(dol_table, 2, 1, down=6),
     "dol_banner": _r(dol_banner, 3, 0, "wall", dy=4),
+    "bday_banner": _r(lambda: dol_banner("생일 축하"), 3, 0, "wall", dy=4),
+    "sandbag": _r(sandbag, 1, 1, down=2),
 }
 # 상태 그림(연출이 바꾼다: InteriorMap.set_prop_state). 이름 → {상태: 그리기 함수}
 PROP_STATES = {
     "birth_bed": {"occupied": lambda: birth_bed(True)},
     "terminal_cart": {"lit": lambda: _sb().terminal_cart(True, 0)},
+    "target": {"down": lambda: target(False, "down")},
+    "target_low": {"down": lambda: target(True, "down"), "duck": lambda: target(True, "duck")},
 }
 # 문 열린 그림(문 소품의 둘째 칸)
 DOOR_OPEN = {"door_slide": lambda: door(None, "open"), "door_hatch": lambda: door(None, "open", "hatch"),

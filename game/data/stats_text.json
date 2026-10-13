@@ -1,0 +1,58 @@
+{
+ "AG": {
+  "_src": "10_character-system.md:92",
+  "code": "AG",
+  "desc": "몸놀림과 손재주",
+  "effects": "최대 AP",
+  "name": "민첩성",
+  "skills": "소형 화기, 은신"
+ },
+ "CH": {
+  "_src": "10_character-system.md:90",
+  "code": "CH",
+  "desc": "첫인상과 신뢰. 사람을 움직이는 힘",
+  "effects": "화술 판정의 카리스마 항, 세력 호감도 획득 보정, 지원 병력·일시 동행 NPC 보정",
+  "name": "카리스마",
+  "skills": "물물교환, 화술"
+ },
+ "EN": {
+  "_src": "10_character-system.md:89",
+  "code": "EN",
+  "desc": "체력과 내성. 오래 버티고 덜 아픈 몸",
+  "effects": "HP, 독·방사능 저항",
+  "name": "지구력",
+  "skills": "중화기, 비무장"
+ },
+ "IN": {
+  "_src": "10_character-system.md:91",
+  "code": "IN",
+  "desc": "지식과 학습력. 볼트 S-07 적성 평가 사회가 가장 높이 친 능력",
+  "effects": "레벨업 스킬 포인트 `10 + 지능`",
+  "name": "지능",
+  "skills": "의학, 수리, 과학"
+ },
+ "LK": {
+  "_src": "10_character-system.md:93",
+  "code": "LK",
+  "desc": "우연이 내 편일 확률",
+  "effects": "기본 치명타 확률, 이로운 랜덤 인카운터 가중치",
+  "name": "행운",
+  "skills": "전 스킬 `+⌈행운/2⌉`"
+ },
+ "PE": {
+  "_src": "10_character-system.md:88",
+  "code": "PE",
+  "desc": "오감과 상황 판단. 소리·냄새·흔적을 읽는 힘",
+  "effects": "탐지 반경, 함정 발견 반경",
+  "name": "인지력",
+  "skills": "에너지 무기, 폭발물, 자물쇠 따기"
+ },
+ "ST": {
+  "_src": "10_character-system.md:87",
+  "code": "ST",
+  "desc": "근력. 짐을 지고, 문을 밀고, 둔기를 휘두르는 힘",
+  "effects": "소지 한도, 근접 피해 보너스, 투척 사거리",
+  "name": "힘",
+  "skills": "근접 무기"
+ }
+}

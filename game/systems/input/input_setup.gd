@@ -8,7 +8,7 @@ const KEYS := {
 	"move_right": [KEY_D, KEY_RIGHT], "walk_toggle": [KEY_CAPSLOCK], "sprint": [KEY_SHIFT],
 	"dodge": [KEY_SPACE], "focus": [KEY_Q], "slot_1": [KEY_1], "slot_2": [KEY_2], "holster": [KEY_F],
 	"interact": [KEY_E, KEY_ENTER], "reload": [KEY_R], "crouch": [KEY_CTRL], "debug": [KEY_F3],
-	"save": [KEY_F5], "load": [KEY_F9],
+	"save": [KEY_F5], "load": [KEY_F9], "pipboy": [KEY_TAB], "stimpak": [KEY_H],
 }
 
 

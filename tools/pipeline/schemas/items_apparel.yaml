@@ -1,0 +1,17 @@
+# SD-13 §5.4 몸통·전신 장비 → game/data/items_apparel.json (단계 0-7: MQ-P2에 받는 볼트 점프슈트)
+doc: 13_items.md
+id_column: ID
+section: "### 5.4 몸통·전신 장비 (A-001~A-054, A-083)"
+rows: [A-001]
+columns:
+  ID: {field: id, type: id, pattern: "^A-\\d{3}$", required: true}
+  이름: {field: name, type: str, required: true}
+  슬롯: {field: slot, type: str}
+  DR: {field: dr, type: lead_number}
+  무게: {field: weight, type: float}
+  가격: {field: value, type: int}
+  보너스: {field: bonus, type: str}
+  레이어: {field: layer, type: str}
+derive:
+  cat: "'apparel'"
+  desc: "bonus"

@@ -184,7 +184,8 @@ def compile_map(m, prop_meta, known_vars, known_fns, scenes=()):
             floor_ids[y][x] = ft[FLOOR[nb[0]]] if nb else ft["panel"]
     solid = [[0 if floor(x, y) else 1 for x in range(W)] for y in range(H)]
     out = {"id": m.id, "name": m.name, "set": m.set, "size": [W, H], "props": [], "doors": [], "exits": [], "marks": {},
-           "npcs": [], "texts": [], "signs": [], "triggers": []}
+           "npcs": [], "texts": [], "signs": [], "triggers": [], "enemies": []}
+    enemy_ids = set(json.load(open(os.path.join(ROOT, "game", "data", "enemies.json"), encoding="utf-8")).keys())
     for ln, words in m.cmds:
         pos, opt = kv(words[1:])
         c = words[0]
@@ -270,9 +271,29 @@ def compile_map(m, prop_meta, known_vars, known_fns, scenes=()):
                     e["route"].append([mm.group(1), rx, ry, float(mm.group(4) or 4)])
                 e["line"] = ln
                 out["npcs"].append(e)
+            elif c == "enemy":                                   # enemy ID x y [cond=] — 적(SD-14), 조건이 맞을 때만 선다
+                eid, x, y = pos[0], int(pos[1]), int(pos[2])
+                if eid not in enemy_ids:
+                    raise Err(f"적 자료(enemies.json)에 없는 ID '{eid}'")
+                if not floor(x, y) or solid[y][x]:
+                    raise Err(f"적 {eid} 자리 ({x},{y})가 빈 바닥이 아니다")
+                e = {"id": eid, "x": x, "y": y, "cond": opt.get("cond", "")}
+                if e["cond"]:
+                    check_cond(e["cond"], known_vars, known_fns)
+                out["enemies"].append(e)
             elif c == "text":
                 x, y, txt = int(pos[0]), int(pos[1]), pos[2]
-                out["texts"].append({"x": x, "y": y, "w": int(opt.get("w", 1)), "h": int(opt.get("h", 1)), "text": txt})
+                e = {"x": x, "y": y, "w": int(opt.get("w", 1)), "h": int(opt.get("h", 1)), "text": txt}
+                if opt.get("cond"):                              # 시대·단계에 따라 다른 조사 글
+                    check_cond(opt["cond"], known_vars, known_fns)
+                    e["cond"] = opt["cond"]
+                if opt.get("seq"):                               # 여러 번 조사: 글이 차례로 바뀌고, 다 읽으면 scene을 연다
+                    e["seq"] = opt["seq"].split("|")
+                if opt.get("scene"):
+                    if opt["scene"] not in scenes:
+                        raise Err(f"text의 장면 '{opt['scene']}'이 원고에 없다")
+                    e["scene"] = opt["scene"]
+                out["texts"].append(e)
             elif c == "sign":
                 x, y, txt = int(pos[0]), int(pos[1]), pos[2]
                 if kind[y][x] != "ftop":

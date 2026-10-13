@@ -57,6 +57,16 @@ mark roach_5 16 12 S
 mark roach_6 22 8 S
 mark doyun 4 7 E
 text 10 6 "배관 틈으로 바깥 공기 냄새가 들어온다." w=4
+enemy CR-002 8 6 cond="MQP2_STAGE == 60"
+enemy CR-002 14 9 cond="MQP2_STAGE == 60"
+enemy CR-002 19 6 cond="MQP2_STAGE == 60"
+enemy CR-002 6 12 cond="MQP2_STAGE == 60"
+enemy CR-002 16 12 cond="MQP2_STAGE == 60"
+enemy CR-002 22 8 cond="MQP2_STAGE == 60"
+mark p2_pipe 11 15 N
+mark doyun_wait 13 19 W
+npc C-002 13 19 W look=K1-S3-HR08-H2-T01-1-PF11-HD00-EY00 cond="year() == 2268 and MQP2_STAGE == 60" bark="바퀴는 대가리를 쳐!"
+trigger 10 15 w=3 h=2 scene=MQ-P2_S06 cond="MQP2_STAGE == 60" once
 prop wall_pipes 54 1
 prop wall_pipes 58 1
 prop crate 66 12

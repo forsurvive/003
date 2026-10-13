@@ -105,7 +105,8 @@ def run_schema(path, rep):
         for rid in want:
             if rid not in found:
                 rep.err(doc, "-", "-", sch["id_column"], f"{rid} 행을 찾지 못함")
-    env_fn = lambda rec: dict(rec, note_number=lambda pre, d: _note_number(rec.get("note", ""), pre, d))
+    env_fn = lambda rec: dict(rec, note_number=lambda pre, d: _note_number(rec.get("note", ""), pre, d),
+                              num_in=lambda text, pre, d: _note_number(text, pre, d))
     for rec in found.values():
         for f, expr in (sch.get("derive") or {}).items():
             rec[f] = eval(expr, {"__builtins__": {}}, env_fn(rec))

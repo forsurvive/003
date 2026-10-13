@@ -1,0 +1,10 @@
+# SD-10 §6.2 카르마 칭호 → game/data/karma_titles.json (핍-보이 능력치 > 일반: 레벨 × 선·중립·악)
+doc: 10_character-system.md
+id_column: Lv
+section: "### 6.2 서울판 카르마 칭호 (Lv1~35 × 3열 = 105종)"
+rows: all
+columns:
+  Lv: {field: level, type: int, required: true}
+  선: {field: good, type: str, required: true}
+  중립: {field: neutral, type: str, required: true}
+  악: {field: evil, type: str, required: true}

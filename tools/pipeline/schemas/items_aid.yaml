@@ -1,0 +1,15 @@
+# SD-13 §6.2 의약품 → game/data/items_aid.json (단계 0-7: 스팀팩)
+doc: 13_items.md
+id_column: ID
+section: "### 6.2 의약품 (I-001~I-009)"
+rows: [I-001]
+columns:
+  ID: {field: id, type: id, pattern: "^I-\\d{3}$", required: true}
+  이름: {field: name, type: str, required: true}
+  효과: {field: effect, type: str, required: true}
+  무게: {field: weight, type: float}
+  가격: {field: value, type: int}
+derive:
+  cat: "'aid'"
+  desc: "effect"
+  heal: "num_in(effect, 'HP +', 0)"      # 'HP +30(의학 배율)' -> 30, 회복량 = 30 × (1 + 의학/50) (SD-11 §2.7)

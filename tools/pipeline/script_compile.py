@@ -39,7 +39,8 @@ PARTICLES = ["은", "는", "이", "가", "을", "를", "과", "와", "으로", "
              "예요", "이었", "였", "이라", "라", "이든", "든"]
 FNS = {"karma", "aff", "quest", "stage", "result", "give", "take", "has", "caps", "xp", "wanted", "stat", "skill", "year"}
 CMDS = {"wait", "fade_in", "fade_out", "balloon", "move", "face", "shake", "year_card", "title_card", "sfx", "bgm", "cam", "show",
-        "hide", "pose", "doc", "flash", "lamp"}
+        "hide", "pose", "doc", "flash", "lamp",
+        "pipboy", "equip", "hurt", "buddy", "range", "hint", "hud"}           # 0-7: 핍-보이·무기·연출 피해·일시 동행·사격장 단계·안내 띠
 ENGINE_VARS = {"PC_ST", "PC_PE", "PC_EN", "PC_CH", "PC_IN", "PC_AG", "PC_LK", "PC_TAG1", "PC_TAG2", "PC_TAG3", "PC_CAPS", "PC_XP",
                "PC_SEX"}
 DECISION = ["어느 편에 서겠", "편에 서겠습니까", "제안을 수락", "받아들이겠습니까", "어느 쪽을 택하", "누구 편이"]

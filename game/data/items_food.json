@@ -1,0 +1,13 @@
+{
+ "I-036": {
+  "_src": "13_items.md:864",
+  "cat": "aid",
+  "desc": "HP +5 · 라드 +3",
+  "heal": 5,
+  "id": "I-036",
+  "name": "바퀴 고기",
+  "rads": 3,
+  "value": 2,
+  "weight": 0.5
+ }
+}

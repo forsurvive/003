@@ -1,0 +1,50 @@
+{
+ "id": "MQ-P2_S04_CARD",
+ "title": "배급소 — 바닥 틈",
+ "loc": "L-R01-01",
+ "npc": "C-027",
+ "cond": "MQP2_STAGE == 40 and MQP2_RESULT == 0",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "틈 속에서 카드를 꺼냈다. 지우의 배급 카드다."
+  },
+  {
+   "op": "line",
+   "who": "C-027",
+   "emo": "미소",
+   "text": "내 카드! 찾았다!"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-011",
+   "emo": "기본",
+   "text": "카드 확인했어요. 다음 분."
+  },
+  {
+   "op": "do",
+   "fx": "karma(25); MQP2_RESULT = 3"
+  },
+  {
+   "op": "cmd",
+   "name": "hint",
+   "args": [
+    "사격장: 아트리움 오른쪽 아래 문 → 보안과",
+    "6"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/prologue/MQ-P2.txt"
+}

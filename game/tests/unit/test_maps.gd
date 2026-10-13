@@ -172,7 +172,7 @@ func test_era_triggers_blockers(t) -> void:
 	t.eq(m.props.filter(func(p): return p["name"] == "dol_table").size(), 1, "2259: 돌상이 있다")
 	t.eq(m.triggers_at(Vector2i(8, 40)).size(), 1, "하도윤 길목 밟는 칸")
 	t.eq(m.triggers_at(Vector2i(23, 41))[0]["scene"], "MQ-P1_S03", "엄마 앞 = 돌잡이")
-	var n: Array = m.data["npcs"].filter(func(x): return x["id"] == "C-002")
+	var n: Array = m.data["npcs"].filter(func(x): return x["id"] == "C-002" and x["cond"] == "year() == 2259")
 	t.eq(n.size(), 1, "아기 하도윤")
 	t.ok(str(n[0].get("sheet", "")).begins_with("st_look_k1_"), "아기 모습 시트")
 	var m2 := InteriorMap.new()

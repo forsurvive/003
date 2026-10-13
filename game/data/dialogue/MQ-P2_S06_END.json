@@ -1,0 +1,63 @@
+{
+ "id": "MQ-P2_S06_END",
+ "title": "하층 배관실 — 산 밑까지",
+ "loc": "L-R01-01",
+ "npc": "C-002",
+ "cond": "MQP2_STAGE == 60",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "C-002",
+   "emo": "미소",
+   "text": "여섯 마리! 다 잡았다!"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "배관 틈으로 서늘한 바람이 든다. 볼트 공기와 냄새가 다르다."
+  },
+  {
+   "op": "line",
+   "who": "C-002",
+   "emo": "기본",
+   "text": "이 관, 어디까지 가는지 알아? 산 밑까지래."
+  },
+  {
+   "op": "line",
+   "who": "C-002",
+   "emo": "미소",
+   "text": "아빠가 그랬어. 언젠가 둘이 끝까지 가 보자."
+  },
+  {
+   "op": "cmd",
+   "name": "buddy",
+   "args": [
+    "off"
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "quest(\"MQ-P2\", 100); xp(34)"
+  },
+  {
+   "op": "cmd",
+   "name": "year_card",
+   "args": [
+    "2274",
+    "열여섯. 적성 평가의 해입니다."
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/prologue/MQ-P2.txt"
+}

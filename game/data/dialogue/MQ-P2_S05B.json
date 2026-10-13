@@ -1,0 +1,53 @@
+{
+ "id": "MQ-P2_S05B",
+ "title": "보안부 사격장 — 은신 표적",
+ "loc": "L-R01-01",
+ "npc": "C-022",
+ "cond": "MQP2_STAGE == 50",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "C-022",
+   "emo": "기본",
+   "text": "열 개. 됐다."
+  },
+  {
+   "op": "line",
+   "who": "C-022",
+   "emo": "기본",
+   "text": "이번엔 숨어서다. 저 낮은 표적 둘은 너를 본다. 들키면 숨는다."
+  },
+  {
+   "op": "line",
+   "who": "C-022",
+   "emo": "기본",
+   "text": "웅크리고 모래주머니 뒤에 붙어라. 들키지 않고 맞히면 한 방에 넘어간다."
+  },
+  {
+   "op": "cmd",
+   "name": "range",
+   "args": [
+    "stealth"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "hint",
+   "args": [
+    "Ctrl: 웅크리기(은신) — 화면 위 [숨음]이면 들키지 않은 것",
+    "9"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/prologue/MQ-P2.txt"
+}

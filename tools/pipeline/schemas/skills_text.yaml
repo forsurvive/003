@@ -1,0 +1,10 @@
+# SD-10 §3.2 스킬 목록과 서울판 정의 → game/data/skills_text.json (핍-보이 능력치 > 스킬 설명)
+doc: 10_character-system.md
+id_column: 스킬
+section: "### 3.2 스킬 목록과 서울판 정의"
+rows: all
+columns:
+  스킬: {field: name, type: str, required: true}
+  연관 능력치: {field: stat, type: str, pattern: "^(ST|PE|EN|CH|IN|AG|LK)$", required: true}
+  서울판 정의: {field: desc, type: str, required: true}
+  대표 쓰임(서울판): {field: uses, type: str}

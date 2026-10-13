@@ -9,6 +9,7 @@ python3 tools/pipeline/extract_story.py
 python3 tools/pipeline/extract_docs.py
 python3 tools/pipeline/script_compile.py
 python3 tools/pipeline/prop_export.py
+python3 tools/pipeline/ui_export.py
 python3 tools/pipeline/map_compile.py
 python3 tools/pipeline/expr_cases.py
 python3 tools/pipeline/portrait_export.py

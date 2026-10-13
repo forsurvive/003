@@ -12,10 +12,12 @@ var id := ""
 var data: Dictionary
 var size := Vector2i.ZERO
 var solid := PackedByteArray()                   ## [y * w + x] 1 = 막힘(벽·소품·잠긴 문)
+var cover := PackedByteArray()                   ## [y * w + x] 엄폐(SD-11 §4.2): 2 높음(벽·키 큰 소품, 탄·시선을 막는다) · 1 낮음 · 0 없음
 var objects: Node2D                              ## y 정렬 층(소품·문·인물이 같은 층에서 앞뒤를 가린다)
 var doors: Array = []                            ## [{"node": Sprite2D, "x", "y", "locked", "closed": Rect2, "open": Rect2, "is_open"}]
 var exits := {}                                  ## Vector2i -> {"to", "mark"}
 var texts := {}                                  ## Vector2i -> 글
+var text_meta := {}                              ## Vector2i -> {"cond", "seq": [글…], "scene", "key"} — 여러 번 조사하는 글(0-7)
 var marks := {}
 var actors: Array = []                           ## 문을 여는 인물(주인공·NPC)
 var props: Array = []                            ## [{"name", "x", "y", "w", "h", "node"}] — 연출이 상태 그림을 바꾼다
@@ -55,6 +57,7 @@ func load_map(map_id: String, st: StoryState = null) -> void:
 	walls.z_index = -10
 	var wall_deco: int = _tile_ids["wall_top"]                       # 바닥 합성에 '벽에 덮인 칸'(덮개 1)을 알리는 타일
 	solid.resize(size.x * size.y)
+	cover.resize(size.x * size.y)
 	for y in size.y:
 		var srow: String = data["solid"][y]
 		for x in size.x:
@@ -63,6 +66,7 @@ func load_map(map_id: String, st: StoryState = null) -> void:
 			if w >= 0:
 				walls.set_cell(Vector2i(x, y), 0, Vector2i(w, 0))
 			solid[y * size.x + x] = 1 if srow[x] == "1" else 0
+			cover[y * size.x + x] = 2 if w >= 0 else (1 if srow[x] == "1" else 0)
 	ground.pad()
 	ground.commit()
 	add_child(ground)
@@ -77,6 +81,13 @@ func load_map(map_id: String, st: StoryState = null) -> void:
 			solid[int(c[1]) * size.x + int(c[0])] = 1                       # 조건부 소품의 발 칸
 		var e: Dictionary = prop_meta[p["name"]]
 		var rect: Array = e["frames"][0] if e.has("frames") else e["rect"]
+		var tall: bool = int(rect[3]) - int(e["foot"][1]) * T > 24          # 발 칸 위로 24px 넘게 서는 소품(사물함·선반) = 높은 엄폐
+		var fx := int(p["x"])
+		var fy := int(p["y"])
+		for yy in range(fy, fy + maxi(1, int(e["foot"][1]))):
+			for xx in range(fx, fx + maxi(1, int(e["foot"][0]))):
+				if xx >= 0 and yy >= 0 and xx < size.x and yy < size.y and solid[yy * size.x + xx] == 1:
+					cover[yy * size.x + xx] = 2 if tall else 1
 		var node := _sprite(rect, Vector2(p["px"][0], p["px"][1]), float(p["sort_y"]))
 		props.append({"name": p["name"], "x": int(p["x"]), "y": int(p["y"]), "w": maxi(1, int(e["foot"][0])),
 			"h": maxi(1, int(e["foot"][1])), "node": node})
@@ -99,9 +110,15 @@ func load_map(map_id: String, st: StoryState = null) -> void:
 	for e in data["exits"]:
 		exits[Vector2i(int(e["x"]), int(e["y"]))] = {"to": e["to"], "mark": e["mark"]}
 	for t in data["texts"]:
+		if not _cond_ok(t.get("cond", ""), st):
+			continue
 		for j in int(t["h"]):
 			for i in int(t["w"]):
-				texts[Vector2i(int(t["x"]) + i, int(t["y"]) + j)] = t["text"]
+				var c := Vector2i(int(t["x"]) + i, int(t["y"]) + j)
+				texts[c] = t["text"]
+				if t.has("seq") or t.has("scene") or t.has("cond"):
+					text_meta[c] = {"cond": t.get("cond", ""), "seq": t.get("seq", []), "scene": t.get("scene", ""),
+						"key": "%s:%d,%d" % [map_id, int(t["x"]), int(t["y"])]}
 
 
 static func _cond_ok(cond: String, st: StoryState) -> bool:
@@ -204,7 +221,9 @@ func is_solid(t: Vector2i) -> bool:
 
 
 func cover_at(t: Vector2i) -> int:
-	return 2 if is_solid(t) else 0
+	if t.x < 0 or t.y < 0 or t.x >= size.x or t.y >= size.y:
+		return 2
+	return cover[t.y * size.x + t.x]
 
 
 func move_circle(from: Vector2, to: Vector2, r: float) -> Vector2:
@@ -244,7 +263,29 @@ func _occupied(except: Vector2i) -> Dictionary:
 	return occ
 
 
-func line_of_sight(_a: Vector2, _b: Vector2) -> bool:
+## 시선: 칸 격자 위 브레젠험 선, 높은 엄폐(벽·키 큰 소품)만 막는다(SD-11 §4.2·§14.3, ChunkWorld와 같은 규칙).
+## low_blocks: 웅크린 대상을 볼 때 — 낮은 엄폐도 시야를 막는다(§4.2 '웅크린 대상 차단')
+func line_of_sight(a: Vector2, b: Vector2, low_blocks: bool = false) -> bool:
+	var p0 := tile_of(a)
+	var p1 := tile_of(b)
+	var dx := absi(p1.x - p0.x)
+	var dy := -absi(p1.y - p0.y)
+	var sx := 1 if p0.x < p1.x else -1
+	var sy := 1 if p0.y < p1.y else -1
+	var err := dx + dy
+	var p := p0
+	while true:
+		if p != p0 and p != p1 and cover_at(p) >= (1 if low_blocks else 2):
+			return false
+		if p == p1:
+			return true
+		var e2 := 2 * err
+		if e2 >= dy:
+			err += dy
+			p.x += sx
+		if e2 <= dx:
+			err += dx
+			p.y += sy
 	return true
 
 

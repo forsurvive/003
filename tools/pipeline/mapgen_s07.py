@@ -199,10 +199,30 @@ def v01():
     m.c(f'npc N-R01-013 28 42 N look=K1-S1-HR09-H2-T01-0-PF11-HD00-EY00 {era} bark="나 이따 방송실에서 축하 방송 할 거야!"')
     m.c('trigger 7 39 w=2 h=4 scene=MQ-P1_S02_DOYUN cond="MQP1_STAGE == 20" once')
     m.c('trigger 22 39 w=6 h=4 scene=MQ-P1_S03 cond="MQP1_STAGE == 20"')
+    # 2268 열 살 생일잔치(MQ-P2 S2, SD-03a §7.2): '생일 축하' 현수막, 윤정인(33세판 HR04)이 핍-보이를 채워 준다. 하도윤 가족·의사·이웃
+    y68 = 'cond="year() == 2268"'
+    m.c(f"prop bday_banner 9 28 {y68}")
+    m.c("mark bday_front 13 40 E"); m.c("mark p2_canteen 14 31 S")
+    m.c(f'npc C-001 15 40 W look=F1-S2-HR04-H1-T01-1-PF11-HD00-EY00 {y68} bark="열 살 생일 축하해."')
+    m.c(f'npc C-002 11 40 E look=K1-S3-HR08-H2-T01-1-PF11-HD00-EY00 cond="year() == 2268 and MQP2_STAGE == 20" bark="생일이다! 간식 쿠폰 받았어?"')
+    for nid, x, y, dd, bk in (("N-R01-007", 6, 39, "E", "도윤이 생일이랑 날이 같았지. 십 년 됐네."),
+                              ("N-R01-008", 7, 41, "E", "콩떡 남았다. 하나 더 가져가렴."),
+                              ("N-R01-010", 19, 39, "W", "축하해! 이제 핍-보이 차는 나이네."),
+                              ("C-025", 18, 41, "W", "열 살 검진표는 다음 주에 와서 받아 가.")):
+        m.c(f'npc {nid} {x} {y} {dd} {y68} bark="{bk}"')
+    m.c('trigger 11 38 w=8 h=5 scene=MQ-P2_S02 cond="MQP2_STAGE == 20" once')
+    # 2268 배급소(MQ-P2 S4, 카르마 튜토리얼): 배급 카드를 잃은 지우(6세)와 창구 주무관 전도하(24세). 바닥 틈 = 조사 3회 길
+    m.c(f'npc N-R01-011 35 30 S look=M1-S3-HR04-H1-T11-0-PF11-HD00-EY00 {y68} bark="배급 카드부터 보여 주세요."')
+    m.c('npc C-027 40 35 S look=K1-S3-HR07-H2-T01-1-PF11-HD00-EY00 cond="year() == 2268 and MQP2_RESULT == 0" bark="흐윽… 카드가 없어…"')
+    m.c("mark p2_ration 39 33 S"); m.c("mark jiwoo_front 40 34 S")
+    m.c('trigger 37 30 w=5 h=2 scene=MQ-P2_S04 cond="MQP2_STAGE == 40 and MQP2_RESULT == 0" once')
+    m.c('text 37 39 "바닥 타일 사이가 벌어져 있다." w=2 seq="바닥 타일 사이에 틈이 있다. 어두워서 잘 안 보인다.|틈 속에서 뭔가 반짝였다. 손가락을 넣어 본다." '
+        'scene=MQ-P2_S04_CARD cond="MQP2_STAGE == 40 and MQP2_RESULT == 0"')
     # 배급소
     m.p("ration_window", 34, 28); m.p("counter_ration", 34, 31); m.p("crate_metal", 45, 33); m.p("crate_metal", 46, 33)
     m.p("crate", 46, 31); m.p("notice_board", 43, 28); m.p("bench", 33, 41); m.p("bench", 43, 41); m.p("bench", 38, 37)
-    m.c('text 34 31 "배급 창구: 이번 주부터 배급 반감 — 수경 농장 2·3동 곰팡이병." w=3')
+    m.c('text 34 31 "배급 창구: 이번 주부터 배급 반감 — 수경 농장 2·3동 곰팡이병." w=3 cond="year() == 2277"')
+    m.c('text 34 31 "배급 창구: 이번 주 배급 — 콩죽, 상추. 생일자 간식 쿠폰 1장." w=3 cond="year() == 2268"')
     # 구내방송실
     m.p("terminal_desk", 52, 31); m.p("desk", 49, 31); m.p("bookshelf", 56, 30); m.p("chair_n", 53, 33)
     m.p("wall_terminal", 50, 28); m.p("slogan_crt2", 55, 28); m.p("record_locker", 49, 38); m.p("bench", 55, 40)
@@ -281,6 +301,11 @@ def v02():
     m.p("crate", 37, 23); m.p("quarantine_sign", 38, 21)
     m.c('text 46 31 "오버시어 전용 비상 계단. 아래는 정문 구역이다."')
     m.c('npc C-024 15 7 S route=책상:15,7,10;창구:5,9,8;서류장:21,5,4 bark="서류는 줄 맞춰서 내요."')
+    # 2268 첫 배정(MQ-P2 S3): 방금례(54세)가 창구에서 통지서를 준다. 하도윤도 줄을 섰다
+    m.c('npc C-024 4 6 S look=F2-S2-HR08-H4-T11-2-PF11-HD00-EY02 cond="year() == 2268" bark="배정 통지서는 한 사람에 한 장이에요."')
+    m.c('npc C-002 7 9 W look=K1-S3-HR08-H2-T01-1-PF11-HD00-EY00 cond="year() == 2268 and MQP2_STAGE == 30" bark="나 아직 내 거 안 열어 봤어."')
+    m.c("mark p2_window 4 8 N")
+    m.c('trigger 2 8 w=5 h=2 scene=MQ-P2_S03 cond="MQP2_STAGE == 30" once')
     m.c('npc C-001 36 8 S route=책상:36,8,14;창:44,9,5;복도:37,17,4 bark="일 끝나면 들를게. 밥은 꼭 먹고."')
     return m
 
@@ -333,6 +358,10 @@ def v03():
     m.p("bat_rack", 36, 36); m.p("crate", 50, 36); m.p("crate", 51, 36); m.p("crate_metal", 53, 36)
     m.c('text 36 36 "방망이 꽂이. 붉은 테이프를 감은 방망이에 \'9회말\'이라고 쓰여 있다."')
     m.c('npc C-023 9 24 S route=교탁:10,25,12;평가관실:44,7,10;복도:30,16,3 bark="질문은 손 들고."')
+    # 2268 학년 말 생활기록부(MQ-P2 S1): 1반 교실, 담임 차명수(43세). 주인공 자리(가운데 줄), 옆자리 하도윤
+    m.c("mark p2_seat 6 8 N"); m.c("mark p2_desk 6 6 S")
+    m.c('npc C-023 7 3 S look=M1-S3-HR05-H1-T11-1-PF11-HD00-EY03 cond="year() == 2268" bark="질문은 손 들고."')
+    m.c('npc C-002 9 8 N look=K1-S3-HR08-H2-T01-1-PF11-HD00-EY00 cond="year() == 2268 and MQP2_STAGE < 20" bark="야, 너 뭐라고 나왔어?"')
     m.c('npc N-R01-017 28 25 S route=서가:28,25,10;책상:29,31,8 bark="책은 제자리에. 200년째 같은 부탁이야."')
     m.c('npc N-R01-016 44 28 W route=체육관:44,28,6;창고:47,37,5 bark="9회말은 아직이야."')
     return m
@@ -484,6 +513,13 @@ def v09():
     m.p("cell_bars", 1, 22); m.p("cell_bars", 8, 22); m.p("bench", 3, 27); m.p("cell_bars", 10, 22); m.p("cell_bars", 17, 22)
     m.p("bench", 12, 27); m.p("bench", 20, 24)
     m.c('npc C-022 6 8 S route=사무실:6,8,10;사격장:32,15,10;복도:12,16,4 bark="보안부는 명령대로 쏜다. 명령 없이는 안 쏜다."')
+    # 2268 사격 교습(MQ-P2 S5): 도경철(45세). 사대 = 입구 쪽 x 29~30. 은신 표적 앞 모래주머니 두 무더기(낮은 엄폐 — 웅크리면 표적이 못 본다)
+    for y in (11, 12, 13, 19, 20, 21):
+        m.p("sandbag", 31, y)
+    m.c("mark p2_range 29 16 E"); m.c("mark range_line 30 16 E"); m.c("mark sneak_1 30 12 E"); m.c("mark sneak_2 30 20 E")
+    m.c('npc C-022 29 14 S look=M2-S4-HR02-H1-T02-1-PF11-HD03-EY00 cond="year() == 2268" bark="보안부는 명령대로 쏜다. 명령 없이는 안 쏜다. 그게 다야."')
+    m.c('npc C-002 29 24 N look=K1-S3-HR08-H2-T01-1-PF11-HD00-EY00 cond="year() == 2268 and MQP2_STAGE >= 50" bark="다 맞혔어? 나 기다리는 중."')
+    m.c('trigger 27 15 w=2 h=4 scene=MQ-P2_S05 cond="MQP2_STAGE == 40" once')
     m.c('npc N-R01-018 21 15 S route=무기고앞:22,15,10;복도:3,16,5 bark="무기고는 부장님 열쇠로만 열려."')
     return m
 
@@ -535,6 +571,12 @@ def v11():
     m.c("mark roach_1 8 6 S"); m.c("mark roach_2 14 9 S"); m.c("mark roach_3 19 6 S"); m.c("mark roach_4 6 12 S")
     m.c("mark roach_5 16 12 S"); m.c("mark roach_6 22 8 S"); m.c("mark doyun 4 7 E")
     m.c('text 10 6 "배관 틈으로 바깥 공기 냄새가 들어온다." w=4')
+    # 2268 해충 구제(MQ-P2 S6): 큰바퀴 6(볼트 판본, SD-14 §3.1), 하도윤 일시 동행. 통로 입구에서 장면, 증기 분출 = 스팀팩 튜토리얼
+    for k, (x, y) in enumerate(((8, 6), (14, 9), (19, 6), (6, 12), (16, 12), (22, 8))):
+        m.c(f'enemy CR-002 {x} {y} cond="MQP2_STAGE == 60"')
+    m.c("mark p2_pipe 11 15 N"); m.c("mark doyun_wait 13 19 W")
+    m.c('npc C-002 13 19 W look=K1-S3-HR08-H2-T01-1-PF11-HD00-EY00 cond="year() == 2268 and MQP2_STAGE == 60" bark="바퀴는 대가리를 쳐!"')
+    m.c('trigger 10 15 w=3 h=2 scene=MQ-P2_S06 cond="MQP2_STAGE == 60" once')
     m.p("wall_pipes", 54, 1); m.p("wall_pipes", 58, 1); m.p("crate", 66, 12)
     m.p("duct_grille", 62, 1)
     m.c('text 64 3 "비상 배수 갱도 철문(원형). 녹이 슬어 바퀴가 꿈쩍하지 않는다." w=3')
