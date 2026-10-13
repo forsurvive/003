@@ -120,15 +120,16 @@ class Canvas:
 
 
 class Head:
-    def __init__(self, look, view, face="idle"):
+    def __init__(self, look, view, face="idle", scale=1.0):
         self.look, self.view, self.face = look, view, face
         self.th = math.radians(YAW[view])
         W, H = HEAD_SIZE.get(look.body, (22, 20))
-        self.rx, self.ry = W / 2, H / 2 - 0.3
-        self.cx, self.cy = HC, 22
+        self.scale = scale
+        self.rx, self.ry = W / 2 * scale, (H / 2 - 0.3) * scale
+        self.cx, self.cy = HC * scale, 22 * scale
         self.skin = skin_ramp(look.skin)
         self.hair = hair_ramp(look.color)
-        self.cv = Canvas()
+        self.cv = Canvas(int(40 * scale), int(40 * scale))
 
     # 머리 좌표 ↔ 화면
     def to_view(self, lx, ly, lz):
@@ -165,7 +166,7 @@ class Head:
     def disk(self, center, rx, rz, y_tilt, col, edge=None, front_only=False):
         """수평 원판(챙): 머리 좌표 (cx, cy, cz)에서 반지름 rx(옆)·rz(앞뒤). y_tilt: 앞쪽이 내려가는 정도."""
         cx, cy, cz = center
-        n = 60
+        n = int(60 * max(1.0, self.scale))
         for i in range(n + 1):
             for j in range(n + 1):
                 u, v = -1 + 2 * i / n, -1 + 2 * j / n
@@ -191,6 +192,8 @@ class Head:
             self.full_hood()
         img = self.cv.image()
         img = outline(img)
+        if self.scale >= 2:                                                   # 초상화: 먹선 2px(크게 그려도 굵기가 같아 보이게)
+            img = outline(img, thick_bottom=False)
         if not hidden_head:
             img = self.eyewear(img)
         return img
@@ -284,7 +287,11 @@ class Head:
         fem = lk.body in ("F1", "F2", "E2")
         ex0 = 0.36
         er = (0.21, 0.27) if not kid else (0.24, 0.31)
-        squint = face in ("fire", "blink") or (face == "hurt")
+        squint = face in ("fire", "blink", "hurt", "smile")
+        if face in ("smile", "angry", "sad", "tired", "surprise"):
+            r = self.portrait_face(lx, ly, lz, ex0, er, fem, old)
+            if r is not False:
+                return r
         for side in (-1, 1):
             ex, ey = side * ex0, 0.2
             sx, sy = er[0], (0.06 if squint else er[1])
@@ -318,6 +325,50 @@ class Head:
             return self.skin[1]                                              # 두툼한 턱 그늘
         return None
 
+    def portrait_face(self, lx, ly, lz, ex0, er, fem, old):
+        """대화 초상화 표정(SD-12 §6.1 표정 칸): 미소·화남·슬픔·피곤·놀람. 해당 없으면 False(평소 얼굴로)."""
+        face = self.face
+        for side in (-1, 1):
+            ex, ey = side * ex0, 0.2
+            dx, dy = (lx - ex) / er[0], (ly - ey) / er[1]
+            if face == "smile":                                              # 웃는 눈 ^ ^
+                if abs(dy + 0.15 - 0.55 * dx * dx) < 0.22 and abs(dx) < 0.95:
+                    return C("P00")
+            elif face == "surprise":                                         # 동그란 눈 + 흰자
+                e = dx * dx + dy * dy
+                if e <= 1.15:
+                    return C("P00") if e < 0.35 else C("P09") if e < 0.9 else C("P01")
+            elif face == "tired":                                            # 반쯤 감긴 눈
+                e = dx * dx + dy * dy
+                if e <= 1.0 and dy > -0.1:
+                    return C("P00") if not (dx < -0.2 and dy < 0.25) else C("P09")
+                if e <= 1.0 and -0.25 < dy <= -0.1:
+                    return self.skin[1]
+            elif face in ("angry", "sad"):
+                e = dx * dx + dy * dy
+                if e <= 1.0:
+                    return C("P09") if dx < -0.25 and dy < -0.3 else C("P00")
+                tilt = side * (0.45 if face == "angry" else -0.4)            # 눈썹: 화남 ↘↙ / 슬픔 ↗↖
+                bx = (lx - ex) / er[0]
+                if abs(bx) < 1.0 and abs((ly - ey + er[1] * 1.45) / er[1] + tilt * bx) < 0.18:
+                    return C("P01")
+                if face == "sad" and side == -1 and 0.3 < dy < 2.4 and abs(dx + 0.1) < 0.18:
+                    return C("P46") if dy > 1.0 else C("P15")                 # 눈물
+        if face == "smile" and abs(lx) < 0.22 and abs(ly - 0.64 + 1.4 * lx * lx) < 0.035:
+            return C("P51")
+        if face == "surprise" and (lx / 0.09) ** 2 + ((ly - 0.62) / 0.08) ** 2 <= 1:
+            return C("P51")
+        if face == "angry" and abs(lx) < 0.14 and abs(ly - 0.58 - 1.2 * lx * lx) < 0.03:
+            return C("P51")
+        if face == "sad" and abs(lx) < 0.12 and abs(ly - 0.6 - 1.6 * lx * lx) < 0.03:
+            return C("P51")
+        if face == "tired" and abs(lx) < 0.08 and 0.57 < ly < 0.62:
+            return self.skin[0]
+        if face in ("smile", "angry", "sad", "tired", "surprise"):
+            if abs(lx) < 0.25 and 0.4 < ly < 0.75:
+                return None
+        return False
+
     def hair_extras(self):
         hr, hc = self.look.hair, self.hair
         hat = self.look.gear is not None
@@ -345,7 +396,7 @@ class Head:
     # -------------------------------------------------------- 머리 장비
     def shell(self, cut, col_ramp, scale=1.09, front_cut=None, hi=0.72):
         """머리를 덮는 껍데기(철모·모자 몸통): 구를 scale만큼 키운 표면에서 ly < cut(앞쪽은 front_cut)인 부분."""
-        n = 70
+        n = int(70 * max(1.0, self.scale))
         for i in range(n):
             for j in range(2 * n):
                 u = math.pi * (i + 0.5) / n
@@ -450,7 +501,7 @@ class Head:
                 self.blob((side * 0.36, 0.15, 0.9), (0.2, 0.17, 0.12), ramp(["P61", "P62", "P63", "P63"]))
 
     def visor(self, y0, y1, col_ramp):
-        n = 50
+        n = int(50 * max(1.0, self.scale))
         for i in range(n):
             for j in range(n):
                 u, v = -1 + 2 * i / n, y0 + (y1 - y0) * j / n
@@ -518,8 +569,8 @@ class Head:
         return img
 
 
-def head(look, view, face="idle"):
-    return Head(look, view, face).render()
+def head(look, view, face="idle", scale=1.0):
+    return Head(look, view, face, scale).render()
 
 
 # ================================================================ 몸
@@ -858,6 +909,39 @@ def _features(img, d, look, o, view, x0, y0, tw, th, hip_y, frame):
         img.putpixel((x0 + tw - 3, y0 + th - 3), C("P01"))
 
 
+# ================================================================ 대화 초상화 96×96(SD-12 §6.1): 같은 머리를 4배로 + 어깨
+PORTRAIT_EXPR = {"기본": "idle", "미소": "smile", "놀람": "surprise", "분노": "angry", "슬픔": "sad", "피곤": "tired",
+                 "말함": "talk", "아픔": "hurt"}
+
+
+def portrait(look, expr="기본", bg=None):
+    face = PORTRAIT_EXPR.get(expr, expr)
+    img = Image.new("RGBA", (96, 96), bg or CLEAR)
+    o = outfit(look)
+    sh = Image.new("RGBA", (96, 96), CLEAR)                                    # 어깨(몸통 윗부분)
+    d = ImageDraw.Draw(sh)
+    main = o["main"]
+    for y in range(66, 96):
+        for x in range(6, 90):
+            nx, ny = (x + 0.5 - 48) / 42, (y + 0.5 - 100) / 32
+            if nx * nx + ny * ny <= 1:
+                nz = math.sqrt(max(0.0, 1 - nx * nx - ny * ny))
+                sh.putpixel((x, y), shade(main, nx * L[0] + ny * L[1] + nz * L[2]))
+    if "stripe" in o["feat"]:
+        d.rectangle([46, 70, 49, 95], fill=o["acc"][1])
+    if "coat" in o["feat"] or "suit" in o["feat"]:
+        d.polygon([(40, 72), (48, 88), (56, 72)], fill=C("P09") if "suit" in o["feat"] else main[3])
+    if "gown" in o["feat"]:
+        d.line([48, 72, 48, 95], fill=main[1])
+    sh = outline(sh, thick_bottom=False)
+    sh = outline(sh, thick_bottom=False)
+    img.alpha_composite(sh)
+    k = 3.0
+    h = head(look, "S", face, k)
+    img.alpha_composite(h, (48 - int(HC * k), 11 - int((22 - 9.7) * k)))
+    return img
+
+
 # 손 무기(머리·조준 방향을 따른다). 손 위치는 발 기준점 기준.
 GUN_AT = {"E": (7, -9), "SE": (7, -6), "S": (6, -4), "NE": (6, -13), "N": (4, -15)}
 
@@ -962,6 +1046,18 @@ def head_preview(path, looks, faces=("idle",)):
                 sheet.alpha_composite(head(lk, v, face), ((fi * 5 + c) * cell, r * cell))
     sheet.resize((sheet.width * 3, sheet.height * 3), Image.NEAREST).save(path)
 
+
+if __name__ == "__main__" and len(sys.argv) > 1 and sys.argv[1] == "portraits":
+    out = sys.argv[2]
+    looks = [Look.parse(c) for c in ("F1-S2-HR06-H1-GOWN-0-PF11-HD00-EY00", "F1-S2-HR07-H1-T13-1-PF11-HD00-EY00",
+                                     "F2-S2-HR08-H2-T11-1-PF11-HD00-EY02", "M1-S4-HR02-H1-T06-1-PF01-HD04-EY00",
+                                     "E1-S2-HR00-H5-T11-2-PF11-HD00-EY03", "K1-S3-HR07-H2-T01-1-PF11-HD00-EY00")]
+    exprs = ("기본", "미소", "놀람", "분노", "슬픔", "피곤")
+    sheet = Image.new("RGBA", (98 * len(exprs), 98 * len(looks)), C("P44"))
+    for r, lk in enumerate(looks):
+        for c, e in enumerate(exprs):
+            sheet.alpha_composite(portrait(lk, e), (c * 98 + 1, r * 98 + 1))
+    sheet.resize((sheet.width * 2, sheet.height * 2), Image.NEAREST).save(out + "_portraits.png")
 
 if __name__ == "__main__" and len(sys.argv) > 1 and sys.argv[1] == "bodies":
     out = sys.argv[2]

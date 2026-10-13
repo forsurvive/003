@@ -2,14 +2,16 @@
 배경 일러스트 대신 실제 게임 화면으로 연출한다(쯔꾸르식): S-07 타일로 깐 V-08 의무실, 맵 스프라이트, 대화창(얼굴 그림),
 감정 말풍선. 주인공은 윤정인 품의 갓난아기라 카메라는 침대에 고정된다.
 흐름: 흰 화면에서 밝아짐 → 신혜령 "건강해요" → 단말 '삑' 두 번, 6번 칸 초록 → 방금례 ! 후 돌아섬 → 대사 → 윤정인 ♥.
+v2(아이작풍, 2026-10-13 리드 결정): 인물은 chibi 체계(큰 머리), 바닥·벽은 tiles_isaac, 소품은 굵은 먹선을 두르고,
+대화창 얼굴은 같은 머리를 4배로 그린 초상화(chibi.portrait). 말하는 사람의 맵 스프라이트도 입을 움직인다.
 Writes samples/21_scene_birth(.png, _x2), 21_scene_birth.gif."""
 import os, sys, math
 from PIL import Image, ImageDraw, ImageFont
 sys.path.insert(0, os.path.dirname(__file__))
 import palette as P
 import tiles_s07 as S
-import npcs as NP
-import portraits as PT
+import tiles_isaac as TI
+import chibi as K
 import hangul16 as HG
 from grid import upscale, check
 
@@ -32,6 +34,11 @@ GEUMRYE = "F2-S2-HR08-H2-T11-1-PF11-HD00-EY02-PR019"
 FX0, FX1, FY0, FY1 = 2, 17, 3, 9
 
 
+def ink(im):
+    """이전 판 소품에 아이작풍 굵은 먹선(바깥 1px + 밑선)."""
+    return TI.outline(im)
+
+
 def contact_shadow(img, x0, x1, y, h=2):
     px = img.load()
     for yy in range(y, min(H, y + h)):
@@ -47,12 +54,12 @@ def room():
         for c in range(20):
             x, y = c * T, r * T
             if FX0 <= c <= FX1 and r == 0:
-                img.alpha_composite(S.wall_top({"s"}), (x, y))
+                img.alpha_composite(TI.wall_top({"s"}), (x, y))
             elif FX0 <= c <= FX1 and r in (1, 2):
                 v = "vent" if (c == 16 and r == 1) else ("outlet" if c == 5 and r == 2 else "plain")
-                img.alpha_composite(S.wall_face("top" if r == 1 else "bot", v, c), (x, y))
+                img.alpha_composite(TI.wall_face_in("top" if r == 1 else "bot", v, c), (x, y))
             elif FX0 <= c <= FX1 and FY0 <= r <= FY1:
-                img.alpha_composite(S.clinic_tile(c * 3 + r), (x, y))
+                img.alpha_composite(TI.clinic_tile(2 if (c * 7 + r * 3) % 11 == 0 else 0), (x, y))
             else:
                 e = set()
                 if c == FX0 - 1 and r >= 1 and r <= FY1:
@@ -61,12 +68,12 @@ def room():
                     e.add("w")
                 if r == FY1 + 1 and FX0 <= c <= FX1:
                     e.add("n")
-                img.alpha_composite(S.wall_top(e), (x, y))
+                img.alpha_composite(TI.wall_top(e), (x, y))
     contact_shadow(img, FX0 * T, (FX1 + 1) * T, FY0 * T, 2)
     # door to the atrium corridor (V-01) and the delivery-room sign in the #14 sign font
-    img.alpha_composite(S.door_slide("closed", "V-01"), (15 * T, 1 * T))
+    img.alpha_composite(ink(S.door_slide("closed", "V-01")), (15 * T, 1 * T))
     plate(img, "의무과", 9 * T - 4, 1 * T + 2)
-    img.alpha_composite(S.wall_clock(4, 20), (12 * T + 8, 1 * T + 9))     # 04:20, eight minutes after the birth
+    img.alpha_composite(ink(S.wall_clock(4, 20)), (12 * T + 8, 1 * T + 9))     # 04:20, eight minutes after the birth
     return img
 
 
@@ -237,14 +244,13 @@ def birth_bed(jeongin, look="calm"):
     # pillow
     d.rounded_rectangle([7, 7, w - 8, 21], radius=3, fill=C("P09"), outline=C("P07"))
     d.line([9, 19, w - 10, 19], fill=C("P08"))
-    # her head (front view crop of the map sprite), hair spread on the pillow
-    head = jeongin.crop((20, 20, 44, 40))
-    hx, hy = (w - 24) // 2, 4
-    hair = [p for p in [(x, y) for y in range(20) for x in range(24)] if head.getpixel(p)[3]]
-    img.alpha_composite(head, (hx, hy))
-    for k, (x0, y0, x1, y1) in enumerate(((hx + 2, 14, hx - 1, 22), (hx + 21, 14, hx + 24, 22), (hx + 3, 16, hx + 1, 23),
-                                          (hx + 20, 16, hx + 22, 23))):
+    # 아이작풍 큰 머리를 베개에(얼굴 그림과 같은 머리), 풀린 머리카락이 베개 위로 퍼진다
+    hd = jeongin.crop((6, 7, 34, 35))
+    hx, hy = (w - 28) // 2, -1
+    for k, (x0, y0, x1, y1) in enumerate(((hx + 3, 16, hx - 2, 25), (hx + 25, 16, hx + 30, 25), (hx + 4, 19, hx + 1, 27),
+                                          (hx + 24, 19, hx + 27, 27))):
         d.line([x0, y0, x1, y1], fill=C("H1.2" if k % 2 else "H1.1"))
+    img.alpha_composite(hd, (hx, hy))
     # blanket from the chest down
     d.rectangle([3, 26, w - 4, 70], fill=C("P45"))
     d.line([3, 26, w - 4, 26], fill=C("P09")); d.line([3, 27, w - 4, 27], fill=C("P08")); d.line([3, 28, w - 4, 28], fill=C("P46"))
@@ -257,35 +263,36 @@ def birth_bed(jeongin, look="calm"):
     for x0 in (7, w - 15):
         d.rectangle([x0, 23, x0 + 7, 29], fill=C("P14"), outline=C("P12"))
     d.line([7, 24, 13, 24], fill=C("P15"))
-    # baby: swaddle bundle on her chest, face toward her
-    bx, by = w // 2, 33
-    d.ellipse([bx - 8, by - 6, bx + 8, by + 7], fill=C("P09"), outline=C("P06"))
-    d.arc([bx - 8, by - 6, bx + 8, by + 7], 20, 120, fill=C("P07"))
-    d.line([bx - 6, by + 4, bx + 6, by + 2], fill=C("P46"))
-    d.ellipse([bx - 4, by - 5, bx + 3, by + 1], fill=C("S1.4"), outline=C("S1.2"))
-    d.point((bx - 2, by - 2), fill=C("S1.1")); d.point((bx + 1, by - 2), fill=C("S1.1"))
-    d.point((bx - 1, by), fill=C("S1.2"))
-    d.arc([bx - 5, by - 7, bx + 4, by - 1], 180, 360, fill=C("P08"))
+    # 아기: 강보 + 아주 작은 아이작풍 머리(눈 감음)
+    bx, by = w // 2, 35
+    d.ellipse([bx - 9, by - 6, bx + 9, by + 8], fill=C("P09"), outline=C("P01"))
+    d.arc([bx - 9, by - 6, bx + 9, by + 8], 20, 120, fill=C("P07"))
+    d.line([bx - 6, by + 5, bx + 6, by + 3], fill=C("P46"))
+    baby = K.head(K.Look(body="K1", skin="S1", hair="HR00"), "S", "blink", 0.62)
+    bb = baby.getbbox()
+    baby = baby.crop(bb)
+    img.alpha_composite(baby, (bx - baby.width // 2, by - 8))
     # her forearms over the bundle (sleeve + hand)
     d.line([8, 30, bx - 5, by + 5], fill=C("P14")); d.line([8, 31, bx - 5, by + 6], fill=C("P12"))
     d.line([w - 9, 30, bx + 6, by + 4], fill=C("P14")); d.line([w - 9, 31, bx + 6, by + 5], fill=C("P12"))
     d.rectangle([bx - 6, by + 4, bx - 4, by + 6], fill=C("S2.4")); d.point((bx - 6, by + 6), fill=C("S2.2"))
     d.rectangle([bx + 5, by + 3, bx + 7, by + 5], fill=C("S2.4")); d.point((bx + 7, by + 5), fill=C("S2.2"))
-    return img
+    return ink(img)
 
 
 # ------------------------------------------------------------------------------------------------ actors
 _cache = {}
 
 
-def sprite(code, view):
-    if code not in _cache:
-        _cache[code] = NP.build(code)
-    return _cache[code]["idle"][view]
+def sprite(code, view, face="idle"):
+    key = (code, view, face)
+    if key not in _cache:
+        _cache[key] = K.actor(K.Look.parse(code), view, "idle", 0, face)
+    return _cache[key]
 
 
 def place(img, spr, fx, fy):
-    """feet point (fx, fy) = sprite (32, 60); 2px contact shadow ellipse first."""
+    """feet point (fx, fy) = sprite (20, 44); 2px contact shadow ellipse first."""
     px = img.load()
     for dx in range(-7, 8):
         for dy in (-1, 0, 1):
@@ -293,7 +300,7 @@ def place(img, spr, fx, fy):
                 tok = RGB2TOK.get(px[fx + dx, fy + dy][:3])
                 if tok:
                     px[fx + dx, fy + dy] = C(S.shadow_px(tok))
-    img.alpha_composite(spr, (fx - 32, fy - 60))
+    img.alpha_composite(spr, (fx - 20, fy - 44))
 
 
 def balloon(img, x, y, kind, frame=0):
@@ -319,23 +326,16 @@ def balloon(img, x, y, kind, frame=0):
 
 def portrait_of(who):
     if who == "윤정인":
-        p = dict(skin="S2", hair="HR06", hair_color="H1", female=True, tired=True, torso="GOWN", jaw=0.15, age=23,
-                 mole=(57, 52))                                      # 환자복 얼굴 그림 (병상 장면 전용 의상)
-    elif who == "신혜령":
-        p = PT.from_code(HYERYEONG, dict(mole=(55, 47)))
-        p["age"] = 34
-    else:
-        p = PT.from_code(GEUMRYE, {})
-        p["age"] = 45
-    return p
+        return K.Look.parse(JEONGIN.replace("-T01-", "-GOWN-"))          # 환자복 얼굴 그림(병상 장면 전용 의상)
+    return K.Look.parse(HYERYEONG if who == "신혜령" else GEUMRYE)
 
 
-def dialogue(img, who, title, text, expr="기본", reveal=None):
+def dialogue(img, who, title, text, expr="기본", reveal=None, talking=False):
     """the game's dialogue window (SD-12 §6.1, as 18_ui_dialogue): 85% black box, face 96x96, name tag."""
     box = Image.new("RGBA", (608, 104), Cr("P01") + (217,))
     ImageDraw.Draw(box).rectangle([0, 0, 607, 103], outline=Cr("P07") + (255,))
     img.alpha_composite(box, (16, 248))
-    face = PT.portrait(portrait_of(who), expr)
+    face = K.portrait(portrait_of(who), {"놀람": "놀람", "미소": "미소"}.get(expr, "기본") if not talking else "말함")
     plate_ = Image.new("RGBA", (96, 96), Cr("P44") + (255,))
     plate_.alpha_composite(face)
     img.alpha_composite(plate_, (24, 252))
@@ -378,13 +378,18 @@ def frame(state):
     img = base.copy()
     t = state.get("tick", 0)
     props = [
-        (iv_stand(), 7 * T + 22, 3 * T - 30),
-        (birth_bed(sprite(JEONGIN, "S")), *BED),
-        (terminal_cart(state.get("field6", False), t), *CART),
+        (ink(iv_stand()), 7 * T + 22, 3 * T - 30),
+        (birth_bed(K.head(K.Look.parse(JEONGIN), "S", "talk" if (state.get("say") and state["say"][0] == "윤정인"
+                                                                    and state.get("reveal") is not None and t % 2 == 0) else "idle")), *BED),
+        (ink(terminal_cart(state.get("field6", False), t)), *CART),
     ]
+    say = state.get("say")
+    talk = say is not None and state.get("reveal") is not None and t % 2 == 0
+    def f(who):
+        return "talk" if talk and say[0] == who else ("blink" if (t + len(who)) % 9 == 0 else "idle")
     actors = [
-        (sprite(HYERYEONG, state.get("hr_view", "E")), *HR_FEET),
-        (sprite(GEUMRYE, state.get("gr_view", "NW")), *GR_FEET),
+        (sprite(HYERYEONG, state.get("hr_view", "E"), f("신혜령")), *HR_FEET),
+        (sprite(GEUMRYE, state.get("gr_view", "NW"), f("방금례")), *GR_FEET),
     ]
     items = [("p", im, x, y, y + im.height) for im, x, y in props] + [("a", im, x, y, y) for im, x, y in actors]
     items.sort(key=lambda it: it[4])
@@ -404,22 +409,22 @@ def frame(state):
     if "단말" in bl:
         balloon(img, CART[0] + 20, CART[1] - 1, bl["단말"], t)
     if state.get("say"):
-        dialogue(img, *state["say"], reveal=state.get("reveal"))
+        dialogue(img, *state["say"], reveal=state.get("reveal"), talking=talk)
     return img
 
 
 def static_props(img):
     """wall cabinets, exam bed, sink-side shelf: things that never change during the shot."""
-    items = [(S.med_cabinet(), 3 * T, 3 * T - 50), (S.med_cabinet(), 4 * T, 3 * T - 50),
-             (sink(), 6 * T, 3 * T - 34),
-             (S.exam_bed(), 15 * T + 4, 4 * T + 2), (screen_partition(), 14 * T + 4, 3 * T - 12),
-             (clinic_desk(), 3 * T, 6 * T + 2), (S.stool(), 4 * T + 8, 7 * T + 10),
-             (bassinet(), 10 * T - 6, 5 * T + 4)]
+    items = [(ink(S.med_cabinet()), 3 * T, 3 * T - 50), (ink(S.med_cabinet()), 4 * T, 3 * T - 50),
+             (ink(sink()), 6 * T, 3 * T - 34),
+             (ink(S.exam_bed()), 15 * T + 4, 4 * T + 2), (ink(screen_partition()), 14 * T + 4, 3 * T - 12),
+             (ink(clinic_desk()), 3 * T, 6 * T + 2), (ink(S.stool()), 4 * T + 8, 7 * T + 10),
+             (ink(bassinet()), 10 * T - 6, 5 * T + 4)]
     items.sort(key=lambda it: it[2] + it[0].height)
     for im, x, y in items:
         contact_shadow(img, x + 2, x + im.width - 2, y + im.height, 2)
         img.alpha_composite(im, (x, y))
-    img.alpha_composite(bobblehead(), (4 * T + 12, 3 * T - 61))
+    img.alpha_composite(ink(bobblehead()), (4 * T + 12, 3 * T - 61))
 
 
 base = None
@@ -432,18 +437,21 @@ def shots():
     for k in range(8):
         seq.append((dict(calm, tick=k, white=1 - k / 7), 90))
     line = ("신혜령", "의무관", "건강해요. 울음소리 좋네.", "미소")
-    seq.append((dict(calm, say=line, reveal=6), 120))
-    seq.append((dict(calm, say=line), 1700))
+    for k in range(6):
+        seq.append((dict(calm, say=line, reveal=2 + k * 3, tick=k), 110))
+    seq.append((dict(calm, say=line), 1500))
     for k in range(4):                                         # 삑 두 번: field 6 lamp blinks green
         seq.append((dict(calm, tick=k, field6=k % 2 == 0, balloons={"단말": "삑"} if k % 2 == 0 else {}), 260))
     seq.append((dict(calm, field6=True, balloons={"방금례": "!", "신혜령": "…"}), 700))
     turned = dict(gr_view="W", hr_view="E", field6=True)
     line = ("방금례", "행정실 서기", "회선 확인 칸에 불 들어오는 거, 처음 봐요.\n이 칸은… 내가 서기 된 뒤로 한 번도 대답한 적이 없는데.", "놀람")
-    seq.append((dict(turned, say=line, reveal=12), 120))
-    seq.append((dict(turned, say=line, reveal=30), 120))
-    seq.append((dict(turned, say=line), 2600))
+    for k in range(10):
+        seq.append((dict(turned, say=line, reveal=4 + k * 5, tick=k), 100))
+    seq.append((dict(turned, say=line), 2400))
     line = ("윤정인", "오버시어", "200년 된 기계예요. 서류 넣어 주세요.", "기본")
-    seq.append((dict(turned, say=line), 2000))
+    for k in range(6):
+        seq.append((dict(turned, say=line, reveal=3 + k * 4, tick=k), 100))
+    seq.append((dict(turned, say=line), 1800))
     line = ("윤정인", "오버시어", "여기서 태어났으니까 여기서 잘 살면 돼.\n엄마가 지킬게.", "미소")
     seq.append((dict(turned, gr_view="NW", balloons={"윤정인": "♥"}, say=line), 2800))
     return seq

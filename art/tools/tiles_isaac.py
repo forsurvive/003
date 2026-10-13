@@ -404,7 +404,7 @@ def lino(seed=0):
 
 def clinic_tile(seed=0):
     img = new()
-    mottle(img, ["P07", "P08", "P09"], 90 + seed, lo=0.25, hi=0.7, fine=0.2)
+    mottle(img, ["P07", "P08", "P09"], 90 + seed, lo=0.05, hi=0.95, fine=0.5)
     d = ImageDraw.Draw(img)
     for k in range(0, 32, 8):
         d.line([k, 0, k, 31], fill=C("P06"))
@@ -431,7 +431,7 @@ def wall_top(edges):
 
 def wall_face_in(part, variant="plain", seed=0):
     img = new()
-    mottle(img, ["P12", "P13", "P14"], 110 + seed + (0 if part == "top" else 5), lo=0.2, hi=0.88, fine=0.3)
+    mottle(img, ["P12", "P13", "P14"], 110 + seed + (0 if part == "top" else 5), lo=0.1, hi=0.93, fine=0.4)
     d = ImageDraw.Draw(img)
     for x in (0, 16):
         d.line([x, 0, x, 31], fill=C("P11"))
@@ -454,7 +454,7 @@ def wall_face_in(part, variant="plain", seed=0):
     else:
         d.rectangle([0, 4, 31, 9], fill=C("P48"))
         d.line([0, 4, 31, 4], fill=C("P49")); d.line([0, 3, 31, 3], fill=C("P01")); d.line([0, 10, 31, 10], fill=C("P01"))
-        mottle(img, ["P11", "P12", "P12"], 120 + seed, box=(0, 11, 32, 29), lo=0.35, hi=0.85)
+        mottle(img, ["P11", "P12", "P12"], 120 + seed, box=(0, 11, 32, 29), lo=0.15, hi=0.9)
         for x in (0, 16):
             d.line([x, 11, x, 29], fill=C("P10"))
         for x in (5, 21):
@@ -464,7 +464,7 @@ def wall_face_in(part, variant="plain", seed=0):
         if variant == "outlet":
             d.rectangle([19, 17, 26, 24], fill=C("P01"))
             d.rectangle([20, 18, 25, 23], fill=C("P08")); d.point([(22, 20), (23, 20)], fill=C("P03"))
-    grime(img, 130 + seed, 0.84)
+    grime(img, 130 + seed, 0.9)
     return img
 
 
