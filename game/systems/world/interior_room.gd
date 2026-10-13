@@ -20,6 +20,9 @@ func _ready() -> void:
 	for k in meta:
 		names[k] = int(meta[k]["atlas"][0])
 		solid[int(meta[k]["atlas"][0])] = bool(meta[k]["solid"])
+	var ground := GroundLayer.new()                                  # 바닥: 재질 합성 셰이더(SD-16 §6.10)
+	ground.setup("s07", Vector2i.ZERO, Vector2i(W, H))
+	ground.z_index = -11
 	var layer := TileMapLayer.new()
 	layer.tile_set = tileset
 	layer.z_index = -10
@@ -38,14 +41,21 @@ func _ready() -> void:
 			elif y == 3:
 				n = "grate_a" if x % 2 else "grate_b"
 			elif y == 7:
-				n = "guide_h"
+				n = "guide_x" if x == exit_tile.x else "guide_h"
 			elif x == exit_tile.x:
 				n = "guide_v"
 			elif (x * 7 + y) % 6 == 0:
 				n = "panel_scuff"
 			row.append(names[n])
-			layer.set_cell(Vector2i(x, y), 0, Vector2i(names[n], 0))
+			if solid[names[n]]:                                       # 벽은 타일, 바닥은 합성 층
+				layer.set_cell(Vector2i(x, y), 0, Vector2i(names[n], 0))
+				ground.put(x, y, names["panel"], names[n])
+			else:
+				ground.put(x, y, names[n], -1)
 		grid.append(row)
+	ground.pad()
+	ground.commit()
+	add_child(ground)
 	add_child(layer)
 	y_sort_enabled = true
 

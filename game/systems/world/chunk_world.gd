@@ -15,7 +15,7 @@ var tile := 32
 var tileset: TileSet
 var solid_atlas := {}                        ## atlas x -> true
 var cover_of := {}                           ## atlas x -> 0/1/2
-var loaded := {}                             ## Vector2i -> {"ground": TileMapLayer, "deco": TileMapLayer, "data": Dictionary}
+var loaded := {}                             ## Vector2i -> {"ground": GroundLayer, "deco": TileMapLayer, "data": Dictionary}
 var _pending := {}                           ## Vector2i -> task id
 var _ready_q: Array = []                     ## [Vector2i, Dictionary] parsed on worker threads
 var _mutex := Mutex.new()
@@ -35,6 +35,7 @@ func _ready() -> void:
 		var ax := int(meta[k]["atlas"][0])
 		solid_atlas[ax] = bool(meta[k]["solid"])
 		cover_of[ax] = int(meta[k]["cover"])
+	GroundLayer.get_set("r01")                                          # 바닥 재질·셰이더를 미리 읽어 둔다(붙이기 예산)
 
 
 func chunk_of_px(p: Vector2) -> Vector2i:
@@ -82,19 +83,31 @@ func _attach_one() -> void:
 	if absi(k.x - focus.x) > 3 or absi(k.y - focus.y) > 3:
 		return                                                           # player moved away meanwhile
 	var t0 := Time.get_ticks_usec()
-	var g := TileMapLayer.new()
 	var d := TileMapLayer.new()
-	g.tile_set = tileset
 	d.tile_set = tileset
 	var o := Vector2i(int(data["origin"][0]), int(data["origin"][1]))
 	var ground: Array = data["ground"]
 	var deco: Array = data["deco"]
+	var g := GroundLayer.new()                                          # 바닥: 재질 합성 셰이더(SD-16 §6.10)
+	g.setup("r01", o, Vector2i(cs, cs))
+	g.fill(ground, deco)
 	for y in cs:
 		for x in cs:
-			var i := y * cs + x
-			g.set_cell(o + Vector2i(x, y), 0, Vector2i(int(ground[i]), 0))
-			if int(deco[i]) >= 0:
-				d.set_cell(o + Vector2i(x, y), 0, Vector2i(int(deco[i]), 0))
+			var dv := int(deco[y * cs + x])
+			if dv >= 0:
+				d.set_cell(o + Vector2i(x, y), 0, Vector2i(dv, 0))
+	for dy in range(-1, 2):                                             # 이웃 청크와 테두리를 서로 채운다(경계 섞임이 이어지게)
+		for dx in range(-1, 2):
+			var nk := k + Vector2i(dx, dy)
+			if (dx == 0 and dy == 0) or not loaded.has(nk):
+				continue
+			var nb: Dictionary = loaded[nk]
+			_share_ring(nb["data"], g)
+			var ng: GroundLayer = nb["ground"]
+			_share_ring(data, ng)
+			ng.commit()
+	g.pad()
+	g.commit()
 	g.z_index = -10
 	d.y_sort_enabled = false
 	add_child(g)
@@ -106,6 +119,21 @@ func _attach_one() -> void:
 	attach_usec_max = maxi(attach_usec_max, us)
 	attach_count += 1
 	chunk_attached.emit(data["id"], us)
+
+
+## src 청크 자료 중 dst 바닥 층의 테두리에 닿는 칸만 넣는다.
+func _share_ring(src: Dictionary, dst: GroundLayer) -> void:
+	var so := Vector2i(int(src["origin"][0]), int(src["origin"][1]))
+	var sg: Array = src["ground"]
+	var sd: Array = src["deco"]
+	var x0 := maxi(so.x, dst.origin.x - 1)
+	var x1 := mini(so.x + cs - 1, dst.origin.x + dst.size.x)
+	var y0 := maxi(so.y, dst.origin.y - 1)
+	var y1 := mini(so.y + cs - 1, dst.origin.y + dst.size.y)
+	for ty in range(y0, y1 + 1):
+		for tx in range(x0, x1 + 1):
+			var i := (ty - so.y) * cs + (tx - so.x)
+			dst.put(tx, ty, int(sg[i]), int(sd[i]))
 
 
 ## 순간 이동·불러오기용: p 둘레 3×3을 지금 붙인다(끊김을 감수하는 경로 — 화면이 페이드로 가려질 때만 쓴다).

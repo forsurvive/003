@@ -1,0 +1,174 @@
+// 바닥 합성 셰이더 v1 (SD-16 §6.10). art/tools/ground.py GroundSet.render와 정수 단위로 같은 식이다(ground_check 장면으로 대조).
+// 재질 텍스처를 월드 픽셀 좌표로 읽고, 가까운 타일 중심 4곳의 이중선형 가중치 + 재질별 잡음으로 재질을 고른다.
+// 색을 섞지 않고 아틀라스 텍셀 하나를 고르므로 결과는 늘 팔레트 안 색이다.
+shader_type canvas_item;
+render_mode unshaded;
+
+uniform sampler2D id_map : filter_nearest;      // RG8: R = 바닥 타일 아틀라스 번호, G = 덮개(0 없음, 1 벽, 2 소품, 3 평평한 구조물). 한 칸 테두리 포함
+uniform sampler2D atlas : filter_nearest;       // 재질 × [A, B, A어둠, B어둠, A더어둠, B더어둠], 칸 cell×cell
+uniform sampler2D decals : filter_nearest;      // 잔 소품 32×32 가로 줄, 아래 32줄은 어둠 벌
+uniform sampler2D noise : filter_nearest;       // 256×256, R 큰 얼룩 · G 잔 얼룩 · B 아주 큰 얼룩
+uniform ivec2 origin;                           // id_map (1,1) 칸의 월드 타일
+uniform ivec2 map_size;                         // id_map 크기(테두리 포함)
+uniform int cell = 256;
+uniform int mat_of[32];
+uniform int force[32];
+uniform int spread[8];
+uniform int edge[8];
+uniform int vthr[8];
+uniform int dens[8];
+uniform int hard[8];
+uniform int boff[16];
+uniform int dlist[64];
+uniform int dcount[8];
+
+varying vec2 lp;
+
+const int BAYER[16] = int[](0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5);
+const int NEG = -1000000000;
+
+void vertex() {
+	lp = VERTEX;
+}
+
+ivec2 cell_at(int tx, int ty) {
+	ivec2 p = clamp(ivec2(tx - origin.x + 1, ty - origin.y + 1), ivec2(0), map_size - ivec2(1));
+	vec4 c = texelFetch(id_map, p, 0);
+	return ivec2(int(round(c.r * 255.0)), int(round(c.g * 255.0)));
+}
+
+ivec3 nz(int x, int y) {
+	vec4 c = texelFetch(noise, ivec2(x & 255, y & 255), 0);
+	return ivec3(int(round(c.r * 255.0)), int(round(c.g * 255.0)), int(round(c.b * 255.0)));
+}
+
+int bay(int x, int y) {
+	return BAYER[(y & 3) * 4 + (x & 3)];
+}
+
+uint thash(int tx, int ty) {
+	uint h = (uint(tx) * 0x8DA6B343u) ^ (uint(ty) * 0xD8163841u);
+	h ^= h >> 13u;
+	h *= 0x85EBCA6Bu;
+	h ^= h >> 16u;
+	return h;
+}
+
+void fragment() {
+	int X = origin.x * 32 + int(floor(lp.x));
+	int Y = origin.y * 32 + int(floor(lp.y));
+	int tx = X >> 5;
+	int ty = Y >> 5;
+	int fx = X & 31;
+	int fy = Y & 31;
+	ivec2 own = cell_at(tx, ty);
+	int m0 = mat_of[own.x];
+	bool hard0 = hard[m0] == 1;
+
+	int ax = (X - 16) >> 5;
+	int ay = (Y - 16) >> 5;
+	int u = (X - 16) - ax * 32;
+	int v = (Y - 16) - ay * 32;
+	int wx1 = 2 * u + 1;
+	int wy1 = 2 * v + 1;
+	int wx0 = 64 - wx1;
+	int wy0 = 64 - wy1;
+	int mats[4];
+	int ws[4];
+	ivec2 cxy[4] = ivec2[](ivec2(ax, ay), ivec2(ax + 1, ay), ivec2(ax, ay + 1), ivec2(ax + 1, ay + 1));
+	ws[0] = wx0 * wy0;
+	ws[1] = wx1 * wy0;
+	ws[2] = wx0 * wy1;
+	ws[3] = wx1 * wy1;
+	for (int k = 0; k < 4; k++) {
+		ivec2 c = cell_at(cxy[k].x, cxy[k].y);
+		mats[k] = (c.y == 1 || c.y == 3) ? m0 : mat_of[c.x]; // 벽·구조물에 덮인 바닥은 섞지 않는다
+	}
+	int raw[4];
+	int sc[4];
+	for (int k = 0; k < 4; k++) {
+		int mk = mats[k];
+		int W = 0;
+		for (int j = 0; j < 4; j++) {
+			W += mats[j] == mk ? ws[j] : 0;
+		}
+		int oxm = (mk * 73) & 255;
+		int oym = (mk * 151) & 255;
+		ivec3 n3 = nz(X + oxm, Y + oym);
+		int n = 2 * (n3.x - 128) + (n3.y - 128);
+		raw[k] = 3 * W + spread[mk] * n;
+		sc[k] = (hard[mk] == 1 && mk != m0) ? NEG : raw[k];
+	}
+	int best_s = NEG;
+	int best_m = 99;
+	int own_s = NEG;
+	for (int k = 0; k < 4; k++) {
+		if (sc[k] > best_s || (sc[k] == best_s && mats[k] < best_m)) {
+			best_s = sc[k];
+			best_m = mats[k];
+		}
+		if (mats[k] == m0) {
+			own_s = max(own_s, raw[k]);
+		}
+	}
+	int win_m = hard0 ? m0 : best_m;
+	int win_s = hard0 ? own_s : best_s;
+	int second = NEG;
+	for (int k = 0; k < 4; k++) {
+		if (mats[k] != win_m) {
+			second = max(second, raw[k]);
+		}
+	}
+	bool dark = false;
+	int e = edge[win_m];
+	if (second != NEG && e > 0) {
+		int margin = win_s - second;
+		dark = margin * 16 <= (bay(X + 1, Y + 2) + 1) * e * 768;
+	}
+	int b2 = bay(X + 3, Y + 1);
+	int fn = cell_at(tx, ty - 1).y;
+	bool deep = fn == 1 && fy * 16 <= (b2 + 1) * 2;                     // 벽 발치: 2단 디더 감쇠
+	if (fn == 1 && fy * 16 <= (b2 + 1) * 6) dark = true;
+	if (cell_at(tx - 1, ty).y == 1 && fx * 16 <= (b2 + 1) * 3) dark = true;
+	if (cell_at(tx + 1, ty).y == 1 && (31 - fx) * 16 <= (b2 + 1) * 3) dark = true;
+	int q0 = (fx - 16) * (fx - 16) * 36 + (fy - 29) * (fy - 29) * 169;   // 소품 그림자 타원(아래 타일로 3px 넘친다)
+	int q1 = (fx - 16) * (fx - 16) * 36 + (fy + 3) * (fy + 3) * 169;
+	if (own.y == 2 && q0 * 32 <= (b2 + 17) * 6084) dark = true;
+	if (fn == 2 && q1 * 32 <= (b2 + 17) * 6084) dark = true;
+	if (own.y == 2 && q0 * 64 <= (b2 + 9) * 6084) deep = true;
+	if (fn == 2 && q1 * 64 <= (b2 + 9) * 6084) deep = true;
+
+	int oxw = (win_m * 73) & 255;
+	int oyw = (win_m * 151) & 255;
+	ivec3 nw = nz(X + oxw, Y + oyw);
+	int vv = nw.z + ((nw.y - 128) >> 3);
+	int var = vv > vthr[win_m] ? 1 : 0;
+	int col = var + (deep ? 4 : (dark ? 2 : 0));
+	int bx = boff[win_m * 2] * var;
+	int by = boff[win_m * 2 + 1] * var;
+	vec4 outc = texelFetch(atlas, ivec2(col * cell + ((X + bx) & (cell - 1)), win_m * cell + ((Y + by) & (cell - 1))), 0);
+
+	uint h = thash(tx, ty);
+	int fo = force[own.x];
+	bool has = win_m == m0 && (fo >= 0 || (int(h & 255u) < dens[m0] && dcount[m0] > 0));
+	if (has) {
+		int di = fo;
+		int dox = 0;
+		int doy = 0;
+		int flip = 0;
+		if (fo < 0) {
+			di = dlist[m0 * 8 + int((h >> 8u) % uint(max(dcount[m0], 1)))];
+			dox = int((h >> 16u) & 7u) - 4;
+			doy = int((h >> 19u) & 7u) - 4;
+			flip = int((h >> 22u) & 1u);
+		}
+		int sx = fx - dox;
+		int sy = fy - doy;
+		if (flip == 1) sx = 31 - sx;
+		if (sx >= 0 && sx < 32 && sy >= 0 && sy < 32) {
+			vec4 dc = texelFetch(decals, ivec2(di * 32 + sx, sy + (dark ? 32 : 0)), 0);
+			if (dc.a > 0.5) outc = dc;
+		}
+	}
+	COLOR = vec4(outc.rgb, 1.0);
+}

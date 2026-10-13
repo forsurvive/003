@@ -103,9 +103,25 @@
   "cover": 0,
   "solid": false
  },
+ "guide_t": {
+  "atlas": [
+   24,
+   0
+  ],
+  "cover": 0,
+  "solid": false
+ },
  "guide_v": {
   "atlas": [
    7,
+   0
+  ],
+  "cover": 0,
+  "solid": false
+ },
+ "guide_x": {
+  "atlas": [
+   23,
    0
   ],
   "cover": 0,

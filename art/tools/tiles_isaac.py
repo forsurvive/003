@@ -390,6 +390,19 @@ def guide_line(axis="h"):
     return img
 
 
+def guide_cross(down=True):
+    img = guide_line("h")
+    v = guide_line("v")
+    for y in list(range(0, 12)) + (list(range(20, 32)) if down else []):
+        for x in range(12, 20):
+            img.putpixel((x, y), v.getpixel((x, y)))
+    for x in range(13, 19):                                           # 가운데는 노란 칠이 이어진다
+        img.putpixel((x, 12), C("P49") if x == 13 else C("P48"))
+        if down:
+            img.putpixel((x, 19), C("P48"))
+    return img
+
+
 def lino(seed=0):
     img = new()
     mottle(img, ["P19", "P20", "P21"], 80 + seed, lo=0.08, hi=0.92, fine=0.5)
@@ -499,6 +512,7 @@ def s07_tiles():
         "face_top": wall_face_in("top"), "face_top_pipe": wall_face_in("top", "pipe"), "face_top_vent": wall_face_in("top", "vent"),
         "face_bot": wall_face_in("bot"), "face_bot_outlet": wall_face_in("bot", "outlet"),
         "balcony": balcony_band(0), "balcony_door": balcony_band(1, door=True, num="B-12"),
+        "guide_x": guide_cross(), "guide_t": guide_cross(down=False),  # 뒤에 덧붙임(앞 번호는 그대로)
     }
 
 

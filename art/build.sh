@@ -8,6 +8,7 @@ export PYTHONHASHSEED=0
 run() {
   python3 tools/make_palette_sheet.py
   python3 tools/tiles_isaac.py        # 아이작풍 바닥·벽 타일 (03·10)
+  python3 tools/ground.py             # 바닥 합성(재질·경계 섞기) 견본 (03_ground·10_ground, 게임 셰이더와 같은 식)
   python3 tools/scene_bongcheon.py
   python3 tools/chibi_samples.py      # 아이작풍 인물·적·초상 견본 (04·08·12~17)
   python3 tools/hud_mobile.py

@@ -130,9 +130,13 @@ def main():
     roach_sheet()
     import tiles_isaac                                             # 아이작풍 타일(이름·순서는 이전 판과 같다)
     r01 = tiles_isaac.r01_tiles()
-    nt = tileset("ts_r01_ext", r01, floor_bg=r01["dirt_a"])
+    nt = tileset("ts_r01_ext", r01)                                # 소품 타일은 투명 바탕(바닥은 합성 층이 그린다)
     ns = tileset("ts_s07_int", tiles_isaac.s07_tiles())
-    print(f"sprites: {n} sheets + cr_cr002 | tiles: r01 {nt}, s07 {ns}")
+    import ground                                                  # 바닥 합성 재질·잔 소품·잡음(SD-16 §6.10)
+    gdir = os.path.join(ROOT, "game", "assets", "ground")
+    for gs in ("r01", "s07"):
+        ground.load(gs).export(gdir)
+    print(f"sprites: {n} sheets + cr_cr002 | tiles: r01 {nt}, s07 {ns} | ground: r01, s07")
 
 
 if __name__ == "__main__":

@@ -9,6 +9,8 @@ sys.path.insert(0, os.path.dirname(__file__))
 import palette as P
 import tiles_s07 as S
 import tiles_isaac as TI
+import ground as G
+import numpy as np
 import chibi as K
 from grid import parse, upscale, check
 
@@ -16,22 +18,43 @@ ROOT = os.path.dirname(os.path.dirname(__file__))
 T = 32
 W, H = 640, 360
 COLS, ROWS = 20, 12
+gs_ids = G.tile_ids("s07_int")
 RGB2TOK = {P.rgb(f"P{i:02d}"): f"P{i:02d}" for i in range(64)}
 
 # Map legend: A atrium panel, G grate, L guide line, N lino, W wall top, w/e etc via code, F face, B balcony
 # Columns 0-12 atrium, 13 dividing wall, 14-19 classroom. Rows 0-2 north wall, 3-9 floor, 10-11 south wall top.
 
 
-def floor_tile(c, r):
+def floor_name(c, r):
+    if c == 13:
+        return "guide_h" if r == 7 else "panel"                      # 칸막이 벽 문간
     if c <= 12:
         if r == 3 or c == 0:
-            return TI.grate((c + r) % 3)
+            return "grate_a"
+        if c == 6 and r == 7:
+            return "guide_t"
         if r == 7:
-            return TI.guide_line("h")
+            return "guide_h"
         if c == 6 and r in (4, 5, 6):
-            return TI.guide_line("v")
-        return TI.panel_floor((c * 7 + r) % 5, sheen=(c + r) % 6 == 0)
-    return TI.lino((c + r) % 3)
+            return "guide_v"
+        return "panel"
+    return "lino_a"
+
+
+def is_wall(c, r):
+    return r >= 10 or r <= 2 or (c == 13 and r not in (6, 7))
+
+
+def floor_layer():
+    """바닥 합성 층(SD-16 §6.10, 게임과 같은 식): 벽 칸은 덮개 1(섞지 않음·아래 그늘)."""
+    gs = G.load("s07")
+    ids = np.zeros((ROWS, COLS), int)
+    flags = np.zeros((ROWS, COLS), int)
+    for r in range(ROWS):
+        for c in range(COLS):
+            ids[r, c] = gs_ids[floor_name(c, r)]
+            flags[r, c] = 1 if is_wall(c, r) else 0
+    return gs.render(np.pad(ids, 1, mode="edge"), None, -1, -1, 0, 0, W, H, flags=np.pad(flags, 1, mode="edge"))
 
 
 def contact_shadow(img, x0, x1, y, h=2):
@@ -46,10 +69,12 @@ def contact_shadow(img, x0, x1, y, h=2):
 
 def build():
     img = Image.new("RGBA", (W, H), S.C("P10"))
-    # --- base tiles
+    img.alpha_composite(floor_layer())                               # 바닥은 합성 층, 벽은 타일
     for r in range(ROWS):
         for c in range(COLS):
             x, y = c * T, r * T
+            if not is_wall(c, r):
+                continue
             if r >= 10:                                              # south wall top
                 img.alpha_composite(TI.wall_top({"n"} if r == 10 and c != 13 else set()), (x, y))
             elif c == 13:                                            # dividing wall with a doorway at rows 6-7
@@ -57,8 +82,6 @@ def build():
                     img.alpha_composite(TI.wall_top({"w", "e"} if r >= 3 else {"w"} if r >= 1 else set()), (x, y))
                 elif r in (4, 5):
                     img.alpha_composite(TI.wall_face_in("top" if r == 4 else "bot"), (x, y))
-                elif r in (6, 7):
-                    img.alpha_composite(TI.panel_floor(1) if r == 6 else TI.guide_line("h"), (x, y))
                 else:
                     img.alpha_composite(TI.wall_top({"w", "e", "n"} if r == 8 else {"w", "e"}), (x, y))
             elif c <= 12 and r <= 2:                                 # atrium north wall: balcony + 2 face tiles
@@ -75,16 +98,11 @@ def build():
                     img.alpha_composite(TI.wall_face_in("top", "vent" if c == 19 else "plain", c), (x, y))
                 else:
                     img.alpha_composite(TI.wall_face_in("bot", "plain", c), (x, y))
-            else:
-                img.alpha_composite(floor_tile(c, r), (x, y))
     # doorway: yellow jamb marks on the floor and the wall stub's face edges
     d = ImageDraw.Draw(img)
     for yy in (6 * T, 8 * T - 1):
         d.line([13 * T, yy, 14 * T - 1, yy], fill=S.C("P48"))
-    # floor shadow line along the foot of every north wall face (light from above: thin)
-    contact_shadow(img, 0, 13 * T, 3 * T, 2)
-    contact_shadow(img, 14 * T, W, 3 * T, 2)
-    contact_shadow(img, 13 * T, 14 * T, 6 * T, 2)
+    # 벽 발치 그늘은 바닥 합성 층이 그린다(디더 감쇠)
     # --- wall-mounted props
     img.alpha_composite(TI.outline(S.ration_window()), (0, 1 * T))
     img.alpha_composite(TI.outline(S.emblem()), (2 * T, 1 * T + 6))

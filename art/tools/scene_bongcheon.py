@@ -4,6 +4,8 @@ import os, sys
 from PIL import Image, ImageDraw, ImageFont, ImageChops
 sys.path.insert(0, os.path.dirname(__file__))
 import palette as P
+import ground as G
+import numpy as np
 import tiles_isaac as TR                                             # v2(아이작풍): 같은 이름의 타일 함수
 import props_r01 as PR
 import chibi as K
@@ -42,6 +44,23 @@ ROWS = [
     ["gutter"] * 20,                                                 # 9
     ["asphalt"] * 20, ["asphalt"] * 20,                              # 10-11 road
 ]
+
+
+# 바닥 합성 층: 종류 → (r01 바닥 이름, 덮개: 0 없음 · 1 벽(아래 그늘) · 3 평평한 구조물(섞지 않음))
+GROUND = {"dirt": ("dirt_a", 0), "dirtg": ("dirt_grass_b", 0), "asphalt": ("asphalt", 0), "stairs": ("stairs", 0),
+          "stairs_rail": ("stairs_rail", 0), "slab": ("dirt_a", 3), "gutter": ("dirt_a", 3), "wallcap": ("dirt_a", 1),
+          "wall": ("dirt_a", 1)}
+
+
+def floor_layer():
+    gs = G.load("r01")
+    tid = G.tile_ids("r01_ext")
+    ids = np.array([[tid[GROUND[k][0]] for k in row] for row in ROWS])
+    flags = np.array([[GROUND[k][1] for k in row] for row in ROWS])
+    img = gs.render(np.pad(ids, 1, mode="edge"), None, -1, -1, 0, 0, W, len(ROWS) * T, flags=np.pad(flags, 1, mode="edge"))
+    out = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    out.alpha_composite(img.crop((0, 0, W, min(H, img.height))))
+    return out
 
 
 RUNTIME = True      # False = asset-only render for QA: shadows as one palette step, no region tone
@@ -92,9 +111,11 @@ def tint(img, r, g, b, grey):
 
 def build(hud=True):
     base = Image.new("RGBA", (W, H), C("P18") + (255,))
+    base.alpha_composite(floor_layer())                              # 흙·풀·아스팔트·계단: 바닥 합성 층(SD-16 §6.10)
     for ty, row in enumerate(ROWS):
         for tx, kind in enumerate(row):
-            base.alpha_composite(tile_at(kind, tx, ty), (tx * T, ty * T))
+            if GROUND[kind][1]:                                      # 슬래브·배수로·옹벽은 타일
+                base.alpha_composite(tile_at(kind, tx, ty), (tx * T, ty * T))
 
     # stepped alleys in the gaps between villas (climb further uphill)
     for gx, gw in ((104, 32), (264, 80), (472, 32)):
