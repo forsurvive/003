@@ -3,6 +3,7 @@
 """
 import os, sys, math, random
 from PIL import Image, ImageDraw
+import numpy as np
 
 sys.path.insert(0, os.path.dirname(__file__))
 import palette as P
@@ -101,85 +102,54 @@ def lump(img, cx, cy, rx, ry, ramp, hi=0.62):
                 px[x, y] = C(ramp[min(k, len(ramp) - 1)])
 
 
-# ================================================================ R01 바깥
+# ================================================================ 바닥 타일 = 바닥 합성 텍스처에서 잘라 낸 한 칸(SD-16 §6.10)
+# 게임 바닥은 합성 층(ground.py)이 그린다. 이 함수들은 같은 텍스처에서 32px 한 칸을 잘라, 타일 시트·장면 견본·컷신이
+# 게임과 같은 바닥 그림을 쓰게 한다(쯔꾸르식 평평한 바탕 + 또렷한 무늬).
+def _gcrop(set_name, mat, seed, decal=None):
+    import ground as G
+    gs = G.load(set_name)
+    m = gs.names.index(mat)
+    tx, ty = (seed * 3) % (G.CELL // 32), (seed * 5 + 1) % (G.CELL // 32)
+    a = gs.atlas[m * G.CELL + ty * 32:m * G.CELL + ty * 32 + 32, tx * 32:tx * 32 + 32].copy()
+    if decal is not None:
+        _, did = G.decals()
+        dv = gs.decal[0:32, did[decal] * 32:did[decal] * 32 + 32]
+        a = np.where(dv != 255, dv, a)
+    rgba = np.zeros((32, 32, 4), np.uint8)
+    rgba[..., :3] = G.PAL[a]
+    rgba[..., 3] = 255
+    return Image.fromarray(rgba, "RGBA")
+
+
 def dirt(seed=1, grass=0):
-    img = new()
-    mottle(img, ["P17", "P18", "P19"], seed, lo=0.12, hi=0.9, fine=0.5)
-    grime(img, seed, 0.92)
-    specks(img, seed + 3, 10, "P16")
-    specks(img, seed + 4, 4, "P20")
-    rnd = random.Random(seed)
-    d = ImageDraw.Draw(img)
-    for _ in range(2):                                                # 자갈: 먹선 두른 작은 돌
-        x, y = rnd.randint(3, 27), rnd.randint(3, 27)
-        d.ellipse([x, y, x + 2, y + 1], fill=C("P06"))
-        d.point((x, y), fill=C("P08"))
-        d.line([x, y + 2, x + 2, y + 2], fill=C("P02"))
-    for _ in range(grass * 3):                                        # 마른 풀 포기
-        x, y = rnd.randint(2, 28), rnd.randint(6, 29)
-        for k, (dx, h) in enumerate(((-2, 3), (0, 5), (2, 4), (1, 2))):
-            col = C("P30") if k % 2 else C("P31")
-            d.line([x, y, x + dx, y - h], fill=col)
-            d.point((x + dx, y - h), fill=C("P32"))
-        d.line([x - 2, y + 1, x + 2, y + 1], fill=C("P16"))
-    return img
+    return _gcrop("r01", "dirt" if grass == 0 else "grass_sparse" if grass < 4 else "grass_dense", seed)
 
 
 def asphalt(seed=2, lane=False):
-    img = new()
-    mottle(img, ["P03", "P04", "P05"], seed, lo=0.3, hi=0.78, fine=0.45)
-    specks(img, seed + 1, 14, "P02")
-    specks(img, seed + 2, 6, "P06")
-    d = ImageDraw.Draw(img)
-    rnd = random.Random(seed)
-    x, y = rnd.randint(6, 12), 0
-    pts = [(x, y)]
-    while y < 31:                                                     # 굵은 균열(먹선 + 밝은 가장자리)
-        x += rnd.choice((-2, -1, 0, 1, 1, 2))
-        y += rnd.randint(2, 4)
-        pts.append((max(1, min(30, x)), min(31, y)))
-    d.line(pts, fill=C("P01"), width=1)
-    d.line([(px + 1, py) for px, py in pts], fill=C("P05"))
-    if lane:
-        for yy in range(0, 32, 12):                                   # 바랜 차선(끊긴 점선)
-            d.rectangle([22, yy + 1, 23, yy + 7], fill=C("P07"))
-            d.point((22, yy + 1), fill=C("P08"))
-            if (yy // 12) % 2:
-                d.point((23, yy + 5), fill=C("P05"))
-    return img
+    return _gcrop("r01", "asphalt", seed, "lane" if lane else None)
 
 
 def pavers(seed=3, broken=2):
-    img = new()
-    d = ImageDraw.Draw(img)
-    rnd = random.Random(seed)
-    tones = [["P05", "P06", "P07"], ["P05", "P06", "P07"], ["P05", "P06", "P07"]]
-    missing = set()                                                   # 깨진 판: 구멍 대신 금(되풀이가 눈에 띄지 않게)
-    for py in (0, 16):
-        for px_ in (0, 16):
-            key = (px_ // 16, py // 16)
-            if key in missing:
-                sub = dirt(seed + 11).crop((px_, py, px_ + 16, py + 16))
-                img.paste(sub, (px_, py))
-                d.line([px_, py, px_ + 15, py], fill=C("P01"))
-                d.line([px_, py, px_, py + 15], fill=C("P01"))
-                d.line([px_ + 1, py + 1, px_ + 14, py + 1], fill=C("P16"))
-                continue
-            tone = tones[(key[0] * 2 + key[1] + seed) % 3]
-            mottle(img, tone, seed + key[0] * 3 + key[1], box=(px_, py, px_ + 16, py + 16), lo=0.18, hi=0.85, fine=0.5)
-            d.line([px_ + 1, py + 1, px_ + 14, py + 1], fill=C(P_up(tone[2])))      # 윗변 밝게
-            d.line([px_ + 1, py + 14, px_ + 14, py + 14], fill=C(tone[0]))
-            d.line([px_, py, px_ + 15, py], fill=C("P02"))                          # 이음매
-            d.line([px_, py, px_, py + 15], fill=C("P02"))
-    if broken:
-        k = rnd.randint(0, 1)
-        x0, y0 = 16 * k + 3, 16 * (1 - k) + 3
-        d.line([x0, y0, x0 + 4, y0 + 5, x0 + 3, y0 + 9, x0 + 8, y0 + 11], fill=C("P02"))
-        d.point((x0 + 5, y0 + 5), fill=C("P07"))
-    grime(img, seed, 0.86)
-    return img
+    return _gcrop("r01", "pavers", seed)
 
 
+def grate(seed=0):
+    return _gcrop("s07", "grate", seed)
+
+
+def panel_floor(seed=0, sheen=False):
+    return _gcrop("s07", "panel", seed)
+
+
+def lino(seed=0):
+    return _gcrop("s07", "lino", seed)
+
+
+def clinic_tile(seed=0):
+    return _gcrop("s07", "clinic", seed)
+
+
+# ================================================================ R01 바깥
 def P_up(tok):
     n = int(tok[1:])
     return f"P{min(n + 1, 9 if n <= 9 else n + 1):02d}"
@@ -190,13 +160,14 @@ def stairs():
     d = ImageDraw.Draw(img)
     for k in range(4):                                                # 디딤판 5px(밝음) + 챌판 3px(어두움)
         y = k * 8
-        mottle(img, ["P06", "P07", "P08"], 40 + k, box=(0, y, 32, y + 5), lo=0.3, hi=0.8)
+        d.rectangle([0, y, 31, y + 4], fill=C("P07"))                  # 쯔꾸르식: 평평한 디딤판 + 밝은 모서리 + 어두운 챌판
         d.line([0, y, 31, y], fill=C("P09"))
+        d.line([0, y + 1, 31, y + 1], fill=C("P08"))
         d.rectangle([0, y + 5, 31, y + 7], fill=C("P04"))
         d.line([0, y + 5, 31, y + 5], fill=C("P03"))
-        d.line([0, y + 7, 31, y + 7], fill=C("P01"))
-    grime(img, 5, 0.82)
-    specks(img, 41, 5, "P05")
+        d.line([0, y + 7, 31, y + 7], fill=C("P02"))
+    for x, y in ((6, 3), (21, 11), (13, 27)):                          # 닳은 자리 몇 점
+        d.line([x, y, x + 3, y], fill=C("P06"))
     return img
 
 
@@ -215,62 +186,59 @@ def stairs_rail():
 
 
 def wall_face(seed=5, top=True):
-    img = new()
-    mottle(img, ["P04", "P05", "P06"], seed, lo=0.24, hi=0.8, fine=0.4)
+    """콘크리트 옹벽(쯔꾸르식): 평평한 바탕 + 거푸집 이음매(어두운 선 + 밝은 선) + 폼타이 구멍 + 위 갓돌 + 아래 때 띠."""
+    img = new("P06")
     d = ImageDraw.Draw(img)
-    for x in (0, 16):                                                 # 거푸집 이음매
-        d.line([x, 0, x, 31], fill=C("P03"))
-        d.line([x + 1, 0, x + 1, 31], fill=C("P06"))
-    for y in (11, 22):
-        for x in (5, 21):
-            d.point((x, y), fill=C("P02"))                           # 폼타이 구멍
+    for x in (0, 16):
+        d.line([x, 0, x, 31], fill=C("P04"))
+        d.line([x + 1, 0, x + 1, 31], fill=C("P07"))
+    for y in (13, 23):
+        for x in (6, 22):
+            d.point((x, y), fill=C("P03")); d.point((x, y + 1), fill=C("P07"))
     rnd = random.Random(seed)
-    for _ in range(3):                                                # 녹물 줄
-        x = rnd.randint(3, 28)
-        d.line([x, rnd.randint(4, 10), x, rnd.randint(16, 30)], fill=C("P18"))
-    grime(img, seed, 0.76)
+    if rnd.random() < 0.5:                                            # 가끔 녹물 한 줄(폼타이 구멍에서)
+        x = rnd.choice((6, 22))
+        d.line([x, 15, x, 15 + rnd.randint(4, 8)], fill=C("P19"))
+    d.rectangle([0, 28, 31, 30], fill=C("P05"))                       # 아래 때 띠
+    d.line([0, 31, 31, 31], fill=C("P03"))
     if top:
-        mottle(img, ["P07", "P08", "P09"], seed + 9, box=(0, 0, 32, 5), lo=0.35, hi=0.8)
-        d.line([0, 5, 31, 5], fill=C("P01"))
-        d.line([0, 6, 31, 6], fill=C("P03"))
-    d.line([0, 31, 31, 31], fill=C("P02"))
+        d.rectangle([0, 0, 31, 4], fill=C("P08"))
+        d.line([0, 0, 31, 0], fill=C("P09"))
+        d.line([0, 4, 31, 4], fill=C("P07"))
+        d.line([0, 5, 31, 5], fill=C("P02"))
+        d.line([0, 6, 31, 6], fill=C("P05"))
+        for x in (0, 16):
+            d.line([x, 0, x, 4], fill=C("P06"))
     return img
 
 
 def brick_wall(window=False):
-    img = new()
+    """벽돌 벽(쯔꾸르식): 8×4 벽돌을 엇갈려, 벽돌마다 윗줄 밝게·아랫줄 어둡게, 밝은 줄눈."""
+    img = new("P05")
     d = ImageDraw.Draw(img)
-    br = [["P24", "P25", "P25"], ["P24", "P25", "P26"], ["P23", "P24", "P25"]]
-    for row in range(5):
-        y = row * 7 - 1
-        off = 6 if row % 2 else 0
-        for col in range(-1, 3):
-            x = col * 12 + off
-            tone = br[(row + col) % 3]
-            box = (max(0, x + 1), max(0, y + 1), min(32, x + 12), min(32, y + 7))
-            if box[2] <= box[0] or box[3] <= box[1]:
+    rnd = random.Random(21)
+    for row in range(8):
+        y = row * 4
+        off = 4 if row % 2 else 0
+        for col in range(-1, 4):
+            x = col * 8 + off
+            r = rnd.random()
+            base, hi, lo = ("P25", "P26", "P24") if r < 0.8 else (("P24", "P25", "P23") if r < 0.9 else ("P26", "P27", "P25"))
+            x0, x1 = max(0, x), min(31, x + 6)
+            if x1 < x0:
                 continue
-            mottle(img, tone, row * 5 + col + 20, box=box, lo=0.3, hi=0.78)
-            d.line([box[0], box[1], box[2] - 1, box[1]], fill=C(tone[2]))
-    for row in range(5):                                              # 줄눈(어두운 모르타르)
-        y = row * 7 - 1
-        if 0 <= y < 32:
-            d.line([0, y, 31, y], fill=C("P02"))
-        off = 6 if row % 2 else 0
-        for col in range(-1, 3):
-            x = col * 12 + off
-            if 0 <= x < 32:
-                d.line([x, max(0, y), x, min(31, y + 6)], fill=C("P02"))
-    grime(img, 21, 0.8)
+            d.rectangle([x0, y, x1, y + 2], fill=C(base))
+            d.line([x0, y, x1, y], fill=C(hi))
+            d.line([x0, y + 2, x1, y + 2], fill=C(lo))
     if window:
         d.rectangle([7, 6, 24, 25], fill=C("P01"))
         d.rectangle([8, 7, 23, 24], fill=C("P10"))
-        mottle(img, ["P10", "P10", "P11"], 30, box=(9, 8, 23, 24), lo=0.5, hi=0.85)
+        d.rectangle([9, 8, 22, 12], fill=C("P11"))                    # 유리에 비친 하늘(위쪽 한 띠)
         for x in (11, 15, 19):                                        # 방범창 살
-            d.line([x, 7, x, 24], fill=C("P05"))
-            d.line([x + 1, 7, x + 1, 24], fill=C("P02"))
-        d.rectangle([6, 25, 25, 26], fill=C("P07"))
-        d.line([6, 27, 25, 27], fill=C("P01"))
+            d.line([x, 7, x, 24], fill=C("P06"))
+            d.line([x + 1, 7, x + 1, 24], fill=C("P03"))
+        d.rectangle([6, 25, 25, 26], fill=C("P08"))
+        d.line([6, 27, 25, 27], fill=C("P03"))
     return img
 
 
@@ -332,50 +300,6 @@ def r01_tiles():
 
 
 # ================================================================ S-07 실내
-def grate(seed=0):
-    img = new("P02")
-    d = ImageDraw.Draw(img)
-    for py in (0, 16):
-        for px_ in (0, 16):
-            mottle(img, ["P04", "P05", "P06"], seed * 4 + px_ + py, box=(px_ + 1, py + 1, px_ + 15, py + 15), lo=0.3, hi=0.8)
-            d.line([px_ + 1, py + 1, px_ + 14, py + 1], fill=C("P07"))
-            horiz = ((px_ + py) // 16 + seed) % 2 == 0
-            for k in range(4, 13, 4):
-                if horiz:
-                    d.line([px_ + 3, py + k, px_ + 12, py + k], fill=C("P01"))
-                    d.line([px_ + 3, py + k + 1, px_ + 12, py + k + 1], fill=C("P06"))
-                else:
-                    d.line([px_ + k, py + 3, px_ + k, py + 12], fill=C("P01"))
-                    d.line([px_ + k + 1, py + 3, px_ + k + 1, py + 12], fill=C("P06"))
-            for x, y in ((px_ + 2, py + 2), (px_ + 13, py + 13)):
-                d.point((x, y), fill=C("P08"))
-    if seed % 3 == 2:
-        for k in range(4, 12):
-            img.putpixel((16 + k, 22), C("P24"))
-        grime(img, seed, 0.7)
-    return img
-
-
-def panel_floor(seed=0, sheen=False):
-    img = new()
-    mottle(img, ["P12", "P13", "P14"], 70 + seed, lo=0.16, hi=0.9, fine=0.3)
-    d = ImageDraw.Draw(img)
-    for x in (0, 16):
-        d.line([x, 0, x, 31], fill=C("P11"))
-        d.line([x + 1, 0, x + 1, 31], fill=C("P14"))
-    d.line([0, 0, 31, 0], fill=C("P11"))
-    d.line([0, 1, 31, 1], fill=C("P14"))
-    if sheen:
-        for k in range(6):                                            # 천장 조명 반사
-            d.point((8 + k, 22 - k), fill=C("P15"))
-            d.point((9 + k, 22 - k), fill=C("P15"))
-    if seed == 3:
-        for k in range(5):
-            d.point((20 + k, 9 + (k % 2)), fill=C("P11"))
-        grime(img, seed, 0.74)
-    return img
-
-
 def guide_line(axis="h"):
     img = panel_floor(0)
     d = ImageDraw.Draw(img)
@@ -403,34 +327,8 @@ def guide_cross(down=True):
     return img
 
 
-def lino(seed=0):
-    img = new()
-    mottle(img, ["P19", "P20", "P21"], 80 + seed, lo=0.08, hi=0.92, fine=0.5)
-    d = ImageDraw.Draw(img)
-    for x in (0, 16):
-        d.line([x, 0, x, 31], fill=C("P18"))
-    for y in (0, 16):
-        d.line([0, y, 31, y], fill=C("P18"))
-    grime(img, 80 + seed, 0.8)
-    return img
-
-
-def clinic_tile(seed=0):
-    img = new()
-    mottle(img, ["P07", "P08", "P09"], 90 + seed, lo=0.05, hi=0.95, fine=0.5)
-    d = ImageDraw.Draw(img)
-    for k in range(0, 32, 8):
-        d.line([k, 0, k, 31], fill=C("P06"))
-        d.line([0, k, 31, k], fill=C("P06"))
-    if seed == 2:
-        d.rectangle([17, 9, 23, 15], fill=C("P14"))                  # 갈아 끼운 타일
-        d.line([18, 10, 22, 14], fill=C("P06"))
-    return img
-
-
 def wall_top(edges):
-    img = new()
-    mottle(img, ["P10", "P10", "P11"], 99, lo=0.3, hi=0.82)
+    img = new("P10")                                                   # 쯔꾸르식: 벽 윗면은 평평한 어둠
     d = ImageDraw.Draw(img)
     for e, line_ in (("s", [0, 31, 31, 31]), ("n", [0, 0, 31, 0]), ("w", [0, 0, 0, 31]), ("e", [31, 0, 31, 31])):
         if e in edges:
@@ -443,8 +341,7 @@ def wall_top(edges):
 
 
 def wall_face_in(part, variant="plain", seed=0):
-    img = new()
-    mottle(img, ["P12", "P13", "P14"], 110 + seed + (0 if part == "top" else 5), lo=0.1, hi=0.93, fine=0.4)
+    img = new("P13")                                                   # 쯔꾸르식: 평평한 판 + 경사 테
     d = ImageDraw.Draw(img)
     for x in (0, 16):
         d.line([x, 0, x, 31], fill=C("P11"))
@@ -467,7 +364,8 @@ def wall_face_in(part, variant="plain", seed=0):
     else:
         d.rectangle([0, 4, 31, 9], fill=C("P48"))
         d.line([0, 4, 31, 4], fill=C("P49")); d.line([0, 3, 31, 3], fill=C("P01")); d.line([0, 10, 31, 10], fill=C("P01"))
-        mottle(img, ["P11", "P12", "P12"], 120 + seed, box=(0, 11, 32, 29), lo=0.15, hi=0.9)
+        d.rectangle([0, 11, 31, 28], fill=C("P12"))
+        d.line([0, 11, 31, 11], fill=C("P13"))
         for x in (0, 16):
             d.line([x, 11, x, 29], fill=C("P10"))
         for x in (5, 21):
@@ -477,21 +375,20 @@ def wall_face_in(part, variant="plain", seed=0):
         if variant == "outlet":
             d.rectangle([19, 17, 26, 24], fill=C("P01"))
             d.rectangle([20, 18, 25, 23], fill=C("P08")); d.point([(22, 20), (23, 20)], fill=C("P03"))
-    grime(img, 130 + seed, 0.9)
     return img
 
 
 def balcony_band(seed=0, door=False, num=None):
     img = new()
-    mottle(img, ["P11", "P12", "P12"], 140 + seed, box=(0, 0, 32, 16), lo=0.35, hi=0.85)
     d = ImageDraw.Draw(img)
+    d.rectangle([0, 0, 31, 15], fill=C("P12"))
     d.line([0, 0, 31, 0], fill=C("P01"))
     d.line([0, 9, 31, 9], fill=C("P47"))
     if door:
         d.rectangle([8, 2, 23, 15], fill=C("P10"))
         d.rectangle([8, 2, 23, 15], outline=C("P01"))
     d.rectangle([0, 16, 31, 17], fill=C("P06")); d.line([0, 16, 31, 16], fill=C("P08"))
-    mottle(img, ["P12", "P13", "P14"], 150 + seed, box=(0, 18, 32, 32), lo=0.3, hi=0.8)
+    d.rectangle([0, 18, 31, 31], fill=C("P13"))
     d.line([0, 18, 31, 18], fill=C("P01"))
     d.line([0, 28, 31, 28], fill=C("P12"))
     for x in (2, 18):

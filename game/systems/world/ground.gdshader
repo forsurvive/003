@@ -1,5 +1,6 @@
-// 바닥 합성 셰이더 v1 (SD-16 §6.10). art/tools/ground.py GroundSet.render와 정수 단위로 같은 식이다(ground_check 장면으로 대조).
-// 재질 텍스처를 월드 픽셀 좌표로 읽고, 가까운 타일 중심 4곳의 이중선형 가중치 + 재질별 잡음으로 재질을 고른다.
+// 바닥 합성 셰이더 v2 — 쯔꾸르풍(SD-16 §6.10). art/tools/ground.py GroundSet.render와 정수 단위로 같은 식이다(ground_check로 대조).
+// 재질 텍스처를 월드 픽셀 좌표로 읽고, 가까운 타일 중심 4곳의 이중선형 가중치 + 재질별 매끈한 큰 얼룩 잡음으로 재질을 고른다(물결 경계).
+// 경계는 쯔꾸르 오토타일처럼: 위 재질은 테두리(rim), 아래 재질은 그늘(shade). 그늘·그림자는 또렷한 띠·타원(디더 없음).
 // 색을 섞지 않고 아틀라스 텍셀 하나를 고르므로 결과는 늘 팔레트 안 색이다.
 shader_type canvas_item;
 render_mode unshaded;
@@ -7,14 +8,16 @@ render_mode unshaded;
 uniform sampler2D id_map : filter_nearest;      // RG8: R = 바닥 타일 아틀라스 번호, G = 덮개(0 없음, 1 벽, 2 소품, 3 평평한 구조물). 한 칸 테두리 포함
 uniform sampler2D atlas : filter_nearest;       // 재질 × [A, B, A어둠, B어둠, A더어둠, B더어둠], 칸 cell×cell
 uniform sampler2D decals : filter_nearest;      // 잔 소품 32×32 가로 줄, 아래 32줄은 어둠 벌
-uniform sampler2D noise : filter_nearest;       // 256×256, R 큰 얼룩 · G 잔 얼룩 · B 아주 큰 얼룩
+uniform sampler2D noise : filter_nearest;       // 256×256, R 큰 얼룩(경계 물결) · B 아주 큰 얼룩(A·B 벌)
 uniform ivec2 origin;                           // id_map (1,1) 칸의 월드 타일
 uniform ivec2 map_size;                         // id_map 크기(테두리 포함)
 uniform int cell = 256;
 uniform int mat_of[32];
 uniform int force[32];
 uniform int spread[8];
-uniform int edge[8];
+uniform int pri[8];
+uniform int rim[8];
+uniform int shade[8];
 uniform int vthr[8];
 uniform int dens[8];
 uniform int hard[8];
@@ -24,7 +27,6 @@ uniform int dcount[8];
 
 varying vec2 lp;
 
-const int BAYER[16] = int[](0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5);
 const int NEG = -1000000000;
 
 void vertex() {
@@ -37,13 +39,9 @@ ivec2 cell_at(int tx, int ty) {
 	return ivec2(int(round(c.r * 255.0)), int(round(c.g * 255.0)));
 }
 
-ivec3 nz(int x, int y) {
+ivec2 nz(int x, int y) {
 	vec4 c = texelFetch(noise, ivec2(x & 255, y & 255), 0);
-	return ivec3(int(round(c.r * 255.0)), int(round(c.g * 255.0)), int(round(c.b * 255.0)));
-}
-
-int bay(int x, int y) {
-	return BAYER[(y & 3) * 4 + (x & 3)];
+	return ivec2(int(round(c.r * 255.0)), int(round(c.b * 255.0)));
 }
 
 uint thash(int tx, int ty) {
@@ -92,10 +90,7 @@ void fragment() {
 		for (int j = 0; j < 4; j++) {
 			W += mats[j] == mk ? ws[j] : 0;
 		}
-		int oxm = (mk * 73) & 255;
-		int oym = (mk * 151) & 255;
-		ivec3 n3 = nz(X + oxm, Y + oym);
-		int n = 2 * (n3.x - 128) + (n3.y - 128);
+		int n = 3 * (nz(X + ((mk * 73) & 255), Y + ((mk * 151) & 255)).x - 128);
 		raw[k] = 3 * W + spread[mk] * n;
 		sc[k] = (hard[mk] == 1 && mk != m0) ? NEG : raw[k];
 	}
@@ -114,35 +109,35 @@ void fragment() {
 	int win_m = hard0 ? m0 : best_m;
 	int win_s = hard0 ? own_s : best_s;
 	int second = NEG;
+	int sec_m = 99;
 	for (int k = 0; k < 4; k++) {
-		if (mats[k] != win_m) {
-			second = max(second, raw[k]);
+		if (mats[k] != win_m && (raw[k] > second || (raw[k] == second && mats[k] < sec_m))) {
+			second = raw[k];
+			sec_m = mats[k];
 		}
 	}
 	bool dark = false;
-	int e = edge[win_m];
-	if (second != NEG && e > 0) {
+	bool deep = false;
+	if (second != NEG) {
 		int margin = win_s - second;
-		dark = margin * 16 <= (bay(X + 1, Y + 2) + 1) * e * 768;
+		int pw = pri[win_m];
+		int ps = pri[sec_m];
+		// 쯔꾸르 오토타일: 위 재질은 테두리, 아래 재질은 (위 재질이 테두리를 가질 때만) 그늘, 같은 높이(실내 이음매)는 그늘
+		int band = pw > ps ? rim[win_m] : ((pw == ps || rim[sec_m] > 0) ? shade[win_m] : 0);
+		dark = band > 0 && margin < band * 768;
 	}
-	int b2 = bay(X + 3, Y + 1);
 	int fn = cell_at(tx, ty - 1).y;
-	bool deep = fn == 1 && fy * 16 <= (b2 + 1) * 2;                     // 벽 발치: 2단 디더 감쇠
-	if (fn == 1 && fy * 16 <= (b2 + 1) * 6) dark = true;
-	if (cell_at(tx - 1, ty).y == 1 && fx * 16 <= (b2 + 1) * 3) dark = true;
-	if (cell_at(tx + 1, ty).y == 1 && (31 - fx) * 16 <= (b2 + 1) * 3) dark = true;
+	if (fn == 1 && fy < 2) deep = true;                                // 벽 발치 그늘(또렷한 2단 띠)
+	if (fn == 1 && fy < 5) dark = true;
+	if (cell_at(tx - 1, ty).y == 1 && fx < 2) dark = true;
+	if (cell_at(tx + 1, ty).y == 1 && fx > 29) dark = true;
 	int q0 = (fx - 16) * (fx - 16) * 36 + (fy - 29) * (fy - 29) * 169;   // 소품 그림자 타원(아래 타일로 3px 넘친다)
 	int q1 = (fx - 16) * (fx - 16) * 36 + (fy + 3) * (fy + 3) * 169;
-	if (own.y == 2 && q0 * 32 <= (b2 + 17) * 6084) dark = true;
-	if (fn == 2 && q1 * 32 <= (b2 + 17) * 6084) dark = true;
-	if (own.y == 2 && q0 * 64 <= (b2 + 9) * 6084) deep = true;
-	if (fn == 2 && q1 * 64 <= (b2 + 9) * 6084) deep = true;
+	if ((own.y == 2 && q0 <= 6084) || (fn == 2 && q1 <= 6084)) dark = true;
 
 	int oxw = (win_m * 73) & 255;
 	int oyw = (win_m * 151) & 255;
-	ivec3 nw = nz(X + oxw, Y + oyw);
-	int vv = nw.z + ((nw.y - 128) >> 3);
-	int var = vv > vthr[win_m] ? 1 : 0;
+	int var = nz(X + oxw, Y + oyw).y > vthr[win_m] ? 1 : 0;
 	int col = var + (deep ? 4 : (dark ? 2 : 0));
 	int bx = boff[win_m * 2] * var;
 	int by = boff[win_m * 2 + 1] * var;
@@ -166,7 +161,7 @@ void fragment() {
 		int sy = fy - doy;
 		if (flip == 1) sx = 31 - sx;
 		if (sx >= 0 && sx < 32 && sy >= 0 && sy < 32) {
-			vec4 dc = texelFetch(decals, ivec2(di * 32 + sx, sy + (dark ? 32 : 0)), 0);
+			vec4 dc = texelFetch(decals, ivec2(di * 32 + sx, sy + ((dark || deep) ? 32 : 0)), 0);
 			if (dc.a > 0.5) outc = dc;
 		}
 	}

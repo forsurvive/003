@@ -1,17 +1,17 @@
-"""바닥 합성 v1 (SD-16 §6.10): 타일 한 장씩 찍지 않고, 재질 텍스처를 월드 좌표로 깔고 재질 경계를 섞는다.
+"""바닥 합성 v2 — 쯔꾸르풍 (SD-16 §6.10): 타일 한 장씩 찍지 않고, 재질 텍스처를 월드 좌표로 깔고 재질 경계를 오토타일처럼 그린다.
 
-왜: 32px 타일 한 장을 되풀이하면 같은 금·자갈이 타일마다 보이고(반복), 재질이 바뀌는 곳은 타일 경계에서 직선으로 끊긴다(단절).
+왜: 32px 타일 한 장을 되풀이하면 같은 무늬가 타일마다 보이고(반복), 재질이 바뀌는 곳이 타일 선에서 직선으로 끊긴다(단절).
+그림은 쯔꾸르(RPG 만들기) 타일 문법: 평평한 바탕 한 색 + 간격을 둔 또렷한 작은 무늬, 픽셀 잡음·디더 없음.
 어떻게(실행 중 셰이더 game/systems/world/ground.gdshader와 픽셀 단위로 같은 정수 계산):
-  ① 재질마다 128×128 이음매 없는 텍스처 2벌(A·B)과 각각 한 단계 어두운 벌. 월드 픽셀 좌표로 바로 읽는다(타일 경계와 무관).
-     A·B는 아주 낮은 주파수 잡음(B 채널)으로 넓은 얼룩처럼 섞인다 → 같은 무늬가 4타일마다 되풀이돼도 눈에 띄지 않는다.
-  ② 경계: 픽셀마다 가까운 타일 중심 4곳의 이중선형 가중치(정수, 합 4096)를 재질별로 모으고, 재질마다 다른 위치의 잡음
-     (R 큰 얼룩 + G 잔 얼룩)과 4×4 베이어 디더를 더해 가장 큰 재질을 고른다. 결과: 경계가 타일 선을 따르지 않고 흙이
-     보도블록 위로 번지듯 들쭉날쭉, 가장자리는 디더 점으로 흩어지는 '그라데이션'. 색을 섞지 않으므로 팔레트 밖 색이 없다.
-  ③ 가장자리 때: 1등과 2등의 차이가 작은 곳(경계 띠)은 재질에 따라 한 단계 어두운 벌을 디더 확률로 쓴다(선형 감쇠).
-  ④ 벽 아래 그늘(북쪽·옆 벽 → 몇 px 디더 감쇠), 소품(바위·드럼통·장벽) 아래 타원 그림자.
-  ⑤ 잔 소품(자갈·뼈·깡통·꽃·기름 얼룩…)을 타일 좌표 해시로 흩뿌린다(타일 안 위치·좌우 반전도 해시). 차선·유도선은 고정 소품.
-  ⑥ 단단한 재질(계단 등 구조물)은 섞지 않는다(자기 타일 그대로, 이웃도 번지지 않음).
-출력: game/assets/ground/ground_<set>.png(재질 아틀라스) · ground_decals.png · ground_noise.png · ground_<set>.json.
+  ① 재질마다 256×256 이음매 없는 텍스처(유기 재질은 같은 바탕 2벌 A·B)와 한·두 단계 어두운 벌. 월드 픽셀 좌표로 읽는다.
+     A·B는 아주 큰 얼룩(B 채널)으로 고르고 B는 어긋난 자리에서 읽어 되풀이 주기를 깬다. 판·줄눈 재질은 한 벌.
+  ② 경계: 가까운 타일 중심 4곳의 이중선형 가중치(정수, 합 4096) + 재질마다 다른 자리의 매끈한 큰 얼룩 잡음(R) → 가장 큰 재질.
+     물결선 경계, 색을 섞지 않으므로 팔레트 밖 색이 없다.
+  ③ 오토타일식 테: 높이(pri)가 높은 재질은 1px 어두운 테두리, 낮은 재질은 (위 재질이 테두리를 가질 때) 그늘 띠. 같은 높이는 그늘.
+  ④ 벽 아래 또렷한 2단 그늘 띠, 소품(바위·드럼통·장벽) 아래 타원 그림자.
+  ⑤ 얼룩 덩어리·자갈·꽃·기름 얼룩 등 잔 소품은 타일 좌표 해시로 통째로 찍는다(위치·좌우 반전도 해시). 차선·유도선은 고정 소품.
+  ⑥ 단단한 재질(보도·계단·실내 바닥)은 섞지 않는다(곧은 가장자리 + 테).
+출력: game/assets/ground/ground_<set>.png(재질 아틀라스) · ground_decals_<set>.png · ground_noise.png · ground_<set>.json.
 """
 import os, sys, json
 import numpy as np
@@ -23,7 +23,6 @@ import palette as P
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 CELL = 256
 NZ = 256
-BAYER = np.array([[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]], dtype=np.int64)
 PAL = np.array([P.rgb(f"P{i:02d}") for i in range(64)], dtype=np.uint8)
 TOK = {f"P{i:02d}": i for i in range(64)}
 DARK = np.array([TOK["P%02d" % [j for j in range(64) if P.rgb(f"P{j:02d}") == P.step(P.rgb(f"P{i:02d}"), -1)][0]] for i in range(64)],
@@ -125,142 +124,144 @@ def walk_line(a, rnd, x, y, n, tok, hi=None, dirs=((1, 0), (1, 1), (1, -1), (0, 
         x, y = x + dx, y + dy
 
 
-# ---------------------------------------------------------------- R01 바깥 재질
-def dirt_tex(seed, damp=False):
-    v = equalize(fbm(CELL, [(32, 0.5), (16, 0.3), (4, 0.2)], seed))
-    a = quant(v, ["P17", "P18", "P19"], [0.09, 0.985] if damp else [0.025, 0.90], dither=0.3 if damp else 0.1, seed=seed)
+# ---------------------------------------------------------------- 쯔꾸르풍 재질 (v2: 평평한 바탕 + 부드러운 큰 얼룩 + 드문드문 또렷한 무늬)
+# 원칙: 픽셀 잡음·디더 점을 쓰지 않는다. 바탕 한 색 + 밝은/어두운 큰 얼룩(가장자리 매끈) + 간격을 둔 작은 무늬(풀포기·자갈·금).
+def soft(seed, scale=64):
+    """매끈한 큰 얼룩 값(0..1 고른 분포)."""
+    return equalize(fbm(CELL, [(scale, 0.65), (scale // 2, 0.35)], seed))
+
+
+def scatter(seed, spacing, mask=None, jitter=None):
+    """간격을 둔 흩뿌림(떨린 격자): 무늬끼리 붙지 않는다. mask[y, x]가 참인 곳만."""
     rnd = np.random.default_rng(seed)
-    fine = equalize(fbm(CELL, [(2, 1.0)], seed + 5))
-    a[(fine > 0.985)] = t("P16")
-    a[(fine < 0.008)] = t("P20")
-    cl = equalize(fbm(CELL, [(32, 1.0)], seed + 9))                   # 자갈은 무리 지어
-    for _ in range(64 if damp else 48):
-        x, y = rnd.integers(CELL), rnd.integers(CELL)
-        if cl[y, x] > 0.55:
-            pebble(a, rnd, x, y)
-    for _ in range(14):                                              # 마른 흙 금(밝은 곳에만)
-        x, y = rnd.integers(CELL), rnd.integers(CELL)
-        if v[y, x] > 0.5 and not damp:
-            walk_line(a, rnd, x, y, rnd.integers(3, 7), "P17")
-    return a
+    j = jitter if jitter is not None else spacing // 2
+    pts = []
+    for gy in range(0, CELL, spacing):
+        for gx in range(0, CELL, spacing):
+            x = (gx + rnd.integers(-j, j + 1)) % CELL
+            y = (gy + rnd.integers(-j, j + 1)) % CELL
+            if mask is None or mask[y, x]:
+                pts.append((x, y, rnd))
+    return pts
 
 
 def tuft(a, rnd, x, y, big=False):
-    blades = [(-2, 3), (0, 5), (2, 4), (1, 2), (-1, 4)] if big else [(-1, 2), (0, 4), (1, 3)]
-    for k, (dx, h) in enumerate(blades):
-        for s in range(h):
-            xx = x + (dx * s) // max(h, 1)
-            put(a, xx, y - s, "P31" if (k + s) % 2 else "P30")
-        put(a, x + dx, y - h, "P32")
-    put(a, x - 1, y + 1, "P29"); put(a, x, y + 1, "P29"); put(a, x + 1, y + 1, "P29")
+    """잔 소품용 풀 덤불(쯔꾸르식: 어두운 잎 덩어리 + 밝은 잎끝)."""
+    rows = [".a.a.a.", "abababa", ".bbbbb.", "..kkk.."] if big else [".a.a.", "ababa", ".kkk."]
+    stamp(a, x - len(rows[0]) // 2, y - len(rows) + 1, rows, {"a": "P31", "b": "P30", "k": "P29"})
+
+
+# 쯔꾸르 풀 무늬: 작은 'ᐱ' 풀포기(어두운 잎 + 밝은 끝)
+GRASS_MOTIFS = [
+    [".a.a.", "ab.ba", ".b.b."],
+    ["a...a", ".a.a.", ".bab."],
+    [".a.", "aba", ".b."],
+    ["a.a", ".b."],
+]
+
+
+def grass_motif(a, rnd, x, y, dark="P29", light="P31"):
+    stamp(a, x, y, GRASS_MOTIFS[rnd.integers(len(GRASS_MOTIFS))], {"a": light, "b": dark})
+
+
+def small_pebble(a, rnd, x, y):
+    stamp(a, x, y, [["ab", "kk"], [".ab", "abk", ".kk"], ["ab."], ["a", "k"]][rnd.integers(4)],
+          {"a": "P08", "b": "P07", "k": "P17"})
+
+
+def dirt_tex(seed, damp=False):
+    a = np.full((CELL, CELL), t("P18"), np.uint8)
+    # 밝은·어두운 얼룩은 잔 소품(통째로 찍는 덩어리)으로: A·B 경계에서 잘리지 않게
+    for x, y, rnd in scatter(seed + 3, 14):                         # 자갈(간격 14px 안팎)
+        if rnd.random() < 0.45:
+            small_pebble(a, rnd, x, y)
+    for x, y, rnd in scatter(seed + 4, 11):                         # 작은 흙 알갱이(한 점, 어둡게)
+        if rnd.random() < 0.5:
+            put(a, x, y, "P17")
+    return a
 
 
 def grass_tex(seed, dense, dry=False):
-    if not dense:
+    if not dense:                                                   # 성긴 풀: 흙 바탕 + 풀 무리
         a = dirt_tex(seed)
-        rnd = np.random.default_rng(seed + 1)
-        fz = equalize(fbm(CELL, [(16, 0.6), (2, 0.4)], seed + 3))
-        a[fz > (0.90 if not dry else 0.94)] = t("P30")
-        a[fz > (0.975 if not dry else 0.985)] = t("P31")
-        cl = equalize(fbm(CELL, [(32, 1.0)], seed + 4))
-        for _ in range(150):
-            x, y = rnd.integers(CELL), rnd.integers(CELL)
-            if cl[y, x] > (0.4 if not dry else 0.6):
-                tuft(a, rnd, x, y, big=rnd.random() < 0.3)
+        clump = soft(seed + 2, 32)
+        for x, y, rnd in scatter(seed + 5, 9, clump > 0.5):
+            grass_motif(a, rnd, x, y, dark="P29", light="P31")
         return a
-    v = equalize(fbm(CELL, [(32, 0.3), (8, 0.35), (2, 0.35)], seed))
-    a = quant(v, ["P18", "P29", "P30", "P31"], [0.012, 0.09, 0.93] if not dry else [0.02, 0.08, 0.86], seed=seed)
-    rnd = np.random.default_rng(seed + 2)
-    for _ in range(700):                                             # 풀잎 결: 짧은 세로 획(밝은 끝 + 어두운 뿌리)
-        x, y = rnd.integers(CELL), rnd.integers(CELL)
-        if v[y, x] > 0.2:
-            put(a, x, y, "P31" if not dry else "P32"); put(a, x, y - 1, "P32" if rnd.random() < 0.5 else "P31")
-            put(a, x, y + 1, "P29")
-    for _ in range(80):
-        x, y = rnd.integers(CELL), rnd.integers(CELL)
-        tuft(a, rnd, x, y, big=True)
-    if dry:                                                          # 마른 풀: 밝은 지푸라기 점
-        a[(fbm(CELL, [(2, 1.0)], seed + 8) > 0.72) & (a == t("P31"))] = t("P32")
+    a = np.full((CELL, CELL), t("P30"), np.uint8)                   # 마른 벌도 같은 바탕(넓게 섞여도 얼룩져 보이지 않게)
+    for x, y, rnd in scatter(seed + 5, 10):                         # 풀포기 무늬(간격 10px 안팎)
+        if rnd.random() < 0.7:
+            under = a[y % CELL, x % CELL]
+            if under == t("P29"):
+                grass_motif(a, rnd, x, y, dark="P28", light="P30")
+            elif under == t("P31") or under == t("P32"):
+                grass_motif(a, rnd, x, y, dark="P30", light="P32")
+            else:
+                grass_motif(a, rnd, x, y, dark="P29", light="P31")
     return a
 
 
 def asphalt_tex(seed, worn=False):
-    v = equalize(fbm(CELL, [(32, 0.35), (8, 0.25), (2, 0.4)], seed))
-    a = quant(v, ["P03", "P04", "P05"], [0.20, 0.82] if not worn else [0.12, 0.66], seed=seed)
+    a = np.full((CELL, CELL), t("P04"), np.uint8)
+    for x, y, rnd in scatter(seed + 3, 6):                          # 골재 점(드문드문)
+        if rnd.random() < 0.35:
+            put(a, x, y, "P05" if a[y % CELL, x % CELL] == t("P04") else "P04")
     rnd = np.random.default_rng(seed)
-    fine = equalize(fbm(CELL, [(2, 1.0)], seed + 7))
-    a[fine > 0.975] = t("P02")
-    a[fine < 0.02] = t("P06")
-    if worn:                                                         # 닳아 드러난 골재
-        a[(fine > 0.4) & (fine < 0.46) & (v > 0.6)] = t("P06")
-    for _ in range(9 if not worn else 11):                           # 이어지는 균열망(타일 경계를 넘는다)
+    for _ in range(6 if not worn else 9):                           # 깔끔한 1px 균열 + 밝은 가장자리
         x, y = rnd.integers(CELL), rnd.integers(CELL)
-        walk_line(a, rnd, x, y, rnd.integers(30, 70), "P01", "P05",
-                  dirs=((1, 0), (1, 1), (0, 1), (1, -1), (-1, 1)))
-    # 보수한 자리(어두운 덧칠 사각, 먹선 테)
-    for _ in range(3):
-        px, py, w, h = rnd.integers(CELL), rnd.integers(CELL), rnd.integers(14, 30), rnd.integers(9, 18)
-        for y in range(py, py + h):
-            for x in range(px, px + w):
-                edge = y in (py, py + h - 1) or x in (px, px + w - 1)
-                put(a, x, y, "P02" if edge else ("P03" if fine[y % CELL, x % CELL] < 0.8 else "P04"))
-    return a
+        dx = rnd.choice((-1, 1))
+        for k in range(rnd.integers(14, 34)):
+            put(a, x, y, "P02"); put(a, x, y + 1, "P05")
+            x += dx if rnd.random() < 0.6 else 0
+            y -= 0 if rnd.random() < 0.5 else 1
+            if rnd.random() < 0.12:
+                dx = -dx
+    return a                                                        # 보수 자리는 잔 소품(patch)으로: A·B 경계에서 잘리지 않게
 
 
-PAVER_TONES = [("P05", "P06", "P07"), ("P05", "P06", "P07"), ("P05", "P06", "P07"), ("P05", "P06", "P06"), ("P06", "P07", "P07")]
+PAVER_TONES = [("P07", "P06", "P05")] * 9 + [("P08", "P07", "P06")]
 
 
 def paver_tex(seed, weathered=False):
+    """보도블록: 16px 판을 엇갈려 깐다. 판 = 한 색 + 윗·왼 밝은 테 + 아래·오른 어두운 테(쯔꾸르식 경사), 이음매 한 줄."""
     a = np.zeros((CELL, CELL), np.uint8)
     rnd = np.random.default_rng(seed)
-    mot = equalize(fbm(CELL, [(8, 0.6), (2, 0.4)], seed + 1))
-    stain = equalize(fbm(CELL, [(32, 0.7), (8, 0.3)], seed + 2))
+    wr = np.random.default_rng(seed + 1)
     for row in range(CELL // 16):
-        off = 8 if row % 2 else 0                                    # 엇갈려 깐 보도블록(16px 판)
+        off = 8 if row % 2 else 0
         for col in range(CELL // 16):
             x0, y0 = col * 16 + off, row * 16
             r = rnd.random()
-            tone = PAVER_TONES[rnd.integers(len(PAVER_TONES))]
+            hi, base, lo = PAVER_TONES[rnd.integers(len(PAVER_TONES))]
+            if weathered and wr.random() < 0.05:                    # 때 탄 판(한 단계 어둡게)
+                hi, base, lo = "P%02d" % DARK[t(hi)], "P%02d" % DARK[t(base)], "P%02d" % DARK[t(lo)]
             for y in range(y0, y0 + 16):
                 for x in range(x0, x0 + 16):
-                    m = mot[y % CELL, x % CELL]
-                    tok = tone[0] if m < 0.06 else tone[2] if m > 0.93 else tone[1]
-                    if weathered and stain[y % CELL, x % CELL] > 0.84:
-                        tok = "P%02d" % DARK[t(tok)]
-                    put(a, x, y, tok)
-            for i in range(1, 15):                                   # 윗변·왼변 밝게, 아랫변·오른변 어둡게
-                put(a, x0 + i, y0 + 1, "P%02d" % min(t(tone[2]) + 1, 9))
-                put(a, x0 + 14, y0 + i, tone[0])
-                put(a, x0 + i, y0 + 14, tone[0])
-            for i in range(16):                                      # 이음매
-                put(a, x0 + i, y0, "P02"); put(a, x0, y0 + i, "P02")
-            if r > 0.96:                                             # 금 간 판
-                x, y = x0 + 3 + rnd.integers(6), y0 + 3
-                for k in range(rnd.integers(6, 10)):
-                    put(a, x, y, "P02")
-                    x += rnd.integers(-1, 2); y += 1
-                    if y >= y0 + 14:
-                        break
-            elif r > 0.93:                                           # 귀퉁이 깨짐
-                cx, cy = (x0 + 13, y0 + 13) if rnd.random() < 0.5 else (x0 + 2, y0 + 13)
-                stamp(a, cx - 1, cy - 1, ["kk", "kd"], {"k": "P02", "d": "P03"})
-    if weathered:                                                    # 이음매에 난 풀
-        for _ in range(90):
+                    put(a, x, y, base)
+            for i in range(1, 16):
+                put(a, x0 + i, y0 + 1, hi); put(a, x0 + 1, y0 + i, hi)
+                put(a, x0 + i, y0 + 15, lo); put(a, x0 + 15, y0 + i, lo)
+            for i in range(16):
+                put(a, x0 + i, y0, "P04"); put(a, x0, y0 + i, "P04")
+            if r > 0.98:                                            # 금 간 판(깔끔한 꺾은선)
+                x, y = x0 + 4 + rnd.integers(6), y0 + 3
+                for k in range(9):
+                    put(a, x, y, "P04")
+                    x += (1 if k % 3 == 0 else 0) * (1 if rnd.random() < 0.5 else -1)
+                    y += 1
+            elif r > 0.965:                                         # 귀퉁이 깨짐
+                stamp(a, x0 + 12, y0 + 12, [".kk", "kkd", "kdd"], {"k": "P04", "d": "P05"})
+    if weathered:                                                   # 이음매에 난 풀
+        for _ in range(60):
             row, col = rnd.integers(CELL // 16), rnd.integers(CELL // 16)
             x0, y0 = col * 16 + (8 if row % 2 else 0), row * 16
-            if rnd.random() < 0.5:
-                x = x0 + rnd.integers(2, 14)
-                for k, tok in enumerate(("P30", "P31", "P30")):
-                    put(a, x + k, y0, tok)
-                put(a, x + 1, y0 - 1, "P32")
-            else:
-                y = y0 + rnd.integers(2, 14)
-                put(a, x0, y, "P30"); put(a, x0, y + 1, "P31"); put(a, x0 - 1, y, "P31")
+            x = x0 + rnd.integers(3, 12)
+            stamp(a, x, y0 - 1, [".a.", "bab"], {"a": "P31", "b": "P30"})
     return a
 
 
 def tile_tex(img32):
-    """구조물 타일(계단 등): 32px 타일을 4×4로 되풀이(월드 좌표 & 31 = 타일 안 좌표)."""
+    """구조물 타일(계단 등): 32px 타일을 되풀이(월드 좌표 & 31 = 타일 안 좌표)."""
     arr = np.array(img32.convert("RGB"))
     lut = {tuple(c): i for i, c in enumerate(PAL)}
     idx = np.zeros((32, 32), np.uint8)
@@ -270,50 +271,57 @@ def tile_tex(img32):
     return np.tile(idx, (CELL // 32, CELL // 32))
 
 
-# ---------------------------------------------------------------- S-07 실내 재질
+# ---------------------------------------------------------------- S-07 실내 재질 (쯔꾸르 실내: 깔끔한 판·줄눈·경사 테)
 def panel_tex(seed, worn=False):
-    v = equalize(fbm(CELL, [(32, 0.55), (8, 0.3), (2, 0.15)], seed))
-    a = quant(v, ["P12", "P13", "P14"], [0.05, 0.96] if not worn else [0.10, 0.98], dither=0.12, seed=seed)
+    """철판 바닥: 16×32 판을 열마다 엇갈려, 한 색 + 밝은 윗·왼 테 + 어두운 아래·오른 테 + 귀퉁이 리벳."""
+    a = np.full((CELL, CELL), t("P13"), np.uint8)
     rnd = np.random.default_rng(seed)
-    for col in range(CELL // 16):                                    # 16px 판, 가로 이음매는 판마다 엇갈림
+    for col in range(CELL // 16):
         x0 = col * 16
-        for y in range(CELL):
-            put(a, x0, y, "P11"); put(a, x0 + 1, y, "P14")
-        y0 = (col * 37 + seed * 11) % 32
+        y00 = (col * 37 + seed * 11) % 32
         for k in range(CELL // 32):
-            yy = y0 + k * 32
-            for x in range(x0 + 1, x0 + 16):
-                put(a, x, yy, "P11"); put(a, x, yy + 1, "P14")
-            for dx in (4, 12):                                       # 리벳
-                put(a, x0 + dx, yy + 3, "P15"); put(a, x0 + dx, yy + 4, "P11")
-    sc = equalize(fbm(CELL, [(32, 0.7), (4, 0.3)], seed + 3))
-    a[(sc > (0.95 if not worn else 0.90)) & (a == t("P13"))] = t("P12")       # 닳은 자국(한 단계만)
-    for _ in range(10 if not worn else 20):                          # 긁힌 자국
-        x, y = rnd.integers(CELL), rnd.integers(CELL)
-        for k in range(rnd.integers(4, 9)):
-            put(a, x + k, y + (k // 3), "P15" if k % 3 else "P12")
+            y0 = y00 + k * 32
+            tone = "P13" if rnd.random() < 0.85 else "P12"
+            if worn and rnd.random() < 0.15:
+                tone = "P12"
+            for y in range(y0, y0 + 32):
+                for x in range(x0, x0 + 16):
+                    put(a, x, y, tone)
+            for i in range(1, 16):
+                put(a, x0 + i, y0 + 1, "P14")
+                put(a, x0 + i, y0 + 31, "P12")
+            for i in range(1, 32):
+                put(a, x0 + 1, y0 + i, "P14")
+                put(a, x0 + 15, y0 + i, "P12")
+            for i in range(16):
+                put(a, x0 + i, y0, "P11")
+            for i in range(32):
+                put(a, x0, y0 + i, "P11")
+            for rx, ry in ((3, 3), (12, 3), (3, 28), (12, 28)):     # 리벳
+                put(a, x0 + rx, y0 + ry, "P15"); put(a, x0 + rx, y0 + ry + 1, "P11")
+    if worn:                                                        # 긁힌 자국 몇 줄(깔끔한 짧은 대각선)
+        for _ in range(14):
+            x, y = rnd.integers(CELL), rnd.integers(CELL)
+            for k in range(5):
+                put(a, x + k, y + k // 2, "P14")
     return a
 
 
 def grate_tex(seed, rusty=False):
     a = np.zeros((CELL, CELL), np.uint8)
     rnd = np.random.default_rng(seed)
-    mot = equalize(fbm(CELL, [(8, 0.5), (2, 0.5)], seed + 1))
-    rust = equalize(fbm(CELL, [(32, 0.8), (4, 0.2)], seed + 2))
     for gy in range(CELL // 16):
         for gx in range(CELL // 16):
             x0, y0 = gx * 16, gy * 16
-            horiz = rnd.random() < 0.5
+            horiz = (gx + gy) % 2 == 0
+            base = "P05" if not (rusty and rnd.random() < 0.15) else "P04"
             for y in range(y0, y0 + 16):
                 for x in range(x0, x0 + 16):
-                    edge = x == x0 or y == y0
-                    m = mot[y, x]
-                    tok = "P02" if edge else ("P04" if m < 0.2 else "P06" if m > 0.85 else "P05")
-                    if not edge and rusty and rust[y, x] > 0.80 and tok == "P05":
-                        tok = "P04"
-                    put(a, x, y, tok)
+                    put(a, x, y, base)
+            for i in range(16):
+                put(a, x0 + i, y0, "P02"); put(a, x0, y0 + i, "P02")
             for i in range(1, 15):
-                put(a, x0 + i, y0 + 1, "P07")
+                put(a, x0 + i, y0 + 1, "P07"); put(a, x0 + 1, y0 + i, "P06")
             for k in (4, 8, 12):
                 for i in range(3, 13):
                     if horiz:
@@ -325,33 +333,39 @@ def grate_tex(seed, rusty=False):
 
 
 def lino_tex(seed, worn=False):
-    v = equalize(fbm(CELL, [(32, 0.5), (8, 0.3), (2, 0.2)], seed))
-    a = quant(v, ["P19", "P20", "P21"], [0.04, 0.93] if not worn else [0.09, 0.97], dither=0.14, seed=seed)
+    """교실 장판: 16px 바둑판(두 색) + 줄눈 + 윗변 밝은 테."""
+    a = np.zeros((CELL, CELL), np.uint8)
     rnd = np.random.default_rng(seed)
-    tone = rnd.random((CELL // 16, CELL // 16))
-    for gy in range(CELL // 16):                                     # 16px 장판 조각: 몇 장은 한 단계 밝거나 어둡게(갈아 붙인 자국)
+    for gy in range(CELL // 16):
         for gx in range(CELL // 16):
-            blk = a[gy * 16 + 1:gy * 16 + 16, gx * 16 + 1:gx * 16 + 16]
-            if tone[gy, gx] > 0.93:
-                blk[blk == t("P20")] = t("P21")
-            elif tone[gy, gx] < 0.05:
-                blk[blk == t("P20")] = t("P19")
-    for k in range(0, CELL, 16):
-        a[:, k] = t("P19"); a[k, :] = t("P19")
-    for k in range(0, CELL, 16):                                     # 이음매 아래·오른쪽 1px 밝게(살짝 뜬 장판)
-        a[(k + 1) % CELL, :][a[(k + 1) % CELL, :] == t("P20")] = t("P21")
+            x0, y0 = gx * 16, gy * 16
+            base, hi = (("P21", "P22") if (gx + gy) % 2 == 0 else ("P20", "P21"))
+            if worn and rnd.random() < 0.12:
+                base, hi = "P20", "P21"
+            for y in range(y0, y0 + 16):
+                for x in range(x0, x0 + 16):
+                    put(a, x, y, base)
+            for i in range(1, 16):
+                put(a, x0 + i, y0 + 1, hi)
+            for i in range(16):
+                put(a, x0 + i, y0, "P19"); put(a, x0, y0 + i, "P19")
     return a
 
 
 def clinic_tex(seed, worn=False):
-    v = equalize(fbm(CELL, [(16, 0.5), (2, 0.5)], seed))
-    a = quant(v, ["P07", "P08", "P09"], [0.06, 0.94] if not worn else [0.14, 0.95], seed=seed)
-    for k in range(0, CELL, 8):
-        a[:, k] = t("P06"); a[k, :] = t("P06")
+    a = np.zeros((CELL, CELL), np.uint8)
     rnd = np.random.default_rng(seed)
-    for _ in range(12):
-        x, y = rnd.integers(CELL // 8) * 8, rnd.integers(CELL // 8) * 8
-        a[y + 1:y + 8, x + 1:x + 8] = t("P14")                       # 갈아 끼운 타일
+    for gy in range(CELL // 8):
+        for gx in range(CELL // 8):
+            x0, y0 = gx * 8, gy * 8
+            base = "P08" if not (rnd.random() < (0.03 if not worn else 0.08)) else "P14"
+            for y in range(y0, y0 + 8):
+                for x in range(x0, x0 + 8):
+                    put(a, x, y, base)
+            for i in range(1, 8):
+                put(a, x0 + i, y0 + 1, "P09")
+            for i in range(8):
+                put(a, x0 + i, y0, "P07"); put(a, x0, y0 + i, "P07")
     return a
 
 
@@ -419,6 +433,20 @@ def decals():
     stamp(a, 9, 11, ["..kkkkkkkk..", ".kddeeeeddk.", "kddeeffeeddk", "kdeeffffeedk", ".kddeeeeddk.", "..kkkkkkkk.."],
           {"k": "P01", "d": "P02", "e": "P17", "f": "P18"})
     ids["pothole"] = add(a)
+    a = cell()                                                       # 아스팔트 덧씌운 보수 자리(먹선 테)
+    for y in range(10, 22):
+        for x in range(7, 26):
+            edge = y in (10, 21) or x in (7, 25)
+            put(a, x, y, "P02" if edge else ("P04" if y == 11 else "P03"))
+    ids["patch"] = add(a)
+    # 바닥 얼룩 덩어리(쯔꾸르식: 평평한 바탕 위에 통째로 찍는 부드러운 얼룩, 모양 두 가지씩)
+    for name, tok, rx, ry, seed in (("dirt_lt1", "P19", 9, 5, 31), ("dirt_lt2", "P19", 6, 4, 32), ("dirt_dk1", "P17", 5, 3, 33),
+                                    ("grass_lt1", "P31", 9, 5, 34), ("grass_lt2", "P31", 6, 4, 35), ("grass_dk1", "P29", 5, 3, 36),
+                                    ("asph_lt1", "P05", 8, 4, 37), ("asph_dk1", "P03", 6, 3, 38)):
+        a = cell()
+        nz = equalize(fbm(32, [(8, 1.0)], seed))
+        blob(a, 16, 16, rx, ry, tok, nz, 0.85)
+        ids[name] = add(a)
     a = cell()                                                       # 종이 쓰레기
     stamp(a, 12, 13, ["kkkkkk.", "kaaabk.", "kabaabk", ".kaaabk", ".kkkkkk"], {"k": "P05", "a": "P09", "b": "P08"})
     ids["paper"] = add(a)
@@ -487,20 +515,22 @@ def sets():
     D, did = decals()
     r01 = {
         "materials": [
-            # name, A, B, spread(px), edge(px), B 문턱(0..255, 클수록 B가 적다), 잔 소품 밀도(%), 잔 소품, 단단함
-            dict(name="dirt", A=dirt_tex(101), B=dirt_tex(101, damp=True), spread=9, edge=0, vthr=150, dens=14,
-                 decals=["pebbles", "pebbles", "rock", "leaves", "pebbles", "damp", "bone", "can"], hard=0, boff=(97, 61)),
-            dict(name="grass_sparse", A=grass_tex(111, False), B=grass_tex(111, False, dry=True), spread=10, edge=0, vthr=140,
-                 dens=16, decals=["bush", "flowers", "pebbles", "clover", "leaves"], hard=0, boff=(141, 83)),
-            dict(name="grass_dense", A=grass_tex(121, True), B=grass_tex(121, True, dry=True), spread=11, edge=0, vthr=150,
-                 dens=18, decals=["bush", "flowers", "clover", "bush"], hard=0, boff=(59, 173)),
-            dict(name="asphalt", A=asphalt_tex(131), B=asphalt_tex(131, worn=True), spread=4, edge=3, vthr=130, dens=12,
-                 decals=["oil", "debris", "pothole", "debris", "paper"], hard=0, boff=(113, 37)),
-            dict(name="pavers", A=paver_tex(141), B=paver_tex(141, weathered=True), spread=5, edge=3, vthr=120, dens=10,
-                 decals=["paper", "butts", "stain", "leaves", "debris"], hard=0),
-            dict(name="stairs", A=tile_tex(TI.stairs()), B=tile_tex(TI.stairs()), spread=0, edge=0, vthr=255, dens=0, decals=[], hard=1),
-            dict(name="stairs_rail", A=tile_tex(TI.stairs_rail()), B=tile_tex(TI.stairs_rail()), spread=0, edge=0, vthr=255, dens=0,
+            # spread: 경계 물결 폭(px) · pri: 위아래(높은 재질이 위) · rim: 위 재질 테두리(px) · shade: 아래 재질 그늘(px)
+            # vthr: B 벌 문턱(클수록 B가 적다) · dens: 잔 소품 밀도(%) · hard: 섞지 않음 · boff: B 벌을 읽는 어긋남
+            dict(name="dirt", A=dirt_tex(101), B=dirt_tex(101, damp=True), spread=6, pri=0, rim=0, shade=2, vthr=160, dens=16,
+                 decals=["dirt_lt1", "dirt_lt2", "dirt_dk1", "pebbles", "rock", "leaves", "bone", "can"], hard=0, boff=(97, 61)),
+            dict(name="grass_sparse", A=grass_tex(111, False), B=grass_tex(111, False, dry=True), spread=6, pri=1, rim=0, shade=1,
+                 vthr=150, dens=14, decals=["dirt_lt1", "grass_dk1", "flowers", "pebbles", "clover", "bush"], hard=0, boff=(141, 83)),
+            dict(name="grass_dense", A=grass_tex(121, True), B=grass_tex(121, True, dry=True), spread=6, pri=2, rim=1, shade=1,
+                 vthr=165, dens=16, decals=["grass_lt1", "grass_lt2", "grass_dk1", "bush", "flowers", "clover"], hard=0, boff=(59, 173)),
+            dict(name="asphalt", A=asphalt_tex(131), B=asphalt_tex(131, worn=True), spread=2, pri=3, rim=1, shade=1, vthr=140, dens=14,
+                 decals=["asph_lt1", "asph_dk1", "oil", "debris", "pothole", "patch", "paper"], hard=0, boff=(113, 37)),
+            dict(name="pavers", A=paver_tex(141, weathered=True), B=paver_tex(141, weathered=True), spread=0, pri=4, rim=1, shade=0, vthr=256, dens=6,
+                 decals=["paper", "butts", "leaves"], hard=1),                # 인공 바닥: 곧은 연석 가장자리(섞지 않음)
+            dict(name="stairs", A=tile_tex(TI.stairs()), B=tile_tex(TI.stairs()), spread=0, pri=5, rim=0, shade=0, vthr=255, dens=0,
                  decals=[], hard=1),
+            dict(name="stairs_rail", A=tile_tex(TI.stairs_rail()), B=tile_tex(TI.stairs_rail()), spread=0, pri=5, rim=0, shade=0, vthr=255,
+                 dens=0, decals=[], hard=1),
         ],
         "mat_of": {"dirt_a": 0, "dirt_b": 0, "dirt_grass_a": 2, "dirt_grass_b": 1, "asphalt": 3, "asphalt_lane": 3,
                    "pavers": 4, "pavers_b": 4, "stairs": 5, "stairs_rail": 6},
@@ -509,14 +539,14 @@ def sets():
     }
     s07 = {
         "materials": [
-            dict(name="panel", A=panel_tex(201), B=panel_tex(201, worn=True), spread=2, edge=4, vthr=150, dens=9,
-                 decals=["scuff", "plate", "paper", "puddle", "scuff"], hard=1),
-            dict(name="grate", A=grate_tex(211), B=grate_tex(211, rusty=True), spread=2, edge=4, vthr=140, dens=6,
-                 decals=["rust", "paper"], hard=1),
-            dict(name="lino", A=lino_tex(221), B=lino_tex(221, worn=True), spread=2, edge=4, vthr=150, dens=6,
-                 decals=["paper", "butts", "paper"], hard=1),
-            dict(name="clinic", A=clinic_tex(231), B=clinic_tex(231, worn=True), spread=2, edge=3, vthr=160, dens=5,
-                 decals=["scuff", "paper"], hard=1),
+            dict(name="panel", A=panel_tex(201, worn=True), B=None, spread=0, pri=0, rim=0, shade=1, vthr=256, dens=5,
+                 decals=["plate", "paper", "puddle"], hard=1),
+            dict(name="grate", A=grate_tex(211, rusty=True), B=None, spread=0, pri=0, rim=0, shade=1, vthr=256, dens=3,
+                 decals=["paper"], hard=1),
+            dict(name="lino", A=lino_tex(221, worn=True), B=None, spread=0, pri=0, rim=0, shade=1, vthr=256, dens=4,
+                 decals=["paper", "butts"], hard=1),
+            dict(name="clinic", A=clinic_tex(231), B=None, spread=0, pri=0, rim=0, shade=1, vthr=256, dens=3,
+                 decals=["paper"], hard=1),
         ],
         "mat_of": {"panel": 0, "panel_sheen": 0, "panel_scuff": 0, "guide_h": 0, "guide_v": 0, "guide_x": 0, "guide_t": 0, "grate_a": 1, "grate_b": 1, "grate_c": 1,
                    "lino_a": 2, "lino_b": 2, "clinic_a": 3, "clinic_b": 3},
@@ -536,10 +566,13 @@ class GroundSet:
         self.M = len(mats)
         self.atlas = np.zeros((CELL * self.M, CELL * 6), np.uint8)                # [A, B, A어둠, B어둠, A더어둠, B더어둠]
         for m, d in enumerate(mats):
-            for k, a in enumerate((d["A"], d["B"], DARK[d["A"]], DARK[d["B"]], DARK[DARK[d["A"]]], DARK[DARK[d["B"]]])):
+            bb = d["B"] if d["B"] is not None else d["A"]                       # 구조가 있는 바닥(판·줄눈)은 한 벌만: 경계에서 판이 잘리지 않게
+            for k, a in enumerate((d["A"], bb, DARK[d["A"]], DARK[bb], DARK[DARK[d["A"]]], DARK[DARK[bb]])):
                 self.atlas[m * CELL:(m + 1) * CELL, k * CELL:(k + 1) * CELL] = a
         self.spread = np.array([2 * d["spread"] for d in mats], np.int64)
-        self.edge = np.array([d["edge"] for d in mats], np.int64)
+        self.pri = np.array([d["pri"] for d in mats], np.int64)
+        self.rim = np.array([d["rim"] for d in mats], np.int64)
+        self.shade = np.array([d["shade"] for d in mats], np.int64)
         self.vthr = np.array([d["vthr"] for d in mats], np.int64)
         self.dens = np.array([d["dens"] * 256 // 100 for d in mats], np.int64)
         self.hard = np.array([d["hard"] for d in mats], np.int64)
@@ -596,15 +629,14 @@ class GroundSet:
         mats = [np.where(np.isin(at(flags, cx, cy), (1, 3)), m0, self.mat_of[at(ids, cx, cy)]) for cx, cy, _ in corners]
         ws = [c[2] for c in corners]
         hard0 = self.hard[m0] == 1
-        R, G, B = (self.noise[..., c].astype(np.int64) for c in range(3))
-        bay = lambda dx, dy: BAYER[(Y + dy) & 3, (X + dx) & 3]
+        R, B = self.noise[..., 0].astype(np.int64), self.noise[..., 2].astype(np.int64)
         NEG = -(1 << 40)
         raw, scores = [], []
         for k in range(4):
             mk = mats[k]
             W = sum(np.where(mats[j] == mk, ws[j], 0) for j in range(4))
             oxm, oym = (mk * 73) & 255, (mk * 151) & 255
-            n = 2 * (R[(Y + oym) & 255, (X + oxm) & 255] - 128) + (G[(Y + oym) & 255, (X + oxm) & 255] - 128)
+            n = 3 * (R[(Y + oym) & 255, (X + oxm) & 255] - 128)          # 매끈한 큰 얼룩만(물결 경계, 잔 점 없음)
             s = 3 * W + self.spread[mk] * n
             raw.append(s)
             scores.append(np.where((self.hard[mk] == 1) & (mk != m0), NEG, s))   # 단단한 이웃은 번지지 않는다
@@ -619,33 +651,34 @@ class GroundSet:
             own_s = np.where(mats[k] == m0, np.maximum(own_s, raw[k]), own_s)
         win_m = np.where(hard0, m0, best_m)
         win_s = np.where(hard0, own_s, best_s)
-        second = np.full(X.shape, NEG, np.int64)                      # 경계 띠: 다른 재질의 원래 점수 중 최고
+        second = np.full(X.shape, NEG, np.int64)                      # 경계: 다른 재질의 원래 점수 중 최고와 그 재질
+        sec_m = np.full(X.shape, 99, np.int64)
         for k in range(4):
-            second = np.where(mats[k] != win_m, np.maximum(second, raw[k]), second)
-        margin = np.where(second == NEG, 1 << 30, win_s - second)
-        b1 = bay(1, 2)
-        e = self.edge[win_m]
-        dark = (e > 0) & (margin * 16 <= (b1 + 1) * e * 768)
-        # 벽 그늘·소품 그림자
+            better = (mats[k] != win_m) & ((raw[k] > second) | ((raw[k] == second) & (mats[k] < sec_m)))
+            second = np.where(better, raw[k], second)
+            sec_m = np.where(better, mats[k], sec_m)
+        has2 = second != NEG
+        margin = win_s - np.where(has2, second, 0)
+        sec_c = np.where(has2, sec_m, 0)
+        pw, ps = self.pri[win_m], self.pri[sec_c]
+        # 쯔꾸르 오토타일: 위 재질은 테두리, 아래 재질은 (위 재질이 테두리를 가질 때만) 그늘, 같은 높이(실내 이음매)는 그늘
+        band = np.where(pw > ps, self.rim[win_m], np.where((pw == ps) | (self.rim[sec_c] > 0), self.shade[win_m], 0))
+        dark = has2 & (band > 0) & (margin < band * 768)
+        # 벽 그늘·소품 그림자(또렷한 띠·타원, 디더 없음)
         fN = at(flags, tx, ty - 1)
         fW = at(flags, tx - 1, ty)
         fE = at(flags, tx + 1, ty)
         f0 = at(flags, tx, ty)
-        b2 = bay(3, 1)
-        deep = (fN == 1) & (fy * 16 <= (b2 + 1) * 2)                      # 벽 발치: 2단(더 어둠 → 어둠) 디더 감쇠
-        dark |= (fN == 1) & (fy * 16 <= (b2 + 1) * 6)
-        dark |= (fW == 1) & (fx * 16 <= (b2 + 1) * 3)
-        dark |= (fE == 1) & ((31 - fx) * 16 <= (b2 + 1) * 3)
+        deep = (fN == 1) & (fy < 2)
+        dark |= (fN == 1) & (fy < 5)
+        dark |= (fW == 1) & (fx < 2)
+        dark |= (fE == 1) & (fx > 29)
         q0 = (fx - 16) ** 2 * 36 + (fy - 29) ** 2 * 169                  # 소품 그림자 타원(가로 13 · 세로 6, 아래 타일로 3px 넘친다)
         q1 = (fx - 16) ** 2 * 36 + (fy + 3) ** 2 * 169
-        dark |= (f0 == 2) & (q0 * 32 <= (b2 + 17) * 6084)
-        dark |= (fN == 2) & (q1 * 32 <= (b2 + 17) * 6084)
-        deep |= (f0 == 2) & (q0 * 64 <= (b2 + 9) * 6084)
-        deep |= (fN == 2) & (q1 * 64 <= (b2 + 9) * 6084)
+        dark |= ((f0 == 2) & (q0 <= 6084)) | ((fN == 2) & (q1 <= 6084))
         # A·B 벌
         oxm, oym = (win_m * 73) & 255, (win_m * 151) & 255
-        vv = B[(Y + oym) & 255, (X + oxm) & 255] + ((G[(Y + oym) & 255, (X + oxm) & 255] - 128) >> 3)
-        var = (vv > self.vthr[win_m]).astype(np.int64)
+        var = (B[(Y + oym) & 255, (X + oxm) & 255] > self.vthr[win_m]).astype(np.int64)
         level = np.where(deep, 2, np.where(dark, 1, 0))
         col = var + 2 * level
         bx, by = self.boff[win_m, 0] * var, self.boff[win_m, 1] * var        # B 벌은 어긋난 자리에서 읽는다(되풀이 주기 깨기)
@@ -678,7 +711,8 @@ class GroundSet:
         idx_img(self.atlas).save(os.path.join(out_dir, f"ground_{self.name}.png"))
         idx_img(self.decal).save(os.path.join(out_dir, f"ground_decals_{self.name}.png"))
         Image.fromarray(self.noise, "RGBA").save(os.path.join(out_dir, "ground_noise.png"))
-        meta = {"set": self.name, "cell": CELL, "materials": self.names, "spread": self.spread.tolist(), "edge": self.edge.tolist(),
+        meta = {"set": self.name, "cell": CELL, "materials": self.names, "spread": self.spread.tolist(), "pri": self.pri.tolist(),
+                "rim": self.rim.tolist(), "shade": self.shade.tolist(),
                 "vthr": self.vthr.tolist(), "boff": self.boff.ravel().tolist(), "dens": self.dens.tolist(), "hard": self.hard.tolist(),
                 "dlist": self.dlist.ravel().tolist(), "dcount": self.dcount.tolist(), "mat_of": self.mat_of.tolist(),
                 "force": self.force.tolist(), "flag_of": self.flag_of.tolist()}

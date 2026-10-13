@@ -5,7 +5,7 @@ class_name GroundLayer
 extends Node2D
 
 const DIR := "res://assets/ground/"
-const PARAMS := ["mat_of", "force", "spread", "edge", "vthr", "dens", "hard", "boff", "dlist", "dcount", "flag_of"]
+const PARAMS := ["mat_of", "force", "spread", "pri", "rim", "shade", "vthr", "dens", "hard", "boff", "dlist", "dcount", "flag_of"]
 static var _sets := {}
 var set_name: String
 var origin: Vector2i
