@@ -17,9 +17,19 @@ func test_distance_driven_cardinal(t) -> void:
 		l.step(Vector2(1, 0), dt, "walk")
 	var dist := l.logical.x - 100.0
 	t.near(dist, 3.0 * 32.0 * 2.0, 0.01, "걷기 3.0t/초 × 2초")
-	t.eq(l.frames_advanced, int(dist / 6.0), "프레임 = 이동 거리 / 6px")
-	t.ok(absf(l.render.x - l.logical.x) < 6.0, "그림과 판정 차이 < 프레임 거리")
-	t.eq(fmod(l.render.x - 100.0, 6.0), 0.0, "그림은 6px 경계에서만 움직인다")
+	var px: float = Locomotion.MOTIONS["walk"]["px"]
+	t.eq(l.frames_advanced, int(dist / px), "프레임 = 이동 거리 / 보폭")
+	t.ok(absf(l.render.x - l.logical.x) < px, "그림과 판정 차이 < 프레임 거리")
+	t.eq(fmod(l.render.x - 100.0, px), 0.0, "그림은 보폭 경계에서만 움직인다")
+
+
+func test_distance_driven_vertical(t) -> void:
+	var l := Locomotion.new(Vector2(100, 100))
+	for i in 120:
+		l.step(Vector2(0, 1), 1.0 / 60.0, "walk")
+	var pv: float = Locomotion.MOTIONS["walk"]["px_v"]
+	t.eq(l.frames_advanced, int((l.logical.y - 100.0) / pv), "앞뒤 걷기: 앞뒤 보폭마다 1컷")
+	t.eq(fmod(l.render.y - 100.0, pv), 0.0, "앞뒤 보폭 경계")
 
 
 func test_distance_driven_diagonal(t) -> void:
@@ -28,9 +38,10 @@ func test_distance_driven_diagonal(t) -> void:
 		l.step(Vector2(1, 1), 1.0 / 60.0, "run")
 	t.eq(l.facing, 1, "SE")
 	var axis := l.logical.x
-	t.eq(l.frames_advanced, int(axis / 6.0), "대각선 달리기: 축 6px마다 1프레임")
-	t.eq(l.render.x, l.render.y, "대각선 단계 (6,6)")
-	t.eq(fmod(l.render.x, 6.0), 0.0, "6px 경계")
+	var dg: float = Locomotion.MOTIONS["run"]["diag"]
+	t.eq(l.frames_advanced, int(axis / dg), "대각선 달리기: 축 보폭마다 1프레임")
+	t.eq(l.render.x, l.render.y, "대각선 단계 (d,d)")
+	t.eq(fmod(l.render.x, dg), 0.0, "대각선 보폭 경계")
 
 
 func test_speed_only_changes_rate(t) -> void:
@@ -140,8 +151,8 @@ func test_sprint_same_stride(t) -> void:
 		a.step(Vector2(1, 0), 1.0 / 60.0, "sprint")
 	t.near(a.logical.x, 6.5 * 32.0, 0.01, "1초에 6.5t")
 	t.eq(a.anim_motion(), "run", "그림은 달리기 컷")
-	t.near(float(a.frames_advanced), 6.5 * 32.0 / 8.0, 1.0, "8px마다 1컷(달리기 보폭, 마지막 컷은 경계 오차)")
-	t.eq(fmod(a.render.x, 8.0), 0.0, "그림 위치는 보폭 단위")
+	t.near(float(a.frames_advanced), 6.5 * 32.0 / float(Locomotion.MOTIONS["run"]["px"]), 1.0, "달리기 보폭마다 1컷(마지막 컷은 경계 오차)")
+	t.eq(fmod(a.render.x, float(Locomotion.MOTIONS["run"]["px"])), 0.0, "그림 위치는 보폭 단위")
 
 
 ## 구르기·넉백 뒤 그 자리에 선다: 판정 = 그림, 대기 상태, 다음 걸음은 새 보폭에서 시작

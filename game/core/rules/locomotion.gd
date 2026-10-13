@@ -12,10 +12,11 @@ const DIRS := ["E", "SE", "S", "SW", "W", "NW", "N", "NE"]
 const VEC := [Vector2(1, 0), Vector2(1, 1), Vector2(0, 1), Vector2(-1, 1), Vector2(-1, 0), Vector2(-1, -1), Vector2(0, -1), Vector2(1, -1)]
 ## 모션 표: 프레임 수, 직교 프레임 거리, 대각선 축 거리, 디딤 프레임(정지 때 보여 줄 수 있는 프레임)
 const MOTIONS := {
-	"walk": {"frames": 6, "px": 6.0, "diag": 4.0, "contact": [0, 3], "speed_t": 3.0},
-	"run": {"frames": 6, "px": 8.0, "diag": 6.0, "contact": [0, 3], "speed_t": 4.5},
+	# 아이작풍 짧은 다리 보폭(SD-16 §3.6 v2.0, art/tools/chibi.py STRIDE와 같은 값): 옆 px, 앞뒤 px_v, 대각선 diag(축 거리)
+	"walk": {"frames": 6, "px": 4.0, "px_v": 3.0, "diag": 3.0, "contact": [0, 3], "speed_t": 3.0},
+	"run": {"frames": 6, "px": 6.0, "px_v": 4.0, "diag": 4.0, "contact": [0, 3], "speed_t": 4.5},
 	# 질주 6.5t/s(SD-11 §2.4): 전용 그림 전까지 달리기 컷을 같은 보폭으로 더 빨리 넘긴다(거리 구동이라 미끄러지지 않는다)
-	"sprint": {"frames": 6, "px": 8.0, "diag": 6.0, "contact": [0, 3], "speed_t": 6.5, "anim": "run"},
+	"sprint": {"frames": 6, "px": 6.0, "px_v": 4.0, "diag": 4.0, "contact": [0, 3], "speed_t": 6.5, "anim": "run"},
 }
 const TILE := 32.0
 const STOP_TICKS := 4
@@ -70,7 +71,7 @@ func step(input: Vector2, dt: float, mode: String = "walk", aim_dir: int = -1, b
 		return
 	var m: Dictionary = custom.get(mode, MOTIONS.get(mode, {}))
 	var back := aim_dir >= 0 and _angle_between(want, aim_dir) > 2      # > 90°
-	var per: float = m["diag"] if want % 2 == 1 else m["px"]
+	var per: float = m["diag"] if want % 2 == 1 else (float(m.get("px_v", m["px"])) if want in [2, 6] else float(m["px"]))
 	var new_stride := motion != mode or want != _move_dir
 	if new_stride:
 		if motion == "idle":
