@@ -64,6 +64,24 @@ func set_pose(p: String) -> void:
 	z_index = 1 if p == "lie" else 0
 
 
+## 발 기준점에서 머리 꼭대기까지(음수 px): 시트 첫 컷의 불투명 영역 위끝(시트마다 한 번 재어 둔다). 말풍선 높이 — 아기는 낮다
+static var _tops := {}
+
+
+func head_y() -> float:
+	if sprite == null:
+		return -39.0
+	if not _tops.has(sheet):
+		var top := -39.0
+		var anims := sprite.sprite_frames.get_animation_names()
+		var tex: Texture2D = sprite.sprite_frames.get_frame_texture(anims[0], 0) if not anims.is_empty() else null
+		var img := tex.get_image() if tex != null else null
+		if img != null and not img.is_empty() and img.get_used_rect().has_area():
+			top = float(img.get_used_rect().position.y - int(meta["foot"][1]))
+		_tops[sheet] = top
+	return _tops[sheet] + (sprite.position.y if sprite.visible else 0.0)
+
+
 func move(input: Vector2, dt: float) -> void:
 	var blocked := func(a: Vector2, b: Vector2) -> Vector2: return world.move_circle(a, b, radius_px)
 	loco.step(input, dt, mode, aim_dir, blocked)

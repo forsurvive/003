@@ -27,16 +27,20 @@ def main():
     for f in glob.glob(os.path.join(DATA, "maps", "*.json")):           # 실내 맵 인물도 말을 건다(단계 0-5 바크)
         if not os.path.basename(f).startswith("_"):
             speakers |= {n["id"] for n in json.load(open(f, encoding="utf-8")).get("npcs", [])}
+    looks = {}                                                        # 맵에서 look=으로 다른 모습(시대)으로 선 인물: 시트 이름 → 외형
+    for f in glob.glob(os.path.join(DATA, "maps", "*.json")):
+        if not os.path.basename(f).startswith("_"):
+            looks |= {n["sheet"]: n["look"] for n in json.load(open(f, encoding="utf-8")).get("npcs", []) if n.get("look")}
     made, skipped, index = 0, [], {}
-    for sid in sorted(speakers):
-        look = npcs.get(sid, {}).get("look", "")
+    for sid in sorted(speakers) + sorted(looks):
+        look = looks.get(sid) or npcs.get(sid, {}).get("look", "")
         if not look or look.split("-")[0] in ("AN", "RB", "BY", "OBJ") or "·" in look:
             skipped.append(sid)
             continue
         lk = K.Look.parse(look)
         index[sid] = {}
         for emo in EMOS:
-            name = f"{sid}_{K.PORTRAIT_EXPR[emo]}.png"                # 파일 이름은 영문(모바일 내보내기에서 한글 경로 문제를 피한다)
+            name = f"{sid.replace('st_look_', 'L_')}_{K.PORTRAIT_EXPR[emo]}.png"                # 파일 이름은 영문(모바일 내보내기에서 한글 경로 문제를 피한다)
             path = os.path.join(OUT, name)
             if not os.path.exists(path):
                 img = K.portrait(lk, emo)

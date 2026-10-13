@@ -6,18 +6,25 @@
  "cond": "MQP1_STAGE == 20",
  "labels": {
   "START": 0,
-  "TUBE": 4,
-  "STETH": 6,
-  "RATION": 8,
-  "MIC": 10,
-  "PELLET": 12,
-  "CARD": 14,
-  "DONE": 16
+  "TUBE": 5,
+  "STETH": 7,
+  "RATION": 9,
+  "MIC": 11,
+  "PELLET": 13,
+  "CARD": 15,
+  "DONE": 17
  },
  "ops": [
   {
    "op": "do",
    "fx": "quest(\"MQ-P1\", 30)"
+  },
+  {
+   "op": "cmd",
+   "name": "cam",
+   "args": [
+    "dol_front"
+   ]
   },
   {
    "op": "line",

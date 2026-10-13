@@ -190,10 +190,7 @@ func _show_actor(id: String, pos: Vector2, dir: String) -> void:
 func _route(a: Actor, to: Vector2) -> PackedVector2Array:
 	if world == null or not world.has_method("path"):
 		return PackedVector2Array()
-	var p := NpcRoutine.with_start(world, a.loco.render, to)
-	if p.is_empty() and world.tile_of(a.loco.render) == world.tile_of(to) and not NpcRoutine.arrived(a.loco.render, to):
-		p.append(to)                                                          # 같은 칸 안: 표지 자리로만 맞춘다
-	return p
+	return NpcRoutine.with_start(world, a.loco.render, to)
 
 
 func _mark(m: String) -> Vector2:
@@ -222,14 +219,15 @@ static func _dir_to(a: Vector2, b: Vector2) -> int:
 
 
 func _process(dt: float) -> void:
+	var had := not balloons.is_empty() or not lamps.is_empty()
 	for b in balloons:
 		b["t"] += dt
 	balloons = balloons.filter(func(b): return b["t"] < 1.2)
 	for l in lamps:
 		l["t"] += dt
 	lamps = lamps.filter(func(l): return l["t"] < 1.0)
-	if not balloons.is_empty() or not lamps.is_empty():
-		queue_redraw()
+	if had:
+		queue_redraw()                                                  # 마지막 말풍선이 사라진 프레임에도 한 번 더 그려 지운다
 	if _job.is_empty():
 		for a in actors.values():
 			if a.loco.motion != "idle":
@@ -321,7 +319,7 @@ func _draw() -> void:
 			continue
 		var t: float = b["t"]
 		var pop := 2 if t < 0.08 else 0                               # 처음 두 프레임은 2px 커졌다가
-		var c := a.position + Vector2(6, -50)
+		var c := a.position + Vector2(6, a.head_y() - 15.0)              # 꼬리 끝이 머리 위 4px(어른 -50, 아기는 그만큼 낮게)
 		var r := Rect2(c - Vector2(8 + pop, 8 + pop), Vector2(16 + pop * 2, 15 + pop * 2))
 		draw_rect(r, Color("1A181D"))
 		draw_rect(r.grow(-1), Color("E9E4D8"))

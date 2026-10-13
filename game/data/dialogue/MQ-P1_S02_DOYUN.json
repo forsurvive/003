@@ -9,6 +9,30 @@
  },
  "ops": [
   {
+   "op": "cmd",
+   "name": "move",
+   "args": [
+    "C-002",
+    "doyun_block"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "pose",
+   "args": [
+    "C-002",
+    "sit"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "balloon",
+   "args": [
+    "C-002",
+    "note"
+   ]
+  },
+  {
    "op": "line",
    "who": "SYS",
    "emo": "기본",

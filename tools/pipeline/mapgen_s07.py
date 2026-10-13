@@ -88,10 +88,11 @@ class M:
         self.cmds.append(line)
 
     def text(self):
+        cmds = [c + ' cond="year() == 2277"' if c.startswith("npc ") and "cond=" not in c else c for c in self.cmds]
         out = [f"# {self.id} {self.name} — SD-09a §L-R01-01 ③. {self.note}".rstrip(), f"map {self.id} {self.name}", "set s07", "grid"]
         out += ["".join(r) for r in self.g]
         out += ["end", ""]
-        out += self.cmds
+        out += cmds
         return "\n".join(out) + "\n"
 
 
@@ -183,7 +184,21 @@ def v01():
                 m.p("stool", x + k, y - 1)
                 m.p("stool", x + k, y + 1)
     m.p("slogan_crt2", 3, 28); m.p("notice_board", 25, 28); m.p("water_cooler", 29, 30)
-    m.c("mark dol_table 24 40 N"); m.c("mark dol_mom 28 39 W"); m.c("mark dol_start 4 41 E")
+    # 2259 돌잔치(MQ-P1 S2·S3, SD-03a §7.1): 돌상·현수막·손님 6·윤정인·아기 하도윤, 밟는 칸 둘(하도윤이 기어 나옴 · 엄마 앞 돌잡이)
+    era = 'cond="year() == 2259"'
+    m.c(f"prop dol_table 24 40 {era}"); m.c(f"prop dol_banner 19 28 {era}")
+    m.c("mark dol_mom 26 40 W"); m.c("mark dol_start 3 41 E"); m.c("mark doyun_block 9 40 W"); m.c("mark dol_front 23 41 E")
+    m.c(f'npc C-001 26 40 W {era} bark="왔네. 엄마 여기 있어."')
+    m.c(f'npc C-002 12 42 W look=K1-S3-HR00-H2-T01-0-PF11-HD00-EY00 {era} bark="까르르."')
+    for nid, x, y, dd in (("N-R01-007", 5, 35, "S"), ("N-R01-008", 12, 35, "S"), ("N-R01-009", 19, 35, "S"),
+                          ("N-R01-010", 8, 39, "N"), ("N-R01-020", 15, 39, "N"), ("N-R01-023", 20, 39, "N")):
+        m.c(f"npc {nid} {x} {y} {dd} {era}")
+    m.c(f'npc C-025 27 38 S {era} bark="돌 지난 아기는 걸음이 제일 바빠."')
+    m.c(f'npc C-022 29 35 W {era} bark="…축하한다."')
+    m.c(f'npc N-R01-011 22 35 S {era} bark="배급과에서 떡 쌀 두 홉 더 냈어."')
+    m.c(f'npc N-R01-013 28 42 N look=K1-S1-HR09-H2-T01-0-PF11-HD00-EY00 {era} bark="나 이따 방송실에서 축하 방송 할 거야!"')
+    m.c('trigger 7 39 w=2 h=4 scene=MQ-P1_S02_DOYUN cond="MQP1_STAGE == 20" once')
+    m.c('trigger 22 39 w=6 h=4 scene=MQ-P1_S03 cond="MQP1_STAGE == 20"')
     # 배급소
     m.p("ration_window", 34, 28); m.p("counter_ration", 34, 31); m.p("crate_metal", 45, 33); m.p("crate_metal", 46, 33)
     m.p("crate", 46, 31); m.p("notice_board", 43, 28); m.p("bench", 33, 41); m.p("bench", 43, 41); m.p("bench", 38, 37)

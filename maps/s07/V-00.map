@@ -64,4 +64,4 @@ prop locker_row2 33 24
 prop quarantine_sign 12 22
 prop slogan_crt2 24 22
 prop notice_board 14 22
-npc N-R01-019 19 13 S route=정문:19,13,12;검역실:15,25,6 bark="정문 근처는 출입 금지 구역이야."
+npc N-R01-019 19 13 S route=정문:19,13,12;검역실:15,25,6 bark="정문 근처는 출입 금지 구역이야." cond="year() == 2277"

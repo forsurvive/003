@@ -5,6 +5,8 @@
 ## L = 대화 기록(최근 400줄). 터치: 아무 곳이나 누르면 결정, 선택지는 그 줄을 누른다. 터치는 마우스 흉내(기본값)로만 받는다 —
 ## ScreenTouch까지 받으면 한 번 눌러 두 번 넘어간다.
 ## 연출 명령(cmd)은 command 신호로 넘기고 resume()을 기다린다. 받는 곳이 없으면 바로 넘어간다.
+## 창 위치(쯔꾸르 '창 위치: 위'): 말하는 사람·주인공이 아래 상자 자리에 서 있으면 그 줄은 상자를 화면 위(26)로 올린다.
+##   위일 때 이름표·(L) 기록 탭도 함께 올라가고, 선택지 창은 상자 아래에 붙는다. 누가 어디 있는지는 subject가 알려 준다.
 class_name DialogueBox
 extends CanvasLayer
 
@@ -25,6 +27,7 @@ const LINE_H := 18
 const LINES := 4
 const TEXT_W := 484.0
 const CPS := 40.0
+const TOP_DY := -222.0               ## 위 배치: 상자 (16,26)
 
 var runner: DialogueRunner
 var font: Font
@@ -53,6 +56,8 @@ var talk_t := 0.0
 var active := false
 var prev_line: Dictionary = {}       ## 선택지가 뜰 때 상자에 남겨 둘 직전 대사(질문)
 var history: Array[String] = []      ## 대화 기록(장면을 넘어 이어진다, 최근 400줄 — SD-12 §6.6)
+var subject := Callable()            ## (말하는 사람 ID) -> 화면(논리) 위 발 위치 배열. 없으면 늘 아래
+var top := false
 
 
 func _init() -> void:
@@ -95,6 +100,7 @@ func _take(s: Dictionary) -> void:
 	match s.get("type", "end"):
 		"line":
 			prev_line = s
+			_place(str(s.get("who", "")))
 			_layout_line(s)
 			line_shown.emit(s)
 		"choices":
@@ -118,8 +124,28 @@ func _take(s: Dictionary) -> void:
 
 
 func _origin() -> Vector2:
-	var vs := view.get_viewport_rect().size
+	return _base() + Vector2(0.0, TOP_DY if top else 0.0)
+
+
+func _base() -> Vector2:
+	var vs := view.get_viewport_rect().size if view.is_inside_tree() else Vector2(640, 360)
 	return Vector2(floorf((vs.x - 640.0) / 2.0), vs.y - 360.0)
+
+
+## 이 줄의 상자 자리: 아래 상자(이름표 위 230부터)에 가리는 사람이 위 상자(아래끝 130 + 사람 키 40)에 가리는 사람보다 많으면 위로
+func _place(who: String) -> void:
+	top = false
+	if not subject.is_valid():
+		return
+	var b := _base()
+	var low := 0
+	var high := 0
+	for p in subject.call(who):
+		if p.y > b.y + 230.0:
+			low += 1
+		elif p.y < b.y + 170.0:
+			high += 1
+	top = low > high
 
 
 func _measure() -> Callable:
@@ -327,6 +353,8 @@ func pick(i: int) -> void:
 
 # ---------------------------------------------------------------- 그리기
 func _choice_top() -> float:
+	if top:
+		return BOX.position.y + BOX.size.y + 14.0                   # 위 상자 아래
 	var h := 12.0
 	for r in choice_rows:
 		h += float(r["h"])
@@ -340,7 +368,7 @@ func _draw_view() -> void:
 	var o := _origin()
 	var t: String = state.get("type", "")
 	if log_open:
-		_draw_log(o)
+		_draw_log(_base())
 		return
 	if t == "cmd" or t == "":
 		return                                                    # 연출 명령 중에는 창을 닫는다(쯔꾸르식)
@@ -404,6 +432,8 @@ func _face(emo: String) -> String:
 
 
 func _portrait(who: String, emo: String) -> Texture2D:
+	if runner != null and runner.st != null:
+		who = runner.st.portrait_alias.get(who, who)
 	if not portraits.has(who):
 		return null
 	var f: String = portraits[who].get(emo, portraits[who].get("기본", ""))
@@ -411,11 +441,11 @@ func _portrait(who: String, emo: String) -> Texture2D:
 
 
 func _draw_choices(o: Vector2) -> void:
-	var top := _choice_top()
+	var ct := _choice_top()
 	var h := 12.0
 	for r in choice_rows:
 		h += float(r["h"])
-	var rect := Rect2(o + Vector2(128, top), Vector2(488, h))
+	var rect := Rect2(o + Vector2(128, ct), Vector2(488, h))
 	view.draw_rect(rect, Color(C["P01"], 0.85))
 	view.draw_rect(Rect2(rect.position + Vector2(0.5, 0.5), rect.size - Vector2.ONE), C["P07"], false, 1.0)
 	for i in choice_rows.size():

@@ -225,3 +225,34 @@ func test_event_dirs(t) -> void:
 	t.eq(EventRunner._dir_to(Vector2.ZERO, Vector2.ZERO), 2, "같은 자리면 남")
 	t.eq(EventRunner._dir8(Vector2(10, 3)), Vector2(1, 0), "가까운 8방향(동)")
 	t.ok(EventRunner._dir8(Vector2(10, 9)).is_equal_approx(Vector2(1, 1).normalized()), "가까운 8방향(남동)")
+
+
+## 대화 창 자리(쯔꾸르 '창 위치'): 아래 상자 자리에 선 사람이 있으면 위로, 선택지 창은 위 상자 아래에. 말풍선은 머리 높이를 따른다
+func test_dialogue_box_place(t) -> void:
+	var box := DialogueBox.new()
+	var b := box._base()
+	var at := [b + Vector2(320, 300)]
+	box.subject = func(_who: String) -> Array: return at
+	box._place("C-001")
+	t.ok(box.top, "발이 아래 상자 자리(300) → 위")
+	t.eq(box._origin().y, b.y - 222.0, "위 상자 원점")
+	box.choice_rows = [{"y": 0, "h": 18}, {"y": 18, "h": 18}]
+	t.eq(box._origin().y + box._choice_top(), b.y + 144.0, "선택지 창은 위 상자(26~130) 아래")
+	at[0] = b + Vector2(320, 120)
+	box._place("C-001")
+	t.ok(not box.top, "화면 가운데 위쪽 → 아래 그대로")
+	at.append(b + Vector2(320, 300))
+	box._place("C-001")
+	t.ok(not box.top, "위아래 하나씩이면 아래(기본)")
+	box.subject = Callable()
+	at[0] = b + Vector2(320, 300)
+	box._place("C-001")
+	t.ok(not box.top, "알려 주는 곳이 없으면 늘 아래")
+	box.free()
+	var adult := Actor.new()
+	adult.setup("st_c_001", Vector2.ZERO, null)
+	var baby := Actor.new()
+	baby.setup("st_look_k1_s3_hr00_h2_t01_0_pf11_hd00_ey00", Vector2.ZERO, null)
+	t.ok(adult.head_y() < -32.0 and baby.head_y() > adult.head_y() + 5.0, "아기 머리가 더 낮다(말풍선도 낮게): %.0f / %.0f" % [adult.head_y(), baby.head_y()])
+	adult.free()
+	baby.free()

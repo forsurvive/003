@@ -36,11 +36,16 @@ func _init() -> void:
 	var n_tests := 0
 	for f in files:
 		var script: GDScript = load("res://tests/unit/" + f)
+		if script == null or not script.can_instantiate():              # 문법 오류: 멈추지 말고 실패로 센다
+			t.failures.append("%s: 시험 파일을 불러오지 못했다(문법 오류)" % f)
+			continue
 		var inst = script.new()
 		for m in script.get_script_method_list():
 			var name: String = m["name"]
-			if name.begins_with("test_"):
+			if name.begins_with("test_") and (OS.get_environment("TEST_ONLY") == "" or name.contains(OS.get_environment("TEST_ONLY"))):
 				t.where = "%s::%s" % [f, name]
+				if OS.get_environment("TEST_VERBOSE") != "":
+					print("… ", t.where)
 				inst.call(name, t)
 				n_tests += 1
 	print("단위 시험: 파일 %d, 시험 %d, 확인 %d, 실패 %d" % [files.size(), n_tests, t.checks, t.failures.size()])

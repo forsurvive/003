@@ -16,6 +16,10 @@
                                  인물. route가 있으면 표지 사이를 걸어 오가며 머문다(일과). cond가 거짓이면 없다.
   text x y "글"                  조사 키로 읽는 글(소품·벽 앞). [w=칸 h=칸]으로 넓힐 수 있다.
   sign x y "글자"                벽면 윗칸에 붙는 문패(그림은 게임이 그린다).
+  trigger x y scene=장면 [w= h=] [cond="식"] [once]
+                                 밟으면 대화 장면을 연다(cond가 참일 때, once면 한 번만).
+  prop·sign·npc에도 cond="식"을 붙일 수 있다(시대·퀘스트에 따라 있다 없다 — 예: year() == 2259).
+  npc에 look=외형코드(SD-07b)를 주면 그 모습 시트로 선다(예: 2259년의 아기 하도윤).
 검사: 격자 폭·글자, 벽 두께(위아래 방 사이 3칸), 소품 발 칸이 바닥·겹침 없음, 벽 소품은 벽면 윗칸, 문 자리, 출구 칸이
   바닥이고 갈 맵·표지가 있음, 인물·일과 지점이 바닥이고 서로 이어짐, 모든 바닥이 한 덩어리(갇힌 곳 없음), 식 문법·변수."""
 import os, sys, json, glob, shlex, re
@@ -24,6 +28,13 @@ from collections import deque
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import story_expr as SE
+
+LOOK_RE = re.compile(r"^(M1|M2|F1|F2|E1|E2|K1)-S[1-6G][12]?-HR\d\d-H\d-T\d\d-\d-PF\d\d-HD\d\d-EY\d\d(-PR\d+)?$")
+
+
+def look_sheet(code):
+    """외형 코드 → 이야기 인물 시트 이름(story_sprites와 같은 규칙)."""
+    return "st_look_" + code.lower().replace("-", "_")
 
 SRC = os.path.join(ROOT, "maps")
 OUT = os.path.join(ROOT, "game", "data", "maps")
@@ -98,7 +109,15 @@ def kv(words):
     return pos, opt
 
 
-def compile_map(m, prop_meta, known_vars, known_fns):
+def check_cond(src, known_vars, known_fns):
+    ast = SE.parse(src)
+    vs, calls = SE.names(ast)
+    bad = [v for v in vs if v not in known_vars] + [f for f in calls if f not in known_fns]
+    if bad:
+        raise Err(f"cond에 모르는 이름 {bad}")
+
+
+def compile_map(m, prop_meta, known_vars, known_fns, scenes=()):
     if not m.rows:
         m.err(1, "grid가 없다")
         return None
@@ -165,7 +184,7 @@ def compile_map(m, prop_meta, known_vars, known_fns):
             floor_ids[y][x] = ft[FLOOR[nb[0]]] if nb else ft["panel"]
     solid = [[0 if floor(x, y) else 1 for x in range(W)] for y in range(H)]
     out = {"id": m.id, "name": m.name, "set": m.set, "size": [W, H], "props": [], "doors": [], "exits": [], "marks": {},
-           "npcs": [], "texts": [], "signs": []}
+           "npcs": [], "texts": [], "signs": [], "triggers": []}
     for ln, words in m.cmds:
         pos, opt = kv(words[1:])
         c = words[0]
@@ -176,6 +195,9 @@ def compile_map(m, prop_meta, known_vars, known_fns):
                     raise Err(f"모르는 소품 '{name}'")
                 pm = prop_meta[name]
                 fw, fh = pm["foot"]
+                cond = opt.get("cond", "")
+                if cond:
+                    check_cond(cond, known_vars, known_fns)
                 if pm["kind"] == "wall":
                     for i in range(max(1, fw)):
                         if 0 <= x + i < W and kind[y][x + i] != "ftop" and name not in ("gear_door", "gear_frame"):
@@ -184,18 +206,24 @@ def compile_map(m, prop_meta, known_vars, known_fns):
                 elif pm["kind"] == "door":
                     raise Err("문은 door 명령으로 둔다")
                 else:
+                    cells = []
                     for j in range(fh):
                         for i in range(fw):
                             if not floor(x + i, y + j):
                                 raise Err(f"소품 '{name}' 발 칸 ({x + i},{y + j})이 바닥이 아니다")
                             if solid[y + j][x + i] == 2:
                                 raise Err(f"소품 '{name}' 발 칸 ({x + i},{y + j})이 다른 소품과 겹친다")
-                            solid[y + j][x + i] = 2
+                            cells.append([x + i, y + j])
+                            if not cond:
+                                solid[y + j][x + i] = 2                 # 조건부 소품의 막힘은 게임이 cond를 보고 더한다
                     sort_y = (y + max(fh, 1)) * 32
                     if pm["kind"] == "deco":
                         sort_y = y * 32 + 16
-                out["props"].append({"name": name, "x": x, "y": y, "px": [x * 32 + pm["off"][0], y * 32 + pm["off"][1]],
-                                     "sort_y": sort_y})
+                e = {"name": name, "x": x, "y": y, "px": [x * 32 + pm["off"][0], y * 32 + pm["off"][1]], "sort_y": sort_y}
+                if cond:
+                    e["cond"] = cond
+                    e["cells"] = cells if pm["kind"] not in ("wall", "deco") else []
+                out["props"].append(e)
             elif c == "door":
                 x, y = int(pos[0]), int(pos[1])
                 label = next((p for p in pos[2:] if p != "locked"), "")
@@ -226,11 +254,12 @@ def compile_map(m, prop_meta, known_vars, known_fns):
                 if not floor(x, y):
                     raise Err(f"인물 {nid} 자리 ({x},{y})가 바닥이 아니다")
                 if e["cond"]:
-                    ast = SE.parse(e["cond"])
-                    vs, calls = SE.names(ast)
-                    bad = [v for v in vs if v not in known_vars] + [f for f in calls if f not in known_fns]
-                    if bad:
-                        raise Err(f"cond에 모르는 이름 {bad}")
+                    check_cond(e["cond"], known_vars, known_fns)
+                if "look" in opt:
+                    if not LOOK_RE.match(opt["look"]):
+                        raise Err(f"외형 코드 형식이 아니다: {opt['look']}")
+                    e["look"] = opt["look"]
+                    e["sheet"] = look_sheet(opt["look"])
                 for part in [p for p in opt.get("route", "").split(";") if p]:
                     mm = re.match(r"^([^:]+):(\d+),(\d+)(?:,(\d+(?:\.\d+)?))?$", part)
                     if not mm:
@@ -248,7 +277,23 @@ def compile_map(m, prop_meta, known_vars, known_fns):
                 x, y, txt = int(pos[0]), int(pos[1]), pos[2]
                 if kind[y][x] != "ftop":
                     raise Err(f"문패 ({x},{y})는 벽면 윗칸에 붙인다")
-                out["signs"].append({"x": x, "y": y, "text": txt})
+                e = {"x": x, "y": y, "text": txt}
+                if opt.get("cond"):
+                    check_cond(opt["cond"], known_vars, known_fns)
+                    e["cond"] = opt["cond"]
+                out["signs"].append(e)
+            elif c == "trigger":
+                x, y = int(pos[0]), int(pos[1])
+                sc = opt.get("scene", "")
+                if sc not in scenes:
+                    raise Err(f"trigger의 장면 '{sc}'이 원고에 없다")
+                e = {"x": x, "y": y, "w": int(opt.get("w", 1)), "h": int(opt.get("h", 1)), "scene": sc, "cond": opt.get("cond", ""),
+                     "once": "once" in pos[2:]}
+                if e["cond"]:
+                    check_cond(e["cond"], known_vars, known_fns)
+                if not any(floor(x + i, y + j) for i in range(e["w"]) for j in range(e["h"])):
+                    raise Err(f"trigger ({x},{y}) 범위에 바닥이 없다")
+                out["triggers"].append(e)
             else:
                 raise Err(f"모르는 명령 '{c}'")
         except (Err, IndexError, ValueError) as e:
@@ -306,13 +351,14 @@ def main():
     known_vars = set(json.load(open(os.path.join(ROOT, "game", "data", "vars.json")))["vars"])
     for q in json.load(open(os.path.join(ROOT, "game", "data", "quests.json")))["quests"]:
         known_vars |= {q.replace("-", "") + s for s in ("_STAGE", "_RESULT", "_SKIP")}
-    known_fns = {"karma", "aff", "quest", "stage", "result", "give", "take", "has", "caps", "xp", "wanted", "stat", "skill"}
+    known_fns = {"karma", "aff", "quest", "stage", "result", "give", "take", "has", "caps", "xp", "wanted", "stat", "skill", "year"}
     npcs = json.load(open(os.path.join(ROOT, "game", "data", "npcs.json")))["npcs"]
     alias = alias_of(npcs)
+    scenes = set(json.load(open(os.path.join(ROOT, "game", "data", "dialogue", "_index.json")))["scenes"])
     errors, maps = [], {}
     for path in sorted(glob.glob(os.path.join(SRC, "*", "*.map"))):
         m = MapSrc(path)
-        out = compile_map(m, prop_meta, known_vars, known_fns)
+        out = compile_map(m, prop_meta, known_vars, known_fns, scenes)
         for n in (out or {}).get("npcs", []):
             if n["id"] not in npcs:
                 m.err(n["line"], f"모르는 인물 ID {n['id']}(SD-07b)")

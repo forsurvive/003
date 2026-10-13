@@ -27,6 +27,7 @@ var names := {}                         ## 아이템·장소 ID -> 이름(\I·\L
 var weapon_out := false
 var events: Array = []                  ## 알림: [{"kind": "karma"|"item"|"xp"|"aff"|"caps", ...}]
 var fns := {}                           ## 추가 함수(이벤트 실행기 등이 등록): 이름 -> Callable(args: Array) -> Variant
+var portrait_alias := {}                ## 인물 ID -> 초상화 키(맵에서 다른 시대 모습으로 선 인물: 2259년 아이 하도윤 등)
 
 
 func _init() -> void:
@@ -117,10 +118,26 @@ func call_fn(name: String, args: Array) -> Variant:
 			return stat(str(args[0]))
 		"skill":
 			return skill(str(args[0]))
+		"year":
+			return year()
 	if fns.has(name):
 		return (fns[name] as Callable).call(args)
 	vars._err("알 수 없는 함수: %s(%s)" % [name, str(args)])
 	return null
+
+
+## 지금 이야기 연도(프롤로그 시대 구분: 맵의 사람·소품을 고른다). 퀘스트 진행으로 정한다:
+## MQ-P1 출생 2258 → 돌잔치(단계 20~) 2259 → MQ-P2 2268 → MQ-P3 2274 → MQ-P4 이후 2277
+func year() -> int:
+	if quests.stage("MQ-P4") > 0 or quests.stage("MQ-101") > 0:
+		return 2277
+	if quests.stage("MQ-P3") > 0:
+		return 2274
+	if quests.stage("MQ-P2") > 0:
+		return 2268
+	if quests.stage("MQ-P1") >= 20:
+		return 2259
+	return 2258
 
 
 func _aff_key(code: String) -> String:

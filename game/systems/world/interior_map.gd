@@ -19,6 +19,9 @@ var texts := {}                                  ## Vector2i -> 글
 var marks := {}
 var actors: Array = []                           ## 문을 여는 인물(주인공·NPC)
 var props: Array = []                            ## [{"name", "x", "y", "w", "h", "node"}] — 연출이 상태 그림을 바꾼다
+var blockers: Array = []                         ## 길을 막는 인물(맵 NPC, 쯔꾸르식): 움직이는 본인은 빼고 원으로 막는다
+const BLOCK_R := 8.0
+var _mover := Vector2.INF
 static var prop_meta: Dictionary
 static var prop_tex: Texture2D
 static var _tile_ids := {}
@@ -37,7 +40,8 @@ static func exists(map_id: String) -> bool:
 	return FileAccess.file_exists("res://data/maps/%s.json" % map_id)
 
 
-func load_map(map_id: String) -> void:
+## st가 있으면 소품·문패의 cond(시대·퀘스트)를 보고 고른다. 없으면 조건부 소품은 모두 뺀다(미리보기·시험)
+func load_map(map_id: String, st: StoryState = null) -> void:
 	_load_static()
 	id = map_id
 	data = JSON.parse_string(FileAccess.get_file_as_string("res://data/maps/%s.json" % map_id))
@@ -67,6 +71,10 @@ func load_map(map_id: String) -> void:
 	objects.y_sort_enabled = true
 	add_child(objects)
 	for p in data["props"]:
+		if not _cond_ok(p.get("cond", ""), st):
+			continue
+		for c in p.get("cells", []):
+			solid[int(c[1]) * size.x + int(c[0])] = 1                       # 조건부 소품의 발 칸
 		var e: Dictionary = prop_meta[p["name"]]
 		var rect: Array = e["frames"][0] if e.has("frames") else e["rect"]
 		var node := _sprite(rect, Vector2(p["px"][0], p["px"][1]), float(p["sort_y"]))
@@ -81,6 +89,8 @@ func load_map(map_id: String) -> void:
 		if d["locked"]:
 			texts[Vector2i(int(d["x"]), int(d["y"]) + 1)] = "잠겨 있다."
 	for s in data["signs"]:
+		if not _cond_ok(s.get("cond", ""), st):
+			continue
 		var plate := SignPlate.new()
 		plate.text = s["text"]
 		plate.position = Vector2(int(s["x"]) * T + 16, (int(s["y"]) + 2) * T)
@@ -92,6 +102,21 @@ func load_map(map_id: String) -> void:
 		for j in int(t["h"]):
 			for i in int(t["w"]):
 				texts[Vector2i(int(t["x"]) + i, int(t["y"]) + j)] = t["text"]
+
+
+static func _cond_ok(cond: String, st: StoryState) -> bool:
+	if cond == "":
+		return true
+	return st != null and StoryExpr.test(cond, st)
+
+
+## 이 칸을 덮는 밟는 칸(trigger) 목록
+func triggers_at(t: Vector2i) -> Array:
+	var out := []
+	for g in data.get("triggers", []):
+		if t.x >= int(g["x"]) and t.x < int(g["x"]) + int(g["w"]) and t.y >= int(g["y"]) and t.y < int(g["y"]) + int(g["h"]):
+			out.append(g)
+	return out
 
 
 func _r(a: Array) -> Rect2:
@@ -183,7 +208,10 @@ func cover_at(t: Vector2i) -> int:
 
 
 func move_circle(from: Vector2, to: Vector2, r: float) -> Vector2:
-	return Sweep.move(from, to, r, _hits)
+	_mover = from
+	var out := Sweep.move(from, to, r, _hits)
+	_mover = Vector2.INF
+	return out
 
 
 func circle_hits(c: Vector2, r: float) -> bool:
@@ -197,7 +225,23 @@ func _hits(c: Vector2, r: float) -> bool:
 				var q := Vector2(clampf(c.x, tx * T, tx * T + T), clampf(c.y, ty * T, ty * T + T))
 				if q.distance_squared_to(c) < r * r:
 					return true
+	for b in blockers:
+		if is_instance_valid(b) and b.visible:
+			var bp: Vector2 = b.loco.logical
+			if bp.distance_to(_mover) > 0.5 and bp.distance_to(c) < r + BLOCK_R:
+				return true
 	return false
+
+
+## 막는 인물이 선 칸(길찾기가 돌아가게)
+func _occupied(except: Vector2i) -> Dictionary:
+	var occ := {}
+	for b in blockers:
+		if is_instance_valid(b) and b.visible:
+			var t := tile_of(b.loco.logical)
+			if t != except:
+				occ[t] = true
+	return occ
 
 
 func line_of_sight(_a: Vector2, _b: Vector2) -> bool:
@@ -211,6 +255,8 @@ func path(a: Vector2, b: Vector2, max_nodes: int = 4000) -> PackedVector2Array:
 	var out := PackedVector2Array()
 	if is_solid(g) or s == g:
 		return out
+	var occ := _occupied(s)
+	occ.erase(g)
 	var came := {s: s}
 	var cost := {s: 0.0}
 	var open: Array = [[0.0, s]]
@@ -227,7 +273,7 @@ func path(a: Vector2, b: Vector2, max_nodes: int = 4000) -> PackedVector2Array:
 			break
 		for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1), Vector2i(1, 1), Vector2i(-1, 1), Vector2i(1, -1), Vector2i(-1, -1)]:
 			var nx: Vector2i = cur + d
-			if is_solid(nx):
+			if is_solid(nx) or occ.has(nx):
 				continue
 			if d.x != 0 and d.y != 0 and (is_solid(Vector2i(cur.x + d.x, cur.y)) or is_solid(Vector2i(cur.x, cur.y + d.y))):
 				continue

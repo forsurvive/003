@@ -716,6 +716,61 @@ def birth_bed(occupied=False):
     return _sb().birth_bed(_jeongin_head() if occupied else None, inked=False)
 
 
+# ================================================================ 돌잔치(MQ-P1 S2·S3, 2259 공동 식당) — SD-03a §7.1 '볼트식 돌상'
+def dol_table():
+    """볼트식 돌상(2칸 × 1, 낮은 상): 철제 상 + 볼트 청 상보 + 수경 농장 작물로 만든 떡·과일 접시(상추·콩·버섯) +
+    앞줄에 돌잡이 물건 여섯(진공관·청진기·배급 카드·방송실 마이크·공기총 탄알·볼트 출입 카드)."""
+    w = 2 * T
+    im = img(w, 40)
+    d = ImageDraw.Draw(im)
+    d.rectangle([1, 6, w - 2, 27], fill=C("P45")); d.line([1, 6, w - 2, 6], fill=C("P46"))      # 상보(윗면)
+    d.rectangle([1, 24, w - 2, 27], fill=C("P48")); d.line([1, 24, w - 2, 24], fill=C("P49"))     # 노란 띠
+    d.rectangle([1, 28, w - 2, 32], fill=C("P44"))                                                 # 상보 앞 자락
+    for x in (3, w - 6):
+        d.rectangle([x, 33, x + 2, 38], fill=C("P04"))
+    # 뒷줄 접시: 콩떡 · 상추 · 버섯
+    for k, (cx, food) in enumerate(((11, "bean"), (32, "lettuce"), (53, "mush"))):
+        d.ellipse([cx - 8, 6, cx + 7, 13], fill=C("P09"), outline=C("P06"))
+        if food == "bean":
+            for i in range(3):
+                d.rectangle([cx - 6 + i * 4, 4 - (i % 2), cx - 3 + i * 4, 9 - (i % 2)], fill=C("P21"), outline=C("P19"))
+                d.point((cx - 5 + i * 4, 6 - (i % 2)), fill=C("P31"))
+        elif food == "lettuce":
+            for i in range(3):
+                d.ellipse([cx - 7 + i * 4, 2 + (i % 2), cx - 1 + i * 4, 9], fill=C("P30"), outline=C("P28"))
+                d.point((cx - 5 + i * 4, 4), fill=C("P32"))
+        else:
+            for i in range(3):
+                d.rectangle([cx - 5 + i * 4, 6, cx - 4 + i * 4, 9], fill=C("P08"))
+                d.ellipse([cx - 7 + i * 4, 3, cx - 2 + i * 4, 7], fill=C("P20"), outline=C("P18"))
+    # 앞줄: 돌잡이 물건 여섯
+    y = 15
+    d.ellipse([3, y, 8, y + 7], fill=C("P59"), outline=C("P58")); d.point((5, y + 2), fill=C("P60"))      # 진공관
+    d.rectangle([4, y + 7, 7, y + 8], fill=C("P05"))
+    d.arc([12, y, 21, y + 8], 0, 300, fill=C("P04")); d.ellipse([18, y + 5, 21, y + 8], fill=C("P07"), outline=C("P03"))  # 청진기
+    d.rectangle([24, y + 1, 32, y + 6], fill=C("P08"), outline=C("P06")); d.line([25, y + 3, 30, y + 3], fill=C("P53"))  # 배급 카드
+    d.rectangle([36, y, 39, y + 4], fill=C("P02")); d.rectangle([37, y + 4, 38, y + 8], fill=C("P04"))    # 방송실 마이크
+    d.point((37, y + 1), fill=C("P05"))
+    for px, py in ((44, y + 5), (46, y + 3), (47, y + 6)):                                              # 공기총 탄알
+        d.rectangle([px, py, px + 1, py + 1], fill=C("P06")); d.point((px, py), fill=C("P08"))
+    d.rectangle([52, y + 1, 60, y + 6], fill=C("P46"), outline=C("P43")); d.rectangle([53, y + 2, 55, y + 4], fill=C("P48"))  # 출입 카드
+    return im
+
+
+def dol_banner():
+    """'축 첫돌' 현수막(벽 3칸): 흰 천 + 붉은 글씨 + 양 끝 끈."""
+    w = 3 * T
+    im = img(w, 22)
+    d = ImageDraw.Draw(im)
+    d.line([0, 2, 6, 6], fill=C("P05")); d.line([w - 1, 2, w - 7, 6], fill=C("P05"))
+    d.rectangle([6, 4, w - 7, 19], fill=C("P09")); d.line([6, 4, w - 7, 4], fill=C("P08"))
+    d.line([6, 19, w - 7, 19], fill=C("P07"))
+    for x in range(8, w - 8, 9):
+        d.point((x, 5), fill=C("P53"))
+    text(d, (w // 2, 6), "축 첫돌", F9, "P53", anchor="ma")
+    return im
+
+
 # ================================================================ 등록부
 # (함수, 발 가로, 발 세로, 종류, down, 벽 소품 dx, dy)
 def _r(fn, fw, fh, kind="floor", down=2, dx=0, dy=0):
@@ -811,6 +866,9 @@ PROPS = {
     "screen_partition": _r(lambda: _sb().screen_partition(), 1, 1, down=0),
     "clinic_desk": _r(lambda: _sb().clinic_desk(), 2, 1, down=4),
     "bobblehead": _r(lambda: _sb().bobblehead(), 1, 0, "wall", dx=11, dy=27),
+    # 돌잔치
+    "dol_table": _r(dol_table, 2, 1, down=6),
+    "dol_banner": _r(dol_banner, 3, 0, "wall", dy=4),
 }
 # 상태 그림(연출이 바꾼다: InteriorMap.set_prop_state). 이름 → {상태: 그리기 함수}
 PROP_STATES = {

@@ -21,6 +21,23 @@ def sheet_name(npc_id):
     return "st_" + npc_id.lower().replace("-", "_")
 
 
+# 걸음마 주인공(MQ-P1 돌잔치, 2259): 아동 몸 K1 + 고른 피부 S1~S6, 아기라 머리카락 없음. 주인공 외형은 게임에서 고르므로 여섯 벌 다 굽는다
+TODDLER = [f"K1-S{i}-HR00-H1-T01-0-PF11-HD00-EY00" for i in range(1, 7)]
+
+
+def look_sheet(code):
+    return "st_look_" + code.lower().replace("-", "_")
+
+
+def map_looks():
+    """맵 원고에서 look=으로 정한 모습들(+ 걸음마 주인공)."""
+    out = set(TODDLER)
+    for f in glob.glob(os.path.join(DATA, "maps", "*.json")):
+        if not os.path.basename(f).startswith("_"):
+            out |= {n["look"] for n in json.load(open(f, encoding="utf-8")).get("npcs", []) if n.get("look")}
+    return out
+
+
 def cast():
     ids = set()
     for f in glob.glob(os.path.join(DATA, "dialogue", "*.json")):
@@ -44,12 +61,12 @@ def main():
     pack.OUT = TMP
     os.makedirs(TMP, exist_ok=True)
     made, skipped, index = 0, [], {}
-    for nid in sorted(cast()):
-        look = npcs.get(nid, {}).get("look", "")
+    jobs = [(nid, npcs.get(nid, {}).get("look", ""), sheet_name(nid)) for nid in sorted(cast())]
+    jobs += [(look_sheet(c), c, look_sheet(c)) for c in sorted(map_looks())]
+    for nid, look, name in jobs:
         if not look or look.split("-")[0] in ("AN", "RB", "BY", "OBJ") or "·" in look:
             skipped.append(nid)
             continue
-        name = sheet_name(nid)
         index[nid] = name
         if os.path.exists(os.path.join(SPR, name + ".tres")):
             continue

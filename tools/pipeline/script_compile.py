@@ -37,7 +37,7 @@ SKILLS = ["물물교환", "중화기", "에너지 무기", "폭발물", "자물�
 FLAVORS = ["거짓말", "위협"]
 PARTICLES = ["은", "는", "이", "가", "을", "를", "과", "와", "으로", "로", "이나", "나", "이랑", "랑", "아", "야", "이다", "다", "이에요",
              "예요", "이었", "였", "이라", "라", "이든", "든"]
-FNS = {"karma", "aff", "quest", "stage", "result", "give", "take", "has", "caps", "xp", "wanted", "stat", "skill"}
+FNS = {"karma", "aff", "quest", "stage", "result", "give", "take", "has", "caps", "xp", "wanted", "stat", "skill", "year"}
 CMDS = {"wait", "fade_in", "fade_out", "balloon", "move", "face", "shake", "year_card", "title_card", "sfx", "bgm", "cam", "show",
         "hide", "pose", "doc", "flash", "lamp"}
 ENGINE_VARS = {"PC_ST", "PC_PE", "PC_EN", "PC_CH", "PC_IN", "PC_AG", "PC_LK", "PC_TAG1", "PC_TAG2", "PC_TAG3", "PC_CAPS", "PC_XP",

@@ -174,9 +174,26 @@ prop stool 26 34
 prop slogan_crt2 3 28
 prop notice_board 25 28
 prop water_cooler 29 30
-mark dol_table 24 40 N
-mark dol_mom 28 39 W
-mark dol_start 4 41 E
+prop dol_table 24 40 cond="year() == 2259"
+prop dol_banner 19 28 cond="year() == 2259"
+mark dol_mom 26 40 W
+mark dol_start 3 41 E
+mark doyun_block 9 40 W
+mark dol_front 23 41 E
+npc C-001 26 40 W cond="year() == 2259" bark="왔네. 엄마 여기 있어."
+npc C-002 12 42 W look=K1-S3-HR00-H2-T01-0-PF11-HD00-EY00 cond="year() == 2259" bark="까르르."
+npc N-R01-007 5 35 S cond="year() == 2259"
+npc N-R01-008 12 35 S cond="year() == 2259"
+npc N-R01-009 19 35 S cond="year() == 2259"
+npc N-R01-010 8 39 N cond="year() == 2259"
+npc N-R01-020 15 39 N cond="year() == 2259"
+npc N-R01-023 20 39 N cond="year() == 2259"
+npc C-025 27 38 S cond="year() == 2259" bark="돌 지난 아기는 걸음이 제일 바빠."
+npc C-022 29 35 W cond="year() == 2259" bark="…축하한다."
+npc N-R01-011 22 35 S cond="year() == 2259" bark="배급과에서 떡 쌀 두 홉 더 냈어."
+npc N-R01-013 28 42 N look=K1-S1-HR09-H2-T01-0-PF11-HD00-EY00 cond="year() == 2259" bark="나 이따 방송실에서 축하 방송 할 거야!"
+trigger 7 39 w=2 h=4 scene=MQ-P1_S02_DOYUN cond="MQP1_STAGE == 20" once
+trigger 22 39 w=6 h=4 scene=MQ-P1_S03 cond="MQP1_STAGE == 20"
 prop ration_window 34 28
 prop counter_ration 34 31
 prop crate_metal 45 33
@@ -196,7 +213,7 @@ prop slogan_crt2 55 28
 prop record_locker 49 38
 prop bench 55 40
 text 52 31 "구내방송 송출기 ST-11. 진공관이 데워지는 냄새가 난다."
-npc N-R01-011 40 36 S route=창구:35,32,8;창고:44,35,4 bark="배급 카드부터 보여 주세요."
-npc N-R01-013 51 38 N route=송출기:52,33,10;문:53,30,4;게시판:42,14,5 bark="S-07 구내방송입니다. 오늘의 평가 일정을 알려 드립니다."
-npc N-R01-023 14 20 E route=광장:14,20,10;식당:8,36,8 bark="2196년 겨울에는 이 광장에 침대가 놓였지."
-npc N-R01-021 31 15 S route=놀이:31,15,4;게시판:24,4,3;화분:38,9,3 bark="게시판 맨 위 이름은 누구야?"
+npc N-R01-011 40 36 S route=창구:35,32,8;창고:44,35,4 bark="배급 카드부터 보여 주세요." cond="year() == 2277"
+npc N-R01-013 51 38 N route=송출기:52,33,10;문:53,30,4;게시판:42,14,5 bark="S-07 구내방송입니다. 오늘의 평가 일정을 알려 드립니다." cond="year() == 2277"
+npc N-R01-023 14 20 E route=광장:14,20,10;식당:8,36,8 bark="2196년 겨울에는 이 광장에 침대가 놓였지." cond="year() == 2277"
+npc N-R01-021 31 15 S route=놀이:31,15,4;게시판:24,4,3;화분:38,9,3 bark="게시판 맨 위 이름은 누구야?" cond="year() == 2277"

@@ -40,6 +40,7 @@ func _ready() -> void:
 	host = InteriorHost.new()
 	add_child(host)
 	host.st.vars.set_v("P_FULL", "윤서진")
+	host.st.quests.set_stage("MQ-P4", 1)                            # 2277년(개방의 날 무렵) 주민 배치
 	host.map_entered.connect(_on_enter)
 	host.use_keyboard = not auto
 	host.enter(start, mark)

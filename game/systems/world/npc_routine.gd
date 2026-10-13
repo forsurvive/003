@@ -92,6 +92,8 @@ func resume() -> void:
 static func with_start(m, from: Vector2, to: Vector2) -> PackedVector2Array:
 	var p: PackedVector2Array = m.path(from, to)
 	if p.is_empty():
+		if m.tile_of(from) == m.tile_of(to) and not arrived(from, to):
+			p.append(to)                                            # 같은 칸 안: 그 자리로만 맞춘다(빈 길이면 제자리에 멈춰 섰다)
 		return p
 	var t: Vector2i = m.tile_of(from)
 	var c := Vector2(t.x * 32 + 16, t.y * 32 + 16)
