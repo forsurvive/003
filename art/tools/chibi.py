@@ -1068,6 +1068,28 @@ def gun(view, kind="pistol", hand=None):
     return outline(img, thick_bottom=False)
 
 
+GUN_KINDS = ("pistol", "rifle", "smg", "bb")                 # 총구가 있는 무기(탄·총구 화염이 나간다)
+
+
+def gun_muzzle(view, kind):
+    """총구 점: gun() 칸(20×16) 안 연속 좌표(화소 중심 = +0.5). 총열 끝 화소에서 총열 축으로 1px 바깥(먹선 자리).
+    SE·NE는 gun()과 같이 동쪽 그림을 (10, 8) 둘레로 ±35° 돌린 자리(PIL rotate와 0.3px 안으로 맞는다).
+    S는 총구가 화면 쪽이라 총구 구멍(권총·소총) 또는 총열 아래 끝(BB총), N은 총열 위 끝 바로 위.
+    게임은 탄 출발점과 총구 화염을 여기에 찍는다(SD-16 §5 'muzzle' = 손 기준점 + 무기 그림의 총구 오프셋)."""
+    n = {"pistol": 7, "rifle": 13, "smg": 9, "bb": 11}[kind]
+    x0 = 10 - n // 2
+    if view in ("E", "SE", "NE"):
+        mx, my = x0 + n + 0.5, 7.5 if kind == "bb" else 8.0
+        if view == "E":
+            return (mx, my)
+        a = math.radians(35 if view == "SE" else -35)
+        vx, vy = mx - 10, my - 8
+        return (round(10 + vx * math.cos(a) - vy * math.sin(a), 2), round(8 + vx * math.sin(a) + vy * math.cos(a), 2))
+    if view == "S":
+        return (10.0, 9.5) if kind == "bb" else (10.0, 7.5)
+    return (10.0, 2.5)
+
+
 def roll_body(look, frame):
     """구르기 5컷용 몸: 웅크린 공(0·4 = 웅크림, 1~3 = 공). 머리는 실행 중에 90도씩 돌려 얹는다."""
     o = outfit(look)

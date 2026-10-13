@@ -1,5 +1,6 @@
 ## 투사체 풀 v0 (SD-11 §14.3, SD-19 §6.8): 풀 128(모바일 96), 공간 격자(4×4타일 버킷),
 ## 이번 프레임 이동 선분 대 원 판정(터널링 방지), 노드 하나에서 일괄 그리기(드로 콜 절감).
+## 그림은 전투 이펙트 시트(CombatFx, SD-16 §10.1): 탄환은 일반 혼합, 총구 화염·맞은 자리 불꽃은 가산 혼합 층.
 ## 높은 엄폐는 막고, 낮은 엄폐는 표적이 서 있으면 40% 확률로 막는다. 쏘는 쪽이 1t 안에 붙은 엄폐는 무시(§4.2).
 class_name Projectiles
 extends Node2D
@@ -8,9 +9,11 @@ const MAX := 128
 const BUCKET := 128.0
 var world
 var rng := RandomNumberGenerator.new()
-var shots: Array = []                    ## {p, v, life, team, weapon, skill, from, origin}
-var flashes: Array = []                  ## [pos, ttl]
+var shots: Array = []                    ## {p, v, ang, life, team, weapon, skill, origin}
+var flashes: Array = []                  ## 총구 효과 {at, ang, set, age, born}
+var sparks: Array = []                   ## 벽·엄폐물에 맞은 자리 불꽃 {at, ang, set, age, born}
 var marks: Array = []                    ## 탄흔 [pos, ttl]
+var _add: Node2D                         ## 가산 혼합 층(총구 화염·불꽃)
 var combatants: Array = []
 var _buckets := {}
 var _occupied := {}                      ## 산 전투 참가자가 선 칸: 그 칸의 엄폐(표적 받침·소품)는 그 사람을 겨눈 탄을 막지 않는다
@@ -23,19 +26,44 @@ var focused_hits: Array = []             ## 집중 사격 명중 부위 기록(�
 func _ready() -> void:
 	rng.seed = 2277
 	z_index = 5
+	_add = Node2D.new()
+	var m := CanvasItemMaterial.new()
+	m.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	_add.material = m
+	add_child(_add)
+	_add.draw.connect(_draw_add)
 
 
 ## focused: 집중 사격(SD-11 §5.3) — 치명타 +15%p, 머리 가중치 + 2 × 인지력, 무기 부위 활성
+## flash: 총구 효과 세트. "auto"면 무기로 고른다(CombatFx.flash_for). ""면 그리지 않는다 — 주인공은 인형이 총과 같은 층에 그린다.
 func fire(origin: Vector2, angle_deg: float, speed: float, team: String, weapon: Dictionary, skill: float,
-		focused: bool = false, per: int = 5) -> bool:
+		focused: bool = false, per: int = 5, flash: String = "auto") -> bool:
 	if shots.size() >= MAX:
 		return false
 	var dir := Vector2.RIGHT.rotated(deg_to_rad(angle_deg))
-	shots.append({"p": origin, "v": dir * speed, "life": weapon["range_max"] * 32.0 / speed, "team": team,
+	shots.append({"p": origin, "v": dir * speed, "ang": angle_deg, "life": weapon["range_max"] * 32.0 / speed, "team": team,
 		"weapon": weapon, "skill": skill, "origin": origin, "focused": focused, "per": per})
-	flashes.append([origin, 2])
+	var fs := CombatFx.flash_for(weapon) if flash == "auto" else flash
+	if CombatFx.has_set(fs):
+		flashes.append(_fx(fs, origin, angle_deg))
 	spawned_total += 1
 	return true
+
+
+static func _fx(set_name: String, at: Vector2, ang: float) -> Dictionary:
+	return {"set": set_name, "at": at, "ang": ang, "age": 0.0, "born": Engine.get_process_frames()}
+
+
+## 이펙트 나이: 나온 프레임에는 첫 컷을 그대로 그리고 다음 프레임부터 먹인다(사격·탄 이동 순서와 녹화 30fps에서도 첫 컷이 남는다)
+static func _aged(list: Array, dt: float) -> Array:
+	var now := Engine.get_process_frames()
+	var keep: Array = []
+	for f in list:
+		if int(f["born"]) != now:
+			f["age"] = float(f["age"]) + dt
+		if CombatFx.frame_at(f["set"], f["age"]) >= 0:
+			keep.append(f)
+	return keep
 
 
 func _rebucket() -> void:
@@ -62,6 +90,7 @@ func step(dt: float) -> void:
 			var blk := _blocked(a, b, s)
 			if blk.x >= 0.0:
 				marks.append([blk, 20])
+				sparks.append(_fx("spark", blk, float(s["ang"])))
 				continue
 		if hit != null:
 			_apply(hit, s, b)
@@ -71,13 +100,14 @@ func step(dt: float) -> void:
 		if s["life"] > 0.0:
 			keep.append(s)
 	shots = keep
-	for f in flashes:
-		f[1] -= 1
-	flashes = flashes.filter(func(f): return f[1] > 0)
+	flashes = _aged(flashes, dt)
+	sparks = _aged(sparks, dt)
 	for m in marks:
 		m[1] -= 1
 	marks = marks.filter(func(m): return m[1] > 0)
 	queue_redraw()
+	if _add != null:
+		_add.queue_redraw()
 
 
 func _segment_hit(a: Vector2, b: Vector2, s: Dictionary):
@@ -165,14 +195,20 @@ func _apply(c: Combatant, s: Dictionary, at: Vector2) -> void:
 
 
 func _draw() -> void:
-	for s in shots:
-		var p: Vector2 = (s["p"] as Vector2).round()
-		var tail: Vector2 = p - (s["v"] as Vector2).normalized() * 6.0
-		draw_line(tail.round(), p, Color("e8c23a"), 1.0)
-		draw_rect(Rect2(p - Vector2(0.5, 0.5), Vector2(1, 1)), Color("ffec9a"))
-	for f in flashes:
-		var q: Vector2 = (f[0] as Vector2).round()
-		draw_rect(Rect2(q - Vector2(2, 2), Vector2(4, 4)), Color("ffec9a"))
-		draw_rect(Rect2(q - Vector2(1, 1), Vector2(2, 2)), Color("e9e4d8"))
+	var tex := CombatFx.sheet()
 	for m in marks:
 		draw_rect(Rect2((m[0] as Vector2).round() - Vector2(1, 1), Vector2(2, 2)), Color("cbc5b9" if m[1] > 10 else "6e6966"))
+	for s in shots:                                                   # 탄환 16방향(2×1 심 + 잔상 4px + 어두운 심) — 머리가 탄 위치
+		var r := CombatFx.region("bullet", float(s["ang"]), 0)
+		draw_texture_rect_region(tex, Rect2(CombatFx.top_left("bullet", s["p"]), r.size), r)
+
+
+func _draw_add() -> void:
+	var tex := CombatFx.sheet()
+	for list in [flashes, sparks]:
+		for f in list:
+			var k := CombatFx.frame_at(f["set"], f["age"])
+			if k < 0:
+				continue
+			var r := CombatFx.region(f["set"], f["ang"], k)
+			_add.draw_texture_rect_region(tex, Rect2(CombatFx.top_left(f["set"], f["at"]), r.size), r)

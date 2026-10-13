@@ -19,6 +19,7 @@ var head: Sprite2D
 var gear: Sprite2D
 var eyes: Sprite2D
 var gun: Sprite2D
+var muzzle_fx: Sprite2D                       ## 총구 화염·분출(가산, CombatFx 시트) — 총과 같은 층(N·NE 조준이면 몸 뒤)
 var mat: ShaderMaterial
 var fam: Dictionary
 var face := "idle"
@@ -27,6 +28,10 @@ var _face_t := 0.0
 var _blink := 2.5
 var _head_view := 0
 var _head_flip := false
+var _fx_set := ""
+var _fx_ang := 0.0
+var _fx_t := -1.0
+var _fx_born := -1
 
 
 static func _load_meta() -> void:
@@ -63,6 +68,14 @@ func _init() -> void:
 	head = _sprite(head_root, Vector2(-20, -22), 5, 5)
 	gear = _sprite(head_root, Vector2(-20, -22), 5, 1)
 	eyes = _sprite(head_root, Vector2(-20, -22), 5, 1)
+	muzzle_fx = Sprite2D.new()
+	muzzle_fx.centered = false
+	muzzle_fx.region_enabled = true
+	muzzle_fx.visible = false
+	var add := CanvasItemMaterial.new()
+	add.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	muzzle_fx.material = add
+	add_child(muzzle_fx)
 	set_look({})
 
 
@@ -189,6 +202,46 @@ func show_aim(motion: String, legs_dir: int, frame: int, aim_dir: int) -> void:
 	_place(motion if motion in ["walk", "run"] else "idle", legs_dir, frame, aim_dir)
 
 
+## 총구 점(인형 좌표): 손 기준점(gun_at + 몸 보정) + 무기 그림 안 총구(paperdoll.json muzzle) — SD-16 §5 'muzzle'.
+## dir8 = 총 그림이 보는 쪽(조준 중이면 조준 방향, 아니면 몸 방향). 총구가 없는 무기면 손 자리.
+func muzzle_local(dir8: int) -> Vector2:
+	var hv: Array = VIEW_OF[dir8]
+	var g: Array = meta["gun_at"][hv[0]]
+	var go: Array = fam.get("gun_off", [0, 0])
+	var gx: float = float(g[0]) + float(go[0])
+	var top := Vector2((-gx if hv[1] else gx) - 10.0, float(g[1]) + float(go[1]) - 8.0)
+	var m: Array = meta.get("muzzle", {}).get(look["weapon"], {}).get(hv[0], [10.0, 8.0])
+	return top + Vector2(20.0 - float(m[0]) if hv[1] else float(m[0]), float(m[1]))
+
+
+## 쏠 때 총구 효과(SD-16 §10.1): 날아가는 각에 가까운 16방향 열, 컷당 2틱. 총과 같은 층에 그려 N·NE 조준이면 머리 뒤로 숨는다.
+func fire_flash(dir8: int, angle_deg: float, set_name: String) -> void:
+	if not CombatFx.has_set(set_name) or not gun.visible:
+		return
+	_fx_set = set_name
+	_fx_ang = angle_deg
+	_fx_t = 0.0
+	_fx_born = Engine.get_process_frames()
+	muzzle_fx.texture = CombatFx.sheet()
+	muzzle_fx.position = CombatFx.top_left(set_name, muzzle_local(dir8))
+	muzzle_fx.z_index = -1 if VIEW_OF[dir8][0] in ["N", "NE"] else 1
+	muzzle_fx.region_rect = CombatFx.region(set_name, angle_deg, 0)
+	muzzle_fx.visible = true
+
+
+func _fx_tick(dt: float) -> void:
+	if _fx_t < 0.0:
+		return
+	if Engine.get_process_frames() != _fx_born:                       # 나온 프레임에는 첫 컷을 그대로 둔다
+		_fx_t += dt
+	var k := CombatFx.frame_at(_fx_set, _fx_t)
+	if k < 0 or not gun.visible:
+		_fx_t = -1.0
+		muzzle_fx.visible = false
+		return
+	muzzle_fx.region_rect = CombatFx.region(_fx_set, _fx_ang, k)
+
+
 ## 회피 구르기 5컷: 몸은 웅크린 공, 머리는 공 둘레를 90도씩 돈다(앞으로 구르는 쪽). 무기는 숨긴다.
 func show_roll(dir: int, frame: int) -> void:
 	var bv: Array = VIEW_OF[dir]
@@ -214,3 +267,4 @@ func show_roll(dir: int, frame: int) -> void:
 func _process(dt: float) -> void:
 	tick(dt)
 	gun.visible = look["weapon"] != "" and meta["weapons"].has(look["weapon"]) and head_root.rotation == 0.0
+	_fx_tick(dt)

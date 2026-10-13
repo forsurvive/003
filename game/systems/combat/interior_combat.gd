@@ -50,7 +50,12 @@ var popups: Array = []                            ## [글, 위치, 남은 초, �
 var stats := {"shots": 0, "hits": 0, "sneak": 0, "spotted": 0, "stims": 0, "downs": 0, "hurt": 0.0}
 var font: Font
 var sneak_skill := 0.0
-var _mouse_seen := false
+var aim_hold := 0.0                               ## 쏜 뒤 조준 자세를 유지하는 남은 초
+var aim_mode := "key"                             ## 조준 장치: mouse(커서 360°) · key(고전 조작: 바라보는 방향 + 자동 조준 원뿔)
+const AIM_HOLD_S := 1.0
+var _aim_real := false                            ## 조준점이 실제 점(봇·마우스·자동 조준이 잡은 표적)인가 — 아니면 바라보는 방향 그대로 쏜다
+var _auto_hit := false
+const AUTO_AIM_HALF := 15.0                       ## 고전 조작 자동 조준 반각(SD-11 §2.3 '원뿔 30°', 조준 보정 반각 15°)
 var _buddy_cool := 0.0
 var _rng := RandomNumberGenerator.new()
 
@@ -316,7 +321,15 @@ func _player(dt: float, player: Actor, st: StoryState) -> void:
 	var w := weapon()
 	var aim := _aim_point(player)
 	var to := aim - (player.loco.logical + Vector2(0, -14))
-	player.aim_dir = Locomotion.snap8(to, 0.0)
+	var fire: bool = bot.get("fire", false) if not bot.is_empty() else Input.is_action_pressed("fire")
+	if fire:
+		aim_hold = AIM_HOLD_S
+	aim_hold = maxf(0.0, aim_hold - dt)
+	# 조준 자세(상·하체 분리, SD-16 §5.10): 정조준을 누르고 있거나 · 쏜 뒤 1초 · 교전 중일 때만. 그 밖에는 전신이 걷는 쪽을 본다
+	# (조준하면서 90° 넘게 반대로 걸을 때만 뒷걸음 — SD-11 §2.4). 커서가 주인공 위에 겹쳐 있으면 조준하지 않는다.
+	var hold_aim: bool = Input.is_action_pressed("aim") if bot.is_empty() else bot.has("aim")
+	var aiming_pose: bool = (hold_aim or aim_hold > 0.0 or in_combat()) and to.length() > 12.0
+	player.aim_dir = Locomotion.snap8(to, 0.0) if aiming_pose else -1
 	if reload_t > 0.0:
 		reload_t -= dt
 		if reload_t <= 0.0:
@@ -326,7 +339,6 @@ func _player(dt: float, player: Actor, st: StoryState) -> void:
 	if ranged and (bot.get("reload", false) if not bot.is_empty() else Input.is_action_just_pressed("reload")):
 		start_reload(st)
 		return
-	var fire: bool = bot.get("fire", false) if not bot.is_empty() else Input.is_action_pressed("fire")
 	if not fire or cool > 0.0:
 		return
 	cool = 1.0 / float(w["rate"])
@@ -338,14 +350,21 @@ func _player(dt: float, player: Actor, st: StoryState) -> void:
 		var aiming: bool = Input.is_action_pressed("aim") if bot.is_empty() else bool(bot.get("aimed", true))
 		var stance := ("crouch_aim" if aiming else "crouch") if crouch else ("aim" if aiming else "stand")
 		var sp := CombatRules.spread(sk, stance, player.loco.motion != "idle", "new", 1.0, 0.0, 0.0, float(w.get("min_spread", 1.0)))
-		var ang := CombatRules.shot_angle(rad_to_deg(to.angle()), sp, shots.rng)
+		# 탄은 그려진 총의 총구에서 나가 조준점으로 간다(SD-16 §5 'muzzle'). 총 그림 방향 = 조준 중이면 조준 방향, 아니면 몸 방향.
+		# 총구 화염은 인형이 총과 같은 층에 그린다(N·NE 조준이면 머리 뒤).
+		var gdir: int = player.aim_dir if player.aim_dir >= 0 else player.loco.facing
 		var muzzle := player.loco.logical + Vector2(0, -14) + to.normalized() * 10.0
-		if shots.fire(muzzle, ang, SHOT_SPEED, "player", w, sk):
+		if player.doll != null:
+			muzzle = player.position + player.doll.position + player.doll.muzzle_local(gdir)
+		var line := aim - muzzle
+		var ang := CombatRules.shot_angle(rad_to_deg((line if _aim_real and line.length() > 24.0 else to).angle()), sp, shots.rng)
+		if shots.fire(muzzle, ang, SHOT_SPEED, "player", w, sk, false, 5, "" if player.doll != null else "auto"):
 			shots.shots[-1]["sneak_ok"] = true
 			mags[weapon_id] = int(mags[weapon_id]) - 1
 			stats["shots"] += 1
 			if player.doll != null:
 				player.doll.flash_face("fire", 0.14)
+				player.doll.fire_flash(gdir, ang, CombatFx.flash_for(w))
 			for e in enemies:
 				if is_instance_valid(e):
 					e.hear(str(w.get("sound", "pistol")), player.loco.logical)
@@ -423,17 +442,54 @@ func damage(amount: float) -> void:
 	hurt.emit(before - pc.hp)
 
 
+## 조준점: 봇이 준 점 · 마우스 커서(360°) · 고전 조작(바라보는 방향, 원뿔 안의 가장 가까운 표적·적에게 끌어당김)
 func _aim_point(player: Actor) -> Vector2:
-	if not bot.is_empty():
-		return bot.get("aim", player.loco.logical + Vector2.RIGHT * 64.0)
-	if _mouse_seen:
+	_aim_real = true
+	if not bot.is_empty() and bot.has("aim"):
+		return bot["aim"]
+	if bot.is_empty() and aim_mode == "mouse":
 		return get_global_mouse_position()
-	return player.loco.logical + Vector2(0, -14) + Locomotion.VEC[player.loco.facing].normalized() * 96.0
+	var p := auto_aim(player)
+	_aim_real = _auto_hit
+	return p
+
+
+## 고전 조작 조준(SD-11 §2.3): 8방향 바라보는 쪽 기준 반각 15° 안, 사거리 안의 가장 가까운 적·표적 중심. 없으면 그 방향 3칸
+func auto_aim(player: Actor) -> Vector2:
+	var eye := player.loco.logical + Vector2(0, -14)
+	var f: Vector2 = Locomotion.VEC[player.loco.facing].normalized()
+	var reach := float(weapon().get("range_max", 8.0)) * 32.0 if armed() else 256.0
+	var best := Vector2.INF
+	var bd := 1e9
+	var cands: Array = []
+	for e in enemies:
+		if is_instance_valid(e) and not e.cmb.dead:
+			cands.append(e.loco.logical + Vector2(0, -6))
+	for t in targets:
+		if not t["down"] and t["live"]:
+			cands.append(t["cmb"].pos() + Vector2(0, -12))
+	for p in cands:
+		var d: Vector2 = p - eye
+		if d.length() <= reach and d.length() < bd and absf(f.angle_to(d)) <= deg_to_rad(AUTO_AIM_HALF):
+			bd = d.length()
+			best = p
+	_auto_hit = best != Vector2.INF
+	return best if _auto_hit else eye + f * 96.0
+
+
+## 교전 중: 주인공을 표적으로 잡은 적이 있다(SD-11 §2.5) — 이동 중에도 상체가 조준을 따른다
+func in_combat() -> bool:
+	for e in enemies:
+		if is_instance_valid(e) and not e.cmb.dead and e.brain.state == AIBrain.S.COMBAT:
+			return true
+	return false
 
 
 func _input(e: InputEvent) -> void:
-	if e is InputEventMouseMotion:
-		_mouse_seen = true
+	if e is InputEventMouseMotion or (e is InputEventMouseButton and e.pressed):
+		aim_mode = "mouse"
+	elif e is InputEventKey and e.pressed and e.physical_keycode in [KEY_Z, KEY_X]:
+		aim_mode = "key"                                                # 고전 조작으로 쏘기 시작하면 키보드 조준
 
 
 ## HUD 탐지 표시(SD-12 §4.5): 숨음 · 주의 · 발각 · 위험 중 가장 나쁜 것. 웅크리지 않았으면 위험만 보인다
@@ -577,6 +633,8 @@ func _draw_cursor() -> void:
 	var a: Actor = pc.actor
 	if a == null or not armed() or not visible_cursor:
 		return
+	if not (aim_mode == "mouse" and bot.is_empty()) and a.aim_dir < 0:
+		return                                                          # 키보드·봇: 조준 자세일 때만(마우스면 늘 커서 자리에)
 	var w := weapon()
 	var aim := _aim_point(a)
 	var from := a.loco.logical + Vector2(0, -14)

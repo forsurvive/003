@@ -1,5 +1,6 @@
 ## 입력 맵 (SD-11 §2.3 키보드+마우스·패드. 터치는 touch_ui.gd).
 ## Shift 질주, Space 회피 구르기, Q 집중 사격, CapsLock 걷기 토글, 1·2 단축키(무기). 상호작용(패드 X 길게)은 대화 시스템과 함께.
+## 고전 조작(키보드 단독): Z 공격·X 정조준(바라보는 방향 + 자동 조준 원뿔 — InteriorCombat.auto_aim).
 ## project.godot에 이벤트 직렬화를 두지 않고 시작할 때 코드로 만든다(데이터로 옮기기 쉽게).
 extends Node
 
@@ -22,6 +23,8 @@ func _ready() -> void:
 			InputMap.action_add_event(a, e)
 	_mouse("fire", MOUSE_BUTTON_LEFT)
 	_mouse("aim", MOUSE_BUTTON_RIGHT)
+	_key("fire", KEY_Z)                               # 고전 조작(키보드 단독, SD-11 §2.3): Z 공격 · X 정조준
+	_key("aim", KEY_X)
 	_axis("move_left", JOY_AXIS_LEFT_X, -1.0); _axis("move_right", JOY_AXIS_LEFT_X, 1.0)
 	_axis("move_up", JOY_AXIS_LEFT_Y, -1.0); _axis("move_down", JOY_AXIS_LEFT_Y, 1.0)
 	_axis("fire", JOY_AXIS_TRIGGER_RIGHT, 1.0); _axis("aim", JOY_AXIS_TRIGGER_LEFT, 1.0)
@@ -38,6 +41,12 @@ func _mouse(a: String, b: MouseButton) -> void:
 		InputMap.add_action(a)
 	var e := InputEventMouseButton.new()
 	e.button_index = b
+	InputMap.action_add_event(a, e)
+
+
+func _key(a: String, k: Key) -> void:
+	var e := InputEventKey.new()
+	e.physical_keycode = k
 	InputMap.action_add_event(a, e)
 
 

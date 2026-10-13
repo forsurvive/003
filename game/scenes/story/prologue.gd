@@ -199,7 +199,7 @@ func _process(dt: float) -> void:
 		return
 	if box.active and not box.waiting_cmd:
 		_stop()
-		host.combat.bot = {"aim": host.player.loco.logical + Vector2(32, 0)}
+		host.combat.bot = {"walk": true}                                   # 봇이지만 조준은 하지 않는다(걷는 쪽을 본다)
 		match box.state.get("type", ""):
 			"line":
 				if box.reveal >= box.page_len:
@@ -275,7 +275,7 @@ func _p2_bot() -> void:
 	var st := host.st
 	var c := host.combat
 	var s := st.quests.stage("MQ-P2")
-	c.bot = {"aim": host.player.loco.logical + Vector2(32, 0)}
+	c.bot = {"walk": true}
 	match s:
 		20:
 			_go("V-01", "bday_front")
@@ -344,13 +344,15 @@ func _range() -> void:
 		stand = host.map.mark_pos("sneak_1" if int(tgt["prop"]["y"]) < 16 else "sneak_2")
 		if tgt["seen_t"] > 0.0:                                          # 들켰다: 모래주머니 뒤에서 기다린다
 			_move_to(stand)
-			c.bot = {"aim": aim, "crouch": true}
+			c.bot = {"walk": true, "crouch": true}
 			return
-	else:                                                                 # 사대(x 30)를 따라 표적과 같은 줄로(BB총 최대 사거리 12.25칸)
-		stand = Vector2(30 * 32 + 16, clampi(int(tgt["prop"]["y"]), 4, 25) * 32 + 16)
+	else:                                                                 # 사대(x 30)의 세 자리 가운데 표적과 가까운 곳에서 비스듬히 쏜다
+		var ty := int(tgt["prop"]["y"])                                   # (BB총 최대 사거리 12.25칸 — 맨 끝 표적은 앞 자리에서)
+		var lane := 9 if ty <= 11 else (22 if ty >= 21 else 16)
+		stand = Vector2(30 * 32 + 16, lane * 32 + 16)
 	if host.player.loco.logical.distance_to(stand) > 6.0:
 		_move_to(stand)
-		c.bot = {"aim": aim, "crouch": crouch}
+		c.bot = {"walk": true, "crouch": crouch}                          # 자리로 가는 동안은 조준하지 않는다(뒷걸음 없이 걷는다)
 		return
 	_stop()
 	c.bot = {"aim": aim, "fire": true, "crouch": crouch, "aimed": true}

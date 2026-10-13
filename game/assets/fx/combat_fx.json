@@ -1,0 +1,46 @@
+{
+ "cell": 16,
+ "dirs": 16,
+ "sets": {
+  "bullet": {
+   "anchor": [
+    8.5,
+    8.5
+   ],
+   "blend": "mix",
+   "frames": 1,
+   "row": 0,
+   "ticks": 2
+  },
+  "flash_air": {
+   "anchor": [
+    7.5,
+    7.5
+   ],
+   "blend": "add",
+   "frames": 2,
+   "row": 4,
+   "ticks": 2
+  },
+  "flash_pistol": {
+   "anchor": [
+    7.5,
+    7.5
+   ],
+   "blend": "add",
+   "frames": 3,
+   "row": 1,
+   "ticks": 2
+  },
+  "spark": {
+   "anchor": [
+    8.5,
+    8.5
+   ],
+   "blend": "add",
+   "frames": 3,
+   "row": 6,
+   "ticks": 2
+  }
+ }
+}

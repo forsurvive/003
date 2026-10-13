@@ -5,7 +5,7 @@
   머리 시트(머리모양 × 몸): 5행(표정 idle·blink·fire·talk·hurt) × 5열(S·SE·E·NE·N), 칸 40×40, 구 중심 (20, 22).
     모자를 쓰면 숨는 머리(HR07 쪽머리)는 'HR07h' 시트를 따로 둔다. 방호복·스텔스 아머(T10·T15)는 후드 머리 시트.
   장비 층: 기본 머리(HR03) 대비 바뀐 칸만(머리 칸과 같은 40×40, 5열). 무기: 5열 20×16.
-  메타: 컷마다 머리 구 중심(발 기준점 기준), 구르기 공 중심, 무기 손 위치, 보폭.
+  메타: 컷마다 머리 구 중심(발 기준점 기준), 구르기 공 중심, 무기 손 위치, 총구 점(무기 칸 안), 보폭.
 출력: game/assets/paperdoll/*.png + paperdoll.json. 팔레트 밖 색이 나오면 실패한다."""
 import os, sys, json
 from PIL import Image
@@ -162,6 +162,7 @@ def main():
             name = f"pd_gun_{w}{suffix}.png"
             to_index(strip, name).save(os.path.join(OUT, name))
             meta["weapons"][w + suffix] = name
+    meta["muzzle"] = {w: {v: list(K.gun_muzzle(v, w)) for v in ROWS} for w in K.GUN_KINDS}   # 총구 점(무기 칸 안, 연속 좌표)
     # 대조용 합성본(art/tools/chibi.actor): 실행 중 페이퍼돌과 픽셀 단위로 같아야 한다(paperdoll_check 장면)
     refs = []
     for i, (bt, fam, hr, gear, eyes, weapon, mo, view, fr, aim) in enumerate(REF_CASES):

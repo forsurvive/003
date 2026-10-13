@@ -11,7 +11,16 @@ func _state(stage := 50) -> StoryState:
 	return st
 
 
+## -s 실행에는 자동 로드(InputSetup)가 없다 — 전투가 읽는 행동(fire·aim·crouch·holster…)을 시험 안에서 만든다
+func _inputs() -> void:
+	if not InputMap.has_action("fire"):
+		var setup: Node = load("res://systems/input/input_setup.gd").new()
+		setup._ready()
+		setup.free()
+
+
 func _setup(map_id: String, st: StoryState, at: Vector2) -> Array:
+	_inputs()
 	var m := InteriorMap.new()
 	m.load_map(map_id, st)
 	var c := InteriorCombat.new()
@@ -21,7 +30,6 @@ func _setup(map_id: String, st: StoryState, at: Vector2) -> Array:
 	lk["body"] = "K1"
 	a.setup_doll(lk, at, m)
 	m.add_actor(a)
-	m.objects.add_child(a)
 	c.on_map(m, a, st)
 	return [m, c, a]
 
@@ -211,3 +219,119 @@ func test_pipboy_rows(t) -> void:
 	p._enter()
 	t.eq(got, [["unequip", "W-065"]], "장착한 무기에서 결정 = 해제")
 	p.free()
+
+
+## 조준 자세(SD-16 §5.10): 걷기만 할 때는 조준하지 않는다(뒷걸음 없음) · 쏘면 그쪽을 보고 1초 유지 · 탄도는 360°(8방향 스냅 아님)
+func test_aim_pose_and_360(t) -> void:
+	var st := _state()
+	var r := _setup("V-09", st, Vector2(30 * 32 + 16, 16 * 32 + 16))
+	var m: InteriorMap = r[0]
+	var c: InteriorCombat = r[1]
+	var a: Actor = r[2]
+	st.call_fn("give", ["W-065"])
+	st.call_fn("give", ["BB탄", 100])
+	c.equip("W-065", st)
+	c.bot = {"walk": true}
+	for i in 30:
+		a.move(Vector2(-1, 0), 1.0 / 60.0)                                # 서쪽으로 걷는다
+		c.tick(1.0 / 60.0, true, st)
+	t.eq(a.aim_dir, -1, "걷기만 하면 조준 자세가 아니다(무기를 들고 있어도)")
+	t.ok(not a.loco.reverse, "뒷걸음이 아니다")
+	var eye := a.loco.logical + Vector2(0, -14)
+	var aim := eye + Vector2.RIGHT.rotated(deg_to_rad(-33.0)) * 200.0     # 8방향 사이의 비스듬한 각
+	c.shots.rng.seed = 7                                                  # 맵이 트리 밖이라 _ready 시드가 없다 — 퍼짐 굴림 고정
+	c.bot = {"aim": aim, "fire": true, "aimed": true}
+	c.cool = 0.0
+	c.tick(1.0 / 60.0, true, st)
+	t.ok(c.shots.shots.size() >= 1, "쐈다")
+	var ang := rad_to_deg((c.shots.shots[-1]["v"] as Vector2).angle())
+	var base := rad_to_deg((aim - (c.shots.shots[-1]["origin"] as Vector2)).angle())   # 총구에서 조준점으로(눈높이 기준 -33°와 1~2° 차이)
+	var sp := CombatRules.spread(st.skill("SMALL_GUNS"), "aim", false)
+	t.ok(absf(base - (-33.0)) < 3.0, "총구→조준점 각은 조준한 각 근처: %.1f°" % base)
+	t.ok(absf(ang - base) <= sp + 0.5, "탄은 총구에서 조준점으로 ± 퍼짐 %.1f°로 난다: %.1f° (기준 %.1f°)" % [sp, ang, base])
+	t.ok(absf(fposmod(ang, 45.0)) > 0.01, "45° 단위로 붙지 않는다")
+	t.eq(a.aim_dir, Locomotion.snap8(aim - (a.loco.logical + Vector2(0, -14)), 0.0), "쏘는 동안 상체(그림)는 가까운 8방향")
+	c.bot = {"walk": true}
+	for i in 30:
+		c.tick(1.0 / 60.0, true, st)
+	t.ok(a.aim_dir >= 0, "쏜 뒤 1초는 조준 자세를 유지")
+	for i in 40:
+		c.tick(1.0 / 60.0, true, st)
+	t.eq(a.aim_dir, -1, "1초가 지나면 걷는 쪽을 보는 전신 자세로")
+	m.free()
+
+
+## 고전 조작(키보드 단독, SD-11 §2.3): 바라보는 방향 반각 15° 안의 가장 가까운 표적으로 조준을 끌어당긴다
+func test_classic_auto_aim(t) -> void:
+	var st := _state()
+	var r := _setup("V-09", st, Vector2(30 * 32 + 16, 13 * 32 + 16))
+	var m: InteriorMap = r[0]
+	var c: InteriorCombat = r[1]
+	var a: Actor = r[2]
+	st.call_fn("give", ["W-065"])
+	c.equip("W-065", st)
+	a.loco.facing = 0                                                     # 동쪽을 본다
+	var tg: Dictionary = c.targets.filter(func(x): return x["kind"] == "target" and int(x["prop"]["y"]) == 13)[0]
+	t.eq(c.auto_aim(a), tg["cmb"].pos() + Vector2(0, -12), "정면의 표적(같은 줄)으로 끌어당긴다")
+	a.loco.facing = 6                                                     # 북쪽: 원뿔 안에 표적이 없다
+	var p := c.auto_aim(a)
+	t.ok(absf((p - (a.loco.logical + Vector2(0, -14))).angle() - deg_to_rad(-90.0)) < 0.01, "원뿔 안에 없으면 바라보는 방향 그대로")
+	c._aim_point(a)
+	t.ok(not c._aim_real, "표적이 없으면 가상 조준점 — 탄은 총구가 아니라 바라보는 방향 그대로 난다(눈높이 차이로 틀어지지 않게)")
+	a.loco.facing = 0
+	c._aim_point(a)
+	t.ok(c._aim_real, "표적을 잡으면 총구에서 그 표적으로 쏜다")
+	_inputs()
+	t.ok(InputMap.action_has_event("fire", _key(KEY_Z)) and InputMap.action_has_event("aim", _key(KEY_X)), "Z = 공격 · X = 정조준")
+	m.free()
+
+
+## 탄·총구 효과(SD-16 §10.1, §5 'muzzle'): 16방향 시트의 열·컷 시간, 탄은 그려진 총의 총구에서 나가고,
+## 총구 효과는 인형이 총과 같은 층에 그린다(N·NE면 몸 뒤). 벽에 막힌 탄은 맞은 자리에 불꽃을 남긴다.
+func test_muzzle_and_fx(t) -> void:
+	t.eq(CombatFx.col(0.0), 0, "동쪽 = 0열")
+	t.eq(CombatFx.col(22.5), 1, "22.5° = 1열")
+	t.eq(CombatFx.col(-90.0), 12, "북쪽(-90°) = 12열")
+	t.eq(CombatFx.col(349.0), 0, "349°는 가까운 동쪽 열")
+	t.eq(CombatFx.frame_at("flash_air", 0.0), 0, "분출 첫 컷")
+	t.eq(CombatFx.frame_at("flash_air", 2.0 / 60.0), 1, "2틱 뒤 둘째 컷")
+	t.eq(CombatFx.frame_at("flash_air", 4.0 / 60.0), -1, "4틱 뒤 끝")
+	t.eq(CombatFx.flash_for({"sound": "suppressed"}), "flash_air", "공기총(소음)은 불꽃 대신 분출")
+	t.eq(CombatFx.flash_for({"sound": "pistol"}), "flash_pistol", "화약 총은 총구 화염")
+	t.eq(CombatFx.sheet().get_width(), 16 * 16, "시트 폭 = 16방향 × 16px")
+	var st := _state()
+	var r := _setup("V-09", st, Vector2(30 * 32 + 16, 18 * 32 + 16))
+	var m: InteriorMap = r[0]
+	var c: InteriorCombat = r[1]
+	var a: Actor = r[2]
+	st.call_fn("give", ["W-065"])
+	st.call_fn("give", ["BB탄", 100])
+	c.equip("W-065", st)
+	var mz_e := a.doll.muzzle_local(0)
+	var mz_w := a.doll.muzzle_local(4)
+	t.ok(mz_e.x > 8.0 and absf(mz_e.x + mz_w.x) < 0.01 and is_equal_approx(mz_e.y, mz_w.y), "서쪽 총구 = 동쪽 총구의 좌우 반전(%s · %s)" % [mz_e, mz_w])
+	t.ok(a.doll.muzzle_local(6).y < a.doll.muzzle_local(2).y, "북쪽 총구가 남쪽 총구보다 위")
+	c.bot = {"aim": a.loco.logical + Vector2(160, -14), "fire": true, "aimed": true}   # 동쪽
+	c.cool = 0.0
+	c.tick(1.0 / 60.0, true, st)
+	var s: Dictionary = c.shots.shots[-1]
+	t.ok((s["origin"] as Vector2).distance_to(a.position + a.doll.position + mz_e) < 0.01, "탄은 그려진 총구에서 나간다")
+	t.eq(c.shots.flashes.size(), 0, "주인공의 총구 효과는 탄 풀이 아니라 인형이 그린다")
+	t.ok(a.doll.muzzle_fx.visible and a.doll.muzzle_fx.z_index == 1, "동쪽 조준: 분출이 총 앞 층에 보인다")
+	a.doll.fire_flash(6, -90.0, "flash_air")
+	t.eq(a.doll.muzzle_fx.z_index, -1, "북쪽 조준: 분출도 총처럼 몸 뒤 층")
+	c.bot = {"aim": a.loco.logical + Vector2(-160, -14), "fire": true, "aimed": true}  # 서쪽 벽(27열)
+	c.cool = 0.0
+	c.tick(1.0 / 60.0, true, st)
+	c.bot = {"aim": a.loco.logical + Vector2(-160, -14)}
+	for i in 20:
+		c.tick(1.0 / 60.0, true, st)
+	var sp: Array = c.shots.sparks.filter(func(f): return CombatFx.col(f["ang"]) == 8)
+	t.ok(not sp.is_empty() and (sp[0]["at"] as Vector2).x <= 28 * 32 + 1, "서쪽 벽에 막힌 탄이 벽 자리에 불꽃을 남긴다")
+	m.free()
+
+
+func _key(k: Key) -> InputEventKey:
+	var e := InputEventKey.new()
+	e.physical_keycode = k
+	return e

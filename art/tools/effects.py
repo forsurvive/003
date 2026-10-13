@@ -227,6 +227,73 @@ def slime_death():
     return frames
 
 
+# ---------------------------------------------------------------- 게임 실행용 16방향 세트 (단계 0-7, tools/pipeline/fx_export.py)
+# 견본 #12의 모양을 그대로 쓰되, 기준점을 칸 안 한 점에 고정한다(게임은 그 점을 탄 위치·총구에 맞춰 찍는다).
+FX_ANCHOR = {"bullet": (8.5, 8.5), "flash": (7.5, 7.5), "spark": (8.5, 8.5)}
+
+
+def bullet_rt(angle, size=16):
+    """게임 탄: 견본 탄환(2×1 심 + 잔상 4px, 머리 P09 → P50 → P60 둘 → P27 둘)의 머리를 칸 (8, 8)에 둔다.
+    밝은 앞 4px 아래에 1px 어두운 심 P01을 댄다(SD-16 §3.7 '투사체 탄환만 1px 어두운 심 허용'). 거의 세로로 날면 오른쪽에.
+    밝은 바닥(S-07 P06·P07)에서 노란 1px 선만으로는 묻힌다 — 어두운 심이 윤곽을 잡아 준다."""
+    img = Image.new("RGBA", (size, size), CLEAR)
+    a = math.radians(angle)
+    ux, uy = math.cos(a), math.sin(a)
+    c = size // 2
+    toks = [(0, "P09"), (-1, "P50"), (-2, "P60"), (-3, "P60"), (-4, "P27"), (-5, "P27")]
+    pts = {}
+    for k, tok in toks:
+        pts[(int(math.floor(c + k * ux + 0.5)), int(math.floor(c + k * uy + 0.5)))] = tok
+    ox, oy = (1, 0) if abs(uy) > 0.92 else (0, 1)
+    for k, _ in toks[:4]:
+        q = (int(math.floor(c + k * ux + 0.5)) + ox, int(math.floor(c + k * uy + 0.5)) + oy)
+        if q not in pts:
+            img.putpixel(q, C("P01"))
+    for (x, y), tok in pts.items():
+        img.putpixel((x, y), C(tok))
+    return img
+
+
+def air_puff(angle, frame, size=16):
+    """공기총(BB총) 총구: 불꽃이 없다. 총구 앞으로 퍼지는 공기·먼지 2컷(가산, 회색 계열 — 화염 세트의 색 교체, SD-16 §10.1).
+    0컷: 총구에서 넓어지는 짧은 부채꼴(P05 심 · P04). 1컷: 앞으로 밀려 나간 둥근 덩어리, 바둑판 솎음(P04 · P03)."""
+    img = Image.new("RGBA", (size, size), CLEAR)
+    c = size // 2 - 1
+    a = math.radians(angle)
+    ux, uy = math.cos(a), math.sin(a)
+    for y in range(size):
+        for x in range(size):
+            dx, dy = x - c, y - c
+            t = dx * ux + dy * uy
+            s = -dx * uy + dy * ux
+            tok = None
+            if frame == 0:
+                w = 0.6 + 0.45 * t
+                if 0.0 <= t <= 4.2 and abs(s) <= w:
+                    tok = "P05" if abs(s) < w * 0.5 and t < 3.0 else "P04"
+            else:
+                r = math.hypot(t - 4.6, s)
+                if r <= 2.6 and (x + y) % 2 == 0:
+                    tok = "P04" if r < 1.4 else "P03"
+            if tok:
+                img.putpixel((x, y), C(tok))
+    return img
+
+
+def sparks_dir(angle, frame, size=16):
+    """탄이 벽·엄폐물에 맞은 자리: 견본 금속 불꽃 3컷을 탄 방향에 맞춰 돌린다(쏜 쪽으로 튄다).
+    견본 sparks()의 각 150·190·215·240·120 = 되튀는 쪽(180) 기준 −30·+10·+35·+60·−60."""
+    img = Image.new("RGBA", (size, size), CLEAR)
+    c = size // 2
+    for k, off in enumerate((-30, 10, 35, 60, -60)):
+        r = 2 + frame * 2 + k % 2
+        ra = math.radians(angle + 180 + off)
+        put(img, c + r * math.cos(ra), c + r * math.sin(ra), "P50" if frame < 2 else "P60")
+        if frame == 0:
+            put(img, c + (r - 1) * math.cos(ra), c + (r - 1) * math.sin(ra), "P09")
+    return img
+
+
 # ---------------------------------------------------------------- composites
 def add(base, fx, xy):
     """Additive composite of an FX sprite (engine blend mode)."""
