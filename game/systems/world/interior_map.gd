@@ -18,6 +18,7 @@ var exits := {}                                  ## Vector2i -> {"to", "mark"}
 var texts := {}                                  ## Vector2i -> 글
 var marks := {}
 var actors: Array = []                           ## 문을 여는 인물(주인공·NPC)
+var props: Array = []                            ## [{"name", "x", "y", "w", "h", "node"}] — 연출이 상태 그림을 바꾼다
 static var prop_meta: Dictionary
 static var prop_tex: Texture2D
 static var _tile_ids := {}
@@ -68,7 +69,9 @@ func load_map(map_id: String) -> void:
 	for p in data["props"]:
 		var e: Dictionary = prop_meta[p["name"]]
 		var rect: Array = e["frames"][0] if e.has("frames") else e["rect"]
-		_sprite(rect, Vector2(p["px"][0], p["px"][1]), float(p["sort_y"]))
+		var node := _sprite(rect, Vector2(p["px"][0], p["px"][1]), float(p["sort_y"]))
+		props.append({"name": p["name"], "x": int(p["x"]), "y": int(p["y"]), "w": maxi(1, int(e["foot"][0])),
+			"h": maxi(1, int(e["foot"][1])), "node": node})
 	for d in data["doors"]:
 		var e: Dictionary = prop_meta[d["kind"]]
 		var pos := Vector2(int(d["x"]) * T + int(e["off"][0]), int(d["y"]) * T + int(e["off"][1]))
@@ -107,6 +110,20 @@ func _sprite(rect: Array, top_left: Vector2, sort_y: float) -> Sprite2D:
 	s.offset = Vector2(0, top_left.y - sort_y)
 	objects.add_child(s)
 	return s
+
+
+## 연출: 이 칸(또는 위·아래 칸)에 있는 소품을 상태 그림으로 바꾼다(state "" = 기본 그림). 바꾼 소품 이름, 없으면 ""
+func set_prop_state(cell: Vector2i, state: String) -> String:
+	for c in [cell, cell + Vector2i(0, -1), cell + Vector2i(0, 1)]:
+		for p in props:
+			var e: Dictionary = prop_meta[p["name"]]
+			if c.x >= p["x"] and c.x < p["x"] + p["w"] and c.y >= p["y"] and c.y < p["y"] + p["h"]:
+				if state != "" and not e.get("states", {}).has(state):
+					continue
+				var rect: Array = e["states"][state] if state != "" else e["rect"]
+				(p["node"].texture as AtlasTexture).region = _r(rect)
+				return p["name"]
+	return ""
 
 
 func add_actor(a: Node2D) -> void:

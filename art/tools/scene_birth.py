@@ -226,9 +226,10 @@ def clinic_desk():
     return img
 
 
-def birth_bed(jeongin, look="calm"):
+def birth_bed(jeongin, look="calm", inked=True):
     """V-08 분만 침대 (top-down, head to the north): vault-blue tube frame, white sheet, 윤정인 lying with the
-    swaddled baby on her chest under her arms; blanket with the S-07 yellow stripe. 44x84."""
+    swaddled baby on her chest under her arms; blanket with the S-07 yellow stripe. 44x84.
+    jeongin=None: 빈 침대(베개 + 반듯하게 갠 이불, 게임 소품 birth_bed). inked=False: 먹선 없이(게임 소품 내보내기가 두른다)."""
     w, h = 44, 84
     img = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
@@ -244,6 +245,12 @@ def birth_bed(jeongin, look="calm"):
     # pillow
     d.rounded_rectangle([7, 7, w - 8, 21], radius=3, fill=C("P09"), outline=C("P07"))
     d.line([9, 19, w - 10, 19], fill=C("P08"))
+    if jeongin is None:                                                # 빈 침대: 갠 이불만
+        d.rectangle([3, 40, w - 4, 70], fill=C("P45")); d.line([3, 40, w - 4, 40], fill=C("P46"))
+        d.line([3, 41, w - 4, 41], fill=C("P09")); d.line([w - 5, 42, w - 5, 70], fill=C("P44"))
+        d.rectangle([3, 60, w - 4, 62], fill=C("P48")); d.line([3, 60, w - 4, 60], fill=C("P49"))
+        d.line([2, 40, 2, 70], fill=C("P02")); d.line([w - 3, 40, w - 3, 70], fill=C("P02"))
+        return ink(img) if inked else img
     # 아이작풍 큰 머리를 베개에(얼굴 그림과 같은 머리), 풀린 머리카락이 베개 위로 퍼진다
     hd = jeongin.crop((6, 7, 34, 35))
     hx, hy = (w - 28) // 2, -1
@@ -277,7 +284,7 @@ def birth_bed(jeongin, look="calm"):
     d.line([w - 9, 30, bx + 6, by + 4], fill=C("P14")); d.line([w - 9, 31, bx + 6, by + 5], fill=C("P12"))
     d.rectangle([bx - 6, by + 4, bx - 4, by + 6], fill=C("S2.4")); d.point((bx - 6, by + 6), fill=C("S2.2"))
     d.rectangle([bx + 5, by + 3, bx + 7, by + 5], fill=C("S2.4")); d.point((bx + 7, by + 5), fill=C("S2.2"))
-    return ink(img)
+    return ink(img) if inked else img
 
 
 # ------------------------------------------------------------------------------------------------ actors

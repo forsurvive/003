@@ -41,23 +41,32 @@ door 5 19 "격리"
 door 33 19 "안치"
 exit 19 29 V-01 from_V-08
 mark from_V-01 19 27 N
-prop delivery_bed 5 5
 prop med_cabinet 1 3
-prop sink 12 3
-prop terminal_desk 10 3
-prop curtain 1 8
-prop file_cabinet 11 3
-prop wall_clock 4 1
-prop chair_n 9 7
+prop med_cabinet 2 3
+prop bobblehead 2 1
+prop sink 4 3
+prop wall_clock 9 1
+prop iv_stand 5 4
+prop birth_bed 6 4
+prop bassinet 7 6
+prop terminal_cart 8 4
+prop screen_partition 11 3
+prop exam_bed 10 5
+prop clinic_desk 2 7
+prop stool 3 8
+prop file_cabinet 12 3
 mark bed 6 5 S
-mark bed_side 8 5 W
-mark nurse 4 5 E
+mark nurse 5 5 E
+mark bed_side 9 5 W
+mark terminal 8 5 N
 mark door 7 10 N
-mark terminal 10 4 N
-mark mother_end 6 6 S
-mark center 6 7 S
-text 10 3 "세진 SJ-RT7 등록 단말이 수레에 실려 있다. 6번 칸 램프는 꺼져 있다."
+mark mother_end 6 7 S
+mark center 6 8 S
+text 8 4 "세진 SJ-RT7 진공관 등록 단말. 6번 칸 '관제망 회선 확인'만 입력할 수 없게 막혀 있다."
+text 6 4 "분만 침대. 시트에서 소독약 냄새가 난다." h=2
+text 7 6 "신생아 바구니. 볼트 청색 담요가 개어 있다."
 text 1 3 "약장. 붕대, 소독약, 이름표가 바랜 앰풀이 줄지어 있다."
+text 2 3 "약장 위에 흔들인형 하나가 고개를 끄덕이고 있다. 안전모를 쓰고 구급함을 든 든든이다."
 prop exam_bed 15 4
 prop exam_bed 15 8
 prop curtain 18 4
@@ -67,7 +76,6 @@ prop desk 21 7
 prop chair_n 22 8
 prop wall_terminal 20 1
 prop emblem 17 1
-text 24 3 "약장 위에 흔들인형 하나가 고개를 끄덕이고 있다. 의사 가운을 입은 든든이다." w=2
 prop crate_metal 27 3
 prop crate_metal 29 3
 prop crate_metal 31 3

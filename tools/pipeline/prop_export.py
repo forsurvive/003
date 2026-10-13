@@ -3,7 +3,7 @@
 메타(이름마다): rect [x, y, w, h](아틀라스 안), foot [가로, 세로](막히는 칸), kind(floor·wall·deco·door), off [x, y]
   — 놓는 칸의 왼쪽 위에서 그림 왼쪽 위까지 px. floor·deco: 발 칸 아래 변 + down에 그림 아래 변을 맞춘다.
   wall: 벽면 윗칸 왼쪽 위 + (dx, dy). door: 1칸 × 2칸 벽면(윗칸 기준), open = 열린 그림 rect.
-  gear_door: 프레임 8장(frames)."""
+  gear_door: 프레임 8장(frames). states: 연출이 바꾸는 상태 그림(예: birth_bed occupied, terminal_cart lit)."""
 import os, sys, json
 from PIL import Image
 
@@ -35,6 +35,8 @@ def main():
         items.append((n, outlined(r["fn"]())))
         if n in R.DOOR_OPEN:
             items.append((n + "#open", outlined(R.DOOR_OPEN[n]())))
+        for st, fn in R.PROP_STATES.get(n, {}).items():
+            items.append((f"{n}#{st}", outlined(fn())))
     W = 1024
     x = y = rowh = 0
     pos = {}
@@ -47,7 +49,7 @@ def main():
     atlas = Image.new("RGBA", (W, y + rowh), (0, 0, 0, 0))
     for k, im in items:
         atlas.alpha_composite(im, pos[k][:2])
-    bad = check(atlas, P.allowed_set("UI", "S3", "H1"))
+    bad = check(atlas, P.allowed_set("UI", *P.SKIN, *P.HAIR))          # 탄생 침대의 윤정인·아기 피부·머리색
     if bad:
         print("팔레트 밖 색:", bad[:5]); sys.exit(1)
     atlas.save(os.path.join(OUT, "s07_props.png"))
@@ -65,6 +67,8 @@ def main():
         e = {"rect": [x0, y0, w, h], "foot": [fw, fh], "kind": r["kind"], "off": off}
         if n + "#open" in pos:
             e["open"] = list(pos[n + "#open"])
+        for st in R.PROP_STATES.get(n, {}):
+            e.setdefault("states", {})[st] = list(pos[f"{n}#{st}"])
         if n == "gear_door":
             e["frames"] = [list(pos[f"gear_door#{f}"]) for f in range(R.GEAR_FRAMES)]
         meta[n] = e

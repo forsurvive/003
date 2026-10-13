@@ -697,6 +697,25 @@ def desk(kind="wood", n=2):
     return im
 
 
+# ================================================================ 의무실 탄생 장면 소품(견본 21_scene_birth에서 옮김)
+def _sb():
+    import scene_birth as SB
+    return SB
+
+
+def _jeongin_head(face="idle"):
+    import chibi as K
+    import json as _j
+    npcs = _j.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+                                     "game", "data", "npcs.json")))["npcs"]
+    return K.head(K.Look.parse(npcs["C-001"]["look"]), "S", face)
+
+
+def birth_bed(occupied=False):
+    """분만 침대(세로, 머리가 북쪽). occupied: 윤정인이 강보에 싼 갓난아기(주인공)를 가슴에 안고 누운 그림."""
+    return _sb().birth_bed(_jeongin_head() if occupied else None, inked=False)
+
+
 # ================================================================ 등록부
 # (함수, 발 가로, 발 세로, 종류, down, 벽 소품 dx, dy)
 def _r(fn, fw, fh, kind="floor", down=2, dx=0, dy=0):
@@ -784,6 +803,19 @@ PROPS = {
     "sink": _r(sink, 1, 1, down=0),
     "desk": _r(desk, 2, 1, down=8),
     "desk_metal": _r(lambda: desk("metal"), 2, 1, down=8),
+    # 의무실(MQ-P1 S1): 견본 소품
+    "birth_bed": _r(lambda: birth_bed(False), 1, 2, down=6),
+    "iv_stand": _r(lambda: _sb().iv_stand(), 0, 0, "deco"),
+    "bassinet": _r(lambda: _sb().bassinet(), 1, 1, down=-2),
+    "terminal_cart": _r(lambda: _sb().terminal_cart(False, 0), 1, 1, down=2),
+    "screen_partition": _r(lambda: _sb().screen_partition(), 1, 1, down=0),
+    "clinic_desk": _r(lambda: _sb().clinic_desk(), 2, 1, down=4),
+    "bobblehead": _r(lambda: _sb().bobblehead(), 1, 0, "wall", dx=11, dy=27),
+}
+# 상태 그림(연출이 바꾼다: InteriorMap.set_prop_state). 이름 → {상태: 그리기 함수}
+PROP_STATES = {
+    "birth_bed": {"occupied": lambda: birth_bed(True)},
+    "terminal_cart": {"lit": lambda: _sb().terminal_cart(True, 0)},
 }
 # 문 열린 그림(문 소품의 둘째 칸)
 DOOR_OPEN = {"door_slide": lambda: door(None, "open"), "door_hatch": lambda: door(None, "open", "hatch"),

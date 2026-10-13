@@ -4,7 +4,7 @@
 ##   show ID 표지 [방향]   hide ID   move ID 표지 [walk|run]   face ID 방향|인물ID   balloon ID ! | ? | heart | ... | note | sweat | anger
 ##   wait n(1/10초)   fade_in 색 n   fade_out 색 n   flash 색   shake n   cam 표지   year_card 연도 "문장"   title_card "제목" "문장"
 ##   sfx·bgm 이름(소리는 납품 뒤 — 지금은 기록만)   lamp 표지 색(장치 램프 깜박임)   doc 이름(서류 UI, 0-4)
-##   pose ID stand|lie|sit(0-5: 누우면 몸을 90도 눕혀 침대 위에 그린다)
+##   pose ID stand|lie|sit|in_bed(0-5: lie 몸을 90도 눕힘 · in_bed 그 칸 침대가 '누운 사람' 그림으로 바뀌고 몸은 숨는다)
 ## 표지(mark)는 맵 자료(game/data/maps/<맵>.json의 marks: 이름 → [타일 x, 타일 y, 방향])다. "x,y" 숫자도 받는다.
 class_name EventRunner
 extends Node2D
@@ -142,6 +142,8 @@ func run(name: String, args: Array, done: Callable) -> void:
 			fade_mat.set_shader_parameter("fill", COLORS["white"] if name == "year_card" else COLORS["black"])
 			_job = {"kind": "card", "t": 0.0, "dark": name == "title_card", "done": done}
 		"lamp":
+			if world != null and world.has_method("set_prop_state"):                  # 장치 그림도 켜진 상태로(등록 단말 6번 칸)
+				world.set_prop_state(world.tile_of(_mark(str(args[0]))), "lit")
 			lamps.append({"pos": _mark(str(args[0])) + Vector2(0, -22), "color": COLORS.get(str(args[1]) if args.size() > 1 else "green",
 				Color.GREEN), "t": 0.0})
 			_job = {"kind": "wait", "left": 0.5, "done": done}
@@ -152,7 +154,12 @@ func run(name: String, args: Array, done: Callable) -> void:
 				doc_requested.emit(str(args[0]), done)
 		"pose":
 			if actors.has(str(args[0])):
-				actors[str(args[0])].set_pose(str(args[1]) if args.size() > 1 else "stand")
+				var a: Actor = actors[str(args[0])]
+				var pz := str(args[1]) if args.size() > 1 else "stand"
+				if world != null and world.has_method("set_prop_state"):              # 침대에 눕기: 침대가 '누운 사람' 그림으로
+					var cell: Vector2i = world.tile_of(a.loco.logical)
+					world.set_prop_state(cell, "occupied" if pz == "in_bed" else "")
+				a.set_pose(pz)
 			done.call()
 		_:
 			done.call()                                           # sfx·bgm: 아직 자원 없음(기록만)

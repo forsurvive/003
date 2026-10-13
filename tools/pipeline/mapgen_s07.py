@@ -104,17 +104,20 @@ def v08():
     m.door(7, 10, label="의무실"); m.door(20, 10, label="진료소"); m.door(32, 10, label="약품")
     m.door(5, 17, label="격리"); m.arch(18, 20, 17); m.door(33, 17, label="안치")
     m.exit_s(19, 27, "V-01")
-    # 의무실
-    m.p("delivery_bed", 5, 5); m.p("med_cabinet", 1, 3); m.p("sink", 12, 3); m.p("terminal_desk", 10, 3)
-    m.p("curtain", 1, 8); m.p("file_cabinet", 11, 3); m.p("wall_clock", 4, 1); m.p("chair_n", 9, 7)
-    m.c("mark bed 6 5 S"); m.c("mark bed_side 8 5 W"); m.c("mark nurse 4 5 E"); m.c("mark door 7 10 N")
-    m.c("mark terminal 10 4 N"); m.c("mark mother_end 6 6 S"); m.c("mark center 6 7 S")
-    m.c('text 10 3 "세진 SJ-RT7 등록 단말이 수레에 실려 있다. 6번 칸 램프는 꺼져 있다."')
+    # 의무실 — 견본 21_scene_birth 배치: 약장 둘(흔들인형)·세면대·링거대·분만 침대·아기 바구니·등록 단말 수레·칸막이·의무관 책상
+    m.p("med_cabinet", 1, 3); m.p("med_cabinet", 2, 3); m.p("bobblehead", 2, 1); m.p("sink", 4, 3); m.p("wall_clock", 9, 1)
+    m.p("iv_stand", 5, 4); m.p("birth_bed", 6, 4); m.p("bassinet", 7, 6); m.p("terminal_cart", 8, 4)
+    m.p("screen_partition", 11, 3); m.p("exam_bed", 10, 5); m.p("clinic_desk", 2, 7); m.p("stool", 3, 8); m.p("file_cabinet", 12, 3)
+    m.c("mark bed 6 5 S"); m.c("mark nurse 5 5 E"); m.c("mark bed_side 9 5 W"); m.c("mark terminal 8 5 N"); m.c("mark door 7 10 N")
+    m.c("mark mother_end 6 7 S"); m.c("mark center 6 8 S")
+    m.c('text 8 4 "세진 SJ-RT7 진공관 등록 단말. 6번 칸 \'관제망 회선 확인\'만 입력할 수 없게 막혀 있다."')
+    m.c('text 6 4 "분만 침대. 시트에서 소독약 냄새가 난다." h=2')
+    m.c('text 7 6 "신생아 바구니. 볼트 청색 담요가 개어 있다."')
     m.c('text 1 3 "약장. 붕대, 소독약, 이름표가 바랜 앰풀이 줄지어 있다."')
+    m.c('text 2 3 "약장 위에 흔들인형 하나가 고개를 끄덕이고 있다. 안전모를 쓰고 구급함을 든 든든이다."')
     # 진료소
     m.p("exam_bed", 15, 4); m.p("exam_bed", 15, 8); m.p("curtain", 18, 4); m.p("med_cabinet", 24, 3); m.p("med_cabinet", 25, 3)
     m.p("desk", 21, 7); m.p("chair_n", 22, 8); m.p("wall_terminal", 20, 1); m.p("emblem", 17, 1)
-    m.c('text 24 3 "약장 위에 흔들인형 하나가 고개를 끄덕이고 있다. 의사 가운을 입은 든든이다." w=2')
     # 약품 창고
     for x in (27, 29, 31):
         m.p("crate_metal", x, 3)

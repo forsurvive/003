@@ -58,6 +58,7 @@ var pose := "stand"
 func set_pose(p: String) -> void:
 	pose = p
 	var n: Node2D = doll if doll != null else sprite
+	n.visible = p != "in_bed"                                          # 침대 그림이 대신 그린다(말풍선 자리는 남는다)
 	n.rotation_degrees = -90.0 if p == "lie" else 0.0
 	n.position = Vector2(-4, -10) if p == "lie" else (Vector2(0, 4) if p == "sit" else Vector2.ZERO)
 	z_index = 1 if p == "lie" else 0
