@@ -79,16 +79,13 @@ func _spawn() -> void:
 		roaches.append(r)
 
 
-## 원 충돌(축 분리): 막힌 32px 칸과 겹치면 그 축 이동을 버린다
+## 원 충돌: 막히기 직전까지만(벽을 따라 미끄러지지 않는다)
 func move_circle(a: Vector2, b: Vector2, r: float) -> Vector2:
-	var p := a
-	var tx := Vector2(b.x, a.y)
-	if not _hits(tx, r):
-		p = tx
-	var ty := Vector2(p.x, b.y)
-	if not _hits(ty, r):
-		p = ty
-	return p
+	return Sweep.move(a, b, r, _hits)
+
+
+func circle_hits(c: Vector2, r: float) -> bool:
+	return _hits(c, r)
 
 
 func _hits(c: Vector2, r: float) -> bool:

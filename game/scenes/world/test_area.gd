@@ -185,7 +185,7 @@ func _input_vector() -> Vector2:
 		var d := front - player.loco.logical
 		return d if d.length() > 8 else Vector2.ZERO
 	if combat_bot:
-		return _bot_move()
+		return player.steer(_bot_move())                              # 봇도 AI처럼 막히면 돌아서 걷는다(벽 비비기 없음)
 	if not autopilot.is_empty():
 		var t := _ap_t
 		for seg in autopilot:
@@ -582,6 +582,10 @@ func _save_roundtrip() -> void:
 ## 측정 항목 6 시스템 통합 시험: 스트리밍·전투·저장이 한 씬에서 계속 돈다. 적이 다 쓰러지면 다시 놓고,
 ## 게임 시간 5분마다 저장 왕복을 비교한다. 끝에 오류 수를 출력한다.
 func _soak_step() -> void:
+	if frames % 1800 == 0 and "--soak-log" in OS.get_cmdline_user_args():
+		var alive := enemies.filter(func(e): return not e.cmb.dead)
+		print("[soak %ds] 주인공 %s %s · 적 %s" % [frames / 60, Vector2i(player.loco.logical / 32), player.loco.motion,
+			", ".join(alive.map(func(e): return "%s%s %s" % [e.row["id"], Vector2i(e.loco.logical / 32), AIBrain.S.keys()[e.brain.state]]))])
 	if enemies.all(func(e): return e.cmb.dead):
 		soak_stats["waves"] += 1
 		var i := 0
@@ -714,6 +718,28 @@ static func _count(a: Array) -> Dictionary:
 	return d
 
 
+## 봇 길찾기: 적과 같은 격자 경로를 1초마다 다시 묻고 웨이포인트를 따라간다(사람처럼 장애물을 돌아간다)
+var _bot_path := PackedVector2Array()
+var _bot_i := 0
+var _bot_t := 0.0
+
+
+func _bot_follow(goal: Vector2) -> Vector2:
+	_bot_t -= get_physics_process_delta_time()
+	if _bot_t <= 0.0 or _bot_i >= _bot_path.size():
+		var p := nav.path(player.loco.logical, goal)
+		if p.size() > 1:
+			_bot_path = p
+			_bot_i = 1
+			_bot_t = 1.0
+	if _bot_i < _bot_path.size():
+		if player.loco.logical.distance_to(_bot_path[_bot_i]) < 8.0:
+			_bot_i += 1
+		if _bot_i < _bot_path.size():
+			return _bot_path[_bot_i] - player.loco.logical
+	return goal - player.loco.logical
+
+
 func _bot_move() -> Vector2:
 	var e = _nearest_enemy()
 	player.mode = "run"
@@ -725,10 +751,10 @@ func _bot_move() -> Vector2:
 				break
 		if any == null:
 			return Vector2.ZERO
-		return (any.loco.logical - player.loco.logical)
+		return _bot_follow(any.loco.logical)
 	var d: Vector2 = e.loco.logical - player.loco.logical
 	if d.length() > 7 * 32:
-		return d
+		return _bot_follow(e.loco.logical)
 	if d.length() < 3 * 32:
 		return -d                                                 # keep distance, backpedal while shooting
 	player.mode = "walk"
@@ -799,6 +825,7 @@ func _swap() -> void:
 		var d: Dictionary = world.objects.filter(func(o): return o["type"] == "door")[0]
 		at = Vector2(int(d["x"]) * 32 + 16, (int(d["y"]) + 2) * 32 + 8)
 		player.loco.facing = 2
+	print("문 전환: %s (프레임 %d)" % ["S-07 정문 안" if _fade_to == "in" else "관악산 비탈", frames])
 	player.world = area
 	player.loco.logical = at
 	player.loco.render = at.round()

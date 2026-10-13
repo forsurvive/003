@@ -156,16 +156,13 @@ func cover_at(t: Vector2i) -> int:
 	return 2 if a == -2 else (cover_of.get(a, 0) if a >= 0 else 0)
 
 
-## 원형 충돌체(반지름 r px)를 축 분리로 옮긴다. 도착점 반환. Locomotion.step의 blocked 콜백.
+## 원형 충돌체(반지름 r px)를 막히기 직전까지만 옮긴다(벽을 따라 미끄러지지 않는다, Sweep). Locomotion.step의 blocked 콜백.
 func move_circle(from: Vector2, to: Vector2, r: float) -> Vector2:
-	var p := from
-	var tx := Vector2(to.x, p.y)
-	if not _circle_hits(tx, r):
-		p = tx
-	var ty := Vector2(p.x, to.y)
-	if not _circle_hits(ty, r):
-		p = ty
-	return p
+	return Sweep.move(from, to, r, _circle_hits)
+
+
+func circle_hits(c: Vector2, r: float) -> bool:
+	return _circle_hits(c, r)
 
 
 func _circle_hits(c: Vector2, r: float) -> bool:

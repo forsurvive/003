@@ -25,7 +25,9 @@ func setup(pos: Vector2, r) -> void:
 
 func move(input: Vector2, dt: float) -> void:
 	var blocked := func(a: Vector2, b: Vector2) -> Vector2: return room.move_circle(a, b, radius)
-	loco.step(input, dt, "run", -1, blocked)
+	var hits := func(c: Vector2, r: float) -> bool: return room.circle_hits(c, r)
+	var dir := Sweep.steer(loco.logical, input, 6.0, radius, hits) if input.length() > 0.2 else Vector2.ZERO
+	loco.step(dir, dt, "run", -1, blocked)
 	position = loco.render
 	flash = maxf(0.0, flash - dt)
 	spr.frame = 3 if flash > 0.0 else loco.frame % 3

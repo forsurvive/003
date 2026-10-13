@@ -169,7 +169,7 @@ func _act(dt: float, target: Combatant, shots: Projectiles) -> void:
 			return
 		if to_t.length() < cmb.radius + target.radius + 2.0:
 			input = Vector2.ZERO
-	move(input, dt)
+	move(steer(input), dt)
 	if aim_dir >= 0 and loco.motion == "idle":
 		loco.facing = aim_dir                                       # 서서 조준하면 그쪽을 본다(시야각 기준)
 	if goal == "engage" and style == "shooter":

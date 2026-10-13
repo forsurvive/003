@@ -61,6 +61,8 @@ static func dir_of(delta: Vector2) -> int:
 
 ## 한 틱 진행. input: 이동 입력(아날로그 가능), aim_dir: 조준 8방향(-1 = 조준 없음),
 ## blocked: Callable(from: Vector2, to: Vector2) -> Vector2 (충돌 처리 뒤 실제 도착점). 없으면 자유 이동.
+## ⑧ 벽(SD-16 §5.4): 보폭 하나를 끝까지 걸을 수 없으면 그 걸음을 떼지 않는다. 벽 앞에서 제자리걸음·비비기·
+##   앞뒤로 들썩임이 없고, 몸만 가려던 쪽으로 돌린다(조준 중이 아니면). 걸음이 바뀌면 그림 위치에서 새 보폭을 시작한다.
 func step(input: Vector2, dt: float, mode: String = "walk", aim_dir: int = -1, blocked: Callable = Callable()) -> void:
 	var want := snap8(input)
 	if want < 0:
@@ -68,31 +70,37 @@ func step(input: Vector2, dt: float, mode: String = "walk", aim_dir: int = -1, b
 		return
 	var m: Dictionary = custom.get(mode, MOTIONS.get(mode, {}))
 	var back := aim_dir >= 0 and _angle_between(want, aim_dir) > 2      # > 90°
+	var per: float = m["diag"] if want % 2 == 1 else m["px"]
+	var new_stride := motion != mode or want != _move_dir
+	if new_stride:
+		if motion == "idle":
+			render = logical.round()
+		logical = render                                              # 발이 있던 자리(그림)에서 새 보폭 — 그림이 튀지 않는다
+		_acc = 0.0
+	if blocked.is_valid():                                            # 보폭 앞보기
+		var end: Vector2 = render + VEC[want] * per
+		if not (blocked.call(logical, end) as Vector2).is_equal_approx(end):
+			_blocked(want, aim_dir)
+			return
 	var speed: float = m["speed_t"] * TILE * (BACK_SPEED if back else 1.0)
 	var dv: Vector2 = VEC[want].normalized() * speed * dt
 	var target := logical + dv
 	var arrived: Vector2 = target if not blocked.is_valid() else blocked.call(logical, target)
 	var actual: Vector2 = arrived - logical
-	var before := logical
-	logical = arrived
-	var d := dir_of(actual)
-	if d < 0:                                                        # ⑤ wall: no treadmill
-		_stop()
+	if actual.length() < 0.001:
+		_blocked(want, aim_dir)
 		return
+	logical = arrived
+	var d := want
 	_stop_left = 0
-	if motion != mode or d != _move_dir:
-		_acc = 0.0
-		render = before.round()                                       # stride starts where the feet were
+	if new_stride:
 		if motion != mode:
 			frame = 0
 		motion = mode
 		_move_dir = d
 	reverse = back
-	facing = (aim_dir if back else d)
-	if back:
-		facing = (d + 4) % 8                                          # lower body looks toward the aim side
+	facing = (d + 4) % 8 if back else d                               # 뒷걸음이면 하체는 조준 쪽
 	var diag := d % 2 == 1
-	var per: float = m["diag"] if diag else m["px"]
 	_acc += maxf(absf(actual.x), absf(actual.y)) if diag else actual.length()
 	while _acc >= per - 0.0001:
 		_acc = maxf(0.0, _acc - per)
@@ -100,6 +108,14 @@ func step(input: Vector2, dt: float, mode: String = "walk", aim_dir: int = -1, b
 		frames_advanced += 1
 		render += VEC[d] * per                                      # ② exactly one frame distance
 	render = render.round()
+
+
+## 막혀서 걸음을 못 뗌: 걷던 중이면 디딤 컷으로 서고(⑤), 서 있었으면 몸만 그쪽으로 돌린다.
+func _blocked(want: int, aim_dir: int) -> void:
+	if motion != "idle":
+		_stop()
+	elif aim_dir < 0:
+		facing = want
 
 
 func _stop() -> void:

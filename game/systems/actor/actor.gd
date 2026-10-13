@@ -20,6 +20,8 @@ var roll_t := -1.0                            ## 구르는 중이면 0 이상
 var roll_vec := Vector2.ZERO
 var roll_dir := 2
 var roll_cool := 0.0
+var _steer := Vector2.ZERO
+var _steer_at := -1
 
 
 func setup_doll(look: Dictionary, pos: Vector2, w) -> void:
@@ -54,6 +56,19 @@ func move(input: Vector2, dt: float) -> void:
 	loco.step(input, dt, mode, aim_dir, blocked)
 	position = loco.render
 	_show()
+
+
+## AI용: 가려는 방향이 막히면 막히지 않은 가까운 8방향으로 돌아선다(벽 비비기 대신 돌아서 걷기, Sweep.steer)
+func steer(input: Vector2) -> Vector2:
+	if input.length() < 0.2:
+		_steer = Vector2.ZERO
+		return input
+	if _steer != Vector2.ZERO and loco.motion != "idle" and loco.frames_advanced == _steer_at:
+		return _steer                                                  # 걸음 하나를 다 걸을 때까지 방향 유지
+	var hits := func(c: Vector2, r: float) -> bool: return world.circle_hits(c, r)
+	_steer = Sweep.steer(loco.logical, input, 6.0, radius_px, hits)
+	_steer_at = loco.frames_advanced
+	return _steer
 
 
 func rolling() -> bool:

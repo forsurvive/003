@@ -65,14 +65,11 @@ func cover_at(t: Vector2i) -> int:
 
 
 func move_circle(from: Vector2, to: Vector2, r: float) -> Vector2:
-	var p := from
-	var tx := Vector2(to.x, p.y)
-	if not _hits(tx, r):
-		p = tx
-	var ty := Vector2(p.x, to.y)
-	if not _hits(ty, r):
-		p = ty
-	return p
+	return Sweep.move(from, to, r, _hits)
+
+
+func circle_hits(c: Vector2, r: float) -> bool:
+	return _hits(c, r)
 
 
 func _hits(c: Vector2, r: float) -> bool:
