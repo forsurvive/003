@@ -38,7 +38,7 @@ func _init() -> void:
 		vars.declare("PC_TAG%d" % (i + 1), "str", "")
 	for k in SKILLS:
 		vars.declare("PC_SKP_" + k, "int", 0)         # 레벨업·책 등으로 더한 영구 증가분
-	for k in ["PC_CAPS", "PC_XP", "PC_SEX"]:
+	for k in ["PC_CAPS", "PC_XP", "PC_SEX", "PC_APT_PROXY"]:   # PC_APT_PROXY: 적성 평가 대리 작성 유형 1~4(0 = 아님, 단계 0-8)
 		vars.declare(k, "int", 0)
 	for k in ["P_SURNAME", "P_GIVEN", "P_FULL", "P_REGNO", "PC_APT"]:   # PC_APT: 적성 평가 답 10개(결과지 다시 보기)
 		vars.declare(k, "str", "")

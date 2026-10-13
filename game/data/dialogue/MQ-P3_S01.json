@@ -1,0 +1,530 @@
+{
+ "id": "MQ-P3_S01",
+ "title": "사물함 복도 — 답안지",
+ "loc": "L-R01-01",
+ "npc": "C-026",
+ "cond": "MQP3_STAGE == 10",
+ "labels": {
+  "START": 0,
+  "MENU": 11,
+  "INK": 12,
+  "REC": 21,
+  "TALK_OK": 29,
+  "TALK_NG": 37,
+  "BLOCK": 39,
+  "BETRAY": 46,
+  "PASS": 55,
+  "CAUGHT": 61,
+  "AFTER": 64
+ },
+ "ops": [
+  {
+   "op": "do",
+   "fx": "quest(\"MQ-P3\", 20); xp(10)"
+  },
+  {
+   "op": "cmd",
+   "name": "cam",
+   "args": [
+    "p3_locker"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "balloon",
+   "args": [
+    "C-026",
+    "anger"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-026",
+   "emo": "분노",
+   "text": "다들 봐! 하도윤 사물함에서 평가 답안지가 나왔어!"
+  },
+  {
+   "op": "cmd",
+   "name": "balloon",
+   "args": [
+    "C-002",
+    "!"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-002",
+   "emo": "놀람",
+   "text": "뭐? 그거 내 거 아니야! 처음 보는 거라고."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "나채윤이 보라색 등사 종이 한 묶음을 흔든다. 오늘 치를 적성 평가의 답안지다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "복도 끝에서 군홧발 소리가 다가온다. 도경철 보안부장이다."
+  },
+  {
+   "op": "cmd",
+   "name": "show",
+   "args": [
+    "C-022",
+    "p3_kc_in",
+    "E"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-002",
+   "emo": "슬픔",
+   "text": "걸리면 응시 자격이 날아가. 배급 등급도 한 칸 내려가고…"
+  },
+  {
+   "op": "line",
+   "who": "C-026",
+   "emo": "기본",
+   "text": "부장님 오시면 다 말할 거야. 증거가 여기 있잖아."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "답안지 종이를 살핀다",
+     "tags": [
+      {
+       "k": "stat",
+       "name": "인지력",
+       "min": 6
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "INK",
+     "id": "MQ-P3_S01:1:0"
+    },
+    {
+     "text": "등사 잉크를 살핀다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "과학",
+       "min": 25
+      }
+     ],
+     "cond": "stat(\"인지력\") < 6",
+     "fx": "",
+     "to": "INK",
+     "id": "MQ-P3_S01:1:1"
+    },
+    {
+     "text": "평가관실 서랍에서 출입 기록을 꺼내 온다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "자물쇠 따기",
+       "min": 25
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "REC",
+     "id": "MQ-P3_S01:1:2"
+    },
+    {
+     "text": "나채윤을 설득한다",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "아주 쉬움"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "TALK_OK",
+     "id": "MQ-P3_S01:1:3",
+     "fail": "TALK_NG"
+    },
+    {
+     "text": "하도윤 편에 서서 도경철 앞을 막는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "BLOCK",
+     "id": "MQ-P3_S01:1:4"
+    },
+    {
+     "text": "하도윤이 넣는 걸 봤다고 말한다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "BETRAY",
+     "id": "MQ-P3_S01:1:5"
+    },
+    {
+     "text": "지나친다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "PASS",
+     "id": "MQ-P3_S01:1:6"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "답안지 귀퉁이에 보라색 잉크가 번져 있다. 마르기 전에 누가 엄지로 눌렀다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "나채윤의 오른손 엄지에 같은 보라색이 묻어 있다."
+  },
+  {
+   "op": "cmd",
+   "name": "move",
+   "args": [
+    "C-022",
+    "p3_kc_stop"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-022",
+   "emo": "기본",
+   "text": "무슨 소란이냐."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "도경철에게 답안지의 잉크 자국과 나채윤의 손가락을 보여 준다."
+  },
+  {
+   "op": "line",
+   "who": "C-022",
+   "emo": "기본",
+   "text": "등사기는 평가관실에 하나뿐이다. …나채윤, 손 펴 봐."
+  },
+  {
+   "op": "cmd",
+   "name": "balloon",
+   "args": [
+    "C-026",
+    "sweat"
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "karma(50); V_DY_P3 = 1; MQP3_RESULT = 1"
+  },
+  {
+   "op": "goto",
+   "to": "CAUGHT"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "평가관실로 뛰어가 서랍 자물쇠를 머리핀으로 연다. 출입 기록 맨 아래 줄 — 어젯밤 22시 40분, 나씨 집 열쇠."
+  },
+  {
+   "op": "cmd",
+   "name": "move",
+   "args": [
+    "C-022",
+    "p3_kc_stop"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-022",
+   "emo": "기본",
+   "text": "무슨 소란이냐."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "도경철에게 출입 기록을 내민다."
+  },
+  {
+   "op": "line",
+   "who": "C-022",
+   "emo": "기본",
+   "text": "어젯밤 평가관실에 나씨 집 열쇠가 들어갔다. 서랍 딴 건 나중에 따지자. …나채윤."
+  },
+  {
+   "op": "cmd",
+   "name": "balloon",
+   "args": [
+    "C-026",
+    "sweat"
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "karma(50); V_DY_P3 = 1; MQP3_RESULT = 2"
+  },
+  {
+   "op": "goto",
+   "to": "CAUGHT"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "나채윤에게만 들리게 말한다. 잉크는 지워지지 않고, 부장님은 등사기 열쇠부터 볼 거라고."
+  },
+  {
+   "op": "line",
+   "who": "C-026",
+   "emo": "슬픔",
+   "text": "……알았어. 내가 넣었어."
+  },
+  {
+   "op": "cmd",
+   "name": "move",
+   "args": [
+    "C-022",
+    "p3_kc_stop"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-022",
+   "emo": "기본",
+   "text": "무슨 소란이냐."
+  },
+  {
+   "op": "line",
+   "who": "C-026",
+   "emo": "슬픔",
+   "text": "제가 넣었어요. 하도윤은 몰라요."
+  },
+  {
+   "op": "line",
+   "who": "C-022",
+   "emo": "기본",
+   "text": "자백했으면 됐다. 반성문 쓰고, 이번 평가는 내년으로 미룬다."
+  },
+  {
+   "op": "do",
+   "fx": "karma(50); V_DY_P3 = 1; MQP3_RESULT = 3"
+  },
+  {
+   "op": "goto",
+   "to": "CAUGHT"
+  },
+  {
+   "op": "line",
+   "who": "C-026",
+   "emo": "분노",
+   "text": "너도 한패야? 저리 비켜."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "cmd",
+   "name": "move",
+   "args": [
+    "C-022",
+    "p3_kc_stop"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-022",
+   "emo": "기본",
+   "text": "무슨 소란이냐. 비켜라."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "하도윤 앞을 막아선다. 증거는 없다. 버틸 뿐이다."
+  },
+  {
+   "op": "line",
+   "who": "C-022",
+   "emo": "기본",
+   "text": "…증거 없이 버티는 건 고집이다. 둘 다 반성문. 응시는 해라."
+  },
+  {
+   "op": "line",
+   "who": "C-002",
+   "emo": "미소",
+   "text": "고마워. 진짜로."
+  },
+  {
+   "op": "do",
+   "fx": "karma(25); V_DY_P3 = 1; MQP3_RESULT = 4"
+  },
+  {
+   "op": "goto",
+   "to": "AFTER"
+  },
+  {
+   "op": "cmd",
+   "name": "move",
+   "args": [
+    "C-022",
+    "p3_kc_stop"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-022",
+   "emo": "기본",
+   "text": "무슨 소란이냐."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "하도윤이 사물함에 뭔가 넣는 걸 봤다고 말한다."
+  },
+  {
+   "op": "line",
+   "who": "C-002",
+   "emo": "놀람",
+   "text": "……너."
+  },
+  {
+   "op": "line",
+   "who": "C-022",
+   "emo": "기본",
+   "text": "하도윤, 응시 자격 박탈이다. 배급 등급은 위원회에서 정한다. 따라와."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "사람들이 흩어지는 사이, 나채윤이 손에 뭔가를 쥐여 준다. 배급 쿠폰 다섯 장이다."
+  },
+  {
+   "op": "line",
+   "who": "C-026",
+   "emo": "미소",
+   "text": "입 다물어 줘서 고마워."
+  },
+  {
+   "op": "do",
+   "fx": "give(\"M-249\", 5); karma(-50); V_DY_P3 = 3; MQP3_RESULT = 5"
+  },
+  {
+   "op": "goto",
+   "to": "AFTER"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "못 본 척 교실 쪽으로 걷는다. 등 뒤에서 도경철의 목소리가 들린다."
+  },
+  {
+   "op": "cmd",
+   "name": "move",
+   "args": [
+    "C-022",
+    "p3_kc_stop"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-022",
+   "emo": "기본",
+   "text": "하도윤, 응시 자격 박탈이다. 따라와."
+  },
+  {
+   "op": "line",
+   "who": "C-002",
+   "emo": "슬픔",
+   "text": "……"
+  },
+  {
+   "op": "do",
+   "fx": "V_DY_P3 = 2; MQP3_RESULT = 6"
+  },
+  {
+   "op": "goto",
+   "to": "AFTER"
+  },
+  {
+   "op": "line",
+   "who": "C-026",
+   "emo": "분노",
+   "text": "점수가 사람을 정하는 데서, 점수 훔치는 게 그렇게 나빠?"
+  },
+  {
+   "op": "line",
+   "who": "C-022",
+   "emo": "기본",
+   "text": "따라와. 하도윤은 응시해라."
+  },
+  {
+   "op": "line",
+   "who": "C-002",
+   "emo": "미소",
+   "text": "살았다… 나 너한테 빚졌다."
+  },
+  {
+   "op": "cmd",
+   "name": "fade_out",
+   "args": [
+    "black",
+    "6"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "hide",
+   "args": [
+    "C-022"
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "quest(\"MQ-P3\", 30); xp(40)"
+  },
+  {
+   "op": "cmd",
+   "name": "refresh",
+   "args": []
+  },
+  {
+   "op": "cmd",
+   "name": "fade_in",
+   "args": [
+    "black",
+    "6"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "hint",
+   "args": [
+    "적성 평가 교실: 복도 서쪽 '평가' 문 → 차명수에게 말 걸기",
+    "7"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/prologue/MQ-P3.txt"
+}

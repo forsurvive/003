@@ -15,7 +15,7 @@
       [관리자 인증] · [볼트 S-07] · [거짓말]·[위협](연출 표지). 한 선택지에 최대 2개(SD-12 §6.3).
 문장 토큰(SD-18 N7): {변수|조사} · {변수} · {N:인물ID|조사} · {I:아이템ID|조사} · {L:장소ID|조사} → \\V[..]·\\N[..]·\\I[..]·\\L[..] + \\J[조사]
 
-자동 검사(불합격이면 종료 코드 1): 토큰 문법·변수 선언·조사 짝, 화자 ID(SD-07b), 표정 키, 라벨, 식 구문·변수·함수,
+자동 검사(불합격이면 종료 코드 1): 토큰 문법·변수 선언·조사 짝, 화자 ID(SD-07b), 표정 키, 라벨, 식 구문·변수·함수, 장면 열림 조건(@cond) 필수,
 창별 글자 수(SD-12 §14.5: 대사 1쪽 160자·2쪽 넘으면 오류, 선택지 80자), 금칙 명칭(SD-18 §2.3·§11.7, 옛 이름),
 진영 결정 질문 문형(바이블 §5.8), 연출 명령 이름."""
 import os, re, sys, json, glob, shlex
@@ -40,9 +40,10 @@ PARTICLES = ["은", "는", "이", "가", "을", "를", "과", "와", "으로", "
 FNS = {"karma", "aff", "quest", "stage", "result", "give", "take", "has", "caps", "xp", "wanted", "stat", "skill", "year"}
 CMDS = {"wait", "fade_in", "fade_out", "balloon", "move", "face", "shake", "year_card", "title_card", "sfx", "bgm", "cam", "show",
         "hide", "pose", "doc", "flash", "lamp",
-        "pipboy", "equip", "hurt", "buddy", "range", "hint", "hud"}           # 0-7: 핍-보이·무기·연출 피해·일시 동행·사격장 단계·안내 띠
+        "pipboy", "equip", "hurt", "buddy", "range", "hint", "hud",          # 0-7: 핍-보이·무기·연출 피해·일시 동행·사격장 단계·안내 띠
+        "refresh"}                                                           # 0-8: 맵 인물을 지금 조건대로 다시 세운다
 ENGINE_VARS = {"PC_ST", "PC_PE", "PC_EN", "PC_CH", "PC_IN", "PC_AG", "PC_LK", "PC_TAG1", "PC_TAG2", "PC_TAG3", "PC_CAPS", "PC_XP",
-               "PC_SEX"}
+               "PC_SEX", "PC_APT_PROXY"}
 DECISION = ["어느 편에 서겠", "편에 서겠습니까", "제안을 수락", "받아들이겠습니까", "어느 쪽을 택하", "누구 편이"]
 OLD_NAMES = ["강태오", "천웨이", "국민방송"]
 PAGE = 160
@@ -338,6 +339,8 @@ def compile_file(path, cx):
         first = s.pop("_first")
         if not s["npc"]:
             s["npc"] = first
+        if not s["cond"]:                                          # 0-8: 2268 장면이 2274년 차명수에게 다시 열렸다
+            cx.rep.err(f"{s['src']} {s['id']}", "@cond가 없다 — 그 인물에게 말을 걸면 어느 시대든 이 장면이 다시 열린다")
         s["ops"].append({"op": "end"})
     return scenes
 

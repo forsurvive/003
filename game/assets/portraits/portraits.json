@@ -60,6 +60,16 @@
    "아픔": "C-025_hurt.png",
    "피곤": "C-025_tired.png"
   },
+  "C-026": {
+   "기본": "C-026_idle.png",
+   "놀람": "C-026_surprise.png",
+   "말함": "C-026_talk.png",
+   "미소": "C-026_smile.png",
+   "분노": "C-026_angry.png",
+   "슬픔": "C-026_sad.png",
+   "아픔": "C-026_hurt.png",
+   "피곤": "C-026_tired.png"
+  },
   "C-027": {
    "기본": "C-027_idle.png",
    "놀람": "C-027_surprise.png",

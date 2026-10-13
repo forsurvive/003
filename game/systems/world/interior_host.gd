@@ -97,7 +97,8 @@ func _index_scenes() -> void:
 func enter(map_id: String, mark: String = "", look: Dictionary = {}) -> void:
 	if map != null:
 		for n in npcs:
-			n["actor"].queue_free()
+			if is_instance_valid(n["actor"]):
+				n["actor"].queue_free()
 		npcs.clear()
 		if player != null:
 			map.remove_actor(player)
@@ -150,27 +151,59 @@ func enter(map_id: String, mark: String = "", look: Dictionary = {}) -> void:
 
 
 func _spawn_npcs() -> void:
-	for n in map.data["npcs"]:
+	for i in map.data["npcs"].size():
+		var n: Dictionary = map.data["npcs"][i]
 		var cond: String = n.get("cond", "")
 		if cond != "" and not StoryExpr.test(cond, st):
 			continue
-		var sheet: String = n.get("sheet", ev.cast_sheets.get(n["id"], ""))
-		if sheet == "" or not ResourceLoader.exists("res://assets/sprites/%s.tres" % sheet):
+		_spawn_npc(i, n)
+
+
+## 맵 인물을 조건대로 다시 세운다(연출 명령 `refresh`, 단계 0-8): 조건이 거짓이 된 인물은 치우고, 참이 된 인물은 그 자리에 세운다.
+## 같은 장면 안에서 사건 결과에 따라 교실 자리가 바뀌는 데 쓴다(맵을 다시 열지 않는다).
+func refresh_npcs() -> void:
+	var keep: Array = []
+	var live := {}
+	for e in npcs:
+		var n: Dictionary = map.data["npcs"][int(e["idx"])] if int(e.get("idx", -1)) >= 0 else {}
+		var cond: String = n.get("cond", "")
+		if not is_instance_valid(e["actor"]) or (cond != "" and not StoryExpr.test(cond, st)):
+			if is_instance_valid(e["actor"]):
+				map.remove_actor(e["actor"])
+				map.blockers.erase(e["actor"])
+				if ev.actors.get(e["id"]) == e["actor"]:
+					ev.actors.erase(e["id"])
+				e["actor"].queue_free()
 			continue
-		if n.has("sheet"):
-			st.portrait_alias[n["id"]] = n["sheet"]                    # 다른 시대 모습: 초상화도 그 모습으로
-		else:
-			st.portrait_alias.erase(n["id"])
-		var a := Actor.new()
-		a.setup(sheet, Vector2(int(n["x"]) * 32 + 16, int(n["y"]) * 32 + 16), map)
-		a.mode = "walk"
-		a.loco.facing = EventRunner.DIR_IDX.get(n["dir"], 2)
-		a._show()
-		map.add_actor(a)
-		var r: NpcRoutine = NpcRoutine.new(a, map, n["route"]) if not n["route"].is_empty() else null
-		npcs.append({"id": n["id"], "actor": a, "routine": r, "bark": n.get("bark", "")})
-		ev.actors[n["id"]] = a                                       # 연출 명령(move·face·balloon·pose)이 맵 인물을 부를 수 있게
-		map.blockers.append(a)
+		keep.append(e)
+		live[int(e["idx"])] = true
+	npcs = keep
+	for i in map.data["npcs"].size():
+		var n: Dictionary = map.data["npcs"][i]
+		var cond: String = n.get("cond", "")
+		if live.has(i) or (cond != "" and not StoryExpr.test(cond, st)):
+			continue
+		_spawn_npc(i, n)
+
+
+func _spawn_npc(i: int, n: Dictionary) -> void:
+	var sheet: String = n.get("sheet", ev.cast_sheets.get(n["id"], ""))
+	if sheet == "" or not ResourceLoader.exists("res://assets/sprites/%s.tres" % sheet):
+		return
+	if n.has("sheet"):
+		st.portrait_alias[n["id"]] = n["sheet"]                    # 다른 시대 모습: 초상화도 그 모습으로
+	else:
+		st.portrait_alias.erase(n["id"])
+	var a := Actor.new()
+	a.setup(sheet, Vector2(int(n["x"]) * 32 + 16, int(n["y"]) * 32 + 16), map)
+	a.mode = "walk"
+	a.loco.facing = EventRunner.DIR_IDX.get(n["dir"], 2)
+	a._show()
+	map.add_actor(a)
+	var r: NpcRoutine = NpcRoutine.new(a, map, n["route"]) if not n["route"].is_empty() else null
+	npcs.append({"id": n["id"], "actor": a, "routine": r, "bark": n.get("bark", ""), "idx": i})
+	ev.actors[n["id"]] = a                                       # 연출 명령(move·face·balloon·pose)이 맵 인물을 부를 수 있게
+	map.blockers.append(a)
 
 
 func _physics_process(dt: float) -> void:
@@ -272,10 +305,14 @@ func go(map_id: String, mark: String) -> void:
 
 ## 조사 키: 바라보는 쪽의 인물 → 조사 글(앞 칸, 벽 앞이면 벽면 두 칸)
 func interact() -> bool:
+	if box.active:                                                   # 대화·서류 중에는 새로 말을 걸지 않는다(장면이 처음부터 다시 열린다)
+		return false
 	var f: Vector2 = Locomotion.VEC[player.loco.facing].normalized()
 	var best: Dictionary = {}
 	var best_d := 1e9
 	for n in npcs:
+		if not is_instance_valid(n["actor"]):
+			continue
 		var v: Vector2 = n["actor"].loco.logical - player.loco.logical
 		if v.length() < 46.0 and v.normalized().dot(f) > 0.5 and v.length() < best_d:
 			best = n
@@ -474,6 +511,9 @@ func _handlers() -> void:
 					n["routine"] = null
 			combat.buddy = b
 			buddy_name = st.npc_name(id).get_slice("(", 0).strip_edges()
+		done.call()
+	ev.handlers["refresh"] = func(_a: Array, done: Callable) -> void:   # 맵 인물을 지금 조건대로 다시 세운다(0-8)
+		refresh_npcs()
 		done.call()
 	ev.handlers["range"] = func(a: Array, done: Callable) -> void:     # 사격장 단계: stealth = 은신 표적을 세운다
 		combat.set_stealth_live(str(a[0]) == "stealth")

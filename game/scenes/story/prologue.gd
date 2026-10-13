@@ -2,11 +2,15 @@
 ##   MQ-P1: S1 의무실 컷신(주인공 = 침대의 갓난아기) + 출생신고서 → '2259' → S2 돌잔치 걸음마 → S3 돌잡이 → '2268'
 ##   MQ-P2: S1 교실 생활기록부 → S2 식당 생일잔치(핍-보이·HUD) → S3 행정실 첫 배정 → S4 배급소 지우(선택, 카르마 5갈래)
 ##          → S5 사격장(BB총: 표적 10 → 은신 표적 2) → S6 배관실(하도윤 동행, 증기 분출·스팀팩, 큰바퀴 6) → '2274'
+##   MQ-P3: S1 사물함 복도 소동(카르마 6갈래, V_DY_P3) → S2 적성 평가 교실(시험·건너뛰기·대리 작성, 10번 문항) → S3 평가관실
+##          결과 통지서·태그 확정(등록 카드 단계 1) → S4 같은 날 오버시어실(주인공 없음, V-02) → '2277'
 ##   사격장 단계 넘김·바퀴 전멸 장면은 여기서 연다(전투 신호). 주인공이 쓰러지면(프롤로그 특례, 정합): 하도윤이 끌어내
 ##   배관실 입구에서 HP 가득으로 깨어난다(바퀴는 그대로).
-## 실행: godot --path game res://scenes/story/prologue.tscn [-- --auto --pick=N --jiwoo=N --from=p2 --shots=디렉터리]
+## 실행: godot --path game res://scenes/story/prologue.tscn [-- --auto --pick=N --jiwoo=N --dy=N --exam=test|skip|proxy --q10=N
+##        --from=p2|range|pipe|p3 --shots=디렉터리 --log]
 ##   --auto: 대사를 넘기고 서류를 내고 길을 찾아 걸어가며(맵을 넘어) 사격·은신·근접·스팀팩까지 하는 봇.
 ##   --pick: 돌잡이 1~6(기본 2 청진기) · --jiwoo: 지우 장면 선택 1~6(기본 3 [인지력 5] 카드 찾기) · --from=p2: MQ-P2부터
+##   --dy: 복도 소동 1 잉크 · 2 출입 기록 · 3 설득 · 4 막아섬 · 5 고발 · 6 지나침(기본 1) · --exam: 응시 방법(기본 test) · --q10: 10번 답
 extends Node
 
 var host: InteriorHost
@@ -14,6 +18,9 @@ var phase := "P1S1"
 var auto := false
 var pick := 2
 var jiwoo := 3
+var dy := 1
+var exam := "test"
+var q10 := 1
 var shots := ""
 var shot_n := 0
 var hold := 0.0
@@ -39,6 +46,12 @@ func _ready() -> void:
 			jiwoo = clampi(int(a.substr(8)), 1, 6)
 		elif a.begins_with("--from="):
 			from = a.substr(7)
+		elif a.begins_with("--dy="):
+			dy = clampi(int(a.substr(5)), 1, 6)
+		elif a.begins_with("--exam="):
+			exam = a.substr(7)
+		elif a.begins_with("--q10="):
+			q10 = clampi(int(a.substr(6)), 1, 4)
 		elif a == "--log":
 			log_on = true
 		elif a.begins_with("--shots="):
@@ -55,6 +68,16 @@ func _ready() -> void:
 	if from == "p2":
 		_quick_p1()
 		_start_p2.call_deferred()
+		return
+	if from == "p3":                                           # 개발용: 적성 평가부터(MQ-P2를 끝낸 상태)
+		_quick_p1()
+		host.st.quests.set_stage("MQ-P2", 100)
+		for c in ["PE", "EN", "IN", "AG", "LK"]:                # 생활기록부 봇과 같은 배분(인지력 6 → 잉크 갈래가 열린다)
+			host.st.vars.set_v("PC_" + c, 6)
+		host.st.call_fn("give", ["W-065"])
+		host.st.call_fn("give", ["W-067"])
+		host.pipboy_ok = true
+		_start_p3.call_deferred()
 		return
 	if from in ["range", "pipe"]:                              # 개발용: 사격장·배관실부터
 		_quick_p1()
@@ -97,6 +120,16 @@ func _on_child(n: Node) -> void:
 			get_tree().create_timer(1.5).timeout.connect(func() -> void: n._press("ok")))
 	elif n is PipBoy:                                          # 봇: 탭을 한 바퀴 둘러보고 닫는다
 		_pip_t = 0.0
+	elif n is AptitudeCard:                                    # 봇: 정해 둔 답을 차례로 칠하고 제출
+		for i in APT.size():
+			get_tree().create_timer(1.2 + i * 0.7).timeout.connect(func() -> void: n._press("opt%d" % (APT[i] - 1)))
+		get_tree().create_timer(1.2 + APT.size() * 0.7 + 0.8).timeout.connect(func() -> void: n._press("submit"))
+	elif n is ResultSheet:                                     # 봇: 추천 그대로(건너뛰었으면 화술·수리·소형 화기) 확정
+		get_tree().create_timer(2.0).timeout.connect(func() -> void:
+			for k in ["SPEECH", "REPAIR", "SMALL_GUNS"]:
+				if n.picks.size() < 3 and not k in n.picks:
+					n._press(k)
+			get_tree().create_timer(1.5).timeout.connect(func() -> void: n._press("ok")))
 
 
 func _on_dialogue_done() -> void:
@@ -118,11 +151,30 @@ func _on_dialogue_done() -> void:
 		_shot("p1_end")
 		_start_p2()
 	elif phase == "P2" and p2 >= 100:
-		phase = "end"
 		print("MQ-P2 완료: 카르마 %d · 지우 %d · XP %d · 표적 %d(기습 %d) · 바퀴 %d · 스팀팩 %d · 받은 피해 %d" % [
 			int(st.vars.get_v("V_KARMA")), int(st.vars.get_v("MQP2_RESULT")), int(st.vars.get_v("PC_XP")),
 			host.combat.stats["hits"], host.combat.stats["sneak"], host.combat.stats["downs"], host.combat.stats["stims"],
 			int(host.combat.stats["hurt"])])
+		_shot("p2_end")
+		_start_p3()
+	elif phase == "P3" and st.quests.stage("MQ-P3") >= 100:
+		phase = "P3S4"                                         # 같은 날 오버시어실: 주인공은 보지 못한다(V-02, 주인공 숨김)
+		_shot("p3_result")
+		host.busy = true
+		host.ev.run("fade_out", ["black", "6"], func() -> void:
+			host.body = "hidden"
+			host.hud_on = false
+			host.date_text = "2274. 09. 02.  15:10"
+			host.enter("V-02", "p3_ovs")
+			host.banner_t = 0.0
+			host.busy = false
+			host.play_scene("MQ-P3_S04"))
+	elif phase == "P3S4":
+		phase = "end"
+		print("MQ-P3 완료: 카르마 %d · 소동 %d(V_DY_P3 %d) · 응시 %s · 10번 %d · 태그 %s · 등록 카드 %d · XP %d" % [
+			int(st.vars.get_v("V_KARMA")), int(st.vars.get_v("MQP3_RESULT")), int(st.vars.get_v("V_DY_P3")),
+			"대리 %d" % CharDocs.proxy_type(st) if CharDocs.proxy_type(st) > 0 else ("응시" if CharDocs.aptitude_of(st).size() > 0 else "미응시"),
+			int(st.vars.get_v("V_Q10")), ",".join(CharDocs.tags_of(st)), int(st.vars.get_v("V_REGCARD")), int(st.vars.get_v("PC_XP"))])
 		_shot("end")
 		if auto:
 			get_tree().create_timer(0.5).timeout.connect(get_tree().quit)
@@ -138,6 +190,24 @@ func _start_p2() -> void:
 	host.ev.run("fade_in", ["white", "8"], func() -> void:
 		host.busy = false
 		host.play_scene("MQ-P2_S01"))
+
+
+## MQ-P3 시작(2274, 열여섯): 무기는 넣어 두고 교무 구역 동쪽 입구에서. 복도에 들어서면 소동이 열린다(트리거)
+func _start_p3() -> void:
+	phase = "P3"
+	host.busy = true
+	host.body = "adult"
+	host.hud_on = true
+	host.date_text = "2274. 09. 02.  08:40"
+	host.combat.buddy = null
+	host.combat.equip("", host.st)
+	host.st.quests.set_stage("MQ-P3", 10)                     # 2274년(year())으로 맵을 연다 — 사물함 앞의 나채윤·하도윤
+	if auto and dy == 2:
+		host.st.vars.set_v("PC_SKP_LOCKPICK", 15)              # 봇 준비: 출입 기록 갈래([자물쇠 따기 25])를 시험하려고 올린다
+	host.enter("V-03", "from_V-01")
+	host.ev.run("fade_in", ["white", "8"], func() -> void:
+		host.busy = false
+		host.hint("적성 평가 날이다 — 교무 구역 복도를 지나 적성 평가 교실로", 6.0))
 
 
 # ---------------------------------------------------------------- 전투 신호 → 장면
@@ -191,7 +261,7 @@ func _process(dt: float) -> void:
 	if log_on and int(t) % 5 == 0 and int(t - dt) % 5 != 0:
 		var c := host.combat
 		print("[%3.0f초] %s %s 단계 %d HP %.0f 무기 %s 대화 %s 바쁨 %s 표적 %d/%d 바퀴 %d" % [t, host.map.id, host.player.loco.render,
-			host.st.quests.stage("MQ-P2"), c.pc.hp, c.weapon_id, host.box.active, host.busy or host.ev.busy(),
+			host.st.quests.stage("MQ-P3" if phase.begins_with("P3") else "MQ-P2"), c.pc.hp, c.weapon_id, host.box.active, host.busy or host.ev.busy(),
 			c.targets_left("target"), c.targets_left("stealth"), c.alive_enemies()])
 	var box := host.box
 	if host.pipboy != null:
@@ -214,17 +284,68 @@ func _process(dt: float) -> void:
 				if hold > 1.4:
 					hold = 0.0
 					_shot("choices")
-					if host.st.quests.stage("MQ-P2") == 40:
-						box.pick(_by_text(box.state.get("opts", []), JIWOO_KEYS[jiwoo - 1]))
+					var opts: Array = box.state.get("opts", [])
+					if phase == "P3":
+						box.pick(_p3_choice(opts))
+					elif host.st.quests.stage("MQ-P2") == 40:
+						box.pick(_by_text(opts, JIWOO_KEYS[jiwoo - 1]))
 					else:
 						box.pick(pick - 1)
 		return
-	if host.busy or host.ev.busy():
+	if box.active or host.busy or host.ev.busy():                  # 서류가 열린 동안(대화창은 명령 대기)도 기다린다
 		return
 	if phase == "P1S2":
 		_p1_bot()
 	elif phase == "P2":
 		_p2_bot()
+	elif phase == "P3":
+		_p3_bot()
+
+
+## MQ-P3 봇 선택: 복도 소동(--dy), 응시 방법(--exam), 대리 작성 유형(돌잡이에 맞춘 칸), 10번(--q10)
+const DY_KEYS := ["살핀다", "출입 기록", "설득한다", "앞을 막는다", "봤다고", "지나친다"]
+const EXAM_KEYS := {"test": "시험을 본다", "skip": "꼭 봐야", "proxy": "대신 써"}
+const APT := [1, 1, 1, 3, 2, 1, 3, 1, 4, 1]                      ## 봇 답(소형 화기 3 · 수리 3 동점 → 10번이 나중 → 보안부 탄피 수거원)
+
+
+func _p3_choice(opts: Array) -> int:
+	var texts := opts.map(func(o): return str(o["text"]))
+	if texts.any(func(x): return x.contains("지나친다")):          # 복도 소동. 화술이 실패해 사라졌으면 막아서기로
+		var i := _by_text(opts, DY_KEYS[dy - 1])
+		return i if str(opts[i]["text"]).contains(DY_KEYS[dy - 1]) else _by_text(opts, "앞을 막는다")
+	if texts.any(func(x): return x.contains("시험을 본다")):
+		return _by_text(opts, EXAM_KEYS.get(exam, "시험을 본다"))
+	if texts.any(func(x): return x.contains("기계를 만지는 일")):    # 돌잡이에 맞춘 칸(없으면 몸)
+		return int(CharDocs.DOL_PROXY.get(int(host.st.vars.get_v("V_DOL")), 3)) - 1
+	return clampi(q10 - 1, 0, opts.size() - 1)                    # 10번 문항
+
+
+## MQ-P3 봇: 복도를 지나(소동 트리거) 교실의 차명수 → 평가관실의 차명수
+func _p3_bot() -> void:
+	var s := host.st.quests.stage("MQ-P3")
+	host.combat.bot = {"walk": true}
+	match s:
+		10:
+			_go("V-03", "p3_locker")
+		30:
+			_talk_to("C-023", Vector2(0, 32), 6)
+		40:
+			_talk_to("C-023", Vector2(0, 32), 6)
+
+
+## 인물 앞(off만큼 떨어진 자리)으로 가서 그쪽을 보고 말을 건다
+func _talk_to(id: String, off: Vector2, facing: int) -> void:
+	var n := _npc(id)
+	if n.is_empty():
+		return
+	var to: Vector2 = n["actor"].loco.logical + off
+	if NpcRoutine.arrived(host.player.loco.render, to):
+		_stop()
+		host.player.loco.facing = facing
+		host.player._show()
+		host.interact()
+	else:
+		_move_to(to)
 
 
 ## 지우 장면 선택지(원고 차례 1~6)를 문장으로 찾는다 — 조건이 안 맞는 줄은 숨어서 번호가 밀린다

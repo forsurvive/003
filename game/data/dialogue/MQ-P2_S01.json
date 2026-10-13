@@ -3,7 +3,7 @@
  "title": "1반 교실 — 생활기록부",
  "loc": "L-R01-01",
  "npc": "C-023",
- "cond": "",
+ "cond": "MQP2_STAGE == 10",
  "labels": {
   "START": 0
  },

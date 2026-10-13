@@ -3,6 +3,8 @@
 ##   아래 칸 '배정: 관리동 — 관리 후보 1순위'(시험과 상관없이 처음부터 인쇄된 칸), '평가' 도장.
 ## 오른쪽 태그 선택: 추천 3개가 미리 체크된 채 열린다. 13행을 눌러 체크·해제(3개까지), 체크한 스킬은 값 → 값+15.
 ## [추천으로] [확정](정확히 3개). 출구 점검표에서 열면(from_exit) 지금 태그로 시작하고 취소할 수 있다.
+## 시험을 건너뛰면(답 없음) 직무 칸은 '미응시', 추천 없음. 감독관 대리 작성(PC_APT_PROXY 1~4, 단계 0-8)이면 직무 칸은 '대리 작성'과
+## 고른 관심 유형, 추천은 그 유형의 태그 3개(점수 없음).
 class_name ResultSheet
 extends DocScreen
 
@@ -12,6 +14,7 @@ var picks: Array = []
 var full_flash := -1.0        ## 4번째를 고르려 할 때 '선택 3 / 3'을 깜박인다
 var confirmed_at := -1.0
 var from_exit := false
+var proxy := 0                ## 감독관 대리 작성 유형(0 = 아님)
 
 
 func setup(state: StoryState, exit_mode := false) -> DocScreen:
@@ -20,11 +23,14 @@ func setup(state: StoryState, exit_mode := false) -> DocScreen:
 	cancel_ok = exit_mode
 	answers = CharDocs.aptitude_of(st)
 	ranking = CharDocs.ranking(answers)
+	proxy = CharDocs.proxy_type(st) if answers.is_empty() else 0
 	picks = CharDocs.tags_of(st) if exit_mode and CharDocs.tags_of(st).size() == 3 else _recommended()
 	return self
 
 
 func _recommended() -> Array:
+	if proxy > 0:
+		return CharDocs.proxy_tags(proxy)
 	return ranking.slice(0, 3) if not answers.is_empty() else []
 
 
@@ -48,8 +54,14 @@ func _draw_notice() -> void:
 	text(Vector2(32, 132), "참고 적성 직무", f10, 10, C["P05"])
 	var top: String = ranking[0] if not answers.is_empty() else ""
 	var jd := CharDocs.job(top)
-	text(Vector2(164, 148), jd["job"] if top != "" else "미응시", f15, 15, C["P02"], HORIZONTAL_ALIGNMENT_CENTER)
+	var job_txt: String = jd["job"] if top != "" else ("대리 작성" if proxy > 0 else "미응시")
+	text(Vector2(164, 148), job_txt, f15, 15, C["P02"], HORIZONTAL_ALIGNMENT_CENTER)
 	text(Vector2(28, 178), "추천 태그", f10, 10, C["P05"])
+	if proxy > 0:
+		text(Vector2(200, 178), "관심 유형: " + CharDocs.PROXY_TYPES[proxy - 1][0], f10, 10, C["P05"])
+		var pt := CharDocs.proxy_tags(proxy)
+		for i in pt.size():
+			text(Vector2(40, 192 + i * 16), "%d. %s" % [i + 1, StoryState.SKILLS[pt[i]][0]], f12, 12, C["P02"])
 	var sc := CharDocs.score(answers)
 	for i in mini(3, ranking.size()):
 		if answers.is_empty():
@@ -95,7 +107,7 @@ func _draw_tags() -> void:
 			text(Vector2(612, y), str(int(base[k]) + 15), f12b, 12, RED, HORIZONTAL_ALIGNMENT_RIGHT)
 	var blink := full_flash >= 0.0 and time - full_flash < 0.6 and fmod(time - full_flash, 0.2) < 0.1
 	text(Vector2(334, 304), "선택 %d / 3" % picks.size(), f12b, 12, C["P09"] if blink else (RED if picks.size() == 3 else INK))
-	var btns := [["rec", "추천으로" if not answers.is_empty() else "모두 해제", true], ["ok", "확정", picks.size() == 3]]
+	var btns := [["rec", "추천으로" if not _recommended().is_empty() else "모두 해제", true], ["ok", "확정", picks.size() == 3]]
 	if from_exit:
 		btns.insert(0, ["back", "그대로", true])
 	var x := 620.0 - 90.0 * btns.size()

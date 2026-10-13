@@ -1,0 +1,96 @@
+{
+ "id": "MQ-P3_S04",
+ "title": "같은 날, 오버시어실",
+ "loc": "L-R01-01",
+ "npc": "C-001",
+ "cond": "MQP3_STAGE == 100",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "cmd",
+   "name": "cam",
+   "args": [
+    "p3_ovs"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "fade_in",
+   "args": [
+    "black",
+    "8"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "같은 날 오후. 관리동 오버시어실."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "윤정인의 단말에 주민 등록 기록이 떠 있다. 자기 이름 옆의 '관리 후보 1순위' 표시가 꺼지고 '해제(승계)'가 찍힌다."
+  },
+  {
+   "op": "cmd",
+   "name": "balloon",
+   "args": [
+    "C-001",
+    "?"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "sfx",
+   "args": [
+    "tap"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "윤정인이 화면을 두 번 두드린다. 표시는 돌아오지 않는다."
+  },
+  {
+   "op": "line",
+   "who": "C-001",
+   "emo": "피곤",
+   "text": "…또 고장이네. 설비과에 올려야겠어."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "윤정인은 결재 서류로 돌아간다."
+  },
+  {
+   "op": "cmd",
+   "name": "fade_out",
+   "args": [
+    "black",
+    "10"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "year_card",
+   "args": [
+    "2277",
+    "열아홉. 개방의 날입니다."
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/prologue/MQ-P3.txt"
+}

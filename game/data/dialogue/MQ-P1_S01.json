@@ -3,7 +3,7 @@
  "title": "의무실 — 출생신고",
  "loc": "L-R01-01",
  "npc": "C-024",
- "cond": "",
+ "cond": "MQP1_STAGE < 20",
  "labels": {
   "START": 0
  },

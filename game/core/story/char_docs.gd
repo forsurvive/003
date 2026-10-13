@@ -156,6 +156,26 @@ static func job(skill: String) -> Dictionary:
 	return data.get("jobs", {}).get(skill, {"job": "", "line": ""})
 
 
+## 감독관 대리 작성(SD-10 §8.5 '관심사 4유형 중 하나를 고르면 태그 3개가 미리 선택된 화면'). 유형 이름·태그는 단계 0-8 정합 —
+## SD-03a 10문항으로는 답을 어떻게 골라도 '몸·총' 묶음이 1~3위가 되지 않아(9번 문항이 의학·자물쇠·물물·수리뿐), 답 대신 태그를 바로 고른다.
+## 돌잡이(V_DOL) 1 진공관·6 출입 카드 → 기계, 2 청진기·3 배급 카드·4 마이크 → 사람, 5 탄알 → 총(몸은 돌잡이 물건이 없다).
+const PROXY_TYPES := [
+	["기계를 만지는 일", ["REPAIR", "SCIENCE", "LOCKPICK"]],
+	["사람을 대하는 일", ["SPEECH", "BARTER", "MEDICINE"]],
+	["몸을 쓰는 일", ["UNARMED", "MELEE", "BIG_GUNS"]],
+	["총을 다루는 일", ["SMALL_GUNS", "ENERGY", "EXPLOSIVES"]],
+]
+const DOL_PROXY := {1: 1, 2: 2, 3: 2, 4: 2, 5: 4, 6: 1}
+
+
+static func proxy_type(st: StoryState) -> int:
+	return clampi(int(st.vars.get_v("PC_APT_PROXY")), 0, PROXY_TYPES.size())
+
+
+static func proxy_tags(n: int) -> Array:
+	return PROXY_TYPES[n - 1][1].duplicate() if n >= 1 and n <= PROXY_TYPES.size() else []
+
+
 # ---------------------------------------------------------------- 이야기 상태에 적기
 static func stats_of(st: StoryState) -> Dictionary:
 	var d := {}

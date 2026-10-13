@@ -1,0 +1,358 @@
+{
+ "id": "MQ-P3_S02",
+ "title": "적성 평가 교실",
+ "loc": "L-R01-01",
+ "npc": "C-023",
+ "cond": "MQP3_STAGE == 30",
+ "labels": {
+  "START": 0,
+  "BOTH": 5,
+  "NODY": 7,
+  "RULES": 8,
+  "TEST": 10,
+  "SKIP": 15,
+  "PROXY": 18,
+  "DOL_MACH": 23,
+  "DOL_PEOPLE": 25,
+  "DOL_GUN": 27,
+  "TYPES": 28,
+  "P10": 29,
+  "Q10": 31,
+  "DONE": 36
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "C-023",
+   "emo": "기본",
+   "text": "왔냐. 앉아라. 재건 행정 요원 적성 평가다."
+  },
+  {
+   "op": "if",
+   "cond": "MQP3_RESULT >= 5",
+   "to": "NODY"
+  },
+  {
+   "op": "if",
+   "cond": "MQP3_RESULT == 4",
+   "to": "BOTH"
+  },
+  {
+   "op": "line",
+   "who": "C-023",
+   "emo": "피곤",
+   "text": "복도 일은 들었다. …등사기 열쇠부터 바꿔야겠군."
+  },
+  {
+   "op": "goto",
+   "to": "RULES"
+  },
+  {
+   "op": "line",
+   "who": "C-023",
+   "emo": "기본",
+   "text": "복도에서 버텼다며. 반성문은 시험 끝나고 써라."
+  },
+  {
+   "op": "goto",
+   "to": "RULES"
+  },
+  {
+   "op": "line",
+   "who": "C-023",
+   "emo": "슬픔",
+   "text": "하도윤 자리는 비워 둔다. 규정이 그렇다."
+  },
+  {
+   "op": "line",
+   "who": "C-023",
+   "emo": "기본",
+   "text": "문항은 내가 읽는다. 답은 카드에 칠해라. 맞고 틀리는 건 없다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "시험을 본다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TEST",
+     "id": "MQ-P3_S02:1:0"
+    },
+    {
+     "text": "\"꼭 봐야 하나요?\"",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SKIP",
+     "id": "MQ-P3_S02:1:1"
+    },
+    {
+     "text": "대신 써 달라고 부탁한다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "PROXY",
+     "id": "MQ-P3_S02:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-023",
+   "emo": "기본",
+   "text": "마지막 10번은… 이 문항은 200년째 안 바뀌었다. 바꾸지 말라는 메모가 붙어 있어."
+  },
+  {
+   "op": "cmd",
+   "name": "bgm",
+   "args": [
+    "stop"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "sfx",
+   "args": [
+    "clock_tick"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "doc",
+   "args": [
+    "aptitude"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "DONE"
+  },
+  {
+   "op": "line",
+   "who": "C-023",
+   "emo": "피곤",
+   "text": "안 봐도 결과지는 나온다. 이 볼트는 원래 그래."
+  },
+  {
+   "op": "line",
+   "who": "C-023",
+   "emo": "기본",
+   "text": "대신 10번만은 써라. 이 문항은 200년째 안 바뀌었다. 바꾸지 말라는 메모가 붙어 있어."
+  },
+  {
+   "op": "goto",
+   "to": "Q10"
+  },
+  {
+   "op": "line",
+   "who": "C-023",
+   "emo": "피곤",
+   "text": "…이러는 애들이 꼭 있어서 양식이 따로 있다. 관심 가는 쪽만 골라라."
+  },
+  {
+   "op": "if",
+   "cond": "V_DOL == 1 or V_DOL == 6",
+   "to": "DOL_MACH"
+  },
+  {
+   "op": "if",
+   "cond": "V_DOL == 2 or V_DOL == 3 or V_DOL == 4",
+   "to": "DOL_PEOPLE"
+  },
+  {
+   "op": "if",
+   "cond": "V_DOL == 5",
+   "to": "DOL_GUN"
+  },
+  {
+   "op": "goto",
+   "to": "TYPES"
+  },
+  {
+   "op": "line",
+   "who": "C-023",
+   "emo": "미소",
+   "text": "돌 때 기계 쪽 물건을 잡았다며. 맨 위 칸에 동그라미 쳐 두마."
+  },
+  {
+   "op": "goto",
+   "to": "TYPES"
+  },
+  {
+   "op": "line",
+   "who": "C-023",
+   "emo": "미소",
+   "text": "돌 때 사람 쓰는 물건을 잡았다며. 둘째 칸에 동그라미 쳐 두마."
+  },
+  {
+   "op": "goto",
+   "to": "TYPES"
+  },
+  {
+   "op": "line",
+   "who": "C-023",
+   "emo": "미소",
+   "text": "돌 때 탄알을 잡았다며. 도 부장이 아직도 그 얘기를 한다. 넷째 칸이다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "기계를 만지는 일",
+     "tags": [],
+     "cond": "",
+     "fx": "PC_APT_PROXY = 1",
+     "to": "P10",
+     "id": "MQ-P3_S02:2:0"
+    },
+    {
+     "text": "사람을 대하는 일",
+     "tags": [],
+     "cond": "",
+     "fx": "PC_APT_PROXY = 2",
+     "to": "P10",
+     "id": "MQ-P3_S02:2:1"
+    },
+    {
+     "text": "몸을 쓰는 일",
+     "tags": [],
+     "cond": "",
+     "fx": "PC_APT_PROXY = 3",
+     "to": "P10",
+     "id": "MQ-P3_S02:2:2"
+    },
+    {
+     "text": "총을 다루는 일",
+     "tags": [],
+     "cond": "",
+     "fx": "PC_APT_PROXY = 4",
+     "to": "P10",
+     "id": "MQ-P3_S02:2:3"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-023",
+   "emo": "기본",
+   "text": "1번부터 9번은 내가 쓴다. 10번은 본인이 써야 해. 규정이다."
+  },
+  {
+   "op": "line",
+   "who": "C-023",
+   "emo": "기본",
+   "text": "이 문항은 200년째 안 바뀌었다. 바꾸지 말라는 메모가 붙어 있어."
+  },
+  {
+   "op": "cmd",
+   "name": "bgm",
+   "args": [
+    "stop"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "sfx",
+   "args": [
+    "clock_tick"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "교실 벽시계 초침 소리만 들린다."
+  },
+  {
+   "op": "line",
+   "who": "C-023",
+   "emo": "기본",
+   "text": "10. 상관이 \"이 문을 지켜라. 아무도 들이지 마라\"고 하고 떠났다. 밤새 아무도 오지 않았고, 아침에도 상관은 돌아오지 않았다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "계속 문을 지킨다. 총을 쥔 채",
+     "tags": [],
+     "cond": "",
+     "fx": "V_Q10 = 1",
+     "to": "DONE",
+     "id": "MQ-P3_S02:3:0"
+    },
+    {
+     "text": "문을 잠그고 몽둥이를 든 채 상관을 찾으러 간다",
+     "tags": [],
+     "cond": "",
+     "fx": "V_Q10 = 2",
+     "to": "DONE",
+     "id": "MQ-P3_S02:3:1"
+    },
+    {
+     "text": "경비 로봇의 포탑에 문을 맡기고 쉰다",
+     "tags": [],
+     "cond": "",
+     "fx": "V_Q10 = 3",
+     "to": "DONE",
+     "id": "MQ-P3_S02:3:2"
+    },
+    {
+     "text": "문을 열고 밖을 본다",
+     "tags": [],
+     "cond": "",
+     "fx": "V_Q10 = 4",
+     "to": "DONE",
+     "id": "MQ-P3_S02:3:3"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "bgm",
+   "args": [
+    "on"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-023",
+   "emo": "기본",
+   "text": "수고했다. 채점은 판독기가 한다. 결과지는 평가관실에서 준다."
+  },
+  {
+   "op": "do",
+   "fx": "quest(\"MQ-P3\", 40); xp(50)"
+  },
+  {
+   "op": "cmd",
+   "name": "move",
+   "args": [
+    "C-023",
+    "p3_cha_out"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "refresh",
+   "args": []
+  },
+  {
+   "op": "cmd",
+   "name": "hint",
+   "args": [
+    "평가관실: 복도 북쪽 '평가관실' 문 → 차명수",
+    "7"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/prologue/MQ-P3.txt"
+}

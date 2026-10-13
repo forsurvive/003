@@ -3,6 +3,7 @@
 
 @scene MQ-P1_S01  의무실 — 출생신고  (L-R01-01)
 @npc   C-024
+@cond  MQP1_STAGE < 20
 ! quest("MQ-P1", 10)
 @cmd show C-001 bed S
 @cmd pose C-001 in_bed
@@ -106,6 +107,6 @@ SYS 식당이 잠깐 조용해진다.
 C-022 [기본] …나가지는 마라.
 * DONE
 C-001 [미소] 뭘 잡든 괜찮아. 여기서 잘 크면 돼.
-! quest("MQ-P1", 100)
+! quest("MQ-P1", 100); xp(50)
 @cmd year_card 2268 "열 살. 볼트의 일원이 되는 해입니다."
 -> END

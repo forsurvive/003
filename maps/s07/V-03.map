@@ -151,5 +151,19 @@ mark p2_seat 6 8 N
 mark p2_desk 6 6 S
 npc C-023 7 3 S look=M1-S3-HR05-H1-T11-1-PF11-HD00-EY03 cond="year() == 2268" bark="질문은 손 들고."
 npc C-002 9 8 N look=K1-S3-HR08-H2-T01-1-PF11-HD00-EY00 cond="year() == 2268 and MQP2_STAGE < 20" bark="야, 너 뭐라고 나왔어?"
+mark p3_locker 24 17 N
+mark p3_kc_in 2 17 E
+mark p3_kc_stop 20 17 E
+mark p3_seat 9 29 N
+mark p3_cha_out 11 22 N
+mark p3_office 45 8 N
+npc C-026 22 16 E cond="year() == 2274 and MQP3_STAGE <= 20" bark="부장님 오시면 다 말할 거야."
+npc C-002 25 16 W cond="year() == 2274 and MQP3_STAGE <= 20" bark="그거 내 거 아니라니까!"
+trigger 30 16 scene=MQ-P3_S01 h=3 cond="year() == 2274 and MQP3_STAGE == 10" once
+npc C-023 10 25 S cond="year() == 2274 and MQP3_STAGE <= 30" bark="앉아라. 문항은 내가 읽는다."
+npc C-002 12 29 N cond="year() == 2274 and MQP3_STAGE >= 30 and MQP3_RESULT >= 1 and MQP3_RESULT <= 4" bark="시험 끝나고 밥 살게."
+npc C-026 6 29 N cond="year() == 2274 and MQP3_STAGE >= 30 and MQP3_RESULT >= 4" bark="…점수가 전부인 데서 사는 거, 너도 알잖아."
+npc C-023 45 7 S cond="year() == 2274 and MQP3_STAGE >= 40" bark="결과지는 판독기가 뱉은 그대로다."
+text 50 9 "출입 기록 서랍. 어젯밤 줄은 이미 누가 들여다봤다." cond="year() == 2274 and MQP3_RESULT == 2"
 npc N-R01-017 28 25 S route=서가:28,25,10;책상:29,31,8 bark="책은 제자리에. 200년째 같은 부탁이야." cond="year() == 2277"
 npc N-R01-016 44 28 W route=체육관:44,28,6;창고:47,37,5 bark="9회말은 아직이야." cond="year() == 2277"

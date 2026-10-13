@@ -95,8 +95,8 @@ func _rows() -> Array:
 		[0, 2]:
 			for k in StoryState.SKILL_ORDER:
 				out.append({"text": StoryState.SKILLS[k][0] + (" [태그]" if st.tagged(k) else ""), "id": k, "right": str(st.skill(k))})
-		[0, 3]:
-			out = []
+		[0, 3]:                                                         # 특별 퍽 관리 후보 1순위(PK-103, SD-10): 결과 통지서를 받으면 자동
+			out = [{"text": "관리 후보 1순위", "id": "PK-103", "right": "특별"}] if int(st.vars.get_v("V_REGCARD")) >= 1 else []
 		[0, 4]:
 			out = [{"text": "등록 카드", "id": "card"}, {"text": "카르마", "id": "karma"}, {"text": "통계", "id": "stats"}]
 		[1, _]:
@@ -273,6 +273,11 @@ func _detail() -> void:
 			text(Vector2(264, 96), "연관 능력치: " + StoryState.STATS[StoryState.SKILLS[id][1]], f10, 10, U[4])
 			var y := _para(Vector2(264, 114), str(tx.get("desc", "")), U[5])
 			_para(Vector2(264, y + 4), "쓰임: " + str(tx.get("uses", "")), U[4])
+		[0, 3]:
+			text(Vector2(264, 78), "관리 후보 1순위", f12b, 12, U[6])
+			text(Vector2(264, 96), "특별 퍽 · 적성 평가 결과 통지서(2274)", f10, 10, U[4])
+			var y := _para(Vector2(264, 114), "결과 통지서 맨 아래 칸에 처음부터 인쇄되어 있던 순위. 누가 무엇을 답해도 같다고 한다.", U[5])
+			_para(Vector2(264, y + 4), "뜻을 알 수 없는 순위.", U[6])
 		[0, 4]:
 			_general_page(id)
 		[1, _], [2, 1]:
@@ -333,12 +338,15 @@ func _general_page(id: String) -> void:
 			hline(264, 588, 96, U[3])
 			var lines := [["성명", st.player_full()], ["등록번호", str(st.vars.get_v("P_REGNO"))], ["출생", "2258. 03. 02."],
 				["배정 구역", "제3 생활동"]]
+			var stage := int(st.vars.get_v("V_REGCARD"))
+			if stage >= 1:                                              # 단계 1(SD-12 §3.8): 적성 평가 줄에 관리 후보 1순위
+				lines.append(["적성 평가", "관리 후보 1순위 (2274)"])
 			var y := 104.0
 			for kv in lines:
 				text(Vector2(268, y), kv[0], f10, 10, U[4])
 				text(Vector2(340, y), kv[1], f12, 12, U[5])
 				y += 18.0
-			text(Vector2(268, y + 6), "관리자 코드 칸 · 관제망 응답 칸 없음 (단계 0)", f10, 10, U[3])
+			text(Vector2(268, y + 6), "관리자 코드 칸 · 관제망 응답 칸 없음 (단계 %d)" % stage, f10, 10, U[3])
 		"karma":
 			var k := int(info.get("karma", 0))
 			var band := "good" if k >= 250 else ("evil" if k <= -250 else "neutral")

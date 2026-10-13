@@ -307,6 +307,9 @@ def v02():
     m.c("mark p2_window 4 8 N")
     m.c('trigger 2 8 w=5 h=2 scene=MQ-P2_S03 cond="MQP2_STAGE == 30" once')
     m.c('npc C-001 36 8 S route=책상:36,8,14;창:44,9,5;복도:37,17,4 bark="일 끝나면 들를게. 밥은 꼭 먹고."')
+    # 2274 같은 날 오버시어실(MQ-P3 S4, 주인공은 보지 못한다): 단말 앞의 윤정인(39세)
+    m.c("mark p3_ovs 34 6 N")
+    m.c('npc C-001 34 4 S cond="year() == 2274 and MQP3_STAGE >= 100"')
     return m
 
 
@@ -362,6 +365,19 @@ def v03():
     m.c("mark p2_seat 6 8 N"); m.c("mark p2_desk 6 6 S")
     m.c('npc C-023 7 3 S look=M1-S3-HR05-H1-T11-1-PF11-HD00-EY03 cond="year() == 2268" bark="질문은 손 들고."')
     m.c('npc C-002 9 8 N look=K1-S3-HR08-H2-T01-1-PF11-HD00-EY00 cond="year() == 2268 and MQP2_STAGE < 20" bark="야, 너 뭐라고 나왔어?"')
+    # 2274 적성 평가(MQ-P3): 사물함 복도 소동 → 적성 평가 교실 → 평가관실 결과지. 사건 결과(MQP3_RESULT)에 따라 교실 자리가 바뀐다
+    #   (1~3 나채윤 적발 · 4 둘 다 응시 · 5·6 하도윤 응시 자격 박탈). 도경철은 장면이 세운다(show).
+    y74 = 'year() == 2274'
+    m.c("mark p3_locker 24 17 N"); m.c("mark p3_kc_in 2 17 E"); m.c("mark p3_kc_stop 20 17 E")
+    m.c("mark p3_seat 9 29 N"); m.c("mark p3_cha_out 11 22 N"); m.c("mark p3_office 45 8 N")
+    m.c(f'npc C-026 22 16 E cond="{y74} and MQP3_STAGE <= 20" bark="부장님 오시면 다 말할 거야."')
+    m.c(f'npc C-002 25 16 W cond="{y74} and MQP3_STAGE <= 20" bark="그거 내 거 아니라니까!"')
+    m.c(f'trigger 30 16 scene=MQ-P3_S01 h=3 cond="{y74} and MQP3_STAGE == 10" once')
+    m.c(f'npc C-023 10 25 S cond="{y74} and MQP3_STAGE <= 30" bark="앉아라. 문항은 내가 읽는다."')
+    m.c(f'npc C-002 12 29 N cond="{y74} and MQP3_STAGE >= 30 and MQP3_RESULT >= 1 and MQP3_RESULT <= 4" bark="시험 끝나고 밥 살게."')
+    m.c(f'npc C-026 6 29 N cond="{y74} and MQP3_STAGE >= 30 and MQP3_RESULT >= 4" bark="…점수가 전부인 데서 사는 거, 너도 알잖아."')
+    m.c(f'npc C-023 45 7 S cond="{y74} and MQP3_STAGE >= 40" bark="결과지는 판독기가 뱉은 그대로다."')
+    m.c(f'text 50 9 "출입 기록 서랍. 어젯밤 줄은 이미 누가 들여다봤다." cond="{y74} and MQP3_RESULT == 2"')
     m.c('npc N-R01-017 28 25 S route=서가:28,25,10;책상:29,31,8 bark="책은 제자리에. 200년째 같은 부탁이야."')
     m.c('npc N-R01-016 44 28 W route=체육관:44,28,6;창고:47,37,5 bark="9회말은 아직이야."')
     return m

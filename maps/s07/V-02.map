@@ -108,3 +108,5 @@ npc C-002 7 9 W look=K1-S3-HR08-H2-T01-1-PF11-HD00-EY00 cond="year() == 2268 and
 mark p2_window 4 8 N
 trigger 2 8 w=5 h=2 scene=MQ-P2_S03 cond="MQP2_STAGE == 30" once
 npc C-001 36 8 S route=책상:36,8,14;창:44,9,5;복도:37,17,4 bark="일 끝나면 들를게. 밥은 꼭 먹고." cond="year() == 2277"
+mark p3_ovs 34 6 N
+npc C-001 34 4 S cond="year() == 2274 and MQP3_STAGE >= 100"
