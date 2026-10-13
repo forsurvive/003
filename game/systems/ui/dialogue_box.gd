@@ -2,7 +2,8 @@
 ## 배치(논리 640×360 기준, 화면이 넓으면 아래 가운데에 붙는다): 대사 상자 (16,248) 608×104 검정 85% + P07 테두리,
 ## 초상화 (24,252) 96×96(바탕 P17), 이름표 (124,230), 본문 (128,258)부터 18px 간격 4줄(40자), 선택지 창은 상자 위 (128, …) 488폭.
 ## 글자: 갈무리11 12px, 초당 40자(옵션), 결정 키 = 출력 중이면 즉시 완성 · 완성이면 다음 쪽. 판정 결과 [성공]/[실패] 0.6초.
-## L = 대화 기록(최근 400줄). 터치: 아무 곳이나 누르면 결정, 선택지는 그 줄을 누른다.
+## L = 대화 기록(최근 400줄). 터치: 아무 곳이나 누르면 결정, 선택지는 그 줄을 누른다. 터치는 마우스 흉내(기본값)로만 받는다 —
+## ScreenTouch까지 받으면 한 번 눌러 두 번 넘어간다.
 ## 연출 명령(cmd)은 command 신호로 넘기고 resume()을 기다린다. 받는 곳이 없으면 바로 넘어간다.
 class_name DialogueBox
 extends CanvasLayer
@@ -256,7 +257,7 @@ func _unhandled_input(e: InputEvent) -> void:
 			pick(sel)
 		elif e is InputEventKey and e.pressed and e.keycode >= KEY_1 and e.keycode <= KEY_9:
 			pick(e.keycode - KEY_1)
-		elif (e is InputEventMouseButton and e.pressed and e.button_index == MOUSE_BUTTON_LEFT) or (e is InputEventScreenTouch and e.pressed):
+		elif e is InputEventMouseButton and e.pressed and e.button_index == MOUSE_BUTTON_LEFT:
 			var i := _row_at(_to_logical(e.position))
 			if i >= 0:
 				pick(i)
@@ -269,8 +270,7 @@ func _unhandled_input(e: InputEvent) -> void:
 		_handled()
 		return
 	if state.get("type", "") == "line":
-		if e.is_action_pressed("ui_accept") or (e is InputEventMouseButton and e.pressed and e.button_index == MOUSE_BUTTON_LEFT) \
-				or (e is InputEventScreenTouch and e.pressed):
+		if e.is_action_pressed("ui_accept") or (e is InputEventMouseButton and e.pressed and e.button_index == MOUSE_BUTTON_LEFT):
 			next()
 			_handled()
 

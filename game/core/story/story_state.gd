@@ -39,8 +39,10 @@ func _init() -> void:
 		vars.declare("PC_SKP_" + k, "int", 0)         # 레벨업·책 등으로 더한 영구 증가분
 	for k in ["PC_CAPS", "PC_XP", "PC_SEX"]:
 		vars.declare(k, "int", 0)
-	for k in ["P_SURNAME", "P_GIVEN", "P_FULL", "P_REGNO"]:
+	for k in ["P_SURNAME", "P_GIVEN", "P_FULL", "P_REGNO", "PC_APT"]:   # PC_APT: 적성 평가 답 10개(결과지 다시 보기)
 		vars.declare(k, "str", "")
+	for kv in [["PC_HAIR", "HR05"], ["PC_HCOL", "H1"], ["PC_SKIN", "S3"]]:   # 외형(SD-10 §8.3). PC_SEX 1 남 · 2 여
+		vars.declare(kv[0], "str", kv[1])
 
 
 ## 기본 자료(변수 선언·퀘스트·인물)를 읽는다. 시험은 이 함수를 건너뛰고 직접 선언할 수 있다.

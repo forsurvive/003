@@ -24,6 +24,10 @@ func _ready() -> void:
 	box = DialogueBox.new()
 	add_child(box)
 	ev.attach(box)
+	Documents.attach(ev, st, self)                                    # `doc birth` → 출생신고서(0-4)
+	child_entered_tree.connect(func(n: Node) -> void:
+		if auto and n is RegisterTerminal:                              # 자동 시연: 미리 채운 이름 그대로 1.5초 뒤 [신고]
+			get_tree().create_timer(1.5).timeout.connect(func() -> void: n._press("ok")))
 	box.finished.connect(func() -> void:
 		print("컷신 끝: 연출 %d개, MQP1_STAGE=%d, 오류 %s" % [ev.log.size(), st.quests.stage("MQ-P1"), str(box.runner.errors)])
 		if auto:
