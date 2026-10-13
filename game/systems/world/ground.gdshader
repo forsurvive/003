@@ -14,16 +14,16 @@ uniform ivec2 map_size;                         // id_map 크기(테두리 포�
 uniform int cell = 256;
 uniform int mat_of[32];
 uniform int force[32];
-uniform int spread[8];
-uniform int pri[8];
-uniform int rim[8];
-uniform int shade[8];
-uniform int vthr[8];
-uniform int dens[8];
-uniform int hard[8];
-uniform int boff[16];
-uniform int dlist[64];
-uniform int dcount[8];
+uniform int spread[16];
+uniform int pri[16];
+uniform int rim[16];
+uniform int shade[16];
+uniform int vthr[16];
+uniform int dens[16];
+uniform int hard[16];
+uniform int boff[32];
+uniform int dlist[128];
+uniform int dcount[16];
 
 varying vec2 lp;
 

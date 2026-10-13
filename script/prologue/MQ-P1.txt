@@ -5,6 +5,7 @@
 @npc   C-024
 ! quest("MQ-P1", 10)
 @cmd show C-001 bed S
+@cmd pose C-001 lie
 @cmd show C-025 nurse E
 @cmd show C-024 door N
 @cmd cam bed

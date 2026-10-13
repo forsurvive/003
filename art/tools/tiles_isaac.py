@@ -410,7 +410,22 @@ def s07_tiles():
         "face_bot": wall_face_in("bot"), "face_bot_outlet": wall_face_in("bot", "outlet"),
         "balcony": balcony_band(0), "balcony_door": balcony_band(1, door=True, num="B-12"),
         "guide_x": guide_cross(), "guide_t": guide_cross(down=False),  # 뒤에 덧붙임(앞 번호는 그대로)
+        "concrete_a": _gcrop("s07", "concrete", 0), "carpet_a": _gcrop("s07", "carpet", 0), "wood_a": _gcrop("s07", "wood", 0),
+        "panel_mold": _gcrop("s07", "panel_mold", 0),             # 단계 0-5 덧붙임(바닥 합성 번호는 32칸 안)
+        "grate_mold": _gcrop("s07", "grate_mold", 0),
     }
+
+
+# 실내 벽 자동 타일(단계 0-5): 바닥 합성과 따로 둔 타일셋 ts_s07_wall. wt_<m> m = 테를 그을 방향 비트(n 1 · e 2 · s 4 · w 8)
+WALL_BITS = (("n", 1), ("e", 2), ("s", 4), ("w", 8))
+
+
+def s07_wall_tiles():
+    out = {f"wt_{m}": wall_top({e for e, b in WALL_BITS if m & b}) for m in range(16)}
+    out.update({"face_top": wall_face_in("top"), "face_top_pipe": wall_face_in("top", "pipe"),
+                "face_top_vent": wall_face_in("top", "vent"), "face_bot": wall_face_in("bot"),
+                "face_bot_outlet": wall_face_in("bot", "outlet")})
+    return out
 
 
 def sheet(tiles, cols=9, bg="P19"):

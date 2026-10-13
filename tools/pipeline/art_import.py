@@ -96,6 +96,10 @@ TILE_PROPS = {
 }
 
 
+for _m in range(16):                                               # 실내 벽 자동 타일(ts_s07_wall)
+    TILE_PROPS[f"wt_{_m}"] = (True, 2)
+
+
 def tileset(name, tiles, floor_bg=None):
     os.makedirs(TIL, exist_ok=True)
     names = list(tiles)
@@ -132,11 +136,13 @@ def main():
     r01 = tiles_isaac.r01_tiles()
     nt = tileset("ts_r01_ext", r01)                                # 소품 타일은 투명 바탕(바닥은 합성 층이 그린다)
     ns = tileset("ts_s07_int", tiles_isaac.s07_tiles())
+    nw = tileset("ts_s07_wall", tiles_isaac.s07_wall_tiles())
     import ground                                                  # 바닥 합성 재질·잔 소품·잡음(SD-16 §6.10)
+    ground._CACHE.clear()                                          # 타일 그림을 자르며 옛 번호로 읽은 세트를 버린다
     gdir = os.path.join(ROOT, "game", "assets", "ground")
     for gs in ("r01", "s07"):
         ground.load(gs).export(gdir)
-    print(f"sprites: {n} sheets + cr_cr002 | tiles: r01 {nt}, s07 {ns} | ground: r01, s07")
+    print(f"sprites: {n} sheets + cr_cr002 | tiles: r01 {nt}, s07 {ns}, s07 벽 {nw} | ground: r01, s07")
 
 
 if __name__ == "__main__":

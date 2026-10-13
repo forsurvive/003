@@ -1,0 +1,41 @@
+# V-05 등록 단말실 — SD-09a §L-R01-01 ③. 출생 등록 단말기(진공관 랙 2×3)·계보 대장 테이프 보관함·서명대
+map V-05 등록 단말실
+set s07
+grid
+########################
+########################
+########################
+#cccccccccccccccccccccc#
+#cccccccccccccccccccccc#
+#cccccccccccccccccccccc#
+#cccccccccc|ccccccccccc#
+#cccccccccc|ccccccccccc#
+#cccccccccc|ccccccccccc#
+#cccccccccc|ccccccccccc#
+#cccccccccc|ccccccccccc#
+#cccccccccc|ccccccccccc#
+#cccccccccc|ccccccccccc#
+#cccccccccc|ccccccccccc#
+#cccccccccc|ccccccccccc#
+#cccccccccc|ccccccccccc#
+###########.############
+###########.############
+end
+
+exit 11 17 V-02 from_V-05
+mark from_V-02 11 15 N
+prop tube_rack 3 3
+prop tube_rack 7 3
+prop tube_rack 15 3
+prop tube_rack 19 3
+prop tube_rack 3 8
+prop tube_rack 19 8
+prop tape_cabinet 2 9
+prop tape_cabinet 2 10
+prop terminal_desk 10 6
+prop desk 15 11
+prop memorial_plaque 10 1
+text 10 1 "동판: 제15조 — 훼손 시 D등급 영구 고정." w=3
+text 10 6 "등록 단말: 출생 기록 검산합 — 사슬 길이 41,207건, 단절 0."
+text 2 9 "계보 대장 테이프 보관함. 오버시어 열쇠로만 열린다." h=2
+text 15 11 "서명대. 펜이 줄에 매여 있다." w=2

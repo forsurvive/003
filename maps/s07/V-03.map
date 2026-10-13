@@ -1,0 +1,151 @@
+# V-03 교무 구역 — SD-09a §L-R01-01 ③. 교실 3·적성 평가 교실(판독 카드 책상 24, 멈추지 않은 벽시계)·평가관실·사물함 복도·도서실·체육관·체육 창고
+map V-03 교무 구역
+set s07
+grid
+########################################################
+########################################################
+########################################################
+#,,,,,,,,,,,,#,,,,,,,,,,,,#,,,,,,,,,,,,#...............#
+#,,,,,,,,,,,,#,,,,,,,,,,,,#,,,,,,,,,,,,#...............#
+#,,,,,,,,,,,,#,,,,,,,,,,,,#,,,,,,,,,,,,#...............#
+#,,,,,,,,,,,,#,,,,,,,,,,,,#,,,,,,,,,,,,#...............#
+#,,,,,,,,,,,,#,,,,,,,,,,,,#,,,,,,,,,,,,#...............#
+#,,,,,,,,,,,,#,,,,,,,,,,,,#,,,,,,,,,,,,#...............#
+#,,,,,,,,,,,,#,,,,,,,,,,,,#,,,,,,,,,,,,#...............#
+#,,,,,,,,,,,,#,,,,,,,,,,,,#,,,,,,,,,,,,#...............#
+#,,,,,,,,,,,,#,,,,,,,,,,,,#,,,,,,,,,,,,#...............#
+######.############.############.#############.#########
+######.############.############.#############.#########
+######.############.############.#############.#########
+#......................................................#
+#.......................................................
+#------------------------------------------------------#
+#......................................................#
+###########.################.##############wwww#########
+###########.################.##############wwww#########
+###########.################.##############wwww#########
+#,,,,,,,,,,,,,,,,,,,,,,#wwwwwwwwww#wwwwwwwwwwwwwwwwwwww#
+#,,,,,,,,,,,,,,,,,,,,,,#wwwwwwwwww#wwwwwwwwwwwwwwwwwwww#
+#,,,,,,,,,,,,,,,,,,,,,,#wwwwwwwwww#wwwwwwwwwwwwwwwwwwww#
+#,,,,,,,,,,,,,,,,,,,,,,#wwwwwwwwww#wwwwwwwwwwwwwwwwwwww#
+#,,,,,,,,,,,,,,,,,,,,,,#wwwwwwwwww#wwwwwwwwwwwwwwwwwwww#
+#,,,,,,,,,,,,,,,,,,,,,,#wwwwwwwwww#wwwwwwwwwwwwwwwwwwww#
+#,,,,,,,,,,,,,,,,,,,,,,#wwwwwwwwww#wwwwwwwwwwwwwwwwwwww#
+#,,,,,,,,,,,,,,,,,,,,,,#wwwwwwwwww#wwwwwwwwwwwwwwwwwwww#
+#,,,,,,,,,,,,,,,,,,,,,,#wwwwwwwwww#wwwwwwwwwwwwwwwwwwww#
+#,,,,,,,,,,,,,,,,,,,,,,#wwwwwwwwww#wwwwwwwwwwwwwwwwwwww#
+#,,,,,,,,,,,,,,,,,,,,,,#wwwwwwwwww#wwwwwwwwwwwwwwwwwwww#
+#,,,,,,,,,,,,,,,,,,,,,,#wwwwwwwwww##########ww##########
+#,,,,,,,,,,,,,,,,,,,,,,#wwwwwwwwww##########ww##########
+#,,,,,,,,,,,,,,,,,,,,,,#wwwwwwwwww##########ww##########
+#,,,,,,,,,,,,,,,,,,,,,,#wwwwwwwwww#~~~~~~~~~~~~~~~~~~~~#
+###################################~~~~~~~~~~~~~~~~~~~~#
+###################################~~~~~~~~~~~~~~~~~~~~#
+########################################################
+end
+
+door 6 13 "1반"
+door 19 13 "2반"
+door 32 13 "3반"
+door 46 13 "평가관실"
+door 11 20 "평가"
+door 28 20 "도서실"
+exit 55 16 V-01 from_V-03
+mark from_V-01 54 16 W
+exit 2 35 V-07 from_V-03
+mark from_V-07 3 35 E
+prop blackboard 5 1
+prop teacher_desk 6 4
+prop exam_desk 3 7
+prop exam_desk 6 7
+prop exam_desk 9 7
+prop exam_desk 3 9
+prop exam_desk 6 9
+prop exam_desk 9 9
+prop blackboard 18 1
+prop teacher_desk 19 4
+prop exam_desk 16 7
+prop exam_desk 19 7
+prop exam_desk 22 7
+prop exam_desk 16 9
+prop exam_desk 19 9
+prop exam_desk 22 9
+prop blackboard 31 1
+prop teacher_desk 32 4
+prop exam_desk 29 7
+prop exam_desk 32 7
+prop exam_desk 35 7
+prop exam_desk 29 9
+prop exam_desk 32 9
+prop exam_desk 35 9
+prop teacher_desk 44 5
+prop mimeograph 41 3
+prop file_cabinet 52 3
+prop file_cabinet 53 3
+prop terminal_desk 49 4
+prop bookshelf 47 3
+prop chair_n 45 6
+prop record_locker 50 9
+text 49 4 "평가관실 단말: 10번 문항 원본에 메모 — 변경 금지, 설계실 지시 2076."
+text 41 3 "등사기. 잉크가 손가락에 묻는다."
+prop locker_row3 1 15
+prop locker_row3 9 15
+prop locker_row3 13 15
+prop locker_row3 22 15
+prop locker_row3 25 15
+prop locker_row3 35 15
+prop locker_row3 38 15
+prop locker_row3 49 15
+prop water_cooler 53 15
+text 22 15 "하도윤의 사물함. 이름표가 반쯤 떨어져 있다." w=3
+prop blackboard 3 20
+prop wall_clock 14 20
+prop teacher_desk 10 23
+prop exam_desk 3 26
+prop exam_desk 6 26
+prop exam_desk 9 26
+prop exam_desk 12 26
+prop exam_desk 15 26
+prop exam_desk 18 26
+prop exam_desk 3 28
+prop exam_desk 6 28
+prop exam_desk 9 28
+prop exam_desk 12 28
+prop exam_desk 15 28
+prop exam_desk 18 28
+prop exam_desk 3 30
+prop exam_desk 6 30
+prop exam_desk 9 30
+prop exam_desk 12 30
+prop exam_desk 15 30
+prop exam_desk 18 30
+prop exam_desk 3 32
+prop exam_desk 6 32
+prop exam_desk 9 32
+prop exam_desk 12 32
+prop exam_desk 15 32
+prop exam_desk 18 32
+text 14 21 "벽시계가 10시 12분을 가리키며 간다. S-07의 시계는 멈추지 않았다."
+prop bookshelf 24 22
+prop bookshelf 26 22
+prop bookshelf 30 22
+prop bookshelf 32 22
+prop bookshelf 24 28
+prop bookshelf 30 28
+prop desk 27 32
+prop chair_n 28 33
+text 24 22 "도서실. 『주간 만화 쇠파이프 반장』 전권이 맨 아래 칸에 꽂혀 있다." w=8
+prop gym_mat 38 26
+prop gym_mat 41 26
+prop gym_mat 38 28
+prop target 52 23
+prop bench 36 22
+prop bench 52 31
+prop bat_rack 36 36
+prop crate 50 36
+prop crate 51 36
+prop crate_metal 53 36
+text 36 36 "방망이 꽂이. 붉은 테이프를 감은 방망이에 '9회말'이라고 쓰여 있다."
+npc C-023 9 24 S route=교탁:10,25,12;평가관실:44,7,10;복도:30,16,3 bark="질문은 손 들고."
+npc N-R01-017 28 25 S route=서가:28,25,10;책상:29,31,8 bark="책은 제자리에. 200년째 같은 부탁이야."
+npc N-R01-016 44 28 W route=체육관:44,28,6;창고:47,37,5 bark="9회말은 아직이야."

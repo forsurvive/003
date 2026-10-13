@@ -15,6 +15,14 @@
   "cover": 2,
   "solid": true
  },
+ "carpet_a": {
+  "atlas": [
+   26,
+   0
+  ],
+  "cover": 0,
+  "solid": false
+ },
  "clinic_a": {
   "atlas": [
    10,
@@ -26,6 +34,14 @@
  "clinic_b": {
   "atlas": [
    11,
+   0
+  ],
+  "cover": 0,
+  "solid": false
+ },
+ "concrete_a": {
+  "atlas": [
+   25,
    0
   ],
   "cover": 0,
@@ -95,6 +111,14 @@
   "cover": 0,
   "solid": false
  },
+ "grate_mold": {
+  "atlas": [
+   29,
+   0
+  ],
+  "cover": 0,
+  "solid": false
+ },
  "guide_h": {
   "atlas": [
    6,
@@ -151,6 +175,14 @@
   "cover": 0,
   "solid": false
  },
+ "panel_mold": {
+  "atlas": [
+   28,
+   0
+  ],
+  "cover": 0,
+  "solid": false
+ },
  "panel_scuff": {
   "atlas": [
    5,
@@ -198,5 +230,13 @@
   ],
   "cover": 2,
   "solid": true
+ },
+ "wood_a": {
+  "atlas": [
+   27,
+   0
+  ],
+  "cover": 0,
+  "solid": false
  }
 }

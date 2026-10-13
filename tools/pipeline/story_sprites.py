@@ -1,5 +1,5 @@
 """이야기 인물 맵 시트 굽기 (SD-19 §6.7 'NPC는 빌드 때 굽기', SD-16 §3.11 아이작풍).
-원고(game/data/dialogue/*.json)에 나오는 인물 — 화자 + 연출 명령(show·move·face·balloon)의 대상 — 마다 SD-07b 외형 코드로
+원고(game/data/dialogue/*.json)에 나오는 인물 — 화자 + 연출 명령(show·move·face·balloon)의 대상 — 과 실내 맵(data/maps)의 인물마다 SD-07b 외형 코드로
 대기·걷기 시트를 굽는다 → game/assets/sprites/st_<ID>.png + .json + .tres. 이미 있으면 다시 굽지 않는다.
 사람이 아닌 인물(진돗개 AN- 등)은 건너뛴다(크리처 시트는 따로)."""
 import os, sys, json, glob
@@ -31,6 +31,11 @@ def cast():
                 ids.add(op["who"])
             if op["op"] == "cmd" and op["name"] in ACTOR_CMDS and op["args"] and op["args"][0][:2] in ("C-", "N-"):
                 ids.add(op["args"][0])
+    for f in glob.glob(os.path.join(DATA, "maps", "*.json")):         # 실내 맵에 서 있는 인물(단계 0-5)
+        if os.path.basename(f).startswith("_"):
+            continue
+        for n in json.load(open(f, encoding="utf-8")).get("npcs", []):
+            ids.add(n["id"])
     return ids
 
 

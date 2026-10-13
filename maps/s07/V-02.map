@@ -1,0 +1,106 @@
+# V-02 관리동 — SD-09a §L-R01-01 ③. 행정실(등록 창구·방금례 책상)·오버시어실(결재 책상·단말·금고)·평가 위원회 회의실·화장실(덕트)·비상 계단
+map V-02 관리동
+set s07
+grid
+########.#########################################
+########.#########################################
+########.#########################################
+#......................#ccccccccccccccccccccccccc#
+#......................#ccccccccccccccccccccccccc#
+#......................#ccccccccccccccccccccccccc#
+#......................#ccccccccccccccccccccccccc#
+#......................#ccccccccccccccccccccccccc#
+#......................#ccccccccccccccccccccccccc#
+#......................#ccccccccccccccccccccccccc#
+#......................#ccccccccccccccccccccccccc#
+#......................#ccccccccccccccccccccccccc#
+#......................#ccccccccccccccccccccccccc#
+############.#######################.#############
+############.#######################.#############
+############.#######################.#############
+#................................................#
+.................................................#
+#------------------------------------------------#
+#................................................#
+##########.##################.############.#######
+##########.##################.############.#######
+##########.##################.############.#######
+#cccccccccccccccccccccc#ooooooooooo#~~~~~~~~~~~~~#
+#cccccccccccccccccccccc#ooooooooooo#~~~~~~~~~~~~~#
+#cccccccccccccccccccccc#ooooooooooo#~~~~~~~~~~~~~#
+#cccccccccccccccccccccc#ooooooooooo#~~~~~~~~~~~~~#
+#cccccccccccccccccccccc#ooooooooooo#~~~~~~~~~~~~~#
+#cccccccccccccccccccccc#ooooooooooo#~~~~~~~~~~~~~#
+#cccccccccccccccccccccc#ooooooooooo#~~~~~~~~~~~~~#
+#cccccccccccccccccccccc#ooooooooooo#~~~~~~~~~~~~~#
+#cccccccccccccccccccccc#ooooooooooo#~~~~~~~~~~~~~#
+#cccccccccccccccccccccc#ooooooooooo#~~~~~~~~~~~~~#
+##################################################
+##################################################
+##################################################
+##################################################
+##################################################
+##################################################
+##################################################
+end
+
+door 12 14 "행정실"
+door 36 14 "오버시어"
+door 10 21 "회의실"
+door 29 21 "화장실"
+door 42 21 kind=hatch "비상"
+exit 0 17 V-01 from_V-02
+mark from_V-01 1 17 E
+door 8 1 "등록 단말실"
+exit 8 0 V-05 from_V-02
+mark from_V-05 8 3 S
+exit 46 31 V-00 from_V-02
+mark from_V-00 44 31 W
+exit 33 23 V-11 from_V-02
+mark from_V-11 32 24 S
+prop counter 3 7
+prop desk 14 5
+prop file_cabinet 20 3
+prop file_cabinet 21 3
+prop file_cabinet 22 3
+prop bookshelf 16 3
+prop terminal_desk 18 7
+prop chair_n 15 6
+prop reg_window 3 1
+prop wall_clock 11 1
+text 14 5 "방금례의 책상. 출생신고서 양식이 열 장씩 묶여 있다." w=2
+prop overseer_desk 33 5
+prop safe 47 3
+prop bookshelf 25 3
+prop file_cabinet 27 3
+prop chair_s 34 4
+prop planter 44 10
+prop emblem 39 1
+prop slogan_crt2 30 1
+prop wall_terminal 43 1
+text 33 5 "결재 책상. 단말에 인구 조사 2277: 192명. 관리 후보 1순위 — 처우 반영 금지." w=3
+text 47 3 "오버시어 금고. 열쇠 구멍이 둘이다."
+prop bench 3 16
+prop water_cooler 47 16
+prop planter 20 16
+sign 13 14 "행정실"
+sign 37 14 "오버시어실"
+prop meeting_table 8 26
+prop chair_s 9 25
+prop chair_s 10 25
+prop chair_n 9 28
+prop chair_n 10 28
+prop blackboard 3 21
+prop file_cabinet 20 23
+prop slogan_crt 14 21
+text 8 26 "평가 위원회 회의 탁자. 관리 후보 순위표는 이 탁자에 오르지 않는다." w=3 h=2
+prop sink 25 23
+prop sink 26 23
+prop sink 27 23
+prop duct_grille 33 21
+text 33 21 "천장 환기 덕트 덮개. 나사 두 개가 빠져 있다."
+prop crate 37 23
+prop quarantine_sign 38 21
+text 46 31 "오버시어 전용 비상 계단. 아래는 정문 구역이다."
+npc C-024 15 7 S route=책상:15,7,10;창구:5,9,8;서류장:21,5,4 bark="서류는 줄 맞춰서 내요."
+npc C-001 36 8 S route=책상:36,8,14;창:44,9,5;복도:37,17,4 bark="일 끝나면 들를게. 밥은 꼭 먹고."

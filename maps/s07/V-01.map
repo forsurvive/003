@@ -1,0 +1,202 @@
+# V-01 아트리움 — SD-09a §L-R01-01 ③. 중앙 광장·성적 순위 게시판·공동 식당(돌잔치)·배급소·구내방송실
+map V-01 아트리움
+set s07
+grid
+#############################.##########################.###
+#############################.##########################.###
+#############################.##########################.###
+#==========================================================#
+#=...........................|............................=#
+#=...........................|............................=#
+#=...........................|............................=#
+#=...........................|............................=#
+#=...........................|............................=#
+#=...........................|............................=#
+.=...........................|............................=.
+#=.....................======|======......................=#
+#=.....................======|======......................=#
+#=.....................======|======......................=#
+#=.....................======|======......................=#
+#=---------------------------+----------------------------=#
+#=.....................======|======......................=#
+#=.....................======|======......................=#
+#=.....................======|======......................=#
+#=...........................|............................=#
+#=...........................|............................=#
+#=...........................|............................=#
+#=...........................|............................=#
+#=...........................|............................=#
+.=...........................|............................=.
+#=...........................|............................=#
+#=...........................|............................=#
+############,,,,,######################.#############.######
+############,,,,,######################.#############.######
+############,,,,,######################.#############.######
+#,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,#...............#ccccccccccc#
+#,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,#...............#ccccccccccc#
+#,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,#...............#ccccccccccc#
+#,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,#...............#ccccccccccc#
+#,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,#...............#ccccccccccc#
+#,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,#...............#ccccccccccc#
+#,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,#...............#ccccccccccc#
+#,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,#...............#ccccccccccc#
+#,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,#...............#ccccccccccc#
+#,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,#...............#ccccccccccc#
+#,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,#...............#ccccccccccc#
+#,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,#...............#ccccccccccc#
+#,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,#...............#ccccccccccc#
+########.###################################################
+end
+
+door 39 28 "배급소"
+door 53 28 "방송실"
+door 29 1 "정문"
+exit 29 0 V-00 from_V-01
+mark from_V-00 29 3 S
+door 56 1 "농장"
+exit 56 0 V-06 from_V-01
+mark from_V-06 56 3 S
+exit 0 10 V-03 from_V-01
+mark from_V-03 1 10 E
+exit 0 24 V-08 from_V-01
+mark from_V-08 1 24 E
+exit 59 10 V-02 from_V-01
+mark from_V-02 58 10 W
+exit 59 24 V-09 from_V-01
+mark from_V-09 58 24 W
+exit 8 43 V-04 from_V-01
+mark from_V-04 8 42 N
+prop ration_window 3 1
+prop emblem 7 1
+prop slogan_crt 10 1
+prop rank_board 19 1
+prop wall_clock 26 1
+prop slogan_crt3 32 1
+prop booth_window 37 1
+prop notice_board 41 1
+prop emblem 45 1
+prop wall_pipes 48 1
+text 19 3 "제2277학년도 성적 순위. 가장자리에는 200년 치 이름 쪽지가 덧붙어 있다." w=6
+text 3 3 "배급과 창구. 셔터가 반쯤 내려와 있다." w=2
+prop pillar 8 8
+prop pillar 50 8
+prop pillar 8 21
+prop pillar 50 21
+prop pillar 18 8
+prop pillar 40 8
+prop pillar 18 21
+prop pillar 40 21
+prop planter 24 12
+prop planter 33 12
+prop planter 24 18
+prop planter 33 18
+prop bench 26 11
+prop bench 31 11
+prop bench 26 18
+prop bench 31 18
+prop planter 12 5
+prop planter 44 5
+prop planter 12 24
+prop planter 44 24
+prop bench 3 12
+prop bench 3 19
+prop bench 55 12
+prop bench 55 19
+prop terminal_desk 21 13
+prop terminal_desk 37 13
+text 21 13 "안내 단말: 오늘의 배급 — 콩죽, 상추. 평가 일정 — 없음."
+text 37 13 "안내 단말: 출생 허가 대기 명단 열람 불가."
+prop water_cooler 57 4
+prop water_cooler 2 4
+prop canteen_table 3 33
+prop stool 3 32
+prop stool 3 34
+prop stool 4 32
+prop stool 4 34
+prop stool 5 32
+prop stool 5 34
+prop stool 6 32
+prop stool 6 34
+prop canteen_table 3 37
+prop stool 3 36
+prop stool 3 38
+prop stool 4 36
+prop stool 4 38
+prop stool 5 36
+prop stool 5 38
+prop stool 6 36
+prop stool 6 38
+prop canteen_table 10 33
+prop stool 10 32
+prop stool 10 34
+prop stool 11 32
+prop stool 11 34
+prop stool 12 32
+prop stool 12 34
+prop stool 13 32
+prop stool 13 34
+prop canteen_table 10 37
+prop stool 10 36
+prop stool 10 38
+prop stool 11 36
+prop stool 11 38
+prop stool 12 36
+prop stool 12 38
+prop stool 13 36
+prop stool 13 38
+prop canteen_table 17 33
+prop stool 17 32
+prop stool 17 34
+prop stool 18 32
+prop stool 18 34
+prop stool 19 32
+prop stool 19 34
+prop stool 20 32
+prop stool 20 34
+prop canteen_table 17 37
+prop stool 17 36
+prop stool 17 38
+prop stool 18 36
+prop stool 18 38
+prop stool 19 36
+prop stool 19 38
+prop stool 20 36
+prop stool 20 38
+prop canteen_table 23 33
+prop stool 23 32
+prop stool 23 34
+prop stool 24 32
+prop stool 24 34
+prop stool 25 32
+prop stool 25 34
+prop stool 26 32
+prop stool 26 34
+prop slogan_crt2 3 28
+prop notice_board 25 28
+prop water_cooler 29 30
+mark dol_table 24 40 N
+mark dol_mom 28 39 W
+mark dol_start 4 41 E
+prop ration_window 34 28
+prop counter_ration 34 31
+prop crate_metal 45 33
+prop crate_metal 46 33
+prop crate 46 31
+prop notice_board 43 28
+prop bench 33 41
+prop bench 43 41
+prop bench 38 37
+text 34 31 "배급 창구: 이번 주부터 배급 반감 — 수경 농장 2·3동 곰팡이병." w=3
+prop terminal_desk 52 31
+prop desk 49 31
+prop bookshelf 56 30
+prop chair_n 53 33
+prop wall_terminal 50 28
+prop slogan_crt2 55 28
+prop record_locker 49 38
+prop bench 55 40
+text 52 31 "구내방송 송출기 ST-11. 진공관이 데워지는 냄새가 난다."
+npc N-R01-011 40 36 S route=창구:35,32,8;창고:44,35,4 bark="배급 카드부터 보여 주세요."
+npc N-R01-013 51 38 N route=송출기:52,33,10;문:53,30,4;게시판:42,14,5 bark="S-07 구내방송입니다. 오늘의 평가 일정을 알려 드립니다."
+npc N-R01-023 14 20 E route=광장:14,20,10;식당:8,36,8 bark="2196년 겨울에는 이 광장에 침대가 놓였지."
+npc N-R01-021 31 15 S route=놀이:31,15,4;게시판:24,4,3;화분:38,9,3 bark="게시판 맨 위 이름은 누구야?"

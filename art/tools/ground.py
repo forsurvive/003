@@ -369,6 +369,70 @@ def clinic_tex(seed, worn=False):
     return a
 
 
+def concrete_tex(seed):
+    """설비 구역 콘크리트: 한 색 바탕 + 64px 판 줄눈(밝은 윗테) + 부드러운 얼룩 + 짧은 금 몇 줄."""
+    a = np.full((CELL, CELL), t("P06"), np.uint8)
+    rnd = np.random.default_rng(seed)
+    nz = equalize(fbm(CELL, [(32, 0.6), (16, 0.4)], seed))
+    a[nz < 0.06] = t("P05")                                         # 얼룩은 작고 드물게(쯔꾸르식 평평한 바탕)
+    for k in range(0, CELL, 64):
+        for i in range(CELL):
+            put(a, i, k, "P04"); put(a, i, k + 1, "P07")
+            put(a, k, i, "P04"); put(a, k + 1, i, "P07")
+    for _ in range(10):
+        walk_line(a, rnd, int(rnd.integers(CELL)), int(rnd.integers(CELL)), int(rnd.integers(4, 9)), "P04", hi="P07")
+    for _ in range(18):
+        x, y = int(rnd.integers(CELL)), int(rnd.integers(CELL))
+        put(a, x, y, "P05")
+    return a
+
+
+def mold_tex(base, seed):
+    """곰팡이병 바닥(수경 농장 2277): 바탕 재질 위에 불규칙하게 번진 검은 반점(큰 얼룩 문턱 + 가장자리 한 단 밝게)."""
+    a = base.copy()
+    nz = equalize(fbm(CELL, [(24, 0.6), (8, 0.4)], seed))
+    big = equalize(fbm(CELL, [(96, 1.0)], seed + 5))
+    m = (nz > 0.80) & (big > 0.35)
+    edge = (nz > 0.74) & (big > 0.35) & ~m
+    a[edge] = t("P03")
+    a[m] = t("P01")
+    a[(nz > 0.93) & (big > 0.35)] = t("P02")
+    return a
+
+
+def carpet_tex(seed):
+    """오버시어실·회의실 카펫: 짙은 자주 바탕 + 8px 마름모 점무늬(밝은 점·어두운 점이 엇갈림)."""
+    a = np.full((CELL, CELL), t("P52"), np.uint8)
+    for y in range(0, CELL, 8):
+        for x in range(0, CELL, 8):
+            ox = 4 if (y // 8) % 2 else 0
+            put(a, x + ox, y, "P53"); put(a, x + ox + 1, y, "P53")
+            put(a, x + ox, y + 4, "P51")
+    return a
+
+
+def wood_tex(seed):
+    """체육관 마루: 8px 널 + 밝은 윗테 + 어두운 이음매(열마다 엇갈림) + 옹이 몇 개."""
+    a = np.zeros((CELL, CELL), np.uint8)
+    rnd = np.random.default_rng(seed)
+    for row in range(CELL // 8):
+        y0 = row * 8
+        off = (row * 41 + seed) % 64
+        base = "P20" if rnd.random() < 0.8 else "P19"
+        for y in range(y0, y0 + 8):
+            for x in range(CELL):
+                put(a, x, y, base)
+        for x in range(CELL):
+            put(a, x, y0, "P18"); put(a, x, y0 + 1, "P21")
+        for x in range(off, CELL + off, 64):
+            for y in range(y0, y0 + 8):
+                put(a, x, y, "P18")
+        for _ in range(2):
+            kx = int(rnd.integers(CELL))
+            put(a, kx, y0 + 4, "P18"); put(a, kx + 1, y0 + 4, "P19")
+    return a
+
+
 # ---------------------------------------------------------------- 잔 소품 (32×32, 투명, 먹선)
 def decals():
     D = []
@@ -506,6 +570,13 @@ def decals():
     nz = equalize(fbm(32, [(8, 1.0)], 25))
     blob(a, 16, 16, 7, 6, "P24", nz, 0.7)
     ids["rust"] = add(a)
+    a = cell()                                                       # 검은 곰팡이 반점(수경 농장 2277, SD-09a V-06)
+    nz = equalize(fbm(32, [(8, 1.0)], 41))
+    for cx, cy, rx, ry in ((12, 13, 5, 4), (20, 18, 4, 3), (14, 21, 3, 2), (22, 10, 2, 2)):
+        blob(a, cx, cy, rx + 1, ry + 1, "P03", nz)
+        blob(a, cx, cy, rx, ry, "P01", nz)
+    put(a, 11, 12, "P02"); put(a, 19, 17, "P02")
+    ids["mold"] = add(a)
     return D, ids
 
 
@@ -547,9 +618,20 @@ def sets():
                  decals=["paper", "butts"], hard=1),
             dict(name="clinic", A=clinic_tex(231), B=None, spread=0, pri=0, rim=0, shade=1, vthr=256, dens=3,
                  decals=["paper"], hard=1),
+            dict(name="concrete", A=concrete_tex(241), B=None, spread=0, pri=0, rim=0, shade=1, vthr=256, dens=3,
+                 decals=["debris", "rust", "puddle", "stain"], hard=1),
+            dict(name="carpet", A=carpet_tex(251), B=None, spread=0, pri=0, rim=0, shade=1, vthr=256, dens=0,
+                 decals=[], hard=1),
+            dict(name="wood", A=wood_tex(261), B=None, spread=0, pri=0, rim=0, shade=1, vthr=256, dens=2,
+                 decals=["scuff"], hard=1),
+            dict(name="panel_mold", A=mold_tex(panel_tex(201, worn=True), 271), B=None, spread=0, pri=0, rim=0, shade=1, vthr=256,
+                 dens=6, decals=["mold", "puddle"], hard=1),
+            dict(name="grate_mold", A=mold_tex(grate_tex(211, rusty=True), 281), B=None, spread=0, pri=0, rim=0, shade=1, vthr=256,
+                 dens=6, decals=["mold"], hard=1),
         ],
         "mat_of": {"panel": 0, "panel_sheen": 0, "panel_scuff": 0, "guide_h": 0, "guide_v": 0, "guide_x": 0, "guide_t": 0, "grate_a": 1, "grate_b": 1, "grate_c": 1,
-                   "lino_a": 2, "lino_b": 2, "clinic_a": 3, "clinic_b": 3},
+                   "lino_a": 2, "lino_b": 2, "clinic_a": 3, "clinic_b": 3, "concrete_a": 4, "carpet_a": 5, "wood_a": 6,
+                   "panel_mold": 7, "grate_mold": 8},
         "force": {"guide_h": "guide_h", "guide_v": "guide_v", "guide_x": "guide_x", "guide_t": "guide_t"},
         "flag_of": {k: 1 for k in ("wall_top_s", "wall_top_w", "wall_top_ws", "wall_top", "face_top", "face_top_pipe", "face_top_vent",
                                    "face_bot", "face_bot_outlet", "balcony", "balcony_door")},

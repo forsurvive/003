@@ -3,7 +3,8 @@
 ## 명령은 차례로 하나씩, 끝날 때까지 기다린다(쯔꾸르 기본 '완료까지 대기').
 ##   show ID 표지 [방향]   hide ID   move ID 표지 [walk|run]   face ID 방향|인물ID   balloon ID ! | ? | heart | ... | note | sweat | anger
 ##   wait n(1/10초)   fade_in 색 n   fade_out 색 n   flash 색   shake n   cam 표지   year_card 연도 "문장"   title_card "제목" "문장"
-##   sfx·bgm 이름(소리는 납품 뒤 — 지금은 기록만)   lamp 표지 색(장치 램프 깜박임)   doc 이름(서류 UI, 0-4)   pose ID 이름(0-5)
+##   sfx·bgm 이름(소리는 납품 뒤 — 지금은 기록만)   lamp 표지 색(장치 램프 깜박임)   doc 이름(서류 UI, 0-4)
+##   pose ID stand|lie|sit(0-5: 누우면 몸을 90도 눕혀 침대 위에 그린다)
 ## 표지(mark)는 맵 자료(game/data/maps/<맵>.json의 marks: 이름 → [타일 x, 타일 y, 방향])다. "x,y" 숫자도 받는다.
 class_name EventRunner
 extends Node2D
@@ -149,8 +150,12 @@ func run(name: String, args: Array, done: Callable) -> void:
 				done.call()
 			else:
 				doc_requested.emit(str(args[0]), done)
+		"pose":
+			if actors.has(str(args[0])):
+				actors[str(args[0])].set_pose(str(args[1]) if args.size() > 1 else "stand")
+			done.call()
 		_:
-			done.call()                                           # sfx·bgm·pose: 아직 자원 없음(기록만)
+			done.call()                                           # sfx·bgm: 아직 자원 없음(기록만)
 
 
 func _show_actor(id: String, pos: Vector2, dir: String) -> void:
@@ -165,7 +170,10 @@ func _show_actor(id: String, pos: Vector2, dir: String) -> void:
 	a.mode = "walk"
 	a.loco.facing = DIR_IDX.get(dir, 2)
 	a._show()
-	get_parent().add_child(a)
+	if world != null and world.has_method("add_actor"):
+		world.add_actor(a)                                         # 실내 맵: 소품과 같은 y 정렬 층(앞뒤 가림)
+	else:
+		get_parent().add_child(a)
 	actors[id] = a
 
 

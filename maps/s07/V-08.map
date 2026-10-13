@@ -1,0 +1,108 @@
+# V-08 의무과 — SD-09a §L-R01-01 ③. 의무실(분만대, MQ-P1 S1)·진료소·약품 창고·격리실·대기실·냉동 안치실
+map V-08 의무과
+set s07
+grid
+########################################
+########################################
+########################################
+#oooooooooooo#oooooooooooo#............#
+#oooooooooooo#oooooooooooo#............#
+#oooooooooooo#oooooooooooo#............#
+#oooooooooooo#oooooooooooo#............#
+#oooooooooooo#oooooooooooo#............#
+#oooooooooooo#oooooooooooo#............#
+#oooooooooooo#oooooooooooo#............#
+#oooooooooooo#oooooooooooo#............#
+#######.############.###########.#######
+#######.############.###########.#######
+#######.############.###########.#######
+#......................................#
+#......................................#
+#--------------------------------------#
+#......................................#
+#####.############...############.######
+#####.############...############.######
+#####.############...############.######
+#oooooooooo#...............#~~~~~~~~~~~#
+#oooooooooo#...............#~~~~~~~~~~~#
+#oooooooooo#...............#~~~~~~~~~~~#
+#oooooooooo#...............#~~~~~~~~~~~#
+#oooooooooo#...............#~~~~~~~~~~~#
+#oooooooooo#...............#~~~~~~~~~~~#
+#oooooooooo#...............#~~~~~~~~~~~#
+###################.####################
+###################.####################
+end
+
+door 7 12 "의무실"
+door 20 12 "진료소"
+door 32 12 "약품"
+door 5 19 "격리"
+door 33 19 "안치"
+exit 19 29 V-01 from_V-08
+mark from_V-01 19 27 N
+prop delivery_bed 5 5
+prop med_cabinet 1 3
+prop sink 12 3
+prop terminal_desk 10 3
+prop curtain 1 8
+prop file_cabinet 11 3
+prop wall_clock 4 1
+prop chair_n 9 7
+mark bed 6 5 S
+mark bed_side 8 5 W
+mark nurse 4 5 E
+mark door 7 10 N
+mark terminal 10 4 N
+mark mother_end 6 6 S
+mark center 6 7 S
+text 10 3 "세진 SJ-RT7 등록 단말이 수레에 실려 있다. 6번 칸 램프는 꺼져 있다."
+text 1 3 "약장. 붕대, 소독약, 이름표가 바랜 앰풀이 줄지어 있다."
+prop exam_bed 15 4
+prop exam_bed 15 8
+prop curtain 18 4
+prop med_cabinet 24 3
+prop med_cabinet 25 3
+prop desk 21 7
+prop chair_n 22 8
+prop wall_terminal 20 1
+prop emblem 17 1
+text 24 3 "약장 위에 흔들인형 하나가 고개를 끄덕이고 있다. 의사 가운을 입은 든든이다." w=2
+prop crate_metal 27 3
+prop crate_metal 29 3
+prop crate_metal 31 3
+prop bookshelf 35 3
+prop med_cabinet 33 3
+prop med_cabinet 34 3
+prop crate 27 6
+prop crate 28 6
+prop file_cabinet 38 3
+text 35 3 "책장. 『응급 구조사 2급 문제집』이 꽂혀 있다." w=2
+prop bench 2 14
+prop water_cooler 37 14
+prop planter 12 14
+prop planter 26 14
+sign 8 12 "의무실"
+sign 21 12 "진료소"
+sign 33 12 "약품 창고"
+prop exam_bed 2 23
+prop exam_bed 6 23
+prop wall_terminal 8 19
+prop quarantine_sign 2 19
+prop curtain 2 26
+text 8 19 "격리실 단말: 2196 회색 열병 사망자 79명. 맨 아래 줄 — 격리 해제 2197-03."
+prop bench 13 23
+prop bench 13 26
+prop bench 24 23
+prop bench 24 26
+prop counter_clinic 15 22
+prop planter 22 26
+prop notice_board 13 19
+prop slogan_crt2 23 19
+prop morgue_drawers 28 21
+prop morgue_drawers 31 21
+prop morgue_drawers 34 21
+prop exam_bed 32 25
+prop sink 38 21
+text 28 21 "냉동 안치실 서랍. 이름표 칸마다 같은 이름이 세대를 건너 되풀이된다." w=6
+npc C-025 17 6 W route=진찰대:17,6,6;약장:23,4,4;창고:30,8,5;복도:20,15,3 bark="손 씻고 들어와. 여긴 의무과야."

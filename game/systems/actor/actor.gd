@@ -51,6 +51,18 @@ func setup(sheet_name: String, pos: Vector2, w) -> void:
 	_show()
 
 
+## 자세(SD-16 §13.6 인게임 컷신): stand 서기 · lie 눕기(그림을 90도 눕혀 머리를 왼쪽에, 침대 위라 앞에 그린다) · sit 앉기(4px 내림)
+var pose := "stand"
+
+
+func set_pose(p: String) -> void:
+	pose = p
+	var n: Node2D = doll if doll != null else sprite
+	n.rotation_degrees = -90.0 if p == "lie" else 0.0
+	n.position = Vector2(-4, -10) if p == "lie" else (Vector2(0, 4) if p == "sit" else Vector2.ZERO)
+	z_index = 1 if p == "lie" else 0
+
+
 func move(input: Vector2, dt: float) -> void:
 	var blocked := func(a: Vector2, b: Vector2) -> Vector2: return world.move_circle(a, b, radius_px)
 	loco.step(input, dt, mode, aim_dir, blocked)

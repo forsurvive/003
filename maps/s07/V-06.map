@@ -1,0 +1,111 @@
+# V-06 수경 농장 — SD-09a §L-R01-01 ③. 1·2·3동 재배 선반(쌀·콩·버섯·상추)·양액 탱크·농장 배수로(은신 경로)·2·3동 곰팡이병 구역
+map V-06 수경 농장
+set s07
+grid
+############################################################
+############################################################
+############################################################
+#==================##==================##==================#
+#========|=========##========|=========##========|=========#
+#========|=========##========|=========##========|=========#
+#========|=========##========|=========##========|=========#
+#========|=========##========|=========##========|=========#
+#========|=========##========|=========##==MMMMMM|MMMMMMM==#
+#========|=========##========|=========##==MMMMMM|MMMMMMM==#
+#========|=========##========|=========##==MMMMMM|MMMMMMM==#
+#========|=========##========|=========##==MMMMMM|MMMMMMM==#
+#========|=========##========|=========##==MMMMMM|MMMMMMM==#
+#========|=========##========|=========##==MMMMMM|MMMMMMM==#
+#========|=========##========|=========##==MMMMMM|MMMMMMM==#
+#========|=========##========|=========##==MMMMMM|MMMMMMM==#
+#========|===================|=============MMMMMM|MMMMMMM==#
+#========|===================|=============MMMMMM|MMMMMMM==#
+#========|=========##========|=========##==MMMMMM|MMMMMMM==#
+#========|=========##========|=========##==MMMMMM|MMMMMMM==#
+#========|=========##==MMMMMM|MMMMMMM==##==MMMMMM|MMMMMMM==#
+#========|=========##==MMMMMM|MMMMMMM==##==MMMMMM|MMMMMMM==#
+#========|=========##==MMMMMM|MMMMMMM==##==MMMMMM|MMMMMMM==#
+#========|=========##==MMMMMM|MMMMMMM==##==MMMMMM|MMMMMMM==#
+#========|=========##==MMMMMM|MMMMMMM==##==MMMMMM|MMMMMMM==#
+#========|=========##==MMMMMM|MMMMMMM==##==MMMMMM|MMMMMMM==#
+#========|=========##==MMMMMM|MMMMMMM==##==MMMMMM|MMMMMMM==#
+#========|=========##==MMMMMM|MMMMMMM==##==MMMMMM|MMMMMMM==#
+#========|=========##==MMMMMM|MMMMMMM==##==MMMMMM|MMMMMMM==#
+#========|=========##==MMMMMM|MMMMMMM==##==MMMMMM|MMMMMMM==#
+#========|=========##==MMMMMM|MMMMMMM==##==MMMMMM|MMMMMMM==#
+#========|=========##========|=========##========|=========#
+#####~###################~###################~##############
+#####~###################~###################~##############
+#####~###################~###################~##############
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+##############################.#############################
+##############################.#############################
+end
+
+exit 30 39 V-01 from_V-06
+mark from_V-01 30 37 N
+exit 58 36 V-11 from_V-06
+mark from_V-11 56 36 W
+prop shelf_lettuce 3 6
+prop shelf_lettuce 12 6
+prop shelf_lettuce 3 9
+prop shelf_lettuce 12 9
+prop shelf_lettuce 3 12
+prop shelf_lettuce 12 12
+prop shelf_lettuce 3 15
+prop shelf_lettuce 12 15
+prop shelf_lettuce 3 18
+prop shelf_lettuce 12 18
+prop shelf_lettuce 3 21
+prop shelf_lettuce 12 21
+prop shelf_lettuce 3 24
+prop shelf_lettuce 12 24
+prop shelf_lettuce 3 27
+prop shelf_lettuce 12 27
+prop tank_nutrient 8 3
+prop wall_terminal 4 1
+prop notice_board 14 1
+prop shelf_rice 23 6
+prop shelf_mold 32 6
+prop shelf_rice 23 9
+prop shelf_rice 32 9
+prop shelf_rice 23 12
+prop shelf_mold 32 12
+prop shelf_rice 23 15
+prop shelf_rice 32 15
+prop shelf_mold 23 18
+prop shelf_mold 32 18
+prop shelf_mold 23 21
+prop shelf_rice 32 21
+prop shelf_mold 23 24
+prop shelf_mold 32 24
+prop shelf_mold 23 27
+prop shelf_rice 32 27
+prop tank_water 28 3
+prop wall_terminal 24 1
+prop notice_board 34 1
+prop shelf_mushroom 43 6
+prop shelf_mold2 52 6
+prop shelf_mushroom 43 9
+prop shelf_mushroom 52 9
+prop shelf_mushroom 43 12
+prop shelf_mold2 52 12
+prop shelf_mushroom 43 15
+prop shelf_mushroom 52 15
+prop shelf_mold2 43 18
+prop shelf_mold2 52 18
+prop shelf_mold2 43 21
+prop shelf_mushroom 52 21
+prop shelf_mold2 43 24
+prop shelf_mold2 52 24
+prop shelf_mold2 43 27
+prop shelf_mushroom 52 27
+prop tank_nutrient 48 3
+prop wall_terminal 44 1
+prop notice_board 54 1
+text 24 1 "수경 농장 단말: 2276 곰팡이병 보고 — 2동·3동 수확량 41% 감소."
+text 13 35 "농장 배수로. 허리를 숙이면 지나갈 수 있다." w=4
+npc N-R01-010 10 15 S route=1동:10,15,8;2동:30,12,8;탱크:9,6,4 bark="잎 만지지 마. 곰팡이는 손으로 옮아."
+npc N-R01-008 49 20 W route=3동:49,20,8;배수로:40,36,5 bark="2동은 이번 주에 갈아엎어야 해."

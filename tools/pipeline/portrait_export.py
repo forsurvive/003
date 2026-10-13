@@ -24,6 +24,9 @@ def main():
         for op in json.load(open(f))["ops"]:
             if op["op"] == "line" and op["who"] != "SYS":
                 speakers.add(op["who"])
+    for f in glob.glob(os.path.join(DATA, "maps", "*.json")):           # 실내 맵 인물도 말을 건다(단계 0-5 바크)
+        if not os.path.basename(f).startswith("_"):
+            speakers |= {n["id"] for n in json.load(open(f, encoding="utf-8")).get("npcs", [])}
     made, skipped, index = 0, [], {}
     for sid in sorted(speakers):
         look = npcs.get(sid, {}).get("look", "")
