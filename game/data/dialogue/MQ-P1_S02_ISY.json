@@ -1,0 +1,26 @@
+{
+ "id": "MQ-P1_S02_ISY",
+ "title": "돌잔치 — 임소율",
+ "loc": "L-R01-01",
+ "npc": "N-R01-008",
+ "cond": "MQP1_STAGE == 20",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-R01-008",
+   "emo": "미소",
+   "text": "상추쌈은 아직 이르다. 떡만 보고 지나가렴."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/prologue/MQ-P1.txt"
+}

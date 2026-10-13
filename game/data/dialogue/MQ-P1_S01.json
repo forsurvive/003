@@ -1,0 +1,164 @@
+{
+ "id": "MQ-P1_S01",
+ "title": "의무실 — 출생신고",
+ "loc": "L-R01-01",
+ "npc": "C-024",
+ "cond": "",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "do",
+   "fx": "quest(\"MQ-P1\", 10)"
+  },
+  {
+   "op": "cmd",
+   "name": "fade_in",
+   "args": [
+    "white",
+    "40"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-025",
+   "emo": "미소",
+   "text": "건강해요. 울음소리 좋네."
+  },
+  {
+   "op": "line",
+   "who": "C-001",
+   "emo": "피곤",
+   "text": "손가락, 발가락… 다 있어요?"
+  },
+  {
+   "op": "line",
+   "who": "C-025",
+   "emo": "미소",
+   "text": "열 개, 열 개. 오버시어님 닮아서 고집 세겠어요."
+  },
+  {
+   "op": "cmd",
+   "name": "move",
+   "args": [
+    "C-024",
+    "bed_side"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-024",
+   "emo": "기본",
+   "text": "등록 단말 들어갑니다. 이름 칸부터 채워 주세요, 오버시어님."
+  },
+  {
+   "op": "cmd",
+   "name": "doc",
+   "args": [
+    "birth"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "sfx",
+   "args": [
+    "beep"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "lamp",
+   "args": [
+    "terminal",
+    "green"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "sfx",
+   "args": [
+    "beep"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "balloon",
+   "args": [
+    "C-024",
+    "!"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-024",
+   "emo": "놀람",
+   "text": "이 칸은… 내가 서기 된 뒤로 한 번도 대답한 적이 없는데."
+  },
+  {
+   "op": "line",
+   "who": "C-024",
+   "emo": "놀람",
+   "text": "회선 확인 칸에 불 들어오는 거, 처음 봐요."
+  },
+  {
+   "op": "line",
+   "who": "C-001",
+   "emo": "피곤",
+   "text": "200년 된 기계예요. 서류 넣어 주세요."
+  },
+  {
+   "op": "cmd",
+   "name": "face",
+   "args": [
+    "C-024",
+    "bed"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-024",
+   "emo": "기본",
+   "text": "…네. 등록 번호 \\V[P_REGNO]. 접수했습니다."
+  },
+  {
+   "op": "line",
+   "who": "C-001",
+   "emo": "미소",
+   "text": "여기서 태어났으니까 여기서 잘 살면 돼. 엄마가 지킬게."
+  },
+  {
+   "op": "cmd",
+   "name": "balloon",
+   "args": [
+    "C-001",
+    "heart"
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "quest(\"MQ-P1\", 20)"
+  },
+  {
+   "op": "cmd",
+   "name": "year_card",
+   "args": [
+    "2259",
+    "\"볼트",
+    "S-07",
+    "공동",
+    "식당.",
+    "돌잔치가",
+    "열렸습니다.\""
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/prologue/MQ-P1.txt"
+}

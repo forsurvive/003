@@ -1,0 +1,26 @@
+{
+ "id": "MQ-P1_S02_ISG",
+ "title": "돌잔치 — 이수겸",
+ "loc": "L-R01-01",
+ "npc": "N-R01-020",
+ "cond": "MQP1_STAGE == 20",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-R01-020",
+   "emo": "기본",
+   "text": "오버시어 자리는 무겁다. 네 엄마는 잘 버틸 거다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/prologue/MQ-P1.txt"
+}

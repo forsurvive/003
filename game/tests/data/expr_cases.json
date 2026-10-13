@@ -1,0 +1,604 @@
+{
+ "cases": [
+  {
+   "src": "V_ACT >= 2 and AFF_YH >= 50",
+   "env": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   },
+   "value": 1,
+   "after": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   }
+  },
+  {
+   "src": "V_ACT >= 3 or AFF_YH >= 60",
+   "env": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   },
+   "value": 0,
+   "after": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   }
+  },
+  {
+   "src": "not K_CODE",
+   "env": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   },
+   "value": 1,
+   "after": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   }
+  },
+  {
+   "src": "not not K_CODE",
+   "env": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   },
+   "value": 0,
+   "after": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   }
+  },
+  {
+   "src": "V_REACTOR in [2, 3, 4]",
+   "env": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   },
+   "value": 1,
+   "after": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   }
+  },
+  {
+   "src": "V_REACTOR in [1]",
+   "env": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   },
+   "value": 0,
+   "after": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   }
+  },
+  {
+   "src": "V_REACTOR in []",
+   "env": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   },
+   "value": 0,
+   "after": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   }
+  },
+  {
+   "src": "1 + 2 * 3",
+   "env": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   },
+   "value": 7,
+   "after": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   }
+  },
+  {
+   "src": "(1 + 2) * 3",
+   "env": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   },
+   "value": 9,
+   "after": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   }
+  },
+  {
+   "src": "10 / 3",
+   "env": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   },
+   "value": 3,
+   "after": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   }
+  },
+  {
+   "src": "-7 / 2",
+   "env": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   },
+   "value": -3,
+   "after": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   }
+  },
+  {
+   "src": "- -3",
+   "env": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   },
+   "value": 3,
+   "after": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   }
+  },
+  {
+   "src": "V_KARMA < 0 and V_KARMA > -100",
+   "env": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   },
+   "value": 1,
+   "after": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   }
+  },
+  {
+   "src": "P_GIVEN == \"서윤\"",
+   "env": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   },
+   "value": 1,
+   "after": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   }
+  },
+  {
+   "src": "P_GIVEN != \"하나\"",
+   "env": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   },
+   "value": 1,
+   "after": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   }
+  },
+  {
+   "src": "V_DOL == 6 or K_CODE",
+   "env": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   },
+   "value": 1,
+   "after": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   }
+  },
+  {
+   "src": "true and false",
+   "env": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   },
+   "value": 0,
+   "after": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   }
+  },
+  {
+   "src": "true or false and false",
+   "env": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   },
+   "value": 1,
+   "after": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   }
+  },
+  {
+   "src": "not V_ACT == 2",
+   "env": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   },
+   "value": 0,
+   "after": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   }
+  },
+  {
+   "src": "V_ACT * 10 + AFF_YH",
+   "env": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   },
+   "value": 75,
+   "after": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   }
+  },
+  {
+   "src": "MQP1_STAGE >= 20 and MQP1_STAGE < 100",
+   "env": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   },
+   "value": 1,
+   "after": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   }
+  },
+  {
+   "src": "V_DOL = 3; V_DOL",
+   "env": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   },
+   "value": 3,
+   "after": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 3,
+    "MQP1_STAGE": 20
+   }
+  },
+  {
+   "src": "V_KARMA += 50; V_KARMA",
+   "env": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   },
+   "value": 10,
+   "after": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": 10,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   }
+  },
+  {
+   "src": "V_KARMA -= 5; V_KARMA",
+   "env": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   },
+   "value": -45,
+   "after": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -45,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   }
+  },
+  {
+   "src": "AFF_YH = AFF_YH + V_ACT * 2; AFF_YH",
+   "env": {
+    "V_ACT": 2,
+    "AFF_YH": 55,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   },
+   "value": 59,
+   "after": {
+    "V_ACT": 2,
+    "AFF_YH": 59,
+    "K_CODE": 0,
+    "V_REACTOR": 3,
+    "P_GIVEN": "서윤",
+    "V_KARMA": -40,
+    "V_DOL": 6,
+    "MQP1_STAGE": 20
+   }
+  }
+ ]
+}

@@ -1,0 +1,26 @@
+{
+ "id": "MQ-P1_S02_HRW",
+ "title": "돌잔치 — 하로운",
+ "loc": "L-R01-01",
+ "npc": "N-R01-007",
+ "cond": "MQP1_STAGE == 20",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-R01-007",
+   "emo": "미소",
+   "text": "우리 도윤이랑 같은 날 났지, 너. 커서 같이 배관이나 타자."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/prologue/MQ-P1.txt"
+}

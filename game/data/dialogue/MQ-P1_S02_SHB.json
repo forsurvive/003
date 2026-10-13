@@ -1,0 +1,26 @@
+{
+ "id": "MQ-P1_S02_SHB",
+ "title": "돌잔치 — 서한별",
+ "loc": "L-R01-01",
+ "npc": "N-R01-009",
+ "cond": "MQP1_STAGE == 20",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-R01-009",
+   "emo": "기본",
+   "text": "원자로는 오늘도 잘 돈다. 네 돌상 불도 그 덕이야."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/prologue/MQ-P1.txt"
+}

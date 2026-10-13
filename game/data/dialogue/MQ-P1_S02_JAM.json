@@ -1,0 +1,26 @@
+{
+ "id": "MQ-P1_S02_JAM",
+ "title": "돌잔치 — 조안민",
+ "loc": "L-R01-01",
+ "npc": "N-R01-023",
+ "cond": "MQP1_STAGE == 20",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-R01-023",
+   "emo": "미소",
+   "text": "회색 열병 때는 돌잔치를 못 했지. 오늘은 잘 먹고 가거라."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/prologue/MQ-P1.txt"
+}

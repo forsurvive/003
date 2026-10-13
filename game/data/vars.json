@@ -1,0 +1,759 @@
+{
+ "vars": {
+  "AFF_BJ": {
+   "default": -30,
+   "src": "06_factions.md:162",
+   "type": "int"
+  },
+  "AFF_GS": {
+   "default": 25,
+   "src": "06_factions.md:168",
+   "type": "int"
+  },
+  "AFF_JC": {
+   "default": 0,
+   "src": "06_factions.md:169",
+   "type": "int"
+  },
+  "AFF_JC_AC": {
+   "default": -5,
+   "src": "06_factions.md:193",
+   "type": "int"
+  },
+  "AFF_JC_BC": {
+   "default": 0,
+   "src": "06_factions.md:185",
+   "type": "int"
+  },
+  "AFF_JC_CD": {
+   "default": 0,
+   "src": "06_factions.md:194",
+   "type": "int"
+  },
+  "AFF_JC_IT": {
+   "default": 5,
+   "src": "06_factions.md:191",
+   "type": "int"
+  },
+  "AFF_JC_MW": {
+   "default": 0,
+   "src": "06_factions.md:190",
+   "type": "int"
+  },
+  "AFF_JC_ND": {
+   "default": 0,
+   "src": "06_factions.md:183",
+   "type": "int"
+  },
+  "AFF_JC_SA": {
+   "default": 0,
+   "src": "06_factions.md:189",
+   "type": "int"
+  },
+  "AFF_JC_SV": {
+   "default": -15,
+   "src": "06_factions.md:188",
+   "type": "int"
+  },
+  "AFF_JC_SY": {
+   "default": 0,
+   "src": "06_factions.md:186",
+   "type": "int"
+  },
+  "AFF_JC_TK": {
+   "default": 0,
+   "src": "06_factions.md:184",
+   "type": "int"
+  },
+  "AFF_JC_TS": {
+   "default": 5,
+   "src": "06_factions.md:187",
+   "type": "int"
+  },
+  "AFF_JC_YJ": {
+   "default": 0,
+   "src": "06_factions.md:192",
+   "type": "int"
+  },
+  "AFF_JG": {
+   "default": -40,
+   "src": "06_factions.md:166",
+   "type": "int"
+  },
+  "AFF_JH": {
+   "default": 0,
+   "src": "06_factions.md:167",
+   "type": "int"
+  },
+  "AFF_KD": {
+   "default": 0,
+   "src": "06_factions.md:171",
+   "type": "int"
+  },
+  "AFF_NJ": {
+   "default": -70,
+   "src": "06_factions.md:170",
+   "type": "int"
+  },
+  "AFF_SB": {
+   "default": -25,
+   "src": "06_factions.md:165",
+   "type": "int"
+  },
+  "AFF_WP": {
+   "default": -10,
+   "src": "06_factions.md:164",
+   "type": "int"
+  },
+  "AFF_YH": {
+   "default": 0,
+   "src": "06_factions.md:163",
+   "type": "int"
+  },
+  "CO_301": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:500",
+   "type": "int"
+  },
+  "CO_302": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:500",
+   "type": "int"
+  },
+  "CO_303": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:500",
+   "type": "int"
+  },
+  "D_BG": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:501",
+   "type": "int"
+  },
+  "D_BIH": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:501",
+   "type": "int"
+  },
+  "D_DS": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:501",
+   "type": "int"
+  },
+  "D_HDC": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:501",
+   "type": "int"
+  },
+  "D_JL": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:501",
+   "type": "int"
+  },
+  "D_JMS": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:501",
+   "type": "int"
+  },
+  "D_MKJ": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:501",
+   "type": "int"
+  },
+  "D_MXM": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:501",
+   "type": "int"
+  },
+  "D_MYS": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:501",
+   "type": "int"
+  },
+  "D_RJ": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:501",
+   "type": "int"
+  },
+  "D_SMR": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:501",
+   "type": "int"
+  },
+  "FW_BJ": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:498",
+   "type": "int"
+  },
+  "FW_GS": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:498",
+   "type": "int"
+  },
+  "FW_JC": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:498",
+   "type": "int"
+  },
+  "FW_JG": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:498",
+   "type": "int"
+  },
+  "FW_JH": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:498",
+   "type": "int"
+  },
+  "FW_KD": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:498",
+   "type": "int"
+  },
+  "FW_NJ": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:498",
+   "type": "int"
+  },
+  "FW_SB": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:498",
+   "type": "int"
+  },
+  "FW_WP": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:498",
+   "type": "int"
+  },
+  "FW_YH": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:498",
+   "type": "int"
+  },
+  "F_BJ_NEUTRALIZED": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:494",
+   "type": "int"
+  },
+  "HO_BROADCAST": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:497",
+   "type": "int"
+  },
+  "HO_COPY": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:497",
+   "type": "int"
+  },
+  "HO_DECODE": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:497",
+   "type": "int"
+  },
+  "HO_KEY": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:497",
+   "type": "int"
+  },
+  "HO_LEDGER": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:497",
+   "type": "int"
+  },
+  "HO_LOG": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:497",
+   "type": "int"
+  },
+  "HO_SAMPLE": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:497",
+   "type": "int"
+  },
+  "HO_TAPE": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:497",
+   "type": "int"
+  },
+  "HO_TUNNEL": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:497",
+   "type": "int"
+  },
+  "KEY_POWER": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:492",
+   "type": "int"
+  },
+  "KEY_PROTO": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:492",
+   "type": "int"
+  },
+  "KEY_ROUTE": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:492",
+   "type": "int"
+  },
+  "K_CODE": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:493",
+   "type": "int"
+  },
+  "K_LINE": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:493",
+   "type": "int"
+  },
+  "K_LINEAGE": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:493",
+   "type": "int"
+  },
+  "K_NET": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:493",
+   "type": "int"
+  },
+  "K_ORDER": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:493",
+   "type": "int"
+  },
+  "K_PROTO": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:493",
+   "type": "int"
+  },
+  "K_Q10": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:493",
+   "type": "int"
+  },
+  "K_RALLY": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:493",
+   "type": "int"
+  },
+  "K_SIGNER": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:493",
+   "type": "int"
+  },
+  "MQ101_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQ101_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQ101_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQ102_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQ102_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQ102_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQ103_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQ103_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQ103_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQ104_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQ104_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQ104_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQ105_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQ105_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQ105_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQ106_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQ106_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQ106_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQ201_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQ201_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQ201_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQ205_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQ205_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQ205_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQ206_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQ206_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQ206_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQ301_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQ301_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQ301_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQ302_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQ302_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQ302_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQ303_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQ303_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQ303_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQP1_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQP1_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQP1_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQP2_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQP2_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQP2_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQP3_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQP3_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQP3_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQP4_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQP4_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "MQP4_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "P_FULL": {
+   "default": "",
+   "src": "18_naming-terms.md:1180",
+   "type": "str"
+  },
+  "P_GIVEN": {
+   "default": "",
+   "src": "18_naming-terms.md:1180",
+   "type": "str"
+  },
+  "P_REGNO": {
+   "default": "",
+   "src": "18_naming-terms.md:1180",
+   "type": "str"
+  },
+  "P_SURNAME": {
+   "default": "",
+   "src": "18_naming-terms.md:1180",
+   "type": "str"
+  },
+  "RADIO_PUBLIC": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:494",
+   "type": "int"
+  },
+  "S_CROSSED": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:494",
+   "type": "int"
+  },
+  "S_TUNNEL_MAP": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:494",
+   "type": "int"
+  },
+  "V_ACT": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:492",
+   "type": "int"
+  },
+  "V_DAY207": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:492",
+   "type": "int"
+  },
+  "V_DAY4": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:492",
+   "type": "int"
+  },
+  "V_DAY5": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:492",
+   "type": "int"
+  },
+  "V_DOL": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:494",
+   "type": "int"
+  },
+  "V_DOYUN": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:494",
+   "type": "int"
+  },
+  "V_DY_P3": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:494",
+   "type": "int"
+  },
+  "V_ENTRY": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:494",
+   "type": "int"
+  },
+  "V_ESCAPE": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:494",
+   "type": "int"
+  },
+  "V_FEED": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:494",
+   "type": "int"
+  },
+  "V_GSTAGE": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:499",
+   "type": "int"
+  },
+  "V_KARMA": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:502",
+   "type": "int"
+  },
+  "V_KARMA_PRE7": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:502",
+   "type": "int"
+  },
+  "V_KEYS": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:492",
+   "type": "int"
+  },
+  "V_MOTHER": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:494",
+   "type": "int"
+  },
+  "V_MXM": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:494",
+   "type": "int"
+  },
+  "V_NAMGUNG": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:494",
+   "type": "int"
+  },
+  "V_PERMIT": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:494",
+   "type": "int"
+  },
+  "V_POWER": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:494",
+   "type": "int"
+  },
+  "V_PROTO": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:494",
+   "type": "int"
+  },
+  "V_Q10": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:494",
+   "type": "int"
+  },
+  "V_REACTOR": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:494",
+   "type": "int"
+  },
+  "V_RECORDS": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:494",
+   "type": "int"
+  },
+  "V_REGCARD": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:494",
+   "type": "int"
+  },
+  "V_STANCE": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:494",
+   "type": "int"
+  },
+  "V_VAULT": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:494",
+   "type": "int"
+  },
+  "V_WANTED": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:494",
+   "type": "int"
+  },
+  "V_YUK": {
+   "default": 0,
+   "src": "03a_main-story-part1.md:494",
+   "type": "int"
+  }
+ }
+}

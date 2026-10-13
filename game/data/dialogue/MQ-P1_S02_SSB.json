@@ -1,0 +1,26 @@
+{
+ "id": "MQ-P1_S02_SSB",
+ "title": "돌잔치 — 송새봄",
+ "loc": "L-R01-01",
+ "npc": "N-R01-010",
+ "cond": "MQP1_STAGE == 20",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-R01-010",
+   "emo": "미소",
+   "text": "콩떡은 농장 2동 콩으로 쪘어. 엄마한테 가 봐, 기다리신다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/prologue/MQ-P1.txt"
+}
