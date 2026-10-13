@@ -24,6 +24,14 @@ LIGHT = (-0.45, -0.65, 0.62)
 _m = math.sqrt(sum(a * a for a in LIGHT))
 L = tuple(a / _m for a in LIGHT)
 FACES = ("idle", "blink", "fire", "talk", "hurt")
+# 맵 크기 머리(1배)의 눈 도장: 구면 위 타원을 픽셀마다 계산하면 22픽셀 머리에서 꼬리·떨어진 하이라이트가 생겨서
+# 손으로 찍은 모양을 투영한 눈 중심에 얹는다. '#' 먹, 'w' 하이라이트(빛이 오는 왼쪽 위), 'l' 속눈썹(여), '.' 빈칸.
+# 정면(앞으로 향한 정도 f > 0.75) · ¾(f > 0.42) · 옆(그 아래). 초상화(2배 이상)는 매끄러운 타원 그대로.
+EYE_STAMP = {
+    "open": ([".##.", "#w##", "####", "####", ".##."], [".#.", "#w#", "###", "###", ".#."], ["##", "w#", "##", "##"]),
+    "shut": (["####"], ["###"], ["##"]),
+    "hurt": (["#..", ".##", "#.."], ["#.", ".#", "#."], ["#.", ".#", "#."]),
+}
 
 
 def ramp(tokens):
@@ -185,6 +193,8 @@ class Head:
         lk = self.look
         hidden_head = lk.torso in ("T10", "T15")              # 방호 후드·스텔스 헬멧: 머리 전체를 덮는다
         self.sphere(hidden_head)
+        if not hidden_head and self.scale < 2:
+            self.eye_stamps()
         if not hidden_head:
             self.hair_extras()
             self.gear_draw()
@@ -214,6 +224,54 @@ class Head:
                     continue
                 col = self.surface(lx, ly, lz, d)
                 cv.put(x + 0.5, y + 0.5, nz, col)
+
+    def eye_stamps(self):
+        lk, face = self.look, self.face
+        kid, fem = lk.body == "K1", lk.body in ("F1", "F2", "E2")
+        kind = "shut" if face in ("blink", "fire", "smile") else "hurt" if face == "hurt" else "open"
+        ex0, ey = 0.36, 0.2 if not kid else 0.22
+        for side in (-1, 1):
+            ex = side * ex0
+            ez = math.sqrt(max(0.0, 1.0 - ex * ex - ey * ey))
+            sx, sy, f = self.to_screen(ex, ey, ez)
+            if f < 0.12:
+                continue                                                     # 머리 뒤로 돌아간 눈
+            stamp = EYE_STAMP[kind][0 if f > 0.75 else 1 if f > 0.42 else 2]
+            if kind == "hurt" and side == 1:
+                stamp = [r[::-1] for r in stamp]                             # > <
+            h, w = len(stamp), len(stamp[0])
+            x0 = int(round(sx - w / 2.0))
+            y0 = int(round(sy - h / 2.0 + (0.5 if kind == "shut" else 0.0)))
+            rows = [list(r) for r in stamp]
+            if fem and kind == "open" and w >= 3:                            # 속눈썹: 바깥 위 한 점
+                rows[0] = (["l"] + rows[0]) if side == -1 else (rows[0] + ["l"])
+                if side == -1:
+                    x0 -= 1
+                    rows = [rows[0]] + [["."] + r for r in rows[1:]]
+                else:
+                    rows = [rows[0]] + [r + ["."] for r in rows[1:]]
+            for j, row in enumerate(rows):
+                for i, ch in enumerate(row):
+                    if ch == ".":
+                        continue
+                    px, py = x0 + i, y0 + j
+                    hit = self._head_point(px, py)
+                    if hit is None:
+                        continue
+                    (lx, ly, lz), nz = hit
+                    if lz < 0.0 or self.hair_at(lx, ly, lz) is not None:
+                        continue                                             # 앞머리에 가린 곳
+                    self.cv.put(px + 0.5, py + 0.5, nz + 0.01, C("P09") if ch == "w" else C("P00"))
+
+    def _head_point(self, x, y):
+        """화면 픽셀 → 머리 구 위의 점(머리 좌표)과 보는 쪽 깊이. 구 밖이면 None."""
+        nx, ny = (x + 0.5 - self.cx) / self.rx, (y + 0.5 - self.cy) / self.ry
+        q = nx * nx + ny * ny
+        if q > 1.0:
+            return None
+        nz = math.sqrt(1.0 - q)
+        s, c = math.sin(self.th), math.cos(self.th)
+        return (nx * c - nz * s, ny, nx * s + nz * c), nz
 
     # 머리 표면 한 점의 색: 머리카락 → 얼굴 → 피부
     def surface(self, lx, ly, lz, d):
@@ -296,6 +354,11 @@ class Head:
             ex, ey = side * ex0, 0.2
             sx, sy = er[0], (0.06 if squint else er[1])
             e = ((lx - ex) / sx) ** 2 + ((ly - ey) / sy) ** 2
+            if self.scale < 2:                                               # 맵 머리: 눈은 eye_stamps()가 찍는다
+                e = 9.0
+                if old and 0.16 < ly - ey - er[1] < 0.24 and abs(lx - ex) < 0.14:
+                    return self.skin[1]
+                continue
             if e <= 1.0:
                 if face == "hurt":
                     return C("P00") if abs((lx - ex) * 1.3) < abs(ly - ey) + 0.05 else None   # ><
