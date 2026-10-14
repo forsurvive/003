@@ -424,8 +424,10 @@ func _draw() -> void:
 		var r := Rect2(c - Vector2(8 + pop, 8 + pop), Vector2(16 + pop * 2, 15 + pop * 2))
 		draw_rect(r, Color("1A181D"))
 		draw_rect(r.grow(-1), Color("E9E4D8"))
-		draw_colored_polygon(PackedVector2Array([c + Vector2(-4, 7 + pop), c + Vector2(0, 7 + pop), c + Vector2(-5, 11 + pop)]), Color("1A181D"))
-		draw_colored_polygon(PackedVector2Array([c + Vector2(-3, 6 + pop), c + Vector2(-1, 6 + pop), c + Vector2(-4, 9 + pop)]), Color("E9E4D8"))
+		draw_set_transform(c)                                           # 꼬리는 말풍선 기준 작은 좌표로(월드 좌표 수만 px에서는 삼각분할이 실패한다)
+		draw_colored_polygon(PackedVector2Array([Vector2(-4, 7 + pop), Vector2(0, 7 + pop), Vector2(-5, 11 + pop)]), Color("1A181D"))
+		draw_colored_polygon(PackedVector2Array([Vector2(-3, 6 + pop), Vector2(-1, 6 + pop), Vector2(-4, 9 + pop)]), Color("E9E4D8"))
+		draw_set_transform(Vector2.ZERO)
 		_draw_glyph(str(b["kind"]), c)
 	for l in lamps:
 		if fmod(l["t"], 0.25) < 0.15:
