@@ -706,18 +706,24 @@ func _bot_trade(t: TradeScreen, dt: float) -> void:
 	if hold < 1.0:
 		return
 	hold = 0.0
-	if not t.has_meta("bot_tried"):
-		t.set_meta("bot_tried", true)
-		var sell := t._list(0).filter(func(id): return id in ["W-067", "M-010", "M-046", "M-002"])   # 잡동사니만 판다(총·탄은 남긴다)
-		if not sell.is_empty():
-			t.deal(str(sell[0]), false)
-		if t.state["items"].has("I-001"):
-			t.deal("I-001", true)
-		print("거래 %s: 오간 캡 %d · 스팀팩 사는 값 %d · 내 캡 %d" % [t.vid, t.total, t.price("I-001", true), v("PC_CAPS")])
-		t.view.queue_redraw()
-		_shot("trade")
-		return
-	t.close(true)
+	var step := int(t.get_meta("bot_step", 0))
+	t.set_meta("bot_step", step + 1)
+	match step:
+		0:                                                             # 바구니에 담는다(잡동사니만 판다 — 총·탄은 남긴다)
+			var sell := t._list(0).filter(func(id): return id in ["W-067", "M-010", "M-046", "M-002"])
+			if not sell.is_empty():
+				t.offer(0, str(sell[0]))
+			if t.state["items"].has("I-001"):
+				t.offer(1, "I-001")
+			t.view.queue_redraw()
+		1:                                                             # 담은 모습(화면 찍기는 프레임 끝에 된다 — 확정은 다음 차례)
+			_shot("trade")
+		2:
+			if not t.confirm():
+				t.cart = [{}, {}]
+			print("거래 %s: 오간 캡 %d · 스팀팩 사는 값 %d · 내 캡 %d" % [t.vid, t.total, t.price("I-001", true), v("PC_CAPS")])
+		_:
+			t.close(true)
 
 
 func _next() -> void:

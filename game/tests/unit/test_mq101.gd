@@ -94,6 +94,42 @@ func test_trade_deals(t) -> void:
 	host.free()
 
 
+## SD-12 §11.1 바구니 거래: 담기 → 차액 → 거래 확정(캡·상인 캡을 넘으면 확정되지 않는다). 닫으면 담은 것은 없던 일
+func test_trade_cart(t) -> void:
+	var st := _state()
+	st.vars.set_v("PC_CAPS", 50)
+	st.items["M-010"] = 4
+	var host := InteriorHost.new()
+	host.st = st
+	host.combat = InteriorCombat.new()
+	host._load_items()
+	var m: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/merchants.json"))
+	var shop := {"items": {"I-001": 3}, "caps": 100}
+	var one := [1.0, 1.0]
+	var tr := TradeScreen.new().setup_trade(st, "V01", m["V01"], shop, host.items_db, 150.0, 0, one, one, "")
+	t.eq(tr.can_confirm(), "담은 물건이 없다", "빈 바구니는 확정할 수 없다")
+	t.eq(tr.offer(0, "M-010", 2), 2, "고철 둘을 판다고 담는다")
+	t.eq(tr.offer(0, "M-010", 9), 2, "가진 수까지만 담긴다")
+	t.eq(tr.offer(1, "I-001", 1), 1, "스팀팩 하나를 산다고 담는다")
+	var bal := tr.balance()
+	t.eq(bal, 4 * tr.price("M-010", false) - tr.price("I-001", true), "차액 = 판 값 합 − 산 값 합")
+	t.eq(int(st.vars.get_v("PC_CAPS")), 50, "확정 전에는 캡이 그대로")
+	t.ok(tr.confirm(), "거래 확정")
+	t.eq(int(st.vars.get_v("PC_CAPS")), 50 + bal, "확정하면 차액만큼")
+	t.eq(int(st.items.get("M-010", 0)), 0, "판 물건이 나간다")
+	t.eq(int(st.items.get("I-001", 0)), 1, "산 물건이 들어온다")
+	t.eq(int(shop["caps"]), 100 - bal, "상인 캡도 차액만큼")
+	t.ok(tr.cart[0].is_empty() and tr.cart[1].is_empty(), "확정 뒤 바구니는 빈다")
+	st.vars.set_v("PC_CAPS", 0)
+	tr.offer(1, "I-001", 2)
+	t.eq(tr.can_confirm(), "캡이 모자라다", "캡이 모자라면 확정이 켜지지 않는다")
+	t.ok(not tr.confirm(), "확정되지 않는다")
+	t.eq(int(shop["items"]["I-001"]), 2, "진열은 그대로")
+	tr.free()
+	host.combat.free()
+	host.free()
+
+
 func test_shop_state_renew(t) -> void:
 	var st := _state()
 	var host := InteriorHost.new()
