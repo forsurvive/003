@@ -247,6 +247,130 @@ def bake(src):
             "play": play, "band": band}
 
 
+# ④ 블록·필지(SD-16 §6.6 프리팹 층의 자리): 동네 길로 블록을 나누고 권역 성격대로 건물 발자국을 놓는다.
+# 건물 양식(style): 빌라·아파트(판상형)·상가·업무(유리)·공장·관청(석조)·기지(군)·주택(평야)
+STYLES = ["villa", "apt", "shop", "office", "factory", "gov", "base", "house"]
+# 권역별 양식 비율(SD-08 §7 지형·분위기·지면 팔레트에서 읽은 값 — 구현 정합)
+MIX = {"R01": {"villa": 62, "apt": 14, "shop": 18, "house": 6}, "R02": {"factory": 30, "shop": 25, "villa": 25, "apt": 12, "office": 8},
+       "R03": {"villa": 40, "apt": 20, "shop": 20, "factory": 20}, "R04": {"villa": 30, "house": 40, "shop": 30},
+       "R05": {"gov": 70, "shop": 30}, "R06": {"base": 55, "villa": 25, "shop": 20}, "R07": {"apt": 55, "office": 20, "shop": 20, "villa": 5},
+       "R08": {"villa": 40, "factory": 25, "apt": 20, "shop": 15}, "R09": {"apt": 48, "villa": 40, "shop": 12},
+       "R10": {"house": 55, "apt": 25, "villa": 20}, "R11": {"base": 50, "house": 50}, "HR": {"house": 100}}
+# 양식 → (블록 안 간격 길 폭, 건물 가로 범위, 세로(지붕+정면) 범위, 정면 단 수 범위)
+FORM = {"villa": (1, (7, 11), (6, 8), (3, 4)), "apt": (3, (16, 28), (8, 9), (5, 6)), "shop": (1, (5, 10), (5, 6), (2, 3)),
+        "office": (3, (10, 16), (10, 12), (6, 6)), "factory": (2, (10, 18), (7, 10), (2, 3)), "gov": (3, (10, 16), (8, 10), (3, 4)),
+        "base": (3, (8, 14), (6, 8), (2, 2)), "house": (2, (4, 6), (4, 5), (1, 2))}
+GRID = {"R01": 30, "R02": 36, "R03": 34, "R04": 30, "R05": 40, "R06": 44, "R07": 48, "R08": 34, "R09": 36, "R10": 44, "R11": 44, "HR": 40}
+YEOUIDO = (700, 1050, 930, 1145)                                         # 섬 상자: 여의도는 업무 지구(SD-08 §7.2)
+
+
+def wave(shape, rng, scale, amp, n=3):
+    """부드러운 저주파 잡음(사인 합): 길 격자를 휘게 하는 변위장"""
+    ys_, xs_ = np.mgrid[0:shape[0], 0:shape[1]].astype(np.float32)
+    out = np.zeros(shape, np.float32)
+    for k in range(n):
+        f = (k + 1) / scale
+        a1, a2, p1, p2 = rng.random(4) * np.pi * 2
+        out += np.sin(xs_ * f * np.cos(a1) + ys_ * f * np.sin(a1) + p1) * np.cos(xs_ * f * np.sin(a2) - ys_ * f * np.cos(a2) + p2)
+    return out * amp / n
+
+
+def city(r, src, seed=4120):
+    kind, use, region, level = r["kind"], r["use"], r["region"], r["level"]
+    rng = np.random.default_rng(seed)
+    buildable = (kind == 1) & ((use == 0) | (use == 1) | (use == 3) | (use == 4)) & (level == 0)
+    ys_, xs_ = np.mgrid[0:H, 0:W].astype(np.float32)
+    # 동네 길: 휜 격자. 언덕(구릉)일수록 더 휘고 촘촘하다(봉천식 계단 골목). 간격은 권역별(GRID), 언덕은 0.6배
+    wx = wave((H, W), rng, 320.0, 34.0) + np.where(use == 1, wave((H, W), rng, 90.0, 12.0), 0)
+    wy = wave((H, W), rng, 320.0, 34.0) + np.where(use == 1, wave((H, W), rng, 90.0, 12.0), 0)
+    gmap = np.zeros((H, W), np.float32)
+    for code in REG_CODES[1:]:
+        gmap[region == REG_CODES.index(code)] = GRID[code]
+    gmap = np.where(use == 1, gmap * 0.6, gmap).clip(16, 60)
+    u = (xs_ + wx) / gmap
+    v = (ys_ + wy) / gmap
+    du = np.abs(u - np.round(u)) * gmap
+    dv = np.abs(v - np.round(v)) * gmap
+    street = ((du < 2.0) | (dv < 2.0)) & buildable                       # 동네 길 4타일(2차로)
+    alley = ((np.abs(u * 2 - np.round(u * 2)) * gmap / 2 < 1.0) | (np.abs(v * 2 - np.round(v * 2)) * gmap / 2 < 1.0)) & buildable & ~street
+    kind[street] = 7
+    buildable &= ~street
+    # 양식 구역: 48타일 칸마다 권역 비율로 하나(이웃 칸끼리 이어지게 저주파 잡음으로 고른다), 간선도로 옆 띠는 상가
+    zone = np.full((H, W), -1, np.int8)
+    zc = 48
+    znoise = wave(((H + zc - 1) // zc, (W + zc - 1) // zc), rng, 3.0, 1.0)
+    for cy in range((H + zc - 1) // zc):
+        for cx in range((W + zc - 1) // zc):
+            sl = (slice(cy * zc, (cy + 1) * zc), slice(cx * zc, (cx + 1) * zc))
+            rc = np.bincount(region[sl].ravel(), minlength=len(REG_CODES))
+            rc[0] = 0
+            if rc.sum() == 0:
+                continue
+            code = REG_CODES[int(rc.argmax())]
+            mix = MIX[code]
+            names = list(mix)
+            cum = np.cumsum(np.array(list(mix.values()), float))
+            q = (znoise[cy, cx] * 0.5 + 0.5) * 0.6 + rng.random() * 0.4
+            st = names[int(np.searchsorted(cum / cum[-1], min(q, 0.999)))]
+            if YEOUIDO[0] <= cx * zc + zc // 2 <= YEOUIDO[2] and YEOUIDO[1] <= cy * zc + zc // 2 <= YEOUIDO[3]:
+                st = "office"
+            zone[sl] = STYLES.index(st)
+    major = (kind == 7) & ~street
+    near = np.zeros((H, W), bool)
+    for dy in range(-12, 13, 4):
+        for dx in range(-12, 13, 4):
+            near |= np.roll(np.roll(major, dy, 0), dx, 1)
+    shopband = near & np.isin(zone, [STYLES.index("villa"), STYLES.index("house"), STYLES.index("apt")])
+    zone[shopband] = STYLES.index("shop")
+    # 빽빽이 채우기: 2칸 간격으로 훑으며 그 자리 양식의 발자국이 들어가면 놓는다(골목 폭만큼 띄움)
+    occ = ~buildable.copy()
+    bid = np.zeros((H, W), np.int32)
+    blds = []
+    order = rng.permutation(4)
+    for oy in (order[0] % 2, 1 - order[0] % 2):
+        for y in range(oy, H - 4, 2):
+            row = occ[y]
+            xs_free = np.nonzero(~row)[0]
+            last = -99
+            for x in xs_free:
+                if x < last or occ[y, x]:
+                    continue
+                z = zone[y, x]
+                if z < 0:
+                    continue
+                st = STYLES[z]
+                gap, wr, hr, fr = FORM[st]
+                bw = int(rng.integers(wr[0], wr[1] + 1))
+                bh = int(rng.integers(hr[0], hr[1] + 1))
+                x1, y1 = min(x + bw, W), min(y + bh, H)
+                win = occ[y:y1, x:x1]
+                if win.any():
+                    free_w = int(np.argmax(win.any(0))) if win.any(0).any() else bw
+                    if free_w < wr[0] or occ[y:y1, x:x + free_w].any():
+                        continue
+                    x1 = x + free_w
+                blds.append({"x": int(x), "y": int(y), "w": int(x1 - x), "h": int(y1 - y), "style": st,
+                             "floors": int(rng.integers(fr[0], fr[1] + 1)), "seed": int(rng.integers(1 << 30))})
+                bid[y:y1, x:x1] = len(blds)
+                g = gap if st != "apt" else int(rng.integers(6, 9))      # 아파트는 동 사이(앞뒤) 간격이 넓다
+                occ[max(0, y - gap):min(H, y1 + g), max(0, x - gap):min(W, x1 + gap)] = True
+                last = x1 + gap
+    r["bid"] = bid
+    r["street"] = street
+    r["alley"] = alley
+    r["zone"] = zone
+    r["buildings"] = blds
+    # 나무: 산지·구릉 숲(SD-16 §6.7 '숲은 마른 침엽 오브젝트 밀도'), 빈 땅 드문드문
+    tree = np.zeros((H, W), bool)
+    rnd = rng.random((H, W))
+    forest = (kind == 1) & ((use == 1) | (use == 2)) & (bid == 0) & ~alley
+    tree |= forest & (rnd < np.where(use == 2, 0.10, 0.04))
+    tree |= (kind == 1) & (use == 0) & (bid == 0) & ~alley & (rnd < 0.01)
+    tree |= (kind == 5) & (rnd < 0.02)
+    r["tree"] = tree
+    return r
+
+
 def preview(r, src, path, scale=1):
     from PIL import Image
     kind, use, level, hgt = r["kind"], r["use"], r["level"], r["hgt"]
@@ -272,6 +396,15 @@ def preview(r, src, path, scale=1):
     img[kind == 11] = (226, 214, 182)
     img[kind == 12] = (120, 150, 92)
     img[r["elevated"] & (kind == 7)] = (40, 40, 46)
+    if "bid" in r:                                                       # 건물: 양식 색 + 아래 정면 띠
+        col = {"villa": (168, 92, 74), "apt": (222, 214, 196), "shop": (190, 150, 110), "office": (120, 150, 170),
+               "factory": (150, 80, 60), "gov": (200, 196, 186), "base": (110, 118, 84), "house": (180, 130, 96)}
+        for b in r["buildings"]:
+            c = np.array(col[b["style"]])
+            img[b["y"]:b["y"] + b["h"], b["x"]:b["x"] + b["w"]] = c
+            f = b["y"] + b["h"] - min(b["floors"], b["h"] - 1)
+            img[f:b["y"] + b["h"], b["x"]:b["x"] + b["w"]] = (c * 0.7).astype(np.uint8)
+        img[r["tree"]] = (52, 86, 50)
     edge = np.zeros((H, W), bool)                                         # 단 경계(암벽)
     edge[:, 1:] |= level[:, 1:] != level[:, :-1]
     edge[1:, :] |= level[1:, :] != level[:-1, :]
@@ -292,10 +425,15 @@ def preview(r, src, path, scale=1):
 def main():
     src = json.load(open(SRC, encoding="utf-8"))
     r = bake(src)
+    city(r, src)
     kind = r["kind"]
     n = {k: int((kind == v).sum()) for k, v in (("땅", 1), ("깊은 물", 2), ("중간 물", 3), ("얕은 물", 4), ("둔치", 5), ("제방", 6),
                                                 ("차도", 7), ("보도", 8), ("철로", 10), ("성곽", 11), ("섬", 12))}
     print("월드 래스터 %d×%d: %s · 최고 단 %d · 최고 %dm" % (W, H, n, int(r["level"].max()), int(r["hgt"].max())))
+    cnt = {}
+    for b in r["buildings"]:
+        cnt[b["style"]] = cnt.get(b["style"], 0) + 1
+    print("건물 %d동 %s · 나무 %d그루" % (len(r["buildings"]), cnt, int(r["tree"].sum())))
     out = None
     for i, a in enumerate(sys.argv):
         if a == "--preview" and i + 1 < len(sys.argv):
