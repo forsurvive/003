@@ -70,7 +70,7 @@ func _rebucket() -> void:
 	_buckets.clear()
 	_occupied.clear()
 	for c in combatants:
-		if c.dead or (c.actor is Object and not is_instance_valid(c.actor)):
+		if c.dead or not is_instance_valid(c.actor):
 			continue
 		_occupied[Vector2i(floori(c.pos().x / 32), floori(c.pos().y / 32))] = c.team
 		var k := Vector2i(floori(c.pos().x / BUCKET), floori(c.pos().y / BUCKET))
