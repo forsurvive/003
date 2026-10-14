@@ -1,4 +1,5 @@
-## 단계 0-9 주민 폭행·살인(SD-10 §6.3): 실총으로 죽이면 카르마 −100·st.dead·S7_KILLS, 공기총·근접은 기절(8초 뒤 일어남, 카르마 0),
+## 단계 0-9 주민 폭행·살인(SD-10 §6.3): 프롤로그 볼트(V_ACT 0)에서는 실총도 기절, 1막 이후 실총으로 죽이면 카르마 −100·st.dead·S7_KILLS,
+## 공기총·근접은 기절(8초 뒤 일어남, 카르마 0),
 ## 불사 4인은 HP 1에서 무릎, 맞으면 맵 방문마다 한 번 S7_ASSAULT. 적의 탄은 주민을 맞히지 않는다.
 extends RefCounted
 
@@ -52,15 +53,21 @@ func test_karma_resident_kill_ko_kneel(t) -> void:
 	var c: InteriorCombat = w[1]
 	var host: InteriorHost = w[2]
 	t.eq(c.residents.size(), 3, "맵 인물이 전투 대상으로 들어간다")
-	c.resident("N-R01-024").take({"hp": 100.0}, Vector2.ZERO)                       # 실총
+	c.resident("N-R01-024").take({"hp": 100.0}, Vector2.ZERO)                       # 실총 — 프롤로그 볼트(평시)
+	t.eq(int(st.vars.get_v("V_KARMA")), 0, "프롤로그 볼트에서는 볼트원을 죽일 수 없다(실총도 기절)")
+	t.ok(not st.dead.has("N-R01-024") and float(host.npcs[0].get("down_t", 0.0)) > 0.0, "쓰러져 기절했을 뿐")
+	host._down_tick(host.npcs[0], 9.0)
+	t.ok(not c.resident("N-R01-024").dead, "일어난다")
+	st.vars.set_v("V_ACT", 1)                                                       # 1막 이후(볼트 귀환 등)에는 살인 규칙
+	c.resident("N-R01-024").take({"hp": 100.0}, Vector2.ZERO)
 	t.eq(int(st.vars.get_v("V_KARMA")), -100, "악하지 않은 주민을 죽이면 카르마 −100")
 	t.ok(st.dead.has("N-R01-024"), "죽은 주민은 기록된다(다시 서지 않는다)")
 	t.eq(int(st.vars.get_v("S7_KILLS")), 1, "S7_KILLS")
 	t.ok(host.npcs[0].get("dead", false) and not host.map.blockers.has(host.npcs[0]["actor"]), "쓰러진 자리는 막지 않는다")
 	c.resident("N-R01-022").take({"hp": 10.0, "nonlethal": true}, Vector2.ZERO)
-	t.eq(int(st.vars.get_v("S7_ASSAULT")), 1, "맞으면 폭행 +1(카르마는 그대로)")
+	t.eq(int(st.vars.get_v("S7_ASSAULT")), 2, "맞으면 폭행 +1(카르마는 그대로)")
 	c.resident("N-R01-022").take({"hp": 10.0, "nonlethal": true}, Vector2.ZERO)
-	t.eq(int(st.vars.get_v("S7_ASSAULT")), 1, "같은 사람은 방문마다 한 번만 센다")
+	t.eq(int(st.vars.get_v("S7_ASSAULT")), 2, "같은 사람은 방문마다 한 번만 센다")
 	c.resident("N-R01-022").take({"hp": 100.0, "nonlethal": true}, Vector2.ZERO)  # 공기총·근접: 기절
 	t.eq(int(st.vars.get_v("V_KARMA")), -100, "기절은 카르마 변화 없음")
 	t.ok(float(host.npcs[1].get("down_t", 0.0)) > 0.0 and not st.dead.has("N-R01-022"), "기절해 누워 있다")

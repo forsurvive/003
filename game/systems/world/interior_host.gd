@@ -512,7 +512,8 @@ func _after_theft() -> void:
 
 # ---------------------------------------------------------------- 주민 폭행·살인(SD-10 §6.3, 0-9)
 ## 맞음: 맵 방문마다 처음 한 번 S7_ASSAULT +1, "!" 말풍선·외침, 하던 일을 멈추고 이쪽을 본다(폭행 자체는 카르마가 아니다 — 원작).
-## 기절(공기총·근접): 8초 누웠다가 일어난다. 실총으로 죽임: 악인이 아니면 카르마 −100, st.dead에 남아 다시 서지 않는다.
+## 기절(공기총·근접, 프롤로그 볼트에서는 실총도): 8초 누웠다가 일어난다. 1막 이후 실총으로 죽임: 악인이 아니면 카르마 −100,
+## st.dead에 남아 다시 서지 않는다.
 ## 불사 4인: HP 1에서 무릎을 꿇고(5초) 일어난다.
 const ASSAULT_BARKS := ["으악! 왜 이래!", "미쳤어? 그만해!", "보안과! 보안과!", "살려 줘!"]
 const KO_SECS := 8.0
@@ -550,10 +551,18 @@ func _on_resident_hit(id: String) -> void:
 	combat._pop(ASSAULT_BARKS[int(st.vars.get_v("S7_ASSAULT")) % ASSAULT_BARKS.size()], a.loco.logical + Vector2(0, -34), Color("E04A35"))
 
 
+## 볼트원을 죽일 수 있는가: 프롤로그 볼트(V_ACT 0, 평시 — 죽이면 처벌받아야 하는 곳)에서는 실총도 기절로 끝난다.
+## 살인 규칙(−100·st.dead)은 1막 이후(4막 볼트 귀환 등)를 위해 남겨 둔다.
+func residents_killable() -> bool:
+	return int(st.vars.get_v("V_ACT")) >= 1
+
+
 func _on_resident_down(id: String, killed: bool) -> void:
 	var n := _npc_entry(id)
 	if n.is_empty():
 		return
+	if killed and not residents_killable():
+		killed = false
 	var a: Actor = n["actor"]
 	a.set_pose("lie")
 	map.blockers.erase(a)

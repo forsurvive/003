@@ -291,7 +291,7 @@ def v00():
     # 2277 탈출(MQ-P4 S4 ①): 데크를 지키는 계엄군 6(제자리 경계, 생포 사격) · 파워 아머 1(정문 옆, 못 이기는 적) · 육지환 · 검역실 최보미(권총 위협 사격)
     for x, y, d in ((13, 10, "S"), (16, 11, "S"), (23, 11, "S"), (26, 10, "S"), (11, 15, "E"), (28, 15, "W")):
         m.c(f'enemy CR-401 {x} {y} dir={d} stance=hold cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60 and MQP4_DECOY == 0"')
-    m.c('enemy CR-405 22 9 dir=S stance=hold cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60"')
+    m.c('enemy CR-405 22 9 dir=S stance=hold cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60 and MQP4_DECOY == 0"')
     m.c('npc C-004 15 9 S cond="year() == 2277 and MQP4_STAGE >= 30 and MQP4_STAGE < 60 and MQP4_DECOY == 0" bark="후보는 다치게 하지 마라."')
     m.c('enemy CR-473 12 19 arm=pistol who=N-R01-019 dir=E route=12,19,4;27,19,4 cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60 and MQP4_DECOY == 0"')    # 데크 남쪽 순찰
     m.c('trigger 17 9 w=4 h=1 scene=MQ-P4_GATE cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60 and V_ESCAPE >= 1" once')

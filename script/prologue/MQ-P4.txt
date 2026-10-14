@@ -353,9 +353,11 @@ C-002 [분노] (외침) 여기야! 1순위는 여기 있다!
 @cmd show BJ1 13,10 S en_cr401_loco
 @cmd show BJ2 26,10 S en_cr401_loco
 @cmd show BJ3 11,15 E en_cr401_loco
+@cmd show PA1 22,9 S en_cr405_loco
 @cmd go BJ1 18,16 run
 @cmd go BJ2 20,16 run
 @cmd go BJ3 18,18 run
+@cmd go PA1 20,18
 @cmd wait go
 @cmd balloon C-002 !
 SYS 군홧발이 한꺼번에 데크 가운데로 몰린다. 하도윤이 두 손을 든다.
@@ -369,20 +371,23 @@ SYS 군홧발이 한꺼번에 데크 가운데로 몰린다. 하도윤이 두 �
 @cmd fade_in black 6
 SYS 오버시어 전용 비상 계단 끝, 정문 구역 서쪽 비상 통로. 데크 쪽 문틈으로 계엄군 철모가 보인다.
 C-001 [기본] (무전) 대령님, 윤정인입니다. 아이가 농장 배수로로 갔어요. 분대를 그쪽으로 보내세요.
-C-004 [기본] (무전) …확인한다. 분대, 수경 농장으로. 파워 아머는 정문을 지켜라.
+C-004 [기본] (무전) …확인한다. 분대, 수경 농장으로. 아머도 따라붙어라. 후보를 놓치면 안 된다.
 ! MQP4_DECOY = 2
 @cmd refresh
 @cmd show BJ1 13,10 S en_cr401_loco
 @cmd show BJ2 16,11 S en_cr401_loco
 @cmd show BJ3 23,11 S en_cr401_loco
+@cmd show PA1 22,9 S en_cr405_loco
 @cmd go BJ1 18,22 run
 @cmd go BJ2 19,22 run
 @cmd go BJ3 20,22 run
+@cmd go PA1 21,22
 @cmd wait go
 @cmd hide BJ1
 @cmd hide BJ2
 @cmd hide BJ3
-SYS 군홧발 소리가 검역실 쪽으로 멀어진다. 데크에는 문 옆의 파워 아머 하나만 남는다.
+@cmd hide PA1
+SYS 군홧발과 파워 아머의 무거운 발소리가 검역실 쪽으로 멀어진다. 데크가 텅 빈다.
 C-001 [기본] 오버시어 비상 개방 단말. 이 열쇠로만 돌아가.
 @cmd move C-001 2,3
 @cmd face C-001 N

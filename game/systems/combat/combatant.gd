@@ -41,8 +41,7 @@ func take(result: Dictionary, from: Vector2) -> void:
 		hp = hp_floor
 		hit.emit()
 		return
-	if hp > 0.0:
-		hit.emit()
+	hit.emit()                                # 쓰러뜨린 한 방도 '맞음'이다(폭행 반응이 먼저, 쓰러짐은 그 뒤)
 	if hp <= 0.0:
 		hp = 0.0
 		dead = true

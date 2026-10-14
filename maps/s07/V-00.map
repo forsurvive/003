@@ -90,7 +90,7 @@ enemy CR-401 23 11 dir=S stance=hold cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60 
 enemy CR-401 26 10 dir=S stance=hold cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60 and MQP4_DECOY == 0"
 enemy CR-401 11 15 dir=E stance=hold cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60 and MQP4_DECOY == 0"
 enemy CR-401 28 15 dir=W stance=hold cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60 and MQP4_DECOY == 0"
-enemy CR-405 22 9 dir=S stance=hold cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60"
+enemy CR-405 22 9 dir=S stance=hold cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60 and MQP4_DECOY == 0"
 npc C-004 15 9 S cond="year() == 2277 and MQP4_STAGE >= 30 and MQP4_STAGE < 60 and MQP4_DECOY == 0" bark="후보는 다치게 하지 마라."
 enemy CR-473 12 19 arm=pistol who=N-R01-019 dir=E route=12,19,4;27,19,4 cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60 and MQP4_DECOY == 0"
 trigger 17 9 w=4 h=1 scene=MQ-P4_GATE cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60 and V_ESCAPE >= 1" once
