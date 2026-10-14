@@ -371,6 +371,139 @@ def city(r, src, seed=4120):
     return r
 
 
+# ⑤-1 건물 조립(SD-16 §6.5): 발자국 w×h = 위쪽 옥상 R행 + 아래 정면 F행(F = 층 단, 최대 6). 칸마다 타일 이름을 고른다.
+# 스킨 표(art/tools/tiles_world.py → game/assets/tiles/ts_world_bld.json "skins")의 부위 목록에서 씨앗으로 고른다.
+SKIN_OF = {"villa": ["villa_brick", "villa_brickdk", "villa_plaster", "villa_tile"], "apt": ["apt_blue", "apt_green", "apt_red"],
+           "shop": ["shop_tile", "shop_plaster"], "office": ["office"], "factory": ["factory_steel", "factory_rust"],
+           "gov": ["gov"], "base": ["base"], "house": ["house_mint", "house_plaster", "house_brick"]}
+
+
+def _h(*a):
+    v = 2166136261
+    for k in a:
+        v = ((v ^ (int(k) & 0xFFFFFFFF)) * 16777619) & 0xFFFFFFFF
+    return v
+
+
+def bld_cells(b, skins):
+    """건물 하나 → ([(dx, dy, 이름)] 몸통 층, [(dx, dy, 이름)] 옥상 덧층, 스킨 이름)"""
+    seed, w, h, st = b["seed"], b["w"], b["h"], b["style"]
+    pool = SKIN_OF[st]
+    skin = pool[_h(seed, 1) % len(pool)]
+    sk = skins[skin]
+    F = max(1, min(b["floors"], h - 1, 6))
+    R = h - F
+    if F == 1:
+        rows = ["solo"]
+    elif st == "apt" and F >= 3:
+        rows = ["top"] + ["mid"] * (F - 3) + ["low", "bot"]
+    else:
+        rows = ["top"] + ["mid"] * (F - 2) + ["bot"]
+    pick = lambda lst, *k: lst[_h(seed, *k) % len(lst)]
+    body, deco = [], []
+    sp = sk["special"]
+    # 1층 특수 칸 자리
+    mid = list(range(1, w - 1)) or [0]
+    door_at, pipe_at, extra = {}, None, {}
+    bot = rows[-1]
+    if st in ("villa", "house"):
+        c = mid[_h(seed, 3) % len(mid)]
+        door_at[c] = pick(sp[bot + "_door"], 4)
+        if st == "villa" and w >= 4:
+            cand = [x for x in mid if abs(x - c) > 1] or mid
+            pipe_at = cand[_h(seed, 5) % len(cand)]
+    elif st == "apt":
+        for c in range(2, w - 2, 6):                                     # 동 현관(계단실)마다 하나
+            door_at[c] = sp["bot_door"][0]
+    elif st == "factory":
+        c = mid[_h(seed, 3) % len(mid)]
+        if c + 1 < w - 1 and _h(seed, 6) % 3:
+            door_at[c] = sp[bot + "_shutter_l"][0]
+            door_at[c + 1] = sp[bot + "_shutter_r"][0]
+        else:
+            door_at[c] = sp[bot + "_steel"][0]
+    elif st == "gov":
+        c = w // 2
+        door_at[c] = sp[bot + "_door"][0]
+        for x in (1, w - 2):
+            if x != c and _h(seed, x, 8) % 2:
+                door_at[x] = sp[bot + "_barrier"][0]
+        extra[(w // 2 - 2 if w > 5 else 0, rows[0])] = sp[rows[0] + "_lamp"][0] if rows[0] + "_lamp" in sp else None
+    elif st == "base":
+        door_at[w // 2] = sp[bot + "_door"][0]
+    sign = {}
+    for j, row in enumerate(rows):
+        y = R + j
+        if st == "shop" and row != "bot":
+            sign[row, j] = _h(seed, j, 11) % 5
+        for x in range(w):
+            col = "l" if x == 0 else ("r" if x == w - 1 else "m")
+            if row == bot and x in door_at:
+                nm = door_at[x]
+            elif pipe_at == x and (row + "_pipe") in sp:
+                nm = sp[row + "_pipe"][0]
+            elif extra.get((x, row)):
+                nm = extra[(x, row)]
+            else:
+                lst = sk["rows"][row + "_" + col]
+                if (row, j) in sign:
+                    lst = [n for n in lst if n.endswith("s%d" % sign[row, j])]
+                nm = pick(lst, x, j, 21)
+            body.append((x, y, nm))
+    rf = sk["roof"]
+    if rf["kind"] == "pitch":
+        nn = (R + 1) // 2
+        for j in range(R):
+            part = ("n" if j == 0 else "ns") if j < nn else ("ridge" if j == nn else "ss")
+            for x in range(w):
+                col = "l" if x == 0 else ("r" if x == w - 1 else "m")
+                body.append((x, j, pick(rf[part + "_" + col], x, j, 23)))
+    else:
+        for j in range(R):
+            for x in range(w):
+                pos = ("n" if j == 0 else "c") if 0 < x < w - 1 else (("nw" if j == 0 else "w") if x == 0 else ("ne" if j == 0 else "e"))
+                lst = rf[pos]
+                hv = _h(seed, x, j, 25)
+                nm = lst[0] if (len(lst) == 1 or hv % 10 < 6) else lst[1 + (hv >> 8) % (len(lst) - 1)]   # 평면 60%
+                body.append((x, j, nm))
+        # 옥상 설비(덧층): 난간 안쪽(1..w-2, 1..R-1)
+        free = {(x, j) for x in range(1, w - 1) for j in range(1, R)}
+
+        def put(name, x, j, ww=1, hh=1):
+            cells = [(x + a, j + c) for c in range(hh) for a in range(ww)]
+            if all(c in free for c in cells):
+                for (a, c) in cells:
+                    free.discard((a, c))
+                if ww == 1:
+                    deco.append((x, j, "rd:" + name))
+                else:
+                    for c in range(hh):
+                        for a in range(ww):
+                            deco.append((x + a, j + c, "rd:%s%d%d" % (name, c, a)))
+                return True
+            return False
+        r = _h(seed, 31)
+        if st in ("apt", "office", "gov", "shop") and R >= 3 and w >= 6:      # 계단실(넓은 옥상)
+            put("pent", 1 + r % max(1, w - 4), 1 + (r >> 4) % max(1, R - 2), 3, 2)
+        if st in ("gov", "shop", "office") and R >= 3 and w >= 8 and (r >> 6) % 2:
+            put("sky", w // 2 - 1 + (r >> 9) % 3 - 1, 1 + (r >> 12) % max(1, R - 2), 2, 2)
+        if st == "apt":
+            put("dome", 2 + r % 3, 1, 2, 2)
+            put("tank", w - 4 - r % 3, 1, 2, 2)
+            for k in range(w // 6):
+                put(["ac", "vent", "antenna", "debris"][(r >> k) % 4], 1 + _h(seed, k, 40) % max(1, w - 2), 1 + _h(seed, k, 41) % max(1, R - 1))
+        else:
+            n = {"villa": 2, "shop": 2, "office": 4, "gov": 2, "base": 2, "factory": 2}.get(st, 1)
+            if st in ("villa", "shop") and r % 3 == 0:
+                put("tank", 1 + r % max(1, w - 3), 1, 2, 2)
+            kinds = {"villa": ["garden0", "garden1", "ac", "hatch", "dish"], "shop": ["ac", "ac", "vent", "hatch", "antenna"],
+                     "office": ["ac", "vent", "vent", "antenna", "dish"], "gov": ["antenna", "vent", "hatch"],
+                     "base": ["sandbag", "antenna", "hatch"], "factory": ["vent", "vent"]}[st]
+            for k in range(n * max(1, w // 6)):
+                put(kinds[_h(seed, k, 50) % len(kinds)], 1 + _h(seed, k, 51) % max(1, w - 2), 1 + _h(seed, k, 52) % max(1, R - 1))
+    return body, deco, skin
+
+
 # ⑤ 바닥 타일(ts_r01_ext 이름): 굽기 결과 → 바닥 합성 층의 타일 번호. 청크 내보내기·견본 그림이 같은 표를 쓴다
 def floor_names(r, seed=77):
     """반환: 칸마다 타일 이름 번호 배열(0..len(FLOOR)-1)과 이름 목록"""
