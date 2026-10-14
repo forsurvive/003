@@ -263,7 +263,7 @@ func _trade_cmd(a: Array, finish: Callable) -> void:
 	var greet := ""
 	if vid == "V01" and r in [1, 2]:
 		k = [0.90, 1.0]
-		greet = "계단 지켜 준 사람한테 제값 받으면 벌 받지. 빼 줄게."
+		greet = "계단 지켜 준 사람한테 제값 받으면 벌 받지. 빼 줄게." if r == 1 else "놈들 하수구로 몰아낸 머리값이야. 빼 줄게."
 	elif vid == "V01" and r == 4:
 		k = [1.10, 1.0]
 		greet = "새벽인력이랑 장사하는 손님이면 값도 그쪽 시세로 받아야지."

@@ -14,7 +14,7 @@ from PIL import Image, ImageChops, ImageStat, ImageDraw
 
 THRESH = 1.5
 REGIONS = {
-    "board": [(160, 60, 480, 300)],
+    "board": [(228, 82, 304, 142)],                          # 게시판(주인공이 X-BC 24,37에 서면 화면 이 자리)
     "greet": [(128, 254, 612, 350), (128, 32, 612, 128)],     # 대화창 글(아래 배치·위 배치 중 큰 쪽)
     "trade": [(330, 24, 630, 44), (560, 50, 630, 262)],       # 상인 머리말 · 오른쪽 값 열
 }
@@ -83,7 +83,7 @@ def main():
         if not sheet_rows:
             sheet_rows = [(s, img[s]) for s in sols]
     if sample and sheet_rows:
-        crops = [("board", (120, 40, 520, 320)), ("greet", (0, 230, 640, 360)), ("trade", (320, 0, 640, 270))]
+        crops = [("board", (200, 60, 330, 160)), ("greet", (0, 230, 640, 360)), ("trade", (320, 0, 640, 270))]
         W = sum(c[1][2] - c[1][0] for c in crops) + 8 * (len(crops) + 1)
         H = max(c[1][3] - c[1][1] for c in crops)
         sheet = Image.new("RGB", (W + 40, (H + 8) * len(sheet_rows) + 8), (26, 24, 29))
