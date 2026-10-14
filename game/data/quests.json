@@ -37,12 +37,12 @@
     "10": {
      "done": "단서 1개 이상",
      "log": "관리자 코드를 읽을 사람을 찾는다",
-     "src": "03a_main-story-part1.md:1133"
+     "src": "03a_main-story-part1.md:1136"
     },
     "100": {
      "done": "K_CODE = 1",
      "log": "(자동) 코드의 정체를 알았다",
-     "src": "03a_main-story-part1.md:1134"
+     "src": "03a_main-story-part1.md:1137"
     }
    },
    "title": "코드를 읽을 사람"
@@ -53,22 +53,22 @@
     "10": {
      "done": "상가 입구 통과",
      "log": "지하시장에 들어간다",
-     "src": "03a_main-story-part1.md:1157"
+     "src": "03a_main-story-part1.md:1160"
     },
     "20": {
      "done": "상인회 허가 / 면담료 / 몰래 진입",
      "log": "마영식을 만날 방법을 찾는다",
-     "src": "03a_main-story-part1.md:1158"
+     "src": "03a_main-story-part1.md:1161"
     },
     "30": {
      "done": "대화 → K_CODE",
      "log": "마영식에게 코드를 보여 준다",
-     "src": "03a_main-story-part1.md:1159"
+     "src": "03a_main-story-part1.md:1162"
     },
     "40": {
      "done": "K_LINE, LR-21",
      "log": "(선택) 마영식에게서 회선 이야기를 끝까지 듣는다",
-     "src": "03a_main-story-part1.md:1160"
+     "src": "03a_main-story-part1.md:1163"
     }
    },
    "title": "지하시장"
@@ -79,27 +79,27 @@
     "10": {
      "done": "벙커 입구(환승 정류장 아래 계단)",
      "log": "볼트 기록이 가리킨 곳을 찾는다",
-     "src": "03a_main-story-part1.md:1197"
+     "src": "03a_main-story-part1.md:1200"
     },
     "20": {
      "done": "출석부, 당직 일지, 유해",
      "log": "2077년 비상 집결지를 조사한다",
-     "src": "03a_main-story-part1.md:1198"
+     "src": "03a_main-story-part1.md:1201"
     },
     "30": {
      "done": "K_CODE",
      "log": "관리자 인증 단말에 핍-보이를 댄다",
-     "src": "03a_main-story-part1.md:1199"
+     "src": "03a_main-story-part1.md:1202"
     },
     "40": {
      "done": "벙커 탈출",
      "log": "들이닥친 수색조를 피하거나 처리한다",
-     "src": "03a_main-story-part1.md:1200"
+     "src": "03a_main-story-part1.md:1203"
     },
     "45": {
      "done": "V_DOYUN = 2",
      "log": "(선택) 호송차의 하도윤을 구한다",
-     "src": "03a_main-story-part1.md:1201"
+     "src": "03a_main-story-part1.md:1204"
     }
    },
    "title": "여의도 집결지"
@@ -110,17 +110,17 @@
     "10": {
      "done": "본소 안 진입",
      "log": "새벽인력 본소에 들어간다",
-     "src": "03a_main-story-part1.md:1242"
+     "src": "03a_main-story-part1.md:1245"
     },
     "20": {
      "done": "장부 열람 → K_CODE",
      "log": "황두칠의 장부를 본다",
-     "src": "03a_main-story-part1.md:1243"
+     "src": "03a_main-story-part1.md:1246"
     },
     "30": {
      "done": "HO_LEDGER 결정(가지고 나가기도 결정이다)",
      "log": "장부를 어떻게 할지 행동한다",
-     "src": "03a_main-story-part1.md:1244"
+     "src": "03a_main-story-part1.md:1247"
     }
    },
    "title": "현상금의 주인"
@@ -131,7 +131,7 @@
     "10": {
      "done": "아래 해법 중 하나",
      "log": "계엄사령관의 수색대를 따돌린다",
-     "src": "03a_main-story-part1.md:1280"
+     "src": "03a_main-story-part1.md:1283"
     }
    },
    "title": "첫 번째 추적자"
@@ -142,17 +142,17 @@
     "10": {
      "done": "섬 진입",
      "log": "노들섬을 건너 강 북쪽으로 간다",
-     "src": "03a_main-story-part1.md:1325"
+     "src": "03a_main-story-part1.md:1328"
     },
     "20": {
      "done": "아래 해법",
      "log": "선주 조합장에게 통행 허락을 받거나, 허락 없이 건넌다",
-     "src": "03a_main-story-part1.md:1326"
+     "src": "03a_main-story-part1.md:1329"
     },
     "30": {
      "done": "북단 진입 → S_CROSSED",
      "log": "한강대교 북단에 닿는다",
-     "src": "03a_main-story-part1.md:1327"
+     "src": "03a_main-story-part1.md:1330"
     }
    },
    "title": "노들섬"
@@ -163,22 +163,22 @@
     "10": {
      "done": "분견대 초소 통과",
      "log": "남산 방송국을 찾아간다",
-     "src": "03a_main-story-part1.md:1426"
+     "src": "03a_main-story-part1.md:1429"
     },
     "20": {
      "done": "방송실 대화",
      "log": "송미래와 이야기한다",
-     "src": "03a_main-story-part1.md:1427"
+     "src": "03a_main-story-part1.md:1430"
     },
     "30": {
      "done": "[수리 50] 또는 [과학 50]",
      "log": "(선택) 송신 진공관 수리를 돕는다",
-     "src": "03a_main-story-part1.md:1428"
+     "src": "03a_main-story-part1.md:1431"
     },
     "40": {
      "done": "방송실 출입문",
      "log": "방송실을 나선다",
-     "src": "03a_main-story-part1.md:1429"
+     "src": "03a_main-story-part1.md:1432"
     }
    },
    "title": "남산의 목소리"
@@ -189,22 +189,22 @@
     "10": {
      "done": "정문 통과",
      "log": "용산 요새에 들어간다",
-     "src": "03a_main-story-part1.md:1466"
+     "src": "03a_main-story-part1.md:1469"
     },
     "20": {
      "done": "회의실",
      "log": "연합단 단장을 만난다",
-     "src": "03a_main-story-part1.md:1467"
+     "src": "03a_main-story-part1.md:1470"
     },
     "30": {
      "done": "아래 행동",
      "log": "손님 숙소에서 나온다",
-     "src": "03a_main-story-part1.md:1468"
+     "src": "03a_main-story-part1.md:1471"
     },
     "40": {
      "done": "테이프 3개 또는 [과학 50]",
      "log": "(선택) 기록관을 돕는다",
-     "src": "03a_main-story-part1.md:1469"
+     "src": "03a_main-story-part1.md:1472"
     }
    },
    "title": "용산 요새"
@@ -215,22 +215,22 @@
     "10": {
      "done": "B1 진입",
      "log": "당인리 지하 원자력 발전소에 들어간다",
-     "src": "03a_main-story-part1.md:1539"
+     "src": "03a_main-story-part1.md:1542"
     },
     "20": {
      "done": "세 계통 조사",
      "log": "발전소의 세 계통(배수·냉각·제어)을 확인한다",
-     "src": "03a_main-story-part1.md:1540"
+     "src": "03a_main-story-part1.md:1543"
     },
     "30": {
      "done": "재가동 / 봉인 / 과부하",
      "log": "원자로를 어떻게 할지 주제어실에서 정한다",
-     "src": "03a_main-story-part1.md:1541"
+     "src": "03a_main-story-part1.md:1544"
     },
     "40": {
      "done": "지상 진입",
      "log": "기동 키를 들고 발전소를 나선다(또는 두고 나선다)",
-     "src": "03a_main-story-part1.md:1542"
+     "src": "03a_main-story-part1.md:1545"
     }
    },
    "title": "당인리"
@@ -241,27 +241,27 @@
     "10": {
      "done": "로비",
      "log": "세진전자 타워에 들어간다",
-     "src": "03a_main-story-part1.md:1601"
+     "src": "03a_main-story-part1.md:1604"
     },
     "20": {
      "done": "협력자 과제 또는 단독 경로",
      "log": "위층으로 오르는 길을 찾는다",
-     "src": "03a_main-story-part1.md:1602"
+     "src": "03a_main-story-part1.md:1605"
     },
     "30": {
      "done": "101층",
      "log": "설계자의 방을 찾는다",
-     "src": "03a_main-story-part1.md:1603"
+     "src": "03a_main-story-part1.md:1606"
     },
     "40": {
      "done": "생체 인증",
      "log": "수석 연구실 금고를 연다",
-     "src": "03a_main-story-part1.md:1604"
+     "src": "03a_main-story-part1.md:1607"
     },
     "50": {
      "done": "1층 출구",
      "log": "테이프를 들고 타워를 나선다(또는 맡기고 나선다)",
-     "src": "03a_main-story-part1.md:1605"
+     "src": "03a_main-story-part1.md:1608"
     }
    },
    "title": "세진전자 타워"
@@ -272,17 +272,17 @@
     "10": {
      "done": "기지 경계",
      "log": "북한산의 중국군 잔존병 기지를 찾는다",
-     "src": "03a_main-story-part1.md:1662"
+     "src": "03a_main-story-part1.md:1665"
     },
     "20": {
      "done": "아래 해법",
      "log": "기지 지휘관을 만나거나, 터널로 가는 길을 확보한다",
-     "src": "03a_main-story-part1.md:1663"
+     "src": "03a_main-story-part1.md:1666"
     },
     "30": {
      "done": "터널 하층 끝(관제 본부 하층 차단벽 앞) 도달 또는 지도 확보",
      "log": "침투 터널이 어디로 이어지는지 확인한다",
-     "src": "03a_main-story-part1.md:1664"
+     "src": "03a_main-story-part1.md:1667"
     }
    },
    "title": "끝나지 않은 명령"
