@@ -390,7 +390,11 @@ func _start_fight() -> void:
 		var a: Actor = host.ev.actors.get(d[0])
 		if a != null:
 			host.combat.add_ally(d[0], a, 60.0, "W-002")
-	if host.combat.weapon_id == "" and int(st.items.get("W-002", 0)) > 0:
+	if int(st.items.get("W-002", 0)) == 0:                            # 총 없이 나온 갈래(은신·설득·하도윤): 남태하가 감시조 예비 권총을 건넨다
+		st.call_fn("give", ["W-002"])
+		st.call_fn("give", ["10mm 탄", 24])
+		st.vars.set_v("MQ101_LOAN", 1)
+	if host.combat.weapon_id != "W-002":
 		host.combat.equip("W-002", st)
 	host.hint("계단 방어 — 감시조가 계단참마다 섰다", 5.0)
 
@@ -607,7 +611,7 @@ func make_plan() -> void:
 	plan = []
 	if from_night:                                                    # --from=xnight: 침대에서 깬 밤부터(해법만)
 		plan += [["go", "X-BC", 27, 9]]
-	elif sol in [1, 3, 5]:
+	elif sol in [1, 3, 5] and int(st.items.get("W-002", 0)) > 0:      # 총이 있으면 들개를 쫓는다(없으면 지나친다 — 백구는 혼자 마을에 와 있다)
 		plan += [["go", "X-S07", 14, 22], ["fight_dogs"], ["go", "X-BC", 55, 43]]
 	else:
 		plan += [["go", "X-BC", 55, 43]]
@@ -660,8 +664,8 @@ func _bot_box(dt: float) -> void:
 				hold = 0.0
 				var opts: Array = box.state.get("opts", [])
 				var want := ""
-				if opts.any(func(o): return str(o["text"]).contains("총을 꺼낸다")):
-					want = {1: "총을 꺼낸다", 2: "돌아선다", 3: "흙색 작업복", 4: "200캡", 5: "저수조"}[sol]
+				if opts.any(func(o): return str(o["text"]).contains("돌아선다")) and opts.any(func(o): return str(o["text"]).contains("200캡")):
+					want = {1: "총을 꺼낸다" if int(st.items.get("W-002", 0)) > 0 else "감시조 옆에", 2: "돌아선다", 3: "흙색 작업복", 4: "200캡", 5: "저수조"}[sol]
 					_shot("doksa")
 				elif opts.any(func(o): return str(o["text"]).contains("눈을 붙인다")):
 					want = "눈을 붙인다"

@@ -52,7 +52,7 @@ func _init() -> void:
 	# MQ-101 진행 표시(단계 0-10, 정합): DOG 백구 장면(1 들개가 몰아붙임 · 2 쫓아 줌 · 3 지나침) · TRADE·WATER·RAD 생활 세 가지 ·
 	# NIGHT 밤(1 쪽지 · 2 추적조가 아랫문에) · DEAD 방어전에서 죽은 감시조 · TANK 비밀 저수조를 앎 · ROOF 옥상길을 들음 · BOARD 수배 쪽지를 읽음 ·
 	# FIGHT 방어전 시작 · PC_RADS 방사능(SD-11 §11.2) · PD_BC·PD_R01 판도 사건 보정(정착지 쪽, SD-06 §5) · GAME_DAY 게임 날짜(1 = 10. 23.)
-	for k in ["MQ101_DOG", "MQ101_TRADE", "MQ101_WATER", "MQ101_RAD", "MQ101_NIGHT", "MQ101_DEAD", "MQ101_TANK", "MQ101_ROOF",
+	for k in ["MQ101_DOG", "MQ101_TRADE", "MQ101_WATER", "MQ101_RAD", "MQ101_NIGHT", "MQ101_DEAD", "MQ101_TANK", "MQ101_ROOF", "MQ101_LOAN",
 			"MQ101_BOARD", "MQ101_FIGHT", "PC_RADS", "PD_BC", "PD_R01", "GAME_DAY"]:
 		vars.declare(k, "int", 0)
 	vars.declare("PC_TORSO", "str", "A-001")                # 입은 몸통 옷(아이템 ID) — 처음은 볼트 점프슈트(MQ-P2 지급)
