@@ -660,6 +660,10 @@ def build():
     log("다리 검사: %d곳 중 기대대로 %d (통행 %d · 끊김 %d)%s" % (len(cross), len(cross) - len(bad), sum(1 for c in cross if c[2]),
         sum(1 for c in cross if not c[2]), " · 어긋남 " + str([(c[0], c[1], "이어짐" if c[2] else "끊김") for c in bad]) if bad else ""))
 
+    # 길 위 발견물(1-4f, SD-08 §13.2 '소형 관심 지점' · §14.1 경고 장치): 굽기 때 규칙으로 흩고, 용기·조사 글은 pois.json으로 낸다
+    pois = place_pois(src, solid, cover, gflag, stair, level, kind, r["use"], reach, inmask, carve, play, body, insets, placed, pm)
+    reach &= solid == 0
+
     # 손 맵 사이 걷는 길(봇 경유점): 비탈 첫 칸 → 봉천 동쪽 골목 끝
     routes = {}
     ins_of = {i["id"]: i for i in insets}
@@ -682,9 +686,239 @@ def build():
     for k_, code in src["region"].items():
         cx_, cy_ = map(int, k_.split(","))
         reg_grid[cy_][cx_] = code
-    return {"r05": r05, "region_grid": reg_grid, "street": r["street"], "bridges": cross, "routes": routes, "floor": floor, "gflag": gflag, "solid": solid, "cover": cover, "level": level, "stair": stair, "body": body,
+    return {"pois": pois, "r05": r05, "region_grid": reg_grid, "street": r["street"], "bridges": cross, "routes": routes, "floor": floor, "gflag": gflag, "solid": solid, "cover": cover, "level": level, "stair": stair, "body": body,
             "deco": deco, "trees": tree_list, "props": props, "shadows": shadows, "insets": insets, "play": play, "band": r["band"],
             "reach": reach, "miss": miss, "wet": wet, "core": core, "kind": kind}
+
+DIR8 = ["동", "남동", "남", "남서", "서", "북서", "북", "북동"]
+NOTES_SRC = os.path.join(ROOT, "script", "world", "road_notes.txt")
+
+
+def read_notes():
+    """길 위 쪽지 원고(script/world/road_notes.txt): [(머리 — 장소 ID · 권역 · *, 본문)]"""
+    out, head = [], None
+    for ln in open(NOTES_SRC, encoding="utf-8").read().split("\n"):
+        ln = ln.strip()
+        if not ln or ln.startswith("#"):
+            continue
+        if ln.startswith("@"):
+            head = ln[1:].strip()
+        elif head is not None:
+            out.append((head, ln))
+            head = None
+    return out
+
+
+def place_pois(src, solid, cover, gflag, stair, level, kind, use, reach, inmask, carve, play, body, insets, placed, pm):
+    """청크마다 소형 관심 지점(SD-08 §13.2): 시가지 3~5 · 산지 1~2 · 도심 5~8.
+    유해(떠돌이 소지품 corpse_scav, 쪽지가 붙기도 한다) · 버려진 배낭(bag) · 나무 상자(crate, 가끔 잠김) · 차 트렁크(이미 놓인 차량 잔해) ·
+    고물 더미(이미 놓인 고철 더미) · 2077 민방위 대피소 표지(가장 가까운 장소 방면을 가리킨다).
+    위협도가 2단 이상 오르는 경계(§14.1)에는 낮은 쪽 청크 가장자리에 손글씨 경고판 + 뼈 무더기.
+    소품은 청크 소품 목록(placed)에 더하고 발 칸을 막는다(둘레 1칸이 모두 빈 같은 높이 땅일 때만 — 길을 끊지 않는다)."""
+    import random as _rnd
+    places = json.load(open(os.path.join(OUT, "places.json"), encoding="utf-8"))
+    enc = json.load(open(os.path.join(OUT, "encounters.json"), encoding="utf-8"))
+    threat = enc["threat"]
+    near_in = np.zeros((H, W), bool)
+    for ins in insets:
+        ox, oy, iw, ih = ins["rect"]
+        near_in[max(0, oy - 8):oy + ih + 8, max(0, ox - 8):ox + iw + 8] = True
+    pfree = (solid == 0) & (stair == 0) & ~inmask & ~carve & play & (body == 0) & reach & ~near_in
+    for d in DOORS:                                                          # 지하로 내려가는 문 자리 둘레는 비워 둔다
+        nx, ny = d["near"]
+        pfree[max(0, ny - 6):ny + 7, max(0, nx - 6):nx + 7] = False
+    sp_path = os.path.join(OUT, "spots_src.json")                           # 손으로 둔 발견 자리(파수 등) 둘레는 비워 둔다
+    for spec in (json.load(open(sp_path, encoding="utf-8"))["spots"] if os.path.exists(sp_path) else []):
+        tx, ty = spec["tile"]
+        pfree[max(0, ty - 10):ty + spec["h"] + 10, max(0, tx - 10):tx + spec["w"] + 10] = False
+    boxes, texts = [], []
+    cnt = {}
+
+    def put(name, x, y):
+        fw, fh = pm[name]["foot"]
+        if fw == 0:
+            if not pfree[y, x]:
+                return False
+            pfree[y, x] = False
+            placed.append((x, y, name))
+            return True
+        x0_, y0_, x1_, y1_ = x - 1, y - 1, x + fw + 1, y + fh + 1
+        if x0_ < 0 or y0_ < 0 or x1_ > W or y1_ > H:
+            return False
+        if not pfree[y0_:y1_, x0_:x1_].all() or (level[y0_:y1_, x0_:x1_] != level[y, x]).any():
+            return False
+        pfree[y:y + fh, x:x + fw] = False
+        solid[y:y + fh, x:x + fw] = 1
+        cover[y:y + fh, x:x + fw] = 2 if pm[name]["rect"][3] - fh * 32 > 24 else 1
+        gflag[y:y + fh, x:x + fw] = 2
+        placed.append((x, y, name))
+        return True
+
+    def cells_of(cx, cy, rng):
+        sl = (slice(cy * CS, cy * CS + CS), slice(cx * CS, cx * CS + CS))
+        yy, xx = np.nonzero(pfree[sl])
+        order = list(range(len(yy)))
+        rng.shuffle(order)
+        return [(int(xx[i]) + cx * CS, int(yy[i]) + cy * CS) for i in order]
+
+    def remains_at(x, y, rng, note=None):
+        if not put("remains" if rng.random() < 0.5 else "remains2", x, y):
+            return False
+        boxes.append({"x": x, "y": y, "w": 1, "h": 1, "kind": "corpse_scav", "name": "떠돌이의 유해", "owner": "", "lock": 0})
+        cnt["유해"] = cnt.get("유해", 0) + 1
+        if note:
+            for (dx, dy) in rng.sample([(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, 1)], 6):
+                if 0 <= x + dx < W and 0 <= y + dy < H and put("note_ground", x + dx, y + dy):
+                    texts.append({"x": x + dx, "y": y + dy, "text": "땅에 떨어진 쪽지 — " + note})
+                    cnt["쪽지"] = cnt.get("쪽지", 0) + 1
+                    break
+        return True
+
+    def nearest_place(x, y):
+        best = None
+        for lid, p in places.items():                                        # 2077 민방위 대피소 = 지하철역 · 주민센터 · 구청 · 학교 · 지하 시설
+            nm = p["name"]
+            station = nm.endswith("역") and not nm.endswith(("묘역", "구역", "방역", "지역", "영역"))
+            if not (station or any(w in nm for w in ("주민센터", "구청", "학교", "지하상가", "대피소"))):
+                continue
+            d = (p["tx"] - x) ** 2 + (p["ty"] - y) ** 2
+            if 64 < d < 120 ** 2 and (best is None or d < best[0]):
+                best = (d, lid, p)
+        return best
+
+    # ① 쪽지(원고): 장소 머리면 그 장소에서 20~70칸 떨어진 길가, 권역 머리면 그 권역 아무 청크, *면 R01·R02
+    region_chunks = {}
+    for k_, code in src["region"].items():
+        region_chunks.setdefault(code, []).append(tuple(map(int, k_.split(","))))
+    used_chunks = {}
+    for i, (head, body_t) in enumerate(read_notes()):
+        rng = _rnd.Random(9000 + i)
+        ok = False
+        for attempt in range(60):
+            if head.startswith("L-"):
+                if head not in places:
+                    raise SystemExit("길 위 쪽지 머리의 장소를 모른다: " + head)
+                p = places[head]
+                ang = rng.random() * 6.283
+                rad = rng.randint(20, 70)
+                x, y = int(p["tx"] + np.cos(ang) * rad), int(p["ty"] + np.sin(ang) * rad)
+                if not (0 <= x < W and 0 <= y < H):
+                    continue
+                c = (x // CS, y // CS)
+                cand = [q for q in cells_of(c[0], c[1], rng) if abs(q[0] - x) < 12 and abs(q[1] - y) < 12]
+            else:
+                pool = region_chunks.get(head, []) if head != "*" else region_chunks.get("R01", []) + region_chunks.get("R02", [])
+                c = rng.choice(pool)
+                cand = cells_of(c[0], c[1], rng)
+            for (x, y) in cand[:20]:
+                if remains_at(x, y, rng, body_t):
+                    used_chunks[c] = used_chunks.get(c, 0) + 1
+                    ok = True
+                    break
+            if ok:
+                break
+        if not ok:
+            raise SystemExit("길 위 쪽지를 놓을 자리가 없다: %s %s" % (head, body_t[:20]))
+
+    # ② 청크 밀도(§13.2)
+    by_chunk = {}
+    for (x, y, n) in placed:
+        by_chunk.setdefault((x // CS, y // CS), []).append((x, y, n))
+    for k_, code in sorted(src["region"].items()):
+        cx, cy = map(int, k_.split(","))
+        if code == "HR":
+            continue
+        rng = _rnd.Random(cx * 7919 + cy * 104729)
+        sl = (slice(cy * CS, cy * CS + CS), slice(cx * CS, cx * CS + CS))
+        if not pfree[sl].any():
+            continue
+        mount = (use[sl] == 2).mean() > 0.5
+        want = rng.randint(5, 8) if code == "R05" else (rng.randint(1, 2) if mount else rng.randint(3, 5))
+        have = used_chunks.get((cx, cy), 0)
+        for (x, y, n) in by_chunk.get((cx, cy), []):                       # 이미 놓인 차량 잔해·고철 더미에 용기를 붙인다
+            if have >= want:
+                break
+            if n in ("car_wreck", "car_wreck2") and rng.random() < 0.45:
+                boxes.append({"x": x, "y": y, "w": 3, "h": 2, "kind": "car", "name": "차량 잔해 트렁크", "owner": "", "lock": 25 if rng.random() < 0.2 else 0})
+                cnt["트렁크"] = cnt.get("트렁크", 0) + 1
+                have += 1
+            elif n in ("scrap_pile", "scrap_pile2") and rng.random() < 0.35:
+                boxes.append({"x": x, "y": y, "w": 2, "h": 1, "kind": "trash", "name": "고물 더미", "owner": "", "lock": 0})
+                cnt["고물"] = cnt.get("고물", 0) + 1
+                have += 1
+        weights = [("remains", 40), ("backpack", 35), ("crate", 25)] if mount else \
+                  [("remains", 30), ("backpack", 18), ("crate", 24), ("evac", 10)]
+        evac_done = False
+        tries = 0
+        cells = cells_of(cx, cy, rng)
+        ci = 0
+        while have < want and ci < len(cells) and tries < 40:
+            tries += 1
+            x, y = cells[ci]
+            ci += 7
+            r_ = rng.random() * sum(w for _, w in weights)
+            pick = weights[0][0]
+            for nm, w in weights:
+                if r_ < w:
+                    pick = nm
+                    break
+                r_ -= w
+            if pick == "remains":
+                okp = remains_at(x, y, rng)
+            elif pick == "backpack":
+                okp = put("backpack", x, y)
+                if okp:
+                    boxes.append({"x": x, "y": y, "w": 1, "h": 1, "kind": "bag", "name": "버려진 배낭", "owner": "", "lock": 0})
+                    cnt["배낭"] = cnt.get("배낭", 0) + 1
+            elif pick == "crate":
+                okp = put("crate_o", x, y)
+                if okp:
+                    boxes.append({"x": x, "y": y, "w": 1, "h": 1, "kind": "crate", "name": "나무 상자", "owner": "", "lock": 25 if rng.random() < 0.15 else 0})
+                    cnt["상자"] = cnt.get("상자", 0) + 1
+            elif pick == "evac" and not evac_done:
+                np_ = nearest_place(x, y)
+                okp = np_ is not None and put("evac_sign", x, y)
+                if okp:
+                    _, lid, p = np_
+                    ang = np.degrees(np.arctan2(p["ty"] - y, p["tx"] - x)) % 360
+                    texts.append({"x": x, "y": y, "text": "2077년 민방위 대피소 표지. 화살표가 %s쪽 '%s' 방면을 가리킨다. 녹이 흘러 글씨가 반쯤 지워졌다." % (DIR8[int((ang + 22.5) // 45) % 8], p["name"])})
+                    evac_done = True
+                    cnt["대피소 표지"] = cnt.get("대피소 표지", 0) + 1
+            else:
+                okp = False
+            if okp:
+                have += 1
+
+    # ③ 경고 장치(§14.1): 위협도가 2단 이상 오르는 이웃 청크 쪽 가장자리
+    WARN = ["손글씨 경고판. '여기서부터 곰.'", "손글씨 경고판. '돌아가. 이 앞은 우리 땅이 아니다.'", "손글씨 경고판. '이 앞에서 세 명 죽음. — 감시조'",
+            "손글씨 경고판. '물 마시지 마시오. 가이거가 운다.'", "손글씨 경고판. '밤에 지나가지 마라.'"]
+    nwarn = 0
+    for cy, row in enumerate(threat):
+        for cx, ch in enumerate(row):
+            if not ch.isdigit():
+                continue
+            t = int(ch)
+            for (dx, dy) in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                nx_, ny_ = cx + dx, cy + dy
+                if not (0 <= ny_ < len(threat) and 0 <= nx_ < len(threat[ny_])) or not threat[ny_][nx_].isdigit():
+                    continue
+                if int(threat[ny_][nx_]) - t < 2:
+                    continue
+                rng = _rnd.Random(cx * 31 + cy * 977 + dx * 7 + dy * 13)
+                band = [q for q in cells_of(cx, cy, rng)
+                        if (dx == 1 and q[0] % CS >= CS - 7) or (dx == -1 and q[0] % CS < 7) or (dy == 1 and q[1] % CS >= CS - 7) or (dy == -1 and q[1] % CS < 7)]
+                for (x, y) in band[:30]:
+                    if put("warn_board", x, y):
+                        texts.append({"x": x, "y": y, "text": WARN[rng.randrange(len(WARN))]})
+                        for (ox, oy) in ((2, 0), (-2, 0), (0, 2), (2, 1)):
+                            if put("bone_pile", x + ox, y + oy):
+                                texts.append({"x": x + ox, "y": y + oy, "text": "뼈 무더기. 이빨 자국이 남아 있다."})
+                                break
+                        nwarn += 1
+                        break
+    log("길 위 발견물: 용기 %d · 조사 글 %d · 경고 장치 %d · %s" % (len(boxes), len(texts), nwarn, cnt))
+    return {"boxes": boxes, "texts": texts}
+
 
 
 def export(R):
@@ -718,6 +952,7 @@ def export(R):
             offs.append([len(blob), len(z), len(raw)])
             blob += z
     open(os.path.join(OUT, "world.bin"), "wb").write(bytes(blob))
+    json.dump(R["pois"], open(os.path.join(OUT, "pois.json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"), default=int)
     meta = {"chunks": [NCX, NCY], "chunk_size": CS, "tile": 32, "size": [W, H], "layers": ["floor+gflag 교대", "solid", "cover", "level", "stair", "body16", "deco16", "trees", "shadows"],
             "offsets": offs, "props": R["props"], "start": list(START),
             "regions": json.load(open(WB.SRC, encoding="utf-8"))["region"],

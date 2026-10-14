@@ -848,6 +848,10 @@ from props_jm import PROPS_JM, STATES_JM                                # 영등
 for _k in PROPS_JM:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_JM)
+from props_road import PROPS_ROAD                                       # 길 위 발견물(1-4f, SD-08 §13.2)
+for _k in PROPS_ROAD:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_ROAD)
 
 STATES = {
     "board_bc": {s: (lambda s=s: notice_board(s)) for s in ("wanted", "torn", "crumpled", "crossed", "rate", "water", "official")},

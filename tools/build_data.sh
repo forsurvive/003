@@ -18,6 +18,7 @@ python3 tools/pipeline/fx_export.py
 python3 tools/pipeline/loot_export.py
 python3 tools/pipeline/merchant_export.py
 python3 tools/pipeline/map_compile.py
+python3 tools/pipeline/rumor_compile.py                  # 소문(1-4f): script/world/rumors.txt → rumors.json
 python3 tools/pipeline/struct_bake.py
 python3 tools/pipeline/world_extract.py                 # 월드(1-1): SD-08 표 → source.json
 python3 tools/pipeline/world_chunks.py                  # 월드 굽기 → world.bin(손 맵·타일셋 뒤에)

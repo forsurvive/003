@@ -24,6 +24,8 @@ var menu_t := 0.0
 var shot_on := ""                                    ## 이 글귀가 든 대사 줄에서 한 장 찍는다(연출 확인)
 var shot_tag := ""
 var shot_wait := 0.0
+var seen := {}
+var last_line := ""
 var step_map := 0                                    ## 걸음 단계를 시작한 맵 노드(출구를 밟아 맵이 바뀌면 그 단계는 끝 — 월드 안 구역 이름 바뀜은 아니다)
 
 
@@ -96,14 +98,24 @@ func _ready() -> void:
 				["check", "K_CODE == 1 and (MQ103_CONF == 1 or MQ103_CONF == 2)", "해독 + 화술 판정(성공·실패 둘 다 길이 있다)"]]
 		"hub":                                                          # MQ-102 허브: 잠든 파수(월드 발견 자리) → 구울 행상 주성호(단서 1) → 하숙자(단서 2)
 			st.vars.set_v("MQ101_RAD", 1)
+			st.vars.set_v("MQ101_RESULT", 1)                             # 계단 방어로 마친 봉천 — 주민 소문 확인
 			host.enter("W", "L-R01-32")
 			plan = [["go", 911, 1395], ["shoton", "판독", "sentry_lit"], ["go", 912, 1393],
 				["check", "MQ102_ROBOT == 1 and MQ102_STAGE == 10", "잠든 파수가 깨어났다 꺼짐"],
 				["use", 912, 1392], ["shot", "sentry_after"],
 				["go", 891, 1381], ["go", 891, 1378], ["go", 894, 1374], ["want", ["읽을 사람"]], ["talk", "N-R02-018"],
 				["check", "MQ102_C1 == 1 and MQ103_STAGE == 10", "구울 행상 → 단서 1(MQ-103 열림)"],
+				["shoton", "*", "rumor"], ["talk", "N-R01-030"], ["wait", 3.0], ["check", "seen_rumor", "이름 없는 봉천 주민이 행적 소문을 한다"],
 				["go", 884, 1365], ["go", 884, 1364], ["go", 7, 7, "B-03"], ["want", ["깨진 숫자 줄"]], ["talk", "C-057"], ["shot", "hasukja"],
 				["check", "MQ102_C2 == 1 and MQ104_STAGE == 10", "하숙자 옛 여의도 지도 → 단서 2(MQ-104 열림)"]]
+		"poi":                                                          # 길 위 발견물(1-4f): 쪽지 읽기 → 떠돌이 유해 열기(용기 창) · 대피소 표지
+			host.enter("W", "L-R01-15")
+			host.player.loco.place(Vector2(806 * 32 + 16, 1381 * 32 + 16))
+			plan = [["shoton", "충전소", "note"], ["go", 806, 1382], ["use", 806, 1383], ["wait", 2.0],
+				["go", 805, 1384], ["use", 806, 1384], ["wait", 1.0], ["shot", "remains_box"],
+				["check", "container_open", "떠돌이 유해 → 용기 창이 열린다"], ["close"],
+				["go", 804, 1338], ["shoton", "대피소", "evac"], ["use", 804, 1337], ["wait", 2.0],
+				["check", "seen_evac", "대피소 표지 글이 뜬다"]]
 	plan.append(["end"])
 
 
@@ -226,8 +238,26 @@ func _process(dt: float) -> void:
 				menu_t = 0.0
 				tm.close(true)
 				_next()
+		"wait":
+			host.input_fn = func() -> Vector2: return Vector2.ZERO
+			if step_t >= float(s[1]):
+				_next()
+		"close":
+			if host.container != null:
+				print("  [봇] 용기 안: ", host.container.title, " ", host.container.state["items"])
+				host.container.close(true)
+			_next()
 		"check":
-			var ok := StoryExpr.test(str(s[1]), st)
+			var ok := false
+			if str(s[1]) == "container_open":
+				ok = host.container != null
+			elif str(s[1]) == "seen_evac":
+				ok = seen.has("evac")
+			elif str(s[1]) == "seen_rumor":
+				ok = seen.has("rumor") and last_line != "……"
+				print("  [봇] 소문: ", last_line)
+			else:
+				ok = StoryExpr.test(str(s[1]), st)
 			checks.append([ok, str(s[2])])
 			print("  [확인] %s %s" % ["○" if ok else "×", s[2]])
 			_next()
@@ -275,11 +305,14 @@ func _box(dt: float) -> void:
 	hold = 0.0
 	match str(host.box.state.get("type", "")):
 		"line":
-			if shot_on != "" and str(host.box.state.get("text", "")).contains(shot_on):
+			if shot_on != "" and (shot_on == "*" or str(host.box.state.get("text", "")).contains(shot_on)):
 				shot_wait += 0.25
 				if shot_wait < 1.75:                                    # 글이 다 찍히게 1.5초 더 기다렸다 찍는다
 					return
 				_shot(shot_tag)
+				last_line = str(host.box.state.get("text", ""))
+				seen[shot_tag] = true
+				shot_wait = 0.0
 				shot_on = ""
 			host.box.next()
 		"choices":

@@ -968,7 +968,9 @@ func talk(n: Dictionary) -> void:
 	_talking = n
 	var g := scene_for(n["id"])
 	if g.is_empty():
-		var bark: String = n["bark"] if n["bark"] != "" else "……"
+		var own := str(n["bark"])                                     # 소문(1-4f): 이 사람이 들은 주인공 이야기 — 없으면 제 혼잣말
+		var rumor := Rumors.pick(st, map_region(map.tile_of(n["actor"].loco.logical)), str(n["id"]) + str(n.get("idx", 0)), own != "")
+		var bark: String = rumor if rumor != "" else (own if own != "" else "……")
 		g = {"id": "bark_" + n["id"], "labels": {"START": 0}, "ops": [{"op": "line", "who": n["id"], "emo": "기본", "text": bark}, {"op": "end"}]}
 		_barking = true
 	talked.emit(n["id"], g.get("id", ""))

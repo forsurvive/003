@@ -142,6 +142,16 @@ func load_map(map_id: String, st: StoryState = null) -> void:
 				gg["y"] = int(g["y"]) + so.y
 				gg["key"] = "%s:%d,%d" % [key, int(g["x"]), int(g["y"])]
 				data[k2].append(gg)
+	if FileAccess.file_exists(WDIR + "pois.json"):                      # 길 위 발견물(1-4f, SD-08 §13.2): 소품은 청크에 구워져 있고 용기·조사 글만 여기서 단다
+		var pz: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(WDIR + "pois.json"))
+		for b in pz["boxes"]:
+			var bb: Dictionary = b
+			bb["cond"] = ""
+			for j in int(bb["h"]):
+				for i in int(bb["w"]):
+					boxes[Vector2i(int(bb["x"]) + i, int(bb["y"]) + j)] = bb
+		for t in pz["texts"]:
+			texts[Vector2i(int(t["x"]), int(t["y"]))] = str(t["text"])
 	for k in exits.keys():                                               # 손 맵끼리 잇던 가장자리 출구는 월드에서 이어진 땅이다
 		if str(exits[k]["to"]) in ids:
 			exits.erase(k)

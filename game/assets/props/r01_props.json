@@ -36,6 +36,24 @@
     28
    ]
   },
+  "backpack": {
+   "atlas": "r01",
+   "foot": [
+    1,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    2,
+    5
+   ],
+   "rect": [
+    812,
+    596,
+    28,
+    26
+   ]
+  },
   "bench_o": {
    "atlas": "r01",
    "foot": [
@@ -115,6 +133,24 @@
      60
     ]
    }
+  },
+  "bone_pile": {
+   "atlas": "r01",
+   "foot": [
+    1,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -2,
+    7
+   ],
+   "rect": [
+    914,
+    596,
+    36,
+    24
+   ]
   },
   "boulder_l": {
    "atlas": "r01",
@@ -714,6 +750,24 @@
     ]
    }
   },
+  "evac_sign": {
+   "atlas": "r01",
+   "foot": [
+    1,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -4,
+    -19
+   ],
+   "rect": [
+    840,
+    596,
+    40,
+    54
+   ]
+  },
   "exit_terminal": {
    "atlas": "r01",
    "foot": [
@@ -1132,6 +1186,24 @@
     293,
     64,
     68
+   ]
+  },
+  "note_ground": {
+   "atlas": "r01",
+   "foot": [
+    0,
+    0
+   ],
+   "kind": "deco",
+   "off": [
+    5,
+    15
+   ],
+   "rect": [
+    790,
+    596,
+    22,
+    18
    ]
   },
   "pharm_counter": {
@@ -2562,6 +2634,24 @@
     293,
     64,
     76
+   ]
+  },
+  "warn_board": {
+   "atlas": "r01",
+   "foot": [
+    1,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -1,
+    -11
+   ],
+   "rect": [
+    880,
+    596,
+    34,
+    46
    ]
   },
   "watchtower": {

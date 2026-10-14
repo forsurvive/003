@@ -370,7 +370,7 @@ def main():
         os.remove(f)
     ids, total = {}, 0
     for path in sorted(glob.glob(os.path.join(SRC, "**", "*.txt"), recursive=True)):
-        if os.sep + "terms" + os.sep in path:                         # 단말 원고(1-4)는 term_compile.py가 읽는다
+        if os.sep + "terms" + os.sep in path or os.sep + "world" + os.sep in path:   # 단말 원고(1-4)는 term_compile, 길 위 쪽지(1-4f)는 world_chunks가 읽는다
             continue
         for s in compile_file(path, cx):
             if s["id"] in ids:
