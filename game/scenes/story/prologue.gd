@@ -62,6 +62,16 @@ func _ready() -> void:
 			sol = clampi(int(a.substr(6)), 1, 5)
 		elif a.begins_with("--esc="):
 			esc = clampi(int(a.substr(6)), 1, 4)
+		elif a == "--chain":                                    # 개발용(0-12): 탈출 봇이 끝나면 그대로 1막 봇(--sol)으로 이어 간다
+			chain = true
+		elif a == "--touch":
+			touch_on = true
+		elif a == "--menushot":
+			menushot = 0.0
+		elif a.begins_with("--load="):                          # 개발용: 저장 파일 하나를 바로 불러온다(system · quick · auto_0 · manual_03 …)
+			SaveSlots.pending = SaveSlots.dir + a.substr(7) + ".sav"
+		elif a == "--savetest":
+			savetest = true
 		elif a == "--log":
 			log_on = true
 		elif a.begins_with("--shots="):
@@ -70,11 +80,21 @@ func _ready() -> void:
 	host = InteriorHost.new()
 	add_child(host)
 	host.use_keyboard = not auto
+	if OS.has_feature("mobile"):
+		auto_every = 300.0
+	touch = TouchHud.new().setup(host, open_pause)
+	add_child(touch)
+	host.map_entered.connect(func(_id: String) -> void: request_auto("door"))
 	host.box.finished.connect(_on_dialogue_done)
 	host.combat.target_down.connect(_on_target_down)
 	host.combat.enemy_killed.connect(_on_enemy_killed)
 	host.combat.player_down.connect(_on_player_down)
 	host.child_entered_tree.connect(_on_child)
+	if SaveSlots.pending != "":                                # 제목 화면·불러오기에서 왔다
+		var path := SaveSlots.pending
+		SaveSlots.pending = ""
+		_load_game.call_deferred(path)
+		return
 	if from == "p2":
 		_quick_p1()
 		_start_p2.call_deferred()
@@ -150,12 +170,35 @@ func _ready() -> void:
 var act1: Mq101
 var sol := 1                                       ## 1막 봇 해법(--sol=1~5, 0-10)
 
+# ---------------------------------------------------------------- 저장·일시 정지·터치(0-11, SD-12 §13·§17)
+var play_time := 0.0                                ## 플레이 시간(일시 정지·메뉴 중에는 멈춘다)
+var pause_menu: PauseMenu
+var touch: TouchHud
+var thumb := PackedByteArray()                      ## 일시 정지를 연 순간의 화면(160×90) — 저장 칸 축소 그림
+var last_auto := -1e9                               ## 마지막 자동 저장(플레이 시간 기준)
+var auto_due := ""                                  ## 미뤄 둔 자동 저장 까닭(문·수면·간격 …)
+var auto_every := 600.0                             ## 자동 저장 간격(PC 10분 · 모바일 5분, §13.2·§17.6)
+var stable := {}                                    ## 마지막으로 저장할 수 있던 순간의 한 장(중단 저장용)
+var stable_slot := {}
+var _stable_t := 0.0
+var _night_seen := 0
+var chain := false                                 ## --chain: 탈출 → 첫 풍경 → 1막까지 한 번에(분기 봇 4 × 5)
+var touch_on := false                              ## --touch: 터치 단추를 켜고 1막 봇이 합성 터치로만 논다(0-11)
+var menushot := -1.0                               ## --menushot: 일시 정지 메뉴 쪽마다 화면을 찍는다(--shots 폴더)
+var savetest := false                               ## --savetest: 1막 15초 뒤 수동 저장 → 장면을 다시 열어 불러오기 → 한 장이 같은지
+var _saved_test := false
+const NO_SAVE_PHASES := ["P1S1", "P3S4", "P4S2", "P4S3", "P4S3B", "P4S5", "P4OUT", "P4S6", "P4S7", "end"]
+
 
 func _act1(from: String) -> void:
 	phase = "ACT1"
 	act1 = Mq101.new()
 	add_child(act1)
 	act1.setup(host, auto, log_on, sol, shots)
+	if touch_on:
+		touch.on = true
+		act1.touch = touch
+		act1.touch_bot = auto
 	if from == "xbc":
 		act1.start("X-BC", "from_X-S07")
 	elif from == "xnight":
@@ -538,6 +581,7 @@ func _p4_escape_done() -> void:
 		host.play_scene("MQ-P4_OUT")
 	elif phase == "P4OUT":
 		phase = "P4S6"
+		save_to("system", 0)                                      # 시스템 저장(SD-12 §13.1·§13.3): 볼트를 나서기 직전, 점검표 앞
 		host.play_scene("MQ-P4_S06")
 	elif phase == "P4S6" and st.quests.stage("MQ-P4") >= 60:
 		phase = "P4S7"
@@ -549,8 +593,11 @@ func _p4_escape_done() -> void:
 			int(st.vars.get_v("MQP4_CAUGHT")), int(st.vars.get_v("MQP4_SEC_KO")), int(st.vars.get_v("MQP4_BJ_KO")),
 			int(st.vars.get_v("K_RALLY")), int(st.vars.get_v("V_ACT")), int(st.vars.get_v("PC_XP"))])
 		_shot("end")
-		if auto:
+		if auto and not chain:
 			get_tree().create_timer(0.5).timeout.connect(get_tree().quit)
+		else:
+			_act1("")                                             # 첫 풍경이 멈춘 흙길에서 1막(MQ-101)이 이어진다
+			request_auto("act")                                   # 막이 오르면 먼저 자동 저장(SD-03a §4.1 ①)
 
 
 ## S7 첫 풍경(SD-03a §7.4): 흰 빛이 걷히면 방폭문 앞 콘크리트 턱(위에서 본 RPG 타일 그림) — 주인공(실제 페이퍼돌, 발 고정 걸음)이
@@ -761,6 +808,7 @@ func _shot(tag: String) -> void:
 # ---------------------------------------------------------------- 자동 진행
 func _process(dt: float) -> void:
 	_view_tick(dt)
+	_save_tick(dt)
 	if phase == "P4E" and host.combat.in_combat():
 		p4_fought = true                                          # 들켜서 교전이 붙었다 → 은신이 아니라 전투로 나간 것
 	if phase == "P4E" and host.map != null and host.map.id != "V-04" and host.st.quests.stage("MQ-P4") == 30:
@@ -1202,3 +1250,210 @@ func _follow(goal: Vector2) -> Vector2:
 	if path.is_empty():
 		return Vector2.ZERO
 	return NpcRoutine.step_dir(p, path[0])
+
+
+# ================================================================================================ 저장·불러오기(0-11)
+## 지금 저장할 수 없는 까닭(빈 글 = 가능). 수동 저장 불가: 핍-보이·대화·서류·연출 중(§13.1)
+func why_no_save() -> String:
+	if host == null or host.map == null or host.player == null:
+		return "아직 저장할 수 없다"
+	if host.box.active or host.ev.busy() or host.busy or view_t >= 0.0 or phase in NO_SAVE_PHASES:
+		return "연출 중에는 저장할 수 없다"
+	if host.pipboy != null or host.container != null:
+		return "창을 닫고 저장한다"
+	for c in host.get_children():
+		if c is DocScreen and not (c is PauseMenu):
+			return "서류를 마치고 저장한다"
+	return ""
+
+
+## 자동 저장을 더 미뤄야 하나(§13.2 미루기: 교전·적 감지·대화·연출)
+func _auto_blocked() -> bool:
+	if why_no_save() != "":
+		return true
+	if host.combat.in_combat():
+		return true
+	for e in host.combat.enemies:
+		if is_instance_valid(e) and not e.cmb.dead and e.cmb.team == "enemy" and e.brain.gauge >= 40.0:
+			return true
+	return false
+
+
+func snapshot() -> Dictionary:
+	return {"story": GameSnapshot.story(host.st), "host": GameSnapshot.host(host),
+		"flow": {"phase": phase, "p4_fought": p4_fought, "buddy": host.buddy_id, "act1": act1.snapshot() if act1 != null else {}}}
+
+
+func save_to(kind: String, idx: int) -> Error:
+	if kind != "suspend" and kind != "system" and why_no_save() != "":
+		return ERR_BUSY
+	var tb := thumb if not thumb.is_empty() else GameSnapshot.thumbnail(get_viewport())
+	var err := SaveSlots.write(kind, idx, GameSnapshot.slot_info(host, play_time, tb), snapshot())
+	if err == OK and kind in ["auto", "system"]:
+		host._note("자동 저장" if kind == "auto" else "볼트를 나서기 전 저장")
+	return err
+
+
+func request_auto(reason: String) -> void:
+	if auto_due == "" or reason in ["sleep", "act"]:
+		auto_due = reason
+
+
+func _menu_shots(dt: float) -> void:
+	if menushot >= 1000.0:
+		return
+	menushot += dt
+	if menushot < 10.0 or why_no_save() != "":                     # 대화가 끝나 저장할 수 있을 때 한 번
+		return
+	menushot = 1000.0
+	save_to("manual", 2)
+	open_pause()
+	var steps := [["menu_main", "save"], ["menu_save", "load"], ["menu_load", "keys"], ["menu_keys", ""]]
+	var i := 0
+	for stp in steps:
+		i += 1
+		get_tree().create_timer(1.5 * i, true).timeout.connect(func() -> void:
+			_shot(stp[0])
+			if stp[1] != "":
+				pause_menu._open(stp[1])
+			else:
+				pause_menu.close(true)
+				get_tree().create_timer(0.5, true).timeout.connect(get_tree().quit))
+
+
+func _save_tick(dt: float) -> void:
+	if menushot >= 0.0:
+		_menu_shots(dt)
+	if get_tree().paused or host == null:
+		return
+	play_time += dt
+	if play_time - last_auto >= auto_every and auto_due == "":
+		request_auto("interval")
+	if act1 != null and int(host.st.vars.get_v("MQ101_NIGHT")) == 3 and _night_seen != 3:
+		request_auto("sleep")                                       # 빌린 침대에서 잔 뒤(§13.2 '수면 뒤')
+	_night_seen = int(host.st.vars.get_v("MQ101_NIGHT"))
+	if auto_due != "" and not _auto_blocked() and (play_time - last_auto >= SaveSlots.AUTO_GAP or auto_due in ["sleep", "act"]):
+		if save_to("auto", SaveSlots.auto_index()) == OK:
+			last_auto = play_time
+		auto_due = ""
+	if savetest and not _saved_test and play_time > 15.0 and why_no_save() == "":
+		_saved_test = true
+		var err := save_to("manual", 59)
+		SaveSlots.check = _sha(var_to_bytes(snapshot()))
+		print("저장 시험: 수동 60칸 %s · %s %s" % [error_string(err), host.map.id, str(host.player.loco.logical)])
+		load_from(SaveSlots.path_of("manual", 59))
+		return
+	_stable_t -= dt
+	if _stable_t <= 0.0 and why_no_save() == "":
+		_stable_t = 2.0
+		stable = snapshot()
+		stable_slot = GameSnapshot.slot_info(host, play_time)
+
+
+## 모바일: 앱이 뒤로 가면 상황과 관계없이 중단 저장(§17.6). 대화·연출 중이면 그 직전의 안정 상태를 쓴다
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_APPLICATION_PAUSED and host != null and not stable.is_empty():
+		SaveSlots.ensure_dir()
+		if why_no_save() != "":
+			SaveSlots.write("suspend", 0, stable_slot, stable)
+		else:
+			SaveSlots.write("suspend", 0, GameSnapshot.slot_info(host, play_time, GameSnapshot.thumbnail(get_viewport())), snapshot())
+	elif what == NOTIFICATION_APPLICATION_RESUMED and host != null and pause_menu == null and (touch_on or OS.has_feature("mobile")):
+		open_pause()                                               # 돌아오면 일시 정지 메뉴가 열린 상태(§17.6 복귀 시 처리)
+
+
+func open_pause() -> void:
+	if pause_menu != null or why_no_save().begins_with("아직") or host.pipboy != null or host.container != null:
+		return
+	thumb = GameSnapshot.thumbnail(get_viewport())
+	get_tree().paused = true
+	pause_menu = PauseMenu.new().setup(host.st, why_no_save, save_to, load_from, to_title)
+	pause_menu.process_mode = Node.PROCESS_MODE_ALWAYS
+	pause_menu.subtitle = host.date_text
+	pause_menu.now = GameSnapshot.slot_info(host, play_time, thumb)
+	pause_menu.now["goal"] = host._objective()
+	add_child(pause_menu)
+	pause_menu.closed.connect(func(_ok: bool) -> void:
+		pause_menu = null
+		thumb = PackedByteArray()
+		get_tree().paused = false)
+
+
+func load_from(path: String) -> void:
+	get_tree().paused = false
+	SaveSlots.pending = path
+	get_tree().change_scene_to_file("res://scenes/story/prologue.tscn")
+
+
+func to_title() -> void:
+	get_tree().paused = false
+	get_tree().change_scene_to_file("res://scenes/title/title.tscn")
+
+
+func _unhandled_input(e: InputEvent) -> void:
+	if not (e is InputEventKey and e.pressed and not e.echo) or auto:
+		return
+	match e.keycode:
+		KEY_ESCAPE:
+			if host.box.active or host.pipboy != null or host.container != null:
+				return
+			open_pause()
+		KEY_F5:
+			var err := save_to("quick", 0)
+			host._note("빠른 저장" if err == OK else why_no_save())
+		KEY_F9:
+			if FileAccess.file_exists(SaveSlots.path_of("quick")):
+				load_from(SaveSlots.path_of("quick"))
+		_:
+			return
+	get_viewport().set_input_as_handled()
+
+
+## 불러오기: 이야기 상태 → 진행 단계 → 맵·주인공(맵 진입 신호가 1막 진행기의 밤·개·추적조를 다시 세운다)
+func _load_game(path: String) -> void:
+	var r := SaveGame.read(path)
+	if not r["ok"]:
+		push_warning("저장을 읽지 못했다: %s (%s)" % [path, r["error"]])
+		to_title()
+		return
+	var w: Dictionary = r["world"]
+	GameSnapshot.apply_story(host.st, w["story"])
+	play_time = float(r["slot"].get("play_time", 0))
+	last_auto = play_time
+	var flow: Dictionary = w.get("flow", {})
+	phase = str(flow.get("phase", "P2"))
+	p4_fought = bool(flow.get("p4_fought", false))
+	if phase.begins_with("P4"):
+		host.ev.handlers["escape"] = _escape_cmd
+	if phase == "ACT1":
+		act1 = Mq101.new()
+		add_child(act1)
+		act1.setup(host, auto, log_on, sol, shots)
+		act1.resume(flow.get("act1", {}))
+	GameSnapshot.apply_host(host, w["host"])
+	if phase == "P4S6":                                            # 시스템 저장: 점검표부터 다시(→ 첫 풍경 → 1막)
+		host.play_scene.call_deferred("MQ-P4_S06")
+	var b := str(flow.get("buddy", ""))
+	if b != "" and host.ev.handlers.has("buddy"):
+		host.ev._show_actor(b, host.player.loco.logical + Vector2(-32, 0), "S")
+		host.ev.handlers["buddy"].call([b], func() -> void: pass)
+	if str(r["slot"].get("kind", "")) == "suspend":
+		SaveSlots.erase("suspend")                                     # 되감기 막기: 불러온 중단 저장은 지운다(§17.6)
+		if not auto:
+			open_pause.call_deferred()                                 # 중단 지점으로 돌아오면 일시 정지 메뉴부터(§17.6)
+	host._note("불러왔다 — " + str(r["slot"].get("place", "")))
+	if SaveSlots.check != "":
+		_saved_test = true
+		var same := _sha(var_to_bytes(snapshot())) == SaveSlots.check
+		print("불러오기 시험: %s · %s %s · 단계 %s · HP %.0f · 캡 %d" % ["한 장 같음" if same else "한 장 다름", host.map.id,
+			str(host.player.loco.logical), phase, host.combat.pc.hp, int(host.st.vars.get_v("PC_CAPS"))])
+		SaveSlots.check = ""
+		get_tree().create_timer(0.3).timeout.connect(get_tree().quit)
+
+
+static func _sha(b: PackedByteArray) -> String:
+	var h := HashingContext.new()
+	h.start(HashingContext.HASH_SHA256)
+	h.update(b)
+	return h.finish().hex_encode()
+

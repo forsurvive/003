@@ -45,6 +45,8 @@ var pause_left := 0.0
 var pauses: Array = []
 var colors: Array = []
 var sel := 0
+var one_tap := false                              ## 설정 '한 번 탭으로 선택지 결정'(SD-12 §17.7, 기본 끔)
+var _touch_sel := -1                              ## 터치로 한 번 눌러 강조한 선택지(다시 누르면 결정)
 var choice_rows: Array = []          ## [{"lines": [...], "y", "h", "enabled", "kind", "tag"}]
 var flash_t := 0.0
 var flash_ok := false
@@ -285,7 +287,11 @@ func _unhandled_input(e: InputEvent) -> void:
 			pick(e.keycode - KEY_1)
 		elif e is InputEventMouseButton and e.pressed and e.button_index == MOUSE_BUTTON_LEFT:
 			var i := _row_at(_to_logical(e.position))
-			if i >= 0:
+			if i >= 0 and e.device == InputEvent.DEVICE_ID_EMULATION and not one_tap and i != _touch_sel:
+				if choice_rows[i]["enabled"]:                                 # 터치(§17.5): 탭 = 강조, 강조된 선택지를 다시 탭 = 결정
+					sel = i
+					_touch_sel = i
+			elif i >= 0:
 				pick(i)
 		elif e is InputEventMouseMotion:
 			var i := _row_at(_to_logical(e.position))
@@ -319,6 +325,13 @@ func _row_at(p: Vector2) -> int:
 	return -1
 
 
+## 선택지 i 줄의 가운데(화면 좌표, 터치 봇)
+func row_center(i: int) -> Vector2:
+	var o := _origin() + Vector2(128, _choice_top())
+	var r: Dictionary = choice_rows[i]
+	return view.get_global_transform_with_canvas() * (Vector2(o.x + 244, o.y + 6 + r["y"] - 2 + r["h"] / 2.0))
+
+
 func _move_sel(d: int) -> void:
 	var n := choice_rows.size()
 	for k in n:
@@ -344,6 +357,7 @@ func next() -> void:
 func pick(i: int) -> void:
 	if state.get("type", "") != "choices" or i < 0 or i >= choice_rows.size() or not choice_rows[i]["enabled"]:
 		return
+	_touch_sel = -1
 	var s := runner.choose(i)
 	if not runner.last_check.is_empty():
 		flash_t = 0.6

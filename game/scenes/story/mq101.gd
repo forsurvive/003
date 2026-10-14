@@ -36,6 +36,69 @@ var lessons_hinted := false
 var morning_due := false
 
 
+# ---------------------------------------------------------------- 터치 봇(0-11): 손가락 0 = 이동 스틱 · 1 = 조준 스틱 · 2 = 단추·화면 누르기
+var touch_bot := false
+var touch: TouchHud
+var _fing := {}                                    ## 손가락 → 누르고 있는 자리(화면 좌표)
+var _tap_q: Array = []                             ## 누를 자리 차례(누르고 다음 프레임에 뗀다)
+
+
+## 논리 화면 좌표(640×360 이상) → 창 좌표(엔진이 늘이기를 되돌려 논리 좌표로 넘긴다)
+func _win(p: Vector2) -> Vector2:
+	return p * (Vector2(get_window().size) / get_viewport().get_visible_rect().size)
+
+
+func _touch(idx: int, p: Vector2, down: bool) -> void:
+	var e := InputEventScreenTouch.new()
+	e.index = idx
+	e.position = _win(p)
+	e.pressed = down
+	Input.parse_input_event(e)
+	if down:
+		_fing[idx] = p
+	else:
+		_fing.erase(idx)
+
+
+func _drag(idx: int, p: Vector2) -> void:
+	var e := InputEventScreenDrag.new()
+	e.index = idx
+	e.position = _win(p)
+	e.relative = _win(p) - _win(_fing.get(idx, p))
+	Input.parse_input_event(e)
+	_fing[idx] = p
+
+
+func _tap(p: Vector2) -> void:
+	_tap_q.append(p)
+
+
+## 매 프레임: 이동 방향(봇 길찾기) → 이동 스틱 끌기. 조준 → 조준 스틱(사격 링 밖). 누를 자리 → 손가락 2
+func _touch_tick(move_dir: Vector2, aim_dir: Vector2) -> void:
+	if _fing.has(0):
+		_touch(0, _fing[0], false)
+	elif not _tap_q.is_empty():
+		_touch(0, _tap_q.pop_front(), true)
+	var home := TouchHud.MOVE_HOME
+	if move_dir.length() > 0.1:
+		if not _fing.has(1):
+			_touch(1, home, true)
+		_drag(1, home + move_dir.normalized() * TouchHud.RING * 0.7)
+	elif _fing.has(1):
+		_touch(1, _fing[1], false)
+	var ah := TouchHud.AIM_HOME + Vector2(touch.off_r, 0)
+	if aim_dir.length() > 0.1:
+		if not _fing.has(2):
+			_touch(2, ah, true)
+		_drag(2, ah + aim_dir.normalized() * TouchHud.RING * 0.95)
+	elif _fing.has(2):
+		_touch(2, _fing[2], false)
+
+
+func _btn_center(id: String) -> Vector2:
+	return touch._btn_rect(id).get_center()
+
+
 func setup(h: InteriorHost, is_auto: bool, is_log: bool, solution: int = 1, shot_dir: String = "") -> void:
 	host = h
 	st = h.st
@@ -64,6 +127,26 @@ func start_night() -> void:
 	start("B-01", "bed_side")
 	host.date_text = "2277. 10. 23.  22:40"
 	host.set_night(true)
+
+
+## 저장 한 장(0-11): 이야기 변수에 없는 진행기 쪽 표시만
+func snapshot() -> Dictionary:
+	return {"baek": baek_lead, "baek_i": baek_i, "bark": bark_hinted, "lessons": lessons_hinted, "res": res_applied}
+
+
+## 불러오기: 신호·명령을 잇고(start와 같게) 맵은 진행기가 연다(GameSnapshot.apply_host가 enter → _on_map)
+func resume(d: Dictionary) -> void:
+	host.map_entered.connect(_on_map)
+	host.box.finished.connect(_after_box)
+	host.ev.handlers["mq"] = _mq_cmd
+	host.ev.handlers["trade"] = _trade_cmd
+	host.combat.ally_down.connect(_on_ally_down)
+	host.combat.player_down.connect(_on_player_down)
+	baek_lead = bool(d.get("baek", false))
+	baek_i = int(d.get("baek_i", 0))
+	bark_hinted = bool(d.get("bark", false))
+	lessons_hinted = bool(d.get("lessons", false))
+	res_applied = int(d.get("res", 0))
 
 
 ## 1막 시작: 비탈 첫 칸(첫 풍경에서 주인공이 멈춘 흙길과 같은 자리)
@@ -559,7 +642,10 @@ func _bot_box(dt: float) -> void:
 				hold += dt
 				if hold > 0.5:
 					hold = 0.0
-					box.next()
+					if touch_bot:
+						_tap(Vector2(320, 300))                                 # 터치: 대사 창 아무 곳이나 누른다
+					else:
+						box.next()
 		"choices":
 			hold += dt
 			if hold > 0.9:
@@ -579,7 +665,11 @@ func _bot_box(dt: float) -> void:
 				for k in opts.size():
 					if want != "" and str(opts[k]["text"]).contains(want):
 						i = k
-				box.pick(i)
+				if touch_bot:
+					_tap(box.row_center(i))                                     # 터치: 그 선택지 줄을 눌러 강조하고
+					_tap(box.row_center(i))                                     # 한 번 더 눌러 결정(§17.5)
+				else:
+					box.pick(i)
 
 
 func _bot(dt: float) -> void:
@@ -590,7 +680,18 @@ func _bot(dt: float) -> void:
 		return
 	if plan.is_empty():
 		make_plan()
-		host.input_fn = _bot_input
+		host.input_fn = _bot_input if not touch_bot else Callable()
+	if touch_bot:
+		var mv := Vector2.ZERO
+		var aim := Vector2.ZERO
+		if not (host.box.active or host.busy or host.ev.busy() or host.container != null):
+			mv = _bot_input() if plan_i < plan.size() and str(plan[plan_i][0]) in ["go", "talk"] else Vector2.ZERO
+			if plan_i < plan.size() and str(plan[plan_i][0]) in ["battle", "fight_dogs"]:
+				var es := host.combat.enemies.filter(func(e): return is_instance_valid(e) and not e.cmb.dead and e.cmb.team == "enemy")
+				if not es.is_empty():
+					es.sort_custom(func(a, b): return a.loco.logical.distance_to(host.player.loco.logical) < b.loco.logical.distance_to(host.player.loco.logical))
+					aim = es[0].loco.logical - host.player.loco.logical
+		_touch_tick(mv, aim)
 	if host.container is TradeScreen:
 		_bot_trade(host.container, dt)
 		return
@@ -631,7 +732,10 @@ func _bot(dt: float) -> void:
 		"use":
 			host.player.loco.facing = Locomotion.snap8(Vector2(int(job[2]) * 32 + 16, int(job[3]) * 32 + 16) - host.player.loco.logical, 0.0)
 			host.player._show()
-			host.interact()
+			if touch_bot:
+				_tap(_btn_center("act"))
+			else:
+				host.interact()
 			_next()
 		"fight_dogs":
 			var alive := dogs.filter(func(e): return is_instance_valid(e) and not e.cmb.dead)
@@ -644,7 +748,8 @@ func _bot(dt: float) -> void:
 				return
 			route = []
 			host.input_fn = func() -> Vector2: return Vector2.ZERO
-			host.combat.bot = {"aim": alive[0].loco.logical + Vector2(0, -12), "fire": true, "aimed": true}
+			if not touch_bot:
+				host.combat.bot = {"aim": alive[0].loco.logical + Vector2(0, -12), "fire": true, "aimed": true}
 			if wait_t <= 0.0:
 				_shot("dogs")
 				wait_t = 99.0
@@ -682,7 +787,8 @@ func _bot(dt: float) -> void:
 			if log_on and int(t * 2.0) % 4 == 0 and int((t - dt) * 2.0) % 4 != 0:
 				print("  전투 %.0f초: 나 %.0f · 감시조 %s · 적 %s" % [t, host.combat.pc.hp, str(host.combat.allies.map(func(a): return int(a["cmb"].hp))),
 					str(alive.map(func(e): return "%s %d/%d %s" % [e.get_meta("enemy_id"), int(e.cmb.hp), int(e.cmb.max_hp), AIBrain.S.keys()[e.brain.state]]))])
-			host.combat.bot = {"aim": alive[0].loco.logical + Vector2(0, -12), "fire": true, "aimed": true,
+			if not touch_bot:
+				host.combat.bot = {"aim": alive[0].loco.logical + Vector2(0, -12), "fire": true, "aimed": true,
 				"reload": host.combat.mags.get(host.combat.weapon_id, 1) == 0, "stim": host.combat.pc.hp < host.combat.pc.max_hp * 0.4}
 			if int(t * 2.0) % 9 == 0 and int((t - dt) * 2.0) % 9 != 0:
 				_shot("battle")
@@ -708,6 +814,9 @@ func _bot_trade(t: TradeScreen, dt: float) -> void:
 	hold = 0.0
 	var step := int(t.get_meta("bot_step", 0))
 	t.set_meta("bot_step", step + 1)
+	if touch_bot:
+		_trade_taps(t, step)
+		return
 	match step:
 		0:                                                             # 바구니에 담는다(잡동사니만 판다 — 총·탄은 남긴다)
 			var sell := t._list(0).filter(func(id): return id in ["W-067", "M-010", "M-046", "M-002"])
@@ -724,6 +833,30 @@ func _bot_trade(t: TradeScreen, dt: float) -> void:
 			print("거래 %s: 오간 캡 %d · 스팀팩 사는 값 %d · 내 캡 %d" % [t.vid, t.total, t.price("I-001", true), v("PC_CAPS")])
 		_:
 			t.close(true)
+
+
+## 터치 거래: 스팀팩 줄을 누르고(고르기) 다시 누르고(담기) → 찍기 → 거래 확정 두 번 → 닫기
+func _trade_taps(t: TradeScreen, step: int) -> void:
+	var at := func(id: String) -> Vector2:
+		for it in t.items:
+			if str(it["id"]) == id:
+				return t.view.position + (it["rect"] as Rect2).get_center()
+		return Vector2(-1, -1)
+	var row := "row1_%d" % t._list(1).find("I-001")
+	match step:
+		0, 1:
+			if t._list(1).has("I-001"):
+				_tap(at.call(row))
+		2:
+			_shot("trade")
+		3, 4:
+			_tap(at.call("confirm"))
+		5:
+			print("거래 %s(터치): 오간 캡 %d · 내 캡 %d" % [t.vid, t.total, v("PC_CAPS")])
+			_tap(at.call("close"))
+		_:
+			if is_instance_valid(t):
+				t.close(true)
 
 
 func _next() -> void:
@@ -765,6 +898,11 @@ func _talk(id: String) -> void:
 		return
 	host.player.loco.facing = Locomotion.snap8(a.loco.logical - host.player.loco.logical, 0.0)
 	host.player._show()
+	if touch_bot:
+		if host.interact_label() == "말하기" and _tap_q.is_empty() and not _fing.has(0):
+			_tap(_btn_center("act"))                                     # 터치: 상황 단추 '말하기'
+			_next()
+		return
 	if host.interact():
 		_next()
 

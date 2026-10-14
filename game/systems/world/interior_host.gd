@@ -57,7 +57,8 @@ func _ready() -> void:
 	_index_scenes()
 	cam = Camera2D.new()
 	add_child(cam)
-	cam.make_current()
+	if is_inside_tree():                                             # 시험은 나무 밖에서 _ready를 부른다
+		cam.make_current()
 	box = DialogueBox.new()
 	add_child(box)
 	box.finished.connect(_on_dialogue_done)
@@ -99,8 +100,7 @@ func set_night(on: bool) -> void:
 		_night_layer.layer = 1                                        # 맵(0층) 위, HUD·대화(8층~) 아래
 		add_child(_night_layer)
 		var r := ColorRect.new()
-		r.set_anchors_preset(Control.PRESET_FULL_RECT)
-		r.size = Vector2(4000, 3000)
+		r.set_anchors_preset(Control.PRESET_FULL_RECT)                # 화면 전체(크기는 앵커가 정한다)
 		r.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		var m := ShaderMaterial.new()
 		m.shader = load("res://systems/display/night_tone.gdshader")
@@ -713,6 +713,25 @@ func _down_tick(n: Dictionary, dt: float) -> void:
 		n["routine"].resume()
 
 
+## 터치 상황 단추 글(SD-11 §15.5): 앞에 인물이면 '말하기', 용기면 '열기', 조사 글이면 '조사'. 없으면 빈 글(단추를 숨긴다)
+func interact_label() -> String:
+	if map == null or player == null or box.active:
+		return ""
+	var f: Vector2 = Locomotion.VEC[player.loco.facing].normalized()
+	for n in npcs:
+		if is_instance_valid(n["actor"]) and not n.get("dead", false):
+			var v: Vector2 = n["actor"].loco.logical - player.loco.logical
+			if v.length() < 46.0 and v.normalized().dot(f) > 0.5:
+				return "말하기"
+	var cells := _front_cells()
+	if not _front_box(cells).is_empty():
+		return "열기"
+	for cc in cells:
+		if map.texts.has(cc):
+			return "조사"
+	return ""
+
+
 ## 조사 안내(HUD): 앞 칸이 용기면 "(E) 열기 이름 [소유]·[빈 상자]·[잠김]"
 func box_prompt() -> String:
 	var b := _front_box()
@@ -771,6 +790,7 @@ func _subject(who: String) -> Array:
 # ---------------------------------------------------------------- HUD (SD-12 §4.2 PC 배치, U 팔레트 단색 + 1px U0 테두리)
 const HU := DocScreen.GREEN
 const HUD_RED := Color("E04A35")
+var touch_layout := false                        ## 터치 배치(SD-12 §17.2): 상태 표시를 위로 올리고 아래 모서리는 엄지에게 — TouchHud가 켠다
 var hud_on := false                              ## 핍-보이를 받으면 켠다(HUD = 핍-보이 표시)
 var buddy_name := ""                             ## 일시 동행 이름(HUD 동행 칸)
 var buddy_id := ""                               ## 일시 동행 인물 ID(맵을 옮기면 주인공 뒤 빈 칸에 다시 세운다)
@@ -793,8 +813,11 @@ func _draw_hud() -> void:
 		var a := 0.5 if _hurt_t > 0.0 else 0.25 + 0.2 * sin(_hud_t * 7.0)
 		for rr in [Rect2(0, 0, vs.x, 3), Rect2(0, vs.y - 3, vs.x, 3), Rect2(0, 0, 3, vs.y), Rect2(vs.x - 3, 0, 3, vs.y)]:
 			banner.draw_rect(rr, Color(HUD_RED, a))
-	_bar(Vector2(70, 330 + b), 140.0, c.hp / maxf(1.0, c.max_hp), "HP", HUD_RED if low else HU[5])
 	var ap := float(status()["ap_max"])
+	if touch_layout:
+		_draw_hud_touch(vs, c, low, ap)
+		return
+	_bar(Vector2(70, 330 + b), 140.0, c.hp / maxf(1.0, c.max_hp), "HP", HUD_RED if low else HU[5])
 	_bar(Vector2(430 + r, 330 + b), 140.0, 1.0 if ap > 0.0 else 0.0, "AP", HU[5])
 	if combat.armed() and combat.weapon()["kind"] == "ranged":
 		var t := "장전 중" if combat.reload_t > 0.0 else "%d/%d" % [int(combat.mags.get(combat.weapon_id, 0)), combat.ammo_left(st)]
@@ -825,6 +848,33 @@ func _draw_hud() -> void:
 	if buddy_name != "" and combat.buddy != null:
 		_txt(Vector2(8, 258 + b), buddy_name, HU[5])
 		_bar(Vector2(8, 272 + b), 60.0, 1.0, "", HU[5])
+
+
+## 터치 배치(§17.2, 640×360 기준 — 오른쪽 묶음은 오른쪽 끝에 붙는다): HP·AP 막대 왼쪽 위, 알림 (8,48), 탐지 (280,48),
+## 방위 링 (576,52) 56×56, 목표 줄 (8,116), 동행 (8,152), 상호작용 문구 (176,250). 탄약·무기 이름은 터치 단추 위에 있다
+func _draw_hud_touch(vs: Vector2, c: Combatant, low: bool, ap: float) -> void:
+	var r := vs.x - 640.0
+	_txt(Vector2(8, 4), "HP", HU[5])
+	_bar(Vector2(28, 8), 140.0, c.hp / maxf(1.0, c.max_hp), "", HUD_RED if low else HU[5])
+	_txt(Vector2(8, 16), "AP", HU[5])
+	_bar(Vector2(28, 20), 140.0, 1.0 if ap > 0.0 else 0.0, "", HU[5])
+	var det := combat.detect_state()
+	if det != "" and not (det == "위험" and fmod(_hud_t, 0.3) < 0.15):
+		_txt(Vector2(320 + r / 2.0, 48), "[%s]" % det, HU[5] if det == "숨음" else HUD_RED, HORIZONTAL_ALIGNMENT_CENTER)
+	_ring(Vector2(604 + r, 80))
+	var ny := 48.0 + (28.0 if not hints.is_empty() else 0.0)
+	for n in notes:
+		_txt(Vector2(8, ny), n[0], HU[6] if n[1] > 3.0 else HU[5])
+		ny += 14.0
+	var goal := _objective()
+	if goal != "":
+		_txt(Vector2(8, maxf(116.0, ny + 4.0)), goal, HU[5])
+	var bp := box_prompt()
+	if bp != "":
+		_txt(Vector2(320 + r / 2.0, 250 + vs.y - 360.0), bp, HUD_RED if bp.ends_with("[소유]") else HU[6], HORIZONTAL_ALIGNMENT_CENTER)
+	if buddy_name != "" and combat.buddy != null:
+		_txt(Vector2(8, 152), buddy_name, HU[5])
+		_bar(Vector2(8, 166), 60.0, 1.0, "", HU[5])
 
 
 func _bar(p: Vector2, w: float, f: float, label: String, col: Color) -> void:
