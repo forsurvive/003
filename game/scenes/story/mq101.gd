@@ -300,7 +300,7 @@ func _dogs_tick(dt: float) -> void:
 			host.play_scene("MQ-101_DOGS_WIN")
 	if baek_lead and is_instance_valid(baek) and host.map.id == "X-S07" and not host.box.active:
 		var me := host.player.loco.logical
-		var goal := Vector2(BAEK_WAY[baek_i].x * 32 + 16, BAEK_WAY[baek_i].y * 32 + 16)
+		var goal := Vector2(host.map.cell_local(BAEK_WAY[baek_i].x, BAEK_WAY[baek_i].y) * 32) + Vector2(16, 16)
 		if baek.loco.logical.distance_to(goal) < 6.0:
 			baek_i = mini(baek_i + 1, BAEK_WAY.size() - 1)
 			baek_path = PackedVector2Array()
@@ -488,7 +488,7 @@ func _board() -> void:
 		s = BOARD_STATE[v("MQ101_RESULT")]
 	elif v("MQ101_NIGHT") >= 1:
 		s = "wanted"
-	host.map.set_prop_state(Vector2i(22, 35), s)
+	host.map.set_prop_state(host.map.cell_local(22, 35), s)
 
 
 ## 주민 한마디: 밤에 바뀌는 대사 3종(경계·두려움·감쌈) + 해법별 호칭(이름 · 손님 · '볼트 애' · 침묵)
@@ -574,22 +574,56 @@ var walk_only := false
 
 
 func walk(points: Array) -> void:
-	route = points
+	route = _expand(points)
 	route_i = 0
 	walk_only = true
 	host.input_fn = _bot_input
 
 
+## 이 맵 ID의 지점을 지금 맵에서 걸어서 갈 수 있나(월드는 "W"·손 맵 모두, 1-1)
+func _scope(map_id: String) -> bool:
+	return host.map.id == map_id or (host.map is WorldMap and WorldMap.covers(map_id))
+
+
+## 지점 [맵, x, y] → 지금 맵의 픽셀(월드는 손 맵 좌표를 옮긴다)
+func _goal_px(r: Array) -> Vector2:
+	var c := Vector2i(int(r[1]), int(r[2]))
+	if host.map is WorldMap:
+		c = host.map.to_world(str(r[0]), c.x, c.y)
+	return Vector2(c * 32) + Vector2(16, 16)
+
+
+## 지금 맵 칸 좌표를 그대로 쓰는 지점의 맵 이름(월드는 "W")
+func _here() -> String:
+	return "W" if host.map is WorldMap else host.map.id
+
+
+## 월드에서 손 맵이 바뀌는 지점 사이에 굽기가 찾은 걷는 길(경유점)을 끼운다
+func _expand(points: Array) -> Array:
+	if host.map == null or not host.map is WorldMap:
+		return points
+	var out: Array = []
+	for i in points.size():
+		var r: Array = points[i]
+		if i > 0:
+			var a := str(points[i - 1][0])
+			var b := str(r[0])
+			if a != b and a != "W" and b != "W" and WorldMap.covers(a) and WorldMap.covers(b):
+				out.append_array(host.map.route_between(a, b))
+		out.append(r)
+	return out
+
+
 func _bot_input() -> Vector2:
 	if route_i >= route.size() or host.map == null:
 		return Vector2.ZERO
-	while route_i + 1 < route.size() and host.map.id != str(route[route_i][0]) and host.map.id == str(route[route_i + 1][0]):
+	while route_i + 1 < route.size() and not _scope(str(route[route_i][0])) and _scope(str(route[route_i + 1][0])):
 		route_i += 1                                               # 출구를 밟아 맵이 바뀌었다: 그 맵의 다음 지점으로
 		path = PackedVector2Array()
 	var r: Array = route[route_i]
-	if host.map.id != str(r[0]):
+	if not _scope(str(r[0])):
 		return Vector2.ZERO
-	var goal := Vector2(int(r[1]) * 32 + 16, int(r[2]) * 32 + 16)
+	var goal := _goal_px(r)
 	var p := host.player.loco.render
 	if p.distance_to(goal) < 6.0:
 		route_i += 1
@@ -729,20 +763,23 @@ func _bot(dt: float) -> void:
 	var job: Array = plan[plan_i]
 	match str(job[0]):
 		"go":
-			if route.is_empty() or route_i >= route.size() or route[0] != [job[1], job[2], job[3]]:
+			if route.is_empty() or route_i >= route.size() or route[route.size() - 1] != [job[1], job[2], job[3]]:
+				var here_zone := host.map.id
 				route = [[job[1], job[2], job[3]]]
+				if host.map is WorldMap and here_zone != str(job[1]) and here_zone != "W" and WorldMap.covers(str(job[1])):
+					route = host.map.route_between(here_zone, str(job[1])) + route     # 손 맵 사이는 월드 길로(1-1)
 				route_i = 0
 				path = PackedVector2Array()
-			if host.map.id == str(job[1]) and host.player.loco.render.distance_to(Vector2(int(job[2]) * 32 + 16, int(job[3]) * 32 + 16)) < 8.0:
+			if _scope(str(job[1])) and host.player.loco.render.distance_to(_goal_px(job.slice(1))) < 8.0:
 				_next()
-			elif host.map.id != str(job[1]):
+			elif not _scope(str(job[1])):
 				_exit_toward(str(job[1]))
 			else:
 				_stuck_check(dt)
 		"talk":
 			_talk(str(job[1]))
 		"use":
-			host.player.loco.facing = Locomotion.snap8(Vector2(int(job[2]) * 32 + 16, int(job[3]) * 32 + 16) - host.player.loco.logical, 0.0)
+			host.player.loco.facing = Locomotion.snap8(_goal_px(job.slice(1)) - host.player.loco.logical, 0.0)
 			host.player._show()
 			if touch_bot:
 				_tap(_btn_center("act"))
@@ -886,8 +923,8 @@ func _next() -> void:
 func _exit_toward(to: String) -> void:
 	for c in host.map.exits:
 		if str(host.map.exits[c]["to"]) == to:
-			if route.is_empty() or route[0] != [host.map.id, c.x, c.y]:
-				route = [[host.map.id, c.x, c.y]]
+			if route.is_empty() or route[0] != [_here(), c.x, c.y]:
+				route = [[_here(), c.x, c.y]]
 				route_i = 0
 				path = PackedVector2Array()
 			return
@@ -906,8 +943,8 @@ func _talk(id: String) -> void:
 			var c: Vector2i = goal + d
 			if not host.map.is_solid(c) and host.map.level_link(c, goal) and (best.x < 0 or me.distance_to(Vector2(c * 32) + Vector2(16, 16)) < me.distance_to(Vector2(best * 32) + Vector2(16, 16))):
 				best = c
-		if best.x >= 0 and (route.is_empty() or route[0] != [host.map.id, best.x, best.y]):
-			route = [[host.map.id, best.x, best.y]]
+		if best.x >= 0 and (route.is_empty() or route[0] != [_here(), best.x, best.y]):
+			route = [[_here(), best.x, best.y]]
 			route_i = 0
 			path = PackedVector2Array()
 		return

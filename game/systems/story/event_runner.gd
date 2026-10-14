@@ -251,19 +251,24 @@ func _route(a: Actor, to: Vector2) -> PackedVector2Array:
 func _mark(m: String) -> Vector2:
 	var tx := 0
 	var ty := 0
-	if marks.has(m):
-		tx = int(marks[m][0])
-		ty = int(marks[m][1])
+	var key: String = world.zone_key(m) if world != null and world.has_method("zone_key") else m
+	if marks.has(key):
+		tx = int(marks[key][0])
+		ty = int(marks[key][1])
 	elif "," in m:
-		tx = int(m.get_slice(",", 0))
-		ty = int(m.get_slice(",", 1))
+		var c := Vector2i(int(m.get_slice(",", 0)), int(m.get_slice(",", 1)))
+		if world != null and world.has_method("cell_local"):
+			c = world.cell_local(c.x, c.y)                               # 월드(1-1): 지금 구역의 손 맵 좌표
+		tx = c.x
+		ty = c.y
 	else:
 		push_warning("없는 표지: " + m)
 	return Vector2(tx * 32 + 16, ty * 32 + 20)
 
 
 func _mark_dir(m: String) -> String:
-	return str(marks[m][2]) if marks.has(m) and marks[m].size() > 2 else "S"
+	var key: String = world.zone_key(m) if world != null and world.has_method("zone_key") else m
+	return str(marks[key][2]) if marks.has(key) and marks[key].size() > 2 else "S"
 
 
 static func _dir_to(a: Vector2, b: Vector2) -> int:

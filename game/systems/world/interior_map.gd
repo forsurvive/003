@@ -114,59 +114,88 @@ func load_map(map_id: String, st: StoryState = null) -> void:
 	objects = Node2D.new()
 	objects.y_sort_enabled = true
 	add_child(objects)
-	for p in data["props"]:
+	_add_objects(map_id, data, st, Vector2i.ZERO)
+
+
+## 맵 자료의 소품·문·문패·용기·출구·조사 글을 o(타일)만큼 옮겨 얹는다. 월드(1-1)는 손 맵마다 그 자리로 부른다.
+## 조사 글 열쇠는 손 맵 좌표 그대로("X-BC:5,36") — 저장된 조사 기록이 월드에서도 이어진다.
+func _add_objects(map_id: String, d: Dictionary, st: StoryState, o: Vector2i) -> void:
+	var op := Vector2(o * T)
+	for p in d["props"]:
 		if not _cond_ok(p.get("cond", ""), st):
 			continue
 		for c in p.get("cells", []):
-			solid[int(c[1]) * size.x + int(c[0])] = 1                       # 조건부 소품의 발 칸
+			_put_solid(o.x + int(c[0]), o.y + int(c[1]), 1)                     # 조건부 소품의 발 칸
 		var e: Dictionary = prop_meta[p["name"]]
 		var rect: Array = e["frames"][0] if e.has("frames") else e["rect"]
 		var tall: bool = int(rect[3]) - int(e["foot"][1]) * T > 24          # 발 칸 위로 24px 넘게 서는 소품(사물함·선반) = 높은 엄폐
-		var fx := int(p["x"])
-		var fy := int(p["y"])
+		var fx := int(p["x"]) + o.x
+		var fy := int(p["y"]) + o.y
 		for yy in range(fy, fy + maxi(1, int(e["foot"][1]))):
 			for xx in range(fx, fx + maxi(1, int(e["foot"][0]))):
-				if xx >= 0 and yy >= 0 and xx < size.x and yy < size.y and solid[yy * size.x + xx] == 1:
-					cover[yy * size.x + xx] = 2 if tall else 1
-		var node := _sprite(rect, Vector2(p["px"][0], p["px"][1]), float(p["sort_y"]), str(e.get("atlas", "s07")))
-		props.append({"name": p["name"], "x": int(p["x"]), "y": int(p["y"]), "w": maxi(1, int(e["foot"][0])),
+				if _get_solid(xx, yy) == 1:
+					_put_cover(xx, yy, 2 if tall else 1)
+		var node := _sprite(rect, Vector2(p["px"][0], p["px"][1]) + op, float(p["sort_y"]) + op.y, str(e.get("atlas", "s07")))
+		props.append({"name": p["name"], "x": fx, "y": fy, "w": maxi(1, int(e["foot"][0])),
 			"h": maxi(1, int(e["foot"][1])), "node": node})
-	for d in data["doors"]:
-		var e: Dictionary = prop_meta[d["kind"]]
-		var pos := Vector2(int(d["x"]) * T + int(e["off"][0]), int(d["y"]) * T + int(e["off"][1]))
-		var s := _sprite(e["rect"], pos, (int(d["y"]) + 2) * T)
-		doors.append({"node": s, "x": int(d["x"]), "y": int(d["y"]), "locked": bool(d["locked"]), "is_open": false,
+	for dd in d["doors"]:
+		var e: Dictionary = prop_meta[dd["kind"]]
+		var dx := int(dd["x"]) + o.x
+		var dy := int(dd["y"]) + o.y
+		var pos := Vector2(dx * T + int(e["off"][0]), dy * T + int(e["off"][1]))
+		var s := _sprite(e["rect"], pos, (dy + 2) * T)
+		doors.append({"node": s, "x": dx, "y": dy, "locked": bool(dd["locked"]), "is_open": false,
 			"closed": _r(e["rect"]), "open": _r(e.get("open", e["rect"]))})
-		if d["locked"]:
-			texts[Vector2i(int(d["x"]), int(d["y"]) + 1)] = "잠겨 있다."
-	for s in data["signs"]:
+		if dd["locked"]:
+			texts[Vector2i(dx, dy + 1)] = "잠겨 있다."
+	for s in d["signs"]:
 		if not _cond_ok(s.get("cond", ""), st):
 			continue
 		var plate := SignPlate.new()
 		plate.text = s["text"]
-		plate.position = Vector2(int(s["x"]) * T + 16, (int(s["y"]) + 2) * T)
+		plate.position = Vector2((int(s["x"]) + o.x) * T + 16, (int(s["y"]) + o.y + 2) * T)
 		plate.lift = 2 * T - 2
 		objects.add_child(plate)
-	for b in data.get("boxes", []):
+	for b in d.get("boxes", []):
+		var bb: Dictionary = b.duplicate()
+		bb["x"] = int(b["x"]) + o.x
+		bb["y"] = int(b["y"]) + o.y
 		for j in int(b["h"]):
 			for i in int(b["w"]):
-				boxes[Vector2i(int(b["x"]) + i, int(b["y"]) + j)] = b
-	for e in data["exits"]:
-		exits[Vector2i(int(e["x"]), int(e["y"]))] = {"to": e["to"], "mark": e["mark"]}
-	for t in data["texts"]:
+				boxes[Vector2i(int(bb["x"]) + i, int(bb["y"]) + j)] = bb
+	for e in d["exits"]:
+		exits[Vector2i(int(e["x"]) + o.x, int(e["y"]) + o.y)] = {"to": e["to"], "mark": e["mark"]}
+	for t in d["texts"]:
 		var live := _cond_ok(t.get("cond", ""), st)
 		var staged: bool = t.has("scene") or t.has("seq")              # 장면이 달린 글: 조건은 조사하는 순간에 본다(무기고를 연 뒤의 총기 거치대 등, 0-9)
 		if not live and not staged:
 			continue
 		for j in int(t["h"]):
 			for i in int(t["w"]):
-				var c := Vector2i(int(t["x"]) + i, int(t["y"]) + j)
+				var c := Vector2i(int(t["x"]) + i + o.x, int(t["y"]) + j + o.y)
 				var plain: String = texts.get(c, "")
 				if live or not texts.has(c):
 					texts[c] = t["text"]
 				if staged or t.has("cond"):
 					text_meta[c] = {"cond": t.get("cond", ""), "seq": t.get("seq", []), "scene": t.get("scene", ""),
 						"key": "%s:%d,%d" % [map_id, int(t["x"]), int(t["y"])], "plain": plain}
+
+
+## 칸 쓰기·읽기(월드는 청크 자료에 쓴다 — WorldMap이 덮어쓴다)
+func _put_solid(x: int, y: int, v: int) -> void:
+	if x >= 0 and y >= 0 and x < size.x and y < size.y:
+		solid[y * size.x + x] = v
+
+
+func _get_solid(x: int, y: int) -> int:
+	if x >= 0 and y >= 0 and x < size.x and y < size.y:
+		return solid[y * size.x + x]
+	return 1
+
+
+func _put_cover(x: int, y: int, v: int) -> void:
+	if x >= 0 and y >= 0 and x < size.x and y < size.y:
+		cover[y * size.x + x] = v
 
 
 static func _cond_ok(cond: String, st: StoryState) -> bool:
@@ -300,7 +329,7 @@ func unlock_door(x: int, y: int) -> bool:
 		if int(d["x"]) == x and int(d["y"]) == y:
 			d["locked"] = false
 			for yy in [y, y + 1]:
-				solid[yy * size.x + x] = 0
+				_put_solid(x, yy, 0)
 			texts.erase(Vector2i(x, y + 1))
 			return true
 	return false
@@ -313,6 +342,16 @@ func add_actor(a: Node2D) -> void:
 
 func remove_actor(a: Node2D) -> void:
 	actors.erase(a)
+
+
+## 맵 좌표(연출·봇이 쓰는 손 맵 좌표) → 이 맵의 칸. 월드는 지금 구역의 손 맵 자리만큼 옮긴다(WorldMap).
+func cell_local(x: int, y: int) -> Vector2i:
+	return Vector2i(x, y)
+
+
+## 표지 이름 → 이 맵의 표지 열쇠(월드는 지금 구역의 표지를 먼저 고른다)
+func zone_key(name: String) -> String:
+	return name
 
 
 func mark_pos(name: String) -> Vector2:

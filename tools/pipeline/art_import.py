@@ -148,6 +148,28 @@ def tileset(name, tiles, floor_bg=None):
     return len(names)
 
 
+def tileset_grid(name, tiles, extra=None, cols=32):
+    """격자 아틀라스 타일셋(월드 구조물처럼 칸이 많을 때 — 한 줄 아틀라스는 모바일 텍스처 한도 4096px를 넘는다).
+    막힘·엄폐는 청크 자료가 칸마다 들고 있어 타일셋에는 그림만 둔다."""
+    import tiles_world
+    img, pos = tiles_world.atlas(tiles, cols)
+    os.makedirs(TIL, exist_ok=True)
+    img.save(os.path.join(TIL, name + ".png"))
+    lines = [f'[gd_resource type="TileSet" load_steps=3 format=3]\n',
+             f'[ext_resource type="Texture2D" path="res://assets/tiles/{name}.png" id="1"]\n',
+             '[sub_resource type="TileSetAtlasSource" id="src0"]', 'texture = ExtResource("1")',
+             "texture_region_size = Vector2i(32, 32)"]
+    for n in tiles:
+        x, y = pos[n]
+        lines.append(f"{x}:{y}/0 = 0")
+    lines += ["", "[resource]", "tile_size = Vector2i(32, 32)", 'sources/0 = SubResource("src0")', ""]
+    open(os.path.join(TIL, name + ".tres"), "w", encoding="utf-8").write("\n".join(lines))
+    meta = {"cols": cols, "tiles": pos}
+    meta.update(extra or {})
+    json.dump(meta, open(os.path.join(TIL, name + ".json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
+    return len(tiles)
+
+
 def main():
     n = import_sheets()
     roach_sheet()
@@ -158,12 +180,15 @@ def main():
     ns = tileset("ts_s07_int", tiles_isaac.s07_tiles())
     nw = tileset("ts_s07_wall", tiles_isaac.s07_wall_tiles())
     tileset("ts_bc_wall", tiles_isaac.bc_wall_tiles())                # 봉천 빌라 실내 벽(0-10)
+    import tiles_world                                             # 월드 건물·지형 구조(1-1)
+    wt, wtab = tiles_world.build()
+    nwd = tileset_grid("ts_world", wt, {"skins": wtab})
     import ground                                                  # 바닥 합성 재질·잔 소품·잡음(SD-16 §6.10)
     ground._CACHE.clear()                                          # 타일 그림을 자르며 옛 번호로 읽은 세트를 버린다
     gdir = os.path.join(ROOT, "game", "assets", "ground")
     for gs in ("r01", "s07"):
         ground.load(gs).export(gdir)
-    print(f"sprites: {n} sheets + cr_cr002 | tiles: r01 {nt}, s07 {ns}, s07 벽 {nw} | ground: r01, s07")
+    print(f"sprites: {n} sheets + cr_cr002 | tiles: r01 {nt}, s07 {ns}, s07 벽 {nw}, 월드 {nwd} | ground: r01, s07")
 
 
 if __name__ == "__main__":

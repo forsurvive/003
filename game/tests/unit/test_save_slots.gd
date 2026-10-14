@@ -91,18 +91,24 @@ func test_host_restore(t) -> void:
 	h.enter("X-BC", "from_X-S07")
 	h.combat.equip("W-002", st)
 	h.combat.mags["W-002"] = 7
-	h.player.loco.place(Vector2(29 * 32 + 16, 37 * 32 + 16))
+	var spot := Vector2(WorldMap.origin_of("X-BC") * 32) + Vector2(29 * 32 + 16, 37 * 32 + 16)   # 봉천 손 맵 (29,37)의 월드 자리
+	h.player.loco.place(spot)
 	h.combat.pc.hp = 123.0
 	h.date_text = "2277. 10. 23.  14:30"
 	var d := GameSnapshot.host(h)
-	t.eq(str(d["map"]), "X-BC", "맵")
+	t.eq(str(d["map"]), "W", "월드는 W + 월드 좌표로 적는다(1-1)")
 	h.enter("X-S07", "start")
 	h.combat.pc.hp = 50.0
 	GameSnapshot.apply_host(h, d)
-	t.eq(h.map.id, "X-BC", "맵으로 돌아온다")
-	t.ok(h.player.loco.logical.distance_to(Vector2(29 * 32 + 16, 37 * 32 + 16)) < 1.0, "저장한 자리")
+	t.eq(h.map.id, "X-BC", "봉천 구역으로 돌아온다")
+	t.ok(h.player.loco.logical.distance_to(spot) < 1.0, "저장한 자리")
 	t.eq(h.combat.weapon_id, "W-002", "든 무기")
 	t.eq(int(h.combat.mags.get("W-002", 0)), 7, "탄창")
 	t.near(h.combat.pc.hp, 123.0, 0.01, "HP")
 	t.eq(var_to_bytes(GameSnapshot.host(h)), var_to_bytes(d), "다시 찍은 한 장이 같다")
+	var old := d.duplicate(true)                                         # 1-1 이전 저장(손 맵 이름 + 손 맵 좌표)도 같은 자리로
+	old["map"] = "X-BC"
+	old["pos"] = [29 * 32 + 16, 37 * 32 + 16]
+	GameSnapshot.apply_host(h, old)
+	t.ok(h.player.loco.logical.distance_to(spot) < 1.0 and h.map.id == "X-BC", "옛 저장 좌표를 월드로 옮긴다")
 	h.free()

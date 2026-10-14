@@ -1,0 +1,435 @@
+## 심리스 바깥 월드(단계 1-1, SD-08 §3.8·SD-19 §6.5): world_chunks.py가 구운 world.bin을 청크 40×40씩 스트리밍한다.
+## InteriorMap을 이어받아 충돌·시선·길찾기·문·소품·조사 API를 그대로 쓰고, 칸 조회만 붙은 청크 자료에서 읽는다.
+##   · 사전 로드 5×5(작업 스레드에서 읽기·압축 풀기) · 7×7 밖 해제 · 한 프레임에 1청크만 붙인다(끊김 예산).
+##   · 층: 바닥 합성(z -11) · 그림자(z -10, 오른쪽 아래 높이 1단당 16px, 35%) · 구조 타일(z -9) · 덧층(z -8) · 물건 층(y 정렬: 나무·소품·인물).
+##   · 손 맵(X-S07 관악산 비탈 · X-BC 봉천)은 실제 좌표에 찍혀 있다(바닥·막힘은 청크 자료, 소품·문·글·출구·NPC는 여기서 옮겨 얹는다).
+##     id는 주인공이 선 손 맵 이름(밖이면 "W") — 손 맵 기준으로 짠 연출·봇이 그대로 돈다. to_world(맵, x, y)로 손 맵 좌표를 바꾼다.
+class_name WorldMap
+extends InteriorMap
+
+const WDIR := "res://data/world/"
+const L_FLOOR := 0
+const L_GFLAG := 1600
+const L_SOLID := 3200
+const L_COVER := 4800
+const L_LEVEL := 6400
+const L_STAIR := 8000
+const L_BODY := 9600
+const L_DECO := 12800
+const L_TAIL := 16000
+const SHADOW := Color(0, 0, 0, 0.35)
+
+var meta: Dictionary
+var cs := 40
+var nchunks := Vector2i(53, 43)
+var chunks := {}                                 ## Vector2i -> {"a": 원자료, "nodes": [노드…], "g": GroundLayer}
+var _pending := {}
+var _ready_q: Array = []
+var _mutex := Mutex.new()
+var focus := Vector2i(-999, -999)
+var follow: Node2D                               ## 스트리밍 기준(없으면 첫 인물)
+var insets: Array = []                           ## [{"id", "origin": Vector2i, "size": Vector2i, "data"}]
+var overrides := {}                              ## Vector2i -> [막힘, 엄폐] (조건부 소품·문·연출이 바꾼 칸; -1 = 청크 값)
+var attach_usec_max := 0
+var attach_count := 0
+var _tiles_ground: Node2D
+var _tiles_shadow: Node2D
+var _tiles_body: Node2D
+static var world_ts: TileSet
+static var ts_cols := 32
+static var tree_names: Array = []
+
+
+func load_map(map_id: String, st: StoryState = null) -> void:
+	_load_static()
+	id = "W"
+	meta = JSON.parse_string(FileAccess.get_file_as_string(WDIR + "world.json"))
+	cs = int(meta["chunk_size"])
+	nchunks = Vector2i(int(meta["chunks"][0]), int(meta["chunks"][1]))
+	size = Vector2i(int(meta["size"][0]), int(meta["size"][1]))
+	ext = true
+	tree_names = meta["props"]
+	if world_ts == null:
+		world_ts = load("res://assets/tiles/ts_world.tres")
+		ts_cols = int(JSON.parse_string(FileAccess.get_file_as_string("res://assets/tiles/ts_world.json"))["cols"])
+	GroundLayer.get_set("r01")                                            # 바닥 재질·셰이더를 미리 읽어 둔다(붙이기 예산)
+	data = {"id": "W", "name": "서울", "npcs": [], "triggers": [], "enemies": [], "props": [], "doors": [], "signs": [], "texts": [],
+		"exits": [], "boxes": [], "marks": {}}
+	marks = {}
+	for n in ["_tiles_ground", "_tiles_shadow", "_tiles_body"]:
+		var nd := Node2D.new()
+		set(n, nd)
+		add_child(nd)
+	_tiles_ground.z_index = -11
+	_tiles_shadow.z_index = -10
+	_tiles_body.z_index = -9
+	objects = Node2D.new()
+	objects.y_sort_enabled = true
+	add_child(objects)
+	var ids: Array = []
+	for e in meta["insets"]:
+		ids.append(str(e["id"]))
+	for e in meta["insets"]:
+		var iid := str(e["id"])
+		var d: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/maps/%s.json" % iid))
+		var o := Vector2i(int(e["origin"][0]), int(e["origin"][1]))
+		insets.append({"id": iid, "origin": o, "size": Vector2i(int(e["size"][0]), int(e["size"][1])), "data": d})
+		var sp := "res://assets/maps/%s_struct.png" % iid                  # 손 맵 구조물 한 장(0-10)
+		if ResourceLoader.exists(sp):
+			var spr := Sprite2D.new()
+			spr.texture = load(sp)
+			spr.centered = false
+			spr.position = Vector2(o * T)
+			spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+			_tiles_body.add_child(spr)
+		_add_objects(iid, d, st, o)
+		for k in d["marks"]:
+			var m: Array = d["marks"][k]
+			var v := [int(m[0]) + o.x, int(m[1]) + o.y, m[2]]
+			marks["%s:%s" % [iid, k]] = v
+			if not marks.has(k):
+				marks[k] = v
+		for n in d["npcs"]:
+			var nn: Dictionary = n.duplicate(true)
+			nn["x"] = int(n["x"]) + o.x
+			nn["y"] = int(n["y"]) + o.y
+			for r in nn["route"]:
+				r[1] = int(r[1]) + o.x
+				r[2] = int(r[2]) + o.y
+			data["npcs"].append(nn)
+		for key in ["triggers", "enemies"]:
+			for g in d.get(key, []):
+				var gg: Dictionary = g.duplicate(true)
+				gg["x"] = int(g["x"]) + o.x
+				gg["y"] = int(g["y"]) + o.y
+				data[key].append(gg)
+	for k in exits.keys():                                               # 손 맵끼리 잇던 가장자리 출구는 월드에서 이어진 땅이다
+		if str(exits[k]["to"]) in ids:
+			exits.erase(k)
+	data["marks"] = marks
+
+
+## 이 맵 ID를 월드가 맡나("W" 또는 월드에 찍힌 손 맵)
+static func covers(map_id: String) -> bool:
+	if map_id == "W":
+		return true
+	if _covered.is_empty() and FileAccess.file_exists(WDIR + "world.json"):
+		for e in JSON.parse_string(FileAccess.get_file_as_string(WDIR + "world.json"))["insets"]:
+			_covered[str(e["id"])] = true
+	return _covered.has(map_id)
+
+
+static var _covered := {}
+
+
+## 손 맵이 월드에 찍힌 자리(타일)
+static func origin_of(map_id: String) -> Vector2i:
+	for e in JSON.parse_string(FileAccess.get_file_as_string(WDIR + "world.json"))["insets"]:
+		if str(e["id"]) == map_id:
+			return Vector2i(int(e["origin"][0]), int(e["origin"][1]))
+	return Vector2i.ZERO
+
+
+## 지금 구역 이름(배너): 손 맵 이름, 밖이면 '서울'
+func zone_name() -> String:
+	for ins in insets:
+		if ins["id"] == id:
+			return str(ins["data"]["name"])
+	return "서울"
+
+
+## 손 맵 좌표 → 월드 타일(손 맵이 아니면 그대로)
+func to_world(map_id: String, x: int, y: int) -> Vector2i:
+	for ins in insets:
+		if ins["id"] == map_id:
+			return Vector2i(x, y) + ins["origin"]
+	return Vector2i(x, y)
+
+
+func cell_local(x: int, y: int) -> Vector2i:
+	return to_world(id, x, y)
+
+
+func zone_key(name: String) -> String:
+	var z := "%s:%s" % [id, name]
+	return z if marks.has(z) else name
+
+
+func mark_pos(name: String) -> Vector2:
+	return super.mark_pos(zone_key(name))
+
+
+func mark_dir(name: String) -> String:
+	return super.mark_dir(zone_key(name))
+
+
+## 손 맵 사이 걷는 길(굽기가 찾은 경유점, ["W", x, y] 목록). 없으면 빈 배열
+func route_between(a: String, b: String) -> Array:
+	var rt: Dictionary = meta.get("routes", {})
+	var out: Array = []
+	if rt.has("%s>%s" % [a, b]):
+		for q in rt["%s>%s" % [a, b]]:
+			out.append(["W", int(q[0]), int(q[1])])
+	elif rt.has("%s>%s" % [b, a]):
+		var r: Array = rt["%s>%s" % [b, a]]
+		for i in range(r.size() - 1, -1, -1):
+			out.append(["W", int(r[i][0]), int(r[i][1])])
+	return out
+
+
+## 이 칸이 든 손 맵 이름(없으면 "W")
+func zone_of(t: Vector2i) -> String:
+	for ins in insets:
+		var o: Vector2i = ins["origin"]
+		var s: Vector2i = ins["size"]
+		if t.x >= o.x and t.y >= o.y and t.x < o.x + s.x and t.y < o.y + s.y:
+			return ins["id"]
+	return "W"
+
+
+func _process(dt: float) -> void:
+	super._process(dt)
+	var f: Node2D = follow if is_instance_valid(follow) else (actors[0] if not actors.is_empty() and is_instance_valid(actors[0]) else null)
+	if f != null:
+		var p: Vector2 = f.loco.logical if "loco" in f and f.loco != null else f.position
+		update_focus(p)
+		id = zone_of(tile_of(p))
+
+
+# ---------------------------------------------------------------- 스트리밍
+func chunk_of_tile(t: Vector2i) -> Vector2i:
+	return Vector2i(floori(float(t.x) / cs), floori(float(t.y) / cs))
+
+
+func _in_world(k: Vector2i) -> bool:
+	if k.x < 0 or k.y < 0 or k.x >= nchunks.x or k.y >= nchunks.y:
+		return false
+	return int(meta["offsets"][k.y * nchunks.x + k.x][1]) > 0
+
+
+func update_focus(p: Vector2) -> void:
+	var c := chunk_of_tile(tile_of(p))
+	if c != focus:
+		focus = c
+		for dy in range(-2, 3):
+			for dx in range(-2, 3):                                         # 5×5 사전 로드
+				var k := c + Vector2i(dx, dy)
+				if _in_world(k) and not chunks.has(k) and not _pending.has(k):
+					_pending[k] = WorkerThreadPool.add_task(_load_task.bind(k))
+		for k in chunks.keys():                                             # 7×7 밖 해제
+			if absi(k.x - c.x) > 3 or absi(k.y - c.y) > 3:
+				_detach(k)
+	_attach_one()
+
+
+func _load_task(k: Vector2i) -> void:
+	var o: Array = meta["offsets"][k.y * nchunks.x + k.x]
+	var f := FileAccess.open(WDIR + "world.bin", FileAccess.READ)
+	f.seek(int(o[0]))
+	var raw := f.get_buffer(int(o[1])).decompress(int(o[2]), FileAccess.COMPRESSION_DEFLATE)
+	_mutex.lock()
+	_ready_q.append([k, raw])
+	_mutex.unlock()
+
+
+func _attach_one() -> bool:
+	_mutex.lock()
+	var item = _ready_q.pop_front() if not _ready_q.is_empty() else null
+	_mutex.unlock()
+	if item == null:
+		return false
+	var k: Vector2i = item[0]
+	WorkerThreadPool.wait_for_task_completion(_pending[k])
+	_pending.erase(k)
+	if absi(k.x - focus.x) > 3 or absi(k.y - focus.y) > 3 or chunks.has(k):
+		return true
+	var t0 := Time.get_ticks_usec()
+	_attach(k, item[1])
+	var us := Time.get_ticks_usec() - t0
+	attach_usec_max = maxi(attach_usec_max, us)
+	attach_count += 1
+	return true
+
+
+func _attach(k: Vector2i, a: PackedByteArray) -> void:
+	var o := k * cs
+	var nodes: Array = []
+	var g := GroundLayer.new()                                           # 바닥 합성(SD-16 §6.10)
+	g.setup("r01", o, Vector2i(cs, cs))
+	for y in cs:
+		for x in cs:
+			var i := y * cs + x
+			g.put_flag(o.x + x, o.y + y, a[L_FLOOR + i], a[L_GFLAG + i])
+	for dy in range(-1, 2):                                              # 이웃 청크와 테두리를 서로 채운다(경계 섞임이 이어지게)
+		for dx in range(-1, 2):
+			var nk := k + Vector2i(dx, dy)
+			if (dx == 0 and dy == 0) or not chunks.has(nk):
+				continue
+			var nb: Dictionary = chunks[nk]
+			_share_ring(nk, nb["a"], g)
+			var ng: GroundLayer = nb["g"]
+			_share_ring(k, a, ng)
+			ng.commit()
+	g.pad()
+	g.commit()
+	_tiles_ground.add_child(g)
+	nodes.append(g)
+	var body := TileMapLayer.new()                                       # 구조 타일(건물·암벽·다리·성곽)
+	body.tile_set = world_ts
+	var dec := TileMapLayer.new()                                        # 덧층(옥상 설비·벼랑 끝)
+	dec.tile_set = world_ts
+	dec.z_index = 1
+	for y in cs:
+		for x in cs:
+			var i := y * cs + x
+			var b := a[L_BODY + i * 2] | (a[L_BODY + i * 2 + 1] << 8)
+			if b > 0:
+				body.set_cell(o + Vector2i(x, y), 0, Vector2i((b - 1) % ts_cols, (b - 1) / ts_cols))
+			var dv := a[L_DECO + i * 2] | (a[L_DECO + i * 2 + 1] << 8)
+			if dv > 0:
+				dec.set_cell(o + Vector2i(x, y), 0, Vector2i((dv - 1) % ts_cols, (dv - 1) / ts_cols))
+	_tiles_body.add_child(body)
+	_tiles_body.add_child(dec)
+	nodes.append(body)
+	nodes.append(dec)
+	var p := L_TAIL                                                      # 나무(R01 소품, y 정렬)
+	var nt := a[p] | (a[p + 1] << 8)
+	p += 2
+	for j in nt:
+		var tx := o.x + a[p]
+		var ty := o.y + a[p + 1]
+		var e: Dictionary = prop_meta[tree_names[a[p + 2] | (a[p + 3] << 8)]]
+		nodes.append(_sprite(e["rect"], Vector2(tx * T + int(e["off"][0]), ty * T + int(e["off"][1])), (ty + 1) * T, "r01"))
+		p += 4
+	var ns := a[p] | (a[p + 1] << 8)                                     # 건물 그림자(SD-16 §3.9: 오른쪽 아래, 높이 1단당 16px, 곱하기 35%)
+	p += 2
+	if ns > 0:
+		var sh := Node2D.new()
+		var polys: Array = []
+		for j in ns:
+			var bx := _i16(a, p)
+			var by := _i16(a, p + 2)
+			var bw := a[p + 4]
+			var bh := a[p + 5]
+			var s := a[p + 6] * 16.0
+			var x1 := (bx + bw) * T
+			polys.append(PackedVector2Array([Vector2(x1, by * T), Vector2(x1 + s, by * T + s), Vector2(x1 + s, (by + bh) * T), Vector2(x1, (by + bh) * T)]))
+			p += 8
+		sh.draw.connect(func() -> void:
+			for q in polys:
+				sh.draw_colored_polygon(q, SHADOW))
+		_tiles_shadow.add_child(sh)
+		nodes.append(sh)
+	chunks[k] = {"a": a, "nodes": nodes, "g": g}
+
+
+static func _i16(a: PackedByteArray, p: int) -> int:
+	var v := a[p] | (a[p + 1] << 8)
+	return v - 65536 if v >= 32768 else v
+
+
+## 청크 k의 자료 중 dst 바닥 층의 테두리에 닿는 칸만 넣는다.
+func _share_ring(k: Vector2i, a: PackedByteArray, dst: GroundLayer) -> void:
+	var so := k * cs
+	var x0 := maxi(so.x, dst.origin.x - 1)
+	var x1 := mini(so.x + cs - 1, dst.origin.x + dst.size.x)
+	var y0 := maxi(so.y, dst.origin.y - 1)
+	var y1 := mini(so.y + cs - 1, dst.origin.y + dst.size.y)
+	for ty in range(y0, y1 + 1):
+		for tx in range(x0, x1 + 1):
+			var i := (ty - so.y) * cs + (tx - so.x)
+			dst.put_flag(tx, ty, a[L_FLOOR + i], a[L_GFLAG + i])
+
+
+func _detach(k: Vector2i) -> void:
+	for n in chunks[k]["nodes"]:
+		if is_instance_valid(n):
+			n.queue_free()
+	chunks.erase(k)
+
+
+## 순간 이동·맵 열기용: p 둘레 3×3을 지금 붙인다(화면이 가려질 때만 — 끊김을 감수한다).
+func load_now(p: Vector2) -> void:
+	update_focus(p)
+	var c := chunk_of_tile(tile_of(p))
+	var t_end := Time.get_ticks_msec() + 5000
+	while Time.get_ticks_msec() < t_end:
+		var missing := false
+		for dy in range(-1, 2):
+			for dx in range(-1, 2):
+				var k := c + Vector2i(dx, dy)
+				if _in_world(k) and not chunks.has(k):
+					missing = true
+		if not missing:
+			return
+		if not _attach_one():
+			OS.delay_msec(1)
+
+
+# ---------------------------------------------------------------- 칸 조회(붙은 청크 자료)
+func _cell(t: Vector2i, layer: int) -> int:
+	var k := chunk_of_tile(t)
+	var c = chunks.get(k)
+	if c == null:
+		return -1
+	return c["a"][layer + (t.y - k.y * cs) * cs + (t.x - k.x * cs)]
+
+
+func is_solid(t: Vector2i) -> bool:
+	var ov = overrides.get(t)
+	if ov != null and ov[0] >= 0:
+		return ov[0] == 1
+	var v := _cell(t, L_SOLID)
+	return v != 0                                                        # 붙지 않은 청크(-1)는 막힌 것으로 본다(밖으로 새지 않게)
+
+
+func cover_at(t: Vector2i) -> int:
+	var ov = overrides.get(t)
+	if ov != null and ov[1] >= 0:
+		return ov[1]
+	var v := _cell(t, L_COVER)
+	return 2 if v < 0 else v
+
+
+func level_at(t: Vector2i) -> int:
+	return maxi(0, _cell(t, L_LEVEL))
+
+
+func is_stair(t: Vector2i) -> bool:
+	return _cell(t, L_STAIR) == 1
+
+
+func _put_solid(x: int, y: int, v: int) -> void:
+	var t := Vector2i(x, y)
+	var ov: Array = overrides.get(t, [-1, -1])
+	ov[0] = v
+	overrides[t] = ov
+
+
+func _put_cover(x: int, y: int, v: int) -> void:
+	var t := Vector2i(x, y)
+	var ov: Array = overrides.get(t, [-1, -1])
+	ov[1] = v
+	overrides[t] = ov
+
+
+## 손 맵 적재 중에는 청크가 아직 없으니 손 맵 자료에서 읽는다
+func _get_solid(x: int, y: int) -> int:
+	var t := Vector2i(x, y)
+	var ov = overrides.get(t)
+	if ov != null and ov[0] >= 0:
+		return ov[0]
+	for ins in insets:
+		var o: Vector2i = ins["origin"]
+		var s: Vector2i = ins["size"]
+		if x >= o.x and y >= o.y and x < o.x + s.x and y < o.y + s.y:
+			return 1 if str(ins["data"]["solid"][y - o.y][x - o.x]) == "1" else 0
+	return 1 if is_solid(t) else 0
+
+
+func triggers_at(t: Vector2i) -> Array:
+	var out := []
+	for g in data["triggers"]:
+		if t.x >= int(g["x"]) and t.x < int(g["x"]) + int(g["w"]) and t.y >= int(g["y"]) and t.y < int(g["y"]) + int(g["h"]):
+			out.append(g)
+	return out

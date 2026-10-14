@@ -808,6 +808,228 @@ def _split(out, name, im):
             out[f"{name}{j}{i}"] = im.crop((i * T, j * T, i * T + T, j * T + T))
 
 
+# ================================================================================================ 지형 구조(암벽·벼랑 끝·계단·성곽·다리)
+def cliff_face(col, var, seed=0):
+    """정면 암벽 1단(SD-16 §6.5 '등고선 1단 = 암벽 1타일'): 높은 땅 남쪽 칸. 위 2px 풀·흙 처마, 화강암 덩어리(왼쪽 위 빛),
+    아래 먹선 + 부스러기. col l·r = 암벽 끝(비스듬히 땅으로 사라진다 — 바깥은 투명, 바닥 합성이 비친다)."""
+    rnd = random.Random(hsh(seed, var, ord(col), 41))
+    img = new()
+    d = ImageDraw.Draw(img)
+    d.rectangle([0, 0, T - 1, T - 1], fill=C("P03"))                        # 바위 틈(어둠)
+    px = img.load()
+    blobs = []
+    for k in range(9):                                                      # 화강암 덩어리: 둥근 바위(칸 가장자리는 32px 주기로 이어지게 감싼다)
+        blobs.append((rnd.randint(0, T - 1), rnd.randint(6, T - 6), rnd.randint(6, 11), rnd.randint(5, 8)))
+    blobs.sort(key=lambda b: b[1])
+    for (cx, cy, rx, ry) in blobs:
+        tone = rnd.choice([("P07", "P06", "P05"), ("P06", "P05", "P04"), ("P08", "P07", "P05")])
+        for yy in range(max(3, cy - ry), min(T - 3, cy + ry + 1)):
+            for xx in range(cx - rx - 1, cx + rx + 2):
+                q = ((xx - cx) / rx) ** 2 + ((yy - cy) / ry) ** 2
+                if q <= 1.0:
+                    X = xx % T
+                    u, v = (xx - cx) / rx, (yy - cy) / ry
+                    c = tone[0] if (u + v) < -0.55 else (tone[2] if (u + v) > 0.55 else tone[1])
+                    if q > 0.82:
+                        c = "P02" if (u + v) > 0 else tone[1]
+                    px[X, yy] = C(c)
+    for _ in range(rnd.randint(1, 3)):                                      # 금(세로)
+        cx, cy = rnd.randint(3, 28), rnd.randint(5, 14)
+        for i in range(rnd.randint(4, 10)):
+            if 0 <= cx < T and cy < T - 3:
+                img.putpixel((cx, cy), C("P02"))
+            cx += rnd.choice((-1, 0, 0, 1)); cy += 1
+    d.rectangle([0, 0, T - 1, 1], fill=C("P29"))                            # 위 처마(마른 풀·흙)
+    for x in range(0, T, 3):
+        d.point((x + rnd.randint(0, 1), 2), fill=C(rnd.choice(["P29", "P30", "P18"])))
+    d.line([0, 3, T - 1, 3], fill=C("P02"))
+    d.rectangle([0, T - 3, T - 1, T - 2], fill=C("P04"))                     # 발치 부스러기
+    for x in range(0, T, 4):
+        d.point((x + rnd.randint(0, 2), T - 3), fill=C(rnd.choice(["P06", "P07", "P05"])))
+    d.line([0, T - 1, T - 1, T - 1], fill=C(INK))
+    if col in ("l", "r"):                                                   # 끝: 비스듬히 깎아 투명하게
+        px = img.load()
+        for yy in range(T):
+            cut = int(12 * yy / T) + 2
+            for xx in range(cut):
+                X = xx if col == "l" else T - 1 - xx
+                px[X, yy] = (0, 0, 0, 0)
+            X = cut if col == "l" else T - 1 - cut
+            px[X, yy] = C(INK)
+    return img
+
+
+def cliff_stair(var=0):
+    """암벽을 깎은 돌계단(남북 방향, SD-16 §6.5): 디딤판 밝음 · 챌판 어둠 · 양옆 돌 기둥."""
+    img = new()
+    d = ImageDraw.Draw(img)
+    d.rectangle([0, 0, T - 1, T - 1], fill=C("P05"))
+    for k, y in enumerate(range(1, T, 6)):
+        d.rectangle([4, y, T - 5, y + 2], fill=C("P08"))
+        d.line([4, y, T - 5, y], fill=C("P09"))
+        d.rectangle([4, y + 3, T - 5, y + 5], fill=C("P05"))
+        d.line([4, y + 5, T - 5, y + 5], fill=C("P03"))
+    for x0 in (0, T - 4):
+        d.rectangle([x0, 0, x0 + 3, T - 1], fill=C("P06"))
+        d.line([x0, 0, x0, T - 1], fill=C("P07" if x0 == 0 else "P04"))
+        d.line([x0 + 3, 0, x0 + 3, T - 1], fill=C(INK))
+    d.line([0, 0, 0, T - 1], fill=C(INK))
+    return img
+
+
+def brink(mask):
+    """벼랑 끝(덧층): 높은 땅 칸의 낮은 쪽 테두리. mask 1 = 북, 2 = 동, 4 = 서. 투명 바탕."""
+    img = new()
+    d = ImageDraw.Draw(img)
+    if mask & 1:
+        d.line([0, 0, T - 1, 0], fill=C(INK)); d.line([0, 1, T - 1, 1], fill=C("P05"))
+    if mask & 4:
+        d.line([0, 0, 0, T - 1], fill=C(INK)); d.line([1, 0, 1, T - 1], fill=C("P07"))
+    if mask & 2:
+        d.line([T - 1, 0, T - 1, T - 1], fill=C(INK)); d.line([T - 2, 0, T - 2, T - 1], fill=C("P04")); d.line([T - 3, 0, T - 3, T - 1], fill=C("P05"))
+    return img
+
+
+def fort(kind, var=0):
+    """한양도성 성벽(SD-08 §6.4): face = 정면(다듬은 돌 쌓기 + 여장 총안), top = 성곽 위 길(남북으로 이어진 구간)."""
+    rnd = random.Random(hsh(var, 43, ord(kind[0])))
+    img = new()
+    d = ImageDraw.Draw(img)
+    if kind == "face":
+        d.rectangle([0, 0, T - 1, T - 1], fill=C("P21"))
+        for row, y in enumerate(range(10, T, 6)):
+            off = 5 if row % 2 else 0
+            for x in range(-10 + off, T, 10):
+                a0, a1 = max(0, x), min(T - 1, x + 9)
+                if a1 < a0:
+                    continue
+                col = rnd.choice(["P21", "P21", "P20", "P22"])
+                d.rectangle([a0, y, a1, y + 5], fill=C(col))
+                d.line([a0, y, a1, y], fill=C("P22"))
+                d.line([a0, y + 5, a1, y + 5], fill=C("P19"))
+                if x + 9 < T:
+                    d.line([x + 9, y, x + 9, y + 5], fill=C("P19"))
+        d.rectangle([0, 0, T - 1, 9], fill=C("P20"))                         # 여장(총안 두 개)
+        d.line([0, 0, T - 1, 0], fill=C("P22"))
+        for x in (6, 22):
+            d.rectangle([x, 2, x + 3, 7], fill=C(INK))
+        d.line([0, 9, T - 1, 9], fill=C("P18"))
+        d.line([0, T - 1, T - 1, T - 1], fill=C(INK))
+    else:
+        d.rectangle([0, 0, T - 1, T - 1], fill=C("P20"))
+        for y in range(0, T, 8):
+            d.line([4, y, T - 5, y], fill=C("P19"))
+        for x0 in (0, T - 4):                                                 # 양옆 여장 윗면
+            d.rectangle([x0, 0, x0 + 3, T - 1], fill=C("P21"))
+            d.line([x0, 0, x0, T - 1], fill=C(INK) if x0 == 0 else C("P22"))
+            d.line([x0 + 3, 0, x0 + 3, T - 1], fill=C("P19") if x0 == 0 else C(INK))
+    return img
+
+
+def deck(mask, broken=False, var=0):
+    """다리 상판(SD-16 §6.3): 콘크리트 판 + 신축 이음, 물 쪽 변에 난간(mask 1 북 · 2 동 · 4 남 · 8 서 = 그쪽이 물).
+    broken: 끊긴 끝 — 북·남 물 쪽 변이 들쭉날쭉 깨지고 철근이 삐져나온다."""
+    rnd = random.Random(hsh(mask, var, 47, int(broken)))
+    img = new()
+    d = ImageDraw.Draw(img)
+    d.rectangle([0, 0, T - 1, T - 1], fill=C("P05"))
+    for _ in range(5):
+        img.putpixel((rnd.randint(1, 30), rnd.randint(1, 30)), C(rnd.choice(["P04", "P06"])))
+    d.line([0, 15, T - 1, 15], fill=C("P04")); d.line([0, 16, T - 1, 16], fill=C("P06"))     # 신축 이음
+    px = img.load()
+
+    def rail(side):
+        if side == 1:
+            d.rectangle([0, 0, T - 1, 3], fill=C("P07")); d.line([0, 0, T - 1, 0], fill=C(INK)); d.line([0, 1, T - 1, 1], fill=C("P08"))
+            d.line([0, 4, T - 1, 4], fill=C("P03"))
+        elif side == 4:
+            d.rectangle([0, T - 7, T - 1, T - 1], fill=C("P06"))            # 남쪽 난간 정면 + 거더 면
+            d.rectangle([0, T - 7, T - 1, T - 5], fill=C("P08")); d.line([0, T - 7, T - 1, T - 7], fill=C("P09"))
+            d.line([0, T - 4, T - 1, T - 4], fill=C("P04"))
+            d.line([0, T - 1, T - 1, T - 1], fill=C(INK))
+        elif side == 8:
+            d.rectangle([0, 0, 3, T - 1], fill=C("P07")); d.line([0, 0, 0, T - 1], fill=C(INK)); d.line([1, 0, 1, T - 1], fill=C("P08"))
+            d.line([4, 0, 4, T - 1], fill=C("P04"))
+        elif side == 2:
+            d.rectangle([T - 4, 0, T - 1, T - 1], fill=C("P06")); d.line([T - 1, 0, T - 1, T - 1], fill=C(INK)); d.line([T - 4, 0, T - 4, T - 1], fill=C("P08"))
+            d.line([T - 5, 0, T - 5, T - 1], fill=C("P04"))
+
+    def jag(side):
+        ys = range(0, 9) if side == 1 else range(T - 9, T)
+        cut = [rnd.randint(2, 8) for _ in range(T)]
+        for x in range(T):
+            c = cut[x] if x % 3 else cut[x - 1]
+            for yy in ys:
+                k = yy if side == 1 else T - 1 - yy
+                if k < c:
+                    px[x, yy] = (0, 0, 0, 0)
+                elif k == c:
+                    px[x, yy] = C(INK)
+                elif k == c + 1:
+                    px[x, yy] = C("P07")
+        for x in range(3, T - 3, 7):                                          # 철근
+            y0 = cut[x] if side == 1 else T - 1 - cut[x]
+            for k in range(4):
+                yy = y0 - k if side == 1 else y0 + k
+                if 0 <= yy < T:
+                    px[x, yy] = C("P25" if k < 3 else "P24")
+
+    for side in (8, 2, 1, 4):
+        if mask & side:
+            if broken and side in (1, 4):
+                jag(side)
+            else:
+                rail(side)
+    if (mask & 1) and (mask & 8):
+        d.point((0, 0), fill=C(INK))
+    return img
+
+
+def scrap_top(var=0):
+    """고철 장벽 위에서 본 남북 구간(정착지 담, 0-10 고철 장벽과 같은 재료): 칸 가운데 판 띠 + 말뚝 + 가시철사."""
+    rnd = random.Random(hsh(var, 59))
+    img = new()
+    d = ImageDraw.Draw(img)
+    tones = [("P24", "P25"), ("P04", "P05"), ("P12", "P13"), ("P17", "P18")]
+    y = 0
+    while y < T:
+        h = rnd.randint(5, 10)
+        a, b = rnd.choice(tones)
+        d.rectangle([12, y, 19, min(T - 1, y + h - 1)], fill=C(a))
+        d.line([12, y, 12, min(T - 1, y + h - 1)], fill=C(b))
+        y += h
+    d.line([11, 0, 11, T - 1], fill=C(INK)); d.line([20, 0, 20, T - 1], fill=C(INK))
+    for yy in (4, 20):                                                       # 말뚝 머리
+        d.rectangle([13, yy, 18, yy + 4], fill=C("P18")); d.rectangle([13, yy, 18, yy + 4], outline=C(INK))
+    for yy in range(1, T, 3):                                                # 가시철사
+        img.putpixel((15 + (yy % 2), yy), C("P06"))
+    for yy in range(0, T):                                                   # 동쪽 그늘
+        step_px(img, 21, yy, -1); step_px(img, 22, yy, -1)
+    return img
+
+
+def terrain_tiles():
+    out = {}
+    sw = S.scrap_wall(6, 1, seed=11)                                         # 고철 장벽 정면(봉천 정착지 담, 0-10과 같은 그림)
+    for i in range(6):
+        out[f"tr:scrap_face{i}"] = sw.crop((i * T, 0, i * T + T, T))
+    for v in range(2):
+        out[f"tr:scrap_top{v}"] = scrap_top(v)
+    for col in "lmr":
+        for v in range(3 if col == "m" else 1):
+            out[f"tr:cliff_{col}{v}"] = cliff_face(col, v)
+    out["tr:cstair"] = cliff_stair()
+    for m in range(1, 8):
+        out[f"tr:brink{m}"] = brink(m)
+    for v in range(2):
+        out[f"tr:fort_face{v}"] = fort("face", v)
+    out["tr:fort_top"] = fort("top")
+    for m in range(16):
+        out[f"tr:deck{m}"] = deck(m)
+        out[f"tr:deckb{m}"] = deck(m, broken=True)
+    return out
+
+
 # ================================================================================================ 스킨 표
 # 스킨: 양식 · 정면 함수 · 행 종류 · 열 변형 수 · 1층 특수 칸 · 옥상
 SKINS = {
@@ -940,6 +1162,7 @@ def build():
     for k, im in deco.items():
         tiles[f"rd:{k}"] = im
     table["_deco"] = sorted(deco)
+    tiles.update(terrain_tiles())
     return tiles, table
 
 

@@ -46,6 +46,7 @@ var cam_lead := Vector2.ZERO                     ## 카메라 리드(조준 쪽�
 var text_seen := {}                              ## 여러 번 조사하는 글: 키 -> 읽은 횟수
 var _talking: Dictionary = {}
 var _last_tile := Vector2i(-99, -99)
+var _zone := ""                                                  ## 월드에서 지금 선 구역(손 맵 이름 또는 "W") — 바뀌면 map_entered(1-1)
 var _from := ""
 
 
@@ -163,7 +164,8 @@ func _index_scenes() -> void:
 
 
 ## 맵을 연다. mark: 주인공이 설 표지(없으면 첫 표지)
-func enter(map_id: String, mark: String = "", look: Dictionary = {}) -> void:
+## at: 표지 대신 이 자리에 세운다(불러오기 — 월드는 그 자리로 구역·청크를 정한다)
+func enter(map_id: String, mark: String = "", look: Dictionary = {}, at: Vector2 = Vector2.INF) -> void:
 	var keep_buddy := buddy_id if combat.buddy != null and is_instance_valid(combat.buddy) else ""   # 일시 동행은 맵을 넘어 따라온다(0-9)
 	if map != null:
 		for n in npcs:
@@ -180,8 +182,11 @@ func enter(map_id: String, mark: String = "", look: Dictionary = {}) -> void:
 	ev.actors.clear()
 	ev._bg.clear()
 	ev.cam_locked = false
-	map = InteriorMap.new()
+	var world_mode := WorldMap.covers(map_id)                       # 바깥(관악산 비탈·봉천 등)은 심리스 월드 하나(1-1)
+	map = WorldMap.new() if world_mode else InteriorMap.new()
 	map.load_map(map_id, st)
+	if world_mode and map_id != "W" and map.marks.has("%s:%s" % [map_id, mark]):
+		mark = "%s:%s" % [map_id, mark]
 	add_child(map)
 	move_child(map, 0)
 	if player != null and player.get_meta("body", "") != body:
@@ -205,9 +210,15 @@ func enter(map_id: String, mark: String = "", look: Dictionary = {}) -> void:
 	player.visible = body != "hidden"
 	map.add_actor(player)
 	var m: String = mark if map.marks.has(mark) else (map.marks.keys()[0] if not map.marks.is_empty() else "")
-	player.loco.place(map.mark_pos(m))
+	player.loco.place(map.mark_pos(m) if at == Vector2.INF else at)
 	player.loco.facing = EventRunner.DIR_IDX.get(map.mark_dir(m), 2)
 	player.position = player.loco.render
+	if map is WorldMap:
+		map.follow = player
+		map.id = map.zone_of(map.tile_of(player.loco.logical))
+		map.load_now(player.loco.logical)
+		map_id = map.id
+		_zone = map.id
 	player._show()
 	_last_tile = map.tile_of(player.loco.logical)
 	_spawn_npcs()
@@ -227,7 +238,7 @@ func enter(map_id: String, mark: String = "", look: Dictionary = {}) -> void:
 	cam.reset_smoothing()
 	if _lights != null:
 		_lights.queue_redraw()
-	banner_text = map.data["name"]
+	banner_text = map.zone_name() if map is WorldMap else map.data["name"]
 	banner_t = BANNER_SECS
 	map_entered.emit(map_id)
 
@@ -294,6 +305,11 @@ func _spawn_npc(i: int, n: Dictionary) -> void:
 func _physics_process(dt: float) -> void:
 	if map == null:
 		return
+	if map is WorldMap and map.id != _zone:                          # 걸어서 다른 구역(손 맵)에 들어섰다: 맵에 들어선 것과 같이 알린다
+		_zone = map.id
+		banner_text = map.zone_name()
+		banner_t = BANNER_SECS
+		map_entered.emit(_zone)
 	banner_t = maxf(0.0, banner_t - dt)
 	_night_tick(dt)
 	_hurt_t = maxf(0.0, _hurt_t - dt)
@@ -972,7 +988,8 @@ func _handlers() -> void:
 			player.visible = m == "show" and body != "hidden"
 			done.call()
 			return
-		var at := map.mark_pos(m) if not "," in m else Vector2(int(m.get_slice(",", 0)) * 32 + 16, int(m.get_slice(",", 1)) * 32 + 16)
+		var lc := map.cell_local(int(m.get_slice(",", 0)), int(m.get_slice(",", 1))) if "," in m else Vector2i.ZERO
+		var at := map.mark_pos(m) if not "," in m else Vector2(lc * 32) + Vector2(16, 16)
 		player.loco.place(at)
 		player.loco.facing = EventRunner.DIR_IDX.get(str(a[1]) if a.size() > 1 else map.mark_dir(m), 2)
 		player.position = player.loco.render
@@ -981,7 +998,8 @@ func _handlers() -> void:
 		cam.position = player.loco.logical.round()
 		done.call()
 	ev.handlers["unlock"] = func(a: Array, done: Callable) -> void:     # 잠긴 문 열기: unlock x y(0-9 무기고)
-		map.unlock_door(int(a[0]), int(a[1]))
+		var uc := map.cell_local(int(a[0]), int(a[1]))
+		map.unlock_door(uc.x, uc.y)
 		combat.nav = InteriorNav.new(map)                                  # 길찾기 격자를 다시 만든다
 		done.call()
 	ev.handlers["hint"] = func(a: Array, done: Callable) -> void:

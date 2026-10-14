@@ -232,7 +232,13 @@ def bake(src):
     ring.append(ring[0])
     Q = densify(chaikin(ring, 2), 2.0)
     d = dist_field(Q, 3)
-    kind[(d <= 1.0) & (kind > 0)] = 11
+    wall = (d <= 1.0) & (kind > 0) & ~np.isin(kind, (7, 8, 9))            # 도로가 지나는 곳은 성벽이 끊겨 있다(현대 서울과 같다)
+    for n in ring_names:                                                   # 성문 자리(SD-08 §5.3 '문' 8곳): 문 칸 3타일은 지나간다
+        if n.endswith("문") or n.endswith("문 터"):
+            p = allp.get(n)
+            if p:
+                wall &= ((xs - p["tx"]) ** 2 + (ys - p["ty"]) ** 2) > 2.6 ** 2
+    kind[wall] = 11
 
     # 땅 쓰임
     use = np.zeros((H, W), np.uint8)

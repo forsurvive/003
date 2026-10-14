@@ -54,7 +54,7 @@ static func host(h: InteriorHost) -> Dictionary:
 	for k in h.text_seen:
 		seen[k] = h.text_seen[k]
 	return _sorted({
-		"map": h.map.id if h.map != null else "",
+		"map": ("W" if h.map is WorldMap else h.map.id) if h.map != null else "",   # 월드는 "W" + 월드 픽셀(1-1)
 		"pos": [_round(h.player.loco.logical.x), _round(h.player.loco.logical.y)] if h.player != null else [0, 0],
 		"facing": h.player.loco.facing if h.player != null else 2,
 		"body": h.body, "date": h.date_text, "hud": h.hud_on, "pip": h.pipboy_ok, "night": h.night,
@@ -88,9 +88,12 @@ static func apply_host(h: InteriorHost, d: Dictionary) -> void:
 	var hk: Dictionary = d.get("hotkeys", {})
 	for k in hk:
 		c.hotkeys[int(k)] = hk[k]
-	h.enter(str(d["map"]))
 	var p: Array = d.get("pos", [0, 0])
 	var at := Vector2(float(p[0]), float(p[1]))
+	var mid := str(d["map"])
+	if mid != "W" and WorldMap.covers(mid):                            # 1-1 이전 저장: 손 맵 이름 + 손 맵 좌표 → 월드 좌표
+		at += Vector2(WorldMap.origin_of(mid) * 32)
+	h.enter(mid, "", {}, at)
 	h.player.loco.place(at)
 	h.player.loco.facing = int(d.get("facing", 2))
 	h.player.position = h.player.loco.render
