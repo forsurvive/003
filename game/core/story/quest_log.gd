@@ -32,6 +32,8 @@ func key_of(id: String) -> String:
 
 
 func stage(id: String) -> int:
+	if not vars.has(key_of(id) + "_STAGE"):                         # 아직 단계 표가 없는 퀘스트(막 표에만 있는 MQ-202 등) = 시작 전
+		return 0
 	var v = vars.get_v(key_of(id) + "_STAGE")
 	return int(v) if v != null else 0
 
