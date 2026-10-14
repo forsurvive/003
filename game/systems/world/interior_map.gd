@@ -180,6 +180,8 @@ func set_prop_state(cell: Vector2i, state: String) -> String:
 ## 톱니 방폭문(V-00, 단계 0-9 개방식): k 0 닫힘 → 1 열림. 문은 오른쪽으로 210px 굴러가며 컷마다 정확히 10px·거리/반지름만큼 돈다
 ## (그림이 그 각도로 구워져 있어 미끄러지지 않는다 — props_s07.GEAR_FRAMES). 빈 구멍에는 바깥의 흰 빛과 바닥에 번지는 빛줄기.
 const GATE_ROLL := 210.0
+const GATE_C := Vector2(128, 108)                 ## 문틀 그림 안 구멍 중심(픽셀 경계 좌표, art/tools/tiles_s07.GATE_C 127.5 + 0.5)
+const GATE_R := 97.0                              ## 구멍 반지름(tiles_s07.GATE_R)
 var gate_k := 0.0
 var _gate_light: Node2D
 
@@ -202,13 +204,16 @@ func set_gate(k: float) -> void:
 	if not door.has("x0"):
 		door["x0"] = node.position.x
 	node.position.x = float(door["x0"]) + roundf(GATE_ROLL * f / float(fr.size() - 1))   # 컷과 같은 거리만(미끄러짐 없음)
+	if not frame.is_empty():
+		set_prop_frame("gear_frame", 1 if gate_k > 0.0 else 0)                 # 열린 구멍 = 문틀 그림의 열림 컷(흰 빛이 테 안쪽에 정확히 맞는다)
 	if _gate_light == null and not frame.is_empty():
 		_gate_light = Node2D.new()
 		_gate_light.draw.connect(_draw_gate_light.bind(node))
 		(frame["node"] as Node2D).add_child(_gate_light)                       # 문틀 바로 위·문 아래에 그린다
-		_gate_light.position = -(frame["node"] as Node2D).position
-		door["c"] = Vector2(float(door["x0"]) + 96.0, node.position.y + node.offset.y + 96.0)
-		_gate_light.set_meta("c", door["c"])
+		var fn: Sprite2D = frame["node"]
+		_gate_light.position = -fn.position
+		var top_left := fn.position + fn.offset + Vector2.ONE                 # 아틀라스 테두리 1px 안쪽 = 그림 왼쪽 위
+		_gate_light.set_meta("c", top_left + GATE_C)
 	if _gate_light != null:
 		_gate_light.queue_redraw()
 
@@ -218,17 +223,10 @@ func _draw_gate_light(_door: Sprite2D) -> void:
 		return
 	var c: Vector2 = _gate_light.get_meta("c")
 	var k := gate_k
-	var white := Color("E9E4D8")
 	var pale := Color("CBC5B9")
 	var pale2 := Color("ABA49A")
-	_gate_light.draw_circle(c, 96.0, white)                                   # 구멍 = 바깥 하늘(흰 빛)
-	for y in range(-96, 97, 2):                                                # 가장자리 디더(빛이 문틀을 먹는다)
-		var hw := sqrt(maxf(0.0, 96.0 * 96.0 - y * y))
-		for s in [-1, 1]:
-			var x: float = c.x + s * hw
-			_gate_light.draw_rect(Rect2(Vector2(roundf(x), c.y + y), Vector2(2, 2)), pale if (y / 2) % 2 == 0 else white)
 	var reach := 220.0 * k                                                    # 바닥 빛줄기: 문이 열린 만큼 앞으로 번진다. 단색 면 없이 디더 밀도로만
-	var top := c.y + 96.0                                                     # (구멍 아래 끝 = 데크 첫 줄)
+	var top := c.y + 116.0                                                    # 문틀 그림 아래 끝 = 데크 첫 줄(테는 덮지 않는다 — 구멍 안 흰 빛은 문틀 그림이 그린다)
 	var y0 := int(top)
 	while float(y0) < top + reach:
 		var t := (float(y0) - top) / maxf(1.0, reach)

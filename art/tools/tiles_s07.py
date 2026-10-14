@@ -632,26 +632,44 @@ def gear_door(frame=0, frames=8, teeth=12, angle=None):
     return img
 
 
-def gear_door_frame():
-    """Wall opening for the cog door: 8x7 tiles of thick concrete + hazard surround (V-00 정문 구역)."""
+GATE_C = (127.5, 107.5)   # 문틀(256×224) 안 구멍 중심 — 문(192×192, 중심 95.5)이 (32, 12)에 놓이면 정확히 겹친다(0-9)
+GATE_R = 97               # 구멍(문이 굴러 나간 자리) 반지름. 97~99 먹선 테, 99~106 경고 빗금, 106~108 콘크리트 테, 108 먹선
+
+
+def gear_door_frame(open_=False):
+    """Wall opening for the cog door: 8x7 tiles of thick concrete + hazard surround (V-00 정문 구역).
+    원은 픽셀마다 중심 GATE_C에서 거리로 칠한다(짝수 지름 — 문 그림과 반 픽셀도 어긋나지 않는다).
+    open_: 문이 굴러 나간 뒤의 구멍 = 바깥 하늘의 흰 빛(가장자리 안쪽만 디더, 테를 침범하지 않는다)."""
     w, h = 8 * T, 7 * T
     img = Image.new("RGBA", (w, h), C("P13"))
     d = ImageDraw.Draw(img)
     for x in range(0, w, 32):
         d.line([x, 0, x, h], fill=C("P12")); d.line([x + 1, 0, x + 1, h], fill=C("P14"))
     d.line([0, 0, w, 0], fill=C("P11"))
-    cx, cy = w // 2, 108
-    d.ellipse([cx - 108, cy - 108, cx + 108, cy + 108], fill=C("P06"), outline=C("P02"))
-    for k in range(36):                                          # hazard chevrons on the ring
-        a0, a1 = k * 10, k * 10 + 5
-        d.pieslice([cx - 106, cy - 106, cx + 106, cy + 106], a0, a1, fill=C("P48"))
-    d.ellipse([cx - 99, cy - 99, cx + 99, cy + 99], fill=C("P02"))
-    d.ellipse([cx - 97, cy - 97, cx + 97, cy + 97], fill=C("P10"))   # recess (seen when the door rolls away)
     d.rectangle([0, h - 12, w, h - 1], fill=C("P12"))
     d.rectangle([0, h - 4, w, h - 1], fill=C("P11"))
-    d.rectangle([10, 30, 34, 70], fill=C("P05"), outline=C("P02"))  # control lever box
-    d.rectangle([20, 36, 24, 56], fill=C("P53"))
-    d.rectangle([18, 34, 26, 37], fill=C("P02"))
+    px = img.load()
+    cx, cy = GATE_C
+    for y in range(h):
+        for x in range(w):
+            r = math.hypot(x - cx, y - cy)
+            if r > 108.5:
+                continue
+            if r > 107.5:
+                px[x, y] = C("P02")                                  # 바깥 먹선
+            elif r > 106:
+                px[x, y] = C("P06")                                  # 콘크리트 테
+            elif r > 99:
+                a = math.degrees(math.atan2(y - cy, x - cx)) % 360.0
+                px[x, y] = C("P48") if (a % 10.0) < 5.0 else C("P06")   # 경고 빗금 36칸
+            elif r > GATE_R:
+                px[x, y] = C("P02")                                  # 구멍 먹선 테
+            elif not open_:
+                px[x, y] = C("P10")                                  # 닫힘: 문 뒤 어두운 홈
+            elif r > GATE_R - 3:
+                px[x, y] = C("P08") if (x + y) % 2 == 0 else C("P09")   # 열림: 테 바로 안쪽만 한 단 디더
+            else:
+                px[x, y] = C("P09")                                  # 바깥 하늘의 흰 빛
     return img
 
 
