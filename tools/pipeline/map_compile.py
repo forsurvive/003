@@ -402,10 +402,10 @@ def _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kin
                         e["route"].append([rx, ry, float(mm.group(3) or 2)])
                 out["enemies"].append(e)
             elif c == "box":                                     # box x y 종류 [w= h=] [owner=] [lock=] [name=] [cond=] — 용기(0-9)
-                x, y, kind = int(pos[0]), int(pos[1]), pos[2]
-                if kind not in loot_kinds:
-                    raise Err(f"모르는 용기 종류 '{kind}'(loot.json: {sorted(loot_kinds)})")
-                e = {"x": x, "y": y, "w": int(opt.get("w", 1)), "h": int(opt.get("h", 1)), "kind": kind,
+                x, y, bkind = int(pos[0]), int(pos[1]), pos[2]          # (kind는 벽 모양 격자 — 덮어쓰지 않는다)
+                if bkind not in loot_kinds:
+                    raise Err(f"모르는 용기 종류 '{bkind}'(loot.json: {sorted(loot_kinds)})")
+                e = {"x": x, "y": y, "w": int(opt.get("w", 1)), "h": int(opt.get("h", 1)), "kind": bkind,
                      "owner": opt.get("owner", ""), "lock": int(opt.get("lock", 0)), "name": opt.get("name", ""), "cond": opt.get("cond", "")}
                 if e["cond"]:
                     check_cond(e["cond"], known_vars, known_fns)
@@ -475,6 +475,8 @@ def _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kin
             else:
                 raise Err(f"모르는 명령 '{c}'")
         except (Err, IndexError, ValueError) as e:
+            if os.environ.get("MAP_DEBUG") and not isinstance(e, Err):
+                import traceback; traceback.print_exc()
             m.err(ln, str(e) if isinstance(e, Err) else f"인자가 모자라거나 틀렸다: {' '.join(words)}")
     if ext:
         _fi, _gf, _cv, level, grid = extra

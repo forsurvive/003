@@ -477,12 +477,11 @@ def concrete_out_tex(seed):
 
 
 def terrazzo_tex(seed):
-    """지하상가 인조석 물갈기 바닥(1-4 지하시장): 밝은 회백 바탕에 잔 돌 조각(어두운·밝은·벽돌색 드물게) + 96px 판마다 놋쇠 줄눈.
-    200년 닳아 통로 가운데가 조금 어둡고(발길), 판 이음매 몇 곳은 깨져 시멘트로 땜질했다."""
+    """지하상가 인조석 물갈기 바닥(1-4 지하시장): 밝은 회백 바탕에 잔 돌 조각(어두운·밝은·벽돌색 드물게) + 128px 판마다 줄눈.
+    판 이음매 몇 곳은 깨져 시멘트로 땜질했다."""
     a = np.full((CELL, CELL), t("P07"), np.uint8)
     rnd = np.random.default_rng(seed)
-    nz = equalize(fbm(CELL, [(48, 0.6), (24, 0.4)], seed))
-    a[nz < 0.10] = t("P06")                                         # 발길에 닳은 얼룩(작게)
+    # 발길 얼룩은 두지 않는다(1-4 화면 검수: 256px 그림이 되풀이되면 같은 얼룩이 줄지어 보인다)
     for _ in range(CELL * CELL // 22):                                # 돌 조각: 1~2px
         x, y = int(rnd.integers(CELL)), int(rnd.integers(CELL))
         r = rnd.random()
@@ -492,8 +491,8 @@ def terrazzo_tex(seed):
             put(a, x + 1, y, tok)
     for k in range(0, CELL, 128):                                     # 놋쇠 줄눈(1px 금빛 + 그 아래 그림자, 128px 판)
         for i in range(CELL):
-            put(a, i, k, "P19"); put(a, i, k + 1, "P05")
-            put(a, k, i, "P19"); put(a, k + 1, i, "P05")
+            put(a, i, k, "P08"); put(a, i, k + 1, "P06")
+            put(a, k, i, "P08"); put(a, k + 1, i, "P06")
     for _ in range(6):                                                # 땜질 자국
         x, y = int(rnd.integers(8, CELL - 20)), int(rnd.integers(8, CELL - 20))
         w, h = int(rnd.integers(5, 12)), int(rnd.integers(4, 9))
@@ -824,10 +823,10 @@ def sets():
             dict(name="jangpan", A=jangpan_tex(291), B=None, spread=0, pri=0, rim=0, shade=1, vthr=256, dens=1,
                  decals=["scuff"], hard=1),
             # 1-4 지하시장: 인조석 물갈기 바닥 · 지하 통로 콘크리트
-            dict(name="terrazzo", A=terrazzo_tex(301), B=None, spread=0, pri=0, rim=0, shade=1, vthr=256, dens=4,
-                 decals=["paper", "butts", "stain"], hard=1),
-            dict(name="tunnel", A=tunnel_tex(311), B=None, spread=0, pri=0, rim=0, shade=1, vthr=256, dens=7,
-                 decals=["puddle", "debris", "stain", "rust"], hard=1),
+            dict(name="terrazzo", A=terrazzo_tex(301), B=None, spread=0, pri=0, rim=0, shade=1, vthr=256, dens=2,
+                 decals=["paper", "butts"], hard=1),
+            dict(name="tunnel", A=tunnel_tex(311), B=None, spread=0, pri=0, rim=0, shade=1, vthr=256, dens=4,
+                 decals=["puddle", "debris", "rust"], hard=1),
         ],
         "mat_of": {"panel": 0, "panel_sheen": 0, "panel_scuff": 0, "guide_h": 0, "guide_v": 0, "guide_x": 0, "guide_t": 0, "grate_a": 1, "grate_b": 1, "grate_c": 1,
                    "lino_a": 2, "lino_b": 2, "clinic_a": 3, "clinic_b": 3, "concrete_a": 4, "carpet_a": 5, "wood_a": 6,

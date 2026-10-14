@@ -1,0 +1,103 @@
+{
+ "id": "MQ-103_VENT",
+ "title": "환풍구",
+ "loc": "L-R02-11",
+ "npc": "",
+ "cond": "MQ103_SNEAK == 0 and MQ103_STAGE < 30",
+ "labels": {
+  "START": 0,
+  "QUIET": 2,
+  "LOUD": 6
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "환풍구 덮개의 나사가 하나 빠져 있다. 배전실 쪽에서 진공관 데우는 냄새가 흘러온다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "덮개를 들어 올리고 소리 없이 기어 들어간다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "은신",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "QUIET",
+     "id": "MQ-103_VENT:1:0"
+    },
+    {
+     "text": "그냥 기어 들어간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "LOUD",
+     "id": "MQ-103_VENT:1:1"
+    },
+    {
+     "text": "(그만둔다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "MQ-103_VENT:1:2"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "MQ103_SNEAK = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "덕트를 따라 한참을 기었다. 아래로 불빛과 작업대가 보인다."
+  },
+  {
+   "op": "cmd",
+   "name": "jm",
+   "args": [
+    "vent",
+    "quiet"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "MQ103_SNEAK = 2"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "덕트가 몸무게에 꺼지며 쾅 하고 울린다. 아래에서 고함이 터진다."
+  },
+  {
+   "op": "cmd",
+   "name": "jm",
+   "args": [
+    "vent",
+    "loud"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-103.txt"
+}

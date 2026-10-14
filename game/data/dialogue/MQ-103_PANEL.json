@@ -1,0 +1,48 @@
+{
+ "id": "MQ-103_PANEL",
+ "title": "배전반",
+ "loc": "L-R02-11",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "EMPTY": 4
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "MQ103_CONF == 1",
+   "to": "EMPTY"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "배전반. 계기 바늘 셋이 떤다. 뒤판 나사 넷 가운데 하나만 유난히 반짝인다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "손대지 않는다. 남의 배전반이다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "뒤판이 열려 있다. 200년 동안 종이 한 장이 숨어 있던 자리만 네모나게 깨끗하다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-103.txt"
+}

@@ -1,0 +1,53 @@
+# 영등포 지하상가 J-09 남쪽 연결 통로(SD-09a L-R02-11 ③ · SD-03a §8.3 S1 남쪽으로 돌아 들어가기 · S2 상인회 일, 단계 1-4)
+# 70×10 · 서쪽 끝 영등포구청역 지하 통로(지상 L-UG-13) · 동쪽 위 중앙 광장(J-03) · 가운데 야생 구울 둥지(CR-200 ×5 + CR-201)
+# · 천장 환풍구(배전실 J-06으로 몰래) · 배수구 철창(J-10 외곽 배수구 — 배수구 어미 CR-501과 함께 연다).
+# 길 위 발견물: 둥지 너머 청소부의 유해와 쪽지(구청역 쪽에서 들어온 사람이 여기까지 왔다).
+map J-09 남쪽 연결 통로
+set jm
+grid
+#################################################################uu###
+#################################################################uu###
+#################################################################uu###
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+######################################################################
+end
+exit 0 5 W L-UG-13
+exit 0 6 W L-UG-13
+exit 65 0 J-03 from_J-09
+exit 66 0 J-03 from_J-09
+mark from_W 1 5 E
+mark from_J-03 65 3 S
+mark vent 40 3 N
+mark nest 30 5 W
+prop stairs_up 65 2
+prop w_sign_plaza 60 1
+prop duct_grille 40 1
+text 40 2 "환풍구 덮개. 손가락이 들어갈 만큼 틈이 벌어졌다. 안쪽에서 진공관 데워지는 냄새." scene=MQ-103_VENT
+prop drain_hatch 12 1
+text 12 2 "배수구 철창. 아래에서 물소리와, 무언가 큰 것이 숨 쉬는 소리. 철창은 안쪽에서 사슬로 감겼다." w=3
+prop work_lamp 58 5
+prop work_lamp 8 5
+prop ghoul_nest 22 4
+prop ghoul_nest2 28 6
+prop ghoul_nest 34 4
+prop rubble 25 7
+prop rubble2 37 3
+prop ceiling_slab 44 6
+text 22 5 "둥지. 신문지와 옷가지, 그리고 뼈. 2077년 명찰이 몇 개 섞여 있다." w=2
+enemy CR-200 24 5 cond="MQ103_NEST == 0"
+enemy CR-200 27 4 cond="MQ103_NEST == 0"
+enemy CR-200 30 7 cond="MQ103_NEST == 0"
+enemy CR-200 33 5 cond="MQ103_NEST == 0"
+enemy CR-200 36 6 cond="MQ103_NEST == 0"
+enemy CR-201 31 4 cond="MQ103_NEST == 0"
+prop remains 50 7
+box 50 7 corpse_scav name="청소부의 유해"
+text 52 8 "구겨진 쪽지." scene=FIND-J09-NOTE
+prop sandbags 56 3
+prop sandbags 56 4
+text 56 3 "모래주머니 몇 개. 누군가 둥지 쪽을 막으려다 그만두었다." h=2

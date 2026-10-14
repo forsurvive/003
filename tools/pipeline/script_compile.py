@@ -45,7 +45,8 @@ CMDS = {"wait", "fade_in", "fade_out", "balloon", "move", "face", "shake", "year
         "gate", "go", "pc", "escape", "unlock", "anim",                     # 0-9: 방폭문 · 기다리지 않는 이동 · 주인공 자리 · 탈출 진행기 · 문 열기
         "mq", "trade",                                                       # 0-10: 1막 진행기 사건 · 거래 창(상인 V번호)
         "meet", "memo", "obit",                                              # 1-2: 인물 수첩 등록 · 한 줄 메모 · 소식으로 안 죽음
-        "re", "cage", "capture"}                                             # 1-3: 인카운터 첫 분대 대화의 결말 · 우리 문 열기 · 생포(사흘 버팀)
+        "re", "cage", "capture",                                             # 1-3: 인카운터 첫 분대 대화의 결말 · 우리 문 열기 · 생포(사흘 버팀)
+        "jm"}                                                                # 1-4: 1막 경로 진행기(지하시장·단서) 사건                                             # 1-3: 인카운터 첫 분대 대화의 결말 · 우리 문 열기 · 생포(사흘 버팀)
 ENGINE_VARS = {"PC_ST", "PC_PE", "PC_EN", "PC_CH", "PC_IN", "PC_AG", "PC_LK", "PC_TAG1", "PC_TAG2", "PC_TAG3", "PC_CAPS", "PC_XP",
                "PC_SEX", "PC_APT_PROXY",
                "MQP4_DUCT", "MQP4_FOLLOW", "MQP4_KEY", "MQP4_ARMORY", "MQP4_TALK", "MQP4_BJ_KO", "MQP4_SEC_KO", "MQP4_CAUGHT", "MQP4_DECOY",
@@ -53,7 +54,9 @@ ENGINE_VARS = {"PC_ST", "PC_PE", "PC_EN", "PC_CH", "PC_IN", "PC_AG", "PC_LK", "P
                "MQ101_DOG", "MQ101_TRADE", "MQ101_WATER", "MQ101_RAD", "MQ101_NIGHT", "MQ101_DEAD", "MQ101_TANK", "MQ101_ROOF", "MQ101_LOAN",
                "MQ101_BOARD", "MQ101_FIGHT", "PC_RADS", "PD_BC", "PD_R01", "GAME_DAY", "PC_TORSO",
                "WANTED_DAY", "WANTED_KILL_SUM", "WANTED_AUTH_SUM", "WANTED_LOOK",                            # 1-3 수배도
-               "CAPTURE_DAY", "CAPTURE_AT", "SB_COLLAR", "SB_CUFF", "CAPTURE_BY", "STAT_HACKED"}             # 1-3 생포 · 1-4 해킹 통계
+               "CAPTURE_DAY", "CAPTURE_AT", "SB_COLLAR", "SB_CUFF", "CAPTURE_BY", "STAT_HACKED",
+               "MQ102_C1", "MQ102_C2", "MQ102_C3", "MQ102_ROBOT", "MQ103_GATE", "MQ103_JOB", "MQ103_HIRE", "MQ103_SNEAK",
+               "MQ103_DOOR", "MQ103_CONF", "MQ103_LOG", "MQ103_AMBUSH", "MQ103_NEST", "MQ103_FOUNT", "JM_REG"}             # 1-3 생포 · 1-4 해킹 통계
 DECISION = ["어느 편에 서겠", "편에 서겠습니까", "제안을 수락", "받아들이겠습니까", "어느 쪽을 택하", "누구 편이"]
 OLD_NAMES = ["강태오", "천웨이", "국민방송"]
 PAGE = 160

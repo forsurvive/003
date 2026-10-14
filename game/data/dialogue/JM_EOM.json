@@ -1,0 +1,56 @@
+{
+ "id": "JM_EOM",
+ "title": "약상 엄수연",
+ "loc": "L-R02-11",
+ "npc": "N-R02-006",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "REG": 4,
+  "SHOP": 5
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "JM_REG == 1",
+   "to": "REG"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-006",
+   "emo": "기본",
+   "text": "스팀팩, 라드어웨이, 제트. 세상 끝나도 약은 팔려."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-006",
+   "emo": "기본",
+   "text": "말벌 독낭 있으면 하나에 20캡. 지네 독샘도 받고."
+  },
+  {
+   "op": "goto",
+   "to": "SHOP"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-006",
+   "emo": "미소",
+   "text": "단골이네. 약은 아껴 써. 몸이 버티는 만큼만."
+  },
+  {
+   "op": "cmd",
+   "name": "trade",
+   "args": [
+    "V11"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/JM_PEOPLE.txt"
+}

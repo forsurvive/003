@@ -1,0 +1,40 @@
+# 영등포 지하상가 J-05 진료소(SD-09a L-R02-11 ③: 금하람 · 병상 4 · 수혈 팩 I-004 매입 15캡, 단계 1-4)
+map J-05 지하시장 진료소
+set jm
+grid
+######################
+######################
+######################
+#oooooooooooooooooooo#
+#oooooooooooooooooooo#
+#oooooooooooooooooooo#
+#oooooooooooooooooooo#
+#oooooooooooooooooooo#
+#oooooooooooooooooooo#
+#oooooooooooooooooooo#
+#oooooooooooooooooooo#
+#oooooooooooooooooooo#
+#oooooooooooooooooooo#
+#oooooooooooooooooooo#
+#oooooooooooooooooooo#
+##########oo##########
+end
+exit 10 15 J-03 from_J-05
+exit 11 15 J-03 from_J-05
+mark from_J-03 10 14 N
+prop exam_bed 2 4
+prop iv_stand 4 4
+prop exam_bed 2 8
+prop exam_bed 16 4
+prop iv_stand 18 4
+prop exam_bed 16 8
+text 2 4 "병상. 얼룩진 시트 위에 깨끗한 시트를 덮었다." w=2
+prop med_cabinet 9 3
+prop med_cabinet 11 3
+box 11 3 pharmacy owner=C-051 lock=25 name="약장"
+prop counter_clinic 8 7
+npc C-051 12 8 W bark="피부가 벗겨지는 건 병이 아니야. 진짜 병은 따로 있고."
+text 8 7 "진료 접수대. '수혈 팩 삽니다 — 1팩 15캡.' 그 밑에 '피 주인은 묻지 않음.'" w=3
+prop screen_partition 14 11
+prop screen_partition 15 11
+prop water_cooler 19 12

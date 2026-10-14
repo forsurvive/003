@@ -65,6 +65,14 @@ func _init() -> void:
 	# 생포(1-3, SD-03a §6.7): CAPTURE_DAY 마지막으로 잡힌 날(하루 1번) · CAPTURE_AT 잡힌 시각(분, 3일 계산) · SB_COLLAR 근태 목걸이(1 채워짐)
 	# SB_CUFF 수갑(1 채워짐) · CAPTURE_BY 잡은 쪽(1 새벽인력)
 	vars.declare("STAT_HACKED", "int", 0)                     # 통계: 해킹한 단말(SD-12 §3.5, 1-4)
+	# MQ-102·103 진행 표시(단계 1-4, 정합): C1~C3 단서 셋(1 들음) · ROBOT 잠든 파수 로봇을 봄 ·
+	# GATE 지하시장에 들어온 길(1 출입세 · 2 카리스마 · 3 남쪽 통로 · 4 역사 쇼핑몰) · JOB 상인회 일(1 맡음 · 2 둥지 비움 · 3 보상) ·
+	# HIRE 박춘삼 고용 · SNEAK 배전실 몰래(1 환풍구 들킴 없이 · 2 들킴 · 3 출입 단말 해킹) · DOOR 배전실 문(1 출입패 · 2 해킹) ·
+	# CONF 고백(1 털어놓음 · 2 화술 실패) · LOG 작업 단말 일지를 읽음 · AMBUSH 북쪽 출구 매복(1 대기 · 2 끝) · NEST 둥지(1 비움) ·
+	# FOUNT 분수에 던진 캡 · JM_REG 지하시장 단골(가격 −10%)
+	for k in ["MQ102_C1", "MQ102_C2", "MQ102_C3", "MQ102_ROBOT", "MQ103_GATE", "MQ103_JOB", "MQ103_HIRE", "MQ103_SNEAK", "MQ103_DOOR",
+			"MQ103_CONF", "MQ103_LOG", "MQ103_AMBUSH", "MQ103_NEST", "MQ103_FOUNT", "JM_REG"]:
+		vars.declare(k, "int", 0)
 	for kv in [["CAPTURE_DAY", -1], ["CAPTURE_AT", 0], ["SB_COLLAR", 0], ["SB_CUFF", 0], ["CAPTURE_BY", 0]]:
 		vars.declare(kv[0], "int", kv[1])
 	for k in ["P_SURNAME", "P_GIVEN", "P_FULL", "P_REGNO", "PC_APT"]:   # PC_APT: 적성 평가 답 10개(결과지 다시 보기)

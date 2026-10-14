@@ -1,0 +1,39 @@
+{
+ "id": "JM_BYEON",
+ "title": "분식 변상민",
+ "loc": "L-R02-11",
+ "npc": "N-R02-007",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-R02-007",
+   "emo": "미소",
+   "text": "떡볶이 한 그릇. 맛은 2077년 그대로야. 재료만 빼고."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-007",
+   "emo": "기본",
+   "text": "떡은 버섯 가루로 쪘어. 국물은… 묻지 마."
+  },
+  {
+   "op": "cmd",
+   "name": "trade",
+   "args": [
+    "VJ07"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/JM_PEOPLE.txt"
+}

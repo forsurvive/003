@@ -1,0 +1,59 @@
+{
+ "id": "MQ-103_DOOR",
+ "title": "배전실 문",
+ "loc": "L-R02-11",
+ "npc": "",
+ "cond": "MQ103_DOOR == 0",
+ "labels": {
+  "START": 0,
+  "PASS": 4
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "배전실 철문. 옆의 출입 단말에 붉은 등. '상인회 출입패를 대십시오.'"
+  },
+  {
+   "op": "if",
+   "cond": "has(\"M-078\")",
+   "to": "PASS"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "출입패가 없다. 단말을 뚫든지, 다른 길을 찾아야 한다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "출입패를 대자 단말이 삑 울리고, 잠금쇠가 풀린다."
+  },
+  {
+   "op": "do",
+   "fx": "MQ103_DOOR = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "jm",
+   "args": [
+    "door"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-103.txt"
+}

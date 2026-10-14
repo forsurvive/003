@@ -1,0 +1,141 @@
+{
+ "id": "MQ-103_PARK",
+ "title": "박춘삼",
+ "loc": "L-R02-11",
+ "npc": "C-018",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "OFFER": 6,
+  "HIRE": 9,
+  "SOLO": 13,
+  "HIRED": 15,
+  "DONE": 17
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "MQ103_HIRE == 1 and MQ103_JOB < 2",
+   "to": "HIRED"
+  },
+  {
+   "op": "if",
+   "cond": "MQ103_JOB == 1",
+   "to": "OFFER"
+  },
+  {
+   "op": "if",
+   "cond": "MQ103_JOB >= 2",
+   "to": "DONE"
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "일감 있으면 불러. 하루 50캡, 총값은 따로."
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "지금은 없어 보이네. 그럼 지나가."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "둥지 치우러 간다고? 회장님 일이구먼."
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "남쪽 통로 놈들은 떼로 와. 혼자 가면 등이 비어."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "같이 가자고 한다",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "HIRE",
+     "id": "MQ-103_PARK:1:0"
+    },
+    {
+     "text": "혼자 가겠다고 한다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SOLO",
+     "id": "MQ-103_PARK:1:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "MQ103_HIRE = 1"
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "미소",
+   "text": "계약 성립. 내가 뒤를 본다. 너는 앞만 봐."
+  },
+  {
+   "op": "cmd",
+   "name": "jm",
+   "args": [
+    "hire"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "배짱은 좋네. 돌아오면 한잔 사."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "앞장서. 남쪽 통로는 광장 남쪽 끝이야."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "미소",
+   "text": "둥지 얘기 다 퍼졌어. 이제 '볼트 양반' 소리는 안 듣겠네."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-103.txt"
+}

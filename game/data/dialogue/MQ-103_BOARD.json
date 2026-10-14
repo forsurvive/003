@@ -1,0 +1,59 @@
+{
+ "id": "MQ-103_BOARD",
+ "title": "상인회 게시판",
+ "loc": "L-R02-11",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "CLEARED": 3,
+  "W": 4,
+  "POSTER": 6
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "상인회 게시판. 셔터 순번표, '버섯 삽니다', '남쪽 통로 통행 금지 — 둥지'."
+  },
+  {
+   "op": "if",
+   "cond": "MQ103_NEST == 1",
+   "to": "CLEARED"
+  },
+  {
+   "op": "goto",
+   "to": "W"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'남쪽 통로 통행 금지' 위에 누가 크게 줄을 그었다. 옆에 '볼트 사람 고마워요.'"
+  },
+  {
+   "op": "if",
+   "cond": "V_WANTED >= 30",
+   "to": "POSTER"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "귀퉁이에 새벽인력 수배 전단. 그림 속 얼굴은 영 딴사람 같다. 누가 그 위에 수염을 그려 놓았다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-103.txt"
+}

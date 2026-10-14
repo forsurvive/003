@@ -416,6 +416,23 @@ def sentry_down(lit=False):
     return im
 
 
+def remains(seed=0):
+    """길 위 유해(1×1, 1-4 발견물): 벽에 기대 쓰러진 사람 — 바랜 외투 · 해골 머리 · 뻗은 다리 · 옆에 배낭. 피는 오래돼 검다."""
+    rnd = random.Random(seed)
+    im = img(40, 26)
+    d = ImageDraw.Draw(im)
+    d.ellipse([2, 16, 38, 25], fill=C("P02"))                          # 바닥 얼룩(오래된 피·물때)
+    coat = rnd.choice(["P18", "P29", "P44", "P05"])
+    d.polygon([(8, 8), (22, 6), (26, 18), (6, 20)], fill=C(coat))       # 몸통(외투)
+    d.line([8, 8, 22, 6], fill=C("P09") if coat == "P05" else C("P20"))
+    d.line([24, 16, 36, 20], fill=C("P17"), width=3); d.line([22, 18, 34, 23], fill=C("P17"), width=3)   # 다리
+    d.rectangle([34, 18, 37, 21], fill=C("P02")); d.rectangle([32, 21, 35, 24], fill=C("P02"))           # 신발
+    d.ellipse([2, 2, 12, 11], fill=C("P08")); d.point((5, 6), fill=C("P02")); d.point((8, 6), fill=C("P02"))   # 해골
+    d.line([5, 9, 9, 9], fill=C("P05"))
+    d.rectangle([14, 15, 22, 22], fill=C("P30")); d.line([14, 15, 22, 15], fill=C("P31"))                 # 배낭
+    return im
+
+
 def subway_stairs(sign="지하상가"):
     """지상에서 지하로 내려가는 계단 입구(2×1 발, 월드 문 1-4): 뒤(북쪽) 낮은 벽 + 청록 안내판, 앞은 아래로 깊어지는 계단(북쪽일수록 어둡다),
     양옆 쇠 난간. 발 칸 두 개가 곧 출구 칸이다(밟으면 내려간다)."""
@@ -476,6 +493,8 @@ PROPS_JM = {
     "stairs_up": _r(stairs_up, 0, 0, "deco"),
     "sentry_down": _r(sentry_down, 2, 1, down=-2),
     "subway_stairs": _r(subway_stairs, 2, 1, down=2),
+    "remains": _r(lambda: remains(1), 1, 1, down=-2),
+    "remains2": _r(lambda: remains(2), 1, 1, down=-2),
     "subway_stairs_st": _r(lambda: subway_stairs("구청역"), 2, 1, down=2),
     "subway_stairs_mall": _r(lambda: subway_stairs("역사 지하"), 2, 1, down=2),
 }

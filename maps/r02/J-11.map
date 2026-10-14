@@ -1,0 +1,47 @@
+# 영등포 지하상가 J-11 냉장 창고·버섯 재배장(SD-09a L-R02-11 ③: 설태호 · 지하 느타리 I-044 · 전원 끊긴 냉장 창고 FQ-JH-06, 단계 1-4)
+map J-11 냉장 창고·버섯 재배장
+set jm
+grid
+##############################
+##############################
+##############################
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+##############################
+end
+exit 29 9 J-03 from_J-11
+exit 29 10 J-03 from_J-11
+mark from_J-03 28 9 W
+prop w_cold_door 3 1
+text 3 2 "냉장 창고 문. 전원이 끊긴 지 오래다. 문틈에서 차가운 기운 대신 곰팡이 냄새." w=2
+prop shelf_mushroom 2 6
+prop shelf_mushroom 6 6
+prop shelf_mushroom 10 6
+prop shelf_mushroom 2 10
+prop shelf_mushroom 6 10
+prop shelf_mushroom 10 10
+prop shelf_mushroom 2 14
+prop shelf_mushroom 6 14
+box 6 10 mushroom w=3 owner=N-R02-011 name="버섯 선반"
+text 2 6 "버섯 선반. 지하 느타리가 층층이 핀다. 물은 천장에서 떨어지는 그대로." w=3
+npc N-R02-011 15 9 W bark="빛 없이 자라는 건 버섯이랑 우리뿐이야."
+prop tank_water 19 4
+prop drum 23 4
+prop crate_o 24 15
+box 24 15 pantry name="재배장 식료품 상자"
+prop work_lamp 14 5
+prop work_lamp 14 14

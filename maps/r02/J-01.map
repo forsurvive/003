@@ -1,0 +1,82 @@
+# 영등포 지하상가 J-01 북쪽 출구 계단(SD-09a L-R02-11 ③ · SD-03a §8.3 MQ-103 S1 · S5 출구 매복, 단계 1-4)
+# 30×20 · 지상(역전 시장 쪽) 계단 → 출입세 초소(구울 경비 · '피부 좋은 손님 환영') → 반쯤 올린 셔터 너머 A구역(J-02).
+# 출입세: 50캡 / [카리스마 6] 농담 / 돌아서기(남쪽 통로·역사 쇼핑몰로 돌아 들어갈 수 있다 — 입구는 셋).
+# 박춘삼(C-018, 일과 북쪽 출구)이 여기서 일감을 기다린다 — 상인회 일(남쪽 통로 둥지 정리)에 50캡으로 고용된다.
+map J-01 영등포 지하상가 북쪽 출구
+set jm
+grid
+#############ttt##############
+#############ttt##############
+#############ttt##############
+#tttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttt#
+##############tt##############
+end
+exit 13 0 W L-R02-11
+exit 14 0 W L-R02-11
+exit 15 0 W L-R02-11
+exit 14 19 J-02 from_J-01
+exit 15 19 J-02 from_J-01
+mark from_W 14 3 S
+mark from_J-02 14 18 N
+mark ambush1 12 6 S
+mark ambush2 16 5 S
+mark ambush3 19 7 S
+prop stairs_up 14 2
+prop w_shutter 1 1
+prop w_shutter2 4 1
+prop w_sign_welcome 8 1
+prop w_shutter3 17 1
+prop w_sign_market 20 1
+prop w_shutter 24 1
+prop w_shutter2 27 1
+text 8 2 "손글씨 판. '피부 좋은 손님 환영.' 그 밑에 작게, 다른 손으로: '매끈이는 50캡.'" w=2
+text 20 2 "천 현수막. '영등포 지하상가 상인회 — 영업 중.' 영업 중 글자만 새로 칠했다." w=3
+prop drum_fire 4 7
+text 4 7 "드럼통 불. 구울 경비들이 손을 쬔다. 손이 따뜻해질 리 없는데도 다들 그렇게 서 있다."
+prop guard_chair 3 8
+prop work_lamp 10 5
+prop work_lamp 20 5
+prop toll_table 16 10
+text 16 10 "출입세 장부. 칸마다 '매끈이 1'과 날짜. 오늘 칸은 비어 있다." w=2
+prop guard_chair 18 10
+prop jersey 1 12
+prop jersey 3 12
+prop jersey 5 12
+prop jersey 7 12
+prop jersey 9 12
+prop jersey 11 12
+prop sandbags 13 12
+prop sandbags 16 12
+prop jersey 17 12
+prop jersey 19 12
+prop jersey 21 12
+prop jersey 23 12
+prop jersey 25 12
+prop jersey 27 12
+text 1 12 "콘크리트 방호벽. 셔터 앞을 막아 두고 한 칸만 비웠다. 들어가려면 경비 앞을 지나야 한다." w=12
+npc CR-456 13 11 E sheet=en_cr456_loco bark="출입세. 매끈이는 50캡."
+trigger 14 12 scene=MQ-103_TOLL cond="MQ103_GATE == 0"
+trigger 15 12 scene=MQ-103_TOLL cond="MQ103_GATE == 0"
+npc N-R02-013 17 13 N bark="셔터 안은 조용해. 소란은 우리가 다 막거든."
+npc C-018 24 15 W bark="일감 있으면 불러. 하루 50캡, 총값은 따로."
+prop bench_o 21 16
+prop crate_o 2 15
+box 2 15 stall owner=C-050 name="상인회 물품 상자"
+prop scrap_pile 26 17
+box 26 17 trash w=2
+prop work_lamp 6 16

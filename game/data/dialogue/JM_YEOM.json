@@ -1,0 +1,56 @@
+{
+ "id": "JM_YEOM",
+ "title": "인쇄소 염희정",
+ "loc": "L-R02-11",
+ "npc": "N-R02-008",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "WANTED": 3,
+  "SHOP": 5
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-R02-008",
+   "emo": "기본",
+   "text": "인쇄소야. 무엇을 인쇄하는지는 묻지 마."
+  },
+  {
+   "op": "if",
+   "cond": "V_WANTED >= 30",
+   "to": "WANTED"
+  },
+  {
+   "op": "goto",
+   "to": "SHOP"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-008",
+   "emo": "기본",
+   "text": "그 얼굴이면 종이 한 장이 아쉬울 텐데. 위조 등록증은 아직 판이 안 나왔어."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-008",
+   "emo": "기본",
+   "text": "상인회랑 사이가 좋아지면 다시 와."
+  },
+  {
+   "op": "cmd",
+   "name": "trade",
+   "args": [
+    "V13"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/JM_PEOPLE.txt"
+}

@@ -1,0 +1,48 @@
+{
+ "id": "MQ-103_KUK",
+ "title": "계약 경호원 국태윤",
+ "loc": "L-R02-11",
+ "npc": "N-R02-013",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "AFTER": 4
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "MQ103_AMBUSH == 2",
+   "to": "AFTER"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-013",
+   "emo": "기본",
+   "text": "셔터 안은 조용해. 소란은 우리가 다 막거든."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-013",
+   "emo": "기본",
+   "text": "바깥에서 묻은 일은 바깥에 두고 와. 그게 여기 규칙이야."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-013",
+   "emo": "미소",
+   "text": "아까 그 장부쟁이들 말이야. 상인회 손님 건드리면 이렇게 돼."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-103.txt"
+}

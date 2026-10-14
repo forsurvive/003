@@ -1,0 +1,42 @@
+{
+ "id": "MQ-103_GUARD",
+ "title": "지하시장 경비",
+ "loc": "L-R02-11",
+ "npc": "CR-456",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TOLL": 3
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "MQ103_GATE == 0",
+   "to": "TOLL"
+  },
+  {
+   "op": "line",
+   "who": "CR-456",
+   "emo": "기본",
+   "text": "들어간 사람은 나갈 때 돈 안 내. 장사 잘해."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "CR-456",
+   "emo": "기본",
+   "text": "출입세부터. 저 빈칸으로 와."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-103.txt"
+}

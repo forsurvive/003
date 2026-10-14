@@ -1,0 +1,122 @@
+{
+ "id": "MQ-103_FOUNTAIN",
+ "title": "물 없는 분수",
+ "loc": "L-R02-11",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "AGAIN": 3,
+  "THROW": 4,
+  "STEAL": 7
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "물 없는 분수. 바닥에 2077년 동전과 병뚜껑이 섞여 있다. 아무도 줍지 않는다."
+  },
+  {
+   "op": "if",
+   "cond": "MQ103_FOUNT >= 1",
+   "to": "AGAIN"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "캡 하나를 던진다",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 1
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "THROW",
+     "id": "MQ-103_FOUNTAIN:1:0"
+    },
+    {
+     "text": "바닥의 캡을 줍는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "STEAL",
+     "id": "MQ-103_FOUNTAIN:1:1"
+    },
+    {
+     "text": "(그냥 본다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "MQ-103_FOUNTAIN:1:2"
+    }
+   ]
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "한 번 더 던진다",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 1
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "THROW",
+     "id": "MQ-103_FOUNTAIN:2:0"
+    },
+    {
+     "text": "(그냥 본다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "MQ-103_FOUNTAIN:2:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "MQ103_FOUNT = MQ103_FOUNT + 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "캡이 동전들 사이로 굴러가 멈춘다. 벤치의 노인이 고개를 끄덕인다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "karma(-5)"
+  },
+  {
+   "op": "do",
+   "fx": "caps(12)"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "손에 캡 열두 개가 잡힌다. 벤치의 노인이 아무 말 없이 본다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-103.txt"
+}

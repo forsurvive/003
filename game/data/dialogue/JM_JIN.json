@@ -1,0 +1,50 @@
+{
+ "id": "JM_JIN",
+ "title": "부품상 진재석",
+ "loc": "L-R02-11",
+ "npc": "N-R02-005",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "REG": 3,
+  "SHOP": 4
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "JM_REG == 1",
+   "to": "REG"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-005",
+   "emo": "기본",
+   "text": "진공관 있으면 가져와. 값 쳐줄게. 마 기사가 더 쳐주긴 하지만."
+  },
+  {
+   "op": "goto",
+   "to": "SHOP"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-005",
+   "emo": "미소",
+   "text": "단골이 왔네. 둥지 치운 사람 맞지? 오늘은 내가 덜 남길게."
+  },
+  {
+   "op": "cmd",
+   "name": "trade",
+   "args": [
+    "VJ05"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/JM_PEOPLE.txt"
+}

@@ -1,0 +1,54 @@
+{
+ "id": "JM_GU",
+ "title": "경호단장 구학수",
+ "loc": "L-R02-11",
+ "npc": "C-052",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "CAUGHT": 4
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "MQ103_SNEAK == 2",
+   "to": "CAUGHT"
+  },
+  {
+   "op": "line",
+   "who": "C-052",
+   "emo": "기본",
+   "text": "상가 안에선 총 집어넣어. 장사는 조용히."
+  },
+  {
+   "op": "line",
+   "who": "C-052",
+   "emo": "기본",
+   "text": "계약서 을 칸이 비어 있지? 상인회 말고 우릴 부릴 사람은 아직 없어."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-052",
+   "emo": "분노",
+   "text": "천장으로 기어든 매끈이. 마 기사가 봐 달라고 해서 넘어가는 거다."
+  },
+  {
+   "op": "line",
+   "who": "C-052",
+   "emo": "기본",
+   "text": "다음에 또 천장에서 떨어지면 그땐 바닥이 마지막이야."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/JM_PEOPLE.txt"
+}

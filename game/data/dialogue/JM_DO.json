@@ -1,0 +1,39 @@
+{
+ "id": "JM_DO",
+ "title": "정수 노점 도민지",
+ "loc": "L-R02-11",
+ "npc": "N-R02-010",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-R02-010",
+   "emo": "기본",
+   "text": "정수 한 병 12캡. 지하수를 세 번 걸렀어."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-010",
+   "emo": "미소",
+   "text": "한강 물 마시고 오는 사람 보면 그냥 한 모금 줄 때도 있어. 넌 아니고."
+  },
+  {
+   "op": "cmd",
+   "name": "trade",
+   "args": [
+    "VJ10"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/JM_PEOPLE.txt"
+}

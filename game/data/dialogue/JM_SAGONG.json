@@ -1,0 +1,39 @@
+{
+ "id": "JM_SAGONG",
+ "title": "수집가 사공민영",
+ "loc": "L-R02-11",
+ "npc": "N-R02-012",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-R02-012",
+   "emo": "기본",
+   "text": "2077년 생활 잡화는 가치 그대로 쳐 줘. 라디오, 타자기, 전화기."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-012",
+   "emo": "기본",
+   "text": "만 원권도 받아. 장당 2캡. 종이가 이백 년을 버틴 값이지."
+  },
+  {
+   "op": "cmd",
+   "name": "trade",
+   "args": [
+    "V14"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/JM_PEOPLE.txt"
+}

@@ -1,0 +1,38 @@
+{
+ "id": "FIND-J09-NOTE",
+ "title": "구겨진 쪽지",
+ "loc": "L-R02-11",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "연필로 꾹꾹 눌러 쓴 쪽지."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'구청역에서 상가까지 70걸음. 둥지만 지나면 된다. 정우야, 아빠 버섯 사 갈게.'"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "쪽지 뒤에 아이 글씨로 '아빠 일찍 와'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-103.txt"
+}

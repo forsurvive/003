@@ -1,0 +1,26 @@
+{
+ "id": "MQ-103_CAUGHT",
+ "title": "들킨 침입자",
+ "loc": "L-R02-11",
+ "npc": "",
+ "cond": "MQ103_SNEAK == 2",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "CR-456",
+   "emo": "분노",
+   "text": "천장에서 뭐가 떨어졌어! 마 기사님 뒤로!"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-103.txt"
+}
