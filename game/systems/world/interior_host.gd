@@ -47,6 +47,7 @@ var text_seen := {}                              ## 여러 번 조사하는 글:
 var _talking: Dictionary = {}
 var _last_tile := Vector2i(-99, -99)
 var _zone := ""                                                  ## 월드에서 지금 선 구역(손 맵 이름 또는 "W") — 바뀌면 map_entered(1-1)
+var _region := ""                                                ## 월드에서 지금 선 권역(R01~R11·HR) — 바뀌면 배너
 var _from := ""
 
 
@@ -302,14 +303,32 @@ func _spawn_npc(i: int, n: Dictionary) -> void:
 	map.blockers.append(a)
 
 
+## 장소 표시(일시 정지·저장 칸): 볼트 실내 = 볼트 S-07 · 맵 이름, 월드 = 권역 · 구역 이름(1-1)
+func _place_name() -> String:
+	if map == null:
+		return ""
+	if map is WorldMap:
+		var rn: String = map.region_name(map.region_at(map.tile_of(player.loco.logical))) if player != null else "서울"
+		var zn: String = map.zone_name()
+		return rn if zn == rn else "%s · %s" % [rn, zn]
+	return ("볼트 S-07 · " if map.id.begins_with("V-") else "관악 · ") + str(map.data["name"])
+
+
 func _physics_process(dt: float) -> void:
 	if map == null:
 		return
 	if map is WorldMap and map.id != _zone:                          # 걸어서 다른 구역(손 맵)에 들어섰다: 맵에 들어선 것과 같이 알린다
 		_zone = map.id
+		_region = map.region_at(map.tile_of(player.loco.logical))
 		banner_text = map.zone_name()
 		banner_t = BANNER_SECS
 		map_entered.emit(_zone)
+	elif map is WorldMap and _zone == "W":                           # 월드 안에서 권역 경계를 넘으면 권역 이름만 띄운다
+		var rc: String = map.region_at(map.tile_of(player.loco.logical))
+		if rc != _region and rc != "":
+			_region = rc
+			banner_text = map.region_name(rc)
+			banner_t = BANNER_SECS
 	banner_t = maxf(0.0, banner_t - dt)
 	_night_tick(dt)
 	_hurt_t = maxf(0.0, _hurt_t - dt)
@@ -1038,7 +1057,7 @@ func status() -> Dictionary:
 	return {"level": lv, "hp": int(ceilf(combat.pc.hp)), "hp_max": int(combat.pc.max_hp), "ap": int(d["ap_max"]), "ap_max": int(d["ap_max"]),
 		"xp": xp, "xp_next": lv * (50 + 75 * (lv + 1)), "date": date_text, "equipped": combat.weapon_id if not combat.holstered else "",
 		"stimpak_id": InteriorCombat.STIMPAK, "carry": carry, "carry_max": 150 + 10 * st.stat("ST"), "caps": int(st.vars.get_v("PC_CAPS")),
-		"place": (("볼트 S-07 · " if map.id.begins_with("V-") else "관악 · ") + str(map.data["name"])) if map != null else "", "hotkeys": combat.hotkeys,
+		"place": _place_name(), "hotkeys": combat.hotkeys,
 		"karma": int(st.vars.get_v("V_KARMA")) if st.vars.has("V_KARMA") else 0,
 		"worn": worn(), "rads": int(st.vars.get_v("PC_RADS")),
 		"dr": int(items_db.get(worn(), {}).get("dr", 0)) if st.items.has(worn()) else 0}

@@ -8,8 +8,7 @@ class_name WorldMap
 extends InteriorMap
 
 const WDIR := "res://data/world/"
-const L_FLOOR := 0
-const L_GFLAG := 1600
+const L_FG := 0                                  ## 바닥·덮개 교대(칸 i: 바닥 2i, 덮개 2i+1)
 const L_SOLID := 3200
 const L_COVER := 4800
 const L_LEVEL := 6400
@@ -130,12 +129,22 @@ static func origin_of(map_id: String) -> Vector2i:
 	return Vector2i.ZERO
 
 
-## 지금 구역 이름(배너): 손 맵 이름, 밖이면 '서울'
+## 지금 구역 이름(배너): 손 맵 이름, 밖이면 권역 이름(SD-08 §7)
 func zone_name() -> String:
 	for ins in insets:
 		if ins["id"] == id:
 			return str(ins["data"]["name"])
-	return "서울"
+	return region_name(region_at(focus * cs))
+
+
+## 칸이 든 권역 코드(R01~R11·HR, 놀이 구역 밖이면 "")
+func region_at(t: Vector2i) -> String:
+	var k := chunk_of_tile(t)
+	return str(meta.get("regions", {}).get("%d,%d" % [k.x, k.y], ""))
+
+
+func region_name(code: String) -> String:
+	return str(meta.get("region_names", {}).get(code, "서울"))
 
 
 ## 손 맵 좌표 → 월드 타일(손 맵이 아니면 그대로)
@@ -256,10 +265,7 @@ func _attach(k: Vector2i, a: PackedByteArray) -> void:
 	var nodes: Array = []
 	var g := GroundLayer.new()                                           # 바닥 합성(SD-16 §6.10)
 	g.setup("r01", o, Vector2i(cs, cs))
-	for y in cs:
-		for x in cs:
-			var i := y * cs + x
-			g.put_flag(o.x + x, o.y + y, a[L_FLOOR + i], a[L_GFLAG + i])
+	g.fill_rg(a, L_FG)
 	for dy in range(-1, 2):                                              # 이웃 청크와 테두리를 서로 채운다(경계 섞임이 이어지게)
 		for dx in range(-1, 2):
 			var nk := k + Vector2i(dx, dy)
@@ -292,14 +298,16 @@ func _attach(k: Vector2i, a: PackedByteArray) -> void:
 	_tiles_body.add_child(dec)
 	nodes.append(body)
 	nodes.append(dec)
-	var p := L_TAIL                                                      # 나무(R01 소품, y 정렬)
+	var p := L_TAIL                                                      # 나무·거리 소품(R01 소품, y 정렬)
 	var nt := a[p] | (a[p + 1] << 8)
 	p += 2
 	for j in nt:
 		var tx := o.x + a[p]
 		var ty := o.y + a[p + 1]
 		var e: Dictionary = prop_meta[tree_names[a[p + 2] | (a[p + 3] << 8)]]
-		nodes.append(_sprite(e["rect"], Vector2(tx * T + int(e["off"][0]), ty * T + int(e["off"][1])), (ty + 1) * T, "r01"))
+		var fh := int(e["foot"][1])
+		var sy := ty * T + 16 if fh == 0 else (ty + fh) * T                 # 바닥 덧그림(풀포기·맨홀)은 칸 가운데, 나머지는 발 칸 아래 변
+		nodes.append(_sprite(e["rect"], Vector2(tx * T + int(e["off"][0]), ty * T + int(e["off"][1])), sy, "r01"))
 		p += 4
 	var ns := a[p] | (a[p + 1] << 8)                                     # 건물 그림자(SD-16 §3.9: 오른쪽 아래, 높이 1단당 16px, 곱하기 35%)
 	p += 2
@@ -338,7 +346,7 @@ func _share_ring(k: Vector2i, a: PackedByteArray, dst: GroundLayer) -> void:
 	for ty in range(y0, y1 + 1):
 		for tx in range(x0, x1 + 1):
 			var i := (ty - so.y) * cs + (tx - so.x)
-			dst.put_flag(tx, ty, a[L_FLOOR + i], a[L_GFLAG + i])
+			dst.put_flag(tx, ty, a[L_FG + i * 2], a[L_FG + i * 2 + 1])
 
 
 func _detach(k: Vector2i) -> void:

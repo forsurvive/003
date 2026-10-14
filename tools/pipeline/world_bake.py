@@ -232,12 +232,9 @@ def bake(src):
     ring.append(ring[0])
     Q = densify(chaikin(ring, 2), 2.0)
     d = dist_field(Q, 3)
-    wall = (d <= 1.0) & (kind > 0) & ~np.isin(kind, (7, 8, 9))            # 도로가 지나는 곳은 성벽이 끊겨 있다(현대 서울과 같다)
-    for n in ring_names:                                                   # 성문 자리(SD-08 §5.3 '문' 8곳): 문 칸 3타일은 지나간다
-        if n.endswith("문") or n.endswith("문 터"):
-            p = allp.get(n)
-            if p:
-                wall &= ((xs - p["tx"]) ** 2 + (ys - p["ty"]) ** 2) > 2.6 ** 2
+    # 도심 밀폐(SD-08 §9.1): 성곽을 넘는 길은 없고, 대로 끝·성문 자리는 관제망 차단벽(38곳)으로 닫혀 있다 → 고리를 끊지 않는다.
+    # 도심 안(D1~D9)은 별도 외부 맵이고 진입은 G1~G10(지하철·터널·차단벽·공중)뿐이다(§9.2·§9.3)
+    wall = (d <= 1.0) & (kind > 0)
     kind[wall] = 11
 
     # 땅 쓰임
@@ -531,7 +528,7 @@ def floor_names(r, seed=77):
     f[(kind == 3)] = ix["water_mid"]
     f[(kind == 4)] = ix["water_shallow"]
     f[(kind == 5)] = np.where(blobs[kind == 5] > 0.0, ix["mud"], ix["dirt_grass_a"])
-    f[(kind == 6)] = ix["concrete_o"]
+    f[(kind == 6)] = ix["rubble"]                                        # 제방: 무너진 콘크리트 사면(잔해 재질 — 대각선에서도 경계가 부드럽다)
     f[(kind == 7)] = ix["asphalt"]
     if "street" in r:
         lane = (kind == 7) & ~r["street"] & (r.get("lane", np.zeros_like(kind, bool)))

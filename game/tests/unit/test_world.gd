@@ -41,6 +41,9 @@ func test_world_insets(t) -> void:
 	m.id = "X-BC"
 	t.eq(m.cell_local(5, 35), m.to_world("X-BC", 5, 35), "연출 좌표는 지금 구역의 손 맵 좌표")
 	t.eq(m.zone_key("from_B-01"), "X-BC:from_B-01", "표지는 지금 구역 것을 먼저")
+	t.eq(m.region_at(Vector2i(959, 1503)), "R01", "볼트 S-07은 R01")
+	t.eq(m.region_name("R01"), "관악", "권역 이름(SD-08 §7)")
+	t.eq(m.region_at(Vector2i(1058, 793)), "R05", "광화문은 R05")
 	m.free()
 
 
@@ -60,12 +63,12 @@ func test_world_cells_path(t) -> void:
 		var a: PackedByteArray = m.chunks[k]["a"]
 		for i in 1600:
 			var cell := Vector2i(k.x * 40 + i % 40, k.y * 40 + i / 40)
-			if a[WorldMap.L_FLOOR + i] == deep:
+			if a[WorldMap.L_FG + i * 2] == deep:
 				wet += 1
 				if not m.is_solid(cell) and a[WorldMap.L_BODY + i * 2] == 0:
 					bad += 1
 			var b := a[WorldMap.L_BODY + i * 2] | (a[WorldMap.L_BODY + i * 2 + 1] << 8)
-			if b > 0 and a[WorldMap.L_GFLAG + i] == 1 and a[WorldMap.L_STAIR + i] == 0:
+			if b > 0 and a[WorldMap.L_FG + i * 2 + 1] == 1 and a[WorldMap.L_STAIR + i] == 0:
 				built += 1
 				if not m.is_solid(cell):
 					built_bad += 1

@@ -27,3 +27,4 @@ Fallout 3를 2277년 서울로 옮긴 한국어 비상업 팬게임.
 - 브랜치 `claude/clever-mayer-yddxqv`. PR은 요청이 있을 때만. 커밋 전 `__pycache__` 삭제. 커밋 메시지에 모델 ID를 넣지 않는다.
 - 시험: `cd game && timeout 900 godot --headless -s res://tests/run_tests.gd` (`TEST_ONLY=부분이름`).
 - 봇: `godot --headless --path game res://scenes/story/prologue.tscn -- --auto --from=p2|p3|p4|p4e|view|gate|box --log`.
+- 월드(1-1): 굽기 `python3 tools/pipeline/world_chunks.py`(build_data에 포함, 그림 바꾸면 `art_import.py` 먼저) · 견본 `world_chunks.py --sample X Y W H 출력.png` · 1막까지 `--from=view --chain` · 벤치 `scenes/bench/world_bench.tscn`.

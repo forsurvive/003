@@ -103,6 +103,36 @@ func fill(ground: Array, deco: Array) -> void:
 			_filled[i] = 1
 
 
+## 구역 안쪽 전부를 RG8 행 복사로(월드 청크 1-1: 바닥·덮개 값이 교대로 든 src[off …], 행 우선 size.x × size.y).
+## 덮개 값은 바로 넣는다(put_flag와 같다). 칸마다 부르는 put보다 수십 배 빠르다(붙이기 예산 4ms).
+func fill_rg(src: PackedByteArray, off: int) -> void:
+	var w := size.x + 2
+	var edge := PackedByteArray()
+	edge.resize(2)
+	var out := PackedByteArray()
+	out.resize(w * 2)
+	var fil := PackedByteArray()
+	fil.resize(w)
+	var frow := PackedByteArray()
+	frow.resize(w)
+	frow.fill(1)
+	frow[0] = 0
+	frow[w - 1] = 0
+	for y in size.y:
+		out.append_array(edge)
+		out.append_array(src.slice(off + y * size.x * 2, off + (y + 1) * size.x * 2))
+		out.append_array(edge)
+		fil.append_array(frow)
+	var tail := PackedByteArray()
+	tail.resize(w * 2)
+	out.append_array(tail)
+	var ft := PackedByteArray()
+	ft.resize(w)
+	fil.append_array(ft)
+	bytes = out
+	_filled = fil
+
+
 ## 아직 이웃 자료가 없는 테두리 칸은 가장자리 칸을 늘려 채운다.
 func pad() -> void:
 	var w := size.x + 2

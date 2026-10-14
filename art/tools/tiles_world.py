@@ -898,17 +898,17 @@ def fort(kind, var=0):
     if kind == "face":
         d.rectangle([0, 0, T - 1, T - 1], fill=C("P21"))
         for row, y in enumerate(range(10, T, 6)):
-            off = 5 if row % 2 else 0
-            for x in range(-10 + off, T, 10):
-                a0, a1 = max(0, x), min(T - 1, x + 9)
+            off = 4 if row % 2 else 0
+            for x in range(-8 + off, T, 8):
+                a0, a1 = max(0, x), min(T - 1, x + 7)
                 if a1 < a0:
                     continue
                 col = rnd.choice(["P21", "P21", "P20", "P22"])
                 d.rectangle([a0, y, a1, y + 5], fill=C(col))
                 d.line([a0, y, a1, y], fill=C("P22"))
                 d.line([a0, y + 5, a1, y + 5], fill=C("P19"))
-                if x + 9 < T:
-                    d.line([x + 9, y, x + 9, y + 5], fill=C("P19"))
+                if x + 7 < T:
+                    d.line([x + 7, y, x + 7, y + 5], fill=C("P19"))
         d.rectangle([0, 0, T - 1, 9], fill=C("P20"))                         # 여장(총안 두 개)
         d.line([0, 0, T - 1, 0], fill=C("P22"))
         for x in (6, 22):
@@ -923,6 +923,39 @@ def fort(kind, var=0):
             d.rectangle([x0, 0, x0 + 3, T - 1], fill=C("P21"))
             d.line([x0, 0, x0, T - 1], fill=C(INK) if x0 == 0 else C("P22"))
             d.line([x0 + 3, 0, x0 + 3, T - 1], fill=C("P19") if x0 == 0 else C(INK))
+    return img
+
+
+def fort_course(part, var=0):
+    """한양도성 정면 중단·하단(SD-08 §9.1 '성곽 높이는 정면 3~4타일'): 위로 갈수록 작아지는 다듬은 돌 쌓기.
+    mid = 중간 크기 돌(10×7), bot = 큰 지대석(16×9) + 아래 땅 접선 먹선과 이끼."""
+    rnd = random.Random(hsh(var, 61, ord(part[0])))
+    img = new()
+    d = ImageDraw.Draw(img)
+    d.rectangle([0, 0, T - 1, T - 1], fill=C("P19"))
+    bw, bh = (16, 8)                                                         # 32의 약수(칸 사이 줄눈이 이어진다)
+    for row, y in enumerate(range(0, T, bh)):
+        off = (bw // 2) if row % 2 else 0
+        for x in range(-bw + off, T, bw):
+            a0, a1 = max(0, x), min(T - 1, x + bw - 2)
+            b1 = min(T - 1, y + bh - 2)
+            if a1 < a0:
+                continue
+            col = rnd.choice(["P21", "P21", "P20", "P20", "P19"] if part == "mid" else ["P20", "P20", "P19", "P21"])
+            d.rectangle([a0, y, a1, b1], fill=C(col))
+            d.line([a0, y, a1, y], fill=C(S.P_up(col)))                     # 윗면 빛
+            d.line([a0, y, a0, b1], fill=C(S.P_up(col)))
+            d.line([a1, y, a1, b1], fill=C("P18"))
+            d.line([a0, b1, a1, b1], fill=C("P18"))
+    for _ in range(rnd.randint(1, 3)):                                      # 물때(세로)
+        x = rnd.randint(2, 29)
+        for i in range(rnd.randint(4, 12)):
+            step_px(img, x, i + (0 if part == "mid" else 2), -1)
+    if part == "bot":
+        for x in range(T):
+            if rnd.random() < 0.25:
+                img.putpixel((x, T - 3), C(rnd.choice(["P29", "P30"])))
+        d.line([0, T - 1, T - 1, T - 1], fill=C(INK))
     return img
 
 
@@ -1024,6 +1057,9 @@ def terrain_tiles():
     for v in range(2):
         out[f"tr:fort_face{v}"] = fort("face", v)
     out["tr:fort_top"] = fort("top")
+    for v in range(2):
+        out[f"tr:fort_mid{v}"] = fort_course("mid", v)
+        out[f"tr:fort_bot{v}"] = fort_course("bot", v)
     for m in range(16):
         out[f"tr:deck{m}"] = deck(m)
         out[f"tr:deckb{m}"] = deck(m, broken=True)
