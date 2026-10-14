@@ -226,7 +226,7 @@ func _draw_gate_light(_door: Sprite2D) -> void:
 	var pale := Color("CBC5B9")
 	var pale2 := Color("ABA49A")
 	var reach := 220.0 * k                                                    # 바닥 빛줄기: 문이 열린 만큼 앞으로 번진다. 단색 면 없이 디더 밀도로만
-	var top := c.y + 116.0                                                    # 문틀 그림 아래 끝 = 데크 첫 줄(테는 덮지 않는다 — 구멍 안 흰 빛은 문틀 그림이 그린다)
+	var top := c.y + 96.0                                                     # (구멍 아래 끝 = 데크 첫 줄)
 	var y0 := int(top)
 	while float(y0) < top + reach:
 		var t := (float(y0) - top) / maxf(1.0, reach)
