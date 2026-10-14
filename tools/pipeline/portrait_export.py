@@ -32,8 +32,10 @@ def main():
         if not os.path.basename(f).startswith("_"):
             looks |= {n["sheet"]: n["look"] for n in json.load(open(f, encoding="utf-8")).get("npcs", []) if n.get("look")}
     made, skipped, index = 0, [], {}
+    import pack as PK                                                 # 무명 적 템플릿 화자(CR-, 1-3 추적대 첫 분대): 적 시트와 같은 외형
+    en_look = {nm.split("_")[1].upper().replace("CR", "CR-"): code for nm, code, _w in PK.ENEMIES if nm.startswith("en_cr")}
     for sid in sorted(speakers) + sorted(looks):
-        look = looks.get(sid) or npcs.get(sid, {}).get("look", "")
+        look = looks.get(sid) or npcs.get(sid, {}).get("look", "") or en_look.get(sid, "")
         if not look or look.split("-")[0] in ("AN", "RB", "BY", "OBJ") or "·" in look:
             skipped.append(sid)
             continue

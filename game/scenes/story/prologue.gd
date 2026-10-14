@@ -92,6 +92,7 @@ func _ready() -> void:
 	host.combat.target_down.connect(_on_target_down)
 	host.combat.enemy_killed.connect(_on_enemy_killed)
 	host.combat.player_down.connect(_on_player_down)
+	host.pc_died.connect(_on_pc_died)
 	host.child_entered_tree.connect(_on_child)
 	if SaveSlots.pending != "":                                # 제목 화면·불러오기에서 왔다
 		var path := SaveSlots.pending
@@ -788,6 +789,10 @@ func _on_player_down() -> void:
 	if phase == "P4E":
 		_caught()
 		return
+	if phase == "ACT1":                                                # 1막: MQ-101 방어전은 그 진행기가, 그 밖은 생포 또는 쓰러짐(1-3)
+		if act1 == null or not act1.fight:
+			host.on_pc_down()
+		return
 	host.busy = true
 	host.ev.run("fade_out", ["black", "6"], func() -> void:
 		var c := host.combat
@@ -797,6 +802,21 @@ func _on_player_down() -> void:
 		host.ev.run("fade_in", ["black", "6"], func() -> void:
 			host.busy = false
 			host.say_text("정신이 들었다. 하도윤이 통로까지 끌고 나왔다. 스팀팩을 쓰고 다시 가자.")))
+
+
+## 1막 이후 쓰러짐(생포가 아님): 화면이 어두워지고 마지막 저장(이어하기)을 연다. 저장이 없으면 제목 화면
+func _on_pc_died() -> void:
+	host.busy = true
+	host.hint("쓰러졌다.", 3.0)
+	host.ev.run("fade_out", ["black", "12"], func() -> void:
+		var p := SaveSlots.continue_path()
+		if p != "" and not auto:
+			load_from(p)
+		elif auto:
+			print("봇: 주인공 쓰러짐(1막 이후)")
+			get_tree().quit(3)
+		else:
+			to_title())
 
 
 ## 붙잡힘(MQ-P4 탈출 중 HP 0, SD-14 §9.12.1 정합): A-07로 끌려와 HP 가득으로 다시 시작. 맵의 경비·계엄군은 제자리로

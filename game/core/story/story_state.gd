@@ -32,6 +32,8 @@ var stolen := {}                        ## 장물(SD-12 §9.2): 아이템 ID -> 
 var dead := {}                          ## 죽은 인물 ID -> true(0-9): 뒤 시대 맵에서 서지 않는다
 var places := PlaceLog.new()             ## 장소 발견 상태(1-2, SD-12 §5.5)
 var book := NpcBook.new()               ## 인물 수첩(1-2, SD-12 §3.11)
+const ENEMY_FACTION := {"CR-401": "BJ", "CR-405": "BJ", "CR-435": "SB", "CR-436": "SB", "CR-437": "SB", "CR-438": "SB", "CR-534": "SB"}
+var enc := {}                           ## 인카운터 상태(1-3, Encounters): 안전 간격 · 오늘 추적대 수 · EP 사용 · 휴전
 var portrait_alias := {}                ## 인물 ID -> 초상화 키(맵에서 다른 시대 모습으로 선 인물: 2259년 아이 하도윤 등)
 
 
@@ -58,6 +60,11 @@ func _init() -> void:
 			"MQ101_BOARD", "MQ101_FIGHT", "PC_RADS", "PD_BC", "PD_R01", "GAME_DAY"]:
 		vars.declare(k, "int", 0)
 	vars.declare("PC_TORSO", "str", "A-001")                # 입은 몸통 옷(아이템 ID) — 처음은 볼트 점프슈트(MQ-P2 지급)
+	Wanted.declare(self)                                   # 수배도 하루 누계·공고 인상착의(1-3)
+	# 생포(1-3, SD-03a §6.7): CAPTURE_DAY 마지막으로 잡힌 날(하루 1번) · CAPTURE_AT 잡힌 시각(분, 3일 계산) · SB_COLLAR 근태 목걸이(1 채워짐)
+	# SB_CUFF 수갑(1 채워짐) · CAPTURE_BY 잡은 쪽(1 새벽인력)
+	for kv in [["CAPTURE_DAY", -1], ["CAPTURE_AT", 0], ["SB_COLLAR", 0], ["SB_CUFF", 0], ["CAPTURE_BY", 0]]:
+		vars.declare(kv[0], "int", kv[1])
 	for k in ["P_SURNAME", "P_GIVEN", "P_FULL", "P_REGNO", "PC_APT"]:   # PC_APT: 적성 평가 답 10개(결과지 다시 보기)
 		vars.declare(k, "str", "")
 	for kv in [["PC_HAIR", "HR05"], ["PC_HCOL", "H1"], ["PC_SKIN", "S3"]]:   # 외형(SD-10 §8.3). PC_SEX 1 남 · 2 여
@@ -72,6 +79,12 @@ func load_data(dir: String = "res://data/") -> void:
 		quests.load_defs(dir + "quests.json")
 	if FileAccess.file_exists(dir + "npcs.json"):
 		npcs = JSON.parse_string(FileAccess.get_file_as_string(dir + "npcs.json"))["npcs"]
+	if FileAccess.file_exists(dir + "enemies.json"):                   # 무명 적 템플릿도 화자(1-3 추적대 첫 분대) — 이름표는 직함, 수첩에 없음
+		var en: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(dir + "enemies.json"))
+		for cid in en:
+			if not npcs.has(cid):
+				npcs[cid] = {"name": str(en[cid].get("name", cid)), "title": str(en[cid].get("name", cid)), "faction": ENEMY_FACTION.get(cid, ""),
+					"ids": [cid], "unnamed": true}
 	book = NpcBook.new(npcs)
 
 
@@ -131,8 +144,8 @@ func call_fn(name: String, args: Array) -> Variant:
 			var nv := vars.add("PC_XP", int(args[0]), 0)
 			events.append({"kind": "xp", "delta": int(args[0]), "value": nv})
 			return nv
-		"wanted":
-			return vars.add("V_WANTED", int(args[0]), 0, 100)
+		"wanted":                                                       # 수배도(1-3): 하한·하루 상한·등급 알림은 Wanted가
+			return Wanted.add(self, int(args[0]), str(args[1]) if args.size() > 1 else "")
 		"stat":
 			return stat(str(args[0]))
 		"skill":

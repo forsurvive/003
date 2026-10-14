@@ -206,7 +206,7 @@ SYS 빌린 침대. 이불에서 햇볕 냄새가 난다.
 > 아직 -> END
 * ZZ
 @cmd fade_out black 10
-! quest("MQ-101", 40); MQ101_NIGHT = 1; V_WANTED = 10; xp(50)
+! quest("MQ-101", 40); MQ101_NIGHT = 1; wanted(10); xp(50)
 @cmd mq night
 @cmd pc bed S
 @cmd fade_in black 12

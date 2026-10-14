@@ -1,0 +1,44 @@
+{
+ "id": "CAPTURE_HANDOVER",
+ "title": "관악 산자락",
+ "loc": "L-R01-03",
+ "npc": "",
+ "cond": "CAPTURE_BY == 2",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "사흘째 아침, 반장이 장부에 도장을 찍었다. 계엄군 트럭이 창고동 마당에 들어왔다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "청계산 벙커의 '귀빈실'. 권한대행 남궁혁이 마주 앉아 오래 웃었다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "\"전원이 들어온 뒤에 모시는 것이 절차입니다.\" 그 말과 함께 다시 눈이 가려졌다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "트럭이 멈춘 곳은 관악 산자락이다. 목걸이는 벙커에서 풀렸다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/CAPTURE.txt"
+}

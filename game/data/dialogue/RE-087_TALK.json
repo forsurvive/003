@@ -1,0 +1,136 @@
+{
+ "id": "RE-087_TALK",
+ "title": "생포 추적대",
+ "loc": "",
+ "npc": "CR-436",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "FIGHT": 3,
+  "TALK_OK": 6,
+  "TALK_FAIL": 10,
+  "RUN": 13
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "CR-436",
+   "emo": "기본",
+   "text": "현상금 3,000캡짜리 물건이 걸어 다니네."
+  },
+  {
+   "op": "line",
+   "who": "CR-436",
+   "emo": "기본",
+   "text": "게시판 쪽지에 적힌 그대로군. 순순히 따라오면 다리는 멀쩡하게 붙여서 데려가 주지."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "덤벼 봐.",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "FIGHT",
+     "id": "RE-087_TALK:1:0"
+    },
+    {
+     "text": "내 값이 장부에 얼마로 적혔는지 반장한테 먼저 물어보지?",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "어려움"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "TALK_OK",
+     "id": "RE-087_TALK:1:1",
+     "fail": "TALK_FAIL"
+    },
+    {
+     "text": "(뒤돌아 달아난다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "RUN",
+     "id": "RE-087_TALK:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "CR-436",
+   "emo": "기본",
+   "text": "그물 준비해. 다리만 노려."
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "fight"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "CR-436",
+   "emo": "기본",
+   "text": "……장부 숫자는 반장이 맞추는 거지."
+  },
+  {
+   "op": "line",
+   "who": "CR-436",
+   "emo": "기본",
+   "text": "오늘은 운 좋은 줄 알아. 다음엔 장부를 들고 온다."
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "CR-436",
+   "emo": "기본",
+   "text": "말 많은 물건은 값이 깎이는데. 잡아."
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "fight"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "run"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/RE-087.txt"
+}

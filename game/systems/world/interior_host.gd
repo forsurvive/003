@@ -9,6 +9,8 @@ extends Node2D
 
 signal map_entered(map_id: String)
 signal talked(npc_id: String, scene: String)
+signal day_tick(day: int)                          ## 게임 시간 06:00을 넘었다(SD-05 §6.4 하루 판정, 1-3)
+signal pc_died                                     ## 주인공이 쓰러졌고 생포도 아니다(1막 이후 — 진행이 마지막 저장을 연다)
 
 const BANNER_SECS := 2.4
 
@@ -51,6 +53,9 @@ var _zone := ""                                                  ## 월드에서
 var _region := ""
 var zone_walk := false                                           ## map_entered가 걸어서 구역을 넘은 것인가(문 전환이 아님)                                                ## 월드에서 지금 선 권역(R01~R11·HR) — 바뀌면 배너
 var _from := ""
+const TIME_SCALE := 30.0                                          ## 실시간 1초 = 게임 30초(SD-11 §1, SD-12 확정)
+var _clock_acc := 0.0
+var enc_live: EncounterLive                                       ## 인카운터 진행(1-3)
 
 
 func _ready() -> void:
@@ -75,6 +80,8 @@ func _ready() -> void:
 	combat = InteriorCombat.new()
 	add_child(combat)
 	combat.message.connect(func(t: String) -> void: hint(t, 3.0))
+	enc_live = EncounterLive.new().setup(self)
+	add_child(enc_live)
 	combat.hurt.connect(func(_a: float) -> void: _hurt_t = 0.3)
 	combat.resident_hit.connect(_on_resident_hit)
 	combat.resident_down.connect(_on_resident_down)
@@ -187,6 +194,9 @@ func enter(map_id: String, mark: String = "", look: Dictionary = {}, at: Vector2
 	ev._bg.clear()
 	ev.cam_locked = false
 	var world_mode := WorldMap.covers(map_id)                       # 바깥(관악산 비탈·봉천 등)은 심리스 월드 하나(1-1)
+	var from_inside := map != null and not (map is WorldMap)
+	if enc_live != null:
+		enc_live.on_map_changed()
 	map = WorldMap.new() if world_mode else InteriorMap.new()
 	map.load_map(map_id, st)
 	if world_mode and map_id != "W" and map.marks.has("%s:%s" % [map_id, mark]):
@@ -213,6 +223,11 @@ func enter(map_id: String, mark: String = "", look: Dictionary = {}, at: Vector2
 		player.doll.set_look({"torso": TORSO_OF[worn()]})                 # 갈아입은 옷(0-10)
 	player.visible = body != "hidden"
 	map.add_actor(player)
+	if world_mode and at == Vector2.INF and mark.begins_with("L-"):    # 실내에서 월드의 장소로 나간다(1-3): 그 장소의 도착 칸
+		PlaceLog.load_db()
+		var arr = PlaceLog.db.get(mark, {}).get("arrive")
+		if arr != null:
+			at = Vector2(int(arr[0]) * 32 + 16, int(arr[1]) * 32 + 16)
 	var m: String = mark if map.marks.has(mark) else (map.marks.keys()[0] if not map.marks.is_empty() else "")
 	player.loco.place(map.mark_pos(m) if at == Vector2.INF else at)
 	player.loco.facing = EventRunner.DIR_IDX.get(map.mark_dir(m), 2)
@@ -234,6 +249,8 @@ func enter(map_id: String, mark: String = "", look: Dictionary = {}, at: Vector2
 	ev.setup(map, map_id, cam)
 	if keep_buddy != "":
 		_bring_buddy(keep_buddy)
+	if world_mode and from_inside and enc_live != null:
+		enc_live.on_exit_interior.call_deferred()                    # 실내에서 밖으로 나온 순간도 판정 기회(SD-05 §6.1)
 	cam.limit_left = 0
 	cam.limit_top = 0
 	cam.limit_right = map.size.x * 32
@@ -380,6 +397,8 @@ func _physics_process(dt: float) -> void:
 		if use_keyboard and pipboy_ok and Input.is_action_just_pressed("pipboy"):
 			open_pipboy()
 		_check_exit()
+		_clock_step(dt)
+		enc_live.tick(dt)
 	combat.tick(dt, not talking, st)
 	var want := Vector2.ZERO                                              # 조준 쪽으로 카메라를 끈다(원거리 무기, 최대 3칸 — SD-12 §15 '카메라 리드')
 	if combat.armed() and combat.weapon()["kind"] == "ranged" and not talking:
@@ -970,7 +989,8 @@ func _txt(p: Vector2, t: String, col: Color, align := HORIZONTAL_ALIGNMENT_LEFT)
 ## 방위 링(SD-12 §4.3): 지름 56, 위 '북', 가운데 = 주인공, 적 = 붉은 마름모(반경 10 + 인지력×2 타일), 동행 = 푸른 원
 func _ring(c: Vector2) -> void:
 	banner.draw_arc(c, 27.0, 0, TAU, 32, HU[0], 3.0)
-	banner.draw_arc(c, 27.0, 0, TAU, 32, HU[3], 1.0)
+	var red: bool = enc_live != null and enc_live.flash_t > 0.0 and fmod(enc_live.flash_t, 0.4) < 0.2   # 추격자 예고: 테두리 붉게 점멸(SD-12 §9.7)
+	banner.draw_arc(c, 27.0, 0, TAU, 32, HUD_RED if red else HU[3], 2.0 if red else 1.0)
 	banner.draw_arc(c, 24.0, 0, TAU, 32, HU[2], 1.0)
 	_txt(c + Vector2(0, -33), "북", HU[5], HORIZONTAL_ALIGNMENT_CENTER)
 	banner.draw_rect(Rect2(c - Vector2(1, 1), Vector2(2, 2)), HU[6])
@@ -987,6 +1007,15 @@ func _ring(c: Vector2) -> void:
 		var d: Vector2 = combat.buddy.loco.logical - player.loco.logical
 		if d.length() <= rad:
 			banner.draw_circle((c + d / rad * 22.0).round(), 2.0, Color("4C7DC8"))
+	if enc_live != null and not enc_live.cur.is_empty():                 # 다가오는 추적대(비적대): 흰 마름모(SD-05 §6.9 예고)
+		for a in enc_live.cur.get("actors", []):
+			if not is_instance_valid(a):
+				continue
+			var d: Vector2 = a.loco.logical - player.loco.logical
+			if d.length() > rad:
+				continue
+			var q := (c + d / rad * 22.0).round()
+			banner.draw_colored_polygon(PackedVector2Array([q + Vector2(0, -2), q + Vector2(2, 0), q + Vector2(0, 2), q + Vector2(-2, 0)]), HU[7])
 	if map is WorldMap:                                                # 장소(SD-12 §4.3·§5.5): 40타일 안, 링 둘레에 방향만 — 발견 = 채움, 그 밖 = 빈 칸
 		var me := map.tile_of(player.loco.logical)
 		for lid in _ring_places(me):
@@ -1102,6 +1131,17 @@ func _handlers() -> void:
 	ev.handlers["memo"] = func(a: Array, done: Callable) -> void:      # 한 줄 메모(퀘스트가 정한 사실): memo 인물ID 문장…
 		st.book.memo(str(a[0]), " ".join(a.slice(1)), date_text)
 		done.call()
+	ev.handlers["re"] = func(a: Array, done: Callable) -> void:        # 인카운터 첫 분대 대화의 결말: re fight · run · leave(1-3)
+		enc_live.cmd(str(a[0]))
+		done.call()
+	ev.handlers["cage"] = func(a: Array, done: Callable) -> void:      # 우리 문 열기(1-3 H-03): cage open x y — 그림을 열린 문으로, 칸을 지나가게
+		var c := Vector2i(int(a[1]), int(a[2]))
+		map.set_prop_state(c, "open")
+		map._put_solid(c.x, c.y, 0)
+		done.call()
+	ev.handlers["capture"] = func(a: Array, done: Callable) -> void:   # capture wait: 사흘을 버텨 계엄군에 넘겨진다(SD-03a §6.7)
+		done.call()
+		_capture_handover.call_deferred()
 	ev.handlers["obit"] = func(a: Array, done: Callable) -> void:      # 소식으로 안 죽음: obit 인물ID
 		st.book.died(str(a[0]), date_text)
 		done.call()
@@ -1220,7 +1260,7 @@ func travel_check(lid: String) -> Array:
 	var s := status_carry()
 	if s[0] > s[1]:
 		return [false, TRAVEL_MSG["F4"], 0]
-	if int(st.vars.get_v("V_CHASE")) > 0 if st.vars.has("V_CHASE") else false:
+	if enc_live != null and enc_live.chasing():                       # 추적대가 다가오거나 싸우는 중(1-3)
 		return [false, TRAVEL_MSG["F8"], 0]
 	if st.quests.stage("MQ-P4") < 100 or e.get("arrive") == null or busy or box.active or str(e.get("region", "")) == "R05":
 		return [false, TRAVEL_MSG["F6"], 0]
@@ -1280,8 +1320,100 @@ func _arrive(lid: String, hours: int) -> void:
 	st.places.mark_seen(_last_tile)
 	cam.position = at.round()
 	cam.reset_smoothing()
-	date_text = Clock.add_hours(date_text, hours, st)
+	advance_minutes(hours * 60)
 	_note("%s 도착 — %d시간이 지났다" % [str(e["name"]), hours])
+	enc_live.on_arrive.call_deferred()                                # 도착 지점 = 추적대 첫 출현 후보(SD-05 §6.2)
+
+
+# ---------------------------------------------------------------- 시각 흐름(1-3)
+## 시간이 흐르나: 1막 MQ-101이 끝난 아침부터(그 전은 진행기가 시각을 정한다), 자유 행동 중에만(대화·핍-보이·연출은 멈춤 — SD-12 §16)
+func clock_running() -> bool:
+	return st.quests.cur_act() >= 1 and st.quests.stage("MQ-101") >= 50 and int(st.vars.get_v("MQ101_NIGHT")) >= 3 and not busy
+
+
+func _clock_step(dt: float) -> void:
+	if not clock_running():
+		return
+	_clock_acc += dt * TIME_SCALE / 60.0
+	if _clock_acc >= 1.0:
+		var m := int(_clock_acc)
+		_clock_acc -= m
+		advance_minutes(m)
+
+
+## 게임 시간을 m분 보낸다. 06:00을 넘으면 하루 판정(day_tick)
+func advance_minutes(m: int) -> void:
+	var a := Clock.abs_min(date_text)
+	date_text = Clock.add_minutes(date_text, m, st)
+	var b := Clock.abs_min(date_text)
+	if a > 0 and floori((b - 360) / 1440.0) > floori((a - 360) / 1440.0):
+		_daily()
+
+
+## 하루 판정(06:00): 수배도 하한 다시 걸기 · 생포 사흘 넘김(SD-03a §6.7 — 계엄군 인계는 청계산 맵과 함께, 정합)
+func _daily() -> void:
+	Wanted.refresh(st)
+	day_tick.emit(int(st.vars.get_v("GAME_DAY")))
+	if int(st.vars.get_v("CAPTURE_BY")) == 1 and map != null and map.id == "H-03" \
+			and Clock.abs_min(date_text) - int(st.vars.get_v("CAPTURE_AT")) >= 3 * 1440:
+		hint("사흘이 지났다. 반장이 계엄군에 넘길 날짜를 장부에 적는다.", 6.0)
+
+
+# ---------------------------------------------------------------- 쓰러짐·생포(1-3, SD-03a §6.7)
+## 주인공 HP 0(1막 이후 자유 행동): 생포 분대가 곁에 있고 오늘 처음이면 생포, 아니면 쓰러짐(pc_died)
+func on_pc_down() -> void:
+	var by := ""
+	for e in combat.enemies:
+		if is_instance_valid(e) and not e.cmb.dead and e.has_meta("capture") \
+				and e.loco.logical.distance_to(player.loco.logical) <= 20.0 * 32.0:
+			by = str(e.get_meta("capture"))
+	var day := int(st.vars.get_v("GAME_DAY"))
+	if by == "SB" and int(st.vars.get_v("CAPTURE_DAY")) != day:
+		capture(by)
+		return
+	pc_died.emit()
+
+
+## 새벽인력 생포(SD-03a §6.7 표 새벽인력 판): 캡 30% 압수(공통) → 근태 목걸이·수갑 → 본소 창고동 '인력' 우리(H-03)에서 깬다.
+## 현상금은 새벽인력이 받는다(이야기 기록만). 하루 한 번 — 같은 날 또 쓰러지면 일반 쓰러짐
+func capture(by: String) -> void:
+	busy = true
+	st.vars.set_v("CAPTURE_DAY", int(st.vars.get_v("GAME_DAY")))
+	var caps := int(st.vars.get_v("PC_CAPS"))
+	var taken := int(floor(caps * 0.3))
+	if taken > 0:
+		st.call_fn("caps", [-taken])
+	enc_live.captured()
+	ev.run("fade_out", ["black", "8"], func() -> void:
+		combat.pc.dead = false
+		combat.pc.hp = maxf(1.0, combat.pc.max_hp * 0.3)
+		combat.equip("", st)
+		advance_minutes(3 * 60)                                       # 끌려가는 길(정합: 3시간)
+		st.vars.set_v("CAPTURE_BY", 1)
+		st.vars.set_v("CAPTURE_AT", Clock.abs_min(date_text))
+		st.vars.set_v("SB_COLLAR", 1)
+		st.vars.set_v("SB_CUFF", 1)
+		enter("H-03", "cage_pc")
+		ev.run("fade_in", ["black", "8"], func() -> void:
+			busy = false
+			play_scene("CAPTURE_SB")))
+
+
+## 사흘 버팀 → 계엄군 인계(1~3막 전원 없음 판, SD-03a §6.7 표): 청계산 귀빈실 → 남궁혁 면담 → 관악 산자락. 비상 +5.
+## 정합: 소지품 압수·압수품 보관함은 청계산 맵과 함께(지금은 압수하지 않는다)
+func _capture_handover() -> void:
+	busy = true
+	ev.run("fade_out", ["black", "10"], func() -> void:
+		advance_minutes(3 * 24 * 60)
+		st.vars.set_v("SB_CUFF", 0)
+		st.vars.set_v("SB_COLLAR", 0)
+		st.vars.set_v("CAPTURE_BY", 2)
+		st.call_fn("aff", ["BJ", 5])
+		enter("X-S07", "from_vault")
+		ev.run("fade_in", ["black", "10"], func() -> void:
+			busy = false
+			play_scene("CAPTURE_HANDOVER")
+			st.vars.set_v("CAPTURE_BY", 0)))
 
 
 ## 레벨(SD-10 §4.2): 누적 XP (L−1)(50 + 75L)
@@ -1359,6 +1491,8 @@ func _drain_events() -> void:
 				_note("카르마가 %s." % ("올라갔습니다" if int(e["delta"]) > 0 else "내려갔습니다"))
 			"xp":
 				_note("+%d XP" % int(e["delta"]))
+			"wanted":                                                   # SD-12 §4.6 예문 '수배 등급이 올라갔습니다: 수배 공고'
+				_note("수배 등급이 %s: %s" % ["올라갔습니다" if bool(e["up"]) else "내려갔습니다", Wanted.NAMES[int(e["grade"])]])
 	st.events.clear()
 	for q in st.quests.events:
 		match str(q.get("kind", "")):

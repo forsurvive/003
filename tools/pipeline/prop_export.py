@@ -104,7 +104,7 @@ def export_r01():
     atlas = Image.new("RGBA", (W, y + rowh), (0, 0, 0, 0))
     for k, im in items:
         atlas.alpha_composite(im, pos[k][:2])
-    bad = check(atlas, P.allowed_set("UI"))
+    bad = check(atlas, P.allowed_set("UI", *P.SKIN.keys(), *P.HAIR.keys(), *P.PF.keys()))   # 앉은 '인력'(1-3)은 인물 피부·머리·세력 팔레트
     if bad:
         print("팔레트 밖 색(r01):", bad[:5]); sys.exit(1)
     atlas.save(os.path.join(OUT, "r01_props.png"))

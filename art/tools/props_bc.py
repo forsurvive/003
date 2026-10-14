@@ -840,6 +840,10 @@ from props_bc_in import PROPS_IN                                         # 봉�
 for _k in PROPS_IN:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_IN)
+from props_sb import PROPS_SB, STATES_SB                                # 새벽인력 창고동 H-03(1-3)
+for _k in PROPS_SB:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_SB)
 
 STATES = {
     "board_bc": {s: (lambda s=s: notice_board(s)) for s in ("wanted", "torn", "crumpled", "crossed", "rate", "water", "official")},
@@ -848,6 +852,7 @@ STATES = {
     "gate_r": {"shut": lambda: gate_leaf(False)},
     "manhole": {"open": lambda: manhole(True)},
 }
+STATES.update(STATES_SB)
 
 
 if __name__ == "__main__":

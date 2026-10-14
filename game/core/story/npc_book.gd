@@ -38,7 +38,7 @@ func canon(id: String) -> String:
 ## 등록(처음이면 true). date = 진행기 날짜 글('2277. 10. 23.  16:40' — 날짜만 남긴다)
 func meet(id: String, date: String) -> bool:
 	var c := canon(id)
-	if c == "" or entries.has(c):
+	if c == "" or entries.has(c) or bool(info(c).get("unnamed", false)):   # 무명(적 템플릿)은 수첩에 없다
 		return false
 	count += 1
 	var t := Clock.parse(date)

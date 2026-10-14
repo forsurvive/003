@@ -165,7 +165,12 @@ func cell_local(x: int, y: int) -> Vector2i:
 
 func zone_key(name: String) -> String:
 	var z := "%s:%s" % [id, name]
-	return z if marks.has(z) else name
+	if marks.has(z) or marks.has(name):
+		return z if marks.has(z) else name
+	for k in marks:                                                # 구역 경계 밖(월드 W)에서도 손 맵 표지를 찾는다(예: 비탈의 dogs)
+		if str(k).ends_with(":" + name):
+			return k
+	return name
 
 
 func mark_pos(name: String) -> Vector2:

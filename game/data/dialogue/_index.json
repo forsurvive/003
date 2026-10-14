@@ -1,6 +1,10 @@
 {
  "scenes": [
   "B-01_BED",
+  "CAPTURE_COLLAR",
+  "CAPTURE_CUFF",
+  "CAPTURE_HANDOVER",
+  "CAPTURE_SB",
   "MQ-101_DOGS",
   "MQ-101_DOGS_WIN",
   "MQ-101_DOKSA",
@@ -55,6 +59,7 @@
   "MQ-P4_S06",
   "MQ-P4_S07",
   "MQ-P4_YUN",
+  "RE-087_TALK",
   "X-BC_BOARD",
   "X-BC_MANHOLE",
   "X-S07_VIEW"

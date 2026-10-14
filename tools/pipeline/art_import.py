@@ -180,6 +180,7 @@ def main():
     ns = tileset("ts_s07_int", tiles_isaac.s07_tiles())
     nw = tileset("ts_s07_wall", tiles_isaac.s07_wall_tiles())
     tileset("ts_bc_wall", tiles_isaac.bc_wall_tiles())                # 봉천 빌라 실내 벽(0-10)
+    tileset("ts_sb_wall", tiles_isaac.sb_wall_tiles())                # 새벽인력 창고동 벽(1-3 H-03)
     import tiles_world                                             # 월드 건물·지형 구조(1-1)
     wt, wtab = tiles_world.build()
     nwd = tileset_grid("ts_world", wt, {"skins": wtab})

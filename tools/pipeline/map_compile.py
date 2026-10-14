@@ -472,6 +472,9 @@ def _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kin
         block[e["y"]][e["x"]] = 0
     for d in out["doors"]:                                        # 잠긴 문은 이야기에서 열린다: 이어짐은 열린 것으로 본다
         block[d["y"]][d["x"]] = block[d["y"] + 1][d["x"]] = 0
+    for p in out["props"]:                                        # 우리 문(1-3 H-03)도 이야기에서 열린다: 열린 것으로 본다
+        if p["name"] == "cage_door":
+            block[p["y"]][p["x"]] = 0
     start = None
     for y in range(H):
         for x in range(W):
@@ -563,9 +566,14 @@ def main():
             if out["id"] in maps:
                 errors.append(f"{path}: 맵 ID 겹침 {out['id']}")
             maps[out["id"]] = (out, m)
+    places = json.load(open(os.path.join(ROOT, "game", "data", "world", "places.json"), encoding="utf-8"))
     for mid, (out, m) in maps.items():                           # 출구 → 갈 맵·표지가 있는지
         for e in out["exits"]:
-            if e["to"] not in maps:
+            if e["to"] == "W":                                       # 월드로 나간다(1-3): 표지 = 장소 L-ID(그 장소의 도착 칸)
+                if e["mark"] not in places:
+                    m.err(e["line"], f"월드 출구 표지는 장소 L-ID여야 한다: '{e['mark']}'")
+                    errors += m.errors[-1:]
+            elif e["to"] not in maps:
                 m.err(e["line"], f"출구가 모르는 맵 '{e['to']}'로 간다")
                 errors += m.errors[-1:]
             elif e["mark"] not in maps[e["to"]][0]["marks"]:

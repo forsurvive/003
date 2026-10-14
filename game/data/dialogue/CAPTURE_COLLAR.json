@@ -1,0 +1,78 @@
+{
+ "id": "CAPTURE_COLLAR",
+ "title": "공구 상자",
+ "loc": "L-R02-19",
+ "npc": "",
+ "cond": "SB_COLLAR == 1",
+ "labels": {
+  "START": 0,
+  "OFF": 2
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "공구 상자 서랍에 철사 절단기와 집게가 굴러다닌다. 목걸이 뒤판 나사가 손끝에 걸린다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "뒤판을 열고 기폭 선을 집게로 들어 올려 끊는다.",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "OFF",
+     "id": "CAPTURE_COLLAR:1:0"
+    },
+    {
+     "text": "표시등 회로를 따라가 전원부터 뺀다.",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "과학",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "OFF",
+     "id": "CAPTURE_COLLAR:1:1"
+    },
+    {
+     "text": "(그대로 둔다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "CAPTURE_COLLAR:1:2"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "SB_COLLAR = 0"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "붉은 불이 꺼진다. 목걸이가 두 쪽으로 갈라져 바닥에 떨어진다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/CAPTURE.txt"
+}

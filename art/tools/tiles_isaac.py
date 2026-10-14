@@ -476,6 +476,53 @@ def bc_wall_tiles():
     return out
 
 
+def wall_face_sb(part, variant="plain", seed=0):
+    """새벽인력 창고동 벽(1-3 H-03): 옛 공구상가 철골동 — 녹슨 골함석(세로 골 4px) + 위 H빔·리벳 + 아래 콘크리트 턱. 쯔꾸르식 평평한 면."""
+    img = new("P12")
+    d = ImageDraw.Draw(img)
+    rnd = random.Random(seed * 13 + (1 if part == "top" else 2))
+    for x in range(0, 32, 4):                                          # 골: 그늘 · 면 · 빛 · 면
+        d.line([x, 0, x, 31], fill=C("P11"))
+        d.line([x + 2, 0, x + 2, 31], fill=C("P13"))
+    if part == "top":
+        d.rectangle([0, 0, 31, 6], fill=C("P10"))                     # H빔
+        d.line([0, 0, 31, 0], fill=C("P01")); d.line([0, 1, 31, 1], fill=C("P13")); d.line([0, 6, 31, 6], fill=C("P01"))
+        d.line([0, 4, 31, 4], fill=C("P11"))
+        for x in (4, 12, 20, 28):
+            d.point((x, 3), fill=C("P14"))
+        for k in range(2 if variant != "rust" else 5):                  # 리벳 아래로 흘러내린 녹
+            x = rnd.randrange(1, 31, 4) + 1
+            d.line([x, 7, x, 7 + rnd.randint(4, 16)], fill=C("P25"))
+            d.point((x, 7), fill=C("P24"))
+        if variant == "num":                                          # 칸 번호 스텐실
+            d.rectangle([11, 12, 21, 24], fill=C("P11"))
+            for yy in (14, 18, 22):
+                d.line([13, yy, 19, yy], fill=C("P08"))
+            d.line([19, 14, 19, 18], fill=C("P08")); d.line([13, 18, 13, 22], fill=C("P08"))
+    else:
+        for k in range(2):
+            x = rnd.randrange(1, 31, 4) + 1
+            d.line([x, 0, x, rnd.randint(6, 14)], fill=C("P25"))
+        d.rectangle([0, 20, 31, 31], fill=C("P05"))                   # 콘크리트 턱
+        d.line([0, 20, 31, 20], fill=C("P01")); d.line([0, 21, 31, 21], fill=C("P07"))
+        for x in (6, 19, 27):
+            d.point((x, 25), fill=C("P04")); d.point((x + 1, 26), fill=C("P06"))
+        d.line([0, 29, 31, 29], fill=C("P04")); d.line([0, 31, 31, 31], fill=C("P01"))
+        if variant == "outlet":                                       # 굵은 전선관과 배전함
+            d.rectangle([18, 6, 27, 16], fill=C("P11")); d.rectangle([19, 7, 26, 15], fill=C("P13"))
+            d.point((24, 9), fill=C("P54"))
+    return img
+
+
+def sb_wall_tiles():
+    """새벽인력 창고동 실내 벽(ts_sb_wall, 1-3): s07 벽과 같은 이름(윗면 wt_m은 같고 벽면만 골함석)."""
+    out = {f"wt_{m}": wall_top({e for e, b in WALL_BITS if m & b}) for m in range(16)}
+    out.update({"face_top": wall_face_sb("top"), "face_top_pipe": wall_face_sb("top", "num", 1),
+                "face_top_vent": wall_face_sb("top", "rust", 2), "face_bot": wall_face_sb("bot"),
+                "face_bot_outlet": wall_face_sb("bot", "outlet")})
+    return out
+
+
 def sheet(tiles, cols=9, bg="P19"):
     names = list(tiles)
     rows = (len(names) + cols - 1) // cols

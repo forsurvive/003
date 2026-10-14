@@ -73,7 +73,7 @@
   },
   {
    "op": "do",
-   "fx": "quest(\"MQ-101\", 40); MQ101_NIGHT = 1; V_WANTED = 10; xp(50)"
+   "fx": "quest(\"MQ-101\", 40); MQ101_NIGHT = 1; wanted(10); xp(50)"
   },
   {
    "op": "cmd",

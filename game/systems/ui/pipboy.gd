@@ -114,7 +114,10 @@ func _rows() -> Array:
 		[0, 3]:                                                         # 특별 퍽 관리 후보 1순위(PK-103, SD-10): 결과 통지서를 받으면 자동
 			out = [{"text": "관리 후보 1순위", "id": "PK-103", "right": "특별"}] if int(st.vars.get_v("V_REGCARD")) >= 1 else []
 		[0, 4]:
-			out = [{"text": "등록 카드", "id": "card"}, {"text": "카르마", "id": "karma"}, {"text": "통계", "id": "stats"}]
+			out = [{"text": "등록 카드", "id": "card"}, {"text": "카르마", "id": "karma"}]
+			if st.quests.cur_act() >= 1:                                  # 수배(SD-12 §9.7, 1-3): 볼트를 나온 뒤
+				out.append({"text": "수배", "id": "wanted", "right": Wanted.NAMES[Wanted.grade(st)]})
+			out.append({"text": "통계", "id": "stats"})
 		[1, _]:
 			var cat: String = CATS[sub[1]]
 			var ids := st.items.keys()
@@ -378,6 +381,16 @@ func _info_line() -> String:
 	return "위치: " + str(info.get("place", ""))
 
 
+static func _comma(n: int) -> String:
+	var s := str(n)
+	var out := ""
+	for i in s.length():
+		if i > 0 and (s.length() - i) % 3 == 0:
+			out += ","
+		out += s[i]
+	return out
+
+
 static func _num(v: float) -> String:
 	return str(int(v)) if is_equal_approx(v, roundf(v)) else "%.1f" % v
 
@@ -533,6 +546,18 @@ func _general_page(id: String) -> void:
 			view.draw_rect(Rect2(px - 1, 113, 3, 14), U[6])
 			text(Vector2(264, 130), "악", f10, 10, U[4])
 			text(Vector2(584, 130), "선", f10, 10, U[4], HORIZONTAL_ALIGNMENT_RIGHT)
+		"wanted":                                                       # 등급 이름 + 공고 문안 1줄 + 현상금(공고된 경우). 수치는 숨김(SD-12 §9.7)
+			var g := Wanted.grade(st)
+			text(Vector2(264, 78), Wanted.NAMES[g], f12b, 12, U[6])
+			text(Vector2(588, 80), "현상금 %s캡" % _comma(Wanted.bounty(st)) if Wanted.bounty(st) > 0 else "공고 금액 없음", f10, 10,
+				U[6] if Wanted.bounty(st) > 0 else U[3], HORIZONTAL_ALIGNMENT_RIGHT)
+			var y := _para(Vector2(264, 100), Wanted.notice(st), U[5])
+			if g >= 1:
+				text(Vector2(264, y + 4), "인상착의", f10, 10, U[4])
+				_para(Vector2(330, y + 4), Wanted.look_text(st, db), U[5], 256.0)
+				var dis := Wanted.disguised(st, str(info.get("worn", "")))
+				text(Vector2(264, y + 24), "지금 옷은 공고와 다르다 — 무명은 잘 못 알아본다." if dis else "지금 옷이 공고와 같다.", f10, 10,
+					U[6] if dis else U[3])
 		"stats":
 			var y := 78.0
 			for kv in [["받은 퀘스트", str(_quests().size())], ["끝낸 퀘스트", str(_quests().filter(func(q): return not q["active"]).size())],

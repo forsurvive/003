@@ -1,0 +1,107 @@
+{
+ "id": "CAPTURE_CUFF",
+ "title": "우리 문",
+ "loc": "L-R02-19",
+ "npc": "",
+ "cond": "SB_CUFF == 1",
+ "labels": {
+  "START": 0,
+  "OPEN": 2,
+  "WAIT": 6
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "수갑 사슬이 문살에 걸린다. 놋쇠 맹꽁이자물쇠 하나가 우리 문을 잠그고 있다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "바닥에서 주운 철사로 수갑 열쇠 구멍을 돌린다.",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "자물쇠 따기",
+       "min": 25
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "OPEN",
+     "id": "CAPTURE_CUFF:1:0"
+    },
+    {
+     "text": "사슬을 문살에 걸고 비튼다.",
+     "tags": [
+      {
+       "k": "stat",
+       "name": "힘",
+       "min": 7
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "OPEN",
+     "id": "CAPTURE_CUFF:1:1"
+    },
+    {
+     "text": "(버틴다. 사흘이 지나면 어디론가 넘겨진다고 했다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "WAIT",
+     "id": "CAPTURE_CUFF:1:2"
+    },
+    {
+     "text": "(그만둔다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "CAPTURE_CUFF:1:3"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "SB_CUFF = 0"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "수갑이 풀린다. 그 철사로 맹꽁이자물쇠까지 돌리자, 문이 끼익 소리를 내며 젖혀진다."
+  },
+  {
+   "op": "cmd",
+   "name": "cage",
+   "args": [
+    "open",
+    "16",
+    "8"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "capture",
+   "args": [
+    "wait"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/CAPTURE.txt"
+}
