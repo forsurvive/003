@@ -1,8 +1,8 @@
-# SD-13 §5.4 몸통·전신 장비 → game/data/items_apparel.json (단계 0-7: MQ-P2에 받는 볼트 점프슈트)
+# SD-13 §5.4 몸통·전신 장비 → game/data/items_apparel.json (단계 0-7: MQ-P2에 받는 볼트 점프슈트, 0-10: 조만석이 건네는 황무지 정착민 복장)
 doc: 13_items.md
 id_column: ID
 section: "### 5.4 몸통·전신 장비 (A-001~A-054, A-083)"
-rows: [A-001]
+rows: [A-001, A-016]
 columns:
   ID: {field: id, type: id, pattern: "^A-\\d{3}$", required: true}
   이름: {field: name, type: str, required: true}

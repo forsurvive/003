@@ -201,9 +201,11 @@ def slope():
                       ("bush_g", 8, 4), ("boulder_m", 18, 12), ("bush_a", 22, 11), ("tree_maple", 9, 10), ("boulder_s", 6, 14),
                       ("tuft", 17, 24), ("tuft2", 25, 33), ("tuft", 7, 32), ("tuft2", 33, 25), ("tuft", 20, 15), ("tuft2", 5, 8)):
         m.p(n, x, y)
-    # S1 백구 장면 자리(바위틈): 서쪽 바위 무리
+    # S1 백구 장면 자리(바위틈): 서쪽 바위 무리. 길(12~16, 21~23)에 들어서면 장면이 열린다
     m.c("mark dogs 7 24 E")
     m.c("mark baekgu 6 26 E")
+    m.c("mark dog1 8 23 W"); m.c("mark dog2 9 25 W"); m.c("mark dog3 8 27 W")
+    m.c('trigger 12 21 scene=MQ-101_DOGS w=6 h=3 cond="MQ101_STAGE == 10 and MQ101_DOG == 0" once')
     border_trees(m)
     return m
 
@@ -356,6 +358,28 @@ def bongcheon():
     m.c("mark from_B-01 27 9 S")
     m.p("water_tank_s", 33, 8); m.p("antenna", 23, 7); m.p("laundry_line", 31, 6)
     m.text(25, 11, "봉천 새마음빌라 1동. 옥상에 옥탑 이장실이 있다.")
+    # ---- 사람들(낮). 밤(MQ101_NIGHT ≥ 1)에는 감시조만 남는다
+    day = "MQ101_NIGHT == 0 or MQ101_RESULT != 0"
+    m.c(f'npc N-R01-028 28 37 S cond="{day}"')                                       # 남태하 감시조장(아랫문)
+    m.c(f'npc N-R01-026 11 33 S cond="{day}"')                                       # 오봉수(고물상 매대 뒤)
+    m.c('npc C-015 37 35 W sheet=cr_baekgu_loco cond="MQ101_DOG != 1"')              # 백구(개집 앞)
+    m.c(f'npc N-R01-034 38 34 W cond="{day}" route=kennel:38,34,6;yard:33,36,4')     # 남솔(백구 밥 당번)
+    m.c(f'npc N-R01-029 16 28 S cond="{day}" route=garden:16,28,6;alley:24,28,4')   # 조담희(텃밭·반상회 총무)
+    m.c(f'npc N-R01-030 46 35 W cond="{day}"')                                       # 남무진(대장간)
+    m.c(f'npc N-R01-031 39 21 S cond="{day}" route=school:39,21,6;stair:33,22,3')   # 오해인(계단 학교)
+    m.c(f'npc N-R01-033 52 37 W cond="{day}"')                                       # 엄태경(사냥꾼)
+    m.c(f'npc N-R01-035 30 29 S cond="{day}"')                                       # 오재윤(계단참②)
+    m.c(f'npc N-R01-036 46 12 S cond="{day}" route=tower:46,12,8;top:40,14,4')      # 조하진(망루 감시조)
+    m.c(f'npc N-R01-501 10 28 E cond="{day}" route=a:10,28,5;b:18,28,4')            # 오영자(미용실)
+    m.c('trigger 27 39 scene=MQ-101_GATE w=5 h=2 cond="MQ101_STAGE == 10" once')
+    m.c('npc C-021 29 42 N cond="MQ101_NIGHT == 2 and MQ101_RESULT == 0 and MQ101_FIGHT == 0"')   # 독사(밤, 아랫문 밖 — 말을 걸 수 있다)
+    for k, (x, y) in enumerate(((29, 37), (29, 29), (33, 21), (30, 13))):           # 계단참 ①~④(방어전 감시조 자리)
+        m.c(f"mark land{k + 1} {x} {y} S")
+    m.c("mark doksa 29 42 N")
+    m.c("mark pc_fight 30 36 S")                                         # 방어전: 주인공은 아랫문 안 계단참① 옆에서 막는다
+    m.c("mark sbf1 25 44 N"); m.c("mark sbf2 33 44 N"); m.c("mark sbf3 37 43 N"); m.c("mark doksaf 29 45 N")   # 방어전 시작 자리(길 위)
+    m.c("mark sb1 27 43 N"); m.c("mark sb2 31 43 N"); m.c("mark sb3 33 42 N")
+    m.c("mark tanks 11 12 N")
     # ---- 윗문(북)
     m.fill(44, 1, 46, 2, "c", 6)
     m.p("gate_shut", 45, 1)
@@ -394,44 +418,67 @@ class I:
 
 
 def b01():
-    """B-01 옥탑 이장실(20×14 안팎) + B-02 빌린 침대 방(이장실 옆방, 안쪽 문)."""
+    """B-01 옥탑 이장실(마루) + 빌린 침대 방(장판, 이장실 옆방, 안쪽 문). 2277년 봉천 살림: 자개장롱·밥상·석유난로·
+    감시조 무전기·손으로 그린 마을 지도(SD-09a §4 봉천 '옥탑 이장실')."""
     m = I("B-01", "옥탑 이장실", 26, 14)
     m.room(1, 3, 15, 12, "w")                                            # 이장실(마루)
-    m.room(19, 3, 24, 12, ",")                                           # 빌린 침대 방(장판)
+    m.room(19, 3, 24, 12, "j")                                           # 빌린 침대 방(콩댐 장판)
     for y in range(3, 13):
         m.g[y][16] = m.g[y][17] = m.g[y][18] = "#"
-    for y in (8, 9, 10):                                                 # 안쪽 문(벽 1칸 두께 → 통로 3칸)
-        pass
     for x in (16, 17, 18):
         m.g[10][x] = "w"
     m.g[13][8] = "w"
     m.c("exit 8 13 X-BC from_B-01")
     m.c("mark from_X-BC 8 12 N")
     m.c("mark bed 21 6 S")
-    m.c("mark chief 6 6 S")
-    m.c("prop overseer_desk 4 5")
-    m.c('text 5 5 "조만석의 책상. 봉천 중심의 2077년 구청 지도가 유리 밑에 깔려 있다." w=3')
-    m.c("prop bunk 22 4")
+    m.c("mark bed_side 20 8 N")
+    m.c("mark chief_night 23 8 W")
+    m.c("mark chief 6 4 S")
+    m.c("npc C-010 6 4 S")
+    # 벽(벽면 윗칸 y=1)
+    m.c("prop w_map 3 1"); m.c("prop w_window 7 1"); m.c("prop w_calendar 11 1"); m.c("prop w_shelf 12 1")
+    m.c('text 3 2 "손으로 그린 봉천 지도. 계단참 넷에 동그라미, 붉은 압정 넷은 감시조 자리다." w=2')
+    # 이장실
+    m.c("prop wardrobe 1 3")
+    m.c('text 1 3 "자개장롱. 학과 구름이 박혀 있다. 이장 할머니의 혼수였다고 한다." w=2')
+    m.c("prop chief_desk 5 5")
+    m.c('text 5 5 "조만석의 책상. 2077년 구청 지도가 유리 밑에 깔려 있고, 장부에는 물탱크 눈금이 날마다 적혀 있다." w=2')
+    m.c("prop radio_desk 9 3")
+    m.c('text 9 3 "감시조 무전기. 호박색 눈금이 은은하게 켜져 있다. 계단참마다 한 대씩."')
+    m.c("prop crt_tv 13 3"); m.c("prop plant_pot 15 3")
+    m.c('text 13 3 "2077년 텔레비전. 전기가 들어온 적이 없다. 위에 뜨개 덮개가 얹혀 있다."')
+    m.c("prop heater 11 7")
+    m.c("prop low_table 4 9"); m.c("prop cushion_r 3 9"); m.c("prop cushion_b 6 9"); m.c("prop cushion_y 5 10")
+    m.c('text 4 9 "밥상. 양은 주전자에 보리차가 식어 있다." w=2')
+    m.c("prop dresser 14 6")
+    m.c("prop shoe_rack 6 12"); m.c("prop crate_o 1 11"); m.c("prop crate_o 1 12"); m.c("prop water_jug 2 12")
+    # 빌린 침대 방
+    m.c("prop w_window 20 1"); m.c("prop w_calendar 23 1")
+    m.c("prop yo_bed 22 4")
     m.c('text 22 4 "빌린 침대. 이불에서 햇볕 냄새가 난다." h=2' + (" scene=B-01_BED" if "B-01_BED" in SCENES else ""))
-    m.c("prop locker_row2 19 3")
+    m.c("prop dresser 19 3"); m.c("prop cushion_y 20 6"); m.c("prop plant_pot 24 11")
     return m
 
 
 def b03():
-    """B-03 하숙자 약국(18×12): 약장·조제대·병상 2."""
+    """B-03 하숙자 약국(18×12): 나무 약 선반·유리 진열 계산대·야전 침대·링거대·약수통·대기 의자."""
     m = I("B-03", "하숙자 약국", 18, 12)
     m.room(1, 3, 16, 10, "o")
     m.g[11][3] = "o"
     m.c("exit 3 11 X-BC from_B-03")
     m.c("mark from_X-BC 3 10 N")
-    m.c("prop med_cabinet 2 3")
-    m.c("prop med_cabinet 3 3")
-    m.c("prop med_cabinet 4 3")
-    m.c("prop exam_bed 12 4")
-    m.c("prop exam_bed 12 8")
-    m.c("prop teacher_desk 6 6")
+    m.c("prop w_cross 5 1"); m.c("prop w_poster_rad 7 1"); m.c("prop w_herbs 9 1"); m.c("prop w_calendar 14 1")
+    m.c("prop med_shelf 1 3"); m.c("prop med_shelf 3 3")
+    m.c('text 1 3 "약 선반. 라드어웨이 봉지와 관악산 약수병이 줄지어 있다." w=4')
+    m.c("prop water_jug 5 3")
+    m.c("prop pharm_counter 6 6")
+    m.c('text 6 6 "유리 진열장. 스팀팩 몇 개와 끓여 말린 붕대." w=2')
     m.c("mark counter 7 7 N")
-    m.c('text 3 3 "약장. 라드어웨이 봉지와 관악산 약수병이 줄지어 있다." w=3')
+    m.c("npc C-057 7 5 S")
+    m.c("prop cot 11 3"); m.c("prop iv_pole 12 3"); m.c("prop cot 13 3"); m.c("prop cot 15 3")
+    m.c("prop cot 13 7"); m.c("prop cot 15 7")
+    m.c('text 11 3 "야전 침대. 열병 앓던 아이가 어제까지 누워 있었다." h=2')
+    m.c("prop stool_w 4 8"); m.c("prop stool_w 9 8"); m.c("prop bench_o 1 9"); m.c("prop plant_pot 16 10")
     return m
 
 

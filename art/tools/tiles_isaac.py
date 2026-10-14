@@ -411,7 +411,7 @@ def s07_tiles():
         "face_bot": wall_face_in("bot"), "face_bot_outlet": wall_face_in("bot", "outlet"),
         "balcony": balcony_band(0), "balcony_door": balcony_band(1, door=True, num="B-12"),
         "guide_x": guide_cross(), "guide_t": guide_cross(down=False),  # 뒤에 덧붙임(앞 번호는 그대로)
-        "concrete_a": _gcrop("s07", "concrete", 0), "carpet_a": _gcrop("s07", "carpet", 0), "wood_a": _gcrop("s07", "wood", 0),
+        "concrete_a": _gcrop("s07", "concrete", 0), "carpet_a": _gcrop("s07", "carpet", 0), "wood_a": _gcrop("s07", "wood", 0), "jangpan_a": _gcrop("s07", "jangpan", 0),
         "panel_mold": _gcrop("s07", "panel_mold", 0),             # 단계 0-5 덧붙임(바닥 합성 번호는 32칸 안)
         "grate_mold": _gcrop("s07", "grate_mold", 0),
     }

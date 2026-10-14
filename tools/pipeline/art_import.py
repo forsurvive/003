@@ -80,6 +80,25 @@ def roach_sheet():
     json.dump(meta, open(os.path.join(SPR, name + ".json"), "w"), ensure_ascii=False, sort_keys=True, indent=1)
 
 
+def quad_sheets():
+    """네발짐승(0-10): CR-104 변이 들개 · 백구(C-015 진돗개). 옆 그림만, 걷기 4컷(컷당 4px)."""
+    import chibi_creatures as CC
+    for kind, name in (("dog", "cr_cr104_loco"), ("jindo", "cr_baekgu_loco")):
+        frames, meta = CC.quad_sheet(kind)
+        fw, fh = meta["frame"]
+        sheet = Image.new("RGBA", (fw * len(frames), fh), (0, 0, 0, 0))
+        for i, f in enumerate(frames):
+            sheet.alpha_composite(f, (i * fw, 0))
+        sheet.save(os.path.join(SPR, name + ".png"))
+        mo = meta["motions"]
+        anims = [("idle_E", [(0, 0)], True), ("walk_E", [(mo["walk"]["start"] + i, 0) for i in range(mo["walk"]["count"])], True),
+                 ("death_E", [(mo["death"]["start"] + i, 0) for i in range(mo["death"]["count"])], False)]
+        open(os.path.join(SPR, name + ".tres"), "w", encoding="utf-8").write(
+            spriteframes_tres(f"res://assets/sprites/{name}.png", fw, fh, anims))
+        meta["name"] = name
+        json.dump(meta, open(os.path.join(SPR, name + ".json"), "w"), ensure_ascii=False, sort_keys=True, indent=1)
+
+
 def _pad32(im):
     out = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
     out.alpha_composite(im, ((32 - im.width) // 2, 32 - im.height))
@@ -132,6 +151,7 @@ def tileset(name, tiles, floor_bg=None):
 def main():
     n = import_sheets()
     roach_sheet()
+    quad_sheets()
     import tiles_isaac                                             # 아이작풍 타일(이름·순서는 이전 판과 같다)
     r01 = tiles_isaac.r01_tiles()
     nt = tileset("ts_r01_ext", r01)                                # 소품 타일은 투명 바탕(바닥은 합성 층이 그린다)

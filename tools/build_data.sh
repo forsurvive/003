@@ -12,6 +12,7 @@ python3 tools/pipeline/prop_export.py
 python3 tools/pipeline/ui_export.py
 python3 tools/pipeline/fx_export.py
 python3 tools/pipeline/loot_export.py
+python3 tools/pipeline/merchant_export.py
 python3 tools/pipeline/map_compile.py
 python3 tools/pipeline/struct_bake.py
 python3 tools/pipeline/expr_cases.py

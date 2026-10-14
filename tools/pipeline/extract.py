@@ -109,9 +109,11 @@ def run_schema(path, rep):
                               num_in=lambda text, pre, d: _note_number(text, pre, d))
     for rec in found.values():
         for f, expr in (sch.get("derive") or {}).items():
-            rec[f] = eval(expr, {"__builtins__": {}}, env_fn(rec))
+            rec[f] = eval(expr, {"__builtins__": {}, "str": str, "round": round}, env_fn(rec))
         for f, g in (sch.get("gaps") or {}).items():
-            rec[f] = eval(g["default"], {"__builtins__": {}}, env_fn(rec))
+            if g.get("only_missing") and f in rec:
+                continue
+            rec[f] = eval(g["default"], {"__builtins__": {}, "round": round}, env_fn(rec))
             rep.gaps.append(f"{doc} {rec.get('id', '')} · {f} = {rec[f]!r} — {g['why']}")
         for f, expr in (sch.get("check") or {}).items():
             exp = eval(expr, {"__builtins__": {}}, rec)

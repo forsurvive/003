@@ -58,6 +58,8 @@ func _ready() -> void:
 			q10 = clampi(int(a.substr(6)), 1, 4)
 		elif a.begins_with("--duct="):
 			duct = int(a.substr(7))
+		elif a.begins_with("--sol="):
+			sol = clampi(int(a.substr(6)), 1, 5)
 		elif a.begins_with("--esc="):
 			esc = clampi(int(a.substr(6)), 1, 4)
 		elif a == "--log":
@@ -120,6 +122,7 @@ func _ready() -> void:
 		host.st.vars.set_v("V_ACT", 1)
 		host.st.vars.set_v("V_ESCAPE", 2)
 		host.st.call_fn("give", ["W-002"])
+		host.st.call_fn("give", ["10mm 탄", 36])                   # MQ-P4 보안부 권총 보상과 같은 몫
 		host.st.call_fn("give", ["W-067"])
 		_act1.call_deferred(from)
 		return
@@ -145,15 +148,18 @@ func _ready() -> void:
 
 ## 1막 MQ-101 진행기로 넘긴다(0-10)
 var act1: Mq101
+var sol := 1                                       ## 1막 봇 해법(--sol=1~5, 0-10)
 
 
 func _act1(from: String) -> void:
 	phase = "ACT1"
 	act1 = Mq101.new()
 	add_child(act1)
-	act1.setup(host, auto, log_on)
+	act1.setup(host, auto, log_on, sol, shots)
 	if from == "xbc":
 		act1.start("X-BC", "from_X-S07")
+	elif from == "xnight":
+		act1.start_night()
 	else:
 		act1.start("X-S07", "start")
 	if from == "xwalk":
@@ -759,7 +765,7 @@ func _process(dt: float) -> void:
 		p4_fought = true                                          # 들켜서 교전이 붙었다 → 은신이 아니라 전투로 나간 것
 	if phase == "P4E" and host.map != null and host.map.id != "V-04" and host.st.quests.stage("MQ-P4") == 30:
 		host.st.quests.set_stage("MQ-P4", 40)                    # 방을 나서면 '볼트를 빠져나간다'
-	if not auto:
+	if not auto or phase == "ACT1":                                # 1막은 Mq101 진행기가 대화·봇을 맡는다
 		return
 	t += dt
 	if log_on and int(t) % 5 == 0 and int(t - dt) % 5 != 0:

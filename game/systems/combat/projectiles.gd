@@ -118,7 +118,9 @@ func _segment_hit(a: Vector2, b: Vector2, s: Dictionary):
 	for ky in range(kmin.y, kmax.y + 1):
 		for kx in range(kmin.x, kmax.x + 1):
 			for c in _buckets.get(Vector2i(kx, ky), []):
-				if c.team == s["team"] or (c.team == "resident" and s["team"] != "player"):   # 적의 탄은 주민을 비켜 간다(주민 피해 = 주인공 책임만)
+				if c.team == s["team"] or (c.team == "resident" and s["team"] != "player") \
+						or (c.team == "ally" and s["team"] == "player") or (s["team"] == "ally" and c.team in ["player", "resident"]) \
+						or c.team == "gone":   # 적의 탄은 주민을 비켜 간다 · 주인공 탄은 아군을 지나간다(SD-11 §8.4 오사 없음) · 달아난 적
 					continue
 				var ctr: Vector2 = c.pos() + Vector2(0, -12)          # torso centre above the feet
 				var tt := _seg_circle(a, b, ctr, c.radius)

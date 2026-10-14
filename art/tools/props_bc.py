@@ -836,6 +836,11 @@ PROPS = {
     "tarp_pile": _r(tarp_pile, 1, 1, down=-2),
 }
 
+from props_bc_in import PROPS_IN                                         # 봉천 실내(0-10c): 같은 아틀라스로 나간다
+for _k in PROPS_IN:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_IN)
+
 STATES = {
     "board_bc": {s: (lambda s=s: notice_board(s)) for s in ("wanted", "torn", "crumpled", "crossed", "rate", "water", "official")},
     "drum_fire": {"f1": lambda: drum(True, 1), "f2": lambda: drum(True, 2)},

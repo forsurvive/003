@@ -1,0 +1,54 @@
+{
+ "I-054": {
+  "_src": "13_items.md:896",
+  "cat": "aid",
+  "desc": "HP +10, 라드 +8",
+  "effect": "HP +10",
+  "heal": 10.0,
+  "id": "I-054",
+  "name": "한강 물",
+  "note": "원작 오염된 물 대응. 한강 하류일수록 라드가 크다(SD-08)",
+  "rads": 8,
+  "value": 2,
+  "weight": 1.0
+ },
+ "I-055": {
+  "_src": "13_items.md:897",
+  "cat": "aid",
+  "desc": "HP +5, 라드 +4",
+  "effect": "HP +5",
+  "heal": 5.0,
+  "id": "I-055",
+  "name": "빗물",
+  "note": "",
+  "rads": 4,
+  "value": 1,
+  "weight": 1.0
+ },
+ "I-056": {
+  "_src": "13_items.md:898",
+  "cat": "aid",
+  "desc": "HP +15, 라드 +2",
+  "effect": "HP +15",
+  "heal": 15.0,
+  "id": "I-056",
+  "name": "관악산 약수",
+  "note": "산의 지하수",
+  "rads": 2,
+  "value": 8,
+  "weight": 1.0
+ },
+ "I-057": {
+  "_src": "13_items.md:899",
+  "cat": "aid",
+  "desc": "HP +20, 방사능 없음",
+  "effect": "HP +20",
+  "heal": 20.0,
+  "id": "I-057",
+  "name": "선유도 정화수",
+  "note": "원작 정화수 대응. 캡과의 교환 보증 대상(SD-15)",
+  "rads": 0,
+  "value": 20,
+  "weight": 1.0
+ }
+}

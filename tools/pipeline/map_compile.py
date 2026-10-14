@@ -45,7 +45,7 @@ SRC = os.path.join(ROOT, "maps")
 OUT = os.path.join(ROOT, "game", "data", "maps")
 TIL = os.path.join(ROOT, "game", "assets", "tiles")
 PROPS = os.path.join(ROOT, "game", "assets", "props")
-FLOOR = {".": "panel", ",": "lino_a", "o": "clinic_a", "=": "grate_a", "~": "concrete_a", "c": "carpet_a", "w": "wood_a",
+FLOOR = {".": "panel", ",": "lino_a", "o": "clinic_a", "=": "grate_a", "~": "concrete_a", "c": "carpet_a", "w": "wood_a", "j": "jangpan_a",
          "m": "panel_mold", "M": "grate_mold", "-": "guide_h", "|": "guide_v", "+": "guide_x", "^": "guide_t"}
 WALL = {"#", " "}
 DIRS = {"E", "SE", "S", "SW", "W", "NW", "N", "NE"}
@@ -356,6 +356,8 @@ def _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kin
                     raise Err(f"인물 {nid} 자리 ({x},{y})가 바닥이 아니다")
                 if e["cond"]:
                     check_cond(e["cond"], known_vars, known_fns)
+                if "sheet" in opt:                                  # 사람 아닌 인물(백구 등): 시트를 바로 쓴다(0-10)
+                    e["sheet"] = opt["sheet"]
                 if "look" in opt:
                     if not LOOK_RE.match(opt["look"]):
                         raise Err(f"외형 코드 형식이 아니다: {opt['look']}")

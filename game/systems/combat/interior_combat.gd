@@ -40,6 +40,7 @@ var inject_t := 0.0
 var heal_q: Array = []                            ## 회복 대기열: 남은 회복량(앞에서부터 2.0초씩)
 var heal_rate := 0.0
 var enemies: Array = []
+var _token_t := 0.0                                ## 공격 토큰 다시 나누기까지 남은 초
 var targets: Array = []                           ## [{"prop", "kind": "target"|"stealth", "cmb", "gauge", "seen_t", "down", "facing", "live"}]
 var stealth_live := false                         ## 은신 표적을 쓰는 중(사격장 2부) — 아니면 받침 뒤에 숨어 있다
 var buddy: Actor                                  ## 일시 동행(MQ-P2 하도윤): 따라오고, 가까운 바퀴를 대걸레 자루로 친다. 불사
@@ -94,6 +95,7 @@ func on_map(map: InteriorMap, player: Actor, st: StoryState) -> void:
 			e.queue_free()
 	enemies.clear()
 	residents.clear()
+	allies.clear()
 	targets.clear()
 	shots.shots.clear()
 	shots.world = map
@@ -140,11 +142,13 @@ func set_stealth_live(on: bool) -> void:
 
 ## 적 무기(정합, 0-9): 보안요원 진압봉 W-041 · 권총 W-002, 계엄군은 생포 사격(W-002 판정을 빌린다), 파워 아머는 그 세 배 연사
 func _enemy_weapon(enemy_id: String, arm: String) -> Dictionary:
-	if enemy_id == "CR-002":
+	if enemy_id in ["CR-002", "CR-104"]:
 		return {}
 	var w: Dictionary = weapons.get("W-041" if arm == "baton" else "W-002", {}).duplicate()
 	if enemy_id == "CR-405":
 		w["rate"] = float(w.get("rate", 2.0)) * 3.0
+	if enemy_id in ["CR-436", "CR-534"]:                               # 기관단총(0-10 정합: 무기 표에 아직 없어 W-002 판정 + 연사 1.5배)
+		w["rate"] = float(w.get("rate", 2.0)) * 1.5
 	return w
 
 
@@ -214,6 +218,82 @@ func set_residents(list: Array) -> void:
 	_rebuild_list()
 
 
+## 아군(0-10 MQ-101 계단 방어): 계단참을 지키는 감시조. 제자리에서 보이는 가장 가까운 적을 쏜다. 주인공 탄은 지나가고, 적 탄은 맞는다.
+signal ally_down(id: String)
+var allies: Array = []                            ## [{"id", "actor", "cmb", "cool", "weapon"}]
+
+
+func add_ally(id: String, actor: Actor, hp: float, weapon_id: String = "W-002") -> Combatant:
+	var c := Combatant.new()
+	c.team = "ally"
+	c.actor = actor
+	c.hp = hp
+	c.max_hp = hp
+	c.radius = actor.radius_px
+	c.died.connect(func() -> void:
+		actor.sprite.rotation_degrees = -90.0
+		actor.sprite.position = Vector2(-4, -8)
+		actor.sprite.modulate = Color(0.7, 0.7, 0.75)
+		_pop("쓰러짐", actor.loco.logical + Vector2(0, -26), Color("E04A35"))
+		ally_down.emit(id))
+	allies.append({"id": id, "actor": actor, "cmb": c, "cool": 0.5 + _rng.randf(), "weapon": weapons.get(weapon_id, {})})
+	_rebuild_list()
+	return c
+
+
+func clear_allies() -> void:
+	allies.clear()
+	_rebuild_list()
+
+
+func _allies(dt: float) -> void:
+	for a in allies:
+		var c: Combatant = a["cmb"]
+		if c.dead or not is_instance_valid(a["actor"]):
+			continue
+		var me: Actor = a["actor"]
+		a["cool"] = float(a["cool"]) - dt
+		var best: Enemy = null
+		var bd := 11.0 * 32.0
+		for e in enemies:
+			if not is_instance_valid(e) or e.cmb.dead or e.cmb.team != "enemy":
+				continue
+			var d: float = e.loco.logical.distance_to(me.loco.logical)
+			if d < bd and shots.world.line_of_sight(me.loco.logical, e.loco.logical):
+				bd = d
+				best = e
+		if best == null:
+			continue
+		me.loco.facing = Locomotion.snap8(best.loco.logical - me.loco.logical, 0.0)
+		me._show()
+		if float(a["cool"]) <= 0.0 and not (a["weapon"] as Dictionary).is_empty():
+			var w: Dictionary = a["weapon"]
+			a["cool"] = 1.0 / (float(w.get("rate", 2.0)) * 0.25) * shots.rng.randf_range(0.8, 1.4)   # 감시조는 아껴 쏜다(초당 1발 안팎)
+			var aim := rad_to_deg((best.loco.logical - me.loco.logical).angle())
+			var ang := CombatRules.shot_angle(aim, CombatRules.spread(20.0, "stand", false), shots.rng)
+			shots.fire(me.loco.logical + Vector2(0, -14) + Vector2.RIGHT.rotated(deg_to_rad(aim)) * 10.0, ang, SHOT_SPEED, "ally", w, 20.0)
+
+
+## 적이 노릴 대상: 주인공과 살아 있는 아군 가운데 보이는 가장 가까운 쪽(지금 대상은 1.5배 가까운 쪽이 나타날 때까지 유지)
+func _target_for(e: Enemy) -> Combatant:
+	if allies.is_empty():
+		return pc
+	var cand: Array = [pc]
+	for a in allies:
+		if not (a["cmb"] as Combatant).dead:
+			cand.append(a["cmb"])
+	var cur: Combatant = e.focus if e.focus != null and not e.focus.dead and e.focus in cand else null
+	var best: Combatant = cur
+	var bd := e.loco.logical.distance_to(cur.pos()) / 1.5 if cur != null else INF
+	for c in cand:
+		var d := e.loco.logical.distance_to((c as Combatant).pos())
+		if d < bd and (c == pc or shots.world.line_of_sight(e.loco.logical, (c as Combatant).pos())):
+			bd = d
+			best = c
+	e.focus = best if best != null else pc
+	return e.focus
+
+
 func resident(id: String) -> Combatant:
 	for r in residents:
 		if r["id"] == id:
@@ -249,6 +329,9 @@ func _rebuild_list() -> void:
 	for r in residents:
 		if is_instance_valid(r["actor"]):
 			l.append(r["cmb"])
+	for a in allies:
+		if is_instance_valid(a["actor"]):
+			l.append(a["cmb"])
 	for t in targets:
 		l.append(t["cmb"])
 	shots.combatants = l
@@ -342,10 +425,17 @@ func tick(dt: float, free: bool, st: StoryState) -> void:
 			player.doll.flash_face("hurt", 0.3)
 	var hp0 := pc.hp
 	var step := dt if free else 0.0
+	_token_t -= step
+	if _token_t <= 0.0:                                                 # 공격 토큰(SD-11 §7.4, 난이도 보통 원거리 3): 대상에 가까운 사수 셋만 쏜다
+		_token_t = 1.5
+		var cands := enemies.filter(func(e): return is_instance_valid(e) and e.style == "shooter" and not e.cmb.dead)
+		cands.sort_custom(func(a, b): return a.loco.logical.distance_to(_target_for(a).pos()) < b.loco.logical.distance_to(_target_for(b).pos()))
+		for i in cands.size():
+			cands[i].has_token = i < 3
 	for e in enemies:
 		if is_instance_valid(e):
 			var was: bool = e.cmb.flash > 0
-			e.think(step, pc, nav, shots)
+			e.think(step, _target_for(e), nav, shots)
 			if e.cmb.flash == 2 and not was and e.cmb.last_sneak:
 				e.cmb.last_sneak = false
 				_pop("기습 치명타 ×%d" % int(CombatRules.sneak_mult("ranged", false)), e.loco.logical + Vector2(0, -22), Color("E8C23A"))
@@ -353,6 +443,7 @@ func tick(dt: float, free: bool, st: StoryState) -> void:
 		_heal(dt)
 		_targets(dt, player)
 		_buddy(dt)
+		_allies(dt)
 	shots.step(step)
 	if pc.hp < hp0:
 		stats["hurt"] += hp0 - pc.hp

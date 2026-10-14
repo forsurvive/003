@@ -1,7 +1,8 @@
-# SD-14 적 표 → game/data/enemies.json (단계 T: 큰바퀴 + 계엄군 보병 1, 단계 0-9: 기갑 계엄병 · S-07 보안요원)
+# SD-14 적 표 → game/data/enemies.json (단계 T: 큰바퀴 + 계엄군 보병 1, 단계 0-9: 기갑 계엄병 · S-07 보안요원,
+# 단계 0-10: 변이 들개 · 새벽인력 추심원·인솔조원 · 독사(§10.4 이름 있는 NPC 표 — 열 이름이 '기본 Lv'·'기본 HP', XP 열 없음))
 doc: 14_creatures-enemies.md
 id_column: ID
-rows: [CR-002, CR-401, CR-405, CR-473]
+rows: [CR-002, CR-104, CR-401, CR-405, CR-436, CR-437, CR-473, CR-534]
 columns:
   ID: {field: id, type: id, pattern: "^CR-\\d{3}$", required: true}
   이름: {field: name, type: str, required: true}
@@ -15,7 +16,12 @@ columns:
   공격 패턴: {field: pattern, type: str}
   주무기: {field: weapon_main, type: str}
   보조·특수: {field: special, type: str}
-  XP: {field: xp, type: int, required: true}
+  XP: {field: xp, type: int}
+  기본 Lv: {field: level, type: int}
+  기본 HP: {field: hp, type: lead_number}
+  무기: {field: weapon_main, type: str}
+  전투 성향(SD-11): {field: pattern, type: str}
 gaps:
-  radius: {default: "0.2 if id == 'CR-002' else 0.3", why: "충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다"}
-  part_weights: {default: "'PW-A' if id == 'CR-002' else 'PW-H'", why: "부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')"}
+  xp: {default: "round((2 * level + hp / 20) / 5) * 5", only_missing: true, why: "§10.4 이름 있는 NPC 표에 XP 열이 없다 — §3.4 XP 식 2×Lv + HP÷20(5 단위 반올림)"}
+  radius: {default: "0.2 if id == 'CR-002' else (0.28 if id == 'CR-104' else 0.3)", why: "충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다"}
+  part_weights: {default: "'PW-A' if id == 'CR-002' else ('PW-C' if id == 'CR-104' else 'PW-H')", why: "부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')"}

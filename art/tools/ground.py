@@ -456,6 +456,29 @@ def wood_tex(seed):
     return a
 
 
+def jangpan_tex(seed):
+    """봉천 장판(콩댐 장판지, 0-10c): 콩물 먹인 누런 한지를 엇갈려 바른 칸(32px, 줄마다 반 칸 어긋남) + 겹친 가장자리
+    (어두운 한 줄 + 밝은 반짝임 한 줄) + 옅은 얼룩(기름 먹은 곳은 진하고 닳은 곳은 밝다) + 담뱃불 자국 몇 개."""
+    a = np.full((CELL, CELL), t("P21"), np.uint8)
+    nz = equalize(fbm(CELL, [(6, 1.0)], seed))
+    a[nz > 0.97] = t("P22")                                           # 기름 먹은 반짝임(잔 점만 — 큰 얼룩은 위장무늬가 된다)
+    for row in range(CELL // 32):
+        y0 = row * 32
+        off = 16 if row % 2 else 0
+        for x in range(CELL):
+            put(a, x, y0, "P20"); put(a, x, y0 + 1, "P22")
+        for x in range(off, CELL + off, 32):
+            for y in range(y0, y0 + 32):
+                put(a, x % CELL, y, "P20"); put(a, (x + 1) % CELL, y, "P22")
+    rnd = np.random.default_rng(seed)
+    for _ in range(4):                                                # 담뱃불·인두 자국
+        x, y = int(rnd.integers(8, CELL - 8)), int(rnd.integers(8, CELL - 8))
+        stamp(a, x - 1, y - 1, [".b.", "bab", ".b."], {"a": "P17", "b": "P19"})
+    for _ in range(60):                                               # 종이 결 점
+        put(a, int(rnd.integers(CELL)), int(rnd.integers(CELL)), "P20")
+    return a
+
+
 # ---------------------------------------------------------------- 잔 소품 (32×32, 투명, 먹선)
 def decals():
     D = []
@@ -654,10 +677,12 @@ def sets():
                  dens=6, decals=["mold", "puddle"], hard=1),
             dict(name="grate_mold", A=mold_tex(grate_tex(211, rusty=True), 281), B=None, spread=0, pri=0, rim=0, shade=1, vthr=256,
                  dens=6, decals=["mold"], hard=1),
+            dict(name="jangpan", A=jangpan_tex(291), B=None, spread=0, pri=0, rim=0, shade=1, vthr=256, dens=1,
+                 decals=["scuff"], hard=1),
         ],
         "mat_of": {"panel": 0, "panel_sheen": 0, "panel_scuff": 0, "guide_h": 0, "guide_v": 0, "guide_x": 0, "guide_t": 0, "grate_a": 1, "grate_b": 1, "grate_c": 1,
                    "lino_a": 2, "lino_b": 2, "clinic_a": 3, "clinic_b": 3, "concrete_a": 4, "carpet_a": 5, "wood_a": 6,
-                   "panel_mold": 7, "grate_mold": 8},
+                   "panel_mold": 7, "grate_mold": 8, "jangpan_a": 9},
         "force": {"guide_h": "guide_h", "guide_v": "guide_v", "guide_x": "guide_x", "guide_t": "guide_t"},
         "flag_of": {k: 1 for k in ("wall_top_s", "wall_top_w", "wall_top_ws", "wall_top", "face_top", "face_top_pipe", "face_top_vent",
                                    "face_bot", "face_bot_outlet", "balcony", "balcony_door")},

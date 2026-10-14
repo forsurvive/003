@@ -16,11 +16,26 @@ grid
 end
 exit 3 11 X-BC from_B-03
 mark from_X-BC 3 10 N
-prop med_cabinet 2 3
-prop med_cabinet 3 3
-prop med_cabinet 4 3
-prop exam_bed 12 4
-prop exam_bed 12 8
-prop teacher_desk 6 6
+prop w_cross 5 1
+prop w_poster_rad 7 1
+prop w_herbs 9 1
+prop w_calendar 14 1
+prop med_shelf 1 3
+prop med_shelf 3 3
+text 1 3 "약 선반. 라드어웨이 봉지와 관악산 약수병이 줄지어 있다." w=4
+prop water_jug 5 3
+prop pharm_counter 6 6
+text 6 6 "유리 진열장. 스팀팩 몇 개와 끓여 말린 붕대." w=2
 mark counter 7 7 N
-text 3 3 "약장. 라드어웨이 봉지와 관악산 약수병이 줄지어 있다." w=3
+npc C-057 7 5 S
+prop cot 11 3
+prop iv_pole 12 3
+prop cot 13 3
+prop cot 15 3
+prop cot 13 7
+prop cot 15 7
+text 11 3 "야전 침대. 열병 앓던 아이가 어제까지 누워 있었다." h=2
+prop stool_w 4 8
+prop stool_w 9 8
+prop bench_o 1 9
+prop plant_pot 16 10

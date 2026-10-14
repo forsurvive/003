@@ -1,0 +1,82 @@
+{
+ "id": "MQ-101_OH",
+ "title": "아랫마당 고물상",
+ "loc": "L-R01-09",
+ "npc": "N-R01-026",
+ "cond": "MQ101_STAGE >= 20 and MQ101_RESULT != 5",
+ "labels": {
+  "START": 0,
+  "FRIEND": 5,
+  "SB": 7,
+  "GUEST": 9,
+  "TRADE": 10
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "MQ101_RESULT == 1 or MQ101_RESULT == 2",
+   "to": "FRIEND"
+  },
+  {
+   "op": "if",
+   "cond": "MQ101_RESULT == 4",
+   "to": "SB"
+  },
+  {
+   "op": "if",
+   "cond": "MQ101_RESULT == 3",
+   "to": "GUEST"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-026",
+   "emo": "기본",
+   "text": "고물 사요, 팔아요. 볼트 물건이면 값 잘 쳐 줄게. 캡은 깨끗한 걸로."
+  },
+  {
+   "op": "goto",
+   "to": "TRADE"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-026",
+   "emo": "미소",
+   "text": "어이, \\V[P_GIVEN]. 계단 막아 준 값이야. 오늘은 한 푼씩 빼 줄게."
+  },
+  {
+   "op": "goto",
+   "to": "TRADE"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-026",
+   "emo": "기본",
+   "text": "새벽인력 거래처 손님이시네. 그쪽 사람들 장사는 값이 좀 세지."
+  },
+  {
+   "op": "goto",
+   "to": "TRADE"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-026",
+   "emo": "기본",
+   "text": "손님, 강 건넜다던 그 볼트 애 얘기 들었어? 하하. 뭐 살래?"
+  },
+  {
+   "op": "cmd",
+   "name": "trade",
+   "args": [
+    "V01"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-101.txt"
+}

@@ -83,6 +83,72 @@ func _ready() -> void:
 	layer.add_child(banner)
 
 
+# ---------------------------------------------------------------- 밤(0-10, SD-16 §4.7 상황 필터 + §10.6 빛 원판)
+var night := false
+var _night_layer: CanvasLayer
+var _light_layer: CanvasLayer
+var _lights: Node2D
+var _flicker_t := 0.0
+const LIGHT_PROPS := {"drum_fire": Vector2(0, -20), "guard_booth": Vector2(0, -26), "watchtower": Vector2(0, -78)}
+
+
+func set_night(on: bool) -> void:
+	night = on
+	if on and _night_layer == null:
+		_night_layer = CanvasLayer.new()
+		_night_layer.layer = 1                                        # 맵(0층) 위, HUD·대화(8층~) 아래
+		add_child(_night_layer)
+		var r := ColorRect.new()
+		r.set_anchors_preset(Control.PRESET_FULL_RECT)
+		r.size = Vector2(4000, 3000)
+		r.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var m := ShaderMaterial.new()
+		m.shader = load("res://systems/display/night_tone.gdshader")
+		r.material = m
+		_night_layer.add_child(r)
+		_light_layer = CanvasLayer.new()
+		_light_layer.layer = 2
+		_light_layer.follow_viewport_enabled = true                  # 빛은 세상 좌표(카메라를 따라간다)
+		add_child(_light_layer)
+		_lights = Node2D.new()
+		var cm := CanvasItemMaterial.new()
+		cm.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+		_lights.material = cm
+		_lights.draw.connect(_draw_lights)
+		_light_layer.add_child(_lights)
+	if _night_layer != null:
+		_night_layer.visible = on
+		_light_layer.visible = on
+		_lights.queue_redraw()
+
+
+## 빛 원판: 반지름 64px 4단(가운데가 가장 밝다), 백열 P50. 디더·그라데이션 없이 단 색 띠(§10.6)
+func _draw_lights() -> void:
+	if map == null:
+		return
+	for p in map.props:
+		var off: Variant = LIGHT_PROPS.get(p["name"])
+		if off == null:
+			continue
+		var c := Vector2(int(p["x"]) * 32 + 16 * int(p["w"]), (int(p["y"]) + int(p["h"])) * 32) + (off as Vector2)
+		var k := 1.0 + (0.06 if p["name"] == "drum_fire" and int(_flicker_t * 6.0) % 2 == 0 else 0.0)
+		for i in 4:
+			var r := 64.0 * k * (1.0 - i * 0.22)
+			_lights.draw_circle(c, r, Color(1.0, 0.92, 0.6, 0.05 + i * 0.035))
+
+
+func _night_tick(dt: float) -> void:
+	if not night or map == null:
+		return
+	_flicker_t += dt
+	var f := int(_flicker_t * 6.0) % 3
+	if f != int((_flicker_t - dt) * 6.0) % 3:
+		for p in map.props:
+			if p["name"] == "drum_fire":
+				map.set_prop_state(Vector2i(int(p["x"]), int(p["y"])), ["", "f1", "f2"][f])
+		_lights.queue_redraw()
+
+
 func _index_scenes() -> void:
 	var p := "res://data/dialogue/_index.json"
 	if not FileAccess.file_exists(p):
@@ -134,6 +200,8 @@ func enter(map_id: String, mark: String = "", look: Dictionary = {}) -> void:
 			player.setup_doll(lk, Vector2.ZERO, map)
 		player.set_meta("body", body)
 	player.world = map
+	if player.doll != null and worn() != "A-001" and TORSO_OF.has(worn()):
+		player.doll.set_look({"torso": TORSO_OF[worn()]})                 # 갈아입은 옷(0-10)
 	player.visible = body != "hidden"
 	map.add_actor(player)
 	var m: String = mark if map.marks.has(mark) else (map.marks.keys()[0] if not map.marks.is_empty() else "")
@@ -157,6 +225,8 @@ func enter(map_id: String, mark: String = "", look: Dictionary = {}) -> void:
 	cam.limit_bottom = map.size.y * 32
 	cam.position = player.loco.logical.round()
 	cam.reset_smoothing()
+	if _lights != null:
+		_lights.queue_redraw()
 	banner_text = map.data["name"]
 	banner_t = BANNER_SECS
 	map_entered.emit(map_id)
@@ -225,6 +295,7 @@ func _physics_process(dt: float) -> void:
 	if map == null:
 		return
 	banner_t = maxf(0.0, banner_t - dt)
+	_night_tick(dt)
 	_hurt_t = maxf(0.0, _hurt_t - dt)
 	_hud_t += dt
 	_drain_events()
@@ -454,6 +525,51 @@ func open_box(b: Dictionary) -> void:
 		container = null
 		_after_theft())
 	add_child(container)
+
+
+## 거래 창(0-10c, SD-15 §3·§4): 상인 V번호. 진열·보유 캡은 st.boxes["shop:V01"]에 남고, 갱신 주기(일)마다 다시 채운다
+## (보유 캡 = min(기준×1.5, max(기준, 현재×0.5)), 기준 = 등급 a + b × 주인공 레벨). done(오간 캡 합)은 창을 닫으면 부른다.
+var merchants := {}
+
+
+func shop_state(vid: String) -> Dictionary:
+	if merchants.is_empty() and FileAccess.file_exists("res://data/merchants.json"):
+		merchants = JSON.parse_string(FileAccess.get_file_as_string("res://data/merchants.json"))
+	var m: Dictionary = merchants.get(vid, {})
+	var key := "shop:" + vid
+	var day := int(st.vars.get_v("GAME_DAY")) if st.vars.has("GAME_DAY") else 1
+	var base := int(m["caps_base"][0]) + int(m["caps_base"][1]) * level()
+	var sh: Dictionary = st.boxes.get(key, {})
+	if sh.is_empty() or day - int(sh.get("day", day)) >= int(m.get("renew", 3)):
+		var items := {}
+		for r in m["stock"]:
+			items[str(r[0])] = int(r[1])
+		var caps := base if sh.is_empty() else mini(roundi(base * 1.5), maxi(base, roundi(int(sh["caps"]) * 0.5)))
+		sh = {"items": items, "caps": caps, "day": day, "total": int(sh.get("total", 0))}
+		st.boxes[key] = sh
+	return sh
+
+
+func open_trade(vid: String, done: Callable, k := [1.0, 1.0], greet := "", item_k := {}) -> TradeScreen:
+	player.move(Vector2.ZERO, 0.0)
+	var sh := shop_state(vid)
+	var m: Dictionary = merchants.get(vid, {})
+	var ak := st._aff_key(str(m.get("settle", "")))
+	var f := TradeScreen.tier_f(int(st.vars.get_v(ak)) if ak != "" else 0)
+	if f.is_empty():
+		say_text("상인이 고개를 젓는다. 거래하지 않겠다는 뜻이다.")
+		done.call(0)
+		return null
+	var t := TradeScreen.new().setup_trade(st, vid, m, sh, items_db, float(150 + 10 * st.stat("ST")), st.skill("BARTER"), f, k,
+		greet if greet != "" else str(m.get("greet", "")))
+	t.item_k = item_k
+	container = t
+	t.closed.connect(func(_ok: bool) -> void:
+		container = null
+		sh["total"] = int(sh.get("total", 0)) + t.total
+		done.call(t.total))
+	add_child(t)
+	return t
 
 
 ## 절도(SD-12 §9.2·SD-10 §6.3): 이 용기의 이 시대 첫 절도에 카르마 −5(주인이 악인이 아니면 — 볼트 주민은 모두 아니다).
@@ -828,7 +944,7 @@ func _handlers() -> void:
 
 # ---------------------------------------------------------------- 핍-보이·소지품
 func _load_items() -> void:
-	for f in ["items_aid", "items_food", "items_quest", "items_apparel", "items_misc_money", "items_misc_mat", "items_misc_func"]:          # 파이프라인이 SD-13 표에서 뽑은 아이템
+	for f in ["items_aid", "items_food", "items_drink", "items_quest", "items_apparel", "items_misc_money", "items_misc_mat", "items_misc_func"]:          # 파이프라인이 SD-13 표에서 뽑은 아이템
 		var p := "res://data/%s.json" % f
 		if FileAccess.file_exists(p):
 			items_db.merge(JSON.parse_string(FileAccess.get_file_as_string(p)))
@@ -838,24 +954,81 @@ func _load_items() -> void:
 			"ammo_id": w.get("ammo_id", ""), "weight": w.get("weight", 0), "value": w.get("price", 0),
 			"desc": "%s · %s · 사거리 %s타일 · 초당 %s회" % [w["skill"], "양손" if w.get("two_handed", false) else "한손",
 				PipBoy._num(float(w["range_eff"])), PipBoy._num(float(w["rate"]))]}
+		var am := str(w.get("ammo_id", ""))
+		if am != "" and not items_db.has(am):                          # 탄약: SD-13 §3 탄약 표 가치 1 · 무게 0(원작)
+			items_db[am] = {"name": am, "cat": "ammo", "value": 1, "weight": 0}
 
 
 ## 핍-보이·HUD 위 줄 수치. 레벨(SD-10 §4.2): 다음 레벨까지 50 + 150 × 레벨, 누적 (L−1)(50 + 75L)
 func status() -> Dictionary:
 	var d := InteriorCombat.derived(st)
 	var xp := int(st.vars.get_v("PC_XP"))
-	var lv := 1
-	while xp >= lv * (50 + 75 * (lv + 1)):
-		lv += 1
+	var lv := level()
 	var carry := 0.0
 	for id in st.items:
 		carry += float(items_db.get(id, {}).get("weight", 0)) * int(st.items[id])
 	return {"level": lv, "hp": int(ceilf(combat.pc.hp)), "hp_max": int(combat.pc.max_hp), "ap": int(d["ap_max"]), "ap_max": int(d["ap_max"]),
 		"xp": xp, "xp_next": lv * (50 + 75 * (lv + 1)), "date": date_text, "equipped": combat.weapon_id if not combat.holstered else "",
 		"stimpak_id": InteriorCombat.STIMPAK, "carry": carry, "carry_max": 150 + 10 * st.stat("ST"), "caps": int(st.vars.get_v("PC_CAPS")),
-		"place": "볼트 S-07 · " + str(map.data["name"]) if map != null else "", "hotkeys": combat.hotkeys,
+		"place": (("볼트 S-07 · " if map.id.begins_with("V-") else "관악 · ") + str(map.data["name"])) if map != null else "", "hotkeys": combat.hotkeys,
 		"karma": int(st.vars.get_v("V_KARMA")) if st.vars.has("V_KARMA") else 0,
-		"dr": int(items_db.get("A-001", {}).get("dr", 0)) if st.items.has("A-001") else 0}
+		"worn": worn(), "rads": int(st.vars.get_v("PC_RADS")),
+		"dr": int(items_db.get(worn(), {}).get("dr", 0)) if st.items.has(worn()) else 0}
+
+
+## 레벨(SD-10 §4.2): 누적 XP (L−1)(50 + 75L)
+func level() -> int:
+	var xp := int(st.vars.get_v("PC_XP"))
+	var lv := 1
+	while xp >= lv * (50 + 75 * (lv + 1)):
+		lv += 1
+	return lv
+
+
+## 입은 몸통 옷(0-10): PC_TORSO. 처음은 볼트 점프슈트 A-001
+func worn() -> String:
+	return str(st.vars.get_v("PC_TORSO"))
+
+
+## 옷 갈아입기: 페이퍼돌 몸통 그림을 바꾼다(SD-13 §5.1 레이어 → 몸통 코드)
+const TORSO_OF := {"A-001": "T01", "A-002": "T01", "A-004": "T02", "A-016": "T03", "A-017": "T03", "A-018": "T03"}
+
+
+func wear(id: String) -> void:
+	if not st.items.has(id) or not TORSO_OF.has(id):
+		return
+	st.vars.set_v("PC_TORSO", id)
+	if player != null and player.doll != null:
+		player.doll.set_look({"torso": TORSO_OF[id]})
+	_note("%s 입음" % str(items_db.get(id, {}).get("name", id)))
+
+
+## 먹고 마시기(SD-13 §7.2): 음식·음료 HP는 5초에 걸쳐, 라드는 즉시. 라드어웨이 −50 × (1 + 의학/50)
+func consume(id: String) -> bool:
+	var it: Dictionary = items_db.get(id, {})
+	if int(st.items.get(id, 0)) <= 0:
+		return false
+	if id == "I-002":
+		st.call_fn("take", [id, 1])
+		var cut := roundi(50.0 * (1.0 + float(st.skill("MEDICINE")) / 50.0))
+		st.vars.set_v("PC_RADS", maxi(0, int(st.vars.get_v("PC_RADS")) - cut))
+		_note("라드어웨이 — 방사능 −%d" % cut)
+		return true
+	if not it.has("heal") and not it.has("rads"):
+		return false
+	st.call_fn("take", [id, 1])
+	var heal := float(it.get("heal", 0.0))
+	if heal > 0.0:
+		combat.heal_q.append(heal)
+		if combat.heal_q.size() == 1:
+			combat.heal_rate = heal / 5.0
+	var rad := int(it.get("rads", 0))
+	if rad > 0:
+		st.vars.set_v("PC_RADS", int(st.vars.get_v("PC_RADS")) + rad)
+	_note("%s — HP +%d%s" % [str(it.get("name", id)), int(heal), ("  방사능 +%d" % rad) if rad > 0 else "  방사능 없음"])
+	if id in ["I-054", "I-055", "I-056", "I-057", "I-058", "I-059"]:
+		st.vars.set_v("MQ101_WATER", 1)                                   # MQ-101 '물': 마셔 봐야 안다
+	return true
 
 
 ## 알림(SD-12 §4.6): 이야기 상태의 사건(아이템·카르마·XP·퀘스트)을 꺼내 알림 줄로. 새 무기·스팀팩은 빈 단축키 칸에
@@ -920,12 +1093,17 @@ func open_pipboy() -> PipBoy:
 func _pip_action(kind: String, id: String) -> void:
 	match kind:
 		"equip":
-			combat.equip(id, st)
+			if str(items_db.get(id, {}).get("cat", "")) == "apparel":
+				wear(id)
+			else:
+				combat.equip(id, st)
 		"unequip":
 			combat.equip("", st)
 		"use":
 			if id == InteriorCombat.STIMPAK:
 				combat.use_stimpak(st)                                          # 핍-보이 안: 시간이 멈춘 채 쓴다(투여 모션 없음)
+			else:
+				consume(id)
 		_:
 			if kind.begins_with("hotkey:"):
 				var n := int(kind.substr(7))

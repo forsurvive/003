@@ -103,7 +103,7 @@ struct rock 26 22 13 2 seed=7
 struct rock 26 4 1 18 seed=8
 struct bridge 29 13 8 3 seed=9 args='{"axis": "v"}'
 prop telescope 33 13
-text 33 13 "동전 망원경. 캡 하나를 넣으면 돌아간다."
+text 33 13 "동전 망원경. 캡 하나를 넣으면 돌아간다." scene=X-S07_VIEW
 prop info_board 35 15
 text 35 15 "2077년 안내판: '맑은 날에는 여의도 국회 돔과 남산 타워가 보입니다.' 돔은 무너졌고 탑은 그대로다."
 mark view 33 14 N
@@ -159,6 +159,10 @@ prop tuft 20 15
 prop tuft2 5 8
 mark dogs 7 24 E
 mark baekgu 6 26 E
+mark dog1 8 23 W
+mark dog2 9 25 W
+mark dog3 8 27 W
+trigger 12 21 scene=MQ-101_DOGS w=6 h=3 cond="MQ101_STAGE == 10 and MQ101_DOG == 0" once
 prop tree_pine 0 0
 prop tree_pine2 2 0
 prop tree_oak 3 0

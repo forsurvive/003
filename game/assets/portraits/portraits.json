@@ -30,6 +30,26 @@
    "아픔": "C-004_hurt.png",
    "피곤": "C-004_tired.png"
   },
+  "C-010": {
+   "기본": "C-010_idle.png",
+   "놀람": "C-010_surprise.png",
+   "말함": "C-010_talk.png",
+   "미소": "C-010_smile.png",
+   "분노": "C-010_angry.png",
+   "슬픔": "C-010_sad.png",
+   "아픔": "C-010_hurt.png",
+   "피곤": "C-010_tired.png"
+  },
+  "C-021": {
+   "기본": "C-021_idle.png",
+   "놀람": "C-021_surprise.png",
+   "말함": "C-021_talk.png",
+   "미소": "C-021_smile.png",
+   "분노": "C-021_angry.png",
+   "슬픔": "C-021_sad.png",
+   "아픔": "C-021_hurt.png",
+   "피곤": "C-021_tired.png"
+  },
   "C-022": {
    "기본": "C-022_idle.png",
    "놀람": "C-022_surprise.png",
@@ -89,6 +109,16 @@
    "슬픔": "C-027_sad.png",
    "아픔": "C-027_hurt.png",
    "피곤": "C-027_tired.png"
+  },
+  "C-057": {
+   "기본": "C-057_idle.png",
+   "놀람": "C-057_surprise.png",
+   "말함": "C-057_talk.png",
+   "미소": "C-057_smile.png",
+   "분노": "C-057_angry.png",
+   "슬픔": "C-057_sad.png",
+   "아픔": "C-057_hurt.png",
+   "피곤": "C-057_tired.png"
   },
   "N-R01-007": {
    "기본": "N-R01-007_idle.png",
@@ -269,6 +299,106 @@
    "슬픔": "N-R01-024_sad.png",
    "아픔": "N-R01-024_hurt.png",
    "피곤": "N-R01-024_tired.png"
+  },
+  "N-R01-026": {
+   "기본": "N-R01-026_idle.png",
+   "놀람": "N-R01-026_surprise.png",
+   "말함": "N-R01-026_talk.png",
+   "미소": "N-R01-026_smile.png",
+   "분노": "N-R01-026_angry.png",
+   "슬픔": "N-R01-026_sad.png",
+   "아픔": "N-R01-026_hurt.png",
+   "피곤": "N-R01-026_tired.png"
+  },
+  "N-R01-028": {
+   "기본": "N-R01-028_idle.png",
+   "놀람": "N-R01-028_surprise.png",
+   "말함": "N-R01-028_talk.png",
+   "미소": "N-R01-028_smile.png",
+   "분노": "N-R01-028_angry.png",
+   "슬픔": "N-R01-028_sad.png",
+   "아픔": "N-R01-028_hurt.png",
+   "피곤": "N-R01-028_tired.png"
+  },
+  "N-R01-029": {
+   "기본": "N-R01-029_idle.png",
+   "놀람": "N-R01-029_surprise.png",
+   "말함": "N-R01-029_talk.png",
+   "미소": "N-R01-029_smile.png",
+   "분노": "N-R01-029_angry.png",
+   "슬픔": "N-R01-029_sad.png",
+   "아픔": "N-R01-029_hurt.png",
+   "피곤": "N-R01-029_tired.png"
+  },
+  "N-R01-030": {
+   "기본": "N-R01-030_idle.png",
+   "놀람": "N-R01-030_surprise.png",
+   "말함": "N-R01-030_talk.png",
+   "미소": "N-R01-030_smile.png",
+   "분노": "N-R01-030_angry.png",
+   "슬픔": "N-R01-030_sad.png",
+   "아픔": "N-R01-030_hurt.png",
+   "피곤": "N-R01-030_tired.png"
+  },
+  "N-R01-031": {
+   "기본": "N-R01-031_idle.png",
+   "놀람": "N-R01-031_surprise.png",
+   "말함": "N-R01-031_talk.png",
+   "미소": "N-R01-031_smile.png",
+   "분노": "N-R01-031_angry.png",
+   "슬픔": "N-R01-031_sad.png",
+   "아픔": "N-R01-031_hurt.png",
+   "피곤": "N-R01-031_tired.png"
+  },
+  "N-R01-033": {
+   "기본": "N-R01-033_idle.png",
+   "놀람": "N-R01-033_surprise.png",
+   "말함": "N-R01-033_talk.png",
+   "미소": "N-R01-033_smile.png",
+   "분노": "N-R01-033_angry.png",
+   "슬픔": "N-R01-033_sad.png",
+   "아픔": "N-R01-033_hurt.png",
+   "피곤": "N-R01-033_tired.png"
+  },
+  "N-R01-034": {
+   "기본": "N-R01-034_idle.png",
+   "놀람": "N-R01-034_surprise.png",
+   "말함": "N-R01-034_talk.png",
+   "미소": "N-R01-034_smile.png",
+   "분노": "N-R01-034_angry.png",
+   "슬픔": "N-R01-034_sad.png",
+   "아픔": "N-R01-034_hurt.png",
+   "피곤": "N-R01-034_tired.png"
+  },
+  "N-R01-035": {
+   "기본": "N-R01-035_idle.png",
+   "놀람": "N-R01-035_surprise.png",
+   "말함": "N-R01-035_talk.png",
+   "미소": "N-R01-035_smile.png",
+   "분노": "N-R01-035_angry.png",
+   "슬픔": "N-R01-035_sad.png",
+   "아픔": "N-R01-035_hurt.png",
+   "피곤": "N-R01-035_tired.png"
+  },
+  "N-R01-036": {
+   "기본": "N-R01-036_idle.png",
+   "놀람": "N-R01-036_surprise.png",
+   "말함": "N-R01-036_talk.png",
+   "미소": "N-R01-036_smile.png",
+   "분노": "N-R01-036_angry.png",
+   "슬픔": "N-R01-036_sad.png",
+   "아픔": "N-R01-036_hurt.png",
+   "피곤": "N-R01-036_tired.png"
+  },
+  "N-R01-501": {
+   "기본": "N-R01-501_idle.png",
+   "놀람": "N-R01-501_surprise.png",
+   "말함": "N-R01-501_talk.png",
+   "미소": "N-R01-501_smile.png",
+   "분노": "N-R01-501_angry.png",
+   "슬픔": "N-R01-501_sad.png",
+   "아픔": "N-R01-501_hurt.png",
+   "피곤": "N-R01-501_tired.png"
   },
   "st_look_f1_s2_hr04_h1_t01_1_pf11_hd00_ey00": {
    "기본": "L_f1_s2_hr04_h1_t01_1_pf11_hd00_ey00_idle.png",

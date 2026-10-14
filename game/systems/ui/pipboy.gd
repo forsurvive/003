@@ -109,7 +109,7 @@ func _rows() -> Array:
 				if c != cat:
 					continue
 				var n := int(st.items[id])
-				var on: bool = id == info.get("equipped", "")
+				var on: bool = id == info.get("equipped", "") or id == info.get("worn", "")
 				var hk := ""
 				for k in info.get("hotkeys", {}):
 					if info["hotkeys"][k] == id:
@@ -234,6 +234,8 @@ func _enter_label() -> String:
 			return "스팀팩 사용"
 		[1, 0]:
 			return "해제" if rows[sel]["id"] == info.get("equipped", "") else "장착"
+		[1, 1]:
+			return "입는 중" if rows[sel]["id"] == info.get("worn", "") else "갈아입기"
 		[1, 2]:
 			return "사용"
 	return "—"
@@ -328,6 +330,9 @@ func _body_page() -> void:
 	var n := int(st.items.get(str(info.get("stimpak_id", "")), 0))
 	text(Vector2(264, 254), "스팀팩 (%d)  사용하면 HP를 회복한다" % n, f12, 12, U[5] if n > 0 else U[3])
 	text(Vector2(264, 272), "회복량 30 × (1 + 의학/50), 2초에 걸쳐", f10, 10, U[4])
+	var rads := int(info.get("rads", 0))                                   # 방사능(SD-11 §11.2: 200 경미 · 400 심화 · 600 위험 · 800 치명 · 1000)
+	var rl := "없음" if rads < 200 else ("경미" if rads < 400 else ("심화" if rads < 600 else ("위험" if rads < 800 else "치명")))
+	text(Vector2(264, 290), "방사능 %d 라드 — %s" % [rads, rl], f12, 12, U[6] if rads < 200 else U[5])
 
 
 ## 일반(SD-12 §3.5): 등록 카드(맨 위, §3.8 단계 0) · 카르마 칭호와 막대(숫자는 숨김, SD-10 §6.1) · 통계
@@ -485,5 +490,8 @@ func _enter() -> void:
 			action.emit("use", str(info.get("stimpak_id", "")))
 		[1, 0]:
 			action.emit("unequip" if id == info.get("equipped", "") else "equip", id)
+		[1, 1]:
+			if id != info.get("worn", ""):
+				action.emit("equip", id)                                   # 옷 갈아입기(0-10, 몸통 슬롯 하나)
 		[1, 2]:
 			action.emit("use", id)

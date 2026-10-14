@@ -125,6 +125,8 @@ def roach_sheet():
 QUAD = {
     "dog": dict(w=44, h=32, foot=(20, 29), px=4, body=(19, 18, 10, 6.5), head=(32, 13, 7.5, 6.5), leg=5, fur=["P17", "P18", "P19", "P20"],
                 skin=["P39", "P40", "P41"], eye="P54", tail="up", ears=True, mange=True),
+    "jindo": dict(w=44, h=32, foot=(20, 29), px=4, body=(19, 18, 10, 6.5), head=(32, 12, 7.5, 6.5), leg=5, fur=["P06", "P07", "P08", "P09"],
+                  skin=["P39", "P40", "P41"], eye="P01", tail="curl", ears=True, mange=False),
     "rat": dict(w=40, h=22, foot=(18, 19), px=2, body=(17, 13, 9, 5), head=(27, 12, 5, 4.5), leg=3, fur=["P03", "P04", "P05", "P06"],
                 skin=["P40", "P41", "P42"], eye="P54", tail="long", ears=True, mange=False),
 }
@@ -165,7 +167,17 @@ def quad(kind, frame=0, pose="walk"):
     _ellipse(body, hxc, hyc - bob, hrx, hry, fur)
     bd = ImageDraw.Draw(body)
     hyb = round(hyc - bob)
-    if kind == "dog":
+    if kind == "jindo":                                                    # 진돗개(백구): 쫑긋 선 세모 귀 + 짧은 주둥이 + 검은 코·눈
+        ex = round(hxc - hrx * 0.25)
+        bd.polygon([(ex - 3, hyb - 4), (ex, hyb - 11), (ex + 3, hyb - 4)], fill=fur[2])
+        bd.polygon([(ex - 1, hyb - 5), (ex, hyb - 9), (ex + 1, hyb - 5)], fill=ramp(q["skin"])[1])
+        sx = round(hxc + hrx - 2)
+        bd.ellipse([sx - 1, hyb - 1, sx + 5, hyb + 4], fill=fur[3])
+        bd.point((sx + 5, hyb), fill=C("P01")); bd.point((sx + 4, hyb), fill=C("P01"))
+        bd.line([sx + 1, hyb + 3, sx + 4, hyb + 3], fill=fur[1])
+        bd.point((round(hxc + 1), hyb - 2), fill=C(q["eye"]))
+        bd.point((round(hxc + 1), hyb - 3), fill=C(q["eye"]))
+    elif kind == "dog":
         ex = round(hxc - hrx * 0.45)                                       # 늘어진 귀
         bd.polygon([(ex - 2, hyb - 5), (ex + 3, hyb - 6), (ex - 3, hyb + 1)], fill=fur[0])
         sx = round(hxc + hrx - 2)                                          # 긴 주둥이 + 검은 코 + 이빨
@@ -189,12 +201,51 @@ def quad(kind, frame=0, pose="walk"):
     if kind == "rat":                                                     # 수염(먹선 밖)
         sx2, sy2 = round(q["head"][0] + q["head"][2] + 2), round(q["head"][1] - bob)
         d.line([sx2, sy2, sx2 + 3, sy2 - 1], fill=C("P07")); d.line([sx2, sy2 + 1, sx2 + 3, sy2 + 2], fill=C("P07"))
-    if q["tail"] == "up":
+    if q["tail"] == "curl":                                               # 진돗개 말린 꼬리(등 위로 둥글게)
+        cx0, cy0 = tx + 1, by - 7 - bob
+        d.ellipse([cx0 - 5, cy0 - 5, cx0 + 3, cy0 + 3], fill=C("P01"))
+        d.ellipse([cx0 - 4, cy0 - 4, cx0 + 2, cy0 + 2], fill=fur[2])
+        d.arc([cx0 - 3, cy0 - 3, cx0 + 1, cy0 + 1], 200, 20, fill=fur[3])
+        d.point((cx0 - 1, cy0), fill=fur[1])
+    elif q["tail"] == "up":
         d.line([(tx, by - 2 - bob), (tx - 3, by - 6 - bob), (tx - 4, by - 9 - bob + (frame % 2))], fill=fur[0], width=2)
     else:
         pts = [(tx, by + 1 - bob), (tx - 5, by + 3), (tx - 10, by + 2 + (frame % 2)), (tx - 14, by + 4)]
         d.line(pts, fill=ramp(q["skin"])[1])
     return img
+
+
+def quad_lying(kind):
+    """쓰러진(누운) 네발짐승: 옆으로 누운 몸 + 뻗은 다리 + 감은 눈. 사망·기절 마지막 컷."""
+    q = QUAD[kind]
+    img = Image.new("RGBA", (q["w"], q["h"]), CLEAR)
+    fur = ramp(q["fur"])
+    bx, by, brx, bry = q["body"]
+    body = Image.new("RGBA", img.size, CLEAR)
+    _ellipse(body, bx + 1, by + 6, brx + 2, bry - 1.5, fur)
+    hxc, hyc, hrx, hry = q["head"]
+    _ellipse(body, hxc + 2, by + 6, hrx, hry - 1, fur)
+    bd = ImageDraw.Draw(body)
+    for x in (bx - 6, bx - 2, bx + 4, bx + 8):                            # 뻗은 다리
+        bd.line([x, by + 9, x + 4, by + 11], fill=fur[1], width=2)
+    bd.line([round(hxc), by + 4, round(hxc) + 2, by + 4], fill=C("P01"))  # 감은 눈
+    img.alpha_composite(body)
+    return outline(img)
+
+
+def quad_sheet(kind):
+    """네발짐승 시트(roach_sheet와 같은 형식): 옆(E)만, W는 뒤집기. idle 1 · walk 4 · run 4(같은 컷, 빠르게) · death 3."""
+    walk = [quad(kind, f) for f in range(4)]
+    idle = [quad(kind, 0, "idle")]
+    lie = quad_lying(kind)
+    mid = Image.new("RGBA", lie.size, CLEAR)                             # 무너지는 중간 컷: 서 있는 몸을 2px 내린 모습
+    mid.alpha_composite(walk[1], (0, 2))
+    frames = idle + walk + [mid, lie, lie]
+    q = QUAD[kind]
+    meta = {"frame": [q["w"], q["h"]], "foot": list(q["foot"]), "rows": ["E"], "mirror": {"W": "E"}, "style": "isaac",
+            "motions": {"idle": {"start": 0, "count": 1}, "walk": {"start": 1, "count": 4, "px_per_frame": q["px"], "drive": "distance"},
+                        "death": {"start": 5, "count": 3}}}
+    return frames, meta
 
 
 def footlock_report():

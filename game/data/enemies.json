@@ -14,6 +14,21 @@
   "tier": "약",
   "xp": 1
  },
+ "CR-104": {
+  "_src": "14_creatures-enemies.md:443",
+  "attack": "물기 8",
+  "dr": 0,
+  "hp": 35,
+  "id": "CR-104",
+  "level": 2,
+  "name": "변이 들개",
+  "part_weights": "PW-C",
+  "pattern": "3~7마리가 지그재그로 달려와 포위",
+  "radius": 0.28,
+  "speed": 4.5,
+  "tier": "약",
+  "xp": 5
+ },
  "CR-401": {
   "_src": "14_creatures-enemies.md:1059",
   "dr": 18,
@@ -42,6 +57,34 @@
   "weapon_main": "미니건 / 플라스마 소총 / 개틀링 레이저",
   "xp": 40
  },
+ "CR-436": {
+  "_src": "14_creatures-enemies.md:1142",
+  "dr": 12,
+  "hp": 100,
+  "id": "CR-436",
+  "level": 9,
+  "name": "추심원",
+  "part_weights": "PW-H",
+  "radius": 0.3,
+  "rank": "2",
+  "special": "그물탄 + 마취 다트(다리 부위 피해 고정, 이동 −50%)",
+  "weapon_main": "기관단총 / 산탄총",
+  "xp": 30
+ },
+ "CR-437": {
+  "_src": "14_creatures-enemies.md:1143",
+  "dr": 8,
+  "hp": 80,
+  "id": "CR-437",
+  "level": 6,
+  "name": "인솔조원 (하청)",
+  "part_weights": "PW-H",
+  "radius": 0.3,
+  "rank": "1",
+  "special": "'인력' 호송. 포로의 작업 목줄 원격기 소지(처치하면 포로 해방)",
+  "weapon_main": "자동소총",
+  "xp": 15
+ },
  "CR-473": {
   "_src": "14_creatures-enemies.md:1238",
   "dr": 4,
@@ -55,5 +98,18 @@
   "special": "보안 제복 T02 + 헬멧 HD03. 순찰 3종(정문·무기고·관리동). 주인공에게는 진압봉만 휘두르고 권총은 위협 사격(빗나가게)만. 기절 25초 뒤 깨어나 경보",
   "weapon_main": "진압봉 / 보안부 권총",
   "xp": 10
+ },
+ "CR-534": {
+  "_src": "14_creatures-enemies.md:1461",
+  "dr": 12,
+  "hp": 140,
+  "id": "CR-534",
+  "level": 10,
+  "name": "독사",
+  "part_weights": "PW-H",
+  "pattern": "사수",
+  "radius": 0.3,
+  "weapon_main": "기관단총 + 마취 다트",
+  "xp": 25
  }
 }

@@ -1,0 +1,67 @@
+{
+ "id": "MQ-101_DOGS",
+ "title": "비탈의 백구",
+ "loc": "L-R01-03",
+ "npc": "",
+ "cond": "MQ101_STAGE == 10 and MQ101_DOG == 0",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "do",
+   "fx": "MQ101_DOG = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "mq",
+   "args": [
+    "dogs"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "cam",
+   "args": [
+    "dogs",
+    "6"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "길섶 바위틈에서 으르렁거리는 소리. 털 빠진 들개 세 마리가 흰 개 한 마리를 바위에 몰아붙였다."
+  },
+  {
+   "op": "cmd",
+   "name": "balloon",
+   "args": [
+    "C-015",
+    "!"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "흰 개는 귀를 세우고 등을 바위에 붙인 채 버틴다. 목에 낡은 천 목줄이 감겨 있다."
+  },
+  {
+   "op": "cmd",
+   "name": "hint",
+   "args": [
+    "들개를 쫓을 수도, 못 본 척 지나갈 수도 있다",
+    "6"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-101.txt"
+}

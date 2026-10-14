@@ -1,0 +1,93 @@
+{
+ "id": "X-BC_MANHOLE",
+ "title": "하수구 맨홀",
+ "loc": "L-R01-09",
+ "npc": "",
+ "cond": "MQ101_STAGE >= 0",
+ "labels": {
+  "START": 0,
+  "LURE": 3
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "MQ101_STAGE == 40 and MQ101_NIGHT == 2 and MQ101_RESULT == 0",
+   "to": "LURE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "하수구 맨홀. 뚜껑 틈으로 마을 밖 배수로의 찬 바람이 올라온다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "맨홀 뚜껑을 쇠막대로 두드린다. 쾅, 쾅. 아랫문 쪽에서 손전등 불빛이 이쪽으로 돈다."
+  },
+  {
+   "op": "line",
+   "who": "C-021",
+   "emo": "분노",
+   "text": "(멀리서) 서쪽이다! 하수구로 튄다!"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "뚜껑을 밀어 놓고 맨홀 사다리를 탄다. 위에서 발소리가 우르르 몰려온다."
+  },
+  {
+   "op": "cmd",
+   "name": "fade_out",
+   "args": [
+    "black",
+    "10"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "mq",
+   "args": [
+    "lure"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "배수로를 따라 한참을 기었다. 추적조의 손전등이 마을 밖 배수로를 따라 남쪽으로 멀어진다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "옆 구멍으로 다시 올라오니 마을 서쪽 끝이다. 추적조는 아직 배수로 어딘가를 헤매고 있다."
+  },
+  {
+   "op": "do",
+   "fx": "result(\"MQ-101\", 2)"
+  },
+  {
+   "op": "cmd",
+   "name": "fade_in",
+   "args": [
+    "black",
+    "10"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-101.txt"
+}

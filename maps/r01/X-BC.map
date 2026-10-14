@@ -118,7 +118,7 @@ prop guard_booth 33 38
 prop sandbags 25 38
 prop stair_post 32 34
 prop board_bc 22 35
-text 22 35 "반상회 게시판." w=2
+text 22 35 "반상회 게시판." w=2 scene=X-BC_BOARD
 prop kennel 35 34
 text 35 34 "백구 집. 옆 기둥에 '백구 밥 당번표'가 붙어 있다." w=2
 prop stall 10 34
@@ -143,7 +143,7 @@ prop rubble 8 33
 prop rubble 8 35
 prop rubble 8 37
 prop manhole 5 36
-text 5 36 "하수구 맨홀. 마을 밖 배수로로 이어진다."
+text 5 36 "하수구 맨홀. 마을 밖 배수로로 이어진다." scene=X-BC_MANHOLE
 prop drum 4 38
 struct roof 4 29 9 2 seed=2 args='{"edges": "w", "paint": "green"}'
 struct facade 4 31 9 2 seed=3 args='{"style": "concrete", "doors": [[6, "shutter"]], "name": "오씨네 고물"}'
@@ -228,6 +228,33 @@ prop water_tank_s 33 8
 prop antenna 23 7
 prop laundry_line 31 6
 text 25 11 "봉천 새마음빌라 1동. 옥상에 옥탑 이장실이 있다."
+npc N-R01-028 28 37 S cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0"
+npc N-R01-026 11 33 S cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0"
+npc C-015 37 35 W sheet=cr_baekgu_loco cond="MQ101_DOG != 1"
+npc N-R01-034 38 34 W cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0" route=kennel:38,34,6;yard:33,36,4
+npc N-R01-029 16 28 S cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0" route=garden:16,28,6;alley:24,28,4
+npc N-R01-030 46 35 W cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0"
+npc N-R01-031 39 21 S cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0" route=school:39,21,6;stair:33,22,3
+npc N-R01-033 52 37 W cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0"
+npc N-R01-035 30 29 S cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0"
+npc N-R01-036 46 12 S cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0" route=tower:46,12,8;top:40,14,4
+npc N-R01-501 10 28 E cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0" route=a:10,28,5;b:18,28,4
+trigger 27 39 scene=MQ-101_GATE w=5 h=2 cond="MQ101_STAGE == 10" once
+npc C-021 29 42 N cond="MQ101_NIGHT == 2 and MQ101_RESULT == 0 and MQ101_FIGHT == 0"
+mark land1 29 37 S
+mark land2 29 29 S
+mark land3 33 21 S
+mark land4 30 13 S
+mark doksa 29 42 N
+mark pc_fight 30 36 S
+mark sbf1 25 44 N
+mark sbf2 33 44 N
+mark sbf3 37 43 N
+mark doksaf 29 45 N
+mark sb1 27 43 N
+mark sb2 31 43 N
+mark sb3 33 42 N
+mark tanks 11 12 N
 prop gate_shut 45 1
 text 45 2 "윗문. 봉천 고개로 넘어가는 쪽문인데 지금은 잠가 두었다."
 prop planter_s 14 27

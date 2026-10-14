@@ -16,6 +16,7 @@ var skill := 45.0
 var per := 5.0
 var react := 0.3                              ## 반응 지연(계엄군 0.3초, §7.4)
 var has_token := false
+var _burst := 0                                   ## 이번 연사에서 쏜 발 수
 var _t_per := 0.0
 var _t_tac := 0.0
 var _cool := 0.0
@@ -38,6 +39,9 @@ var _route_i := 0
 var _route_wait := 0.0
 var _look_base := 2
 var stance := ""                              ## "hold": 제자리 경계(정문 계엄군)
+var level := 1                                ## 실제 레벨(장소 상한을 건 뒤)
+var bite := 8.0                               ## 들개 물기 피해(SD-14 표 '물기 n')
+var focus: Combatant                          ## 지금 노리는 대상(주인공·아군 감시조 — 진행기가 정한다, 0-10)
 var hold_dir := 2                             ## 제자리 경계 방향
 var arm := ""                                 ## 보안요원 무기: baton | pistol
 var who := ""                                 ## 이름 있는 경비(N-R01-018 권서준 등) — 이름표·대사
@@ -58,16 +62,27 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 	who = str(opts.get("who", ""))
 	stance = str(opts.get("stance", ""))
 	var is_roach: bool = row["id"] == "CR-002"
+	var is_dog: bool = row["id"] == "CR-104"
 	var sheet := "en_cr401_loco"
 	match str(row["id"]):
 		"CR-002":
 			sheet = "cr_cr002_base_loco"
+		"CR-104":
+			sheet = "cr_cr104_loco"
 		"CR-405":
 			sheet = "en_cr405_loco"
+		"CR-436", "CR-437":
+			sheet = "en_%s_loco" % str(row["id"]).to_lower().replace("-", "")
+		"CR-534":
+			sheet = "en_c021_loco"                                  # 독사(SD-14 §10.4, 외형 SD-07b C-021)
 		"CR-473":
 			sheet = "en_cr473_%s_loco" % arm
 	setup(sheet, pos, w)
-	style = "swarm" if is_roach else ("melee" if arm == "baton" else "shooter")
+	style = "swarm" if is_roach else ("dog" if is_dog else ("melee" if arm == "baton" else "shooter"))
+	if is_dog:                                                       # 변이 들개(SD-14 §4.2): 4.5t/초, 지그재그로 달려와 문다
+		loco.custom = {"run": {"frames": 4, "px": 4.0, "diag": 4.0, "contact": [0, 2], "speed_t": float(row["speed"])},
+			"walk": {"frames": 4, "px": 4.0, "diag": 4.0, "contact": [0, 2], "speed_t": float(row["speed"]) * 0.45}}
+		bite = float(str(row.get("attack", "물기 8")).get_slice(" ", 1))
 	if row["id"] == "CR-405":                                       # 파워 아머: 느리고 무겁다(보폭 6·4px, 2.4t/초). 넉다운 면역
 		loco.custom = {"run": {"frames": 6, "px": 6.0, "px_v": 4.0, "diag": 4.0, "contact": [0, 3], "speed_t": 2.4},
 			"walk": {"frames": 6, "px": 6.0, "px_v": 4.0, "diag": 4.0, "contact": [0, 3], "speed_t": 2.4}}
@@ -79,14 +94,20 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 		route.append([Vector2(int(r[0]) * 32 + 16, int(r[1]) * 32 + 16), float(r[2])])
 	cmb.actor = self
 	cmb.team = "enemy"
-	cmb.can_ko = not is_roach
+	cmb.can_ko = not is_roach and not is_dog
 	cmb.hp = float(row["hp"])
-	cmb.max_hp = cmb.hp
 	cmb.dr = float(row["dr"])
+	level = int(row.get("level", 1))
+	if opts.has("lv") and int(opts["lv"]) < level:                   # 장소 위협도 상한(SD-08 §9: 봉천 위협 1 = Lv1~4, SD-14 §12 스케일링)
+		var lv := int(opts["lv"])
+		cmb.hp = (20.0 + lv * 8.0) if not (is_roach or is_dog) else roundf(cmb.hp * lv / level)   # 인간 HP ≈ 20 + Lv×8(SD-14 §3.4)
+		cmb.dr = roundf(cmb.dr * lv / level)
+		level = lv
+	cmb.max_hp = cmb.hp
 	cmb.radius = float(row["radius"]) * 32.0
 	radius_px = cmb.radius
-	cmb.weights = {"head": 15, "torso": 55, "leg": 30} if is_roach else CombatRules.HUMANOID_WEIGHTS
-	per = 3.0 if is_roach else 5.0
+	cmb.weights = {"head": 15, "torso": 55, "leg": 30} if is_roach else ({"head": 20, "torso": 50, "leg": 30} if is_dog else CombatRules.HUMANOID_WEIGHTS)
+	per = 3.0 if is_roach else (4.0 if is_dog else 5.0)
 	brain = AIBrain.new(pos, per, "insect" if is_roach else "human")
 	if stance == "hold":
 		brain.per = 7.0
@@ -163,7 +184,7 @@ func _tactics(target: Combatant, nav) -> void:
 	if goal == "engage":
 		var d := loco.logical.distance_to(target.pos()) / 32.0
 		var los: bool = world.line_of_sight(loco.logical, target.pos())
-		if style == "swarm" or style == "melee":
+		if style == "swarm" or style == "melee" or style == "dog":
 			_repath(nav, target.pos())
 		else:
 			var lo: float = float(weapon["range_eff"]) * 0.6
@@ -239,6 +260,13 @@ func _act(dt: float, target: Combatant, shots: Projectiles) -> void:
 			input = Vector2.ZERO
 	if style == "melee" and goal == "engage" and to_t.length() < float(weapon.get("range_eff", 1.0)) * 32.0 + target.radius:
 		input = Vector2.ZERO                                       # 닿는 거리면 서서 휘두른다
+	if style == "dog" and goal == "engage":
+		if to_t.length() < cmb.radius + target.radius + 6.0:
+			input = Vector2.ZERO
+			_bite(dt, target, to_t)
+		elif to_t.length() > 3.0 * 32.0 and input != Vector2.ZERO:     # 지그재그로 달려든다(포위)
+			input = input.normalized() + input.normalized().orthogonal() * sin(_clock * 5.0 + float(get_instance_id() % 7)) * 0.7
+		_cool = maxf(0.0, _cool - dt)
 	move(steer(input), dt)
 	if aim_dir >= 0 and loco.motion == "idle":
 		loco.facing = aim_dir                                       # 서서 조준하면 그쪽을 본다(시야각 기준)
@@ -278,6 +306,16 @@ func _swarm(dt: float, target: Combatant, to_t: Vector2) -> void:
 		_close_t = 0.0
 
 
+## 들개 물기: 닿으면 반응 지연 뒤 물고 1.1초 쉰다(SD-14 §4.2 '물기 n')
+func _bite(_dt: float, target: Combatant, to_t: Vector2) -> void:
+	if _cool > 0.0 or target.dead:
+		return
+	loco.facing = Locomotion.snap8(to_t, 0.0)
+	_show()
+	_cool = 1.1
+	target.take({"hp": bite}, loco.logical)
+
+
 func _shoot(dt: float, target: Combatant, shots: Projectiles) -> void:
 	_cool = maxf(0.0, _cool - dt)
 	if not has_token or _cool > 0.0 or target.dead:
@@ -293,6 +331,10 @@ func _shoot(dt: float, target: Combatant, shots: Projectiles) -> void:
 	if shots.fire(loco.logical + Vector2(0, -14) + Vector2.RIGHT.rotated(deg_to_rad(aim)) * 10.0, ang, 640.0, "enemy", weapon, skill):
 		_cool = 1.0 / (float(weapon["rate"]) * 0.6)                  # semi-auto: 60% of max rate
 		shots_fired += 1
+		_burst += 1
+		if _burst >= 3:                                               # 세 발 쏘면 다시 겨눈다(조준 지연 + 1~1.6초) — 쉬지 않고 쏘면 Lv1 주인공이 6초에 쓰러진다
+			_burst = 0
+			_cool += 1.0 + shots.rng.randf() * 0.6
 
 
 ## 진압봉(보안요원): 닿는 거리에서 반응 지연 뒤 휘두른다. 주인공에게는 HP 피해만(붙잡힘 판정은 진행기)
@@ -340,7 +382,7 @@ signal woke
 
 func _die_step(dt: float) -> void:
 	_dead_t += dt
-	if style == "swarm":
+	if style == "swarm" or style == "dog":
 		var f := mini(int(_dead_t * 10.0), sprite.sprite_frames.get_frame_count("death_E") - 1)
 		sprite.animation = "death_E"
 		sprite.frame = f
@@ -365,7 +407,7 @@ func _draw() -> void:
 	if swing_t > 0.0:                                              # 진압봉 휘두름: 앞쪽 호 한 획
 		var f: Vector2 = Locomotion.VEC[loco.facing].normalized()
 		draw_arc(Vector2(0, -12) + f * 8.0, 10.0, f.angle() - 0.9, f.angle() + 0.9, 6, Color("E9E4D8"), 2.0)
-	var top := -float(meta["foot"][1]) + (14.0 if style != "swarm" else 6.0)
+	var top := -float(meta["foot"][1]) + (14.0 if style != "swarm" and style != "dog" else 6.0)
 	match brain.state:
 		AIBrain.S.SUSPICIOUS, AIBrain.S.SEARCH:
 			draw_string(ui_font, Vector2(-3, top - 2), "?", HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("e8c23a"))

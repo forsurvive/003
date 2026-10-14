@@ -1,5 +1,19 @@
 {
  "scenes": [
+  "B-01_BED",
+  "MQ-101_DOGS",
+  "MQ-101_DOGS_WIN",
+  "MQ-101_DOKSA",
+  "MQ-101_GATE",
+  "MQ-101_HA",
+  "MQ-101_OH",
+  "MQ-101_OH_CLOSED",
+  "MQ-101_R1",
+  "MQ-101_S2",
+  "MQ-101_S2B",
+  "MQ-101_S5",
+  "MQ-101_SELL",
+  "MQ-101_START",
   "MQ-P1_S01",
   "MQ-P1_S02_DOYUN",
   "MQ-P1_S02_HRW",
@@ -40,6 +54,9 @@
   "MQ-P4_S05",
   "MQ-P4_S06",
   "MQ-P4_S07",
-  "MQ-P4_YUN"
+  "MQ-P4_YUN",
+  "X-BC_BOARD",
+  "X-BC_MANHOLE",
+  "X-S07_VIEW"
  ]
 }

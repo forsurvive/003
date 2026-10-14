@@ -335,3 +335,25 @@ func _key(k: Key) -> InputEventKey:
 	var e := InputEventKey.new()
 	e.physical_keycode = k
 	return e
+
+
+## 0-10에서 찾은 결함: 실내·바깥 맵 적이 공격 토큰을 받지 못해 원거리 적이 한 발도 쏘지 않았다(SD-11 §7.4 보통 원거리 3)
+func test_attack_tokens(t) -> void:
+	var st := _state()
+	var s := _setup("X-BC", st, Vector2(29 * 32 + 16, 36 * 32 + 16))
+	var m: InteriorMap = s[0]
+	var c: InteriorCombat = s[1]
+	for i in 5:
+		var e := c.spawn("CR-437", Vector2((24 + i * 3) * 32 + 16, 43 * 32 + 16), m, st, {"lv": 3})
+		e.brain.state = AIBrain.S.COMBAT
+		e.brain.gauge = 100.0
+	c.tick(0.1, true, st)
+	var n := c.enemies.filter(func(e): return e.has_token).size()
+	t.eq(n, 3, "사수 다섯 가운데 셋만 토큰을 받는다")
+	var fired := 0
+	for k in 60:
+		c.tick(0.05, true, st)
+	for e in c.enemies:
+		fired += e.shots_fired
+	t.ok(fired > 0, "토큰을 받은 사수는 실제로 쏜다(%d발)" % fired)
+	m.free()

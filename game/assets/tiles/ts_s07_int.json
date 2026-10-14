@@ -113,7 +113,7 @@
  },
  "grate_mold": {
   "atlas": [
-   29,
+   30,
    0
   ],
   "cover": 0,
@@ -151,6 +151,14 @@
   "cover": 0,
   "solid": false
  },
+ "jangpan_a": {
+  "atlas": [
+   28,
+   0
+  ],
+  "cover": 0,
+  "solid": false
+ },
  "lino_a": {
   "atlas": [
    8,
@@ -177,7 +185,7 @@
  },
  "panel_mold": {
   "atlas": [
-   28,
+   29,
    0
   ],
   "cover": 0,

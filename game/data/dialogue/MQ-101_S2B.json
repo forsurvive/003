@@ -1,0 +1,82 @@
+{
+ "id": "MQ-101_S2B",
+ "title": "옥탑 이장실",
+ "loc": "L-R01-09",
+ "npc": "C-010",
+ "cond": "MQ101_STAGE == 30",
+ "labels": {
+  "START": 0,
+  "T": 4,
+  "W": 5,
+  "R": 7,
+  "DONE": 10
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "MQ101_TRADE == 1 and MQ101_WATER == 1 and MQ101_RAD == 1",
+   "to": "DONE"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "캡, 물, 방사능. 셋 다 했냐?"
+  },
+  {
+   "op": "if",
+   "cond": "MQ101_TRADE == 0",
+   "to": "T"
+  },
+  {
+   "op": "goto",
+   "to": "W"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "오봉수한테는 아직 안 갔구나. 아랫마당 저울 있는 데다."
+  },
+  {
+   "op": "if",
+   "cond": "MQ101_WATER == 1",
+   "to": "R"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "물은 마셔 봐야 안다. 준 물병 하나 따 봐라."
+  },
+  {
+   "op": "if",
+   "cond": "MQ101_RAD == 1",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "손목 기계 숫자는 하숙자한테 물어봐라. 약국은 2단 골목이다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "미소",
+   "text": "됐다. 해 떨어지기 전에 눈 좀 붙여라. 옆방이다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-101.txt"
+}

@@ -1,0 +1,32 @@
+{
+ "id": "MQ-101_OH_CLOSED",
+ "title": "아랫마당 고물상",
+ "loc": "L-R01-09",
+ "npc": "N-R01-026",
+ "cond": "MQ101_RESULT == 5",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "고물상 셔터가 내려가 있다. 셔터 너머에서 오봉수가 기침을 한다."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-026",
+   "emo": "분노",
+   "text": "오늘 장사 안 해. 물값이 두 배라 다들 문 닫았어. 누구 덕분인지는 다 알고."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-101.txt"
+}

@@ -1,0 +1,230 @@
+{
+ "id": "B-01_BED",
+ "title": "빌린 침대",
+ "loc": "L-R01-09",
+ "npc": "",
+ "cond": "MQ101_STAGE >= 20",
+ "labels": {
+  "START": 0,
+  "SLEEP": 5,
+  "ZZ": 7
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "MQ101_STAGE == 30 and MQ101_TRADE == 1 and MQ101_WATER == 1 and MQ101_RAD == 1",
+   "to": "SLEEP"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빌린 침대. 이불에서 햇볕 냄새가 난다."
+  },
+  {
+   "op": "if",
+   "cond": "MQ101_STAGE >= 40",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "아직 이장님이 말한 세 가지를 다 하지 않았다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빌린 침대. 이불에서 햇볕 냄새가 난다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "눈을 붙인다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "ZZ",
+     "id": "B-01_BED:1:0"
+    },
+    {
+     "text": "아직",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "B-01_BED:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "fade_out",
+   "args": [
+    "black",
+    "10"
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "quest(\"MQ-101\", 40); MQ101_NIGHT = 1; V_WANTED = 10; xp(50)"
+  },
+  {
+   "op": "cmd",
+   "name": "mq",
+   "args": [
+    "night"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "pc",
+   "args": [
+    "bed",
+    "S"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "fade_in",
+   "args": [
+    "black",
+    "12"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "show",
+   "args": [
+    "N-R01-034",
+    "from_X-BC",
+    "N"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "move",
+   "args": [
+    "N-R01-034",
+    "bed_side",
+    "run"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "balloon",
+   "args": [
+    "N-R01-034",
+    "!"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-034",
+   "emo": "놀람",
+   "text": "일어나요! 게시판에 쪽지가 붙었어요. 볼트 작업복 입은 사람 데려오면 돈 준대요."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-034",
+   "emo": "슬픔",
+   "text": "그리고 아랫문에 이상한 아저씨들이 왔어요. 백구가 계속 짖어요."
+  },
+  {
+   "op": "cmd",
+   "name": "hide",
+   "args": [
+    "N-R01-034"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "show",
+   "args": [
+    "C-010",
+    "chief_night",
+    "S"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "face",
+   "args": [
+    "PC",
+    "C-010"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "새벽인력 독사다. 사람한테 값 매겨서 사고파는 놈들이지."
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "너를 내놓으래. 안 내주면 계단으로 올라오겠단다."
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "분노",
+   "text": "봉천은 손님 안 판다. 감시조가 계단참마다 선다."
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "싸우기 싫으면 옥상길이 있다. 서쪽 빌라 옥상들을 판자로 이어 놨어. 사다리를 끝까지 타고 내려가면 하수구 맨홀이다."
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "거기서 소리를 내면 놈들을 마을 밖 배수로로 끌고 나갈 수 있지."
+  },
+  {
+   "op": "do",
+   "fx": "MQ101_ROOF = 1"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "아랫문에서 독사랑 직접 말을 섞어 보든가. 네 일이다. 우리는 네가 하는 대로 따른다."
+  },
+  {
+   "op": "do",
+   "fx": "MQ101_NIGHT = 2"
+  },
+  {
+   "op": "cmd",
+   "name": "hide",
+   "args": [
+    "C-010"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "mq",
+   "args": [
+    "trackers"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-101.txt"
+}

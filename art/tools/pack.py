@@ -72,7 +72,11 @@ def chibi_sets(look, weapon=None, motions=("idle", "walk", "run")):
 ENEMIES = [("en_cr401_loco", "M1-S4-HR02-H1-T06-1-PF01-HD04-EY00-PR034", "rifle"),
            # CR-473 S-07 보안요원(SD-14 §9.4, 단계 0-9): 보안 제복 T02 + 헬멧 HD03. 진압봉 / 권총 두 벌
            ("en_cr473_baton_loco", "M1-S3-HR03-H1-T02-1-PF11-HD03-EY00", "baton"),
-           ("en_cr473_pistol_loco", "F1-S4-HR02-H2-T02-1-PF11-HD03-EY00", "pistol")]
+           ("en_cr473_pistol_loco", "F1-S4-HR02-H2-T02-1-PF11-HD03-EY00", "pistol"),
+           # 0-10 MQ-101 새벽인력 추적조(SD-14 §10.9, 새벽인력 팔레트 PF-05): 추심원 CR-436 기관단총 · 인솔조원 CR-437 소총 · 독사(C-021, SD-07b 외형)
+           ("en_cr436_loco", "M2-S3-HR01-H2-T12-2-PF05-HD05-EY00", "smg"),
+           ("en_cr437_loco", "M1-S4-HR02-H1-T05-1-PF05-HD02-EY00", "rifle"),
+           ("en_c021_loco", "M1-S4-HR01-H1-T12-1-PF05-HD00-EY05-PR027", "smg")]
 
 
 def main():

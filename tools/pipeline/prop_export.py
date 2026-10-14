@@ -113,7 +113,9 @@ def export_r01():
         x0, y0, w, h = pos[n]
         fw, fh = r["foot"]
         off = [(fw * T - (w - 2)) // 2 - 1 if fw else -(w // 2) + 16, fh * T + r["down"] - h + 1]
-        if fw == 0:
+        if r["kind"] == "wall":                                    # 벽 소품(봉천 실내): 벽면 윗칸 왼쪽 위 + dx·dy
+            off = [r["dx"] - 1, r["dy"] - 1]
+        elif fw == 0:
             off = [16 - w // 2, T - h + 1]
         e = {"rect": [x0, y0, w, h], "foot": [fw, fh], "kind": r["kind"], "off": off, "atlas": "r01"}
         for st in B.STATES.get(n, {}):

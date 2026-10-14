@@ -1,0 +1,40 @@
+{
+ "id": "MQ-101_DOGS_WIN",
+ "title": "비탈의 백구",
+ "loc": "L-R01-03",
+ "npc": "",
+ "cond": "MQ101_DOG == 2",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "cmd",
+   "name": "balloon",
+   "args": [
+    "C-015",
+    "heart"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "흰 개가 꼬리를 한 번 흔든다. 북쪽 길로 몇 걸음 앞서 가다가 돌아본다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "따라오라는 것 같다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-101.txt"
+}

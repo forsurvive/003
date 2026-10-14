@@ -1,7 +1,8 @@
 데이터 빌드 v0 — 오류 0
-  enemies: 4행
+  enemies: 8행
   items_aid: 4행
-  items_apparel: 1행
+  items_apparel: 2행
+  items_drink: 4행
   items_food: 4행
   items_misc_func: 2행
   items_misc_mat: 7행
@@ -16,12 +17,21 @@
 정합 목록(문서에 없는 필드, 기본값 사용):
   - 14_creatures-enemies.md CR-002 · radius = 0.2 — 충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다
   - 14_creatures-enemies.md CR-002 · part_weights = 'PW-A' — 부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')
+  - 14_creatures-enemies.md CR-104 · radius = 0.28 — 충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다
+  - 14_creatures-enemies.md CR-104 · part_weights = 'PW-C' — 부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')
   - 14_creatures-enemies.md CR-401 · radius = 0.3 — 충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다
   - 14_creatures-enemies.md CR-401 · part_weights = 'PW-H' — 부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')
   - 14_creatures-enemies.md CR-405 · radius = 0.3 — 충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다
   - 14_creatures-enemies.md CR-405 · part_weights = 'PW-H' — 부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')
+  - 14_creatures-enemies.md CR-436 · radius = 0.3 — 충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다
+  - 14_creatures-enemies.md CR-436 · part_weights = 'PW-H' — 부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')
+  - 14_creatures-enemies.md CR-437 · radius = 0.3 — 충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다
+  - 14_creatures-enemies.md CR-437 · part_weights = 'PW-H' — 부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')
   - 14_creatures-enemies.md CR-473 · radius = 0.3 — 충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다
   - 14_creatures-enemies.md CR-473 · part_weights = 'PW-H' — 부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')
+  - 14_creatures-enemies.md CR-534 · xp = 25 — §10.4 이름 있는 NPC 표에 XP 열이 없다 — §3.4 XP 식 2×Lv + HP÷20(5 단위 반올림)
+  - 14_creatures-enemies.md CR-534 · radius = 0.3 — 충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다
+  - 14_creatures-enemies.md CR-534 · part_weights = 'PW-H' — 부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')
   - 13_items.md W-002 · crit_dmg = 9 — SD-13 표에 치명 피해 열이 없다(SD-11 부록 C 필드)
   - 13_items.md W-002 · min_spread = 1.0 — SD-13 표에 최소 퍼짐 열이 없다(SD-11 §4.1 참고표 가정값 1°)
   - 13_items.md W-002 · ap_cost = None — SD-13 표에 AP 비용 열이 없다(SD-11 §5.3)

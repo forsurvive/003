@@ -1,0 +1,17 @@
+# SD-13 §6.5 음료 → game/data/items_drink.json (단계 0-10: MQ-101 '물' — 정화수와 날물의 차이)
+doc: 13_items.md
+id_column: ID
+section: "### 6.5 음료·주류 (I-048~I-063)"
+rows: [I-054, I-055, I-056, I-057]
+columns:
+  ID: {field: id, type: id, pattern: "^I-\\d{3}$", required: true}
+  이름: {field: name, type: str, required: true}
+  효과: {field: effect, type: str}
+  라드: {field: rads, type: lead_number}
+  무게: {field: weight, type: float}
+  가격: {field: value, type: int}
+  비고: {field: note, type: str}
+derive:
+  cat: "'aid'"
+  heal: "num_in(effect, 'HP +', 0)"
+  desc: "effect + (', 라드 +' + str(rads) if rads else ', 방사능 없음')"

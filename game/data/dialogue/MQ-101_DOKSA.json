@@ -1,0 +1,268 @@
+{
+ "id": "MQ-101_DOKSA",
+ "title": "아랫문의 독사",
+ "loc": "L-R01-09",
+ "npc": "C-021",
+ "cond": "MQ101_STAGE == 40 and MQ101_NIGHT == 2",
+ "labels": {
+  "START": 0,
+  "LIE": 4,
+  "LIEFAIL": 9,
+  "MONEY": 15,
+  "SELL": 19,
+  "FIGHT": 24
+ },
+ "ops": [
+  {
+   "op": "cmd",
+   "name": "face",
+   "args": [
+    "C-021",
+    "PC"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-021",
+   "emo": "미소",
+   "text": "볼트 애가 직접 나오셨네. 사람한테는 값이 있어. 너는 좀 비싸."
+  },
+  {
+   "op": "line",
+   "who": "C-021",
+   "emo": "말함",
+   "text": "산 채로 데려가면 3,000캡이야. 순순히 따라오면 마을 사람들은 아무도 안 다쳐."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "볼트 애? 그 애는 벌써 강을 건넜어",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "쉬움"
+      },
+      {
+       "k": "flavor",
+       "text": "거짓말"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "LIE",
+     "id": "MQ-101_DOKSA:1:0",
+     "fail": "LIEFAIL"
+    },
+    {
+     "text": "이 흙색 작업복이 볼트 옷으로 보여? 볼트 애는 벌써 강 건넜어",
+     "tags": [
+      {
+       "k": "evidence",
+       "id": "A-016"
+      }
+     ],
+     "cond": "PC_TORSO == \"A-016\"",
+     "fx": "",
+     "to": "LIE",
+     "id": "MQ-101_DOKSA:1:1"
+    },
+    {
+     "text": "200캡 줄 테니 오늘은 돌아가",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 200
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "MONEY",
+     "id": "MQ-101_DOKSA:1:2"
+    },
+    {
+     "text": "물이 필요하잖아. 이 마을 비밀 저수조가 어디 있는지 알려 준다",
+     "tags": [],
+     "cond": "MQ101_TANK == 1",
+     "fx": "",
+     "to": "SELL",
+     "id": "MQ-101_DOKSA:1:3"
+    },
+    {
+     "text": "총을 꺼낸다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "FIGHT",
+     "id": "MQ-101_DOKSA:1:4"
+    },
+    {
+     "text": "대꾸하지 않고 돌아선다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "MQ-101_DOKSA:1:5"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-021",
+   "emo": "놀람",
+   "text": "…강을? 볼트에서 갓 나온 애가 혼자서?"
+  },
+  {
+   "op": "line",
+   "who": "C-021",
+   "emo": "기본",
+   "text": "하. 강 건너면 남궁 쪽 일이지 내 일이 아니야. 철수."
+  },
+  {
+   "op": "cmd",
+   "name": "mq",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "result(\"MQ-101\", 3)"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-021",
+   "emo": "분노",
+   "text": "거짓말이 서툴러. 그 손목 기계는 강 건너서도 반짝이냐?"
+  },
+  {
+   "op": "cmd",
+   "name": "fade_out",
+   "args": [
+    "black",
+    "5"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "mq",
+   "args": [
+    "fight"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "fade_in",
+   "args": [
+    "black",
+    "5"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "감시조가 계단참마다 섰다. 추적조가 길 위에서 흩어진다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-021",
+   "emo": "미소",
+   "text": "오늘은 이걸로 됐어. 다음엔 값이 오른다."
+  },
+  {
+   "op": "cmd",
+   "name": "mq",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "result(\"MQ-101\", 4)"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "손가락으로 꼭대기 물탱크 쪽을 가리킨다. 독사의 눈이 가늘어진다."
+  },
+  {
+   "op": "line",
+   "who": "C-021",
+   "emo": "미소",
+   "text": "물이라. 물값이 사람값보다 비쌀 때가 있지. 거래 성립."
+  },
+  {
+   "op": "cmd",
+   "name": "mq",
+   "args": [
+    "sell"
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "result(\"MQ-101\", 5)"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-021",
+   "emo": "분노",
+   "text": "그래, 값을 몸으로 치르겠다는 거지."
+  },
+  {
+   "op": "cmd",
+   "name": "fade_out",
+   "args": [
+    "black",
+    "5"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "mq",
+   "args": [
+    "fight"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "fade_in",
+   "args": [
+    "black",
+    "5"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "감시조가 계단참마다 섰다. 추적조가 길 위에서 흩어진다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-101.txt"
+}
