@@ -376,6 +376,42 @@
     64
    ]
   },
+  "ceiling_slab": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -2,
+    -21
+   ],
+   "rect": [
+    0,
+    596,
+    68,
+    52
+   ]
+  },
+  "ceiling_slab2": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -2,
+    -21
+   ],
+   "rect": [
+    68,
+    596,
+    68,
+    52
+   ]
+  },
   "chain_post": {
    "atlas": "r01",
    "foot": [
@@ -592,6 +628,24 @@
     56
    ]
   },
+  "drain_valve": {
+   "atlas": "r01",
+   "foot": [
+    1,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -1,
+    -15
+   ],
+   "rect": [
+    136,
+    596,
+    34,
+    46
+   ]
+  },
   "dresser": {
    "atlas": "r01",
    "foot": [
@@ -714,6 +768,24 @@
     52
    ]
   },
+  "fountain_dry": {
+   "atlas": "r01",
+   "foot": [
+    3,
+    2
+   ],
+   "kind": "floor",
+   "off": [
+    -2,
+    -19
+   ],
+   "rect": [
+    752,
+    514,
+    100,
+    82
+   ]
+  },
   "gate_l": {
    "atlas": "r01",
    "foot": [
@@ -782,6 +854,42 @@
     225,
     36,
     68
+   ]
+  },
+  "ghoul_nest": {
+   "atlas": "r01",
+   "foot": [
+    0,
+    0
+   ],
+   "kind": "deco",
+   "off": [
+    -8,
+    5
+   ],
+   "rect": [
+    170,
+    596,
+    48,
+    28
+   ]
+  },
+  "ghoul_nest2": {
+   "atlas": "r01",
+   "foot": [
+    0,
+    0
+   ],
+   "kind": "deco",
+   "off": [
+    -8,
+    5
+   ],
+   "rect": [
+    218,
+    596,
+    48,
+    28
    ]
   },
   "guard_booth": {
@@ -1260,6 +1368,32 @@
     38
    ]
   },
+  "sentry_down": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -4,
+    -11
+   ],
+   "rect": [
+    364,
+    596,
+    72,
+    42
+   ],
+   "states": {
+    "lit": [
+     436,
+     596,
+     72,
+     42
+    ]
+   }
+  },
   "shoe_rack": {
    "atlas": "r01",
    "foot": [
@@ -1296,6 +1430,24 @@
     48
    ]
   },
+  "stairs_up": {
+   "atlas": "r01",
+   "foot": [
+    0,
+    0
+   ],
+   "kind": "deco",
+   "off": [
+    -33,
+    -33
+   ],
+   "rect": [
+    266,
+    596,
+    98,
+    66
+   ]
+  },
   "stall": {
    "atlas": "r01",
    "foot": [
@@ -1312,6 +1464,114 @@
     103,
     68,
     48
+   ]
+  },
+  "stall_clothes": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -2,
+    -19
+   ],
+   "rect": [
+    344,
+    514,
+    68,
+    50
+   ]
+  },
+  "stall_food": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -2,
+    -19
+   ],
+   "rect": [
+    548,
+    514,
+    68,
+    50
+   ]
+  },
+  "stall_forge": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -2,
+    -19
+   ],
+   "rect": [
+    684,
+    514,
+    68,
+    50
+   ]
+  },
+  "stall_meds": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -2,
+    -19
+   ],
+   "rect": [
+    480,
+    514,
+    68,
+    50
+   ]
+  },
+  "stall_parts": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -2,
+    -19
+   ],
+   "rect": [
+    412,
+    514,
+    68,
+    50
+   ]
+  },
+  "stall_water": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -2,
+    -19
+   ],
+   "rect": [
+    616,
+    514,
+    68,
+    50
    ]
   },
   "stool_w": {
@@ -1404,6 +1664,78 @@
     20
    ]
   },
+  "subway_stairs": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -1,
+    -13
+   ],
+   "rect": [
+    508,
+    596,
+    66,
+    48
+   ]
+  },
+  "subway_stairs_mall": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -1,
+    -13
+   ],
+   "rect": [
+    640,
+    596,
+    66,
+    48
+   ]
+  },
+  "subway_stairs_st": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -1,
+    -13
+   ],
+   "rect": [
+    574,
+    596,
+    66,
+    48
+   ]
+  },
+  "switchboard": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -2,
+    -49
+   ],
+   "rect": [
+    852,
+    514,
+    68,
+    80
+   ]
+  },
   "tarp_pile": {
    "atlas": "r01",
    "foot": [
@@ -1438,6 +1770,24 @@
     0,
     26,
     42
+   ]
+  },
+  "toll_table": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -2,
+    -15
+   ],
+   "rect": [
+    276,
+    514,
+    68,
+    46
    ]
   },
   "tool_chest": {
@@ -1656,6 +2006,24 @@
     122
    ]
   },
+  "w_board_jm": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    0
+   ],
+   "kind": "wall",
+   "off": [
+    1,
+    7
+   ],
+   "rect": [
+    62,
+    514,
+    62,
+    42
+   ]
+  },
   "w_calendar": {
    "atlas": "r01",
    "foot": [
@@ -1672,6 +2040,24 @@
     395,
     26,
     32
+   ]
+  },
+  "w_cold_door": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    0
+   ],
+   "kind": "wall",
+   "off": [
+    5,
+    3
+   ],
+   "rect": [
+    124,
+    514,
+    54,
+    62
    ]
   },
   "w_collars": {
@@ -1797,6 +2183,294 @@
     210,
     395,
     64,
+    32
+   ]
+  },
+  "w_shop_clothes": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    0
+   ],
+   "kind": "wall",
+   "off": [
+    -1,
+    1
+   ],
+   "rect": [
+    84,
+    450,
+    66,
+    64
+   ]
+  },
+  "w_shop_food": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    0
+   ],
+   "kind": "wall",
+   "off": [
+    -1,
+    1
+   ],
+   "rect": [
+    282,
+    450,
+    66,
+    64
+   ]
+  },
+  "w_shop_forge": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    0
+   ],
+   "kind": "wall",
+   "off": [
+    -1,
+    1
+   ],
+   "rect": [
+    414,
+    450,
+    66,
+    64
+   ]
+  },
+  "w_shop_meds": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    0
+   ],
+   "kind": "wall",
+   "off": [
+    -1,
+    1
+   ],
+   "rect": [
+    216,
+    450,
+    66,
+    64
+   ]
+  },
+  "w_shop_parts": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    0
+   ],
+   "kind": "wall",
+   "off": [
+    -1,
+    1
+   ],
+   "rect": [
+    150,
+    450,
+    66,
+    64
+   ]
+  },
+  "w_shop_repair": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    0
+   ],
+   "kind": "wall",
+   "off": [
+    -1,
+    1
+   ],
+   "rect": [
+    480,
+    450,
+    66,
+    64
+   ]
+  },
+  "w_shop_water": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    0
+   ],
+   "kind": "wall",
+   "off": [
+    -1,
+    1
+   ],
+   "rect": [
+    348,
+    450,
+    66,
+    64
+   ]
+  },
+  "w_shutter": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    0
+   ],
+   "kind": "wall",
+   "off": [
+    -1,
+    1
+   ],
+   "rect": [
+    546,
+    450,
+    66,
+    64
+   ]
+  },
+  "w_shutter2": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    0
+   ],
+   "kind": "wall",
+   "off": [
+    -1,
+    1
+   ],
+   "rect": [
+    612,
+    450,
+    66,
+    64
+   ]
+  },
+  "w_shutter3": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    0
+   ],
+   "kind": "wall",
+   "off": [
+    -1,
+    1
+   ],
+   "rect": [
+    678,
+    450,
+    66,
+    64
+   ]
+  },
+  "w_shutter_big": {
+   "atlas": "r01",
+   "foot": [
+    3,
+    0
+   ],
+   "kind": "wall",
+   "off": [
+    -1,
+    1
+   ],
+   "rect": [
+    178,
+    514,
+    98,
+    64
+   ]
+  },
+  "w_sign_exit": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    0
+   ],
+   "kind": "wall",
+   "off": [
+    1,
+    7
+   ],
+   "rect": [
+    960,
+    450,
+    62,
+    18
+   ]
+  },
+  "w_sign_market": {
+   "atlas": "r01",
+   "foot": [
+    3,
+    0
+   ],
+   "kind": "wall",
+   "off": [
+    0,
+    3
+   ],
+   "rect": [
+    744,
+    450,
+    96,
+    30
+   ]
+  },
+  "w_sign_plaza": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    0
+   ],
+   "kind": "wall",
+   "off": [
+    1,
+    7
+   ],
+   "rect": [
+    898,
+    450,
+    62,
+    18
+   ]
+  },
+  "w_sign_south": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    0
+   ],
+   "kind": "wall",
+   "off": [
+    1,
+    7
+   ],
+   "rect": [
+    0,
+    514,
+    62,
+    18
+   ]
+  },
+  "w_sign_welcome": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    0
+   ],
+   "kind": "wall",
+   "off": [
+    3,
+    9
+   ],
+   "rect": [
+    840,
+    450,
+    58,
     32
    ]
   },
@@ -1942,6 +2616,24 @@
     395,
     32,
     42
+   ]
+  },
+  "workbench": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -2,
+    -21
+   ],
+   "rect": [
+    920,
+    514,
+    68,
+    52
    ]
   },
   "yo_bed": {

@@ -2,7 +2,8 @@
 doc: 13_items.md
 id_column: ID
 section: "### 6.5 음료·주류 (I-048~I-063)"
-rows: [I-054, I-055, I-056, I-057]
+rows: all
+id_filter: "^I-\\d{3}$"
 columns:
   ID: {field: id, type: id, pattern: "^I-\\d{3}$", required: true}
   이름: {field: name, type: str, required: true}

@@ -2,7 +2,8 @@
 doc: 13_items.md
 id_column: ID
 section: "### 7.3 제작 재료 (M-010~M-049)"
-rows: [M-010, M-012, M-014, M-015, M-025, M-044, M-046]
+rows: all
+id_filter: "^M-\\d{3}$"
 columns:
   분류: {field: kind, type: str}
   ID: {field: id, type: id, pattern: "^M-\\d{3}$", required: true}

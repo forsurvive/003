@@ -72,6 +72,8 @@ def run_schema(path, rep):
     for sec, tline, header, rows in tables(os.path.join(DOCS, doc)):
         if sch.get("section") and sec != sch["section"]:
             continue
+        if sch.get("sections") and not any(sec.startswith(x) for x in sch["sections"]):   # 1-4: 여러 절(머리말 앞부분)
+            continue
         if sch["id_column"] not in header:
             continue
         idx = {h: k for k, h in enumerate(header)}
@@ -81,11 +83,15 @@ def run_schema(path, rep):
             rid = cells[idx[sch["id_column"]]].replace("**", "")
             if want != "all" and rid not in want:
                 continue
+            if sch.get("id_filter") and not re.match(sch["id_filter"], rid):   # 표 전체를 뽑을 때 ID 모양이 다른 행(범위 줄 등)은 건너뛴다
+                continue
             rec = {"_src": f"{doc}:{line}"}
             for col, spec in sch["columns"].items():
                 if col not in idx:
                     continue
                 raw = cells[idx[col]]
+                if raw.strip() in ("—", "-", "–", "") and not spec.get("required"):   # 빈 칸(1-4: 표 전체 추출)
+                    continue
                 try:
                     v = convert(raw, spec["type"])
                 except Exception as e:
@@ -105,7 +111,16 @@ def run_schema(path, rep):
         for rid in want:
             if rid not in found:
                 rep.err(doc, "-", "-", sch["id_column"], f"{rid} 행을 찾지 못함")
-    env_fn = lambda rec: dict(rec, note_number=lambda pre, d: _note_number(rec.get("note", ""), pre, d),
+    # 행에 빈 칸이 있어도 식이 돌게: 숫자 열은 0, 글 열은 ""(1-4: 표 전체를 뽑으면서 빈 칸이 생긴다)
+    blank = {spec["field"]: (0 if spec["type"] in ("int", "float", "lead_number", "int_or_none") else "") for spec in sch["columns"].values()}
+
+    class _Env(dict):
+        def __missing__(self, k):
+            if k in blank:
+                return blank[k]
+            raise KeyError(k)
+
+    env_fn = lambda rec: _Env(rec, note_number=lambda pre, d: _note_number(rec.get("note", ""), pre, d),
                               num_in=lambda text, pre, d: _note_number(text, pre, d))
     for rec in found.values():
         for f, expr in (sch.get("derive") or {}).items():

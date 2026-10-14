@@ -1,0 +1,18 @@
+# SD-13 §5.5 머리·§5.6 눈 장비 → game/data/items_apparel_head.json (1-4 파밍 v2)
+doc: 13_items.md
+id_column: ID
+sections: ["### 5.5 ", "### 5.6 "]
+rows: all
+id_filter: "^A-\\d{3}$"
+columns:
+  ID: {field: id, type: id, pattern: "^A-\\d{3}$", required: true}
+  이름: {field: name, type: str, required: true}
+  슬롯: {field: slot, type: str}
+  DR: {field: dr, type: lead_number}
+  무게: {field: weight, type: float}
+  가격: {field: value, type: int}
+  보너스: {field: bonus, type: str}
+  레이어: {field: layer, type: str}
+derive:
+  cat: "'apparel'"
+  desc: "bonus"

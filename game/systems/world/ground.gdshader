@@ -12,8 +12,8 @@ uniform sampler2D noise : filter_nearest;       // 256×256, R 큰 얼룩(경계
 uniform ivec2 origin;                           // id_map (1,1) 칸의 월드 타일
 uniform ivec2 map_size;                         // id_map 크기(테두리 포함)
 uniform int cell = 256;
-uniform int mat_of[32];
-uniform int force[32];
+uniform int mat_of[64];
+uniform int force[64];
 uniform int spread[16];
 uniform int pri[16];
 uniform int rim[16];

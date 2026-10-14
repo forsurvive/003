@@ -476,6 +476,53 @@ def concrete_out_tex(seed):
     return a
 
 
+def terrazzo_tex(seed):
+    """지하상가 인조석 물갈기 바닥(1-4 지하시장): 밝은 회백 바탕에 잔 돌 조각(어두운·밝은·벽돌색 드물게) + 96px 판마다 놋쇠 줄눈.
+    200년 닳아 통로 가운데가 조금 어둡고(발길), 판 이음매 몇 곳은 깨져 시멘트로 땜질했다."""
+    a = np.full((CELL, CELL), t("P07"), np.uint8)
+    rnd = np.random.default_rng(seed)
+    nz = equalize(fbm(CELL, [(48, 0.6), (24, 0.4)], seed))
+    a[nz < 0.10] = t("P06")                                         # 발길에 닳은 얼룩(작게)
+    for _ in range(CELL * CELL // 22):                                # 돌 조각: 1~2px
+        x, y = int(rnd.integers(CELL)), int(rnd.integers(CELL))
+        r = rnd.random()
+        tok = "P05" if r < 0.45 else "P08" if r < 0.80 else "P04" if r < 0.93 else "P18" if r < 0.985 else "P53"
+        put(a, x, y, tok)
+        if rnd.random() < 0.3:
+            put(a, x + 1, y, tok)
+    for k in range(0, CELL, 128):                                     # 놋쇠 줄눈(1px 금빛 + 그 아래 그림자, 128px 판)
+        for i in range(CELL):
+            put(a, i, k, "P19"); put(a, i, k + 1, "P05")
+            put(a, k, i, "P19"); put(a, k + 1, i, "P05")
+    for _ in range(6):                                                # 땜질 자국
+        x, y = int(rnd.integers(8, CELL - 20)), int(rnd.integers(8, CELL - 20))
+        w, h = int(rnd.integers(5, 12)), int(rnd.integers(4, 9))
+        for yy in range(y, y + h):
+            for xx in range(x, x + w):
+                put(a, xx, yy, "P06")
+        for xx in range(x, x + w):
+            put(a, xx, y, "P05")
+    return a
+
+
+def tunnel_tex(seed):
+    """지하 연결 통로·배수구 콘크리트(1-4 J-09·J-10): 어둡고 축축한 판 + 물때 얼룩 + 거푸집 이음매 + 짧은 금."""
+    a = np.full((CELL, CELL), t("P05"), np.uint8)
+    rnd = np.random.default_rng(seed)
+    nz = equalize(fbm(CELL, [(40, 0.5), (16, 0.5)], seed))
+    a[nz < 0.16] = t("P04")
+    a[nz > 0.93] = t("P06")
+    for k in range(0, CELL, 48):                                      # 거푸집 이음매
+        for i in range(CELL):
+            put(a, i, k, "P03"); put(a, i, k + 1, "P06")
+    for _ in range(14):
+        walk_line(a, rnd, int(rnd.integers(CELL)), int(rnd.integers(CELL)), int(rnd.integers(4, 10)), "P03", hi="P06")
+    for _ in range(40):
+        x, y = int(rnd.integers(CELL)), int(rnd.integers(CELL))
+        put(a, x, y, "P04")
+    return a
+
+
 def mold_tex(base, seed):
     """곰팡이병 바닥(수경 농장 2277): 바탕 재질 위에 불규칙하게 번진 검은 반점(큰 얼룩 문턱 + 가장자리 한 단 밝게)."""
     a = base.copy()
@@ -776,10 +823,15 @@ def sets():
                  dens=6, decals=["mold"], hard=1),
             dict(name="jangpan", A=jangpan_tex(291), B=None, spread=0, pri=0, rim=0, shade=1, vthr=256, dens=1,
                  decals=["scuff"], hard=1),
+            # 1-4 지하시장: 인조석 물갈기 바닥 · 지하 통로 콘크리트
+            dict(name="terrazzo", A=terrazzo_tex(301), B=None, spread=0, pri=0, rim=0, shade=1, vthr=256, dens=4,
+                 decals=["paper", "butts", "stain"], hard=1),
+            dict(name="tunnel", A=tunnel_tex(311), B=None, spread=0, pri=0, rim=0, shade=1, vthr=256, dens=7,
+                 decals=["puddle", "debris", "stain", "rust"], hard=1),
         ],
         "mat_of": {"panel": 0, "panel_sheen": 0, "panel_scuff": 0, "guide_h": 0, "guide_v": 0, "guide_x": 0, "guide_t": 0, "grate_a": 1, "grate_b": 1, "grate_c": 1,
                    "lino_a": 2, "lino_b": 2, "clinic_a": 3, "clinic_b": 3, "concrete_a": 4, "carpet_a": 5, "wood_a": 6,
-                   "panel_mold": 7, "grate_mold": 8, "jangpan_a": 9},
+                   "panel_mold": 7, "grate_mold": 8, "jangpan_a": 9, "terrazzo_a": 10, "tunnel_a": 11},
         "force": {"guide_h": "guide_h", "guide_v": "guide_v", "guide_x": "guide_x", "guide_t": "guide_t"},
         "flag_of": {k: 1 for k in ("wall_top_s", "wall_top_w", "wall_top_ws", "wall_top", "face_top", "face_top_pipe", "face_top_vent",
                                    "face_bot", "face_bot_outlet", "balcony", "balcony_door")},
@@ -814,9 +866,9 @@ class GroundSet:
                 self.dlist[m, i] = did[n]
             self.dcount[m] = len(d["decals"][:8])
         n_ids = max(tile_ids.values()) + 1
-        self.mat_of = np.zeros(32, np.int64)
-        self.force = np.full(32, -1, np.int64)
-        self.flag_of = np.zeros(32, np.int64)
+        self.mat_of = np.zeros(64, np.int64)                             # 타일 번호 → 재질(1-4: 32 → 64칸, 셰이더 mat_of[64])
+        self.force = np.full(64, -1, np.int64)
+        self.flag_of = np.zeros(64, np.int64)
         for k, i in tile_ids.items():
             self.mat_of[i] = spec["mat_of"].get(k, 0)
             if k in spec["force"]:

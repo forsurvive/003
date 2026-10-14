@@ -144,7 +144,13 @@ func set_stealth_live(on: bool) -> void:
 func _enemy_weapon(enemy_id: String, arm: String) -> Dictionary:
 	if enemy_id in ["CR-002", "CR-104"]:
 		return {}
-	var w: Dictionary = weapons.get("W-041" if arm == "baton" else "W-002", {}).duplicate()
+	var w: Dictionary = weapons.get("W-041" if arm in ["baton", "claw"] else "W-002", {}).duplicate()
+	if arm == "claw":                                                   # 야생 구울(1-4): 맨손 내려치기 — 피해는 SD-14 표 '근접 n'
+		var row: Dictionary = enemy_rows.get(enemy_id, {})
+		w["dmg"] = float(str(row.get("attack", "근접 5")).get_slice(" ", 1))
+		w["crit_dmg"] = w["dmg"]
+		w["name"] = "맨손"
+		w["rate"] = 1.4
 	if enemy_id == "CR-405":
 		w["rate"] = float(w.get("rate", 2.0)) * 3.0
 	if enemy_id in ["CR-436", "CR-534"]:                               # 기관단총(0-10 정합: 무기 표에 아직 없어 W-002 판정 + 연사 1.5배)
@@ -152,9 +158,12 @@ func _enemy_weapon(enemy_id: String, arm: String) -> Dictionary:
 	return w
 
 
+signal enemy_down(e: Enemy)
+
+
 func spawn(enemy_id: String, pos: Vector2, map: InteriorMap, st: StoryState = null, opts: Dictionary = {}) -> Enemy:
 	var e := Enemy.new()
-	var arm := str(opts.get("arm", "baton" if enemy_id == "CR-473" else ""))
+	var arm := str(opts.get("arm", "baton" if enemy_id == "CR-473" else ("claw" if enemy_id in ["CR-200", "CR-201"] else "")))
 	e.setup_enemy(enemy_rows[enemy_id], _enemy_weapon(enemy_id, arm), pos, map, opts)
 	e.set_meta("enemy_id", enemy_id)
 	e.set_meta("row", opts)
@@ -183,6 +192,8 @@ func spawn(enemy_id: String, pos: Vector2, map: InteriorMap, st: StoryState = nu
 		if e.who == "N-R01-018" and st != null and int(st.vars.get_v("MQP4_KEY")) == 0:   # 무기고 담당 권서준: 무기고 열쇠(0-9 정합)
 			st.vars.set_v("MQP4_KEY", 1)
 			message.emit("권서준의 허리춤에서 무기고 열쇠를 빼앗았다.")
+		if not e.cmb.ko:
+			enemy_down.emit(e)                                          # 유해(1-4 파밍): 호스트가 그 자리에 소지품 용기를 둔다
 		enemy_killed.emit(enemy_id, alive_enemies()))
 	_rebuild_list()
 	return e

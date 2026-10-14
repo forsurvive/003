@@ -9,6 +9,16 @@
   "value": 5,
   "weight": 1.0
  },
+ "M-011": {
+  "_src": "13_items.md:965",
+  "cat": "misc",
+  "desc": "판매, 정착지 보수 퀘스트",
+  "id": "M-011",
+  "kind": "금속",
+  "name": "철근",
+  "value": 3,
+  "weight": 3.0
+ },
  "M-012": {
   "_src": "13_items.md:966",
   "cat": "misc",
@@ -18,6 +28,16 @@
   "name": "구리선",
   "value": 8,
   "weight": 0.5
+ },
+ "M-013": {
+  "_src": "13_items.md:967",
+  "cat": "misc",
+  "desc": "금속 아머 주문 제작(탱크마을)",
+  "id": "M-013",
+  "kind": "금속",
+  "name": "강판 조각",
+  "value": 6,
+  "weight": 2.0
  },
  "M-014": {
   "_src": "13_items.md:968",
@@ -39,6 +59,96 @@
   "value": 10,
   "weight": 0.5
  },
+ "M-016": {
+  "_src": "13_items.md:970",
+  "cat": "misc",
+  "desc": "잡동사니 발사기",
+  "id": "M-016",
+  "kind": "전자",
+  "name": "전도체",
+  "value": 10,
+  "weight": 0.5
+ },
+ "M-017": {
+  "_src": "13_items.md:971",
+  "cat": "misc",
+  "desc": "병뚜껑 지뢰",
+  "id": "M-017",
+  "kind": "전자",
+  "name": "센서 모듈",
+  "value": 30,
+  "weight": 1.0
+ },
+ "M-018": {
+  "_src": "13_items.md:972",
+  "cat": "misc",
+  "desc": "압력 대못총, 비상 발전기 가동(SD-12). 명판 '태성 핵분열 전지'(SD-02)",
+  "id": "M-018",
+  "kind": "전자",
+  "name": "핵분열 배터리",
+  "value": 75,
+  "weight": 1.0
+ },
+ "M-019": {
+  "_src": "13_items.md:973",
+  "cat": "misc",
+  "desc": "판매, 연합단 기술품 거래",
+  "id": "M-019",
+  "kind": "전자",
+  "name": "세진 회로 기판(진공관식)",
+  "value": 25,
+  "weight": 1.0
+ },
+ "M-020": {
+  "_src": "13_items.md:974",
+  "cat": "misc",
+  "desc": "탄약 재생대",
+  "id": "M-020",
+  "kind": "화학",
+  "name": "화약",
+  "value": 10,
+  "weight": 0.2
+ },
+ "M-021": {
+  "_src": "13_items.md:975",
+  "cat": "misc",
+  "desc": "번개 수류탄",
+  "id": "M-021",
+  "kind": "화학",
+  "name": "강력 세제",
+  "value": 8,
+  "weight": 1.0
+ },
+ "M-022": {
+  "_src": "13_items.md:976",
+  "cat": "misc",
+  "desc": "번개 수류탄",
+  "id": "M-022",
+  "kind": "화학",
+  "name": "시너",
+  "value": 8,
+  "weight": 1.0
+ },
+ "M-023": {
+  "_src": "13_items.md:977",
+  "cat": "misc",
+  "desc": "부탄 토치 검, 휴대용 버너 연료",
+  "id": "M-023",
+  "kind": "화학",
+  "name": "부탄가스 통",
+  "value": 6,
+  "weight": 0.5
+ },
+ "M-024": {
+  "_src": "13_items.md:978",
+  "cat": "misc",
+  "desc": "갈퀴 장갑",
+  "id": "M-024",
+  "kind": "화학",
+  "name": "강력 접착제",
+  "value": 10,
+  "weight": 0.2
+ },
  "M-025": {
   "_src": "13_items.md:979",
   "cat": "misc",
@@ -48,6 +158,186 @@
   "name": "공업용 테이프",
   "value": 5,
   "weight": 0.2
+ },
+ "M-026": {
+  "_src": "13_items.md:980",
+  "cat": "misc",
+  "desc": "독침 마취총(SD-14 말벌 30% 드롭)",
+  "id": "M-026",
+  "kind": "생물",
+  "name": "말벌 독낭",
+  "value": 15,
+  "weight": 0.5
+ },
+ "M-027": {
+  "_src": "13_items.md:981",
+  "cat": "misc",
+  "desc": "가죽 아머 주문 제작(뚝섬 장터). 뉴트리아 모피도 같은 용도",
+  "id": "M-027",
+  "kind": "생물",
+  "name": "멧돼지 가죽",
+  "value": 8,
+  "weight": 2.0
+ },
+ "M-028": {
+  "_src": "13_items.md:982",
+  "cat": "misc",
+  "desc": "갈퀴 장갑(SD-14 갈퀴도마뱀 100% 드롭)",
+  "id": "M-028",
+  "kind": "생물",
+  "name": "갈퀴도마뱀 발톱",
+  "value": 40,
+  "weight": 2.0
+ },
+ "M-029": {
+  "_src": "13_items.md:983",
+  "cat": "misc",
+  "desc": "독침 마취총, 마취 다트",
+  "id": "M-029",
+  "kind": "생물",
+  "name": "수술용 튜브",
+  "value": 6,
+  "weight": 0.5
+ },
+ "M-030": {
+  "_src": "13_items.md:984",
+  "cat": "misc",
+  "desc": "압력 대못총",
+  "id": "M-030",
+  "kind": "생활",
+  "name": "압력솥",
+  "value": 15,
+  "weight": 4.0
+ },
+ "M-031": {
+  "_src": "13_items.md:985",
+  "cat": "misc",
+  "desc": "전지 재충전(§4.3)",
+  "id": "M-031",
+  "kind": "탄약 부속",
+  "name": "빈 전지",
+  "value": 0,
+  "weight": 0.0
+ },
+ "M-032": {
+  "_src": "13_items.md:986",
+  "cat": "misc",
+  "desc": "압력 대못총",
+  "id": "M-032",
+  "kind": "생활",
+  "name": "목발",
+  "value": 8,
+  "weight": 3.0
+ },
+ "M-033": {
+  "_src": "13_items.md:987",
+  "cat": "misc",
+  "desc": "압력 대못총",
+  "id": "M-033",
+  "kind": "생활",
+  "name": "증기 압력계",
+  "value": 20,
+  "weight": 2.0
+ },
+ "M-034": {
+  "_src": "13_items.md:988",
+  "cat": "misc",
+  "desc": "잡동사니 발사기",
+  "id": "M-034",
+  "kind": "생활",
+  "name": "소화전 노즐",
+  "value": 10,
+  "weight": 2.0
+ },
+ "M-035": {
+  "_src": "13_items.md:989",
+  "cat": "misc",
+  "desc": "잡동사니 발사기",
+  "id": "M-035",
+  "kind": "생활",
+  "name": "낙엽 송풍기",
+  "value": 15,
+  "weight": 6.0
+ },
+ "M-036": {
+  "_src": "13_items.md:990",
+  "cat": "misc",
+  "desc": "잡동사니 발사기",
+  "id": "M-036",
+  "kind": "생활",
+  "name": "로봇청소기 흡입 모듈",
+  "value": 20,
+  "weight": 4.0
+ },
+ "M-037": {
+  "_src": "13_items.md:991",
+  "cat": "misc",
+  "desc": "부탄 토치 검",
+  "id": "M-037",
+  "kind": "생활",
+  "name": "예초기 날",
+  "value": 10,
+  "weight": 2.0
+ },
+ "M-038": {
+  "_src": "13_items.md:992",
+  "cat": "misc",
+  "desc": "부탄 토치 검",
+  "id": "M-038",
+  "kind": "생활",
+  "name": "점화 장치",
+  "value": 10,
+  "weight": 0.5
+ },
+ "M-039": {
+  "_src": "13_items.md:993",
+  "cat": "misc",
+  "desc": "부탄 토치 검",
+  "id": "M-039",
+  "kind": "생활",
+  "name": "오토바이 브레이크 레버",
+  "value": 8,
+  "weight": 1.0
+ },
+ "M-040": {
+  "_src": "13_items.md:994",
+  "cat": "misc",
+  "desc": "독침 마취총",
+  "id": "M-040",
+  "kind": "생활",
+  "name": "분무 페인트건",
+  "value": 15,
+  "weight": 2.0
+ },
+ "M-041": {
+  "_src": "13_items.md:995",
+  "cat": "misc",
+  "desc": "독침 마취총",
+  "id": "M-041",
+  "kind": "생활",
+  "name": "태엽 장난감 자동차",
+  "value": 5,
+  "weight": 1.0
+ },
+ "M-042": {
+  "_src": "13_items.md:996",
+  "cat": "misc",
+  "desc": "갈퀴 장갑",
+  "id": "M-042",
+  "kind": "생활",
+  "name": "의료용 보조기",
+  "value": 10,
+  "weight": 1.0
+ },
+ "M-043": {
+  "_src": "13_items.md:997",
+  "cat": "misc",
+  "desc": "갈퀴 장갑",
+  "id": "M-043",
+  "kind": "생활",
+  "name": "가죽 벨트",
+  "value": 5,
+  "weight": 1.0
  },
  "M-044": {
   "_src": "13_items.md:998",
@@ -59,6 +349,16 @@
   "value": 5,
   "weight": 1.0
  },
+ "M-045": {
+  "_src": "13_items.md:999",
+  "cat": "misc",
+  "desc": "병뚜껑 지뢰",
+  "id": "M-045",
+  "kind": "생활",
+  "name": "폭죽",
+  "value": 3,
+  "weight": 0.0
+ },
  "M-046": {
   "_src": "13_items.md:1000",
   "cat": "misc",
@@ -68,5 +368,45 @@
   "name": "깡통",
   "value": 1,
   "weight": 0.5
+ },
+ "M-047": {
+  "_src": "13_items.md:1001",
+  "cat": "misc",
+  "desc": "조리(§7.9.5). 소모되지 않는다",
+  "id": "M-047",
+  "kind": "도구",
+  "name": "휴대용 버너",
+  "value": 25,
+  "weight": 2.0
+ },
+ "M-048": {
+  "_src": "13_items.md:1002",
+  "cat": "misc",
+  "desc": "마취 다트, 해독 앰플 조제(SD-14 지네 드롭)",
+  "id": "M-048",
+  "kind": "생물",
+  "name": "지네 독샘",
+  "value": 12,
+  "weight": 0.5
+ },
+ "M-049": {
+  "_src": "13_items.md:1003",
+  "cat": "misc",
+  "desc": "장기 보존 식품 조리(PK-009 손맛, §7.9.5)",
+  "id": "M-049",
+  "kind": "조리",
+  "name": "양념 꾸러미",
+  "value": 6,
+  "weight": 0.5
+ },
+ "M-162": {
+  "_src": "13_items.md:1004",
+  "cat": "misc",
+  "desc": "핵분열 배터리(M-018) 상위판. M-018이 쓰이는 곳에 모두 쓰인다. SD-04a SQ-S04 인도 대상(`SQH_BATT`)",
+  "id": "M-162",
+  "kind": "전자",
+  "name": "관악 중계소 핵분열 전지",
+  "value": 150,
+  "weight": 1.0
  }
 }

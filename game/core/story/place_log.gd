@@ -16,6 +16,7 @@ const GEO := "res://data/world/place_geo.json"
 
 static var db: Dictionary = {}                  ## lid -> {name, type, region, tx, ty, icon, marker, hidden, xp, ...}
 static var _grid: Dictionary = {}               ## 청크 Vector2i -> [lid] (발견 검사용)
+static var doors: Array = []                    ## 월드 → 실내 문(1-4, 굽기 "_doors"): [{"lid", "at", "to", "mark", "name", "prop"}]
 static var han: Array = []                      ## 한강 본류 세로 가운데(가로 칸마다, 굽기 place_geo.json "_han")
 var state := {}                                 ## lid -> 상태(0이면 적지 않는다)
 var found_order: Array = []                     ## 발견한 순서(통계·최근 목록)
@@ -31,6 +32,7 @@ static func load_db() -> void:
 	if FileAccess.file_exists(GEO):
 		geo = JSON.parse_string(FileAccess.get_file_as_string(GEO))
 	han = geo.get("_han", [])
+	doors = geo.get("_doors", [])
 	for lid in db:
 		var e: Dictionary = db[lid]
 		var g: Dictionary = geo.get(lid, {})

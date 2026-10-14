@@ -106,6 +106,17 @@ func load_map(map_id: String, st: StoryState = null) -> void:
 				gg["y"] = int(g["y"]) + o.y
 				gg["key"] = "%s:%d,%d" % [iid, int(g["x"]), int(g["y"])]          # 한 번만 여는 칸의 기록 열쇠는 손 맵 좌표 그대로
 				data[key].append(gg)
+	var dd := {"props": [], "doors": [], "signs": [], "exits": [], "texts": []}   # 지하로 내려가는 문(1-4): 계단 소품 + 2칸 출구
+	for door in PlaceLog.doors:
+		var at := Vector2i(int(door["at"][0]), int(door["at"][1]))
+		var pm: Dictionary = prop_meta.get(str(door["prop"]), {})
+		var off: Array = pm.get("off", [0, 0])
+		dd["props"].append({"name": str(door["prop"]), "x": at.x, "y": at.y, "px": [at.x * T + int(off[0]), at.y * T + int(off[1])],
+			"sort_y": at.y * T})                                         # 땅에 뚫린 입구: 그 위를 걷는 사람이 앞에 그려진다
+		for i in 2:
+			dd["exits"].append({"x": at.x + i, "y": at.y, "to": str(door["to"]), "mark": str(door["mark"])})
+			dd["texts"].append({"x": at.x + i, "y": at.y - 1, "w": 1, "h": 1, "text": str(door["name"]) + " — 계단을 내려가면 지하다."})
+	_add_objects("W", dd, st, Vector2i.ZERO)
 	for k in exits.keys():                                               # 손 맵끼리 잇던 가장자리 출구는 월드에서 이어진 땅이다
 		if str(exits[k]["to"]) in ids:
 			exits.erase(k)

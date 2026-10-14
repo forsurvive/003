@@ -418,6 +418,8 @@ def s07_tiles():
         "concrete_a": _gcrop("s07", "concrete", 0), "carpet_a": _gcrop("s07", "carpet", 0), "wood_a": _gcrop("s07", "wood", 0), "jangpan_a": _gcrop("s07", "jangpan", 0),
         "panel_mold": _gcrop("s07", "panel_mold", 0),             # 단계 0-5 덧붙임(바닥 합성 번호는 32칸 안)
         "grate_mold": _gcrop("s07", "grate_mold", 0),
+        "terrazzo_a": _gcrop("s07", "terrazzo", 0),               # 1-4 지하시장 덧붙임
+        "tunnel_a": _gcrop("s07", "tunnel", 0),
     }
 
 
@@ -520,6 +522,67 @@ def sb_wall_tiles():
     out.update({"face_top": wall_face_sb("top"), "face_top_pipe": wall_face_sb("top", "num", 1),
                 "face_top_vent": wall_face_sb("top", "rust", 2), "face_bot": wall_face_sb("bot"),
                 "face_bot_outlet": wall_face_sb("bot", "outlet")})
+    return out
+
+
+def wall_face_jm(part, variant="plain", seed=0):
+    """영등포 지하상가 벽(1-4 지하시장 J-01~J-11): 2077년 상가의 크림색 8px 벽 타일(줄눈 · 왼쪽 위 빛) + 위 천장 반자 띠 +
+    아래 짙은 인조석 걸레받이. 200년 물때가 줄눈을 타고 흐른다. 쯔꾸르식 평평한 면."""
+    img = new("P08")
+    d = ImageDraw.Draw(img)
+    rnd = random.Random(seed * 17 + (1 if part == "top" else 2))
+    y0 = 7 if part == "top" else 0
+    y1 = 31 if part == "top" else 18
+    for y in range(y0, y1 + 1, 8):                                     # 타일 줄눈 + 빛
+        d.line([0, y, 31, y], fill=C("P07"))
+        if y + 1 <= y1:
+            d.line([0, y + 1, 31, y + 1], fill=C("P09"))
+    for x in range(0, 32, 8):
+        d.line([x, y0, x, y1], fill=C("P07"))
+        d.line([x + 1, y0 + 1, x + 1, y1], fill=C("P09"))
+    for _ in range(3):                                                 # 빛바랜 타일 몇 장
+        tx, ty = rnd.randrange(0, 32, 8), rnd.randrange(y0, max(y0 + 1, y1 - 6), 8)
+        d.rectangle([tx + 2, ty + 2, tx + 7, ty + 7], fill=C("P07"))
+    if part == "top":
+        d.rectangle([0, 0, 31, 5], fill=C("P04"))                     # 천장 반자 띠
+        d.line([0, 0, 31, 0], fill=C("P01")); d.line([0, 1, 31, 1], fill=C("P06")); d.line([0, 5, 31, 5], fill=C("P02"))
+        d.line([0, 6, 31, 6], fill=C("P05"))
+        for x in (5, 21):
+            d.point((x, 3), fill=C("P03"))
+        if variant == "sign":                                          # 2077 상가 안내 띠(청록 바탕 흰 화살표)
+            d.rectangle([0, 10, 31, 21], fill=C("P61"))
+            d.line([0, 10, 31, 10], fill=C("P62")); d.line([0, 21, 31, 21], fill=C("P01"))
+            d.line([5, 15, 15, 15], fill=C("P09")); d.line([12, 12, 15, 15], fill=C("P09")); d.line([12, 18, 15, 15], fill=C("P09"))
+            for x in (20, 23, 26):
+                d.line([x, 13, x, 17], fill=C("P09"))
+        if variant == "stain":                                         # 물때가 줄눈을 타고 흐른다
+            for k in range(4):
+                x = rnd.randrange(2, 30)
+                d.line([x, 7, x, 7 + rnd.randint(8, 22)], fill=C("P06"))
+                d.point((x, 7), fill=C("P25"))
+    else:
+        for k in range(2):
+            x = rnd.randrange(2, 30)
+            d.line([x, 0, x, rnd.randint(4, 14)], fill=C("P06"))
+        d.rectangle([0, 19, 31, 28], fill=C("P04"))                   # 인조석 걸레받이
+        d.line([0, 19, 31, 19], fill=C("P01")); d.line([0, 20, 31, 20], fill=C("P06"))
+        for x in (4, 13, 22, 27):
+            d.point((x, 23 + (x % 3)), fill=C("P05"))
+        d.rectangle([0, 29, 31, 31], fill=C("P03")); d.line([0, 29, 31, 29], fill=C("P01"))
+        if variant == "outlet":                                       # 옥내 소화전함(붉은 철함 + 유리창)
+            d.rectangle([17, 2, 29, 18], fill=C("P52")); d.rectangle([18, 3, 28, 17], fill=C("P53"))
+            d.rectangle([20, 5, 26, 11], fill=C("P02")); d.line([20, 5, 26, 5], fill=C("P06"))
+            d.line([18, 3, 28, 3], fill=C("P54")); d.point((27, 14), fill=C("P09"))
+            d.line([17, 18, 29, 18], fill=C("P01"))
+    return img
+
+
+def jm_wall_tiles():
+    """지하시장 실내 벽(ts_jm_wall, 1-4): s07 벽과 같은 이름(윗면 wt_m은 같고 벽면만 상가 타일)."""
+    out = {f"wt_{m}": wall_top({e for e, b in WALL_BITS if m & b}) for m in range(16)}
+    out.update({"face_top": wall_face_jm("top"), "face_top_pipe": wall_face_jm("top", "sign", 1),
+                "face_top_vent": wall_face_jm("top", "stain", 2), "face_bot": wall_face_jm("bot"),
+                "face_bot_outlet": wall_face_jm("bot", "outlet")})
     return out
 
 

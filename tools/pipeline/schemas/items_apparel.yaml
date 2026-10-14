@@ -2,7 +2,8 @@
 doc: 13_items.md
 id_column: ID
 section: "### 5.4 몸통·전신 장비 (A-001~A-054, A-083)"
-rows: [A-001, A-016]
+rows: all
+id_filter: "^A-\\d{3}$"
 columns:
   ID: {field: id, type: id, pattern: "^A-\\d{3}$", required: true}
   이름: {field: name, type: str, required: true}

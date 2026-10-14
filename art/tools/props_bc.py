@@ -844,6 +844,10 @@ from props_sb import PROPS_SB, STATES_SB                                # 새벽
 for _k in PROPS_SB:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_SB)
+from props_jm import PROPS_JM, STATES_JM                                # 영등포 지하상가(1-4 지하시장)
+for _k in PROPS_JM:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_JM)
 
 STATES = {
     "board_bc": {s: (lambda s=s: notice_board(s)) for s in ("wanted", "torn", "crumpled", "crossed", "rate", "water", "official")},
@@ -853,6 +857,7 @@ STATES = {
     "manhole": {"open": lambda: manhole(True)},
 }
 STATES.update(STATES_SB)
+STATES.update(STATES_JM)
 
 
 if __name__ == "__main__":

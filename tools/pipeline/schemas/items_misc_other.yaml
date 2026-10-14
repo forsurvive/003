@@ -1,0 +1,15 @@
+# SD-13 §6.6 기타 소모품 → game/data/items_misc_other.json (1-4 파밍 v2: 해충 기피제·스텔스 보이·수리 키트 등)
+doc: 13_items.md
+id_column: ID
+section: "### 6.6 기타 소모품 (I-064~I-068)"
+rows: all
+id_filter: "^I-\\d{3}$"
+columns:
+  ID: {field: id, type: id, pattern: "^I-\\d{3}$", required: true}
+  이름: {field: name, type: str, required: true}
+  효과: {field: effect, type: str}
+  무게: {field: weight, type: float}
+  가격: {field: value, type: int}
+derive:
+  cat: "'aid'"
+  desc: "effect"

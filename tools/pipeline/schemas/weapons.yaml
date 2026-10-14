@@ -1,7 +1,9 @@
 # SD-13 무기 표 → game/data/weapons.json (단계 T 무기 2행 + 단계 0-7 MQ-P2 BB총·대걸레 자루, SD-19 §6.12)
 doc: 13_items.md
 id_column: ID
-rows: [W-002, W-041, W-065, W-067]
+rows: all
+id_filter: "^W-\\d{3}$"
+sections: ["### 3.4 ", "### 3.5 ", "### 3.6 ", "### 3.7 ", "#### 3.8.1 ", "#### 3.8.2 ", "#### 3.8.3 "]
 columns:
   ID: {field: id, type: id, pattern: "^W-\\d{3}$", required: true}
   이름: {field: name, type: str, required: true}
@@ -13,7 +15,7 @@ columns:
   탄창: {field: mag, type: int_or_none}
   무게: {field: weight, type: float}
   가격: {field: price, type: int}
-  내구: {field: durability, type: str, pattern: "^[SABCDE]$"}
+  내구: {field: durability, type: str, pattern: "^[SABCDE∞]$"}
   레이어: {field: layer, type: str}
   비고: {field: note, type: str}
 derive:

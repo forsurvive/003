@@ -85,7 +85,10 @@ func _transfer(id: String, n: int, taking: bool) -> void:
 		state["items"][id] = int(state["items"][id]) - n
 		if int(state["items"][id]) <= 0:
 			state["items"].erase(id)
-		st.call_fn("give", [id, n])
+		if id == "M-001":
+			st.call_fn("caps", [n])                                     # 캡(병뚜껑)은 소지 캡이 된다(1-4 파밍)
+		else:
+			st.call_fn("give", [id, n])
 		state["taken"] = int(state.get("taken", 0)) + n
 		if Loot.owned(bdef):
 			st.stolen[id] = int(st.stolen.get(id, 0)) + n

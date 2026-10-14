@@ -25,6 +25,10 @@ TIL = os.path.join(ROOT, "game", "assets", "tiles")
 CS = 40
 W, H = WB.W, WB.H
 NCX, NCY = W // CS, H // CS
+# 월드 → 실내 문(1-4, 지하로 내려가는 계단): 장소 L-ID · 요청 자리(타일) · 갈 실내 맵·표지 · 상호작용 이름
+DOORS = [{"lid": "L-R02-11", "near": (720, 1147), "to": "J-01", "mark": "from_W", "name": "영등포 지하상가 북쪽 출구", "prop": "subway_stairs"},
+         {"lid": "L-R02-13", "near": (734, 1156), "to": "J-02", "mark": "from_mall", "name": "역사 쇼핑몰 지하 통로", "prop": "subway_stairs_mall"},
+         {"lid": "L-UG-13", "near": (672, 1099), "to": "J-09", "mark": "from_W", "name": "영등포구청역 지하 통로", "prop": "subway_stairs_st"}]
 INSETS = [{"id": "X-S07", "mark": "from_vault", "at": (959, 1503)},          # 볼트 S-07 정문(L-R01-01)
           {"id": "X-BC", "center": (892, 1362)}]                             # 봉천 계단마을(L-R01-09)
 START = (959, 1503)                                                          # 도달성 검사 출발점 = 볼트 정문
@@ -815,12 +819,35 @@ def place_geo(R):
                     arrive = [int(xx[k] + x0), int(yy[k] + y0)]
                     break
         geo[lid] = {"bank": bank, "arrive": arrive}
-    geo["_han"] = [int(round(v)) for v in yc]                               # 한강 본류 세로 가운데(가로 칸마다): 주인공 강변 판정
+    # 월드 → 실내 문(1-4): 지하로 내려가는 계단 입구 2칸. 요청 자리에서 가장 가까운, 문 2칸과 그 아래 2칸이 모두 걸어서 닿는 곳.
+    # 그 장소의 도착 칸은 문 바로 아래(실내에서 나오면 문 앞에 선다 — 문 칸에 서면 다시 들어가 버린다).
+    doors = []
+    for spec in DOORS:
+        nx, ny = spec["near"]
+        best = None
+        for rr in range(0, 16):
+            for yy in range(ny - rr, ny + rr + 1):
+                for xx in range(nx - rr, nx + rr + 1):
+                    if not (1 <= xx < W - 2 and 1 <= yy < H - 2):
+                        continue
+                    if reach[yy, xx] and reach[yy, xx + 1] and reach[yy + 1, xx] and reach[yy + 1, xx + 1]:
+                        dd = (xx - nx) ** 2 + (yy - ny) ** 2
+                        if best is None or dd < best[0]:
+                            best = (dd, xx, yy)
+            if best is not None:
+                break
+        if best is None:
+            raise SystemExit("문 자리를 못 찾았다: %s" % spec)
+        _, xx, yy = best
+        doors.append({"lid": spec["lid"], "at": [xx, yy], "to": spec["to"], "mark": spec["mark"], "name": spec["name"], "prop": spec["prop"]})
+        geo.setdefault(spec["lid"], {"bank": "S", "arrive": None})["arrive"] = [xx, yy + 1]
+    geo["_doors"] = doors
+    geo["_han"] = [int(round(v)) for v in yc]                             # 한강 본류 세로 가운데(가로 칸마다): 주인공 강변 판정
     json.dump(geo, open(os.path.join(OUT, "place_geo.json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"), sort_keys=True)
-    n_arr = sum(1 for k, g in geo.items() if k != "_han" and g["arrive"])
+    n_arr = sum(1 for k, g in geo.items() if not k.startswith("_") and g["arrive"])
     log("장소 지리: 북안 %d · 남안 %d · 소속 없음 %d · 도착 칸 %d / 지상 %d" % (
-        sum(1 for k, g in geo.items() if k != "_han" and g["bank"] == "N"), sum(1 for k, g in geo.items() if k != "_han" and g["bank"] == "S"),
-        sum(1 for k, g in geo.items() if k != "_han" and g["bank"] == ""), n_arr, sum(1 for p in places.values() if p["region"] != "UG")))
+        sum(1 for k, g in geo.items() if not k.startswith("_") and g["bank"] == "N"), sum(1 for k, g in geo.items() if not k.startswith("_") and g["bank"] == "S"),
+        sum(1 for k, g in geo.items() if not k.startswith("_") and g["bank"] == ""), n_arr, sum(1 for p in places.values() if p["region"] != "UG")))
 
 
 def sample(R, x0, y0, w, h, out):

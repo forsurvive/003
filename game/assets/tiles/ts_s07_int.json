@@ -207,6 +207,22 @@
   "cover": 0,
   "solid": false
  },
+ "terrazzo_a": {
+  "atlas": [
+   31,
+   0
+  ],
+  "cover": 0,
+  "solid": false
+ },
+ "tunnel_a": {
+  "atlas": [
+   32,
+   0
+  ],
+  "cover": 0,
+  "solid": false
+ },
  "wall_top": {
   "atlas": [
    15,

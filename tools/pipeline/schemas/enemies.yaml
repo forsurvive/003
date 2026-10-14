@@ -1,8 +1,9 @@
 # SD-14 적 표 → game/data/enemies.json (단계 T: 큰바퀴 + 계엄군 보병 1, 단계 0-9: 기갑 계엄병 · S-07 보안요원,
 # 단계 0-10: 변이 들개 · 새벽인력 추심원·인솔조원 · 독사(§10.4 이름 있는 NPC 표 — 열 이름이 '기본 Lv'·'기본 HP', XP 열 없음))
+# 단계 1-4: 야생 구울 CR-200 · 떠돌이 구울 CR-201(§7 J-09 둥지) · 지하시장 경비 CR-456 · 계약 경호 구울 CR-457(§10 출입세·S5 가세)
 doc: 14_creatures-enemies.md
 id_column: ID
-rows: [CR-002, CR-104, CR-401, CR-405, CR-436, CR-437, CR-473, CR-534]
+rows: [CR-002, CR-104, CR-200, CR-201, CR-401, CR-405, CR-436, CR-437, CR-456, CR-457, CR-473, CR-534]
 columns:
   ID: {field: id, type: id, pattern: "^CR-\\d{3}$", required: true}
   이름: {field: name, type: str, required: true}

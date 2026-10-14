@@ -1,0 +1,19 @@
+# SD-13 §6.3 약물 → game/data/items_chems.json (1-4 파밍 v2: 지하시장 약상·약탈자 드롭)
+doc: 13_items.md
+id_column: ID
+section: "### 6.3 약물 (I-010~I-021)"
+rows: all
+id_filter: "^I-\\d{3}$"
+columns:
+  ID: {field: id, type: id, pattern: "^I-\\d{3}$", required: true}
+  이름: {field: name, type: str, required: true}
+  효과: {field: effect, type: str}
+  지속: {field: duration, type: str}
+  라드: {field: rads, type: lead_number}
+  중독 위험: {field: addict, type: str}
+  무게: {field: weight, type: float}
+  가격: {field: value, type: int}
+derive:
+  cat: "'aid'"
+  desc: "effect + (' · ' + duration if duration else '')"
+  heal: "num_in(effect, 'HP +', 0)"

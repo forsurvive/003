@@ -5,7 +5,7 @@
   set s07                        타일셋·소품 묶음(지금은 s07)
   grid … end                     글자 격자. 모든 줄 길이가 같아야 한다.
      # 또는 공백 = 벽(자동: 아래가 바닥이면 벽면 아랫칸, 두 칸 아래가 바닥이면 벽면 윗칸, 아니면 벽 윗면 + 테)
-     . 철판  , 장판  o 진료실 타일  = 격자  ~ 콘크리트  c 카펫  w 마루  m·M 곰팡이 핀 철판·격자
+     . 철판  , 장판  o 진료실 타일  = 격자  ~ 콘크리트  c 카펫  w 마루  m·M 곰팡이 핀 철판·격자  t 인조석(지하상가)  u 지하 통로 콘크리트
      - | + ^  바닥 유도선(가로·세로·교차·T자)
   prop 이름 x y                  소품(발 칸 왼쪽 위). 벽 소품(wall)은 벽면 윗칸에 건다.
   door x y [kind=slide|hatch|iron] [locked] ["표지"]
@@ -19,7 +19,7 @@
   trigger x y scene=장면 [w= h=] [cond="식"] [once]
                                  밟으면 대화 장면을 연다(cond가 참일 때, once면 한 번만).
   box x y 종류 [w= h=] [owner=인물ID|S7|PC] [lock=판정값] [name="이름"] [cond="식"]
-                                 용기(SD-12 §7.3, 0-9): 그 칸(보통 소품)을 조사하면 2단 창. 종류 = loot_s07.json 표. owner가 있으면
+                                 용기(SD-12 §7.3, 0-9): 그 칸(보통 소품)을 조사하면 2단 창. 종류 = loot.json 표. owner가 있으면
                                  [소유](꺼내면 절도), lock이면 [자물쇠 따기 n] 판정 뒤 열린다.
   term x y TM-ID [w= h=] [cond="식"]
                                  단말(SD-12 §7.4, 1-4): 그 칸(보통 책상 위 단말 소품)을 조사하면 단말 화면. 내용은 script/terms/*.txt.
@@ -50,7 +50,7 @@ SRC = os.path.join(ROOT, "maps")
 OUT = os.path.join(ROOT, "game", "data", "maps")
 TIL = os.path.join(ROOT, "game", "assets", "tiles")
 PROPS = os.path.join(ROOT, "game", "assets", "props")
-FLOOR = {".": "panel", ",": "lino_a", "o": "clinic_a", "=": "grate_a", "~": "concrete_a", "c": "carpet_a", "w": "wood_a", "j": "jangpan_a",
+FLOOR = {".": "panel", ",": "lino_a", "o": "clinic_a", "=": "grate_a", "~": "concrete_a", "c": "carpet_a", "w": "wood_a", "j": "jangpan_a", "t": "terrazzo_a", "u": "tunnel_a",
          "m": "panel_mold", "M": "grate_mold", "-": "guide_h", "|": "guide_v", "+": "guide_x", "^": "guide_t"}
 WALL = {"#", " "}
 DIRS = {"E", "SE", "S", "SW", "W", "NW", "N", "NE"}
@@ -288,7 +288,7 @@ def compile_map(m, prop_meta, known_vars, known_fns, scenes=()):
 
 def _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kind, solid, walk, ext=False, extra=()):
     """맵 명령(prop·door·exit·mark·npc·enemy·box·text·sign·trigger·struct) → out. 실내·바깥 공용."""
-    loot_kinds = set(json.load(open(os.path.join(ROOT, "game", "data", "loot_s07.json"), encoding="utf-8"))["tables"].keys())
+    loot_kinds = set(json.load(open(os.path.join(ROOT, "game", "data", "loot.json"), encoding="utf-8"))["tables"].keys())
     enemy_ids = set(json.load(open(os.path.join(ROOT, "game", "data", "enemies.json"), encoding="utf-8")).keys())
     npc_ids = set(json.load(open(os.path.join(ROOT, "game", "data", "npcs.json"), encoding="utf-8"))["npcs"].keys())
     for ln, words in m.cmds:
@@ -404,7 +404,7 @@ def _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kin
             elif c == "box":                                     # box x y 종류 [w= h=] [owner=] [lock=] [name=] [cond=] — 용기(0-9)
                 x, y, kind = int(pos[0]), int(pos[1]), pos[2]
                 if kind not in loot_kinds:
-                    raise Err(f"모르는 용기 종류 '{kind}'(loot_s07.json: {sorted(loot_kinds)})")
+                    raise Err(f"모르는 용기 종류 '{kind}'(loot.json: {sorted(loot_kinds)})")
                 e = {"x": x, "y": y, "w": int(opt.get("w", 1)), "h": int(opt.get("h", 1)), "kind": kind,
                      "owner": opt.get("owner", ""), "lock": int(opt.get("lock", 0)), "name": opt.get("name", ""), "cond": opt.get("cond", "")}
                 if e["cond"]:
@@ -565,6 +565,7 @@ def main():
         known_vars |= {q.replace("-", "") + s for s in ("_STAGE", "_RESULT", "_SKIP")}
     known_fns = {"karma", "aff", "quest", "stage", "result", "give", "take", "has", "caps", "xp", "wanted", "stat", "skill", "year"}
     npcs = json.load(open(os.path.join(ROOT, "game", "data", "npcs.json")))["npcs"]
+    enemy_rows = json.load(open(os.path.join(ROOT, "game", "data", "enemies.json"), encoding="utf-8"))
     alias = alias_of(npcs)
     scenes = set(json.load(open(os.path.join(ROOT, "game", "data", "dialogue", "_index.json")))["scenes"])
     errors, maps = [], {}
@@ -572,12 +573,16 @@ def main():
         m = MapSrc(path)
         out = compile_map(m, prop_meta, known_vars, known_fns, scenes)
         for n in (out or {}).get("npcs", []):
+            if n["id"] in enemy_rows and "sheet" in n:                   # 이름 없는 주민(1-4: 지하시장 경비 CR-456 등) — 이름표는 직함
+                continue
             if n["id"] not in npcs:
                 m.err(n["line"], f"모르는 인물 ID {n['id']}(SD-07b)")
             elif n["id"] in alias:
                 m.err(n["line"], f"{n['id']}는 주요 인물 {alias[n['id']]}와 같은 사람이다 — C-ID를 쓴다(초상화·대사가 C-ID에 붙는다)")
         errors += m.errors
         if out:
+            fold = os.path.basename(os.path.dirname(path))
+            out["region"] = fold.upper() if re.match(r"^r\d\d$", fold) else ""     # 루팅 등급 권역(1-4, SD-13 §9.2)
             if out["id"] in maps:
                 errors.append(f"{path}: 맵 ID 겹침 {out['id']}")
             maps[out["id"]] = (out, m)

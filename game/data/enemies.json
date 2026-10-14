@@ -29,6 +29,36 @@
   "tier": "약",
   "xp": 5
  },
+ "CR-200": {
+  "_src": "14_creatures-enemies.md:825",
+  "attack": "근접 5",
+  "dr": 0,
+  "hp": 25,
+  "id": "CR-200",
+  "level": 3,
+  "name": "야생 구울",
+  "part_weights": "PW-H",
+  "pattern": "비명 뒤 한꺼번에 돌진. 3~6마리. 첫 공격은 달리며 내려치기",
+  "radius": 0.3,
+  "speed": 4.0,
+  "tier": "약",
+  "xp": 7
+ },
+ "CR-201": {
+  "_src": "14_creatures-enemies.md:826",
+  "attack": "근접 16",
+  "dr": 5,
+  "hp": 80,
+  "id": "CR-201",
+  "level": 6,
+  "name": "떠돌이 구울",
+  "part_weights": "PW-H",
+  "pattern": "2077년 방호복 잔해(벗길 수 없음)",
+  "radius": 0.3,
+  "speed": 4.0,
+  "tier": "중",
+  "xp": 15
+ },
  "CR-401": {
   "_src": "14_creatures-enemies.md:1059",
   "dr": 18,
@@ -84,6 +114,34 @@
   "special": "'인력' 호송. 포로의 작업 목줄 원격기 소지(처치하면 포로 해방)",
   "weapon_main": "자동소총",
   "xp": 15
+ },
+ "CR-456": {
+  "_src": "14_creatures-enemies.md:1200",
+  "dr": 12,
+  "hp": 90,
+  "id": "CR-456",
+  "level": 8,
+  "name": "지하시장 경비",
+  "part_weights": "PW-H",
+  "radius": 0.3,
+  "rank": "1",
+  "special": "출입구 고정. 셔터를 내려 지형을 바꾼다",
+  "weapon_main": "자동소총 / 산탄총",
+  "xp": 20
+ },
+ "CR-457": {
+  "_src": "14_creatures-enemies.md:1201",
+  "dr": 18,
+  "hp": 130,
+  "id": "CR-457",
+  "level": 12,
+  "name": "계약 경호 구울",
+  "part_weights": "PW-H",
+  "radius": 0.3,
+  "rank": "2",
+  "special": "박춘삼과 같은 직종(이름 있는 NPC는 10.4절)",
+  "weapon_main": "전투 산탄총 + 소방 도끼",
+  "xp": 30
  },
  "CR-473": {
   "_src": "14_creatures-enemies.md:1238",

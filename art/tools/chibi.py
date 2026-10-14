@@ -229,6 +229,7 @@ class Head:
         lk, face = self.look, self.face
         kid, fem = lk.body == "K1", lk.body in ("F1", "F2", "E2")
         kind = "shut" if face in ("blink", "fire", "smile") else "hurt" if face == "hurt" else "open"
+        feral = lk.skin == "SG2" and lk.torso == "T16"                       # 야생 구울 외형(SG2 피부 + 누더기)
         ex0, ey = 0.36, 0.2 if not kid else 0.22
         for side in (-1, 1):
             ex = side * ex0
@@ -261,6 +262,9 @@ class Head:
                     (lx, ly, lz), nz = hit
                     if lz < 0.0 or self.hair_at(lx, ly, lz) is not None:
                         continue                                             # 앞머리에 가린 곳
+                    if feral:                                                # 야생 구울(1-4): 흐린 우윳빛 눈(동공 없음)
+                        self.cv.put(px + 0.5, py + 0.5, nz + 0.01, C("P09") if ch == "w" else C("P07"))
+                        continue
                     self.cv.put(px + 0.5, py + 0.5, nz + 0.01, C("P09") if ch == "w" else C("P00"))
 
     def _head_point(self, x, y):

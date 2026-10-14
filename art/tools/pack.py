@@ -76,7 +76,13 @@ ENEMIES = [("en_cr401_loco", "M1-S4-HR02-H1-T06-1-PF01-HD04-EY00-PR034", "rifle"
            # 0-10 MQ-101 새벽인력 추적조(SD-14 §10.9, 새벽인력 팔레트 PF-05): 추심원 CR-436 기관단총 · 인솔조원 CR-437 소총 · 독사(C-021, SD-07b 외형)
            ("en_cr436_loco", "M2-S3-HR01-H2-T12-2-PF05-HD05-EY00", "smg"),
            ("en_cr437_loco", "M1-S4-HR02-H1-T05-1-PF05-HD02-EY00", "rifle"),
-           ("en_c021_loco", "M1-S4-HR01-H1-T12-1-PF05-HD00-EY05-PR027", "smg")]
+           ("en_c021_loco", "M1-S4-HR01-H1-T12-1-PF05-HD00-EY05-PR027", "smg"),
+           # 1-4 지하시장(SD-14 §7·§10): 야생 구울 CR-200(누더기, 맨손) · 떠돌이 구울 CR-201(2077 방호복 잔해) ·
+           # 지하시장 경비 CR-456(가죽 + 자동소총) · 계약 경호 구울 CR-457(고철 갑옷 + 전투 산탄총)
+           ("en_cr200_loco", "M1-SG2-HR00-H1-T16-2-PF00-HD00-EY00", None),
+           ("en_cr201_loco", "M2-SG2-HR00-H1-T10-2-PF00-HD00-EY00", None),
+           ("en_cr456_loco", "M1-SG1-HR01-H1-T05-1-PF00-HD02-EY00", "rifle"),
+           ("en_cr457_loco", "M2-SG1-HR00-H5-T04-1-PF00-HD05-EY00", "rifle")]
 
 
 def main():

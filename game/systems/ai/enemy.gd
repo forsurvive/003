@@ -58,7 +58,7 @@ static var prof := {"per": 0, "tac": 0, "act": 0, "n_per": 0, "n_tac": 0, "n_pat
 func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w, opts: Dictionary = {}) -> void:
 	row = enemy_row
 	weapon = weapon_row
-	arm = str(opts.get("arm", "baton" if row["id"] == "CR-473" else ""))
+	arm = str(opts.get("arm", "baton" if row["id"] == "CR-473" else ("claw" if row["id"] in ["CR-200", "CR-201"] else "")))
 	who = str(opts.get("who", ""))
 	stance = str(opts.get("stance", ""))
 	var is_roach: bool = row["id"] == "CR-002"
@@ -71,14 +71,14 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 			sheet = "cr_cr104_loco"
 		"CR-405":
 			sheet = "en_cr405_loco"
-		"CR-436", "CR-437":
+		"CR-436", "CR-437", "CR-200", "CR-201", "CR-456", "CR-457":   # 1-4: 야생·떠돌이 구울(맨손), 지하시장 경비·계약 경호 구울
 			sheet = "en_%s_loco" % str(row["id"]).to_lower().replace("-", "")
 		"CR-534":
 			sheet = "en_c021_loco"                                  # 독사(SD-14 §10.4, 외형 SD-07b C-021)
 		"CR-473":
 			sheet = "en_cr473_%s_loco" % arm
 	setup(sheet, pos, w)
-	style = "swarm" if is_roach else ("dog" if is_dog else ("melee" if arm == "baton" else "shooter"))
+	style = "swarm" if is_roach else ("dog" if is_dog else ("melee" if arm in ["baton", "claw"] else "shooter"))
 	if is_dog:                                                       # 변이 들개(SD-14 §4.2): 4.5t/초, 지그재그로 달려와 문다
 		loco.custom = {"run": {"frames": 4, "px": 4.0, "diag": 4.0, "contact": [0, 2], "speed_t": float(row["speed"])},
 			"walk": {"frames": 4, "px": 4.0, "diag": 4.0, "contact": [0, 2], "speed_t": float(row["speed"]) * 0.45}}
@@ -386,8 +386,13 @@ func _die_step(dt: float) -> void:
 		var f := mini(int(_dead_t * 10.0), sprite.sprite_frames.get_frame_count("death_E") - 1)
 		sprite.animation = "death_E"
 		sprite.frame = f
+	elif _dead_t > 0.3:                                              # 사람형(1-4 파밍): 깜박인 뒤 바닥에 눕는다 — 그 자리가 유해(조사하면 소지품)
+		sprite.rotation_degrees = -90.0
+		sprite.position = Vector2(-4, -8)
+		sprite.modulate = Color(0.68, 0.66, 0.7)
+		z_index = -1
 	else:
-		sprite.modulate = Color(1, 1, 1, 0) if _dead_t > 0.3 else (Color(3, 3, 3) if int(_dead_t * 20) % 2 == 0 else Color(1, 1, 1))
+		sprite.modulate = Color(3, 3, 3) if int(_dead_t * 20) % 2 == 0 else Color(1, 1, 1)
 
 
 func _show() -> void:

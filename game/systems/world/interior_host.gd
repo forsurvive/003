@@ -88,6 +88,7 @@ func _ready() -> void:
 	combat.hurt.connect(func(_a: float) -> void: _hurt_t = 0.3)
 	combat.resident_hit.connect(_on_resident_hit)
 	combat.resident_down.connect(_on_resident_down)
+	combat.enemy_down.connect(_on_enemy_down)                        # 유해 소지품(1-4 파밍)
 	_handlers()
 	_load_items()
 	var layer := CanvasLayer.new()
@@ -576,6 +577,37 @@ func box_owner_label(b: Dictionary) -> String:
 	return st.npc_name(o)
 
 
+## 용기 내용물(1-4 파밍 v2): 맵 권역으로 등급을 정하고, 유해(_corpse)는 그 적의 드롭 표로 굴린다
+func box_contents(b: Dictionary) -> Dictionary:
+	if str(b.get("kind", "")) == "_corpse":
+		var k := str(b["key"])
+		if not st.boxes.has(k):
+			st.boxes[k] = {"items": Loot.drop(str(b["eid"]), k, Loot.tier_of(st, map_region(Vector2i(int(b["x"]), int(b["y"]))))),
+				"opened": 0, "taken": 0}
+		return st.boxes[k]
+	return Loot.contents(st, map.id, b, map_region(Vector2i(int(b["x"]), int(b["y"]))))
+
+
+## 칸의 권역(루팅 등급): 월드는 청크 권역, 실내는 맵 원고 폴더(r01·r02)
+func map_region(t: Vector2i) -> String:
+	if map is WorldMap:
+		return (map as WorldMap).region_at(t)
+	return str(map.data.get("region", ""))
+
+
+## 쓰러진 적 자리에 유해(소지품 용기)를 둔다(SD-13 §9.3 세력·적 장비표). 바퀴·들개처럼 드롭이 없거나 고기만 주는 크리처는 두지 않는다
+func _on_enemy_down(e: Enemy) -> void:
+	var eid := str(e.get_meta("enemy_id", ""))
+	if not Loot.drops.has(eid) or eid in ["CR-002", "CR-104"]:
+		return
+	var c := map.tile_of(e.loco.logical)
+	if map.boxes.has(c):
+		return
+	var nm := str(combat.enemy_rows.get(eid, {}).get("name", "적"))
+	map.boxes[c] = {"x": c.x, "y": c.y, "w": 1, "h": 1, "kind": "_corpse", "eid": eid, "name": nm + "의 유해", "owner": "", "lock": 0,
+		"cond": "", "key": "corpse:%s:%d,%d@%d:%d" % [map.id, c.x, c.y, int(st.vars.get_v("GAME_DAY")), Time.get_ticks_msec()]}
+
+
 func box_lock_key(b: Dictionary) -> String:
 	return Loot.key(map.id, b, st.year())
 
@@ -585,7 +617,7 @@ func box_locked(b: Dictionary) -> bool:
 	var lv := int(b.get("lock", 0))
 	if lv <= 0:
 		return false
-	var c := Loot.contents(st, map.id, b)
+	var c := box_contents(b)
 	return not bool(c.get("unlocked", false))
 
 
@@ -594,7 +626,7 @@ func open_box(b: Dictionary) -> void:
 	if body == "toddler":                                                # 돌잔치의 아기는 용기를 못 연다
 		say_text("손이 닿지 않는다.")
 		return
-	var c := Loot.contents(st, map.id, b)
+	var c := box_contents(b)
 	if box_locked(b):
 		var lv := int(b.get("lock", 0))
 		if st.skill("LOCKPICK") < lv:
@@ -905,7 +937,7 @@ func box_prompt() -> String:
 	var tag := ""
 	if box_locked(b):
 		tag = "  [잠김 %d]" % int(b.get("lock", 0))
-	elif Loot.contents(st, map.id, b)["items"].is_empty():
+	elif box_contents(b)["items"].is_empty():
 		tag = "  [빈 상자]"
 	if Loot.owned(b):
 		tag += "  [소유]"
@@ -1295,7 +1327,8 @@ func _handlers() -> void:
 
 # ---------------------------------------------------------------- 핍-보이·소지품
 func _load_items() -> void:
-	for f in ["items_aid", "items_food", "items_drink", "items_quest", "items_apparel", "items_misc_money", "items_misc_mat", "items_misc_func"]:          # 파이프라인이 SD-13 표에서 뽑은 아이템
+	for f in ["items_aid", "items_food", "items_drink", "items_quest", "items_apparel", "items_misc_money", "items_misc_mat", "items_misc_func",
+			"items_chems", "items_misc_other", "items_apparel_head", "items_misc_crit", "items_junk", "items_ammo"]:          # 파이프라인이 SD-13 표에서 뽑은 아이템(1-4: 표 전체)
 		var p := "res://data/%s.json" % f
 		if FileAccess.file_exists(p):
 			items_db.merge(JSON.parse_string(FileAccess.get_file_as_string(p)))

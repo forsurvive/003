@@ -32,7 +32,8 @@ var stolen := {}                        ## 장물(SD-12 §9.2): 아이템 ID -> 
 var dead := {}                          ## 죽은 인물 ID -> true(0-9): 뒤 시대 맵에서 서지 않는다
 var places := PlaceLog.new()             ## 장소 발견 상태(1-2, SD-12 §5.5)
 var book := NpcBook.new()               ## 인물 수첩(1-2, SD-12 §3.11)
-const ENEMY_FACTION := {"CR-401": "BJ", "CR-405": "BJ", "CR-435": "SB", "CR-436": "SB", "CR-437": "SB", "CR-438": "SB", "CR-534": "SB"}
+const ENEMY_FACTION := {"CR-401": "BJ", "CR-405": "BJ", "CR-435": "SB", "CR-436": "SB", "CR-437": "SB", "CR-438": "SB", "CR-534": "SB",
+	"CR-456": "JH", "CR-457": "JH"}
 var enc := {}                           ## 인카운터 상태(1-3, Encounters): 안전 간격 · 오늘 추적대 수 · EP 사용 · 휴전
 var portrait_alias := {}                ## 인물 ID -> 초상화 키(맵에서 다른 시대 모습으로 선 인물: 2259년 아이 하도윤 등)
 
