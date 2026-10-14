@@ -45,6 +45,7 @@ var date_text := ""                              ## 핍-보이 위 줄 날짜
 var cam_lead := Vector2.ZERO                     ## 카메라 리드(조준 쪽으로 끌린 만큼)
 var text_seen := {}                              ## 여러 번 조사하는 글: 키 -> 읽은 횟수
 var _talking: Dictionary = {}
+var _barking := false                                               ## 지금 대화가 바크 한 줄인가(수첩에 올리지 않는다)
 var _last_tile := Vector2i(-99, -99)
 var _zone := ""                                                  ## 월드에서 지금 선 구역(손 맵 이름 또는 "W") — 바뀌면 map_entered(1-1)
 var _region := ""
@@ -65,6 +66,7 @@ func _ready() -> void:
 	box = DialogueBox.new()
 	add_child(box)
 	box.finished.connect(_on_dialogue_done)
+	box.line_shown.connect(_on_line)
 	box.subject = _subject
 	ev = EventRunner.new()
 	add_child(ev)
@@ -745,6 +747,7 @@ func _on_resident_down(id: String, killed: bool) -> void:
 		if not bool(st.npcs.get(id, {}).get("evil", false)):
 			st.call_fn("karma", [-100])                                  # 악하지 않은 인물 살해(목격자가 없어도)
 		combat._pop(st.npc_name(id) + " 사망", a.loco.logical + Vector2(0, -20), Color("E04A35"))
+		st.book.died(id, date_text)                                     # 눈앞의 죽음 = 아는 죽음
 	else:
 		n["down_t"] = KO_SECS
 		n["down_kind"] = "ko"
@@ -815,6 +818,7 @@ func talk(n: Dictionary) -> void:
 	if g.is_empty():
 		var bark: String = n["bark"] if n["bark"] != "" else "……"
 		g = {"id": "bark_" + n["id"], "labels": {"START": 0}, "ops": [{"op": "line", "who": n["id"], "emo": "기본", "text": bark}, {"op": "end"}]}
+		_barking = true
 	talked.emit(n["id"], g.get("id", ""))
 	box.open(st, g)
 
@@ -886,13 +890,15 @@ func _draw_hud() -> void:
 		if not blink:
 			_txt(Vector2(320 + r / 2.0, 9), "[%s]" % det, HU[5] if det == "숨음" else HUD_RED, HORIZONTAL_ALIGNMENT_CENTER)
 	_ring(Vector2(36, 324 + b))
+	_quest_pointer(vs)
 	var ny := 8.0 if hints.is_empty() else 36.0
 	for n in notes:
 		_txt(Vector2(8, ny), n[0], HU[6] if n[1] > 3.0 else HU[5])
 		ny += 14.0
-	var goal := _objective()
-	if goal != "":
-		_txt(Vector2(8, maxf(66.0, ny + 4.0)), goal, HU[5])                  # 알림 줄이 많으면 그 아래로
+	var gy := maxf(66.0, ny + 4.0)                                         # 목표 줄 최대 3줄(추적 1 + 고정 2) — 알림 줄이 많으면 그 아래로
+	for goal in st.quests.objectives():
+		_txt(Vector2(8, gy), _clip(goal, 220.0), HU[5] if goal.begins_with("▶") else HU[4])
+		gy += 12.0
 
 	var bp := box_prompt()
 	if bp != "" and not _box_hinted:                                        # 처음 용기 앞에 서면 한 번 알려 준다
@@ -918,19 +924,31 @@ func _draw_hud_touch(vs: Vector2, c: Combatant, low: bool, ap: float) -> void:
 	if det != "" and not (det == "위험" and fmod(_hud_t, 0.3) < 0.15):
 		_txt(Vector2(320 + r / 2.0, 48), "[%s]" % det, HU[5] if det == "숨음" else HUD_RED, HORIZONTAL_ALIGNMENT_CENTER)
 	_ring(Vector2(604 + r, 80))
+	_quest_pointer(vs)
 	var ny := 48.0 + (28.0 if not hints.is_empty() else 0.0)
 	for n in notes:
 		_txt(Vector2(8, ny), n[0], HU[6] if n[1] > 3.0 else HU[5])
 		ny += 14.0
-	var goal := _objective()
-	if goal != "":
-		_txt(Vector2(8, maxf(116.0, ny + 4.0)), goal, HU[5])
+	var gy := maxf(116.0, ny + 4.0)
+	for goal in st.quests.objectives():
+		_txt(Vector2(8, gy), _clip(goal, 220.0), HU[5] if goal.begins_with("▶") else HU[4])
+		gy += 12.0
 	var bp := box_prompt()
 	if bp != "":
 		_txt(Vector2(320 + r / 2.0, 250 + vs.y - 360.0), bp, HUD_RED if bp.ends_with("[소유]") else HU[6], HORIZONTAL_ALIGNMENT_CENTER)
 	if buddy_name != "" and combat.buddy != null:
 		_txt(Vector2(8, 152), buddy_name, HU[5])
 		_bar(Vector2(8, 166), 60.0, 1.0, "", HU[5])
+
+
+## HUD 글을 폭 w(px)에 맞춰 자른다(넘치면 '…')
+func _clip(t: String, w: float) -> String:
+	if font_s.get_string_size(t, HORIZONTAL_ALIGNMENT_LEFT, -1, 10).x <= w:
+		return t
+	var n := t.length()
+	while n > 1 and font_s.get_string_size(t.substr(0, n) + "…", HORIZONTAL_ALIGNMENT_LEFT, -1, 10).x > w:
+		n -= 1
+	return t.substr(0, n).strip_edges() + "…"
 
 
 func _bar(p: Vector2, w: float, f: float, label: String, col: Color) -> void:
@@ -980,6 +998,73 @@ func _ring(c: Vector2) -> void:
 			var found: bool = st.places.get_state(lid) >= PlaceLog.FOUND
 			banner.draw_rect(Rect2(q - Vector2(2, 2), Vector2(4, 4)), HU[0])
 			banner.draw_rect(Rect2(q - Vector2(1, 1), Vector2(3, 3)) if found else Rect2(q - Vector2(1, 1), Vector2(3, 3)), HU[6], found)
+		var lead := quest_lead()                                           # 퀘스트 마커(SD-12 §3.12): 가장 가까운 1개 굵게, 나머지 작게 — 방향만
+		for m in st.quests.marks(st.places):
+			var e: Dictionary = PlaceLog.db[m["lid"]]
+			var d := Vector2(int(e["tx"]) - me.x, int(e["ty"]) - me.y)
+			if d.length() < 1.0:
+				continue
+			var big: bool = not lead.is_empty() and m["lid"] == lead["lid"] and m["id"] == lead["id"]
+			var u := d.normalized()
+			var q := c + u * (25.5 if big else 26.0)
+			var r := 4.0 if big else 2.5
+			var tri := PackedVector2Array([q + u * r, q - u * r + u.orthogonal() * r, q - u * r - u.orthogonal() * r])
+			banner.draw_colored_polygon(tri, HU[0])
+			banner.draw_colored_polygon(PackedVector2Array([q + u * (r - 1.0), q - u * (r - 1.0) + u.orthogonal() * (r - 1.0),
+				q - u * (r - 1.0) - u.orthogonal() * (r - 1.0)]), HU[7] if big else HU[5])
+
+
+## 굵게 보일 퀘스트 마커: 추적 퀘스트(없으면 고정) 마커 중 가장 가까운 것. 없으면 {}
+func quest_lead() -> Dictionary:
+	if not (map is WorldMap) or player == null:
+		return {}
+	var me := map.tile_of(player.loco.logical)
+	var best := {}
+	var bd := INF
+	for m in st.quests.marks(st.places):
+		var e: Dictionary = PlaceLog.db[m["lid"]]
+		var dd := Vector2(int(e["tx"]) - me.x, int(e["ty"]) - me.y).length() + (0.0 if m["main"] else 1e6)   # 추적 쪽이 먼저
+		if dd < bd:
+			bd = dd
+			best = m
+	return best
+
+
+## 화면 위 퀘스트 표식(SD-12 §3.12 '화면 가장자리'): 굵은 마커 1개 — 화면 안이면 장소 위에 ▼(위아래로 까딱), 밖이면 가장자리에서 그쪽을 가리킨다
+func _quest_pointer(vs: Vector2) -> void:
+	var m := quest_lead()
+	if m.is_empty():
+		return
+	var e: Dictionary = PlaceLog.db[m["lid"]]
+	var me := map.tile_of(player.loco.logical)
+	if Vector2(int(e["tx"]) - me.x, int(e["ty"]) - me.y).length() < 2.0:
+		return
+	var k := player.get_viewport().get_canvas_transform().get_scale().x
+	var sp := player.get_global_transform_with_canvas().origin + (Vector2(int(e["tx"]) * 32 + 16, int(e["ty"]) * 32) - player.loco.logical) * k
+	var inner := Rect2(Vector2(14, 14), vs - Vector2(28, 28))
+	var tri: PackedVector2Array
+	if inner.has_point(sp):
+		var tip := sp + Vector2(0, -4.0 - 2.0 * absf(sin(_hud_t * 3.0)))
+		tri = PackedVector2Array([tip + Vector2(-5, -7), tip + Vector2(5, -7), tip])
+	else:
+		var mid := vs / 2.0
+		var u := (sp - mid).normalized()
+		var t := INF                                                      # 가운데에서 그 방향으로 안쪽 사각형 테두리까지
+		if absf(u.x) > 0.001:
+			t = minf(t, (inner.size.x / 2.0) / absf(u.x))
+		if absf(u.y) > 0.001:
+			t = minf(t, (inner.size.y / 2.0) / absf(u.y))
+		var q := mid + u * (t - 2.0 * absf(sin(_hud_t * 3.0)))              # 화살촉(꼬리 홈) — 그쪽으로 까딱
+		var o := u.orthogonal()
+		tri = PackedVector2Array([q + u * 6.0, q - u * 5.0 + o * 5.0, q - u * 2.0, q - u * 5.0 - o * 5.0])
+	var c := tri[0] * 0.0
+	for p in tri:
+		c += p / tri.size()
+	var outer := PackedVector2Array()
+	for p in tri:
+		outer.append(c + (p - c) * 1.4)
+	banner.draw_colored_polygon(outer, HU[0])
+	banner.draw_colored_polygon(tri, HU[7])
 
 
 ## 방위 링에 보일 장소: 40타일 안 · 마커 Y(숨김 장소는 발견 뒤) — 미상도 빈 칸으로 보인다(SD-12 §5.5 '미상: 40타일 안 빈 아이콘')
@@ -997,17 +1082,10 @@ func _ring_places(me: Vector2i) -> Array:
 	return out
 
 
-## 목표 줄(SD-12 §4.2): 진행 중인 메인 퀘스트의 지금 단계 기록 한 줄
+## 목표 줄 첫 줄(일시 정지 메뉴 '지금 할 일'): QuestLog.objectives()의 맨 위
 func _objective() -> String:
-	for id in ["MQ-P2", "MQ-P3", "MQ-P4", "MQ-101"]:
-		var s := st.quests.stage(id)
-		if s > 0 and s < 100:
-			var best := ""
-			for n in st.quests.stages_of(id):
-				if int(n) <= s and st.quests.log_text(id, int(n)) != "":
-					best = st.quests.log_text(id, int(n))
-			return "▶ " + best if best != "" else ""
-	return ""
+	var o := st.quests.objectives()
+	return str(o[0]) if not o.is_empty() else ""
 
 
 ## 원고의 진행기 명령(0-7). 이벤트 실행기가 모르는 명령을 여기서 처리하고 done을 부른다
@@ -1018,6 +1096,15 @@ func _handlers() -> void:
 		var p := open_pipboy()
 		p.first = true
 		p.closed.connect(func(_ok: bool) -> void: done.call())
+	ev.handlers["meet"] = func(a: Array, done: Callable) -> void:      # 이름 소개(수첩 등록, SD-12 §3.11): meet 인물ID
+		st.book.meet(str(a[0]), date_text)
+		done.call()
+	ev.handlers["memo"] = func(a: Array, done: Callable) -> void:      # 한 줄 메모(퀘스트가 정한 사실): memo 인물ID 문장…
+		st.book.memo(str(a[0]), " ".join(a.slice(1)), date_text)
+		done.call()
+	ev.handlers["obit"] = func(a: Array, done: Callable) -> void:      # 소식으로 안 죽음: obit 인물ID
+		st.book.died(str(a[0]), date_text)
+		done.call()
 	ev.handlers["equip"] = func(a: Array, done: Callable) -> void:
 		combat.equip(str(a[0]) if a.size() > 0 and str(a[0]) != "none" else "", st)
 		done.call()
@@ -1277,6 +1364,9 @@ func _drain_events() -> void:
 		match str(q.get("kind", "")):
 			"start":
 				_note("새 퀘스트: " + st.quests.title(str(q["id"])))
+				st.quests.auto_track(str(q["id"]))
+				for lid in st.quests.places_of(str(q["id"])):                # 목표 장소의 위치를 알게 된다(지도 윤곽 아이콘·퀘스트 ▼)
+					st.places.raise(lid, PlaceLog.MARKED)
 			"done":
 				_note("퀘스트 완료: " + st.quests.title(str(q["id"])))
 	st.quests.events.clear()
@@ -1338,7 +1428,15 @@ func _pip_action(kind: String, id: String) -> void:
 		pipboy.info = status()
 
 
+## 대화 줄이 뜰 때: 말한 이름 있는 인물을 인물 수첩에 올린다(바크만 들은 인물은 없음, SD-12 §3.11)
+func _on_line(s: Dictionary) -> void:
+	if _barking:
+		return
+	st.book.meet(str(s.get("who", "")), date_text)                       # 알림은 띄우지 않는다(프롤로그에서 수십 명 — 수첩을 열면 최근 순 맨 위)
+
+
 func _on_dialogue_done() -> void:
+	_barking = false
 	ev.cam_locked = false
 	if not _talking.is_empty() and _talking["routine"] != null:
 		_talking["routine"].resume()

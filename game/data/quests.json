@@ -1,7 +1,179 @@
 {
+ "acts": [
+  {
+   "goal": "볼트에서 자라고, 나간다",
+   "n": 0,
+   "name": "프롤로그 「S-07」",
+   "paths": [],
+   "quests": [
+    "MQ-P1",
+    "MQ-P2",
+    "MQ-P3",
+    "MQ-P4"
+   ],
+   "rule": "선형. P4 탈출 방법 4가지",
+   "src": "03a_main-story-part1.md:238",
+   "title": "S-07"
+  },
+  {
+   "goal": "내 핍-보이의 관리자 코드가 무엇인지 알아낸다. 현상금 추적을 따돌린다.",
+   "goal_src": "03a_main-story-part1.md:1044",
+   "n": 1,
+   "name": "1막 「미등록자」",
+   "paths": [
+    "MQ-103",
+    "MQ-104",
+    "MQ-105"
+   ],
+   "quests": [
+    "MQ-101",
+    "MQ-102",
+    "MQ-103",
+    "MQ-104",
+    "MQ-105",
+    "MQ-106"
+   ],
+   "rule": "103~105 중 하나",
+   "src": "03a_main-story-part1.md:239",
+   "title": "미등록자"
+  },
+  {
+   "goal": "강 건너 서울의 세력들을 만난다",
+   "n": 2,
+   "name": "2막 「강」",
+   "paths": [
+    "MQ-201",
+    "MQ-202",
+    "MQ-203",
+    "MQ-204"
+   ],
+   "quests": [
+    "MQ-201",
+    "MQ-202",
+    "MQ-203",
+    "MQ-204",
+    "MQ-205",
+    "MQ-206",
+    "MQ-207"
+   ],
+   "rule": "횡단 넷 중 하나. 205·206은 권장",
+   "src": "03a_main-story-part1.md:240",
+   "title": "강"
+  },
+  {
+   "goal": "관제망의 세 열쇠 중 둘의 행방을 정한다",
+   "n": 3,
+   "name": "3막 「세 개의 열쇠」",
+   "paths": [
+    "MQ-301",
+    "MQ-302",
+    "MQ-303"
+   ],
+   "quests": [
+    "MQ-301",
+    "MQ-302",
+    "MQ-303",
+    "MQ-304"
+   ],
+   "rule": "셋 중 둘. 304는 선택이며 302를 대신할 수 있다",
+   "src": "03a_main-story-part1.md:241",
+   "title": "세 개의 열쇠"
+  },
+  {
+   "goal": "볼트 S-07과 어머니를 되찾는다",
+   "n": 4,
+   "name": "4막 「개방의 대가」",
+   "paths": [],
+   "quests": [
+    "MQ-401",
+    "MQ-402",
+    "MQ-403"
+   ],
+   "rule": "401·402 순서 자유. 403은 둘의 결과로 닫힌다",
+   "src": "03a_main-story-part1.md:242",
+   "title": "개방의 대가"
+  },
+  {
+   "goal": "계엄 아래에서 버틴다",
+   "n": 5,
+   "name": "5막 「서울 회의」",
+   "paths": [
+    "MQ-503",
+    "MQ-504",
+    "MQ-505",
+    "MQ-506",
+    "MQ-507"
+   ],
+   "quests": [
+    "MQ-501",
+    "MQ-502",
+    "MQ-503",
+    "MQ-504",
+    "MQ-505",
+    "MQ-506",
+    "MQ-507",
+    "MQ-508"
+   ],
+   "rule": "위기 퀘스트는 아무것이나 몇 개든",
+   "src": "03a_main-story-part1.md:243",
+   "title": "서울 회의"
+  },
+  {
+   "goal": "관제 본부의 문을 연다",
+   "n": 6,
+   "name": "6막 「사대문 안」",
+   "paths": [
+    "MQ-601",
+    "MQ-602",
+    "MQ-603",
+    "MQ-604"
+   ],
+   "quests": [
+    "MQ-601",
+    "MQ-602",
+    "MQ-603",
+    "MQ-604",
+    "MQ-605"
+   ],
+   "rule": "진입 넷 중 실제로 들어간 길 하나",
+   "src": "03a_main-story-part1.md:244",
+   "title": "사대문 안"
+  },
+  {
+   "goal": "관제 본부 안으로",
+   "n": 7,
+   "name": "7막 「종전」",
+   "paths": [],
+   "quests": [
+    "MQ-701",
+    "MQ-702"
+   ],
+   "rule": "공동 작전 또는 단독",
+   "src": "03a_main-story-part1.md:245",
+   "title": "종전"
+  },
+  {
+   "goal": "그 후의 서울",
+   "n": 99,
+   "name": "에필로그",
+   "paths": [],
+   "quests": [
+    "MQ-E1"
+   ],
+   "rule": "—",
+   "src": "03a_main-story-part1.md:246",
+   "title": "에필로그"
+  }
+ ],
  "quests": {
   "MQ-101": {
+   "act": 1,
    "key": "MQ101",
+   "path": false,
+   "places": [
+    "L-R01-09"
+   ],
+   "places_src": "03a_main-story-part1.md:1052",
    "stages": {
     "10": {
      "done": "봉천 계단마을 입구",
@@ -32,7 +204,9 @@
    "title": "산 아래 마을"
   },
   "MQ-102": {
+   "act": 1,
    "key": "MQ102",
+   "path": false,
    "stages": {
     "10": {
      "done": "단서 1개 이상",
@@ -48,7 +222,13 @@
    "title": "코드를 읽을 사람"
   },
   "MQ-103": {
+   "act": 1,
    "key": "MQ103",
+   "path": true,
+   "places": [
+    "L-R02-11"
+   ],
+   "places_src": "03a_main-story-part1.md:1152",
    "stages": {
     "10": {
      "done": "상가 입구 통과",
@@ -74,7 +254,14 @@
    "title": "지하시장"
   },
   "MQ-104": {
+   "act": 1,
    "key": "MQ104",
+   "path": true,
+   "places": [
+    "L-R02-01",
+    "L-R02-02"
+   ],
+   "places_src": "03a_main-story-part1.md:1192",
    "stages": {
     "10": {
      "done": "벙커 입구(환승 정류장 아래 계단)",
@@ -105,7 +292,13 @@
    "title": "여의도 집결지"
   },
   "MQ-105": {
+   "act": 1,
    "key": "MQ105",
+   "path": true,
+   "places": [
+    "L-R02-19"
+   ],
+   "places_src": "03a_main-story-part1.md:1237",
    "stages": {
     "10": {
      "done": "본소 안 진입",
@@ -126,7 +319,9 @@
    "title": "현상금의 주인"
   },
   "MQ-106": {
+   "act": 1,
    "key": "MQ106",
+   "path": false,
    "stages": {
     "10": {
      "done": "아래 해법 중 하나",
@@ -137,7 +332,13 @@
    "title": "첫 번째 추적자"
   },
   "MQ-201": {
+   "act": 2,
    "key": "MQ201",
+   "path": true,
+   "places": [
+    "L-HR-01"
+   ],
+   "places_src": "03a_main-story-part1.md:1320",
    "stages": {
     "10": {
      "done": "섬 진입",
@@ -158,7 +359,13 @@
    "title": "노들섬"
   },
   "MQ-205": {
+   "act": 2,
    "key": "MQ205",
+   "path": false,
+   "places": [
+    "L-R06-12"
+   ],
+   "places_src": "03a_main-story-part1.md:1421",
    "stages": {
     "10": {
      "done": "분견대 초소 통과",
@@ -184,7 +391,13 @@
    "title": "남산의 목소리"
   },
   "MQ-206": {
+   "act": 2,
    "key": "MQ206",
+   "path": false,
+   "places": [
+    "L-R06-01"
+   ],
+   "places_src": "03a_main-story-part1.md:1462",
    "stages": {
     "10": {
      "done": "정문 통과",
@@ -210,7 +423,11 @@
    "title": "용산 요새"
   },
   "MQ-301": {
+   "act": 3,
    "key": "MQ301",
+   "path": true,
+   "places": [],
+   "places_src": "03a_main-story-part1.md:1533",
    "stages": {
     "10": {
      "done": "B1 진입",
@@ -236,7 +453,13 @@
    "title": "당인리"
   },
   "MQ-302": {
+   "act": 3,
    "key": "MQ302",
+   "path": true,
+   "places": [
+    "L-R07-01"
+   ],
+   "places_src": "03a_main-story-part1.md:1595",
    "stages": {
     "10": {
      "done": "로비",
@@ -267,7 +490,11 @@
    "title": "세진전자 타워"
   },
   "MQ-303": {
+   "act": 3,
    "key": "MQ303",
+   "path": true,
+   "places": [],
+   "places_src": "03a_main-story-part1.md:1656",
    "stages": {
     "10": {
      "done": "기지 경계",
@@ -288,7 +515,11 @@
    "title": "끝나지 않은 명령"
   },
   "MQ-P1": {
+   "act": 0,
    "key": "MQP1",
+   "path": false,
+   "places": [],
+   "places_src": "03a_main-story-part1.md:740",
    "stages": {
     "10": {
      "done": "신고서 UI 완료",
@@ -309,7 +540,11 @@
    "title": "출생신고"
   },
   "MQ-P2": {
+   "act": 0,
    "key": "MQP2",
+   "path": false,
+   "places": [],
+   "places_src": "03a_main-story-part1.md:795",
    "stages": {
     "10": {
      "done": "S.P.E.C.I.A.L. 배분 완료",
@@ -345,7 +580,11 @@
    "title": "열 살, 첫 배정"
   },
   "MQ-P3": {
+   "act": 0,
    "key": "MQP3",
+   "path": false,
+   "places": [],
+   "places_src": "03a_main-story-part1.md:864",
    "stages": {
     "10": {
      "done": "복도 진입",
@@ -371,7 +610,11 @@
    "title": "적성 평가"
   },
   "MQ-P4": {
+   "act": 0,
    "key": "MQP4",
+   "path": false,
+   "places": [],
+   "places_src": "03a_main-story-part1.md:958",
    "stages": {
     "10": {
      "done": "식당 도착",

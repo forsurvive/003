@@ -27,6 +27,7 @@ var center := Vector2(959, 1503)
 var cursor := Vector2(959, 1503)
 var sel := ""                                         ## 커서 아래 장소
 var hold := 0.0
+var temp := ""                                        ## 임시 표식(인물 수첩 '지도에서 보기', SD-12 §3.11) — 장소 ID
 
 
 static func _load() -> void:
@@ -192,6 +193,27 @@ func _markers(v: Control, U: Array) -> void:
 			best_d = d
 			best = lid
 	sel = best
+	if temp != "" and PlaceLog.db.has(temp):                              # 임시 표식: 깜박이는 겹원
+		var te: Dictionary = PlaceLog.db[temp]
+		var tp := w2s(Vector2(int(te["tx"]) + 0.5, int(te["ty"]) + 0.5))
+		if AREA.has_point(tp) and fmod(pb.time, 0.8) < 0.55:
+			v.draw_arc(tp, 10.0, 0, TAU, 24, U[7], 1.0)
+			v.draw_arc(tp, 13.0, 0, TAU, 24, U[5], 1.0)
+	for m in pb.st.quests.marks(places):                                   # 퀘스트 마커(SD-12 §3.12): 장소 위 ▼ + 번호(①~⑧), 추적 = 밝게 · 고정 = 흐리게
+		var e: Dictionary = PlaceLog.db[m["lid"]]
+		var p := w2s(Vector2(int(e["tx"]) + 0.5, int(e["ty"]) + 0.5))
+		if AREA.grow(-6).has_point(p) and p.y <= AREA.end.y - 34:
+			quest_mark(v, p + Vector2(0, -10), m, U)
+
+
+## ▼ 하나(꼭짓점이 장소를 가리킨다) + 번호
+func quest_mark(v: Control, tip: Vector2, m: Dictionary, U: Array) -> void:
+	var col: Color = U[7] if m["main"] else U[5]
+	var tri := PackedVector2Array([tip + Vector2(-5, -6), tip + Vector2(5, -6), tip])
+	v.draw_colored_polygon(PackedVector2Array([tri[0] + Vector2(-1, -1), tri[1] + Vector2(1, -1), tri[2] + Vector2(0, 2)]), U[0])
+	v.draw_colored_polygon(tri, col)
+	if int(m["n"]) > 0:
+		pb.text(tip + Vector2(6, -12), String.chr(0x2460 + int(m["n"]) - 1), pb.f10, 10, col)
 
 
 func _info_box(v: Control, U: Array) -> void:
@@ -236,6 +258,12 @@ func draw_local() -> void:
 			if k <= 0:
 				continue
 			v.draw_rect(Rect2(o + Vector2(x, y) * LOCAL_PX, Vector2(LOCAL_PX, LOCAL_PX)), [U[0], U[2], U[3], U[5], U[6], U[4]][k])
+	for m in places_marks(places):                                        # 퀘스트 ▼(둘레 안에 든 것만)
+		var e: Dictionary = PlaceLog.db[m["lid"]]
+		var lx0 := int(e["tx"]) - me.x + h
+		var ly0 := int(e["ty"]) - me.y + h
+		if lx0 >= 0 and ly0 >= 4 and lx0 < LOCAL_N and ly0 < LOCAL_N:
+			quest_mark(v, o + Vector2(lx0, ly0) * LOCAL_PX + Vector2(1, 0), m, U)
 	var c := o + Vector2(h, h) * LOCAL_PX + Vector2(1, 1)
 	v.draw_colored_polygon(PackedVector2Array([c + Vector2(0, -4), c + Vector2(3, 3), c + Vector2(-3, 3)]), U[7])
 	v.draw_rect(Rect2(o - Vector2(1, 1), Vector2(LOCAL_N, LOCAL_N) * LOCAL_PX + Vector2(2, 2)), U[3], false)
@@ -248,6 +276,10 @@ func draw_local() -> void:
 		pb.text(Vector2(lx + 14, y0), kv[1], pb.f10, 10, U[5])
 		y0 += 15
 	pb.text(Vector2(lx, y0 + 8), "본 곳만 그린다(안개 걷기).", pb.f10, 10, U[3])
+
+
+func places_marks(places: PlaceLog) -> Array:
+	return pb.st.quests.marks(places)
 
 
 # ---------------------------------------------------------------- 입력

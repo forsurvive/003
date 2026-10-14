@@ -31,6 +31,7 @@ var boxes := {}                         ## 용기 상태(0-9): "맵:x,y@연도" 
 var stolen := {}                        ## 장물(SD-12 §9.2): 아이템 ID -> 훔친 수(그 수만큼 [장물] 표시)
 var dead := {}                          ## 죽은 인물 ID -> true(0-9): 뒤 시대 맵에서 서지 않는다
 var places := PlaceLog.new()             ## 장소 발견 상태(1-2, SD-12 §5.5)
+var book := NpcBook.new()               ## 인물 수첩(1-2, SD-12 §3.11)
 var portrait_alias := {}                ## 인물 ID -> 초상화 키(맵에서 다른 시대 모습으로 선 인물: 2259년 아이 하도윤 등)
 
 
@@ -71,6 +72,7 @@ func load_data(dir: String = "res://data/") -> void:
 		quests.load_defs(dir + "quests.json")
 	if FileAccess.file_exists(dir + "npcs.json"):
 		npcs = JSON.parse_string(FileAccess.get_file_as_string(dir + "npcs.json"))["npcs"]
+	book = NpcBook.new(npcs)
 
 
 # ---------------------------------------------------------------- 식 언어 컨텍스트

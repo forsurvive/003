@@ -34,6 +34,11 @@ var fig: TextureRect
 var rows: Array = []                                 ## 지금 목록 [{"text", "id", "right", "dim"}]
 var t_open := 0.0
 var map: PipMap                                      ## 지도 화면(데이터 탭 지역·월드 지도)
+var book_filter := 0                                 ## 인물 수첩 거르기(NpcBook.FILTERS)
+var book_q := ""                                     ## 인물 수첩 이름 찾기(초성 가능)
+var searching := false                               ## 찾기 글자를 받는 중('/'로 시작, Enter·Esc로 끝)
+var face: TextureRect                                ## 인물 수첩 얼굴(48×48 — 그림은 노드로 얹는다, DocScreen 머리글)
+static var svc_icons: Texture2D
 
 
 func setup(state: StoryState, items_db: Dictionary, status: Dictionary) -> PipBoy:
@@ -59,6 +64,16 @@ func _init() -> void:
 	fig.texture = load("res://assets/ui/pipboy_figure.png")
 	fig.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(fig)
+	face = TextureRect.new()
+	face.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	face.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	face.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	face.size = Vector2(48, 48)
+	face.visible = false
+	var mat := ShaderMaterial.new()
+	mat.shader = load("res://systems/ui/crt_mono.gdshader")
+	face.material = mat
+	add_child(face)
 	crt = TextureRect.new()
 	crt.texture = load("res://assets/ui/pipboy_crt.png")
 	crt.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -118,15 +133,126 @@ func _rows() -> Array:
 				out.append({"text": str(it.get("name", id)) + (" (%d)" % n if n > 1 and cat != "ammo" else "") + (" [장착]" if on else ""),
 					"id": id, "right": (str(n) if cat == "ammo" else hk.strip_edges())})
 		[2, 2]:
-			for q in _quests():
-				out.append({"text": ("" if q["active"] else "✓ ") + str(q["title"]), "id": q["id"], "dim": not q["active"]})
+			out = _quest_rows()
 		[2, 3]:
-			var ids := st.items.keys()
-			ids.sort()
-			for id in ids:
-				if str(db.get(id, {}).get("tag", "")) == "퀘스트":
-					out.append({"text": str(db[id]["name"]), "id": id})
+			out = _record_rows()
 	return out
+
+
+## 퀘스트 목록(SD-12 §3.12): 메인(지금 막 머리 + 그 막 퀘스트 → 지난 막은 머리 한 줄로 접힘) · 단서(아직 오지 않은 막에서 먼저 시작한 퀘스트) ·
+## 세력의 일(FQ) · 사이드(SQ) · 기타(RQ). 비표시(UQ)는 없음. 묶음 이름 줄은 id ""(고를 수 없다). 표식: ▶ 추적 · ◆ 고정
+func _quest_rows() -> Array:
+	var q := st.quests
+	var out: Array = []
+	var cur := q.cur_act()
+	var listed := {}
+	var a := q.act_def(cur)
+	if not a.is_empty():
+		out.append({"text": _qmark("act:%d" % cur, "") + "[메인] " + str(a["name"]), "id": "act:%d" % cur, "right": _short(q.act_tag(cur))})
+		var shown: Array = []
+		for id in a["quests"]:
+			listed[id] = true
+			var rumor := false
+			for lid in q.places_of(id):
+				rumor = rumor or st.places.get_state(lid) >= PlaceLog.RUMOR
+			if q.stage(id) > 0 or (q.defs.get(id, {}).get("path", false) and rumor):   # 시작 안 한 경로는 장소 소문이라도 있어야 보인다
+				shown.append(id)
+		for i in shown.size():
+			var id: String = shown[i]
+			out.append({"text": _qmark(id, "└ " if i == shown.size() - 1 else "├ ") + q.title(id), "id": id, "right": _short(q.path_tag(id)),
+				"dim": q.stage(id) >= 100})
+	for n in range(cur - 1, -1, -1):                                     # 지난 막(접힘)
+		var pa := q.act_def(n)
+		if pa.is_empty():
+			continue
+		for id in pa["quests"]:
+			listed[id] = true
+		out.append({"text": _qmark("act:%d" % n, "") + "[메인] " + str(pa["name"]), "id": "act:%d" % n, "right": _short(q.act_tag(n)), "dim": true})
+	var groups := {"단서": [], "세력의 일": [], "사이드": [], "기타": []}
+	for id in q.defs:
+		if listed.has(id) or q.stage(id) <= 0 or id.begins_with("UQ"):
+			continue
+		var g := "단서" if id.begins_with("MQ") else ("세력의 일" if id.begins_with("FQ") else ("사이드" if id.begins_with("SQ") else "기타"))
+		groups[g].append(id)
+	for g in ["단서", "세력의 일", "사이드", "기타"]:
+		if groups[g].is_empty():
+			continue
+		out.append({"text": "— " + g, "id": "", "dim": true})
+		var ids: Array = groups[g]
+		ids.sort_custom(func(x, y): return q.stage(x) < 100 and q.stage(y) >= 100)   # 진행 중 → 끝난 것
+		for id in ids:
+			out.append({"text": _qmark(id, "  ") + q.title(id), "id": id, "right": _short(q.path_tag(id)), "dim": q.stage(id) >= 100})
+	return out
+
+
+func _qmark(id: String, plain: String) -> String:
+	if id == st.quests.tracked:
+		return "▶ " if plain != "" else "▶"
+	if id in st.quests.pinned:
+		return "◆ " if plain != "" else "◆"
+	return plain
+
+
+## 기록(SD-12 §3.2 데이터 > 기록): 문서(퀘스트 문서) · 인물 수첩(§3.11, 최근 만난 순 — [S] 거르기 · [/] 이름·초성 찾기)
+func _record_rows() -> Array:
+	var out: Array = []
+	var ids := st.items.keys()
+	ids.sort()
+	var docs: Array = []
+	for id in ids:
+		if str(db.get(id, {}).get("tag", "")) == "퀘스트":
+			docs.append({"text": str(db[id]["name"]), "id": id})
+	var book: NpcBook = st.book
+	var people := book.list(book_filter, _region(), book_q, _active_quests())
+	if not docs.is_empty() and not book.entries.is_empty():
+		out.append({"text": "— 문서", "id": "", "dim": true})
+	out.append_array(docs)
+	if not book.entries.is_empty() or book_q != "":
+		var head := "— 인물 수첩 %d" % people.size()
+		if book_filter > 0:
+			head += " · " + NpcBook.FILTERS[book_filter]
+		if book_q != "" or searching:
+			head += " · '%s%s'" % [book_q, "_" if searching and fmod(time, 1.0) < 0.5 else ""]
+		out.append({"text": head, "id": "", "dim": true})
+		for c in people:
+			var e: Dictionary = book.entries[c]
+			var dead := str(e["dead"]) != ""
+			out.append({"text": str(book.info(c).get("name", c)), "id": "npc:" + c, "right": "고인" if dead else _fit(book.title(c), 116.0),
+				"dim": dead})
+	return out
+
+
+## 지금 권역 코드(인물 수첩 '이 권역' 거르기)
+func _region() -> String:
+	var t: Vector2 = info.get("tile", Vector2(-1, -1))
+	if t.x < 0:
+		return "R01"
+	PipMap._load()
+	return str(PipMap.regions.get("%d,%d" % [int(t.x) / 40, int(t.y) / 40], "R01"))
+
+
+func _active_quests() -> Array:
+	var out: Array = []
+	for id in st.quests.defs:
+		if st.quests.stage(id) > 0 and st.quests.stage(id) < 100:
+			out.append(id)
+	return out
+
+
+## 글을 폭 w(px, 12px 글꼴)에 맞춰 자른다
+func _fit(t: String, w: float) -> String:
+	if tw(t, f12, 12) <= w:
+		return t
+	var n := t.length()
+	while n > 1 and tw(t.substr(0, n) + "…", f12, 12) > w:
+		n -= 1
+	return t.substr(0, n).strip_edges() + "…"
+
+
+## 목록 오른쪽 칸은 좁아서 상태를 줄여 쓴다(상세 쪽은 원래 표기)
+static func _short(tag: String) -> String:
+	return {"[진행 중]": "진행", "[이룸]": "이룸", "[다른 길로 이룸]": "다른 길", "[끝남]": "끝남", "[놓침]": "놓침", "[알려진 것 없음]": "?",
+		"[선택]": "선택"}.get(tag, "")
 
 
 func _quests() -> Array:
@@ -214,15 +340,26 @@ func _draw_doc() -> void:
 			text(Vector2(242, y), row["right"], f12, 12, col, HORIZONTAL_ALIGNMENT_RIGHT)
 	view.draw_line(Vector2(250.5, 70), Vector2(250.5, 290), U[2])
 	fig.visible = false
+	face.visible = false
 	_detail()
 	var hint := "[Tab] 닫기   [Q·E] 탭   [←→] 하위 탭   [↑↓] 선택   [Enter] " + _enter_label()
 	if tab == 1 and sub[1] in [0, 2]:
 		hint += "   [1~8] 단축키"
+	if tab == 2 and sub[2] == 2:
+		hint = "[Tab] 닫기   [Q·E] 탭   [←→] 하위 탭   [↑↓] 선택   [Enter] %s   [F] 고정" % _enter_label()
+	if tab == 2 and sub[2] == 3 and not st.book.entries.is_empty():
+		hint = "[Tab] 닫기   [←→] 하위 탭   [↑↓] 선택   [Enter] %s   [S] 거르기   [/] 찾기" % _enter_label()
+		if searching:
+			hint = "이름 찾기: 글자·초성(ㅂㅇㅎ)을 치세요   [Backspace] 지우기   [Enter·Esc] 끝"
 	if first:
 		hint = "핍-보이: [Q·E] 능력치·아이템·데이터   [←→] 하위 탭   [Tab] 닫기"
 	item("close", Rect2(44, 314, 50, 14))
 	item("power", Rect2(614, 180, 20, 40))
 	text(Vector2(48, 316), hint, f10, 10, U[4] if not first or fmod(time, 1.0) < 0.6 else U[6])
+	for kv in [["[F] 고정", "pin"], ["[S] 거르기", "filter"], ["[/] 찾기", "find"]]:   # 터치: 안내 줄의 이 글자를 누르면 그 키와 같다
+		var at := hint.find(kv[0])
+		if at >= 0 and not first:
+			item(kv[1], Rect2(48 + tw(hint.substr(0, at), f10, 10) - 2, 314, tw(kv[0], f10, 10) + 4, 14))
 
 
 func _map_mode() -> bool:
@@ -257,6 +394,10 @@ func _enter_label() -> String:
 			return "입는 중" if rows[sel]["id"] == info.get("worn", "") else "갈아입기"
 		[1, 2]:
 			return "사용"
+		[2, 2]:
+			return "—" if rows[sel]["id"] == "" else ("추적 끄기" if rows[sel]["id"] == st.quests.tracked else "추적")
+		[2, 3]:
+			return "지도에서 보기" if _npc_lid(str(rows[sel]["id"])) != "" else "—"
 	return "—"
 
 
@@ -301,7 +442,11 @@ func _detail() -> void:
 			_para(Vector2(264, y + 4), "뜻을 알 수 없는 순위.", U[6])
 		[0, 4]:
 			_general_page(id)
+		[2, 3] when id.begins_with("npc:"):
+			_npc_page(id.substr(4))
 		[1, _], [2, 3]:
+			if id == "":
+				return
 			var it: Dictionary = db.get(id, {"name": id})
 			text(Vector2(264, 78), str(it.get("name", id)), f12b, 12, U[6])
 			var y := 98.0
@@ -311,7 +456,10 @@ func _detail() -> void:
 				y += 14.0
 			_para(Vector2(264, y + 8), str(it.get("desc", "")), U[5])
 		[2, 2]:
-			_quest_page(id)
+			if id.begins_with("act:"):
+				_act_page(int(id.substr(4)))
+			elif id != "":
+				_quest_page(id)
 
 
 func _item_lines(id: String, it: Dictionary) -> Array:
@@ -396,14 +544,21 @@ func _general_page(id: String) -> void:
 
 
 func _quest_page(id: String) -> void:
-	text(Vector2(264, 78), "[메인] " + st.quests.title(id), f12b, 12, U[6])
-	var s := st.quests.stage(id)
-	var y := 100.0
+	var q := st.quests
+	var a := q.act_of(id)
+	var head := ("[메인] %s · " % str(q.act_def(a).get("name", "")).get_slice(" ", 0)) if id.begins_with("MQ") and a >= 0 else \
+		("[부탁받은 일] " if id.begins_with("FQ") else ("[사이드] " if id.begins_with("SQ") else ""))
+	text(Vector2(264, 78), head + q.title(id), f12b, 12, U[6])
+	text(Vector2(588, 94), q.path_tag(id), f10, 10, U[6], HORIZONTAL_ALIGNMENT_RIGHT)
+	if id == q.tracked or id in q.pinned:
+		text(Vector2(264, 94), "▶ 추적 중" if id == q.tracked else "◆ 고정", f10, 10, U[5])
+	var s := q.stage(id)
+	var y := 112.0
 	var cur_n := _cur_stage(id, s)
-	for n in st.quests.stages_of(id):
+	for n in q.stages_of(id):
 		if int(n) > s or int(n) >= 100:
 			continue
-		var line := st.quests.log_text(id, int(n))
+		var line := q.log_text(id, int(n))
 		if line == "":
 			continue
 		var cur := int(n) == cur_n
@@ -411,6 +566,135 @@ func _quest_page(id: String) -> void:
 		if not cur:
 			view.draw_line(Vector2(266, y + 9), Vector2(272, y + 3), U[5])
 		y = _para(Vector2(280, y), "- " + line, U[6] if cur else U[3], 300.0) + 4.0
+	var tag := q.path_tag(id)
+	if tag == "[놓침]":
+		var why := q.log_text(id, 200)
+		if why != "":
+			y = _para(Vector2(280, y), "- " + why, U[6], 300.0) + 4.0
+		for o in q.act_def(a).get("paths", []):                           # 다른 경로가 남아 있음을 사실로(바이블 §5.3-4)
+			if o != id and q.stage(o) < 100:
+				y = _para(Vector2(280, y), "- 다른 길은 아직 닫히지 않았다.", U[5], 300.0) + 4.0
+				break
+	elif bool(q.defs.get(id, {}).get("path", false)) and q.act_goal_met(a) and s > 0 and s < 100:
+		y = _para(Vector2(280, y), "목표는 이미 이뤘다. 이 길에는 아직 할 일이 남아 있다.", U[5], 300.0) + 4.0
+	elif s <= 0:
+		y = _para(Vector2(280, y), "- 아직 아는 것이 거의 없다.", U[3], 300.0) + 4.0
+	var known: Array = []                                                # 알려진 장소(지도 ▼)
+	for lid in q.places_of(id):
+		var ps := st.places.get_state(lid)
+		if ps >= PlaceLog.RUMOR:
+			known.append(str(PlaceLog.db[lid]["name"]) + (" (소문)" if ps == PlaceLog.RUMOR else ""))
+	if not known.is_empty() and y < 270.0:
+		hline(264, 588, y + 4, U[2])
+		_para(Vector2(264, y + 10), "장소: " + ", ".join(known), U[4])
+
+
+## 인물 수첩 한 사람(SD-12 §3.11): 얼굴 48×48 · 이름 · 직함 · 소속 / 주로 있는 곳 · 서비스 · 처음 만난 날 · 한 줄 메모 · 생사
+func _npc_page(c: String) -> void:
+	var book: NpcBook = st.book
+	var e: Dictionary = book.entries.get(c, {})
+	var dead := str(e.get("dead", "")) != ""
+	var tex := _face_of(c)
+	box(Rect2(263, 77, 50, 50), U[3], false)
+	if tex != null:
+		face.texture = tex
+		face.position = view.position + Vector2(264, 78)
+		face.modulate = Color(1, 1, 1, 1.0 if not dead else 0.45)         # CRT 단색(셰이더) — 고인은 흐리게
+		face.visible = true
+	var nm := str(book.info(c).get("name", c))
+	text(Vector2(322, 78), nm, f12b, 12, U[3] if dead else U[6])
+	text(Vector2(322, 96), book.title(c), f10, 10, U[5])
+	text(Vector2(322, 110), book.faction_text(c), f10, 10, U[4])
+	var y := 136.0
+	var lid := book.place_of(c)
+	var pname := str(PlaceLog.db.get(lid, {}).get("name", "알 수 없는 곳"))
+	text(Vector2(264, y), "마지막으로 본 곳" if str(e.get("seen", "")) != "" else "주로 있는 곳", f10, 10, U[4])
+	text(Vector2(360, y), pname, f10, 10, U[5])
+	y += 15.0
+	var svs: Array = book.info(c).get("services", [])
+	if not svs.is_empty():
+		text(Vector2(264, y), "서비스", f10, 10, U[4])
+		if svc_icons == null:
+			svc_icons = load("res://assets/ui/service_icons.png")
+		var x := 360.0
+		for sv in svs:
+			var i := NpcBook.SERVICE_ORDER.find(str(sv))
+			if i >= 0:
+				view.draw_texture_rect_region(svc_icons, Rect2(x, y + 2, 8, 8), Rect2(i * 8, 0, 8, 8), U[6])
+			var lb: String = NpcBook.SERVICES.get(str(sv), str(sv))
+			text(Vector2(x + 11, y), lb, f10, 10, U[5])
+			x += 15.0 + tw(lb, f10, 10)
+		y += 15.0
+	text(Vector2(264, y), "처음 만난 날", f10, 10, U[4])
+	text(Vector2(360, y), str(e.get("met", "")), f10, 10, U[5])
+	y += 15.0
+	if dead:
+		text(Vector2(264, y), "고인 (%s)" % str(e["dead"]), f12, 12, U[5])
+		y += 17.0
+	if str(e.get("memo", "")) != "":
+		hline(264, 588, y + 4, U[2])
+		_para(Vector2(264, y + 10), "- " + str(e["memo"]), U[6])
+
+
+## 얼굴: 초상화(A·B 등급, 기본 표정)가 있으면 그것, 없으면 맵 스프라이트 정면 첫 칸
+func _face_of(c: String) -> Texture2D:
+	var idx := "res://assets/portraits/portraits.json"
+	if not has_meta("portraits") and FileAccess.file_exists(idx):
+		set_meta("portraits", JSON.parse_string(FileAccess.get_file_as_string(idx))["portraits"])
+	var pt: Dictionary = get_meta("portraits", {})
+	for k in [c] + (st.npcs.get(c, {}).get("ids", []) as Array):
+		if pt.has(k):
+			return load("res://assets/portraits/" + str(pt[k].get("기본", "")))
+	var cast := "res://assets/sprites/story_cast.json"
+	if FileAccess.file_exists(cast):
+		var sh: String = JSON.parse_string(FileAccess.get_file_as_string(cast))["sheets"].get(c, "")
+		if sh != "" and FileAccess.file_exists("res://assets/sprites/%s.json" % sh):
+			var m: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://assets/sprites/%s.json" % sh))
+			var row := maxi(0, (m.get("rows", []) as Array).find("S"))
+			var at := AtlasTexture.new()
+			at.atlas = load("res://assets/sprites/%s.png" % sh)
+			at.region = Rect2(0, row * float(m["frame"][1]), float(m["frame"][0]), float(m["frame"][1]))
+			return at
+	return null
+
+
+## 인물 줄의 '지도에서 보기' 장소(지도에 있는 곳만 — 모르는 곳을 알려 주지 않는다). 아니면 ""
+func _npc_lid(id: String) -> String:
+	if not id.begins_with("npc:"):
+		return ""
+	var lid := st.book.place_of(id.substr(4))
+	return lid if PlaceLog.db.has(lid) and st.places.on_map(lid) else ""
+
+
+## 막 머리 상세(SD-12 §3.12 메인 묶음 예): 목표 1줄 + 경로·퀘스트마다 상태와 가장 최근 사실 줄
+func _act_page(n: int) -> void:
+	var q := st.quests
+	var a := q.act_def(n)
+	text(Vector2(264, 78), "[메인] " + str(a.get("name", "")), f12b, 12, U[6])
+	text(Vector2(588, 80), q.act_tag(n), f10, 10, U[6], HORIZONTAL_ALIGNMENT_RIGHT)
+	if "act:%d" % n == q.tracked or "act:%d" % n in q.pinned:
+		text(Vector2(264, 94), "▶ 추적 중 — 경로 마커 전부" if "act:%d" % n == q.tracked else "◆ 고정", f10, 10, U[5])
+	var y := _para(Vector2(264, 110), "목표: " + str(a.get("goal", "")), U[6], 324.0) + 4.0
+	for id in a.get("quests", []):
+		var s := q.stage(id)
+		var tag := q.path_tag(id)
+		if s <= 0 and tag != "[알려진 것 없음]":
+			continue
+		if s <= 0:                                                       # 시작 안 한 경로: 장소 소문이 있어야 보인다(목록과 같다)
+			var rumor := false
+			for lid in q.places_of(id):
+				rumor = rumor or st.places.get_state(lid) >= PlaceLog.RUMOR
+			if not rumor:
+				continue
+		if y > 272.0:
+			break
+		text(Vector2(268, y), q.title(id), f10, 10, U[5] if s < 100 else U[3])
+		text(Vector2(588, y), tag, f10, 10, U[5] if s < 100 else U[3], HORIZONTAL_ALIGNMENT_RIGHT)
+		y += 14.0
+		var line := q.latest_line(id)
+		if line != "" and s < 100 and y <= 272.0:
+			y = _para(Vector2(280, y), "- " + line, U[4], 304.0)
+		y += 2.0
 
 
 ## 지금 하는 단계: 지금 단계 값 이하에서 기록이 있는 가장 큰 단계(끝난 퀘스트는 없음)
@@ -437,6 +721,11 @@ func _unhandled_input(e: InputEvent) -> void:
 		return
 	var handled := true
 	var k: int = e.keycode if e is InputEventKey and e.pressed and not e.echo else -1
+	if searching and e is InputEventKey and e.pressed:
+		_search_key(e)
+		get_viewport().set_input_as_handled()
+		view.queue_redraw()
+		return
 	if k in [KEY_TAB, KEY_ESCAPE]:
 		close(true)
 	elif k == KEY_Q:
@@ -447,6 +736,15 @@ func _unhandled_input(e: InputEvent) -> void:
 		_tab(k - KEY_F1)
 	elif k == KEY_J:
 		open_at(2, 2)
+	elif k == KEY_S and tab == 2 and sub[2] == 3:                      # 인물 수첩 거르기 바꾸기
+		book_filter = (book_filter + 1) % NpcBook.FILTERS.size()
+		sel = 0
+	elif (k == KEY_SLASH or (e is InputEventKey and e.pressed and e.unicode == 47)) and tab == 2 and sub[2] == 3:
+		searching = true
+		DisplayServer.window_set_ime_active(true)                        # 한글 조합 입력(초성 포함)
+	elif k == KEY_F and tab == 2 and sub[2] == 2:                      # 고정(SD-12 §3.12, 2개까지)
+		if not rows.is_empty() and str(rows[sel]["id"]) != "":
+			st.quests.pin(str(rows[sel]["id"]))
 	elif _map_mode() and e is InputEventKey and e.pressed and e.shift_pressed and e.keycode in [KEY_LEFT, KEY_RIGHT]:
 		_sub(-1 if e.keycode == KEY_LEFT else 1)
 	elif _map_mode() and sub[2] == 1 and _map_key(e):
@@ -459,9 +757,9 @@ func _unhandled_input(e: InputEvent) -> void:
 	elif e.is_action_pressed("ui_right", true):
 		_sub(1)
 	elif e.is_action_pressed("ui_up", true):
-		sel = maxi(0, sel - 1)
+		_step(-1)
 	elif e.is_action_pressed("ui_down", true):
-		sel = mini(rows.size() - 1, sel + 1)
+		_step(1)
 	elif e.is_action_pressed("ui_accept"):
 		_enter()
 	elif e is InputEventMouseButton and e.pressed and e.button_index == MOUSE_BUTTON_LEFT:
@@ -480,6 +778,25 @@ func _unhandled_input(e: InputEvent) -> void:
 			first = false
 		get_viewport().set_input_as_handled()
 		view.queue_redraw()
+
+
+## 찾기 글자 받기: 글자(IME로 조합한 한글·초성 포함)를 붙이고, Backspace는 지우고, Enter·Esc는 끝낸다
+func _search_key(e: InputEventKey) -> void:
+	if e.keycode in [KEY_ENTER, KEY_KP_ENTER, KEY_ESCAPE]:
+		searching = false
+		DisplayServer.window_set_ime_active(false)
+		if DisplayServer.has_feature(DisplayServer.FEATURE_VIRTUAL_KEYBOARD):
+			DisplayServer.virtual_keyboard_hide()
+		if e.keycode == KEY_ESCAPE:
+			book_q = ""
+	elif e.keycode == KEY_BACKSPACE:
+		book_q = book_q.substr(0, maxi(0, book_q.length() - 1))
+	elif e.unicode >= 0x20:
+		book_q += String.chr(e.unicode)
+	sel = 0
+	rows = _rows()
+	if not rows.is_empty() and str(rows[0]["id"]) == "":
+		_step(1)
 
 
 ## 월드 지도 키(방향키 커서 · Z·X 확대 · Enter 빠른 이동). 처리했으면 true
@@ -536,8 +853,27 @@ func _press(id: String) -> void:
 		if i == sel:
 			_enter()
 		sel = i
+	elif id == "pin" and not rows.is_empty() and str(rows[sel]["id"]) != "":
+		st.quests.pin(str(rows[sel]["id"]))
+	elif id == "filter":
+		book_filter = (book_filter + 1) % NpcBook.FILTERS.size()
+		sel = 0
+	elif id == "find":
+		searching = true
+		DisplayServer.window_set_ime_active(true)
+		if DisplayServer.has_feature(DisplayServer.FEATURE_VIRTUAL_KEYBOARD):
+			DisplayServer.virtual_keyboard_show("")                      # 모바일: 화면 자판(글자는 키 이벤트로 들어온다)
 	elif id in ["close", "power"]:
 		close(true)
+
+
+## 목록 한 칸 옮기기: 묶음 이름 줄(id "")은 건너뛴다
+func _step(d: int) -> void:
+	var i := sel + d
+	while i >= 0 and i < rows.size() and str(rows[i]["id"]) == "":
+		i += d
+	if i >= 0 and i < rows.size():
+		sel = i
 
 
 func _tab(i: int) -> void:
@@ -565,3 +901,17 @@ func _enter() -> void:
 				action.emit("equip", id)                                   # 옷 갈아입기(0-10, 몸통 슬롯 하나)
 		[1, 2]:
 			action.emit("use", id)
+		[2, 2]:
+			if id != "":
+				st.quests.track(id)                                      # 추적(SD-12 §3.12) — 같은 줄을 다시 고르면 끈다
+		[2, 3]:
+			var lid := _npc_lid(id)
+			if lid != "":                                                # 지도에서 보기: 그 장소에 임시 표식을 찍고 월드 지도로
+				open_at(2, 1)
+				if map == null:
+					map = PipMap.new(self)
+				var pe: Dictionary = PlaceLog.db[lid]
+				map.cursor = Vector2(int(pe["tx"]) + 0.5, int(pe["ty"]) + 0.5)
+				map.center = map.cursor
+				map.zoom = 2
+				map.temp = lid

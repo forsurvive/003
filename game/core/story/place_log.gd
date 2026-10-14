@@ -50,6 +50,7 @@ func get_state(lid: String) -> int:
 
 ## 상태를 올린다(내려가지 않는다). 올렸으면 true
 func raise(lid: String, s: int) -> bool:
+	load_db()
 	if s <= get_state(lid) or not db.has(lid):
 		return false
 	state[lid] = s

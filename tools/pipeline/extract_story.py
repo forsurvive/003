@@ -96,11 +96,39 @@ def extract_npcs():
                    "species": cells[hi["종"]], "faction": cells[hi["세력"]].split("·")[0].strip(),
                    "place": cells[hi["장소"]], "role": cells[hi["역할"]], "look": cells[hi["외형 코드(통일안)"]],
                    "src": f"{src}:{ln}"}
+            # 인물 수첩(SD-12 §3.11): 직함 = 역할 첫 마디, 소속 = 세력 칸 전체(JC·BC = 정착지 연합 봉천), 서비스 약자(상 의 수 정 숙 통 지 동 교, SD-07b §1.4)
+            rec["title"] = re.split(r"[.,(]", rec["role"].replace("…", ""))[0].strip().strip('"')
+            rec["faction_full"] = re.sub(r"\(.*?\)", "", cells[hi["세력"]]).strip()
+            sv = cells[hi["서비스"]]
+            rec["services"] = [c for c in re.sub(r"V\d+", "", sv) if c in "상의수정숙통지동교"]
+            vm = re.search(r"V\d+", sv)
+            rec["vendor"] = vm.group(0) if vm else ""
+            rec["quests"] = re.findall(r"MQ-[A-Z0-9]+", cells[hi["관련 퀘스트"]]) if "관련 퀘스트" in hi else []
             for i in ids:
                 if i in out and out[i]["name"] != rec["name"]:
                     err(src, ln, f"ID 중복 {i}: {out[i]['name']} / {rec['name']}")
                 out[i] = rec
     return out
+
+
+def extract_factions():
+    """세력 약호 → 이름(SD-06 §2.2 표 + 정착지별 약호 줄). 인물 수첩 소속 칸에 쓴다"""
+    src = "06_factions.md"
+    out = {}
+    for section, line, header, rows in tables(doc(src)):
+        if not section.startswith("### 2.2") or header[:2] != ["약호", "세력"]:
+            continue
+        for ln, cells in rows:
+            code = cells[0].replace("★", "").strip()
+            out[code] = re.sub(r"\(.*?\)", "", cells[1]).strip()
+    sub = {}
+    for line in open(doc(src), encoding="utf-8"):
+        if line.startswith("- 정착지별 약호"):
+            for code, name in re.findall(r"([A-Z]{2}) ([^,.]+?)(?:,|\.|$)", line.split(":", 1)[1]):
+                sub[code] = name.strip()
+    if len(out) < 20 or len(sub) < 12:
+        err(src, 0, f"세력 약호 {len(out)} · 정착지 약호 {len(sub)} — 표를 못 읽었다")
+    return {"factions": out, "settlements": sub}
 
 
 QHEAD = re.compile(r"^### \d+\.\d+ (MQ-[A-Z0-9]+) (.+)$")
@@ -125,7 +153,72 @@ def extract_quests():
     for need in ("MQ-P1", "MQ-P2", "MQ-P3", "MQ-P4", "MQ-101"):
         if need not in out:
             err(src, 0, f"단계 표가 없다: {need}")
+    # 퀘스트 장소(마커 후보, SD-12 §3.12): 퀘스트 절 '장소' 행의 이름을 장소 표(SD-09a~f, places.json) 이름과 맞춘다
+    pj = os.path.join(OUT, "world", "places.json")
+    places = json.load(open(pj, encoding="utf-8")) if os.path.exists(pj) else {}
+    for section, line, header, rows in tables(doc(src)):
+        m = QHEAD.match(section)
+        if not m or m.group(1) not in out or header[:2] != ["항목", "내용"]:
+            continue
+        for ln, cells in rows:
+            if cells[0] == "장소":
+                txt = cells[1]
+                hits = sorted({lid for lid, p in places.items() if p["name"] in txt and p["region"] != "UG"})
+                for lid in re.findall(r"L-[A-Z0-9]+-\d+", txt):
+                    if lid in places and lid not in hits:
+                        hits.append(lid)
+                out[m.group(1)]["places"] = hits
+                out[m.group(1)]["places_src"] = f"{src}:{ln}"
     return out
+
+
+def extract_acts():
+    """SD-03a §3.1 막 구조표 → 막마다 이름·목표(퀘스트 로그 상단 문구)·메인 퀘스트·경로 묶음(굵은 글씨). SD-12 §3.12 막 묶음."""
+    src = "03a_main-story-part1.md"
+    acts = []
+    for section, line, header, rows in tables(doc(src)):
+        if "3.1 막 구조표" not in section:
+            continue
+        for ln, cells in rows:
+            name = cells[0]
+            n = 0 if name.startswith("프롤로그") else (99 if name.startswith("에필로그") else int(re.match(r"(\d+)막", name).group(1)))
+            title = re.search(r"「(.+?)」", name)
+            quests, paths = [], []
+            raw = cells[2]
+            for tok in [t.strip() for t in raw.split(",")]:
+                bold = "**" in tok
+                t2 = tok.replace("**", "").replace("MQ-", "")
+                ids = []
+                if "~" in t2 and t2.startswith("P"):
+                    a, b = t2.split("~")
+                    ids = ["MQ-P%d" % i for i in range(int(a[1:]), int(b.replace("P", "")) + 1)]
+                elif "~" in t2:
+                    a, b = t2.split("~")
+                    ids = ["MQ-%s" % i for i in range(int(a), int(b) + 1)]
+                elif "/" in t2:
+                    ids = ["MQ-%s" % x.strip() for x in t2.split("/")]
+                elif t2:
+                    ids = ["MQ-" + t2]
+                quests += ids
+                if bold:
+                    paths += ids
+            acts.append({"n": n, "name": name.replace("**", ""), "title": title.group(1) if title else name, "goal": cells[1],
+                         "quests": quests, "paths": paths, "rule": cells[3], "src": f"{src}:{ln}"})
+    if len(acts) < 9:
+        err(src, 0, "막 구조표 행이 모자란다(%d)" % len(acts))
+    # 막 절 머리의 '막 목표(로그 상단)' 문구가 있으면 그것이 정본(1막: §8 머리가 §3.1 표보다 한 문장 길다)
+    cur = None
+    for i, l in enumerate(open(doc(src), encoding="utf-8").read().split("\n")):
+        m = re.match(r"## \d+\. 퀘스트 상세: (\d+)막", l)
+        if m:
+            cur = int(m.group(1))
+        m = re.match(r"- \*\*막 목표\(로그 상단\)\*\*: \"(.+?)\"", l)
+        if m and cur is not None:
+            for a in acts:
+                if a["n"] == cur:
+                    a["goal"] = m.group(1)
+                    a["goal_src"] = f"{src}:{i + 1}"
+    return acts
 
 
 def main():
@@ -139,8 +232,15 @@ def main():
     dump = lambda name, obj: json.dump(obj, open(os.path.join(OUT, name), "w", encoding="utf-8"), ensure_ascii=False, indent=1,
                                        sort_keys=True)
     dump("vars.json", {"vars": vars_})
-    dump("quests.json", {"quests": quests})
-    dump("npcs.json", {"npcs": npcs})
+    acts = extract_acts()
+    for a in acts:
+        for q in a["quests"]:
+            if q in quests:
+                quests[q]["act"] = a["n"]
+                quests[q]["path"] = q in a["paths"]
+    dump("quests.json", {"quests": quests, "acts": acts})
+    fac = extract_factions()
+    dump("npcs.json", {"npcs": npcs, "factions": fac["factions"], "settlements": fac["settlements"]})
     rep = [f"이야기 자료 v1: 변수 {len(vars_)}, 퀘스트 {len(quests)}, 인물 ID {len(npcs)}"] + REPORT
     open(os.path.join(OUT, "_story_report.txt"), "w", encoding="utf-8").write("\n".join(rep) + "\n")
     print(rep[0], "| 오류", len(REPORT))

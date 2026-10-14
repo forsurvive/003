@@ -32,6 +32,8 @@ static func story(st: StoryState) -> Dictionary:
 	d["dead"] = dead
 	d["alias"] = _sorted(st.portrait_alias)
 	d["places"] = st.places.to_dict()
+	d["track"] = {"on": st.quests.tracked, "pins": st.quests.pinned.duplicate()}
+	d["book"] = st.book.to_dict()
 	return _sorted(d)
 
 
@@ -45,6 +47,11 @@ static func apply_story(st: StoryState, d: Dictionary) -> void:
 	st.portrait_alias = (d.get("alias", {}) as Dictionary).duplicate(true)
 	st.places = PlaceLog.new()
 	st.places.from_dict(d.get("places", {}))
+	var tr: Dictionary = d.get("track", {})
+	st.quests.tracked = str(tr.get("on", ""))
+	st.quests.pinned = (tr.get("pins", []) as Array).duplicate()
+	st.book = NpcBook.new(st.npcs)
+	st.book.from_dict(d.get("book", {}))
 	st.events.clear()
 
 
