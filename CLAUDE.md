@@ -3,7 +3,7 @@
 Fallout 3를 2277년 서울로 옮긴 한국어 비상업 팬게임.
 - 기획서 세트: `docs/seoul-fallout/` (SD-00~SD-19, 조사 SR-01~05).
 - 정밀 요약: `docs/seoul-fallout/_digest/` — 문서마다 규칙·수치·ID·결정·절 줄 번호를 담았다. 색인은 `_digest/00_INDEX.md`.
-- 게임: `game/` (Godot 4.7.2). 단계 계획·진행 기록: `game/STAGE_0.md`.
+- 게임: `game/` (Godot 4.7.2). 단계 계획·진행 기록: `game/STAGE_0.md`(완료) · `game/STAGE_1.md`(진행 중).
 - 그림: `art/`. 자료 빌드: `bash tools/build_data.sh`.
 
 ## 사용자 고정 지침 (어기지 말 것)
