@@ -53,7 +53,7 @@ ENGINE_VARS = {"PC_ST", "PC_PE", "PC_EN", "PC_CH", "PC_IN", "PC_AG", "PC_LK", "P
                "MQ101_DOG", "MQ101_TRADE", "MQ101_WATER", "MQ101_RAD", "MQ101_NIGHT", "MQ101_DEAD", "MQ101_TANK", "MQ101_ROOF", "MQ101_LOAN",
                "MQ101_BOARD", "MQ101_FIGHT", "PC_RADS", "PD_BC", "PD_R01", "GAME_DAY", "PC_TORSO",
                "WANTED_DAY", "WANTED_KILL_SUM", "WANTED_AUTH_SUM", "WANTED_LOOK",                            # 1-3 수배도
-               "CAPTURE_DAY", "CAPTURE_AT", "SB_COLLAR", "SB_CUFF", "CAPTURE_BY"}                            # 1-3 생포
+               "CAPTURE_DAY", "CAPTURE_AT", "SB_COLLAR", "SB_CUFF", "CAPTURE_BY", "STAT_HACKED"}             # 1-3 생포 · 1-4 해킹 통계
 DECISION = ["어느 편에 서겠", "편에 서겠습니까", "제안을 수락", "받아들이겠습니까", "어느 쪽을 택하", "누구 편이"]
 OLD_NAMES = ["강태오", "천웨이", "국민방송"]
 PAGE = 160
@@ -367,6 +367,8 @@ def main():
         os.remove(f)
     ids, total = {}, 0
     for path in sorted(glob.glob(os.path.join(SRC, "**", "*.txt"), recursive=True)):
+        if os.sep + "terms" + os.sep in path:                         # 단말 원고(1-4)는 term_compile.py가 읽는다
+            continue
         for s in compile_file(path, cx):
             if s["id"] in ids:
                 cx.rep.err(s["src"], f"장면 ID 중복: {s['id']} ({ids[s['id']]})")

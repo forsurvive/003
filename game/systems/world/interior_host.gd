@@ -41,6 +41,9 @@ const TODDLER_WALK := {"walk": {"frames": 6, "px": 4.0, "px_v": 3.0, "diag": 3.0
 var combat: InteriorCombat                       ## 실내 전투(무기·표적·적) — 무기를 들지 않으면 아무것도 하지 않는다
 var pipboy: PipBoy                               ## 열려 있는 핍-보이(없으면 null)
 var container: ContainerScreen                   ## 열려 있는 용기 창(없으면 null, 0-9)
+var terminal: TerminalScreen                     ## 열려 있는 단말 화면(1-4) — 단말·해킹 중에는 게임 시간이 멈춘다(SD-12 §8.1)
+var terms_db := {}                               ## 단말 원고(game/data/terminals.json)
+var _prompt_shake := -1.0                        ## 요구치 미달로 시도하면 상호작용 문구가 0.8초 흔들린다(SD-12 §8.1)
 var pipboy_ok := false                           ## 핍-보이를 받았다(MQ-P2 생일잔치부터)
 var items_db := {}                               ## 아이템 ID -> 이름·분류·설명(data/items.json + weapons.json)
 var date_text := ""                              ## 핍-보이 위 줄 날짜
@@ -372,7 +375,7 @@ func _physics_process(dt: float) -> void:
 			continue
 		if n["routine"] != null and is_instance_valid(n["actor"]) and not n.get("dead", false):
 			n["routine"].tick(dt, player.loco.logical)
-	talking = talking or pipboy != null or container != null
+	talking = talking or pipboy != null or container != null or terminal != null
 	if talking:
 		if not ev.drives(player):                                         # 연출이 주인공을 걷게 하는 중이면(move PC …) 멈추지 않는다
 			player.move(Vector2.ZERO, dt)
@@ -513,6 +516,10 @@ func interact() -> bool:
 	if not b.is_empty():
 		open_box(b)
 		return true
+	var tm := _front_term(cells)
+	if not tm.is_empty():
+		open_terminal(tm)
+		return true
 	for cc in cells:
 		if map.texts.has(cc):
 			var m: Dictionary = map.text_meta.get(cc, {})
@@ -602,6 +609,82 @@ func open_box(b: Dictionary) -> void:
 		container = null
 		_after_theft())
 	add_child(container)
+
+
+# ---------------------------------------------------------------- 단말(SD-12 §7.4 · §8.1·§8.3 해킹, 1-4)
+func _terms() -> Dictionary:
+	if terms_db.is_empty() and FileAccess.file_exists("res://data/terminals.json"):
+		terms_db = JSON.parse_string(FileAccess.get_file_as_string("res://data/terminals.json"))["terms"]
+	return terms_db
+
+
+func _front_term(cells: Array = []) -> Dictionary:
+	if map == null or map.terms.is_empty():
+		return {}
+	for cc in (cells if not cells.is_empty() else _front_cells()):
+		if map.terms.has(cc):
+			var t: Dictionary = map.terms[cc]
+			if InteriorMap._cond_ok(str(t.get("cond", "")), st) and _terms().has(str(t["id"])):
+				return t
+	return {}
+
+
+## 단말 상태(저장): {"unlocked": 뚫음·비밀번호, "locked": 영구 잠김, "read": [읽은 항목 번호]}
+func term_state(id: String) -> Dictionary:
+	var k := "term:" + id
+	if not st.boxes.has(k):
+		st.boxes[k] = {"unlocked": false, "locked": false, "read": []}
+	return st.boxes[k]
+
+
+func term_prompt(t: Dictionary) -> String:
+	var d: Dictionary = _terms()[str(t["id"])]
+	var s := term_state(str(t["id"]))
+	var tag := ""
+	var lv := int(d.get("lock", 0))
+	if lv > 0 and not s["unlocked"] and not (d.get("key", "") != "" and st.items.has(str(d["key"]))):
+		var g: String = Hack.GRADES[maxi(0, Hack.REQ.find(lv))]
+		if s["locked"]:
+			tag = "  [잠김: 단말기 잠김]"
+		elif st.skill("SCIENCE") < lv:
+			tag = "  [잠김: %s · 과학 %d 필요]" % [g, lv]
+		else:
+			tag = "  [잠김: %s]" % g
+	if str(d.get("owner", "")) != "":
+		tag += "  [소유]"
+	return "(E) 사용  " + str(d["name"]) + tag
+
+
+func open_terminal(t: Dictionary) -> void:
+	player.move(Vector2.ZERO, 0.0)
+	var id := str(t["id"])
+	var d: Dictionary = _terms()[id]
+	var s := term_state(id)
+	var lv := int(d.get("lock", 0))
+	var need: bool = lv > 0 and not s["unlocked"]
+	if need and str(d.get("key", "")) != "" and st.items.has(str(d["key"])):
+		s["unlocked"] = true                                             # 비밀번호(SD-12 §8.3 흐름: 비밀번호가 있으면 메뉴 바로)
+		need = false
+		_note("비밀번호로 접속했다")
+	if need and (s["locked"] or st.skill("SCIENCE") < lv):
+		_prompt_shake = _hud_t + 0.8                                     # 시도할 수 없다 — 메시지 상자 없이 문구만 흔들린다
+		return
+	terminal = TerminalScreen.new().setup(st, id, d, need)
+	terminal.hacked.connect(func(xp: int) -> void:
+		s["unlocked"] = true
+		st.call_fn("xp", [xp])
+		st.vars.set_v("STAT_HACKED", int(st.vars.get_v("STAT_HACKED")) + 1)
+		if str(d.get("owner", "")) != "":                              # 소유 단말 접근(해킹 포함) −5(SD-12 §9.2)
+			st.call_fn("karma", [-5]))
+	terminal.locked_out.connect(func() -> void: s["locked"] = true)
+	terminal.read.connect(func(i: int) -> void:
+		if not (i in s["read"]):
+			s["read"].append(i)
+			var fx := str(d["entries"][i].get("set", ""))
+			if fx != "":
+				StoryExpr.run(fx, st))
+	terminal.closed.connect(func(_ok: bool) -> void: terminal = null)
+	add_child(terminal)
 
 
 ## 거래 창(0-10c, SD-15 §3·§4): 상인 V번호. 진열·보유 캡은 st.boxes["shop:V01"]에 남고, 갱신 주기(일)마다 다시 채운다
@@ -804,17 +887,20 @@ func interact_label() -> String:
 	var cells := _front_cells()
 	if not _front_box(cells).is_empty():
 		return "열기"
+	if not _front_term(cells).is_empty():
+		return "사용"
 	for cc in cells:
 		if map.texts.has(cc):
 			return "조사"
 	return ""
 
 
-## 조사 안내(HUD): 앞 칸이 용기면 "(E) 열기 이름 [소유]·[빈 상자]·[잠김]"
+## 조사 안내(HUD): 앞 칸이 용기면 "(E) 열기 이름 [소유]·[빈 상자]·[잠김]", 단말이면 "(E) 사용 이름 [잠김: 등급 · 과학 n 필요]"
 func box_prompt() -> String:
 	var b := _front_box()
 	if b.is_empty():
-		return ""
+		var tm := _front_term()
+		return term_prompt(tm) if not tm.is_empty() else ""
 	var nm: String = str(b.get("name", "")) if str(b.get("name", "")) != "" else Loot.kind_name(str(b["kind"]))
 	var tag := ""
 	if box_locked(b):
@@ -879,7 +965,7 @@ var font_s: Font
 
 
 func _draw_hud() -> void:
-	if not hud_on or box.active or ev.busy() or busy or pipboy != null or container != null or body == "hidden":
+	if not hud_on or box.active or ev.busy() or busy or pipboy != null or container != null or terminal != null or body == "hidden":
 		return
 	if font_s == null:
 		font_s = load("res://assets/fonts/Galmuri9.ttf")
@@ -925,7 +1011,7 @@ func _draw_hud() -> void:
 		hint("E·Enter: 용기 열기 — 붉은 [소유]는 남의 물건, 꺼내면 절도(카르마)", 7.0)
 	if bp != "":
 		var owned := bp.ends_with("[소유]")
-		_txt(Vector2(320 + r / 2.0, 296 + b), bp, HUD_RED if owned else HU[6], HORIZONTAL_ALIGNMENT_CENTER)
+		_txt(Vector2(320 + r / 2.0 + _shake_x(), 296 + b), bp, HUD_RED if owned else HU[6], HORIZONTAL_ALIGNMENT_CENTER)
 	if buddy_name != "" and combat.buddy != null:
 		_txt(Vector2(8, 258 + b), buddy_name, HU[5])
 		_bar(Vector2(8, 272 + b), 60.0, 1.0, "", HU[5])
@@ -954,10 +1040,14 @@ func _draw_hud_touch(vs: Vector2, c: Combatant, low: bool, ap: float) -> void:
 		gy += 12.0
 	var bp := box_prompt()
 	if bp != "":
-		_txt(Vector2(320 + r / 2.0, 250 + vs.y - 360.0), bp, HUD_RED if bp.ends_with("[소유]") else HU[6], HORIZONTAL_ALIGNMENT_CENTER)
+		_txt(Vector2(320 + r / 2.0 + _shake_x(), 250 + vs.y - 360.0), bp, HUD_RED if bp.ends_with("[소유]") else HU[6], HORIZONTAL_ALIGNMENT_CENTER)
 	if buddy_name != "" and combat.buddy != null:
 		_txt(Vector2(8, 152), buddy_name, HU[5])
 		_bar(Vector2(8, 166), 60.0, 1.0, "", HU[5])
+
+
+func _shake_x() -> float:
+	return roundf(sin(_hud_t * 70.0) * 3.0) if _hud_t < _prompt_shake else 0.0
 
 
 ## HUD 글을 폭 w(px)에 맞춰 자른다(넘치면 '…')

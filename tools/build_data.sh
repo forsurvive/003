@@ -10,6 +10,8 @@ python3 tools/pipeline/extract.py
 python3 tools/pipeline/extract_story.py
 python3 tools/pipeline/extract_docs.py
 python3 tools/pipeline/script_compile.py
+python3 tools/pipeline/term_compile.py                  # 단말(1-4): script/terms → terminals.json
+python3 tools/pipeline/hack_words.py                    # 해킹 단어 풀(1-4)
 python3 tools/pipeline/prop_export.py
 python3 tools/pipeline/ui_export.py
 python3 tools/pipeline/fx_export.py

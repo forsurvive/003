@@ -21,6 +21,8 @@
   box x y 종류 [w= h=] [owner=인물ID|S7|PC] [lock=판정값] [name="이름"] [cond="식"]
                                  용기(SD-12 §7.3, 0-9): 그 칸(보통 소품)을 조사하면 2단 창. 종류 = loot_s07.json 표. owner가 있으면
                                  [소유](꺼내면 절도), lock이면 [자물쇠 따기 n] 판정 뒤 열린다.
+  term x y TM-ID [w= h=] [cond="식"]
+                                 단말(SD-12 §7.4, 1-4): 그 칸(보통 책상 위 단말 소품)을 조사하면 단말 화면. 내용은 script/terms/*.txt.
   enemy ID x y [cond="식"] [arm=baton|pistol] [who=인물ID] [dir=방향] [stance=hold] [route=x,y,초;…]
                                  적(SD-14). route면 순찰(닿으면 그 초만큼 서서 둘러본다), stance=hold면 제자리 경계(0-9).
   prop·sign·npc에도 cond="식"을 붙일 수 있다(시대·퀘스트에 따라 있다 없다 — 예: year() == 2259).
@@ -33,6 +35,9 @@ from collections import deque
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import story_expr as SE
+
+_TERMS = os.path.join(ROOT, "game", "data", "terminals.json")
+terms_db = json.load(open(_TERMS, encoding="utf-8"))["terms"] if os.path.exists(_TERMS) else {}
 
 LOOK_RE = re.compile(r"^(M1|M2|F1|F2|E1|E2|K1)-S[1-6G][12]?-HR\d\d-H\d-T\d\d-\d-PF\d\d-HD\d\d-EY\d\d(-PR\d+)?$")
 
@@ -191,7 +196,7 @@ def compile_ext(m, prop_meta, known_vars, known_fns, scenes=()):
                 fr.append(ft[g]); gr.append(f); sr.append(1); cr.append(c)
         floor_ids.append(fr); gflag.append(gr); solid.append(sr); cover.append(cr)
     out = {"id": m.id, "name": m.name, "set": m.set, "ext": True, "size": [W, H], "props": [], "doors": [], "exits": [], "marks": {},
-           "npcs": [], "texts": [], "signs": [], "triggers": [], "enemies": [], "boxes": [], "structs": []}
+           "npcs": [], "texts": [], "signs": [], "triggers": [], "enemies": [], "boxes": [], "terms": [], "structs": []}
     return out, grid, floor_ids, gflag, solid, cover, level, walk
 
 
@@ -276,7 +281,7 @@ def compile_map(m, prop_meta, known_vars, known_fns, scenes=()):
             floor_ids[y][x] = ft[FLOOR[nb[0]]] if nb else ft["panel"]
     solid = [[0 if floor(x, y) else 1 for x in range(W)] for y in range(H)]
     out = {"id": m.id, "name": m.name, "set": m.set, "size": [W, H], "props": [], "doors": [], "exits": [], "marks": {},
-           "npcs": [], "texts": [], "signs": [], "triggers": [], "enemies": [], "boxes": []}
+           "npcs": [], "texts": [], "signs": [], "triggers": [], "enemies": [], "boxes": [], "terms": []}
     return _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kind, solid, None, ext=False,
                      extra=(floor_ids, wall_ids))
 
@@ -411,6 +416,16 @@ def _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kin
                 if e["owner"] not in ("", "PC", "S7") and e["owner"] not in npc_ids:
                     raise Err(f"용기 주인 '{e['owner']}'를 모른다(\"\"·PC·S7·인물 ID)")
                 out["boxes"].append(e)
+            elif c == "term":                                    # term x y TM-ID [w= h=] [cond=] — 단말(1-4, SD-12 §7.4)
+                x, y, tid = int(pos[0]), int(pos[1]), pos[2]
+                if tid not in terms_db:
+                    raise Err(f"모르는 단말 '{tid}'(script/terms)")
+                e = {"x": x, "y": y, "w": int(opt.get("w", 1)), "h": int(opt.get("h", 1)), "id": tid, "cond": opt.get("cond", "")}
+                if e["cond"]:
+                    check_cond(e["cond"], known_vars, known_fns)
+                if not (0 <= x < W and 0 <= y < H):
+                    raise Err(f"단말 ({x},{y})가 맵 밖이다")
+                out["terms"].append(e)
             elif c == "text":
                 x, y, txt = int(pos[0]), int(pos[1]), pos[2]
                 e = {"x": x, "y": y, "w": int(opt.get("w", 1)), "h": int(opt.get("h", 1)), "text": txt}

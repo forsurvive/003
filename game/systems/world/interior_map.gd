@@ -17,6 +17,7 @@ var objects: Node2D                              ## y 정렬 층(소품·문·�
 var doors: Array = []                            ## [{"node": Sprite2D, "x", "y", "locked", "closed": Rect2, "open": Rect2, "is_open"}]
 var exits := {}                                  ## Vector2i -> {"to", "mark"}
 var texts := {}                                  ## Vector2i -> 글
+var terms := {}                                  ## Vector2i -> 단말(1-4): {"x","y","w","h","id","cond"}
 var boxes := {}                                  ## Vector2i -> 용기(0-9): {"x","y","w","h","kind","owner","lock","name","cond"} — 조건은 조사할 때 본다
 var text_meta := {}                              ## Vector2i -> {"cond", "seq": [글…], "scene", "key"} — 여러 번 조사하는 글(0-7)
 var marks := {}
@@ -163,6 +164,11 @@ func _add_objects(map_id: String, d: Dictionary, st: StoryState, o: Vector2i) ->
 		for j in int(b["h"]):
 			for i in int(b["w"]):
 				boxes[Vector2i(int(bb["x"]) + i, int(bb["y"]) + j)] = bb
+	for tm in d.get("terms", []):
+		var tt: Dictionary = tm.duplicate()
+		for j in int(tm["h"]):
+			for i in int(tm["w"]):
+				terms[Vector2i(int(tm["x"]) + o.x + i, int(tm["y"]) + o.y + j)] = tt
 	for e in d["exits"]:
 		exits[Vector2i(int(e["x"]) + o.x, int(e["y"]) + o.y)] = {"to": e["to"], "mark": e["mark"]}
 	for t in d["texts"]:

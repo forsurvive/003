@@ -17,7 +17,7 @@
   },
   {
    "goal": "내 핍-보이의 관리자 코드가 무엇인지 알아낸다. 현상금 추적을 따돌린다.",
-   "goal_src": "03a_main-story-part1.md:1044",
+   "goal_src": "03a_main-story-part1.md:1049",
    "n": 1,
    "name": "1막 「미등록자」",
    "paths": [
@@ -173,32 +173,32 @@
    "places": [
     "L-R01-09"
    ],
-   "places_src": "03a_main-story-part1.md:1052",
+   "places_src": "03a_main-story-part1.md:1057",
    "stages": {
     "10": {
      "done": "봉천 계단마을 입구",
      "log": "산을 내려가 사람이 사는 곳을 찾는다",
-     "src": "03a_main-story-part1.md:1061"
+     "src": "03a_main-story-part1.md:1066"
     },
     "20": {
      "done": "조만석 대화",
      "log": "마을 이장을 만난다",
-     "src": "03a_main-story-part1.md:1062"
+     "src": "03a_main-story-part1.md:1067"
     },
     "30": {
      "done": "거래 1회, 물 마시기, 방사능 수치 확인(순서 무관)",
      "log": "황무지에서 사는 법을 배운다",
-     "src": "03a_main-story-part1.md:1063"
+     "src": "03a_main-story-part1.md:1068"
     },
     "40": {
      "done": "추적조 해결",
      "log": "밤에 찾아온 추적조를 처리한다",
-     "src": "03a_main-story-part1.md:1064"
+     "src": "03a_main-story-part1.md:1069"
     },
     "50": {
      "done": "대화 → MQ-102 발동",
      "log": "조만석과 다음 일을 의논한다",
-     "src": "03a_main-story-part1.md:1065"
+     "src": "03a_main-story-part1.md:1070"
     }
    },
    "title": "산 아래 마을"
@@ -211,12 +211,12 @@
     "10": {
      "done": "단서 1개 이상",
      "log": "관리자 코드를 읽을 사람을 찾는다",
-     "src": "03a_main-story-part1.md:1136"
+     "src": "03a_main-story-part1.md:1141"
     },
     "100": {
      "done": "K_CODE = 1",
      "log": "(자동) 코드의 정체를 알았다",
-     "src": "03a_main-story-part1.md:1137"
+     "src": "03a_main-story-part1.md:1142"
     }
    },
    "title": "코드를 읽을 사람"
@@ -228,27 +228,27 @@
    "places": [
     "L-R02-11"
    ],
-   "places_src": "03a_main-story-part1.md:1152",
+   "places_src": "03a_main-story-part1.md:1157",
    "stages": {
     "10": {
      "done": "상가 입구 통과",
      "log": "지하시장에 들어간다",
-     "src": "03a_main-story-part1.md:1160"
+     "src": "03a_main-story-part1.md:1165"
     },
     "20": {
      "done": "상인회 허가 / 면담료 / 몰래 진입",
      "log": "마영식을 만날 방법을 찾는다",
-     "src": "03a_main-story-part1.md:1161"
+     "src": "03a_main-story-part1.md:1166"
     },
     "30": {
      "done": "대화 → K_CODE",
      "log": "마영식에게 코드를 보여 준다",
-     "src": "03a_main-story-part1.md:1162"
+     "src": "03a_main-story-part1.md:1167"
     },
     "40": {
      "done": "K_LINE, LR-21",
      "log": "(선택) 마영식에게서 회선 이야기를 끝까지 듣는다",
-     "src": "03a_main-story-part1.md:1163"
+     "src": "03a_main-story-part1.md:1168"
     }
    },
    "title": "지하시장"
@@ -261,32 +261,32 @@
     "L-R02-01",
     "L-R02-02"
    ],
-   "places_src": "03a_main-story-part1.md:1192",
+   "places_src": "03a_main-story-part1.md:1197",
    "stages": {
     "10": {
      "done": "벙커 입구(환승 정류장 아래 계단)",
      "log": "볼트 기록이 가리킨 곳을 찾는다",
-     "src": "03a_main-story-part1.md:1200"
+     "src": "03a_main-story-part1.md:1205"
     },
     "20": {
      "done": "출석부, 당직 일지, 유해",
      "log": "2077년 비상 집결지를 조사한다",
-     "src": "03a_main-story-part1.md:1201"
+     "src": "03a_main-story-part1.md:1206"
     },
     "30": {
      "done": "K_CODE",
      "log": "관리자 인증 단말에 핍-보이를 댄다",
-     "src": "03a_main-story-part1.md:1202"
+     "src": "03a_main-story-part1.md:1207"
     },
     "40": {
      "done": "벙커 탈출",
      "log": "들이닥친 수색조를 피하거나 처리한다",
-     "src": "03a_main-story-part1.md:1203"
+     "src": "03a_main-story-part1.md:1208"
     },
     "45": {
      "done": "V_DOYUN = 2",
      "log": "(선택) 호송차의 하도윤을 구한다",
-     "src": "03a_main-story-part1.md:1204"
+     "src": "03a_main-story-part1.md:1209"
     }
    },
    "title": "여의도 집결지"
@@ -298,22 +298,22 @@
    "places": [
     "L-R02-19"
    ],
-   "places_src": "03a_main-story-part1.md:1237",
+   "places_src": "03a_main-story-part1.md:1242",
    "stages": {
     "10": {
      "done": "본소 안 진입",
      "log": "새벽인력 본소에 들어간다",
-     "src": "03a_main-story-part1.md:1245"
+     "src": "03a_main-story-part1.md:1250"
     },
     "20": {
      "done": "장부 열람 → K_CODE",
      "log": "황두칠의 장부를 본다",
-     "src": "03a_main-story-part1.md:1246"
+     "src": "03a_main-story-part1.md:1251"
     },
     "30": {
      "done": "HO_LEDGER 결정(가지고 나가기도 결정이다)",
      "log": "장부를 어떻게 할지 행동한다",
-     "src": "03a_main-story-part1.md:1247"
+     "src": "03a_main-story-part1.md:1252"
     }
    },
    "title": "현상금의 주인"
@@ -326,7 +326,7 @@
     "10": {
      "done": "아래 해법 중 하나",
      "log": "계엄사령관의 수색대를 따돌린다",
-     "src": "03a_main-story-part1.md:1283"
+     "src": "03a_main-story-part1.md:1288"
     }
    },
    "title": "첫 번째 추적자"
@@ -338,22 +338,22 @@
    "places": [
     "L-HR-01"
    ],
-   "places_src": "03a_main-story-part1.md:1320",
+   "places_src": "03a_main-story-part1.md:1325",
    "stages": {
     "10": {
      "done": "섬 진입",
      "log": "노들섬을 건너 강 북쪽으로 간다",
-     "src": "03a_main-story-part1.md:1328"
+     "src": "03a_main-story-part1.md:1333"
     },
     "20": {
      "done": "아래 해법",
      "log": "선주 조합장에게 통행 허락을 받거나, 허락 없이 건넌다",
-     "src": "03a_main-story-part1.md:1329"
+     "src": "03a_main-story-part1.md:1334"
     },
     "30": {
      "done": "북단 진입 → S_CROSSED",
      "log": "한강대교 북단에 닿는다",
-     "src": "03a_main-story-part1.md:1330"
+     "src": "03a_main-story-part1.md:1335"
     }
    },
    "title": "노들섬"
@@ -365,27 +365,27 @@
    "places": [
     "L-R06-12"
    ],
-   "places_src": "03a_main-story-part1.md:1421",
+   "places_src": "03a_main-story-part1.md:1426",
    "stages": {
     "10": {
      "done": "분견대 초소 통과",
      "log": "남산 방송국을 찾아간다",
-     "src": "03a_main-story-part1.md:1429"
+     "src": "03a_main-story-part1.md:1434"
     },
     "20": {
      "done": "방송실 대화",
      "log": "송미래와 이야기한다",
-     "src": "03a_main-story-part1.md:1430"
+     "src": "03a_main-story-part1.md:1435"
     },
     "30": {
      "done": "[수리 50] 또는 [과학 50]",
      "log": "(선택) 송신 진공관 수리를 돕는다",
-     "src": "03a_main-story-part1.md:1431"
+     "src": "03a_main-story-part1.md:1436"
     },
     "40": {
      "done": "방송실 출입문",
      "log": "방송실을 나선다",
-     "src": "03a_main-story-part1.md:1432"
+     "src": "03a_main-story-part1.md:1437"
     }
    },
    "title": "남산의 목소리"
@@ -397,27 +397,27 @@
    "places": [
     "L-R06-01"
    ],
-   "places_src": "03a_main-story-part1.md:1462",
+   "places_src": "03a_main-story-part1.md:1467",
    "stages": {
     "10": {
      "done": "정문 통과",
      "log": "용산 요새에 들어간다",
-     "src": "03a_main-story-part1.md:1469"
+     "src": "03a_main-story-part1.md:1474"
     },
     "20": {
      "done": "회의실",
      "log": "연합단 단장을 만난다",
-     "src": "03a_main-story-part1.md:1470"
+     "src": "03a_main-story-part1.md:1475"
     },
     "30": {
      "done": "아래 행동",
      "log": "손님 숙소에서 나온다",
-     "src": "03a_main-story-part1.md:1471"
+     "src": "03a_main-story-part1.md:1476"
     },
     "40": {
      "done": "테이프 3개 또는 [과학 50]",
      "log": "(선택) 기록관을 돕는다",
-     "src": "03a_main-story-part1.md:1472"
+     "src": "03a_main-story-part1.md:1477"
     }
    },
    "title": "용산 요새"
@@ -427,27 +427,27 @@
    "key": "MQ301",
    "path": true,
    "places": [],
-   "places_src": "03a_main-story-part1.md:1533",
+   "places_src": "03a_main-story-part1.md:1538",
    "stages": {
     "10": {
      "done": "B1 진입",
      "log": "당인리 지하 원자력 발전소에 들어간다",
-     "src": "03a_main-story-part1.md:1542"
+     "src": "03a_main-story-part1.md:1547"
     },
     "20": {
      "done": "세 계통 조사",
      "log": "발전소의 세 계통(배수·냉각·제어)을 확인한다",
-     "src": "03a_main-story-part1.md:1543"
+     "src": "03a_main-story-part1.md:1548"
     },
     "30": {
      "done": "재가동 / 봉인 / 과부하",
      "log": "원자로를 어떻게 할지 주제어실에서 정한다",
-     "src": "03a_main-story-part1.md:1544"
+     "src": "03a_main-story-part1.md:1549"
     },
     "40": {
      "done": "지상 진입",
      "log": "기동 키를 들고 발전소를 나선다(또는 두고 나선다)",
-     "src": "03a_main-story-part1.md:1545"
+     "src": "03a_main-story-part1.md:1550"
     }
    },
    "title": "당인리"
@@ -459,32 +459,32 @@
    "places": [
     "L-R07-01"
    ],
-   "places_src": "03a_main-story-part1.md:1595",
+   "places_src": "03a_main-story-part1.md:1600",
    "stages": {
     "10": {
      "done": "로비",
      "log": "세진전자 타워에 들어간다",
-     "src": "03a_main-story-part1.md:1604"
+     "src": "03a_main-story-part1.md:1609"
     },
     "20": {
      "done": "협력자 과제 또는 단독 경로",
      "log": "위층으로 오르는 길을 찾는다",
-     "src": "03a_main-story-part1.md:1605"
+     "src": "03a_main-story-part1.md:1610"
     },
     "30": {
      "done": "101층",
      "log": "설계자의 방을 찾는다",
-     "src": "03a_main-story-part1.md:1606"
+     "src": "03a_main-story-part1.md:1611"
     },
     "40": {
      "done": "생체 인증",
      "log": "수석 연구실 금고를 연다",
-     "src": "03a_main-story-part1.md:1607"
+     "src": "03a_main-story-part1.md:1612"
     },
     "50": {
      "done": "1층 출구",
      "log": "테이프를 들고 타워를 나선다(또는 맡기고 나선다)",
-     "src": "03a_main-story-part1.md:1608"
+     "src": "03a_main-story-part1.md:1613"
     }
    },
    "title": "세진전자 타워"
@@ -494,22 +494,22 @@
    "key": "MQ303",
    "path": true,
    "places": [],
-   "places_src": "03a_main-story-part1.md:1656",
+   "places_src": "03a_main-story-part1.md:1661",
    "stages": {
     "10": {
      "done": "기지 경계",
      "log": "북한산의 중국군 잔존병 기지를 찾는다",
-     "src": "03a_main-story-part1.md:1665"
+     "src": "03a_main-story-part1.md:1670"
     },
     "20": {
      "done": "아래 해법",
      "log": "기지 지휘관을 만나거나, 터널로 가는 길을 확보한다",
-     "src": "03a_main-story-part1.md:1666"
+     "src": "03a_main-story-part1.md:1671"
     },
     "30": {
      "done": "터널 하층 끝(관제 본부 하층 차단벽 앞) 도달 또는 지도 확보",
      "log": "침투 터널이 어디로 이어지는지 확인한다",
-     "src": "03a_main-story-part1.md:1667"
+     "src": "03a_main-story-part1.md:1672"
     }
    },
    "title": "끝나지 않은 명령"
@@ -519,22 +519,22 @@
    "key": "MQP1",
    "path": false,
    "places": [],
-   "places_src": "03a_main-story-part1.md:740",
+   "places_src": "03a_main-story-part1.md:745",
    "stages": {
     "10": {
      "done": "신고서 UI 완료",
      "log": "출생신고서를 작성한다",
-     "src": "03a_main-story-part1.md:750"
+     "src": "03a_main-story-part1.md:755"
     },
     "20": {
      "done": "돌잔치 맵에서 윤정인 앞에 도착",
      "log": "엄마에게 걸어간다",
-     "src": "03a_main-story-part1.md:751"
+     "src": "03a_main-story-part1.md:756"
     },
     "30": {
      "done": "돌잡이 물건 하나 선택",
      "log": "돌상에서 하나를 잡는다",
-     "src": "03a_main-story-part1.md:752"
+     "src": "03a_main-story-part1.md:757"
     }
    },
    "title": "출생신고"
@@ -544,37 +544,37 @@
    "key": "MQP2",
    "path": false,
    "places": [],
-   "places_src": "03a_main-story-part1.md:795",
+   "places_src": "03a_main-story-part1.md:800",
    "stages": {
     "10": {
      "done": "S.P.E.C.I.A.L. 배분 완료",
      "log": "생활기록부 확인 서명을 한다",
-     "src": "03a_main-story-part1.md:804"
+     "src": "03a_main-story-part1.md:809"
     },
     "20": {
      "done": "식당 도착, 핍-보이 수령",
      "log": "생일잔치에 간다",
-     "src": "03a_main-story-part1.md:805"
+     "src": "03a_main-story-part1.md:810"
     },
     "30": {
      "done": "행정실 창구",
      "log": "첫 배정 통지서를 받는다",
-     "src": "03a_main-story-part1.md:806"
+     "src": "03a_main-story-part1.md:811"
     },
     "40": {
      "done": "지우 장면 종료",
      "log": "(선택) 배급소의 지우를 돕는다",
-     "src": "03a_main-story-part1.md:807"
+     "src": "03a_main-story-part1.md:812"
     },
     "50": {
      "done": "표적 10개",
      "log": "사격장에서 도경철 부장을 만난다",
-     "src": "03a_main-story-part1.md:808"
+     "src": "03a_main-story-part1.md:813"
     },
     "60": {
      "done": "변이 바퀴 6마리",
      "log": "하도윤과 배관실 해충을 잡는다",
-     "src": "03a_main-story-part1.md:809"
+     "src": "03a_main-story-part1.md:814"
     }
    },
    "title": "열 살, 첫 배정"
@@ -584,27 +584,27 @@
    "key": "MQP3",
    "path": false,
    "places": [],
-   "places_src": "03a_main-story-part1.md:864",
+   "places_src": "03a_main-story-part1.md:869",
    "stages": {
     "10": {
      "done": "복도 진입",
      "log": "적성 평가 교실로 간다",
-     "src": "03a_main-story-part1.md:873"
+     "src": "03a_main-story-part1.md:878"
     },
     "20": {
      "done": "사건 종료",
      "log": "(선택) 하도윤의 부정행위 소동을 해결한다",
-     "src": "03a_main-story-part1.md:874"
+     "src": "03a_main-story-part1.md:879"
     },
     "30": {
      "done": "10문항 응답",
      "log": "적성 평가를 치른다",
-     "src": "03a_main-story-part1.md:875"
+     "src": "03a_main-story-part1.md:880"
     },
     "40": {
      "done": "평가관 면담, 태그 확정",
      "log": "결과지를 받는다",
-     "src": "03a_main-story-part1.md:876"
+     "src": "03a_main-story-part1.md:881"
     }
    },
    "title": "적성 평가"
@@ -614,37 +614,37 @@
    "key": "MQP4",
    "path": false,
    "places": [],
-   "places_src": "03a_main-story-part1.md:958",
+   "places_src": "03a_main-story-part1.md:963",
    "stages": {
     "10": {
      "done": "식당 도착",
      "log": "주민 회의에 간다",
-     "src": "03a_main-story-part1.md:969"
+     "src": "03a_main-story-part1.md:974"
     },
     "20": {
      "done": "정문 장면 종료",
      "log": "개방식을 지켜본다",
-     "src": "03a_main-story-part1.md:970"
+     "src": "03a_main-story-part1.md:975"
     },
     "30": {
      "done": "(실제로는 탈출 시작 신호)",
      "log": "관리동으로 오라는 호출에 응한다",
-     "src": "03a_main-story-part1.md:971"
+     "src": "03a_main-story-part1.md:976"
     },
     "40": {
      "done": "4가지 방법 중 하나로 출구 도달",
      "log": "볼트를 빠져나간다",
-     "src": "03a_main-story-part1.md:972"
+     "src": "03a_main-story-part1.md:977"
     },
     "50": {
      "done": "K_RALLY, LR-18",
      "log": "(선택) 오버시어 단말의 기록을 복사한다",
-     "src": "03a_main-story-part1.md:973"
+     "src": "03a_main-story-part1.md:978"
     },
     "60": {
      "done": "재설정 화면 종료",
      "log": "출구 점검표를 확인한다",
-     "src": "03a_main-story-part1.md:974"
+     "src": "03a_main-story-part1.md:979"
     }
    },
    "title": "개방의 날"
