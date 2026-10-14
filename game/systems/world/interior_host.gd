@@ -180,7 +180,11 @@ func _index_scenes() -> void:
 
 ## 맵을 연다. mark: 주인공이 설 표지(없으면 첫 표지)
 ## at: 표지 대신 이 자리에 세운다(불러오기 — 월드는 그 자리로 구역·청크를 정한다)
+var last_mark := ""                              ## 마지막으로 들어온 표지(1-4: 어느 문으로 들어왔나 — 북쪽 출구 매복은 안에서 나올 때만)
+
+
 func enter(map_id: String, mark: String = "", look: Dictionary = {}, at: Vector2 = Vector2.INF) -> void:
+	last_mark = mark
 	var keep_buddy := buddy_id if combat.buddy != null and is_instance_valid(combat.buddy) else ""   # 일시 동행은 맵을 넘어 따라온다(0-9)
 	if map != null:
 		for n in npcs:
@@ -509,6 +513,17 @@ func interact() -> bool:
 		if v.length() < 46.0 and v.normalized().dot(f) > 0.5 and v.length() < best_d:
 			best = n
 			best_d = v.length()
+	if best.is_empty():                                             # 계산대·진열대 너머(앞 칸이 가구로 막혔고 그 너머가 트였다): 두 칸까지
+		var fc := map.tile_of(player.loco.logical + f * 32.0)
+		if map.is_solid(fc) and map.cover_at(fc) > 0:                   # 가구(엄폐가 되는 낮은·높은 소품) — 벽은 아니다
+			for n in npcs:
+				if not is_instance_valid(n["actor"]) or n.get("dead", false) or float(n.get("down_t", 0.0)) > 0.0:
+					continue
+				var v2: Vector2 = n["actor"].loco.logical - player.loco.logical
+				if v2.length() < 76.0 and v2.normalized().dot(f) > 0.85 and v2.length() < best_d \
+						and map.line_of_sight(player.loco.logical, n["actor"].loco.logical):
+					best = n
+					best_d = v2.length()
 	if not best.is_empty():
 		talk(best)
 		return true

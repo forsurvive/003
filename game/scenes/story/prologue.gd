@@ -172,6 +172,7 @@ func _ready() -> void:
 
 ## 1막 MQ-101 진행기로 넘긴다(0-10)
 var act1: Mq101
+var paths: Act1Paths                               ## 1막 경로 진행기(MQ-102 허브 · MQ-103 지하시장, 1-4)
 var sol := 1                                       ## 1막 봇 해법(--sol=1~5, 0-10)
 
 # ---------------------------------------------------------------- 저장·일시 정지·터치(0-11, SD-12 §13·§17)
@@ -194,11 +195,19 @@ var _saved_test := false
 const NO_SAVE_PHASES := ["P1S1", "P3S4", "P4S2", "P4S3", "P4S3B", "P4S5", "P4OUT", "P4S6", "P4S7", "end"]
 
 
+func _paths() -> void:
+	if paths == null:
+		paths = Act1Paths.new()
+		add_child(paths)
+		paths.setup(host, log_on)
+
+
 func _act1(from: String) -> void:
 	phase = "ACT1"
 	act1 = Mq101.new()
 	add_child(act1)
 	act1.setup(host, auto, log_on, sol, shots)
+	_paths()
 	if touch_on:
 		touch.on = true
 		act1.touch = touch
@@ -1467,6 +1476,7 @@ func _load_game(path: String) -> void:
 		add_child(act1)
 		act1.setup(host, auto, log_on, sol, shots)
 		act1.resume(flow.get("act1", {}))
+		_paths()
 	GameSnapshot.apply_host(host, w["host"])
 	if phase == "P4S6":                                            # 시스템 저장: 점검표부터 다시(→ 첫 풍경 → 1막)
 		host.play_scene.call_deferred("MQ-P4_S06")

@@ -545,6 +545,80 @@ def _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kin
     return out
 
 
+def compile_spots(prop_meta, known_vars, known_fns, scenes):
+    """월드 발견 자리(1-4, maps/world/*.spots): 월드 위 작은 구역에 소품·조사 글·장면·용기·인물을 둔다(잠든 파수·길 위 유해·쪽지).
+    spot L-ID w h [off=dx,dy] [cond=] — 장소 칸(+off) 둘레에서 w×h가 모두 걸어서 닿는 가장 가까운 자리(world_chunks가 고른다)
+    spot @x,y w h — 월드 타일을 바로 찍는다(장소 없는 길가). 다음 spot까지의 명령은 그 구역 왼쪽 위 기준 좌표(맵 명령과 같은 문법).
+    월드 땅은 굽기 전에는 모르니 구역 전체를 바닥으로 놓고 검사하고, 소품 발 칸은 실행 중 막힘(cells)으로 더한다."""
+    out_all, errors = [], []
+    places = json.load(open(os.path.join(ROOT, "game", "data", "world", "places.json"), encoding="utf-8"))
+    for path in sorted(glob.glob(os.path.join(SRC, "world", "*.spots"))):
+        m = MapSrc(path)
+        blocks = []
+        for ln, words in m.cmds:
+            if words[0] == "spot":
+                blocks.append((ln, words, []))
+            elif not blocks:
+                m.err(ln, "spot 줄보다 먼저 나온 명령")
+            else:
+                blocks[-1][2].append((ln, words))
+        for ln, words, cmds in blocks:
+            pos, opt = kv(words[1:])
+            try:
+                at, W, H = pos[0], int(pos[1]), int(pos[2])
+            except (IndexError, ValueError):
+                m.err(ln, "spot L-ID|@x,y w h 형식이 아니다")
+                continue
+            spec = {"w": W, "h": H, "line": ln, "file": os.path.basename(path)}
+            if at.startswith("@"):
+                xx, yy = at[1:].split(",")
+                spec["tile"] = [int(xx), int(yy)]
+                spec["key"] = "@%s,%s" % (xx, yy)
+            else:
+                if at not in places:
+                    m.err(ln, f"모르는 장소 '{at}'")
+                    continue
+                spec["lid"] = at
+                spec["key"] = at
+                dx, dy = (int(v) for v in opt.get("off", "0,0").split(","))
+                spec["tile"] = [places[at]["tx"] + dx, places[at]["ty"] + dy]
+            if opt.get("cond"):
+                check_cond(opt["cond"], known_vars, known_fns)
+                spec["cond"] = opt["cond"]
+            sub = MapSrc.__new__(MapSrc)
+            sub.path, sub.errors, sub.cmds, sub.id, sub.name, sub.set = path, [], cmds, "W", "", "r01"
+            out = {"id": "W", "name": "", "set": "r01", "size": [W, H], "props": [], "doors": [], "exits": [], "marks": {},
+                   "npcs": [], "texts": [], "signs": [], "triggers": [], "enemies": [], "boxes": [], "terms": [], "structs": []}
+            kind = [[None] * W for _ in range(H)]
+            solid = [[0] * W for _ in range(H)]
+            inb = lambda x, y: 0 <= x < W and 0 <= y < H
+            out = _commands(sub, prop_meta, known_vars, known_fns, scenes, out, W, H, inb, kind, solid, inb,
+                            extra=([[0] * W for _ in range(H)], [[0] * W for _ in range(H)]))
+            for p in out["props"]:                                    # 월드 청크에는 이 소품이 없다: 발 칸을 실행 중 막힘으로
+                pm = prop_meta[p["name"]]
+                if "cells" not in p and pm["kind"] not in ("wall", "deco"):
+                    fw, fh = pm["foot"]
+                    p["cells"] = [[p["x"] + i, p["y"] + j] for j in range(max(1, fh)) for i in range(max(1, fw))]
+            for k in ("floor", "wall", "solid"):
+                out.pop(k, None)
+            for k in ("doors", "signs", "structs", "exits"):
+                if out.get(k):
+                    sub.err(ln, f"발견 자리에는 {k}를 두지 않는다")
+                out[k] = []
+            for n in out["npcs"]:
+                n.pop("line", None)
+            errors += m.errors + sub.errors
+            m.errors = []
+            spec["data"] = out
+            out_all.append(spec)
+        errors += m.errors
+    keys = [s["key"] for s in out_all]
+    for k in set(keys):
+        if keys.count(k) > 1:
+            errors.append(f"발견 자리 겹침: {k}")
+    return out_all, errors
+
+
 def alias_of(npcs):
     """같은 사람이 C-ID와 N-ID 둘로 있을 때(SD-07a 주요 인물이 SD-07b 권역 표에도 실림) N-ID → C-ID."""
     by_name = {}
@@ -601,11 +675,15 @@ def main():
             elif e["mark"] not in maps[e["to"]][0]["marks"]:
                 m.err(e["line"], f"출구가 '{e['to']}'의 없는 표지 '{e['mark']}'로 간다")
                 errors += m.errors[-1:]
+    spots, sp_err = compile_spots(prop_meta, known_vars, known_fns, scenes)
+    errors += sp_err
     for e in errors:
         print("오류", e)
     if errors:
         sys.exit(1)
     os.makedirs(OUT, exist_ok=True)
+    json.dump({"spots": spots}, open(os.path.join(ROOT, "game", "data", "world", "spots_src.json"), "w", encoding="utf-8"),
+              ensure_ascii=False, separators=(",", ":"))
     index = {}
     for mid, (out, m) in sorted(maps.items()):
         for e in out["exits"]:
@@ -615,6 +693,7 @@ def main():
         json.dump(out, open(os.path.join(OUT, mid + ".json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
         index[mid] = {"name": out["name"], "size": out["size"], "exits": sorted({e["to"] for e in out["exits"]})}
     json.dump({"maps": index}, open(os.path.join(OUT, "_index.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    print(f"월드 발견 자리: {len(spots)}곳")
     print(f"맵: {len(maps)}장 — " + ", ".join(f"{k} {v['size'][0]}×{v['size'][1]}" for k, v in sorted(index.items())))
 
 

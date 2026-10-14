@@ -117,6 +117,31 @@ func load_map(map_id: String, st: StoryState = null) -> void:
 			dd["exits"].append({"x": at.x + i, "y": at.y, "to": str(door["to"]), "mark": str(door["mark"])})
 			dd["texts"].append({"x": at.x + i, "y": at.y - 1, "w": 1, "h": 1, "text": str(door["name"]) + " — 계단을 내려가면 지하다."})
 	_add_objects("W", dd, st, Vector2i.ZERO)
+	for sp in PlaceLog.spots:                                            # 발견 자리(1-4): 잠든 파수·길 위 유해·쪽지 — 구역 기준 좌표를 옮겨 붙인다
+		if not _cond_ok(str(sp.get("cond", "")), st):
+			continue
+		var so := Vector2i(int(sp["at"][0]), int(sp["at"][1]))
+		var sd: Dictionary = sp["data"]
+		var key := "W:" + str(sp["key"])
+		_add_objects(key, sd, st, so)
+		for k in sd["marks"]:
+			var m: Array = sd["marks"][k]
+			marks[k] = [int(m[0]) + so.x, int(m[1]) + so.y, m[2]]
+		for n in sd["npcs"]:
+			var nn: Dictionary = n.duplicate(true)
+			nn["x"] = int(n["x"]) + so.x
+			nn["y"] = int(n["y"]) + so.y
+			for r in nn["route"]:
+				r[1] = int(r[1]) + so.x
+				r[2] = int(r[2]) + so.y
+			data["npcs"].append(nn)
+		for k2 in ["triggers", "enemies"]:
+			for g in sd.get(k2, []):
+				var gg: Dictionary = g.duplicate(true)
+				gg["x"] = int(g["x"]) + so.x
+				gg["y"] = int(g["y"]) + so.y
+				gg["key"] = "%s:%d,%d" % [key, int(g["x"]), int(g["y"])]
+				data[k2].append(gg)
 	for k in exits.keys():                                               # 손 맵끼리 잇던 가장자리 출구는 월드에서 이어진 땅이다
 		if str(exits[k]["to"]) in ids:
 			exits.erase(k)

@@ -189,6 +189,10 @@ func run(name: String, args: Array, done: Callable) -> void:
 			lamps.append({"pos": _mark(str(args[0])) + Vector2(0, -22), "color": COLORS.get(str(args[1]) if args.size() > 1 else "green",
 				Color.GREEN), "t": 0.0})
 			_job = {"kind": "wait", "left": 0.5, "done": done}
+		"unlit":                                                          # 장치 그림을 끈다(lamp의 반대, 1-4 잠든 파수)
+			if world != null and world.has_method("set_prop_state"):
+				world.set_prop_state(world.tile_of(_mark(str(args[0]))), "")
+			_job = {"kind": "wait", "left": 0.3, "done": done}
 		"gate":                                                           # 톱니 방폭문(V-00): gate open|close [n 1/10초]
 			var to := 1.0 if str(args[0]) == "open" else 0.0
 			if world == null or not world.has_method("set_gate"):

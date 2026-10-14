@@ -1,0 +1,32 @@
+{
+ "id": "MQ-102_SENTRY_AFTER",
+ "title": "넘어진 파수",
+ "loc": "L-R01-32",
+ "npc": "",
+ "cond": "MQ102_ROBOT == 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "엎드린 '파수' 경비 로봇. 세진 동심원 마크가 흙에 반쯤 묻혔다. 유리 머리 안의 진공관은 식어 있다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "손목을 가까이 대 봐도 이제는 아무 반응이 없다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-102.txt"
+}

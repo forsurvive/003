@@ -239,6 +239,7 @@ npc N-R01-033 52 37 W cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0"
 npc N-R01-035 30 29 S cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0"
 npc N-R01-036 46 12 S cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0" route=tower:46,12,8;top:40,14,4
 npc N-R01-501 10 28 E cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0" route=a:10,28,5;b:18,28,4
+npc N-R02-018 20 36 E cond="V_ACT >= 1 and MQ101_NIGHT != 1" route=stall:20,36,8;well:24,38,5
 trigger 27 39 scene=MQ-101_GATE w=5 h=2 cond="MQ101_STAGE == 10" once
 npc C-021 29 42 N cond="MQ101_NIGHT == 2 and MQ101_RESULT == 0 and MQ101_FIGHT == 0"
 mark land1 29 37 S

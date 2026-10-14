@@ -842,9 +842,43 @@ def place_geo(R):
         doors.append({"lid": spec["lid"], "at": [xx, yy], "to": spec["to"], "mark": spec["mark"], "name": spec["name"], "prop": spec["prop"]})
         geo.setdefault(spec["lid"], {"bank": "S", "arrive": None})["arrive"] = [xx, yy + 1]
     geo["_doors"] = doors
+    # 월드 발견 자리(1-4, maps/world/*.spots → map_compile → spots_src.json): 요청 칸에서 가장 가까운, w×h가 모두 걸어서 닿고
+    # 손 맵·문 자리와 겹치지 않는 곳(장소 없는 '@x,y' 자리는 그 칸 그대로여야 한다 — 어긋나면 굽기 오류)
+    sp_path = os.path.join(OUT, "spots_src.json")
+    spots = []
+    taken = [tuple(ins["rect"]) for ins in R["insets"]] + [(d["at"][0], d["at"][1] - 1, 2, 3) for d in doors]
+    for spec in (json.load(open(sp_path, encoding="utf-8"))["spots"] if os.path.exists(sp_path) else []):
+        nx, ny = spec["tile"]
+        w, h = spec["w"], spec["h"]
+
+        def fits(xx, yy):
+            if not (1 <= xx and 1 <= yy and xx + w < W - 1 and yy + h < H - 1):
+                return False
+            if not reach[yy:yy + h, xx:xx + w].all():
+                return False
+            return not any(xx < ox + ow and xx + w > ox and yy < oy + oh and yy + h > oy for (ox, oy, ow, oh) in taken)
+        best = None
+        for rr in range(0, 1 if "lid" not in spec else 20):
+            for yy in range(ny - rr, ny + rr + 1):
+                for xx in range(nx - rr, nx + rr + 1):
+                    if fits(xx, yy):
+                        dd = (xx - nx) ** 2 + (yy - ny) ** 2
+                        if best is None or dd < best[0]:
+                            best = (dd, xx, yy)
+            if best is not None:
+                break
+        if best is None:
+            raise SystemExit("발견 자리를 못 놓았다(%s:%d %s %d×%d — 걸어서 닿는 빈 땅이 없다)" % (spec["file"], spec["line"], spec["key"], w, h))
+        _, xx, yy = best
+        taken.append((xx, yy, w, h))
+        if spec.get("lid") and spec["lid"] in geo:                       # 장소의 도착 칸 = 발견 자리 앞(빠른 이동·지도 표시)
+            geo[spec["lid"]]["arrive"] = [int(xx + w // 2), int(yy + h - 1)]
+        spots.append({"key": spec["key"], "lid": spec.get("lid", ""), "at": [int(xx), int(yy)], "cond": spec.get("cond", ""), "data": spec["data"]})
+    geo["_spots"] = spots
     geo["_han"] = [int(round(v)) for v in yc]                             # 한강 본류 세로 가운데(가로 칸마다): 주인공 강변 판정
     json.dump(geo, open(os.path.join(OUT, "place_geo.json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"), sort_keys=True)
     n_arr = sum(1 for k, g in geo.items() if not k.startswith("_") and g["arrive"])
+    log("발견 자리 %d곳: %s" % (len(spots), ", ".join("%s@%d,%d" % (s_["key"], s_["at"][0], s_["at"][1]) for s_ in spots)))
     log("장소 지리: 북안 %d · 남안 %d · 소속 없음 %d · 도착 칸 %d / 지상 %d" % (
         sum(1 for k, g in geo.items() if not k.startswith("_") and g["bank"] == "N"), sum(1 for k, g in geo.items() if not k.startswith("_") and g["bank"] == "S"),
         sum(1 for k, g in geo.items() if not k.startswith("_") and g["bank"] == ""), n_arr, sum(1 for p in places.values() if p["region"] != "UG")))

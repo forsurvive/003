@@ -1,0 +1,78 @@
+{
+ "id": "MQ-102_SENTRY",
+ "title": "봉천 동 주민센터 앞",
+ "loc": "L-R01-32",
+ "npc": "",
+ "cond": "V_ACT >= 1 and MQ102_ROBOT == 0",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "손목의 핍-보이가 혼자 깜박인다. 등록 카드 한 칸의 깨진 글자 줄이 화면 위로 떠오른다."
+  },
+  {
+   "op": "cmd",
+   "name": "lamp",
+   "args": [
+    "sentry",
+    "green"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "엎드린 경비 로봇의 유리 머리 안에서 진공관이 하나씩 붉게, 그리고 푸르게 켜진다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "스피커가 갈라진 소리를 낸다. \"판독… 관리자 후보… 인증 대기. 관제 본부로—\""
+  },
+  {
+   "op": "cmd",
+   "name": "wait",
+   "args": [
+    "8"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "unlit",
+   "args": [
+    "sentry"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "불빛이 꺼진다. 로봇은 다시 이백 년째의 잠으로 돌아간다."
+  },
+  {
+   "op": "do",
+   "fx": "MQ102_ROBOT = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "hint",
+   "args": [
+    "관리자 후보 · 관제 본부 — 손목의 깨진 줄은 어딘가의 열쇠다",
+    "7"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-102.txt"
+}

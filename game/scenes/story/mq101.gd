@@ -267,6 +267,10 @@ func _trade_cmd(a: Array, finish: Callable) -> void:
 	elif vid == "V01" and r == 4:
 		k = [1.10, 1.0]
 		greet = "새벽인력이랑 장사하는 손님이면 값도 그쪽 시세로 받아야지."
+	host.shop_state(vid)                                              # 상인 표를 읽어 둔다(세력 확인)
+	if str(host.merchants.get(vid, {}).get("settle", "")) == "JH" and v("JM_REG") == 1:   # 지하시장 단골(1-4): −10%
+		k = [0.90, 1.0]
+		greet = "단골한테는 덜 남겨."
 	var item_k := {}
 	if r == 5:                                                        # 마을을 팖: 다음 날 마을 물값 2배(SD-03a §8.1 표)
 		for w in ["I-054", "I-055", "I-056", "I-057"]:

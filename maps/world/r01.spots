@@ -1,0 +1,8 @@
+# 월드 발견 자리 — 관악·봉천(R01). 문법: map_compile.compile_spots 참조(spot 줄 아래 명령은 구역 왼쪽 위 기준 좌표).
+
+# 봉천 동 주민센터(L-R01-32) 앞 넘어진 파수(SD-03a §8.2 MQ-102 잠든 로봇 · SD-09a L-R01-32). 다가가면 한 번 깨어난다.
+spot L-R01-32 6 4 off=4,42                     # 장소 표 칸(906,1349)은 손 맵 X-BC 안 — 아랫문(891,1379) 남동 18칸, 길 건너 1층 건물 정문 앞
+prop sentry_down 2 1
+mark sentry 2 1 S
+trigger 0 0 w=6 h=4 scene=MQ-102_SENTRY cond="V_ACT >= 1 and MQ102_ROBOT == 0" once
+text 2 1 "엎드린 경비 로봇." w=2 scene=MQ-102_SENTRY_AFTER

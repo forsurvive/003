@@ -12,11 +12,11 @@
   "MA": 12,
   "WHY": 15,
   "JOB": 19,
-  "FEE": 27,
-  "WAITING": 31,
-  "REWARD": 33,
-  "HAVEPASS": 37,
-  "REGULAR": 39
+  "FEE": 26,
+  "WAITING": 30,
+  "REWARD": 32,
+  "HAVEPASS": 36,
+  "REGULAR": 38
  },
  "ops": [
   {
@@ -194,10 +194,6 @@
   {
    "op": "do",
    "fx": "MQ103_JOB = 1"
-  },
-  {
-   "op": "do",
-   "fx": "quest(\"MQ-103\", 20)"
   },
   {
    "op": "line",

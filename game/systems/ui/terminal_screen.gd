@@ -13,7 +13,7 @@ const SCR := Rect2(56, 30, 528, 288)
 const CW := 6.0                                   ## 반칸 폭
 const RH := 16.0                                  ## 행 높이
 const ROWS := 18
-const TYPE_RATE := 90.0                           ## 초당 칸
+const TYPE_RATE := 140.0                          ## 초당 칸(머리글은 처음 한 번만 찍는다 — 메뉴·본문은 바로 이어서)
 const SKIN_HEAD := {
 	"T1": ["세진전자 통합 운영체계 SJ-OS 7.7", "(c) 2075~2077 세진전자(주)"],
 	"T2": ["수도 관제망 운용 체계 관제-77", "국가 보안 등급: 2급 비밀"],
@@ -67,7 +67,7 @@ func _tick(dt: float) -> void:
 		if hack != null and hack.state == "ok":
 			mode = "menu"
 			cur = 0
-			shown = 0.0
+			shown = float(_header_cells())                          # 머리글은 그대로 두고 메뉴만 찍는다
 		else:
 			close(false)
 
@@ -116,6 +116,16 @@ func _read_lines() -> Array:
 
 func _body_rows() -> int:
 	return ROWS - _head_rows() - 3
+
+
+## 머리글(회사·저작권·줄·head 줄)의 반칸 수
+func _header_cells() -> int:
+	var hd: Array = SKIN_HEAD.get(str(term.get("skin", "T1")), SKIN_HEAD["T1"])
+	var n := 86
+	for s in [str(hd[0]), str(hd[1])] + term.get("head", []).map(func(h): return ">> " + str(h)):
+		for i in s.length():
+			n += _w(s.unicode_at(i))
+	return n
 
 
 func _head_rows() -> int:
@@ -459,7 +469,7 @@ func _press(id: String) -> void:
 func _open_entry(k: int) -> void:
 	reading = k
 	page = 0
-	shown = 0.0
+	shown = float(_header_cells())
 	mode = "read"
 	read.emit(int(entries[k][0]))
 

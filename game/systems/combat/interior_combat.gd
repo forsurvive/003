@@ -150,7 +150,7 @@ func _enemy_weapon(enemy_id: String, arm: String) -> Dictionary:
 		w["dmg"] = float(str(row.get("attack", "근접 5")).get_slice(" ", 1))
 		w["crit_dmg"] = w["dmg"]
 		w["name"] = "맨손"
-		w["rate"] = 1.4
+		w["rate"] = 0.8                                             # 한 번 내려치고 숨 고르기(떼로 붙으면 초당 30 안팎 — 1.4면 3초 만에 쓰러졌다)
 	if enemy_id == "CR-405":
 		w["rate"] = float(w.get("rate", 2.0)) * 3.0
 	if enemy_id in ["CR-436", "CR-534"]:                               # 기관단총(0-10 정합: 무기 표에 아직 없어 W-002 판정 + 연사 1.5배)

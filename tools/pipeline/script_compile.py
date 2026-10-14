@@ -39,7 +39,7 @@ PARTICLES = ["은", "는", "이", "가", "을", "를", "과", "와", "으로", "
              "예요", "이었", "였", "이라", "라", "이든", "든"]
 FNS = {"karma", "aff", "quest", "stage", "result", "give", "take", "has", "caps", "xp", "wanted", "stat", "skill", "year"}
 CMDS = {"wait", "fade_in", "fade_out", "balloon", "move", "face", "shake", "year_card", "title_card", "sfx", "bgm", "cam", "show",
-        "hide", "pose", "doc", "flash", "lamp",
+        "hide", "pose", "doc", "flash", "lamp", "unlit",
         "pipboy", "equip", "hurt", "buddy", "range", "hint", "hud",          # 0-7: 핍-보이·무기·연출 피해·일시 동행·사격장 단계·안내 띠
         "refresh",                                                           # 0-8: 맵 인물을 지금 조건대로 다시 세운다
         "gate", "go", "pc", "escape", "unlock", "anim",                     # 0-9: 방폭문 · 기다리지 않는 이동 · 주인공 자리 · 탈출 진행기 · 문 열기

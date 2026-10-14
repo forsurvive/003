@@ -22,7 +22,7 @@
  "ops": [
   {
    "op": "if",
-   "cond": "MQ103_STAGE >= 30",
+   "cond": "MQ103_STAGE >= 40",
    "to": "AFTER"
   },
   {
@@ -104,19 +104,19 @@
    "text": "관제망은 너를 열쇠로 봐."
   },
   {
+   "op": "cmd",
+   "name": "jm",
+   "args": [
+    "decode"
+   ]
+  },
+  {
    "op": "do",
    "fx": "K_CODE = 1"
   },
   {
    "op": "do",
    "fx": "K_NET = 1"
-  },
-  {
-   "op": "cmd",
-   "name": "jm",
-   "args": [
-    "decode"
-   ]
   },
   {
    "op": "line",
