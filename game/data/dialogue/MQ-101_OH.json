@@ -6,16 +6,22 @@
  "cond": "MQ101_STAGE >= 20 and MQ101_RESULT != 5",
  "labels": {
   "START": 0,
-  "FRIEND": 5,
-  "SB": 7,
-  "GUEST": 9,
-  "TRADE": 10
+  "FRIEND": 6,
+  "LURED": 8,
+  "SB": 10,
+  "GUEST": 12,
+  "TRADE": 13
  },
  "ops": [
   {
    "op": "if",
-   "cond": "MQ101_RESULT == 1 or MQ101_RESULT == 2",
+   "cond": "MQ101_RESULT == 1",
    "to": "FRIEND"
+  },
+  {
+   "op": "if",
+   "cond": "MQ101_RESULT == 2",
+   "to": "LURED"
   },
   {
    "op": "if",
@@ -42,6 +48,16 @@
    "who": "N-R01-026",
    "emo": "미소",
    "text": "어이, \\V[P_GIVEN]. 계단 막아 준 값이야. 오늘은 한 푼씩 빼 줄게."
+  },
+  {
+   "op": "goto",
+   "to": "TRADE"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-026",
+   "emo": "미소",
+   "text": "어이, \\V[P_GIVEN]. 그 뱀 같은 것들 하수구로 끌고 간 거 다 봤어. 오늘은 한 푼씩 빼 줄게."
   },
   {
    "op": "goto",

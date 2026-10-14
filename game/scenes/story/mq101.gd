@@ -559,6 +559,9 @@ var path_goal := Vector2.INF
 var _re_t := 0.0
 var stuck_t := 0.0
 var _last_p := Vector2.ZERO
+var _greet_shot := false
+var _ev_greet := ""                                 ## 0-12 증거: 아침 고물상 첫마디
+var _ev_price := -1                                 ## 0-12 증거: 아침 스팀팩 사는 값(-1 = 거래 안 함)
 var plan: Array = []                               ## 봇 할 일 [[종류, 인자…], …]
 var plan_i := 0
 var wait_t := 0.0
@@ -642,6 +645,11 @@ func _bot_box(dt: float) -> void:
 				hold += dt
 				if hold > 0.5:
 					hold = 0.0
+					if not _greet_shot and str(box.state.get("who", "")) == "N-R01-026" and st.quests.stage("MQ-101") >= 100:
+						_greet_shot = true                                   # 아침 고물상 첫마디(해법별 호칭, 0-12 비교) — 찍고 다음 차례에 넘긴다
+						_ev_greet = str(box.state.get("text", ""))
+						_shot("greet")
+						return
 					if touch_bot:
 						_tap(Vector2(320, 300))                                 # 터치: 대사 창 아무 곳이나 누른다
 					else:
@@ -803,6 +811,7 @@ func _bot(dt: float) -> void:
 			print("MQ-101 완료: 해법 %d · 결과 %d · 카르마 %d · 봉천 %d · 새벽 %d · 판도 봉천 %d · R01 %d · 감시조 사망 %d · 수배 %d · 백구 %d · 캡 %d · XP %d · MQ-102 %d" % [
 				sol, v("MQ101_RESULT"), v("V_KARMA"), v("AFF_JC_BC"), v("AFF_SB"), v("PD_BC"), v("PD_R01"), v("MQ101_DEAD"),
 				v("V_WANTED"), v("MQ101_DOG"), v("PC_CAPS"), v("PC_XP"), st.quests.stage("MQ-102")])
+			print("해법 증거: 게시판=%s | 사는 값=%d | 첫마디=%s" % [BOARD_STATE.get(v("MQ101_RESULT"), "?"), _ev_price, _ev_greet.replace("\n", " ")])
 			get_tree().create_timer(0.6).timeout.connect(get_tree().quit)
 
 
@@ -831,6 +840,8 @@ func _bot_trade(t: TradeScreen, dt: float) -> void:
 			if not t.confirm():
 				t.cart = [{}, {}]
 			print("거래 %s: 오간 캡 %d · 스팀팩 사는 값 %d · 내 캡 %d" % [t.vid, t.total, t.price("I-001", true), v("PC_CAPS")])
+			if st.quests.stage("MQ-101") >= 100:
+				_ev_price = t.price("I-001", true)
 		_:
 			t.close(true)
 

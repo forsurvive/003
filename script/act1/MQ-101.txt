@@ -126,13 +126,17 @@ C-010 [미소] 됐다. 해 떨어지기 전에 눈 좀 붙여라. 옆방이다.
 @scene MQ-101_OH  아랫마당 고물상  (L-R01-09)
 @npc   N-R01-026
 @cond  MQ101_STAGE >= 20 and MQ101_RESULT != 5
-? MQ101_RESULT == 1 or MQ101_RESULT == 2 -> FRIEND
+? MQ101_RESULT == 1 -> FRIEND
+? MQ101_RESULT == 2 -> LURED
 ? MQ101_RESULT == 4 -> SB
 ? MQ101_RESULT == 3 -> GUEST
 N-R01-026 [기본] 고물 사요, 팔아요. 볼트 물건이면 값 잘 쳐 줄게. 캡은 깨끗한 걸로.
 -> TRADE
 * FRIEND
 N-R01-026 [미소] 어이, {P_GIVEN}. 계단 막아 준 값이야. 오늘은 한 푼씩 빼 줄게.
+-> TRADE
+* LURED
+N-R01-026 [미소] 어이, {P_GIVEN}. 그 뱀 같은 것들 하수구로 끌고 간 거 다 봤어. 오늘은 한 푼씩 빼 줄게.
 -> TRADE
 * SB
 N-R01-026 [기본] 새벽인력 거래처 손님이시네. 그쪽 사람들 장사는 값이 좀 세지.

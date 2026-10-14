@@ -596,8 +596,9 @@ func _p4_escape_done() -> void:
 		if auto and not chain:
 			get_tree().create_timer(0.5).timeout.connect(get_tree().quit)
 		else:
-			_act1("")                                             # 첫 풍경이 멈춘 흙길에서 1막(MQ-101)이 이어진다
-			request_auto("act")                                   # 막이 오르면 먼저 자동 저장(SD-03a §4.1 ①)
+			_end_view(func() -> void:                             # 첫 풍경이 멈춘 흙길에서 1막(MQ-101)이 이어진다
+				_act1("")
+				request_auto("act"))                              # 막이 오르면 먼저 자동 저장(SD-03a §4.1 ①)
 
 
 ## S7 첫 풍경(SD-03a §7.4): 흰 빛이 걷히면 방폭문 앞 콘크리트 턱(위에서 본 RPG 타일 그림) — 주인공(실제 페이퍼돌, 발 고정 걸음)이
@@ -663,6 +664,19 @@ func _first_view() -> void:
 		view_step = "stand"
 		_view_place(0.0)
 		host.ev.run("fade_in", ["white", "14"], func() -> void: pass))
+
+
+## 첫 풍경을 걷는다: 검게 닫고 → 무대를 치우고 주인공을 다시 보이게 → then(1막 시작, 비탈 맵) → 검게 연다
+func _end_view(then: Callable) -> void:
+	host.ev.run("fade_out", ["black", "8"], func() -> void:
+		if view_layer != null:
+			view_layer.queue_free()
+			view_layer = null
+		view_t = -1.0
+		view_title = -1.0
+		host.player.visible = true
+		then.call()
+		host.ev.run("fade_in", ["black", "8"], func() -> void: pass))
 
 
 ## 무대 자리: 가운데 맞춤 + 세로 이동(1px 단위, 반 픽셀 없이)
