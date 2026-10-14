@@ -17,6 +17,7 @@ const L_BODY := 9600
 const L_DECO := 12800
 const L_TAIL := 16000
 const SHADOW := Color(0, 0, 0, 0.35)
+const SPR_PER_FRAME := 40
 
 var meta: Dictionary
 var cs := 40
@@ -31,6 +32,7 @@ var insets: Array = []                           ## [{"id", "origin": Vector2i, 
 var overrides := {}                              ## Vector2i -> [막힘, 엄폐] (조건부 소품·문·연출이 바꾼 칸; -1 = 청크 값)
 var attach_usec_max := 0
 var attach_count := 0
+var _spr_q: Array = []                           ## [청크, 그림 영역, 위치, 정렬 y] — 나눠 붙일 소품
 var _tiles_ground: Node2D
 var _tiles_shadow: Node2D
 var _tiles_body: Node2D
@@ -241,7 +243,19 @@ func _load_task(k: Vector2i) -> void:
 	_mutex.unlock()
 
 
+## 소품 스프라이트를 프레임마다 SPR_PER_FRAME개씩 붙인다(청크 하나에 수십 개 — 한 번에 만들면 붙이기 예산 4ms를 넘는다)
+func _drain_sprites(n: int = SPR_PER_FRAME) -> void:
+	while n > 0 and not _spr_q.is_empty():
+		var q: Array = _spr_q.pop_front()
+		var c = chunks.get(q[0])
+		if c == null:
+			continue
+		c["nodes"].append(_sprite(q[1], q[2], q[3], "r01"))
+		n -= 1
+
+
 func _attach_one() -> bool:
+	_drain_sprites()
 	_mutex.lock()
 	var item = _ready_q.pop_front() if not _ready_q.is_empty() else null
 	_mutex.unlock()
@@ -307,7 +321,7 @@ func _attach(k: Vector2i, a: PackedByteArray) -> void:
 		var e: Dictionary = prop_meta[tree_names[a[p + 2] | (a[p + 3] << 8)]]
 		var fh := int(e["foot"][1])
 		var sy := ty * T + 16 if fh == 0 else (ty + fh) * T                 # 바닥 덧그림(풀포기·맨홀)은 칸 가운데, 나머지는 발 칸 아래 변
-		nodes.append(_sprite(e["rect"], Vector2(tx * T + int(e["off"][0]), ty * T + int(e["off"][1])), sy, "r01"))
+		_spr_q.append([k, e["rect"], Vector2(tx * T + int(e["off"][0]), ty * T + int(e["off"][1])), sy])   # 다음 프레임들에 나눠 붙인다
 		p += 4
 	var ns := a[p] | (a[p + 1] << 8)                                     # 건물 그림자(SD-16 §3.9: 오른쪽 아래, 높이 1단당 16px, 곱하기 35%)
 	p += 2
@@ -369,6 +383,7 @@ func load_now(p: Vector2) -> void:
 				if _in_world(k) and not chunks.has(k):
 					missing = true
 		if not missing:
+			_drain_sprites(1 << 30)                                       # 화면이 가려진 동안이니 소품도 다 붙인다
 			return
 		if not _attach_one():
 			OS.delay_msec(1)

@@ -78,23 +78,30 @@ func _process(dt: float) -> void:
 		get_tree().quit()
 
 
-## 주인공: 경유점 사이를 칸 길찾기로 걷는다(달리기 — 청크 경계를 더 자주 넘게)
+## 주인공: 경유점 사이를 칸 길찾기로 걷는다(MQ-101 봇과 같은 입력 — 축마다 맞추고 지난 칸은 건너뛴다)
 func _walk_player() -> void:
+	if OS.get_environment("BENCH_DEBUG") != "" and int(t * 2) != int((t - get_process_delta_time()) * 2):
+		print("  %.1f초 칸 %s 경유점 %d 길 %d" % [t, host.map.tile_of(host.player.loco.logical), way_i, path.size()])
+	if host.input_fn.is_null():
+		host.input_fn = _bot_input
+
+
+func _bot_input() -> Vector2:
 	if way_i >= way.size():
-		host.input_vec = Vector2.ZERO
-		return
+		return Vector2.ZERO
 	var g := Vector2(int(way[way_i][1]) * 32 + 16, int(way[way_i][2]) * 32 + 16)
-	var p := host.player.loco.logical
-	if p.distance_to(g) < 10.0:
+	var p := host.player.loco.render
+	if p.distance_to(g) < 6.0:
 		way_i += 1
 		path = PackedVector2Array()
-		return
+		return Vector2.ZERO
 	if path.is_empty():
 		path = NpcRoutine.with_start(host.map, p, g)
-	while path.size() > 0 and p.distance_to(path[0]) < 6.0:
+	while path.size() > 0 and (NpcRoutine.arrived(p, path[0]) or (path.size() > 1 and p.distance_to(path[1]) <= path[0].distance_to(path[1]) + 2.0)):
 		path.remove_at(0)
-	var to: Vector2 = path[0] if path.size() > 0 else g
-	host.input_vec = (to - p).normalized()
+	if path.is_empty():
+		return (g - p).normalized() if p.distance_to(g) > 2.0 else Vector2.ZERO
+	return NpcRoutine.step_dir(p, path[0])
 
 
 func _pct(a: Array, p: float) -> float:

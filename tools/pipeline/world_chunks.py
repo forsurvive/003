@@ -717,7 +717,7 @@ def export(R):
                              "R06": "용산·남산", "R07": "강남", "R08": "동부", "R09": "북부 산악", "R10": "서부 평야", "R11": "청계산",
                              "HR": "한강"},                                   # SD-08 §7 권역 이름(배너·장소 표시)
             "insets": [{"id": i["id"], "origin": list(i["rect"][:2]), "size": list(i["rect"][2:]), "base": i["base"]} for i in R["insets"]],
-            "unreached": [m[0] for m in R["miss"]], "routes": R["routes"], "bridges": [{"name": c[0], "state": c[1], "linked": c[2]} for c in R["bridges"]], "water_chunks": [m[0] for m in R["wet"]], "sealed_core": [m[0] for m in R["core"]]}
+            "unreached": [m[0] for m in R["miss"]], "routes": R["routes"], "bridges": [{"name": c[0], "state": c[1], "linked": bool(c[2])} for c in R["bridges"]], "water_chunks": [m[0] for m in R["wet"]], "sealed_core": [m[0] for m in R["core"]]}
     json.dump(meta, open(os.path.join(OUT, "world.json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
     log("내보내기: 청크 %d · 원자료 %.1fMB → 압축 %.2fMB" % (sum(1 for o in offs if o[1]), raw_total / 1e6, len(blob) / 1e6))
 
