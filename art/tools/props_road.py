@@ -117,6 +117,23 @@ def bone_pile(seed=0):
     return im
 
 
+def civil_box():
+    """민방위 비상함(1×1): 노란 칠 철함 · 앞면 '민방위 비상' 띠 · 녹슨 경첩과 걸쇠. 대피소 표지 곁에 둔다(SD-08 §13.2 보급 상자)."""
+    im = img(30, 30)
+    d = ImageDraw.Draw(im)
+    d.ellipse([2, 24, 28, 29], fill=C("P02"))
+    d.rectangle([3, 6, 26, 26], fill=C("P48"))                              # 몸통
+    d.rectangle([3, 6, 26, 7], fill=C("P49"))
+    d.rectangle([2, 2, 27, 8], fill=C("P59"))                               # 뚜껑
+    d.line([(2, 2), (27, 2)], fill=C("P60"))
+    d.rectangle([3, 12, 26, 18], fill=C("P61"))                             # 띠
+    put_text(im, "민방위", 5, 11, "P09", size=8)
+    d.rectangle([13, 20, 16, 24], fill=C("P05")); d.point((14, 22), fill=C("P02"))   # 걸쇠
+    for (x, y, h) in ((5, 19, 6), (22, 20, 5), (10, 8, 3)):                 # 녹
+        d.line([(x, y), (x, y + h)], fill=C("P25"))
+    return im
+
+
 def _r(fn, fw, fh, kind="floor", down=2, dx=0, dy=0):
     return {"fn": fn, "foot": (fw, fh), "kind": kind, "down": down, "dx": dx, "dy": dy}
 
@@ -127,4 +144,5 @@ PROPS_ROAD = {
     "evac_sign": _r(evac_sign, 1, 1),
     "warn_board": _r(lambda: warn_board(1), 1, 1),
     "bone_pile": _r(lambda: bone_pile(1), 1, 1, down=-2),
+    "civil_box": _r(civil_box, 1, 1),
 }

@@ -136,7 +136,7 @@
   },
   {
    "op": "if",
-   "cond": "MQ101_STAGE == 100 and MQ102_STAGE == 0",
+   "cond": "MQ101_STAGE == 100 and MQ102_C1 == 0",
    "to": "R5Q"
   },
   {
@@ -177,7 +177,7 @@
   },
   {
    "op": "goto",
-   "to": "END"
+   "to": "ADDR"
   },
   {
    "op": "end"

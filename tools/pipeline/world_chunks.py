@@ -884,6 +884,12 @@ def place_pois(src, solid, cover, gflag, stair, level, kind, use, reach, inmask,
                     texts.append({"x": x, "y": y, "text": "2077년 민방위 대피소 표지. 화살표가 %s쪽 '%s' 방면을 가리킨다. 녹이 흘러 글씨가 반쯤 지워졌다." % (DIR8[int((ang + 22.5) // 45) % 8], p["name"])})
                     evac_done = True
                     cnt["대피소 표지"] = cnt.get("대피소 표지", 0) + 1
+                    if rng.random() < 0.5:                                    # 표지 곁 민방위 비상함(구급·식수·신호탄 — SD-13 §9.4 civil)
+                        for (ox, oy) in ((2, 0), (-2, 0), (0, 2), (2, 1)):
+                            if put("civil_box", x + ox, y + oy):
+                                boxes.append({"x": x + ox, "y": y + oy, "w": 1, "h": 1, "kind": "civil", "name": "민방위 비상함", "owner": "", "lock": 0})
+                                cnt["비상함"] = cnt.get("비상함", 0) + 1
+                                break
             else:
                 okp = False
             if okp:
