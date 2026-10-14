@@ -1,0 +1,26 @@
+map B-03 하숙자 약국
+set bc
+grid
+##################
+##################
+##################
+#oooooooooooooooo#
+#oooooooooooooooo#
+#oooooooooooooooo#
+#oooooooooooooooo#
+#oooooooooooooooo#
+#oooooooooooooooo#
+#oooooooooooooooo#
+#oooooooooooooooo#
+###o##############
+end
+exit 3 11 X-BC from_B-03
+mark from_X-BC 3 10 N
+prop med_cabinet 2 3
+prop med_cabinet 3 3
+prop med_cabinet 4 3
+prop exam_bed 12 4
+prop exam_bed 12 8
+prop teacher_desk 6 6
+mark counter 7 7 N
+text 3 3 "약장. 라드어웨이 봉지와 관악산 약수병이 줄지어 있다." w=3

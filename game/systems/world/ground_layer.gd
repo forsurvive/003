@@ -76,6 +76,18 @@ func put(tx: int, ty: int, ground: int, deco: int) -> void:
 	_filled[i] = 1
 
 
+## 덮개 값을 바로 넣는다(바깥 맵 0-10: 0 없음 · 1 벽 · 2 소품 · 3 평평한 구조물).
+func put_flag(tx: int, ty: int, ground: int, flag: int) -> void:
+	var x := tx - origin.x + 1
+	var y := ty - origin.y + 1
+	if x < 0 or y < 0 or x > size.x + 1 or y > size.y + 1:
+		return
+	var i := y * (size.x + 2) + x
+	bytes[i * 2] = ground
+	bytes[i * 2 + 1] = flag
+	_filled[i] = 1
+
+
 ## 구역 안쪽 전부를 한 번에(청크 자료 배열, 행 우선 size.x × size.y).
 func fill(ground: Array, deco: Array) -> void:
 	var w := size.x + 2

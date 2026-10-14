@@ -111,6 +111,18 @@ func _ready() -> void:
 		else:
 			_start_p4.call_deferred()
 		return
+	if from.begins_with("x"):                                   # 개발용(0-10): 1막 바깥 맵부터 — x 비탈 · xbc 봉천 · xwalk/xroof 걷기 봇
+		_quick_p1()
+		for q in ["MQ-P2", "MQ-P3", "MQ-P4"]:
+			host.st.quests.set_stage(q, 100)
+		for c in ["PE", "EN", "IN", "AG", "LK"]:
+			host.st.vars.set_v("PC_" + c, 6)
+		host.st.vars.set_v("V_ACT", 1)
+		host.st.vars.set_v("V_ESCAPE", 2)
+		host.st.call_fn("give", ["W-002"])
+		host.st.call_fn("give", ["W-067"])
+		_act1.call_deferred(from)
+		return
 	if from in ["range", "pipe"]:                              # 개발용: 사격장·배관실부터
 		_quick_p1()
 		phase = "P2"
@@ -129,6 +141,29 @@ func _ready() -> void:
 	host.enter("V-08", "door")
 	host.banner_t = 0.0
 	host.play_scene.call_deferred("MQ-P1_S01")
+
+
+## 1막 MQ-101 진행기로 넘긴다(0-10)
+var act1: Mq101
+
+
+func _act1(from: String) -> void:
+	phase = "ACT1"
+	act1 = Mq101.new()
+	add_child(act1)
+	act1.setup(host, auto, log_on)
+	if from == "xbc":
+		act1.start("X-BC", "from_X-S07")
+	else:
+		act1.start("X-S07", "start")
+	if from == "xwalk":
+		act1.walk([["X-S07", 30, 25], ["X-S07", 30, 21], ["X-S07", 33, 14], ["X-S07", 30, 24], ["X-S07", 13, 19], ["X-S07", 12, 15],
+			["X-S07", 14, 0], ["X-BC", 50, 43], ["X-BC", 29, 37], ["X-BC", 29, 27], ["X-BC", 33, 22], ["X-BC", 30, 20],
+			["X-BC", 30, 14], ["X-BC", 34, 12], ["X-BC", 32, 9], ["X-BC", 27, 8], ["B-01", 8, 11]])
+	elif from == "xroof":
+		host.enter("X-BC", "from_B-01")
+		act1.walk([["X-BC", 6, 14], ["X-BC", 5, 16], ["X-BC", 5, 20], ["X-BC", 5, 23], ["X-BC", 5, 27], ["X-BC", 5, 30],
+			["X-BC", 5, 35]])
 
 
 ## --from=p2: MQ-P1을 건너뛴 상태(이름·외형·돌잡이)를 만든다

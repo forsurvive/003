@@ -35,15 +35,30 @@ def assets():
         names = {v["atlas"][0]: k for k, v in load_json(os.path.join(ROOT, "game", "assets", "tiles", "ts_s07_wall.json")).items()}
         tiles = TI.s07_wall_tiles()
         _WALL = {i: tiles[n] for i, n in names.items()}
-        _ATLAS = Image.open(os.path.join(ROOT, "game", "assets", "props", "s07_props.png")).convert("RGBA")
-        _PM = load_json(os.path.join(ROOT, "game", "assets", "props", "s07_props.json"))["props"]
+        _ATLAS = {"s07": Image.open(os.path.join(ROOT, "game", "assets", "props", "s07_props.png")).convert("RGBA"),
+                  "r01": Image.open(os.path.join(ROOT, "game", "assets", "props", "r01_props.png")).convert("RGBA")}
+        _PM = dict(load_json(os.path.join(ROOT, "game", "assets", "props", "s07_props.json"))["props"])
+        _PM.update(load_json(os.path.join(ROOT, "game", "assets", "props", "r01_props.json"))["props"])
         _NPC = load_json(os.path.join(ROOT, "game", "data", "npcs.json"))["npcs"]
     return _WALL, _ATLAS, _PM, _NPC
 
 
-def crop(rect):
+_WSETS = {}
+
+
+def wall_set(name):
+    if name not in _WSETS:
+        fn = {"s07": TI.s07_wall_tiles, "bc": TI.bc_wall_tiles}.get(name, TI.s07_wall_tiles)
+        p = os.path.join(ROOT, "game", "assets", "tiles", f"ts_{name if name in ('s07', 'bc') else 's07'}_wall.json")
+        names = {v["atlas"][0]: k for k, v in load_json(p).items()}
+        tiles = fn()
+        _WSETS[name] = {i: tiles[n] for i, n in names.items()}
+    return _WSETS[name]
+
+
+def crop(rect, atlas="s07"):
     x, y, w, h = rect
-    return _ATLAS.crop((x, y, x + w, y + h))
+    return _ATLAS[atlas].crop((x, y, x + w, y + h))
 
 
 def sign(text_):
@@ -61,21 +76,30 @@ def render(mid, grid=False):
     wall, atlas, pm, npcs = assets()
     m = load_json(os.path.join(MAPS, mid + ".json"))
     W, H = m["size"]
-    gs = G.load("s07")
     ids = np.array(m["floor"])
-    flags = np.array([[1 if m["wall"][y][x] >= 0 else 0 for x in range(W)] for y in range(H)])
     img = Image.new("RGBA", (W * T, H * T), (11, 10, 13, 255))
-    img.alpha_composite(gs.render(np.pad(ids, 1, mode="edge"), None, -1, -1, 0, 0, W * T, H * T, flags=np.pad(flags, 1, mode="edge")))
-    for y in range(H):
-        for x in range(W):
-            i = m["wall"][y][x]
-            if i >= 0:
-                img.alpha_composite(wall[i], (x * T, y * T))
+    if m.get("ext"):
+        gs = G.load("r01")
+        flags = np.array([[int(c) for c in row] for row in m["gflag"]])
+        img.alpha_composite(gs.render(np.pad(ids, 1, mode="edge"), None, -1, -1, 0, 0, W * T, H * T, flags=np.pad(flags, 1, mode="edge")))
+        sp = os.path.join(ROOT, "game", "assets", "maps", f"{mid}_struct.png")
+        if os.path.exists(sp):
+            img.alpha_composite(Image.open(sp).convert("RGBA"))
+    else:
+        gs = G.load("s07")
+        flags = np.array([[1 if m["wall"][y][x] >= 0 else 0 for x in range(W)] for y in range(H)])
+        img.alpha_composite(gs.render(np.pad(ids, 1, mode="edge"), None, -1, -1, 0, 0, W * T, H * T, flags=np.pad(flags, 1, mode="edge")))
+        wset = wall_set(m["set"])
+        for y in range(H):
+            for x in range(W):
+                i = m["wall"][y][x]
+                if i >= 0:
+                    img.alpha_composite(wset[i], (x * T, y * T))
     items = []                                                      # (정렬 y, 그림, 위치)
     for p in m["props"]:
         e = pm[p["name"]]
         rect = e["frames"][0] if "frames" in e else e["rect"]
-        items.append((p["sort_y"], crop(rect), tuple(p["px"])))
+        items.append((p["sort_y"], crop(rect, e.get("atlas", "s07")), tuple(p["px"])))
     for d in m["doors"]:
         e = pm[d["kind"]]
         items.append(((d["y"] + 2) * T, crop(e["rect"]), (d["x"] * T + e["off"][0], d["y"] * T + e["off"][1])))

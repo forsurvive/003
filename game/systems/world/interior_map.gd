@@ -27,13 +27,23 @@ const BLOCK_R := 8.0
 var _mover := Vector2.INF
 static var prop_meta: Dictionary
 static var prop_tex: Texture2D
+static var prop_texs := {}                       ## 아틀라스 이름 -> 그림(s07 실내 · r01 바깥, 0-10)
 static var _tile_ids := {}
+var ext := false                                 ## 바깥 맵(0-10): 높이 칸·구조물 층
+var level := PackedInt32Array()                  ## [y * w + x] 걷는 칸의 높이(타일 단위), 막힌 칸 -1
+var stair := PackedByteArray()                   ## [y * w + x] 1 = 계단·사다리(높이가 다른 칸을 잇는다)
 
 
 static func _load_static() -> void:
 	if prop_meta.is_empty():
 		prop_meta = JSON.parse_string(FileAccess.get_file_as_string("res://assets/props/s07_props.json"))["props"]
 		prop_tex = load("res://assets/props/s07_props.png")
+		prop_texs["s07"] = prop_tex
+		if FileAccess.file_exists("res://assets/props/r01_props.json"):
+			var r: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://assets/props/r01_props.json"))["props"]
+			for k in r:
+				prop_meta[k] = r[k]
+			prop_texs["r01"] = load("res://assets/props/r01_props.png")
 		var m: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://assets/tiles/ts_s07_int.json"))
 		for k in m:
 			_tile_ids[k] = int(m[k]["atlas"][0])
@@ -50,28 +60,57 @@ func load_map(map_id: String, st: StoryState = null) -> void:
 	data = JSON.parse_string(FileAccess.get_file_as_string("res://data/maps/%s.json" % map_id))
 	size = Vector2i(int(data["size"][0]), int(data["size"][1]))
 	marks = data["marks"]
+	ext = bool(data.get("ext", false))
 	var ground := GroundLayer.new()                                  # 바닥: 재질 합성 셰이더(SD-16 §6.10)
-	ground.setup(data["set"], Vector2i.ZERO, size)
+	ground.setup("r01" if ext else "s07", Vector2i.ZERO, size)
 	ground.z_index = -11
-	var walls := TileMapLayer.new()
-	walls.tile_set = load("res://assets/tiles/ts_%s_wall.tres" % data["set"])
-	walls.z_index = -10
-	var wall_deco: int = _tile_ids["wall_top"]                       # 바닥 합성에 '벽에 덮인 칸'(덮개 1)을 알리는 타일
 	solid.resize(size.x * size.y)
 	cover.resize(size.x * size.y)
-	for y in size.y:
-		var srow: String = data["solid"][y]
-		for x in size.x:
-			var w: int = int(data["wall"][y][x])
-			ground.put(x, y, int(data["floor"][y][x]), wall_deco if w >= 0 else -1)
-			if w >= 0:
-				walls.set_cell(Vector2i(x, y), 0, Vector2i(w, 0))
-			solid[y * size.x + x] = 1 if srow[x] == "1" else 0
-			cover[y * size.x + x] = 2 if w >= 0 else (1 if srow[x] == "1" else 0)
-	ground.pad()
-	ground.commit()
-	add_child(ground)
-	add_child(walls)
+	if ext:                                                          # 바깥(0-10): 덮개·엄폐·높이를 자료에서 바로, 구조물은 구운 한 장
+		level.resize(size.x * size.y)
+		stair.resize(size.x * size.y)
+		for y in size.y:
+			var srow: String = data["solid"][y]
+			var grow: String = data["gflag"][y]
+			var crow: String = data["cover"][y]
+			var lrow: String = data["level"][y]
+			var trow: String = data["stair"][y]
+			for x in size.x:
+				var i := y * size.x + x
+				ground.put_flag(x, y, int(data["floor"][y][x]), int(grow[x]))
+				solid[i] = 1 if srow[x] == "1" else 0
+				cover[i] = int(crow[x])
+				level[i] = -1 if lrow[x] == "." else int(lrow[x])
+				stair[i] = 1 if trow[x] == "1" else 0
+		ground.pad()
+		ground.commit()
+		add_child(ground)
+		var sp := "res://assets/maps/%s_struct.png" % map_id
+		if ResourceLoader.exists(sp):
+			var st_spr := Sprite2D.new()
+			st_spr.texture = load(sp)
+			st_spr.centered = false
+			st_spr.z_index = -10
+			st_spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+			add_child(st_spr)
+	else:
+		var walls := TileMapLayer.new()
+		walls.tile_set = load("res://assets/tiles/ts_%s_wall.tres" % data["set"])
+		walls.z_index = -10
+		var wall_deco: int = _tile_ids["wall_top"]                   # 바닥 합성에 '벽에 덮인 칸'(덮개 1)을 알리는 타일
+		for y in size.y:
+			var srow: String = data["solid"][y]
+			for x in size.x:
+				var w: int = int(data["wall"][y][x])
+				ground.put(x, y, int(data["floor"][y][x]), wall_deco if w >= 0 else -1)
+				if w >= 0:
+					walls.set_cell(Vector2i(x, y), 0, Vector2i(w, 0))
+				solid[y * size.x + x] = 1 if srow[x] == "1" else 0
+				cover[y * size.x + x] = 2 if w >= 0 else (1 if srow[x] == "1" else 0)
+		ground.pad()
+		ground.commit()
+		add_child(ground)
+		add_child(walls)
 	objects = Node2D.new()
 	objects.y_sort_enabled = true
 	add_child(objects)
@@ -89,7 +128,7 @@ func load_map(map_id: String, st: StoryState = null) -> void:
 			for xx in range(fx, fx + maxi(1, int(e["foot"][0]))):
 				if xx >= 0 and yy >= 0 and xx < size.x and yy < size.y and solid[yy * size.x + xx] == 1:
 					cover[yy * size.x + xx] = 2 if tall else 1
-		var node := _sprite(rect, Vector2(p["px"][0], p["px"][1]), float(p["sort_y"]))
+		var node := _sprite(rect, Vector2(p["px"][0], p["px"][1]), float(p["sort_y"]), str(e.get("atlas", "s07")))
 		props.append({"name": p["name"], "x": int(p["x"]), "y": int(p["y"]), "w": maxi(1, int(e["foot"][0])),
 			"h": maxi(1, int(e["foot"][1])), "node": node})
 	for d in data["doors"]:
@@ -150,10 +189,10 @@ func _r(a: Array) -> Rect2:
 
 
 ## 소품 하나: 노드 위치 = 정렬 기준(발 칸 아래 변), 그림은 오프셋으로 놓는다
-func _sprite(rect: Array, top_left: Vector2, sort_y: float) -> Sprite2D:
+func _sprite(rect: Array, top_left: Vector2, sort_y: float, atlas := "s07") -> Sprite2D:
 	var s := Sprite2D.new()
 	var at := AtlasTexture.new()
-	at.atlas = prop_tex
+	at.atlas = prop_texs.get(atlas, prop_tex)
 	at.region = _r(rect)
 	s.texture = at
 	s.centered = false
@@ -336,10 +375,35 @@ func circle_hits(c: Vector2, r: float) -> bool:
 	return _hits(c, r)
 
 
+## 높이(0-10 바깥): 서 있는 칸과 높이가 다른 칸은 막힌 것으로 본다(벼랑·옥상 끝). 계단·사다리 칸은 양쪽 높이를 잇는다.
+func level_at(t: Vector2i) -> int:
+	if not ext or t.x < 0 or t.y < 0 or t.x >= size.x or t.y >= size.y:
+		return 0
+	return level[t.y * size.x + t.x]
+
+
+func is_stair(t: Vector2i) -> bool:
+	return ext and t.x >= 0 and t.y >= 0 and t.x < size.x and t.y < size.y and stair[t.y * size.x + t.x] == 1
+
+
+## from 칸에서 to 칸으로 넘어갈 수 있나(높이 규칙만, 막힘은 따로)
+func level_link(from: Vector2i, to: Vector2i) -> bool:
+	if not ext or from == to:
+		return true
+	if is_stair(from) or is_stair(to):
+		return true
+	return level_at(from) == level_at(to)
+
+
+func _blocked_from(t: Vector2i, from: Vector2i) -> bool:
+	return is_solid(t) or (ext and not level_link(from, t))
+
+
 func _hits(c: Vector2, r: float) -> bool:
+	var home := tile_of(_mover) if _mover != Vector2.INF else tile_of(c)
 	for ty in range(floori((c.y - r) / T), floori((c.y + r) / T) + 1):
 		for tx in range(floori((c.x - r) / T), floori((c.x + r) / T) + 1):
-			if is_solid(Vector2i(tx, ty)):
+			if _blocked_from(Vector2i(tx, ty), home):
 				var q := Vector2(clampf(c.x, tx * T, tx * T + T), clampf(c.y, ty * T, ty * T + T))
 				if q.distance_squared_to(c) < r * r:
 					return true
@@ -413,9 +477,9 @@ func path(a: Vector2, b: Vector2, max_nodes: int = 4000) -> PackedVector2Array:
 			break
 		for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1), Vector2i(1, 1), Vector2i(-1, 1), Vector2i(1, -1), Vector2i(-1, -1)]:
 			var nx: Vector2i = cur + d
-			if is_solid(nx) or occ.has(nx):
+			if _blocked_from(nx, cur) or occ.has(nx):
 				continue
-			if d.x != 0 and d.y != 0 and (is_solid(Vector2i(cur.x + d.x, cur.y)) or is_solid(Vector2i(cur.x, cur.y + d.y))):
+			if d.x != 0 and d.y != 0 and (_blocked_from(Vector2i(cur.x + d.x, cur.y), cur) or _blocked_from(Vector2i(cur.x, cur.y + d.y), cur)):
 				continue
 			var c: float = cost[cur] + (1.414 if d.x != 0 and d.y != 0 else 1.0)
 			if not cost.has(nx) or c < cost[nx]:

@@ -1,0 +1,583 @@
+map X-BC 봉천 계단마을
+set r01
+grid
+TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTcccTTTTTTTTTTTTT
+TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTcccTTTTTTTTTTTTT
+TTTT;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TTTT
+TTTT;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TTTT
+TTTT;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TTTT
+TTTT................ccrrrXXXXXXrrrrcccccccccccccccccccccTTTT
+TTTT................ccrrrXXXXXXrrrrcccccccccccccccccccccTTTT
+TTTT................ccrrrHHDHHHrrrrcccccccccccccccccccccTTTT
+TTTT................ccrrrrrrrrrrrrrcccccccccccccccccccccTTTT
+TTTT................ccHHHHHHHHHHHH!#ccccccccccccccccccccTTTT
+TTTT................ccHHHHHHHHHHHH!#ccccccccccccccccccccTTTT
+TTTT................ccccccc:::::::ccccccccccccccccccccccTTTT
+TTTT................ccccccc:::::::ccccccccccccccccccccccTTTT
+TTTT................ccccccc:::::::ccccccccccccccccccccccTTTT
+TTTTrrrrrrrrrrrrr..........:::::::rrrrrrrrrr............TTTT
+TTTTrrrrrrrrrrrrr..........:::::::rrrrrrrrrr............TTTT
+TTTTHLHHHHHHHHHHH############!=##HHHHHHHHHHH############TTTT
+TTTTHLHHHHHHHHHHH############!=##HHHHHHHHHHH############TTTT
+TTTTccccccccccccccccccccccccccc:::::::ccccccccccccccccccTTTT
+TTTTccccccccccccccccccccccccccc:::::::ccccccccccccccccccTTTT
+TTTTccccccccccccccccccccccccccc:::::::ccccccccccccccccccTTTT
+TTTTrrrrrrrvrrrrrrr..rrrrrrrrrr:::::::rrrrrrrp..........TTTT
+TTTTrrrrrrrprrrrrrr..rrrrrrrrrr:::::::rrrrrrrv..........TTTT
+TTTTHLHHHHHvHHHHHHH##HHHHHHHHHH##!=##HHHHHHHHv##########TTTT
+TTTTHLHHHHHvHHHHHHH##HDHHHHHHHH##!=##HHHHHHHHv##########TTTT
+TTTTccccccccccccccccccccccc::::::cccccccccccccccccccccccTTTT
+TTTTccccccccccccccccccccccc::::::cccccccccccccccccccccccTTTT
+TTTTccccccccccccccccccccccc::::::cccccccccccccccccccccccTTTT
+TTTTrrrrrrrrrvrrrrrr.......::::::rrrrrrprrrrrrr.........TTTT
+TTTTrrrrrrrrrprrrrrr.......::::::rrrrrrvrrrrrrr.........TTTT
+TTTTHLHHHHHHHvHHHHHH#########!=##HHHHHHvHHHHHHH#########TTTT
+TTTTHLHHHHHHHvHHHHHH#########!=##HHHHHHvHHHHHHH#########TTTT
+TTTT....o..........ccccccccc::::cccccccc................TTTT
+TTTT....o..........ccccccccc::::cccccccc................TTTT
+TTTT....o..........cccccccc:::::cccccccc................TTTT
+TTTT....o..........cccccccc:::::cccccccc................TTTT
+TTTT....o..........cccccccc:::::cccccccc................TTTT
+TTTT....o..........cccccccc:::::cccccccc................TTTT
+TTTTSSSSSSSSSSSSSSSSSSSSSSS:::::SSSSSSSSSSSSSSSSSSSSSSSSTTTT
+TTTTSSSSSSSSSSSSSSSSSSSSSSS:::::SSSSSSSSSSSSSSSSSSSSSSSSTTTT
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+____________________________________________________________
+_--__--__--__--__--__--__--__--__--__--__--__--__--__--__--_
+____________________________________________________________
+____________________________________________________________
+end
+levels
+............................................................
+............................................666.............
+............................................666.............
+....6666666666666666666666666666666666666666666666666666....
+....6666666666666666666666666666666666666666666666666666....
+....6666666666666666666666666666666666666666666666666666....
+....6666666666666666668888888888888666666666666666666666....
+....6666666666666666668888888888888666666666666666666666....
+....6666666666666666668888888888888666666666666666666666....
+....6666666666666666668888888888888666666666666666666666....
+....6666666666666666666666666666668666666666666666666666....
+....6666666666666666666666666666667666666666666666666666....
+....6666666666666666666666666666666666666666666666666666....
+....6666666666666666666666666666666666666666666666666666....
+....6666666666666666666666666666666666666666666666666666....
+....6666666666666666666666666666666666666666666666666666....
+....6666666666666666666666666666666666666666666666666666....
+.....5.......................66.............................
+.....5.......................55.............................
+....4444444444444444444444444444444444444444444444444444....
+....4444444444444444444444444444444444444444444444444444....
+....4444444444444444444444444444444444444444444444444444....
+....4444444444444444444444444444444444444444444444444444....
+....4444444444444444444444444444444444444444444444444444....
+.....3...........................44.........................
+.....3................2..........33.........................
+....2222222222222222222222222222222222222222222222222222....
+....2222222222222222222222222222222222222222222222222222....
+....2222222222222222222222222222222222222222222222222222....
+....2222222222222222222222222222222222222222222222222222....
+....2222222222222222222222222222222222222222222222222222....
+.....1.......................22.............................
+.....1.......................11.............................
+....0000.00000000000000000000000000000000000000000000000....
+....0000.00000000000000000000000000000000000000000000000....
+....0000.00000000000000000000000000000000000000000000000....
+....0000.00000000000000000000000000000000000000000000000....
+....0000.00000000000000000000000000000000000000000000000....
+....0000.00000000000000000000000000000000000000000000000....
+...........................00000............................
+...........................00000............................
+000000000000000000000000000000000000000000000000000000000000
+000000000000000000000000000000000000000000000000000000000000
+000000000000000000000000000000000000000000000000000000000000
+000000000000000000000000000000000000000000000000000000000000
+000000000000000000000000000000000000000000000000000000000000
+end
+exit 59 42 X-S07 from_X-BC
+exit 59 43 X-S07 from_X-BC
+exit 59 44 X-S07 from_X-BC
+exit 59 45 X-S07 from_X-BC
+mark from_X-S07 57 43 W
+prop car_wreck 8 42
+prop car_wreck2 44 43
+prop bus_stop 50 41
+prop jersey 2 44
+prop streetlamp 22 41
+prop utility_pole 36 41
+prop rubble 54 45
+prop rubble2 17 45
+text 0 43 "남부순환로 서쪽은 무너진 고가가 막고 있다." h=3
+struct scrap 4 39 52 2 seed=1 args='{"gate": [23, 27], "banner": [33, 36, "봉천 새봄빌라 분양"]}'
+prop gate_l 27 40
+prop gate_r 31 40
+text 29 39 "봉천 계단마을 아랫문. 고철 장벽에 분양 현수막을 덧댄 철판 문이다."
+prop guard_booth 33 38
+prop sandbags 25 38
+prop stair_post 32 34
+prop board_bc 22 35
+text 22 35 "반상회 게시판." w=2
+prop kennel 35 34
+text 35 34 "백구 집. 옆 기둥에 '백구 밥 당번표'가 붙어 있다." w=2
+prop stall 10 34
+prop scale 13 34
+prop scrap_pile 10 37
+prop scrap_pile2 14 37
+prop crate_o 16 35
+prop lp_gas 17 33
+prop forge 44 34
+prop anvil 47 35
+prop drum_fire 42 37
+prop tarp_pile 51 36
+prop crate_o 53 34
+prop planter_l 20 33
+prop planter_p 24 33
+prop planter_s 38 33
+prop bench_o 19 37
+prop utility_pole 39 36
+prop drum 54 38
+prop tree_small 49 33
+prop rubble 8 33
+prop rubble 8 35
+prop rubble 8 37
+prop manhole 5 36
+text 5 36 "하수구 맨홀. 마을 밖 배수로로 이어진다."
+prop drum 4 38
+struct roof 4 29 9 2 seed=2 args='{"edges": "w", "paint": "green"}'
+struct facade 4 31 9 2 seed=3 args='{"style": "concrete", "doors": [[6, "shutter"]], "name": "오씨네 고물"}'
+struct gap 13 29 1 4 seed=4
+struct bridge 13 30 1 1 seed=5
+struct roof 14 29 6 2 seed=6 args='{"edges": "", "paint": "red"}'
+struct facade 14 31 6 2 seed=7 args='{"style": "brick", "doors": [[2, "steel"]], "num": "7"}'
+struct wall 20 31 8 2 seed=8 args='{"posters": [[30, 20, 0], [190, 22, 1]], "paint": [[100, 32, "312계단", "P53"]]}'
+struct wall 28 31 1 2 seed=9 args='{"outlets": false, "vines": false}'
+struct wall 31 31 2 2 seed=10 args='{"outlets": false, "vines": false}'
+struct roof 33 29 6 2 seed=11 args='{"edges": "", "paint": "green"}'
+struct facade 33 31 6 2 seed=12 args='{"style": "plaster", "doors": [[2, "steel"]], "num": "6"}'
+struct gap 39 29 1 4 seed=13
+struct bridge 39 29 1 1 seed=14
+struct roof 40 29 7 2 seed=15 args='{"edges": "", "paint": "grey"}'
+struct facade 40 31 7 2 seed=16 args='{"style": "brick_dk", "doors": [[4, "steel"]], "name": "행복주택"}'
+struct wall 47 31 9 2 seed=17 args='{"posters": [[100, 24, 3]]}'
+struct ladder 5 31 1 2 seed=18
+struct roof 4 22 7 2 seed=19 args='{"edges": "w", "paint": "green"}'
+struct facade 4 24 7 2 seed=20 args='{"style": "brick_dk", "doors": [], "name": "삼성빌라"}'
+struct gap 11 22 1 4 seed=21
+struct bridge 11 23 1 1 seed=22
+struct roof 12 22 7 2 seed=23 args='{"edges": "", "paint": "grey"}'
+struct facade 12 24 7 2 seed=24 args='{"style": "mint", "doors": [[3, "steel"]], "num": "5"}'
+struct wall 19 24 2 2 seed=25 args='{"outlets": false}'
+struct roof 21 22 10 2 seed=26 args='{"edges": "", "paint": "green"}'
+struct facade 21 24 10 2 seed=27 args='{"style": "tile", "doors": [[1, "steel"]], "shop": [3, 8, "봉천약국"]}'
+exit 22 25 B-03 from_X-BC
+struct wall 31 24 2 2 seed=28 args='{"outlets": false, "vines": false}'
+struct wall 35 24 2 2 seed=29 args='{"outlets": false, "vines": false}'
+struct roof 37 22 8 2 seed=30 args='{"edges": "", "paint": "red"}'
+struct facade 37 24 8 2 seed=31 args='{"style": "concrete", "doors": [[4, "steel"]], "num": "4"}'
+struct gap 45 22 1 4 seed=32
+struct bridge 45 22 1 1 seed=33
+struct wall 46 24 10 2 seed=34 args='{"posters": [[60, 20, 2]], "paint": [[150, 30, "학교 ↑", "P44"]]}'
+mark from_B-03 22 26 S
+struct ladder 5 24 1 2 seed=35
+struct roof 4 15 6 2 seed=36 args='{"edges": "w", "paint": "green"}'
+struct facade 4 17 6 2 seed=37 args='{"style": "plaster", "doors": [], "name": "새봄빌라"}'
+struct roof 10 15 7 2 seed=38 args='{"edges": "", "paint": "grey"}'
+struct facade 10 17 7 2 seed=39 args='{"style": "brick", "doors": [[3, "steel"]], "num": "3"}'
+struct wall 17 17 12 2 seed=40 args='{"posters": [[200, 22, 1]], "paint": [[60, 30, "물 아껴 쓰자", "P44"]]}'
+struct wall 31 17 2 2 seed=41 args='{"outlets": false, "vines": false}'
+struct roof 33 15 11 2 seed=42 args='{"edges": "", "paint": "green"}'
+struct facade 33 17 11 2 seed=43 args='{"style": "mint", "doors": [[5, "steel"]], "name": "계단 학교", "num": "학"}'
+struct wall 44 17 12 2 seed=44
+struct ladder 5 17 1 2 seed=45
+text 38 18 "계단 학교. 오늘은 수업이 없다."
+text 16 32 "문이 잠겨 있다."
+text 35 32 "문이 잠겨 있다."
+text 44 32 "문이 잠겨 있다."
+text 15 25 "문이 잠겨 있다."
+text 41 25 "문이 잠겨 있다."
+text 13 18 "문이 잠겨 있다."
+prop water_tank 6 7
+prop water_tank 9 7
+prop water_tank 12 7
+prop water_tank 6 10
+prop water_tank 9 10
+prop water_tank 12 10
+text 9 7 "마을 물탱크. 빌라 옥상 여섯 개 탱크를 관으로 이었다." w=6 h=4
+prop floor_hatch 16 11
+text 16 11 "녹슨 철판 뚜껑. 자물쇠가 걸려 있다. 아래로 사다리가 보인다."
+prop watchtower 48 9
+text 48 9 "망루. 옥탑 감시조가 교대로 오른다." w=2 h=2
+prop planter_l 41 13
+prop planter_s 43 13
+prop drum 52 7
+prop utility_pole 20 13
+prop tree_ginkgo 38 6
+prop tree_small 54 12
+prop bush_g 17 5
+prop bush_a 53 4
+struct facade 22 10 12 2 seed=46 args='{"style": "brick", "doors": [[3, "steel"]], "name": "봉천 새마음빌라", "num": "1"}'
+struct roof 22 6 13 4 seed=47 args='{"edges": "nwe"}'
+struct wall 35 10 1 2 seed=48 args='{"outlets": false, "vines": false}'
+struct roof 25 6 6 2 seed=49 args='{"edges": "nwe", "paint": "red"}'
+struct facade 25 8 6 1 seed=50 args='{"style": "plaster", "doors": [[2, "steel"]], "name": "이장실"}'
+exit 27 8 B-01 from_X-BC
+mark from_B-01 27 9 S
+prop water_tank_s 33 8
+prop antenna 23 7
+prop laundry_line 31 6
+text 25 11 "봉천 새마음빌라 1동. 옥상에 옥탑 이장실이 있다."
+prop gate_shut 45 1
+text 45 2 "윗문. 봉천 고개로 넘어가는 쪽문인데 지금은 잠가 두었다."
+prop planter_s 14 27
+prop planter_l 23 27
+prop drum 45 27
+prop planter_p 52 26
+prop bench_o 48 26
+prop utility_pole 38 27
+prop lp_gas 9 27
+prop crate_o 19 26
+prop laundry_line 15 29
+prop antenna 35 29
+prop water_tank_s 44 29
+prop planter_l 6 29
+prop planter_p 41 20
+prop drum 50 20
+prop bench_o 44 19
+prop utility_pole 26 20
+prop planter_s 9 20
+prop tree_small 19 20
+prop laundry_line 24 22
+prop antenna 14 22
+prop water_tank_s 39 22
+prop planter_l 7 22
+prop laundry_line 11 15
+prop antenna 7 15
+prop planter_p 22 15
+prop planter_l 26 15
+prop water_tank_s 41 15
+prop planter_s 48 15
+prop tree_small 52 23
+prop bush_g 54 30
+prop bush_a 22 29
+prop tree_small 25 29
+prop tree_pine 0 0
+prop tree_pine2 2 0
+prop tree_oak 3 0
+prop tree_maple 5 0
+prop tree_pine2 6 0
+prop tree_oak2 8 0
+prop tree_maple 9 0
+prop tree_pine 11 0
+prop tree_oak2 12 0
+prop tree_oak 14 0
+prop tree_pine 15 0
+prop tree_pine2 17 0
+prop tree_oak 18 0
+prop tree_maple 20 0
+prop tree_pine2 21 0
+prop tree_oak2 23 0
+prop tree_maple 24 0
+prop tree_pine 26 0
+prop tree_oak2 27 0
+prop tree_oak 29 0
+prop tree_pine 30 0
+prop tree_pine2 32 0
+prop tree_oak 33 0
+prop tree_maple 35 0
+prop tree_pine2 36 0
+prop tree_oak2 38 0
+prop tree_maple 39 0
+prop tree_pine 41 0
+prop tree_oak2 42 0
+prop tree_oak 44 0
+prop tree_pine 45 0
+prop tree_pine2 47 0
+prop tree_oak 48 0
+prop tree_maple 50 0
+prop tree_pine2 51 0
+prop tree_oak2 53 0
+prop tree_maple 54 0
+prop tree_pine 56 0
+prop tree_oak2 57 0
+prop tree_oak 59 0
+prop tree_maple 1 1
+prop tree_pine2 2 1
+prop tree_oak2 4 1
+prop tree_maple 5 1
+prop tree_pine 7 1
+prop tree_oak2 8 1
+prop tree_oak 10 1
+prop tree_pine 11 1
+prop tree_pine2 13 1
+prop tree_oak 14 1
+prop tree_maple 16 1
+prop tree_pine2 17 1
+prop tree_oak2 19 1
+prop tree_maple 20 1
+prop tree_pine 22 1
+prop tree_oak2 23 1
+prop tree_oak 25 1
+prop tree_pine 26 1
+prop tree_pine2 28 1
+prop tree_oak 29 1
+prop tree_maple 31 1
+prop tree_pine2 32 1
+prop tree_oak2 34 1
+prop tree_maple 35 1
+prop tree_pine 37 1
+prop tree_oak2 38 1
+prop tree_oak 40 1
+prop tree_pine 41 1
+prop tree_pine2 43 1
+prop tree_pine 47 1
+prop tree_pine2 49 1
+prop tree_oak 50 1
+prop tree_maple 52 1
+prop tree_pine2 53 1
+prop tree_oak2 55 1
+prop tree_maple 56 1
+prop tree_pine 58 1
+prop tree_oak2 59 1
+prop tree_maple 0 2
+prop tree_pine2 1 2
+prop tree_oak2 3 2
+prop tree_maple 4 2
+prop tree_pine 6 2
+prop tree_oak2 7 2
+prop tree_oak 9 2
+prop tree_pine 10 2
+prop tree_pine2 12 2
+prop tree_oak 13 2
+prop tree_maple 15 2
+prop tree_pine2 16 2
+prop tree_oak2 18 2
+prop tree_maple 19 2
+prop tree_pine 21 2
+prop tree_oak2 22 2
+prop tree_oak 24 2
+prop tree_pine 25 2
+prop tree_pine2 27 2
+prop tree_oak 28 2
+prop tree_maple 30 2
+prop tree_pine2 31 2
+prop tree_oak2 33 2
+prop tree_maple 34 2
+prop tree_pine 36 2
+prop tree_oak2 37 2
+prop tree_oak 39 2
+prop tree_pine 40 2
+prop tree_pine2 42 2
+prop tree_oak 43 2
+prop tree_pine2 48 2
+prop tree_oak 49 2
+prop tree_maple 51 2
+prop tree_pine2 52 2
+prop tree_oak2 54 2
+prop tree_maple 55 2
+prop tree_pine 57 2
+prop tree_oak2 58 2
+prop tree_oak 0 3
+prop tree_maple 2 3
+prop tree_pine2 3 3
+prop tree_pine2 56 3
+prop tree_oak 57 3
+prop tree_maple 59 3
+prop tree_pine 1 4
+prop tree_oak2 2 4
+prop tree_pine2 56 4
+prop tree_oak2 58 4
+prop tree_maple 59 4
+prop tree_pine2 0 5
+prop tree_oak 1 5
+prop tree_maple 3 5
+prop tree_oak 57 5
+prop tree_pine 58 5
+prop tree_pine2 0 6
+prop tree_oak2 2 6
+prop tree_maple 3 6
+prop tree_maple 56 6
+prop tree_pine2 57 6
+prop tree_oak2 59 6
+prop tree_oak 1 7
+prop tree_pine 2 7
+prop tree_maple 56 7
+prop tree_pine 58 7
+prop tree_oak2 59 7
+prop tree_maple 0 8
+prop tree_pine2 1 8
+prop tree_oak2 3 8
+prop tree_pine2 57 8
+prop tree_oak 58 8
+prop tree_maple 0 9
+prop tree_pine 2 9
+prop tree_oak2 3 9
+prop tree_oak2 56 9
+prop tree_maple 57 9
+prop tree_pine 59 9
+prop tree_pine2 1 10
+prop tree_oak 2 10
+prop tree_oak2 56 10
+prop tree_oak 58 10
+prop tree_pine 59 10
+prop tree_oak2 0 11
+prop tree_maple 1 11
+prop tree_pine 3 11
+prop tree_maple 57 11
+prop tree_pine2 58 11
+prop tree_oak2 0 12
+prop tree_oak 2 12
+prop tree_pine 3 12
+prop tree_pine 56 12
+prop tree_oak2 57 12
+prop tree_oak 59 12
+prop tree_maple 1 13
+prop tree_pine2 2 13
+prop tree_pine 56 13
+prop tree_pine2 58 13
+prop tree_oak 59 13
+prop tree_pine 0 14
+prop tree_oak2 1 14
+prop tree_oak 3 14
+prop tree_oak2 57 14
+prop tree_maple 58 14
+prop tree_pine 0 15
+prop tree_pine2 2 15
+prop tree_oak 3 15
+prop tree_oak 56 15
+prop tree_pine 57 15
+prop tree_pine2 59 15
+prop tree_oak2 1 16
+prop tree_maple 2 16
+prop tree_oak 56 16
+prop tree_maple 58 16
+prop tree_pine2 59 16
+prop tree_oak 0 17
+prop tree_pine 1 17
+prop tree_pine2 3 17
+prop tree_pine 57 17
+prop tree_oak2 58 17
+prop tree_oak 0 18
+prop tree_maple 2 18
+prop tree_pine2 3 18
+prop tree_pine2 56 18
+prop tree_oak 57 18
+prop tree_maple 59 18
+prop tree_pine 1 19
+prop tree_oak2 2 19
+prop tree_pine2 56 19
+prop tree_oak2 58 19
+prop tree_maple 59 19
+prop tree_pine2 0 20
+prop tree_oak 1 20
+prop tree_maple 3 20
+prop tree_oak 57 20
+prop tree_pine 58 20
+prop tree_pine2 0 21
+prop tree_oak2 2 21
+prop tree_maple 3 21
+prop tree_maple 56 21
+prop tree_pine2 57 21
+prop tree_oak2 59 21
+prop tree_oak 1 22
+prop tree_pine 2 22
+prop tree_maple 56 22
+prop tree_pine 58 22
+prop tree_oak2 59 22
+prop tree_maple 0 23
+prop tree_pine2 1 23
+prop tree_oak2 3 23
+prop tree_pine2 57 23
+prop tree_oak 58 23
+prop tree_maple 0 24
+prop tree_pine 2 24
+prop tree_oak2 3 24
+prop tree_oak2 56 24
+prop tree_maple 57 24
+prop tree_pine 59 24
+prop tree_pine2 1 25
+prop tree_oak 2 25
+prop tree_oak2 56 25
+prop tree_oak 58 25
+prop tree_pine 59 25
+prop tree_oak2 0 26
+prop tree_maple 1 26
+prop tree_pine 3 26
+prop tree_maple 57 26
+prop tree_pine2 58 26
+prop tree_oak2 0 27
+prop tree_oak 2 27
+prop tree_pine 3 27
+prop tree_pine 56 27
+prop tree_oak2 57 27
+prop tree_oak 59 27
+prop tree_maple 1 28
+prop tree_pine2 2 28
+prop tree_pine 56 28
+prop tree_pine2 58 28
+prop tree_oak 59 28
+prop tree_pine 0 29
+prop tree_oak2 1 29
+prop tree_oak 3 29
+prop tree_oak2 57 29
+prop tree_maple 58 29
+prop tree_pine 0 30
+prop tree_pine2 2 30
+prop tree_oak 3 30
+prop tree_oak 56 30
+prop tree_pine 57 30
+prop tree_pine2 59 30
+prop tree_oak2 1 31
+prop tree_maple 2 31
+prop tree_oak 56 31
+prop tree_maple 58 31
+prop tree_pine2 59 31
+prop tree_oak 0 32
+prop tree_pine 1 32
+prop tree_pine2 3 32
+prop tree_pine 57 32
+prop tree_oak2 58 32
+prop tree_oak 0 33
+prop tree_maple 2 33
+prop tree_pine2 3 33
+prop tree_pine2 56 33
+prop tree_oak 57 33
+prop tree_maple 59 33
+prop tree_pine 1 34
+prop tree_oak2 2 34
+prop tree_pine2 56 34
+prop tree_oak2 58 34
+prop tree_maple 59 34
+prop tree_pine2 0 35
+prop tree_oak 1 35
+prop tree_maple 3 35
+prop tree_oak 57 35
+prop tree_pine 58 35
+prop tree_pine2 0 36
+prop tree_oak2 2 36
+prop tree_maple 3 36
+prop tree_maple 56 36
+prop tree_pine2 57 36
+prop tree_oak2 59 36
+prop tree_oak 1 37
+prop tree_pine 2 37
+prop tree_maple 56 37
+prop tree_pine 58 37
+prop tree_oak2 59 37
+prop tree_maple 0 38
+prop tree_pine2 1 38
+prop tree_oak2 3 38
+prop tree_pine2 57 38
+prop tree_oak 58 38
+prop tree_maple 0 39
+prop tree_pine 2 39
+prop tree_oak2 3 39
+prop tree_oak2 56 39
+prop tree_maple 57 39
+prop tree_pine 59 39
+prop tree_pine2 1 40
+prop tree_oak 2 40
+prop tree_oak2 56 40
+prop tree_oak 58 40
+prop tree_pine 59 40

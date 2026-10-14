@@ -84,5 +84,46 @@ def main():
     print(f"소품: {len(meta)}종, 아틀라스 {atlas.size[0]}×{atlas.size[1]}")
 
 
+def export_r01():
+    """바깥 소품(0-10, art/tools/props_bc.py) → r01_props.png/json. 같은 오프셋 규칙, 상태 그림(states)."""
+    import props_bc as B
+    items = []
+    for n, r in B.PROPS.items():
+        items.append((n, outlined(r["fn"]())))
+        for st, fn in B.STATES.get(n, {}).items():
+            items.append((f"{n}#{st}", outlined(fn())))
+    W = 1024
+    x = y = rowh = 0
+    pos = {}
+    for k, im in items:
+        if x + im.width > W:
+            x, y, rowh = 0, y + rowh, 0
+        pos[k] = (x, y, im.width, im.height)
+        x += im.width
+        rowh = max(rowh, im.height)
+    atlas = Image.new("RGBA", (W, y + rowh), (0, 0, 0, 0))
+    for k, im in items:
+        atlas.alpha_composite(im, pos[k][:2])
+    bad = check(atlas, P.allowed_set("UI"))
+    if bad:
+        print("팔레트 밖 색(r01):", bad[:5]); sys.exit(1)
+    atlas.save(os.path.join(OUT, "r01_props.png"))
+    meta = {}
+    for n, r in B.PROPS.items():
+        x0, y0, w, h = pos[n]
+        fw, fh = r["foot"]
+        off = [(fw * T - (w - 2)) // 2 - 1 if fw else -(w // 2) + 16, fh * T + r["down"] - h + 1]
+        if fw == 0:
+            off = [16 - w // 2, T - h + 1]
+        e = {"rect": [x0, y0, w, h], "foot": [fw, fh], "kind": r["kind"], "off": off, "atlas": "r01"}
+        for st in B.STATES.get(n, {}):
+            e.setdefault("states", {})[st] = list(pos[f"{n}#{st}"])
+        meta[n] = e
+    json.dump({"props": meta, "tile": T}, open(os.path.join(OUT, "r01_props.json"), "w", encoding="utf-8"), ensure_ascii=False,
+              indent=1, sort_keys=True)
+    print(f"바깥 소품: {len(meta)}종, 아틀라스 {atlas.size[0]}×{atlas.size[1]}")
+
+
 if __name__ == "__main__":
     main()
+    export_r01()

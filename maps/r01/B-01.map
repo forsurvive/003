@@ -1,0 +1,27 @@
+map B-01 옥탑 이장실
+set bc
+grid
+##########################
+##########################
+##########################
+#wwwwwwwwwwwwwww###,,,,,,#
+#wwwwwwwwwwwwwww###,,,,,,#
+#wwwwwwwwwwwwwww###,,,,,,#
+#wwwwwwwwwwwwwww###,,,,,,#
+#wwwwwwwwwwwwwww###,,,,,,#
+#wwwwwwwwwwwwwww###,,,,,,#
+#wwwwwwwwwwwwwww###,,,,,,#
+#wwwwwwwwwwwwwwwwww,,,,,,#
+#wwwwwwwwwwwwwww###,,,,,,#
+#wwwwwwwwwwwwwww###,,,,,,#
+########w#################
+end
+exit 8 13 X-BC from_B-01
+mark from_X-BC 8 12 N
+mark bed 21 6 S
+mark chief 6 6 S
+prop overseer_desk 4 5
+text 5 5 "조만석의 책상. 봉천 중심의 2077년 구청 지도가 유리 밑에 깔려 있다." w=3
+prop bunk 22 4
+text 22 4 "빌린 침대. 이불에서 햇볕 냄새가 난다." h=2
+prop locker_row2 19 3

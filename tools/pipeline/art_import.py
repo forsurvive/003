@@ -137,6 +137,7 @@ def main():
     nt = tileset("ts_r01_ext", r01)                                # 소품 타일은 투명 바탕(바닥은 합성 층이 그린다)
     ns = tileset("ts_s07_int", tiles_isaac.s07_tiles())
     nw = tileset("ts_s07_wall", tiles_isaac.s07_wall_tiles())
+    tileset("ts_bc_wall", tiles_isaac.bc_wall_tiles())                # 봉천 빌라 실내 벽(0-10)
     import ground                                                  # 바닥 합성 재질·잔 소품·잡음(SD-16 §6.10)
     ground._CACHE.clear()                                          # 타일 그림을 자르며 옛 번호로 읽은 세트를 버린다
     gdir = os.path.join(ROOT, "game", "assets", "ground")

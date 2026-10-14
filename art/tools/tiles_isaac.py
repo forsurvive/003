@@ -296,6 +296,7 @@ def r01_tiles():
         "stairs": stairs(), "stairs_rail": stairs_rail(), "wall_face_cap": wall_face(5, True), "wall_face": wall_face(6, False),
         "brick": brick_wall(), "brick_window": brick_wall(True), "granite_rock": granite_rock(), "scrap_barrier": scrap_barrier(),
         "drum": drum(),
+        "concrete_o": _gcrop("r01", "concrete", 0),                  # 0-10 덧붙임(앞 번호는 그대로)
     }
 
 
@@ -425,6 +426,49 @@ def s07_wall_tiles():
     out.update({"face_top": wall_face_in("top"), "face_top_pipe": wall_face_in("top", "pipe"),
                 "face_top_vent": wall_face_in("top", "vent"), "face_bot": wall_face_in("bot"),
                 "face_bot_outlet": wall_face_in("bot", "outlet")})
+    return out
+
+
+def wall_face_bc(part, variant="plain", seed=0):
+    """빌라 방 벽(봉천 실내, 0-10): 바랜 꽃무늬 벽지(위) + 나무 걸레받이(아래). 쯔꾸르식 평평한 면 + 테."""
+    img = new("P21")
+    d = ImageDraw.Draw(img)
+    rnd = random.Random(seed * 7 + (1 if part == "top" else 2))
+    if part == "top":
+        d.line([0, 0, 31, 0], fill=C("P01"))
+        d.line([0, 1, 31, 1], fill=C("P19"))
+        d.rectangle([0, 2, 31, 4], fill=C("P20"))                    # 몰딩
+        d.line([0, 5, 31, 5], fill=C("P19"))
+        for y in range(10, 32, 8):                                     # 벽지 무늬(작은 꽃 점, 엇갈림)
+            for x in range(4 if (y // 8) % 2 else 0, 32, 8):
+                d.point((x + 2, y), fill=C("P22")); d.point((x + 1, y + 1), fill=C("P20")); d.point((x + 3, y + 1), fill=C("P20"))
+        if variant == "stain":
+            for k in range(3):
+                d.line([6 + k * 9, 6, 6 + k * 9, 6 + rnd.randint(8, 20)], fill=C("P20"))
+        if variant == "calendar":
+            d.rectangle([10, 9, 21, 24], fill=C("P09")); d.rectangle([10, 9, 21, 12], fill=C("P53"))
+            for yy in (15, 18, 21):
+                d.line([12, yy, 19, yy], fill=C("P06"))
+            d.rectangle([10, 9, 21, 24], outline=C("P05"))
+    else:
+        for y in range(0, 20, 8):
+            for x in range(0 if (y // 8) % 2 else 4, 32, 8):
+                d.point((x + 2, y + 2), fill=C("P22")); d.point((x + 1, y + 3), fill=C("P20")); d.point((x + 3, y + 3), fill=C("P20"))
+        d.rectangle([0, 20, 31, 28], fill=C("P18"))                   # 걸레받이(나무)
+        d.line([0, 20, 31, 20], fill=C("P01")); d.line([0, 21, 31, 21], fill=C("P20"))
+        d.rectangle([0, 29, 31, 31], fill=C("P17")); d.line([0, 29, 31, 29], fill=C("P01"))
+        if variant == "outlet":
+            d.rectangle([20, 12, 26, 18], fill=C("P01")); d.rectangle([21, 13, 25, 17], fill=C("P09"))
+            d.point((22, 15), fill=C("P04")); d.point((24, 15), fill=C("P04"))
+    return img
+
+
+def bc_wall_tiles():
+    """봉천 빌라 실내 벽(ts_bc_wall): s07 벽과 같은 이름(윗면 wt_m은 같고 벽면만 벽지)."""
+    out = {f"wt_{m}": wall_top({e for e, b in WALL_BITS if m & b}) for m in range(16)}
+    out.update({"face_top": wall_face_bc("top"), "face_top_pipe": wall_face_bc("top", "calendar", 1),
+                "face_top_vent": wall_face_bc("top", "stain", 2), "face_bot": wall_face_bc("bot"),
+                "face_bot_outlet": wall_face_bc("bot", "outlet")})
     return out
 
 

@@ -71,6 +71,7 @@ class MapSrc:
         self.id = self.name = ""
         self.set = "s07"
         self.rows = []
+        self.levels = []                                           # 바깥 맵 높이 격자(levels … end)
         self.cmds = []                                             # (줄, [낱말])
         lines = open(path, encoding="utf-8").read().split("\n")
         i = 0
@@ -79,9 +80,10 @@ class MapSrc:
             ln = i + 1
             i += 1
             s = raw.split(" #")[0].rstrip() if not raw.lstrip().startswith("#") else ""
-            if raw.strip() == "grid":
+            if raw.strip() in ("grid", "levels"):
+                dst = self.rows if raw.strip() == "grid" else self.levels
                 while i < len(lines) and lines[i].rstrip() != "end":
-                    self.rows.append((i + 1, lines[i].rstrip("\n")))
+                    dst.append((i + 1, lines[i].rstrip("\n")))
                     i += 1
                 i += 1
                 continue
@@ -122,10 +124,95 @@ def check_cond(src, known_vars, known_fns):
         raise Err(f"cond에 모르는 이름 {bad}")
 
 
+# ------------------------------------------------------------------------------------------------ 바깥 맵(단계 0-10, set r01)
+# 격자 글자: 걷는 바닥 · 구조물 위 걷는 칸 · 막힌 칸. 높이는 levels 격자(칸마다 0~9, 타일 단위 높이 — 옹벽 2타일 = 2단).
+# 높이가 다른 이웃 칸은 계단·사다리 칸을 거쳐야만 오간다(실행 중 충돌·길찾기가 같은 규칙). 구조물 그림은 struct 명령으로
+# 맵마다 한 장에 굽는다(tools/pipeline/struct_bake.py → game/assets/maps/<ID>_struct.png).
+EXT_WALK = {".": "dirt_a", ",": "dirt_grass_b", ";": "dirt_grass_a", "_": "asphalt", "-": "asphalt_lane", ":": "pavers",
+            "c": "concrete_o", "=": "stairs", "!": "stairs_rail"}
+EXT_ON = {"r": "concrete_o", "p": "dirt_a", "L": "concrete_o", "D": "concrete_o"}     # 구조물 그림이 덮는 걷는 칸(옥상·판자 다리·사다리·문)
+EXT_SOLID = {"H": ("concrete_o", 1, 2), "#": ("concrete_o", 1, 2), "R": ("concrete_o", 1, 2), "S": ("concrete_o", 1, 2),
+             "P": ("concrete_o", 1, 2), "X": ("concrete_o", 3, 2), "v": ("concrete_o", 3, 0), "T": ("dirt_grass_a", 0, 2),
+             "o": ("dirt_a", 0, 1), "~": ("dirt_a", 3, 0)}                                  # 글자: (바닥, 덮개, 엄폐)
+EXT_STAIR = {"=", "!", "L"}
+EXT_PROPOK = set(EXT_WALK) | {"T", "o", "r", "p"}                                            # 소품 발 칸이 놓일 수 있는 글자
+
+
+def compile_ext(m, prop_meta, known_vars, known_fns, scenes=()):
+    W = max(len(r) for _, r in m.rows)
+    H = len(m.rows)
+    grid = []
+    for ln, r in m.rows:
+        if len(r) != W:
+            m.err(ln, f"격자 줄 길이 {len(r)} ≠ {W}")
+            r = r.ljust(W)
+        for x, ch in enumerate(r):
+            if ch not in EXT_WALK and ch not in EXT_ON and ch not in EXT_SOLID:
+                m.err(ln, f"모르는 바깥 격자 글자 '{ch}' (x={x})")
+        grid.append(r)
+    if len(m.levels) != H or any(len(r) != W for _, r in m.levels):
+        m.err(1, f"levels 격자 크기가 grid({W}×{H})와 다르다")
+        return None
+    lv = [r for _, r in m.levels]
+    walk = lambda x, y: 0 <= x < W and 0 <= y < H and (grid[y][x] in EXT_WALK or grid[y][x] in EXT_ON)
+    stair = lambda x, y: walk(x, y) and grid[y][x] in EXT_STAIR
+    level = [[-1] * W for _ in range(H)]
+    for y in range(H):
+        for x in range(W):
+            if walk(x, y):
+                ch = lv[y][x]
+                if not ch.isdigit():
+                    m.err(m.levels[y][0], f"걷는 칸 ({x},{y}) '{grid[y][x]}'에 높이가 없다")
+                    continue
+                level[y][x] = int(ch)
+    for y in range(H):                                                   # 높이 이음 규칙
+        for x in range(W):
+            if not walk(x, y):
+                continue
+            for dx, dy in ((1, 0), (0, 1)):
+                nx, ny = x + dx, y + dy
+                pass                                                    # 높이가 다른 칸끼리 붙은 곳 = 벼랑·옥상 끝(실행 중 막힘, 난간·턱을 그린다)
+            if stair(x, y):
+                for nx in (x - 1, x + 1):
+                    if walk(nx, y) and not stair(nx, y) and level[y][nx] != level[y][x]:
+                        m.err(m.rows[y][0], f"계단 ({x},{y}) 옆({nx},{y})이 다른 높이의 바닥이다 — 계단 옆은 벽이나 계단이어야 한다")
+    ft = tiles("r01_ext")
+    floor_ids, gflag, solid, cover = [], [], [], []
+    for y in range(H):
+        fr, gr, sr, cr = [], [], [], []
+        for x in range(W):
+            ch = grid[y][x]
+            if ch in EXT_WALK:
+                fr.append(ft[EXT_WALK[ch]]); gr.append(0); sr.append(0); cr.append(0)
+            elif ch in EXT_ON:
+                fr.append(ft[EXT_ON[ch]]); gr.append(1 if ch == "D" else 3); sr.append(0); cr.append(0)
+            else:
+                g, f, c = EXT_SOLID.get(ch, ("dirt_a", 0, 0))
+                fr.append(ft[g]); gr.append(f); sr.append(1); cr.append(c)
+        floor_ids.append(fr); gflag.append(gr); solid.append(sr); cover.append(cr)
+    out = {"id": m.id, "name": m.name, "set": m.set, "ext": True, "size": [W, H], "props": [], "doors": [], "exits": [], "marks": {},
+           "npcs": [], "texts": [], "signs": [], "triggers": [], "enemies": [], "boxes": [], "structs": []}
+    return out, grid, floor_ids, gflag, solid, cover, level, walk
+
+
 def compile_map(m, prop_meta, known_vars, known_fns, scenes=()):
     if not m.rows:
         m.err(1, "grid가 없다")
         return None
+    ext = m.set == "r01"
+    if ext:
+        res = compile_ext(m, prop_meta, known_vars, known_fns, scenes)
+        if res is None:
+            return None
+        out, grid, floor_ids, gflag, solid, cover, level, walk = res
+        W, H = out["size"]
+        kind = [[None] * W for _ in range(H)]
+
+        def floor(x, y):
+            return 0 <= x < W and 0 <= y < H and grid[y][x] in EXT_PROPOK
+
+        return _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kind, solid, walk, ext=True,
+                         extra=(floor_ids, gflag, cover, level, grid))
     W = max(len(r) for _, r in m.rows)
     H = len(m.rows)
     grid = []
@@ -145,7 +232,7 @@ def compile_map(m, prop_meta, known_vars, known_fns, scenes=()):
         return not floor(x, y)
 
     # 벽 자동 타일
-    wt = tiles("s07_wall")
+    wt = tiles(f"{m.set}_wall" if os.path.exists(os.path.join(TIL, f"ts_{m.set}_wall.json")) else "s07_wall")
     ft = tiles("s07_int")
     kind = [[None] * W for _ in range(H)]                         # 'top' / 'ftop' / 'fbot' / None(바닥)
     for y in range(H):
@@ -190,6 +277,12 @@ def compile_map(m, prop_meta, known_vars, known_fns, scenes=()):
     solid = [[0 if floor(x, y) else 1 for x in range(W)] for y in range(H)]
     out = {"id": m.id, "name": m.name, "set": m.set, "size": [W, H], "props": [], "doors": [], "exits": [], "marks": {},
            "npcs": [], "texts": [], "signs": [], "triggers": [], "enemies": [], "boxes": []}
+    return _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kind, solid, None, ext=False,
+                     extra=(floor_ids, wall_ids))
+
+
+def _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kind, solid, walk, ext=False, extra=()):
+    """맵 명령(prop·door·exit·mark·npc·enemy·box·text·sign·trigger·struct) → out. 실내·바깥 공용."""
     loot_kinds = set(json.load(open(os.path.join(ROOT, "game", "data", "loot_s07.json"), encoding="utf-8"))["tables"].keys())
     enemy_ids = set(json.load(open(os.path.join(ROOT, "game", "data", "enemies.json"), encoding="utf-8")).keys())
     npc_ids = set(json.load(open(os.path.join(ROOT, "game", "data", "npcs.json"), encoding="utf-8"))["npcs"].keys())
@@ -246,20 +339,20 @@ def compile_map(m, prop_meta, known_vars, known_fns, scenes=()):
                 out["doors"].append({"x": x, "y": y, "kind": "door_" + k, "label": label, "locked": locked})
             elif c == "exit":
                 x, y, to, mk = int(pos[0]), int(pos[1]), pos[2], pos[3]
-                if not floor(x, y):
+                if not (walk(x, y) if ext else floor(x, y)):
                     raise Err(f"출구 칸 ({x},{y})이 바닥이 아니다")
                 out["exits"].append({"x": x, "y": y, "to": to, "mark": mk, "line": ln})
             elif c == "mark":
                 name, x, y, d = pos[0], int(pos[1]), int(pos[2]), pos[3]
                 if d not in DIRS:
                     raise Err(f"모르는 방향 '{d}'")
-                if not floor(x, y):
+                if not (walk(x, y) if ext else floor(x, y)):
                     raise Err(f"표지 '{name}' ({x},{y})가 바닥이 아니다")
                 out["marks"][name] = [x, y, d]
             elif c == "npc":
                 nid, x, y, d = pos[0], int(pos[1]), int(pos[2]), pos[3]
                 e = {"id": nid, "x": x, "y": y, "dir": d, "route": [], "cond": opt.get("cond", ""), "bark": opt.get("bark", "")}
-                if not floor(x, y):
+                if not (walk(x, y) if ext else floor(x, y)):
                     raise Err(f"인물 {nid} 자리 ({x},{y})가 바닥이 아니다")
                 if e["cond"]:
                     check_cond(e["cond"], known_vars, known_fns)
@@ -273,7 +366,7 @@ def compile_map(m, prop_meta, known_vars, known_fns, scenes=()):
                     if not mm:
                         raise Err(f"route 형식 '이름:x,y,초' 아님: {part}")
                     rx, ry = int(mm.group(2)), int(mm.group(3))
-                    if not floor(rx, ry):
+                    if not (walk(rx, ry) if ext else floor(rx, ry)):
                         raise Err(f"일과 지점 {mm.group(1)} ({rx},{ry})가 바닥이 아니다")
                     e["route"].append([mm.group(1), rx, ry, float(mm.group(4) or 4)])
                 e["line"] = ln
@@ -282,7 +375,7 @@ def compile_map(m, prop_meta, known_vars, known_fns, scenes=()):
                 eid, x, y = pos[0], int(pos[1]), int(pos[2])
                 if eid not in enemy_ids:
                     raise Err(f"적 자료(enemies.json)에 없는 ID '{eid}'")
-                if not floor(x, y) or solid[y][x]:
+                if not (walk(x, y) if ext else floor(x, y)) or solid[y][x]:
                     raise Err(f"적 {eid} 자리 ({x},{y})가 빈 바닥이 아니다")
                 e = {"id": eid, "x": x, "y": y, "cond": opt.get("cond", "")}
                 if e["cond"]:
@@ -297,7 +390,7 @@ def compile_map(m, prop_meta, known_vars, known_fns, scenes=()):
                         if not mm:
                             raise Err(f"순찰 route 형식 'x,y,초' 아님: {part}")
                         rx, ry = int(mm.group(1)), int(mm.group(2))
-                        if not floor(rx, ry) or solid[ry][rx]:
+                        if not (walk(rx, ry) if ext else floor(rx, ry)) or solid[ry][rx]:
                             raise Err(f"순찰 지점 ({rx},{ry})가 빈 바닥이 아니다")
                         e["route"].append([rx, ry, float(mm.group(3) or 2)])
                 out["enemies"].append(e)
@@ -350,10 +443,27 @@ def compile_map(m, prop_meta, known_vars, known_fns, scenes=()):
                 if not any(floor(x + i, y + j) for i in range(e["w"]) for j in range(e["h"])):
                     raise Err(f"trigger ({x},{y}) 범위에 바닥이 없다")
                 out["triggers"].append(e)
+            elif c == "struct":                                  # struct 종류 x y w h [seed=] [args='{json}'] — 바깥 구조물(0-10)
+                if not ext:
+                    raise Err("struct는 바깥 맵(set r01)에서만 쓴다")
+                sk, x, y, w, hh = pos[0], int(pos[1]), int(pos[2]), int(pos[3]), int(pos[4])
+                if not (0 <= x and 0 <= y and x + w <= W and y + hh <= H):
+                    raise Err(f"구조물 {sk} ({x},{y},{w}×{hh})가 맵 밖으로 나간다")
+                e = {"kind": sk, "x": x, "y": y, "w": w, "h": hh, "seed": int(opt.get("seed", 0)),
+                     "args": json.loads(opt["args"]) if opt.get("args") else {}}
+                if opt.get("cond"):
+                    check_cond(opt["cond"], known_vars, known_fns)
+                    e["cond"] = opt["cond"]
+                out["structs"].append(e)
             else:
                 raise Err(f"모르는 명령 '{c}'")
         except (Err, IndexError, ValueError) as e:
             m.err(ln, str(e) if isinstance(e, Err) else f"인자가 모자라거나 틀렸다: {' '.join(words)}")
+    if ext:
+        _fi, _gf, _cv, level, grid = extra
+
+        def link(x, y, nx, ny):
+            return level[y][x] == level[ny][nx] or grid[y][x] in EXT_STAIR or grid[ny][nx] in EXT_STAIR
     # 막힘(소품 포함) 위에서 이어짐 검사
     block = [[1 if solid[y][x] else 0 for x in range(W)] for y in range(H)]
     for e in out["exits"]:
@@ -376,6 +486,8 @@ def compile_map(m, prop_meta, known_vars, known_fns, scenes=()):
             x, y = q.popleft()
             for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
                 nx, ny = x + dx, y + dy
+                if ext and 0 <= nx < W and 0 <= ny < H and not link(x, y, nx, ny):
+                    continue
                 if 0 <= nx < W and 0 <= ny < H and not block[ny][nx] and (nx, ny) not in seen:
                     seen.add((nx, ny))
                     q.append((nx, ny))
@@ -396,8 +508,17 @@ def compile_map(m, prop_meta, known_vars, known_fns, scenes=()):
         for (cx, cy) in cells:
             if not solid[cy][cx]:
                 m.err(1, f"용기 ({b['x']},{b['y']}) 칸 ({cx},{cy})에 가구가 없다(빈 바닥)")
-    out["floor"] = floor_ids
-    out["wall"] = wall_ids
+    if ext:
+        floor_ids, gflag, cover, level, grid = extra
+        out["floor"] = floor_ids
+        out["gflag"] = ["".join(str(v) for v in row) for row in gflag]
+        out["cover"] = ["".join(str(v) for v in row) for row in cover]
+        out["level"] = ["".join(str(v) if v >= 0 else "." for v in row) for row in level]
+        out["stair"] = ["".join("1" if grid[y][x] in EXT_STAIR else "0" for x in range(W)) for y in range(H)]
+    else:
+        floor_ids, wall_ids = extra
+        out["floor"] = floor_ids
+        out["wall"] = wall_ids
     out["solid"] = ["".join(str(min(1, v)) for v in row) for row in solid]
     return out
 
@@ -412,7 +533,12 @@ def alias_of(npcs):
 
 
 def main():
-    prop_meta = json.load(open(os.path.join(PROPS, "s07_props.json")))["props"]
+    prop_meta = dict(json.load(open(os.path.join(PROPS, "s07_props.json")))["props"])
+    if os.path.exists(os.path.join(PROPS, "r01_props.json")):                  # 바깥 소품(0-10): 이름이 겹치지 않는다
+        for k, v in json.load(open(os.path.join(PROPS, "r01_props.json")))["props"].items():
+            if k in prop_meta:
+                print("오류 소품 이름 겹침:", k); sys.exit(1)
+            prop_meta[k] = v
     from script_compile import ENGINE_VARS                                 # 엔진이 선언하는 변수(PC_·MQP4_ 진행 표시 등)
     known_vars = set(json.load(open(os.path.join(ROOT, "game", "data", "vars.json")))["vars"]) | ENGINE_VARS
     for q in json.load(open(os.path.join(ROOT, "game", "data", "quests.json")))["quests"]:

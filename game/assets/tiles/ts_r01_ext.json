@@ -31,6 +31,14 @@
   "cover": 2,
   "solid": true
  },
+ "concrete_o": {
+  "atlas": [
+   17,
+   0
+  ],
+  "cover": 0,
+  "solid": false
+ },
  "dirt_a": {
   "atlas": [
    0,

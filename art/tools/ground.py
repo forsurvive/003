@@ -387,6 +387,29 @@ def concrete_tex(seed):
     return a
 
 
+def concrete_out_tex(seed):
+    """바깥 콘크리트 포장(골목·데크): 실내 판보다 거칠게 — 64px 타설 이음매, 가장자리 때, 금, 풀 난 이음매."""
+    a = np.full((CELL, CELL), t("P06"), np.uint8)
+    rnd = np.random.default_rng(seed + 7)
+    for k in range(0, CELL, 64):                                       # 타설 이음매(어두운 선 + 밝은 선)
+        for i in range(CELL):
+            put(a, i, k, "P04"); put(a, i, k + 1, "P07")
+            put(a, k, i, "P04"); put(a, k + 1, i, "P07")
+    for _ in range(14):                                               # 짧은 금
+        walk_line(a, rnd, int(rnd.integers(CELL)), int(rnd.integers(CELL)), int(rnd.integers(4, 9)), "P04", hi="P07")
+    for _ in range(90):                                               # 자잘한 자갈 박힌 점(밝음·어두움)
+        x, y = int(rnd.integers(CELL)), int(rnd.integers(CELL))
+        put(a, x, y, "P05" if rnd.random() < 0.6 else "P07")
+    for _ in range(40):                                               # 이음매에 난 풀
+        k = int(rnd.integers(CELL // 64)) * 64
+        i = int(rnd.integers(CELL))
+        if rnd.random() < 0.5:
+            stamp(a, i, k - 1, [".a.", "bab"], {"a": "P31", "b": "P30"})
+        else:
+            stamp(a, k - 1, i, [".a", "ab", ".b"], {"a": "P31", "b": "P30"})
+    return a
+
+
 def mold_tex(base, seed):
     """곰팡이병 바닥(수경 농장 2277): 바탕 재질 위에 불규칙하게 번진 검은 반점(큰 얼룩 문턱 + 가장자리 한 단 밝게)."""
     a = base.copy()
@@ -602,9 +625,12 @@ def sets():
                  decals=[], hard=1),
             dict(name="stairs_rail", A=tile_tex(TI.stairs_rail()), B=tile_tex(TI.stairs_rail()), spread=0, pri=5, rim=0, shade=0, vthr=255,
                  dens=0, decals=[], hard=1),
+            # 0-10: 골목·데크 콘크리트(64px 타설 이음매 + 미끄럼 홈 대신 얼룩·금) — 봉천 골목·볼트 데크
+            dict(name="concrete", A=concrete_out_tex(151), B=None, spread=0, pri=4, rim=1, shade=1, vthr=256, dens=8,
+                 decals=["paper", "butts", "leaves"], hard=1),
         ],
         "mat_of": {"dirt_a": 0, "dirt_b": 0, "dirt_grass_a": 2, "dirt_grass_b": 1, "asphalt": 3, "asphalt_lane": 3,
-                   "pavers": 4, "pavers_b": 4, "stairs": 5, "stairs_rail": 6},
+                   "pavers": 4, "pavers_b": 4, "stairs": 5, "stairs_rail": 6, "concrete_o": 7},
         "force": {"asphalt_lane": "lane"},
         "flag_of": {"brick": 1, "brick_window": 1, "wall_face": 1, "wall_face_cap": 1, "granite_rock": 2, "scrap_barrier": 2, "drum": 2},
     }
