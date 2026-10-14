@@ -297,6 +297,10 @@ def r01_tiles():
         "brick": brick_wall(), "brick_window": brick_wall(True), "granite_rock": granite_rock(), "scrap_barrier": scrap_barrier(),
         "drum": drum(),
         "concrete_o": _gcrop("r01", "concrete", 0),                  # 0-10 덧붙임(앞 번호는 그대로)
+        # 1-1 월드 바닥(앞 번호는 그대로): 바닥 합성 재질에서 32px 한 칸을 잘라 쓴다
+        "water_deep": _gcrop("r01", "water_deep", 0), "water_mid": _gcrop("r01", "water_mid", 0),
+        "water_shallow": _gcrop("r01", "water_shallow", 0), "mud": _gcrop("r01", "mud", 0),
+        "rock_floor": _gcrop("r01", "rock", 0), "rubble": _gcrop("r01", "rubble", 0), "ballast": _gcrop("r01", "ballast", 0),
     }
 
 

@@ -219,6 +219,72 @@ def asphalt_tex(seed, worn=False):
     return a                                                        # 보수 자리는 잔 소품(patch)으로: A·B 경계에서 잘리지 않게
 
 
+# ---------------------------------------------------------------- 단계 1-1 월드 재질(SD-16 §6.7·§6.10, SD-08 §6.2)
+WAVES = [["aaa", ".bb."], [".aaaa", "bb..."], ["aa", ".b"], ["aaaa.", "..bbb"]]
+
+
+def water_tex(seed, base, lt, dk):
+    """수면: 한 색 바탕 + 간격 둔 잔물결(밝은 윗줄 + 어두운 아랫점). 깊을수록 물결이 드물다."""
+    a = np.full((CELL, CELL), t(base), np.uint8)
+    for x, y, rnd in scatter(seed + 3, 13):
+        if rnd.random() < 0.55:
+            stamp(a, x, y, WAVES[rnd.integers(len(WAVES))], {"a": lt, "b": dk})
+    return a
+
+
+def mud_tex(seed):
+    """둔치 진흙(갈대흙): 젖은 흙 바탕 + 마른 금 + 작은 물기 자국. 갈대는 잔 소품."""
+    a = np.full((CELL, CELL), t("P17"), np.uint8)
+    for x, y, rnd in scatter(seed + 3, 12):
+        r = rnd.random()
+        if r < 0.35:
+            stamp(a, x, y, ["ab", ".b"], {"a": "P18", "b": "P16"})          # 마른 흙 덩이
+        elif r < 0.55:
+            stamp(a, x, y, ["aa."], {"a": "P16"})                           # 젖은 금
+    return a
+
+
+def rubble_tex(seed):
+    """잔해: 회색 콘크리트 부스러기 바탕 + 덩이(윗·왼 밝게, 아래·오른 어둡게)."""
+    a = np.full((CELL, CELL), t("P05"), np.uint8)
+    for x, y, rnd in scatter(seed + 3, 9):
+        r = rnd.random()
+        if r < 0.45:
+            stamp(a, x, y, [["aab", "acb", "bbk"], ["ab", "bk"], ["aaab", "accb", ".bkk"]][rnd.integers(3)],
+                  {"a": "P07", "c": "P06", "b": "P04", "k": "P03"})
+        elif r < 0.6:
+            put(a, x, y, "P04")
+    return a
+
+
+def rock_tex(seed):
+    """화강암 암반(R01·R09 흰 화강암, SD-08 §7): 밝은 판 + 꺾은 금(어두운 선 + 밝은 아래 가장자리) + 운모 점."""
+    a = np.full((CELL, CELL), t("P08"), np.uint8)
+    rnd = np.random.default_rng(seed)
+    for _ in range(7):
+        x, y = rnd.integers(CELL), rnd.integers(CELL)
+        dx = rnd.choice((-1, 1))
+        for k in range(rnd.integers(10, 26)):
+            put(a, x, y, "P06"); put(a, x, y + 1, "P09")
+            x += dx if rnd.random() < 0.7 else 0
+            y += 0 if rnd.random() < 0.6 else 1
+            if rnd.random() < 0.1:
+                dx = -dx
+    for x, y, rnd2 in scatter(seed + 5, 10):
+        if rnd2.random() < 0.4:
+            put(a, x, y, "P07")
+    return a
+
+
+def ballast_tex(seed):
+    """철로 자갈: 회갈 바탕 + 자갈 알(밝은 점 + 그늘 점) 촘촘히."""
+    a = np.full((CELL, CELL), t("P06"), np.uint8)
+    for x, y, rnd in scatter(seed + 3, 5):
+        if rnd.random() < 0.6:
+            stamp(a, x, y, [["ab"], ["a", "b"], ["ab", "bb"]][rnd.integers(3)], {"a": "P07", "b": "P04"})
+    return a
+
+
 PAVER_TONES = [("P07", "P06", "P05")] * 9 + [("P08", "P07", "P06")]
 
 
@@ -623,6 +689,21 @@ def decals():
         blob(a, cx, cy, rx, ry, "P01", nz)
     put(a, 11, 12, "P02"); put(a, 19, 17, "P02")
     ids["mold"] = add(a)
+    a = cell()                                                       # 수면 반짝임(긴 물결 한 줄)
+    stamp(a, 8, 14, [".aaaaaaa.", "b.......b"], {"a": "P37", "b": "P35"})
+    stamp(a, 14, 19, ["aaaa"], {"a": "P36"})
+    ids["glint"] = add(a)
+    a = cell()                                                       # 떠다니는 쓰레기(스티로폼 조각)
+    stamp(a, 12, 14, ["kkkkk", "kaabk", "kbbbk", ".kkk."], {"k": "P04", "a": "P09", "b": "P07"})
+    ids["float"] = add(a)
+    a = cell()                                                       # 갈대 포기(SD-08 §7.4 갈대 둔치)
+    stamp(a, 9, 9, ["a..a...a", "a.ba..ba", "ab.a.b.a", ".bab.ba.", ".bbbbbb.", "..kkkk.."],
+          {"a": "P21", "b": "P31", "k": "P16"})
+    ids["reeds"] = add(a)
+    a = cell()                                                       # 잔해 철근
+    stamp(a, 8, 13, ["a.......", ".a......", "..aaaaaa", ".......b"], {"a": "P24", "b": "P23"})
+    stamp(a, 18, 18, ["kkkk", "kaak", "kkkk"], {"k": "P03", "a": "P07"})
+    ids["rebar"] = add(a)
     return D, ids
 
 
@@ -634,26 +715,42 @@ def sets():
         "materials": [
             # spread: 경계 물결 폭(px) · pri: 위아래(높은 재질이 위) · rim: 위 재질 테두리(px) · shade: 아래 재질 그늘(px)
             # vthr: B 벌 문턱(클수록 B가 적다) · dens: 잔 소품 밀도(%) · hard: 섞지 않음 · boff: B 벌을 읽는 어긋남
-            dict(name="dirt", A=dirt_tex(101), B=dirt_tex(101, damp=True), spread=6, pri=0, rim=0, shade=2, vthr=160, dens=16,
+            dict(name="dirt", A=dirt_tex(101), B=dirt_tex(101, damp=True), spread=6, pri=4, rim=0, shade=2, vthr=160, dens=16,
                  decals=["dirt_lt1", "dirt_lt2", "dirt_dk1", "pebbles", "rock", "leaves", "bone", "can"], hard=0, boff=(97, 61)),
-            dict(name="grass_sparse", A=grass_tex(111, False), B=grass_tex(111, False, dry=True), spread=6, pri=1, rim=0, shade=1,
+            dict(name="grass_sparse", A=grass_tex(111, False), B=grass_tex(111, False, dry=True), spread=6, pri=6, rim=0, shade=1,
                  vthr=150, dens=14, decals=["dirt_lt1", "grass_dk1", "flowers", "pebbles", "clover", "bush"], hard=0, boff=(141, 83)),
-            dict(name="grass_dense", A=grass_tex(121, True), B=grass_tex(121, True, dry=True), spread=6, pri=2, rim=1, shade=1,
+            dict(name="grass_dense", A=grass_tex(121, True), B=grass_tex(121, True, dry=True), spread=6, pri=7, rim=1, shade=1,
                  vthr=165, dens=16, decals=["grass_lt1", "grass_lt2", "grass_dk1", "bush", "flowers", "clover"], hard=0, boff=(59, 173)),
-            dict(name="asphalt", A=asphalt_tex(131), B=asphalt_tex(131, worn=True), spread=2, pri=3, rim=1, shade=1, vthr=140, dens=14,
+            dict(name="asphalt", A=asphalt_tex(131), B=asphalt_tex(131, worn=True), spread=2, pri=9, rim=1, shade=1, vthr=140, dens=14,
                  decals=["asph_lt1", "asph_dk1", "oil", "debris", "pothole", "patch", "paper"], hard=0, boff=(113, 37)),
-            dict(name="pavers", A=paver_tex(141, weathered=True), B=paver_tex(141, weathered=True), spread=0, pri=4, rim=1, shade=0, vthr=256, dens=6,
+            dict(name="pavers", A=paver_tex(141, weathered=True), B=paver_tex(141, weathered=True), spread=0, pri=10, rim=1, shade=0, vthr=256, dens=6,
                  decals=["paper", "butts", "leaves"], hard=1),                # 인공 바닥: 곧은 연석 가장자리(섞지 않음)
-            dict(name="stairs", A=tile_tex(TI.stairs()), B=tile_tex(TI.stairs()), spread=0, pri=5, rim=0, shade=0, vthr=255, dens=0,
+            dict(name="stairs", A=tile_tex(TI.stairs()), B=tile_tex(TI.stairs()), spread=0, pri=11, rim=0, shade=0, vthr=255, dens=0,
                  decals=[], hard=1),
-            dict(name="stairs_rail", A=tile_tex(TI.stairs_rail()), B=tile_tex(TI.stairs_rail()), spread=0, pri=5, rim=0, shade=0, vthr=255,
+            dict(name="stairs_rail", A=tile_tex(TI.stairs_rail()), B=tile_tex(TI.stairs_rail()), spread=0, pri=11, rim=0, shade=0, vthr=255,
                  dens=0, decals=[], hard=1),
             # 0-10: 골목·데크 콘크리트(64px 타설 이음매 + 미끄럼 홈 대신 얼룩·금) — 봉천 골목·볼트 데크
-            dict(name="concrete", A=concrete_out_tex(151), B=None, spread=0, pri=4, rim=1, shade=1, vthr=256, dens=8,
+            dict(name="concrete", A=concrete_out_tex(151), B=None, spread=0, pri=10, rim=1, shade=1, vthr=256, dens=8,
                  decals=["paper", "butts", "leaves"], hard=1),
+            # 1-1 월드(높이: 수면 < 진흙 < 흙 < 암반 < 풀 < 잔해·자갈 < 아스팔트 < 보도, SD-16 §6.4)
+            dict(name="water_deep", A=water_tex(161, "P33", "P34", "P33"), B=None, spread=8, pri=0, rim=0, shade=0, vthr=256, dens=6,
+                 decals=["glint", "float"], hard=0),
+            dict(name="water_mid", A=water_tex(171, "P34", "P35", "P33"), B=None, spread=8, pri=1, rim=0, shade=0, vthr=256, dens=7,
+                 decals=["glint", "float"], hard=0),
+            dict(name="water_shallow", A=water_tex(181, "P35", "P36", "P34"), B=None, spread=6, pri=2, rim=0, shade=1, vthr=256, dens=8,
+                 decals=["glint", "float", "reeds"], hard=0),
+            dict(name="mud", A=mud_tex(191), B=None, spread=6, pri=3, rim=1, shade=2, vthr=256, dens=14,
+                 decals=["reeds", "reeds", "damp", "pebbles", "can"], hard=0),
+            dict(name="rock", A=rock_tex(195), B=None, spread=4, pri=5, rim=1, shade=1, vthr=256, dens=8,
+                 decals=["rock", "pebbles", "leaves"], hard=0),
+            dict(name="rubble", A=rubble_tex(197), B=None, spread=4, pri=8, rim=1, shade=1, vthr=256, dens=12,
+                 decals=["rebar", "rock", "debris", "can", "paper"], hard=0),
+            dict(name="ballast", A=ballast_tex(199), B=None, spread=2, pri=8, rim=1, shade=1, vthr=256, dens=4,
+                 decals=["can", "paper"], hard=0),
         ],
         "mat_of": {"dirt_a": 0, "dirt_b": 0, "dirt_grass_a": 2, "dirt_grass_b": 1, "asphalt": 3, "asphalt_lane": 3,
-                   "pavers": 4, "pavers_b": 4, "stairs": 5, "stairs_rail": 6, "concrete_o": 7},
+                   "pavers": 4, "pavers_b": 4, "stairs": 5, "stairs_rail": 6, "concrete_o": 7,
+                   "water_deep": 8, "water_mid": 9, "water_shallow": 10, "mud": 11, "rock_floor": 12, "rubble": 13, "ballast": 14},
         "force": {"asphalt_lane": "lane"},
         "flag_of": {"brick": 1, "brick_window": 1, "wall_face": 1, "wall_face_cap": 1, "granite_rock": 2, "scrap_barrier": 2, "drum": 2},
     }

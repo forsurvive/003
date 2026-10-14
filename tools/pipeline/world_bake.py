@@ -371,6 +371,39 @@ def city(r, src, seed=4120):
     return r
 
 
+# ⑤ 바닥 타일(ts_r01_ext 이름): 굽기 결과 → 바닥 합성 층의 타일 번호. 청크 내보내기·견본 그림이 같은 표를 쓴다
+def floor_names(r, seed=77):
+    """반환: 칸마다 타일 이름 번호 배열(0..len(FLOOR)-1)과 이름 목록"""
+    kind, use, level, hgt = r["kind"], r["use"], r["level"], r["hgt"]
+    rng = np.random.default_rng(seed)
+    names = ["dirt_a", "dirt_grass_b", "dirt_grass_a", "asphalt", "asphalt_lane", "pavers", "concrete_o", "water_deep", "water_mid",
+             "water_shallow", "mud", "rock_floor", "rubble", "ballast"]
+    ix = {n: i for i, n in enumerate(names)}
+    f = np.full(kind.shape, ix["dirt_a"], np.uint8)
+    blobs = wave(kind.shape, rng, 40.0, 1.0, 4)                          # 흙·풀 얼룩(넓게)
+    land = (kind == 1) | (kind == 12)
+    f[land & (blobs > 0.15)] = ix["dirt_grass_b"]
+    f[land & (blobs > 0.45)] = ix["dirt_grass_a"]
+    f[land & (use == 1)] = np.where(blobs[land & (use == 1)] > -0.2, ix["dirt_grass_a"], ix["dirt_grass_b"])
+    f[land & (use == 2)] = np.where(blobs[land & (use == 2)] > 0.2, ix["dirt_grass_a"], ix["dirt_a"])
+    f[land & (hgt >= 300)] = ix["rock_floor"]                               # 300m+ 화강암 노출(SD-08 §6.1)
+    f[land & (use == 3)] = ix["rubble"]                                     # 도심 밀폐(R05)
+    f[(kind == 2)] = ix["water_deep"]
+    f[(kind == 3)] = ix["water_mid"]
+    f[(kind == 4)] = ix["water_shallow"]
+    f[(kind == 5)] = np.where(blobs[kind == 5] > 0.0, ix["mud"], ix["dirt_grass_a"])
+    f[(kind == 6)] = ix["concrete_o"]
+    f[(kind == 7)] = ix["asphalt"]
+    if "street" in r:
+        lane = (kind == 7) & ~r["street"] & (r.get("lane", np.zeros_like(kind, bool)))
+        f[lane] = ix["asphalt_lane"]
+    f[(kind == 8)] = ix["pavers"]
+    f[(kind == 9)] = ix["dirt_grass_a"]
+    f[(kind == 10)] = ix["ballast"]
+    f[(kind == 11)] = ix["rock_floor"]
+    return f, names
+
+
 def preview(r, src, path, scale=1):
     from PIL import Image
     kind, use, level, hgt = r["kind"], r["use"], r["level"], r["hgt"]

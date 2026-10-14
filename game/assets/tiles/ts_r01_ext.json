@@ -15,6 +15,14 @@
   "cover": 0,
   "solid": false
  },
+ "ballast": {
+  "atlas": [
+   24,
+   0
+  ],
+  "cover": 0,
+  "solid": false
+ },
  "brick": {
   "atlas": [
    12,
@@ -87,6 +95,14 @@
   "cover": 1,
   "solid": true
  },
+ "mud": {
+  "atlas": [
+   21,
+   0
+  ],
+  "cover": 0,
+  "solid": false
+ },
  "pavers": {
   "atlas": [
    6,
@@ -98,6 +114,22 @@
  "pavers_b": {
   "atlas": [
    7,
+   0
+  ],
+  "cover": 0,
+  "solid": false
+ },
+ "rock_floor": {
+  "atlas": [
+   22,
+   0
+  ],
+  "cover": 0,
+  "solid": false
+ },
+ "rubble": {
+  "atlas": [
+   23,
    0
   ],
   "cover": 0,
@@ -142,5 +174,29 @@
   ],
   "cover": 2,
   "solid": true
+ },
+ "water_deep": {
+  "atlas": [
+   18,
+   0
+  ],
+  "cover": 0,
+  "solid": false
+ },
+ "water_mid": {
+  "atlas": [
+   19,
+   0
+  ],
+  "cover": 0,
+  "solid": false
+ },
+ "water_shallow": {
+  "atlas": [
+   20,
+   0
+  ],
+  "cover": 0,
+  "solid": false
  }
 }
