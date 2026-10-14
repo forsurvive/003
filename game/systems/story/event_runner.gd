@@ -65,7 +65,9 @@ func _init() -> void:
 func setup(w, map_id: String, camera: Camera2D = null) -> void:
 	world = w
 	var p := "res://data/maps/%s.json" % map_id
-	if FileAccess.file_exists(p):
+	if w is WorldMap:
+		marks = w.marks                                                # 월드(1-1): 표지는 월드 좌표('구역:이름'과 이름 둘 다)
+	elif FileAccess.file_exists(p):
 		marks = JSON.parse_string(FileAccess.get_file_as_string(p))["marks"]
 	cam = camera
 	if cam == null:
