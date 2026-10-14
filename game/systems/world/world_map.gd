@@ -54,6 +54,7 @@ func load_map(map_id: String, st: StoryState = null) -> void:
 		world_ts = load("res://assets/tiles/ts_world.tres")
 		ts_cols = int(JSON.parse_string(FileAccess.get_file_as_string("res://assets/tiles/ts_world.json"))["cols"])
 	GroundLayer.get_set("r01")                                            # 바닥 재질·셰이더를 미리 읽어 둔다(붙이기 예산)
+	PlaceLog.load_db()                                                   # 장소 425곳(발견·방위 링·지도, 1-2)
 	data = {"id": "W", "name": "서울", "npcs": [], "triggers": [], "enemies": [], "props": [], "doors": [], "signs": [], "texts": [],
 		"exits": [], "boxes": [], "marks": {}}
 	marks = {}
@@ -103,6 +104,7 @@ func load_map(map_id: String, st: StoryState = null) -> void:
 				var gg: Dictionary = g.duplicate(true)
 				gg["x"] = int(g["x"]) + o.x
 				gg["y"] = int(g["y"]) + o.y
+				gg["key"] = "%s:%d,%d" % [iid, int(g["x"]), int(g["y"])]          # 한 번만 여는 칸의 기록 열쇠는 손 맵 좌표 그대로
 				data[key].append(gg)
 	for k in exits.keys():                                               # 손 맵끼리 잇던 가장자리 출구는 월드에서 이어진 땅이다
 		if str(exits[k]["to"]) in ids:
@@ -448,6 +450,33 @@ func _get_solid(x: int, y: int) -> int:
 		if x >= o.x and y >= o.y and x < o.x + s.x and y < o.y + s.y:
 			return 1 if str(ins["data"]["solid"][y - o.y][x - o.x]) == "1" else 0
 	return 1 if is_solid(t) else 0
+
+
+## 지역 지도 칸 분류: 0 모름(청크 없음) · 1 걷는 땅 · 2 길 · 3 물 · 4 건물·구조물 · 5 나무·소품
+func tile_class(t: Vector2i) -> int:
+	var k := chunk_of_tile(t)
+	var c = chunks.get(k)
+	if c == null:
+		return 0
+	var a: PackedByteArray = c["a"]
+	var i := (t.y - k.y * cs) * cs + (t.x - k.x * cs)
+	var fl := a[L_FG + i * 2]
+	if _floor_kind.is_empty():
+		var m: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://assets/tiles/ts_r01_ext.json"))
+		for n in m:
+			var cls := 3 if str(n).begins_with("water") else (2 if str(n) in ["asphalt", "asphalt_lane", "pavers", "pavers_b", "concrete_o", "ballast"] else 1)
+			_floor_kind[int(m[n]["atlas"][0])] = cls
+	var body := a[L_BODY + i * 2] | (a[L_BODY + i * 2 + 1] << 8)
+	if a[L_SOLID + i] == 1:
+		if body > 0:
+			return 4
+		return 3 if int(_floor_kind.get(fl, 1)) == 3 else 5
+	if body > 0:
+		return 2                                                             # 다리 상판·돌계단
+	return int(_floor_kind.get(fl, 1))
+
+
+static var _floor_kind := {}
 
 
 func triggers_at(t: Vector2i) -> Array:

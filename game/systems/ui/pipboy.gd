@@ -1,8 +1,8 @@
 ## 핍-보이 3000 (SD-12 §3, 견본 art/samples/07_pipboy_stat.png): 기기 틀 + 초록 CRT(U 팔레트), 주 탭 3개(능력치·아이템·데이터).
 ##   능력치: 상태(주민 그림·부위 막대·스팀팩) · S.P.E.C.I.A.L.(SD-10 §2.2 정의 + 생활기록부 문구) · 스킬 · 퍽 · 일반(카르마·등록 카드)
 ##   아이템: 무기 · 의복 · 구호품 · 잡화 · 탄약 (결정 = 장착/해제·사용, 1~8 = 단축키 지정)
-##   데이터: 퀘스트 · 기록
-##   프롤로그(단계 0)에서 뺀 하위 탭(정합): 세력(볼트 안에는 세력이 없다, SD-03a §7 서두), 지역·월드 지도·라디오(SD-19 §5.4 단계 1 시스템)
+##   데이터: 지역 지도 · 월드 지도(빠른 이동, 1-2 — systems/ui/pip_map.gd) · 퀘스트 · 기록
+##   아직 뺀 하위 탭(정합): 세력(1-10 무렵 판도와 함께), 라디오(1-10)
 ## 조작(SD-12 §3.2·§13.8): Tab·Esc 닫기, Q·E 주 탭, ←→ 하위 탭, ↑↓ 목록, Enter 사용, F1·F2·F3 주 탭 바로, J 퀘스트.
 ## 마우스·터치(마우스 흉내): 탭·하위 탭·줄을 누르고(고른 줄을 다시 누르면 사용), 아래 줄 [닫기]·오른쪽 위 전원 단추를 누르면 닫힌다.
 ## 열 때(§3.2): 기기가 아래에서 0.2초 올라오고 화면이 0.15초 켜진다(가로 주사선이 위아래로 벌어짐). 열어 둔 동안 시간이 멈춘다.
@@ -13,7 +13,7 @@ signal action(kind: String, id: String)              ## "equip"·"unequip"·"use
 
 const U := DocScreen.GREEN
 const TABS := ["능력치", "아이템", "데이터"]
-const SUBS := [["상태", "S.P.E.C.I.A.L.", "스킬", "퍽", "일반"], ["무기", "의복", "구호품", "잡화", "탄약"], ["퀘스트", "기록"]]
+const SUBS := [["상태", "S.P.E.C.I.A.L.", "스킬", "퍽", "일반"], ["무기", "의복", "구호품", "잡화", "탄약"], ["지역 지도", "월드 지도", "퀘스트", "기록"]]
 const CATS := ["weapon", "apparel", "aid", "misc", "ammo"]
 const STAT_ORDER := ["ST", "PE", "EN", "CH", "IN", "AG", "LK"]
 const OPEN_S := 0.2
@@ -33,6 +33,7 @@ var crt: TextureRect
 var fig: TextureRect
 var rows: Array = []                                 ## 지금 목록 [{"text", "id", "right", "dim"}]
 var t_open := 0.0
+var map: PipMap                                      ## 지도 화면(데이터 탭 지역·월드 지도)
 
 
 func setup(state: StoryState, items_db: Dictionary, status: Dictionary) -> PipBoy:
@@ -116,10 +117,10 @@ func _rows() -> Array:
 						hk = " (%d)" % int(k)
 				out.append({"text": str(it.get("name", id)) + (" (%d)" % n if n > 1 and cat != "ammo" else "") + (" [장착]" if on else ""),
 					"id": id, "right": (str(n) if cat == "ammo" else hk.strip_edges())})
-		[2, 0]:
+		[2, 2]:
 			for q in _quests():
 				out.append({"text": ("" if q["active"] else "✓ ") + str(q["title"]), "id": q["id"], "dim": not q["active"]})
-		[2, 1]:
+		[2, 3]:
 			var ids := st.items.keys()
 			ids.sort()
 			for id in ids:
@@ -182,6 +183,20 @@ func _draw_doc() -> void:
 		else:
 			text(Vector2(sx + w / 2.0, 298), subs[i], f12, 12, U[3], HORIZONTAL_ALIGNMENT_CENTER)
 	hline(48, 591, 313, U[2])
+	if _map_mode():                                                      # 지역·월드 지도(1-2): 목록·상세 대신 지도 한 장
+		if map == null:
+			map = PipMap.new(self)
+		item("map", PipMap.AREA)
+		if sub[2] == 0:
+			map.draw_local()
+		else:
+			map.draw_world()
+		fig.visible = false
+		var mh := "[Tab] 닫기   [Q·E] 탭   [Shift+←→] 하위 탭" + ("   [방향키] 커서   [Z·X] 확대   [Enter] 빠른 이동" if sub[2] == 1 else "")
+		item("close", Rect2(44, 314, 50, 14))
+		item("power", Rect2(614, 180, 20, 40))
+		text(Vector2(48, 316), mh, f10, 10, U[4])
+		return
 	# 목록(12px 행 15행)
 	for i in rows.size():
 		var y := 74.0 + i * 15.0
@@ -208,6 +223,10 @@ func _draw_doc() -> void:
 	item("close", Rect2(44, 314, 50, 14))
 	item("power", Rect2(614, 180, 20, 40))
 	text(Vector2(48, 316), hint, f10, 10, U[4] if not first or fmod(time, 1.0) < 0.6 else U[6])
+
+
+func _map_mode() -> bool:
+	return tab == 2 and sub[2] in [0, 1]
 
 
 ## 정보 줄(SD-12 §3.4): 능력치 = 레벨·HP·AP·XP / 아이템 = 무게·HP·DR·캡 / 데이터 = 위치
@@ -282,7 +301,7 @@ func _detail() -> void:
 			_para(Vector2(264, y + 4), "뜻을 알 수 없는 순위.", U[6])
 		[0, 4]:
 			_general_page(id)
-		[1, _], [2, 1]:
+		[1, _], [2, 3]:
 			var it: Dictionary = db.get(id, {"name": id})
 			text(Vector2(264, 78), str(it.get("name", id)), f12b, 12, U[6])
 			var y := 98.0
@@ -291,7 +310,7 @@ func _detail() -> void:
 				text(Vector2(588, y), kv[1], f10, 10, U[5], HORIZONTAL_ALIGNMENT_RIGHT)
 				y += 14.0
 			_para(Vector2(264, y + 8), str(it.get("desc", "")), U[5])
-		[2, 0]:
+		[2, 2]:
 			_quest_page(id)
 
 
@@ -369,6 +388,7 @@ func _general_page(id: String) -> void:
 		"stats":
 			var y := 78.0
 			for kv in [["받은 퀘스트", str(_quests().size())], ["끝낸 퀘스트", str(_quests().filter(func(q): return not q["active"]).size())],
+					["발견한 장소", str(st.places.count_found())],
 					["소지품 종류", str(st.items.size())]]:
 				text(Vector2(264, y), kv[0], f10, 10, U[4])
 				text(Vector2(588, y), kv[1], f10, 10, U[5], HORIZONTAL_ALIGNMENT_RIGHT)
@@ -426,7 +446,11 @@ func _unhandled_input(e: InputEvent) -> void:
 	elif k in [KEY_F1, KEY_F2, KEY_F3]:
 		_tab(k - KEY_F1)
 	elif k == KEY_J:
-		open_at(2, 0)
+		open_at(2, 2)
+	elif _map_mode() and e is InputEventKey and e.pressed and e.shift_pressed and e.keycode in [KEY_LEFT, KEY_RIGHT]:
+		_sub(-1 if e.keycode == KEY_LEFT else 1)
+	elif _map_mode() and sub[2] == 1 and _map_key(e):
+		pass
 	elif k >= KEY_1 and k <= KEY_8:
 		if tab == 1 and sub[1] in [0, 2] and not rows.is_empty():
 			action.emit("hotkey:%d" % (k - KEY_0), rows[sel]["id"])
@@ -445,7 +469,10 @@ func _unhandled_input(e: InputEvent) -> void:
 		if i >= 0:
 			_press(items[i]["id"])
 	elif e is InputEventMouseButton and e.pressed and e.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]:
-		sel = clampi(sel + (1 if e.button_index == MOUSE_BUTTON_WHEEL_DOWN else -1), 0, maxi(0, rows.size() - 1))
+		if _map_mode() and map != null:
+			map.zoom_by(1 if e.button_index == MOUSE_BUTTON_WHEEL_UP else -1)
+		else:
+			sel = clampi(sel + (1 if e.button_index == MOUSE_BUTTON_WHEEL_DOWN else -1), 0, maxi(0, rows.size() - 1))
 	else:
 		handled = false
 	if handled:
@@ -455,7 +482,50 @@ func _unhandled_input(e: InputEvent) -> void:
 		view.queue_redraw()
 
 
+## 월드 지도 키(방향키 커서 · Z·X 확대 · Enter 빠른 이동). 처리했으면 true
+func _map_key(e: InputEvent) -> bool:
+	if map == null:
+		return false
+	var d := Vector2.ZERO
+	if e.is_action_pressed("ui_left", true):
+		d = Vector2.LEFT
+	elif e.is_action_pressed("ui_right", true):
+		d = Vector2.RIGHT
+	elif e.is_action_pressed("ui_up", true):
+		d = Vector2.UP
+	elif e.is_action_pressed("ui_down", true):
+		d = Vector2.DOWN
+	if d != Vector2.ZERO:
+		map.move_cursor(d, 0.06 if e.is_echo() else 0.0)
+		return true
+	var k: int = e.keycode if e is InputEventKey and e.pressed and not e.echo else -1
+	if k in [KEY_Z, KEY_MINUS]:
+		map.zoom_by(-1)
+		return true
+	if k in [KEY_X, KEY_EQUAL, KEY_PLUS]:
+		map.zoom_by(1)
+		return true
+	if e.is_action_pressed("ui_accept"):
+		_travel()
+		return true
+	return false
+
+
+## 빠른 이동(SD-12 §5.6): 커서 아래 장소가 갈 수 있으면 받는 쪽(진행기)에 넘기고 닫는다. 못 가면 이유를 그대로 둔다(정보 줄에 보인다)
+func _travel() -> void:
+	if map == null or map.sel == "" or not info.has("travel"):
+		return
+	var why: Array = info["travel"].call(map.sel)
+	if why[0]:
+		action.emit("travel", map.sel)
+		close(true)
+
+
 func _press(id: String) -> void:
+	if id == "map":
+		if map != null and map.click(_local(get_viewport().get_mouse_position())):
+			_travel()
+		return
 	if id.begins_with("tab"):
 		_tab(int(id.substr(3)))
 	elif id.begins_with("sub"):

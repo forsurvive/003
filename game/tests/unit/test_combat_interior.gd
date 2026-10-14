@@ -209,9 +209,9 @@ func test_pipboy_rows(t) -> void:
 	t.eq(p._rows()[0]["right"], "(1)", "단축키 1")
 	p.open_at(1, 4)
 	t.eq(p._rows()[0]["right"], "40", "탄약: BB탄 40")
-	p.open_at(2, 0)
+	p.open_at(2, 2)
 	t.ok(p._rows().size() >= 2, "퀘스트: MQ-P2·MQ-P1")
-	p.open_at(2, 1)
+	p.open_at(2, 3)
 	t.eq(p._rows()[0]["id"], "M-201", "기록: 퀘스트 문서")
 	var got := []
 	p.action.connect(func(k, id): got.append([k, id]))

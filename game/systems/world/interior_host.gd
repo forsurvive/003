@@ -47,7 +47,8 @@ var text_seen := {}                              ## 여러 번 조사하는 글:
 var _talking: Dictionary = {}
 var _last_tile := Vector2i(-99, -99)
 var _zone := ""                                                  ## 월드에서 지금 선 구역(손 맵 이름 또는 "W") — 바뀌면 map_entered(1-1)
-var _region := ""                                                ## 월드에서 지금 선 권역(R01~R11·HR) — 바뀌면 배너
+var _region := ""
+var zone_walk := false                                           ## map_entered가 걸어서 구역을 넘은 것인가(문 전환이 아님)                                                ## 월드에서 지금 선 권역(R01~R11·HR) — 바뀌면 배너
 var _from := ""
 
 
@@ -322,7 +323,9 @@ func _physics_process(dt: float) -> void:
 		_region = map.region_at(map.tile_of(player.loco.logical))
 		banner_text = map.zone_name()
 		banner_t = BANNER_SECS
+		zone_walk = true                                             # 걸어서 바뀐 구역: 문 전환 자동 저장 사유가 아니다(SD-12 §13.2)
 		map_entered.emit(_zone)
+		zone_walk = false
 	elif map is WorldMap and _zone == "W":                           # 월드 안에서 권역 경계를 넘으면 권역 이름만 띄운다
 		var rc: String = map.region_at(map.tile_of(player.loco.logical))
 		if rc != _region and rc != "":
@@ -404,13 +407,31 @@ func _bring_buddy(id: String) -> void:
 		combat.buddy = b
 
 
+## 장소 발견(SD-12 §5.5): 반경 4타일 안에 들면 '발견' — 알림 · 발견 XP(마커 N은 구역 이름만, XP 없음)
+func _discover(t: Vector2i) -> void:
+	for lid in st.places.discover_near(t):
+		var e: Dictionary = PlaceLog.db[lid]
+		if bool(e["marker"]):
+			_note("장소 발견: " + str(e["name"]))
+			if int(e["xp"]) > 0:
+				st.call_fn("xp", [int(e["xp"])])
+		else:
+			hint(str(e["name"]), 3.0)
+
+
 func _check_exit() -> void:
 	var t := map.tile_of(player.loco.logical)
 	if t == _last_tile:
 		return
 	_last_tile = t
+	if map is WorldMap:
+		_discover(t)
+		st.places.mark_seen(t)
+		var rc: String = map.region_at(t)
+		if rc != "":
+			st.places.regions[rc] = true
 	for g in map.triggers_at(t):                                      # 밟는 칸: 조건이 맞으면 장면을 연다
-		var key := "%s:%d,%d" % [map.id, int(g["x"]), int(g["y"])]
+		var key: String = g.get("key", "%s:%d,%d" % [map.id, int(g["x"]), int(g["y"])])   # 월드는 손 맵 좌표 열쇠(옛 저장과 같다)
 		if (g["once"] and fired.has(key)) or not InteriorMap._cond_ok(g["cond"], st):
 			continue
 		fired[key] = true
@@ -948,6 +969,32 @@ func _ring(c: Vector2) -> void:
 		var d: Vector2 = combat.buddy.loco.logical - player.loco.logical
 		if d.length() <= rad:
 			banner.draw_circle((c + d / rad * 22.0).round(), 2.0, Color("4C7DC8"))
+	if map is WorldMap:                                                # 장소(SD-12 §4.3·§5.5): 40타일 안, 링 둘레에 방향만 — 발견 = 채움, 그 밖 = 빈 칸
+		var me := map.tile_of(player.loco.logical)
+		for lid in _ring_places(me):
+			var e: Dictionary = PlaceLog.db[lid]
+			var d := Vector2(int(e["tx"]) - me.x, int(e["ty"]) - me.y)
+			if d.length() < 2.0:
+				continue
+			var q := (c + d.normalized() * 25.5).round()
+			var found: bool = st.places.get_state(lid) >= PlaceLog.FOUND
+			banner.draw_rect(Rect2(q - Vector2(2, 2), Vector2(4, 4)), HU[0])
+			banner.draw_rect(Rect2(q - Vector2(1, 1), Vector2(3, 3)) if found else Rect2(q - Vector2(1, 1), Vector2(3, 3)), HU[6], found)
+
+
+## 방위 링에 보일 장소: 40타일 안 · 마커 Y(숨김 장소는 발견 뒤) — 미상도 빈 칸으로 보인다(SD-12 §5.5 '미상: 40타일 안 빈 아이콘')
+func _ring_places(me: Vector2i) -> Array:
+	var out: Array = []
+	var k := Vector2i(me.x / PlaceLog.CHUNK, me.y / PlaceLog.CHUNK)
+	for dy in range(-1, 2):
+		for dx in range(-1, 2):
+			for lid in PlaceLog._grid.get(k + Vector2i(dx, dy), []):
+				var e: Dictionary = PlaceLog.db[lid]
+				if not bool(e["marker"]) or (bool(e["hidden"]) and st.places.get_state(lid) < PlaceLog.FOUND):
+					continue
+				if Vector2(int(e["tx"]) - me.x, int(e["ty"]) - me.y).length() <= 40.0:
+					out.append(lid)
+	return out
 
 
 ## 목표 줄(SD-12 §4.2): 진행 중인 메인 퀘스트의 지금 단계 기록 한 줄
@@ -1060,7 +1107,94 @@ func status() -> Dictionary:
 		"place": _place_name(), "hotkeys": combat.hotkeys,
 		"karma": int(st.vars.get_v("V_KARMA")) if st.vars.has("V_KARMA") else 0,
 		"worn": worn(), "rads": int(st.vars.get_v("PC_RADS")),
-		"dr": int(items_db.get(worn(), {}).get("dr", 0)) if st.items.has(worn()) else 0}
+		"dr": int(items_db.get(worn(), {}).get("dr", 0)) if st.items.has(worn()) else 0,
+		"tile": Vector2(map.tile_of(player.loco.logical)) if map is WorldMap and player != null else Vector2(-99, -99),
+		"world": map if map is WorldMap else null, "travel": travel_check}
+
+
+# ---------------------------------------------------------------- 빠른 이동(SD-12 §5.6)
+signal traveled(lid: String)
+const TRAVEL_MSG := {"F1": "아직 가 보지 않은 장소입니다.", "F2": "실내에서는 이동할 수 없습니다.", "F3": "근처에 적이 있습니다.",
+	"F4": "짐이 너무 무겁습니다.", "F6": "지금은 이동할 수 없습니다.", "F7": "건널 수 있는 길을 아직 확보하지 못했습니다.",
+	"F8": "추격자를 따돌려야 합니다."}
+
+
+## [갈 수 있나, 안내 문구, 걸리는 시간(게임 시간)]. 불가 조건 F1~F8 순서대로 본다
+func travel_check(lid: String) -> Array:
+	var e: Dictionary = PlaceLog.db.get(lid, {})
+	if not map is WorldMap:
+		return [false, TRAVEL_MSG["F2"], 0]
+	if st.places.get_state(lid) < PlaceLog.FOUND:
+		return [false, TRAVEL_MSG["F1"], 0]
+	var rad := (10.0 + 2.0 * st.stat("PE")) * 32.0
+	for en in combat.enemies:
+		if is_instance_valid(en) and not en.cmb.dead and en.loco.logical.distance_to(player.loco.logical) <= rad:
+			return [false, TRAVEL_MSG["F3"], 0]
+	var s := status_carry()
+	if s[0] > s[1]:
+		return [false, TRAVEL_MSG["F4"], 0]
+	if int(st.vars.get_v("V_CHASE")) > 0 if st.vars.has("V_CHASE") else false:
+		return [false, TRAVEL_MSG["F8"], 0]
+	if st.quests.stage("MQ-P4") < 100 or e.get("arrive") == null or busy or box.active or str(e.get("region", "")) == "R05":
+		return [false, TRAVEL_MSG["F6"], 0]
+	var here := PlaceLog.bank_at(map.tile_of(player.loco.logical))
+	var there := str(e.get("bank", here))
+	if there != "" and there != here:                                    # 강 건너: 확보한 횡단로가 하나라도 있어야(2막 첫 횡단 전에는 없다)
+		if secured_crossings().is_empty():
+			return [false, TRAVEL_MSG["F7"], 0]
+		return [true, "", 2]
+	return [true, "", 1]
+
+
+func status_carry() -> Array:
+	var carry := 0.0
+	for id in st.items:
+		carry += float(items_db.get(id, {}).get("weight", 0)) * int(st.items[id])
+	return [carry, 150 + 10 * st.stat("ST")]
+
+
+## 확보한 횡단로(SD-12 §5.7): 이야기 변수 X_SECURED_<ID> = 1. 1막에는 없다
+func secured_crossings() -> Array:
+	var out: Array = []
+	for i in range(1, 16):
+		var k := "X_SECURED_X%02d" % i
+		if st.vars.has(k) and int(st.vars.get_v(k)) == 1:
+			out.append("X%02d" % i)
+	return out
+
+
+## 빠른 이동: 암전 → 도착 칸 → 시간 경과(같은 강변 1시간 · 건너면 2시간) → 밝아짐 → 도착 자동 저장(진행기가 traveled를 받아)
+func fast_travel(lid: String) -> void:
+	var why := travel_check(lid)
+	if not why[0]:
+		hint(str(why[1]), 3.0)
+		return
+	var e: Dictionary = PlaceLog.db[lid]
+	busy = true
+	player.move(Vector2.ZERO, 0.0)
+	ev.run("fade_out", ["black", "3"], func() -> void:
+		_arrive(lid, int(why[2]))
+		ev.run("fade_in", ["black", "3"], func() -> void:
+			busy = false
+			traveled.emit(lid)))
+
+
+## 빠른 이동 도착(화면이 가려진 사이): 도착 칸에 세우고 둘레 청크를 붙이고 시각을 넘긴다
+func _arrive(lid: String, hours: int) -> void:
+	var e: Dictionary = PlaceLog.db[lid]
+	var at := Vector2(int(e["arrive"][0]) * 32 + 16, int(e["arrive"][1]) * 32 + 16)
+	map.load_now(at)
+	player.loco.place(at)
+	player.position = player.loco.render
+	player._show()
+	map.update_focus(at)
+	map.id = map.zone_of(map.tile_of(at))
+	_last_tile = map.tile_of(at)
+	st.places.mark_seen(_last_tile)
+	cam.position = at.round()
+	cam.reset_smoothing()
+	date_text = Clock.add_hours(date_text, hours, st)
+	_note("%s 도착 — %d시간이 지났다" % [str(e["name"]), hours])
 
 
 ## 레벨(SD-10 §4.2): 누적 XP (L−1)(50 + 75L)
@@ -1186,6 +1320,8 @@ func _pip_action(kind: String, id: String) -> void:
 				combat.equip(id, st)
 		"unequip":
 			combat.equip("", st)
+		"travel":
+			fast_travel(id)
 		"use":
 			if id == InteriorCombat.STIMPAK:
 				combat.use_stimpak(st)                                          # 핍-보이 안: 시간이 멈춘 채 쓴다(투여 모션 없음)

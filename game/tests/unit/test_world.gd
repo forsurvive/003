@@ -97,3 +97,60 @@ func test_world_streaming(t) -> void:
 	print("  월드 청크 붙이기 최대 %.2fms · %d회" % [m.attach_usec_max / 1000.0, m.attach_count])
 	t.ok(m.attach_usec_max < 40000, "붙이기 1회 40ms 이하(헤드리스, 기준 기기 측정은 이월)")
 	m.free()
+
+
+func test_world_places(t) -> void:
+	PlaceLog.load_db()
+	t.eq(PlaceLog.db.size(), 425, "장소 425곳(SD-08 §11 · SD-09a~f)")
+	var p := PlaceLog.new()
+	t.eq(int(PlaceLog.db["L-R01-09"]["xp"]), 25, "봉천 계단마을 = 주요(정착지) 25 XP")
+	t.eq(int(PlaceLog.db["L-R01-01"]["xp"]), 0, "볼트 S-07 = 통계 제외 0 XP")
+	t.ok(bool(PlaceLog.db["L-R01-02"]["hidden"]), "S-07 비상 탈출구 = 발견 전 숨김")
+	t.ok(not bool(PlaceLog.db["L-R02-27"]["marker"]), "온수 경계 둑 = 마커 N")
+	t.eq(int(PlaceLog.db["L-UG-01"]["xp"]), 5, "지하철역 5 XP")
+	var got := p.discover_near(Vector2i(892 + 3, 1362 - 2))
+	t.ok("L-R01-09" in got, "반경 4타일 안 = 발견")
+	t.eq(p.discover_near(Vector2i(892, 1362)).size(), 0, "두 번 발견하지 않는다")
+	t.eq(p.discover_near(Vector2i(892 + 6, 1362)).size(), 0, "반경 밖")
+	t.ok(not p.on_map("L-R01-02"), "숨김 장소는 표시만으로는 지도에 없다")
+	p.raise("L-R01-02", PlaceLog.MARKED)
+	t.ok(not p.on_map("L-R01-02"), "숨김 장소는 표시 상태여도 지도에 없다")
+	p.raise("L-R01-02", PlaceLog.FOUND)
+	t.ok(p.on_map("L-R01-02"), "발견하면 지도에 있다")
+	t.ok(not p.raise("L-R01-02", PlaceLog.RUMOR), "상태는 내려가지 않는다")
+	var q := PlaceLog.new()
+	q.from_dict(JSON.parse_string(JSON.stringify(p.to_dict())))
+	t.eq(q.get_state("L-R01-09"), PlaceLog.FOUND, "저장 왕복")
+	t.eq(q.count_found(), 2, "발견 수(마커 Y)")
+
+
+func test_world_fast_travel(t) -> void:
+	var st := StoryState.new()
+	st.load_data()
+	var h := InteriorHost.new()
+	h.st = st
+	h._ready()
+	for q in ["MQ-P1", "MQ-P2", "MQ-P3", "MQ-P4"]:
+		st.quests.set_stage(q, 100)
+	h.body = "adult"
+	h.date_text = "2277. 10. 23.  22:40"
+	h.enter("X-BC", "from_X-S07")
+	t.eq(h.travel_check("L-R01-18")[1], InteriorHost.TRAVEL_MSG["F1"], "F1 아직 가 보지 않은 장소")
+	st.places.raise("L-R01-18", PlaceLog.FOUND)
+	var ok: Array = h.travel_check("L-R01-18")
+	t.ok(ok[0] and int(ok[2]) == 1, "같은 강변(남안) 사당 환승촌 = 1시간")
+	st.places.raise("L-R03-03", PlaceLog.FOUND)
+	t.eq(h.travel_check("L-R03-03")[1], InteriorHost.TRAVEL_MSG["F7"], "F7 강 건너(탱크마을 북안) — 확보한 횡단로 없음")
+	st.places.raise("L-R05-01", PlaceLog.FOUND)
+	t.eq(h.travel_check("L-R05-01")[1], InteriorHost.TRAVEL_MSG["F6"], "F6 도심 밀폐 구역")
+	h._arrive("L-R01-18", 1)
+	var e: Dictionary = PlaceLog.db["L-R01-18"]
+	t.ok(h.map.tile_of(h.player.loco.logical).distance_to(Vector2i(int(e["tx"]), int(e["ty"]))) <= 12.0, "사당 환승촌 곁에 도착")
+	t.ok(not h.map.is_solid(h.map.tile_of(h.player.loco.logical)), "도착 칸은 걷는 칸")
+	t.eq(h.date_text, "2277. 10. 23.  23:40", "1시간이 지났다")
+	h._arrive("L-R01-18", 2)
+	t.eq(h.date_text, "2277. 10. 24.  01:40", "날이 넘어간다")
+	t.eq(h.map.id, "W", "봉천 밖 구역")
+	t.eq(PlaceLog.bank_at(Vector2i(892, 1362)), "S", "봉천은 남안")
+	t.eq(PlaceLog.bank_at(Vector2i(1058, 793)), "N", "광화문은 북안")
+	h.free()

@@ -84,7 +84,10 @@ func _ready() -> void:
 		auto_every = 300.0
 	touch = TouchHud.new().setup(host, open_pause)
 	add_child(touch)
-	host.map_entered.connect(func(_id: String) -> void: request_auto("door"))
+	host.map_entered.connect(func(_id: String) -> void:
+		if not host.zone_walk:
+			request_auto("door"))
+	host.traveled.connect(func(_lid: String) -> void: request_auto("travel"))   # 빠른 이동 도착(SD-12 §5.6 '도착 시 자동 저장')
 	host.box.finished.connect(_on_dialogue_done)
 	host.combat.target_down.connect(_on_target_down)
 	host.combat.enemy_killed.connect(_on_enemy_killed)
@@ -1346,7 +1349,7 @@ func _save_tick(dt: float) -> void:
 	if act1 != null and int(host.st.vars.get_v("MQ101_NIGHT")) == 3 and _night_seen != 3:
 		request_auto("sleep")                                       # 빌린 침대에서 잔 뒤(§13.2 '수면 뒤')
 	_night_seen = int(host.st.vars.get_v("MQ101_NIGHT"))
-	if auto_due != "" and not _auto_blocked() and (play_time - last_auto >= SaveSlots.AUTO_GAP or auto_due in ["sleep", "act"]):
+	if auto_due != "" and not _auto_blocked() and (play_time - last_auto >= SaveSlots.AUTO_GAP or auto_due in ["sleep", "act", "travel"]):
 		if save_to("auto", SaveSlots.auto_index()) == OK:
 			last_auto = play_time
 		auto_due = ""

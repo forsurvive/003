@@ -31,6 +31,7 @@ static func story(st: StoryState) -> Dictionary:
 	dead.sort()
 	d["dead"] = dead
 	d["alias"] = _sorted(st.portrait_alias)
+	d["places"] = st.places.to_dict()
 	return _sorted(d)
 
 
@@ -42,6 +43,8 @@ static func apply_story(st: StoryState, d: Dictionary) -> void:
 	for k in d.get("dead", []):
 		st.dead[k] = true
 	st.portrait_alias = (d.get("alias", {}) as Dictionary).duplicate(true)
+	st.places = PlaceLog.new()
+	st.places.from_dict(d.get("places", {}))
 	st.events.clear()
 
 

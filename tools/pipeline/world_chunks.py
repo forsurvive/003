@@ -674,7 +674,11 @@ def build():
     extra = np.array([(x, y, names.index(n)) for (x, y, n) in placed], tree_list.dtype).reshape(-1, 3)
     tree_list = np.concatenate([tree_list, extra])
     props = names
-    return {"bridges": cross, "routes": routes, "floor": floor, "gflag": gflag, "solid": solid, "cover": cover, "level": level, "stair": stair, "body": body,
+    reg_grid = [[0] * NCX for _ in range(NCY)]
+    for k_, code in src["region"].items():
+        cx_, cy_ = map(int, k_.split(","))
+        reg_grid[cy_][cx_] = code
+    return {"r05": r05, "region_grid": reg_grid, "street": r["street"], "bridges": cross, "routes": routes, "floor": floor, "gflag": gflag, "solid": solid, "cover": cover, "level": level, "stair": stair, "body": body,
             "deco": deco, "trees": tree_list, "props": props, "shadows": shadows, "insets": insets, "play": play, "band": r["band"],
             "reach": reach, "miss": miss, "wet": wet, "core": core, "kind": kind}
 
@@ -720,6 +724,103 @@ def export(R):
             "unreached": [m[0] for m in R["miss"]], "routes": R["routes"], "bridges": [{"name": c[0], "state": c[1], "linked": bool(c[2])} for c in R["bridges"]], "water_chunks": [m[0] for m in R["wet"]], "sealed_core": [m[0] for m in R["core"]]}
     json.dump(meta, open(os.path.join(OUT, "world.json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
     log("내보내기: 청크 %d · 원자료 %.1fMB → 압축 %.2fMB" % (sum(1 for o in offs if o[1]), raw_total / 1e6, len(blob) / 1e6))
+
+
+def map_art(R, r_kind, region_codes):
+    """월드 지도 원화(SD-12 §5.1 '2077년 공무용 단색 선화에 한강만 짙게'): 1px = 1타일, 흰색 + 알파(세기). 게임이 CRT 색으로 칠한다.
+    땅 옅게 · 산 점묘 · 등고선 · 간선도로 · 동네 길 · 철길 점선 · 지천 · 한강 짙게 · 다리 · 성곽 굵게 · 도심 밀폐 빗금 · 권역 경계 점선."""
+    from PIL import Image
+    kind, level = R["kind"], R["level"]
+    a = np.zeros((H, W), np.uint8)
+    play = R["play"]
+    a[play] = 26
+    ys, xs = np.mgrid[0:H, 0:W]
+    mount = play & (level > 0)
+    a[mount & ((xs + ys * 3) % 5 == 0)] = 70
+    cont = np.zeros((H, W), bool)
+    cont[:, 1:] |= level[:, 1:] != level[:, :-1]
+    cont[1:] |= level[1:] != level[:-1]
+    a[cont & play] = 95
+    st_ = R["street"]
+    a[st_ & play] = 62
+    a[(kind == 7) & ~st_] = 150
+    a[(kind == 8)] = 110
+    a[(kind == 10) & ((xs + ys) % 4 < 2)] = 140
+    trib = (kind == 4)
+    a[trib] = 190
+    a[(kind == 2) | (kind == 3)] = 235
+    a[kind == 13] = 255
+    core = R["r05"] & ~((kind >= 2) & (kind <= 4))
+    a[core & ((xs - ys) % 6 == 0)] = np.maximum(a[core & ((xs - ys) % 6 == 0)], 85)
+    fort = kind == 11
+    thick = fort.copy()
+    thick[1:] |= fort[:-1]
+    thick[:, 1:] |= fort[:, :-1]
+    a[thick] = 255
+    reg = R["region_grid"]                                                   # 권역 경계 점선(청크 경계, 2타일 칠 · 2타일 비움)
+    for cy in range(NCY):
+        for cx in range(NCX):
+            c = reg[cy][cx]
+            if not c:
+                continue
+            if cx + 1 < NCX and reg[cy][cx + 1] and reg[cy][cx + 1] != c:
+                x = (cx + 1) * CS
+                for y in range(cy * CS, cy * CS + CS, 4):
+                    a[y:y + 2, x - 1:x + 1] = np.maximum(a[y:y + 2, x - 1:x + 1], 170)
+            if cy + 1 < NCY and reg[cy + 1][cx] and reg[cy + 1][cx] != c:
+                y = (cy + 1) * CS
+                for x in range(cx * CS, cx * CS + CS, 4):
+                    a[y - 1:y + 1, x:x + 2] = np.maximum(a[y - 1:y + 1, x:x + 2], 170)
+    img = np.zeros((H, W, 4), np.uint8)
+    img[..., :3] = 255
+    img[..., 3] = a
+    out = os.path.join(ROOT, "game", "assets", "ui", "world_map.png")
+    Image.fromarray(img, "RGBA").save(out, optimize=True)
+    log("월드 지도 원화: %s (%d×%d)" % (out, W, H))
+
+
+def place_geo(R):
+    """장소마다 강변(SD-12 §5.6 '남안·북안 두 구역')과 도착 칸(빠른 이동, 장소 중심에서 가장 가까운 걸어서 닿는 칸).
+    강변 = 한강 본류(깊은·중간 물) 세로 가운데보다 위면 북안. 섬 소속은 SD-08 §8.7(노들섬 북안 · 선유도·서래섬 남안 · 밤섬 없음)."""
+    kind, reach = R["kind"], R["reach"]
+    deep = (kind == 2) | (kind == 3)
+    cols = np.arange(W)
+    yc = np.full(W, np.nan)
+    for x in range(W):
+        yy = np.nonzero(deep[:, x])[0]
+        if len(yy):
+            yc[x] = yy.mean()
+    ok = ~np.isnan(yc)
+    yc = np.interp(cols, cols[ok], yc[ok])
+    places = json.load(open(os.path.join(OUT, "places.json"), encoding="utf-8"))
+    geo = {}
+    for lid, p in places.items():
+        tx, ty = p["tx"], p["ty"]
+        bank = "N" if ty < yc[min(W - 1, max(0, tx))] else "S"
+        nm = p["name"]
+        if "노들섬" in nm:
+            bank = "N"
+        elif "선유도" in nm or "서래섬" in nm:
+            bank = "S"
+        elif "밤섬" in nm:
+            bank = ""
+        arrive = None
+        if p["region"] != "UG":
+            for rr in range(0, 13):
+                y0, y1, x0, x1 = max(0, ty - rr), min(H, ty + rr + 1), max(0, tx - rr), min(W, tx + rr + 1)
+                win = reach[y0:y1, x0:x1]
+                if win.any():
+                    yy, xx = np.nonzero(win)
+                    k = int(np.argmin((yy + y0 - ty) ** 2 + (xx + x0 - tx) ** 2))
+                    arrive = [int(xx[k] + x0), int(yy[k] + y0)]
+                    break
+        geo[lid] = {"bank": bank, "arrive": arrive}
+    geo["_han"] = [int(round(v)) for v in yc]                               # 한강 본류 세로 가운데(가로 칸마다): 주인공 강변 판정
+    json.dump(geo, open(os.path.join(OUT, "place_geo.json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"), sort_keys=True)
+    n_arr = sum(1 for k, g in geo.items() if k != "_han" and g["arrive"])
+    log("장소 지리: 북안 %d · 남안 %d · 소속 없음 %d · 도착 칸 %d / 지상 %d" % (
+        sum(1 for k, g in geo.items() if k != "_han" and g["bank"] == "N"), sum(1 for k, g in geo.items() if k != "_han" and g["bank"] == "S"),
+        sum(1 for k, g in geo.items() if k != "_han" and g["bank"] == ""), n_arr, sum(1 for p in places.values() if p["region"] != "UG")))
 
 
 def sample(R, x0, y0, w, h, out):
@@ -796,3 +897,5 @@ if __name__ == "__main__":
                 sample(R, int(q[0]), int(q[1]), int(q[2]), int(q[3]), q[4])
     else:
         export(R)
+        map_art(R, None, None)
+        place_geo(R)
