@@ -131,6 +131,46 @@ func _routines_walk(t, step: float) -> void:
 	t.ok(total >= 15, "일과 인물 %d명" % total)
 
 
+## 0-12: 좁은 복도에서 주인공이 길을 막고 서 있으면 주민은 3초 남짓 기다린 뒤 돌아서 왔던 지점으로 간다(서로 기다리는 교착 없음)
+func test_routine_yields_to_player(t) -> void:
+	var cast: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://assets/sprites/story_cast.json"))["sheets"]
+	var m := _load("V-04")
+	var n: Dictionary = {}
+	for x in m.data["npcs"]:
+		if x["id"] == "N-R01-022":
+			n = x
+	t.ok(not n.is_empty() and cast.has("N-R01-022"), "V-04 N-R01-022(복도 일과)")
+	var a := Actor.new()
+	a.setup(cast["N-R01-022"], Vector2(int(n["x"]) * 32 + 16, int(n["y"]) * 32 + 16), m)
+	a.mode = "walk"
+	var route: Array = n["route"].duplicate(true)
+	for p in route:
+		p[3] = 0.05
+	var r := NpcRoutine.new(a, m, route)
+	r.wait_t = 0.0
+	r.idx = 1                                                       # 세로 통로(31,20) 쪽으로 걷기 시작
+	r.path = NpcRoutine.with_start(m, a.loco.render, r.target())
+	var blocked_at := -1.0
+	var start_idx := r.idx
+	var steps := 0
+	var me := Vector2(-999, -999)
+	var stop_at := Vector2.ZERO
+	while steps < 600:                                              # 10초
+		if steps == 20:                                             # 0.33초 뒤: 주인공이 바로 앞을 막아선다
+			me = a.loco.logical + NpcRoutine.step_dir(a.loco.render, r.path[0] if not r.path.is_empty() else r.target()) * 30.0
+			stop_at = a.loco.logical
+		r.tick(1.0 / 60.0, me)
+		steps += 1
+		if r.idx != start_idx:
+			blocked_at = steps / 60.0
+			break
+	t.ok(blocked_at > 3.0 and blocked_at < 4.5, "막힌 뒤 3초 남짓에 돌아선다(%.2f초)" % blocked_at)
+	t.ok(r.idx != start_idx, "목표 지점이 바뀌었다(%d → %d)" % [start_idx, r.idx])
+	t.ok(a.loco.logical.distance_to(stop_at) < 8.0, "그동안 막힌 자리에 서 있었다(도착해서 바뀐 것이 아니다): %.1fpx" % a.loco.logical.distance_to(stop_at))
+	a.free()
+	m.free()
+
+
 ## 컷신 move: 문에서 침대 옆까지 소품(아기 바구니·진찰대)을 돌아 걸어간다 — 곧장 걸으면 끼어 제자리에서 버둥거렸다.
 ## 프레임 길이 1/60초와 0.1초(녹화 10fps) 둘 다: 긴 프레임에서 칸 가운데를 지나쳤다 되돌아오기를 되풀이했다
 func test_cutscene_move_paths(t) -> void:

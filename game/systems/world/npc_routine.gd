@@ -7,6 +7,7 @@ extends RefCounted
 const TOL := Vector2(3.0, 2.0)                  ## 도착 허용(가로·세로): 보폭(가로 6·세로 4) 절반 — 칸 가운데를 정확히 밟는다.
                                                 ## 판정은 그림 위치(걸음 경계)로 한다: 걸음 중간 위치는 방향을 바꾸면 경계로 돌아가 맴돈다
 const BLOCK_R := 22.0
+const YIELD_S := 3.0                             ## 주인공에게 이만큼 막히면 길을 비켜 준다(돌아서 왔던 지점으로)
 
 var actor: Actor
 var map
@@ -17,6 +18,7 @@ var path := PackedVector2Array()
 var paused := false
 var _stuck_t := 0.0
 var _last := Vector2.ZERO
+var _yield_t := 0.0
 
 
 func _init(a: Actor, m, r: Array) -> void:
@@ -60,7 +62,13 @@ func tick(dt: float, player_pos: Vector2) -> void:
 	var dir: Vector2 = step_dir(actor.loco.render, path[0])
 	if (actor.loco.logical + dir * BLOCK_R).distance_to(player_pos) < BLOCK_R:
 		actor.move(Vector2.ZERO, dt)                                # 주인공이 길을 막았다: 서서 기다린다
+		_yield_t += dt
+		if _yield_t > YIELD_S and route.size() > 1:                 # 오래 막히면 돌아서 왔던 지점으로 간다 — 좁은 복도에서 서로 기다리는 교착 풀기
+			_yield_t = 0.0
+			idx = (idx - 1 + route.size()) % route.size()
+			path = with_start(map, actor.loco.render, target())
 		return
+	_yield_t = 0.0
 	path = walk_path(actor, path, dt)
 	_stuck_t = _stuck_t + dt if actor.loco.logical.distance_to(_last) < 0.5 else 0.0
 	_last = actor.loco.logical
