@@ -59,11 +59,18 @@ SYS (구내방송) 개방을 축하합니다. 개방을 축하합니다. 개방�
 SYS 녹음 방송이 지직거리며 끊긴다. 200년 전에 녹음해 둔 방송이다.
 C-001 [기본] 이 문은 2077년 10월 23일 밤에 닫혔습니다. 오늘이 꼭 200년 되는 날입니다.
 C-001 [기본] 최보미 요원, 레버.
-@cmd cam 19,7 10
 @cmd lamp p4_lever amber
+@cmd sfx lever
+@cmd cam 19,7 12
 @cmd sfx gate_alarm
-@cmd shake 4
-@cmd gate open 60
+@cmd lamp 16,9 amber
+@cmd lamp 22,9 amber
+@cmd lamp 16,9 amber
+@cmd lamp 22,9 amber
+SYS 경고등이 돈다. 톱니 문 가장자리에서 200년 묵은 먼지가 떨어진다.
+@cmd shake 6
+@cmd wait 6
+@cmd gate open 90
 @cmd flash white
 SYS 흰 빛. 문 너머에서 들어온 바람이 데크의 먼지를 한꺼번에 들어 올린다.
 @cmd balloon C-002 !
@@ -112,6 +119,13 @@ SYS 윤정인의 얼굴이 굳는다. 2274년. 적성 평가가 있던 해다.
 C-001 [슬픔] ……3년 전까지는, 제가.
 C-004 [기본] 개인 감정은 없다. 서류가 그렇게 돼 있다.
 C-001 [기본] 오버시어실로 가시죠. 거기서 얘기합시다. …도 부장, 사람들 해산시켜요.
+C-004 [기본] 정문은 닫는다. 인도가 끝날 때까지 볼트를 봉쇄한다. 분대는 데크에 남는다.
+@cmd cam 19,7 8
+@cmd sfx gate_alarm
+@cmd gate close 70
+@cmd shake 4
+SYS 흰 빛이 반달이 되고, 실금이 되고, 사라진다. 방폭문이 제자리로 굴러 돌아왔다.
+@cmd cam p4_yuk 6
 @cmd go C-001 p4_out
 @cmd go C-004 p4_out
 @cmd wait 14
@@ -158,20 +172,21 @@ C-002 [기본] 도 부장한테 명령 떨어졌대. 너를 관리동에 '보호
 C-024 [기본] (구내방송) {P_FULL} 주민은 지금 관리동 행정실로 오십시오. 다시 알립니다. {P_FULL} 주민은 관리동 행정실로.
 @cmd balloon C-002 !
 C-002 [말함] 왔다. 가면 끝이야.
-C-002 [기본] 하층 배관실 끝에 비상 배수 갱도 철문 있잖아. 녹슬어서 혼자는 못 열어. 나는 바퀴 잡으러 다니면서 거기 돌리는 법 알아.
+C-002 [기본] 정문은 봉쇄됐어. 근데 하층 배관실 끝 원형 철문 지나면 비상 배수 갱도가 정문 구역 검역실 밑으로 이어져.
+C-002 [기본] 녹슬어서 혼자는 못 열어. 나는 바퀴 잡으러 다니면서 거기 돌리는 법 알아. 거기서 정문 레버까지 금방이야.
 > 하도윤을 따라간다 -> FOLLOW
 > 혼자 방법을 찾겠다 -> ALONE
 * FOLLOW
 C-002 [미소] 좋아. 설비 구역으로 해서 내려가자. 계엄군은 정문 쪽에 몰려 있어.
 ! MQP4_FOLLOW = 1
 @cmd buddy C-002
-@cmd hint "하도윤을 따라 하층 배관·덕트망의 비상 배수 갱도 철문으로" 7
+@cmd hint "하도윤을 따라 하층 배관·덕트망의 원형 철문으로" 7
 -> GO
 * ALONE
 C-002 [기본] …그래. 마음 바뀌면 갱도 철문 앞으로 와. 거기서 기다릴게.
 @cmd move C-002 p4_dy_out
 @cmd hide C-002
-@cmd hint "관리동 호출 — 무기고 · 화장실 덕트 · 오버시어실 · 하층 갱도 철문, 어디로든" 8
+@cmd hint "볼트를 나가는 길은 정문 방폭문뿐 — 정문 구역 제어실 레버로" 8
 * GO
 @cmd escape start
 -> END
@@ -196,9 +211,12 @@ SYS 엄마가 고개를 숙인다. 자식을 넘기는 일이, 한때 자기 것
 @cmd fade_out black 8
 -> END
 
-# ---------------------------------------------------------------- S4 탈출(행동으로 정해진다, SD-03a §7.4 표)
-# 정합: 무기고 문(V-09 22,11)은 [자물쇠 따기 25] · 권서준을 쓰러뜨려 빼앗은 열쇠 · 도경철에게서 [은신 25]로 슬쩍한 열쇠로 연다.
-#   출구에 닿으면(정문 데크 앞줄 · 농장 배수로 서쪽 끝 · 설득 성공 · 갱도 철문) `escape done N`으로 진행기가 V_ESCAPE를 적는다.
+# ---------------------------------------------------------------- S4 탈출(행동으로 정해진다, SD-03a §7.4 — 0-9 정합: 출구는 정문 방폭문 하나)
+# 개방식 뒤 정문은 봉쇄됐다. 네 갈래 모두 정문 구역(V-00)으로 모이고, 방폭문을 다시 굴려 열어야 나간다.
+#   ① 전투: 무기고 → 데크를 뚫고 제어실 레버 · ② 은신: 설비 → 하층 → 농장 배수로 → 검역실 → 정비 통로 → 제어실 레버
+#   ③ 설득: 엄마가 분대를 농장으로 따돌리고 오버시어 열쇠로 연다 · ④ 하도윤: 원형 철문 → 갱도 → 검역실, 하도윤이 데크에서 미끼가 된다
+#   V_ESCAPE는 문이 열리는 순간 정한다: 엄마 3 · 하도윤 미끼 4 · 들키거나 싸웠으면(무기고를 열었어도) 1 · 아니면 2.
+# 무기고 문(V-09 22,13)은 [자물쇠 따기 25] · 권서준을 쓰러뜨려 빼앗은 열쇠 · 도경철에게서 [은신 25]로 슬쩍한 열쇠로 연다.
 
 @scene MQ-P4_ARMORY  보안과 — 무기고 문  (L-R01-01)
 @npc   -
@@ -223,7 +241,7 @@ SYS 핀 두 개를 차례로 밀어 올린다. 딸깍.
 @cond  MQP4_ARMORY == 1 and has("W-002") == 0
 SYS 보안부 권총이 한 정 남아 있다. 탄 상자도 하나.
 ! give("W-002"); give("10mm 탄", 36)
-@cmd hint "숫자 키로 무기 고르기 · 정문은 아트리움 북쪽 — 계엄군 사이를 지나 문밖으로" 7
+@cmd hint "숫자 키로 무기 고르기 · 정문 구역 동쪽 제어실 레버로 — 데크의 계엄군을 지나야 한다" 8
 -> END
 
 @scene MQ-P4_DO  보안과 — 도경철  (L-R01-01)
@@ -265,10 +283,9 @@ C-001 [놀람] ……이건 처음부터 정해져 있던 거야. 시험도, 순
 * OK
 @cmd balloon C-001 ...
 C-001 [슬픔] …여기 사람들 다 살리려고 그랬어. 너 하나 빼고. 그게 오버시어야.
-C-001 [기본] 오버시어 전용 비상 계단. 정문 구역 서쪽 비상문으로 나가. 대령한테는 네가 이미 배수로로 나갔다고 할게.
-C-001 [슬픔] 가. 뒤돌아보지 말고.
+C-001 [기본] 따라와. 오버시어 전용 비상 계단으로 정문 구역 서쪽 통로까지 내려간다. 대령한테는 네가 배수로로 갔다고 할게.
 ! MQP4_TALK = 1
-@cmd escape done 3
+@cmd escape yun
 -> END
 * NG
 @cmd balloon C-001 sweat
@@ -297,76 +314,166 @@ SYS 결재 서류 맨 위의 '관리 후보 지정 통지서'도 함께 챙긴�
 @scene MQ-P4_DOYUN  하층 갱도 철문 — 하도윤  (L-R01-01)
 @npc   C-002
 @cond  MQP4_STAGE >= 30 and MQP4_STAGE < 60
-C-002 [미소] 왔네. 이 바퀴, 반 바퀴 돌리고 발로 차야 해. 내가 할게.
+C-002 [미소] 왔네. 이 바퀴, 녹이 슬어서 혼자는 안 돌아. 반 바퀴 돌리고 어깨로 밀어야 해.
+@cmd move C-002 64,3
+@cmd face C-002 N
 @cmd sfx gate_rust
+@cmd anim drain_hatch 0 3 8
+@cmd anim drain_hatch 0 3 6
+@cmd shake 2
+@cmd anim drain_hatch 0 3 5
+SYS 바퀴가 끼익 소리를 내며 반 바퀴 돈다. 하도윤이 어깨를 문에 댄다.
+@cmd anim drain_hatch 4 9 16
 @cmd shake 3
-SYS 녹슨 원형 철문이 비명을 지르며 한 뼘씩 열린다. 틈으로 젖은 흙냄새가 들어온다.
-? V_DY_P3 == 3 -> BETRAYED
-C-002 [기본] 먼저 가. 금방 따라갈게.
--> GIVE
-* BETRAYED
-C-002 [기본] 너 때문이 아니라 내가 나가고 싶어서야. 먼저 가.
-* GIVE
-SYS 하도윤이 보안 카드를 손에 쥐여 준다. 바깥 문 어딘가에 쓸 데가 있을 거라고.
+SYS 녹슨 원형 철문이 비명을 지르며 젖혀진다. 갱도 끝에서 흰 빛이 새어 들고, 젖은 흙냄새가 밀려든다.
+@cmd face C-002 S
+C-002 [미소] 됐다. 이 갱도 끝이 검역실 바닥 배수구야. 가자.
+@cmd escape doyun
+-> END
+
+@scene MQ-P4_DECOY  검역실 배수구 — 하도윤의 미끼  (L-R01-01)
+@npc   -
+@cond  MQP4_STAGE >= 30 and MQP4_STAGE < 60 and MQP4_DECOY == 0
+@cmd show C-002 3,26 E
+@cmd fade_in black 6
+SYS 갱도 끝의 쇠창살을 밀어 올리자 정문 구역 검역실 바닥이다. 데크 쪽에서 계엄군 무전 소리가 들린다.
+C-002 [기본] 레버는 동쪽 제어실에 있어. 열쇠 대신 이 카드면 돼. 보안부 정비 카드야.
 ! give("M-205")
-@cmd escape done 4
+? V_DY_P3 == 3 -> BETRAYED
+C-002 [기본] 내가 데크로 나가서 소리를 지를게. 다들 나한테 몰려들 거야. 그 틈에 레버 당기고 먼저 가. 금방 따라갈게.
+-> GO
+* BETRAYED
+C-002 [기본] 내가 데크로 나가서 시선을 끌게. 너 때문이 아니라 내가 나가고 싶어서야. 레버 당기고 먼저 가.
+* GO
+@cmd go C-002 19,17 run
+@cmd wait 14
+C-002 [분노] (외침) 여기야! 1순위는 여기 있다!
+! MQP4_DECOY = 1
+@cmd refresh
+@cmd show BJ1 13,10 S en_cr401_loco
+@cmd show BJ2 26,10 S en_cr401_loco
+@cmd show BJ3 11,15 E en_cr401_loco
+@cmd go BJ1 18,16 run
+@cmd go BJ2 20,16 run
+@cmd go BJ3 18,18 run
+@cmd wait go
+@cmd balloon C-002 !
+SYS 군홧발이 한꺼번에 데크 가운데로 몰린다. 하도윤이 두 손을 든다.
+@cmd hint "지금 — 동쪽 정비 통로로 제어실 레버까지" 7
 -> END
 
-@scene MQ-P4_DRAIN  농장 배수로 서쪽 끝  (L-R01-01)
+@scene MQ-P4_YUN  정문 구역 서쪽 비상 통로 — 엄마  (L-R01-01)
 @npc   -
-@cond  MQP4_STAGE >= 30 and MQP4_STAGE < 60
-SYS 배수로가 끝나는 곳에 쇠창살 하나가 빠져 있다. 그 너머로 바람이 분다.
-@cmd escape done 2
+@cond  MQP4_STAGE >= 30 and MQP4_STAGE < 60 and MQP4_TALK == 1 and MQP4_DECOY == 0
+@cmd show C-001 4,5 W
+@cmd fade_in black 6
+SYS 오버시어 전용 비상 계단 끝, 정문 구역 서쪽 비상 통로. 데크 쪽 문틈으로 계엄군 철모가 보인다.
+C-001 [기본] (무전) 대령님, 윤정인입니다. 아이가 농장 배수로로 갔어요. 분대를 그쪽으로 보내세요.
+C-004 [기본] (무전) …확인한다. 분대, 수경 농장으로. 파워 아머는 정문을 지켜라.
+! MQP4_DECOY = 2
+@cmd refresh
+@cmd show BJ1 13,10 S en_cr401_loco
+@cmd show BJ2 16,11 S en_cr401_loco
+@cmd show BJ3 23,11 S en_cr401_loco
+@cmd go BJ1 18,22 run
+@cmd go BJ2 19,22 run
+@cmd go BJ3 20,22 run
+@cmd wait go
+@cmd hide BJ1
+@cmd hide BJ2
+@cmd hide BJ3
+SYS 군홧발 소리가 검역실 쪽으로 멀어진다. 데크에는 문 옆의 파워 아머 하나만 남는다.
+C-001 [기본] 오버시어 비상 개방 단말. 이 열쇠로만 돌아가.
+@cmd move C-001 2,3
+@cmd face C-001 N
+SYS 엄마가 목에 건 열쇠를 꽂고 돌린다.
+@cmd escape gate
 -> END
 
-@scene MQ-P4_GATE  정문 — 방폭문 밖  (L-R01-01)
+@scene MQ-P4_LEVER  정문 제어실 — 레버  (L-R01-01)
 @npc   -
-@cond  MQP4_STAGE >= 30 and MQP4_STAGE < 60
+@cond  MQP4_STAGE >= 30 and MQP4_STAGE < 60 and V_ESCAPE == 0
+SYS 정문 레버 2단. 봉쇄 잠금에 열쇠 구멍과 카드 홈이 함께 달려 있다.
+> [증거: M-205] 하도윤의 정비 카드를 홈에 긋는다 -> OPEN
+> [자물쇠 따기 25] 열쇠 구멍을 딴다 -> OPEN
+> [과학 25] 옆 단말로 봉쇄 잠금을 우회한다 -> OPEN
+> 서랍을 뒤져 비상 열쇠를 찾는다 -> SEARCH
+* SEARCH
+SYS 서랍을 하나씩 뒤엎는다. 쇳소리가 데크까지 울린다.
+@cmd escape alarm
+SYS 맨 아래 서랍 바닥에 테이프로 붙은 열쇠 하나.
+* OPEN
+SYS 레버를 두 단 끝까지 당긴다.
+@cmd escape gate
+-> END
+
+# 레버(또는 엄마의 열쇠) 뒤: 방폭문이 다시 굴러 열린다(진행기가 연다)
+@scene MQ-P4_GATEOPEN  정문 — 방폭문 개방  (L-R01-01)
+@npc   -
+@cond  V_ESCAPE >= 1 and MQP4_STAGE < 60
+@cmd cam 19,7 12
+@cmd sfx gate_alarm
+@cmd lamp 16,9 amber
+@cmd lamp 22,9 amber
+@cmd lamp 16,9 amber
+@cmd lamp 22,9 amber
+SYS 경고등이 돈다. 봉쇄 쐐기가 하나씩 빠지는 소리가 벽 속을 지나간다.
+@cmd shake 6
+@cmd wait 6
+@cmd gate open 90
+@cmd flash white
+SYS 흰 빛. 같은 날 두 번째로, 방폭문이 굴러 열린다.
+? V_ESCAPE >= 3 -> CALM
+@cmd escape alarm
+@cmd hint "방폭문으로 — 파워 아머 옆을 지나 문밖으로" 6
+-> END
+* CALM
+@cmd hint "방폭문으로" 5
+-> END
+
+@scene MQ-P4_GATE  정문 — 문턱  (L-R01-01)
+@npc   -
+@cond  MQP4_STAGE >= 30 and MQP4_STAGE < 60 and V_ESCAPE >= 1
+? V_ESCAPE >= 3 -> QUIET
 ? MQP4_BJ_KO == 0 -> PASS
 C-004 [아픔] (무릎을 꿇은 채) …다시 만난다.
 -> OUT
 * PASS
 C-004 [기본] 쏘지 마! 후보다. …다시 만난다.
+-> OUT
+* QUIET
+SYS 문턱 너머로 바람이 분다.
 * OUT
-@cmd escape done 1
+@cmd escape out
 -> END
 
-# 탈출 직후(진행기가 문밖 컷 뒤에 연다): 출구 점검표 → 첫 풍경
-@scene MQ-P4_S06  출구 점검표  (L-R01-01)
-@npc   -
-@cond  MQP4_STAGE >= 40 and MQP4_STAGE < 100
-SYS 바깥으로 나가는 마지막 문 옆에 낡은 단말이 하나 붙어 있다. '볼트 출입 점검표 — 전출 신고서 서식 제9호'.
-@cmd doc exit
-! quest("MQ-P4", 60); xp(25)
--> END
-
-# 문밖 컷(진행기가 escape done 뒤 지금 맵 위에서 연다) — 방법마다 한 장면
-@scene MQ-P4_OUT  문밖  (L-R01-01)
+# 문턱을 넘은 뒤(진행기가 연다): 방법마다 돌아보는 한 장면 → 출구 점검표 → 첫 풍경
+@scene MQ-P4_OUT  문턱 — 돌아보기  (L-R01-01)
 @npc   -
 @cond  MQP4_STAGE >= 40 and MQP4_STAGE < 60
 ? V_ESCAPE == 1 -> M1
 ? V_ESCAPE == 2 -> M2
 ? V_ESCAPE == 3 -> M3
-SYS 철문 틈으로 돌아본다. 하도윤이 안에서 바퀴를 다시 감고 있다.
-@cmd show BJ1 60,14 N en_cr401_loco
-@cmd show BJ2 61,14 N en_cr401_loco
-@cmd go BJ1 61,7
-@cmd go BJ2 63,8
-SYS 통로 저쪽에서 손전등 불빛 여럿이 다가온다. 하도윤은 돌아보지 않는다.
+SYS 문턱에서 돌아본다. 데크 한가운데, 계엄군에 둘러싸인 하도윤이 두 손을 든 채 이쪽을 보고 웃는다.
 C-002 [말함] 가!
-@cmd wait go
-@cmd balloon BJ1 !
 -> END
 * M1
-SYS 계엄군 사이를 뚫고 방폭문 밖 계단으로 달린다. 등 뒤에서 육지환의 목소리가 멀어진다.
+SYS 문턱을 넘는다. 등 뒤에서 육지환의 목소리가 멀어진다.
 C-004 [기본] 사격 중지. 후보는 산 채로다. …2순위부터 찾아.
 -> END
 * M2
-SYS 배수 갱도를 기어서 지나간다. 아무도 다치지 않았다. 등 뒤에서는 아무 소리도 들리지 않는다.
+SYS 아무도 다치지 않았다. 문턱을 넘을 때까지 누구도 돌아보지 않았다.
 -> END
 * M3
-SYS 엄마가 비상문 바퀴를 직접 돌린다. 문이 닫히기 전, 무전기에 대고 말하는 엄마의 목소리가 들린다.
-C-001 [기본] (무전) 아이는 이미 배수로로 나갔어요. 농장 쪽을 보세요.
+SYS 돌아본다. 서쪽 비상 통로 문틈에 엄마가 서 있다. 엄마는 손을 흔들지 않는다.
+-> END
+
+@scene MQ-P4_S06  출구 점검표  (L-R01-01)
+@npc   -
+@cond  MQP4_STAGE >= 40 and MQP4_STAGE < 100
+SYS 방폭문 바깥 계단참. 벽에 낡은 단말이 하나 붙어 있다. '볼트 출입 점검표 — 전출 신고서 서식 제9호'.
+@cmd doc exit
+! quest("MQ-P4", 60); xp(25)
 -> END
 
 # 첫 풍경 뒤(관악산 북쪽 비탈): 공보방송 — 비상정부는 주인공을 '죽이려'가 아니라 '데려가려' 한다(기울기 체감)

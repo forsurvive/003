@@ -3,8 +3,9 @@
   pipboy_bezel.png   640×360 기기 틀(녹슨 금속·리벳·방사능계·손잡이·명판). 화면 자리 (40,28) 560×304는 게임이 그린다.
   pipboy_crt.png     560×304 덮개: 짝수 줄 어둡게(×0.85 ≈ 검정 15%), 둥근 모서리 비네트, 지문 얼룩. 화면 내용 위에 얹는다.
   pipboy_figure.png  S-07 주민 그림(볼트 보이 아님) — 선 U6, 부위 막대는 게임이 그린다.
-  first_seoul.png    첫 풍경(MQ-P4 S7, SD-16 §12.3 #13 키 이미지) 640×400 — 키아트를 아래로 40px 늘려 그려, 화면이 북쪽으로
-                     천천히 미끄러지는 연출에 쓴다(art/tools/keyart.py가 바뀔 때만 다시 그린다).
+  first_view_far.png  첫 풍경(MQ-P4 S7) 먼 풍경 640×330(art/tools/first_view.py — 키아트 먼 풍경 + 관악산 아래 비탈 숲)
+  first_view_near.png 첫 풍경 가까운 비탈 640×250(아이작풍 타일·먹선 소품, 위쪽 능선 너머는 비어 있다). 게임이 y 290에 겹치고
+                     실제 페이퍼돌 주인공을 세운다(그림이 바뀔 때만 다시 그린다).
 견본 그림(art/tools/pipboy.py)을 고치면 이것도 다시 돌린다(build_data.sh에 들어 있다)."""
 import os, sys
 from PIL import Image, ImageDraw
@@ -58,13 +59,18 @@ def main():
     PB.bezel().convert("RGBA").save(os.path.join(OUT, "pipboy_bezel.png"))
     crt_overlay().save(os.path.join(OUT, "pipboy_crt.png"))
     figure().save(os.path.join(OUT, "pipboy_figure.png"))
-    fs = os.path.join(OUT, "first_seoul.png")
-    src = os.path.join(ROOT, "art", "tools", "keyart.py")
-    if not os.path.exists(fs) or os.path.getmtime(src) > os.path.getmtime(fs):
-        import keyart as KA
-        KA.H = 400
-        KA.build().convert("RGB").save(fs)
-    print("UI 그림: 핍-보이 틀·CRT 덮개·주민 그림·첫 풍경")
+    src = [os.path.join(ROOT, "art", "tools", n) for n in ("keyart.py", "first_view.py", "tiles_isaac.py", "ground.py")]
+    fa, fn = os.path.join(OUT, "first_view_far.png"), os.path.join(OUT, "first_view_near.png")
+    if not os.path.exists(fa) or max(os.path.getmtime(x) for x in src) > min(os.path.getmtime(fa), os.path.getmtime(fn)):
+        import first_view as FV
+        f, n, _ = FV.build()
+        f.convert("RGB").save(fa)
+        n.save(fn)
+    old = os.path.join(OUT, "first_seoul.png")
+    for o in (old, old + ".import"):
+        if os.path.exists(o):
+            os.remove(o)
+    print("UI 그림: 핍-보이 틀·CRT 덮개·주민 그림·첫 풍경(먼·가까운)")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,193 @@
+{
+ "id": "MQ-P4_DECOY",
+ "title": "검역실 배수구 — 하도윤의 미끼",
+ "loc": "L-R01-01",
+ "npc": "",
+ "cond": "MQP4_STAGE >= 30 and MQP4_STAGE < 60 and MQP4_DECOY == 0",
+ "labels": {
+  "START": 0,
+  "BETRAYED": 8,
+  "GO": 9
+ },
+ "ops": [
+  {
+   "op": "cmd",
+   "name": "show",
+   "args": [
+    "C-002",
+    "3,26",
+    "E"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "fade_in",
+   "args": [
+    "black",
+    "6"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "갱도 끝의 쇠창살을 밀어 올리자 정문 구역 검역실 바닥이다. 데크 쪽에서 계엄군 무전 소리가 들린다."
+  },
+  {
+   "op": "line",
+   "who": "C-002",
+   "emo": "기본",
+   "text": "레버는 동쪽 제어실에 있어. 열쇠 대신 이 카드면 돼. 보안부 정비 카드야."
+  },
+  {
+   "op": "do",
+   "fx": "give(\"M-205\")"
+  },
+  {
+   "op": "if",
+   "cond": "V_DY_P3 == 3",
+   "to": "BETRAYED"
+  },
+  {
+   "op": "line",
+   "who": "C-002",
+   "emo": "기본",
+   "text": "내가 데크로 나가서 소리를 지를게. 다들 나한테 몰려들 거야. 그 틈에 레버 당기고 먼저 가. 금방 따라갈게."
+  },
+  {
+   "op": "goto",
+   "to": "GO"
+  },
+  {
+   "op": "line",
+   "who": "C-002",
+   "emo": "기본",
+   "text": "내가 데크로 나가서 시선을 끌게. 너 때문이 아니라 내가 나가고 싶어서야. 레버 당기고 먼저 가."
+  },
+  {
+   "op": "cmd",
+   "name": "go",
+   "args": [
+    "C-002",
+    "19,17",
+    "run"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "wait",
+   "args": [
+    "14"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-002",
+   "emo": "분노",
+   "text": "(외침) 여기야! 1순위는 여기 있다!"
+  },
+  {
+   "op": "do",
+   "fx": "MQP4_DECOY = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "refresh",
+   "args": []
+  },
+  {
+   "op": "cmd",
+   "name": "show",
+   "args": [
+    "BJ1",
+    "13,10",
+    "S",
+    "en_cr401_loco"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "show",
+   "args": [
+    "BJ2",
+    "26,10",
+    "S",
+    "en_cr401_loco"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "show",
+   "args": [
+    "BJ3",
+    "11,15",
+    "E",
+    "en_cr401_loco"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "go",
+   "args": [
+    "BJ1",
+    "18,16",
+    "run"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "go",
+   "args": [
+    "BJ2",
+    "20,16",
+    "run"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "go",
+   "args": [
+    "BJ3",
+    "18,18",
+    "run"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "wait",
+   "args": [
+    "go"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "balloon",
+   "args": [
+    "C-002",
+    "!"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "군홧발이 한꺼번에 데크 가운데로 몰린다. 하도윤이 두 손을 든다."
+  },
+  {
+   "op": "cmd",
+   "name": "hint",
+   "args": [
+    "지금 — 동쪽 정비 통로로 제어실 레버까지",
+    "7"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/prologue/MQ-P4.txt"
+}

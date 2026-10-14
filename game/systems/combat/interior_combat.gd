@@ -93,6 +93,7 @@ func on_map(map: InteriorMap, player: Actor, st: StoryState) -> void:
 		if is_instance_valid(e):
 			e.queue_free()
 	enemies.clear()
+	residents.clear()
 	targets.clear()
 	shots.shots.clear()
 	shots.world = map
@@ -152,6 +153,7 @@ func spawn(enemy_id: String, pos: Vector2, map: InteriorMap, st: StoryState = nu
 	var arm := str(opts.get("arm", "baton" if enemy_id == "CR-473" else ""))
 	e.setup_enemy(enemy_rows[enemy_id], _enemy_weapon(enemy_id, arm), pos, map, opts)
 	e.set_meta("enemy_id", enemy_id)
+	e.set_meta("row", opts)
 	e.cmb.unaware = func() -> bool: return e.brain.state != AIBrain.S.COMBAT and e.brain.gauge < 100.0
 	if enemy_id == "CR-405":                                            # '못 이기는 적'(SD-03a §7.4 연출 메모): HP 하한 1, 체력 표시 없음
 		e.cmb.hp_floor = 1.0
@@ -182,6 +184,55 @@ func spawn(enemy_id: String, pos: Vector2, map: InteriorMap, st: StoryState = nu
 	return e
 
 
+## 주민(SD-10 §6.3, 0-9): 맵 인물도 맞는다. 공기총·근접은 기절(비살상), 실총으로 죽이면 진행기가 카르마 −100.
+## 프롤로그 불사 4인(윤정인·하도윤·육지환·도경철)은 HP 1에서 멈춘다(무릎). 적의 탄은 주민을 맞히지 않는다.
+signal resident_hit(id: String)
+signal resident_down(id: String, killed: bool)
+const IMMORTAL := ["C-001", "C-002", "C-004", "C-022"]
+const RESIDENT_HP := 40.0
+var residents: Array = []                         ## [{"id", "cmb", "actor"}]
+
+
+func set_residents(list: Array) -> void:
+	residents.clear()
+	for n in list:
+		var a = n["actor"]
+		if not is_instance_valid(a) or n.get("dead", false):
+			continue
+		var c := Combatant.new()
+		c.team = "resident"
+		c.actor = a
+		c.hp = RESIDENT_HP
+		c.max_hp = RESIDENT_HP
+		c.can_ko = true
+		var id := str(n["id"])
+		if id in IMMORTAL:
+			c.hp_floor = 1.0
+		c.hit.connect(func() -> void: resident_hit.emit(id))
+		c.died.connect(func() -> void: resident_down.emit(id, c.killed_lethal))
+		residents.append({"id": id, "cmb": c, "actor": a})
+	_rebuild_list()
+
+
+func resident(id: String) -> Combatant:
+	for r in residents:
+		if r["id"] == id:
+			return r["cmb"]
+	return null
+
+
+## 맵의 적을 지금 조건대로 다시 본다(연출 명령 refresh, 0-9): 조건이 거짓이 된 적은 치운다(하도윤의 미끼·엄마의 거짓 무전으로 분대가 빠진다)
+func refresh_enemies(st: StoryState) -> void:
+	for e in enemies.duplicate():
+		if not is_instance_valid(e):
+			continue
+		var row: Dictionary = e.get_meta("row", {})
+		if not InteriorMap._cond_ok(str(row.get("cond", "")), st):
+			enemies.erase(e)
+			e.queue_free()
+	_rebuild_list()
+
+
 func alive_enemies() -> int:
 	return enemies.filter(func(e): return is_instance_valid(e) and not e.cmb.dead).size()
 
@@ -195,6 +246,9 @@ func _rebuild_list() -> void:
 	for e in enemies:
 		if is_instance_valid(e):
 			l.append(e.cmb)
+	for r in residents:
+		if is_instance_valid(r["actor"]):
+			l.append(r["cmb"])
 	for t in targets:
 		l.append(t["cmb"])
 	shots.combatants = l
@@ -425,6 +479,17 @@ func _melee(player: Actor, w: Dictionary, to: Vector2, st: StoryState) -> void:
 			if sneak:
 				stats["sneak"] += 1
 				_pop("기습 치명타 ×%d" % int(CombatRules.sneak_mult("melee", false)), e.loco.logical + Vector2(0, -22), Color("E8C23A"))
+	for rr in residents:                                               # 주민도 맞는다(기절, 0-9)
+		var c: Combatant = rr["cmb"]
+		if c.dead or n >= (4 if two else 3) or not is_instance_valid(rr["actor"]):
+			continue
+		var d: Vector2 = rr["actor"].loco.logical - player.loco.logical
+		if d.length() <= reach + c.radius and (d.length() < pc.radius + c.radius or absf(to.angle_to(d)) <= arc):
+			n += 1
+			var r := CombatRules.resolve({"weapon": w, "skill": float(st.skill("MELEE")) if st != null else 15.0,
+				"attacker": {"str": st.stat("ST") if st != null else 5}, "part": CombatRules.pick_part(c.weights, shots.rng), "dr": 0.0})
+			r["nonlethal"] = true
+			c.take(r, player.loco.logical)
 	_swing_fx(player.loco.logical + Vector2(0, -12) + to.normalized() * reach * 0.6)
 
 

@@ -4,7 +4,7 @@
 ##   show ID 표지 [방향 [시트]](시트: 이름 없는 단역 — 계엄병 en_cr401_loco 등)   hide ID   move ID 표지 [walk|run]   face ID 방향|인물ID   balloon ID ! | ? | heart | ... | note | sweat | anger
 ##   go ID 표지 [walk|run](기다리지 않는 이동, 0-9)   wait n(1/10초) | wait go(go로 걷는 사람이 다 설 때까지)   fade_in 색 n   fade_out 색 n   flash 색   shake n   cam 표지   year_card 연도 "문장"   title_card "제목" "문장"
 ##   sfx·bgm 이름(소리는 납품 뒤 — 지금은 기록만)   lamp 표지 색(장치 램프 깜박임)   doc 이름(서류 UI, 0-4)
-##   gate open|close [n](톱니 방폭문 굴리기, 0-9)
+##   gate open|close [n](톱니 방폭문 굴리기, 0-9)   anim 소품이름 처음컷 끝컷 [n](원형 철문 등 컷 넘기기)
 ##   pose ID stand|lie|sit|in_bed(0-5: lie 몸을 90도 눕힘 · in_bed 그 칸 침대가 '누운 사람' 그림으로 바뀌고 몸은 숨는다)
 ## 표지(mark)는 맵 자료(game/data/maps/<맵>.json의 marks: 이름 → [타일 x, 타일 y, 방향])다. "x,y" 숫자도 받는다.
 class_name EventRunner
@@ -83,6 +83,13 @@ func busy() -> bool:
 	return not _job.is_empty()
 
 
+## 이 인물을 지금 연출이 걷게 하고 있나(진행기가 주인공을 멈춰 세우지 않게)
+func drives(a) -> bool:
+	if _job.get("kind", "") == "move" and _job.get("actor") == a:
+		return true
+	return _bg.any(func(b): return b["actor"] == a)
+
+
 ## 기다리지 않는 이동이 남았나(장면 끝에서 다 걸을 때까지 기다리는 `wait_go`)
 func walking() -> bool:
 	return not _bg.is_empty()
@@ -96,6 +103,9 @@ func run(name: String, args: Array, done: Callable) -> void:
 				str(args[3]) if args.size() > 3 else "")
 			done.call()
 		"hide":
+			if str(args[0]) == "PC":                                          # 주인공은 치우지 않는다(pc hide를 쓴다)
+				done.call()
+				return
 			if actors.has(str(args[0])):
 				var ha = actors[str(args[0])]
 				_bg = _bg.filter(func(b): return is_instance_valid(b["actor"]) and b["actor"] != ha)
@@ -184,6 +194,13 @@ func run(name: String, args: Array, done: Callable) -> void:
 				return
 			_job = {"kind": "gate", "from": float(world.gate_k), "to": to, "len": float(args[1]) / 10.0 if args.size() > 1 else 4.0,
 				"t": 0.0, "done": done}
+		"anim":                                                           # 소품 컷 넘기기: anim 이름 처음컷 끝컷 [n 1/10초](0-9 원형 철문)
+			if world == null or not world.has_method("set_prop_frame"):
+				done.call()
+				return
+			_job = {"kind": "anim", "name": str(args[0]), "a": int(args[1]), "b": int(args[2]),
+				"len": float(args[3]) / 10.0 if args.size() > 3 else 1.0, "t": 0.0, "done": done}
+			world.set_prop_frame(_job["name"], _job["a"])
 		"doc":
 			if doc_requested.get_connections().is_empty():
 				done.call()
@@ -289,8 +306,9 @@ func _process(dt: float) -> void:
 			b["still"] = 0.0
 			b["path"] = _route(a, b["to"])
 	if _job.is_empty():
+		var pc = actors.get("PC")
 		for a in actors.values():
-			if is_instance_valid(a) and not moving.has(a) and a.loco.motion != "idle":
+			if is_instance_valid(a) and a != pc and not moving.has(a) and a.loco.motion != "idle":   # 주인공은 진행기가 걷게 한다
 				a.move(Vector2.ZERO, dt)
 		return
 	var j := _job
@@ -349,6 +367,12 @@ func _process(dt: float) -> void:
 			j["t"] += dt
 			var k := clampf(j["t"] / j["len"], 0.0, 1.0)
 			cam.position = (j["from"] as Vector2).lerp(j["to"], k * k * (3.0 - 2.0 * k)).round()
+			if k >= 1.0:
+				_finish()
+		"anim":
+			j["t"] += dt
+			var k := clampf(j["t"] / maxf(j["len"], 0.001), 0.0, 1.0)
+			world.set_prop_frame(j["name"], int(round(lerpf(float(j["a"]), float(j["b"]), k))))
 			if k >= 1.0:
 				_finish()
 		"gate":

@@ -167,3 +167,11 @@ npc C-023 45 7 S cond="year() == 2274 and MQP3_STAGE >= 40" bark="결과지는 �
 text 50 9 "출입 기록 서랍. 어젯밤 줄은 이미 누가 들여다봤다." cond="year() == 2274 and MQP3_RESULT == 2"
 npc N-R01-017 28 25 S route=서가:28,25,10;책상:29,31,8 bark="책은 제자리에. 200년째 같은 부탁이야." cond="year() == 2277"
 npc N-R01-016 44 28 W route=체육관:44,28,6;창고:47,37,5 bark="9회말은 아직이야." cond="year() == 2277"
+box 1 15 school_locker w=3 owner=C-026
+box 9 15 school_locker w=3 name="주인 없는 사물함"
+box 13 15 school_locker w=3 owner=PC name="내 사물함"
+box 25 15 school_locker w=3 owner=N-R01-016
+box 35 15 school_locker w=3 owner=S7 name="분실물 사물함"
+box 44 5 desk w=2 owner=C-023 name="교사 책상"
+box 52 3 cabinet w=2 owner=S7 name="교무 서류함"
+box 50 36 crate w=2 owner=S7 name="체육 창고 상자"

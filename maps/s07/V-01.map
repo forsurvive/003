@@ -252,3 +252,7 @@ trigger 12 28 w=5 h=2 scene=MQ-P4_S01 cond="MQP4_STAGE == 10" once
 trigger 1 38 w=29 h=1 scene=MQ-P4_S01 cond="MQP4_STAGE == 10" once
 enemy CR-473 10 15 arm=baton dir=E route=10,15,3;48,15,3;48,22,2;10,22,2 cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60"
 npc N-R01-021 31 15 S route=놀이:31,15,4;게시판:24,4,3;화분:38,9,3 bark="게시판 맨 위 이름은 누구야?" cond="year() == 2277"
+box 46 31 crate owner=S7
+box 45 33 pantry w=2 owner=S7 name="배급 창고 상자"
+box 49 31 desk w=2 owner=S7 name="배급 사무 책상"
+box 49 38 cabinet w=2 owner=S7 name="기록 보관함"

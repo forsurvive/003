@@ -43,3 +43,5 @@ prop wall_pipes 12 1
 text 13 8 "세진 적성 판정기 SJ-AP7. 옆에 붙은 봉인: 관리 후보 순위 출력 — 수정 금지." w=3 h=2
 text 2 3 "평가 기록 보관장. 200년 치 판독 카드가 연도별로 묶여 있다." w=4
 text 2 20 "교무 구역으로 올라가는 계단."
+box 21 3 cabinet w=2 owner=S7 name="판정 기록함"
+box 26 18 crate w=2 name="먼지 쌓인 상자"

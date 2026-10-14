@@ -1,0 +1,72 @@
+{
+ "M-010": {
+  "_src": "13_items.md:964",
+  "cat": "misc",
+  "desc": "대못 제작, 탄약 재생대, 반복 거래(§7.5)",
+  "id": "M-010",
+  "kind": "금속",
+  "name": "고철",
+  "value": 5,
+  "weight": 1.0
+ },
+ "M-012": {
+  "_src": "13_items.md:966",
+  "cat": "misc",
+  "desc": "잡동사니 발사기",
+  "id": "M-012",
+  "kind": "금속",
+  "name": "구리선",
+  "value": 8,
+  "weight": 0.5
+ },
+ "M-014": {
+  "_src": "13_items.md:968",
+  "cat": "misc",
+  "desc": "원칙파·지하시장 거래, 관제망 단말 수리 퀘스트",
+  "id": "M-014",
+  "kind": "전자",
+  "name": "진공관",
+  "value": 15,
+  "weight": 0.2
+ },
+ "M-015": {
+  "_src": "13_items.md:969",
+  "cat": "misc",
+  "desc": "병뚜껑 지뢰(대체 재료)",
+  "id": "M-015",
+  "kind": "전자",
+  "name": "계전기",
+  "value": 10,
+  "weight": 0.5
+ },
+ "M-025": {
+  "_src": "13_items.md:979",
+  "cat": "misc",
+  "desc": "수리 키트 제작(작업대, 고철 2 + 테이프 1 + 접착제 1)",
+  "id": "M-025",
+  "kind": "화학",
+  "name": "공업용 테이프",
+  "value": 5,
+  "weight": 0.2
+ },
+ "M-044": {
+  "_src": "13_items.md:998",
+  "cat": "misc",
+  "desc": "병뚜껑 지뢰",
+  "id": "M-044",
+  "kind": "생활",
+  "name": "도시락통",
+  "value": 5,
+  "weight": 1.0
+ },
+ "M-046": {
+  "_src": "13_items.md:1000",
+  "cat": "misc",
+  "desc": "번개 수류탄",
+  "id": "M-046",
+  "kind": "생활",
+  "name": "깡통",
+  "value": 1,
+  "weight": 0.5
+ }
+}

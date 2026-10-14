@@ -3,7 +3,7 @@
 메타(이름마다): rect [x, y, w, h](아틀라스 안), foot [가로, 세로](막히는 칸), kind(floor·wall·deco·door), off [x, y]
   — 놓는 칸의 왼쪽 위에서 그림 왼쪽 위까지 px. floor·deco: 발 칸 아래 변 + down에 그림 아래 변을 맞춘다.
   wall: 벽면 윗칸 왼쪽 위 + (dx, dy). door: 1칸 × 2칸 벽면(윗칸 기준), open = 열린 그림 rect.
-  gear_door: 프레임 8장(frames). states: 연출이 바꾸는 상태 그림(예: birth_bed occupied, terminal_cart lit)."""
+  gear_door: 프레임 22장(frames), PROP_FRAMES(원형 철문 등)도 frames. states: 연출이 바꾸는 상태 그림(예: birth_bed occupied, terminal_cart lit)."""
 import os, sys, json
 from PIL import Image
 
@@ -32,6 +32,11 @@ def main():
             for f in range(R.GEAR_FRAMES):
                 items.append((f"gear_door#{f}", outlined(R.S.gear_door(f, R.GEAR_FRAMES))))
             continue
+        if n in R.PROP_FRAMES:                                      # 컷이 여럿인 소품(원형 철문 등, 연출 명령 anim)
+            fn, cnt = R.PROP_FRAMES[n]
+            for f in range(cnt):
+                items.append((f"{n}#{f}", outlined(fn(f))))
+            continue
         items.append((n, outlined(r["fn"]())))
         if n in R.DOOR_OPEN:
             items.append((n + "#open", outlined(R.DOOR_OPEN[n]())))
@@ -55,7 +60,7 @@ def main():
     atlas.save(os.path.join(OUT, "s07_props.png"))
     meta = {}
     for n, r in R.PROPS.items():
-        key = "gear_door#0" if n == "gear_door" else n
+        key = "gear_door#0" if n == "gear_door" else (n + "#0" if n in R.PROP_FRAMES else n)
         x0, y0, w, h = pos[key]
         fw, fh = r["foot"]
         if r["kind"] in ("wall", "door"):
@@ -71,6 +76,8 @@ def main():
             e.setdefault("states", {})[st] = list(pos[f"{n}#{st}"])
         if n == "gear_door":
             e["frames"] = [list(pos[f"gear_door#{f}"]) for f in range(R.GEAR_FRAMES)]
+        if n in R.PROP_FRAMES:
+            e["frames"] = [list(pos[f"{n}#{f}"]) for f in range(R.PROP_FRAMES[n][1])]
         meta[n] = e
     json.dump({"props": meta, "tile": T}, open(os.path.join(OUT, "s07_props.json"), "w", encoding="utf-8"), ensure_ascii=False,
               indent=1, sort_keys=True)

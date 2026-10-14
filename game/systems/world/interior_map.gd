@@ -17,6 +17,7 @@ var objects: Node2D                              ## y 정렬 층(소품·문·�
 var doors: Array = []                            ## [{"node": Sprite2D, "x", "y", "locked", "closed": Rect2, "open": Rect2, "is_open"}]
 var exits := {}                                  ## Vector2i -> {"to", "mark"}
 var texts := {}                                  ## Vector2i -> 글
+var boxes := {}                                  ## Vector2i -> 용기(0-9): {"x","y","w","h","kind","owner","lock","name","cond"} — 조건은 조사할 때 본다
 var text_meta := {}                              ## Vector2i -> {"cond", "seq": [글…], "scene", "key"} — 여러 번 조사하는 글(0-7)
 var marks := {}
 var actors: Array = []                           ## 문을 여는 인물(주인공·NPC)
@@ -107,6 +108,10 @@ func load_map(map_id: String, st: StoryState = null) -> void:
 		plate.position = Vector2(int(s["x"]) * T + 16, (int(s["y"]) + 2) * T)
 		plate.lift = 2 * T - 2
 		objects.add_child(plate)
+	for b in data.get("boxes", []):
+		for j in int(b["h"]):
+			for i in int(b["w"]):
+				boxes[Vector2i(int(b["x"]) + i, int(b["y"]) + j)] = b
 	for e in data["exits"]:
 		exits[Vector2i(int(e["x"]), int(e["y"]))] = {"to": e["to"], "mark": e["mark"]}
 	for t in data["texts"]:
@@ -237,6 +242,20 @@ func _draw_gate_light(_door: Sprite2D) -> void:
 				_gate_light.draw_rect(Rect2(Vector2(x, y0), Vector2(2, 2)), col)
 				x += every * 2
 		y0 += 2
+
+
+## 컷이 여럿인 소품의 컷을 바꾼다(원형 철문 등, 연출 명령 anim, 0-9). 맵에 그 이름 소품이 없으면 false
+func set_prop_frame(name: String, f: int) -> bool:
+	var e: Dictionary = prop_meta.get(name, {})
+	if not e.has("frames"):
+		return false
+	for p in props:
+		if p["name"] == name:
+			var fr: Array = e["frames"]
+			(p["node"].texture as AtlasTexture).region = _r(fr[clampi(f, 0, fr.size() - 1)])
+			p["frame"] = f
+			return true
+	return false
 
 
 func unlock_door(x: int, y: int) -> bool:

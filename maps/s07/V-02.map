@@ -115,3 +115,8 @@ enemy CR-473 6 17 arm=baton dir=E route=6,17,3;46,17,4 cond="MQP4_STAGE >= 30 an
 text 33 5 "결재 책상. 오버시어 단말이 켜져 있다." w=3 scene=MQ-P4_S05 cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60 and K_RALLY == 0"
 mark p3_ovs 34 6 N
 npc C-001 34 4 S cond="year() == 2274 and MQP3_STAGE >= 100"
+box 20 3 cabinet w=3 owner=S7 name="행정 서류함"
+box 27 3 cabinet owner=S7 name="행정 서류함"
+box 47 3 safe owner=C-001 lock=50 name="오버시어 금고"
+box 20 23 cabinet owner=S7
+box 37 23 crate owner=S7

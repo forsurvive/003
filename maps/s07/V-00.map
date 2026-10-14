@@ -23,9 +23,9 @@ grid
 #.......==.........|..........==.......#
 #.......==.........|..........==.......#
 #......#==.........|..........==#......#
-#################ooooo##################
-#################ooooo##################
-#################ooooo##################
+#################ooooo###############.##
+#################ooooo###############.##
+#################ooooo###############.##
 #oooooooooooooooooooooooooooooooooooooo#
 #oooooooooooooooooooooooooooooooooooooo#
 #oooooooooooooooooooooooooooooooooooooo#
@@ -41,6 +41,8 @@ mark from_V-01 19 27 N
 door 3 1 kind=hatch "비상 계단"
 exit 3 0 V-02 from_V-00
 mark from_V-02 3 3 S
+exit 1 26 V-06 from_V-00
+mark from_V-06 2 26 E
 prop gear_frame 16 7
 prop gear_door 17 7
 text 17 8 "톱니 방폭문. 200년 동안 한 번도 굴러가지 않았다." w=6
@@ -82,16 +84,19 @@ npc C-001 17 12 S cond="year() == 2277 and MQP4_STAGE == 20"
 npc C-022 21 12 S cond="year() == 2277 and MQP4_STAGE == 20"
 npc N-R01-019 35 3 N cond="year() == 2277 and MQP4_STAGE == 20"
 npc C-002 20 15 N cond="year() == 2277 and MQP4_STAGE == 20" bark="맨 앞자리 맞지?"
-enemy CR-401 13 10 dir=S stance=hold cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60"
-enemy CR-401 16 11 dir=S stance=hold cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60"
-enemy CR-401 23 11 dir=S stance=hold cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60"
-enemy CR-401 26 10 dir=S stance=hold cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60"
-enemy CR-401 11 15 dir=E stance=hold cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60"
-enemy CR-401 28 15 dir=W stance=hold cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60"
+enemy CR-401 13 10 dir=S stance=hold cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60 and MQP4_DECOY == 0"
+enemy CR-401 16 11 dir=S stance=hold cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60 and MQP4_DECOY == 0"
+enemy CR-401 23 11 dir=S stance=hold cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60 and MQP4_DECOY == 0"
+enemy CR-401 26 10 dir=S stance=hold cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60 and MQP4_DECOY == 0"
+enemy CR-401 11 15 dir=E stance=hold cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60 and MQP4_DECOY == 0"
+enemy CR-401 28 15 dir=W stance=hold cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60 and MQP4_DECOY == 0"
 enemy CR-405 22 9 dir=S stance=hold cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60"
-npc C-004 15 9 S cond="year() == 2277 and MQP4_STAGE >= 30 and MQP4_STAGE < 60" bark="후보는 다치게 하지 마라."
-enemy CR-473 15 25 arm=pistol who=N-R01-019 dir=E route=15,25,3;25,26,3 cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60"
-trigger 17 9 w=4 h=1 scene=MQ-P4_GATE cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60" once
+npc C-004 15 9 S cond="year() == 2277 and MQP4_STAGE >= 30 and MQP4_STAGE < 60 and MQP4_DECOY == 0" bark="후보는 다치게 하지 마라."
+enemy CR-473 12 19 arm=pistol who=N-R01-019 dir=E route=12,19,4;27,19,4 cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60 and MQP4_DECOY == 0"
+trigger 17 9 w=4 h=1 scene=MQ-P4_GATE cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60 and V_ESCAPE >= 1" once
+text 34 3 "정문 레버." w=2 scene=MQ-P4_LEVER cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60 and V_ESCAPE == 0"
+prop wall_terminal 2 1
+text 2 3 "오버시어 비상 개방 단말. 열쇠 구멍 하나 — 오버시어 열쇠로만 돈다."
 npc N-R01-023 12 14 N cond="year() == 2277 and MQP4_STAGE == 20"
 npc N-R01-007 14 15 N cond="year() == 2277 and MQP4_STAGE == 20"
 npc N-R01-008 16 14 N cond="year() == 2277 and MQP4_STAGE == 20"
@@ -104,3 +109,7 @@ npc C-026 22 17 N cond="year() == 2277 and MQP4_STAGE == 20"
 npc C-025 25 17 N cond="year() == 2277 and MQP4_STAGE == 20"
 npc N-R01-013 19 18 N cond="year() == 2277 and MQP4_STAGE == 20"
 npc N-R01-021 28 17 N cond="year() == 2277 and MQP4_STAGE == 20"
+box 7 24 locker w=3 owner=S7 name="경비대 사물함"
+box 33 24 locker w=2 owner=S7 name="검역실 사물함"
+box 28 11 crate w=2 owner=S7 name="반입 화물 상자"
+box 38 4 cabinet owner=S7 name="제어실 서류함"

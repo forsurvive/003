@@ -2,7 +2,7 @@
 doc: 13_items.md
 id_column: ID
 section: "### 6.4 음식 (I-022~I-047)"
-rows: [I-036]
+rows: [I-026, I-028, I-030, I-036]
 columns:
   ID: {field: id, type: id, pattern: "^I-\\d{3}$", required: true}
   이름: {field: name, type: str, required: true}

@@ -170,3 +170,17 @@ prop water_cooler 33 13
 npc N-R01-024 20 10 E route=복도:20,10,6;C동:23,19,8 bark="…아무한테도 말하지 마." cond="year() == 2277"
 npc N-R01-022 40 26 W route=복도:40,26,5;세로:31,20,4;빨래:5,26,6 bark="첫 배정이 세탁이래. 하루 종일 비누 냄새야." cond="year() == 2277"
 npc N-R01-015 52 20 N route=D동:52,19,8;복도:55,10,5 bark="D등급 방은 문이 안 잠겨. 원래 그래." cond="year() == 2277"
+prop crate_metal 6 3
+prop crate_metal 13 3
+prop crate_metal 20 3
+prop crate_metal 27 3
+prop crate 12 35
+box 6 3 locker owner=N-R01-024 name="A-05 사물함"
+box 13 3 locker owner=N-R01-022 name="A-06 사물함"
+box 20 3 locker owner=PC name="A-07 내 사물함"
+box 27 3 locker owner=N-R01-015 name="A-08 사물함"
+box 2 20 crate owner=S7 name="C동 설비 상자"
+box 16 20 pantry owner=S7 name="C동 배급 상자"
+box 44 20 locker owner=N-R01-015 name="D동 공용 사물함"
+box 51 20 crate name="버려진 상자"
+box 12 35 crate name="빈방에 남은 상자"

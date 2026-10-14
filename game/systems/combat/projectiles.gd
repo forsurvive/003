@@ -70,7 +70,7 @@ func _rebucket() -> void:
 	_buckets.clear()
 	_occupied.clear()
 	for c in combatants:
-		if c.dead:
+		if c.dead or (c.actor is Object and not is_instance_valid(c.actor)):
 			continue
 		_occupied[Vector2i(floori(c.pos().x / 32), floori(c.pos().y / 32))] = c.team
 		var k := Vector2i(floori(c.pos().x / BUCKET), floori(c.pos().y / BUCKET))
@@ -118,7 +118,7 @@ func _segment_hit(a: Vector2, b: Vector2, s: Dictionary):
 	for ky in range(kmin.y, kmax.y + 1):
 		for kx in range(kmin.x, kmax.x + 1):
 			for c in _buckets.get(Vector2i(kx, ky), []):
-				if c.team == s["team"]:
+				if c.team == s["team"] or (c.team == "resident" and s["team"] != "player"):   # 적의 탄은 주민을 비켜 간다(주민 피해 = 주인공 책임만)
 					continue
 				var ctr: Vector2 = c.pos() + Vector2(0, -12)          # torso centre above the feet
 				var tt := _seg_circle(a, b, ctr, c.radius)

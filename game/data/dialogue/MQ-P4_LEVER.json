@@ -1,0 +1,114 @@
+{
+ "id": "MQ-P4_LEVER",
+ "title": "정문 제어실 — 레버",
+ "loc": "L-R01-01",
+ "npc": "",
+ "cond": "MQP4_STAGE >= 30 and MQP4_STAGE < 60 and V_ESCAPE == 0",
+ "labels": {
+  "START": 0,
+  "SEARCH": 2,
+  "OPEN": 5
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "정문 레버 2단. 봉쇄 잠금에 열쇠 구멍과 카드 홈이 함께 달려 있다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "하도윤의 정비 카드를 홈에 긋는다",
+     "tags": [
+      {
+       "k": "evidence",
+       "id": "M-205"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "OPEN",
+     "id": "MQ-P4_LEVER:1:0"
+    },
+    {
+     "text": "열쇠 구멍을 딴다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "자물쇠 따기",
+       "min": 25
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "OPEN",
+     "id": "MQ-P4_LEVER:1:1"
+    },
+    {
+     "text": "옆 단말로 봉쇄 잠금을 우회한다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "과학",
+       "min": 25
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "OPEN",
+     "id": "MQ-P4_LEVER:1:2"
+    },
+    {
+     "text": "서랍을 뒤져 비상 열쇠를 찾는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SEARCH",
+     "id": "MQ-P4_LEVER:1:3"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "서랍을 하나씩 뒤엎는다. 쇳소리가 데크까지 울린다."
+  },
+  {
+   "op": "cmd",
+   "name": "escape",
+   "args": [
+    "alarm"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "맨 아래 서랍 바닥에 테이프로 붙은 열쇠 하나."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "레버를 두 단 끝까지 당긴다."
+  },
+  {
+   "op": "cmd",
+   "name": "escape",
+   "args": [
+    "gate"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/prologue/MQ-P4.txt"
+}

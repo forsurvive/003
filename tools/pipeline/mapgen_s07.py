@@ -259,12 +259,15 @@ def v00():
     for y in range(13, 16):
         m.hole(7, y + 4, "."); m.hole(32, y + 4, ".")
     m.hole(7, 18, "."); m.hole(32, 18, ".")
+    for y in (21, 22, 23):                                                                  # 정비 통로(검역실 → 동쪽 아래 방, 0-9 은신 길)
+        m.hole(37, y, ".")
     for y in (10, 11):
         m.hole(7, y, "."); m.hole(32, y, ".")
     m.door(3, 12, label="비상"); m.door(36, 12, label="제어")
     m.arch(17, 21, 20, "o")
     m.exit_s(19, 27, "V-01")
     m.exit_n(3, 3, "V-02", kind="hatch", label="비상 계단")
+    m.exit_at(1, 26, "V-06", (2, 26), "E")                                                  # 검역실 바닥 배수구 ↔ 농장 배수로(배수 갱도)
     # 방폭문(벽 6칸 위로 걸친 192×192): 북벽 윗칸 y=7
     m.p("gear_frame", 16, 7); m.p("gear_door", 17, 7)
     m.c('text 17 8 "톱니 방폭문. 200년 동안 한 번도 굴러가지 않았다." w=6')
@@ -287,11 +290,15 @@ def v00():
     m.c(f'npc C-002 20 15 N cond="{y77}" bark="맨 앞자리 맞지?"')
     # 2277 탈출(MQ-P4 S4 ①): 데크를 지키는 계엄군 6(제자리 경계, 생포 사격) · 파워 아머 1(정문 옆, 못 이기는 적) · 육지환 · 검역실 최보미(권총 위협 사격)
     for x, y, d in ((13, 10, "S"), (16, 11, "S"), (23, 11, "S"), (26, 10, "S"), (11, 15, "E"), (28, 15, "W")):
-        m.c(f'enemy CR-401 {x} {y} dir={d} stance=hold cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60"')
+        m.c(f'enemy CR-401 {x} {y} dir={d} stance=hold cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60 and MQP4_DECOY == 0"')
     m.c('enemy CR-405 22 9 dir=S stance=hold cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60"')
-    m.c('npc C-004 15 9 S cond="year() == 2277 and MQP4_STAGE >= 30 and MQP4_STAGE < 60" bark="후보는 다치게 하지 마라."')
-    m.c('enemy CR-473 15 25 arm=pistol who=N-R01-019 dir=E route=15,25,3;25,26,3 cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60"')
-    m.c('trigger 17 9 w=4 h=1 scene=MQ-P4_GATE cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60" once')
+    m.c('npc C-004 15 9 S cond="year() == 2277 and MQP4_STAGE >= 30 and MQP4_STAGE < 60 and MQP4_DECOY == 0" bark="후보는 다치게 하지 마라."')
+    m.c('enemy CR-473 12 19 arm=pistol who=N-R01-019 dir=E route=12,19,4;27,19,4 cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60 and MQP4_DECOY == 0"')    # 데크 남쪽 순찰
+    m.c('trigger 17 9 w=4 h=1 scene=MQ-P4_GATE cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60 and V_ESCAPE >= 1" once')
+    # 탈출 출구는 방폭문 하나(0-9 정합): 제어실 레버 · 서쪽 통로의 오버시어 비상 개방 단말 · 검역실 바닥 배수구(배수 갱도) · 정비 통로
+    m.c('text 34 3 "정문 레버." w=2 scene=MQ-P4_LEVER cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60 and V_ESCAPE == 0"')
+    m.p("wall_terminal", 2, 1)
+    m.c('text 2 3 "오버시어 비상 개방 단말. 열쇠 구멍 하나 — 오버시어 열쇠로만 돈다."')
     for nid, x, y in (("N-R01-023", 12, 14), ("N-R01-007", 14, 15), ("N-R01-008", 16, 14), ("N-R01-010", 23, 14),
                       ("N-R01-009", 25, 15), ("N-R01-020", 27, 14), ("N-R01-012", 13, 17), ("C-023", 16, 17),
                       ("C-026", 22, 17), ("C-025", 25, 17), ("N-R01-013", 19, 18), ("N-R01-021", 28, 17)):
@@ -511,6 +518,7 @@ def v06():
         m.arch(x, x, 31, "~")
     m.exit_s(30, 37, "V-01")
     m.exit_at(58, 36, "V-11", (56, 36), "W")
+    m.exit_at(1, 36, "V-00", (2, 36), "E")                                                   # 배수 갱도 → 정문 구역 검역실 바닥 배수구
     crops = {1: ("shelf_lettuce", "shelf_bean"), 21: ("shelf_rice", "shelf_mold"), 41: ("shelf_mushroom", "shelf_mold2")}
     for x0, (a, b) in crops.items():
         for i, y in enumerate(range(6, 30, 3)):
@@ -519,11 +527,10 @@ def v06():
         m.p("tank_water" if x0 == 21 else "tank_nutrient", x0 + 7, 3)
         m.p("wall_terminal", x0 + 3, 1); m.p("notice_board", x0 + 13, 1)
     m.c('text 24 1 "수경 농장 단말: 2276 곰팡이병 보고 — 2동·3동 수확량 41% 감소."')
-    m.c('text 13 35 "농장 배수로. 허리를 숙이면 지나갈 수 있다." w=4')
+    m.c('text 13 35 "농장 배수로. 허리를 숙이면 지나갈 수 있다. 서쪽 끝은 배수 갱도 — 정문 구역 검역실 밑으로 이어진다." w=4')
     m.c('npc N-R01-010 10 15 S route=1동:10,15,8;2동:30,12,8;탱크:9,6,4 bark="잎 만지지 마. 곰팡이는 손으로 옮아."')
     m.c('npc N-R01-008 49 20 W route=3동:49,20,8;배수로:40,36,5 cond="year() == 2277 and (MQP4_STAGE < 30 or MQP4_STAGE >= 60)" bark="2동은 이번 주에 갈아엎어야 해."')
     m.c('enemy CR-473 40 36 arm=baton dir=W route=40,36,5;18,36,5 cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60"')                     # 탈출: 배수로 순찰(순찰 3)
-    m.c('trigger 1 35 w=2 h=3 scene=MQ-P4_DRAIN cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60" once')
     return m
 
 
@@ -639,7 +646,7 @@ def v11():
     m.c('npc C-002 13 19 W look=K1-S3-HR08-H2-T01-1-PF11-HD00-EY00 cond="year() == 2268 and MQP2_STAGE == 60" bark="바퀴는 대가리를 쳐!"')
     m.c('trigger 10 15 w=3 h=2 scene=MQ-P2_S06 cond="MQP2_STAGE == 60" once')
     m.p("wall_pipes", 54, 1); m.p("wall_pipes", 58, 1); m.p("crate", 66, 12)
-    m.p("duct_grille", 62, 1)
+    m.p("duct_grille", 61, 1); m.p("drain_hatch", 63, 1)
     m.c('text 64 3 "비상 배수 갱도 철문(원형). 녹이 슬어 바퀴가 꿈쩍하지 않는다." w=3')
     m.c("mark p4_gate11 64 4 N")
     m.c('npc C-002 62 5 E cond="year() == 2277 and MQP4_STAGE >= 30 and MQP4_STAGE < 60 and MQP4_FOLLOW == 0" bark="왔네."')         # 탈출 ④: 혼자 왔을 때 기다리는 하도윤
@@ -652,11 +659,50 @@ def v11():
 ALL = [v00, v01, v02, v03, v04, v05, v06, v07, v08, v09, v10, v11]
 
 
+# ---------------------------------------------------------------- 용기(0-9, SD-12 §7.3·§9.2): 가구 위에 겹쳐 놓는다(가구 칸 = 조사 칸)
+# box x y 종류 w= h= owner=(""·PC·S7·인물 ID) lock=(자물쇠 따기 판정) name="이름". 주인 있는 용기에서 꺼내면 절도(카르마 −5).
+# 장면이 달린 조사 글(무기고 총기 거치대·제어실 레버·오버시어 책상)과는 겹치지 않는다(map_compile이 막는다).
+BOX_PROPS = {                                                                     # 용기를 위해 새로 놓는 가구
+    "V-04": [("crate_metal", 6, 3), ("crate_metal", 13, 3), ("crate_metal", 20, 3), ("crate_metal", 27, 3), ("crate", 12, 35)],
+}
+BOXES = {
+    "V-00": ['box 7 24 locker w=3 owner=S7 name="경비대 사물함"', 'box 33 24 locker w=2 owner=S7 name="검역실 사물함"',
+             'box 28 11 crate w=2 owner=S7 name="반입 화물 상자"', 'box 38 4 cabinet owner=S7 name="제어실 서류함"'],
+    "V-01": ['box 46 31 crate owner=S7', 'box 45 33 pantry w=2 owner=S7 name="배급 창고 상자"', 'box 49 31 desk w=2 owner=S7 name="배급 사무 책상"',
+             'box 49 38 cabinet w=2 owner=S7 name="기록 보관함"'],
+    "V-02": ['box 20 3 cabinet w=3 owner=S7 name="행정 서류함"', 'box 27 3 cabinet owner=S7 name="행정 서류함"',
+             'box 47 3 safe owner=C-001 lock=50 name="오버시어 금고"', 'box 20 23 cabinet owner=S7', 'box 37 23 crate owner=S7'],
+    "V-03": ['box 1 15 school_locker w=3 owner=C-026', 'box 9 15 school_locker w=3 name="주인 없는 사물함"',
+             'box 13 15 school_locker w=3 owner=PC name="내 사물함"', 'box 25 15 school_locker w=3 owner=N-R01-016',
+             'box 35 15 school_locker w=3 owner=S7 name="분실물 사물함"', 'box 44 5 desk w=2 owner=C-023 name="교사 책상"',
+             'box 52 3 cabinet w=2 owner=S7 name="교무 서류함"', 'box 50 36 crate w=2 owner=S7 name="체육 창고 상자"'],
+    "V-04": ['box 6 3 locker owner=N-R01-024 name="A-05 사물함"', 'box 13 3 locker owner=N-R01-022 name="A-06 사물함"',
+             'box 20 3 locker owner=PC name="A-07 내 사물함"', 'box 27 3 locker owner=N-R01-015 name="A-08 사물함"',
+             'box 2 20 crate owner=S7 name="C동 설비 상자"', 'box 16 20 pantry owner=S7 name="C동 배급 상자"',
+             'box 44 20 locker owner=N-R01-015 name="D동 공용 사물함"', 'box 51 20 crate name="버려진 상자"',
+             'box 12 35 crate name="빈방에 남은 상자"'],
+    "V-05": ['box 2 10 cabinet owner=S7 name="테이프 보관함"'],
+    "V-06": ['box 23 6 pantry w=3 owner=S7 name="수확물 선반"', 'box 43 6 pantry w=3 owner=N-R01-010 name="버섯 선반"'],
+    "V-07": ['box 21 3 cabinet w=2 owner=S7 name="판정 기록함"', 'box 26 18 crate w=2 name="먼지 쌓인 상자"'],
+    "V-08": ['box 24 3 aid w=2 owner=S7 name="의무과 약품장"', 'box 33 3 aid w=2 owner=S7 lock=25 name="약품장(잠김)"',
+             'box 27 6 crate w=2 owner=S7 name="의무과 물품 상자"', 'box 2 7 desk w=2 owner=C-025 name="의무관 책상"',
+             'box 12 3 cabinet owner=S7 name="진료 기록함"'],
+    "V-09": ['box 25 8 ammo w=2 owner=S7 lock=25 name="보안과 탄약 상자"', 'box 18 9 safe owner=C-022 lock=75 name="보안부장 금고"',
+             'box 4 6 desk w=2 owner=C-022 name="보안부장 책상"', 'box 1 3 cabinet w=2 owner=S7 name="보안 서류함"'],
+    "V-10": ['box 2 19 crate w=2 owner=S7 name="설비 부품 상자"', 'box 50 38 crate w=2 name="굴러다니는 상자"'],
+    "V-11": ['box 3 10 crate w=2 name="배관공 상자"', 'box 66 12 crate name="녹슨 상자"', 'box 22 4 aid name="민방위 비상용품함"'],
+}
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     force = "--force" in sys.argv
     for f in ALL:
         m = f()
+        for name, x, y in BOX_PROPS.get(m.id, []):
+            m.p(name, x, y)
+        for b in BOXES.get(m.id, []):
+            m.c(b)
         p = os.path.join(OUT, m.id + ".map")
         if os.path.exists(p) and not force:
             print("건너뜀(이미 있음):", p)

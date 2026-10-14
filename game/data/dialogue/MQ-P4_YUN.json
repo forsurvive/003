@@ -1,0 +1,190 @@
+{
+ "id": "MQ-P4_YUN",
+ "title": "정문 구역 서쪽 비상 통로 — 엄마",
+ "loc": "L-R01-01",
+ "npc": "",
+ "cond": "MQP4_STAGE >= 30 and MQP4_STAGE < 60 and MQP4_TALK == 1 and MQP4_DECOY == 0",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "cmd",
+   "name": "show",
+   "args": [
+    "C-001",
+    "4,5",
+    "W"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "fade_in",
+   "args": [
+    "black",
+    "6"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "오버시어 전용 비상 계단 끝, 정문 구역 서쪽 비상 통로. 데크 쪽 문틈으로 계엄군 철모가 보인다."
+  },
+  {
+   "op": "line",
+   "who": "C-001",
+   "emo": "기본",
+   "text": "(무전) 대령님, 윤정인입니다. 아이가 농장 배수로로 갔어요. 분대를 그쪽으로 보내세요."
+  },
+  {
+   "op": "line",
+   "who": "C-004",
+   "emo": "기본",
+   "text": "(무전) …확인한다. 분대, 수경 농장으로. 파워 아머는 정문을 지켜라."
+  },
+  {
+   "op": "do",
+   "fx": "MQP4_DECOY = 2"
+  },
+  {
+   "op": "cmd",
+   "name": "refresh",
+   "args": []
+  },
+  {
+   "op": "cmd",
+   "name": "show",
+   "args": [
+    "BJ1",
+    "13,10",
+    "S",
+    "en_cr401_loco"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "show",
+   "args": [
+    "BJ2",
+    "16,11",
+    "S",
+    "en_cr401_loco"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "show",
+   "args": [
+    "BJ3",
+    "23,11",
+    "S",
+    "en_cr401_loco"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "go",
+   "args": [
+    "BJ1",
+    "18,22",
+    "run"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "go",
+   "args": [
+    "BJ2",
+    "19,22",
+    "run"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "go",
+   "args": [
+    "BJ3",
+    "20,22",
+    "run"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "wait",
+   "args": [
+    "go"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "hide",
+   "args": [
+    "BJ1"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "hide",
+   "args": [
+    "BJ2"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "hide",
+   "args": [
+    "BJ3"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "군홧발 소리가 검역실 쪽으로 멀어진다. 데크에는 문 옆의 파워 아머 하나만 남는다."
+  },
+  {
+   "op": "line",
+   "who": "C-001",
+   "emo": "기본",
+   "text": "오버시어 비상 개방 단말. 이 열쇠로만 돌아가."
+  },
+  {
+   "op": "cmd",
+   "name": "move",
+   "args": [
+    "C-001",
+    "2,3"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "face",
+   "args": [
+    "C-001",
+    "N"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "엄마가 목에 건 열쇠를 꽂고 돌린다."
+  },
+  {
+   "op": "cmd",
+   "name": "escape",
+   "args": [
+    "gate"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/prologue/MQ-P4.txt"
+}

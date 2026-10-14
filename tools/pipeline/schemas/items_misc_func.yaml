@@ -1,0 +1,13 @@
+# SD-13 §7.6 기능성 잡동사니 → game/data/items_misc_func.json (머리핀·빈 홀로테이프, 0-9 정합)
+doc: 13_items.md
+id_column: ID
+section: "### 7.6 기능성·판매용 잡동사니 (M-070~M-099, 신규 기능성 M-163~M-194)"
+rows: [M-070, M-075]
+columns:
+  ID: {field: id, type: id, pattern: "^M-\\d{3}$", required: true}
+  이름: {field: name, type: str, required: true}
+  가치: {field: value, type: int}
+  무게: {field: weight, type: float}
+  기능: {field: desc, type: str}
+derive:
+  cat: "'misc'"

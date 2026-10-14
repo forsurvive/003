@@ -18,6 +18,9 @@
   sign x y "글자"                벽면 윗칸에 붙는 문패(그림은 게임이 그린다).
   trigger x y scene=장면 [w= h=] [cond="식"] [once]
                                  밟으면 대화 장면을 연다(cond가 참일 때, once면 한 번만).
+  box x y 종류 [w= h=] [owner=인물ID|S7|PC] [lock=판정값] [name="이름"] [cond="식"]
+                                 용기(SD-12 §7.3, 0-9): 그 칸(보통 소품)을 조사하면 2단 창. 종류 = loot_s07.json 표. owner가 있으면
+                                 [소유](꺼내면 절도), lock이면 [자물쇠 따기 n] 판정 뒤 열린다.
   enemy ID x y [cond="식"] [arm=baton|pistol] [who=인물ID] [dir=방향] [stance=hold] [route=x,y,초;…]
                                  적(SD-14). route면 순찰(닿으면 그 초만큼 서서 둘러본다), stance=hold면 제자리 경계(0-9).
   prop·sign·npc에도 cond="식"을 붙일 수 있다(시대·퀘스트에 따라 있다 없다 — 예: year() == 2259).
@@ -186,8 +189,10 @@ def compile_map(m, prop_meta, known_vars, known_fns, scenes=()):
             floor_ids[y][x] = ft[FLOOR[nb[0]]] if nb else ft["panel"]
     solid = [[0 if floor(x, y) else 1 for x in range(W)] for y in range(H)]
     out = {"id": m.id, "name": m.name, "set": m.set, "size": [W, H], "props": [], "doors": [], "exits": [], "marks": {},
-           "npcs": [], "texts": [], "signs": [], "triggers": [], "enemies": []}
+           "npcs": [], "texts": [], "signs": [], "triggers": [], "enemies": [], "boxes": []}
+    loot_kinds = set(json.load(open(os.path.join(ROOT, "game", "data", "loot_s07.json"), encoding="utf-8"))["tables"].keys())
     enemy_ids = set(json.load(open(os.path.join(ROOT, "game", "data", "enemies.json"), encoding="utf-8")).keys())
+    npc_ids = set(json.load(open(os.path.join(ROOT, "game", "data", "npcs.json"), encoding="utf-8"))["npcs"].keys())
     for ln, words in m.cmds:
         pos, opt = kv(words[1:])
         c = words[0]
@@ -296,6 +301,21 @@ def compile_map(m, prop_meta, known_vars, known_fns, scenes=()):
                             raise Err(f"순찰 지점 ({rx},{ry})가 빈 바닥이 아니다")
                         e["route"].append([rx, ry, float(mm.group(3) or 2)])
                 out["enemies"].append(e)
+            elif c == "box":                                     # box x y 종류 [w= h=] [owner=] [lock=] [name=] [cond=] — 용기(0-9)
+                x, y, kind = int(pos[0]), int(pos[1]), pos[2]
+                if kind not in loot_kinds:
+                    raise Err(f"모르는 용기 종류 '{kind}'(loot_s07.json: {sorted(loot_kinds)})")
+                e = {"x": x, "y": y, "w": int(opt.get("w", 1)), "h": int(opt.get("h", 1)), "kind": kind,
+                     "owner": opt.get("owner", ""), "lock": int(opt.get("lock", 0)), "name": opt.get("name", ""), "cond": opt.get("cond", "")}
+                if e["cond"]:
+                    check_cond(e["cond"], known_vars, known_fns)
+                if not (0 <= x < W and 0 <= y < H):
+                    raise Err(f"용기 ({x},{y})가 맵 밖이다")
+                if any(b["x"] == x and b["y"] == y for b in out["boxes"]):
+                    raise Err(f"용기 ({x},{y})가 두 번 놓였다")
+                if e["owner"] not in ("", "PC", "S7") and e["owner"] not in npc_ids:
+                    raise Err(f"용기 주인 '{e['owner']}'를 모른다(\"\"·PC·S7·인물 ID)")
+                out["boxes"].append(e)
             elif c == "text":
                 x, y, txt = int(pos[0]), int(pos[1]), pos[2]
                 e = {"x": x, "y": y, "w": int(opt.get("w", 1)), "h": int(opt.get("h", 1)), "text": txt}
@@ -367,6 +387,15 @@ def compile_map(m, prop_meta, known_vars, known_fns, scenes=()):
         for r in n["route"]:
             if (r[1], r[2]) not in seen:
                 m.err(n["line"], f"인물 {n['id']} 일과 지점 {r[0]}에 갈 수 없다")
+    staged = {(t["x"] + i, t["y"] + j) for t in out["texts"] if t.get("scene") or t.get("seq")
+              for j in range(t["h"]) for i in range(t["w"])}
+    for b in out["boxes"]:                                       # 용기가 장면 달린 조사 글을 가리면 장면을 못 연다
+        cells = {(b["x"] + i, b["y"] + j) for j in range(b["h"]) for i in range(b["w"])}
+        if cells & staged:
+            m.err(1, f"용기 ({b['x']},{b['y']})가 장면이 달린 조사 글과 겹친다: {sorted(cells & staged)}")
+        for (cx, cy) in cells:
+            if not solid[cy][cx]:
+                m.err(1, f"용기 ({b['x']},{b['y']}) 칸 ({cx},{cy})에 가구가 없다(빈 바닥)")
     out["floor"] = floor_ids
     out["wall"] = wall_ids
     out["solid"] = ["".join(str(min(1, v)) for v in row) for row in solid]

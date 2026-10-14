@@ -3,6 +3,7 @@ class_name Combatant
 extends RefCounted
 
 signal died
+signal hit                                    ## 맞았지만 쓰러지지 않았다(주민 폭행 반응, 0-9)
 var actor                                     ## loco.logical을 가진 것(Actor 또는 표적 자리표)
 var team := "player"
 var hp := 100.0
@@ -38,7 +39,10 @@ func take(result: Dictionary, from: Vector2) -> void:
 	flash = 3
 	if hp_floor > 0.0 and hp < hp_floor:
 		hp = hp_floor
+		hit.emit()
 		return
+	if hp > 0.0:
+		hit.emit()
 	if hp <= 0.0:
 		hp = 0.0
 		dead = true

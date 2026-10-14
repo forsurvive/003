@@ -99,3 +99,7 @@ npc N-R01-018 21 15 S route=무기고앞:22,15,10;복도:3,16,5 cond="year() == 
 enemy CR-473 22 15 arm=baton who=N-R01-018 dir=N route=22,15,4;12,16,2;24,16,3 cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60"
 text 22 14 "무기고 철문." scene=MQ-P4_ARMORY cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60 and MQP4_ARMORY == 0"
 text 22 3 "총기 거치대." scene=MQ-P4_GUNS cond="MQP4_ARMORY == 1"
+box 25 8 ammo w=2 owner=S7 lock=25 name="보안과 탄약 상자"
+box 18 9 safe owner=C-022 lock=75 name="보안부장 금고"
+box 4 6 desk w=2 owner=C-022 name="보안부장 책상"
+box 1 3 cabinet w=2 owner=S7 name="보안 서류함"

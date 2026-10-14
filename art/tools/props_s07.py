@@ -216,6 +216,121 @@ def duct_grille():
     return im
 
 
+HATCH_WHEEL = 4                                      # 원형 철문: 바퀴 4컷(22.5도씩, 손잡이 4개라 90도마다 같은 그림) + 문 젖힘 6컷(15도씩)
+HATCH_SWING = 6
+HATCH_FRAMES = HATCH_WHEEL + HATCH_SWING
+
+
+def drain_hatch(frame=0):
+    """비상 배수 갱도 원형 철문(V-11, 벽면 3칸 × 2줄 = 96×64, 바닥선에 붙는다).
+    컷 0~3: 닫힌 문의 바퀴가 22.5도씩 돈다. 컷 4~9: 왼쪽 경첩으로 15~90도 젖혀진다(문 면이 cos만큼 좁아지고, 두께가 sin만큼 보인다).
+    문 뒤는 갱도: 검은 원통 안쪽 고리 셋 + 젖은 바닥 반사 + 끝의 흰 바깥 빛(디더). 녹은 아래쪽에 고인다."""
+    W, H = 96, 64
+    im = img(W, H)
+    px = im.load()
+    cx, cy = 48, 33
+    R_COL, R_IN, R_DOOR = 30, 26, 25
+    wheel = frame if frame < HATCH_WHEEL else 0
+    th = math.radians(15 * (frame - HATCH_WHEEL + 1)) if frame >= HATCH_WHEEL else 0.0
+    def put(x, y, t):
+        if 0 <= x < W and 0 <= y < H:
+            px[x, y] = C(t)
+    # 콘크리트 테(집수 고리)
+    for y in range(H):
+        for x in range(W):
+            dx, dy = x - cx + 0.5, y - cy + 0.5
+            r = math.hypot(dx, dy)
+            if R_IN <= r <= R_COL:
+                lit = (-dx - dy) / max(r, 1)
+                put(x, y, "P13" if lit > 0.45 else ("P10" if lit < -0.55 else "P11"))
+            elif r < R_IN:                                     # 갱도 안쪽(문이 가리지 않는 곳만 보인다)
+                put(x, y, "P00")
+    for k in range(8):                                         # 테의 볼트
+        a = k * math.pi / 4 + math.pi / 8
+        bx, by = round(cx + 28 * math.cos(a)), round(cy + 28 * math.sin(a))
+        put(bx, by, "P07"); put(bx + 1, by + 1, "P10")
+    # 갱도 깊이: 안쪽 고리 셋 + 끝의 바깥 빛 + 젖은 바닥
+    for rr, t in ((21, "P01"), (15, "P02"), (10, "P01")):
+        for i in range(160):
+            a = i * 2 * math.pi / 160
+            put(round(cx + rr * math.cos(a)), round(cy - 2 + rr * 0.92 * math.sin(a)), t)
+    for y in range(cy - 7, cy + 4):
+        for x in range(cx - 5, cx + 6):
+            r = math.hypot(x - cx, (y - cy + 2) * 1.1)
+            if r <= 3.2:
+                put(x, y, "P09")
+            elif r <= 5.4 and (x + y) % 2 == 0:
+                put(x, y, "P08")
+    for x in range(cx - 14, cx + 15):                          # 바닥에 고인 물: 바깥 빛이 한 줄 비친다
+        y = cy + 17 - round(abs(x - cx) * 0.12)
+        put(x, y, "P35" if abs(x - cx) > 3 else "P37")
+        if abs(x - cx) <= 8 and x % 3 == 0:
+            put(x, y + 2, "P36")
+    # 문(경첩 = 왼쪽 끝). 젖힐수록 면이 cos로 좁아지고 어두워진다
+    s = math.cos(th)
+    hx = cx - R_DOOR
+    face = ["P05", "P04", "P04", "P03", "P03", "P02", "P02"][min(6, int(round(math.degrees(th) / 15)))]
+    for y in range(H):
+        for x in range(W):
+            if s < 0.05:
+                break
+            lx = (x + 0.5 - hx) / s - R_DOOR                  # 문 면 좌표(가운데 0)
+            ly = y + 0.5 - cy
+            r = math.hypot(lx, ly)
+            if r > R_DOOR:
+                continue
+            t = face
+            lit = (-lx - ly) / max(r, 1)
+            if r > R_DOOR - 2.2:
+                t = "P07" if lit > 0.3 and th == 0 else "P03"                       # 테두리 띠
+            elif r > R_DOOR - 4.5:
+                t = "P04"
+            elif th == 0 and lit > 0.55 and r > 14:
+                t = "P06"                                                           # 위왼쪽 반사
+            n = ((int(lx + 40) * 73856093) ^ (int(ly + 40) * 19349663)) % 97 / 97.0   # 문 면에 붙은 녹(젖혀도 같은 자리)
+            if ly > 4 and r < R_DOOR - 3 and n < (ly - 4) / 26.0:
+                t = "P25" if n < (ly - 4) / 70.0 else "P24"                          # 아래로 갈수록 짙게 고인 녹
+            put(x, y, t)
+    if th > 0:                                                 # 문 두께(젖혀진 만큼 오른쪽 끝에 보인다)
+        thick = max(1, round(5 * math.sin(th)))
+        for y in range(H):
+            ly = y + 0.5 - cy
+            if abs(ly) > R_DOOR - 1:
+                continue
+            ex = hx + 2 * R_DOOR * s * (math.sqrt(max(0.0, 1 - (ly / R_DOOR) ** 2)) * 0.5 + 0.5)
+            for k in range(thick):
+                put(round(ex) + k, y, "P02" if k else "P06")
+    # 바퀴(손잡이 4개): 문 면 좌표에서 그려 cos로 눌러 찍는다
+    if s > 0.2:
+        rot = math.radians(22.5 * wheel)
+        def wp(lx, ly):
+            return round(hx + (lx + R_DOOR) * s), round(cy + ly)
+        for i in range(120):
+            a = i * 2 * math.pi / 120
+            for rr, t in ((12, "P02"), (11, "P07" if th == 0 else "P05")):
+                x, y = wp(rr * math.cos(a), rr * math.sin(a))
+                put(x, y, t)
+        for k in range(4):
+            a = rot + k * math.pi / 2
+            for step in range(3, 11):
+                x, y = wp(step * math.cos(a), step * math.sin(a))
+                put(x, y, "P06" if th == 0 else "P04"); put(x, y + 1, "P02")
+            x, y = wp(12.5 * math.cos(a), 12.5 * math.sin(a))      # 손잡이 혹
+            put(x, y, "P08" if th == 0 else "P05"); put(x + 1, y, "P03")
+        hx0, hy0 = wp(0, 0)
+        for dx in (-2, -1, 0, 1, 2):
+            for dy in (-2, -1, 0, 1, 2):
+                if dx * dx + dy * dy <= 5:
+                    put(hx0 + dx, hy0 + dy, "P03" if dx * dx + dy * dy > 2 else ("P07" if th == 0 else "P04"))
+    # 경첩(왼쪽): 두 개
+    for yy in (cy - 14, cy + 10):
+        for x in range(hx - 4, hx + 2):
+            for y in range(yy, yy + 5):
+                put(x, y, "P03" if y in (yy, yy + 4) else "P05")
+        put(hx - 2, yy + 2, "P08")
+    return im
+
+
 def wall_clock():
     return S.wall_clock(10, 12)
 
@@ -834,6 +949,7 @@ PROPS = {
     "quarantine_sign": _r(quarantine_sign, 1, 0, "wall", dy=10),
     "wall_pipes": _r(wall_pipes, 3, 0, "wall", dy=8),
     "duct_grille": _r(duct_grille, 1, 0, "wall", dy=12),
+    "drain_hatch": _r(lambda: drain_hatch(0), 3, 0, "wall", dy=0),                 # 비상 배수 갱도 원형 철문(0-9, 컷 HATCH_FRAMES)
     "lever_panel": _r(lever_panel, 2, 0, "wall", dy=10),
     # 바닥 소품
     "canteen_table": _r(lambda: S.canteen_table(4), 4, 1, down=4),
@@ -915,6 +1031,7 @@ PROP_STATES = {
 # 문 열린 그림(문 소품의 둘째 칸)
 DOOR_OPEN = {"door_slide": lambda: door(None, "open"), "door_hatch": lambda: door(None, "open", "hatch"),
              "door_iron": lambda: door(None, "open", "iron")}
+PROP_FRAMES = {"drain_hatch": (drain_hatch, HATCH_FRAMES)}   # 컷이 여럿인 소품(연출 명령 anim) — 방폭문은 GEAR_FRAMES로 따로
 GEAR_FRAMES = 22                                     # 굴러 열리는 컷: 컷마다 10px(210/21) — 회전각 = 거리/반지름이라 미끄러지지 않는다
 
 

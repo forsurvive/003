@@ -1,0 +1,14 @@
+# SD-13 §7.3 제작 재료 → game/data/items_misc_mat.json (볼트 S-07 설비 상자·서랍, 0-9 정합)
+doc: 13_items.md
+id_column: ID
+section: "### 7.3 제작 재료 (M-010~M-049)"
+rows: [M-010, M-012, M-014, M-015, M-025, M-044, M-046]
+columns:
+  분류: {field: kind, type: str}
+  ID: {field: id, type: id, pattern: "^M-\\d{3}$", required: true}
+  이름: {field: name, type: str, required: true}
+  가치: {field: value, type: int}
+  무게: {field: weight, type: float}
+  쓰이는 곳: {field: desc, type: str}
+derive:
+  cat: "'misc'"

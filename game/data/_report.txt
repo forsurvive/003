@@ -1,8 +1,11 @@
 데이터 빌드 v0 — 오류 0
   enemies: 4행
-  items_aid: 1행
+  items_aid: 4행
   items_apparel: 1행
-  items_food: 1행
+  items_food: 4행
+  items_misc_func: 2행
+  items_misc_mat: 7행
+  items_misc_money: 2행
   items_quest: 10행
   karma_titles: 35행
   skills_text: 13행

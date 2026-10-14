@@ -48,6 +48,8 @@ exit 30 39 V-01 from_V-06
 mark from_V-01 30 37 N
 exit 58 36 V-11 from_V-06
 mark from_V-11 56 36 W
+exit 1 36 V-00 from_V-06
+mark from_V-00 2 36 E
 prop shelf_lettuce 3 6
 prop shelf_lettuce 12 6
 prop shelf_lettuce 3 9
@@ -106,8 +108,9 @@ prop tank_nutrient 48 3
 prop wall_terminal 44 1
 prop notice_board 54 1
 text 24 1 "수경 농장 단말: 2276 곰팡이병 보고 — 2동·3동 수확량 41% 감소."
-text 13 35 "농장 배수로. 허리를 숙이면 지나갈 수 있다." w=4
+text 13 35 "농장 배수로. 허리를 숙이면 지나갈 수 있다. 서쪽 끝은 배수 갱도 — 정문 구역 검역실 밑으로 이어진다." w=4
 npc N-R01-010 10 15 S route=1동:10,15,8;2동:30,12,8;탱크:9,6,4 bark="잎 만지지 마. 곰팡이는 손으로 옮아." cond="year() == 2277"
 npc N-R01-008 49 20 W route=3동:49,20,8;배수로:40,36,5 cond="year() == 2277 and (MQP4_STAGE < 30 or MQP4_STAGE >= 60)" bark="2동은 이번 주에 갈아엎어야 해."
 enemy CR-473 40 36 arm=baton dir=W route=40,36,5;18,36,5 cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60"
-trigger 1 35 w=2 h=3 scene=MQ-P4_DRAIN cond="MQP4_STAGE >= 30 and MQP4_STAGE < 60" once
+box 23 6 pantry w=3 owner=S7 name="수확물 선반"
+box 43 6 pantry w=3 owner=N-R01-010 name="버섯 선반"

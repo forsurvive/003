@@ -27,6 +27,9 @@ var names := {}                         ## 아이템·장소 ID -> 이름(\I·\L
 var weapon_out := false
 var events: Array = []                  ## 알림: [{"kind": "karma"|"item"|"xp"|"aff"|"caps", ...}]
 var fns := {}                           ## 추가 함수(이벤트 실행기 등이 등록): 이름 -> Callable(args: Array) -> Variant
+var boxes := {}                         ## 용기 상태(0-9): "맵:x,y@연도" -> {"items": {ID: 수}, "opened": 연 횟수, "taken": 꺼낸 횟수}
+var stolen := {}                        ## 장물(SD-12 §9.2): 아이템 ID -> 훔친 수(그 수만큼 [장물] 표시)
+var dead := {}                          ## 죽은 인물 ID -> true(0-9): 뒤 시대 맵에서 서지 않는다
 var portrait_alias := {}                ## 인물 ID -> 초상화 키(맵에서 다른 시대 모습으로 선 인물: 2259년 아이 하도윤 등)
 
 
@@ -41,8 +44,10 @@ func _init() -> void:
 	for k in ["PC_CAPS", "PC_XP", "PC_SEX", "PC_APT_PROXY"]:   # PC_APT_PROXY: 적성 평가 대리 작성 유형 1~4(0 = 아님, 단계 0-8)
 		vars.declare(k, "int", 0)
 	# MQ-P4 진행 표시(단계 0-9, 정합): DUCT 덕트 엿듣기 1 · FOLLOW 하도윤 동행 1 · KEY 무기고 열쇠 1 · ARMORY 무기고 열림 1 ·
-	# TALK 설득 1 성공 2 실패 · BJ_KO 계엄병 사망 수 · SEC_KO 보안요원 사살 수 · CAUGHT 붙잡힌 횟수
-	for k in ["MQP4_DUCT", "MQP4_FOLLOW", "MQP4_KEY", "MQP4_ARMORY", "MQP4_TALK", "MQP4_BJ_KO", "MQP4_SEC_KO", "MQP4_CAUGHT"]:
+	# TALK 설득 1 성공 2 실패 · BJ_KO 계엄병 사망 수 · SEC_KO 보안요원 사살 수 · CAUGHT 붙잡힌 횟수 · DECOY 데크 분대가 빠짐(1 하도윤 미끼 · 2 엄마의 거짓 무전)
+	# S7_THEFT_SEEN: 볼트 안에서 훔치다 들킨 횟수(SD-12 §9.2) · S7_ASSAULT: 주민을 때린 횟수 · S7_KILLS: 죽인 주민 수(SD-10 §6.3)
+	for k in ["MQP4_DUCT", "MQP4_FOLLOW", "MQP4_KEY", "MQP4_ARMORY", "MQP4_TALK", "MQP4_BJ_KO", "MQP4_SEC_KO", "MQP4_CAUGHT", "MQP4_DECOY",
+			"S7_THEFT_SEEN", "S7_ASSAULT", "S7_KILLS"]:
 		vars.declare(k, "int", 0)
 	for k in ["P_SURNAME", "P_GIVEN", "P_FULL", "P_REGNO", "PC_APT"]:   # PC_APT: 적성 평가 답 10개(결과지 다시 보기)
 		vars.declare(k, "str", "")

@@ -70,7 +70,8 @@ trigger 10 15 w=3 h=2 scene=MQ-P2_S06 cond="MQP2_STAGE == 60" once
 prop wall_pipes 54 1
 prop wall_pipes 58 1
 prop crate 66 12
-prop duct_grille 62 1
+prop duct_grille 61 1
+prop drain_hatch 63 1
 text 64 3 "비상 배수 갱도 철문(원형). 녹이 슬어 바퀴가 꿈쩍하지 않는다." w=3
 mark p4_gate11 64 4 N
 npc C-002 62 5 E cond="year() == 2277 and MQP4_STAGE >= 30 and MQP4_STAGE < 60 and MQP4_FOLLOW == 0" bark="왔네."
@@ -79,3 +80,6 @@ text 27 3 "환기 덕트. 위로 올라가면 관리동 화장실이다."
 prop wall_pipes 3 22
 prop wall_pipes 34 22
 prop wall_pipes 50 22
+box 3 10 crate w=2 name="배관공 상자"
+box 66 12 crate name="녹슨 상자"
+box 22 4 aid name="민방위 비상용품함"

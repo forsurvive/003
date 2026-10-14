@@ -10,6 +10,7 @@ from grid import parse, upscale, check
 
 ROOT = os.path.dirname(os.path.dirname(__file__))
 W, H = 640, 360
+FAR_ONLY = False  # True: 먼 풍경만(첫 풍경 컷신 배경)
 CX = 320  # viewer's horizontal position (side faces flip around it)
 _cache = {}
 
@@ -833,6 +834,8 @@ def build():
              gap=(3, 12))
     tree_clump(cv, 0, W, 272, 53, ["P03", "P28", "P28", "P29", "P29", "P30", "P26"], size=(3, 7), density=0.6, jitter=3)
     smoke(cv, 404, 258, 128, 34, 3, near=True)
+    if FAR_ONLY:                                            # 첫 풍경 컷신(0-9): 먼 풍경만 — 앞쪽 비탈·볼트 출구·사람은 게임이 타일로 얹는다
+        return cv.img
     top_rock = foreground(cv)
     pine(cv, 604, 350, 150, 3, lean=-0.16, pads=[(0.45, -18, 13, 5), (0.58, 12, 15, 6), (0.72, -14, 16, 6),
                                                  (0.84, 8, 18, 6), (0.97, -4, 20, 7)])

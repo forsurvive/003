@@ -2,7 +2,7 @@
 doc: 13_items.md
 id_column: ID
 section: "### 6.2 의약품 (I-001~I-009)"
-rows: [I-001]
+rows: [I-001, I-002, I-004, I-005]
 columns:
   ID: {field: id, type: id, pattern: "^I-\\d{3}$", required: true}
   이름: {field: name, type: str, required: true}

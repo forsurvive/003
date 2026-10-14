@@ -70,18 +70,25 @@
   },
   {
    "op": "cmd",
-   "name": "cam",
-   "args": [
-    "19,7",
-    "10"
-   ]
-  },
-  {
-   "op": "cmd",
    "name": "lamp",
    "args": [
     "p4_lever",
     "amber"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "sfx",
+   "args": [
+    "lever"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "cam",
+   "args": [
+    "19,7",
+    "12"
    ]
   },
   {
@@ -93,9 +100,54 @@
   },
   {
    "op": "cmd",
+   "name": "lamp",
+   "args": [
+    "16,9",
+    "amber"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "lamp",
+   "args": [
+    "22,9",
+    "amber"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "lamp",
+   "args": [
+    "16,9",
+    "amber"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "lamp",
+   "args": [
+    "22,9",
+    "amber"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "경고등이 돈다. 톱니 문 가장자리에서 200년 묵은 먼지가 떨어진다."
+  },
+  {
+   "op": "cmd",
    "name": "shake",
    "args": [
-    "4"
+    "6"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "wait",
+   "args": [
+    "6"
    ]
   },
   {
@@ -103,7 +155,7 @@
    "name": "gate",
    "args": [
     "open",
-    "60"
+    "90"
    ]
   },
   {
@@ -466,6 +518,56 @@
    "who": "C-001",
    "emo": "기본",
    "text": "오버시어실로 가시죠. 거기서 얘기합시다. …도 부장, 사람들 해산시켜요."
+  },
+  {
+   "op": "line",
+   "who": "C-004",
+   "emo": "기본",
+   "text": "정문은 닫는다. 인도가 끝날 때까지 볼트를 봉쇄한다. 분대는 데크에 남는다."
+  },
+  {
+   "op": "cmd",
+   "name": "cam",
+   "args": [
+    "19,7",
+    "8"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "sfx",
+   "args": [
+    "gate_alarm"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "gate",
+   "args": [
+    "close",
+    "70"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "shake",
+   "args": [
+    "4"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "흰 빛이 반달이 되고, 실금이 되고, 사라진다. 방폭문이 제자리로 굴러 돌아왔다."
+  },
+  {
+   "op": "cmd",
+   "name": "cam",
+   "args": [
+    "p4_yuk",
+    "6"
+   ]
   },
   {
    "op": "cmd",

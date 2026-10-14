@@ -1,0 +1,141 @@
+{
+ "id": "MQ-P4_GATEOPEN",
+ "title": "정문 — 방폭문 개방",
+ "loc": "L-R01-01",
+ "npc": "",
+ "cond": "V_ESCAPE >= 1 and MQP4_STAGE < 60",
+ "labels": {
+  "START": 0,
+  "CALM": 16
+ },
+ "ops": [
+  {
+   "op": "cmd",
+   "name": "cam",
+   "args": [
+    "19,7",
+    "12"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "sfx",
+   "args": [
+    "gate_alarm"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "lamp",
+   "args": [
+    "16,9",
+    "amber"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "lamp",
+   "args": [
+    "22,9",
+    "amber"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "lamp",
+   "args": [
+    "16,9",
+    "amber"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "lamp",
+   "args": [
+    "22,9",
+    "amber"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "경고등이 돈다. 봉쇄 쐐기가 하나씩 빠지는 소리가 벽 속을 지나간다."
+  },
+  {
+   "op": "cmd",
+   "name": "shake",
+   "args": [
+    "6"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "wait",
+   "args": [
+    "6"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "gate",
+   "args": [
+    "open",
+    "90"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "flash",
+   "args": [
+    "white"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "흰 빛. 같은 날 두 번째로, 방폭문이 굴러 열린다."
+  },
+  {
+   "op": "if",
+   "cond": "V_ESCAPE >= 3",
+   "to": "CALM"
+  },
+  {
+   "op": "cmd",
+   "name": "escape",
+   "args": [
+    "alarm"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "hint",
+   "args": [
+    "방폭문으로 — 파워 아머 옆을 지나 문밖으로",
+    "6"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "hint",
+   "args": [
+    "방폭문으로",
+    "5"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/prologue/MQ-P4.txt"
+}

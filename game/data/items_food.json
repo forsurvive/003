@@ -1,4 +1,37 @@
 {
+ "I-026": {
+  "_src": "13_items.md:854",
+  "cat": "aid",
+  "desc": "HP +10 · 라드 +2",
+  "heal": 10,
+  "id": "I-026",
+  "name": "청솔 참치 통조림",
+  "rads": 2,
+  "value": 6,
+  "weight": 0.5
+ },
+ "I-028": {
+  "_src": "13_items.md:856",
+  "cat": "aid",
+  "desc": "HP +5 · 라드 +2",
+  "heal": 5,
+  "id": "I-028",
+  "name": "청솔 크림빵 '달콤'",
+  "rads": 2,
+  "value": 4,
+  "weight": 0.2
+ },
+ "I-030": {
+  "_src": "13_items.md:858",
+  "cat": "aid",
+  "desc": "HP +5 · 라드 +0",
+  "heal": 5,
+  "id": "I-030",
+  "name": "태성 군용 건빵",
+  "rads": 0,
+  "value": 4,
+  "weight": 0.2
+ },
  "I-036": {
   "_src": "13_items.md:864",
   "cat": "aid",

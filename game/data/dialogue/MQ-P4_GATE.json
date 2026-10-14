@@ -1,15 +1,21 @@
 {
  "id": "MQ-P4_GATE",
- "title": "정문 — 방폭문 밖",
+ "title": "정문 — 문턱",
  "loc": "L-R01-01",
  "npc": "",
- "cond": "MQP4_STAGE >= 30 and MQP4_STAGE < 60",
+ "cond": "MQP4_STAGE >= 30 and MQP4_STAGE < 60 and V_ESCAPE >= 1",
  "labels": {
   "START": 0,
-  "PASS": 3,
-  "OUT": 4
+  "PASS": 4,
+  "QUIET": 6,
+  "OUT": 7
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "V_ESCAPE >= 3",
+   "to": "QUIET"
+  },
   {
    "op": "if",
    "cond": "MQP4_BJ_KO == 0",
@@ -32,11 +38,20 @@
    "text": "쏘지 마! 후보다. …다시 만난다."
   },
   {
+   "op": "goto",
+   "to": "OUT"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "문턱 너머로 바람이 분다."
+  },
+  {
    "op": "cmd",
    "name": "escape",
    "args": [
-    "done",
-    "1"
+    "out"
    ]
   },
   {

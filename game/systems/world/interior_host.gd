@@ -38,6 +38,7 @@ const CROUCH_WALK := {"walk": {"frames": 6, "px": 4.0, "px_v": 3.0, "diag": 3.0,
 const TODDLER_WALK := {"walk": {"frames": 6, "px": 4.0, "px_v": 3.0, "diag": 3.0, "contact": [0, 3], "speed_t": 1.8}}
 var combat: InteriorCombat                       ## 실내 전투(무기·표적·적) — 무기를 들지 않으면 아무것도 하지 않는다
 var pipboy: PipBoy                               ## 열려 있는 핍-보이(없으면 null)
+var container: ContainerScreen                   ## 열려 있는 용기 창(없으면 null, 0-9)
 var pipboy_ok := false                           ## 핍-보이를 받았다(MQ-P2 생일잔치부터)
 var items_db := {}                               ## 아이템 ID -> 이름·분류·설명(data/items.json + weapons.json)
 var date_text := ""                              ## 핍-보이 위 줄 날짜
@@ -69,6 +70,8 @@ func _ready() -> void:
 	add_child(combat)
 	combat.message.connect(func(t: String) -> void: hint(t, 3.0))
 	combat.hurt.connect(func(_a: float) -> void: _hurt_t = 0.3)
+	combat.resident_hit.connect(_on_resident_hit)
+	combat.resident_down.connect(_on_resident_down)
 	_handlers()
 	_load_items()
 	var layer := CanvasLayer.new()
@@ -140,9 +143,11 @@ func enter(map_id: String, mark: String = "", look: Dictionary = {}) -> void:
 	player._show()
 	_last_tile = map.tile_of(player.loco.logical)
 	_spawn_npcs()
-	if map_id == "V-00" and st.quests.stage("MQ-P4") >= 30:               # 개방식 뒤: 방폭문은 열린 채(맵을 다시 열 때마다)
-		map.set_gate(1.0)
+	if map_id == "V-00" and int(st.vars.get_v("V_ESCAPE")) >= 1 and st.quests.stage("MQ-P4") < 60:
+		map.set_gate(1.0)                                              # 탈출 중 레버로 다시 연 방폭문은 맵을 다시 열어도 열린 채
+	ev.actors["PC"] = player                                          # 연출 명령이 주인공도 부를 수 있다(move PC 표지 · face PC 방향, 0-9)
 	combat.on_map(map, player, st)
+	combat.set_residents(npcs)
 	ev.setup(map, map_id, cam)
 	if keep_buddy != "":
 		_bring_buddy(keep_buddy)
@@ -162,6 +167,8 @@ func _spawn_npcs() -> void:
 		var n: Dictionary = map.data["npcs"][i]
 		var cond: String = n.get("cond", "")
 		if cond != "" and not StoryExpr.test(cond, st):
+			continue
+		if st.dead.has(str(n["id"])):                                    # 죽인 주민은 다시 서지 않는다(SD-10 §6.3, 0-9)
 			continue
 		_spawn_npc(i, n)
 
@@ -188,9 +195,10 @@ func refresh_npcs() -> void:
 	for i in map.data["npcs"].size():
 		var n: Dictionary = map.data["npcs"][i]
 		var cond: String = n.get("cond", "")
-		if live.has(i) or (cond != "" and not StoryExpr.test(cond, st)):
+		if live.has(i) or (cond != "" and not StoryExpr.test(cond, st)) or st.dead.has(str(n["id"])):
 			continue
 		_spawn_npc(i, n)
+	combat.set_residents(npcs)
 
 
 func _spawn_npc(i: int, n: Dictionary) -> void:
@@ -231,11 +239,15 @@ func _physics_process(dt: float) -> void:
 	banner.queue_redraw()
 	var talking: bool = box.active or ev.busy() or busy or locked or body == "hidden"
 	for n in npcs:
-		if n["routine"] != null and is_instance_valid(n["actor"]):
+		if float(n.get("down_t", 0.0)) > 0.0:
+			_down_tick(n, dt)
+			continue
+		if n["routine"] != null and is_instance_valid(n["actor"]) and not n.get("dead", false):
 			n["routine"].tick(dt, player.loco.logical)
-	talking = talking or pipboy != null
+	talking = talking or pipboy != null or container != null
 	if talking:
-		player.move(Vector2.ZERO, dt)
+		if not ev.drives(player):                                         # 연출이 주인공을 걷게 하는 중이면(move PC …) 멈추지 않는다
+			player.move(Vector2.ZERO, dt)
 	else:
 		var v := input_vec
 		if use_keyboard and v == Vector2.ZERO:
@@ -339,7 +351,7 @@ func interact() -> bool:
 	var best: Dictionary = {}
 	var best_d := 1e9
 	for n in npcs:
-		if not is_instance_valid(n["actor"]):
+		if not is_instance_valid(n["actor"]) or n.get("dead", false) or float(n.get("down_t", 0.0)) > 0.0:
 			continue
 		var v: Vector2 = n["actor"].loco.logical - player.loco.logical
 		if v.length() < 46.0 and v.normalized().dot(f) > 0.5 and v.length() < best_d:
@@ -348,10 +360,11 @@ func interact() -> bool:
 	if not best.is_empty():
 		talk(best)
 		return true
-	var c := map.tile_of(player.loco.logical + f * 24.0)
-	var cells := [c]
-	if f.y < -0.5:
-		cells += [c + Vector2i(0, -1), c + Vector2i(0, -2)]
+	var cells := _front_cells()
+	var b := _front_box(cells)
+	if not b.is_empty():
+		open_box(b)
+		return true
 	for cc in cells:
 		if map.texts.has(cc):
 			var m: Dictionary = map.text_meta.get(cc, {})
@@ -372,6 +385,223 @@ func interact() -> bool:
 			say_text(map.texts[cc])
 			return true
 	return false
+
+
+## 바라보는 앞 칸(벽을 보고 서면 벽면 두 칸까지)
+func _front_cells() -> Array:
+	var f: Vector2 = Locomotion.VEC[player.loco.facing].normalized()
+	var c := map.tile_of(player.loco.logical + f * 24.0)
+	var cells := [c]
+	if f.y < -0.5:
+		cells += [c + Vector2i(0, -1), c + Vector2i(0, -2)]
+	return cells
+
+
+## 앞 칸의 용기(조건이 맞는 것만, 없으면 빈 사전)
+func _front_box(cells: Array = []) -> Dictionary:
+	if map == null or map.boxes.is_empty():
+		return {}
+	for cc in (cells if not cells.is_empty() else _front_cells()):
+		if map.boxes.has(cc):
+			var b: Dictionary = map.boxes[cc]
+			if InteriorMap._cond_ok(str(b.get("cond", "")), st):
+				return b
+	return {}
+
+
+# ---------------------------------------------------------------- 용기(SD-12 §7.3·§9.2·§11.1, 0-9)
+## 주인 이름: "" 없음 · PC 내 것 · S7 볼트 공용 · 인물 ID
+func box_owner_label(b: Dictionary) -> String:
+	var o := str(b.get("owner", ""))
+	match o:
+		"", "PC":
+			return ""
+		"S7":
+			return "볼트 S-07 공용"
+	return st.npc_name(o)
+
+
+func box_lock_key(b: Dictionary) -> String:
+	return Loot.key(map.id, b, st.year())
+
+
+## 잠김: 자물쇠 등급(SD-10 자물쇠 따기 25·50·75·100). 땄으면 st.boxes에 남는다
+func box_locked(b: Dictionary) -> bool:
+	var lv := int(b.get("lock", 0))
+	if lv <= 0:
+		return false
+	var c := Loot.contents(st, map.id, b)
+	return not bool(c.get("unlocked", false))
+
+
+func open_box(b: Dictionary) -> void:
+	player.move(Vector2.ZERO, 0.0)
+	if body == "toddler":                                                # 돌잔치의 아기는 용기를 못 연다
+		say_text("손이 닿지 않는다.")
+		return
+	var c := Loot.contents(st, map.id, b)
+	if box_locked(b):
+		var lv := int(b.get("lock", 0))
+		if st.skill("LOCKPICK") < lv:
+			say_text("잠겨 있다. 자물쇠가 단단하다.  [자물쇠 따기 %d]" % lv)
+			return
+		c["unlocked"] = true                                             # 여는 것만으로는 절도가 아니다(꺼내야 절도)
+		_note("자물쇠를 땄다")
+	var cmax := float(status()["carry_max"])
+	container = ContainerScreen.new().setup(st, b, c, items_db, box_owner_label(b), cmax)
+	container.stole.connect(_on_stole.bind(b))
+	container.closed.connect(func(_ok: bool) -> void:
+		container = null
+		_after_theft())
+	add_child(container)
+
+
+## 절도(SD-12 §9.2·SD-10 §6.3): 이 용기의 이 시대 첫 절도에 카르마 −5(주인이 악인이 아니면 — 볼트 주민은 모두 아니다).
+## 보는 사람이 있으면(8칸 안·시야·이쪽을 보고 있음) 창을 닫은 뒤 그 사람이 한마디 하고 S7_THEFT_SEEN이 오른다.
+var _theft_witness := ""
+var _box_hinted := false
+
+
+func _on_stole(first: bool, b: Dictionary) -> void:
+	if first and not bool(st.npcs.get(str(b.get("owner", "")), {}).get("evil", false)):
+		st.call_fn("karma", [-5])
+	var w := theft_witness()
+	if w != "" and _theft_witness == "":
+		_theft_witness = w
+
+
+## 지금 주인공을 보고 있는 주민(가장 가까운 사람의 ID, 없으면 "")
+func theft_witness() -> String:
+	var best := ""
+	var best_d := 8.0 * 32.0
+	for n in npcs:
+		var a = n["actor"]
+		if not is_instance_valid(a) or not a.visible:
+			continue
+		var v: Vector2 = player.loco.logical - a.loco.logical
+		var d := v.length()
+		if d >= best_d:
+			continue
+		var look: Vector2 = Locomotion.VEC[a.loco.facing].normalized()
+		if d > 40.0 and look.dot(v.normalized()) < 0.2:                 # 등지고 있으면 못 본다(바로 옆이면 본다)
+			continue
+		if not map.line_of_sight(a.loco.logical, player.loco.logical):
+			continue
+		best = str(n["id"])
+		best_d = d
+	return best
+
+
+const THEFT_BARKS := ["거기, 남의 거잖아!", "지금 뭐 하는 거야? 그거 내려놔.", "…봤어. 보안과에 말할 거야.", "손버릇이 그래서야 쓰나."]
+
+
+func _after_theft() -> void:
+	if _theft_witness == "":
+		return
+	var w := _theft_witness
+	_theft_witness = ""
+	st.vars.set_v("S7_THEFT_SEEN", int(st.vars.get_v("S7_THEFT_SEEN")) + 1)
+	for n in npcs:
+		if str(n["id"]) == w and is_instance_valid(n["actor"]):
+			n["actor"].loco.facing = Locomotion.snap8(player.loco.logical - n["actor"].loco.logical)
+			n["actor"]._show()
+			ev.balloons.append({"actor": n["actor"], "kind": "!", "t": 0.0})
+	var line: String = THEFT_BARKS[int(st.vars.get_v("S7_THEFT_SEEN")) % THEFT_BARKS.size()]
+	box.open(st, {"id": "theft_" + w, "labels": {"START": 0}, "ops": [{"op": "line", "who": w, "emo": "분노", "text": line}, {"op": "end"}]})
+
+
+# ---------------------------------------------------------------- 주민 폭행·살인(SD-10 §6.3, 0-9)
+## 맞음: 맵 방문마다 처음 한 번 S7_ASSAULT +1, "!" 말풍선·외침, 하던 일을 멈추고 이쪽을 본다(폭행 자체는 카르마가 아니다 — 원작).
+## 기절(공기총·근접): 8초 누웠다가 일어난다. 실총으로 죽임: 악인이 아니면 카르마 −100, st.dead에 남아 다시 서지 않는다.
+## 불사 4인: HP 1에서 무릎을 꿇고(5초) 일어난다.
+const ASSAULT_BARKS := ["으악! 왜 이래!", "미쳤어? 그만해!", "보안과! 보안과!", "살려 줘!"]
+const KO_SECS := 8.0
+const KNEEL_SECS := 5.0
+
+
+func _npc_entry(id: String) -> Dictionary:
+	for n in npcs:
+		if str(n["id"]) == id and is_instance_valid(n["actor"]):
+			return n
+	return {}
+
+
+func _on_resident_hit(id: String) -> void:
+	var n := _npc_entry(id)
+	if n.is_empty():
+		return
+	var a: Actor = n["actor"]
+	var c := combat.resident(id)
+	if c != null and c.hp_floor > 0.0 and c.hp <= c.hp_floor and float(n.get("down_t", 0.0)) <= 0.0:
+		n["down_t"] = KNEEL_SECS                                         # 불사: 무릎
+		n["down_kind"] = "kneel"
+		a.set_pose("sit")
+		combat._pop("그만… 그만해…", a.loco.logical + Vector2(0, -34), Color("E9E4D8"))
+	if n.get("assaulted", false):
+		return
+	n["assaulted"] = true
+	st.vars.set_v("S7_ASSAULT", int(st.vars.get_v("S7_ASSAULT")) + 1)
+	if n["routine"] != null:
+		n["routine"].talk_to(player.loco.logical)
+	else:
+		a.loco.facing = Locomotion.snap8(player.loco.logical - a.loco.logical)
+		a._show()
+	ev.balloons.append({"actor": a, "kind": "!", "t": 0.0})
+	combat._pop(ASSAULT_BARKS[int(st.vars.get_v("S7_ASSAULT")) % ASSAULT_BARKS.size()], a.loco.logical + Vector2(0, -34), Color("E04A35"))
+
+
+func _on_resident_down(id: String, killed: bool) -> void:
+	var n := _npc_entry(id)
+	if n.is_empty():
+		return
+	var a: Actor = n["actor"]
+	a.set_pose("lie")
+	map.blockers.erase(a)
+	if killed:
+		n["dead"] = true
+		st.dead[id] = st.year()
+		st.vars.set_v("S7_KILLS", int(st.vars.get_v("S7_KILLS")) + 1)
+		if not bool(st.npcs.get(id, {}).get("evil", false)):
+			st.call_fn("karma", [-100])                                  # 악하지 않은 인물 살해(목격자가 없어도)
+		combat._pop(st.npc_name(id) + " 사망", a.loco.logical + Vector2(0, -20), Color("E04A35"))
+	else:
+		n["down_t"] = KO_SECS
+		n["down_kind"] = "ko"
+		combat._pop("기절", a.loco.logical + Vector2(0, -20), Color("E8C23A"))
+
+
+func _down_tick(n: Dictionary, dt: float) -> void:
+	n["down_t"] = float(n["down_t"]) - dt
+	if float(n["down_t"]) > 0.0 or not is_instance_valid(n["actor"]):
+		return
+	n["down_t"] = 0.0
+	var a: Actor = n["actor"]
+	a.set_pose("stand")
+	if not map.blockers.has(a):
+		map.blockers.append(a)
+	var c := combat.resident(str(n["id"]))
+	if c != null:
+		c.dead = false
+		c.ko = false
+		c.hp = c.max_hp * 0.5
+	if n["routine"] != null:
+		n["routine"].resume()
+
+
+## 조사 안내(HUD): 앞 칸이 용기면 "(E) 열기 이름 [소유]·[빈 상자]·[잠김]"
+func box_prompt() -> String:
+	var b := _front_box()
+	if b.is_empty():
+		return ""
+	var nm: String = str(b.get("name", "")) if str(b.get("name", "")) != "" else Loot.kind_name(str(b["kind"]))
+	var tag := ""
+	if box_locked(b):
+		tag = "  [잠김 %d]" % int(b.get("lock", 0))
+	elif Loot.contents(st, map.id, b)["items"].is_empty():
+		tag = "  [빈 상자]"
+	if Loot.owned(b):
+		tag += "  [소유]"
+	return "(E) 열기  " + nm + tag
 
 
 func talk(n: Dictionary) -> void:
@@ -425,7 +655,7 @@ var font_s: Font
 
 
 func _draw_hud() -> void:
-	if not hud_on or box.active or ev.busy() or busy or pipboy != null or body == "hidden":
+	if not hud_on or box.active or ev.busy() or busy or pipboy != null or container != null or body == "hidden":
 		return
 	if font_s == null:
 		font_s = load("res://assets/fonts/Galmuri9.ttf")
@@ -458,7 +688,15 @@ func _draw_hud() -> void:
 		ny += 14.0
 	var goal := _objective()
 	if goal != "":
-		_txt(Vector2(8, 66), goal, HU[5])
+		_txt(Vector2(8, maxf(66.0, ny + 4.0)), goal, HU[5])                  # 알림 줄이 많으면 그 아래로
+
+	var bp := box_prompt()
+	if bp != "" and not _box_hinted:                                        # 처음 용기 앞에 서면 한 번 알려 준다
+		_box_hinted = true
+		hint("E·Enter: 용기 열기 — 붉은 [소유]는 남의 물건, 꺼내면 절도(카르마)", 7.0)
+	if bp != "":
+		var owned := bp.ends_with("[소유]")
+		_txt(Vector2(320 + r / 2.0, 296 + b), bp, HUD_RED if owned else HU[6], HORIZONTAL_ALIGNMENT_CENTER)
 	if buddy_name != "" and combat.buddy != null:
 		_txt(Vector2(8, 258 + b), buddy_name, HU[5])
 		_bar(Vector2(8, 272 + b), 60.0, 1.0, "", HU[5])
@@ -546,15 +784,22 @@ func _handlers() -> void:
 			buddy_id = id
 			buddy_name = st.npc_name(id).get_slice("(", 0).strip_edges()
 		done.call()
-	ev.handlers["refresh"] = func(_a: Array, done: Callable) -> void:   # 맵 인물을 지금 조건대로 다시 세운다(0-8)
+	ev.handlers["refresh"] = func(_a: Array, done: Callable) -> void:   # 맵 인물·적을 지금 조건대로 다시 세운다(0-8, 적은 0-9)
 		refresh_npcs()
+		combat.refresh_enemies(st)
 		done.call()
 	ev.handlers["range"] = func(a: Array, done: Callable) -> void:     # 사격장 단계: stealth = 은신 표적을 세운다
 		combat.set_stealth_live(str(a[0]) == "stealth")
 		done.call()
-	ev.handlers["pc"] = func(a: Array, done: Callable) -> void:         # 주인공 자리 옮기기(페이드 사이, 0-9): pc 표지 [방향]
-		player.loco.place(map.mark_pos(str(a[0])))
-		player.loco.facing = EventRunner.DIR_IDX.get(str(a[1]) if a.size() > 1 else map.mark_dir(str(a[0])), 2)
+	ev.handlers["pc"] = func(a: Array, done: Callable) -> void:         # 주인공 자리 옮기기(페이드 사이, 0-9): pc 표지|x,y [방향] · pc hide|show
+		var m := str(a[0])
+		if m == "hide" or m == "show":
+			player.visible = m == "show" and body != "hidden"
+			done.call()
+			return
+		var at := map.mark_pos(m) if not "," in m else Vector2(int(m.get_slice(",", 0)) * 32 + 16, int(m.get_slice(",", 1)) * 32 + 16)
+		player.loco.place(at)
+		player.loco.facing = EventRunner.DIR_IDX.get(str(a[1]) if a.size() > 1 else map.mark_dir(m), 2)
 		player.position = player.loco.render
 		player._show()
 		_last_tile = map.tile_of(player.loco.logical)
@@ -574,7 +819,7 @@ func _handlers() -> void:
 
 # ---------------------------------------------------------------- 핍-보이·소지품
 func _load_items() -> void:
-	for f in ["items_aid", "items_food", "items_quest", "items_apparel"]:          # 파이프라인이 SD-13 표에서 뽑은 아이템
+	for f in ["items_aid", "items_food", "items_quest", "items_apparel", "items_misc_money", "items_misc_mat", "items_misc_func"]:          # 파이프라인이 SD-13 표에서 뽑은 아이템
 		var p := "res://data/%s.json" % f
 		if FileAccess.file_exists(p):
 			items_db.merge(JSON.parse_string(FileAccess.get_file_as_string(p)))
