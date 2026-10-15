@@ -597,8 +597,8 @@ def build_one(spec, pools, prop_meta, known_vars, known_fns, scenes, tries=6):
         else:
             tpl_store(p)
         _traps(p, style, got if style in ("villa", "house") else style, threat)
-        _rads(p, style, got if style in ("villa", "house") else style, threat)
         _place_enemies(p, threat, region)
+        _rads(p, style, got if style in ("villa", "house") else style, threat)   # 맨 뒤: 앞선 배치(적 · 상자 · 글)를 바꾸지 않는다
         with tempfile.NamedTemporaryFile("w", suffix=".map", delete=False, encoding="utf-8") as f:
             f.write(p.source())
             path = f.name
@@ -688,12 +688,15 @@ def _traps(p, style, got, threat):
 
 def _rads(p, style, got, threat):
     """방사능 섞기(1-9d, SD-11 §11.2 · §9.2): 지대는 소품이 내는 선량으로 생긴다(웅덩이 Z1 · 폐기물 드럼 Z2 · 열린 차폐 용기 20라드/초).
-    창고·소굴(위협 2 이상) 18% = 구석의 폐기물 드럼 + 흘러나온 웅덩이 · 사무실·주민센터(위협 3 이상) 12% = 차폐 용기 함정(앞 칸 압력판이 뚜껑을 연다).
+    창고·소굴(위협 2 이상) 18% = 구석의 폐기물 드럼 + 흘러나온 웅덩이 · 위협 3 이상 창고·사무실·주민센터 12% = 차폐 용기 함정(앞 칸 압력판이 뚜껑을 연다).
     입구 줄에는 놓지 않는다 — 들어서자마자 피폭되는 방은 없다."""
-    rnd, W, H = p.rnd, p.W, p.H
+    rnd = random.Random(hash(tuple(p.rnd.getstate()[1][:6])))             # 따로 굴린다 — 다른 배치(적 · 상자)의 난수를 건드리지 않게
+    W, H = p.W, p.H
     ex = getattr(p, "ex", W // 2)
     keep = {(ex + i, y) for i in (-2, -1, 0, 1, 2, 3) for y in (H - 2, H - 3, H - 4)}
-    if (got == "den" or style not in ("villa", "house", "apt", "shop", "office", "gov")) and threat >= 2 and rnd.random() < 0.18:
+    store = got == "den" or style not in ("villa", "house", "apt", "shop", "office", "gov")
+    roll = rnd.random()
+    if store and threat >= 2 and roll < 0.18:
         corners = [(1, 3), (W - 2, 3), (1, H - 5), (W - 2, H - 5)]
         rnd.shuffle(corners)
         for (cx, cy) in corners:
@@ -705,8 +708,10 @@ def _rads(p, style, got, threat):
                     p.prop("rad_puddle" if rnd.random() < 0.5 else "rad_puddle2", cx + dx, cy + dy, solid=False)
                     break
             break
-    elif style in ("office", "gov") and threat >= 3 and rnd.random() < 0.12:
-        for (x, y) in p.spots(2, 3, W - 3, H - 6):
+    elif (style in ("office", "gov") or store) and threat >= 3 and roll < 0.30:
+        cand = [(x, y) for y in range(3, H - 5) for x in range(2, W - 2) if p.free(x, y)]
+        rnd.shuffle(cand)
+        for (x, y) in cand:
             if (x, y) in keep or not p.free(x, y + 1) or (x, y + 1) in keep:
                 continue
             p.prop("rad_cask", x, y)

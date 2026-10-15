@@ -234,8 +234,8 @@ func in_zone(p: Vector2, kind: String) -> bool:
 # ---------------------------------------------------------------- 그림
 func _draw() -> void:
 	var tex := CombatFx.sheet()
-	for z in zones:                                                   # 최루 · 연막 구름은 인물 위
-		if z["kind"] != "fire":
+	for z in zones:                                                   # 최루 · 연막 구름은 인물 위(방사능 지대는 RadField가 바닥에 그린다)
+		if z["kind"] != "fire" and z["kind"] != "rad":
 			_draw_zone(self, tex, z)
 	for n in nades:
 		if str(n["team"]) != "player" and float(n["fuse"]) > 0.0:   # 적 수류탄 경고: 떨어질 자리에 붉은 원(외부 반경)

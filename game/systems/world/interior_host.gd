@@ -99,6 +99,7 @@ func _ready() -> void:
 	combat.hurt.connect(func(_a: float) -> void: _hurt_t = 0.3)
 	combat.hurt.connect(_armor_hit)
 	combat.armor_dr = pc_dr
+	combat.rad_items = items_db                                          # 옷의 방사능 저항(1-9d)
 	combat.resident_hit.connect(_on_resident_hit)
 	combat.resident_down.connect(_on_resident_down)
 	combat.enemy_down.connect(_on_enemy_down)                        # 유해 소지품(1-4 파밍)
@@ -439,6 +440,7 @@ func _physics_process(dt: float) -> void:
 			open_wait()
 		_check_exit()
 		_clock_step(dt)
+		Radiation.drug_tick(st, dt)                                          # 라드-X 류는 실시간 초로 닳는다(1-9d)
 		enc_live.tick(dt)
 	if map is WorldMap:
 		map.update_hole(player.loco.logical, player.floor_id)                # 고가 상판 아래·끝 앞: 둘레를 디더로 비춘다(1-Rd)
@@ -1311,6 +1313,8 @@ func _draw_hud() -> void:
 		for rr in [Rect2(0, 0, vs.x, 3), Rect2(0, vs.y - 3, vs.x, 3), Rect2(0, 0, 3, vs.y), Rect2(vs.x - 3, 0, 3, vs.y)]:
 			banner.draw_rect(rr, Color(HUD_RED, a))
 	var ap := combat.ap.ap / maxf(1.0, combat.ap.max_ap)               # 1-9a: 실제 AP(파워 공격이 쓴다)
+	if combat.rad_rate > 0.0 and str(st.rad_drug.get("id", "")) != "I-093":     # 1-9d 피폭(노래하는 알약은 선량계를 끈다, SD-13 I-093): 가장자리 녹색 색조 + 오른쪽 위 선량계(터치는 방위 링 아래)
+		_draw_geiger(vs, Vector2(584.0 + (vs.x - 640.0), 112.0 if touch_layout else 24.0))
 	if touch_layout:
 		_draw_hud_touch(vs, c, low, ap)
 		return
@@ -1347,6 +1351,38 @@ func _draw_hud() -> void:
 	if buddy_name != "" and combat.buddy != null:
 		_txt(Vector2(8, 258 + b), buddy_name, HU[5])
 		_bar(Vector2(8, 272 + b), 60.0, 1.0, "", HU[5])
+
+
+## 선량계(SD-11 §11.2 · §12.5 · SD-12 §5.6): 피폭 중에만. 반원 눈금(로그) · 바늘 · 초당 라드 · 단계가 오르면 1초 흔들림.
+## 화면 가장자리 녹색 색조는 가이거 단계(1~5)만큼 진하게. 소리 SE-ENV-GEI-1~5는 SD-17 소리 단계에서(지금은 이름만 넘긴다).
+func _draw_geiger(vs: Vector2, at: Vector2) -> void:
+	var rate := combat.rad_rate
+	var lv := Radiation.geiger_level(rate)
+	var tint := Color("7CD62B")
+	var a := 0.06 + 0.05 * lv + 0.04 * sin(_hud_t * (6.0 + lv * 3.0))
+	for k in 3:                                                               # 바깥에서 안으로 옅어지는 테
+		var w := 3.0 + k * 3.0
+		var col := Color(tint, a * (1.0 - k * 0.3))
+		for rr in [Rect2(0, 0, vs.x, w), Rect2(0, vs.y - w, vs.x, w), Rect2(0, 0, w, vs.y), Rect2(vs.x - w, 0, w, vs.y)]:
+			banner.draw_rect(rr, col)
+	var box_r := Rect2(at, Vector2(48, 32))                                   # SD-12 §4.2: (584, 24) 48×32
+	banner.draw_rect(box_r.grow(1.0), HU[0])
+	banner.draw_rect(box_r, Color(HU[1], 0.92))
+	banner.draw_rect(box_r, HU[3], false, 1.0)
+	var c := at + Vector2(24, 28)
+	var hot := lv >= 4 and fmod(_hud_t, 0.4) < 0.2
+	banner.draw_arc(c, 17.0, PI * 1.1, PI * 1.9, 18, HU[3], 2.0)
+	banner.draw_arc(c, 17.0, PI * 1.62, PI * 1.9, 8, Color(HUD_RED, 0.8), 2.0)   # 붉은 구역(25라드/초 이상)
+	for i in 6:                                                               # 눈금 0 · 1 · 3 · 8 · 25 · 80(로그)
+		var an := PI * (1.1 + 0.8 * float(i) / 5.0)
+		banner.draw_line(c + Vector2.from_angle(an) * 14.0, c + Vector2.from_angle(an) * 19.0, HU[5], 1.0)
+	var f := clampf(log(1.0 + rate) / log(81.0), 0.0, 1.0)
+	var jit := sin(_hud_t * 47.0) * 0.06 * combat.rad_shake + sin(_hud_t * 23.0) * 0.012 * lv   # 바늘 떨림
+	var na := PI * (1.1 + 0.8 * clampf(f + jit, 0.0, 1.0))
+	banner.draw_line(c, c + Vector2.from_angle(na) * 16.0, HUD_RED if hot else HU[7], 1.5)
+	banner.draw_circle(c, 2.0, HU[6])
+	_txt(at + Vector2(2, -2), "RAD", HU[4])
+	_txt(at + Vector2(24, 33), "+%s 라드/초" % (("%.1f" % rate) if rate < 10.0 else str(roundi(rate))), HUD_RED if hot else HU[7], HORIZONTAL_ALIGNMENT_CENTER)
 
 
 ## 터치 배치(§17.2, 640×360 기준 — 오른쪽 묶음은 오른쪽 끝에 붙는다): HP·AP 막대 왼쪽 위, 알림 (8,48), 탐지 (280,48),
@@ -1601,7 +1637,7 @@ func _handlers() -> void:
 			if str(a[1]) == "heal":
 				combat.pc.hp = combat.pc.max_hp
 			elif str(a[1]) == "rad":
-				st.vars.set_v("PC_RADS", 0)
+				Radiation.remove(st, Radiation.rads(st))
 			advance_minutes(30)
 			ev.run("fade_in", ["black", "4"], func() -> void:
 				busy = false
@@ -1738,7 +1774,8 @@ func status() -> Dictionary:
 		"stimpak_id": InteriorCombat.STIMPAK, "carry": carry, "carry_max": 150 + 10 * st.stat("ST"), "caps": int(st.vars.get_v("PC_CAPS")),
 		"place": _place_name(), "hotkeys": combat.hotkeys,
 		"karma": int(st.vars.get_v("V_KARMA")) if st.vars.has("V_KARMA") else 0,
-		"worn": worn(), "rads": int(st.vars.get_v("PC_RADS")),
+		"worn": worn(), "rads": int(st.vars.get_v("PC_RADS")), "rad_rate": snappedf(combat.rad_rate, 0.01), "rad_res": Radiation.resist(st, items_db),
+		"rad_drug": st.rad_drug.duplicate(),
 		"dr": int(items_db.get(worn(), {}).get("dr", 0)) if st.items.has(worn()) else 0,
 		"tile": Vector2(map.tile_of(player.loco.logical)) if map is WorldMap and player != null else Vector2(-99, -99),
 		"world": map if map is WorldMap else null, "travel": travel_check}
@@ -1853,6 +1890,8 @@ func _clock_step(dt: float) -> void:
 ## 게임 시간을 m분 보낸다. 06:00을 넘을 때마다 하루 판정(day_tick) — 사흘 구금·긴 잠처럼 여러 날을 한 번에 보내도
 ## 넘어간 06:00마다 한 번씩, 그 날짜(GAME_DAY)로 차례대로 부른다(SD-20 P6 시간 도약)
 func advance_minutes(m: int) -> void:
+	if m >= 60:
+		Radiation.drug_tick(st, m * 2.0)                                     # 한꺼번에 보내는 시간(대기 · 수면 · 생포): 게임 1분 = 실시간 2초
 	var a := Clock.abs_min(date_text)
 	if a <= 0:
 		date_text = Clock.add_minutes(date_text, m, st)
@@ -2036,8 +2075,13 @@ func consume(id: String) -> bool:
 	if id == "I-002":
 		st.call_fn("take", [id, 1])
 		var cut := roundi(50.0 * (1.0 + float(st.skill("MEDICINE")) / 50.0))
-		st.vars.set_v("PC_RADS", maxi(0, int(st.vars.get_v("PC_RADS")) - cut))
+		Radiation.remove(st, cut)
 		_note("라드어웨이 — 방사능 −%d" % cut)
+		return true
+	if Radiation.DRUGS.has(id):                                          # 라드-X · 갑상선 방호정 · 노래하는 알약(1-9d, SD-13 §7): 저항 + 시간 누적
+		st.call_fn("take", [id, 1])
+		var pct := Radiation.take_drug(st, id)
+		_note("%s — 방사능 저항 +%d%% (%d분 %02d초)" % [str(it.get("name", id)), roundi(pct), int(float(st.rad_drug["t"])) / 60, int(float(st.rad_drug["t"])) % 60])
 		return true
 	if not it.has("heal") and not it.has("rads"):
 		return false
@@ -2248,6 +2292,8 @@ func wait_block() -> String:
 			return "근처에 적이 있다. 쉴 수 없다."
 	if enc_live.chasing():
 		return "쫓기고 있다. 쉴 수 없다."
+	if combat.rad_dose > 0.0:
+		return "방사능 지대에서는 쉴 수 없다."                               # SD-11 §11.2 · SD-12 §7.6
 	return ""
 
 

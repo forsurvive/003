@@ -11,7 +11,8 @@ extends InteriorMap
 const INTERACT := ["hangyeol_bench", "workbench", "drum_fire", "forge", "cot", "bedroll", "bedroll2", "straw_mat", "straw_mat2", "bunk",
 	"hosp_bed", "vip_bed", "yo_bed"]
 
-const HAZARD := ["car_wreck", "car_wreck2", "bus_wreck", "convoy_truck", "drum", "lp_gas"]   ## 원자력 차량 · 드럼 · 가스통(1-9c 환경 폭발)
+const HAZARD := ["car_wreck", "car_wreck2", "bus_wreck", "convoy_truck", "drum", "lp_gas",   ## 원자력 차량 · 드럼 · 가스통(1-9c 환경 폭발)
+	"rad_puddle", "rad_puddle2", "waste_drum", "rad_cask"]                                 ## 방사능 근원(1-9d): 웅덩이 · 폐기물 드럼 · 차폐 용기
 
 const WDIR := "res://data/world/"
 const L_FG := 0                                  ## 바닥·덮개 교대(칸 i: 바닥 2i, 덮개 2i+1)

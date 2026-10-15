@@ -20,6 +20,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import world_bake as WB
 import road_net as RN
 import elevated as EVB
+import rad_zones as RZ
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 OUT = os.path.join(ROOT, "game", "data", "world")
@@ -618,6 +619,28 @@ def build():
             try_put("utility_pole", x, y)
         elif hsh(x, y, 3) % 61 == 5:
             try_put("drum", x, y)
+    rz = RZ.zones(json.load(open(RZ.SRC, encoding="utf-8")))                  # 방사능 구역(1-9d): 웅덩이 · 폐기물 드럼 · 가장자리 표지판
+    for z in rz:
+        if "c" not in z:
+            continue
+        cx, cy = z["c"]
+        R = z["rings"][-1][0]
+        y0, y1, x0, x1 = max(0, cy - R), min(H, cy + R + 1), max(0, cx - R), min(W, cx + R + 1)
+        yy, xx = np.nonzero(free[y0:y1, x0:x1] & np.isin(kind[y0:y1, x0:x1], (1, 5, 12)))
+        for y, x in zip(yy + y0, xx + x0):
+            d = ((x - cx) ** 2 + (y - cy) ** 2) ** 0.5
+            if d > R:
+                continue
+            g = RZ.grade([z], x, y)
+            h_ = hsh(x, y, 9)
+            if R - 14 <= d <= R - 9 and h_ % 60 == 3:
+                try_put("rad_sign", x, y)
+            elif g >= 2 and h_ % 85 == 0:
+                try_put("rad_puddle" if h_ & 512 else "rad_puddle2", x, y)
+            elif g >= 2 and h_ % 700 == 5:
+                try_put("waste_drum", x, y)
+            elif g == 1 and h_ % 240 == 0:
+                try_put("rad_puddle" if h_ & 512 else "rad_puddle2", x, y)
     use = r["use"]
     land = free & (kind == 1)
     yy, xx = np.nonzero(land)

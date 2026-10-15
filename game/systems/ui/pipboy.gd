@@ -455,18 +455,17 @@ func _detail() -> void:
 			if id == "body":
 				_body_page()
 			elif id == "rad":
-				text(Vector2(264, 78), "방사능 0", f12b, 12, U[6])
-				_para(Vector2(264, 100), "볼트 안 공기 정화 정상. 라드어웨이 없음.", U[4])
+				_rad_page()
 			else:
-				text(Vector2(264, 78), "효과 없음", f12b, 12, U[6])
-				_para(Vector2(264, 100), "중독 없음 · 부위 손상 없음", U[4])
+				_effects_page()
 		[0, 1]:
 			var tx: Dictionary = stats_text.get(id, {})
 			var v := st.stat(id)
 			text(Vector2(264, 78), "%s (%s)  %d" % [StoryState.STATS[id], id, v], f12b, 12, U[6])
 			var y := _para(Vector2(264, 100), str(tx.get("desc", "")), U[5])
 			y = _para(Vector2(264, y + 4), "관련: " + str(tx.get("skills", "")) + " · " + str(tx.get("effects", "")), U[4])
-			text(Vector2(264, y + 6), "기본 %d   장비 +0   약물 +0" % v, f10, 10, U[5])
+			var rp := st.stat_base(id) - v                                   # 방사능 단계 감소(1-9d)
+			text(Vector2(264, y + 6), ("기본 %d   장비 +0   약물 +0" % st.stat_base(id)) + (("   방사능 −%d" % rp) if rp > 0 else ""), f10, 10, U[5])
 			var cm := CharDocs.comment(id, v)
 			if cm != "":
 				text(Vector2(264, y + 28), "생활기록부 · " + CharDocs.record_item(id), f10, 10, U[4])
@@ -549,6 +548,62 @@ func _body_page() -> void:
 	var rads := int(info.get("rads", 0))                                   # 방사능(SD-11 §11.2: 200 경미 · 400 심화 · 600 위험 · 800 치명 · 1000)
 	var rl := "없음" if rads < 200 else ("경미" if rads < 400 else ("심화" if rads < 600 else ("위험" if rads < 800 else "치명")))
 	text(Vector2(264, 290), "방사능 %d 라드 — %s" % [rads, rl], f12, 12, U[6] if rads < 200 else U[5])
+
+
+## 방사능(SD-11 §11.2, 1-9d): 라드 · 단계 막대(200씩) · 지금 깎인 능력치 · 저항 내역 · 약 남은 시간 · 라드어웨이 수 · 피폭 중이면 초당 라드
+func _rad_page() -> void:
+	var rads := int(info.get("rads", 0))
+	var stg := Radiation.stage(rads)
+	text(Vector2(264, 78), "방사능 %d 라드" % rads, f12b, 12, U[6] if stg == 0 else U[5])
+	text(Vector2(264, 96), Radiation.NAMES[stg], f12, 12, U[5] if stg == 0 else Color("E04A35"))
+	for i in 5:                                                           # 0~1,000 막대: 단계 칸 다섯
+		var r := Rect2(264 + i * 64, 116, 60, 8)
+		box(r, U[3], false)
+		var f := clampf(float(rads - i * 200) / 200.0, 0.0, 1.0)
+		if f > 0.0:
+			view.draw_rect(Rect2(r.position + Vector2(1, 1), Vector2(58 * f, 6)), U[6] if i < 2 else Color("E04A35"))
+		text(Vector2(264 + i * 64, 128), "%s %d" % [Radiation.SHORT[i + 1], (i + 1) * 200], f10, 10, U[4], HORIZONTAL_ALIGNMENT_RIGHT, 60.0)   # 칸 끝 = 다음 단계 문턱
+	var pen: Dictionary = Radiation.PEN[stg]
+	var parts: Array = []
+	for k in ["EN", "AG", "ST"]:
+		if pen.has(k):
+			parts.append("%s −%d" % [StoryState.STATS[k], int(pen[k])])
+	text(Vector2(264, 150), "효과: " + (" · ".join(parts) if not parts.is_empty() else "없음"), f12, 12, U[5])
+	var res := float(info.get("rad_res", 0.0)) * 100.0
+	text(Vector2(264, 170), "방사능 저항 %d%%  (지구력 %d%%%s)" % [roundi(res), (st.stat_base("EN") - 1) * 2,
+		("  약 +%d%%" % roundi(float(st.rad_drug.get("pct", 0.0)))) if not st.rad_drug.is_empty() else ""], f12, 12, U[5])
+	if not st.rad_drug.is_empty():
+		var t := int(float(st.rad_drug.get("t", 0.0)))
+		text(Vector2(264, 188), "%s 남은 시간 %d:%02d" % [str(items_db_name(str(st.rad_drug.get("id", "")))), t / 60, t % 60], f10, 10, U[4])
+	var rr := float(info.get("rad_rate", 0.0))
+	if rr > 0.0:
+		text(Vector2(264, 206), "지금 피폭 중: 초당 %.1f 라드" % rr, f12, 12, Color("E04A35"))
+	text(Vector2(264, 236), "라드어웨이 (%d)  라드 −50 × (1 + 의학/50)" % int(st.items.get("I-002", 0)), f12, 12, U[5] if int(st.items.get("I-002", 0)) > 0 else U[3])
+	text(Vector2(264, 254), "라드-X (%d)  저항 +25 × (1 + 의학/50)%% · 4분" % int(st.items.get("I-003", 0)), f12, 12, U[5] if int(st.items.get("I-003", 0)) > 0 else U[3])
+	_para(Vector2(264, 276), "라드는 저절로 빠지지 않는다. 1,000 라드면 죽는다. 의사에게 빼거나 라드어웨이를 먹을 것.", U[4])
+
+
+func items_db_name(id: String) -> String:
+	return {"I-003": "라드-X", "I-005": "갑상선 방호정", "I-093": "노래하는 알약"}.get(id, id)
+
+
+## 효과: 방사능 단계 · 약 효과(중독 · 부위 손상은 그 단계에서)
+func _effects_page() -> void:
+	var rows: Array = []
+	var stg := Radiation.stage(int(info.get("rads", 0)))
+	if stg > 0:
+		rows.append(Radiation.NAMES[stg])
+	if not st.rad_drug.is_empty():
+		rows.append("%s — 방사능 저항 +%d%%" % [items_db_name(str(st.rad_drug.get("id", ""))), roundi(float(st.rad_drug.get("pct", 0.0)))])
+	if rows.is_empty():
+		text(Vector2(264, 78), "효과 없음", f12b, 12, U[6])
+		_para(Vector2(264, 100), "중독 없음 · 부위 손상 없음", U[4])
+		return
+	text(Vector2(264, 78), "효과 %d" % rows.size(), f12b, 12, U[6])
+	var y := 100.0
+	for r in rows:
+		text(Vector2(264, y), "· " + r, f12, 12, U[5])
+		y += 18.0
 
 
 ## 일반(SD-12 §3.5): 등록 카드(맨 위, §3.8 단계 0) · 카르마 칭호와 막대(숫자는 숨김, SD-10 §6.1) · 통계

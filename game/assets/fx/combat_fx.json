@@ -24,9 +24,9 @@
    "cell": 96,
    "dirs": 1,
    "frames": 8,
-   "row": 67,
+   "row": 69,
    "ticks": 3,
-   "y": 1072
+   "y": 1104
   },
   "boom_pulse": {
    "anchor": [
@@ -37,9 +37,9 @@
    "cell": 96,
    "dirs": 1,
    "frames": 8,
-   "row": 73,
+   "row": 75,
    "ticks": 3,
-   "y": 1168
+   "y": 1200
   },
   "boom_smoke": {
    "anchor": [
@@ -440,11 +440,24 @@
    "cell": 16,
    "dirs": 1,
    "frames": 2,
-   "row": 79,
+   "row": 81,
    "ticks": 2,
-   "y": 1264
+   "y": 1296
   },
   "trap_claymore": {
+   "anchor": [
+    8.0,
+    8.0
+   ],
+   "blend": "mix",
+   "cell": 16,
+   "dirs": 1,
+   "frames": 1,
+   "row": 84,
+   "ticks": 2,
+   "y": 1344
+  },
+  "trap_plate": {
    "anchor": [
     8.0,
     8.0
@@ -457,19 +470,6 @@
    "ticks": 2,
    "y": 1312
   },
-  "trap_plate": {
-   "anchor": [
-    8.0,
-    8.0
-   ],
-   "blend": "mix",
-   "cell": 16,
-   "dirs": 1,
-   "frames": 1,
-   "row": 80,
-   "ticks": 2,
-   "y": 1280
-  },
   "trap_shotgun": {
    "anchor": [
     16.0,
@@ -479,9 +479,9 @@
    "cell": 32,
    "dirs": 1,
    "frames": 1,
-   "row": 83,
+   "row": 85,
    "ticks": 2,
-   "y": 1328
+   "y": 1360
   },
   "trap_wire": {
    "anchor": [
@@ -492,9 +492,9 @@
    "cell": 16,
    "dirs": 1,
    "frames": 1,
-   "row": 81,
+   "row": 83,
    "ticks": 2,
-   "y": 1296
+   "y": 1328
   },
   "zone_fire": {
    "anchor": [
@@ -521,6 +521,19 @@
    "row": 63,
    "ticks": 2,
    "y": 1008
+  },
+  "zone_rad": {
+   "anchor": [
+    16.0,
+    16.0
+   ],
+   "blend": "mix",
+   "cell": 32,
+   "dirs": 1,
+   "frames": 3,
+   "row": 67,
+   "ticks": 2,
+   "y": 1072
   },
   "zone_smoke": {
    "anchor": [

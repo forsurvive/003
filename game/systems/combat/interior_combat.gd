@@ -71,6 +71,15 @@ var ord: Ordnance                                 ## 투척·설치(1-9b): 수�
 var hazards: Hazards                              ## 함정 · 환경 폭발(1-9c)
 var disarm_prog := -1.0                           ## 그리기: 해체 진행(0~1, -1 = 아님)
 var _disarm: Dictionary = {}                      ## 해체 중인 지뢰
+## 1-9d 방사능
+var rad: RadField                                 ## 지대 근원(맵 rad 줄 · 월드 고리 · 웅덩이 · 드럼 · 임시 지대 · 열린 차폐 용기)
+var rad_items := {}                               ## 아이템 표(옷의 방사능 저항) — 호스트가 준다
+var rad_dose := 0.0                               ## 선 자리의 초당 라드(저항 전)
+var rad_rate := 0.0                               ## 저항 뒤 초당 라드(선량계 · 0이면 계기를 숨긴다)
+var rad_shake := 0.0                              ## 단계가 오른 순간 선량계 바늘 흔들림(초)
+var rad_stage := 0
+var _rad_t := 0.0
+const NUKE_RAD := {"r": 4.0, "t": 20.0, "rad": 8.0}  ## 핵 투사기 폭심 지대(SD-11 §9.2 표)
 
 
 func _init() -> void:
@@ -91,6 +100,12 @@ func _init() -> void:
 	hazards = Hazards.new()
 	add_child(hazards)
 	hazards.bind(shots, ord, weapons)
+	rad = RadField.new()
+	add_child(rad)
+	rad.bind(ord, hazards)
+	shots.nuked.connect(func(at: Vector2) -> void:
+		ord.zones.append({"p": at, "r": NUKE_RAD["r"] * 32.0, "t": NUKE_RAD["t"], "t0": NUKE_RAD["t"], "kind": "rad", "team": "env",
+			"w": {"rad": NUKE_RAD["rad"]}}))
 	pc.team = "player"
 	pc.died.connect(func() -> void:                                    # Combatant.take가 HP 0에서 dead를 세우고 died를 낸다
 		heal_q.clear()
@@ -132,7 +147,7 @@ static func derived(st: StoryState) -> Dictionary:
 	if _special.is_empty():
 		_special = JSON.parse_string(FileAccess.get_file_as_string("res://data/special.json"))
 	var sp: Dictionary = _special
-	var en := str(clampi(st.stat("EN"), 1, 10))
+	var en := str(clampi(st.stat_base("EN"), 1, 10))                   # 일시적 지구력 감소(방사능)는 최대 HP를 깎지 않는다(SD-11 §11.2)
 	var ag := str(clampi(st.stat("AG"), 1, 10))
 	return {"hp_max": float(sp[en]["hp_lv1"]), "ap_max": float(sp[ag]["ap_max"])}
 
@@ -153,6 +168,9 @@ func on_map(map: InteriorMap, player: Actor, st: StoryState) -> void:
 	ord.zones.clear()
 	_disarm = {}
 	hazards.setup(map, st)
+	rad.setup(map, st)
+	rad_stage = Radiation.stage(Radiation.rads(st))
+	_rad_t = 0.0
 	for row in map.data.get("mines", []):                              # 맵에 깔린 지뢰(적 편, 1-9c 배치)
 		if InteriorMap._cond_ok(str(row.get("cond", "")), st) and weapons.has(str(row.get("id", "W-063"))):
 			ord.lay(Vector2(int(row["x"]) * 32 + 16, int(row["y"]) * 32 + 16), weapons[str(row.get("id", "W-063"))])
@@ -595,9 +613,11 @@ func tick(dt: float, free: bool, st: StoryState) -> void:
 		_targets(dt, player)
 		_buddy(dt)
 		_allies(dt)
+		_radiation(dt, st)
 	shots.step(step)
 	ord.step(step, shots.combatants)
 	hazards.step(step, shots.combatants)
+	rad.step(dt, pc.pos())
 	if pc.hp < hp0:
 		stats["hurt"] += hp0 - pc.hp
 		hurt.emit(hp0 - pc.hp)
@@ -610,6 +630,43 @@ func tick(dt: float, free: bool, st: StoryState) -> void:
 		return
 	if free:
 		_player(dt, player, st)
+
+
+## 1-9d 피폭(SD-11 §11.2): 0.5초마다 선량 × 0.5 × (1 − 저항), 최소 0.1. 단계가 바뀌면 알림 · 바늘 흔들림 · 최대 AP. 1,000이면 죽는다
+func _radiation(dt: float, st: StoryState) -> void:
+	if st == null or pc.dead:
+		return
+	rad_shake = maxf(0.0, rad_shake - dt)
+	rad_dose = rad.dose_at(pc.pos())
+	var res := Radiation.resist(st, rad_items)
+	rad_rate = rad_dose * (1.0 - res) if rad_dose > 0.0 else 0.0
+	if rad_dose > 0.0:
+		_rad_t += dt
+		while _rad_t >= Radiation.TICK:
+			_rad_t -= Radiation.TICK
+			Radiation.expose(st, rad_dose, res)
+	else:
+		_rad_t = 0.0
+	var r := Radiation.rads(st)
+	var s := Radiation.stage(r)
+	if s != rad_stage:
+		if s > rad_stage and s < 5:
+			var pen: Dictionary = Radiation.PEN[s]
+			var parts: Array = []
+			for k in ["EN", "AG", "ST"]:
+				if pen.has(k):
+					parts.append("%s −%d" % [StoryState.STATS[k], int(pen[k])])
+			message.emit("%s — %s" % [Radiation.NAMES[s], " · ".join(parts)])
+			rad_shake = 1.0
+		rad_stage = s
+		ap.max_ap = APPool.max_for(st.stat("AG"))
+		ap.ap = minf(ap.ap, ap.max_ap)
+	if r >= 1000:                                                       # 치사(SD-11 §11.2)
+		message.emit("방사능 1,000 라드 — 몸이 버티지 못한다.")
+		pc.hp = 0.0
+		pc.dead = true
+		heal_q.clear()
+		pc.died.emit()
 
 
 ## 1-9a 상태 이상 흐름: 지속 피해 틱 · 행동 제한 시간 · 넉백(발이 뜬 이동 — 막히면 거기서 선다, SD-16 §5.4 ⑦)
@@ -1276,8 +1333,11 @@ func can_disarm_here() -> bool:
 
 func _draw() -> void:
 	_draw_cursor()
-	if disarm_prog >= 0.0 and pc.actor != null:                        # 해체 진행 고리
-		draw_arc(pc.pos() + Vector2(0, -40), 7.0, -PI / 2.0, -PI / 2.0 + TAU * disarm_prog, 20, Color("7CD62B"), 2.0)
+	if disarm_prog >= 0.0 and pc.actor != null:                        # 해체 진행 고리(어두운 바탕 원 위 — 녹색 빛 위에서도 보이게)
+		var rc := pc.pos() + Vector2(0, -50)
+		draw_circle(rc, 11.0, Color(0.04, 0.06, 0.04, 0.8))
+		draw_arc(rc, 8.0, 0.0, TAU, 24, Color(0.3, 0.36, 0.3, 0.9), 1.0)
+		draw_arc(rc, 8.0, -PI / 2.0, -PI / 2.0 + TAU * disarm_prog, 24, Color("D4FF6A"), 3.0)
 	if throw_hold >= 0.0 and pc.actor != null:                         # 투척 조준선(SD-11 §3.4): 누른 시간만큼 착지점까지 늘어나는 점선 포물선
 		var from: Vector2 = pc.pos() + Vector2(0, -10)
 		var d := minf(from.distance_to(throw_aim), throw_max_t * 32.0 * clampf(throw_hold / Ordnance.THROW_HOLD_S, 0.15, 1.0))

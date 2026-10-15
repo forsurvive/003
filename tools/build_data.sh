@@ -25,6 +25,7 @@ python3 tools/pipeline/map_compile.py
 python3 tools/pipeline/rumor_compile.py                  # 소문(1-4f): script/world/rumors.txt → rumors.json
 python3 tools/pipeline/struct_bake.py
 python3 tools/pipeline/world_extract.py                 # 월드(1-1): SD-08 표 → source.json
+python3 tools/pipeline/rad_zones.py                    # 방사능 구역(1-9d): source.json → rad.json(굽기가 고리 안에 웅덩이·드럼·표지판)
 python3 tools/pipeline/world_chunks.py                  # 월드 굽기 → world.bin(손 맵·타일셋 뒤에)
 python3 tools/pipeline/expr_cases.py
 python3 tools/pipeline/portrait_export.py

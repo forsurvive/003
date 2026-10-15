@@ -1,7 +1,8 @@
 ## 함정 · 환경 폭발(SD-11 §9.2 함정 표 · §9.3 환경 폭발, 단계 1-9c).
 ## 함정(맵 자료 traps + 함정 소품): 인계철선 + 수류탄 다발 · 압력판(연결 함정 발동) · 덫(다리 · 2초 묶임) · 함정 산탄총(철선·압력판 연결) ·
 ##   폭탄 택배함(2t 접근) · 부비트랩 자판기(접근 → 경보음 → 폭발 + 파편 지뢰) · 폭탄 단말기(쓰려 하면 감전 + 폭발) · 도시가스 누출(불씨 → 점화 · 넘어짐) ·
-##   중국군 지향성 지뢰(철선 → 부채꼴 4t 파편, 인지력 7 이상이면 발견 반경 +1t). 방사능 함정은 방사능 구역(1-9d)과 함께.
+##   중국군 지향성 지뢰(철선 → 부채꼴 4t 파편, 인지력 7 이상이면 발견 반경 +1t) · 방사능 함정(차폐 용기, 1-9d): 압력판·철선이 뚜껑을 열면
+##   20라드/초 2.5t 지대(RadField)가 봉인(수리 75)할 때까지 남는다. 상태 "open"도 st.hazards에 남는다.
 ##   숨긴 함정(철선 · 압력판 · 덫 · 지향성 지뢰)은 3t 안에 들어와야 보인다(발견하면 계속 보인다). 웅크려 1t 안에서 1초 상호작용 = 해체(요구 기술 · 회수).
 ## 환경 폭발: 원자력 차량(승용차 · 버스 · 화물차) 누적 피해 50(버스 120) → 불붙음 → 4초 뒤 폭발(1.5/4t, 300, DR 절반) → 방사능 지대 15초.
 ##   불붙은 차를 쏘면 1초씩 앞당긴다. 연료 드럼 · 가스통 피해 30 → 폭발(0.8/2.5t, 120, 화상). 연쇄 폭발. 처치 XP 없음(편 env).
@@ -11,12 +12,13 @@ extends Node2D
 
 const CARS := {"car_wreck": 50.0, "car_wreck2": 50.0, "bus_wreck": 120.0, "convoy_truck": 120.0}
 const DRUMS := {"drum": 30.0, "lp_gas": 30.0}
-const PROP_TRAPS := {"trap_vending": "vending", "trap_parcel": "parcel", "gas_pipe": "gas"}
+const PROP_TRAPS := {"trap_vending": "vending", "trap_parcel": "parcel", "gas_pipe": "gas", "rad_cask": "radcask"}
 const HIDDEN := ["wire", "plate", "bear", "claymore"]
 ## 해체 요구(SD-10 스킬 단계 II 25 · III 50 · IV 75) — 둘 중 하나면 된다
 const NEED := {"wire": [["수리", 25], ["폭발물", 25]], "plate": [["수리", 25]], "bear": [["수리", 25]], "shotgun": [["수리", 50]],
-	"parcel": [["폭발물", 50]], "vending": [["폭발물", 75]], "terminal": [["폭발물", 50]], "claymore": [["폭발물", 75]]}
-const LOOT := {"wire": ["W-060", 2], "shotgun": ["12게이지 산탄", 3], "parcel": ["W-060", 1], "vending": ["W-063", 1], "claymore": ["W-063", 1]}
+	"parcel": [["폭발물", 50]], "vending": [["폭발물", 75]], "terminal": [["폭발물", 50]], "claymore": [["폭발물", 75]],
+	"radcask": [["수리", 75]]}
+const LOOT := {"wire": ["W-060", 2], "shotgun": ["12게이지 산탄", 3], "parcel": ["W-060", 1], "vending": ["W-063", 1], "claymore": ["W-063", 1], "radcask": ["M-018", 1]}
 const SEE_T := 3.0
 const CAR_BURN_S := 4.0
 var shots: Projectiles
@@ -59,8 +61,13 @@ func setup(m, s: StoryState) -> void:
 		var it := {"key": _key(c), "kind": "trap", "type": str(t["type"]), "cell": c, "cells": _trap_cells(t), "p": Vector2(c.x * 32 + 16, c.y * 32 + 16),
 			"dir": str(t.get("dir", "E")), "len": int(t.get("len", 1)), "id": str(t.get("id", "")), "link": str(t.get("link", "")), "state": "ready",
 			"seen": false, "beep": -1.0}
+		if it["type"] == "radcask":                                        # 차폐 용기: 소품(rad_cask)과 한 물건 — 보이고, 그림 상태를 바꾼다
+			it["name"] = "rad_cask"
+			it["seen"] = true
 		_restore(it)
 		items.append(it)
+		if it.has("name") and it["state"] != "ready":
+			m.set_prop_state(c, _prop_state(it))
 	_sync_props()
 
 
@@ -82,6 +89,8 @@ func _restore(it: Dictionary) -> void:
 	var s := str(st.hazards.get(it["key"], "")) if st != null else ""
 	if s in ["done", "off", "burnt", "boom"]:
 		it["state"] = "done"
+	if s == "open":
+		it["state"] = "open"
 	if s == "seen":
 		it["seen"] = true
 
@@ -114,11 +123,18 @@ func _sync_props() -> void:
 		else:
 			it.merge({"kind": "trap", "type": PROP_TRAPS[nm]})
 		_restore(it)
-		if it["state"] == "done":
-			map.set_prop_state(c, "burnt" if it["kind"] in ["car", "drum"] else "boom")
+		if it["state"] != "ready":
+			map.set_prop_state(c, _prop_state(it))
 		items.append(it)
 	if map is WorldMap:                                                # 내려간 청크의 소품은 목록에서 뺀다
 		items = items.filter(func(it): return it["kind"] == "trap" and not it.has("name") or live.has(it["key"]))
+
+
+## 다시 열었을 때 소품 그림 상태: 차·드럼 = 그을림 · 차폐 용기 = 열림/봉인 · 나머지 함정 소품 = 터짐
+func _prop_state(it: Dictionary) -> String:
+	if it["type"] == "radcask":
+		return "open" if it["state"] == "open" else "off"
+	return "burnt" if it["kind"] in ["car", "drum"] else "boom"
 
 
 # ---------------------------------------------------------------- 맞음 · 폭발
@@ -253,6 +269,12 @@ func _trigger(it: Dictionary, team: String = "enemy") -> void:
 				"range_eff": 4.0, "range_max": 4.5, "falloff_min": 0.4, "name": "지향성 지뢰"}
 			shots.fire_weapon(p, ang, "enemy", w, 50.0, {"flash": "flash_shotgun"})
 			shots.booms.append({"at": p, "age": 0.0, "k": 1, "born": Engine.get_process_frames(), "set": "boom"})
+		"radcask":                                                     # 차폐 해제 장치: 뚜껑이 열린다(지대는 RadField)
+			it["state"] = "open"
+			if st != null:
+				st.hazards[it["key"]] = "open"
+			if map != null:
+				map.set_prop_state(it["cell"], "open")
 		"bear":
 			pass
 
@@ -384,6 +406,8 @@ func finish_disarm(it: Dictionary) -> void:
 		var lt: Array = LOOT.get(it["type"], [])
 		if not lt.is_empty():
 			st.call_fn("give", [lt[0], int(lt[1])])
+	if it["type"] == "radcask" and map != null:
+		map.set_prop_state(it["cell"], "off")
 
 
 # ---------------------------------------------------------------- 그림

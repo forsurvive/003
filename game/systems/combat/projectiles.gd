@@ -25,6 +25,7 @@ var beams: Array = []                    ## 레이저 빔 {a, b, age, col} — 0
 var booms: Array = []                    ## 폭발 {at, age, k}
 var blasts_total := 0
 signal exploded(at: Vector2, outer_px: float, team: String)
+signal nuked(at: Vector2)                       ## 핵 투사기 착탄(1-9d): 전투 모듈이 폭심 4t 방사능 지대 20초(8라드/초)를 깐다
 signal struck(at: Vector2, tile: Vector2i, weapon: Dictionary, team: String)   ## 탄이 엄폐·벽에 막힌 자리(1-9c: 차량·드럼·함정 소품이 맞는다)
 const BEAM_HOLD := 0.1
 const BEAM_FADE := 4.0 / 30.0
@@ -164,6 +165,8 @@ func explode(at: Vector2, w: Dictionary, skill: float, team: String, fl: int = 0
 	booms.append({"at": at, "age": 0.0, "k": 2 if pk in ["nuke", "car"] else 1, "born": Engine.get_process_frames(),
 		"set": "boom_pulse" if bk == "emp" else ("boom_plasma" if bk == "plasma" else "boom")})
 	exploded.emit(at, outer, team)
+	if pk == "nuke":
+		nuked.emit(at)
 	if base <= 0.0:
 		return
 	_rebucket()
