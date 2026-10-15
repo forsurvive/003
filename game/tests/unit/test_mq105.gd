@@ -29,15 +29,23 @@ func test_sb_inset(t) -> void:
 
 func test_sb_exits(t) -> void:
 	var bad := []
-	for id in ["X-SB", "H-02", "H-03", "H-04", "H-05"]:
+	for id in ["X-SB", "H-02", "H-03", "H-04", "H-05", "K-20", "K-22", "K-23"]:
 		var d := _map(id)
 		for e in d["exits"]:
 			var to := str(e["to"])
 			var mk := str(e["mark"])
+			if to == "W":
+				PlaceLog.load_db()
+				if PlaceLog.db.get(mk, {}).get("arrive") == null:              # 손 장소 출구: 장소 도착 칸(건물 문 앞)
+					bad.append("%s → W:%s(도착 칸 없음)" % [id, mk])
+				continue
 			if not InteriorMap.exists(to) or not _map(to)["marks"].has(mk):
 				bad.append("%s → %s:%s" % [id, to, mk])
 	t.eq(bad, [], "본소 출구가 모두 있는 맵·표지로 간다")
-	t.ok(_map("H-03")["exits"].all(func(e): return str(e["to"]) == "X-SB"), "창고동 우리 출구는 마당·뒷마당(X-SB)")
+	var outs := {}
+	for e in _map("H-03")["exits"]:
+		outs[str(e["to"])] = true
+	t.ok(outs.has("X-SB") and outs.has("K-23") and outs.size() == 2, "창고동 우리 출구 = 마당·뒷마당(X-SB) + 쪽방 벽 사이 통로(K-23)")
 
 
 func test_sb_cages(t) -> void:

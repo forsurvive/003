@@ -1,0 +1,32 @@
+{
+ "id": "R02-24_COMMUTER",
+ "title": "출근길의 유해",
+ "loc": "L-R02-24",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "정기권 지갑 안에 반으로 접은 쪽지. '오늘 비 온대. 우산 챙겨. 저녁에 순댓국.'"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "지갑 뒷면에 아이 사진. 우산은 펴지도 못했다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/places/R02_SOUTH.txt"
+}

@@ -20,3 +20,16 @@ npc C-034 9 4 S cond="MQ104_SEARCH == 0 or MQ104_SEARCH == 4"
 mark truck_door 3 4 N
 mark guard_a 0 5 E
 mark guard_b 5 5 W
+
+# 신도림 환승 고가(L-R02-24, SD-09a C · 단계 1-6 R02 남쪽 탐험 묶음): 2077년 출근 인파가 버린 우산 수백 개가 한쪽으로 쌓여 바리케이드가 됐다.
+# 인솔조 운송로가 고가 아래를 지난다(매복 지점 — 인카운터 표가 맡는다). 우산 사이에 누가 숨겨 둔 보따리.
+spot L-R02-24 10 4 off=9,1
+prop umbrella_pile 0 1
+prop umbrella_pile 3 1
+prop umbrella_pile 7 1
+text 0 1 "우산 바리케이드. 접힌 우산 수백 개가 손잡이끼리 엉켰다. 2077년 10월 24일 아침 출근길의 우산들이다." w=10
+prop remains 6 3
+text 6 3 "우산 하나를 쥔 채 엎드린 유해. 정기권 지갑에 '신도림 → 여의도'." scene=R02-24_COMMUTER
+prop backpack 9 3
+box 9 3 bag name="우산 사이 보따리"
+text 9 3 "우산 더미 사이에 밀어 넣은 보따리. 끈에 붉은 번호표 '214'." 

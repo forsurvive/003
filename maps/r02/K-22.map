@@ -1,0 +1,62 @@
+# 구로 공단 노동자 아파트 107동(SD-09a L-R02-22 · 훅 「127번」 H-R02-07 · LR-47 · 단계 1-6)
+# 36×18 · 위 왼쪽 숨은 세대(127번의 아내 채해인) · 판자로 막은 '빈집' 둘 · 오른쪽 지하주차장 경사로와 대피소 기둥(LR-47 원문).
+map K-22 구로 노동자 아파트 107동
+set bc
+grid
+####################################
+####################################
+####################################
+#jjjjjjjj#jjjjjj#jjjjjj#~~~~~~~~~~~#
+#jjjjjjjj#jjjjjj#jjjjjj#~~~~~~~~~~~#
+#jjjjjjjj#jjjjjj#jjjjjj#~~~~~~~~~~~#
+#jjjjjjjj#jjjjjj#jjjjjj#~~~~~~~~~~~#
+#jjjjjjjj#jjjjjj#jjjjjj#~~~~~~~~~~~#
+#jjjjjjjj#jjjjjj#jjjjjj#~~~~~~~~~~~#
+####j#######j######j####~~~~~~~~~~~#
+####j#######j######j####~~~~~~~~~~~#
+####j#######j######j####~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+##########~#############~~~~~~~~~~~#
+##########~#########################
+end
+exit 10 17 W L-R02-22
+mark from_W 10 15 N
+mark home 6 5 S
+# 숨은 세대
+prop yo_bed 1 4
+prop low_table 3 6
+prop crt_tv 7 3
+prop w_kid_drawing 2 1
+text 2 2 "아이 그림. 아빠 · 엄마 · 나. 아빠 목에 동그라미를 그리고 숫자 '127'." w=2
+npc N-R02-050 5 5 S
+npc N-R02-039 3 5 E cond="SB_127 == 2 or SB_127 == 3 or SB_127 == 4 or SB_DEBT == 1"
+prop water_jug 8 7
+# 판자 막은 세대
+text 10 3 "판자로 막은 현관 안쪽. '빈집'이라 쓴 판자 뒤에 살림이 그대로다. 나간 지 오래다." w=6
+prop dresser 11 4
+box 11 4 apartment name="빈집 서랍장"
+prop yo_bed 17 4
+text 17 4 "이불 위에 빨간 번호표 '89'. 주인은 데려가졌다." w=2
+box 21 3 apartment name="빈집 쌀통"
+prop crate_o 21 3
+# 복도
+text 4 12 "복도 문마다 판자. 판자마다 '빈집'. 판자 하나에만 아이 손자국." w=6
+prop shoe_rack 14 12
+prop drum 20 14
+# 지하주차장
+prop car_wreck 26 4
+prop car_wreck2 30 4
+prop car_wreck 26 9
+prop car_wreck2 31 10
+prop w_procedure 28 1
+text 28 2 "벽 표지 '민방위 대피소 — 수용 인원 5,800명'. 표지 아래까지 차가 빽빽하다." w=2
+prop pillar 33 7
+text 33 7 "기둥에 테이프로 붙인 종이." scene=K-22_PILLAR
+prop remains 29 14
+box 29 14 corpse_scav name="차 사이의 유해"
+enemy CR-095 25 13
+enemy CR-095 32 14
+enemy CR-095 28 7

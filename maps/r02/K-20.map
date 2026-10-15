@@ -1,0 +1,60 @@
+# 가리봉 쪽방 골목 — 인솔조 숙소 1층(SD-09a L-R02-20 · 훅 「쪽방 통로」 H-R02-08 · 단계 1-6 R02 남쪽 탐험 묶음)
+# 30×16 · 쪽방 여섯 칸(2077년 원룸 쪽방) · 아래 복도에 인솔조장 갈고리 · 맨 오른쪽 칸 쪽방 할매 길금순(은신처 숙박 무료).
+# 길금순 칸 벽장(자물쇠 25 — 할매가 열어 주기도 한다) 뒤 = 벽 사이 비밀 통로(K-23) → 새벽인력 본소 창고동 우리(H-03) 벽 판자 틈. '이 벽 뒤로 마흔 명이 나갔어.'
+map K-20 가리봉 쪽방 — 인솔조 숙소
+set bc
+grid
+###########################j##
+###########################j##
+###########################j##
+#jjjj#jjjj#jjjj#jjjj#jjjj#jjj#
+#jjjj#jjjj#jjjj#jjjj#jjjj#jjj#
+#jjjj#jjjj#jjjj#jjjj#jjjj#jjj#
+#jjjj#jjjj#jjjj#jjjj#jjjj#jjj#
+#jjjj#jjjj#jjjj#jjjj#jjjj#jjj#
+##j####j####j####j####j####j##
+##j####j####j####j####j####j##
+##j####j####j####j####j####j##
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+##############~###############
+end
+exit 14 15 W L-R02-20
+mark from_W 14 14 N
+door 27 1 locked lock=25 "벽장"
+exit 27 0 K-23 from_K-20
+mark from_K-23 27 3 S
+mark bed 27 4 S
+# 쪽방 다섯(인솔조원 숙소 · 빈방)
+prop yo_bed 1 4
+prop crt_tv 3 3
+text 2 4 "쪽방 문 못에 2077년 월세 영수증과 2277년 번호표가 같이 걸려 있다. '월세 35만 원' · '번호 214'." w=2
+prop yo_bed 6 4
+prop low_table 7 6
+text 7 6 "밥상 위 화투와 전표 묶음. 일당 전표 석 장으로 판돈을 걸었다." w=2
+box 6 4 bag name="인솔조원 배낭"
+prop yo_bed 11 4
+prop w_calendar 12 1
+text 12 2 "2077년 10월 달력. 24일 칸에 '월세 — 사장님 입금'. 그 위에 2277년 볼펜 글씨로 '인솔 고척 6명'."
+prop shoe_rack 13 6
+prop yo_bed 16 4
+prop heater 18 6
+prop yo_bed 23 5
+prop folding_chair 21 6
+text 23 5 "빈 쪽방. 요 위에 쇠고리 수갑 하나. 사슬은 잘려 있다." w=2
+# 길금순 칸
+prop yo_bed 26 5
+prop wardrobe 21 3
+text 28 3 "벽장 문틈으로 바람이 샌다. 안쪽 벽지가 들떠 있다."
+npc N-R02-042 26 4 S
+prop plant_pot 28 5
+# 복도
+npc N-R02-041 9 12 E route=a:9,12,8;b:22,12,6 bark="줄 맞춰. 낙오하면 장부에 이자 붙는다."
+npc CR-437 4 13 S sheet=en_cr437_loco bark="쉬는 시간이야. 말 걸지 마."
+prop drum 1 14
+prop shoe_rack 16 11
+prop crate_o 27 14
+box 27 14 trash name="복도 상자"
+text 20 11 "복도 벽 낙서. '쪽방 214호 — 고척 가서 안 옴'. 그 밑에 다른 글씨로 '213호도'."

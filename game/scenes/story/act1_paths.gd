@@ -86,6 +86,8 @@ func _process(dt: float) -> void:
 		host.map.unlock_door(27, 1)
 	if host.map != null and host.map.id == "Y-00" and v("MQ104_FIRE") >= 1:
 		host.map.unlock_door(6, 13)
+	if host.map != null and host.map.id == "K-20" and v("GB_PASS") >= 1:
+		host.map.unlock_door(27, 1)                                     # 길금순이 열어 준 벽장(1-6)
 	if host.map != null and host.map.id == "Y-04" and v("MQ104_AUTH") >= 1:
 		host.map.unlock_door(3, 12)                                     # 방폭문: 관리자 인증으로도 열린다(SD-09a Y-04)
 	_yd_tick()
@@ -720,7 +722,9 @@ func _sb_free() -> void:
 		return
 	st.boxes["sbcage:%d" % best] = {"open": true}
 	host.ev.handlers["cage"].call(["open", best, 8], func() -> void: pass)
-	var n: int = SB_CAGES[best] - (1 if best == 22 and st.boxes.has("sb88") else 0)
+	var n: int = SB_CAGES[best] - (1 if best == 22 and st.boxes.has("sb88") else 0) - (1 if best == 10 and st.boxes.has("sb127") else 0)
+	if best == 10 and v("SB_127") < 2:
+		st.vars.set_v("SB_127", 2)                                        # 127번을 우리에서 빼 왔다(훅 「127번」)
 	st.vars.set_v("SB_FREED", v("SB_FREED") + n)
 	var said := {10: "127번 — 채윤재가 고개를 숙인다. '아내한테, 그 이름으로 전해 줄게.'", 22: "88번 — 기라희가 문살을 놓는다. 세이프빌 대신 노들로 간다고 했다."}
 	host.hint(said.get(best, "철창 안 사람이 말없이 뒷문 통로로 빠져나간다."), 5.0)
@@ -773,9 +777,19 @@ func _sb_cmd(a: Array, done: Callable) -> void:
 					e.queue_free()
 					host.combat.enemies.erase(e)
 			host.hint("개들이 고기에 정신이 팔렸다. 뒷마당을 지나갈 수 있다.", 4.0)
-		"buy":
-			st.boxes["sb88"] = {"open": true}
+		"buy":                                                          # 소장에게 값을 치르고 산 '인력'(88 · 127): 그 사람만 우리에서 나간다
+			st.boxes["sb%s" % str(a[1])] = {"open": true}
 			st.vars.set_v("SB_FREED", v("SB_FREED") + 1)
+		"sleep":                                                        # 은신처에서 잔다(길금순 칸 · 1-6): 8시간 · 체력 회복(침대 휴식, SD-11 '자연 회복 없음'과 별개)
+			host.ev.run("fade_out", ["black", "8"], func() -> void:
+				host.advance_minutes(8 * 60)
+				host.combat.pc.hp = host.combat.pc.max_hp
+				host.ev.run("fade_in", ["black", "8"], func() -> void:
+					host.hint("푹 잤다. 몸이 가볍다. (%s)" % host.date_text.substr(13), 4.0)))
+		"wardrobe":
+			if host.map != null and host.map.id == "K-20":
+				host.map.unlock_door(27, 1)
+				host.hint("할매가 벽장 문고리를 돌려 준다. 벽 사이로 바람이 분다.", 4.0)
 		"free":
 			_sb_free()
 	done.call()

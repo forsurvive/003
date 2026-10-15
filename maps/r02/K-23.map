@@ -1,0 +1,28 @@
+# 쪽방 벽 사이 비밀 통로(SD-09a L-R02-20 '쪽방 벽 사이 비밀 통로(길금순의 탈출로)' · 훅 「쪽방 통로」 · 단계 1-6)
+# 32×8 · 서쪽 끝 = 길금순 칸 벽장(K-20) · 동쪽 끝 = 본소 창고동 우리 벽 판자 틈(H-03). 탈출한 마흔 명이 지나간 길.
+map K-23 쪽방 벽 사이 통로
+set bc
+grid
+################################
+################################
+################################
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+########uuuuu#######uuuuuuu#####
+########uuuuu#######uuuuuuu#####
+################################
+end
+exit 0 3 K-20 from_K-23
+mark from_K-20 1 3 E
+exit 31 4 H-03 from_tunnel
+mark from_H-03 30 4 W
+prop rubble 6 4
+prop bucket 10 6
+prop straw_mat 21 5
+prop work_lamp 15 3
+text 9 5 "벽에 분필로 그은 바를 정(正) 자 여덟. 마흔 명. 맨 끝 획만 굵다." w=2
+text 22 5 "웅크려 쉬던 자리. 담요 조각과 빈 물병, 아이 신발 한 짝." w=2
+prop backpack 24 6
+box 24 6 bag name="두고 간 보따리"
+prop remains 25 6 cond="V_ACT >= 99"
+text 29 4 "판자 틈. 건너편에서 쇠 냄새와 사람 숨소리. 창고동 우리 벽이다."

@@ -419,6 +419,38 @@ def w_punch():
     return im
 
 
+def umbrella_pile(seed=0):
+    """우산 바리케이드(3×1, SD-09a L-R02-24): 2077년 출근 인파가 버린 우산 수백 개가 한쪽으로 쌓였다 — 접힌 우산 다발 + 펼친 채 뒤집힌 몇 개."""
+    im = img(96, 44)
+    d = ImageDraw.Draw(im)
+    rnd = random.Random(seed)
+    cols = [("P44", "P45", "P46"), ("P52", "P53", "P54"), ("P02", "P03", "P04"), ("P47", "P48", "P49"), ("P34", "P35", "P36"), ("P05", "P06", "P07")]
+    d.ellipse([2, 30, 93, 43], fill=C("P03"))                          # 더미 그늘
+    for k in range(70):                                               # 접힌 우산(사선 막대 + 천 주름 + 손잡이 갈고리)
+        x = rnd.randint(4, 88)
+        y = rnd.randint(12, 36)
+        c = rnd.choice(cols)
+        ang = rnd.choice((-1, 1))
+        ln = rnd.randint(14, 22)
+        for i in range(ln):
+            xx, yy = x + i * ang * 0.6, y - i * 0.5
+            w_ = 2 if i < ln - 4 else 1
+            d.line([xx - w_, yy, xx + w_, yy], fill=C(c[1] if i % 3 else c[0]))
+            if i % 3 == 0:
+                d.point((xx + w_, yy), fill=C(c[2]))
+        d.arc([x - 3, y, x + 1, y + 5], 0, 180, fill=C("P18"))           # 손잡이
+    for k in range(3):                                                # 뒤집혀 펼친 우산(살이 드러남)
+        cx, cy = rnd.randint(16, 80), rnd.randint(8, 22)
+        c = rnd.choice(cols)
+        d.pieslice([cx - 12, cy - 6, cx + 12, cy + 10], 180, 360, fill=C(c[1]))
+        d.arc([cx - 12, cy - 6, cx + 12, cy + 10], 180, 360, fill=C(c[0]))
+        for a in range(5):
+            xx = cx - 11 + a * 5
+            d.line([cx, cy + 2, xx, cy - 2 + abs(a - 2)], fill=C("P06"))
+        d.line([cx, cy + 2, cx + 1, cy + 12], fill=C("P05"))
+    return K.outline(im) if hasattr(K, "outline") else im
+
+
 # ================================================================================================ 등록
 def _r(fn, fw, fh, kind="floor", down=2, dx=0, dy=0):
     return {"fn": fn, "foot": (fw, fh), "kind": kind, "down": down, "dx": dx, "dy": dy}
@@ -452,6 +484,7 @@ PROPS_SB = {
     "ledger_shelf": _r(ledger_shelf, 2, 1, down=-2),
     "w_wanted": _r(w_wanted, 1, 0, "wall", dx=3, dy=2),
     "w_punch": _r(w_punch, 1, 0, "wall", dx=2, dy=1),
+    "umbrella_pile": _r(lambda: umbrella_pile(3), 3, 1, down=-2),
 }
 for _c, _s in DETAINEES:
     PROPS_SB["detainee_" + _s] = _r(lambda c=_c: detainee(c), 1, 1, down=-4)

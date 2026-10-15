@@ -82,8 +82,9 @@ func _init() -> void:
 	# PASS 정문(1 구매자 · 2 거래 손님 · 3 쫓겨남) · DOGS 경비견(1 고기에 정신 팔림 · 2 모두 쓰러짐) · SAFE 금고 열림 ·
 	# KEY 허리춤 열쇠 · FREED 풀어 준 '인력' 수 · READ 장부를 읽음 · DEAL 이름을 산 거래 · BURNT 황두칠이 장부를 태움 · DEBT 112명 빚 탕감 ·
 	# BJ 계엄군 초소에 넘김 · TALK 소장 면담(1 만남 · 2 열쇠를 빼앗긴 뒤 마당으로 내려감) · BOUGHT 88번을 삼 · DEPO 보증금을 냄
+	# SB_127 훅 「127번」(1 아내가 부탁함 · 2 우리에서 빼 옴 · 3 값을 치르고 삼 · 4 집에 돌아감) · GB_PASS 길금순이 벽장 통로를 알려 줌
 	for k in ["GAME_HOUR", "SB_RAID", "SB_PASS", "SB_DOGS", "SB_SAFE", "SB_KEY", "SB_FREED", "SB_READ", "SB_DEAL", "SB_BURNT",
-			"SB_DEBT", "SB_BJ", "SB_TALK", "SB_BOUGHT", "SB_DEPO"]:
+			"SB_DEBT", "SB_BJ", "SB_TALK", "SB_BOUGHT", "SB_DEPO", "SB_127", "GB_PASS"]:
 		vars.declare(k, "int", 0)
 	for kv in [["CAPTURE_DAY", -1], ["CAPTURE_AT", 0], ["SB_COLLAR", 0], ["SB_CUFF", 0], ["CAPTURE_BY", 0]]:
 		vars.declare(kv[0], "int", kv[1])

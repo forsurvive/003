@@ -137,7 +137,7 @@ func _ready() -> void:
 				["check", "read:LR-01", "앵커석의 심야 뉴스 대본(LR-01)"]]
 		"yd_talk", "yd_fight", "yd_vent":                               # MQ-104(1-5): 해치 → 방화문 → 작은 방 → 집결지 조사 → 인증 → 수색조 세 갈래
 			_yd_plan()
-		"sb_buy", "sb_deal", "sb_capture", "sb_raid", "sb_roof", "sb_jo":   # MQ-105(1-6) 새벽인력 본소
+		"sb_buy", "sb_deal", "sb_capture", "sb_raid", "sb_roof", "sb_jo", "sb_south":   # MQ-105(1-6) 새벽인력 본소 · R02 남쪽 탐험 묶음
 			_sb_plan()
 	plan.append(["end"])
 
@@ -171,6 +171,27 @@ func _sb_plan() -> void:
 		plan = [["want", ["장부를 건넨다"]], ["talk", "C-010"], ["wait", 1.0],
 			["check", "HO_LEDGER == 81", "조만석에게 장부(HO 81)"], ["check", "has(\"M-211\") == 0 and MQ105_STAGE == 100", "장부를 건넴 · 단계 100"],
 			["check", "AFF_JC >= 5", "연합 일괄 +5"]]
+		return
+	if route == "sb_south":                                            # 쪽방 할매 → 잠 → 벽 사이 통로 → 창고동 우리에서 127번 → 아내 → LR-47 → 신도림 우산
+		st.vars.set_v("PC_CH", 8)
+		st.vars.set_v("PC_SKP_SPEECH", 80)
+		host.date_text = "2277. 10. 25.  21:30"
+		host.combat.pc.hp = host.combat.pc.max_hp * 0.5
+		host.enter("W", "L-R02-20")
+		plan = [["wait", 1.0], ["face", 6], ["shot", "k20_door"], ["use", 641, 1364], ["wait", 2.0], ["shot", "k20"],
+			["go", 27, 12, "K-20"], ["go", 27, 7], ["want", ["벽장에서", "[화술 쉬움]"]], ["talk", "N-R02-042"], ["wait", 1.0], ["check", "GB_PASS == 1", "길금순이 벽장 통로를 알려 준다(화술 쉬움)"],
+			["want", ["눈을 붙이고"]], ["talk", "N-R02-042"], ["wait", 4.0], ["check", "GAME_HOUR == 5 or GAME_HOUR == 6", "은신처에서 잠(8시간)"],
+			["check", "hp_full", "자고 나면 체력이 찬다"],
+			["go", 27, 3, "K-20"], ["go", 27, 1], ["go", 27, 0], ["wait", 1.5], ["shot", "k23"], ["go", 29, 4, "K-23"], ["go", 31, 4], ["wait", 1.5],
+			["check", "map:H-03", "벽 사이 통로 끝 = 창고동 우리 벽 판자 틈"], ["shot", "k23_h03"],
+			["go", 10, 9, "H-03"], ["want", ["[힘 7]"]], ["use", 10, 8], ["wait", 1.0], ["check", "SB_127 == 2", "127번을 우리에서 빼 옴"],
+			["go", 42, 15], ["go", 43, 15], ["wait", 1.5], ["go", 0, 3, "K-23"], ["wait", 1.5], ["go", 14, 14, "K-20"], ["go", 14, 15], ["wait", 1.5],
+			["warp", "W", "L-R02-22"], ["wait", 1.0], ["face", 6], ["use", 672, 1354], ["wait", 2.0], ["shot", "k22"], ["fight"],
+			["want", ["채윤재"]], ["shoton", "더 깊은 데로", "k22_back"], ["talk", "N-R02-050"], ["wait", 1.0],
+			["check", "SB_127 == 4 and has(\"I-001\", 21)", "아내: 빼 온 남편 — 빚은 그대로(카르마 +50 · 스팀팩)"],
+			["go", 33, 8, "K-22"], ["use", 33, 7], ["wait", 2.0], ["check", "read:LR-47", "지하주차장 기둥의 LR-47"],
+			["warp", "W", "L-R02-24"], ["wait", 1.5], ["shot", "umbrella"], ["go", 665, 1200], ["face", 6], ["shoton", "순댓국", "commuter"], ["use", 665, 1199], ["wait", 2.0],
+			["check", "seen_commuter", "신도림 우산 바리케이드의 출근길 유해"]]
 		return
 	host.enter("W", "L-R02-19")
 	plan = [["shot", "sb_front"], W.call(22, 39)]
@@ -450,6 +471,12 @@ func _process(dt: float) -> void:
 				ok = seen.has("evac")
 			elif str(s[1]).begins_with("read:"):
 				ok = st.boxes.has("notes") and st.boxes["notes"]["read"].has(str(s[1]).substr(5))
+			elif str(s[1]) == "hp_full":
+				ok = host.combat.pc.hp >= host.combat.pc.max_hp - 0.5
+			elif str(s[1]).begins_with("map:"):
+				ok = host.map.id == str(s[1]).substr(4)
+			elif str(s[1]) == "seen_commuter":
+				ok = seen.has("commuter")
 			elif str(s[1]) == "seen_guard":
 				ok = seen.has("guard_bark")
 			elif str(s[1]) == "seen_rumor":
