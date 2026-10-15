@@ -238,11 +238,57 @@ func _enemy_weapon(enemy_id: String, arm: String) -> Dictionary:
 
 signal enemy_down(e: Enemy)
 
+## 1-9e2 적 무기(SD-14 주무기 글 → SD-13 무기 ID, SD-11 §7.4): 길 위 조우 · 생성 건물 적만 — 진행기가 세운 적은 다듬어 둔 장비 그대로(1막 이야기 전투 밸런스)
+const ENEMY_ARMS := {
+	"CR-420": [["W-005", 0.6], ["W-001", 0.4]],                        # 낡은 권총 / 개조 권총
+	"CR-421": [["W-014", 0.4], ["W-025", 0.3], ["W-017", 0.3]],         # 사냥총 / 산탄총 / 자동소총
+	"CR-422": [["W-018", 0.4], ["W-029", 0.3], ["W-015", 0.3]],         # 자동소총 / 전투 산탄총 / 기관단총
+	"CR-423": [["W-047", 0.35], ["W-040", 0.35], ["W-046", 0.3]],       # 야구방망이 / 쇠파이프 / 각목(+ 파편 수류탄)
+	"CR-401": [["W-018", 0.75], ["W-023", 0.25]],                       # 돌격소총 / 레이저 소총
+	"CR-456": [["W-017", 0.6], ["W-028", 0.4]],                         # 자동소총 / 산탄총
+	"CR-457": [["W-029", 1.0]],                                         # 전투 산탄총(+ 소방 도끼)
+}
+const ENEMY_ALT := {"CR-457": "W-049"}                                  ## 붙으면 바꿔 드는 근접 무기
+const ENEMY_NADES := {"CR-423": ["W-060", 1], "CR-401": ["W-058", 1]}   ## 수류탄(계엄 '기절탄'은 자료가 없어 최루탄으로 — 정합)
+var _team_nade := {}                                                  ## 편 -> 마지막 수류탄 시각(분대 재사용 4초)
+var _clock := 0.0
+
+
+## 무기 고르기: 개체 자리로 시드한 굴림(같은 자리 같은 무기 — 다시 열어도 같다)
+func _pick_arm(enemy_id: String, pos: Vector2) -> Dictionary:
+	var opts: Array = ENEMY_ARMS[enemy_id]
+	var r := RandomNumberGenerator.new()
+	r.seed = int(pos.x * 131 + pos.y * 977) ^ enemy_id.hash()
+	var x := r.randf()
+	var acc := 0.0
+	for o in opts:
+		acc += float(o[1])
+		if x <= acc:
+			return weapons.get(str(o[0]), {}).duplicate()
+	return weapons.get(str(opts[-1][0]), {}).duplicate()
+
 
 func spawn(enemy_id: String, pos: Vector2, map: InteriorMap, st: StoryState = null, opts: Dictionary = {}) -> Enemy:
 	var e := Enemy.new()
 	var arm := str(opts.get("arm", "baton" if enemy_id == "CR-473" else ("claw" if enemy_id in ["CR-200", "CR-201"] else "")))
-	e.setup_enemy(enemy_rows[enemy_id], _enemy_weapon(enemy_id, arm), pos, map, opts)
+	var generic := bool(opts.get("morale", str(map.data.get("id", "")).begins_with("G-")))   # 길 위 조우 · 생성 건물(1-9e)
+	var w := _enemy_weapon(enemy_id, arm)
+	var o2 := opts
+	if generic and ENEMY_ARMS.has(enemy_id) and not opts.has("arm"):
+		w = _pick_arm(enemy_id, pos)
+		if str(w.get("kind", "")) == "melee":
+			o2 = opts.duplicate()
+			o2["arm"] = "melee"
+	e.setup_enemy(enemy_rows[enemy_id], w, pos, map, o2)
+	if generic and ENEMY_ALT.has(enemy_id):
+		e.alt_weapon = weapons.get(ENEMY_ALT[enemy_id], {}).duplicate()
+	if generic and ENEMY_NADES.has(enemy_id) and weapons.has(str(ENEMY_NADES[enemy_id][0])):
+		e.nade_w = weapons[str(ENEMY_NADES[enemy_id][0])]
+		e.nades = int(ENEMY_NADES[enemy_id][1])
+		e.throw_cb = func(from: Vector2, to: Vector2) -> void:
+			_team_nade[e.cmb.team] = _clock
+			ord.throw(from, to, e.nade_w, e.cmb.team, e.skill, 8.0)
+		e.squad_ok = func() -> bool: return _clock - float(_team_nade.get(e.cmb.team, -99.0)) >= 4.0
 	e.smoke_at = ord.in_zone
 	e.cmb.robot = enemy_id.begins_with("CR-3")                          # SD-14 CR-3xx = 로봇(관제망 · 드론 · 포탑)
 	e.cmb.big = enemy_id == "CR-405"                                    # 파워 아머: 넘어짐 · 그물 · 넉백 면역(SD-11 §9.4)
@@ -630,6 +676,7 @@ func tick(dt: float, free: bool, st: StoryState) -> void:
 	if armor_dr.is_valid():
 		pc.dr = float(armor_dr.call())
 	cool = maxf(0.0, cool - dt)
+	_clock += dt
 	if pc.flash > 0:
 		pc.flash -= 1
 	if player.doll != null:

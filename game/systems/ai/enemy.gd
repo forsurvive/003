@@ -69,8 +69,21 @@ var _spread_add := 0.0                        ## 팔 손상 +8° · 머리 손�
 var _melee_mul := 1.0                         ## 팔 손상 근접 −30%
 var say_text := ""
 var say_t := 0.0
+## 1-9e2 무기 · 점사 · 전환 · 수류탄(SD-11 §7.4)
+var alt_weapon := {}                          ## 붙으면 바꿔 드는 근접 무기(계약 경호 구울 소방 도끼)
+var _main_weapon := {}
+var on_alt := false
+var _switch_t := 0.0                          ## 무기 바꾸는 중(0.6초 — 경계에서 들락날락하면 공격이 끊긴다, 원작 공략)
+var nades := 0
+var nade_w := {}
+var throw_cb := Callable()                    ## (from, to) — 전투 모듈이 Ordnance.throw로
+var squad_ok := Callable()                    ## () -> bool: 분대 수류탄 재사용(4초)
+var _nade_cd := 0.0                           ## 개체 재사용(8초)
+var _hide_t := 0.0                            ## 표적이 엄폐 뒤에서 버틴 초(3초 넘으면 수류탄)
+var _burst_on := 0.0                          ## 연사 무기 점사 남은 초(0.6~1.2)
+var _burst_rest := 0.0                        ## 점사 뒤 쉬는 초(0.5~1.0)
 const SAY := {"flee": ["살려 줘!", "튀어!", "이건 못 해먹겠다!"], "surrender": ["쏘지 마! 항복이야!", "그만, 그만! 손 들었어!"],
-	"drug": ["크흐… 이거면 돼…", "으아아!"], "back": ["다시 간다!", "덤벼 봐!"], "alarm": ["저기다!", "여기야!"]}
+	"drug": ["크흐… 이거면 돼…", "으아아!"], "nade": ["수류탄!", "받아라!"], "back": ["다시 간다!", "덤벼 봐!"], "alarm": ["저기다!", "여기야!"]}
 var _rng := RandomNumberGenerator.new()
 ## 측정용(--ai-profile): 이번 프레임 층별 시간(마이크로초)과 횟수. 측정을 켜지 않으면 시계를 읽지 않는다.
 static var profiling := false
@@ -116,7 +129,7 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 	if opts.has("sheet"):
 		sheet = str(opts["sheet"])
 	setup(sheet, pos, w)
-	style = "swarm" if is_roach else ("dog" if is_dog else ("melee" if arm in ["baton", "claw"] else "shooter"))
+	style = "swarm" if is_roach else ("dog" if is_dog else ("melee" if arm in ["baton", "claw", "melee"] else "shooter"))
 	if is_dog:                                                       # 변이 들개(SD-14 §4.2): 4.5t/초, 지그재그로 달려와 문다
 		loco.custom = {"run": {"frames": 4, "px": 4.0, "diag": 4.0, "contact": [0, 2], "speed_t": float(row["speed"])},
 			"walk": {"frames": 4, "px": 4.0, "diag": 4.0, "contact": [0, 2], "speed_t": float(row["speed"]) * 0.45}}
@@ -297,6 +310,7 @@ func _tactics(target: Combatant, nav) -> void:
 	if goal == "engage":
 		var d := loco.logical.distance_to(target.pos()) / 32.0
 		var los: bool = sight_of(target) > 0.0 and meets(target)
+		_arms_tactics(target, d, los)
 		if style == "swarm" or style == "melee" or style == "dog":
 			_repath(nav, target.pos(), target.fl())
 		else:
@@ -455,7 +469,18 @@ func _bite(_dt: float, target: Combatant, to_t: Vector2) -> void:
 
 func _shoot(dt: float, target: Combatant, shots: Projectiles) -> void:
 	_cool = maxf(0.0, _cool - dt)
-	if not has_token or _cool > 0.0 or target.dead:
+	_switch_t = maxf(0.0, _switch_t - dt)
+	var auto := float(weapon.get("rate", 1.0)) >= 5.0 and str(weapon.get("id", "")) != "W-002"   # 연사 무기(1-9e2) — W-002 호환 장비는 예전 리듬
+	if auto:
+		if _burst_rest > 0.0:
+			_burst_rest -= dt
+			return
+		if _burst_on > 0.0:
+			_burst_on -= dt
+			if _burst_on <= 0.0:
+				_burst_rest = shots.rng.randf_range(0.5, 1.0)
+				return
+	if not has_token or _cool > 0.0 or target.dead or _switch_t > 0.0:
 		return
 	if sight_of(target) <= 0.0 or not meets(target):
 		return
@@ -470,8 +495,13 @@ func _shoot(dt: float, target: Combatant, shots: Projectiles) -> void:
 	var wf := weapon if not frenzied else weapon.merged({"dmg": float(weapon.get("dmg", 5.0)) * 1.25}, true)   # 광란 피해 +25%
 	if shots.fire_weapon(loco.logical + Vector2(0, -14) + Vector2.RIGHT.rotated(deg_to_rad(aim)) * 10.0, ang, cmb.team, wf, skill,
 			{"speed": 640.0, "fl": floor_id, "target": seen}) > 0:      # 1-9a: 무기 계열대로(산탄·화염·곡사…), 실탄은 20t/초로 읽히게
-		_cool = 1.0 / (float(weapon["rate"]) * 0.6)                  # semi-auto: 60% of max rate
 		shots_fired += 1
+		if auto:                                                     # 연사: 최대 연사로 0.6~1.2초 점사 → 0.5~1.0초 쉼(§7.4)
+			_cool = 1.0 / float(weapon["rate"])
+			if _burst_on <= 0.0:
+				_burst_on = shots.rng.randf_range(0.6, 1.2)
+			return
+		_cool = 1.0 / (float(weapon["rate"]) * 0.6)                  # semi-auto: 60% of max rate
 		_burst += 1
 		if _burst >= 3:                                               # 세 발 쏘면 다시 겨눈다(조준 지연 + 1~1.6초) — 쉬지 않고 쏘면 Lv1 주인공이 6초에 쓰러진다
 			_burst = 0
@@ -484,7 +514,10 @@ var swing_t := 0.0                            ## 휘두르는 그림 남은 초(
 
 func _swing(dt: float, target: Combatant) -> void:
 	_cool = maxf(0.0, _cool - dt)
+	_switch_t = maxf(0.0, _switch_t - dt)
 	swing_t = maxf(0.0, swing_t - dt)
+	if _switch_t > 0.0:
+		return
 	var to_t := target.pos() - loco.logical
 	if _cool > 0.0 or target.dead or not meets(target) or to_t.length() > float(weapon.get("range_eff", 1.0)) * 32.0 + target.radius + cmb.radius:
 		return
@@ -737,4 +770,46 @@ func _say(kind: String, secs: float = 1.6) -> void:
 		return
 	say_text = str(opts[_rng.randi() % opts.size()])
 	say_t = secs
+
+
+# ---------------------------------------------------------------- 1-9e2 무기 전환 · 수류탄(SD-11 §7.4)
+## 전술 틱(0.5초)마다: 붙으면 근접 무기로(1.6t) · 떨어지면 다시 총으로(2.6t) — 바꾸는 0.6초 동안은 공격하지 않는다.
+## 수류탄: 표적이 엄폐 뒤에서 3초 넘게 버티거나(시선 없음 · 웅크려 엄폐 곁) · 근접형이 3~9t에서 처음 붙기 전 — 개체 8초 · 분대 4초.
+func _arms_tactics(target: Combatant, d: float, los: bool) -> void:
+	if not alt_weapon.is_empty():
+		if _main_weapon.is_empty():
+			_main_weapon = weapon
+		if d <= 1.6 and not on_alt:
+			weapon = alt_weapon
+			style = "melee"
+			on_alt = true
+			_switch_t = 0.6
+		elif d >= 2.6 and on_alt:
+			weapon = _main_weapon
+			style = "shooter"
+			on_alt = false
+			_switch_t = 0.6
+	_nade_cd = maxf(0.0, _nade_cd - 0.5)
+	var covered := not los or (target.posture == "crouch" and _cover_by(target.pos()))
+	_hide_t = _hide_t + 0.5 if covered else 0.0
+	if nades <= 0 or _nade_cd > 0.0 or not throw_cb.is_valid() or (squad_ok.is_valid() and not bool(squad_ok.call())):
+		return
+	if d < 3.0 or d > 9.0 or not meets(target):
+		return
+	if _hide_t >= 3.0 or (style == "melee" and d >= 3.0):
+		nades -= 1
+		_nade_cd = 8.0
+		_hide_t = 0.0
+		_say("nade", 1.2)
+		throw_cb.call(loco.logical + Vector2(0, -12), target.pos())
+
+
+## 표적 둘레 1칸에 엄폐가 있나(웅크려 숨은 자리)
+func _cover_by(p: Vector2) -> bool:
+	var c := Vector2i(floori(p.x / 32.0), floori(p.y / 32.0))
+	for dy in [-1, 0, 1]:
+		for dx in [-1, 0, 1]:
+			if world.cover_at(c + Vector2i(dx, dy)) > 0:
+				return true
+	return false
 

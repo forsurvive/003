@@ -152,6 +152,29 @@ func _trace(s: Dictionary) -> void:
 	beams.append({"a": a, "b": end, "age": 0.0, "red": str(s["weapon"].get("family", "")) != "heavy"})
 
 
+## 미사일 약한 유도(SD-11 §3.3 · 1-9e2): 앞쪽 ±60° · 12t 안 로봇 · 파워 아머(대형)를 초당 30°까지 쫓는다
+const HOME_TURN := 30.0
+func _home(s: Dictionary, dt: float) -> void:
+	var v: Vector2 = s["v"]
+	var team := str(s["team"])
+	var best: Combatant = null
+	var bd := 12.0 * 32.0
+	for c in combatants:
+		if c.dead or c.team == team or (team == "player" and c.team == "ally") or not (c.robot or c.big):
+			continue
+		var to: Vector2 = c.pos() - (s["p"] as Vector2)
+		if to.length() > bd or absf(v.angle_to(to)) > deg_to_rad(60.0):
+			continue
+		bd = to.length()
+		best = c
+	if best == null:
+		return
+	var ang := v.angle_to(best.pos() - (s["p"] as Vector2))
+	var lim := deg_to_rad(HOME_TURN) * dt
+	s["v"] = v.rotated(clampf(ang, -lim, lim))
+	s["homing"] = true
+
+
 ## 폭발(SD-11 §9.2): 피해 = 폭발 기본 × (100 + 스킬)/200 × 거리 비율(내부 1.0 → 외부 0.25) · DR 절반 · 낮은 엄폐 뒤 ×0.5 · 높은 엄폐 뒤 0.
 ## 내부 반경 안 인간형은 넘어진다. 광역이라 기습 배수가 없다. 주인공의 폭발은 아군을 비켜 가고(오사 없음 §8.4), 적의 폭발은 주민을 비켜 간다.
 func explode(at: Vector2, w: Dictionary, skill: float, team: String, fl: int = 0) -> void:
@@ -266,6 +289,7 @@ func step(dt: float) -> void:
 		if s.has("accel"):
 			var v: Vector2 = s["v"]
 			s["v"] = v.normalized() * minf(Arms.speed("missile_max"), v.length() + float(s["accel"]) * dt)
+			_home(s, dt)
 		var a: Vector2 = s["p"]
 		var b: Vector2 = a + s["v"] * dt
 		var hit = null if s.has("fx_only") else _segment_hit(a, b, s)
