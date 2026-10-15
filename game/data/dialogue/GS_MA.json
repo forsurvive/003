@@ -1,0 +1,48 @@
+{
+ "id": "GS_MA",
+ "title": "노신도 마노을",
+ "loc": "L-R01-23",
+ "npc": "N-R01-054",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-R01-054",
+   "emo": "기본",
+   "text": "…삐. 삐. 삐이. …아, 대기음 흉내예요. 하루 네 번. 오십 년째."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-054",
+   "emo": "기본",
+   "text": "대기 1401. 어머니가 2214년 그날 밤 여기 있었어요. 등이 환해졌대요. 대낮처럼. 그리고 다시 이 빛으로."
+  },
+  {
+   "op": "if",
+   "cond": "GS_MET_MA >= 1",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "GS_MET_MA = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "meet",
+   "args": [
+    "N-R01-054"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/JUNGGYE.txt"
+}

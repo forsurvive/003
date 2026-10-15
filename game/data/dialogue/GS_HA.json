@@ -1,0 +1,48 @@
+{
+ "id": "GS_HA",
+ "title": "응답자 하은결",
+ "loc": "L-R01-23",
+ "npc": "N-R01-502",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-R01-502",
+   "emo": "기본",
+   "text": "응답자 하은결이에요. 매뉴얼을 필사해요. 종이가 삭으면 다시 쓰고. 한 권 쓰는 데 한 해."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-502",
+   "emo": "기본",
+   "text": "필사본 첫 장엔 늘 「도성 문답」을 붙여요. 저희가 왜 기다리는지 잊지 않으려고."
+  },
+  {
+   "op": "if",
+   "cond": "GS_MET_HA >= 1",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "GS_MET_HA = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "meet",
+   "args": [
+    "N-R01-502"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/JUNGGYE.txt"
+}

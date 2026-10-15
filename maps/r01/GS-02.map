@@ -1,0 +1,77 @@
+# 노량진 관제 중계소 GS-02 1층 대기등 홀(SD-09a L-R01-23 ③⑨ · 단계 1-8g): 200년 동안 꺼지지 않은 녹색 대기등 · 진공관 랙 · 천공 카드 벽.
+# 류정(C-014)의 안내석 · 노신도 마노을(대기 1401, 무릎). 북동 계단 → GS-03 서고, 바닥 해치 → GS-04 기계실(FQ-GS-07, 지금은 잠김).
+map GS-02 중계소 대기등 홀
+set bk
+grid
+####################~~##
+####################~~##
+####################~~##
+#~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~#
+###########~~###########
+end
+exit 11 15 X-GS from_GS-02
+exit 12 15 X-GS from_GS-02
+mark from_X 11 14 N
+exit 20 0 GS-03 from_GS-02
+exit 21 0 GS-03 from_GS-02
+mark from_GS-03 20 3 S
+prop stairs_up 20 2
+prop gs_standby_lamp 11 6
+text 11 6 "대기등." scene=GS_LAMP
+prop gs_kneel 10 8
+prop gs_kneel 12 8
+prop gs_kneel 11 9
+prop gs_kneel 9 9
+prop gs_kneel 13 9
+prop gs_kneel 10 10
+prop gs_kneel 12 10
+prop gs_relay_rack 2 3
+prop gs_relay_rack 4 3
+prop gs_relay_rack 6 3
+prop gs_relay_rack 15 3
+prop gs_relay_rack 17 3
+text 4 3 "중계 진공관 랙. 셋에 하나는 아직 호박색으로 켜진다. 원자 전지가 200년째 먹여 살린다." w=1
+prop w_gs_punch_wall 2 1
+prop w_gs_punch_wall 6 1
+prop w_gs_punch_wall 14 1
+text 7 2 "천공 카드 벽." w=3 scene=GS_CARDS
+prop floor_hatch 4 12
+text 4 12 "바닥 해치. 기계실로 내려간다. 정비 당번장의 자물쇠 — '첫 당번의 자리. 출입은 대기 6203에게.'"
+prop bench 15 11
+prop bench 15 13
+prop pillar 6 6
+prop pillar 16 6
+prop pillar 6 11
+prop pillar 19 9
+prop wait_chairs 2 7
+prop wait_chairs 2 9
+prop wait_chairs 19 12
+prop wait_chairs 19 14
+text 2 7 "대기 의자. 2077년 역 대합실에서 떼어 왔다. 등받이에 「대기 번호 호출 시 일어나 주십시오」." w=2
+prop gs_cloth_post 9 5
+prop gs_cloth_post 13 5
+prop gs_lamp_line 8 13
+prop gs_lamp_line2 12 13
+prop cushion_r 14 8
+prop cushion_b 8 8
+prop cushion_y 14 10
+prop cushion_r 8 10
+prop lectern 11 4
+text 11 4 "안내석. 류정이 서는 자리. 받침에 매뉴얼 제1권 필사본이 펼쳐져 있다."
+prop crate_o 22 7
+box 22 7 crate owner=C-014 name="헌금 상자"
+text 22 6 "헌금 상자. 「수호자의 전지는 우리가 지킨다.」 캡 · 진공관 · 실 · 빵." 
+text 15 11 "대기 의자. 앉아서 기다리는 사람 몫이다. 무릎 자리는 오래 기다린 사람 몫이고." w=2
+npc C-014 11 7 S
+npc N-R01-054 9 10 N pose=sit bark="…삐. 삐. 삐이. (대기음을 흉내 내고 있다.)"

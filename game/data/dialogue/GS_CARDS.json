@@ -1,0 +1,52 @@
+{
+ "id": "GS_CARDS",
+ "title": "천공 카드 벽",
+ "loc": "L-R01-23",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "MINE": 3
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "신도들이 손으로 뚫은 누런 천공 카드 수십 장. 구멍 열두 줄마다 대기 번호와 날짜."
+  },
+  {
+   "op": "if",
+   "cond": "MQ106_RESULT > 0",
+   "to": "MINE"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "그중 한 장만 새 종이다. 구멍 사이에 손글씨 — \\V[P_REGNO]. 공보방송이 부른 그 번호다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "카드 아래 작게 — '응답자. 대기 0000.'"
+  },
+  {
+   "op": "do",
+   "fx": "GS_CARD_SEEN = 1"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/JUNGGYE.txt"
+}

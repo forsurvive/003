@@ -1,0 +1,153 @@
+{
+ "id": "GS_HAN",
+ "title": "정비 당번장 한가람",
+ "loc": "L-R01-23",
+ "npc": "N-R01-055",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "HOSTILE": 7,
+  "AGAIN": 9,
+  "ASK": 10,
+  "SHOP": 11,
+  "PRICEY": 14,
+  "BOT": 17
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "AFF_GS <= -60",
+   "to": "HOSTILE"
+  },
+  {
+   "op": "if",
+   "cond": "GS_MET_HAN >= 1",
+   "to": "AGAIN"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-055",
+   "emo": "기본",
+   "text": "한가람. 대기 6203. 정비 당번장. 마당 파수 셋은 내가 닦아. 관절에 녹 슬면 대기도 끝이거든."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-055",
+   "emo": "기본",
+   "text": "부품은 수호자에게 돌아가야 해. 진공관, 회로 기판, 판독기 부품. 가져오면 바꿔 주고, 필요하면 내줘."
+  },
+  {
+   "op": "do",
+   "fx": "GS_MET_HAN = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "meet",
+   "args": [
+    "N-R01-055"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-055",
+   "emo": "분노",
+   "text": "해지된 계정하고는 안 바꿔. 마당에서 나가."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-055",
+   "emo": "기본",
+   "text": "진공관 하나라도 있으면 보여 줘."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "부품 교환대를 본다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SHOP",
+     "id": "GS_HAN:1:0"
+    },
+    {
+     "text": "잠든 파수는 깨어날 수 있습니까?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "BOT",
+     "id": "GS_HAN:1:1"
+    },
+    {
+     "text": "됐습니다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "GS_HAN:1:2"
+    }
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "AFF_GS <= -20",
+   "to": "PRICEY"
+  },
+  {
+   "op": "cmd",
+   "name": "trade",
+   "args": [
+    "V06"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-055",
+   "emo": "기본",
+   "text": "응답 없는 사람한텐 값을 더 받아. 규칙이야."
+  },
+  {
+   "op": "cmd",
+   "name": "trade",
+   "args": [
+    "V06"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-055",
+   "emo": "기본",
+   "text": "몰라. 내 일은 닦는 거야. 깨우는 건 내 일이 아니야. …은솔한테 물어보면 다른 대답을 하겠지."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-055",
+   "emo": "기본",
+   "text": "그리고 식별 태그 — 파수 목에 달린 쇳조각 — 그거 주우면 가져와. 하나에 20캡. 수호자 것은 수호자에게."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/JUNGGYE.txt"
+}

@@ -64,11 +64,13 @@ ENGINE_VARS = {"PC_ST", "PC_PE", "PC_EN", "PC_CH", "PC_IN", "PC_AG", "PC_LK", "P
                "SB_BURNT", "SB_DEBT", "SB_BJ", "SB_TALK", "SB_BOUGHT", "SB_DEPO", "SB_127", "GB_PASS",
                "MQ106_CUSTODY", "MQ106_TALKED", "MQ106_SEIZED", "MQ106_AT", "MQ106_QLINE", "MQ106_QWHY", "MQ106_QGRID", "MQ106_QDEAD", "MQ106_QSIGN", "NAMGUNG_MET", "WANTED_PRE",
                "PD_R01_BJ", "WANTED_HOLD", "RE036_MET", "RE036_NEWS", "RE042_N", "HOME_BC", "HOME_BC_OK", "WELL_RESTED", "HOME_BC_NOTE", "BAEKGU_NAP", "INFO_RUMOR_R01", "INFO_RUMOR_R02", "CARAVAN_V54", "MEDIC_AT", "TR_YEON_MET", "TR_SO_MET", "TR_EOM_MET",
-               "SD_MET_HUH", "SD_MET_PYO", "SD_MET_WI", "SD_MET_SEONG", "SD_MET_BAN", "SD_MET_TAK", "SA_MAKCHA_HEARD", "SA_MAT_UNTIL", "SD_MAP_UG", "SD_BOARD_SEEN", "SD_LR05", "SD_LR09", "U02_OPEN"}                                                        # 1-6 MQ-105             # 1-3 생포 · 1-4 해킹 통계
+               "SD_MET_HUH", "SD_MET_PYO", "SD_MET_WI", "SD_MET_SEONG", "SD_MET_BAN", "SD_MET_TAK", "SA_MAKCHA_HEARD", "SA_MAT_UNTIL", "SD_MAP_UG", "SD_BOARD_SEEN", "SD_LR05", "SD_LR09", "U02_OPEN",
+               "SG_MET_HWANG", "SG_MET_KWON", "SG_REFUSED", "SG_ISSUED", "GS_MET_RJ", "GS_MET_HAN", "GS_MET_EUNSOL", "GS_MET_MA", "GS_MET_HA", "GS_CARD_SEEN", "GS_LR50"}                                                        # 1-6 MQ-105             # 1-3 생포 · 1-4 해킹 통계
 UNNAMED = {"N-TRADER": "떠돌이 고물상", "N-REFUGEE": "피난민", "N-DOWNED": "쓰러진 민병", "N-HS-E1": "수송대 호위", "N-HS-E2": "수송대 호위",
            "CR-091": "짐소",                                                     # 1-8d 고개길 수송대
            "N-SA-G1": "승강장 경비", "N-SA-G2": "승강장 경비", "N-SA-G3": "승강장 경비", "N-SA-R1": "환승촌 주민", "N-SA-R2": "환승촌 주민",   # 1-8f 사당 환승촌
-           "N-SA-R3": "환승촌 주민", "N-SA-R4": "버섯 일꾼"}
+           "N-SA-R3": "환승촌 주민", "N-SA-R4": "버섯 일꾼",
+           "N-GS-1": "각성회 신도", "N-GS-2": "각성회 신도", "N-GS-3": "각성회 신도"}   # 1-8g 노량진 관제 중계소
 DECISION = ["어느 편에 서겠", "편에 서겠습니까", "제안을 수락", "받아들이겠습니까", "어느 쪽을 택하", "누구 편이"]
 OLD_NAMES = ["강태오", "천웨이", "국민방송"]
 PAGE = 160

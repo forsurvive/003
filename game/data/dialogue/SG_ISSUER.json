@@ -1,0 +1,26 @@
+{
+ "id": "SG_ISSUER",
+ "title": "임시 등록증 발급기",
+ "loc": "L-R01-19",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "등급 버튼 다섯. 1번 버튼만 덮개가 씌워져 있다. 반쯤 나온 카드는 비어 있다 — 분류관이 찍어야 글씨가 들어간다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SAGOGAE.txt"
+}

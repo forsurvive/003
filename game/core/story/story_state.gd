@@ -38,7 +38,8 @@ const ENEMY_FACTION := {"CR-401": "BJ", "CR-405": "BJ", "CR-435": "SB", "CR-436"
 const UNNAMED := [["N-TRADER", "떠돌이 고물상", ""], ["N-REFUGEE", "피난민", ""], ["N-DOWNED", "쓰러진 민병", "JC_BC"],
 	["N-HS-E1", "수송대 호위", "HS"], ["N-HS-E2", "수송대 호위", "HS"], ["CR-091", "짐소", ""],   # 1-8d 고개길 수송대
 	["N-SA-G1", "승강장 경비", "JC_SA"], ["N-SA-G2", "승강장 경비", "JC_SA"], ["N-SA-G3", "승강장 경비", "JC_SA"], ["N-SA-R1", "환승촌 주민", "JC_SA"],   # 1-8f 사당 환승촌
-	["N-SA-R2", "환승촌 주민", "JC_SA"], ["N-SA-R3", "환승촌 주민", "JC_SA"], ["N-SA-R4", "버섯 일꾼", "JC_SA"]]
+	["N-SA-R2", "환승촌 주민", "JC_SA"], ["N-SA-R3", "환승촌 주민", "JC_SA"], ["N-SA-R4", "버섯 일꾼", "JC_SA"],
+	["N-GS-1", "각성회 신도", "GS"], ["N-GS-2", "각성회 신도", "GS"], ["N-GS-3", "각성회 신도", "GS"]]   # 1-8g 노량진 관제 중계소
 var enc := {}                           ## 인카운터 상태(1-3, Encounters): 안전 간격 · 오늘 추적대 수 · EP 사용 · 휴전
 var portrait_alias := {}                ## 인물 ID -> 초상화 키(맵에서 다른 시대 모습으로 선 인물: 2259년 아이 하도윤 등)
 
@@ -106,6 +107,10 @@ func _init() -> void:
 	# 사당 환승촌(1-8f): 인물 첫 만남 · SA_MAKCHA_HEARD 서쪽 터널 '막차 손님' 들음(SQ-S05 '이미 앎') · SA_MAT_UNTIL 승강장 매트 빌린 끝 절대 분 ·
 	# SD_MAP_UG 노선도 봄 · SD_BOARD_SEEN 운행 칠판 봄 · SD_LR05 · SD_LR09 기록물 · U02_OPEN 4호선 남쪽 터널(지하 구간 단계에서 1)
 	for k in ["SD_MET_HUH", "SD_MET_PYO", "SD_MET_WI", "SD_MET_SEONG", "SD_MET_BAN", "SD_MET_TAK", "SA_MAKCHA_HEARD", "SA_MAT_UNTIL", "SD_MAP_UG", "SD_BOARD_SEEN", "SD_LR05", "SD_LR09", "U02_OPEN"]:
+		vars.declare(k, "int", 0)
+	# 사당 고개 검문소 · 노량진 관제 중계소(1-8g): 첫 만남 · SG_REFUSED 중립 '동행 요청' 거절(한 번 −10) · SG_ISSUED 임시 등록증 첫 발급 ·
+	# GS_MET_RJ 류정을 만남(MQ-207 '이미 앎') · GS_CARD_SEEN 천공 카드 벽의 내 번호 · GS_LR50 「도성 문답」
+	for k in ["SG_MET_HWANG", "SG_MET_KWON", "SG_REFUSED", "SG_ISSUED", "GS_MET_RJ", "GS_MET_HAN", "GS_MET_EUNSOL", "GS_MET_MA", "GS_MET_HA", "GS_CARD_SEEN", "GS_LR50"]:
 		vars.declare(k, "int", 0)
 	for kv in [["CAPTURE_DAY", -1], ["CAPTURE_AT", 0], ["SB_COLLAR", 0], ["SB_CUFF", 0], ["CAPTURE_BY", 0]]:
 		vars.declare(kv[0], "int", kv[1])

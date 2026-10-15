@@ -1,0 +1,53 @@
+{
+ "id": "GS_LR50",
+ "title": "필사 책상",
+ "loc": "L-R01-23",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "SEEN": 5
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "GS_LR50 >= 1",
+   "to": "SEEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "필사본 첫 장. 「도성 문답」."
+  },
+  {
+   "op": "cmd",
+   "name": "note",
+   "args": [
+    "LR-50"
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "GS_LR50 = 1"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "「도성 문답」 필사본. 여백의 다른 손글씨가 볼 때마다 늘어 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/JUNGGYE.txt"
+}

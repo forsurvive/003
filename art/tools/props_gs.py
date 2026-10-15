@@ -39,8 +39,12 @@ def kneel_marks():
     """무릎 자리(deco 1×1): 콘크리트 바닥에서 무릎 두 자리만 하얗게 닳았다."""
     im = img(32, 32)
     d = ImageDraw.Draw(im)
-    for (x, y) in ((8, 12), (19, 13)):
-        d.ellipse([x, y, x + 6, y + 8], fill=P.rgb("P08") + (150,)); d.ellipse([x + 1, y + 2, x + 5, y + 6], fill=P.rgb("P09") + (120,))
+    for (x, y) in ((8, 12), (19, 13)):                                        # 닳아 하얀 자리(디더 — 반투명 대신 점 섞기)
+        for yy in range(y, y + 9):
+            for xx in range(x, x + 7):
+                if ((xx - x - 3) / 3.5) ** 2 + ((yy - y - 4) / 4.5) ** 2 <= 1.0 and (xx + yy) % 2 == 0:
+                    d.point((xx, yy), fill=C("P08"))
+        d.ellipse([x + 2, y + 3, x + 4, y + 5], fill=C("P09"))
     return im
 
 

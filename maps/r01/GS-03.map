@@ -1,0 +1,41 @@
+# 노량진 관제 중계소 GS-03 2층 서고(SD-09a L-R01-23 ③ · 단계 1-8g): 관제망 운영 매뉴얼 서가 · 방송기 '중계소 스피커' · 각성회 경전 LR-50 「도성 문답」.
+# 응답자 하은결(N-R01-502, 의례 담당)이 매뉴얼을 필사한다.
+map GS-03 중계소 매뉴얼 서고
+set bk
+grid
+####################
+####################
+####################
+#,,,,,,,,,,,,,,,,,,#
+#,,,,,,,,,,,,,,,,,,#
+#,,,,,,,,,,,,,,,,,,#
+#,,,,,,,,,,,,,,,,,,#
+#,,,,,,,,,,,,,,,,,,#
+#,,,,,,,,,,,,,,,,,,#
+#,,,,,,,,,,,,,,,,,,#
+#,,,,,,,,,,,,,,,,,,#
+##########,,########
+end
+exit 10 11 GS-02 from_GS-03
+exit 11 11 GS-02 from_GS-03
+mark from_GS-02 10 10 N
+prop gs_manual_shelf 2 3
+prop gs_manual_shelf 5 3
+prop gs_manual_shelf 13 3
+prop gs_manual_shelf 16 3
+text 3 3 "운영 매뉴얼 서가. '관제망 운영 지침 제1~40권'. 등이 닳은 건 제1권과 제7권 — 대기 상태와 인증 절차." w=2 scene=GS_MANUAL
+prop gs_relay_speaker 8 3
+text 8 3 "방송기 '중계소 스피커'. 각성회 신호는 여기서 나간다 — '모든 분은 대기해 주십시오. 곧 연결됩니다.'" w=2
+prop desk_metal 7 7
+text 7 7 "필사 책상. 펼쳐진 필사본." w=2 scene=GS_LR50
+prop file_cabinet 17 7
+box 17 7 cabinet owner=C-014 name="필사본 서랍"
+npc N-R01-502 9 8 N bark="(필사 중이다. 매뉴얼 한 줄을 쓰고, 소리 내어 읽고, 다음 줄로.)"
+prop work_lamp 4 8
+prop study_carrel 2 7
+prop study_carrel 13 7
+prop bookshelf_home 2 9
+prop crate_o 16 9
+prop folding_chair 10 7
+text 2 7 "필사대. 촛농 대신 대기등 램프 하나. 종이마다 같은 손글씨 — 한 사람이 한 권씩 맡는다."
+text 16 9 "필사본 더미. 삭은 옛 필사본은 버리지 않고 묶어 둔다. 「대기 0412 필사 — 2241」."

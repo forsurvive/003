@@ -1,0 +1,32 @@
+{
+ "id": "SG_CLASSIFY",
+ "title": "분류 단말",
+ "loc": "L-R01-19",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "판독기 손잡이에 손을 올렸다. 화면이 잠깐 흔들린다. '판독 불능 — 임시 적성.' 그리고 한 줄 더. '등록 대기 — 관리 후보.'"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "화면은 두 줄을 번갈아 띄우다 '판독 대기'로 돌아간다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SAGOGAE.txt"
+}

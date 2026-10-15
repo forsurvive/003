@@ -1,0 +1,80 @@
+# 노량진 관제 중계소 GS-01 대기실(SD-09a L-R01-23 ③ · 단계 1-8g): 옛 배수지 저수조를 덮은 신도 숙소 · 천공기실.
+# 침낭 줄 · 천공기 셋 · 물통 · 흰 로브 빨래. 밤엔 정비 당번장 한가람이 여기서 잔다(낮 마당).
+map GS-01 중계소 대기실
+set bk
+grid
+###############~~###############
+###############~~###############
+###############~~###############
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+################################
+end
+exit 15 0 X-GS from_GS-01
+exit 16 0 X-GS from_GS-01
+mark from_X 15 3 S
+prop stairs_up 15 2
+prop bedroll 2 5
+prop bedroll 2 9
+prop bedroll2 5 5
+prop bedroll2 5 9
+prop bedroll 8 5
+prop bedroll 8 9
+prop bedroll2 11 5
+prop bedroll2 11 9
+prop bedroll 20 5
+prop bedroll 20 9
+prop bedroll2 23 5
+prop bedroll2 23 9
+prop bedroll 26 5
+prop bedroll 26 9
+prop bedroll2 29 5
+prop bedroll2 29 9
+text 5 5 "침낭 줄. 머리맡마다 천공 카드 한 장 — 각자의 대기 번호." w=1
+prop gs_card_punch 13 12
+prop gs_card_punch 16 12
+prop gs_card_punch 19 12
+text 16 12 "천공기. 새 신도는 여기서 자기 카드를 직접 뚫는다. 구멍 열두 줄 — 매뉴얼의 등록 양식 그대로." scene=GS_PUNCH
+prop laundry_line 3 13
+prop laundry_line 26 13
+prop drum 29 3
+prop drum 30 3
+prop water_jug 28 3
+text 29 3 "물통. 저수조 바닥에서 아직 물이 스민다. 끓여 마신다." w=2
+prop wall_clock 4 1
+prop w_poster_rad 25 1
+text 4 2 "벽시계. 대기음 시각에만 맞춘다. 하루 네 번."
+prop crate 2 3
+box 2 3 pantry owner=C-014 name="대기실 식량 상자"
+prop work_lamp 9 7
+prop work_lamp 22 7
+prop low_table 13 7
+prop low_table 17 7
+prop cushion_r 13 6
+prop cushion_b 14 6
+prop cushion_y 17 6
+prop cushion_r 18 6
+prop cushion_y 13 8
+prop cushion_b 18 8
+text 13 7 "공동 상. 보리밥 그릇 · 숟가락이 번호표대로 꽂혀 있다." w=2
+prop laundry_rack 6 11
+prop laundry_rack 24 11
+prop shoe_rack 13 3
+prop shoe_rack 18 3
+text 13 3 "신발장. 칸마다 대기 번호. 맨발로 들어오는 사람이 더 많다."
+prop water_jug 2 12
+prop bucket 3 12
+prop gs_lamp_line 9 13
+prop gs_lamp_line2 21 13
+npc N-GS-3 22 10 W look=E1-S3-HR00-H5-T14-0-PF10-HD14-EY00-PR017 pose=sit bark="새로 오셨어요? 대기 번호는 천공기에서."
+npc N-R01-055 8 11 E cond="(GAME_HOUR < 6 or GAME_HOUR >= 20)" bark="밤엔 정비 안 해. 로봇도 쉬어야지. …농담이야."

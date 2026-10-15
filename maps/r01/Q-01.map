@@ -1,0 +1,41 @@
+# 사당 고개 검문소 Q-01 막사(SD-09a L-R01-19 실내 · 단계 1-8g): 컨테이너 안 — 무기 보관대 · 수배 전단 게시판 · 무전실 · 2층 침대.
+# 낮에는 비어 있고(병력은 차단봉) 밤엔 검문소장 황보서현이 무전 당번을 선다. 무기 보관대는 잠겨 있다(자물쇠 50, 주인 검문소장 — 절도).
+map Q-01 제7 검문대 막사
+set bk
+grid
+##################
+##################
+##################
+#~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~#
+###~##############
+end
+exit 3 9 X-SG from_Q-01
+mark from_X 3 8 N
+prop w_gov_notice 2 1
+prop w_wanted 5 1
+prop w_wanted 6 1
+prop wall_clock 9 1
+text 2 2 "포고문. 2077년 계엄 포고문 제7호를 다시 찍은 것. 날짜만 2277년이다." w=2
+text 5 2 "수배 전단 둘." w=2 scene=SG_WANTED
+text 9 2 "벽시계. 이 막사 시계는 맞게 간다. 무전 시각 때문이다."
+prop gun_rack 12 3
+box 12 3 armory owner=N-R01-047 lock=50 name="무기 보관대"
+prop radio_desk 15 4
+prop w_speaker 15 1
+text 15 4 "무전기. 진공관 다이얼에 '청계산 · 여의도 · 한강대교 남단' 세 칸만 손때가 묻었다." scene=SG_RADIO
+prop bunk 2 5
+prop bunk 4 5
+prop bunk 6 5
+text 4 5 "2층 침대 셋. 담요가 각 잡혀 개켜져 있다." h=2
+prop desk_metal 10 6
+prop file_cabinet 9 3
+box 9 3 cabinet owner=N-R01-047 name="검문 기록철"
+text 10 6 "검문소장 책상. 오늘 통과자 명부 — 빈칸이 많다." w=2
+prop crate_metal 15 7
+prop work_lamp 8 8
+npc N-R01-047 11 7 N cond="(GAME_HOUR < 6 or GAME_HOUR >= 20)"

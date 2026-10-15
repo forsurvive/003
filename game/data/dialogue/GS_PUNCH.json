@@ -1,0 +1,32 @@
+{
+ "id": "GS_PUNCH",
+ "title": "대기실 천공기",
+ "loc": "L-R01-23",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "쇠 레버를 누르자 딸깍, 빈 카드에 구멍 하나가 뚫린다. 옆 신도가 고개를 든다."
+  },
+  {
+   "op": "line",
+   "who": "N-GS-3",
+   "emo": "미소",
+   "text": "대기 번호 받으시게요? 열두 줄을 다 채우면 돼요. 이름은 안 써요. 번호만."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/JUNGGYE.txt"
+}

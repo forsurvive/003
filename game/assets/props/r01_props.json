@@ -224,6 +224,150 @@
     32
    ]
   },
+  "bj_barracks": {
+   "atlas": "r01",
+   "foot": [
+    3,
+    2
+   ],
+   "kind": "floor",
+   "off": [
+    -2,
+    -15
+   ],
+   "rect": [
+    630,
+    1325,
+    100,
+    78
+   ]
+  },
+  "bj_board": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -2,
+    -25
+   ],
+   "rect": [
+    830,
+    1325,
+    68,
+    56
+   ]
+  },
+  "bj_boom": {
+   "atlas": "r01",
+   "foot": [
+    3,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -2,
+    -27
+   ],
+   "rect": [
+    396,
+    1325,
+    100,
+    58
+   ]
+  },
+  "bj_boom_up": {
+   "atlas": "r01",
+   "foot": [
+    1,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -34,
+    -27
+   ],
+   "rect": [
+    496,
+    1325,
+    100,
+    58
+   ]
+  },
+  "bj_class_tent": {
+   "atlas": "r01",
+   "foot": [
+    3,
+    2
+   ],
+   "kind": "floor",
+   "off": [
+    -2,
+    -13
+   ],
+   "rect": [
+    730,
+    1325,
+    100,
+    76
+   ]
+  },
+  "bj_flag": {
+   "atlas": "r01",
+   "foot": [
+    1,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -1,
+    -43
+   ],
+   "rect": [
+    898,
+    1325,
+    34,
+    72
+   ]
+  },
+  "bj_issuer": {
+   "atlas": "r01",
+   "foot": [
+    1,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -1,
+    -17
+   ],
+   "rect": [
+    932,
+    1325,
+    34,
+    48
+   ]
+  },
+  "bj_speaker": {
+   "atlas": "r01",
+   "foot": [
+    1,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -1,
+    -45
+   ],
+   "rect": [
+    596,
+    1325,
+    34,
+    74
+   ]
+  },
   "bk_desk": {
    "atlas": "r01",
    "foot": [
@@ -1798,6 +1942,186 @@
     765,
     102,
     74
+   ]
+  },
+  "gs_card_punch": {
+   "atlas": "r01",
+   "foot": [
+    1,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -1,
+    -11
+   ],
+   "rect": [
+    204,
+    1403,
+    34,
+    42
+   ]
+  },
+  "gs_cloth_post": {
+   "atlas": "r01",
+   "foot": [
+    1,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -1,
+    -25
+   ],
+   "rect": [
+    170,
+    1403,
+    34,
+    54
+   ]
+  },
+  "gs_kneel": {
+   "atlas": "r01",
+   "foot": [
+    0,
+    0
+   ],
+   "kind": "deco",
+   "off": [
+    -1,
+    -1
+   ],
+   "rect": [
+    0,
+    1403,
+    34,
+    34
+   ]
+  },
+  "gs_lamp_line": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -2,
+    -17
+   ],
+   "rect": [
+    34,
+    1403,
+    68,
+    48
+   ]
+  },
+  "gs_lamp_line2": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -2,
+    -17
+   ],
+   "rect": [
+    102,
+    1403,
+    68,
+    48
+   ]
+  },
+  "gs_manual_shelf": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -2,
+    -29
+   ],
+   "rect": [
+    306,
+    1403,
+    68,
+    60
+   ]
+  },
+  "gs_relay_rack": {
+   "atlas": "r01",
+   "foot": [
+    1,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -1,
+    -27
+   ],
+   "rect": [
+    374,
+    1403,
+    34,
+    58
+   ]
+  },
+  "gs_relay_speaker": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -2,
+    -21
+   ],
+   "rect": [
+    238,
+    1403,
+    68,
+    52
+   ]
+  },
+  "gs_reservoir_stairs": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -1,
+    -13
+   ],
+   "rect": [
+    408,
+    1403,
+    66,
+    48
+   ]
+  },
+  "gs_standby_lamp": {
+   "atlas": "r01",
+   "foot": [
+    1,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -1,
+    -33
+   ],
+   "rect": [
+    966,
+    1325,
+    34,
+    62
    ]
   },
   "guard_booth": {
@@ -4530,6 +4854,24 @@
     1105,
     58,
     26
+   ]
+  },
+  "w_gs_punch_wall": {
+   "atlas": "r01",
+   "foot": [
+    3,
+    0
+   ],
+   "kind": "wall",
+   "off": [
+    -1,
+    1
+   ],
+   "rect": [
+    474,
+    1403,
+    98,
+    32
    ]
   },
   "w_herbs": {

@@ -1,0 +1,42 @@
+{
+ "id": "SG_WANTED",
+ "title": "막사 수배 전단",
+ "loc": "L-R01-19",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "MINE": 3
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "V_WANTED >= 1",
+   "to": "MINE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "수배 전단. 새벽인력 탈주 인부 · 남부순환 패거리. 현상금 칸에 연필로 덧쓴 숫자."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "수배 전단 맨 위에 볼트 점프슈트 그림. '관리 후보 — 생포. 사살 금지.' 사살 금지에 두 줄이 그어져 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SAGOGAE.txt"
+}

@@ -75,6 +75,7 @@ func test_gen_stash(t) -> void:
 	var by_name := {}
 	var stash_maps := {}
 	var notes: Array = []
+	var texts: Array = []
 	for f in dir.get_files():
 		if not f.begins_with("G-") or not f.ends_with(".json"):
 			continue
@@ -84,10 +85,15 @@ func test_gen_stash(t) -> void:
 			if str(b["kind"]) == "stash":
 				stash_maps[str(m["name"])] = true
 		for x in m["texts"]:
-			for shop in ["슈퍼", "상회", "마트", "약국", "철물", "공구", "세탁", "크리닝", "분식", "김밥"]:
-				if str(x["text"]).contains(shop) and (str(x["text"]).contains("쪽으로") or str(x["text"]).contains("으로 ")) and str(x["text"]).contains("상자"):
-					notes.append(str(x["text"]))
-					break
+			texts.append([str(m["name"]), str(x["text"])])
+	for pair in texts:                                                  # 쪽지 = 다른 건물에서 숨긴 가게 이름 + 방위를 말하는 글(문장 틀은 여럿 — rooms.txt stash_note)
+		var tx: String = pair[1]
+		if not tx.contains("쪽지") and not tx.contains("뒷장") and not tx.contains("뒷면"):
+			continue
+		for nm in stash_maps:
+			if nm != pair[0] and tx.contains(nm) and ["북", "남", "동", "서"].any(func(d): return tx.contains(d)):
+				notes.append(tx)
+				break
 	t.ok(stash_maps.size() >= 20, "숨겨 둔 상자 %d곳" % stash_maps.size())
 	var bad := 0
 	for nm in stash_maps:

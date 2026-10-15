@@ -1,0 +1,251 @@
+{
+ "id": "SG_KWON",
+ "title": "분류관 권은서",
+ "loc": "L-R01-19",
+ "npc": "N-R01-048",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TIER": 5,
+  "HOSTILE": 7,
+  "COLD": 9,
+  "WARM": 12,
+  "ISSUE": 16,
+  "LOST": 20,
+  "CARD": 22,
+  "SHOP": 23,
+  "SHOP2": 26,
+  "GRADE": 28
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "AFF_BJ <= -60",
+   "to": "HOSTILE"
+  },
+  {
+   "op": "if",
+   "cond": "SG_MET_KWON >= 1",
+   "to": "TIER"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-048",
+   "emo": "기본",
+   "text": "분류반 권은서입니다. 충성 등급 상담, 임시 등록, 배급. 순서대로입니다."
+  },
+  {
+   "op": "do",
+   "fx": "SG_MET_KWON = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "meet",
+   "args": [
+    "N-R01-048"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "AFF_BJ < 20",
+   "to": "COLD"
+  },
+  {
+   "op": "goto",
+   "to": "WARM"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-048",
+   "emo": "분노",
+   "text": "적성 분자와는 상담하지 않습니다. 경비!"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-048",
+   "emo": "기본",
+   "text": "미등록자는 상담 대상이 아닙니다. 청계산에 출석하시면 거기서 판정합니다."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-048",
+   "emo": "기본",
+   "text": "…판독기는 이름을 기억하지 않아요. 줄을 기억하죠. 당신 줄은 판독기가 아직 못 읽습니다. 그래서 '관리 후보'예요."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "충성 등급이 뭐죠?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "GRADE",
+     "id": "SG_KWON:1:0"
+    },
+    {
+     "text": "됐습니다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SG_KWON:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-048",
+   "emo": "미소",
+   "text": "관리자님. 협조에 감사드립니다."
+  },
+  {
+   "op": "if",
+   "cond": "has(\"M-120\")",
+   "to": "CARD"
+  },
+  {
+   "op": "if",
+   "cond": "SG_ISSUED >= 1",
+   "to": "LOST"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "임시 등록을 하겠습니다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "ISSUE",
+     "id": "SG_KWON:2:0"
+    },
+    {
+     "text": "충성 등급이 뭐죠?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "GRADE",
+     "id": "SG_KWON:2:1"
+    },
+    {
+     "text": "됐습니다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SG_KWON:2:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-048",
+   "emo": "기본",
+   "text": "판독기에 손 올려 주십시오. …판독 불능. 그래도 우호 기록이 있으니 임시로 4등급입니다."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-048",
+   "emo": "기본",
+   "text": "임시 등록증 '충성 4등급'. 배급소 이용, 검문소 통과. 등급은 협조에 따라 오릅니다."
+  },
+  {
+   "op": "do",
+   "fx": "SG_ISSUED = 1; give(\"M-120\", 1)"
+  },
+  {
+   "op": "goto",
+   "to": "CARD"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-048",
+   "emo": "기본",
+   "text": "등록증을 잃어버리셨군요. 재발급은 청계산 본부에서만 합니다. 여기선 첫 장만."
+  },
+  {
+   "op": "goto",
+   "to": "GRADE"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "배급소를 이용하겠습니다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SHOP",
+     "id": "SG_KWON:3:0"
+    },
+    {
+     "text": "충성 등급이 뭐죠?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "GRADE",
+     "id": "SG_KWON:3:1"
+    },
+    {
+     "text": "됐습니다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SG_KWON:3:2"
+    }
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "MQ106_RESULT > 0 and PD_R01_BJ > 0",
+   "to": "SHOP2"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-048",
+   "emo": "기본",
+   "text": "배급소는 상설 검문소에서만 엽니다. 이곳은 아직 임시 초소예요. 보급이 오면 그때."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "trade",
+   "args": [
+    "V07"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-048",
+   "emo": "기본",
+   "text": "1등급부터 5등급. 1·2등급은 경례 받고 통과, 3등급은 통과, 4등급은 동행 확인, 5등급은 정지. 2077년 지침 그대로입니다."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-048",
+   "emo": "기본",
+   "text": "그리고 등급 밖 — 적성 분자. 판독이 안 되는 사람은 임시로 적성으로 봅니다. 제9조 7항."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SAGOGAE.txt"
+}

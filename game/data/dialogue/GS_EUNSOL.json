@@ -1,0 +1,129 @@
+{
+ "id": "GS_EUNSOL",
+ "title": "개통파 당번장 은솔",
+ "loc": "L-R01-23",
+ "npc": "C-053",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "HOSTILE": 7,
+  "AGAIN": 9,
+  "ASK": 10,
+  "OPEN": 11,
+  "SPLIT": 14
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "AFF_GS <= -60",
+   "to": "HOSTILE"
+  },
+  {
+   "op": "if",
+   "cond": "GS_MET_EUNSOL >= 1",
+   "to": "AGAIN"
+  },
+  {
+   "op": "line",
+   "who": "C-053",
+   "emo": "미소",
+   "text": "운영자님. 기다렸어요. 저는 은솔. 개통파 당번장이에요."
+  },
+  {
+   "op": "line",
+   "who": "C-053",
+   "emo": "기본",
+   "text": "대기는 충분히 했어요. 200년이에요. 수호자는 잠든 게 아니라 연결을 기다리는 거예요 — 연결은 누군가 해야 하는 일이고요."
+  },
+  {
+   "op": "do",
+   "fx": "GS_MET_EUNSOL = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "meet",
+   "args": [
+    "C-053"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "C-053",
+   "emo": "분노",
+   "text": "해지된 계정이 왜 여기 있죠?"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-053",
+   "emo": "기본",
+   "text": "대기등이 또 깜박였어요. 어젯밤에. 운영자님 쪽에서 신호가 온 거죠?"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "'개통'이 뭡니까?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "OPEN",
+     "id": "GS_EUNSOL:1:0"
+    },
+    {
+     "text": "류정과는 왜 갈라섰습니까?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SPLIT",
+     "id": "GS_EUNSOL:1:1"
+    },
+    {
+     "text": "됐습니다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "GS_EUNSOL:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-053",
+   "emo": "기본",
+   "text": "매뉴얼 제7권. 인증 절차. 전원, 본부, 관리자. 셋이 맞으면 수호자가 깨어나요. 개통이죠."
+  },
+  {
+   "op": "line",
+   "who": "C-053",
+   "emo": "미소",
+   "text": "운영자님이 그 셋 중 하나라는 걸, 류정 안내자님도 알아요. 다만 말하지 않을 뿐."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "C-053",
+   "emo": "기본",
+   "text": "그분은 기다리자고 하고, 저는 연결하자고 해요. 같은 매뉴얼을 읽고요. 대기등은 하나인데."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/JUNGGYE.txt"
+}

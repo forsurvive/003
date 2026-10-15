@@ -1,0 +1,26 @@
+{
+ "id": "SG_RADIO",
+ "title": "막사 무전기",
+ "loc": "L-R01-19",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "무전기에서 짧은 호출이 반복된다. \"제7 검문대, 이상 유무.\" 아무도 받지 않는 시간엔 같은 말이 다섯 번 온다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SAGOGAE.txt"
+}
