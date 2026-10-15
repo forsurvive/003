@@ -1,0 +1,80 @@
+{
+ "id": "MQ-104_RIFLE",
+ "title": "경비 장교의 유해",
+ "loc": "L-R02-02",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TAKE": 4,
+  "EMPTY": 7
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "MQ104_RIFLE == 1",
+   "to": "EMPTY"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "국방색 군복의 장교. 계급장은 녹슬었고, 곁에 세운 소총은 기름을 먹여 천으로 감싸 두었다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "마지막까지 손질했다. 쏠 일은 없었다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "소총을 가져간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TAKE",
+     "id": "MQ-104_RIFLE:1:0"
+    },
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "MQ-104_RIFLE:1:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "give(\"W-017\", 1); give(\"5.56mm 탄\", 20); MQ104_RIFLE = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "천을 풀자 총몸이 아직 번들거린다. 탄창 하나가 함께 감겨 있었다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "소총이 세워져 있던 자리. 장교의 손은 여전히 그쪽으로 뻗어 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-104.txt"
+}

@@ -1,0 +1,49 @@
+{
+ "id": "MQ-104_ROLL",
+ "title": "출석부",
+ "loc": "L-R02-02",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "cmd",
+   "name": "note",
+   "args": [
+    "LR-28"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "MQ104_ROLL == 1",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "give(\"M-209\", 1); MQ104_ROLL = 1; K_LINE = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "뒷장의 한 줄. '시공 입회: 영신통신 마영식.' 지하시장 배전실의 그 구울이다."
+  },
+  {
+   "op": "cmd",
+   "name": "yd",
+   "args": [
+    "look"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-104.txt"
+}

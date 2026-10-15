@@ -1,0 +1,25 @@
+# 여의도 지하 벙커 Y-05 윤중제 배수로(SD-09a L-R02-02 ③ Y-03 '40×6 배수로 맵' · SD-03a §8.4 S4 은신 탈출, 단계 1-5)
+# 40×8 · 기계실 환기구에서 둑 아래 배수구까지. 시궁쥐 둘. 동쪽 끝 = 윤중제 배수구(샛강 쪽 둑).
+map Y-05 윤중제 배수로
+set bk
+grid
+########################################
+########################################
+########################################
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+########################################
+end
+exit 0 4 Y-03 from_Y-05
+exit 0 5 Y-03 from_Y-05
+exit 39 4 W L-R02-10
+exit 39 5 W L-R02-10
+mark from_Y-03 1 4 E
+mark from_W 38 4 W
+enemy CR-095 20 4
+enemy CR-095 23 5
+prop remains 30 3
+box 30 3 corpse_scav name="떠돌이의 유해"
+text 12 6 "배수로 벽에 분필 화살표. '→ 둑. 물 차면 돌아가.'"

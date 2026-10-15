@@ -82,7 +82,10 @@ ENEMIES = [("en_cr401_loco", "M1-S4-HR02-H1-T06-1-PF01-HD04-EY00-PR034", "rifle"
            ("en_cr200_loco", "M1-SG2-HR00-H1-T16-2-PF00-HD00-EY00", None),
            ("en_cr201_loco", "M2-SG2-HR00-H1-T10-2-PF00-HD00-EY00", None),
            ("en_cr456_loco", "M1-SG1-HR01-H1-T05-1-PF00-HD02-EY00", "rifle"),
-           ("en_cr457_loco", "M2-SG1-HR00-H5-T04-1-PF00-HD05-EY00", "rifle")]
+           ("en_cr457_loco", "M2-SG1-HR00-H5-T04-1-PF00-HD05-EY00", "rifle"),
+           # 1-5 여의도 벙커 수색조(SD-14 §9.2): 인도 분대원 CR-402 전기 진압봉 · 계엄 분대장 CR-403(같은 군복, 다른 얼굴·고글)
+           ("en_cr402_loco", "M2-S3-HR02-H1-T06-1-PF01-HD04-EY00-PR034", "baton"),
+           ("en_cr403_loco", "M1-S2-HR01-H2-T06-1-PF01-HD04-EY02-PR034", "rifle")]
 
 
 def main():

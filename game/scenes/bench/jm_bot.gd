@@ -26,7 +26,8 @@ var shot_tag := ""
 var shot_wait := 0.0
 var seen := {}
 var last_line := ""
-var step_map := 0                                    ## 걸음 단계를 시작한 맵 노드(출구를 밟아 맵이 바뀌면 그 단계는 끝 — 월드 안 구역 이름 바뀜은 아니다)
+var note_t := 0.0
+var step_map := 0                                   ## 걸음 단계를 시작한 맵 노드(출구를 밟아 맵이 바뀌면 그 단계는 끝 — 월드 안 구역 이름 바뀜은 아니다)
 
 
 func _ready() -> void:
@@ -116,7 +117,54 @@ func _ready() -> void:
 				["check", "container_open", "떠돌이 유해 → 용기 창이 열린다"], ["close"],
 				["go", 804, 1338], ["shoton", "대피소", "evac"], ["use", 804, 1337], ["wait", 2.0],
 				["check", "seen_evac", "대피소 표지 글이 뜬다"]]
+		"yd_talk", "yd_fight", "yd_vent":                               # MQ-104(1-5): 해치 → 방화문 → 작은 방 → 집결지 조사 → 인증 → 수색조 세 갈래
+			_yd_plan()
 	plan.append(["end"])
+
+
+## MQ-104 공통 앞부분(해치·방화문·서랍·유해·출석부·당직 일지·인증)과 갈래별 뒷부분
+func _yd_plan() -> void:
+	st.vars.set_v("V_DOYUN", 1)
+	st.vars.set_v("PC_ST", 6 if route == "yd_talk" else 5)                # 방화문: 말로 갈래는 힘 6, 나머지는 쇠파이프(W-040)
+	st.vars.set_v("PC_SKP_SCIENCE", 50)
+	st.vars.set_v("PC_SKP_LOCKPICK", 50 if route == "yd_vent" else 0)
+	st.vars.set_v("PC_SKP_SMALL_GUNS", 40 if route == "yd_fight" else 0)
+	for kv in [["W-040", 1], ["M-070", 3], ["10mm 탄", 200], ["I-001", 10]]:
+		st.call_fn("give", kv)
+	host.enter("W", "L-R02-02")
+	plan = [["shot", "hatch"], ["go", 812, 1086], ["shot", "stairs"], ["check", "MQ104_STAGE == 20", "해치로 내려가면 단계 20"],
+		["go", 6, 12, "Y-00"], ["want", ["[힘 6]", "[물건: W-040"]], ["use", 6, 13], ["shot", "firedoor"],
+		["check", "MQ104_FIRE == 1", "방화문을 비틀어 열었다"], ["go", 5, 26], ["go", 5, 27],
+		["go", 9, 5, "Y-01"], ["use", 9, 4], ["check", "K_SIGNER == 1 and has(\"M-228\")", "서랍의 반대 의견서(K_SIGNER)"], ["shot", "small_room"],
+		["go", 12, 2], ["go", 12, 0], ["shot", "hall"],
+		["go", 19, 18, "Y-02"], ["want", ["거둔다"]], ["shoton", "열두 구", "remains"], ["use", 19, 17], ["wait", 0.5],
+		["go", 13, 22], ["use", 13, 21], ["wait", 0.5], ["go", 26, 22], ["use", 26, 21], ["wait", 0.5],
+		["check", "MQ104_STAGE == 30 and has(\"M-209\") and has(\"M-210\") and K_LINE == 1", "출석부·당직 일지·유해 → 단계 30"],
+		["go", 30, 4], ["shoton", "녹색 화면", "auth"], ["use", 30, 3], ["wait", 0.5],
+		["check", "MQ104_STAGE == 40 and K_CODE == 1 and K_NET == 1 and MQ104_SEARCH == 1", "인증 단말 → K_CODE·K_NET · 단계 40"]]
+	match route:
+		"yd_talk":                                                      # 기다렸다 과학 50으로 돌려보낸다 → 방폭문(인증으로 열림) 너머 마지막 쪽지 → 계단으로
+			plan += [["want", ["[과학 50]"]], ["go", 20, 20], ["shoton", "선우진 중위", "sunwoo"], ["wait", 14.0],
+				["check", "MQ104_SEARCH == 4 and AFF_BJ == -25", "선우진을 말로 돌려보냄(비상 +5)"],
+				["go", 38, 13], ["go", 39, 13], ["go", 3, 13, "Y-04"], ["go", 5, 8], ["use", 5, 7], ["wait", 0.5],
+				["check", "MQ104_LAST == 1", "방폭문 너머 관리자의 마지막 쪽지"], ["go", 3, 28], ["go", 3, 29],
+				["go", 19, 26, "Y-02"], ["go", 19, 27], ["go", 1, 8, "Y-01"], ["go", 0, 8], ["go", 5, 1, "Y-00"], ["go", 5, 0],
+				["check", "MQ104_STAGE == 100", "벙커를 나서면 끝"], ["go", 800, 1097, "W"], ["shoton", "관리자 후보님", "guard_bark"], ["talk", "CR-401"], ["wait", 2.0], ["check", "seen_guard", "초소 병사가 '관리자 후보'라 부른다"]]
+		"yd_fight":                                                     # 총을 든다 → 수색조 다섯 → 초소가 빈다 → 호송차 열쇠로 하도윤
+			plan += [["want", ["총을 든다"]], ["wait", 14.0], ["fight"], ["shot", "squad_down"],
+				["check", "MQ104_SEARCH == 2 and MQ104_GUARDS == 1 and AFF_BJ == -40", "수색조 격퇴(비상 -10) · 초소가 빈다"],
+				["go", 34, 5], ["want", ["가져간다"]], ["use", 34, 4], ["check", "has(\"W-017\")", "경비 장교의 소총"],
+				["go", 19, 26], ["go", 19, 27], ["go", 1, 8, "Y-01"], ["go", 0, 8], ["go", 5, 1, "Y-00"], ["go", 5, 0],
+				["check", "MQ104_STAGE == 100", "벙커를 나서면 끝"],
+				["go", 800, 1095, "W"], ["shoton", "초소가 비었다", "truck_empty"], ["use", 800, 1094], ["wait", 1.0],
+				["check", "V_DOYUN == 2 and MQ104_DOYUN == 1 and MQ104_STAGE == 100", "빈 초소의 열쇠로 하도윤 구출(V_DOYUN 2)"]]
+		"yd_vent":                                                      # 인증 뒤 기계실 환기구 → 배수로(은신) → 둑 → 호송차 자물쇠 50
+			plan += [["go", 5, 2], ["go", 5, 0], ["go", 15, 3, "Y-03"], ["use", 15, 2], ["wait", 0.3],
+				["want", ["기어 들어간다"]], ["use", 15, 2], ["shot", "drain"],
+				["check", "MQ104_SEARCH == 3", "수색조가 내려오기 전에 환기구로 빠짐(은신)"], ["wait", 1.5], ["shot", "drain_tunnel"], ["fight"],
+				["go", 38, 4, "Y-05"], ["go", 39, 4], ["check", "MQ104_STAGE == 100", "둑 배수구로 나오면 끝"],
+				["go", 800, 1095, "W"], ["shot", "post"], ["want", ["[자물쇠 따기 50]"]], ["use", 800, 1094], ["lock"],
+				["wait", 1.5], ["check", "V_DOYUN == 2 and STAT_LOCKS == 1", "호송 칸 자물쇠를 땄다(V_DOYUN 2)"]]
 
 
 func _process(dt: float) -> void:
@@ -129,6 +177,18 @@ func _process(dt: float) -> void:
 	if i >= plan.size():
 		return
 	var s: Array = plan[i]
+	for c in host.get_children():                                      # 종이 기록물 창: 한 장 찍고 끝 쪽까지 넘겨 닫는다
+		if c is NoteScreen:
+			note_t += dt
+			if note_t > 1.2:
+				note_t = 0.0
+				if c.page == 0:
+					_shot("note_" + str(c.note.get("title", "")).substr(0, 8).replace(" ", "_"))
+				if c.page < c._pages.size() - 1:
+					c.page += 1
+				else:
+					c.close(true)
+			return
 	if host.box.active or host.ev.busy() or host.busy:
 		host.input_fn = func() -> Vector2: return Vector2.ZERO
 		if s[0] != "fight":
@@ -238,6 +298,31 @@ func _process(dt: float) -> void:
 				menu_t = 0.0
 				tm.close(true)
 				_next()
+		"lock":                                                         # 자물쇠 창: 머리핀을 정답 쪽으로 쓸어 가다 돌린다(한 번은 일부러 비껴서 걸림을 본다)
+			var ls: LockScreen = host.lockpick
+			if ls == null:
+				if step_t > 2.0:
+					if not seen.has("lock"):
+						print("  [봇] 자물쇠 창이 안 열렸다")
+					_next()
+				return
+			ls.bot_on = true
+			seen["lock"] = true
+			var lk: Lockpick = ls.lock
+			if step_t < 1.2:                                            # 비껴 돌리기: 막혀 덜 돈다
+				lk.set_angle(clampf(lk.target + lk.w + 25.0, 0.0, 180.0))
+				ls.bot_turn = true
+			elif step_t < 1.6:
+				ls.bot_turn = false
+			else:
+				if not seen.has("lock_shot"):
+					seen["lock_shot"] = true
+					_shot("lock_miss")
+				lk.set_angle(lk.target)
+				ls.bot_turn = true
+				if lk.turn > 45.0 and not seen.has("lock_shot2"):
+					seen["lock_shot2"] = true
+					_shot("lock_turn")
 		"wait":
 			host.input_fn = func() -> Vector2: return Vector2.ZERO
 			if step_t >= float(s[1]):
@@ -253,6 +338,8 @@ func _process(dt: float) -> void:
 				ok = host.container != null
 			elif str(s[1]) == "seen_evac":
 				ok = seen.has("evac")
+			elif str(s[1]) == "seen_guard":
+				ok = seen.has("guard_bark")
 			elif str(s[1]) == "seen_rumor":
 				ok = seen.has("rumor") and last_line != "……"
 				print("  [봇] 소문: ", last_line)

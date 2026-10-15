@@ -1,0 +1,50 @@
+# 여의도 지하 벙커 Y-01 작은 방(SD-09a L-R02-02 ③ · SD-03a §8.4 S2·S3, 단계 1-5)
+# 24×16 · 소파 응접실 · 철제 책상(맨 아래 서랍 LR-17 지침 연동 반대 의견서 → K_SIGNER) · 23:29에 멈춘 벽시계 · 샤워장 거울 '23:2'(⑧-3).
+map Y-01 작은 방
+set bk
+grid
+############e###########
+############e###########
+############e###########
+#eeeeeeeeeeeeeeee#ooooo#
+#eeeeeeeeeeeeeeee#ooooo#
+#eeeeeeeeeeeeeeee#ooooo#
+#eeeeeeeeeeeeeeee#ooooo#
+#eeeeeeeeeeeeeeeeeooooo#
+eeeeeeeeeeeeeeeeeeeeeee#
+eeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeee#
+########################
+end
+exit 0 8 Y-00 from_Y-01
+exit 0 9 Y-00 from_Y-01
+door 12 1 "비상 집결지"
+exit 12 0 Y-02 from_Y-01
+mark from_Y-00 1 8 E
+mark from_Y-02 12 3 S
+prop wall_clock 6 1
+text 6 2 "벽시계. 11시 29분에 멈춰 있다. 23시 29분 — 정전된 시각이다."
+prop w_bk_notice 2 1
+text 2 2 "철판 표지. '비상 집결지 — 관계자 외 출입 금지.'" w=2
+prop bk_sofa 3 5
+text 3 5 "인조 가죽 소파. 갈라진 틈마다 먼지가 앉았다. 누군가 여기 누워 기다렸다." w=2
+prop low_table 3 7
+prop bk_desk 9 4
+text 9 4 "철제 사무 책상. 맨 아래 서랍이 반쯤 열려 있다." w=2 scene=MQ-104_DESK
+prop file_cabinet 14 3
+prop file_cabinet 15 3
+box 14 3 cabinet w=2 name="서류함"
+prop water_cooler 1 4
+prop w_mirror 20 1
+text 20 2 "샤워장 거울. 립스틱 글씨 '23:2… 출발'. 끝 자리는 누군가 손으로 문질러 지웠다."
+prop shower_stall 19 3
+prop shower_stall 21 3
+prop toilet_bk 22 6
+prop rubble 20 12
+prop crate_metal 2 12
+box 2 12 crate name="비상 물품 상자"
+text 16 13 "바닥에 굴러다니는 2077년 배급 건빵 봉지. 유통기한 2079. 03."

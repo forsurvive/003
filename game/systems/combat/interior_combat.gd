@@ -142,7 +142,7 @@ func set_stealth_live(on: bool) -> void:
 
 ## 적 무기(정합, 0-9): 보안요원 진압봉 W-041 · 권총 W-002, 계엄군은 생포 사격(W-002 판정을 빌린다), 파워 아머는 그 세 배 연사
 func _enemy_weapon(enemy_id: String, arm: String) -> Dictionary:
-	if enemy_id in ["CR-002", "CR-104"]:
+	if enemy_id in ["CR-002", "CR-104", "CR-095"]:
 		return {}
 	var w: Dictionary = weapons.get("W-041" if arm in ["baton", "claw"] else "W-002", {}).duplicate()
 	if arm == "claw":                                                   # 야생 구울(1-4): 맨손 내려치기 — 피해는 SD-14 표 '근접 n'

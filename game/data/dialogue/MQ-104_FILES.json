@@ -1,0 +1,48 @@
+{
+ "id": "MQ-104_FILES",
+ "title": "인수 절차 공문철",
+ "loc": "L-R02-02",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "공문철 마지막 장. '예비 관리 체계: S-07 전용 회선(관악 중계소 경유). 시공 입회 영신통신 마영식.'"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "그 아래 끼워 둔 공고문 한 장."
+  },
+  {
+   "op": "cmd",
+   "name": "note",
+   "args": [
+    "LR-03"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "MQ104_FILES == 1",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "give(\"M-208\", 1); MQ104_FILES = 1"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-104.txt"
+}

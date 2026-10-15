@@ -10,6 +10,7 @@ python3 tools/pipeline/extract.py
 python3 tools/pipeline/extract_story.py
 python3 tools/pipeline/extract_docs.py
 python3 tools/pipeline/script_compile.py
+python3 tools/pipeline/note_compile.py                  # 종이 기록물(1-5): script/notes → notes.json
 python3 tools/pipeline/term_compile.py                  # 단말(1-4): script/terms → terminals.json
 python3 tools/pipeline/hack_words.py                    # 해킹 단어 풀(1-4)
 python3 tools/pipeline/prop_export.py

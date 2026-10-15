@@ -1,0 +1,38 @@
+{
+ "id": "MQ-104_DOYUN_FREE",
+ "title": "호송차",
+ "loc": "L-R02-28",
+ "npc": "",
+ "cond": "V_DOYUN == 2",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "철창 문이 열린다. 하도윤이 굳은 다리를 펴며 기어 나온다."
+  },
+  {
+   "op": "line",
+   "who": "C-002",
+   "emo": "미소",
+   "text": "…고마워. 봉천 계단마을로 갈게. 거기서 기다릴게."
+  },
+  {
+   "op": "line",
+   "who": "C-002",
+   "emo": "기본",
+   "text": "너는 너 할 일 해. 나는 이번엔 내 발로 걸어갈 거야."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-104.txt"
+}

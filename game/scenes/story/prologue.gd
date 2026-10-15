@@ -127,6 +127,7 @@ func _ready() -> void:
 		host.st.call_fn("give", ["W-067"])
 		host.pipboy_ok = true
 		if from == "view":
+			host.st.vars.set_v("V_DOYUN", 1)                          # 탈출을 건너뛰어도 하도윤은 붙잡힌 상태(SD-03a §7.4)
 			_start_view.call_deferred()
 		elif from == "box":
 			_start_box.call_deferred()

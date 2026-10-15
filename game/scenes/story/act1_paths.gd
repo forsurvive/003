@@ -5,6 +5,9 @@
 ## MQ-102: 1막이 열리면 10. 단서 셋은 경로 퀘스트를 10으로 열고 장소를 '표시'로 올린다. 경로 장소에 먼저 들어가도 열린다(O-02). K_CODE가 서면 100.
 ## S5 출구: 해독 뒤 북쪽 출구(J-01)로 나가면 수배 1 이상 + 추적대가 다닐 때 새벽인력 추적조 매복(셋). 출입패가 있으면 구울 경비 둘,
 ##   박춘삼을 고용했으면 박춘삼이 함께 싸운다. 남쪽 통로나 역사 쇼핑몰로 나가면 매복을 피한다(입구 선택이 곧 서사).
+## MQ-104(1-5, SD-03a §8.4): 벙커에 들어오면 20 → 출석부·당직 일지·유해를 보면 30 → 인증 단말(K_CODE·K_NET, XP 300/180) 40 + 수색조가
+##   12초 뒤 내려온다(그때 있는 방에서 선우진과 마주침 — 말로·과학·교전) · 기계실 환기구 → 배수로로 빠지면 은신 · 벙커를 나서면 100.
+##   호송차의 하도윤(V_DOYUN 1): 자물쇠 50 · 은신 50(열쇠) · 경비 처리 · 수색조와 싸웠으면 초소가 빈다. 인증한 다음 날 아침 호송차는 떠난다.
 class_name Act1Paths
 extends Node
 
@@ -13,6 +16,10 @@ var st: StoryState
 var log_on := false
 var _t := 0.0
 var _ambush: Array = []
+var _search_t := -1.0                                ## 인증 뒤 수색조가 내려오기까지 남은 초(-1 = 없음)
+var _squad: Array = []
+var _guards: Array = []
+const SEARCH_DELAY := 12.0
 const CLUE_QUEST := {1: "MQ-103", 2: "MQ-104", 3: "MQ-105"}
 const CLUE_TEXT := {1: "영등포 지하에 200살 먹은 기술자가 있다 — 2077년엔 세진 하청",
 	2: "볼트 기록의 좌표가 여의도를 가리킨다", 3: "현상금을 건 자의 의뢰서는 새벽인력 장부에 붙어 있다"}
@@ -24,6 +31,7 @@ func setup(h: InteriorHost, is_log := false) -> void:
 	st = h.st
 	log_on = is_log
 	host.ev.handlers["jm"] = _jm
+	host.ev.handlers["yd"] = _yd
 	host.map_entered.connect(_on_map)
 	host.combat.enemy_killed.connect(_on_killed)
 
@@ -56,6 +64,11 @@ func _process(dt: float) -> void:
 		_log("MQ-102 닫힘(K_CODE)")
 	if host.map != null and host.map.id == "J-03" and v("MQ103_DOOR") >= 1:
 		host.map.unlock_door(27, 1)
+	if host.map != null and host.map.id == "Y-00" and v("MQ104_FIRE") >= 1:
+		host.map.unlock_door(6, 13)
+	if host.map != null and host.map.id == "Y-04" and v("MQ104_AUTH") >= 1:
+		host.map.unlock_door(3, 12)                                     # 방폭문: 관리자 인증으로도 열린다(SD-09a Y-04)
+	_yd_tick()
 	if not _ambush.is_empty():
 		var alive := _ambush.filter(func(e): return is_instance_valid(e) and not e.cmb.dead)
 		if alive.is_empty():
@@ -106,6 +119,22 @@ func _on_map(id: String) -> void:
 		_bring_park()
 	if id == "J-01" and host.last_mark == "from_J-02":
 		_maybe_ambush()
+	if id.begins_with("Y-"):
+		_enter_bunker(id)
+	if id == "Y-05" and v("MQ104_SEARCH") == 1:                         # 수색조가 내려오기 전에 환기구로 빠졌다(은신)
+		_search_t = -1.0
+		st.vars.set_v("MQ104_SEARCH", 3)
+		host.hint("덕트 너머로 군화 소리가 멀어진다. 아무도 따라오지 않는다.", 5.0)
+		_log("수색조 은신으로 피함")
+	if not id.begins_with("Y-") and st.quests.stage("MQ-104") >= 40 and st.quests.stage("MQ-104") < 100 and v("MQ104_SEARCH") >= 2:
+		st.quests.set_stage("MQ-104", 100)                              # 벙커 탈출(SD-03a §8.4 단계 40 완료)
+		_log("MQ-104 완료(수색조 %d)" % v("MQ104_SEARCH"))
+	if not id.begins_with("Y-") and v("MQ104_SEARCH") == 1:              # 수색조가 내려오기 전에 계단으로 빠져나갔다
+		_search_t = -1.0
+		st.vars.set_v("MQ104_SEARCH", 3)
+		if st.quests.stage("MQ-104") < 100:
+			st.quests.set_stage("MQ-104", 100)
+		_log("수색조가 내려오기 전에 빠져나감")
 
 
 func _enter_market(id: String) -> void:
@@ -159,6 +188,144 @@ func _on_killed(_eid: String, alive: int) -> void:
 			st.vars.set_v("MQ103_JOB", 2)
 			host.hint("둥지를 비웠다 — 상인회장 노복희에게 알린다", 7.0)
 		_log("둥지 비움")
+
+
+# ---------------------------------------------------------------- MQ-104 여의도 집결지(@cmd yd …)
+func _enter_bunker(_id: String) -> void:
+	if st.quests.stage("MQ-104") < 20:
+		if st.quests.stage("MQ-104") < 10:
+			st.quests.set_stage("MQ-104", 10)
+		st.quests.set_stage("MQ-104", 20)
+		st.places.raise("L-R02-02", PlaceLog.FOUND)
+		_log("벙커 들어옴")
+
+
+## 출석부·당직 일지·유해를 다 보면 단계 30(인증 단말)
+func _check_look() -> void:
+	if st.quests.stage("MQ-104") == 20 and v("MQ104_ROLL") >= 1 and v("MQ104_LOG") >= 1 and v("MQ104_SEEN") >= 1:
+		st.quests.set_stage("MQ-104", 30)
+		_log("집결지 조사 끝")
+
+
+func _yd_tick() -> void:
+	if _search_t >= 0.0 and not host.box.active and not host.ev.busy():
+		_search_t -= 0.5
+		if _search_t < 0.0:
+			_squad_arrives()
+	if not _squad.is_empty():
+		var alive := _squad.filter(func(e): return is_instance_valid(e) and not e.cmb.dead)
+		if alive.is_empty():
+			_squad.clear()
+			st.vars.set_v("MQ104_SEARCH", 2)
+			st.vars.set_v("MQ104_GUARDS", 1)                              # 초소가 비었다(S5 '수색조와 싸웠다면 쉽다')
+			host.hint("수색조가 쓰러졌다. 계단 위 초소는 이제 비었을 것이다.", 5.0)
+			_log("수색조 격퇴")
+	if not _guards.is_empty():
+		var g_alive := _guards.filter(func(e): return is_instance_valid(e) and not e.cmb.dead)
+		if g_alive.is_empty():
+			_guards.clear()
+			st.vars.set_v("MQ104_GUARDS", 1)
+			host.hint("호송차 경비가 쓰러졌다. 열쇠는 초소 탁자에.", 5.0)
+	var day := int(st.vars.get_v("GAME_DAY")) if st.vars.has("GAME_DAY") else 0
+	if v("V_DOYUN") == 1 and v("MQ104_DOYUN") == 0 and v("MQ104_DAY") > 0 and day > v("MQ104_DAY"):
+		st.vars.set_v("MQ104_DOYUN", 2)                                   # 다음 날 아침 청계산으로(MQ-106에서 다시 기회)
+		_log("호송차 떠남")
+
+
+## 수색조가 내려왔다: 지금 있는 벙커 방에서 선우진과 마주친다
+func _squad_arrives() -> void:
+	if host.map == null or not host.map.id in ["Y-00", "Y-01", "Y-02"]:
+		if host.map != null and host.map.id in ["Y-03", "Y-04"]:
+			_search_t = 0.0                                               # 기계실·통로에 숨어 있으면 큰 방으로 돌아오는 순간 마주친다
+		return
+	var m := "from_Y-01" if host.map.id == "Y-02" else ("from_Y-00" if host.map.id == "Y-01" else "from_W")
+	host.ev._show_actor("C-034", host.map.mark_pos(m), "N" if host.map.id == "Y-02" else "S")
+	for i in 2:
+		host.ev._show_actor("BJ%d" % (i + 1), host.map.mark_pos(m) + Vector2((i * 2 - 1) * 36, 20), "N", "en_cr401_loco")
+	host.play_scene("MQ-104_SUNWOO")
+	_log("수색조 도착(%s)" % host.map.id)
+
+
+func _clear_actors() -> void:
+	for a in ["C-034", "BJ1", "BJ2"]:
+		host.ev.run("hide", [a], func() -> void: pass)
+
+
+func _squad_fight() -> void:
+	var base: Vector2 = host.ev.actors["C-034"].loco.logical if host.ev.actors.has("C-034") else host.player.loco.logical + Vector2(0, 96)
+	_clear_actors()
+	var ids := ["CR-403", "CR-401", "CR-401", "CR-401", "CR-402"]
+	for i in ids.size():
+		var off := Vector2((i - 2) * 34, -24 - (i % 2) * 20)             # 선우진 뒤(입구 쪽)가 아니라 방 안쪽으로 퍼진다
+		var p := base + off
+		if host.map.marks.has("search_%d" % (i + 1)):                  # 집결지: 맵에 둔 수색조 자리
+			p = host.map.mark_pos("search_%d" % (i + 1))
+		if host.map.is_solid(host.map.tile_of(p)):
+			p = base
+		var e := host.combat.spawn(ids[i], p, host.map, st, {"lv": 5})
+		e.brain.gauge = 100.0
+		_squad.append(e)
+	st.call_fn("aff", ["BJ", -10])
+	host.hint("선우진이 계단 위로 물러나며 무전을 친다. 수색조가 덮쳐 온다!", 5.0)
+
+
+func _yd(a: Array, done: Callable) -> void:
+	match str(a[0]):
+		"enter":
+			_enter_bunker("Y-00")
+		"fire":
+			host.map.unlock_door(6, 13)
+		"look":
+			_check_look()
+		"auth":                                                         # 인증(K_CODE를 세우기 전에 부른다 — 이미 알았으면 XP 180)
+			var later := v("K_CODE") >= 1
+			st.call_fn("xp", [180 if later else 300])
+			if st.quests.stage("MQ-104") < 40:
+				st.quests.set_stage("MQ-104", 40)
+			st.vars.set_v("MQ104_SEARCH", 1)
+			st.vars.set_v("MQ104_DAY", int(st.vars.get_v("GAME_DAY")) if st.vars.has("GAME_DAY") else 1)
+			_search_t = SEARCH_DELAY
+			host.map.set_prop_state(host.map.tile_of(host.map.mark_pos("auth")) + Vector2i(0, -1), "lit")
+		"talk":                                                         # 말로 돌려보냈다(비상 +5)
+			_clear_actors()
+			st.vars.set_v("MQ104_SEARCH", 4)
+			st.call_fn("aff", ["BJ", 5])
+			host.hint("수색조가 계단을 올라간다. 호송차 경비는 그대로다.", 5.0)
+		"fight":
+			_squad_fight()
+		"vent":
+			host.enter("Y-05", "from_Y-03")
+		"pick":                                                         # 호송 칸 자물쇠(50): 미니게임
+			if Lockpick.can_try(50, st.skill("LOCKPICK")):
+				host.open_lock(50, "pad", func() -> void: _rescue())
+			else:
+				host.hint("자물쇠가 단단하다. [자물쇠 따기 50 필요]", 4.0)
+		"guards":                                                       # 경비 처리: 둘이 적이 된다
+			for n in host.npcs:
+				if str(n["id"]) == "CR-401" and is_instance_valid(n["actor"]):
+					var e := host.combat.spawn("CR-401", n["actor"].loco.logical, host.map, st, {"lv": 4})
+					e.brain.gauge = 100.0
+					_guards.append(e)
+					n["actor"].visible = false
+					host.map.blockers.erase(n["actor"])
+			st.call_fn("aff", ["BJ", -5])
+		"rescue":
+			_rescue()
+	done.call()
+
+
+func _rescue() -> void:
+	if v("MQ104_DOYUN") != 0:
+		return
+	st.vars.set_v("V_DOYUN", 2)
+	st.vars.set_v("MQ104_DOYUN", 1)
+	st.call_fn("karma", [100])
+	st.call_fn("aff", ["BJ", -5])
+	st.call_fn("aff", ["JC_BC", 5])                                     # 봉천에 사람이 하나 늘었다
+	if st.quests.stage("MQ-104") < 45:
+		st.quests.set_stage("MQ-104", 45)
+	host.play_scene.call_deferred("MQ-104_DOYUN_FREE")
+	_log("하도윤 구출")
 
 
 # ---------------------------------------------------------------- 원고 사건(@cmd jm …)

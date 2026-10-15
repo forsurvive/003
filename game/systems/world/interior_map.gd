@@ -145,8 +145,8 @@ func _add_objects(map_id: String, d: Dictionary, st: StoryState, o: Vector2i) ->
 		var dy := int(dd["y"]) + o.y
 		var pos := Vector2(dx * T + int(e["off"][0]), dy * T + int(e["off"][1]))
 		var s := _sprite(e["rect"], pos, (dy + 2) * T)
-		doors.append({"node": s, "x": dx, "y": dy, "locked": bool(dd["locked"]), "is_open": false,
-			"closed": _r(e["rect"]), "open": _r(e.get("open", e["rect"]))})
+		doors.append({"node": s, "x": dx, "y": dy, "locked": bool(dd["locked"]), "is_open": false, "lock": int(dd.get("lock", -1)),
+			"label": str(dd.get("label", "")), "closed": _r(e["rect"]), "open": _r(e.get("open", e["rect"]))})
 		if dd["locked"]:
 			texts[Vector2i(dx, dy + 1)] = "잠겨 있다."
 	for s in d["signs"]:
@@ -328,6 +328,14 @@ func set_prop_frame(name: String, f: int) -> bool:
 			p["frame"] = f
 			return true
 	return false
+
+
+## 이 칸(문 두 칸 중 하나)의 잠긴 문(없으면 빈 사전)
+func locked_door_at(c: Vector2i) -> Dictionary:
+	for d in doors:
+		if bool(d["locked"]) and int(d["x"]) == c.x and (int(d["y"]) == c.y or int(d["y"]) + 1 == c.y):
+			return d
+	return {}
 
 
 func unlock_door(x: int, y: int) -> bool:

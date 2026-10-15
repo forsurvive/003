@@ -1,0 +1,59 @@
+{
+ "id": "MQ-104_DESK",
+ "title": "작은 방 책상",
+ "loc": "L-R02-02",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "EMPTY": 6
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "MQ104_DESK == 1",
+   "to": "EMPTY"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "맨 아래 서랍. 접힌 서류철 한 권이 먼지를 덮고 있다. 표지에 '세진전자 관제사업부'."
+  },
+  {
+   "op": "cmd",
+   "name": "note",
+   "args": [
+    "LR-17"
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "give(\"M-228\", 1); MQ104_DESK = 1; K_SIGNER = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "결재란의 붉은 도장이 이백 년이 지나도 선명하다. '반려 — 행정안전부 장관 남궁혁.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈 서랍. 서류철이 놓였던 자리만 먼지가 없다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-104.txt"
+}

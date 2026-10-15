@@ -504,6 +504,59 @@ def terrazzo_tex(seed):
     return a
 
 
+def steps_tex(seed):
+    """콘크리트 계단(1-5 벙커 입구 28단): 16px마다 디딤판 — 위 모서리 밝은 줄(논슬립 쇠띠) · 디딤면 · 아래 챌판 그늘.
+    가운데가 닳아 밝고, 모서리 군데군데 깨졌다."""
+    a = np.full((CELL, CELL), t("P05"), np.uint8)
+    rnd = np.random.default_rng(seed)
+    for y0 in range(0, CELL, 16):
+        for x in range(CELL):
+            put(a, x, y0, "P07")                                      # 논슬립 띠(빛)
+            put(a, x, y0 + 1, "P06")
+            for yy in (y0 + 12, y0 + 13):
+                put(a, x, yy, "P04")                                  # 챌판 그늘
+            put(a, x, y0 + 14, "P03"); put(a, x, y0 + 15, "P03")
+        for _ in range(3):                                            # 닳은 가운데
+            x = int(rnd.integers(CELL))
+            for xx in range(x, x + int(rnd.integers(6, 18))):
+                put(a, xx, y0 + 4 + int(rnd.integers(0, 5)), "P06")
+        if rnd.random() < 0.5:                                        # 깨진 모서리
+            x = int(rnd.integers(CELL - 6))
+            for xx in range(x, x + int(rnd.integers(2, 6))):
+                put(a, xx, y0, "P03"); put(a, xx, y0 + 1, "P04")
+    for _ in range(30):
+        x, y = int(rnd.integers(CELL)), int(rnd.integers(CELL))
+        put(a, x, y, "P04")
+    return a
+
+
+def epoxy_tex(seed):
+    """벙커 칠 바닥(1-5): 회청색 에폭시 칠. 큰 얼룩 대신 잔 점묘로 바랜 결 — 걷던 자리만 성기게 밝고(디더),
+    칠이 벗겨진 콘크리트는 손톱만 한 조각뿐. 64px마다 신축 줄눈(어두운 줄 + 아래 밝은 턱), 군데군데 끌린 자국."""
+    a = np.full((CELL, CELL), t("P12"), np.uint8)
+    rnd = np.random.default_rng(seed)
+    big = equalize(fbm(CELL, [(96, 0.7), (40, 0.3)], seed))
+    fine = rnd.random((CELL, CELL))
+    a[(big < 0.30) & (fine < 0.10)] = t("P11")                         # 그늘진 결: 점묘만
+    a[(big > 0.72) & (fine < 0.16)] = t("P13")                         # 닳아 밝은 결: 성긴 디더
+    a[(big > 0.90) & (fine < 0.05)] = t("P14")
+    for _ in range(10):                                                # 칠이 벗겨진 작은 조각(2~4px)
+        x, y = int(rnd.integers(CELL)), int(rnd.integers(CELL))
+        w, h = int(rnd.integers(2, 5)), int(rnd.integers(1, 3))
+        for yy in range(h):
+            for xx in range(w):
+                put(a, (x + xx) % CELL, (y + yy) % CELL, "P06" if (xx + yy) % 3 else "P05")
+    for _ in range(8):                                                 # 끌린 자국: 짧은 가로 획
+        x, y = int(rnd.integers(CELL)), int(rnd.integers(CELL))
+        for xx in range(int(rnd.integers(5, 12))):
+            put(a, (x + xx) % CELL, y, "P11")
+    for k in range(0, CELL, 64):                                       # 신축 줄눈
+        for i in range(CELL):
+            put(a, i, k, "P10"); put(a, i, k + 1, "P13")
+            put(a, k, i, "P10"); put(a, k + 1, i, "P13")
+    return a
+
+
 def tunnel_tex(seed):
     """지하 연결 통로·배수구 콘크리트(1-4 J-09·J-10): 어둡고 축축한 판 + 물때 얼룩 + 거푸집 이음매 + 짧은 금."""
     a = np.full((CELL, CELL), t("P05"), np.uint8)
@@ -827,10 +880,15 @@ def sets():
                  decals=["paper", "butts"], hard=1),
             dict(name="tunnel", A=tunnel_tex(311), B=None, spread=0, pri=0, rim=0, shade=1, vthr=256, dens=4,
                  decals=["puddle", "debris", "rust"], hard=1),
+            # 1-5 여의도 벙커: 콘크리트 계단 · 회녹색 칠 바닥
+            dict(name="steps", A=steps_tex(321), B=None, spread=0, pri=0, rim=0, shade=1, vthr=256, dens=1,
+                 decals=["debris"], hard=1),
+            dict(name="epoxy", A=epoxy_tex(331), B=None, spread=0, pri=0, rim=0, shade=1, vthr=256, dens=2,
+                 decals=["paper", "debris"], hard=1),
         ],
         "mat_of": {"panel": 0, "panel_sheen": 0, "panel_scuff": 0, "guide_h": 0, "guide_v": 0, "guide_x": 0, "guide_t": 0, "grate_a": 1, "grate_b": 1, "grate_c": 1,
                    "lino_a": 2, "lino_b": 2, "clinic_a": 3, "clinic_b": 3, "concrete_a": 4, "carpet_a": 5, "wood_a": 6,
-                   "panel_mold": 7, "grate_mold": 8, "jangpan_a": 9, "terrazzo_a": 10, "tunnel_a": 11},
+                   "panel_mold": 7, "grate_mold": 8, "jangpan_a": 9, "terrazzo_a": 10, "tunnel_a": 11, "steps_a": 12, "epoxy_a": 13},
         "force": {"guide_h": "guide_h", "guide_v": "guide_v", "guide_x": "guide_x", "guide_t": "guide_t"},
         "flag_of": {k: 1 for k in ("wall_top_s", "wall_top_w", "wall_top_ws", "wall_top", "face_top", "face_top_pipe", "face_top_vent",
                                    "face_bot", "face_bot_outlet", "balcony", "balcony_door")},

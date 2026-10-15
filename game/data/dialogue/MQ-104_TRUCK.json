@@ -1,0 +1,184 @@
+{
+ "id": "MQ-104_TRUCK",
+ "title": "호송차",
+ "loc": "L-R02-28",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "PICK": 7,
+  "STEAL": 10,
+  "GUARDS": 12,
+  "EMPTY": 14,
+  "FREE": 16,
+  "FREED": 18,
+  "GONE": 20
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "MQ104_DOYUN == 1",
+   "to": "FREED"
+  },
+  {
+   "op": "if",
+   "cond": "MQ104_DOYUN == 2 or V_DOYUN != 1",
+   "to": "GONE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "철창 호송 칸. 안쪽에 볼트 작업복이 웅크려 있다. …하도윤이다."
+  },
+  {
+   "op": "line",
+   "who": "C-002",
+   "emo": "놀람",
+   "text": "\\V[P_GIVEN]? 너, 진짜 나왔구나."
+  },
+  {
+   "op": "line",
+   "who": "C-002",
+   "emo": "피곤",
+   "text": "청계산으로 간대. 여기서 하룻밤 자고 내일 아침에. 예비 열쇠래, 내가."
+  },
+  {
+   "op": "if",
+   "cond": "MQ104_GUARDS == 1",
+   "to": "EMPTY"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "호송 칸 자물쇠를 딴다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "자물쇠 따기",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PICK",
+     "id": "MQ-104_TRUCK:1:0"
+    },
+    {
+     "text": "경비 허리춤의 열쇠를 슬쩍한다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "은신",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "STEAL",
+     "id": "MQ-104_TRUCK:1:1"
+    },
+    {
+     "text": "경비를 처리한다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "GUARDS",
+     "id": "MQ-104_TRUCK:1:2"
+    },
+    {
+     "text": "기다려. 방법을 찾아 올게",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "MQ-104_TRUCK:1:3"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "경비 둘이 초소 쪽으로 등을 돌리고 담뱃불을 나눈다. 그 사이 호송 칸 자물쇠에 머리핀을 넣는다."
+  },
+  {
+   "op": "cmd",
+   "name": "yd",
+   "args": [
+    "pick"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "경비가 담배에 불을 붙이는 사이, 허리춤의 열쇠 꾸러미가 손에 들어온다."
+  },
+  {
+   "op": "goto",
+   "to": "FREE"
+  },
+  {
+   "op": "cmd",
+   "name": "yd",
+   "args": [
+    "guards"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "초소가 비었다. 수색조가 내려간 뒤로 돌아오지 않았다. 열쇠는 초소 탁자 위에 그대로 있다."
+  },
+  {
+   "op": "goto",
+   "to": "FREE"
+  },
+  {
+   "op": "cmd",
+   "name": "yd",
+   "args": [
+    "rescue"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "열린 호송 칸. 철창 문이 바람에 삐걱인다. 하도윤은 봉천 쪽으로 갔다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "호송차가 섰던 자리. 아스팔트에 바퀴 자국과 기름 얼룩만 남았다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-104.txt"
+}

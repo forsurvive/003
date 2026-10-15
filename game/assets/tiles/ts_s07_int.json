@@ -47,6 +47,14 @@
   "cover": 0,
   "solid": false
  },
+ "epoxy_a": {
+  "atlas": [
+   34,
+   0
+  ],
+  "cover": 0,
+  "solid": false
+ },
  "face_bot": {
   "atlas": [
    19,
@@ -202,6 +210,14 @@
  "panel_sheen": {
   "atlas": [
    4,
+   0
+  ],
+  "cover": 0,
+  "solid": false
+ },
+ "steps_a": {
+  "atlas": [
+   33,
    0
   ],
   "cover": 0,

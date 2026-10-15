@@ -42,6 +42,8 @@ var combat: InteriorCombat                       ## 실내 전투(무기·표적
 var pipboy: PipBoy                               ## 열려 있는 핍-보이(없으면 null)
 var container: ContainerScreen                   ## 열려 있는 용기 창(없으면 null, 0-9)
 var terminal: TerminalScreen                     ## 열려 있는 단말 화면(1-4) — 단말·해킹 중에는 게임 시간이 멈춘다(SD-12 §8.1)
+var lockpick: LockScreen                         ## 열려 있는 자물쇠 따기 화면(1-5) — 게임 시간이 멈춘다(SD-12 §8.1)
+var lock_assist := false                         ## 옵션 '자물쇠 보조'(근접도 막대)
 var terms_db := {}                               ## 단말 원고(game/data/terminals.json)
 var _prompt_shake := -1.0                        ## 요구치 미달로 시도하면 상호작용 문구가 0.8초 흔들린다(SD-12 §8.1)
 var pipboy_ok := false                           ## 핍-보이를 받았다(MQ-P2 생일잔치부터)
@@ -207,6 +209,11 @@ func enter(map_id: String, mark: String = "", look: Dictionary = {}, at: Vector2
 		enc_live.on_map_changed()
 	map = WorldMap.new() if world_mode else InteriorMap.new()
 	map.load_map(map_id, st)
+	if not world_mode:                                                   # 자물쇠로 딴 문은 열린 채로 남는다(1-5)
+		for d in map.doors:
+			if bool(d["locked"]) and st.boxes.has("door:%s:%d,%d" % [map_id, int(d["x"]), int(d["y"])]) \
+					and bool(st.boxes["door:%s:%d,%d" % [map_id, int(d["x"]), int(d["y"])]].get("open", false)):
+				map.unlock_door(int(d["x"]), int(d["y"]))
 	if world_mode and map_id != "W" and map.marks.has("%s:%s" % [map_id, mark]):
 		mark = "%s:%s" % [map_id, mark]
 	add_child(map)
@@ -380,7 +387,7 @@ func _physics_process(dt: float) -> void:
 			continue
 		if n["routine"] != null and is_instance_valid(n["actor"]) and not n.get("dead", false):
 			n["routine"].tick(dt, player.loco.logical)
-	talking = talking or pipboy != null or container != null or terminal != null
+	talking = talking or pipboy != null or container != null or terminal != null or lockpick != null
 	if talking:
 		if not ev.drives(player):                                         # 연출이 주인공을 걷게 하는 중이면(move PC …) 멈추지 않는다
 			player.move(Vector2.ZERO, dt)
@@ -489,7 +496,7 @@ func hint(text: String, secs: float = 5.0) -> void:
 
 ## 다른 맵으로(디더 페이드). 갈 맵이 없으면(아직 만들지 않은 바깥 등) 막혔다는 글만 띄운다.
 func go(map_id: String, mark: String) -> void:
-	if not InteriorMap.exists(map_id):
+	if map_id != "W" and not InteriorMap.exists(map_id):              # W = 심리스 월드(맵 파일이 아니라 청크)
 		say_text("이 앞은 아직 갈 수 없다.")
 		return
 	busy = true
@@ -532,6 +539,21 @@ func interact() -> bool:
 	if not b.is_empty():
 		open_box(b)
 		return true
+	for cc in cells:                                                    # 자물쇠로 잠긴 문(1-5, lock=n): 자물쇠 따기
+		var dr: Dictionary = map.locked_door_at(cc) if map.has_method("locked_door_at") else {}
+		if not dr.is_empty() and int(dr.get("lock", -1)) >= 0:
+			var lv := int(dr["lock"])
+			var dkey := "door:%s:%d,%d" % [map.id, int(dr["x"]), int(dr["y"])]
+			if st.boxes.has(dkey) and bool(st.boxes[dkey].get("jammed", false)):
+				say_text("자물쇠 안이 부러져 있다. 열쇠가 있어야 연다.")
+			elif not Lockpick.can_try(lv, st.skill("LOCKPICK")):
+				_prompt_shake = _hud_t + 0.8
+			else:
+				open_lock(lv, "door", func() -> void:
+					st.boxes[dkey] = {"open": true}
+					map.unlock_door(int(dr["x"]), int(dr["y"])),
+					func() -> void: st.boxes[dkey] = {"jammed": true})
+			return true
 	var tm := _front_term(cells)
 	if not tm.is_empty():
 		open_terminal(tm)
@@ -643,12 +665,42 @@ func open_box(b: Dictionary) -> void:
 		return
 	var c := box_contents(b)
 	if box_locked(b):
-		var lv := int(b.get("lock", 0))
-		if st.skill("LOCKPICK") < lv:
-			say_text("잠겨 있다. 자물쇠가 단단하다.  [자물쇠 따기 %d]" % lv)
+		if bool(c.get("jammed", false)):
+			say_text("자물쇠 안이 부러져 있다. 열쇠가 있어야 연다.")
 			return
-		c["unlocked"] = true                                             # 여는 것만으로는 절도가 아니다(꺼내야 절도)
-		_note("자물쇠를 땄다")
+		var lv := int(b.get("lock", 0))
+		if not Lockpick.can_try(lv, st.skill("LOCKPICK")):
+			_prompt_shake = _hud_t + 0.8                                 # 시도할 수 없다 — 문구만 흔들린다(SD-12 §8.1)
+			return
+		open_lock(lv, "dial" if str(b.get("kind", "")) == "safe" else ("pad" if str(b.get("kind", "")) in ["locker", "school_locker", "cabinet"] else "door"),
+			func() -> void:
+				c["unlocked"] = true                                         # 여는 것만으로는 절도가 아니다(꺼내야 절도)
+				_open_container(b, c),
+			func() -> void: c["jammed"] = true)
+		return
+	_open_container(b, c)
+
+
+## 자물쇠 따기 화면(SD-12 §8.2)을 연다: 열리면 on_open, 강제 개방 실패(영구 파손)면 on_jam. 머리핀 M-070을 쓴다
+func open_lock(lv: int, skin: String, on_open: Callable, on_jam: Callable = Callable()) -> void:
+	lockpick = LockScreen.new().setup(st, lv, int(st.items.get("M-070", 0)), skin)
+	lockpick.assist = lock_assist
+	lockpick.pin_used.connect(func() -> void: st.call_fn("take", ["M-070", 1]))
+	lockpick.opened.connect(func(xp: int) -> void:
+		st.call_fn("xp", [xp])
+		st.vars.set_v("STAT_LOCKS", int(st.vars.get_v("STAT_LOCKS")) + 1)
+		_note("자물쇠를 땄다"))
+	lockpick.jammed.connect(func() -> void:
+		if on_jam.is_valid():
+			on_jam.call())
+	lockpick.closed.connect(func(ok: bool) -> void:
+		lockpick = null
+		if ok:
+			on_open.call())
+	add_child(lockpick)
+
+
+func _open_container(b: Dictionary, c: Dictionary) -> void:
 	var cmax := float(status()["carry_max"])
 	container = ContainerScreen.new().setup(st, b, c, items_db, box_owner_label(b), cmax)
 	container.stole.connect(_on_stole.bind(b))
@@ -945,13 +997,32 @@ func interact_label() -> String:
 ## 조사 안내(HUD): 앞 칸이 용기면 "(E) 열기 이름 [소유]·[빈 상자]·[잠김]", 단말이면 "(E) 사용 이름 [잠김: 등급 · 과학 n 필요]"
 func box_prompt() -> String:
 	var b := _front_box()
+	if b.is_empty() and map != null and map.has_method("locked_door_at"):
+		for cc in _front_cells():
+			var dr: Dictionary = map.locked_door_at(cc)
+			if not dr.is_empty() and int(dr.get("lock", -1)) >= 0:
+				var lv := int(dr["lock"])
+				var gi := Lockpick.grade_of(lv)
+				var dkey := "door:%s:%d,%d" % [map.id, int(dr["x"]), int(dr["y"])]
+				if st.boxes.has(dkey) and bool(st.boxes[dkey].get("jammed", false)):
+					return "(E) 따기  %s  [열쇠 필요]" % str(dr.get("label", "문"))
+				if Lockpick.can_try(lv, st.skill("LOCKPICK")):
+					return "(E) 따기  %s  [잠김: %s]" % [str(dr.get("label", "문")), Lockpick.NAMES[gi]]
+				return "(E) 따기  %s  [잠김: %s · 자물쇠 따기 %d 필요]" % [str(dr.get("label", "문")), Lockpick.NAMES[gi], int(Lockpick.REQ[gi])]
 	if b.is_empty():
 		var tm := _front_term()
 		return term_prompt(tm) if not tm.is_empty() else ""
 	var nm: String = str(b.get("name", "")) if str(b.get("name", "")) != "" else Loot.kind_name(str(b["kind"]))
 	var tag := ""
 	if box_locked(b):
-		tag = "  [잠김 %d]" % int(b.get("lock", 0))
+		var lv := int(b.get("lock", 0))
+		var gi := Lockpick.grade_of(lv)
+		if bool(box_contents(b).get("jammed", false)):
+			tag = "  [열쇠 필요]"
+		elif Lockpick.can_try(lv, st.skill("LOCKPICK")):
+			tag = "  [잠김: %s]" % Lockpick.NAMES[gi]
+		else:
+			tag = "  [잠김: %s · 자물쇠 따기 %d 필요]" % [Lockpick.NAMES[gi], int(Lockpick.REQ[gi])]
 	elif box_contents(b)["items"].is_empty():
 		tag = "  [빈 상자]"
 	if Loot.owned(b):
@@ -969,7 +1040,8 @@ func talk(n: Dictionary) -> void:
 	var g := scene_for(n["id"])
 	if g.is_empty():
 		var own := str(n["bark"])                                     # 소문(1-4f): 이 사람이 들은 주인공 이야기 — 없으면 제 혼잣말
-		var rumor := Rumors.pick(st, map_region(map.tile_of(n["actor"].loco.logical)), str(n["id"]) + str(n.get("idx", 0)), own != "")
+		var rumor := "" if str(n["id"]).begins_with("CR-") else \
+			Rumors.pick(st, map_region(map.tile_of(n["actor"].loco.logical)), str(n["id"]) + str(n.get("idx", 0)), own != "")   # 경비·병사(CR-)는 근무 중 — 주민 소문을 옮기지 않는다
 		var bark: String = rumor if rumor != "" else (own if own != "" else "……")
 		g = {"id": "bark_" + n["id"], "labels": {"START": 0}, "ops": [{"op": "line", "who": n["id"], "emo": "기본", "text": bark}, {"op": "end"}]}
 		_barking = true
@@ -1014,7 +1086,7 @@ var font_s: Font
 
 
 func _draw_hud() -> void:
-	if not hud_on or box.active or ev.busy() or busy or pipboy != null or container != null or terminal != null or body == "hidden":
+	if not hud_on or box.active or ev.busy() or busy or pipboy != null or container != null or terminal != null or lockpick != null or body == "hidden":
 		return
 	if font_s == null:
 		font_s = load("res://assets/fonts/Galmuri9.ttf")
@@ -1334,6 +1406,10 @@ func _handlers() -> void:
 		map.unlock_door(uc.x, uc.y)
 		combat.nav = InteriorNav.new(map)                                  # 길찾기 격자를 다시 만든다
 		done.call()
+	ev.handlers["note"] = func(a: Array, done: Callable) -> void:      # 종이 기록물 창(1-5): 닫으면 장면이 이어진다
+		var ns := NoteScreen.new().setup(st, str(a[0]))
+		ns.closed.connect(func(_ok: bool) -> void: done.call())
+		add_child(ns)
 	ev.handlers["hint"] = func(a: Array, done: Callable) -> void:
 		hint(str(a[0]), float(a[1]) if a.size() > 1 else 6.0)
 		done.call()

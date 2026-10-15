@@ -420,6 +420,8 @@ def s07_tiles():
         "grate_mold": _gcrop("s07", "grate_mold", 0),
         "terrazzo_a": _gcrop("s07", "terrazzo", 0),               # 1-4 지하시장 덧붙임
         "tunnel_a": _gcrop("s07", "tunnel", 0),
+        "steps_a": _gcrop("s07", "steps", 0),                     # 1-5 벙커 덧붙임
+        "epoxy_a": _gcrop("s07", "epoxy", 0),
     }
 
 
@@ -583,6 +585,64 @@ def jm_wall_tiles():
     out.update({"face_top": wall_face_jm("top"), "face_top_pipe": wall_face_jm("top", "sign", 1),
                 "face_top_vent": wall_face_jm("top", "stain", 2), "face_bot": wall_face_jm("bot"),
                 "face_bot_outlet": wall_face_jm("bot", "outlet")})
+    return out
+
+
+def wall_face_bk(part, variant="plain", seed=0):
+    """여의도 지하 벙커 벽(1-5 MQ-104 Y-00~Y-04): 1970년대 군 시설 콘크리트 — 위는 미색 수성 칠, 허리 아래는 국방색 칠 + 짙은 경계 띠,
+    천장은 노출 콘크리트 보. 200년 습기에 칠이 일어나 회색 콘크리트가 드러나고 물이 줄지어 흘렀다. 쯔꾸르식 평평한 면."""
+    img = new("P22")
+    d = ImageDraw.Draw(img)
+    rnd = random.Random(seed * 19 + (1 if part == "top" else 2))
+    if part == "top":
+        d.rectangle([0, 0, 31, 6], fill=C("P05"))                     # 천장 보(노출 콘크리트)
+        d.line([0, 0, 31, 0], fill=C("P01")); d.line([0, 1, 31, 1], fill=C("P07")); d.line([0, 6, 31, 6], fill=C("P02"))
+        for x in (3, 11, 24):
+            d.point((x, 3 + x % 2), fill=C("P04"))                     # 거푸집 자국
+        d.line([0, 7, 31, 7], fill=C("P20"))
+        for y in range(9, 32, 6):                                      # 미색 칠의 붓 결
+            x = rnd.randrange(0, 24)
+            d.line([x, y, x + rnd.randint(4, 9), y], fill=C("P21"))
+        if variant == "sign":                                          # '관계자 외 출입 금지' 철판 표지(흰 바탕 붉은 글 줄)
+            d.rectangle([5, 11, 26, 25], fill=C("P01"))
+            d.rectangle([6, 12, 25, 24], fill=C("P09"))
+            d.rectangle([6, 12, 25, 15], fill=C("P53"))
+            for yy in (18, 21):
+                d.line([8, yy, 23, yy], fill=C("P53"))
+            for x, y in ((6, 12), (25, 12), (6, 24), (25, 24)):
+                d.point((x, y), fill=C("P05"))
+            d.line([24, 25, 24, 29], fill=C("P25"))                    # 볼트 녹
+        if variant == "stain":                                         # 칠이 일어나 콘크리트가 드러나고 물이 흐른다
+            d.polygon([(9, 12), (17, 10), (20, 17), (12, 21), (7, 17)], fill=C("P06"))
+            d.line([9, 12, 17, 10], fill=C("P09")); d.point((12, 15), fill=C("P05"))
+            for k in range(3):
+                x = rnd.randrange(3, 29)
+                d.line([x, 8, x, 8 + rnd.randint(10, 23)], fill=C("P20"))
+    else:
+        d.rectangle([0, 0, 31, 3], fill=C("P22"))
+        d.rectangle([0, 4, 31, 6], fill=C("P28"))                     # 경계 띠(짙은 국방색)
+        d.line([0, 4, 31, 4], fill=C("P01"))
+        d.rectangle([0, 7, 31, 28], fill=C("P29"))                    # 허리 아래 국방색
+        d.line([0, 7, 31, 7], fill=C("P31"))
+        x, y = rnd.randrange(4, 26), rnd.randrange(12, 22)              # 칠 일어남(작은 회색 조각 하나 — 되풀이가 눈에 띄지 않게)
+        d.rectangle([x, y, x + 2, y + 1], fill=C("P05")); d.point((x, y), fill=C("P07"))
+        x = rnd.randrange(2, 30)
+        d.line([x, 8, x, 8 + rnd.randint(4, 9)], fill=C("P28"))
+        d.rectangle([0, 29, 31, 31], fill=C("P03")); d.line([0, 29, 31, 29], fill=C("P01"))   # 걸레받이(콘크리트 턱)
+        if variant == "outlet":                                       # 쇠 전선관 + 2077 이전 스위치 함
+            d.line([22, 0, 22, 10], fill=C("P04")); d.line([23, 0, 23, 10], fill=C("P06"))
+            d.rectangle([18, 10, 27, 20], fill=C("P02")); d.rectangle([19, 11, 26, 19], fill=C("P05"))
+            d.rectangle([21, 13, 24, 17], fill=C("P03")); d.point((22, 14), fill=C("P54"))
+            d.line([19, 11, 26, 11], fill=C("P07"))
+    return img
+
+
+def bk_wall_tiles():
+    """여의도 벙커 실내 벽(ts_bk_wall, 1-5): s07 벽과 같은 이름(윗면 wt_m은 같고 벽면만 군 시설 칠)."""
+    out = {f"wt_{m}": wall_top({e for e, b in WALL_BITS if m & b}) for m in range(16)}
+    out.update({"face_top": wall_face_bk("top"), "face_top_pipe": wall_face_bk("top", "sign", 1),
+                "face_top_vent": wall_face_bk("top", "stain", 2), "face_bot": wall_face_bk("bot"),
+                "face_bot_outlet": wall_face_bk("bot", "outlet")})
     return out
 
 

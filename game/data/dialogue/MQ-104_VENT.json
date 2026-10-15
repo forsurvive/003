@@ -1,0 +1,59 @@
+{
+ "id": "MQ-104_VENT",
+ "title": "기계실 환기구",
+ "loc": "L-R02-02",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "GO": 2
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "격자가 통째로 빠진다. 안쪽으로 사람 하나 기어갈 만한 덕트가 이어진다. 차고 젖은 바람에 강 냄새가 섞여 있다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "기어 들어간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "GO",
+     "id": "MQ-104_VENT:1:0"
+    },
+    {
+     "text": "나중에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "MQ-104_VENT:1:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "MQ104_VENT = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "yd",
+   "args": [
+    "vent"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-104.txt"
+}

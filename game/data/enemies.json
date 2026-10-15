@@ -14,6 +14,21 @@
   "tier": "약",
   "xp": 1
  },
+ "CR-095": {
+  "_src": "14_creatures-enemies.md:416",
+  "attack": "물기 10",
+  "dr": 0,
+  "hp": 35,
+  "id": "CR-095",
+  "level": 2,
+  "name": "변이 시궁쥐",
+  "part_weights": "PW-H",
+  "pattern": "2타일 거리에서 덤벼 문다(원작 '긴 근접 사거리'). 3~5마리",
+  "radius": 0.3,
+  "speed": 3.5,
+  "tier": "약",
+  "xp": 5
+ },
  "CR-104": {
   "_src": "14_creatures-enemies.md:443",
   "attack": "물기 8",
@@ -72,6 +87,34 @@
   "special": "기절탄 수류탄 1. 왼팔 노란 '계엄' 완장",
   "weapon_main": "레이저 소총 / 돌격소총",
   "xp": 20
+ },
+ "CR-402": {
+  "_src": "14_creatures-enemies.md:1060",
+  "dr": 18,
+  "hp": 90,
+  "id": "CR-402",
+  "level": 8,
+  "name": "인도 분대원",
+  "part_weights": "PW-H",
+  "radius": 0.3,
+  "rank": "1",
+  "special": "기절탄 2. 주인공에게는 비살상 무기만, 동행자에게는 실탄(9.2.1)",
+  "weapon_main": "전기 진압봉 / 그물탄 발사기",
+  "xp": 25
+ },
+ "CR-403": {
+  "_src": "14_creatures-enemies.md:1061",
+  "dr": 22,
+  "hp": 125,
+  "id": "CR-403",
+  "level": 12,
+  "name": "계엄 분대장 (중사·하사)",
+  "part_weights": "PW-H",
+  "radius": 0.3,
+  "rank": "2",
+  "special": "분대 명중 +10%. 무전 증원(60초 뒤 보병 계엄병 2)",
+  "weapon_main": "플라스마 소총 / 레이저 소총",
+  "xp": 35
  },
  "CR-405": {
   "_src": "14_creatures-enemies.md:1063",

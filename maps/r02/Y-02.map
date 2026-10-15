@@ -1,0 +1,97 @@
+# 여의도 지하 벙커 Y-02 큰 방 · 비상 집결지(SD-09a L-R02-02 ③⑧ · SD-03a §8.4 S2~S4, 단계 1-5)
+# 40×28 · 관리 요원 유해 12구가 3열 종대로 의자에 앉아 남쪽 입구를 본다(들어오는 순간 시선을 정면으로 받는다).
+# 벽 '관리 요원 인수 절차' · 출석부(LR-28, 뒷장 '시공 입회: 영신통신 마영식') · 당직 일지(9일) · 관리자 인증 단말(K_CODE·K_NET, 호송 요청 송출) ·
+# 인수 절차 공문철 · 경비 장교 유해 곁 W-103 · 경비 무기함(자물쇠 50, W-017).
+map Y-02 비상 집결지
+set bk
+grid
+#####e##################################
+#####e##################################
+#####e##################################
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+###################ee###################
+end
+exit 19 27 Y-01 from_Y-02
+exit 20 27 Y-01 from_Y-02
+door 5 1 "기계실"
+exit 5 0 Y-03 from_Y-02
+exit 39 13 Y-04 from_Y-02
+exit 39 14 Y-04 from_Y-02
+mark from_Y-01 19 26 N
+mark from_Y-03 5 3 S
+mark from_Y-04 38 13 W
+mark search_1 19 24 N
+mark search_2 18 25 N
+mark search_3 21 25 N
+mark search_4 17 26 N
+mark search_5 22 26 N
+mark sunwoo 20 23 N
+mark auth 30 4 N
+prop w_procedure 18 1
+text 18 2 "'관리 요원 인수 절차 — 호송차 도착 시 3열 종대.' 그림 속 점 열둘이 그대로 앉아 있다." w=2
+prop seated_0 16 8
+text 16 8 "앉은 채 입구를 보는 유해. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS
+prop seated_1 19 8
+text 19 8 "앉은 채 입구를 보는 유해. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS
+prop seated_2 22 8
+text 22 8 "앉은 채 입구를 보는 유해. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS
+prop seated_3 16 11
+text 16 11 "앉은 채 입구를 보는 유해. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS
+prop seated_4 19 11
+text 19 11 "앉은 채 입구를 보는 유해. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS
+prop seated_0 22 11
+text 22 11 "앉은 채 입구를 보는 유해. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS
+prop seated_1 16 14
+text 16 14 "앉은 채 입구를 보는 유해. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS
+prop seated_2 19 14
+text 19 14 "앉은 채 입구를 보는 유해. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS
+prop seated_3 22 14
+text 22 14 "앉은 채 입구를 보는 유해. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS
+prop seated_4 16 17
+text 16 17 "앉은 채 입구를 보는 유해. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS
+prop seated_0 19 17
+text 19 17 "앉은 채 입구를 보는 유해. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS
+prop seated_1 22 17
+text 22 17 "앉은 채 입구를 보는 유해. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS
+prop auth_terminal 30 3
+text 30 3 "관리자 인증 단말. 핍-보이를 대는 받침에 손바닥 자국 같은 먼지가 비어 있다." scene=MQ-104_AUTH
+prop file_cabinet 32 3
+text 32 3 "인수 절차 공문철. 마지막 장이 접혀 있다." scene=MQ-104_FILES
+prop lectern 13 21
+text 13 21 "출석부(LR-28). 2077. 10. 22. 비상 소집 — 열두 칸에 열두 서명." scene=MQ-104_ROLL
+prop duty_table 26 21
+text 26 21 "당직 일지. 마지막 장이 펼쳐져 있다." scene=MQ-104_LOG
+prop seated_officer 34 4
+text 34 4 "경비 장교의 유해. 곁에 소총을 세워 두고 앉았다." scene=MQ-104_RIFLE
+prop gun_locker 36 3
+box 36 3 armory lock=50 owner=S7 name="경비 무기함"
+prop folding_chair 9 6
+prop folding_chair 10 6
+prop crate_metal 2 24
+prop crate_metal 3 24
+box 2 24 crate w=2 name="비상 식량 상자"
+prop water_cooler 2 4
+text 37 20 "벽에 연필로 그은 줄. 다섯 개씩 묶어 아홉. 그 뒤로는 없다."

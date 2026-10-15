@@ -62,16 +62,18 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 	who = str(opts.get("who", ""))
 	stance = str(opts.get("stance", ""))
 	var is_roach: bool = row["id"] == "CR-002"
-	var is_dog: bool = row["id"] == "CR-104"
+	var is_dog: bool = row["id"] in ["CR-104", "CR-095"]               # 네발 물기(들개 · 1-5 변이 시궁쥐 — 2타일에서 덤벼 문다, SD-14 §4)
 	var sheet := "en_cr401_loco"
 	match str(row["id"]):
 		"CR-002":
 			sheet = "cr_cr002_base_loco"
 		"CR-104":
 			sheet = "cr_cr104_loco"
+		"CR-095":
+			sheet = "cr_cr095_loco"
 		"CR-405":
 			sheet = "en_cr405_loco"
-		"CR-436", "CR-437", "CR-200", "CR-201", "CR-456", "CR-457":   # 1-4: 야생·떠돌이 구울(맨손), 지하시장 경비·계약 경호 구울
+		"CR-436", "CR-437", "CR-200", "CR-201", "CR-456", "CR-457", "CR-402", "CR-403":   # 1-4: 야생·떠돌이 구울(맨손), 지하시장 경비·계약 경호 구울
 			sheet = "en_%s_loco" % str(row["id"]).to_lower().replace("-", "")
 		"CR-534":
 			sheet = "en_c021_loco"                                  # 독사(SD-14 §10.4, 외형 SD-07b C-021)

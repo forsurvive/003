@@ -50,7 +50,7 @@ SRC = os.path.join(ROOT, "maps")
 OUT = os.path.join(ROOT, "game", "data", "maps")
 TIL = os.path.join(ROOT, "game", "assets", "tiles")
 PROPS = os.path.join(ROOT, "game", "assets", "props")
-FLOOR = {".": "panel", ",": "lino_a", "o": "clinic_a", "=": "grate_a", "~": "concrete_a", "c": "carpet_a", "w": "wood_a", "j": "jangpan_a", "t": "terrazzo_a", "u": "tunnel_a",
+FLOOR = {".": "panel", ",": "lino_a", "o": "clinic_a", "=": "grate_a", "~": "concrete_a", "c": "carpet_a", "w": "wood_a", "j": "jangpan_a", "t": "terrazzo_a", "u": "tunnel_a", "s": "steps_a", "e": "epoxy_a",
          "m": "panel_mold", "M": "grate_mold", "-": "guide_h", "|": "guide_v", "+": "guide_x", "^": "guide_t"}
 WALL = {"#", " "}
 DIRS = {"E", "SE", "S", "SW", "W", "NW", "N", "NE"}
@@ -341,7 +341,12 @@ def _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kin
                 locked = "locked" in pos
                 if locked:
                     solid[y][x] = solid[y + 1][x] = 1
-                out["doors"].append({"x": x, "y": y, "kind": "door_" + k, "label": label, "locked": locked})
+                e = {"x": x, "y": y, "kind": "door_" + k, "label": label, "locked": locked}
+                if opt.get("lock"):                                  # 자물쇠 따기로 여는 잠긴 문(1-5): lock=0·25·50·75·100
+                    if not locked or int(opt["lock"]) not in (0, 25, 50, 75, 100):
+                        raise Err("lock=은 locked 문에 0·25·50·75·100으로 붙인다")
+                    e["lock"] = int(opt["lock"])
+                out["doors"].append(e)
             elif c == "exit":
                 x, y, to, mk = int(pos[0]), int(pos[1]), pos[2], pos[3]
                 if not (walk(x, y) if ext else floor(x, y)):

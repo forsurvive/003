@@ -1,0 +1,52 @@
+# 여의도 지하 벙커 Y-00 입구 계단(SD-09a L-R02-02 ③ · SD-03a §8.4 S1, 단계 1-5)
+# 12×28 · 환승센터 터 승강장 해치에서 28단을 내려간다. 중간 방화문(전원 없음 — [힘 6] 또는 쇠지레). '비상 집결지 — 관계자 외 출입 금지'.
+map Y-00 입구 계단
+set bk
+grid
+#####ss#####
+#####ss#####
+#####ss#####
+###ssssss###
+###ssssss###
+###ssssss###
+###ssssss###
+###ssssss###
+###ssssss###
+###ssssss###
+###ssssss###
+###ssssss###
+######s#####
+######s#####
+######s#####
+###ssssss###
+###ssssss###
+###ssssss###
+###ssssss###
+###ssssss###
+###ssssss###
+###ssssss###
+###ssssss###
+###ssssss###
+###ssssss###
+###ssssss###
+###ssssss###
+#####ss#####
+end
+exit 5 0 W L-R02-02
+exit 6 0 W L-R02-02
+exit 5 27 Y-01 from_Y-00
+exit 6 27 Y-01 from_Y-00
+mark from_W 5 3 S
+mark from_Y-01 5 26 N
+trigger 5 4 w=2 h=1 scene=MQ-104_ENTER cond="MQ104_STAGE <= 20" once
+mark fire_n 6 11 S
+mark fire_s 6 15 N
+prop w_bk_notice 3 1
+text 3 2 "철판 표지. '비상 집결지 — 관계자 외 출입 금지. 행정안전부.'" w=2
+prop w_bk_notice 7 1
+text 7 2 "같은 표지가 하나 더. 누군가 아래에 못으로 긁었다. '28'" w=2
+door 6 13 locked kind=iron "방화문"
+text 6 13 "방화문. 전원이 끊겨 자석 빗장이 걸린 채 굳었다." h=2 scene=MQ-104_FIRE
+prop rubble 3 6
+prop rubble2 8 20
+text 4 22 "계단 난간에 붙은 쪽지. '호송 도착 23:25 — 3열 종대로 대기.' 누렇게 바랬다."

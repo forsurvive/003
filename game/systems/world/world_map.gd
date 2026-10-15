@@ -115,7 +115,7 @@ func load_map(map_id: String, st: StoryState = null) -> void:
 			"sort_y": at.y * T})                                         # 땅에 뚫린 입구: 그 위를 걷는 사람이 앞에 그려진다
 		for i in 2:
 			dd["exits"].append({"x": at.x + i, "y": at.y, "to": str(door["to"]), "mark": str(door["mark"])})
-			dd["texts"].append({"x": at.x + i, "y": at.y - 1, "w": 1, "h": 1, "text": str(door["name"]) + " — 계단을 내려가면 지하다."})
+			dd["texts"].append({"x": at.x + i, "y": at.y - 1, "w": 1, "h": 1, "text": str(door["name"]) + " — " + str(door.get("hint", "계단을 내려가면 지하다."))})
 	_add_objects("W", dd, st, Vector2i.ZERO)
 	for sp in PlaceLog.spots:                                            # 발견 자리(1-4): 잠든 파수·길 위 유해·쪽지 — 구역 기준 좌표를 옮겨 붙인다
 		if not _cond_ok(str(sp.get("cond", "")), st):

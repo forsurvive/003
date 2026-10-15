@@ -28,7 +28,9 @@ NCX, NCY = W // CS, H // CS
 # 월드 → 실내 문(1-4, 지하로 내려가는 계단): 장소 L-ID · 요청 자리(타일) · 갈 실내 맵·표지 · 상호작용 이름
 DOORS = [{"lid": "L-R02-11", "near": (720, 1147), "to": "J-01", "mark": "from_W", "name": "영등포 지하상가 북쪽 출구", "prop": "subway_stairs"},
          {"lid": "L-R02-13", "near": (734, 1156), "to": "J-02", "mark": "from_mall", "name": "역사 쇼핑몰 지하 통로", "prop": "subway_stairs_mall"},
-         {"lid": "L-UG-13", "near": (672, 1099), "to": "J-09", "mark": "from_W", "name": "영등포구청역 지하 통로", "prop": "subway_stairs_st"}]
+         {"lid": "L-UG-13", "near": (672, 1099), "to": "J-09", "mark": "from_W", "name": "영등포구청역 지하 통로", "prop": "subway_stairs_st"},
+         {"lid": "L-R02-02", "near": (812, 1086), "to": "Y-00", "mark": "from_W", "name": "환승센터 터 승강장 해치", "prop": "bunker_hatch"},     # 1-5 여의도 지하 벙커
+         {"lid": "L-R02-10", "near": (826, 1134), "to": "Y-05", "mark": "from_W", "name": "윤중제 배수구", "prop": "drain_outlet", "hint": "쇠창살이 뜯긴 틈으로 기어 들어가면 배수로다."}]
 INSETS = [{"id": "X-S07", "mark": "from_vault", "at": (959, 1503)},          # 볼트 S-07 정문(L-R01-01)
           {"id": "X-BC", "center": (892, 1362)}]                             # 봉천 계단마을(L-R01-09)
 START = (959, 1503)                                                          # 도달성 검사 출발점 = 볼트 정문
@@ -1080,7 +1082,8 @@ def place_geo(R):
         if best is None:
             raise SystemExit("문 자리를 못 찾았다: %s" % spec)
         _, xx, yy = best
-        doors.append({"lid": spec["lid"], "at": [xx, yy], "to": spec["to"], "mark": spec["mark"], "name": spec["name"], "prop": spec["prop"]})
+        doors.append({"lid": spec["lid"], "at": [xx, yy], "to": spec["to"], "mark": spec["mark"], "name": spec["name"], "prop": spec["prop"],
+                      "hint": spec.get("hint", "계단을 내려가면 지하다.")})
         geo.setdefault(spec["lid"], {"bank": "S", "arrive": None})["arrive"] = [xx, yy + 1]
     geo["_doors"] = doors
     # 월드 발견 자리(1-4, maps/world/*.spots → map_compile → spots_src.json): 요청 칸에서 가장 가까운, w×h가 모두 걸어서 닿고

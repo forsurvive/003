@@ -852,6 +852,10 @@ from props_road import PROPS_ROAD                                       # 길 �
 for _k in PROPS_ROAD:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_ROAD)
+from props_bk import PROPS_BK, STATES_BK                                # 여의도 지하 벙커(1-5 MQ-104)
+for _k in PROPS_BK:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_BK)
 
 STATES = {
     "board_bc": {s: (lambda s=s: notice_board(s)) for s in ("wanted", "torn", "crumpled", "crossed", "rate", "water", "official")},
@@ -862,6 +866,7 @@ STATES = {
 }
 STATES.update(STATES_SB)
 STATES.update(STATES_JM)
+STATES.update(STATES_BK)
 
 
 if __name__ == "__main__":
