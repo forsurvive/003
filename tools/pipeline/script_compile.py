@@ -37,13 +37,13 @@ SKILLS = ["물물교환", "중화기", "에너지 무기", "폭발물", "자물�
 FLAVORS = ["거짓말", "위협"]
 PARTICLES = ["은", "는", "이", "가", "을", "를", "과", "와", "으로", "로", "이나", "나", "이랑", "랑", "아", "야", "이다", "다", "이에요",
              "예요", "이었", "였", "이라", "라", "이든", "든"]
-FNS = {"karma", "aff", "quest", "stage", "result", "give", "take", "has", "caps", "xp", "wanted", "stat", "skill", "year"}
+FNS = {"karma", "aff", "quest", "stage", "result", "give", "take", "has", "caps", "xp", "wanted", "stat", "skill", "year", "worn"}
 CMDS = {"wait", "fade_in", "fade_out", "balloon", "move", "face", "shake", "year_card", "title_card", "sfx", "bgm", "cam", "show",
         "hide", "pose", "doc", "flash", "lamp", "unlit", "note", "reveal",
         "pipboy", "equip", "hurt", "buddy", "range", "hint", "hud",          # 0-7: 핍-보이·무기·연출 피해·일시 동행·사격장 단계·안내 띠
         "refresh",                                                           # 0-8: 맵 인물을 지금 조건대로 다시 세운다
         "gate", "go", "pc", "escape", "unlock", "anim",                     # 0-9: 방폭문 · 기다리지 않는 이동 · 주인공 자리 · 탈출 진행기 · 문 열기
-        "mq", "trade", "yd",                                                     # 0-10: 1막 진행기 사건 · 거래 창(상인 V번호)
+        "mq", "trade", "yd", "fix",                                                   # 0-10: 1막 진행기 사건 · 거래 창(상인 V번호)
         "meet", "memo", "obit",                                              # 1-2: 인물 수첩 등록 · 한 줄 메모 · 소식으로 안 죽음
         "re", "cage", "capture",                                             # 1-3: 인카운터 첫 분대 대화의 결말 · 우리 문 열기 · 생포(사흘 버팀)
         "jm", "yd", "sb", "vb"}                                                                # 1-4: 1막 경로 진행기(지하시장·단서) 사건                                             # 1-3: 인카운터 첫 분대 대화의 결말 · 우리 문 열기 · 생포(사흘 버팀)
@@ -57,7 +57,7 @@ ENGINE_VARS = {"PC_ST", "PC_PE", "PC_EN", "PC_CH", "PC_IN", "PC_AG", "PC_LK", "P
                "CAPTURE_DAY", "CAPTURE_AT", "SB_COLLAR", "SB_CUFF", "CAPTURE_BY", "STAT_HACKED", "STAT_LOCKS",
                "MQ104_FIRE", "MQ104_DESK", "MQ104_IDS", "MQ104_SEEN", "MQ104_ROLL", "MQ104_LOG", "MQ104_FILES", "MQ104_RIFLE",
                "MQ104_AUTH", "MQ104_VENT", "MQ104_LAST", "MQ104_SEARCH", "MQ104_DOYUN", "MQ104_GUARDS", "MQ104_DAY",
-               "PL_LETTER", "PL_VIEW", "PL_TECH", "PN_SON", "PN_Q10", "PN_NURSE", "PN_HEAL_DAY", "PN_SIM", "PN_GIL", "PN_LEDGER",
+               "PL_LETTER", "PL_VIEW", "PL_TECH", "PN_SON", "PN_Q10", "PN_NURSE", "PN_HEAL_DAY", "PN_SIM", "PN_GIL", "PN_LEDGER", "PN_NAM", "PN_NAM_TIP",
                "MQ102_C1", "MQ102_C2", "MQ102_C3", "MQ102_ROBOT", "MQ103_GATE", "MQ103_JOB", "MQ103_HIRE", "MQ103_SNEAK",
                "MQ103_DOOR", "MQ103_CONF", "MQ103_LOG", "MQ103_AMBUSH", "MQ103_NEST", "MQ103_FOUNT", "JM_REG",
                "GAME_HOUR", "SB_RAID", "SB_PASS", "SB_DOGS", "SB_SAFE", "SB_KEY", "SB_FREED", "SB_READ", "SB_DEAL",

@@ -18,7 +18,7 @@
 @cond  V_ACT >= 1
 @cmd sb enter
 ? SB_DEAL == 1 -> CLIENT
-? V_WANTED >= 10 and PC_TORSO == "A-001" -> KNOWN
+? V_WANTED >= 10 and worn() == "A-001" -> KNOWN
 N-R02-035 [기본] 번호표 받으러 왔어, 사람 사러 왔어?
 * ASK
 > 사람을 사러 왔다 -> BUYER

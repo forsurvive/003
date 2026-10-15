@@ -12,6 +12,7 @@ columns:
   무게: {field: weight, type: float}
   가격: {field: value, type: int}
   보너스: {field: bonus, type: str}
+  내구: {field: durability, type: str}
   레이어: {field: layer, type: str}
 derive:
   cat: "'apparel'"

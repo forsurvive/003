@@ -64,7 +64,7 @@
        "id": "A-016"
       }
      ],
-     "cond": "PC_TORSO == \"A-016\"",
+     "cond": "worn() == \"A-016\"",
      "fx": "",
      "to": "LIE",
      "id": "MQ-101_DOKSA:1:1"

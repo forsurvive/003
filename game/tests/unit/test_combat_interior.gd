@@ -205,7 +205,7 @@ func test_pipboy_rows(t) -> void:
 	p.open_at(0, 2)
 	t.eq(p._rows().size(), 13, "스킬 13")
 	p.open_at(1, 0)
-	t.eq(p._rows()[0]["text"], "BB총 [장착]", "무기: 장착 표시")
+	t.eq(p._rows()[0]["text"], "BB총 (새것) [장착]", "무기: 장착 표시")
 	t.eq(p._rows()[0]["right"], "(1)", "단축키 1")
 	p.open_at(1, 4)
 	t.eq(p._rows()[0]["right"], "40", "탄약: BB탄 40")

@@ -37,7 +37,7 @@
   },
   {
    "op": "if",
-   "cond": "V_WANTED >= 10 and PC_TORSO == \"A-001\"",
+   "cond": "V_WANTED >= 10 and worn() == \"A-001\"",
    "to": "KNOWN"
   },
   {

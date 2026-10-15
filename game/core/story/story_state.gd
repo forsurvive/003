@@ -27,6 +27,7 @@ var names := {}                         ## 아이템·장소 ID -> 이름(\I·\L
 var weapon_out := false
 var events: Array = []                  ## 알림: [{"kind": "karma"|"item"|"xp"|"aff"|"caps", ...}]
 var fns := {}                           ## 추가 함수(이벤트 실행기 등이 등록): 이름 -> Callable(args: Array) -> Variant
+var wear := {}                          ## 장비 사용 카운터(1-8a, SD-13 §8.2): 아이템 열쇠("W-002@1") -> 이번 단계에서 쓴 횟수
 var boxes := {}                         ## 용기 상태(0-9): "맵:x,y@연도" -> {"items": {ID: 수}, "opened": 연 횟수, "taken": 꺼낸 횟수}
 var stolen := {}                        ## 장물(SD-12 §9.2): 아이템 ID -> 훔친 수(그 수만큼 [장물] 표시)
 var dead := {}                          ## 죽은 인물 ID -> true(0-9): 뒤 시대 맵에서 서지 않는다
@@ -68,7 +69,7 @@ func _init() -> void:
 	vars.declare("STAT_LOCKS", "int", 0)                      # 통계: 딴 자물쇠(SD-12 §3.5, 1-5)
 	for k in ["MQ104_FIRE", "MQ104_DESK", "MQ104_IDS", "MQ104_SEEN", "MQ104_ROLL", "MQ104_LOG", "MQ104_FILES", "MQ104_RIFLE",
 			"MQ104_AUTH", "MQ104_VENT", "MQ104_LAST", "MQ104_SEARCH", "MQ104_DOYUN", "MQ104_GUARDS", "MQ104_DAY",
-			"PL_LETTER", "PL_VIEW", "PL_TECH", "PN_SON", "PN_Q10", "PN_NURSE", "PN_HEAL_DAY", "PN_SIM", "PN_GIL", "PN_LEDGER"]:
+			"PL_LETTER", "PL_VIEW", "PL_TECH", "PN_SON", "PN_Q10", "PN_NURSE", "PN_HEAL_DAY", "PN_SIM", "PN_GIL", "PN_LEDGER", "PN_NAM", "PN_NAM_TIP"]:
 		vars.declare(k, "int", 0)                                     # MQ-104 여의도 집결지 진행(1-5, Act1Paths)
 	# MQ-102·103 진행 표시(단계 1-4, 정합): C1~C3 단서 셋(1 들음) · ROBOT 잠든 파수 로봇을 봄 ·
 	# GATE 지하시장에 들어온 길(1 출입세 · 2 카리스마 · 3 남쪽 통로 · 4 역사 쇼핑몰) · JOB 상인회 일(1 맡음 · 2 둥지 비움 · 3 보상) ·
@@ -155,18 +156,26 @@ func call_fn(name: String, args: Array) -> Variant:
 			items[str(args[0])] = int(items.get(str(args[0]), 0)) + n
 			events.append({"kind": "item", "id": str(args[0]), "delta": n})
 			return items[str(args[0])]
-		"take":
+		"take":                                                         # 기본 ID("W-002")로 부르면 상태 변형(@1~@4)도 같은 물건으로 센다(1-8a) — 정확한 열쇠 → 나쁜 상태 순
 			var n := int(args[1]) if args.size() > 1 else 1
-			var left := maxi(0, int(items.get(str(args[0]), 0)) - n)
-			if left == 0:
-				items.erase(str(args[0]))
-			else:
-				items[str(args[0])] = left
+			var want := n
+			for k in kinds_of(str(args[0])):
+				var m := mini(want, int(items.get(k, 0)))
+				if m <= 0:
+					continue
+				want -= m
+				if int(items[k]) - m <= 0:
+					items.erase(k)
+					wear.erase(k)
+				else:
+					items[k] = int(items[k]) - m
+				if want <= 0:
+					break
 			events.append({"kind": "item", "id": str(args[0]), "delta": -n})
-			return left
+			return count_of(str(args[0]))
 		"has":
 			var n := int(args[1]) if args.size() > 1 else 1
-			return 1 if int(items.get(str(args[0]), 0)) >= n else 0
+			return 1 if count_of(str(args[0])) >= n else 0
 		"caps":
 			var nv := vars.add("PC_CAPS", int(args[0]), 0)
 			events.append({"kind": "caps", "delta": int(args[0]), "value": nv})
@@ -177,6 +186,8 @@ func call_fn(name: String, args: Array) -> Variant:
 			return nv
 		"wanted":                                                       # 수배도(1-3): 하한·하루 상한·등급 알림은 Wanted가
 			return Wanted.add(self, int(args[0]), str(args[1]) if args.size() > 1 else "")
+		"worn":                                                         # 입은 몸통 옷의 기본 ID(상태 떼고 — 낡은 볼트 점프슈트도 볼트 옷, 1-8a)
+			return Gear.base(str(vars.get_v("PC_TORSO")))
 		"stat":
 			return stat(str(args[0]))
 		"skill":
@@ -187,6 +198,34 @@ func call_fn(name: String, args: Array) -> Variant:
 		return (fns[name] as Callable).call(args)
 	vars._err("알 수 없는 함수: %s(%s)" % [name, str(args)])
 	return null
+
+
+## 같은 물건의 소지 열쇠들: 기본 ID면 그 ID + 상태 변형(정확한 열쇠 먼저, 나머지는 나쁜 상태부터). 열쇠에 '@'가 있으면 그것만
+func kinds_of(id: String) -> Array:
+	if id.contains("@"):
+		return [id]
+	var out := [id]
+	for c in [4, 3, 2, 1]:
+		out.append("%s@%d" % [id, c])
+	return out
+
+
+func count_of(id: String) -> int:
+	var n := 0
+	for k in kinds_of(id):
+		n += int(items.get(k, 0))
+	return n
+
+
+## 소지품에서 이 물건의 가장 좋은 상태 열쇠(없으면 "")
+func best_of(id: String) -> String:
+	var ks := kinds_of(id)
+	ks.reverse()
+	ks.push_front(ks.pop_back())                                       # 정확한 열쇠(새것) → @1 → @2 …
+	for k in ks:
+		if int(items.get(k, 0)) > 0 and not str(k).ends_with("@4"):
+			return k
+	return ""
 
 
 ## 지금 이야기 연도(프롤로그 시대 구분: 맵의 사람·소품을 고른다). 퀘스트 진행으로 정한다:

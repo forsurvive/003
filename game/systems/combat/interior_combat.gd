@@ -45,6 +45,7 @@ var targets: Array = []                           ## [{"prop", "kind": "target"|
 var stealth_live := false                         ## 은신 표적을 쓰는 중(사격장 2부) — 아니면 받침 뒤에 숨어 있다
 var buddy: Actor                                  ## 일시 동행(MQ-P2 하도윤): 따라오고, 가까운 바퀴를 대걸레 자루로 친다. 불사
 var buddy_weapon := "W-067"
+var armor_dr := Callable()                         ## 주인공 DR(입은 옷 × 상태, 1-8a) — 호스트가 준다
 var nav: InteriorNav
 var bot := {}                                     ## 봇 입력: {"aim", "fire", "crouch", "reload", "stim"}
 var popups: Array = []                            ## [글, 위치, 남은 초, 색]
@@ -66,6 +67,7 @@ func _init() -> void:
 	_rng.seed = 2268
 	font = load("res://assets/fonts/Galmuri9.ttf")
 	weapons = JSON.parse_string(FileAccess.get_file_as_string("res://data/weapons.json"))
+	Gear.expand_weapons(weapons)                                       # 상태 변형 "W-002@2"(1-8a): 같은 수치 + condition
 	enemy_rows = JSON.parse_string(FileAccess.get_file_as_string("res://data/enemies.json"))
 	shots = Projectiles.new()
 	add_child(shots)
@@ -366,6 +368,9 @@ func weapon() -> Dictionary:
 
 ## 무기 고르기. 처음 드는 원거리 무기는 소지 탄약으로 탄창을 채운다
 func equip(id: String, st: StoryState) -> void:
+	if id != "" and Gear.cond(id) >= 4:                                 # 파손(SD-13 §8.1): 사용 불가 — 고치거나 부품으로 쓴다
+		message.emit("부서져서 쓸 수 없다. 고쳐야 한다.")
+		return
 	weapon_id = id
 	holstered = false
 	reload_t = 0.0
@@ -382,7 +387,7 @@ func _doll() -> void:
 		return
 	var w := ""
 	if armed():
-		w = DOLL.get(weapon_id, DOLL_LAYER.get(str(weapon().get("layer", "")).substr(0, 1), ""))
+		w = DOLL.get(Gear.base(weapon_id), DOLL_LAYER.get(str(weapon().get("layer", "")).substr(0, 1), ""))
 	a.doll.set_look({"weapon": w})
 
 
@@ -435,6 +440,8 @@ func tick(dt: float, free: bool, st: StoryState) -> void:
 	pc.posture = "crouch" if crouch else "stand"                          # 적의 탐지식 입력(SD-11 §7.3, 0-9)
 	pc.movement = "still" if player.loco.motion == "idle" else ("sneak" if crouch else "move")
 	pc.sneak = sneak_skill
+	if armor_dr.is_valid():
+		pc.dr = float(armor_dr.call())
 	cool = maxf(0.0, cool - dt)
 	if pc.flash > 0:
 		pc.flash -= 1
@@ -543,7 +550,7 @@ func _player(dt: float, player: Actor, st: StoryState) -> void:
 		var sk := float(st.skill("SMALL_GUNS")) if st != null else 15.0
 		var aiming: bool = Input.is_action_pressed("aim") if bot.is_empty() else bool(bot.get("aimed", true))
 		var stance := ("crouch_aim" if aiming else "crouch") if crouch else ("aim" if aiming else "stand")
-		var sp := CombatRules.spread(sk, stance, player.loco.motion != "idle", "new", 1.0, 0.0, 0.0, float(w.get("min_spread", 1.0)))
+		var sp := CombatRules.spread(sk, stance, player.loco.motion != "idle", str(w.get("condition", "new")), 1.0, 0.0, 0.0, float(w.get("min_spread", 1.0)))
 		# 탄은 그려진 총의 총구에서 나가 조준점으로 간다(SD-16 §5 'muzzle'). 총 그림 방향 = 조준 중이면 조준 방향, 아니면 몸 방향.
 		# 총구 화염은 인형이 총과 같은 층에 그린다(N·NE 조준이면 머리 뒤).
 		var gdir: int = player.aim_dir if player.aim_dir >= 0 else player.loco.facing
@@ -556,6 +563,7 @@ func _player(dt: float, player: Actor, st: StoryState) -> void:
 			shots.shots[-1]["sneak_ok"] = true
 			mags[weapon_id] = int(mags[weapon_id]) - 1
 			stats["shots"] += 1
+			_wear_weapon(st, 1)
 			if player.doll != null:
 				player.doll.flash_face("fire", 0.14)
 				player.doll.fire_flash(gdir, ang, CombatFx.flash_for(w))
@@ -600,6 +608,7 @@ func _melee(player: Actor, w: Dictionary, to: Vector2, st: StoryState) -> void:
 				"attacker": {"str": st.stat("ST") if st != null else 5}, "part": CombatRules.pick_part(c.weights, shots.rng), "dr": 0.0})
 			r["nonlethal"] = true
 			c.take(r, player.loco.logical)
+	_wear_weapon(st, n)                                                # 근접은 타격마다 카운터 1(SD-13 §8.2)
 	_swing_fx(player.loco.logical + Vector2(0, -12) + to.normalized() * reach * 0.6)
 
 
@@ -614,6 +623,46 @@ func start_reload(st: StoryState) -> void:
 		return
 	var sk := float(st.skill("SMALL_GUNS")) if st != null else 15.0
 	reload_t = float(w.get("reload_s", 2.0)) * (1.2 - 0.004 * sk)            # SD-11 §3.5
+	var jam: float = Gear.JAM[Gear.cond(weapon_id)]
+	if jam > 0.0 and _rng.randf() < jam:                                 # 탄 걸림(SD-11 §11.8): 낡음 25% · 위태 80%, 재장전 +1.5초
+		reload_t += 1.5
+		stats["jams"] = int(stats.get("jams", 0)) + 1
+		message.emit("탄 걸림! 노리쇠를 당긴다.")
+
+
+## 든 무기의 열쇠가 바뀌었다(열화·수리): 탄창·단축키를 새 열쇠로 옮긴다
+func rekey(old: String, nk: String, st: StoryState) -> void:
+	if weapon_id == old:
+		weapon_id = nk
+		if mags.has(old):
+			mags[nk] = mags[old]
+			mags.erase(old)
+	for k in hotkeys.keys():
+		if hotkeys[k] == old and int(st.items.get(old, 0)) <= 0:
+			hotkeys[k] = nk
+
+
+## 무기 열화(SD-13 §8.2): 공격 1회(연사는 발마다, 근접은 타격마다)에 카운터 1. 볼트 안(프롤로그)은 정비반이 손봐 닳지 않는다(정합 1-8a).
+## 단계가 바뀌면 든 무기의 열쇠를 바꿔 낀다(탄창·단축키를 옮긴다). 파손이면 내려놓는다
+func _wear_weapon(st: StoryState, n: int) -> void:
+	if st == null or n <= 0 or weapon_id == "" or st.quests.cur_act() < 1:
+		return
+	var old := weapon_id
+	var nk := Gear.use(st, old, n)
+	if nk == old:
+		return
+	rekey(old, nk, st)
+	var nm := str(weapons.get(Gear.base(nk), {}).get("name", nk))
+	if Gear.cond(nk) >= 4:
+		message.emit("%s — 부서졌다. 더는 쏠 수 없다." % nm)
+		mags.erase(nk)
+		weapon_id = ""
+		holstered = false
+		reload_t = 0.0
+		st.weapon_out = false
+		_doll()
+	else:
+		message.emit("%s — 상태가 '%s'(으)로 떨어졌다." % [nm, Gear.NAMES[Gear.cond(nk)]])
 
 
 ## 스팀팩(SD-11 §2.7, SD-13 §6.2): 30 × (1 + 의학/50)을 회복 대기열에 2.0초로. 단축키면 0.4초 투여 모션

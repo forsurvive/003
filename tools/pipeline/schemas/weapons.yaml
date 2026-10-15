@@ -7,6 +7,8 @@ sections: ["### 3.4 ", "### 3.5 ", "### 3.6 ", "### 3.7 ", "#### 3.8.1 ", "#### 
 columns:
   ID: {field: id, type: id, pattern: "^W-\\d{3}$", required: true}
   이름: {field: name, type: str, required: true}
+  출처: {field: origin, type: str}
+  출처·제조사: {field: origin, type: str}
   스킬: {field: skill, type: str, required: true}
   탄약: {field: ammo, type: str}
   피해: {field: dmg, type: lead_number, required: true}

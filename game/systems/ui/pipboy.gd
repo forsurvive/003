@@ -91,6 +91,26 @@ func _place() -> void:
 
 func _tick(dt: float) -> void:
 	t_open += dt
+	toast_t = maxf(0.0, toast_t - dt)
+
+
+## 핍-보이 안 한 줄 알림(수리 결과 등 — 화면 뒤 HUD 알림은 핍-보이에 가린다)
+var toast := ""
+var toast_t := 0.0
+
+
+func say(t: String) -> void:
+	toast = t
+	toast_t = 3.0
+
+
+## 열쇠가 바뀐 줄(수리로 '낡음' → '양호')을 다시 고른다
+func select_id(id: String) -> void:
+	rows = _rows()
+	for i in rows.size():
+		if str(rows[i]["id"]) == id:
+			sel = i
+			return
 
 
 func open_at(t: int, s: int = 0) -> void:
@@ -133,8 +153,11 @@ func _rows() -> Array:
 				for k in info.get("hotkeys", {}):
 					if info["hotkeys"][k] == id:
 						hk = " (%d)" % int(k)
-				out.append({"text": str(it.get("name", id)) + (" (%d)" % n if n > 1 and cat != "ammo" else "") + (" [장착]" if on else ""),
-					"id": id, "right": (str(n) if cat == "ammo" else hk.strip_edges())})
+				var nm := str(it.get("name", id))
+				if Gear.cond(id) == 0 and Gear.is_gear(it):
+					nm += " (새것)"                                         # 상태는 늘 이름 뒤 괄호(SD-13 §8.1, SD-18 §7.1)
+				out.append({"text": nm + (" (%d)" % n if n > 1 and cat != "ammo" else "") + (" [장착]" if on else ""),
+					"id": id, "right": (str(n) if cat == "ammo" else hk.strip_edges()), "dim": Gear.cond(id) >= 4})
 		[2, 2]:
 			out = _quest_rows()
 		[2, 3]:
@@ -348,6 +371,8 @@ func _draw_doc() -> void:
 	var hint := "[Tab] 닫기   [Q·E] 탭   [←→] 하위 탭   [↑↓] 선택   [Enter] " + _enter_label()
 	if tab == 1 and sub[1] in [0, 2]:
 		hint += "   [1~8] 단축키"
+	if tab == 1 and sub[1] in [0, 1] and not rows.is_empty() and Gear.cond(str(rows[sel]["id"])) > 0:
+		hint += "   [R] 수리"
 	if tab == 2 and sub[2] == 2:
 		hint = "[Tab] 닫기   [Q·E] 탭   [←→] 하위 탭   [↑↓] 선택   [Enter] %s   [F] 고정" % _enter_label()
 	if tab == 2 and sub[2] == 3 and not st.book.entries.is_empty():
@@ -356,10 +381,13 @@ func _draw_doc() -> void:
 			hint = "이름 찾기: 글자·초성(ㅂㅇㅎ)을 치세요   [Backspace] 지우기   [Enter·Esc] 끝"
 	if first:
 		hint = "핍-보이: [Q·E] 능력치·아이템·데이터   [←→] 하위 탭   [Tab] 닫기"
+	if toast_t > 0.0:
+		view.draw_rect(Rect2(258, 274, 334, 16), U[0])
+		text(Vector2(262, 276), toast, f10, 10, U[6])
 	item("close", Rect2(44, 314, 50, 14))
 	item("power", Rect2(614, 180, 20, 40))
 	text(Vector2(48, 316), hint, f10, 10, U[4] if not first or fmod(time, 1.0) < 0.6 else U[6])
-	for kv in [["[F] 고정", "pin"], ["[S] 거르기", "filter"], ["[/] 찾기", "find"]]:   # 터치: 안내 줄의 이 글자를 누르면 그 키와 같다
+	for kv in [["[F] 고정", "pin"], ["[S] 거르기", "filter"], ["[/] 찾기", "find"], ["[R] 수리", "repair"]]:   # 터치: 안내 줄의 이 글자를 누르면 그 키와 같다
 		var at := hint.find(kv[0])
 		if at >= 0 and not first:
 			item(kv[1], Rect2(48 + tw(hint.substr(0, at), f10, 10) - 2, 314, tw(kv[0], f10, 10) + 4, 14))
@@ -489,6 +517,12 @@ func _item_lines(id: String, it: Dictionary) -> Array:
 		out.append(["효과", "HP +%s" % _num(float(it["heal"]))])
 	if it.has("tag"):
 		out.append(["구분", "[%s]" % it["tag"]])
+	if Gear.is_gear(it):                                                 # 상태 4칸 막대(SD-11 §12.5) + 이번 단계 닳은 정도
+		var c := Gear.cond(id)
+		var per := Gear.stage_of(id)
+		var used := int(st.wear.get(id, 0))
+		var bar := "■".repeat(4 - c) + "□".repeat(c)
+		out.append(["상태", "%s %s%s" % [bar, Gear.NAMES[c], "" if c >= 4 or per <= 0 else " · %d%%" % roundi(100.0 * (per - used) / per)]])
 	out.append(["WG 무게", _num(float(it.get("weight", 0)))])
 	out.append(["VAL 가치", _num(float(it.get("value", 0)))])
 	if str(id).ends_with("탄"):
@@ -761,6 +795,8 @@ func _unhandled_input(e: InputEvent) -> void:
 		_tab(k - KEY_F1)
 	elif k == KEY_J:
 		open_at(2, 2)
+	elif k == KEY_R and tab == 1 and sub[1] in [0, 1] and not rows.is_empty():   # 스스로 고치기(SD-13 §8.3): 부품 · 수리 키트 · 군용 정비 키트
+		action.emit("repair", str(rows[sel]["id"]))
 	elif k == KEY_S and tab == 2 and sub[2] == 3:                      # 인물 수첩 거르기 바꾸기
 		book_filter = (book_filter + 1) % NpcBook.FILTERS.size()
 		sel = 0
@@ -880,6 +916,8 @@ func _press(id: String) -> void:
 		sel = i
 	elif id == "pin" and not rows.is_empty() and str(rows[sel]["id"]) != "":
 		st.quests.pin(str(rows[sel]["id"]))
+	elif id == "repair" and not rows.is_empty():
+		action.emit("repair", str(rows[sel]["id"]))
 	elif id == "filter":
 		book_filter = (book_filter + 1) % NpcBook.FILTERS.size()
 		sel = 0

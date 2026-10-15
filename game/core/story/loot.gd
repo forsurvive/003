@@ -85,7 +85,8 @@ static func pick(pool: String, t: int, rng: RandomNumberGenerator) -> String:
 
 
 ## 줄 목록을 굴린다(결정적: 같은 씨앗이면 같은 결과). 볼트판 표(묶음·등급 없음)는 0-9와 같은 결과가 나온다
-static func roll_rows(rows: Array, seed_key: String, t: int = 1) -> Dictionary:
+## cond_kind: 장비 상태 굴림 종류(1-8a, Gear.roll — "loot" 상자 · "enemy" 적 유해 · "" 새것 그대로)
+static func roll_rows(rows: Array, seed_key: String, t: int = 1, cond_kind: String = "") -> Dictionary:
 	_load()
 	var rng := RandomNumberGenerator.new()
 	rng.seed = hash(seed_key)
@@ -104,13 +105,14 @@ static func roll_rows(rows: Array, seed_key: String, t: int = 1) -> Dictionary:
 				continue
 			if id.begins_with("W-") or id.begins_with("A-"):
 				n = 1                                                    # 무기·방어구 묶음은 한 점
+		id = Gear.rolled_key(id, cond_kind, "%s#%d" % [seed_key, out.size()])
 		out[id] = int(out.get(id, 0)) + n
 	return out
 
 
-static func roll(kind: String, seed_key: String, t: int = 1) -> Dictionary:
+static func roll(kind: String, seed_key: String, t: int = 1, cond_kind: String = "") -> Dictionary:
 	_load()
-	return roll_rows(tables.get(kind, {}).get("rows", []), seed_key, t)
+	return roll_rows(tables.get(kind, {}).get("rows", []), seed_key, t, cond_kind)
 
 
 ## 이 용기의 지금 내용물(없으면 굴려서 st.boxes에 넣는다). region = 맵의 권역(등급)
@@ -118,14 +120,14 @@ static func contents(st: StoryState, map_id: String, b: Dictionary, region: Stri
 	var k := key(map_id, b, st.year())
 	if not st.boxes.has(k):
 		var t := tier_of(st, region) if region != "" else 1
-		st.boxes[k] = {"items": roll(str(b["kind"]), k, t), "opened": 0, "taken": 0}
+		st.boxes[k] = {"items": roll(str(b["kind"]), k, t, "loot" if st.year() >= 2277 else ""), "opened": 0, "taken": 0}
 	return st.boxes[k]
 
 
 ## 쓰러진 적의 소지품(§9.3): 적 ID 표 + 씨앗(맵·자리·날)
-static func drop(enemy_id: String, seed_key: String, t: int = 1) -> Dictionary:
+static func drop(enemy_id: String, seed_key: String, t: int = 1, cond_kind: String = "enemy") -> Dictionary:
 	_load()
-	return roll_rows(drops.get(enemy_id, []), seed_key, t)
+	return roll_rows(drops.get(enemy_id, []), seed_key, t, cond_kind)
 
 
 ## 주인이 있는 남의 물건인가(절도 판정 대상)

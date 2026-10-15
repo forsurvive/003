@@ -94,6 +94,8 @@ func _ready() -> void:
 	enc_live = EncounterLive.new().setup(self)
 	add_child(enc_live)
 	combat.hurt.connect(func(_a: float) -> void: _hurt_t = 0.3)
+	combat.hurt.connect(_armor_hit)
+	combat.armor_dr = pc_dr
 	combat.resident_hit.connect(_on_resident_hit)
 	combat.resident_down.connect(_on_resident_down)
 	combat.enemy_down.connect(_on_enemy_down)                        # 유해 소지품(1-4 파밍)
@@ -240,8 +242,8 @@ func enter(map_id: String, mark: String = "", look: Dictionary = {}, at: Vector2
 			player.setup_doll(lk, Vector2.ZERO, map)
 		player.set_meta("body", body)
 	player.world = map
-	if player.doll != null and worn() != "A-001" and TORSO_OF.has(worn()):
-		player.doll.set_look({"torso": TORSO_OF[worn()]})                 # 갈아입은 옷(0-10)
+	if player.doll != null and worn() != "A-001" and torso_of(worn()) != "":
+		player.doll.set_look({"torso": torso_of(worn())})                 # 갈아입은 옷(0-10)
 	player.visible = body != "hidden"
 	map.add_actor(player)
 	if world_mode and at == Vector2.INF and mark.begins_with("@"):     # 들어가 본 건물에서 나온다(1-5e): 그 문 앞 칸, 남쪽을 보고
@@ -665,7 +667,8 @@ func box_contents(b: Dictionary) -> Dictionary:
 	if str(b.get("kind", "")) == "_corpse":
 		var k := str(b["key"])
 		if not st.boxes.has(k):
-			st.boxes[k] = {"items": Loot.drop(str(b["eid"]), k, Loot.tier_of(st, map_region(Vector2i(int(b["x"]), int(b["y"]))))),
+			st.boxes[k] = {"items": Loot.drop(str(b["eid"]), k, Loot.tier_of(st, map_region(Vector2i(int(b["x"]), int(b["y"])))),
+				"enemy" if st.year() >= 2277 else ""),
 				"opened": 0, "taken": 0}
 		return st.boxes[k]
 	return Loot.contents(st, map.id, b, map_region(Vector2i(int(b["x"]), int(b["y"]))))
@@ -847,12 +850,74 @@ func shop_state(vid: String) -> Dictionary:
 	var sh: Dictionary = st.boxes.get(key, {})
 	if sh.is_empty() or day - int(sh.get("day", day)) >= int(m.get("renew", 3)):
 		var items := {}
-		for r in m["stock"]:
-			items[str(r[0])] = int(r[1])
+		for r in m["stock"]:                                          # 진열 장비는 '양호' 이상(SD-15 §3.8) — 갱신마다 새로 굴린다(1-8a)
+			var id := str(r[0])
+			if Gear.is_gear_id(id):
+				for i in int(r[1]):
+					var kk := Gear.rolled_key(id, "shop", "%s:%d:%d" % [vid, day, i])
+					items[kk] = int(items.get(kk, 0)) + 1
+			else:
+				items[id] = int(r[1])
 		var caps := base if sh.is_empty() else mini(roundi(base * 1.5), maxi(base, roundi(int(sh["caps"]) * 0.5)))
 		sh = {"items": items, "caps": caps, "day": day, "total": int(sh.get("total", 0))}
 		st.boxes[key] = sh
 	return sh
+
+
+# ---------------------------------------------------------------- NPC 정비(1-8a, SD-15 §5.2)
+## 정비 메뉴를 대화 선택지로 연다: 맡길 수 있는 장비마다 '한 단계 위로 · 정비비'([캡 N] 태그가 모자라면 꺼지고, 고르면 낸다).
+## 한 단계를 고치면 메뉴가 다시 열린다(SD-15 '한 단계씩도 가능'). 상한(fix.cap)·계열(fix.kinds)·요율(fix.rate)은 상인 표가 정한다
+func fix_menu(vid: String, again: bool = false) -> void:
+	shop_state(vid)
+	var m: Dictionary = merchants.get(vid, {})
+	var fx: Dictionary = m.get("fix", {})
+	var npc := str(m.get("npc", ""))
+	var lines: Array = fx.get("lines", ["어느 걸 손볼까?", "됐다. 또?", "손볼 게 없네."])
+	var ops: Array = []
+	var labels := {"START": 0}
+	var opts: Array = []
+	var jobs := fix_jobs(vid)
+	ops.append({"op": "line", "who": npc, "emo": "기본", "text": str(lines[1] if again else lines[0]) if not jobs.is_empty() else str(lines[2])})
+	if not jobs.is_empty():
+		for i in jobs.size():
+			var j: Dictionary = jobs[i]
+			opts.append({"text": "%s → %s" % [str(items_db.get(j["key"], {}).get("name", j["key"])), Gear.NAMES[int(j["to"])]],
+				"tags": [{"k": "caps", "n": int(j["cost"])}], "cond": "", "fx": "", "to": "F%d" % i, "id": "FIX:%s:%d" % [vid, i]})
+		opts.append({"text": "됐다", "tags": [], "cond": "", "fx": "", "to": "END", "id": "FIX:%s:end" % vid})
+		ops.append({"op": "choice", "opts": opts})
+		for i in jobs.size():
+			labels["F%d" % i] = ops.size()
+			ops.append({"op": "cmd", "name": "fixdo", "args": [vid, str(jobs[i]["key"])]})
+			ops.append({"op": "goto", "to": "END"})
+	ops.append({"op": "end"})
+	box.open(st, {"id": "FIX_" + vid, "title": str(m.get("name", vid)), "npc": npc, "labels": labels, "ops": ops}, "START")
+
+
+## 맡길 수 있는 일: [{"key", "to", "cost"}] — 정비사 계열 · 상한보다 나쁜 상태 · 파손 포함. 정비비는 한 단계 위까지
+func fix_jobs(vid: String) -> Array:
+	var m: Dictionary = merchants.get(vid, {})
+	var fx: Dictionary = m.get("fix", {})
+	if fx.is_empty():
+		return []
+	var ak := st._aff_key(str(m.get("settle", "")))
+	var f := TradeScreen.tier_f(int(st.vars.get_v(ak)) if ak != "" else 0)
+	if f.is_empty():
+		return []
+	var rate := float(fx.get("rate", 1.0))
+	if vid == "V03" and int(st.vars.get_v("MQ101_RESULT")) == 5:
+		rate *= 1.25                                                    # 마을을 판 손님: 값은 따로(원고 BC_NAM COLD)
+	if vid == "V09" and st.vars.has("MQ103_CONF") and int(st.vars.get_v("MQ103_CONF")) == 1:
+		rate *= 0.9                                                     # "정비는 1할 빼 줄게"(MQ-103 FRIEND)
+	var out: Array = []
+	var ks := st.items.keys()
+	ks.sort()
+	for k in ks:
+		var c := Gear.cond(str(k))
+		if c <= int(fx.get("cap", 0)) or not Gear.fixable_by(str(k), fx.get("kinds", [])):
+			continue
+		var v := int(items_db.get(Gear.base(str(k)), {}).get("value", 0))
+		out.append({"key": str(k), "to": c - 1, "cost": Gear.fix_cost(v, c, c - 1, st.skill("BARTER"), float(f[0]), rate)})
+	return out
 
 
 func open_trade(vid: String, done: Callable, k := [1.0, 1.0], greet := "", item_k := {}) -> TradeScreen:
@@ -865,6 +930,7 @@ func open_trade(vid: String, done: Callable, k := [1.0, 1.0], greet := "", item_
 		say_text("상인이 고개를 젓는다. 거래하지 않겠다는 뜻이다.")
 		done.call(0)
 		return null
+	k = [float(k[0]) * float(m.get("rate", 1.0)), k[1]]                # 상인 요율(손님 값 1.2배 등, SD-15 §3.1 K)
 	var t := TradeScreen.new().setup_trade(st, vid, m, sh, items_db, float(150 + 10 * st.stat("ST")), st.skill("BARTER"), f, k,
 		greet if greet != "" else str(m.get("greet", "")))
 	t.item_k = item_k
@@ -1394,6 +1460,19 @@ func _handlers() -> void:
 		var p := open_pipboy()
 		p.first = true
 		p.closed.connect(func(_ok: bool) -> void: done.call())
+	ev.handlers["fix"] = func(a: Array, done: Callable) -> void:       # NPC 정비(1-8a): 이 대화가 끝나면 정비 메뉴를 연다
+		box.finished.connect(func() -> void: fix_menu.call_deferred(str(a[0])), CONNECT_ONE_SHOT)
+		done.call()
+	ev.handlers["fixdo"] = func(a: Array, done: Callable) -> void:     # 정비 한 단계(값은 선택지 [캡] 태그가 이미 받았다)
+		var key := str(a[1])
+		var nk := Gear.improve(st, key, 1, 0)
+		if nk != key:
+			combat.rekey(key, nk, st)
+			if worn() == key and int(st.items.get(key, 0)) <= 0:
+				st.vars.set_v("PC_TORSO", nk)
+			hint("%s 정비 — '%s'" % [str(items_db.get(Gear.base(nk), {}).get("name", nk)), Gear.NAMES[Gear.cond(nk)]], 3.0)
+			box.finished.connect(func() -> void: fix_menu.call_deferred(str(a[0]), true), CONNECT_ONE_SHOT)
+		done.call()
 	ev.handlers["meet"] = func(a: Array, done: Callable) -> void:      # 이름 소개(수첩 등록, SD-12 §3.11): meet 인물ID
 		st.book.meet(str(a[0]), date_text)
 		done.call()
@@ -1497,12 +1576,13 @@ func _load_items() -> void:
 	for id in combat.weapons:
 		var w: Dictionary = combat.weapons[id]
 		items_db[id] = {"name": w["name"], "cat": "weapon", "dmg": w["dmg"], "mag": w.get("mag"), "ammo": w.get("ammo", ""),
-			"ammo_id": w.get("ammo_id", ""), "weight": w.get("weight", 0), "value": w.get("price", 0),
+			"ammo_id": w.get("ammo_id", ""), "weight": w.get("weight", 0), "value": w.get("price", 0), "durability": w.get("durability", "B"),
 			"desc": "%s · %s · 사거리 %s타일 · 초당 %s회" % [w["skill"], "양손" if w.get("two_handed", false) else "한손",
 				PipBoy._num(float(w["range_eff"])), PipBoy._num(float(w["rate"]))]}
 		var am := str(w.get("ammo_id", ""))
 		if am != "" and not items_db.has(am):                          # 탄약: SD-13 §3 탄약 표 가치 1 · 무게 0(원작)
 			items_db[am] = {"name": am, "cat": "ammo", "value": 1, "weight": 0}
+	Gear.expand_items(items_db)                                        # 장비 상태 변형 "W-002@2" = 10mm 권총 (낡음)(1-8a)
 
 
 ## 핍-보이·HUD 위 줄 수치. 레벨(SD-10 §4.2): 다음 레벨까지 50 + 150 × 레벨, 누적 (L−1)(50 + 75L)
@@ -1735,17 +1815,75 @@ func worn() -> String:
 	return str(st.vars.get_v("PC_TORSO"))
 
 
-## 옷 갈아입기: 페이퍼돌 몸통 그림을 바꾼다(SD-13 §5.1 레이어 → 몸통 코드)
-const TORSO_OF := {"A-001": "T01", "A-002": "T01", "A-004": "T02", "A-016": "T03", "A-017": "T03", "A-018": "T03"}
+## 옷 갈아입기: 페이퍼돌 몸통 그림을 바꾼다. 외형 차분 BD → 실루엣 T(SD-13 §5.3 표). 파워 아머(BD23·24)는 훈련·리그가 따로라 아직 못 입는다
+const BD_TORSO := {"BD01": "T01", "BD02": "T02", "BD03": "T03", "BD04": "T11", "BD05": "T11", "BD06": "T12", "BD07": "T13", "BD08": "T08",
+	"BD09": "T03", "BD10": "T08", "BD11": "T04", "BD12": "T05", "BD13": "T07", "BD14": "T12", "BD15": "T06", "BD16": "T08", "BD17": "T06",
+	"BD18": "T09", "BD19": "T15", "BD20": "T12", "BD21": "T14", "BD22": "T10"}
+
+
+## 이 몸통 옷의 실루엣 코드(입을 수 없으면 "")
+func torso_of(id: String) -> String:
+	var it: Dictionary = items_db.get(Gear.base(id), {})
+	if str(it.get("cat", "")) != "apparel" or not (str(it.get("slot", "")) in ["몸통", "전신"]):
+		return ""
+	return str(BD_TORSO.get(str(it.get("layer", "")), ""))
 
 
 func wear(id: String) -> void:
-	if not st.items.has(id) or not TORSO_OF.has(id):
+	if not st.items.has(id) or torso_of(id) == "":
+		return
+	if Gear.cond(id) >= 4:                                             # 파손: 입은 채면 '위태' 값으로 버티지만, 벗으면 다시 입을 수 없다(SD-13 §8.1)
+		_note("찢어지고 부서져서 다시 입을 수 없다")
 		return
 	st.vars.set_v("PC_TORSO", id)
 	if player != null and player.doll != null:
-		player.doll.set_look({"torso": TORSO_OF[id]})
+		player.doll.set_look({"torso": torso_of(id)})
 	_note("%s 입음" % str(items_db.get(id, {}).get("name", id)))
+
+
+## 방어구 열화(SD-13 §8.2): DR 적용 뒤 피해가 5 이상인 피격마다 입은 옷 카운터 1. 볼트 안(프롤로그)은 닳지 않는다(정합 1-8a)
+func _armor_hit(amount: float) -> void:
+	if amount < 5.0 or st.quests.cur_act() < 1:
+		return
+	var key := worn()
+	var nk := Gear.use(st, key, 1)
+	if nk == key:
+		return
+	st.vars.set_v("PC_TORSO", nk)
+	var nm := str(items_db.get(Gear.base(nk), {}).get("name", nk))
+	hint("%s — %s" % [nm, "찢어지고 부서졌다. 벗으면 다시 입을 수 없다." if Gear.cond(nk) >= 4 else "상태가 '%s'(으)로 떨어졌다." % Gear.NAMES[Gear.cond(nk)]], 3.0)
+
+
+## 스스로 고치기(핍-보이 [R], SD-13 §8.3): 든 무기·입은 옷은 부품으로 쓰지 않는다. 고친 것이 든 무기·입은 옷이면 열쇠를 바꿔 낀다
+func repair_self(id: String) -> Dictionary:
+	var keep := [combat.weapon_id, worn()].filter(func(k): return k != id)
+	var r := Gear.self_repair(st, id, keep, id == combat.weapon_id or id == worn())
+	if not r["ok"]:
+		_note(str(r["why"]))
+		if pipboy != null:
+			pipboy.say(str(r["why"]))
+		return r
+	var nk := str(r["key"])
+	combat.rekey(id, nk, st)
+	if worn() == id and int(st.items.get(id, 0)) <= 0:
+		st.vars.set_v("PC_TORSO", nk)
+	var used := str(r["used"])
+	var how := "수리 키트" if used == Gear.KIT else ("군용 정비 키트" if used == Gear.MIL_KIT else "부품 " + str(items_db.get(used, {}).get("name", used)))
+	var msg := "%s 손봄 — %s 사용" % [str(items_db.get(nk, {}).get("name", nk)), how]
+	_note(msg)
+	if pipboy != null:
+		pipboy.say(msg)
+		pipboy.info = status()
+		pipboy.select_id(nk)
+	return r
+
+
+## 주인공 DR(SD-11 D11-06): 입은 몸통 옷 DR × 상태 배율(변형 항목의 dr). 상한 85. 입은 옷이 소지품에 없으면 0
+func pc_dr() -> float:
+	var id := worn()
+	if int(st.items.get(id, 0)) <= 0:
+		return 0.0
+	return minf(85.0, float(items_db.get(id, {}).get("dr", 0)))
 
 
 ## 먹고 마시기(SD-13 §7.2): 음식·음료 HP는 5초에 걸쳐, 라드는 즉시. 라드어웨이 −50 × (1 + 의학/50)
@@ -1851,6 +1989,8 @@ func _pip_action(kind: String, id: String) -> void:
 			combat.equip("", st)
 		"travel":
 			fast_travel(id)
+		"repair":
+			repair_self(id)
 		"use":
 			if id == InteriorCombat.STIMPAK:
 				combat.use_stimpak(st)                                          # 핍-보이 안: 시간이 멈춘 채 쓴다(투여 모션 없음)
