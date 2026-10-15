@@ -23,6 +23,7 @@ var _ambush: Array = []
 var _search_t := -1.0                                ## 인증 뒤 수색조가 내려오기까지 남은 초(-1 = 없음)
 var _squad: Array = []
 var _guards: Array = []
+var _squad_left := 0                                 ## 수색조 중 아직 선 수(방을 옮기면 그만큼 뒤따른다)
 const SEARCH_DELAY := 12.0
 const CLUE_QUEST := {1: "MQ-103", 2: "MQ-104", 3: "MQ-105"}
 const CLUE_TEXT := {1: "영등포 지하에 200살 먹은 기술자가 있다 — 2077년엔 세진 하청",
@@ -94,7 +95,12 @@ func _process(dt: float) -> void:
 	_sb_tick()
 	if not _ambush.is_empty():
 		var alive := _ambush.filter(func(e): return is_instance_valid(e) and not e.cmb.dead)
-		if alive.is_empty():
+		if alive.is_empty() and _lost(_ambush):                         # 셔터 밖으로 빠져나갔다: 따돌림(격퇴가 아니다 — SD-20 N4)
+			_ambush.clear()
+			st.vars.set_v("MQ103_AMBUSH", 3)
+			host.combat.clear_allies()
+			_log("매복 따돌림")
+		elif alive.is_empty():
 			_ambush.clear()
 			st.vars.set_v("MQ103_AMBUSH", 2)
 			st.call_fn("aff", ["SB", -5])
@@ -247,15 +253,24 @@ func _yd_tick() -> void:
 			_squad_arrives()
 	if not _squad.is_empty():
 		var alive := _squad.filter(func(e): return is_instance_valid(e) and not e.cmb.dead)
-		if alive.is_empty():
+		if alive.is_empty() and _lost(_squad):                          # 방을 옮겨 시야에서 사라졌다: 격퇴가 아니다(SD-20 N4) — 벙커 안이면 남은 수가 문으로 뒤따른다
+			var left := _squad_left
+			_squad.clear()
+			if host.map != null and host.map.id in ["Y-00", "Y-01", "Y-02"] and left > 0:
+				_squad_chase(left)
+			_log("수색조 놓침(남은 %d)" % left)
+		elif alive.is_empty():
 			_squad.clear()
 			st.vars.set_v("MQ104_SEARCH", 2)
 			st.vars.set_v("MQ104_GUARDS", 1)                              # 초소가 비었다(S5 '수색조와 싸웠다면 쉽다')
 			host.hint("수색조가 쓰러졌다. 계단 위 초소는 이제 비었을 것이다.", 5.0)
 			_log("수색조 격퇴")
+	_squad_left = _squad.filter(func(e): return is_instance_valid(e) and not e.cmb.dead).size() if not _squad.is_empty() else _squad_left
 	if not _guards.is_empty():
 		var g_alive := _guards.filter(func(e): return is_instance_valid(e) and not e.cmb.dead)
-		if g_alive.is_empty():
+		if g_alive.is_empty() and _lost(_guards):                       # 자리를 떴다: 경비는 초소로 돌아간다(쓰러진 게 아니다)
+			_guards.clear()
+		elif g_alive.is_empty():
 			_guards.clear()
 			st.vars.set_v("MQ104_GUARDS", 1)
 			host.hint("호송차 경비가 쓰러졌다. 열쇠는 초소 탁자에.", 5.0)
@@ -272,6 +287,11 @@ func _squad_arrives() -> void:
 			_search_t = 0.0                                               # 기계실·통로에 숨어 있으면 큰 방으로 돌아오는 순간 마주친다
 		return
 	var m := "from_Y-01" if host.map.id == "Y-02" else ("from_Y-00" if host.map.id == "Y-01" else "from_W")
+	if st.dead.has("C-034"):                                           # 선우진이 이미 죽었다(초소에서 등): 이름 없는 하사가 이끄는 수색조가 말없이 덮친다(SD-20 P3)
+		host.ev.actors.erase("C-034")
+		_squad_fight()
+		_log("수색조 도착(선우진 없음)")
+		return
 	host.ev._show_actor("C-034", host.map.mark_pos(m), "N" if host.map.id == "Y-02" else "S")
 	for i in 2:
 		host.ev._show_actor("BJ%d" % (i + 1), host.map.mark_pos(m) + Vector2((i * 2 - 1) * 36, 20), "N", "en_cr401_loco")
@@ -299,7 +319,26 @@ func _squad_fight() -> void:
 		e.brain.gauge = 100.0
 		_squad.append(e)
 	st.call_fn("aff", ["BJ", -10])
-	host.hint("선우진이 계단 위로 물러나며 무전을 친다. 수색조가 덮쳐 온다!", 5.0)
+	host.hint("수색조가 계단을 뛰어 내려와 덮쳐 온다!" if st.dead.has("C-034") else "선우진이 계단 위로 물러나며 무전을 친다. 수색조가 덮쳐 온다!", 5.0)
+
+
+## 맵을 옮겨 지워진 적이 있나(쓰러뜨린 것과 놓친 것을 가른다 — SD-20 P1·N4)
+func _lost(list: Array) -> bool:
+	return list.any(func(e): return not is_instance_valid(e))
+
+
+## 벙커 안에서 방을 옮겼다: 남은 수색조가 주인공이 들어온 문으로 뒤따라 들어온다(대화 없이 곧장 교전)
+func _squad_chase(n: int) -> void:
+	var at: Vector2 = host.map.mark_pos(host.last_mark) if host.map.marks.has(host.last_mark) else host.player.loco.logical + Vector2(0, 96)
+	var ids := ["CR-401", "CR-401", "CR-402", "CR-401", "CR-403"]
+	for i in mini(n, ids.size()):
+		var p := at + Vector2((i - 1) * 30, 0)
+		if host.map.is_solid(host.map.tile_of(p)):
+			p = at
+		var e := host.combat.spawn(ids[i], p, host.map, st, {"lv": 5})
+		e.brain.gauge = 100.0
+		_squad.append(e)
+	host.hint("군화 소리가 문 너머에서 따라 들어온다.", 4.0)
 
 
 func _yd(a: Array, done: Callable) -> void:
@@ -313,6 +352,7 @@ func _yd(a: Array, done: Callable) -> void:
 		"auth":                                                         # 인증(K_CODE를 세우기 전에 부른다 — 이미 알았으면 XP 180)
 			var later := v("K_CODE") >= 1
 			st.call_fn("xp", [180 if later else 300])
+			st.call_fn("wanted", [3, "auth"])                               # 관리자 인증 +3(SD-03a §6.5 '104 인증 단말 +3' · 하루 +9 상한)
 			if st.quests.stage("MQ-104") < 40:
 				st.quests.set_stage("MQ-104", 40)
 			st.vars.set_v("MQ104_SEARCH", 1)
@@ -355,7 +395,8 @@ func _rescue() -> void:
 	st.call_fn("karma", [100])
 	st.call_fn("aff", ["BJ", -5])
 	st.call_fn("aff", ["JC_BC", 5])                                     # 봉천에 사람이 하나 늘었다
-	if st.quests.stage("MQ-104") < 45:
+	var s := st.quests.stage("MQ-104")
+	if s >= 40 and s < 45:                                              # 벙커를 다 본 뒤에만 단계 45(먼저 호송차를 털면 조사 단계 20→30이 막히던 것 — SD-20 N1)
 		st.quests.set_stage("MQ-104", 45)
 	host.play_scene.call_deferred("MQ-104_DOYUN_FREE")
 	_log("하도윤 구출")
@@ -608,6 +649,9 @@ func _sb_fill() -> void:
 
 ## 맵에 들어옴: 습격 중이면 그 맵 사람도 적으로 · 우리 문·금고 상태를 되살린다
 func _sb_map(id: String) -> void:
+	if v("CAPTURE_BY") == 1 and v("SB_CUFF") == 0 and not (id == "X-SB" or id.begins_with("H-0") or id == "K-23"):
+		st.vars.set_v("CAPTURE_BY", 0)                                   # 본소를 빠져나갔다: 더는 '잡혀 온 사람'이 아니다(남아 있으면 H-03 감시·습격이 영영 꺼지던 것)
+		_log("생포 탈출 — 본소 밖")
 	if not (id == "X-SB" or id.begins_with("H-0")):
 		return
 	if id != "X-SB":

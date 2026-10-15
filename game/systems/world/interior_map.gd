@@ -464,7 +464,9 @@ func _hits(c: Vector2, r: float) -> bool:
 	for b in blockers:
 		if is_instance_valid(b) and b.visible:
 			var bp: Vector2 = b.loco.logical
-			if bp.distance_to(_mover) > 0.5 and bp.distance_to(c) < r + BLOCK_R:
+			# 이미 겹친 인물은 막지 않는다(인물이 주인공 자리로 걸어 들어와 겹치면 서로 영영 못 빠져나오던 것 — 막히면 서되, 갇히지는 않는다)
+			var d0 := bp.distance_to(_mover)
+			if d0 > 0.5 and d0 >= r + BLOCK_R and bp.distance_to(c) < r + BLOCK_R:
 				return true
 	return false
 

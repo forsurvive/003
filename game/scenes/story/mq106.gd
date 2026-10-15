@@ -38,6 +38,9 @@ var _men: Array = []                                 ## 대치 중 선 사람(�
 var _fake: Array = []                                ## host.npcs에 넣은 말 거는 자리(육지환 · 하도윤)
 var _was_inside := false
 var _seen_kills := 0
+var _poll := 0.0                                     ## 발동 판정 주기(0.5초) — SD-20 P5 안전한 순간까지 미룬다
+var why_wait := ""                                   ## 미루는 이유(봇·디버그)
+const STAGE_ZONES := ["X-SB"]                        ## 다른 퀘스트의 닫힌 무대(본소 담 안): 여기서는 내려앉지 않는다
 
 
 func setup(h: InteriorHost, is_log := false) -> void:
@@ -53,26 +56,18 @@ func setup(h: InteriorHost, is_log := false) -> void:
 	_check_resume.call_deferred()
 
 
-var _resume := false
-
-
-## 불러온 판(저장을 다 펼친 뒤): 귀빈실 구간이면 그대로, 사건 한가운데(저장은 막지만 중단 저장 등)면 무전부터 다시
+## 불러온 판(저장을 다 펼친 뒤): 귀빈실 구간이면 그대로. 사건 한가운데(단계 10)면 다음 안전한 순간에 무전부터 다시(_process가 본다)
 func _check_resume() -> void:
 	_was_inside = host.map != null and not (host.map is WorldMap)
 	if v("MQ106_CUSTODY") > 0:
 		state = "custody"
-	elif st.quests.stage("MQ-106") == 10 and state == "":
-		_resume = true
-		if host.map is WorldMap:
-			_resume = false
-			_begin()
 
 
-## 출두 확인 사흘이 끝났다: 정식 공고(등급 2)
+## 출두 확인 사흘이 끝났다: 정식 공고(등급 2) — 걸어 들어가기 전 값이 더 높았으면 그 값으로(출두 확인이 수배를 깎아 주지는 않는다, SD-20 P8)
 func _on_day(_day: int) -> void:
 	if v("WANTED_HOLD") > 0 and v("GAME_DAY") >= v("WANTED_HOLD"):
 		st.vars.set_v("WANTED_HOLD", 0)
-		Wanted.set_value(st, maxi(Wanted.value(st), 30))
+		Wanted.set_value(st, maxi(maxi(Wanted.value(st), v("WANTED_PRE")), 30))
 
 
 func v(k: String) -> int:
@@ -89,18 +84,41 @@ func active() -> bool:
 	return state in ["radio", "fly", "stand", "fight", "walk", "leave"]
 
 
-# ---------------------------------------------------------------- 발동
-func _due() -> bool:
-	return v("V_ACT") >= 1 and v("K_CODE") >= 1 and st.quests.stage("MQ-106") == 0 and v("MQ106_CUSTODY") == 0
+# ---------------------------------------------------------------- 발동(SD-20 P5: 조건이 맞아도 안전한 순간까지 미룬다)
+## 발동할 때인가: K_CODE를 안 뒤(단계 0) · 끊겼다가 다시(단계 10, 진행기 상태 없음)
+func _wants() -> bool:
+	var s := st.quests.stage("MQ-106")
+	return state == "" and v("V_ACT") >= 1 and v("K_CODE") >= 1 and (s == 0 or s == 10) and v("MQ106_CUSTODY") == 0
+
+
+## 안전한 순간인가: 아니면 그 이유. 바깥 월드 · 자유 행동 · 다른 퀘스트 무대 밖 · 몸이 묶이지 않음 · 교전·습격·매복 아님
+func unsafe() -> String:
+	if host.map == null or not (host.map is WorldMap):
+		return "실내"
+	if host.box.active or host.ev.busy() or host.busy or host.locked:
+		return "대화·연출"
+	if host.map.id in STAGE_ZONES:
+		return "다른 퀘스트 무대(%s)" % host.map.id
+	if v("CAPTURE_BY") == 1 or v("SB_CUFF") == 1 or v("SB_COLLAR") == 1:
+		return "생포·구속 중"
+	if v("SB_RAID") == 1 or v("MQ103_AMBUSH") == 1:
+		return "습격·매복 중"
+	var me: Vector2 = host.player.loco.logical
+	for e in host.combat.enemies:
+		if is_instance_valid(e) and not e.cmb.dead and e.brain.gauge >= AIBrain.DETECT_AT and e.loco.logical.distance_to(me) <= 20.0 * 32.0:
+			return "교전 중"
+	return ""
 
 
 func _on_map(id: String) -> void:
 	var inside := not (host.map is WorldMap)
-	if state == "" and not inside and (_was_inside or _resume) and (_due() or _resume) and not host.zone_walk:
-		_resume = false
-		_begin()
-	elif active() and inside and state != "walk":
-		_went_inside()
+	if state == "walk" and id != "CG-05":
+		_interrupt("걸어 들어가던 중 다른 곳으로(%s)" % id)                # 끌려갔다 · 맵이 바뀌었다: 반쯤 된 탑승을 남기지 않는다(SD-20 P10)
+	elif active() and inside:
+		if v("CAPTURE_BY") == 1:
+			_interrupt("새벽인력 생포")                                     # 기절해 끌려간 것은 '숨음'이 아니다
+		else:
+			_went_inside()
 	elif state == "hiding" and not inside:
 		_came_out()
 	if not inside or id == "CG-05":
@@ -108,7 +126,27 @@ func _on_map(id: String) -> void:
 	_was_inside = inside
 
 
+## 사건이 끊겼다(생포·끌려감): 분대·기체는 그 맵과 함께 사라졌다. 단계 10은 그대로 — 다음 안전한 순간에 무전부터 다시
+func _interrupt(why: String) -> void:
+	host.locked = false
+	_fake.clear()
+	_men.clear()
+	_foes.clear()
+	_yoon = null
+	_pa = null
+	if vb != null and is_instance_valid(vb):
+		vb.queue_free()
+	vb = null
+	state = ""
+	host.story_hold = false
+	st.vars.set_v("MQ106_RESULT", 0)
+	_poll = 5.0
+	_log("끊김: " + why)
+
+
 func _begin() -> void:
+	if v("V_DOYUN") == 1 and v("MQ104_DOYUN") == 0:
+		st.vars.set_v("MQ104_DOYUN", 2)                                    # 하도윤은 여의도 호송차에서 이 버티버드로 옮겨 실렸다(SD-20 P3 — 두 곳에 있지 않게)
 	state = "radio"
 	_radio = RADIO_SECS
 	_tries = 0
@@ -120,6 +158,13 @@ func _begin() -> void:
 
 func _process(dt: float) -> void:
 	if state == "":
+		_poll -= dt
+		if _poll <= 0.0:
+			_poll = 0.5
+			if _wants():
+				why_wait = unsafe()
+				if why_wait == "":
+					_begin()
 		return
 	if state == "hiding":
 		_inside_t += dt
@@ -172,9 +217,8 @@ func _fly() -> void:
 	if at == Vector2.INF:
 		_tries += 1
 		_radio = 3.0
-		if _tries > 6:                                                   # 내려앉을 땅이 없다(좁은 골목·지하상가 입구): 무전만으로 끝 — 말로 돌려보낸 것과 같다
-			host.hint("회전음이 머리 위를 맴돌다 멀어진다. 내려앉을 땅이 없었다.", 5.0)
-			_finish(2)
+		if _tries == 4:                                                  # 내려앉을 땅이 없다(좁은 골목): 끝내지 않고 맴돈다 — 트인 땅으로 나오거나 건물에 숨으면 갈린다(O-14 '실제 장면 한 번')
+			host.hint("회전음이 머리 위를 맴돈다. 내려앉을 트인 땅을 찾는 모양이다.", 5.0)
 		return
 	vb = Vertibird.new().setup(host.map, host.cam, at)
 	host.map.objects.add_child(vb)
@@ -296,10 +340,14 @@ func _cmd(a: Array, done: Callable) -> void:
 				host.hint("자물쇠가 단단하다. [자물쇠 따기 50 필요]", 4.0)
 		"free":
 			_free_doyun()
-		"interview":                                                    # 남궁혁 면담(K_SIGNER · K_LINEAGE, §8.6 걸어 들어간다)
+		"interview":                                                    # 남궁혁 면담(§8.6): 서명자(K_SIGNER) · 관리자 = 주인공의 생체 인증(K_CODE · K_NET — §6.1 '최후 보정') · 계보는 물었을 때만
 			st.vars.set_v("MQ106_TALKED", 1)
+			st.vars.set_v("NAMGUNG_MET", 1)
 			st.vars.set_v("K_SIGNER", 1)
-			st.vars.set_v("K_LINEAGE", 1)
+			st.vars.set_v("K_CODE", 1)
+			st.vars.set_v("K_NET", 1)
+			if v("MQ106_QLINE") == 1:
+				st.vars.set_v("K_LINEAGE", 1)
 		"release":
 			_release.call_deferred()
 	done.call()
@@ -583,9 +631,16 @@ func _seize() -> void:
 		var s := str(id)
 		if quest.has(s) or s.begins_with("M-2"):                           # 퀘스트 물건 · 메인 물건(M-201~250)은 몸에 남는다
 			continue
+		if s == str(st.vars.get_v("PC_TORSO")):                            # 입은 옷 한 벌은 그대로(압수한 옷을 입은 채 그려지던 것 — SD-20 N4)
+			if int(st.items[id]) > 1:
+				box["items"][s] = int(st.items[id]) - 1
+			continue
 		box["items"][s] = int(st.items[id])
 	for id in box["items"]:
-		st.items.erase(id)
+		if str(id) == str(st.vars.get_v("PC_TORSO")):
+			st.items[id] = 1
+		else:
+			st.items.erase(id)
 	var old: Dictionary = st.boxes.get("bj_seized", {})
 	for id in old.get("items", {}):                                     # 지난번 압수품도 그대로 있다
 		box["items"][id] = int(box["items"].get(id, 0)) + int(old["items"][id])
@@ -597,6 +652,9 @@ func _seize() -> void:
 func _custody(kind: int) -> void:
 	state = "custody"
 	host.story_hold = false
+	var collar := v("SB_COLLAR") == 1 or v("SB_CUFF") == 1
+	st.vars.set_v("SB_CUFF", 0)                                          # 목걸이·수갑은 벙커가 벗긴다(사흘 뒤 내려 주자마자 터지던 것 — SD-20 P3)
+	st.vars.set_v("SB_COLLAR", 0)
 	st.vars.set_v("MQ106_CUSTODY", kind)
 	st.vars.set_v("MQ106_TALKED", 0)
 	st.vars.set_v("MQ106_AT", Clock.abs_min(host.date_text))
@@ -605,7 +663,9 @@ func _custody(kind: int) -> void:
 	host.enter("CG-05", "arrive")
 	host.ev.run("fade_in", ["black", "8"], func() -> void:
 		host.busy = false
-		host.play_scene("CG-05_ARRIVE"))
+		host.play_scene("CG-05_ARRIVE")
+		if collar and kind != 3:
+			_wait_box(func() -> void: host.hint("목이 가볍다. 근태 목걸이는 경호대가 벗겨 해체반에 넘겼다.", 6.0)))
 	_log("귀빈실(%d)" % kind)
 
 
@@ -647,14 +707,17 @@ func _release() -> void:
 
 func _after_custody(kind: int) -> void:
 	state = ""
-	if kind == 3:                                                          # 새벽인력 인계(1-3 생포): 비상 +5, 결과는 MQ-106과 따로
-		st.call_fn("aff", ["BJ", 5])
+	if kind == 3:
 		st.vars.set_v("CAPTURE_BY", 0)
 	st.vars.set_v("MQ106_CUSTODY", 0)
-	if st.quests.stage("MQ-106") == 10:
-		_finish(v("MQ106_RESULT") if v("MQ106_RESULT") > 0 else (4 if kind == 1 else 5))
-	elif kind == 2:
-		st.call_fn("aff", ["BJ", 5])
+	var s := st.quests.stage("MQ-106")
+	if s == 0 and v("V_ACT") == 1 and v("K_CODE") >= 1:                 # 1막에 인계돼 남궁혁을 만났다 = 첫 번째 추적자는 이미 끝났다(방금 내려 준 계엄군이 다시 오지 않게, SD-20 N1)
+		st.quests.set_stage("MQ-106", 10)
+		s = 10
+	if s == 10:
+		_finish(v("MQ106_RESULT") if v("MQ106_RESULT") > 0 else (4 if kind == 1 else 5))   # 비상 +5는 결과 5에서 한 번만
+	elif kind >= 2:
+		st.call_fn("aff", ["BJ", 5])                                     # MQ-106과 따로인 생포·인계(2막 이후 등)
 
 
 # ---------------------------------------------------------------- 결과 · 막 전환
@@ -677,6 +740,7 @@ func _finish(result: int) -> void:
 		4:
 			st.call_fn("aff", ["BJ", 15])
 			st.call_fn("aff", ["JC", -3])                                 # 정착 −3(소문: 볼트 아이가 비상정부 벙커에 다녀왔다)
+			st.vars.set_v("WANTED_PRE", Wanted.value(st))                 # 출두 확인 전 값(사흘 뒤 되돌린다)
 			st.vars.set_v("WANTED_HOLD", v("GAME_DAY") + 3)              # 공고 → '출두 확인', 사흘 등급 1(§6.5 하한 예외 1회)
 			st.vars.set_v("PD_R01_BJ", 10)
 		5:

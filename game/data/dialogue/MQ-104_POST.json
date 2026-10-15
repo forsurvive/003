@@ -6,7 +6,9 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "AFTER": 4
+  "TRUCK": 5,
+  "LATER": 7,
+  "AFTER": 10
  },
  "ops": [
   {
@@ -15,16 +17,46 @@
    "to": "AFTER"
   },
   {
+   "op": "if",
+   "cond": "MQ106_STAGE >= 100",
+   "to": "LATER"
+  },
+  {
    "op": "line",
    "who": "C-034",
    "emo": "기본",
    "text": "여기서부터 계엄 구역입니다. 볼일 없으시면 지나가십시오."
   },
   {
+   "op": "if",
+   "cond": "V_DOYUN == 1 and MQ104_DOYUN == 0",
+   "to": "TRUCK"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
    "op": "line",
    "who": "C-034",
    "emo": "기본",
    "text": "호송차는 내일 아침 청계산으로 갑니다. 가까이 오지 마십시오."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-034",
+   "emo": "기본",
+   "text": "관리자 후보님. 대령님 방침은 들었습니다. 전원이 들어온 뒤에 모신다고."
+  },
+  {
+   "op": "line",
+   "who": "C-034",
+   "emo": "기본",
+   "text": "그 전까지 이 초소는 길만 지킵니다. 지나가십시오."
   },
   {
    "op": "goto",

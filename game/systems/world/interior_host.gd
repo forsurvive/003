@@ -1547,6 +1547,8 @@ func travel_check(lid: String) -> Array:
 		return [false, TRAVEL_MSG["F4"], 0]
 	if enc_live != null and enc_live.chasing():                       # 추적대가 다가오거나 싸우는 중(1-3)
 		return [false, TRAVEL_MSG["F8"], 0]
+	if story_hold:                                                     # 이야기 사건 중(MQ-106 무전·대치 등): 사건 무대를 빠른 이동으로 떠나지 않는다(SD-20 P4)
+		return [false, TRAVEL_MSG["F8"], 0]
 	if st.quests.stage("MQ-P4") < 100 or e.get("arrive") == null or busy or box.active or str(e.get("region", "")) == "R05":
 		return [false, TRAVEL_MSG["F6"], 0]
 	var here := PlaceLog.bank_at(map.tile_of(player.loco.logical))
@@ -1626,13 +1628,23 @@ func _clock_step(dt: float) -> void:
 		advance_minutes(m)
 
 
-## 게임 시간을 m분 보낸다. 06:00을 넘으면 하루 판정(day_tick)
+## 게임 시간을 m분 보낸다. 06:00을 넘을 때마다 하루 판정(day_tick) — 사흘 구금·긴 잠처럼 여러 날을 한 번에 보내도
+## 넘어간 06:00마다 한 번씩, 그 날짜(GAME_DAY)로 차례대로 부른다(SD-20 P6 시간 도약)
 func advance_minutes(m: int) -> void:
 	var a := Clock.abs_min(date_text)
-	date_text = Clock.add_minutes(date_text, m, st)
-	var b := Clock.abs_min(date_text)
-	if a > 0 and floori((b - 360) / 1440.0) > floori((a - 360) / 1440.0):
-		_daily()
+	if a <= 0:
+		date_text = Clock.add_minutes(date_text, m, st)
+		return
+	while m > 0:
+		var to6 := posmod(360 - a, 1440)                                  # 다음 06:00까지 남은 분(지금이 06:00 정각이면 하루 뒤)
+		if to6 == 0:
+			to6 = 1440
+		var step := mini(m, to6)
+		date_text = Clock.add_minutes(date_text, step, st)
+		a += step
+		m -= step
+		if step == to6:
+			_daily()
 
 
 ## 하루 판정(06:00): 수배도 하한 다시 걸기 · 생포 사흘 넘김(SD-03a §6.7 — 계엄군 인계는 청계산 맵과 함께, 정합)
@@ -1651,7 +1663,9 @@ func on_pc_down() -> void:
 	for e in combat.enemies:
 		if is_instance_valid(e) and not e.cmb.dead and e.has_meta("capture") \
 				and e.loco.logical.distance_to(player.loco.logical) <= 20.0 * 32.0:
-			by = str(e.get_meta("capture"))
+			var c := str(e.get_meta("capture"))
+			if by == "" or capture_hooks.has(c):                          # 이야기 사건(MQ-106 계엄군)의 생포가 이긴다 — 목록 순서로 행선지가 갈리지 않게(SD-20 §5)
+				by = c
 	var day := int(st.vars.get_v("GAME_DAY"))
 	if (by == "SB" or capture_hooks.has(by)) and int(st.vars.get_v("CAPTURE_DAY")) != day:
 		capture(by)
@@ -1688,7 +1702,7 @@ func capture(by: String) -> void:
 
 
 ## 사흘 버팀 → 계엄군 인계(1~3막 전원 없음 판, SD-03a §6.7 표): 청계산 귀빈실 → 남궁혁 면담 → 관악 산자락. 비상 +5.
-## 정합: 소지품 압수·압수품 보관함은 청계산 맵과 함께(지금은 압수하지 않는다)
+## 1-7부터는 capture_hooks["BJ_HANDOVER"](MQ-106 진행기)가 맡는다 — 압수품 보관함 · 청계산 귀빈실 · 남궁혁 면담. 아래는 훅이 없을 때의 옛 판
 func _capture_handover() -> void:
 	if capture_hooks.has("BJ_HANDOVER"):                               # 1-7: 청계산 귀빈실 구간(남궁혁 면담 · 압수품 보관함)
 		(capture_hooks["BJ_HANDOVER"] as Callable).call()

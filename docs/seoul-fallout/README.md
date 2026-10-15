@@ -19,7 +19,7 @@
 | 세력·인물 | [06 세력·호감도·판도](06_factions.md), [07a 주요 인물](07a_characters-major.md), [07b NPC 디렉터리](07b_npc-directory.md) |
 | 월드·장소 | [08 월드·좌표계](08_world-regions.md), [09a 관악·여의도](09a_locations-r01-r02.md), [09b 마포·서강·서부](09b_locations-r03-r04-r10.md), [09c 도심·용산](09c_locations-r05-r06.md), [09d 강남·청계산](09d_locations-r07-r11.md), [09e 동부·북부](09e_locations-r08-r09.md), [09f 지하·한강](09f_locations-underground-river.md) |
 | 시스템 | [10 캐릭터](10_character-system.md), [11 전투·상태](11_combat-system.md), [12 탐험·UI](12_exploration-ui.md), [13 아이템](13_items.md), [14 크리처·적](14_creatures-enemies.md), [15 경제](15_economy.md) |
-| 제작 | [16 아트 디렉션](16_art-direction.md), [17 사운드](17_sound.md), [18 용어·명명](18_naming-terms.md), [19 개발 로드맵](19_dev-roadmap.md) |
+| 제작 | [16 아트 디렉션](16_art-direction.md), [17 사운드](17_sound.md), [18 용어·명명](18_naming-terms.md), [19 개발 로드맵](19_dev-roadmap.md), [20 서사 정합](20_narrative-consistency.md) |
 | 부속 | [maps/](maps/) 월드·도심·권역별 지도와 장소 좌표 CSV, [research/](research/) 조사 자료 SR-01~05 |
 
 ## 지도

@@ -12,7 +12,7 @@ const BOUNTY := [0, 0, 500, 1500, 3000]
 const EXECUTE_BOUNTY := 5000                     ## 처단 공고: 등급 4 + 비상정부 적대 + MQ-402 이후(SD-15 §5.7.1)
 const DAY_CAP := {"kill": [2, 10], "auth": [3, 9]}   ## 원인 -> [한 번, 하루 상한]
 ## 엔진 변수(기획서 변수표 밖 — 저장된다): 하루 누계와 그날 번호, 공고 인상착의(마지막으로 목격된 몸통 의복)
-const VARS := {"WANTED_DAY": "int", "WANTED_KILL_SUM": "int", "WANTED_AUTH_SUM": "int", "WANTED_LOOK": "str", "WANTED_HOLD": "int"}
+const VARS := {"WANTED_DAY": "int", "WANTED_KILL_SUM": "int", "WANTED_AUTH_SUM": "int", "WANTED_LOOK": "str", "WANTED_HOLD": "int", "WANTED_PRE": "int"}
 
 
 static func declare(st: StoryState) -> void:
@@ -63,7 +63,7 @@ static func floor_value(st: StoryState) -> int:
 	if act == 1:
 		return LOWS[1]
 	if act <= 3:
-		return LOWS[2]
+		return LOWS[2]                                                   # 등급 3은 하한이 아니라 '순간'(bj_crossed) — 시작 호감 −30이라 하한이면 누구나 2막에 지명 수배가 된다
 	if act == 4:
 		return LOWS[3] if bj(st) <= -20 else LOWS[2]
 	if act <= 7:
@@ -99,6 +99,12 @@ static func set_value(st: StoryState, v: int) -> int:
 	if after != before:
 		st.events.append({"kind": "wanted", "grade": after, "up": after > before, "value": nv})
 	return nv
+
+
+## 비상정부 호감이 −20 위에서 −20 이하로 내려간 순간(§6.5): 2막 이후 지명 수배 max(현재, 60) · 5막 이후(501) 총력 수배 max(현재, 80)
+static func bj_crossed(st: StoryState, before: int, after: int) -> void:
+	if before > -20 and after <= -20 and st.quests.cur_act() >= 2:
+		set_value(st, maxi(value(st), LOWS[4] if st.quests.cur_act() >= 5 else LOWS[3]))
 
 
 ## 막이 바뀌었거나 호감도가 움직였을 때 하한을 다시 건다

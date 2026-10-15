@@ -68,7 +68,7 @@ func _init() -> void:
 	vars.declare("STAT_LOCKS", "int", 0)                      # 통계: 딴 자물쇠(SD-12 §3.5, 1-5)
 	for k in ["MQ104_FIRE", "MQ104_DESK", "MQ104_IDS", "MQ104_SEEN", "MQ104_ROLL", "MQ104_LOG", "MQ104_FILES", "MQ104_RIFLE",
 			"MQ104_AUTH", "MQ104_VENT", "MQ104_LAST", "MQ104_SEARCH", "MQ104_DOYUN", "MQ104_GUARDS", "MQ104_DAY",
-			"PL_LETTER", "PL_VIEW", "PL_TECH"]:
+			"PL_LETTER", "PL_VIEW", "PL_TECH", "PN_SON", "PN_Q10", "PN_NURSE", "PN_HEAL_DAY", "PN_SIM", "PN_GIL", "PN_LEDGER"]:
 		vars.declare(k, "int", 0)                                     # MQ-104 여의도 집결지 진행(1-5, Act1Paths)
 	# MQ-102·103 진행 표시(단계 1-4, 정합): C1~C3 단서 셋(1 들음) · ROBOT 잠든 파수 로봇을 봄 ·
 	# GATE 지하시장에 들어온 길(1 출입세 · 2 카리스마 · 3 남쪽 통로 · 4 역사 쇼핑몰) · JOB 상인회 일(1 맡음 · 2 둥지 비움 · 3 보상) ·
@@ -88,7 +88,7 @@ func _init() -> void:
 		vars.declare(k, "int", 0)
 	# MQ-106 첫 번째 추적자(단계 1-7, Mq106): CUSTODY 귀빈실(1 걸어 들어감 · 2 생포 · 3 새벽인력 인계) · TALKED 남궁혁 면담 ·
 	# SEIZED 압수품 보관함에 물건이 있다 · AT 귀빈실에 든 시각(분) · Q* 면담에서 물은 것 · PD_R01_BJ 판도 사건 보정(R01 비상정부 쪽, SD-06 §5)
-	for k in ["MQ106_CUSTODY", "MQ106_TALKED", "MQ106_SEIZED", "MQ106_AT", "MQ106_QLINE", "MQ106_QWHY", "MQ106_QGRID", "MQ106_QDEAD", "PD_R01_BJ"]:
+	for k in ["MQ106_CUSTODY", "MQ106_TALKED", "MQ106_SEIZED", "MQ106_AT", "MQ106_QLINE", "MQ106_QWHY", "MQ106_QGRID", "MQ106_QDEAD", "MQ106_QSIGN", "NAMGUNG_MET", "PD_R01_BJ"]:
 		vars.declare(k, "int", 0)
 	for kv in [["CAPTURE_DAY", -1], ["CAPTURE_AT", 0], ["SB_COLLAR", 0], ["SB_CUFF", 0], ["CAPTURE_BY", 0]]:
 		vars.declare(kv[0], "int", kv[1])
@@ -135,8 +135,12 @@ func call_fn(name: String, args: Array) -> Variant:
 			if key == "":
 				vars._err("알 수 없는 호감도 대상: " + str(args[0]))
 				return null
+			var was := int(vars.get_v(key)) if vars.has(key) else 0
 			var nv := vars.add(key, int(args[1]), -AFF_RANGE, AFF_RANGE)
 			events.append({"kind": "aff", "key": key, "delta": int(args[1]), "value": nv})
+			if key == "AFF_BJ" and vars.has("V_WANTED"):
+				Wanted.refresh(self)                                           # 비상정부 호감이 움직이면 수배 하한을 다시 건다(철회 · 4막 이후 하한)
+				Wanted.bj_crossed(self, was, nv)                               # §6.5 등급 3·4 진입 '순간'
 			return nv
 		"quest":
 			quests.set_stage(str(args[0]), int(args[1]))

@@ -135,10 +135,21 @@ func path_tag(id: String) -> String:
 	if s >= 100:
 		return "[이룸]"
 	if is_path and act_goal_met(a):
+		if s > 0 and s > _own_goal_stage(id):
+			return "[진행 중]"                                             # 이 경로가 스스로 막 목표를 이뤘고 마무리만 남았다('다른 길로'가 아니다 — SD-20 N10)
 		return "[다른 길로 이룸]" if s > 0 else "[끝남]"
 	if s > 0:
 		return "[진행 중]"
 	return "[알려진 것 없음]" if is_path else ""
+
+
+## 경로 퀘스트가 스스로 막 목표(1막 K_CODE)를 세우는 단계: 단계 표 '완료 조건'에 K_CODE가 적힌 단계. 없으면 아주 큰 값
+func _own_goal_stage(id: String) -> int:
+	var sts: Dictionary = defs.get(id, {}).get("stages", {})
+	for n in sts:
+		if str(sts[n].get("done", "")).contains("K_CODE"):
+			return int(n)
+	return 1 << 30
 
 
 ## 퀘스트의 가장 최근 사실 줄(지금 단계 이하에서 기록이 있는 가장 큰 단계)

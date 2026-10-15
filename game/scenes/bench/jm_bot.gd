@@ -120,10 +120,14 @@ func _ready() -> void:
 		"poi":                                                          # 길 위 발견물(1-4f): 쪽지 읽기 → 떠돌이 유해 열기(용기 창) · 대피소 표지
 			host.enter("W", "L-R01-15")
 			host.player.loco.place(Vector2(806 * 32 + 16, 1381 * 32 + 16))
-			plan = [["shoton", "충전소", "note"], ["go", 806, 1382], ["use", 806, 1383], ["wait", 2.0],
-				["go", 805, 1384], ["use", 806, 1384], ["wait", 1.0], ["shot", "remains_box"],
+			# 발견물 자리는 굽기가 정한다(지형을 다시 구우면 몇 칸씩 옮겨진다) — 좌표를 박지 않고 pois.json에서 가장 가까운 것을 찾는다
+			var note := _poi_at("texts", "충전소", Vector2i(806, 1383))
+			var body := _poi_at("boxes", "떠돌이의 유해", note)
+			var evac := _poi_at("texts", "대피소 표지", Vector2i(806, 1337))
+			plan = [["shoton", "충전소", "note"], ["go", note.x, note.y + 1], ["use", note.x, note.y], ["wait", 2.0],
+				["go", body.x, body.y + 1], ["use", body.x, body.y], ["wait", 1.0], ["shot", "remains_box"],
 				["check", "container_open", "떠돌이 유해 → 용기 창이 열린다"], ["close"],
-				["go", 804, 1338], ["shoton", "대피소", "evac"], ["use", 804, 1337], ["wait", 2.0],
+				["go", evac.x, evac.y + 1], ["shoton", "대피소", "evac"], ["use", evac.x, evac.y], ["wait", 2.0],
 				["check", "seen_evac", "대피소 표지 글이 뜬다"]]
 		"place":                                                        # 1-5e 손 장소: 전망바위 → 연수원 본관(LR-19)·기숙사(LR-11) → 계곡 배수로(정비공) → 경찰서 무기고(자물쇠 50) → 공영방송(LR-01)
 			st.vars.set_v("PC_SKP_LOCKPICK", 50)
@@ -153,6 +157,22 @@ func _ready() -> void:
 
 
 ## MQ-106: K_CODE를 안 채로 연수원 본관(K-01)에서 바깥으로 나온다 → 무전 → 30초 뒤 버티버드 → 해법 여섯 갈래 → 막 전환(V_ACT 2)
+## 굽힌 발견물(data/world/pois.json의 texts·boxes)에서 글·이름에 sub가 든 것 중 near에 가장 가까운 칸
+func _poi_at(group: String, sub: String, near: Vector2i) -> Vector2i:
+	var d: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/world/pois.json"))
+	var best := near
+	var bd := INF
+	for p in d.get(group, []):
+		if not (str(p.get("text", "")) + str(p.get("name", ""))).contains(sub):
+			continue
+		var t := Vector2i(int(p["x"]), int(p["y"]))
+		var dd := Vector2(t - near).length()
+		if dd < bd:
+			bd = dd
+			best = t
+	return best
+
+
 func _vb_plan() -> void:
 	st.quests.set_stage("MQ-102", 100)
 	st.quests.set_stage("MQ-104", 100)

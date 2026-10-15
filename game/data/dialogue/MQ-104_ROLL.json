@@ -5,7 +5,10 @@
  "npc": "",
  "cond": "V_ACT >= 1",
  "labels": {
-  "START": 0
+  "START": 0,
+  "MET": 7,
+  "HEARD": 9,
+  "ROLLED": 10
  },
  "ops": [
   {
@@ -25,10 +28,40 @@
    "fx": "give(\"M-209\", 1); MQ104_ROLL = 1; K_LINE = 1"
   },
   {
+   "op": "if",
+   "cond": "MQ103_STAGE >= 40",
+   "to": "MET"
+  },
+  {
+   "op": "if",
+   "cond": "MQ102_C1 == 1",
+   "to": "HEARD"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "뒷장의 한 줄. '시공 입회: 영신통신 마영식.' 이백 년 전 이름이다. 회선을 깐 사람."
+  },
+  {
+   "op": "goto",
+   "to": "ROLLED"
+  },
+  {
    "op": "line",
    "who": "SYS",
    "emo": "기본",
    "text": "뒷장의 한 줄. '시공 입회: 영신통신 마영식.' 지하시장 배전실의 그 구울이다."
+  },
+  {
+   "op": "goto",
+   "to": "ROLLED"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "뒷장의 한 줄. '시공 입회: 영신통신 마영식.' 영등포 지하에 산다는 200살 먹은 기술자 — 그 사람일까."
   },
   {
    "op": "cmd",

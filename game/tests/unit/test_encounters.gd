@@ -48,6 +48,14 @@ func test_wanted_grades(t) -> void:
 	Wanted.seen_wearing(st, "A-016")
 	t.ok(not Wanted.disguised(st, "A-016"), "다시 목격되면 공고가 지금 옷으로 바뀐다")
 	t.eq(int(st.call_fn("wanted", [5])), 56, "원고 함수 wanted(n)도 같은 길")
+	st.vars.set_v("AFF_BJ", -10)                                     # SD-20 · §6.5: 등급 3은 하한이 아니라 −20을 넘어가는 순간
+	Wanted.set_value(st, 35)
+	st.call_fn("aff", ["BJ", -5])
+	t.eq(Wanted.value(st), 35, "−15: 아직 −20 위 — 그대로")
+	st.call_fn("aff", ["BJ", -10])
+	t.eq(Wanted.value(st), 60, "2막 비상 −25로 넘어가는 순간 지명 수배(60)")
+	st.call_fn("aff", ["BJ", -5])
+	t.eq(Wanted.value(st), 60, "이미 −20 아래에서 더 내려가도 다시 올리지 않는다")
 
 
 func test_clock_minutes(t) -> void:
@@ -70,6 +78,12 @@ func test_clock_minutes(t) -> void:
 	t.eq(ticks[0], 1, "같은 날 다시는 없다")
 	h.advance_minutes(24 * 60)
 	t.eq(ticks[0], 2, "다음 날 06:00")
+	var days := []                                                   # SD-20 P6: 사흘을 한 번에 보내도 하루 판정은 날마다, 그 날짜로
+	h.day_tick.connect(func(d): days.append(d))
+	var d0 := int(h.st.vars.get_v("GAME_DAY"))
+	h.advance_minutes(3 * 24 * 60)
+	t.eq(ticks[0], 5, "사흘 도약 = 하루 판정 세 번")
+	t.eq(days, [d0 + 1, d0 + 2, d0 + 3], "날짜가 하나씩 오른 채로 차례대로")
 	h.free()
 
 
