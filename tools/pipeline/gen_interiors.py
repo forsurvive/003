@@ -638,7 +638,7 @@ def _h(*a):
     return v
 
 
-def run(entries, reach, threat, region_at, taken, log=print, cache=True):
+def run(entries, reach, threat, region_at, taken, log=print, cache=True, fixed=()):
     """entries: 굽기가 찍은 건물 문 후보 [{x, y, style, seed}] · reach[y, x] · threat(청크) · region_at(x, y) → 권역 코드 ·
     taken: 비워 둘 칸 사각형(손 맵·지하 문). 돌려줌: 월드 문 목록(kind 'facade')."""
     if cache:                                                          # 따로 다시 돌릴 수 있게 후보·문 앞 칸·위협·권역을 남긴다
@@ -646,15 +646,33 @@ def run(entries, reach, threat, region_at, taken, log=print, cache=True):
         H_, W_ = reach.shape
         front = [[e["x"], e["y"] + 1] for e in entries if e["y"] + 1 < H_ and reach[e["y"] + 1, e["x"]]]
         reg = [[region_at(cx * 40, cy * 40) for cx in range(W_ // 40)] for cy in range(H_ // 40)]
-        json.dump({"W": W_, "H": H_, "entries": entries, "front": front, "threat": threat, "region": reg, "taken": [list(t) for t in taken]},
+        json.dump({"W": W_, "H": H_, "entries": entries, "front": front, "threat": threat, "region": reg, "taken": [list(t) for t in taken],
+                   "fixed": list(fixed)},
                   open(CACHE, "w", encoding="utf-8"), default=int)
     pools = read_pools()
     prop_meta, known_vars, known_fns, scenes = _setup()
     for f in glob.glob(os.path.join(OUT, "G-*.json")):
         os.remove(f)
     doors, made, cnt = [], {}, {}
+    used = set()
+    for spec in fixed:                                                 # 손으로 만든 실내: 요청 자리에서 가장 가까운, 문 앞이 걸어서 닿는 1층 문
+        nx, ny = spec["near"]
+        best = None
+        for e in entries:
+            if e["y"] + 1 < reach.shape[0] and reach[e["y"] + 1, e["x"]]:
+                dd = (e["x"] - nx) ** 2 + (e["y"] - ny) ** 2
+                if dd <= 30 * 30 and (best is None or dd < best[0]):
+                    best = (dd, e)
+        if best is None:
+            raise SystemExit("손 실내 문 자리를 못 찾았다: %s" % spec)
+        e = best[1]
+        used.add((e["x"], e["y"]))
+        doors.append({"lid": spec["lid"], "at": [e["x"], e["y"]], "to": spec["to"], "mark": spec.get("mark", "from_W"), "name": spec["name"],
+                      "prop": "", "kind": "facade", "lock": int(spec.get("lock", 0))})
     for e in entries:
         x, y, st = e["x"], e["y"], e["style"]
+        if (x, y) in used:
+            continue
         rg = region_at(x, y)
         if rg not in REGIONS or st not in RATE:
             continue
@@ -701,9 +719,15 @@ def run_cached(log=print):
     def region_at(x, y):
         cy_, cx_ = y // 40, x // 40
         return reg[cy_][cx_] if 0 <= cy_ < len(reg) and 0 <= cx_ < len(reg[cy_]) else 0
-    doors = run(c["entries"], reach, c["threat"], region_at, [tuple(t) for t in c["taken"]], log=log, cache=False)
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from world_chunks import DOORS                                     # 손 실내 문 목록은 굽기 파일이 정본(캐시보다 새것)
+    fixed = [d for d in DOORS if d.get("kind") == "facade"]
+    doors = run(c["entries"], reach, c["threat"], region_at, [tuple(t) for t in c["taken"]], log=log, cache=False, fixed=fixed)
     gp = os.path.join(ROOT, "game", "data", "world", "place_geo.json")
     geo = json.load(open(gp, encoding="utf-8"))
+    for d in doors:
+        if d.get("lid"):
+            geo.setdefault(d["lid"], {"bank": "S", "arrive": None})["arrive"] = [d["at"][0], d["at"][1] + 1]
     geo["_doors"] = [d for d in geo["_doors"] if d.get("kind") != "facade"] + doors
     json.dump(geo, open(gp, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"), sort_keys=True, default=int)
 

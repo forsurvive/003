@@ -8,7 +8,7 @@
      . 철판  , 장판  o 진료실 타일  = 격자  ~ 콘크리트  c 카펫  w 마루  m·M 곰팡이 핀 철판·격자  t 인조석(지하상가)  u 지하 통로 콘크리트
      - | + ^  바닥 유도선(가로·세로·교차·T자)
   prop 이름 x y                  소품(발 칸 왼쪽 위). 벽 소품(wall)은 벽면 윗칸에 건다.
-  door x y [kind=slide|hatch|iron] [locked] ["표지"]
+  door x y [kind=slide|hatch|iron|steel|blast] [locked] ["표지"]
                                  벽면 문: (x, y) 벽면 윗칸과 그 아래 칸이 바닥(뚫린 곳)이어야 한다. 가까이 가면 열린다.
   exit x y 맵 표지               이 칸에 들어서면 다른 맵의 표지로 간다(바닥 칸).
   mark 이름 x y 방향             연출·도착 표지(E S W N …)

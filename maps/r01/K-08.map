@@ -1,0 +1,35 @@
+# 관악 계곡 배수로(SD-09a L-R01-08 C · 단계 1-5e) — 신림계곡 배수 암거. S-07 비상 배수 갱도 물길이 동쪽 끝에서 합류한다.
+# 60×10 · 천장 검은 곰팡이 군락(S-07 수경 농장의 곰팡이와 같다, H-R01-02) · 2077 수질 측정 상자 · 2214년 실종 정비공의 유해(미스터리 M7).
+map K-08 관악 계곡 배수로
+set bk
+grid
+############################################################
+############################################################
+############################################################
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+##uu########################################################
+end
+exit 2 9 W L-R01-08
+exit 3 9 W L-R01-08
+mark from_W 2 8 N
+prop drain_valve 10 3
+text 10 3 "2077년 수질 측정 상자. 바늘이 '측정 불가'에 붙어 있다."
+box 10 3 crate name="수질 측정 상자"
+text 20 3 "천장에 검은 곰팡이가 번졌다. 둥근 반점이 겹겹이 — 어디서 본 무늬다. 볼트 수경 농장 2동의 그 반점." w=3
+prop rubble 26 7
+prop remains 44 4
+text 44 4 "벽에 기대 앉은 해골. 볼트 작업복, 등판 번호 'S-07'. 손에 꼭 쥔 종이 한 장." scene=K-08_TECH
+prop backpack 43 5
+box 43 5 toolbox name="정비공의 공구 가방"
+text 57 5 "동쪽 끝 쇠창살. 그 너머 좁은 갱도가 산 쪽으로 올라간다. 볼트 배수 갱도다. 창살은 안쪽에서 휘었다." h=2
+prop scrap_pile 52 7
+box 52 7 trash w=2 name="떠내려온 고물"
+enemy CR-095 18 6
+enemy CR-095 30 5
+enemy CR-095 36 7
+enemy CR-095 49 6

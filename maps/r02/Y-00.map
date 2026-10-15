@@ -45,7 +45,7 @@ prop w_bk_notice 3 1
 text 3 2 "철판 표지. '비상 집결지 — 관계자 외 출입 금지. 행정안전부.'" w=2
 prop w_bk_notice 7 1
 text 7 2 "같은 표지가 하나 더. 누군가 아래에 못으로 긁었다. '28'" w=2
-door 6 13 locked kind=iron "방화문"
+door 6 13 locked kind=steel "방화문"
 text 6 13 "방화문. 전원이 끊겨 자석 빗장이 걸린 채 굳었다." h=2 scene=MQ-104_FIRE
 prop rubble 3 6
 prop rubble2 8 20

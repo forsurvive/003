@@ -117,6 +117,24 @@ func _ready() -> void:
 				["check", "container_open", "떠돌이 유해 → 용기 창이 열린다"], ["close"],
 				["go", 804, 1338], ["shoton", "대피소", "evac"], ["use", 804, 1337], ["wait", 2.0],
 				["check", "seen_evac", "대피소 표지 글이 뜬다"]]
+		"place":                                                        # 1-5e 손 장소: 전망바위 → 연수원 본관(LR-19)·기숙사(LR-11) → 계곡 배수로(정비공) → 경찰서 무기고(자물쇠 50) → 공영방송(LR-01)
+			st.vars.set_v("PC_SKP_LOCKPICK", 50)
+			st.vars.set_v("PC_SKP_SMALL_GUNS", 40)
+			for kv in [["M-070", 4], ["I-001", 10], ["10mm 탄", 200]]:
+				st.call_fn("give", kv)
+			host.enter("W", "L-R01-03")
+			plan = [["go", 984, 1514], ["shoton", "세진전자 타워", "view"], ["use", 984, 1513], ["wait", 0.5],
+				["check", "PL_VIEW == 1 and PC_CAPS == 612", "전망바위 망원경 → 지도 표시 · 동전 12캡"],
+				["warp", "W", "L-R01-06"], ["wait", 1.0], ["face", 6], ["shot", "k01_door"], ["use", 929, 1475], ["wait", 2.0], ["shot", "k01"], ["fight"],
+				["go", 3, 5, "K-01"], ["use", 3, 4], ["wait", 0.5], ["check", "has(\"M-230\") and PL_LETTER == 1", "교관 책상 서랍의 LR-19(M-230)"],
+				["go", 15, 3], ["go", 15, 0], ["wait", 1.5], ["shot", "k02"], ["fight"], ["go", 37, 7, "K-02"], ["use", 37, 6], ["wait", 0.5],
+				["check", "read:LR-11", "기숙사 끝 해골의 「종전」 유인물(LR-11)"]]
+			plan += [["warp", "K-08"], ["wait", 1.5], ["shot", "k08"], ["fight"], ["go", 44, 5, "K-08"], ["use", 44, 4], ["wait", 0.5],
+				["check", "PL_TECH == 1", "배수로 정비공의 수질 측정지"],
+				["warp", "K-29"], ["wait", 1.5], ["shot", "k29"], ["fight"], ["go", 21, 11, "K-29"], ["use", 21, 10], ["lock"], ["wait", 1.0],
+				["go", 21, 6, "K-29"], ["check", "STAT_LOCKS == 1", "경찰서 무기고 문(자물쇠 50)을 따고 들어감"], ["shot", "k29_armory"],
+				["warp", "K-06"], ["wait", 1.5], ["fight"], ["go", 8, 5, "K-06"], ["use", 8, 4], ["wait", 0.5], ["shot", "k06"],
+				["check", "read:LR-01", "앵커석의 심야 뉴스 대본(LR-01)"]]
 		"yd_talk", "yd_fight", "yd_vent":                               # MQ-104(1-5): 해치 → 방화문 → 작은 방 → 집결지 조사 → 인증 → 수색조 세 갈래
 			_yd_plan()
 	plan.append(["end"])
@@ -183,6 +201,7 @@ func _process(dt: float) -> void:
 			if note_t > 1.2:
 				note_t = 0.0
 				if c.page == 0:
+					seen["note"] = true
 					_shot("note_" + str(c.note.get("title", "")).substr(0, 8).replace(" ", "_"))
 				if c.page < c._pages.size() - 1:
 					c.page += 1
@@ -323,6 +342,13 @@ func _process(dt: float) -> void:
 				if lk.turn > 45.0 and not seen.has("lock_shot2"):
 					seen["lock_shot2"] = true
 					_shot("lock_turn")
+		"warp":                                                         # 다음 장소로 바로(확인 봇: 걸어가는 길은 다른 봇이 본다)
+			host.enter(str(s[1]), str(s[2]) if s.size() > 2 else "from_W")
+			_next()
+		"face":
+			host.player.loco.facing = int(s[1])
+			host.player._show()
+			_next()
 		"wait":
 			host.input_fn = func() -> Vector2: return Vector2.ZERO
 			if step_t >= float(s[1]):
@@ -338,6 +364,8 @@ func _process(dt: float) -> void:
 				ok = host.container != null
 			elif str(s[1]) == "seen_evac":
 				ok = seen.has("evac")
+			elif str(s[1]).begins_with("read:"):
+				ok = st.boxes.has("notes") and st.boxes["notes"]["read"].has(str(s[1]).substr(5))
 			elif str(s[1]) == "seen_guard":
 				ok = seen.has("guard_bark")
 			elif str(s[1]) == "seen_rumor":

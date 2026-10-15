@@ -38,12 +38,12 @@ end
 exit 3 29 Y-02 from_Y-04
 exit 4 29 Y-02 from_Y-04
 mark from_Y-02 3 28 N
-door 3 12 locked lock=75 kind=iron "방폭문"
+door 3 12 locked lock=75 kind=blast "방폭문"
 prop rubble 1 3
 prop rubble2 2 3
 prop rubble 5 3
 text 4 3 "무너진 콘크리트가 통로를 막았다. 틈으로 희미한 방송: '…투표는 시민의 의무입니다. 지금 투표소로…'"
-prop crate_metal 1 8
+prop crate_army 1 8
 box 1 8 safe lock=0 name="비품실 금고"
 prop duty_table 5 7
 text 5 7 "작은 탁자 위 접힌 쪽지(LR-29)." scene=MQ-104_LASTNOTE

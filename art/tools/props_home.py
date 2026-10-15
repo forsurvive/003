@@ -626,6 +626,83 @@ def door_mat():
     return im
 
 
+# ================================================================================================ 손 장소(1-5e): 여의도 공영방송
+def anchor_desk():
+    """앵커석(2×1): 반달 앵커 책상 · 의자에 기대 앉은 앵커 해골(정장·넥타이) · 원고 묶음 · 마이크 · 앞면 방송사 띠(이름 없음)."""
+    im = img(62, 54)
+    d = ImageDraw.Draw(im)
+    shadow(d, 2, 60, 51)
+    d.rectangle([20, 2, 41, 20], fill=C("P02")); d.line([20, 2, 41, 2], fill=C("P04"))          # 의자 등받이
+    d.polygon([(23, 14), (38, 14), (40, 26), (21, 26)], fill=C("P43"))                           # 몸통(감색 정장)
+    d.polygon([(29, 14), (32, 14), (31, 22)], fill=C("P08")); d.line([30, 16, 30, 22], fill=C("P53"))
+    d.ellipse([25, 3, 36, 14], fill=C("P08")); d.ellipse([27, 7, 29, 9], fill=C("P01")); d.ellipse([32, 7, 34, 9], fill=C("P01"))   # 해골
+    d.line([29, 12, 33, 12], fill=C("P05"))
+    d.rounded_rectangle([2, 22, 59, 40], 6, fill=C("P11")); d.rounded_rectangle([2, 22, 59, 37], 6, fill=C("P12"))   # 책상
+    d.line([8, 22, 53, 22], fill=C("P14"))
+    d.rectangle([4, 38, 57, 49], fill=C("P10")); d.rectangle([4, 41, 57, 44], fill=C("P45"))    # 앞면 띠
+    d.line([10, 42, 26, 42], fill=C("P15")); d.line([36, 42, 51, 42], fill=C("P15"))
+    d.rectangle([12, 24, 22, 29], fill=C("P09")); d.line([13, 26, 21, 26], fill=C("P05"))       # 원고
+    d.rectangle([15, 25, 25, 31], fill=C("P08"))
+    d.line([40, 18, 42, 26], fill=C("P05")); d.ellipse([38, 15, 42, 19], fill=C("P03"))          # 마이크
+    d.line([22, 27, 26, 29], fill=C("P08"), width=2)                                            # 원고 위 손뼈
+    return im
+
+
+def tv_camera():
+    """스튜디오 카메라(1×1): 세 발 받침 · 상자 몸통 · 앞 렌즈 · 뒤 손잡이 · 꺼진 붉은 촬영등."""
+    im = img(32, 50)
+    d = ImageDraw.Draw(im)
+    shadow(d, 2, 30, 47)
+    for x0, x1 in ((16, 4), (16, 28), (16, 16)):
+        d.line([x0, 26, x1, 46], fill=C("P04"), width=2)
+    d.rounded_rectangle([5, 8, 27, 26], 3, fill=C("P03")); d.rounded_rectangle([5, 8, 27, 23], 3, fill=C("P04"))
+    d.line([7, 8, 25, 8], fill=C("P06"))
+    d.ellipse([10, 12, 22, 22], fill=C("P02")); d.ellipse([12, 14, 20, 20], fill=C("P11")); d.point((14, 15), fill=C("P15"))   # 렌즈
+    d.rectangle([22, 4, 26, 8], fill=C("P52")); d.point((24, 5), fill=C("P53"))                 # 촬영등
+    d.line([27, 18, 31, 22], fill=C("P05"), width=2)
+    return im
+
+
+def studio_light():
+    """조명 스탠드(1×1): 긴 기둥 위 각진 등갓(깨진 유리) · 늘어진 전선."""
+    im = img(28, 58)
+    d = ImageDraw.Draw(im)
+    shadow(d, 4, 24, 55)
+    d.line([14, 14, 14, 52], fill=C("P05"), width=2)
+    d.line([14, 52, 5, 55], fill=C("P04")); d.line([14, 52, 23, 55], fill=C("P04"))
+    d.polygon([(4, 2), (24, 2), (21, 14), (7, 14)], fill=C("P03"))
+    d.rectangle([7, 4, 21, 11], fill=C("P50")); d.line([9, 5, 14, 10], fill=C("P02")); d.line([15, 6, 19, 9], fill=C("P02"))
+    d.arc([10, 30, 26, 56], 270, 90, fill=C("P02"))
+    return im
+
+
+def w_onair():
+    """'방송 중' 표시등(벽, 1칸): 빨간 유리 상자(꺼짐) · 글자 띠."""
+    im = img(26, 12)
+    d = ImageDraw.Draw(im)
+    d.rounded_rectangle([0, 0, 25, 11], 2, fill=C("P02"))
+    d.rounded_rectangle([2, 2, 23, 9], 2, fill=C("P52"))
+    for x in (5, 9, 13, 17, 20):
+        d.line([x, 4, x, 7], fill=C("P51"))
+    d.line([3, 3, 8, 3], fill=C("P53"))
+    return im
+
+
+def crate_army():
+    """국방색 나무 상자(1×1): 판자 이음 · 모서리 쇠 · 흰 스텐실 '탄약 · 비상' · 위에 접힌 방수포. 볼트 밖 비상 물자."""
+    im = img(32, 34)
+    d = ImageDraw.Draw(im)
+    shadow(d, 1, 31, 31)
+    box3(d, 1, 6, 30, 30, 6, ["P28", "P29", "P30", "P31"])
+    for y in (16, 23):
+        d.line([2, y, 29, y], fill=C("P28"))
+    for x in (1, 26):
+        d.rectangle([x, 12, x + 3, 30], fill=C("P04")); d.line([x, 12, x, 30], fill=C("P06"))
+    d.rectangle([9, 18, 22, 21], fill=C("P08")); d.line([11, 19, 20, 19], fill=C("P29"))
+    d.polygon([(4, 4), (20, 2), (24, 8), (6, 9)], fill=C("P12")); d.line([6, 5, 19, 3], fill=C("P13"))
+    return im
+
+
 def _r(fn, fw, fh, kind="floor", down=2, dx=0, dy=0):
     return {"fn": fn, "foot": (fw, fh), "kind": kind, "down": down, "dx": dx, "dy": dy}
 
@@ -661,5 +738,10 @@ PROPS_HOME = {
     "steel_rack": _r(steel_rack, 2, 1, down=1),
     "pallet_sacks": _r(pallet_sacks, 1, 1),
     "door_mat": _r(door_mat, 0, 0, "deco", dx=2, dy=12),
+    "anchor_desk": _r(anchor_desk, 2, 1),
+    "crate_army": _r(crate_army, 1, 1),
+    "tv_camera": _r(tv_camera, 1, 1),
+    "studio_light": _r(studio_light, 1, 1),
+    "w_onair": _r(w_onair, 1, 0, "wall", dx=3, dy=10),
 }
 STATES_HOME = {}

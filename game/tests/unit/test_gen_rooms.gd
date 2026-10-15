@@ -21,8 +21,14 @@ func test_gen_doors(t) -> void:
 		var m: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/maps/%s.json" % mid))
 		kinds[str(m.get("gen", ""))] = true
 		var want := "@%d,%d" % [int(d["at"][0]), int(d["at"][1]) + 1]
+		if str(d.get("lid", "")) != "":                                      # 손 실내(1-5e K-*): 장소 도착 칸 = 문 앞
+			want = str(d["lid"])
+			PlaceLog.load_db()
+			var arr = PlaceLog.db.get(want, {}).get("arrive")
+			if arr == null or int(arr[0]) != int(d["at"][0]) or int(arr[1]) != int(d["at"][1]) + 1:
+				bad_exit += 1
 		for e in m["exits"]:
-			if str(e["to"]) != "W" or str(e["mark"]) != want:
+			if str(e["to"]) == "W" and str(e["mark"]) != want:
 				bad_exit += 1
 		if not m["marks"].has("from_W"):
 			bad_exit += 1

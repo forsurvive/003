@@ -30,7 +30,13 @@ DOORS = [{"lid": "L-R02-11", "near": (720, 1147), "to": "J-01", "mark": "from_W"
          {"lid": "L-R02-13", "near": (734, 1156), "to": "J-02", "mark": "from_mall", "name": "역사 쇼핑몰 지하 통로", "prop": "subway_stairs_mall"},
          {"lid": "L-UG-13", "near": (672, 1099), "to": "J-09", "mark": "from_W", "name": "영등포구청역 지하 통로", "prop": "subway_stairs_st"},
          {"lid": "L-R02-02", "near": (812, 1086), "to": "Y-00", "mark": "from_W", "name": "환승센터 터 승강장 해치", "prop": "bunker_hatch"},     # 1-5 여의도 지하 벙커
-         {"lid": "L-R02-10", "near": (826, 1134), "to": "Y-05", "mark": "from_W", "name": "윤중제 배수구", "prop": "drain_outlet", "hint": "쇠창살이 뜯긴 틈으로 기어 들어가면 배수로다."}]
+         {"lid": "L-R02-10", "near": (826, 1134), "to": "Y-05", "mark": "from_W", "name": "윤중제 배수구", "prop": "drain_outlet", "hint": "쇠창살이 뜯긴 틈으로 기어 들어가면 배수로다."},
+         # 1-5e 손 장소: 건물 1층 문(kind facade — gen_interiors가 가장 가까운 1층 문에 붙인다) · 계곡 배수구
+         {"lid": "L-R01-06", "near": (938, 1488), "to": "K-01", "mark": "from_W", "name": "관악 행정 연수원 본관", "kind": "facade"},
+         {"lid": "L-R02-29", "near": (700, 1105), "to": "K-29", "mark": "from_W", "name": "영등포 경찰서", "kind": "facade"},
+         {"lid": "L-R02-06", "near": (777, 1101), "to": "K-06", "mark": "from_W", "name": "여의도 공영방송", "kind": "facade"},
+         {"lid": "L-R01-08", "near": (887, 1494), "to": "K-08", "mark": "from_W", "name": "관악 계곡 배수 암거", "prop": "drain_outlet",
+          "hint": "콘크리트 암거 입구. 물비린내와 곰팡이 냄새가 흘러나온다."}]
 INSETS = [{"id": "X-S07", "mark": "from_vault", "at": (959, 1503)},          # 볼트 S-07 정문(L-R01-01)
           {"id": "X-BC", "center": (892, 1362)}]                             # 봉천 계단마을(L-R01-09)
 START = (959, 1503)                                                          # 도달성 검사 출발점 = 볼트 정문
@@ -1074,6 +1080,8 @@ def place_geo(R):
     # 그 장소의 도착 칸은 문 바로 아래(실내에서 나오면 문 앞에 선다 — 문 칸에 서면 다시 들어가 버린다).
     doors = []
     for spec in DOORS:
+        if spec.get("kind") == "facade":                                     # 손으로 만든 건물 실내(1-5e)는 건물 1층 문에 붙인다(gen_interiors)
+            continue
         nx, ny = spec["near"]
         best = None
         for rr in range(0, 16):
@@ -1101,7 +1109,12 @@ def place_geo(R):
         cy_, cx_ = y // CS, x // CS
         return reg[cy_][cx_] if 0 <= cy_ < len(reg) and 0 <= cx_ < len(reg[cy_]) else 0
     taken_g = [tuple(ins["rect"]) for ins in R["insets"]] + [(d["at"][0] - 3, d["at"][1] - 3, 8, 7) for d in doors]
-    doors += gen_interiors.run(R["entries"], reach, enc["threat"], region_at, taken_g, log=log)
+    fixed = [d for d in DOORS if d.get("kind") == "facade"]
+    gdoors = gen_interiors.run(R["entries"], reach, enc["threat"], region_at, taken_g, log=log, fixed=fixed)
+    for d in gdoors:
+        if d.get("lid"):                                                     # 손 장소의 도착 칸 = 그 건물 문 앞(실내 출구 'W 장소 ID'가 여기로 나온다)
+            geo.setdefault(d["lid"], {"bank": "S", "arrive": None})["arrive"] = [d["at"][0], d["at"][1] + 1]
+    doors += gdoors
     geo["_doors"] = doors
     # 월드 발견 자리(1-4, maps/world/*.spots → map_compile → spots_src.json): 요청 칸에서 가장 가까운, w×h가 모두 걸어서 닿고
     # 손 맵·문 자리와 겹치지 않는 곳(장소 없는 '@x,y' 자리는 그 칸 그대로여야 한다 — 어긋나면 굽기 오류)

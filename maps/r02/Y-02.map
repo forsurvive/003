@@ -90,8 +90,8 @@ prop gun_locker 36 3
 box 36 3 armory lock=50 owner=S7 name="경비 무기함"
 prop folding_chair 9 6
 prop folding_chair 10 6
-prop crate_metal 2 24
-prop crate_metal 3 24
+prop crate_army 2 24
+prop crate_army 3 24
 box 2 24 crate w=2 name="비상 식량 상자"
 prop water_cooler 2 4
 text 37 20 "벽에 연필로 그은 줄. 다섯 개씩 묶어 아홉. 그 뒤로는 없다."

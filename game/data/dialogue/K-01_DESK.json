@@ -1,0 +1,65 @@
+{
+ "id": "K-01_DESK",
+ "title": "교관 한유정의 책상",
+ "loc": "L-R01-06",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "EMPTY": 7
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "PL_LETTER == 1",
+   "to": "EMPTY"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "녹슨 서랍을 비틀어 연다. 서류 사이에 뜯지 않은 봉투 하나. '세진전자 내부 우편 — 관악 연수원 교관 한유정 앞'."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "보낸 사람 칸에 '한유리'. 봉투는 뜯겨 있고, 편지의 아래쪽 절반이 없다."
+  },
+  {
+   "op": "cmd",
+   "name": "note",
+   "args": [
+    "LR-19"
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "give(\"M-230\", 1); PL_LETTER = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "2077년 10월 20일. 사흘 뒤 이 사람은 볼트로 내려갔고, 편지는 서랍에 남았다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈 서랍. 봉투가 놓였던 자리에 먼지 자국만."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/places/R01_R02.txt"
+}

@@ -1,0 +1,52 @@
+# 여의도 공영방송(SD-09a L-R02-06 B · 단계 1-5e) — 가상 '전시 국영방송' 2077 본사. LR-01 심야 뉴스 대본(2077-10-23 22:40).
+# 28×15 · 뉴스 스튜디오(앵커석의 해골 · 카메라 셋 · 조명 · '방송 중' 등) · 오른쪽 송출실(진공관 랙 · 송출 진공관).
+map K-06 여의도 공영방송
+set bk
+grid
+############################
+############################
+############################
+#cccccccccccccccccc#.......#
+#cccccccccccccccccc#.......#
+#cccccccccccccccccc#.......#
+#cccccccccccccccccc#.......#
+#cccccccccccccccccc#.......#
+#cccccccccccccccccc#.......#
+#ccccccccccccccccccc.......#
+#ccccccccccccccccccc.......#
+#ccccccccccccccccccc.......#
+#ccccccccccccccccccc.......#
+#ccccccccccccccccccc.......#
+#########cc#################
+end
+exit 9 14 W L-R02-06
+exit 10 14 W L-R02-06
+mark from_W 9 13 N
+prop w_onair 9 1
+text 9 2 "'방송 중' 표시등. 빨간 유리 안 전구는 깨졌다. 마지막으로 켜진 게 언제인지는 대본이 안다."
+prop anchor_desk 8 4
+text 8 4 "앵커석. 정장 차림의 해골이 원고 위에 손을 얹고 앉아 있다. 프롬프터 화면에 글자 한 줄." w=2 scene=K-06_ANCHOR
+prop tv_camera 6 9
+prop tv_camera 10 9
+prop tv_camera 14 9
+text 10 9 "스튜디오 카메라. 붉은 촬영등은 꺼졌다. 렌즈가 아직 앵커석을 본다."
+prop studio_light 3 4
+prop studio_light 15 4
+prop desk 2 11
+box 2 11 desk w=2 name="작가 책상"
+text 2 11 "작가 책상. 대본 초고마다 빨간 줄. '전쟁' → '긴장 국면', '피난' → '이동'." w=2
+prop file_cabinet 17 11
+box 17 11 cabinet name="보도국 서류함"
+prop rubble 13 12
+# 송출실
+prop tube_rack 20 3
+text 20 3 "송출 진공관 랙. 가운데 큰 관 하나가 아직 멀쩡하다 — 남산 방송이 탐낼 만한 물건이다." w=2
+box 20 3 crate w=2 name="송출 진공관 랙"
+prop battery_rack 23 3
+prop terminal_desk 25 3
+text 25 3 "송출 단말. 마지막 송출 기록 '23:21 — 긴급 재난 방송 송출 불가(전원)'."
+prop crate_army 21 10
+box 21 10 crate name="예비 부품 상자"
+prop drum 25 11
+enemy CR-200 22 7
+enemy CR-095 5 12

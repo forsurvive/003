@@ -1,0 +1,33 @@
+{
+ "id": "K-02_LEAFLET",
+ "title": "기숙사 복도 끝의 해골",
+ "loc": "L-R01-06",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "cmd",
+   "name": "note",
+   "args": [
+    "LR-11"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "유인물 끝에 볼펜 글씨. '토요일에 같이 가자. — 연수생 S-07 입주 예정자 명단엔 없음.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/places/R01_R02.txt"
+}

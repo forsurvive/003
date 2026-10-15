@@ -6,3 +6,13 @@ prop sentry_down 2 1
 mark sentry 2 1 S
 trigger 0 0 w=6 h=4 scene=MQ-102_SENTRY cond="V_ACT >= 1 and MQ102_ROBOT == 0" once
 text 2 1 "엎드린 경비 로봇." w=2 scene=MQ-102_SENTRY_AFTER
+
+# 관악산 전망바위(L-R01-03, SD-09a B · 단계 1-5e): 데크 끝 동전 망원경 → 전망 장면(R01 전체 + 여의도 장소를 지도에 '표시').
+# 2077 안내판 '맑은 날에는 여의도 국회 돔과 남산 타워가 보입니다' — 돔은 무너졌고 탑은 그대로라 절반만 맞다.
+spot L-R01-03 7 4
+prop telescope 3 1
+text 3 1 "동전 망원경. 렌즈에 흙먼지가 앉았다." scene=K-03_VIEW
+prop info_board 1 1
+text 1 1 "2077 안내판. '맑은 날에는 여의도 국회 돔과 남산 타워가 보입니다.' 돔은 무너졌다. 탑은 그대로다."
+prop bench 4 3
+text 4 3 "쉼터 벤치. 등받이에 새긴 낙서 '2076. 10. 우리 여기서 처음 만남'." w=2

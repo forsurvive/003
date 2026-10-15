@@ -61,6 +61,33 @@ def door(label=None, state="closed", kind="slide"):
             d.rectangle([5, 8, 26, 63], fill=C("P10"))
         d.rectangle([2, 0, 29, 4], fill=C("P53")); d.line([2, 0, 29, 0], fill=C("P54"))
         text(d, (16, 0), "비상", F7, "P09", anchor="ma")
+    elif kind in ("steel", "blast"):                                 # steel: 철제 방화문·무기고 문(1-5e) / blast: 방폭문(노랑·검정 경고 띠, 두꺼운 테)
+        frame = "P04" if kind == "steel" else "P03"
+        d.rectangle([0, 0, 31, 63], fill=C(frame)); d.line([0, 0, 31, 0], fill=C("P06"))
+        d.rectangle([3, 4, 28, 63], fill=C("P02"))
+        if state == "closed":
+            d.rectangle([4, 5, 27, 63], fill=C("P06" if kind == "steel" else "P05"))
+            d.line([4, 5, 27, 5], fill=C("P08")); d.line([4, 5, 4, 63], fill=C("P07"))
+            if kind == "steel":
+                d.rectangle([10, 12, 21, 22], fill=C("P11")); d.rectangle([10, 12, 21, 22], outline=C("P04"))   # 철망 유리
+                for k in range(11, 21, 3):
+                    d.line([k, 13, k, 21], fill=C("P12")); d.line([11, k + 1, 20, k + 1], fill=C("P12"))
+                d.line([11, 13, 14, 13], fill=C("P14"))
+                d.rectangle([6, 36, 25, 39], fill=C("P05")); d.line([6, 36, 25, 36], fill=C("P08"))        # 밀대
+                d.rectangle([5, 56, 26, 60], fill=C("P05"))
+            else:
+                for k in range(0, 24, 6):                                    # 경고 띠
+                    d.polygon([(4 + k, 26), (8 + k, 26), (4 + k, 32)], fill=C("P49"))
+                d.rectangle([4, 26, 27, 32], outline=C("P02"))
+                for y in (10, 44):
+                    d.rectangle([7, y, 24, y + 8], outline=C("P04"))
+                d.ellipse([12, 35, 19, 42], outline=C("P02"), width=2); d.line([15, 35, 15, 42], fill=C("P02"))   # 핸들
+            for y in (10, 50):                                               # 경첩
+                d.rectangle([3, y, 5, y + 5], fill=C("P03"))
+            d.point((24, 10), fill=C("P25")); d.point((25, 48), fill=C("P25")); d.line([6, 58, 9, 58], fill=C("P25"))   # 녹
+        else:
+            d.rectangle([4, 5, 27, 63], fill=C("P00"))
+            d.rectangle([24, 5, 27, 63], fill=C("P06"))                     # 열린 문짝 옆선
     else:                                                            # iron: 원형 철문(배수 갱도)
         d.rectangle([0, 0, 31, 63], fill=C("P11"))
         d.ellipse([1, 14, 30, 63], fill=C("P24"), outline=C("P02"))
@@ -930,6 +957,8 @@ PROPS = {
     "door_slide": _r(lambda: door(None), 1, 2, "door"),
     "door_hatch": _r(lambda: door(None, kind="hatch"), 1, 2, "door"),
     "door_iron": _r(lambda: door(None, kind="iron"), 1, 2, "door"),
+    "door_steel": _r(lambda: door(None, kind="steel"), 1, 2, "door"),
+    "door_blast": _r(lambda: door(None, kind="blast"), 1, 2, "door"),
     "gear_door": _r(lambda: gear_door(0), 6, 0, "wall", dx=-16, dy=-124),          # 문틀 구멍 중심(S.GATE_C)에 정확히 겹친다(0-9)
     "gear_frame": _r(lambda: S.gear_door_frame(), 7, 0, "wall", dx=-16, dy=-136),
     # 벽 소품(벽면 윗칸 기준 위치)
@@ -1030,7 +1059,8 @@ PROP_STATES = {
 }
 # 문 열린 그림(문 소품의 둘째 칸)
 DOOR_OPEN = {"door_slide": lambda: door(None, "open"), "door_hatch": lambda: door(None, "open", "hatch"),
-             "door_iron": lambda: door(None, "open", "iron")}
+             "door_iron": lambda: door(None, "open", "iron"), "door_steel": lambda: door(None, "open", "steel"),
+             "door_blast": lambda: door(None, "open", "blast")}
 PROP_FRAMES = {"drain_hatch": (drain_hatch, HATCH_FRAMES),
                "gear_frame": (lambda f: S.gear_door_frame(open_=f == 1), 2)}   # 문틀: 0 닫힘 · 1 열림(구멍에 흰 빛)   # 컷이 여럿인 소품(연출 명령 anim) — 방폭문은 GEAR_FRAMES로 따로
 GEAR_FRAMES = 22                                     # 굴러 열리는 컷: 컷마다 10px(210/21) — 회전각 = 거리/반지름이라 미끄러지지 않는다

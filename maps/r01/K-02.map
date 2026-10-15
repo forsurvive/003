@@ -1,0 +1,51 @@
+# 관악 행정 연수원 기숙사 A동 복도(SD-09a L-R01-06 ③ '23:23 개방 지령 때 버리고 간 가방들' · 단계 1-5e)
+# 40×10 · 위쪽 문 열린 방마다 2층 침대(입주 확정 서류) · 복도에 버리고 간 가방 · 끝방 해골의 손에 LR-11 「종전」 유인물.
+map K-02 기숙사 A동 복도
+set bc
+grid
+########################################
+########################################
+########################################
+#jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj#
+#jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj#
+#jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj#
+#jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+####################t###################
+end
+exit 20 9 K-01 from_K-02
+mark from_K-01 20 8 N
+prop bunk 2 3
+text 2 3 "2층 침대. 매트리스 위 '입주 확정' 붉은 도장 서류. 이름 칸이 비었다." h=2
+prop bunk 6 3
+prop bunk 10 3
+text 10 3 "침대마다 '입주 확정' 서류. 이 침대 것만 반으로 찢겨 있다. 서류 없는 가족은 들어가지 못했다." h=2
+prop bunk 14 3
+prop locker_row2 16 3
+box 16 3 school_locker w=2 name="연수생 사물함"
+prop bunk 22 3
+prop bunk 26 3
+prop locker_row2 28 3
+box 28 3 school_locker w=2 name="연수생 사물함"
+prop bunk 32 3
+prop bunk 36 3
+prop backpack 4 6
+box 4 6 bag name="버리고 간 가방"
+prop backpack 9 7
+box 9 7 bag name="버리고 간 가방"
+text 9 7 "가방 지퍼가 반쯤 열렸다. 가족사진 한 장과 연수생 신분증. 23:23에 다 들고 뛸 수는 없었다."
+prop backpack 18 6
+box 18 6 bag name="버리고 간 가방"
+prop backpack 25 7
+box 25 7 bag name="버리고 간 가방"
+prop backpack 30 6
+box 30 6 bag name="버리고 간 가방"
+prop remains 37 6
+text 37 6 "벽에 기대 앉은 해골. 손에 쥔 등사 유인물 한 장." scene=K-02_LEAFLET
+prop w_calendar 20 1
+text 20 2 "복도 시간표. '23:00 소등'. 그 아래 누가 연필로 '내일 이사'."
+prop rubble 12 7
+prop rubble2 33 7
+enemy CR-095 34 7
+enemy CR-095 6 7

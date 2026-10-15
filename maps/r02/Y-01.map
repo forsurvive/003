@@ -45,6 +45,6 @@ prop shower_stall 19 3
 prop shower_stall 21 3
 prop toilet_bk 22 6
 prop rubble 20 12
-prop crate_metal 2 12
+prop crate_army 2 12
 box 2 12 crate name="비상 물품 상자"
 text 16 13 "바닥에 굴러다니는 2077년 배급 건빵 봉지. 유통기한 2079. 03."

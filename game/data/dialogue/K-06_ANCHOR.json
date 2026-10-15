@@ -1,0 +1,45 @@
+{
+ "id": "K-06_ANCHOR",
+ "title": "앵커석",
+ "loc": "L-R02-06",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "프롬프터 화면에 마지막 줄이 멈춰 있다. '방송은 계속됩니다.'"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "앵커의 손 아래 원고 묶음."
+  },
+  {
+   "op": "cmd",
+   "name": "note",
+   "args": [
+    "LR-01"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "22시 40분 원고다. 이 방송이 끝나고 49분 뒤에 전원이 나갔다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/places/R01_R02.txt"
+}

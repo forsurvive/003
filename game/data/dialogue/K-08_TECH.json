@@ -1,0 +1,59 @@
+{
+ "id": "K-08_TECH",
+ "title": "배수로의 정비공",
+ "loc": "L-R01-08",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "SEEN": 6
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "PL_TECH == 1",
+   "to": "SEEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "작업복 가슴 명찰 '설비과 정비 2팀'. 2214년 갱도 점검 근무표가 주머니에 접혀 있다."
+  },
+  {
+   "op": "cmd",
+   "name": "note",
+   "args": [
+    "K-08-WATER"
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "PL_TECH = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "볼트 기록은 이 사람을 '사고사'로 적었다. 이 사람은 바깥에서, 문이 열리기를 기다렸다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "해골의 손이 빈 채로 펴져 있다. 측정지는 이제 내 주머니에 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/places/R01_R02.txt"
+}

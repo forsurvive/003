@@ -67,7 +67,8 @@ func _init() -> void:
 	vars.declare("STAT_HACKED", "int", 0)                     # 통계: 해킹한 단말(SD-12 §3.5, 1-4)
 	vars.declare("STAT_LOCKS", "int", 0)                      # 통계: 딴 자물쇠(SD-12 §3.5, 1-5)
 	for k in ["MQ104_FIRE", "MQ104_DESK", "MQ104_IDS", "MQ104_SEEN", "MQ104_ROLL", "MQ104_LOG", "MQ104_FILES", "MQ104_RIFLE",
-			"MQ104_AUTH", "MQ104_VENT", "MQ104_LAST", "MQ104_SEARCH", "MQ104_DOYUN", "MQ104_GUARDS", "MQ104_DAY"]:
+			"MQ104_AUTH", "MQ104_VENT", "MQ104_LAST", "MQ104_SEARCH", "MQ104_DOYUN", "MQ104_GUARDS", "MQ104_DAY",
+			"PL_LETTER", "PL_VIEW", "PL_TECH"]:
 		vars.declare(k, "int", 0)                                     # MQ-104 여의도 집결지 진행(1-5, Act1Paths)
 	# MQ-102·103 진행 표시(단계 1-4, 정합): C1~C3 단서 셋(1 들음) · ROBOT 잠든 파수 로봇을 봄 ·
 	# GATE 지하시장에 들어온 길(1 출입세 · 2 카리스마 · 3 남쪽 통로 · 4 역사 쇼핑몰) · JOB 상인회 일(1 맡음 · 2 둥지 비움 · 3 보상) ·

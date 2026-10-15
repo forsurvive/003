@@ -1458,6 +1458,17 @@ func _handlers() -> void:
 		var ns := NoteScreen.new().setup(st, str(a[0]))
 		ns.closed.connect(func(_ok: bool) -> void: done.call())
 		add_child(ns)
+	ev.handlers["reveal"] = func(a: Array, done: Callable) -> void:   # 전망 지점(1-5e, SD-08 §12.3): 권역 코드·장소 ID 목록을 지도에 '표시'로
+		PlaceLog.load_db()
+		var n := 0
+		for tok in a:
+			for lid in PlaceLog.db:
+				var hit := str(lid) == str(tok) or (str(tok).length() == 3 and str(PlaceLog.db[lid]["region"]) == str(tok))
+				if hit and not bool(PlaceLog.db[lid].get("hidden", false)) and st.places.raise(str(lid), PlaceLog.MARKED):
+					n += 1
+		if n > 0:
+			hint("지도에 장소 %d곳이 표시되었다" % n, 5.0)
+		done.call()
 	ev.handlers["hint"] = func(a: Array, done: Callable) -> void:
 		hint(str(a[0]), float(a[1]) if a.size() > 1 else 6.0)
 		done.call()
