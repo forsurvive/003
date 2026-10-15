@@ -247,6 +247,8 @@ func _site_check(t: Vector2i, now: int, night: bool, region: String = "") -> Dic
 				if inside_ep.has("site:" + id):
 					continue
 				inside_ep["site:" + id] = true
+				if near_settlement(at):                                      # 정착지 둘레 2청크는 인카운터 없음(SD-05 §6.2) — 빈 야영지로 둔다
+					continue
 				var d := re_def(str(s_["re"]))
 				if d.is_empty() or not _time_ok(d, night, int(ctx.get("hour", 22 if night else 12))):
 					continue

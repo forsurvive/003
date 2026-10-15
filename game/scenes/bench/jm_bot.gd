@@ -110,7 +110,7 @@ func _ready() -> void:
 			st.vars.set_v("MQ101_RESULT", 1)                             # 계단 방어로 마친 봉천 — 주민 소문 확인
 			host.enter("W", "L-R01-32")
 			var sen := _spot_find("L-R01-32", "sentry")
-			plan = [["go", sen.x - 1, sen.y + 3], ["shoton", "판독", "sentry_lit"], ["go", sen.x, sen.y + 1],
+			plan = [["go", sen.x, sen.y + 3], ["shoton", "판독", "sentry_lit"], ["go", sen.x, sen.y + 1],
 				["check", "MQ102_ROBOT == 1 and MQ102_STAGE == 10", "잠든 파수가 깨어났다 꺼짐"],
 				["use", sen.x, sen.y], ["shot", "sentry_after"],
 				["go", 891, 1381], ["go", 891, 1378], ["go", 894, 1374], ["want", ["읽을 사람"]], ["talk", "N-R02-018"],
@@ -484,7 +484,9 @@ func _process(dt: float) -> void:
 			host.input_fn = _walk.bind(Vector2(int(s[1]) * 32 + 16, int(s[2]) * 32 + 16))
 			if host.player.loco.render.distance_to(Vector2(int(s[1]) * 32 + 16, int(s[2]) * 32 + 16)) < 6.0 or step_t > 40.0:
 				if step_t > 40.0:
-					print("  [봇] 걸어서 못 감: ", s, " 지금 ", host.map.id, " ", host.map.tile_of(host.player.loco.logical))
+					print("  [봇] 걸어서 못 감: ", s, " 지금 ", host.map.id, " ", host.map.tile_of(host.player.loco.logical),
+						" · 대화 ", host.box.active, " 바쁨 ", host.busy, " 연출 ", host.ev.busy(), " 길 ", NpcRoutine.with_start(host.map, host.player.loco.logical,
+						Vector2(int(s[1]) * 32 + 16, int(s[2]) * 32 + 16)).size(), " 고체 ", host.map.is_solid(host.map.tile_of(host.player.loco.logical)))
 				_next()
 		"want":
 			want = s[1]
