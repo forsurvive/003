@@ -55,7 +55,9 @@ func _ready() -> void:
 	host.hud_on = true
 	var hh := hour if mode == "re" else (22 if mode == "roach" else 9)
 	host.date_text = "2277. 10. 24.  %02d:%s" % [hh, "10" if mode == "roach" else "20"]
-	host.enter("W", "", {}, Vector2(833 * 32 + 16, 1343 * 32 + 16))      # 신림 사거리 고가(L-R01-15) 도착 칸
+	PlaceLog.load_db()
+	var arr: Array = PlaceLog.db["L-R01-15"]["arrive"]                  # 신림 사거리 고가(L-R01-15) 도착 칸(도로를 다시 구우면 옮겨진다 — SD-21 §8)
+	host.enter("W", "", {}, Vector2(int(arr[0]) * 32 + 16, int(arr[1]) * 32 + 16))
 	host.combat.equip("W-002", st)
 	st.events.clear()
 	host.ev.handlers["trade"] = func(a: Array, done: Callable) -> void:  # 1막 진행기 대신(벤치): 거래 창
@@ -74,8 +76,23 @@ func _ready() -> void:
 				req["at"] = sat
 				print("소장소 자리 ", s_)
 				break
+	if OS.get_environment("DECK") == "1":                                 # 고가(1-Rd): 주인공을 가까운 상판 위(층 1)에 세운다
+		var t0: Vector2i = host.map.tile_of(host.player.loco.logical)
+		var done_ := false
+		for r in range(0, 30):
+			for dy in range(-r, r + 1):
+				for dx in range(-r, r + 1):
+					if not done_ and host.map.deck_at(t0 + Vector2i(dx, dy)) == InteriorMap.DK_DECK:
+						host.player.loco.place(Vector2(t0 + Vector2i(dx, dy)) * 32.0 + Vector2(16, 16))
+						host.player.set_floor(1)
+						done_ = true
+		print("상판 위에 섬: ", host.map.tile_of(host.player.loco.logical), " 층 ", host.player.floor_id)
 	host.enc_live._ctx(host.map.tile_of(host.player.loco.logical))
 	var ok := host.enc_live.start(req)
+	if not ok and mode == "re":
+		print("세움 실패 진단: 산 적 ", host.combat.alive_enemies(), " 위협 ", Encounters.threat_at(host.map.tile_of(host.player.loco.logical)),
+			" 중심(near) ", host.enc_live._center("near"), " 중심(any) ", host.enc_live._center("any"))
+
 	print("인카운터 세움: ", ok, " · ", host.enc_live.cur.get("re", ""), " ", host.enc_live.cur.get("state", ""), " · 단계 ", host.enc_live.cur.get("phase", ""))
 
 

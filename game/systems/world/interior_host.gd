@@ -469,6 +469,16 @@ func _discover(t: Vector2i) -> void:
 			hint(str(e["name"]), 3.0)
 
 
+## 고가 상판 위(층 1, 1-Rd): 그 아래 땅의 문·출구·밟는 칸·조사 글·땅 용기는 걸리지 않는다
+func _up() -> bool:
+	return map != null and map.has_deck and player.floor_id >= 1
+
+
+## 그 인물과 같은 층에서 마주 서 있나(상판 위·아래 사이로는 말을 걸지 않는다)
+func _same_floor(a) -> bool:
+	return map == null or not map.has_deck or map.floors_meet(a.loco.logical, a.floor_id, player.loco.logical, player.floor_id)
+
+
 func _check_exit() -> void:
 	var t := map.tile_of(player.loco.logical)
 	if t == _last_tile:
@@ -480,6 +490,8 @@ func _check_exit() -> void:
 		var rc: String = map.region_at(t)
 		if rc != "":
 			st.places.regions[rc] = true
+	if _up():
+		return
 	for g in map.triggers_at(t):                                      # 밟는 칸: 조건이 맞으면 장면을 연다
 		var key: String = g.get("key", "%s:%d,%d" % [map.id, int(g["x"]), int(g["y"])])   # 월드는 손 맵 좌표 열쇠(옛 저장과 같다)
 		if (g["once"] and fired.has(key)) or not InteriorMap._cond_ok(g["cond"], st):
@@ -530,6 +542,8 @@ func interact() -> bool:
 	for n in npcs:
 		if not is_instance_valid(n["actor"]) or n.get("dead", false) or float(n.get("down_t", 0.0)) > 0.0:
 			continue
+		if not _same_floor(n["actor"]):
+			continue
 		var v: Vector2 = n["actor"].loco.logical - player.loco.logical
 		var sc := v.length() * (1.5 - v.normalized().dot(f))            # 바라보는 쪽에 더 맞는 사람 먼저(나란히 선 두 사람 — 버티버드 문의 하도윤·육지환)
 		if v.length() < 46.0 and v.normalized().dot(f) > 0.5 and sc < best_d:
@@ -554,6 +568,8 @@ func interact() -> bool:
 	if not b.is_empty():
 		open_box(b)
 		return true
+	if _up():
+		return false
 	for cc in cells:                                                    # 자물쇠로 잠긴 문(1-5, lock=n): 자물쇠 따기
 		var dr: Dictionary = map.locked_door_at(cc) if map.has_method("locked_door_at") else {}
 		if not dr.is_empty() and int(dr.get("lock", -1)) >= 0:
@@ -607,7 +623,7 @@ func interact() -> bool:
 
 ## 앞 칸의 들어가는 문(1-5e 월드 건물 1층 문) — 없으면 빈 사전
 func _front_go(cells: Array = []) -> Dictionary:
-	if map == null or map.gos.is_empty():
+	if map == null or map.gos.is_empty() or _up():
 		return {}
 	for cc in (cells if not cells.is_empty() else _front_cells()):
 		if map.gos.has(cc):
@@ -651,6 +667,8 @@ func _front_box(cells: Array = []) -> Dictionary:
 	for cc in (cells if not cells.is_empty() else _front_cells()):
 		if map.boxes.has(cc):
 			var b: Dictionary = map.boxes[cc]
+			if map.has_deck and int(b.get("fl", 0)) != player.floor_id:
+				continue                                                   # 상판 위 차 트렁크(층 1)와 그 아래 땅 용기(층 0)는 제 층에서만
 			if InteriorMap._cond_ok(str(b.get("cond", "")), st):
 				return b
 	return {}
@@ -777,7 +795,7 @@ func _terms() -> Dictionary:
 
 
 func _front_term(cells: Array = []) -> Dictionary:
-	if map == null or map.terms.is_empty():
+	if map == null or map.terms.is_empty() or _up():
 		return {}
 	for cc in (cells if not cells.is_empty() else _front_cells()):
 		if map.terms.has(cc):
@@ -1111,13 +1129,15 @@ func interact_label() -> String:
 		return ""
 	var f: Vector2 = Locomotion.VEC[player.loco.facing].normalized()
 	for n in npcs:
-		if is_instance_valid(n["actor"]) and not n.get("dead", false):
+		if is_instance_valid(n["actor"]) and not n.get("dead", false) and _same_floor(n["actor"]):
 			var v: Vector2 = n["actor"].loco.logical - player.loco.logical
 			if v.length() < 46.0 and v.normalized().dot(f) > 0.5:
 				return "말하기"
 	var cells := _front_cells()
 	if not _front_box(cells).is_empty():
 		return "열기"
+	if _up():
+		return ""
 	if not _front_term(cells).is_empty():
 		return "사용"
 	for cc in cells:

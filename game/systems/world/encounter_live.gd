@@ -130,6 +130,20 @@ func on_map_changed() -> void:
 
 
 # ---------------------------------------------------------------- 세우기
+## 고가(1-Rd, SD-21 §7.3): 이번 인카운터가 서는 층 — 주인공이 상판 위(층 1)면 무리도 상판 위에(고가 길목), 소장소 자리는 땅
+var _efl := 0
+var _pick_state := ""
+var _pick_cat := ""
+
+
+## 무리를 세워도 되는 칸: 층 1이면 상판 노면, 층 0이면 같은 높이 단의 걷는 땅
+func _ok_tile(t: Vector2i, lv: int) -> bool:
+	if _efl >= 1:
+		var d: int = host.map.deck_at(t)
+		return d == InteriorMap.DK_DECK or d == InteriorMap.DK_PILLAR or d == InteriorMap.DK_BROKEN
+	return not host.map.is_solid(t) and host.map.level_at(t) == lv
+
+
 func start(req: Dictionary) -> bool:
 	var re := str(req["re"])
 	var d := Encounters.re_def(re)
@@ -149,6 +163,9 @@ func start(req: Dictionary) -> bool:
 		n = CAP_TRACKER
 	if host.combat.alive_enemies() + n > int(CAP.get(Encounters.threat_at(_here()), 12)):
 		return false                                                     # 활성 상한: 다음 판정으로 미룬다
+	_efl = host.player.floor_id if host.map.has_deck and not req.has("at") else 0
+	_pick_state = state
+	_pick_cat = cat
 	var mode := _mode(cat, state)
 	var center: Vector2i = req["at"] if req.has("at") else _center(mode)       # 소장소 자리(1-W)면 그 자리에
 	if center.x < 0:
@@ -223,14 +240,21 @@ func _center(mode: String) -> Vector2i:
 		var t := me + Vector2i(roundi(cos(ang) * r), roundi(sin(ang) * r))
 		if offscreen and absi(t.x - me.x) <= 11 and absi(t.y - me.y) <= 7:
 			continue
-		if host.map.is_solid(t) or host.map.level_at(t) != lv:
+		if not _ok_tile(t, lv):
 			continue
 		var hidden: bool = not host.map.line_of_sight(me_px, Vector2(t) * 32.0 + Vector2(16, 16))
 		var score := 2 if (hidden == want_hidden) else 1
+		var top := 2
+		if _efl == 0 and host.map.has_deck and _pick_state == "S2":           # 매복은 고가 아래 그늘을 좋아한다(SD-21 §7.3)
+			top = 3
+			score += 1 if InteriorMap.is_top(host.map.deck_at(t)) else 0
+		elif _pick_cat in ["tracker", "patrol"] and host.map.has_method("road_rank"):   # 추적대·순찰은 큰길(H2·H3) 위
+			top = 3
+			score += 1 if host.map.road_rank(t) >= 2 else 0
 		if score > best_score and _reachable(me_px, t):
 			best_score = score
 			best = t
-			if score == 2:
+			if score >= top:
 				break
 	if best.x < 0 and mode != "any":                                   # 방향이 막혔으면(벼랑·강) 아무 쪽에서나
 		return _center("any")
@@ -239,7 +263,7 @@ func _center(mode: String) -> Vector2i:
 
 ## 길이 닿나(칸 A* — 26타일 안팎이면 충분하다)
 func _reachable(from_px: Vector2, t: Vector2i) -> bool:
-	return not host.map.path(Vector2(t) * 32.0 + Vector2(16, 16), from_px, 1200).is_empty()
+	return not host.map.path(Vector2(t) * 32.0 + Vector2(16, 16), from_px, 1200, _efl, host.player.floor_id).is_empty()
 
 
 ## 중심 둘레 걷는 칸 n개(서로 한 칸 띄움, 같은 높이 단)
@@ -250,7 +274,7 @@ func _cluster(c: Vector2i, n: int, gap := 1) -> Array:
 	var q: Array = [c]
 	while not q.is_empty() and out.size() < n:
 		var t: Vector2i = q.pop_front()
-		var ok: bool = not host.map.is_solid(t) and host.map.level_at(t) == lv
+		var ok: bool = _ok_tile(t, lv)
 		if ok:
 			var far := true
 			for o in out:
@@ -274,7 +298,7 @@ func _walk_tile(c: Vector2i, r: int) -> Vector2i:
 	for i in 10:
 		var ang := _rng.randf() * TAU
 		var t := c + Vector2i(roundi(cos(ang) * r), roundi(sin(ang) * r))
-		if not host.map.is_solid(t) and host.map.level_at(t) == lv and not host.map.path(Vector2(c) * 32.0 + Vector2(16, 16), Vector2(t) * 32.0 + Vector2(16, 16), 400).is_empty():
+		if _ok_tile(t, lv) and not host.map.path(Vector2(c) * 32.0 + Vector2(16, 16), Vector2(t) * 32.0 + Vector2(16, 16), 400, _efl, _efl).is_empty():
 			return t
 	return c
 
@@ -356,6 +380,7 @@ func _spawn() -> void:
 					opts["det"] = 0.6
 					opts["sleep"] = i % 2 == 1 or _rng.randf() < 0.3
 			var e: Enemy = host.combat.spawn(id, at, host.map, host.st, opts)
+			e.set_floor(_efl)
 			if state == "S7" and i > 0:                                  # 끝난 뒤: 하나만 살아 있고 나머지는 쓰러진 채(유해 용기는 호스트가 둔다, 경험치 없음)
 				e.cmb.last_by = "world"
 				e.cmb.take({"hp": 99999.0}, at)
@@ -373,7 +398,7 @@ func _spawn() -> void:
 	match state:
 		"S3":                                                            # 먹이·약탈 중: 가운데 유해(다 끝나면 뒤진다)
 			_corpse_box(_snap_walk(c, c), "", "누군가의 유해")
-		"S4" when not bool(cur.get("site", false)):                      # 야영: 불 드럼 + 자루(소장소 자리면 이미 놓여 있다)
+		"S4" when not bool(cur.get("site", false)) and _efl == 0:             # 상판 위(층 1)에는 불 드럼·자루를 두지 않는다                      # 야영: 불 드럼 + 자루(소장소 자리면 이미 놓여 있다)
 			var fire := _free_near(c)
 			if fire.x >= 0:
 				cur["props"].append(host.map.add_runtime_prop("drum_fire", fire))
@@ -427,6 +452,7 @@ func _add_person(id: String, at: Vector2, state: String) -> void:
 	if not ResourceLoader.exists("res://assets/sprites/%s.tres" % sheet) and SHEETS.has(id):
 		sheet = SHEETS[id]
 	a.setup(sheet, at, host.map)
+	a.set_floor(_efl)
 	a.mode = "walk"
 	a.set_meta("cr", id)
 	host.map.add_actor(a)
@@ -445,7 +471,7 @@ func _add_person(id: String, at: Vector2, state: String) -> void:
 
 ## 유해 용기(S3·S5·S7·RE-042): 적 ID가 있으면 그 적의 소지품, 없으면 떠돌이 유해(청소부 용기 표)
 func _corpse_box(t: Vector2i, eid: String, name: String) -> Dictionary:
-	if t.x < 0 or host.map.boxes.has(t) or host.map.is_solid(t):
+	if t.x < 0 or host.map.boxes.has(t) or (_efl == 0 and host.map.is_solid(t)):
 		return {}
 	var key := "re:%s:%d,%d@%d:%d" % [str(cur.get("re", "")), t.x, t.y, int(host.st.vars.get_v("GAME_DAY")), Time.get_ticks_msec()]
 	var b := {"x": t.x, "y": t.y, "w": 1, "h": 1, "owner": "", "lock": 0, "cond": "", "key": key}
@@ -455,7 +481,13 @@ func _corpse_box(t: Vector2i, eid: String, name: String) -> Dictionary:
 		return {}                                                        # 드롭이 없는 크리처(바퀴·들개)는 유해를 두지 않는다
 	else:
 		b.merge({"kind": "corpse_scav", "name": name})
-		cur["props"].append(host.map.add_runtime_prop("remains" if _rng.randf() < 0.5 else "remains2", t))   # 쓰러진 사람 그림(유해 용기)
+		var rp: Dictionary = host.map.add_runtime_prop("remains" if _rng.randf() < 0.5 else "remains2", t)   # 쓰러진 사람 그림(유해 용기)
+		if _efl >= 1 and not rp.is_empty():
+			rp["node"].z_index = 3                                           # 상판 위 유해는 상판 위에 그린다
+			for cc in rp.get("cells", []):
+				host.map._put_solid(cc.x, cc.y, 0)                           # 땅을 막지 않는다(상판 위 그림일 뿐)
+			rp["cells"] = []
+		cur["props"].append(rp)
 	host.map.boxes[t] = b
 	return b
 
@@ -469,10 +501,10 @@ func _free_near(c: Vector2i) -> Vector2i:
 
 func _snap_walk(t: Vector2i, fallback: Vector2i) -> Vector2i:
 	var lv: int = host.map.level_at(fallback)
-	if not host.map.is_solid(t) and host.map.level_at(t) == lv:
+	if _ok_tile(t, lv):
 		return t
 	var near := _cluster(t, 1, 1)
-	return near[0] if not near.is_empty() and host.map.level_at(near[0]) == lv else fallback
+	return near[0] if not near.is_empty() and _ok_tile(near[0], lv) else fallback
 
 
 # ---------------------------------------------------------------- 돌보기

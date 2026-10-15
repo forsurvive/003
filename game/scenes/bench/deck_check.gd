@@ -86,6 +86,18 @@ func _ready() -> void:
 	host.map.load_now(host.player.loco.logical)
 	plan = [["shot", "1_ground"], ["go", foot, -1, "램프"], ["shot", "2_ramp"], ["go", far, 1, "상판"], ["shot", "3_deck"],
 		["check", "on_deck"], ["save"], ["check", "saved"]]
+	var trunk := Vector2i(-1, -1)                                          # 상판 위 버려진 차 트렁크(층 1 용기): 그 옆 상판 칸에서 연다
+	var stand := Vector2i(-1, -1)
+	for c in m.boxes:
+		var bx: Dictionary = m.boxes[c]
+		if int(bx.get("fl", 0)) == 1 and Vector2(c - center).length() < 60 and trunk.x < 0:
+			for n in [Vector2i(0, 1), Vector2i(0, -1), Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 2), Vector2i(2, 0), Vector2i(-1, 1)]:
+				if stand.x < 0 and m.deck_at(c + n) == InteriorMap.DK_DECK:
+					trunk = c
+					stand = c + n
+	if trunk.x >= 0:
+		print("상판 위 트렁크 ", trunk, " 설 자리 ", stand)
+		plan += [["go", stand, 1, "트렁크 앞"], ["open", trunk], ["shot", "3b_trunk"], ["check", "trunk"]]
 	if broken.x >= 0:
 		plan += [["go", broken, 1, "끊긴 끝"], ["shot", "4_broken"], ["push", broken], ["check", "stopped"]]
 	plan += [["go", under, 0, "그늘"], ["shot", "5_under"], ["check", "under"]]
@@ -123,6 +135,13 @@ func _process(dt: float) -> void:
 			if step_t > 2.0:
 				set_meta("p1", host.player.loco.logical)
 				_next()
+		"open":
+			var tb: Vector2i = s[1]
+			host.input_fn = func() -> Vector2: return Vector2.ZERO
+			host.player.loco.facing = Locomotion.snap8(Vector2(tb) * 32.0 + Vector2(16, 16) - host.player.loco.logical, 0.0)
+			host.player._show()
+			host.interact()
+			_next()
 		"save":
 			var d := GameSnapshot.host(host)
 			host.player.set_floor(0)
@@ -135,6 +154,11 @@ func _process(dt: float) -> void:
 					ok = host.player.floor_id == 1 and InteriorMap.is_top(host.map.deck_at(host.map.tile_of(host.player.loco.logical)))
 				"saved":
 					ok = host.player.floor_id == 1
+				"trunk":
+					ok = host.container != null
+					if ok:
+						print("  트렁크 안: ", host.container.title, " ", host.container.state["items"])
+						host.container.close(true)
 				"stopped":
 					var p0: Vector2 = get_meta("p0")
 					var p1: Vector2 = get_meta("p1")

@@ -754,6 +754,8 @@ def build():
     # 길 위 발견물(1-4f, SD-08 §13.2 '소형 관심 지점' · §14.1 경고 장치): 굽기 때 규칙으로 흩고, 용기·조사 글은 pois.json으로 낸다
     tags = chunk_tags(r, kind)                                                 # 결·지형 태그(소장소 템플릿이 먼저 읽는다)
     pois = place_pois(src, solid, cover, gflag, stair, level, kind, r["use"], reach, inmask, carve | EV["noprop"], play, body, insets, placed, pm, tags["chunks"])
+    taken_b = {(b_["x"] + i, b_["y"] + j) for b_ in pois["boxes"] for i in range(b_["w"]) for j in range(b_["h"])}
+    pois["boxes"] += [b_ for b_ in EV["boxes"] if not any((b_["x"] + i, b_["y"] + j) in taken_b for i in range(b_["w"]) for j in range(b_["h"]))]   # 고가 위 버려진 차 트렁크(층 1) — 칸이 겹치는 땅 용기가 있으면 뺀다
     reach &= solid == 0
 
     # 손 맵 사이 걷는 길(봇 경유점): 비탈 첫 칸 → 봉천 동쪽 골목 끝

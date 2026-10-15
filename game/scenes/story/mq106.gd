@@ -203,8 +203,8 @@ func _clear(c: Vector2i, lv: int) -> bool:
 	for dy in range(-3, 3):
 		for dx in range(-4, 5):
 			var t := c + Vector2i(dx, dy)
-			if m.is_solid(t) or m.level_at(t) != lv:
-				return false
+			if m.is_solid(t) or m.level_at(t) != lv or m.deck_at(t) != InteriorMap.DK_NONE:
+				return false                                             # 고가 상판·램프 둘레는 착륙 불가(SD-21 §8)
 	var cp := Vector2(c.x * 32 + 16, c.y * 32 + 16)
 	for n in host.npcs:
 		if is_instance_valid(n["actor"]) and n["actor"].loco.logical.distance_to(cp) < 5.0 * 32.0:

@@ -68,6 +68,7 @@ def build(roads, section, land_ok, H, W, tid, seed=2277, log=print, ramp_ok=None
     pillar_s = np.zeros((H, W), bool)                                      # 기둥 줄(아래층 그늘 앞 칸에 기둥 그림)
     rubble = []
     wrecks = []
+    boxes = []                                                             # 상판 위 차 트렁크(층 1 용기 — 'car' 루팅표, T2 상한: SD-21 §7.3)
     stats = {"runs": 0, "deck": 0, "ramps": 0, "gaps": 0, "stairs": 0, "stairs_broken": 0, "pillars": 0, "cars": 0, "names": []}
     stair_plan = []
     for a in roads:
@@ -248,6 +249,9 @@ def build(roads, section, land_ok, H, W, tid, seed=2277, log=print, ramp_ok=None
                 top[c1[1], c1[0]] = tid("ev:car_%s%d" % ("l" if ew else "t", v))
                 top[c2[1], c2[0]] = tid("ev:car_%s%d" % ("r" if ew else "b", v))
                 stats["cars"] += 1
+                if _h(c1[0], c1[1], 13) % 100 < 60:
+                    boxes.append({"x": int(c1[0]), "y": int(c1[1]), "w": 2 if ew else 1, "h": 1 if ew else 2, "kind": "car", "fl": 1,
+                                  "name": "고가 위 버려진 차 트렁크", "owner": "", "lock": 25 if _h(c1[0], c1[1], 14) % 100 < 20 else 0})
     # 방호벽·옹벽 고리: 노면·램프 둘레 8이웃(무너진 경간·램프 아래 끝 너머는 열어 둔다)
     walk = np.isin(code, SURF + (DK_RAMP,))
     dil = walk.copy()
@@ -368,4 +372,4 @@ def build(roads, section, land_ok, H, W, tid, seed=2277, log=print, ramp_ok=None
         stats["runs"], ", ".join(sorted(set(stats["names"]))), stats["deck"], stats["ramps"], stats["pillars"], stats["gaps"],
         stats["stairs"], stats["stairs_broken"], stats["cars"]))
     return {"code": code, "top": top, "low": low, "solid_on": solid_on | heap, "cover": cover, "noprop": noprop, "clear": clear,
-            "ramp": code == DK_RAMP, "stats": stats}
+            "ramp": code == DK_RAMP, "stats": stats, "boxes": boxes}

@@ -114,7 +114,22 @@ static func apply_host(h: InteriorHost, d: Dictionary) -> void:
 	h.player.loco.place(at)
 	h.player.loco.facing = int(d.get("facing", 2))
 	h.player.position = h.player.loco.render
-	h.player.set_floor(int(d.get("floor", 0)))
+	var fl := int(d.get("floor", 0))
+	if fl >= 1 and h.map.has_deck:                                       # SD-21 §9: 층 1인데 상판이 아닌 자리면 가장 가까운 상판 칸으로(없으면 땅)
+		var t0: Vector2i = h.map.tile_of(at)
+		var d0: int = h.map.deck_at(t0)
+		if not (InteriorMap.is_top(d0) or InteriorMap.is_link(d0)) or d0 == InteriorMap.DK_RAIL or d0 == InteriorMap.DK_JUNK:
+			fl = 0
+			for r in range(1, 6):
+				for dy in range(-r, r + 1):
+					for dx in range(-r, r + 1):
+						var dd: int = h.map.deck_at(t0 + Vector2i(dx, dy))
+						if fl == 0 and (dd == InteriorMap.DK_DECK or dd == InteriorMap.DK_PILLAR):
+							fl = 1
+							at = Vector2(t0 + Vector2i(dx, dy)) * 32.0 + Vector2(16, 16)
+							h.player.loco.place(at)
+							h.player.position = h.player.loco.render
+	h.player.set_floor(fl)
 	h.player._show()
 	h.cam.position = at.round()
 	h.cam.reset_smoothing()

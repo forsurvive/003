@@ -16,6 +16,7 @@ var i := 0
 var t := 0.0
 var step_t := 0.0
 var path := PackedVector2Array()
+var _repath_t := -1.0
 var want: Array = []
 var checks: Array = []
 var hold := 0.0
@@ -125,10 +126,13 @@ func _ready() -> void:
 			var note := _poi_at("texts", "충전소", Vector2i(806, 1383))
 			var body := _poi_at("boxes", "떠돌이의 유해", note)
 			var evac := _poi_at("texts", "대피소 표지", Vector2i(806, 1337))
-			plan = [["shoton", "충전소", "note"], ["go", note.x, note.y + 1], ["use", note.x, note.y], ["wait", 2.0],
-				["go", body.x, body.y + 1], ["use", body.x, body.y], ["wait", 1.0], ["shot", "remains_box"],
+			var sn := _stand(note)
+			var sb := _stand(body)
+			var se := _stand(evac)
+			plan = [["shoton", "충전소", "note"], ["go", sn.x, sn.y], ["use", note.x, note.y], ["wait", 2.0],
+				["go", sb.x, sb.y], ["use", body.x, body.y], ["wait", 1.0], ["shot", "remains_box"],
 				["check", "container_open", "떠돌이 유해 → 용기 창이 열린다"], ["close"],
-				["go", evac.x, evac.y + 1], ["shoton", "대피소", "evac"], ["use", evac.x, evac.y], ["wait", 2.0],
+				["go", se.x, se.y], ["shoton", "대피소", "evac"], ["use", evac.x, evac.y], ["wait", 2.0],
 				["check", "seen_evac", "대피소 표지 글이 뜬다"]]
 		"north":                                                        # 1-7c R01 북쪽 탐험 묶음: 학원가(손재석 문항집 · 10번) → 흑석 병원(간호 7호 붕대) → 수산시장 → 국립묘지 대장 → 상도 빌라 LR-06
 			st.vars.set_v("V_Q10", 4)                                    # 볼트 10번에 '문을 열고 밖을 본다'를 고른 주인공
@@ -217,6 +221,16 @@ func _spot_find(lid: String, sub: String) -> Vector2i:
 					return Vector2i(int(sp["at"][0]) + int(e["x"]), int(sp["at"][1]) + int(e["y"]))
 	push_error("봇: 자리 안 '%s'를 못 찾았다 %s" % [sub, lid])
 	return Vector2i.ZERO
+
+
+## 발견물 옆에 설 칸: 아래 → 위 → 옆 순으로 걸을 수 있는 칸(다시 구우면 아래 칸이 막힐 수 있다)
+func _stand(c: Vector2i) -> Vector2i:
+	host.map.load_now(Vector2(c) * 32.0)
+	for n in [Vector2i(0, 1), Vector2i(0, -1), Vector2i(1, 0), Vector2i(-1, 0), Vector2i(1, 1), Vector2i(-1, 1)]:
+		var t: Vector2i = c + n
+		if not host.map.is_solid(t) and host.map.deck_at(t) not in [InteriorMap.DK_WALL, InteriorMap.DK_PILLAR]:
+			return t
+	return c + Vector2i(0, 1)
 
 
 func _poi_at(group: String, sub: String, near: Vector2i) -> Vector2i:
@@ -721,6 +735,7 @@ func _until(s: Array) -> bool:
 func _next() -> void:
 	i += 1
 	step_t = 0.0
+	_repath_t = -1.0
 	step_map = 0
 	path = PackedVector2Array()
 
@@ -741,8 +756,9 @@ func _walk(goal: Vector2) -> Vector2:
 	var p := host.player.loco.render
 	if p.distance_to(goal) < 4.0:
 		return Vector2.ZERO
-	if path.is_empty() or step_t < 0.05 or int(step_t * 2.0) % 6 == 0:
+	if (path.is_empty() and step_t - _repath_t > 0.5) or step_t < 0.05 or (int(step_t * 2.0) % 6 == 0 and step_t - _repath_t > 0.4):
 		path = NpcRoutine.with_start(host.map, p, goal, host.player.floor_id)
+		_repath_t = step_t                                                # 닿지 않는 목표에 매 틱 길찾기를 되풀이하지 않는다(0.5초에 한 번)
 	while path.size() > 0 and (NpcRoutine.arrived(p, path[0]) or (path.size() > 1 and p.distance_to(path[1]) <= path[0].distance_to(path[1]) + 2.0)):
 		path.remove_at(0)
 	if path.is_empty():
