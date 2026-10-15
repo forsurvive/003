@@ -1,0 +1,177 @@
+{
+ "id": "HOME_BC_KEY",
+ "title": "옥탑 이장실 옆방",
+ "loc": "L-R01-09",
+ "npc": "",
+ "cond": "HOME_BC == 0",
+ "labels": {
+  "START": 0,
+  "STAIR": 10,
+  "ROOF": 12,
+  "SOLD": 14,
+  "KEY": 15,
+  "THX": 21
+ },
+ "ops": [
+  {
+   "op": "cmd",
+   "name": "show",
+   "args": [
+    "C-010",
+    "home_door",
+    "W"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "balloon",
+   "args": [
+    "C-010",
+    "..."
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "왔냐. 잠깐 이리 와 봐라."
+  },
+  {
+   "op": "cmd",
+   "name": "move",
+   "args": [
+    "PC",
+    "home_pc"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "face",
+   "args": [
+    "PC",
+    "C-010"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "MQ101_RESULT == 5",
+   "to": "SOLD"
+  },
+  {
+   "op": "if",
+   "cond": "MQ101_RESULT == 2",
+   "to": "ROOF"
+  },
+  {
+   "op": "if",
+   "cond": "MQ101_RESULT == 1",
+   "to": "STAIR"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "그 밤에 네가 한 일, 마을이 다 봤다. 손님 대접은 이제 그만하잔다."
+  },
+  {
+   "op": "goto",
+   "to": "KEY"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "미소",
+   "text": "계단을 지킨 사람한테 빌린 이불만 덮게 하는 건 경우가 아니지."
+  },
+  {
+   "op": "goto",
+   "to": "KEY"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "미소",
+   "text": "옥상길로 뱀들을 끌고 나간 사람이 아직 남의 이불을 덮고 자면 쓰나."
+  },
+  {
+   "op": "goto",
+   "to": "KEY"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "물값 얘기는 이제 그만하자. 반상회가 너를 다시 받기로 했다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "조만석이 바지 주머니에서 끈 달린 열쇠를 꺼낸다. 놋쇠 꼬리표에 '312'가 새겨져 있다."
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "빌린 침대였지. 이제 빌린 거 아니다."
+  },
+  {
+   "op": "do",
+   "fx": "give(\"M-136-BC\", 1); HOME_BC = 1"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "궤짝이랑 사물함은 비워 놨다. 네 물건은 아무도 안 건드린다. 312번째 계단 집은 다 그렇다."
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "진열장은 할머니가 쓰던 거다. 받침이 비었으니 뭐든 올려 둬라."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "고맙습니다. 잘 쓸게요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "THX",
+     "id": "HOME_BC_KEY:1:0"
+    },
+    {
+     "text": "(말없이 열쇠를 쥔다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "THX",
+     "id": "HOME_BC_KEY:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "미소",
+   "text": "백구가 문 앞에서 자도 쫓지 마라. 저 녀석도 거기가 제 자리인 줄 안다."
+  },
+  {
+   "op": "cmd",
+   "name": "home",
+   "args": [
+    "in"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/HOME_BC.txt"
+}

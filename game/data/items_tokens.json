@@ -1,0 +1,224 @@
+{
+ "M-120": {
+  "cat": "misc",
+  "desc": "임시 등록증 '충성 4등급' — BJ 우호",
+  "id": "M-120",
+  "name": "임시 등록증 '충성 4등급'",
+  "no_sell": true,
+  "token": true,
+  "value": 0,
+  "weight": 0.0
+ },
+ "M-121": {
+  "cat": "misc",
+  "desc": "모범 시민 등록증 '충성 2등급'(청색 띠) — BJ 신뢰",
+  "id": "M-121",
+  "name": "모범 시민 등록증 '충성 2등급'",
+  "no_sell": true,
+  "token": true,
+  "value": 0,
+  "weight": 0.0
+ },
+ "M-122": {
+  "cat": "misc",
+  "desc": "국가 핵심 인력 등록증 '충성 1등급'(금색 띠) — BJ 동맹",
+  "id": "M-122",
+  "name": "국가 핵심 인력 등록증 '충성 1등급'",
+  "no_sell": true,
+  "token": true,
+  "value": 0,
+  "weight": 0.0
+ },
+ "M-123": {
+  "cat": "misc",
+  "desc": "연합단 방문자 패치 — YH 우호",
+  "id": "M-123",
+  "name": "연합단 방문자 패치",
+  "no_sell": true,
+  "token": true,
+  "value": 0,
+  "weight": 0.0
+ },
+ "M-124": {
+  "cat": "misc",
+  "desc": "수습기사 계급장 — YH 신뢰",
+  "id": "M-124",
+  "name": "수습기사 계급장",
+  "no_sell": true,
+  "token": true,
+  "value": 0,
+  "weight": 0.0
+ },
+ "M-125": {
+  "cat": "misc",
+  "desc": "기사 계급장 — YH 신뢰(+65)",
+  "id": "M-125",
+  "name": "기사 계급장",
+  "no_sell": true,
+  "token": true,
+  "value": 0,
+  "weight": 0.0
+ },
+ "M-126": {
+  "cat": "misc",
+  "desc": "명예 기사장 계급장 — YH 동맹",
+  "id": "M-126",
+  "name": "명예 기사장 계급장",
+  "no_sell": true,
+  "token": true,
+  "value": 0,
+  "weight": 0.0
+ },
+ "M-127": {
+  "cat": "misc",
+  "desc": "회수 요원 완장 — WP 우호",
+  "id": "M-127",
+  "name": "회수 요원 완장",
+  "no_sell": true,
+  "token": true,
+  "value": 0,
+  "weight": 0.0
+ },
+ "M-128": {
+  "cat": "misc",
+  "desc": "회수 목록 서고 열쇠 — WP 동맹",
+  "id": "M-128",
+  "name": "회수 목록 서고 열쇠",
+  "no_sell": true,
+  "token": true,
+  "value": 0,
+  "weight": 0.0
+ },
+ "M-129": {
+  "cat": "misc",
+  "desc": "일용직 번호표 목걸이 — SB 우호",
+  "id": "M-129",
+  "name": "일용직 번호표 목걸이",
+  "no_sell": true,
+  "token": true,
+  "value": 0,
+  "weight": 0.0
+ },
+ "M-130": {
+  "cat": "misc",
+  "desc": "실장 클립보드 장부 — SB 동맹",
+  "id": "M-130",
+  "name": "실장 클립보드 장부",
+  "no_sell": true,
+  "token": true,
+  "value": 0,
+  "weight": 0.0
+ },
+ "M-131": {
+  "cat": "misc",
+  "desc": "흰 완장 '연락관' — JG 우호",
+  "id": "M-131",
+  "name": "흰 완장 '연락관'",
+  "no_sell": true,
+  "token": true,
+  "value": 0,
+  "weight": 0.0
+ },
+ "M-132": {
+  "cat": "misc",
+  "desc": "명예 전우 인식표 — JG 신뢰",
+  "id": "M-132",
+  "name": "명예 전우 인식표",
+  "no_sell": true,
+  "token": true,
+  "value": 0,
+  "weight": 0.0
+ },
+ "M-133": {
+  "cat": "misc",
+  "desc": "상인회 준회원 명찰 — JH 우호",
+  "id": "M-133",
+  "name": "상인회 준회원 명찰",
+  "no_sell": true,
+  "token": true,
+  "value": 0,
+  "weight": 0.0
+ },
+ "M-134": {
+  "cat": "misc",
+  "desc": "정회원 셔터 열쇠 — JH 신뢰",
+  "id": "M-134",
+  "name": "정회원 셔터 열쇠",
+  "no_sell": true,
+  "token": true,
+  "value": 0,
+  "weight": 0.0
+ },
+ "M-135": {
+  "cat": "misc",
+  "desc": "대기자 천공 카드 — GS 우호(시작 시 보유)",
+  "id": "M-135",
+  "name": "대기자 천공 카드",
+  "no_sell": true,
+  "token": true,
+  "value": 0,
+  "weight": 0.0
+ },
+ "M-136": {
+  "cat": "misc",
+  "desc": "정착지 명예 주민 증표(봉천 계단 열쇠, 탱크마을 출입 배지, 노들섬 선적 허가증, 선유도 물표, 뚝섬 자릿세 면제패, 세이프빌 방문 출입증 등 정착지별 차분. 아차산 배수지 마을 M-177·창동 M-178은 기능이 있어 별도 ID) — JC 우호(정착지 개별)",
+  "id": "M-136",
+  "name": "정착지 명예 주민 증표",
+  "no_sell": true,
+  "token": true,
+  "value": 0,
+  "weight": 0.0
+ },
+ "M-136-BC": {
+  "base": "M-136",
+  "cat": "misc",
+  "desc": "정착지 명예 주민 증표(봉천). 312번째 계단 옥탑방 문 열쇠 — 조만석의 '빌린 침대'가 이제 내 방이다(SD-15 §7.2).",
+  "id": "M-136-BC",
+  "name": "봉천 계단 열쇠",
+  "no_sell": true,
+  "settle": "BC",
+  "token": true,
+  "value": 0,
+  "weight": 0.0
+ },
+ "M-137": {
+  "cat": "misc",
+  "desc": "자경 조원 완장 — JC 신뢰(정착지 개별)",
+  "id": "M-137",
+  "name": "자경 조원 완장",
+  "no_sell": true,
+  "token": true,
+  "value": 0,
+  "weight": 0.0
+ },
+ "M-138": {
+  "cat": "misc",
+  "desc": "연합 대표 위임장 — JC 신뢰(연합 +50)",
+  "id": "M-138",
+  "name": "연합 대표 위임장",
+  "no_sell": true,
+  "token": true,
+  "value": 0,
+  "weight": 0.0
+ },
+ "M-139": {
+  "cat": "misc",
+  "desc": "서울 회의 의장 대행 지팡이 — JC 동맹",
+  "id": "M-139",
+  "name": "서울 회의 의장 대행 지팡이",
+  "no_sell": true,
+  "token": true,
+  "value": 0,
+  "weight": 0.0
+ },
+ "M-140": {
+  "cat": "misc",
+  "desc": "'가족' 표지판 목걸이 — KD 동맹",
+  "id": "M-140",
+  "name": "'가족' 표지판 목걸이",
+  "no_sell": true,
+  "token": true,
+  "value": 0,
+  "weight": 0.0
+ }
+}

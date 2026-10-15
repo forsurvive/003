@@ -1,0 +1,602 @@
+{
+ "I-067": {
+  "_src": "13_items.md:1232",
+  "blueprint": "",
+  "caps": 0,
+  "cook": false,
+  "count": 1,
+  "kind": "item",
+  "needs": [
+   {
+    "any": [
+     "M-010"
+    ],
+    "n": 2
+   },
+   {
+    "any": [
+     "M-025"
+    ],
+    "n": 1
+   },
+   {
+    "any": [
+     "M-024"
+    ],
+    "n": 1
+   }
+  ],
+  "out": "I-067",
+  "perk": "",
+  "value_in": 25,
+  "value_out": 60
+ },
+ "I-077": {
+  "_src": "13_items.md:1255",
+  "blueprint": "",
+  "caps": 0,
+  "cook": true,
+  "count": 1,
+  "kind": "food",
+  "needs": [
+   {
+    "any": [
+     "I-023"
+    ],
+    "n": 1
+   },
+   {
+    "any": [
+     "I-054",
+     "I-055",
+     "I-056",
+     "I-057",
+     "I-058",
+     "I-059"
+    ],
+    "n": 1
+   }
+  ],
+  "out": "I-077",
+  "perk": "",
+  "rad_add": 0,
+  "rad_rule": "sum"
+ },
+ "I-078": {
+  "_src": "13_items.md:1256",
+  "blueprint": "",
+  "caps": 0,
+  "cook": true,
+  "count": 1,
+  "kind": "food",
+  "needs": [
+   {
+    "any": [
+     "I-033"
+    ],
+    "n": 1
+   },
+   {
+    "any": [
+     "I-054",
+     "I-055",
+     "I-056",
+     "I-057",
+     "I-058",
+     "I-059"
+    ],
+    "n": 1
+   }
+  ],
+  "out": "I-078",
+  "perk": "",
+  "rad_add": 0,
+  "rad_rule": "sum"
+ },
+ "I-079": {
+  "_src": "13_items.md:1257",
+  "blueprint": "",
+  "caps": 0,
+  "cook": true,
+  "count": 1,
+  "kind": "food",
+  "needs": [
+   {
+    "any": [
+     "I-034"
+    ],
+    "n": 1
+   },
+   {
+    "any": [
+     "I-054",
+     "I-055",
+     "I-056",
+     "I-057",
+     "I-058",
+     "I-059"
+    ],
+    "n": 1
+   }
+  ],
+  "out": "I-079",
+  "perk": "",
+  "rad_add": 0,
+  "rad_rule": "sum"
+ },
+ "I-080": {
+  "_src": "13_items.md:1258",
+  "blueprint": "",
+  "caps": 0,
+  "cook": true,
+  "count": 1,
+  "kind": "food",
+  "needs": [
+   {
+    "any": [
+     "I-027"
+    ],
+    "n": 1
+   },
+   {
+    "any": [
+     "I-023"
+    ],
+    "n": 1
+   },
+   {
+    "any": [
+     "I-026",
+     "I-035"
+    ],
+    "n": 1
+   },
+   {
+    "any": [
+     "I-054",
+     "I-055",
+     "I-056",
+     "I-057",
+     "I-058",
+     "I-059"
+    ],
+    "n": 1
+   }
+  ],
+  "out": "I-080",
+  "perk": "",
+  "rad_add": -2,
+  "rad_rule": "sum"
+ },
+ "I-081": {
+  "_src": "13_items.md:1259",
+  "blueprint": "",
+  "caps": 0,
+  "cook": true,
+  "count": 1,
+  "kind": "food",
+  "needs": [
+   {
+    "any": [
+     "I-038"
+    ],
+    "n": 1
+   }
+  ],
+  "out": "I-081",
+  "perk": "",
+  "rad_add": 3,
+  "rad_rule": "flat"
+ },
+ "I-082": {
+  "_src": "13_items.md:1260",
+  "blueprint": "",
+  "caps": 0,
+  "cook": true,
+  "count": 1,
+  "kind": "food",
+  "needs": [
+   {
+    "any": [
+     "I-045"
+    ],
+    "n": 2
+   },
+   {
+    "any": [
+     "M-049"
+    ],
+    "n": 1
+   }
+  ],
+  "out": "I-082",
+  "perk": "PK-009",
+  "rad_add": 0,
+  "rad_rule": "flat"
+ },
+ "I-083": {
+  "_src": "13_items.md:1261",
+  "blueprint": "",
+  "caps": 0,
+  "cook": true,
+  "count": 1,
+  "kind": "food",
+  "needs": [
+   {
+    "any": [
+     "I-046"
+    ],
+    "n": 2
+   },
+   {
+    "any": [
+     "M-049"
+    ],
+    "n": 1
+   }
+  ],
+  "out": "I-083",
+  "perk": "PK-009",
+  "rad_add": 0,
+  "rad_rule": "flat"
+ },
+ "I-084": {
+  "_src": "13_items.md:1262",
+  "blueprint": "",
+  "caps": 0,
+  "cook": true,
+  "count": 1,
+  "kind": "food",
+  "needs": [
+   {
+    "any": [
+     "I-044"
+    ],
+    "n": 2
+   }
+  ],
+  "out": "I-084",
+  "perk": "PK-009",
+  "rad_add": -8,
+  "rad_rule": "flat"
+ },
+ "M-074": {
+  "_src": "13_items.md:1235",
+  "blueprint": "",
+  "caps": 0,
+  "cook": false,
+  "count": 1,
+  "kind": "item",
+  "needs": [
+   {
+    "any": [
+     "M-010"
+    ],
+    "n": 2
+   },
+   {
+    "any": [
+     "M-029"
+    ],
+    "n": 1
+   },
+   {
+    "any": [
+     "M-087"
+    ],
+    "n": 1
+   }
+  ],
+  "out": "M-074",
+  "perk": "PK-111",
+  "value_in": 17,
+  "value_out": 150
+ },
+ "W-151": {
+  "_src": "13_items.md:1225",
+  "blueprint": "M-100",
+  "caps": 10,
+  "cook": false,
+  "count": 1,
+  "kind": "explosive",
+  "needs": [
+   {
+    "any": [
+     "M-045"
+    ],
+    "n": 1
+   },
+   {
+    "any": [
+     "M-044"
+    ],
+    "n": 1
+   },
+   {
+    "any": [
+     "M-017"
+    ],
+    "n": 1
+   }
+  ],
+  "out": "W-151",
+  "perk": "",
+  "value_in": 48,
+  "value_out": 75
+ },
+ "W-152": {
+  "_src": "13_items.md:1226",
+  "blueprint": "M-101",
+  "caps": 0,
+  "cook": false,
+  "count": 1,
+  "kind": "explosive",
+  "needs": [
+   {
+    "any": [
+     "I-050",
+     "I-052"
+    ],
+    "n": 1
+   },
+   {
+    "any": [
+     "M-021"
+    ],
+    "n": 1
+   },
+   {
+    "any": [
+     "M-046"
+    ],
+    "n": 1
+   },
+   {
+    "any": [
+     "M-022"
+    ],
+    "n": 1
+   }
+  ],
+  "out": "W-152",
+  "perk": "",
+  "value_in": 47,
+  "value_out": 50
+ },
+ "W-153": {
+  "_src": "13_items.md:1227",
+  "blueprint": "M-102",
+  "caps": 0,
+  "cook": false,
+  "count": 1,
+  "kind": "weapon",
+  "needs": [
+   {
+    "any": [
+     "M-032"
+    ],
+    "n": 1
+   },
+   {
+    "any": [
+     "M-018"
+    ],
+    "n": 1
+   },
+   {
+    "any": [
+     "M-030"
+    ],
+    "n": 1
+   },
+   {
+    "any": [
+     "M-033"
+    ],
+    "n": 1
+   }
+  ],
+  "out": "W-153",
+  "perk": "",
+  "value_in": 118,
+  "value_out": 220
+ },
+ "W-154": {
+  "_src": "13_items.md:1228",
+  "blueprint": "M-103",
+  "caps": 0,
+  "cook": false,
+  "count": 1,
+  "kind": "weapon",
+  "needs": [
+   {
+    "any": [
+     "M-016"
+    ],
+    "n": 1
+   },
+   {
+    "any": [
+     "M-034"
+    ],
+    "n": 1
+   },
+   {
+    "any": [
+     "M-035"
+    ],
+    "n": 1
+   },
+   {
+    "any": [
+     "M-036"
+    ],
+    "n": 1
+   }
+  ],
+  "out": "W-154",
+  "perk": "",
+  "value_in": 55,
+  "value_out": 200
+ },
+ "W-155": {
+  "_src": "13_items.md:1229",
+  "blueprint": "M-104",
+  "caps": 0,
+  "cook": false,
+  "count": 1,
+  "kind": "weapon",
+  "needs": [
+   {
+    "any": [
+     "M-037"
+    ],
+    "n": 1
+   },
+   {
+    "any": [
+     "M-023"
+    ],
+    "n": 1
+   },
+   {
+    "any": [
+     "M-038"
+    ],
+    "n": 1
+   },
+   {
+    "any": [
+     "M-039"
+    ],
+    "n": 1
+   }
+  ],
+  "out": "W-155",
+  "perk": "",
+  "value_in": 34,
+  "value_out": 200
+ },
+ "W-156": {
+  "_src": "13_items.md:1230",
+  "blueprint": "M-105",
+  "caps": 0,
+  "cook": false,
+  "count": 1,
+  "kind": "weapon",
+  "needs": [
+   {
+    "any": [
+     "M-040"
+    ],
+    "n": 1
+   },
+   {
+    "any": [
+     "M-026"
+    ],
+    "n": 1
+   },
+   {
+    "any": [
+     "M-029"
+    ],
+    "n": 1
+   },
+   {
+    "any": [
+     "M-041"
+    ],
+    "n": 1
+   }
+  ],
+  "out": "W-156",
+  "perk": "",
+  "value_in": 41,
+  "value_out": 500
+ },
+ "W-157": {
+  "_src": "13_items.md:1231",
+  "blueprint": "M-106",
+  "caps": 0,
+  "cook": false,
+  "count": 1,
+  "kind": "weapon",
+  "needs": [
+   {
+    "any": [
+     "M-028"
+    ],
+    "n": 1
+   },
+   {
+    "any": [
+     "M-043"
+    ],
+    "n": 1
+   },
+   {
+    "any": [
+     "M-042"
+    ],
+    "n": 1
+   },
+   {
+    "any": [
+     "M-024"
+    ],
+    "n": 1
+   }
+  ],
+  "out": "W-157",
+  "perk": "",
+  "value_in": 65,
+  "value_out": 150
+ },
+ "건설용 대못": {
+  "_src": "13_items.md:1233",
+  "blueprint": "",
+  "caps": 0,
+  "cook": false,
+  "count": 20,
+  "kind": "ammo",
+  "needs": [
+   {
+    "any": [
+     "M-010"
+    ],
+    "n": 1
+   }
+  ],
+  "out": "건설용 대못",
+  "perk": "",
+  "value_in": 5,
+  "value_out": 20
+ },
+ "마취 다트": {
+  "_src": "13_items.md:1234",
+  "blueprint": "",
+  "caps": 0,
+  "cook": false,
+  "count": 10,
+  "kind": "ammo",
+  "needs": [
+   {
+    "any": [
+     "M-048"
+    ],
+    "n": 1
+   },
+   {
+    "any": [
+     "M-029"
+    ],
+    "n": 1
+   }
+  ],
+  "out": "마취 다트",
+  "perk": "",
+  "value_in": 18,
+  "value_out": 10
+ }
+}

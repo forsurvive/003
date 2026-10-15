@@ -22,6 +22,9 @@ mark bed 21 6 S
 mark bed_side 20 8 N
 mark chief_night 23 8 W
 mark chief 6 4 S
+mark home_door 18 10 W
+mark home_pc 16 10 E
+mark home_in 19 10 E
 npc C-010 6 4 S
 prop w_map 3 1
 prop w_window 7 1
@@ -55,3 +58,14 @@ text 22 4 "빌린 침대. 이불에서 햇볕 냄새가 난다." h=2 scene=B-01_
 prop dresser 19 3
 prop cushion_y 20 6
 prop plant_pot 24 11
+# 312번째 계단 옥탑방 거처(1-8b, SD-15 §7.2 · §7.5): 조만석이 열쇠(M-136-BC)를 주면 빌린 침대 방이 내 방이 된다.
+# 보관함 2(반닫이 궤짝 · 철제 사물함, 비워지지 않음 · 무게 무제한) + 입주 기념 진열장. 압류(HOME_BC 2)면 보관함이 닫힌다(물건은 남는다).
+prop keepsake_case 24 3 cond="HOME_BC >= 1"
+text 24 3 "입주 기념 진열장. 흔들인형 받침 스무 칸이 비어 있다. 놋쇠판에 '입주 기념 — 312번째 계단'." cond="HOME_BC >= 1"
+prop bandaji 20 12 cond="HOME_BC >= 1"
+box 20 12 home w=2 owner=PC name="반닫이 궤짝" cond="HOME_BC == 1"
+prop home_locker 24 6 cond="HOME_BC >= 1"
+box 24 6 home owner=PC name="철제 사물함" cond="HOME_BC == 1"
+text 20 12 "반닫이 궤짝에 붉은 딱지가 붙어 있다. '압류 — 반상회'. 물건은 그대로 두었다고 적혀 있다." w=2 cond="HOME_BC == 2"
+text 24 6 "사물함 손잡이에 철사가 감겨 있다. '압류 — 반상회'." cond="HOME_BC == 2"
+npc C-015 19 11 E sheet=cr_baekgu_loco pose=sleep cond="HOME_BC == 1 and BAEKGU_NAP == 1 and MQ101_DOG != 1" bark="(백구가 문 앞에 배를 깔고 잔다. 꼬리만 한 번 친다.)"

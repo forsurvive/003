@@ -53,7 +53,8 @@ func setup(sheet_name: String, pos: Vector2, w) -> void:
 	_show()
 
 
-## 자세(SD-16 §13.6 인게임 컷신): stand 서기 · lie 눕기(그림을 90도 눕혀 머리를 왼쪽에, 침대 위라 앞에 그린다) · sit 앉기(4px 내림)
+## 자세(SD-16 §13.6 인게임 컷신): stand 서기 · lie 눕기(그림을 90도 눕혀 머리를 왼쪽에, 침대 위라 앞에 그린다) · sit 앉기(4px 내림) ·
+## sleep 잠(시트에 sleep_E가 있는 짐승만 — 엎드려 숨쉬는 2컷, 1-8b 백구)
 var pose := "stand"
 
 
@@ -64,6 +65,7 @@ func set_pose(p: String) -> void:
 	n.rotation_degrees = -90.0 if p == "lie" else 0.0
 	n.position = Vector2(-4, -10) if p == "lie" else (Vector2(0, 4) if p == "sit" else Vector2.ZERO)
 	_floor_z()
+	_show()
 
 
 ## 그리는 층: 상판(z 2) 위에 선 인물은 z 3 — 상판 아래(층 0) 인물은 상판 그림에 가려진다. 램프 위도 상판 쪽이다
@@ -188,6 +190,15 @@ func _show() -> void:
 		return
 	if meta.get("rows", []) == ["E"]:                                 # side-only sheets (creatures): E or mirrored W
 		dir = 4 if Locomotion.VEC[dir].x < 0 else 0
+	if pose == "sleep" and loco.motion == "idle" and sprite.sprite_frames.has_animation("sleep_E"):   # 잠(백구 낮잠, 1-8b): 숨쉬기 2컷을 느리게 돈다
+		if sprite.animation != "sleep_E":
+			sprite.animation = "sleep_E"
+		sprite.flip_h = dir == 4
+		sprite.speed_scale = 0.12
+		if not sprite.is_playing():
+			sprite.play("sleep_E")
+		return
+	sprite.speed_scale = 1.0
 	var a: Array = Locomotion.anim_for(motion, dir)
 	var anim: String = a[0]
 	if not sprite.sprite_frames.has_animation(anim):

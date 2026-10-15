@@ -1,0 +1,36 @@
+{
+ "id": "HOME_BC_BACK",
+ "title": "옥탑방 문",
+ "loc": "L-R01-09",
+ "npc": "",
+ "cond": "HOME_BC == 1 and HOME_BC_NOTE == 5",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "옥탑방 문고리의 철사가 풀려 있다. 딱지는 반쯤 뜯긴 채 바람에 흔들린다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "궤짝도 사물함도 그대로다."
+  },
+  {
+   "op": "do",
+   "fx": "HOME_BC_NOTE = 0"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/HOME_BC.txt"
+}

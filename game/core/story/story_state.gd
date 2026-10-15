@@ -95,6 +95,11 @@ func _init() -> void:
 	# 길 위 인카운터(1-E, SD-22): RE036_MET 떠돌이 고물상을 만난 적 · RE036_NEWS 길 소식 차례 · RE042_N 유해 쪽지 차례(같은 글이 연달아 나오지 않게)
 	for k in ["RE036_MET", "RE036_NEWS", "RE042_N"]:
 		vars.declare(k, "int", 0)
+	# 거처(1-8b, SD-15 §7): HOME_BC 봉천 옥탑방(0 없음 · 1 내 방 · 2 압류) · HOME_BC_OK 조건이 찬 날(그다음 날부터 조만석이 열쇠를 준다) ·
+	# WELL_RESTED 숙면이 끝나는 절대 분(0 = 없음, SD-11 §11.5 경험치 +10% 12시간) · HOME_BC_NOTE 문 앞 알림(§7.7: 1 '출입 자제' 쪽지 · 2 읽음 · 3 압류 딱지 · 4 읽음 · 5 재개방) ·
+	# BAEKGU_NAP 오늘 백구가 옥탑방 문 앞에서 자는 날(하루 판정마다 굴림)
+	for k in ["HOME_BC", "HOME_BC_OK", "WELL_RESTED", "HOME_BC_NOTE", "BAEKGU_NAP"]:
+		vars.declare(k, "int", 0)
 	for kv in [["CAPTURE_DAY", -1], ["CAPTURE_AT", 0], ["SB_COLLAR", 0], ["SB_CUFF", 0], ["CAPTURE_BY", 0]]:
 		vars.declare(kv[0], "int", kv[1])
 	for k in ["P_SURNAME", "P_GIVEN", "P_FULL", "P_REGNO", "PC_APT"]:   # PC_APT: 적성 평가 답 10개(결과지 다시 보기)
@@ -188,8 +193,11 @@ func call_fn(name: String, args: Array) -> Variant:
 			events.append({"kind": "caps", "delta": int(args[0]), "value": nv})
 			return nv
 		"xp":
-			var nv := vars.add("PC_XP", int(args[0]), 0)
-			events.append({"kind": "xp", "delta": int(args[0]), "value": nv})
+			var dx := int(args[0])
+			if dx > 0 and int(vars.get_v("WELL_RESTED")) > 0:
+				dx = roundi(dx * 1.1)                                     # 숙면(SD-11 §11.5): 경험치 +10% — 끝나는 시각은 호스트가 지운다
+			var nv := vars.add("PC_XP", dx, 0)
+			events.append({"kind": "xp", "delta": dx, "value": nv})
 			return nv
 		"wanted":                                                       # 수배도(1-3): 하한·하루 상한·등급 알림은 Wanted가
 			return Wanted.add(self, int(args[0]), str(args[1]) if args.size() > 1 else "")

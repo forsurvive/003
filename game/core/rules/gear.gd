@@ -58,13 +58,13 @@ static var _db := {}                                     ## 무기·방어구 �
 
 static func db() -> Dictionary:
 	if _db.is_empty():
-		for f in ["weapons", "items_apparel", "items_apparel_head"]:
+		for f in ["weapons", "weapons_craft", "items_apparel", "items_apparel_head"]:
 			var p := "res://data/%s.json" % f
 			if FileAccess.file_exists(p):
 				var d: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(p))
 				for id in d:
 					var e: Dictionary = d[id]
-					if f == "weapons":
+					if f.begins_with("weapons"):
 						e = e.duplicate()
 						e["cat"] = "weapon"
 					_db[id] = e

@@ -288,7 +288,7 @@ def compile_map(m, prop_meta, known_vars, known_fns, scenes=()):
 
 def _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kind, solid, walk, ext=False, extra=()):
     """맵 명령(prop·door·exit·mark·npc·enemy·box·text·sign·trigger·struct) → out. 실내·바깥 공용."""
-    loot_kinds = set(json.load(open(os.path.join(ROOT, "game", "data", "loot.json"), encoding="utf-8"))["tables"].keys()) | {"seized"}   # seized: 계엄군 압수품 보관함(1-7, 진행기가 채운다)
+    loot_kinds = set(json.load(open(os.path.join(ROOT, "game", "data", "loot.json"), encoding="utf-8"))["tables"].keys()) | {"seized", "home"}   # seized: 계엄군 압수품 보관함(1-7, 진행기가 채운다) · home: 거처 보관함(1-8b, 빈 채로 시작 · 다시 차지 않음)
     enemy_ids = set(json.load(open(os.path.join(ROOT, "game", "data", "enemies.json"), encoding="utf-8")).keys())
     npc_ids = set(json.load(open(os.path.join(ROOT, "game", "data", "npcs.json"), encoding="utf-8"))["npcs"].keys())
     for ln, words in m.cmds:
@@ -368,6 +368,10 @@ def _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kin
                     check_cond(e["cond"], known_vars, known_fns)
                 if "sheet" in opt:                                  # 사람 아닌 인물(백구 등): 시트를 바로 쓴다(0-10)
                     e["sheet"] = opt["sheet"]
+                if "pose" in opt:                                   # 처음 자세(1-8b): sleep(시트에 잠 컷이 있는 짐승) · sit · lie
+                    if opt["pose"] not in ("sleep", "sit", "lie"):
+                        raise Err(f"모르는 자세 '{opt['pose']}'")
+                    e["pose"] = opt["pose"]
                 if "look" in opt:
                     if not LOOK_RE.match(opt["look"]):
                         raise Err(f"외형 코드 형식이 아니다: {opt['look']}")
@@ -528,12 +532,13 @@ def _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kin
                 m.err(n["line"], f"인물 {n['id']} 일과 지점 {r[0]}에 갈 수 없다")
     staged = {(t["x"] + i, t["y"] + j) for t in out["texts"] if t.get("scene") or t.get("seq")
               for j in range(t["h"]) for i in range(t["w"])}
+    cond_cells = {tuple(c) for p in out["props"] if p.get("cond") for c in p.get("cells", [])}
     for b in out["boxes"]:                                       # 용기가 장면 달린 조사 글을 가리면 장면을 못 연다
         cells = {(b["x"] + i, b["y"] + j) for j in range(b["h"]) for i in range(b["w"])}
         if cells & staged:
             m.err(1, f"용기 ({b['x']},{b['y']})가 장면이 달린 조사 글과 겹친다: {sorted(cells & staged)}")
         for (cx, cy) in cells:
-            if not solid[cy][cx]:
+            if not solid[cy][cx] and (cx, cy) not in cond_cells:          # 조건부 가구(거처 보관함 등) 위의 용기는 같은 조건으로 함께 선다
                 m.err(1, f"용기 ({b['x']},{b['y']}) 칸 ({cx},{cy})에 가구가 없다(빈 바닥)")
     if ext:
         floor_ids, gflag, cover, level, grid = extra

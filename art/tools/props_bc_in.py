@@ -269,6 +269,61 @@ def yo_bed():
     return im
 
 
+# ================================================================================================ 거처(1-8b, SD-15 §7.2 · §7.5)
+def keepsake_case():
+    """입주 기념 진열장(1×1, 봉천 기본): 나무틀 유리장 3칸 — 흔들인형 자리(SD-10 §7.1)는 아직 비었다. 아래 놋쇠 받침판 '입주 기념'."""
+    im = img(32, 62)
+    d = ImageDraw.Draw(im)
+    box3(d, 1, 6, 30, 60, 4, WOOD)                                         # 나무틀
+    d.rectangle([4, 12, 27, 50], fill=C("P11"))                           # 유리 안쪽(어둡고 푸른 빛)
+    for y in (24, 37):                                                    # 선반 둘
+        d.line([4, y, 27, y], fill=C("P19"))
+        d.line([4, y + 1, 27, y + 1], fill=C("P17"))
+    for y0 in (13, 25, 38):                                               # 칸마다 흔들인형 받침 자리(빈 동그라미 둘)
+        for x in (10, 21):
+            d.ellipse([x - 3, y0 + 8, x + 3, y0 + 10], outline=C("P13"))
+    d.line([6, 13, 6, 49], fill=C("P14"))                                 # 유리 반사(왼쪽 위 빛)
+    d.line([7, 13, 7, 22], fill=C("P15"))
+    d.line([16, 12, 16, 50], fill=C("P18"))                               # 두 짝 문 가운데 틀
+    d.rectangle([9, 52, 22, 57], fill=C("P48")); d.rectangle([9, 52, 22, 57], outline=C("P47"))   # 놋쇠 받침판
+    d.line([11, 54, 20, 54], fill=C("P50"))
+    d.rectangle([14, 30, 15, 33], fill=C("P49")); d.rectangle([17, 30, 18, 33], fill=C("P49"))   # 문고리
+    return im
+
+
+def bandaji():
+    """반닫이 궤짝(2×1, 거처 보관함): 앞판 위쪽이 아래로 열리는 옛 궤 — 무쇠 장석(나비·박쥐)과 자물통. 이장 할머니 혼수 자개장과 짝."""
+    im = img(62, 40)
+    d = ImageDraw.Draw(im)
+    box3(d, 1, 8, 60, 38, 6, WOOD_D)
+    d.rectangle([4, 17, 57, 26], outline=C("P16"))                        # 여는 앞판
+    for x in (6, 52):                                                     # 모서리 무쇠 장석
+        d.rectangle([x, 15, x + 3, 36], fill=C("P04"))
+        d.line([x, 15, x + 3, 15], fill=C("P06"))
+    for cx in (18, 43):                                                   # 나비 장석
+        d.polygon([(cx - 5, 19), (cx, 22), (cx - 5, 25)], fill=C("P05"))
+        d.polygon([(cx + 5, 19), (cx, 22), (cx + 5, 25)], fill=C("P05"))
+        d.point((cx, 22), fill=C("P07"))
+    d.rectangle([28, 19, 33, 27], fill=C("P48")); d.rectangle([28, 19, 33, 27], outline=C("P47"))   # 놋쇠 자물통
+    d.line([30, 23, 31, 23], fill=C("P01"))
+    grain(d, 4, 28, 57, 36, "P17", step=5, seed=11)
+    return im
+
+
+def home_locker():
+    """철제 사물함(1×1, 거처 보관함): 학교에서 떼 온 회색 사물함 — 문에 '312' 분필 글씨, 아래 칸에 장화."""
+    im = img(32, 60)
+    d = ImageDraw.Draw(im)
+    box3(d, 2, 4, 29, 58, 3, ["P04", "P05", "P06", "P07"])
+    d.rectangle([5, 10, 26, 55], outline=C("P04"))
+    for y in range(14, 24, 3):                                            # 환기 틈
+        d.line([9, y, 22, y], fill=C("P03"))
+    d.rectangle([22, 30, 24, 36], fill=C("P08"))                          # 손잡이
+    put_text(im, "312", 8, 38, "P09")                                    # 분필 번호
+    d.point((6, 40), fill=C("P24")); d.point((25, 50), fill=C("P25"))     # 녹
+    return im
+
+
 # ================================================================================================ 약국
 def med_shelf():
     """약 선반(2×1): 나무 선반 3단 + 갈색 약병·흰 상자·주황 라드어웨이 봉지·관악산 약수병(파란 뚜껑)."""
@@ -518,6 +573,9 @@ PROPS_IN = {
     "dresser": _r(dresser, 1, 1, down=-2),
     "plant_pot": _r(plant_pot, 1, 1, down=-2),
     "yo_bed": _r(yo_bed, 1, 2, down=-2),
+    "keepsake_case": _r(keepsake_case, 1, 1, down=-2),
+    "bandaji": _r(bandaji, 2, 1, down=-2),
+    "home_locker": _r(home_locker, 1, 1, down=-2),
     "med_shelf": _r(med_shelf, 2, 1, down=-2),
     "pharm_counter": _r(pharm_counter, 2, 1, down=-2),
     "cot": _r(cot, 1, 2, down=-2),

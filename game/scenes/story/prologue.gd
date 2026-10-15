@@ -87,6 +87,7 @@ func _ready() -> void:
 	host.map_entered.connect(func(_id: String) -> void:
 		if not host.zone_walk:
 			request_auto("door"))
+	host.slept.connect(func(_h: int) -> void: request_auto("sleep"))             # 침대에서 잔 뒤(SD-12 §13.2 '수면 뒤')
 	host.traveled.connect(func(_lid: String) -> void: request_auto("travel"))   # 빠른 이동 도착(SD-12 §5.6 '도착 시 자동 저장')
 	host.box.finished.connect(_on_dialogue_done)
 	host.combat.target_down.connect(_on_target_down)
@@ -175,6 +176,7 @@ func _ready() -> void:
 var act1: Mq101
 var paths: Act1Paths                               ## 1막 경로 진행기(MQ-102 허브 · MQ-103 지하시장, 1-4)
 var mq106: Mq106                                   ## MQ-106 첫 번째 추적자 · 1 → 2막 전환(1-7)
+var home: HomeBc                                   ## 봉천 옥탑방 거처(1-8b)
 var sol := 1                                       ## 1막 봇 해법(--sol=1~5, 0-10)
 
 # ---------------------------------------------------------------- 저장·일시 정지·터치(0-11, SD-12 §13·§17)
@@ -207,6 +209,10 @@ func _paths() -> void:
 		add_child(mq106)
 		mq106.setup(host, log_on)
 		mq106.act_up.connect(func(_n: int) -> void: request_auto("act"))
+	if home == null:                                               # 거처(1-8b, SD-15 §7)
+		home = HomeBc.new()
+		add_child(home)
+		home.setup(host, log_on)
 
 
 func _act1(from: String) -> void:

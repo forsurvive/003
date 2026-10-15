@@ -256,6 +256,44 @@ def quad_lying(kind):
     return outline(img)
 
 
+def quad_sleep(kind, breath=0):
+    """엎드려 자는 진돗개(1-8b 백구 낮잠): 배를 깔고 앞발을 모아 뻗고, 턱을 앞발에 얹고, 말린 꼬리로 엉덩이를 감싼다.
+    breath 1 = 들숨(등이 1px 오르고 귀 끝이 1px 들린다). 발 기준점은 서 있을 때와 같다(같은 칸에 놓인다)."""
+    q = QUAD[kind]
+    img = Image.new("RGBA", (q["w"], q["h"]), CLEAR)
+    fur = ramp(q["fur"])
+    fy = q["foot"][1]
+    d0 = ImageDraw.Draw(img)
+    d0.line([25, fy - 1, 33, fy - 1], fill=fur[0], width=2)                # 먼 앞발(뒤에 깔린)
+    d0.line([10, fy, 16, fy], fill=fur[0], width=2)                        # 접힌 뒷다리 아랫단
+    body = Image.new("RGBA", img.size, CLEAR)
+    _ellipse(body, 18, fy - 5 - breath * 0.5, 11, 5 + breath * 0.5, fur)   # 엎드린 몸통
+    _ellipse(body, 11, fy - 4, 5, 4, fur)                                  # 접힌 뒷다리 허벅지
+    bd = ImageDraw.Draw(body)
+    bd.line([24, fy, 35, fy], fill=fur[1], width=2)                        # 가까운 앞발(쭉 뻗음)
+    bd.point((36, fy), fill=fur[0])
+    bd.arc([24, fy - 11, 30, fy - 1], 110, 250, fill=fur[0])                # 목 주름(머리와 몸을 가르는 그늘)
+    _ellipse(body, 31, fy - 5, 6.5, 4.6, fur)                              # 앞발 위에 얹은 머리
+    bd.arc([25, fy - 10, 31, fy - 1], 120, 230, fill=fur[1])               # 뒤통수 가장자리
+    sx = 36                                                                # 주둥이: 앞발에 턱을 얹었다
+    bd.ellipse([sx - 1, fy - 6, sx + 4, fy - 2], fill=fur[3])
+    bd.point((sx + 4, fy - 5), fill=C("P01")); bd.point((sx + 3, fy - 5), fill=C("P01"))
+    bd.line([sx, fy - 2, sx + 3, fy - 2], fill=fur[1])
+    ex = 29                                                                # 뒤로 눕힌 세모 귀(잘 때는 힘을 뺀다)
+    bd.polygon([(ex - 3, fy - 8), (ex - 4 + breath, fy - 14 - breath), (ex + 1, fy - 9)], fill=fur[2])
+    bd.polygon([(ex - 2, fy - 9), (ex - 3 + breath, fy - 12 - breath), (ex, fy - 9)], fill=ramp(q["skin"])[1])
+    bd.line([31, fy - 6, 33, fy - 6], fill=C("P01"))                       # 감은 눈(한 줄)
+    img.alpha_composite(body)
+    img = outline(img)
+    d = ImageDraw.Draw(img)
+    cx0, cy0 = 8, fy - 6                                                   # 말린 꼬리: 엉덩이 옆으로 둥글게 감는다
+    d.ellipse([cx0 - 4, cy0 - 4, cx0 + 4, cy0 + 4], fill=C("P01"))
+    d.ellipse([cx0 - 3, cy0 - 3, cx0 + 3, cy0 + 3], fill=fur[2])
+    d.arc([cx0 - 2, cy0 - 2, cx0 + 2, cy0 + 2], 200, 20, fill=fur[3])
+    d.point((cx0, cy0), fill=fur[1])
+    return img
+
+
 def quad_sheet(kind):
     """네발짐승 시트(roach_sheet와 같은 형식): 옆(E)만, W는 뒤집기. idle 1 · walk 4 · run 4(같은 컷, 빠르게) · death 3."""
     walk = [quad(kind, f) for f in range(4)]
@@ -268,6 +306,9 @@ def quad_sheet(kind):
     meta = {"frame": [q["w"], q["h"]], "foot": list(q["foot"]), "rows": ["E"], "mirror": {"W": "E"}, "style": "isaac",
             "motions": {"idle": {"start": 0, "count": 1}, "walk": {"start": 1, "count": 4, "px_per_frame": q["px"], "drive": "distance"},
                         "death": {"start": 5, "count": 3}}}
+    if kind == "jindo":                                                    # 백구 낮잠(1-8b): 숨쉬기 2컷
+        meta["motions"]["sleep"] = {"start": len(frames), "count": 2}
+        frames += [quad_sleep(kind, 0), quad_sleep(kind, 1)]
     return frames, meta
 
 

@@ -11,6 +11,7 @@ signal map_entered(map_id: String)
 signal talked(npc_id: String, scene: String)
 signal day_tick(day: int)                          ## 게임 시간 06:00을 넘었다(SD-05 §6.4 하루 판정, 1-3)
 signal pc_died                                     ## 주인공이 쓰러졌고 생포도 아니다(1막 이후 — 진행이 마지막 저장을 연다)
+signal slept(hours: int)                           ## 침대에서 잤다(SD-12 §13.2 '수면 뒤' 자동 저장)
 
 const BANNER_SECS := 2.4
 
@@ -41,6 +42,7 @@ const TODDLER_WALK := {"walk": {"frames": 6, "px": 4.0, "px_v": 3.0, "diag": 3.0
 var combat: InteriorCombat                       ## 실내 전투(무기·표적·적) — 무기를 들지 않으면 아무것도 하지 않는다
 var pipboy: PipBoy                               ## 열려 있는 핍-보이(없으면 null)
 var container: ContainerScreen                   ## 열려 있는 용기 창(없으면 null, 0-9)
+var wait_ui: WaitScreen                          ## 열려 있는 대기·수면 창(1-8b)
 var terminal: TerminalScreen                     ## 열려 있는 단말 화면(1-4) — 단말·해킹 중에는 게임 시간이 멈춘다(SD-12 §8.1)
 var lockpick: LockScreen                         ## 열려 있는 자물쇠 따기 화면(1-5) — 게임 시간이 멈춘다(SD-12 §8.1)
 var lock_assist := false                         ## 옵션 '자물쇠 보조'(근접도 막대)
@@ -344,6 +346,8 @@ func _spawn_npc(i: int, n: Dictionary) -> void:
 	a.loco.facing = EventRunner.DIR_IDX.get(n["dir"], 2)
 	a._show()
 	map.add_actor(a)
+	if str(n.get("pose", "")) != "":
+		a.set_pose(str(n["pose"]))                                   # 맵 원고의 자세(pose=sleep 낮잠 등)
 	var r: NpcRoutine = NpcRoutine.new(a, map, n["route"]) if not n["route"].is_empty() else null
 	npcs.append({"id": n["id"], "actor": a, "routine": r, "bark": n.get("bark", ""), "idx": i})
 	ev.actors[n["id"]] = a                                       # 연출 명령(move·face·balloon·pose)이 맵 인물을 부를 수 있게
@@ -399,7 +403,7 @@ func _physics_process(dt: float) -> void:
 			continue
 		if n["routine"] != null and is_instance_valid(n["actor"]) and not n.get("dead", false):
 			n["routine"].tick(dt, player.loco.logical)
-	talking = talking or pipboy != null or container != null or terminal != null or lockpick != null
+	talking = talking or pipboy != null or container != null or terminal != null or lockpick != null or wait_ui != null
 	if talking:
 		if not ev.drives(player):                                         # 연출이 주인공을 걷게 하는 중이면(move PC …) 멈추지 않는다
 			player.move(Vector2.ZERO, dt)
@@ -423,6 +427,8 @@ func _physics_process(dt: float) -> void:
 			interact()
 		if use_keyboard and pipboy_ok and Input.is_action_just_pressed("pipboy"):
 			open_pipboy()
+		if use_keyboard and pipboy_ok and Input.is_action_just_pressed("wait"):
+			open_wait()
 		_check_exit()
 		_clock_step(dt)
 		enc_live.tick(dt)
@@ -570,6 +576,13 @@ func interact() -> bool:
 		return true
 	if _up():
 		return false
+	var bd := bed_front(cells)                                          # 침대(1-8b): 남의 것이면 못 자고, 아니면 수면 창
+	if not bd.is_empty() and not bool(bd.get("script", false)):
+		if bool(bd["other"]):
+			say_text(str(bd.get("why", "[소유] 남의 침대다. 함부로 누울 수 없다.")))
+		else:
+			open_wait(bd)
+		return true
 	for cc in cells:                                                    # 자물쇠로 잠긴 문(1-5, lock=n): 자물쇠 따기
 		var dr: Dictionary = map.locked_door_at(cc) if map.has_method("locked_door_at") else {}
 		if not dr.is_empty() and int(dr.get("lock", -1)) >= 0:
@@ -1138,6 +1151,9 @@ func interact_label() -> String:
 		return "열기"
 	if _up():
 		return ""
+	var bd := bed_front(cells)
+	if not bd.is_empty() and not bool(bd.get("script", false)):
+		return "자기"
 	if not _front_term(cells).is_empty():
 		return "사용"
 	for cc in cells:
@@ -1632,7 +1648,7 @@ func _handlers() -> void:
 # ---------------------------------------------------------------- 핍-보이·소지품
 func _load_items() -> void:
 	for f in ["items_aid", "items_food", "items_drink", "items_quest", "items_apparel", "items_misc_money", "items_misc_mat", "items_misc_func",
-			"items_chems", "items_misc_other", "items_apparel_head", "items_misc_crit", "items_junk", "items_ammo"]:          # 파이프라인이 SD-13 표에서 뽑은 아이템(1-4: 표 전체)
+			"items_chems", "items_misc_other", "items_apparel_head", "items_misc_crit", "items_junk", "items_ammo", "items_tokens", "items_craft"]:          # 파이프라인이 SD-13 표에서 뽑은 아이템(1-4: 표 전체)
 		var p := "res://data/%s.json" % f
 		if FileAccess.file_exists(p):
 			items_db.merge(JSON.parse_string(FileAccess.get_file_as_string(p)))
@@ -1773,6 +1789,7 @@ func _clock_step(dt: float) -> void:
 		var m := int(_clock_acc)
 		_clock_acc -= m
 		advance_minutes(m)
+		_rest_check()
 
 
 ## 게임 시간을 m분 보낸다. 06:00을 넘을 때마다 하루 판정(day_tick) — 사흘 구금·긴 잠처럼 여러 날을 한 번에 보내도
@@ -2115,3 +2132,98 @@ func _draw_banner() -> void:
 	banner.draw_line(r.end - Vector2(14, 11), r.end - Vector2(6, 11), Color("B08A1C"))
 	banner.draw_string(font, Vector2(r.position.x + 20, r.position.y + 4 + font.get_ascent(12)), banner_text, HORIZONTAL_ALIGNMENT_LEFT,
 		-1, 12, Color("E9E4D8"))
+
+
+# ---------------------------------------------------------------- 침대·대기·수면(1-8b, SD-12 §7.6 · SD-11 §11.5)
+const BEDS := {"yo_bed": "요", "cot": "야전 침대", "bedroll": "침낭", "bedroll2": "침낭", "hosp_bed": "병원 침대", "vip_bed": "침대",
+	"bunk": "2층 침대", "straw_mat": "거적", "straw_mat2": "거적"}
+const OTHERS_MAPS := ["B-", "J-", "H-", "K-", "V-", "X-"]          ## 정착지·손 실내의 침대는 주인이 있다(거처 침대만 예외)
+
+
+## 앞 칸의 침대: {"name", "owned"(숙면), "other"(남의 것), "script"(원고 장면이 맡는 침대)} — 없으면 빈 사전
+func bed_front(cells: Array = []) -> Dictionary:
+	if map == null:
+		return {}
+	for cc in (cells if not cells.is_empty() else _front_cells()):
+		for p in map.props:
+			if not BEDS.has(str(p["name"])):
+				continue
+			if cc.x < int(p["x"]) or cc.x >= int(p["x"]) + int(p["w"]) or cc.y < int(p["y"]) or cc.y >= int(p["y"]) + int(p["h"]):
+				continue
+			var home := map.id == "B-01" and str(p["name"]) == "yo_bed"         # 봉천 옥탑방: 조만석의 '빌린 침대'가 거처가 된다(SD-15 §7.2)
+			if home:
+				if st.quests.stage("MQ-101") < 40:
+					return {"script": true}                                  # MQ-101 첫날 밤은 원고 B-01_BED가 맡는다
+				if int(st.vars.get_v("HOME_BC")) == 2:                       # 압류(SD-15 §7.7): 적대인 동안 못 쓴다
+					return {"name": "요", "owned": false, "other": true, "why": "압류된 방이다. 반상회 딱지가 이불 위에 붙어 있다."}
+				var hb := int(st.vars.get_v("HOME_BC"))
+				if (hb == 1 and int(st.vars.get_v("HOME_BC_NOTE")) in [1, 2]) or (hb == 0 and int(st.vars.get_v("AFF_JC_BC")) <= -20):
+					return {"name": "요", "owned": false, "other": true,                # 경계 이하 영역의 침대(SD-11 §11.5) — 방은 드나들 수 있다(SD-15 §7.7)
+						"why": "마을 인심이 사납다. 이 방에서 마음 놓고 누울 수 없다."}
+				return {"name": "312번째 계단 옥탑방 요" if int(st.vars.get_v("HOME_BC")) == 1 else "빌린 침대",
+					"owned": int(st.vars.get_v("HOME_BC")) == 1, "other": false}
+			var other := false
+			for pre in OTHERS_MAPS:
+				if map.id.begins_with(pre):
+					other = true
+			return {"name": str(BEDS[p["name"]]), "owned": false, "other": other}
+	return {}
+
+
+## 기다리거나 잘 수 없는 까닭(없으면 ""): 근처 교전 중인 적 · 쫓기는 중 · 대화·연출 중(SD-12 §7.6 · SD-11 §11.5)
+func wait_block() -> String:
+	if box.active or ev.busy() or busy or story_hold:
+		return "지금은 쉴 수 없다."
+	for e in combat.enemies:
+		if is_instance_valid(e) and not e.cmb.dead and e.brain.state == AIBrain.S.COMBAT \
+				and e.loco.logical.distance_to(player.loco.logical) < 30.0 * 32.0:
+			return "근처에 적이 있다. 쉴 수 없다."
+	if enc_live.chasing():
+		return "쫓기고 있다. 쉴 수 없다."
+	return ""
+
+
+## 대기·수면 창을 연다(bed가 비면 그냥 기다리기 — T 키)
+func open_wait(bed: Dictionary = {}) -> void:
+	var why := wait_block()
+	if why != "":
+		_note(why)
+		hint(why, 3.0)
+		return
+	player.move(Vector2.ZERO, 0.0)
+	var w := WaitScreen.new().setup(st, date_text, str(bed.get("name", "")), bool(bed.get("owned", false)))
+	wait_ui = w
+	w.closed.connect(func(ok: bool) -> void:
+		wait_ui = null
+		if ok:
+			_do_wait(w.hours, bed))
+	add_child(w)
+
+
+func _do_wait(h: int, bed: Dictionary) -> void:
+	busy = true
+	ev.run("fade_out", ["black", "3"], func() -> void:
+		advance_minutes(h * 60)
+		var msg := "%d시간을 기다렸다." % h
+		if not bed.is_empty():
+			if combat.pc != null:
+				combat.pc.hp = combat.pc.max_hp                              # 수면 = HP·부위 전부(시간 길이와 무관, SD-11 §11.5)
+			msg = "%d시간 잤다. 몸이 가볍다." % h
+			if bool(bed.get("owned", false)):
+				st.vars.set_v("WELL_RESTED", Clock.abs_min(date_text) + 12 * 60)
+				msg += " 숙면 — 경험치 +10% (12시간)"
+		_rest_check()
+		_note(msg)
+		ev.run("fade_in", ["black", "3"], func() -> void:
+			busy = false
+			if not bed.is_empty():
+				slept.emit(h)))
+
+
+## 숙면이 끝났으면 지운다(시계가 갈 때마다)
+func _rest_check() -> void:
+	var until := int(st.vars.get_v("WELL_RESTED"))
+	if until > 0 and Clock.abs_min(date_text) >= until:
+		st.vars.set_v("WELL_RESTED", 0)
+		_note("숙면 효과가 끝났다.")
+

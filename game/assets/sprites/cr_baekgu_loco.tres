@@ -1,4 +1,4 @@
-[gd_resource type="SpriteFrames" load_steps=10 format=3]
+[gd_resource type="SpriteFrames" load_steps=12 format=3]
 
 [ext_resource type="Texture2D" path="res://assets/sprites/cr_baekgu_loco.png" id="1"]
 
@@ -34,5 +34,13 @@ region = Rect2(264, 0, 44, 32)
 atlas = ExtResource("1")
 region = Rect2(308, 0, 44, 32)
 
+[sub_resource type="AtlasTexture" id="a8"]
+atlas = ExtResource("1")
+region = Rect2(352, 0, 44, 32)
+
+[sub_resource type="AtlasTexture" id="a9"]
+atlas = ExtResource("1")
+region = Rect2(396, 0, 44, 32)
+
 [resource]
-animations = [{"frames": [{"duration": 1.0, "texture": SubResource("a0")}], "loop": true, "name": &"idle_E", "speed": 8.0}, {"frames": [{"duration": 1.0, "texture": SubResource("a1")}, {"duration": 1.0, "texture": SubResource("a2")}, {"duration": 1.0, "texture": SubResource("a3")}, {"duration": 1.0, "texture": SubResource("a4")}], "loop": true, "name": &"walk_E", "speed": 8.0}, {"frames": [{"duration": 1.0, "texture": SubResource("a5")}, {"duration": 1.0, "texture": SubResource("a6")}, {"duration": 1.0, "texture": SubResource("a7")}], "loop": false, "name": &"death_E", "speed": 8.0}]
+animations = [{"frames": [{"duration": 1.0, "texture": SubResource("a0")}], "loop": true, "name": &"idle_E", "speed": 8.0}, {"frames": [{"duration": 1.0, "texture": SubResource("a1")}, {"duration": 1.0, "texture": SubResource("a2")}, {"duration": 1.0, "texture": SubResource("a3")}, {"duration": 1.0, "texture": SubResource("a4")}], "loop": true, "name": &"walk_E", "speed": 8.0}, {"frames": [{"duration": 1.0, "texture": SubResource("a5")}, {"duration": 1.0, "texture": SubResource("a6")}, {"duration": 1.0, "texture": SubResource("a7")}], "loop": false, "name": &"death_E", "speed": 8.0}, {"frames": [{"duration": 1.0, "texture": SubResource("a8")}, {"duration": 1.0, "texture": SubResource("a9")}], "loop": true, "name": &"sleep_E", "speed": 8.0}]

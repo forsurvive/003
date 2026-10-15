@@ -68,6 +68,8 @@ func _init() -> void:
 	_rng.seed = 2268
 	font = load("res://assets/fonts/Galmuri9.ttf")
 	weapons = JSON.parse_string(FileAccess.get_file_as_string("res://data/weapons.json"))
+	if FileAccess.file_exists("res://data/weapons_craft.json"):                # 제작 무기 W-153~157(1-8c, SD-13 §3.10)
+		weapons.merge(JSON.parse_string(FileAccess.get_file_as_string("res://data/weapons_craft.json")))
 	Gear.expand_weapons(weapons)                                       # 상태 변형 "W-002@2"(1-8a): 같은 수치 + condition
 	enemy_rows = JSON.parse_string(FileAccess.get_file_as_string("res://data/enemies.json"))
 	shots = Projectiles.new()

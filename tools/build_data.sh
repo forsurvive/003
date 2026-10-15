@@ -17,6 +17,8 @@ python3 tools/pipeline/hack_words.py                    # 해킹 단어 풀(1-4)
 python3 tools/pipeline/prop_export.py
 python3 tools/pipeline/ui_export.py
 python3 tools/pipeline/fx_export.py
+python3 tools/pipeline/token_export.py                   # 세력 계급 증표(1-8b, SD-13 §7.4.2 · M-136 정착지 차분)
+python3 tools/pipeline/craft_export.py                   # 제작(1-8c, SD-13 §3.10 · §7.9): 제작 무기 · 설계도 · 폭발물 · 조리 · 레시피
 python3 tools/pipeline/loot_export.py
 python3 tools/pipeline/merchant_export.py
 python3 tools/pipeline/map_compile.py

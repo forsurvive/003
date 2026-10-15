@@ -19,6 +19,10 @@
    "count": 1,
    "start": 0
   },
+  "sleep": {
+   "count": 2,
+   "start": 8
+  },
   "walk": {
    "count": 4,
    "drive": "distance",

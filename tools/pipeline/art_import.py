@@ -93,6 +93,8 @@ def quad_sheets():
         mo = meta["motions"]
         anims = [("idle_E", [(0, 0)], True), ("walk_E", [(mo["walk"]["start"] + i, 0) for i in range(mo["walk"]["count"])], True),
                  ("death_E", [(mo["death"]["start"] + i, 0) for i in range(mo["death"]["count"])], False)]
+        if "sleep" in mo:                                               # 백구 낮잠(1-8b): 숨쉬기 2컷 — 배우 자세 'sleep'이 튼다
+            anims.append(("sleep_E", [(mo["sleep"]["start"] + i, 0) for i in range(mo["sleep"]["count"])], True))
         open(os.path.join(SPR, name + ".tres"), "w", encoding="utf-8").write(
             spriteframes_tres(f"res://assets/sprites/{name}.png", fw, fh, anims))
         meta["name"] = name
