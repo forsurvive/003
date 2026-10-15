@@ -1,11 +1,11 @@
 ## 적 AI 상태 층 (SD-11 §7.2). 엔진 무관: 인지 결과(percept)를 받아 상태를 바꾸고 의도를 낸다.
 ## 인지·상태는 0.1초마다(활성 반경 밖 0.5초), 전술은 0.5초마다 부른다 — 주기는 부르는 쪽(§7.1).
-## 이번 판: 대기·의심·수색·교전·놓침·귀환·사망. 도주·항복·광란·무력화는 단계 0에서 붙인다.
+## 대기·의심·수색·교전·놓침·귀환·사망 + 1-9e 도주·항복·광란(§7.5). 사기 판정(언제 도망치나)은 Enemy가 속성(EnemyTraits)으로 하고 여기는 상태만 지킨다.
 class_name AIBrain
 extends RefCounted
 
-enum S { IDLE, SUSPICIOUS, SEARCH, COMBAT, LOST, RETURN, DEAD }
-const NAMES := ["대기", "의심", "수색", "교전", "놓침", "귀환", "사망"]
+enum S { IDLE, SUSPICIOUS, SEARCH, COMBAT, LOST, RETURN, DEAD, FLEE, SURRENDER, FRENZY }
+const NAMES := ["대기", "의심", "수색", "교전", "놓침", "귀환", "사망", "도주", "항복", "광란"]
 const SUSPECT_AT := 40.0
 const DETECT_AT := 100.0
 const SEARCH_TIME := 12.0
@@ -20,6 +20,7 @@ var _t_state := 0.0
 var _t_unseen := 0.0
 var per := 5.0
 var kind := "human"
+var flee_for := 0.0                    ## 도주 시간(10~20초 뒤 사기를 되찾아 교전으로, §7.5)
 
 
 func _init(home_pos: Vector2 = Vector2.ZERO, perception: float = 5.0, body_kind: String = "human") -> void:
@@ -55,7 +56,7 @@ func tick(dt: float, p: Dictionary) -> Dictionary:
 		last_seen = p.get("sound_at", last_seen)
 		if state == S.IDLE or state == S.RETURN:
 			_go(S.SUSPICIOUS)
-	if p.get("hit", false) and state != S.COMBAT:
+	if p.get("hit", false) and not state in [S.COMBAT, S.FLEE, S.FRENZY]:   # 도주 · 광란 중엔 맞아도 그대로, 항복 중에 맞으면 다시 교전
 		gauge = DETECT_AT
 		_go(S.COMBAT)
 	match state:
@@ -86,6 +87,10 @@ func tick(dt: float, p: Dictionary) -> Dictionary:
 			elif _t_state >= LOST_TIME:
 				gauge = 0.0
 				_go(S.RETURN)
+		S.FLEE:
+			if _t_state >= flee_for:                                    # 용기를 되찾아 다시 공격(원작)
+				gauge = DETECT_AT
+				_go(S.COMBAT)
 	match state:
 		S.SUSPICIOUS:
 			return {"goal": "face", "at": last_seen}
@@ -95,7 +100,32 @@ func tick(dt: float, p: Dictionary) -> Dictionary:
 			return {"goal": "engage", "at": last_seen}
 		S.RETURN:
 			return {"goal": "home", "at": home}
+		S.FLEE:
+			return {"goal": "flee", "at": last_seen}
+		S.SURRENDER:
+			return {"goal": "surrender", "at": last_seen}
+		S.FRENZY:
+			return {"goal": "engage", "at": last_seen}
 	return {"goal": "hold", "at": home}
+
+
+## 사기 판정 결과(Enemy가 부른다): 도주 secs초 · 항복 · 광란(도주하지 않는다)
+func flee(secs: float) -> void:
+	flee_for = secs
+	_go(S.FLEE)
+
+
+func surrender() -> void:
+	_go(S.SURRENDER)
+
+
+func frenzy() -> void:
+	gauge = DETECT_AT
+	_go(S.FRENZY)
+
+
+func fleeing() -> bool:
+	return state == S.FLEE or state == S.SURRENDER
 
 
 func _go(s: int) -> void:

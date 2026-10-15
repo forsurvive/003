@@ -54,6 +54,23 @@ var hp_floor := 0.0                           ## 이 밑으로 HP가 내려가�
 var hide_bar := false
 var ko_t := 0.0                               ## 기절해 누운 남은 초
 const KO_SECS := 25.0
+## 1-9e 사기(SD-11 §7.5 · SD-14 §12.1): 속성 · 도주 · 항복 · 약물 광란 · 부위 손상 효과 · 말풍선
+var traits := {}
+var morale := false                           ## 사기가 꺾일 수 있나(길 위 조우 · 생성 건물 — 진행기가 세운 적은 끝까지 싸운다, SD-20 P10)
+var conf_mod := 0                             ## 분대장 사망 −1 · 궁지에서 버팀 +4
+var leader_near := Callable()                 ## () -> bool: 살아 있는 우리 분대장이 12t 안에 있나(전투 모듈이 준다)
+var frenzied := false                         ## 광란: 도주하지 않고 피해 +25%
+var released := false                         ## 항복한 적을 놓아줌: 주인공에게서 멀어져 사라진다
+var _drug_t := -1.0                           ## 약물 투여 중 남은 초(1.5초 멈춤 → 광란)
+var _drug_done := false
+var _stuck_t := 0.0
+var _rally := 2.0                             ## 사기를 되찾았을 때 HP 비율 — 그보다 15%p 더 깎여야 다시 도망친다
+var _spread_add := 0.0                        ## 팔 손상 +8° · 머리 손상 +3°
+var _melee_mul := 1.0                         ## 팔 손상 근접 −30%
+var say_text := ""
+var say_t := 0.0
+const SAY := {"flee": ["살려 줘!", "튀어!", "이건 못 해먹겠다!"], "surrender": ["쏘지 마! 항복이야!", "그만, 그만! 손 들었어!"],
+	"drug": ["크흐… 이거면 돼…", "으아아!"], "back": ["다시 간다!", "덤벼 봐!"], "alarm": ["저기다!", "여기야!"]}
 var _rng := RandomNumberGenerator.new()
 ## 측정용(--ai-profile): 이번 프레임 층별 시간(마이크로초)과 횟수. 측정을 켜지 않으면 시계를 읽지 않는다.
 static var profiling := false
@@ -119,6 +136,13 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 		foes = (opts["foes"] as Array).duplicate()
 	det_mul = float(opts.get("det", 1.0))
 	cmb.can_ko = not is_roach and not is_dog
+	traits = EnemyTraits.of(str(row["id"]))
+	react = float(traits.get("react", react))
+	cmb.track_limbs = true
+	cmb.crippled_part.connect(_on_cripple)
+	cmb.hit.connect(func() -> void:
+		if cmb.crippled.has("torso") and not cmb.dead and _rng.randf() < 0.5:
+			cmb.hold("flinch", 0.25))                                  # 몸통 손상: 맞을 때마다 50% 0.25초 경직
 	cmb.hp = float(row["hp"])
 	cmb.dr = float(row["dr"])
 	level = int(row.get("level", 1))
@@ -207,10 +231,29 @@ func think(dt: float, target: Combatant, nav, shots: Projectiles) -> void:   ## 
 				sees = false
 				rate = 0.0
 		cmb.last_hit_from = Vector2.ZERO
-		_intent = brain.tick(step, {"sees": sees and (fov or dist_t <= 3.0), "rate": rate, "target": target.pos(),
+		var was := brain.state
+		_intent = brain.tick(step, {"sees": sees and (fov or dist_t <= 3.0), "rate": rate * (0.6 if cmb.crippled.has("head") else 1.0), "target": target.pos(),
 			"hit": hit, "sound": _heard, "sound_at": _heard_at, "at_home": loco.logical.distance_to(brain.home) < 24.0})
 		_heard = 0.0
+		if was == AIBrain.S.FLEE and brain.state == AIBrain.S.COMBAT:      # 용기를 되찾았다
+			loco.speed_mul = 0.5 if cmb.crippled.has("leg") else 1.0
+			_rally = cmb.hp / maxf(1.0, cmb.max_hp)
+			_say("back")
+		_morale(target)
 	var t1 := Time.get_ticks_usec() if profiling else 0
+	say_t = maxf(0.0, say_t - dt)
+	if _drug_t > 0.0:                                                  # 약물 투여(1.5초 정지) → 광란(§7.8 약탈자)
+		_drug_t -= dt
+		loco.step(Vector2.ZERO, dt)
+		if _drug_t <= 0.0:
+			frenzied = true
+			brain.frenzy()
+			_intent = {"goal": "engage", "at": target.pos()}
+		queue_redraw()
+		return
+	if released:
+		_leave(dt, target, nav)
+		return
 	_t_tac += dt
 	if _t_tac >= 0.5:                                              # 전술 층
 		_t_tac = 0.0
@@ -245,14 +288,20 @@ func _tactics(target: Combatant, nav) -> void:
 		goal = "hold"
 	var at: Vector2 = _intent.get("at", loco.logical)
 	_move = Vector2.ZERO
+	if goal == "flee":
+		_flee_path(target, nav)
+		return
+	if goal == "surrender":
+		_path = PackedVector2Array()
+		return
 	if goal == "engage":
 		var d := loco.logical.distance_to(target.pos()) / 32.0
 		var los: bool = sight_of(target) > 0.0 and meets(target)
 		if style == "swarm" or style == "melee" or style == "dog":
 			_repath(nav, target.pos(), target.fl())
 		else:
-			var lo: float = float(weapon["range_eff"]) * 0.6
-			var hi: float = float(weapon["range_eff"]) * 0.9
+			var lo: float = float(weapon["range_eff"]) * (0.0 if frenzied else 0.6)
+			var hi: float = float(weapon["range_eff"]) * 0.9 if not frenzied else 2.0   # 광란: 붙어서 쏜다
 			if d > hi or not los:
 				_repath(nav, target.pos())
 			elif d < lo:
@@ -305,6 +354,14 @@ func _repath(nav, to: Vector2, goal_fl: int = -1) -> void:
 func _act(dt: float, target: Combatant, shots: Projectiles) -> void:
 	var goal: String = _intent.get("goal", "hold")
 	mode = "walk" if goal == "walk_to" or goal == "home" or goal == "hold" else "run"
+	if goal == "surrender":                                         # 항복: 서서 손을 든다(그리기) · 쏘지 않는다
+		loco.step(Vector2.ZERO, dt)
+		aim_dir = -1
+		var tt := target.pos() - loco.logical
+		if tt.length() > 4.0:
+			loco.facing = Locomotion.snap8(tt, 0.0)
+		_show()
+		return
 	var input := _move
 	if _path.size() > 0 and _path_i < _path.size():
 		var wp: Vector2 = _path[_path_i]
@@ -331,7 +388,19 @@ func _act(dt: float, target: Combatant, shots: Projectiles) -> void:
 		elif to_t.length() > 3.0 * 32.0 and input != Vector2.ZERO:     # 지그재그로 달려든다(포위)
 			input = input.normalized() + input.normalized().orthogonal() * sin(_clock * 5.0 + float(get_instance_id() % 7)) * 0.7
 		_cool = maxf(0.0, _cool - dt)
+	if goal == "flee":
+		aim_dir = -1
+	var f0 := loco.frames_advanced
 	move(steer(input), dt)
+	if goal == "flee":                                               # 궁지: 1초 넘게 한 걸음도 못 떼면 항복하거나 버틴다
+		if input.length() > 0.2 and loco.frames_advanced == f0 and loco.motion == "idle":
+			_stuck_t += dt
+			if _stuck_t >= 1.0:
+				_stuck_t = 0.0
+				_cornered()
+		else:
+			_stuck_t = 0.0
+		return
 	if aim_dir >= 0 and loco.motion == "idle":
 		loco.facing = aim_dir                                       # 서서 조준하면 그쪽을 본다(시야각 기준)
 	if goal == "engage" and style == "shooter":
@@ -381,7 +450,7 @@ func _bite(_dt: float, target: Combatant, to_t: Vector2) -> void:
 	_show()
 	_cool = 1.1
 	target.last_by = cmb.team
-	target.take({"hp": bite}, loco.logical)
+	target.take({"hp": bite * (1.25 if frenzied else 1.0)}, loco.logical)
 
 
 func _shoot(dt: float, target: Combatant, shots: Projectiles) -> void:
@@ -394,11 +463,12 @@ func _shoot(dt: float, target: Combatant, shots: Projectiles) -> void:
 	var aim := rad_to_deg((seen - loco.logical).angle())
 	if row["id"] == "CR-473":                                       # 보안요원 권총: 위협 사격만(어깨 너머로 빗나가게, SD-14 §9.12.1)
 		aim += (10.0 + shots.rng.randf() * 6.0) * (1.0 if shots.rng.randf() < 0.5 else -1.0)
-	var sp := CombatRules.spread(skill, "stand", loco.motion != "idle")
+	var sp := CombatRules.spread(skill, "stand", loco.motion != "idle") + _spread_add
 	if smoke_at.is_valid() and smoke_at.call(loco.logical, "gas") and not cmb.robot and not cmb.big:
 		sp *= 1.3                                                    # 최루(SD-13 W-058): 인간형 명중 −30%
 	var ang := CombatRules.shot_angle(aim, sp, shots.rng)
-	if shots.fire_weapon(loco.logical + Vector2(0, -14) + Vector2.RIGHT.rotated(deg_to_rad(aim)) * 10.0, ang, cmb.team, weapon, skill,
+	var wf := weapon if not frenzied else weapon.merged({"dmg": float(weapon.get("dmg", 5.0)) * 1.25}, true)   # 광란 피해 +25%
+	if shots.fire_weapon(loco.logical + Vector2(0, -14) + Vector2.RIGHT.rotated(deg_to_rad(aim)) * 10.0, ang, cmb.team, wf, skill,
 			{"speed": 640.0, "fl": floor_id, "target": seen}) > 0:      # 1-9a: 무기 계열대로(산탄·화염·곡사…), 실탄은 20t/초로 읽히게
 		_cool = 1.0 / (float(weapon["rate"]) * 0.6)                  # semi-auto: 60% of max rate
 		shots_fired += 1
@@ -423,6 +493,7 @@ func _swing(dt: float, target: Combatant) -> void:
 	_cool = 1.0 / maxf(0.1, float(weapon.get("rate", 1.0)))
 	swing_t = 0.2
 	var r := CombatRules.resolve({"weapon": weapon, "skill": skill, "attacker": {"str": 5}, "part": "torso", "dr": target.dr})
+	r["hp"] = float(r["hp"]) * _melee_mul * (1.25 if frenzied else 1.0)   # 팔 손상 −30% · 광란 +25%
 	target.last_by = cmb.team
 	target.take(r, loco.logical)
 
@@ -471,6 +542,9 @@ func _show() -> void:
 	super._show()
 	if cmb != null and cmb.flash > 0:
 		sprite.modulate = Color(4, 4, 4)
+	elif cmb != null and not cmb.dead and frenzied:                     # 광란: 붉게 맥동(§7.2 '붉은 눈 이펙트'를 몸 색조로 키움)
+		var k := 0.5 + 0.5 * sin(_clock * 9.0)
+		sprite.modulate = Color(1.0 + 0.35 * k, 0.75 - 0.15 * k, 0.72 - 0.15 * k)
 	elif cmb != null and not cmb.dead:
 		sprite.modulate = Color(1, 1, 1)
 
@@ -485,6 +559,20 @@ func _draw() -> void:
 		var f: Vector2 = Locomotion.VEC[loco.facing].normalized()
 		draw_arc(Vector2(0, -12) + f * 8.0, 10.0, f.angle() - 0.9, f.angle() + 0.9, 6, Color("E9E4D8"), 2.0)
 	var top := -float(meta["foot"][1]) + (14.0 if style != "swarm" and style != "dog" else 6.0)
+	if say_t > 0.0 and say_text != "":                             # 말풍선(§7.2 도주 '살려 줘!' · 항복 · 약물)
+		var tw := ui_font.get_string_size(say_text, HORIZONTAL_ALIGNMENT_LEFT, -1, 9).x
+		var bp := Vector2(-tw / 2.0 - 3.0, top - 22.0)
+		draw_rect(Rect2(bp, Vector2(tw + 6.0, 12.0)), Color(0.96, 0.94, 0.88, 0.92))
+		draw_rect(Rect2(bp, Vector2(tw + 6.0, 12.0)), Color("1a181d"), false, 1.0)
+		draw_string(ui_font, bp + Vector2(3, 9), say_text, HORIZONTAL_ALIGNMENT_LEFT, -1, 9, Color("1a181d"))
+	if brain.state == AIBrain.S.SURRENDER and not released:         # 항복: 머리 위 흰 천(손 든 자세 그림 전까지)
+		draw_line(Vector2(6, top + 6), Vector2(6, top - 10), Color("6b5a44"), 1.0)
+		draw_rect(Rect2(Vector2(7, top - 10), Vector2(7, 5)), Color("ECE8DE"))
+		draw_line(Vector2(7, top - 5), Vector2(13, top - 5), Color("B8B2A4"), 1.0)
+		return
+	if frenzied:                                                    # 광란: 붉은 눈(§7.2)
+		draw_rect(Rect2(Vector2(-3, top + 9), Vector2(2, 1)), Color("FF3B2A"))
+		draw_rect(Rect2(Vector2(1, top + 9), Vector2(2, 1)), Color("FF3B2A"))
 	if cmb.held_by("stun") or cmb.held_by("root"):                # 기절·마비: 머리 위 별 · 그물: 엇갈린 줄
 		var col := Color("E8C23A") if cmb.held_by("stun") else Color("CBC5B9")
 		var k := fmod(_clock * 6.0, TAU)
@@ -496,8 +584,8 @@ func _draw() -> void:
 			draw_string(ui_font, Vector2(-3, top - 2), "?", HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("e8c23a"))
 		AIBrain.S.LOST:
 			draw_string(ui_font, Vector2(-3, top - 2), "?", HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("e04a35"))
-		AIBrain.S.COMBAT:
-			if brain._t_state < 0.8:
+		AIBrain.S.COMBAT, AIBrain.S.FRENZY, AIBrain.S.FLEE:
+			if brain._t_state < 0.8 and brain.state == AIBrain.S.COMBAT:
 				draw_string(ui_font, Vector2(-2, top - 2), "!", HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("e04a35"))
 			elif cmb.hp < cmb.max_hp and not hide_bar:
 				var w := 16.0
@@ -517,3 +605,136 @@ func sight_of(target: Combatant) -> float:
 ## 표적과 같은 층에서 닿나(탄·물기·근접)
 func meets(target: Combatant) -> bool:
 	return not (world is InteriorMap and world.has_deck) or world.floors_meet(loco.logical, floor_id, target.pos(), target.fl())
+
+
+# ---------------------------------------------------------------- 1-9e 사기 · 도주 · 항복 · 부위 손상(SD-11 §7.5 · §4.8)
+## 지금 자신감: 속성 + 사건 보정 + 분대장(+1) − 몸에 붙은 불(인간형 −1)
+func confidence() -> int:
+	var c := int(traits.get("conf", 2)) + conf_mod
+	if leader_near.is_valid() and bool(leader_near.call()):
+		c += 1
+	if cmb.dots.has("burn") and style != "dog" and style != "swarm":
+		c -= 1
+	return c
+
+
+func can_break() -> bool:
+	return morale and who == "" and cmb.hp_floor <= 0.0 and not frenzied and not released
+
+
+## 사기 판정(인지 틱마다, 교전 · 놓침 중): 약탈자 약물(HP 50% 이하 한 번, 30%) · 자신감별 HP 문턱 → 도주
+func _morale(target: Combatant) -> void:
+	if not can_break() or not brain.state in [AIBrain.S.COMBAT, AIBrain.S.LOST] or cmb.held():
+		return
+	var ratio := cmb.hp / maxf(1.0, cmb.max_hp)
+	if bool(traits.get("drug", false)) and not _drug_done and ratio <= 0.5:
+		_drug_done = true
+		if _rng.randf() < 0.3:
+			_drug_t = 1.5
+			_say("drug")
+			return
+	if EnemyTraits.should_flee(confidence(), ratio) and ratio <= _rally - 0.15:
+		flee_now(target.pos())
+
+
+func flee_now(from: Vector2, secs: float = -1.0) -> void:
+	if not can_break() or brain.fleeing():
+		return
+	brain.last_seen = from
+	brain.flee(secs if secs > 0.0 else _rng.randf_range(10.0, 20.0))
+	loco.speed_mul = 0.3 if cmb.crippled.has("leg") else 1.0         # 다리 손상이면 절뚝 도주
+	_path = PackedVector2Array()
+	_say("flee")
+	if cmb.crippled.has("leg"):
+		_cornered()
+
+
+## 같은 편이 쓰러진 걸 봤다(전투 모듈이 12t 안 같은 편에게): 분대장이면 자신감 −1 뒤 다시 판정 · 신중(1) 이하는 바로 도주
+func witness_death(at: Vector2, leader: bool) -> void:
+	if not can_break() or cmb.dead:
+		return
+	if leader:
+		conf_mod -= 1
+	if confidence() <= 1 and brain.state in [AIBrain.S.COMBAT, AIBrain.S.LOST, AIBrain.S.SUSPICIOUS, AIBrain.S.SEARCH]:
+		flee_now(brain.last_seen if brain.last_seen != Vector2.ZERO else at)
+	elif brain.state == AIBrain.S.COMBAT and EnemyTraits.should_flee(confidence(), cmb.hp / maxf(1.0, cmb.max_hp)):
+		flee_now(brain.last_seen)
+
+
+## 궁지(막힘 1초 · 도주 중 다리 손상): 항복 가능하면 굴려서 항복, 아니면 돌아서서 버틴다(다시 도망치지 않는다)
+func _cornered() -> void:
+	if float(traits.get("surr", 0.0)) > 0.0 and _rng.randf() < float(traits["surr"]):
+		brain.surrender()
+		_path = PackedVector2Array()
+		_say("surrender", 3.0)
+		set_meta("surrendered", true)
+	else:
+		conf_mod += 4
+		brain.gauge = AIBrain.DETECT_AT
+		brain.state = AIBrain.S.COMBAT
+		loco.speed_mul = 0.5 if cmb.crippled.has("leg") else 1.0
+
+
+## 도주 경로: 표적 반대쪽 ±60° 안 8t 지점 중 길이 닿는 첫 곳. 없으면 궁지
+func _flee_path(target: Combatant, nav) -> void:
+	if _path.size() > 0 and _path_i < _path.size():
+		return
+	var away := (loco.logical - target.pos())
+	if away.length() < 1.0:
+		away = Vector2.RIGHT.rotated(_rng.randf() * TAU)
+	away = away.normalized()
+	for a in [0.0, 0.5, -0.5, 1.0, -1.0]:
+		var to := loco.logical + away.rotated(a) * 8.0 * 32.0
+		var p: PackedVector2Array = nav.path(loco.logical, to, floor_id, -1)
+		if p.size() > 2 and p[p.size() - 1].distance_to(target.pos()) > loco.logical.distance_to(target.pos()):
+			_path = p
+			_path_i = 1
+			return
+	_cornered()
+
+
+## 놓아준 적: 주인공에게서 멀어진다(14t 넘거나 15초면 전투 모듈이 치운다)
+var _leave_t := 0.0
+
+
+func _leave(dt: float, _target: Combatant, nav) -> void:
+	_leave_t += dt
+	mode = "walk"
+	var from: Vector2 = get_meta("leave_from", loco.logical)            # 놓아준 순간 주인공 자리(대상이 없어진 뒤라 표적은 믿을 수 없다)
+	if _path.is_empty() or _path_i >= _path.size():
+		var away := (loco.logical - from).normalized()
+		_repath(nav, loco.logical + away * 10.0 * 32.0)
+	var input := Vector2.ZERO
+	if _path_i < _path.size():
+		var wp: Vector2 = _path[_path_i]
+		if loco.logical.distance_to(wp) < 6.0:
+			_path_i += 1
+		input = wp - loco.logical
+	move(steer(input), dt)
+	if _leave_t > 15.0 or loco.logical.distance_to(from) > 14.0 * 32.0:
+		set_meta("gone", true)
+	queue_redraw()
+
+
+## 부위 손상(SD-11 §4.8 적 효과): 다리 이동 −50%(도주 중이면 궁지) · 팔 퍼짐 +8° · 근접 −30% · 머리 시야·탐지 −40% · 퍼짐 +3°
+func _on_cripple(part: String) -> void:
+	match part:
+		"leg":
+			loco.speed_mul = 0.3 if brain.state == AIBrain.S.FLEE else 0.5
+			if brain.state == AIBrain.S.FLEE:
+				_cornered()
+		"arm":
+			_spread_add += 8.0
+			_melee_mul = 0.7
+		"head":
+			_spread_add += 3.0
+			per *= 0.6
+
+
+func _say(kind: String, secs: float = 1.6) -> void:
+	var opts: Array = SAY.get(kind, [])
+	if opts.is_empty():
+		return
+	say_text = str(opts[_rng.randi() % opts.size()])
+	say_t = secs
+

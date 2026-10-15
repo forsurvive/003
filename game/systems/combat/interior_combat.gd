@@ -248,7 +248,14 @@ func spawn(enemy_id: String, pos: Vector2, map: InteriorMap, st: StoryState = nu
 	e.cmb.big = enemy_id == "CR-405"                                    # 파워 아머: 넘어짐 · 그물 · 넉백 면역(SD-11 §9.4)
 	e.set_meta("enemy_id", enemy_id)
 	e.set_meta("row", opts)
-	e.cmb.unaware = func() -> bool: return e.brain.state != AIBrain.S.COMBAT and e.brain.gauge < 100.0
+	e.cmb.unaware = func() -> bool: return not e.brain.state in [AIBrain.S.COMBAT, AIBrain.S.FRENZY, AIBrain.S.FLEE] and e.brain.gauge < 100.0
+	e.morale = bool(opts.get("morale", str(map.data.get("id", "")).begins_with("G-")))   # 1-9e: 길 위 조우 · 생성 건물만(진행기 적은 끝까지)
+	e.leader_near = func() -> bool:                                   # 살아 있는 우리 분대장 12t 안(자신감 +1, SD-11 §7.6)
+		for o in enemies:
+			if is_instance_valid(o) and o != e and not o.cmb.dead and o.cmb.team == e.cmb.team and bool(o.traits.get("leader", false)) \
+					and o.loco.logical.distance_to(e.loco.logical) <= 12.0 * 32.0:
+				return true
+		return false
 	if enemy_id == "CR-405":                                            # '못 이기는 적'(SD-03a §7.4 연출 메모): HP 하한 1, 체력 표시 없음
 		e.cmb.hp_floor = 1.0
 		e.hide_bar = true
@@ -258,6 +265,7 @@ func spawn(enemy_id: String, pos: Vector2, map: InteriorMap, st: StoryState = nu
 		if e.cmb.robot and not e.cmb.ko and _rng.randf() < 0.3:          # 처치된 로봇의 30%: 원자 전지 소형 폭발(SD-11 §9.3)
 			shots.explode.call_deferred(e.loco.logical + Vector2(0, -10), {"blast": 40.0, "proj": "robot", "condition": "new"}, 100.0, "env")
 		var by_pc: bool = e.cmb.last_by in ["player", "ally", ""]          # 교전(1-E): 다른 무리가 쓰러뜨린 적은 경험치·카르마가 없다
+		_morale_death(e, by_pc, st)
 		if by_pc:
 			stats["downs"] += 1
 		if st != null and by_pc:
@@ -282,6 +290,49 @@ func spawn(enemy_id: String, pos: Vector2, map: InteriorMap, st: StoryState = nu
 		enemy_killed.emit(enemy_id, alive_enemies()))
 	_rebuild_list()
 	return e
+
+
+## 1-9e 사기 사건(SD-11 §7.5 · §7.6): 같은 편 12t 안 목격(분대장이면 자신감 −1) · 무리 우두머리면 50% 무리 도주 ·
+## 항복한 적을 쏘아 죽이면 카르마 −10(SD-10 미정 → 1-9e 임시값, 구현 정합 SD-11 §7.5)
+func _morale_death(e: Enemy, by_pc: bool, st: StoryState) -> void:
+	if e.cmb.ko:
+		return
+	var at: Vector2 = e.loco.logical
+	if by_pc and e.has_meta("surrendered") and e.brain.state == AIBrain.S.SURRENDER and not e.released:
+		if st != null:
+			st.call_fn("karma", [-10])
+		_pop("항복한 자를 쐈다", at + Vector2(0, -28), Color("E04A35"))
+	var lead := bool(e.traits.get("leader", false))
+	var rout := bool(e.traits.get("pack_lead", false)) and _rng.randf() < 0.5
+	for o in enemies:
+		if not is_instance_valid(o) or o == e or o.cmb.dead or o.cmb.team != e.cmb.team:
+			continue
+		var d: float = o.loco.logical.distance_to(at)
+		if rout and d <= 20.0 * 32.0 and o.style == "dog":                  # 우두머리를 잃은 무리: 20~30초 흩어진다
+			o.flee_now(pc.pos(), _rng.randf_range(20.0, 30.0))
+		elif d <= 12.0 * 32.0:
+			o.witness_death(at, lead)
+
+
+## 항복한 적(1.5t 안): 상호작용 = 놓아준다(그 개체는 적대하지 않고 떠난다 — 경험치 없음)
+func surrendered_near(p: Vector2) -> Enemy:
+	for e in enemies:
+		if is_instance_valid(e) and not e.cmb.dead and not e.released and e.brain.state == AIBrain.S.SURRENDER \
+				and e.loco.logical.distance_to(p) <= 1.5 * 32.0 + 8.0:
+			return e
+	return null
+
+
+func release(e: Enemy) -> void:
+	e.released = true
+	e.set_meta("leave_from", pc.pos())
+	e.foes.clear()
+	e.cmb.team = "gone"
+	e.brain.state = AIBrain.S.RETURN
+	e.say_text = "고, 고맙다…"
+	e.say_t = 2.0
+	message.emit("놓아줬다. 다시는 덤비지 않을 것이다.")
+	_rebuild_list()
 
 
 ## 주민(SD-10 §6.3, 0-9): 맵 인물도 맞는다. 공기총·근접은 기절(비살상), 실총으로 죽이면 진행기가 카르마 −100.
@@ -621,6 +672,9 @@ func tick(dt: float, free: bool, st: StoryState) -> void:
 	if pc.hp < hp0:
 		stats["hurt"] += hp0 - pc.hp
 		hurt.emit(hp0 - pc.hp)
+	for e in enemies.duplicate():                                       # 놓아준 적이 멀어지면 전장에서 뺀다(1-9e)
+		if is_instance_valid(e) and e.has_meta("gone"):
+			drop_enemy(e)
 	for p in popups:
 		p[2] -= dt
 		p[1] += Vector2(0, -12) * dt
@@ -1143,7 +1197,7 @@ func auto_aim(player: Actor) -> Vector2:
 ## 교전 중: 주인공을 표적으로 잡은 적이 있다(SD-11 §2.5) — 이동 중에도 상체가 조준을 따른다
 func in_combat() -> bool:
 	for e in enemies:
-		if is_instance_valid(e) and not e.cmb.dead and e.brain.state == AIBrain.S.COMBAT:
+		if is_instance_valid(e) and not e.cmb.dead and e.brain.state in [AIBrain.S.COMBAT, AIBrain.S.FRENZY]:
 			return true
 	return false
 
@@ -1161,7 +1215,7 @@ func detect_state() -> String:
 	for e in enemies:
 		if not is_instance_valid(e) or e.cmb.dead:
 			continue
-		if e.brain.state == AIBrain.S.COMBAT:
+		if e.brain.state in [AIBrain.S.COMBAT, AIBrain.S.FRENZY]:
 			worst = maxi(worst, 3)
 		elif e.brain.gauge >= 40.0:
 			worst = maxi(worst, 1)

@@ -552,6 +552,10 @@ func go(map_id: String, mark: String) -> void:
 func interact() -> bool:
 	if box.active:                                                   # 대화·서류 중에는 새로 말을 걸지 않는다(장면이 처음부터 다시 열린다)
 		return false
+	var sur := combat.surrendered_near(player.loco.logical)             # 항복한 적(1-9e, SD-11 §7.5): 놓아준다
+	if sur != null:
+		combat.release(sur)
+		return true
 	var f: Vector2 = Locomotion.VEC[player.loco.facing].normalized()
 	var best: Dictionary = {}
 	var best_d := 1e9
@@ -1170,6 +1174,8 @@ func _down_tick(n: Dictionary, dt: float) -> void:
 func interact_label() -> String:
 	if map == null or player == null or box.active:
 		return ""
+	if combat.surrendered_near(player.loco.logical) != null:
+		return "놓아준다"
 	var f: Vector2 = Locomotion.VEC[player.loco.facing].normalized()
 	for n in npcs:
 		if is_instance_valid(n["actor"]) and not n.get("dead", false) and _same_floor(n["actor"]):

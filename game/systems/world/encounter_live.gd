@@ -370,7 +370,9 @@ func _spawn() -> void:
 				if oi != gi and clash:
 					foes.append(teams[oi])
 					foes.append(_team(str(gs[oi]["side"]), true))       # 상대가 도발로 적대가 되어도 계속 노린다
-			var opts := {"lv": host.level(), "team": teams[gi], "foes": foes, "hurt": float(g["hurt"][i]) if i < (g["hurt"] as Array).size() else 0.0}
+			var opts := {"lv": host.level(), "team": teams[gi], "foes": foes, "hurt": float(g["hurt"][i]) if i < (g["hurt"] as Array).size() else 0.0,
+				"morale": not d.has("capture")}                               # 1-9e 사기(도주·항복): 길 위 무리는 꺾인다 · 생포조는 이야기 사건이라 끝까지
+
 			match state:
 				"S2":
 					opts["det"] = 1.2
