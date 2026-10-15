@@ -852,6 +852,10 @@ from props_road import PROPS_ROAD                                       # 길 �
 for _k in PROPS_ROAD:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_ROAD)
+from props_site import PROPS_SITE                                       # 소장소(1-W, SD-22 §5.2)
+for _k in PROPS_SITE:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_SITE)
 from props_bk import PROPS_BK, STATES_BK                                # 여의도 지하 벙커(1-5 MQ-104)
 for _k in PROPS_BK:
     assert _k not in PROPS, _k

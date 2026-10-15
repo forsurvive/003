@@ -64,6 +64,16 @@ func _ready() -> void:
 	host.pc_died.connect(func(): print("쓰러짐"))
 	host.combat.player_down.connect(host.on_pc_down)
 	var req := {"re": re, "src": "bench", "state": state} if mode == "re" else {"re": "RE-004" if mode == "roach" else "RE-087", "src": "bench"}
+	if mode == "re" and OS.get_environment("SITE") != "":                 # 소장소 자리(1-W): 그 RE가 걸린 R01·R02 자리 중 하나에서
+		Encounters.load_data()
+		for s_ in Encounters.data.get("sites", []):
+			var sat := Vector2i(int(s_["x"]), int(s_["y"]))
+			if str(s_["re"]) == re and str(s_.get("tpl", "")) == OS.get_environment("SITE") and host.map.region_at(sat) in ["R01", "R02"]:
+				host.player.loco.place(Vector2(sat + Vector2i(0, 12)) * 32.0 + Vector2(16, 16))
+				host.map.load_now(host.player.loco.logical)
+				req["at"] = sat
+				print("소장소 자리 ", s_)
+				break
 	host.enc_live._ctx(host.map.tile_of(host.player.loco.logical))
 	var ok := host.enc_live.start(req)
 	print("인카운터 세움: ", ok, " · ", host.enc_live.cur.get("re", ""), " ", host.enc_live.cur.get("state", ""), " · 단계 ", host.enc_live.cur.get("phase", ""))

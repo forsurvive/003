@@ -331,3 +331,35 @@ func test_item_tag_names(t) -> void:
 	t.ok(str(st.names.get("I-055", "I-055")) != "I-055", "I-055 → %s" % str(st.names.get("I-055", "")))
 	t.ok(str(st.names.get("I-001", "I-001")) != "I-001", "I-001 → %s" % str(st.names.get("I-001", "")))
 	h.free()
+
+
+## 소장소 자리(1-W, SD-22 §5.2 ④): 반경 안에 처음 들어서면 그 자리의 RE · 72시간 안에는 다시 안 함 · 권역 밖 무리는 서지 않는다
+func test_minisite_sites(t) -> void:
+	var st := _st()
+	Encounters.load_data()
+	var sites: Array = Encounters.data.get("sites", [])
+	t.ok(sites.size() > 100, "소장소 사람·크리처 자리 %d곳" % sites.size())
+	var s0: Dictionary = {}
+	for s_ in sites:
+		if str(s_["re"]) == "RE-002":
+			s0 = s_
+			break
+	t.ok(not s0.is_empty(), "패거리 야영 자리가 있다")
+	var en := Encounters.new(st, 3)
+	en.rng.seed = 3
+	var at := Vector2i(int(s0["x"]), int(s0["y"]))
+	var got := {}
+	for i in 12:                                                       # 처음 들어설 때만 판정(80%) — 여러 번 들락날락
+		Encounters._site_grid.clear()
+		var e2 := Encounters.new(_st(), 100 + i)
+		var r := e2._site_check(at + Vector2i(10, 0), 1000, true, "R01")
+		got[str(r.get("re", ""))] = true
+		if not r.is_empty():
+			t.eq(r.get("at"), at, "그 자리에 세운다")
+	t.ok(got.has("RE-002"), "패거리 야영이 선다")
+	var r1 := en._site_check(at + Vector2i(10, 0), 1000, true, "R01")
+	en._site_check(at + Vector2i(40, 0), 1100, true, "R01")
+	var r2 := en._site_check(at + Vector2i(10, 0), 1200, true, "R01")
+	t.ok(r2.is_empty(), "72게임시간 안에는 다시 서지 않는다")
+	var e3 := Encounters.new(_st(), 5)
+	t.ok(e3._site_check(at + Vector2i(10, 0), 1000, true, "R09").is_empty(), "권역 밖(R09)이면 빈 야영지로 둔다")

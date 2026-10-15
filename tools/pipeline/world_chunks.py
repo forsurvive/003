@@ -733,7 +733,8 @@ def build():
         sum(1 for c in cross if not c[2]), " · 어긋남 " + str([(c[0], c[1], "이어짐" if c[2] else "끊김") for c in bad]) if bad else ""))
 
     # 길 위 발견물(1-4f, SD-08 §13.2 '소형 관심 지점' · §14.1 경고 장치): 굽기 때 규칙으로 흩고, 용기·조사 글은 pois.json으로 낸다
-    pois = place_pois(src, solid, cover, gflag, stair, level, kind, r["use"], reach, inmask, carve, play, body, insets, placed, pm)
+    tags = chunk_tags(r, kind)                                                 # 결·지형 태그(소장소 템플릿이 먼저 읽는다)
+    pois = place_pois(src, solid, cover, gflag, stair, level, kind, r["use"], reach, inmask, carve, play, body, insets, placed, pm, tags["chunks"])
     reach &= solid == 0
 
     # 손 맵 사이 걷는 길(봇 경유점): 비탈 첫 칸 → 봉천 동쪽 골목 끝
@@ -758,7 +759,6 @@ def build():
     for k_, code in src["region"].items():
         cx_, cy_ = map(int, k_.split(","))
         reg_grid[cy_][cx_] = code
-    tags = chunk_tags(r, kind)
     json.dump(tags, open(os.path.join(OUT, "chunk_tags.json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
     log("청크 태그: " + ", ".join("%s %d" % (k_, sum(1 for v in tags["chunks"].values() if k_ in v["tags"])) for k_ in TAGS))
     return {"pois": pois, "r05": r05, "region_grid": reg_grid, "street": r["street"], "bridges": cross, "routes": routes, "floor": floor, "gflag": gflag, "solid": solid, "cover": cover, "level": level, "stair": stair, "body": body,
@@ -820,7 +820,7 @@ def read_notes():
     return out
 
 
-def place_pois(src, solid, cover, gflag, stair, level, kind, use, reach, inmask, carve, play, body, insets, placed, pm):
+def place_pois(src, solid, cover, gflag, stair, level, kind, use, reach, inmask, carve, play, body, insets, placed, pm, ctags=None):
     """청크마다 소형 관심 지점(SD-08 §13.2): 시가지 3~5 · 산지 1~2 · 도심 5~8.
     유해(떠돌이 소지품 corpse_scav, 쪽지가 붙기도 한다) · 버려진 배낭(bag) · 나무 상자(crate, 가끔 잠김) · 차 트렁크(이미 놓인 차량 잔해) ·
     고물 더미(이미 놓인 고철 더미) · 2077 민방위 대피소 표지(가장 가까운 장소 방면을 가리킨다).
@@ -931,6 +931,15 @@ def place_pois(src, solid, cover, gflag, stair, level, kind, use, reach, inmask,
         if not ok:
             raise SystemExit("길 위 쪽지를 놓을 자리가 없다: %s %s" % (head, body_t[:20]))
 
+    # ①' 소장소(1-W, SD-22 §5): 결·지형 템플릿 장면 — 흩는 발견물보다 먼저 자리를 잡는다
+    import minisites as MS
+    play_chunks = {(int(k.split(",")[0]), int(k.split(",")[1])) for k in src["region"] if src["region"][k] != "HR"}
+    ms = MS.place({"put": put, "free": lambda x, y: bool(pfree[y, x]), "cells": cells_of, "boxes": boxes, "texts": texts, "cnt": cnt,
+                   "places": places, "chunks": ctags or {}, "play_chunks": play_chunks, "W": W, "H": H, "CS": CS, "kind": kind,
+                   "foot": lambda n: pm[n]["foot"]})
+    log("소장소 %d곳 · 사람/크리처 자리 %d · %s" % (ms["n"], len(ms["sites"]), ms["by_tpl"]))
+    log("소장소 견본 좌표: %s" % ms["first"])
+
     # ② 청크 밀도(§13.2)
     by_chunk = {}
     for (x, y, n) in placed:
@@ -1034,7 +1043,7 @@ def place_pois(src, solid, cover, gflag, stair, level, kind, use, reach, inmask,
                         nwarn += 1
                         break
     log("길 위 발견물: 용기 %d · 조사 글 %d · 경고 장치 %d · %s" % (len(boxes), len(texts), nwarn, cnt))
-    return {"boxes": boxes, "texts": texts}
+    return {"boxes": boxes, "texts": texts, "sites": ms["sites"]}
 
 
 
@@ -1069,7 +1078,12 @@ def export(R):
             offs.append([len(blob), len(z), len(raw)])
             blob += z
     open(os.path.join(OUT, "world.bin"), "wb").write(bytes(blob))
-    json.dump(R["pois"], open(os.path.join(OUT, "pois.json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"), default=int)
+    pz = {k: v for k, v in R["pois"].items() if k != "sites"}
+    json.dump(pz, open(os.path.join(OUT, "pois.json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"), default=int)
+    ep = os.path.join(OUT, "encounters.json")                               # 소장소의 사람·크리처 자리(1-W) → 인카운터 자료(가까이 오면 그 RE)
+    ed = json.load(open(ep, encoding="utf-8"))
+    ed["sites"] = R["pois"].get("sites", [])
+    json.dump(ed, open(ep, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"), default=int)
     meta = {"chunks": [NCX, NCY], "chunk_size": CS, "tile": 32, "size": [W, H], "layers": ["floor+gflag 교대", "solid", "cover", "level", "stair", "body16", "deco16", "trees", "shadows"],
             "offsets": offs, "props": R["props"], "start": list(START),
             "regions": json.load(open(WB.SRC, encoding="utf-8"))["region"],

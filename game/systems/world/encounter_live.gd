@@ -150,11 +150,11 @@ func start(req: Dictionary) -> bool:
 	if host.combat.alive_enemies() + n > int(CAP.get(Encounters.threat_at(_here()), 12)):
 		return false                                                     # 활성 상한: 다음 판정으로 미룬다
 	var mode := _mode(cat, state)
-	var center := _center(mode)
+	var center: Vector2i = req["at"] if req.has("at") else _center(mode)       # 소장소 자리(1-W)면 그 자리에
 	if center.x < 0:
 		return false
 	cur = {"re": re, "def": d, "cat": cat, "state": state, "phase": "sign", "t": 0.0, "src": str(req.get("src", "")), "center": center,
-		"groups": gs, "actors": [], "foes": [], "props": [], "talked": false, "sign_t": 0.0, "half": false}
+		"groups": gs, "actors": [], "foes": [], "props": [], "talked": false, "sign_t": 0.0, "half": false, "site": req.has("at")}
 	var sign := str(d.get("sign", ""))
 	if state == "S4":
 		sign = "smoke"
@@ -373,7 +373,7 @@ func _spawn() -> void:
 	match state:
 		"S3":                                                            # 먹이·약탈 중: 가운데 유해(다 끝나면 뒤진다)
 			_corpse_box(_snap_walk(c, c), "", "누군가의 유해")
-		"S4":                                                            # 야영: 불 드럼 + 자루
+		"S4" when not bool(cur.get("site", false)):                      # 야영: 불 드럼 + 자루(소장소 자리면 이미 놓여 있다)
 			var fire := _free_near(c)
 			if fire.x >= 0:
 				cur["props"].append(host.map.add_runtime_prop("drum_fire", fire))

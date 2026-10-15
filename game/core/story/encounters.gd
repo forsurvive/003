@@ -15,6 +15,8 @@ const CHUNK := 40
 const SAFE_SKIP := 2
 const EP_R := 6                                   ## EP 진입 반경(타일) — 표는 지점만 준다(정합)
 const EP_RESET_MIN := 72 * 60
+const SITE_R := 14                                ## 소장소 사람·크리처 자리(1-W): 이 반경에 들어서면 그 RE를 그 자리에 세운다
+const SITE_P := 0.8
 const TRACKER_P := [0.0, 0.05, 0.10, 0.15, 0.20]
 const TRACKER_DAY_CAP := [0, 1, 1, 2, 3]
 const P_MIN := 0.03                               ## SD-22 §3.6 하한·상한
@@ -36,6 +38,7 @@ const CAT_W_DEFAULT := {"경합": {"patrol": 30, "clash": 30, "creature": 10, "r
 	"공백": {"creature": 45, "raider": 25, "trader": 5, "event": 15}}
 
 static var data := {}
+static var _site_grid := {}                       ## 청크 → [소장소 자리](1-W, encounters.json "sites")
 var st: StoryState
 var rng := RandomNumberGenerator.new()
 var last_chunk := Vector2i(-9999, -9999)
@@ -106,6 +109,9 @@ static func near_settlement(t: Vector2i) -> bool:
 func on_move(t: Vector2i, now: int, night: bool, region: String) -> Dictionary:
 	now_min = now
 	var req := _ep_check(t, now, night)
+	if not req.is_empty():
+		return req
+	req = _site_check(t, now, night, region)
 	if not req.is_empty():
 		return req
 	var k := Vector2i(t.x / CHUNK, t.y / CHUNK)
@@ -213,6 +219,51 @@ func _ep_check(t: Vector2i, now: int, night: bool) -> Dictionary:
 			var state := pick_state(re, night)
 			_remember_pick(re, state, t)
 			return {"re": re, "src": "ep", "ep": id, "state": state}
+	return {}
+
+
+## 소장소 자리(1-W, SD-22 §5.2 ④): 반경 14칸에 처음 들어서면 80%로 그 자리의 RE(야영 패거리·고물상·둥지 크리처)를 그 자리에 세운다.
+## 한 번 판정하면 72게임시간 뒤 다시(안 맞는 시간대 RE는 판정하지 않고 넘긴다). 안전 간격 중에도 자리 장면은 선다(그곳에 있던 것이니까)
+func _site_check(t: Vector2i, now: int, night: bool, region: String = "") -> Dictionary:
+	if _site_grid.is_empty() and not data.get("sites", []).is_empty():
+		for s_ in data["sites"]:
+			var k := Vector2i(int(s_["x"]) / CHUNK, int(s_["y"]) / CHUNK)
+			if not _site_grid.has(k):
+				_site_grid[k] = []
+			_site_grid[k].append(s_)
+	var k0 := Vector2i(t.x / CHUNK, t.y / CHUNK)
+	var e := enc()
+	if not e.has("site"):
+		e["site"] = {}
+	for dy in range(-1, 2):
+		for dx in range(-1, 2):
+			for s_ in _site_grid.get(k0 + Vector2i(dx, dy), []):
+				var at := Vector2i(int(s_["x"]), int(s_["y"]))
+				var id := "%d,%d" % [at.x, at.y]
+				var near: bool = Vector2(at - t).length() <= SITE_R
+				if not near:
+					inside_ep.erase("site:" + id)
+					continue
+				if inside_ep.has("site:" + id):
+					continue
+				inside_ep["site:" + id] = true
+				var d := re_def(str(s_["re"]))
+				if d.is_empty() or not _time_ok(d, night, int(ctx.get("hour", 22 if night else 12))):
+					continue
+				var regs = d.get("regions", "*")                          # 그 권역에 없는 무리(남부순환 패거리는 R01·R02)면 빈 야영지로 둔다
+				if region != "" and ((typeof(regs) == TYPE_ARRAY and not (region in regs)) or region in d.get("no_regions", [])):
+					continue
+				var used := int(e["site"].get(id, -99999999))
+				if used > -99999999 and now - used < EP_RESET_MIN:
+					continue
+				e["site"][id] = now
+				var roll := rng.randf()
+				trace.append({"src": "site:" + id, "t": t, "threat": threat_at(t), "p": SITE_P, "roll": roll, "re": ""})
+				if roll >= SITE_P:
+					continue
+				trace[-1]["re"] = str(s_["re"])
+				_remember_pick(str(s_["re"]), str(s_["state"]), at)
+				return {"re": str(s_["re"]), "src": "site", "state": str(s_["state"]), "at": at, "tpl": str(s_.get("tpl", ""))}
 	return {}
 
 

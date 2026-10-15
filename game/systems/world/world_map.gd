@@ -160,6 +160,8 @@ func load_map(map_id: String, st: StoryState = null) -> void:
 					boxes[Vector2i(int(bb["x"]) + i, int(bb["y"]) + j)] = bb
 		for t in pz["texts"]:
 			texts[Vector2i(int(t["x"]), int(t["y"]))] = str(t["text"])
+			if t.has("fx"):
+				text_fx[Vector2i(int(t["x"]), int(t["y"]))] = str(t["fx"])
 	for k in exits.keys():                                               # 손 맵끼리 잇던 가장자리 출구는 월드에서 이어진 땅이다
 		if str(exits[k]["to"]) in ids:
 			exits.erase(k)

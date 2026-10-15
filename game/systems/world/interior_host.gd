@@ -592,6 +592,12 @@ func interact() -> bool:
 					play_scene(m["scene"])
 					return true
 			say_text(map.texts[cc])
+			if map.text_fx.has(cc):                                          # 소장소 쪽지(1-W): 지도 조각 — 가까운 장소 하나 표시(한 번만)
+				var fk := "fx:%d,%d" % [cc.x, cc.y]
+				if not st.boxes.has(fk):
+					st.boxes[fk] = {"done": true}
+					if str(map.text_fx[cc]) == "reveal_near":
+						box.finished.connect(func() -> void: reveal_near(cc), CONNECT_ONE_SHOT)
 			return true
 	return false
 
@@ -1457,6 +1463,25 @@ func _ring_places(me: Vector2i) -> Array:
 	return out
 
 
+## 쪽지·지도 조각(1-E RE-042 · 1-W 소장소): 아직 표시 안 된 가장 가까운 장소 하나를 지도에 '표시'(60타일 안, 6타일 밖)
+func reveal_near(from: Vector2i) -> bool:
+	PlaceLog.load_db()
+	var pick := ""
+	var bd := 60.0
+	for lid in PlaceLog.db:
+		var e: Dictionary = PlaceLog.db[lid]
+		if bool(e.get("hidden", false)) or not bool(e.get("marker", true)) or st.places.get_state(str(lid)) >= PlaceLog.MARKED:
+			continue
+		var dd := Vector2(int(e["tx"]) - from.x, int(e["ty"]) - from.y).length()
+		if dd < bd and dd > 6.0:
+			bd = dd
+			pick = str(lid)
+	if pick != "" and st.places.raise(pick, PlaceLog.MARKED):
+		hint("쪽지가 가리킨 곳이 지도에 표시되었다", 5.0)
+		return true
+	return false
+
+
 ## 목표 줄 첫 줄(일시 정지 메뉴 '지금 할 일'): QuestLog.objectives()의 맨 위
 func _objective() -> String:
 	var o := st.quests.objectives()
@@ -1562,19 +1587,7 @@ func _handlers() -> void:
 		PlaceLog.load_db()
 		var n := 0
 		if a.size() == 1 and str(a[0]) == "near":                     # 쪽지·지도 조각(1-E RE-042): 아직 표시 안 된 가장 가까운 장소 하나(60타일 안)
-			var me := map.tile_of(player.loco.logical)
-			var pick := ""
-			var bd := 60.0
-			for lid in PlaceLog.db:
-				var e: Dictionary = PlaceLog.db[lid]
-				if bool(e.get("hidden", false)) or not bool(e.get("marker", true)) or st.places.get_state(str(lid)) >= PlaceLog.MARKED:
-					continue
-				var dd := Vector2(int(e["tx"]) - me.x, int(e["ty"]) - me.y).length()
-				if dd < bd and dd > 6.0:
-					bd = dd
-					pick = str(lid)
-			if pick != "" and st.places.raise(pick, PlaceLog.MARKED):
-				hint("쪽지가 가리킨 곳이 지도에 표시되었다", 5.0)
+			reveal_near(map.tile_of(player.loco.logical))
 			done.call()
 			return
 		for tok in a:
