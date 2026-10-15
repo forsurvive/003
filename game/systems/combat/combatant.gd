@@ -25,6 +25,7 @@ var can_ko := false                           ## 비살상 피해로 HP 0이면 
 var ko := false                               ## 기절 중(dead도 참: 맞지 않고 막지 않는다)
 var hp_floor := 0.0                           ## 이 밑으로 내려가지 않는다(죽지 않는 적)
 var killed_lethal := false                    ## 마지막 일격이 실총이었나(카르마)
+var last_by := ""                             ## 마지막으로 때린 편(1-E: 교전 중 다른 무리가 쓰러뜨리면 경험치 없음 · 비적대 무리를 때리면 적대로)
 
 
 func pos() -> Vector2:

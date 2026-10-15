@@ -749,14 +749,15 @@ func _draw_view_title() -> void:
 		return
 	if view_title < 0.3 and int(view_title * 20.0) % 2 == 0:                     # 반투명 없이: 두 번 깜박이며 켜진다
 		return
-	var f: Font = host.ev.font_big
+	var f: Font = host.ev.font_title                                                # 숫자가 또렷한 굵은 글꼴(2277이 2077로 읽히지 않게)
+	var px := EventRunner.TITLE_PX
 	var t := "2277년, 서울."
 	var vs := view_cap.get_viewport_rect().size
-	var w := f.get_string_size(t, HORIZONTAL_ALIGNMENT_LEFT, -1, 32).x
+	var w := f.get_string_size(t, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x
 	var p := Vector2(floorf((vs.x - w) / 2.0), floorf(vs.y * 0.15))                 # 하늘(주인공은 아래 가운데에 서 있다)
-	for o in [Vector2(-2, 0), Vector2(2, 0), Vector2(0, -2), Vector2(0, 2)]:
-		view_cap.draw_string(f, p + o, t, HORIZONTAL_ALIGNMENT_LEFT, -1, 32, Color("1A181D"))
-	view_cap.draw_string(f, p, t, HORIZONTAL_ALIGNMENT_LEFT, -1, 32, Color("E9E4D8"))
+	for o in [Vector2(-2, 0), Vector2(2, 0), Vector2(0, -2), Vector2(0, 2), Vector2(-2, -2), Vector2(2, 2), Vector2(-2, 2), Vector2(2, -2)]:
+		view_cap.draw_string(f, p + o, t, HORIZONTAL_ALIGNMENT_LEFT, -1, px, Color("1A181D"))
+	view_cap.draw_string(f, p, t, HORIZONTAL_ALIGNMENT_LEFT, -1, px, Color("E9E4D8"))
 
 
 ## MQ-P3 시작(2274, 열여섯): 무기는 넣어 두고 교무 구역 동쪽 입구에서. 복도에 들어서면 소동이 열린다(트리거)

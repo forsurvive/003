@@ -7,6 +7,7 @@ cd "$(dirname "$0")/.."
 python3 tools/pipeline/places_extract.py                # 장소 425(1-2): SD-09a~f 개요 표 → places.json(이야기 추출이 쓴다)
 python3 tools/pipeline/encounter_extract.py             # 인카운터(1-3): SD-08 §14.3 위협도 격자 · SD-05 §6.5 EP → encounters.json
 python3 tools/pipeline/extract.py
+python3 tools/pipeline/encounter_table.py             # 인카운터 표(1-E, SD-22): RE 행·범주 가중 → encounters.json(적 자료 뒤에)
 python3 tools/pipeline/extract_story.py
 python3 tools/pipeline/extract_docs.py
 python3 tools/pipeline/script_compile.py

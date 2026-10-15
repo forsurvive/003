@@ -36,6 +36,7 @@ var hotkeys := {}                                 ## 1~8 -> 아이템 ID(무기�
 var reload_t := 0.0
 var cool := 0.0
 var crouch := false
+var since_shot := 999.0                            ## 주인공이 마지막으로 쏜 뒤 지난 초(1-E 인카운터 확률 '30초 안 총성 ×1.4')
 var inject_t := 0.0
 var heal_q: Array = []                            ## 회복 대기열: 남은 회복량(앞에서부터 2.0초씩)
 var heal_rate := 0.0
@@ -144,7 +145,7 @@ func set_stealth_live(on: bool) -> void:
 
 ## 적 무기(정합, 0-9): 보안요원 진압봉 W-041 · 권총 W-002, 계엄군은 생포 사격(W-002 판정을 빌린다), 파워 아머는 그 세 배 연사
 func _enemy_weapon(enemy_id: String, arm: String) -> Dictionary:
-	if enemy_id in ["CR-002", "CR-104", "CR-095", "CR-107"]:
+	if enemy_id == "CR-002" or enemy_id in Enemy.DOGS:
 		return {}
 	var w: Dictionary = weapons.get("W-041" if arm in ["baton", "claw"] else "W-002", {}).duplicate()
 	if arm == "claw":                                                   # 야생 구울(1-4): 맨손 내려치기 — 피해는 SD-14 표 '근접 n'
@@ -176,8 +177,10 @@ func spawn(enemy_id: String, pos: Vector2, map: InteriorMap, st: StoryState = nu
 	map.objects.add_child(e)
 	enemies.append(e)
 	e.cmb.died.connect(func() -> void:
-		stats["downs"] += 1
-		if st != null:
+		var by_pc: bool = e.cmb.last_by in ["player", "ally", ""]          # 교전(1-E): 다른 무리가 쓰러뜨린 적은 경험치·카르마가 없다
+		if by_pc:
+			stats["downs"] += 1
+		if st != null and by_pc:
 			if not e.has_meta("xp_given"):
 				e.set_meta("xp_given", true)
 				st.call_fn("xp", [int(enemy_rows[enemy_id]["xp"])])
@@ -269,7 +272,7 @@ func _allies(dt: float) -> void:
 		var best: Enemy = null
 		var bd := 11.0 * 32.0
 		for e in enemies:
-			if not is_instance_valid(e) or e.cmb.dead or e.cmb.team != "enemy":
+			if not is_instance_valid(e) or e.cmb.dead or not e.cmb.team.begins_with("enemy"):
 				continue
 			var d: float = e.loco.logical.distance_to(me.loco.logical)
 			if d < bd and shots.world.line_of_sight(me.loco.logical, e.loco.logical):
@@ -287,14 +290,25 @@ func _allies(dt: float) -> void:
 			shots.fire(me.loco.logical + Vector2(0, -14) + Vector2.RIGHT.rotated(deg_to_rad(aim)) * 10.0, ang, SHOT_SPEED, "ally", w, 20.0)
 
 
-## 적이 노릴 대상: 주인공과 살아 있는 아군 가운데 보이는 가장 가까운 쪽(지금 대상은 1.5배 가까운 쪽이 나타날 때까지 유지)
+## 적이 노릴 대상: 그 적이 노리는 편(foes — 주인공·아군 · 교전 중이면 다른 무리) 가운데 보이는 가장 가까운 쪽
+## (지금 대상은 1.5배 가까운 쪽이 나타날 때까지 유지). 노릴 편이 아무도 없으면 '아무도 아님'(죽은 허수아비)을 준다
 func _target_for(e: Enemy) -> Combatant:
-	if allies.is_empty():
+	var plain: bool = e.foes.size() == 2 and "player" in e.foes and "ally" in e.foes
+	if plain and allies.is_empty():
 		return pc
-	var cand: Array = [pc]
-	for a in allies:
-		if not (a["cmb"] as Combatant).dead:
-			cand.append(a["cmb"])
+	var cand: Array = []
+	if "player" in e.foes:
+		cand.append(pc)
+	if "ally" in e.foes:
+		for a in allies:
+			if not (a["cmb"] as Combatant).dead:
+				cand.append(a["cmb"])
+	if not plain:
+		for o in enemies:
+			if is_instance_valid(o) and o != e and not o.cmb.dead and o.cmb.team in e.foes:
+				cand.append(o.cmb)
+	if cand.is_empty():
+		return _nobody()
 	var cur: Combatant = e.focus if e.focus != null and not e.focus.dead and e.focus in cand else null
 	var best: Combatant = cur
 	var bd := e.loco.logical.distance_to(cur.pos()) / 1.5 if cur != null else INF
@@ -303,8 +317,50 @@ func _target_for(e: Enemy) -> Combatant:
 		if d < bd and (c == pc or shots.world.line_of_sight(e.loco.logical, (c as Combatant).pos())):
 			bd = d
 			best = c
-	e.focus = best if best != null else pc
+	e.focus = best if best != null else cand[0]
 	return e.focus
+
+
+## 노릴 편이 없는 적에게 주는 허수아비(죽어 있어 보지도 쏘지도 않는다)
+class _NoLoco:
+	var logical := Vector2(-1.0e6, -1.0e6)
+
+
+class _NoActor:
+	var loco := _NoLoco.new()
+
+
+var _none: Combatant
+
+
+func _nobody() -> Combatant:
+	if _none == null:
+		_none = Combatant.new()
+		_none.actor = _NoActor.new()
+		_none.dead = true
+		_none.team = "none"
+	return _none
+
+
+signal provoked(team: String)
+
+
+## 비적대 무리를 주인공이 때렸다(1-E): 그 무리(같은 편) 모두 주인공을 노린다. 탄도 이제 주인공을 맞힌다
+func _provoked() -> void:
+	for e in enemies:
+		if not is_instance_valid(e) or e.cmb.dead or "player" in e.foes or e.cmb.last_by != "player":
+			continue
+		var team: String = e.cmb.team
+		var nt := "enemy" + team.trim_prefix("calm")
+		for o in enemies:
+			if is_instance_valid(o) and o.cmb.team == team:
+				o.foes.append_array(["player", "ally"])
+				o.cmb.team = nt
+				o.wake()
+		for o in enemies:                                                # 그 무리를 노리던 쪽은 바뀐 편 이름도 노린다
+			if is_instance_valid(o) and team in o.foes and not nt in o.foes:
+				o.foes.append(nt)
+		provoked.emit(team)
 
 
 func resident(id: String) -> Combatant:
@@ -452,12 +508,17 @@ func tick(dt: float, free: bool, st: StoryState) -> void:
 	var hp0 := pc.hp
 	var step := dt if free else 0.0
 	_token_t -= step
-	if _token_t <= 0.0:                                                 # 공격 토큰(SD-11 §7.4, 난이도 보통 원거리 3): 대상에 가까운 사수 셋만 쏜다
+	since_shot += step
+	if _token_t <= 0.0:                                                 # 공격 토큰(SD-11 §7.4, 난이도 보통 원거리 3): 대상에 가까운 사수 셋만 쏜다(편마다 — 1-E 교전)
 		_token_t = 1.5
+		_provoked()
 		var cands := enemies.filter(func(e): return is_instance_valid(e) and e.style == "shooter" and not e.cmb.dead)
 		cands.sort_custom(func(a, b): return a.loco.logical.distance_to(_target_for(a).pos()) < b.loco.logical.distance_to(_target_for(b).pos()))
+		var per_team := {}
 		for i in cands.size():
-			cands[i].has_token = i < 3
+			var tm: String = cands[i].cmb.team
+			per_team[tm] = int(per_team.get(tm, 0)) + 1
+			cands[i].has_token = int(per_team[tm]) <= 3
 	for e in enemies:
 		if is_instance_valid(e):
 			var was: bool = e.cmb.flash > 0
@@ -563,6 +624,7 @@ func _player(dt: float, player: Actor, st: StoryState) -> void:
 			shots.shots[-1]["sneak_ok"] = true
 			mags[weapon_id] = int(mags[weapon_id]) - 1
 			stats["shots"] += 1
+			since_shot = 0.0
 			_wear_weapon(st, 1)
 			if player.doll != null:
 				player.doll.flash_face("fire", 0.14)
@@ -591,6 +653,7 @@ func _melee(player: Actor, w: Dictionary, to: Vector2, st: StoryState) -> void:
 			var r := CombatRules.resolve({"weapon": w, "skill": float(st.skill("MELEE")) if st != null else 15.0,
 				"attacker": {"str": st.stat("ST") if st != null else 5}, "part": part, "dr": e.cmb.dr, "sneak": sneak, "crit": sneak})
 			r["nonlethal"] = true                                       # 근접 = 비살상(사람은 기절, 0-9)
+			e.cmb.last_by = "player"
 			e.cmb.take(r, player.loco.logical)
 			e.hear("melee", player.loco.logical)
 			stats["hits"] += 1

@@ -44,6 +44,21 @@
   "tier": "약",
   "xp": 5
  },
+ "CR-106": {
+  "_src": "14_creatures-enemies.md:445",
+  "attack": "물기 25",
+  "dr": 0,
+  "hp": 150,
+  "id": "CR-106",
+  "level": 7,
+  "name": "들개 우두머리",
+  "part_weights": "PW-C",
+  "pattern": "울부짖기: 무리 속도 +15%·피해 +20%(20초, 쿨 30초). 처치 시 무리 50% 도주",
+  "radius": 0.28,
+  "speed": 4.5,
+  "tier": "강",
+  "xp": 25
+ },
  "CR-107": {
   "_src": "14_creatures-enemies.md:446",
   "attack": "물기 12",
@@ -57,6 +72,21 @@
   "radius": 0.28,
   "speed": 4.5,
   "tier": "중",
+  "xp": 15
+ },
+ "CR-108": {
+  "_src": "14_creatures-enemies.md:447",
+  "attack": "물기 15",
+  "dr": 0,
+  "hp": 80,
+  "id": "CR-108",
+  "level": 5,
+  "name": "정착지 진돗개",
+  "part_weights": "PW-C",
+  "pattern": "평소 비적대. 정착지 호감도 '적대'이거나 정착지에서 범죄가 적발되면 주민과 함께 공격",
+  "radius": 0.28,
+  "speed": 4.5,
+  "tier": "중(비적대)",
   "xp": 15
  },
  "CR-200": {
@@ -144,6 +174,45 @@
   "special": "면허 생산 파워 아머(태성 면허 정비형, SD-13). 넉다운 면역",
   "weapon_main": "미니건 / 플라스마 소총 / 개틀링 레이저",
   "xp": 40
+ },
+ "CR-420": {
+  "_src": "14_creatures-enemies.md:1113",
+  "dr": 5,
+  "hp": 25,
+  "id": "CR-420",
+  "level": 1,
+  "name": "약탈자(총)",
+  "part_weights": "PW-H",
+  "radius": 0.3,
+  "rank": "1",
+  "weapon_main": "낡은 권총 / 개조 권총",
+  "xp": 3
+ },
+ "CR-421": {
+  "_src": "14_creatures-enemies.md:1114",
+  "dr": 8,
+  "hp": 55,
+  "id": "CR-421",
+  "level": 4,
+  "name": "약탈자(총)",
+  "part_weights": "PW-H",
+  "radius": 0.3,
+  "rank": "2",
+  "weapon_main": "사냥총 / 산탄총 / 자동소총",
+  "xp": 10
+ },
+ "CR-423": {
+  "_src": "14_creatures-enemies.md:1116",
+  "dr": 5,
+  "hp": 30,
+  "id": "CR-423",
+  "level": 1,
+  "name": "약탈자(근접)",
+  "part_weights": "PW-H",
+  "radius": 0.3,
+  "rank": "1",
+  "weapon_main": "야구방망이 / 골프채 / 쇠파이프 / 각목 + 파편 수류탄",
+  "xp": 3
  },
  "CR-435": {
   "_src": "14_creatures-enemies.md:1141",

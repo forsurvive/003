@@ -7,6 +7,8 @@
 class_name Enemy
 extends Actor
 
+const DOGS := ["CR-104", "CR-095", "CR-107", "CR-106", "CR-108"]
+
 var brain: AIBrain
 var cmb := Combatant.new()
 var row: Dictionary
@@ -43,6 +45,9 @@ var level := 1                                ## 실제 레벨(장소 상한을 
 var bite := 8.0                               ## 들개 물기 피해(SD-14 표 '물기 n')
 var focus: Combatant                          ## 지금 노리는 대상(주인공·아군 감시조 — 진행기가 정한다, 0-10)
 var hold_dir := 2                             ## 제자리 경계 방향
+var det_mul := 1.0                            ## 감지 배수(1-E 상황: S3 먹이 중 0.5 · S4 잠 0.15 · S2 매복 1.2)
+var asleep := false                           ## 야영 중 잠(S4): 누워 있고, 맞거나 가까운 소리·탐지 게이지 50이면 깬다
+var foes: Array = ["player", "ally"]          ## 노리는 편(1-E 교전 S5: 다른 무리 편을 더한다 · 비적대 무리는 player를 뺀다)
 var arm := ""                                 ## 보안요원 무기: baton | pistol
 var who := ""                                 ## 이름 있는 경비(N-R01-018 권서준 등) — 이름표·대사
 var hp_floor := 0.0                           ## 이 밑으로 HP가 내려가지 않는다(CR-405, '못 이기는 적')
@@ -62,7 +67,8 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 	who = str(opts.get("who", ""))
 	stance = str(opts.get("stance", ""))
 	var is_roach: bool = row["id"] == "CR-002"
-	var is_dog: bool = row["id"] in ["CR-104", "CR-095", "CR-107"]               # 네발 물기(들개 · 1-5 변이 시궁쥐 — 2타일에서 덤벼 문다, SD-14 §4)
+	var is_dog: bool = row["id"] in DOGS                                         # 네발 물기(들개 · 1-5 변이 시궁쥐 — 2타일에서 덤벼 문다, SD-14 §4)
+	_rng.seed = int(pos.x * 31 + pos.y * 17)
 	var sheet := "en_cr401_loco"
 	match str(row["id"]):
 		"CR-002":
@@ -83,6 +89,15 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 			sheet = "en_c021_loco"                                  # 독사(SD-14 §10.4, 외형 SD-07b C-021)
 		"CR-473":
 			sheet = "en_cr473_%s_loco" % arm
+		"CR-420", "CR-421", "CR-423":                               # 1-E 남부순환 패거리(SD-14 F-04-C): 두 외형 중 하나
+			sheet = "en_%s%s_loco" % [str(row["id"]).to_lower().replace("-", ""), "b" if _rng.randf() < 0.5 else ""]
+		"CR-106":
+			sheet = "cr_cr104_loco"                                  # 들개 우두머리(그림은 들개, 1-E2에서 따로)
+		"CR-108":
+			sheet = "cr_baekgu_loco"                                 # 진돗개(백구 그림을 빌린다)
+	_rng.seed = int(pos.x * 7 + pos.y * 13)
+	if opts.has("sheet"):
+		sheet = str(opts["sheet"])
 	setup(sheet, pos, w)
 	style = "swarm" if is_roach else ("dog" if is_dog else ("melee" if arm in ["baton", "claw"] else "shooter"))
 	if is_dog:                                                       # 변이 들개(SD-14 §4.2): 4.5t/초, 지그재그로 달려와 문다
@@ -99,7 +114,10 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 	for r in opts.get("route", []):
 		route.append([Vector2(int(r[0]) * 32 + 16, int(r[1]) * 32 + 16), float(r[2])])
 	cmb.actor = self
-	cmb.team = "enemy"
+	cmb.team = str(opts.get("team", "enemy"))
+	if opts.has("foes"):
+		foes = (opts["foes"] as Array).duplicate()
+	det_mul = float(opts.get("det", 1.0))
 	cmb.can_ko = not is_roach and not is_dog
 	cmb.hp = float(row["hp"])
 	cmb.dr = float(row["dr"])
@@ -110,6 +128,8 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 		cmb.dr = roundf(cmb.dr * lv / level)
 		level = lv
 	cmb.max_hp = cmb.hp
+	if float(opts.get("hurt", 0.0)) > 0.0:                          # 다친 개체(S5~S7, SD-22 §3.2): HP 30~60%로 시작
+		cmb.hp = maxf(1.0, roundf(cmb.max_hp * float(opts["hurt"])))
 	cmb.radius = float(row["radius"]) * 32.0
 	radius_px = cmb.radius
 	cmb.weights = {"head": 15, "torso": 55, "leg": 30} if is_roach else ({"head": 20, "torso": 50, "leg": 30} if is_dog else CombatRules.HUMANOID_WEIGHTS)
@@ -121,7 +141,9 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 		loco.custom = {"run": {"frames": 4, "px": 3.0, "diag": 3.0, "contact": [0, 2], "speed_t": float(row["speed"])},
 			"walk": {"frames": 4, "px": 3.0, "diag": 3.0, "contact": [0, 2], "speed_t": float(row["speed"]) * 0.5}}
 	ui_font = load("res://assets/fonts/Galmuri9.ttf")
-	_rng.seed = int(pos.x * 7 + pos.y * 13)
+	if bool(opts.get("sleep", false)):
+		asleep = true
+		set_pose("lie")
 	_t_tac = _rng.randf() * 0.5                                    # 전술 갱신을 개체마다 엇갈리게(한 프레임 몰림 방지)
 	_t_per = _rng.randf() * 0.1
 
@@ -132,6 +154,15 @@ func hear(kind: String, at: Vector2) -> void:
 	if g > _heard:
 		_heard = g
 		_heard_at = at
+
+
+## 잠에서 깬다(일어선다)
+func wake() -> void:
+	if not asleep:
+		return
+	asleep = false
+	set_pose("stand")
+	det_mul = maxf(det_mul, 1.0)
 
 
 func think(dt: float, target: Combatant, nav, shots: Projectiles) -> void:   ## nav: NavGrid(청크 월드) 또는 InteriorNav(실내) — 같은 path()
@@ -160,8 +191,14 @@ func think(dt: float, target: Combatant, nav, shots: Projectiles) -> void:   ## 
 		var fov := brain.state == AIBrain.S.COMBAT or Perception.in_fov(fwd, to, brain.kind)   # 교전 중에는 표적을 계속 본다
 		var sees: bool = not target.dead and dist_t <= Perception.sight_range(per) and world.line_of_sight(loco.logical, target.pos())
 		var rate: float = Perception.detect_rate(dist_t, per, {"movement": target.movement, "posture": target.posture,
-			"sneak_skill": target.sneak, "alert": brain.alert(), "in_fov": fov}) if sees else 0.0
+			"sneak_skill": target.sneak, "alert": brain.alert(), "in_fov": fov}) * det_mul if sees else 0.0
 		var hit: bool = cmb.last_hit_from != Vector2.ZERO
+		if asleep:                                                  # 잠(S4): 맞거나, 가까운 소리(0.5+)거나, 바로 옆까지 오면 깬다
+			if hit or _heard >= 0.5 or (sees and dist_t <= 1.5) or brain.gauge >= 50.0:
+				wake()
+			else:
+				sees = false
+				rate = 0.0
 		cmb.last_hit_from = Vector2.ZERO
 		_intent = brain.tick(step, {"sees": sees and (fov or dist_t <= 3.0), "rate": rate, "target": target.pos(),
 			"hit": hit, "sound": _heard, "sound_at": _heard_at, "at_home": loco.logical.distance_to(brain.home) < 24.0})
@@ -185,6 +222,8 @@ func think(dt: float, target: Combatant, nav, shots: Projectiles) -> void:   ## 
 
 func _tactics(target: Combatant, nav) -> void:
 	var goal: String = _intent.get("goal", "hold")
+	if target.dead and goal == "engage":                              # 노릴 대상이 없다(교전 상대가 다 쓰러짐 · 비적대 무리): 제자리
+		goal = "hold"
 	var at: Vector2 = _intent.get("at", loco.logical)
 	_move = Vector2.ZERO
 	if goal == "engage":
@@ -300,6 +339,7 @@ func _swarm(dt: float, target: Combatant, to_t: Vector2) -> void:
 		loco.render = loco.logical.round()
 		position = loco.render
 		if _leap <= 0.0 and loco.logical.distance_to(target.pos()) <= 32.0 + target.radius:
+			target.last_by = cmb.team
 			target.take({"hp": 3.0}, loco.logical)
 		return
 	if to_t.length() <= 3.0 * 32.0:
@@ -319,6 +359,7 @@ func _bite(_dt: float, target: Combatant, to_t: Vector2) -> void:
 	loco.facing = Locomotion.snap8(to_t, 0.0)
 	_show()
 	_cool = 1.1
+	target.last_by = cmb.team
 	target.take({"hp": bite}, loco.logical)
 
 
@@ -334,7 +375,7 @@ func _shoot(dt: float, target: Combatant, shots: Projectiles) -> void:
 		aim += (10.0 + shots.rng.randf() * 6.0) * (1.0 if shots.rng.randf() < 0.5 else -1.0)
 	var sp := CombatRules.spread(skill, "stand", loco.motion != "idle")
 	var ang := CombatRules.shot_angle(aim, sp, shots.rng)
-	if shots.fire(loco.logical + Vector2(0, -14) + Vector2.RIGHT.rotated(deg_to_rad(aim)) * 10.0, ang, 640.0, "enemy", weapon, skill):
+	if shots.fire(loco.logical + Vector2(0, -14) + Vector2.RIGHT.rotated(deg_to_rad(aim)) * 10.0, ang, 640.0, cmb.team, weapon, skill):
 		_cool = 1.0 / (float(weapon["rate"]) * 0.6)                  # semi-auto: 60% of max rate
 		shots_fired += 1
 		_burst += 1
@@ -358,6 +399,7 @@ func _swing(dt: float, target: Combatant) -> void:
 	_cool = 1.0 / maxf(0.1, float(weapon.get("rate", 1.0)))
 	swing_t = 0.2
 	var r := CombatRules.resolve({"weapon": weapon, "skill": skill, "attacker": {"str": 5}, "part": "torso", "dr": target.dr})
+	target.last_by = cmb.team
 	target.take(r, loco.logical)
 
 

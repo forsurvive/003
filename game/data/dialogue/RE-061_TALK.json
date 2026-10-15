@@ -1,0 +1,246 @@
+{
+ "id": "RE-061_TALK",
+ "title": "계엄군 분대",
+ "loc": "",
+ "npc": "CR-403",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "OPEN": 6,
+  "REFUSE": 10,
+  "WARY": 14,
+  "TALK_OK": 16,
+  "TALK_FAIL": 19,
+  "RUN": 22,
+  "HOSTILE": 24,
+  "PASS": 27,
+  "SALUTE": 30
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "AFF_BJ <= -60",
+   "to": "HOSTILE"
+  },
+  {
+   "op": "if",
+   "cond": "AFF_BJ >= 50",
+   "to": "SALUTE"
+  },
+  {
+   "op": "if",
+   "cond": "AFF_BJ >= 20",
+   "to": "PASS"
+  },
+  {
+   "op": "if",
+   "cond": "AFF_BJ <= -20",
+   "to": "WARY"
+  },
+  {
+   "op": "line",
+   "who": "CR-403",
+   "emo": "기본",
+   "text": "정지. 어디 가나. 가방 열어."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "가방을 연다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "OPEN",
+     "id": "RE-061_TALK:1:0"
+    },
+    {
+     "text": "내 가방은 내 거다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "REFUSE",
+     "id": "RE-061_TALK:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "분대장이 가방을 뒤적이다 닫는다."
+  },
+  {
+   "op": "line",
+   "who": "CR-403",
+   "emo": "기본",
+   "text": "…통과. 계엄 구역에서 무기 꺼내지 마라."
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "CR-403",
+   "emo": "분노",
+   "text": "비협조 기록한다. 다음엔 이렇게 안 끝나."
+  },
+  {
+   "op": "do",
+   "fx": "aff(\"BJ\", -3)"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "CR-403",
+   "emo": "분노",
+   "text": "등록번호 대조한다. 같이 가 줘야겠다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "볼트에서 막 나온 사람한테 무슨 기록이 있겠소",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "어려움"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "TALK_OK",
+     "id": "RE-061_TALK:2:0",
+     "fail": "TALK_FAIL"
+    },
+    {
+     "text": "(달아난다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "RUN",
+     "id": "RE-061_TALK:2:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "CR-403",
+   "emo": "피곤",
+   "text": "…오늘은 넘어간다. 분대 이동."
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "CR-403",
+   "emo": "분노",
+   "text": "말이 길다. 제압해."
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "fight"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "run"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "CR-403",
+   "emo": "분노",
+   "text": "저놈이다. 사격 개시!"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "fight"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "CR-403",
+   "emo": "기본",
+   "text": "아, 그쪽이군. 지나가."
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "CR-403",
+   "emo": "미소",
+   "text": "충성. 이 앞 고가 밑은 오늘 우리가 쓸었다."
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/encounters/RE_WORLD.txt"
+}

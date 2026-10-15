@@ -1,5 +1,5 @@
 데이터 빌드 v0 — 오류 0
-  enemies: 19행
+  enemies: 24행
   items_aid: 12행
   items_apparel: 58행
   items_apparel_head: 31행
@@ -25,8 +25,12 @@
   - 14_creatures-enemies.md CR-095 · part_weights = 'PW-H' — 부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')
   - 14_creatures-enemies.md CR-104 · radius = 0.28 — 충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다
   - 14_creatures-enemies.md CR-104 · part_weights = 'PW-C' — 부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')
+  - 14_creatures-enemies.md CR-106 · radius = 0.28 — 충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다
+  - 14_creatures-enemies.md CR-106 · part_weights = 'PW-C' — 부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')
   - 14_creatures-enemies.md CR-107 · radius = 0.28 — 충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다
   - 14_creatures-enemies.md CR-107 · part_weights = 'PW-C' — 부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')
+  - 14_creatures-enemies.md CR-108 · radius = 0.28 — 충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다
+  - 14_creatures-enemies.md CR-108 · part_weights = 'PW-C' — 부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')
   - 14_creatures-enemies.md CR-200 · radius = 0.3 — 충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다
   - 14_creatures-enemies.md CR-200 · part_weights = 'PW-H' — 부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')
   - 14_creatures-enemies.md CR-201 · radius = 0.3 — 충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다
@@ -39,6 +43,12 @@
   - 14_creatures-enemies.md CR-403 · part_weights = 'PW-H' — 부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')
   - 14_creatures-enemies.md CR-405 · radius = 0.3 — 충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다
   - 14_creatures-enemies.md CR-405 · part_weights = 'PW-H' — 부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')
+  - 14_creatures-enemies.md CR-420 · radius = 0.3 — 충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다
+  - 14_creatures-enemies.md CR-420 · part_weights = 'PW-H' — 부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')
+  - 14_creatures-enemies.md CR-421 · radius = 0.3 — 충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다
+  - 14_creatures-enemies.md CR-421 · part_weights = 'PW-H' — 부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')
+  - 14_creatures-enemies.md CR-423 · radius = 0.3 — 충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다
+  - 14_creatures-enemies.md CR-423 · part_weights = 'PW-H' — 부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')
   - 14_creatures-enemies.md CR-435 · radius = 0.3 — 충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다
   - 14_creatures-enemies.md CR-435 · part_weights = 'PW-H' — 부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')
   - 14_creatures-enemies.md CR-436 · radius = 0.3 — 충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다

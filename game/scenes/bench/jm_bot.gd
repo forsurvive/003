@@ -109,9 +109,10 @@ func _ready() -> void:
 			st.vars.set_v("MQ101_RAD", 1)
 			st.vars.set_v("MQ101_RESULT", 1)                             # 계단 방어로 마친 봉천 — 주민 소문 확인
 			host.enter("W", "L-R01-32")
-			plan = [["go", 911, 1395], ["shoton", "판독", "sentry_lit"], ["go", 912, 1393],
+			var sen := _spot_find("L-R01-32", "sentry")
+			plan = [["go", sen.x - 1, sen.y + 3], ["shoton", "판독", "sentry_lit"], ["go", sen.x, sen.y + 1],
 				["check", "MQ102_ROBOT == 1 and MQ102_STAGE == 10", "잠든 파수가 깨어났다 꺼짐"],
-				["use", 912, 1392], ["shot", "sentry_after"],
+				["use", sen.x, sen.y], ["shot", "sentry_after"],
 				["go", 891, 1381], ["go", 891, 1378], ["go", 894, 1374], ["want", ["읽을 사람"]], ["talk", "N-R02-018"],
 				["check", "MQ102_C1 == 1 and MQ103_STAGE == 10", "구울 행상 → 단서 1(MQ-103 열림)"],
 				["shoton", "*", "rumor"], ["talk", "N-R01-030"], ["wait", 3.0], ["check", "seen_rumor", "이름 없는 봉천 주민이 행적 소문을 한다"],
@@ -132,18 +133,19 @@ func _ready() -> void:
 		"north":                                                        # 1-7c R01 북쪽 탐험 묶음: 학원가(손재석 문항집 · 10번) → 흑석 병원(간호 7호 붕대) → 수산시장 → 국립묘지 대장 → 상도 빌라 LR-06
 			st.vars.set_v("V_Q10", 4)                                    # 볼트 10번에 '문을 열고 밖을 본다'를 고른 주인공
 			host.enter("W", "L-R01-24")
-			plan = [["go", 873, 1174], ["shot", "k24_door"], ["use", 873, 1173], ["wait", 2.0], ["shot", "k24"],
+			var d24 := _door("K-24")
+			plan = [["go", d24.x, d24.y + 1], ["shot", "k24_door"], ["use", d24.x, d24.y], ["wait", 2.0], ["shot", "k24"],
 				["go", 9, 7, "K-24"], ["want", ["무슨 수업", "풀어 보자", "가장 가까운 지하", "판독기 앞에 정지", "신고한다", "10번은?", "볼트 시험엔 10번"]],
 				["shoton", "점수 없는 답", "son_q10"], ["talk", "N-R01-056"], ["wait", 1.0],
 				["check", "PN_Q10 == 1 and PN_SON == 2 and has(\"M-090\") and K_Q10 == 0", "손재석: 문항집에 10번이 없다(보조 단서만, K_Q10은 그대로)"],
 				["warp", "K-26"], ["wait", 1.5], ["shot", "k26"], ["fight"],
 				["go", 23, 8, "K-26"], ["want", ["!붕대를 갈아", "됐다"]], ["shoton", "관리 후보", "nurse"], ["talk", "N-R01-058"], ["wait", 1.0],
 				["check", "PN_NURSE == 1 and PN_HEAL_DAY == GAME_DAY", "간호 7호: 등록 판독 · 오늘 붕대"],
-				["warp", "W", "L-R01-25"], ["wait", 1.5], ["go", 898, 1167], ["want", ["!저 냉동고는", "됐다"]], ["shoton", "원자력 냉동고", "market"],
+				["warp", "W", "L-R01-25"], ["wait", 1.5], ["go", _spot_o("L-R01-25").x + 6, _spot_o("L-R01-25").y + 6], ["want", ["!저 냉동고는", "됐다"]], ["shoton", "원자력 냉동고", "market"],
 				["talk", "N-R01-057"], ["wait", 1.0], ["check", "PN_SIM == 1", "수산시장 경매사 심도겸"],
-				["warp", "W", "L-R01-22"], ["wait", 1.5], ["go", 1055, 1246], ["want", ["!인수 대장을", "됐다"]], ["shoton", "인수 대장", "cemetery"],
+				["warp", "W", "L-R01-22"], ["wait", 1.5], ["go", _spot_o("L-R01-22").x + 5, _spot_o("L-R01-22").y + 6], ["want", ["!인수 대장을", "됐다"]], ["shoton", "인수 대장", "cemetery"],
 				["talk", "N-R01-052"], ["wait", 1.5], ["check", "read:K-22-LEDGER", "길덕수의 귀환 유해 인수 대장"],
-				["warp", "W", "L-R01-27"], ["wait", 1.5], ["go", 934, 1252], ["shoton", "금색 봉투", "villa"], ["use", 934, 1251], ["wait", 2.0],
+				["warp", "W", "L-R01-27"], ["wait", 1.5], ["go", _spot_o("L-R01-27").x + 4, _spot_o("L-R01-27").y + 4], ["shoton", "금색 봉투", "villa"], ["use", _spot_o("L-R01-27").x + 4, _spot_o("L-R01-27").y + 3], ["wait", 2.0],
 				["check", "read:LR-06", "무너진 빌라의 국가 유공 통지서(LR-06)"]]
 		"place":                                                        # 1-5e 손 장소: 전망바위 → 연수원 본관(LR-19)·기숙사(LR-11) → 계곡 배수로(정비공) → 경찰서 무기고(자물쇠 50) → 공영방송(LR-01)
 			st.vars.set_v("PC_SKP_LOCKPICK", 50)
@@ -151,9 +153,10 @@ func _ready() -> void:
 			for kv in [["M-070", 4], ["I-001", 10], ["10mm 탄", 200]]:
 				st.call_fn("give", kv)
 			host.enter("W", "L-R01-03")
-			plan = [["go", 985, 1517], ["shoton", "세진전자 타워", "view"], ["use", 985, 1516], ["wait", 0.5],
+			var tel := _spot_find("L-R01-03", "telescope")
+			plan = [["go", tel.x, tel.y + 1], ["shoton", "세진전자 타워", "view"], ["use", tel.x, tel.y], ["wait", 0.5],
 				["check", "PL_VIEW == 1 and PC_CAPS == 612", "전망바위 망원경 → 지도 표시 · 동전 12캡"],
-				["warp", "W", "L-R01-06"], ["wait", 1.0], ["face", 6], ["shot", "k01_door"], ["use", 929, 1475], ["wait", 2.0], ["shot", "k01"], ["fight"],
+				["warp", "W", "L-R01-06"], ["wait", 1.0], ["face", 6], ["shot", "k01_door"], ["use", _door("K-01").x, _door("K-01").y], ["wait", 2.0], ["shot", "k01"], ["fight"],
 				["go", 3, 5, "K-01"], ["use", 3, 4], ["wait", 0.5], ["check", "has(\"M-230\") and PL_LETTER == 1", "교관 책상 서랍의 LR-19(M-230)"],
 				["go", 15, 3], ["go", 15, 0], ["wait", 1.5], ["shot", "k02"], ["fight"], ["go", 37, 7, "K-02"], ["use", 37, 6], ["wait", 0.5],
 				["check", "read:LR-11", "기숙사 끝 해골의 「종전」 유인물(LR-11)"]]
@@ -174,6 +177,48 @@ func _ready() -> void:
 
 ## MQ-106: K_CODE를 안 채로 연수원 본관(K-01)에서 바깥으로 나온다 → 무전 → 30초 뒤 버티버드 → 해법 여섯 갈래 → 막 전환(V_ACT 2)
 ## 굽힌 발견물(data/world/pois.json의 texts·boxes)에서 글·이름에 sub가 든 것 중 near에 가장 가까운 칸
+## 굽기 결과(place_geo.json)에서 자리 찾기 — 도로망이 바뀌어도 봇이 따라간다(SD-21 §8 '봇·시험 좌표 → 장소 ID 기준')
+static var _geo := {}
+
+
+func _geo_d() -> Dictionary:
+	if _geo.is_empty():
+		_geo = JSON.parse_string(FileAccess.get_file_as_string("res://data/world/place_geo.json"))
+	return _geo
+
+
+## 월드 → 실내 문(to = 실내 맵 ID)의 문 칸
+func _door(to: String) -> Vector2i:
+	for d in _geo_d().get("_doors", []):
+		if str(d.get("to", "")) == to:
+			return Vector2i(int(d["at"][0]), int(d["at"][1]))
+	push_error("봇: 문을 못 찾았다 " + to)
+	return Vector2i.ZERO
+
+
+## 손 장소 자리(spot) 원점
+func _spot_o(lid: String) -> Vector2i:
+	for sp in _geo_d().get("_spots", []):
+		if str(sp.get("lid", "")) == lid:
+			return Vector2i(int(sp["at"][0]), int(sp["at"][1]))
+	push_error("봇: 장소 자리를 못 찾았다 " + lid)
+	return Vector2i.ZERO
+
+
+## 손 장소 자리 안의 소품·조사 글·인물(이름·글·ID에 sub가 든 첫 것)의 월드 칸
+func _spot_find(lid: String, sub: String) -> Vector2i:
+	for sp in _geo_d().get("_spots", []):
+		if str(sp.get("lid", "")) != lid:
+			continue
+		var data: Dictionary = sp["data"]
+		for grp in ["texts", "props", "npcs", "boxes"]:
+			for e in data.get(grp, []):
+				if (str(e.get("text", "")) + str(e.get("name", "")) + str(e.get("id", ""))).contains(sub):
+					return Vector2i(int(sp["at"][0]) + int(e["x"]), int(sp["at"][1]) + int(e["y"]))
+	push_error("봇: 자리 안 '%s'를 못 찾았다 %s" % [sub, lid])
+	return Vector2i.ZERO
+
+
 func _poi_at(group: String, sub: String, near: Vector2i) -> Vector2i:
 	var d: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/world/pois.json"))
 	var best := near
@@ -288,7 +333,7 @@ func _sb_plan() -> void:
 		host.date_text = "2277. 10. 25.  21:30"
 		host.combat.pc.hp = host.combat.pc.max_hp * 0.5
 		host.enter("W", "L-R02-20")
-		plan = [["wait", 1.0], ["face", 6], ["shot", "k20_door"], ["use", 641, 1364], ["wait", 2.0], ["shot", "k20"],
+		plan = [["wait", 1.0], ["face", 6], ["shot", "k20_door"], ["use", _door("K-20").x, _door("K-20").y], ["wait", 2.0], ["shot", "k20"],
 			["go", 27, 12, "K-20"], ["go", 27, 7], ["want", ["벽장에서", "[화술 쉬움]"]], ["talk", "N-R02-042"], ["wait", 1.0], ["check", "GB_PASS == 1", "길금순이 벽장 통로를 알려 준다(화술 쉬움)"],
 			["want", ["눈을 붙이고"]], ["talk", "N-R02-042"], ["wait", 4.0], ["check", "GAME_HOUR == 5 or GAME_HOUR == 6", "은신처에서 잠(8시간)"],
 			["check", "hp_full", "자고 나면 체력이 찬다"],
@@ -296,7 +341,7 @@ func _sb_plan() -> void:
 			["check", "map:H-03", "벽 사이 통로 끝 = 창고동 우리 벽 판자 틈"], ["shot", "k23_h03"],
 			["go", 10, 9, "H-03"], ["want", ["[힘 7]"]], ["use", 10, 8], ["wait", 1.0], ["check", "SB_127 == 2", "127번을 우리에서 빼 옴"],
 			["go", 42, 15], ["go", 43, 15], ["wait", 1.5], ["go", 0, 3, "K-23"], ["wait", 1.5], ["go", 14, 14, "K-20"], ["go", 14, 15], ["wait", 1.5],
-			["warp", "W", "L-R02-22"], ["wait", 1.0], ["face", 6], ["use", 672, 1354], ["wait", 2.0], ["shot", "k22"], ["fight"],
+			["warp", "W", "L-R02-22"], ["wait", 1.0], ["face", 6], ["use", _door("K-22").x, _door("K-22").y], ["wait", 2.0], ["shot", "k22"], ["fight"],
 			["want", ["채윤재"]], ["shoton", "더 깊은 데로", "k22_back"], ["talk", "N-R02-050"], ["wait", 1.0],
 			["check", "SB_127 == 4 and has(\"I-001\", 21)", "아내: 빼 온 남편 — 빚은 그대로(카르마 +50 · 스팀팩)"],
 			["go", 33, 8, "K-22"], ["use", 33, 7], ["wait", 2.0], ["check", "read:LR-47", "지하주차장 기둥의 LR-47"],
@@ -362,7 +407,8 @@ func _yd_plan() -> void:
 	for kv in [["W-040", 1], ["M-070", 3], ["10mm 탄", 200], ["I-001", 10]]:
 		st.call_fn("give", kv)
 	host.enter("W", "L-R02-02")
-	plan = [["shot", "hatch"], ["go", 812, 1086], ["shot", "stairs"], ["check", "MQ104_STAGE == 20", "해치로 내려가면 단계 20"],
+	var tk := _spot_find("L-R02-28", "계엄군 호송차")                       # 호송차 조사 글 칸(도로망이 바뀌어도 따라간다)
+	plan = [["shot", "hatch"], ["go", _door("Y-00").x, _door("Y-00").y], ["shot", "stairs"], ["check", "MQ104_STAGE == 20", "해치로 내려가면 단계 20"],
 		["go", 6, 12, "Y-00"], ["want", ["[힘 6]", "[물건: W-040"]], ["use", 6, 13], ["shot", "firedoor"],
 		["check", "MQ104_FIRE == 1", "방화문을 비틀어 열었다"], ["go", 5, 26], ["go", 5, 27],
 		["go", 9, 5, "Y-01"], ["use", 9, 4], ["check", "K_SIGNER == 1 and has(\"M-228\")", "서랍의 반대 의견서(K_SIGNER)"], ["shot", "small_room"],
@@ -379,21 +425,21 @@ func _yd_plan() -> void:
 				["go", 38, 13], ["go", 39, 13], ["go", 3, 13, "Y-04"], ["go", 5, 8], ["use", 5, 7], ["wait", 0.5],
 				["check", "MQ104_LAST == 1", "방폭문 너머 관리자의 마지막 쪽지"], ["go", 3, 28], ["go", 3, 29],
 				["go", 19, 26, "Y-02"], ["go", 19, 27], ["go", 1, 8, "Y-01"], ["go", 0, 8], ["go", 5, 1, "Y-00"], ["go", 5, 0],
-				["check", "MQ104_STAGE == 100", "벙커를 나서면 끝"], ["go", 800, 1097, "W"], ["shoton", "관리자 후보님", "guard_bark"], ["talk", "CR-401"], ["wait", 2.0], ["check", "seen_guard", "초소 병사가 '관리자 후보'라 부른다"]]
+				["check", "MQ104_STAGE == 100", "벙커를 나서면 끝"], ["go", tk.x, tk.y + 3, "W"], ["shoton", "관리자 후보님", "guard_bark"], ["talk", "CR-401"], ["wait", 2.0], ["check", "seen_guard", "초소 병사가 '관리자 후보'라 부른다"]]
 		"yd_fight":                                                     # 총을 든다 → 수색조 다섯 → 초소가 빈다 → 호송차 열쇠로 하도윤
 			plan += [["want", ["총을 든다"]], ["wait", 14.0], ["fight"], ["shot", "squad_down"],
 				["check", "MQ104_SEARCH == 2 and MQ104_GUARDS == 1 and AFF_BJ == -40", "수색조 격퇴(비상 -10) · 초소가 빈다"],
 				["go", 34, 5], ["want", ["가져간다"]], ["use", 34, 4], ["check", "has(\"W-017\")", "경비 장교의 소총"],
 				["go", 19, 26], ["go", 19, 27], ["go", 1, 8, "Y-01"], ["go", 0, 8], ["go", 5, 1, "Y-00"], ["go", 5, 0],
 				["check", "MQ104_STAGE == 100", "벙커를 나서면 끝"],
-				["go", 800, 1095, "W"], ["shoton", "초소가 비었다", "truck_empty"], ["use", 800, 1094], ["wait", 1.0],
+				["go", tk.x, tk.y + 1, "W"], ["shoton", "초소가 비었다", "truck_empty"], ["use", tk.x, tk.y], ["wait", 1.0],
 				["check", "V_DOYUN == 2 and MQ104_DOYUN == 1 and MQ104_STAGE == 100", "빈 초소의 열쇠로 하도윤 구출(V_DOYUN 2)"]]
 		"yd_vent":                                                      # 인증 뒤 기계실 환기구 → 배수로(은신) → 둑 → 호송차 자물쇠 50
 			plan += [["go", 5, 2], ["go", 5, 0], ["go", 15, 3, "Y-03"], ["use", 15, 2], ["wait", 0.3],
 				["want", ["기어 들어간다"]], ["use", 15, 2], ["shot", "drain"],
 				["check", "MQ104_SEARCH == 3", "수색조가 내려오기 전에 환기구로 빠짐(은신)"], ["wait", 1.5], ["shot", "drain_tunnel"], ["fight"],
 				["go", 38, 4, "Y-05"], ["go", 39, 4], ["check", "MQ104_STAGE == 100", "둑 배수구로 나오면 끝"],
-				["go", 800, 1095, "W"], ["shot", "post"], ["want", ["[자물쇠 따기 50]"]], ["use", 800, 1094], ["lock"],
+				["go", tk.x, tk.y + 1, "W"], ["shot", "post"], ["want", ["[자물쇠 따기 50]"]], ["use", tk.x, tk.y], ["lock"],
 				["wait", 1.5], ["check", "V_DOYUN == 2 and STAT_LOCKS == 1", "호송 칸 자물쇠를 땄다(V_DOYUN 2)"]]
 
 

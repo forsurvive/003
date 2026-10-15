@@ -1,0 +1,213 @@
+{
+ "id": "RE-057_TALK",
+ "title": "혼자 온 신참",
+ "loc": "",
+ "npc": "CR-420",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TALK_OK": 3,
+  "HOME": 6,
+  "LEAVE": 11,
+  "TALK_FAIL": 14,
+  "PAY": 17,
+  "FIGHT": 22
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "CR-420",
+   "emo": "놀람",
+   "text": "거, 거기 서! 가진 거 다 내놔!"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "녹슨 권총을 쥔 손이 떨린다. 많아야 열다섯."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "형님들이 혼자 털어 오래?",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "쉬움"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "TALK_OK",
+     "id": "RE-057_TALK:1:0",
+     "fail": "TALK_FAIL"
+    },
+    {
+     "text": "캡 주머니를 던져 준다",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 20
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PAY",
+     "id": "RE-057_TALK:1:1"
+    },
+    {
+     "text": "총 내려. 두 번 말 안 한다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "FIGHT",
+     "id": "RE-057_TALK:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "CR-420",
+   "emo": "슬픔",
+   "text": "…이거 못 하면 패거리에 못 낀대."
+  },
+  {
+   "op": "line",
+   "who": "CR-420",
+   "emo": "피곤",
+   "text": "고가 밑에서 얼어 죽는 것보단 낫잖아."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "사당 환승촌에 가. 거긴 일손을 받아",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "HOME",
+     "id": "RE-057_TALK:2:0"
+    },
+    {
+     "text": "그럼 딴 사람 털러 가든가",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "LEAVE",
+     "id": "RE-057_TALK:2:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "CR-420",
+   "emo": "놀람",
+   "text": "거기 사람들이… 나 같은 것도 받아 줘?"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "신참이 권총을 허리춤에 꽂고 남쪽 고개로 걸어간다."
+  },
+  {
+   "op": "do",
+   "fx": "karma(25)"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "CR-420",
+   "emo": "피곤",
+   "text": "…그래. 말은 쉽지."
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "CR-420",
+   "emo": "분노",
+   "text": "닥쳐! 형님들이 보고 있을지도 몰라!"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "fight"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "CR-420",
+   "emo": "놀람",
+   "text": "지, 진짜 주는 거야? …고마워."
+  },
+  {
+   "op": "line",
+   "who": "CR-420",
+   "emo": "분노",
+   "text": "아니, 털린 거다, 너! 그렇게 알아!"
+  },
+  {
+   "op": "do",
+   "fx": "karma(10)"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "CR-420",
+   "emo": "분노",
+   "text": "쏠 거야! 진짜 쏜다!"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "fight"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/encounters/RE_WORLD.txt"
+}

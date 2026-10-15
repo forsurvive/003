@@ -405,6 +405,13 @@ func _draw_view() -> void:
 		face_rect.texture = _portrait(line_state["who"], _face(line_state["emo"]))
 		face_rect.position = pr.position
 		face_rect.visible = face_rect.texture != null
+		if face_rect.texture == null:                                     # 초상 없는 무명 화자(길 위 사람·무명 적): 머리·어깨 실루엣
+			var c := pr.position + Vector2(48, 40)
+			var sil: Color = C["P02"]
+			view.draw_colored_polygon(PackedVector2Array([c + Vector2(-34, 56), c + Vector2(-30, 34), c + Vector2(-16, 24), c + Vector2(16, 24),
+				c + Vector2(30, 34), c + Vector2(34, 56)]), sil)
+			view.draw_circle(c, 17.0, sil)
+			view.draw_string(font, c + Vector2(-4, 6), "?", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, C["P06"])
 		view.draw_rect(Rect2(pr.position + Vector2(0.5, 0.5), pr.size - Vector2.ONE), C["P05"], false, 1.0)
 		var name: String = line_state["name"]
 		var nw := font.get_string_size(name, HORIZONTAL_ALIGNMENT_LEFT, -1, 12).x + 16.0

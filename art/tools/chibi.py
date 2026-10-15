@@ -702,7 +702,10 @@ def outfit(look):
     elif t == "T03":
         o.update(main=R("P16", "P17", "P18", "P19"), pants=R("P28", "P29", "P30", "P31"), boots=R("P16", "P17"),
                  feat={"scarf", "loose"}, hem=1)
-    elif t == "T04":
+    elif t == "T04" and fac == "PF-04":                                  # 약탈자 아머(SD-16 §4.5 PF-04): 녹슨 가죽 + 회색 청바지 + 교통콘 주황 띠 + 스프레이
+        o.update(main=R("P24", "P25", "P16", "P17"), pants=R("P03", "P04", "P05", "P06"), feat={"scrap_big", "cone", "spray"},
+                 hand=R("P16", "P17"), acc=fa)
+    elif t == "T04":                                                     # 고철 갑옷(세력 없음 — 계약 경호 구울 등)
         o.update(main=R("P16", "P17", "P18", "P19"), pants=R("P16", "P17", "P18", "P19"), feat={"scrap"}, hand=R("P16", "P17"))
     elif t == "T05":
         o.update(main=R("P16", "P17", "P18", "P19"), pants=R("P10", "P11", "P12", "P13"), feat={"leather"})
@@ -889,15 +892,38 @@ def _features(img, d, look, o, view, x0, y0, tw, th, hip_y, frame):
         d.line([x0 + 1, y0 + 1, x0 + tw - 2, y0 + 1], fill=sc[1])
         tail = x0 + 2 if view in ("S", "SE", "E") else x0 + tw - 4
         d.rectangle([tail, y0 + 2, tail + 1, y0 + 4], fill=sc[1])
-    if "scrap" in f:
+    if "cone" in f and view != "E":                                         # 교통콘 주황 띠(어깨 → 반대 허리, 반사 줄 한 칸)
+        orng, refl = acc[1], C("P07")
+        for k in range(th - 1):
+            xx = x0 + 1 + (k * (tw - 3)) // max(1, th - 2) if not back else x0 + tw - 2 - (k * (tw - 3)) // max(1, th - 2)
+            d.point((xx, y0 + k), fill=orng); d.point((xx + 1, y0 + k), fill=orng)
+            if k == th // 2:
+                d.point((xx, y0 + k), fill=refl)
+    if "spray" in f:                                                       # 스프레이 적: 등에 X, 앞은 점 하나(해골 자리)
+        red = C("P53")
+        if back:
+            d.line([cx - 3, y0 + 2, cx + 2, y0 + th - 3], fill=red); d.line([cx + 2, y0 + 2, cx - 3, y0 + th - 3], fill=red)
+        elif front:
+            d.point((cx + 2, y0 + 4), fill=red); d.point((cx + 3, y0 + 4), fill=red)
+    if "scrap" in f:                                                       # 고철 갑옷(세력 없음 — CR-457 계약 경호 구울 등, 0-9 그대로)
         rust = ramp(["P24", "P25", "P26", "P27"])
-        side = 1 if view != "E" else 1
         px = x0 + tw - 4
         d.rectangle([px, y0 - 2, px + 5, y0 + 2], fill=rust[2])                 # 비대칭 어깨판
         d.line([px, y0 + 2, px + 5, y0 + 2], fill=rust[0])
         d.point((px + 1, y0 - 3), fill=C("P07")); d.point((px + 4, y0 - 3), fill=C("P07"))
         if front:
             d.rectangle([cx - 3, y0 + 3, cx, y0 + 5], fill=C("P02"))              # 타이어 조각
+    if "scrap_big" in f:                                                   # 약탈자(PF-04, 1-E): 크게 — 2등신 몸에서도 읽히게
+        metal = ramp(["P04", "P05", "P06", "P07"])
+        rust = ramp(["P24", "P25", "P26", "P27"])
+        px = x0 + tw - 5 if view != "E" else x0 + tw - 6
+        d.rectangle([px, y0 - 3, px + 6, y0 + 3], fill=metal[2])               # 비대칭 고철 어깨판(크게 — 2등신 몸에서도 읽히게)
+        d.line([px, y0 + 3, px + 6, y0 + 3], fill=metal[0])
+        d.line([px, y0 - 3, px + 6, y0 - 3], fill=metal[3])
+        d.point((px + 1, y0 - 1), fill=rust[1]); d.point((px + 4, y0 + 1), fill=rust[1]); d.point((px + 5, y0 - 2), fill=rust[2])
+        d.point((px + 1, y0 + 2), fill=metal[0]); d.point((px + 5, y0 + 2), fill=metal[0])      # 리벳
+        if front:
+            d.rectangle([cx - 4, y0 + th - 4, cx - 1, y0 + th - 2], fill=C("P02"))       # 허리에 감은 타이어 조각
     if "leather" in f:
         if front:
             d.rectangle([cx - 4, y0 + 2, cx + 3, y0 + 6], fill=main[0])

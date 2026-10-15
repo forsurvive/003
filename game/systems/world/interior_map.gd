@@ -238,6 +238,37 @@ func _sprite(rect: Array, top_left: Vector2, sort_y: float, atlas := "s07") -> S
 	return s
 
 
+## 실행 중에 세우는 소품(1-E 인카운터 야영지의 불 드럼·거적 등): 발 칸을 막고(낮은 엄폐) 그림을 세운다. 돌려준 자료로 remove_runtime_prop
+func add_runtime_prop(pname: String, c: Vector2i) -> Dictionary:
+	var e: Dictionary = prop_meta.get(pname, {})
+	if e.is_empty():
+		return {}
+	var rect: Array = e["frames"][0] if e.has("frames") else e["rect"]
+	var fw := maxi(1, int(e["foot"][0]))
+	var fh := maxi(1, int(e["foot"][1]))
+	var node := _sprite(rect, Vector2(c.x * T + int(e["off"][0]), c.y * T + int(e["off"][1])), (c.y + fh) * T, str(e.get("atlas", "s07")))
+	var p := {"name": pname, "x": c.x, "y": c.y, "w": fw, "h": fh, "node": node, "cells": []}
+	if int(e["foot"][0]) > 0 and str(e.get("kind", "floor")) != "deco":
+		for yy in range(c.y, c.y + fh):
+			for xx in range(c.x, c.x + fw):
+				_put_solid(xx, yy, 1)
+				_put_cover(xx, yy, 1)
+				p["cells"].append(Vector2i(xx, yy))
+	props.append(p)
+	return p
+
+
+func remove_runtime_prop(p: Dictionary) -> void:
+	if p.is_empty():
+		return
+	for cc in p.get("cells", []):
+		_put_solid(cc.x, cc.y, 0)
+		_put_cover(cc.x, cc.y, 0)
+	if is_instance_valid(p.get("node")):
+		p["node"].queue_free()
+	props.erase(p)
+
+
 ## 연출: 이 칸(또는 위·아래 칸)에 있는 소품을 상태 그림으로 바꾼다(state "" = 기본 그림). 바꾼 소품 이름, 없으면 ""
 func set_prop_state(cell: Vector2i, state: String) -> String:
 	for c in [cell, cell + Vector2i(0, -1), cell + Vector2i(0, 1)]:

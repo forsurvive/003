@@ -63,7 +63,8 @@ ENGINE_VARS = {"PC_ST", "PC_PE", "PC_EN", "PC_CH", "PC_IN", "PC_AG", "PC_LK", "P
                "GAME_HOUR", "SB_RAID", "SB_PASS", "SB_DOGS", "SB_SAFE", "SB_KEY", "SB_FREED", "SB_READ", "SB_DEAL",
                "SB_BURNT", "SB_DEBT", "SB_BJ", "SB_TALK", "SB_BOUGHT", "SB_DEPO", "SB_127", "GB_PASS",
                "MQ106_CUSTODY", "MQ106_TALKED", "MQ106_SEIZED", "MQ106_AT", "MQ106_QLINE", "MQ106_QWHY", "MQ106_QGRID", "MQ106_QDEAD", "MQ106_QSIGN", "NAMGUNG_MET", "WANTED_PRE",
-               "PD_R01_BJ", "WANTED_HOLD"}                                                        # 1-6 MQ-105             # 1-3 생포 · 1-4 해킹 통계
+               "PD_R01_BJ", "WANTED_HOLD", "RE036_MET", "RE036_NEWS", "RE042_N"}                                                        # 1-6 MQ-105             # 1-3 생포 · 1-4 해킹 통계
+UNNAMED = {"N-TRADER": "떠돌이 고물상", "N-REFUGEE": "피난민", "N-DOWNED": "쓰러진 민병"}
 DECISION = ["어느 편에 서겠", "편에 서겠습니까", "제안을 수락", "받아들이겠습니까", "어느 쪽을 택하", "누구 편이"]
 OLD_NAMES = ["강태오", "천웨이", "국민방송"]
 PAGE = 160
@@ -115,6 +116,8 @@ class Ctx:
         self.npcs = json.load(open(os.path.join(DATA, "npcs.json")))["npcs"]
         for cid, row in json.load(open(os.path.join(DATA, "enemies.json"))).items():   # 무명 적 템플릿도 화자(1-3: 추적대 첫 분대, 이름표는 직함)
             self.npcs.setdefault(cid, {"name": row.get("name", cid), "unnamed": True})
+        for cid, nm in UNNAMED.items():                                   # 길 위 무명 사람(1-E 인카운터, game StoryState.UNNAMED와 같게)
+            self.npcs.setdefault(cid, {"name": nm, "unnamed": True})
         self.banned = banned_terms()
         self.rep = Report()
 

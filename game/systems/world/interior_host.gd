@@ -528,9 +528,10 @@ func interact() -> bool:
 		if not is_instance_valid(n["actor"]) or n.get("dead", false) or float(n.get("down_t", 0.0)) > 0.0:
 			continue
 		var v: Vector2 = n["actor"].loco.logical - player.loco.logical
-		if v.length() < 46.0 and v.normalized().dot(f) > 0.5 and v.length() < best_d:
+		var sc := v.length() * (1.5 - v.normalized().dot(f))            # 바라보는 쪽에 더 맞는 사람 먼저(나란히 선 두 사람 — 버티버드 문의 하도윤·육지환)
+		if v.length() < 46.0 and v.normalized().dot(f) > 0.5 and sc < best_d:
 			best = n
-			best_d = v.length()
+			best_d = sc
 	if best.is_empty():                                             # 계산대·진열대 너머(앞 칸이 가구로 막혔고 그 너머가 트였다): 두 칸까지
 		var fc := map.tile_of(player.loco.logical + f * 32.0)
 		if map.is_solid(fc) and map.cover_at(fc) > 0:                   # 가구(엄폐가 되는 낮은·높은 소품) — 벽은 아니다
@@ -538,10 +539,10 @@ func interact() -> bool:
 				if not is_instance_valid(n["actor"]) or n.get("dead", false) or float(n.get("down_t", 0.0)) > 0.0:
 					continue
 				var v2: Vector2 = n["actor"].loco.logical - player.loco.logical
-				if v2.length() < 76.0 and v2.normalized().dot(f) > 0.85 and v2.length() < best_d \
+				if v2.length() < 76.0 and v2.normalized().dot(f) > 0.85 and v2.length() * (1.5 - v2.normalized().dot(f)) < best_d \
 						and map.line_of_sight(player.loco.logical, n["actor"].loco.logical):
 					best = n
-					best_d = v2.length()
+					best_d = v2.length() * (1.5 - v2.normalized().dot(f))
 	if not best.is_empty():
 		talk(best)
 		return true
@@ -850,7 +851,17 @@ func shop_state(vid: String) -> Dictionary:
 	var sh: Dictionary = st.boxes.get(key, {})
 	if sh.is_empty() or day - int(sh.get("day", day)) >= int(m.get("renew", 3)):
 		var items := {}
-		for r in m["stock"]:                                          # 진열 장비는 '양호' 이상(SD-15 §3.8) — 갱신마다 새로 굴린다(1-8a)
+		var stock: Array = (m["stock"] as Array).duplicate()
+		if m.has("pick") and int(m["pick"]) < stock.size():            # 떠돌이 상인(1-E V57): 짐이 매번 다르다 — 갱신마다 그 판 씨앗으로 몇 줄만 고른다
+			var rr := RandomNumberGenerator.new()
+			rr.seed = hash("%s:%d:%d" % [vid, day, st.check_seed])
+			for i in range(stock.size() - 1, 0, -1):
+				var j := rr.randi_range(0, i)
+				var tmp = stock[i]
+				stock[i] = stock[j]
+				stock[j] = tmp
+			stock = stock.slice(0, int(m["pick"]))
+		for r in stock:                                               # 진열 장비는 '양호' 이상(SD-15 §3.8) — 갱신마다 새로 굴린다(1-8a)
 			var id := str(r[0])
 			if Gear.is_gear_id(id):
 				for i in int(r[1]):
@@ -1550,6 +1561,22 @@ func _handlers() -> void:
 	ev.handlers["reveal"] = func(a: Array, done: Callable) -> void:   # 전망 지점(1-5e, SD-08 §12.3): 권역 코드·장소 ID 목록을 지도에 '표시'로
 		PlaceLog.load_db()
 		var n := 0
+		if a.size() == 1 and str(a[0]) == "near":                     # 쪽지·지도 조각(1-E RE-042): 아직 표시 안 된 가장 가까운 장소 하나(60타일 안)
+			var me := map.tile_of(player.loco.logical)
+			var pick := ""
+			var bd := 60.0
+			for lid in PlaceLog.db:
+				var e: Dictionary = PlaceLog.db[lid]
+				if bool(e.get("hidden", false)) or not bool(e.get("marker", true)) or st.places.get_state(str(lid)) >= PlaceLog.MARKED:
+					continue
+				var dd := Vector2(int(e["tx"]) - me.x, int(e["ty"]) - me.y).length()
+				if dd < bd and dd > 6.0:
+					bd = dd
+					pick = str(lid)
+			if pick != "" and st.places.raise(pick, PlaceLog.MARKED):
+				hint("쪽지가 가리킨 곳이 지도에 표시되었다", 5.0)
+			done.call()
+			return
 		for tok in a:
 			for lid in PlaceLog.db:
 				var hit := str(lid) == str(tok) or (str(tok).length() == 3 and str(PlaceLog.db[lid]["region"]) == str(tok))
@@ -1583,6 +1610,9 @@ func _load_items() -> void:
 		if am != "" and not items_db.has(am):                          # 탄약: SD-13 §3 탄약 표 가치 1 · 무게 0(원작)
 			items_db[am] = {"name": am, "cat": "ammo", "value": 1, "weight": 0}
 	Gear.expand_items(items_db)                                        # 장비 상태 변형 "W-002@2" = 10mm 권총 (낡음)(1-8a)
+	for id in items_db:                                                # 원고 태그 [물건: ID n]·\I 코드가 이름으로 보이게(이름 표에 아이템 이름을 채운다)
+		if not st.names.has(id):
+			st.names[id] = str(items_db[id].get("name", id))
 
 
 ## 핍-보이·HUD 위 줄 수치. 레벨(SD-10 §4.2): 다음 레벨까지 50 + 150 × 레벨, 누적 (L−1)(50 + 75L)

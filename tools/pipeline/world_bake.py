@@ -10,6 +10,7 @@ python3 tools/pipeline/world_bake.py [--preview art/samples/43_world_bake.png]
 """
 import os, sys, json, math
 import numpy as np
+import road_net as RN
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 SRC = os.path.join(ROOT, "game", "data", "world", "source.json")
@@ -184,6 +185,7 @@ def bake(src):
     kind[mid] = 3
     kind[deep] = 2
     hgt[river | bank] = 0
+    river_lines = {"한강": (P, wid / 2 + 7)}                              # 강변 고속도로가 따라갈 선(제방 바깥 기준)
     for r in src["rivers"]:
         nm = r["name"]
         if nm.startswith("한강"):
@@ -192,6 +194,7 @@ def bake(src):
         Q = line_of(r["path"], 60)
         if nm.startswith("샛강"):                                          # 샛강은 한강 남쪽 갈래: 여의도 남쪽 끝을 따라 양끝이 한강에 닿게
             Q = np.vstack([[Q[0][0] - 30, Q[0][1] - 25], Q, [Q[-1][0] + 40, Q[-1][1] - 30]])
+        river_lines[nm] = (Q, np.full(len(Q), wv / 2.0))
         d = dist_field(Q, wv)
         water = (d <= wv / 2) & (kind > 0) & (kind != 2) & (kind != 3)
         kind[water & ~river] = 4
@@ -201,24 +204,32 @@ def bake(src):
         isl = ((xs - p["tx"]) / rx) ** 2 + ((ys - p["ty"]) / ry) ** 2 <= 1.0
         kind[isl & (kind >= 2) & (kind <= 4)] = 12
 
-    # ③ 도로(SD-16 §6.7): 차로 2타일 · 중앙분리대 1 · 보도 각 2. 강물 위는 다리가 아니면 끊긴다(다리는 다음 단계)
+    # ③ 간선도로(SD-21 §4): 실제 노선 근사(road_net) · 위계별 단면(차도·중앙분리대·보도). 강물 위는 다리가 아니면 끊긴다
     elevated = np.zeros((H, W), bool)
-    for r in src["roads"]:
-        lanes, walk = next((v for k, v in ROAD_LANES.items() if r["name"].startswith(k)), (4, True))
-        Q = line_of(r["path"], 90)
-        carriage = lanes * 2 + (1 if lanes >= 6 else 0)
-        full = carriage + (4 if walk else 0)
-        d = dist_field(Q, full)
-        land = (kind == 1) | (kind == 5) | (kind == 6)
-        road = (d <= carriage / 2) & land
+    roads = RN.arterials(river_lines)
+    order = {"H4": 0, "H3": 1, "H2": 2, "H1": 3}
+    roads.sort(key=lambda a: order[a["cls"]])                            # 높은 위계가 나중에 덮는다(교차로에서 큰길이 이어진다)
+    cls_map = np.zeros((H, W), np.uint8)                                 # 칸의 간선 위계(1~4, 0 = 간선 아님)
+    land = (kind == 1) | (kind == 5) | (kind == 6)
+    for a in roads:
+        car, med, walk = RN.SECTION[a["cls"]]
+        full = car + 2 * walk
+        Q = a["pts"]
+        if len(Q) < 2:
+            continue
+        el = np.zeros((H, W), np.float32)
+        d = dist_field(Q, full + 2, el, a["elev"].astype(np.float32))
+        road = (d <= car / 2) & land
         kind[road] = 7
-        if lanes >= 6:
-            kind[(d <= 0.6) & land] = 9
+        cls_map[road] = 4 - order[a["cls"]]
+        if med:
+            kind[(d <= med / 2 + 0.1) & land] = 9
         if walk:
-            kind[(d > carriage / 2) & (d <= full / 2) & land] = 8
-        if "고가" in r["name"]:
-            elevated[(d <= carriage / 2) & (play | band)] = True
-    # 철도: 지상 구간만(SD-08 §6.4). 2호선 순환은 지상·지하가 섞여 있으나 원문이 구간을 나누지 않았다 → 지상 1호선만(구현 정합)
+            side = (d > car / 2) & (d <= full / 2) & land & (kind != 7)
+            kind[side] = 8
+        elevated |= road & (el > 0.5)
+        a["width"] = full
+    # 철도: 지상 구간만    # 철도: 지상 구간만(SD-08 §6.4). 2호선 순환은 지상·지하가 섞여 있으나 원문이 구간을 나누지 않았다 → 지상 1호선만(구현 정합)
     for r in src["rails"]:
         if "지상" not in r["name"]:
             continue
@@ -247,7 +258,7 @@ def bake(src):
     # 높이 단(SD-08 §6.1·SD-16 §6.5): 150m 미만은 경사만(단 0), 150m부터 50m마다 암벽 1단
     level = np.where(hgt >= 150, ((hgt - 150) // 50 + 1), 0).astype(np.int8)
     return {"kind": kind, "hgt": hgt.astype(np.int16), "level": level, "use": use, "region": region, "elevated": elevated,
-            "play": play, "band": band}
+            "play": play, "band": band, "roads": roads, "cls": cls_map}
 
 
 # ④ 블록·필지(SD-16 §6.6 프리팹 층의 자리): 동네 길로 블록을 나누고 권역 성격대로 건물 발자국을 놓는다.
@@ -331,30 +342,27 @@ def rock_frac(r):
     return r["rockf"]
 
 
-def city(r, src, seed=4120):
+def city(r, src, seed=4120, anchors=()):
+    """anchors: [(x, y, 양식)] — 손 실내 문이 붙을 장소에 반드시 세울 건물(SD-21 §8 재접속). 길·골목 위면 그 칸을 땅으로 되돌린다"""
     kind, use, region, level = r["kind"], r["use"], r["region"], r["level"]
     rng = np.random.default_rng(seed)
     buildable = (kind == 1) & ((use == 0) | (use == 1) | (use == 3) | (use == 4)) & (level == 0)
-    ys_, xs_ = np.mgrid[0:H, 0:W].astype(np.float32)
-    # 동네 길: 휜 격자. 언덕(구릉)일수록 더 휘고 촘촘하다(봉천식 계단 골목). 간격은 권역별(GRID), 언덕은 0.6배
-    wx = wave((H, W), rng, 320.0, 34.0) + np.where(use == 1, wave((H, W), rng, 90.0, 12.0), 0)
-    wy = wave((H, W), rng, 320.0, 34.0) + np.where(use == 1, wave((H, W), rng, 90.0, 12.0), 0)
-    gmap = np.zeros((H, W), np.float32)
-    for code in REG_CODES[1:]:
-        gmap[region == REG_CODES.index(code)] = GRID[code]
-    gmap = np.where(use == 1, gmap * 0.6, gmap).clip(16, 60)
-    u = (xs_ + wx) / gmap
-    v = (ys_ + wy) / gmap
-    du = np.abs(u - np.round(u)) * gmap
-    dv = np.abs(v - np.round(v)) * gmap
-    street = ((du < 2.0) | (dv < 2.0)) & buildable                       # 동네 길 4타일(2차로)
-    alley = ((np.abs(u * 2 - np.round(u * 2)) * gmap / 2 < 1.0) | (np.abs(v * 2 - np.round(v * 2)) * gmap / 2 < 1.0)) & buildable & ~street
+    # 동네 길(SD-21 §5): 바둑판 대신 시가지 결(F1~F7)별 생성 — 구도심 유기형 · 언덕 등고선형 · 계획 격자 · 공업 대블록 ·
+    # 아파트 단지 순환로 · 시장 미로 · 황무지 흙길. 결은 큰길로 나뉜 큰 블록마다 정한다
+    hs = soft_height(r)
+    fab = RN.fabric_map(r, src, hs)
+    land_ok = buildable | ((kind == 1) & (level == 0))
+    street, alley, track = RN.local_streets(r, fab, land_ok, hs)
+    street &= buildable
+    alley &= land_ok & ~street
+    track &= land_ok & ~street
     kind[street] = 7
-    buildable &= ~street
-    # 양식 구역: 48타일 칸마다 권역 비율로 하나(이웃 칸끼리 이어지게 저주파 잡음으로 고른다), 간선도로 옆 띠는 상가
+    buildable &= ~street & ~alley & ~track
+    # 양식 구역: 결이 정한다(아파트 = 단지 · 공장 = 공단 · 업무 = 계획 시가지 · 상가 = 시장). 구도심·도심·기지·외곽 권역은 권역 비율로
     zone = np.full((H, W), -1, np.int8)
     zc = 48
     znoise = wave(((H + zc - 1) // zc, (W + zc - 1) // zc), rng, 3.0, 1.0)
+    F1_DROP = {"apt", "factory", "office"}
     for cy in range((H + zc - 1) // zc):
         for cx in range((W + zc - 1) // zc):
             sl = (slice(cy * zc, (cy + 1) * zc), slice(cx * zc, (cx + 1) * zc))
@@ -363,25 +371,73 @@ def city(r, src, seed=4120):
             if rc.sum() == 0:
                 continue
             code = REG_CODES[int(rc.argmax())]
-            mix = MIX[code]
+            mix = {k: v for k, v in MIX[code].items() if k not in F1_DROP or code in ("R05", "R06", "R11")} or {"villa": 1}
             names = list(mix)
             cum = np.cumsum(np.array(list(mix.values()), float))
             q = (znoise[cy, cx] * 0.5 + 0.5) * 0.6 + rng.random() * 0.4
-            st = names[int(np.searchsorted(cum / cum[-1], min(q, 0.999)))]
-            if YEOUIDO[0] <= cx * zc + zc // 2 <= YEOUIDO[2] and YEOUIDO[1] <= cy * zc + zc // 2 <= YEOUIDO[3]:
-                st = "office"
-            zone[sl] = STYLES.index(st)
+            zone[sl] = STYLES.index(names[int(np.searchsorted(cum / cum[-1], min(q, 0.999)))])
+    pick = vnoise((H, W), 24, rng, 2)
+    reg_keep = np.isin(region, [REG_CODES.index(c) for c in ("R05", "R06", "R11")])
+    zone[(fab == 1) & ~reg_keep] = np.where(pick[(fab == 1) & ~reg_keep] < 0.68, STYLES.index("villa"), STYLES.index("house"))
+    yeo = np.zeros((H, W), bool)
+    yeo[YEOUIDO[1]:YEOUIDO[3], YEOUIDO[0]:YEOUIDO[2]] = True
+    zone[(fab == 2)] = np.where(yeo[fab == 2] | (pick[fab == 2] < 0.45), STYLES.index("office"), STYLES.index("apt"))
+    zone[(fab == 3)] = np.where(pick[fab == 3] < 0.86, STYLES.index("factory"), STYLES.index("shop"))
+    zone[(fab == 4)] = STYLES.index("apt")
+    zone[(fab == 5)] = STYLES.index("shop")
+    zone[(fab == 6) & ~reg_keep] = STYLES.index("house")
+    # 황무지(F7): 집은 띄엄띄엄 모여 있다(농가·폐가 무리) — 저주파 잡음 높은 곳만 짓는다
+    cluster = vnoise((H, W), 40, rng, 3)
+    buildable &= ~((fab == 6) & (cluster < 0.66))
+    r["fabric"] = fab
+    r["track"] = track
     major = (kind == 7) & ~street
     near = np.zeros((H, W), bool)
     for dy in range(-12, 13, 4):
         for dx in range(-12, 13, 4):
             near |= np.roll(np.roll(major, dy, 0), dx, 1)
-    shopband = near & np.isin(zone, [STYLES.index("villa"), STYLES.index("house"), STYLES.index("apt")])
+    shopband = near & np.isin(zone, [STYLES.index("villa"), STYLES.index("house")])   # 아파트 단지·공단은 큰길 옆이어도 그대로
     zone[shopband] = STYLES.index("shop")
     # 빽빽이 채우기: 2칸 간격으로 훑으며 그 자리 양식의 발자국이 들어가면 놓는다(골목 폭만큼 띄움)
     occ = ~buildable.copy()
     bid = np.zeros((H, W), np.int32)
     blds = []
+    arter = r.get("cls", np.zeros((H, W), np.uint8)) > 0
+    for ax, ay, st in anchors:                                            # 고정 건물 먼저(간선·물·성곽·단 위는 피해 가장 가까운 자리)
+        gap, wr, hr, fr = FORM[st]
+        bw, bh = (wr[0] + wr[1]) // 2, (hr[0] + hr[1]) // 2
+        best = None
+        for rr in range(0, 24):
+            for yy in range(ay - rr - bh, ay + rr + 1):
+                for xx in range(ax - rr - bw // 2, ax + rr - bw // 2 + 1):
+                    if not (2 <= xx < W - bw - 2 and 2 <= yy < H - bh - 3):
+                        continue
+                    win = (slice(yy, yy + bh + 2), slice(xx, xx + bw))
+                    ok = (kind[win] == 1) | ((kind[win] == 7) & ~arter[win])        # 땅 또는 동네 길(간선·물·성곽·철로는 안 됨)
+                    if not ok.all() or (level[win] != 0).any():
+                        continue
+                    if bid[yy:yy + bh, xx:xx + bw].any():
+                        continue
+                    dd = (xx + bw // 2 - ax) ** 2 + (yy + bh - ay) ** 2
+                    if best is None or dd < best[0]:
+                        best = (dd, xx, yy)
+            if best is not None:
+                break
+        if best is None:
+            print("고정 건물 자리를 못 찾았다:", ax, ay, st)
+            continue
+        _, xx, yy = best
+        sl = (slice(yy, yy + bh), slice(xx, xx + bw))
+        kind[sl][kind[sl] == 7] = 1                                       # 동네 길·골목이 지나던 칸은 땅으로(건물이 길을 끊는다)
+        street[sl] = False
+        alley[sl] = False
+        track[sl] = False
+        front = (slice(yy + bh, yy + bh + 2), slice(xx, xx + bw))          # 문 앞 두 줄은 비워 걸어서 닿게
+        alley[front] |= (kind[front] == 1)
+        blds.append({"x": int(xx), "y": int(yy), "w": int(bw), "h": int(bh), "style": st,
+                     "floors": int(min(fr[1], bh - 2)), "seed": int(_h(ax, ay, 77))})
+        bid[sl] = len(blds)
+        occ[max(0, yy - gap):yy + bh + gap + 2, max(0, xx - gap):xx + bw + gap] = True
     order = rng.permutation(4)
     for oy in (order[0] % 2, 1 - order[0] % 2):
         for y in range(oy, H - 4, 2):
@@ -428,7 +484,8 @@ def city(r, src, seed=4120):
     out = ~r["play"]
     deep = 1.0 - box_blur(r["play"], 10)                                     # 구역 밖으로 들어갈수록 1
     dens = np.where(out, np.maximum(dens, 0.04 + 0.16 * deep), dens)
-    land = ((kind == 1) | (kind == 0) | (kind == 12)) & (bid == 0) & ~alley & ~street
+    dens = np.where(fab == 6, dens + 0.035, dens)                               # 황무지: 덤불·잡목이 짙다
+    land = ((kind == 1) | (kind == 0) | (kind == 12)) & (bid == 0) & ~alley & ~street & ~track
     tree |= land & (rnd < dens)
     tree |= (kind == 5) & (rnd < 0.02)
     r["tree"] = tree
@@ -601,6 +658,12 @@ def floor_names(r, seed=77):
     if "street" in r:
         lane = (kind == 7) & ~r["street"] & (r.get("lane", np.zeros_like(kind, bool)))
         f[lane] = ix["asphalt_lane"]
+    if "alley" in r:                                                     # 골목(H6): 시가지는 낡은 콘크리트, 언덕·황무지는 흙 · 흙길(F7)
+        fab = r.get("fabric", np.zeros_like(kind))
+        al = r["alley"] & (kind == 1)
+        f[al & ~np.isin(fab, [1, 6])] = ix["concrete_o"]
+        f[al & np.isin(fab, [1, 6])] = ix["dirt_a"]
+        f[r.get("track", np.zeros_like(al)) & (kind == 1)] = ix["dirt_a"]
     f[(kind == 8)] = ix["pavers"]
     f[(kind == 9)] = ix["dirt_grass_a"]
     f[(kind == 10)] = ix["ballast"]
@@ -633,6 +696,9 @@ def preview(r, src, path, scale=1):
     img[kind == 11] = (226, 214, 182)
     img[kind == 12] = (120, 150, 92)
     img[r["elevated"] & (kind == 7)] = (40, 40, 46)
+    if "alley" in r:
+        img[r["alley"] & (kind == 1)] = (150, 146, 136)
+        img[r["track"] & (kind == 1)] = (160, 140, 100)
     if "bid" in r:                                                       # 건물: 양식 색 + 아래 정면 띠
         col = {"villa": (168, 92, 74), "apt": (222, 214, 196), "shop": (190, 150, 110), "office": (120, 150, 170),
                "factory": (150, 80, 60), "gov": (200, 196, 186), "base": (110, 118, 84), "house": (180, 130, 96)}

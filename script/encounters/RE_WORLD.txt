@@ -1,0 +1,244 @@
+# 랜덤 인카운터 대화(1-E, SD-05 §5 · SD-22): 비적대로 다가오거나, 다가가면 말을 거는 RE.
+# 진행기 명령: @cmd re fight(싸움) · re leave(떠남) · re run(달아남) — RE-087과 같다. @cmd reveal near = 아직 표시 안 된 가까운 장소 1곳 표시.
+# 화자: 적 ID(CR-…)·무명 인물(N-TRADER 떠돌이 고물상 · N-REFUGEE 피난민 · N-DOWNED 쓰러진 민병)은 호스트가 이름표에 올린다.
+# 서사 정합(SD-20): 같은 사람을 또 만나면 '또 만남' 판(RE036_MET). 쪽지·소식은 차례로 돌아 같은 글이 연달아 나오지 않는다.
+
+@scene RE-057_TALK  혼자 온 신참
+@npc   CR-420
+@cond  V_ACT >= 1
+CR-420 [놀람] 거, 거기 서! 가진 거 다 내놔!
+SYS 녹슨 권총을 쥔 손이 떨린다. 많아야 열다섯.
+> [화술 쉬움] 형님들이 혼자 털어 오래? -> TALK_OK | TALK_FAIL
+> [캡 20] 캡 주머니를 던져 준다 -> PAY
+> 총 내려. 두 번 말 안 한다 -> FIGHT
+* TALK_OK
+CR-420 [슬픔] …이거 못 하면 패거리에 못 낀대.
+CR-420 [피곤] 고가 밑에서 얼어 죽는 것보단 낫잖아.
+> 사당 환승촌에 가. 거긴 일손을 받아 -> HOME
+> 그럼 딴 사람 털러 가든가 -> LEAVE
+* HOME
+CR-420 [놀람] 거기 사람들이… 나 같은 것도 받아 줘?
+SYS 신참이 권총을 허리춤에 꽂고 남쪽 고개로 걸어간다.
+! karma(25)
+@cmd re leave
+-> END
+* LEAVE
+CR-420 [피곤] …그래. 말은 쉽지.
+@cmd re leave
+-> END
+* TALK_FAIL
+CR-420 [분노] 닥쳐! 형님들이 보고 있을지도 몰라!
+@cmd re fight
+-> END
+* PAY
+CR-420 [놀람] 지, 진짜 주는 거야? …고마워.
+CR-420 [분노] 아니, 털린 거다, 너! 그렇게 알아!
+! karma(10)
+@cmd re leave
+-> END
+* FIGHT
+CR-420 [분노] 쏠 거야! 진짜 쏜다!
+@cmd re fight
+-> END
+
+@scene RE-036_TALK  떠돌이 고물상
+@npc   N-TRADER
+@cond  V_ACT >= 1
+? RE036_MET >= 1 -> AGAIN
+N-TRADER [미소] 어이, 길동무. 짐 좀 내려놓을게. 구경은 공짜야.
+N-TRADER [기본] 고철, 탄, 약, 옷가지. 수제 총은 손도 봐 주고.
+! RE036_MET = 1
+-> MENU
+* AGAIN
+N-TRADER [미소] 또 만나네. 길이 좁은 건지, 우리가 닮은 건지.
+* MENU
+> 물건을 본다 -> SHOP
+> 총 좀 손봐 줘 -> FIX
+> 요즘 길은 어때? -> NEWS
+> 잘 가 -> BYE
+* SHOP
+@cmd trade V57
+-> MENU
+* FIX
+@cmd fix V57
+-> END
+* NEWS
+! RE036_NEWS = RE036_NEWS + 1
+? RE036_NEWS == 1 -> N1
+? RE036_NEWS == 2 -> N2
+? RE036_NEWS == 3 -> N3
+! RE036_NEWS = 0
+N-TRADER [기본] 고가 밑은 낮에 지나가. 밤엔 거기 사는 것들이 깨.
+-> MENU
+* N1
+N-TRADER [기본] 신림 사거리 고가에 패거리가 새로 붙었어. 호루라기 소리 나면 돌아가.
+-> MENU
+* N2
+N-TRADER [피곤] 새벽 네 시 넘으면 영등포 쪽 큰길은 피해. 인솔조가 머릿수 채우러 나와.
+-> MENU
+* N3
+N-TRADER [미소] 강변 둔치엔 아직 통조림 든 낚시 가방이 굴러다녀. 비 온 다음 날이 좋아.
+-> MENU
+* BYE
+N-TRADER [미소] 몸 성히 다녀. 다음엔 고철 좀 모아 와.
+@cmd re leave
+-> END
+
+@scene RE-042_NOTE  시체와 쪽지
+@npc   -
+@cond  V_ACT >= 1
+! RE042_N = RE042_N + 1
+? RE042_N == 2 -> B
+? RE042_N == 3 -> C
+? RE042_N >= 4 -> D
+SYS 엎드린 유해. 손에 접힌 종이가 쥐여 있다.
+SYS '물탱크 집 지하에 통조림 둘. 열쇠는 우편함 뒤. 누가 보면 써.'
+@cmd reveal near
+-> END
+* B
+SYS 등에 배낭을 멘 채 쓰러진 유해. 배낭 옆주머니에 지도 조각.
+SYS '여기까진 왔다. 빨간 표시한 데가 마지막 대피소.' 표시 하나가 아직 선명하다.
+@cmd reveal near
+-> END
+* C
+SYS 벽에 기대 앉은 유해. 무릎 위 수첩 마지막 장.
+SYS '물 반 병. 다리는 못 쓴다. 저 건물엔 아직 사람이 있을지도.'
+@cmd reveal near
+-> END
+* D
+! RE042_N = 0
+SYS 길가에 쓰러진 행상. 짐 끈에 매단 꼬리표에 주소가 적혀 있다.
+SYS '이 짐 받을 사람 — 표시한 곳. 대금은 받았음.' 받을 사람은 끝내 못 만났다.
+@cmd reveal near
+-> END
+
+@scene RE-044_TALK  피난민 가족
+@npc   N-REFUGEE
+@cond  V_ACT >= 1
+N-REFUGEE [놀람] 쏘지 마요! 우린 아무것도 없어요.
+N-REFUGEE [슬픔] 새벽인력이 쫓아와요. 봉천 쪽 길을 아세요?
+> 큰길 말고 골목으로 가요. 저쪽이 봉천이에요 -> POINT
+> [물건: I-055 1] 정수한 물 한 병을 건넨다 -> WATER
+> 쫓아오는 놈들은 내가 막을게요. 가요 -> GUARD
+> (못 본 척 지나간다) -> NO
+* POINT
+N-REFUGEE [미소] 고마워요. 이 은혜는… 언젠가.
+SYS 가족이 골목으로 사라진다.
+! karma(10)
+@cmd re leave
+-> END
+* WATER
+N-REFUGEE [슬픔] 애가 이틀을 굶었어요. …고마워요, 정말.
+! karma(25)
+@cmd re leave
+-> END
+* GUARD
+SYS 가족이 골목으로 달려간다. 뒤쪽에서 인솔조원들이 모습을 드러낸다.
+! karma(25)
+@cmd re fight
+-> END
+* NO
+N-REFUGEE [슬픔] …그래요. 다들 그렇죠.
+@cmd re leave
+-> END
+
+@scene RE-046_TALK  쓰러진 민병
+@npc   N-DOWNED
+@cond  V_ACT >= 1
+N-DOWNED [아픔] …물. 아니, 약. 약 있으면…
+SYS 정착지 민병 조끼. 허벅지에 물린 자국이 깊다.
+> [물건: I-001 1] 스팀팩을 놓아 준다 -> HEAL
+> 주머니부터 뒤진다 -> ROB
+> (그냥 둔다) -> NO
+* HEAL
+N-DOWNED [피곤] …살았다. 봉천 감시조야. 마을에 가면 네 얘기 할게.
+! karma(25); aff("JC_BC", 2)
+@cmd re leave
+-> END
+* ROB
+SYS 탄 몇 발과 꼬깃한 캡. 민병이 원망 섞인 눈으로 올려다본다.
+! karma(-10); caps(15); give("10mm 탄", 6)
+@cmd re leave
+-> END
+* NO
+N-DOWNED [아픔] …가지 마.
+@cmd re leave
+-> END
+
+@scene RE-061_TALK  계엄군 분대
+@npc   CR-403
+@cond  V_ACT >= 1
+? AFF_BJ <= -60 -> HOSTILE
+? AFF_BJ >= 50 -> SALUTE
+? AFF_BJ >= 20 -> PASS
+? AFF_BJ <= -20 -> WARY
+CR-403 [기본] 정지. 어디 가나. 가방 열어.
+> 가방을 연다 -> OPEN
+> 내 가방은 내 거다 -> REFUSE
+* OPEN
+SYS 분대장이 가방을 뒤적이다 닫는다.
+CR-403 [기본] …통과. 계엄 구역에서 무기 꺼내지 마라.
+@cmd re leave
+-> END
+* REFUSE
+CR-403 [분노] 비협조 기록한다. 다음엔 이렇게 안 끝나.
+! aff("BJ", -3)
+@cmd re leave
+-> END
+* WARY
+CR-403 [분노] 등록번호 대조한다. 같이 가 줘야겠다.
+> [화술 어려움] 볼트에서 막 나온 사람한테 무슨 기록이 있겠소 -> TALK_OK | TALK_FAIL
+> (달아난다) -> RUN
+* TALK_OK
+CR-403 [피곤] …오늘은 넘어간다. 분대 이동.
+@cmd re leave
+-> END
+* TALK_FAIL
+CR-403 [분노] 말이 길다. 제압해.
+@cmd re fight
+-> END
+* RUN
+@cmd re run
+-> END
+* HOSTILE
+CR-403 [분노] 저놈이다. 사격 개시!
+@cmd re fight
+-> END
+* PASS
+CR-403 [기본] 아, 그쪽이군. 지나가.
+@cmd re leave
+-> END
+* SALUTE
+CR-403 [미소] 충성. 이 앞 고가 밑은 오늘 우리가 쓸었다.
+@cmd re leave
+-> END
+
+@scene RE-064_TALK  인력 검문
+@npc   CR-438
+@cond  V_ACT >= 1
+? AFF_SB >= 20 -> FRIEND
+CR-438 [기본] 새벽인력 검문. 무장 통행세 30캡.
+CR-438 [미소] 없으면, 뭐. 일손으로 받아도 되고.
+> [캡 30] 낸다 -> PAY
+> [화술 보통] 이 길은 원래 아무나 다니던 길인데 -> TALK_OK | TALK_FAIL
+> 안 낸다 -> FIGHT
+* PAY
+CR-438 [미소] 장부에 적어 둔다. 지나가.
+@cmd re leave
+-> END
+* TALK_OK
+CR-438 [피곤] …오늘은 머릿수가 찼으니까. 가.
+@cmd re leave
+-> END
+* TALK_FAIL
+CR-438 [분노] 원래 같은 소리 하는 놈이 제일 비싸게 팔려.
+@cmd re fight
+-> END
+* FIGHT
+CR-438 [분노] 그물 꺼내.
+@cmd re fight
+-> END
+* FRIEND
+CR-438 [미소] 거래처 손님이네. 그냥 가.
+@cmd re leave
+-> END

@@ -27,6 +27,7 @@ var fade_mat: ShaderMaterial
 var card: Control
 var card_lines: Array = []
 var font_big: Font
+var font_title: Font                              ## 연도·막 제목 카드(숫자가 또렷한 굵은 글꼴 — 둥근모 '2'가 'ㄹ'처럼 읽혀 2277이 2077로 보였다)
 var handlers := {}                            ## 진행기가 붙이는 명령(0-7: pipboy·equip·hurt·buddy·range·hint·hud): 이름 -> Callable(args, done)
 var font: Font
 var balloons: Array = []                      ## [{"actor", "kind", "t"}]
@@ -40,6 +41,7 @@ var log: Array[String] = []
 func _init() -> void:
 	font = load("res://assets/fonts/Galmuri11.ttf")
 	font_big = load("res://assets/fonts/NeoDunggeunmoPro.ttf")
+	font_title = load("res://assets/fonts/Galmuri11-Bold.ttf")
 	if FileAccess.file_exists("res://assets/sprites/story_cast.json"):
 		cast_sheets = JSON.parse_string(FileAccess.get_file_as_string("res://assets/sprites/story_cast.json"))["sheets"]
 	overlay = CanvasLayer.new()
@@ -472,6 +474,9 @@ func _draw_glyph(kind: String, c: Vector2) -> void:
 				draw_rect(Rect2(c + p + (Vector2(2, 0) if p.x > 0 else Vector2.ZERO), Vector2(1, 3)), Color("E04A35"))
 
 
+const TITLE_PX := 24                             ## Galmuri11 12px의 두 배(픽셀이 고르게)
+
+
 func _draw_card() -> void:
 	if card_lines.is_empty() or _job.get("kind", "") != "card":
 		return
@@ -481,8 +486,8 @@ func _draw_card() -> void:
 	var vs := card.get_viewport_rect().size
 	var ink := Color("E9E4D8") if _job["dark"] else Color("1A181D")
 	var big: String = card_lines[0]
-	var w := font_big.get_string_size(big, HORIZONTAL_ALIGNMENT_LEFT, -1, 32).x
-	card.draw_string(font_big, Vector2(floorf((vs.x - w) / 2.0), floorf(vs.y / 2.0) - 4), big, HORIZONTAL_ALIGNMENT_LEFT, -1, 32, ink)
+	var w := font_title.get_string_size(big, HORIZONTAL_ALIGNMENT_LEFT, -1, TITLE_PX).x
+	card.draw_string(font_title, Vector2(floorf((vs.x - w) / 2.0), floorf(vs.y / 2.0) - 4), big, HORIZONTAL_ALIGNMENT_LEFT, -1, TITLE_PX, ink)
 	if card_lines.size() > 1:
 		var s: String = card_lines[1]
 		var w2 := font.get_string_size(s, HORIZONTAL_ALIGNMENT_LEFT, -1, 12).x

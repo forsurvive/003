@@ -1,0 +1,125 @@
+{
+ "id": "RE-046_TALK",
+ "title": "쓰러진 민병",
+ "loc": "",
+ "npc": "N-DOWNED",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "HEAL": 3,
+  "ROB": 7,
+  "NO": 11
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-DOWNED",
+   "emo": "아픔",
+   "text": "…물. 아니, 약. 약 있으면…"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "정착지 민병 조끼. 허벅지에 물린 자국이 깊다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "스팀팩을 놓아 준다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "I-001",
+       "n": 1
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "HEAL",
+     "id": "RE-046_TALK:1:0"
+    },
+    {
+     "text": "주머니부터 뒤진다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "ROB",
+     "id": "RE-046_TALK:1:1"
+    },
+    {
+     "text": "(그냥 둔다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "NO",
+     "id": "RE-046_TALK:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-DOWNED",
+   "emo": "피곤",
+   "text": "…살았다. 봉천 감시조야. 마을에 가면 네 얘기 할게."
+  },
+  {
+   "op": "do",
+   "fx": "karma(25); aff(\"JC_BC\", 2)"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "탄 몇 발과 꼬깃한 캡. 민병이 원망 섞인 눈으로 올려다본다."
+  },
+  {
+   "op": "do",
+   "fx": "karma(-10); caps(15); give(\"10mm 탄\", 6)"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-DOWNED",
+   "emo": "아픔",
+   "text": "…가지 마."
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/encounters/RE_WORLD.txt"
+}

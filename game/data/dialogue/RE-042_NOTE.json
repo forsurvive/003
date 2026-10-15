@@ -1,0 +1,134 @@
+{
+ "id": "RE-042_NOTE",
+ "title": "시체와 쪽지",
+ "loc": "",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "B": 8,
+  "C": 12,
+  "D": 16
+ },
+ "ops": [
+  {
+   "op": "do",
+   "fx": "RE042_N = RE042_N + 1"
+  },
+  {
+   "op": "if",
+   "cond": "RE042_N == 2",
+   "to": "B"
+  },
+  {
+   "op": "if",
+   "cond": "RE042_N == 3",
+   "to": "C"
+  },
+  {
+   "op": "if",
+   "cond": "RE042_N >= 4",
+   "to": "D"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "엎드린 유해. 손에 접힌 종이가 쥐여 있다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'물탱크 집 지하에 통조림 둘. 열쇠는 우편함 뒤. 누가 보면 써.'"
+  },
+  {
+   "op": "cmd",
+   "name": "reveal",
+   "args": [
+    "near"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "등에 배낭을 멘 채 쓰러진 유해. 배낭 옆주머니에 지도 조각."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'여기까진 왔다. 빨간 표시한 데가 마지막 대피소.' 표시 하나가 아직 선명하다."
+  },
+  {
+   "op": "cmd",
+   "name": "reveal",
+   "args": [
+    "near"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "벽에 기대 앉은 유해. 무릎 위 수첩 마지막 장."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'물 반 병. 다리는 못 쓴다. 저 건물엔 아직 사람이 있을지도.'"
+  },
+  {
+   "op": "cmd",
+   "name": "reveal",
+   "args": [
+    "near"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "RE042_N = 0"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "길가에 쓰러진 행상. 짐 끈에 매단 꼬리표에 주소가 적혀 있다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'이 짐 받을 사람 — 표시한 곳. 대금은 받았음.' 받을 사람은 끝내 못 만났다."
+  },
+  {
+   "op": "cmd",
+   "name": "reveal",
+   "args": [
+    "near"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/encounters/RE_WORLD.txt"
+}

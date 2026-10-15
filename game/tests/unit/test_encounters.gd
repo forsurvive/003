@@ -126,10 +126,16 @@ func test_encounter_rules(t) -> void:
 	for i in 400:
 		var r := en2._roll("move", Vector2i(1100, row), 1.0, true, "R01")
 		got[str(r.get("re", ""))] = int(got.get(str(r.get("re", "")), 0)) + 1
-	t.ok(got.has("RE-087") and got.has("RE-004"), "밤 판정 성공 = 추적대 끼워 넣기(5%) 또는 기본 표 RE-004")
+	t.ok(got.has("RE-087"), "밤 판정 성공 = 추적대 끼워 넣기(5%)")
+	t.ok(got.size() >= 6, "밤 판정 성공 = 표에서 여러 RE가 나온다(정해진 것처럼 보이지 않게, SD-22): %s" % str(got.keys()))
 	t.ok(int(got.get("RE-087", 0)) <= 1, "추적대는 하루 상한(1막 등급 1 = 1번)")
+	t.ok(not got.has("RE-036") and not got.has("RE-057"), "낮에만 나오는 RE(떠돌이 고물상·혼자 온 신참)는 밤에 없다")
 	var day_en := Encounters.new(st, 3)
-	t.eq(day_en._base("R01", false), "", "낮에는 RE-004(밤) 없음")
+	var day := {}
+	for i in 300:
+		day[day_en._base("R01", false)] = true
+	t.ok(not day.has("RE-004") and not day.has("RE-125"), "낮에는 밤 RE(시체 뜯는 바퀴·밤의 구울) 없음")
+	t.ok(not day.has("RE-064"), "R01에는 R02 전용 RE(인력 검문)가 없다")
 	t.eq(Encounters.new(st, 5).units("RE-087", 3), ["CR-436", "CR-437", "CR-437"], "편성: 추심원 1 + 인솔조원 2(레벨 1~7)")
 	t.eq(Encounters.new(st, 5).units("RE-087", 9).size(), 4, "레벨 구간이 오르면 인솔조원 +1(최대 3)")
 
@@ -201,3 +207,127 @@ func test_capture_flow(t) -> void:
 func await_frames(h: InteriorHost) -> void:
 	for i in 40:
 		h.ev._process(0.5)
+
+
+## SD-22 §3.6 · §4.2 · §3.5 · §3.1: 조건 배수 · 지역 어울림 · 반복 피하기 · 상황 · 놓친 무리 기억
+func test_encounter_variety(t) -> void:
+	var st := _st()
+	var en := Encounters.new(st, 21)
+	en.ctx = {"road": 3, "move": "walk", "shot": 999.0, "hour": 12, "level": 1, "tags": ["큰길", "고가"]}
+	t.eq(snappedf(en.global_mult(), 0.01), 1.3, "큰길·고가 위 ×1.3")
+	en.ctx["road"] = 1
+	en.ctx["move"] = "sneak"
+	t.eq(snappedf(en.global_mult(), 0.01), 0.42, "골목 ×0.6 · 웅크림 ×0.7")
+	en.ctx["shot"] = 10.0
+	t.eq(snappedf(en.global_mult(), 0.01), 0.59, "30초 안 총성 ×1.4")
+	var re002 := Encounters.re_def("RE-002")
+	en.ctx["tags"] = ["고가"]
+	t.eq(en.fit_mult(re002), 2.0, "고가 아래 패거리: 고가 태그 ×2(SD-22 §4.2)")
+	en.ctx["tags"] = ["산지"]
+	t.eq(en.fit_mult(re002), 0.0, "산지 금지 ×0")
+	# 지역 어울림: 산지에서는 캠퍼스 들개, 고가 둘레에서는 패거리가 더 잦다
+	var count := func(tags: Array, id: String) -> int:
+		var e2 := Encounters.new(st, 5)
+		e2.ctx = {"road": 2, "move": "walk", "shot": 999.0, "hour": 12, "level": 1, "tags": tags}
+		var n := 0
+		for i in 600:
+			st.enc.erase("recent")
+			if e2._pick("R01", false, Vector2i(-1, -1)) == id:
+				n += 1
+		return n
+	t.ok(count.call(["산지"], "RE-001") > count.call(["업무"], "RE-001"), "캠퍼스 들개: 산지에서 더 잦고 업무지구엔 없다")
+	t.eq(count.call(["산지"], "RE-002"), 0, "고가 아래 패거리는 산지에 없다")
+	# 반복 피하기: 최근 6건 안 같은 RE ×0.25
+	st.enc["recent"] = [["RE-X02", "S5"]]
+	var e3 := Encounters.new(st, 9)
+	e3.ctx = {"road": 2, "move": "walk", "shot": 999.0, "hour": 12, "level": 1, "tags": ["큰길"]}
+	var a := 0
+	var b := 0
+	for i in 800:
+		var r := e3._pick("R01", false, Vector2i(-1, -1))
+		if r == "RE-X02":
+			a += 1
+		elif r == "RE-061":
+			b += 1
+	t.ok(a * 2 < b, "최근에 나온 교전(RE-X02)은 덜 나온다(×0.25): %d 대 계엄 분대 %d" % [a, b])
+	# 같은 청크 12시간 안 = 다른 범주
+	st.enc["recent"] = []
+	st.enc["chunk"] = {"27,37": [100, "patrol"]}
+	e3.now_min = 200
+	var pats := 0
+	for i in 200:
+		if str(Encounters.re_def(e3._pick("R01", false, Vector2i(27 * 40 + 5, 37 * 40 + 5))).get("cat", "")) == "patrol":
+			pats += 1
+	t.eq(pats, 0, "같은 청크에서 12게임시간 안에는 같은 범주(순찰)가 다시 나오지 않는다")
+	# 상황: 밤에는 야영·매복이 더 잦다
+	var night_s4 := 0
+	var day_s4 := 0
+	st.enc["recent"] = []
+	for i in 600:
+		if e3.pick_state("RE-002", true) == "S4":
+			night_s4 += 1
+		if e3.pick_state("RE-002", false) == "S4":
+			day_s4 += 1
+	t.ok(night_s4 > day_s4, "밤에는 야영(S4) ×1.5: 밤 %d · 낮 %d" % [night_s4, day_s4])
+	# 편성: 다친 개체(S5~S7) · 대장 확률
+	var gs := e3.groups("RE-X02", 1, "S5")
+	t.eq(gs.size(), 2, "교전 = 두 무리")
+	t.ok(not bool(gs[0]["hostile"]) and bool(gs[1]["hostile"]), "계엄 분대(비적대) 대 패거리(적대)")
+	# 놓친 무리 기억
+	e3.remember_pack("RE-002", ["CR-420", "CR-423"])
+	t.eq(e3.groups("RE-002", 1, "S1")[0]["ids"], ["CR-420", "CR-423"], "놓친 무리가 줄어든 인원 그대로 다시 나온다(SD-22 §3.5)")
+	e3.remember_pack("RE-002", ["CR-420"])
+	e3.remember_pack("RE-002", ["CR-420"])
+	t.eq(e3.pick_state("RE-002", false), "S4", "세 번 놓치면 그 무리는 야영을 차린다")
+	e3.remember_pack("RE-002", [])
+	t.ok(not st.enc["packs"].has("RE-002"), "정리하면 잊는다")
+	# 확률: 하한·상한 · 고요 누적
+	st.enc["calm"] = 0.0
+	st.enc["safe"] = 0
+	var e4 := Encounters.new(st, 4)
+	e4.ctx = {"road": 1, "move": "sneak", "shot": 999.0, "hour": 12, "level": 1, "tags": []}
+	e4._roll("move", Vector2i(1100, 1250), 0.0001, false, "R01")
+	t.eq(snappedf(float(e4.trace[-1]["p"]), 0.001), 0.03, "확률 하한 0.03")
+	st.enc["calm"] = 0.0
+	var fails := 0
+	for i in 10:
+		var r := e4._roll("move", Vector2i(1100, 1250), 0.0001, false, "R01")
+		if r.is_empty():
+			fails += 1
+	t.ok(float(st.enc.get("calm", 0.0)) <= Encounters.CALM_MAX + 0.0001, "고요 누적 최대 +0.15")
+
+
+## 표의 RE가 쓰는 대화 장면·사람 외형·적 자료가 실제로 있다(원고가 컴파일되지 않는 폴더에 있으면 대화가 영영 안 열린다 — 1-E에서 겪음)
+func test_encounter_assets(t) -> void:
+	var tab := Encounters.table()
+	var enemies: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/enemies.json"))
+	var missing: Array = []
+	for id in tab:
+		var d: Dictionary = tab[id]
+		if str(d.get("talk", "")) != "" and not FileAccess.file_exists("res://data/dialogue/%s.json" % d["talk"]):
+			missing.append("%s 대화 %s" % [id, d["talk"]])
+		for g in d.get("groups", []):
+			for u in g["units"]:
+				if str(u[0]).begins_with("CR-") and not enemies.has(str(u[0])):
+					missing.append("%s 적 %s" % [id, u[0]])
+	for nid in Encounters.data.get("friendly_sheet", {}):
+		var sh := str(Encounters.data["friendly_sheet"][nid])
+		if not ResourceLoader.exists("res://assets/sprites/%s.tres" % sh):
+			missing.append("외형 %s" % sh)
+	for cr in ["cr420", "cr420b", "cr421", "cr421b", "cr423", "cr423b"]:
+		if not ResourceLoader.exists("res://assets/sprites/en_%s_loco.tres" % cr):
+			missing.append("외형 en_%s_loco" % cr)
+	t.eq(missing, [], "RE 대화 장면·적 자료·외형 시트가 모두 있다")
+	var st := _st()
+	t.eq(st.npc_name("N-TRADER"), "떠돌이 고물상", "무명 화자 이름표")
+
+
+## 원고 태그 [물건: ID n]이 이름으로 보인다(호스트가 아이템 이름을 이름 표에 채운다)
+func test_item_tag_names(t) -> void:
+	var st := _st()
+	var h := InteriorHost.new()
+	h.st = st
+	h._ready()
+	t.ok(str(st.names.get("I-055", "I-055")) != "I-055", "I-055 → %s" % str(st.names.get("I-055", "")))
+	t.ok(str(st.names.get("I-001", "I-001")) != "I-001", "I-001 → %s" % str(st.names.get("I-001", "")))
+	h.free()

@@ -41,6 +41,8 @@ DOORS = [{"lid": "L-R02-11", "near": (720, 1147), "to": "J-01", "mark": "from_W"
          {"lid": "L-R01-26", "near": (980, 1207), "to": "K-26", "mark": "from_W", "name": "흑석 대학병원", "kind": "facade"},
          {"lid": "L-R01-08", "near": (887, 1494), "to": "K-08", "mark": "from_W", "name": "관악 계곡 배수 암거", "prop": "drain_outlet",
           "hint": "콘크리트 암거 입구. 물비린내와 곰팡이 냄새가 흘러나온다."}]
+# 손 실내가 붙는 건물의 양식(SD-21 §8): 도로망이 바뀌어도 그 자리에 건물이 선다
+ANCHOR_STYLE = {"K-01": "gov", "K-29": "gov", "K-06": "office", "K-20": "villa", "K-22": "apt", "K-24": "office", "K-26": "gov"}
 INSETS = [{"id": "X-S07", "mark": "from_vault", "at": (959, 1503)},          # 볼트 S-07 정문(L-R01-01)
           {"id": "X-BC", "center": (892, 1362)},                             # 봉천 계단마을(L-R01-09)
           {"id": "X-SB", "center": (632, 1329), "lid": "L-R02-19", "arrive": "arrive"}]   # 새벽인력 본소(1-6): 도착 칸 = 정문 앞 길
@@ -208,7 +210,7 @@ def build():
     t0 = time.time()
     src = json.load(open(WB.SRC, encoding="utf-8"))
     r = WB.bake(src)
-    WB.city(r, src)
+    WB.city(r, src, anchors=[(d["near"][0], d["near"][1], ANCHOR_STYLE.get(d["to"], "gov")) for d in DOORS if d.get("kind") == "facade"])
     kind = r["kind"]
     lvl = r["level"].astype(np.int16)
     play = r["play"]
@@ -756,9 +758,48 @@ def build():
     for k_, code in src["region"].items():
         cx_, cy_ = map(int, k_.split(","))
         reg_grid[cy_][cx_] = code
+    tags = chunk_tags(r, kind)
+    json.dump(tags, open(os.path.join(OUT, "chunk_tags.json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
+    log("청크 태그: " + ", ".join("%s %d" % (k_, sum(1 for v in tags["chunks"].values() if k_ in v["tags"])) for k_ in TAGS))
     return {"pois": pois, "r05": r05, "region_grid": reg_grid, "street": r["street"], "bridges": cross, "routes": routes, "floor": floor, "gflag": gflag, "solid": solid, "cover": cover, "level": level, "stair": stair, "body": body,
             "deco": deco, "trees": tree_list, "props": props, "shadows": shadows, "insets": insets, "play": play, "band": r["band"],
             "reach": reach, "miss": miss, "wet": wet, "core": core, "kind": kind, "entries": entries}
+
+# 청크 지형 태그(SD-22 §4.2·§5.4): 인카운터 어울림·루팅 특색이 읽는다. 결 = 땅 칸의 최빈 결(F1~F7)
+TAGS = ["강변", "산지", "큰길", "고가", "공단", "아파트", "시장", "업무", "황무지", "구도심", "언덕", "지하철"]
+FAB_TAG = {"F1": "구도심", "F2": "언덕", "F3": "업무", "F4": "공단", "F5": "아파트", "F6": "시장", "F7": "황무지"}
+
+
+def chunk_tags(r, kind):
+    fab, use, cls, el = r["fabric"], r["use"], r["cls"], r["elevated"]
+    out = {}
+    subway = [d["near"] for d in DOORS if str(d.get("prop", "")).startswith("subway")]
+    for cy in range(NCY):
+        for cx in range(NCX):
+            sl = (slice(cy * CS, (cy + 1) * CS), slice(cx * CS, (cx + 1) * CS))
+            if not r["play"][sl].any():
+                continue
+            k = kind[sl]
+            land = (k == 1) | (k == 7) | (k == 8)
+            t = []
+            f = "물"
+            if land.sum() > 40:
+                cnt = np.bincount(fab[sl][land].ravel(), minlength=7)
+                f = "F%d" % (int(cnt.argmax()) + 1)
+                t.append(FAB_TAG[f])
+            if ((k == 5) | (k == 6)).sum() > 20 or ((k >= 2) & (k <= 4)).sum() > 160:
+                t.append("강변")
+            if (use[sl] == 2).mean() > 0.3:
+                t.append("산지")
+            if (cls[sl] >= 3).sum() > 40:
+                t.append("큰길")
+            if el[sl].sum() > 20:
+                t.append("고가")
+            if any(cx * CS - 20 <= x < (cx + 1) * CS + 20 and cy * CS - 20 <= y < (cy + 1) * CS + 20 for (x, y) in subway):
+                t.append("지하철")
+            out["%d,%d" % (cx, cy)] = {"fab": f, "tags": t}
+    return {"chunk": CS, "chunks": out}
+
 
 DIR8 = ["동", "남동", "남", "남서", "서", "북서", "북", "북동"]
 NOTES_SRC = os.path.join(ROOT, "script", "world", "road_notes.txt")

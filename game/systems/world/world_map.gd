@@ -536,6 +536,28 @@ func tile_class(t: Vector2i) -> int:
 
 
 static var _floor_kind := {}
+static var _floor_name := {}
+
+
+## 길 위계(SD-21 · SD-22 §3.6 인카운터 확률): 3 큰길·고가 둘레(아스팔트·보도, 청크 태그 큰길·고가) · 2 다른 찻길 · 1 동네 길·골목 · 0 길 아님
+func road_rank(t: Vector2i) -> int:
+	var k := chunk_of_tile(t)
+	var c = chunks.get(k)
+	if c == null:
+		return 0
+	if _floor_name.is_empty():
+		var m: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://assets/tiles/ts_r01_ext.json"))
+		for n in m:
+			_floor_name[int(m[n]["atlas"][0])] = str(n)
+	var a: PackedByteArray = c["a"]
+	var fl := str(_floor_name.get(a[L_FG + ((t.y - k.y * cs) * cs + (t.x - k.x * cs)) * 2], ""))
+	var tags: Array = Loot.tags_at(t.x, t.y)
+	var big: bool = "큰길" in tags or "고가" in tags
+	if fl in ["asphalt", "asphalt_lane", "pavers", "pavers_b"]:
+		return 3 if big else 2
+	if fl == "concrete_o" or (fl == "dirt" and ("구도심" in tags or "언덕" in tags)):
+		return 1
+	return 0
 
 
 func triggers_at(t: Vector2i) -> Array:

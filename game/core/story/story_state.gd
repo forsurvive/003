@@ -34,7 +34,8 @@ var dead := {}                          ## 죽은 인물 ID -> true(0-9): 뒤 �
 var places := PlaceLog.new()             ## 장소 발견 상태(1-2, SD-12 §5.5)
 var book := NpcBook.new()               ## 인물 수첩(1-2, SD-12 §3.11)
 const ENEMY_FACTION := {"CR-401": "BJ", "CR-405": "BJ", "CR-435": "SB", "CR-436": "SB", "CR-437": "SB", "CR-438": "SB", "CR-534": "SB",
-	"CR-456": "JH", "CR-457": "JH"}
+	"CR-456": "JH", "CR-457": "JH", "CR-403": "BJ", "CR-420": "YT", "CR-421": "YT", "CR-423": "YT"}
+const UNNAMED := [["N-TRADER", "떠돌이 고물상", ""], ["N-REFUGEE", "피난민", ""], ["N-DOWNED", "쓰러진 민병", "JC_BC"]]
 var enc := {}                           ## 인카운터 상태(1-3, Encounters): 안전 간격 · 오늘 추적대 수 · EP 사용 · 휴전
 var portrait_alias := {}                ## 인물 ID -> 초상화 키(맵에서 다른 시대 모습으로 선 인물: 2259년 아이 하도윤 등)
 
@@ -91,6 +92,9 @@ func _init() -> void:
 	# SEIZED 압수품 보관함에 물건이 있다 · AT 귀빈실에 든 시각(분) · Q* 면담에서 물은 것 · PD_R01_BJ 판도 사건 보정(R01 비상정부 쪽, SD-06 §5)
 	for k in ["MQ106_CUSTODY", "MQ106_TALKED", "MQ106_SEIZED", "MQ106_AT", "MQ106_QLINE", "MQ106_QWHY", "MQ106_QGRID", "MQ106_QDEAD", "MQ106_QSIGN", "NAMGUNG_MET", "PD_R01_BJ"]:
 		vars.declare(k, "int", 0)
+	# 길 위 인카운터(1-E, SD-22): RE036_MET 떠돌이 고물상을 만난 적 · RE036_NEWS 길 소식 차례 · RE042_N 유해 쪽지 차례(같은 글이 연달아 나오지 않게)
+	for k in ["RE036_MET", "RE036_NEWS", "RE042_N"]:
+		vars.declare(k, "int", 0)
 	for kv in [["CAPTURE_DAY", -1], ["CAPTURE_AT", 0], ["SB_COLLAR", 0], ["SB_CUFF", 0], ["CAPTURE_BY", 0]]:
 		vars.declare(kv[0], "int", kv[1])
 	for k in ["P_SURNAME", "P_GIVEN", "P_FULL", "P_REGNO", "PC_APT"]:   # PC_APT: 적성 평가 답 10개(결과지 다시 보기)
@@ -113,6 +117,9 @@ func load_data(dir: String = "res://data/") -> void:
 			if not npcs.has(cid):
 				npcs[cid] = {"name": str(en[cid].get("name", cid)), "title": str(en[cid].get("name", cid)), "faction": ENEMY_FACTION.get(cid, ""),
 					"ids": [cid], "unnamed": true}
+	for kv in UNNAMED:                                                # 길 위 무명 사람(1-E 인카운터 화자, SD-22) — 이름표는 직함, 수첩에 없음
+		if not npcs.has(kv[0]):
+			npcs[kv[0]] = {"name": kv[1], "title": kv[1], "faction": kv[2], "ids": [kv[0]], "unnamed": true}
 	book = NpcBook.new(npcs)
 
 

@@ -120,7 +120,8 @@ func _segment_hit(a: Vector2, b: Vector2, s: Dictionary):
 			for c in _buckets.get(Vector2i(kx, ky), []):
 				if c.team == s["team"] or (c.team == "resident" and s["team"] != "player") \
 						or (c.team == "ally" and s["team"] == "player") or (s["team"] == "ally" and c.team in ["player", "resident"]) \
-						or c.team == "gone":   # 적의 탄은 주민을 비켜 간다 · 주인공 탄은 아군을 지나간다(SD-11 §8.4 오사 없음) · 달아난 적
+						or c.team == "gone" \
+						or (str(s["team"]).begins_with("calm") and c.team in ["player", "resident", "ally"]):   # 적의 탄은 주민을 비켜 간다 · 주인공 탄은 아군을 지나간다(SD-11 §8.4 오사 없음) · 달아난 적 · 비적대 무리(1-E)의 탄은 주인공 편을 비켜 간다
 					continue
 				var ctr: Vector2 = c.pos() + Vector2(0, -12)          # torso centre above the feet
 				var tt := _seg_circle(a, b, ctr, c.radius)
@@ -190,6 +191,7 @@ func _apply(c: Combatant, s: Dictionary, at: Vector2) -> void:
 	var r := CombatRules.resolve({"weapon": w, "skill": s["skill"], "dist": s["origin"].distance_to(at) / 32.0,
 		"crit": crit or sneak, "part": part, "dr": c.dr, "sneak": sneak})
 	r["nonlethal"] = w.get("sound", "") == "suppressed" or w.get("kind", "ranged") != "ranged"   # 공기총·근접 = 비살상(기절, 0-9)
+	c.last_by = str(s["team"])
 	c.take(r, s["origin"])
 	hits_total += 1
 	if focused:

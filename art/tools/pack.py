@@ -89,7 +89,21 @@ ENEMIES = [("en_cr401_loco", "M1-S4-HR02-H1-T06-1-PF01-HD04-EY00-PR034", "rifle"
            # 1-6 새벽인력 본소(SD-14 §10.9 · SD-07b): 모집원 CR-435(웃는 얼굴, 권총) · 반장 CR-438(십장 N-R02-035 외형, 자동소총) · 황두칠 C-013(CR-513, 마취 권총)
            ("en_cr435_loco", "M2-S2-HR05-H2-T12-1-PF05-HD00-EY00", "pistol"),
            ("en_cr438_loco", "M2-S5-HR02-H2-T12-2-PF05-HD02-EY00-PR002", "rifle"),
-           ("en_c013_loco", "M2-S3-HR02-H4-T12-0-PF05-HD00-EY03-PR001", "pistol")]
+           ("en_c013_loco", "M2-S3-HR02-H4-T12-0-PF05-HD00-EY03-PR001", "pistol"),
+           # 1-E 남부순환 패거리(SD-14 F-04-C · SD-16 §4.5 약탈자 PF-04: 비대칭 고철 어깨판 T04 · 배달 오토바이 헬멧 HD09 · 가시 두건 HD08).
+           # 같은 적도 외형 두 벌(…_b) — 늘 같은 얼굴이 나오지 않게(SD-22 E1)
+           ("en_cr420_loco", "M1-S3-HR03-H2-T04-2-PF04-HD09-EY00", "pistol"),
+           ("en_cr420b_loco", "F1-S4-HR06-H2-T04-2-PF04-HD08-EY00", "pistol"),
+           ("en_cr421_loco", "M2-S4-HR02-H1-T04-2-PF04-HD08-EY02", "rifle"),
+           ("en_cr421b_loco", "M1-S2-HR01-H3-T04-1-PF04-HD09-EY00", "rifle"),
+           ("en_cr423_loco", "M1-S5-HR00-H1-T04-2-PF04-HD00-EY02", "baton"),
+           ("en_cr423b_loco", "F2-S3-HR07-H2-T04-2-PF04-HD08-EY00", "baton"),
+           # 1-E 무명 사람(비적대): 떠돌이 고물상(V57 템플릿, 짐 진 황무지 복장) · 피난민(낡은 평상복) · 쓰러진 세력원(방범·정착 민병 조끼)
+           ("en_trader_loco", "M2-S4-HR01-H1-T03-2-PF00-HD18-EY00", None),
+           ("en_trader_b_loco", "F2-S3-HR08-H2-T03-2-PF00-HD07-EY00", None),
+           ("en_refugee_loco", "F1-S2-HR06-H1-T03-2-PF00-HD00-EY00", None),
+           ("en_refugee_b_loco", "M1-S3-HR02-H2-T03-2-PF00-HD05-EY00", None),
+           ("en_downed_loco", "M1-S4-HR01-H1-T12-2-PF12-HD02-EY00", None)]
 
 
 def main():
