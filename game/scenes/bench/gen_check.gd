@@ -11,6 +11,11 @@ var step := 0
 var ok := 0
 var fail := 0
 var door: Dictionary = {}
+var stash_src := ""
+var stash_dst := ""
+var stash_name := ""
+var note_cell := Vector2i.ZERO
+var stash_cell := Vector2i.ZERO
 
 
 func _ready() -> void:
@@ -106,6 +111,55 @@ func _process(dt: float) -> void:
 			var tile: Vector2i = host.map.tile_of(host.player.loco.logical)
 			_check(host.map is WorldMap and tile == Vector2i(int(door["at"][0]), int(door["at"][1]) + 1), "나오면 그 문 앞 칸(지금 %s)" % str(tile))
 			_shot("back_out")
+			step += 1
+			t = 0.0
+			_find_stash()
+			host.enter(stash_src, "from_W")
+		4:                                                            # 쪽지 따라가기: 쪽지를 읽고
+			if t < 1.5:
+				return
+			_stand_before(note_cell)
+			host.interact()
+			step += 1
+			t = 0.0
+		5:
+			if t < 1.5:
+				return
+			var line := str(host.box.state.get("text", ""))
+			print("  쪽지: ", line)
+			_check(host.box.active and line.contains(stash_name), "쪽지가 가게 '%s'를 가리킨다" % stash_name)
+			_shot("stash_note")
+			for _i in 10:
+				if host.box.active:
+					host.box.next()
+			host.enter(stash_dst, "from_W")
+			step += 1
+			t = 0.0
+		6:                                                            # 그 가게에서 숨겨 둔 상자를 연다
+			if t < 1.5:
+				return
+			_stand_before(stash_cell)
+			print("  상자 앞 안내: ", host.box_prompt())
+			_check(host.box_prompt().contains("숨겨 둔 상자"), "가게 안 '숨겨 둔 상자'")
+			host.interact()
+			step += 1
+			t = 0.0
+		7:
+			if t < 1.0:
+				return
+			if host.lockpick != null:                                   # 잠겼으면 봇이 딴다
+				host.lockpick.bot_on = true
+				host.lockpick.lock.set_angle(host.lockpick.lock.target)
+				host.lockpick.bot_turn = true
+				return
+			if host.container == null:
+				if t > 6.0:
+					_check(false, "상자 창이 열린다")
+					step += 1
+				return
+			print("  숨겨 둔 상자: ", host.container.state["items"])
+			_check(not host.container.state["items"].is_empty(), "숨겨 둔 상자에 물건이 있다")
+			_shot("stash_box")
 			print("들어가는 건물 확인: %s 실내 %d · 실패 %d" % ["○" if fail == 0 else "×", ok, fail])
 			step += 1
 			get_tree().create_timer(0.3).timeout.connect(get_tree().quit)
@@ -122,3 +176,35 @@ func _shot(tag: String) -> void:
 		return
 	var img := get_viewport().get_texture().get_image()
 	img.save_png("%s/gen_%s.png" % [shots, tag.replace(" ", "_")])
+
+
+## 쪽지 따라가기 한 쌍: 숨겨 둔 상자가 있는 가게와, 그 가게 이름을 적은 쪽지가 있는 집
+func _find_stash() -> void:
+	var dir := DirAccess.open("res://data/maps")
+	var maps := {}
+	for f in dir.get_files():
+		if f.begins_with("G-") and f.ends_with(".json"):
+			maps[f.get_basename()] = JSON.parse_string(FileAccess.get_file_as_string("res://data/maps/" + f))
+	for k in maps:
+		for b in maps[k]["boxes"]:
+			if str(b["kind"]) == "stash" and stash_dst == "":
+				stash_dst = k
+				stash_name = str(maps[k]["name"])
+				stash_cell = Vector2i(int(b["x"]), int(b["y"]))
+	for k in maps:
+		for x in maps[k]["texts"]:
+			if stash_src == "" and str(x["text"]).contains(stash_name) and str(x["text"]).contains("상자"):
+				stash_src = k
+				note_cell = Vector2i(int(x["x"]), int(x["y"]))
+	print("  쪽지 %s %s → 가게 %s(%s) %s" % [stash_src, str(note_cell), stash_dst, stash_name, str(stash_cell)])
+
+
+## 칸 c를 마주 보고 선다(아래 · 위 · 옆 순으로 빈 칸)
+func _stand_before(c: Vector2i) -> void:
+	for d in [Vector2i(0, 1), Vector2i(0, -1), Vector2i(1, 0), Vector2i(-1, 0)]:
+		var p: Vector2i = c + d
+		if not host.map.is_solid(p):
+			host.player.loco.place(Vector2(p.x * 32 + 16, p.y * 32 + 16))
+			host.player.loco.facing = Locomotion.snap8(Vector2(-d), 0.0)
+			host.player._show()
+			return

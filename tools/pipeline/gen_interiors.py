@@ -638,6 +638,91 @@ def _h(*a):
     return v
 
 
+DIR8 = ["동쪽", "남동쪽", "남쪽", "남서쪽", "서쪽", "북서쪽", "북쪽", "북동쪽"]
+STASH_SPOT = ["계산대 밑", "창고 쪽 구석", "진열대 뒤", "뒷벽 선반 아래"]
+
+
+def _free_cell(out, rnd, need_solid_free=True, avoid=()):
+    """들어온 자리에서 닿는 빈 바닥 칸(소품·조사 글·용기·출구 없는 곳)을 하나 고른다."""
+    m = out["marks"]["from_W"]
+    seen = _reach(out, (m[0], m[1]))
+    W, H = out["size"]
+    busy = {(b["x"] + i, b["y"]) for b in out["boxes"] for i in range(b.get("w", 1))}
+    busy |= {(t["x"] + i, t["y"] + j) for t in out["texts"] for i in range(t.get("w", 1)) for j in range(t.get("h", 1))}
+    busy |= {(p_["x"], p_["y"]) for p_ in out["props"]}
+    busy |= {(e["x"], e["y"]) for e in out["exits"]} | {(e["x"], e["y"] - 1) for e in out["exits"]}
+    cells = [c for c in seen if c not in busy and c not in avoid and 3 <= c[1] <= H - 3]
+    rnd.shuffle(cells)
+    return cells
+
+
+def _add_prop(out, prop_meta, name, x, y):
+    pm = prop_meta[name]
+    sort_y = y * 32 + 16 if pm["kind"] == "deco" else (y + max(pm["foot"][1], 1)) * 32
+    out["props"].append({"name": name, "x": x, "y": y, "px": [x * 32 + pm["off"][0], y * 32 + pm["off"][1]], "sort_y": sort_y})
+    if pm["kind"] == "floor":
+        row = out["solid"][y]
+        out["solid"][y] = row[:x] + "1" + row[x + 1:]
+
+
+def stash_chains(outs, pools, prop_meta):
+    """쪽지 따라가기(STAGE_1 §1.1 '탐험이 서사를 만든다'): 어떤 집·사무실의 쪽지가 이름 있는 가게 하나를 방위·거리로 가리키고,
+    그 가게 안에 숨겨 둔 상자(용기 'stash', 일반 용기보다 한 단 두껍다)가 있다. 지도 표시는 없다 — 쪽지를 읽고 걸어서 찾는다."""
+    import math
+    rnd = random.Random(2077)
+    src = [k for k, (o, _, st) in sorted(outs.items()) if st in ("villa", "house", "office") and o.get("gen") != "den"]
+    tgt = [k for k, (o, _, st) in sorted(outs.items()) if st == "shop"]
+    rnd.shuffle(src)
+    names = {}
+    for k in tgt:                                                       # 이름이 겹치는 가게는 가리키지 않는다(헷갈린다)
+        names.setdefault(outs[k][0]["name"], []).append(k)
+    used, n = set(), 0
+    for s_id in src[:60]:
+        (so, (sx, sy), _) = outs[s_id]
+        cand = []
+        for t_id in tgt:
+            to, (tx, ty), _ = outs[t_id]
+            d = math.hypot(tx - sx, ty - sy)
+            if t_id in used or len(names[to["name"]]) > 1 or not (25 <= d <= 90):
+                continue
+            cand.append((d, t_id))
+        if not cand:
+            continue
+        d, t_id = rnd.choice(cand)
+        to, (tx, ty), _ = outs[t_id]
+        ang = math.degrees(math.atan2(ty - sy, tx - sx))
+        dname = DIR8[int(((ang + 22.5) % 360) // 45)]
+        far = "골목 몇 개 건너" if d < 40 else ("큰길 하나 건너" if d < 65 else "한참 가서")
+        spot = rnd.choice(STASH_SPOT)
+        cells_t = _free_cell(to, rnd)
+        cells_s = _free_cell(so, rnd)
+        if not cells_t or not cells_s:
+            continue
+        placed = False
+        for (cx, cy) in cells_t[:8]:                                       # 상자를 놓아도 다른 곳이 막히지 않아야 한다
+            trial = json.loads(json.dumps(to))
+            _add_prop(trial, prop_meta, "crate_army", cx, cy)
+            trial["boxes"].append({"x": cx, "y": cy, "w": 1, "h": 1, "kind": "stash", "owner": "", "lock": 25 if rnd.random() < 0.4 else 0,
+                                   "name": "숨겨 둔 상자", "cond": ""})
+            trial["texts"].append({"x": cx, "y": cy, "w": 1, "h": 1, "text": "국방색 상자. 위에 덮은 방수포를 누가 일부러 반듯하게 접어 두었다."})
+            if _ok(trial):
+                outs[t_id] = (trial, (tx, ty), "shop")
+                placed = True
+                break
+        if not placed:
+            continue
+        line = rnd.choice(pools.get("stash_note", ["'{가게} {곳}. 여기서 {dir}으로 {far}.'"]))
+        line = line.replace("{가게}", to["name"]).replace("{곳}", spot).replace("{dir}", dname).replace("{far}", far)
+        (cx, cy) = cells_s[0]
+        _add_prop(so, prop_meta, "note_ground", cx, cy)
+        so["texts"].append({"x": cx, "y": cy, "w": 1, "h": 1, "text": line})
+        used.add(t_id)
+        n += 1
+        if n >= 40:
+            break
+    return n
+
+
 def run(entries, reach, threat, region_at, taken, log=print, cache=True, fixed=()):
     """entries: 굽기가 찍은 건물 문 후보 [{x, y, style, seed}] · reach[y, x] · threat(청크) · region_at(x, y) → 권역 코드 ·
     taken: 비워 둘 칸 사각형(손 맵·지하 문). 돌려줌: 월드 문 목록(kind 'facade')."""
@@ -654,6 +739,7 @@ def run(entries, reach, threat, region_at, taken, log=print, cache=True, fixed=(
     for f in glob.glob(os.path.join(OUT, "G-*.json")):
         os.remove(f)
     doors, made, cnt = [], {}, {}
+    outs = {}
     used = set()
     for spec in fixed:                                                 # 손으로 만든 실내: 요청 자리에서 가장 가까운, 문 앞이 걸어서 닿는 1층 문
         nx, ny = spec["near"]
@@ -688,7 +774,7 @@ def run(entries, reach, threat, region_at, taken, log=print, cache=True, fixed=(
         out = build_one({"x": x, "y": y, "style": st, "threat": t, "region": rg}, pools, prop_meta, known_vars, known_fns, scenes)
         if out is None:
             continue
-        json.dump(out, open(os.path.join(OUT, out["id"] + ".json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
+        outs[out["id"]] = (out, (x, y), st)
         made[out["id"]] = {"name": out["name"], "size": out["size"], "exits": ["W"]}
         lock = 0
         hv = _h(e["seed"], 91) % 100
@@ -698,6 +784,10 @@ def run(entries, reach, threat, region_at, taken, log=print, cache=True, fixed=(
                  "factory": "창고 셔터"}[st]
         doors.append({"lid": "", "at": [x, y], "to": out["id"], "mark": "from_W", "name": label, "prop": "", "kind": "facade", "lock": lock})
         cnt[st] = cnt.get(st, 0) + 1
+    n_stash = stash_chains(outs, pools, prop_meta)
+    for mid, (out, _, _) in outs.items():
+        json.dump(out, open(os.path.join(OUT, mid + ".json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
+    log("쪽지 따라가기(숨겨 둔 상자): %d쌍" % n_stash)
     idx_path = os.path.join(OUT, "_index.json")
     idx = json.load(open(idx_path, encoding="utf-8")) if os.path.exists(idx_path) else {"maps": {}}
     idx["maps"] = {k: v for k, v in idx["maps"].items() if not k.startswith("G-")}
