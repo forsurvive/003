@@ -15,6 +15,32 @@
    "ticks": 3,
    "y": 720
   },
+  "boom_plasma": {
+   "anchor": [
+    48.0,
+    48.0
+   ],
+   "blend": "mix",
+   "cell": 96,
+   "dirs": 1,
+   "frames": 8,
+   "row": 67,
+   "ticks": 3,
+   "y": 1072
+  },
+  "boom_pulse": {
+   "anchor": [
+    48.0,
+    48.0
+   ],
+   "blend": "mix",
+   "cell": 96,
+   "dirs": 1,
+   "frames": 8,
+   "row": 73,
+   "ticks": 3,
+   "y": 1168
+  },
   "boom_smoke": {
    "anchor": [
     48.0,
@@ -171,6 +197,45 @@
    "ticks": 2,
    "y": 400
   },
+  "mine_cap": {
+   "anchor": [
+    8.0,
+    8.0
+   ],
+   "blend": "mix",
+   "cell": 16,
+   "dirs": 1,
+   "frames": 2,
+   "row": 60,
+   "ticks": 2,
+   "y": 960
+  },
+  "mine_frag": {
+   "anchor": [
+    8.0,
+    8.0
+   ],
+   "blend": "mix",
+   "cell": 16,
+   "dirs": 1,
+   "frames": 2,
+   "row": 58,
+   "ticks": 2,
+   "y": 928
+  },
+  "mine_pulse": {
+   "anchor": [
+    8.0,
+    8.0
+   ],
+   "blend": "mix",
+   "cell": 16,
+   "dirs": 1,
+   "frames": 2,
+   "row": 59,
+   "ticks": 2,
+   "y": 944
+  },
   "missile": {
    "anchor": [
     8.5,
@@ -274,6 +339,136 @@
    "row": 22,
    "ticks": 2,
    "y": 352
+  },
+  "thrown_frag": {
+   "anchor": [
+    8.0,
+    8.0
+   ],
+   "blend": "mix",
+   "cell": 16,
+   "dirs": 1,
+   "frames": 4,
+   "row": 51,
+   "ticks": 2,
+   "y": 816
+  },
+  "thrown_gas": {
+   "anchor": [
+    8.0,
+    8.0
+   ],
+   "blend": "mix",
+   "cell": 16,
+   "dirs": 1,
+   "frames": 4,
+   "row": 55,
+   "ticks": 2,
+   "y": 880
+  },
+  "thrown_molotov": {
+   "anchor": [
+    8.0,
+    8.0
+   ],
+   "blend": "mix",
+   "cell": 16,
+   "dirs": 1,
+   "frames": 4,
+   "row": 54,
+   "ticks": 2,
+   "y": 864
+  },
+  "thrown_nuka": {
+   "anchor": [
+    8.0,
+    8.0
+   ],
+   "blend": "mix",
+   "cell": 16,
+   "dirs": 1,
+   "frames": 4,
+   "row": 57,
+   "ticks": 2,
+   "y": 912
+  },
+  "thrown_plasma": {
+   "anchor": [
+    8.0,
+    8.0
+   ],
+   "blend": "mix",
+   "cell": 16,
+   "dirs": 1,
+   "frames": 4,
+   "row": 52,
+   "ticks": 2,
+   "y": 832
+  },
+  "thrown_pulse": {
+   "anchor": [
+    8.0,
+    8.0
+   ],
+   "blend": "mix",
+   "cell": 16,
+   "dirs": 1,
+   "frames": 4,
+   "row": 53,
+   "ticks": 2,
+   "y": 848
+  },
+  "thrown_smoke": {
+   "anchor": [
+    8.0,
+    8.0
+   ],
+   "blend": "mix",
+   "cell": 16,
+   "dirs": 1,
+   "frames": 4,
+   "row": 56,
+   "ticks": 2,
+   "y": 896
+  },
+  "zone_fire": {
+   "anchor": [
+    16.0,
+    16.0
+   ],
+   "blend": "mix",
+   "cell": 32,
+   "dirs": 1,
+   "frames": 3,
+   "row": 61,
+   "ticks": 2,
+   "y": 976
+  },
+  "zone_gas": {
+   "anchor": [
+    16.0,
+    16.0
+   ],
+   "blend": "mix",
+   "cell": 32,
+   "dirs": 1,
+   "frames": 3,
+   "row": 63,
+   "ticks": 2,
+   "y": 1008
+  },
+  "zone_smoke": {
+   "anchor": [
+    16.0,
+    16.0
+   ],
+   "blend": "mix",
+   "cell": 32,
+   "dirs": 1,
+   "frames": 3,
+   "row": 65,
+   "ticks": 2,
+   "y": 1040
   }
  }
 }

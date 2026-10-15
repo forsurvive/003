@@ -28,9 +28,16 @@ var placed_total := 0
 var disarmed_total := 0
 
 
-func _ready() -> void:
+var _ground: Node2D                            ## 바닥층(불 지대 · 지뢰): 인물 아래(z −5), 바닥·벽 그림(−11·−10) 위
+
+
+func _init() -> void:
 	rng.seed = 2277
 	z_index = 4
+	_ground = Node2D.new()
+	_ground.z_index = -9
+	add_child(_ground)
+	_ground.draw.connect(_draw_ground)
 
 
 ## 던지기: 누른 시간(0~1.2초)이 거리(최대 = 투척 사거리)를 정한다. to를 주면 그 자리(봇 · 적)를 겨눈다.
@@ -163,6 +170,7 @@ func step(dt: float, combatants: Array) -> void:
 					c.add_dot("burn", float(z["w"].get("dot", 5.0)), 1.0)
 					c.last_by = str(z["team"])
 	queue_redraw()
+	_ground.queue_redraw()
 
 
 func _zone(n: Dictionary) -> void:
@@ -226,34 +234,47 @@ func in_zone(p: Vector2, kind: String) -> bool:
 # ---------------------------------------------------------------- 그림
 func _draw() -> void:
 	var tex := CombatFx.sheet()
-	var frame := Engine.get_process_frames()
-	for z in zones:                                                   # 지대: 32칸 덩이를 반경만큼 흩어 깐다(3컷 순환)
-		var set_name := "zone_" + str(z["kind"])
-		if not CombatFx.has_set(set_name):
-			continue
-		var r := float(z["r"])
-		var n := maxi(1, int(r * r / 260.0))
-		var k0 := int(float(z["t"]) * 5.0)
-		for i in n:
-			var a := float(i) * 2.399
-			var rr := r * 0.75 * sqrt((float(i) + 0.5) / n)
-			var c: Vector2 = (z["p"] as Vector2) + Vector2(cos(a), sin(a) * 0.8) * rr
-			var rg := CombatFx.region(set_name, 0.0, (k0 + i) % 3)
-			if float(z["t"]) < 1.0 and (i + k0) % 2 == 1:
-				continue                                              # 사그라드는 지대: 덩이가 줄어든다
-			draw_texture_rect_region(tex, Rect2(c - rg.size * 0.5, rg.size), rg)
-	for m in mines:
-		var blink := 1 if float(m["arm"]) <= 0.0 and (float(m["alarm"]) >= 0.0 and int(frame / 4) % 2 == 0 or int(frame / 40) % 2 == 0) else 0
-		var rg := CombatFx.region("mine_" + str(m["kind"]), 0.0, blink)
-		draw_texture_rect_region(tex, Rect2((m["p"] as Vector2) - rg.size * 0.5, rg.size), rg)
-		if float(m["alarm"]) >= 0.0:
-			draw_arc(m["p"], MINE_SENSE, 0, TAU, 24, Color("A82A26"), 1.0)
+	for z in zones:                                                   # 최루 · 연막 구름은 인물 위
+		if z["kind"] != "fire":
+			_draw_zone(self, tex, z)
 	for n in nades:
 		if str(n["team"]) != "player" and float(n["fuse"]) > 0.0:   # 적 수류탄 경고: 떨어질 자리에 붉은 원(외부 반경)
-			var pr := "grenade"
-			draw_arc(n["to"], float(Arms.blast_r(pr)[1]) * 32.0, 0, TAU, 32, Color("E04A35"), 1.0)
+			draw_arc(n["to"], float(Arms.blast_r("grenade")[1]) * 32.0, 0, TAU, 32, Color("E04A35"), 1.0)
 		var at: Vector2 = n["p"]
 		if float(n["h"]) > 0.0:
 			draw_circle(at, 2.5, Color(0, 0, 0, 0.35))
 		var rg := CombatFx.region("thrown_" + str(n["kind"]), 0.0, int(n["spin"]))
 		draw_texture_rect_region(tex, Rect2(at - Vector2(0, float(n["h"])) - rg.size * 0.5, rg.size), rg)
+
+
+## 바닥층: 불 지대 · 지뢰(경보 중이면 감지 원)
+func _draw_ground() -> void:
+	var tex := CombatFx.sheet()
+	var frame := Engine.get_process_frames()
+	for z in zones:
+		if z["kind"] == "fire":
+			_draw_zone(_ground, tex, z)
+	for m in mines:
+		var on := float(m["arm"]) <= 0.0 and ((float(m["alarm"]) >= 0.0 and int(frame / 4) % 2 == 0) or int(frame / 40) % 2 == 0)
+		var rg := CombatFx.region("mine_" + str(m["kind"]), 0.0, 1 if on else 0)
+		_ground.draw_texture_rect_region(tex, Rect2((m["p"] as Vector2) - rg.size * 0.5, rg.size), rg)
+		if float(m["alarm"]) >= 0.0:
+			_ground.draw_arc(m["p"], MINE_SENSE, 0, TAU, 24, Color("A82A26"), 1.0)
+
+
+## 지대: 32칸 덩이를 반경 안에 해바라기 배치로 깐다(3컷 순환, 사그라들 때 덩이가 줄어든다)
+static func _draw_zone(ci: CanvasItem, tex: Texture2D, z: Dictionary) -> void:
+	var set_name := "zone_" + str(z["kind"])
+	if not CombatFx.has_set(set_name):
+		return
+	var r := float(z["r"])
+	var n := maxi(1, int(r * r / (520.0 if z["kind"] == "fire" else 300.0)))
+	var k0 := int(float(z["t"]) * 5.0)
+	for i in n:
+		if float(z["t"]) < 1.0 and (i + k0) % 2 == 1:
+			continue
+		var a := float(i) * 2.399
+		var rr := r * 0.75 * sqrt((float(i) + 0.5) / n)
+		var c: Vector2 = (z["p"] as Vector2) + Vector2(cos(a), sin(a) * 0.8) * rr
+		var rg := CombatFx.region(set_name, 0.0, (k0 + i) % 3)
+		ci.draw_texture_rect_region(tex, Rect2(c - rg.size * 0.5, rg.size), rg)

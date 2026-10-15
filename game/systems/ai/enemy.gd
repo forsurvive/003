@@ -228,6 +228,7 @@ func think(dt: float, target: Combatant, nav, shots: Projectiles) -> void:   ## 
 
 
 var _held_pose := false
+var smoke_at := Callable()                    ## 지대 묻기(Ordnance.in_zone) — 연막 · 최루(1-9b)
 
 
 func _held_step(dt: float) -> void:
@@ -394,6 +395,8 @@ func _shoot(dt: float, target: Combatant, shots: Projectiles) -> void:
 	if row["id"] == "CR-473":                                       # 보안요원 권총: 위협 사격만(어깨 너머로 빗나가게, SD-14 §9.12.1)
 		aim += (10.0 + shots.rng.randf() * 6.0) * (1.0 if shots.rng.randf() < 0.5 else -1.0)
 	var sp := CombatRules.spread(skill, "stand", loco.motion != "idle")
+	if smoke_at.is_valid() and smoke_at.call(loco.logical, "gas") and not cmb.robot and not cmb.big:
+		sp *= 1.3                                                    # 최루(SD-13 W-058): 인간형 명중 −30%
 	var ang := CombatRules.shot_angle(aim, sp, shots.rng)
 	if shots.fire_weapon(loco.logical + Vector2(0, -14) + Vector2.RIGHT.rotated(deg_to_rad(aim)) * 10.0, ang, cmb.team, weapon, skill,
 			{"speed": 640.0, "fl": floor_id, "target": seen}) > 0:      # 1-9a: 무기 계열대로(산탄·화염·곡사…), 실탄은 20t/초로 읽히게
@@ -504,6 +507,8 @@ func _draw() -> void:
 
 ## 고가(1-Rd): 표적과의 시야 배수(1 같은 층 · 0.5 다른 층 · 0 못 봄). 상판이 없는 맵은 시선만 본다
 func sight_of(target: Combatant) -> float:
+	if smoke_at.is_valid() and (smoke_at.call(target.pos(), "smoke") or smoke_at.call(loco.logical, "smoke")):
+		return 0.0                                                    # 연막(1-9b, SD-13 W-059): 안팎으로 보이지 않는다(쏘지도 못한다)
 	if world is InteriorMap and world.has_deck:
 		return world.sight_mul(loco.logical, floor_id, target.pos(), target.fl())
 	return 1.0 if world.line_of_sight(loco.logical, target.pos()) else 0.0

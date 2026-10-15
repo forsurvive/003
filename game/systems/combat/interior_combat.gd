@@ -67,6 +67,8 @@ var _recoil := 0.0                                ## 돌격소총 반동 누적(
 var _recoil_t := 0.0
 var _charge := -1.0                               ## 근접 누르는 중(초) — 0.5초면 파워 공격. -1 = 누르지 않음
 var power_hits := 0                               ## 시험용: 파워 공격 횟수
+var ord: Ordnance                                 ## 투척·설치(1-9b): 수류탄 · 지뢰 · 지대
+var _disarm: Dictionary = {}                      ## 해체 중인 지뢰
 
 
 func _init() -> void:
@@ -76,14 +78,45 @@ func _init() -> void:
 	weapons = JSON.parse_string(FileAccess.get_file_as_string("res://data/weapons.json"))
 	if FileAccess.file_exists("res://data/weapons_craft.json"):                # 제작 무기 W-153~157(1-8c, SD-13 §3.10)
 		weapons.merge(JSON.parse_string(FileAccess.get_file_as_string("res://data/weapons_craft.json")))
+	_load_throwables()                                                 # 투척·설치 W-057~W-064 + 제작 폭발물 W-151 · W-152(1-9b)
 	Gear.expand_weapons(weapons)                                       # 상태 변형 "W-002@2"(1-8a): 같은 수치 + condition
 	enemy_rows = JSON.parse_string(FileAccess.get_file_as_string("res://data/enemies.json"))
 	shots = Projectiles.new()
 	add_child(shots)
+	ord = Ordnance.new()
+	ord.shots = shots
+	add_child(ord)
 	pc.team = "player"
 	pc.died.connect(func() -> void:                                    # Combatant.take가 HP 0에서 dead를 세우고 died를 낸다
 		heal_q.clear()
 		player_down.emit())
+
+
+## 투척·설치 자료를 무기 표에 넣는다(투척 0.65회/초 · 설치 0.5회/초, SD-11 §3.2). 사거리는 던질 때 6 + ⌊힘/2⌋
+func _load_throwables() -> void:
+	var rows := {}
+	if FileAccess.file_exists("res://data/throwables.json"):
+		rows.merge(JSON.parse_string(FileAccess.get_file_as_string("res://data/throwables.json")))
+	if FileAccess.file_exists("res://data/items_craft.json"):
+		var cr: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/items_craft.json"))
+		for id in cr:
+			if cr[id].get("explosive", false) and cr[id].has("kind"):
+				rows[id] = cr[id]
+	for id in rows:
+		var r: Dictionary = rows[id].duplicate()
+		var mine := str(r.get("kind", "")) == "mine"
+		r["family"] = "mine" if mine else "thrown"
+		r["layer"] = "X02" if mine else "X01"
+		r["skill"] = "폭발물"
+		r["rate"] = 0.5 if mine else 0.65
+		r["range_eff"] = 0.0 if mine else 6.0
+		r["range_max"] = r["range_eff"]
+		r["two_handed"] = false
+		r["sound"] = "melee"
+		r["ammo_id"] = ""
+		r["price"] = r.get("price", r.get("value", 0))
+		r["durability"] = "∞"
+		weapons[id] = r
 
 
 ## 주인공 최대 HP·AP(SD-10 §2.3): 레벨 1 = special.json의 hp_lv1(지구력), ap_max(민첩성)
@@ -110,6 +143,13 @@ func on_map(map: InteriorMap, player: Actor, st: StoryState) -> void:
 	targets.clear()
 	shots.shots.clear()
 	shots.world = map
+	ord.nades.clear()
+	ord.mines.clear()
+	ord.zones.clear()
+	_disarm = {}
+	for row in map.data.get("mines", []):                              # 맵에 깔린 지뢰(적 편, 1-9c 배치)
+		if InteriorMap._cond_ok(str(row.get("cond", "")), st) and weapons.has(str(row.get("id", "W-063"))):
+			ord.lay(Vector2(int(row["x"]) * 32 + 16, int(row["y"]) * 32 + 16), weapons[str(row.get("id", "W-063"))])
 	nav = InteriorNav.new(map)
 	pc.actor = player
 	pc.radius = player.radius_px
@@ -179,6 +219,7 @@ func spawn(enemy_id: String, pos: Vector2, map: InteriorMap, st: StoryState = nu
 	var e := Enemy.new()
 	var arm := str(opts.get("arm", "baton" if enemy_id == "CR-473" else ("claw" if enemy_id in ["CR-200", "CR-201"] else "")))
 	e.setup_enemy(enemy_rows[enemy_id], _enemy_weapon(enemy_id, arm), pos, map, opts)
+	e.smoke_at = ord.in_zone
 	e.set_meta("enemy_id", enemy_id)
 	e.set_meta("row", opts)
 	e.cmb.unaware = func() -> bool: return e.brain.state != AIBrain.S.COMBAT and e.brain.gauge < 100.0
@@ -545,6 +586,7 @@ func tick(dt: float, free: bool, st: StoryState) -> void:
 		_buddy(dt)
 		_allies(dt)
 	shots.step(step)
+	ord.step(step, shots.combatants)
 	if pc.hp < hp0:
 		stats["hurt"] += hp0 - pc.hp
 		hurt.emit(hp0 - pc.hp)
@@ -630,6 +672,8 @@ func _player(dt: float, player: Actor, st: StoryState) -> void:
 		crouch = bot.get("crouch", false)
 		if bot.has("weapon") and str(bot["weapon"]) != weapon_id:
 			equip(str(bot["weapon"]), st)
+		if bot.get("disarm", false):
+			disarm_tick(dt, st)
 		if bot.get("stim", false):
 			bot["stim"] = false
 			use_stimpak(st, true)
@@ -657,6 +701,9 @@ func _player(dt: float, player: Actor, st: StoryState) -> void:
 	var ranged: bool = w["kind"] == "ranged"
 	if ranged and (bot.get("reload", false) if not bot.is_empty() else Input.is_action_just_pressed("reload")):
 		start_reload(st)
+		return
+	if Arms.fam(w) in ["thrown", "mine"]:
+		_throw_input(dt, player, w, aim, st, fire)
 		return
 	if not ranged:
 		_melee_input(dt, player, w, to, st, fire)
@@ -712,6 +759,75 @@ func _player(dt: float, player: Actor, st: StoryState) -> void:
 	for e in enemies:
 		if is_instance_valid(e):
 			e.hear(str(w.get("sound", "pistol")), player.loco.logical)
+
+
+## 투척(SD-11 §3.4): 누르고 있으면 조준선이 착지점까지 늘어나고(1.2초에 최대 거리 6 + ⌊힘/2⌋t), 놓으면 던진다. 쿠킹 없음.
+## 설치: 누르면 발밑 0.8t 앞에 놓는다. 하나 쓰면 소지품에서 하나 줄고, 다 쓰면 빈손. 봇은 throw = 누른 초, fire = 설치.
+var throw_hold := -1.0                            ## 그리기: 누르는 중인 초(-1 = 아님)
+var throw_aim := Vector2.ZERO
+var throw_max_t := 8.0
+
+
+func _throw_input(dt: float, player: Actor, w: Dictionary, aim: Vector2, st: StoryState, fire: bool) -> void:
+	var sk := float(st.skill("폭발물")) if st != null else 15.0
+	var max_t := 6.0 + floorf(float(st.stat("ST") if st != null else 5) / 2.0)
+	throw_aim = aim
+	throw_max_t = max_t
+	if Arms.fam(w) == "mine":
+		if fire and cool <= 0.0:
+			cool = 1.0 / float(w["rate"])
+			var fwd: Vector2 = (aim - player.loco.logical).normalized() if aim.distance_to(player.loco.logical) > 4.0 else (Locomotion.VEC[player.loco.facing] as Vector2).normalized()
+			ord.place(player.loco.logical, fwd, w, "player", sk)
+			_use_one(st)
+		return
+	var hold := -1.0
+	if not bot.is_empty():
+		if bot.has("throw") and cool <= 0.0:
+			hold = float(bot["throw"])
+			bot.erase("throw")
+	else:
+		if fire and cool <= 0.0:
+			throw_hold = maxf(0.0, throw_hold) + dt
+			return
+		if throw_hold >= 0.0:
+			hold = throw_hold
+	throw_hold = -1.0
+	if hold < 0.0:
+		return
+	cool = 1.0 / float(w["rate"])
+	ord.throw(player.loco.logical + Vector2(0, -10), aim, w, "player", sk, max_t, hold)
+	if player.doll != null:
+		player.doll.flash_face("fire", 0.14)
+	_use_one(st)
+
+
+func _use_one(st: StoryState) -> void:
+	if st == null:
+		return
+	var id := weapon_id
+	st.call_fn("take", [id, 1])
+	if int(st.items.get(id, 0)) <= 0:
+		equip("", st)
+
+
+## 지뢰 해체(SD-11 §9.2): 웅크려 1t 안에서 상호작용 1초 · 폭발물 I(15). 끝나면 소지품으로. 호스트(상호작용 키)·봇(disarm)이 부른다
+func disarm_tick(dt: float, st: StoryState) -> String:
+	if not crouch:
+		_disarm = {}
+		return "stand"
+	if _disarm.is_empty() or not ord.mines.has(_disarm):
+		_disarm = ord.near_mine(pc.pos())
+		if _disarm.is_empty():
+			return "none"
+	var r := ord.disarm_step(_disarm, dt, float(st.skill("폭발물")) if st != null else 0.0)
+	if r == "done" and st != null:
+		var id := str(_disarm["w"].get("id", "W-063"))
+		st.call_fn("give", [id, 1])
+		message.emit("%s을(를) 해체했다." % str(_disarm["w"].get("name", id)))
+		_disarm = {}
+	elif r == "skill":
+		message.emit("폭발물 기술이 모자라 해체할 수 없다(15 필요).")
+	return r
 
 
 ## 근접 입력(SD-11 §3.4·§5.3): 눌렀다 떼면 일반 공격, 0.5초 누르고 있으면 파워 공격(피해 ×2 · 0.6t 전진 · 넉백 · AP = 무기 AP ÷ 2, 최소 10).
@@ -1130,6 +1246,15 @@ var visible_cursor := true
 
 func _draw() -> void:
 	_draw_cursor()
+	if throw_hold >= 0.0 and pc.actor != null:                         # 투척 조준선(SD-11 §3.4): 누른 시간만큼 착지점까지 늘어나는 점선 포물선
+		var from: Vector2 = pc.pos() + Vector2(0, -10)
+		var d := minf(from.distance_to(throw_aim), throw_max_t * 32.0 * clampf(throw_hold / Ordnance.THROW_HOLD_S, 0.15, 1.0))
+		var to := from + (throw_aim - from).normalized() * d
+		for i in 12:
+			var k := float(i) / 11.0
+			var p := from.lerp(to, k) - Vector2(0, 4.0 * 22.0 * k * (1.0 - k))
+			draw_rect(Rect2(p.round() - Vector2(1, 1), Vector2(2, 2)), Color("E8C23A") if i % 2 == 0 else Color("0B0A0D"))
+		draw_arc(to, float(Arms.blast_r("grenade")[1]) * 32.0, 0, TAU, 28, Color("E8C23A"), 1.0)
 	for s in _swings:
 		var a: Vector2 = (s[0] as Vector2).round()
 		draw_arc(a, 7.0, -0.8, 0.8, 6, Color("E9E4D8"), 1.0)

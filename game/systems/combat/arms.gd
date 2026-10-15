@@ -13,7 +13,8 @@ const RADIUS := {"plasma": 0.15, "missile": 0.2, "tesla": 0.2, "flame": 0.3, "na
 ## 곡사(SD-11 §3.3 '곡사탄'): 비행 0.6~1.2초, 가짜 높이. 핵 투사기 최소 사거리 6t
 const ARC_MIN_T := {"nuke": 6.0, "grenade": 1.5}
 ## 폭발 반경(타일, 내부 / 외부) — SD-11 §9.2 표 + 정합(유탄 = 파편 수류탄, 미사일 1.0/3.0, 방전포 0.8/2.0)
-const BLAST_R := {"grenade": [0.8, 2.5], "missile": [1.0, 3.0], "tesla": [0.8, 2.0], "nuke": [2.0, 5.0]}
+const BLAST_R := {"grenade": [0.8, 2.5], "missile": [1.0, 3.0], "tesla": [0.8, 2.0], "nuke": [2.0, 5.0], "mine": [0.6, 1.8], "capmine": [0.8, 2.2],
+	"emp": [1.0, 3.0]}                             ## 지뢰 0.6/1.8 · 병뚜껑 지뢰 0.8/2.2 · 펄스(수류탄·지뢰) 1.0/3.0(§9.2 표)
 ## 근접 호(반각°)·최대 인원(SD-11 §3.4): 한손 90°·3명, 양손 140°·4명, 비무장 70°·2명
 const MELEE := {"melee1": [45.0, 3], "melee2": [70.0, 4], "unarmed": [35.0, 2]}
 const POWER_HOLD_S := 0.5                         ## 길게 누르면 파워 공격(피해 ×2, 0.6t 전진)
@@ -34,7 +35,9 @@ static func fam(w: Dictionary) -> String:
 		"M": return "melee1"
 		"T": return "melee2"
 		"U": return "unarmed"
-		"X": return "thrown"
+		"X": return "mine" if l == "X02" else "thrown"
+	if str(w.get("kind", "")) in ["thrown", "mine"]:
+		return str(w["kind"])
 	return "unarmed" if str(w.get("kind", "")) == "unarmed" else ("melee1" if str(w.get("kind", "")) == "melee" else "pistol")
 
 
@@ -75,7 +78,7 @@ static func doll(w: Dictionary) -> String:
 		"melee2":
 			return "sledge" if l in ["T03", "T04", "T05"] else "bat"
 		"thrown":
-			return "grenade"
+			return "grenade"                                      # X01 투척 손 · X02 설치는 맨손(SD-13 §3.2)
 	return ""
 
 

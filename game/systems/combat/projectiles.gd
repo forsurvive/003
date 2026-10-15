@@ -152,13 +152,15 @@ func _trace(s: Dictionary) -> void:
 ## 폭발(SD-11 §9.2): 피해 = 폭발 기본 × (100 + 스킬)/200 × 거리 비율(내부 1.0 → 외부 0.25) · DR 절반 · 낮은 엄폐 뒤 ×0.5 · 높은 엄폐 뒤 0.
 ## 내부 반경 안 인간형은 넘어진다. 광역이라 기습 배수가 없다. 주인공의 폭발은 아군을 비켜 가고(오사 없음 §8.4), 적의 폭발은 주민을 비켜 간다.
 func explode(at: Vector2, w: Dictionary, skill: float, team: String, fl: int = 0) -> void:
-	var pk := Arms.proj(w)
-	var rr: Array = Arms.blast_r(pk)
+	var pk := str(w.get("proj", Arms.proj(w)))
+	var bk := str(w.get("blast_kind", ""))
+	var rr: Array = Arms.blast_r("emp" if bk == "emp" else pk)
 	var inner := float(rr[0]) * 32.0
 	var outer := float(rr[1]) * 32.0
 	var base := float(w.get("blast", 0.0))
 	blasts_total += 1
-	booms.append({"at": at, "age": 0.0, "k": 2 if pk == "nuke" else 1, "born": Engine.get_process_frames()})
+	booms.append({"at": at, "age": 0.0, "k": 2 if pk == "nuke" else 1, "born": Engine.get_process_frames(),
+		"set": "boom_pulse" if bk == "emp" else ("boom_plasma" if bk == "plasma" else "boom")})
 	exploded.emit(at, outer, team)
 	if base <= 0.0:
 		return
@@ -181,6 +183,12 @@ func explode(at: Vector2, w: Dictionary, skill: float, team: String, fl: int = 0
 			ratio *= 0.5
 		var r := CombatRules.resolve({"weapon": bw, "skill": skill, "part": "torso", "dr": c.dr, "explosive": true})
 		r["hp"] = float(r["hp"]) * ratio * (float(w.get("robot_mult", 1.0)) if c.robot else 1.0)
+		if bk == "emp":                                               # 펄스(§9.2): 로봇 +200 · 정지, 사람은 거의 안 다친다
+			if c.robot:
+				r["hp"] = float(r["hp"]) + 200.0 * ratio
+				c.hold("stun", float(w.get("robot_stop", 2.0)))
+			else:
+				r["hp"] = float(r["hp"]) * 0.1
 		c.last_by = team
 		c.take(r, at)
 		if d <= inner:
@@ -472,9 +480,10 @@ func _draw() -> void:
 		var r := CombatFx.region(spr, float(s["ang"]), _proj_frame(s))
 		draw_texture_rect_region(tex, Rect2(CombatFx.top_left(spr, at), r.size), r)
 	for bo in booms:                                                 # 폭발 불덩이(연기 위) — 일반 혼합
-		var k := CombatFx.frame_at("boom", float(bo["age"]))
+		var bs: String = bo.get("set", "boom")
+		var k := CombatFx.frame_at(bs, float(bo["age"]))
 		if k >= 0:
-			var rs := CombatFx.region("boom", 0.0, k)
+			var rs := CombatFx.region(bs, 0.0, k)
 			var sc := float(bo["k"])
 			draw_texture_rect_region(tex, Rect2((bo["at"] as Vector2) - rs.size * 0.5 * sc, rs.size * sc), rs)
 
