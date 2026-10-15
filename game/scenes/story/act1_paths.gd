@@ -774,8 +774,7 @@ func _sb_cmd(a: Array, done: Callable) -> void:
 		"dogs":
 			for e in host.combat.enemies.duplicate():
 				if is_instance_valid(e) and str(e.get_meta("enemy_id", "")) == "CR-107":
-					e.queue_free()
-					host.combat.enemies.erase(e)
+					host.combat.drop_enemy(e)
 			host.hint("개들이 고기에 정신이 팔렸다. 뒷마당을 지나갈 수 있다.", 4.0)
 		"buy":                                                          # 소장에게 값을 치르고 산 '인력'(88 · 127): 그 사람만 우리에서 나간다
 			st.boxes["sb%s" % str(a[1])] = {"open": true}

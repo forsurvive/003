@@ -278,6 +278,59 @@ def wave(shape, rng, scale, amp, n=3):
     return out * amp / n
 
 
+def vnoise(shape, cell, rng, octaves=2):
+    """값 잡음 0~1(격자 cell칸마다 난수, 사이는 부드럽게 보간 — 옥타브마다 칸 반으로). 전이 띠를 조각조각 깨는 데 쓴다"""
+    hh, ww = shape
+    out = np.zeros(shape, np.float32)
+    amp, tot = 1.0, 0.0
+    ys = np.arange(hh, dtype=np.float32)[:, None]
+    xs = np.arange(ww, dtype=np.float32)[None, :]
+    for _ in range(octaves):
+        g = rng.random((hh // cell + 3, ww // cell + 3)).astype(np.float32)
+        fy, fx = ys / cell, xs / cell
+        y0, x0 = fy.astype(np.int32), fx.astype(np.int32)
+        ty, tx = fy - y0, fx - x0
+        ty, tx = ty * ty * (3 - 2 * ty), tx * tx * (3 - 2 * tx)
+        a = g[y0, x0]; b = g[y0, x0 + 1]; c = g[y0 + 1, x0]; d = g[y0 + 1, x0 + 1]
+        out += amp * ((a * (1 - tx) + b * tx) * (1 - ty) + (c * (1 - tx) + d * tx) * ty)
+        tot += amp
+        amp *= 0.5
+        cell = max(1, cell // 2)
+    return out / tot
+
+
+def ramp(x, a, b):
+    """a 이하 0 → b 이상 1, 사이는 부드러운 S자(smoothstep). 바이옴 전이에 쓴다(경계선 대신 띠)"""
+    t = np.clip((x - a) / float(b - a), 0.0, 1.0)
+    return t * t * (3.0 - 2.0 * t)
+
+
+def box_blur(m, rad):
+    """정사각 상자 흐림(누적합, 반지름 rad칸): 0/1 마스크 → 0~1 '얼마나 안쪽인가' — 구역 가장자리를 띠로 푼다"""
+    a = np.pad(m.astype(np.float32), rad, mode="edge")
+    c = a.cumsum(0).cumsum(1)
+    c = np.pad(c, ((1, 0), (1, 0)))
+    k = 2 * rad + 1
+    hh, ww = m.shape
+    tot = c[k:k + hh, k:k + ww] - c[0:hh, k:k + ww] - c[k:k + hh, 0:ww] + c[0:hh, 0:ww]
+    return tot / float(k * k)
+
+
+def soft_height(r, seed=91):
+    """바이옴 판정용 높이(m): 실제 높이에 저주파 잡음(±30m)을 더해 등고선 한 줄이 경계가 되지 않게 한다(배치·높이 단은 실제 높이 그대로)"""
+    if "hsoft" not in r:
+        rng = np.random.default_rng(seed)
+        r["hsoft"] = r["hgt"].astype(np.float32) + wave(r["hgt"].shape, rng, 34.0, 30.0, 4) + wave(r["hgt"].shape, rng, 11.0, 9.0, 3)
+    return r["hsoft"]
+
+
+def rock_frac(r):
+    """화강암 노출(300m+)의 '안쪽 정도' 0~1: 바위 구역을 6칸 상자로 흐린 값 — 전이 띠 폭이 경사와 상관없이 12칸쯤"""
+    if "rockf" not in r:
+        r["rockf"] = box_blur(soft_height(r) >= 298.0, 10)
+    return r["rockf"]
+
+
 def city(r, src, seed=4120):
     kind, use, region, level = r["kind"], r["use"], r["region"], r["level"]
     rng = np.random.default_rng(seed)
@@ -364,11 +417,19 @@ def city(r, src, seed=4120):
     r["zone"] = zone
     r["buildings"] = blds
     # 나무: 산지·구릉 숲(SD-16 §6.7 '숲은 마른 침엽 오브젝트 밀도'), 빈 땅 드문드문
+    # 밀도는 높이(잡음 섞은 바이옴 높이)에 따라 이어진다: 평지 0.01 → 구릉 0.04 → 산지 0.10(등고선 한 줄에서 숲이 뚝 끊기지 않게).
+    # 놀이 구역 밖(경계 띠)은 바깥으로 갈수록 숲이 짙어진다(네모난 맨땅 대신 숲 가장자리)
     tree = np.zeros((H, W), bool)
     rnd = rng.random((H, W))
-    forest = (kind == 1) & ((use == 1) | (use == 2)) & (bid == 0) & ~alley
-    tree |= forest & (rnd < np.where(use == 2, 0.10, 0.04))
-    tree |= (kind == 1) & (use == 0) & (bid == 0) & ~alley & (rnd < 0.01)
+    hs = soft_height(r)
+    dens = 0.01 + 0.03 * ramp(hs, 25.0, 95.0) + 0.06 * ramp(hs, 115.0, 205.0)
+    clump = wave((H, W), rng, 14.0, 1.0, 3)                                    # 덤불 덩어리(고르게 흩뿌리지 않는다)
+    dens = dens * (0.55 + 0.9 * ramp(clump, -0.6, 0.6)) * (1.0 - 0.75 * rock_frac(r))   # 맨바위 위엔 나무가 드물다
+    out = ~r["play"]
+    deep = 1.0 - box_blur(r["play"], 10)                                     # 구역 밖으로 들어갈수록 1
+    dens = np.where(out, np.maximum(dens, 0.04 + 0.16 * deep), dens)
+    land = ((kind == 1) | (kind == 0) | (kind == 12)) & (bid == 0) & ~alley & ~street
+    tree |= land & (rnd < dens)
     tree |= (kind == 5) & (rnd < 0.02)
     r["tree"] = tree
     return r
@@ -517,13 +578,20 @@ def floor_names(r, seed=77):
     ix = {n: i for i, n in enumerate(names)}
     f = np.full(kind.shape, ix["dirt_a"], np.uint8)
     blobs = wave(kind.shape, rng, 40.0, 1.0, 4)                          # 흙·풀 얼룩(넓게)
-    land = (kind == 1) | (kind == 12)
-    f[land & (blobs > 0.15)] = ix["dirt_grass_b"]
-    f[land & (blobs > 0.45)] = ix["dirt_grass_a"]
-    f[land & (use == 1)] = np.where(blobs[land & (use == 1)] > -0.2, ix["dirt_grass_a"], ix["dirt_grass_b"])
-    f[land & (use == 2)] = np.where(blobs[land & (use == 2)] > 0.2, ix["dirt_grass_a"], ix["dirt_a"])
-    f[land & (hgt >= 300)] = ix["rock_floor"]                               # 300m+ 화강암 노출(SD-08 §6.1)
-    f[land & (use == 3)] = ix["rubble"]                                     # 도심 밀폐(R05)
+    fine = np.clip((vnoise(kind.shape, 4, rng, 3) - 0.5) * 4.4, -1.0, 1.0)   # 잔 얼룩 −1~1(4 · 2 · 1칸 옥타브, 대비를 키워 띠 안에 섬이 생긴다)
+    hs = soft_height(r)
+    # 바이옴 전이(리드 지시 2026-10-15 '경계선 없이 점진적으로'): 쓰임(use) 구역을 바로 재질로 바꾸지 않고, 높이에 따라 이어지는
+    # 푸름 점수 = 얼룩 + 구릉일수록 +0.6 − 산지 숲 바닥(낙엽·흙) −0.35. 점수로 흙 · 마른 풀 · 풀을 고른다
+    land = (kind == 1) | (kind == 12) | (kind == 0)
+    green = box_blur(blobs + 0.6 * ramp(hs, 30.0, 95.0) - 0.35 * ramp(hs, 140.0, 225.0), 3) + 0.12 * fine   # 공간으로도 한 번 흐린다(급경사에서 띠가 좁아지지 않게)
+    f[land & (green > 0.15)] = ix["dirt_grass_b"]
+    f[land & (green > 0.45)] = ix["dirt_grass_a"]
+    # 화강암 노출(SD-08 §6.1, 300m+): 가장자리 12칸쯤의 띠에서 바위 조각이 안쪽으로 갈수록 늘어난다
+    rock = ramp(rock_frac(r), 0.1, 0.9)
+    f[land & (rock > 0.0) & ((fine * 0.5 + 0.5) < rock)] = ix["rock_floor"]
+    # 도심 밀폐(R05) 잔해: 구역 가장자리 8칸 띠에서 잔해 조각이 안쪽으로 갈수록 늘어난다
+    inner = box_blur(use == 3, 8)
+    f[land & (inner > 0.05) & ((fine * 0.5 + 0.5) < ramp(inner, 0.1, 0.75))] = ix["rubble"]
     f[(kind == 2)] = ix["water_deep"]
     f[(kind == 3)] = ix["water_mid"]
     f[(kind == 4)] = ix["water_shallow"]

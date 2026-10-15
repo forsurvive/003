@@ -324,6 +324,14 @@ func refresh_enemies(st: StoryState) -> void:
 	_rebuild_list()
 
 
+## 적 하나를 전장에서 뺀다(물러남 · 기체에 오름 · 고기에 정신 팔림): 목록과 탄 판정 목록을 함께 고친다
+func drop_enemy(e: Enemy) -> void:
+	enemies.erase(e)
+	if is_instance_valid(e):
+		e.queue_free()
+	_rebuild_list()
+
+
 func alive_enemies() -> int:
 	return enemies.filter(func(e): return is_instance_valid(e) and not e.cmb.dead).size()
 

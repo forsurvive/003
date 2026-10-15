@@ -28,6 +28,9 @@ var shot_wait := 0.0
 var seen := {}
 var last_line := ""
 var note_t := 0.0
+var fight_hp := 0.0                                 ## 싸움: 적 체력 합(피해를 주고 있나)
+var fight_n := 0
+var fight_still := 0.0
 var step_map := 0                                   ## 걸음 단계를 시작한 맵 노드(출구를 밟아 맵이 바뀌면 그 단계는 끝 — 월드 안 구역 이름 바뀜은 아니다)
 
 
@@ -128,7 +131,7 @@ func _ready() -> void:
 			for kv in [["M-070", 4], ["I-001", 10], ["10mm 탄", 200]]:
 				st.call_fn("give", kv)
 			host.enter("W", "L-R01-03")
-			plan = [["go", 984, 1514], ["shoton", "세진전자 타워", "view"], ["use", 984, 1513], ["wait", 0.5],
+			plan = [["go", 985, 1517], ["shoton", "세진전자 타워", "view"], ["use", 985, 1516], ["wait", 0.5],
 				["check", "PL_VIEW == 1 and PC_CAPS == 612", "전망바위 망원경 → 지도 표시 · 동전 12캡"],
 				["warp", "W", "L-R01-06"], ["wait", 1.0], ["face", 6], ["shot", "k01_door"], ["use", 929, 1475], ["wait", 2.0], ["shot", "k01"], ["fight"],
 				["go", 3, 5, "K-01"], ["use", 3, 4], ["wait", 0.5], ["check", "has(\"M-230\") and PL_LETTER == 1", "교관 책상 서랍의 LR-19(M-230)"],
@@ -455,9 +458,23 @@ func _process(dt: float) -> void:
 				last_report = t
 				print("  [봇] 싸움 %.0f초: 남은 %s · 체력 %d · 무기 %s 탄창 %s 넣음 %s" % [t, str(alive.map(func(e): return "%s hp%d" % [str(host.map.tile_of(e.loco.logical)), int(e.cmb.hp)])), int(host.combat.pc.hp),
 					host.combat.weapon_id, str(host.combat.mags.get(host.combat.weapon_id, -1)), str(host.combat.holstered)])
+				var a0: Enemy = alive.reduce(func(m, e): return e if m == null or e.loco.logical.distance_to(host.player.loco.logical) < m.loco.logical.distance_to(host.player.loco.logical) else m, null)
+				print("    가까운 적 %s 거리 %.0f 시야 %s 보임 %s 나 %s" % [str(a0.get_meta("enemy_id", "")), a0.loco.logical.distance_to(host.player.loco.logical),
+					str(host.map.line_of_sight(host.player.loco.logical, a0.loco.logical)), str(a0.visible), str(host.player.loco.logical)])
 			alive.sort_custom(func(a, b): return a.loco.logical.distance_to(host.player.loco.logical) < b.loco.logical.distance_to(host.player.loco.logical))
 			var far: float = alive[0].loco.logical.distance_to(host.player.loco.logical)
-			if far > 160.0:                                                # 멀면 다가간다(사거리·시야 안으로)
+			var hp_sum: float = alive.reduce(func(m, e): return m + e.cmb.hp, 0.0)
+			if absf(hp_sum - fight_hp) > 0.1 or alive.size() != fight_n:
+				fight_hp = hp_sum
+				fight_n = alive.size()
+				fight_still = 0.0
+			fight_still += get_process_delta_time()
+			if fight_still > 6.0:                                          # 6초 동안 피해를 못 줬다(엄폐 뒤): 표적 옆으로 돌아간다
+				var side: Vector2 = (alive[0].loco.logical - host.player.loco.logical).orthogonal().normalized() * 96.0
+				host.input_fn = _walk.bind(alive[0].loco.logical + side * (1.0 if int(t / 8.0) % 2 == 0 else -1.0))
+				if fight_still > 9.0:
+					fight_still = 0.0
+			elif far > 160.0:                                                # 멀면 다가간다(사거리·시야 안으로)
 				host.input_fn = _walk.bind(alive[0].loco.logical)
 			host.combat.bot = {"aim": alive[0].loco.logical + Vector2(0, -12), "fire": true, "aimed": true,
 				"reload": host.combat.mags.get(host.combat.weapon_id, 1) == 0, "stim": host.combat.pc.hp < host.combat.pc.max_hp * 0.4}

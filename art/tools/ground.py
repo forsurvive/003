@@ -814,11 +814,11 @@ def sets():
         "materials": [
             # spread: 경계 물결 폭(px) · pri: 위아래(높은 재질이 위) · rim: 위 재질 테두리(px) · shade: 아래 재질 그늘(px)
             # vthr: B 벌 문턱(클수록 B가 적다) · dens: 잔 소품 밀도(%) · hard: 섞지 않음 · boff: B 벌을 읽는 어긋남
-            dict(name="dirt", A=dirt_tex(101), B=dirt_tex(101, damp=True), spread=6, pri=4, rim=0, shade=2, vthr=160, dens=16,
+            dict(name="dirt", A=dirt_tex(101), B=dirt_tex(101, damp=True), spread=8, soft=1, pri=4, rim=0, shade=2, vthr=160, dens=16,
                  decals=["dirt_lt1", "dirt_lt2", "dirt_dk1", "pebbles", "rock", "leaves", "bone", "can"], hard=0, boff=(97, 61)),
-            dict(name="grass_sparse", A=grass_tex(111, False), B=grass_tex(111, False, dry=True), spread=6, pri=6, rim=0, shade=1,
+            dict(name="grass_sparse", A=grass_tex(111, False), B=grass_tex(111, False, dry=True), spread=8, soft=1, pri=6, rim=0, shade=1,
                  vthr=150, dens=14, decals=["dirt_lt1", "grass_dk1", "flowers", "pebbles", "clover", "bush"], hard=0, boff=(141, 83)),
-            dict(name="grass_dense", A=grass_tex(121, True), B=grass_tex(121, True, dry=True), spread=6, pri=7, rim=1, shade=1,
+            dict(name="grass_dense", A=grass_tex(121, True), B=grass_tex(121, True, dry=True), spread=8, soft=1, pri=7, rim=1, shade=1,
                  vthr=165, dens=16, decals=["grass_lt1", "grass_lt2", "grass_dk1", "bush", "flowers", "clover"], hard=0, boff=(59, 173)),
             dict(name="asphalt", A=asphalt_tex(131), B=asphalt_tex(131, worn=True), spread=2, pri=9, rim=1, shade=1, vthr=140, dens=14,
                  decals=["asph_lt1", "asph_dk1", "oil", "debris", "pothole", "patch", "paper"], hard=0, boff=(113, 37)),
@@ -838,11 +838,11 @@ def sets():
                  decals=["glint", "float"], hard=0),
             dict(name="water_shallow", A=water_tex(181, "P35", "P36", "P34"), B=None, spread=6, pri=2, rim=0, shade=1, vthr=256, dens=8,
                  decals=["glint", "float", "reeds"], hard=0),
-            dict(name="mud", A=mud_tex(191), B=None, spread=6, pri=3, rim=1, shade=2, vthr=256, dens=14,
+            dict(name="mud", A=mud_tex(191), B=None, spread=8, soft=1, pri=3, rim=1, shade=2, vthr=256, dens=14,
                  decals=["reeds", "reeds", "damp", "pebbles", "can"], hard=0),
-            dict(name="rock", A=rock_tex(195), B=None, spread=4, pri=5, rim=1, shade=1, vthr=256, dens=8,
+            dict(name="rock", A=rock_tex(195), B=None, spread=6, soft=1, pri=5, rim=1, shade=1, vthr=256, dens=8,
                  decals=["rock", "pebbles", "leaves"], hard=0),
-            dict(name="rubble", A=rubble_tex(197), B=None, spread=4, pri=8, rim=1, shade=1, vthr=256, dens=12,
+            dict(name="rubble", A=rubble_tex(197), B=None, spread=6, soft=1, pri=8, rim=1, shade=1, vthr=256, dens=12,
                  decals=["rebar", "rock", "debris", "can", "paper"], hard=0),
             dict(name="ballast", A=ballast_tex(199), B=None, spread=2, pri=8, rim=1, shade=1, vthr=256, dens=4,
                  decals=["can", "paper"], hard=0),
@@ -915,6 +915,7 @@ class GroundSet:
         self.vthr = np.array([d["vthr"] for d in mats], np.int64)
         self.dens = np.array([d["dens"] * 256 // 100 for d in mats], np.int64)
         self.hard = np.array([d["hard"] for d in mats], np.int64)
+        self.soft = np.array([d.get("soft", 0) for d in mats], np.int64)      # 자연 재질(흙·풀·진흙·바위·잔해): 서로 만나면 테 없이 디더로 섞는다
         self.boff = np.array([d.get("boff", (0, 0)) for d in mats], np.int64)
         self.dlist = np.full((self.M, 8), 0, np.int64)
         self.dcount = np.zeros(self.M, np.int64)
@@ -1002,7 +1003,15 @@ class GroundSet:
         pw, ps = self.pri[win_m], self.pri[sec_c]
         # 쯔꾸르 오토타일: 위 재질은 테두리, 아래 재질은 (위 재질이 테두리를 가질 때만) 그늘, 같은 높이(실내 이음매)는 그늘
         band = np.where(pw > ps, self.rim[win_m], np.where((pw == ps) | (self.rim[sec_c] > 0), self.shade[win_m], 0))
+        # 자연 재질끼리(바이옴 전이, 리드 지시 2026-10-15 '경계선 없이 점진적으로'): 테두리·그늘 띠 없이, 경계에서 10px 안쪽까지
+        # 2×2px 조각 디더로 섞는다(경계 위 50% → 멀어질수록 0%). 길·포장·물가는 오토타일 테 그대로
+        both_soft = has2 & (self.soft[win_m] == 1) & (self.soft[sec_c] == 1)
+        band = np.where(both_soft, 0, band)
         dark = has2 & (band > 0) & (margin < band * 768)
+        DB = 7680
+        p_mix = np.where(both_soft & (margin < DB), ((DB - np.minimum(margin, DB)) * 128) // DB, 0)
+        hp = (thash(X >> 1, Y >> 1) >> 5) & 255
+        win_m = np.where(hp < p_mix, sec_c, win_m)
         # 벽 그늘·소품 그림자(또렷한 띠·타원, 디더 없음)
         fN = at(flags, tx, ty - 1)
         fW = at(flags, tx - 1, ty)
@@ -1052,7 +1061,7 @@ class GroundSet:
         Image.fromarray(self.noise, "RGBA").save(os.path.join(out_dir, "ground_noise.png"))
         meta = {"set": self.name, "cell": CELL, "materials": self.names, "spread": self.spread.tolist(), "pri": self.pri.tolist(),
                 "rim": self.rim.tolist(), "shade": self.shade.tolist(),
-                "vthr": self.vthr.tolist(), "boff": self.boff.ravel().tolist(), "dens": self.dens.tolist(), "hard": self.hard.tolist(),
+                "vthr": self.vthr.tolist(), "boff": self.boff.ravel().tolist(), "dens": self.dens.tolist(), "hard": self.hard.tolist(), "soft": self.soft.tolist(),
                 "dlist": self.dlist.ravel().tolist(), "dcount": self.dcount.tolist(), "mat_of": self.mat_of.tolist(),
                 "force": self.force.tolist(), "flag_of": self.flag_of.tolist()}
         json.dump(meta, open(os.path.join(out_dir, f"ground_{self.name}.json"), "w"), indent=1)

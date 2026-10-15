@@ -220,8 +220,8 @@ func _on_landed() -> void:
 	var me: Vector2 = host.player.loco.logical
 	var dir := (me - door).normalized() if me.distance_to(door) > 1.0 else Vector2.DOWN
 	# 육지환: 문 앞(오른쪽 반 칸) — 말을 걸 수 있는 자리
-	host.ev._show_actor("C-004", _free_near(door + Vector2(36, 0)), "S")
-	_add_fake("C-004")
+	host.ev._show_actor("C-004", Vector2(door.x + 34.0, vb.land_at.y + 8.0), "S")   # 문 옆 발판(기체 칸 안) — 길도 총알도 막지 않는다
+	_add_fake("C-004", false)
 	if v("V_DOYUN") == 1:                                                # 화물칸 철창 안 하도윤(기체 앞에 그린다)
 		host.ev._show_actor("C-002", vb.door_seat(), "S")
 		if host.ev.actors.has("C-002"):
@@ -364,8 +364,7 @@ func _fight_tick(dt: float) -> void:
 
 func _yoon_retreat() -> void:
 	var p: Vector2 = _yoon.loco.logical
-	host.combat.enemies.erase(_yoon)
-	_yoon.queue_free()
+	host.combat.drop_enemy(_yoon)
 	_yoon = null
 	host.hint("윤석진: 대위 부상! 기체로 물러난다! 엄호!", 4.0)
 	host.ev._show_actor("C-031", p, "N", str(host.ev.cast_sheets.get("C-031", "en_cr403_loco")))
@@ -419,8 +418,7 @@ func _withdraw(result: int) -> void:
 		if e != null and is_instance_valid(e) and (not e.cmb.dead or e.cmb.ko):
 			var p: Vector2 = e.loco.logical
 			var cr := str(e.get_meta("enemy_id", "CR-402"))
-			host.combat.enemies.erase(e)
-			e.queue_free()                                                # 서 있는 병사 · 기절한 병사는 기체에 오른다(죽은 병사는 남는다)
+			host.combat.drop_enemy(e)                                     # 서 있는 병사 · 기절한 병사는 기체에 오른다(죽은 병사는 남는다)
 			var id := "BJR%d" % _men.size()
 			host.ev._show_actor(id, p, "N", str(SHEETS.get(cr, "en_cr401_loco")))
 			if host.ev.actors.has(id):
@@ -433,8 +431,10 @@ func _withdraw(result: int) -> void:
 		_finish(result)
 		return
 	_wait_box(func() -> void:
-		var names: Array = _men + ["C-031", "C-004"]
+		var names: Array = _men + ["C-031"]
 		_men.clear()
+		if host.ev.actors.has("C-004"):                                     # 육지환은 문 옆에서 바로 기체에 오른다
+			host.ev.run("hide", ["C-004"], func() -> void: pass)
 		for id in names:
 			_walk_off(id, "vb_door")
 		_lift_when_gone(names, 0.0, result))

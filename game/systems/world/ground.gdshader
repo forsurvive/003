@@ -21,6 +21,7 @@ uniform int shade[16];
 uniform int vthr[16];
 uniform int dens[16];
 uniform int hard[16];
+uniform int soft[16];                            // 자연 재질: 서로 만나면 테 없이 2×2 디더로 섞는다(바이옴 전이)
 uniform int boff[32];
 uniform int dlist[128];
 uniform int dcount[16];
@@ -124,7 +125,14 @@ void fragment() {
 		int ps = pri[sec_m];
 		// 쯔꾸르 오토타일: 위 재질은 테두리, 아래 재질은 (위 재질이 테두리를 가질 때만) 그늘, 같은 높이(실내 이음매)는 그늘
 		int band = pw > ps ? rim[win_m] : ((pw == ps || rim[sec_m] > 0) ? shade[win_m] : 0);
+		bool both_soft = soft[win_m] == 1 && soft[sec_m] == 1;
+		if (both_soft) band = 0;
 		dark = band > 0 && margin < band * 768;
+		if (both_soft && margin < 7680) {                                  // 경계에서 10px 안쪽: 50% → 0% 디더 섞기
+			int p_mix = ((7680 - margin) * 128) / 7680;
+			int hp = int((thash(X >> 1, Y >> 1) >> 5u) & 255u);
+			if (hp < p_mix) win_m = sec_m;
+		}
 	}
 	int fn = cell_at(tx, ty - 1).y;
 	if (fn == 1 && fy < 2) deep = true;                                // 벽 발치 그늘(또렷한 2단 띠)

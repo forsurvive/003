@@ -218,6 +218,7 @@ def build():
         return pos[n][1] * cols + pos[n][0] + 1
     r01 = json.load(open(os.path.join(TIL, "ts_r01_ext.json"), encoding="utf-8"))
     rid = {k: v["atlas"][0] for k, v in r01.items()}
+    NATURAL = {rid[n] for n in rid if n.startswith(("dirt", "grass", "mud", "rock"))}          # 자연 바닥(손 맵 숲 가장자리를 넓혀도 되는 칸)
     fl, names = WB.floor_names(r)
     floor = np.array([rid[n] for n in names], np.uint8)[fl]
     solid = np.zeros((H, W), np.uint8)
@@ -370,12 +371,27 @@ def build():
         tree[sl] = False
         shadows.append((b["x"], b["y"], b["w"], b["h"], max(1, min(b["floors"], b["h"] - 1, 6))))
     # 나무(R01 소품): 산지 = 소나무, 시가지 = 은행·단풍·고목, 둔치 = 작은 나무·고목
-    tree &= (solid == 0) & np.isin(kind, (1, 5, 12)) & ~carve & ~inmask
+    # 손 맵 둘레 4칸: 숲이 바깥으로 점점 옅어진다(손 맵 테두리 숲이 일직선 벽으로 보이지 않게 — 바이옴 전이, 2026-10-15)
+    nz_rng = np.random.default_rng(5150)
+    rnd_ring = nz_rng.random((H, W))
+    clump = WB.vnoise((H, W), 3, nz_rng, 2)
+    for spec_ in INSETS:
+        if spec_["id"] == "X-SB":                                            # 새벽인력 본소는 철판 담 — 공업 지대에 숲 띠를 두르지 않는다
+            continue
+        d_, (ox_, oy_, w_, h_) = load_inset(spec_)
+        for k_, pk in ((1, 0.62), (2, 0.42), (3, 0.26), (4, 0.12)):
+            ring_ = np.zeros((H, W), bool)
+            ring_[max(0, oy_ - k_):oy_ + h_ + k_, max(0, ox_ - k_):ox_ + w_ + k_] = True
+            ring_[max(0, oy_ - k_ + 1):oy_ + h_ + k_ - 1, max(0, ox_ - k_ + 1):ox_ + w_ + k_ - 1] = False
+            tree |= ring_ & (rnd_ring < pk * (0.4 + 1.2 * clump))
+    tree &= (solid == 0) & (np.isin(kind, (1, 5, 12)) | ((kind == 0) & ~play)) & ~carve & ~inmask
     props = ["tree_pine", "tree_pine2", "tree_oak", "tree_oak2", "tree_ginkgo", "tree_maple", "tree_dead", "tree_small"]
     ty_, tx_ = np.nonzero(tree)
     use = r["use"]
     hh = (tx_ * 73856093 ^ ty_ * 19349663) & 0xFFFF
-    pid = np.where(use[ty_, tx_] == 2, np.where(hh % 5 == 0, 1, np.where(hh % 11 == 0, 6, 0)),
+    piney = ((hh >> 4) & 255) < (WB.ramp(WB.soft_height(r)[ty_, tx_], 95.0, 185.0) * 255).astype(np.int64)   # 높을수록 소나무가 점점 많아진다
+    piney |= kind[ty_, tx_] == 0                                                 # 구역 밖 숲
+    pid = np.where(piney, np.where(hh % 5 == 0, 1, np.where(hh % 11 == 0, 6, np.where(hh % 7 == 0, 2, 0))),
                    np.where(kind[ty_, tx_] == 5, np.where(hh % 2 == 0, 7, 6),
                             np.choose(hh % 6, [4, 5, 2, 3, 6, 7])))
     tree_list = np.stack([tx_, ty_, pid], 1)
@@ -448,6 +464,39 @@ def build():
                 if band[y, x] and any(0 <= x + dx < w and 0 <= y + dy < h and not band[y + dy, x + dx]
                                       for dx in (-1, 0, 1) for dy in (-1, 0, 1)):
                     line[y, x] = True
+        if ins["id"] != "X-BC":                                              # 안쪽 가장자리 1칸을 덩어리 잡음으로 숲에 넣는다(직선 숲 벽 대신 들쭉날쭉한 숲 가장자리)
+            busy = set()
+            for k_ in ("props", "npcs", "texts", "boxes", "triggers", "exits", "doors"):
+                for e_ in d.get(k_, []):
+                    if k_ == "props" and str(e_.get("name", "")).startswith(("tree", "tuft", "bush", "boulder", "stump")):
+                        continue                                         # 자연 소품(테두리 나무 등)은 가장자리 숲과 같은 것
+                    for ddx in range(-2, 3):
+                        for ddy in range(-2, 3):
+                            busy.add((int(e_["x"]) + ddx, int(e_["y"]) + ddy))
+            for mv in d.get("marks", {}).values():
+                for ddx in range(-2, 3):
+                    for ddy in range(-2, 3):
+                        busy.add((int(mv[0]) + ddx, int(mv[1]) + ddy))
+            for (o_in, _o) in inset_openings(d, ins["rect"]):
+                for ddx in range(-3, 4):
+                    for ddy in range(-3, 4):
+                        busy.add((o_in[0] - ox + ddx, o_in[1] - oy + ddy))
+            grow = []
+            for y in range(1, h - 1):
+                for x in range(1, w - 1):
+                    if band[y, x] or sol[y, x] or (x, y) in busy or int(d["floor"][y][x]) not in NATURAL:
+                        continue
+                    if any(band[y + dy, x + dx] for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))) and clump[oy + y, ox + x] > 0.58:
+                        grow.append((x, y))
+            for (x, y) in grow:
+                band[y, x] = True
+            log("손 맵 %s 숲 가장자리 넓힘 %d칸 (막힘 띠 %d칸)" % (ins["id"], len(grow), int(band.sum())))
+            line = np.zeros((h, w), bool)
+            for y in range(h):
+                for x in range(w):
+                    if band[y, x] and any(0 <= x + dx < w and 0 <= y + dy < h and not band[y + dy, x + dx]
+                                          for dx in (-1, 0, 1) for dy in (-1, 0, 1)):
+                        line[y, x] = True
         ins["band"] = band
         for y in range(h):
             frow, grow, srow, crow, lrow, trow = d["floor"][y], d["gflag"][y], d["solid"][y], d["cover"][y], d["level"][y], d["stair"][y]
@@ -468,7 +517,7 @@ def build():
                             extra_trees.append((X, Y, (X * 7 + Y * 3) % 3 and 0 or 1))
                             cover[Y, X] = 1
                             gflag[Y, X] = 2
-                    elif ins["id"] != "X-BC" and solid[Y, X] == 0 and (X * 31 + Y * 17) % 5 < 2:
+                    elif ins["id"] != "X-BC" and solid[Y, X] == 0 and clump[Y, X] > 0.42 and rnd_ring[Y, X] < 0.75:
                         extra_trees.append((X, Y, 0 if (X + Y) % 3 else 1))  # 비탈 숲
                         solid[Y, X] = 1
                         cover[Y, X] = 1
