@@ -520,6 +520,57 @@ def hangyeol_bench():
     return im
 
 
+def hunter_shack():
+    """관악산 사냥꾼 엄태경의 오두막(1-8d, SD-09a N-R01-033 '산/아랫문 오두막'): 판자 벽 + 녹슨 함석 지붕(돌로 눌러 둠) +
+    양철 연통 + 널문(가죽 발) + 처마에 말리는 육포 줄 + 문 옆 멧돼지 엄니 두 개. 3×2칸."""
+    im = img(100, 74)
+    d = ImageDraw.Draw(im)
+    d.rectangle([8, 30, 92, 72], fill=C("P18"))                          # 판자 벽
+    for x in range(10, 92, 7):
+        d.line([x, 31, x, 71], fill=C("P17"))
+        d.point((x + 3, 40 + (x * 7) % 20), fill=C("P16"))                # 옹이
+    d.line([8, 52, 92, 52], fill=C("P17"))
+    d.polygon([(2, 34), (50, 10), (98, 34), (98, 38), (50, 15), (2, 38)], fill=C("P05"))   # 함석 지붕(처마)
+    d.polygon([(6, 34), (50, 13), (94, 34)], fill=C("P26"))               # 녹 슨 지붕면
+    for i, x in enumerate(range(12, 90, 9)):
+        y = 13 + abs(50 - x) * 21 // 44
+        d.line([x, y + 2, x + 1, 33], fill=C("P25" if i % 2 else "P27"))  # 골함석 줄(지붕면 안에서만)
+    for (x, y) in ((28, 24), (66, 22), (48, 15)):                         # 지붕 누름돌
+        lump(im, x, y, 4, 3, ["P04", "P05", "P06", "P07"])
+    d.rectangle([70, 2, 75, 20], fill=C("P12")); d.rectangle([69, 1, 76, 4], fill=C("P11"))   # 양철 연통
+    d.rectangle([40, 44, 58, 72], fill=C("P38"))                          # 문: 늘어뜨린 멧돼지 가죽 발
+    d.rectangle([41, 45, 57, 71], fill=C("P39"))
+    for y in range(48, 70, 5):
+        d.line([42, y, 56, y + 1], fill=C("P40"))
+    d.line([40, 44, 58, 44], fill=C("P17"))
+    d.rectangle([14, 40, 30, 52], fill=C("P02")); d.rectangle([15, 41, 29, 51], fill=C("P11"))   # 작은 창(비닐)
+    d.line([22, 41, 22, 51], fill=C("P18")); d.line([15, 46, 29, 46], fill=C("P18"))
+    d.line([62, 36, 92, 37], fill=C("P17"))                               # 처마 밑 육포 줄
+    for x in range(64, 92, 5):
+        d.rectangle([x, 37, x + 2, 43], fill=C("P24")); d.point((x + 1, 43), fill=C("P23"))
+    for (x, sgn) in ((37, -1), (61, 1)):                                  # 문 위 멧돼지 엄니 한 쌍(못에 건)
+        d.arc([x - 3, 34, x + 3, 42], 90 if sgn > 0 else 270, 270 if sgn > 0 else 90, fill=C("P08"), width=1)
+        d.point((x, 34), fill=C("P04"))
+    d.rectangle([4, 66, 18, 72], fill=C("P17")); d.rectangle([5, 64, 17, 66], fill=C("P18"))  # 장작더미
+    for x in (6, 10, 14):
+        d.ellipse([x - 1, 66, x + 2, 69], fill=C("P20"))
+    return im
+
+
+def hide_rack():
+    """가죽 건조대: 나무 틀에 펼쳐 말리는 멧돼지 가죽 + 끈. 1×1칸(위로 솟는다)."""
+    im = img(34, 46)
+    d = ImageDraw.Draw(im)
+    d.line([4, 44, 8, 4], fill=C("P18"), width=2); d.line([29, 44, 25, 4], fill=C("P18"), width=2)
+    d.line([6, 6, 27, 6], fill=C("P17"), width=2); d.line([5, 36, 28, 36], fill=C("P17"), width=2)
+    d.polygon([(9, 9), (24, 9), (26, 20), (23, 33), (10, 33), (7, 20)], fill=C("P39"))
+    d.polygon([(11, 11), (22, 11), (24, 20), (21, 31), (12, 31), (9, 20)], fill=C("P40"))
+    for (a, b) in (((9, 9), (8, 6)), ((24, 9), (25, 6)), ((10, 33), (7, 36)), ((23, 33), (26, 36)), ((7, 20), (6, 20)), ((26, 20), (27, 20))):
+        d.line([a, b], fill=C("P21"))
+    d.line([16, 13, 17, 29], fill=C("P38"))
+    return im
+
+
 def anvil():
     im = img(30, 26)
     d = ImageDraw.Draw(im)
@@ -847,7 +898,9 @@ PROPS = {
     "stall": _r(lambda: stall_counter(1), 2, 1, down=-2),
     "forge": _r(forge, 2, 1, down=-2),
     "anvil": _r(anvil, 1, 1, down=-2),
-    "hangyeol_bench": _r(hangyeol_bench, 2, 1, down=-2),                  # 한결 공구 작업대(1-8c, SD-13 §7.9.1)
+    "hangyeol_bench": _r(hangyeol_bench, 2, 1, down=-2),
+    "hunter_shack": _r(hunter_shack, 3, 2, down=-2),                      # 사냥꾼 오두막(1-8d, V04 엄태경)
+    "hide_rack": _r(hide_rack, 1, 1, down=-2),                  # 한결 공구 작업대(1-8c, SD-13 §7.9.1)
     "gate_l": _r(lambda: gate_leaf(True, "l"), 1, 1, down=-2),
     "gate_r": _r(lambda: gate_leaf(True, "r"), 1, 1, down=-2),
     "gate_shut": _r(lambda: gate_leaf(False), 1, 1, down=-2),
@@ -911,6 +964,10 @@ from props_r01n import PROPS_R01N                                     # R01 북�
 for _k in PROPS_R01N:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_R01N)
+from props_sd import PROPS_SD                                         # 사당 환승촌(1-8f, SD-09a L-R01-18)
+for _k in PROPS_SD:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_SD)
 
 STATES = {
     "board_bc": {s: (lambda s=s: notice_board(s)) for s in ("wanted", "torn", "crumpled", "crossed", "rate", "water", "official")},

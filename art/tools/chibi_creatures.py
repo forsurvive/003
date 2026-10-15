@@ -294,8 +294,119 @@ def quad_sleep(kind, breath=0):
     return img
 
 
+# ---------------------------------------------------------------- 두머리소 CR-090 · 짐소 CR-091(SD-14 §4.10, 1-8d): 누렁소 두 머리, 짐소는 안장·짐
+OX = dict(w=72, h=60, foot=(34, 56), px=3)
+OX_FUR = ["P16", "P17", "P58", "P59", "P60"]
+
+
+def _ox_head(im, cx, cy, far):
+    """누렁소 머리 하나: 둥근 이마 + 밝은 주둥이 + 콧구멍 + 짧은 뿔 + 귀 + 눈. far면 한 단계 어둡게(뒤에 있는 머리)."""
+    fur = ramp(OX_FUR[:-1] if far else OX_FUR[1:])
+    _ellipse(im, cx, cy, 7.0, 6.0, fur)
+    d = ImageDraw.Draw(im)
+    mz = ramp(["P20", "P21", "P22"] if not far else ["P19", "P20", "P21"])
+    _ellipse(im, cx + 6, cy + 2.5, 3.6, 3.0, mz)                         # 주둥이
+    d.point((cx + 8, cy + 2), fill=C("P16")); d.point((cx + 8, cy + 4), fill=C("P16"))
+    d.polygon([(cx - 3, cy - 4), (cx - 6, cy - 9), (cx - 4, cy - 9), (cx - 1, cy - 5)], fill=C("P08" if not far else "P07"))   # 뿔
+    d.line([cx - 6, cy - 9, cx - 5, cy - 10], fill=C("P06"))
+    d.polygon([(cx - 5, cy - 1), (cx - 10, cy - 3), (cx - 6, cy + 1)], fill=fur[1])                                          # 귀
+    d.point((cx + 1, cy - 1), fill=C("P01")); d.point((cx + 2, cy - 1), fill=C("P01"))                                     # 눈
+    if not far:
+        d.point((cx + 1, cy - 2), fill=C("P09"))
+
+
+def ox(frame=0, pose="walk", pack=False):
+    """두머리소 옆모습(E). 4컷 걸음은 네발짐승과 같은 대각 짝(디딘 발은 컷마다 −px = 세계에서 고정, 발 미끄럼 없음)."""
+    q = OX
+    img = Image.new("RGBA", (q["w"], q["h"]), CLEAR)
+    d = ImageDraw.Draw(img)
+    fur = ramp(OX_FUR)
+    p = q["px"]
+    u0 = (p + 1) // 2
+    table = [(u0, 0), (u0 - p, 0), (u0 - p, 2), (0, 2)]
+    bx, by, brx, bry = 32, q["foot"][1] - 23, 19, 11
+    bob = 1 if pose == "walk" and frame % 2 else 0
+    hips = {"front": bx + 12, "back": bx - 12}
+    for far in (1, 0):
+        for end in ("back", "front"):
+            pair = (0 if (end == "front") == (far == 0) else 2)
+            ph = (frame + pair) % 4 if pose == "walk" else 0
+            u, lift = table[ph] if pose == "walk" else (0, 0)
+            hx = hips[end] - far * 3
+            fx, fy = hx + u, q["foot"][1] - far * 2 - lift
+            col = fur[1] if far else fur[2]
+            d.line([hx, by + 4 - bob, fx, fy - 2], fill=col, width=4 if far else 5)   # 굵은 다리(먼 다리는 한 단계 어둡게)
+            d.line([fx - 1, fy - 6, fx - 1, fy - 3], fill=fur[3] if not far else fur[2])  # 정강이 빛
+            d.rectangle([fx - 2, fy - 2, fx + 2, fy], fill=C("P02"))          # 굽
+    body = Image.new("RGBA", img.size, CLEAR)
+    _ellipse(body, bx, by - bob, brx, bry, fur)
+    _ellipse(body, bx - 13, by + 1 - bob, 8, 9, fur)                     # 엉덩이
+    _ellipse(body, bx + 12, by - 3 - bob, 9, 10, fur)                    # 어깨 혹
+    bd = ImageDraw.Draw(body)
+    bd.arc([bx - 16, by + 2 - bob, bx + 14, by + 13 - bob], 20, 160, fill=fur[1])   # 배 그늘
+    if pack:                                                             # 짐소: 안장 담요 · 짐 자루 둘 · 물통 · 밧줄
+        bd.polygon([(bx - 10, by - 11 - bob), (bx + 10, by - 12 - bob), (bx + 12, by + 2 - bob), (bx - 12, by + 3 - bob)], fill=C("P53"))
+        bd.line([bx - 10, by - 8 - bob, bx + 10, by - 9 - bob], fill=C("P50"))
+        bd.line([bx - 11, by - 1 - bob, bx + 11, by - 2 - bob], fill=C("P52"))
+        _ellipse(body, bx - 6, by - 2 - bob, 7, 6, ramp(["P19", "P20", "P21", "P22"]))   # 짐 자루(삼베)
+        _ellipse(body, bx + 5, by - 3 - bob, 6, 5.5, ramp(["P18", "P19", "P20", "P21"]))
+        bd.line([bx - 12, by - 6 - bob, bx - 1, by + 3 - bob], fill=C("P17"))  # 자루 묶은 끈
+        bd.line([bx + 1, by - 7 - bob, bx + 10, by + 1 - bob], fill=C("P17"))
+        bd.rectangle([bx - 2, by - 17 - bob, bx + 3, by - 10 - bob], fill=C("P36"))   # 물통
+        bd.rectangle([bx - 1, by - 19 - bob, bx + 2, by - 17 - bob], fill=C("P35"))
+        bd.line([bx - 15, by - 4 - bob, bx + 15, by - 6 - bob], fill=C("P18"))  # 밧줄(배띠)
+    hb = 1 if pose == "walk" and frame % 2 == 0 else 0                  # 머리는 걸음과 반 박자 엇갈려 끄덕인다
+    _ellipse(body, bx + 19, by - 13 - bob, 5, 7, ramp(OX_FUR[:-1]))     # 뒤 목(위로 갈라진다)
+    _ox_head(body, bx + 23, by - 19 - bob - hb, True)                    # 뒤 머리(위·안쪽)
+    _ellipse(body, bx + 22, by - 3 - bob, 6, 6, fur)                    # 앞 목
+    _ox_head(body, bx + 30, by - 4 - bob + hb, False)                    # 앞 머리
+    img.alpha_composite(body)
+    img = outline(img)
+    d = ImageDraw.Draw(img)
+    tx = bx - 20
+    d.line([(tx, by - 6 - bob), (tx - 4, by + 4), (tx - 4, by + 12 + (frame % 2))], fill=fur[1], width=2)   # 꼬리
+    d.ellipse([tx - 6, by + 11 + (frame % 2), tx - 2, by + 16 + (frame % 2)], fill=C("P16"))                 # 꼬리 끝 술
+    return img
+
+
+def ox_lying(pack=False):
+    """쓰러진 두머리소: 옆으로 누운 몸 + 뻗은 다리 + 감은 눈(사망·기절 마지막 컷). 짐은 옆으로 쏟아진다."""
+    img = Image.new("RGBA", (OX["w"], OX["h"]), CLEAR)
+    fur = ramp(OX_FUR)
+    body = Image.new("RGBA", img.size, CLEAR)
+    by = OX["foot"][1] - 9
+    _ellipse(body, 32, by, 22, 8, fur)
+    _ellipse(body, 56, by + 1, 7, 5, fur)
+    _ellipse(body, 61, by - 4, 6, 4.5, ramp(OX_FUR[:-1]))
+    bd = ImageDraw.Draw(body)
+    for x in (18, 24, 40, 46):
+        bd.line([x, by + 6, x + 6, by + 8], fill=fur[1], width=3)
+    bd.line([55, by, 58, by], fill=C("P01")); bd.line([60, by - 5, 62, by - 5], fill=C("P01"))
+    if pack:
+        _ellipse(body, 26, by + 6, 6, 4, ramp(["P19", "P20", "P21", "P22"]))
+        bd.rectangle([40, by - 7, 45, by - 2], fill=C("P36"))
+        bd.polygon([(20, by - 7), (40, by - 8), (40, by - 3), (20, by - 2)], fill=C("P53"))
+    img.alpha_composite(body)
+    return outline(img)
+
+
+def ox_sheet(pack=False):
+    walk = [ox(f, "walk", pack) for f in range(4)]
+    idle = [ox(0, "idle", pack)]
+    lie = ox_lying(pack)
+    mid = Image.new("RGBA", lie.size, CLEAR)
+    mid.alpha_composite(walk[1], (0, 3))
+    frames = idle + walk + [mid, lie, lie]
+    meta = {"frame": [OX["w"], OX["h"]], "foot": list(OX["foot"]), "rows": ["E"], "mirror": {"W": "E"}, "style": "isaac",
+            "motions": {"idle": {"start": 0, "count": 1}, "walk": {"start": 1, "count": 4, "px_per_frame": OX["px"], "drive": "distance"},
+                        "death": {"start": 5, "count": 3}}}
+    return frames, meta
+
+
 def quad_sheet(kind):
     """네발짐승 시트(roach_sheet와 같은 형식): 옆(E)만, W는 뒤집기. idle 1 · walk 4 · run 4(같은 컷, 빠르게) · death 3."""
+    if kind in ("ox", "ox_pack"):
+        return ox_sheet(kind == "ox_pack")
     walk = [quad(kind, f) for f in range(4)]
     idle = [quad(kind, 0, "idle")]
     lie = quad_lying(kind)

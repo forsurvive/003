@@ -22,6 +22,7 @@
   "C-051": "st_c_051",
   "C-052": "st_c_052",
   "C-057": "st_c_057",
+  "C-067": "st_c_067",
   "N-R01-007": "st_n_r01_007",
   "N-R01-008": "st_n_r01_008",
   "N-R01-009": "st_n_r01_009",
@@ -49,6 +50,7 @@
   "N-R01-034": "st_n_r01_034",
   "N-R01-035": "st_n_r01_035",
   "N-R01-036": "st_n_r01_036",
+  "N-R01-040": "st_n_r01_040",
   "N-R01-050": "st_n_r01_050",
   "N-R01-052": "st_n_r01_052",
   "N-R01-056": "st_n_r01_056",
@@ -92,8 +94,10 @@
   "st_look_k1_s4_hr00_h1_t01_0_pf11_hd00_ey00": "st_look_k1_s4_hr00_h1_t01_0_pf11_hd00_ey00",
   "st_look_k1_s5_hr00_h1_t01_0_pf11_hd00_ey00": "st_look_k1_s5_hr00_h1_t01_0_pf11_hd00_ey00",
   "st_look_k1_s6_hr00_h1_t01_0_pf11_hd00_ey00": "st_look_k1_s6_hr00_h1_t01_0_pf11_hd00_ey00",
+  "st_look_m1_s2_hr01_h1_t03_2_pf00_hd05_ey00_pr040": "st_look_m1_s2_hr01_h1_t03_2_pf00_hd05_ey00_pr040",
   "st_look_m1_s3_hr04_h1_t11_0_pf11_hd00_ey00": "st_look_m1_s3_hr04_h1_t11_0_pf11_hd00_ey00",
   "st_look_m1_s3_hr05_h1_t11_1_pf11_hd00_ey03": "st_look_m1_s3_hr05_h1_t11_1_pf11_hd00_ey03",
-  "st_look_m2_s4_hr02_h1_t02_1_pf11_hd03_ey00": "st_look_m2_s4_hr02_h1_t02_1_pf11_hd03_ey00"
+  "st_look_m2_s4_hr02_h1_t02_1_pf11_hd03_ey00": "st_look_m2_s4_hr02_h1_t02_1_pf11_hd03_ey00",
+  "st_look_m2_s5_hr03_h2_t10_2_pf00_hd00_ey00_pr040": "st_look_m2_s5_hr03_h2_t10_2_pf00_hd00_ey00_pr040"
  }
 }

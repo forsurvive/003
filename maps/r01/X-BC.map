@@ -131,7 +131,10 @@ prop forge 44 34
 prop anvil 47 35
 prop hangyeol_bench 49 34
 prop drum_fire 42 37
-prop tarp_pile 51 36
+prop hunter_shack 51 35
+text 52 36 "사냥꾼 오두막. 함석 지붕 처마에 멧돼지 다리가 매달려 있다. 연기 냄새와 소금 냄새." w=3
+prop hide_rack 55 35
+text 55 35 "가죽 말림 틀. 들개 가죽 두 장이 나무 틀에 팽팽하게 매여 있다."
 prop crate_o 53 34
 prop planter_l 20 33
 prop planter_p 24 33
@@ -610,3 +613,10 @@ prop tree_oak 2 40
 prop tree_oak2 56 40
 prop tree_oak 58 40
 prop tree_pine 59 40
+# 순회 상인(1-8d, SD-15 §4.3): 고개길 수송대 V54(정류장 12시간 · 54시간 한 바퀴)와 순회 의료반 V56(7일 중 0~1일째) — 첫날 밤(MQ-101)이 지난 뒤부터
+npc CR-091 24 38 E sheet=cr_cr091_loco cond="CARAVAN_V54 == 1 and MQ101_RESULT > 0" bark="(짐소 두 머리가 번갈아 콧김을 뿜는다.)"
+npc N-R01-040 26 37 S cond="CARAVAN_V54 == 1 and MQ101_RESULT > 0" bark="고개길 수송대! 옷·가죽·방독면!"
+npc N-HS-E1 22 37 S look=M1-S2-HR01-H1-T03-2-PF00-HD05-EY00-PR040 cond="CARAVAN_V54 == 1 and MQ101_RESULT > 0" bark="짐 건드리지 마쇼."
+npc N-HS-E2 27 36 W look=M2-S5-HR03-H2-T10-2-PF00-HD00-EY00-PR040 cond="CARAVAN_V54 == 1 and MQ101_RESULT > 0" bark="사당까지 반나절이야. 비 오면 하루고."
+npc C-067 24 26 S cond="MEDIC_AT == 1 and MQ101_RESULT > 0" bark="다친 사람 먼저. 줄은 그다음."
+

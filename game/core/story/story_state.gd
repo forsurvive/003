@@ -35,7 +35,8 @@ var places := PlaceLog.new()             ## 장소 발견 상태(1-2, SD-12 §5.
 var book := NpcBook.new()               ## 인물 수첩(1-2, SD-12 §3.11)
 const ENEMY_FACTION := {"CR-401": "BJ", "CR-405": "BJ", "CR-435": "SB", "CR-436": "SB", "CR-437": "SB", "CR-438": "SB", "CR-534": "SB",
 	"CR-456": "JH", "CR-457": "JH", "CR-403": "BJ", "CR-420": "YT", "CR-421": "YT", "CR-423": "YT"}
-const UNNAMED := [["N-TRADER", "떠돌이 고물상", ""], ["N-REFUGEE", "피난민", ""], ["N-DOWNED", "쓰러진 민병", "JC_BC"]]
+const UNNAMED := [["N-TRADER", "떠돌이 고물상", ""], ["N-REFUGEE", "피난민", ""], ["N-DOWNED", "쓰러진 민병", "JC_BC"],
+	["N-HS-E1", "수송대 호위", "HS"], ["N-HS-E2", "수송대 호위", "HS"], ["CR-091", "짐소", ""]]   # 1-8d 고개길 수송대
 var enc := {}                           ## 인카운터 상태(1-3, Encounters): 안전 간격 · 오늘 추적대 수 · EP 사용 · 휴전
 var portrait_alias := {}                ## 인물 ID -> 초상화 키(맵에서 다른 시대 모습으로 선 인물: 2259년 아이 하도윤 등)
 
@@ -98,7 +99,7 @@ func _init() -> void:
 	# 거처(1-8b, SD-15 §7): HOME_BC 봉천 옥탑방(0 없음 · 1 내 방 · 2 압류) · HOME_BC_OK 조건이 찬 날(그다음 날부터 조만석이 열쇠를 준다) ·
 	# WELL_RESTED 숙면이 끝나는 절대 분(0 = 없음, SD-11 §11.5 경험치 +10% 12시간) · HOME_BC_NOTE 문 앞 알림(§7.7: 1 '출입 자제' 쪽지 · 2 읽음 · 3 압류 딱지 · 4 읽음 · 5 재개방) ·
 	# BAEKGU_NAP 오늘 백구가 옥탑방 문 앞에서 자는 날(하루 판정마다 굴림)
-	for k in ["HOME_BC", "HOME_BC_OK", "WELL_RESTED", "HOME_BC_NOTE", "BAEKGU_NAP", "INFO_RUMOR_R01", "INFO_RUMOR_R02"]:   # 정보상 장소 소문 산 수(1-8d)
+	for k in ["HOME_BC", "HOME_BC_OK", "WELL_RESTED", "HOME_BC_NOTE", "BAEKGU_NAP", "INFO_RUMOR_R01", "INFO_RUMOR_R02", "CARAVAN_V54", "MEDIC_AT", "TR_YEON_MET", "TR_SO_MET", "TR_EOM_MET"]:   # 정보상 장소 소문 산 수(1-8d)
 		vars.declare(k, "int", 0)
 	for kv in [["CAPTURE_DAY", -1], ["CAPTURE_AT", 0], ["SB_COLLAR", 0], ["SB_CUFF", 0], ["CAPTURE_BY", 0]]:
 		vars.declare(kv[0], "int", kv[1])

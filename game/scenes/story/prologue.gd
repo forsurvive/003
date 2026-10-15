@@ -177,6 +177,7 @@ var act1: Mq101
 var paths: Act1Paths                               ## 1막 경로 진행기(MQ-102 허브 · MQ-103 지하시장, 1-4)
 var mq106: Mq106                                   ## MQ-106 첫 번째 추적자 · 1 → 2막 전환(1-7)
 var home: HomeBc                                   ## 봉천 옥탑방 거처(1-8b)
+var caravans: Caravans                             ## 순회 상인 일정(1-8d)
 var sol := 1                                       ## 1막 봇 해법(--sol=1~5, 0-10)
 
 # ---------------------------------------------------------------- 저장·일시 정지·터치(0-11, SD-12 §13·§17)
@@ -209,6 +210,10 @@ func _paths() -> void:
 		add_child(mq106)
 		mq106.setup(host, log_on)
 		mq106.act_up.connect(func(_n: int) -> void: request_auto("act"))
+	if caravans == null:                                           # 순회 상인(1-8d, SD-15 §4.3)
+		caravans = Caravans.new()
+		add_child(caravans)
+		caravans.setup(host)
 	if home == null:                                               # 거처(1-8b, SD-15 §7)
 		home = HomeBc.new()
 		add_child(home)

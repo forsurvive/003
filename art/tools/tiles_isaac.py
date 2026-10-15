@@ -646,6 +646,65 @@ def bk_wall_tiles():
     return out
 
 
+def wall_face_sd(part, variant="plain", seed=0):
+    """사당역 대합실 벽(1-8f 사당 환승촌 D-01~D-06): 2077년 역사의 미색 법랑 패널(16×12 줄눈) + 허리 높이 노선 띠
+    (2호선 녹색 위 · 4호선 하늘색 아래, 환승역이라 두 줄) + 아래 짙은 화강석 걸레받이. 200년 그을음과 물때. 쯔꾸르식 평평한 면."""
+    img = new("P08")
+    d = ImageDraw.Draw(img)
+    rnd = random.Random(seed * 23 + (1 if part == "top" else 2))
+    if part == "top":
+        d.rectangle([0, 0, 31, 5], fill=C("P05"))                     # 천장 반자(그을음)
+        d.line([0, 0, 31, 0], fill=C("P01")); d.line([0, 1, 31, 1], fill=C("P06")); d.line([0, 5, 31, 5], fill=C("P02"))
+        d.line([0, 6, 31, 6], fill=C("P07"))
+        for y in (18, 30):                                             # 법랑 패널 줄눈
+            d.line([0, y, 31, y], fill=C("P07"))
+        for x in (0, 16):
+            d.line([x, 7, x, 31], fill=C("P07")); d.line([x + 1, 7, x + 1, 31], fill=C("P09"))
+        d.line([2, 8, 14, 8], fill=C("P09")); d.line([18, 8, 30, 8], fill=C("P09"))
+        for _ in range(2):                                             # 그을음 얼룩
+            x = rnd.randrange(2, 26)
+            d.rectangle([x, 7, x + rnd.randint(3, 6), 7 + rnd.randint(1, 3)], fill=C("P07"))
+        if variant == "sign":                                          # 역 이름 판: 흰 바탕 '사당' + 2·4호선 동그라미
+            d.rectangle([2, 11, 29, 25], fill=C("P01")); d.rectangle([3, 12, 28, 24], fill=C("P09"))
+            d.ellipse([4, 14, 10, 20], fill=C("P55")); d.ellipse([21, 14, 27, 20], fill=C("P62"))
+            d.point((7, 17), fill=C("P09")); d.point((24, 17), fill=C("P09"))
+            d.line([11, 22, 20, 22], fill=C("P02")); d.line([12, 15, 19, 15], fill=C("P02"))
+            d.line([12, 18, 19, 18], fill=C("P04"))
+        if variant == "stain":                                         # 물때가 패널 줄눈을 타고 흐른다
+            for k in range(3):
+                x = rnd.choice([1, 16, 17, rnd.randrange(3, 29)])
+                d.line([x, 7, x, 7 + rnd.randint(10, 24)], fill=C("P06"))
+                d.point((x, 7), fill=C("P25"))
+    else:
+        d.line([0, 2, 31, 2], fill=C("P07"))
+        d.line([0, 0, 0, 2], fill=C("P07")); d.line([16, 0, 16, 2], fill=C("P07"))
+        d.rectangle([0, 4, 31, 6], fill=C("P55")); d.line([0, 4, 31, 4], fill=C("P56"))   # 2호선 띠(녹)
+        d.rectangle([0, 7, 31, 9], fill=C("P62")); d.line([0, 9, 31, 9], fill=C("P61"))   # 4호선 띠(하늘)
+        d.line([0, 10, 31, 10], fill=C("P09"))
+        for x in (0, 16):
+            d.line([x, 11, x, 20], fill=C("P07"))
+        x = rnd.randrange(3, 27)
+        d.line([x, 11, x, 11 + rnd.randint(3, 8)], fill=C("P06"))
+        d.rectangle([0, 21, 31, 28], fill=C("P03"))                   # 화강석 걸레받이
+        d.line([0, 21, 31, 21], fill=C("P01")); d.line([0, 22, 31, 22], fill=C("P05"))
+        for k in range(3):
+            d.point((rnd.randrange(1, 31), rnd.randrange(23, 28)), fill=C("P04"))
+        if variant == "outlet":                                       # 소화전 함(빨강, 유리 깨짐)
+            d.rectangle([18, 8, 29, 20], fill=C("P01")); d.rectangle([19, 9, 28, 19], fill=C("P53"))
+            d.rectangle([20, 10, 27, 15], fill=C("P02")); d.line([20, 10, 24, 14], fill=C("P07"))
+            d.line([20, 17, 27, 17], fill=C("P09"))
+    return img
+
+
+def sd_wall_tiles():
+    """사당역 실내 벽(ts_sd_wall, 1-8f): s07 벽과 같은 이름(윗면 wt_m은 같고 벽면만 역사 법랑 패널)."""
+    out = {f"wt_{m}": wall_top({e for e, b in WALL_BITS if m & b}) for m in range(16)}
+    out.update({"face_top": wall_face_sd("top"), "face_top_pipe": wall_face_sd("top", "sign", 1),
+                "face_top_vent": wall_face_sd("top", "stain", 2), "face_bot": wall_face_sd("bot"),
+                "face_bot_outlet": wall_face_sd("bot", "outlet")})
+    return out
+
+
 def sheet(tiles, cols=9, bg="P19"):
     names = list(tiles)
     rows = (len(names) + cols - 1) // cols

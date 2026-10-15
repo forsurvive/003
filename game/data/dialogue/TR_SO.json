@@ -1,0 +1,102 @@
+{
+ "id": "TR_SO",
+ "title": "순회 의료반 들것",
+ "loc": "L-R01-09",
+ "npc": "C-067",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "AGAIN": 5,
+  "ASK": 6,
+  "DOC": 7,
+  "SHOP": 9
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "TR_SO_MET >= 1",
+   "to": "AGAIN"
+  },
+  {
+   "op": "line",
+   "who": "C-067",
+   "emo": "기본",
+   "text": "소윤희. 들것 하나에 약 상자 둘, 이레에 한 번 이 길을 돌아요. 봉천, 영등포 지하상가, 강 건너."
+  },
+  {
+   "op": "line",
+   "who": "C-067",
+   "emo": "기본",
+   "text": "비상정부 장부엔 '미등록 의료 행위자'로 적혀 있대요. 그러니 검문소 근처에선 안 봐요. 다쳤으면 지금 말해요."
+  },
+  {
+   "op": "do",
+   "fx": "TR_SO_MET = 1"
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "C-067",
+   "emo": "미소",
+   "text": "또 봐요. 이번엔 어디가 아파요?"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "치료를 받는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "DOC",
+     "id": "TR_SO:1:0"
+    },
+    {
+     "text": "약을 산다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SHOP",
+     "id": "TR_SO:1:1"
+    },
+    {
+     "text": "됐다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "TR_SO:1:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "doctor",
+   "args": [
+    "V56"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "trade",
+   "args": [
+    "V56"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/TRAVEL.txt"
+}

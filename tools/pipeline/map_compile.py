@@ -651,6 +651,8 @@ def main():
         known_vars |= {q.replace("-", "") + s for s in ("_STAGE", "_RESULT", "_SKIP")}
     known_fns = {"karma", "aff", "quest", "stage", "result", "give", "take", "has", "caps", "xp", "wanted", "stat", "skill", "year"}
     npcs = json.load(open(os.path.join(ROOT, "game", "data", "npcs.json")))["npcs"]
+    from script_compile import UNNAMED                                  # 이름 없는 인물(떠돌이 고물상·수송대 호위·짐소 등)
+    npcs = dict(npcs, **{k: {"name": v} for k, v in UNNAMED.items()})
     enemy_rows = json.load(open(os.path.join(ROOT, "game", "data", "enemies.json"), encoding="utf-8"))
     alias = alias_of(npcs)
     scenes = set(json.load(open(os.path.join(ROOT, "game", "data", "dialogue", "_index.json")))["scenes"])

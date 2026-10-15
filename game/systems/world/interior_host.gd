@@ -962,6 +962,8 @@ func fix_menu(vid: String, again: bool = false) -> void:
 
 ## 맡길 수 있는 일: [{"key", "to", "cost"}] — 정비사 계열 · 상한보다 나쁜 상태 · 파손 포함. 정비비는 한 단계 위까지
 func fix_jobs(vid: String) -> Array:
+	if merchants.is_empty():
+		shop_state(vid)                                                 # 상인 표를 아직 안 읽었다(대화 전 바로 부를 때)
 	var m: Dictionary = merchants.get(vid, {})
 	var fx: Dictionary = m.get("fix", {})
 	if fx.is_empty():
@@ -1577,6 +1579,20 @@ func _handlers() -> void:
 		st.vars.set_v("INFO_RUMOR_" + rg, int(st.vars.get_v("INFO_RUMOR_" + rg)) + 1)
 		hint("지도에 표시: %s" % str(PlaceLog.db.get(lid, {}).get("name", lid)), 4.0)
 		done.call()
+	ev.handlers["doctor"] = func(a: Array, done: Callable) -> void:    # 의사 메뉴(1-8d): doctor 상인ID
+		box.finished.connect(func() -> void: doctor_menu.call_deferred(str(a[0])), CONNECT_ONE_SHOT)
+		done.call()
+	ev.handlers["docdo"] = func(a: Array, done: Callable) -> void:     # 치료 하나(값은 선택지 [캡] 태그가 이미 받았다): 암전 2초 → 효과
+		busy = true
+		ev.run("fade_out", ["black", "4"], func() -> void:
+			if str(a[1]) == "heal":
+				combat.pc.hp = combat.pc.max_hp
+			elif str(a[1]) == "rad":
+				st.vars.set_v("PC_RADS", 0)
+			advance_minutes(30)
+			ev.run("fade_in", ["black", "4"], func() -> void:
+				busy = false
+				done.call()))
 	ev.handlers["meet"] = func(a: Array, done: Callable) -> void:      # 이름 소개(수첩 등록, SD-12 §3.11): meet 인물ID
 		st.book.meet(str(a[0]), date_text)
 		done.call()
@@ -2384,3 +2400,74 @@ func info_menu(vid: String, region: String = "") -> void:
 			ops.append({"op": "goto", "to": "END"})
 	ops.append({"op": "end"})
 	box.open(st, {"id": "INFO_" + vid, "title": str(m.get("name", vid)), "npc": npc, "labels": labels, "ops": ops}, "START")
+
+
+# ---------------------------------------------------------------- 의사(1-8d, SD-15 §5.1)
+## 요금은 물물교환과 무관, 의사 세력·정착지 호감도 단계 F구매만 곱한다. 손상 지수 = 1 − HP/최대 HP(부위 손상 체계가 생기면 + 0.15 × 부위 수):
+## 0.34 미만 경상 40 · 0.67 미만 중상 70 · 그 이상 위중 100. 0이면 거절. 방사능 제거 100(라드 200 미만이면 60).
+## 순회 의료반(V56): 카르마 선함(+250) 이상이면 치료 무료, 악함(−250) 이하면 치료 거절(약은 판다).
+func injury_index() -> float:
+	if combat.pc == null or combat.pc.max_hp <= 0.0:
+		return 0.0
+	return clampf(1.0 - combat.pc.hp / combat.pc.max_hp, 0.0, 1.0)
+
+
+func doctor_prices(vid: String) -> Dictionary:
+	var m: Dictionary = merchants.get(vid, {})
+	var ak := st._aff_key(str(m.get("settle", "")))
+	var f := TradeScreen.tier_f(int(st.vars.get_v(ak)) if ak != "" else 0)
+	var fb := float(f[0]) if not f.is_empty() else 1.0
+	var ii := injury_index()
+	var base := 0 if ii <= 0.0 else (40 if ii < 0.34 else (70 if ii < 0.67 else 100))
+	var rads := int(st.vars.get_v("PC_RADS"))
+	var rad := 0 if rads <= 0 else (60 if rads < 200 else 100)
+	var karma := int(st.vars.get_v("V_KARMA"))
+	var out := {"heal": roundi(base * fb), "rad": roundi(rad * fb), "tier": ["", "경상", "중상", "위중"][0 if base == 0 else (1 if base == 40 else (2 if base == 70 else 3))],
+		"refuse": false, "free": false}
+	if vid == "V56":
+		out["refuse"] = karma <= -250
+		out["free"] = karma >= 250
+		if out["free"]:
+			out["heal"] = 0
+			out["rad"] = 0
+	return out
+
+
+func doctor_menu(vid: String) -> void:
+	shop_state(vid)
+	var m: Dictionary = merchants.get(vid, {})
+	var npc := str(m.get("npc", ""))
+	var pr := doctor_prices(vid)
+	var ops: Array = []
+	var labels := {"START": 0}
+	var opts: Array = []
+	var say := "어디 봐요."
+	if bool(pr["refuse"]):
+		say = "당신 손에 묻은 건 내 붕대로 안 지워져요. 약은 팔아 줄게. 치료는 안 해."
+	elif int(pr["heal"]) == 0 and str(pr["tier"]) == "" and int(st.vars.get_v("PC_RADS")) <= 0:
+		say = "멀쩡한데 왜 왔어요? 다치면 와요."
+	elif bool(pr["free"]):
+		say = "당신 얘기는 들었어요. 돈은 넣어 둬요."
+	ops.append({"op": "line", "who": npc, "emo": "기본", "text": say})
+	if not bool(pr["refuse"]) and str(pr["tier"]) != "":
+		opts.append({"text": "치료 — %s" % str(pr["tier"]), "tags": [{"k": "caps", "n": int(pr["heal"])}] if int(pr["heal"]) > 0 else [], "cond": "", "fx": "",
+			"to": "H", "id": "DOC:%s:heal" % vid})
+	if not bool(pr["refuse"]) and int(st.vars.get_v("PC_RADS")) > 0:
+		opts.append({"text": "방사능을 빼 달라고 한다(라드 %d)" % int(st.vars.get_v("PC_RADS")), "tags": [{"k": "caps", "n": int(pr["rad"])}] if int(pr["rad"]) > 0 else [],
+			"cond": "", "fx": "", "to": "R", "id": "DOC:%s:rad" % vid})
+	opts.append({"text": "약을 산다", "tags": [], "cond": "", "fx": "", "to": "S", "id": "DOC:%s:shop" % vid})
+	opts.append({"text": "됐다", "tags": [], "cond": "", "fx": "", "to": "END", "id": "DOC:%s:end" % vid})
+	ops.append({"op": "choice", "opts": opts})
+	labels["H"] = ops.size()
+	ops.append({"op": "cmd", "name": "docdo", "args": [vid, "heal"]})
+	ops.append({"op": "line", "who": npc, "emo": "미소", "text": "됐어요. 다음엔 덜 다치고 와요."})
+	ops.append({"op": "goto", "to": "END"})
+	labels["R"] = ops.size()
+	ops.append({"op": "cmd", "name": "docdo", "args": [vid, "rad"]})
+	ops.append({"op": "line", "who": npc, "emo": "기본", "text": "다 뺐어요. 물은 가려 마셔요."})
+	ops.append({"op": "goto", "to": "END"})
+	labels["S"] = ops.size()
+	ops.append({"op": "cmd", "name": "trade", "args": [vid]})
+	ops.append({"op": "goto", "to": "END"})
+	ops.append({"op": "end"})
+	box.open(st, {"id": "DOC_" + vid, "title": str(m.get("name", vid)), "npc": npc, "labels": labels, "ops": ops}, "START")
