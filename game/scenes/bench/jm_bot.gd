@@ -137,7 +137,88 @@ func _ready() -> void:
 				["check", "read:LR-01", "앵커석의 심야 뉴스 대본(LR-01)"]]
 		"yd_talk", "yd_fight", "yd_vent":                               # MQ-104(1-5): 해치 → 방화문 → 작은 방 → 집결지 조사 → 인증 → 수색조 세 갈래
 			_yd_plan()
+		"sb_buy", "sb_deal", "sb_capture", "sb_raid", "sb_roof", "sb_jo":   # MQ-105(1-6) 새벽인력 본소
+			_sb_plan()
 	plan.append(["end"])
+
+
+## MQ-105 본소(손 맵 X-SB 원점 606,1307): 구매자(열쇠 은신 50 → 금고 → 장부 → 마당 화로) · 거래(물물교환 50 + 1,000캡) ·
+## 생포(볼트 작업복으로 정문 → 손을 내민다 → 우리 · 여섯 풀기 · 목걸이) · 정면 습격 · 옥상(사다리·판자 다리 → 뚜껑 → 금고 50 → 노량진 초소) · 조만석 인도
+func _sb_plan() -> void:
+	var O := Vector2i(606, 1307)
+	var W := func(x: int, y: int) -> Array: return ["go", O.x + x, O.y + y]
+	st.vars.set_v("PC_CAPS", 1500 if route == "sb_deal" else 800)
+	st.vars.set_v("PC_TORSO", "A-001" if route == "sb_capture" else "A-016")
+	st.call_fn("give", ["A-016", 1])
+	st.vars.set_v("PC_SKP_SNEAK", 50)
+	st.vars.set_v("PC_SKP_BARTER", 50)
+	st.vars.set_v("PC_SKP_LOCKPICK", 50)
+	st.vars.set_v("PC_SKP_REPAIR", 50)
+	st.vars.set_v("PC_SKP_SMALL_GUNS", 60 if route == "sb_raid" else 20)
+	st.vars.set_v("PC_ST", 7)
+	for kv in [["M-070", 6], ["I-001", 20], ["10mm 탄", 400]]:
+		st.call_fn("give", kv)
+	if route == "sb_raid":                                              # 습격 기계 확인용: 개는 빼고(뒷마당 담 너머), 체력을 넉넉히
+		st.vars.set_v("SB_DOGS", 1)
+		host.combat.pc.max_hp = 3000.0
+		host.combat.pc.hp = 3000.0
+	if route == "sb_roof":
+		host.date_text = "2277. 10. 25.  04:20"                      # 인력시장 시간: 소장실이 빈다
+	if route == "sb_jo":
+		st.call_fn("give", ["M-211", 1])
+		st.quests.set_stage("MQ-105", 30)
+		host.enter("B-01", "from_X-BC")
+		plan = [["want", ["장부를 건넨다"]], ["talk", "C-010"], ["wait", 1.0],
+			["check", "HO_LEDGER == 81", "조만석에게 장부(HO 81)"], ["check", "has(\"M-211\") == 0 and MQ105_STAGE == 100", "장부를 건넴 · 단계 100"],
+			["check", "AFF_JC >= 5", "연합 일괄 +5"]]
+		return
+	host.enter("W", "L-R02-19")
+	plan = [["shot", "sb_front"], W.call(22, 39)]
+	match route:
+		"sb_buy":
+			plan += [["want", ["사람을 사러", "[캡 500]"]], W.call(22, 37), ["wait", 1.0], ["shot", "sb_gate"],
+				["check", "SB_PASS == 1 and SB_DEPO == 1 and PC_CAPS == 300", "정문 보증금 500 → 손님 표찰"],
+				W.call(22, 30), ["check", "MQ105_STAGE == 20", "담 안에 들어서면 단계 20"], ["shot", "sb_yard"], W.call(19, 11), W.call(19, 10),
+				["go", 10, 17, "H-02"], ["shot", "sb_h02"], ["go", 4, 3], ["go", 4, 0], ["wait", 1.0],
+				["go", 28, 7, "H-04"], ["go", 28, 11], ["want", ["[캡 300] 88번", "[은신 50]"]], ["talk", "C-013"], ["shot", "sb_hdc"],
+				["check", "SB_BOUGHT == 1 and PC_CAPS == 500 and SB_KEY == 1 and SB_TALK == 2", "88번을 삼(보증금 환급) · 허리춤 열쇠(은신 50)"],
+				["go", 36, 12], ["want", ["열쇠를 꽂는다", "장부를 챙긴다"]], ["use", 36, 11], ["wait", 3.0], ["shot", "sb_safe"],
+				["check", "SB_READ == 1 and K_CODE == 1 and K_NET == 1 and has(\"M-211\") and has(\"M-212\") and MQ105_STAGE == 30", "장부·의뢰서 → K_CODE · 단계 30"],
+				["go", 28, 10], ["go", 28, 7], ["go", 1, 5], ["go", 0, 5], ["wait", 1.0], ["go", 10, 18, "H-02"], ["go", 10, 19], ["wait", 1.5],
+				W.call(28, 18), W.call(28, 17), ["want", ["불에 던진다"]], ["shoton", "규정 제1조는", "sb_burn"], ["use", O.x + 29, O.y + 17], ["wait", 1.5],
+				["check", "HO_LEDGER == 99 and SB_DEBT == 1 and MQ105_STAGE == 100 and has(\"M-211\") == 0", "마당 화로에 태움(HO 99 · 112명 빚)"],
+				["check", "SB_RAID == 1", "불길에 마당이 술렁인다 → 습격"]]
+		"sb_deal":
+			plan += [["want", ["돈 얘기다"]], W.call(22, 37), ["wait", 1.0],
+				["check", "SB_PASS == 2", "정문: 소장한테 돈 얘기(1,000캡 이상)"], W.call(19, 11), W.call(19, 10),
+				["go", 4, 3, "H-02"], ["go", 4, 0], ["wait", 1.0], ["go", 28, 7, "H-04"], ["go", 28, 11],
+				["want", ["[물물교환 50]"]], ["shoton", "줄은 긋지", "sb_deal"], ["talk", "C-013"], ["wait", 3.0],
+				["check", "SB_DEAL == 1 and HO_LEDGER == 96 and MQ105_STAGE == 100 and K_CODE == 1 and PC_CAPS == 500 and AFF_SB == -10", "거래: 이름에 줄 · 수배 −30 · 새벽 +15"],
+				["check", "read:SB-ORDER7", "의뢰서와 지령 제7호 사본을 읽음"]]
+		"sb_capture":
+			plan += [["want", ["손을 내민다"]], W.call(22, 37), ["wait", 4.0], ["shot", "sb_cage"],
+				["check", "CAPTURE_BY == 1 and SB_CUFF == 1 and SB_COLLAR == 1", "볼트 작업복으로 정문 → 손을 내밀어 우리로"],
+				["go", 16, 6, "H-03"], ["want", ["[힘 7]"]], ["go", 16, 7], ["wait", 1.0], ["check", "SB_CUFF == 0", "수갑·우리 문(힘 7)"],
+				["go", 16, 9], ["go", 10, 9], ["want", ["[힘 7]"]], ["use", 10, 8], ["wait", 0.8], ["shot", "sb_free127"],
+				["go", 4, 9], ["use", 4, 8], ["wait", 0.8], ["go", 22, 9], ["use", 22, 8], ["wait", 0.8],
+				["go", 28, 9], ["use", 28, 8], ["wait", 0.8], ["go", 34, 9], ["use", 34, 8], ["wait", 0.8], ["shot", "sb_freed"],
+				["check", "SB_FREED >= 6 and V_KARMA >= 100", "'인력' 여섯을 풀어 줌(카르마 +100)"],
+				["want", ["[수리 50]"]], ["go", 40, 5], ["wait", 1.5], ["check", "SB_COLLAR == 0", "목걸이 해제(수리 50)"]]
+		"sb_raid":
+			plan += [["want", ["총을 꺼낸다"]], W.call(22, 37), ["wait", 1.0], ["check", "SB_RAID == 1", "정문에서 총 → 정면 습격"],
+				["fight"], ["shot", "sb_raid_yard"], W.call(19, 11), W.call(19, 10), ["fight"], ["go", 4, 3, "H-02"], ["go", 4, 0], ["wait", 1.0],
+				["fight"], ["go", 28, 11, "H-04"], ["fight"], ["shot", "sb_hdc_down"], ["wait", 2.0],
+				["check", "D_HDC == 1 and SB_RAID == 2 and SB_READ == 1", "황두칠 사살 → 외투의 의뢰서(K_CODE)"]]
+		"sb_roof":
+			plan += [["crouch", true], W.call(5, 10), W.call(5, 9), W.call(5, 6), W.call(9, 5), W.call(12, 5), ["shot", "sb_roof"],
+				W.call(27, 7), ["want", ["내려간다"]], ["face", 6], ["use", O.x + 27, O.y + 6], ["wait", 1.5],
+				["check", "SB_RAID == 0", "옥상 길로 들키지 않고 2층"], ["go", 28, 7, "H-04"], ["go", 28, 11], ["go", 36, 12],
+				["want", ["[자물쇠 따기 50]", "장부를 챙긴다"]], ["use", 36, 11], ["lock"], ["wait", 3.0],
+				["check", "SB_READ == 1 and has(\"M-211\")", "인력시장 시간 빈 소장실 금고(자물쇠 50) → 장부"],
+				["go", 28, 7], ["go", 27, 3], ["go", 27, 0], ["wait", 1.5], W.call(12, 5), W.call(9, 5), W.call(5, 6), W.call(5, 10), W.call(1, 20),
+				["check", "MQ105_STAGE == 100 and HO_LEDGER == 0", "장부를 들고 본소를 나서면 끝(HO 0)"], ["crouch", false],
+				["warp", "W", "L-R01-20"], ["wait", 1.0], ["want", ["장부를 넘긴다"]], ["talk", "N-R01-050"], ["wait", 1.0], ["shot", "sb_bj"],
+				["check", "HO_LEDGER == 1 and SB_BJ == 1 and AFF_BJ == -20", "노량진 다리목 초소에 넘김(비상 +10)"]]
 
 
 ## MQ-104 공통 앞부분(해치·방화문·서랍·유해·출석부·당직 일지·인증)과 갈래별 뒷부분
@@ -345,6 +426,9 @@ func _process(dt: float) -> void:
 		"warp":                                                         # 다음 장소로 바로(확인 봇: 걸어가는 길은 다른 봇이 본다)
 			host.enter(str(s[1]), str(s[2]) if s.size() > 2 else "from_W")
 			_next()
+		"crouch":
+			host.combat.crouch = bool(s[1])
+			_next()
 		"face":
 			host.player.loco.facing = int(s[1])
 			host.player._show()
@@ -390,11 +474,16 @@ func _next() -> void:
 	path = PackedVector2Array()
 
 
-func _npc(id: String) -> Dictionary:
+func _npc(id: String) -> Dictionary:                                   # 같은 ID(무명 병사 CR-401 등)가 여럿이면 가장 가까운 사람
+	var best := {}
+	var bd := INF
 	for n in host.npcs:
-		if str(n["id"]) == id and is_instance_valid(n["actor"]):
-			return n
-	return {}
+		if str(n["id"]) == id and is_instance_valid(n["actor"]) and n["actor"].visible:
+			var d: float = n["actor"].loco.logical.distance_to(host.player.loco.logical)
+			if d < bd:
+				bd = d
+				best = n
+	return best
 
 
 func _walk(goal: Vector2) -> Vector2:
@@ -454,7 +543,7 @@ func _finish(why: String) -> void:
 	if why != "" and i < plan.size():
 		print("  [봇] 멈춘 단계 %d: %s · 맵 %s %s" % [i, str(plan[i]), host.map.id if host.map else "-", str(host.map.tile_of(host.player.loco.logical)) if host.map else ""])
 	var ok := checks.filter(func(c): return c[0]).size()
-	print("지하시장 봇 %s: %s %d/%d%s · MQ-103 %d · 캡 %d · XP %d · 지하 %d" % [route, "○" if ok == checks.size() and why == "" else "×", ok,
+	print("지하시장 봇 %s: %s %d/%d%s · MQ-103 %d · 캡 %d · XP %d · 지하 %d · MQ-105 %d" % [route, "○" if ok == checks.size() and why == "" else "×", ok,
 		checks.size(), (" (" + why + ")") if why != "" else "", st.quests.stage("MQ-103"), int(st.vars.get_v("PC_CAPS")),
-		int(st.vars.get_v("PC_XP")), int(st.vars.get_v("AFF_JH")) if st.vars.has("AFF_JH") else 0])
+		int(st.vars.get_v("PC_XP")), int(st.vars.get_v("AFF_JH")) if st.vars.has("AFF_JH") else 0, st.quests.stage("MQ-105")])
 	get_tree().create_timer(0.3).timeout.connect(get_tree().quit)

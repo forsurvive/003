@@ -895,7 +895,341 @@ def brink(w, h=1, seed=0):
     return TI.outline(img)
 
 
+# ================================================================================================ 새벽인력 본소(1-6, SD-09a L-R02-19)
+# 2077년 구로 공구상가 철골 2층 동을 200년 덧대 쓴 인력사무소. 골함석 외벽·H형강 기둥·1층 공구 가게 셔터·2층 띠창,
+# 정면 위 큰 간판. 둘레는 칠이 벗겨진 철판 담 + 가시철사 코일, 정문 옆 번호표 창구.
+SHOPS_SB = ["공구", "기계", "볼트", "용접", "철물", "모터", "체인", "배관"]       # 셔터에 칠한 업종(가게마다 한 단어)
+
+
+def _corrugate(img, box, tones, rnd, pitch=4, rust=0.05):
+    """세로 골함석: 골 4px(빛·몸·그늘·먹) + 판 이음(48~80px마다 겹친 자리) + 녹 얼룩."""
+    x0, y0, x1, y1 = box
+    d = ImageDraw.Draw(img)
+    seam = x0 + rnd.randint(30, 60)
+    for x in range(x0, x1):
+        k = (x - x0) % pitch
+        col = tones[2] if k == 0 else tones[1] if k == 1 else tones[0] if k == 2 else tones[1]
+        d.line([x, y0, x, y1 - 1], fill=C(col))
+        if x == seam:                                                     # 판 이음: 겹친 판 끝의 그늘선 + 리벳
+            d.line([x, y0, x, y1 - 1], fill=C(INK))
+            for yy in range(y0 + 3, y1 - 2, 9):
+                d.point((x + 1, yy), fill=C(tones[2]))
+            seam += rnd.randint(48, 80)
+    nz = vnoise(x1 - x0, y1 - y0, 12, rnd.randint(0, 9999)) * 0.6 + vnoise(x1 - x0, y1 - y0, 4, rnd.randint(0, 9999)) * 0.4
+    thr = 1 - rust * 3
+    for y in range(y0, y1):
+        for x in range(x0, x1):
+            v = nz[y - y0, x - x0]
+            if v > thr:                                                   # 녹 얼룩(골을 따라 번진다 — 골 그늘에 짙게)
+                img.putpixel((x, y), C(RUST_SB[0 if (x - x0) % pitch == 3 else 1 if v > thr + 0.05 else 2]))
+    for _ in range((x1 - x0) // 9):                                       # 녹물 줄
+        streak(img, rnd.randrange(x0, x1), y0 + rnd.randint(0, max(1, (y1 - y0) // 3)), rnd.randint(5, 14), -1, rnd)
+
+
+RUST_SB = ["P24", "P25", "P26"]
+
+
+def _hbeam(img, x, y0, y1):
+    """H형강 기둥(정면 7px): 플랜지 둘 + 웨브 그늘, 녹."""
+    d = ImageDraw.Draw(img)
+    d.rectangle([x - 1, y0, x + 7, y1], fill=C(INK))
+    d.rectangle([x, y0, x + 6, y1], fill=C("P24"))
+    d.line([x, y0, x, y1], fill=C("P26"))
+    d.line([x + 1, y0, x + 1, y1], fill=C("P25"))
+    d.rectangle([x + 2, y0, x + 4, y1], fill=C("P23"))
+    d.line([x + 5, y0, x + 5, y1], fill=C("P25"))
+    for yy in range(y0 + 5, y1, 11):                                      # 볼트 판
+        d.point((x + 1, yy), fill=C("P27")); d.point((x + 5, yy), fill=C("P27"))
+
+
+def _ribbon(img, x0, x1, y, h, rnd):
+    """2층 띠창: 철 창틀 + 철망 유리(격자) · 깨짐 · 합판 덧댐 · 안쪽 어둠."""
+    d = ImageDraw.Draw(img)
+    d.rectangle([x0 - 1, y - 1, x1 + 1, y + h], fill=C(INK))
+    x = x0
+    while x < x1:
+        pw = min(x1 - x, rnd.randint(14, 20))
+        kind = rnd.random()
+        if kind < 0.55:                                                   # 철망 유리(뿌연 녹청)
+            d.rectangle([x, y, x + pw - 1, y + h - 1], fill=C("P12"))
+            d.rectangle([x, y, x + pw - 1, y + 2], fill=C("P13"))
+            for xx in range(x + 2, x + pw, 3):
+                for yy in range(y + 1, y + h, 3):
+                    d.point((xx, yy), fill=C("P11"))
+        elif kind < 0.78:                                                 # 깨져 안이 보인다
+            d.rectangle([x, y, x + pw - 1, y + h - 1], fill=C("P02"))
+            d.polygon([(x, y), (x + pw // 2, y), (x + 2, y + h // 2)], fill=C("P12"))
+        else:                                                             # 합판 덧댐
+            d.rectangle([x, y, x + pw - 1, y + h - 1], fill=C("P19"))
+            d.line([x, y, x + pw - 1, y], fill=C("P20"))
+            d.line([x + pw // 2, y, x + pw // 2, y + h - 1], fill=C("P18"))
+            d.point((x + 2, y + 2), fill=C("P04")); d.point((x + pw - 3, y + h - 3), fill=C("P04"))
+        d.line([x + pw - 1, y, x + pw - 1, y + h - 1], fill=C("P05"))       # 창살 기둥
+        x += pw
+    d.line([x0 - 2, y + h + 1, x1 + 2, y + h + 1], fill=C("P06"))           # 창턱(철)
+    d.line([x0 - 2, y + h + 2, x1 + 2, y + h + 2], fill=C(INK))
+
+
+def _tool_shutter(img, x, y, w, h, label, rnd, up=0):
+    """1층 공구 가게 셔터: 가로 골 + 칠 바랜 상호(2077년 그대로) + 자물쇠 고리. up>0이면 그만큼 올라가 안이 어둡다."""
+    d = ImageDraw.Draw(img)
+    d.rectangle([x - 1, y - 4, x + w, y + h], fill=C(INK))
+    d.rectangle([x, y - 3, x + w - 1, y], fill=C("P05"))                  # 셔터 통
+    d.line([x, y - 3, x + w - 1, y - 3], fill=C("P07"))
+    d.rectangle([x, y + 1, x + w - 1, y + h - 1], fill=C("P06"))
+    for yy in range(y + 2, y + h, 2):
+        d.line([x, yy, x + w - 1, yy], fill=C("P05" if (yy // 2) % 2 else "P07"))
+    if up:
+        d.rectangle([x, y + h - up, x + w - 1, y + h - 1], fill=C("P01"))
+        d.line([x, y + h - up - 1, x + w - 1, y + h - up - 1], fill=C("P08"))
+    else:
+        d.rectangle([x + w // 2 - 2, y + h - 4, x + w // 2 + 1, y + h - 2], fill=C("P04"))
+    if label:                                                             # 칠 바랜 상호(셔터에 페인트)
+        pts, tw, th = text_px(label, 8, "Galmuri7")
+        lx = x + max(1, (w - tw) // 2)
+        for (a, b) in pts:
+            if rnd.random() < 0.88 and lx + a < x + w - 1:
+                img.putpixel((lx + a, y + 4 + b), C(rnd.choice(["P44", "P45", "P44"])))
+    for _ in range(w // 6):
+        streak(img, rnd.randrange(x, x + w), y + 1, rnd.randint(3, 9), -1, rnd)
+
+
+def big_sign(img, x0, x1, y, text, rnd, sub=None):
+    """정면 위 큰 간판: 흰 철판 + 붉은 글(16px) + 녹 번짐 + 받침 쇠. sub = 아래 작은 글."""
+    d = ImageDraw.Draw(img)
+    hgt = 22 if sub else 18
+    d.rectangle([x0 - 1, y - 1, x1 + 1, y + hgt], fill=C(INK))
+    d.rectangle([x0, y, x1, y + hgt - 1], fill=C("P09"))
+    d.line([x0, y, x1, y], fill=C("P08"))
+    d.rectangle([x0, y + hgt - 3, x1, y + hgt - 1], fill=C("P08"))
+    pts, tw, th = text_px(text, 12, "Galmuri11-Bold")
+    tx = (x0 + x1 - tw) // 2
+    for (a, b) in pts:                                                    # 붉은 칠 글자(군데군데 벗겨짐) + 아래 그늘
+        if (a, b + 1) not in pts and x0 <= tx + a <= x1 and y + 3 + b < y + hgt - 3:
+            img.putpixel((tx + a, y + 3 + b), C("P07"))
+        if rnd.random() < 0.94 and x0 <= tx + a <= x1:
+            img.putpixel((tx + a, y + 2 + b), C("P53"))
+    if sub:
+        put_text(img, sub, (x0 + x1) // 2 - text_px(sub)[1] // 2, y + hgt - 10, "P04", 8, "Galmuri7")
+    for _ in range((x1 - x0) // 8):                                       # 녹 번짐(볼트 구멍에서 흘러내림)
+        sx = rnd.randint(x0 + 1, x1 - 1)
+        streak(img, sx, y + rnd.randint(1, hgt - 2), rnd.randint(3, 8), -2, rnd)
+    for sx in (x0 + 6, x1 - 8):                                           # 받침 쇠
+        d.rectangle([sx, y + hgt, sx + 2, y + hgt + 4], fill=C("P04"))
+        d.line([sx + 2, y + hgt, sx + 2, y + hgt + 4], fill=C(INK))
+
+
+def steel_shed(w, h, seed=0, doors=(), shutters=None, sign=None, sub=None, beams=4):
+    """철골 2층 공구상가 정면 w×h(h=2: 2층 띠창 + 1층 셔터). doors = [(열, 종류)] (steel·open·shutter),
+    shutters = 셔터 둘 열 목록(None이면 문 아닌 1층 칸에 하나 걸러), sign = 2층 위 큰 간판 글, beams = 기둥 간격(칸)."""
+    rnd = random.Random(hsh(seed, w, h, 97))
+    img = new(w, h)
+    W, H = w * T, h * T
+    tones = rnd.choice([("P12", "P13", "P14"), ("P05", "P06", "P07"), ("P12", "P13", "P14")])
+    _corrugate(img, (0, 0, W, H), tones, rnd, rust=0.06)
+    d = ImageDraw.Draw(img)
+    d.rectangle([0, 0, W - 1, 4], fill=C("P05"))                          # 처마 철판(골 위 덮개)
+    d.line([0, 0, W - 1, 0], fill=C("P07"))
+    d.line([0, 5, W - 1, 5], fill=C(INK))
+    yb = (h - 1) * T
+    d.rectangle([0, yb - 3, W - 1, yb], fill=C("P05"))                    # 층 띠(철골 보)
+    d.line([0, yb - 3, W - 1, yb - 3], fill=C("P07"))
+    d.line([0, yb + 1, W - 1, yb + 1], fill=C(INK))
+    for f in range(h - 1):                                                # 위층: 띠창(간판 자리는 비움)
+        y = f * T + (16 if (sign and f == 0) else 9)
+        _ribbon(img, 6, W - 7, y, 10 if (sign and f == 0) else 12, rnd)
+    door_cols = {c: k for c, k in doors}
+    if shutters is None:
+        shutters = [c for c in range(w) if c not in door_cols and c % 2 == 0]
+    for i, c in enumerate(shutters):
+        if c in door_cols:
+            continue
+        lab = SHOPS_SB[(seed + i) % len(SHOPS_SB)] if rnd.random() < 0.55 else None
+        _tool_shutter(img, c * T + 3, yb + 9, 26, 22, lab, rnd, up=8 if rnd.random() < 0.15 else 0)
+    for c, k in doors:
+        door(img, c * T + 7, yb + 6, 18, 25, k, rnd)
+    for c in range(0, w + 1, beams):                                      # H형강 기둥(문 칸은 피한다)
+        x = min(W - 8, max(0, c * T - 4))
+        if any(abs(x - (dc * T + 7)) < 22 for dc in door_cols):
+            continue
+        _hbeam(img, x, 6, H - 2)
+    if sign:
+        big_sign(img, max(8, W // 2 - len(sign) * 7 - 10), min(W - 9, W // 2 + len(sign) * 7 + 10), 3, sign, rnd, sub)
+    for x in range(W):                                                    # 아래 때 띠·물튐
+        for k in range(3):
+            if (x * 5 + k) % 4 != 0 or k == 0:
+                step_px(img, x, H - 1 - k, -1)
+    for y in range(6, H):
+        step_px(img, 1, y, 1)
+        step_px(img, W - 2, y, -1)
+    d.line([0, 0, 0, H - 1], fill=C(INK))
+    d.line([W - 1, 0, W - 1, H - 1], fill=C(INK))
+    d.line([0, H - 1, W - 1, H - 1], fill=C(INK))
+    return img
+
+
+def tin_roof(w, h, seed=0, edges="nsew", skylights=True, patches=True):
+    """골함석 지붕(위에서 본 면): 남북으로 흐르는 골 · 채광판(바랜 녹색 반투명 판) · 녹 · 덧댄 합판 · 용마루 · 가장자리 물받이."""
+    rnd = random.Random(hsh(seed, w, h, 101))
+    W, H = w * T, h * T
+    img = new(w, h)
+    _corrugate(img, (0, 0, W, H), ("P05", "P06", "P07"), rnd, pitch=4, rust=0.06)
+    d = ImageDraw.Draw(img)
+    if skylights:                                                         # 채광판: 골 폭 맞춰 짧은 판(바랜 연두 · 금), 두 줄
+        rows = [(8, min(H - 8, 8 + T + 8))] + ([(H - T - 16, H - 8)] if h >= 4 else [])
+        for c in range(1, w - 1, 3):
+            for (y0, y1) in rows:
+                x = c * T + 8 + (hsh(seed, c, y0) % 3) * 4
+                d.rectangle([x - 1, y0 - 1, x + 12, y1 + 1], fill=C(INK))
+                for xx in range(x, x + 12):
+                    d.line([xx, y0, xx, y1], fill=C("P32" if (xx - x) % 4 == 0 else "P31"))
+                for _ in range(2):
+                    cx, cy = rnd.randint(x, x + 11), rnd.randint(y0, y1)
+                    for i in range(rnd.randint(4, 9)):
+                        if y0 <= cy + i <= y1:
+                            img.putpixel((min(x + 11, cx + (i % 2)), cy + i), C("P29"))
+    if patches:                                                           # 덧댄 합판·철판 조각
+        for _ in range(max(1, w * h // 6)):
+            px, py = rnd.randrange(4, W - 20), rnd.randrange(4, H - 14)
+            pw, ph = rnd.randint(10, 18), rnd.randint(8, 12)
+            col = rnd.choice(["P19", "P20", "P13"])
+            d.rectangle([px - 1, py - 1, px + pw, py + ph], fill=C(INK))
+            d.rectangle([px, py, px + pw - 1, py + ph - 1], fill=C(col))
+            d.line([px, py, px + pw - 1, py], fill=C(P_up(col)))
+            for (qx, qy) in ((px + 1, py + 1), (px + pw - 2, py + 1), (px + 1, py + ph - 2), (px + pw - 2, py + ph - 2)):
+                d.point((qx, qy), fill=C("P04"))
+    if h >= 3:                                                            # 용마루(동서)
+        ym = H // 2
+        d.rectangle([0, ym - 2, W - 1, ym + 2], fill=C("P06"))
+        d.line([0, ym - 2, W - 1, ym - 2], fill=C("P08"))
+        d.line([0, ym + 3, W - 1, ym + 3], fill=C(INK))
+    for side in edges:                                                    # 물받이(먹선 + 녹 띠)
+        if side == "n":
+            d.rectangle([0, 0, W - 1, 2], fill=C("P24")); d.line([0, 0, W - 1, 0], fill=C(INK))
+        elif side == "s":
+            d.rectangle([0, H - 3, W - 1, H - 1], fill=C("P24")); d.line([0, H - 1, W - 1, H - 1], fill=C(INK))
+        elif side == "w":
+            d.rectangle([0, 0, 2, H - 1], fill=C("P05")); d.line([0, 0, 0, H - 1], fill=C(INK))
+        elif side == "e":
+            d.rectangle([W - 3, 0, W - 1, H - 1], fill=C("P04")); d.line([W - 1, 0, W - 1, H - 1], fill=C(INK))
+    return img
+
+
+def _razor(img, x0, x1, y):
+    """가시철사 코일(정면): 겹친 고리 + 반짝 날."""
+    d = ImageDraw.Draw(img)
+    for x in range(x0, x1, 5):
+        d.arc([x, y, x + 7, y + 6], 180, 360, fill=C("P05"))
+        d.arc([x, y + 1, x + 7, y + 7], 0, 180, fill=C("P04"))
+        d.point((x + 3, y), fill=C("P08"))
+
+
+def steel_fence(w, h=2, seed=0, gate=None, booth=None, sign=None, stencil=None):
+    """철판 담 정면 w×h: 칠한 철판(녹청) + 리벳 + 녹 + 위 가시철사 코일. gate=(열0, 열1) 비움(문짝은 소품),
+    booth=열: 번호표 창구(작은 미닫이 + '번호표' 글 + 번호판), sign=(열0, 열1, 글): 담 위 간판, stencil=(열, 글): 흰 스텐실."""
+    rnd = random.Random(hsh(seed, w, h, 113))
+    W, H = w * T, h * T
+    img = new(w, h)
+    d = ImageDraw.Draw(img)
+    skip = set(range(gate[0] * T, (gate[1] + 1) * T)) if gate else set()
+    top = 9
+    x = 0
+    while x < W:
+        pw = rnd.randint(28, 44)
+        x1 = min(W, x + pw)
+        cols = [c for c in range(x, x1) if c not in skip]
+        if cols:
+            a, b = cols[0], cols[-1]
+            tone = rnd.choice([("P11", "P12", "P13"), ("P34", "P35", "P36"), ("P11", "P12", "P13")])
+            d.rectangle([a, top, b, H - 2], fill=C(tone[1]))
+            d.line([a, top, b, top], fill=C(tone[2]))
+            d.line([a, top + 1, a, H - 2], fill=C(tone[2]))
+            d.line([b, top, b, H - 2], fill=C(INK))
+            for yy in range(top + 4, H - 4, 10):                          # 리벳
+                d.point((a + 2, yy), fill=C(tone[0])); d.point((b - 2, yy), fill=C(tone[0]))
+            d.line([a + 1, H // 2 + 4, b - 1, H // 2 + 4], fill=C(tone[0]))  # 가로 보강띠 그늘
+            nz = vnoise(b - a + 1, H - top, 9, rnd.randint(0, 9999))
+            for yy in range(top + 1, H - 2):
+                for xx in range(a + 1, b):
+                    v = nz[yy - top, xx - a]
+                    if v > 0.8:
+                        img.putpixel((xx, yy), C(RUST_SB[2 if v < 0.85 else 1 if v < 0.9 else 0]))
+                    elif v < 0.1:
+                        img.putpixel((xx, yy), C(tone[0]))
+            for _ in range((b - a) // 7):
+                streak(img, rnd.randint(a + 1, b - 1), top + rnd.randint(1, 8), rnd.randint(6, 20), -1, rnd)
+        x = x1
+    segs, cur = [], None
+    for xx in range(W):
+        if xx in skip:
+            if cur is not None:
+                segs.append((cur, xx - 1)); cur = None
+        elif cur is None:
+            cur = xx
+    if cur is not None:
+        segs.append((cur, W - 1))
+    for (a, b) in segs:
+        for px_ in range(a, b, 40):                                       # 기둥(각관) + 코일 받침
+            d.rectangle([px_, 2, px_ + 3, H - 1], fill=C("P05"))
+            d.line([px_, 2, px_, H - 1], fill=C("P07"))
+            d.line([px_ + 3, 2, px_ + 3, H - 1], fill=C(INK))
+        _razor(img, a, b - 6, 1)
+        for xx in range(a, b + 1):
+            img.putpixel((xx, H - 1), C(INK))
+    if gate:                                                              # 문 기둥(굵은 H형강)
+        for gx in (gate[0] * T - 6, (gate[1] + 1) * T - 2):
+            _hbeam(img, max(0, min(W - 8, gx)), 0, H - 1)
+    if booth is not None:                                                 # 번호표 창구
+        bx = booth * T + 4
+        d.rectangle([bx - 1, top + 6, bx + 24, top + 30], fill=C(INK))
+        d.rectangle([bx, top + 7, bx + 23, top + 29], fill=C("P07"))
+        d.rectangle([bx + 3, top + 14, bx + 20, top + 25], fill=C("P02"))  # 작은 미닫이(안은 어둡다)
+        d.line([bx + 11, top + 14, bx + 11, top + 25], fill=C("P06"))
+        d.rectangle([bx + 2, top + 26, bx + 21, top + 28], fill=C("P05"))  # 받침
+        put_text(img, "번호표", bx + 3, top + 7, "P53", 8, "Galmuri7")
+        d.rectangle([bx + 25, top + 10, bx + 31, top + 20], fill=C(INK))   # 번호판(붉은 숫자)
+        put_text(img, "7", bx + 26, top + 11, "P54", 8, "Galmuri7")
+    if stencil:
+        c, s = stencil
+        pts, tw, _ = text_px(s, 8, "Galmuri7")
+        sx = c * T + 4
+        for (a, b) in pts:
+            if rnd.random() < 0.85 and sx + a < W:
+                img.putpixel((sx + a, top + 14 + b), C("P08"))
+    if sign:
+        c0, c1, s = sign
+        big_sign(img, c0 * T + 2, (c1 + 1) * T - 3, 0, s, rnd)
+    return img
+
+
+def fence_top(w, h, seed=0, axis="v"):
+    """철판 담(위에서 본 세로 줄): 칸 가운데 6px 철판 머리 + 각관 기둥 + 가시철사 코일 — 양옆은 비어 바닥이 보인다."""
+    rnd = random.Random(hsh(seed, w, h, 127))
+    W, H = w * T, h * T
+    img = new(w, h)
+    d = ImageDraw.Draw(img)
+    if axis == "v":
+        x = W // 2 - 3
+        d.rectangle([x - 1, 0, x + 6, H - 1], fill=C(INK))
+        d.rectangle([x, 0, x + 5, H - 1], fill=C("P12"))
+        d.line([x, 0, x, H - 1], fill=C("P13"))
+        d.line([x + 5, 0, x + 5, H - 1], fill=C("P11"))
+        for y in range(0, H, 2):
+            if rnd.random() < 0.18:
+                d.line([x + 1, y, x + 4, y], fill=C(rnd.choice(RUST_SB)))
+        for y in range(4, H, 40):                                         # 기둥 머리
+            d.rectangle([x - 2, y, x + 7, y + 5], fill=C("P05"))
+            d.rectangle([x - 2, y, x + 7, y + 5], outline=C(INK))
+        for y in range(0, H, 5):                                          # 코일(위에서: 지그재그 고리)
+            d.arc([x - 3, y, x + 8, y + 6], 0, 360, fill=C("P06") if (y // 5) % 2 else C("P04"))
+        for y in range(0, H):                                             # 동쪽 그늘(빛은 왼쪽 위)
+            if 0 <= x + 7 < W:
+                img.putpixel((x + 7, y), C("P02")) if img.getpixel((x + 7, y))[3] == 0 else None
+    return img
+
+
 KINDS = {
+    "steel_shed": steel_shed, "tin_roof": tin_roof, "steel_fence": steel_fence, "fence_top": fence_top,
     "slab": slab, "brink": brink,
     "facade": facade, "roof": roof, "wall": retaining_wall, "rock": rock_face, "scrap": scrap_wall, "gap": gap,
     "bridge": bridge, "ledge": ledge, "deck_edge": deck_edge, "portal": vault_portal,

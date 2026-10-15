@@ -1,0 +1,95 @@
+{
+ "id": "X-SB_FIRE",
+ "title": "드럼통 화로",
+ "loc": "L-R02-19",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "BURN": 3,
+  "PLAIN": 9
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "has(\"M-211\") == 0",
+   "to": "PLAIN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "드럼통 안에서 젖은 장부 종이가 탄다. 두꺼운 장부 한 권쯤은 금방이다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "장부를 불에 던진다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "BURN",
+     "id": "X-SB_FIRE:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "X-SB_FIRE:1:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "take(\"M-211\", 1); HO_LEDGER = 99; SB_DEBT = 1; karma(100); aff(\"SB\", -20)"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "표지의 '근면'이 먼저 오그라든다. 백열두 명의 이름과 빚이 한 장씩 까맣게 말려 올라간다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "규정 제1조는 틀렸다. 장부는 탄다."
+  },
+  {
+   "op": "cmd",
+   "name": "sb",
+   "args": [
+    "decide",
+    "99"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "sb",
+   "args": [
+    "burned"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "드럼통 화로. 장작 대신 젖은 출근부 종이가 탄다. 매운 연기가 마당에 깔린다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-105.txt"
+}

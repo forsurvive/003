@@ -1,0 +1,223 @@
+{
+ "id": "H-04_SAFE",
+ "title": "소장실 금고",
+ "loc": "L-R02-19",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "PICK": 5,
+  "KEYOPEN": 7,
+  "WATCHED": 9,
+  "CAUGHT": 11,
+  "OPENED": 14,
+  "TAKE": 19,
+  "EMPTY": 22,
+  "ASH": 24
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SB_SAFE == 1",
+   "to": "OPENED"
+  },
+  {
+   "op": "if",
+   "cond": "SB_RAID == 0 and D_HDC == 0 and SB_DEAL == 0 and SB_TALK != 2 and GAME_HOUR >= 6",
+   "to": "WATCHED"
+  },
+  {
+   "op": "if",
+   "cond": "SB_RAID == 0 and D_HDC == 0 and SB_DEAL == 0 and SB_TALK != 2 and GAME_HOUR < 4",
+   "to": "WATCHED"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "검은 철 금고. 다이얼은 손때로 반들반들하고, 놋쇠 명판에 '근면'."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "다이얼에 귀를 대고 돌린다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "자물쇠 따기",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PICK",
+     "id": "H-04_SAFE:1:0"
+    },
+    {
+     "text": "허리춤에서 뺀 열쇠를 꽂는다",
+     "tags": [],
+     "cond": "SB_KEY == 1",
+     "fx": "",
+     "to": "KEYOPEN",
+     "id": "H-04_SAFE:1:1"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "H-04_SAFE:1:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "sb",
+   "args": [
+    "pick"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "sb",
+   "args": [
+    "safe"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "책상 너머에서 황두칠이 이쪽을 본다. 금고에 손을 대면 끝이다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "그래도 다이얼을 돌린다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "CAUGHT",
+     "id": "H-04_SAFE:2:0"
+    },
+    {
+     "text": "물러선다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "H-04_SAFE:2:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-013",
+   "emo": "분노",
+   "text": "손님이 금고를 만지네. 다들 올라와!"
+  },
+  {
+   "op": "cmd",
+   "name": "sb",
+   "args": [
+    "raid"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "SB_BURNT == 1",
+   "to": "ASH"
+  },
+  {
+   "op": "if",
+   "cond": "has(\"M-211\") == 1",
+   "to": "EMPTY"
+  },
+  {
+   "op": "if",
+   "cond": "HO_LEDGER == 99",
+   "to": "EMPTY"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "열린 금고. 장부가 제자리에 있다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "장부를 꺼낸다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TAKE",
+     "id": "H-04_SAFE:3:0"
+    },
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "H-04_SAFE:3:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "give(\"M-211\", 1); HO_LEDGER = 0"
+  },
+  {
+   "op": "cmd",
+   "name": "sb",
+   "args": [
+    "took"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈 금고. 장부가 놓였던 자리만 먼지가 없다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "금고 안은 비었다. 난로 앞에 타다 만 장부 귀퉁이가 굴러다닌다. '규정 제1조 — 장부는 지운다고…'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-105.txt"
+}

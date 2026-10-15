@@ -1,0 +1,75 @@
+# 새벽인력 본소 본동 2층 H-04(SD-09a L-R02-19 ③ · SD-03a §8.5 · SD-14 CR-513 · 단계 1-6)
+# 40×20 · 위 복도(계단 · 옥상 뚜껑) · 아래 왼쪽 실장실(구만호, 목걸이 마스터 코드 금고 — FQ-SB-05) · 아래 오른쪽 소장실(황두칠, 금고: 장부 M-211 · 의뢰서 M-212).
+# 금고: [자물쇠 따기 50] 또는 허리춤 열쇠(MQ-105 구매자 면담에서 [은신 50]). 황두칠은 인력시장(04~06시)에 마당으로 내려간다.
+map H-04 새벽인력 본소 본동 2층
+set sb
+grid
+###########################,############
+###########################,############
+###########################,############
+#,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,#
+#,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,#
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,#
+#,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,#
+#,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,#
+########w###################c###########
+########w###################c###########
+########w###################c###########
+#wwwwwwwwwwwwwwww#ccccccccccccccccccccc#
+#wwwwwwwwwwwwwwww#ccccccccccccccccccccc#
+#wwwwwwwwwwwwwwww#ccccccccccccccccccccc#
+#wwwwwwwwwwwwwwww#ccccccccccccccccccccc#
+#wwwwwwwwwwwwwwww#ccccccccccccccccccccc#
+#wwwwwwwwwwwwwwww#ccccccccccccccccccccc#
+#wwwwwwwwwwwwwwww#ccccccccccccccccccccc#
+#wwwwwwwwwwwwwwww#ccccccccccccccccccccc#
+########################################
+end
+exit 0 5 H-02 from_H-04
+mark from_H-02 1 5 E
+door 27 1 kind=hatch "옥상"
+exit 27 0 X-SB from_roof
+mark from_roof 27 3 S
+mark office_in 28 12 S
+mark hdc_desk 28 12 S
+mark hdc_stove 33 16 E
+door 8 9 "실장실"
+door 28 9 "소장실"
+# 복도
+prop w_window 12 1
+prop w_window 31 1
+prop w_calendar 6 1
+text 6 2 "2277년 10월 달력. 날마다 '인솔 ○명'. 24일 칸에만 '볼트 — 3,000'." 
+prop water_cooler 36 3
+prop bench 15 6
+prop w_photo 21 1
+text 21 2 "단체 사진. '새벽인력 창립 170주년 — 2278년 1월 1일'. 내년 행사 사진을 미리 걸었다. 가운데 황두칠이 웃는다." w=2
+npc CR-437 20 5 W sheet=en_cr437_loco cond="SB_RAID == 0" route=a:20,5,6;b:32,5,6 bark="2층은 소장님 손님만."
+# 실장실(구만호)
+prop office_desk 6 13
+npc C-049 7 12 S cond="SB_RAID == 0" bark="장부는 소장님 거고, 숫자는 내 거야."
+prop file_cabinet 2 11
+box 2 11 cabinet name="실장실 서류함"
+prop safe 14 11
+box 14 11 safe lock=75 name="근태 목걸이 마스터 코드 금고"
+text 14 12 "작은 금고. 문에 '목걸이 마스터 — 실장 외 열지 말 것'. 자물쇠가 단단하다."
+prop w_map 4 9
+text 4 10 "인솔 노선도. 고척 돔 · 구로 공단 · 여의도 철거 현장. 붉은 실이 고척 돔에 모인다." w=2
+prop sofa_home 10 16
+prop low_table 10 17
+# 소장실(황두칠)
+prop chief_desk 27 13
+text 27 13 "소장 책상. 결재판에 '비상정부 공보실 — 협조 감사'. 도장은 아직 마르지 않았다." w=2
+npc C-013 28 12 S cond="SB_RAID == 0 and D_HDC == 0 and SB_TALK != 2 and (GAME_HOUR < 4 or GAME_HOUR >= 6)" bark="빚 없는 사람은 없어. 장부에 안 적혔을 뿐이지."
+prop safe_big 36 11
+text 36 11 "소장실 금고. 놋쇠 명판에 '근면'. 다이얼이 손때로 반들반들하다." scene=H-04_SAFE
+prop sofa_home 20 16
+prop low_table 20 17
+prop heater 33 16
+text 33 16 "석유 난로. 불이 약하다. 위에 주전자." 
+prop bookshelf_home 19 11
+prop w_photo 22 9
+text 22 10 "액자. 2108년 첫 소장의 사진. 아래 '규정 제1조 — 장부는 지운다고 지워지지 않는다'." w=2
+prop plant_pot 38 17
+prop gun_locker 38 11
+box 38 11 police name="소장실 총기함" lock=25

@@ -1,0 +1,91 @@
+{
+ "id": "H-03_CAGE",
+ "title": "우리 문",
+ "loc": "L-R02-19",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "OPEN": 3,
+  "CUFFED": 5
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SB_CUFF == 1",
+   "to": "CUFFED"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "놋쇠 맹꽁이자물쇠 하나. 철창 안에서 누군가 숨을 죽인다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "철사로 자물쇠를 돌린다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "자물쇠 따기",
+       "min": 25
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "OPEN",
+     "id": "H-03_CAGE:1:0"
+    },
+    {
+     "text": "문살을 비틀어 걸쇠를 뽑는다",
+     "tags": [
+      {
+       "k": "stat",
+       "name": "힘",
+       "min": 7
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "OPEN",
+     "id": "H-03_CAGE:1:1"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "H-03_CAGE:1:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "sb",
+   "args": [
+    "free"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "수갑이 먼저다. 손목이 묶인 채로는 자물쇠에 손이 닿지 않는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-105.txt"
+}

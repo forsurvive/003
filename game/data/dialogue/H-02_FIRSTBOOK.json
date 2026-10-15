@@ -1,0 +1,33 @@
+{
+ "id": "H-02_FIRSTBOOK",
+ "title": "2108년 첫 장부",
+ "loc": "L-R02-19",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "맨 아래 칸, 표지에 '근면' 스티커가 붙은 장부. 첫 장을 넘긴다."
+  },
+  {
+   "op": "cmd",
+   "name": "note",
+   "args": [
+    "SB-RULE"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-105.txt"
+}

@@ -1,0 +1,32 @@
+{
+ "id": "MQ-105_HDC_AFTER",
+ "title": "소장 황두칠 — 거래처",
+ "loc": "L-R02-19",
+ "npc": "C-013",
+ "cond": "SB_DEAL == 1 and SB_RAID == 0",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "C-013",
+   "emo": "미소",
+   "text": "거래처 오셨네. 이번엔 누구 값을 사러 왔나."
+  },
+  {
+   "op": "line",
+   "who": "C-013",
+   "emo": "기본",
+   "text": "장부는 지운다고 지워지지 않아. 줄 그은 데도 장부야."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-105.txt"
+}

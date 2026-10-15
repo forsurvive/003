@@ -16,3 +16,18 @@ prop info_board 1 1
 text 1 1 "2077 안내판. '맑은 날에는 여의도 국회 돔과 남산 타워가 보입니다.' 돔은 무너졌다. 탑은 그대로다."
 prop bench 4 3
 text 4 3 "쉼터 벤치. 등받이에 새긴 낙서 '2076. 10. 우리 여기서 처음 만남'." w=2
+
+# 노량진 다리목 검문소(L-R01-20, SD-09a B · SD-03a §8.5 장부 인도처 · 단계 1-6): 계엄군 분대 초소. 엄도현 하사(N-R01-050)가 장부를 받는다.
+# 정합: 다리 건너 판독기 구역·통행 판정은 2막 횡단(MQ-201)과 함께 — 지금은 초소와 사람만 선다.
+spot L-R01-20 10 6
+prop guard_booth 6 1
+text 6 1 "계엄군 다리목 초소. 무전기와 판독기 대장, 탄띠." scene=MQ-105_BJ_IDLE
+prop sandbags 1 3
+prop sandbags 2 3
+prop sandbags 7 3
+prop sandbags 8 3
+prop jersey 4 3
+text 4 3 "콘크리트 차단벽. 스텐실 '계엄 구역 — 판독기 앞에서 정지'." 
+npc N-R01-050 5 4 S
+npc CR-401 2 4 E sheet=en_cr401_loco bark="강 건너는 판독기 구역입니다. 등록증을 준비하십시오."
+npc CR-401 8 4 W sheet=en_cr401_loco bark="노량진 쪽 통행은 06시부터입니다."

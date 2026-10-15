@@ -1,0 +1,395 @@
+{
+ "id": "X-SB_GATE",
+ "title": "본소 정문",
+ "loc": "L-R02-19",
+ "npc": "N-R02-035",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "ASK": 4,
+  "BUYER": 5,
+  "PAID": 7,
+  "FREE": 11,
+  "NOPE": 15,
+  "DEAL": 17,
+  "NODEAL": 21,
+  "JOB": 23,
+  "BYE": 25,
+  "RAID": 29,
+  "KNOWN": 32,
+  "FOOLED": 35,
+  "GIVEUP": 37,
+  "RUN": 40,
+  "CLIENT": 43
+ },
+ "ops": [
+  {
+   "op": "cmd",
+   "name": "sb",
+   "args": [
+    "enter"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "SB_DEAL == 1",
+   "to": "CLIENT"
+  },
+  {
+   "op": "if",
+   "cond": "V_WANTED >= 10 and PC_TORSO == \"A-001\"",
+   "to": "KNOWN"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-035",
+   "emo": "기본",
+   "text": "번호표 받으러 왔어, 사람 사러 왔어?"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "사람을 사러 왔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "BUYER",
+     "id": "X-SB_GATE:1:0"
+    },
+    {
+     "text": "소장한테 볼일이 있다. 돈 얘기다",
+     "tags": [],
+     "cond": "PC_CAPS >= 1000",
+     "fx": "",
+     "to": "DEAL",
+     "id": "X-SB_GATE:1:1"
+    },
+    {
+     "text": "소장한테 볼일이 있다",
+     "tags": [],
+     "cond": "PC_CAPS < 1000",
+     "fx": "",
+     "to": "NODEAL",
+     "id": "X-SB_GATE:1:2"
+    },
+    {
+     "text": "일자리를 찾는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "JOB",
+     "id": "X-SB_GATE:1:3"
+    },
+    {
+     "text": "총을 꺼낸다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "RAID",
+     "id": "X-SB_GATE:1:4"
+    },
+    {
+     "text": "돌아선다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "BYE",
+     "id": "X-SB_GATE:1:5"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-035",
+   "emo": "미소",
+   "text": "손님이시네. 보증금 500. 사 가면 돌려주고, 그냥 가면 장부 값이야."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "보증금을 건넨다",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 500
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PAID",
+     "id": "X-SB_GATE:2:0"
+    },
+    {
+     "text": "보증금은 소장한테 직접 내지. 네 손 거치면 반이 없어지던데",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "보통"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "FREE",
+     "id": "X-SB_GATE:2:1",
+     "fail": "NOPE"
+    },
+    {
+     "text": "다음에 온다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "BYE",
+     "id": "X-SB_GATE:2:2"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "SB_PASS = 1; SB_DEPO = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "sb",
+   "args": [
+    "pass"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-035",
+   "emo": "기본",
+   "text": "손님 표찰. 목에 걸고 다녀. 소장님은 2층, 새벽 장 설 땐 마당에 계셔."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "SB_PASS = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "sb",
+   "args": [
+    "pass"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-035",
+   "emo": "분노",
+   "text": "…말은 잘하네. 들어가. 표찰 걸고. 소장님은 2층이야."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-035",
+   "emo": "기본",
+   "text": "말 많은 손님은 보증금이 두 배야. 오늘은 그냥 가."
+  },
+  {
+   "op": "goto",
+   "to": "BYE"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-035",
+   "emo": "놀람",
+   "text": "돈 얘기면 소장님이 좋아하시지. 2층으로 올라가. 계단 왼쪽."
+  },
+  {
+   "op": "do",
+   "fx": "SB_PASS = 2"
+  },
+  {
+   "op": "cmd",
+   "name": "sb",
+   "args": [
+    "pass"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-035",
+   "emo": "기본",
+   "text": "소장님은 돈 얘기만 들어. 천 캡은 들고 와야 계단을 밟지."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-035",
+   "emo": "미소",
+   "text": "새벽 네 시에 와. 번호표 받고 줄 서. 빚부터 지면 일은 금방 생겨."
+  },
+  {
+   "op": "goto",
+   "to": "BYE"
+  },
+  {
+   "op": "do",
+   "fx": "SB_PASS = 3"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-035",
+   "emo": "기본",
+   "text": "그럼 문 앞에서 비켜. 번호표 없는 사람은 마당에 못 들어와."
+  },
+  {
+   "op": "cmd",
+   "name": "sb",
+   "args": [
+    "shoo"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-035",
+   "emo": "분노",
+   "text": "총? 여기서? 다들 나와!"
+  },
+  {
+   "op": "cmd",
+   "name": "sb",
+   "args": [
+    "raid"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-035",
+   "emo": "놀람",
+   "text": "…볼트 작업복. 열아홉쯤. 손목에 그 기계."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-035",
+   "emo": "미소",
+   "text": "이게 웬 3,000캡이냐. 제 발로 걸어 들어오네."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "(손을 내민다. 우리 안에서부터 시작해 본다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "GIVEUP",
+     "id": "X-SB_GATE:3:0"
+    },
+    {
+     "text": "작업복은 주운 거야. 진짜 볼트 애는 강 건넜어",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "어려움"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "FOOLED",
+     "id": "X-SB_GATE:3:1",
+     "fail": "RAID"
+    },
+    {
+     "text": "총을 꺼낸다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "RAID",
+     "id": "X-SB_GATE:3:2"
+    },
+    {
+     "text": "뒤돌아 달아난다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "RUN",
+     "id": "X-SB_GATE:3:3"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-035",
+   "emo": "기본",
+   "text": "…강을? 하긴 요새 그 옷 입은 시체가 많긴 하지. 볼일 있으면 말해."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-035",
+   "emo": "미소",
+   "text": "착하네. 수갑 차. 목걸이도 하나 걸어 주지."
+  },
+  {
+   "op": "cmd",
+   "name": "sb",
+   "args": [
+    "surrender"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-035",
+   "emo": "분노",
+   "text": "잡아! 다리만 노려!"
+  },
+  {
+   "op": "cmd",
+   "name": "sb",
+   "args": [
+    "raid"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-035",
+   "emo": "미소",
+   "text": "거래처 오셨네. 들어가세요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-105.txt"
+}

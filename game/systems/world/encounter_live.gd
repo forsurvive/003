@@ -259,6 +259,14 @@ func cmd(what: String) -> void:
 		"leave":
 			cur["state"] = "leave"
 			cur["t"] = 0.0
+		"surrender":                                                     # 손을 내민다(MQ-105 '일부러 잡힌다', SD-03a §8.5): 싸움 없이 생포
+			for a in cur["actors"]:
+				if is_instance_valid(a):
+					a.queue_free()
+			cur["actors"] = []
+			cur["state"] = "leave"
+			cur["t"] = 99.0
+			host.capture.call_deferred("SB")
 
 
 func _leave(dt: float) -> void:

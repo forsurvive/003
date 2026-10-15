@@ -1,0 +1,26 @@
+{
+ "id": "MQ-105_BJ_IDLE",
+ "title": "노량진 다리목 초소",
+ "loc": "L-R01-20",
+ "npc": "N-R01-050",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "기본",
+   "text": "노량진 다리목 초소입니다. 강 건너는 판독기 구역. 등록증 없으면 돌아가십시오."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-105.txt"
+}

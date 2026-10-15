@@ -1,0 +1,83 @@
+{
+ "id": "MQ-105_HDC_WHO",
+ "title": "소장 황두칠",
+ "loc": "L-R02-19",
+ "npc": "C-013",
+ "cond": "SB_PASS != 1 and SB_PASS != 2 and SB_DEAL == 0 and SB_RAID == 0",
+ "labels": {
+  "START": 0,
+  "OK": 2,
+  "NO": 5
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "C-013",
+   "emo": "분노",
+   "text": "누구야. 표찰도 없이 2층까지."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "손님입니다. 십장이 올려 보냈어요",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "어려움"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "OK",
+     "id": "MQ-105_HDC_WHO:1:0",
+     "fail": "NO"
+    },
+    {
+     "text": "총을 꺼낸다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "NO",
+     "id": "MQ-105_HDC_WHO:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-013",
+   "emo": "기본",
+   "text": "십장 그놈은… 됐어. 손님이면 번호부터 골라."
+  },
+  {
+   "op": "do",
+   "fx": "SB_PASS = 1"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-013",
+   "emo": "분노",
+   "text": "다들 올라와! 손님이 아니다!"
+  },
+  {
+   "op": "cmd",
+   "name": "sb",
+   "args": [
+    "raid"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-105.txt"
+}

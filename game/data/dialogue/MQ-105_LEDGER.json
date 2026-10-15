@@ -1,0 +1,159 @@
+{
+ "id": "MQ-105_LEDGER",
+ "title": "황두칠의 장부",
+ "loc": "L-R02-19",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TAKE": 8,
+  "BACK": 12,
+  "DROP": 16
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "금고 안. 두꺼운 장부 한 권과, 클립으로 물린 누런 봉투 하나."
+  },
+  {
+   "op": "cmd",
+   "name": "note",
+   "args": [
+    "SB-LEDGER"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "note",
+   "args": [
+    "SB-ORDER"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "note",
+   "args": [
+    "SB-ORDER7"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "sb",
+   "args": [
+    "read"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "손목 화면이 한 번 깜박인다. 지령 사본 속 '관리 후보'라는 말이 화면 맨 윗줄과 같다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "봉투는 챙겼다. 장부가 남았다. 백열두 명의 빚이 적힌 장부."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "장부를 챙긴다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TAKE",
+     "id": "MQ-105_LEDGER:1:0"
+    },
+    {
+     "text": "장부를 도로 넣고 금고를 잠근다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "BACK",
+     "id": "MQ-105_LEDGER:1:1"
+    },
+    {
+     "text": "장부를 꺼내 바닥에 던져 두고 간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "DROP",
+     "id": "MQ-105_LEDGER:1:2"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "give(\"M-211\", 1); HO_LEDGER = 0"
+  },
+  {
+   "op": "cmd",
+   "name": "sb",
+   "args": [
+    "took"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "장부가 가방 안에서 무겁다. 어디로 가져갈지는 걸으면서 정한다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "HO_LEDGER = 96"
+  },
+  {
+   "op": "cmd",
+   "name": "sb",
+   "args": [
+    "decide",
+    "96"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "다이얼을 돌려 놓는다. 장부는 원래 자리로. 아무 일도 없었던 것처럼."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "HO_LEDGER = 97"
+  },
+  {
+   "op": "cmd",
+   "name": "sb",
+   "args": [
+    "decide",
+    "97"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "장부가 소장실 바닥에 펼쳐진 채 엎어진다. 누가 먼저 줍느냐는 이제 이 건물 사람들 일이다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-105.txt"
+}

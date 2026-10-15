@@ -1,0 +1,170 @@
+{
+ "id": "MQ-105_HDC_DEAL",
+ "title": "소장 황두칠 — 거래",
+ "loc": "L-R02-19",
+ "npc": "C-013",
+ "cond": "SB_PASS == 2 and SB_DEAL == 0 and SB_RAID == 0",
+ "labels": {
+  "START": 0,
+  "SHOW": 4,
+  "LATER": 6,
+  "SOLD": 8
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "C-013",
+   "emo": "미소",
+   "text": "볼트 작업복이 제 발로 걸어왔네. 3,000캡짜리가."
+  },
+  {
+   "op": "line",
+   "who": "C-013",
+   "emo": "기본",
+   "text": "앉아. 우리는 사람 안 팔아. 빚을 팔지. 장부에 적힌 건 다 빚이야."
+  },
+  {
+   "op": "line",
+   "who": "C-013",
+   "emo": "기본",
+   "text": "네 빚은 비상정부가 대신 적었어. 3,000. 갚을 생각이면 들어 주지."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "내 값은 내가 산다. 천 캡. 장부에서 이름 지워",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "물물교환",
+       "min": 50
+      },
+      {
+       "k": "caps",
+       "n": 1000
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "SOLD",
+     "id": "MQ-105_HDC_DEAL:1:0"
+    },
+    {
+     "text": "그 빚, 누가 적었는지 보여 줘",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SHOW",
+     "id": "MQ-105_HDC_DEAL:1:1"
+    },
+    {
+     "text": "생각해 본다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "LATER",
+     "id": "MQ-105_HDC_DEAL:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-013",
+   "emo": "미소",
+   "text": "장부는 금고에서 안 나와. 손님한테는 더더욱. 값을 치르면 보여 주지."
+  },
+  {
+   "op": "goto",
+   "to": "LATER"
+  },
+  {
+   "op": "line",
+   "who": "C-013",
+   "emo": "기본",
+   "text": "생각은 빨리 해. 값은 하루마다 올라."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-013",
+   "emo": "미소",
+   "text": "장사할 줄 아네. 천 캡이면 비상정부 시세의 삼분의 일이야. 대신 현금이지."
+  },
+  {
+   "op": "cmd",
+   "name": "sb",
+   "args": [
+    "safe_show"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "황두칠이 금고를 열고 두꺼운 장부를 펼친다. 맨 아랫줄 붉은 글씨. 그 위에 누런 봉투가 클립으로 물려 있다."
+  },
+  {
+   "op": "cmd",
+   "name": "note",
+   "args": [
+    "SB-ORDER"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "note",
+   "args": [
+    "SB-ORDER7"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "sb",
+   "args": [
+    "read"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-013",
+   "emo": "기본",
+   "text": "인력사무소 규정 제1조. 장부는 지운다고 지워지지 않아. 그래도 줄은 긋지."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "펜이 한 번 지나간다. 맨 아랫줄 위에 굵은 줄 하나."
+  },
+  {
+   "op": "do",
+   "fx": "SB_DEAL = 1; HO_LEDGER = 96; wanted(-30); aff(\"SB\", 15)"
+  },
+  {
+   "op": "cmd",
+   "name": "sb",
+   "args": [
+    "decide",
+    "96"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-013",
+   "emo": "미소",
+   "text": "이제 거래처야. 마당 애들한테도 그렇게 말해 두지. 의뢰서는… 봤으니 됐지?"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-105.txt"
+}

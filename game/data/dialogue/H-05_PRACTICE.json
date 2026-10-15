@@ -1,0 +1,114 @@
+{
+ "id": "H-05_PRACTICE",
+ "title": "해제 연습용 목걸이",
+ "loc": "L-R02-19",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "LEARN": 3,
+  "MINE": 5,
+  "OFF": 7
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SB_COLLAR == 1",
+   "to": "MINE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "바이스에 물린 고장 난 목걸이. 뒤판 나사가 반쯤 풀려 있다. 연습용이다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "뒤판을 열고 기폭 선의 순서를 익힌다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "LEARN",
+     "id": "H-05_PRACTICE:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "H-05_PRACTICE:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "붉은 선, 검은 선, 그리고 표시등 뒤에 숨은 세 번째 선. 진짜 목걸이는 세 번째 선이 먼저다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "바이스 옆에 공구가 다 있다. 내 목에 걸린 것과 같은 목걸이다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "연습용으로 선 순서를 확인하고 내 목걸이 뒤판을 연다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 25
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "OFF",
+     "id": "H-05_PRACTICE:2:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "H-05_PRACTICE:2:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "SB_COLLAR = 0"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "세 번째 선을 먼저. 붉은 불이 꺼지고 목걸이가 두 쪽으로 떨어진다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-105.txt"
+}

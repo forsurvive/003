@@ -8,6 +8,10 @@
 ## MQ-104(1-5, SD-03a §8.4): 벙커에 들어오면 20 → 출석부·당직 일지·유해를 보면 30 → 인증 단말(K_CODE·K_NET, XP 300/180) 40 + 수색조가
 ##   12초 뒤 내려온다(그때 있는 방에서 선우진과 마주침 — 말로·과학·교전) · 기계실 환기구 → 배수로로 빠지면 은신 · 벙커를 나서면 100.
 ##   호송차의 하도윤(V_DOYUN 1): 자물쇠 50 · 은신 50(열쇠) · 경비 처리 · 수색조와 싸웠으면 초소가 빈다. 인증한 다음 날 아침 호송차는 떠난다.
+## MQ-105(1-6, SD-03a §8.5 · SD-09a L-R02-19): 본소(손 맵 X-SB · H-02~H-05)에 들어오면 20 → 장부·의뢰서를 읽으면 30(K_CODE · K_NET · K_LINE,
+##   XP 300/180) → HO_LEDGER가 정해지면 100(장부를 들고 본소를 나서도 100). 정면 습격(SB_RAID): 마당 사람을 치거나 정문·소장실에서 들키면
+##   평시 인물이 적으로 바뀌고(맵마다, 들어오는 맵도) 마당엔 모자란 만큼 조직원이 붙는다(합 10). 황두칠은 HP 30%에서 장부를 난로에 넣으려 한다(8초).
+##   표찰 없이 마당에 서면(웅크리지 않고 6칸 안) 한 번 경고하고 3초 뒤 습격. 근태 목걸이를 찬 채 본소 밖에 6초 서 있으면 터진다.
 class_name Act1Paths
 extends Node
 
@@ -23,7 +27,21 @@ const SEARCH_DELAY := 12.0
 const CLUE_QUEST := {1: "MQ-103", 2: "MQ-104", 3: "MQ-105"}
 const CLUE_TEXT := {1: "영등포 지하에 200살 먹은 기술자가 있다 — 2077년엔 세진 하청",
 	2: "볼트 기록의 좌표가 여의도를 가리킨다", 3: "현상금을 건 자의 의뢰서는 새벽인력 장부에 붙어 있다"}
-const PATH_MAPS := {"MQ-103": ["J-"], "MQ-104": ["Y-"], "MQ-105": ["H-01", "H-02"]}
+const PATH_MAPS := {"MQ-103": ["J-"], "MQ-104": ["Y-"], "MQ-105": ["H-0"]}
+# MQ-105 새벽인력 본소: 평시 인물 → 습격 때 적 종류(SD-14 · SD-09a ⑤). 독사는 MQ-101과 같은 CR-534, 황두칠은 보스 CR-513
+const SB_ROLE := {"N-R02-035": "CR-438", "CR-435": "CR-435", "CR-436": "CR-436", "CR-437": "CR-437", "CR-438": "CR-438",
+	"C-021": "CR-534", "N-R02-037": "CR-435", "N-R02-036": "CR-435", "C-049": "CR-438", "N-R02-038": "CR-437", "C-013": "CR-513"}
+const SB_RAID_N := 10                                ## 정면 습격 조직원 수(SD-03a §8.5: 조직원 10 + 황두칠 + 독사)
+const SB_CAGES := {4: 1, 10: 1, 22: 2, 28: 1, 34: 1} ## H-03 우리 문 x → 갇힌 사람 수(주인공 칸 16 빼고 합 6)
+const SB_YARD := Rect2i(11, 11, 37, 25)              ## X-SB 담 안(마당 + 뒷마당, 손 맵 좌표)
+const SB_WALLS := Rect2i(10, 3, 39, 35)              ## X-SB 본소 울타리 안(건물 · 옥상 · 마당 — 이 밖이 '본소 밖')
+const SB_BURN_SECS := 8.0
+var _sb: Array = []                                  ## 지금 맵에서 싸우는 새벽인력
+var _hdc: Enemy = null
+var _hdc_burn := -1.0
+var _sb_warn := -1.0
+var _collar := -1.0
+var _sb_zone := ""
 
 
 func setup(h: InteriorHost, is_log := false) -> void:
@@ -32,8 +50,10 @@ func setup(h: InteriorHost, is_log := false) -> void:
 	log_on = is_log
 	host.ev.handlers["jm"] = _jm
 	host.ev.handlers["yd"] = _yd
+	host.ev.handlers["sb"] = _sb_cmd
 	host.map_entered.connect(_on_map)
 	host.combat.enemy_killed.connect(_on_killed)
+	host.combat.resident_hit.connect(_on_sb_hit)
 
 
 func v(k: String) -> int:
@@ -69,6 +89,7 @@ func _process(dt: float) -> void:
 	if host.map != null and host.map.id == "Y-04" and v("MQ104_AUTH") >= 1:
 		host.map.unlock_door(3, 12)                                     # 방폭문: 관리자 인증으로도 열린다(SD-09a Y-04)
 	_yd_tick()
+	_sb_tick()
 	if not _ambush.is_empty():
 		var alive := _ambush.filter(func(e): return is_instance_valid(e) and not e.cmb.dead)
 		if alive.is_empty():
@@ -121,6 +142,7 @@ func _on_map(id: String) -> void:
 		_maybe_ambush()
 	if id.begins_with("Y-"):
 		_enter_bunker(id)
+	_sb_map(id)
 	if id == "Y-05" and v("MQ104_SEARCH") == 1:                         # 수색조가 내려오기 전에 환기구로 빠졌다(은신)
 		_search_t = -1.0
 		st.vars.set_v("MQ104_SEARCH", 3)
@@ -182,6 +204,15 @@ func _maybe_ambush() -> void:
 func _on_killed(_eid: String, alive: int) -> void:
 	if host.map == null:
 		return
+	for e in _sb:                                                       # 본소 이름 있는 적(황두칠 · 독사)
+		if is_instance_valid(e) and e.cmb.dead and not e.has_meta("sb_done"):
+			e.set_meta("sb_done", true)
+			if e.who == "C-013":
+				_hdc_dead()
+			elif e.who == "C-021":
+				st.vars.set_v("D_DS", 1)
+				st.dead["C-021"] = true
+				_log("독사 사망")
 	if host.map.id == "J-09" and alive == 0 and v("MQ103_NEST") == 0:
 		st.vars.set_v("MQ103_NEST", 1)
 		if v("MQ103_JOB") == 1:
@@ -392,3 +423,359 @@ func _finish() -> void:
 		st.quests.set_stage("MQ-103", 100)
 		# 판도 지하상가 +지하시장 5는 1-12 판도 표와 함께 붙인다(구현 정합)
 		_log("MQ-103 완료")
+
+
+# ---------------------------------------------------------------- MQ-105 새벽인력 본소(@cmd sb …, 1-6)
+## 지금 서 있는 본소 구역: "X-SB"(월드의 손 맵) · "H-02"~"H-05" · ""(밖)
+## 잡혀 왔다(습격 중이었어도): 마당은 잡았으니 가라앉는다 — 교대 조가 다시 선다
+func _on_captured() -> void:
+	if v("SB_RAID") == 1:
+		st.vars.set_v("SB_RAID", 0)
+		for k in st.boxes.keys():
+			if str(k).begins_with("sbclear:"):
+				st.boxes.erase(k)
+		_log("습격 중 생포 → 습격 끝")
+
+
+func _sb_where() -> String:
+	if host.map == null:
+		return ""
+	if host.map.id == "X-SB" or host.map.id.begins_with("H-0"):
+		return host.map.id
+	return ""
+
+
+func _sb_local() -> Vector2i:
+	return host.map.tile_of(host.player.loco.logical) - WorldMap.origin_of("X-SB")
+
+
+func _sb_enter() -> void:
+	var s := st.quests.stage("MQ-105")
+	if s >= 20:
+		return
+	if st.quests.stage("MQ-102") == 0:
+		_open_hub()
+	if s < 10:
+		st.quests.set_stage("MQ-105", 10)
+	st.quests.set_stage("MQ-105", 20)
+	st.places.raise("L-R02-19", PlaceLog.FOUND)
+	_log("본소 들어옴")
+
+
+func _sb_tick() -> void:
+	var where := _sb_where()
+	if where != _sb_zone:
+		_sb_zone = where
+		if where == "X-SB":
+			_sb_map("X-SB")
+	var inside := where != "" and (where != "X-SB" or SB_WALLS.has_point(_sb_local()))
+	if inside and where != "X-SB":
+		_sb_enter()
+	elif where == "X-SB" and SB_YARD.has_point(_sb_local()):
+		_sb_enter()
+	# 장부를 들고 본소를 나섰다 = 결정(SD-03a §8.5 '가지고 나가기도 결정이다')
+	if not inside and st.items.has("M-211") and st.quests.stage("MQ-105") >= 30 and st.quests.stage("MQ-105") < 100:
+		_sb_decide(0)
+	_sb_watch(where)
+	_sb_collar(inside)
+	if not _sb.is_empty():
+		_sb = _sb.filter(func(e): return is_instance_valid(e) and not e.cmb.dead)
+		if _sb.is_empty() and host.map != null:
+			st.boxes["sbclear:" + host.map.id] = {"open": true}
+	if is_instance_valid(_hdc) and not _hdc.cmb.dead:
+		if _hdc_burn < 0.0 and _hdc.cmb.hp <= _hdc.cmb.max_hp * 0.3 and v("SB_SAFE") == 0 and v("SB_READ") == 0:
+			_hdc_burn = SB_BURN_SECS
+			host.hint("황두칠이 금고로 달려간다 — 장부를 난로에 처넣으려 한다!", 4.0)
+		elif _hdc_burn > 0.0:
+			_hdc_burn -= 0.5
+			if _hdc_burn <= 0.0:
+				st.vars.set_v("SB_BURNT", 1)
+				st.vars.set_v("SB_SAFE", 1)
+				st.vars.set_v("HO_LEDGER", 99)
+				host.map.set_prop_state(Vector2i(36, 11), "open")
+				host.hint("난로 속에서 장부가 타오른다. 의뢰서 봉투만 황두칠의 외투 안에 남았다.", 5.0)
+				_log("황두칠이 장부를 태움")
+
+
+## 표찰 없이 담 안에 선 사람: 6칸 안 · 서 있음(웅크리면 못 봄) → 경고 한 번, 3초 뒤에도 보이면 습격
+func _sb_watch(where: String) -> void:
+	if v("SB_RAID") != 0 or v("SB_DEAL") == 1 or v("SB_PASS") == 1 or v("SB_PASS") == 2 or where == "" or host.box.active or host.ev.busy():
+		_sb_warn = -1.0
+		return
+	if where == "X-SB" and not SB_YARD.has_point(_sb_local()):
+		_sb_warn = -1.0
+		return
+	if where == "H-03" and v("CAPTURE_BY") == 1:
+		return                                                          # 잡혀 온 사람은 우리 안이 제자리다
+	var seen := ""
+	var me: Vector2 = host.player.loco.logical
+	for n in host.npcs:
+		if SB_ROLE.has(str(n["id"])) and is_instance_valid(n["actor"]) and n["actor"].visible \
+				and n["actor"].loco.logical.distance_to(me) <= 6.0 * 32.0 and not host.combat.crouch \
+				and host.map.line_of_sight(n["actor"].loco.logical, me):
+			seen = str(n["id"])
+			break
+	if seen == "":
+		if _sb_warn > 0.0:
+			_sb_warn = -1.0
+		return
+	if _sb_warn < 0.0:
+		_sb_warn = 3.0
+		host.combat._pop("거기! 표찰 없는 놈이다. 나가!", me + Vector2(0, -40), Color("E04A35"))
+		host.hint("들켰다 — 3초 안에 시야를 벗어나거나 몸을 낮춘다", 3.0)
+		return
+	_sb_warn -= 0.5
+	if _sb_warn <= 0.0:
+		_sb_warn = -1.0
+		_sb_raid("들킴")
+
+
+## 근태 목걸이를 찬 채 본소 밖(SD-06 · H-03 '마당 문 밖으로 나가면 터진다'): 6초 삑삑 → 폭발(최대 HP 60%)
+func _sb_collar(inside: bool) -> void:
+	if v("SB_COLLAR") == 0 or inside or host.map == null or not (host.map is WorldMap):
+		_collar = -1.0
+		return
+	if _collar < 0.0:
+		_collar = 6.0
+		host.hint("목걸이가 빠르게 삑삑거린다 — 담 밖이다!", 3.0)
+		return
+	_collar -= 0.5
+	if _collar <= 0.0:
+		_collar = -1.0
+		st.vars.set_v("SB_COLLAR", 0)
+		host.combat.damage(host.combat.pc.max_hp * 0.6)
+		host.hint("목걸이가 터졌다. 귀가 먹먹하다.", 5.0)
+		_log("목걸이 폭발")
+
+
+func _on_sb_hit(id: String) -> void:
+	if SB_ROLE.has(id) and _sb_where() != "" and v("SB_RAID") == 0:
+		_sb_raid("마당 사람을 침")
+
+
+## 정면 습격: 이 맵의 평시 인물을 적으로 바꾸고, 마당이면 모자란 만큼 습격 자리에 붙인다
+func _sb_raid(why: String) -> void:
+	if v("SB_RAID") != 0:
+		return
+	st.vars.set_v("SB_RAID", 1)
+	st.call_fn("aff", ["SB", -10])
+	_log("정면 습격(%s)" % why)
+	host.hint("새벽인력이 몰려나온다!", 4.0)
+	for n in host.npcs:
+		var id := str(n["id"])
+		if SB_ROLE.has(id) and is_instance_valid(n["actor"]) and n["actor"].visible:
+			_sb_spawn(id, n["actor"].loco.logical)
+			n["actor"].visible = false
+			host.map.blockers.erase(n["actor"])
+	if host.map.id == "X-SB":
+		_sb_fill()
+
+
+func _sb_lv(boss := false) -> int:
+	var pl := int(host.level())
+	return clampi(pl + 3, 8, 22) if boss else clampi(pl + 2, 4, 22)       # 정합: 위협 4(Lv 10~22)를 1막 레벨에 맞춰 낮춘다
+
+
+func _sb_spawn(id: String, p: Vector2) -> Enemy:
+	var cr: String = SB_ROLE[id]
+	var opts := {"lv": _sb_lv(cr == "CR-513")}
+	if id.begins_with("C-") or id.begins_with("N-"):
+		opts["who"] = id
+	if id == "CR-436" and host.map.id == "X-SB":
+		opts["arm"] = "rifle"                                            # 옥상 저격수(추심원 소총 판본)
+	var e := host.combat.spawn(cr, p, host.map, st, opts)
+	e.brain.gauge = 100.0
+	e.set_meta("capture", "SB")                                         # 새벽인력은 '생포만'(칠판 맨 아랫줄): 지면 우리에서 깬다
+	_sb.append(e)
+	if id == "C-013":
+		_hdc = e
+		_hdc_burn = -1.0
+	return e
+
+
+func _sb_fill() -> void:
+	var have := _sb.filter(func(e): return is_instance_valid(e) and not e.cmb.dead and str(e.get_meta("enemy_id")) != "CR-107").size()
+	var ids := ["CR-437", "CR-436", "CR-437", "CR-435", "CR-438", "CR-437", "CR-436", "CR-435", "CR-436", "CR-436"]
+	for i in range(SB_RAID_N):
+		if have >= SB_RAID_N:
+			break
+		var p: Vector2 = host.map.mark_pos("raid_%d" % (i + 1))
+		_sb_spawn(ids[i], p)
+		have += 1
+
+
+## 맵에 들어옴: 습격 중이면 그 맵 사람도 적으로 · 우리 문·금고 상태를 되살린다
+func _sb_map(id: String) -> void:
+	if not (id == "X-SB" or id.begins_with("H-0")):
+		return
+	if id != "X-SB":
+		_sb_enter()
+	_sb.clear()
+	_hdc = null
+	if v("SB_RAID") == 1 and not st.boxes.has("sbclear:" + id):
+		for n in host.map.data.get("npcs", []):
+			var nid := str(n["id"])
+			if not SB_ROLE.has(nid) or st.dead.has(nid) or (nid == "C-013" and v("D_HDC") == 1):
+				continue
+			if host.map is WorldMap and host.map.zone_of(Vector2i(int(n["x"]), int(n["y"]))) != "X-SB":
+				continue
+			if nid == "C-013" and id != "H-04":
+				continue                                                # 습격 중 황두칠은 소장실을 지킨다
+			_sb_spawn(nid, Vector2(int(n["x"]) * 32 + 16, int(n["y"]) * 32 + 16))
+		if id == "X-SB":
+			_sb_fill()
+	if id == "H-03" and v("CAPTURE_BY") == 1:
+		_on_captured()
+	if id == "H-03":
+		for x in SB_CAGES:
+			if st.boxes.has("sbcage:%d" % x):
+				host.ev.handlers["cage"].call(["open", x, 8], func() -> void: pass)
+				_sb_hide_cage(x)
+		if st.boxes.has("sb88"):
+			_sb_hide_npc("N-R02-040")
+	if id == "H-04" and v("SB_SAFE") == 1:
+		host.map.set_prop_state(Vector2i(36, 11), "open")
+
+
+func _sb_hide_npc(nid: String) -> void:
+	for n in host.npcs:
+		if str(n["id"]) == nid and is_instance_valid(n["actor"]):
+			n["actor"].visible = false
+			host.map.blockers.erase(n["actor"])
+
+
+## 우리 칸(문 x 기준 왼쪽 3 · 오른쪽 2, 3~7행)의 사람(소품 · 인물)을 지운다
+func _sb_hide_cage(x: int) -> void:
+	var r := Rect2i(x - 3, 3, 6, 5)
+	for p in host.map.props:
+		if str(p["name"]).begins_with("detainee") and r.has_point(Vector2i(int(p["x"]), int(p["y"]))):
+			p["node"].visible = false
+			host.map._put_solid(int(p["x"]), int(p["y"]), 0)
+	for n in host.npcs:
+		if is_instance_valid(n["actor"]) and r.has_point(host.map.tile_of(n["actor"].loco.logical)):
+			n["actor"].visible = false
+			host.map.blockers.erase(n["actor"])
+
+
+## 황두칠 사망(SD-03a §8.5 정면 습격: 카르마 +100 · 새벽 −30 · D_HDC): 허리춤 열쇠 · 외투 안주머니의 의뢰서 봉투
+func _hdc_dead() -> void:
+	st.vars.set_v("D_HDC", 1)
+	st.dead["C-013"] = true
+	st.call_fn("karma", [100])
+	st.call_fn("aff", ["SB", -30])
+	st.vars.set_v("SB_RAID", 2)
+	st.vars.set_v("SB_KEY", 1)
+	st.book.died("C-013", host.date_text)
+	_hdc_burn = -1.0
+	_log("황두칠 사망")
+	if v("SB_READ") == 0:
+		host.play_scene.call_deferred("MQ-105_COAT")
+	else:
+		host.hint("허리춤 열쇠고리를 챙겼다.", 4.0)
+
+
+func _sb_read() -> void:
+	if v("SB_READ") == 1:
+		return
+	var later := v("K_CODE") >= 1
+	st.vars.set_v("SB_READ", 1)
+	st.call_fn("give", ["M-212", 1])
+	st.vars.set_v("K_CODE", 1)
+	st.vars.set_v("K_NET", 1)
+	if v("K_LINE") == 0:
+		st.vars.set_v("K_LINE", 1)                                       # 시공 확인서 사본(K_LINE 일부, SD-03a §8.5)
+	st.call_fn("xp", [180 if later else 300])
+	_sb_enter()
+	if st.quests.stage("MQ-105") < 30:
+		st.quests.set_stage("MQ-105", 30)
+	_log("장부 읽음(XP %d)" % (180 if later else 300))
+
+
+func _sb_decide(ho: int) -> void:
+	st.vars.set_v("HO_LEDGER", ho)
+	if st.quests.stage("MQ-105") < 30:
+		_sb_read()
+	if st.quests.stage("MQ-105") < 100:
+		st.quests.set_stage("MQ-105", 100)
+		_log("MQ-105 완료(HO_LEDGER %d)" % ho)
+
+
+func _sb_safe_open() -> void:
+	st.vars.set_v("SB_SAFE", 1)
+	host.map.set_prop_state(Vector2i(36, 11), "open")
+	if v("SB_BURNT") == 0 and not st.items.has("M-211") and v("HO_LEDGER") != 81 and v("HO_LEDGER") != 1 and v("HO_LEDGER") != 99:
+		host.play_scene.call_deferred("MQ-105_LEDGER" if v("SB_READ") == 0 else "H-04_SAFE")
+
+
+## 우리 문 하나를 연다(주인공 앞 가장 가까운 닫힌 문): 갇힌 사람이 뒷문 통로로 빠져나간다. 여섯이 다 나가면 카르마 +100 · 새벽 −15 · 고향 +5
+func _sb_free() -> void:
+	var me := host.map.tile_of(host.player.loco.logical)
+	var best := -1
+	for x in SB_CAGES:
+		if st.boxes.has("sbcage:%d" % x):
+			continue
+		if best < 0 or absi(x - me.x) < absi(best - me.x):
+			best = x
+	if best < 0:
+		return
+	st.boxes["sbcage:%d" % best] = {"open": true}
+	host.ev.handlers["cage"].call(["open", best, 8], func() -> void: pass)
+	var n: int = SB_CAGES[best] - (1 if best == 22 and st.boxes.has("sb88") else 0)
+	st.vars.set_v("SB_FREED", v("SB_FREED") + n)
+	var said := {10: "127번 — 채윤재가 고개를 숙인다. '아내한테, 그 이름으로 전해 줄게.'", 22: "88번 — 기라희가 문살을 놓는다. 세이프빌 대신 노들로 간다고 했다."}
+	host.hint(said.get(best, "철창 안 사람이 말없이 뒷문 통로로 빠져나간다."), 5.0)
+	_sb_hide_cage(best)
+	if v("SB_FREED") >= 6 and not st.boxes.has("sbfreed6"):
+		st.boxes["sbfreed6"] = {"open": true}
+		st.call_fn("karma", [100])
+		st.call_fn("aff", ["SB", -15])
+		st.call_fn("aff", ["JC_BC", 5])                                   # 구출된 사람의 고향(우리 벽의 고향 이름 — 봉천이 가장 많다)
+		host.hint("우리에 남은 사람이 없다. 여섯이 모두 뒷문 통로로 나갔다.", 6.0)
+		_log("인력 여섯 풀어 줌")
+
+
+func _sb_cmd(a: Array, done: Callable) -> void:
+	match str(a[0]):
+		"enter":
+			_sb_enter()
+		"pass":
+			host.hint("손님 표찰을 목에 걸었다 — 마당과 본동을 다닐 수 있다", 5.0)
+		"shoo":
+			host.hint("번호표 없이는 마당에 못 들어간다. 다른 길도 있을 것이다.", 5.0)
+		"surrender":
+			host.capture.call_deferred("SB")
+		"raid":
+			_sb_raid("원고")
+		"pick":
+			if Lockpick.can_try(50, st.skill("LOCKPICK")):
+				host.open_lock(50, "dial", func() -> void: _sb_safe_open())
+			else:
+				host.hint("다이얼이 단단하다. [자물쇠 따기 50 필요]", 4.0)
+		"safe":
+			_sb_safe_open()
+		"safe_show":
+			pass
+		"read":
+			_sb_read()
+		"took":
+			host.hint("장부를 챙겼다 — 어디에 넘길지는 걸으며 정한다", 5.0)
+		"decide":
+			_sb_decide(int(a[1]))
+		"burned":
+			if v("SB_RAID") == 0 and _sb_where() == "X-SB":
+				host.hint("불길이 치솟자 마당이 술렁인다 — 장부 타는 냄새를 모를 리 없다!", 4.0)
+				_sb_raid("장부를 태움")
+		"hatch":
+			host.enter("H-04", "from_roof")
+		"dogs":
+			for e in host.combat.enemies.duplicate():
+				if is_instance_valid(e) and str(e.get_meta("enemy_id", "")) == "CR-107":
+					e.queue_free()
+					host.combat.enemies.erase(e)
+			host.hint("개들이 고기에 정신이 팔렸다. 뒷마당을 지나갈 수 있다.", 4.0)
+		"buy":
+			st.boxes["sb88"] = {"open": true}
+			st.vars.set_v("SB_FREED", v("SB_FREED") + 1)
+		"free":
+			_sb_free()
+	done.call()

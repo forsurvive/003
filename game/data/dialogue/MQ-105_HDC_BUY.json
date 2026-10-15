@@ -1,0 +1,207 @@
+{
+ "id": "MQ-105_HDC_BUY",
+ "title": "소장 황두칠 — 손님",
+ "loc": "L-R02-19",
+ "npc": "C-013",
+ "cond": "SB_PASS == 1 and SB_RAID == 0 and SB_DEAL == 0",
+ "labels": {
+  "START": 0,
+  "AGAIN": 4,
+  "LEDGER": 6,
+  "KEY": 8,
+  "BUY88": 14,
+  "REFUND": 20,
+  "MINE": 23
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SB_TALK == 1",
+   "to": "AGAIN"
+  },
+  {
+   "op": "do",
+   "fx": "SB_TALK = 1"
+  },
+  {
+   "op": "line",
+   "who": "C-013",
+   "emo": "미소",
+   "text": "손님. 어떤 몸이 필요하신가. 등 튼튼, 이빨 성함, 셈 빠름."
+  },
+  {
+   "op": "line",
+   "who": "C-013",
+   "emo": "기본",
+   "text": "우리는 사람 안 팔아. 빚을 팔지. 장부에 적힌 건 다 빚이야."
+  },
+  {
+   "op": "line",
+   "who": "C-013",
+   "emo": "기본",
+   "text": "고르셨나."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "장부를 좀 보자. 빚이 얼마짜리인지",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "LEDGER",
+     "id": "MQ-105_HDC_BUY:1:0"
+    },
+    {
+     "text": "(흥정하는 척 다가서서 허리춤 열쇠고리를 슬쩍 뺀다)",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "은신",
+       "min": 50
+      }
+     ],
+     "cond": "SB_KEY == 0",
+     "fx": "",
+     "to": "KEY",
+     "id": "MQ-105_HDC_BUY:1:1"
+    },
+    {
+     "text": "88번을 산다. 세이프빌로 갈 몸이라던데",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 300
+      }
+     ],
+     "cond": "SB_BOUGHT == 0",
+     "fx": "",
+     "to": "BUY88",
+     "id": "MQ-105_HDC_BUY:1:2"
+    },
+    {
+     "text": "내 현상금 이야기를 꺼낸다",
+     "tags": [],
+     "cond": "PC_CAPS >= 1000",
+     "fx": "",
+     "to": "MINE",
+     "id": "MQ-105_HDC_BUY:1:3"
+    },
+    {
+     "text": "다음에 온다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "MQ-105_HDC_BUY:1:4"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-013",
+   "emo": "기본",
+   "text": "장부는 금고에서 안 나와. 손님은 번호만 보면 돼."
+  },
+  {
+   "op": "goto",
+   "to": "AGAIN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "장부 이야기에 맞장구를 치며 한 걸음 다가선다. 열쇠고리가 손바닥 안으로 소리 없이 미끄러진다."
+  },
+  {
+   "op": "do",
+   "fx": "SB_KEY = 1; SB_TALK = 2"
+  },
+  {
+   "op": "line",
+   "who": "C-013",
+   "emo": "기본",
+   "text": "말로 고르는 손님은 처음이네. 내려가서 번호를 직접 봐. 우리 쪽으로."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "황두칠이 먼저 계단을 내려간다. 소장실에 혼자 남았다."
+  },
+  {
+   "op": "cmd",
+   "name": "refresh",
+   "args": []
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-013",
+   "emo": "미소",
+   "text": "세이프빌 기씨네가 520을 불렀는데. 300이면 손해지만, 현금이니 셈이 맞지."
+  },
+  {
+   "op": "do",
+   "fx": "SB_BOUGHT = 1; karma(25)"
+  },
+  {
+   "op": "cmd",
+   "name": "sb",
+   "args": [
+    "buy",
+    "88"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "창고동 우리 하나를 열라는 쪽지가 반장에게 내려간다. 88번 — 기라희."
+  },
+  {
+   "op": "if",
+   "cond": "SB_DEPO == 1",
+   "to": "REFUND"
+  },
+  {
+   "op": "goto",
+   "to": "AGAIN"
+  },
+  {
+   "op": "do",
+   "fx": "caps(500); SB_DEPO = 0"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "사 갔으니 보증금 500캡은 돌려받았다."
+  },
+  {
+   "op": "goto",
+   "to": "AGAIN"
+  },
+  {
+   "op": "line",
+   "who": "C-013",
+   "emo": "놀람",
+   "text": "손님이 아니었구먼. …볼트 작업복이 제 발로 걸어왔네."
+  },
+  {
+   "op": "do",
+   "fx": "SB_PASS = 2"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-105.txt"
+}

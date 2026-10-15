@@ -48,7 +48,11 @@ var terms_db := {}                               ## 단말 원고(game/data/term
 var _prompt_shake := -1.0                        ## 요구치 미달로 시도하면 상호작용 문구가 0.8초 흔들린다(SD-12 §8.1)
 var pipboy_ok := false                           ## 핍-보이를 받았다(MQ-P2 생일잔치부터)
 var items_db := {}                               ## 아이템 ID -> 이름·분류·설명(data/items.json + weapons.json)
-var date_text := ""                              ## 핍-보이 위 줄 날짜
+var date_text := "":                             ## 핍-보이 위 줄 날짜(바뀌면 GAME_HOUR도 — 맵 조건식의 시각, 1-6)
+	set(v):
+		date_text = v
+		if st != null and st.vars.has("GAME_HOUR") and v != "":
+			st.vars.set_v("GAME_HOUR", Clock.hour(v))
 var cam_lead := Vector2.ZERO                     ## 카메라 리드(조준 쪽으로 끌린 만큼)
 var text_seen := {}                              ## 여러 번 조사하는 글: 키 -> 읽은 횟수
 var _talking: Dictionary = {}

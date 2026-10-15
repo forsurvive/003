@@ -1,0 +1,40 @@
+# 새벽인력 본소 근태 목걸이 작업실 H-05(SD-09a L-R02-19 ③ H-05 · SD-06 근태 목걸이 · 단계 1-6)
+# 20×14 · 폭약 목걸이 조립대(철사) · 해제 판정 연습용 고장 목걸이 · 『열쇠 기능사 실기 대비』.
+map H-05 근태 목걸이 작업실
+set sb
+grid
+####################
+####################
+####################
+#eeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeee#
+eeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeee#
+####################
+end
+exit 0 8 H-02 from_H-05
+mark from_H-02 1 8 E
+prop collar_bench 3 4
+prop collar_bench 8 4
+text 3 4 "목걸이 조립대. 고리 · 뇌관 통 · 표시등. 부품마다 일련번호를 새겼다. 장부 번호와 같다." w=2
+text 8 4 "고장 난 목걸이 하나가 바이스에 물려 있다. 해제 연습용이다." w=2 scene=H-05_PRACTICE
+npc N-R02-038 9 6 N cond="SB_RAID == 0" bark="목걸이는 거짓말을 안 해. 사람이 하지."
+prop w_collars 5 1
+prop w_collars 12 1
+text 5 2 "목걸이 걸이. 붉은 표시등이 줄지어 깜박인다." 
+prop workbench 14 4
+box 14 4 toolbox w=2 name="작업대 서랍"
+text 14 4 "작업대 위 『열쇠 기능사 실기 대비』. 철사가 책갈피다." w=2
+prop tool_chest 17 3
+box 17 3 toolbox name="공구 상자"
+prop steel_rack 14 10
+box 14 10 crate w=2 name="부품 선반"
+prop drum 2 11
+prop work_lamp 6 7
+prop work_lamp 13 7

@@ -38,7 +38,8 @@ DOORS = [{"lid": "L-R02-11", "near": (720, 1147), "to": "J-01", "mark": "from_W"
          {"lid": "L-R01-08", "near": (887, 1494), "to": "K-08", "mark": "from_W", "name": "관악 계곡 배수 암거", "prop": "drain_outlet",
           "hint": "콘크리트 암거 입구. 물비린내와 곰팡이 냄새가 흘러나온다."}]
 INSETS = [{"id": "X-S07", "mark": "from_vault", "at": (959, 1503)},          # 볼트 S-07 정문(L-R01-01)
-          {"id": "X-BC", "center": (892, 1362)}]                             # 봉천 계단마을(L-R01-09)
+          {"id": "X-BC", "center": (892, 1362)},                             # 봉천 계단마을(L-R01-09)
+          {"id": "X-SB", "center": (632, 1329), "lid": "L-R02-19", "arrive": "arrive"}]   # 새벽인력 본소(1-6): 도착 칸 = 정문 앞 길
 START = (959, 1503)                                                          # 도달성 검사 출발점 = 볼트 정문
 WALKK = (1, 5, 6, 7, 8, 9, 10, 12, 13)                                       # 걷는 땅 종류(13 = 다리 상판)
 STAIR_GAP = 28
@@ -239,7 +240,7 @@ def build():
         outs = [o for (_, o) in ops if not inmask[o[1], o[0]]]
         base = int(lvl[outs[0][1], outs[0][0]]) if outs else 0
         lo = min(int(c) for row in d["level"] for c in row if c != ".")
-        insets.append({"id": spec["id"], "data": d, "rect": rect, "base": base - lo, "outs": outs})
+        insets.append({"id": spec["id"], "data": d, "rect": rect, "base": base - lo, "outs": outs, "spec": spec})
     for ins in insets:                                                       # 길목 무리(맞닿은 바깥 칸)마다 길 하나
         groups = []
         for o in ins["outs"]:
@@ -1076,6 +1077,11 @@ def place_geo(R):
                     arrive = [int(xx[k] + x0), int(yy[k] + y0)]
                     break
         geo[lid] = {"bank": bank, "arrive": arrive}
+    for ins in R["insets"]:                                                  # 손 맵 장소의 도착 칸 = 그 맵의 표지(본소는 정문 앞 길)
+        sp = ins.get("spec", {})
+        if sp.get("lid") and sp.get("arrive"):
+            m = ins["data"]["marks"][sp["arrive"]]
+            geo.setdefault(sp["lid"], {"bank": "S", "arrive": None})["arrive"] = [ins["rect"][0] + int(m[0]), ins["rect"][1] + int(m[1])]
     # 월드 → 실내 문(1-4): 지하로 내려가는 계단 입구 2칸. 요청 자리에서 가장 가까운, 문 2칸과 그 아래 2칸이 모두 걸어서 닿는 곳.
     # 그 장소의 도착 칸은 문 바로 아래(실내에서 나오면 문 앞에 선다 — 문 칸에 서면 다시 들어가 버린다).
     doors = []

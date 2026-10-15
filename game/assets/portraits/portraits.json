@@ -50,6 +50,16 @@
    "아픔": "C-010_hurt.png",
    "피곤": "C-010_tired.png"
   },
+  "C-013": {
+   "기본": "C-013_idle.png",
+   "놀람": "C-013_surprise.png",
+   "말함": "C-013_talk.png",
+   "미소": "C-013_smile.png",
+   "분노": "C-013_angry.png",
+   "슬픔": "C-013_sad.png",
+   "아픔": "C-013_hurt.png",
+   "피곤": "C-013_tired.png"
+  },
   "C-018": {
    "기본": "C-018_idle.png",
    "놀람": "C-018_surprise.png",
@@ -140,6 +150,16 @@
    "아픔": "C-034_hurt.png",
    "피곤": "C-034_tired.png"
   },
+  "C-049": {
+   "기본": "C-049_idle.png",
+   "놀람": "C-049_surprise.png",
+   "말함": "C-049_talk.png",
+   "미소": "C-049_smile.png",
+   "분노": "C-049_angry.png",
+   "슬픔": "C-049_sad.png",
+   "아픔": "C-049_hurt.png",
+   "피곤": "C-049_tired.png"
+  },
   "C-050": {
    "기본": "C-050_idle.png",
    "놀람": "C-050_surprise.png",
@@ -180,6 +200,16 @@
    "아픔": "C-057_hurt.png",
    "피곤": "C-057_tired.png"
   },
+  "CR-435": {
+   "기본": "CR-435_idle.png",
+   "놀람": "CR-435_surprise.png",
+   "말함": "CR-435_talk.png",
+   "미소": "CR-435_smile.png",
+   "분노": "CR-435_angry.png",
+   "슬픔": "CR-435_sad.png",
+   "아픔": "CR-435_hurt.png",
+   "피곤": "CR-435_tired.png"
+  },
   "CR-436": {
    "기본": "CR-436_idle.png",
    "놀람": "CR-436_surprise.png",
@@ -189,6 +219,16 @@
    "슬픔": "CR-436_sad.png",
    "아픔": "CR-436_hurt.png",
    "피곤": "CR-436_tired.png"
+  },
+  "CR-437": {
+   "기본": "CR-437_idle.png",
+   "놀람": "CR-437_surprise.png",
+   "말함": "CR-437_talk.png",
+   "미소": "CR-437_smile.png",
+   "분노": "CR-437_angry.png",
+   "슬픔": "CR-437_sad.png",
+   "아픔": "CR-437_hurt.png",
+   "피곤": "CR-437_tired.png"
   },
   "CR-456": {
    "기본": "CR-456_idle.png",
@@ -480,6 +520,16 @@
    "아픔": "N-R01-036_hurt.png",
    "피곤": "N-R01-036_tired.png"
   },
+  "N-R01-050": {
+   "기본": "N-R01-050_idle.png",
+   "놀람": "N-R01-050_surprise.png",
+   "말함": "N-R01-050_talk.png",
+   "미소": "N-R01-050_smile.png",
+   "분노": "N-R01-050_angry.png",
+   "슬픔": "N-R01-050_sad.png",
+   "아픔": "N-R01-050_hurt.png",
+   "피곤": "N-R01-050_tired.png"
+  },
   "N-R01-501": {
    "기본": "N-R01-501_idle.png",
    "놀람": "N-R01-501_surprise.png",
@@ -629,6 +679,46 @@
    "슬픔": "N-R02-018_sad.png",
    "아픔": "N-R02-018_hurt.png",
    "피곤": "N-R02-018_tired.png"
+  },
+  "N-R02-035": {
+   "기본": "N-R02-035_idle.png",
+   "놀람": "N-R02-035_surprise.png",
+   "말함": "N-R02-035_talk.png",
+   "미소": "N-R02-035_smile.png",
+   "분노": "N-R02-035_angry.png",
+   "슬픔": "N-R02-035_sad.png",
+   "아픔": "N-R02-035_hurt.png",
+   "피곤": "N-R02-035_tired.png"
+  },
+  "N-R02-036": {
+   "기본": "N-R02-036_idle.png",
+   "놀람": "N-R02-036_surprise.png",
+   "말함": "N-R02-036_talk.png",
+   "미소": "N-R02-036_smile.png",
+   "분노": "N-R02-036_angry.png",
+   "슬픔": "N-R02-036_sad.png",
+   "아픔": "N-R02-036_hurt.png",
+   "피곤": "N-R02-036_tired.png"
+  },
+  "N-R02-037": {
+   "기본": "N-R02-037_idle.png",
+   "놀람": "N-R02-037_surprise.png",
+   "말함": "N-R02-037_talk.png",
+   "미소": "N-R02-037_smile.png",
+   "분노": "N-R02-037_angry.png",
+   "슬픔": "N-R02-037_sad.png",
+   "아픔": "N-R02-037_hurt.png",
+   "피곤": "N-R02-037_tired.png"
+  },
+  "N-R02-038": {
+   "기본": "N-R02-038_idle.png",
+   "놀람": "N-R02-038_surprise.png",
+   "말함": "N-R02-038_talk.png",
+   "미소": "N-R02-038_smile.png",
+   "분노": "N-R02-038_angry.png",
+   "슬픔": "N-R02-038_sad.png",
+   "아픔": "N-R02-038_hurt.png",
+   "피곤": "N-R02-038_tired.png"
   },
   "N-R02-039": {
    "기본": "N-R02-039_idle.png",

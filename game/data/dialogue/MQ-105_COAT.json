@@ -1,0 +1,81 @@
+{
+ "id": "MQ-105_COAT",
+ "title": "황두칠의 외투",
+ "loc": "L-R02-19",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "ASH": 7
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "쓰러진 황두칠의 허리춤에 열쇠고리. 외투 안주머니에서 누런 봉투가 나온다. 클립 자국이 선명하다."
+  },
+  {
+   "op": "cmd",
+   "name": "note",
+   "args": [
+    "SB-ORDER"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "note",
+   "args": [
+    "SB-ORDER7"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "sb",
+   "args": [
+    "read"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "SB_BURNT == 1",
+   "to": "ASH"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "열쇠고리를 챙겼다. 금고는 아직 잠겨 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "난로 안에서 장부 등뼈가 마저 타들어 간다. 봉투만 남았다."
+  },
+  {
+   "op": "do",
+   "fx": "HO_LEDGER = 99"
+  },
+  {
+   "op": "cmd",
+   "name": "sb",
+   "args": [
+    "decide",
+    "99"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-105.txt"
+}
