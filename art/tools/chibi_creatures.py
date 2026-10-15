@@ -127,6 +127,9 @@ QUAD = {
                 skin=["P39", "P40", "P41"], eye="P54", tail="up", ears=True, mange=True),
     "jindo": dict(w=44, h=32, foot=(20, 29), px=4, body=(19, 18, 10, 6.5), head=(32, 12, 7.5, 6.5), leg=5, fur=["P06", "P07", "P08", "P09"],
                   skin=["P39", "P40", "P41"], eye="P01", tail="curl", ears=True, mange=False),
+    # 경비견 CR-107(SD-14 §6, 새벽인력·약탈자 사육견): 검정·황갈 셰퍼드형, 선 귀, 검은 조끼 + 주황 띠(새벽인력 PF-05)
+    "guard": dict(w=44, h=32, foot=(20, 29), px=4, body=(19, 18, 10, 6.5), head=(32, 13, 7.5, 6.5), leg=5, fur=["P01", "P02", "P03", "P18"],
+                  skin=["P39", "P40", "P41"], eye="P49", tail="up", ears=True, mange=False, vest=True),
     "rat": dict(w=40, h=22, foot=(18, 19), px=2, body=(17, 13, 9, 5), head=(27, 12, 5, 4.5), leg=3, fur=["P03", "P04", "P05", "P06"],
                 skin=["P40", "P41", "P42"], eye="P54", tail="long", ears=True, mange=False),
 }
@@ -163,6 +166,14 @@ def quad(kind, frame=0, pose="walk"):
             return fur[0]                                                  # 드러난 갈비
         return None
     _ellipse(body, bx, by - bob, brx, bry, fur, extra=mange)
+    if q.get("vest"):                                                      # 검은 조끼(가슴·등) + 주황 띠 + 버클
+        vb = ImageDraw.Draw(body)
+        x0, x1 = round(bx - brx * 0.45), round(bx + brx * 0.65)
+        y0, y1 = round(by - bob - bry + 1), round(by - bob + bry - 2)
+        vb.rectangle([x0, y0, x1, y1], fill=C("P02"))
+        vb.line([x0, y0, x1, y0], fill=C("P04"))
+        vb.rectangle([x0, (y0 + y1) // 2, x1, (y0 + y1) // 2 + 1], fill=C("P26"))
+        vb.point((x1 - 2, y0 + 2), fill=C("P07"))
     hxc, hyc, hrx, hry = q["head"]
     _ellipse(body, hxc, hyc - bob, hrx, hry, fur)
     bd = ImageDraw.Draw(body)
@@ -177,6 +188,18 @@ def quad(kind, frame=0, pose="walk"):
         bd.line([sx + 1, hyb + 3, sx + 4, hyb + 3], fill=fur[1])
         bd.point((round(hxc + 1), hyb - 2), fill=C(q["eye"]))
         bd.point((round(hxc + 1), hyb - 3), fill=C(q["eye"]))
+    elif kind == "guard":                                                  # 셰퍼드형: 선 귀(검정) · 황갈 주둥이 · 목줄 고리
+        ex = round(hxc - hrx * 0.3)
+        bd.polygon([(ex - 3, hyb - 4), (ex - 1, hyb - 12), (ex + 2, hyb - 4)], fill=fur[0])
+        bd.polygon([(ex - 2, hyb - 5), (ex - 1, hyb - 9), (ex + 1, hyb - 5)], fill=ramp(q["skin"])[0])
+        sx = round(hxc + hrx - 2)
+        bd.ellipse([sx - 1, hyb - 1, sx + 6, hyb + 4], fill=fur[3])
+        bd.line([sx, hyb + 3, sx + 5, hyb + 3], fill=fur[1])
+        bd.point((sx + 6, hyb), fill=C("P01")); bd.point((sx + 5, hyb), fill=C("P01"))
+        bd.point((sx + 3, hyb + 4), fill=C("P09"))
+        bd.point((round(hxc + 1), hyb - 2), fill=C(q["eye"]))
+        bd.line([round(hxc - hrx + 1), hyb + 3, round(hxc - hrx + 3), hyb + 6], fill=C("P26"), width=2)   # 목줄
+        bd.point((round(hxc - hrx + 2), hyb + 6), fill=C("P07"))
     elif kind == "dog":
         ex = round(hxc - hrx * 0.45)                                       # 늘어진 귀
         bd.polygon([(ex - 2, hyb - 5), (ex + 3, hyb - 6), (ex - 3, hyb + 1)], fill=fur[0])

@@ -83,7 +83,7 @@ def roach_sheet():
 def quad_sheets():
     """네발짐승(0-10): CR-104 변이 들개 · 백구(C-015 진돗개). 옆 그림만, 걷기 4컷(컷당 4px)."""
     import chibi_creatures as CC
-    for kind, name in (("dog", "cr_cr104_loco"), ("jindo", "cr_baekgu_loco"), ("rat", "cr_cr095_loco")):
+    for kind, name in (("dog", "cr_cr104_loco"), ("jindo", "cr_baekgu_loco"), ("rat", "cr_cr095_loco"), ("guard", "cr_cr107_loco")):
         frames, meta = CC.quad_sheet(kind)
         fw, fh = meta["frame"]
         sheet = Image.new("RGBA", (fw * len(frames), fh), (0, 0, 0, 0))

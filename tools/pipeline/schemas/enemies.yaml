@@ -3,13 +3,13 @@
 # 단계 1-4: 야생 구울 CR-200 · 떠돌이 구울 CR-201(§7 J-09 둥지) · 지하시장 경비 CR-456 · 계약 경호 구울 CR-457(§10 출입세·S5 가세)
 doc: 14_creatures-enemies.md
 id_column: ID
-rows: [CR-002, CR-095, CR-104, CR-200, CR-201, CR-401, CR-402, CR-403, CR-405, CR-436, CR-437, CR-456, CR-457, CR-473, CR-534]
+rows: [CR-002, CR-095, CR-104, CR-107, CR-200, CR-201, CR-401, CR-402, CR-403, CR-405, CR-435, CR-436, CR-437, CR-438, CR-456, CR-457, CR-473, CR-513, CR-534]
 columns:
   ID: {field: id, type: id, pattern: "^CR-\\d{3}$", required: true}
   이름: {field: name, type: str, required: true}
   단계: {field: tier, type: str}
   랭크: {field: rank, type: str}
-  Lv: {field: level, type: int, required: true}
+  Lv: {field: level, type: lead_number, required: true}            # 보스 총람 '플레이어 비례(8~22)' → 8(최솟값, 진행기가 lv로 덮는다)
   HP: {field: hp, type: lead_number, required: true}
   피해: {field: attack, type: str}
   DR: {field: dr, type: lead_number, required: true}
@@ -17,12 +17,12 @@ columns:
   공격 패턴: {field: pattern, type: str}
   주무기: {field: weapon_main, type: str}
   보조·특수: {field: special, type: str}
-  XP: {field: xp, type: int}
+  XP: {field: xp, type: lead_number}                               # '65(Lv12 기준)' → 65
   기본 Lv: {field: level, type: int}
   기본 HP: {field: hp, type: lead_number}
   무기: {field: weapon_main, type: str}
   전투 성향(SD-11): {field: pattern, type: str}
 gaps:
   xp: {default: "round((2 * level + hp / 20) / 5) * 5", only_missing: true, why: "§10.4 이름 있는 NPC 표에 XP 열이 없다 — §3.4 XP 식 2×Lv + HP÷20(5 단위 반올림)"}
-  radius: {default: "0.2 if id == 'CR-002' else (0.28 if id == 'CR-104' else 0.3)", why: "충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다"}
-  part_weights: {default: "'PW-A' if id == 'CR-002' else ('PW-C' if id == 'CR-104' else 'PW-H')", why: "부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')"}
+  radius: {default: "0.2 if id == 'CR-002' else (0.28 if id in ('CR-104', 'CR-107') else 0.3)", why: "충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다"}
+  part_weights: {default: "'PW-A' if id == 'CR-002' else ('PW-C' if id in ('CR-104', 'CR-107') else 'PW-H')", why: "부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')"}

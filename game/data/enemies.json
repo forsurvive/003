@@ -44,6 +44,21 @@
   "tier": "약",
   "xp": 5
  },
+ "CR-107": {
+  "_src": "14_creatures-enemies.md:446",
+  "attack": "물기 12",
+  "dr": 0,
+  "hp": 60,
+  "id": "CR-107",
+  "level": 4,
+  "name": "경비견 (약탈자·새벽인력 사육견)",
+  "part_weights": "PW-C",
+  "pattern": "탐지 거리 +50%(인지력 8). 먼저 발견하면 짖어 주인을 부른다",
+  "radius": 0.28,
+  "speed": 4.5,
+  "tier": "중",
+  "xp": 15
+ },
  "CR-200": {
   "_src": "14_creatures-enemies.md:825",
   "attack": "근접 5",
@@ -130,6 +145,20 @@
   "weapon_main": "미니건 / 플라스마 소총 / 개틀링 레이저",
   "xp": 40
  },
+ "CR-435": {
+  "_src": "14_creatures-enemies.md:1141",
+  "dr": 5,
+  "hp": 60,
+  "id": "CR-435",
+  "level": 4,
+  "name": "새벽인력 모집원",
+  "part_weights": "PW-H",
+  "radius": 0.3,
+  "rank": "1",
+  "special": "비적대로 다가와 \"좋은 자리 있는데\" 대화 후 적대(원작 첫 분대 방식)",
+  "weapon_main": "권총 / 그물탄 발사기",
+  "xp": 15
+ },
  "CR-436": {
   "_src": "14_creatures-enemies.md:1142",
   "dr": 12,
@@ -157,6 +186,20 @@
   "special": "'인력' 호송. 포로의 작업 목줄 원격기 소지(처치하면 포로 해방)",
   "weapon_main": "자동소총",
   "xp": 15
+ },
+ "CR-438": {
+  "_src": "14_creatures-enemies.md:1144",
+  "dr": 15,
+  "hp": 130,
+  "id": "CR-438",
+  "level": 13,
+  "name": "새벽인력 반장",
+  "part_weights": "PW-H",
+  "radius": 0.3,
+  "rank": "3",
+  "special": "반경 15타일 지휘(명중 +10%). 장부 드롭",
+  "weapon_main": "자동소총 / 마취총",
+  "xp": 40
  },
  "CR-456": {
   "_src": "14_creatures-enemies.md:1200",
@@ -199,6 +242,17 @@
   "special": "보안 제복 T02 + 헬멧 HD03. 순찰 3종(정문·무기고·관리동). 주인공에게는 진압봉만 휘두르고 권총은 위협 사격(빗나가게)만. 기절 25초 뒤 깨어나 경보",
   "weapon_main": "진압봉 / 보안부 권총",
   "xp": 10
+ },
+ "CR-513": {
+  "_src": "14_creatures-enemies.md:1291",
+  "dr": 18,
+  "hp": 60,
+  "id": "CR-513",
+  "level": 8,
+  "name": "황두칠",
+  "part_weights": "PW-H",
+  "radius": 0.3,
+  "xp": 65
  },
  "CR-534": {
   "_src": "14_creatures-enemies.md:1461",
