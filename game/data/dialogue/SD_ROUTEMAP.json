@@ -1,0 +1,58 @@
+{
+ "id": "SD_ROUTEMAP",
+ "title": "노선도 단말",
+ "loc": "L-R01-18",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "SEEN": 6
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SD_MAP_UG >= 1",
+   "to": "SEEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'2077 수도권 전철 노선도'. 녹색 2호선 고리, 하늘색 4호선 줄. 역 이름마다 작은 불이 켜졌다가 꺼진다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "사당에서 서쪽으로 서울대입구, 남쪽으로 남태령. 동쪽 고리 끝은 강 건너까지 이어진다."
+  },
+  {
+   "op": "do",
+   "fx": "SD_MAP_UG = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "역 이름과 갈림길을 핍-보이 메모에 옮겨 적었다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "노선도. 역 이름 불이 켜졌다 꺼진다. 서울대입구 칸만 꺼진 채다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SADANG.txt"
+}

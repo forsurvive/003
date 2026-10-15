@@ -1,0 +1,32 @@
+{
+ "id": "SD_BROADCAST",
+ "title": "역 방송 설비",
+ "loc": "L-R01-18",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "마이크 · 앰프 · 녹음 테이프 칸. 스위치를 올리자 대합실 확성기가 지직거린다. 테이프 칸은 비어 있다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "앰프 옆 쪽지, 허순자 글씨. '방송은 역장만. 물 배급 · 불 당번 · 비상.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SADANG.txt"
+}

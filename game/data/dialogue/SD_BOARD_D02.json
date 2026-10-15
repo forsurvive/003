@@ -1,0 +1,44 @@
+{
+ "id": "SD_BOARD_D02",
+ "title": "역무 위원회 게시판",
+ "loc": "L-R01-18",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'물 배급 — 사흘에 한 통. 빈 통은 엎어 둘 것.'"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'버섯 일손 구함 — 표 주임. 빛 무서워하지 않는 사람.'"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'서쪽 터널 출입 금지 — 경비대. 철망에 귀 대지 말 것.'"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "맨 구석에 아이 글씨. '남태령 안내 10캡 — 로아.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SADANG.txt"
+}

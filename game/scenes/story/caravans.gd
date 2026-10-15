@@ -1,6 +1,6 @@
 ## 순회 상인 일정(단계 1-8d, SD-15 §4.3): 시각·날짜로 정류장에 서고 떠난다. 맵의 인물 cond가 아래 변수를 본다.
 ## · V54 고개길 수송대(연보경 · 호위 둘 · 짐소 CR-091): 남부 고개길 봉천 → 사당 → 노들섬 남단 → 봉천, 정류장 12시간 + 이동 6시간 = 54시간 한 바퀴.
-##   1막엔 봉천 정류장만 있다 — CARAVAN_V54 = 1이면 봉천 아랫문 안 마당에 선다(나머지 42시간은 다른 정류장·길 위).
+##   CARAVAN_V54 = 1 봉천 아랫문 안 마당 · 2 사당 4번 출구 광장(1-8f) · 3 노들섬 남단(2막 노들섬과 함께) · 0 길 위(정류장 사이 6시간).
 ## · V56 순회 의료반(소윤희): 7일 주기 — 0~1일째 봉천 · 2~3일째 영등포 지하상가 북쪽 출구 · 나머지는 강 건너(탱크마을·뚝섬). MEDIC_AT 1·2·0.
 ## 정류장에 있는 동안 그 맵에 들어와 있으면 인물을 바로 세우고 치운다(refresh_npcs). 같은 인물은 한 곳에만(SD-20 P3).
 class_name Caravans
@@ -23,7 +23,9 @@ func setup(h: InteriorHost) -> void:
 
 static func v54_at(abs_min: int) -> int:
 	var hh := (abs_min / 60 + V54_OFFSET_H) % V54_CYCLE_H
-	return 1 if hh < V54_STAY_H else 0
+	var leg := V54_STAY_H + 6                                                  ## 정류장 12시간 + 다음 정류장까지 6시간
+	var stop := hh / leg
+	return stop + 1 if hh % leg < V54_STAY_H else 0
 
 
 static func medic_at(day: int) -> int:

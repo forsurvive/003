@@ -1,0 +1,100 @@
+# 사당 환승촌 D-01 4번 출구 계단 · 개찰구(SD-09a L-R01-18 ③ · 단계 1-8f)
+# 40×24 · 판독기 개찰구 12기(전원 없음 — 표시창이 '대기 구역'에서 멈췄다, 셋은 손으로 밀어 젖힌 날개) · 무기 내림대 · 경비 초소.
+# 개찰구 아래 해골의 손에 LR-05 판독기 출력지. 낮 성지후(경비대장) · 밤 위강윤(캐러밴 정류장 관리인)이 초소를 지킨다.
+map D-01 사당역 4번 출구 개찰구
+set sd
+grid
+##################ttt###################
+##################ttt###################
+##################ttt###################
+#tttttttttttttttttt|ttttttttttttttttttt#
+#tttttttttttttttttt|ttttttttttttttttttt#
+#tttttttttttttttttt|ttttttttttttttttttt#
+#tttttttttttttttttt|ttttttttttttttttttt#
+#tttttttttttttttttt|ttttttttttttttttttt#
+#tttttttttttttttttt|ttttttttttttttttttt#
+#tttttttttttttttttt|ttttttttttttttttttt#
+#tttttttttttttttttt|ttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttt|ttttttttttttttttttt#
+#tttttttttttttttttt|ttttttttttttttttttt#
+#tttttttttttttttttt|ttttttttttttttttttt#
+#tttttttttttttttttt|ttttttttttttttttttt#
+#tttttttttttttttttt|ttttttttttttttttttt#
+#tttttttttttttttttt|ttttttttttttttttttt#
+#tttttttttttttttttt|ttttttttttttttttttt#
+#tttttttttttttttttt|ttttttttttttttttttt#
+#tttttttttttttttttt|ttttttttttttttttttt#
+#tttttttttttttttttt|ttttttttttttttttttt#
+#tttttttttttttttttt|ttttttttttttttttttt#
+###################tt###################
+end
+exit 18 0 X-SD from_D-01
+exit 19 0 X-SD from_D-01
+exit 20 0 X-SD from_D-01
+exit 19 23 D-02 from_D-01
+exit 20 23 D-02 from_D-01
+mark from_X 19 3 S
+mark from_D-02 19 22 N
+prop stairs_up 19 2
+prop w_sd_sign 4 1
+text 5 2 "환승촌 간판. 2호선 녹색 천과 4호선 하늘색 천을 이어 붙였다. 바느질 땀이 고르다." w=4
+prop w_speaker 30 1
+prop w_poster_rad 34 1
+prop sd_weapon_rack 22 7
+text 22 7 "무기 내림대. '무기는 여기 내려놓고.' 걸린 건 녹슨 파이프 소총 하나 · 쇠파이프 · 칼. 주인들은 대합실에 있다." w=2
+prop sd_gate 13 11
+prop sd_gate 14 11
+prop sd_gate 15 11
+prop sd_gate_open 16 11
+prop sd_gate 18 11
+prop sd_gate_wash 19 11
+prop sd_gate 20 11
+prop sd_gate_open 21 11
+prop sd_gate 23 11
+prop sd_gate 24 11
+prop sd_gate_wash 25 11
+prop sd_gate_open 26 11
+prop sd_fence 1 11
+prop sd_fence 2 11
+prop sd_fence 3 11
+prop sd_fence 4 11
+prop sd_fence 5 11
+prop sd_fence 6 11
+prop sd_fence 7 11
+prop sd_fence 8 11
+prop sd_fence 9 11
+prop sd_fence 10 11
+prop sd_fence 11 11
+prop sd_fence 12 11
+prop sd_fence 28 11
+prop sd_fence 29 11
+prop sd_fence 30 11
+prop sd_fence 31 11
+prop sd_fence 32 11
+prop sd_fence 33 11
+prop sd_fence 34 11
+prop sd_fence 35 11
+prop sd_fence 36 11
+prop sd_fence 37 11
+prop sd_fence 38 11
+text 13 11 "판독기 개찰구. 표시창마다 호박색 글씨가 멈춰 있다 — '대기 구역'. 2077년 마지막 판독 결과다." w=3
+text 19 11 "개찰구 표시창 위에 셔츠와 양말이 널려 있다. 판독기는 빨랫대가 된 지 오래다." w=1
+text 16 11 "손으로 밀어 젖힌 날개. 무겁다. 200년 동안 사람들이 어깨로 밀고 다녀서 날개 끝이 반들반들하다." w=1
+prop remains 15 12
+text 15 12 "개찰구 앞 해골. 웅크린 손에 누렇게 바랜 종이 한 장." scene=SD_LR05
+prop sd_guard_post 9 14
+text 9 14 "개찰구 초소. 모래주머니 위 철판 방패. 확성기 선은 대합실로 이어진다." w=2
+prop crate 8 17
+box 8 17 crate owner=N-R01-044 name="경비 초소 상자"
+prop wait_chairs 30 15
+prop wait_chairs 30 18
+text 30 15 "대합실 의자. 앉는 자리마다 이름이 칼로 새겨져 있다. 그 위에 또 다른 이름." w=2
+prop kiosk_ruin 4 18
+text 4 18 "역 매점 터. 2077년 가격표가 남았다. '뉴카-콜라 1,500원.'" w=2
+prop work_lamp 6 6
+prop work_lamp 33 6
+prop work_lamp 26 16
+npc N-R01-044 22 13 N cond="GAME_HOUR >= 6 and GAME_HOUR < 20" bark="환승객 여러분, 무기는 개찰구 앞에서 내려놓으십시오. …역장님 말투야. 나도 그렇게 말해."
+npc N-R01-043 12 13 S cond="(GAME_HOUR < 6 or GAME_HOUR >= 20)" bark="밤엔 내가 초소야. 낮엔 광장에서 짐소 빌려주고."
+npc N-SA-G2 27 13 N look=M1-S4-HR01-H1-T06-2-PF12-HD03-EY00-PR041 bark="날개 밀 땐 어깨로. 손 끼면 아파."

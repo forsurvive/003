@@ -1,0 +1,36 @@
+{
+ "id": "SD_RUNBOARD",
+ "title": "역무실 칠판",
+ "loc": "L-R01-18",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'오늘의 운행 안내: 운행 없음.' 그 줄이 날짜만 바꿔 위에서 아래로 빽빽하다. 위로 갈수록 글씨가 흐려 읽을 수 없다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "맨 아래 오늘 날짜 — 2277. 10. — 허순자의 글씨. 그 위 줄은 다른 사람 글씨. 그 위도."
+  },
+  {
+   "op": "do",
+   "fx": "SD_BOARD_SEEN = 1"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SADANG.txt"
+}

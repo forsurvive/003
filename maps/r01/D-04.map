@@ -1,0 +1,101 @@
+# 사당 환승촌 D-04 환승 통로(SD-09a L-R01-18 ③⑨ · 단계 1-8f)
+# 56×16 · 2·4호선을 잇는 긴 통로. 볼트 분양 광고판 LR-09 · '11시 29분' 멈춘 시계 · 노란 '대기 구역' 선(안쪽에만 해골) ·
+# 동쪽 끝 승강장 계단(L-UG-01 사당역 승강장은 U01 구간과 함께 — 지금은 경비대 줄). 스킬북 BK-11 게시대는 스킬북 체계와 함께(이월).
+map D-04 사당역 환승 통로
+set sd
+grid
+########################################################
+########################################################
+########################################################
+#tttttttttttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttttttttttt#
+ttttttttttttttttttttttttttttttttttttttttttttttttttttttt#
+t-------------------------------------------------ttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttttttttttt#
+########################################################
+end
+exit 0 8 D-02 from_D-04
+exit 0 9 D-02 from_D-04
+mark from_D-02 1 8 E
+prop w_sd_ad 10 1
+text 10 2 "볼트 분양 광고판. 웃는 가족과 둥근 문." w=2 scene=SD_LR09
+prop w_sd_clock 24 1
+text 24 2 "역 시계. 11시 29분에 멈췄다. 이 역의 시계는 다 그렇다."
+prop w_poster_rad 18 1
+prop w_speaker 40 1
+prop sd_line_h 32 4
+prop sd_line_h 32 13
+prop sd_line_h 33 4
+prop sd_line_h 33 13
+prop sd_line_h 34 4
+prop sd_line_h 34 13
+prop sd_line_h 35 4
+prop sd_line_h 35 13
+prop sd_line_h 36 4
+prop sd_line_h 36 13
+prop sd_line_h 37 4
+prop sd_line_h 37 13
+prop sd_line_h 38 4
+prop sd_line_h 38 13
+prop sd_line_h 39 4
+prop sd_line_h 39 13
+prop sd_line_h 40 4
+prop sd_line_h 40 13
+prop sd_line_h 41 4
+prop sd_line_h 41 13
+prop sd_line_h 42 4
+prop sd_line_h 42 13
+prop sd_line_h 43 4
+prop sd_line_h 43 13
+prop sd_line_h 44 4
+prop sd_line_h 44 13
+prop sd_line_h 45 4
+prop sd_line_h 45 13
+prop sd_line_h 46 4
+prop sd_line_h 46 13
+prop sd_line_v 31 5
+prop sd_line_v 47 5
+prop sd_line_v 31 6
+prop sd_line_v 47 6
+prop sd_line_v 31 7
+prop sd_line_v 47 7
+prop sd_line_v 31 8
+prop sd_line_v 47 8
+prop sd_line_v 31 9
+prop sd_line_v 47 9
+prop sd_line_v 31 10
+prop sd_line_v 47 10
+prop sd_line_v 31 11
+prop sd_line_v 47 11
+prop sd_line_v 31 12
+prop sd_line_v 47 12
+prop remains 34 6
+prop remains2 37 8
+prop bone_pile 40 6
+prop remains 43 10
+prop remains2 35 11
+prop bone_pile 39 11
+prop remains 45 7
+prop bone_pile 33 9
+prop remains2 41 9
+text 31 8 "바닥의 노란 선. '대기 구역 — 선 안에서 기다리십시오.' 선 밖은 깨끗이 쓸었다. 선 안은 아무도 손대지 않았다." h=2
+text 37 8 "해골들이 줄 맞춰 앉은 채다. 누군가 해골마다 마른 버섯 한 송이씩 놓아두었다. '그 사람들 자리.'" scene=SD_WAITLINE
+prop pillar 8 4
+prop pillar 8 12
+prop pillar 20 4
+prop pillar 20 12
+prop pillar 52 4
+prop pillar 52 12
+prop sd_platform_stairs 51 8
+text 51 8 "승강장 계단. 붉은 줄이 가로질렀다. '승강장은 경비대 허락 받고 — 성지후.'" w=2 scene=SD_PLATFORM
+prop info_board 14 4
+text 14 4 "통로 게시대. 2077년 '적성 분자 식별 요령' 포스터 자리만 네모나게 바래 있다. 누가 떼어 갔다."
+prop work_lamp 4 6
+prop work_lamp 28 10

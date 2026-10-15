@@ -1,0 +1,109 @@
+{
+ "id": "SD_TAK",
+ "title": "환승촌 의원 탁순복",
+ "loc": "L-R01-18",
+ "npc": "N-R01-046",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "AGAIN": 6,
+  "ASK": 7,
+  "DOC": 8,
+  "SHOP": 10
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SD_MET_TAK >= 1",
+   "to": "AGAIN"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-046",
+   "emo": "기본",
+   "text": "어디 보자. 방사능은 많이, 겁은 더 많이 먹었네."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-046",
+   "emo": "기본",
+   "text": "탁순복. 다들 의원 할매라 해. 침 놓고 꿰매고 라드어웨이 놓는 게 다야. 그거면 대개 살아."
+  },
+  {
+   "op": "do",
+   "fx": "SD_MET_TAK = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "meet",
+   "args": [
+    "N-R01-046"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-046",
+   "emo": "기본",
+   "text": "또 다쳤어? 다치는 것도 버릇이야."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "치료를 받는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "DOC",
+     "id": "SD_TAK:1:0"
+    },
+    {
+     "text": "약을 산다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SHOP",
+     "id": "SD_TAK:1:1"
+    },
+    {
+     "text": "됐어요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SD_TAK:1:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "doctor",
+   "args": [
+    "VSD"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "trade",
+   "args": [
+    "VSD"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SADANG.txt"
+}

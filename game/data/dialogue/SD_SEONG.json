@@ -1,0 +1,133 @@
+{
+ "id": "SD_SEONG",
+ "title": "승강장 경비대장 성지후",
+ "loc": "L-R01-18",
+ "npc": "N-R01-044",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "AGAIN": 5,
+  "ASK": 6,
+  "WEST": 7,
+  "WEST2": 13,
+  "POST": 15
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SD_MET_SEONG >= 1",
+   "to": "AGAIN"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-044",
+   "emo": "기본",
+   "text": "성지후. 승강장 경비대장. 경비는 열 명, 규칙은 하나 — 역장님 말대로."
+  },
+  {
+   "op": "do",
+   "fx": "SD_MET_SEONG = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "meet",
+   "args": [
+    "N-R01-044"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-044",
+   "emo": "기본",
+   "text": "무기 내림대 거쳤지? 좋아."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "서쪽 터널엔 뭐가 있어요?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "WEST",
+     "id": "SD_SEONG:1:0"
+    },
+    {
+     "text": "경비는 어디를 지켜요?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "POST",
+     "id": "SD_SEONG:1:1"
+    },
+    {
+     "text": "됐어요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SD_SEONG:1:2"
+    }
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "SA_MAKCHA_HEARD >= 1",
+   "to": "WEST2"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-044",
+   "emo": "기본",
+   "text": "서쪽 터널은 손님 자리야. 막차 기다리는 손님."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-044",
+   "emo": "기본",
+   "text": "구울 열 명 남짓. 서서 자. 총소리, 뛰는 소리, 문 닫는 소리면 한꺼번에 깨. 웅크려 걸으면 안 깨고."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-044",
+   "emo": "분노",
+   "text": "그러니까 들어가지 마. 깨면 승강장까지 밀려와. 우린 열 명이야."
+  },
+  {
+   "op": "do",
+   "fx": "SA_MAKCHA_HEARD = 1"
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-044",
+   "emo": "기본",
+   "text": "역장님한테 들었구나. 그럼 알지. 철망에 귀 대지 마. 대답하는 소리 들리면 잠 못 자."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-044",
+   "emo": "기본",
+   "text": "낮엔 개찰구, 밤엔 서쪽 철망. 광장은 위강윤이 보고. 4번 출구 말고는 다 막았어 — 6번, 10번은 고철로."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SADANG.txt"
+}

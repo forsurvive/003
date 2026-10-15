@@ -1,0 +1,53 @@
+# 사당 환승촌 D-06 2호선 서쪽 터널 입구(SD-09a L-R01-18 ③ · 단계 1-8f)
+# 40×16 · 차단 철망과 '서울대입구 방면 — 막차 기다리는 손님 있음(들어가지 마시오)' 표지. 철망 너머가 U01 던전 구간(SQ-S05 「환승촌 막차」와 함께 — 1-11).
+# 낮 승강장 경비 · 밤 성지후(경비대장)가 지킨다.
+map D-06 사당역 2호선 서쪽 터널 입구
+set sd
+grid
+##########################~~############
+##########################~~############
+##########################~~############
+#              uuu~~~~~~~~~~~~~~~~~~~~~#
+#              uuu~~~~~~~~~~~~~~~~~~~~~#
+#              uuu~~~~~~~~~~~~~~~~~~~~~#
+#              uuu~~~~~~~~~~~~~~~~~~~~~#
+#              uuu~~~~~~~~~~~~~~~~~~~~~#
+#              uuu~~~~~~~~~~~~~~~~~~~~~#
+#              uuu~~~~~~~~~~~~~~~~~~~~~#
+#              uuu~~~~~~~~~~~~~~~~~~~~~#
+#              uuu~~~~~~~~~~~~~~~~~~~~~#
+#              uuu~~~~~~~~~~~~~~~~~~~~~#
+#              uuu~~~~~~~~~~~~~~~~~~~~~#
+#              uuu~~~~~~~~~~~~~~~~~~~~~#
+########################################
+end
+exit 26 0 D-02 from_D-06
+exit 27 0 D-02 from_D-06
+mark from_D-02 26 3 S
+prop sd_fence 15 3
+prop sd_fence 15 4
+prop sd_fence 15 5
+prop sd_fence 15 6
+prop sd_fence 15 7
+prop sd_fence 15 8
+prop sd_fence 15 9
+prop sd_fence 15 10
+prop sd_fence 15 11
+prop sd_fence 15 12
+prop sd_fence 15 13
+prop sd_fence 15 14
+prop w_sd_lasttrain 16 1
+text 16 2 "표지. '서울대입구 방면 — 막차 기다리는 손님 있음(들어가지 마시오).'" w=2
+text 15 8 "차단 철망. 너머 어둠 속에서 가끔 발소리가 난다. 아주 느린. 그리고 멈춘다." h=2 scene=SD_FENCE
+prop sd_guard_post 18 5
+prop sandbag 17 10
+prop sandbag 17 11
+prop sandbag 17 12
+prop work_lamp 20 9
+prop work_lamp 32 5
+prop crate_metal 36 4
+prop crate 37 4
+box 36 4 ammo owner=N-R01-044 name="경비대 탄약 상자"
+prop w_poster_rad 32 1
+npc N-R01-044 19 8 W cond="(GAME_HOUR < 6 or GAME_HOUR >= 20)" bark="서쪽 터널은 손님 자리야. 막차 기다리는 손님."
+npc N-SA-G3 19 8 W look=F2-S4-HR05-H1-T06-2-PF12-HD03-EY00-PR041 cond="GAME_HOUR >= 6 and GAME_HOUR < 20" bark="철망에 귀 대지 마. 대답하는 소리 들리면 잠 못 자."

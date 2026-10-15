@@ -1,0 +1,53 @@
+{
+ "id": "SD_LR05",
+ "title": "개찰구 앞 해골",
+ "loc": "L-R01-18",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "SEEN": 5
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SD_LR05 >= 1",
+   "to": "SEEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "웅크린 손이 종이를 쥐고 있다. 판독기 출력지. 손가락뼈를 하나씩 펴서 꺼냈다."
+  },
+  {
+   "op": "cmd",
+   "name": "note",
+   "args": [
+    "LR-05"
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "SD_LR05 = 1"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈 손이 개찰구 쪽을 향해 있다. 누군가 손 밑에 마른 버섯 한 송이를 놓아두었다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SADANG.txt"
+}

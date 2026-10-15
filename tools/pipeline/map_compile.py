@@ -320,7 +320,7 @@ def _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kin
                             if solid[y + j][x + i] == 2:
                                 raise Err(f"소품 '{name}' 발 칸 ({x + i},{y + j})이 다른 소품과 겹친다")
                             cells.append([x + i, y + j])
-                            if not cond:
+                            if not cond and opt.get("pass") != "1":     # pass=1: 밟고 지나가는 소품(지하철 출입구 계단 = 출구 칸, 1-8f)
                                 solid[y + j][x + i] = 2                 # 조건부 소품의 막힘은 게임이 cond를 보고 더한다
                     sort_y = (y + max(fh, 1)) * 32
                     if pm["kind"] == "deco":

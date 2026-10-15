@@ -968,6 +968,14 @@ from props_sd import PROPS_SD                                         # 사당 �
 for _k in PROPS_SD:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_SD)
+from props_bj import PROPS_BJ                                         # 사당 고개 검문소(1-8g, SD-09a L-R01-19)
+for _k in PROPS_BJ:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_BJ)
+from props_gs import PROPS_GS                                         # 노량진 관제 중계소(1-8g, SD-09a L-R01-23)
+for _k in PROPS_GS:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_GS)
 
 STATES = {
     "board_bc": {s: (lambda s=s: notice_board(s)) for s in ("wanted", "torn", "crumpled", "crossed", "rate", "water", "official")},

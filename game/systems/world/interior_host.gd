@@ -1579,6 +1579,9 @@ func _handlers() -> void:
 		st.vars.set_v("INFO_RUMOR_" + rg, int(st.vars.get_v("INFO_RUMOR_" + rg)) + 1)
 		hint("지도에 표시: %s" % str(PlaceLog.db.get(lid, {}).get("name", lid)), 4.0)
 		done.call()
+	ev.handlers["rent"] = func(a: Array, done: Callable) -> void:      # 숙박(1-8f, SD-15 §5.5): rent 변수 시간 — 값은 선택지 [캡] 태그가 받았다. 지금부터 N시간 '소유 침대'
+		st.vars.set_v(str(a[0]), Clock.abs_min(date_text) + int(a[1]) * 60)
+		done.call()
 	ev.handlers["doctor"] = func(a: Array, done: Callable) -> void:    # 의사 메뉴(1-8d): doctor 상인ID
 		box.finished.connect(func() -> void: doctor_menu.call_deferred(str(a[0])), CONNECT_ONE_SHOT)
 		done.call()
@@ -2185,8 +2188,9 @@ func _draw_banner() -> void:
 
 # ---------------------------------------------------------------- 침대·대기·수면(1-8b, SD-12 §7.6 · SD-11 §11.5)
 const BEDS := {"yo_bed": "요", "cot": "야전 침대", "bedroll": "침낭", "bedroll2": "침낭", "hosp_bed": "병원 침대", "vip_bed": "침대",
-	"bunk": "2층 침대", "straw_mat": "거적", "straw_mat2": "거적"}
-const OTHERS_MAPS := ["B-", "J-", "H-", "K-", "V-", "X-"]          ## 정착지·손 실내의 침대는 주인이 있다(거처 침대만 예외)
+	"bunk": "2층 침대", "straw_mat": "거적", "straw_mat2": "거적", "sd_rent_mat": "승강장 매트"}
+const RENT_BEDS := {"sd_rent_mat": ["SA_MAT_UNTIL", "표하경에게 10캡을 내면 하룻밤 쓸 수 있는 매트다."]}   ## 돈 내고 빌리는 잠자리(SD-15 §5.5): 빌린 동안 '소유 침대'(숙면)
+const OTHERS_MAPS := ["B-", "J-", "H-", "K-", "V-", "X-", "D-"]          ## 정착지·손 실내의 침대는 주인이 있다(거처 침대만 예외)
 
 
 ## 앞 칸의 침대: {"name", "owned"(숙면), "other"(남의 것), "script"(원고 장면이 맡는 침대)} — 없으면 빈 사전
@@ -2211,6 +2215,11 @@ func bed_front(cells: Array = []) -> Dictionary:
 						"why": "마을 인심이 사납다. 이 방에서 마음 놓고 누울 수 없다."}
 				return {"name": "312번째 계단 옥탑방 요" if int(st.vars.get_v("HOME_BC")) == 1 else "빌린 침대",
 					"owned": int(st.vars.get_v("HOME_BC")) == 1, "other": false}
+			if RENT_BEDS.has(str(p["name"])):                                 # 빌린 매트(1-8f 사당): 기한 안이면 내 침대
+				var rb: Array = RENT_BEDS[str(p["name"])]
+				if Clock.abs_min(date_text) < int(st.vars.get_v(str(rb[0]))):
+					return {"name": str(BEDS[p["name"]]), "owned": true, "other": false}
+				return {"name": str(BEDS[p["name"]]), "owned": false, "other": true, "why": str(rb[1])}
 			var other := false
 			for pre in OTHERS_MAPS:
 				if map.id.begins_with(pre):

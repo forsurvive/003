@@ -1,0 +1,53 @@
+{
+ "id": "SD_LR09",
+ "title": "볼트 분양 광고판",
+ "loc": "L-R01-18",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "SEEN": 5
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SD_LR09 >= 1",
+   "to": "SEEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "2070년 광고판. 웃는 가족 셋과 둥근 볼트 문. 아래 붉은 띠에 굵은 글씨."
+  },
+  {
+   "op": "cmd",
+   "name": "note",
+   "args": [
+    "LR-09"
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "SD_LR09 = 1"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'당첨되면 200년이 편안합니다.' 누군가 '200년' 밑에 분필로 줄을 그었다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SADANG.txt"
+}

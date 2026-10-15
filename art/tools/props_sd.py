@@ -279,6 +279,43 @@ def platform_stairs():
     return im
 
 
+def rent_mat():
+    """승강장 매트(1×1, 숙박 10캡 — SD-15 §5.5 V05): 승강장 고무 매트를 잘라 깐 잠자리 + 접은 담요 + 나무 번호표 '7'."""
+    im = img(32, 32)
+    d = ImageDraw.Draw(im)
+    d.rounded_rectangle([2, 8, 29, 29], radius=2, fill=C("P03")); d.line([3, 8, 28, 8], fill=C("P05"))
+    for y in range(11, 28, 3):
+        d.line([4, y, 27, y], fill=C("P02"))                              # 고무 홈
+    d.rectangle([5, 10, 17, 16], fill=C("P36")); d.line([5, 10, 17, 10], fill=C("P37"))   # 접은 담요
+    d.line([5, 13, 17, 13], fill=C("P35"))
+    d.rectangle([21, 22, 27, 28], fill=C("P20")); d.line([21, 22, 27, 22], fill=C("P21"))  # 번호표
+    d.line([23, 24, 25, 24], fill=C("P02")); d.line([25, 24, 23, 27], fill=C("P02"))
+    return im
+
+
+def scrap_wall(seed=1):
+    """고철 칸막이(2×1): 녹슨 함석 · 자동차 보닛 · 철문짝을 쇠기둥에 철사로 묶어 세웠다(사당 4번 출구 광장 둘레)."""
+    rnd = random.Random(seed)
+    im = img(66, 54)
+    d = ImageDraw.Draw(im)
+    x = 1
+    while x < 62:
+        w = rnd.randint(9, 15)
+        top = rnd.randint(6, 14)
+        col = rnd.choice(["P25", "P12", "P26", "P05", "P24", "P13", "P18"])
+        d.rectangle([x, top, min(x + w, 64), 50], fill=C(col)); d.line([x, top, min(x + w, 64), top], fill=C("P07"))
+        if col in ("P12", "P13", "P05"):
+            for yy in range(top + 4, 48, 4):
+                d.line([x + 1, yy, min(x + w, 64) - 1, yy], fill=C("P04"))      # 함석 골
+        else:
+            d.point((x + 2, top + 3), fill=C("P23")); d.line([x + w // 2, top + 6, x + w // 2 + 2, top + 14], fill=C("P23"))   # 녹 자국
+        x += w
+    for xx in (2, 32, 61):
+        d.rectangle([xx, 2, xx + 2, 52], fill=C("P11")); d.line([xx, 2, xx, 52], fill=C("P13"))
+    d.line([1, 22, 64, 20], fill=C("P05")); d.line([1, 38, 64, 40], fill=C("P05"))   # 철사
+    return im
+
+
 # ================================================================================================ 벽 소품
 def w_sign_transfer():
     """환승촌 간판(4×0 벽): 2호선 녹색 · 4호선 하늘색 천을 이어 붙이고 흰 글씨 '사당 환승촌'."""
@@ -373,6 +410,9 @@ PROPS_SD = {
     "sd_guard_post": _r(guard_post, 2, 1, down=-2),
     "sd_station_desk": _r(station_desk, 2, 1, down=-2),
     "sd_banner": _r(banner, 3, 1, down=-2),
+    "sd_rent_mat": _r(rent_mat, 1, 1, down=-4),
+    "sd_scrap_wall": _r(lambda: scrap_wall(1), 2, 1, down=-2),
+    "sd_scrap_wall2": _r(lambda: scrap_wall(2), 2, 1, down=-2),
     "sd_exit4": _r(lambda: exit_stairs(4), 2, 1, down=2),
     "sd_exit6": _r(lambda: exit_stairs(6, True), 2, 1, down=-2),
     "sd_exit10": _r(lambda: exit_stairs(10, True), 2, 1, down=-2),

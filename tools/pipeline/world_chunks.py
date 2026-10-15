@@ -47,7 +47,8 @@ DOORS = [{"lid": "L-R02-11", "near": (720, 1147), "to": "J-01", "mark": "from_W"
 ANCHOR_STYLE = {"K-01": "gov", "K-29": "gov", "K-06": "office", "K-20": "villa", "K-22": "apt", "K-24": "office", "K-26": "gov"}
 INSETS = [{"id": "X-S07", "mark": "from_vault", "at": (959, 1503)},          # 볼트 S-07 정문(L-R01-01)
           {"id": "X-BC", "center": (892, 1362)},                             # 봉천 계단마을(L-R01-09)
-          {"id": "X-SB", "center": (632, 1329), "lid": "L-R02-19", "arrive": "arrive"}]   # 새벽인력 본소(1-6): 도착 칸 = 정문 앞 길
+          {"id": "X-SB", "center": (632, 1329), "lid": "L-R02-19", "arrive": "arrive", "urban": True},   # 새벽인력 본소(1-6): 도착 칸 = 정문 앞 길
+          {"id": "X-SD", "center": (1114, 1408), "lid": "L-R01-18", "arrive": "arrive", "urban": True}]   # 사당 환승촌 4번 출구 광장(1-8f): 사거리 남동쪽 모퉁이
 START = (959, 1503)                                                          # 도달성 검사 출발점 = 볼트 정문
 WALKK = (1, 5, 6, 7, 8, 9, 10, 12, 13)                                       # 걷는 땅 종류(13 = 다리 상판)
 STAIR_GAP = 28
@@ -399,7 +400,7 @@ def build():
     rnd_ring = nz_rng.random((H, W))
     clump = WB.vnoise((H, W), 3, nz_rng, 2)
     for spec_ in INSETS:
-        if spec_["id"] == "X-SB":                                            # 새벽인력 본소는 철판 담 — 공업 지대에 숲 띠를 두르지 않는다
+        if spec_.get("urban"):                                              # 새벽인력 본소 · 사당 광장은 시가지 — 숲 띠를 두르지 않는다
             continue
         d_, (ox_, oy_, w_, h_) = load_inset(spec_)
         for k_, pk in ((1, 0.62), (2, 0.42), (3, 0.26), (4, 0.12)):
@@ -481,13 +482,15 @@ def build():
                 if 0 <= nx < w and 0 <= ny < h and sol[ny, nx] and not band[ny, nx] and min(nx, ny, w - 1 - nx, h - 1 - ny) <= 3:
                     band[ny, nx] = True
                     q.append((nx, ny))
+        if ins["spec"].get("urban"):                                         # 시가지 손 맵(본소 · 사당 광장): 테두리 막힘은 손 맵 소품 그대로(숲 띠 없음)
+            band[:] = False
         line = np.zeros((h, w), bool)
         for y in range(h):
             for x in range(w):
                 if band[y, x] and any(0 <= x + dx < w and 0 <= y + dy < h and not band[y + dy, x + dx]
                                       for dx in (-1, 0, 1) for dy in (-1, 0, 1)):
                     line[y, x] = True
-        if ins["id"] != "X-BC":                                              # 안쪽 가장자리 1칸을 덩어리 잡음으로 숲에 넣는다(직선 숲 벽 대신 들쭉날쭉한 숲 가장자리)
+        if ins["id"] != "X-BC" and not ins["spec"].get("urban"):            # 안쪽 가장자리 1칸을 덩어리 잡음으로 숲에 넣는다(직선 숲 벽 대신 들쭉날쭉한 숲 가장자리)
             busy = set()
             for k_ in ("props", "npcs", "texts", "boxes", "triggers", "exits", "doors"):
                 for e_ in d.get(k_, []):

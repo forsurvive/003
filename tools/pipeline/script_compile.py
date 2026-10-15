@@ -46,7 +46,7 @@ CMDS = {"wait", "fade_in", "fade_out", "balloon", "move", "face", "shake", "year
         "mq", "trade", "yd", "fix",                                                   # 0-10: 1막 진행기 사건 · 거래 창(상인 V번호)
         "meet", "memo", "obit",                                              # 1-2: 인물 수첩 등록 · 한 줄 메모 · 소식으로 안 죽음
         "re", "cage", "capture",                                             # 1-3: 인카운터 첫 분대 대화의 결말 · 우리 문 열기 · 생포(사흘 버팀)
-        "jm", "yd", "sb", "vb", "home", "info", "doctor"}                                                                # 1-4: 1막 경로 진행기(지하시장·단서) 사건                                             # 1-3: 인카운터 첫 분대 대화의 결말 · 우리 문 열기 · 생포(사흘 버팀)
+        "jm", "yd", "sb", "vb", "home", "info", "doctor", "rent"}                                                                # 1-4: 1막 경로 진행기(지하시장·단서) 사건                                             # 1-3: 인카운터 첫 분대 대화의 결말 · 우리 문 열기 · 생포(사흘 버팀)
 ENGINE_VARS = {"PC_ST", "PC_PE", "PC_EN", "PC_CH", "PC_IN", "PC_AG", "PC_LK", "PC_TAG1", "PC_TAG2", "PC_TAG3", "PC_CAPS", "PC_XP",
                "PC_SEX", "PC_APT_PROXY",
                "MQP4_DUCT", "MQP4_FOLLOW", "MQP4_KEY", "MQP4_ARMORY", "MQP4_TALK", "MQP4_BJ_KO", "MQP4_SEC_KO", "MQP4_CAUGHT", "MQP4_DECOY",
@@ -63,9 +63,12 @@ ENGINE_VARS = {"PC_ST", "PC_PE", "PC_EN", "PC_CH", "PC_IN", "PC_AG", "PC_LK", "P
                "GAME_HOUR", "SB_RAID", "SB_PASS", "SB_DOGS", "SB_SAFE", "SB_KEY", "SB_FREED", "SB_READ", "SB_DEAL",
                "SB_BURNT", "SB_DEBT", "SB_BJ", "SB_TALK", "SB_BOUGHT", "SB_DEPO", "SB_127", "GB_PASS",
                "MQ106_CUSTODY", "MQ106_TALKED", "MQ106_SEIZED", "MQ106_AT", "MQ106_QLINE", "MQ106_QWHY", "MQ106_QGRID", "MQ106_QDEAD", "MQ106_QSIGN", "NAMGUNG_MET", "WANTED_PRE",
-               "PD_R01_BJ", "WANTED_HOLD", "RE036_MET", "RE036_NEWS", "RE042_N", "HOME_BC", "HOME_BC_OK", "WELL_RESTED", "HOME_BC_NOTE", "BAEKGU_NAP", "INFO_RUMOR_R01", "INFO_RUMOR_R02", "CARAVAN_V54", "MEDIC_AT", "TR_YEON_MET", "TR_SO_MET", "TR_EOM_MET"}                                                        # 1-6 MQ-105             # 1-3 생포 · 1-4 해킹 통계
+               "PD_R01_BJ", "WANTED_HOLD", "RE036_MET", "RE036_NEWS", "RE042_N", "HOME_BC", "HOME_BC_OK", "WELL_RESTED", "HOME_BC_NOTE", "BAEKGU_NAP", "INFO_RUMOR_R01", "INFO_RUMOR_R02", "CARAVAN_V54", "MEDIC_AT", "TR_YEON_MET", "TR_SO_MET", "TR_EOM_MET",
+               "SD_MET_HUH", "SD_MET_PYO", "SD_MET_WI", "SD_MET_SEONG", "SD_MET_BAN", "SD_MET_TAK", "SA_MAKCHA_HEARD", "SA_MAT_UNTIL", "SD_MAP_UG", "SD_BOARD_SEEN", "SD_LR05", "SD_LR09", "U02_OPEN"}                                                        # 1-6 MQ-105             # 1-3 생포 · 1-4 해킹 통계
 UNNAMED = {"N-TRADER": "떠돌이 고물상", "N-REFUGEE": "피난민", "N-DOWNED": "쓰러진 민병", "N-HS-E1": "수송대 호위", "N-HS-E2": "수송대 호위",
-           "CR-091": "짐소"}                                                     # 1-8d 고개길 수송대
+           "CR-091": "짐소",                                                     # 1-8d 고개길 수송대
+           "N-SA-G1": "승강장 경비", "N-SA-G2": "승강장 경비", "N-SA-G3": "승강장 경비", "N-SA-R1": "환승촌 주민", "N-SA-R2": "환승촌 주민",   # 1-8f 사당 환승촌
+           "N-SA-R3": "환승촌 주민", "N-SA-R4": "버섯 일꾼"}
 DECISION = ["어느 편에 서겠", "편에 서겠습니까", "제안을 수락", "받아들이겠습니까", "어느 쪽을 택하", "누구 편이"]
 OLD_NAMES = ["강태오", "천웨이", "국민방송"]
 PAGE = 160

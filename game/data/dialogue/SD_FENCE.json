@@ -1,0 +1,38 @@
+{
+ "id": "SD_FENCE",
+ "title": "서쪽 터널 철망",
+ "loc": "L-R01-18",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "철망 너머 어둠. 레일이 서쪽으로 휘어 사라진다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "한참 귀를 기울이자 발소리가 난다. 아주 느린. 두 걸음. 그리고 멈춘다. 다시 두 걸음."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "철망 기둥에 분필 글씨. '막차 아직 — 경비대.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SADANG.txt"
+}

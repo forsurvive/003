@@ -1,0 +1,32 @@
+{
+ "id": "SD_WAITLINE",
+ "title": "노란 선 안",
+ "loc": "L-R01-18",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "해골들이 줄 맞춰 앉은 채다. 몇은 서로 기대고, 몇은 가방을 안았다. 모두 같은 쪽 — 승강장 계단 쪽을 본다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "해골마다 마른 버섯 한 송이. 바닥 먼지에 빗자루 자국이 노란 선 앞에서 딱 멈춘다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SADANG.txt"
+}
