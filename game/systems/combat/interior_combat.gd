@@ -68,6 +68,8 @@ var _recoil_t := 0.0
 var _charge := -1.0                               ## 근접 누르는 중(초) — 0.5초면 파워 공격. -1 = 누르지 않음
 var power_hits := 0                               ## 시험용: 파워 공격 횟수
 var ord: Ordnance                                 ## 투척·설치(1-9b): 수류탄 · 지뢰 · 지대
+var hazards: Hazards                              ## 함정 · 환경 폭발(1-9c)
+var disarm_prog := -1.0                           ## 그리기: 해체 진행(0~1, -1 = 아님)
 var _disarm: Dictionary = {}                      ## 해체 중인 지뢰
 
 
@@ -86,6 +88,9 @@ func _init() -> void:
 	ord = Ordnance.new()
 	ord.shots = shots
 	add_child(ord)
+	hazards = Hazards.new()
+	add_child(hazards)
+	hazards.bind(shots, ord, weapons)
 	pc.team = "player"
 	pc.died.connect(func() -> void:                                    # Combatant.take가 HP 0에서 dead를 세우고 died를 낸다
 		heal_q.clear()
@@ -147,6 +152,7 @@ func on_map(map: InteriorMap, player: Actor, st: StoryState) -> void:
 	ord.mines.clear()
 	ord.zones.clear()
 	_disarm = {}
+	hazards.setup(map, st)
 	for row in map.data.get("mines", []):                              # 맵에 깔린 지뢰(적 편, 1-9c 배치)
 		if InteriorMap._cond_ok(str(row.get("cond", "")), st) and weapons.has(str(row.get("id", "W-063"))):
 			ord.lay(Vector2(int(row["x"]) * 32 + 16, int(row["y"]) * 32 + 16), weapons[str(row.get("id", "W-063"))])
@@ -220,6 +226,8 @@ func spawn(enemy_id: String, pos: Vector2, map: InteriorMap, st: StoryState = nu
 	var arm := str(opts.get("arm", "baton" if enemy_id == "CR-473" else ("claw" if enemy_id in ["CR-200", "CR-201"] else "")))
 	e.setup_enemy(enemy_rows[enemy_id], _enemy_weapon(enemy_id, arm), pos, map, opts)
 	e.smoke_at = ord.in_zone
+	e.cmb.robot = enemy_id.begins_with("CR-3")                          # SD-14 CR-3xx = 로봇(관제망 · 드론 · 포탑)
+	e.cmb.big = enemy_id == "CR-405"                                    # 파워 아머: 넘어짐 · 그물 · 넉백 면역(SD-11 §9.4)
 	e.set_meta("enemy_id", enemy_id)
 	e.set_meta("row", opts)
 	e.cmb.unaware = func() -> bool: return e.brain.state != AIBrain.S.COMBAT and e.brain.gauge < 100.0
@@ -229,6 +237,8 @@ func spawn(enemy_id: String, pos: Vector2, map: InteriorMap, st: StoryState = nu
 	map.objects.add_child(e)
 	enemies.append(e)
 	e.cmb.died.connect(func() -> void:
+		if e.cmb.robot and not e.cmb.ko and _rng.randf() < 0.3:          # 처치된 로봇의 30%: 원자 전지 소형 폭발(SD-11 §9.3)
+			shots.explode.call_deferred(e.loco.logical + Vector2(0, -10), {"blast": 40.0, "proj": "robot", "condition": "new"}, 100.0, "env")
 		var by_pc: bool = e.cmb.last_by in ["player", "ally", ""]          # 교전(1-E): 다른 무리가 쓰러뜨린 적은 경험치·카르마가 없다
 		if by_pc:
 			stats["downs"] += 1
@@ -587,6 +597,7 @@ func tick(dt: float, free: bool, st: StoryState) -> void:
 		_allies(dt)
 	shots.step(step)
 	ord.step(step, shots.combatants)
+	hazards.step(step, shots.combatants)
 	if pc.hp < hp0:
 		stats["hurt"] += hp0 - pc.hp
 		hurt.emit(hp0 - pc.hp)
@@ -814,7 +825,21 @@ func _use_one(st: StoryState) -> void:
 func disarm_tick(dt: float, st: StoryState) -> String:
 	if not crouch:
 		_disarm = {}
+		disarm_prog = -1.0
 		return "stand"
+	var hz := hazards.near(pc.pos())                                   # 함정이 먼저(1-9c): 기술 확인 → 1초 → 회수
+	if not hz.is_empty():
+		if not hazards.can_disarm(hz):
+			disarm_prog = -1.0
+			message.emit("해체하려면 %s이 필요하다." % hazards.need_text(hz))
+			return "skill"
+		disarm_prog = clampf(maxf(0.0, disarm_prog) + dt / Ordnance.DISARM_S, 0.0, 1.0)
+		if disarm_prog >= 1.0:
+			hazards.finish_disarm(hz)
+			disarm_prog = -1.0
+			message.emit("함정을 해체했다.")
+			return "done"
+		return "busy"
 	if _disarm.is_empty() or not ord.mines.has(_disarm):
 		_disarm = ord.near_mine(pc.pos())
 		if _disarm.is_empty():
@@ -1244,8 +1269,15 @@ func _draw_cursor() -> void:
 var visible_cursor := true
 
 
+## 웅크린 채 1t 안에 해체할 것이 있나(호스트: 상호작용 키를 누르고 있으면 해체)
+func can_disarm_here() -> bool:
+	return crouch and pc.actor != null and (not hazards.near(pc.pos()).is_empty() or not ord.near_mine(pc.pos()).is_empty())
+
+
 func _draw() -> void:
 	_draw_cursor()
+	if disarm_prog >= 0.0 and pc.actor != null:                        # 해체 진행 고리
+		draw_arc(pc.pos() + Vector2(0, -40), 7.0, -PI / 2.0, -PI / 2.0 + TAU * disarm_prog, 20, Color("7CD62B"), 2.0)
 	if throw_hold >= 0.0 and pc.actor != null:                         # 투척 조준선(SD-11 §3.4): 누른 시간만큼 착지점까지 늘어나는 점선 포물선
 		var from: Vector2 = pc.pos() + Vector2(0, -10)
 		var d := minf(from.distance_to(throw_aim), throw_max_t * 32.0 * clampf(throw_hold / Ordnance.THROW_HOLD_S, 0.15, 1.0))

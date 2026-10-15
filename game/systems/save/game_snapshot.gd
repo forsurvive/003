@@ -27,6 +27,7 @@ static func story(st: StoryState) -> Dictionary:
 	var d := st.dump()
 	d["boxes"] = _sorted(st.boxes)
 	d["stolen"] = _sorted(st.stolen)
+	d["hazards"] = _sorted(st.hazards)
 	d["wear"] = _sorted(st.wear)
 	var dead := st.dead.keys()
 	dead.sort()
@@ -43,6 +44,7 @@ static func apply_story(st: StoryState, d: Dictionary) -> void:
 	st.restore(d)
 	st.boxes = (d.get("boxes", {}) as Dictionary).duplicate(true)
 	st.stolen = (d.get("stolen", {}) as Dictionary).duplicate(true)
+	st.hazards = (d.get("hazards", {}) as Dictionary).duplicate(true)
 	st.wear = {}
 	for k in d.get("wear", {}):
 		st.wear[k] = int(d["wear"][k])

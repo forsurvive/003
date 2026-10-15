@@ -418,7 +418,7 @@ def mine(kind, frame):
 def zone(kind, frame, size=32):
     """지대(일반 혼합 — 반투명 대신 바둑판): fire = 바닥 불꽃 덩이 · gas = 누런 최루 구름 · smoke = 회색 연막. 3컷 순환(덩이가 자리를 바꾼다)."""
     img = Image.new("RGBA", (size, size), CLEAR)
-    rnd = random.Random({"fire": 3, "gas": 5, "smoke": 7}[kind] * 10 + frame)
+    rnd = random.Random({"fire": 3, "gas": 5, "smoke": 7, "rad": 11}[kind] * 10 + frame)
     lobes = [(rnd.uniform(-9, 9), rnd.uniform(-7, 7), rnd.uniform(4.5, 7.5)) for _ in range(6)]
     for y in range(size):
         for x in range(size):
@@ -439,6 +439,13 @@ def zone(kind, frame, size=32):
                 if (x + y + frame) % 2:
                     continue
                 tok = "P32" if ry < -0.3 else ("P31" if d < 0.75 else "P30")
+            elif kind == "rad":                                              # 방사능 아지랑이(1-9d): 성긴 녹색 점 · 가운데 밝은 알갱이
+                if d < 0.22 and (x * 3 + y + frame) % 5 == 0:
+                    tok = "P57"
+                elif (x + 2 * y + frame) % 4:
+                    continue
+                else:
+                    tok = "P56" if d < 0.55 else ("P55" if d < 0.85 else "P35")
             else:
                 if (x + y + frame) % 2 and d > 0.5:
                     continue
@@ -461,3 +468,44 @@ def boom_tint(frame, kind, size=96):
             if a and (r, g, b) in rev:
                 px[x, y] = rev[(r, g, b)] + (255,)
     return base
+
+
+# ================================================================ 단계 1-9c 숨긴 함정(SD-11 §9.2): 발견했을 때만 그린다(바닥층, 일반 혼합)
+def trap(kind, frame=0):
+    """bear 덫(0 벌림 · 1 닫힘) · plate 압력판 · wire 철선 말뚝 + 수류탄 다발 · claymore 지향성 파편 지뢰(오른쪽을 향함) ·
+    shotgun 함정 산탄총(오른쪽을 향한 총 + 받침) · 16칸 또는 32칸(shotgun)."""
+    size = 32 if kind == "shotgun" else 16
+    im = Image.new("RGBA", (size, size), CLEAR)
+    d = __import__("PIL.ImageDraw", fromlist=["Draw"]).Draw(im)
+    if kind == "bear":
+        if frame == 0:                                                        # 벌린 톱니 턱(위에서 본 원) + 가운데 발판
+            for a in range(0, 360, 30):
+                r = 6.5
+                x, y = 8 + r * math.cos(math.radians(a)), 9 + r * 0.7 * math.sin(math.radians(a))
+                _px(im, x, y, "P06" if a % 60 == 0 else "P05")
+            d.ellipse([3, 5, 13, 13], outline=C("P04"))
+            d.rectangle([6, 8, 10, 10], fill=C("P24")); d.point((8, 9), fill=C("P07"))
+        else:                                                                 # 닫힌 턱(한 줄)
+            d.rectangle([2, 8, 14, 10], fill=C("P05")); d.line([2, 8, 14, 8], fill=C("P06"))
+            for x in range(3, 14, 2):
+                d.point((x, 7), fill=C("P07"))
+        d.line([13, 11, 15, 14], fill=C("P04"))                               # 말뚝 사슬
+    elif kind == "plate":                                                     # 흙에 묻힌 판 + 비죽 나온 선
+        d.rectangle([3, 6, 12, 11], fill=C("P17")); d.rectangle([4, 7, 11, 10], fill=C("P18"))
+        d.line([4, 7, 11, 7], fill=C("P19")); d.line([12, 9, 15, 7], fill=C("P54"))
+    elif kind == "wire":                                                      # 철선 말뚝 + 테이프로 묶은 수류탄 셋
+        d.line([3, 3, 3, 13], fill=C("P18")); d.point((3, 2), fill=C("P19"))
+        for i, (x, y) in enumerate(((6, 9), (9, 9), (7, 12))):
+            d.ellipse([x - 1, y - 2, x + 2, y + 1], fill=C("P30")); d.point((x, y - 2), fill=C("P31"))
+        d.line([5, 10, 11, 10], fill=C("P06"))
+    elif kind == "claymore":                                                  # 휜 국방색 상자 · 다리 둘 · 앞면 글자 띠 · 철선
+        d.polygon([(4, 4), (11, 3), (12, 10), (4, 11)], fill=C("P30")); d.line([11, 3, 12, 10], fill=C("P31"))
+        d.line([6, 6, 10, 6], fill=C("P32")); d.line([5, 11, 4, 14], fill=C("P29")); d.line([10, 10, 11, 14], fill=C("P29"))
+        d.point((13, 7), fill=C("P07")); d.point((14, 7), fill=C("P06"))
+    elif kind == "shotgun":                                                   # 나무 받침 위 산탄총(오른쪽) + 방아쇠 줄
+        d.rectangle([10, 20, 12, 28], fill=C("P18")); d.rectangle([20, 20, 22, 28], fill=C("P18"))
+        d.rectangle([8, 18, 24, 20], fill=C("P19")); d.line([8, 18, 24, 18], fill=C("P20"))
+        d.rectangle([4, 14, 10, 16], fill=C("P18")); d.rectangle([10, 13, 28, 15], fill=C("P04")); d.line([10, 13, 28, 13], fill=C("P06"))
+        d.rectangle([14, 16, 18, 17], fill=C("P18"))
+        d.line([13, 17, 8, 26], fill=C("P07"))
+    return im

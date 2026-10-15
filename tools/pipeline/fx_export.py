@@ -45,9 +45,16 @@ SETS = [  # 이름, 컷 수, 그리는 함수(각, 컷), 기준점, 혼합, 칸,
 SETS += [  # 1-9b 투척·설치(SD-11 §3.4 · §9.2): 던진 물체 4컷(구름) · 지뢰 2컷(경보등) · 지대 3컷 · 플라스마·펄스 폭발(색 교체)
     *[("thrown_" + k, 4, (lambda k: lambda a, f: A.thrown(k, f))(k), A.ANCHOR["mid16"], "mix", 16, 1) for k in A.THROWN],
     *[("mine_" + k, 2, (lambda k: lambda a, f: A.mine(k, f))(k), A.ANCHOR["mid16"], "mix", 16, 1) for k in A.MINES],
-    *[("zone_" + k, 3, (lambda k: lambda a, f: A.zone(k, f))(k), (16.0, 16.0), "mix", 32, 1) for k in ("fire", "gas", "smoke")],
+    *[("zone_" + k, 3, (lambda k: lambda a, f: A.zone(k, f))(k), (16.0, 16.0), "mix", 32, 1) for k in ("fire", "gas", "smoke", "rad")],
     ("boom_plasma", 8, lambda a, f: A.boom_tint(f, "plasma"), A.ANCHOR["mid96"], "mix", 96, 1),
     ("boom_pulse", 8, lambda a, f: A.boom_tint(f, "pulse"), A.ANCHOR["mid96"], "mix", 96, 1),
+]
+SETS += [  # 1-9c 숨긴 함정(발견하면 바닥층에 그린다)
+    ("trap_bear", 2, lambda a, f: A.trap("bear", f), A.ANCHOR["mid16"], "mix", 16, 1),
+    ("trap_plate", 1, lambda a, f: A.trap("plate"), A.ANCHOR["mid16"], "mix", 16, 1),
+    ("trap_wire", 1, lambda a, f: A.trap("wire"), A.ANCHOR["mid16"], "mix", 16, 1),
+    ("trap_claymore", 1, lambda a, f: A.trap("claymore"), A.ANCHOR["mid16"], "mix", 16, 1),
+    ("trap_shotgun", 1, lambda a, f: A.trap("shotgun"), (16.0, 16.0), "mix", 32, 1),
 ]
 TICKS = {"flame": 4, "boom": 3, "boom_smoke": 4, "boom_plasma": 3, "boom_pulse": 3}   # 컷당 틱(기본 2)
 

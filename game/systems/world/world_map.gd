@@ -11,6 +11,8 @@ extends InteriorMap
 const INTERACT := ["hangyeol_bench", "workbench", "drum_fire", "forge", "cot", "bedroll", "bedroll2", "straw_mat", "straw_mat2", "bunk",
 	"hosp_bed", "vip_bed", "yo_bed"]
 
+const HAZARD := ["car_wreck", "car_wreck2", "bus_wreck", "convoy_truck", "drum", "lp_gas"]   ## 원자력 차량 · 드럼 · 가스통(1-9c 환경 폭발)
+
 const WDIR := "res://data/world/"
 const L_FG := 0                                  ## 바닥·덮개 교대(칸 i: 바닥 2i, 덮개 2i+1)
 const L_SOLID := 3200
@@ -437,7 +439,7 @@ func _attach(k: Vector2i, a: PackedByteArray) -> void:
 		var sy := ty * T + 16 if fh == 0 else (ty + fh) * T                 # 바닥 덧그림(풀포기·맨홀)은 칸 가운데, 나머지는 발 칸 아래 변
 		_spr_q.append([k, e["rect"], Vector2(tx * T + int(e["off"][0]), ty * T + int(e["off"][1])), sy])   # 다음 프레임들에 나눠 붙인다
 		var pn: String = tree_names[a[p + 2] | (a[p + 3] << 8)]
-		if INTERACT.has(pn):                                               # 작업대·화덕·침대(1-8c): 호스트가 앞 칸에서 찾는다
+		if INTERACT.has(pn) or HAZARD.has(pn):                                               # 작업대·화덕·침대(1-8c): 호스트가 앞 칸에서 찾는다
 			props.append({"name": pn, "x": tx, "y": ty, "w": maxi(1, int(e["foot"][0])), "h": maxi(1, fh), "chunk": k})
 		p += 4
 	var ns := a[p] | (a[p + 1] << 8)                                     # 건물 그림자(SD-16 §3.9: 오른쪽 아래, 높이 1단당 16px, 곱하기 35%)

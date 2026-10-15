@@ -976,6 +976,10 @@ from props_gs import PROPS_GS                                         # 노량�
 for _k in PROPS_GS:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_GS)
+from props_trap import PROPS_TRAP, STATES_TRAP, burnt_states       # 함정 · 환경 폭발(1-9c, SD-11 §9.2 · §9.3)
+for _k in PROPS_TRAP:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_TRAP)
 
 STATES = {
     "board_bc": {s: (lambda s=s: notice_board(s)) for s in ("wanted", "torn", "crumpled", "crossed", "rate", "water", "official")},
@@ -988,6 +992,9 @@ STATES.update(STATES_SB)
 STATES.update(STATES_JM)
 STATES.update(STATES_BK)
 STATES.update(STATES_CG)
+STATES.update(STATES_TRAP)
+for _k, _v in burnt_states(PROPS).items():
+    STATES.setdefault(_k, {}).update(_v)
 
 
 if __name__ == "__main__":

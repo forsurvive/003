@@ -25,6 +25,7 @@ var beams: Array = []                    ## 레이저 빔 {a, b, age, col} — 0
 var booms: Array = []                    ## 폭발 {at, age, k}
 var blasts_total := 0
 signal exploded(at: Vector2, outer_px: float, team: String)
+signal struck(at: Vector2, tile: Vector2i, weapon: Dictionary, team: String)   ## 탄이 엄폐·벽에 막힌 자리(1-9c: 차량·드럼·함정 소품이 맞는다)
 const BEAM_HOLD := 0.1
 const BEAM_FADE := 4.0 / 30.0
 
@@ -144,6 +145,7 @@ func _trace(s: Dictionary) -> void:
 		hit = null
 		sparks.append(_fx("spark_red", blk, float(s["ang"])))
 		marks.append([blk, 20])
+		struck.emit(blk, Vector2i(floori(blk.x / 32), floori(blk.y / 32)), s["weapon"], str(s["team"]))
 	if hit != null:
 		_apply(hit, s, end)
 	beams.append({"a": a, "b": end, "age": 0.0, "red": str(s["weapon"].get("family", "")) != "heavy"})
@@ -159,7 +161,7 @@ func explode(at: Vector2, w: Dictionary, skill: float, team: String, fl: int = 0
 	var outer := float(rr[1]) * 32.0
 	var base := float(w.get("blast", 0.0))
 	blasts_total += 1
-	booms.append({"at": at, "age": 0.0, "k": 2 if pk == "nuke" else 1, "born": Engine.get_process_frames(),
+	booms.append({"at": at, "age": 0.0, "k": 2 if pk in ["nuke", "car"] else 1, "born": Engine.get_process_frames(),
 		"set": "boom_pulse" if bk == "emp" else ("boom_plasma" if bk == "plasma" else "boom")})
 	exploded.emit(at, outer, team)
 	if base <= 0.0:
@@ -191,6 +193,8 @@ func explode(at: Vector2, w: Dictionary, skill: float, team: String, fl: int = 0
 				r["hp"] = float(r["hp"]) * 0.1
 		c.last_by = team
 		c.take(r, at)
+		if float(w.get("blast_burn", 0.0)) > 0.0:                      # 연료 드럼 · 가스: 화상(SD-11 §9.3)
+			c.add_dot("burn", float(w["blast_burn"]), 4.0)
 		if d <= inner:
 			c.hold("down", 1.5)
 		if not c.big:
@@ -270,6 +274,8 @@ func step(dt: float) -> void:
 				elif s["proj"] != "flame":
 					marks.append([blk, 20])
 					sparks.append(_fx("spark", blk, float(s["ang"])))
+				if not s.has("fx_only"):
+					struck.emit(blk, Vector2i(floori(blk.x / 32), floori(blk.y / 32)), s["weapon"], str(s["team"]))
 				continue
 		if hit != null and s.has("pierce"):                            # 화염: 대상마다 한 번(입자는 계속 간다)
 			if not (s["pierce"] as Dictionary).has(hit.get_instance_id()):

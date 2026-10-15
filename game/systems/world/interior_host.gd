@@ -426,8 +426,13 @@ func _physics_process(dt: float) -> void:
 			player.move(v, dt)
 		if player.doll != null:
 			player.doll.position.y = 2.0 if combat.crouch else 0.0               # 웅크리면 2px 낮게(전용 그림 전까지)
-		if use_keyboard and Input.is_action_just_pressed("interact") and not box.active:
+		if use_keyboard and combat.can_disarm_here() and Input.is_action_pressed("interact") and not box.active:
+			combat.disarm_tick(dt, st)                                       # 웅크려 상호작용 길게 = 함정·지뢰 해체(1-9c, SD-11 §9.2)
+		elif use_keyboard and Input.is_action_just_pressed("interact") and not box.active:
+			combat.disarm_prog = -1.0
 			interact()
+		elif combat.disarm_prog >= 0.0:
+			combat.disarm_prog = -1.0                                        # 손을 떼면 처음부터(반쯤 된 해체 없음, SD-20 P10)
 		if use_keyboard and pipboy_ok and Input.is_action_just_pressed("pipboy"):
 			open_pipboy()
 		if use_keyboard and pipboy_ok and Input.is_action_just_pressed("wait"):
@@ -610,6 +615,9 @@ func interact() -> bool:
 			return true
 	var tm := _front_term(cells)
 	if not tm.is_empty():
+		if combat.hazards.on_use(Vector2i(int(tm["x"]), int(tm["y"]))):     # 폭탄 단말기(1-9c): 켜는 순간 감전 + 폭발
+			hint("단말기 속에서 무언가 딸깍 했다.", 3.0)
+			return true
 		open_terminal(tm)
 		return true
 	var gd := _front_go(cells)

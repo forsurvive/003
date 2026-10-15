@@ -410,6 +410,40 @@ def _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kin
                             raise Err(f"순찰 지점 ({rx},{ry})가 빈 바닥이 아니다")
                         e["route"].append([rx, ry, float(mm.group(3) or 2)])
                 out["enemies"].append(e)
+            elif c == "trap":                                    # trap 종류 x y [len=] [dir=E|W|N|S] [id=] [link=] [hide=] [cond=] — 숨긴 함정(1-9c, SD-11 §9.2)
+                tk, x, y = pos[0], int(pos[1]), int(pos[2])
+                if tk not in ("wire", "plate", "bear", "shotgun", "claymore", "terminal", "radcask"):
+                    raise Err(f"모르는 함정 '{tk}'(wire·plate·bear·shotgun·claymore·terminal·radcask — 자판기·택배함·가스 배관은 소품)")
+                if tk not in ("terminal", "radcask") and not (walk(x, y) if ext else floor(x, y)):
+                    raise Err(f"함정 {tk} 자리 ({x},{y})가 바닥이 아니다")
+                e = {"type": tk, "x": x, "y": y, "dir": opt.get("dir", "E"), "len": int(opt.get("len", 3 if tk == "wire" else 1)),
+                     "id": opt.get("id", ""), "link": opt.get("link", ""), "cond": opt.get("cond", "")}
+                if tk == "wire":                                        # 철선은 dir 쪽으로 len칸 — 모두 걸을 수 있는 칸이어야 한다
+                    dx, dy = {"E": (1, 0), "W": (-1, 0), "S": (0, 1), "N": (0, -1)}[e["dir"]]
+                    for k in range(e["len"]):
+                        if not (walk(x + dx * k, y + dy * k) if ext else floor(x + dx * k, y + dy * k)):
+                            raise Err(f"철선 칸 ({x + dx * k},{y + dy * k})가 바닥이 아니다")
+                if e["cond"]:
+                    check_cond(e["cond"], known_vars, known_fns)
+                out.setdefault("traps", []).append(e)
+            elif c == "rad":                                     # rad Z x y w h [cond=] — 방사능 지대(1-9d, SD-11 §11.2 Z1~Z5)
+                z, x, y, w, h = int(pos[0]), int(pos[1]), int(pos[2]), int(pos[3]), int(pos[4])
+                if not 1 <= z <= 5:
+                    raise Err(f"방사능 등급 Z{z}(1~5)")
+                e = {"z": z, "x": x, "y": y, "w": w, "h": h, "cond": opt.get("cond", "")}
+                if e["cond"]:
+                    check_cond(e["cond"], known_vars, known_fns)
+                out.setdefault("rad", []).append(e)
+            elif c == "mine":                                    # mine ID x y [cond=] — 적이 깔아 둔 지뢰(1-9c, W-063 · W-064 · W-151)
+                mid, x, y = pos[0], int(pos[1]), int(pos[2])
+                if mid not in ("W-063", "W-064", "W-151"):
+                    raise Err(f"지뢰 ID '{mid}'(W-063 · W-064 · W-151)")
+                if not (walk(x, y) if ext else floor(x, y)):
+                    raise Err(f"지뢰 자리 ({x},{y})가 바닥이 아니다")
+                e = {"id": mid, "x": x, "y": y, "cond": opt.get("cond", "")}
+                if e["cond"]:
+                    check_cond(e["cond"], known_vars, known_fns)
+                out.setdefault("mines", []).append(e)
             elif c == "box":                                     # box x y 종류 [w= h=] [owner=] [lock=] [name=] [cond=] — 용기(0-9)
                 x, y, bkind = int(pos[0]), int(pos[1]), pos[2]          # (kind는 벽 모양 격자 — 덮어쓰지 않는다)
                 if bkind not in loot_kinds:

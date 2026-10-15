@@ -31,6 +31,7 @@ var wear := {}                          ## 장비 사용 카운터(1-8a, SD-13 �
 var boxes := {}                         ## 용기 상태(0-9): "맵:x,y@연도" -> {"items": {ID: 수}, "opened": 연 횟수, "taken": 꺼낸 횟수}
 var stolen := {}                        ## 장물(SD-12 §9.2): 아이템 ID -> 훔친 수(그 수만큼 [장물] 표시)
 var dead := {}                          ## 죽은 인물 ID -> true(0-9): 뒤 시대 맵에서 서지 않는다
+var hazards := {}                       ## 함정 · 환경 폭발(1-9c): "맵:x,y" -> "done"(터짐·발동) | "off"(해체) | "seen"(발견)
 var places := PlaceLog.new()             ## 장소 발견 상태(1-2, SD-12 §5.5)
 var book := NpcBook.new()               ## 인물 수첩(1-2, SD-12 §3.11)
 const ENEMY_FACTION := {"CR-401": "BJ", "CR-405": "BJ", "CR-435": "SB", "CR-436": "SB", "CR-437": "SB", "CR-438": "SB", "CR-534": "SB",

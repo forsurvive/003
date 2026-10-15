@@ -596,6 +596,8 @@ def build_one(spec, pools, prop_meta, known_vars, known_fns, scenes, tries=6):
             tpl_office(p)
         else:
             tpl_store(p)
+        _traps(p, style, got if style in ("villa", "house") else style, threat)
+        _rads(p, style, got if style in ("villa", "house") else style, threat)
         _place_enemies(p, threat, region)
         with tempfile.NamedTemporaryFile("w", suffix=".map", delete=False, encoding="utf-8") as f:
             f.write(p.source())
@@ -629,6 +631,89 @@ def _setup():
     known_fns = {"karma", "aff", "quest", "stage", "result", "give", "take", "has", "caps", "xp", "wanted", "stat", "skill", "year"}
     scenes = set(json.load(open(os.path.join(ROOT, "game", "data", "dialogue", "_index.json")))["scenes"])
     return prop_meta, known_vars, known_fns, scenes
+
+
+def _traps(p, style, got, threat):
+    """함정 섞기(1-9c, SD-11 §9.2): 숨긴 함정은 길을 막지 않는다(발견하면 보이고, 웅크려 해체).
+    떠돌이 소굴 = 철선 수류탄 다발 또는 덫(위협 3 이상이면 입구 지뢰도) · 아파트 현관 = 폭탄 택배함 · 가게·사무실·주민센터 = 부비트랩 자판기 ·
+    창고 = 압력판 → 함정 산탄총 · 가스 누출 배관. 들어온 자리(문 위 두 칸)와 그 앞줄에는 놓지 않는다."""
+    rnd, W, H = p.rnd, p.W, p.H
+    ex = getattr(p, "ex", W // 2)
+    keep = {(ex + i, H - 2) for i in (-1, 0, 1, 2)} | {(ex + i, H - 3) for i in (0, 1)}
+    ok = lambda x, y: p.free(x, y) and (x, y) not in keep
+    if got == "den":
+        if rnd.random() < 0.65:
+            y = H - 4
+            for x0 in (ex - 1, ex, ex - 2):
+                if all(ok(x0 + k, y) for k in range(3)):
+                    p.cmds.append(f"trap wire {x0} {y} dir=E len=3")
+                    break
+        else:
+            for (x, y) in p.spots(2, H - 6, W - 3, H - 4)[:1]:
+                if ok(x, y):
+                    p.cmds.append(f"trap bear {x} {y}")
+        if rnd.random() < 0.3:
+            for (x, y) in p.spots(1, 4, W - 2, 8)[:1]:
+                if ok(x, y):
+                    p.cmds.append(f"trap bear {x} {y}")
+        if threat >= 3 and rnd.random() < 0.3:
+            for (x, y) in p.spots(ex - 2, H - 6, ex + 3, H - 5)[:1]:
+                if ok(x, y):
+                    p.cmds.append(f"mine W-063 {x} {y}")
+    elif style == "apt" and threat >= 1 and rnd.random() < 0.25:
+        for (x, y) in p.spots(1, 3, W - 2, 3)[:1]:
+            p.prop("trap_parcel", x, y)
+    elif style in ("shop", "office", "gov") and threat >= 1 and rnd.random() < 0.12:
+        for (x, y) in p.spots(1, 3, W - 2, 3)[:1]:
+            p.prop("trap_vending", x, y)
+    elif style not in ("villa", "house", "apt", "shop", "office", "gov"):       # 창고
+        if threat >= 2 and rnd.random() < 0.25:
+            for (x, y) in p.spots(5, 4, W - 6, H - 5):
+                if not ok(x, y):
+                    continue
+                for dx, d in ((4, "W"), (-4, "E")):
+                    if ok(x + dx, y) and all(p.isfloor(x + k * (1 if dx > 0 else -1), y) for k in range(1, 4)):
+                        p.cmds.append(f"trap plate {x} {y} link=sg{x}")
+                        p.cmds.append(f"trap shotgun {x + dx} {y} dir={d} id=sg{x}")
+                        p.busy.add((x + dx, y))
+                        break
+                else:
+                    continue
+                break
+        if rnd.random() < 0.2:
+            for (x, y) in p.spots(1, 4, W - 2, H - 4)[:1]:
+                if ok(x, y):
+                    p.prop("gas_pipe", x, y)
+
+
+def _rads(p, style, got, threat):
+    """방사능 섞기(1-9d, SD-11 §11.2 · §9.2): 지대는 소품이 내는 선량으로 생긴다(웅덩이 Z1 · 폐기물 드럼 Z2 · 열린 차폐 용기 20라드/초).
+    창고·소굴(위협 2 이상) 18% = 구석의 폐기물 드럼 + 흘러나온 웅덩이 · 사무실·주민센터(위협 3 이상) 12% = 차폐 용기 함정(앞 칸 압력판이 뚜껑을 연다).
+    입구 줄에는 놓지 않는다 — 들어서자마자 피폭되는 방은 없다."""
+    rnd, W, H = p.rnd, p.W, p.H
+    ex = getattr(p, "ex", W // 2)
+    keep = {(ex + i, y) for i in (-2, -1, 0, 1, 2, 3) for y in (H - 2, H - 3, H - 4)}
+    if (got == "den" or style not in ("villa", "house", "apt", "shop", "office", "gov")) and threat >= 2 and rnd.random() < 0.18:
+        corners = [(1, 3), (W - 2, 3), (1, H - 5), (W - 2, H - 5)]
+        rnd.shuffle(corners)
+        for (cx, cy) in corners:
+            if (cx, cy) in keep or not p.free(cx, cy):
+                continue
+            p.prop("waste_drum", cx, cy)
+            for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                if p.free(cx + dx, cy + dy) and (cx + dx, cy + dy) not in keep:
+                    p.prop("rad_puddle" if rnd.random() < 0.5 else "rad_puddle2", cx + dx, cy + dy, solid=False)
+                    break
+            break
+    elif style in ("office", "gov") and threat >= 3 and rnd.random() < 0.12:
+        for (x, y) in p.spots(2, 3, W - 3, H - 6):
+            if (x, y) in keep or not p.free(x, y + 1) or (x, y + 1) in keep:
+                continue
+            p.prop("rad_cask", x, y)
+            p.cmds.append(f"trap radcask {x} {y} id=rc{x}")
+            p.cmds.append(f"trap plate {x} {y + 1} link=rc{x}")
+            p.busy.add((x, y + 1))
+            break
 
 
 def _h(*a):
