@@ -1,0 +1,54 @@
+{
+ "id": "ACT2_BROADCAST",
+ "title": "공보방송",
+ "loc": "",
+ "npc": "",
+ "cond": "V_ACT >= 2",
+ "labels": {
+  "START": 0,
+  "CONFIRM": 5
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "핍-보이 라디오가 저절로 켜진다. 공보방송 주파수."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "(공보방송) 비상정부 공보방송입니다. 관리자 후보가 아직 수도 황무지에 있습니다."
+  },
+  {
+   "op": "if",
+   "cond": "MQ106_RESULT == 4",
+   "to": "CONFIRM"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "(공보방송) 등록번호 \\V[P_REGNO]. 시민 여러분의 신고를 기다립니다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "(공보방송) 관리자 후보는 비상정부에 출두해 확인을 마쳤습니다. 시민 여러분은 동요하지 마십시오. 신고는 필요 없습니다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-106.txt"
+}

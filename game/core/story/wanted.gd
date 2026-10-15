@@ -12,7 +12,7 @@ const BOUNTY := [0, 0, 500, 1500, 3000]
 const EXECUTE_BOUNTY := 5000                     ## 처단 공고: 등급 4 + 비상정부 적대 + MQ-402 이후(SD-15 §5.7.1)
 const DAY_CAP := {"kill": [2, 10], "auth": [3, 9]}   ## 원인 -> [한 번, 하루 상한]
 ## 엔진 변수(기획서 변수표 밖 — 저장된다): 하루 누계와 그날 번호, 공고 인상착의(마지막으로 목격된 몸통 의복)
-const VARS := {"WANTED_DAY": "int", "WANTED_KILL_SUM": "int", "WANTED_AUTH_SUM": "int", "WANTED_LOOK": "str"}
+const VARS := {"WANTED_DAY": "int", "WANTED_KILL_SUM": "int", "WANTED_AUTH_SUM": "int", "WANTED_LOOK": "str", "WANTED_HOLD": "int"}
 
 
 static func declare(st: StoryState) -> void:
@@ -45,10 +45,18 @@ static func withdrawn(st: StoryState) -> bool:
 	return bj(st) >= 50
 
 
+## MQ-106 '걸어 들어간다'(SD-03a §6.5 하한 예외 1회): 공고가 '출두 확인'으로 바뀌어 사흘 동안 등급 1. WANTED_HOLD = 끝나는 날
+static func held(st: StoryState) -> bool:
+	return st.vars.has("WANTED_HOLD") and int(st.vars.get_v("WANTED_HOLD")) > 0 \
+		and int(st.vars.get_v("GAME_DAY")) < int(st.vars.get_v("WANTED_HOLD"))
+
+
 ## 지금 막의 최저 값(SD-03a §6.5 표)
 static func floor_value(st: StoryState) -> int:
 	if withdrawn(st):
 		return 0
+	if held(st):
+		return LOWS[1]
 	var act := st.quests.cur_act()
 	if act <= 0:
 		return 0
@@ -84,6 +92,8 @@ static func add(st: StoryState, delta: int, reason := "") -> int:
 static func set_value(st: StoryState, v: int) -> int:
 	var before := grade(st)
 	var nv := 0 if withdrawn(st) else clampi(maxi(v, floor_value(st)), 0, 100)
+	if held(st):
+		nv = mini(nv, LOWS[2] - 1)                                       # 출두 확인 중: 등급 1을 넘지 않는다
 	st.vars.set_v("V_WANTED", nv)
 	var after := grade_of(nv)
 	if after != before:
@@ -109,6 +119,8 @@ static func notice(st: StoryState) -> String:
 	var g := grade(st)
 	if g == 0:
 		return "공고 없음."
+	if held(st):
+		return "관리자 후보 출두 확인 — 신고 불요."
 	if g == 1:
 		return "새벽인력 전령이 정착지 게시판에 인상착의 쪽지를 붙였다."
 	var b := bj(st)

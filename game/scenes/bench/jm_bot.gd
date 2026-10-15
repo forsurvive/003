@@ -7,6 +7,7 @@ extends Node
 
 var host: InteriorHost
 var paths: Act1Paths
+var mq106: Mq106
 var st: StoryState
 var route := "job"
 var shots := ""
@@ -55,6 +56,10 @@ func _ready() -> void:
 	paths = Act1Paths.new()
 	add_child(paths)
 	paths.setup(host, true)
+	mq106 = Mq106.new()
+	add_child(mq106)
+	mq106.setup(host, true)
+	host.combat.player_down.connect(host.on_pc_down)                  # 쓰러짐 → 생포 판정(진짜 진행 prologue와 같은 연결)
 	host.combat.equip("W-002", st)
 	match route:
 		"job":
@@ -139,7 +144,73 @@ func _ready() -> void:
 			_yd_plan()
 		"sb_buy", "sb_deal", "sb_capture", "sb_raid", "sb_roof", "sb_jo", "sb_south":   # MQ-105(1-6) 새벽인력 본소 · R02 남쪽 탐험 묶음
 			_sb_plan()
+		"vb_talk", "vb_walk", "vb_fight", "vb_hide", "vb_cargo", "vb_capture":   # MQ-106(1-7) 첫 번째 추적자 · 막 전환
+			_vb_plan()
 	plan.append(["end"])
+
+
+## MQ-106: K_CODE를 안 채로 연수원 본관(K-01)에서 바깥으로 나온다 → 무전 → 30초 뒤 버티버드 → 해법 여섯 갈래 → 막 전환(V_ACT 2)
+func _vb_plan() -> void:
+	st.quests.set_stage("MQ-102", 100)
+	st.quests.set_stage("MQ-104", 100)
+	st.vars.set_v("K_CODE", 1)
+	st.vars.set_v("K_NET", 1)
+	st.vars.set_v("MQ104_AUTH", 1)
+	st.vars.set_v("V_DOYUN", 1 if route in ["vb_cargo", "vb_walk"] else 2)
+	st.vars.set_v("PC_SKP_SPEECH", 90)
+	st.vars.set_v("PC_SKP_LOCKPICK", 50)
+	st.vars.set_v("PC_SKP_SMALL_GUNS", 60)
+	for kv in [["M-070", 6], ["I-001", 20], ["10mm 탄", 600], ["I-036", 2]]:
+		st.call_fn("give", kv)
+	host.date_text = "2277. 10. 26.  10:00"
+	if route == "vb_fight":                                               # 싸움 갈래 기계 확인: 넉넉한 체력(맵을 옮긴 뒤 'hp' 단계에서) · 총 솜씨
+		st.vars.set_v("PC_SKP_SMALL_GUNS", 100)
+	host.enter("K-01", "from_W")
+	var first := {"vb_talk": ["[화술 보통]"], "vb_walk": ["(무기를 집어넣고"], "vb_fight": ["서류는 너희 사정"], "vb_hide": ["(뒤돌아 달아난다)"],
+		"vb_cargo": ["(뒤돌아 달아난다)"], "vb_capture": ["서류는 너희 사정"]}
+	plan = [["want", first[route]], ["go", 14, 15], ["wait", 1.0], ["hp", 3000 if route == "vb_fight" else (6 if route == "vb_capture" else 0)],
+		["check", "MQ106_STAGE == 10", "실내에서 나오자 무전(단계 10)"],
+		["until", "state:fly", 30.0, "18초 뒤 버티버드가 날아온다"], ["wait", 4.0], ["shot", "vb_fly"], ["wait", 4.5], ["shot", "vb_descend"],
+		["until", "state:stand", 20.0, "내려앉는다(하강 · 먼지 · 흔들림)", "vb_landed"],
+		["check", "vb_blocks", "내려앉은 기체 밑 칸이 막힌다"]]
+	match route:
+		"vb_talk":
+			plan += [["shoton", "서류대로", "vb_yuk"], ["until", "MQ106_STAGE == 100", 40.0, "철수"],
+				["wait", 3.0], ["shot", "vb_lift"],
+				["check", "MQ106_RESULT == 3 and AFF_BJ == -25 and V_WANTED >= 30", "말: 비상 +5(−30 → −25) · 수배 공고 30"]]
+		"vb_walk":
+			plan += [["shoton", "맞은편 의자", "vb_ride"], ["until", "map:CG-05", 40.0, "걸어 들어감 → 청계산 귀빈실"],
+				["wait", 2.0], ["shot", "cg05"], ["check", "has(\"W-002\") == 0", "무기는 정문 보관함에"],
+				["go", 17, 14], ["want", ["알겠다"]], ["talk", "N-R11-005"],
+				["go", 31, 15], ["shoton", "서명한 사람이", "namgung"],
+				["want", ["왜 하필", "날 쫓은", "관제망이", "죽은 사람", "(일어선다)"]], ["talk", "C-003"], ["wait", 1.0],
+				["check", "K_SIGNER == 1 and K_LINEAGE == 1 and MQ106_TALKED == 1", "남궁혁 면담: 서명자 · 계보(K_SIGNER · K_LINEAGE)"],
+				["want", ["(사흘을 보낸다)"]], ["talk", "C-003"], ["until", "MQ106_STAGE == 100", 40.0, "사흘째 아침 관악 산자락"], ["wait", 2.0], ["shot", "vb_drop"],
+				["check", "MQ106_RESULT == 4 and AFF_BJ == -15 and has(\"W-002\") and WANTED_HOLD > 0 and V_WANTED < 30", "걸어 들어감: 비상 +15 · 무기 돌려받음 · 출두 확인(등급 1)"],
+				["check", "V_DOYUN == 1", "기체 안에서 마주 앉기만(구출 아님)"]]
+		"vb_fight":
+			plan += [["fight"], ["until", "MQ106_STAGE == 100", 60.0, "분대가 무너지면 철수"],
+				["wait", 3.0], ["shot", "vb_after"],
+				["check", "MQ106_RESULT == 1 and AFF_BJ == -45 and V_WANTED >= 30", "싸움: 비상 −15 · 수배 +10 이상"]]
+		"vb_hide":
+			plan += [["wait", 2.0], ["warp", "K-01"], ["wait", 62.0], ["warp", "W", "L-R01-06"], ["wait", 1.0],
+				["check", "MQ106_RESULT == 2 and MQ106_STAGE == 100 and AFF_BJ == -30", "숨음: 건물 안에서 1분 — 비상 0"]]
+		"vb_cargo":
+			plan += [["wait", 1.0], ["want", ["[자물쇠 따기 50]"]], ["godoor"], ["talk", "C-002"], ["lock"], ["wait", 3.0], ["shot", "vb_doyun"],
+				["check", "V_DOYUN == 2 and V_KARMA >= 100", "화물칸 철창(자물쇠 50) → 하도윤 구출 · 카르마 +100"],
+				["warp", "K-01"], ["wait", 62.0], ["warp", "W", "L-R01-06"], ["wait", 1.0], ["check", "MQ106_RESULT == 2", "숨음으로 마침"]]
+		"vb_capture":
+			plan += [["until", "map:CG-05", 80.0, "쓰러짐 → 생포 → 귀빈실"], ["wait", 2.0], ["shot", "cg05_taken"],
+				["check", "MQ106_CUSTODY == 2 and MQ106_SEIZED == 1 and has(\"W-002\") == 0 and has(\"I-001\") == 0", "소지품 압수(무기 · 스팀팩)"],
+				["go", 31, 15], ["want", ["(일어선다)"]], ["talk", "C-003"], ["wait", 1.0],
+				["want", ["(사흘을 보낸다)"]], ["talk", "C-003"], ["until", "MQ106_STAGE == 100", 40.0, "내려 줌"],
+				["check", "MQ106_RESULT == 5 and AFF_BJ == -25", "생포: 비상 +5"], ["check", "place_marked:L-R11-02", "압수품 보관함 자리가 지도에"]]
+	plan += [["check", "V_ACT == 2", "막 전환 1 → 2"], ["wait", 4.0], ["shot", "act2_after"]]
+	for k in plan.size():                                               # 막 제목 카드는 MQ-106이 끝나는 순간 뜬다: 그 '기다림' 바로 뒤에서 본다
+		var st_: Array = plan[k]
+		if str(st_[0]) == "until" and str(st_[1]) == "MQ106_STAGE == 100":
+			plan.insert(k + 1, ["until", "card", 30.0, "막 제목 카드 「2막 강」", "act2_card"])
+			break
 
 
 ## MQ-105 본소(손 맵 X-SB 원점 606,1307): 구매자(열쇠 은신 50 → 금고 → 장부 → 마당 화로) · 거래(물물교환 50 + 1,000캡) ·
@@ -310,6 +381,8 @@ func _process(dt: float) -> void:
 				else:
 					c.close(true)
 			return
+	if str(s[0]) == "until" and _until(s):
+		return
 	if host.box.active or host.ev.busy() or host.busy:
 		host.input_fn = func() -> Vector2: return Vector2.ZERO
 		if s[0] != "fight":
@@ -370,7 +443,8 @@ func _process(dt: float) -> void:
 			_next()
 		"fight":
 			host.input_fn = func() -> Vector2: return Vector2.ZERO
-			var alive := host.combat.enemies.filter(func(e): return is_instance_valid(e) and not e.cmb.dead and e.cmb.team == "enemy")
+			var alive := host.combat.enemies.filter(func(e): return is_instance_valid(e) and not e.cmb.dead and e.cmb.team == "enemy" and not e.hide_bar \
+				and e.loco.logical.distance_to(host.player.loco.logical) < 30.0 * 32.0)
 			if alive.is_empty():
 				if step_t > 1.5:
 					host.combat.bot = {}
@@ -379,7 +453,8 @@ func _process(dt: float) -> void:
 			step_t = 0.0 if step_t > 1.0 and not alive.is_empty() and t < 380.0 else step_t
 			if t - last_report > 10.0:
 				last_report = t
-				print("  [봇] 싸움 %.0f초: 남은 %s · 체력 %d" % [t, str(alive.map(func(e): return "%s hp%d" % [str(host.map.tile_of(e.loco.logical)), int(e.cmb.hp)])), int(host.combat.pc.hp)])
+				print("  [봇] 싸움 %.0f초: 남은 %s · 체력 %d · 무기 %s 탄창 %s 넣음 %s" % [t, str(alive.map(func(e): return "%s hp%d" % [str(host.map.tile_of(e.loco.logical)), int(e.cmb.hp)])), int(host.combat.pc.hp),
+					host.combat.weapon_id, str(host.combat.mags.get(host.combat.weapon_id, -1)), str(host.combat.holstered)])
 			alive.sort_custom(func(a, b): return a.loco.logical.distance_to(host.player.loco.logical) < b.loco.logical.distance_to(host.player.loco.logical))
 			var far: float = alive[0].loco.logical.distance_to(host.player.loco.logical)
 			if far > 160.0:                                                # 멀면 다가간다(사거리·시야 안으로)
@@ -450,6 +525,19 @@ func _process(dt: float) -> void:
 		"crouch":
 			host.combat.crouch = bool(s[1])
 			_next()
+		"godoor":                                                       # 버티버드 문 앞 칸으로(기체를 돌아서)
+			var g := host.map.mark_pos("vb_door") if host.map.marks.has("vb_door") else host.player.loco.logical
+			host.input_fn = _walk.bind(g)
+			if host.player.loco.render.distance_to(g) < 6.0 or step_t > 20.0:
+				host.input_fn = func() -> Vector2: return Vector2.ZERO
+				host.player.loco.facing = 6
+				host.player._show()
+				_next()
+		"hp":                                                           # 체력을 정한다(0 = 그대로)
+			if int(s[1]) > 0:
+				host.combat.pc.max_hp = maxf(host.combat.pc.max_hp, float(s[1]))
+				host.combat.pc.hp = float(s[1])
+			_next()
 		"face":
 			host.player.loco.facing = int(s[1])
 			host.player._show()
@@ -477,6 +565,10 @@ func _process(dt: float) -> void:
 				ok = host.map.id == str(s[1]).substr(4)
 			elif str(s[1]) == "seen_commuter":
 				ok = seen.has("commuter")
+			elif str(s[1]) == "vb_blocks":
+				ok = mq106.land_check
+			elif str(s[1]).begins_with("place_marked:"):
+				ok = st.places.get_state(str(s[1]).substr(13)) >= PlaceLog.MARKED
 			elif str(s[1]) == "seen_guard":
 				ok = seen.has("guard_bark")
 			elif str(s[1]) == "seen_rumor":
@@ -490,8 +582,32 @@ func _process(dt: float) -> void:
 		"shot":
 			_shot(str(s[1]))
 			_next()
+		"until":
+			host.input_fn = func() -> Vector2: return Vector2.ZERO
 		"end":
 			_finish("")
+
+
+## 조건까지 기다림(state:진행기 상태 · map:맵 · card 막 제목 카드 · 식). 대화·연출 중에도 본다. 넘어갔으면 true
+func _until(s: Array) -> bool:
+	var c := str(s[1])
+	var ok2 := false
+	if c.begins_with("state:"):
+		ok2 = mq106 != null and mq106.state == c.substr(6)
+	elif c.begins_with("map:"):
+		ok2 = host.map.id == c.substr(4)
+	elif c == "card":
+		ok2 = str(host.ev._job.get("kind", "")) == "card"
+	else:
+		ok2 = StoryExpr.test(c, st)
+	if ok2 or step_t > float(s[2]):
+		checks.append([ok2, str(s[3])])
+		print("  [확인] %s %s (%.1f초)" % ["○" if ok2 else "×", s[3], step_t])
+		if ok2 and s.size() > 4:
+			_shot(str(s[4]))
+		_next()
+		return true
+	return false
 
 
 func _next() -> void:

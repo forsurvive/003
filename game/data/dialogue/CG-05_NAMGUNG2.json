@@ -1,0 +1,61 @@
+{
+ "id": "CG-05_NAMGUNG2",
+ "title": "권한대행 집무실",
+ "loc": "",
+ "npc": "C-003",
+ "cond": "MQ106_CUSTODY >= 1 and MQ106_TALKED == 1",
+ "labels": {
+  "START": 0,
+  "WAIT": 2
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "C-003",
+   "emo": "기본",
+   "text": "서류는 여기 있습니다. 언제든 오십시오. 전원이 들어온 뒤에."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "(사흘을 보낸다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "WAIT",
+     "id": "CG-05_NAMGUNG2:1:0"
+    },
+    {
+     "text": "(물러난다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "CG-05_NAMGUNG2:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-003",
+   "emo": "기본",
+   "text": "서현이가 모실 겁니다. 살펴 가십시오, 관리자 후보님."
+  },
+  {
+   "op": "cmd",
+   "name": "vb",
+   "args": [
+    "release"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-106.txt"
+}

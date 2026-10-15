@@ -1,0 +1,76 @@
+{
+ "id": "MQ-106_GONE",
+ "title": "버티버드가 떠난다",
+ "loc": "",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "FOUGHT": 4,
+  "TALKED": 7
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "MQ106_RESULT == 1",
+   "to": "FOUGHT"
+  },
+  {
+   "op": "if",
+   "cond": "MQ106_RESULT == 3",
+   "to": "TALKED"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "회전음이 멀어진다. 산 너머로 작아지는 점 하나."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-004",
+   "emo": "기본",
+   "text": "(확성기) 관리자 후보. 오늘 일은 서류에 남는다. 네 이름 옆에."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "버티버드가 쓰러진 병사들을 싣고 떠오른다. 먼지가 가라앉고, 남은 건 탄피와 발자국이다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-031",
+   "emo": "기본",
+   "text": "사령관님, 정말 이대로 —"
+  },
+  {
+   "op": "line",
+   "who": "C-004",
+   "emo": "기본",
+   "text": "탑승해, 윤 대위. 오늘 서류는 여기까지다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "버티버드가 떠오른다. 문이 닫히기 전, 육지환이 한 번 돌아본다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-106.txt"
+}

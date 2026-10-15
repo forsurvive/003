@@ -65,6 +65,8 @@ var _from := ""
 const TIME_SCALE := 30.0                                          ## 실시간 1초 = 게임 30초(SD-11 §1, SD-12 확정)
 var _clock_acc := 0.0
 var enc_live: EncounterLive                                       ## 인카운터 진행(1-3)
+var story_hold := false                                           ## 이야기 사건 중(MQ-106 버티버드 등): 무작위 인카운터를 세우지 않는다(1-7)
+var capture_hooks := {}                                           ## 잡은 쪽 → 진행기 함수(1-7: "BJ" 계엄군 생포 · "BJ_HANDOVER" 새벽인력 인계 → 청계산 귀빈실)
 
 
 func _ready() -> void:
@@ -656,6 +658,10 @@ func box_owner_label(b: Dictionary) -> String:
 
 ## 용기 내용물(1-4 파밍 v2): 맵 권역으로 등급을 정하고, 유해(_corpse)는 그 적의 드롭 표로 굴린다
 func box_contents(b: Dictionary) -> Dictionary:
+	if str(b.get("kind", "")) == "seized":                              # 계엄군 압수품 보관함(1-7): 진행기가 채운 한 상자
+		if not st.boxes.has("bj_seized"):
+			st.boxes["bj_seized"] = {"items": {}, "opened": 0, "taken": 0}
+		return st.boxes["bj_seized"]
 	if str(b.get("kind", "")) == "_corpse":
 		var k := str(b["key"])
 		if not st.boxes.has(k):
@@ -1647,7 +1653,7 @@ func on_pc_down() -> void:
 				and e.loco.logical.distance_to(player.loco.logical) <= 20.0 * 32.0:
 			by = str(e.get_meta("capture"))
 	var day := int(st.vars.get_v("GAME_DAY"))
-	if by == "SB" and int(st.vars.get_v("CAPTURE_DAY")) != day:
+	if (by == "SB" or capture_hooks.has(by)) and int(st.vars.get_v("CAPTURE_DAY")) != day:
 		capture(by)
 		return
 	pc_died.emit()
@@ -1656,6 +1662,9 @@ func on_pc_down() -> void:
 ## 새벽인력 생포(SD-03a §6.7 표 새벽인력 판): 캡 30% 압수(공통) → 근태 목걸이·수갑 → 본소 창고동 '인력' 우리(H-03)에서 깬다.
 ## 현상금은 새벽인력이 받는다(이야기 기록만). 하루 한 번 — 같은 날 또 쓰러지면 일반 쓰러짐
 func capture(by: String) -> void:
+	if capture_hooks.has(by):                                          # 계엄군 판(1-7): 진행기가 귀빈실로
+		(capture_hooks[by] as Callable).call()
+		return
 	busy = true
 	st.vars.set_v("CAPTURE_DAY", int(st.vars.get_v("GAME_DAY")))
 	var caps := int(st.vars.get_v("PC_CAPS"))
@@ -1681,6 +1690,9 @@ func capture(by: String) -> void:
 ## 사흘 버팀 → 계엄군 인계(1~3막 전원 없음 판, SD-03a §6.7 표): 청계산 귀빈실 → 남궁혁 면담 → 관악 산자락. 비상 +5.
 ## 정합: 소지품 압수·압수품 보관함은 청계산 맵과 함께(지금은 압수하지 않는다)
 func _capture_handover() -> void:
+	if capture_hooks.has("BJ_HANDOVER"):                               # 1-7: 청계산 귀빈실 구간(남궁혁 면담 · 압수품 보관함)
+		(capture_hooks["BJ_HANDOVER"] as Callable).call()
+		return
 	busy = true
 	ev.run("fade_out", ["black", "10"], func() -> void:
 		advance_minutes(3 * 24 * 60)

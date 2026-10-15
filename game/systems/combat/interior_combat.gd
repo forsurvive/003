@@ -203,7 +203,7 @@ func spawn(enemy_id: String, pos: Vector2, map: InteriorMap, st: StoryState = nu
 ## 프롤로그 불사 4인(윤정인·하도윤·육지환·도경철)은 HP 1에서 멈춘다(무릎). 적의 탄은 주민을 맞히지 않는다.
 signal resident_hit(id: String)
 signal resident_down(id: String, killed: bool)
-const IMMORTAL := ["C-001", "C-002", "C-004", "C-022"]
+const IMMORTAL := ["C-001", "C-002", "C-004", "C-022", "C-003"]   # C-003 남궁혁(1-7 귀빈실 — 4막 MQ-402 전에는 쓰러지지 않는다)
 const RESIDENT_HP := 40.0
 var residents: Array = []                         ## [{"id", "cmb", "actor"}]
 

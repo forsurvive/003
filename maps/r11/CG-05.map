@@ -1,0 +1,110 @@
+# 청계산 벙커 C05 권한대행 집무실 · 비서실 · 귀빈실 · 경호대 대기실(SD-09d L-R11-01 C05 · SD-03a §8.6 MQ-106 '걸어 들어간다' · §6.7 계엄군 생포 판, 단계 1-7)
+# 40×22 · z-2 행정층. 위: 복도(서쪽 끝 승강기 홀 문 — 근위병이 지킨다, 귀빈은 이 층에만) · 동쪽 끝 경호대 대기실(남궁도현 + 기갑 근위병 둘).
+# 아래 왼쪽 귀빈실(3일 구간) · 가운데 비서실(남궁서현) · 오른쪽 권한대행 집무실(남궁혁 — 의자에서 일어나지 않는다).
+# 집무실: 2077년 장관실 가구 · 태극기와 13개 별 성조기 · 23:29에 멈춘 벽시계 · 서류함 6 · 책상 위 다섯 가지(MQ-402에서 행동이 결과가 된다) ·
+# 진열장(W-111 경호 권총 · 국무위원 배지 7자리 중 4자리 빔). 출구 없음: 사흘 뒤 버티버드가 관악 산자락에 내려 준다(진행기 Mq106).
+map CG-05 청계산 벙커 행정층
+set bk
+grid
+###t####################################
+###t####################################
+###t####################################
+#ttttttttttttttttttttttttttttteeeeeeeee#
+#ttttttttttttttttttttttttttttteeeeeeeee#
+#ttttttttttttttttttttttttttttteeeeeeeee#
+#ttttttttttttttttttttttttttttteeeeeeeee#
+######c##########w######################
+######c##########w######################
+######c##########w######################
+#ccccccccccc#wwwwwwwwww#ccccccccccccccc#
+#ccccccccccc#wwwwwwwwww#ccccccccccccccc#
+#ccccccccccc#wwwwwwwwww#ccccccccccccccc#
+#ccccccccccc#wwwwwwwwww#ccccccccccccccc#
+#ccccccccccc#wwwwwwwwww#ccccccccccccccc#
+#ccccccccccc#wwwwwwwwwwcccccccccccccccc#
+#ccccccccccc#wwwwwwwwwwcccccccccccccccc#
+#ccccccccccc#wwwwwwwwww#ccccccccccccccc#
+#ccccccccccc#wwwwwwwwww#ccccccccccccccc#
+#ccccccccccc#wwwwwwwwww#ccccccccccccccc#
+#ccccccccccc#wwwwwwwwww#ccccccccccccccc#
+########################################
+end
+door 3 1 locked "승강기 홀"
+text 3 2 "승강기 홀로 가는 철문. 밖에서 잠겼다. '귀빈께서는 이 층에만 계십니다.'"
+mark arrive 6 12 S
+mark from_elev 3 3 S
+mark office_in 31 15 N
+mark guest_door 6 10 S
+mark sec_desk 17 15 N
+# 복도
+prop w_gov_notice 9 1
+text 9 2 "비상정부 공고. '충성 등급 확인은 C04 등록관리실. 등급 밖 인원은 이 층 출입을 금한다.'" w=2
+prop w_photo 14 1
+text 14 2 "액자. 2078년 권한대행 취임 선서. 사진 속 사람들 가운데 지금 살아 있는 사람은 하나뿐이다."
+prop water_cooler 21 3
+text 21 3 "냉수기. 물이 차갑다. 벙커 원자로가 아직 돈다는 뜻이다."
+prop bench 12 6
+npc CR-401 2 4 E sheet=en_cr401_loco bark="귀빈께서는 이 층에만 계십니다. 필요하신 건 비서실에 말씀하십시오."
+npc CR-401 4 4 W sheet=en_cr401_loco bark="승강기는 권한대행님 결재가 있어야 움직입니다."
+# 경호대 대기실
+prop gun_locker 36 3
+prop gun_locker 37 3
+text 36 3 "근위대 무기함. 자물쇠 셋. 손대면 안 되는 물건이라는 게 한눈에 보인다." w=2
+prop bench 32 6
+npc N-R11-024 34 4 W bark="권한대행님 면담 때는 문밖에 서 있겠습니다. 저를 신경 쓰실 필요는 없습니다."
+npc CR-405 37 5 W sheet=en_cr405_loco bark="……(파워 아머 안에서 숨소리만 들린다)"
+npc CR-405 31 3 S sheet=en_cr405_loco bark="……(헬멧 렌즈가 천천히 당신을 따라 돈다)"
+# 귀빈실
+prop vip_bed 2 11
+text 2 11 "각 잡힌 침대. 모포의 휘장이 정확히 가운데에 있다. 누군가 자로 쟀다." h=2
+prop dresser 9 10
+box 9 10 cabinet name="귀빈실 서랍장"
+prop w_fake_window 3 8
+text 3 9 "창. 아니, 창틀에 끼운 사진이다. 2077년 봄 한강. 지하 60미터에서 보는 바깥." w=2
+prop w_speaker 9 8
+text 9 9 "공보방송 스피커. 끄는 손잡이가 없다. 정시마다 '대한민국 비상정부는 국민 여러분과 함께 있습니다.'"
+prop tea_table 6 15
+text 6 15 "찻상. 찻주전자가 아직 따뜻하다. 잔은 둘. 누군가 마주 앉을 줄 안다." scene=CG-05_TEA
+prop stool_w 5 15
+prop stool_w 7 15
+prop wash_basin 1 19
+text 1 19 "세면대. 수건이 접혀 있다. 비누에 '비상정부 보급' 각인."
+prop bookshelf_home 11 19
+box 11 19 desk name="귀빈실 책장"
+text 11 20 "책장. 2077년 판 '공무원 복무 규정'과 '귀빈 응대 요령'이 나란히 꽂혀 있다." 
+# 비서실
+prop typewriter_desk 16 13
+text 16 13 "타자기에 서식이 물려 있다. '면담 기록 — 관리자 후보 1순위.' 아래는 아직 비었다." w=2
+npc N-R11-005 17 12 S bark="권한대행님은 서두르지 않으십니다. 서류는 서두르지 않으니까요."
+prop file_cabinet 19 10
+prop file_cabinet 20 10
+prop file_cabinet 21 10
+box 19 10 cabinet w=3 owner=N-R11-005 name="비서실 서류함"
+prop w_calendar 14 8
+text 14 9 "2277년 10월 달력. 23일 칸에 붉은 글씨 '200주년 — 23:29 묵념.' 26일 칸에 연필로 '관리자 후보?'"
+prop wait_chairs 14 18
+text 14 18 "대기 의자. 앉는 자리가 반들반들하다. 여기서 기다린 사람이 많았다." w=2
+prop plant_pot 22 20
+text 22 20 "화분. 조화다. 먼지를 닦은 자국이 있다."
+# 집무실
+prop minister_desk 30 14
+text 30 14 "권한대행 책상." w=3 scene=CG-05_DESK
+npc C-003 31 13 S
+prop flag_stand 27 11
+text 27 11 "깃대 둘. 태극기와, 별이 열세 개인 성조기. 2077년엔 둘이 나란히 걸리는 게 당연했다."
+prop wall_clock 31 8
+text 31 9 "벽시계. 23시 29분. 초침이 없다. 일부러 뺀 것 같다."
+prop file_cabinet 38 11
+prop file_cabinet 38 12
+prop file_cabinet 38 13
+prop file_cabinet 38 14
+prop file_cabinet 38 15
+prop file_cabinet 38 16
+text 38 11 "서류함 여섯. 서랍마다 날짜 표. 마지막 서랍의 마지막 날짜는 '2077. 10. 23. 23:21.'" h=6
+prop display_case 25 11
+text 25 11 "진열장. 상아 손잡이 권총 한 자루와 국무위원 배지 일곱 자리. 배지는 셋뿐이다. 자물쇠가 아주 단단하다."
+prop chair_n 31 16
+prop plant_pot 24 20
+prop plant_pot 38 20
+prop w_photo 35 8
+text 35 9 "액자. 2077년 국무회의 사진. 일곱 자리 가운데 넷이 오려져 있다."

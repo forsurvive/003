@@ -856,6 +856,10 @@ from props_bk import PROPS_BK, STATES_BK                                # 여의
 for _k in PROPS_BK:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_BK)
+from props_cg import PROPS_CG, STATES_CG                                # 청계산 벙커 C05 · 북사면 환기탑(1-7 MQ-106)
+for _k in PROPS_CG:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_CG)
 from props_home import PROPS_HOME                                     # 들어가 보는 건물 실내(1-5e 자유 탐험 확장)
 for _k in PROPS_HOME:
     assert _k not in PROPS, _k
@@ -871,6 +875,7 @@ STATES = {
 STATES.update(STATES_SB)
 STATES.update(STATES_JM)
 STATES.update(STATES_BK)
+STATES.update(STATES_CG)
 
 
 if __name__ == "__main__":

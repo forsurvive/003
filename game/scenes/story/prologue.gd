@@ -174,6 +174,7 @@ func _ready() -> void:
 ## 1막 MQ-101 진행기로 넘긴다(0-10)
 var act1: Mq101
 var paths: Act1Paths                               ## 1막 경로 진행기(MQ-102 허브 · MQ-103 지하시장, 1-4)
+var mq106: Mq106                                   ## MQ-106 첫 번째 추적자 · 1 → 2막 전환(1-7)
 var sol := 1                                       ## 1막 봇 해법(--sol=1~5, 0-10)
 
 # ---------------------------------------------------------------- 저장·일시 정지·터치(0-11, SD-12 §13·§17)
@@ -201,6 +202,11 @@ func _paths() -> void:
 		paths = Act1Paths.new()
 		add_child(paths)
 		paths.setup(host, log_on)
+	if mq106 == null:                                              # MQ-106 첫 번째 추적자 · 막 전환(1-7)
+		mq106 = Mq106.new()
+		add_child(mq106)
+		mq106.setup(host, log_on)
+		mq106.act_up.connect(func(_n: int) -> void: request_auto("act"))
 
 
 func _act1(from: String) -> void:
@@ -1308,6 +1314,8 @@ func why_no_save() -> String:
 		return "연출 중에는 저장할 수 없다"
 	if host.pipboy != null or host.container != null:
 		return "창을 닫고 저장한다"
+	if mq106 != null and mq106.active():
+		return "추격 중에는 저장할 수 없다"
 	for c in host.get_children():
 		if c is DocScreen and not (c is PauseMenu):
 			return "서류를 마치고 저장한다"

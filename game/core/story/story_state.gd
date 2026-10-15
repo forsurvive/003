@@ -86,6 +86,10 @@ func _init() -> void:
 	for k in ["GAME_HOUR", "SB_RAID", "SB_PASS", "SB_DOGS", "SB_SAFE", "SB_KEY", "SB_FREED", "SB_READ", "SB_DEAL", "SB_BURNT",
 			"SB_DEBT", "SB_BJ", "SB_TALK", "SB_BOUGHT", "SB_DEPO", "SB_127", "GB_PASS"]:
 		vars.declare(k, "int", 0)
+	# MQ-106 첫 번째 추적자(단계 1-7, Mq106): CUSTODY 귀빈실(1 걸어 들어감 · 2 생포 · 3 새벽인력 인계) · TALKED 남궁혁 면담 ·
+	# SEIZED 압수품 보관함에 물건이 있다 · AT 귀빈실에 든 시각(분) · Q* 면담에서 물은 것 · PD_R01_BJ 판도 사건 보정(R01 비상정부 쪽, SD-06 §5)
+	for k in ["MQ106_CUSTODY", "MQ106_TALKED", "MQ106_SEIZED", "MQ106_AT", "MQ106_QLINE", "MQ106_QWHY", "MQ106_QGRID", "MQ106_QDEAD", "PD_R01_BJ"]:
+		vars.declare(k, "int", 0)
 	for kv in [["CAPTURE_DAY", -1], ["CAPTURE_AT", 0], ["SB_COLLAR", 0], ["SB_CUFF", 0], ["CAPTURE_BY", 0]]:
 		vars.declare(kv[0], "int", kv[1])
 	for k in ["P_SURNAME", "P_GIVEN", "P_FULL", "P_REGNO", "PC_APT"]:   # PC_APT: 적성 평가 답 10개(결과지 다시 보기)

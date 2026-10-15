@@ -1,0 +1,110 @@
+{
+ "id": "MQ-106_CARGO",
+ "title": "버티버드 화물칸",
+ "loc": "",
+ "npc": "C-002",
+ "cond": "MQ106_STAGE == 10 and V_DOYUN == 1",
+ "labels": {
+  "START": 0,
+  "PICK": 3,
+  "PRY": 5,
+  "WAIT": 8
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "C-002",
+   "emo": "놀람",
+   "text": "\\V[P_GIVEN]? 너 — 진짜 너야?"
+  },
+  {
+   "op": "line",
+   "who": "C-002",
+   "emo": "기본",
+   "text": "철창이 밖에서 잠겼어. 열쇠는 윤 대위가 갖고 있고."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "자물쇠를 딴다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "자물쇠 따기",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PICK",
+     "id": "MQ-106_CARGO:1:0"
+    },
+    {
+     "text": "철창 경첩을 손으로 비틀어 뜯는다",
+     "tags": [
+      {
+       "k": "stat",
+       "name": "힘",
+       "min": 8
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PRY",
+     "id": "MQ-106_CARGO:1:1"
+    },
+    {
+     "text": "조금만 버텨. 금방 온다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "WAIT",
+     "id": "MQ-106_CARGO:1:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "vb",
+   "args": [
+    "pick"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "경첩 나사가 비명을 지르며 빠진다. 철창이 한쪽으로 기운다."
+  },
+  {
+   "op": "cmd",
+   "name": "vb",
+   "args": [
+    "free"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-002",
+   "emo": "슬픔",
+   "text": "……응. 늘 그랬잖아. 기다리는 건 내가 잘해."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-106.txt"
+}

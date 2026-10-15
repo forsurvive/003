@@ -50,7 +50,7 @@ func _here() -> Vector2i:
 
 
 func _ok() -> bool:
-	return host.map is WorldMap and host.clock_running() and cur.is_empty()
+	return host.map is WorldMap and host.clock_running() and cur.is_empty() and not host.story_hold
 
 
 # ---------------------------------------------------------------- 판정 기회(진행기·호스트가 부른다)

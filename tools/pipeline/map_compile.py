@@ -288,7 +288,7 @@ def compile_map(m, prop_meta, known_vars, known_fns, scenes=()):
 
 def _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kind, solid, walk, ext=False, extra=()):
     """맵 명령(prop·door·exit·mark·npc·enemy·box·text·sign·trigger·struct) → out. 실내·바깥 공용."""
-    loot_kinds = set(json.load(open(os.path.join(ROOT, "game", "data", "loot.json"), encoding="utf-8"))["tables"].keys())
+    loot_kinds = set(json.load(open(os.path.join(ROOT, "game", "data", "loot.json"), encoding="utf-8"))["tables"].keys()) | {"seized"}   # seized: 계엄군 압수품 보관함(1-7, 진행기가 채운다)
     enemy_ids = set(json.load(open(os.path.join(ROOT, "game", "data", "enemies.json"), encoding="utf-8")).keys())
     npc_ids = set(json.load(open(os.path.join(ROOT, "game", "data", "npcs.json"), encoding="utf-8"))["npcs"].keys())
     for ln, words in m.cmds:

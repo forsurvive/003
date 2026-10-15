@@ -1,0 +1,111 @@
+{
+ "id": "MQ-106_YUK",
+ "title": "버티버드 문 앞",
+ "loc": "",
+ "npc": "C-004",
+ "cond": "MQ106_STAGE == 10",
+ "labels": {
+  "START": 0,
+  "WALK": 2,
+  "TALK_OK": 5,
+  "TALK_NO": 9
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "C-004",
+   "emo": "기본",
+   "text": "아직 늦지 않았다. 무기를 넣고 타라."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "(무기를 집어넣고 버티버드에 오른다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "WALK",
+     "id": "MQ-106_YUK:1:0"
+    },
+    {
+     "text": "전원 없는 관리자를 데려가서 뭘 하지? 차나 대접하려고?",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "보통"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "TALK_OK",
+     "id": "MQ-106_YUK:1:1",
+     "fail": "TALK_NO"
+    },
+    {
+     "text": "(물러난다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "MQ-106_YUK:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-004",
+   "emo": "기본",
+   "text": "……현명하다. 윤 대위, 사격 중지."
+  },
+  {
+   "op": "cmd",
+   "name": "vb",
+   "args": [
+    "walk"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-004",
+   "emo": "기본",
+   "text": "……차는 권한대행께서 내신다. 그 말이 맞아서 문제다."
+  },
+  {
+   "op": "line",
+   "who": "C-004",
+   "emo": "기본",
+   "text": "철수. 전원이 들어오는 날 다시 온다."
+  },
+  {
+   "op": "cmd",
+   "name": "vb",
+   "args": [
+    "talk"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-004",
+   "emo": "기본",
+   "text": "말이 많군. 그 말은 벙커에서 해라."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-106.txt"
+}
