@@ -54,7 +54,7 @@ prop rubble2 18 12
 prop crate_o 19 3
 box 19 3 trash name="버려진 상자"
 # 대강의실
-prop blackboard 22 1
+prop blackboard_k01 22 1
 text 22 2 "칠판. '관제망 운영 개론 — 3주차: 관리자 인증과 생체 판독'. 지우다 만 그림에 손목과 열쇠 구멍." w=4
 prop lectern 24 4
 prop desk 21 6

@@ -1,0 +1,39 @@
+{
+ "id": "L27_LR06",
+ "title": "무너진 빌라 거실",
+ "loc": "L-R01-27",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빌라 앞면이 통째로 무너져 거실이 길가로 쏟아졌다. 낮은 탁자 위에 금색 봉투 하나. 테두리에 국방부 휘장."
+  },
+  {
+   "op": "cmd",
+   "name": "note",
+   "args": [
+    "LR-06"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "봉투 밑에 반상회 회람. '국가 유공 가정 — 다음 분기 배급 1.2배.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/places/R01_NORTH.txt"
+}

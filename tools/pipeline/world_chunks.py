@@ -37,6 +37,8 @@ DOORS = [{"lid": "L-R02-11", "near": (720, 1147), "to": "J-01", "mark": "from_W"
          {"lid": "L-R02-06", "near": (777, 1101), "to": "K-06", "mark": "from_W", "name": "여의도 공영방송", "kind": "facade"},
          {"lid": "L-R02-20", "near": (637, 1362), "to": "K-20", "mark": "from_W", "name": "가리봉 쪽방 — 인솔조 숙소", "kind": "facade"},     # 1-6 R02 남쪽
          {"lid": "L-R02-22", "near": (672, 1362), "to": "K-22", "mark": "from_W", "name": "구로 노동자 아파트 107동", "kind": "facade"},
+         {"lid": "L-R01-24", "near": (870, 1171), "to": "K-24", "mark": "from_W", "name": "노량진 학원가 — 대한 대피 적성 학원", "kind": "facade"},   # 1-7c R01 북쪽
+         {"lid": "L-R01-26", "near": (980, 1207), "to": "K-26", "mark": "from_W", "name": "흑석 대학병원", "kind": "facade"},
          {"lid": "L-R01-08", "near": (887, 1494), "to": "K-08", "mark": "from_W", "name": "관악 계곡 배수 암거", "prop": "drain_outlet",
           "hint": "콘크리트 암거 입구. 물비린내와 곰팡이 냄새가 흘러나온다."}]
 INSETS = [{"id": "X-S07", "mark": "from_vault", "at": (959, 1503)},          # 볼트 S-07 정문(L-R01-01)

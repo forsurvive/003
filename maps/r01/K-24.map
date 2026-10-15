@@ -1,0 +1,76 @@
+# 노량진 학원가 — '대한 대피 적성 학원' 3층(SD-09a L-R01-24 · 단계 1-7c R01 북쪽 탐험 묶음 · 훅 H-R01-08)
+# 44×15 · 왼쪽 대강의실(칠판 '수능 D-26 / 대피 적성 D-3', 진공관 자습석, 구울 강사 손재석의 200년째 수업, 과외-3 조교)
+# · 가운데 원장실(전산 모의고사 채점기 — H-R01-03 고시생 훅) · 오른쪽 복사실(옆 건물로 뚫린 벽, 야생 구울 둘).
+# 정합: 원문 실내 2장(3층 강의실 · 원장실)을 한 장으로, 원장실은 같은 층 옆방. 1층·계단은 건물 정면(월드)만.
+map K-24 노량진 학원가 3층
+set bk
+grid
+############################################
+############################################
+############################################
+#cccccccccccccccccccc#wwwwwwwwww#,,,,,,,,,,#
+#cccccccccccccccccccc#wwwwwwwwww#,,,,,,,,,,#
+#cccccccccccccccccccc#wwwwwwwwww#,,,,,,,,,,#
+#cccccccccccccccccccc#wwwwwwwwww,,,,,,,,,,,#
+#cccccccccccccccccccc#wwwwwwwwww#,,,,,,,,,,#
+#cccccccccccccccccccc#wwwwwwwwww#,,,,,,,,,,#
+#cccccccccccccccccccc#wwwwwwwwww#,,,,,,,,,,#
+#cccccccccccccccccccc#wwwwwwwwww#,,,,,,,,,,#
+#cccccccccccccccccccc#wwwwwwwwww#,,,,,,,,,,#
+#cccccccccccccccccccccwwwwwwwwww#,,,,,,,,,,#
+#cccccccccccccccccccc#wwwwwwwwww#,,,,,,,,,,#
+#########cc#################################
+end
+exit 9 14 W L-R01-24
+exit 10 14 W L-R01-24
+mark from_W 9 13 N
+mark lectern 9 4 S
+# 대강의실
+prop blackboard_hw 6 1
+text 6 2 "칠판. 왼쪽에 '수능 D-26', 오른쪽에 '대피 적성 D-3'. 가운데 지우다 만 글씨 — '3번 정답: 가장 가까운 지하'." w=4
+prop w_calendar 2 1
+text 2 2 "2077년 10월 달력. 27일에 붉은 동그라미 '대피 적성 검사'. 23일 칸에는 '모의고사 마지막 회'."
+prop lectern 8 4
+prop tutor_bot 13 3
+text 13 3 "과외-3 조교 로봇. 바퀴가 책상 다리에 묶여 있다. 화면에 '3번'." scene=K-24_TUTOR
+prop desk 3 7
+prop desk 7 7
+prop desk 11 7
+prop desk 15 7
+prop desk 3 9
+prop desk 7 9
+prop desk 11 9
+prop desk 15 9
+box 15 9 academy w=2 name="수강생 책상"
+text 3 9 "책상 모서리에 칼로 판 글씨. '1등급 받으면 엄마랑 지하 3층.'" w=2
+prop study_carrel 2 12
+prop study_carrel 5 12
+prop study_carrel 13 12
+prop study_carrel 16 12
+text 2 12 "자습석 단말. 화면마다 같은 글이 타 들어가 있다 — '국가 대피 적성 검사 연기 공지(2077. 10. 24.)'." w=2
+box 16 12 desk w=2 name="자습석 서랍"
+prop plant_pot 19 3
+npc N-R01-056 9 4 S
+# 원장실
+prop w_roster 25 1
+text 25 2 "벽의 합격 현수막. '2076 대피 적성 1등급 37명 배출 — 지하 3층 직행!' 이름 칸은 볕에 다 바랬다." w=2
+prop file_cabinet 22 3
+box 22 3 cabinet name="원장실 서류함"
+prop grader 29 3
+text 29 3 "전산 모의고사 채점기. 마지막 천공 카드가 반쯤 걸린 채 멈췄다." scene=K-24_GRADER
+prop typewriter_desk 25 6
+text 25 6 "원장 책상. 타자기에 끼운 종이 '학부모님께 — 검사가 연기되었습니다. 환불은'에서 멈췄다." w=2
+prop safe_big 30 11
+box 30 11 safe lock=50 name="원장 금고"
+prop bookshelf 22 10
+# 복사실(옆 건물과 맞닿은 벽이 무너졌다)
+prop steel_rack 34 3
+box 34 3 academy name="문항지 더미"
+text 37 3 "등사기 옆에 같은 문항지가 수천 장. 한 장을 집는다 — 1번부터 9번까지." scene=K-24_SHEETS w=2
+prop crate_o 41 3
+box 41 3 trash name="버린 상자"
+prop ghoul_nest 38 10
+prop rubble 33 12
+prop rubble2 41 12
+enemy CR-200 36 8
+enemy CR-200 40 10

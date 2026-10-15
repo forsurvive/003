@@ -31,3 +31,55 @@ text 4 3 "콘크리트 차단벽. 스텐실 '계엄 구역 — 판독기 앞에�
 npc N-R01-050 5 4 S
 npc CR-401 2 4 E sheet=en_cr401_loco bark="강 건너는 판독기 구역입니다. 등록증을 준비하십시오."
 npc CR-401 8 4 W sheet=en_cr401_loco bark="노량진 쪽 통행은 06시부터입니다."
+
+# 노량진 수산시장(L-R01-25, SD-09a B · 단계 1-7c): 경매장 지붕 아래 좌판 · 원자력 냉동고(가동, 각성회 대기등 하나) · 생선 함지 · 2077 시세 칠판.
+# 경매사 심도겸(N-R01-057) — 거래(VR25) · 냉동고 이야기(훅 H-R01-09 앞부분). 시장 뒤 터는 고정 매복 지점(SD-06 §12.3, 1-12 판도와 함께).
+spot L-R01-25 11 7
+prop freezer_unit 8 1
+text 8 2 "원자력 냉동고. 문틈으로 하얀 김. 손잡이 옆에 녹색 등 하나가 흔들린다 — 언덕 위 각성회가 달아 놓은 대기등." w=2
+prop price_board 1 1
+text 1 1 "경매장 칠판. 위 칸 '광어 kg 38,000원'(2077), 아래 칸 분필로 '가물치 1마리 6캡'." 
+prop stall_food 3 1
+prop stall_food 5 1
+prop fish_tub 3 3
+prop fish_tub 5 3
+prop fish_tub 7 4
+text 7 4 "고무 함지. 흙탕물 속에서 가물치 등지느러미가 돈다. 참게 한 마리가 테두리를 기어오른다." 
+prop scale 1 4
+text 1 4 "저울. 눈금에 '검정필 2076'. 바늘이 0에 돌아오지 않는다 — 2킬로그램쯤 먹은 저울이다."
+npc N-R01-057 6 5 N
+box 10 5 stall name="생선 상자" cond="V_ACT >= 1"
+prop crate_o 10 5
+
+# 동작 국립묘지(L-R01-22, SD-09a B · 단계 1-7c): 이름 없는 비석 비탈 · 빈 기념탑 받침 · 2077 전시 합동 안치소(귀환 유해 상자 — 상자·꼬리표까지만).
+# 묘지기 길덕수(N-R01-052) — 인수 대장(훅 H-R01-06 앞부분). 밤에는 변이 멧돼지(1-11 인카운터와 함께).
+spot L-R01-22 10 6
+prop memorial_base 4 0
+text 4 1 "빈 기념탑 받침. 탑이 서 있던 자리에 녹슨 볼트 네 개. 앞면 동판은 뜯겨 나갔다." w=2
+prop gravestone 0 0
+prop gravestone2 1 0
+prop gravestone 0 2
+prop gravestone2 1 2
+prop gravestone 8 0
+prop gravestone2 9 0
+prop gravestone 8 2
+prop gravestone2 9 2
+text 0 0 "이름 없는 비석. 글자가 있던 자리를 손가락으로 쓸어 본다. 아무것도 걸리지 않는다."
+prop morgue_shelf 2 4
+text 2 4 "안치소 선반. 국방색 상자마다 흰 꼬리표 '인수자 미정'. 상자 위 마른 꽃은 모두 오늘 것이다." w=2
+prop morgue_shelf 6 4
+npc N-R01-052 5 5 N
+
+# 상도 언덕 빌라촌(L-R01-27, SD-09a C · 단계 1-7c): 봉천 윗문 → 노량진 능선 길. 앞면이 무너져 거실이 길가로 쏟아진 빌라(LR-06 국가 유공 통지서) ·
+# 반상회비 미납 명단 · 판자 다리('옛날에 옥상길 연습하던 곳'). 새벽인력 추적대 매복 무대(1-12와 함께).
+spot L-R01-27 9 6
+prop rubble 1 1
+prop rubble2 3 1
+prop sofa_home 2 3
+prop low_table 4 3
+text 4 3 "길가로 쏟아진 거실. 낮은 탁자 위 금색 봉투." scene=L27_LR06
+box 2 3 apartment name="무너진 거실" w=2
+prop info_board 7 1
+text 7 1 "빌라 현관 게시판. '반상회비 미납 세대 — 201호 · 302호 · 304호'. 그 아래 누군가 덧쓴 글씨 '302호 아들 전사. 미납 면제.'"
+prop scrap_pile 7 4
+box 7 4 trash name="빌라 앞 고물"

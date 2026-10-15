@@ -1,0 +1,70 @@
+# 흑석 대학병원 1층(SD-09a L-R01-26 · 단계 1-7c · 훅 H-R01-13 앞부분) — 2077 전시 지정 병원. 실명 병원명은 쓰지 않는다.
+# 46×15 · 왼쪽 응급실·접수 로비 · 가운데 병동(야생 구울 '환자' — 간호 7호가 돌본다, 병상마다 이름표와 '대기 구역' 판독 스티커,
+# 화이트보드 '병상 가동률 312%') · 오른쪽 약제부(의약 파밍, 약장 자물쇠 25·50).
+# 정합: 원문 실내 3장(응급실·로비 / 병동 5층 / 지하 혈액은행·약제부)을 한 장으로. 혈액은행 냉장고(H-R01-13 본편)는 1-11 사이드와 함께.
+map K-26 흑석 대학병원
+set bk
+grid
+##############################################
+##############################################
+##############################################
+#ttttttttttttttt#ooooooooooooooo#,,,,,,,,,,,,#
+#ttttttttttttttt#ooooooooooooooo#,,,,,,,,,,,,#
+#ttttttttttttttt#oooooooooooooooo,,,,,,,,,,,,#
+#ttttttttttttttt#ooooooooooooooo#,,,,,,,,,,,,#
+#ttttttttttttttt#ooooooooooooooo#,,,,,,,,,,,,#
+#ttttttttttttttt#ooooooooooooooo#,,,,,,,,,,,,#
+#ttttttttttttttt#ooooooooooooooo#,,,,,,,,,,,,#
+#ttttttttttttttt#ooooooooooooooo#,,,,,,,,,,,,#
+#ttttttttttttttt#ooooooooooooooo#,,,,,,,,,,,,#
+#ttttttttttttttttooooooooooooooo#,,,,,,,,,,,,#
+#ttttttttttttttt#ooooooooooooooo#,,,,,,,,,,,,#
+#######tt#####################################
+end
+exit 7 14 W L-R01-26
+exit 8 14 W L-R01-26
+mark from_W 7 13 N
+# 응급실 · 접수
+prop gov_counter 3 3
+text 3 3 "접수대. 번호표 기계가 '312'에서 멈췄다. 옆에 붙은 안내 '판독 결과에 따라 진료 순서가 정해집니다'." w=2
+prop wait_chairs 8 6
+prop wait_chairs 8 9
+prop iv_pole 13 3
+prop hosp_bed_x 13 4
+text 13 4 "응급 침상. 시트에 '전시 지정 병원 — 1·2등급 우선' 도장." h=2
+prop cot 2 9
+box 2 9 aid name="응급 처치 상자"
+prop rubble 11 12
+# 병동
+prop w_whiteboard 22 1
+text 22 2 "병동 화이트보드. '병상 가동률 312%'. 아래 근무표에는 한 이름만 남았다 — '간호 7호, 24시간'." w=2
+prop hosp_bed 18 3
+prop hosp_bed 21 3
+prop hosp_bed 24 3
+prop hosp_bed 27 3
+prop hosp_bed 18 9
+prop hosp_bed 21 9
+prop hosp_bed 24 9
+prop hosp_bed 27 9
+text 18 3 "병상 이름표는 비었다. 머리맡 스티커만 붉다 — '판독 결과: 대기 구역'." h=2
+text 27 9 "모포가 사람 모양으로 꺼져 있다. 이름표에 연필 글씨 '7호가 매일 바꿈'." h=2
+prop iv_pole 30 4
+prop iv_pole 30 10
+npc N-R01-058 23 7 S sheet=rb_nurse7_loco route=ward_a:20,7,5;ward_b:28,7,5
+enemy CR-200 19 5 stance=hold dir=S
+enemy CR-200 25 5 stance=hold dir=S
+enemy CR-200 22 11 stance=hold dir=N
+enemy CR-200 28 11 stance=hold dir=N
+enemy CR-200 17 12 route=17,12,4;17,6,4
+# 약제부
+prop pharm_counter 34 3
+text 34 3 "약제부 창구. '처방전 없이는 조제하지 않습니다 — 판독 등급 확인 후'." w=2
+prop med_shelf 38 3
+box 38 3 pharmacy lock=25 name="약장"
+prop med_shelf 40 3
+box 40 3 pharmacy lock=50 name="마약류 금고 약장"
+prop steel_rack 43 8
+box 43 8 aid name="수액 선반"
+prop drink_fridge 34 10
+text 34 10 "약품 냉장고. 전원이 죽었다. 문을 열자 200년 묵은 냉기 대신 먼지." 
+enemy CR-201 39 9

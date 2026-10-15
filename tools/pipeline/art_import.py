@@ -99,6 +99,26 @@ def quad_sheets():
         json.dump(meta, open(os.path.join(SPR, name + ".json"), "w"), ensure_ascii=False, sort_keys=True, indent=1)
 
 
+def robot_sheets():
+    """세진 로봇(1-7c, art/tools/robots.py): 살핌-1 간호 7호(N-R01-058) · 관제망 휘장 판(CR-312). 옆(E)만, 부양 — idle 4 · walk 4 · death 4."""
+    import robots as RB
+    for nurse, name in ((True, "rb_nurse7_loco"), (False, "rb_cr312_loco")):
+        frames, meta = RB.salpim_sheet(nurse)
+        fw, fh = meta["frame"]
+        sheet = Image.new("RGBA", (fw * len(frames), fh), (0, 0, 0, 0))
+        for i, f in enumerate(frames):
+            sheet.alpha_composite(f, (i * fw, 0))
+        sheet.save(os.path.join(SPR, name + ".png"))
+        mo = meta["motions"]
+        anims = [("idle_E", [(mo["idle"]["start"] + i, 0) for i in range(mo["idle"]["count"])], True),
+                 ("walk_E", [(mo["walk"]["start"] + i, 0) for i in range(mo["walk"]["count"])], True),
+                 ("death_E", [(mo["death"]["start"] + i, 0) for i in range(mo["death"]["count"])], False)]
+        open(os.path.join(SPR, name + ".tres"), "w", encoding="utf-8").write(
+            spriteframes_tres(f"res://assets/sprites/{name}.png", fw, fh, anims))
+        meta["name"] = name
+        json.dump(meta, open(os.path.join(SPR, name + ".json"), "w"), ensure_ascii=False, sort_keys=True, indent=1)
+
+
 def _pad32(im):
     out = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
     out.alpha_composite(im, ((32 - im.width) // 2, 32 - im.height))
@@ -174,6 +194,7 @@ def main():
     n = import_sheets()
     roach_sheet()
     quad_sheets()
+    robot_sheets()
     import tiles_isaac                                             # 아이작풍 타일(이름·순서는 이전 판과 같다)
     r01 = tiles_isaac.r01_tiles()
     nt = tileset("ts_r01_ext", r01)                                # 소품 타일은 투명 바탕(바닥은 합성 층이 그린다)

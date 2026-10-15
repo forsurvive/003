@@ -52,6 +52,20 @@ def main():
                 img.save(path)
                 made += 1
             index[sid][emo] = name
+    import robots as RB                                               # 로봇 화자(1-7c): 시트 이름으로 선 간호 7호 — 렌즈 표정 8종
+    for sid, nurse, stem in (("rb_nurse7_loco", True, "RB_nurse7"), ("N-R01-058", True, "RB_nurse7")):
+        index[sid] = {}
+        for emo in EMOS:
+            name = f"{stem}_{K.PORTRAIT_EXPR[emo]}.png"
+            path = os.path.join(OUT, name)
+            if not os.path.exists(path):
+                img = RB.salpim_portrait(emo, nurse)
+                bad = {px[:3] for px in img.getdata() if px[3] and px[:3] not in ALLOWED_SET()}
+                if bad:
+                    raise SystemExit(f"{name}: 팔레트 밖 색 {sorted(bad)[:4]}")
+                img.save(path)
+                made += 1
+            index[sid][emo] = name
     json.dump({"portraits": index}, open(os.path.join(OUT, "portraits.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1,
               sort_keys=True)
     print(f"초상화: 화자 {len(index)}명 × 표정 {len(EMOS)} (새로 그림 {made}), 건너뜀 {skipped}")

@@ -293,8 +293,8 @@ def wall_clock(hour=10, minute=12):
     return img
 
 
-def blackboard():
-    """교실 칠판 4x1.5 tiles (green board, chalk ledge, a half-erased timetable)."""
+def blackboard(l1="적성 평가", l2="1교시 09:00", c2="P32"):
+    """교실 칠판 4x1.5 tiles (green board, chalk ledge, a half-erased timetable). l1·l2 = 분필 두 줄(볼트 기본 '적성 평가 / 1교시 09:00')."""
     w, h = 4 * T, 40
     img = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
@@ -303,8 +303,8 @@ def blackboard():
     d.rectangle([2, 2, w - 3, h - 7], fill=C("P29"))
     for y in range(4, h - 8, 3):
         d.line([4, y, 4 + (y * 7) % 40 + 20, y], fill=C("P30"))   # erased smudges (rows, not noise)
-    text(d, (8, 5), "적성 평가", F7, "P08")
-    text(d, (8, 15), "1교시 09:00", F7, "P32")
+    text(d, (8, 5), l1, F7, "P08")
+    text(d, (8, 15), l2, F7, c2)
     d.line([70, 8, 118, 8], fill=C("P08")); d.line([70, 12, 104, 12], fill=C("P32"))
     d.rectangle([0, h - 5, w - 1, h - 3], fill=C("P18")); d.line([0, h - 5, w - 1, h - 5], fill=C("P20"))
     d.rectangle([20, h - 7, 23, h - 6], fill=C("P09")); d.rectangle([90, h - 7, 92, h - 6], fill=C("P54"))

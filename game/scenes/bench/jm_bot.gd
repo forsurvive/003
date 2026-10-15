@@ -129,6 +129,22 @@ func _ready() -> void:
 				["check", "container_open", "떠돌이 유해 → 용기 창이 열린다"], ["close"],
 				["go", evac.x, evac.y + 1], ["shoton", "대피소", "evac"], ["use", evac.x, evac.y], ["wait", 2.0],
 				["check", "seen_evac", "대피소 표지 글이 뜬다"]]
+		"north":                                                        # 1-7c R01 북쪽 탐험 묶음: 학원가(손재석 문항집 · 10번) → 흑석 병원(간호 7호 붕대) → 수산시장 → 국립묘지 대장 → 상도 빌라 LR-06
+			st.vars.set_v("V_Q10", 4)                                    # 볼트 10번에 '문을 열고 밖을 본다'를 고른 주인공
+			host.enter("W", "L-R01-24")
+			plan = [["go", 873, 1174], ["shot", "k24_door"], ["use", 873, 1173], ["wait", 2.0], ["shot", "k24"],
+				["go", 9, 7, "K-24"], ["want", ["무슨 수업", "풀어 보자", "가장 가까운 지하", "판독기 앞에 정지", "신고한다", "10번은?", "볼트 시험엔 10번"]],
+				["shoton", "점수 없는 답", "son_q10"], ["talk", "N-R01-056"], ["wait", 1.0],
+				["check", "PN_Q10 == 1 and PN_SON == 2 and has(\"M-090\") and K_Q10 == 0", "손재석: 문항집에 10번이 없다(보조 단서만, K_Q10은 그대로)"],
+				["warp", "K-26"], ["wait", 1.5], ["shot", "k26"], ["fight"],
+				["go", 23, 8, "K-26"], ["want", ["!붕대를 갈아", "됐다"]], ["shoton", "관리 후보", "nurse"], ["talk", "N-R01-058"], ["wait", 1.0],
+				["check", "PN_NURSE == 1 and PN_HEAL_DAY == GAME_DAY", "간호 7호: 등록 판독 · 오늘 붕대"],
+				["warp", "W", "L-R01-25"], ["wait", 1.5], ["go", 898, 1167], ["want", ["!저 냉동고는", "됐다"]], ["shoton", "원자력 냉동고", "market"],
+				["talk", "N-R01-057"], ["wait", 1.0], ["check", "PN_SIM == 1", "수산시장 경매사 심도겸"],
+				["warp", "W", "L-R01-22"], ["wait", 1.5], ["go", 1055, 1246], ["want", ["!인수 대장을", "됐다"]], ["shoton", "인수 대장", "cemetery"],
+				["talk", "N-R01-052"], ["wait", 1.5], ["check", "read:K-22-LEDGER", "길덕수의 귀환 유해 인수 대장"],
+				["warp", "W", "L-R01-27"], ["wait", 1.5], ["go", 934, 1252], ["shoton", "금색 봉투", "villa"], ["use", 934, 1251], ["wait", 2.0],
+				["check", "read:LR-06", "무너진 빌라의 국가 유공 통지서(LR-06)"]]
 		"place":                                                        # 1-5e 손 장소: 전망바위 → 연수원 본관(LR-19)·기숙사(LR-11) → 계곡 배수로(정비공) → 경찰서 무기고(자물쇠 50) → 공영방송(LR-01)
 			st.vars.set_v("PC_SKP_LOCKPICK", 50)
 			st.vars.set_v("PC_SKP_SMALL_GUNS", 40)
@@ -702,10 +718,15 @@ func _box(dt: float) -> void:
 		"choices":
 			var opts: Array = host.box.state.get("opts", [])
 			var pick := -1
+			var used := ""
 			for w in want:
+				var ws := str(w).trim_prefix("!")                          # '!'로 시작하면 한 번 쓰고 지운다(메뉴로 돌아오는 대화에서 맴돌지 않게)
 				for k in opts.size():
-					if pick < 0 and str(opts[k]["text"]).contains(str(w)) and bool(opts[k].get("enabled", true)):
+					if pick < 0 and str(opts[k]["text"]).contains(ws) and bool(opts[k].get("enabled", true)):
 						pick = k
+						used = str(w)
+			if used.begins_with("!"):
+				want.erase(used)
 			_shot("choice")
 			host.box.pick(maxi(0, pick))
 

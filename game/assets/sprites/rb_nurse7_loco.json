@@ -1,0 +1,29 @@
+{
+ "dirs": [
+  "E"
+ ],
+ "foot": [
+  22,
+  50
+ ],
+ "frame": [
+  44,
+  54
+ ],
+ "hover": true,
+ "motions": {
+  "death": {
+   "count": 4,
+   "start": 8
+  },
+  "idle": {
+   "count": 4,
+   "start": 0
+  },
+  "walk": {
+   "count": 4,
+   "start": 4
+  }
+ },
+ "name": "rb_nurse7_loco"
+}

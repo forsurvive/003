@@ -864,6 +864,10 @@ from props_home import PROPS_HOME                                     # 들어�
 for _k in PROPS_HOME:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_HOME)
+from props_r01n import PROPS_R01N                                     # R01 북쪽 탐험 묶음(1-7c): 학원가 · 병원 · 수산시장 · 국립묘지
+for _k in PROPS_R01N:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_R01N)
 
 STATES = {
     "board_bc": {s: (lambda s=s: notice_board(s)) for s in ("wanted", "torn", "crumpled", "crossed", "rate", "water", "official")},
