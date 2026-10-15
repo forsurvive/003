@@ -290,6 +290,8 @@ func set_prop_state(cell: Vector2i, state: String) -> String:
 		for p in props:
 			var e: Dictionary = prop_meta[p["name"]]
 			if c.x >= p["x"] and c.x < p["x"] + p["w"] and c.y >= p["y"] and c.y < p["y"] + p["h"]:
+				if not p.has("node"):
+					continue                                                 # 월드 청크 소품(상호작용 목록만 — 그림은 청크가 붙인다)
 				if state != "" and not e.get("states", {}).has(state):
 					continue
 				var rect: Array = e["states"][state] if state != "" else e["rect"]

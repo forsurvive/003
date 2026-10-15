@@ -482,6 +482,44 @@ def forge():
     return im
 
 
+def hangyeol_bench():
+    """한결 공구 작업대(SD-13 §7.9.1, 1-8c): 2077년 공구 매장 진열형 — 철제 상판 · 바이스 · 공구 걸이판 · 한결 로고 판.
+    걸이판에 스패너·망치·톱·드라이버, 상판에 부품 상자와 기름통, 아래 선반에 철제 공구함. 2×1칸, 걸이판이 칸 위로 솟는다."""
+    im = img(66, 58)
+    d = ImageDraw.Draw(im)
+    d.rectangle([6, 4, 58, 30], fill=C("P18"))                           # 공구 걸이판(타공 합판)
+    d.rectangle([7, 5, 57, 29], fill=C("P19"))
+    for y in range(8, 29, 4):
+        for x in range(9, 57, 4):
+            d.point((x, y), fill=C("P18"))
+    d.rectangle([18, 0, 47, 11], fill=C("P46"))                          # 한결 로고 판(바랜 청 + 주황 사각 마크)
+    d.line([18, 11, 47, 11], fill=C("P44"))
+    d.rectangle([20, 3, 24, 8], fill=C("P53")); d.rectangle([21, 4, 22, 5], fill=C("P54"))
+    put_text(im, "한결", 27, 1, "P09", 8, "Galmuri7")
+    d.line([11, 14, 13, 24], fill=C("P06")); d.ellipse([9, 12, 14, 16], outline=C("P07"))  # 스패너
+    d.rectangle([18, 15, 19, 25], fill=C("P20")); d.rectangle([15, 13, 22, 15], fill=C("P05"))  # 망치
+    d.polygon([(27, 15), (39, 15), (39, 20), (27, 18)], fill=C("P12")); d.rectangle([39, 14, 43, 20], fill=C("P24"))   # 톱
+    for x in range(28, 39, 2):
+        d.point((x, 19), fill=C("P11"))
+    d.rectangle([47, 10, 48, 18], fill=C("P53")); d.rectangle([47, 19, 48, 25], fill=C("P07"))    # 드라이버
+    d.rectangle([51, 10, 52, 17], fill=C("P45")); d.rectangle([51, 18, 52, 24], fill=C("P07"))
+    d.rectangle([2, 30, 63, 36], fill=C("P13"))                          # 철제 상판
+    d.line([2, 30, 63, 30], fill=C("P15")); d.line([2, 36, 63, 36], fill=C("P11"))
+    d.rectangle([5, 26, 14, 30], fill=C("P05")); d.rectangle([6, 27, 13, 29], fill=C("P53"))      # 부품 상자(붉은 서랍)
+    d.rectangle([17, 25, 21, 30], fill=C("P26")); d.line([18, 24, 20, 24], fill=C("P07"))         # 기름통
+    d.rectangle([30, 28, 36, 30], fill=C("P06")); d.point((32, 27), fill=C("P53"))                # 부품(회로 기판 조각)
+    d.rectangle([50, 24, 60, 30], fill=C("P12")); d.rectangle([53, 22, 57, 24], fill=C("P11"))     # 바이스
+    d.line([60, 27, 64, 27], fill=C("P06")); d.rectangle([63, 25, 64, 29], fill=C("P05"))
+    d.line([50, 27, 60, 27], fill=C("P11"))
+    for x in (4, 60):                                                    # 다리
+        d.rectangle([x, 36, x + 2, 56], fill=C("P11"))
+    d.rectangle([4, 46, 62, 48], fill=C("P12"))                          # 아래 선반
+    d.rectangle([10, 39, 30, 46], fill=C("P53")); d.rectangle([10, 39, 30, 41], fill=C("P54"))    # 철제 공구함(빨강)
+    d.rectangle([18, 37, 22, 39], fill=C("P06"))
+    d.rectangle([36, 41, 44, 46], fill=C("P05")); d.rectangle([47, 42, 55, 46], fill=C("P18"))    # 깡통 · 나무 상자
+    return im
+
+
 def anvil():
     im = img(30, 26)
     d = ImageDraw.Draw(im)
@@ -809,6 +847,7 @@ PROPS = {
     "stall": _r(lambda: stall_counter(1), 2, 1, down=-2),
     "forge": _r(forge, 2, 1, down=-2),
     "anvil": _r(anvil, 1, 1, down=-2),
+    "hangyeol_bench": _r(hangyeol_bench, 2, 1, down=-2),                  # 한결 공구 작업대(1-8c, SD-13 §7.9.1)
     "gate_l": _r(lambda: gate_leaf(True, "l"), 1, 1, down=-2),
     "gate_r": _r(lambda: gate_leaf(True, "r"), 1, 1, down=-2),
     "gate_shut": _r(lambda: gate_leaf(False), 1, 1, down=-2),

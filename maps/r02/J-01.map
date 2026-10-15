@@ -80,3 +80,7 @@ box 2 15 stall owner=C-050 name="상인회 물품 상자"
 prop scrap_pile 26 17
 box 26 17 trash w=2
 prop work_lamp 6 16
+# 정보상 구문철 '귀동냥'(SD-15 V12, 1-8d): 출입세 초소 뒤 계단참 — 오르내리는 사람이 숨을 고르는 자리
+prop crate_o 25 4
+npc N-R02-501 26 4 W bark="숨 고르는 사람 입이 제일 헐거워."
+text 25 4 "엎은 사과 궤짝. 분필로 '들은 거 삽니다 · 팝니다'. 그 밑에 '소문 한 마디 50'." 

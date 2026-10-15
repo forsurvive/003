@@ -182,9 +182,10 @@ def ammo_items():
 def known_ids(extra=()):
     """게임이 아는 아이템 ID(아이템 표 전체 + 무기 + 탄약 이름). 상인 표 내보내기도 쓴다."""
     ids = set(extra)
-    for f in glob.glob(os.path.join(DATA, "items_*.json")) + [os.path.join(DATA, "weapons.json")]:
+    wfiles = [os.path.join(DATA, f) for f in ("weapons.json", "weapons_craft.json") if os.path.exists(os.path.join(DATA, f))]
+    for f in glob.glob(os.path.join(DATA, "items_*.json")) + wfiles:
         ids |= set(json.load(open(f, encoding="utf-8")).keys())
-    for w in json.load(open(os.path.join(DATA, "weapons.json"), encoding="utf-8")).values():
+    for w in [v for f in wfiles for v in json.load(open(f, encoding="utf-8")).values()]:
         if w.get("ammo_id"):
             ids.add(w["ammo_id"])
     return ids

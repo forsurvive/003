@@ -129,6 +129,7 @@ prop crate_o 16 35
 prop lp_gas 17 33
 prop forge 44 34
 prop anvil 47 35
+prop hangyeol_bench 49 34
 prop drum_fire 42 37
 prop tarp_pile 51 36
 prop crate_o 53 34

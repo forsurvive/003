@@ -177,6 +177,8 @@ static func contents(st: StoryState, map_id: String, b: Dictionary, region: Stri
 	var cond := "loot" if st.year() >= 2277 else ""
 	if not st.boxes.has(k):
 		st.boxes[k] = {"items": roll(str(b["kind"]), seed_of(st, k, 0), t, cond, ctx_for(st, map_id, b, region)), "opened": 0, "taken": 0}
+		if map_id.begins_with("G-") and str(b.get("name", "")) == "작업대" and st.year() >= 2277:
+			st.boxes[k]["items"]["W-151"] = 1                              # 시설 작업대 서랍의 완성 병뚜껑 지뢰 1개(SD-13 §7.9.1 원작 관습, 처음 한 번)
 	else:
 		_restock(st, k, map_id, b, t, cond, region)
 	return st.boxes[k]

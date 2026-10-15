@@ -78,7 +78,7 @@ func _init() -> void:
 	# CONF 고백(1 털어놓음 · 2 화술 실패) · LOG 작업 단말 일지를 읽음 · AMBUSH 북쪽 출구 매복(1 대기 · 2 끝) · NEST 둥지(1 비움) ·
 	# FOUNT 분수에 던진 캡 · JM_REG 지하시장 단골(가격 −10%)
 	for k in ["MQ102_C1", "MQ102_C2", "MQ102_C3", "MQ102_ROBOT", "MQ103_GATE", "MQ103_JOB", "MQ103_HIRE", "MQ103_SNEAK", "MQ103_DOOR",
-			"MQ103_CONF", "MQ103_LOG", "MQ103_AMBUSH", "MQ103_NEST", "MQ103_FOUNT", "JM_REG"]:
+			"MQ103_CONF", "MQ103_LOG", "MQ103_AMBUSH", "MQ103_NEST", "MQ103_FOUNT", "JM_REG", "JM_GU_MET"]:
 		vars.declare(k, "int", 0)
 	# MQ-105 새벽인력 본소 진행 표시(단계 1-6, Act1Paths): GAME_HOUR 지금 시(0~23, 진행기 시각 글에서) · RAID 정면 습격(1 교전 · 2 끝) ·
 	# PASS 정문(1 구매자 · 2 거래 손님 · 3 쫓겨남) · DOGS 경비견(1 고기에 정신 팔림 · 2 모두 쓰러짐) · SAFE 금고 열림 ·
@@ -98,7 +98,7 @@ func _init() -> void:
 	# 거처(1-8b, SD-15 §7): HOME_BC 봉천 옥탑방(0 없음 · 1 내 방 · 2 압류) · HOME_BC_OK 조건이 찬 날(그다음 날부터 조만석이 열쇠를 준다) ·
 	# WELL_RESTED 숙면이 끝나는 절대 분(0 = 없음, SD-11 §11.5 경험치 +10% 12시간) · HOME_BC_NOTE 문 앞 알림(§7.7: 1 '출입 자제' 쪽지 · 2 읽음 · 3 압류 딱지 · 4 읽음 · 5 재개방) ·
 	# BAEKGU_NAP 오늘 백구가 옥탑방 문 앞에서 자는 날(하루 판정마다 굴림)
-	for k in ["HOME_BC", "HOME_BC_OK", "WELL_RESTED", "HOME_BC_NOTE", "BAEKGU_NAP"]:
+	for k in ["HOME_BC", "HOME_BC_OK", "WELL_RESTED", "HOME_BC_NOTE", "BAEKGU_NAP", "INFO_RUMOR_R01", "INFO_RUMOR_R02"]:   # 정보상 장소 소문 산 수(1-8d)
 		vars.declare(k, "int", 0)
 	for kv in [["CAPTURE_DAY", -1], ["CAPTURE_AT", 0], ["SB_COLLAR", 0], ["SB_CUFF", 0], ["CAPTURE_BY", 0]]:
 		vars.declare(kv[0], "int", kv[1])

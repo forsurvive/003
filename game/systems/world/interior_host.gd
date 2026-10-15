@@ -43,6 +43,7 @@ var combat: InteriorCombat                       ## 실내 전투(무기·표적
 var pipboy: PipBoy                               ## 열려 있는 핍-보이(없으면 null)
 var container: ContainerScreen                   ## 열려 있는 용기 창(없으면 null, 0-9)
 var wait_ui: WaitScreen                          ## 열려 있는 대기·수면 창(1-8b)
+var craft_ui: CraftScreen                        ## 열려 있는 작업대·조리 창(1-8c)
 var terminal: TerminalScreen                     ## 열려 있는 단말 화면(1-4) — 단말·해킹 중에는 게임 시간이 멈춘다(SD-12 §8.1)
 var lockpick: LockScreen                         ## 열려 있는 자물쇠 따기 화면(1-5) — 게임 시간이 멈춘다(SD-12 §8.1)
 var lock_assist := false                         ## 옵션 '자물쇠 보조'(근접도 막대)
@@ -403,7 +404,7 @@ func _physics_process(dt: float) -> void:
 			continue
 		if n["routine"] != null and is_instance_valid(n["actor"]) and not n.get("dead", false):
 			n["routine"].tick(dt, player.loco.logical)
-	talking = talking or pipboy != null or container != null or terminal != null or lockpick != null or wait_ui != null
+	talking = talking or pipboy != null or container != null or terminal != null or lockpick != null or wait_ui != null or craft_ui != null
 	if talking:
 		if not ev.drives(player):                                         # 연출이 주인공을 걷게 하는 중이면(move PC …) 멈추지 않는다
 			player.move(Vector2.ZERO, dt)
@@ -576,6 +577,13 @@ func interact() -> bool:
 		return true
 	if _up():
 		return false
+	var wb := bench_front(cells)                                        # 작업대·화덕(1-8c): 제작·조리 창
+	if not wb.is_empty():
+		if str(wb.get("why", "")) != "":
+			say_text(str(wb["why"]))
+		else:
+			open_craft(wb)
+		return true
 	var bd := bed_front(cells)                                          # 침대(1-8b): 남의 것이면 못 자고, 아니면 수면 창
 	if not bd.is_empty() and not bool(bd.get("script", false)):
 		if bool(bd["other"]):
@@ -901,8 +909,16 @@ func shop_state(vid: String) -> Dictionary:
 				stock[i] = stock[j]
 				stock[j] = tmp
 			stock = stock.slice(0, int(m["pick"]))
+		var slow: Dictionary = (sh.get("slow", {}) as Dictionary).duplicate()
 		for r in stock:                                               # 진열 장비는 '양호' 이상(SD-15 §3.8) — 갱신마다 새로 굴린다(1-8a)
 			var id := str(r[0])
+			if (r as Array).size() > 2:                                   # 느린 재입고(설계도 1장 · 30일, SD-15 §8 — 1-8c): 그 날수가 지나야 다시 놓는다
+				if not slow.has(id) or day - int(slow[id]) >= int(r[2]):
+					items[id] = int(r[1])
+					slow[id] = day
+				elif int((sh.get("items", {}) as Dictionary).get(id, 0)) > 0:
+					items[id] = int(sh["items"][id])
+				continue
 			if Gear.is_gear_id(id):
 				for i in int(r[1]):
 					var kk := Gear.rolled_key(id, "shop", "%s:%d:%d" % [vid, day, i])
@@ -910,7 +926,7 @@ func shop_state(vid: String) -> Dictionary:
 			else:
 				items[id] = int(r[1])
 		var caps := base if sh.is_empty() else mini(roundi(base * 1.5), maxi(base, roundi(int(sh["caps"]) * 0.5)))
-		sh = {"items": items, "caps": caps, "day": day, "total": int(sh.get("total", 0))}
+		sh = {"items": items, "caps": caps, "day": day, "total": int(sh.get("total", 0)), "slow": slow}
 		st.boxes[key] = sh
 	return sh
 
@@ -1151,6 +1167,9 @@ func interact_label() -> String:
 		return "열기"
 	if _up():
 		return ""
+	var wb := bench_front(cells)
+	if not wb.is_empty() and str(wb.get("why", "")) == "":
+		return "작업대" if bool(wb["bench"]) else "조리"
 	var bd := bed_front(cells)
 	if not bd.is_empty() and not bool(bd.get("script", false)):
 		return "자기"
@@ -1547,6 +1566,16 @@ func _handlers() -> void:
 				st.vars.set_v("PC_TORSO", nk)
 			hint("%s 정비 — '%s'" % [str(items_db.get(Gear.base(nk), {}).get("name", nk)), Gear.NAMES[Gear.cond(nk)]], 3.0)
 			box.finished.connect(func() -> void: fix_menu.call_deferred(str(a[0]), true), CONNECT_ONE_SHOT)
+		done.call()
+	ev.handlers["info"] = func(a: Array, done: Callable) -> void:      # 정보상 메뉴(1-8d): info 상인ID [권역]
+		box.finished.connect(func() -> void: info_menu.call_deferred(str(a[0]), str(a[1]) if a.size() > 1 else ""), CONNECT_ONE_SHOT)
+		done.call()
+	ev.handlers["infodo"] = func(a: Array, done: Callable) -> void:    # 장소 소문 하나(값은 선택지 [캡] 태그가 이미 받았다)
+		var lid := str(a[1])
+		var rg := str(PlaceLog.db.get(lid, {}).get("region", ""))
+		st.places.raise(lid, PlaceLog.MARKED)
+		st.vars.set_v("INFO_RUMOR_" + rg, int(st.vars.get_v("INFO_RUMOR_" + rg)) + 1)
+		hint("지도에 표시: %s" % str(PlaceLog.db.get(lid, {}).get("name", lid)), 4.0)
 		done.call()
 	ev.handlers["meet"] = func(a: Array, done: Callable) -> void:      # 이름 소개(수첩 등록, SD-12 §3.11): meet 인물ID
 		st.book.meet(str(a[0]), date_text)
@@ -1988,11 +2017,11 @@ func consume(id: String) -> bool:
 	if heal > 0.0:
 		combat.heal_q.append(heal)
 		if combat.heal_q.size() == 1:
-			combat.heal_rate = heal / 5.0
+			combat.heal_rate = heal / float(it.get("heal_secs", 5.0))         # 부대찌개는 10초에 걸쳐(SD-13 §7.9.5)
 	var rad := int(it.get("rads", 0))
-	if rad > 0:
-		st.vars.set_v("PC_RADS", int(st.vars.get_v("PC_RADS")) + rad)
-	_note("%s — HP +%d%s" % [str(it.get("name", id)), int(heal), ("  방사능 +%d" % rad) if rad > 0 else "  방사능 없음"])
+	if rad != 0:
+		st.vars.set_v("PC_RADS", maxi(0, int(st.vars.get_v("PC_RADS")) + rad))   # 말린 버섯 나물처럼 라드를 줄이는 음식(음수)
+	_note("%s — HP +%d%s" % [str(it.get("name", id)), int(heal), ("  방사능 +%d" % rad) if rad > 0 else (("  방사능 %d" % rad) if rad < 0 else "  방사능 없음")])
 	if id in ["I-054", "I-055", "I-056", "I-057", "I-058", "I-059"]:
 		st.vars.set_v("MQ101_WATER", 1)                                   # MQ-101 '물': 마셔 봐야 안다
 	return true
@@ -2078,6 +2107,10 @@ func _pip_action(kind: String, id: String) -> void:
 		"use":
 			if id == InteriorCombat.STIMPAK:
 				combat.use_stimpak(st)                                          # 핍-보이 안: 시간이 멈춘 채 쓴다(투여 모션 없음)
+			elif id == Craft.BURNER:
+				if pipboy != null:
+					pipboy.close(true)
+				open_craft.call_deferred({"name": "조리 — 휴대용 버너", "bench": false, "station": false})
 			else:
 				consume(id)
 		_:
@@ -2227,3 +2260,127 @@ func _rest_check() -> void:
 		st.vars.set_v("WELL_RESTED", 0)
 		_note("숙면 효과가 끝났다.")
 
+
+
+# ---------------------------------------------------------------- 작업대·조리(1-8c, SD-13 §7.9 · SD-12 §11.3)
+## 제작 작업대: 한결 공구 작업대(어디서나) · 생성 창고(G-)의 작업대(공장 창고 = 시설 작업대) · 마영식 작업대(J-06, 지하시장 동맹 — SD-13 §6 '작업대 사용권').
+## 불(조리만): 드럼통 화덕 · 대장간 화로. 근태 목걸이 작업실(H-05) 같은 남의 작업대는 쓸 수 없다.
+const BENCHES := {"hangyeol_bench": "한결 공구 작업대", "workbench": "작업대"}
+const FIRES := {"drum_fire": "드럼통 화덕", "forge": "대장간 화로"}
+const JH_BENCH_AFF := 80
+
+
+## 앞 칸의 작업대·불: {"name", "bench"(제작 탭), "station"(불), "why"(못 쓰는 까닭)} — 없으면 빈 사전
+func bench_front(cells: Array = []) -> Dictionary:
+	if map == null:
+		return {}
+	for cc in (cells if not cells.is_empty() else _front_cells()):
+		for p in map.props:
+			var nm := str(p["name"])
+			if not BENCHES.has(nm) and not FIRES.has(nm):
+				continue
+			var pw := int(p.get("w", 1))
+			var ph := int(p.get("h", 1))
+			if cc.x < int(p["x"]) or cc.x >= int(p["x"]) + maxi(pw, 1) or cc.y < int(p["y"]) or cc.y >= int(p["y"]) + maxi(ph, 1):
+				continue
+			if FIRES.has(nm):
+				if map.texts.has(cc):
+					continue                                                  # 조사 글이 달린 불(지하시장 경비들의 드럼통 등)은 글이 먼저
+				return {"name": "조리 — " + str(FIRES[nm]), "bench": false, "station": true}
+			if nm == "workbench" and not (map.id.begins_with("G-") or map.id == "J-06"):
+				continue                                                  # 남의 작업대(본소 목걸이 작업실 등): 조사 글로
+			if nm == "workbench" and map.id == "J-06" and int(st.vars.get_v("AFF_JH")) < JH_BENCH_AFF:
+				return {"name": "마영식 작업대", "bench": true, "station": true, "why": "마영식의 작업대다. 상인회가 믿어 주기 전엔 손댈 수 없다."}
+			return {"name": str(BENCHES[nm]) if map.id != "J-06" else "마영식 작업대", "bench": true, "station": true}
+	return {}
+
+
+func open_craft(wb: Dictionary) -> void:
+	if craft_ui != null:
+		return
+	player.move(Vector2.ZERO, 0.0)
+	var c := CraftScreen.new().setup(st, items_db, str(wb.get("name", "작업대")), bool(wb.get("bench", true)), bool(wb.get("station", true)))
+	craft_ui = c
+	c.crafted.connect(func(rid: String, _r: Dictionary) -> void: _note_craft(rid))
+	c.closed.connect(func(_ok: bool) -> void: craft_ui = null)
+	add_child(c)
+
+
+func _note_craft(_rid: String) -> void:
+	_drain_events()
+
+
+# ---------------------------------------------------------------- 정보상(1-8d, SD-15 §5.3)
+## 장소 소문: 50캡에 아직 모르는 장소 1곳을 지도에 '표시'로 띄운다(권역별 목록에서 고른다, 권역당 5곳까지).
+## 판도 소식·누가 나를 아는가·목격자 매수·정보 세탁·추격자 동선·정보 매입은 판도 겹치기·공개도(1-10·1-12) 단계에서 더한다.
+const INFO_REGIONS := {"R01": "관악·동작", "R02": "영등포·여의도"}
+const RUMOR_PRICE := 50
+const RUMOR_CAP := 5
+
+
+## 권역에서 소문으로 살 수 있는 장소(아직 '표시' 전 · 숨은 곳 아님 · 지도 표시가 있는 곳) — 가까운 순
+func rumor_places(region: String, n: int = 6) -> Array:
+	PlaceLog.load_db()
+	var me := map.tile_of(player.loco.logical) if map is WorldMap else Vector2i(-1, -1)
+	if me.x < 0:                                                          # 실내: 바깥으로 나가는 출구의 장소(월드 문)를 기준점으로
+		for ex in map.data.get("exits", []):
+			var lid0 := str(ex.get("mark", ex.get("to_mark", "")))
+			if PlaceLog.db.has(lid0):
+				me = Vector2i(int(PlaceLog.db[lid0]["tx"]), int(PlaceLog.db[lid0]["ty"]))
+				break
+	var out: Array = []
+	for lid in PlaceLog.db:
+		var e: Dictionary = PlaceLog.db[lid]
+		if str(e.get("region", "")) != region or bool(e.get("hidden", false)) or not bool(e.get("marker", true)):
+			continue
+		if st.places.get_state(lid) >= PlaceLog.MARKED:
+			continue
+		out.append(lid)
+	if me.x >= 0:
+		out.sort_custom(func(a, b): return Vector2i(int(PlaceLog.db[a]["tx"]), int(PlaceLog.db[a]["ty"])).distance_squared_to(me) \
+			< Vector2i(int(PlaceLog.db[b]["tx"]), int(PlaceLog.db[b]["ty"])).distance_squared_to(me))
+	else:
+		out.sort()
+	return out.slice(0, n)
+
+
+func info_menu(vid: String, region: String = "") -> void:
+	shop_state(vid)
+	var m: Dictionary = merchants.get(vid, {})
+	var npc := str(m.get("npc", ""))
+	var ops: Array = []
+	var labels := {"START": 0}
+	var opts: Array = []
+	if region == "":
+		ops.append({"op": "line", "who": npc, "emo": "기본", "text": "어디 얘기가 궁금해? 한 군데 50캡. 권역마다 다섯 군데까지만 판다. 내 밑천이라서."})
+		var i := 0
+		for rg in INFO_REGIONS:
+			var left := RUMOR_CAP - int(st.vars.get_v("INFO_RUMOR_" + rg))
+			var have := not rumor_places(rg, 1).is_empty()
+			opts.append({"text": "장소 소문 — %s (남은 %d곳)" % [INFO_REGIONS[rg], maxi(left, 0) if have else 0], "tags": [],
+				"cond": "INFO_RUMOR_%s < %d" % [rg, RUMOR_CAP] if have else "1 == 0", "fx": "", "to": "R%d" % i, "id": "INFO:%s:%s" % [vid, rg]})
+			i += 1
+		opts.append({"text": "됐다", "tags": [], "cond": "", "fx": "", "to": "END", "id": "INFO:%s:end" % vid})
+		ops.append({"op": "choice", "opts": opts})
+		i = 0
+		for rg in INFO_REGIONS:
+			labels["R%d" % i] = ops.size()
+			ops.append({"op": "cmd", "name": "info", "args": [vid, rg]})
+			ops.append({"op": "goto", "to": "END"})
+			i += 1
+	else:
+		var cands := rumor_places(region)
+		ops.append({"op": "line", "who": npc, "emo": "기본", "text": "%s 쪽 얘기라면 들은 데가 몇 군데 있지. 어느 쪽?" % str(INFO_REGIONS.get(region, region))})
+		for i in cands.size():
+			var e: Dictionary = PlaceLog.db[cands[i]]
+			opts.append({"text": "%s(%s)" % [str(e["name"]), str(e.get("type", ""))], "tags": [{"k": "caps", "n": RUMOR_PRICE}], "cond": "", "fx": "",
+				"to": "P%d" % i, "id": "INFOP:%s:%s" % [vid, cands[i]]})
+		opts.append({"text": "됐다", "tags": [], "cond": "", "fx": "", "to": "END", "id": "INFOP:%s:end" % vid})
+		ops.append({"op": "choice", "opts": opts})
+		for i in cands.size():
+			labels["P%d" % i] = ops.size()
+			ops.append({"op": "line", "who": npc, "emo": "기본", "text": "핍-보이에 찍어 둬. 내가 말했다고는 하지 말고."})
+			ops.append({"op": "cmd", "name": "infodo", "args": [vid, cands[i]]})
+			ops.append({"op": "goto", "to": "END"})
+	ops.append({"op": "end"})
+	box.open(st, {"id": "INFO_" + vid, "title": str(m.get("name", vid)), "npc": npc, "labels": labels, "ops": ops}, "START")

@@ -72,7 +72,7 @@ def main():
         rec = {"_src": "13_items.md:%d" % ln, "id": wid, "name": name, "skill": skill, "dmg": num(dmg), "weight": float(num(wt)),
                "price": int(num(price)), "note": role, "origin": "제작(작업대)", "layer": layer}
         if layer.startswith("X"):                                          # 폭발물: 잡화로
-            items[wid] = {"_src": rec["_src"], "id": wid, "name": name, "cat": "explosive", "value": rec["price"], "weight": rec["weight"],
+            items[wid] = {"_src": rec["_src"], "id": wid, "name": name, "cat": "misc", "explosive": True, "value": rec["price"], "weight": rec["weight"],
                           "desc": "%s 피해 %s · %s" % (skill, dmg, role), "dmg": rec["dmg"], "craft": True}
             continue
         kind = "melee" if skill == "근접 무기" else ("unarmed" if skill == "비무장" else "ranged")
@@ -112,7 +112,7 @@ def main():
         caps = sum(s.get("caps", 0) for s in slots)
         recipes[out] = {"_src": "13_items.md:%d" % ln, "out": out, "count": cnt, "caps": caps, "needs": [s for s in slots if "any" in s],
                         "blueprint": bp_of.get(out, ""), "perk": perk, "value_in": int(num(c[5])), "value_out": int(num(c[7])),
-                        "kind": "weapon" if out in weapons else ("explosive" if out in items and items[out]["cat"] == "explosive" else
+                        "kind": "weapon" if out in weapons else ("explosive" if out in items and items[out].get("explosive") else
                                                                   ("ammo" if not out[:2] in ("I-", "M-", "W-") else "item")), "cook": False}
     # ---- §7.9.5 조리(결과 ID I-077~I-084, 표 순서)
     k = 77
@@ -150,10 +150,31 @@ def main():
                     raise SystemExit("레시피 %s 재료 %s가 아이템 표에 없다" % (rid, i))
         if r["cook"]:
             items[rid]["value"] = sum(int(vals[s["any"][0]].get("value", 0)) * s["n"] for s in r["needs"]) + 2
+    # 조리 '재료 합' 라드(§7.9.5): 물에 따라 라드가 다르다 — 라드 0인 물(정화수·생수)로 끓인 것이 기본 ID,
+    # 라드가 있는 물로 끓인 것은 '기본ID+물ID' 변형(이름 뒤 물 이름). 다른 '또는' 칸은 첫 재료의 라드로 센다(구현 정합).
+    WATER = ["I-%03d" % k for k in range(54, 60)]
+    for rid, r in list(recipes.items()):
+        if not r["cook"] or r["rad_rule"] != "sum":
+            continue
+        base = sum(int(vals[s["any"][0]].get("rads", 0)) * s["n"] for s in r["needs"] if s["any"] != WATER)
+        wat = [s for s in r["needs"] if s["any"] == WATER]
+        items[rid]["rads"] = max(0, base + int(r["rad_add"]))
+        r["variants"] = {}
+        for w in (WATER if wat else []):
+            wr = int(vals[w].get("rads", 0))
+            if wr == 0:
+                continue
+            vid = "%s+%s" % (rid, w)
+            v = dict(items[rid])
+            v.update({"id": vid, "name": "%s(%s)" % (items[rid]["name"], vals[w]["name"]), "rads": max(0, base + wr + int(r["rad_add"])),
+                      "desc": "HP +%d · 라드 +%d — %s로 끓였다" % (items[rid]["heal"], max(0, base + wr + int(r["rad_add"])), vals[w]["name"])})
+            items[vid] = v
+            r["variants"][w] = vid
+        items[rid]["desc"] = "HP +%d · 라드 +%d%s" % (items[rid]["heal"], items[rid]["rads"], " — 맑은 물로 끓였다" if wat else "")
     for name, obj in (("weapons_craft", weapons), ("items_craft", items), ("recipes", recipes)):
         json.dump(obj, open(os.path.join(DATA, name + ".json"), "w", encoding="utf-8"), ensure_ascii=False, sort_keys=True, indent=1)
     print("제작: 무기 %d · 잡화 %d(설계도 %d · 폭발물 %d · 조리 %d) · 레시피 %d(조리 %d)" % (
-        len(weapons), len(items), sum(1 for v in items.values() if "blueprint" in v), sum(1 for v in items.values() if v["cat"] == "explosive"),
+        len(weapons), len(items), sum(1 for v in items.values() if "blueprint" in v), sum(1 for v in items.values() if v.get("explosive")),
         sum(1 for v in items.values() if v.get("cooked")), len(recipes), sum(1 for r in recipes.values() if r["cook"])))
 
 

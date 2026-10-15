@@ -435,6 +435,8 @@ func _enter_label() -> String:
 			return "입는 중" if rows[sel]["id"] == info.get("worn", "") else "갈아입기"
 		[1, 2]:
 			return "사용"
+		[1, 3]:
+			return "조리" if rows[sel]["id"] == Craft.BURNER else "—"
 		[2, 2]:
 			return "—" if rows[sel]["id"] == "" else ("추적 끄기" if rows[sel]["id"] == st.quests.tracked else "추적")
 		[2, 3]:
@@ -964,6 +966,9 @@ func _enter() -> void:
 				action.emit("equip", id)                                   # 옷 갈아입기(0-10, 몸통 슬롯 하나)
 		[1, 2]:
 			action.emit("use", id)
+		[1, 3]:
+			if id == Craft.BURNER:
+				action.emit("use", id)                                     # 휴대용 버너: 그 자리에서 조리(1-8c, SD-13 §7.9.5)
 		[2, 2]:
 			if id != "":
 				st.quests.track(id)                                      # 추적(SD-12 §3.12) — 같은 줄을 다시 고르면 끈다
