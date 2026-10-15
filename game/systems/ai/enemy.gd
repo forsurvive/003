@@ -175,6 +175,12 @@ func think(dt: float, target: Combatant, nav, shots: Projectiles) -> void:   ## 
 		return
 	if cmb.flash > 0:
 		cmb.flash -= 1
+	if cmb.held():                                                 # 1-9a 행동 제한(넘어짐·기절·마비·그물): 아무것도 못 한다
+		_held_step(dt)
+		return
+	if _held_pose:
+		_held_pose = false
+		set_pose("stand")
 	_hist.append([_clock, target.pos()])
 	while _hist.size() > 2 and _clock - float(_hist[0][0]) > react + 0.1:
 		_hist.pop_front()
@@ -219,6 +225,17 @@ func think(dt: float, target: Combatant, nav, shots: Projectiles) -> void:   ## 
 		prof["per"] += t1 - t0
 		prof["tac"] += t2 - t1
 		prof["act"] += t3 - t2
+
+
+var _held_pose := false
+
+
+func _held_step(dt: float) -> void:
+	loco.step(Vector2.ZERO, dt)
+	if cmb.held_by("down") and not _held_pose:
+		_held_pose = true
+		set_pose("lie")
+	queue_redraw()
 
 
 func _tactics(target: Combatant, nav) -> void:
@@ -378,7 +395,8 @@ func _shoot(dt: float, target: Combatant, shots: Projectiles) -> void:
 		aim += (10.0 + shots.rng.randf() * 6.0) * (1.0 if shots.rng.randf() < 0.5 else -1.0)
 	var sp := CombatRules.spread(skill, "stand", loco.motion != "idle")
 	var ang := CombatRules.shot_angle(aim, sp, shots.rng)
-	if shots.fire(loco.logical + Vector2(0, -14) + Vector2.RIGHT.rotated(deg_to_rad(aim)) * 10.0, ang, 640.0, cmb.team, weapon, skill, false, 5, "auto", floor_id):
+	if shots.fire_weapon(loco.logical + Vector2(0, -14) + Vector2.RIGHT.rotated(deg_to_rad(aim)) * 10.0, ang, cmb.team, weapon, skill,
+			{"speed": 640.0, "fl": floor_id, "target": seen}) > 0:      # 1-9a: 무기 계열대로(산탄·화염·곡사…), 실탄은 20t/초로 읽히게
 		_cool = 1.0 / (float(weapon["rate"]) * 0.6)                  # semi-auto: 60% of max rate
 		shots_fired += 1
 		_burst += 1
@@ -464,6 +482,12 @@ func _draw() -> void:
 		var f: Vector2 = Locomotion.VEC[loco.facing].normalized()
 		draw_arc(Vector2(0, -12) + f * 8.0, 10.0, f.angle() - 0.9, f.angle() + 0.9, 6, Color("E9E4D8"), 2.0)
 	var top := -float(meta["foot"][1]) + (14.0 if style != "swarm" and style != "dog" else 6.0)
+	if cmb.held_by("stun") or cmb.held_by("root"):                # 기절·마비: 머리 위 별 · 그물: 엇갈린 줄
+		var col := Color("E8C23A") if cmb.held_by("stun") else Color("CBC5B9")
+		var k := fmod(_clock * 6.0, TAU)
+		for i in 3:
+			var a := k + i * TAU / 3.0
+			draw_rect(Rect2(Vector2(cos(a) * 6.0 - 1.0, top - 4.0 + sin(a) * 2.0), Vector2(2, 2)), col)
 	match brain.state:
 		AIBrain.S.SUSPICIOUS, AIBrain.S.SEARCH:
 			draw_string(ui_font, Vector2(-3, top - 2), "?", HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("e8c23a"))

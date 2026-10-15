@@ -24,7 +24,7 @@ HAIRS = ["HR00", "HR01", "HR02", "HR03", "HR04", "HR05", "HR06", "HR07", "HR08",
 GEARS = ["HD01", "HD02", "HD03", "HD04", "HD05", "HD06", "HD07", "HD08", "HD09", "HD10", "HD11", "HD12",
          "HD13", "HD14", "HD15", "HD16", "HD17", "HD18"]
 EYES = ["EY01", "EY02", "EY03", "EY04", "EY05", "EY06", "EY07", "EY08"]
-WEAPONS = ["pistol", "rifle", "smg", "baton", "bb", "pole"]
+WEAPONS = ["pistol", "rifle", "smg", "baton", "bb", "pole", "shotgun", "laser", "minigun", "flamer", "launcher", "knife", "bat", "sledge", "grenade"]   # 1-9a: 8계열 손 무기
 MOTIONS = [("idle", 1), ("walk", 6), ("run", 6), ("roll", 5)]
 PF = "PF-01"                                         # 세력 슬롯 자리표시(색은 실행 중 팔레트가 정한다)
 DIR8 = {"E": 0, "SE": 1, "S": 2, "SW": 3, "W": 4, "NW": 5, "N": 6, "NE": 7}

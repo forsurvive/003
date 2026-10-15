@@ -71,9 +71,16 @@ def main():
         layer = pose.split("·")[-1].strip()
         rec = {"_src": "13_items.md:%d" % ln, "id": wid, "name": name, "skill": skill, "dmg": num(dmg), "weight": float(num(wt)),
                "price": int(num(price)), "note": role, "origin": "제작(작업대)", "layer": layer}
-        if layer.startswith("X"):                                          # 폭발물: 잡화로
+        if layer.startswith("X"):                                          # 폭발물: 잡화로 — 1-9b 투척·설치 필드(throwables.yaml과 같은 이름)
+            blast = re.search(r"폭발 (\d+)", dmg)
+            fire = re.search(r"화염 (\d+)/초\((\d+)초\)", dmg)
+            mine = layer == "X02"
             items[wid] = {"_src": rec["_src"], "id": wid, "name": name, "cat": "misc", "explosive": True, "value": rec["price"], "weight": rec["weight"],
-                          "desc": "%s 피해 %s · %s" % (skill, dmg, role), "dmg": rec["dmg"], "craft": True}
+                          "desc": "%s 피해 %s · %s" % (skill, dmg, role), "dmg": rec["dmg"], "craft": True,
+                          "kind": "mine" if mine else "thrown", "layer": layer, "blast": float(blast.group(1)) if blast else 0.0,
+                          "blast_kind": "frag" if blast else "", "zone": "", "zone_r": 0.0, "zone_s": 0.0,
+                          "dot": float(fire.group(1)) if fire else 0.0, "dot_s": float(fire.group(2)) if fire else 0.0, "robot_stop": 0.0,
+                          "fuse": 0.0 if mine else 2.5, "arm_s": 1.0 if mine else 0.0, "range_text": rng}
             continue
         kind = "melee" if skill == "근접 무기" else ("unarmed" if skill == "비무장" else "ranged")
         ammo_id = "" if kind != "ranged" else ("잡동사니" if ammo.startswith("잡동사니") else ammo)
@@ -82,11 +89,19 @@ def main():
                     "falloff_min": 0.7, "two_handed": layer[:1] in ("R", "S", "H", "T"), "crit_dmg": num(dmg), "min_spread": 1.0, "ap_cost": None,
                     "reload_s": (1.5 if layer[:1] == "P" else 2.0) if kind == "ranged" else 0.0,
                     "sound": "melee" if kind != "ranged" else "pistol", "craft": True})
+        fam = {"P": "pistol", "R": "rifle", "S": "shotgun", "H": "heavy", "M": "melee1", "T": "melee2", "U": "unarmed"}.get(layer[:1], "pistol")
+        proj = "" if kind != "ranged" else ("nail" if "대못" in name else "junk" if "잡동사니" in name else "dart" if "독침" in name or "마취" in name else "bullet")
+        rec.update({"family": fam, "proj": proj, "pellets": 1, "blast": 0, "dot": 0, "dot_s": 0, "dot_kind": "", "knock_pct": 0, "stun_pct": 0,
+                    "leg_pct": 100 if proj == "dart" else 0, "no_crit": False, "robot_mult": 1.0, "ammo_per_shot": 1, "spinup": 0, "saw": False, "cone": 0.0,
+                    "limb_mult": 3.0 if "부위 피해 ×3" in role else 1.0})   # 1-9a 계열 필드(weapons.yaml과 같은 이름)
+        if fam == "heavy":
+            rec["reload_s"] = 3.0
         if "DR 무시" in dmg:
             rec["ignore_dr"] = True
         fire = re.search(r"화염 (\d+)/초\((\d+)초\)", dmg)
         if fire:
             rec["burn"] = [int(fire.group(1)), int(fire.group(2))]
+            rec.update({"dot": int(fire.group(1)), "dot_s": int(fire.group(2)), "dot_kind": "burn"})
         poison = re.search(r"독 (\d+)/초\((\d+)초\)", dmg)
         if poison:
             rec["poison"] = [int(poison.group(1)), int(poison.group(2))]

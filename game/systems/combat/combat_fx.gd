@@ -33,7 +33,8 @@ static func flash_for(weapon: Dictionary) -> String:
 			return "flash_air"
 		"melee":
 			return ""
-	return "flash_pistol"
+	var f := Arms.flash(weapon)                                      # 1-9a: 산탄·중화기·레이저·플라스마·화염
+	return f if has_set(f) else "flash_pistol"
 
 
 static func col(angle_deg: float) -> int:
@@ -43,8 +44,11 @@ static func col(angle_deg: float) -> int:
 
 static func region(set_name: String, angle_deg: float, frame: int) -> Rect2:
 	var s: Dictionary = meta()["sets"][set_name]
-	var c := float(meta()["cell"])
-	return Rect2(col(angle_deg) * c, (int(s["row"]) + frame) * c, c, c)
+	var c := float(s.get("cell", meta()["cell"]))
+	var y0 := float(s.get("y", int(s["row"]) * int(meta()["cell"])))
+	if int(s.get("dirs", meta()["dirs"])) == 1:                     # 무방향 세트(화염 입자·폭발): 컷이 가로로 놓인다(1-9a)
+		return Rect2(frame * c, y0, c, c)
+	return Rect2(col(angle_deg) * c, y0 + frame * c, c, c)
 
 
 ## 그 자리(at)에 기준점을 맞춘 그림 왼쪽 위(정수 화소)

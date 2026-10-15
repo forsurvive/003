@@ -412,7 +412,9 @@ func _physics_process(dt: float) -> void:
 		var v := input_vec
 		if use_keyboard and v == Vector2.ZERO:
 			v = Input.get_vector("move_left", "move_right", "move_up", "move_down")
-		player.mode = "walk" if body == "toddler" or combat.crouch or combat.inject_t > 0.0 else "run"
+		if combat.pc.held():                                             # 1-9a: 넘어짐·기절·마비·그물 — 서 있다
+			v = Vector2.ZERO
+		player.mode = "walk" if body == "toddler" or combat.crouch or combat.inject_t > 0.0 or combat.heavy_slow() else "run"
 		player.loco.custom = TODDLER_WALK if body == "toddler" else (CROUCH_WALK if combat.crouch else {})
 		if input_fn.is_valid():
 			var left := dt
@@ -1300,12 +1302,12 @@ func _draw_hud() -> void:
 		var a := 0.5 if _hurt_t > 0.0 else 0.25 + 0.2 * sin(_hud_t * 7.0)
 		for rr in [Rect2(0, 0, vs.x, 3), Rect2(0, vs.y - 3, vs.x, 3), Rect2(0, 0, 3, vs.y), Rect2(vs.x - 3, 0, 3, vs.y)]:
 			banner.draw_rect(rr, Color(HUD_RED, a))
-	var ap := float(status()["ap_max"])
+	var ap := combat.ap.ap / maxf(1.0, combat.ap.max_ap)               # 1-9a: 실제 AP(파워 공격이 쓴다)
 	if touch_layout:
 		_draw_hud_touch(vs, c, low, ap)
 		return
 	_bar(Vector2(70, 330 + b), 140.0, c.hp / maxf(1.0, c.max_hp), "HP", HUD_RED if low else HU[5])
-	_bar(Vector2(430 + r, 330 + b), 140.0, 1.0 if ap > 0.0 else 0.0, "AP", HU[5])
+	_bar(Vector2(430 + r, 330 + b), 140.0, ap, "AP", HU[5])
 	if combat.armed() and combat.weapon()["kind"] == "ranged":
 		var t := "장전 중" if combat.reload_t > 0.0 else "%d/%d" % [int(combat.mags.get(combat.weapon_id, 0)), combat.ammo_left(st)]
 		_txt(Vector2(632 + r, 322 + b), t, HU[6], HORIZONTAL_ALIGNMENT_RIGHT)
@@ -1346,7 +1348,7 @@ func _draw_hud_touch(vs: Vector2, c: Combatant, low: bool, ap: float) -> void:
 	_txt(Vector2(8, 4), "HP", HU[5])
 	_bar(Vector2(28, 8), 140.0, c.hp / maxf(1.0, c.max_hp), "", HUD_RED if low else HU[5])
 	_txt(Vector2(8, 16), "AP", HU[5])
-	_bar(Vector2(28, 20), 140.0, 1.0 if ap > 0.0 else 0.0, "", HU[5])
+	_bar(Vector2(28, 20), 140.0, ap, "", HU[5])
 	var det := combat.detect_state()
 	if det != "" and not (det == "위험" and fmod(_hud_t, 0.3) < 0.15):
 		_txt(Vector2(320 + r / 2.0, 48), "[%s]" % det, HU[5] if det == "숨음" else HUD_RED, HORIZONTAL_ALIGNMENT_CENTER)
@@ -1723,7 +1725,7 @@ func status() -> Dictionary:
 	var carry := 0.0
 	for id in st.items:
 		carry += float(items_db.get(id, {}).get("weight", 0)) * int(st.items[id])
-	return {"level": lv, "hp": int(ceilf(combat.pc.hp)), "hp_max": int(combat.pc.max_hp), "ap": int(d["ap_max"]), "ap_max": int(d["ap_max"]),
+	return {"level": lv, "hp": int(ceilf(combat.pc.hp)), "hp_max": int(combat.pc.max_hp), "ap": int(combat.ap.ap), "ap_max": int(d["ap_max"]),
 		"xp": xp, "xp_next": lv * (50 + 75 * (lv + 1)), "date": date_text, "equipped": combat.weapon_id if not combat.holstered else "",
 		"stimpak_id": InteriorCombat.STIMPAK, "carry": carry, "carry_max": 150 + 10 * st.stat("ST"), "caps": int(st.vars.get_v("PC_CAPS")),
 		"place": _place_name(), "hotkeys": combat.hotkeys,

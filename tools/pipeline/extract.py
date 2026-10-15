@@ -100,6 +100,8 @@ def run_schema(path, rep):
                 if spec.get("pattern") and not re.match(spec["pattern"], str(v)):
                     rep.err(doc, sec, line, col, f"'{v}' 가 패턴 {spec['pattern']}에 맞지 않음")
                 rec[spec["field"]] = v
+                if spec.get("raw"):                                           # 1-9a: 같은 칸의 원문도 남긴다('40 (5×8)' → 펠릿 수 · '10 + 폭발 60' → 폭발 피해)
+                    rec[spec["raw"]] = raw.replace("**", "").strip()
             for col, spec in sch["columns"].items():
                 if spec.get("required") and spec["field"] not in rec:
                     rep.err(doc, sec, line, col, "필수 열 없음")
@@ -113,6 +115,7 @@ def run_schema(path, rep):
                 rep.err(doc, "-", "-", sch["id_column"], f"{rid} 행을 찾지 못함")
     # 행에 빈 칸이 있어도 식이 돌게: 숫자 열은 0, 글 열은 ""(1-4: 표 전체를 뽑으면서 빈 칸이 생긴다)
     blank = {spec["field"]: (0 if spec["type"] in ("int", "float", "lead_number", "int_or_none") else "") for spec in sch["columns"].values()}
+    blank.update({spec["raw"]: "" for spec in sch["columns"].values() if spec.get("raw")})
 
     class _Env(dict):
         def __missing__(self, k):

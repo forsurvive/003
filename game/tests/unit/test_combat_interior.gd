@@ -298,7 +298,7 @@ func test_muzzle_and_fx(t) -> void:
 	t.eq(CombatFx.frame_at("flash_air", 4.0 / 60.0), -1, "4틱 뒤 끝")
 	t.eq(CombatFx.flash_for({"sound": "suppressed"}), "flash_air", "공기총(소음)은 불꽃 대신 분출")
 	t.eq(CombatFx.flash_for({"sound": "pistol"}), "flash_pistol", "화약 총은 총구 화염")
-	t.eq(CombatFx.sheet().get_width(), 16 * 16, "시트 폭 = 16방향 × 16px")
+	t.ok(CombatFx.meta()["sets"].values().all(func(v): return int(v.get("cell", 16)) * int(v.get("dirs", 16)) <= CombatFx.sheet().get_width()), "시트 폭 안에 세트마다 16방향(또는 무방향 컷)이 다 든다")
 	var st := _state()
 	var r := _setup("V-09", st, Vector2(30 * 32 + 16, 18 * 32 + 16))
 	var m: InteriorMap = r[0]

@@ -11,7 +11,7 @@ columns:
   출처·제조사: {field: origin, type: str}
   스킬: {field: skill, type: str, required: true}
   탄약: {field: ammo, type: str}
-  피해: {field: dmg, type: lead_number, required: true}
+  피해: {field: dmg, type: lead_number, required: true, raw: dmg_text}
   연사(/초): {field: rate, type: float, required: true}
   사거리(타일): {field: range_eff, type: float, required: true}
   탄창: {field: mag, type: int_or_none}
@@ -24,12 +24,30 @@ derive:
   range_max: "range_eff * 1.75"          # SD-13 §3.3: 최대 사거리 = 유효 × 1.75
   kind: "'melee' if skill == '근접 무기' else ('unarmed' if skill == '비무장' else 'ranged')"
   crit_mult: "note_number('치명 배수 x', 1.0)"
-  falloff_min: "0.7"
+  falloff_min: "0.4 if layer[:1] == 'S' else 0.7"                           # SD-11 §3.2: 최대 사거리에서 원거리 70% · 산탄 40%
   ammo_id: "ammo if kind == 'ranged' and ammo not in ('—', '-', '') else ''"   # SD-13 §4.1: 탄약은 ID 없이 이름으로 부른다
   two_handed: "layer[:1] in ('R', 'S', 'H', 'T')"                            # SD-13 §3.11 자세: 소총·산탄총·중화기·양손 근접
   sound: "'suppressed' if '소음' in note else ('melee' if kind != 'ranged' else 'pistol')"   # SD-11 §7.3 소리 표(공기총류 = 소음 무기)
+  # 1-9a 무기 계열(SD-11 §3.2 · SD-13 §3.2 '계열 = 레이어 첫 글자'): 모션·사격 방식 단위
+  family: "'pistol' if layer[:1] == 'P' else 'rifle' if layer[:1] == 'R' else 'shotgun' if layer[:1] == 'S' else 'heavy' if layer[:1] == 'H' else 'melee1' if layer[:1] == 'M' else 'melee2' if layer[:1] == 'T' else 'thrown' if layer[:1] == 'X' else 'unarmed' if skill == '비무장' else 'pistol'"
+  # 투사체 유형(SD-11 §3.3): 이름·계열로 고른다
+  proj: "'' if kind != 'ranged' else 'pellet' if layer[:1] == 'S' else 'flame' if '화염' in name else 'grenade' if '유탄' in name else 'missile' if '미사일' in name else 'tesla' if '방전' in name else 'nuke' if name == '팻맨' else 'laser' if '레이저' in name else 'plasma' if '플라스마' in name else 'nail' if '못' in name else 'shock' if '충격' in name else 'net' if '그물' in name else 'flare' if '신호탄' in name else 'bullet'"
+  pellets: "round(num_in(dmg_text, '×', 9)) if layer[:1] == 'S' else 1"                   # 산탄 '합계 (탄당×수)'
+  blast: "num_in(dmg_text, '폭발 ', 0)"                                                    # 폭발 피해(유탄·미사일·방전포·팻맨)
+  dot: "num_in(dmg_text, '화염 ', 0) + num_in(dmg_text, '전기 ', 0)"                       # 지속 피해 /초
+  dot_s: "num_in(dmg_text, '/초(', 0)"
+  dot_kind: "'burn' if '화염 ' in dmg_text else 'shock' if '전기 ' in dmg_text else ''"
+  knock_pct: "num_in(note, '명중 시 ', 0) if '넘어뜨림' in note else 0"                      # '명중 시 10% 넘어뜨림'
+  stun_pct: "(num_in(note, '명중 시 ', 0) or num_in(note, '%, ', 0)) if '마비' in note else 0"   # '25% 마비 1초'
+  leg_pct: "num_in(note, '명중 시 ', 0) if '다리' in note else 0"                           # 못총: 다리 부위 손상
+  no_crit: "'치명타 불가' in note"
+  robot_mult: "1.5 if '로봇' in note and '+50%' in note else 1.0"
+  ammo_per_shot: "2 if '탄 2발' in note else 1"
+  spinup: "num_in(note, '예열 ', 0)"                                                      # 회전 예열(초)
+  saw: "'톱날' in note"                                                                  # 리퍼: 누르는 동안 0.1초 틱
 gaps:                                      # 문서에 없는 필드: 기본값을 쓰고 정합 목록에 올린다
   crit_dmg: {default: "dmg", why: "SD-13 표에 치명 피해 열이 없다(SD-11 부록 C 필드)"}
-  min_spread: {default: "1.0", why: "SD-13 표에 최소 퍼짐 열이 없다(SD-11 §4.1 참고표 가정값 1°)"}
+  min_spread: {default: "0.0 if ('레이저' in name or '저격' in name or '지정사수' in name) else 3.0 if layer in ('R03', 'R04', 'R05', 'R06') else 4.0 if layer in ('H03', 'H05') else 1.0", why: "SD-13 표에 최소 퍼짐 열이 없다 — SD-11 §3.2 계열 범위(레이저·저격 0° · 기관단총·돌격 3° · 회전 기관포 4° · 그 밖 1°)"}
+  cone: {default: "{'S01': 10.0, 'S02': 12.0, 'S03': 8.0, 'S04': 7.0, 'S05': 6.0}.get(layer, 25.0 if '화염' in name else 0.0)", why: "SD-13 표에 펠릿 원뿔 열이 없다 — SD-11 §3.2 산탄 6°~12°(짧을수록 넓게) · 화염 25°"}
   ap_cost: {default: "None", why: "SD-13 표에 AP 비용 열이 없다(SD-11 §5.3)"}
-  reload_s: {default: "(1.5 if layer[:1] == 'P' else 2.0) if kind == 'ranged' else 0.0", why: "SD-13 표에 재장전 시간 열이 없다 — SD-11 §3.2 자세별 범위의 하한(권총 1.5, 소총 2.0)"}
+  reload_s: {default: "(1.5 if layer[:1] == 'P' else 2.5 if layer == 'S05' else 3.0 if layer[:1] == 'S' else 4.0 if layer in ('H03', 'H05') else 3.0 if layer[:1] == 'H' else 2.0) if kind == 'ranged' else 0.0", why: "SD-13 표에 재장전 시간 열이 없다 — SD-11 §3.2 자세별 범위의 하한(권총 1.5, 소총 2.0, 산탄 2.5~3.0, 중화기 3.0~4.0)"}

@@ -22,8 +22,7 @@ const STIM_QUEUE_S := 2.0                         ## 회복 대기열: 한 개�
 const STIM_INJECT_S := 0.4                        ## 단축키 사용 투여 모션: 이동 50%·사격 불가
 const STEALTH_PER := 5.0                          ## 은신 표적의 인지력(정합)
 const STEALTH_RESET_S := 3.0
-const DOLL := {"W-065": "bb", "W-067": "pole"}    ## 무기 → 페이퍼돌 손 무기(SD-13 §3.11 형상 차분). 그 밖은 레이어 첫 글자로
-const DOLL_LAYER := {"P": "pistol", "R": "rifle", "M": "baton", "T": "pole"}
+const DOLL := {"W-065": "bb", "W-067": "pole"}    ## 무기 → 페이퍼돌 손 무기(SD-13 §3.11 형상 차분). 그 밖은 계열로(Arms.doll, 1-9a)
 
 var shots: Projectiles
 var pc := Combatant.new()
@@ -61,6 +60,13 @@ var _auto_hit := false
 const AUTO_AIM_HALF := 15.0                       ## 고전 조작 자동 조준 반각(SD-11 §2.3 '원뿔 30°', 조준 보정 반각 15°)
 var _buddy_cool := 0.0
 var _rng := RandomNumberGenerator.new()
+## 1-9a 무기 계열
+var ap := APPool.new(5)                            ## 행동력(SD-11 §5): 파워 공격·(구르기·질주는 호스트)
+var _spin := 0.0                                  ## 회전 기관포 예열(누르고 있는 초)
+var _recoil := 0.0                                ## 돌격소총 반동 누적(°, 최대 +4)
+var _recoil_t := 0.0
+var _charge := -1.0                               ## 근접 누르는 중(초) — 0.5초면 파워 공격. -1 = 누르지 않음
+var power_hits := 0                               ## 시험용: 파워 공격 횟수
 
 
 func _init() -> void:
@@ -131,6 +137,9 @@ func on_map(map: InteriorMap, player: Actor, st: StoryState) -> void:
 		if InteriorMap._cond_ok(str(row.get("cond", "")), st):
 			spawn(str(row["id"]), Vector2(int(row["x"]) * 32 + 16, int(row["y"]) * 32 + 16), map, st, row)
 	_rebuild_list()
+	if st != null:
+		ap.max_ap = APPool.max_for(st.stat("AG"))
+		ap.ap = minf(ap.ap, ap.max_ap)
 	_doll()
 
 
@@ -445,7 +454,7 @@ func _doll() -> void:
 		return
 	var w := ""
 	if armed():
-		w = DOLL.get(Gear.base(weapon_id), DOLL_LAYER.get(str(weapon().get("layer", "")).substr(0, 1), ""))
+		w = DOLL.get(Gear.base(weapon_id), Arms.doll(weapon()))
 	a.doll.set_look({"weapon": w})
 
 
@@ -529,6 +538,8 @@ func tick(dt: float, free: bool, st: StoryState) -> void:
 				e.cmb.last_sneak = false
 				_pop("기습 치명타 ×%d" % int(CombatRules.sneak_mult("ranged", false)), e.loco.logical + Vector2(0, -22), Color("E8C23A"))
 	if free:
+		ap.tick(dt, false)
+		_status(dt)
 		_heal(dt)
 		_targets(dt, player)
 		_buddy(dt)
@@ -548,6 +559,42 @@ func tick(dt: float, free: bool, st: StoryState) -> void:
 		_player(dt, player, st)
 
 
+## 1-9a 상태 이상 흐름: 지속 피해 틱 · 행동 제한 시간 · 넉백(발이 뜬 이동 — 막히면 거기서 선다, SD-16 §5.4 ⑦)
+func _status(dt: float) -> void:
+	var all: Array = [pc]
+	for e in enemies:
+		if is_instance_valid(e):
+			all.append(e.cmb)
+	for r in residents:
+		all.append(r["cmb"])
+	for c in all:
+		c.tick_status(dt)
+		if c.push == Vector2.ZERO or c.dead:
+			c.push = Vector2.ZERO
+			continue
+		var a = c.actor
+		var step: Vector2 = c.push.limit_length(240.0 * dt)
+		c.push -= step
+		if c.push.length() < 0.5:
+			c.push = Vector2.ZERO
+		if not (a is Actor) or a.world == null:
+			continue
+		var from: Vector2 = a.loco.logical
+		var to: Vector2 = a.world.move_circle(from, from + step, a.radius_px)
+		if to.distance_to(from + step) > 0.5:                      # 벽·엄폐에 닿으면 넉백은 거기서 끝(비비지 않는다)
+			c.push = Vector2.ZERO
+		a.loco.place(to.round() if to.distance_to(from) > 0.0 else from)
+	_recoil_t += dt
+	while _recoil_t >= 0.3 and _recoil > 0.0:                      # 쏘지 않으면 0.3초마다 1°씩 돌아온다
+		_recoil_t -= 0.3
+		_recoil = maxf(0.0, _recoil - 1.0)
+
+
+## 사격 중 중화기는 정조준 이동 속도(3.0t/초)로 걷는다(SD-11 §3.4)
+func heavy_slow() -> bool:
+	return armed() and Arms.fam(weapon()) == "heavy" and aim_hold > 0.0
+
+
 func _heal(dt: float) -> void:
 	if heal_q.is_empty():
 		return
@@ -564,17 +611,25 @@ func _player(dt: float, player: Actor, st: StoryState) -> void:
 	if inject_t > 0.0:
 		inject_t -= dt
 		return
+	if pc.held():                                                     # 1-9a: 넘어짐·기절·마비·그물 동안 공격 못 한다
+		_charge = -1.0
+		return
 	if bot.is_empty():
 		if Input.is_action_just_pressed("crouch"):
 			crouch = not crouch
-		if Input.is_action_just_pressed("holster") and weapon_id != "":
-			holstered = not holstered
-			reload_t = 0.0
-			if st != null:
-				st.weapon_out = armed()
-			_doll()
+		if Input.is_action_just_pressed("holster"):
+			if weapon_id == "" or weapon_id == Arms.FIST:                 # 빈손이면 주먹을 쥐고 편다(SD-11 §3.4 비무장, 1-9a)
+				equip("" if weapon_id == Arms.FIST else Arms.FIST, st)
+			else:
+				holstered = not holstered
+				reload_t = 0.0
+				if st != null:
+					st.weapon_out = armed()
+				_doll()
 	else:
 		crouch = bot.get("crouch", false)
+		if bot.has("weapon") and str(bot["weapon"]) != weapon_id:
+			equip(str(bot["weapon"]), st)
 		if bot.get("stim", false):
 			bot["stim"] = false
 			use_stimpak(st, true)
@@ -603,78 +658,168 @@ func _player(dt: float, player: Actor, st: StoryState) -> void:
 	if ranged and (bot.get("reload", false) if not bot.is_empty() else Input.is_action_just_pressed("reload")):
 		start_reload(st)
 		return
+	if not ranged:
+		_melee_input(dt, player, w, to, st, fire)
+		return
+	var spin := float(w.get("spinup", 0.0))
+	if spin > 0.0:                                                     # 회전 기관포(SD-11 §3.4): 누르면 예열 뒤 연사, 예열 중에도 회전음
+		if not fire:
+			_spin = 0.0
+		elif _spin < spin:
+			_spin += dt
+			for e in enemies:
+				if is_instance_valid(e):
+					e.hear("pistol", player.loco.logical)
+			return
 	if not fire or cool > 0.0:
 		return
 	cool = 1.0 / float(w["rate"])
-	if ranged:
-		if int(mags.get(weapon_id, 0)) <= 0:
-			start_reload(st)                                              # 탄창이 비면 자동 재장전(옵션 기본 켬)
-			return
-		var sk := float(st.skill("SMALL_GUNS")) if st != null else 15.0
-		var aiming: bool = Input.is_action_pressed("aim") if bot.is_empty() else bool(bot.get("aimed", true))
-		var stance := ("crouch_aim" if aiming else "crouch") if crouch else ("aim" if aiming else "stand")
-		var sp := CombatRules.spread(sk, stance, player.loco.motion != "idle", str(w.get("condition", "new")), 1.0, 0.0, 0.0, float(w.get("min_spread", 1.0)))
-		# 탄은 그려진 총의 총구에서 나가 조준점으로 간다(SD-16 §5 'muzzle'). 총 그림 방향 = 조준 중이면 조준 방향, 아니면 몸 방향.
-		# 총구 화염은 인형이 총과 같은 층에 그린다(N·NE 조준이면 머리 뒤).
-		var gdir: int = player.aim_dir if player.aim_dir >= 0 else player.loco.facing
-		var muzzle := player.loco.logical + Vector2(0, -14) + to.normalized() * 10.0
-		if player.doll != null:
-			muzzle = player.position + player.doll.position + player.doll.muzzle_local(gdir)
-		var line := aim - muzzle
-		var ang := CombatRules.shot_angle(rad_to_deg((line if _aim_real and line.length() > 24.0 else to).angle()), sp, shots.rng)
-		if shots.fire(muzzle, ang, SHOT_SPEED, "player", w, sk, false, 5, "" if player.doll != null else "auto", player.floor_id):
-			shots.shots[-1]["sneak_ok"] = true
-			mags[weapon_id] = int(mags[weapon_id]) - 1
-			stats["shots"] += 1
-			since_shot = 0.0
-			_wear_weapon(st, 1)
-			if player.doll != null:
-				player.doll.flash_face("fire", 0.14)
-				player.doll.fire_flash(gdir, ang, CombatFx.flash_for(w))
-			for e in enemies:
-				if is_instance_valid(e):
-					e.hear(str(w.get("sound", "pistol")), player.loco.logical)
-	else:
-		_melee(player, w, to, st)
-
-
-## 근접(SD-11 §3.4): 한손 호 90°·1.1t, 양손 호 140°·1.4t(무기 사거리), 호 안의 충돌체 중심이면 명중(굴림 없음)
-func _melee(player: Actor, w: Dictionary, to: Vector2, st: StoryState) -> void:
-	var two: bool = w.get("two_handed", false)
-	var reach := float(w["range_eff"]) * 32.0
-	var arc := deg_to_rad(70.0 if two else 45.0)
-	var n := 0
+	var need := Arms.per_shot(w)
+	if int(mags.get(weapon_id, 0)) < need:
+		start_reload(st)                                              # 탄창이 비면 자동 재장전(옵션 기본 켬)
+		return
+	var sk := float(st.skill(Arms.skill_name(w))) if st != null else 15.0
+	var aiming: bool = Input.is_action_pressed("aim") if bot.is_empty() else bool(bot.get("aimed", true))
+	var stance := Arms.aim_stance(w, aiming, crouch)
+	var assault := str(w.get("layer", "")) in ["R04", "R05", "R06"]
+	var sp := CombatRules.spread(sk, stance, player.loco.motion != "idle", str(w.get("condition", "new")), 1.0, 0.0, _recoil if assault else 0.0, float(w.get("min_spread", 1.0)))
+	# 탄은 그려진 총의 총구에서 나가 조준점으로 간다(SD-16 §5 'muzzle'). 총 그림 방향 = 조준 중이면 조준 방향, 아니면 몸 방향.
+	# 총구 화염은 인형이 총과 같은 층에 그린다(N·NE 조준이면 머리 뒤).
+	var gdir: int = player.aim_dir if player.aim_dir >= 0 else player.loco.facing
+	var muzzle := player.loco.logical + Vector2(0, -14) + to.normalized() * 10.0
+	if player.doll != null:
+		muzzle = player.position + player.doll.position + player.doll.muzzle_local(gdir)
+	var line := aim - muzzle
+	var ang := CombatRules.shot_angle(rad_to_deg((line if _aim_real and line.length() > 24.0 else to).angle()), sp, shots.rng)
+	var n := shots.fire_weapon(muzzle, ang, "player", w, sk, {"flash": "" if player.doll != null else "auto", "fl": player.floor_id,
+		"sneak_ok": true, "target": aim, "per": 5})
+	if n <= 0:
+		if Arms.proj(w) == "nuke":
+			message.emit("너무 가깝다. 6걸음 밖을 겨눠야 한다.")
+		return
+	mags[weapon_id] = int(mags[weapon_id]) - need
+	stats["shots"] += 1
+	since_shot = 0.0
+	if assault:
+		_recoil = minf(4.0, _recoil + 0.5)
+		_recoil_t = 0.0
+	_wear_weapon(st, 1)
+	if player.doll != null:
+		player.doll.flash_face("fire", 0.14)
+		var fs := CombatFx.flash_for(w)
+		if fs != "":
+			player.doll.fire_flash(gdir, ang, fs)
 	for e in enemies:
-		if not is_instance_valid(e) or e.cmb.dead or n >= (4 if two else 3) or not e.meets(pc):
+		if is_instance_valid(e):
+			e.hear(str(w.get("sound", "pistol")), player.loco.logical)
+
+
+## 근접 입력(SD-11 §3.4·§5.3): 눌렀다 떼면 일반 공격, 0.5초 누르고 있으면 파워 공격(피해 ×2 · 0.6t 전진 · 넉백 · AP = 무기 AP ÷ 2, 최소 10).
+## 회전날(리퍼)은 누르는 동안 0.1초마다 틱(틱당 피해 ÷ 10). 봇은 fire = 일반 공격(쿨마다), power = 파워 공격.
+func _melee_input(dt: float, player: Actor, w: Dictionary, to: Vector2, st: StoryState, fire: bool) -> void:
+	if w.get("saw", false):
+		if fire and cool <= 0.0:
+			cool = 0.1
+			_melee(player, w, to, st, false, 0.1)
+		return
+	var cost := maxf(10.0, float(w.get("ap_cost", 0.0) if w.get("ap_cost") != null else 0.0) * 0.5)
+	if not bot.is_empty():
+		if cool > 0.0:
+			return
+		if bot.get("power", false) and ap.spend(cost):
+			cool = 1.0 / float(w["rate"])
+			_melee(player, w, to, st, true)
+		elif fire:
+			cool = 1.0 / float(w["rate"])
+			_melee(player, w, to, st, false)
+		return
+	if _charge < 0.0:
+		if fire and cool <= 0.0 and Input.is_action_just_pressed("fire"):
+			_charge = 0.0
+		return
+	if fire:
+		_charge += dt
+		if _charge >= Arms.POWER_HOLD_S:
+			_charge = -1.0
+			cool = 1.0 / float(w["rate"])
+			_melee(player, w, to, st, ap.spend(cost))                  # AP가 모자라면 일반 공격
+		return
+	_charge = -1.0
+	cool = 1.0 / float(w["rate"])
+	_melee(player, w, to, st, false)
+
+
+## 근접(SD-11 §3.4): 한손 호 90°·최대 3명, 양손 호 140°·4명, 비무장 호 70°·2명(사거리는 무기 자료), 호 안 충돌체 중심이면 명중(굴림 없음).
+## 파워 공격 = 피해 ×2 · 0.6t 전진 · 넉백(양손 1.0t + 경직, 한손·비무장 0.3t). 슈퍼 슬레지급 파워 공격은 인간형 25% 넘어뜨림(§4.9).
+## 비무장은 머리에 맞으면 15%(맨주먹 30%) 1.5초 기절. 프롤로그(볼트 평시)의 근접은 비살상(사람은 기절, 0-9) — 1막부터는 실제 피해(1-9a 정합).
+func _melee(player: Actor, w: Dictionary, to: Vector2, st: StoryState, power: bool = false, tick_mult: float = 1.0) -> void:
+	var fam := Arms.fam(w)
+	var reach := float(w["range_eff"]) * 32.0
+	var arc := Arms.melee_arc(w)
+	var cap := Arms.melee_max(w)
+	var sk := float(st.skill(Arms.skill_name(w))) if st != null else 15.0
+	var calm := st == null or st.quests.cur_act() < 1                   # 프롤로그: 근접 = 기절
+	var dirv: Vector2 = to.normalized() if to.length() > 0.1 else (Locomotion.VEC[player.loco.facing] as Vector2).normalized()
+	if power:                                                          # 0.6t 전진 — 앞의 상대 몸 앞에서 멈춘다(겹치지 않는다)
+		power_hits += 1
+		var go := Arms.POWER_LUNGE_T * 32.0
+		for e in enemies:
+			if is_instance_valid(e) and not e.cmb.dead:
+				var dd: Vector2 = e.loco.logical - player.loco.logical
+				if absf(dirv.angle_to(dd)) <= arc:
+					go = minf(go, maxf(0.0, dd.length() - pc.radius - e.cmb.radius - 2.0))
+		if go > 0.5 and player.world != null:
+			var lunge: Vector2 = player.world.move_circle(player.loco.logical, player.loco.logical + dirv * go, player.radius_px)
+			player.loco.place(lunge.round())
+	var kb := Arms.knockback(w, power) * 32.0
+	var n := 0
+	var hits: Array = []
+	for e in enemies:
+		if not is_instance_valid(e) or e.cmb.dead or not e.meets(pc):
 			continue                                                     # 다른 층(고가 위·아래)은 닿지 않는다
-		var d: Vector2 = e.loco.logical - player.loco.logical
-		if d.length() <= reach + e.cmb.radius and (d.length() < pc.radius + e.cmb.radius or absf(to.angle_to(d)) <= arc):
-			n += 1
-			var sneak: bool = e.cmb.unaware.call()
-			var part := CombatRules.pick_part(e.cmb.weights, shots.rng)
-			var r := CombatRules.resolve({"weapon": w, "skill": float(st.skill("MELEE")) if st != null else 15.0,
-				"attacker": {"str": st.stat("ST") if st != null else 5}, "part": part, "dr": e.cmb.dr, "sneak": sneak, "crit": sneak})
-			r["nonlethal"] = true                                       # 근접 = 비살상(사람은 기절, 0-9)
-			e.cmb.last_by = "player"
-			e.cmb.take(r, player.loco.logical)
-			e.hear("melee", player.loco.logical)
-			stats["hits"] += 1
-			if sneak:
-				stats["sneak"] += 1
-				_pop("기습 치명타 ×%d" % int(CombatRules.sneak_mult("melee", false)), e.loco.logical + Vector2(0, -22), Color("E8C23A"))
-	for rr in residents:                                               # 주민도 맞는다(기절, 0-9)
-		var c: Combatant = rr["cmb"]
-		if c.dead or n >= (4 if two else 3) or not is_instance_valid(rr["actor"]):
+		hits.append([e.cmb, e.loco.logical, e])
+	for rr in residents:                                               # 주민도 맞는다
+		if not rr["cmb"].dead and is_instance_valid(rr["actor"]):
+			hits.append([rr["cmb"], rr["actor"].loco.logical, null])
+	for h in hits:
+		if n >= cap:
+			break
+		var c: Combatant = h[0]
+		var d: Vector2 = (h[1] as Vector2) - player.loco.logical
+		if d.length() > reach + c.radius or (d.length() >= pc.radius + c.radius and absf(dirv.angle_to(d)) > arc):
 			continue
-		var d: Vector2 = rr["actor"].loco.logical - player.loco.logical
-		if d.length() <= reach + c.radius and (d.length() < pc.radius + c.radius or absf(to.angle_to(d)) <= arc):
-			n += 1
-			var r := CombatRules.resolve({"weapon": w, "skill": float(st.skill("MELEE")) if st != null else 15.0,
-				"attacker": {"str": st.stat("ST") if st != null else 5}, "part": CombatRules.pick_part(c.weights, shots.rng), "dr": 0.0})
-			r["nonlethal"] = true
-			c.take(r, player.loco.logical)
-	_wear_weapon(st, n)                                                # 근접은 타격마다 카운터 1(SD-13 §8.2)
-	_swing_fx(player.loco.logical + Vector2(0, -12) + to.normalized() * reach * 0.6)
+		n += 1
+		var e = h[2]
+		var sneak: bool = e != null and c.unaware.is_valid() and c.unaware.call()
+		var part := CombatRules.pick_part(CombatRules.part_weights(c.weights, {"melee": true, "attacker_crouch": crouch}), shots.rng)
+		var r := CombatRules.resolve({"weapon": w, "skill": sk, "power": power, "part": part, "dr": c.dr, "sneak": sneak, "crit": sneak,
+			"attacker": {"str": st.stat("ST") if st != null else 5, "unarmed": sk}})
+		r["hp"] = float(r["hp"]) * tick_mult * (float(w.get("robot_mult", 1.0)) if c.robot else 1.0)
+		r["nonlethal"] = calm or str(w.get("id", "")) == "W-066"
+		c.last_by = "player"
+		c.take(r, player.loco.logical)
+		Projectiles.after_hit(c, w, "", d.length() / 32.0, shots.rng, dirv)
+		if not c.dead:
+			if kb > 0.0 and not c.big:
+				c.push += d.normalized() * kb
+			if power and fam == "melee2":
+				c.hold("stun", 0.6)                                      # 파워 공격 경직
+				if str(w.get("layer", "")) == "T05" and c.weights.has("arm") and shots.rng.randf() < 0.25:
+					c.hold("down", 1.5)
+			if fam == "unarmed" and part == "head" and shots.rng.randf() < (0.3 if Gear.base(str(w.get("id", ""))) == Arms.FIST else 0.15):
+				c.hold("stun", 1.5)
+		if e != null:
+			e.hear("melee", player.loco.logical)
+		stats["hits"] += 1
+		if sneak:
+			stats["sneak"] += 1
+			_pop("기습 치명타 ×%d" % int(CombatRules.sneak_mult("melee", false)), (h[1] as Vector2) + Vector2(0, -22), Color("E8C23A"))
+	if tick_mult >= 1.0:
+		_wear_weapon(st, n)                                            # 근접은 타격마다 카운터 1(SD-13 §8.2) · 리퍼 틱은 열 번에 한 번
+	elif n > 0 and shots.rng.randf() < tick_mult:
+		_wear_weapon(st, 1)
+	if tick_mult >= 1.0 or shots.rng.randf() < 0.3:
+		_swing_fx(player.loco.logical + Vector2(0, -12) + dirv * reach * 0.6)
 
 
 func start_reload(st: StoryState) -> void:
@@ -686,7 +831,7 @@ func start_reload(st: StoryState) -> void:
 	if str(w.get("ammo_id", "")) != "" and ammo_left(st) <= 0:
 		message.emit("탄이 없다.")
 		return
-	var sk := float(st.skill("SMALL_GUNS")) if st != null else 15.0
+	var sk := float(st.skill(Arms.skill_name(w))) if st != null else 15.0
 	reload_t = float(w.get("reload_s", 2.0)) * (1.2 - 0.004 * sk)            # SD-11 §3.5
 	var jam: float = Gear.JAM[Gear.cond(weapon_id)]
 	if jam > 0.0 and _rng.randf() < jam:                                 # 탄 걸림(SD-11 §11.8): 낡음 25% · 위태 80%, 재장전 +1.5초
@@ -710,7 +855,7 @@ func rekey(old: String, nk: String, st: StoryState) -> void:
 ## 무기 열화(SD-13 §8.2): 공격 1회(연사는 발마다, 근접은 타격마다)에 카운터 1. 볼트 안(프롤로그)은 정비반이 손봐 닳지 않는다(정합 1-8a).
 ## 단계가 바뀌면 든 무기의 열쇠를 바꿔 낀다(탄창·단축키를 옮긴다). 파손이면 내려놓는다
 func _wear_weapon(st: StoryState, n: int) -> void:
-	if st == null or n <= 0 or weapon_id == "" or st.quests.cur_act() < 1:
+	if st == null or n <= 0 or weapon_id == "" or weapon_id == Arms.FIST or st.quests.cur_act() < 1:
 		return
 	var old := weapon_id
 	var nk := Gear.use(st, old, n)

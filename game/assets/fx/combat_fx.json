@@ -2,15 +2,70 @@
  "cell": 16,
  "dirs": 16,
  "sets": {
+  "boom": {
+   "anchor": [
+    48.0,
+    48.0
+   ],
+   "blend": "mix",
+   "cell": 96,
+   "dirs": 1,
+   "frames": 8,
+   "row": 45,
+   "ticks": 3,
+   "y": 720
+  },
+  "boom_smoke": {
+   "anchor": [
+    48.0,
+    48.0
+   ],
+   "blend": "mix",
+   "cell": 96,
+   "dirs": 1,
+   "frames": 8,
+   "row": 39,
+   "ticks": 4,
+   "y": 624
+  },
   "bullet": {
    "anchor": [
     8.5,
     8.5
    ],
    "blend": "mix",
+   "cell": 16,
+   "dirs": 16,
    "frames": 1,
    "row": 0,
-   "ticks": 2
+   "ticks": 2,
+   "y": 0
+  },
+  "dart": {
+   "anchor": [
+    8.5,
+    8.5
+   ],
+   "blend": "mix",
+   "cell": 16,
+   "dirs": 16,
+   "frames": 1,
+   "row": 20,
+   "ticks": 2,
+   "y": 320
+  },
+  "flame": {
+   "anchor": [
+    8.0,
+    8.0
+   ],
+   "blend": "mix",
+   "cell": 16,
+   "dirs": 1,
+   "frames": 5,
+   "row": 26,
+   "ticks": 4,
+   "y": 416
   },
   "flash_air": {
    "anchor": [
@@ -18,9 +73,51 @@
     7.5
    ],
    "blend": "add",
+   "cell": 16,
+   "dirs": 16,
    "frames": 2,
    "row": 4,
-   "ticks": 2
+   "ticks": 2,
+   "y": 64
+  },
+  "flash_flame": {
+   "anchor": [
+    7.5,
+    7.5
+   ],
+   "blend": "add",
+   "cell": 16,
+   "dirs": 16,
+   "frames": 2,
+   "row": 13,
+   "ticks": 2,
+   "y": 208
+  },
+  "flash_heavy": {
+   "anchor": [
+    15.5,
+    15.5
+   ],
+   "blend": "add",
+   "cell": 32,
+   "dirs": 16,
+   "frames": 3,
+   "row": 33,
+   "ticks": 2,
+   "y": 528
+  },
+  "flash_laser": {
+   "anchor": [
+    7.5,
+    7.5
+   ],
+   "blend": "add",
+   "cell": 16,
+   "dirs": 16,
+   "frames": 2,
+   "row": 9,
+   "ticks": 2,
+   "y": 144
   },
   "flash_pistol": {
    "anchor": [
@@ -28,9 +125,116 @@
     7.5
    ],
    "blend": "add",
+   "cell": 16,
+   "dirs": 16,
    "frames": 3,
    "row": 1,
-   "ticks": 2
+   "ticks": 2,
+   "y": 16
+  },
+  "flash_plasma": {
+   "anchor": [
+    7.5,
+    7.5
+   ],
+   "blend": "add",
+   "cell": 16,
+   "dirs": 16,
+   "frames": 2,
+   "row": 11,
+   "ticks": 2,
+   "y": 176
+  },
+  "flash_shotgun": {
+   "anchor": [
+    15.5,
+    15.5
+   ],
+   "blend": "add",
+   "cell": 32,
+   "dirs": 16,
+   "frames": 3,
+   "row": 27,
+   "ticks": 2,
+   "y": 432
+  },
+  "junk": {
+   "anchor": [
+    8.0,
+    8.0
+   ],
+   "blend": "mix",
+   "cell": 16,
+   "dirs": 16,
+   "frames": 1,
+   "row": 25,
+   "ticks": 2,
+   "y": 400
+  },
+  "missile": {
+   "anchor": [
+    8.5,
+    8.5
+   ],
+   "blend": "mix",
+   "cell": 16,
+   "dirs": 16,
+   "frames": 1,
+   "row": 23,
+   "ticks": 2,
+   "y": 368
+  },
+  "nail": {
+   "anchor": [
+    8.5,
+    8.5
+   ],
+   "blend": "mix",
+   "cell": 16,
+   "dirs": 16,
+   "frames": 1,
+   "row": 19,
+   "ticks": 2,
+   "y": 304
+  },
+  "pellet": {
+   "anchor": [
+    8.5,
+    8.5
+   ],
+   "blend": "mix",
+   "cell": 16,
+   "dirs": 16,
+   "frames": 1,
+   "row": 18,
+   "ticks": 2,
+   "y": 288
+  },
+  "plasma": {
+   "anchor": [
+    8.0,
+    8.0
+   ],
+   "blend": "add",
+   "cell": 16,
+   "dirs": 16,
+   "frames": 1,
+   "row": 21,
+   "ticks": 2,
+   "y": 336
+  },
+  "shell": {
+   "anchor": [
+    8.0,
+    8.0
+   ],
+   "blend": "mix",
+   "cell": 16,
+   "dirs": 16,
+   "frames": 1,
+   "row": 24,
+   "ticks": 2,
+   "y": 384
   },
   "spark": {
    "anchor": [
@@ -38,9 +242,38 @@
     8.5
    ],
    "blend": "add",
+   "cell": 16,
+   "dirs": 16,
    "frames": 3,
    "row": 6,
-   "ticks": 2
+   "ticks": 2,
+   "y": 96
+  },
+  "spark_red": {
+   "anchor": [
+    8.5,
+    8.5
+   ],
+   "blend": "add",
+   "cell": 16,
+   "dirs": 16,
+   "frames": 3,
+   "row": 15,
+   "ticks": 2,
+   "y": 240
+  },
+  "tesla": {
+   "anchor": [
+    8.0,
+    8.0
+   ],
+   "blend": "add",
+   "cell": 16,
+   "dirs": 16,
+   "frames": 1,
+   "row": 22,
+   "ticks": 2,
+   "y": 352
   }
  }
 }

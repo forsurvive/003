@@ -1,0 +1,33 @@
+# SD-13 §3.8.4 투척·설치 → game/data/throwables.json (단계 1-9b, SD-11 §3.4 투척·설치 계열 · §9.2 폭발물과 지뢰)
+# 소지품으로 들고(단축키) 누른 시간만큼 멀리 던지거나 발밑에 놓는다. 수류탄 신관 2.5초 · 지뢰 설치 1초 뒤 활성.
+doc: 13_items.md
+id_column: ID
+rows: all
+id_filter: "^W-\\d{3}$"
+sections: ["#### 3.8.4 "]
+columns:
+  ID: {field: id, type: id, pattern: "^W-\\d{3}$", required: true}
+  이름: {field: name, type: str, required: true}
+  출처·제조사: {field: origin, type: str}
+  스킬: {field: skill, type: str, required: true}
+  피해: {field: dmg, type: lead_number, required: true, raw: dmg_text}
+  사거리(타일): {field: range_text, type: str}
+  무게: {field: weight, type: float}
+  가격: {field: price, type: int}
+  레이어: {field: layer, type: str}
+  비고: {field: note, type: str}
+derive:
+  kind: "'mine' if layer == 'X02' else 'thrown'"                                   # X01 투척 손 · X02 설치(SD-13 §3.2)
+  # 폭발 피해(파편 · 플라스마 · EMP) — SD-11 §9.2 폭발 피해 식의 '폭발 기본 피해'
+  blast: "num_in(dmg_text, '폭발 ', 0) + num_in(dmg_text, '플라스마 ', 0) + num_in(dmg_text, 'EMP ', 0)"
+  blast_kind: "'emp' if 'EMP' in dmg_text else ('plasma' if '플라스마' in dmg_text else ('frag' if '폭발' in dmg_text else ''))"
+  # 지대(SD-13 §3.8.4 비고 · SD-11 지대 판정): 화염 · 최루 · 연막
+  zone: "'fire' if '화염' in dmg_text else ('gas' if '최루' in dmg_text else ('smoke' if '연막' in dmg_text else ''))"
+  zone_r: "2.0 if '화염' in dmg_text else num_in(dmg_text, '지대 ', 0) + num_in(dmg_text, '연막 ', 0)"
+  zone_s: "5.0 if '화염' in dmg_text else num_in(dmg_text, '타일(', 0) + num_in(dmg_text, '타일, ', 0)"
+  dot: "num_in(dmg_text, '화염 ', 0)"
+  dot_s: "num_in(dmg_text, '/초(', 0)"
+  robot_stop: "2.0 if '정지' in note else (3.0 if 'EMP' in dmg_text else 0.0)"         # 펄스: 수류탄은 SD-13 비고 2초, 지뢰는 §9.2 표 3초(무기 개별 수치 우선)
+gaps:
+  fuse: {default: "2.5 if kind == 'thrown' and blast > 0 else 0.0", why: "SD-11 §3.4: 모든 수류탄 시간 신관 2.5초 — 지대 투척물(화염병·최루·연막)은 착탄 즉시"}
+  arm_s: {default: "1.0 if kind == 'mine' else 0.0", why: "SD-13 §3.8.4: 지뢰는 설치 1초 뒤 활성"}

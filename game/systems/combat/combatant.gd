@@ -26,6 +26,14 @@ var ko := false                               ## 기절 중(dead도 참: 맞지 
 var hp_floor := 0.0                           ## 이 밑으로 내려가지 않는다(죽지 않는 적)
 var killed_lethal := false                    ## 마지막 일격이 실총이었나(카르마)
 var last_by := ""                             ## 마지막으로 때린 편(1-E: 교전 중 다른 무리가 쓰러뜨리면 경험치 없음 · 비적대 무리를 때리면 적대로)
+## 1-9a 상태 이상(SD-11 §9.6): 지속 피해는 0.5초 틱 · 같은 종류는 시간만 갱신(세기는 큰 쪽) · 행동 제한은 끝난 뒤 1초 같은 종류 면역
+var dots := {}                                ## 종류(burn·shock·poison) -> [초당 피해, 남은 초]
+var holds := {}                               ## 종류(stun·root·down) -> 남은 초
+var _immune := {}                             ## 종류 -> 면역 남은 초
+var _dot_acc := 0.0
+var robot := false                            ## 로봇(관제망 로봇 피해 +50% 무기)
+var big := false                              ## 대형(넉백·넉다운·그물 무효)
+var push := Vector2.ZERO                      ## 넉백 남은 거리(px) — 몸 주인이 걸음 규칙으로 옮긴다
 
 
 func pos() -> Vector2:
@@ -55,3 +63,60 @@ func take(result: Dictionary, from: Vector2) -> void:
 		ko = can_ko and bool(result.get("nonlethal", false))
 		killed_lethal = not ko
 		died.emit()
+
+
+## 지속 피해 걸기: 같은 종류는 남은 시간만 갱신, 세기는 큰 쪽(SD-11 §9.6)
+func add_dot(kind: String, dps: float, secs: float) -> void:
+	if dead or dps <= 0.0 or secs <= 0.0:
+		return
+	var cur: Array = dots.get(kind, [0.0, 0.0])
+	dots[kind] = [maxf(float(cur[0]), dps), maxf(float(cur[1]), secs)]
+
+
+## 행동 제한 걸기(stun 기절·마비 · root 그물·덫 · down 넘어짐). 면역 중이면 무시. 대형은 넘어짐·그물 무효
+func hold(kind: String, secs: float) -> bool:
+	if dead or secs <= 0.0 or float(_immune.get(kind, 0.0)) > 0.0:
+		return false
+	if big and kind in ["down", "root"]:
+		return false
+	holds[kind] = maxf(float(holds.get(kind, 0.0)), secs)
+	return true
+
+
+func held() -> bool:
+	return not holds.is_empty()
+
+
+func held_by(kind: String) -> bool:
+	return float(holds.get(kind, 0.0)) > 0.0
+
+
+## 상태 흐름(전투 모듈이 매 프레임 부른다): 지속 피해는 0.5초마다 한 틱. 돌려주는 값 = 이번에 깎인 HP
+func tick_status(dt: float) -> float:
+	for k in _immune.keys():
+		_immune[k] = float(_immune[k]) - dt
+		if float(_immune[k]) <= 0.0:
+			_immune.erase(k)
+	for k in holds.keys():
+		holds[k] = float(holds[k]) - dt
+		if float(holds[k]) <= 0.0:
+			holds.erase(k)
+			_immune[k] = 1.0
+	if dots.is_empty() or dead:
+		dots.clear()
+		_dot_acc = 0.0
+		return 0.0
+	_dot_acc += dt
+	var lost := 0.0
+	while _dot_acc >= 0.5 - 0.0001:
+		_dot_acc -= 0.5
+		for k in dots.keys():
+			var dps := float(dots[k][0])
+			var amt := dps * 0.5 * (1.0 - minf(dr * (0.5 if k == "shock" else 0.0), CombatRules.DR_CAP) / 100.0)   # 전기는 DR 절반 적용
+			if amt > 0.0 and not dead:
+				lost += amt
+				take({"hp": amt, "part": "torso", "dot": k}, last_hit_from)
+			dots[k][1] = float(dots[k][1]) - 0.5
+			if float(dots[k][1]) <= 0.0:
+				dots.erase(k)
+	return lost

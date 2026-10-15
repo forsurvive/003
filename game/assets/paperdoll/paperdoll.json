@@ -13768,6 +13768,94 @@
     11.32
    ]
   },
+  "flamer": {
+   "E": [
+    17.5,
+    8.0
+   ],
+   "N": [
+    10.0,
+    2.5
+   ],
+   "NE": [
+    16.14,
+    3.7
+   ],
+   "S": [
+    10.0,
+    7.0
+   ],
+   "SE": [
+    16.14,
+    12.3
+   ]
+  },
+  "laser": {
+   "E": [
+    17.5,
+    8.0
+   ],
+   "N": [
+    10.0,
+    2.5
+   ],
+   "NE": [
+    16.14,
+    3.7
+   ],
+   "S": [
+    10.0,
+    7.5
+   ],
+   "SE": [
+    16.14,
+    12.3
+   ]
+  },
+  "launcher": {
+   "E": [
+    18.5,
+    8.0
+   ],
+   "N": [
+    10.0,
+    2.5
+   ],
+   "NE": [
+    16.96,
+    3.12
+   ],
+   "S": [
+    10.0,
+    7.0
+   ],
+   "SE": [
+    16.96,
+    12.88
+   ]
+  },
+  "minigun": {
+   "E": [
+    18.5,
+    8.0
+   ],
+   "N": [
+    10.0,
+    2.5
+   ],
+   "NE": [
+    16.96,
+    3.12
+   ],
+   "S": [
+    10.0,
+    8.0
+   ],
+   "SE": [
+    16.96,
+    12.88
+   ]
+  },
   "pistol": {
    "E": [
     14.5,
@@ -13810,6 +13898,28 @@
    "SE": [
     16.14,
     12.3
+   ]
+  },
+  "shotgun": {
+   "E": [
+    17.5,
+    7.5
+   ],
+   "N": [
+    10.0,
+    2.5
+   ],
+   "NE": [
+    15.86,
+    3.29
+   ],
+   "S": [
+    10.0,
+    7.5
+   ],
+   "SE": [
+    16.43,
+    11.89
    ]
   },
   "smg": {
@@ -14411,16 +14521,34 @@
  "style": "isaac",
  "version": 2,
  "weapons": {
+  "bat": "pd_gun_bat.png",
+  "bat_glove": "pd_gun_bat_glove.png",
   "baton": "pd_gun_baton.png",
   "baton_glove": "pd_gun_baton_glove.png",
   "bb": "pd_gun_bb.png",
   "bb_glove": "pd_gun_bb_glove.png",
+  "flamer": "pd_gun_flamer.png",
+  "flamer_glove": "pd_gun_flamer_glove.png",
+  "grenade": "pd_gun_grenade.png",
+  "grenade_glove": "pd_gun_grenade_glove.png",
+  "knife": "pd_gun_knife.png",
+  "knife_glove": "pd_gun_knife_glove.png",
+  "laser": "pd_gun_laser.png",
+  "laser_glove": "pd_gun_laser_glove.png",
+  "launcher": "pd_gun_launcher.png",
+  "launcher_glove": "pd_gun_launcher_glove.png",
+  "minigun": "pd_gun_minigun.png",
+  "minigun_glove": "pd_gun_minigun_glove.png",
   "pistol": "pd_gun_pistol.png",
   "pistol_glove": "pd_gun_pistol_glove.png",
   "pole": "pd_gun_pole.png",
   "pole_glove": "pd_gun_pole_glove.png",
   "rifle": "pd_gun_rifle.png",
   "rifle_glove": "pd_gun_rifle_glove.png",
+  "shotgun": "pd_gun_shotgun.png",
+  "shotgun_glove": "pd_gun_shotgun_glove.png",
+  "sledge": "pd_gun_sledge.png",
+  "sledge_glove": "pd_gun_sledge_glove.png",
   "smg": "pd_gun_smg.png",
   "smg_glove": "pd_gun_smg_glove.png"
  }

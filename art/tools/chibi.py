@@ -1046,11 +1046,12 @@ def gun(view, kind="pistol", hand=None):
     img = Image.new("RGBA", (20, 16), CLEAR)
     metal = [C("P02"), C("P03"), C("P04"), C("P06")]
     wood = [C("P17"), C("P18")]
-    n = {"pistol": 7, "rifle": 13, "smg": 9, "baton": 10, "bb": 11, "pole": 15}[kind]
+    n = GUN_LEN[kind]
     if view in ("E", "SE", "NE"):
         t = Image.new("RGBA", (20, 16), CLEAR)
         g = ImageDraw.Draw(t)
         x0 = 10 - n // 2
+        hx, hy = x0 + 1, 9                                   # 손(쥔 자리) 왼쪽 위
         if kind == "pole":                                   # 대걸레 자루: 밝은 나무 막대, 끝에 쇠 물림
             g.line([x0, 8, x0 + n - 1, 8], fill=wood[1])
             g.line([x0 + 2, 7, x0 + n - 2, 7], fill=C("P19"))
@@ -1065,6 +1066,77 @@ def gun(view, kind="pistol", hand=None):
         elif kind == "baton":
             g.rectangle([x0, 7, x0 + n - 1, 8], fill=C("P02"))
             g.line([x0, 7, x0 + n - 1, 7], fill=C("P04"))
+        elif kind == "shotgun":                              # 산탄총: 나무 개머리, 굵은 총열 + 아래 탄창관, 나무 펌프
+            g.rectangle([x0 - 2, 8, x0, 9], fill=wood[1])
+            g.point((x0 - 2, 10), fill=wood[0])
+            g.rectangle([x0, 7, x0 + 4, 8], fill=metal[1])
+            g.line([x0 + 4, 7, x0 + n - 1, 7], fill=metal[2])
+            g.line([x0 + 1, 6, x0 + n - 2, 6], fill=metal[3])
+            g.line([x0 + 5, 8, x0 + n - 2, 8], fill=metal[1])
+            g.rectangle([x0 + 6, 8, x0 + 9, 9], fill=wood[1])
+            g.line([x0 + 6, 8, x0 + 9, 8], fill=C("P19"))
+        elif kind == "laser":                                # 레이저 소총: 회색 몸통, 청록 축전 코일, 붉은 발광구
+            g.rectangle([x0 - 2, 8, x0, 9], fill=metal[1])
+            g.rectangle([x0, 7, x0 + n - 1, 8], fill=metal[2])
+            g.line([x0, 6, x0 + n - 3, 6], fill=metal[3])
+            for i in range(5):
+                g.point((x0 + 5 + i, 7), fill=C("P62") if i % 2 else C("P63"))
+            g.rectangle([x0 + n - 2, 7, x0 + n - 1, 8], fill=C("P53"))
+            g.point((x0 + n - 1, 7), fill=C("P54"))
+            g.rectangle([x0 + 6, 9, x0 + 6, 10], fill=metal[1])
+        elif kind == "minigun":                              # 미니건: 모터 상자 + 여섯 총열 묶음 + 죔쇠 둘 + 늘어진 탄띠
+            g.rectangle([x0, 6, x0 + 5, 10], fill=metal[1])
+            g.line([x0, 6, x0 + 5, 6], fill=metal[2])
+            g.point((x0 + 1, 7), fill=C("P53"))
+            g.rectangle([x0 + 6, 7, x0 + n - 1, 8], fill=metal[2])
+            g.line([x0 + 6, 6, x0 + n - 1, 6], fill=metal[3])
+            g.line([x0 + 6, 9, x0 + n - 1, 9], fill=metal[1])
+            for cx in (x0 + 8, x0 + n - 2):
+                g.line([cx, 5, cx, 10], fill=metal[3])
+            g.point((x0 + 2, 11), fill=C("P48")); g.point((x0 + 3, 12), fill=C("P49"))
+            g.point((x0 + 2, 13), fill=C("P48")); g.point((x0 + 3, 11), fill=C("P47"))
+            hx, hy = x0 + 3, 10
+        elif kind == "flamer":                               # 화염방사기: 긴 분사관, 붉은 연료통, 끝에 점화 불씨
+            g.rectangle([x0 - 1, 8, x0 + 2, 9], fill=metal[1])
+            g.rectangle([x0 + 2, 7, x0 + n - 1, 8], fill=metal[2])
+            g.line([x0 + 2, 7, x0 + n - 1, 7], fill=metal[3])
+            g.rectangle([x0 + n - 2, 6, x0 + n - 1, 9], fill=metal[1])
+            g.rectangle([x0 + 3, 9, x0 + 8, 11], fill=C("P52"))
+            g.line([x0 + 3, 9, x0 + 8, 9], fill=C("P54"))
+            g.line([x0 + 4, 10, x0 + 7, 10], fill=C("P53"))
+            g.point((x0 + n - 1, 10), fill=C("P60"))
+        elif kind == "launcher":                             # 발사기: 올리브 굵은 관, 위 조준기, 아래 손잡이, 앞 구멍
+            g.rectangle([x0, 6, x0 + n - 1, 9], fill=C("P30"))
+            g.line([x0 + 1, 6, x0 + n - 2, 6], fill=C("P31"))
+            g.line([x0 + 1, 9, x0 + n - 2, 9], fill=C("P29"))
+            g.line([x0, 6, x0, 9], fill=C("P29"))
+            g.rectangle([x0 + n - 1, 7, x0 + n - 1, 8], fill=C("P00"))
+            g.line([x0 + 3, 7, x0 + 3, 8], fill=C("P49"))
+            g.rectangle([x0 + 7, 4, x0 + 8, 5], fill=metal[1])
+            g.rectangle([x0 + 6, 10, x0 + 7, 11], fill=metal[1])
+            hx, hy = x0 + 5, 10
+        elif kind == "knife":                                # 칼: 나무 손잡이, 쇠 날밑, 밝은 날(끝이 가늘다)
+            g.rectangle([x0, 8, x0 + 2, 8], fill=wood[0])
+            g.line([x0 + 3, 7, x0 + 3, 9], fill=metal[2])
+            g.rectangle([x0 + 4, 7, x0 + n - 2, 8], fill=C("P08"))
+            g.line([x0 + 4, 7, x0 + n - 2, 7], fill=C("P09"))
+            g.point((x0 + n - 1, 8), fill=C("P08"))
+        elif kind == "bat":                                  # 방망이: 가는 손잡이 → 굵은 몸통(나무 결)
+            g.line([x0, 8, x0 + 3, 8], fill=wood[0])
+            g.point((x0, 9), fill=wood[0])
+            g.rectangle([x0 + 4, 7, x0 + n - 1, 8], fill=C("P20"))
+            g.rectangle([x0 + 7, 6, x0 + n - 1, 9], fill=C("P20"))
+            g.line([x0 + 7, 6, x0 + n - 1, 6], fill=C("P21"))
+            g.line([x0 + 7, 9, x0 + n - 1, 9], fill=C("P19"))
+            g.point((x0 + 9, 7), fill=C("P19"))
+        elif kind == "sledge":                               # 해머: 나무 자루 끝에 쇠 머리(세로로 길다)
+            g.rectangle([x0, 8, x0 + n - 4, 8], fill=wood[1])
+            g.line([x0, 7, x0 + n - 5, 7], fill=C("P19"))
+            g.rectangle([x0 + n - 4, 4, x0 + n - 1, 11], fill=metal[1])
+            g.line([x0 + n - 4, 4, x0 + n - 4, 11], fill=metal[3])
+            g.line([x0 + n - 3, 4, x0 + n - 1, 4], fill=metal[2])
+        elif kind == "grenade":                              # 수류탄: 손 안의 올리브 알 + 안전 손잡이
+            pass
         else:
             g.rectangle([x0, 7, x0 + n - 1, 8], fill=metal[2])
             g.line([x0, 7, x0 + n - 1, 7], fill=metal[3])
@@ -1072,12 +1144,19 @@ def gun(view, kind="pistol", hand=None):
             if kind in ("rifle", "smg"):
                 g.rectangle([x0 - 2, 8, x0, 9], fill=wood[1] if kind == "rifle" else metal[1])
                 g.rectangle([x0 + 6, 9, x0 + 6, 10], fill=metal[1])
-        g.rectangle([x0 + 1, 9, x0 + 2, 9], fill=hand)
+        g.rectangle([hx, hy, hx + 1, hy], fill=hand)
+        if kind == "grenade":
+            g.rectangle([x0 + 1, 6, x0 + 3, 8], fill=C("P30"))
+            g.line([x0 + 1, 6, x0 + 2, 6], fill=C("P31"))
+            g.point((x0 + 3, 8), fill=C("P29"))
+            g.line([x0 + 3, 5, x0 + 4, 5], fill=metal[3])
+            g.point((x0 + 1, 5), fill=C("P49"))
         if view != "E":
             t = t.rotate(-35 if view == "SE" else 35, resample=Image.NEAREST, center=(10, 8))
         img = t
     elif view == "S":
         g = ImageDraw.Draw(img)
+        hand_box = [8, 10 if kind in ("pistol", "knife", "grenade") else 11, 11, 11 if kind in ("pistol", "knife", "grenade") else 12]
         if kind == "pole":
             g.rectangle([9, 0, 9, 13], fill=wood[1])
             g.point((9, 0), fill=metal[3])
@@ -1087,18 +1166,88 @@ def gun(view, kind="pistol", hand=None):
             g.rectangle([8, 8, 11, 10], fill=wood[1])
         elif kind == "baton":
             g.rectangle([9, 2, 10, 10], fill=C("P02"))
+        elif kind == "shotgun":                              # 앞에서 본 총열 구멍 + 아래 펌프
+            g.rectangle([8, 5, 11, 10], fill=metal[2])
+            g.line([8, 5, 11, 5], fill=metal[3])
+            g.rectangle([9, 6, 10, 7], fill=C("P00"))
+            g.rectangle([8, 9, 11, 10], fill=wood[1])
+        elif kind == "laser":
+            g.rectangle([8, 6, 11, 10], fill=metal[2])
+            g.point((9, 7), fill=C("P54")); g.point((10, 7), fill=C("P53"))
+            g.line([8, 9, 11, 9], fill=C("P62"))
+        elif kind == "minigun":                              # 총열 여섯이 둥글게
+            g.rectangle([6, 4, 13, 11], fill=metal[1])
+            g.rectangle([7, 5, 12, 10], fill=metal[2])
+            for p in ((9, 5), (11, 6), (11, 8), (9, 9), (7, 8), (7, 6)):
+                g.rectangle([p[0], p[1], p[0] + 1, p[1]], fill=C("P00"))
+            g.rectangle([9, 7, 10, 7], fill=metal[3])
+            hand_box = [8, 12, 11, 13]
+        elif kind == "flamer":                               # 분사구 고리 + 아래 붉은 연료통
+            g.rectangle([8, 5, 11, 8], fill=metal[3])
+            g.rectangle([9, 6, 10, 7], fill=C("P00"))
+            g.point((12, 6), fill=C("P60"))
+            g.rectangle([7, 9, 12, 11], fill=C("P52"))
+            g.line([7, 9, 12, 9], fill=C("P54"))
+        elif kind == "launcher":                             # 굵은 관 입구
+            g.rectangle([6, 3, 13, 10], fill=C("P30"))
+            g.line([6, 3, 13, 3], fill=C("P31"))
+            g.rectangle([7, 4, 12, 9], fill=C("P29"))
+            g.rectangle([8, 5, 11, 8], fill=C("P00"))
+            hand_box = [8, 11, 11, 12]
+        elif kind == "knife":
+            g.rectangle([9, 3, 10, 9], fill=C("P08"))
+            g.line([9, 3, 9, 9], fill=C("P09"))
+            g.line([8, 9, 11, 9], fill=metal[2])
+        elif kind == "bat":
+            g.rectangle([9, 1, 10, 10], fill=C("P20"))
+            g.rectangle([8, 1, 11, 5], fill=C("P20"))
+            g.line([8, 1, 11, 1], fill=C("P21"))
+            g.line([11, 2, 11, 5], fill=C("P19"))
+        elif kind == "sledge":
+            g.rectangle([9, 4, 10, 10], fill=wood[1])
+            g.rectangle([6, 0, 13, 3], fill=metal[1])
+            g.line([6, 0, 13, 0], fill=metal[3])
+            g.line([6, 3, 13, 3], fill=metal[0])
+        elif kind == "grenade":
+            pass
         else:
             g.rectangle([8, 6, 11, 9 if kind == "pistol" else 10], fill=metal[2])
             g.point((9, 7), fill=C("P00")); g.point((10, 7), fill=C("P00"))
-        g.rectangle([8, 10 if kind == "pistol" else 11, 11, 11 if kind == "pistol" else 12], fill=hand)
+        g.rectangle(hand_box, fill=hand)
+        if kind == "grenade":
+            g.rectangle([8, 7, 11, 10], fill=C("P30"))
+            g.line([8, 7, 10, 7], fill=C("P31"))
+            g.line([8, 10, 11, 10], fill=C("P29"))
+            g.line([11, 6, 12, 6], fill=metal[3])
     else:
         g = ImageDraw.Draw(img)
-        g.rectangle([9, 3, 10, 3 + n // 2], fill=wood[1] if kind in ("pole",) else metal[2] if kind != "baton" else C("P02"))
+        body = {"pole": wood[1], "baton": C("P02"), "bat": C("P20"), "sledge": wood[1], "knife": C("P08"),
+                "launcher": C("P30"), "flamer": metal[2]}.get(kind, metal[2])
+        if kind == "grenade":
+            g.rectangle([9, 9, 10, 10], fill=hand)
+            g.rectangle([8, 7, 11, 9], fill=C("P30"))
+            g.line([8, 7, 11, 7], fill=C("P31"))
+            return outline(img, thick_bottom=False)
+        wide = kind in ("minigun", "launcher")
+        g.rectangle([8 if wide else 9, 3, 11 if wide else 10, 3 + n // 2], fill=body)
+        if kind == "sledge":
+            g.rectangle([7, 1, 12, 3], fill=metal[1])
+            g.line([7, 1, 12, 1], fill=metal[3])
+        elif kind == "bat":
+            g.rectangle([8, 3, 11, 5], fill=C("P20"))
+        elif kind == "flamer":
+            g.rectangle([8, 3 + n // 4, 11, 4 + n // 4 + 2], fill=C("P52"))
+        elif kind == "minigun":
+            g.line([8, 3, 11, 3], fill=metal[3])
         g.rectangle([9, 4 + n // 2, 10, 5 + n // 2], fill=hand)
     return outline(img, thick_bottom=False)
 
 
-GUN_KINDS = ("pistol", "rifle", "smg", "bb")                 # 총구가 있는 무기(탄·총구 화염이 나간다)
+GUN_LEN = {"pistol": 7, "rifle": 13, "smg": 9, "baton": 10, "bb": 11, "pole": 15, "shotgun": 13, "laser": 13,
+           "minigun": 15, "flamer": 14, "launcher": 15, "knife": 7, "bat": 12, "sledge": 12, "grenade": 3}
+GUN_KINDS = ("pistol", "rifle", "smg", "bb", "shotgun", "laser", "minigun", "flamer", "launcher")   # 총구가 있는 무기(탄·총구 화염·불길이 나간다)
+MUZZLE_Y = {"bb": 7.5, "shotgun": 7.5}                     # 동쪽 그림의 총열 축(기본 8.0)
+MUZZLE_S = {"bb": (10.0, 9.5), "minigun": (10.0, 8.0), "launcher": (10.0, 7.0), "flamer": (10.0, 7.0)}
 
 
 def gun_muzzle(view, kind):
@@ -1106,17 +1255,17 @@ def gun_muzzle(view, kind):
     SE·NE는 gun()과 같이 동쪽 그림을 (10, 8) 둘레로 ±35° 돌린 자리(PIL rotate와 0.3px 안으로 맞는다).
     S는 총구가 화면 쪽이라 총구 구멍(권총·소총) 또는 총열 아래 끝(BB총), N은 총열 위 끝 바로 위.
     게임은 탄 출발점과 총구 화염을 여기에 찍는다(SD-16 §5 'muzzle' = 손 기준점 + 무기 그림의 총구 오프셋)."""
-    n = {"pistol": 7, "rifle": 13, "smg": 9, "bb": 11}[kind]
+    n = GUN_LEN[kind]
     x0 = 10 - n // 2
     if view in ("E", "SE", "NE"):
-        mx, my = x0 + n + 0.5, 7.5 if kind == "bb" else 8.0
+        mx, my = x0 + n + 0.5, MUZZLE_Y.get(kind, 8.0)
         if view == "E":
             return (mx, my)
         a = math.radians(35 if view == "SE" else -35)
         vx, vy = mx - 10, my - 8
         return (round(10 + vx * math.cos(a) - vy * math.sin(a), 2), round(8 + vx * math.sin(a) + vy * math.cos(a), 2))
     if view == "S":
-        return (10.0, 9.5) if kind == "bb" else (10.0, 7.5)
+        return MUZZLE_S.get(kind, (10.0, 7.5))
     return (10.0, 2.5)
 
 

@@ -21,6 +21,12 @@ var hits_total := 0
 var spawned_total := 0
 var ghosted_total := 0                   ## 무적 프레임에 몸을 지나간 탄 수
 var focused_hits: Array = []             ## 집중 사격 명중 부위 기록(시험·HUD용)
+var beams: Array = []                    ## 레이저 빔 {a, b, age, col} — 0.1초 유지 뒤 4컷에 사그라든다(SD-16 §10.1)
+var booms: Array = []                    ## 폭발 {at, age, k}
+var blasts_total := 0
+signal exploded(at: Vector2, outer_px: float, team: String)
+const BEAM_HOLD := 0.1
+const BEAM_FADE := 4.0 / 30.0
 
 
 func _ready() -> void:
@@ -41,13 +47,161 @@ func fire(origin: Vector2, angle_deg: float, speed: float, team: String, weapon:
 	if shots.size() >= MAX:
 		return false
 	var dir := Vector2.RIGHT.rotated(deg_to_rad(angle_deg))
+	var pk := Arms.proj(weapon) if weapon.get("kind", "ranged") == "ranged" else "bullet"
 	shots.append({"p": origin, "v": dir * speed, "ang": angle_deg, "life": weapon["range_max"] * 32.0 / speed, "team": team,
-		"weapon": weapon, "skill": skill, "origin": origin, "focused": focused, "per": per, "fl": fl})
+		"weapon": weapon, "skill": skill, "origin": origin, "focused": focused, "per": per, "fl": fl,
+		"proj": pk, "r": Arms.radius(pk), "spr": Arms.sprite(pk)})
 	var fs := CombatFx.flash_for(weapon) if flash == "auto" else flash
 	if CombatFx.has_set(fs):
 		flashes.append(_fx(fs, origin, angle_deg))
 	spawned_total += 1
 	return true
+
+
+## 1-9a 무기 계열 발사(SD-11 §3.2·§3.3): 무기 자료의 투사체 유형으로 고른다. 돌려주는 값 = 나간 투사체 수(0이면 못 쐈다).
+## opts: focused, per, flash("auto"·""·세트), fl(층), target(곡사 착탄점), sneak_ok
+func fire_weapon(origin: Vector2, angle_deg: float, team: String, w: Dictionary, skill: float, opts: Dictionary = {}) -> int:
+	var pk := Arms.proj(w)
+	var focused: bool = opts.get("focused", false)
+	var per: int = int(opts.get("per", 5))
+	var fl: int = int(opts.get("fl", 0))
+	var fs: String = opts.get("flash", "auto")
+	if fs == "auto":
+		fs = CombatFx.flash_for(w)
+	var n0 := shots.size()
+	var lasers := 0
+	match pk:
+		"pellet":                                                     # 펠릿 n발을 원뿔 안에 고르게(탄당 피해 = 합계 ÷ n)
+			var n := Arms.pellets(w)
+			var cone := Arms.cone(w)
+			var wp := w.duplicate()
+			wp["dmg"] = float(w["dmg"]) / n
+			wp["crit_dmg"] = float(w.get("crit_dmg", w["dmg"])) / n
+			var gid := spawned_total
+			for i in n:
+				var a := angle_deg - cone + 2.0 * cone * (float(i) + 0.5) / n + rng.randf_range(-0.5, 0.5) * cone / n
+				if not fire(origin, a, Arms.speed("pellet"), team, wp, skill, focused, per, "", fl):
+					break
+				shots[-1]["group"] = gid
+		"laser":                                                      # 히트스캔: 이 프레임에 끝까지(벽·엄폐에서 멎는다)
+			if fire(origin, angle_deg, Arms.speed("bullet"), team, w, skill, focused, per, "", fl):
+				var ls: Dictionary = shots.pop_back()
+				ls["sneak_ok"] = opts.get("sneak_ok", false)
+				_trace(ls)
+				lasers += 1
+		"flame":                                                      # 화염 입자: 6t/초, 원뿔 25° 안, 대상마다 한 틱
+			var cone := maxf(Arms.cone(w), 1.0)
+			var a := angle_deg + (rng.randf() + rng.randf() - 1.0) * cone
+			if fire(origin, a, Arms.speed("flame"), team, w, skill, false, per, "", fl):
+				shots[-1]["life"] = float(w.get("range_eff", 4.0)) * 32.0 / Arms.speed("flame")
+				shots[-1]["life0"] = shots[-1]["life"]
+				shots[-1]["pierce"] = {}
+				for k in 3:                                           # 그림만 있는 입자 셋(틱 사이를 메워 줄기로 보이게 — 맞지 않는다)
+					if shots.size() >= MAX - 8:
+						break
+					var b := angle_deg + (rng.randf() + rng.randf() - 1.0) * cone
+					var lead := Vector2.RIGHT.rotated(deg_to_rad(b)) * Arms.speed("flame") * (k + 1) / (float(w["rate"]) * 4.0)
+					shots.append({"p": origin + lead, "v": Vector2.RIGHT.rotated(deg_to_rad(b)) * Arms.speed("flame") * rng.randf_range(0.9, 1.1),
+						"ang": b, "life": shots[n0]["life"] - lead.length() / Arms.speed("flame"), "life0": shots[n0]["life0"], "team": team,
+						"weapon": w, "skill": skill, "origin": origin, "fl": fl, "proj": "flame", "r": 0.0, "spr": "flame", "fx_only": true})
+		"grenade", "nuke":                                            # 곡사: 착탄점으로 포물선(가짜 높이), 엄폐를 넘는다
+			var to: Vector2 = opts.get("target", origin + Vector2.RIGHT.rotated(deg_to_rad(angle_deg)) * float(w["range_eff"]) * 32.0)
+			var d: float = origin.distance_to(to)
+			if pk == "nuke" and d < float(Arms.ARC_MIN_T["nuke"]) * 32.0:
+				return 0                                              # 최소 사거리 6t 안은 쏘지 않는다(자폭 방지)
+			d = minf(d, float(w["range_max"]) * 32.0)
+			var land := origin + Vector2.RIGHT.rotated(deg_to_rad(angle_deg)) * d
+			if fire(origin, angle_deg, 1.0, team, w, skill, false, per, "", fl):
+				var s: Dictionary = shots[-1]
+				s["arc"] = {"from": origin, "to": land, "t": 0.0, "dur": lerpf(0.6, 1.2, clampf(d / (16.0 * 32.0), 0.0, 1.0))}
+				s["life"] = 99.0
+		_:
+			var sp := float(opts.get("speed", Arms.speed(pk))) if pk == "bullet" else Arms.speed(pk)
+			if fire(origin, angle_deg, sp, team, w, skill, focused, per, "", fl) and pk == "missile":
+				shots[-1]["accel"] = (Arms.speed("missile_max") - sp) / 0.8      # 0.8초에 18t/초까지
+				shots[-1]["life"] = float(w["range_max"]) * 32.0 / Arms.speed("missile_max") + 0.4
+	var made := shots.size() - n0 + lasers
+	if made > 0:
+		for k in range(n0, shots.size()):
+			shots[k]["sneak_ok"] = opts.get("sneak_ok", false)
+		if CombatFx.has_set(fs):
+			flashes.append(_fx(fs, origin, angle_deg))
+	return made
+
+
+## 레이저 히트스캔: 처음 맞는 대상 또는 엄폐·벽까지 한 번에. 빔은 0.1초 보인다
+func _trace(s: Dictionary) -> void:
+	_rebucket()
+	var a: Vector2 = s["p"]
+	var b: Vector2 = a + (s["v"] as Vector2).normalized() * float(s["weapon"]["range_max"]) * 32.0
+	var hit = _segment_hit(a, b, s)
+	var end := b
+	if hit != null:
+		end = a.lerp(b, float(s.get("_t", 1.0)))
+	var blk := _blocked(a, end, s)
+	if blk.x >= 0.0:
+		end = blk
+		hit = null
+		sparks.append(_fx("spark_red", blk, float(s["ang"])))
+		marks.append([blk, 20])
+	if hit != null:
+		_apply(hit, s, end)
+	beams.append({"a": a, "b": end, "age": 0.0, "red": str(s["weapon"].get("family", "")) != "heavy"})
+
+
+## 폭발(SD-11 §9.2): 피해 = 폭발 기본 × (100 + 스킬)/200 × 거리 비율(내부 1.0 → 외부 0.25) · DR 절반 · 낮은 엄폐 뒤 ×0.5 · 높은 엄폐 뒤 0.
+## 내부 반경 안 인간형은 넘어진다. 광역이라 기습 배수가 없다. 주인공의 폭발은 아군을 비켜 가고(오사 없음 §8.4), 적의 폭발은 주민을 비켜 간다.
+func explode(at: Vector2, w: Dictionary, skill: float, team: String, fl: int = 0) -> void:
+	var pk := Arms.proj(w)
+	var rr: Array = Arms.blast_r(pk)
+	var inner := float(rr[0]) * 32.0
+	var outer := float(rr[1]) * 32.0
+	var base := float(w.get("blast", 0.0))
+	blasts_total += 1
+	booms.append({"at": at, "age": 0.0, "k": 2 if pk == "nuke" else 1, "born": Engine.get_process_frames()})
+	exploded.emit(at, outer, team)
+	if base <= 0.0:
+		return
+	_rebucket()
+	var bw := {"dmg": base, "kind": "ranged", "crit_dmg": 0.0, "range_eff": 0.0, "condition": str(w.get("condition", "new"))}
+	for c in combatants:
+		if c.dead or c.team == "gone" or (team == "player" and c.team == "ally") or (team != "player" and c.team == "resident"):
+			continue
+		if c.fl() != fl:
+			continue
+		var ctr: Vector2 = c.pos() + Vector2(0, -12)
+		var d: float = at.distance_to(ctr) - float(c.radius)
+		if d > outer:
+			continue
+		var ratio := 1.0 if d <= inner else lerpf(1.0, 0.25, (d - inner) / maxf(1.0, outer - inner))
+		var cover := _blast_cover(at, ctr)
+		if cover >= 2:
+			continue
+		if cover == 1:
+			ratio *= 0.5
+		var r := CombatRules.resolve({"weapon": bw, "skill": skill, "part": "torso", "dr": c.dr, "explosive": true})
+		r["hp"] = float(r["hp"]) * ratio * (float(w.get("robot_mult", 1.0)) if c.robot else 1.0)
+		c.last_by = team
+		c.take(r, at)
+		if d <= inner:
+			c.hold("down", 1.5)
+		if not c.big:
+			c.push += (ctr - at).normalized() * (16.0 if d <= inner else 6.0)
+
+
+## 폭심 → 대상 사이 엄폐(가장 높은 것): 0 없음 · 1 낮음 · 2 높음/벽
+func _blast_cover(a: Vector2, b: Vector2) -> int:
+	var n := int(ceil(a.distance_to(b) / 8.0)) + 1
+	var best := 0
+	var ta := Vector2i(floori(a.x / 32), floori(a.y / 32))
+	var tb := Vector2i(floori(b.x / 32), floori(b.y / 32))
+	for i in range(1, n):
+		var p := a.lerp(b, float(i) / n)
+		var t := Vector2i(floori(p.x / 32), floori(p.y / 32))
+		if t == ta or t == tb:
+			continue
+		best = maxi(best, int(world.cover_at(t)) if world != null else 0)
+	return best
 
 
 static func _fx(set_name: String, at: Vector2, ang: float) -> Dictionary:
@@ -83,23 +237,55 @@ func step(dt: float) -> void:
 	_rebucket()
 	var keep: Array = []
 	for s in shots:
+		if s.has("arc"):                                               # 곡사: 날아가는 동안 맞지 않고, 내려앉으면 터진다
+			var arc: Dictionary = s["arc"]
+			arc["t"] = float(arc["t"]) + dt
+			var k := clampf(float(arc["t"]) / float(arc["dur"]), 0.0, 1.0)
+			s["p"] = (arc["from"] as Vector2).lerp(arc["to"], k)
+			s["h"] = 4.0 * 28.0 * k * (1.0 - k)
+			if k >= 1.0:
+				explode(s["p"], s["weapon"], float(s["skill"]), str(s["team"]), int(s.get("fl", 0)))
+				continue
+			keep.append(s)
+			continue
+		if s.has("accel"):
+			var v: Vector2 = s["v"]
+			s["v"] = v.normalized() * minf(Arms.speed("missile_max"), v.length() + float(s["accel"]) * dt)
 		var a: Vector2 = s["p"]
 		var b: Vector2 = a + s["v"] * dt
-		var hit = _segment_hit(a, b, s)
-		if hit == null:
+		var hit = null if s.has("fx_only") else _segment_hit(a, b, s)
+		if hit == null or s.has("pierce"):
 			var blk := _blocked(a, b, s)
 			if blk.x >= 0.0:
-				marks.append([blk, 20])
-				sparks.append(_fx("spark", blk, float(s["ang"])))
+				if float(s["weapon"].get("blast", 0.0)) > 0.0:
+					explode(blk - (s["v"] as Vector2).normalized() * 4.0, s["weapon"], float(s["skill"]), str(s["team"]), int(s.get("fl", 0)))
+				elif s["proj"] != "flame":
+					marks.append([blk, 20])
+					sparks.append(_fx("spark", blk, float(s["ang"])))
 				continue
-		if hit != null:
+		if hit != null and s.has("pierce"):                            # 화염: 대상마다 한 번(입자는 계속 간다)
+			if not (s["pierce"] as Dictionary).has(hit.get_instance_id()):
+				s["pierce"][hit.get_instance_id()] = true
+				_apply(hit, s, b)
+		elif hit != null:
 			_apply(hit, s, b)
+			if float(s["weapon"].get("blast", 0.0)) > 0.0:
+				explode(b, s["weapon"], float(s["skill"]), str(s["team"]), int(s.get("fl", 0)))
 			continue
 		s["p"] = b
 		s["life"] -= dt
 		if s["life"] > 0.0:
 			keep.append(s)
+		elif float(s["weapon"].get("blast", 0.0)) > 0.0 and s["proj"] == "missile":
+			explode(b, s["weapon"], float(s["skill"]), str(s["team"]), int(s.get("fl", 0)))   # 미사일은 사거리 끝에서도 터진다
 	shots = keep
+	for bm in beams:
+		bm["age"] = float(bm["age"]) + dt
+	beams = beams.filter(func(bm): return float(bm["age"]) < BEAM_HOLD + BEAM_FADE)
+	for bo in booms:
+		if int(bo["born"]) != Engine.get_process_frames():
+			bo["age"] = float(bo["age"]) + dt
+	booms = booms.filter(func(bo): return CombatFx.frame_at("boom_smoke", float(bo["age"])) >= 0)
 	flashes = _aged(flashes, dt)
 	sparks = _aged(sparks, dt)
 	for m in marks:
@@ -127,7 +313,7 @@ func _segment_hit(a: Vector2, b: Vector2, s: Dictionary):
 				if deck_world and not world.floors_meet(c.pos(), c.fl(), a, int(s.get("fl", 0))):
 					continue                                              # 다른 층(고가 위·아래)은 맞지 않는다(SD-21 §6.2, 내려 쏘기는 1-9)
 				var ctr: Vector2 = c.pos() + Vector2(0, -12)          # torso centre above the feet
-				var tt := _seg_circle(a, b, ctr, c.radius)
+				var tt := _seg_circle(a, b, ctr, c.radius + float(s.get("r", 0.0)))
 				if c.invuln:                                          # 구르기 무적: 탄이 지나간다
 					if tt >= 0.0 and not s.has("ghost"):
 						s["ghost"] = true
@@ -136,6 +322,7 @@ func _segment_hit(a: Vector2, b: Vector2, s: Dictionary):
 				if tt >= 0.0 and tt < best_t:
 					best_t = tt
 					best = c
+	s["_t"] = best_t
 	return best
 
 
@@ -185,7 +372,7 @@ func _blocked(a: Vector2, b: Vector2, s: Dictionary) -> Vector2:
 			continue
 		if cov == 1 and _occupied.get(t, s["team"]) != s["team"]:      # 표적이 선 칸(받침대·낮은 소품)
 			continue
-		if cov >= 2:
+		if cov >= 2 or s.get("proj", "") == "flame":                    # 화염은 낮은 엄폐도 넘지 못한다(SD-11 §3.4)
 			return p
 		if rng.randf() < 0.4:                                            # low cover vs a standing target
 			return p
@@ -195,37 +382,114 @@ func _blocked(a: Vector2, b: Vector2, s: Dictionary) -> Vector2:
 func _apply(c: Combatant, s: Dictionary, at: Vector2) -> void:
 	var w: Dictionary = s["weapon"]
 	var focused: bool = s.get("focused", false)
-	var crit := rng.randf() * 100.0 < CombatRules.crit_chance(5, float(w.get("crit_mult", 1.0)), "new", 0.0, focused)
+	var crit: bool = rng.randf() * 100.0 < CombatRules.crit_chance(5, float(w.get("crit_mult", 1.0)), "new", 0.0, focused) and not bool(w.get("no_crit", false))
 	var part := CombatRules.pick_part(CombatRules.part_weights(c.weights, {"focused": focused, "per": s.get("per", 5)}) if focused
 		else c.weights, rng)
 	var sneak: bool = s.get("sneak_ok", false) and c.unaware.is_valid() and c.unaware.call()
 	c.last_sneak = sneak
 	var r := CombatRules.resolve({"weapon": w, "skill": s["skill"], "dist": s["origin"].distance_to(at) / 32.0,
 		"crit": crit or sneak, "part": part, "dr": c.dr, "sneak": sneak})
-	r["nonlethal"] = w.get("sound", "") == "suppressed" or w.get("kind", "ranged") != "ranged"   # 공기총·근접 = 비살상(기절, 0-9)
+	r["nonlethal"] = w.get("sound", "") == "suppressed" or w.get("kind", "ranged") != "ranged" or s.get("proj", "") == "net"   # 공기총·근접·그물 = 비살상(기절, 0-9)
+	if c.robot:
+		r["hp"] = float(r["hp"]) * float(w.get("robot_mult", 1.0))
 	c.last_by = str(s["team"])
 	c.take(r, s["origin"])
+	Projectiles.after_hit(c, w, s.get("proj", "bullet"), s["origin"].distance_to(at) / 32.0, rng, (at - s["origin"]).normalized())
+	if s.has("group"):                                              # 산탄 넉백: 3t 안에서 같은 대상에 6발 이상(대형 제외)
+		var pg: Array = c.get_meta("pellet_group", [-1, 0])
+		var cnt: int = (int(pg[1]) + 1) if int(pg[0]) == int(s["group"]) else 1
+		c.set_meta("pellet_group", [int(s["group"]), cnt])
+		if cnt == 6 and s["origin"].distance_to(at) <= 96.0 and not c.big:
+			c.push += (at - s["origin"]).normalized() * 16.0
 	hits_total += 1
 	if focused:
 		focused_hits.append(part)
 	marks.append([at, 6])
 
 
+## 투사체 그림 컷: 화염 입자는 나온 뒤 수명에 따라 0~4컷(작은 심 → 불덩이 → 성기게 꺼짐), 그 밖은 0
+static func _proj_frame(s: Dictionary) -> int:
+	if s.get("spr", "") != "flame":
+		return 0
+	return clampi(int((1.0 - float(s["life"]) / maxf(0.01, float(s.get("life0", 1.0)))) * 5.0), 0, 4)
+
+
+## 맞은 뒤 상태 이상(1-9a, SD-13 무기 특성): 지속 피해(화상·전기) · 넘어뜨림 · 마비 · 그물 · 다리 손상(못·다트)
+static func after_hit(c: Combatant, w: Dictionary, pk: String, dist_t: float, r: RandomNumberGenerator, dir: Vector2) -> void:
+	if c.dead:
+		return
+	var dot := float(w.get("dot", 0.0))
+	if dot > 0.0:
+		c.add_dot(str(w.get("dot_kind", "burn")), dot, float(w.get("dot_s", 3.0)))
+	var kp := float(w.get("knock_pct", 0.0))
+	if kp > 0.0 and (Arms.fam(w) != "shotgun" or dist_t <= 3.0) and r.randf() * 100.0 < kp:
+		c.hold("down", 1.5)
+	var sp := float(w.get("stun_pct", 0.0))
+	if sp > 0.0 and not c.robot and r.randf() * 100.0 < sp:
+		c.hold("stun", 1.0)
+	if pk == "net":
+		c.hold("root", 3.0)
+	var lp := float(w.get("leg_pct", 0.0))
+	if lp > 0.0 and r.randf() * 100.0 < lp:
+		c.set_meta("leg_hurt", true)
+
+
 func _draw() -> void:
 	var tex := CombatFx.sheet()
+	for bo in booms:                                                 # 폭발 연기(일반 혼합) — 불덩이 아래
+		var k := CombatFx.frame_at("boom_smoke", float(bo["age"]))
+		if k >= 0:
+			var rs := CombatFx.region("boom_smoke", 0.0, k)
+			var sc := float(bo["k"])
+			draw_texture_rect_region(tex, Rect2((bo["at"] as Vector2) - rs.size * 0.5 * sc, rs.size * sc), rs)
 	for m in marks:
 		draw_rect(Rect2((m[0] as Vector2).round() - Vector2(1, 1), Vector2(2, 2)), Color("cbc5b9" if m[1] > 10 else "6e6966"))
 	var dw: bool = world is WorldMap and world.has_deck
+	for bm in beams:                                                  # 레이저 빔(SD-16 §10.1 '빔 1~2px P54·P63, 0.1초 유지 후 4컷'): 일반 혼합 — 밝은 바닥에서도 보인다.
+		var f := clampf((float(bm["age"]) - BEAM_HOLD) / BEAM_FADE, 0.0, 1.0)   # 사그라듦은 반투명 대신 굵기·색 단계(§3.8)
+		var k := int(f * 4.0)
+		var red: bool = bm["red"]
+		if k == 0:
+			draw_line(bm["a"], bm["b"], Color("A82A26") if red else Color("1F9AA6"), 2.0)
+			draw_line(bm["a"], bm["b"], Color("FFEC9A") if red else Color("7FF0E8"), 1.0)
+		elif k == 1:
+			draw_line(bm["a"], bm["b"], Color("E04A35") if red else Color("7FF0E8"), 1.0)
+		elif k == 2:
+			draw_line(bm["a"], bm["b"], Color("A82A26") if red else Color("1F9AA6"), 1.0)
+		elif k == 3:
+			draw_dashed_line(bm["a"], bm["b"], Color("6E1A1E") if red else Color("0E4A52"), 1.0, 2.0)
 	for s in shots:                                                   # 탄환 16방향(2×1 심 + 잔상 4px + 어두운 심) — 머리가 탄 위치
 		if dw and int(s.get("fl", 0)) == 0 and InteriorMap.is_top(world.deck_at(world.tile_of(s["p"]))) \
 				and (s["p"] as Vector2).distance_to(world.hole) > world.hole_r:
 			continue                                                  # 상판 아래(층 0) 탄은 상판에 가린다(디더 구멍 안만 보인다)
-		var r := CombatFx.region("bullet", float(s["ang"]), 0)
-		draw_texture_rect_region(tex, Rect2(CombatFx.top_left("bullet", s["p"]), r.size), r)
+		var spr: String = s.get("spr", "bullet")
+		if CombatFx.meta()["sets"][spr]["blend"] == "add":         # 가산 투사체(플라스마·방전 구)는 가산 층에서
+			continue
+		var at: Vector2 = s["p"]
+		if s.has("h"):                                             # 곡사: 그림자 + 띄운 탄
+			draw_circle(at, 3.0, Color(0, 0, 0, 0.35))
+			at -= Vector2(0, float(s["h"]))
+		var r := CombatFx.region(spr, float(s["ang"]), _proj_frame(s))
+		draw_texture_rect_region(tex, Rect2(CombatFx.top_left(spr, at), r.size), r)
+	for bo in booms:                                                 # 폭발 불덩이(연기 위) — 일반 혼합
+		var k := CombatFx.frame_at("boom", float(bo["age"]))
+		if k >= 0:
+			var rs := CombatFx.region("boom", 0.0, k)
+			var sc := float(bo["k"])
+			draw_texture_rect_region(tex, Rect2((bo["at"] as Vector2) - rs.size * 0.5 * sc, rs.size * sc), rs)
 
 
 func _draw_add() -> void:
 	var tex := CombatFx.sheet()
+	for s in shots:                                                # 가산 투사체: 플라스마·방전 구·화염 입자
+		var spr: String = s.get("spr", "bullet")
+		if CombatFx.meta()["sets"][spr]["blend"] != "add":
+			continue
+		var r := CombatFx.region(spr, float(s["ang"]), _proj_frame(s))
+		_add.draw_texture_rect_region(tex, Rect2(CombatFx.top_left(spr, s["p"]), r.size), r)
+	for bm in beams:                                               # 빔 둘레 빛(가산, 밝은 바닥에서는 묻히고 어두운 곳에서 번진다)
+		if float(bm["age"]) < BEAM_HOLD:
+			_add.draw_line(bm["a"], bm["b"], Color("6E1A1E") if bm["red"] else Color("0E4A52"), 4.0)
 	for list in [flashes, sparks]:
 		for f in list:
 			var k := CombatFx.frame_at(f["set"], f["age"])
