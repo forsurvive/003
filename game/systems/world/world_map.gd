@@ -109,6 +109,14 @@ func load_map(map_id: String, st: StoryState = null) -> void:
 	var dd := {"props": [], "doors": [], "signs": [], "exits": [], "texts": []}   # 지하로 내려가는 문(1-4): 계단 소품 + 2칸 출구
 	for door in PlaceLog.doors:
 		var at := Vector2i(int(door["at"][0]), int(door["at"][1]))
+		if str(door.get("kind", "")) == "facade":                       # 건물 1층 문(1-5e): 그려진 문 타일에 대고 E — 출구 없음, 문 앞에 닳은 발판(들어갈 수 있다는 표시)
+			gos[at] = door
+			var mm: Dictionary = prop_meta.get("door_mat", {})
+			if not mm.is_empty():
+				var mo: Array = mm.get("off", [0, 0])
+				dd["props"].append({"name": "door_mat", "x": at.x, "y": at.y + 1, "px": [at.x * T + int(mo[0]), (at.y + 1) * T + 1],
+					"sort_y": (at.y + 1) * T + 4})
+			continue
 		var pm: Dictionary = prop_meta.get(str(door["prop"]), {})
 		var off: Array = pm.get("off", [0, 0])
 		dd["props"].append({"name": str(door["prop"]), "x": at.x, "y": at.y, "px": [at.x * T + int(off[0]), at.y * T + int(off[1])],

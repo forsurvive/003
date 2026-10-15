@@ -17,6 +17,7 @@ var objects: Node2D                              ## y 정렬 층(소품·문·�
 var doors: Array = []                            ## [{"node": Sprite2D, "x", "y", "locked", "closed": Rect2, "open": Rect2, "is_open"}]
 var exits := {}                                  ## Vector2i -> {"to", "mark"}
 var texts := {}                                  ## Vector2i -> 글
+var gos := {}                                    ## Vector2i -> 들어가는 문(1-5e 월드 건물 1층 문: {"to", "mark", "name", "lock", "at"})
 var terms := {}                                  ## Vector2i -> 단말(1-4): {"x","y","w","h","id","cond"}
 var boxes := {}                                  ## Vector2i -> 용기(0-9): {"x","y","w","h","kind","owner","lock","name","cond"} — 조건은 조사할 때 본다
 var text_meta := {}                              ## Vector2i -> {"cond", "seq": [글…], "scene", "key"} — 여러 번 조사하는 글(0-7)

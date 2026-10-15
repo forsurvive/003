@@ -339,11 +339,19 @@ def build():
         body[y, x] = tid(("tr:deckb%d" if brk[y, x] else "tr:deck%d") % m)
     # 건물
     shadows = []
+    entries = []                                                             # 1층 문 후보(1-5e 들어가 보는 건물): 문·셔터 타일, 가게·사무동은 정면 가운데
     blds = [b for b in blds if not fort_ext[b["y"]:b["y"] + b["h"], b["x"]:b["x"] + b["w"]].any()]
     for b in blds:
         cells, dcells, skin = WB.bld_cells(b, skins)
         for (dx, dy, nm) in cells:
             body[b["y"] + dy, b["x"] + dx] = tid(nm)
+        doors_b = sorted((b["x"] + dx, b["y"] + dy) for (dx, dy, nm) in cells
+                         if dy == b["h"] - 1 and ("_door" in nm or "_shutter_l" in nm or nm.endswith("_steel")))
+        if not doors_b and b["style"] in ("shop", "office") and b["w"] >= 3:
+            doors_b = [(b["x"] + b["w"] // 2, b["y"] + b["h"] - 1)]
+        if doors_b:
+            dx_, dy_ = doors_b[WB._h(b["seed"], 31) % len(doors_b)]
+            entries.append({"x": int(dx_), "y": int(dy_), "style": b["style"], "seed": int(b["seed"])})
         for (dx, dy, nm) in dcells:
             deco[b["y"] + dy, b["x"] + dx] = tid(nm)
         sl = (slice(b["y"], b["y"] + b["h"]), slice(b["x"], b["x"] + b["w"]))
@@ -690,7 +698,7 @@ def build():
         reg_grid[cy_][cx_] = code
     return {"pois": pois, "r05": r05, "region_grid": reg_grid, "street": r["street"], "bridges": cross, "routes": routes, "floor": floor, "gflag": gflag, "solid": solid, "cover": cover, "level": level, "stair": stair, "body": body,
             "deco": deco, "trees": tree_list, "props": props, "shadows": shadows, "insets": insets, "play": play, "band": r["band"],
-            "reach": reach, "miss": miss, "wet": wet, "core": core, "kind": kind}
+            "reach": reach, "miss": miss, "wet": wet, "core": core, "kind": kind, "entries": entries}
 
 DIR8 = ["동", "남동", "남", "남서", "서", "북서", "북", "북동"]
 NOTES_SRC = os.path.join(ROOT, "script", "world", "road_notes.txt")
@@ -1085,6 +1093,15 @@ def place_geo(R):
         doors.append({"lid": spec["lid"], "at": [xx, yy], "to": spec["to"], "mark": spec["mark"], "name": spec["name"], "prop": spec["prop"],
                       "hint": spec.get("hint", "계단을 내려가면 지하다.")})
         geo.setdefault(spec["lid"], {"bank": "S", "arrive": None})["arrive"] = [xx, yy + 1]
+    import gen_interiors                                                     # 들어가 보는 건물(1-5e): 문 앞 칸이 걸어서 닿는 1층 문 일부 → 실내 'G-x-y'
+    enc = json.load(open(os.path.join(OUT, "encounters.json"), encoding="utf-8"))
+    reg = R["region_grid"]
+
+    def region_at(x, y):
+        cy_, cx_ = y // CS, x // CS
+        return reg[cy_][cx_] if 0 <= cy_ < len(reg) and 0 <= cx_ < len(reg[cy_]) else 0
+    taken_g = [tuple(ins["rect"]) for ins in R["insets"]] + [(d["at"][0] - 3, d["at"][1] - 3, 8, 7) for d in doors]
+    doors += gen_interiors.run(R["entries"], reach, enc["threat"], region_at, taken_g, log=log)
     geo["_doors"] = doors
     # 월드 발견 자리(1-4, maps/world/*.spots → map_compile → spots_src.json): 요청 칸에서 가장 가까운, w×h가 모두 걸어서 닿고
     # 손 맵·문 자리와 겹치지 않는 곳(장소 없는 '@x,y' 자리는 그 칸 그대로여야 한다 — 어긋나면 굽기 오류)

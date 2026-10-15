@@ -856,6 +856,10 @@ from props_bk import PROPS_BK, STATES_BK                                # 여의
 for _k in PROPS_BK:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_BK)
+from props_home import PROPS_HOME                                     # 들어가 보는 건물 실내(1-5e 자유 탐험 확장)
+for _k in PROPS_HOME:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_HOME)
 
 STATES = {
     "board_bc": {s: (lambda s=s: notice_board(s)) for s in ("wanted", "torn", "crumpled", "crossed", "rate", "water", "official")},

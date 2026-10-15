@@ -98,6 +98,24 @@
     26
    ]
   },
+  "bathtub": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    0,
+    -7
+   ],
+   "rect": [
+    428,
+    738,
+    64,
+    42
+   ]
+  },
   "bench_o": {
    "atlas": "r01",
    "foot": [
@@ -230,6 +248,24 @@
     596,
     36,
     24
+   ]
+  },
+  "bookshelf_home": {
+   "atlas": "r01",
+   "foot": [
+    1,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -1,
+    -26
+   ],
+   "rect": [
+    588,
+    738,
+    34,
+    60
    ]
   },
   "boulder_l": {
@@ -508,6 +544,24 @@
     225,
     100,
     64
+   ]
+  },
+  "cash_counter": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    0,
+    -15
+   ],
+   "rect": [
+    0,
+    814,
+    64,
+    50
    ]
   },
   "ceiling_slab": {
@@ -816,6 +870,42 @@
     56
    ]
   },
+  "dining_table": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    0,
+    -17
+   ],
+   "rect": [
+    364,
+    738,
+    64,
+    52
+   ]
+  },
+  "door_mat": {
+   "atlas": "r01",
+   "foot": [
+    0,
+    0
+   ],
+   "kind": "deco",
+   "off": [
+    1,
+    19
+   ],
+   "rect": [
+    714,
+    814,
+    30,
+    14
+   ]
+  },
   "drain_outlet": {
    "atlas": "r01",
    "foot": [
@@ -868,6 +958,24 @@
     293,
     34,
     46
+   ]
+  },
+  "drink_fridge": {
+   "atlas": "r01",
+   "foot": [
+    1,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -1,
+    -28
+   ],
+   "rect": [
+    966,
+    738,
+    34,
+    62
    ]
   },
   "drum": {
@@ -1046,6 +1154,42 @@
     82
    ]
   },
+  "fridge": {
+   "atlas": "r01",
+   "foot": [
+    1,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    0,
+    -24
+   ],
+   "rect": [
+    234,
+    738,
+    32,
+    58
+   ]
+  },
+  "gas_range": {
+   "atlas": "r01",
+   "foot": [
+    1,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -1,
+    -11
+   ],
+   "rect": [
+    266,
+    738,
+    34,
+    46
+   ]
+  },
   "gate_l": {
    "atlas": "r01",
    "foot": [
@@ -1170,6 +1314,24 @@
     28
    ]
   },
+  "gov_counter": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    0,
+    -25
+   ],
+   "rect": [
+    316,
+    814,
+    64,
+    60
+   ]
+  },
   "guard_booth": {
    "atlas": "r01",
    "foot": [
@@ -1240,6 +1402,24 @@
     293,
     32,
     46
+   ]
+  },
+  "hw_rack": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    0,
+    -23
+   ],
+   "rect": [
+    64,
+    814,
+    64,
+    58
    ]
   },
   "info_board": {
@@ -1314,6 +1494,42 @@
     42
    ]
   },
+  "kid_desk": {
+   "atlas": "r01",
+   "foot": [
+    1,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -1,
+    -17
+   ],
+   "rect": [
+    686,
+    738,
+    34,
+    52
+   ]
+  },
+  "kitchen_sink": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    0,
+    -13
+   ],
+   "rect": [
+    300,
+    738,
+    64,
+    48
+   ]
+  },
   "laundry_line": {
    "atlas": "r01",
    "foot": [
@@ -1330,6 +1546,24 @@
     225,
     68,
     48
+   ]
+  },
+  "laundry_rack": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    0,
+    -25
+   ],
+   "rect": [
+    160,
+    814,
+    64,
+    60
    ]
   },
   "lectern": {
@@ -1466,6 +1700,60 @@
     18
    ]
   },
+  "num_machine": {
+   "atlas": "r01",
+   "foot": [
+    1,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    2,
+    -19
+   ],
+   "rect": [
+    224,
+    814,
+    28,
+    54
+   ]
+  },
+  "office_desk": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    0,
+    -17
+   ],
+   "rect": [
+    380,
+    814,
+    64,
+    52
+   ]
+  },
+  "pallet_sacks": {
+   "atlas": "r01",
+   "foot": [
+    1,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    -1,
+    -1
+   ],
+   "rect": [
+    680,
+    814,
+    34,
+    36
+   ]
+  },
   "pharm_counter": {
    "atlas": "r01",
    "foot": [
@@ -1482,6 +1770,24 @@
     293,
     64,
     44
+   ]
+  },
+  "piano": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    0,
+    -23
+   ],
+   "rect": [
+    622,
+    738,
+    64,
+    58
    ]
   },
   "plant_pot": {
@@ -1888,6 +2194,60 @@
     32
    ]
   },
+  "shop_shelf": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    0,
+    -19
+   ],
+   "rect": [
+    774,
+    738,
+    64,
+    54
+   ]
+  },
+  "shop_shelf_can": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    0,
+    -19
+   ],
+   "rect": [
+    838,
+    738,
+    64,
+    54
+   ]
+  },
+  "shop_shelf_goods": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    0,
+    -19
+   ],
+   "rect": [
+    902,
+    738,
+    64,
+    54
+   ]
+  },
   "shower_stall": {
    "atlas": "r01",
    "foot": [
@@ -1904,6 +2264,24 @@
     662,
     34,
     54
+   ]
+  },
+  "sofa_home": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    0,
+    -9
+   ],
+   "rect": [
+    524,
+    738,
+    64,
+    44
    ]
   },
   "stair_post": {
@@ -2066,6 +2444,24 @@
     514,
     68,
     50
+   ]
+  },
+  "steel_rack": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    0,
+    -28
+   ],
+   "rect": [
+    616,
+    814,
+    64,
+    62
    ]
   },
   "stool_w": {
@@ -2626,6 +3022,42 @@
     32
    ]
   },
+  "w_elevator": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    0
+   ],
+   "kind": "wall",
+   "off": [
+    5,
+    -9
+   ],
+   "rect": [
+    562,
+    814,
+    54,
+    42
+   ]
+  },
+  "w_gov_notice": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    0
+   ],
+   "kind": "wall",
+   "off": [
+    3,
+    7
+   ],
+   "rect": [
+    444,
+    814,
+    58,
+    26
+   ]
+  },
   "w_herbs": {
    "atlas": "r01",
    "foot": [
@@ -2642,6 +3074,42 @@
     395,
     64,
     32
+   ]
+  },
+  "w_kid_drawing": {
+   "atlas": "r01",
+   "foot": [
+    1,
+    0
+   ],
+   "kind": "wall",
+   "off": [
+    3,
+    7
+   ],
+   "rect": [
+    748,
+    738,
+    26,
+    22
+   ]
+  },
+  "w_mailboxes": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    0
+   ],
+   "kind": "wall",
+   "off": [
+    2,
+    3
+   ],
+   "rect": [
+    502,
+    814,
+    60,
+    30
    ]
   },
   "w_map": {
@@ -2678,6 +3146,24 @@
     662,
     28,
     30
+   ]
+  },
+  "w_photo": {
+   "atlas": "r01",
+   "foot": [
+    1,
+    0
+   ],
+   "kind": "wall",
+   "off": [
+    2,
+    5
+   ],
+   "rect": [
+    720,
+    738,
+    28,
+    24
    ]
   },
   "w_poster_rad": {
@@ -3094,6 +3580,24 @@
     38
    ]
   },
+  "wait_chairs": {
+   "atlas": "r01",
+   "foot": [
+    2,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    0,
+    -7
+   ],
+   "rect": [
+    252,
+    814,
+    64,
+    42
+   ]
+  },
   "wardrobe": {
    "atlas": "r01",
    "foot": [
@@ -3128,6 +3632,42 @@
     596,
     34,
     46
+   ]
+  },
+  "wash_basin": {
+   "atlas": "r01",
+   "foot": [
+    1,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    0,
+    -7
+   ],
+   "rect": [
+    492,
+    738,
+    32,
+    42
+   ]
+  },
+  "washer": {
+   "atlas": "r01",
+   "foot": [
+    1,
+    1
+   ],
+   "kind": "floor",
+   "off": [
+    0,
+    -7
+   ],
+   "rect": [
+    128,
+    814,
+    32,
+    42
    ]
   },
   "watchtower": {

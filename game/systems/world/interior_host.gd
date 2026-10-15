@@ -238,6 +238,9 @@ func enter(map_id: String, mark: String = "", look: Dictionary = {}, at: Vector2
 		player.doll.set_look({"torso": TORSO_OF[worn()]})                 # 갈아입은 옷(0-10)
 	player.visible = body != "hidden"
 	map.add_actor(player)
+	if world_mode and at == Vector2.INF and mark.begins_with("@"):     # 들어가 본 건물에서 나온다(1-5e): 그 문 앞 칸, 남쪽을 보고
+		var xy := mark.substr(1).split(",")
+		at = Vector2(int(xy[0]) * 32 + 16, int(xy[1]) * 32 + 16)
 	if world_mode and at == Vector2.INF and mark.begins_with("L-"):    # 실내에서 월드의 장소로 나간다(1-3): 그 장소의 도착 칸
 		PlaceLog.load_db()
 		var arr = PlaceLog.db.get(mark, {}).get("arrive")
@@ -558,6 +561,10 @@ func interact() -> bool:
 	if not tm.is_empty():
 		open_terminal(tm)
 		return true
+	var gd := _front_go(cells)
+	if not gd.is_empty():
+		_enter_go(gd)
+		return true
 	for cc in cells:
 		if map.texts.has(cc):
 			var m: Dictionary = map.text_meta.get(cc, {})
@@ -578,6 +585,35 @@ func interact() -> bool:
 			say_text(map.texts[cc])
 			return true
 	return false
+
+
+## 앞 칸의 들어가는 문(1-5e 월드 건물 1층 문) — 없으면 빈 사전
+func _front_go(cells: Array = []) -> Dictionary:
+	if map == null or map.gos.is_empty():
+		return {}
+	for cc in (cells if not cells.is_empty() else _front_cells()):
+		if map.gos.has(cc):
+			return map.gos[cc]
+	return {}
+
+
+## 건물 문 열기: 잠겼으면 자물쇠 따기(딴 문은 'wdoor:x,y'에 남는다), 열리면 실내로
+func _enter_go(gd: Dictionary) -> void:
+	var key := "wdoor:%d,%d" % [int(gd["at"][0]), int(gd["at"][1])]
+	var lv := int(gd.get("lock", 0))
+	var opened := st.boxes.has(key) and bool(st.boxes[key].get("open", false))
+	if lv > 0 and not opened:
+		if st.boxes.has(key) and bool(st.boxes[key].get("jammed", false)):
+			say_text("자물쇠 안이 부러졌다. 이 문은 이제 열리지 않는다.")
+		elif not Lockpick.can_try(lv, st.skill("LOCKPICK")):
+			_prompt_shake = _hud_t + 0.8
+		else:
+			open_lock(lv, "door", func() -> void:
+				st.boxes[key] = {"open": true}
+				go(str(gd["to"]), str(gd["mark"])),
+				func() -> void: st.boxes[key] = {"jammed": true})
+		return
+	go(str(gd["to"]), str(gd["mark"]))
 
 
 ## 바라보는 앞 칸(벽을 보고 서면 벽면 두 칸까지)
@@ -1010,6 +1046,18 @@ func box_prompt() -> String:
 					return "(E) 따기  %s  [잠김: %s]" % [str(dr.get("label", "문")), Lockpick.NAMES[gi]]
 				return "(E) 따기  %s  [잠김: %s · 자물쇠 따기 %d 필요]" % [str(dr.get("label", "문")), Lockpick.NAMES[gi], int(Lockpick.REQ[gi])]
 	if b.is_empty():
+		var gd := _front_go()
+		if not gd.is_empty():                                            # 건물 1층 문(1-5e)
+			var lv := int(gd.get("lock", 0))
+			var key := "wdoor:%d,%d" % [int(gd["at"][0]), int(gd["at"][1])]
+			if lv <= 0 or (st.boxes.has(key) and bool(st.boxes[key].get("open", false))):
+				return "(E) 들어간다  " + str(gd["name"])
+			if st.boxes.has(key) and bool(st.boxes[key].get("jammed", false)):
+				return "(E) 들어간다  %s  [열쇠 필요]" % str(gd["name"])
+			var gi := Lockpick.grade_of(lv)
+			if Lockpick.can_try(lv, st.skill("LOCKPICK")):
+				return "(E) 따기  %s  [잠김: %s]" % [str(gd["name"]), Lockpick.NAMES[gi]]
+			return "(E) 따기  %s  [잠김: %s · 자물쇠 따기 %d 필요]" % [str(gd["name"]), Lockpick.NAMES[gi], int(Lockpick.REQ[gi])]
 		var tm := _front_term()
 		return term_prompt(tm) if not tm.is_empty() else ""
 	var nm: String = str(b.get("name", "")) if str(b.get("name", "")) != "" else Loot.kind_name(str(b["kind"]))
