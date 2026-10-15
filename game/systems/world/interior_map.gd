@@ -35,6 +35,20 @@ static var _tile_ids := {}
 var ext := false                                 ## 바깥 맵(0-10): 높이 칸·구조물 층
 var level := PackedInt32Array()                  ## [y * w + x] 걷는 칸의 높이(타일 단위), 막힌 칸 -1
 var stair := PackedByteArray()                   ## [y * w + x] 1 = 계단·사다리(높이가 다른 칸을 잇는다)
+## 고가 상판 층(1-Rd, SD-21 §6.1~6.2 · SD-16 §6.5 '층 ID 0 지면 · 1 고가 상판'): 칸마다 상판 부호. 지형 높이(level)와 따로,
+## 한 칸에 '땅(층 0)'과 '상판(층 1)'이 겹친다. 층은 램프·비상계단 칸에서만 바뀐다. 인물·탄은 저마다 층을 가진다.
+const DK_NONE := 0
+const DK_DECK := 1                               ## 상판: 층 1이 걷는다 · 층 0은 그 아래(그늘)를 걷는다
+const DK_RAIL := 2                               ## 상판 가장자리 난간: 층 1 막힘 · 아래는 지나간다
+const DK_RAMP := 3                               ## 램프 노면: 층 0 ↔ 1을 잇는다(아래 끝은 땅, 위 끝은 상판)
+const DK_WALL := 4                               ## 램프 옆벽·옹벽: 두 층 다 막힘
+const DK_PILLAR := 5                             ## 기둥 위 상판: 층 1 상판 · 층 0 막힘(높은 엄폐)
+const DK_BROKEN := 6                             ## 끊긴 경간 끝 상판: 층 1이 걷되 다음 칸이 비어 거기서 선다(낙하 없음)
+const DK_STAIR := 7                              ## 비상계단: 램프와 같은 규칙(걷는 사람 지름길)
+const DK_JUNK := 8                               ## 상판 위 버려진 차: 층 1 막힘·엄폐 · 아래(층 0)는 그늘
+var deck := PackedByteArray()                    ## [y * w + x] 상판 부호(손 맵·시험). 빈 배열 = 상판 없음. 월드는 청크 자료에서 읽는다
+var has_deck := false
+var mover_floor := 0                             ## move_circle·circle_hits를 부르는 인물의 층(Actor가 부르기 전에 맞춘다)
 
 
 static func _load_static() -> void:
@@ -485,17 +499,91 @@ func _blocked_from(t: Vector2i, from: Vector2i) -> bool:
 	return is_solid(t) or (ext and not level_link(from, t))
 
 
+# ---------------------------------------------------------------- 고가 상판 층(1-Rd)
+func deck_at(t: Vector2i) -> int:
+	if deck.is_empty() or t.x < 0 or t.y < 0 or t.x >= size.x or t.y >= size.y:
+		return DK_NONE
+	return deck[t.y * size.x + t.x]
+
+
+## 상판이 덮은 칸(층 1 노면 또는 난간) — 층 0에서는 그 아래 그늘
+static func is_top(d: int) -> bool:
+	return d == DK_DECK or d == DK_RAIL or d == DK_PILLAR or d == DK_BROKEN or d == DK_JUNK
+
+
+## 층을 잇는 칸(램프·비상계단)
+static func is_link(d: int) -> bool:
+	return d == DK_RAMP or d == DK_STAIR
+
+
+## 층 fl인 인물이 home 칸에서 t 칸으로 들어갈 수 없나.
+##   층 1: 상판·램프만 걷는다. 상판 밖(빈 경간·상판 없는 칸)은 막혀 끝에서 선다. 램프 아래 끝에서만 땅으로 내려선다.
+##   층 0: 땅 규칙 + 기둥·옹벽이 막는다. 상판 그늘에서 램프로는 못 오른다(램프는 아래 끝 땅에서만 탄다).
+##   램프 위 끝에서 상판으로 들어서면 층 1 규칙(층 0으로 램프를 올라온 인물이 상판에 닿는 순간).
+func _blocked_floor(t: Vector2i, home: Vector2i, fl: int) -> bool:
+	var d := deck_at(t)
+	var hd := deck_at(home)
+	if fl >= 1 or (is_link(hd) and is_top(d)):
+		if d == DK_DECK or d == DK_PILLAR or d == DK_BROKEN or is_link(d):
+			return false
+		if d == DK_RAIL or d == DK_WALL or d == DK_JUNK:
+			return true
+		return not is_link(hd) or _blocked_from(t, home)
+	if d == DK_WALL or d == DK_PILLAR:
+		return true
+	if is_link(d) and is_top(hd):
+		return true
+	return _blocked_from(t, home)
+
+
+func _blocked_at(t: Vector2i, home: Vector2i) -> bool:
+	return _blocked_floor(t, home, mover_floor) if has_deck else _blocked_from(t, home)
+
+
+## 칸을 옮긴 뒤의 층: 램프·계단 위에서는 그대로, 상판 칸은 위에서 왔거나 램프에서 올라섰으면 1, 땅은 0
+func floor_after(from_t: Vector2i, to_t: Vector2i, fl: int) -> int:
+	if not has_deck or from_t == to_t:
+		return fl
+	var d := deck_at(to_t)
+	if is_link(d):
+		return fl
+	if is_top(d):
+		return 1 if fl >= 1 or is_link(deck_at(from_t)) else 0
+	return 0
+
+
+## 두 인물 사이 시야 배수(SD-21 §6.2 '층이 다르면 시야 판정 거리 ×0.5'): 1 같은 층 · 0.5 다른 층 · 0 못 봄.
+## 상판 그늘(층 0, 상판이 덮은 칸)에 선 사람과 상판 위 사람은 서로 못 본다. 램프 위는 두 층 다로 본다.
+func sight_mul(a: Vector2, fa: int, b: Vector2, fb: int, low_blocks: bool = false) -> float:
+	if has_deck and fa != fb:
+		var ta := tile_of(a)
+		var tb := tile_of(b)
+		if not (is_link(deck_at(ta)) or is_link(deck_at(tb))):
+			var low := ta if fa < fb else tb
+			if is_top(deck_at(low)):
+				return 0.0
+			return 0.5 if line_of_sight(a, b, low_blocks, true) else 0.0
+	return 1.0 if line_of_sight(a, b, low_blocks, has_deck and fa >= 1 and fb >= 1) else 0.0
+
+
+## 두 층이 서로 닿나(근접·탄·막기): 같은 층이거나 어느 한쪽이 램프 위
+func floors_meet(a: Vector2, fa: int, b: Vector2, fb: int) -> bool:
+	return fa == fb or not has_deck or is_link(deck_at(tile_of(a))) or is_link(deck_at(tile_of(b)))
+
+
 func _hits(c: Vector2, r: float) -> bool:
 	var home := tile_of(_mover) if _mover != Vector2.INF else tile_of(c)
 	for ty in range(floori((c.y - r) / T), floori((c.y + r) / T) + 1):
 		for tx in range(floori((c.x - r) / T), floori((c.x + r) / T) + 1):
-			if _blocked_from(Vector2i(tx, ty), home):
+			if _blocked_at(Vector2i(tx, ty), home):
 				var q := Vector2(clampf(c.x, tx * T, tx * T + T), clampf(c.y, ty * T, ty * T + T))
 				if q.distance_squared_to(c) < r * r:
 					return true
 	for b in blockers:
 		if is_instance_valid(b) and b.visible:
 			var bp: Vector2 = b.loco.logical
+			if has_deck and not floors_meet(bp, int(b.get("floor_id")), c, mover_floor):
+				continue                                             # 다른 층 사람(상판 위·아래)은 서로 막지 않는다
 			# 이미 겹친 인물은 막지 않는다(인물이 주인공 자리로 걸어 들어와 겹치면 서로 영영 못 빠져나오던 것 — 막히면 서되, 갇히지는 않는다)
 			var d0 := bp.distance_to(_mover)
 			if d0 > 0.5 and d0 >= r + BLOCK_R and bp.distance_to(c) < r + BLOCK_R:
@@ -516,7 +604,7 @@ func _occupied(except: Vector2i) -> Dictionary:
 
 ## 시선: 칸 격자 위 브레젠험 선, 높은 엄폐(벽·키 큰 소품)만 막는다(SD-11 §4.2·§14.3, ChunkWorld와 같은 규칙).
 ## low_blocks: 웅크린 대상을 볼 때 — 낮은 엄폐도 시야를 막는다(§4.2 '웅크린 대상 차단')
-func line_of_sight(a: Vector2, b: Vector2, low_blocks: bool = false) -> bool:
+func line_of_sight(a: Vector2, b: Vector2, low_blocks: bool = false, over_deck: bool = false) -> bool:
 	var p0 := tile_of(a)
 	var p1 := tile_of(b)
 	var dx := absi(p1.x - p0.x)
@@ -526,8 +614,8 @@ func line_of_sight(a: Vector2, b: Vector2, low_blocks: bool = false) -> bool:
 	var err := dx + dy
 	var p := p0
 	while true:
-		if p != p0 and p != p1 and cover_at(p) >= (1 if low_blocks else 2):
-			return false
+		if p != p0 and p != p1 and cover_at(p) >= (1 if low_blocks else 2) and not (over_deck and is_top(deck_at(p))):
+			return false                                          # over_deck: 상판 위에서 보는 시선은 상판이 덮은 칸(기둥·그늘의 물건)을 넘는다
 		if p == p1:
 			return true
 		var e2 := 2 * err
@@ -541,7 +629,9 @@ func line_of_sight(a: Vector2, b: Vector2, low_blocks: bool = false) -> bool:
 
 
 ## 칸 단위 길찾기(8방향, 모서리 끼어 지나가기 없음). 돌려줌: 칸 가운데 점들(시작 칸 제외), 못 가면 빈 배열
-func path(a: Vector2, b: Vector2, max_nodes: int = 4000) -> PackedVector2Array:
+func path(a: Vector2, b: Vector2, max_nodes: int = 4000, fl: int = 0, goal_fl: int = -1) -> PackedVector2Array:
+	if has_deck:
+		return _path_deck(a, b, max_nodes, fl, goal_fl)
 	var s := tile_of(a)
 	var g := tile_of(b)
 	var out := PackedVector2Array()
@@ -579,6 +669,68 @@ func path(a: Vector2, b: Vector2, max_nodes: int = 4000) -> PackedVector2Array:
 	var t := g
 	var rev: Array[Vector2i] = []
 	while t != s:
+		rev.append(t)
+		t = came[t]
+	rev.reverse()
+	for c in rev:
+		out.append(Vector2(c.x * T + 16, c.y * T + 16))
+	return out
+
+
+## 상판이 있는 맵의 길찾기(1-Rd, SD-21 §6.2 '층별 그래프 + 램프·계단 간선'): 상태 = (칸, 층). 층 1에서 땅으로는 램프 아래 끝으로만,
+## 층 0에서 상판으로는 램프를 올라서만 간다(추적대는 램프를 돌아서 온다). goal_fl < 0이면 목표 칸에 어느 층으로 닿아도 된다.
+func _path_deck(a: Vector2, b: Vector2, max_nodes: int, fl: int, goal_fl: int) -> PackedVector2Array:
+	var s := tile_of(a)
+	var g := tile_of(b)
+	var out := PackedVector2Array()
+	if s == g:
+		return out
+	var occ := {}
+	for bl in blockers:
+		if is_instance_valid(bl) and bl.visible:
+			var bt := tile_of(bl.loco.logical)
+			if bt != s and bt != g:
+				occ[Vector3i(bt.x, bt.y, int(bl.get("floor_id")))] = true
+	var s3 := Vector3i(s.x, s.y, fl)
+	var came := {s3: s3}
+	var cost := {s3: 0.0}
+	var open: Array = [[0.0, s3]]
+	var n := 0
+	var hit := Vector3i(-1, -1, -1)
+	var keep := mover_floor
+	while not open.is_empty() and n < max_nodes:
+		n += 1
+		var best := 0
+		for i in open.size():
+			if open[i][0] < open[best][0]:
+				best = i
+		var cur: Vector3i = open[best][1]
+		open.remove_at(best)
+		if cur.x == g.x and cur.y == g.y and (goal_fl < 0 or cur.z == goal_fl):
+			hit = cur
+			break
+		var ct := Vector2i(cur.x, cur.y)
+		for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1), Vector2i(1, 1), Vector2i(-1, 1), Vector2i(1, -1), Vector2i(-1, -1)]:
+			var nx: Vector2i = ct + d
+			if _blocked_floor(nx, ct, cur.z):
+				continue
+			if d.x != 0 and d.y != 0 and (_blocked_floor(Vector2i(ct.x + d.x, ct.y), ct, cur.z) or _blocked_floor(Vector2i(ct.x, ct.y + d.y), ct, cur.z)):
+				continue
+			var nf := floor_after(ct, nx, cur.z)
+			var n3 := Vector3i(nx.x, nx.y, nf)
+			if occ.has(n3):
+				continue
+			var c: float = cost[cur] + (1.414 if d.x != 0 and d.y != 0 else 1.0)
+			if not cost.has(n3) or c < cost[n3]:
+				cost[n3] = c
+				came[n3] = cur
+				open.append([c + Vector2(nx - g).length(), n3])
+	mover_floor = keep
+	if hit.x < 0:
+		return out
+	var t := hit
+	var rev: Array[Vector3i] = []
+	while t != s3:
 		rev.append(t)
 		t = came[t]
 	rev.reverse()

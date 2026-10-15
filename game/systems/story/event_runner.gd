@@ -253,7 +253,7 @@ func _show_actor(id: String, pos: Vector2, dir: String, sheet_name := "") -> voi
 func _route(a: Actor, to: Vector2) -> PackedVector2Array:
 	if world == null or not world.has_method("path"):
 		return PackedVector2Array()
-	return NpcRoutine.with_start(world, a.loco.render, to)
+	return NpcRoutine.with_start(world, a.loco.render, to, a.floor_id if "floor_id" in a else 0)
 
 
 func _mark(m: String) -> Vector2:

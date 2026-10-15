@@ -15,7 +15,10 @@ const L_LEVEL := 6400
 const L_STAIR := 8000
 const L_BODY := 9600
 const L_DECO := 12800
-const L_TAIL := 16000
+const L_DECK := 16000                            ## 고가(1-Rd): 상판 부호 1바이트 · 위층 그림 2바이트 · 아래층 그림 2바이트
+const L_DKTOP := 17600
+const L_DKLOW := 20800
+var L_TAIL := 16000                              ## 나무·그림자 목록 시작(고가 층이 있으면 24000)
 const SHADOW := Color(0, 0, 0, 0.35)
 const SPR_PER_FRAME := 40
 
@@ -36,6 +39,11 @@ var _spr_q: Array = []                           ## [청크, 그림 영역, 위�
 var _tiles_ground: Node2D
 var _tiles_shadow: Node2D
 var _tiles_body: Node2D
+var _tiles_dlow: Node2D                          ## 고가 아래층(그늘·기둥 밑동·램프·옹벽·비상계단·잔해) z -7
+var _tiles_dtop: Node2D                          ## 고가 상판(인물 위) z 2 — 층 1 인물은 z 3
+var deck_mat: ShaderMaterial
+var hole := Vector2(-99999, -99999)              ## 상판 디더 구멍(주인공이 상판 아래·끝 앞에 설 때) — 탄 그리기도 본다
+var hole_r := 0.0
 static var world_ts: TileSet
 static var ts_cols := 32
 static var tree_names: Array = []
@@ -49,6 +57,8 @@ func load_map(map_id: String, st: StoryState = null) -> void:
 	nchunks = Vector2i(int(meta["chunks"][0]), int(meta["chunks"][1]))
 	size = Vector2i(int(meta["size"][0]), int(meta["size"][1]))
 	ext = true
+	has_deck = bool(meta.get("deck", false))
+	L_TAIL = 24000 if has_deck else 16000
 	tree_names = meta["props"]
 	if world_ts == null:
 		world_ts = load("res://assets/tiles/ts_world.tres")
@@ -65,6 +75,15 @@ func load_map(map_id: String, st: StoryState = null) -> void:
 	_tiles_ground.z_index = -11
 	_tiles_shadow.z_index = -10
 	_tiles_body.z_index = -9
+	_tiles_dlow = Node2D.new()
+	_tiles_dlow.z_index = -7
+	add_child(_tiles_dlow)
+	_tiles_dtop = Node2D.new()
+	_tiles_dtop.z_index = 2
+	deck_mat = ShaderMaterial.new()
+	deck_mat.shader = load("res://systems/world/deck_cut.gdshader")
+	_tiles_dtop.material = deck_mat
+	add_child(_tiles_dtop)
 	objects = Node2D.new()
 	objects.y_sort_enabled = true
 	add_child(objects)
@@ -375,6 +394,34 @@ func _attach(k: Vector2i, a: PackedByteArray) -> void:
 	_tiles_body.add_child(dec)
 	nodes.append(body)
 	nodes.append(dec)
+	if has_deck:                                                         # 고가(1-Rd·Re): 아래층(인물 아래) · 상판(인물 위, 디더 구멍)
+		var dl := TileMapLayer.new()
+		dl.tile_set = world_ts
+		var dt := TileMapLayer.new()
+		dt.tile_set = world_ts
+		dt.use_parent_material = true
+		var any := false
+		for y in cs:
+			for x in cs:
+				var i := y * cs + x
+				if a[L_DECK + i] == 0 and a[L_DKLOW + i * 2] == 0 and a[L_DKLOW + i * 2 + 1] == 0:
+					continue
+				var tv := a[L_DKTOP + i * 2] | (a[L_DKTOP + i * 2 + 1] << 8)
+				var lv := a[L_DKLOW + i * 2] | (a[L_DKLOW + i * 2 + 1] << 8)
+				if tv > 0:
+					dt.set_cell(o + Vector2i(x, y), 0, Vector2i((tv - 1) % ts_cols, (tv - 1) / ts_cols))
+					any = true
+				if lv > 0:
+					dl.set_cell(o + Vector2i(x, y), 0, Vector2i((lv - 1) % ts_cols, (lv - 1) / ts_cols))
+					any = true
+		if any:
+			_tiles_dlow.add_child(dl)
+			_tiles_dtop.add_child(dt)
+			nodes.append(dl)
+			nodes.append(dt)
+		else:
+			dl.free()
+			dt.free()
 	var p := L_TAIL                                                      # 나무·거리 소품(R01 소품, y 정렬)
 	var nt := a[p] | (a[p + 1] << 8)
 	p += 2
@@ -479,6 +526,27 @@ func cover_at(t: Vector2i) -> int:
 
 func level_at(t: Vector2i) -> int:
 	return maxi(0, _cell(t, L_LEVEL))
+
+
+## 고가 상판 부호(InteriorMap.DK_*) — 붙지 않은 청크는 0
+func deck_at(t: Vector2i) -> int:
+	if not has_deck:
+		return DK_NONE
+	return maxi(0, _cell(t, L_DECK))
+
+
+## 상판 디더 구멍: 주인공이 층 0에서 상판 아래(그늘)나 상판 남쪽 끝 바로 앞(머리가 상판 그림에 걸리는 칸)에 서면 둘레를 비춘다
+func update_hole(p: Vector2, fl: int) -> void:
+	if not has_deck or deck_mat == null:
+		return
+	var t := tile_of(p)
+	var under := fl == 0 and (is_top(deck_at(t)) or is_top(deck_at(t + Vector2i(0, -1))))
+	var r := 5.0 * T if under else 0.0
+	if r != hole_r or (under and p.distance_to(hole + Vector2(0, 16)) > 0.5):
+		hole_r = r
+		hole = p - Vector2(0, 16)
+		deck_mat.set_shader_parameter("hole", hole)
+		deck_mat.set_shader_parameter("radius", hole_r)
 
 
 func is_stair(t: Vector2i) -> bool:

@@ -70,7 +70,7 @@ func new_frame() -> void:
 
 
 ## 경로(픽셀 좌표 배열). 이번 프레임 예산을 넘으면 빈 배열(다음 프레임에 다시 요청).
-func path(a: Vector2, b: Vector2) -> PackedVector2Array:
+func path(a: Vector2, b: Vector2, _fl: int = 0, _goal_fl: int = -1) -> PackedVector2Array:
 	if queries_this_frame >= budget:
 		return PackedVector2Array()
 	queries_this_frame += 1

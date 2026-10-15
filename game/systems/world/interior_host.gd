@@ -258,6 +258,7 @@ func enter(map_id: String, mark: String = "", look: Dictionary = {}, at: Vector2
 	player.loco.place(map.mark_pos(m) if at == Vector2.INF else at)
 	player.loco.facing = EventRunner.DIR_IDX.get(map.mark_dir(m), 2)
 	player.position = player.loco.render
+	player.set_floor(0)                                                 # 맵에 들어서는 자리는 땅(불러오기는 저장한 층을 뒤에 다시 세운다)
 	if map is WorldMap:
 		map.follow = player
 		map.id = map.zone_of(map.tile_of(player.loco.logical))
@@ -425,6 +426,8 @@ func _physics_process(dt: float) -> void:
 		_check_exit()
 		_clock_step(dt)
 		enc_live.tick(dt)
+	if map is WorldMap:
+		map.update_hole(player.loco.logical, player.floor_id)                # 고가 상판 아래·끝 앞: 둘레를 디더로 비춘다(1-Rd)
 	combat.tick(dt, not talking, st)
 	var want := Vector2.ZERO                                              # 조준 쪽으로 카메라를 끈다(원거리 무기, 최대 3칸 — SD-12 §15 '카메라 리드')
 	if combat.armed() and combat.weapon()["kind"] == "ranged" and not talking:
@@ -1723,6 +1726,7 @@ func _arrive(lid: String, hours: int) -> void:
 	map.load_now(at)
 	player.loco.place(at)
 	player.position = player.loco.render
+	player.set_floor(0)
 	player._show()
 	map.update_focus(at)
 	map.id = map.zone_of(map.tile_of(at))

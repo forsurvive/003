@@ -43,13 +43,13 @@ func tick(dt: float, player_pos: Vector2) -> void:
 		actor.move(Vector2.ZERO, dt)
 		if wait_t <= 0.0:
 			idx = (idx + 1) % route.size()
-			path = with_start(map, actor.loco.render, target())
+			path = with_start(map, actor.loco.render, target(), actor.floor_id)
 		return
 	if path.is_empty():
 		if arrived(actor.loco.render, target()):
 			_arrive()
 		else:
-			path = with_start(map, actor.loco.render, target())
+			path = with_start(map, actor.loco.render, target(), actor.floor_id)
 			if path.is_empty():
 				_arrive()                                               # 갈 수 없으면 그 자리에서 머문다
 		actor.move(Vector2.ZERO, dt)
@@ -66,7 +66,7 @@ func tick(dt: float, player_pos: Vector2) -> void:
 		if _yield_t > YIELD_S and route.size() > 1:                 # 오래 막히면 돌아서 왔던 지점으로 간다 — 좁은 복도에서 서로 기다리는 교착 풀기
 			_yield_t = 0.0
 			idx = (idx - 1 + route.size()) % route.size()
-			path = with_start(map, actor.loco.render, target())
+			path = with_start(map, actor.loco.render, target(), actor.floor_id)
 		return
 	_yield_t = 0.0
 	path = walk_path(actor, path, dt)
@@ -74,7 +74,7 @@ func tick(dt: float, player_pos: Vector2) -> void:
 	_last = actor.loco.logical
 	if _stuck_t > 2.0:
 		_stuck_t = 0.0
-		path = with_start(map, actor.loco.render, target())
+		path = with_start(map, actor.loco.render, target(), actor.floor_id)
 
 
 func _arrive() -> void:
@@ -97,8 +97,8 @@ func resume() -> void:
 # ---------------------------------------------------------------- 칸 길 따라가기(봇·연출도 쓴다)
 ## 길찾기 경로 앞에, 첫 걸음 방향에 수직인 축만 칸 가운데로 맞추는 점을 둔다(어긋난 채 문틀·모서리로 들어 걸리지 않게).
 ## 진행 방향 축의 어긋남은 그대로 둔다 — 지나온 칸 가운데로 되돌아가 좌우로 맴돌지 않게.
-static func with_start(m, from: Vector2, to: Vector2) -> PackedVector2Array:
-	var p: PackedVector2Array = m.path(from, to)
+static func with_start(m, from: Vector2, to: Vector2, fl: int = 0) -> PackedVector2Array:
+	var p: PackedVector2Array = m.path(from, to, 4000, fl) if fl != 0 else m.path(from, to)
 	if p.is_empty():
 		if m.tile_of(from) == m.tile_of(to) and not arrived(from, to):
 			p.append(to)                                            # 같은 칸 안: 그 자리로만 맞춘다(빈 길이면 제자리에 멈춰 섰다)

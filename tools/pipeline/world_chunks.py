@@ -18,6 +18,8 @@ import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import world_bake as WB
+import road_net as RN
+import elevated as EVB
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 OUT = os.path.join(ROOT, "game", "data", "world")
@@ -351,6 +353,23 @@ def build():
             if 2 <= k2 <= 4:
                 m |= bit
         body[y, x] = tid(("tr:deckb%d" if brk[y, x] else "tr:deck%d") % m)
+    # 고가(1-Rd·Re, SD-21 §6): 상판(층 1)·방호벽·램프·옹벽·기둥·무너진 경간·비상계단 — 그 자리와 둘레 2칸의 건물·나무는 비운다.
+    # 손 맵·손 실내 문 앞 고정 건물(ANCHOR_STYLE) 둘레·성곽·다리·놀이 구역 밖에는 놓지 않는다
+    ev_ok = play & ~water & ~fort & ~fort_ext & (kind != 13)
+    ev_keep = inmask.copy()
+    for d_ in DOORS:
+        nx_, ny_ = d_["near"]
+        ev_keep[max(0, ny_ - 10):ny_ + 11, max(0, nx_ - 10):nx_ + 11] = True
+    for ins in insets:
+        ox, oy, iw, ih = ins["rect"]
+        ev_keep[max(0, oy - 6):oy + ih + 6, max(0, ox - 6):ox + iw + 6] = True
+    EV = EVB.build(r["roads"], RN.SECTION, ev_ok & ~ev_keep & (kind != 2) & (kind != 3), H, W, tid, log=log,
+                   ramp_ok=ev_ok & ~ev_keep & ~((kind >= 2) & (kind <= 4)))      # 상판은 지천(4) 위를 지나도 되고 램프는 땅에만
+    solid[EV["solid_on"]] = 1
+    solid[EV["ramp"]] = 0
+    cover[:] = np.maximum(cover, EV["cover"])
+    tree &= ~EV["clear"]
+    blds = [b for b in blds if not EV["clear"][b["y"]:b["y"] + b["h"], b["x"]:b["x"] + b["w"]].any()]
     # 건물
     shadows = []
     entries = []                                                             # 1층 문 후보(1-5e 들어가 보는 건물): 문·셔터 타일, 가게·사무동은 정면 가운데
@@ -542,7 +561,7 @@ def build():
 
     # 거리 소품(R01 소품, SD-16 §6.6 '소품' 층): 막는 소품은 발 칸 + 둘레 1칸이 모두 같은 높이의 걷는 칸일 때만(좁은 길을 막지 않는다)
     pm = json.load(open(os.path.join(ROOT, "game", "assets", "props", "r01_props.json"), encoding="utf-8"))["props"]
-    free = (solid == 0) & (stair == 0) & ~inmask & ~carve & play & (body == 0)
+    free = (solid == 0) & (stair == 0) & ~inmask & ~carve & play & (body == 0) & ~EV["noprop"]
     near_in = np.zeros((H, W), bool)
     for ins in insets:
         ox, oy, iw, ih = ins["rect"]
@@ -734,7 +753,7 @@ def build():
 
     # 길 위 발견물(1-4f, SD-08 §13.2 '소형 관심 지점' · §14.1 경고 장치): 굽기 때 규칙으로 흩고, 용기·조사 글은 pois.json으로 낸다
     tags = chunk_tags(r, kind)                                                 # 결·지형 태그(소장소 템플릿이 먼저 읽는다)
-    pois = place_pois(src, solid, cover, gflag, stair, level, kind, r["use"], reach, inmask, carve, play, body, insets, placed, pm, tags["chunks"])
+    pois = place_pois(src, solid, cover, gflag, stair, level, kind, r["use"], reach, inmask, carve | EV["noprop"], play, body, insets, placed, pm, tags["chunks"])
     reach &= solid == 0
 
     # 손 맵 사이 걷는 길(봇 경유점): 비탈 첫 칸 → 봉천 동쪽 골목 끝
@@ -761,7 +780,7 @@ def build():
         reg_grid[cy_][cx_] = code
     json.dump(tags, open(os.path.join(OUT, "chunk_tags.json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
     log("청크 태그: " + ", ".join("%s %d" % (k_, sum(1 for v in tags["chunks"].values() if k_ in v["tags"])) for k_ in TAGS))
-    return {"pois": pois, "r05": r05, "region_grid": reg_grid, "street": r["street"], "bridges": cross, "routes": routes, "floor": floor, "gflag": gflag, "solid": solid, "cover": cover, "level": level, "stair": stair, "body": body,
+    return {"dk_code": EV["code"], "dk_top": EV["top"], "dk_low": EV["low"], "ev_stats": EV["stats"], "pois": pois, "r05": r05, "region_grid": reg_grid, "street": r["street"], "bridges": cross, "routes": routes, "floor": floor, "gflag": gflag, "solid": solid, "cover": cover, "level": level, "stair": stair, "body": body,
             "deco": deco, "trees": tree_list, "props": props, "shadows": shadows, "insets": insets, "play": play, "band": r["band"],
             "reach": reach, "miss": miss, "wet": wet, "core": core, "kind": kind, "entries": entries}
 
@@ -1067,6 +1086,7 @@ def export(R):
             fg = np.stack([R["floor"][sl].astype(np.uint8), R["gflag"][sl].astype(np.uint8)], -1)   # 바닥·덮개 교대(바닥 층 RG8 그대로 — 행 복사로 붙인다)
             parts = [fg.tobytes()] + [R[k][sl].astype(np.uint8).tobytes() for k in ("solid", "cover", "level", "stair")]
             parts += [R[k][sl].astype("<u2").tobytes() for k in ("body", "deco")]
+            parts += [R["dk_code"][sl].astype(np.uint8).tobytes()] + [R[k][sl].astype("<u2").tobytes() for k in ("dk_top", "dk_low")]   # 고가(1-Rd)
             ci = cy * NCX + cx
             tl = trees[tree_chunk == ci]
             pb = struct.pack("<H", len(tl)) + b"".join(struct.pack("<BBH", int(t[0]) - cx * CS, int(t[1]) - cy * CS, int(t[2])) for t in tl)
@@ -1084,7 +1104,7 @@ def export(R):
     ed = json.load(open(ep, encoding="utf-8"))
     ed["sites"] = R["pois"].get("sites", [])
     json.dump(ed, open(ep, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"), default=int)
-    meta = {"chunks": [NCX, NCY], "chunk_size": CS, "tile": 32, "size": [W, H], "layers": ["floor+gflag 교대", "solid", "cover", "level", "stair", "body16", "deco16", "trees", "shadows"],
+    meta = {"chunks": [NCX, NCY], "chunk_size": CS, "tile": 32, "size": [W, H], "layers": ["floor+gflag 교대", "solid", "cover", "level", "stair", "body16", "deco16", "deck", "deck_top16", "deck_low16", "trees", "shadows"], "deck": True,
             "offsets": offs, "props": R["props"], "start": list(START),
             "regions": json.load(open(WB.SRC, encoding="utf-8"))["region"],
             "region_names": {"R01": "관악", "R02": "여의도·영등포", "R03": "마포·상암", "R04": "서강·선유도", "R05": "도심",
@@ -1301,7 +1321,7 @@ def sample(R, x0, y0, w, h, out):
             img.alpha_composite(lay)
     atlas = Image.open(os.path.join(TIL, "ts_world.png")).convert("RGBA")
     cols = atlas.width // 32
-    for layer in ("body", "deco"):
+    for layer in ("body", "deco", "dk_low"):
         a = R[layer][y0:y0 + h, x0:x0 + w]
         for yy, xx in zip(*np.nonzero(a)):
             i = int(a[yy, xx]) - 1
@@ -1333,6 +1353,10 @@ def sample(R, x0, y0, w, h, out):
         if -128 < px_ < img.width and -128 < py_ < img.height:
             lay.alpha_composite(im2, (px_ + 128, py_ + 128))
     img.alpha_composite(lay.crop((128, 128, 128 + img.width, 128 + img.height)))
+    a = R["dk_top"][y0:y0 + h, x0:x0 + w]                                    # 고가 상판(인물·소품 위)
+    for yy, xx in zip(*np.nonzero(a)):
+        i = int(a[yy, xx]) - 1
+        img.alpha_composite(atlas.crop(((i % cols) * 32, (i // cols) * 32, (i % cols) * 32 + 32, (i // cols) * 32 + 32)), (int(xx) * 32, int(yy) * 32))
     img.save(out)
     log("견본:", out, img.size)
 

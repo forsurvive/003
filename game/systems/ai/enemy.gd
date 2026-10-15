@@ -189,7 +189,8 @@ func think(dt: float, target: Combatant, nav, shots: Projectiles) -> void:   ## 
 		var dist_t := to.length() / 32.0
 		var fwd: Vector2 = Locomotion.VEC[loco.facing].normalized()
 		var fov := brain.state == AIBrain.S.COMBAT or Perception.in_fov(fwd, to, brain.kind)   # 교전 중에는 표적을 계속 본다
-		var sees: bool = not target.dead and dist_t <= Perception.sight_range(per) and world.line_of_sight(loco.logical, target.pos())
+		var sm := sight_of(target)                                   # 고가(1-Rd): 다른 층이면 시야 거리 ×0.5, 상판 위·그늘 사이는 못 본다
+		var sees: bool = not target.dead and sm > 0.0 and dist_t <= Perception.sight_range(per) * sm
 		var rate: float = Perception.detect_rate(dist_t, per, {"movement": target.movement, "posture": target.posture,
 			"sneak_skill": target.sneak, "alert": brain.alert(), "in_fov": fov}) * det_mul if sees else 0.0
 		var hit: bool = cmb.last_hit_from != Vector2.ZERO
@@ -228,9 +229,9 @@ func _tactics(target: Combatant, nav) -> void:
 	_move = Vector2.ZERO
 	if goal == "engage":
 		var d := loco.logical.distance_to(target.pos()) / 32.0
-		var los: bool = world.line_of_sight(loco.logical, target.pos())
+		var los: bool = sight_of(target) > 0.0 and meets(target)
 		if style == "swarm" or style == "melee" or style == "dog":
-			_repath(nav, target.pos())
+			_repath(nav, target.pos(), target.fl())
 		else:
 			var lo: float = float(weapon["range_eff"]) * 0.6
 			var hi: float = float(weapon["range_eff"]) * 0.9
@@ -276,8 +277,8 @@ func _tactics(target: Combatant, nav) -> void:
 			_repath(nav, p)
 
 
-func _repath(nav, to: Vector2) -> void:
-	var p: PackedVector2Array = nav.path(loco.logical, to)
+func _repath(nav, to: Vector2, goal_fl: int = -1) -> void:
+	var p: PackedVector2Array = nav.path(loco.logical, to, floor_id, goal_fl)
 	if p.size() > 0:
 		_path = p
 		_path_i = 1
@@ -335,10 +336,12 @@ func _swarm(dt: float, target: Combatant, to_t: Vector2) -> void:
 		_leap -= dt
 		var blocked := func(a: Vector2, b: Vector2) -> Vector2: return world.move_circle(a, b, radius_px)
 		var room := maxf(0.0, to_t.length() - (cmb.radius + target.radius))     # 닿는 자리에서 멈춘다(겹쳐 올라타지 않는다)
+		var ft := _deck_pre()
 		loco.logical = blocked.call(loco.logical, loco.logical + to_t.normalized() * minf(160.0 * dt, room))
+		_deck_post(ft)
 		loco.render = loco.logical.round()
 		position = loco.render
-		if _leap <= 0.0 and loco.logical.distance_to(target.pos()) <= 32.0 + target.radius:
+		if _leap <= 0.0 and loco.logical.distance_to(target.pos()) <= 32.0 + target.radius and meets(target):
 			target.last_by = cmb.team
 			target.take({"hp": 3.0}, loco.logical)
 		return
@@ -354,7 +357,7 @@ func _swarm(dt: float, target: Combatant, to_t: Vector2) -> void:
 
 ## 들개 물기: 닿으면 반응 지연 뒤 물고 1.1초 쉰다(SD-14 §4.2 '물기 n')
 func _bite(_dt: float, target: Combatant, to_t: Vector2) -> void:
-	if _cool > 0.0 or target.dead:
+	if _cool > 0.0 or target.dead or not meets(target):
 		return
 	loco.facing = Locomotion.snap8(to_t, 0.0)
 	_show()
@@ -367,7 +370,7 @@ func _shoot(dt: float, target: Combatant, shots: Projectiles) -> void:
 	_cool = maxf(0.0, _cool - dt)
 	if not has_token or _cool > 0.0 or target.dead:
 		return
-	if not world.line_of_sight(loco.logical, target.pos()):
+	if sight_of(target) <= 0.0 or not meets(target):
 		return
 	var seen: Vector2 = _hist[0][1] if not _hist.is_empty() else target.pos()     # aim lags by the reaction delay
 	var aim := rad_to_deg((seen - loco.logical).angle())
@@ -375,7 +378,7 @@ func _shoot(dt: float, target: Combatant, shots: Projectiles) -> void:
 		aim += (10.0 + shots.rng.randf() * 6.0) * (1.0 if shots.rng.randf() < 0.5 else -1.0)
 	var sp := CombatRules.spread(skill, "stand", loco.motion != "idle")
 	var ang := CombatRules.shot_angle(aim, sp, shots.rng)
-	if shots.fire(loco.logical + Vector2(0, -14) + Vector2.RIGHT.rotated(deg_to_rad(aim)) * 10.0, ang, 640.0, cmb.team, weapon, skill):
+	if shots.fire(loco.logical + Vector2(0, -14) + Vector2.RIGHT.rotated(deg_to_rad(aim)) * 10.0, ang, 640.0, cmb.team, weapon, skill, false, 5, "auto", floor_id):
 		_cool = 1.0 / (float(weapon["rate"]) * 0.6)                  # semi-auto: 60% of max rate
 		shots_fired += 1
 		_burst += 1
@@ -392,7 +395,7 @@ func _swing(dt: float, target: Combatant) -> void:
 	_cool = maxf(0.0, _cool - dt)
 	swing_t = maxf(0.0, swing_t - dt)
 	var to_t := target.pos() - loco.logical
-	if _cool > 0.0 or target.dead or to_t.length() > float(weapon.get("range_eff", 1.0)) * 32.0 + target.radius + cmb.radius:
+	if _cool > 0.0 or target.dead or not meets(target) or to_t.length() > float(weapon.get("range_eff", 1.0)) * 32.0 + target.radius + cmb.radius:
 		return
 	loco.facing = Locomotion.snap8(to_t, 0.0)
 	_show()
@@ -473,3 +476,15 @@ func _draw() -> void:
 				var w := 16.0
 				draw_rect(Rect2(-w / 2, top + 2, w, 2), Color("1a181d"))
 				draw_rect(Rect2(-w / 2, top + 2, w * cmb.hp / cmb.max_hp, 2), Color("e04a35"))
+
+
+## 고가(1-Rd): 표적과의 시야 배수(1 같은 층 · 0.5 다른 층 · 0 못 봄). 상판이 없는 맵은 시선만 본다
+func sight_of(target: Combatant) -> float:
+	if world is InteriorMap and world.has_deck:
+		return world.sight_mul(loco.logical, floor_id, target.pos(), target.fl())
+	return 1.0 if world.line_of_sight(loco.logical, target.pos()) else 0.0
+
+
+## 표적과 같은 층에서 닿나(탄·물기·근접)
+func meets(target: Combatant) -> bool:
+	return not (world is InteriorMap and world.has_deck) or world.floors_meet(loco.logical, floor_id, target.pos(), target.fl())

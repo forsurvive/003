@@ -484,9 +484,16 @@ func _process(dt: float) -> void:
 			host.input_fn = _walk.bind(Vector2(int(s[1]) * 32 + 16, int(s[2]) * 32 + 16))
 			if host.player.loco.render.distance_to(Vector2(int(s[1]) * 32 + 16, int(s[2]) * 32 + 16)) < 6.0 or step_t > 40.0:
 				if step_t > 40.0:
+					var near: Array = []
+					for b in host.map.blockers:
+						if is_instance_valid(b) and b.loco.logical.distance_to(host.player.loco.logical) < 48.0:
+							near.append([b.sheet, b.loco.logical, b.floor_id])
 					print("  [봇] 걸어서 못 감: ", s, " 지금 ", host.map.id, " ", host.map.tile_of(host.player.loco.logical),
 						" · 대화 ", host.box.active, " 바쁨 ", host.busy, " 연출 ", host.ev.busy(), " 길 ", NpcRoutine.with_start(host.map, host.player.loco.logical,
-						Vector2(int(s[1]) * 32 + 16, int(s[2]) * 32 + 16)).size(), " 고체 ", host.map.is_solid(host.map.tile_of(host.player.loco.logical)))
+						Vector2(int(s[1]) * 32 + 16, int(s[2]) * 32 + 16)).size(), " 고체 ", host.map.is_solid(host.map.tile_of(host.player.loco.logical)),
+						" · 잠금 ", host.locked, " 몸 ", host.body, " 창 ", [host.pipboy != null, host.container != null, host.terminal != null, host.lockpick != null],
+						" 입력 ", _walk(Vector2(int(s[1]) * 32 + 16, int(s[2]) * 32 + 16)), " 걸음 ", host.player.loco.motion, " 그림 ", host.player.loco.render, " 판정 ", host.player.loco.logical,
+						" 층 ", host.player.floor_id, " 곁 ", near)
 				_next()
 		"want":
 			want = s[1]
@@ -735,7 +742,7 @@ func _walk(goal: Vector2) -> Vector2:
 	if p.distance_to(goal) < 4.0:
 		return Vector2.ZERO
 	if path.is_empty() or step_t < 0.05 or int(step_t * 2.0) % 6 == 0:
-		path = NpcRoutine.with_start(host.map, p, goal)
+		path = NpcRoutine.with_start(host.map, p, goal, host.player.floor_id)
 	while path.size() > 0 and (NpcRoutine.arrived(p, path[0]) or (path.size() > 1 and p.distance_to(path[1]) <= path[0].distance_to(path[1]) + 2.0)):
 		path.remove_at(0)
 	if path.is_empty():

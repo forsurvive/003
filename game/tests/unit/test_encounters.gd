@@ -107,6 +107,7 @@ func test_encounter_rules(t) -> void:
 	var row := 31 * 40 + 20                                          # C-14-31 ~ C-21-31: 위협 1~3, 정착지 밖
 	var x0 := 14 * 40 + 20
 	var hits := 0
+	Encounters._site_grid = {Vector2i(-99, -99): []}                     # 주기 시험: 소장소(1-W)는 빼고 본다(다시 구우면 자리가 옮겨진다)
 	en.on_move(Vector2i(x0, row), 0, false, "R01")                    # 첫 자리 잡기
 	for i in range(1, 7):
 		en.on_move(Vector2i(x0 + i * 40, row), 0, false, "R01")
@@ -120,6 +121,7 @@ func test_encounter_rules(t) -> void:
 	for i in range(5, -1, -1):                                       # 되돌아 걷는다(경계 6번 = 판정 2번)
 		en.on_move(Vector2i(x0 + i * 40, row), 0, false, "R01")
 	t.eq(en.trace.slice(n0).filter(func(r): return r["re"] == "(안전 간격)").size(), 2, "RE가 끝나면 다음 2번은 건너뛴다")
+	Encounters._site_grid = {}
 	# 판정 성공 → 추적대 또는 기본 표(밤만 RE-004)
 	var got := {}
 	var en2 := Encounters.new(st, 11)
@@ -179,7 +181,8 @@ func test_capture_flow(t) -> void:
 	h.body = "adult"
 	h.date_text = "2277. 10. 24.  09:20"
 	h.enter("W", "L-R01-15")
-	t.eq(h.map.tile_of(h.player.loco.logical), Vector2i(833, 1343), "월드 출구 표지 = 장소 L-ID의 도착 칸")
+	var arr: Array = PlaceLog.db["L-R01-15"]["arrive"]                   # 도로·고가를 다시 구우면 도착 칸이 옮겨진다(SD-21 §8) — 장소 자료를 읽는다
+	t.eq(h.map.tile_of(h.player.loco.logical), Vector2i(int(arr[0]), int(arr[1])), "월드 출구 표지 = 장소 L-ID의 도착 칸")
 	t.ok(h.clock_running(), "MQ-101 아침 뒤 = 시간이 흐른다")
 	var e: Enemy = h.combat.spawn("CR-436", h.player.loco.logical + Vector2(64, 0), h.map, st, {})
 	e.set_meta("capture", "SB")

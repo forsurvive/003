@@ -22,6 +22,8 @@ var roll_dir := 2
 var roll_cool := 0.0
 var _steer := Vector2.ZERO
 var _steer_at := -1
+## 층(1-Rd, SD-16 §6.5 '층 ID'): 0 지면 · 1 고가 상판. 램프·비상계단 칸에서만 바뀐다(InteriorMap.floor_after)
+var floor_id := 0
 
 
 func setup_doll(look: Dictionary, pos: Vector2, w) -> void:
@@ -61,7 +63,38 @@ func set_pose(p: String) -> void:
 	n.visible = p != "in_bed"                                          # 침대 그림이 대신 그린다(말풍선 자리는 남는다)
 	n.rotation_degrees = -90.0 if p == "lie" else 0.0
 	n.position = Vector2(-4, -10) if p == "lie" else (Vector2(0, 4) if p == "sit" else Vector2.ZERO)
-	z_index = 1 if p == "lie" else 0
+	_floor_z()
+
+
+## 그리는 층: 상판(z 2) 위에 선 인물은 z 3 — 상판 아래(층 0) 인물은 상판 그림에 가려진다. 램프 위도 상판 쪽이다
+func _floor_z() -> void:
+	var up := floor_id >= 1
+	if not up and world is InteriorMap and world.has_deck:
+		up = InteriorMap.is_link(world.deck_at(world.tile_of(loco.logical)))
+	z_index = (3 if up else 0) + (1 if pose == "lie" else 0)
+
+
+## 층이 있는 맵에서 충돌을 부르기 전후: 맵에 내 층을 알리고, 움직인 뒤 층을 갱신한다
+func _deck_pre() -> Vector2i:
+	if world is InteriorMap and world.has_deck:
+		world.mover_floor = floor_id
+		return world.tile_of(loco.logical)
+	return Vector2i(-99999, -99999)
+
+
+func _deck_post(from_t: Vector2i) -> void:
+	if from_t.x == -99999:
+		return
+	var f: int = world.floor_after(from_t, world.tile_of(loco.logical), floor_id)
+	world.mover_floor = 0
+	floor_id = f
+	_floor_z()                                                          # 램프에 오르내리면 층이 같아도 그리는 층이 바뀐다
+
+
+## 층을 정해 세운다(불러오기·순간 이동·연출 배치)
+func set_floor(f: int) -> void:
+	floor_id = f
+	_floor_z()
 
 
 ## 발 기준점에서 머리 꼭대기까지(음수 px): 시트 첫 컷의 불투명 영역 위끝(시트마다 한 번 재어 둔다). 말풍선 높이 — 아기는 낮다
@@ -84,7 +117,9 @@ func head_y() -> float:
 
 func move(input: Vector2, dt: float) -> void:
 	var blocked := func(a: Vector2, b: Vector2) -> Vector2: return world.move_circle(a, b, radius_px)
+	var ft := _deck_pre()
 	loco.step(input, dt, mode, aim_dir, blocked)
+	_deck_post(ft)
 	position = loco.render
 	_show()
 
@@ -97,7 +132,10 @@ func steer(input: Vector2) -> Vector2:
 	if _steer != Vector2.ZERO and loco.motion != "idle" and loco.frames_advanced == _steer_at:
 		return _steer                                                  # 걸음 하나를 다 걸을 때까지 방향 유지
 	var hits := func(c: Vector2, r: float) -> bool: return world.circle_hits(c, r)
+	var ft := _deck_pre()
 	_steer = Sweep.steer(loco.logical, input, 6.0, radius_px, hits)
+	if ft.x != -99999:
+		world.mover_floor = 0
 	_steer_at = loco.frames_advanced
 	return _steer
 
@@ -122,8 +160,10 @@ func start_roll(dir_vec: Vector2) -> void:
 ## 구르는 동안 매 프레임: 발이 땅에서 떨어진 이동이라 위치가 연속으로 바뀐다. 끝나면 그 자리에 선다.
 func roll_step(dt: float) -> void:
 	var a := loco.logical
+	var ft := _deck_pre()
 	var b: Vector2 = world.move_circle(a, a + roll_vec * ROLL_DIST / ROLL_TIME * dt, radius_px)
 	loco.logical = b
+	_deck_post(ft)
 	loco.render = b.round()
 	roll_t += dt
 	if roll_t >= ROLL_TIME:

@@ -37,12 +37,12 @@ func _ready() -> void:
 ## focused: 집중 사격(SD-11 §5.3) — 치명타 +15%p, 머리 가중치 + 2 × 인지력, 무기 부위 활성
 ## flash: 총구 효과 세트. "auto"면 무기로 고른다(CombatFx.flash_for). ""면 그리지 않는다 — 주인공은 인형이 총과 같은 층에 그린다.
 func fire(origin: Vector2, angle_deg: float, speed: float, team: String, weapon: Dictionary, skill: float,
-		focused: bool = false, per: int = 5, flash: String = "auto") -> bool:
+		focused: bool = false, per: int = 5, flash: String = "auto", fl: int = 0) -> bool:
 	if shots.size() >= MAX:
 		return false
 	var dir := Vector2.RIGHT.rotated(deg_to_rad(angle_deg))
 	shots.append({"p": origin, "v": dir * speed, "ang": angle_deg, "life": weapon["range_max"] * 32.0 / speed, "team": team,
-		"weapon": weapon, "skill": skill, "origin": origin, "focused": focused, "per": per})
+		"weapon": weapon, "skill": skill, "origin": origin, "focused": focused, "per": per, "fl": fl})
 	var fs := CombatFx.flash_for(weapon) if flash == "auto" else flash
 	if CombatFx.has_set(fs):
 		flashes.append(_fx(fs, origin, angle_deg))
@@ -113,6 +113,7 @@ func step(dt: float) -> void:
 func _segment_hit(a: Vector2, b: Vector2, s: Dictionary):
 	var best = null
 	var best_t := 2.0
+	var deck_world: bool = world is InteriorMap and world.has_deck
 	var kmin := Vector2i(floori(minf(a.x, b.x) / BUCKET) - 1, floori(minf(a.y, b.y) / BUCKET) - 1)
 	var kmax := Vector2i(floori(maxf(a.x, b.x) / BUCKET) + 1, floori(maxf(a.y, b.y) / BUCKET) + 1)
 	for ky in range(kmin.y, kmax.y + 1):
@@ -123,6 +124,8 @@ func _segment_hit(a: Vector2, b: Vector2, s: Dictionary):
 						or c.team == "gone" \
 						or (str(s["team"]).begins_with("calm") and c.team in ["player", "resident", "ally"]):   # 적의 탄은 주민을 비켜 간다 · 주인공 탄은 아군을 지나간다(SD-11 §8.4 오사 없음) · 달아난 적 · 비적대 무리(1-E)의 탄은 주인공 편을 비켜 간다
 					continue
+				if deck_world and not world.floors_meet(c.pos(), c.fl(), a, int(s.get("fl", 0))):
+					continue                                              # 다른 층(고가 위·아래)은 맞지 않는다(SD-21 §6.2, 내려 쏘기는 1-9)
 				var ctr: Vector2 = c.pos() + Vector2(0, -12)          # torso centre above the feet
 				var tt := _seg_circle(a, b, ctr, c.radius)
 				if c.invuln:                                          # 구르기 무적: 탄이 지나간다
@@ -162,10 +165,19 @@ static func _seg_circle(a: Vector2, b: Vector2, c: Vector2, r: float) -> float:
 func _blocked(a: Vector2, b: Vector2, s: Dictionary) -> Vector2:
 	var n := int(ceil(a.distance_to(b) / 8.0)) + 1
 	var o: Vector2 = s["origin"]
+	var deck_world: bool = world is InteriorMap and world.has_deck
 	var ot := Vector2i(floori(o.x / 32), floori(o.y / 32))
 	for i in n + 1:
 		var p := a.lerp(b, float(i) / n)
 		var t := Vector2i(floori(p.x / 32), floori(p.y / 32))
+		if deck_world:                                                   # 고가(1-Rd): 층 1 탄은 상판 밖·난간에서 멎고 땅 엄폐를 넘는다 · 층 0 탄은 기둥·옹벽에 막힌다
+			var d: int = world.deck_at(t)
+			if int(s.get("fl", 0)) >= 1 and not InteriorMap.is_link(d):
+				if (d == InteriorMap.DK_RAIL or d == InteriorMap.DK_WALL or d == InteriorMap.DK_JUNK or not InteriorMap.is_top(d)) and p.distance_to(o) > 12.0:
+					return p
+				continue
+			if d == InteriorMap.DK_PILLAR or d == InteriorMap.DK_WALL:
+				return p
 		var cov: int = world.cover_at(t)
 		if cov == 0:
 			continue
@@ -203,7 +215,11 @@ func _draw() -> void:
 	var tex := CombatFx.sheet()
 	for m in marks:
 		draw_rect(Rect2((m[0] as Vector2).round() - Vector2(1, 1), Vector2(2, 2)), Color("cbc5b9" if m[1] > 10 else "6e6966"))
+	var dw: bool = world is WorldMap and world.has_deck
 	for s in shots:                                                   # 탄환 16방향(2×1 심 + 잔상 4px + 어두운 심) — 머리가 탄 위치
+		if dw and int(s.get("fl", 0)) == 0 and InteriorMap.is_top(world.deck_at(world.tile_of(s["p"]))) \
+				and (s["p"] as Vector2).distance_to(world.hole) > world.hole_r:
+			continue                                                  # 상판 아래(층 0) 탄은 상판에 가린다(디더 구멍 안만 보인다)
 		var r := CombatFx.region("bullet", float(s["ang"]), 0)
 		draw_texture_rect_region(tex, Rect2(CombatFx.top_left("bullet", s["p"]), r.size), r)
 

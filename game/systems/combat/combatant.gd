@@ -32,6 +32,12 @@ func pos() -> Vector2:
 	return actor.loco.logical
 
 
+## 층(1-Rd): 0 지면 · 1 고가 상판(인물이 아니면 0)
+func fl() -> int:
+	var v = actor.get("floor_id") if actor is Object else null
+	return int(v) if v != null else 0
+
+
 func take(result: Dictionary, from: Vector2) -> void:
 	if dead or invuln:
 		return

@@ -73,6 +73,7 @@ static func host(h: InteriorHost) -> Dictionary:
 		"map": ("W" if h.map is WorldMap else h.map.id) if h.map != null else "",   # 월드는 "W" + 월드 픽셀(1-1)
 		"pos": [_round(h.player.loco.logical.x), _round(h.player.loco.logical.y)] if h.player != null else [0, 0],
 		"facing": h.player.loco.facing if h.player != null else 2,
+		"floor": h.player.floor_id if h.player != null else 0,             # 고가 상판 위(1)·아래(0) — 같은 칸이라도 층이 다르다(SD-21 §9)
 		"body": h.body, "date": h.date_text, "hud": h.hud_on, "pip": h.pipboy_ok, "night": h.night,
 		"fired": fired, "seen": seen,
 		"hp": _round(c.pc.hp) if c.pc != null else 0.0,
@@ -113,6 +114,7 @@ static func apply_host(h: InteriorHost, d: Dictionary) -> void:
 	h.player.loco.place(at)
 	h.player.loco.facing = int(d.get("facing", 2))
 	h.player.position = h.player.loco.render
+	h.player.set_floor(int(d.get("floor", 0)))
 	h.player._show()
 	h.cam.position = at.round()
 	h.cam.reset_smoothing()

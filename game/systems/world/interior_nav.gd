@@ -16,11 +16,11 @@ func new_frame() -> void:
 	queries_this_frame = 0
 
 
-func path(a: Vector2, b: Vector2) -> PackedVector2Array:
+func path(a: Vector2, b: Vector2, fl: int = 0, goal_fl: int = -1) -> PackedVector2Array:
 	if queries_this_frame >= budget:
 		return PackedVector2Array()
 	queries_this_frame += 1
-	var p := map.path(a, b)
+	var p := map.path(a, b, 4000, fl, goal_fl)
 	if p.is_empty():
 		if map.tile_of(a) == map.tile_of(b):
 			return PackedVector2Array([a, b])

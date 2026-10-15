@@ -1063,6 +1063,8 @@ def terrain_tiles():
     for m in range(16):
         out[f"tr:deck{m}"] = deck(m)
         out[f"tr:deckb{m}"] = deck(m, broken=True)
+    import tiles_elevated                                                    # 고가 상판·램프·비상계단(1-Re, SD-21 §6.1)
+    out.update(tiles_elevated.tiles())
     return out
 
 

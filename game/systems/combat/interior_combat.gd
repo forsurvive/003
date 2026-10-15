@@ -275,7 +275,7 @@ func _allies(dt: float) -> void:
 			if not is_instance_valid(e) or e.cmb.dead or not e.cmb.team.begins_with("enemy"):
 				continue
 			var d: float = e.loco.logical.distance_to(me.loco.logical)
-			if d < bd and shots.world.line_of_sight(me.loco.logical, e.loco.logical):
+			if d < bd and shots.world.line_of_sight(me.loco.logical, e.loco.logical) and e.meets(a["cmb"]):
 				bd = d
 				best = e
 		if best == null:
@@ -287,7 +287,7 @@ func _allies(dt: float) -> void:
 			a["cool"] = 1.0 / (float(w.get("rate", 2.0)) * 0.25) * shots.rng.randf_range(0.8, 1.4)   # 감시조는 아껴 쏜다(초당 1발 안팎)
 			var aim := rad_to_deg((best.loco.logical - me.loco.logical).angle())
 			var ang := CombatRules.shot_angle(aim, CombatRules.spread(20.0, "stand", false), shots.rng)
-			shots.fire(me.loco.logical + Vector2(0, -14) + Vector2.RIGHT.rotated(deg_to_rad(aim)) * 10.0, ang, SHOT_SPEED, "ally", w, 20.0)
+			shots.fire(me.loco.logical + Vector2(0, -14) + Vector2.RIGHT.rotated(deg_to_rad(aim)) * 10.0, ang, SHOT_SPEED, "ally", w, 20.0, false, 5, "auto", me.floor_id)
 
 
 ## 적이 노릴 대상: 그 적이 노리는 편(foes — 주인공·아군 · 교전 중이면 다른 무리) 가운데 보이는 가장 가까운 쪽
@@ -314,7 +314,7 @@ func _target_for(e: Enemy) -> Combatant:
 	var bd := e.loco.logical.distance_to(cur.pos()) / 1.5 if cur != null else INF
 	for c in cand:
 		var d := e.loco.logical.distance_to((c as Combatant).pos())
-		if d < bd and (c == pc or shots.world.line_of_sight(e.loco.logical, (c as Combatant).pos())):
+		if d < bd and (c == pc or e.sight_of(c) > 0.0):
 			bd = d
 			best = c
 	e.focus = best if best != null else cand[0]
@@ -620,7 +620,7 @@ func _player(dt: float, player: Actor, st: StoryState) -> void:
 			muzzle = player.position + player.doll.position + player.doll.muzzle_local(gdir)
 		var line := aim - muzzle
 		var ang := CombatRules.shot_angle(rad_to_deg((line if _aim_real and line.length() > 24.0 else to).angle()), sp, shots.rng)
-		if shots.fire(muzzle, ang, SHOT_SPEED, "player", w, sk, false, 5, "" if player.doll != null else "auto"):
+		if shots.fire(muzzle, ang, SHOT_SPEED, "player", w, sk, false, 5, "" if player.doll != null else "auto", player.floor_id):
 			shots.shots[-1]["sneak_ok"] = true
 			mags[weapon_id] = int(mags[weapon_id]) - 1
 			stats["shots"] += 1
@@ -643,8 +643,8 @@ func _melee(player: Actor, w: Dictionary, to: Vector2, st: StoryState) -> void:
 	var arc := deg_to_rad(70.0 if two else 45.0)
 	var n := 0
 	for e in enemies:
-		if not is_instance_valid(e) or e.cmb.dead or n >= (4 if two else 3):
-			continue
+		if not is_instance_valid(e) or e.cmb.dead or n >= (4 if two else 3) or not e.meets(pc):
+			continue                                                     # 다른 층(고가 위·아래)은 닿지 않는다
 		var d: Vector2 = e.loco.logical - player.loco.logical
 		if d.length() <= reach + e.cmb.radius and (d.length() < pc.radius + e.cmb.radius or absf(to.angle_to(d)) <= arc):
 			n += 1
