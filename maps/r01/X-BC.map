@@ -163,7 +163,7 @@ struct facade 40 31 7 2 seed=16 args='{"style": "brick_dk", "doors": [[4, "steel
 struct wall 47 31 9 2 seed=17 args='{"posters": [[100, 24, 3]]}'
 struct ladder 5 31 1 2 seed=18
 struct roof 4 22 7 2 seed=19 args='{"edges": "w", "paint": "green"}'
-struct facade 4 24 7 2 seed=20 args='{"style": "brick_dk", "doors": [], "name": "삼성빌라"}'
+struct facade 4 24 7 2 seed=20 args='{"style": "brick_dk", "doors": [], "name": "새솔빌라"}'
 struct gap 11 22 1 4 seed=21
 struct bridge 11 23 1 1 seed=22
 struct roof 12 22 7 2 seed=23 args='{"edges": "", "paint": "grey"}'
