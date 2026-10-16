@@ -128,7 +128,8 @@ def sentry_sheets():
     사람 시트처럼 다섯 줄(S · SE · E · NE · N, W 쪽은 거울) — idle · walk 6(사람과 같은 보폭 표 · 발 고정) · death 4."""
     import robot_sentry as RS
     for name, (rows, meta) in (("rb_cr305_loco", RS.sentry_sheet("awake")), ("rb_cr305_carry_loco", RS.sentry_sheet("awake", True)),
-                               ("rb_cr320_loco", RS.turret_sheet())):
+                               ("rb_cr320_loco", RS.turret_sheet()),
+                               ("rb_cr306_loco", RS.metro_sheet("idle"))):        # 역무 파수-3(1-11e SQ-S05 — 2호선 녹색 띠 · 안내 화면)
         fw, fh = meta["frame"]
         sheet = Image.new("RGBA", (fw * len(rows[0]), fh * len(rows)), (0, 0, 0, 0))
         for r, row in enumerate(rows):

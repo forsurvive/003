@@ -1,0 +1,105 @@
+{
+ "id": "SQS05_IRONB",
+ "title": "연결 통로 철문",
+ "loc": "L-UG-02",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "PRY": 3,
+  "STUCK": 6,
+  "OPEN": 8,
+  "GO": 9
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S05_DOOR == 1",
+   "to": "OPEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "연결 통로 끝 철문. 빗장은 저편, 낙성대 쪽에 걸려 있다. 문틈으로 아주 느린 숨소리가 새어 나온다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "문틈에 쇠막대를 넣어 빗장을 들어 올린다",
+     "tags": [
+      {
+       "k": "stat",
+       "name": "힘",
+       "min": 7
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PRY",
+     "id": "SQS05_IRONB:1:0",
+     "fail": "STUCK"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS05_IRONB:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s05",
+   "args": [
+    "door"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "쇠막대가 휘청 — 빗장이 들려 굴러떨어진다. 쩡, 하는 소리가 저편 승강장으로 굴러간다."
+  },
+  {
+   "op": "goto",
+   "to": "GO"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빗장이 꿈쩍하지 않는다. 쇠막대만 미끄러진다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "철문이 열려 있다. 낙성대역 승강장으로 이어진다."
+  },
+  {
+   "op": "cmd",
+   "name": "s05",
+   "args": [
+    "go",
+    "U-02",
+    "from_W"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S05.txt"
+}

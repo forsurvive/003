@@ -1,0 +1,180 @@
+# 2호선 서쪽 터널(사당 → 낙성대, SD-09f U01 · SD-04a §4.5 SQ-S05 「환승촌 막차」 · 단계 1-11e). 64×12 · 어둠(손전등).
+# 동쪽 끝 = 사당 D-06 차단 철망 문(조사 장면으로 지난다) · 서쪽 끝 = 낙성대역 승강장 U-02. 레일 두 줄 · 가운데 아래 측선(역무 파수-3이 방전된 채 쓰러져 있다).
+# 재미 검수(계획): 텅 빈 64칸이 아니게 — 측선 곁에 혼자 서서 조는 대피민 구울 하나(철망에서 들리던 '두 걸음'), 2077년 대피 행렬이 흘린 짐.
+map U-01 2호선 서쪽 터널
+set cv
+grid
+################################################################
+################################################################
+################################################################
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+######################uuuuuuuuuuuuuuuuu#########################
+######################uuuuuuuuuuuuuuuuu#########################
+################################################################
+end
+exit 63 5 D-06 from_U01
+exit 63 6 D-06 from_U01
+exit 0 5 U-02 from_E
+exit 0 6 U-02 from_E
+mark from_E 61 5 W
+mark from_W 2 5 E
+prop rail_h 1 4
+prop rail_h2 1 7
+prop rail_h 2 4
+prop rail_h 2 7
+prop rail_h2 3 4
+prop rail_h 3 7
+prop rail_h 4 4
+prop rail_h 4 7
+prop rail_h 5 4
+prop rail_h2 5 7
+prop rail_h2 6 4
+prop rail_h 6 7
+prop rail_h 7 4
+prop rail_h 7 7
+prop rail_h 8 4
+prop rail_h 8 7
+prop rail_h2 9 4
+prop rail_h2 9 7
+prop rail_h 10 4
+prop rail_h 10 7
+prop rail_h 11 4
+prop rail_h 11 7
+prop rail_h2 12 4
+prop rail_h 12 7
+prop rail_h 13 4
+prop rail_h2 13 7
+prop rail_h 14 4
+prop rail_h 14 7
+prop rail_h2 15 4
+prop rail_h 15 7
+prop rail_h 16 4
+prop rail_h 16 7
+prop rail_h 17 4
+prop rail_h2 17 7
+prop rail_h2 18 4
+prop rail_h 18 7
+prop rail_h 19 4
+prop rail_h 19 7
+prop rail_h 20 4
+prop rail_h 20 7
+prop rail_h2 21 4
+prop rail_h2 21 7
+prop rail_h 22 4
+prop rail_h 22 7
+prop rail_h 23 4
+prop rail_h 23 7
+prop rail_h2 24 4
+prop rail_h 24 7
+prop rail_h 25 4
+prop rail_h2 25 7
+prop rail_h 26 4
+prop rail_h 26 7
+prop rail_h2 27 4
+prop rail_h 27 7
+prop rail_h 28 4
+prop rail_h 28 7
+prop rail_h 29 4
+prop rail_h2 29 7
+prop rail_h2 30 4
+prop rail_h 30 7
+prop rail_h 31 4
+prop rail_h 31 7
+prop rail_h 32 4
+prop rail_h 32 7
+prop rail_h2 33 4
+prop rail_h2 33 7
+prop rail_h 34 4
+prop rail_h 34 7
+prop rail_h 35 4
+prop rail_h 35 7
+prop rail_h2 36 4
+prop rail_h 36 7
+prop rail_h 37 4
+prop rail_h2 37 7
+prop rail_h 38 4
+prop rail_h 38 7
+prop rail_h2 39 4
+prop rail_h 39 7
+prop rail_h 40 4
+prop rail_h 40 7
+prop rail_h 41 4
+prop rail_h2 41 7
+prop rail_h2 42 4
+prop rail_h 42 7
+prop rail_h 43 4
+prop rail_h 43 7
+prop rail_h 44 4
+prop rail_h 44 7
+prop rail_h2 45 4
+prop rail_h2 45 7
+prop rail_h 46 4
+prop rail_h 46 7
+prop rail_h 47 4
+prop rail_h 47 7
+prop rail_h2 48 4
+prop rail_h 48 7
+prop rail_h 49 4
+prop rail_h2 49 7
+prop rail_h 50 4
+prop rail_h 50 7
+prop rail_h2 51 4
+prop rail_h 51 7
+prop rail_h 52 4
+prop rail_h 52 7
+prop rail_h 53 4
+prop rail_h2 53 7
+prop rail_h2 54 4
+prop rail_h 54 7
+prop rail_h 55 4
+prop rail_h 55 7
+prop rail_h 56 4
+prop rail_h 56 7
+prop rail_h2 57 4
+prop rail_h2 57 7
+prop rail_h 58 4
+prop rail_h 58 7
+prop rail_h 59 4
+prop rail_h 59 7
+prop rail_h2 60 4
+prop rail_h 60 7
+prop rail_h 61 4
+prop rail_h2 61 7
+prop rail_h 62 4
+prop rail_h 62 7
+prop rail_h 24 9
+prop rail_h 25 9
+prop rail_h 26 9
+prop rail_h 27 9
+prop rail_h 28 9
+prop rail_h 29 9
+prop rail_h 30 9
+prop rail_h 31 9
+prop rail_h 32 9
+prop rail_h 33 9
+prop rail_h 34 9
+prop rail_h 35 9
+prop rail_h 36 9
+prop rail_h 37 9
+prop rail_stop 23 9
+prop rathole 12 8
+prop rathole 50 3
+prop luggage 46 6
+prop luggage2 17 5
+prop ticket 40 8
+text 46 6 "여행 가방과 종이봉투, 신발 한 짝. 가방 손잡이에 꼬리표 — '2077. 10. 23. 사당 → 서울대입구 · 막차'." w=2
+text 17 5 "떨어진 짐 꾸러미. 우산 손잡이가 사당 쪽을 향해 있다 — 모두 서쪽으로 걸어갔다."
+text 40 8 "바닥의 종이표. '2077-10-23 사당 → 서울대입구'. 개찰 구멍이 뚫리지 않았다."
+prop metro_robot_down 29 9 cond="SQ_S05_ROBOT == 0"
+text 30 9 "측선. 녹색 띠를 두른 안내 로봇이 엎어져 있다. 등판 '사당역 안내 · SJ-G70'. 화면이 꺼졌다." w=3 scene=SQS05_ROBOT
+text 2 4 "터널이 승강장으로 넓어진다. 앞쪽 어둠에서 사람 숨소리 같은 것이 고르게 들린다." h=3
+mark sleeper 33 6 W
+mark r1 14 6 E
+mark r2 52 5 W
+mark x1 44 7 W
+mark x2 8 4 E

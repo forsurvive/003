@@ -329,6 +329,12 @@ func enter(map_id: String, mark: String = "", look: Dictionary = {}, at: Vector2
 	player.world = map
 	if player.doll != null and worn() != "A-001" and torso_of(worn()) != "":
 		player.doll.set_look({"torso": torso_of(worn())})                 # 갈아입은 옷(0-10)
+	var eyes_on := str(st.vars.get_v("PC_EYES"))
+	if player.doll != null and eyes_on != "":
+		if st.items.has(eyes_on):
+			player.doll.set_look({"eyes": str(items_db.get(Gear.base(eyes_on), {}).get("layer", ""))})   # 쓴 눈 장비(1-11e)
+		else:
+			st.vars.set_v("PC_EYES", "")                                   # 팔았거나 잃었다
 	player.visible = body != "hidden"
 	map.add_actor(player)
 	if world_mode and at == Vector2.INF and mark.begins_with("@"):     # 들어가 본 건물에서 나온다(1-5e): 그 문 앞 칸, 남쪽을 보고
@@ -1179,6 +1185,8 @@ func shop_state(vid: String) -> Dictionary:
 					items[kk] = int(items.get(kk, 0)) + 1
 			else:
 				items[id] = int(r[1])
+				if vid == "V05" and id == "I-044" and st.vars.has("SQ_S05_PYO") and int(st.vars.get_v("SQ_S05_PYO")) == 1:
+					items[id] = int(r[1]) * 2                                 # SQ-S05 뒤 서쪽 측실 선반(SD-04a §4.5): 느타리 재고 2배
 		var caps := base if sh.is_empty() else mini(roundi(base * 1.5), maxi(base, roundi(int(sh["caps"]) * 0.5)))
 		sh = {"items": items, "caps": caps, "day": day, "total": int(sh.get("total", 0)), "slow": slow}
 		st.boxes[key] = sh
@@ -2209,7 +2217,7 @@ func _handlers() -> void:
 # ---------------------------------------------------------------- 핍-보이·소지품
 func _load_items() -> void:
 	for f in ["items_aid", "items_food", "items_drink", "items_quest", "items_apparel", "items_misc_money", "items_misc_mat", "items_misc_func",
-			"items_chems", "items_misc_other", "items_apparel_head", "items_misc_crit", "items_junk", "items_ammo", "items_tokens", "items_craft", "items_side"]:          # 파이프라인이 SD-13 표에서 뽑은 아이템(1-4: 표 전체)
+			"items_chems", "items_misc_other", "items_apparel_head", "items_misc_crit", "items_junk", "items_ammo", "items_tokens", "items_craft", "items_side", "items_unique"]:          # 파이프라인이 SD-13 표에서 뽑은 아이템(1-4: 표 전체)
 		var p := "res://data/%s.json" % f
 		if FileAccess.file_exists(p):
 			items_db.merge(JSON.parse_string(FileAccess.get_file_as_string(p)))
@@ -2479,6 +2487,14 @@ func torso_of(id: String) -> String:
 
 
 func wear(id: String) -> void:
+	var it: Dictionary = items_db.get(Gear.base(id), {})
+	if st.items.has(id) and str(it.get("slot", "")).begins_with("눈"):     # 눈 장비(1-11e — A-106 구울 가면): 한 번 더 고르면 벗는다
+		var on := str(st.vars.get_v("PC_EYES")) != id
+		st.vars.set_v("PC_EYES", id if on else "")
+		if player != null and player.doll != null:
+			player.doll.set_look({"eyes": str(it.get("layer", "")) if on else ""})
+		_note("%s %s" % [str(it.get("name", id)), "씀" if on else "벗음"])
+		return
 	if not st.items.has(id) or torso_of(id) == "":
 		return
 	if Gear.cond(id) >= 4:                                             # 파손: 입은 채면 '위태' 값으로 버티지만, 벗으면 다시 입을 수 없다(SD-13 §8.1)

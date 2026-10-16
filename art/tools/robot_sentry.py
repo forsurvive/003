@@ -492,3 +492,25 @@ if __name__ == "__main__":                                                 # 미
     sheet.alpha_composite(brain4(), (7 * TW, FH * 10 + 6)); sheet.alpha_composite(brain4("off"), (8 * TW, FH * 10 + 6))
     sheet.resize((sheet.width * 3, sheet.height * 3), Image.NEAREST).save(out)
     print(out)
+
+
+# ---------------------------------------------------------------- 역무 파수-3 CR-306(1-11e SQ-S05, SD-14 'SJ-G70 지하철형')
+# 같은 몸에 관제망 휘장(청록) 대신 2호선 녹색 띠 · 방패 대신 안내판(녹색 판에 흰 화살표). 눈은 꺼짐(방전)/켜짐(안내 화면).
+METRO = {"P61": "P30", "P62": "P56", "P63": "P57"}
+
+
+def _metro(im):
+    src = {P.rgb(k) + (255,): P.rgb(v) + (255,) for k, v in METRO.items()}
+    px = im.load()
+    for y in range(im.height):
+        for x in range(im.width):
+            c = px[x, y]
+            if c in src:
+                px[x, y] = src[c]
+    return im
+
+
+def metro_sheet(eye="idle"):
+    """sentry_sheet과 같은 칸(idle 1 · walk 6 · death 4)에 2호선 색. 쓰러져 방전된 판은 death 마지막 컷(sleep 눈)."""
+    rows, meta = sentry_sheet(eye)
+    return [[_metro(f) for f in row] for row in rows], meta

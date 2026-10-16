@@ -55,6 +55,8 @@ var focus: Combatant                          ## 지금 노리는 대상(주인�
 var hold_dir := 2                             ## 제자리 경계 방향
 var det_mul := 1.0                            ## 감지 배수(1-E 상황: S3 먹이 중 0.5 · S4 잠 0.15 · S2 매복 1.2)
 var asleep := false                           ## 야영 중 잠(S4): 누워 있고, 맞거나 가까운 소리·탐지 게이지 50이면 깬다
+var doze := ""                                ## 휴면 군집(SD-14 §12 · SQ-S05): "sit" · "lie" · "stand" — 소리 · 맞음 · 가까이 선 걸음으로만 깬다
+var wake_cb := Callable()                     ## (e): 하나가 깨면 같은 무리가 한꺼번에(SD-14 '일제 기상') — 진행기가 준다
 var foes: Array = ["player", "ally"]          ## 노리는 편(1-E 교전 S5: 다른 무리 편을 더한다 · 비적대 무리는 player를 뺀다)
 var arm := ""                                 ## 보안요원 무기: baton | pistol
 var who := ""                                 ## 이름 있는 경비(N-R01-018 권서준 등) — 이름표·대사
@@ -115,7 +117,7 @@ static var prof := {"per": 0, "tac": 0, "act": 0, "n_per": 0, "n_tac": 0, "n_pat
 func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w, opts: Dictionary = {}) -> void:
 	row = enemy_row
 	weapon = weapon_row
-	arm = str(opts.get("arm", "baton" if row["id"] == "CR-473" else ("claw" if row["id"] in ["CR-200", "CR-201", "CR-202"] else "")))
+	arm = str(opts.get("arm", "baton" if row["id"] == "CR-473" else ("claw" if row["id"] in ["CR-200", "CR-201", "CR-202", "CR-204"] else "")))
 	who = str(opts.get("who", ""))
 	stance = str(opts.get("stance", ""))
 	var is_roach: bool = row["id"] == "CR-002"
@@ -151,6 +153,10 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 			sheet = "en_cr473_%s_loco" % arm
 		"CR-420", "CR-421", "CR-423":                               # 1-E 남부순환 패거리(SD-14 F-04-C): 두 외형 중 하나
 			sheet = "en_%s%s_loco" % [str(row["id"]).to_lower().replace("-", ""), "b" if _rng.randf() < 0.5 else ""]
+		"CR-204", "CR-205":
+			sheet = "en_%s_loco" % str(row["id"]).to_lower().replace("-", "")   # 대피민 · 역무원 구울(1-11e SQ-S05 — 2077 차림 · 제복)
+		"CR-306":
+			sheet = "rb_cr306_loco"                                  # 역무 파수-3(파수-3의 지하철 판)
 		"CR-305":
 			sheet = "rb_cr305_loco"                                  # 파수-3(1-11c SQ-S04, SD-16 §7.4 — 이족 · 방패 팔 · CRT 얼굴판 · 관제망 휘장)
 		"CR-320":
@@ -231,7 +237,12 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 		loco.custom = {"run": {"frames": 4, "px": 3.0, "diag": 3.0, "contact": [0, 2], "speed_t": float(row["speed"])},
 			"walk": {"frames": 4, "px": 3.0, "diag": 3.0, "contact": [0, 2], "speed_t": float(row["speed"]) * 0.5}}
 	ui_font = load("res://assets/fonts/Galmuri9.ttf")
-	if bool(opts.get("sleep", false)):
+	if str(opts.get("doze", "")) != "":
+		doze = str(opts["doze"])
+		asleep = true
+		det_mul = 0.3
+		set_pose(doze if doze != "stand" else "stand")
+	elif bool(opts.get("sleep", false)):
 		asleep = true
 		var curl: bool = sprite != null and sprite.sprite_frames != null and sprite.sprite_frames.has_animation("sleep_E")
 		set_pose("sleep" if curl else "lie")                        # 웅크려 자는 그림이 있는 개(외눈 · 백구 핏줄)는 그 그림으로
@@ -254,6 +265,10 @@ func wake() -> void:
 	asleep = false
 	set_pose("stand")
 	det_mul = maxf(det_mul, 1.0)
+	if doze != "":
+		doze = ""
+		if wake_cb.is_valid():
+			wake_cb.call(self)
 
 
 func think(dt: float, target: Combatant, nav, shots: Projectiles) -> void:   ## nav: NavGrid(청크 월드) 또는 InteriorNav(실내) — 같은 path()
@@ -293,7 +308,10 @@ func think(dt: float, target: Combatant, nav, shots: Projectiles) -> void:   ## 
 			"sneak_skill": target.sneak, "alert": brain.alert(), "in_fov": fov}) * det_mul if sees else 0.0
 		var hit: bool = cmb.last_hit_from != Vector2.ZERO
 		if asleep:                                                  # 잠(S4): 맞거나, 가까운 소리(0.5+)거나, 바로 옆까지 오면 깬다
-			if hit or _heard >= 0.5 or (sees and dist_t <= 1.5) or brain.gauge >= 50.0:
+			var near := 1.5
+			if doze != "":                                          # 휴면: 서서 걸으면 2칸 · 웅크리면 1칸까지(서 있기만 하면 1.5칸)
+				near = 1.0 if target.posture == "crouch" else (2.0 if target.movement != "still" else 1.5)
+			if hit or _heard >= 0.5 or (sees and dist_t <= near) or brain.gauge >= 50.0:
 				wake()
 			else:
 				sees = false
@@ -353,6 +371,10 @@ func _held_step(dt: float) -> void:
 
 func _tactics(target: Combatant, nav) -> void:
 	var goal: String = _intent.get("goal", "hold")
+	if asleep and not (doze == "stand" and not route.is_empty()):                   # 자는 동안은 제자리(서서 조는 손님만 순찰 길 — 두 걸음 걷고 멈춘다)
+		_path = PackedVector2Array()
+		_move = Vector2.ZERO
+		return
 	if target.dead and goal == "engage":                              # 노릴 대상이 없다(교전 상대가 다 쓰러짐 · 비적대 무리): 제자리
 		goal = "hold"
 	var at: Vector2 = _intent.get("at", loco.logical)

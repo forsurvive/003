@@ -45,7 +45,7 @@
   "xp": 25
  },
  "CR-104": {
-  "_src": "14_creatures-enemies.md:443",
+  "_src": "14_creatures-enemies.md:446",
   "attack": "물기 8",
   "dr": 0,
   "hp": 35,
@@ -60,7 +60,7 @@
   "xp": 5
  },
  "CR-105": {
-  "_src": "14_creatures-enemies.md:444",
+  "_src": "14_creatures-enemies.md:447",
   "attack": "물기 12",
   "dr": 0,
   "hp": 60,
@@ -75,7 +75,7 @@
   "xp": 10
  },
  "CR-106": {
-  "_src": "14_creatures-enemies.md:445",
+  "_src": "14_creatures-enemies.md:448",
   "attack": "물기 25",
   "dr": 0,
   "hp": 150,
@@ -90,7 +90,7 @@
   "xp": 25
  },
  "CR-107": {
-  "_src": "14_creatures-enemies.md:446",
+  "_src": "14_creatures-enemies.md:449",
   "attack": "물기 12",
   "dr": 0,
   "hp": 60,
@@ -105,7 +105,7 @@
   "xp": 15
  },
  "CR-108": {
-  "_src": "14_creatures-enemies.md:447",
+  "_src": "14_creatures-enemies.md:450",
   "attack": "물기 15",
   "dr": 0,
   "hp": 80,
@@ -120,7 +120,7 @@
   "xp": 15
  },
  "CR-136": {
-  "_src": "14_creatures-enemies.md:638",
+  "_src": "14_creatures-enemies.md:641",
   "attack": "물기 6 + 옴 25%",
   "dr": 0,
   "hp": 30,
@@ -135,7 +135,7 @@
   "xp": 6
  },
  "CR-200": {
-  "_src": "14_creatures-enemies.md:827",
+  "_src": "14_creatures-enemies.md:830",
   "attack": "근접 5",
   "dr": 0,
   "hp": 25,
@@ -150,7 +150,7 @@
   "xp": 7
  },
  "CR-201": {
-  "_src": "14_creatures-enemies.md:828",
+  "_src": "14_creatures-enemies.md:831",
   "attack": "근접 16",
   "dr": 5,
   "hp": 80,
@@ -165,7 +165,7 @@
   "xp": 15
  },
  "CR-202": {
-  "_src": "14_creatures-enemies.md:829",
+  "_src": "14_creatures-enemies.md:832",
   "attack": "근접 32 / 방사능 폭발(반경 4타일) 5 + 방사능 5/초(2초)",
   "dr": 0,
   "hp": 240,
@@ -179,8 +179,38 @@
   "tier": "강",
   "xp": 35
  },
+ "CR-204": {
+  "_src": "14_creatures-enemies.md:834",
+  "attack": "근접 5",
+  "dr": 0,
+  "hp": 25,
+  "id": "CR-204",
+  "level": 3,
+  "name": "대피민 구울 (지하철 대피소 군집)",
+  "part_weights": "PW-H",
+  "pattern": "휴면 군집. 승강장에 앉거나 누운 채 있다가 소리(총성·달리기·문)에 한꺼번에 깨어난다. 6~12마리",
+  "radius": 0.3,
+  "speed": 2.5,
+  "tier": "약",
+  "xp": 7
+ },
+ "CR-205": {
+  "_src": "14_creatures-enemies.md:835",
+  "attack": "경광봉 12",
+  "dr": 5,
+  "hp": 60,
+  "id": "CR-205",
+  "level": 5,
+  "name": "역무원 구울",
+  "part_weights": "PW-H",
+  "pattern": "개찰구·승강장을 정해진 경로로 순찰. '지하철 정기권'을 지닌 대상은 공격하지 않는다",
+  "radius": 0.3,
+  "speed": 3.5,
+  "tier": "중",
+  "xp": 15
+ },
  "CR-305": {
-  "_src": "14_creatures-enemies.md:902",
+  "_src": "14_creatures-enemies.md:905",
   "attack": "손 레이저 30 ×2 / 머리 레이저 30",
   "dr": 5,
   "hp": 75,
@@ -194,8 +224,23 @@
   "tier": "약",
   "xp": 10
  },
+ "CR-306": {
+  "_src": "14_creatures-enemies.md:906",
+  "attack": "CR-305와 같음",
+  "dr": 5,
+  "hp": 75,
+  "id": "CR-306",
+  "level": 3,
+  "name": "역무 파수-3 (SJ-G70 지하철형)",
+  "part_weights": "PW-H",
+  "pattern": "지하철 정기권 소지 시 우호. 관제망 단계 G3 이후에는 정기권을 무시한다",
+  "radius": 0.3,
+  "speed": 2.5,
+  "tier": "약",
+  "xp": 10
+ },
  "CR-313": {
-  "_src": "14_creatures-enemies.md:912",
+  "_src": "14_creatures-enemies.md:915",
   "attack": "전기 충격 8",
   "dr": 15,
   "hp": 150,
@@ -210,7 +255,7 @@
   "xp": 25
  },
  "CR-320": {
-  "_src": "14_creatures-enemies.md:921",
+  "_src": "14_creatures-enemies.md:924",
   "attack": "기관총 5(연사)",
   "dr": 10,
   "hp": 40,
@@ -224,7 +269,7 @@
   "xp": 7
  },
  "CR-401": {
-  "_src": "14_creatures-enemies.md:1066",
+  "_src": "14_creatures-enemies.md:1069",
   "dr": 18,
   "hp": 90,
   "id": "CR-401",
@@ -238,7 +283,7 @@
   "xp": 20
  },
  "CR-402": {
-  "_src": "14_creatures-enemies.md:1067",
+  "_src": "14_creatures-enemies.md:1070",
   "dr": 18,
   "hp": 90,
   "id": "CR-402",
@@ -252,7 +297,7 @@
   "xp": 25
  },
  "CR-403": {
-  "_src": "14_creatures-enemies.md:1068",
+  "_src": "14_creatures-enemies.md:1071",
   "dr": 22,
   "hp": 125,
   "id": "CR-403",
@@ -266,7 +311,7 @@
   "xp": 35
  },
  "CR-405": {
-  "_src": "14_creatures-enemies.md:1070",
+  "_src": "14_creatures-enemies.md:1073",
   "dr": 35,
   "hp": 170,
   "id": "CR-405",
@@ -280,7 +325,7 @@
   "xp": 40
  },
  "CR-420": {
-  "_src": "14_creatures-enemies.md:1120",
+  "_src": "14_creatures-enemies.md:1123",
   "dr": 5,
   "hp": 25,
   "id": "CR-420",
@@ -293,7 +338,7 @@
   "xp": 3
  },
  "CR-421": {
-  "_src": "14_creatures-enemies.md:1121",
+  "_src": "14_creatures-enemies.md:1124",
   "dr": 8,
   "hp": 55,
   "id": "CR-421",
@@ -306,7 +351,7 @@
   "xp": 10
  },
  "CR-423": {
-  "_src": "14_creatures-enemies.md:1123",
+  "_src": "14_creatures-enemies.md:1126",
   "dr": 5,
   "hp": 30,
   "id": "CR-423",
@@ -319,7 +364,7 @@
   "xp": 3
  },
  "CR-435": {
-  "_src": "14_creatures-enemies.md:1148",
+  "_src": "14_creatures-enemies.md:1151",
   "dr": 5,
   "hp": 60,
   "id": "CR-435",
@@ -333,7 +378,7 @@
   "xp": 15
  },
  "CR-436": {
-  "_src": "14_creatures-enemies.md:1149",
+  "_src": "14_creatures-enemies.md:1152",
   "dr": 12,
   "hp": 100,
   "id": "CR-436",
@@ -347,7 +392,7 @@
   "xp": 30
  },
  "CR-437": {
-  "_src": "14_creatures-enemies.md:1150",
+  "_src": "14_creatures-enemies.md:1153",
   "dr": 8,
   "hp": 80,
   "id": "CR-437",
@@ -361,7 +406,7 @@
   "xp": 15
  },
  "CR-438": {
-  "_src": "14_creatures-enemies.md:1151",
+  "_src": "14_creatures-enemies.md:1154",
   "dr": 15,
   "hp": 130,
   "id": "CR-438",
@@ -375,7 +420,7 @@
   "xp": 40
  },
  "CR-456": {
-  "_src": "14_creatures-enemies.md:1207",
+  "_src": "14_creatures-enemies.md:1210",
   "dr": 12,
   "hp": 90,
   "id": "CR-456",
@@ -389,7 +434,7 @@
   "xp": 20
  },
  "CR-457": {
-  "_src": "14_creatures-enemies.md:1208",
+  "_src": "14_creatures-enemies.md:1211",
   "dr": 18,
   "hp": 130,
   "id": "CR-457",
@@ -403,7 +448,7 @@
   "xp": 30
  },
  "CR-466": {
-  "_src": "14_creatures-enemies.md:1231",
+  "_src": "14_creatures-enemies.md:1234",
   "dr": 8,
   "hp": 70,
   "id": "CR-466",
@@ -415,7 +460,7 @@
   "xp": 15
  },
  "CR-472": {
-  "_src": "14_creatures-enemies.md:1237",
+  "_src": "14_creatures-enemies.md:1240",
   "dr": 2,
   "hp": 40,
   "id": "CR-472",
@@ -427,7 +472,7 @@
   "xp": 8
  },
  "CR-473": {
-  "_src": "14_creatures-enemies.md:1245",
+  "_src": "14_creatures-enemies.md:1248",
   "dr": 4,
   "hp": 36,
   "id": "CR-473",
@@ -441,7 +486,7 @@
   "xp": 10
  },
  "CR-500": {
-  "_src": "14_creatures-enemies.md:1287",
+  "_src": "14_creatures-enemies.md:1290",
   "attack": "물기 18",
   "dr": 0,
   "hp": 260,
@@ -455,7 +500,7 @@
   "xp": 50
  },
  "CR-513": {
-  "_src": "14_creatures-enemies.md:1300",
+  "_src": "14_creatures-enemies.md:1303",
   "dr": 18,
   "hp": 60,
   "id": "CR-513",
@@ -466,7 +511,7 @@
   "xp": 65
  },
  "CR-534": {
-  "_src": "14_creatures-enemies.md:1470",
+  "_src": "14_creatures-enemies.md:1473",
   "dr": 12,
   "hp": 140,
   "id": "CR-534",

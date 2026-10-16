@@ -31,7 +31,7 @@ prop sd_fence 15 6
 prop sd_fence 15 7
 prop sd_fence 15 8
 prop sd_fence 15 9
-prop sd_fence 15 10
+prop sd_fence_gate 15 10
 prop sd_fence 15 11
 prop sd_fence 15 12
 prop sd_fence 15 13
@@ -39,6 +39,9 @@ prop sd_fence 15 14
 prop w_sd_lasttrain 16 1
 text 16 2 "표지. '서울대입구 방면 — 막차 기다리는 손님 있음(들어가지 마시오).'" w=2
 text 15 8 "차단 철망. 너머 어둠 속에서 가끔 발소리가 난다. 아주 느린. 그리고 멈춘다." h=2 scene=SD_FENCE
+# SQ-S05(1-11e): 철망 문 — 경비가 연다(조사 장면으로 U-01에 들어간다). 돌아오면 문 동쪽에 선다.
+text 16 10 "철망 문. 자물쇠 고리에 경비대 자물쇠." scene=SQS05_GATE
+mark from_U01 16 11 E
 prop sd_guard_post 18 5
 prop sandbag 17 10
 prop sandbag 17 11

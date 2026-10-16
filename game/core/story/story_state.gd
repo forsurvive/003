@@ -75,6 +75,7 @@ func _init() -> void:
 	for k in ["MQ101_DOG", "MQ101_TRADE", "MQ101_WATER", "MQ101_RAD", "MQ101_NIGHT", "MQ101_DEAD", "MQ101_TANK", "MQ101_ROOF", "MQ101_LOAN",
 			"MQ101_BOARD", "MQ101_FIGHT", "PC_RADS", "PD_BC", "PD_R01", "GAME_DAY"]:
 		vars.declare(k, "int", 0)
+	vars.declare("PC_EYES", "str", "")                       # 쓴 눈 장비(아이템 ID — A-106 구울 가면, 1-11e)
 	vars.declare("PC_TORSO", "str", "A-001")                # 입은 몸통 옷(아이템 ID) — 처음은 볼트 점프슈트(MQ-P2 지급)
 	Wanted.declare(self)                                   # 수배도 하루 누계·공고 인상착의(1-3)
 	# 생포(1-3, SD-03a §6.7): CAPTURE_DAY 마지막으로 잡힌 날(하루 1번) · CAPTURE_AT 잡힌 시각(분, 3일 계산) · SB_COLLAR 근태 목걸이(1 채워짐)
@@ -142,8 +143,8 @@ func _init() -> void:
 	vars.declare("JC_PROB_BC", "int", 0)
 	# SQ-S03 곰팡이의 근원(1-11d, SD-04a §4.3 · SideS03): ARM MQ-101 끝난 날 · POSTED 게시판 쪽지 · WALL 이음 벽 얼룩 · P1 P2 P3 조사 지점 · SPRAY 분무기 · GATE 수문(1 살핌 · 2 닫음) ·
 	# NAME · TAGSEEN 정영수 · TAG 볼트 기록(1 · 2 · 3) · CALLS 인터컴 · VAULT 방금례(1 받음 · 2 수치) · SOL 처리(1 소각 · 2 약품 · 3 원인 차단) · CLEAN 맑아짐 · DRY_DAY C 마르기 시작 ·
-	# FILTER D 필터(FILTER_DAY · FILTER_N 며칠째 · SMELL 30일 뒤 곰팡내) · RACC_UNTIL 소각 뒤 너구리 · RAT RAT2 KING ERAT 쥐 무리 · IN · VISITS K-08 · REWARD · DRINKS 오늘 꼭지 · SAID · PIPE S02 B 표지
-	for k in "ARM POSTED WALL P1 P2 P3 SPRAY GATE NAME TAGSEEN TAG CALLS VAULT SOL CLEAN DRY_DAY FILTER FILTER_DAY FILTER_N SMELL RACC_UNTIL RAT RAT2 KING ERAT IN VISITS REWARD DRINKS SAID PIPE".split(" "):
+	# FILTER D 필터(FILTER_DAY · FILTER_N 며칠째 · SMELL 30일 뒤 곰팡내) · RACC_UNTIL 소각 뒤 너구리 · RAT RAT2 KING(1 섬 · 2 쓰러짐) KING_HP(물러선 왕쥐의 남은 체력) ERAT 쥐 무리 · IN · VISITS K-08 · REWARD · DRINKS 오늘 꼭지 · SAID · PIPE S02 B 표지
+	for k in "ARM POSTED WALL P1 P2 P3 SPRAY GATE NAME TAGSEEN TAG CALLS VAULT SOL CLEAN DRY_DAY FILTER FILTER_DAY FILTER_N SMELL RACC_UNTIL RAT RAT2 KING KING_HP ERAT IN VISITS REWARD DRINKS SAID PIPE".split(" "):
 		vars.declare("SQ_S03_" + k, "int", 0)
 	vars.declare("SQR_S03", "int", 0)                                     # 4막 볼트 반응(SD-04a §4.3 정보 전파 — MQ-401 이월)
 	# SQ-S04 도성이 뒤척인다(1-11c, SD-04a §4.4 · SideS04): ARM MQ-102가 열린 분 · WAKE_AT 깨어날 21시 · WAKE 깨어난 분 · HELD 남솔이 철망 안 · DEADLINE 보호 기간 끝 ·
@@ -153,6 +154,12 @@ func _init() -> void:
 	# GUARD_BACK 노량진에서 돌아오는 분 · VILLAGE_AT 마을이 철망을 여는 분 · B 셋 다 부숨 · PD_LOCK 거점 '관악산 송신소' 공백 고정 · TICKET 주인공 번호표 0414(재미 검수)
 	for k in ["ARM", "WAKE_AT", "WAKE", "HELD", "DEADLINE", "OUT", "SLEEP", "KILLED", "TKILLED", "HOT", "LOITER", "D", "D_AT", "TEST", "BATT", "F", "LETTER", "AWAY", "BELL", "RED", "HELP", "FENCE", "CHASE", "FIGHT", "UP", "GUARD_BACK", "VILLAGE_AT", "B", "PD_LOCK", "TICKET"]:
 		vars.declare("SQ_S04_" + k, "int", 0)
+	# SQ-S05 환승촌 막차(1-11e, SD-04a §4.5 · SideS05): ARM MQ-102가 열린 분 · GATE 철망 문 경고 · IN U-01 들어섬 · BSEEN 테이프 칸 봄 · ROBOT 역무 파수-3(1 깨어 걷는 중 · 2 역무실) ·
+	# PASS 허순자 정기권(1 빌림 · 2 돌려줌) · TIP 반로아의 시각 · BCAST 방송(1 혼자 · 2 허순자가, BCAST_AT 분) · MAD 무단 방송 꾸중 · SOFT 허순자가 누그러짐 · SOL 해법(1 방송 · 2 소탕 · 3 구울의 말 · 4 정기권 통과) ·
+	# LEFT 떠난 손님 · WOKE 군집이 깨어남 · DOOR 철문 · JU 주성호(1 부탁 · 2 동행 · 3 갈라섬, JU_AT) · REPORT 보고 · FENCE 철망 횟수 · LINE 행렬을 봄 · PYO 표하경 할인 · RAT 터널 쥐 ·
+	# SLEEPER 선 채 잠든 손님 · MASK 가면 손님 · HOT 깨운 업보 · REWARD 사례
+	for k in "ARM GATE IN BSEEN ROBOT PASS TIP BCAST BCAST_AT MAD SOFT SOL LEFT WOKE DOOR JU JU_AT REPORT FENCE LINE PYO RAT SLEEPER MASK HOT REWARD AWAY".split(" "):
+		vars.declare("SQ_S05_" + k, "int", 0)
 	for kv in [["SQH_BATT", -1], ["LR15_READ", 0], ["PD_R01_GS", 0], ["M303_BONUS", 0], ["PK_017", 0]]:   # 전지 인도처(HO) · LR-15 · 판도 PD-R01-2 각성회 · 편지 화술 +10(첫 1회) · 퍽 눈치(퍽 창은 1-12)
 		vars.declare(kv[0], "int", kv[1])
 	for kv in [["CAPTURE_DAY", -1], ["CAPTURE_AT", 0], ["SB_COLLAR", 0], ["SB_CUFF", 0], ["CAPTURE_BY", 0]]:

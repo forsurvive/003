@@ -1,0 +1,20 @@
+# SD-13 §5.9 고유 방어구 → game/data/items_unique.json (단계 1-11e: SQ-S05 해법 D의 구울 가면 A-106부터 — 나머지는 쓰는 퀘스트와 함께)
+doc: 13_items.md
+id_column: ID
+section: "### 5.9 고유 방어구 (A-101~A-115, A-117)"
+rows: [A-106]
+id_filter: "^A-\\d{3}$"
+columns:
+  ID: {field: id, type: id, pattern: "^A-\\d{3}$", required: true}
+  이름: {field: name, type: str, required: true}
+  슬롯·레이어: {field: slot, type: str}
+  DR: {field: dr, type: lead_number}
+  무게: {field: weight, type: float}
+  가격: {field: value, type: int}
+  보너스: {field: bonus, type: str}
+  내구: {field: durability, type: str}
+  유래: {field: origin, type: str}
+derive:
+  cat: "'apparel'"
+  layer: "'EY06'"
+  desc: "{'A-106': '지하시장 구울들이 사람 냄새를 가리려고 무두질한 가죽 가면. 쓰면 숨이 조금 답답하고, 야생 구울들이 고개를 갸웃한다.'}.get(id, bonus)"

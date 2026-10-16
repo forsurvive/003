@@ -11,6 +11,7 @@ extends Node
 const BC_CENTER := Vector2i(892, 1362)    ## 봉천(밤 너구리 +30% 범위의 중심)
 const BC_R := 60
 const COLONY_K08 := Vector2i(19, 1)      ## K-08 천장 군락 소품
+const STREAKS_K08 := [Vector2i(23, 1), Vector2i(27, 1), Vector2i(32, 1), Vector2i(39, 1), Vector2i(44, 1), Vector2i(48, 1), Vector2i(52, 1)]   ## 군락에서 갱도 쪽으로 이어지는 줄기(같은 상태)
 const GATE_E01 := Vector2i(24, 4)        ## E-01 중간 수문
 const PATCH_BS := Vector2i(10, 7)        ## X-BS 이음 벽 얼룩 · 옛 관 입 거름망
 const SCREEN_BS := Vector2i(14, 9)
@@ -23,6 +24,7 @@ var host: InteriorHost
 var st: StoryState
 var log_on := false
 var _t := 0.0
+var _king: Enemy                          ## 지금 맵에 선 왕쥐(물러선 체력을 다음 방문에 잇는다)
 
 
 func setup(h: InteriorHost, is_log := false) -> void:
@@ -102,6 +104,8 @@ func _process(dt: float) -> void:
 	if _t < 0.5:
 		return
 	_t = 0.0
+	if is_instance_valid(_king) and not _king.cmb.dead and v("SQ_S03_KING") == 1:
+		_sv("SQ_S03_KING_HP", maxi(1, int(ceil(_king.cmb.hp))))           # 물러서거나 두고 나가도 깎인 체력은 남는다
 	if v("SQ_S03_PIPE") == 1 and stage() == 0:                       # SQ-S02 B: 옛 관로가 계곡 배수로를 지난다
 		_start("우회 관로")
 		host.hint("관에서 내려온 물에 곰팡이 냄새가 섞였다. 배수지 저수조 벽을 봐야겠다.", 6.0)
@@ -164,6 +168,8 @@ func _looks() -> void:
 					var dd := day() - v("SQ_S03_DRY_DAY")
 					s = "dry2" if dd >= DRY_DAYS else ("dry1" if dd >= DRY_DAYS / 2 else "")
 			m.set_prop_state(COLONY_K08, s)
+			for c in STREAKS_K08:
+				m.set_prop_state(c, s)
 		"E-01":
 			m.set_prop_state(GATE_E01, "shut" if v("SQ_S03_GATE") == 2 else "")
 
@@ -179,11 +185,14 @@ func _rats_k08() -> void:
 		for i in n:
 			host.combat.spawn("CR-095", host.map.mark_pos("k%d" % (i + 1)), host.map, st, {"lv": r.randi_range(2, 3), "dir": "W"})
 		_log("K-08 시궁쥐 %d" % n)
-	if v("SQ_S03_KING") == 1:                                              # 물러섰거나 두고 나갔다 — 둥지로 돌아와 있다(쓰러뜨릴 때까지)
-		host.combat.spawn("CR-097", host.map.mark_pos("king"), host.map, st, {"lv": 7, "dir": "W"})
+	if v("SQ_S03_KING") == 1:                                              # 물러섰거나 두고 나갔다 — 둥지로 돌아와 있다(쓰러뜨릴 때까지, 깎인 체력 그대로)
+		_king = host.combat.spawn("CR-097", host.map.mark_pos("king"), host.map, st, {"lv": 7, "dir": "W"})
+		if v("SQ_S03_KING_HP") > 0 and v("SQ_S03_KING_HP") < int(_king.cmb.max_hp):
+			_king.cmb.hp = float(v("SQ_S03_KING_HP"))
+			host.hint("암거 안쪽에서 낮은 찍찍 — 그 왕쥐다. 흉터가 하나 늘었다.", 5.0)
 	elif v("SQ_S03_KING") == 0 and (stage() >= 10 or v("SQ_S03_VISITS") >= 3):
 		_sv("SQ_S03_KING", 1)
-		host.combat.spawn("CR-097", host.map.mark_pos("king"), host.map, st, {"lv": 7, "dir": "W"})
+		_king = host.combat.spawn("CR-097", host.map.mark_pos("king"), host.map, st, {"lv": 7, "dir": "W"})
 		host.hint("암거 안쪽 어둠에서 찌이익 — 크고 낮은 울음. 무리가 대답한다.", 5.0)
 		_log("왕쥐")
 	if v("SQ_S03_SMELL") == 1 and v("SQ_S03_RAT2") == 0:
@@ -194,7 +203,8 @@ func _rats_k08() -> void:
 
 func _on_kill(id: String, _left: int) -> void:
 	if id == "CR-097" and v("SQ_S03_KING") == 1:
-		_sv("SQ_S03_KING", 2)                                            # 왕쥐를 쓰러뜨렸다 — 다시 서지 않는다
+		_sv("SQ_S03_KING", 2)                                            # 왕쥐를 쓰러뜨렸다 — 다시 서지 않는다(봉천 소문 한 줄)
+		_sv("SQ_S03_KING_HP", 0)
 		_log("왕쥐 쓰러짐")
 
 
@@ -297,14 +307,13 @@ func _solve_c() -> void:
 	_deed("SQS03_C", {"JC_BC": 0}, "볼트 S-07이 농장 배수를 정화조로 돌렸다는 말이 봉천까지 내려왔다")
 
 
-## 보고(조수안 — 없으면 칠판): 100 · XP 300 · 사례(조수안이 살아 있을 때) · 꼭지 필터(방사능 0, 상시) · 봉천 호감(A · B +6, C +8)
+## 보고(조수안 — 없으면 칠판 · 반상회 궤짝): 100 · XP 300 · 사례 100캡 · 꼭지 필터(방사능 0, 상시) · 봉천 호감(A · B +6, C +8)
 func _report() -> void:
 	if stage() >= 100:
 		return
 	_up(100)
 	st.call_fn("xp", [300])
-	if not st.known_dead("N-R01-032"):
-		st.call_fn("caps", [100])
+	st.call_fn("caps", [100])                                           # 조수안이 없으면 칠판 아래 반상회 궤짝(재미 검수: 보상은 사람이 아니라 마을 몫)
 	if v("SQ_S03_FILTER") == 0:
 		_sv("SQ_S03_FILTER", 1)
 		_sv("SQ_S03_FILTER_DAY", 0)                                       # 보상 필터는 군락이 처리된 뒤라 곰팡내 시계가 없다

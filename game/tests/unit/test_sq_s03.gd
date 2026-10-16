@@ -268,10 +268,10 @@ func test_sq_s03_sol_c_dry(t) -> void:
 	t.eq(_v(st, "SQ_S03_SOL"), 0, "볼트에 알리기 전엔 아직")
 	st.call_fn("give", ["M-302", 1])
 	h.enter("X-S07", "start")
-	for i in 2:
-		t.ok(_says(st, c, "SQS03_INTERCOM", "잡음", ["누른다"]), "호출 %d: 잡음" % (i + 1))
+	t.ok(_says(st, c, "SQS03_INTERCOM", "잡음", ["누른다"]), "호출 1: 잡음")
 	var k0 := _v(st, "V_KARMA")
-	t.eq(_play(st, c, "SQS03_INTERCOM", ["누른다", "수치를 읽어", "끊는다"]), [], "셋째 호출: 방금례 — 측정지 수치")
+	t.ok(_says(st, c, "SQS03_INTERCOM", "역류", ["누른다"]), "둘째 호출(측정지가 있으면 받는다) — 수문을 먼저 닫았으면 방금례가 먼저 묻는다")
+	t.eq(_play(st, c, "SQS03_INTERCOM", ["누른다", "수치를 읽어", "끊는다"]), [], "방금례 — 측정지 수치")
 	t.eq([_v(st, "SQ_S03_VAULT"), _v(st, "SQ_S03_SOL"), _v(st, "SQR_S03")], [2, 3, 3], "해법 C · 4막 이월")
 	t.eq(_v(st, "V_KARMA") - k0, 100, "카르마 +100")
 	t.eq(st.quests.stage("SQ-S03"), 70, "70")
@@ -371,9 +371,18 @@ func test_sq_s03_rat_king(t) -> void:
 			e.cmb.dead = true
 	h.combat._rat_call(king)
 	t.eq(king.brain.state, AIBrain.S.FLEE, "대답이 없다 — 왕쥐가 물러선다")
+	king.cmb.hp = 60.0
+	c._process(1.0)
+	t.eq(_v(st, "SQ_S03_KING_HP"), 60, "깎인 체력을 적어 둔다")
 	h.enter("X-BS", "tanks")
 	h.enter("K-08", "from_W")
 	t.eq(_count(h, "CR-097"), 1, "물러선 왕쥐는 둥지로 돌아와 있다")
+	var k2: Enemy = null
+	for e in h.combat.enemies:
+		if is_instance_valid(e) and str(e.row.get("id", "")) == "CR-097":
+			k2 = e
+	t.ok(k2 != null and absf(k2.cmb.hp - 60.0) < 0.5, "깎인 체력 그대로")
+	t.ok(h.hints.any(func(x): return str(x[0]).contains("흉터가 하나 늘었다")), "흉터가 하나 늘었다")
 	h.combat.enemy_killed.emit("CR-097", 0)
 	t.eq(_v(st, "SQ_S03_KING"), 2, "쓰러뜨림")
 	h.enter("X-BS", "tanks")
@@ -404,7 +413,51 @@ func test_sq_s03_suan_dead_tag(t) -> void:
 	var caps := _v(st, "PC_CAPS")
 	t.ok(_says(st, c, "SQS03_CHALK", "근원 처리함"), "관리인 없는 칠판에 적는다")
 	t.eq(_play(st, c, "SQS03_CHALK"), [], "칠판")
-	t.eq([st.quests.stage("SQ-S03"), _v(st, "PC_CAPS") - caps, _v(st, "SQ_S03_FILTER")], [100, 0, 1], "100 · 사례 없음 · 필터는 남는다")
+	t.eq([st.quests.stage("SQ-S03"), _v(st, "PC_CAPS") - caps, _v(st, "SQ_S03_FILTER")], [100, 100, 1], "100 · 반상회 궤짝 100캡 · 필터")
+
+
+func test_sq_s03_fun_fixes(t) -> void:
+	var r := _host("2277. 10. 26.  08:00", "X-BS", "tanks")
+	var h: InteriorHost = r[0]
+	var st: StoryState = r[1]
+	var c: SideS03 = r[2]
+	t.ok(_says(st, c, "SQS03_COLONY", "물이 오는 데를 막든가"), "맨손으로 와도 해법 셋의 실마리가 보인다")
+	t.ok(_says(st, c, "SQS03_BOX", "세제 2 · 희석제 1"), "배합은 분무기를 처음 집을 때 보인다")
+	st.kill("N-R01-032")
+	t.eq(_play(st, c, "SQS03_WALL"), [], "벽")
+	st.call_fn("give", ["M-013", 1])
+	st.vars.set_v("PC_SKP_REPAIR", 40)
+	t.eq(_play(st, c, "SQS03_TAP", ["필터 틀"]), [], "조수안이 없어도 꼭지에서 D")
+	t.eq([_v(st, "SQ_S03_FILTER"), st.count_of("M-013")], [1, 0], "필터 · 강판")
+	t.ok(not _says(st, c, "SQS03_CHALK", "조수안"), "칠판 글씨는 누구의 것인지 말하지 않는다(생사 무관)")
+	t.ok(_says(st, c, "SQS03_P3", "검은 막이 물살"), "물길: 처리 전")
+	st.vars.set_v("SQ_S03_SOL", 1)
+	st.vars.set_v("SQ_S03_CLEAN", 1)
+	t.ok(_says(st, c, "SQS03_P3", "여전히"), "A · B 뒤 물길: 근원은 그대로")
+	st.vars.set_v("SQ_S03_SOL", 3)
+	t.ok(_says(st, c, "SQS03_P3", "갈라졌다"), "C 뒤 물길: 말라 갈라짐")
+	st.vars.set_v("SQ_S03_VAULT", 1)
+	t.ok(_says(st, c, "SQS03_INTERCOM", "파종", ["누른다", "안은 어때"]), "인터컴 '안은 어때?' — C 뒤")
+	st.vars.set_v("SQ_S03_SOL", 0)
+	t.ok(_says(st, c, "SQS03_INTERCOM", "반감", ["누른다", "안은 어때"]), "C 전엔 배급표 '반감'")
+	h.enter("K-08", "from_W")
+	var n := 0
+	for p in h.map.props:
+		if str(p["name"]).begins_with("w_mold_streak"):
+			n += 1
+	t.eq(n, 7, "군락에서 갱도 쪽으로 이어지는 줄기 일곱")
+	st.vars.set_v("SQ_S03_SOL", 1)
+	c._looks()
+	t.ok(_prop_is(h, "w_mold_streak3", "burnt"), "줄기도 함께 그을린다")
+
+
+func test_sq_s03_noise2(t) -> void:
+	var r := _host("2277. 10. 26.  08:00", "X-S07", "start")
+	var st: StoryState = r[1]
+	var c: SideS03 = r[2]
+	t.ok(_says(st, c, "SQS03_INTERCOM", "잡음", ["누른다"]), "첫 호출: 잡음")
+	t.ok(_says(st, c, "SQS03_INTERCOM", "다시 끊긴다", ["누른다"]), "둘째 호출: 수화기 드는 소리 — 누군가 듣고 있다")
+	t.ok(_says(st, c, "SQS03_INTERCOM", "등록 번호", ["누른다"]), "셋째 호출: 받는다")
 
 
 func test_sq_s03_cold_vault(t) -> void:

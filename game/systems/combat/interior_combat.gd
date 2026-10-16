@@ -368,7 +368,7 @@ func _pick_arm(enemy_id: String, pos: Vector2) -> Dictionary:
 
 func spawn(enemy_id: String, pos: Vector2, map: InteriorMap, st: StoryState = null, opts: Dictionary = {}) -> Enemy:
 	var e := Enemy.new()
-	var arm := str(opts.get("arm", "baton" if enemy_id == "CR-473" else ("claw" if enemy_id in ["CR-200", "CR-201", "CR-202"] else "")))
+	var arm := str(opts.get("arm", "baton" if enemy_id == "CR-473" else ("claw" if enemy_id in ["CR-200", "CR-201", "CR-202", "CR-204"] else "")))
 	var generic := bool(opts.get("morale", str(map.data.get("id", "")).begins_with("G-")))   # 길 위 조우 · 생성 건물(1-9e)
 	var w := _enemy_weapon(enemy_id, arm)
 	var o2 := opts

@@ -6,11 +6,13 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "DRINK": 4,
-  "SIP": 6,
-  "GULP": 7,
-  "SPENT": 9,
-  "DRY": 11
+  "FILTER_OK": 4,
+  "FILTER_NO": 8,
+  "DRINK": 10,
+  "SIP": 12,
+  "GULP": 13,
+  "SPENT": 15,
+  "DRY": 17
  },
  "ops": [
   {
@@ -41,14 +43,60 @@
      "id": "SQS03_TAP:1:0"
     },
     {
+     "text": "강판으로 꼭지 앞에 필터 틀을 짠다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 25
+      }
+     ],
+     "cond": "has(\"M-013\") == 1 and SQ_S03_FILTER == 0 and SQS03_STAGE >= 10 and SQS03_STAGE < 70",
+     "fx": "",
+     "to": "FILTER_OK",
+     "id": "SQS03_TAP:1:1",
+     "fail": "FILTER_NO"
+    },
+    {
      "text": "그냥 둔다",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "SQS03_TAP:1:1"
+     "id": "SQS03_TAP:1:2"
     }
    ]
+  },
+  {
+   "op": "do",
+   "fx": "take(\"M-013\", 1)"
+  },
+  {
+   "op": "cmd",
+   "name": "s03",
+   "args": [
+    "filter"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "강판을 접어 틀을 짜고 숯과 모래를 켜켜이 채운다. 꼭지 물이 틀을 지나 맑게 떨어진다. 칠판 구석에 날짜를 적어 둔다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "틀이 맞지 않는다. 이음매에서 물이 샌다. 강판은 다시 쓸 수 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
   },
   {
    "op": "if",

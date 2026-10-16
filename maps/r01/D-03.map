@@ -27,6 +27,9 @@ box 5 6 sd_drawer owner=N-R01-041 name="역무실 서랍"
 npc N-R01-041 5 5 S
 prop radio_desk 10 4
 prop w_speaker 10 1
+# SQ-S05(1-11e): 역무 파수-3이 방송 설비 곁에 선다(측선에서 옮겨 온 뒤 — 한 곳에만, P3)
+prop metro_robot_stand 12 5 cond="SQ_S05_ROBOT == 2"
+text 12 5 "역무 파수-3. 녹색 띠 · 안내 화면에 '역무실 방송 설비 연결 필요'." scene=SQS05_ROBOT
 text 10 4 "역 방송 설비. 마이크 · 앰프 · 녹음 테이프 칸. 전원은 들어오는데 테이프 칸이 비었다." scene=SD_BROADCAST
 prop w_sd_board 13 1
 text 13 2 "역무실 칠판." w=2 scene=SD_RUNBOARD

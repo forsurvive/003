@@ -1,0 +1,86 @@
+{
+ "id": "SQS05_SIDING",
+ "title": "폐쇄 측선 문",
+ "loc": "L-UG-02",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "GUESTS": 4,
+  "PASSHOLDER": 8,
+  "HALF": 11
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S05_SOL == 1",
+   "to": "GUESTS"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S05_SOL == 3",
+   "to": "HALF"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "철망 셔터가 내려져 있다. 위에 '회송 · 측선'. 셔터 아래 바닥 먼지에 발자국이 하나도 없다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "셔터가 올라가 있다. 안쪽 어둠 속에 사람들이 줄지어 서 있다 — 내린 손님들. 아무도 돌아보지 않는다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "맨 끝에 제복 모자를 쓴 역무원이 셔터 쪽을 향해 서 있다. 표를 확인하듯 고개를 까딱인다."
+  },
+  {
+   "op": "if",
+   "cond": "has(\"M-071\") == 1",
+   "to": "PASSHOLDER"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "한 걸음 다가가자 역무원이 경광봉을 가로로 든다. \"정기권 손님은 다음 차를 기다리십시오.\""
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "셔터가 천천히 내려온다. 아무도 다치지 않았다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "셔터가 반쯤 올라가 있다. 안쪽에 봉천행 표를 쥔 사람들이 줄지어 서 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S05.txt"
+}

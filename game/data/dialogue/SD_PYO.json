@@ -7,11 +7,12 @@
  "labels": {
   "START": 0,
   "AGAIN": 6,
-  "ASK": 7,
-  "SHOP": 8,
-  "MAT": 10,
-  "GROW": 14,
-  "GROW2": 18
+  "S5PYO": 9,
+  "ASK": 12,
+  "SHOP": 13,
+  "MAT": 15,
+  "GROW": 19,
+  "GROW2": 23
  },
  "ops": [
   {
@@ -47,10 +48,38 @@
    "to": "ASK"
   },
   {
+   "op": "if",
+   "cond": "SQ_S05_SOL >= 1 and SQ_S05_SOL <= 3 and SQ_S05_PYO == 0",
+   "to": "S5PYO"
+  },
+  {
    "op": "line",
    "who": "N-R01-042",
    "emo": "미소",
    "text": "왔어? 오늘 건 갓이 두꺼워."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-042",
+   "emo": "미소",
+   "text": "서쪽 측실 봤어? 습기, 어둠, 온도 — 버섯한텐 천국이야. 손님들이 비켜 줬으니 거기다 선반을 놓을게."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-042",
+   "emo": "기본",
+   "text": "첫 수확 나눠 줄게. 그리고 앞으로 너한테는 싸게."
+  },
+  {
+   "op": "cmd",
+   "name": "s05",
+   "args": [
+    "pyo"
+   ]
   },
   {
    "op": "choice",

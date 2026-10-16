@@ -291,6 +291,9 @@ func trade_mult(vid: String) -> Array:
 	if str(host.merchants.get(vid, {}).get("settle", "")) == "JH" and v("JM_REG") == 1:   # 지하시장 단골(1-4): −10%
 		k = [0.90, 1.0]
 		greet = "단골한테는 덜 남겨."
+	if vid == "V05" and st.vars.has("SQ_S05_PYO") and v("SQ_S05_PYO") == 1:   # SQ-S05 보상(SD-04a §4.5): 표하경 상시 −15% — 서쪽 측실 선반
+		k = [k[0] * 0.85, k[1]]
+		greet = "서쪽 측실 선반 몫이야. 너한테는 싸게."
 	var item_k := {}
 	if r == 5:                                                        # 마을을 팖: 다음 날 마을 물값 2배(SD-03a §8.1 표)
 		for w in WATER_IDS:
@@ -905,6 +908,10 @@ func _bot(dt: float) -> void:
 			if log_on and int(t * 2.0) % 4 == 0 and int((t - dt) * 2.0) % 4 != 0:
 				print("  전투 %.0f초: 나 %.0f · 감시조 %s · 적 %s" % [t, host.combat.pc.hp, str(host.combat.allies.map(func(a): return int(a["cmb"].hp))),
 					str(alive.map(func(e): return "%s %d/%d %s" % [e.get_meta("enemy_id"), int(e.cmb.hp), int(e.cmb.max_hp), AIBrain.S.keys()[e.brain.state]]))])
+				var other := host.combat.enemies.filter(func(e): return is_instance_valid(e) and not e.cmb.dead and e.cmb.team != "enemy")
+				if not other.is_empty():                                            # 진단: 다른 편(경비 · 정착지 · 무명)도 함께 — 보이지 않는 공격자 찾기
+					print("    다른 편: %s" % str(other.map(func(e): return "%s[%s] %d %s 거리%.0f" % [e.get_meta("enemy_id"), e.cmb.team, int(e.cmb.hp),
+						AIBrain.S.keys()[e.brain.state], e.loco.logical.distance_to(host.player.loco.logical) / 32.0])))
 			if not touch_bot:
 				host.combat.bot = {"aim": alive[0].loco.logical + Vector2(0, -12), "fire": true, "aimed": true,
 				"reload": host.combat.mags.get(host.combat.weapon_id, 1) == 0, "stim": host.combat.pc.hp < host.combat.pc.max_hp * 0.4}

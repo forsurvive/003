@@ -200,6 +200,16 @@ func _show() -> void:
 			sprite.play("sleep_E")
 		return
 	sprite.speed_scale = 1.0
+	if pose == "sit" and loco.motion == "idle":                      # 앉은 그림이 있는 시트(대피민 구울, 1-11e): 무릎을 세운 앉음
+		var sa: Array = Locomotion.anim_for("sit", dir)
+		if sprite.sprite_frames.has_animation(sa[0]):
+			sprite.position = Vector2.ZERO
+			if sprite.animation != sa[0]:
+				sprite.animation = sa[0]
+			sprite.flip_h = sa[1]
+			sprite.frame = 0
+			sprite.pause()
+			return
 	var a: Array = Locomotion.anim_for(motion, dir)
 	var anim: String = a[0]
 	if not sprite.sprite_frames.has_animation(anim):

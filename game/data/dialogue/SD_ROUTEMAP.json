@@ -6,7 +6,8 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "SEEN": 6
+  "SEEN": 6,
+  "S5LIT": 9
  },
  "ops": [
   {
@@ -41,10 +42,25 @@
    "to": "END"
   },
   {
+   "op": "if",
+   "cond": "SQ_S05_REPORT == 1",
+   "to": "S5LIT"
+  },
+  {
    "op": "line",
    "who": "SYS",
    "emo": "기본",
    "text": "노선도. 역 이름 불이 켜졌다 꺼진다. 서울대입구 칸만 꺼진 채다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "노선도. 역 이름 불이 켜졌다 꺼진다. 서울대입구 칸에도 — 이제 불이 들어온다."
   },
   {
    "op": "goto",

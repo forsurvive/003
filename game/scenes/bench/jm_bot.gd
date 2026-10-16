@@ -12,6 +12,7 @@ var side: SideR01                                    ## 관악 사이드 퀘스�
 var side2: SideS02                                   ## 관악 사이드 퀘스트(1-11b SQ-S02)
 var side4: SideS04                                   ## 관악 사이드 퀘스트(1-11c SQ-S04)
 var side3: SideS03                                   ## 관악 사이드 퀘스트(1-11d SQ-S03)
+var side5: SideS05                                   ## 관악 사이드 퀘스트(1-11e SQ-S05)
 var st: StoryState
 var route := "job"
 var shots := ""
@@ -83,6 +84,9 @@ func _ready() -> void:
 	side3 = SideS03.new()
 	add_child(side3)
 	side3.setup(host, true)
+	side5 = SideS05.new()
+	add_child(side5)
+	side5.setup(host, true)
 	host.combat.player_down.connect(host.on_pc_down)                  # 쓰러짐 → 생포 판정(진짜 진행 prologue와 같은 연결)
 	host.combat.equip("W-002", st)
 	match route:
@@ -208,9 +212,24 @@ func _ready() -> void:
 				["check", "SQ_S02_PIPEMAP == 1", "조수안의 옛 관로 지도"],
 				["warp", "K-08"], ["wait", 1.5], ["go", 30, 4, "K-08"], ["want", ["덧대고"]], ["use", 30, 3], ["wait", 1.0],
 				["check", "SQ_S02_J1 == 1", "첫 이음 지점"], ["go", 37, 4, "K-08"], ["want", ["덧대고"]], ["use", 37, 3], ["wait", 1.0], ["shot", "bs_joint"],
-				["check", "SQ_S02_B == 1 and SQS02_STAGE == 70 and SQS03_STAGE == 10", "해법 B 우회 관로 — 단계 70 · SQ-S03 자동 발동"],
+				["check", "SQ_S02_B == 1 and SQS02_STAGE == 70 and SQS03_STAGE >= 10", "해법 B 우회 관로 — 단계 70 · SQ-S03 자동 발동(암거 안이면 바로 40)"],
 				["warp", "X-BS", "arrive"], ["wait", 1.0], ["talk", "N-R01-032"], ["wait", 1.5],
 				["check", "SQ_S02_REWARD == 1 and has(\"I-056\")", "조수안 사례: 관악산 약수 ×5 + 100캡"]]
+		"s3":                                                           # 1-11d SQ-S03: 저수조 벽(20) → 암거 쥐 무리 · 왕쥐(40) → 정비공 측정지(50) → 갱도 수문 닫음(60) → 정문 인터컴 측정지 수치(C · 70) → 조수안 보고(100)
+			st.vars.set_v("PC_ST", 7)
+			host.date_text = "2277. 10. 27.  10:00"
+			host.enter("X-BS", "tanks")
+			plan = [["wait", 1.0], ["shot", "s3_wall"], ["scene", "SQS03_WALL"], ["wait", 2.0], ["check", "SQS03_STAGE == 20", "저수조 이음 벽 — 볼트 회의 기억(20)"],
+				["warp", "K-08", "from_W"], ["wait", 1.5], ["check", "SQS03_STAGE == 40 and SQ_S03_KING == 1", "암거에 들어섬(40) · 왕쥐가 선다"],
+				["hp", 9999], ["fight"], ["shot", "s3_k08"], ["check", "SQ_S03_KING == 2", "왕쥐를 쓰러뜨림(다시 서지 않는다)"],
+				["go", 44, 5, "K-08"], ["use", 44, 4], ["wait", 2.0], ["check", "has(\"M-302\") and SQS03_STAGE == 50", "정비공 유해의 측정지(50)"],
+				["warp", "E-01", "from_W"], ["wait", 1.5], ["fight"], ["go", 23, 5, "E-01"], ["want", ["온몸으로"]], ["use", 24, 5], ["wait", 2.0], ["shot", "s3_gate"],
+				["check", "SQ_S03_GATE == 2 and SQS03_STAGE == 60", "갱도 중간 수문을 닫음(60)"],
+				["warp", "X-S07", "from_vault"], ["wait", 1.0], ["want", ["누른다"]], ["scene", "SQS03_INTERCOM"], ["wait", 2.0],
+				["want", ["누른다", "수치를 읽어", "끊는다"]], ["scene", "SQS03_INTERCOM"], ["wait", 5.0], ["shot", "s3_intercom"],
+				["check", "SQ_S03_SOL == 3 and SQR_S03 == 3 and SQS03_STAGE == 70", "방금례에게 측정지 수치 — 원인 차단(C · 70 · 4막 이월)"],
+				["warp", "X-BS", "arrive"], ["wait", 1.0], ["talk", "N-R01-032"], ["wait", 2.0],
+				["check", "SQS03_STAGE == 100 and SQ_S03_REWARD == 1", "조수안 보고(100) · 사례 · 꼭지 필터"]]
 		"rd":                                                           # 1-11c SQ-S04: 21시 경보(봉천) → 민원실 철망 → 레이더 철조망(힘 6) → 돔 전지 회수(E) → 대장간 인도 → 마을이 철망을 연다
 			st.vars.set_v("PC_ST", 7)
 			host.combat.pc.hp = 99999.0
@@ -727,6 +746,9 @@ func _process(dt: float) -> void:
 				if lk.turn > 45.0 and not seen.has("lock_shot2"):
 					seen["lock_shot2"] = true
 					_shot("lock_turn")
+		"scene":                                                        # 조사 글 장면을 그 자리에서 연다(월드 손 맵의 조사 칸 — 1-11d)
+			host.play_scene(str(s[1]))
+			_next()
 		"warp":                                                         # 다음 장소로 바로(확인 봇: 걸어가는 길은 다른 봇이 본다)
 			host.enter(str(s[1]), str(s[2]) if s.size() > 2 else "from_W")
 			_next()

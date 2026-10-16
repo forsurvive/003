@@ -5,9 +5,29 @@
  "npc": "",
  "cond": "V_ACT >= 1",
  "labels": {
-  "START": 0
+  "START": 0,
+  "STILL": 6,
+  "DRIED": 8
  },
  "ops": [
+  {
+   "op": "cmd",
+   "name": "s03",
+   "args": [
+    "point",
+    "3"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S03_SOL == 3",
+   "to": "DRIED"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S03_CLEAN == 1",
+   "to": "STILL"
+  },
   {
    "op": "line",
    "who": "SYS",
@@ -21,12 +41,24 @@
    "text": "막은 갱도 안쪽, 산 위 볼트 쪽에서부터 이어져 내려온다."
   },
   {
-   "op": "cmd",
-   "name": "s03",
-   "args": [
-    "point",
-    "3"
-   ]
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "출구 물길. 암거 천장은 처리했는데 — 검은 막은 여전히 갱도 안쪽, 볼트 쪽에서 내려온다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "출구 물길이 가늘어졌다. 바닥의 검은 막이 말라 거북등처럼 갈라졌다."
   },
   {
    "op": "goto",

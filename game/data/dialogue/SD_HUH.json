@@ -6,16 +6,41 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "AGAIN": 7,
-  "ASK": 8,
-  "HIST": 9,
-  "MAP": 13,
-  "MAP2": 19,
-  "WEST": 21,
-  "WEST2": 26,
-  "PASS": 29
+  "AGAIN": 10,
+  "ASK": 11,
+  "HIST": 12,
+  "MAP": 16,
+  "MAP2": 22,
+  "WEST": 24,
+  "WEST2": 29,
+  "PASS": 32,
+  "S5MAD": 35,
+  "S5MAD_OK": 39,
+  "S5SOFT": 41,
+  "S5PASS": 45,
+  "S5PAID": 47,
+  "S5ASKB": 51,
+  "S5REPORT": 58,
+  "S5R_A": 62,
+  "S5R_B": 64,
+  "S5PAY": 65
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S05_BCAST == 1 and SQ_S05_MAD == 0 and SQ_S05_SOL != 1",
+   "to": "S5MAD"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S05_BCAST == 1 and SQ_S05_MAD == 0 and SQ_S05_SOL == 1",
+   "to": "S5MAD_OK"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S05_MAD == 1 and SQ_S05_SOL == 1 and SQ_S05_SOFT == 0",
+   "to": "S5SOFT"
+  },
   {
    "op": "if",
    "cond": "SD_MET_HUH >= 1",
@@ -96,12 +121,36 @@
      "id": "SD_HUH:1:3"
     },
     {
+     "text": "정기권, 지금 쓸 일이 생겼어요",
+     "tags": [],
+     "cond": "SQS05_STAGE >= 10 and SQ_S05_PASS == 0 and has(\"M-071\") == 0",
+     "fx": "",
+     "to": "S5PASS",
+     "id": "SD_HUH:1:4"
+    },
+    {
+     "text": "방송 설비를 써도 될까요? 안내 로봇을 옮겨 왔어요",
+     "tags": [],
+     "cond": "SQ_S05_ROBOT == 2 and SQ_S05_BCAST == 0",
+     "fx": "",
+     "to": "S5ASKB",
+     "id": "SD_HUH:1:5"
+    },
+    {
+     "text": "서쪽 터널이 비었어요",
+     "tags": [],
+     "cond": "SQ_S05_SOL >= 1 and SQ_S05_SOL <= 3 and SQ_S05_REPORT == 0",
+     "fx": "",
+     "to": "S5REPORT",
+     "id": "SD_HUH:1:6"
+    },
+    {
      "text": "됐어요",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "SD_HUH:1:4"
+     "id": "SD_HUH:1:7"
     }
    ]
   },
@@ -224,6 +273,202 @@
   {
    "op": "goto",
    "to": "ASK"
+  },
+  {
+   "op": "do",
+   "fx": "SQ_S05_MAD = 1"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-041",
+   "emo": "분노",
+   "text": "누가 방송했어. 쪽지 못 봤어? 방송은 역장만이야. 대합실 애들이 다 깼어."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-041",
+   "emo": "기본",
+   "text": "…서쪽에서 무슨 소리 나는지 경비대가 지금 보러 갔어. 결과 보고 다시 얘기해."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "SQ_S05_MAD = 1"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-041",
+   "emo": "분노",
+   "text": "누가 방송했어. 방송은 역장만이라고 —"
+  },
+  {
+   "op": "do",
+   "fx": "SQ_S05_SOFT = 1"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-041",
+   "emo": "슬픔",
+   "text": "…손님들이 일어났대. 줄 서서, 측선 쪽으로. 이백 년 만에."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-041",
+   "emo": "기본",
+   "text": "잘했어. 다음엔 물어봐. 내가 스위치 올리는 거, 한 번은 해 보고 싶었으니까."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-041",
+   "emo": "기본",
+   "text": "공짜는 아니라고 했지. 위원회 물통이 비었어. 물 한 통 채워 줘. 그럼 빌려줄게."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "물 한 통을 채운다",
+     "tags": [],
+     "cond": "has(\"I-054\") == 1 or has(\"I-055\") == 1 or has(\"I-056\") == 1 or has(\"I-057\") == 1",
+     "fx": "",
+     "to": "S5PAID",
+     "id": "SD_HUH:2:0"
+    },
+    {
+     "text": "나중에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "ASK",
+     "id": "SD_HUH:2:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s05",
+   "args": [
+    "water"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-041",
+   "emo": "미소",
+   "text": "됐어. 서랍에서 꺼내 줄게. 빌려주는 거야 — 돌려받을 생각은 없지만."
+  },
+  {
+   "op": "cmd",
+   "name": "s05",
+   "args": [
+    "lend"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-041",
+   "emo": "놀람",
+   "text": "안내 3호를 끌고 왔다고? …저게 아직 말을 한다고?"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-041",
+   "emo": "기본",
+   "text": "비켜 봐. 이 스위치는 역장이 올려."
+  },
+  {
+   "op": "cmd",
+   "name": "s05",
+   "args": [
+    "broadcast",
+    "2"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "허순자가 스위치를 올린다. 확성기가 숨을 들이쉬듯 지직거리고 — 이백 년 전 목소리가 역 전체로 번진다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "\"오늘 운행을 모두 마쳤습니다. 승강장에 계신 손님께서는 서울대입구 방면 승강장 끝 출구로 나가 주시기 바랍니다. 감사합니다.\""
+  },
+  {
+   "op": "line",
+   "who": "N-R01-041",
+   "emo": "슬픔",
+   "text": "…내 목소리로는 이백 년 동안 못 한 말이야."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S05_SOL == 1",
+   "to": "S5R_A"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S05_SOL == 2",
+   "to": "S5R_B"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-041",
+   "emo": "놀람",
+   "text": "구울 행상이 내려갔다고? 말로? …절반이 표를 쥐고 떠났대. 남은 사람들은 네가 마무리했고."
+  },
+  {
+   "op": "goto",
+   "to": "S5PAY"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-041",
+   "emo": "슬픔",
+   "text": "들었어. 줄 서서 측선으로 들어갔다고. 막차는 끝났다고 들었으니 이제 집에 간 거지."
+  },
+  {
+   "op": "goto",
+   "to": "S5PAY"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-041",
+   "emo": "피곤",
+   "text": "터널이 비었다는 건 알아. 어떻게 비었는지도 알고. …길은 길이야. 고마워."
+  },
+  {
+   "op": "cmd",
+   "name": "s05",
+   "args": [
+    "report"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-041",
+   "emo": "기본",
+   "text": "위원회 몫이야. 노선도에 서쪽 칸 불 들어온 거 봐. 칠판 마지막 줄은 내가 고칠게."
+  },
+  {
+   "op": "goto",
+   "to": "END"
   },
   {
    "op": "end"

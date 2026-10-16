@@ -229,7 +229,7 @@ class Head:
         lk, face = self.look, self.face
         kid, fem = lk.body == "K1", lk.body in ("F1", "F2", "E2")
         kind = "shut" if face in ("blink", "fire", "smile") else "hurt" if face == "hurt" else "open"
-        feral = lk.skin == "SG2" and lk.torso == "T16"                       # 야생 구울 외형(SG2 피부 + 누더기)
+        feral = lk.skin == "SG2" and (lk.torso == "T16" or lk.eyes == "EY20")   # 야생 구울 외형(SG2 피부 + 누더기) · EY20 = 구울 백탁 눈(옷은 그대로 — 대피민 · 역무원 구울, 1-11e)
         ex0, ey = 0.36, 0.2 if not kid else 0.22
         for side in (-1, 1):
             ex = side * ex0
@@ -585,6 +585,8 @@ class Head:
     def eyewear(self, img):
         e = self.look.eyes
         g = self.look.gear
+        if e == "EY20":                                                      # 구울 백탁 눈: 안경이 아니라 눈 도장(eye_stamps)에서 그린다
+            e = None
         if not e and g != "HD09":
             return img
         d = ImageDraw.Draw(img)
@@ -755,6 +757,8 @@ def _leg(d, hx, hy, fx, fy, col, w=2):
 
 def body(look, view, mode="idle", frame=0):
     """한 컷. 반환 (그림 32×32, 머리 구 중심 (x, y) — 몸 칸 좌표, 발 기준점은 (16, 30))."""
+    if mode == "sit":
+        return sit_body(look, view)
     tw, th, legl, overlap, stoop = BODY.get(look.body, BODY["M1"])
     o = outfit(look)
     sk = skin_ramp(look.skin)
@@ -1066,6 +1070,11 @@ def gun(view, kind="pistol", hand=None):
         elif kind == "baton":
             g.rectangle([x0, 7, x0 + n - 1, 8], fill=C("P02"))
             g.line([x0, 7, x0 + n - 1, 7], fill=C("P04"))
+        elif kind == "lightstick":                           # 경광봉(역무원 구울, 1-11e): 검은 손잡이 + 주황 발광 몸통 · 끝은 더 밝게
+            g.rectangle([x0, 7, x0 + 2, 8], fill=C("P02"))
+            g.rectangle([x0 + 3, 7, x0 + n - 1, 8], fill=C("P27"))
+            g.line([x0 + 3, 7, x0 + n - 2, 7], fill=C("P60"))
+            g.rectangle([x0 + n - 2, 7, x0 + n - 1, 8], fill=C("P50"))
         elif kind == "shotgun":                              # 산탄총: 나무 개머리, 굵은 총열 + 아래 탄창관, 나무 펌프
             g.rectangle([x0 - 2, 8, x0, 9], fill=wood[1])
             g.point((x0 - 2, 10), fill=wood[0])
@@ -1166,6 +1175,11 @@ def gun(view, kind="pistol", hand=None):
             g.rectangle([8, 8, 11, 10], fill=wood[1])
         elif kind == "baton":
             g.rectangle([9, 2, 10, 10], fill=C("P02"))
+        elif kind == "lightstick":
+            g.rectangle([9, 2, 10, 7], fill=C("P27"))
+            g.line([9, 2, 9, 6], fill=C("P60"))
+            g.rectangle([9, 2, 10, 2], fill=C("P50"))
+            g.rectangle([9, 8, 10, 10], fill=C("P02"))
         elif kind == "shotgun":                              # 앞에서 본 총열 구멍 + 아래 펌프
             g.rectangle([8, 5, 11, 10], fill=metal[2])
             g.line([8, 5, 11, 5], fill=metal[3])
@@ -1221,7 +1235,7 @@ def gun(view, kind="pistol", hand=None):
             g.line([11, 6, 12, 6], fill=metal[3])
     else:
         g = ImageDraw.Draw(img)
-        body = {"pole": wood[1], "baton": C("P02"), "bat": C("P20"), "sledge": wood[1], "knife": C("P08"),
+        body = {"pole": wood[1], "baton": C("P02"), "lightstick": C("P27"), "bat": C("P20"), "sledge": wood[1], "knife": C("P08"),
                 "launcher": C("P30"), "flamer": metal[2]}.get(kind, metal[2])
         if kind == "grenade":
             g.rectangle([9, 9, 10, 10], fill=hand)
@@ -1243,7 +1257,7 @@ def gun(view, kind="pistol", hand=None):
     return outline(img, thick_bottom=False)
 
 
-GUN_LEN = {"pistol": 7, "rifle": 13, "smg": 9, "baton": 10, "bb": 11, "pole": 15, "shotgun": 13, "laser": 13,
+GUN_LEN = {"pistol": 7, "rifle": 13, "smg": 9, "baton": 10, "lightstick": 10, "bb": 11, "pole": 15, "shotgun": 13, "laser": 13,
            "minigun": 15, "flamer": 14, "launcher": 15, "knife": 7, "bat": 12, "sledge": 12, "grenade": 3}
 GUN_KINDS = ("pistol", "rifle", "smg", "bb", "shotgun", "laser", "minigun", "flamer", "launcher")   # 총구가 있는 무기(탄·총구 화염·불길이 나간다)
 MUZZLE_Y = {"bb": 7.5, "shotgun": 7.5}                     # 동쪽 그림의 총열 축(기본 8.0)
@@ -1267,6 +1281,85 @@ def gun_muzzle(view, kind):
     if view == "S":
         return MUZZLE_S.get(kind, (10.0, 7.5))
     return (10.0, 2.5)
+
+
+def sit_body(look, view):
+    """앉음 한 컷(1-11e SQ-S05 '막차를 기다리는 손님'): 바닥에 엉덩이를 대고 무릎을 세워 팔로 감싼 자세.
+    엉덩이가 발 기준점(16, 30) 바로 위 — 서 있을 때보다 다리 길이만큼 낮다. 머리는 조금 숙인다(등 굽음 +1).
+    옆(E)은 무릎이 앞으로 솟은 옆모습, 앞(S)은 두 무릎이 몸통 앞을 가리고, 뒤(N)는 등과 엉덩이만 보인다."""
+    tw, th, legl, overlap, stoop = BODY.get(look.body, BODY["M1"])
+    o = outfit(look)
+    sk = skin_ramp(look.skin)
+    img = Image.new("RGBA", (32, 32), CLEAR)
+    d = ImageDraw.Draw(img)
+    side_view = view == "E"
+    if side_view:
+        tw -= 2
+    elif view in ("SE", "NE"):
+        tw -= 1
+    th = th - 1                                                               # 웅크려 몸통이 짧아 보인다
+    hip_y = 29
+    x0 = 16 - tw // 2 - (1 if side_view else 0)
+    y0 = hip_y - th + 1
+    leg_ramp = sk if o["legs_skin"] else o["pants"]
+    boot = (lambda near: (sk[1] if o["legs_skin"] else o["boots"][1]) if near else (sk[0] if o["legs_skin"] else o["boots"][0]))
+    def legs(front):
+        """front=True면 몸통 앞에 그리는 다리(S · SE · E), False면 몸통 뒤(N · NE)"""
+        if side_view:                                                         # 엉덩이 → 무릎(앞 위) → 발(앞 아래)
+            for k, dx in ((0, 0), (1, 1)):
+                col = leg_ramp[1] if k else leg_ramp[0]
+                hx, hy = 15 + dx, hip_y - 1
+                kx, ky = 20 + dx, hip_y - 5
+                fx, fy = 22 + dx, hip_y
+                _leg(d, hx, hy, kx, ky, col)
+                _leg(d, kx, ky, fx, fy - 1, col)
+                d.rectangle([fx - 1, fy, fx + 1, fy], fill=boot(k == 1))
+            return
+        if view in ("S", "SE") and front:                                     # 두 무릎이 몸통 아래쪽 앞을 가린다
+            off = 1 if view == "SE" else 0
+            for k, sx in ((0, -2), (1, 2)):
+                col = leg_ramp[1] if (k == 1 or view == "S") else leg_ramp[0]
+                kx, ky = 16 + sx + off, hip_y - 4
+                d.rectangle([kx - 1, ky, kx + 1, ky + 2], fill=col)            # 세운 정강이(앞에서 본 짧은 기둥)
+                d.point((kx, ky - 1), fill=col)                                # 무릎 머리
+                d.rectangle([kx - 1, hip_y, kx + 1, hip_y], fill=boot(True))   # 발끝
+        if view in ("N", "NE") and not front:                                 # 뒤: 양옆으로 무릎 끝만 살짝
+            for sx in (-tw // 2 - 1, tw // 2):
+                d.rectangle([16 + sx, hip_y - 3, 16 + sx + 1, hip_y - 1], fill=leg_ramp[0])
+    legs(False)
+    main = o["main"]
+    for y in range(th):
+        for x in range(tw):
+            nx = (x + 0.5 - tw / 2) / (tw / 2)
+            ny = (y + 0.5 - th / 2) / (th / 2)
+            if nx * nx * 0.9 + max(0.0, ny) ** 4 + max(0.0, -ny) ** 2 * 0.6 > 1.0:
+                continue
+            nz = math.sqrt(max(0.0, 1 - min(1.0, nx * nx)))
+            dd = nx * L[0] + max(-1, min(1, ny)) * 0.5 * L[1] + nz * L[2]
+            img.putpixel((x0 + x, y0 + y), shade(main, dd))
+    _features(img, d, look, o, view, x0, y0, tw, th, hip_y, -1)
+    legs(True)
+    hand = o["hand"][1] if o["hand"] else sk[3]
+    sleeve = sk[2] if "rags" in o["feat"] else main[1]
+    if side_view:                                                             # 팔이 무릎을 감싼다
+        d.line([x0 + tw - 2, y0 + 3, 19, hip_y - 4], fill=sleeve)
+        d.point((20, hip_y - 4), fill=hand)
+    elif view in ("S", "SE"):
+        for sx in (-2, 2):
+            d.rectangle([16 + sx - (1 if sx < 0 else 0), y0 + 4, 16 + sx + (0 if sx < 0 else 1), y0 + 5], fill=sleeve)
+            d.point((16 + sx + (0 if sx < 0 else 0), hip_y - 5), fill=hand)
+    else:
+        for side in (-1, 1):
+            xa = x0 - 1 if side < 0 else x0 + tw
+            d.rectangle([xa, y0 + 3, xa, y0 + 5], fill=sleeve)
+    if "backpack" in o["feat"] and view in ("N", "NE", "E"):
+        bx = x0 + 1 if view == "N" else (x0 - 2 if view == "E" else x0)
+        d.rectangle([bx, y0 - 1, bx + (tw - 3 if view == "N" else 4), y0 + th - 2], fill=C("P18"), outline=C("P17"))
+    img = outline(img, thick_bottom=False)
+    neck_y = y0 + overlap
+    hx = 16 + (stoop + 1 if view in ("E", "SE", "NE") else 0) - (1 if side_view else 0)
+    ry = HEAD_SIZE.get(look.body, (22, 20))[1] / 2 - 0.3
+    return img, (hx, int(round(neck_y + stoop + 1 - ry)))
 
 
 def roll_body(look, frame):

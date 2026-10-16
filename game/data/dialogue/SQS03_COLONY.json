@@ -6,16 +6,16 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "BURN1": 6,
-  "BURN2": 7,
-  "BURN3": 8,
-  "FIRE": 10,
-  "FIZZLE": 14,
-  "SPRAY": 17,
-  "SPRAYFAIL": 22,
-  "BURNT": 24,
-  "SPRAYED": 26,
-  "DRYING": 28
+  "BURN1": 7,
+  "BURN2": 8,
+  "BURN3": 9,
+  "FIRE": 11,
+  "FIZZLE": 15,
+  "SPRAY": 18,
+  "SPRAYFAIL": 23,
+  "BURNT": 25,
+  "SPRAYED": 27,
+  "DRYING": 29
  },
  "ops": [
   {
@@ -44,6 +44,12 @@
    "who": "SYS",
    "emo": "기본",
    "text": "이 따뜻하고 축축한 암거가 둥지다. 여기서 포자가 위로, 아래로 번진다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "불이면 태울 수 있겠다. 약이면 — 측정 상자의 분무기. 아니면 이 둥지를 먹이는 물이 오는 데를 막든가."
   },
   {
    "op": "choice",

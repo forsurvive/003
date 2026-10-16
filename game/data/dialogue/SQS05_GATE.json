@@ -1,0 +1,180 @@
+{
+ "id": "SQS05_GATE",
+ "title": "서쪽 터널 철망 문",
+ "loc": "L-R01-18",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "SEONG": 5,
+  "WARN": 8,
+  "OPEN1": 11,
+  "AGAIN": 14,
+  "OPENED": 16,
+  "GO": 18
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S05_SOL >= 1 and SQ_S05_SOL <= 3",
+   "to": "OPENED"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S05_GATE == 1",
+   "to": "AGAIN"
+  },
+  {
+   "op": "if",
+   "cond": "known_dead(\"N-R01-044\") == 0 and (GAME_HOUR < 6 or GAME_HOUR >= 20)",
+   "to": "SEONG"
+  },
+  {
+   "op": "line",
+   "who": "N-SA-G3",
+   "emo": "기본",
+   "text": "철망 문? 대장 허락 없인 안 열어. …뭐, 들어가겠다는 사람 막을 권리는 없지."
+  },
+  {
+   "op": "goto",
+   "to": "WARN"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-044",
+   "emo": "기본",
+   "text": "들어가겠다고. 손님 자리야. 그래도 가겠다면 하나만 지켜."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-044",
+   "emo": "기본",
+   "text": "뛰지 마. 문 쾅 닫지 마. 총은 더더욱. 그 사람들 막차 놓칠까 봐 예민해. 하나 깨면 다 깨. 웅크리고 지나가."
+  },
+  {
+   "op": "goto",
+   "to": "OPEN1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "경비가 자물쇠를 풀며 철망 너머를 턱으로 가리킨다."
+  },
+  {
+   "op": "line",
+   "who": "N-SA-G3",
+   "emo": "기본",
+   "text": "뛰지 마. 문 쾅 닫지 마. 총은 더더욱. 그 사람들 막차 놓칠까 봐 예민해. 하나 깨면 다 깨."
+  },
+  {
+   "op": "line",
+   "who": "N-SA-G3",
+   "emo": "기본",
+   "text": "웅크리고 지나가. 숨소리 들리는 데선 더 낮게."
+  },
+  {
+   "op": "do",
+   "fx": "SQ_S05_GATE = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "s05",
+   "args": [
+    "heard"
+   ]
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "들어간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "GO",
+     "id": "SQS05_GATE:1:0"
+    },
+    {
+     "text": "나중에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS05_GATE:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "경비가 철망 문 자물쇠를 만지작거린다. \"또? 웅크리고. 뛰지 말고.\""
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "들어간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "GO",
+     "id": "SQS05_GATE:2:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS05_GATE:2:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "철망 문이 활짝 젖혀져 있다. 기둥의 분필 글씨 '막차 아직'이 지워지고 그 아래 '손님 없음'."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "터널로 들어간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "GO",
+     "id": "SQS05_GATE:3:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS05_GATE:3:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s05",
+   "args": [
+    "go",
+    "U-01",
+    "from_E"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S05.txt"
+}

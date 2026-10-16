@@ -63,7 +63,7 @@ def chibi_sets(look, weapon=None, motions=("idle", "walk", "run")):
     import chibi as K
     sets = {}
     for mo in motions:
-        n = 1 if mo == "idle" else 6
+        n = 1 if mo in ("idle", "sit") else 6
         sets[mo] = {v: [K.actor(look, v, mo, f, weapon=weapon) for f in range(n)] for v in ROWS}
     return sets
 
@@ -107,6 +107,13 @@ ENEMIES = [("en_cr401_loco", "M1-S4-HR02-H1-T06-1-PF01-HD04-EY00-PR034", "rifle"
            ("en_refugee_b_loco", "M1-S3-HR02-H2-T03-2-PF00-HD05-EY00", None),
            ("en_downed_loco", "M1-S4-HR01-H1-T12-2-PF12-HD02-EY00", None)]
 
+# 앉음(sit) 동작이 있는 적 시트(1-11e SQ-S05 「환승촌 막차」, SD-14 CR-204 · CR-205 · §12 휴면): 2077년 그날 밤 막차를 기다리던 대피민 구울 —
+# 퇴근길 양복 · 솜점퍼(목도리) · 가죽 외투 세 벌(무리 안에서 같은 얼굴만 나오지 않게) · 역무원 구울(제복 모자 + 경광봉)
+SEATED = [("en_cr204_loco", "M1-SG2-HR02-H1-T11-2-PF00-HD00-EY20", None),
+          ("en_cr204b_loco", "F1-SG2-HR06-H2-T03-2-PF00-HD00-EY20", None),
+          ("en_cr204c_loco", "M2-SG2-HR00-H1-T05-2-PF00-HD05-EY20", None),
+          ("en_cr205_loco", "M1-SG2-HR01-H1-T11-1-PF00-HD06-EY20", "lightstick")]
+
 
 def main():
     import chibi as K
@@ -120,6 +127,8 @@ def main():
         made.append(pack(nm, chibi_sets(lk), ("idle", "walk", "run"), K.STRIDE))
     for nm, code, weapon in ENEMIES:
         made.append(pack(nm, chibi_sets(K.Look.parse(code), weapon), ("idle", "walk", "run"), K.STRIDE))
+    for nm, code, weapon in SEATED:
+        made.append(pack(nm, chibi_sets(K.Look.parse(code), weapon, ("idle", "walk", "run", "sit")), ("idle", "walk", "run", "sit"), K.STRIDE))
     import power_armor as PA                             # CR-405 파워 아머(구형, SD-16 §5.7): 48×56 칸
     made.append(pack("en_cr405_loco", PA.sets(), ("idle", "walk", "run"), PA.STRIDE, frame=(PA.W, PA.H), foot=(PA.FX, PA.FY)))
     for grp, name, role, code in NP.NPCS:

@@ -992,6 +992,10 @@ PROPS.update(PROPS_S03)
 for _k in PROPS_S04:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_S04)
+from props_s05 import PROPS_S05, STATES_S05                           # 2호선 서쪽 터널 · 낙성대 · 서울대입구(1-11e SQ-S05)
+for _k in PROPS_S05:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_S05)
 from props_trap import PROPS_TRAP, STATES_TRAP, burnt_states       # 함정 · 환경 폭발(1-9c, SD-11 §9.2 · §9.3)
 for _k in PROPS_TRAP:
     assert _k not in PROPS, _k
@@ -1012,6 +1016,7 @@ STATES.update(STATES_TRAP)
 STATES.update(STATES_BS)
 STATES.update(STATES_S04)
 STATES.update(STATES_S03)
+STATES.update(STATES_S05)
 STATES.update(STATES_HOME)
 for _k, _v in burnt_states(PROPS).items():
     STATES.setdefault(_k, {}).update(_v)

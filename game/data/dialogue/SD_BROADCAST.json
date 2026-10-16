@@ -5,9 +5,23 @@
  "npc": "",
  "cond": "V_ACT >= 1",
  "labels": {
-  "START": 0
+  "START": 0,
+  "S5PLUG": 7,
+  "S5PLAY": 10,
+  "S5FAIL": 15,
+  "S5AFTER": 17
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S05_BCAST >= 1",
+   "to": "S5AFTER"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S05_ROBOT == 2",
+   "to": "S5PLUG"
+  },
   {
    "op": "line",
    "who": "SYS",
@@ -19,6 +33,124 @@
    "who": "SYS",
    "emo": "기본",
    "text": "앰프 옆 쪽지, 허순자 글씨. '방송은 역장만. 물 배급 · 불 당번 · 비상.'"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "칸 옆에 오래된 인쇄 쪽지. '막차 안내 방송 원본 — 안내 로봇 기억 장치에 저장(근무 중 휴대).'"
+  },
+  {
+   "op": "cmd",
+   "name": "s05",
+   "args": [
+    "bseen"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "테이프 칸 옆, 역무 파수-3의 가슴 칸이 열려 있다. 케이블 한 가닥이면 닿는다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "앰프 옆 쪽지, 허순자 글씨. '방송은 역장만.'"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "케이블을 이어 방송한다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 25
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "S5PLAY",
+     "id": "SD_BROADCAST:1:0",
+     "fail": "S5FAIL"
+    },
+    {
+     "text": "기억 장치 신호를 앰프 규격에 맞춰 방송한다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "과학",
+       "min": 25
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "S5PLAY",
+     "id": "SD_BROADCAST:1:1",
+     "fail": "S5FAIL"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SD_BROADCAST:1:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s05",
+   "args": [
+    "broadcast",
+    "1"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "확성기가 숨을 들이쉬듯 지직거리고 — 이백 년 전 목소리가 역 전체로 번진다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "\"오늘 운행을 모두 마쳤습니다. 승강장에 계신 손님께서는 서울대입구 방면 승강장 끝 출구로 나가 주시기 바랍니다. 감사합니다.\""
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "로봇 화면이 바뀐다. '2호선 전 역 안내 — 매시 정각 되풀이.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "앰프가 끽 소리를 내고 꺼진다. 배선이 맞지 않는다. 다시 해 볼 수 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "테이프 칸에 녹색 케이블. 매시 정각 막차 안내가 대합실 확성기로 흘러나온다."
   },
   {
    "op": "goto",

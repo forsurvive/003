@@ -7,20 +7,26 @@
  "labels": {
   "START": 0,
   "PRESS": 2,
-  "NOISE": 7,
-  "FIRST": 9,
-  "COLD": 14,
-  "MENU": 15,
-  "NUMBERS": 16,
-  "NUMBERS2_OK": 23,
-  "NUMBERS2_NO": 27,
-  "GATE_DONE": 29,
-  "NAME": 31,
-  "TAG1": 34,
-  "TAG2": 37,
-  "TAG3": 40,
-  "OVER": 43,
-  "BYE": 45
+  "AGAIN": 7,
+  "NOISE": 9,
+  "NOISE2": 11,
+  "FIRST": 13,
+  "COLD": 18,
+  "FLOW": 19,
+  "BACKFLOW": 21,
+  "MENU": 22,
+  "NUMBERS": 23,
+  "NUMBERS2_OK": 30,
+  "NUMBERS2_NO": 34,
+  "GATE_DONE": 36,
+  "NAME": 38,
+  "TAG1": 41,
+  "TAG2": 44,
+  "TAG3": 47,
+  "OVER": 50,
+  "INSIDE": 52,
+  "INSIDE_C": 56,
+  "BYE": 58
  },
  "ops": [
   {
@@ -59,12 +65,21 @@
   },
   {
    "op": "if",
-   "cond": "SQ_S03_CALLS < 3",
+   "cond": "SQ_S03_VAULT >= 1",
+   "to": "AGAIN"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S03_CALLS == 1",
    "to": "NOISE"
   },
   {
    "op": "if",
-   "cond": "SQ_S03_VAULT == 0",
+   "cond": "SQ_S03_CALLS == 2 and has(\"M-302\") == 0",
+   "to": "NOISE2"
+  },
+  {
+   "op": "goto",
    "to": "FIRST"
   },
   {
@@ -75,13 +90,23 @@
   },
   {
    "op": "goto",
-   "to": "MENU"
+   "to": "FLOW"
   },
   {
    "op": "line",
    "who": "SYS",
    "emo": "기본",
    "text": "지직— 잡음뿐이다. 스피커 너머에서 누가 숨을 고르는 것 같기도 하다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "딸깍 — 수화기 드는 소리. 숨소리 하나, 그리고 다시 끊긴다. 누군가 저 안에서 듣고는 있다."
   },
   {
    "op": "goto",
@@ -110,13 +135,28 @@
   },
   {
    "op": "goto",
-   "to": "MENU"
+   "to": "FLOW"
   },
   {
    "op": "line",
    "who": "N-R01-003",
    "emo": "슬픔",
    "text": "보안요원 둘이 아직 의무실에 있어요. …그래도 회선은 회선이니까."
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S03_GATE == 2 and SQ_S03_VAULT < 2",
+   "to": "BACKFLOW"
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-003",
+   "emo": "놀람",
+   "text": "그런데요 — 며칠 새 하층 배수가 역류했어요. 설비과가 난리예요. …혹시 당신이에요?"
   },
   {
    "op": "choice",
@@ -153,12 +193,20 @@
      "id": "SQS03_INTERCOM:2:2"
     },
     {
+     "text": "안은 어때?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "INSIDE",
+     "id": "SQS03_INTERCOM:2:3"
+    },
+    {
      "text": "오버시어께 직접 말씀드릴 수 있어?",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "OVER",
-     "id": "SQS03_INTERCOM:2:3"
+     "id": "SQS03_INTERCOM:2:4"
     },
     {
      "text": "끊는다",
@@ -166,7 +214,7 @@
      "cond": "",
      "fx": "",
      "to": "BYE",
-     "id": "SQS03_INTERCOM:2:4"
+     "id": "SQS03_INTERCOM:2:5"
     }
    ]
   },
@@ -352,6 +400,37 @@
    "who": "N-R01-003",
    "emo": "기본",
    "text": "오버시어실 회선은 봉쇄 뒤로 닫혔어요. 설비과로는 올릴 수 있어요."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S03_SOL == 3",
+   "to": "INSIDE_C"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-003",
+   "emo": "피곤",
+   "text": "농장 3동은 아직 비어 있어요. 2동은 반쯤. 식당 배급표엔 여전히 '반감'이고요."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-003",
+   "emo": "기본",
+   "text": "다들 문 얘기는 안 해요. 대신 물 얘기를 해요. 물에서 냄새가 난다고."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-003",
+   "emo": "기본",
+   "text": "설비과가 농장 배수를 정화조로 돌렸어요. 농장 사람들이 다음 파종 얘기를 해요. …오랜만에요."
   },
   {
    "op": "goto",

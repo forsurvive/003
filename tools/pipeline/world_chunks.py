@@ -46,7 +46,9 @@ DOORS = [{"lid": "L-R02-11", "near": (720, 1147), "to": "J-01", "mark": "from_W"
          {"lid": "L-R01-08", "near": (887, 1494), "to": "K-08", "mark": "from_W", "name": "관악 계곡 배수 암거", "prop": "drain_outlet",
           "hint": "콘크리트 암거 입구. 물비린내와 곰팡이 냄새가 흘러나온다."},
          {"lid": "L-R01-02", "near": (932, 1533), "to": "E-01", "mark": "from_W", "name": "S-07 배수 출구", "prop": "vault_drain_out",   # 1-11d SQ-S03 갱도 바깥 끝
-          "hint": "바위 틈에 녹슨 원형 철문이 반쯤 열린 채 굳었다. 안에서 물이 흘러나온다."}]
+          "hint": "바위 틈에 녹슨 원형 철문이 반쯤 열린 채 굳었다. 안에서 물이 흘러나온다."},
+         {"lid": "L-UG-02", "near": (943, 1360), "to": "U-03", "mark": "from_W", "name": "서울대입구역 — 감시조 사다리", "prop": "subway_stairs",   # 1-11e SQ-S05 봉천 북서
+          "hint": "무너진 역 입구에 봉천 감시조가 사다리를 걸어 두었다. 아래로 2호선 서울대입구역."}]
 # 손 실내가 붙는 건물의 양식(SD-21 §8): 도로망이 바뀌어도 그 자리에 건물이 선다
 ANCHOR_STYLE = {"K-33": "gov", "K-01": "gov", "K-29": "gov", "K-06": "office", "K-20": "villa", "K-22": "apt", "K-24": "office", "K-26": "gov"}
 INSETS = [{"id": "X-S07", "mark": "from_vault", "at": (959, 1503)},          # 볼트 S-07 정문(L-R01-01)
