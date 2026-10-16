@@ -1,0 +1,137 @@
+# 관악산 들개 바위굴(SD-09a L-R01-05 B · SD-14 §10.3 · SD-04a §4.1 SQ-S01 외눈의 인식표 · 단계 1-11a)
+# 32×26 · 관악산 서쪽 계곡 · 연수원 남서 별관(무너진 체육 시설) 뒤편. 가운데 화강암 테로 둘러싼 '뼈 마당' — 암굴 입구 셋(북 · 서 · 남).
+# 북쪽 별관 2층 관람석 난간이 외눈(CR-500)의 감시 자리(K-31). 남쪽 숲길이 삼성산 능선으로 이어지는 도주로(미끼 터는 남쪽 빈터).
+# 무리(외눈 + 변이 들개 CR-104 ×4 + 사나운 들개 CR-105 ×2~3, 밤 20~05시 +2)는 진행기(SideR01 — game/scenes/story/side_r01.gd)가 시간대마다 세운다 — 맵 원고에는 적을 두지 않는다.
+map X-BW 관악산 들개 바위굴
+set r01
+grid
+TTT..TTTTTTTTTTTTTTTTTTTTTTTTTTT
+TTT..TT;,;T;,;,;,;,;,;,TTTTTT;TT
+TT;..;;;;;,;XXXXXXXXXX,;T;;;;;TT
+T;;..,;;,;;;XXXXXXXXXX;;,;;;,;TT
+TT,;;;;;;;;,HHHHHHHHHH;;;;,;;,;T
+TT;,;;o;,;,;HHHHHHHHHH;,;;;;;;;T
+TT,;;;;;;;;;;;;;;;;;;;,;;;;;;;,T
+TT;;;;;;,RRRRRRR..RRRRRR;;;;;;;T
+TTT,;;,;RRRRRRRR..RRRRRRR;;;,;TT
+TT;,;,;;R...............R;;;;;TT
+T;;;,;;;R...............R;;;;;TT
+T,;,;,;;................R;;;;;TT
+T;,;;;;;................R;;;,TTT
+T;;,,;;;R...............R,;,,;TT
+T,,,;;;,R...............R;;,,;;T
+T;;,;;;;R...............R;;o;;,T
+TT,;;;;,RRRRRRRRRRR..RRRR,;;;;;T
+TTT,,,;;;RRRRRRRRRR..RRR;;;;;,;T
+TTT,,,;;;;;;;;,,;;....,;;,;;;;,T
+TT,,;;;,,,;;;;;,,;....,;,;;;;,;T
+T,;;;;;;;;;;;,,,,,,..,,,,;,,;;;T
+T;;,;,;;;;;;;,,,,,,..,,,,,;;;TTT
+TT;;,,,;;;;,;,,,,,,..,,,,;,;;TTT
+T,;;;;;;;,;TT;,;;;;..TT;;,;,,;TT
+TTTT;,;TTTTTTT;;;;;..TTTTT;,;;TT
+TTTTTTTTTTTTTTTTTTT..TTTTTTTTTTT
+end
+levels
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+end
+mark arrive 3 2 S
+mark from_K-30 16 7 S
+mark yard 16 12 S
+mark den 13 10 S
+mark one_yard 16 11 S
+mark baek_face 16 14 N
+mark north_in 16 8 S
+mark west_in 7 11 E
+mark south_in 19 18 N
+mark bait 18 21 S
+mark south_out 19 24 S
+mark ridge 20 25 S
+exit 16 6 K-30 from_X
+# 별관(무너진 체육 시설)
+struct roof 12 2 10 2 seed=1 args='{"edges": "nwe", "paint": "grey"}'
+struct facade 12 4 10 2 seed=2 args='{"style": "concrete", "doors": [[4, "steel"]], "name": "연수원 체육관 별관", "windows": ["broken", "board", "dark", "broken"]}'
+text 13 6 "별관 출입문. 쇠문이 반쯤 떨어져 있다. 안에서 개 냄새가 난다." w=4
+prop gym_mat 9 6
+prop rubble 23 6
+prop rubble2 10 3
+prop tree_dead 24 3
+# 소굴 바위 테 · 암굴 입구 셋
+struct rock 9 7 5 2 seed=3
+struct cave 14 7 6 2 seed=4 args='{"opening": [2, 3]}'
+struct rock 20 7 4 2 seed=5
+struct rock 8 8 1 3 seed=6 args='{"grass_top": false}'
+struct rock 8 13 1 4 seed=7 args='{"grass_top": false}'
+struct rock 24 8 1 9 seed=8 args='{"grass_top": false}'
+struct rock 9 16 8 2 seed=9
+struct cave 17 16 6 2 seed=10 args='{"opening": [2, 3]}'
+struct rock 23 16 1 2 seed=11
+# 바위 테 바깥(마당이 네모난 우리처럼 보이지 않게 — 모서리는 깎고 바깥으로 큰 바위가 흩어진다)
+prop boulder_l 5 14
+prop boulder_l 26 10
+prop boulder_m 27 12
+prop boulder_l 11 18
+prop boulder_s 13 19
+prop boulder_m 6 10
+prop boulder_s 7 12
+prop boulder_s 8 7
+prop boulder_m 24 17
+prop boulder_s 8 17
+prop tuft2 24 7
+text 7 11 "서쪽 암굴. 바위 틈이 좁다. 바닥에 발톱 자국이 닳아 매끈하다." h=2
+text 16 8 "북쪽 암굴. 별관 뒤에서 내려오는 길. 흰 털이 바위 모서리에 걸려 있다." w=2
+text 19 18 "남쪽 암굴. 숲 쪽으로 열려 있다. 무리가 사냥 나가는 길이다." w=2
+# 뼈 마당
+prop collar_pile 16 12
+text 16 12 "목줄 더미." scene=SQS01_COLLARS
+prop bone_pile 11 10
+prop bone_pile 21 14
+prop bone_pile 12 14
+prop dog_nest 13 10
+text 13 10 "다져진 흙자리. 흰 털 뭉치가 박혀 있다. 무리 가운데 가장 큰 개가 눕는 자리다."
+prop tuft 10 13
+prop tuft2 22 10
+prop boulder_s 20 10
+text 20 10 "물어뜯긴 체육 매트 조각. 파란 비닐에 '관악 행정 연수원 체육부'." 
+prop stump 22 12
+# 바깥 숲 · 남쪽 빈터(미끼 터)
+prop tree_pine 4 8
+prop tree_pine2 27 6
+prop tree_pine 3 16
+prop tree_oak 27 17
+prop tree_pine2 6 19
+prop tree_pine 26 20
+prop tree_small 12 22
+prop tree_pine2 25 23
+prop bush_g 5 4
+prop bush_y 26 13
+prop bush_a 14 19
+prop stump 23 21
+text 18 21 "숲 빈터." w=3 scene=SQS01_BAIT
+prop warn_board 4 3
+text 4 3 "누군가 꽂은 판자. 붉은 글씨 '개 있음 — 해 지면 오지 마라.' 밑에 '엄'." 

@@ -653,6 +653,62 @@ def rock_face(w, h, seed=0, grass_top=True, rubble=True):
     return img
 
 
+def cave_mouth(w, h, seed=0, opening=(1, 2), grass_top=True):
+    """암굴 입구(1-11a 관악산 들개 바위굴): 화강암 정면 w×h에 opening 칸(x0~x1, 구조물 안 칸 번호)만큼 아치 모양 굴 입구.
+    입구 칸은 걷는 칸이다 — 위쪽은 짙은 그늘(굴 안), 아래로 갈수록 디더로 옅어져 바닥 흙이 비친다. 아치 테두리는 밝은 바위 테 + 먹선,
+    입구 바닥엔 굴에서 끌려 나온 뼛조각과 털 뭉치."""
+    rnd = random.Random(hsh(seed, w, h, 53))
+    img = rock_face(w, h, seed, grass_top=grass_top, rubble=False)
+    W, H = w * T, h * T
+    px = img.load()
+    x0, x1 = opening[0] * T, (opening[1] + 1) * T
+    cx = (x0 + x1) / 2.0
+    rx = (x1 - x0) / 2.0 - 1
+    top = 8 if grass_top else 3
+    arch = (H - top) * 0.62                                                 # 둥근 머리 높이
+    jag = [rnd.uniform(-1.6, 1.6) for _ in range(H + 2)]
+    BAYER = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]]
+    for y in range(top, H):
+        u = (y - top) / arch
+        if u < 1.0:
+            half = rx * math.sqrt(max(0.0, 1.0 - (1.0 - u) ** 2))            # 반타원 머리
+        else:
+            half = rx + 1.5 * (u - 1.0)                                      # 아래는 조금 벌어진다
+        half += jag[y] + 0.8 * math.sin(y * 0.9 + seed)                      # 거친 바위 가장자리
+        if half < 1:
+            continue
+        t = (y - top) / max(1.0, H - top)
+        dark = 1.0 - max(0.0, (t - 0.35) / 0.65)                             # 굴 안 그늘: 위 1 → 아래 0
+        for x in range(int(cx - half), int(cx + half) + 1):
+            if not (0 <= x < W):
+                continue
+            if abs(x - cx) > half - 1.2:
+                px[x, y] = C(INK)
+                continue
+            depth = dark * (1.0 - 0.35 * (abs(x - cx) / max(1.0, half)) ** 2)   # 가장자리는 빛이 조금 든다
+            thr = (BAYER[y % 4][x % 4] + 0.5) / 16.0
+            if depth > 0.85:
+                px[x, y] = C("P00")
+            elif depth > thr:
+                px[x, y] = C("P01" if depth > 0.5 else "P02")
+            else:
+                px[x, y] = (0, 0, 0, 0)
+        if u < 0.25:
+            for x in (int(cx - half) - 1, int(cx + half) + 1):
+                if 0 <= x < W:
+                    px[x, y] = C("P07")                                      # 아치 이마의 밝은 바위 테
+    for _ in range(int(rx // 3) + 2):                                       # 입구 바닥: 뼛조각 · 털 뭉치
+        bx = int(cx + rnd.uniform(-rx * 0.8, rx * 0.8))
+        by = H - rnd.randint(2, 7)
+        if rnd.random() < 0.6:
+            for k in range(rnd.randint(2, 4)):
+                if 0 <= bx + k < W:
+                    px[bx + k, by] = C("P09" if k % 3 else "P08")
+        else:
+            px[bx, by] = C("P06"); px[min(W - 1, bx + 1), by] = C("P07")
+    return img
+
+
 # ================================================================================================ 고철 장벽(정착지)
 def scrap_wall(w, h=2, seed=0, gate=None, banner=None):
     """고철 장벽 정면 w×h: 골함석·자동차 문·철판·드럼통을 말뚝에 엮고 위에 가시철사. gate=(열0, 열1): 문 자리(비움).
@@ -1231,7 +1287,7 @@ def fence_top(w, h, seed=0, axis="v"):
 KINDS = {
     "steel_shed": steel_shed, "tin_roof": tin_roof, "steel_fence": steel_fence, "fence_top": fence_top,
     "slab": slab, "brink": brink,
-    "facade": facade, "roof": roof, "wall": retaining_wall, "rock": rock_face, "scrap": scrap_wall, "gap": gap,
+    "facade": facade, "roof": roof, "wall": retaining_wall, "rock": rock_face, "cave": cave_mouth, "scrap": scrap_wall, "gap": gap,
     "bridge": bridge, "ledge": ledge, "deck_edge": deck_edge, "portal": vault_portal,
 }
 

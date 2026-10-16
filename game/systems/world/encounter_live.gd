@@ -31,7 +31,8 @@ const SIGN_TEXT := {"howl": "%s에서 개 짖는 소리가 들린다", "skitter"
 const DIR8 := ["동쪽", "남동쪽", "남쪽", "남서쪽", "서쪽", "북서쪽", "북쪽", "북동쪽"]
 ## 비적대로 걸어오는 사람 외형(전투 개체가 되면 Enemy가 고른다)
 const SHEETS := {"CR-436": "en_cr436_loco", "CR-437": "en_cr437_loco", "CR-401": "en_cr401_loco", "CR-403": "en_cr403_loco",
-	"CR-438": "en_cr438_loco", "CR-107": "cr_cr107_loco", "CR-108": "cr_baekgu_loco", "CR-002": "cr_cr002_base_loco"}
+	"CR-438": "en_cr438_loco", "CR-107": "cr_cr107_loco", "CR-108": "cr_baekgu_loco", "CR-002": "cr_cr002_base_loco",
+	"CR-104": "cr_cr104_loco", "CR-105": "cr_cr105_loco"}
 
 var host                                          ## InteriorHost
 var rules: Encounters

@@ -2472,6 +2472,10 @@ func _pip_action(kind: String, id: String) -> void:
 				combat.equip(id, st)
 		"unequip":
 			combat.equip("", st)
+		"examine":                                                      # 물건 살펴보기: 핍-보이를 닫고 그 물건의 장면
+			if pipboy != null:
+				pipboy.close(true)
+			play_scene.call_deferred("EXAMINE_" + Gear.base(id).replace("-", ""))
 		"travel":
 			fast_travel(id)
 		"repair":

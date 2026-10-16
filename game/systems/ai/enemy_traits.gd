@@ -24,6 +24,7 @@ const ROWS := {
 	"CR-104": {"ai": "AI-03"},
 	"CR-105": {"ai": "AI-03"},
 	"CR-106": {"ai": "AI-03", "pack_lead": true},
+	"CR-500": {"ai": "AI-03", "pack_lead": true, "conf": 4},             # 외눈(보스, 1-11a): 쉽게 꺾이지 않는다
 	"CR-107": {"ai": "AI-12"},
 	"CR-108": {"ai": "AI-18"},
 	"CR-200": {"ai": "AI-03"},

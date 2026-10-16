@@ -1,0 +1,105 @@
+{
+ "id": "SQS01_BAIT",
+ "title": "숲 빈터",
+ "loc": "L-R01-05",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "LAY": 4,
+  "LAID": 8,
+  "GONE": 10
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "숲 빈터. 멧돼지 발자국 위로 들개 발자국이 겹쳤다. 사냥터의 가장자리다."
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S01_BAIT > 0 and SQ_S01_LEFT == 0",
+   "to": "LAID"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S01_LEFT == 1",
+   "to": "GONE"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "고기를 빈터에 늘어놓는다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "I-038",
+       "n": 3
+      }
+     ],
+     "cond": "SQS01_STAGE >= 10 and SQS01_STAGE < 100 and SQ_S01_SOL == 0",
+     "fx": "",
+     "to": "LAY",
+     "id": "SQS01_BAIT:1:0"
+    },
+    {
+     "text": "그냥 간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS01_BAIT:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s01",
+   "args": [
+    "bait"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "고기 세 덩이를 바위 그늘에 늘어놓는다. 피 냄새가 숲 쪽으로 번진다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "무리가 냄새를 따라 사냥터를 옮기기까지 한두 시간은 걸릴 것이다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "놓아 둔 고기 자리에 파리가 꼬인다. 아직 아무것도 오지 않았다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "고기를 끌고 간 자국이 남쪽 능선 쪽으로 길게 나 있다. 무리는 이제 여기 오지 않는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S01.txt"
+}

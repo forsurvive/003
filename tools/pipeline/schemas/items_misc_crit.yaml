@@ -12,3 +12,5 @@ columns:
   용도: {field: desc, type: str}
 derive:
   cat: "'misc'"
+gaps:
+  desc: {skip_none: true, default: "'낡은 가죽 목줄 끝에 달린 동그란 쇠 인식표. 개 이빨에 닳아 테두리가 매끈하다. 앞면에 주소와 이름이 새겨져 있다.' if id == 'M-158' else ('흰 개가 아파트 화단 앞에 앉아 있는 빛바랜 사진. 뒷면에 연필로 「백설이, 2076 봄」.' if id == 'M-189' else None)", why: "§7.4.3 '용도' 열은 기획 메모(ID · 퀘스트 이름)라 핍-보이 설명으로 쓰지 않는다 — SQ-S01 두 물건만 게임 속 문장(1-11a)"}

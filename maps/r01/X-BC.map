@@ -234,7 +234,7 @@ prop laundry_line 31 6
 text 25 11 "봉천 새마음빌라 1동. 옥상에 옥탑 이장실이 있다."
 npc N-R01-028 28 37 S cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0"
 npc N-R01-026 11 33 S cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0"
-npc C-015 37 35 W sheet=cr_baekgu_loco cond="MQ101_DOG != 1 and (HOME_BC != 1 or BAEKGU_NAP != 1)"
+npc C-015 37 35 W sheet=cr_baekgu_loco cond="MQ101_DOG != 1 and SQ_S01_DOG != 1 and (HOME_BC != 1 or BAEKGU_NAP != 1)"
 npc N-R01-034 38 34 W cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0" route=kennel:38,34,6;yard:33,36,4
 npc N-R01-029 16 28 S cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0" route=garden:16,28,6;alley:24,28,4
 npc N-R01-030 46 35 W cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0"

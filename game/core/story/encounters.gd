@@ -432,6 +432,9 @@ func cat_mult(d: Dictionary, region: String, _t: Vector2i, night: bool) -> float
 		m *= 2.0                                                        # 새벽 04~06 인력시장
 	if c == "patrol":
 		m *= 1.0 + 0.1 * Wanted.grade(st)
+	if c == "creature" and _t.x >= 0 and st.vars.has("SQ_S01_SOL") and int(st.vars.get_v("SQ_S01_SOL")) == 1 \
+			and absi(_t.x - SideR01.PD_CENTER.x) <= SideR01.PD_R and absi(_t.y - SideR01.PD_CENTER.y) <= SideR01.PD_R:
+		m *= 0.7                                                        # SQ-S01 소탕: PD-R01-1 크리처 인카운터 −30%(SD-04a §4.1 해법 A)
 	var th := threat_at(_t) if _t.x >= 0 else 0
 	if th > 0 and int(ctx.get("level", 1)) - (th * 4 - 3) >= 6:     # 권역 기본 레벨(위협 1 = Lv1 … 5 = Lv17)보다 6 넘게 높다
 		if c in ["creature", "raider"] and int(d.get("threat_max", 9)) <= th:

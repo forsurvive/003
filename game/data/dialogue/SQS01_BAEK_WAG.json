@@ -1,0 +1,26 @@
+{
+ "id": "SQS01_BAEK_WAG",
+ "title": "백구",
+ "loc": "L-R01-09",
+ "npc": "C-015",
+ "cond": "SQH_TAG == 81",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "흰 개가 벌떡 일어나 꼬리를 크게 흔든다. 반상회관 쪽을 한 번 보고, 다시 손 냄새를 맡는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S01.txt"
+}

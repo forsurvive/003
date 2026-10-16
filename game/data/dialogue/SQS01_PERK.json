@@ -1,0 +1,114 @@
+{
+ "id": "SQS01_PERK",
+ "title": "외눈",
+ "loc": "L-R01-05",
+ "npc": "",
+ "cond": "PK_045 >= 1",
+ "labels": {
+  "START": 0,
+  "UNTIE": 4,
+  "LEAVE": 7,
+  "RANK2": 9
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "PK_045 >= 2",
+   "to": "RANK2"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "외눈이 이쪽을 본다. 으르렁거리지 않는다. 무리도 가만히 엎드려 있다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "목에 걸린 쇠붙이가 반짝인다. 손을 뻗으면 닿는 거리다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "천천히 손을 뻗어 목줄을 푼다",
+     "tags": [
+      {
+       "k": "stat",
+       "name": "민첩성",
+       "min": 5
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "UNTIE",
+     "id": "SQS01_PERK:1:0"
+    },
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "LEAVE",
+     "id": "SQS01_PERK:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s01",
+   "args": [
+    "untie"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "외눈은 움직이지 않는다. 매듭이 풀리고, 인식표가 손바닥에 떨어진다. 외눈이 코를 한 번 킁 울리고 돌아선다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "s01",
+   "args": [
+    "back"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "외눈이 다가와 손 냄새를 맡는다. 오래, 천천히."
+  },
+  {
+   "op": "cmd",
+   "name": "s01",
+   "args": [
+    "untie"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "외눈이 고개를 숙여 목을 턴다. 인식표가 발치에 떨어진다. 외눈은 돌아보지 않고 무리 쪽으로 걸어간다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S01.txt"
+}

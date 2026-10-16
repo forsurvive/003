@@ -1,0 +1,46 @@
+# 관악 행정 연수원 남서 별관 1층 — 체육관(SD-09a L-R01-05 '연수원 남서쪽 별관(무너진 체육 시설)' · 단계 1-11a SQ-S01)
+# 26×12 · 원목 마루 체육관. 동쪽 모퉁이 천장이 무너져 콘크리트 잔해가 쌓였다. 북쪽 계단 → 2층 관람석(K-31, 외눈의 낮잠 자리).
+# 들개 무리가 드나드는 굴 — 마루에 발톱 자국 · 물어뜯긴 매트. 2077년 10월 23일 '관악 연수원 대 행안부 친선 경기'가 열릴 예정이었다.
+map K-30 연수원 별관 체육관
+set bk
+grid
+####################ss####
+####################ss####
+####################ss####
+#~~wwwwwwwwwwwwwwwwwwwww~#
+#~wwwwwwwwwwwwwwwwwwwwww~#
+#wwwwwwwwwwwwwwwwwwwwwwww#
+#wwwwwwwwwwwwwwwwwwwwwwww#
+#wwwwwwwwwwwwwwwwwwwww~~~#
+#wwwwwwwwwwwwwwwwwwww~~~~#
+#~wwwwwwwwwwwwwwwwwww~~~~#
+#~~wwwwwwwwwwwwwwwwwww~~~#
+###########ww#############
+end
+exit 11 11 X-BW from_K-30
+exit 12 11 X-BW from_K-30
+exit 20 0 K-31 from_K-30
+exit 21 0 K-31 from_K-30
+mark from_X 11 10 N
+mark from_K-31 20 3 S
+prop gym_hoop 4 1
+prop gym_hoop 18 1
+text 4 2 "농구 골대. 백보드가 기울었다. 그물은 개들이 물어 끊었다." w=2
+prop w_board_jm 11 1
+text 11 2 "경기 일정표. '10월 23일(토) 관악 연수원 대 행정안전부 친선 경기 — 14:00.' 그 아래 손글씨 '취소'." w=2
+prop gym_mat 6 7
+prop gym_mat 9 9
+text 6 7 "체육 매트. 가장자리가 동그랗게 물어뜯겼다. 개 비린내가 배었다." w=2
+prop rubble 22 7
+prop rubble2 23 9
+prop rubble 21 9
+text 22 8 "무너진 천장. 콘크리트 판 사이로 하늘이 보인다. 2층 관람석 한쪽이 같이 내려앉았다." w=2
+prop gym_crack 14 6
+prop gym_crack 3 9
+prop bench 15 9
+text 15 9 "선수 벤치. 등받이에 '연수 12기 — 단합'. 발톱 자국이 그어져 있다." w=2
+prop bone_pile 18 5
+text 18 5 "닭뼈 · 쥐뼈 무더기. 물어 와서 먹은 자리다."
+prop locker_row2 1 4
+box 1 4 locker name="체육부 사물함"
+text 20 3 "2층 관람석으로 가는 계단. 계단참에 흰 털이 수북하다."

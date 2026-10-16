@@ -7,7 +7,7 @@
 class_name Enemy
 extends Actor
 
-const DOGS := ["CR-104", "CR-095", "CR-107", "CR-106", "CR-108"]
+const DOGS := ["CR-104", "CR-095", "CR-107", "CR-106", "CR-108", "CR-105", "CR-500"]
 const GHOULS := ["CR-200", "CR-201", "CR-202", "CR-204", "CR-205", "CR-206", "CR-457", "CR-459", "CR-518"]   ## 방사능에 낫는 구울(SD-14 §7.2 '라드 100당 HP +1')
 const FERALS := ["CR-200", "CR-201", "CR-204", "CR-205", "CR-206"]            ## 빛나는 구울 폭발에 HP +30%를 받는 야생 구울
 const BURST_R := 4.0 * 32.0                       ## 빛나는 구울 방사능 폭발 반경(SD-14 CR-202 '반경 4타일')
@@ -124,6 +124,10 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 			sheet = "cr_cr002_base_loco"
 		"CR-104":
 			sheet = "cr_cr104_loco"
+		"CR-105":
+			sheet = "cr_cr105_loco"                                  # 사나운 들개(1-11a, SD-14 — 검은 털 · 붉은 눈)
+		"CR-500":
+			sheet = "cr_cr500_loco"                                  # 외눈(1-11a, SD-04a §4.1 — 흰 털 · 왼눈 흉터 · 목줄과 인식표)
 		"CR-095":
 			sheet = "cr_cr095_loco"
 		"CR-107":
@@ -213,7 +217,8 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 	ui_font = load("res://assets/fonts/Galmuri9.ttf")
 	if bool(opts.get("sleep", false)):
 		asleep = true
-		set_pose("lie")
+		var curl: bool = sprite != null and sprite.sprite_frames != null and sprite.sprite_frames.has_animation("sleep_E")
+		set_pose("sleep" if curl else "lie")                        # 웅크려 자는 그림이 있는 개(외눈 · 백구 핏줄)는 그 그림으로
 	_t_tac = _rng.randf() * 0.5                                    # 전술 갱신을 개체마다 엇갈리게(한 프레임 몰림 방지)
 	_t_per = _rng.randf() * 0.1
 
@@ -781,13 +786,21 @@ func _flee_path(target: Combatant, nav) -> void:
 var _leave_t := 0.0
 
 
+var _leave_cd := 0.0                          ## 떠나는 길 다시 찾기까지(0.5초 — 막힌 쪽을 매 프레임 찾지 않게)
+
+
 func _leave(dt: float, _target: Combatant, nav) -> void:
 	_leave_t += dt
+	_leave_cd -= dt
 	mode = "walk"
 	var from: Vector2 = get_meta("leave_from", loco.logical)            # 놓아준 순간 주인공 자리(대상이 없어진 뒤라 표적은 믿을 수 없다)
-	if _path.is_empty() or _path_i >= _path.size():
+	var to: Vector2 = get_meta("leave_to", Vector2.INF)                 # 정해진 출구(진행기 — 바위굴 남쪽 숲길 등)가 있으면 그리로
+	if (_path.is_empty() or _path_i >= _path.size()) and _leave_cd <= 0.0:
+		_leave_cd = 0.5
 		var away := (loco.logical - from).normalized()
-		_repath(nav, loco.logical + away * 10.0 * 32.0)
+		_repath(nav, to if to != Vector2.INF else loco.logical + away * 10.0 * 32.0)
+	if to != Vector2.INF and loco.logical.distance_to(to) < 24.0:
+		set_meta("gone", true)
 	var input := Vector2.ZERO
 	if _path_i < _path.size():
 		var wp: Vector2 = _path[_path_i]
@@ -840,7 +853,7 @@ func _specials(dt: float, target: Combatant) -> void:
 			_burst_cd = BURST_CD
 			_ring_t = 0.0
 			burst_cb.call(self, false)
-	if id == "CR-106" and fighting and howl_cb.is_valid():          # 들개 우두머리: 교전에 들면 바로, 그 뒤 30초마다
+	if id in ["CR-106", "CR-500"] and fighting and howl_cb.is_valid():   # 들개 우두머리(외눈 포함): 교전에 들면 바로, 그 뒤 30초마다
 		_howl_cd -= dt
 		if _howl_cd <= 0.0:
 			_howl_cd = HOWL_CD

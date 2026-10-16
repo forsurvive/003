@@ -25,6 +25,7 @@ var check_seed := 0                     ## 판정 고정 씨앗(새 게임 때 �
 var npcs := {}                          ## 인물 ID -> 자료(이름·세력·외형 등, game/data/npcs.json)
 var names := {}                         ## 아이템·장소 ID -> 이름(\I·\L)
 var weapon_out := false
+var wielded := ""                       ## 손에 든 무기 열쇠(전투 모듈이 equip 때 넣는다 — 원고 blade() 판정, 1-11a)
 var events: Array = []                  ## 알림: [{"kind": "karma"|"item"|"xp"|"aff"|"caps", ...}]
 var fns := {}                           ## 추가 함수(이벤트 실행기 등이 등록): 이름 -> Callable(args: Array) -> Variant
 var wear := {}                          ## 장비 사용 카운터(1-8a, SD-13 §8.2): 아이템 열쇠("W-002@1") -> 이번 단계에서 쓴 횟수
@@ -119,6 +120,15 @@ func _init() -> void:
 	# GS_MET_RJ 류정을 만남(MQ-207 '이미 앎') · GS_CARD_SEEN 천공 카드 벽의 내 번호 · GS_LR50 「도성 문답」
 	for k in ["SG_MET_HWANG", "SG_MET_KWON", "SG_REFUSED", "SG_ISSUED", "GS_MET_RJ", "GS_MET_HAN", "GS_MET_EUNSOL", "GS_MET_MA", "GS_MET_HA", "GS_CARD_SEEN", "GS_LR50"]:
 		vars.declare(k, "int", 0)
+	# SQ-S01 외눈의 인식표(1-11a, SD-04a §4.1 · SideR01): SOL 해법(1 소탕 · 2 백구 대치 · 3 애니멀 프렌드 · 4 낮잠 · 5 미끼) · LEFT 무리가 남쪽 능선으로 떠남 ·
+	# LEFT_DAY 떠난 날 · DROP 인식표가 뼈 마당 바닥에 떨어져 있음 · TAG_DAY 인식표를 처음 쥔 날(7일 소지 자동 종료) · DOG 백구 동행(1 함께 · 2 다쳐 돌아감 · 3 일을 마치고 개집으로) ·
+	# FEED 남솔의 밥 당번 · COLL 목줄 더미 조사 횟수 · BAIT 미끼를 놓은 절대 분 · BETRAY 백구를 공격함 · CLEAR_DAY 소탕한 날(3일 뒤 시궁쥐 · 크리처 인카운터 −30%) ·
+	# KILLS 쓰러뜨린 무리 수 · KILL_DAY 그날(72시간 뒤 다시 채움) · EOM 엄태경에게 소탕을 알림 · BC 봉천이 아직 모르는 해법 호감(돌아오면 반영 — 공개도 1, SD-06 §6) · NAP 지금 외눈이 둥지에서 잔다(진행기)
+	# PK_045 애니멀 프렌드 랭크(퍽 창은 1-12 — 지금은 변수만)
+	for k in ["SQ_S01_SOL", "SQ_S01_LEFT", "SQ_S01_LEFT_DAY", "SQ_S01_DROP", "SQ_S01_DROP_AT", "SQ_S01_TAG_DAY", "SQ_S01_DOG", "SQ_S01_FEED", "SQ_S01_COLL", "SQ_S01_BAIT",
+			"SQ_S01_BETRAY", "SQ_S01_CLEAR_DAY", "SQ_S01_KILLS", "SQ_S01_KILL_DAY", "SQ_S01_EOM", "SQ_S01_BC", "SQ_S01_NAP", "PK_045"]:
+		vars.declare(k, "int", 0)
+	vars.declare("SQH_TAG", "int", -1)
 	for kv in [["CAPTURE_DAY", -1], ["CAPTURE_AT", 0], ["SB_COLLAR", 0], ["SB_CUFF", 0], ["CAPTURE_BY", 0]]:
 		vars.declare(kv[0], "int", kv[1])
 	for k in ["P_SURNAME", "P_GIVEN", "P_FULL", "P_REGNO", "PC_APT"]:   # PC_APT: 적성 평가 답 10개(결과지 다시 보기)
@@ -220,6 +230,9 @@ func call_fn(name: String, args: Array) -> Variant:
 			return nv
 		"wanted":                                                       # 수배도(1-3): 하한·하루 상한·등급 알림은 Wanted가
 			return Wanted.add(self, int(args[0]), str(args[1]) if args.size() > 1 else "")
+		"blade":                                                        # 날붙이 근접 무기(W-037~W-045)를 들었나(SD-04a §4.1 해법 D, 1-11a)
+			var b := Gear.base(wielded)
+			return 1 if b >= "W-037" and b <= "W-045" else 0
 		"worn":                                                         # 입은 몸통 옷의 기본 ID(상태 떼고 — 낡은 볼트 점프슈트도 볼트 옷, 1-8a)
 			return Gear.base(str(vars.get_v("PC_TORSO")))
 		"stat":

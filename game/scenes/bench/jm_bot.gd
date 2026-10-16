@@ -8,6 +8,7 @@ extends Node
 var host: InteriorHost
 var paths: Act1Paths
 var mq106: Mq106
+var side: SideR01                                    ## 관악 사이드 퀘스트(1-11a SQ-S01)
 var st: StoryState
 var route := "job"
 var shots := ""
@@ -63,6 +64,9 @@ func _ready() -> void:
 	mq106 = Mq106.new()
 	add_child(mq106)
 	mq106.setup(host, true)
+	side = SideR01.new()
+	add_child(side)
+	side.setup(host, true)
 	host.combat.player_down.connect(host.on_pc_down)                  # 쓰러짐 → 생포 판정(진짜 진행 prologue와 같은 연결)
 	host.combat.equip("W-002", st)
 	match route:
@@ -151,6 +155,23 @@ func _ready() -> void:
 				["talk", "N-R01-052"], ["wait", 1.5], ["check", "read:K-22-LEDGER", "길덕수의 귀환 유해 인수 대장"],
 				["warp", "W", "L-R01-27"], ["wait", 1.5], ["go", _spot_o("L-R01-27").x + 4, _spot_o("L-R01-27").y + 4], ["shoton", "금색 봉투", "villa"], ["use", _spot_o("L-R01-27").x + 4, _spot_o("L-R01-27").y + 3], ["wait", 2.0],
 				["check", "read:LR-06", "무너진 빌라의 국가 유공 통지서(LR-06)"]]
+		"bw":                                                           # 1-11a SQ-S01: 엄태경 → 남솔 밥 당번 → 백구 동행 → 해 질 녘 바위굴 대치 → 바닥 인식표 → 살펴보기 → 조담희
+			st.call_fn("give", ["I-038", 1])
+			host.date_text = "2277. 10. 25.  16:40"
+			host.enter("X-BC", "from_X-S07")
+			plan = [["want", ["!쇠붙이", "됐다"]], ["talk", "N-R01-033"], ["wait", 1.0], ["check", "SQS01_STAGE == 10", "엄태경: '외눈 목에 쇠붙이' — 단계 10"],
+				["want", ["그릇"]], ["talkd", "N-R01-034"], ["wait", 1.0], ["check", "SQ_S01_FEED == 1 and has(\"I-038\") == 0", "남솔의 밥 당번(멧돼지 고기)"],
+				["talkd", "C-015"], ["wait", 1.0], ["check", "SQ_S01_DOG == 1", "백구가 따라나선다"],
+				["settime", "2277. 10. 25.  17:20"], ["warp", "X-BW", "arrive"], ["wait", 1.0], ["shot", "bw_arrive"],
+				["gomark", "X-BW:baek_face"], ["until", "SQS01_STAGE >= 20", 5.0, "바위굴 반경 20칸 — 단계 20"],
+				["until", "side:stand", 25.0, "해 질 녘 · 백구 동행 · 외눈 8칸 안 — 대치", "bw_standoff"],
+				["chase"], ["until", "SQ_S01_SOL == 2 and SQ_S01_LEFT == 1", 20.0, "들개 둘을 쫓아 무리가 흩어진다(해법 B)", "bw_scatter"],
+				["gotag"], ["until", "has(\"M-158\")", 30.0, "바닥의 인식표를 주웠다"], ["examine", "M-158"], ["wait", 1.0],
+				["check", "SQS01_STAGE == 40", "살펴보기: 봉천 106동(40)"],
+				["warp", "X-BC", "from_X-S07"], ["wait", 1.0], ["check", "SQ_S01_DOG == 3", "봉천에 돌아오자 백구가 개집으로"],
+				["check", "SQ_S01_BC == 0", "해법 몫 봉천 +5가 이제 반영"],
+				["want", ["드릴게요"]], ["shoton", "백, 설", "bw_jo"], ["talkd", "N-R01-029"], ["wait", 1.5],
+				["check", "SQH_TAG == 81 and SQS01_STAGE == 100 and has(\"M-189\")", "조담희에게 건넴 — 백설이 사진 · 종료"]]
 		"place":                                                        # 1-5e 손 장소: 전망바위 → 연수원 본관(LR-19)·기숙사(LR-11) → 계곡 배수로(정비공) → 경찰서 무기고(자물쇠 50) → 공영방송(LR-01)
 			st.vars.set_v("PC_SKP_LOCKPICK", 50)
 			st.vars.set_v("PC_SKP_SMALL_GUNS", 40)
@@ -647,6 +668,51 @@ func _process(dt: float) -> void:
 		"crouch":
 			host.combat.crouch = bool(s[1])
 			_next()
+		"talkd":                                                        # 그 인물에게 바로 말 건다(나란히 선 사람 · 개 — 남솔과 백구, 1-11a)
+			var nd := _npc(str(s[1]))
+			if nd.is_empty():
+				print("  [봇] 인물 없음: ", s[1])
+				_next()
+				return
+			var gd: Vector2 = nd["actor"].loco.logical
+			if host.player.loco.logical.distance_to(gd) < 60.0 or step_t >= 30.0:
+				host.input_fn = func() -> Vector2: return Vector2.ZERO
+				host.talk(nd)
+				_next()
+				return
+			host.input_fn = _walk.bind(gd + (host.player.loco.logical - gd).normalized() * 34.0)
+		"settime":
+			host.date_text = str(s[1])
+			_next()
+		"gomark":                                                       # 월드 손 맵 표지까지 걷는다(1-11a)
+			var gm: Vector2 = host.map.mark_pos(str(s[1]))
+			host.input_fn = _walk.bind(gm)
+			if host.player.loco.logical.distance_to(gm) < 40.0 or step_t > 40.0 or side.stand_t > 0.0:
+				host.input_fn = func() -> Vector2: return Vector2.ZERO
+				print("  [봇] 표지 %s: 나 %s · 목표 %s · %.1f초 · 외눈 %s" % [s[1], str(host.map.tile_of(host.player.loco.logical)), str(host.map.tile_of(gm)), step_t,
+					str(host.map.tile_of(side.one.loco.logical)) if is_instance_valid(side.one) else "-"])
+				_shot("gomark")
+				_next()
+		"chase":                                                        # 대치 중 들개를 쏘아 쫓는다(외눈은 쏘지 않는다)
+			host.input_fn = func() -> Vector2: return Vector2.ZERO
+			var dogs: Array = side.pack.filter(func(e): return is_instance_valid(e) and e != side.one and not e.cmb.dead and not e.released)
+			if int(st.vars.get_v("SQ_S01_SOL")) != 0 or dogs.is_empty() or step_t > 20.0:
+				host.combat.bot = {}
+				_next()
+				return
+			dogs.sort_custom(func(a, b): return a.loco.logical.distance_to(host.player.loco.logical) < b.loco.logical.distance_to(host.player.loco.logical))
+			host.combat.bot = {"aim": dogs[0].loco.logical + Vector2(0, -8), "fire": true, "aimed": true,
+				"reload": host.combat.mags.get(host.combat.weapon_id, 1) == 0}
+		"gotag":
+			var dc := side._drop_cell()
+			var gt := Vector2(dc.x * 32 + 16, dc.y * 32 + 16)
+			host.input_fn = _walk.bind(gt)
+			if st.count_of("M-158") > 0 or step_t > 30.0:
+				host.input_fn = func() -> Vector2: return Vector2.ZERO
+				_next()
+		"examine":
+			host._pip_action("examine", str(s[1]))
+			_next()
 		"godoor":                                                       # 버티버드 문 앞 칸으로(기체를 돌아서)
 			var g := host.map.mark_pos("vb_door") if host.map.marks.has("vb_door") else host.player.loco.logical
 			host.input_fn = _walk.bind(g)
@@ -720,9 +786,14 @@ func _until(s: Array) -> bool:
 		ok2 = host.map.id == c.substr(4)
 	elif c == "card":
 		ok2 = str(host.ev._job.get("kind", "")) == "card"
+	elif c == "side:stand":
+		ok2 = side != null and side.stand_t > 0.0
 	else:
 		ok2 = StoryExpr.test(c, st)
 	if ok2 or step_t > float(s[2]):
+		if not ok2:
+			print("  [봇] 기다림 끝: 나 %s · 맵 %s · 교전 %s" % [str(host.map.tile_of(host.player.loco.logical)), host.map.id, str(host.combat.in_combat())])
+			_shot("until_fail")
 		checks.append([ok2, str(s[3])])
 		print("  [확인] %s %s (%.1f초)" % ["○" if ok2 else "×", s[3], step_t])
 		if ok2 and s.size() > 4:

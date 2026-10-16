@@ -1,0 +1,71 @@
+{
+ "id": "SQS01_BAEK",
+ "title": "백구",
+ "loc": "L-R01-09",
+ "npc": "C-015",
+ "cond": "SQS01_STAGE >= 10 and SQS01_STAGE < 100 and SQ_S01_LEFT == 0 and SQ_S01_SOL == 0 and SQ_S01_DOG != 1 and SQ_S01_BETRAY == 0",
+ "labels": {
+  "START": 0,
+  "HINT": 4,
+  "GO": 6
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "MQ101_DOG == 2 or SQ_S01_FEED == 1 or AFF_JC_BC >= 20",
+   "to": "GO"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "흰 개가 코를 한 번 킁킁대더니, 다시 앞발에 턱을 얹는다. 아직은 낯선 사람이다."
+  },
+  {
+   "op": "if",
+   "cond": "MQ101_STAGE >= 100 and SQ_S01_FEED == 0",
+   "to": "HINT"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "개집 옆 빈 밥그릇. 남솔이 오늘 밥 당번이라고 했다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "흰 개가 일어나 몸을 턴다. 귀가 산 쪽으로 선다. 한 번 돌아보고, 아랫문 쪽으로 몇 걸음 앞서 간다."
+  },
+  {
+   "op": "cmd",
+   "name": "s01",
+   "args": [
+    "dog"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "백구가 잠시 함께 간다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S01.txt"
+}

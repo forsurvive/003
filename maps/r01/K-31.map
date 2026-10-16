@@ -1,0 +1,62 @@
+# 관악 행정 연수원 남서 별관 2층 — 관람석 난간(SD-14 §10.3 '캠퍼스 건물 2층 난간' · SD-04a §4.1 해법 D 낮잠 · 단계 1-11a)
+# 24×9 · 북쪽 관람석 통로(3줄)와 남쪽 난간. 난간 아래는 무너진 체육관. 동쪽 끝 둥지가 외눈의 낮잠 자리(10~16시).
+# 잔해 소음 칸(무너진 마루 틈 gym_crack) — 밟으면 삐걱여 외눈이 깬다. 칸마다 두 줄을 막아 한 줄씩 비켜 갈 길이 있다.
+map K-31 연수원 별관 관람석
+set bk
+grid
+##ss####################
+##ss####################
+##ss####################
+#wwwwwwwwwwwwwwwwwwwwww#
+#wwwwwwwwwwwwwwwwwwwwww#
+#wwwwwwwwwwwwwwwwwwwwww#
+#wwwwwwwwwwwwwwwwwwwwww#
+########################
+########################
+end
+exit 2 0 K-30 from_K-31
+exit 3 0 K-30 from_K-31
+mark from_K-30 2 3 S
+mark nap 19 4 W
+mark nap_side 17 4 E
+mark noise1 7 4 S
+mark noise2 7 5 S
+mark noise3 11 3 S
+mark noise4 11 4 S
+mark noise5 15 4 S
+mark noise6 15 5 S
+prop gym_crack 7 4
+prop gym_crack 7 5
+prop gym_crack 11 3
+prop gym_crack 11 4
+prop gym_crack 15 4
+prop gym_crack 15 5
+text 7 5 "무너진 마루 틈. 판재 끝이 들려 있다. 밟으면 삐걱일 것 같다."
+prop gym_rail 1 6
+prop gym_rail 2 6
+prop gym_rail 3 6
+prop gym_rail 4 6
+prop gym_rail 5 6
+prop gym_rail 6 6
+prop gym_rail 7 6
+prop gym_rail 8 6
+prop gym_rail 9 6
+prop gym_rail 10 6
+prop gym_rail 11 6
+prop gym_rail 12 6
+prop gym_rail 13 6
+prop gym_rail 14 6
+prop gym_rail 15 6
+prop gym_rail 16 6
+prop gym_rail 17 6
+prop gym_rail 18 6
+prop gym_rail 19 6
+prop gym_rail 20 6
+prop gym_rail 21 6
+prop gym_rail 22 6
+text 10 6 "관람석 난간. 아래로 무너진 체육관 마루가 보인다. 여기서는 별관 앞 숲길과 뼈 마당이 내려다보인다." w=3
+prop dog_nest 19 4
+text 20 4 "둥지. 체육 매트를 찢어 깔았다. 흰 털 · 낙엽. 여기서 내려다보면 숲으로 드는 길이 다 보인다." 
+prop bench_o 5 3
+prop bench_o 13 3
+text 13 3 "관람석 긴 의자. '응원석 — 연수 12기'. 의자 다리를 개가 물어 놓았다." w=2

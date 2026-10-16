@@ -135,7 +135,7 @@ QUAD = {
     "oenun": dict(w=44, h=32, foot=(20, 29), px=4, body=(19, 17, 11, 7), head=(32, 11, 8, 7), leg=5, fur=["P05", "P06", "P08", "P09"],
                   skin=["P39", "P40", "P41"], eye="P01", tail="curl", ears=True, mange=False, scar=True, tag=True),
     # 사나운 들개 CR-105(SD-14 §4.7): 변이 들개보다 크고 어두운 털, 붉은 눈, 몸의 물린 흉터
-    "fierce": dict(w=44, h=32, foot=(20, 29), px=4, body=(19, 17, 11, 7), head=(32, 12, 8, 6.5), leg=5, fur=["P16", "P17", "P18", "P19"],
+    "fierce": dict(w=44, h=32, foot=(20, 29), px=4, body=(19, 17, 11, 7), head=(32, 12, 8, 6.5), leg=5, fur=["P10", "P11", "P12", "P13"],
                    skin=["P39", "P40", "P41"], eye="P54", tail="up", ears=True, mange=False, scars=True),
     "rat": dict(w=40, h=22, foot=(18, 19), px=2, body=(17, 13, 9, 5), head=(27, 12, 5, 4.5), leg=3, fur=["P03", "P04", "P05", "P06"],
                 skin=["P40", "P41", "P42"], eye="P54", tail="long", ears=True, mange=False),
@@ -224,6 +224,12 @@ def quad(kind, frame=0, pose="walk"):
         bd.ellipse([sx - 1, hyb - 1, sx + 3, hyb + 2], fill=fur[2])
         bd.point((sx + 3, hyb), fill=ramp(q["skin"])[2])
         bd.point((round(hxc + 1), hyb - 1), fill=C(q["eye"]))
+    if q.get("scars"):                                                     # 사나운 들개: 곤두선 등 갈기(검푸른 털 위 뾰족 다발)
+        for k in range(5):
+            gx = round(bx - brx * 0.55 + k * 3)
+            gy = round(by - bob - bry + 1)
+            bd.polygon([(gx - 1, gy + 1), (gx + 1, gy - 3 + (k % 2)), (gx + 2, gy + 1)], fill=fur[0])
+            bd.point((gx + 1, gy - 1), fill=fur[1])
     if q.get("scars"):                                                     # 사나운 들개: 옆구리 물린 흉터 셋(분홍 살 + 그늘)
         for k, (sx3, sy3) in enumerate(((bx - 4, by - 3), (bx + 1, by - 1), (bx + 5, by - 4))):
             bd.line([sx3, sy3 - bob, sx3 + 2, sy3 + 2 - bob], fill=ramp(q["skin"])[1])

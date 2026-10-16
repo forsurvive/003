@@ -1,0 +1,174 @@
+{
+ "id": "SQS01_NAMSOL",
+ "title": "백구 밥 당번",
+ "loc": "L-R01-09",
+ "npc": "N-R01-034",
+ "cond": "MQ101_STAGE >= 100 and (SQ_S01_FEED == 0 or SQH_TAG == 81 or (SQS01_STAGE >= 10 and SQS01_STAGE < 100))",
+ "labels": {
+  "START": 0,
+  "FED": 5,
+  "HOWL": 8,
+  "NAMED": 10
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQH_TAG == 81",
+   "to": "NAMED"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S01_FEED == 1",
+   "to": "HOWL"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-034",
+   "emo": "기본",
+   "text": "오늘 백구 밥 당번 나야. 근데 그릇이 비었어. 엄마가 고기는 아끼래."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-034",
+   "emo": "기본",
+   "text": "고기 있으면 저 그릇에 하나만 놔 줄래? 백구는 아무거나 다 먹어."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "그릇에 놓는다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "I-036",
+       "n": 1
+      }
+     ],
+     "cond": "has(\"I-036\")",
+     "fx": "",
+     "to": "FED",
+     "id": "SQS01_NAMSOL:1:0"
+    },
+    {
+     "text": "그릇에 놓는다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "I-037",
+       "n": 1
+      }
+     ],
+     "cond": "has(\"I-037\")",
+     "fx": "",
+     "to": "FED",
+     "id": "SQS01_NAMSOL:1:1"
+    },
+    {
+     "text": "그릇에 놓는다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "I-038",
+       "n": 1
+      }
+     ],
+     "cond": "has(\"I-038\")",
+     "fx": "",
+     "to": "FED",
+     "id": "SQS01_NAMSOL:1:2"
+    },
+    {
+     "text": "그릇에 놓는다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "I-039",
+       "n": 1
+      }
+     ],
+     "cond": "has(\"I-039\")",
+     "fx": "",
+     "to": "FED",
+     "id": "SQS01_NAMSOL:1:3"
+    },
+    {
+     "text": "그릇에 놓는다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "I-040",
+       "n": 1
+      }
+     ],
+     "cond": "has(\"I-040\")",
+     "fx": "",
+     "to": "FED",
+     "id": "SQS01_NAMSOL:1:4"
+    },
+    {
+     "text": "그릇에 놓는다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "I-041",
+       "n": 1
+      }
+     ],
+     "cond": "has(\"I-041\")",
+     "fx": "",
+     "to": "FED",
+     "id": "SQS01_NAMSOL:1:5"
+    },
+    {
+     "text": "지금은 없어",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS01_NAMSOL:1:6"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "SQ_S01_FEED = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "그릇에 고기를 놓자 개집 안에서 흰 개가 고개를 든다. 냄새를 한 번 맡고, 손등을 한 번 핥고, 먹는다."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-034",
+   "emo": "미소",
+   "text": "봐, 이제 너 안다. 백구는 밥 준 사람 냄새는 안 잊어."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-034",
+   "emo": "기본",
+   "text": "어젯밤에 백구가 저쪽 산 보고 울었어. 형제가 있나 봐."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-034",
+   "emo": "미소",
+   "text": "당번표 맨 위 봤어? 백, 설. 내가 썼어. 엄청 옛날 이름이래. 백구네 할머니의 할머니의… 아무튼."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S01.txt"
+}

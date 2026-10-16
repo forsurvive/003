@@ -267,6 +267,9 @@ func _trade_cmd(a: Array, finish: Callable) -> void:
 	elif vid == "V01" and r == 4:
 		k = [1.10, 1.0]
 		greet = "새벽인력이랑 장사하는 손님이면 값도 그쪽 시세로 받아야지."
+	if vid == "V04" and v("SQH_TAG") == 20:                             # SQ-S01 인식표를 오두막에 걸었다(SD-04a §4.1): 상시 −10% · 매입 +10%
+		k = [0.90, 1.10]
+		greet = "산의 이름 걸어 둔 사람 값이야."
 	host.shop_state(vid)                                              # 상인 표를 읽어 둔다(세력 확인)
 	if str(host.merchants.get(vid, {}).get("settle", "")) == "JH" and v("JM_REG") == 1:   # 지하시장 단골(1-4): −10%
 		k = [0.90, 1.0]

@@ -944,6 +944,10 @@ from props_road import PROPS_ROAD                                       # 길 �
 for _k in PROPS_ROAD:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_ROAD)
+from props_bw import PROPS_BW                                           # 관악산 들개 바위굴 · 연수원 별관(1-11a SQ-S01)
+for _k in PROPS_BW:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_BW)
 from props_site import PROPS_SITE                                       # 소장소(1-W, SD-22 §5.2)
 for _k in PROPS_SITE:
     assert _k not in PROPS, _k

@@ -442,6 +442,11 @@ static func _num(v: float) -> String:
 	return str(int(v)) if is_equal_approx(v, roundf(v)) else "%.1f" % v
 
 
+## 살펴볼 장면이 있는 물건(원고 EXAMINE_<붙임표 뺀 ID> — 인식표 M-158 등, SD-04a §4.1 단계 40)
+static func examinable(id: String) -> bool:
+	return id != "" and FileAccess.file_exists("res://data/dialogue/EXAMINE_%s.json" % Gear.base(id).replace("-", ""))
+
+
 func _enter_label() -> String:
 	if rows.is_empty():
 		return "—"
@@ -455,7 +460,9 @@ func _enter_label() -> String:
 		[1, 2]:
 			return "사용"
 		[1, 3]:
-			return "조리" if rows[sel]["id"] == Craft.BURNER else "—"
+			if rows[sel]["id"] == Craft.BURNER:
+				return "조리"
+			return "살펴보기" if PipBoy.examinable(str(rows[sel]["id"])) else "—"
 		[2, 2]:
 			return "—" if rows[sel]["id"] == "" else ("추적 끄기" if rows[sel]["id"] == st.quests.tracked else "추적")
 		[2, 4]:
@@ -1100,6 +1107,8 @@ func _enter() -> void:
 		[1, 3]:
 			if id == Craft.BURNER:
 				action.emit("use", id)                                     # 휴대용 버너: 그 자리에서 조리(1-8c, SD-13 §7.9.5)
+			elif PipBoy.examinable(id):
+				action.emit("examine", id)                                 # 살펴보기(1-11a): 물건에 딸린 장면(EXAMINE_<ID>)
 		[2, 4]:
 			if not (id in ["past", "log"]) and Radio.quality(id, info.get("radio", {})) >= 0:
 				if st.radio.on and st.radio.tuned == id:

@@ -691,6 +691,7 @@ func equip(id: String, st: StoryState) -> void:
 		mags[id] = _ammo_take(id, int(weapons[id]["mag"]), st)
 	if st != null:
 		st.weapon_out = armed()
+		st.wielded = id
 	_doll()
 
 
