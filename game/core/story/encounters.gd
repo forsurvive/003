@@ -435,6 +435,16 @@ func cat_mult(d: Dictionary, region: String, _t: Vector2i, night: bool) -> float
 	if c == "creature" and _t.x >= 0 and st.vars.has("SQ_S01_SOL") and int(st.vars.get_v("SQ_S01_SOL")) == 1 \
 			and absi(_t.x - SideR01.PD_CENTER.x) <= SideR01.PD_R and absi(_t.y - SideR01.PD_CENTER.y) <= SideR01.PD_R:
 		m *= 0.7                                                        # SQ-S01 소탕: PD-R01-1 크리처 인카운터 −30%(SD-04a §4.1 해법 A)
+	if c == "raider" and _t.x >= 0 and st.vars.has("SQ_S01_LEFT") and int(st.vars.get_v("SQ_S01_LEFT")) == 1 \
+			and int(st.vars.get_v("GAME_DAY")) >= int(st.vars.get_v("SQ_S01_LEFT_DAY")) + 7 \
+			and absi(_t.x - SideS02.RIDGE.x) <= SideS02.RIDGE_R and absi(_t.y - SideS02.RIDGE.y) <= SideS02.RIDGE_R:
+		m *= 0.75                                                       # SQ-S01 외눈 생존 7일 뒤: 무리가 삼성산 능선 패거리 외곽 분대를 괴롭힌다(SD-04a §4.1 후일담)
+	if c == "raider" and night and _t.x >= 0 and st.vars.has("SQ_S02_RAID_UNTIL") \
+			and absi(_t.x - SideS02.BC_CENTER.x) <= SideS02.BC_R and absi(_t.y - SideS02.BC_CENTER.y) <= SideS02.BC_R:
+		if int(st.vars.get_v("GAME_DAY")) < int(st.vars.get_v("SQ_S02_RAID_UNTIL")):
+			m *= 1.3                                                    # SQ-S02 우회 관로: 패거리가 사흘 동안 봉천 밤 습격을 늘린다(SD-04a §4.2 해법 B)
+		if int(st.vars.get_v("SQ_S02_IN")) == 4:
+			m *= 1.2                                                    # SQ-S02 묵인: 척후가 정확해진다(해법 d)
 	var th := threat_at(_t) if _t.x >= 0 else 0
 	if th > 0 and int(ctx.get("level", 1)) - (th * 4 - 3) >= 6:     # 권역 기본 레벨(위협 1 = Lv1 … 5 = Lv17)보다 6 넘게 높다
 		if c in ["creature", "raider"] and int(d.get("threat_max", 9)) <= th:

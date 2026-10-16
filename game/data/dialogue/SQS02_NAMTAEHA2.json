@@ -1,0 +1,61 @@
+{
+ "id": "SQS02_NAMTAEHA2",
+ "title": "옥탑 감시조장 — 상류 밸브",
+ "loc": "L-R01-09",
+ "npc": "N-R01-028",
+ "cond": "V_ACT >= 1 and SQ_S02_SOL == 1 and SQ_S02_GUARD == 0",
+ "labels": {
+  "START": 0,
+  "POST": 2
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "놀람",
+   "text": "삼성산 밸브를 네가 열었다고? 패거리 캠프를 비우고?"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "비어 있는 동안 누가 지키면 좋겠어요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "POST",
+     "id": "SQS02_NAMTAEHA2:1:0"
+    },
+    {
+     "text": "그냥 알려 드리는 거예요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS02_NAMTAEHA2:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s02",
+   "args": [
+    "guard"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "기본",
+   "text": "둘 보내지. 밸브 앞에 모래주머니 쌓고 교대로 선다. 이제 거긴 봉천 경비 지점이야."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S02.txt"
+}

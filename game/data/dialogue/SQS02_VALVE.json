@@ -1,0 +1,161 @@
+{
+ "id": "SQS02_VALVE",
+ "title": "상류 관로 밸브",
+ "loc": "L-R01-31",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TURN": 7,
+  "FLOW": 10,
+  "PAIDV": 12,
+  "GUARDED": 14,
+  "OPEN": 16,
+  "BJ": 18
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S02_BJ == 1",
+   "to": "BJ"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S02_OPEN == 1",
+   "to": "OPEN"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S02_POSTED == 0",
+   "to": "FLOW"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S02_OPEN == 2 and SQ_S02_CAMP == 0",
+   "to": "PAIDV"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "땅에서 솟은 굵은 강관에 큰 바퀴 핸들. 사슬로 칭칭 감고 자물쇠를 채웠다. 관에 귀를 대면 저 위에서 물이 갇혀 웅웅 운다."
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S02_CAMP == 0",
+   "to": "GUARDED"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "사슬을 풀고 녹슨 핸들을 돌린다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 15
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "TURN",
+     "id": "SQS02_VALVE:1:0"
+    },
+    {
+     "text": "사슬째 비틀어 핸들을 돌린다",
+     "tags": [
+      {
+       "k": "stat",
+       "name": "힘",
+       "min": 5
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "TURN",
+     "id": "SQS02_VALVE:1:1"
+    },
+    {
+     "text": "그냥 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS02_VALVE:1:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s02",
+   "args": [
+    "open"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "핸들이 끼익 돌아간다. 한 바퀴, 두 바퀴. 관 속에서 무언가 밀려 내려가는 소리 — 쏴아."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "땅에서 솟은 굵은 강관에 큰 바퀴 핸들. 관 속으로 물이 흐른다. 핸들에 사슬과 자물쇠 — 언제든 잠글 수 있게 해 두었다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "사슬이 풀려 핸들에 걸쳐 있다. 관 속으로 물이 흐른다. 패거리가 사흘만 흘려 주는 물이다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "등 뒤에서 패거리가 지켜보고 있다. 지금 손을 대면 싸움이다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "끊긴 사슬이 늘어져 있다. 관 속으로 물이 흐르는 소리."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "밸브 옆 새 철판 표지. '배급 수도 — 관리 계엄사령부. 무단 조작 시 적성 행위로 간주.' 표지 위에 확성기 받침 하나."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S02.txt"
+}

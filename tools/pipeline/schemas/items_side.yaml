@@ -1,0 +1,20 @@
+# SD-13 §7.10 사이드·세력·비표시 퀘스트 아이템 → game/data/items_side.json (단계 1-11b: SQ-S02 패거리 척후 지도부터)
+doc: 13_items.md
+id_column: ID
+section: "### 7.10 사이드·세력·비표시 퀘스트 아이템 (M-301~M-399)"
+rows: all
+id_filter: "^M-\\d{3}$"
+columns:
+  ID: {field: id, type: id, pattern: "^M-\\d{3}$", required: true}
+  이름: {field: name, type: str, required: true}
+  퀘스트(문서): {field: quest, type: str}
+  입수: {field: source, type: str}
+  용도: {field: desc, type: str}
+  태그: {field: kind, type: str}
+derive:
+  cat: "'misc'"
+  weight: "0"                            # §7.10: 퀘스트 아이템은 무게 0(예외 M-319 · M-383은 표에)
+  value: "0"
+  tag: "'퀘스트'"
+gaps:
+  desc: {skip_none: true, default: "'구겨진 종이에 연필로 그린 지도. 봉천 물탱크 여섯 개, 옥탑 감시조 교대 시간 22시 · 04시, 윗문 쪽문 자물쇠 \"고장\"이 적혀 있다.' if id == 'M-301' else None", why: "§7.10 '용도' 열은 기획 메모라 핍-보이 설명으로 쓰지 않는다 — 1-11b에서 쓰는 물건부터 게임 속 문장"}

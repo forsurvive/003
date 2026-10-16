@@ -705,47 +705,47 @@
     "L-R01-19",
     "L-R01-31"
    ],
-   "places_src": "04a_side-quests-south.md:416",
+   "places_src": "04a_side-quests-south.md:432",
    "stages": {
     "10": {
      "done": "조수안 대화 또는 게시판 쪽지",
      "log": "봉천 배수지의 물이 줄고 있다",
-     "src": "04a_side-quests-south.md:428"
+     "src": "04a_side-quests-south.md:444"
     },
     "100": {
      "done": "70 + 내부자 처리(또는 7일 경과)",
      "log": "물길과 윗문의 일이 끝났다",
-     "src": "04a_side-quests-south.md:435"
+     "src": "04a_side-quests-south.md:451"
     },
     "20": {
      "done": "밸브실 관로 지도 조사",
      "log": "상류 밸브는 삼성산 능선 아래에 있다",
-     "src": "04a_side-quests-south.md:429"
+     "src": "04a_side-quests-south.md:445"
     },
     "30": {
      "done": "밸브실 반경 30타일 진입",
      "log": "밸브실 앞에 남부순환 패거리가 있다",
-     "src": "04a_side-quests-south.md:430"
+     "src": "04a_side-quests-south.md:446"
     },
     "40": {
      "done": "척후 지도(M-301) 입수",
      "log": "패거리의 지도에 봉천 교대 시간이 있다",
-     "src": "04a_side-quests-south.md:431"
+     "src": "04a_side-quests-south.md:447"
     },
     "50": {
      "done": "지도 조사 + 반상회 게시판 손글씨 대조",
      "log": "지도의 글씨는 봉천 사람의 것이다",
-     "src": "04a_side-quests-south.md:432"
+     "src": "04a_side-quests-south.md:448"
     },
     "60": {
      "done": "남건희 미행(22시 이후) 또는 남태하 대화",
      "log": "남건희는 밤마다 윗문 밖으로 나간다",
-     "src": "04a_side-quests-south.md:433"
+     "src": "04a_side-quests-south.md:449"
     },
     "70": {
      "done": "밸브 해법 하나 완료",
      "log": "봉천 배수지에 물이 다시 찬다",
-     "src": "04a_side-quests-south.md:434"
+     "src": "04a_side-quests-south.md:450"
     }
    },
    "title": "물 반 컵의 값"
@@ -758,47 +758,47 @@
     "L-R01-10",
     "L-R01-01"
    ],
-   "places_src": "04a_side-quests-south.md:489",
+   "places_src": "04a_side-quests-south.md:505",
    "stages": {
     "10": {
      "done": "탱크 벽 조사",
      "log": "봉천 물탱크 벽에 검은 곰팡이가 피었다",
-     "src": "04a_side-quests-south.md:501"
+     "src": "04a_side-quests-south.md:517"
     },
     "100": {
      "done": "조수안 또는 송새봄 보고",
      "log": "물길의 일이 끝났다",
-     "src": "04a_side-quests-south.md:508"
+     "src": "04a_side-quests-south.md:524"
     },
     "20": {
      "done": "인터컴(방금례) 또는 송새봄 대화 또는 LR-27 열람",
      "log": "같은 곰팡이가 S-07 수경 농장에도 있다",
-     "src": "04a_side-quests-south.md:502"
+     "src": "04a_side-quests-south.md:518"
     },
     "30": {
      "done": "관로 조사 지점 3곳 중 2곳",
      "log": "곰팡이는 물을 따라 내려왔다",
-     "src": "04a_side-quests-south.md:503"
+     "src": "04a_side-quests-south.md:519"
     },
     "40": {
      "done": "배수로 암거 진입",
      "log": "관악 계곡 배수로 천장에 군락이 있다",
-     "src": "04a_side-quests-south.md:504"
+     "src": "04a_side-quests-south.md:520"
     },
     "50": {
      "done": "유해 곁 측정지(M-302) 입수",
      "log": "2214년 정비공의 측정지가 암거에 있다",
-     "src": "04a_side-quests-south.md:505"
+     "src": "04a_side-quests-south.md:521"
     },
     "60": {
      "done": "측정지 + 탈출구 갱도 수문 조사",
      "log": "군락의 먹이는 볼트에서 내려온 물이다",
-     "src": "04a_side-quests-south.md:506"
+     "src": "04a_side-quests-south.md:522"
     },
     "70": {
      "done": "해법 하나",
      "log": "군락이 처리됐다",
-     "src": "04a_side-quests-south.md:507"
+     "src": "04a_side-quests-south.md:523"
     }
    },
    "title": "곰팡이의 근원"
@@ -811,42 +811,42 @@
     "L-R01-23",
     "L-R01-32"
    ],
-   "places_src": "04a_side-quests-south.md:551",
+   "places_src": "04a_side-quests-south.md:567",
    "stages": {
     "10": {
      "done": "경보 장면",
      "log": "주민센터 앞 파수 로봇이 일어났다",
-     "src": "04a_side-quests-south.md:562"
+     "src": "04a_side-quests-south.md:578"
     },
     "100": {
      "done": "50 + 60",
      "log": "봉천의 밤이 조용해졌다",
-     "src": "04a_side-quests-south.md:568"
+     "src": "04a_side-quests-south.md:584"
     },
     "20": {
      "done": "주민센터 반경 10타일",
      "log": "로봇이 남솔을 대기 구역에 데려갔다",
-     "src": "04a_side-quests-south.md:563"
+     "src": "04a_side-quests-south.md:579"
     },
     "30": {
      "done": "파수 방송 청취",
      "log": "파수는 보호 기간을 72시간이라 방송한다",
-     "src": "04a_side-quests-south.md:564"
+     "src": "04a_side-quests-south.md:580"
     },
     "40": {
      "done": "핍-보이 수신 신호(등록 카드 '반송파 강함') 또는 남태하 대화(\"산꼭대기 돔이 빨갛게 깜박였어\")",
      "log": "관악 레이더 중계소의 전지가 깨어 있다",
-     "src": "04a_side-quests-south.md:565"
+     "src": "04a_side-quests-south.md:581"
     },
     "50": {
      "done": "해법 ① 하나",
      "log": "남솔이 대기 구역에서 나왔다",
-     "src": "04a_side-quests-south.md:566"
+     "src": "04a_side-quests-south.md:582"
     },
     "60": {
      "done": "해법 ② 하나(① 중 원인 해법이면 동시 달성)",
      "log": "봉천의 파수들은 다시 잠들었다",
-     "src": "04a_side-quests-south.md:567"
+     "src": "04a_side-quests-south.md:583"
     }
    },
    "title": "도성이 뒤척인다"
@@ -856,37 +856,37 @@
    "places": [
     "L-R01-18"
    ],
-   "places_src": "04a_side-quests-south.md:620",
+   "places_src": "04a_side-quests-south.md:636",
    "stages": {
     "10": {
      "done": "허순자·성지후 대화 또는 칠판 조사",
      "log": "서쪽 터널에는 막차를 기다리는 손님이 있다",
-     "src": "04a_side-quests-south.md:631"
+     "src": "04a_side-quests-south.md:647"
     },
     "100": {
      "done": "50 + 허순자 보고",
      "log": "서쪽 터널이 서울대입구까지 열렸다",
-     "src": "04a_side-quests-south.md:636"
+     "src": "04a_side-quests-south.md:652"
     },
     "20": {
      "done": "D-06 철망 너머 관찰",
      "log": "손님들은 2077년의 대피민이다",
-     "src": "04a_side-quests-south.md:632"
+     "src": "04a_side-quests-south.md:648"
     },
     "30": {
      "done": "역무실 방송 설비 조사",
      "log": "막차 안내 방송은 역무 로봇의 기억에 있다",
-     "src": "04a_side-quests-south.md:633"
+     "src": "04a_side-quests-south.md:649"
     },
     "40": {
      "done": "U01 진입",
      "log": "역무 로봇은 서쪽 터널 안에 쓰러져 있다",
-     "src": "04a_side-quests-south.md:634"
+     "src": "04a_side-quests-south.md:650"
     },
     "50": {
      "done": "해법 하나",
      "log": "서쪽 터널의 손님들이 자리를 떴다",
-     "src": "04a_side-quests-south.md:635"
+     "src": "04a_side-quests-south.md:651"
     }
    },
    "title": "환승촌 막차"
@@ -901,42 +901,42 @@
     "L-R01-25",
     "L-R01-30"
    ],
-   "places_src": "04a_side-quests-south.md:678",
+   "places_src": "04a_side-quests-south.md:694",
    "stages": {
     "10": {
      "done": "발동 ①~③",
      "log": "시흥 고개 초소 지하에 누군가 숨어 산다",
-     "src": "04a_side-quests-south.md:689"
+     "src": "04a_side-quests-south.md:705"
     },
     "100": {
      "done": "50 또는 51 또는 사망",
      "log": "시흥 고개 초소가 비었다",
-     "src": "04a_side-quests-south.md:695"
+     "src": "04a_side-quests-south.md:711"
     },
     "20": {
      "done": "진해원 대화",
      "log": "진해원은 노들섬으로 가고 싶어 한다",
-     "src": "04a_side-quests-south.md:690"
+     "src": "04a_side-quests-south.md:706"
     },
     "30": {
      "done": "24시간 경과 또는 수색조 목격",
      "log": "계엄군 수색조가 시흥 고개를 뒤진다",
-     "src": "04a_side-quests-south.md:691"
+     "src": "04a_side-quests-south.md:707"
     },
     "40": {
      "done": "길 안내 대화(연보경·반로아·심도겸 중 하나)",
      "log": "노들섬까지는 검문소가 둘 있다",
-     "src": "04a_side-quests-south.md:692"
+     "src": "04a_side-quests-south.md:708"
     },
     "50": {
      "done": "노들섬 남문 통과",
      "log": "진해원이 노들섬에 닿았다",
-     "src": "04a_side-quests-south.md:693"
+     "src": "04a_side-quests-south.md:709"
     },
     "51": {
      "done": "인도·포획",
      "log": "진해원은 계엄군 손에 있다",
-     "src": "04a_side-quests-south.md:694"
+     "src": "04a_side-quests-south.md:710"
     }
    },
    "title": "근무자: 공란"
@@ -946,42 +946,42 @@
    "places": [
     "L-R01-01"
    ],
-   "places_src": "04a_side-quests-south.md:741",
+   "places_src": "04a_side-quests-south.md:757",
    "stages": {
     "10": {
      "done": "장해솔 대화",
      "log": "장해솔의 집안은 117년째 D등급이다",
-     "src": "04a_side-quests-south.md:751"
+     "src": "04a_side-quests-south.md:767"
     },
     "100": {
      "done": "60",
      "log": "장해솔의 일이 끝났다",
-     "src": "04a_side-quests-south.md:757"
+     "src": "04a_side-quests-south.md:773"
     },
     "20": {
      "done": "LR-26 열람(도경철 허락, [과학 50], 또는 보안과장 열쇠)",
      "log": "2160년의 기록이 보안과 단말에 있다",
-     "src": "04a_side-quests-south.md:752"
+     "src": "04a_side-quests-south.md:768"
     },
     "30": {
      "done": "오윤슬 대화(생활기록부 열람)",
      "log": "200년 치 생활기록부가 도서실에 있다",
-     "src": "04a_side-quests-south.md:753"
+     "src": "04a_side-quests-south.md:769"
     },
     "40": {
      "done": "이수겸 대화",
      "log": "이수겸은 인수인계 문서의 끝줄을 안다",
-     "src": "04a_side-quests-south.md:754"
+     "src": "04a_side-quests-south.md:770"
     },
     "50": {
      "done": "V-12 조사 + 조안민 대화",
      "log": "납골 벽 2160년 칸에는 번호만 있다",
-     "src": "04a_side-quests-south.md:755"
+     "src": "04a_side-quests-south.md:771"
     },
     "60": {
      "done": "해법 하나",
      "log": "41명의 등급이 다시 정해졌다",
-     "src": "04a_side-quests-south.md:756"
+     "src": "04a_side-quests-south.md:772"
     }
    },
    "title": "개방파의 손녀"
@@ -992,37 +992,37 @@
     "L-R02-11",
     "L-R02-15"
    ],
-   "places_src": "04a_side-quests-south.md:811",
+   "places_src": "04a_side-quests-south.md:827",
    "stages": {
     "10": {
      "done": "다툼 장면",
      "log": "'김민수' 명찰을 단 구울이 둘이다",
-     "src": "04a_side-quests-south.md:822"
+     "src": "04a_side-quests-south.md:838"
     },
     "100": {
      "done": "해법 하나",
      "log": "두 김민수의 일이 끝났다",
-     "src": "04a_side-quests-south.md:827"
+     "src": "04a_side-quests-south.md:843"
     },
     "20": {
      "done": "함준호 대화 → 명부 단말 열람",
      "log": "관리사무소에 2077년 대피자 명부가 있다",
-     "src": "04a_side-quests-south.md:823"
+     "src": "04a_side-quests-south.md:839"
     },
     "30": {
      "done": "명부의 사망자 칸 조사",
      "log": "명부의 김민수는 10월 24일에 죽었다",
-     "src": "04a_side-quests-south.md:824"
+     "src": "04a_side-quests-south.md:840"
     },
     "40": {
      "done": "위동현 창구",
      "log": "구청 배급소에 2077년 주민 기록이 있다",
-     "src": "04a_side-quests-south.md:825"
+     "src": "04a_side-quests-south.md:841"
     },
     "50": {
      "done": "배급 기록 사진 대조",
      "log": "두 사람의 2077년 이름이 따로 있다",
-     "src": "04a_side-quests-south.md:826"
+     "src": "04a_side-quests-south.md:842"
     }
    },
    "title": "같은 명찰의 두 사람"
@@ -1035,42 +1035,42 @@
     "L-R02-20",
     "L-R02-22"
    ],
-   "places_src": "04a_side-quests-south.md:868",
+   "places_src": "04a_side-quests-south.md:884",
    "stages": {
     "10": {
      "done": "우리 앞 대화",
      "log": "127번의 이름은 채윤재다",
-     "src": "04a_side-quests-south.md:879"
+     "src": "04a_side-quests-south.md:895"
     },
     "100": {
      "done": "두 사람을 같은 장소로 데려감",
      "log": "채윤재와 채해인이 다시 만났다",
-     "src": "04a_side-quests-south.md:885"
+     "src": "04a_side-quests-south.md:901"
     },
     "20": {
      "done": "아파트 '빈집' 판자 중 손자국 있는 문",
      "log": "채해인은 구로 공단 아파트에 숨어 산다",
-     "src": "04a_side-quests-south.md:880"
+     "src": "04a_side-quests-south.md:896"
     },
     "30": {
      "done": "채해인 대화 또는 구만호 장부 열람",
      "log": "채윤재의 장부 빚은 400캡이다",
-     "src": "04a_side-quests-south.md:881"
+     "src": "04a_side-quests-south.md:897"
     },
     "40": {
      "done": "길금순 대화",
      "log": "쪽방 골목 벽 뒤에 통로가 있다",
-     "src": "04a_side-quests-south.md:882"
+     "src": "04a_side-quests-south.md:898"
     },
     "50": {
      "done": "해법 ①",
      "log": "채윤재가 우리를 나왔다",
-     "src": "04a_side-quests-south.md:883"
+     "src": "04a_side-quests-south.md:899"
     },
     "60": {
      "done": "해법 ②",
      "log": "쪽방 통로의 일이 정리됐다",
-     "src": "04a_side-quests-south.md:884"
+     "src": "04a_side-quests-south.md:900"
     }
    },
    "title": "127번"
@@ -1083,32 +1083,32 @@
     "L-R02-23",
     "L-R07-04"
    ],
-   "places_src": "04a_side-quests-south.md:930",
+   "places_src": "04a_side-quests-south.md:946",
    "stages": {
     "10": {
      "done": "발동 ①~③",
      "log": "88번 기라희는 세이프빌 기씨 집에 팔려 간다",
-     "src": "04a_side-quests-south.md:941"
+     "src": "04a_side-quests-south.md:957"
     },
     "100": {
      "done": "기라희가 경매장을 떠남",
      "log": "기라희의 자리가 정해졌다",
-     "src": "04a_side-quests-south.md:945"
+     "src": "04a_side-quests-south.md:961"
     },
     "20": {
      "done": "경매장 칠판 조사",
      "log": "고척 돔 경매는 사흘마다 10시에 열린다",
-     "src": "04a_side-quests-south.md:942"
+     "src": "04a_side-quests-south.md:958"
     },
     "30": {
      "done": "경매일 09시 이후 경매장 진입",
      "log": "세이프빌 대리인 기서윤이 VIP 박스에 있다",
-     "src": "04a_side-quests-south.md:943"
+     "src": "04a_side-quests-south.md:959"
     },
     "40": {
      "done": "경매 종료(해법 무관)",
      "log": "오늘의 4번 경매가 끝났다",
-     "src": "04a_side-quests-south.md:944"
+     "src": "04a_side-quests-south.md:960"
     }
    },
    "title": "오늘의 4번 인력"
@@ -1121,37 +1121,37 @@
     "L-R02-28",
     "L-R02-29"
    ],
-   "places_src": "04a_side-quests-south.md:984",
+   "places_src": "04a_side-quests-south.md:1000",
    "stages": {
     "10": {
      "done": "발동",
      "log": "인지영은 토요일마다 여의도에서 종전을 외쳤다",
-     "src": "04a_side-quests-south.md:995"
+     "src": "04a_side-quests-south.md:1011"
     },
     "100": {
      "done": "두 물건 모두 인도·보관 결정(7일 소지면 '보관'으로 자동 종료)",
      "log": "두 기록이 자리를 찾았다",
-     "src": "04a_side-quests-south.md:1000"
+     "src": "04a_side-quests-south.md:1016"
     },
     "20": {
      "done": "인지영·의사록 대화",
      "log": "해산 사건 보고서는 영등포 경찰서에 있다",
-     "src": "04a_side-quests-south.md:996"
+     "src": "04a_side-quests-south.md:1012"
     },
     "30": {
      "done": "LR-12 출력(M-305 명단)",
      "log": "사망자 열한 명의 이름은 지금 당신 손에 있다",
-     "src": "04a_side-quests-south.md:997"
+     "src": "04a_side-quests-south.md:1013"
     },
     "40": {
      "done": "의사록 대화 또는 기록관 조사",
      "log": "국회 기록관 지하에 휴회 결의 원본이 있다",
-     "src": "04a_side-quests-south.md:998"
+     "src": "04a_side-quests-south.md:1014"
     },
     "50": {
      "done": "M-306 입수",
      "log": "휴회 결의 원본은 지금 당신 손에 있다",
-     "src": "04a_side-quests-south.md:999"
+     "src": "04a_side-quests-south.md:1015"
     }
    },
    "title": "토요일의 여의도"
@@ -1162,32 +1162,32 @@
     "L-R02-02",
     "L-R02-11"
    ],
-   "places_src": "04a_side-quests-south.md:1044",
+   "places_src": "04a_side-quests-south.md:1060",
    "stages": {
     "10": {
      "done": "발동",
      "log": "신분증 세 장의 주소가 영등포다",
-     "src": "04a_side-quests-south.md:1054"
+     "src": "04a_side-quests-south.md:1070"
     },
     "100": {
      "done": "해법 하나",
      "log": "신분증의 자리가 정해졌다",
-     "src": "04a_side-quests-south.md:1058"
+     "src": "04a_side-quests-south.md:1074"
     },
     "20": {
      "done": "함준호 단말",
      "log": "관리사무소에 2077년 주소록이 있다",
-     "src": "04a_side-quests-south.md:1055"
+     "src": "04a_side-quests-south.md:1071"
     },
     "30": {
      "done": "주소록 대조",
      "log": "진재석·사공민영·엄수연은 그날 밤 가족을 기다렸다",
-     "src": "04a_side-quests-south.md:1056"
+     "src": "04a_side-quests-south.md:1072"
     },
     "40": {
      "done": "세 사람 중 한 명 이상과 대화",
      "log": "신분증 세 장은 지금 당신 손에 있다",
-     "src": "04a_side-quests-south.md:1057"
+     "src": "04a_side-quests-south.md:1073"
     }
    },
    "title": "관리 요원의 유족"
@@ -1201,42 +1201,42 @@
     "L-R02-11",
     "L-R02-12"
    ],
-   "places_src": "04a_side-quests-south.md:1096",
+   "places_src": "04a_side-quests-south.md:1112",
    "stages": {
     "10": {
      "done": "아트리움 진입",
      "log": "S-02의 로봇이 제752차 선거를 준비한다",
-     "src": "04a_side-quests-south.md:1107"
+     "src": "04a_side-quests-south.md:1123"
     },
     "100": {
      "done": "당선자에게 열쇠 전달 또는 창고 개방",
      "log": "선거 비축 창고의 열쇠가 주인을 찾았다",
-     "src": "04a_side-quests-south.md:1113"
+     "src": "04a_side-quests-south.md:1129"
     },
     "20": {
      "done": "아트리움 야생 구울 처리(또는 은신 우회 경로 확보)",
      "log": "아트리움에는 아직 위험이 남아 있다",
-     "src": "04a_side-quests-south.md:1108"
+     "src": "04a_side-quests-south.md:1124"
     },
     "30": {
      "done": "투표함지기 2호 대화",
      "log": "선거는 유권자 다섯 명이 있어야 성립한다",
-     "src": "04a_side-quests-south.md:1109"
+     "src": "04a_side-quests-south.md:1125"
     },
     "40": {
      "done": "등록부에 이름 기입",
      "log": "후보 등록부에 이름이 하나 이상 있다",
-     "src": "04a_side-quests-south.md:1110"
+     "src": "04a_side-quests-south.md:1126"
     },
     "50": {
      "done": "유권자 5명 도착",
      "log": "유권자 다섯 명이 투표소에 모였다",
-     "src": "04a_side-quests-south.md:1111"
+     "src": "04a_side-quests-south.md:1127"
     },
     "60": {
      "done": "개표 4호 발표",
      "log": "개표가 끝났다",
-     "src": "04a_side-quests-south.md:1112"
+     "src": "04a_side-quests-south.md:1128"
     }
    },
    "title": "제752차 개표"
@@ -1247,37 +1247,37 @@
     "L-R07-04",
     "L-R07-05"
    ],
-   "places_src": "04a_side-quests-south.md:1158",
+   "places_src": "04a_side-quests-south.md:1174",
    "stages": {
     "10": {
      "done": "발동",
      "log": "함지율 가문의 빚은 백십팔만 캡이다",
-     "src": "04a_side-quests-south.md:1168"
+     "src": "04a_side-quests-south.md:1184"
     },
     "100": {
      "done": "해법 하나",
      "log": "관리비 장부가 새 주인을 만났다",
-     "src": "04a_side-quests-south.md:1173"
+     "src": "04a_side-quests-south.md:1189"
     },
     "20": {
      "done": "LR-43 열람 또는 맹나래 대화",
      "log": "빚은 2077년 관리 약관의 이자로 계산된다",
-     "src": "04a_side-quests-south.md:1169"
+     "src": "04a_side-quests-south.md:1185"
     },
     "30": {
      "done": "맹나래 대화",
      "log": "약관 원본은 S-03 관리소장 금고에 있다",
-     "src": "04a_side-quests-south.md:1170"
+     "src": "04a_side-quests-south.md:1186"
     },
     "40": {
      "done": "약관 원본(M-307) 입수·열람",
      "log": "약관 제31조는 대피 해제 시 효력을 잃는다",
-     "src": "04a_side-quests-south.md:1171"
+     "src": "04a_side-quests-south.md:1187"
     },
     "50": {
      "done": "40",
      "log": "약관과 장부는 지금 당신 손에 있다",
-     "src": "04a_side-quests-south.md:1172"
+     "src": "04a_side-quests-south.md:1188"
     }
    },
    "title": "관리비 200년"
@@ -1288,37 +1288,37 @@
     "L-R06-08",
     "L-R07-04"
    ],
-   "places_src": "04a_side-quests-south.md:1223",
+   "places_src": "04a_side-quests-south.md:1239",
    "stages": {
     "10": {
      "done": "발동",
      "log": "103동 1301호는 2203년부터 봉인돼 있다",
-     "src": "04a_side-quests-south.md:1233"
+     "src": "04a_side-quests-south.md:1249"
     },
     "100": {
      "done": "인도·보관",
      "log": "1301호의 물건들이 자리를 찾았다",
-     "src": "04a_side-quests-south.md:1238"
+     "src": "04a_side-quests-south.md:1254"
     },
     "20": {
      "done": "엄정민 대화 또는 관리동 세대 명부",
      "log": "1301호의 주인은 세진전자의 높은 사람이었다",
-     "src": "04a_side-quests-south.md:1234"
+     "src": "04a_side-quests-south.md:1250"
     },
     "30": {
      "done": "기세훈 또는 우태현 대화",
      "log": "봉인은 입주자대표회의 규약으로 지켜진다",
-     "src": "04a_side-quests-south.md:1235"
+     "src": "04a_side-quests-south.md:1251"
     },
     "40": {
      "done": "1301호 진입",
      "log": "1301호 안에 한유리의 엽서와 가계부가 있다",
-     "src": "04a_side-quests-south.md:1236"
+     "src": "04a_side-quests-south.md:1252"
     },
     "50": {
      "done": "서재 서랍(M-308)",
      "log": "엽서와 가계부는 지금 당신 손에 있다",
-     "src": "04a_side-quests-south.md:1237"
+     "src": "04a_side-quests-south.md:1253"
     }
    },
    "title": "1301호의 봉인"
@@ -1330,37 +1330,37 @@
     "L-R07-07",
     "L-R07-27"
    ],
-   "places_src": "04a_side-quests-south.md:1276",
+   "places_src": "04a_side-quests-south.md:1292",
    "stages": {
     "10": {
      "done": "발동",
      "log": "인보경이 비등록 세대 명단을 만들었다",
-     "src": "04a_side-quests-south.md:1286"
+     "src": "04a_side-quests-south.md:1302"
     },
     "100": {
      "done": "해법 하나",
      "log": "명단의 일이 끝났다",
-     "src": "04a_side-quests-south.md:1291"
+     "src": "04a_side-quests-south.md:1307"
     },
     "20": {
      "done": "설담희·성한별 대화",
      "log": "명단은 사흘 뒤 양재 고개 검문소로 간다",
-     "src": "04a_side-quests-south.md:1287"
+     "src": "04a_side-quests-south.md:1303"
     },
     "30": {
      "done": "지사 게시판 또는 봉상훈 대화",
      "log": "철벽경호는 같은 날 두 곳과 계약했다",
-     "src": "04a_side-quests-south.md:1288"
+     "src": "04a_side-quests-south.md:1304"
     },
     "40": {
      "done": "위치 확인",
      "log": "명단은 인보경의 관리동 서랍에 있다",
-     "src": "04a_side-quests-south.md:1289"
+     "src": "04a_side-quests-south.md:1305"
     },
     "50": {
      "done": "시간 도달(또는 그 전에 해법 완료)",
      "log": "사흘째 아침, 분류반이 정문에 왔다",
-     "src": "04a_side-quests-south.md:1290"
+     "src": "04a_side-quests-south.md:1306"
     }
    },
    "title": "등록 명부"
@@ -1370,37 +1370,37 @@
    "places": [
     "L-R07-04"
    ],
-   "places_src": "04a_side-quests-south.md:1331",
+   "places_src": "04a_side-quests-south.md:1347",
    "stages": {
     "10": {
      "done": "모재석 대화",
      "log": "모재석은 23시 40분 부산행 승객을 기다린다",
-     "src": "04a_side-quests-south.md:1342"
+     "src": "04a_side-quests-south.md:1358"
     },
     "100": {
      "done": "50",
      "log": "23시 40분 부산행 운행이 끝났다",
-     "src": "04a_side-quests-south.md:1347"
+     "src": "04a_side-quests-south.md:1363"
     },
     "20": {
      "done": "단말 열람([과학 25] 또는 고터 찬이 비밀번호를 판다 20캡)",
      "log": "매표소 단말에 예매자 41명이 있다",
-     "src": "04a_side-quests-south.md:1343"
+     "src": "04a_side-quests-south.md:1359"
     },
     "30": {
      "done": "명부와 세이프빌 동대표 성씨 대조",
      "log": "예매자 다수는 세이프빌 로열동 가문이다",
-     "src": "04a_side-quests-south.md:1344"
+     "src": "04a_side-quests-south.md:1360"
     },
     "40": {
      "done": "차다온 대화",
      "log": "로열동 몇 집은 그날의 표를 아직 갖고 있다",
-     "src": "04a_side-quests-south.md:1345"
+     "src": "04a_side-quests-south.md:1361"
     },
     "50": {
      "done": "해법 하나",
      "log": "승차장 1번에 승객이 왔다 / 모재석이 사실을 들었다",
-     "src": "04a_side-quests-south.md:1346"
+     "src": "04a_side-quests-south.md:1362"
     }
    },
    "title": "23시 40분 부산행"
@@ -1410,42 +1410,42 @@
    "places": [
     "L-R07-01"
    ],
-   "places_src": "04a_side-quests-south.md:1386",
+   "places_src": "04a_side-quests-south.md:1402",
    "stages": {
     "10": {
      "done": "발동",
      "log": "61층 정비고에 정지한 파수 48기가 있다",
-     "src": "04a_side-quests-south.md:1397"
+     "src": "04a_side-quests-south.md:1413"
     },
     "100": {
      "done": "50 + 60",
      "log": "61층이 조용하다",
-     "src": "04a_side-quests-south.md:1403"
+     "src": "04a_side-quests-south.md:1419"
     },
     "20": {
      "done": "T06 업무 일지(M-312) 열람",
      "log": "운영기획팀 업무 일지에 여의도 계획서가 있다",
-     "src": "04a_side-quests-south.md:1398"
+     "src": "04a_side-quests-south.md:1414"
     },
     "30": {
      "done": "정비 감독실 단말",
      "log": "정비고 전원은 B2 원자로 2호기에서 온다",
-     "src": "04a_side-quests-south.md:1399"
+     "src": "04a_side-quests-south.md:1415"
     },
     "40": {
      "done": "단말 '각성 조건' 항목",
      "log": "관제망 전원이 들어오면 파수들이 깨어난다",
-     "src": "04a_side-quests-south.md:1400"
+     "src": "04a_side-quests-south.md:1416"
     },
     "50": {
      "done": "해법 ①",
      "log": "정비고 48기의 처분이 끝났다",
-     "src": "04a_side-quests-south.md:1401"
+     "src": "04a_side-quests-south.md:1417"
     },
     "60": {
      "done": "해법 ②",
      "log": "업무 일지가 자리를 찾았다",
-     "src": "04a_side-quests-south.md:1402"
+     "src": "04a_side-quests-south.md:1418"
     }
    },
    "title": "파수 부대의 처분"
@@ -1456,37 +1456,37 @@
     "L-R07-04",
     "L-R07-31"
    ],
-   "places_src": "04a_side-quests-south.md:1446",
+   "places_src": "04a_side-quests-south.md:1462",
    "stages": {
     "10": {
      "done": "발동",
      "log": "세이프빌이 전깃줄 요금을 세 배로 올렸다",
-     "src": "04a_side-quests-south.md:1457"
+     "src": "04a_side-quests-south.md:1473"
     },
     "100": {
      "done": "50",
      "log": "전깃줄의 일이 끝났다",
-     "src": "04a_side-quests-south.md:1462"
+     "src": "04a_side-quests-south.md:1478"
     },
     "20": {
      "done": "기계실 조사",
      "log": "고터 펌프 세 대 가운데 한 대만 돈다",
-     "src": "04a_side-quests-south.md:1458"
+     "src": "04a_side-quests-south.md:1474"
     },
     "30": {
      "done": "노가온 또는 기세훈 대화",
      "log": "요금이 오른 까닭은 장벽 경비 계약이다",
-     "src": "04a_side-quests-south.md:1459"
+     "src": "04a_side-quests-south.md:1475"
     },
     "40": {
      "done": "추영훈 대화(C 경로 단서)",
      "log": "가락시장 냉동 창고에 멈춘 발전기가 있다",
-     "src": "04a_side-quests-south.md:1460"
+     "src": "04a_side-quests-south.md:1476"
     },
     "50": {
      "done": "해법 하나",
      "log": "고터의 불이 다시 켜졌다",
-     "src": "04a_side-quests-south.md:1461"
+     "src": "04a_side-quests-south.md:1477"
     }
    },
    "title": "전깃줄 한 가닥"
@@ -1499,37 +1499,37 @@
     "L-R07-26",
     "L-R11-07"
    ],
-   "places_src": "04a_side-quests-south.md:1501",
+   "places_src": "04a_side-quests-south.md:1517",
    "stages": {
     "10": {
      "done": "발동",
      "log": "버스왕이 막차를 남쪽으로 몰 준비를 한다",
-     "src": "04a_side-quests-south.md:1512"
+     "src": "04a_side-quests-south.md:1528"
     },
     "100": {
      "done": "50",
      "log": "버스 요새의 일이 끝났다",
-     "src": "04a_side-quests-south.md:1517"
+     "src": "04a_side-quests-south.md:1533"
     },
     "20": {
      "done": "휘발유 대화 또는 두목 버스 계기판 조사",
      "log": "막차 노심 바늘이 붉은 칸에 묶여 있다",
-     "src": "04a_side-quests-south.md:1513"
+     "src": "04a_side-quests-south.md:1529"
     },
     "30": {
      "done": "경광 또는 휘발유 대화",
      "log": "막차는 닷새 뒤 새벽 두 시에 떠난다",
-     "src": "04a_side-quests-south.md:1514"
+     "src": "04a_side-quests-south.md:1530"
     },
     "40": {
      "done": "경광 대화",
      "log": "경광은 버스왕 없는 요새를 원한다",
-     "src": "04a_side-quests-south.md:1515"
+     "src": "04a_side-quests-south.md:1531"
     },
     "50": {
      "done": "해법 하나",
      "log": "막차가 떠났다 / 멈췄다",
-     "src": "04a_side-quests-south.md:1516"
+     "src": "04a_side-quests-south.md:1532"
     }
    },
    "title": "막차는 남쪽으로"
@@ -1542,42 +1542,42 @@
     "L-R11-20",
     "L-R11-21"
    ],
-   "places_src": "04a_side-quests-south.md:1569",
+   "places_src": "04a_side-quests-south.md:1585",
    "stages": {
     "10": {
      "done": "발동",
      "log": "지해원은 아이에게 하늘을 보여 주고 싶다",
-     "src": "04a_side-quests-south.md:1580"
+     "src": "04a_side-quests-south.md:1596"
     },
     "100": {
      "done": "60",
      "log": "청계산의 아이들이 하늘을 봤다",
-     "src": "04a_side-quests-south.md:1586"
+     "src": "04a_side-quests-south.md:1602"
     },
     "20": {
      "done": "지해원·방준재 대화",
      "log": "4등급 가족 셋이 지상으로 나가려 한다",
-     "src": "04a_side-quests-south.md:1581"
+     "src": "04a_side-quests-south.md:1597"
     },
     "30": {
      "done": "길 단서 하나(배소영·도강토·금진영)",
      "log": "벙커 밖으로 나가는 길은 셋이다",
-     "src": "04a_side-quests-south.md:1582"
+     "src": "04a_side-quests-south.md:1598"
     },
     "40": {
      "done": "도강토 대화 또는 C02 근무표",
      "log": "경비 교대는 06시와 18시다",
-     "src": "04a_side-quests-south.md:1583"
+     "src": "04a_side-quests-south.md:1599"
     },
     "50": {
      "done": "해법 하나로 탈출",
      "log": "가족들이 벙커 밖에 나왔다",
-     "src": "04a_side-quests-south.md:1584"
+     "src": "04a_side-quests-south.md:1600"
     },
     "60": {
      "done": "정착지까지 호위",
      "log": "가족들이 새 마을에 닿았다",
-     "src": "04a_side-quests-south.md:1585"
+     "src": "04a_side-quests-south.md:1601"
     }
    },
    "title": "벙커의 아이들"
@@ -1590,37 +1590,37 @@
     "L-R11-08",
     "L-R11-09"
    ],
-   "places_src": "04a_side-quests-south.md:1626",
+   "places_src": "04a_side-quests-south.md:1642",
    "stages": {
     "10": {
      "done": "발동",
      "log": "납품 상자 절반이 검문소에 닿지 않는다",
-     "src": "04a_side-quests-south.md:1636"
+     "src": "04a_side-quests-south.md:1652"
     },
     "100": {
      "done": "해법 하나",
      "log": "납품의 일이 끝났다",
-     "src": "04a_side-quests-south.md:1641"
+     "src": "04a_side-quests-south.md:1657"
     },
     "20": {
      "done": "마은비 대화 → 수령 장부(M-317)",
      "log": "마은비는 상자를 받은 대로 적는다",
-     "src": "04a_side-quests-south.md:1637"
+     "src": "04a_side-quests-south.md:1653"
     },
     "30": {
      "done": "PX 판매 장부(M-318)",
      "log": "남은 상자는 원지동 PX에서 팔린다",
-     "src": "04a_side-quests-south.md:1638"
+     "src": "04a_side-quests-south.md:1654"
     },
     "40": {
      "done": "대장 확인(벙커 C06 연가인, 또는 검문소 사본)",
      "log": "온실촌 주민 22명이 대장에 '보류'로 있다",
-     "src": "04a_side-quests-south.md:1639"
+     "src": "04a_side-quests-south.md:1655"
     },
     "50": {
      "done": "20 + 30",
      "log": "두 장부는 지금 당신 손에 있다",
-     "src": "04a_side-quests-south.md:1640"
+     "src": "04a_side-quests-south.md:1656"
     }
    },
    "title": "납품 장부"
@@ -1632,37 +1632,37 @@
     "L-R11-20",
     "L-R11-21"
    ],
-   "places_src": "04a_side-quests-south.md:1682",
+   "places_src": "04a_side-quests-south.md:1698",
    "stages": {
     "10": {
      "done": "발동",
      "log": "장수말벌이 온실촌 꿀벌을 물어 간다",
-     "src": "04a_side-quests-south.md:1693"
+     "src": "04a_side-quests-south.md:1709"
     },
     "100": {
      "done": "봉선 보고",
      "log": "온실촌 벌통에 다시 꿀이 찬다",
-     "src": "04a_side-quests-south.md:1698"
+     "src": "04a_side-quests-south.md:1714"
     },
     "20": {
      "done": "봉선 대화 또는 말벌 귀환 방향 관찰(조사)",
      "log": "말벌은 청계산 쪽에서 날아온다",
-     "src": "04a_side-quests-south.md:1694"
+     "src": "04a_side-quests-south.md:1710"
     },
     "30": {
      "done": "단우 대화 또는 쉼터 반경 15타일",
      "log": "땅벌집은 등산로 쉼터 아래에 있다",
-     "src": "04a_side-quests-south.md:1695"
+     "src": "04a_side-quests-south.md:1711"
     },
     "40": {
      "done": "입구 3곳 확인",
      "log": "땅벌집 입구는 셋이다",
-     "src": "04a_side-quests-south.md:1696"
+     "src": "04a_side-quests-south.md:1712"
     },
     "50": {
      "done": "해법 하나",
      "log": "땅벌집이 조용해졌다",
-     "src": "04a_side-quests-south.md:1697"
+     "src": "04a_side-quests-south.md:1713"
     }
    },
    "title": "땅벌집"
@@ -1677,37 +1677,37 @@
     "L-R11-18",
     "L-R07-12"
    ],
-   "places_src": "04a_side-quests-south.md:1732",
+   "places_src": "04a_side-quests-south.md:1748",
    "stages": {
     "10": {
      "done": "발동",
      "log": "고터 상추는 씨가 다했다",
-     "src": "04a_side-quests-south.md:1743"
+     "src": "04a_side-quests-south.md:1759"
     },
     "100": {
      "done": "50",
      "log": "강남과 청계산의 밭이 달라졌다",
-     "src": "04a_side-quests-south.md:1748"
+     "src": "04a_side-quests-south.md:1764"
     },
     "20": {
      "done": "서보람 또는 고터 해인 대화",
      "log": "세곡 비닐하우스 터 지하에 종자 저장고가 있다",
-     "src": "04a_side-quests-south.md:1744"
+     "src": "04a_side-quests-south.md:1760"
     },
     "30": {
      "done": "저장고 진입로",
      "log": "저장고 문은 '종자 반출 금지'로 잠겼다",
-     "src": "04a_side-quests-south.md:1745"
+     "src": "04a_side-quests-south.md:1761"
     },
     "40": {
      "done": "저장고 개방",
      "log": "씨앗 상자 네 개는 지금 당신 손에 있다",
-     "src": "04a_side-quests-south.md:1746"
+     "src": "04a_side-quests-south.md:1762"
     },
     "50": {
      "done": "4개 분배(또는 30일 경과)",
      "log": "씨앗 상자가 모두 자리를 찾았다",
-     "src": "04a_side-quests-south.md:1747"
+     "src": "04a_side-quests-south.md:1763"
     }
    },
    "title": "세곡의 씨앗"
@@ -1720,47 +1720,47 @@
     "L-R06-01",
     "L-R11-06"
    ],
-   "places_src": "04a_side-quests-south.md:1790",
+   "places_src": "04a_side-quests-south.md:1806",
    "stages": {
     "10": {
      "done": "발동",
      "log": "엄기현은 기체를 몰고 떠나고 싶어 한다",
-     "src": "04a_side-quests-south.md:1801"
+     "src": "04a_side-quests-south.md:1817"
     },
     "100": {
      "done": "60 또는 다른 결과",
      "log": "엄기현의 비행이 끝났다",
-     "src": "04a_side-quests-south.md:1808"
+     "src": "04a_side-quests-south.md:1824"
     },
     "20": {
      "done": "엄기현 대화",
      "log": "버티버드는 받아 주는 곳에만 내린다",
-     "src": "04a_side-quests-south.md:1802"
+     "src": "04a_side-quests-south.md:1818"
     },
     "30": {
      "done": "(상태형, 허가 전)",
      "log": "착륙 허가는 아직 어디서도 받지 못했다",
-     "src": "04a_side-quests-south.md:1803"
+     "src": "04a_side-quests-south.md:1819"
     },
     "31": {
      "done": "허가 하나 획득(○○에 실제 받아 온 곳이 들어간다)",
      "log": "착륙 허가: ○○",
-     "src": "04a_side-quests-south.md:1804"
+     "src": "04a_side-quests-south.md:1820"
     },
     "40": {
      "done": "우나은 정비 일정 확인",
      "log": "연료는 착륙장 탱크에 있다",
-     "src": "04a_side-quests-south.md:1805"
+     "src": "04a_side-quests-south.md:1821"
     },
     "50": {
      "done": "이륙 준비 완료",
      "log": "이륙은 밤 정찰 교대 시각이다",
-     "src": "04a_side-quests-south.md:1806"
+     "src": "04a_side-quests-south.md:1822"
     },
     "60": {
      "done": "착륙",
      "log": "버티버드가 ○○에 내렸다",
-     "src": "04a_side-quests-south.md:1807"
+     "src": "04a_side-quests-south.md:1823"
     }
    },
    "title": "조종사의 망명"

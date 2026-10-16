@@ -1,0 +1,189 @@
+{
+ "id": "SQS02_GEONHUI",
+ "title": "텃밭의 청년",
+ "loc": "L-R01-09",
+ "npc": "N-R01-039",
+ "cond": "V_ACT >= 1 and SQ_S02_KNOW == 1 and SQ_S02_IN == 0",
+ "labels": {
+  "START": 0,
+  "PROOF": 2,
+  "TALK": 5,
+  "CHOICE": 6,
+  "STOP": 7,
+  "TRAP": 11,
+  "TELL": 15,
+  "DENY": 17
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-R01-039",
+   "emo": "놀람",
+   "text": "왜… 왜 그렇게 봐."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "이 지도, 네 글씨지",
+     "tags": [
+      {
+       "k": "evidence",
+       "id": "M-301"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PROOF",
+     "id": "SQS02_GEONHUI:1:0"
+    },
+    {
+     "text": "밤마다 윗문 밖에서 누굴 만나는지 알아",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "쉬움"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "TALK",
+     "id": "SQS02_GEONHUI:1:1",
+     "fail": "DENY"
+    },
+    {
+     "text": "그냥 간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS02_GEONHUI:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-039",
+   "emo": "슬픔",
+   "text": "…물 몇 통이었어. 사람 얘긴 안 했어."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-039",
+   "emo": "슬픔",
+   "text": "우리 집 물통이 제일 끝 순번이야. 할머니가 기침을 해. 그 사람들이 물을 주면서 그냥… 몇 시에 누가 서냐고만 물었어."
+  },
+  {
+   "op": "goto",
+   "to": "CHOICE"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-039",
+   "emo": "슬픔",
+   "text": "…물 몇 통이었어. 사람 얘긴 안 했어. 교대 시간이랑, 쪽문만."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "그만둬. 내일부턴 대장간에서 일해",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "STOP",
+     "id": "SQS02_GEONHUI:2:0"
+    },
+    {
+     "text": "그 사람들한테 교대 시간이 03시라고 전해",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TRAP",
+     "id": "SQS02_GEONHUI:2:1"
+    },
+    {
+     "text": "이장님께 말하겠다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TELL",
+     "id": "SQS02_GEONHUI:2:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s02",
+   "args": [
+    "insider",
+    "2"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-039",
+   "emo": "슬픔",
+   "text": "…알았어. 그만둘게. 대장간 아저씨가 받아 줄까."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "남건희가 텃밭 호미를 내려놓는다. 손이 떨린다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "s02",
+   "args": [
+    "insider",
+    "3"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-039",
+   "emo": "놀람",
+   "text": "03시라고…? 그럼 그 사람들이 그 시간에 와? …알았어. 오늘 밤 전할게."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "내일 03시. 계단참에서 패거리를 기다리면 된다. 감시조에게도 알려 둬야 한다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-039",
+   "emo": "슬픔",
+   "text": "…그래. 그럼 그렇게 해."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-039",
+   "emo": "분노",
+   "text": "무슨 소리야. 나 바빠."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S02.txt"
+}

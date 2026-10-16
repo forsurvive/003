@@ -232,16 +232,18 @@ prop water_tank_s 33 8
 prop antenna 23 7
 prop laundry_line 31 6
 text 25 11 "봉천 새마음빌라 1동. 옥상에 옥탑 이장실이 있다."
-npc N-R01-028 28 37 S cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0"
+npc N-R01-028 28 37 S cond="(MQ101_NIGHT == 0 or MQ101_RESULT != 0) and SQ_S02_FIGHT == 0"
 npc N-R01-026 11 33 S cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0"
 npc C-015 37 35 W sheet=cr_baekgu_loco cond="MQ101_DOG != 1 and SQ_S01_DOG != 1 and (HOME_BC != 1 or BAEKGU_NAP != 1)"
 npc N-R01-034 38 34 W cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0" route=kennel:38,34,6;yard:33,36,4
+# SQ-S02(1-11b): 남건희 — 낮엔 계단 텃밭(22시 이후엔 윗문 쪽문 — 진행기가 세운다) · 고발 다음 날부터는 없다
+npc N-R01-039 20 27 S cond="V_ACT >= 1 and (SQ_S02_IN != 1 or GAME_DAY < SQ_S02_EXILE_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 22 and SQ_S02_FIGHT == 0" route=garden:20,27,6;alley:12,27,4
 npc N-R01-029 16 28 S cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0" route=garden:16,28,6;alley:24,28,4
 npc N-R01-030 46 35 W cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0"
 npc N-R01-031 39 21 S cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0" route=school:39,21,6;stair:33,22,3
 npc N-R01-033 52 37 W cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0"
-npc N-R01-035 30 29 S cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0"
-npc N-R01-036 46 12 S cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0" route=tower:46,12,8;top:40,14,4
+npc N-R01-035 30 29 S cond="(MQ101_NIGHT == 0 or MQ101_RESULT != 0) and SQ_S02_FIGHT == 0"
+npc N-R01-036 46 12 S cond="(MQ101_NIGHT == 0 or MQ101_RESULT != 0) and SQ_S02_FIGHT == 0" route=tower:46,12,8;top:40,14,4
 npc N-R01-501 10 28 E cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0" route=a:10,28,5;b:18,28,4
 npc N-R02-018 20 36 E cond="V_ACT >= 1 and MQ101_NIGHT != 1" route=stall:20,36,8;well:24,38,5
 trigger 27 39 scene=MQ-101_GATE w=5 h=2 cond="MQ101_STAGE == 10" once
@@ -250,6 +252,7 @@ mark land1 29 37 S
 mark land2 29 29 S
 mark land3 33 21 S
 mark land4 30 13 S
+mark upgate 45 3 N
 mark doksa 29 42 N
 mark pc_fight 30 36 S
 mark sbf1 25 44 N

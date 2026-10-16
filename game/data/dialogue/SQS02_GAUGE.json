@@ -1,0 +1,90 @@
+{
+ "id": "SQS02_GAUGE",
+ "title": "수위계",
+ "loc": "L-R01-10",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "HIGH": 6,
+  "MID": 8,
+  "LOW": 10,
+  "FULL": 12
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S02_LEVEL >= 5",
+   "to": "FULL"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S02_LEVEL >= 4",
+   "to": "HIGH"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S02_LEVEL >= 2",
+   "to": "MID"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S02_LEVEL == 1",
+   "to": "LOW"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "수위계 유리관이 바닥까지 말랐다. 붉은 띠 아래. 오늘부터 물값이 두 배라는 쪽지가 문에 붙었다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "수위계 다섯 칸 가운데 넷. 하루에 한 칸씩 내려간다고 조수안이 분필로 적어 놨다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "수위계가 절반 아래로 내려갔다. 분필 글씨 '아이들 먼저'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "수위계 마지막 한 칸. 내일이면 붉은 띠다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "수위계 다섯 칸이 푸르게 차 있다. 유리관 안에서 물이 가늘게 흔들린다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S02.txt"
+}

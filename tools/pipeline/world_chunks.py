@@ -52,7 +52,11 @@ INSETS = [{"id": "X-S07", "mark": "from_vault", "at": (959, 1503)},          # �
           {"id": "X-SD", "center": (1114, 1408), "lid": "L-R01-18", "arrive": "arrive", "urban": True},  # 사당 환승촌 4번 출구 광장(1-8f): 사거리 남동쪽 모퉁이
           {"id": "X-SG", "center": (1113, 1466), "lid": "L-R01-19", "arrive": "arrive", "urban": True},  # 사당 고개 검문소(1-8g): 과천대로 길목
           {"id": "X-GS", "center": (898, 1196), "lid": "L-R01-23", "arrive": "arrive", "urban": True},  # 노량진 관제 중계소(1-8g): 배수지 언덕(학원가 남동)
-          {"id": "X-BW", "center": (901, 1538), "lid": "L-R01-05", "arrive": "arrive"}]                 # 관악산 들개 바위굴(1-11a SQ-S01): 연수원 남서 별관 뒤 골짜기
+          {"id": "X-BW", "center": (901, 1538), "lid": "L-R01-05", "arrive": "arrive"},                 # 관악산 들개 바위굴(1-11a SQ-S01): 연수원 남서 별관 뒤 골짜기
+          # 1-11b SQ-S02 물 반 컵의 값: 봉천 배수지(계단마을 동쪽 언덕 — 기준점 918·1379 동쪽) · 삼성산 능선 캠프(상류 밸브) · 낙성대 고개 캠프(남부순환로 언덕)
+          {"id": "X-BS", "center": (937, 1370), "lid": "L-R01-10", "arrive": "arrive"},
+          {"id": "X-SS", "center": (868, 1578), "lid": "L-R01-31", "arrive": "arrive"},
+          {"id": "X-NS", "center": (971, 1421), "lid": "L-R01-12", "arrive": "arrive", "urban": True}]
 START = (959, 1503)                                                          # 도달성 검사 출발점 = 볼트 정문
 WALKK = (1, 5, 6, 7, 8, 9, 10, 12, 13)                                       # 걷는 땅 종류(13 = 다리 상판)
 STAIR_GAP = 28

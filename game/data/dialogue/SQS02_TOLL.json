@@ -1,0 +1,125 @@
+{
+ "id": "SQS02_TOLL",
+ "title": "밸브 앞 수금원",
+ "loc": "L-R01-31",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "PAY": 4,
+  "PAID2": 7,
+  "ARGUE": 9,
+  "BACK": 11
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S02_OPEN == 2",
+   "to": "PAID2"
+  },
+  {
+   "op": "line",
+   "who": "N-YT-1",
+   "emo": "분노",
+   "text": "거기 서. 물값은 하루 30캡. 봉천 물탱크 여섯 개 몫이다."
+  },
+  {
+   "op": "line",
+   "who": "N-YT-1",
+   "emo": "기본",
+   "text": "내면 오늘부터 사흘은 흘려 주지. 안 내면 — 돌아가."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "낸다",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 30
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PAY",
+     "id": "SQS02_TOLL:1:0"
+    },
+    {
+     "text": "산 위 물이 너희 거냐",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "ARGUE",
+     "id": "SQS02_TOLL:1:1"
+    },
+    {
+     "text": "물러난다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "BACK",
+     "id": "SQS02_TOLL:1:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s02",
+   "args": [
+    "pay"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-YT-1",
+   "emo": "미소",
+   "text": "진작 그럴 것이지. 사흘이다. 나흘째엔 또 와."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-YT-1",
+   "emo": "미소",
+   "text": "낸 손님이네. 사흘은 흘려 준다고 했지. 나흘째엔 또 와."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-YT-1",
+   "emo": "분노",
+   "text": "분양 끝났다고. 산도, 물도. 두목님이 다 샀어. 따지고 싶으면 신림 고시촌 옥상으로 가."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "s02",
+   "args": [
+    "back"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-YT-1",
+   "emo": "기본",
+   "text": "그래. 그게 오래 사는 길이야."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S02.txt"
+}

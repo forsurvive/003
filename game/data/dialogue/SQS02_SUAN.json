@@ -1,0 +1,267 @@
+{
+ "id": "SQS02_SUAN",
+ "title": "배수지 관리인",
+ "loc": "L-R01-10",
+ "npc": "N-R01-032",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "PAIDDAY": 8,
+  "DRY": 10,
+  "AFTER": 12,
+  "PLAIN": 14,
+  "TELL": 16,
+  "ASK": 21,
+  "WHERE": 22,
+  "BYPASS": 24,
+  "BYPASS2": 29,
+  "THANKS": 31,
+  "THANKS_B": 36,
+  "THANKS_BJ": 38,
+  "PAY": 39
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQS02_STAGE >= 70 and SQ_S02_REWARD == 0",
+   "to": "THANKS"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S02_POSTED == 0",
+   "to": "PLAIN"
+  },
+  {
+   "op": "if",
+   "cond": "SQS02_STAGE >= 70",
+   "to": "AFTER"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S02_HEARD == 0",
+   "to": "TELL"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S02_OPEN == 2",
+   "to": "PAIDDAY"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S02_LEVEL == 0",
+   "to": "DRY"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-032",
+   "emo": "피곤",
+   "text": "왔어? 수위계 봤지. 오늘도 한 칸."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-032",
+   "emo": "기본",
+   "text": "물이 내려와. 누가 패거리한테 물값을 냈대. …사흘이야. 나흘째엔 또 잠겨."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-032",
+   "emo": "슬픔",
+   "text": "붉은 띠 아래야. 아이들 몫부터 떼고 나면 남는 게 없어. 장터 물값이 두 배가 됐어."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-032",
+   "emo": "미소",
+   "text": "관에서 물 내려오는 소리, 밤에 들으면 잠이 와. 수위계도 다섯 칸 그대로야."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-032",
+   "emo": "기본",
+   "text": "배수지 물은 한 집 하루 두 통. 끓여 마셔. 그게 규칙이야."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "SQ_S02_HEARD = 1"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-032",
+   "emo": "슬픔",
+   "text": "상류 밸브가 또 잠겼어. 패거리 짓이야. 끓여 마셔도 없는 물은 안 생겨."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-032",
+   "emo": "기본",
+   "text": "관악산 약수 계통에서 내려오는 관이 하나 있는데, 그 중간 밸브를 남부순환 패거리가 틀어쥐었어. 물값을 내래. 하루 30캡."
+  },
+  {
+   "op": "if",
+   "cond": "SQS02_STAGE >= 10",
+   "to": "ASK"
+  },
+  {
+   "op": "do",
+   "fx": "quest(\"SQ-S02\", 10)"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "상류 밸브는 어디 있어?",
+     "tags": [],
+     "cond": "SQS02_STAGE >= 10 and SQS02_STAGE < 70",
+     "fx": "",
+     "to": "WHERE",
+     "id": "SQS02_SUAN:1:0"
+    },
+    {
+     "text": "싸우지 않고 물을 돌릴 길은?",
+     "tags": [],
+     "cond": "SQS02_STAGE >= 20 and SQS02_STAGE < 70 and SQ_S02_PIPEMAP == 0",
+     "fx": "",
+     "to": "BYPASS",
+     "id": "SQS02_SUAN:1:1"
+    },
+    {
+     "text": "이음 지점이 어디랬지?",
+     "tags": [],
+     "cond": "SQ_S02_PIPEMAP == 1 and SQ_S02_SOL == 0",
+     "fx": "",
+     "to": "BYPASS2",
+     "id": "SQS02_SUAN:1:2"
+    },
+    {
+     "text": "됐어",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS02_SUAN:1:3"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-032",
+   "emo": "기본",
+   "text": "밸브실 벽에 관로 계통도가 있어. 봐. 산 쪽 붉은 × — 삼성산 능선 아래야. 패거리가 거기 진을 쳤어."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-032",
+   "emo": "기본",
+   "text": "…계곡 쪽에 옛 관로가 있어. 2077년 전에 쓰던 거. 관악 계곡 배수로를 지나서 내려와."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-032",
+   "emo": "기본",
+   "text": "이음 지점 두 군데가 끊겼어. 고철 넷, 공업용 테이프 둘, 그리고 손 좋은 사람. 지도는 빌려줄게."
+  },
+  {
+   "op": "do",
+   "fx": "SQ_S02_PIPEMAP = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "조수안이 기름종이에 옛 관로를 베껴 준다. 계곡 배수로 안 두 곳에 동그라미."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-032",
+   "emo": "기본",
+   "text": "관악 계곡 배수로 안, 동그라미 두 곳. 고철 넷, 테이프 둘. [수리]를 좀 할 줄 알아야 해."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-032",
+   "emo": "놀람",
+   "text": "들려? 관에서 물 내려오는 소리. …수위계가 올라가고 있어."
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S02_SOL == 4",
+   "to": "THANKS_BJ"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S02_B == 1",
+   "to": "THANKS_B"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-032",
+   "emo": "미소",
+   "text": "고마워. 이건 우리 몫이야. 약수 다섯 병, 그리고 반상회에서 걷은 캡."
+  },
+  {
+   "op": "goto",
+   "to": "PAY"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-032",
+   "emo": "미소",
+   "text": "옛 관로라니. 이제 산 위 밸브는 아무것도 아니야. 정수한 물은 앞으로 네게 싸게 줄게."
+  },
+  {
+   "op": "goto",
+   "to": "PAY"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-032",
+   "emo": "기본",
+   "text": "계엄군이 밸브를 쳤다며. 밸브실에 '관리 계엄사령부' 표지가 붙었대. …물은 물이지. 고마워."
+  },
+  {
+   "op": "do",
+   "fx": "give(\"I-056\", 5); caps(100); SQ_S02_REWARD = 1"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S02.txt"
+}

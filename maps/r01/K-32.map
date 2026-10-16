@@ -1,0 +1,38 @@
+# 봉천 배수지 밸브실(SD-09a L-R01-10 실내 · SD-04a §4.2 · 단계 1-11b): 펌프 2 · 밸브 4 · 관로 지도 · 수위계(5칸 — 하루 한 칸씩 내려간다).
+# 조수안(N-R01-032)의 일터. 관로 지도를 살피면 단계 20(상류 밸브는 삼성산 능선 아래), 우회 관로(해법 B)는 조수안에게 지도를 빌린다.
+map K-32 배수지 밸브실
+set bk
+grid
+################
+################
+################
+#cccccccccccccc#
+#cccccccccccccc#
+#cccccccccccccc#
+#cccccccccccccc#
+#cccccccccccccc#
+######cc########
+end
+exit 6 8 X-BS from_K-32
+exit 7 8 X-BS from_K-32
+mark from_X 6 7 N
+mark desk 11 5 W
+prop w_valves 1 1
+text 2 2 "밸브 넷. 맨 오른쪽 '상류' 핸들에 붉은 꼬리표 — '잠김. 산 쪽.'" w=2
+prop w_pipe_map 5 1
+text 6 2 "벽에 붙은 관로 계통도." w=2 scene=SQS02_MAP
+prop w_gauge 9 1
+text 9 2 "수위계." scene=SQS02_GAUGE
+prop w_procedure 11 1
+text 11 2 "벽 공고 '급수 순서 — 아랫마을 → 계단참 → 윗마을. 물통 두 개까지.'"
+prop pump 1 4
+prop pump 1 6
+text 2 5 "양수 펌프. 전기는 끊긴 지 오래 — 물은 산에서 제 무게로 내려온다. 내려오기만 하면." w=2 h=3
+prop office_desk 11 5
+prop folding_chair 12 6
+prop tool_chest 13 3
+text 13 3 "공구 상자. 렌치 · 테이프 쪼가리 · 고무 패킹. 다 닳았다."
+prop drum 14 6
+prop water_jug 4 7
+prop water_jug 5 7
+npc N-R01-032 10 6 E cond="GAME_HOUR >= 18 or GAME_HOUR < 6"

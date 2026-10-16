@@ -9,6 +9,7 @@ var host: InteriorHost
 var paths: Act1Paths
 var mq106: Mq106
 var side: SideR01                                    ## 관악 사이드 퀘스트(1-11a SQ-S01)
+var side2: SideS02                                   ## 관악 사이드 퀘스트(1-11b SQ-S02)
 var st: StoryState
 var route := "job"
 var shots := ""
@@ -67,6 +68,9 @@ func _ready() -> void:
 	side = SideR01.new()
 	add_child(side)
 	side.setup(host, true)
+	side2 = SideS02.new()
+	add_child(side2)
+	side2.setup(host, true)
 	host.combat.player_down.connect(host.on_pc_down)                  # 쓰러짐 → 생포 판정(진짜 진행 prologue와 같은 연결)
 	host.combat.equip("W-002", st)
 	match route:
@@ -172,6 +176,29 @@ func _ready() -> void:
 				["check", "SQ_S01_BC == 0", "해법 몫 봉천 +5가 이제 반영"],
 				["want", ["드릴게요"]], ["shoton", "백, 설", "bw_jo"], ["talkd", "N-R01-029"], ["wait", 1.5],
 				["check", "SQH_TAG == 81 and SQS01_STAGE == 100 and has(\"M-189\")", "조담희에게 건넴 — 백설이 사진 · 종료"]]
+		"bs":                                                           # 1-11b SQ-S02: 쪽지 → 조수안 → 밸브실 관로 지도 → 수금원에게 물값(E) → 우회 관로 지도 → 계곡 이음 지점 둘(B) → 사례
+			for kv in [["M-010", 4], ["M-025", 2]]:
+				st.call_fn("give", kv)
+			st.vars.set_v("PC_SKP_REPAIR", 40)
+			host.date_text = "2277. 10. 26.  10:00"
+			side2.tick()
+			st.vars.set_v("GAME_DAY", 5)
+			side2._on_day(5)
+			host.enter("X-BS", "arrive")
+			plan = [["wait", 1.0], ["shot", "bs_yard"], ["want", ["됐어"]], ["talk", "N-R01-032"], ["wait", 1.0],
+				["check", "SQS02_STAGE == 10 and SQ_S02_HEARD == 1", "조수안: '상류 밸브가 또 잠겼어' — 단계 10"],
+				["warp", "K-32", "from_X"], ["wait", 1.0], ["go", 6, 3, "K-32"], ["use", 6, 2], ["wait", 1.0], ["shot", "bs_k32"],
+				["check", "SQS02_STAGE == 20", "밸브실 관로 계통도 — 단계 20"],
+				["settime", "2277. 10. 26.  14:00"], ["want", ["낸다"]], ["warp", "X-SS", "arrive"], ["wait", 1.0],
+				["until", "SQ_S02_OPEN == 2", 20.0, "수금원: 물값 30캡 — 사흘 흐른다(해법 E)", "bs_toll"],
+				["check", "SQS02_STAGE == 30 and SQ_S02_LEVEL == 5", "밸브 반경 30칸(단계 30) · 물값 기간 수위 다섯 칸"],
+				["warp", "X-BS", "arrive"], ["wait", 1.0], ["want", ["싸우지 않고", "됐어"]], ["talk", "N-R01-032"], ["wait", 1.0],
+				["check", "SQ_S02_PIPEMAP == 1", "조수안의 옛 관로 지도"],
+				["warp", "K-08"], ["wait", 1.5], ["go", 30, 4, "K-08"], ["want", ["덧대고"]], ["use", 30, 3], ["wait", 1.0],
+				["check", "SQ_S02_J1 == 1", "첫 이음 지점"], ["go", 37, 4, "K-08"], ["want", ["덧대고"]], ["use", 37, 3], ["wait", 1.0], ["shot", "bs_joint"],
+				["check", "SQ_S02_B == 1 and SQS02_STAGE == 70 and SQS03_STAGE == 10", "해법 B 우회 관로 — 단계 70 · SQ-S03 자동 발동"],
+				["warp", "X-BS", "arrive"], ["wait", 1.0], ["talk", "N-R01-032"], ["wait", 1.5],
+				["check", "SQ_S02_REWARD == 1 and has(\"I-056\")", "조수안 사례: 관악산 약수 ×5 + 100캡"]]
 		"place":                                                        # 1-5e 손 장소: 전망바위 → 연수원 본관(LR-19)·기숙사(LR-11) → 계곡 배수로(정비공) → 경찰서 무기고(자물쇠 50) → 공영방송(LR-01)
 			st.vars.set_v("PC_SKP_LOCKPICK", 50)
 			st.vars.set_v("PC_SKP_SMALL_GUNS", 40)

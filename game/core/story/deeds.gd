@@ -175,6 +175,13 @@ func _done(d: Dictionary, now: int) -> bool:
 	return false
 
 
+## 꼬리표 tag 기록을 세력 f에 지금 닿게 한다(그 자리에서 본 일 — 물이 다시 흐르는 마을에 돌아왔다, 1-11b). 이미 닿았으면 그대로
+func tell(st: StoryState, tag: String, f: String, now: int, route := "목격") -> void:
+	for d in list:
+		if str(d["tag"]) == tag and (d["fx"] as Dictionary).has(f):
+			_arrive(st, d, f, now, route)
+
+
 ## 세력 f가 그 꼬리표의 일을 아는가(대사 조건 · 시험)
 func knows(f: String, tag: String) -> bool:
 	for h in heard:

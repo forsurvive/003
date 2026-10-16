@@ -98,6 +98,8 @@ ENEMIES = [("en_cr401_loco", "M1-S4-HR02-H1-T06-1-PF01-HD04-EY00-PR034", "rifle"
            ("en_cr421b_loco", "M1-S2-HR01-H3-T04-1-PF04-HD09-EY00", "rifle"),
            ("en_cr423_loco", "M1-S5-HR00-H1-T04-2-PF04-HD00-EY02", "baton"),
            ("en_cr423b_loco", "F2-S3-HR07-H2-T04-2-PF04-HD08-EY00", "baton"),
+           # 1-11b SQ-S02 낙성대 척후장 사이렌(N-R01-062, SD-07b 외형 그대로 — 적으로 쓸 때도 같은 얼굴)
+           ("en_n062_loco", "F2-S3-HR09-H7-T04-1-PF04-HD00-EY05-PR014", "pistol"),
            # 1-E 무명 사람(비적대): 떠돌이 고물상(V57 템플릿, 짐 진 황무지 복장) · 피난민(낡은 평상복) · 쓰러진 세력원(방범·정착 민병 조끼)
            ("en_trader_loco", "M2-S4-HR01-H1-T03-2-PF00-HD18-EY00", None),
            ("en_trader_b_loco", "F2-S3-HR08-H2-T03-2-PF00-HD07-EY00", None),

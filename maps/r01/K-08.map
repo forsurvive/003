@@ -33,3 +33,12 @@ enemy CR-095 18 6
 enemy CR-095 30 5
 enemy CR-095 36 7
 enemy CR-095 49 6
+# SQ-S02 해법 B 우회 관로(1-11b): 2071년에 폐쇄한 옛 상수 관로가 암거 천장을 따라 지난다 — 끊긴 이음 지점 둘
+prop pipe_run 28 3
+prop pipe_run 29 3
+prop pipe_run 30 3
+prop pipe_run 36 3
+prop pipe_run 37 3
+prop pipe_run 38 3
+text 30 3 "옛 관로 이음 지점." scene=SQS02_JOINT
+text 37 3 "옛 관로 이음 지점." scene=SQS02_JOINT

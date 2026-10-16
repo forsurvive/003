@@ -1,0 +1,108 @@
+{
+ "id": "SQS02_JOINT",
+ "title": "옛 관로 이음 지점",
+ "loc": "L-R01-08",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "FIX": 4,
+  "UNKNOWN": 8,
+  "DONE": 10
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "2071년에 폐쇄한 옛 관로. 이음 고리가 녹아내려 관이 반 뼘 벌어졌다. 틈 사이로 차가운 바람."
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S02_B == 1 or SQ_S02_AT == 1",
+   "to": "DONE"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S02_PIPEMAP == 0",
+   "to": "UNKNOWN"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "고철로 덧대고 테이프로 감는다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 25
+      },
+      {
+       "k": "item",
+       "id": "M-010",
+       "n": 2
+      }
+     ],
+     "cond": "has(\"M-025\")",
+     "fx": "",
+     "to": "FIX",
+     "id": "SQS02_JOINT:1:0"
+    },
+    {
+     "text": "나중에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS02_JOINT:1:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "take(\"M-025\", 1)"
+  },
+  {
+   "op": "cmd",
+   "name": "s02",
+   "args": [
+    "joint"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "고철 판을 덧대고 공업용 테이프를 감는다. 틈이 닫힌다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "어디로 이어지는 관인지 모르겠다. 배수지 관리인이라면 알 것이다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "감아 둔 테이프 아래로 관이 차갑게 울린다. 물이 흐른다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S02.txt"
+}

@@ -34,6 +34,8 @@ def main():
     made, skipped, index = 0, [], {}
     import pack as PK                                                 # 무명 적 템플릿 화자(CR-, 1-3 추적대 첫 분대): 적 시트와 같은 외형
     en_look = {nm.split("_")[1].upper().replace("CR", "CR-"): code for nm, code, _w in PK.ENEMIES if nm.startswith("en_cr")}
+    sheet_look = {nm: code for nm, code, _w in PK.ENEMIES}
+    en_look |= {"N-YT-1": sheet_look["en_cr421_loco"], "N-YT-2": sheet_look["en_cr420b_loco"]}   # 1-11b 무명 패거리 화자: 진행기가 세우는 그 그림(수금원 · 척후)과 같은 얼굴
     for sid in sorted(speakers) + sorted(looks):
         look = looks.get(sid) or npcs.get(sid, {}).get("look", "") or en_look.get(sid, "")
         if not look or look.split("-")[0] in ("AN", "RB", "BY", "OBJ") or "·" in look:

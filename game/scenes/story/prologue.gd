@@ -178,6 +178,7 @@ var paths: Act1Paths                               ## 1막 경로 진행기(MQ-1
 var mq106: Mq106                                   ## MQ-106 첫 번째 추적자 · 1 → 2막 전환(1-7)
 var home: HomeBc                                   ## 봉천 옥탑방 거처(1-8b)
 var side_r01: SideR01                              ## 관악 사이드 퀘스트(1-11 — SQ-S01 외눈의 인식표)
+var side_s02: SideS02                              ## 관악 사이드 퀘스트(1-11b — SQ-S02 물 반 컵의 값)
 var caravans: Caravans                             ## 순회 상인 일정(1-8d)
 var sol := 1                                       ## 1막 봇 해법(--sol=1~5, 0-10)
 
@@ -223,6 +224,10 @@ func _paths() -> void:
 		side_r01 = SideR01.new()
 		add_child(side_r01)
 		side_r01.setup(host, log_on)
+	if side_s02 == null:
+		side_s02 = SideS02.new()
+		add_child(side_s02)
+		side_s02.setup(host, log_on)
 
 
 func _act1(from: String) -> void:

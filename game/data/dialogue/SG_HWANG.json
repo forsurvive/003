@@ -14,11 +14,12 @@
   "REFUSE": 19,
   "FRIEND": 22,
   "ASK": 23,
-  "PASS": 24,
-  "PASS2": 27,
-  "PASS3": 30,
-  "WHAT": 32,
-  "PERM": 36
+  "S02": 24,
+  "PASS": 30,
+  "PASS2": 33,
+  "PASS3": 36,
+  "WHAT": 38,
+  "PERM": 42
  },
  "ops": [
   {
@@ -175,14 +176,57 @@
      "id": "SG_HWANG:2:1"
     },
     {
+     "text": "삼성산 능선 아래 패거리가 상수 밸브를 막았습니다",
+     "tags": [],
+     "cond": "SQS02_STAGE >= 20 and SQ_S02_CAMP == 0 and SQ_S02_SOL == 0 and SQ_S02_BJ_AT == 0 and AFF_BJ > -60",
+     "fx": "",
+     "to": "S02",
+     "id": "SG_HWANG:2:2"
+    },
+    {
      "text": "됐습니다",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "SG_HWANG:2:2"
+     "id": "SG_HWANG:2:3"
     }
    ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-047",
+   "emo": "기본",
+   "text": "상수 밸브. 위치를 정확히 말씀해 주십시오."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "삼성산 능선 등산로, 정상 0.4km 표지 아래 비탈."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-047",
+   "emo": "기본",
+   "text": "확인했습니다. 민간 기반 시설 점거는 비상 지침 위반입니다. 내일 06시 분대를 보냅니다."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-047",
+   "emo": "기본",
+   "text": "수도는 앞으로 계엄사령부가 관리합니다. 봉천에는 공보 공고로 알리겠습니다."
+  },
+  {
+   "op": "cmd",
+   "name": "s02",
+   "args": [
+    "bj"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
   },
   {
    "op": "if",

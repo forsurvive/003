@@ -1,0 +1,46 @@
+{
+ "id": "SQS02_MAP",
+ "title": "관로 계통도",
+ "loc": "L-R01-10",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "NOTE": 4
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "바랜 청사진. 관악산 등고선에서 굵은 관 하나가 봉천 배수지로 내려온다. 중간에 붉은 펜으로 그은 ×."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "× 옆 연필 글씨 '삼성산 능선 아래 — 상류 밸브'. 계곡 쪽으로는 끊긴 점선이 또 하나 내려온다. '옛 관로(2071 폐쇄)'."
+  },
+  {
+   "op": "if",
+   "cond": "SQS02_STAGE >= 10 and SQS02_STAGE < 20",
+   "to": "NOTE"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "quest(\"SQ-S02\", 20)"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S02.txt"
+}

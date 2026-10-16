@@ -2040,7 +2040,7 @@ func _handlers() -> void:
 # ---------------------------------------------------------------- 핍-보이·소지품
 func _load_items() -> void:
 	for f in ["items_aid", "items_food", "items_drink", "items_quest", "items_apparel", "items_misc_money", "items_misc_mat", "items_misc_func",
-			"items_chems", "items_misc_other", "items_apparel_head", "items_misc_crit", "items_junk", "items_ammo", "items_tokens", "items_craft"]:          # 파이프라인이 SD-13 표에서 뽑은 아이템(1-4: 표 전체)
+			"items_chems", "items_misc_other", "items_apparel_head", "items_misc_crit", "items_junk", "items_ammo", "items_tokens", "items_craft", "items_side"]:          # 파이프라인이 SD-13 표에서 뽑은 아이템(1-4: 표 전체)
 		var p := "res://data/%s.json" % f
 		if FileAccess.file_exists(p):
 			items_db.merge(JSON.parse_string(FileAccess.get_file_as_string(p)))

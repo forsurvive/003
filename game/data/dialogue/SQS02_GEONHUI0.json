@@ -1,0 +1,90 @@
+{
+ "id": "SQS02_GEONHUI0",
+ "title": "텃밭의 청년",
+ "loc": "L-R01-09",
+ "npc": "N-R01-039",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "DRY": 6,
+  "WAIT": 8,
+  "AFTERTRAP": 10,
+  "SMITH": 12
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S02_IN == 2",
+   "to": "SMITH"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S02_IN == 3 and SQ_S02_TRAP_DONE == 1",
+   "to": "AFTERTRAP"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S02_IN == 3",
+   "to": "WAIT"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S02_POSTED == 1 and SQ_S02_LEVEL < 5",
+   "to": "DRY"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-039",
+   "emo": "기본",
+   "text": "상추가 또 녹았어. 계단 텃밭은 볕이 반나절이라."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-039",
+   "emo": "슬픔",
+   "text": "물이 반 통이면 상추한테 줄까, 할머니한테 줄까. …답은 정해져 있지."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-039",
+   "emo": "놀람",
+   "text": "전했어. 03시라고. …정말 아무도 안 다치는 거지?"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-039",
+   "emo": "슬픔",
+   "text": "계단참에서 그 사람들 얼굴을 봤어. 물 주던 얼굴. …다시는 안 할게."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-039",
+   "emo": "기본",
+   "text": "대장간 아저씨가 망치는 손목으로 치는 거래. 아직 손목이 나가."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S02.txt"
+}

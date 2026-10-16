@@ -948,6 +948,10 @@ from props_bw import PROPS_BW                                           # 관악
 for _k in PROPS_BW:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_BW)
+from props_bs import PROPS_BS, STATES_BS                                # 봉천 배수지 · 상류 밸브 · 낙성대 고개(1-11b SQ-S02)
+for _k in PROPS_BS:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_BS)
 from props_site import PROPS_SITE                                       # 소장소(1-W, SD-22 §5.2)
 for _k in PROPS_SITE:
     assert _k not in PROPS, _k
@@ -997,6 +1001,7 @@ STATES.update(STATES_JM)
 STATES.update(STATES_BK)
 STATES.update(STATES_CG)
 STATES.update(STATES_TRAP)
+STATES.update(STATES_BS)
 for _k, _v in burnt_states(PROPS).items():
     STATES.setdefault(_k, {}).update(_v)
 

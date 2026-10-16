@@ -1,0 +1,97 @@
+# 봉천 배수지(SD-09a L-R01-10 B · SD-04a §4.2 SQ-S02 물 반 컵의 값 · 단계 1-11b): 계단마을 동쪽 언덕 위 2077년 상수도 배수지.
+# 26×19 · 원형 콘크리트 저수조 2기 · 밸브실(문 → K-32: 펌프 2 · 밸브 4 · 관로 지도 · 수위계) · 관악산에서 내려오는 관로.
+# 장소 기준점(918·1379)은 그대로 — 봉천 손 맵(X-BC) 동쪽 테두리 숲이라 저수조 마당은 기준점 동쪽 6타일부터, 도착 칸은 남쪽 큰길 옆.
+# 밸브실 문 앞 봉천 감시조 1(SD-09a). 조수안(N-R01-032)은 낮엔 마당 · 저녁엔 밸브실 안.
+map X-BS 봉천 배수지
+set r01
+grid
+TTTT;;TTTTTT;,TTTTTT;;TTTT
+;;TT;,;TTTTT;;,TTTT;,;TTTT
+;,;;,;;;,;T;,;;;,;;,;;;TTT
+;,,ccccccccccccc;,;;;;,;TT
+,;ccccccccccccc;XXXXXX;,;T
+;;ccccccccccccc,XXXXXX;;,T
+;,ccccccccccccc;HHHHHH,;TT
+,;ccccccccccccc;HHHHHH;;,T
+;;cccccccccccccccccccc;,;T
+,;cccccccccccccccccccc,;TT
+;,ccccccccccccccccccccc;TT
+;;cccccccccccccccccccc;,TT
+,;;ccccccccccccccccccc;;,T
+;,,cccccccccccccccccc,;;TT
+;;;cccccccc..cccccc;,;,;TT
+T;;,;;;,;;;..;;,;;;,;;;,;T
+,;;;,;;;,;;..;;;,;;;,;;;,T
+;,;;;,;;;,;..,;;;,;;;,;;;T
+;;,;;;,;;;,..;,;;;,;;;,;;;
+end
+levels
+00000000000000000000000000
+00000000000000000000000000
+00000000000000000000000000
+00000000000000000000000000
+00000000000000000000000000
+00000000000000000000000000
+00000000000000000000000000
+00000000000000000000000000
+00000000000000000000000000
+00000000000000000000000000
+00000000000000000000000000
+00000000000000000000000000
+00000000000000000000000000
+00000000000000000000000000
+00000000000000000000000000
+00000000000000000000000000
+00000000000000000000000000
+00000000000000000000000000
+00000000000000000000000000
+end
+mark arrive 11 17 N
+mark from_K-32 18 9 S
+mark yard 12 10 S
+mark tanks 8 9 N
+exit 18 8 K-32 from_X
+struct roof 16 4 6 2 seed=41 args='{"edges": "nwe", "paint": "grey", "hatch": 3}'
+struct facade 16 6 6 2 seed=42 args='{"style": "concrete", "doors": [[2, "steel"]], "windows": ["board", "dark", "board"], "name": "봉천 배수지 밸브실", "pipe": true}'
+text 17 8 "밸브실 쇠문. 손잡이에 걸린 판자 '관계자 외 출입 금지 — 조'." w=3
+prop reservoir 3 4
+prop reservoir2 10 4
+text 5 7 "1호 저수조. 2077년 글씨 '수질 1등급' 아래 붉은 페인트 '끓여 마셔'. 벽을 두드리면 속이 텅 빈 소리가 난다." w=5 scene=SQS02_TANK
+text 12 7 "2호 저수조. 점검구에 자물쇠. 옆구리 물때 줄이 수위보다 한참 위에 있다." w=5 scene=SQS02_TANK
+prop pipe_run 15 10
+prop pipe_run 16 10
+prop pipe_run 17 10
+prop pipe_run 18 10
+prop pipe_run 19 10
+prop pipe_run 20 10
+prop pipe_run 21 10
+prop pipe_run 22 10
+prop pipe_run 23 10
+text 19 10 "땅 위로 드러난 관. 관악산 쪽에서 내려와 밸브실로 들어간다. 손을 대면 차갑고 — 조용하다. 물 흐르는 소리가 없다." w=5
+prop water_tap 8 8
+text 8 8 "급수 꼭지. 붉은 핸들을 돌리면 — 쇳소리만 난다. 아래 양동이가 말라 있다." scene=SQS02_TANK
+prop water_jug 4 8
+prop water_jug 5 8
+prop water_jug 6 8
+text 4 8 "꼭지 앞에 줄 선 물통. 통마다 집 번호를 칼로 새겼다. '312-3' '208' '94'. 맨 앞 통에 분필 '아이들 먼저'." w=3
+prop info_board 12 8
+text 12 8 "분필 칠판 '급수 순번 — 아랫마을 → 계단참 → 윗마을. 한 집 하루 두 통.' 두 통의 '두'에 줄을 긋고 '한'." 
+prop sandbags 20 12
+prop drum 22 9
+prop crate_o 3 11
+prop bench_o 14 12
+prop laundry_line 4 13
+prop bucket 7 12
+prop chain_post 2 14
+prop chain_post 19 14
+prop tuft 3 15
+prop tuft2 20 16
+prop bush_g 23 15
+prop bush_a 1 16
+prop tree_small 22 13
+prop tree_oak 2 2
+prop warn_board 9 15
+text 9 15 "판자 안내. '배수지 물 — 한 집 하루 두 통. 끓여 마실 것. 관리 조수안.'"
+# 조수안(N-R01-032): 낮엔 저수조 마당, 저녁 · 밤엔 밸브실(K-32). 밸브실 문 앞 봉천 감시조 1(SD-09a)
+npc N-R01-032 13 11 S cond="GAME_HOUR >= 6 and GAME_HOUR < 18" route=yard:13,11,6;tap:9,9,5;door:16,9,3
+npc N-BC-1 20 9 S look=M2-S4-HR01-H1-T05-1-PF12-HD05-EY00 bark="밸브실은 조수안 씨 허락 없이 못 들어가. …물? 끓여 마셔."

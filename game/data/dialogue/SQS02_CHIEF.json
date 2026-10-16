@@ -1,0 +1,72 @@
+{
+ "id": "SQS02_CHIEF",
+ "title": "이장 조만석 — 척후 지도",
+ "loc": "L-R01-09",
+ "npc": "C-010",
+ "cond": "V_ACT >= 1 and has(\"M-301\") and SQ_S02_KNOW == 1 and SQ_S02_IN == 0",
+ "labels": {
+  "START": 0,
+  "GIVE": 2
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "그 종이는 뭐냐."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "패거리 척후 지도예요. 그린 사람은 남건희입니다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "GIVE",
+     "id": "SQS02_CHIEF:1:0"
+    },
+    {
+     "text": "아무것도 아닙니다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS02_CHIEF:1:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "take(\"M-301\", 1)"
+  },
+  {
+   "op": "cmd",
+   "name": "s02",
+   "args": [
+    "insider",
+    "1"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "분노",
+   "text": "…건희가. 그 애 할머니 물통을 내가 채워 줬다."
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "반상회에 올린다. 마을 규칙대로 하마. 내일 아침엔 그 애가 없을 거다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S02.txt"
+}

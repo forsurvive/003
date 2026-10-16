@@ -20,6 +20,7 @@ var done := false
 var dogs: Array = []
 var baek: Actor
 var baek_lead := false
+const WATER_IDS := ["I-054", "I-055", "I-056", "I-057"]          ## 마실 물(물값 배수 대상)
 const BAEK_WAY := [Vector2i(13, 20), Vector2i(13, 17), Vector2i(13, 15), Vector2i(14, 9), Vector2i(14, 2)]
 var baek_i := 0
 var baek_path := PackedVector2Array()
@@ -258,6 +259,15 @@ func _heal(price: int) -> void:
 ## 돈으로 해결(4)이면 +10%. 창 위 인사는 가장 큰 보정 하나를 말로 알린다(§3.10). 한 번이라도 사고팔면 MQ101_TRADE = 1
 func _trade_cmd(a: Array, finish: Callable) -> void:
 	var vid := str(a[0])
+	var m := trade_mult(vid)
+	host.open_trade(vid, func(caps: int) -> void:
+		if caps > 0:
+			st.vars.set_v("MQ101_TRADE", 1)
+		finish.call(), m[0], m[1], m[2])
+
+
+## 거래 배수 [[사는 값, 파는 값], 인사, 물건별 배수]: MQ-101 결과 · SQ-S01 인식표 · 지하시장 단골 · SQ-S02 수위(봉천 상인 — 붉은 띠면 +10% · 물값 2배, 우회 관로 뒤 정수 물 −20%)
+func trade_mult(vid: String) -> Array:
 	var r := v("MQ101_RESULT")
 	var k := [1.0, 1.0]
 	var greet := ""
@@ -276,13 +286,19 @@ func _trade_cmd(a: Array, finish: Callable) -> void:
 		greet = "단골한테는 덜 남겨."
 	var item_k := {}
 	if r == 5:                                                        # 마을을 팖: 다음 날 마을 물값 2배(SD-03a §8.1 표)
-		for w in ["I-054", "I-055", "I-056", "I-057"]:
+		for w in WATER_IDS:
 			item_k[w] = 2.0
 		greet = "물값이 왜 올랐는지는 당신이 더 잘 알 텐데."
-	host.open_trade(vid, func(caps: int) -> void:
-		if caps > 0:
-			st.vars.set_v("MQ101_TRADE", 1)
-		finish.call(), k, greet, item_k)
+	if str(host.merchants.get(vid, {}).get("settle", "")) == "BC" and st.vars.has("SQ_S02_LEVEL"):
+		if v("SQ_S02_POSTED") == 1 and v("SQ_S02_LEVEL") == 0:
+			k = [k[0] * 1.10, k[1]]                                   # SD-04a §4.2 시간 제한: 5일째 봉천 상인 가격 +10% · 물값 2배
+			for w in WATER_IDS:
+				item_k[w] = float(item_k.get(w, 1.0)) * 2.0
+			greet = "배수지가 바닥이야. 물이 금값이라 다른 것도 따라 올라."
+		elif v("SQ_S02_B") == 1:
+			for w in WATER_IDS:
+				item_k[w] = float(item_k.get(w, 1.0)) * 0.8                # 해법 B: 배수지 정수 물 상시 −20%
+	return [k, greet, item_k]
 
 
 # ================================================================================================ S1 들개·백구

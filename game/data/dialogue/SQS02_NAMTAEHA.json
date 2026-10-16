@@ -1,0 +1,45 @@
+{
+ "id": "SQS02_NAMTAEHA",
+ "title": "옥탑 감시조장",
+ "loc": "L-R01-09",
+ "npc": "N-R01-028",
+ "cond": "V_ACT >= 1 and SQ_S02_MAP == 1 and SQ_S02_KNOW == 0 and SQ_S02_IN == 0",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "기본",
+   "text": "그 지도. …교대 시간이 정확하네. 우리 안쪽 사람 짓이야."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "기본",
+   "text": "망루에서 보면 다 보여. 밤마다 윗문 쪽문으로 나가는 놈이 있어. 남건희. 텃밭 하는 애."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "슬픔",
+   "text": "말 안 했어. 애가 물통을 안고 들어오길래. …이제는 말해야겠지."
+  },
+  {
+   "op": "cmd",
+   "name": "s02",
+   "args": [
+    "seen"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S02.txt"
+}

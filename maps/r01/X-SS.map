@@ -1,0 +1,129 @@
+# 삼성산 능선 캠프 + 상류 관로 밸브(SD-09a L-R01-31 C · SD-04a §4.2 SQ-S02 '밸브 캠프' · 단계 1-11b): 삼성산 능선 바위 은신처, 남부순환 패거리 외곽 분대.
+# 32×24 · 북쪽 비탈 아래 상류 밸브(관악산 약수 계통 → 봉천 배수지) · 바위 턱 위 캠프(천막 · 드럼 불 · 모래주머니) · 남쪽 등산로(정상 0.4km).
+# 적(약탈자 CR-420 · 421 · 423 ×4 + 경비견 CR-107)은 진행기(SideR01)가 세운다 — 해법 A 탈환 · D 계엄군 동원 뒤엔 비거나 감시조가 선다.
+map X-SS 삼성산 능선 캠프
+set r01
+grid
+TTTTTTTTTTTTTTT..TTTTTTTTTTTTTTT
+TTTTTT;;;,TTTTT..,;;;,;TTTTTT,;T
+TT,;;;,;;;,;;;T..;,;;;,TT;,;;;TT
+T;;,;;;,;;;,;;;..;;,;;;,;;;,;;TT
+T;;;,;;;,;;;,;;..;;;,;;;,;;;,;TT
+TT;;;,;;;,;;;,;..,;;;,;;;,;;;,TT
+TT,;;;,;;;,;;;,..;,;;;,;;;,;;;TT
+TT;,;;;,;;;,;;;..;;,;;;,;;;,;TTT
+TT;;,;;;,;;;,;;..;;;,;;;,;;;,;TT
+TTT;;,;;;,;;;,;..,;;;,;;;,;;;,;T
+TTT;;;,...,....,....,....;,;;;,T
+TT;,;;;..,....,....,....,;;,;;;T
+T;;;,;;.,....,....,....,.;;;,;;T
+T,;;;,;,....,....,....,..,;;;,;T
+T;,;;;,....,....,....,...;,;;;,T
+T;;,;;;...,....,....,....;;,;;TT
+T;;;,;;..,....,....,....,;;;,TTT
+T,;;;,;.,....,....,....,.,;;;TTT
+TT,;;;,,....,....,....,..;,;;;TT
+TTT,;;;....,....,........;;,;;;T
+TTT;,;;;,;;;,;;;,;;;..;;,;;;,;;T
+TT;;;,;;;,;TT,;;;,;;..T;;,;;;,;T
+TTTT;;,TTTTTTT,;;;,;..TTTTT;;;TT
+TTTTTTTTTTTTTTTTTTTT..TTTTTTTTTT
+end
+levels
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+end
+mark arrive 15 2 S
+mark valve 16 6 S
+mark valve_front 16 7 N
+mark camp 15 14 S
+mark camp1 11 12 S
+mark camp2 19 12 W
+mark camp3 13 16 N
+mark camp4 21 16 W
+mark dog 16 15 N
+mark guard1 14 7 E
+mark guard2 18 7 W
+mark summit 20 22 S
+text 16 6 "상류 관로 밸브." scene=SQS02_VALVE
+prop pipe_run 9 7
+prop pipe_run 10 7
+prop pipe_run 11 7
+prop pipe_run 12 7
+prop pipe_run 13 7
+prop pipe_run 14 7
+prop pipe_run 18 7
+prop pipe_run 19 7
+prop pipe_run 20 7
+prop pipe_run 21 7
+prop pipe_run 22 7
+text 11 7 "땅 위로 드러난 관. 산 위 약수 계통에서 내려와 봉천 쪽으로 간다. 밸브 너머로는 관이 말라 있다." w=4
+prop boulder_s 14 9
+prop boulder_l 5 8
+prop boulder_m 7 8
+prop boulder_s 4 10
+prop boulder_l 24 9
+prop boulder_s 26 10
+prop boulder_m 9 19
+prop boulder_s 11 20
+prop boulder_m 23 18
+prop arrow_paint 6 9
+text 6 9 "바위에 붉은 페인트. '봉천 물 ↓'. 화살표가 밸브를 가리킨다." w=2
+prop trail_sign 22 20
+text 22 20 "2077년 등산로 표지. '삼성산 정상 0.4km'. 그 아래 판은 누가 뽑아 갔다."
+prop tent 10 11
+prop tent2 20 11
+prop drum_fire 15 13
+prop sandbags 12 14
+prop sandbags 18 14
+prop crate_o 22 13
+prop crate_army 9 15
+box 9 15 scout_cache name="패거리 상자"
+text 15 13 "드럼통 불. 꺼진 지 몇 시간 안 됐다. 옆에 물통 여섯 — 전부 가득 차 있다." w=1
+prop water_jug 16 13
+prop water_jug 17 13
+prop bedroll 11 13
+prop sandbags 13 5
+prop sandbags 19 5
+text 13 5 "모래주머니 위에 빈 깡통 줄. 밸브로 오는 길목을 패거리가 지킨다."
+prop tarp_pile 7 13
+prop bucket 14 13
+prop laundry_line 21 15
+prop crate_o 12 17
+prop bedroll2 19 13
+prop boulder_l 4 15
+prop boulder_m 26 12
+prop boulder_s 7 5
+prop tree_pine 4 4
+prop tree_pine2 26 5
+prop tree_pine 27 17
+prop tree_pine2 5 20
+prop tree_dead 12 4
+prop bush_g 24 3
+prop tuft 8 12
+prop tuft2 23 15
+# 해법 A 뒤 남태하에게 알리면 봉천 감시조 둘이 밸브 앞에 상주한다(SD-04a §4.2) — 밸브 그림(잠김 · 열림 · 계엄사령부 표지)은 진행기가 세운다
+npc N-BC-2 14 7 E look=M1-S3-HR02-H1-T05-1-PF12-HD02-EY00 cond="SQ_S02_GUARD == 1 and SQ_S02_BJ == 0"
+npc N-BC-3 18 7 W look=F1-S4-HR06-H2-T05-1-PF12-HD00-EY00 cond="SQ_S02_GUARD == 1 and SQ_S02_BJ == 0" bark="교대는 해 질 녘. 깡통 줄 건드리지 마."

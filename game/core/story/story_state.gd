@@ -46,6 +46,7 @@ const UNNAMED := [["N-TRADER", "떠돌이 고물상", ""], ["N-REFUGEE", "피난
 	["N-HS-E1", "수송대 호위", "HS"], ["N-HS-E2", "수송대 호위", "HS"], ["CR-091", "짐소", ""],   # 1-8d 고개길 수송대
 	["N-SA-G1", "승강장 경비", "JC_SA"], ["N-SA-G2", "승강장 경비", "JC_SA"], ["N-SA-G3", "승강장 경비", "JC_SA"], ["N-SA-R1", "환승촌 주민", "JC_SA"],   # 1-8f 사당 환승촌
 	["N-SA-R2", "환승촌 주민", "JC_SA"], ["N-SA-R3", "환승촌 주민", "JC_SA"], ["N-SA-R4", "버섯 일꾼", "JC_SA"],
+	["N-YT-1", "패거리 수금원", ""], ["N-YT-2", "패거리 척후", ""], ["N-BC-1", "봉천 감시조", "JC_BC"], ["N-BC-2", "봉천 감시조", "JC_BC"], ["N-BC-3", "봉천 감시조", "JC_BC"],   # 1-11b SQ-S02
 	["N-GS-1", "각성회 신도", "GS"], ["N-GS-2", "각성회 신도", "GS"], ["N-GS-3", "각성회 신도", "GS"]]   # 1-8g 노량진 관제 중계소
 var enc := {}                           ## 인카운터 상태(1-3, Encounters): 안전 간격 · 오늘 추적대 수 · EP 사용 · 휴전
 var portrait_alias := {}                ## 인물 ID -> 초상화 키(맵에서 다른 시대 모습으로 선 인물: 2259년 아이 하도윤 등)
@@ -129,6 +130,15 @@ func _init() -> void:
 			"SQ_S01_BETRAY", "SQ_S01_CLEAR_DAY", "SQ_S01_KILLS", "SQ_S01_KILL_DAY", "SQ_S01_EOM", "SQ_S01_BC", "SQ_S01_NAP", "PK_045"]:
 		vars.declare(k, "int", 0)
 	vars.declare("SQH_TAG", "int", -1)
+	# SQ-S02 물 반 컵의 값(1-11b, SD-04a §4.2 · SideS02): ARM MQ-101 끝난 날 · POSTED 급수 제한 쪽지(DAY0 밸브가 잠긴 첫날) · LEVEL 수위계 칸 · OPEN 밸브(1 열림 · 2 물값 사흘, PAID 끝 날) ·
+	# SOL 밸브 해법(1 탈환 · 2 우회 관로 · 4 계엄군) · B 우회 관로 · BJ 계엄사령부 관리(BJ_AT 분대 시각) · CAMP 밸브 캠프가 빔(CKILLS · TDEAD 수금원 · DDEAD 경비견 · HOT 적대) ·
+	# GUARD 봉천 감시조 상주 · MAP 척후 지도 · SIREN 사이렌(2 쓰러짐 · 3 지도를 팜, NKILLS 척후 · NS_HOT) · HAND 글씨 대조 · KNOW 남건희를 앎 · IN 내부자(1 고발 · 2 타이름 · 3 함정 · 4 묵인) ·
+	# PIPEMAP 관로 지도 · J1 · J2 이음 지점(AT 주인공 곁 지점) · TRAP_AT 03시 함정(TRAP_DONE · FIGHT 싸우는 중) · NH_DEAD 남건희 죽음(NH_KILLED 주인공이) · EXILE_DAY 추방 날 ·
+	# STOP_DAY 대장간 간 날 · NIGHT_DAY 윗문 거래를 들킨 밤 · HEARD 조수안에게 들음 · REWARD 사례 · DONE_DAY 단계 70 날 · RAID_UNTIL 밤 습격 +30% 끝 날 · SOL_E 물값 봉천 +2 · DRY_HINT
+	# JC_PROB_BC 봉천 '문제 해결'(SD-04a §2.5 — 거처 조건 표지)
+	for k in ["ARM", "POSTED", "DAY0", "LEVEL", "OPEN", "PAID", "SOL", "B", "BJ", "BJ_AT", "CAMP", "CKILLS", "TDEAD", "DDEAD", "HOT", "NS_HOT", "GUARD", "MAP", "SIREN", "NKILLS", "HAND", "KNOW", "IN", "PIPEMAP", "J1", "J2", "AT", "TRAP_AT", "TRAP_DONE", "FIGHT", "NH_DEAD", "NH_KILLED", "EXILE_DAY", "STOP_DAY", "NIGHT_DAY", "HEARD", "REWARD", "DONE_DAY", "RAID_UNTIL", "SOL_E", "DRY_HINT"]:
+		vars.declare("SQ_S02_" + k, "int", 0)
+	vars.declare("JC_PROB_BC", "int", 0)
 	for kv in [["CAPTURE_DAY", -1], ["CAPTURE_AT", 0], ["SB_COLLAR", 0], ["SB_CUFF", 0], ["CAPTURE_BY", 0]]:
 		vars.declare(kv[0], "int", kv[1])
 	for k in ["P_SURNAME", "P_GIVEN", "P_FULL", "P_REGNO", "PC_APT"]:   # PC_APT: 적성 평가 답 10개(결과지 다시 보기)
