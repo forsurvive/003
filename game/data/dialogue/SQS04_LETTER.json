@@ -1,0 +1,88 @@
+{
+ "id": "SQS04_LETTER",
+ "title": "남솔의 편지",
+ "loc": "L-R01-09",
+ "npc": "N-R01-034",
+ "cond": "SQ_S04_OUT >= 1 and SQ_S04_HELD == 0 and SQ_S04_AWAY == 0 and SQ_S04_LETTER == 0",
+ "labels": {
+  "START": 0,
+  "BOSS": 4,
+  "FAR": 7,
+  "GIVE": 9
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S04_OUT == 1",
+   "to": "BOSS"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S04_OUT == 5",
+   "to": "FAR"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-034",
+   "emo": "미소",
+   "text": "왔다! 이거 너 주려고 썼어. 크레용이 두 개밖에 없어서 로봇은 노란색이야."
+  },
+  {
+   "op": "goto",
+   "to": "GIVE"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-034",
+   "emo": "미소",
+   "text": "로봇 대장! 로봇이 네 말 들었잖아. 애들이 다 따라 해. \"관리자님 명령이다!\""
+  },
+  {
+   "op": "line",
+   "who": "N-R01-034",
+   "emo": "기본",
+   "text": "이거 너 주려고 썼어. 로봇도 그렸어. 착한 로봇으로."
+  },
+  {
+   "op": "goto",
+   "to": "GIVE"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-034",
+   "emo": "기본",
+   "text": "노량진에 갔었어. 등이 엄청 많은 데. 거기 사람들이 나더러 '등록 아동'이래. 밥도 줬어."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-034",
+   "emo": "기본",
+   "text": "그래도 집이 좋아. 이거, 너 주려고 거기서 썼어."
+  },
+  {
+   "op": "do",
+   "fx": "give(\"M-303\", 1); SQ_S04_LETTER = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "s04",
+   "args": [
+    "letter"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "꾹꾹 눌러 쓴 크레용 글씨. '고마워요. 나는 등록 안 됐대도 괜찮아요.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S04.txt"
+}

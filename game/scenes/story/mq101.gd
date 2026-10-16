@@ -259,6 +259,11 @@ func _heal(price: int) -> void:
 ## 돈으로 해결(4)이면 +10%. 창 위 인사는 가장 큰 보정 하나를 말로 알린다(§3.10). 한 번이라도 사고팔면 MQ101_TRADE = 1
 func _trade_cmd(a: Array, finish: Callable) -> void:
 	var vid := str(a[0])
+	if str(host.merchants.get(vid, {}).get("settle", "")) == "BC" and st.vars.has("SQ_S04_LOITER") \
+			and v("SQ_S04_LOITER") > Clock.abs_min(host.date_text):
+		host.hint("오늘은 장사 안 해. 아랫문 앞에 쇳덩이 셋이 서성이잖아.", 4.0)   # SQ-S04 해법 C 뒤 72시간: 봉천 상인 휴업(SD-04a §4.4)
+		finish.call()
+		return
 	var m := trade_mult(vid)
 	host.open_trade(vid, func(caps: int) -> void:
 		if caps > 0:

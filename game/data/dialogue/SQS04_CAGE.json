@@ -1,0 +1,178 @@
+{
+ "id": "SQS04_CAGE",
+ "title": "대기 구역 B 철망",
+ "loc": "L-R01-32",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "ASLEEP": 4,
+  "PICK": 6,
+  "QUIET": 12,
+  "EMPTY": 14
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S04_HELD == 0",
+   "to": "EMPTY"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "철망 문에 관제망 휘장 자물쇠. '보호 조치 중 · 관계자 외 개방 금지'."
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S04_SLEEP >= 1",
+   "to": "ASLEEP"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "휘장 자물쇠를 딴다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "자물쇠 따기",
+       "min": 25
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PICK",
+     "id": "SQS04_CAGE:1:0"
+    },
+    {
+     "text": "문살을 잡고 경첩째 비튼다",
+     "tags": [
+      {
+       "k": "stat",
+       "name": "힘",
+       "min": 6
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PICK",
+     "id": "SQS04_CAGE:1:1"
+    },
+    {
+     "text": "(그만둔다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS04_CAGE:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "자물쇠 옆 작은 표시등이 꺼져 있다. 바깥의 파수들은 다시 잠들었다. 이제 자물쇠는 그냥 쇳덩이다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "휘장 자물쇠를 딴다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "자물쇠 따기",
+       "min": 25
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PICK",
+     "id": "SQS04_CAGE:2:0"
+    },
+    {
+     "text": "문살을 잡고 경첩째 비튼다",
+     "tags": [
+      {
+       "k": "stat",
+       "name": "힘",
+       "min": 6
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PICK",
+     "id": "SQS04_CAGE:2:1"
+    },
+    {
+     "text": "(그만둔다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS04_CAGE:2:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s04",
+   "args": [
+    "cage"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "자물쇠가 툭 떨어진다. 남솔이 번호표를 쥔 채 철망 틈으로 빠져나온다."
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S04_SLEEP >= 1",
+   "to": "QUIET"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-034",
+   "emo": "놀람",
+   "text": "열렸다! …로봇이 보면 화낼 거야. 나 먼저 뛸게, 뒷길로!"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "바깥에서 대기음이 짧게, 빠르게 울린다. '보호 대상 이탈. 보호 대상 이탈.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-034",
+   "emo": "미소",
+   "text": "열렸다! 백구 밥 주러 가야 해. 나 먼저 갈게!"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "철망 문이 열려 있다. 바닥에 구겨진 번호표 한 장 — 0413."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S04.txt"
+}

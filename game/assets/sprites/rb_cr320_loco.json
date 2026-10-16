@@ -1,0 +1,32 @@
+{
+ "foot": [
+  24,
+  60
+ ],
+ "frame": [
+  48,
+  64
+ ],
+ "motions": {
+  "death": {
+   "count": 4,
+   "start": 4
+  },
+  "idle": {
+   "count": 2,
+   "start": 0
+  },
+  "walk": {
+   "count": 2,
+   "start": 2
+  }
+ },
+ "name": "rb_cr320_loco",
+ "rows": [
+  "S",
+  "SE",
+  "E",
+  "NE",
+  "N"
+ ]
+}

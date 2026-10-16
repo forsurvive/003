@@ -1,0 +1,65 @@
+# 봉천 동 주민센터 민원실(SD-09a L-R01-32 실내 · SD-04a §4.4 SQ-S04 도성이 뒤척인다 · 단계 1-11c)
+# 26×14 · 왼쪽 민원 창구 셋(유리 칸막이) · 가운데 대기 의자 · 입구 곁 번호표 발급기(2077년 그대로 '대기 인원 412명') ·
+# 오른쪽 '대기 구역 B' 철망 우리(2077년 지침 부칙 '미등록 아동 보호 조치' — 파수가 남솔을 여기 둔다). 앞 마당의 파수는 월드 쪽(진행기).
+map K-33 봉천 동 주민센터 민원실
+set bk
+grid
+##########################
+##########################
+##########################
+#tttttttttttttttttttttttt#
+#tttttttttttttttttttttttt#
+#tttttttttttttttttttttttt#
+#tttttttttttttttttttttttt#
+#tttttttttttttttttttttttt#
+#tttttttttttttttttttttttt#
+#tttttttttttttttttttttttt#
+#tttttttttttttttttttttttt#
+#tttttttttttttttttttttttt#
+#tttttttttttttttttttttttt#
+############tt############
+end
+exit 12 13 W L-R01-32
+exit 13 13 W L-R01-32
+mark from_W 12 12 N
+mark solna 21 6 S
+mark cage_out 20 11 N
+mark counter 5 6 N
+prop w_civil_sign 19 1
+prop w_calendar 9 1
+prop w_window 13 1
+prop w_window 15 1
+prop gov_counter 1 4
+prop gov_counter 3 4
+prop gov_counter 5 4
+text 2 5 "민원 창구. 유리 칸막이 너머 의자는 비었다. 인주가 말라 갈라졌다." w=6
+prop office_desk 1 3
+prop num_machine 10 4
+text 10 5 "번호표 발급기." scene=SQS04_NUM
+prop wait_chairs 2 8
+prop wait_chairs 5 8
+prop wait_chairs 2 10
+prop wait_chairs 5 10
+prop wait_chairs 9 8
+text 9 9 "대기 의자. 버린 번호표가 의자 밑에 수북하다. 0399 · 0400 · 0401…" w=2
+prop cage_post 17 3
+prop cage_post 17 4
+prop cage_post 17 5
+prop cage_post 17 6
+prop cage_post 17 7
+prop cage_post 17 8
+prop cage_post 17 9
+prop cage_front 17 10
+prop cage_front2 18 10
+prop cage_front 19 10
+prop cage_door 20 10
+prop cage_front2 21 10
+prop cage_front 22 10
+prop cage_front2 23 10
+prop cage_front 24 10
+text 20 11 "대기 구역 B 철망." scene=SQS04_CAGE
+npc N-R01-034 21 6 S cond="SQ_S04_HELD == 1"
+prop folding_chair 22 5
+prop bucket 23 8
+prop tuft 14 11
+prop tuft2 3 12

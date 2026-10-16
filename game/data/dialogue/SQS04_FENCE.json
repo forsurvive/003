@@ -1,0 +1,97 @@
+{
+ "id": "SQS04_FENCE",
+ "title": "녹슨 철조망",
+ "loc": "L-R01-04",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "OPEN": 3,
+  "CUT": 6
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S04_FENCE == 1",
+   "to": "CUT"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "장비동 뒤 철조망 한 칸. 기둥 밑동이 썩어 흔들린다. 너머로 돔 마당의 콘크리트가 보인다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "기둥째 밀어 넘긴다",
+     "tags": [
+      {
+       "k": "stat",
+       "name": "힘",
+       "min": 6
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "OPEN",
+     "id": "SQS04_FENCE:1:0"
+    },
+    {
+     "text": "녹슨 철선을 한 가닥씩 비틀어 끊는다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 25
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "OPEN",
+     "id": "SQS04_FENCE:1:1"
+    },
+    {
+     "text": "(그만둔다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS04_FENCE:1:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s04",
+   "args": [
+    "fence"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "철망이 비명을 지르며 젖혀진다. 감시포 사선 뒤쪽, 돔 마당으로 들어가는 틈이 생겼다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "젖혀 둔 철조망. 사람 하나 지나갈 틈."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S04.txt"
+}

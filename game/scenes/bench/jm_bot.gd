@@ -10,6 +10,7 @@ var paths: Act1Paths
 var mq106: Mq106
 var side: SideR01                                    ## 관악 사이드 퀘스트(1-11a SQ-S01)
 var side2: SideS02                                   ## 관악 사이드 퀘스트(1-11b SQ-S02)
+var side4: SideS04                                   ## 관악 사이드 퀘스트(1-11c SQ-S04)
 var st: StoryState
 var route := "job"
 var shots := ""
@@ -71,6 +72,9 @@ func _ready() -> void:
 	side2 = SideS02.new()
 	add_child(side2)
 	side2.setup(host, true)
+	side4 = SideS04.new()
+	add_child(side4)
+	side4.setup(host, true)
 	host.combat.player_down.connect(host.on_pc_down)                  # 쓰러짐 → 생포 판정(진짜 진행 prologue와 같은 연결)
 	host.combat.equip("W-002", st)
 	match route:
@@ -199,6 +203,29 @@ func _ready() -> void:
 				["check", "SQ_S02_B == 1 and SQS02_STAGE == 70 and SQS03_STAGE == 10", "해법 B 우회 관로 — 단계 70 · SQ-S03 자동 발동"],
 				["warp", "X-BS", "arrive"], ["wait", 1.0], ["talk", "N-R01-032"], ["wait", 1.5],
 				["check", "SQ_S02_REWARD == 1 and has(\"I-056\")", "조수안 사례: 관악산 약수 ×5 + 100캡"]]
+		"rd":                                                           # 1-11c SQ-S04: 21시 경보(봉천) → 민원실 철망 → 레이더 철조망(힘 6) → 돔 전지 회수(E) → 대장간 인도 → 마을이 철망을 연다
+			st.vars.set_v("PC_ST", 7)
+			host.combat.pc.hp = 99999.0
+			host.combat.pc.max_hp = 99999.0
+			host.date_text = "2277. 10. 25.  14:00"
+			st.quests.set_stage("MQ-102", 10)
+			side4.tick()
+			host.enter("X-BC", "from_X-S07")
+			var rd: Vector2i = host.map.to_world("X-RD", 0, 0)                 # 레이더 손 맵 왼쪽 위(월드 칸) — 손 맵 좌표 + 이 값
+			plan = [["wait", 1.0], ["gomark", "X-BC:land2"], ["settime", "2277. 10. 27.  21:00"],
+				["until", "SQS04_STAGE == 10 and SQ_S04_HELD == 1", 20.0, "21시: 종 · 파수가 남솔을 안고 간다 — 단계 10", "rd_alarm"], ["wait", 3.0], ["shot", "rd_carry"],
+				["warp", "K-33", "from_W"], ["wait", 1.5], ["shot", "rd_k33"],
+				["check", "SQS04_STAGE >= 20", "민원실 — 철망 안 남솔(단계 20 이상)"],
+				["settime", "2277. 10. 28.  10:00"], ["warp", "X-RD", "arrive"], ["wait", 1.0], ["shot", "rd_arrive"],
+				["go", rd.x + 9, rd.y + 6], ["go", rd.x + 10, rd.y + 5], ["want", ["힘 6"]], ["use", rd.x + 11, rd.y + 5], ["wait", 1.0],
+				["check", "SQ_S04_FENCE == 1", "장비동 뒤 철조망을 젖혔다"], ["shot", "rd_fence"],
+				["go", rd.x + 13, rd.y + 6], ["go", rd.x + 17, rd.y + 9], ["go", rd.x + 17, rd.y + 8], ["wait", 1.5], ["shot", "rd_k36"],
+				["go", 4, 7, "K-36"], ["want", ["뽑는다"]], ["use", 4, 6], ["wait", 1.0],
+				["check", "SQ_S04_BATT == 1 and SQ_S04_SLEEP == 1 and has(\"M-162\")", "핵분열 전지 회수(해법 E) — 파수가 잠든다"],
+				["warp", "X-BC", "from_X-S07"], ["wait", 1.0], ["want", ["전지를 보여", "마을에 쓰세요", "돌아선다"]], ["talkd", "N-R01-030"], ["wait", 1.5],
+				["check", "SQH_BATT == 81", "대장간 남무진에게 — 옥탑 조명"],
+				["settime", "2277. 10. 28.  18:30"], ["wait", 1.5],
+				["check", "SQ_S04_OUT == 6 and SQS04_STAGE == 100", "잠든 뒤 여섯 시간: 남태하가 철망을 연다 — 종료"]]
 		"place":                                                        # 1-5e 손 장소: 전망바위 → 연수원 본관(LR-19)·기숙사(LR-11) → 계곡 배수로(정비공) → 경찰서 무기고(자물쇠 50) → 공영방송(LR-01)
 			st.vars.set_v("PC_SKP_LOCKPICK", 50)
 			st.vars.set_v("PC_SKP_SMALL_GUNS", 40)

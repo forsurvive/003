@@ -1,0 +1,122 @@
+{
+ "id": "SQS04_BATT",
+ "title": "핵분열 전지 받침",
+ "loc": "L-R01-04",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "STANDBY": 6,
+  "COLD": 8,
+  "ASK": 9,
+  "PULL": 10,
+  "EMPTY": 14
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S04_BATT == 1",
+   "to": "EMPTY"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S04_F == 1",
+   "to": "STANDBY"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S04_WAKE == 0",
+   "to": "COLD"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "유리 칸 안의 핵분열 전지가 앰버로 맥동한다. 굵은 전선 셋이 돔 구동부와 두뇌-4로 뻗어 있다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "손을 대면 따뜻하다. 이백 년 만에 깨어난 심장이다."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "전지의 맥동이 느려졌다. 당직실 단말에서 '대기'로 내린 출력이다. 손을 대면 미지근하다."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "유리 칸 안의 핵분열 전지. 표시등이 아주 느리게, 숨 쉬듯 깜박인다. 잠든 심장이다 — 아직은."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "걸쇠를 젖히고 전지를 뽑는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "PULL",
+     "id": "SQS04_BATT:1:0"
+    },
+    {
+     "text": "(그대로 둔다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS04_BATT:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s04",
+   "args": [
+    "batt"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "걸쇠 둘을 젖히고 전지를 당긴다. 묵직하다. 돔 구동부가 긴 한숨 같은 소리를 내고 멈춘다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "두뇌-4의 진공관 셋이 차례로 꺼진다. 다음 전원이 들어올 때까지 이 산의 관제 장치는 깨어나지 않는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈 받침. 끊어진 전선 끝에 녹색 녹이 앉았다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S04.txt"
+}

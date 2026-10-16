@@ -448,18 +448,36 @@ def laundry_rack():
 
 
 # ================================================================================================ 주민센터·사무실
-def num_machine():
-    """번호표 발급기(1×1): 기둥 위 붉은 숫자판 '412' · 혀처럼 나온 번호표 · 아래 버린 번호표 더미."""
+SEG7 = {"0": "abcdef", "1": "bc", "2": "abged", "3": "abgcd", "4": "fgbc", "5": "afgcd", "6": "afgedc", "7": "abc", "8": "abcdefg", "9": "abcfgd"}
+
+
+def _seg7(d, x, y, ch, on="P54", off="P52"):
+    """7획 숫자 하나(4×7): 켜진 획은 붉게, 꺼진 획은 어둡게 비친다."""
+    segs = {"a": [(x, y), (x + 3, y)], "b": [(x + 3, y), (x + 3, y + 3)], "c": [(x + 3, y + 3), (x + 3, y + 6)],
+            "d": [(x, y + 6), (x + 3, y + 6)], "e": [(x, y + 3), (x, y + 6)], "f": [(x, y), (x, y + 3)], "g": [(x, y + 3), (x + 3, y + 3)]}
+    lit = SEG7.get(ch, "")
+    for k, ln in segs.items():
+        if k not in lit:
+            d.line(ln, fill=C("P51"))
+    for k in lit:
+        d.line(segs[k], fill=C(on))
+
+
+def num_machine(num="412"):
+    """번호표 발급기(1×1): 기둥 위 붉은 7획 숫자판(대기 인원 — 2077년 그대로 '412', SQ-S04에서 남솔이 들어가 '413') ·
+    혀처럼 나온 번호표 · 아래 버린 번호표 더미."""
     im = img(26, 52)
     d = ImageDraw.Draw(im)
     shadow(d, 4, 22, 49)
     d.rectangle([10, 22, 15, 47], fill=C("P05")); d.line([10, 22, 10, 47], fill=C("P07"))
     d.rounded_rectangle([3, 2, 22, 24], 3, fill=C("P12")); d.rounded_rectangle([3, 2, 22, 22], 3, fill=C("P13"))
-    d.rectangle([5, 4, 20, 11], fill=C("P01"))
-    for k, x in enumerate((6, 11, 16)):                                   # 4 1 2(붉은 7획)
-        d.rectangle([x, 5, x + 3, 10], outline=C("P52"))
-        d.line([x + 1, 7, x + 2, 7], fill=C("P54"))
+    d.rectangle([4, 3, 21, 12], fill=C("P01"))
+    for k, ch in enumerate(num[:3]):
+        _seg7(d, 6 + k * 5, 4, ch)
+    if num != "412":
+        d.point((21, 3), fill=C("P60"))                                  # 바뀐 순간 켜진 차임 표시등
     d.rectangle([9, 15, 16, 17], fill=C("P02")); d.rectangle([10, 17, 15, 21], fill=C("P09"))   # 번호표
+    d.line([11, 19, 14, 19], fill=C("P05"))
     for x, y in ((3, 46), (8, 48), (17, 47), (20, 45)):
         d.rectangle([x, y, x + 3, y + 2], fill=C("P08"))
     return im
@@ -744,4 +762,4 @@ PROPS_HOME = {
     "studio_light": _r(studio_light, 1, 1),
     "w_onair": _r(w_onair, 1, 0, "wall", dx=3, dy=10),
 }
-STATES_HOME = {}
+STATES_HOME = {"num_machine": {"413": lambda: num_machine("413")}}   # 1-11c SQ-S04: 남솔 1명 추가

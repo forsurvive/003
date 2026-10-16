@@ -7,7 +7,7 @@
 
 @scene MQ-102_SENTRY  봉천 동 주민센터 앞  (L-R01-32)
 @npc   -
-@cond  V_ACT >= 1 and MQ102_ROBOT == 0
+@cond  V_ACT >= 1 and MQ102_ROBOT == 0 and SQ_S04_UP == 0
 SYS 손목의 핍-보이가 혼자 깜박인다. 등록 카드 한 칸의 깨진 글자 줄이 화면 위로 떠오른다.
 @cmd lamp sentry green
 SYS 엎드린 경비 로봇의 유리 머리 안에서 진공관이 하나씩 붉게, 그리고 푸르게 켜진다.
@@ -21,9 +21,29 @@ SYS 불빛이 꺼진다. 로봇은 다시 이백 년째의 잠으로 돌아간�
 
 @scene MQ-102_SENTRY_AFTER  넘어진 파수  (L-R01-32)
 @npc   -
-@cond  MQ102_ROBOT == 1
+@cond  MQ102_ROBOT == 1 or SQ_S04_WAKE > 0
+? SQ_S04_UP == 1 -> UP
+? SQ_S04_KILLED == 1 or SQ_S04_KILLED == 3 or SQ_S04_KILLED == 5 or SQ_S04_KILLED == 7 -> WRECK
+? SQ_S04_SLEEP >= 1 -> SLEPT
 SYS 엎드린 '파수' 경비 로봇. 세진 동심원 마크가 흙에 반쯤 묻혔다. 유리 머리 안의 진공관은 식어 있다.
 SYS 손목을 가까이 대 봐도 이제는 아무 반응이 없다.
+-> END
+* UP
+SYS 엎드렸던 자리에 흙 자국만 남았다. 파수는 일어나 정문 앞을 오간다. 얼굴판의 앰버 눈이 이쪽을 따라온다.
+-> END
+* WRECK
+SYS 부서진 파수. 얼굴판이 깨지고 방패 팔이 꺾였다. 가슴의 관제망 휘장만 반짝인다.
+? SQ_S04_OUT == 2 -> WIPED
+-> END
+* WIPED
+SYS 누군가 잔해의 흙을 닦아 놓았다. 기름 먹인 헝겊 냄새.
+-> END
+* SLEPT
+SYS 다시 엎드린 '파수' 경비 로봇. 얼굴판의 앰버가 아주 느리게, 숨 쉬듯 깜박인다. 대기.
+? SQ_S04_OUT == 4 -> CLOTH
+-> END
+* CLOTH
+SYS 로봇 어깨에 흰 천이 덮여 있다. 곁의 대기등 램프에 기름이 새로 채워졌다.
 -> END
 
 @scene MQ-102_JU  구울 행상 주성호  (L-R01-09)

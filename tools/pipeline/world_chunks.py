@@ -42,10 +42,11 @@ DOORS = [{"lid": "L-R02-11", "near": (720, 1147), "to": "J-01", "mark": "from_W"
          {"lid": "L-R02-22", "near": (672, 1362), "to": "K-22", "mark": "from_W", "name": "구로 노동자 아파트 107동", "kind": "facade"},
          {"lid": "L-R01-24", "near": (870, 1171), "to": "K-24", "mark": "from_W", "name": "노량진 학원가 — 대한 대피 적성 학원", "kind": "facade"},   # 1-7c R01 북쪽
          {"lid": "L-R01-26", "near": (980, 1207), "to": "K-26", "mark": "from_W", "name": "흑석 대학병원", "kind": "facade"},
+         {"lid": "L-R01-32", "near": (906, 1402), "to": "K-33", "mark": "from_W", "name": "봉천 동 주민센터", "kind": "facade"},   # 1-11c SQ-S04 민원실
          {"lid": "L-R01-08", "near": (887, 1494), "to": "K-08", "mark": "from_W", "name": "관악 계곡 배수 암거", "prop": "drain_outlet",
           "hint": "콘크리트 암거 입구. 물비린내와 곰팡이 냄새가 흘러나온다."}]
 # 손 실내가 붙는 건물의 양식(SD-21 §8): 도로망이 바뀌어도 그 자리에 건물이 선다
-ANCHOR_STYLE = {"K-01": "gov", "K-29": "gov", "K-06": "office", "K-20": "villa", "K-22": "apt", "K-24": "office", "K-26": "gov"}
+ANCHOR_STYLE = {"K-33": "gov", "K-01": "gov", "K-29": "gov", "K-06": "office", "K-20": "villa", "K-22": "apt", "K-24": "office", "K-26": "gov"}
 INSETS = [{"id": "X-S07", "mark": "from_vault", "at": (959, 1503)},          # 볼트 S-07 정문(L-R01-01)
           {"id": "X-BC", "center": (892, 1362)},                             # 봉천 계단마을(L-R01-09)
           {"id": "X-SB", "center": (632, 1329), "lid": "L-R02-19", "arrive": "arrive", "urban": True},   # 새벽인력 본소(1-6): 도착 칸 = 정문 앞 길
@@ -56,7 +57,8 @@ INSETS = [{"id": "X-S07", "mark": "from_vault", "at": (959, 1503)},          # �
           # 1-11b SQ-S02 물 반 컵의 값: 봉천 배수지(계단마을 동쪽 언덕 — 기준점 918·1379 동쪽) · 삼성산 능선 캠프(상류 밸브) · 낙성대 고개 캠프(남부순환로 언덕)
           {"id": "X-BS", "center": (937, 1370), "lid": "L-R01-10", "arrive": "arrive"},
           {"id": "X-SS", "center": (868, 1578), "lid": "L-R01-31", "arrive": "arrive"},
-          {"id": "X-NS", "center": (971, 1421), "lid": "L-R01-12", "arrive": "arrive", "urban": True}]
+          {"id": "X-NS", "center": (971, 1421), "lid": "L-R01-12", "arrive": "arrive", "urban": True},
+          {"id": "X-RD", "center": (990, 1561), "lid": "L-R01-04", "arrive": "arrive"}]                 # 관악 레이더 중계소(1-11c SQ-S04): 관악산 정상 화강암 능선
 START = (959, 1503)                                                          # 도달성 검사 출발점 = 볼트 정문
 WALKK = (1, 5, 6, 7, 8, 9, 10, 12, 13)                                       # 걷는 땅 종류(13 = 다리 상판)
 STAIR_GAP = 28
@@ -1314,8 +1316,8 @@ def place_geo(R):
             raise SystemExit("발견 자리를 못 놓았다(%s:%d %s %d×%d — 걸어서 닿는 빈 땅이 없다)" % (spec["file"], spec["line"], spec["key"], w, h))
         _, xx, yy = best
         taken.append((xx, yy, w, h))
-        if spec.get("lid") and spec["lid"] in geo:                       # 장소의 도착 칸 = 발견 자리 앞(빠른 이동·지도 표시)
-            geo[spec["lid"]]["arrive"] = [int(xx + w // 2), int(yy + h - 1)]
+        if spec.get("lid") and spec["lid"] in geo and not any(d.get("lid") == spec["lid"] and d.get("kind") == "facade" for d in DOORS):
+            geo[spec["lid"]]["arrive"] = [int(xx + w // 2), int(yy + h - 1)]   # 장소의 도착 칸 = 발견 자리 앞(빠른 이동·지도 표시) — 손 실내 문이 있는 장소는 문 앞(gen_interiors, 1-11c 주민센터)
         spots.append({"key": spec["key"], "lid": spec.get("lid", ""), "at": [int(xx), int(yy)], "cond": spec.get("cond", ""), "data": spec["data"]})
     geo["_spots"] = spots
     geo["_han"] = [int(round(v)) for v in yc]                             # 한강 본류 세로 가운데(가로 칸마다): 주인공 강변 판정

@@ -1,0 +1,125 @@
+# 관악 레이더 중계소(SD-09a L-R01-04 · SD-04a §4.4 SQ-S04 도성이 뒤척인다 · 단계 1-11c): 관악산 정상 화강암 능선, 2077년 관제망 레이더 돔 R-03 + 장비동.
+# 30×24 · 북쪽 돔 마당(철조망 울타리 — 남쪽 문은 능선 계단, 감시포 1형 둘의 사선) · 서쪽 장비동(1층 당직실 K-34 · 2층 기록실 K-35) ·
+# 장비동 뒤 철조망 한 칸이 녹슬었다([힘 6] · 절단 — 진행기가 세운다, 감시포 사선을 비켜 돔으로). 돔 안 K-36(두뇌-4 · 핵분열 전지).
+# 장수말벌 CR-075는 여름에만(지금은 10월 — 둥지만 남았다). 감시포는 전지가 깨어 있는 동안만 돈다(진행기).
+map X-RD 관악 레이더 중계소
+set r01
+grid
+TTTTggggggggggggggggggg;,gTTTT
+TTTTTgg,gg,gggggg;,gggg,gTTTTT
+TTTT,ggggggggggggggggg;gT,TTTT
+gTTTggg;ggggcccccccccccgggggTT
+ggggggggggggcccccccccccggTTgTT
+gggggggggg;gcccccccccccggggTg,
+ggcccccccccgcccccccccccg,gg;gg
+ggcXXXXXXXcgcccccccccccggggg,g
+ggcXXXXXXXcgcccccccccccggggggg
+g,cHHHHHHHcgcccccccccccgggggg;
+g;cHHHHHHHcgcccccccccccgg,g,,g
+ggccccccccc,cccccccccccggggggg
+ggcccccccccgggg;:::g,ggggTTTgg
+ggcccccccc:::::::::gggggTTTTgg
+g,g,ggg,gggg,g,g:::ggggggTTTgg
+,ggggg,ggggggggg:::ggg;gggTgg;
+gggggggggggggggg:::ggg;gg;gggg
+gTggggg,gg,;gg,g:::ggggg,g,g,,
+TTgTgggggggggggg:::ggggggg,ggg
+TTgTggggggggggg;:::gg;ggggg,T,
+TTTTTgg,ggg,gggg:::ggggggggTTT
+TTTTgggggggg,ggg:::ggg,gggTTTT
+TTTgggggggggggg,:::ggggggggTTT
+TTg,gggg,,,g,ggg:::g,ggg,gggTT
+end
+levels
+000000000000000000000000000000
+000000000000000000000000000000
+000000000000000000000000000000
+000000000000000000000000000000
+000000000000000000000000000000
+000000000000000000000000000000
+000000000000000000000000000000
+000000000000000000000000000000
+000000000000000000000000000000
+000000000000000000000000000000
+000000000000000000000000000000
+000000000000000000000000000000
+000000000000000000000000000000
+000000000000000000000000000000
+000000000000000000000000000000
+000000000000000000000000000000
+000000000000000000000000000000
+000000000000000000000000000000
+000000000000000000000000000000
+000000000000000000000000000000
+000000000000000000000000000000
+000000000000000000000000000000
+000000000000000000000000000000
+000000000000000000000000000000
+end
+mark arrive 17 22 N
+mark from_K-34 6 11 S
+mark from_K-36 17 8 S
+mark t1 14 11 S
+mark t2 21 10 S
+mark fence_weak 11 5 E
+mark dome_yard 17 9 S
+exit 6 11 K-34 from_X
+exit 17 8 K-36 from_X
+prop radar_dome 15 5
+text 17 8 "돔 R-03 정비 문. 손잡이 아래 관제망 휘장 판 — 앰버 표시등이 숨 쉬듯 깜박인다."
+struct roof 3 7 7 2 seed=61 args='{"edges": "nwe", "paint": "grey", "hatch": 2}'
+struct facade 3 9 7 2 seed=62 args='{"style": "concrete", "doors": [[3, "steel"]], "windows": ["board", "dark", "dark", "board"], "name": "관악 레이더 중계소 장비동", "pipe": true}'
+text 5 11 "장비동 쇠문. 2077년 출입 기록판 '당직 2인 — 23일 야간 근무 교대 없음'." w=3
+prop chain_fence 12 12
+prop chain_fence 13 12
+prop chain_fence 14 12
+prop chain_fence 15 12
+prop chain_fence 19 12
+prop chain_fence 20 12
+prop chain_fence 21 12
+prop chain_fence 22 12
+prop chain_fence 11 3
+prop chain_fence 11 4
+prop chain_fence 11 6
+prop chain_fence 11 7
+prop chain_fence 11 8
+prop chain_fence 11 9
+prop chain_fence 11 10
+prop chain_fence 11 11
+# 돔 마당 울타리 북 · 동
+prop chain_fence 12 2
+prop chain_fence 13 2
+prop chain_fence 14 2
+prop chain_fence 15 2
+prop chain_fence 16 2
+prop chain_fence 17 2
+prop chain_fence 18 2
+prop chain_fence 19 2
+prop chain_fence 20 2
+prop chain_fence 21 2
+prop chain_fence 22 2
+prop chain_fence 23 3
+prop chain_fence 23 4
+prop chain_fence 23 5
+prop chain_fence 23 6
+prop chain_fence 23 7
+prop chain_fence 23 8
+prop chain_fence 23 9
+prop chain_fence 23 10
+prop chain_fence 23 11
+text 11 5 "녹슨 철조망 한 칸." scene=SQS04_FENCE
+prop radar_mast 25 7
+prop radar_mast 4 3
+prop trail_sign 19 19
+text 19 19 "2077년 등산로 표지 '관악산 정상(연주대) 0.3km'. 그 위에 붉은 페인트 '로봇 있음'." 
+prop boulder_l 7 17
+prop boulder_m 24 17
+prop boulder_s 9 20
+prop boulder_s 22 6
+prop drum 10 13
+prop crate_o 2 12
+prop rad_sign 13 14
+text 13 14 "2077년 표지 '관제 시설 — 허가 없이 접근 시 경고 없이 대응함'." 
+prop tuft 26 9
+prop tuft2 4 15
+prop bush_g 23 19

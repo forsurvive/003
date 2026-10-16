@@ -46,7 +46,7 @@ CMDS = {"wait", "fade_in", "fade_out", "balloon", "move", "face", "shake", "year
         "mq", "trade", "yd", "fix",                                                   # 0-10: 1막 진행기 사건 · 거래 창(상인 V번호)
         "meet", "memo", "obit",                                              # 1-2: 인물 수첩 등록 · 한 줄 메모 · 소식으로 안 죽음
         "re", "cage", "capture",                                             # 1-3: 인카운터 첫 분대 대화의 결말 · 우리 문 열기 · 생포(사흘 버팀)
-        "jm", "yd", "sb", "vb", "home", "info", "doctor", "rent", "s01", "s02"}                                                                # 1-4: 1막 경로 진행기(지하시장·단서) 사건                                             # 1-3: 인카운터 첫 분대 대화의 결말 · 우리 문 열기 · 생포(사흘 버팀)
+        "jm", "yd", "sb", "vb", "home", "info", "doctor", "rent", "s01", "s02", "s04"}                                                                # 1-4: 1막 경로 진행기(지하시장·단서) 사건                                             # 1-3: 인카운터 첫 분대 대화의 결말 · 우리 문 열기 · 생포(사흘 버팀)
 ENGINE_VARS = {"PC_ST", "PC_PE", "PC_EN", "PC_CH", "PC_IN", "PC_AG", "PC_LK", "PC_TAG1", "PC_TAG2", "PC_TAG3", "PC_CAPS", "PC_XP",
                "PC_SEX", "PC_APT_PROXY",
                "MQP4_DUCT", "MQP4_FOLLOW", "MQP4_KEY", "MQP4_ARMORY", "MQP4_TALK", "MQP4_BJ_KO", "MQP4_SEC_KO", "MQP4_CAUGHT", "MQP4_DECOY",
@@ -69,12 +69,14 @@ ENGINE_VARS = {"PC_ST", "PC_PE", "PC_EN", "PC_CH", "PC_IN", "PC_AG", "PC_LK", "P
                "SQ_S01_SOL", "SQ_S01_LEFT", "SQ_S01_LEFT_DAY", "SQ_S01_DROP", "SQ_S01_DROP_AT", "SQ_S01_TAG_DAY", "SQ_S01_DOG", "SQ_S01_FEED", "SQ_S01_COLL", "SQ_S01_BAIT",
                "SQ_S01_BETRAY", "SQ_S01_CLEAR_DAY", "SQ_S01_KILLS", "SQ_S01_KILL_DAY", "SQ_S01_EOM", "SQ_S01_BC", "SQ_S01_NAP", "PK_045", "SQH_TAG"} | {"SQ_S02_" + k for k in (
                "ARM POSTED DAY0 LEVEL OPEN PAID SOL B BJ BJ_AT CAMP CKILLS TDEAD DDEAD HOT NS_HOT GUARD MAP SIREN NKILLS HAND KNOW IN PIPEMAP J1 J2 AT "
-               "TRAP_AT TRAP_DONE FIGHT NH_DEAD NH_KILLED EXILE_DAY STOP_DAY NIGHT_DAY HEARD REWARD DONE_DAY RAID_UNTIL SOL_E DRY_HINT").split()} | {"JC_PROB_BC"}   # 1-11b SQ-S02   # 1-11a SQ-S01                                                        # 1-6 MQ-105             # 1-3 생포 · 1-4 해킹 통계
+               "TRAP_AT TRAP_DONE FIGHT NH_DEAD NH_KILLED EXILE_DAY STOP_DAY NIGHT_DAY HEARD REWARD DONE_DAY RAID_UNTIL SOL_E DRY_HINT").split()} | {"JC_PROB_BC"} \
+    | {"SQ_S04_" + k for k in "ARM WAKE_AT WAKE HELD DEADLINE OUT SLEEP KILLED TKILLED HOT LOITER D D_AT TEST BATT F LETTER AWAY BELL RED HELP FENCE CHASE FIGHT UP GUARD_BACK VILLAGE_AT B PD_LOCK".split()} | {"SQH_BATT", "LR15_READ", "PD_R01_GS", "M303_BONUS", "PK_017"}   # 1-11c SQ-S04   # 1-11b SQ-S02   # 1-11a SQ-S01                                                        # 1-6 MQ-105             # 1-3 생포 · 1-4 해킹 통계
 UNNAMED = {"N-TRADER": "떠돌이 고물상", "N-REFUGEE": "피난민", "N-DOWNED": "쓰러진 민병", "N-HS-E1": "수송대 호위", "N-HS-E2": "수송대 호위",
            "CR-091": "짐소",                                                     # 1-8d 고개길 수송대
            "N-SA-G1": "승강장 경비", "N-SA-G2": "승강장 경비", "N-SA-G3": "승강장 경비", "N-SA-R1": "환승촌 주민", "N-SA-R2": "환승촌 주민",   # 1-8f 사당 환승촌
            "N-SA-R3": "환승촌 주민", "N-SA-R4": "버섯 일꾼",
            "N-YT-1": "패거리 수금원", "N-YT-2": "패거리 척후", "N-BC-1": "봉천 감시조", "N-BC-2": "봉천 감시조", "N-BC-3": "봉천 감시조",   # 1-11b SQ-S02
+           "N-PS-1": "파수-3",                                                   # 1-11c SQ-S04
            "N-GS-1": "각성회 신도", "N-GS-2": "각성회 신도", "N-GS-3": "각성회 신도"}   # 1-8g 노량진 관제 중계소
 DECISION = ["어느 편에 서겠", "편에 서겠습니까", "제안을 수락", "받아들이겠습니까", "어느 쪽을 택하", "누구 편이"]
 OLD_NAMES = ["강태오", "천웨이", "국민방송"]

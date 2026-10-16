@@ -13,3 +13,5 @@ columns:
   쓰이는 곳: {field: desc, type: str}
 derive:
   cat: "'misc'"
+gaps:
+  desc: {skip_none: false, default: "'관악 레이더 돔 R-03에서 뽑은 핵분열 전지. 손바닥이 따뜻하다. 핵분열 배터리가 들어가는 자리면 어디든 맞는다.' if id == 'M-162' else desc", why: "'쓰이는 곳' 열의 기획 메모(SQH_BATT 등)를 핍-보이 설명으로 쓰지 않는다 — 1-11c에서 쓰는 물건부터 게임 속 문장"}

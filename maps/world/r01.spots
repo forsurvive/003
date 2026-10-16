@@ -1,11 +1,12 @@
 # 월드 발견 자리 — 관악·봉천(R01). 문법: map_compile.compile_spots 참조(spot 줄 아래 명령은 구역 왼쪽 위 기준 좌표).
 
 # 봉천 동 주민센터(L-R01-32) 앞 넘어진 파수(SD-03a §8.2 MQ-102 잠든 로봇 · SD-09a L-R01-32). 다가가면 한 번 깨어난다.
-spot L-R01-32 6 4 off=4,42                     # 장소 표 칸(906,1349)은 손 맵 X-BC 안 — 아랫문(891,1379) 남동 18칸, 길 건너 1층 건물 정문 앞
-prop sentry_down 2 1
-mark sentry 2 1 S
-trigger 0 0 w=6 h=4 scene=MQ-102_SENTRY cond="V_ACT >= 1 and MQ102_ROBOT == 0" once
-text 2 1 "엎드린 경비 로봇." w=2 scene=MQ-102_SENTRY_AFTER
+spot L-R01-32 12 3 off=-5,51                   # 장소 표 칸(906,1349)은 손 맵 X-BC 안 — 남쪽 관공서 건물(정면 문 908,1399 · K-33, 시험 test_sq_s04가 문과 자리를 맞춰 본다) 문 앞 콘크리트 마당
+prop civil_post 0 0
+text 0 0 "세움 간판 '봉천동 주민센터 · 민원실 1층'. 판 귀퉁이에 총탄 구멍 하나." w=3
+mark sentry 7 0 S                              # 파수 그림은 진행기 SideS04가 세운다(잠듦 · 깨어남 · 잔해 — 1-11c)
+trigger 2 0 w=9 h=3 scene=MQ-102_SENTRY cond="V_ACT >= 1 and MQ102_ROBOT == 0 and SQ_S04_UP == 0" once
+text 7 0 "엎드린 경비 로봇." w=2 scene=MQ-102_SENTRY_AFTER
 
 # 관악산 전망바위(L-R01-03, SD-09a B · 단계 1-5e): 데크 끝 동전 망원경 → 전망 장면(R01 전체 + 여의도 장소를 지도에 '표시').
 # 2077 안내판 '맑은 날에는 여의도 국회 돔과 남산 타워가 보입니다' — 돔은 무너졌고 탑은 그대로라 절반만 맞다.

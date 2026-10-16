@@ -445,6 +445,9 @@ func cat_mult(d: Dictionary, region: String, _t: Vector2i, night: bool) -> float
 			m *= 1.3                                                    # SQ-S02 우회 관로: 패거리가 사흘 동안 봉천 밤 습격을 늘린다(SD-04a §4.2 해법 B)
 		if int(st.vars.get_v("SQ_S02_IN")) == 4:
 			m *= 1.2                                                    # SQ-S02 묵인: 척후가 정확해진다(해법 d)
+	if night and c in ["creature", "raider"] and _t.x >= 0 and st.vars.has("SQH_BATT") and int(st.vars.get_v("SQH_BATT")) == 81 \
+			and absi(_t.x - SideS02.BC_CENTER.x) <= SideS02.BC_R and absi(_t.y - SideS02.BC_CENTER.y) <= SideS02.BC_R:
+		m *= 0.9                                                        # SQ-S04 전지를 대장간에: 계단마을 옥탑 조명 — 봉천 밤 RE −10%(SD-04a §4.4 인도처)
 	var th := threat_at(_t) if _t.x >= 0 else 0
 	if th > 0 and int(ctx.get("level", 1)) - (th * 4 - 3) >= 6:     # 권역 기본 레벨(위협 1 = Lv1 … 5 = Lv17)보다 6 넘게 높다
 		if c in ["creature", "raider"] and int(d.get("threat_max", 9)) <= th:

@@ -134,7 +134,7 @@ def check_cond(src, known_vars, known_fns):
 # 높이가 다른 이웃 칸은 계단·사다리 칸을 거쳐야만 오간다(실행 중 충돌·길찾기가 같은 규칙). 구조물 그림은 struct 명령으로
 # 맵마다 한 장에 굽는다(tools/pipeline/struct_bake.py → game/assets/maps/<ID>_struct.png).
 EXT_WALK = {".": "dirt_a", ",": "dirt_grass_b", ";": "dirt_grass_a", "_": "asphalt", "-": "asphalt_lane", ":": "pavers",
-            "c": "concrete_o", "=": "stairs", "!": "stairs_rail"}
+            "c": "concrete_o", "=": "stairs", "!": "stairs_rail", "g": "rock_floor"}       # g = 화강암 맨바닥(1-11c 관악산 정상)
 EXT_ON = {"r": "concrete_o", "p": "dirt_a", "L": "concrete_o", "D": "concrete_o"}     # 구조물 그림이 덮는 걷는 칸(옥상·판자 다리·사다리·문)
 EXT_SOLID = {"H": ("concrete_o", 1, 2), "#": ("concrete_o", 1, 2), "R": ("concrete_o", 1, 2), "S": ("concrete_o", 1, 2),
              "P": ("concrete_o", 1, 2), "X": ("concrete_o", 3, 2), "v": ("concrete_o", 3, 0), "T": ("dirt_grass_a", 0, 2),

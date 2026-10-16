@@ -47,6 +47,7 @@ const UNNAMED := [["N-TRADER", "떠돌이 고물상", ""], ["N-REFUGEE", "피난
 	["N-SA-G1", "승강장 경비", "JC_SA"], ["N-SA-G2", "승강장 경비", "JC_SA"], ["N-SA-G3", "승강장 경비", "JC_SA"], ["N-SA-R1", "환승촌 주민", "JC_SA"],   # 1-8f 사당 환승촌
 	["N-SA-R2", "환승촌 주민", "JC_SA"], ["N-SA-R3", "환승촌 주민", "JC_SA"], ["N-SA-R4", "버섯 일꾼", "JC_SA"],
 	["N-YT-1", "패거리 수금원", ""], ["N-YT-2", "패거리 척후", ""], ["N-BC-1", "봉천 감시조", "JC_BC"], ["N-BC-2", "봉천 감시조", "JC_BC"], ["N-BC-3", "봉천 감시조", "JC_BC"],   # 1-11b SQ-S02
+	["N-PS-1", "파수-3", ""],   # 1-11c SQ-S04 관제망 경비 로봇
 	["N-GS-1", "각성회 신도", "GS"], ["N-GS-2", "각성회 신도", "GS"], ["N-GS-3", "각성회 신도", "GS"]]   # 1-8g 노량진 관제 중계소
 var enc := {}                           ## 인카운터 상태(1-3, Encounters): 안전 간격 · 오늘 추적대 수 · EP 사용 · 휴전
 var portrait_alias := {}                ## 인물 ID -> 초상화 키(맵에서 다른 시대 모습으로 선 인물: 2259년 아이 하도윤 등)
@@ -139,6 +140,15 @@ func _init() -> void:
 	for k in ["ARM", "POSTED", "DAY0", "LEVEL", "OPEN", "PAID", "SOL", "B", "BJ", "BJ_AT", "CAMP", "CKILLS", "TDEAD", "DDEAD", "HOT", "NS_HOT", "GUARD", "MAP", "SIREN", "NKILLS", "HAND", "KNOW", "IN", "PIPEMAP", "J1", "J2", "AT", "TRAP_AT", "TRAP_DONE", "FIGHT", "NH_DEAD", "NH_KILLED", "EXILE_DAY", "STOP_DAY", "NIGHT_DAY", "HEARD", "REWARD", "DONE_DAY", "RAID_UNTIL", "SOL_E", "DRY_HINT"]:
 		vars.declare("SQ_S02_" + k, "int", 0)
 	vars.declare("JC_PROB_BC", "int", 0)
+	# SQ-S04 도성이 뒤척인다(1-11c, SD-04a §4.4 · SideS04): ARM MQ-102가 열린 분 · WAKE_AT 깨어날 21시 · WAKE 깨어난 분 · HELD 남솔이 철망 안 · DEADLINE 보호 기간 끝 ·
+	# OUT 나온 길(1 인증 · 2 파괴 · 3 은신 · 4 정비 · 5 만료 · 6 마을) · SLEEP 잠든 까닭(1 전지 회수 · 2 대기 · 3 정비 모드) · KILLED · TKILLED 부순 파수 · 감시포(비트) ·
+	# HOT 제압 중 · LOITER 아랫문 서성임 끝 · D 정비(1 오는 중 · 2 끝, D_AT) · TEST 시험 가동 · BATT 전지 회수 · F 단말 대기 · LETTER 편지 · AWAY 노량진(돌아오는 날) ·
+	# BELL 종(1 봄 · 2 들음 · 3 쪽지) · RED 남태하 · HELP 감시조 지원 · FENCE 철조망 · CHASE 이탈 경보 대기 · FIGHT 감시조가 싸우는 중 · UP 주민센터 파수가 서 있다 ·
+	# GUARD_BACK 노량진에서 돌아오는 분 · VILLAGE_AT 마을이 철망을 여는 분 · B 셋 다 부숨 · PD_LOCK 거점 '관악산 송신소' 공백 고정
+	for k in ["ARM", "WAKE_AT", "WAKE", "HELD", "DEADLINE", "OUT", "SLEEP", "KILLED", "TKILLED", "HOT", "LOITER", "D", "D_AT", "TEST", "BATT", "F", "LETTER", "AWAY", "BELL", "RED", "HELP", "FENCE", "CHASE", "FIGHT", "UP", "GUARD_BACK", "VILLAGE_AT", "B", "PD_LOCK"]:
+		vars.declare("SQ_S04_" + k, "int", 0)
+	for kv in [["SQH_BATT", -1], ["LR15_READ", 0], ["PD_R01_GS", 0], ["M303_BONUS", 0], ["PK_017", 0]]:   # 전지 인도처(HO) · LR-15 · 판도 PD-R01-2 각성회 · 편지 화술 +10(첫 1회) · 퍽 눈치(퍽 창은 1-12)
+		vars.declare(kv[0], "int", kv[1])
 	for kv in [["CAPTURE_DAY", -1], ["CAPTURE_AT", 0], ["SB_COLLAR", 0], ["SB_CUFF", 0], ["CAPTURE_BY", 0]]:
 		vars.declare(kv[0], "int", kv[1])
 	for k in ["P_SURNAME", "P_GIVEN", "P_FULL", "P_REGNO", "PC_APT"]:   # PC_APT: 적성 평가 답 10개(결과지 다시 보기)

@@ -1,0 +1,121 @@
+{
+ "id": "SQS04_NAMTAEHA",
+ "title": "옥탑 감시조장 — 파수",
+ "loc": "L-R01-09",
+ "npc": "N-R01-028",
+ "cond": "V_ACT >= 1 and SQS04_STAGE >= 10 and SQS04_STAGE < 100 and (SQ_S04_RED == 0 or (SQ_S04_HELP == 0 and SQ_S04_HELD == 1 and SQ_S04_SLEEP == 0))",
+ "labels": {
+  "START": 0,
+  "KNEW": 6,
+  "HELPQ0": 9,
+  "HELPQ": 10,
+  "YES": 12
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S04_RED == 1",
+   "to": "HELPQ"
+  },
+  {
+   "op": "if",
+   "cond": "SQS04_STAGE >= 40",
+   "to": "KNEW"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "슬픔",
+   "text": "망루에서 봤어. 쇳덩이가 애를 안고 걸어가더라. 아주 조심스럽게."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "기본",
+   "text": "그날 밤에 산꼭대기 돔이 빨갛게 깜박였어. 관악산 꼭대기, 옛 레이더. 그게 깜박이면 쇳덩이들이 뒤척여."
+  },
+  {
+   "op": "cmd",
+   "name": "s04",
+   "args": [
+    "red"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "HELPQ0"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "슬픔",
+   "text": "망루에서 봤어. 쇳덩이가 애를 안고 걸어가더라. 아주 조심스럽게."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "기본",
+   "text": "산꼭대기 돔 얘기는 너도 알지? 그래, 그 불이야. 그게 깜박이면 쇳덩이들이 뒤척여."
+  },
+  {
+   "op": "cmd",
+   "name": "s04",
+   "args": [
+    "red"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S04_HELD == 0 or SQ_S04_SLEEP >= 1",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "기본",
+   "text": "솔이 꺼내러 갈 거면 말해. 쇳덩이랑 싸움이 나면 계단참①에서 둘 내려보낼게. 셋을 혼자 상대하는 건 무리야."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "부탁해",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "YES",
+     "id": "SQS04_NAMTAEHA:1:0"
+    },
+    {
+     "text": "혼자 해 볼게",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS04_NAMTAEHA:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s04",
+   "args": [
+    "help"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "기본",
+   "text": "아랫문 쪽에서 쇳소리 나면 내려간다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S04.txt"
+}

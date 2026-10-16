@@ -3,7 +3,7 @@
  "title": "봉천 동 주민센터 앞",
  "loc": "L-R01-32",
  "npc": "",
- "cond": "V_ACT >= 1 and MQ102_ROBOT == 0",
+ "cond": "V_ACT >= 1 and MQ102_ROBOT == 0 and SQ_S04_UP == 0",
  "labels": {
   "START": 0
  },

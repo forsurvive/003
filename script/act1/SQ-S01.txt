@@ -87,7 +87,7 @@ N-R01-029 [기본] 그래. 주운 사람 거지. …그래도 언제든 가져�
 # ---------------------------------------------------------------- 남솔(백구 밥 당번) — 동행 조건 ②
 @scene SQS01_NAMSOL  백구 밥 당번  (L-R01-09)
 @npc   N-R01-034
-@cond  MQ101_STAGE >= 100 and (SQ_S01_FEED == 0 or SQH_TAG == 81 or (SQS01_STAGE >= 10 and SQS01_STAGE < 100))
+@cond  MQ101_STAGE >= 100 and (SQ_S01_FEED == 0 or SQH_TAG == 81 or (SQS01_STAGE >= 10 and SQS01_STAGE < 100)) and SQ_S04_HELD == 0 and SQ_S04_AWAY == 0 and (SQ_S04_OUT == 0 or SQ_S04_LETTER == 1)
 ? SQH_TAG == 81 -> NAMED
 ? SQ_S01_FEED == 1 -> HOWL
 N-R01-034 [기본] 오늘 백구 밥 당번 나야. 근데 그릇이 비었어. 엄마가 고기는 아끼래.

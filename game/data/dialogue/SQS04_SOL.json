@@ -1,0 +1,94 @@
+{
+ "id": "SQS04_SOL",
+ "title": "철망 안의 남솔",
+ "loc": "L-R01-32",
+ "npc": "N-R01-034",
+ "cond": "SQ_S04_HELD == 1",
+ "labels": {
+  "START": 0,
+  "NAME": 2,
+  "HURT": 4,
+  "SOON": 5,
+  "UP": 8
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-R01-034",
+   "emo": "슬픔",
+   "text": "로봇이 나 등록 안 됐대. 등록이 뭐야?"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "이름을 적어 두는 거야. 너는 이미 이름이 있잖아",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "NAME",
+     "id": "SQS04_SOL:1:0"
+    },
+    {
+     "text": "다친 데는 없어?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "HURT",
+     "id": "SQS04_SOL:1:1"
+    },
+    {
+     "text": "금방 꺼내 줄게",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SOON",
+     "id": "SQS04_SOL:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-034",
+   "emo": "기본",
+   "text": "남솔. 엄마가 지어 줬어. …근데 로봇은 그 이름을 몰라."
+  },
+  {
+   "op": "goto",
+   "to": "SOON"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-034",
+   "emo": "기본",
+   "text": "안 다쳤어. 로봇이 아주 살살 안았어. 이상하지. 무서운데 살살."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-034",
+   "emo": "기본",
+   "text": "백구 밥 줘야 하는데. 오늘 내 당번이야."
+  },
+  {
+   "op": "if",
+   "cond": "SQS04_STAGE < 20",
+   "to": "UP"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "quest(\"SQ-S04\", 20)"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S04.txt"
+}

@@ -1,0 +1,33 @@
+# 레이더 돔 R-03 안(SD-04a §4.4 해법 E · SD-14 CR-313 · 단계 1-11c): 회전 받침대 · 두뇌-4(대기) · 핵분열 전지 받침(M-162).
+# 18×12 · 가운데 레이더 회전 구동부 · 왼쪽 전지 받침(뽑으면 두뇌-4가 꺼지고 R01의 잠든 관제망 장치가 다음 전원까지 깨지 않는다) · 오른쪽 두뇌-4.
+map K-36 레이더 돔 R-03
+set bk
+grid
+##################
+##################
+##################
+#tttttttttttttttt#
+#tttttttttttttttt#
+#tttttttttttttttt#
+#tttttttttttttttt#
+#tttttttttttttttt#
+#tttttttttttttttt#
+#tttttttttttttttt#
+#tttttttttttttttt#
+########tt########
+end
+exit 8 11 X-RD from_K-36
+exit 9 11 X-RD from_K-36
+mark from_X 8 10 N
+mark socket 4 6 N
+mark brain 13 5 S
+prop generator_bk 8 4
+text 8 5 "레이더 회전 구동부. 진공관 줄이 앰버로 숨 쉰다. 이백 년 만에 다시 도는 쇠바퀴 소리." w=2
+prop fission_socket 4 5
+text 4 6 "핵분열 전지 받침." scene=SQS04_BATT
+prop brain4 13 4
+text 13 5 "두뇌-4." scene=SQS04_BRAIN
+prop w_gauge 2 1
+prop switchboard 15 7
+prop file_cabinet 15 9
+prop bucket 2 9

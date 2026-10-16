@@ -1,0 +1,28 @@
+# 레이더 중계소 장비동 2층 기록실(SD-02 LR-15 · SD-03a MQ-304 기록 1 · 단계 1-11c): 한유리 설계 일지 「진공관은 잊지 않는다」 단말.
+# 16×10 · 기록 단말 TM-K35(LR-15, [과학 50] 해킹) · 서류 선반 · 깨진 창(정상 바람) · 아래층 계단.
+map K-35 레이더 중계소 장비동 2층
+set bk
+grid
+################
+################
+################
+#tttttttttttttt#
+#tttttttttttttt#
+#tttttttttttttt#
+#tttttttttttttt#
+#tttttttttttttt#
+#tttttttttttttt#
+##t#############
+end
+exit 2 9 K-34 from_K-35
+mark from_K-34 2 8 N
+term 7 3 TM-K35
+prop terminal_desk 7 3
+prop ledger_shelf 1 3
+prop ledger_shelf 12 3
+text 13 4 "서류 선반. '관제 중계 점검표 2071~2077'. 마지막 칸만 비었다." w=2
+prop w_window 4 1
+prop w_window 10 1
+text 10 2 "깨진 창. 정상 바람이 종이를 들춘다. 저 아래 봉천 계단마을 지붕이 작다."
+prop office_desk 10 6
+prop folding_chair 9 6

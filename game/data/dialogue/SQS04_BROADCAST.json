@@ -1,0 +1,52 @@
+{
+ "id": "SQS04_BROADCAST",
+ "title": "파수 방송",
+ "loc": "L-R01-32",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "UP": 5
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "파수의 가슴 확성기가 갈라진 소리로 켜진다. 대기음 네 번."
+  },
+  {
+   "op": "line",
+   "who": "N-PS-1",
+   "emo": "기본",
+   "text": "미등록 아동 1명 보호. 보호 기간 72시간. 보호자는 등록 창구로 오십시오."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "같은 말이 일정한 간격으로 되풀이된다. 이백 년 전에 녹음된 여자 목소리다."
+  },
+  {
+   "op": "if",
+   "cond": "SQS04_STAGE < 30",
+   "to": "UP"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "quest(\"SQ-S04\", 30)"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S04.txt"
+}

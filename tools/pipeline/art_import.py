@@ -123,6 +123,30 @@ def robot_sheets():
         json.dump(meta, open(os.path.join(SPR, name + ".json"), "w"), ensure_ascii=False, sort_keys=True, indent=1)
 
 
+def sentry_sheets():
+    """관제망 경비 로봇(1-11c SQ-S04, art/tools/robot_sentry.py): 파수-3 CR-305(깨어남 앰버) · 아이를 안은 판 · 감시포 1형 CR-320.
+    사람 시트처럼 다섯 줄(S · SE · E · NE · N, W 쪽은 거울) — idle · walk 6(사람과 같은 보폭 표 · 발 고정) · death 4."""
+    import robot_sentry as RS
+    for name, (rows, meta) in (("rb_cr305_loco", RS.sentry_sheet("awake")), ("rb_cr305_carry_loco", RS.sentry_sheet("awake", True)),
+                               ("rb_cr320_loco", RS.turret_sheet())):
+        fw, fh = meta["frame"]
+        sheet = Image.new("RGBA", (fw * len(rows[0]), fh * len(rows)), (0, 0, 0, 0))
+        for r, row in enumerate(rows):
+            for c, f in enumerate(row):
+                sheet.alpha_composite(f, (c * fw, r * fh))
+        sheet.save(os.path.join(SPR, name + ".png"))
+        mo = meta["motions"]
+        anims = []
+        for r, v in enumerate(meta["rows"]):
+            anims.append((f"idle_{v}", [(mo["idle"]["start"] + i, r) for i in range(mo["idle"]["count"])], True))
+            anims.append((f"walk_{v}", [(mo["walk"]["start"] + i, r) for i in range(mo["walk"]["count"])], True))
+            anims.append((f"death_{v}", [(mo["death"]["start"] + i, r) for i in range(mo["death"]["count"])], False))
+        open(os.path.join(SPR, name + ".tres"), "w", encoding="utf-8").write(
+            spriteframes_tres(f"res://assets/sprites/{name}.png", fw, fh, anims))
+        meta["name"] = name
+        json.dump(meta, open(os.path.join(SPR, name + ".json"), "w"), ensure_ascii=False, sort_keys=True, indent=1)
+
+
 def _pad32(im):
     out = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
     out.alpha_composite(im, ((32 - im.width) // 2, 32 - im.height))
@@ -199,6 +223,7 @@ def main():
     roach_sheet()
     quad_sheets()
     robot_sheets()
+    sentry_sheets()
     import tiles_isaac                                             # 아이작풍 타일(이름·순서는 이전 판과 같다)
     r01 = tiles_isaac.r01_tiles()
     nt = tileset("ts_r01_ext", r01)                                # 소품 타일은 투명 바탕(바닥은 합성 층이 그린다)

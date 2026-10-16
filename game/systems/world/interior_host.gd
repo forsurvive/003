@@ -1488,7 +1488,7 @@ func _draw_hud() -> void:
 			_txt(Vector2(320 + r / 2.0, 9), "[%s]" % det, HU[5] if det == "숨음" else HUD_RED, HORIZONTAL_ALIGNMENT_CENTER)
 	_ring(Vector2(36, 324 + b))
 	_quest_pointer(vs)
-	var ny := 8.0 if hints.is_empty() else 36.0
+	var ny := 8.0 if hints.is_empty() else 16.0 + _hint_h()
 	for n in notes:
 		_txt(Vector2(8, ny), n[0], HU[6] if n[1] > 3.0 else HU[5])
 		ny += 14.0
@@ -1655,7 +1655,7 @@ func _draw_hud_touch(vs: Vector2, c: Combatant, low: bool, ap: float) -> void:
 		_txt(Vector2(320 + r / 2.0, 48), "[%s]" % det, HU[5] if det == "숨음" else HUD_RED, HORIZONTAL_ALIGNMENT_CENTER)
 	_ring(Vector2(604 + r, 80))
 	_quest_pointer(vs)
-	var ny := 48.0 + (28.0 if not hints.is_empty() else 0.0)
+	var ny := 48.0 + (8.0 + _hint_h() if not hints.is_empty() else 0.0)
 	for n in notes:
 		_txt(Vector2(8, ny), n[0], HU[6] if n[1] > 3.0 else HU[5])
 		ny += 14.0
@@ -2515,17 +2515,44 @@ func _on_dialogue_done() -> void:
 	_talking = {}
 
 
+## 안내 띠 줄 나누기: 화면 폭(양옆 10px 여백 · 글 안쪽 10px)을 넘으면 띄어쓰기에서 나눈다(최대 3줄 — 1-11c 긴 원고 안내)
+func _hint_lines(text: String) -> PackedStringArray:
+	var maxw := (banner.get_viewport_rect().size.x if banner != null else 640.0) - 40.0
+	var out := PackedStringArray()
+	var cur := ""
+	for w in text.split(" "):
+		var t := w if cur == "" else cur + " " + w
+		if cur != "" and font.get_string_size(t, HORIZONTAL_ALIGNMENT_LEFT, -1, 12).x > maxw:
+			out.append(cur)
+			cur = w
+		else:
+			cur = t
+	if cur != "":
+		out.append(cur)
+	return out
+
+
+## 지금 안내 띠의 높이(줄 수 × 16 + 4)
+func _hint_h() -> float:
+	if hints.is_empty() or font == null:
+		return 20.0
+	return 4.0 + 16.0 * _hint_lines(str(hints[0][0])).size()
+
+
 func _draw_banner() -> void:
 	_draw_hud()
 	if not hints.is_empty() and banner_t <= 0.0 and not box.active:
-		var hint_text: String = hints[0][0]
-		var hw := font.get_string_size(hint_text, HORIZONTAL_ALIGNMENT_LEFT, -1, 12).x + 20.0
-		var hr := Rect2(10, 10, hw, 20)
+		var lines := _hint_lines(str(hints[0][0]))
+		var hw := 0.0
+		for ln in lines:
+			hw = maxf(hw, font.get_string_size(ln, HORIZONTAL_ALIGNMENT_LEFT, -1, 12).x)
+		var hr := Rect2(10, 10, hw + 20.0, 4.0 + 16.0 * lines.size())
 		banner.draw_rect(hr.grow(1), Color("0B0A0D"))
 		banner.draw_rect(hr, Color("1F3A6E"))
 		banner.draw_rect(Rect2(hr.position + Vector2(0.5, 0.5), hr.size - Vector2.ONE), Color("4C7DC8"), false, 1.0)
-		banner.draw_string(font, Vector2(hr.position.x + 10, hr.position.y + 3 + font.get_ascent(12)), hint_text, HORIZONTAL_ALIGNMENT_LEFT,
-			-1, 12, Color("E9E4D8"))
+		for i in lines.size():
+			banner.draw_string(font, Vector2(hr.position.x + 10, hr.position.y + 2 + 16.0 * i + font.get_ascent(12)), lines[i], HORIZONTAL_ALIGNMENT_LEFT,
+				-1, 12, Color("E9E4D8"))
 	if banner_t <= 0.0 or banner_text == "":
 		return
 	var vs := banner.get_viewport_rect().size

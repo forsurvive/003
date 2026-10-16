@@ -1,0 +1,53 @@
+{
+ "id": "SQS04_BRAIN",
+ "title": "두뇌-4",
+ "loc": "L-R01-04",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "OFF": 5
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S04_BATT == 1",
+   "to": "OFF"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "두뇌-4. 유리 통 안 진공관 셋이 느리게 깜박인다. 명판 '세진 SJ-B74 두뇌-4 · 관악 레이더 중계 · 대기'."
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S04_WAKE == 0 or SQ_S04_SLEEP >= 1",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "통 아래로 종이 띠가 조금씩 밀려 나온다. 구멍 뚫린 글자 — '봉천 1구역 · 미등록 아동 1 · 보호 조치 · 파수 3 기동'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "꺼진 진공관 셋. 유리 통 안에 먼지가 천천히 가라앉는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S04.txt"
+}

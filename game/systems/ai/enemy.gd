@@ -47,6 +47,7 @@ var _route_i := 0
 var _route_wait := 0.0
 var _look_base := 2
 var stance := ""                              ## "hold": 제자리 경계(정문 계엄군)
+var fixed := false                            ## 제자리 고정(감시포 — 몸은 돌고 걷지 않는다, 1-11c)
 var level := 1                                ## 실제 레벨(장소 상한을 건 뒤)
 var bite := 8.0                               ## 들개 물기 피해(SD-14 표 '물기 n')
 var focus: Combatant                          ## 지금 노리는 대상(주인공·아군 감시조 — 진행기가 정한다, 0-10)
@@ -144,6 +145,10 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 			sheet = "en_cr473_%s_loco" % arm
 		"CR-420", "CR-421", "CR-423":                               # 1-E 남부순환 패거리(SD-14 F-04-C): 두 외형 중 하나
 			sheet = "en_%s%s_loco" % [str(row["id"]).to_lower().replace("-", ""), "b" if _rng.randf() < 0.5 else ""]
+		"CR-305":
+			sheet = "rb_cr305_loco"                                  # 파수-3(1-11c SQ-S04, SD-16 §7.4 — 이족 · 방패 팔 · CRT 얼굴판 · 관제망 휘장)
+		"CR-320":
+			sheet = "rb_cr320_loco"                                  # 감시포 1형(기둥 위 원통 포탑 — 제자리)
 		"CR-106":
 			sheet = "cr_cr104_loco"                                  # 들개 우두머리(그림은 들개, 1-E2에서 따로)
 		"CR-108":
@@ -171,6 +176,10 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 		loco.custom = {"run": {"frames": 4, "px": 4.0, "diag": 4.0, "contact": [0, 2], "speed_t": float(row["speed"])},
 			"walk": {"frames": 4, "px": 4.0, "diag": 4.0, "contact": [0, 2], "speed_t": float(row["speed"]) * 0.45}}
 		bite = float(str(row.get("attack", "물기 8")).get_slice(" ", 1))
+	if row["id"] == "CR-305":                                       # 파수-3: 사람과 같은 보폭 표(발 고정 6컷) · 무거워 뛰지 않는다(2.5t/초)
+		loco.custom = {"run": {"frames": 6, "px": 4.0, "px_v": 3.0, "diag": 3.0, "contact": [0, 3], "speed_t": float(row["speed"]), "anim": "walk"},
+			"walk": {"frames": 6, "px": 4.0, "px_v": 3.0, "diag": 3.0, "contact": [0, 3], "speed_t": float(row["speed"]) * 0.7}}
+	fixed = float(row.get("speed", 1.0)) <= 0.0                       # 포탑(감시포): 제자리에서 돌기만 한다
 	if row["id"] == "CR-405":                                       # 파워 아머: 느리고 무겁다(보폭 6·4px, 2.4t/초). 넉다운 면역
 		loco.custom = {"run": {"frames": 6, "px": 6.0, "px_v": 4.0, "diag": 4.0, "contact": [0, 3], "speed_t": 2.4},
 			"walk": {"frames": 6, "px": 6.0, "px_v": 4.0, "diag": 4.0, "contact": [0, 3], "speed_t": 2.4}}
@@ -446,6 +455,8 @@ func _act(dt: float, target: Combatant, shots: Projectiles) -> void:
 		aim_dir = -1
 	if style == "dog" and input.length() > 0.2 and mine_list.is_valid():
 		input = _mine_dodge(input)
+	if fixed:
+		input = Vector2.ZERO                                        # 감시포: 걷지 않는다(돌아서 쏜다)
 	var f0 := loco.frames_advanced
 	move(steer(input), dt)
 	if goal == "flee":                                               # 궁지: 1초 넘게 한 걸음도 못 떼면 항복하거나 버틴다
@@ -604,6 +615,12 @@ func _die_step(dt: float) -> void:
 		var f := mini(int(_dead_t * 10.0), sprite.sprite_frames.get_frame_count("death_E") - 1)
 		sprite.animation = "death_E"
 		sprite.frame = f
+	elif sprite.sprite_frames.has_animation("death_S"):                # 로봇(1-11c): 불꽃 → 꺾임 → 넘어짐 → 화면 꺼진 채 누움
+		var fr := mini(int(_dead_t * 8.0), sprite.sprite_frames.get_frame_count("death_S") - 1)
+		sprite.animation = "death_S"
+		sprite.flip_h = false
+		sprite.frame = fr
+		z_index = -1 if fr >= 2 else 0
 	elif _dead_t > 0.3:                                              # 사람형(1-4 파밍): 깜박인 뒤 바닥에 눕는다 — 그 자리가 유해(조사하면 소지품)
 		sprite.rotation_degrees = -90.0
 		sprite.position = Vector2(-4, -8)

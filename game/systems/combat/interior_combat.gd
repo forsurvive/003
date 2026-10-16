@@ -260,6 +260,14 @@ func _enemy_weapon(enemy_id: String, arm: String) -> Dictionary:
 		w["rate"] = 0.8                                             # 한 번 내려치고 숨 고르기(떼로 붙으면 초당 30 안팎 — 1.4면 3초 만에 쓰러졌다)
 	if enemy_id == "CR-405":
 		w["rate"] = float(w.get("rate", 2.0)) * 3.0
+	if enemy_id == "CR-305":                                          # 파수-3(1-11c): 손 레이저 — 레이저 권총 판정(SD-14 §8.2 '3정 레이저'는 연사로)
+		w = weapons.get("W-008", w).duplicate()
+		w["rate"] = float(w.get("rate", 2.0)) * 1.3
+	if enemy_id == "CR-320":                                          # 감시포 1형: 기관총 5 연사(회전이 느려 바로 아래가 사각 — 제자리)
+		w["dmg"] = 5.0
+		w["crit_dmg"] = 5.0
+		w["rate"] = float(w.get("rate", 2.0)) * 3.0
+		w["name"] = "감시포 기관총"
 	if enemy_id in ["CR-436", "CR-534"]:                               # 기관단총(0-10 정합: 무기 표에 아직 없어 W-002 판정 + 연사 1.5배)
 		w["rate"] = float(w.get("rate", 2.0)) * 1.5
 	return w

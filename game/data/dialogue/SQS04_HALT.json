@@ -1,0 +1,166 @@
+{
+ "id": "SQS04_HALT",
+ "title": "주민센터 앞 파수-3",
+ "loc": "L-R01-32",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "AUTH": 4,
+  "PLAIN": 9,
+  "PAUSE": 12,
+  "BACK": 15
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S04_HELD == 0",
+   "to": "PLAIN"
+  },
+  {
+   "op": "line",
+   "who": "N-PS-1",
+   "emo": "놀람",
+   "text": "정지. …판독 중. 등록됨. 관리 후보."
+  },
+  {
+   "op": "line",
+   "who": "N-PS-1",
+   "emo": "기본",
+   "text": "미등록 아동 1명 보호 중. 보호 기간 72시간. 관리자 명령을 기다립니다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "\"보호 조치를 해제한다. 아동을 보호자에게 돌려보내라.\"",
+     "tags": [
+      {
+       "k": "admin"
+      },
+      {
+       "k": "skill",
+       "name": "과학",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "AUTH",
+     "id": "SQS04_HALT:1:0"
+    },
+    {
+     "text": "(물러난다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "BACK",
+     "id": "SQS04_HALT:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s04",
+   "args": [
+    "auth"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-PS-1",
+   "emo": "기본",
+   "text": "관리자 명령 확인. 보호 조치 해제. 대기 구역 B 개방."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "얼굴판이 한 번 꺼졌다 켜진다. 민원실 안쪽에서 철망 자물쇠가 딸깍 풀리는 소리."
+  },
+  {
+   "op": "line",
+   "who": "N-PS-1",
+   "emo": "기본",
+   "text": "순찰을 60초 정지합니다. …관리자님, 안녕히 가십시오."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-PS-1",
+   "emo": "놀람",
+   "text": "정지. …판독 중. 등록됨. 관리 후보."
+  },
+  {
+   "op": "line",
+   "who": "N-PS-1",
+   "emo": "기본",
+   "text": "이 구역은 보호 조치 중입니다. 관리자 명령을 기다립니다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "\"순찰을 멈추고 대기하라.\"",
+     "tags": [
+      {
+       "k": "admin"
+      },
+      {
+       "k": "skill",
+       "name": "과학",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PAUSE",
+     "id": "SQS04_HALT:2:0"
+    },
+    {
+     "text": "(물러난다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "BACK",
+     "id": "SQS04_HALT:2:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s04",
+   "args": [
+    "pause"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-PS-1",
+   "emo": "기본",
+   "text": "관리자 명령 확인. 순찰을 60초 정지합니다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "s04",
+   "args": [
+    "back"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S04.txt"
+}

@@ -77,4 +77,4 @@ prop bucket 3 12
 prop gs_lamp_line 9 13
 prop gs_lamp_line2 21 13
 npc N-GS-3 22 10 W look=E1-S3-HR00-H5-T14-0-PF10-HD14-EY00-PR017 pose=sit bark="새로 오셨어요? 대기 번호는 천공기에서."
-npc N-R01-055 8 11 E cond="(GAME_HOUR < 6 or GAME_HOUR >= 20)" bark="밤엔 정비 안 해. 로봇도 쉬어야지. …농담이야."
+npc N-R01-055 8 11 E cond="(GAME_HOUR < 6 or GAME_HOUR >= 20) and SQ_S04_D != 1" bark="밤엔 정비 안 해. 로봇도 쉬어야지. …농담이야."

@@ -964,7 +964,7 @@ from props_cg import PROPS_CG, STATES_CG                                # 청계
 for _k in PROPS_CG:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_CG)
-from props_home import PROPS_HOME                                     # 들어가 보는 건물 실내(1-5e 자유 탐험 확장)
+from props_home import PROPS_HOME, STATES_HOME                        # 들어가 보는 건물 실내(1-5e 자유 탐험 확장)
 for _k in PROPS_HOME:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_HOME)
@@ -984,6 +984,10 @@ from props_gs import PROPS_GS                                         # 노량�
 for _k in PROPS_GS:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_GS)
+from props_s04 import PROPS_S04, STATES_S04                           # 봉천 동 주민센터 · 관악 레이더 중계소(1-11c SQ-S04)
+for _k in PROPS_S04:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_S04)
 from props_trap import PROPS_TRAP, STATES_TRAP, burnt_states       # 함정 · 환경 폭발(1-9c, SD-11 §9.2 · §9.3)
 for _k in PROPS_TRAP:
     assert _k not in PROPS, _k
@@ -1002,6 +1006,8 @@ STATES.update(STATES_BK)
 STATES.update(STATES_CG)
 STATES.update(STATES_TRAP)
 STATES.update(STATES_BS)
+STATES.update(STATES_S04)
+STATES.update(STATES_HOME)
 for _k, _v in burnt_states(PROPS).items():
     STATES.setdefault(_k, {}).update(_v)
 

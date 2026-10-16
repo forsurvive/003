@@ -68,6 +68,20 @@ def main():
                 img.save(path)
                 made += 1
             index[sid][emo] = name
+    import robot_sentry as RS                                         # 파수-3(1-11c SQ-S04): CRT 얼굴판 표정 8종 — 무명 화자 N-PS-1 · 시트 이름
+    for sid in ("N-PS-1", "CR-305", "rb_cr305_loco", "rb_cr305_carry_loco"):
+        index[sid] = {}
+        for emo in EMOS:
+            name = f"RB_sentry3_{K.PORTRAIT_EXPR[emo]}.png"
+            path = os.path.join(OUT, name)
+            if not os.path.exists(path):
+                img = RS.sentry_portrait(emo)
+                bad = {px[:3] for px in img.getdata() if px[3] and px[:3] not in ALLOWED_SET()}
+                if bad:
+                    raise SystemExit(f"{name}: 팔레트 밖 색 {sorted(bad)[:4]}")
+                img.save(path)
+                made += 1
+            index[sid][emo] = name
     json.dump({"portraits": index}, open(os.path.join(OUT, "portraits.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1,
               sort_keys=True)
     print(f"초상화: 화자 {len(index)}명 × 표정 {len(EMOS)} (새로 그림 {made}), 건너뜀 {skipped}")

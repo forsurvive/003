@@ -1,0 +1,39 @@
+# 관악 레이더 중계소 장비동 1층(SD-09a L-R01-04 실내 · SD-04a §4.4 해법 F · 단계 1-11c): 당직실(2077-10-23 야간 당직 2인 — 교대 없음).
+# 20×12 · 당직 단말 TM-K34(전지 출력 '대기'로 — [과학 50] 해킹) · 무전 책상 · 침상 둘 · 비상 발전기(꺼짐) · 위층 기록실(K-35)로 가는 계단.
+map K-34 레이더 중계소 장비동 1층
+set bk
+grid
+################t###
+################t###
+################t###
+#tttttttttttttttttt#
+#tttttttttttttttttt#
+#tttttttttttttttttt#
+#tttttttttttttttttt#
+#tttttttttttttttttt#
+#tttttttttttttttttt#
+#tttttttttttttttttt#
+#tttttttttttttttttt#
+#########tt#########
+end
+exit 9 11 X-RD from_K-34
+exit 10 11 X-RD from_K-34
+mark from_X 9 10 N
+door 16 1 "2층 기록실"
+exit 16 0 K-35 from_K-34
+mark from_K-35 16 3 S
+term 3 3 TM-K34
+prop terminal_desk 3 3
+prop radio_desk 6 3
+text 6 4 "무전 책상. 수화기가 선에 매달려 흔들린다. 송신 버튼 위에 손때." w=2
+prop w_calendar 9 1
+prop w_procedure 12 1
+text 12 2 "벽 공고 '전지 출력 조정은 당직 2인 입회 하에 — 위반 시 관제 규정 제7조'."
+prop cot 2 7
+prop cot 2 9
+text 3 8 "침상 둘. 모포가 개켜진 채 그대로다. 23일 밤, 아무도 눕지 않았다." w=2
+prop generator_bk 13 6
+text 14 7 "비상 발전기. 연료 바늘은 0. 계기판 옆에 붙인 쪽지 '돔 전지가 살아 있으면 손대지 말 것'." w=2
+prop gun_locker 17 6
+prop file_cabinet 17 8
+prop drum 15 9

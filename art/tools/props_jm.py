@@ -395,24 +395,14 @@ def stairs_up():
 
 
 def sentry_down(lit=False):
-    """넘어진 '파수' 경비 로봇(2×1, MQ-102 봉천 잠든 로봇): 세진 크림·청록 캡슐 몸 · 외바퀴 · 진공관 머리 · 한쪽 팔. lit이면 머리 진공관이 켜진다."""
+    """넘어진 '파수-3' 경비 로봇(2×1, MQ-102 봉천 잠든 로봇 · SQ-S04에서 일어선다): robot_sentry의 누운 그림과 같은 몸
+    (이족 · 크림 캡슐 · 관제망 휘장 · 떨어진 청록 방패 · CRT 얼굴판). lit이면 화면에 앰버 얼굴이 켜진다."""
+    import robot_sentry as RS
+    body = RS.sentry_death(3, lit)
+    bb = body.getbbox()
+    part = body.crop(bb)
     im = img(70, 40)
-    d = ImageDraw.Draw(im)
-    d.ellipse([6, 12, 50, 36], fill=C("P08"))                          # 옆으로 누운 몸
-    d.chord([6, 12, 50, 36], 200, 340, fill=C("P09"))
-    d.rectangle([18, 12, 30, 36], fill=C("P61")); d.line([18, 12, 18, 36], fill=C("P62"))   # 청록 띠
-    for r in (5, 3):                                                   # SJ 동심원
-        d.ellipse([38 - r, 23 - r, 38 + r, 23 + r], outline=C("P61"))
-    d.ellipse([46, 14, 66, 32], fill=C("P13"))                         # 머리(유리 돔) + 진공관
-    d.ellipse([48, 16, 64, 30], fill=C("P02"))
-    tube = "P60" if lit else "P05"
-    d.rectangle([53, 19, 58, 27], fill=C(tube)); d.ellipse([53, 17, 58, 21], fill=C(tube))
-    if lit:
-        d.point((55, 22), fill=C("P50")); d.point((56, 23), fill=C("P50"))
-    d.ellipse([0, 24, 12, 36], fill=C("P02")); d.ellipse([3, 27, 9, 33], fill=C("P05"))   # 외바퀴
-    d.line([30, 34, 40, 39], fill=C("P12"), width=3); d.line([40, 39, 46, 37], fill=C("P12"), width=2)  # 팔
-    for x in (12, 44):
-        d.point((x, 16), fill=C("P25"))
+    im.alpha_composite(part, ((70 - part.width) // 2, 40 - part.height))
     return im
 
 
