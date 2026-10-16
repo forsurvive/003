@@ -438,10 +438,17 @@ func _fight_tick(_dt: float) -> void:
 	if is_instance_valid(doksa) and not doksa_gone and not doksa.cmb.dead and doksa.cmb.hp <= doksa.cmb.max_hp * 0.25:
 		doksa_gone = true                                                 # 독사는 체력 25%에서 도주(SD-03a §8.1)
 		doksa.cmb.team = "gone"
+		doksa.foes.clear()                                                # 달아나는 동안 아무도 노리지 않는다(예전엔 노리는 편이 남아 보이지 않는 채로 물었다 — 해법 1 봇 원인)
+		doksa.brain.state = AIBrain.S.RETURN
+		host.combat._rebuild_list()
 		host.combat.message.emit("독사가 피를 흘리며 아랫문 밖으로 달아난다")
 		var tw := create_tween()
 		tw.tween_property(doksa, "position", doksa.position + Vector2(0, 160), 1.6)
-		tw.tween_callback(func() -> void: doksa.visible = false)
+		var gone_d := doksa
+		tw.tween_callback(func() -> void:
+			if is_instance_valid(gone_d):
+				gone_d.visible = false
+				host.combat.drop_enemy(gone_d))                       # 전장에서 뺀다(사라진 몸이 남아 싸우지 않게)
 	if is_instance_valid(doksa) and doksa.cmb.dead and doksa.cmb.killed_lethal and not st.is_dead("C-021"):
 		st.kill("C-021")                                           # 독사 사살: 카르마 0(SD-03a §8.1 표)
 	var left := foes.filter(func(e): return is_instance_valid(e) and not e.cmb.dead and e.cmb.team == "enemy")
