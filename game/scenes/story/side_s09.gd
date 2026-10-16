@@ -435,7 +435,7 @@ func _settle(n: int) -> void:
 	if v("SQ_S09_PLACE") != 0:
 		return
 	_sv("SQ_S09_PLACE", n)
-	_sv("SQR_S09", n)
+	_sv("SQR_S09", 7 if n == 9 else n)                                      # SQR: 1~3 정착 · 7 아내 없음 · 8 채윤재 사망 · 9 팔림
 	if n != 9:
 		st.call_fn("give", ["M-184", 1])                                   # 채해인: 구로 공단 근속 15년 명패
 		match n:
@@ -450,7 +450,7 @@ func _settle(n: int) -> void:
 	st.deeds.record(st, "side", "R02", 1, {"SB": 0}, Clock.abs_min(host.date_text), {"tag": "SQS09_%d" % n, "place": "R02",
 		"what": {1: "구로 107동 판자에 '사람 있음'이 쓰였다", 2: "127번이라 불리던 사람이 고향 봉천에 자리를 잡았다",
 			3: "새벽인력 우리를 나온 부부가 지하시장에 칸을 얻었다", 9: "127번이 우리를 나왔지만 이름을 불러 줄 사람이 없었다"}[n], "seen_by": [], "about": []})
-	_close(n, "재회")
+	_close(7 if n == 9 else n, "재회")
 
 
 func _give_list() -> void:
