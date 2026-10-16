@@ -6,7 +6,8 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "TAKEN": 5
+  "TAKEN": 5,
+  "CARRIED": 8
  },
  "ops": [
   {
@@ -38,10 +39,25 @@
    "to": "END"
   },
   {
+   "op": "if",
+   "cond": "SQ_S08_SOL == 3",
+   "to": "CARRIED"
+  },
+  {
    "op": "line",
    "who": "SYS",
    "emo": "기본",
    "text": "경비복 유해. 명찰은 그대로 달려 있다. 수첩은 당신 손에."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈 벽. 먼지 위에 사람 모양 자국과 손전등 하나. 들것 손잡이에 쓸린 자국이 광장 쪽으로 이어진다."
   },
   {
    "op": "goto",

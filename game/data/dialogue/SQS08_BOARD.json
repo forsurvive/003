@@ -6,13 +6,19 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "CALLED": 3
+  "CALLED": 4,
+  "SKIPPED": 6
  },
  "ops": [
   {
    "op": "if",
    "cond": "SQ_S08_DESK == 1",
    "to": "CALLED"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S08_PROXY >= 2",
+   "to": "SKIPPED"
   },
   {
    "op": "line",
@@ -29,6 +35,16 @@
    "who": "SYS",
    "emo": "기본",
    "text": "전광판 '0413'. 내 번호다. 2077년 이후 처음으로 넘어간 숫자."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "전광판 '0412'. 0411번 — 오순례 님은 불렸다. 200년 만에 한 칸."
   },
   {
    "op": "goto",

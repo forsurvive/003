@@ -6,24 +6,27 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "STRANGER": 6,
-  "MENU": 8,
-  "WAITLINE": 9,
-  "TALK_OK": 11,
-  "TALK_NO": 14,
-  "CARD": 16,
-  "NAMES": 19,
-  "PROXY": 22,
-  "SERVED": 26,
-  "SERVED_LINE": 29,
-  "CALLED_IN": 31,
-  "LINE_OK": 34,
-  "SHUT": 36,
-  "RECORD": 38,
-  "GRADES": 45,
-  "SELF": 51,
-  "NOBODY": 53,
-  "EMPTY_DONE": 56
+  "STRANGER": 7,
+  "MENU": 9,
+  "WAITLINE": 10,
+  "TALK_OK": 12,
+  "TALK_NO": 15,
+  "CARD": 17,
+  "NAMES": 20,
+  "PROXY": 23,
+  "SERVED": 27,
+  "SERVED_LINE": 30,
+  "CALLED_IN": 32,
+  "LINE_OK": 36,
+  "CALLED_NONE": 38,
+  "STOLEN": 40,
+  "SHUT": 42,
+  "RECORD": 44,
+  "GRADES": 51,
+  "SELF": 57,
+  "NOBODY": 59,
+  "LAY": 62,
+  "EMPTY_DONE": 65
  },
  "ops": [
   {
@@ -33,13 +36,18 @@
   },
   {
    "op": "if",
-   "cond": "SQ_S08_DESK >= 1",
-   "to": "SERVED"
+   "cond": "SQ_S08_SHUT > GAME_DAY - 1 and SQ_S08_SHUT > 0",
+   "to": "SHUT"
   },
   {
    "op": "if",
-   "cond": "SQ_S08_SHUT > GAME_DAY - 1 and SQ_S08_SHUT > 0",
-   "to": "SHUT"
+   "cond": "SQ_S08_DESK == 4",
+   "to": "STOLEN"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S08_DESK >= 1",
+   "to": "SERVED"
   },
   {
    "op": "line",
@@ -93,7 +101,7 @@
      "id": "SQS08_DESK:1:1"
     },
     {
-     "text": "다른 이름으로 찾아 주세요 — 하경수, 봉재민",
+     "text": "주소와 가게로 찾아 주세요 — 영등포로 4가 31 · 전자상가 3층 '봉'",
      "tags": [],
      "cond": "SQ_S08_TOOL == 1 or SQ_S08_ADDR == 1",
      "fx": "",
@@ -178,7 +186,7 @@
    "op": "line",
    "who": "N-R02-023",
    "emo": "기본",
-   "text": "이름이 둘이시군요. (서류를 넘긴다) 하경수 — 지하상가 택배, 3등급. 봉재민 — 전자상가 수리, 5등급. 사진 붙어 있습니다."
+   "text": "주소로 찾는 분은 오랜만입니다. (서류를 넘긴다) 영등포로 4가 31 — 하경수, 지하상가 택배, 3등급. 전자상가 3층 — 봉재민, 수리 기사, 5등급. 사진 붙어 있습니다."
   },
   {
    "op": "cmd",
@@ -241,6 +249,11 @@
    "to": "END"
   },
   {
+   "op": "if",
+   "cond": "SQ_S08_SAW == 0 and SQ_S08_LEDGER == 0",
+   "to": "CALLED_NONE"
+  },
+  {
    "op": "line",
    "who": "N-R02-023",
    "emo": "기본",
@@ -264,7 +277,7 @@
      "id": "SQS08_DESK:2:0"
     },
     {
-     "text": "다른 이름으로 찾아 주세요 — 하경수, 봉재민",
+     "text": "주소와 가게로 찾아 주세요 — 영등포로 4가 31 · 전자상가 3층 '봉'",
      "tags": [],
      "cond": "SQ_S08_TOOL == 1 or SQ_S08_ADDR == 1",
      "fx": "",
@@ -284,6 +297,26 @@
   {
    "op": "goto",
    "to": "RECORD"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-023",
+   "emo": "기본",
+   "text": "0413번 손님. …민원 내용이 없으시군요. 번호표는 한 번 부르면 끝입니다. 다음 분."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-023",
+   "emo": "기본",
+   "text": "(서류함을 한 번 돌아본다) …원본이 한 장 비는군요. 2077년 이후 처음입니다. (도장을 고쳐 쥔다) 다음 분."
+  },
+  {
+   "op": "goto",
+   "to": "END"
   },
   {
    "op": "line",
@@ -390,6 +423,40 @@
    "who": "SYS",
    "emo": "기본",
    "text": "둘째 창구는 비었다. 도장이 서류 위에 그대로 놓여 있다. 창구 뒤 서류함은 잠겨 있다 — 원본은 저 안에."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "(0411번 번호표를 도장 옆에 올려 둔다)",
+     "tags": [],
+     "cond": "SQ_S08_PROXY == 1",
+     "fx": "",
+     "to": "LAY",
+     "id": "SQS08_DESK:3:0"
+    },
+    {
+     "text": "물러선다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS08_DESK:3:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "번호표를 도장 옆에 올려 둔다. 전광판 진공관이 덜컥 — 200년 만에 한 칸 넘어간다. 0412."
+  },
+  {
+   "op": "cmd",
+   "name": "s08",
+   "args": [
+    "lay"
+   ]
   },
   {
    "op": "goto",

@@ -8,7 +8,8 @@
   "START": 0,
   "TAKE": 3,
   "GONE": 6,
-  "NAMED": 9
+  "NAMED": 10,
+  "LAID": 12
  },
  "ops": [
   {
@@ -66,6 +67,11 @@
    "to": "NAMED"
   },
   {
+   "op": "if",
+   "cond": "SQ_S08_PROXY == 3",
+   "to": "LAID"
+  },
+  {
    "op": "line",
    "who": "SYS",
    "emo": "기본",
@@ -80,6 +86,16 @@
    "who": "SYS",
    "emo": "기본",
    "text": "오순례. 위동현이 불러 준 이름. 해골의 빈손이 조금 덜 비어 보인다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈손의 해골. 번호표는 빈 창구 도장 옆에 놓였다. 전광판은 0412."
   },
   {
    "op": "goto",
