@@ -42,7 +42,7 @@ def queue_board(state=""):
     d.rectangle([1, 2, 62, 28], fill=C(INK)); d.rectangle([2, 3, 61, 27], fill=C("P02"))
     d.line([2, 3, 61, 3], fill=C("P04"))
     put_text(im, "민원 대기", 4, 3, "P07")
-    num = "0413" if state == "next" else "0411"
+    num = {"next": "0413", "skip": "0412"}.get(state, "0411")
     seg = {"0": "abcdef", "1": "bc", "2": "abged", "3": "abgcd", "4": "fgbc", "5": "afgcd", "6": "afgedc", "7": "abc", "8": "abcdefg", "9": "abcdfg"}
     for i, ch in enumerate(num):                                                              # 진공관 칠획(5×8)
         x0, y0 = 6 + i * 9, 12
@@ -256,7 +256,7 @@ PROPS_S08 = {
 }
 
 STATES_S08 = {
-    "queue_board": {"next": lambda: queue_board("next")},
+    "queue_board": {"next": lambda: queue_board("next"), "skip": lambda: queue_board("skip")},
     "remains_guard": {"taken": lambda: remains_guard("taken")},
     "w_shutter_mem": {"named": lambda: w_shutter_mem("named")},
     "sign_repair": {"bong": lambda: sign_repair("bong")},

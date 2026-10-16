@@ -10,23 +10,24 @@
   "S8": 8,
   "S8_BOTH": 12,
   "S8_NO": 15,
-  "S8_ONE_B": 17,
-  "S8_ONE_A": 20,
-  "ABOUT": 23,
-  "SHOP": 27,
-  "MA": 29,
-  "WHY": 32,
-  "JOB": 36,
-  "JOB_ALONE": 43,
-  "JOB_HINT": 46,
-  "FEE": 48,
-  "WAITING": 52,
-  "REWARD": 54,
-  "HAVEPASS": 58,
-  "REGULAR": 60,
-  "MA_DEAD": 62,
-  "MA_LOG": 65,
-  "MA_DEAD_KNEW": 72
+  "S8_PAY": 17,
+  "S8_ONE_B": 20,
+  "S8_ONE_A": 23,
+  "ABOUT": 26,
+  "SHOP": 30,
+  "MA": 32,
+  "WHY": 35,
+  "JOB": 39,
+  "JOB_ALONE": 46,
+  "JOB_HINT": 49,
+  "FEE": 51,
+  "WAITING": 55,
+  "REWARD": 57,
+  "HAVEPASS": 61,
+  "REGULAR": 63,
+  "MA_DEAD": 65,
+  "MA_LOG": 68,
+  "MA_DEAD_KNEW": 75
  },
  "ops": [
   {
@@ -101,12 +102,20 @@
      "id": "MQ-103_BOK:1:3"
     },
     {
+     "text": "김민수 일, 끝났어요",
+     "tags": [],
+     "cond": "SQ_S08_SOL >= 1 and SQ_S08_SOL <= 3 and SQ_S08_REWARD == 0 and dead(\"N-R02-009\") == 1",
+     "fx": "",
+     "to": "S8_PAY",
+     "id": "MQ-103_BOK:1:4"
+    },
+    {
      "text": "(인사만 한다)",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "MQ-103_BOK:1:4"
+     "id": "MQ-103_BOK:1:5"
     }
    ]
   },
@@ -180,6 +189,23 @@
   {
    "op": "goto",
    "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "슬픔",
+   "text": "함 소장이 있었으면 명부에 줄 하나 긋고 봉투를 내밀었을 거야. 2분 늦은 시계 보면서. (봉투를 내민다) 그 사람 몫이야."
+  },
+  {
+   "op": "cmd",
+   "name": "s08",
+   "args": [
+    "reward"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
   },
   {
    "op": "line",

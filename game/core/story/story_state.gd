@@ -171,8 +171,8 @@ func _init() -> void:
 	vars.declare("SQE_DESERTER", "int", 0)                                # MQ-502 증인(노들섬에 닿은 진해원)
 	# SQ-S08 같은 명찰의 두 사람(1-11g, SD-04a §5.1 · SideS08): SAW 다툼 · LEDGER 명부(1 허락 · 2 열람) · DEAD 사망자 칸 · DESK 창구(1 줄 · 2 화술 · 3 카드 · 4 서류함 · 5 이름으로) ·
 	# MATCH 사진 대조 · NOTEBOOK 근무 수첩 · TOLD_A · TOLD_B 각자에게 · TOOL B 공구함 · ADDR A 주소 · GRADE 등급 · SOL 해법(1 이름 · 2 둘 다 · 3 진짜 · 4 그대로 · 5 하나 남음 · 6 둘 다 죽음) ·
-	# TICKET 번호표 · WAIT 전광판 칸 · SHUT 창구 폐쇄 날 · PROXY 해골 번호표 · STRAIN 긴장 바크 단계 · REWARD · FIX_DAY 무료 수리 · FOUND_DAY 기록 찾은 날 · DAY 해법 날 · CARRY 수습 · GHOULS 초소 구울 · SEEN_A 금하람 판 · SEEN_B 광장 방문 수 · CARD K-33 출입 카드 한 장 넣음
-	for k in "SAW LEDGER DEAD DESK MATCH NOTEBOOK TOLD_A TOLD_B TOOL ADDR GRADE SOL TICKET WAIT SHUT PROXY STRAIN REWARD FIX_DAY FOUND_DAY DAY CARRY GHOULS SEEN_A SEEN_B CARD".split(" "):
+	# TICKET 번호표 · WAIT 전광판 칸 · SHUT 창구 폐쇄 날 · PROXY 해골 번호표 · STRAIN 긴장 바크 단계 · REWARD · FIX_DAY 무료 수리 · FOUND_DAY 기록 찾은 날 · DAY 해법 날 · CARRY 수습 · GHOULS 초소 구울 · SEEN_A 금하람 판 · SEEN_B 광장 방문 수 · CARD K-33 출입 카드 한 장 넣음 · LATE 진료소 뒤 늦은 이름(D → A)
+	for k in "SAW LEDGER DEAD DESK MATCH NOTEBOOK TOLD_A TOLD_B TOOL ADDR GRADE SOL TICKET WAIT SHUT PROXY STRAIN REWARD FIX_DAY FOUND_DAY DAY CARRY GHOULS SEEN_A SEEN_B CARD LATE".split(" "):
 		vars.declare("SQ_S08_" + k, "int", 0)
 	for kv in [["SQH_BATT", -1], ["LR15_READ", 0], ["PD_R01_GS", 0], ["M303_BONUS", 0], ["PK_017", 0]]:   # 전지 인도처(HO) · LR-15 · 판도 PD-R01-2 각성회 · 편지 화술 +10(첫 1회) · 퍽 눈치(퍽 창은 1-12)
 		vars.declare(kv[0], "int", kv[1])

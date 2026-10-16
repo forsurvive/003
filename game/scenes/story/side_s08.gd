@@ -91,9 +91,9 @@ func _catch_up() -> void:
 	if v("SQ_S08_MATCH") == 1:
 		_up(40)
 		_up(50)
-	if v("SQ_S08_MATCH") == 1 or v("SQ_S08_NOTEBOOK") == 1:
+	if (v("SQ_S08_MATCH") == 1 or v("SQ_S08_NOTEBOOK") == 1) and v("SQ_S08_SAW") == 1:
 		if v("SQ_S08_FOUND_DAY") == 0:
-			_sv("SQ_S08_FOUND_DAY", day())                                    # D 시계: 기록을 찾은 날부터
+			_sv("SQ_S08_FOUND_DAY", day())                                    # D 시계: 다툼을 보고 기록을 찾은 날부터(재미 검수 — 다툼 전 수첩은 시계를 켜지 않는다)
 
 
 func _process(dt: float) -> void:
@@ -120,7 +120,7 @@ func tick() -> void:
 
 # ---------------------------------------------------------------- 광장 다툼(지하시장 첫 방문 뒤 — 광장에 두 번째로 들어섰을 때부터)
 func _quarrel_tick() -> void:
-	if v("SQ_S08_SAW") == 1 or v("SQ_S08_SEEN_B") < 2 or host.box.active or host.ev.busy() or host.busy:
+	if v("SQ_S08_SAW") == 1 or v("SQ_S08_SOL") != 0 or v("SQ_S08_SEEN_B") < 2 or host.box.active or host.ev.busy() or host.busy:
 		return
 	if _dead(A_ID) or _dead(B_ID):
 		return
@@ -229,7 +229,7 @@ func _paint() -> void:
 		return
 	match _zone():
 		"J-03":
-			if v("SQ_S08_SOL") == 3:
+			if v("SQ_S08_SOL") in [3, 6] or v("SQ_S08_LATE") == 1:
 				host.map.set_prop_state(Vector2i(24, 1), "named")
 			if v("SQ_S08_SOL") in [1, 3] or (v("SQ_S08_SOL") == 5 and v("SQ_S08_TOLD_B") == 1):
 				host.map.set_prop_state(Vector2i(36, 4), "bong")
@@ -239,11 +239,14 @@ func _paint() -> void:
 		"K-15":
 			if v("SQ_S08_DESK") == 1:
 				host.map.set_prop_state(Vector2i(17, 1), "next")
+			elif v("SQ_S08_PROXY") >= 2:
+				host.map.set_prop_state(Vector2i(17, 1), "skip")              # 0411 오순례가 불렸다 — 200년 만에 한 칸
 
 
 func _on_map(_id: String) -> void:
 	if host.map == null:
 		return
+	_barks()
 	match _zone():
 		"J-03":
 			_sv("SQ_S08_SEEN_B", mini(9, v("SQ_S08_SEEN_B") + 1))           # 광장 방문 횟수(다툼은 두 번째부터 — '첫 방문 이후')
@@ -260,6 +263,35 @@ func _on_map(_id: String) -> void:
 				items["M-073"] = int(items.get("M-073", 0)) + 1
 				host.box_contents(cb)["items"] = items
 	_paint()
+
+
+## 지나가며 하는 말이 결과를 안다(재미 검수 ⑤): 두 김민수 · 광장 인지영
+func _barks() -> void:
+	var sol := v("SQ_S08_SOL")
+	var a_named := v("SQ_S08_TOLD_A") == 1 or sol in [1, 3]
+	var b_named := v("SQ_S08_TOLD_B") == 1 or sol in [1, 3]
+	var lines := {}
+	if sol == 2:
+		lines = {A_ID: "큰 민수야. 짐 있으면 말해. …걸레질? 이제 안 해. 내 가게 아니잖아.", B_ID: "작은 민수네 수리. 주 1회는 공짜야."}
+	elif sol == 4:
+		lines = {A_ID: "(붕대 감은 팔로 셔터를 닦는다)", B_ID: "(반쪽 난 명찰을 만지작거린다) 수리 안 해. 오늘은."}
+	else:
+		if a_named:
+			lines[A_ID] = "하경수야. 짐 들 때 이름 불러 줘. 힘이 나." if sol != 3 else "하경수야. 저 셔터, 이제 김민수 거야. 진짜 김민수."
+		if b_named:
+			lines[B_ID] = "봉 수리. 고칠 거 있어? 주 1회는 공짜."
+		if sol == 5:
+			if not a_named:
+				lines[A_ID] = "이제 김민수는 나 하나야. …셔터는 계속 닦을래. 습관이야."
+			if not b_named:
+				lines[B_ID] = "김민수는 나 하나 남았어. 명찰 봐. …좋을 줄 알았는데."
+	if sol == 0 and v("SQ_S08_STRAIN") >= 1:
+		lines["N-R02-014"] = "어제 또 소리 질렀대, 김민수 둘이. 저러다 주먹 나가." if v("SQ_S08_STRAIN") == 1 else "수리 간판 이름 위에 누가 칼로 줄을 그었어. 큰일 나겠다."
+	elif sol == 2:
+		lines["N-R02-014"] = "큰 민수, 작은 민수. 이름 하나로 둘이 사는 법도 있더라."
+	for n in host.npcs:
+		if lines.has(str(n["id"])):
+			n["bark"] = lines[str(n["id"])]
 
 
 # ---------------------------------------------------------------- 하루 판정: D 시계 · 창구 폐쇄 풀림
@@ -330,6 +362,14 @@ func _cmd(a: Array, done: Callable) -> void:
 			_resolve()
 		"both":
 			_solve(2)
+		"one":
+			_solve(5)                                                      # 노복희 — 한쪽이 이미 본명을 받아들였다(재미 검수 ④)
+		"late":
+			_late()
+		"lay":
+			_sv("SQ_S08_PROXY", 3)                                         # 빈 창구 도장 옆에 0411(위동현 사망 — 해 보고 싶은 짓)
+			if host.map != null and _zone() == "K-15":
+				host.map.set_prop_state(Vector2i(17, 1), "skip")
 		"carry":
 			done.call()
 			_carry()
@@ -344,13 +384,33 @@ func _cmd(a: Array, done: Callable) -> void:
 	done.call()
 
 
+## 진료소 뒤 늦은 이름(재미 검수 ②): 그대로 두기(D)로 끝난 뒤 기록을 내밀면 둘이 본명을 받아들인다 — 반쪽 명찰을 셔터에(보상은 줄여서)
+func _late() -> void:
+	if v("SQ_S08_SOL") != 4 or v("SQ_S08_LATE") == 1:
+		return
+	_sv("SQ_S08_LATE", 1)
+	_sv("SQ_S08_SOL", 1)
+	_sv("SQ_S08_TOLD_A", 1)
+	_sv("SQ_S08_TOLD_B", 1)
+	st.call_fn("karma", [25])
+	st.call_fn("aff", ["JH", 2])
+	st.call_fn("xp", [100])
+	_sv("SQ_S08_FIX_DAY", day() - 7)
+	st.deeds.record(st, "side", "R02", 2, {"JH": 0}, Clock.abs_min(host.date_text), {"tag": "SQS08_LATE", "place": "JH",
+		"what": "지하시장 김민수 둘이 진료소에서 나와 본명을 찾았다 — 반쪽 명찰은 셔터에", "seen_by": ["JH"], "about": []})
+	_paint()
+	_log("늦은 이름(D → A)")
+
+
 ## 대기 의자: 화면이 어두워졌다 밝아지며 전광판이 한 칸씩 — 위동현이 해골 줄을 보고 번호를 부른다(재미 검수 1)
 func _wait() -> void:
 	host.ev.run("fade_out", ["black", "5"], func() -> void:
 		host.advance_minutes(60)
 		_sv("SQ_S08_WAIT", TICKET_MINE)
-		var who := "오순례 님." if v("SQ_S08_PROXY") == 2 else "손님…"
-		host.hint("위동현: \"0411번 %s\" (5등급 줄 맨 앞 해골을 한 번 본다) \"…0412번.\" 200년 만에 진공관 숫자가 넘어간다." % who, 5.0)
+		if v("SQ_S08_PROXY") >= 2:
+			host.hint("위동현: \"0412번 손님…\" (빈 의자를 한 번 본다) 진공관 숫자가 한 칸씩 넘어간다.", 5.0)
+		else:
+			host.hint("위동현: \"0411번 손님…\" (5등급 줄 맨 앞 해골을 한 번 본다) \"…0412번.\" 200년 만에 진공관 숫자가 넘어간다.", 5.0)
 		host.ev.run("fade_in", ["black", "5"], func() -> void:
 			if host.map != null and _zone() == "K-15":
 				host.map.set_prop_state(Vector2i(17, 1), "next")

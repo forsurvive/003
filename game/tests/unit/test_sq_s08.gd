@@ -218,7 +218,7 @@ func test_sq_s08_desk_ways(t) -> void:
 	st3.vars.set_v("SQ_S08_SAW", 1)
 	_play(st3, c3, "SQS08_SIGN")
 	t.eq(_v(st3, "SQ_S08_TOOL"), 1, "간판 공구함의 '봉'")
-	_play(st3, c3, "SQS08_DESK", ["다른 이름으로"])
+	_play(st3, c3, "SQS08_DESK", ["주소로 찾아"])
 	t.eq(_v(st3, "SQ_S08_DESK"), 5, "이름으로 찾기")
 
 
@@ -257,15 +257,15 @@ func test_sq_s08_drawer_and_guess(t) -> void:
 	t.eq(int(st.vars.get_v("V_KARMA")) - k0, -5, "산 공무원의 서류함 −5")
 	t.eq(st.quests.stage("SQ-S08"), 40, "서류함만으로 창구 단계")
 	t.eq(_v(st, "SQ_S08_MATCH"), 0, "원본은 직접 맞춰 봐야")
-	t.eq(_play(st, c, "SQS08_A", ["증명사진", "안경을"]), [], "A에게 틀린 얼굴")
+	t.eq(_play(st, c, "SQS08_A", ["증명사진", "사진 ②"]), [], "A에게 틀린 얼굴")
 	t.eq(_v(st, "SQ_S08_TOLD_A"), 0, "틀리면 그대로")
-	_play(st, c, "SQS08_A", ["증명사진", "택배 모자"])
+	_play(st, c, "SQS08_A", ["증명사진", "사진 ①"])
 	t.eq(_v(st, "SQ_S08_MATCH"), 1, "맞히면 대조")
 	t.eq(_v(st, "SQ_S08_TOLD_A"), 1, "하경수")
 	t.eq(st.quests.stage("SQ-S08"), 50, "대조 → 50")
 	t.eq(_v(st, "SQ_S08_SOL"), 0, "B가 남았다")
 	st.vars.set_v("PC_SKP_SPEECH", 90)
-	_play(st, c, "SQS08_B", ["증명사진", "안경을", "줄은 끝났어"])
+	_play(st, c, "SQS08_B", ["증명사진", "사진 ②", "줄은 끝났어"])
 	t.eq(_v(st, "SQ_S08_TOLD_B"), 1, "봉재민")
 	t.eq(_v(st, "SQ_S08_SOL"), 1, "해법 A 이름 돌려주기")
 	t.eq(st.quests.stage("SQ-S08"), 100, "끝")
@@ -302,7 +302,9 @@ func test_sq_s08_notebook_and_carry(t) -> void:
 	t.eq(_v(st, "SQ_S08_GHOULS"), 1, "구울 깨어남")
 	_play(st, c, "SQS08_GUARD")
 	t.eq(_v(st, "SQ_S08_NOTEBOOK"), 1, "근무 수첩")
-	t.ok(_v(st, "SQ_S08_FOUND_DAY") > 0, "수첩도 기록 — D 시계")
+	t.eq(_v(st, "SQ_S08_FOUND_DAY"), 0, "다툼 전 수첩은 D 시계를 켜지 않는다")
+	c._cmd(["saw"], func() -> void: pass)
+	t.ok(_v(st, "SQ_S08_FOUND_DAY") > 0, "다툼을 보면 수첩 기록부터 D 시계")
 	h.enter("J-03", "from_J-09")
 	h.enter("J-09", "from_J-03")
 	var g2 := 0
@@ -358,6 +360,7 @@ func test_sq_s08_leave_it_d(t) -> void:
 	var h: InteriorHost = r[0]
 	var st: StoryState = r[1]
 	var c: SideS08 = r[2]
+	c._cmd(["saw"], func() -> void: pass)
 	_ledger(h, st, c)
 	h.enter("K-15", "from_W")
 	_desk_talk(h, st, c)
@@ -479,3 +482,101 @@ func test_sq_s08_card_and_fix(t) -> void:
 	_play(st, c, "SQS08_HAM")
 	t.eq(int(st.vars.get_v("PC_CAPS")) - c0, 100, "함준호 100캡")
 	t.eq(_v(st, "SQ_S08_REWARD"), 1, "보상 한 번")
+
+
+func test_sq_s08_fun_fixes(t) -> void:
+	var r := _host("2277. 10. 26.  10:00", "J-04", "from_J-03")
+	var h: InteriorHost = r[0]
+	var st: StoryState = r[1]
+	var c: SideS08 = r[2]
+	_ledger(h, st, c)
+	t.ok(_says(st, c, "SQS08_HAM", "영등포 구청", ["경비원"]), "함준호가 구청으로 길을 잇는다")
+	t.ok(_says(st, c, "SQS08_HAM", "노복희", ["둘 다 김민수로"]), "함준호가 해법 B를 노복희에게 넘긴다")
+	# 창구: 서류함 · 폐쇄 · 낯선 번호표
+	var r2 := _host("2277. 10. 26.  10:00", "K-15", "from_W")
+	var st2: StoryState = r2[1]
+	var c2: SideS08 = r2[2]
+	t.ok(_says(st2, c2, "SQS08_DESK", "민원 내용이 없으시군요", [], "CALLED_IN"), "모르는 사람이 번호표로 불리면 '다음 분'")
+	t.eq(_v(st2, "SQ_S08_DESK"), 0, "기록은 주지 않는다")
+	st2.vars.set_v("SQ_S08_DESK", 4)
+	t.ok(_says(st2, c2, "SQS08_DESK", "원본이 한 장 비는군요"), "서류함 털이를 안다")
+	st2.vars.set_v("SQ_S08_SHUT", 5)
+	t.ok(_says(st2, c2, "SQS08_DESK", "업무 마감"), "목격했으면 폐쇄가 먼저")
+	# 노복희 — 한쪽이 이미 본명을 받아들였으면 하나 남은 김민수
+	var r3 := _host("2277. 10. 26.  10:00", "J-04", "from_J-03")
+	var st3: StoryState = r3[1]
+	var c3: SideS08 = r3[2]
+	c3._cmd(["saw"], func() -> void: pass)
+	st3.vars.set_v("SQ_S08_TOLD_A", 1)
+	_play(st3, c3, "MQ-103_BOK", ["김민수 둘"], "MENU")
+	t.eq(_v(st3, "SQ_S08_SOL"), 5, "짐꾼은 하경수 — 김민수 칸은 수리공 몫")
+	t.ok(_says(st3, c3, "SQS08_B", "나 하나"), "수리공이 김민수로 남는다")
+	# 해법 B 뒤 무료 수리
+	var r4 := _host("2277. 10. 26.  10:00", "J-03", "from_J-02")
+	var h4: InteriorHost = r4[0]
+	var st4: StoryState = r4[1]
+	var c4: SideS08 = r4[2]
+	st4.vars.set_v("SQ_S08_SOL", 2)
+	st4.vars.set_v("SQ_S08_FIX_DAY", -10)
+	t.ok("총 좀 봐 줘(주 1회 무료)" in _opts(st4, "SQS08_B"), "작은 민수네도 주 1회 무료")
+	h4.enter("J-02", "from_J-03")
+	var ab := ""
+	for n in h4.npcs:
+		if str(n["id"]) == "N-R02-015":
+			ab = str(n["bark"])
+	t.ok(ab.contains("큰 민수"), "짐꾼 바크가 해법을 안다")
+	# D 뒤 늦은 이름
+	var r5 := _host("2277. 10. 26.  10:00", "J-03", "from_J-02")
+	var st5: StoryState = r5[1]
+	var c5: SideS08 = r5[2]
+	for kv in [["SQ_S08_SOL", 4], ["SQ_S08_MATCH", 1]]:
+		st5.vars.set_v(kv[0], kv[1])
+	t.ok(_says(st5, c5, "SQS08_A", "셔터에 걸게", ["배급 기록 사본"]), "진료소 뒤에도 기록을 내밀 수 있다")
+	_play(st5, c5, "SQS08_A", ["배급 기록 사본"])
+	t.eq(_v(st5, "SQ_S08_SOL"), 1, "늦은 이름 → A")
+	t.eq(_v(st5, "SQ_S08_LATE"), 1, "늦은 표지")
+	t.ok(_says(st5, c5, "SQS08_SHUTTER", "반쪽 명찰"), "반쪽 명찰 셔터")
+	_play(st5, c5, "SQS08_A", ["배급 기록 사본"])
+	t.eq(_v(st5, "SQ_S08_LATE"), 1, "한 번만")
+	# 오순례로 봉재민 설득
+	var r6 := _host("2277. 10. 26.  10:00", "J-03", "from_J-02")
+	var st6: StoryState = r6[1]
+	var c6: SideS08 = r6[2]
+	for kv in [["SQ_S08_MATCH", 1], ["SQ_S08_PROXY", 2], ["PC_SKP_SPEECH", 0]]:
+		st6.vars.set_v(kv[0], kv[1])
+	_play(st6, c6, "SQS08_B", ["기록을 보여", "오순례"])
+	t.eq(_v(st6, "SQ_S08_TOLD_B"), 1, "0411번 오순례로 봉재민")
+	t.ok(_says(st6, c6, "SQS08_BOARD", "0412"), "전광판은 0412")
+	# 위동현이 죽은 빈 창구에 번호표
+	var r7 := _host("2277. 10. 26.  10:00", "K-15", "from_W")
+	var st7: StoryState = r7[1]
+	var c7: SideS08 = r7[2]
+	st7.kill(WI)
+	st7.vars.set_v("SQ_S08_PROXY", 1)
+	_play(st7, c7, "SQS08_DESK", ["도장 옆에"])
+	t.eq(_v(st7, "SQ_S08_PROXY"), 3, "빈 창구에 올려 둔다")
+	t.ok(_says(st7, c7, "SQS08_SKEL", "도장 옆"), "해골 판")
+	# 수습 뒤 초소 · 둘 다 죽음 셔터 · 다툼은 해법 뒤 다시 안 열림
+	var r8 := _host("2277. 10. 26.  10:00", "J-03", "from_J-02")
+	var h8: InteriorHost = r8[0]
+	var st8: StoryState = r8[1]
+	var c8: SideS08 = r8[2]
+	for kv in [["SQ_S08_NOTEBOOK", 1], ["SQ_S08_SOL", 3]]:
+		st8.vars.set_v(kv[0], kv[1])
+	t.ok(_says(st8, c8, "SQS08_GUARD", "빈 벽"), "수습 뒤 초소는 빈 벽")
+	st8.vars.set_v("SQ_S08_SOL", 6)
+	t.ok(_says(st8, c8, "SQS08_SHUTTER", "하경수 · 봉재민"), "둘 다 죽으면 이름 셋 셔터")
+	st8.vars.set_v("SQ_S08_SOL", 2)
+	st8.vars.set_v("SQ_S08_SEEN_B", 5)
+	h8.player.loco.place(h8.map.mark_pos("quarrel"))
+	c8.tick()
+	t.eq(_v(st8, "SQ_S08_SAW"), 0, "해법 뒤엔 다툼이 없다")
+	# 함준호가 죽으면 노복희가 보상
+	var r9 := _host("2277. 10. 26.  10:00", "J-04", "from_J-03")
+	var st9: StoryState = r9[1]
+	var c9: SideS08 = r9[2]
+	st9.vars.set_v("SQ_S08_SOL", 1)
+	st9.kill("N-R02-009")
+	var cap0 := _v(st9, "PC_CAPS")
+	_play(st9, c9, "MQ-103_BOK", ["끝났어요"], "MENU")
+	t.eq(_v(st9, "PC_CAPS") - cap0, 100, "노복희가 함준호 몫")

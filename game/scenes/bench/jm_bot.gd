@@ -161,6 +161,7 @@ func _ready() -> void:
 			var sn := _stand(note)
 			var sb := _stand(body)
 			var se := _stand(evac)
+			host.player.loco.place(Vector2(sn.x * 32 + 16, sn.y * 32 + 16))   # 시작 칸도 굽기가 정한 쪽지 옆(다시 구우면 건물이 옮겨진다 — 1-11g)
 			plan = [["shoton", "충전소", "note"], ["go", sn.x, sn.y], ["use", note.x, note.y], ["wait", 2.0],
 				["go", sb.x, sb.y], ["use", body.x, body.y], ["wait", 1.0], ["shot", "remains_box"],
 				["check", "container_open", "떠돌이 유해 → 용기 창이 열린다"], ["close"],
