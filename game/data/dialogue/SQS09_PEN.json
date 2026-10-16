@@ -1,0 +1,93 @@
+{
+ "id": "SQS09_PEN",
+ "title": "출근부 반장 빨간펜",
+ "loc": "L-R02-19",
+ "npc": "N-R02-036",
+ "cond": "V_ACT >= 1 and SB_RAID == 0",
+ "labels": {
+  "START": 0,
+  "ASK": 4,
+  "PEN": 5,
+  "STRUCK": 8
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-R02-036",
+   "emo": "기본",
+   "text": "번호만 불러. 이름은 장부에 있어."
+  },
+  {
+   "op": "if",
+   "cond": "(SQ_S09_NOTICE > 0 or SQ_S09_REQ == 1) and SQ_S09_ORDER == 0 and SQ_S09_SOL2 == 0",
+   "to": "ASK"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S09_SOL1 == 2 or SQ_S09_SOL1 == 4 or SQ_S09_SOL2 == 1",
+   "to": "STRUCK"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "운송로 변경 지시서 한 장 — 실장 이름으로",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 100
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PEN",
+     "id": "SQS09_PEN:1:0"
+    },
+    {
+     "text": "됐다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS09_PEN:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-036",
+   "emo": "기본",
+   "text": "(봉투를 서랍에 넣는다) 빨간펜은 줄도 긋고 이름도 쓰지. 실장 글씨는 내가 제일 잘 알아."
+  },
+  {
+   "op": "cmd",
+   "name": "s09",
+   "args": [
+    "order",
+    "2"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-036",
+   "emo": "분노",
+   "text": "127번은 결번이야. 빨간 줄 그은 지 오래야. …누가 그었는지는 몰라도."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S09.txt"
+}

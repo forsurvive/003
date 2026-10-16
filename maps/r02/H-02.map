@@ -86,3 +86,6 @@ prop pallet_sacks 37 17
 prop drum 22 17
 prop steel_rack 35 12
 box 35 12 stall w=2 name="매점 창고 선반" owner=N-R02-037
+# 1-11h SQ-S09: 인력 칠판(현장 출발 날짜 · 결번)
+prop w_roster 10 1
+text 10 2 "인력 칠판." scene=SQS09_BOARD w=2

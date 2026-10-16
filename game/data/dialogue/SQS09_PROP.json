@@ -1,0 +1,127 @@
+{
+ "id": "SQS09_PROP",
+ "title": "썩은 버팀목",
+ "loc": "L-R02-20",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "NOLIST": 6,
+  "BOMB": 8,
+  "FALL": 10,
+  "FALLEN": 13
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S09_SOL2 == 3",
+   "to": "FALLEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "천장 버팀목이 썩었다. 세게 차면 이 통로는 무너진다."
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S09_NOTICE == 0 and SQ_S09_REQ == 0",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S09_SOL2 != 0",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S09_LIST == 0 and dead(\"N-R02-042\") == 0",
+   "to": "NOLIST"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "버팀목을 걷어찬다",
+     "tags": [
+      {
+       "k": "stat",
+       "name": "힘",
+       "min": 7
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "FALL",
+     "id": "SQS09_PROP:1:0"
+    },
+    {
+     "text": "(파편 수류탄을 버팀목 아래 놓는다)",
+     "tags": [],
+     "cond": "has(\"W-060\") == 1",
+     "fx": "",
+     "to": "BOMB",
+     "id": "SQS09_PROP:1:1"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS09_PROP:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "막기 전에 — 이 길로 나간 마흔 명의 이름은 길금순 할매만 안다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "take(\"W-060\", 1)"
+  },
+  {
+   "op": "goto",
+   "to": "FALL"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "흙과 판자가 쏟아진다. 우리 벽 쪽 길이 메워졌다. 먼지 속에서 분필 바를 정(正) 자 여덟이 보인다."
+  },
+  {
+   "op": "cmd",
+   "name": "s09",
+   "args": [
+    "sol2",
+    "3"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "무너진 흙. 이 길로는 더 못 간다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S09.txt"
+}

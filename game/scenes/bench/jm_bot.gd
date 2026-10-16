@@ -15,6 +15,7 @@ var side3: SideS03                                   ## 관악 사이드 퀘스�
 var side5: SideS05                                   ## 관악 사이드 퀘스트(1-11e SQ-S05)
 var side6: SideS06                                   ## 관악 사이드 퀘스트(1-11f SQ-S06)
 var side8: SideS08                                   ## 영등포 사이드 퀘스트(1-11g SQ-S08)
+var side9: SideS09                                   ## 영등포 사이드 퀘스트(1-11h SQ-S09)
 var st: StoryState
 var route := "job"
 var shots := ""
@@ -95,6 +96,9 @@ func _ready() -> void:
 	side8 = SideS08.new()
 	add_child(side8)
 	side8.setup(host, true)
+	side9 = SideS09.new()
+	add_child(side9)
+	side9.setup(host, true)
 	host.combat.player_down.connect(host.on_pc_down)                  # 쓰러짐 → 생포 판정(진짜 진행 prologue와 같은 연결)
 	host.combat.equip("W-002", st)
 	match route:
@@ -289,6 +293,21 @@ func _ready() -> void:
 				["warp", "J-02", "from_J-03"], ["wait", 1.0], ["want", ["기록을 보여"]], ["talk", "N-R02-015"], ["wait", 2.0],
 				["check", "SQ_S08_SOL == 1 and SQS08_STAGE == 100", "짐꾼 — 하경수 · 해법 A 이름 돌려주기(100)"],
 				["warp", "J-03", "from_J-02"], ["wait", 1.5], ["shot", "s8_after"]]
+		"s9":                                                           # 1-11h SQ-S09 B: 쪽방 할매 → 벽장 → 벽 사이 통로 판자 틈 속삭임(10 · 40) → 새벽 두 시 창고동 → 127번 칸 문 · 목걸이 → 길금순 칸 → '같이 가자' → 구로 107동 이름으로 재회(100)
+			st.vars.set_v("PC_SKP_LOCKPICK", 30)
+			st.vars.set_v("PC_SKP_REPAIR", 60)
+			st.quests.set_stage("MQ-103", 20)
+			host.date_text = "2277. 10. 27.  01:40"
+			host.enter("K-23", "from_K-20")
+			plan = [["wait", 1.0], ["go", 28, 4], ["use", 29, 4], ["wait", 2.0], ["shot", "s9_crack"],
+				["check", "SQ_S09_CRACK == 1 and SQS09_STAGE == 40", "판자 틈 — 127번 말고 채윤재(10 → 40)"],
+				["warp", "H-03", "from_tunnel"], ["wait", 1.0], ["settime", "2277. 10. 27.  02:20"], ["go", 10, 9], ["want", ["자물쇠 따기"]], ["use", 10, 8], ["wait", 2.0],
+				["check", "SQ_S09_DOOR == 1 and SB_RAID == 0", "새벽 두 시 — 문만 열림(목걸이부터)"], ["shot", "s9_door"],
+				["want", ["수리 50"]], ["use", 10, 8], ["wait", 2.0],
+				["check", "SB_127 == 2 and SQ_S09_SOL1 == 2 and SQS09_STAGE == 50", "목걸이 → 판자 틈으로(해법 B · 50)"],
+				["warp", "K-20", "from_K-23"], ["wait", 1.0], ["shot", "s9_room"], ["want", ["같이 가자", "채윤재", "지하시장"]], ["talk", "N-R02-039"],
+				["until", "map:K-22", 20.0, "같이 가자 — 화면 전환 뒤 구로 107동", "s9_home"], ["wait", 5.0], ["shot", "s9_reunion"],
+				["check", "SQ_S09_PLACE == 3 and SQS09_STAGE == 100", "이름으로 재회 · 지하시장 정착(100)"]]
 		"s6s":                                                          # 1-11f 수색조: 첫 접촉 25시간 뒤 시흥 고개 — 평상복 · 등록증 진해원과 길을 걸으면 수색조가 선다 → 분대장 검문 통과
 			for kv in [["A-005", 1], ["M-062", 1]]:
 				st.call_fn("give", kv)

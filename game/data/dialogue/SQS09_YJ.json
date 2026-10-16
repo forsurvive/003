@@ -1,0 +1,321 @@
+{
+ "id": "SQS09_YJ",
+ "title": "채윤재",
+ "loc": "L-R02-20",
+ "npc": "N-R02-039",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "HIDE": 7,
+  "GO": 9,
+  "ALONE": 11,
+  "ON_WAY": 14,
+  "LINE": 16,
+  "LINE_COLLAR": 19,
+  "LINE_BUY": 21,
+  "LINE_SNEAK": 24,
+  "HOME": 27,
+  "REUNITE": 30,
+  "SETTLED": 32,
+  "BC": 35
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SB_127 == 5",
+   "to": "LINE"
+  },
+  {
+   "op": "if",
+   "cond": "SB_127 == 4",
+   "to": "HOME"
+  },
+  {
+   "op": "if",
+   "cond": "SB_127 >= 6",
+   "to": "SETTLED"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-039",
+   "emo": "미소",
+   "text": "(목을 문지른다) 목이 가벼워. …구로 107동. 판자에 아이 손자국 있는 집."
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S09_OUT > 0",
+   "to": "ON_WAY"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S09_NOTICE > 0 and SQ_S09_SOL2 == 0",
+   "to": "HIDE"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "같이 가자. 구로 107동까지",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "GO",
+     "id": "SQS09_YJ:1:0"
+    },
+    {
+     "text": "혼자 갈 수 있겠어?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "ALONE",
+     "id": "SQS09_YJ:1:1"
+    },
+    {
+     "text": "조금만 기다려",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS09_YJ:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-039",
+   "emo": "기본",
+   "text": "갈고리가 가리봉을 뒤진대. 혼자 나가면 다시 우리야. …할매 칸에서 기다릴게. 같이라면 몰라도."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "같이 가자. 구로 107동까지",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "GO",
+     "id": "SQS09_YJ:2:0"
+    },
+    {
+     "text": "기다려. 통로 일부터 정리할게",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS09_YJ:2:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s09",
+   "args": [
+    "go"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-039",
+   "emo": "기본",
+   "text": "내일 아침이면 닿아. 아내한테 먼저 가 있어 줘. 판자 두드리면 이름으로 불러 달라고 해."
+  },
+  {
+   "op": "cmd",
+   "name": "s09",
+   "args": [
+    "alone"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-039",
+   "emo": "기본",
+   "text": "내일 아침에 나설 거야. 이불만 개고."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-039",
+   "emo": "슬픔",
+   "text": "(번호표 127을 쥐고 줄에 서 있다) 트럭이 여섯 시래. …현장. 탱크마을."
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S09_UNCOL == 0",
+   "to": "LINE_COLLAR"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "십장에게 웃돈을 쥐여 준다",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 500
+      }
+     ],
+     "cond": "dead(\"N-R02-035\") == 0",
+     "fx": "",
+     "to": "LINE_BUY",
+     "id": "SQS09_YJ:3:0"
+    },
+    {
+     "text": "(줄 끝에서 슬쩍 빼낸다)",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "은신",
+       "min": 40
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "LINE_SNEAK",
+     "id": "SQS09_YJ:3:1"
+    },
+    {
+     "text": "미안",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS09_YJ:3:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-039",
+   "emo": "기본",
+   "text": "목걸이가 아직이야. 줄에서 빠져도 담은 못 넘어."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "십장에게 웃돈을 쥐여 준다",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 500
+      }
+     ],
+     "cond": "dead(\"N-R02-035\") == 0",
+     "fx": "",
+     "to": "LINE_BUY",
+     "id": "SQS09_YJ:4:0"
+    },
+    {
+     "text": "미안",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS09_YJ:4:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-035",
+   "emo": "기본",
+   "text": "(봉투를 세어 본다) 트럭 자리 하나 빈다고 큰일 나진 않지. …철사, 이놈 목걸이 따. 127번 — 매각."
+  },
+  {
+   "op": "cmd",
+   "name": "s09",
+   "args": [
+    "linebuy"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "줄이 움직이는 틈에 소매를 끈다. 채윤재가 번호표를 바닥에 떨어뜨리고 뒤따른다. 아무도 돌아보지 않는다."
+  },
+  {
+   "op": "cmd",
+   "name": "s09",
+   "args": [
+    "linesneak"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S09_PLACE == 0",
+   "to": "REUNITE"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-039",
+   "emo": "미소",
+   "text": "채윤재입니다. 번호 말고 이름으로 불리니까… 그게 제일 좋네요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "s09",
+   "args": [
+    "reunion"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "SB_127 == 6",
+   "to": "BC"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-039",
+   "emo": "미소",
+   "text": "지하시장은 시끄러워. 셔터 올리는 소리에 깨. 그게 좋아."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-039",
+   "emo": "미소",
+   "text": "장부가 틀린 줄만 알았는데. 고향 맞더라. 봉천 계단 냄새."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S09.txt"
+}

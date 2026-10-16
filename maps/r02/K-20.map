@@ -51,10 +51,13 @@ text 28 3 "벽장 문틈으로 바람이 샌다. 안쪽 벽지가 들떠 있다.
 npc N-R02-042 26 4 S
 prop plant_pot 28 5
 # 복도
-npc N-R02-041 9 12 E route=a:9,12,8;b:22,12,6 bark="줄 맞춰. 낙오하면 장부에 이자 붙는다."
-npc CR-437 4 13 S sheet=en_cr437_loco bark="쉬는 시간이야. 말 걸지 마."
+npc N-R02-041 9 12 E cond="SQ_S09_SOL2 != 2" route=a:9,12,8;b:22,12,6 bark="줄 맞춰. 낙오하면 장부에 이자 붙는다."
+npc CR-437 4 13 S sheet=en_cr437_loco cond="SQ_S09_SOL2 != 2" bark="쉬는 시간이야. 말 걸지 마."
 prop drum 1 14
 prop shoe_rack 16 11
 prop crate_o 27 14
 box 27 14 trash name="복도 상자"
 text 20 11 "복도 벽 낙서. '쪽방 214호 — 고척 가서 안 옴'. 그 밑에 다른 글씨로 '213호도'."
+# 1-11h SQ-S09: 우리를 나온 채윤재는 길금순 칸(SB_127 2) · 운송로를 바꾸면(SOL2 2) 인솔조가 가리봉을 비운다
+npc N-R02-039 28 5 W cond="SB_127 == 2"
+text 22 6 "빈 쪽방 벽에 분필 — '인솔 노선 변경: 고척 일원화'. 누가 지웠다 다시 썼다." w=2 cond="SQ_S09_SOL2 == 2"

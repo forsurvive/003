@@ -1,0 +1,159 @@
+{
+ "id": "SQS09_BREACH",
+ "title": "무너진 벽",
+ "loc": "L-R02-20",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "NEST": 6,
+  "NEST_B": 9,
+  "FIX": 11,
+  "DOWN": 15,
+  "GO": 17
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S09_WALL == 1",
+   "to": "DOWN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "벽 아래쪽이 무너져 있다. 습한 바람 — 지하시장 남쪽 통로의 구울 냄새가 올라온다."
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S09_NOTICE == 0 and SQ_S09_REQ == 0",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S09_SOL2 != 0",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "MQ103_NEST == 0",
+   "to": "NEST"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "고철 여섯 장으로 버팀목을 대고 구멍을 넓힌다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 50
+      }
+     ],
+     "cond": "has(\"M-010\", 6) == 1",
+     "fx": "",
+     "to": "FIX",
+     "id": "SQS09_BREACH:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS09_BREACH:1:1"
+    }
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"C-018\")",
+   "to": "NEST_B"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "아래에서 구울 우는 소리. 둥지가 그대로다. 먼저 치워야 길이 된다 — 지하시장 박춘삼이 오십 캡이면 같이 내려간다고 했다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "아래에서 구울 우는 소리. 둥지가 그대로다. 먼저 치워야 길이 된다 — 지하시장 남쪽 통로로 직접 내려가서."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "take(\"M-010\", 6)"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "버팀목을 대고 흙을 긁어낸다. 아래로 사다리 걸 만한 구멍 — 남쪽 통로의 녹슨 천장이 보인다."
+  },
+  {
+   "op": "cmd",
+   "name": "s09",
+   "args": [
+    "sol2",
+    "1"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "버팀목을 댄 구멍. 아래는 지하시장 남쪽 통로다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "내려간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "GO",
+     "id": "SQS09_BREACH:2:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS09_BREACH:2:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s09",
+   "args": [
+    "down"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S09.txt"
+}

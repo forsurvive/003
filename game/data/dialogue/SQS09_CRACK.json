@@ -1,0 +1,115 @@
+{
+ "id": "SQS09_CRACK",
+ "title": "판자 틈",
+ "loc": "L-R02-20",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "AGAIN": 10,
+  "EMPTY": 12,
+  "GONE": 14,
+  "SHUT": 16
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S09_SOL2 == 3 or SQ_S09_CLOSED == 1",
+   "to": "SHUT"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R02-039\")",
+   "to": "GONE"
+  },
+  {
+   "op": "if",
+   "cond": "SB_127 >= 2",
+   "to": "EMPTY"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "판자 틈. 건너편에서 쇠 냄새와 사람 숨소리. 창고동 우리 벽이다."
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S09_CRACK == 1",
+   "to": "AGAIN"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-039",
+   "emo": "놀람",
+   "text": "(판자 너머 속삭임) …거기 누구야. 인솔조는 아니지. 발소리가 달라."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-039",
+   "emo": "슬픔",
+   "text": "127번 말고 채윤재. 구로 107동. 아내한테 그 이름으로 전해 줘. …판자는 헐거워도, 내 목에 이게 있어."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "틈으로 붉은 표시등이 깜박인다. 근태 목걸이 — 담 밖으로 나가면 터진다."
+  },
+  {
+   "op": "cmd",
+   "name": "s09",
+   "args": [
+    "crack"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-039",
+   "emo": "기본",
+   "text": "(속삭임) 아직 거기 있어? …목걸이부터야. 그다음이 문이고."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "판자 너머가 조용하다. 127번 칸은 비었다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "판자 너머 127번 칸. 아무도 숨 쉬지 않는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "무너진 흙과 판자 조각. 이 길은 끝났다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S09.txt"
+}

@@ -1,0 +1,61 @@
+{
+ "id": "SQS09_JO",
+ "title": "이장 조만석 — 탈출자 명단",
+ "loc": "L-R01-09",
+ "npc": "C-010",
+ "cond": "V_ACT >= 1 and SQ_S09_LIST == 1 and SQ_S09_LISTGIVEN == 0",
+ "labels": {
+  "START": 0,
+  "GIVE": 2
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "무슨 봉투야."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "가리봉 쪽방 벽장으로 나간 마흔 명 이름이야. 명부에 올려 줘",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "GIVE",
+     "id": "SQS09_JO:1:0"
+    },
+    {
+     "text": "아무것도",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS09_JO:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "슬픔",
+   "text": "(봉투를 한 장씩 넘긴다) …봉천 사람도 여럿이네. 명부에 오르면 새벽인력이 장부를 들이밀어도 못 데려가. 올리지."
+  },
+  {
+   "op": "cmd",
+   "name": "s09",
+   "args": [
+    "listgiven"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S09.txt"
+}

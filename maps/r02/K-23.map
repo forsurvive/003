@@ -25,4 +25,11 @@ text 22 5 "웅크려 쉬던 자리. 담요 조각과 빈 물병, 아이 신발 �
 prop backpack 24 6
 box 24 6 bag name="두고 간 보따리"
 prop remains 25 6 cond="V_ACT >= 99"
-text 29 4 "판자 틈. 건너편에서 쇠 냄새와 사람 숨소리. 창고동 우리 벽이다."
+text 29 4 "판자 틈. 건너편에서 쇠 냄새와 사람 숨소리. 창고동 우리 벽이다." scene=SQS09_CRACK
+# 1-11h SQ-S09: 무너진 벽(지하로 잇기 a) · 썩은 버팀목(막기 c) · 지하시장 남쪽 통로에서 올라오는 자리
+text 10 6 "벽 아래쪽이 무너져 있다. 습한 바람이 올라온다." scene=SQS09_BREACH
+text 14 3 "천장 버팀목. 썩어서 손톱이 들어간다." scene=SQS09_PROP
+mark from_J-09 10 5 N
+# 1-11h SQ-S09: 막고 넘기기(c) · 인솔조가 부숨 — 우리 벽 쪽 길이 흙더미로
+prop rubble 27 3 cond="SQ_S09_SOL2 == 3 or SQ_S09_CLOSED == 1"
+prop rubble2 27 4 cond="SQ_S09_SOL2 == 3 or SQ_S09_CLOSED == 1"

@@ -234,3 +234,7 @@ mark raid_7 36 31 W
 mark raid_8 26 13 S
 mark raid_9 30 5 S
 mark raid_10 14 7 E
+# 1-11h SQ-S09: 값을 치르고 나온 채윤재(정문 밖) · 7일째 04~06시 인력시장 줄 · 6일째 정문의 채해인
+npc N-R02-039 24 40 S cond="SB_127 == 3"
+npc N-R02-039 16 15 S cond="SB_127 == 5" bark="(번호표 127을 쥐고 있다)"
+npc N-R02-050 21 38 E cond="SQ_S09_START > 0 and GAME_DAY == SQ_S09_START + 5 and SB_127 <= 1" bark="이름은 채윤재예요. 번호 말고."

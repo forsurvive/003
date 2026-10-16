@@ -1,0 +1,190 @@
+{
+ "id": "SQS09_GU",
+ "title": "실장 구만호",
+ "loc": "L-R02-19",
+ "npc": "C-049",
+ "cond": "V_ACT >= 1 and SB_RAID == 0",
+ "labels": {
+  "START": 0,
+  "DEAL": 3,
+  "PRICE": 4,
+  "HAGGLE": 7,
+  "CHEAP": 9,
+  "BUY": 10
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "C-049",
+   "emo": "기본",
+   "text": "장부는 소장님 거고, 숫자는 내 거야."
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S09_START > 0 and SB_127 <= 1",
+   "to": "DEAL"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "127번 — 채윤재. 계약을 끝내고 싶다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "PRICE",
+     "id": "SQS09_GU:1:0"
+    },
+    {
+     "text": "됐다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS09_GU:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-049",
+   "emo": "기본",
+   "text": "채윤재? …아, 127. 빚 400. 해지 전표는 실장 결재야."
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S09_HAGGLE == 1",
+   "to": "CHEAP"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "낸다",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 400
+      }
+     ],
+     "cond": "AFF_SB < 20",
+     "fx": "",
+     "to": "BUY",
+     "id": "SQS09_GU:2:0"
+    },
+    {
+     "text": "낸다(단골 값)",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 300
+      }
+     ],
+     "cond": "AFF_SB >= 20",
+     "fx": "",
+     "to": "BUY",
+     "id": "SQS09_GU:2:1"
+    },
+    {
+     "text": "400은 장부값이지. 사람 값은 아니잖아",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "물물교환",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "HAGGLE",
+     "id": "SQS09_GU:2:2"
+    },
+    {
+     "text": "다음에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS09_GU:2:3"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-049",
+   "emo": "기본",
+   "text": "(주판을 튕긴다) 말은 장사꾼이네. 두 할 빼 주지. 대신 오늘 안에."
+  },
+  {
+   "op": "cmd",
+   "name": "s09",
+   "args": [
+    "haggle"
+   ]
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "낸다",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 320
+      }
+     ],
+     "cond": "AFF_SB < 20",
+     "fx": "",
+     "to": "BUY",
+     "id": "SQS09_GU:3:0"
+    },
+    {
+     "text": "낸다(단골 값)",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 240
+      }
+     ],
+     "cond": "AFF_SB >= 20",
+     "fx": "",
+     "to": "BUY",
+     "id": "SQS09_GU:3:1"
+    },
+    {
+     "text": "다음에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS09_GU:3:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-049",
+   "emo": "기본",
+   "text": "(전표에 도장) '계약 해지 — 127'. 철사가 목걸이 딸 거야. 정문으로 나가게 해."
+  },
+  {
+   "op": "cmd",
+   "name": "s09",
+   "args": [
+    "buy"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S09.txt"
+}

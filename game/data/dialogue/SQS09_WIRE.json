@@ -1,0 +1,76 @@
+{
+ "id": "SQS09_WIRE",
+ "title": "목걸이 기술자 철사",
+ "loc": "L-R02-19",
+ "npc": "N-R02-038",
+ "cond": "V_ACT >= 1 and SB_RAID == 0",
+ "labels": {
+  "START": 0,
+  "ASK": 3,
+  "PAY": 4
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-R02-038",
+   "emo": "기본",
+   "text": "목걸이는 거짓말을 안 해. 사람이 하지."
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S09_START > 0 and SB_127 <= 1 and SQ_S09_UNCOL == 0",
+   "to": "ASK"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "127번 목걸이, 오늘 밤 풀어 둬",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 200
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PAY",
+     "id": "SQS09_WIRE:1:0"
+    },
+    {
+     "text": "됐다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS09_WIRE:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-038",
+   "emo": "기본",
+   "text": "(동전을 세지도 않는다) 고장 났다고 적으면 그만이야. 고장 난 건 많거든."
+  },
+  {
+   "op": "cmd",
+   "name": "s09",
+   "args": [
+    "uncol"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S09.txt"
+}

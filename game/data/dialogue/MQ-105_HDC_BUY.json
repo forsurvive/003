@@ -11,8 +11,8 @@
   "KEY": 8,
   "BUY88": 14,
   "BUY127": 20,
-  "REFUND": 26,
-  "MINE": 29
+  "REFUND": 27,
+  "MINE": 30
  },
  "ops": [
   {
@@ -201,6 +201,13 @@
    "args": [
     "buy",
     "127"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s09",
+   "args": [
+    "buy_hdc"
    ]
   },
   {

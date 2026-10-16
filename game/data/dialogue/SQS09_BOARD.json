@@ -1,0 +1,58 @@
+{
+ "id": "SQS09_BOARD",
+ "title": "인력 칠판",
+ "loc": "L-R02-19",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "DUE": 4,
+  "STRUCK": 6
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S09_SOL1 == 2 or SQ_S09_SOL1 == 4 or SQ_S09_SOL2 == 1",
+   "to": "STRUCK"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S09_START > 0 and SB_127 <= 1 and dead(\"N-R02-039\") == 0",
+   "to": "DUE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "칠판. '오늘의 인력 단가 — 일반 30 · 숙련 45 · 현장 60'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "칠판. '현장 출발 — \\V[SQ_S09_DUE_M]월 \\V[SQ_S09_DUE_D]일 04:00 · 127 · 211 · 304'. 127 옆에 빨간 동그라미."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "칠판 맨 아래, 빨간 분필로 — '127번 — 결번'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S09.txt"
+}

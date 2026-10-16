@@ -60,3 +60,6 @@ mark g4 8 7 N
 prop sandbags 56 3
 prop sandbags 56 4
 text 56 3 "모래주머니 몇 개. 누군가 둥지 쪽을 막으려다 그만두었다." h=2
+# 1-11h SQ-S09: 쪽방 통로와 이은 구멍(SQ_S09_WALL)
+text 3 3 "천장에 새로 뚫린 구멍. 버팀목 사이로 바람." scene=SQS09_UP cond="SQ_S09_WALL == 1"
+mark from_K-23 4 3 E

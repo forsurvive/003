@@ -73,3 +73,5 @@ text 22 10 "액자. 2108년 첫 소장의 사진. 아래 '규정 제1조 — 장
 prop plant_pot 38 17
 prop gun_locker 38 11
 box 38 11 police name="소장실 총기함" lock=25
+# 1-11h SQ-S09: 결재 양식(운송로 변경 지시서 위조 b)
+text 3 11 "서류함 옆 결재 양식 묶음." scene=SQS09_FORM

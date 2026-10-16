@@ -623,4 +623,6 @@ npc N-R01-040 26 37 S cond="CARAVAN_V54 == 1 and MQ101_RESULT > 0" bark="고개�
 npc N-HS-E1 22 37 S look=M1-S2-HR01-H1-T03-2-PF00-HD05-EY00-PR040 cond="CARAVAN_V54 == 1 and MQ101_RESULT > 0" bark="짐 건드리지 마쇼."
 npc N-HS-E2 27 36 W look=M2-S5-HR03-H2-T10-2-PF00-HD00-EY00-PR040 cond="CARAVAN_V54 == 1 and MQ101_RESULT > 0" bark="사당까지 반나절이야. 비 오면 하루고."
 npc C-067 24 26 S cond="MEDIC_AT == 1 and MQ101_RESULT > 0" bark="다친 사람 먼저. 줄은 그다음."
-
+# 1-11h SQ-S09: 봉천에 자리 잡은 채윤재 · 채해인(고향)
+npc N-R02-039 12 30 E cond="SB_127 == 6" bark="고향 맞더라. 봉천 계단 냄새."
+npc N-R02-050 13 30 W cond="SB_127 == 6"

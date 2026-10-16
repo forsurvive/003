@@ -1,0 +1,387 @@
+{
+ "id": "SQS09_HAEIN",
+ "title": "채해인",
+ "loc": "L-R02-22",
+ "npc": "N-R02-050",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "NAME": 8,
+  "TAKE": 13,
+  "KEEP": 17,
+  "DUE": 21,
+  "OUT": 23,
+  "WAIT": 25,
+  "WAIT2": 31,
+  "WAIT3": 33,
+  "OTHER": 35,
+  "GATE": 37,
+  "GATE_B": 44,
+  "REUNITE": 47,
+  "SOLD": 49,
+  "WIDOW": 51,
+  "AFTER": 53,
+  "AFTER_BC": 57,
+  "AFTER_JH": 59
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SB_127 == 8",
+   "to": "SOLD"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S09_PLACE > 0",
+   "to": "AFTER"
+  },
+  {
+   "op": "if",
+   "cond": "SB_127 == 4",
+   "to": "REUNITE"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R02-039\")",
+   "to": "WIDOW"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S09_START > 0 and GAME_DAY == SQ_S09_START + 5 and SB_127 <= 1",
+   "to": "GATE"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S09_WIFE == 1",
+   "to": "WAIT"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-050",
+   "emo": "놀람",
+   "text": "누구세요. …새벽인력 아니죠? 판자에 '빈집'이라고 써 놨는데."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "채윤재. 본소에선 127번이라고 부르더라",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "NAME",
+     "id": "SQS09_HAEIN:1:0"
+    },
+    {
+     "text": "길을 잘못 들었다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS09_HAEIN:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s09",
+   "args": [
+    "wife"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-050",
+   "emo": "놀람",
+   "text": "…살아 있어요? 그이 이름을 아는 사람이 아직 있어요?"
+  },
+  {
+   "op": "if",
+   "cond": "SB_127 >= 2",
+   "to": "OUT"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-050",
+   "emo": "슬픔",
+   "text": "장부엔 빚이 400이래요. 이거, 다 모은 거예요. 아이 몰래 판 것까지."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "돈을 받는다. 그 값으로 데려오겠다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TAKE",
+     "id": "SQS09_HAEIN:2:0"
+    },
+    {
+     "text": "돈은 두라. 데려오겠다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "KEEP",
+     "id": "SQS09_HAEIN:2:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "caps(400)"
+  },
+  {
+   "op": "cmd",
+   "name": "s09",
+   "args": [
+    "took",
+    "1"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-050",
+   "emo": "기본",
+   "text": "부탁해요. 이름으로 불러 주세요. 번호 말고."
+  },
+  {
+   "op": "goto",
+   "to": "DUE"
+  },
+  {
+   "op": "do",
+   "fx": "karma(10)"
+  },
+  {
+   "op": "cmd",
+   "name": "s09",
+   "args": [
+    "took",
+    "2"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-050",
+   "emo": "슬픔",
+   "text": "…고마워요. 아이한테는 아빠가 일하러 갔다고만 했어요."
+  },
+  {
+   "op": "goto",
+   "to": "DUE"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-050",
+   "emo": "기본",
+   "text": "본소 칠판에 날짜가 적힌대요. \\V[SQ_S09_DUE_M]월 \\V[SQ_S09_DUE_D]일 새벽 네 시 — 현장 트럭."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-050",
+   "emo": "놀람",
+   "text": "우리를 나왔다고요? …그럼 데려와 줘요. 판자 두드리고, 이름으로."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S09_TOOK == 1 and SB_BOUGHT == 1 and SQ_S09_SOL1 == 0",
+   "to": "OTHER"
+  },
+  {
+   "op": "if",
+   "cond": "SB_127 >= 2",
+   "to": "OUT"
+  },
+  {
+   "op": "if",
+   "cond": "GAME_DAY >= SQ_S09_START + 5",
+   "to": "WAIT3"
+  },
+  {
+   "op": "if",
+   "cond": "GAME_DAY >= SQ_S09_START + 3",
+   "to": "WAIT2"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-050",
+   "emo": "기본",
+   "text": "아직이에요? \\V[SQ_S09_DUE_M]월 \\V[SQ_S09_DUE_D]일까지래요. …판자 뒤에서 기다릴게요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-050",
+   "emo": "슬픔",
+   "text": "며칠 안 남았어요. 아이가 아빠 그림을 또 그렸어요. 숫자를 지우고."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-050",
+   "emo": "분노",
+   "text": "내일이에요. \\V[SQ_S09_DUE_D]일 새벽 네 시. …본소 정문까지 가 볼 거예요. 이름이라도 불러 보게."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-050",
+   "emo": "분노",
+   "text": "그 돈으로 다른 사람을 샀다면서요. 88번. …그 사람도 누군가의 이름이겠죠. 그래도 그이는요?"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R02-035\")",
+   "to": "GATE_B"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-035",
+   "emo": "기본",
+   "text": "번호표 없으면 줄 서지 마. 가."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-050",
+   "emo": "분노",
+   "text": "127번 아내예요. 이름은 채윤재고요!"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-035",
+   "emo": "기본",
+   "text": "장부엔 번호만 있어. 내일 새벽 트럭이 와. 가."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "채해인이 정문에서 밀려난다. 주먹을 쥔 채 철판 담을 한 번 본다."
+  },
+  {
+   "op": "cmd",
+   "name": "s09",
+   "args": [
+    "gate"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "정문 경비가 진압봉으로 채해인의 어깨를 민다. '장부엔 번호만 있어.' 채해인이 철판 담을 한 번 본다."
+  },
+  {
+   "op": "cmd",
+   "name": "s09",
+   "args": [
+    "gate"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "s09",
+   "args": [
+    "reunion"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-050",
+   "emo": "슬픔",
+   "text": "트럭이 갔대요. 탱크마을 현장으로. …판자에 그렇게 썼어요. '현장으로 감.' 찾으러 갈 거예요. 이름 들고."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-050",
+   "emo": "슬픔",
+   "text": "그이 이름을 아는 사람이… 이제 나밖에 없네요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S09_PLACE == 2",
+   "to": "AFTER_BC"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S09_PLACE == 3",
+   "to": "AFTER_JH"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-050",
+   "emo": "미소",
+   "text": "아이가 그림을 다시 그렸어요. 이번엔 숫자 없이요. 판자엔 '사람 있음'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-050",
+   "emo": "미소",
+   "text": "봉천은 그이 고향이에요. 계단마다 누가 인사를 해요. 이름으로."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-050",
+   "emo": "미소",
+   "text": "지하시장은 밤이 없어요. 아이가 무서워하지 않아요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S09.txt"
+}

@@ -1,0 +1,94 @@
+{
+ "id": "SQS09_GALGORI",
+ "title": "인솔조장 갈고리",
+ "loc": "L-R02-20",
+ "npc": "N-R02-041",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "CLOCK": 4,
+  "HAND": 6,
+  "HAND2": 8
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S09_ORDER > 0 and SQ_S09_SOL2 == 0",
+   "to": "HAND"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S09_START > 0 and GAME_DAY >= SQ_S09_START + 4 and SB_127 <= 1 and dead(\"N-R02-039\") == 0",
+   "to": "CLOCK"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "기본",
+   "text": "줄 맞춰. 낙오하면 장부에 이자 붙는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "기본",
+   "text": "127번? \\V[SQ_S09_DUE_D]일 새벽 트럭이야. 현장 가면 이자 걱정은 끝나지."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "기본",
+   "text": "뭐야."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "(운송로 변경 지시서를 내민다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "HAND2",
+     "id": "SQS09_GALGORI:1:0"
+    },
+    {
+     "text": "아무것도",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS09_GALGORI:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "놀람",
+   "text": "실장님 서명…? 가리봉은 비우고 고척 노선으로. (지시서를 접어 품에 넣는다) 짐 싸. 이동한다."
+  },
+  {
+   "op": "cmd",
+   "name": "s09",
+   "args": [
+    "sol2",
+    "2"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S09.txt"
+}

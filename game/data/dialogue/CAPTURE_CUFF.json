@@ -7,7 +7,8 @@
  "labels": {
   "START": 0,
   "OPEN": 2,
-  "WAIT": 6
+  "NAP": 6,
+  "WAIT": 8
  },
  "ops": [
   {
@@ -48,12 +49,20 @@
      "id": "CAPTURE_CUFF:1:1"
     },
     {
+     "text": "(벽에 기대 눈 붙인다 — 새벽 두 시, 경비 교대까지)",
+     "tags": [],
+     "cond": "GAME_HOUR >= 4 or GAME_HOUR < 2",
+     "fx": "",
+     "to": "NAP",
+     "id": "CAPTURE_CUFF:1:2"
+    },
+    {
      "text": "(버틴다. 사흘이 지나면 어디론가 넘겨진다고 했다)",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "WAIT",
-     "id": "CAPTURE_CUFF:1:2"
+     "id": "CAPTURE_CUFF:1:3"
     },
     {
      "text": "(그만둔다)",
@@ -61,7 +70,7 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "CAPTURE_CUFF:1:3"
+     "id": "CAPTURE_CUFF:1:4"
     }
    ]
   },
@@ -82,6 +91,17 @@
     "open",
     "16",
     "8"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "s09",
+   "args": [
+    "nap"
    ]
   },
   {

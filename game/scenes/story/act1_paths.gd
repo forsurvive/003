@@ -749,13 +749,15 @@ func _sb_safe_open() -> void:
 		host.play_scene.call_deferred("MQ-105_LEDGER" if v("SB_READ") == 0 else "H-04_SAFE")
 
 
-## 우리 문 하나를 연다(주인공 앞 가장 가까운 닫힌 문): 갇힌 사람이 뒷문 통로로 빠져나간다. 여섯이 다 나가면 카르마 +100 · 새벽 −15 · 고향 +5
-func _sb_free() -> void:
+## 우리 문 하나를 연다(주인공 앞 가장 가까운 닫힌 문 · only면 그 칸): 갇힌 사람이 뒷문 통로로 빠져나간다. 여섯이 다 나가면 카르마 +100 · 새벽 −15 · 고향 +5
+func _sb_free(only := -1) -> void:
 	var me := host.map.tile_of(host.player.loco.logical)
 	var best := -1
 	for x in SB_CAGES:
 		if st.boxes.has("sbcage:%d" % x):
 			continue
+		if (only >= 0 and x != only) or (only < 0 and x == 10):
+			continue                                                    # 127번 칸은 그 칸 문 장면(SQS09_CAGE10 — 목걸이부터)만 연다(1-11h)
 		if best < 0 or absi(x - me.x) < absi(best - me.x):
 			best = x
 	if best < 0:
@@ -766,7 +768,7 @@ func _sb_free() -> void:
 	if best == 10 and v("SB_127") < 2:
 		st.vars.set_v("SB_127", 2)                                        # 127번을 우리에서 빼 왔다(훅 「127번」)
 	st.vars.set_v("SB_FREED", v("SB_FREED") + n)
-	var said := {10: "127번 — 채윤재가 고개를 숙인다. '아내한테, 그 이름으로 전해 줄게.'", 22: "88번 — 기라희가 문살을 놓는다. 세이프빌 대신 노들로 간다고 했다."}
+	var said := {10: "127번 — 채윤재가 판자 틈으로 빠져나간다. '할매 칸에서 기다릴게. 구로 107동.'", 22: "88번 — 기라희가 문살을 놓는다. 세이프빌 대신 노들로 간다고 했다."}
 	host.hint(said.get(best, "철창 안 사람이 말없이 뒷문 통로로 빠져나간다."), 5.0)
 	_sb_hide_cage(best)
 	if v("SB_FREED") >= 6 and not st.boxes.has("sbfreed6"):
@@ -831,4 +833,6 @@ func _sb_cmd(a: Array, done: Callable) -> void:
 				host.hint("할매가 벽장 문고리를 돌려 준다. 벽 사이로 바람이 분다.", 4.0)
 		"free":
 			_sb_free()
+		"free10":                                                       # 127번 칸(SQ-S09 진행기가 부른다 — 목걸이가 풀렸거나 습격 중)
+			_sb_free(10)
 	done.call()

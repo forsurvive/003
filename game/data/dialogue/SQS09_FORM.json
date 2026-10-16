@@ -1,0 +1,78 @@
+{
+ "id": "SQS09_FORM",
+ "title": "결재 양식 묶음",
+ "loc": "L-R02-19",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "FORGE": 4
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "서류함 옆 결재 양식 묶음. '인솔 운송로 변경 지시서 — 실장 결재'."
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S09_NOTICE == 0 and SQ_S09_REQ == 0",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S09_ORDER > 0 or SQ_S09_SOL2 != 0",
+   "to": "END"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "구만호 서명을 결재판 것 그대로 옮겨 그린다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "과학",
+       "min": 25
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "FORGE",
+     "id": "SQS09_FORM:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS09_FORM:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'가리봉 인솔 중지 — 고척 노선으로 일원화. 실장 구만호.' 잉크가 마르기를 기다린다."
+  },
+  {
+   "op": "cmd",
+   "name": "s09",
+   "args": [
+    "order",
+    "1"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S09.txt"
+}
