@@ -7,21 +7,24 @@
  "labels": {
   "START": 0,
   "MENU": 7,
-  "ABOUT": 8,
-  "SHOP": 12,
-  "MA": 14,
-  "WHY": 17,
-  "JOB": 21,
-  "JOB_ALONE": 28,
-  "JOB_HINT": 31,
-  "FEE": 33,
-  "WAITING": 37,
-  "REWARD": 39,
-  "HAVEPASS": 43,
-  "REGULAR": 45,
-  "MA_DEAD": 47,
-  "MA_LOG": 50,
-  "MA_DEAD_KNEW": 57
+  "S8": 8,
+  "S8_BOTH": 10,
+  "S8_NO": 13,
+  "ABOUT": 15,
+  "SHOP": 19,
+  "MA": 21,
+  "WHY": 24,
+  "JOB": 28,
+  "JOB_ALONE": 35,
+  "JOB_HINT": 38,
+  "FEE": 40,
+  "WAITING": 44,
+  "REWARD": 46,
+  "HAVEPASS": 50,
+  "REGULAR": 52,
+  "MA_DEAD": 54,
+  "MA_LOG": 57,
+  "MA_DEAD_KNEW": 64
  },
  "ops": [
   {
@@ -88,14 +91,83 @@
      "id": "MQ-103_BOK:1:2"
     },
     {
+     "text": "김민수 둘 말인데요",
+     "tags": [],
+     "cond": "SQ_S08_SAW == 1 and SQ_S08_SOL == 0",
+     "fx": "",
+     "to": "S8",
+     "id": "MQ-103_BOK:1:3"
+    },
+    {
      "text": "(인사만 한다)",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "MQ-103_BOK:1:3"
+     "id": "MQ-103_BOK:1:4"
     }
    ]
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "김민수 둘? 상인회 명부엔 하나만 적혀 있어. 둘이서 그 한 칸을 두고 싸우지."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "둘 다 김민수로 등록해 주세요. 김민수(짐) · 김민수(수리)",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "쉬움"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "S8_BOTH",
+     "id": "MQ-103_BOK:2:0",
+     "fail": "S8_NO"
+    },
+    {
+     "text": "됐어요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "MENU",
+     "id": "MQ-103_BOK:2:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "미소",
+   "text": "(장부에 줄을 하나 더 긋는다) 큰 민수, 작은 민수. 됐지? 싸울 칸이 없어졌어."
+  },
+  {
+   "op": "cmd",
+   "name": "s08",
+   "args": [
+    "both"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "명부는 한 사람 한 칸이야. 이름이 같아도 칸은 따로 — 그 칸에 쓸 다른 걸 가져와."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
   },
   {
    "op": "line",
@@ -151,7 +223,7 @@
      "cond": "",
      "fx": "",
      "to": "JOB",
-     "id": "MQ-103_BOK:2:0"
+     "id": "MQ-103_BOK:3:0"
     },
     {
      "text": "면담료를 내겠다",
@@ -164,7 +236,7 @@
      "cond": "",
      "fx": "",
      "to": "FEE",
-     "id": "MQ-103_BOK:2:1"
+     "id": "MQ-103_BOK:3:1"
     },
     {
      "text": "그 사람을 꼭 만나야 하는 이유를 말한다",
@@ -172,7 +244,7 @@
      "cond": "",
      "fx": "",
      "to": "WHY",
-     "id": "MQ-103_BOK:2:2"
+     "id": "MQ-103_BOK:3:2"
     },
     {
      "text": "다시 생각해 보겠다",
@@ -180,7 +252,7 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "MQ-103_BOK:2:3"
+     "id": "MQ-103_BOK:3:3"
     }
    ]
   },
@@ -372,7 +444,7 @@
      "cond": "",
      "fx": "",
      "to": "MA_LOG",
-     "id": "MQ-103_BOK:3:0"
+     "id": "MQ-103_BOK:4:0"
     },
     {
      "text": "다음에 오겠다",
@@ -380,7 +452,7 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "MQ-103_BOK:3:1"
+     "id": "MQ-103_BOK:4:1"
     }
    ]
   },

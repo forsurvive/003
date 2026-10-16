@@ -43,6 +43,7 @@ DOORS = [{"lid": "L-R02-11", "near": (720, 1147), "to": "J-01", "mark": "from_W"
          {"lid": "L-R01-24", "near": (870, 1171), "to": "K-24", "mark": "from_W", "name": "노량진 학원가 — 대한 대피 적성 학원", "kind": "facade"},   # 1-7c R01 북쪽
          {"lid": "L-R01-26", "near": (980, 1207), "to": "K-26", "mark": "from_W", "name": "흑석 대학병원", "kind": "facade"},
          {"lid": "L-R01-32", "near": (906, 1402), "to": "K-33", "mark": "from_W", "name": "봉천 동 주민센터", "kind": "facade"},   # 1-11c SQ-S04 민원실
+         {"lid": "L-R02-15", "near": (672, 1092), "to": "K-15", "mark": "from_W", "name": "영등포 구청 배급소", "kind": "facade"},   # 1-11g SQ-S08
          {"lid": "L-R01-08", "near": (887, 1494), "to": "K-08", "mark": "from_W", "name": "관악 계곡 배수 암거", "prop": "drain_outlet",
           "hint": "콘크리트 암거 입구. 물비린내와 곰팡이 냄새가 흘러나온다."},
          {"lid": "L-R01-02", "near": (932, 1533), "to": "E-01", "mark": "from_W", "name": "S-07 배수 출구", "prop": "vault_drain_out",   # 1-11d SQ-S03 갱도 바깥 끝
@@ -424,6 +425,10 @@ def build():
             ring_[max(0, oy_ - k_ + 1):oy_ + h_ + k_ - 1, max(0, ox_ - k_ + 1):ox_ + w_ + k_ - 1] = False
             tree |= ring_ & (rnd_ring < pk * (0.4 + 1.2 * clump))
     tree &= (solid == 0) & (np.isin(kind, (1, 5, 12)) | ((kind == 0) & ~play)) & ~carve & ~inmask
+    sp_path = os.path.join(OUT, "spots_src.json")                           # 손으로 둔 발견 자리(남문 등 '@x,y' 그 칸 자리)에는 나무가 서지 않는다
+    for spec in (json.load(open(sp_path, encoding="utf-8"))["spots"] if os.path.exists(sp_path) else []):
+        tx, ty = spec["tile"]
+        tree[max(0, ty - 1):ty + spec["h"] + 1, max(0, tx - 1):tx + spec["w"] + 1] = False
     props = ["tree_pine", "tree_pine2", "tree_oak", "tree_oak2", "tree_ginkgo", "tree_maple", "tree_dead", "tree_small"]
     ty_, tx_ = np.nonzero(tree)
     use = r["use"]
@@ -585,6 +590,10 @@ def build():
         ox, oy, iw, ih = ins["rect"]
         near_in[max(0, oy - 8):oy + ih + 8, max(0, ox - 8):ox + iw + 8] = True
     free &= ~near_in
+    sp_path = os.path.join(OUT, "spots_src.json")                           # 손으로 둔 발견 자리(남문 등 '@x,y' 그 칸 자리)는 거리 소품이 덮지 않는다
+    for spec in (json.load(open(sp_path, encoding="utf-8"))["spots"] if os.path.exists(sp_path) else []):
+        tx, ty = spec["tile"]
+        free[max(0, ty - 1):ty + spec["h"] + 1, max(0, tx - 1):tx + spec["w"] + 1] = False
     hsh = lambda x, y, k: ((x * 73856093) ^ (y * 19349663) ^ (k * 83492791)) & 0xFFFFFF
     placed = []
 
@@ -1318,6 +1327,8 @@ def place_geo(R):
             if best is not None:
                 break
         if best is None:
+            log("  막힘 진단: 걸음 %s · 겹침 %s" % (reach[ny:ny + h, nx:nx + w].astype(int).tolist(),
+                [t for t in taken if nx < t[0] + t[2] and nx + w > t[0] and ny < t[1] + t[3] and ny + h > t[1]]))
             raise SystemExit("발견 자리를 못 놓았다(%s:%d %s %d×%d — 걸어서 닿는 빈 땅이 없다)" % (spec["file"], spec["line"], spec["key"], w, h))
         _, xx, yy = best
         taken.append((xx, yy, w, h))

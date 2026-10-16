@@ -1,0 +1,93 @@
+{
+ "id": "SQS08_SKEL",
+ "title": "5등급 줄 맨 앞",
+ "loc": "L-R02-15",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TAKE": 3,
+  "GONE": 6,
+  "NAMED": 9
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S08_PROXY >= 1",
+   "to": "GONE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "5등급 줄 맨 앞. 무너져 앉은 해골이 번호표를 쥐고 있다 — 0411. 전광판의 숫자와 같다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "번호표를 빼낸다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TAKE",
+     "id": "SQS08_SKEL:1:0"
+    },
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS08_SKEL:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "손가락뼈가 쉽게 풀린다. 200년 동안 쥐고 있던 종이."
+  },
+  {
+   "op": "cmd",
+   "name": "s08",
+   "args": [
+    "take411"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S08_PROXY == 2",
+   "to": "NAMED"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈손의 해골. 번호표는 당신 주머니에."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "오순례. 위동현이 불러 준 이름. 해골의 빈손이 조금 덜 비어 보인다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S08.txt"
+}

@@ -14,6 +14,7 @@ var side4: SideS04                                   ## 관악 사이드 퀘스�
 var side3: SideS03                                   ## 관악 사이드 퀘스트(1-11d SQ-S03)
 var side5: SideS05                                   ## 관악 사이드 퀘스트(1-11e SQ-S05)
 var side6: SideS06                                   ## 관악 사이드 퀘스트(1-11f SQ-S06)
+var side8: SideS08                                   ## 영등포 사이드 퀘스트(1-11g SQ-S08)
 var st: StoryState
 var route := "job"
 var shots := ""
@@ -91,6 +92,9 @@ func _ready() -> void:
 	side6 = SideS06.new()
 	add_child(side6)
 	side6.setup(host, true)
+	side8 = SideS08.new()
+	add_child(side8)
+	side8.setup(host, true)
 	host.combat.player_down.connect(host.on_pc_down)                  # 쓰러짐 → 생포 판정(진짜 진행 prologue와 같은 연결)
 	host.combat.equip("W-002", st)
 	match route:
@@ -267,6 +271,23 @@ func _ready() -> void:
 				["wait", 1.0], ["want", ["견습"]], ["go", 966, 1145], ["until", "SQ_S06_JIN == 3", 40.0, "노들섬 남문 — 하다현이 등록증을 밀어낸다", "s6_gate"],
 				["wait", 2.0], ["shot", "s6_after"],
 				["check", "SQ_S06_SOL == 2 and SQS06_STAGE == 100 and SQE_DESERTER == 1 and has(\"M-185\")", "해법 B — 노들섬(100) · 군번줄 · MQ-502 증인"]]
+		"s8":                                                           # 1-11g SQ-S08 A: 광장 두 번째 방문 다툼(10) → 구청 번호표 · 한 시간 대기 → 위동현이 0413 호출(40 · 50) → 수리공 화술 · 짐꾼 사진 → 이름 돌려주기(100)
+			st.vars.set_v("PC_SKP_SPEECH", 90)
+			host.date_text = "2277. 10. 27.  10:00"
+			host.enter("J-03", "from_J-02")
+			plan = [["wait", 1.0], ["warp", "J-02", "from_J-03"], ["wait", 0.5], ["warp", "J-03", "from_J-02"], ["wait", 1.0], ["go", 18, 9],
+				["until", "SQ_S08_SAW == 1", 20.0, "광장 두 번째 방문 — 두 김민수의 다툼(10)", "s8_quarrel"], ["wait", 2.0],
+				["check", "SQS08_STAGE == 10", "다툼을 보면 10"],
+				["warp", "K-15", "from_W"], ["wait", 1.0], ["shot", "s8_office"], ["go", 13, 6], ["use", 13, 5], ["wait", 1.0],
+				["check", "SQ_S08_TICKET == 1", "번호표 0413"],
+				["want", ["기다린다", "2077년 주민 기록"]], ["go", 15, 6], ["use", 15, 5],
+				["until", "SQ_S08_DESK == 1", 30.0, "한 시간 대기 → 위동현이 0413번을 부른다", "s8_called"], ["wait", 2.0], ["shot", "s8_board"],
+				["check", "SQ_S08_MATCH == 1 and SQS08_STAGE == 50", "배급 기록 사진 대조(50)"],
+				["warp", "J-03", "from_J-02"], ["wait", 1.0], ["want", ["기록을 보여", "줄은 끝났어"]], ["talk", "N-R02-016"], ["wait", 2.0],
+				["check", "SQ_S08_TOLD_B == 1", "수리공 — 봉재민(화술)"],
+				["warp", "J-02", "from_J-03"], ["wait", 1.0], ["want", ["기록을 보여"]], ["talk", "N-R02-015"], ["wait", 2.0],
+				["check", "SQ_S08_SOL == 1 and SQS08_STAGE == 100", "짐꾼 — 하경수 · 해법 A 이름 돌려주기(100)"],
+				["warp", "J-03", "from_J-02"], ["wait", 1.5], ["shot", "s8_after"]]
 		"s6s":                                                          # 1-11f 수색조: 첫 접촉 25시간 뒤 시흥 고개 — 평상복 · 등록증 진해원과 길을 걸으면 수색조가 선다 → 분대장 검문 통과
 			for kv in [["A-005", 1], ["M-062", 1]]:
 				st.call_fn("give", kv)

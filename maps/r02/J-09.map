@@ -48,6 +48,15 @@ enemy CR-201 31 4 cond="MQ103_NEST == 0"
 prop remains 50 7
 box 50 7 corpse_scav name="청소부의 유해"
 text 52 8 "구겨진 쪽지." scene=FIND-J09-NOTE
+prop guard_desk 3 3
+text 3 4 "2077 상가 경비 초소. 무전기 빨간 불은 꺼졌다. 책상 위 먼지에 수첩 크기 네모 자국." w=2
+prop remains_guard 6 4
+text 6 4 "경비복 유해. 벽에 기대 앉았다." scene=SQS08_GUARD
+mark post 6 5 W
+mark g1 9 4 W
+mark g2 10 7 W
+mark g3 12 5 W
+mark g4 8 7 N
 prop sandbags 56 3
 prop sandbags 56 4
 text 56 3 "모래주머니 몇 개. 누군가 둥지 쪽을 막으려다 그만두었다." h=2

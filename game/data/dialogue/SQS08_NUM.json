@@ -1,0 +1,49 @@
+{
+ "id": "SQS08_NUM",
+ "title": "번호표 발급기",
+ "loc": "L-R02-15",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "HAVE": 4
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S08_TICKET == 1",
+   "to": "HAVE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "번호표 발급기. 단추를 누르자 기계가 200년 만에 덜컥 — 종이 한 장을 뱉는다. '0413'."
+  },
+  {
+   "op": "cmd",
+   "name": "s08",
+   "args": [
+    "ticket"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "손에 번호표 0413. 전광판은 아직 앞 번호다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S08.txt"
+}

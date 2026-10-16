@@ -1,0 +1,42 @@
+{
+ "id": "SQS08_VIP",
+ "title": "넷째 창구",
+ "loc": "L-R02-15",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "NOBODY": 3
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "dead(\"N-R02-023\")",
+   "to": "NOBODY"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'공무원 우선 창구'. 창구는 비었다. 위동현이 고개를 들지 않고 말한다. \"출입 카드 있으시면 둘째 창구로 오십시오.\""
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'공무원 우선 창구'. 먼지가 앉은 창구 너머로 둘째 창구의 빈 의자가 보인다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S08.txt"
+}

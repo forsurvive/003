@@ -1,0 +1,72 @@
+{
+ "id": "SQS08_SIGN",
+ "title": "수리 노점 간판",
+ "loc": "L-R02-11",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "SCRATCH": 5,
+  "BONG": 8
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S08_SOL == 1 or SQ_S08_SOL == 3 or (SQ_S08_SOL == 5 and SQ_S08_TOLD_B == 1)",
+   "to": "BONG"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S08_STRAIN >= 1 and SQ_S08_SOL == 0",
+   "to": "SCRATCH"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'수리 — 김민수'. 간판 옆 공구함 바닥에 낡은 각인 '봉' 한 글자와, 바랜 스티커 '영등포 전자상가 3층'."
+  },
+  {
+   "op": "cmd",
+   "name": "s08",
+   "args": [
+    "tool"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'수리 — 김민수'. 이름 위로 누가 칼로 줄을 그었다. 공구함 바닥 각인 '봉'."
+  },
+  {
+   "op": "cmd",
+   "name": "s08",
+   "args": [
+    "tool"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'봉 수리'. 새 칠이 아직 끈적하다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S08.txt"
+}

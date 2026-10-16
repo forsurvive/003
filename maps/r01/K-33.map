@@ -34,6 +34,7 @@ prop gov_counter 3 4
 prop gov_counter 5 4
 text 2 5 "민원 창구. 유리 칸막이 너머 의자는 비었다. 인주가 말라 갈라졌다." w=6
 prop office_desk 1 3
+box 1 3 desk name="직원 서랍"
 prop num_machine 10 4
 text 10 5 "번호표 발급기." scene=SQS04_NUM
 prop wait_chairs 2 8

@@ -1,0 +1,42 @@
+{
+ "id": "SQS08_SHUTTER",
+ "title": "닫힌 셔터",
+ "loc": "L-R02-11",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "NAMED": 3
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S08_SOL == 3",
+   "to": "NAMED"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "상호 띠가 없는 셔터 한 칸. 아무도 쓰지 않는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "김민수 셔터. 흰 칠 '김민수 — 상가 야간 경비'. 손잡이에 명찰 둘. 아래 국화와 초 한 자루."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S08.txt"
+}

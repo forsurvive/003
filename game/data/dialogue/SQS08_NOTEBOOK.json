@@ -1,0 +1,167 @@
+{
+ "id": "SQS08_NOTEBOOK",
+ "title": "근무 수첩을 보여 준다",
+ "loc": "L-R02-11",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "ONLY_A": 8,
+  "ONLY_B": 11,
+  "CARRY": 14,
+  "DONE": 16
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S08_SOL != 0 or SQ_S08_CARRY == 1",
+   "to": "DONE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "근무 수첩 첫 장 — 명찰 사진. 그 아래 연필로 '김민수, 야간조. 어머니 가게 민수 수선 셔터 확인할 것.'"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R02-016\")",
+   "to": "ONLY_A"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R02-015\")",
+   "to": "ONLY_B"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-015",
+   "emo": "슬픔",
+   "text": "…민수 수선. 이 사람 어머니 가게였구나. 내가 닦던 셔터."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-016",
+   "emo": "슬픔",
+   "text": "우리 둘 다 그 사람 이름을 달고 살았네. 그 사람은 남쪽 통로에 혼자 있고."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-015",
+   "emo": "기본",
+   "text": "데려오자. 둘이 들면 들 수 있어."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "같이 가자. 남쪽 통로까지는 내가 앞장선다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "CARRY",
+     "id": "SQS08_NOTEBOOK:1:0"
+    },
+    {
+     "text": "나중에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS08_NOTEBOOK:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-015",
+   "emo": "슬픔",
+   "text": "…민수 수선. 이 사람 어머니 가게였구나. 내가 닦던 셔터. 수리공 그 사람도 이걸 봤어야 했는데."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-015",
+   "emo": "기본",
+   "text": "혼자라도 들 수 있어. 짐꾼이잖아."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "같이 가자. 남쪽 통로까지는 내가 앞장선다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "CARRY",
+     "id": "SQS08_NOTEBOOK:2:0"
+    },
+    {
+     "text": "나중에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS08_NOTEBOOK:2:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-016",
+   "emo": "슬픔",
+   "text": "그 사람 이름을 달고 산 게 나 하나만은 아니었지. 짐꾼은 이제 없고, 이 사람은 남쪽 통로에 혼자 있고."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-016",
+   "emo": "기본",
+   "text": "들것은 내가 만들게. 수리공이 그거 하나는 잘해."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "같이 가자. 남쪽 통로까지는 내가 앞장선다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "CARRY",
+     "id": "SQS08_NOTEBOOK:3:0"
+    },
+    {
+     "text": "나중에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS08_NOTEBOOK:3:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s08",
+   "args": [
+    "carry"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "수첩은 이제 광장 셔터 아래 국화 옆에 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S08.txt"
+}

@@ -1,0 +1,103 @@
+{
+ "id": "SQS08_WAIT",
+ "title": "대기 의자",
+ "loc": "L-R02-15",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "WAIT": 5,
+  "NOTICKET": 7,
+  "DONE": 9,
+  "NOBODY": 11
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "dead(\"N-R02-023\")",
+   "to": "NOBODY"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S08_TICKET == 0",
+   "to": "NOTICKET"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S08_DESK >= 1",
+   "to": "DONE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "대기 의자에 앉는다. 전광판의 진공관 숫자가 주황빛으로 떤다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "기다린다(한 시간)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "WAIT",
+     "id": "SQS08_WAIT:1:0"
+    },
+    {
+     "text": "일어선다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS08_WAIT:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s08",
+   "args": [
+    "wait"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "대기 의자. 번호표 없이 앉아 있는 건 규정에 없다 — 위동현의 시선이 그렇게 말한다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "대기 의자. 이제 기다릴 일은 없다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "대기 의자. 번호를 부를 사람이 없다. 전광판 숫자만 주황빛으로 떤다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S08.txt"
+}

@@ -1,0 +1,159 @@
+# 영등포 구청 배급소(SD-09a L-R02-15 C · SD-04a §5.1 SQ-S08 · 단계 1-11g): 영등포구청 1층 배급소. 2077년 배급 대기열이 그대로 멎었다.
+# 30×18 · 왼쪽 창구 넷(위동현은 둘째 창구에 — 창구에 말을 건다) · 창구 뒤 서류함(자물쇠 25) · 입구 곁 번호표 발급기 · 천장 아래 진공관 번호 전광판 ·
+# 위쪽 대기 의자(앉으면 시간이 흐른다) · 아래쪽 등급 줄 다섯(1·2등급 줄은 짧고 4·5등급 줄은 문까지) — 줄마다 그날 선 채 무너진 해골 · 지하 계단(쇠사슬 — 다른 훅).
+map K-15 영등포 구청 배급소
+set bk
+grid
+##############################
+##############################
+##############################
+#tttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttt#
+##############tt##############
+end
+exit 14 17 W L-R02-15
+exit 15 17 W L-R02-15
+mark from_W 14 16 N
+mark desk 4 6 N
+mark wait 13 6 N
+prop w_grade_chart 10 1
+text 10 2 "배급 등급표 · 2077. 1등급부터 5등급까지 하루 배급량. 5등급 칸에는 양 대신 붉은 글씨 '대기'." w=2
+prop queue_board 17 1
+text 17 2 "번호표 전광판. 진공관 숫자가 주황빛으로 떤다." w=2 scene=SQS08_BOARD
+prop wall_clock 23 1
+text 23 2 "벽시계. 23시 41분에 멎었다."
+prop w_window 25 1
+prop office_desk 1 3
+prop file_cabinet 6 3
+prop file_cabinet 7 3
+box 7 3 cabinet lock=25 owner=N-R02-023 name="창구 뒤 서류함"
+npc N-R02-023 4 4 S bark="번호표 뽑으시고 기다려 주십시오. 다음 분."
+prop gov_counter 1 5
+prop gov_counter 3 5
+prop gov_counter 5 5
+prop gov_counter 7 5
+text 1 6 "빈 창구. '부재중' 팻말이 200년째 놓여 있다." w=2
+text 3 6 "둘째 창구. 유리 칸막이 너머 위동현이 도장을 고쳐 쥔다." w=2 scene=SQS08_DESK
+text 5 6 "빈 창구. 인주가 말라 갈라졌다." w=2
+text 7 6 "넷째 창구 — 공무원 우선 창구. 창구는 비었는데 팻말만 꼿꼿하다." w=2 scene=SQS08_VIP
+prop vip_sign 9 6
+prop num_machine 13 4
+text 13 5 "번호표 발급기." scene=SQS08_NUM
+prop wait_chairs 15 4
+prop wait_chairs 18 4
+prop wait_chairs 21 4
+text 15 5 "대기 의자." w=2 scene=SQS08_WAIT
+text 18 5 "대기 의자." w=2 scene=SQS08_WAIT
+text 21 5 "대기 의자. 앉은 채 굳은 해골 하나 — 번호표를 무릎에 올려 두었다." w=2
+prop queue_skel3 22 3
+prop rubble2 27 3
+text 27 4 "지하 계단. 쇠사슬과 '관계자 외 출입 금지 — 1953 접수실'. 아래는 깜깜하다."
+prop grade_line1 2 8
+prop grade_line1 3 8
+prop grade_line1 4 8
+prop grade_line1 5 8
+prop queue_skel 3 7
+prop queue_skel2 5 7
+prop grade_line2 2 10
+prop grade_line2 3 10
+prop grade_line2 4 10
+prop grade_line2 5 10
+prop grade_line2 6 10
+prop grade_line2 7 10
+prop grade_line2 8 10
+prop queue_skel3 3 9
+prop queue_skel 5 9
+prop queue_skel2 7 9
+prop grade_line3 2 12
+prop grade_line3 3 12
+prop grade_line3 4 12
+prop grade_line3 5 12
+prop grade_line3 6 12
+prop grade_line3 7 12
+prop grade_line3 8 12
+prop grade_line3 9 12
+prop grade_line3 10 12
+prop grade_line3 11 12
+prop grade_line3 12 12
+prop grade_line3 13 12
+prop queue_skel3 3 11
+prop queue_skel 6 11
+prop queue_skel2 9 11
+prop queue_skel3 12 11
+prop grade_line4 2 14
+prop grade_line4 3 14
+prop grade_line4 4 14
+prop grade_line4 5 14
+prop grade_line4 6 14
+prop grade_line4 7 14
+prop grade_line4 8 14
+prop grade_line4 9 14
+prop grade_line4 10 14
+prop grade_line4 11 14
+prop grade_line4 12 14
+prop grade_line4 13 14
+prop grade_line4 14 14
+prop grade_line4 15 14
+prop grade_line4 16 14
+prop grade_line4 17 14
+prop grade_line4 18 14
+prop grade_line4 19 14
+prop grade_line4 20 14
+prop grade_line4 21 14
+prop queue_skel 3 13
+prop queue_skel2 6 13
+prop queue_skel3 9 13
+prop queue_skel 12 13
+prop queue_skel2 15 13
+prop queue_skel3 18 13
+prop queue_skel 21 13
+prop grade_line5 2 15
+prop grade_line5 3 15
+prop grade_line5 4 15
+prop grade_line5 5 15
+prop grade_line5 6 15
+prop grade_line5 7 15
+prop grade_line5 8 15
+prop grade_line5 9 15
+prop grade_line5 10 15
+prop grade_line5 11 15
+prop grade_line5 12 15
+prop grade_line5 13 15
+prop grade_line5 14 15
+prop grade_line5 15 15
+prop grade_line5 16 15
+prop grade_line5 17 15
+prop grade_line5 18 15
+prop grade_line5 19 15
+prop grade_line5 20 15
+prop grade_line5 21 15
+prop grade_line5 22 15
+prop grade_line5 23 15
+prop grade_line5 24 15
+prop grade_line5 25 15
+prop grade_line5 26 15
+prop grade_line5 27 15
+prop grade_line5 28 15
+prop queue_skel2 3 14
+prop queue_skel3 6 14
+prop queue_skel 9 14
+prop queue_skel2 12 14
+prop queue_skel3 18 14
+prop queue_skel 21 14
+prop queue_skel2 24 14
+prop queue_skel3 27 14
+text 2 8 "1등급 줄. 해골 둘. 금빛 칠이 아직 반짝인다." w=3
+text 2 15 "5등급 줄. 문 밖까지 이어진다." w=2
+text 3 14 "5등급 줄 맨 앞 해골." scene=SQS08_SKEL

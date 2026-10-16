@@ -1,0 +1,42 @@
+{
+ "id": "SQS08_BOARD",
+ "title": "번호표 전광판",
+ "loc": "L-R02-15",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "CALLED": 3
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S08_DESK == 1",
+   "to": "CALLED"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "전광판 '0411'. 그 번호표를 쥔 사람은 5등급 줄 맨 앞에서 200년째 기다린다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "전광판 '0413'. 내 번호다. 2077년 이후 처음으로 넘어간 숫자."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S08.txt"
+}

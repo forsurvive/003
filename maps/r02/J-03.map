@@ -67,6 +67,11 @@ prop w_shutter_big 35 1
 text 8 2 "상인회 게시판." w=2 scene=MQ-103_BOARD
 text 35 2 "B구역 셔터. 쇠사슬로 감았다. 셔터 밑으로 무언가 긁는 소리가 난다." w=3
 trigger 27 3 scene=MQ-103_DOOR cond="MQ103_DOOR == 0" once
+prop w_shutter_mem 24 1
+text 24 2 "닫힌 셔터 한 칸. 상호 띠가 없다." w=2 scene=SQS08_SHUTTER
+prop sign_repair 36 4
+text 36 5 "수리 노점 간판." scene=SQS08_SIGN
+mark quarrel 18 11 S
 prop wall_terminal 28 1
 term 28 2 TM-J06D
 prop fountain_dry 18 13

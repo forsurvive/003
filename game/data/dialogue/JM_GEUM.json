@@ -6,17 +6,44 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "HEAL1": 2,
-  "HEAL2": 5,
-  "BLOOD": 8,
-  "SHOP": 11
+  "S8FIGHT": 3,
+  "MENU": 6,
+  "HEAL1": 7,
+  "HEAL2": 10,
+  "BLOOD": 13,
+  "SHOP": 16
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S08_SOL == 4 and SQ_S08_SEEN_A == 0",
+   "to": "S8FIGHT"
+  },
   {
    "op": "line",
    "who": "C-051",
    "emo": "기본",
    "text": "피부가 벗겨지는 건 병이 아니야. 진짜 병은 따로 있고. 어디가 아파?"
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "C-051",
+   "emo": "피곤",
+   "text": "(침상 둘 사이에서 붕대를 자른다) 명찰 하나 때문에 둘 다 이 꼴이야. 하나는 이마, 하나는 손목."
+  },
+  {
+   "op": "line",
+   "who": "C-051",
+   "emo": "슬픔",
+   "text": "싸우다 명찰이 반으로 쪼개졌대. 반쪽씩 쥐고 누웠어. '김' 하고 '민수'."
+  },
+  {
+   "op": "do",
+   "fx": "SQ_S08_SEEN_A = 1"
   },
   {
    "op": "choice",

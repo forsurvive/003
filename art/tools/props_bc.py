@@ -1000,6 +1000,10 @@ from props_s06 import PROPS_S06, STATES_S06                           # 시흥 �
 for _k in PROPS_S06:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_S06)
+from props_s08 import PROPS_S08, STATES_S08                           # 영등포 구청 배급소 · 남쪽 통로 경비 초소 · 김민수 셔터(1-11g SQ-S08)
+for _k in PROPS_S08:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_S08)
 from props_trap import PROPS_TRAP, STATES_TRAP, burnt_states       # 함정 · 환경 폭발(1-9c, SD-11 §9.2 · §9.3)
 for _k in PROPS_TRAP:
     assert _k not in PROPS, _k
@@ -1022,6 +1026,7 @@ STATES.update(STATES_S04)
 STATES.update(STATES_S03)
 STATES.update(STATES_S05)
 STATES.update(STATES_S06)
+STATES.update(STATES_S08)
 STATES.update(STATES_HOME)
 for _k, _v in burnt_states(PROPS).items():
     STATES.setdefault(_k, {}).update(_v)

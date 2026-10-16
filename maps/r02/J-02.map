@@ -73,7 +73,7 @@ prop stall_forge 34 3
 npc N-R02-008 33 3 S bark="종이 한 장이면 다른 사람이 돼. 값은 종이 값이 아니고."
 prop stall_water 43 3
 npc N-R02-010 42 3 S bark="정수 한 병 12캡. 지하수를 세 번 걸렀어."
-npc N-R02-015 48 4 S bark="이 가게? 내 거야. 명찰에 그렇게 써 있잖아."
+npc N-R02-015 48 4 S bark="…영등포로 4가 31… 2층… 아, 이 가게? 내 거야. 명찰에 그렇게 써 있잖아."
 prop work_lamp 15 8
 prop work_lamp 32 8
 prop work_lamp 50 8

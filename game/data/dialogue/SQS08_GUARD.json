@@ -1,0 +1,55 @@
+{
+ "id": "SQS08_GUARD",
+ "title": "경비복 유해",
+ "loc": "L-R02-11",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TAKEN": 5
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S08_NOTEBOOK == 1",
+   "to": "TAKEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "남색 경비복. 가슴에 노란 명찰 — '김민수'. 손전등이 구청역 쪽을 향한 채 떨어져 있다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "무릎 위에 근무 수첩. 첫 장에 명찰 사진을 오려 붙였다. 마지막 장: '00:31 남쪽 셔터 이상 없음. 뒤에서 뭔가 —' 거기서 끊겼다."
+  },
+  {
+   "op": "cmd",
+   "name": "s08",
+   "args": [
+    "notebook"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "경비복 유해. 명찰은 그대로 달려 있다. 수첩은 당신 손에."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S08.txt"
+}

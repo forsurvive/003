@@ -21,6 +21,8 @@ end
 exit 9 13 J-03 from_J-04
 exit 10 13 J-03 from_J-04
 mark from_J-03 9 12 N
+prop w_paper_name 12 1 cond="SQ_S08_SOL == 1 or SQ_S08_SOL == 3"
+text 12 2 "'본명 찾기 상담 — 관리사무소, 06시부터.' 함준호의 반듯한 글씨." cond="SQ_S08_SOL == 1 or SQ_S08_SOL == 3"
 prop wall_clock 9 1
 text 9 2 "벽시계. 시각이 정확하다. 이 상가에서 시간이 맞는 시계는 이것 하나뿐이다."
 prop w_board_jm 3 1
@@ -40,4 +42,4 @@ prop water_cooler 17 8
 prop screen_partition 12 9
 prop crate 2 10
 box 2 10 desk name="분실물 상자"
-text 2 11 "분실물 상자 쪽지: '2077. 10. 24. 접수 — 명찰 1(김민수), 우산 3, 아이 신발 한 짝.'"
+text 2 11 "분실물 상자 쪽지: '2077. 10. 24. 접수 — 경비 예비 명찰 2(김민수 — 경비실 서랍에서 없어짐), 우산 3, 아이 신발 한 짝.'"
