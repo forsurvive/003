@@ -181,7 +181,20 @@ func _init() -> void:
 		vars.declare("SQ_S09_" + k, "int", 0)
 	vars.declare("SQR_S09", "int", 0)
 	vars.declare("SQS_S09", "int", 0)
-	vars.declare("PD_R02_SB", "int", 0)                                  # 판도 PD-R02-4 새벽(영등포 남부 — 우리 열기 −3 · 습격 −10 · 지하로 −5, SD-04a §5.2)
+	vars.declare("PD_R02_SB", "int", 0)
+	# SQ-S10 오늘의 4번 인력(1-11i, SD-04a §5.3 · SideS10): 기라희의 자리는 SQ_S10_KIRA 하나(0 우리 H-03 22 · 1 고척 지하 대기실 · 2 경매 무대 · 3 풀려나 고척 정문 앞 ·
+	# 4 정착(PLACE 1 봉천 · 2 노들 남문 앞 · 3 지하시장) · 5 세이프빌 식당(친척) · 6 세이프빌 112동 노역(팔림) · 7 주인공 소유(본소 22번 칸) · 8 다른 구매자(탱크마을)).
+	# AUCTION 그녀의 경매일(GAME_DAY) · OPEN 오늘이 경매일 06~11시 · HOST 견적이 고척에 있음 · SEO 기서윤이 VIP 박스에(경매일 09시~경매 끝) · PADDLE 내 패 · PRICE 현재가 ·
+	# LEAD 지금 앞선 패(0 나 · 1 기서윤 · 2 십장 · 3 감독관) · WATCH 망치 하나둘 · BUDGET 예산을 털어놓음(상한 600) · TOLD 진술 · CARVE 각인 · KIN 친척 · THREAT 장부로 위협 ·
+	# SWAP 장부와 계약서를 바꿈 · LEDGER 구매 장부(1 손에 · 2 우도하에게) · CAST 방송(1 넘김 · 2 송출됨) · CAST_DAY · RAID · SOL(1 낙찰 · 2 친척 · 3 습격 · 4 방송만 · 5 소유 · 6 본소 매입 · 7 되팜 · 8 교환 · 9 팔림) ·
+	# PLACE · REFUSED 보상 사양 · REWARD · OLD 3번 노인 · FORE 십장이 끼었다 빠짐 · GAVE 패를 기라희에게 · TAK 탁현수 부탁(1 받음 · 2 물 줌) · CODE 장부함 번호 앎 · STOP 세이프빌 구매 중단 ·
+	# DONE 경매 끝 · SEEN 칠판 봄 · LATE 늦게 낌 · PEN 대기실 문 열림 · GLANCE 유리창 봄 · SAID 기라희가 정착지를 말함 · JUMP 한 번에 600 시도 ·
+	# AM/AD 그녀의 경매 월·일 · NM/ND 다음 경기 월·일 · KSAY 단상의 한 줄(1 450 · 2 600 · 3 750) · CAPV 지금 경쟁자 상한 · SEOIN 기서윤이 4번에 패를 듦 · BOOTH 중계석 쪽지 봄
+	for k in "START AUCTION OPEN HOST SEO KIRA PADDLE PRICE LEAD WATCH BUDGET TOLD CARVE KIN THREAT SWAP LEDGER CAST CAST_DAY RAID SOL PLACE REFUSED REWARD OLD FORE GAVE TAK CODE STOP DONE SEEN LATE PEN GLANCE SAID JUMP AM AD NM ND KSAY CAPV SEOIN BOOTH".split(" "):
+		vars.declare("SQ_S10_" + k, "int", 0)
+	vars.declare("SQR_S10", "int", 0)
+	vars.declare("SQS_S10", "int", 0)
+	vars.declare("PD_R02_GD", "int", 0)                                  # 판도 PD-R02-5 새벽(고척 · 개봉 — 습격 −15 · 방송 −5, SD-04a §5.3)                                  # 판도 PD-R02-4 새벽(영등포 남부 — 우리 열기 −3 · 습격 −10 · 지하로 −5, SD-04a §5.2)
 	for kv in [["SQH_BATT", -1], ["LR15_READ", 0], ["PD_R01_GS", 0], ["M303_BONUS", 0], ["PK_017", 0]]:   # 전지 인도처(HO) · LR-15 · 판도 PD-R01-2 각성회 · 편지 화술 +10(첫 1회) · 퍽 눈치(퍽 창은 1-12)
 		vars.declare(kv[0], "int", kv[1])
 	for kv in [["CAPTURE_DAY", -1], ["CAPTURE_AT", 0], ["SB_COLLAR", 0], ["SB_CUFF", 0], ["CAPTURE_BY", 0]]:

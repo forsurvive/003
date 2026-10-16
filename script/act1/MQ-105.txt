@@ -151,7 +151,9 @@ C-013 [기본] 우리는 사람 안 팔아. 빚을 팔지. 장부에 적힌 건 
 C-013 [기본] 고르셨나.
 > 장부를 좀 보자. 빚이 얼마짜리인지 -> LEDGER
 > [은신 50] (흥정하는 척 다가서서 허리춤 열쇠고리를 슬쩍 뺀다) -> KEY ?? SB_KEY == 0
-> [캡 300] 88번을 산다. 세이프빌로 갈 몸이라던데 -> BUY88 ?? SB_BOUGHT == 0 and dead("N-R02-040") == 0
+> [캡 300] 88번을 산다. 세이프빌로 갈 몸이라던데 -> BUY88 ?? SB_BOUGHT == 0 and dead("N-R02-040") == 0 and SQ_S10_START == 0 and SQ_S10_KIRA == 0
+> [캡 520] 88번을 뺀다. 고척에 붙였다던데 -> BUY88B ?? SB_BOUGHT == 0 and dead("N-R02-040") == 0 and SQ_S10_START > 0 and SQ_S10_KIRA == 0
+> 88번은? -> GONE88 ?? SB_BOUGHT == 0 and dead("N-R02-040") == 0 and SQ_S10_KIRA == 1
 > [캡 400] 127번을 산다. 빚이 400이라던데 -> BUY127 ?? SB_127 < 2 and dead("N-R02-039") == 0
 > 내 현상금 이야기를 꺼낸다 -> MINE ?? PC_CAPS >= 1000
 > 다음에 온다 -> END
@@ -170,8 +172,21 @@ C-013 [미소] 세이프빌 기씨네가 520을 불렀는데. 300이면 손해�
 ! SB_BOUGHT = 1; karma(25)
 @cmd sb buy 88
 @cmd s09 spent88
+@cmd s10 bought
 SYS 창고동 우리 하나를 열라는 쪽지가 반장에게 내려간다. 88번 — 기라희.
 ? SB_DEPO == 1 -> REFUND
+-> AGAIN
+* BUY88B
+C-013 [기본] 고척에 4번으로 붙여 놨어. 빼려면 520 — 기씨네가 부른 값. 경매 수수료 떼면 내가 손해야.
+! SB_BOUGHT = 1; karma(25)
+@cmd sb buy 88
+@cmd s09 spent88
+@cmd s10 bought
+SYS 창고동 우리 하나를 열라는 쪽지가 반장에게 내려간다. 88번 — 기라희.
+? SB_DEPO == 1 -> REFUND
+-> AGAIN
+* GONE88
+C-013 [기본] 고척 내려갔어. 열 시 망치 소리 듣고 싶으면 거기 가서 사.
 -> AGAIN
 * BUY127
 C-013 [기본] 127번. 봉천 놈이지. 빚 400에 이자는 안 붙이지. 손님이니까.

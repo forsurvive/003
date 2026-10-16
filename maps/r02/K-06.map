@@ -48,5 +48,6 @@ text 25 3 "송출 단말. 마지막 송출 기록 '23:21 — 긴급 재난 방�
 prop crate_army 21 10
 box 21 10 crate name="예비 부품 상자"
 prop drum 25 11
+npc N-R02-026 25 12 W cond="dead(\"N-R02-026\") == 0" bark="쉿 — 저 구울, 송출 랙 앞에서 안 비켜."
 enemy CR-200 22 7
 enemy CR-095 5 12

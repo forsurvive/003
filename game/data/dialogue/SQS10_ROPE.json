@@ -1,0 +1,55 @@
+{
+ "id": "SQS10_ROPE",
+ "title": "늘어진 밧줄",
+ "loc": "L-R02-23",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "UP": 2
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "지붕 구멍에서 늘어진 밧줄. 매듭이 일정하다 — 누가 오르내린다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "밧줄을 타고 캣워크로 올라간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "UP",
+     "id": "SQS10_ROPE:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS10_ROPE:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s10",
+   "args": [
+    "up"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S10.txt"
+}

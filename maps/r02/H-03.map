@@ -116,7 +116,8 @@ prop straw_mat2 9 6
 npc N-R02-039 10 5 S cond="SB_127 < 2" bark="127번 말고 채윤재. 아내한테 그 이름으로 전해 줘."
 prop straw_mat 15 4
 prop bucket 17 4
-npc N-R02-040 22 5 S cond="SB_DEBT == 0" bark="팔려 가는 데가 세이프빌이래. 기씨 집이래."
+npc N-R02-040 22 5 S cond="SB_DEBT == 0 and SQ_S10_KIRA == 0" bark="팔려 가는 데가 세이프빌이래. 기씨 집이래."
+npc N-R02-040 22 5 S cond="SQ_S10_KIRA == 7" bark="…주인이라고 불러야 해?"
 prop detainee_b 23 4
 prop straw_mat2 21 6
 prop detainee_c 27 4
@@ -140,7 +141,7 @@ trigger 40 5 scene=CAPTURE_COLLAR cond="SB_COLLAR == 1 and SB_CUFF == 0"
 # 우리 문(1-6 MQ-105 '일부러 잡힌다'): 다른 '인력' 여섯을 풀어 줄 수 있다 — [자물쇠 따기 25] 또는 [힘 7]
 text 4 8 "다른 우리 문. 맹꽁이자물쇠." scene=H-03_CAGE
 text 10 8 "127번의 우리 문. 맹꽁이자물쇠." scene=SQS09_CAGE10
-text 22 8 "88번의 우리 문. 맹꽁이자물쇠." scene=H-03_CAGE
+text 22 8 "88번의 우리 문. 맹꽁이자물쇠." scene=SQS10_CAGE22
 text 28 8 "다른 우리 문. 맹꽁이자물쇠." scene=H-03_CAGE
 text 34 8 "다른 우리 문. 맹꽁이자물쇠." scene=H-03_CAGE
 # 1-11h SQ-S09: 감시 의자 경비 — 02~04시 교대에만 빈다(우리 열기 B의 창). 잡혀 온 사람도 자기 칸 밖으로 나오면 본다(_sb_watch).

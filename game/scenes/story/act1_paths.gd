@@ -764,11 +764,14 @@ func _sb_free(only := -1) -> void:
 		return
 	st.boxes["sbcage:%d" % best] = {"open": true}
 	host.ev.handlers["cage"].call(["open", best, 8], func() -> void: pass)
-	var n: int = SB_CAGES[best] - (1 if best == 22 and st.boxes.has("sb88") else 0) - (1 if best == 10 and st.boxes.has("sb127") else 0)
+	var kira_in := best == 22 and not st.boxes.has("sb88") and v("SQ_S10_KIRA") in [0, 7] and v("SB_DEBT") == 0 and not st.is_dead("N-R02-040")   # 88번이 칸에 있나(1-11i — 고척으로 옮겨졌으면 없다)
+	var n: int = SB_CAGES[best] - (1 if best == 22 and not kira_in else 0) - (1 if best == 10 and st.boxes.has("sb127") else 0)
 	if best == 10 and v("SB_127") < 2:
 		st.vars.set_v("SB_127", 2)                                        # 127번을 우리에서 빼 왔다(훅 「127번」)
 	st.vars.set_v("SB_FREED", v("SB_FREED") + n)
 	var said := {10: "127번 — 채윤재가 판자 틈으로 빠져나간다. '할매 칸에서 기다릴게. 구로 107동.'", 22: "88번 — 기라희가 문살을 놓는다. 세이프빌 대신 노들로 간다고 했다."}
+	if best == 22 and not kira_in:
+		said.erase(22)
 	host.hint(said.get(best, "철창 안 사람이 말없이 뒷문 통로로 빠져나간다."), 5.0)
 	_sb_hide_cage(best)
 	if v("SB_FREED") >= 6 and not st.boxes.has("sbfreed6"):

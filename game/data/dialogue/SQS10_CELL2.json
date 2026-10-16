@@ -1,0 +1,42 @@
+{
+ "id": "SQS10_CELL2",
+ "title": "둘째 칸",
+ "loc": "L-R02-23",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "EMPTY": 3
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S10_PEN == 1",
+   "to": "EMPTY"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "152번. 말을 못 한다. 문살의 녹을 손톱으로 긁어 작은 새 모양을 만들어 놓았다. 당신이 보자 하나를 문살 사이로 내민다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈 칸. 문살마다 녹으로 긁은 작은 새."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S10.txt"
+}

@@ -1,0 +1,55 @@
+{
+ "id": "SQS10_CATWALK",
+ "title": "캣워크 사다리",
+ "loc": "L-R02-23",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "DOWN": 2
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "벽 사다리 위로 지붕 캣워크. 철판 길이 무너진 구멍 가장자리까지 이어지고, 거기서 밧줄이 단상 뒤로 늘어진다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "캣워크를 건너 밧줄로 내려간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "DOWN",
+     "id": "SQS10_CATWALK:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS10_CATWALK:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s10",
+   "args": [
+    "down"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S10.txt"
+}

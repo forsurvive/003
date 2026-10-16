@@ -98,5 +98,6 @@ text 0 1 "통행세 창구. '첫 통과 100캡 · 정기 30캡 — 노들섬 선
 prop nd_flag 5 1
 text 5 1 "조합 깃발. 닻 문양 아래 기증 표식이 줄줄이 — 봉천 계단, 탱크마을 기름띠, 선유도 물방울."
 npc N-HR-027 3 1 S bark="남문 밖은 계엄 땅이야. 등록증 챙겨."
+npc N-R02-040 1 2 E cond="SQ_S10_KIRA == 4 and SQ_S10_PLACE == 2" bark="남문 앞 판잣집. 섬엔 아직 못 들어가도 여기가 우리 집이야."
 npc N-R01-064 4 2 S look=M1-S2-HR02-H1-T03-2-PF01-HD00-EY00-PR033 cond="SQ_S06_JIN == 3" bark="여기선 등록증 안 봐요. …그게 좋아요."
 trigger 0 0 w=6 h=3 scene=SQS06_GATE cond="SQ_S06_JIN == 1 and SQ_S06_NEAR == 1"

@@ -1,0 +1,204 @@
+{
+ "id": "SQS10_KIRA",
+ "title": "기라희",
+ "loc": "L-R02-23",
+ "npc": "N-R02-040",
+ "cond": "V_ACT >= 1 and (SQ_S10_KIRA == 3 or SQ_S10_KIRA == 4)",
+ "labels": {
+  "START": 0,
+  "BC": 8,
+  "GIFT": 10,
+  "TAKE": 13,
+  "REFUSE": 16,
+  "BYE": 19,
+  "HOME": 21,
+  "HBC": 25,
+  "HBC2": 28
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S10_KIRA == 4",
+   "to": "HOME"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-040",
+   "emo": "미소",
+   "text": "번호표, 내가 벗어도 돼?"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "기라희가 목줄을 끊고 번호표 88을 그라운드에 던진다."
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S10_SAID == 1",
+   "to": "GIFT"
+  },
+  {
+   "op": "if",
+   "cond": "SB_127 == 6 and dead(\"N-R02-039\") == 0",
+   "to": "BC"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-040",
+   "emo": "기본",
+   "text": "노들로 갈래. 남문 앞 판잣집. 섬엔 아직 못 들어가도, 거기가 우리 집이었어."
+  },
+  {
+   "op": "cmd",
+   "name": "s10",
+   "args": [
+    "say",
+    "2"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "GIFT"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-040",
+   "emo": "기본",
+   "text": "봉천으로 갈래. 127번 아저씨가 거기 있대. 아는 얼굴 옆이 좋아."
+  },
+  {
+   "op": "cmd",
+   "name": "s10",
+   "args": [
+    "say",
+    "1"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S10_REWARD == 1 or SQ_S10_REFUSED == 1",
+   "to": "BYE"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-040",
+   "emo": "기본",
+   "text": "이거. 할머니가 대대로 지닌 복권이야. 당첨됐대. 받으러 갈 데가 없었대."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "받는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TAKE",
+     "id": "SQS10_KIRA:1:0"
+    },
+    {
+     "text": "\"네가 가져. 언젠가 받으러 갈 데가 생길 거야.\"",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "REFUSE",
+     "id": "SQS10_KIRA:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s10",
+   "args": [
+    "reward"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-040",
+   "emo": "미소",
+   "text": "운이 좋대. 이백 년 동안 아무도 못 썼지만."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "s10",
+   "args": [
+    "refuse"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-040",
+   "emo": "놀람",
+   "text": "…그럼 받으러 갈 데가 생기면, 같이 가."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-040",
+   "emo": "미소",
+   "text": "내일이면 거기 있을게."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S10_REWARD == 0 and SQ_S10_REFUSED == 0",
+   "to": "GIFT"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S10_PLACE == 1",
+   "to": "HBC"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-040",
+   "emo": "미소",
+   "text": "남문 사람들이 판잣집 문을 고쳐 줬어. …공다온 엄마한테도 전했어. 살아 있다고."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R02-039\")",
+   "to": "HBC2"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-040",
+   "emo": "미소",
+   "text": "127번 아저씨가 계단 고치는 걸 가르쳐 줘. 번호 말고 이름으로 불러."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-040",
+   "emo": "슬픔",
+   "text": "아는 얼굴 옆이 좋다고 왔는데. …그래도 계단 냄새는 좋아."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S10.txt"
+}

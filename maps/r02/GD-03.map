@@ -1,0 +1,111 @@
+# 고척 돔 GD-03 지하 대기실(SD-09a L-R02-23 '억류 인력 약 150' · SD-04a §5.3 · 단계 1-11i)
+# 30×14 · 철창 칸 다섯(칸마다 서른 남짓 — 소품은 대표 몇) · 장부 번호 있는 셋(140 탁현수 · 152 무명 · 158 공다온, r02_dawn 장부와 같은 사람) ·
+# 경매일 06시부터 88번 기라희(셋째 칸) · 대기실 철문 개폐기(습격 — 칸이 모두 열린다)
+map GD-03 고척 돔 지하 대기실
+set sb
+grid
+##############################
+##############################
+##############################
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+##############################
+end
+exit 0 9 GD-01 from_GD-03
+exit 0 10 GD-01 from_GD-03
+mark from_GD-01 1 9 E
+prop cage_post 4 3
+prop cage_post 4 4
+prop cage_post 4 5
+prop cage_post 4 6
+prop cage_post 4 7
+prop cage_post 10 3
+prop cage_post 10 4
+prop cage_post 10 5
+prop cage_post 10 6
+prop cage_post 10 7
+prop cage_post 16 3
+prop cage_post 16 4
+prop cage_post 16 5
+prop cage_post 16 6
+prop cage_post 16 7
+prop cage_post 22 3
+prop cage_post 22 4
+prop cage_post 22 5
+prop cage_post 22 6
+prop cage_post 22 7
+prop cage_post 28 3
+prop cage_post 28 4
+prop cage_post 28 5
+prop cage_post 28 6
+prop cage_post 28 7
+prop cage_front2 1 8
+prop cage_door 2 8
+prop cage_front2 3 8
+prop cage_front 4 8
+prop cage_front2 5 8
+prop cage_front 6 8
+prop cage_door 7 8
+prop cage_front 8 8
+prop cage_front2 9 8
+prop cage_front 10 8
+prop cage_front2 11 8
+prop cage_front 12 8
+prop cage_door 13 8
+prop cage_front 14 8
+prop cage_front2 15 8
+prop cage_front 16 8
+prop cage_front2 17 8
+prop cage_front 18 8
+prop cage_door 19 8
+prop cage_front 20 8
+prop cage_front2 21 8
+prop cage_front 22 8
+prop cage_front2 23 8
+prop cage_front 24 8
+prop cage_door 25 8
+prop cage_front 26 8
+prop cage_front2 27 8
+prop cage_front 28 8
+prop w_roster 2 1
+prop w_collars 26 1
+text 2 2 "대기 명단. 번호 옆에 '고척' 도장. 오늘 날짜 칸에 줄이 넷." w=2
+prop straw_mat 2 4 cond="SQ_S10_PEN == 0"
+prop detainee_a 3 5 cond="SQ_S10_PEN == 0"
+prop detainee_c 5 4 cond="SQ_S10_PEN == 0"
+prop detainee_b 2 6 cond="SQ_S10_PEN == 0"
+prop straw_mat2 8 5 cond="SQ_S10_PEN == 0"
+prop detainee_d 9 4 cond="SQ_S10_PEN == 0"
+prop detainee_a 8 6 cond="SQ_S10_PEN == 0"
+prop detainee_c 11 5 cond="SQ_S10_PEN == 0"
+prop straw_mat 14 4 cond="SQ_S10_PEN == 0"
+prop detainee_b 15 6 cond="SQ_S10_PEN == 0"
+prop detainee_d 13 5 cond="SQ_S10_PEN == 0"
+prop straw_mat2 20 4 cond="SQ_S10_PEN == 0"
+prop detainee_a 21 6 cond="SQ_S10_PEN == 0"
+prop straw_mat 24 5 cond="SQ_S10_PEN == 0"
+prop detainee_c 23 4 cond="SQ_S10_PEN == 0"
+prop detainee_b 26 6 cond="SQ_S10_PEN == 0"
+prop detainee_d 27 4 cond="SQ_S10_PEN == 0"
+prop bucket 17 4 cond="SQ_S10_PEN == 0"
+prop bucket 5 6 cond="SQ_S10_PEN == 0"
+text 2 8 "끝 칸 문. 노인 둘과 아이 하나가 문살에 기대 잠들었다."
+text 7 8 "첫째 칸 문. 140번이 문살에 기대 있다." scene=SQS10_CELL1
+text 13 8 "둘째 칸 문. 152번이 손가락으로 문살의 녹을 긁어 무언가를 만든다." scene=SQS10_CELL2
+text 19 8 "셋째 칸 문. 맹꽁이자물쇠." scene=SQS10_CELL3
+text 25 8 "넷째 칸 문. 158번 — 아이가 무릎을 끌어안고 있다." scene=SQS10_CELL4
+npc N-R02-040 19 5 S cond="SQ_S10_KIRA == 1" bark="여기가 고척이래. 할머니가 야구 보러 왔던 데래."
+prop guard_chair 27 11
+prop work_lamp 8 12
+prop work_lamp 20 12
+prop chain_post 14 11
+text 14 11 "대기실 철문 개폐기. 쇠사슬 손잡이를 당기면 칸 문 다섯이 한꺼번에 풀린다." scene=SQS10_PEN
+npc CR-436 26 11 W sheet=en_cr436_loco cond="SQ_S10_RAID == 0" bark="떠들지 마. 열 시면 올라간다."

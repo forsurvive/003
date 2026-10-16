@@ -1,0 +1,127 @@
+{
+ "id": "SQS10_CELL1",
+ "title": "첫째 칸",
+ "loc": "L-R02-23",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "WATER": 5,
+  "WATER2": 7,
+  "TOLD": 8,
+  "AFTER": 12,
+  "EMPTY": 14
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S10_PEN == 1",
+   "to": "EMPTY"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "140번. 그을음이 밴 손. \"탁현수. 탱크마을. 아버지 연료 빚을 내가 이어받았지.\""
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S10_TAK == 2",
+   "to": "AFTER"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "\"물 한 모금만. 여기선 아침에 한 컵이야.\""
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "물을 건넨다(한강 물)",
+     "tags": [],
+     "cond": "has(\"I-054\") >= 1",
+     "fx": "",
+     "to": "WATER",
+     "id": "SQS10_CELL1:1:0"
+    },
+    {
+     "text": "물을 건넨다(청솔 생수)",
+     "tags": [],
+     "cond": "has(\"I-058\") >= 1",
+     "fx": "",
+     "to": "WATER2",
+     "id": "SQS10_CELL1:1:1"
+    },
+    {
+     "text": "다음에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS10_CELL1:1:2"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "take(\"I-054\", 1)"
+  },
+  {
+   "op": "goto",
+   "to": "TOLD"
+  },
+  {
+   "op": "do",
+   "fx": "take(\"I-058\", 1)"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "단숨에 마신다. \"…고마워. 하나 알려 주지. 단상 뒤 장부함 번호는 견적이 손등에 적어. 4-0-8-8. 88번 번호를 거꾸로 붙였어.\""
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "\"그리고 탱크마을 십장은 450 넘으면 안 따라와. 우리 동네 돈이 거기까지야.\""
+  },
+  {
+   "op": "cmd",
+   "name": "s10",
+   "args": [
+    "tak"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "\"4-0-8-8. 잊지 마.\""
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈 칸. 문살에 그을음 손자국."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S10.txt"
+}

@@ -16,6 +16,7 @@ var side5: SideS05                                   ## 관악 사이드 퀘스�
 var side6: SideS06                                   ## 관악 사이드 퀘스트(1-11f SQ-S06)
 var side8: SideS08                                   ## 영등포 사이드 퀘스트(1-11g SQ-S08)
 var side9: SideS09                                   ## 영등포 사이드 퀘스트(1-11h SQ-S09)
+var side10: SideS10                                 ## 영등포 사이드 퀘스트(1-11i SQ-S10)
 var st: StoryState
 var route := "job"
 var shots := ""
@@ -99,6 +100,9 @@ func _ready() -> void:
 	side9 = SideS09.new()
 	add_child(side9)
 	side9.setup(host, true)
+	side10 = SideS10.new()
+	add_child(side10)
+	side10.setup(host, true)
 	host.combat.player_down.connect(host.on_pc_down)                  # 쓰러짐 → 생포 판정(진짜 진행 prologue와 같은 연결)
 	host.combat.equip("W-002", st)
 	match route:

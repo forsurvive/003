@@ -1,0 +1,195 @@
+{
+ "id": "SQS10_HOST",
+ "title": "견적",
+ "loc": "L-R02-23",
+ "npc": "N-R02-043",
+ "cond": "V_ACT >= 1 and SQ_S10_KIRA != 2",
+ "labels": {
+  "START": 0,
+  "MENU": 1,
+  "PAD": 2,
+  "PAID": 4,
+  "FREEPAD": 7,
+  "NOPAD": 10,
+  "WHO": 12,
+  "DONE": 15,
+  "BOX": 17
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-R02-043",
+   "emo": "미소",
+   "text": "오늘의 4번 인력! …은 열 시고. 사흘마다 열 시. 손님은 사러 왔어, 팔러 왔어?"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "구매자 패를 받는다",
+     "tags": [],
+     "cond": "SQ_S10_PADDLE == 0",
+     "fx": "",
+     "to": "PAD",
+     "id": "SQS10_HOST:1:0"
+    },
+    {
+     "text": "4번은 누구야",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "WHO",
+     "id": "SQS10_HOST:1:1"
+    },
+    {
+     "text": "단상 뒤 철함은",
+     "tags": [],
+     "cond": "SQ_S10_LEDGER == 0",
+     "fx": "",
+     "to": "BOX",
+     "id": "SQS10_HOST:1:2"
+    },
+    {
+     "text": "됐어",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS10_HOST:1:3"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-043",
+   "emo": "기본",
+   "text": "패는 보증금 100. 안 사면 돌려주지. 사면 값에서 빼 주고."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "보증금을 낸다",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 100
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PAID",
+     "id": "SQS10_HOST:2:0"
+    },
+    {
+     "text": "\"살 사람한테 보증금 받는 경매는 처음 보네.\"",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "쉬움"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "FREEPAD",
+     "id": "SQS10_HOST:2:1",
+     "fail": "NOPAD"
+    },
+    {
+     "text": "다음에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "MENU",
+     "id": "SQS10_HOST:2:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s10",
+   "args": [
+    "pad",
+    "1"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-043",
+   "emo": "미소",
+   "text": "7번 패. 손 들 때 크게 들어. 유리창 위 손님은 눈이 좋아."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "cmd",
+   "name": "s10",
+   "args": [
+    "pad",
+    "0"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-043",
+   "emo": "미소",
+   "text": "말 잘하네. 7번 패 그냥 가져가. 대신 살 땐 크게 사."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-043",
+   "emo": "기본",
+   "text": "말로는 패 안 줘. 캡은 말보다 무거워."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S10_KIRA >= 3 or dead(\"N-R02-040\")",
+   "to": "DONE"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-043",
+   "emo": "기본",
+   "text": "본소에서 온 88번. 스무 살, 노들. 시작가 300. 보통 위층 손님이 가져가. 세이프빌 기씨 댁."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-043",
+   "emo": "기본",
+   "text": "4번은 끝났어. 다음 경기는 \\V[SQ_S10_NM]월 \\V[SQ_S10_ND]일. 사람은 매번 새로 와."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-043",
+   "emo": "기본",
+   "text": "손님은 번호만 보면 돼. 그 함은 내 손등이 열쇠야."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S10.txt"
+}

@@ -1,0 +1,49 @@
+{
+ "id": "SQS10_GLASS",
+ "title": "VIP 박스 유리창",
+ "loc": "L-R02-23",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "SIL": 3
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S10_SEO == 1",
+   "to": "SIL"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "위층 귀빈석 유리창. 짙은 색유리 너머가 비었다. 경매 날 아침이면 저기 누가 앉는다고 한다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "유리창 너머 실루엣 — 올림머리, 무릎 위에 펼친 장부. 펜 끝이 숫자를 따라 내려간다."
+  },
+  {
+   "op": "cmd",
+   "name": "s10",
+   "args": [
+    "seen"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S10.txt"
+}

@@ -1,0 +1,52 @@
+# 고척 돔 GD-02 위층 관중석 — VIP 쪽 절반(SD-09a L-R02-23 · SD-04a §5.3 · 단계 1-11i, 재미 검수: GD-02는 VIP 쪽만)
+# 32×14 · 서쪽 복도(매점 · 복권 포스터 · 캣워크 사다리) · 가운데 중계석(송출 장비 — 우도하 낙서) · 동쪽 VIP 박스(기서윤, 경매일 09시~경매 끝)
+map GD-02 고척 돔 위층 관중석
+set bk
+grid
+################################
+################################
+################################
+#~~~~~~~~~~~#wwwwwwww#ccccccccc#
+#~~~~~~~~~~~#wwwwwwww#ccccccccc#
+#~~~~~~~~~~~#wwwwwwww#ccccccccc#
+#~~~~~~~~~~~#wwwwwwww#ccccccccc#
+#~~~~~~~~~~~#wwwwwwww#ccccccccc#
+#~~~~~~~~~~~#wwwwwwww#ccccccccc#
+#~~~~~~~~~~~~wwwwwwwwcccccccccc#
+#~~~~~~~~~~~~wwwwwwwwcccccccccc#
+#~~~~~~~~~~~#wwwwwwww#ccccccccc#
+#~~~~~~~~~~~#wwwwwwww#ccccccccc#
+###~~###########################
+end
+exit 3 13 GD-01 from_GD-02
+exit 4 13 GD-01 from_GD-02
+mark from_GD-01 3 12 N
+mark from_catwalk 10 3 S
+mark from_rope 10 3 S
+# 복도: 매점 · 복권 포스터 · 캣워크 사다리
+prop snack_counter 3 4
+text 3 4 "매점 계산대. 진열은 비었고 손 계산기만 남았다. 차양의 줄무늬가 바랬다." w=2
+prop w_lotto_poster 6 1
+text 6 2 "매점 복권 포스터." scene=SQS10_LOTTO
+prop w_ladder 10 1
+text 10 2 "벽 사다리. 지붕 캣워크로 올라간다." scene=SQS10_CATWALK
+prop wait_chairs 2 8
+prop rubble 8 11
+prop cheer_sticks 6 10
+# 중계석
+prop broadcast_desk 15 4
+text 15 4 "중계석 송출 장비." w=2 scene=SQS10_BOOTH
+prop w_onair 17 1
+prop tv_camera 19 8
+prop studio_light 14 9
+text 19 8 "중계 카메라. 렌즈 너머로 그라운드 한가운데 단상이 보인다."
+# VIP 박스
+prop w_vip_glass 25 1
+text 26 2 "VIP 박스 유리창. 그라운드가 한눈에 내려다보인다." w=3
+prop bk_sofa 23 6
+prop low_table 26 7
+prop plant_pot 29 4
+prop drink_fridge 29 9
+text 29 9 "작은 냉장고. 2077년 상표의 탄산수 한 병이 아직 차갑다 — 전기가 이 방에만 들어온다."
+npc N-R02-044 26 5 S cond="SQ_S10_SEO == 1" bark="가사 인력 두 명. 깨끗한 걸로."
+npc CR-435 22 11 W sheet=en_cr435_loco cond="SQ_S10_RAID == 0 and SQ_S10_SEO == 1" bark="귀빈석. 볼일이 있으면 짧게."

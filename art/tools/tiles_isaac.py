@@ -428,6 +428,7 @@ def s07_tiles():
         "tunnel_a": _gcrop("s07", "tunnel", 0),
         "steps_a": _gcrop("s07", "steps", 0),                     # 1-5 벙커 덧붙임
         "epoxy_a": _gcrop("s07", "epoxy", 0),
+        "turf_a": _gcrop("s07", "turf", 0),                       # 1-11i 고척 돔 그라운드
     }
 
 

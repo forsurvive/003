@@ -1,0 +1,81 @@
+{
+ "id": "SQS10_BOARD",
+ "title": "분필 칠판",
+ "loc": "L-R02-23",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "NEXT88": 4,
+  "SEEN": 6,
+  "STOP": 8
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'오늘의 경기 — 인력 4번 경매 — 시작 10:00'. 귀퉁이에 작은 글씨 '다음 경기 \\V[SQ_S10_NM]월 \\V[SQ_S10_ND]일'."
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S10_STOP == 1",
+   "to": "STOP"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S10_KIRA == 0 and dead(\"N-R02-040\") == 0 and SB_BOUGHT == 0 and SB_DEBT == 0",
+   "to": "NEXT88"
+  },
+  {
+   "op": "goto",
+   "to": "SEEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "그 아래 다음 순번표. '4번 — 88번 · 스무 살 · 노들 · 가사 — 세이프빌 문의 있음'."
+  },
+  {
+   "op": "cmd",
+   "name": "s10",
+   "args": [
+    "start",
+    "2"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s10",
+   "args": [
+    "board"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "맨 아랫줄에 새 분필 — '세이프빌 구매 중단'. 누가 줄을 그었다가 다시 지웠다."
+  },
+  {
+   "op": "cmd",
+   "name": "s10",
+   "args": [
+    "board"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S10.txt"
+}

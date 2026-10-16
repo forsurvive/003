@@ -1,0 +1,39 @@
+{
+ "id": "SQS10_BOOTH",
+ "title": "중계석",
+ "loc": "L-R02-23",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "중계석 송출 장비. 먼지가 쌓였는데 송출선 자리만 깨끗하다. 믹서 위에 테이프로 붙인 노란 쪽지."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'송출선 떼러 왔다 감. 진공관은 여의도 방송사 송출실에 — 우.'"
+  },
+  {
+   "op": "cmd",
+   "name": "s10",
+   "args": [
+    "booth"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S10.txt"
+}

@@ -239,6 +239,14 @@
   "cover": 0,
   "solid": false
  },
+ "turf_a": {
+  "atlas": [
+   35,
+   0
+  ],
+  "cover": 0,
+  "solid": false
+ },
  "wall_top": {
   "atlas": [
    15,

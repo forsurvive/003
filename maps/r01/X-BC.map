@@ -626,3 +626,4 @@ npc C-067 24 26 S cond="MEDIC_AT == 1 and MQ101_RESULT > 0" bark="다친 사람 
 # 1-11h SQ-S09: 봉천에 자리 잡은 채윤재 · 채해인(고향)
 npc N-R02-039 12 30 E cond="SB_127 == 6" bark="고향 맞더라. 봉천 계단 냄새."
 npc N-R02-050 13 30 W cond="SB_127 == 6"
+npc N-R02-040 15 30 W cond="SQ_S10_KIRA == 4 and SQ_S10_PLACE == 1" bark="계단 고치는 거 배워. 번호 말고 이름으로 불러 줘."

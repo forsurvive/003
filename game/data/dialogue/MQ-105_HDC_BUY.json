@@ -10,9 +10,11 @@
   "LEDGER": 6,
   "KEY": 8,
   "BUY88": 14,
-  "BUY127": 21,
-  "REFUND": 28,
-  "MINE": 31
+  "BUY88B": 22,
+  "GONE88": 30,
+  "BUY127": 32,
+  "REFUND": 39,
+  "MINE": 42
  },
  "ops": [
   {
@@ -75,10 +77,31 @@
        "n": 300
       }
      ],
-     "cond": "SB_BOUGHT == 0 and dead(\"N-R02-040\") == 0",
+     "cond": "SB_BOUGHT == 0 and dead(\"N-R02-040\") == 0 and SQ_S10_START == 0 and SQ_S10_KIRA == 0",
      "fx": "",
      "to": "BUY88",
      "id": "MQ-105_HDC_BUY:1:2"
+    },
+    {
+     "text": "88번을 뺀다. 고척에 붙였다던데",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 520
+      }
+     ],
+     "cond": "SB_BOUGHT == 0 and dead(\"N-R02-040\") == 0 and SQ_S10_START > 0 and SQ_S10_KIRA == 0",
+     "fx": "",
+     "to": "BUY88B",
+     "id": "MQ-105_HDC_BUY:1:3"
+    },
+    {
+     "text": "88번은?",
+     "tags": [],
+     "cond": "SB_BOUGHT == 0 and dead(\"N-R02-040\") == 0 and SQ_S10_KIRA == 1",
+     "fx": "",
+     "to": "GONE88",
+     "id": "MQ-105_HDC_BUY:1:4"
     },
     {
      "text": "127번을 산다. 빚이 400이라던데",
@@ -91,7 +114,7 @@
      "cond": "SB_127 < 2 and dead(\"N-R02-039\") == 0",
      "fx": "",
      "to": "BUY127",
-     "id": "MQ-105_HDC_BUY:1:3"
+     "id": "MQ-105_HDC_BUY:1:5"
     },
     {
      "text": "내 현상금 이야기를 꺼낸다",
@@ -99,7 +122,7 @@
      "cond": "PC_CAPS >= 1000",
      "fx": "",
      "to": "MINE",
-     "id": "MQ-105_HDC_BUY:1:4"
+     "id": "MQ-105_HDC_BUY:1:6"
     },
     {
      "text": "다음에 온다",
@@ -107,7 +130,7 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "MQ-105_HDC_BUY:1:5"
+     "id": "MQ-105_HDC_BUY:1:7"
     }
    ]
   },
@@ -178,6 +201,13 @@
    ]
   },
   {
+   "op": "cmd",
+   "name": "s10",
+   "args": [
+    "bought"
+   ]
+  },
+  {
    "op": "line",
    "who": "SYS",
    "emo": "기본",
@@ -187,6 +217,63 @@
    "op": "if",
    "cond": "SB_DEPO == 1",
    "to": "REFUND"
+  },
+  {
+   "op": "goto",
+   "to": "AGAIN"
+  },
+  {
+   "op": "line",
+   "who": "C-013",
+   "emo": "기본",
+   "text": "고척에 4번으로 붙여 놨어. 빼려면 520 — 기씨네가 부른 값. 경매 수수료 떼면 내가 손해야."
+  },
+  {
+   "op": "do",
+   "fx": "SB_BOUGHT = 1; karma(25)"
+  },
+  {
+   "op": "cmd",
+   "name": "sb",
+   "args": [
+    "buy",
+    "88"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s09",
+   "args": [
+    "spent88"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s10",
+   "args": [
+    "bought"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "창고동 우리 하나를 열라는 쪽지가 반장에게 내려간다. 88번 — 기라희."
+  },
+  {
+   "op": "if",
+   "cond": "SB_DEPO == 1",
+   "to": "REFUND"
+  },
+  {
+   "op": "goto",
+   "to": "AGAIN"
+  },
+  {
+   "op": "line",
+   "who": "C-013",
+   "emo": "기본",
+   "text": "고척 내려갔어. 열 시 망치 소리 듣고 싶으면 거기 가서 사."
   },
   {
    "op": "goto",

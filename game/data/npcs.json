@@ -105,7 +105,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:998",
+   "src": "07b_npc-directory.md:1000",
    "title": "권한대행",
    "vendor": ""
   },
@@ -132,7 +132,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1015",
+   "src": "07b_npc-directory.md:1017",
    "title": "계엄사령관 대령",
    "vendor": ""
   },
@@ -158,7 +158,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:744",
+   "src": "07b_npc-directory.md:746",
    "title": "단장",
    "vendor": ""
   },
@@ -188,7 +188,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:501",
+   "src": "07b_npc-directory.md:503",
    "title": "2077년 S-07 회선 시공자 구",
    "vendor": "V09"
   },
@@ -217,7 +217,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:892",
+   "src": "07b_npc-directory.md:894",
    "title": "상위",
    "vendor": ""
   },
@@ -245,7 +245,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:745",
+   "src": "07b_npc-directory.md:747",
    "title": "진행자",
    "vendor": ""
   },
@@ -270,7 +270,7 @@
    "services": [],
    "sex": "여",
    "species": "기록",
-   "src": "07b_npc-directory.md:813",
+   "src": "07b_npc-directory.md:815",
    "title": "관제망 설계자",
    "vendor": ""
   },
@@ -328,7 +328,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1119",
+   "src": "07b_npc-directory.md:1121",
    "title": "선주 조합장",
    "vendor": ""
   },
@@ -356,7 +356,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:509",
+   "src": "07b_npc-directory.md:511",
    "title": "대표",
    "vendor": ""
   },
@@ -384,7 +384,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:502",
+   "src": "07b_npc-directory.md:504",
    "title": "소장",
    "vendor": ""
   },
@@ -457,7 +457,7 @@
    "services": [],
    "sex": "남",
    "species": "변",
-   "src": "07b_npc-directory.md:746",
+   "src": "07b_npc-directory.md:748",
    "title": "평화적인 변종 무리의 우두머리",
    "vendor": ""
   },
@@ -482,7 +482,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:747",
+   "src": "07b_npc-directory.md:749",
    "title": "기사",
    "vendor": ""
   },
@@ -533,7 +533,7 @@
    "services": [],
    "sex": "",
    "species": "로",
-   "src": "07b_npc-directory.md:788",
+   "src": "07b_npc-directory.md:790",
    "title": "0311호 경비 로봇",
    "vendor": ""
   },
@@ -559,7 +559,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:949",
+   "src": "07b_npc-directory.md:951",
    "title": "용병",
    "vendor": ""
   },
@@ -824,7 +824,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1019",
+   "src": "07b_npc-directory.md:1021",
    "title": "대위",
    "vendor": ""
   },
@@ -849,7 +849,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:999",
+   "src": "07b_npc-directory.md:1001",
    "title": "등록관리실장",
    "vendor": ""
   },
@@ -872,7 +872,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1017",
+   "src": "07b_npc-directory.md:1019",
    "title": "소령",
    "vendor": ""
   },
@@ -917,7 +917,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1001",
+   "src": "07b_npc-directory.md:1003",
    "title": "공보관",
    "vendor": ""
   },
@@ -940,7 +940,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1000",
+   "src": "07b_npc-directory.md:1002",
    "title": "태성 계열 국무위원",
    "vendor": ""
   },
@@ -962,7 +962,7 @@
    "services": [],
    "sex": "남",
    "species": "기록",
-   "src": "07b_npc-directory.md:669",
+   "src": "07b_npc-directory.md:671",
    "title": "2077년 계엄사령관",
    "vendor": ""
   },
@@ -987,7 +987,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:676",
+   "src": "07b_npc-directory.md:678",
    "title": "수호관",
    "vendor": ""
   },
@@ -1010,7 +1010,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:677",
+   "src": "07b_npc-directory.md:679",
    "title": "수호관",
    "vendor": ""
   },
@@ -1033,7 +1033,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:678",
+   "src": "07b_npc-directory.md:680",
    "title": "수호관",
    "vendor": ""
   },
@@ -1059,7 +1059,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:681",
+   "src": "07b_npc-directory.md:683",
    "title": "기록관",
    "vendor": ""
   },
@@ -1082,7 +1082,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:682",
+   "src": "07b_npc-directory.md:684",
    "title": "통신병",
    "vendor": ""
   },
@@ -1108,7 +1108,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:679",
+   "src": "07b_npc-directory.md:681",
    "title": "수석 공작관",
    "vendor": "V27"
   },
@@ -1132,7 +1132,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:680",
+   "src": "07b_npc-directory.md:682",
    "title": "PX 관리관",
    "vendor": "V26"
   },
@@ -1152,7 +1152,7 @@
    "services": [],
    "sex": "남",
    "species": "기록",
-   "src": "07b_npc-directory.md:748",
+   "src": "07b_npc-directory.md:750",
    "title": "2077년 기지 방송 진행자",
    "vendor": ""
   },
@@ -1177,7 +1177,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:924",
+   "src": "07b_npc-directory.md:926",
    "title": "원칙파 수장",
    "vendor": ""
   },
@@ -1201,7 +1201,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:925",
+   "src": "07b_npc-directory.md:927",
    "title": "회수 목록 대장",
    "vendor": "V41"
   },
@@ -1225,7 +1225,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:926",
+   "src": "07b_npc-directory.md:928",
    "title": "회수대장",
    "vendor": ""
   },
@@ -1371,7 +1371,7 @@
    "services": [],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:893",
+   "src": "07b_npc-directory.md:895",
    "title": "부중대장",
    "vendor": ""
   },
@@ -1397,7 +1397,7 @@
    ],
    "sex": "여",
    "species": "구",
-   "src": "07b_npc-directory.md:894",
+   "src": "07b_npc-directory.md:896",
    "title": "통신병",
    "vendor": ""
   },
@@ -1421,7 +1421,7 @@
    "services": [],
    "sex": "남",
    "species": "야구",
-   "src": "07b_npc-directory.md:908",
+   "src": "07b_npc-directory.md:910",
    "title": "중사",
    "vendor": ""
   },
@@ -1472,7 +1472,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:573",
+   "src": "07b_npc-directory.md:575",
    "title": "물 상인 조합장",
    "vendor": ""
   },
@@ -1497,7 +1497,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:820",
+   "src": "07b_npc-directory.md:822",
    "title": "장터 번영회장",
    "vendor": ""
   },
@@ -1520,7 +1520,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:755",
+   "src": "07b_npc-directory.md:757",
    "title": "입주자대표회의 회장",
    "vendor": ""
   },
@@ -1546,7 +1546,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:756",
+   "src": "07b_npc-directory.md:758",
    "title": "관리소장",
    "vendor": ""
   },
@@ -1573,7 +1573,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1150",
+   "src": "07b_npc-directory.md:1152",
    "title": "뱃사공",
    "vendor": "V23"
   },
@@ -1594,7 +1594,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:947",
+   "src": "07b_npc-directory.md:949",
    "title": "대표",
    "vendor": ""
   },
@@ -1615,7 +1615,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:948",
+   "src": "07b_npc-directory.md:950",
    "title": "실장",
    "vendor": ""
   },
@@ -1639,7 +1639,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:836",
+   "src": "07b_npc-directory.md:838",
    "title": "대장",
    "vendor": ""
   },
@@ -1660,7 +1660,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:821",
+   "src": "07b_npc-directory.md:823",
    "title": "조합장",
    "vendor": ""
   },
@@ -1709,7 +1709,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:530",
+   "src": "07b_npc-directory.md:532",
    "title": "두목 '쇠갈퀴'",
    "vendor": ""
   },
@@ -1730,7 +1730,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:531",
+   "src": "07b_npc-directory.md:533",
    "title": "산주",
    "vendor": ""
   },
@@ -1753,7 +1753,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:880",
+   "src": "07b_npc-directory.md:882",
    "title": "두목 '배기통'",
    "vendor": ""
   },
@@ -1776,7 +1776,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:957",
+   "src": "07b_npc-directory.md:959",
    "title": "두목 '방열복'",
    "vendor": ""
   },
@@ -1820,7 +1820,7 @@
    "services": [],
    "sex": "남",
    "species": "빛구",
-   "src": "07b_npc-directory.md:539",
+   "src": "07b_npc-directory.md:541",
    "title": "2077년 당직 기사",
    "vendor": ""
   },
@@ -1841,7 +1841,7 @@
    "services": [],
    "sex": "남",
    "species": "변",
-   "src": "07b_npc-directory.md:1086",
+   "src": "07b_npc-directory.md:1088",
    "title": "서울역 변종 무리 대장",
    "vendor": ""
   },
@@ -1861,7 +1861,7 @@
    "services": [],
    "sex": "",
    "species": "인",
-   "src": "07b_npc-directory.md:1174",
+   "src": "07b_npc-directory.md:1176",
    "title": "미스터리어스 스트레인저의 서울판",
    "vendor": ""
   },
@@ -1890,7 +1890,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1119",
+   "src": "07b_npc-directory.md:1121",
    "title": "선주 조합장",
    "vendor": ""
   },
@@ -1910,7 +1910,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1120",
+   "src": "07b_npc-directory.md:1122",
    "title": "부조합장",
    "vendor": ""
   },
@@ -1934,7 +1934,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1121",
+   "src": "07b_npc-directory.md:1123",
    "title": "경비대 60 지휘",
    "vendor": ""
   },
@@ -1958,7 +1958,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1122",
+   "src": "07b_npc-directory.md:1124",
    "title": "출장소장",
    "vendor": "V50"
   },
@@ -1978,7 +1978,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1123",
+   "src": "07b_npc-directory.md:1125",
    "title": "섬 시장 검량원",
    "vendor": ""
   },
@@ -2002,7 +2002,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1124",
+   "src": "07b_npc-directory.md:1126",
    "title": "주점 '물마루'·여관 주인",
    "vendor": "V49"
   },
@@ -2024,7 +2024,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1125",
+   "src": "07b_npc-directory.md:1127",
    "title": "다리 시장 무기상",
    "vendor": "V47"
   },
@@ -2046,7 +2046,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1126",
+   "src": "07b_npc-directory.md:1128",
    "title": "다리 시장 식당",
    "vendor": "V48"
   },
@@ -2068,7 +2068,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1127",
+   "src": "07b_npc-directory.md:1129",
    "title": "텃밭지기",
    "vendor": ""
   },
@@ -2091,7 +2091,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1128",
+   "src": "07b_npc-directory.md:1130",
    "title": "선적 사무 서기",
    "vendor": ""
   },
@@ -2113,7 +2113,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1129",
+   "src": "07b_npc-directory.md:1131",
    "title": "노들 나룻배 선장",
    "vendor": ""
   },
@@ -2135,7 +2135,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1130",
+   "src": "07b_npc-directory.md:1132",
    "title": "서래섬 구간 사공",
    "vendor": ""
   },
@@ -2157,7 +2157,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1131",
+   "src": "07b_npc-directory.md:1133",
    "title": "교각 아래 마을 대표",
    "vendor": ""
   },
@@ -2179,7 +2179,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1132",
+   "src": "07b_npc-directory.md:1134",
    "title": "진료선 의사",
    "vendor": ""
   },
@@ -2201,7 +2201,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1133",
+   "src": "07b_npc-directory.md:1135",
    "title": "크레인 정비공",
    "vendor": ""
   },
@@ -2221,7 +2221,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1134",
+   "src": "07b_npc-directory.md:1136",
    "title": "조합장 집안 아이",
    "vendor": ""
   },
@@ -2243,7 +2243,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1135",
+   "src": "07b_npc-directory.md:1137",
    "title": "선주 원로",
    "vendor": ""
   },
@@ -2263,7 +2263,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1136",
+   "src": "07b_npc-directory.md:1138",
    "title": "통행세 인상파",
    "vendor": ""
   },
@@ -2285,7 +2285,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1137",
+   "src": "07b_npc-directory.md:1139",
    "title": "보호 대가 식량 교역 담당",
    "vendor": ""
   },
@@ -2307,7 +2307,7 @@
    ],
    "sex": "여",
    "species": "구",
-   "src": "07b_npc-directory.md:1138",
+   "src": "07b_npc-directory.md:1140",
    "title": "지하시장 행상",
    "vendor": ""
   },
@@ -2327,7 +2327,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1139",
+   "src": "07b_npc-directory.md:1141",
    "title": "노들섬 현상금 사냥꾼",
    "vendor": ""
   },
@@ -2349,7 +2349,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1140",
+   "src": "07b_npc-directory.md:1142",
    "title": "회의장 관리·서기",
    "vendor": ""
   },
@@ -2371,7 +2371,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1141",
+   "src": "07b_npc-directory.md:1143",
    "title": "다리 시장 고철 수리상",
    "vendor": ""
   },
@@ -2393,7 +2393,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1142",
+   "src": "07b_npc-directory.md:1144",
    "title": "한강 북로 수송대장",
    "vendor": "V52"
   },
@@ -2413,7 +2413,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1143",
+   "src": "07b_npc-directory.md:1145",
    "title": "선착장 하역 반장",
    "vendor": ""
   },
@@ -2437,7 +2437,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1144",
+   "src": "07b_npc-directory.md:1146",
    "title": "남문 관문장",
    "vendor": ""
   },
@@ -2459,7 +2459,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1145",
+   "src": "07b_npc-directory.md:1147",
    "title": "북문 초소장",
    "vendor": ""
   },
@@ -2479,7 +2479,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1146",
+   "src": "07b_npc-directory.md:1148",
    "title": "한강철교 매복조장",
    "vendor": ""
   },
@@ -2501,7 +2501,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1147",
+   "src": "07b_npc-directory.md:1149",
    "title": "4호선 거더 밧줄지기",
    "vendor": ""
   },
@@ -2524,7 +2524,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1148",
+   "src": "07b_npc-directory.md:1150",
    "title": "폭심 침전물 채집꾼",
    "vendor": ""
   },
@@ -2546,7 +2546,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1149",
+   "src": "07b_npc-directory.md:1151",
    "title": "잠수교 참게잡이",
    "vendor": ""
   },
@@ -2573,7 +2573,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1150",
+   "src": "07b_npc-directory.md:1152",
    "title": "뱃사공",
    "vendor": "V23"
   },
@@ -2598,7 +2598,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1151",
+   "src": "07b_npc-directory.md:1153",
    "title": "조합 승선표 판매원",
    "vendor": ""
   },
@@ -2620,7 +2620,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:1152",
+   "src": "07b_npc-directory.md:1154",
    "title": "2077년 수상 레스토랑 주방장",
    "vendor": ""
   },
@@ -2642,7 +2642,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1153",
+   "src": "07b_npc-directory.md:1155",
    "title": "밀수 배 선주",
    "vendor": ""
   },
@@ -2664,7 +2664,7 @@
    ],
    "sex": "여",
    "species": "구",
-   "src": "07b_npc-directory.md:1154",
+   "src": "07b_npc-directory.md:1156",
    "title": "2077년 계류장 관리사무소 직원",
    "vendor": ""
   },
@@ -2687,7 +2687,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1155",
+   "src": "07b_npc-directory.md:1157",
    "title": "구조대 초소 무전 지기",
    "vendor": ""
   },
@@ -2709,7 +2709,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1156",
+   "src": "07b_npc-directory.md:1158",
    "title": "서래섬 나루지기",
    "vendor": ""
   },
@@ -2733,7 +2733,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1157",
+   "src": "07b_npc-directory.md:1159",
    "title": "잠실대교 다리지기",
    "vendor": ""
   },
@@ -2755,7 +2755,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1158",
+   "src": "07b_npc-directory.md:1160",
    "title": "광진교 통행소장",
    "vendor": ""
   },
@@ -2775,7 +2775,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1159",
+   "src": "07b_npc-directory.md:1161",
    "title": "화물선 '두물호' 선장",
    "vendor": ""
   },
@@ -2797,7 +2797,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1160",
+   "src": "07b_npc-directory.md:1162",
    "title": "주탑 꼭대기 저격 은자",
    "vendor": ""
   },
@@ -2819,7 +2819,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1161",
+   "src": "07b_npc-directory.md:1163",
    "title": "가양대교 정찰꾼",
    "vendor": ""
   },
@@ -2839,7 +2839,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1162",
+   "src": "07b_npc-directory.md:1164",
    "title": "한강 북로 수송대원",
    "vendor": ""
   },
@@ -2859,7 +2859,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1163",
+   "src": "07b_npc-directory.md:1165",
    "title": "한강 행상 조합 수송대 경비",
    "vendor": ""
   },
@@ -2879,7 +2879,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1164",
+   "src": "07b_npc-directory.md:1166",
    "title": "볼트 작업복을 주워 입은 피난민",
    "vendor": ""
   },
@@ -2899,7 +2899,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1165",
+   "src": "07b_npc-directory.md:1167",
    "title": "화물선 '두물호' 갑판장",
    "vendor": ""
   },
@@ -2919,7 +2919,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1166",
+   "src": "07b_npc-directory.md:1168",
    "title": "두물호 기관 담당 선원",
    "vendor": ""
   },
@@ -2939,7 +2939,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1167",
+   "src": "07b_npc-directory.md:1169",
    "title": "두물호 견습 선원",
    "vendor": ""
   },
@@ -5775,6 +5775,46 @@
    "title": "지하시장 수선집",
    "vendor": ""
   },
+  "N-R02-508": {
+   "age": 50,
+   "faction": "JC",
+   "faction_full": "JC·TK",
+   "ids": [
+    "N-R02-508"
+   ],
+   "look": "M2-S5-HR00-H2-T12-2-PF12-HD02-EY00-PR103",
+   "name": "연석규",
+   "name_full": "연석규",
+   "place": "방문(R02-23)",
+   "quests": [],
+   "role": "탱크마을 위험 작업 십장(경매 구매자)",
+   "services": [],
+   "sex": "남",
+   "species": "인",
+   "src": "07b_npc-directory.md:501",
+   "title": "탱크마을 위험 작업 십장",
+   "vendor": ""
+  },
+  "N-R02-509": {
+   "age": 40,
+   "faction": "BJ",
+   "faction_full": "BJ",
+   "ids": [
+    "N-R02-509"
+   ],
+   "look": "M2-S4-HR02-H1-T06-1-PF01-HD04-EY00-PR002",
+   "name": "반경모",
+   "name_full": "반경모",
+   "place": "방문(R02-23)",
+   "quests": [],
+   "role": "비상정부 지상 노역 감독관(경매 구매자)",
+   "services": [],
+   "sex": "남",
+   "species": "인",
+   "src": "07b_npc-directory.md:502",
+   "title": "비상정부 지상 노역 감독관",
+   "vendor": ""
+  },
   "N-R03-001": {
    "age": 55,
    "faction": "JC",
@@ -5799,7 +5839,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:509",
+   "src": "07b_npc-directory.md:511",
    "title": "대표",
    "vendor": ""
   },
@@ -5821,7 +5861,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:510",
+   "src": "07b_npc-directory.md:512",
    "title": "2호 위원·상인회장",
    "vendor": ""
   },
@@ -5843,7 +5883,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:511",
+   "src": "07b_npc-directory.md:513",
    "title": "3호 위원·정유 반장",
    "vendor": ""
   },
@@ -5863,7 +5903,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:512",
+   "src": "07b_npc-directory.md:514",
    "title": "4호 위원·살림 담당",
    "vendor": ""
   },
@@ -5886,7 +5926,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:513",
+   "src": "07b_npc-directory.md:515",
    "title": "5호 위원·대장장이",
    "vendor": "V16"
   },
@@ -5911,7 +5951,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:514",
+   "src": "07b_npc-directory.md:516",
    "title": "자경대장",
    "vendor": ""
   },
@@ -5931,7 +5971,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:515",
+   "src": "07b_npc-directory.md:517",
    "title": "자경대 저격수",
    "vendor": ""
   },
@@ -5951,7 +5991,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:516",
+   "src": "07b_npc-directory.md:518",
    "title": "자경대 막내",
    "vendor": ""
   },
@@ -5973,7 +6013,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:517",
+   "src": "07b_npc-directory.md:519",
    "title": "정유공",
    "vendor": ""
   },
@@ -5995,7 +6035,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:518",
+   "src": "07b_npc-directory.md:520",
    "title": "연료상",
    "vendor": "V17"
   },
@@ -6017,7 +6057,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:519",
+   "src": "07b_npc-directory.md:521",
    "title": "잡화상",
    "vendor": ""
   },
@@ -6039,7 +6079,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:520",
+   "src": "07b_npc-directory.md:522",
    "title": "꼬치 노점 '솥뚜껑'",
    "vendor": "V18"
   },
@@ -6061,7 +6101,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:521",
+   "src": "07b_npc-directory.md:523",
    "title": "수리공",
    "vendor": ""
   },
@@ -6083,7 +6123,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:522",
+   "src": "07b_npc-directory.md:524",
    "title": "진료소 의사",
    "vendor": ""
   },
@@ -6103,7 +6143,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:523",
+   "src": "07b_npc-directory.md:525",
    "title": "4호 교사",
    "vendor": ""
   },
@@ -6125,7 +6165,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:524",
+   "src": "07b_npc-directory.md:526",
    "title": "무전기사",
    "vendor": ""
   },
@@ -6145,7 +6185,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:525",
+   "src": "07b_npc-directory.md:527",
    "title": "아이",
    "vendor": ""
   },
@@ -6167,7 +6207,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:526",
+   "src": "07b_npc-directory.md:528",
    "title": "아이·캡 수집",
    "vendor": ""
   },
@@ -6187,7 +6227,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:527",
+   "src": "07b_npc-directory.md:529",
    "title": "정문 문지기",
    "vendor": ""
   },
@@ -6209,7 +6249,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:528",
+   "src": "07b_npc-directory.md:530",
    "title": "시장 관리인",
    "vendor": ""
   },
@@ -6232,7 +6272,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:529",
+   "src": "07b_npc-directory.md:531",
    "title": "식당 '기름솥' 주인",
    "vendor": ""
   },
@@ -6257,7 +6297,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:530",
+   "src": "07b_npc-directory.md:532",
    "title": "두목 '쇠갈퀴'",
    "vendor": ""
   },
@@ -6278,7 +6318,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:531",
+   "src": "07b_npc-directory.md:533",
    "title": "산주",
    "vendor": ""
   },
@@ -6300,7 +6340,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:532",
+   "src": "07b_npc-directory.md:534",
    "title": "저울잡이",
    "vendor": "V19"
   },
@@ -6322,7 +6362,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:533",
+   "src": "07b_npc-directory.md:535",
    "title": "갑옷 공방장",
    "vendor": ""
   },
@@ -6342,7 +6382,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:534",
+   "src": "07b_npc-directory.md:536",
    "title": "부두목 후보",
    "vendor": ""
   },
@@ -6362,7 +6402,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:535",
+   "src": "07b_npc-directory.md:537",
    "title": "부두목 후보",
    "vendor": ""
   },
@@ -6382,7 +6422,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:536",
+   "src": "07b_npc-directory.md:538",
    "title": "정찰 소년",
    "vendor": ""
   },
@@ -6402,7 +6442,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:537",
+   "src": "07b_npc-directory.md:539",
    "title": "포로",
    "vendor": ""
   },
@@ -6424,7 +6464,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:538",
+   "src": "07b_npc-directory.md:540",
    "title": "강변 초소장",
    "vendor": ""
   },
@@ -6447,7 +6487,7 @@
    "services": [],
    "sex": "남",
    "species": "빛구",
-   "src": "07b_npc-directory.md:539",
+   "src": "07b_npc-directory.md:541",
    "title": "2077년 당직 기사",
    "vendor": ""
   },
@@ -6467,7 +6507,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:540",
+   "src": "07b_npc-directory.md:542",
    "title": "공병 하사",
    "vendor": ""
   },
@@ -6487,7 +6527,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:541",
+   "src": "07b_npc-directory.md:543",
    "title": "공병 상병",
    "vendor": ""
   },
@@ -6509,7 +6549,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:542",
+   "src": "07b_npc-directory.md:544",
    "title": "은둔자",
    "vendor": ""
   },
@@ -6529,7 +6569,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:543",
+   "src": "07b_npc-directory.md:545",
    "title": "보도국장",
    "vendor": ""
   },
@@ -6549,7 +6589,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:544",
+   "src": "07b_npc-directory.md:546",
    "title": "'전시 특보' 앵커",
    "vendor": ""
   },
@@ -6569,7 +6609,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:545",
+   "src": "07b_npc-directory.md:547",
    "title": "아이",
    "vendor": ""
   },
@@ -6591,7 +6631,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:546",
+   "src": "07b_npc-directory.md:548",
    "title": "2077 송출 엔지니어",
    "vendor": ""
   },
@@ -6613,7 +6653,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:547",
+   "src": "07b_npc-directory.md:549",
    "title": "고물상",
    "vendor": ""
   },
@@ -6635,7 +6675,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:548",
+   "src": "07b_npc-directory.md:550",
    "title": "객차 하숙집 주인",
    "vendor": ""
   },
@@ -6655,7 +6695,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:549",
+   "src": "07b_npc-directory.md:551",
    "title": "순례 당번",
    "vendor": ""
   },
@@ -6677,7 +6717,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:550",
+   "src": "07b_npc-directory.md:552",
    "title": "행상",
    "vendor": ""
   },
@@ -6699,7 +6739,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:551",
+   "src": "07b_npc-directory.md:553",
    "title": "땜장이",
    "vendor": ""
   },
@@ -6719,7 +6759,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:552",
+   "src": "07b_npc-directory.md:554",
    "title": "기타 떠돌이",
    "vendor": ""
   },
@@ -6741,7 +6781,7 @@
    "services": [],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:553",
+   "src": "07b_npc-directory.md:555",
    "title": "2077 전자공학 강사",
    "vendor": ""
   },
@@ -6763,7 +6803,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:554",
+   "src": "07b_npc-directory.md:556",
    "title": "의료반원",
    "vendor": ""
   },
@@ -6783,7 +6823,7 @@
    "services": [],
    "sex": "여",
    "species": "구",
-   "src": "07b_npc-directory.md:555",
+   "src": "07b_npc-directory.md:557",
    "title": "격리 병동 간호사",
    "vendor": ""
   },
@@ -6805,7 +6845,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:556",
+   "src": "07b_npc-directory.md:558",
    "title": "초소장 기사",
    "vendor": ""
   },
@@ -6825,7 +6865,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:557",
+   "src": "07b_npc-directory.md:559",
    "title": "수습기사",
    "vendor": ""
   },
@@ -6849,7 +6889,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:558",
+   "src": "07b_npc-directory.md:560",
    "title": "공작관",
    "vendor": ""
   },
@@ -6869,7 +6909,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:559",
+   "src": "07b_npc-directory.md:561",
    "title": "은둔 노인",
    "vendor": ""
   },
@@ -6889,7 +6929,7 @@
    "services": [],
    "sex": "",
    "species": "로",
-   "src": "07b_npc-directory.md:560",
+   "src": "07b_npc-directory.md:562",
    "title": "집사 로봇",
    "vendor": ""
   },
@@ -6909,7 +6949,7 @@
    "services": [],
    "sex": "여",
    "species": "구",
-   "src": "07b_npc-directory.md:561",
+   "src": "07b_npc-directory.md:563",
    "title": "민원 주무관",
    "vendor": ""
   },
@@ -6929,7 +6969,7 @@
    "services": [],
    "sex": "",
    "species": "로",
-   "src": "07b_npc-directory.md:562",
+   "src": "07b_npc-directory.md:564",
    "title": "소방 로봇",
    "vendor": ""
   },
@@ -6951,7 +6991,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:563",
+   "src": "07b_npc-directory.md:565",
    "title": "1번 탱크 여인숙·목욕탕 주인",
    "vendor": ""
   },
@@ -6971,7 +7011,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:564",
+   "src": "07b_npc-directory.md:566",
    "title": "5호 대표 석해든의 보좌",
    "vendor": ""
   },
@@ -6993,7 +7033,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:565",
+   "src": "07b_npc-directory.md:567",
    "title": "난지 고철단 채집조 반장",
    "vendor": ""
   },
@@ -7015,7 +7055,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:566",
+   "src": "07b_npc-directory.md:568",
    "title": "난지 강변 새 초소장",
    "vendor": ""
   },
@@ -7039,7 +7079,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:573",
+   "src": "07b_npc-directory.md:575",
    "title": "물 상인 조합장",
    "vendor": ""
   },
@@ -7059,7 +7099,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:574",
+   "src": "07b_npc-directory.md:576",
    "title": "부조합장·물값 고시",
    "vendor": ""
   },
@@ -7083,7 +7123,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:575",
+   "src": "07b_npc-directory.md:577",
    "title": "경비대장",
    "vendor": ""
   },
@@ -7103,7 +7143,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:576",
+   "src": "07b_npc-directory.md:578",
    "title": "수조 경비",
    "vendor": ""
   },
@@ -7125,7 +7165,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:577",
+   "src": "07b_npc-directory.md:579",
    "title": "경비 교관",
    "vendor": ""
   },
@@ -7145,7 +7185,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:578",
+   "src": "07b_npc-directory.md:580",
    "title": "여과공 반장",
    "vendor": ""
   },
@@ -7165,7 +7205,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:579",
+   "src": "07b_npc-directory.md:581",
    "title": "여과공",
    "vendor": ""
   },
@@ -7187,7 +7227,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:580",
+   "src": "07b_npc-directory.md:582",
    "title": "수경 농장장",
    "vendor": ""
   },
@@ -7207,7 +7247,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:581",
+   "src": "07b_npc-directory.md:583",
    "title": "농부",
    "vendor": ""
   },
@@ -7229,7 +7269,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:582",
+   "src": "07b_npc-directory.md:584",
    "title": "물표 출납원",
    "vendor": "V21"
   },
@@ -7249,7 +7289,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:583",
+   "src": "07b_npc-directory.md:585",
    "title": "장부 감사",
    "vendor": ""
   },
@@ -7271,7 +7311,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:584",
+   "src": "07b_npc-directory.md:586",
    "title": "양조장",
    "vendor": ""
   },
@@ -7295,7 +7335,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:585",
+   "src": "07b_npc-directory.md:587",
    "title": "선착장 관리",
    "vendor": ""
   },
@@ -7315,7 +7355,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:586",
+   "src": "07b_npc-directory.md:588",
    "title": "선착장 줄잡이 견습",
    "vendor": ""
   },
@@ -7337,7 +7377,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:587",
+   "src": "07b_npc-directory.md:589",
    "title": "조합 배 '맑은물 2호' 선장",
    "vendor": ""
   },
@@ -7359,7 +7399,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:588",
+   "src": "07b_npc-directory.md:590",
    "title": "의원",
    "vendor": ""
   },
@@ -7379,7 +7419,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:589",
+   "src": "07b_npc-directory.md:591",
    "title": "선유교 문지기",
    "vendor": ""
   },
@@ -7399,7 +7439,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:590",
+   "src": "07b_npc-directory.md:592",
    "title": "아이",
    "vendor": ""
   },
@@ -7421,7 +7461,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:591",
+   "src": "07b_npc-directory.md:593",
    "title": "물 상점",
    "vendor": ""
   },
@@ -7443,7 +7483,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:592",
+   "src": "07b_npc-directory.md:594",
    "title": "물장수",
    "vendor": "V53"
   },
@@ -7463,7 +7503,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:593",
+   "src": "07b_npc-directory.md:595",
    "title": "대표",
    "vendor": ""
   },
@@ -7483,7 +7523,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:594",
+   "src": "07b_npc-directory.md:596",
    "title": "수문지기",
    "vendor": ""
   },
@@ -7505,7 +7545,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:595",
+   "src": "07b_npc-directory.md:597",
    "title": "붕어 양식장",
    "vendor": "V20"
   },
@@ -7525,7 +7565,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:596",
+   "src": "07b_npc-directory.md:598",
    "title": "양식 일꾼",
    "vendor": ""
   },
@@ -7547,7 +7587,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:597",
+   "src": "07b_npc-directory.md:599",
    "title": "펌프 기술자",
    "vendor": ""
   },
@@ -7567,7 +7607,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:598",
+   "src": "07b_npc-directory.md:600",
    "title": "수상 정원 관리",
    "vendor": ""
   },
@@ -7587,7 +7627,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:599",
+   "src": "07b_npc-directory.md:601",
    "title": "노인",
    "vendor": ""
   },
@@ -7607,7 +7647,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:600",
+   "src": "07b_npc-directory.md:602",
    "title": "아이",
    "vendor": ""
   },
@@ -7627,7 +7667,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:601",
+   "src": "07b_npc-directory.md:603",
    "title": "취수탑 관리",
    "vendor": ""
   },
@@ -7649,7 +7689,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:602",
+   "src": "07b_npc-directory.md:604",
    "title": "남단 초소장",
    "vendor": ""
   },
@@ -7671,7 +7711,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:603",
+   "src": "07b_npc-directory.md:605",
    "title": "공구상",
    "vendor": ""
   },
@@ -7691,7 +7731,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:604",
+   "src": "07b_npc-directory.md:606",
    "title": "공구상 보조",
    "vendor": ""
   },
@@ -7713,7 +7753,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:605",
+   "src": "07b_npc-directory.md:607",
    "title": "당산철교 정비소장",
    "vendor": ""
   },
@@ -7733,7 +7773,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:606",
+   "src": "07b_npc-directory.md:608",
    "title": "줄다리꾼",
    "vendor": ""
   },
@@ -7753,7 +7793,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:607",
+   "src": "07b_npc-directory.md:609",
    "title": "펌프장 반장",
    "vendor": ""
   },
@@ -7773,7 +7813,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:608",
+   "src": "07b_npc-directory.md:610",
    "title": "비누 장인",
    "vendor": ""
   },
@@ -7795,7 +7835,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:609",
+   "src": "07b_npc-directory.md:611",
    "title": "고가 캠프 주인",
    "vendor": ""
   },
@@ -7817,7 +7857,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:610",
+   "src": "07b_npc-directory.md:612",
    "title": "밀수 연락책·폐선 고물꾼",
    "vendor": ""
   },
@@ -7839,7 +7879,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:611",
+   "src": "07b_npc-directory.md:613",
    "title": "철새 기록원",
    "vendor": ""
   },
@@ -7859,7 +7899,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:612",
+   "src": "07b_npc-directory.md:614",
    "title": "저격수 노인",
    "vendor": ""
   },
@@ -7883,7 +7923,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:613",
+   "src": "07b_npc-directory.md:615",
    "title": "잡화점 주인",
    "vendor": "V22"
   },
@@ -7903,7 +7943,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:614",
+   "src": "07b_npc-directory.md:616",
    "title": "물장수 패거리 연락책",
    "vendor": ""
   },
@@ -7925,7 +7965,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:621",
+   "src": "07b_npc-directory.md:623",
    "title": "공방장",
    "vendor": ""
   },
@@ -7947,7 +7987,7 @@
    ],
    "sex": "여",
    "species": "구",
-   "src": "07b_npc-directory.md:622",
+   "src": "07b_npc-directory.md:624",
    "title": "살림·상인",
    "vendor": ""
   },
@@ -7969,7 +8009,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:623",
+   "src": "07b_npc-directory.md:625",
    "title": "무기공",
    "vendor": ""
   },
@@ -7992,7 +8032,7 @@
    ],
    "sex": "여",
    "species": "구",
-   "src": "07b_npc-directory.md:624",
+   "src": "07b_npc-directory.md:626",
    "title": "약사·의사",
    "vendor": ""
   },
@@ -8014,7 +8054,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:625",
+   "src": "07b_npc-directory.md:627",
    "title": "하수로 길잡이",
    "vendor": ""
   },
@@ -8036,7 +8076,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:626",
+   "src": "07b_npc-directory.md:628",
    "title": "로봇 수리공",
    "vendor": ""
   },
@@ -8056,7 +8096,7 @@
    "services": [],
    "sex": "여",
    "species": "구",
-   "src": "07b_npc-directory.md:627",
+   "src": "07b_npc-directory.md:629",
    "title": "경비대장",
    "vendor": ""
   },
@@ -8076,7 +8116,7 @@
    "services": [],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:628",
+   "src": "07b_npc-directory.md:630",
    "title": "경비",
    "vendor": ""
   },
@@ -8096,7 +8136,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:629",
+   "src": "07b_npc-directory.md:631",
    "title": "견습공",
    "vendor": ""
   },
@@ -8118,7 +8158,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:630",
+   "src": "07b_npc-directory.md:632",
    "title": "사냥꾼",
    "vendor": ""
   },
@@ -8140,7 +8180,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:631",
+   "src": "07b_npc-directory.md:633",
    "title": "기술 교환상",
    "vendor": ""
   },
@@ -8160,7 +8200,7 @@
    "services": [],
    "sex": "",
    "species": "로",
-   "src": "07b_npc-directory.md:632",
+   "src": "07b_npc-directory.md:634",
    "title": "경비 로봇",
    "vendor": ""
   },
@@ -8182,7 +8222,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:633",
+   "src": "07b_npc-directory.md:635",
    "title": "공구상",
    "vendor": ""
   },
@@ -8204,7 +8244,7 @@
    ],
    "sex": "여",
    "species": "구",
-   "src": "07b_npc-directory.md:634",
+   "src": "07b_npc-directory.md:636",
    "title": "고철 수집",
    "vendor": ""
   },
@@ -8226,7 +8266,7 @@
    ],
    "sex": "여",
    "species": "구",
-   "src": "07b_npc-directory.md:635",
+   "src": "07b_npc-directory.md:637",
    "title": "의사",
    "vendor": ""
   },
@@ -8248,7 +8288,7 @@
    ],
    "sex": "",
    "species": "로",
-   "src": "07b_npc-directory.md:636",
+   "src": "07b_npc-directory.md:638",
    "title": "간호 로봇",
    "vendor": ""
   },
@@ -8268,7 +8308,7 @@
    "services": [],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:637",
+   "src": "07b_npc-directory.md:639",
    "title": "극단 단장·연출",
    "vendor": ""
   },
@@ -8288,7 +8328,7 @@
    "services": [],
    "sex": "여",
    "species": "구",
-   "src": "07b_npc-directory.md:638",
+   "src": "07b_npc-directory.md:640",
    "title": "배우",
    "vendor": ""
   },
@@ -8310,7 +8350,7 @@
    ],
    "sex": "여",
    "species": "구",
-   "src": "07b_npc-directory.md:639",
+   "src": "07b_npc-directory.md:641",
    "title": "조명·음향 기사",
    "vendor": ""
   },
@@ -8332,7 +8372,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:640",
+   "src": "07b_npc-directory.md:642",
    "title": "정원사",
    "vendor": ""
   },
@@ -8354,7 +8394,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:641",
+   "src": "07b_npc-directory.md:643",
    "title": "은둔 관찰자",
    "vendor": ""
   },
@@ -8377,7 +8417,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:642",
+   "src": "07b_npc-directory.md:644",
    "title": "사대문 순례조장",
    "vendor": ""
   },
@@ -8397,7 +8437,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:643",
+   "src": "07b_npc-directory.md:645",
    "title": "순례자",
    "vendor": ""
   },
@@ -8419,7 +8459,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:644",
+   "src": "07b_npc-directory.md:646",
    "title": "회수 기사",
    "vendor": "V25"
   },
@@ -8439,7 +8479,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:645",
+   "src": "07b_npc-directory.md:647",
    "title": "회수 요원",
    "vendor": ""
   },
@@ -8464,7 +8504,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:646",
+   "src": "07b_npc-directory.md:648",
    "title": "공병 상사",
    "vendor": ""
   },
@@ -8487,7 +8527,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:647",
+   "src": "07b_npc-directory.md:649",
    "title": "환전상",
    "vendor": ""
   },
@@ -8507,7 +8547,7 @@
    "services": [],
    "sex": "",
    "species": "로",
-   "src": "07b_npc-directory.md:648",
+   "src": "07b_npc-directory.md:650",
    "title": "상가 안내 로봇",
    "vendor": ""
   },
@@ -8530,7 +8570,7 @@
    ],
    "sex": "여",
    "species": "구",
-   "src": "07b_npc-directory.md:649",
+   "src": "07b_npc-directory.md:651",
    "title": "국밥집 주인",
    "vendor": ""
   },
@@ -8550,7 +8590,7 @@
    "services": [],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:650",
+   "src": "07b_npc-directory.md:652",
    "title": "보급소 관리인",
    "vendor": ""
   },
@@ -8572,7 +8612,7 @@
    "services": [],
    "sex": "",
    "species": "로",
-   "src": "07b_npc-directory.md:651",
+   "src": "07b_npc-directory.md:653",
    "title": "차단벽 현장 정비",
    "vendor": ""
   },
@@ -8594,7 +8634,7 @@
    "services": [],
    "sex": "",
    "species": "로",
-   "src": "07b_npc-directory.md:652",
+   "src": "07b_npc-directory.md:654",
    "title": "차단벽 현장 정비",
    "vendor": ""
   },
@@ -8616,7 +8656,7 @@
    "services": [],
    "sex": "",
    "species": "로",
-   "src": "07b_npc-directory.md:653",
+   "src": "07b_npc-directory.md:655",
    "title": "차단벽 현장 정비",
    "vendor": ""
   },
@@ -8638,7 +8678,7 @@
    "services": [],
    "sex": "",
    "species": "로",
-   "src": "07b_npc-directory.md:654",
+   "src": "07b_npc-directory.md:656",
    "title": "차단벽 현장 정비",
    "vendor": ""
   },
@@ -8658,7 +8698,7 @@
    "services": [],
    "sex": "",
    "species": "로",
-   "src": "07b_npc-directory.md:655",
+   "src": "07b_npc-directory.md:657",
    "title": "차단벽 현장 정비",
    "vendor": ""
   },
@@ -8678,7 +8718,7 @@
    "services": [],
    "sex": "",
    "species": "로",
-   "src": "07b_npc-directory.md:656",
+   "src": "07b_npc-directory.md:658",
    "title": "민원 안내 로봇",
    "vendor": ""
   },
@@ -8700,7 +8740,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:657",
+   "src": "07b_npc-directory.md:659",
    "title": "연락 장교",
    "vendor": ""
   },
@@ -8720,7 +8760,7 @@
    "services": [],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:658",
+   "src": "07b_npc-directory.md:660",
    "title": "비상 행정 사무관",
    "vendor": ""
   },
@@ -8740,7 +8780,7 @@
    "services": [],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:659",
+   "src": "07b_npc-directory.md:661",
    "title": "인쇄 기사",
    "vendor": ""
   },
@@ -8762,7 +8802,7 @@
    ],
    "sex": "여",
    "species": "구",
-   "src": "07b_npc-directory.md:660",
+   "src": "07b_npc-directory.md:662",
    "title": "원단상",
    "vendor": ""
   },
@@ -8782,7 +8822,7 @@
    "services": [],
    "sex": "남",
    "species": "변",
-   "src": "07b_npc-directory.md:661",
+   "src": "07b_npc-directory.md:663",
    "title": "탈주 변종",
    "vendor": ""
   },
@@ -8804,7 +8844,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:662",
+   "src": "07b_npc-directory.md:664",
    "title": "고물상",
    "vendor": ""
   },
@@ -8826,7 +8866,7 @@
    ],
    "sex": "여",
    "species": "구",
-   "src": "07b_npc-directory.md:663",
+   "src": "07b_npc-directory.md:665",
    "title": "양봉가",
    "vendor": ""
   },
@@ -8848,7 +8888,7 @@
    "services": [],
    "sex": "",
    "species": "기계",
-   "src": "07b_npc-directory.md:664",
+   "src": "07b_npc-directory.md:666",
    "title": "관제 본부 음성 안내 단말",
    "vendor": ""
   },
@@ -8870,7 +8910,7 @@
    ],
    "sex": "",
    "species": "로",
-   "src": "07b_npc-directory.md:665",
+   "src": "07b_npc-directory.md:667",
    "title": "공관 안내 로봇",
    "vendor": ""
   },
@@ -8893,7 +8933,7 @@
    ],
    "sex": "",
    "species": "로",
-   "src": "07b_npc-directory.md:666",
+   "src": "07b_npc-directory.md:668",
    "title": "명동 번개24 점원 로봇",
    "vendor": "V24"
   },
@@ -8915,7 +8955,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:667",
+   "src": "07b_npc-directory.md:669",
    "title": "하수로로 도심을 드나드는 비공식 행",
    "vendor": ""
   },
@@ -8935,7 +8975,7 @@
    "services": [],
    "sex": "여",
    "species": "야생 구울",
-   "src": "07b_npc-directory.md:668",
+   "src": "07b_npc-directory.md:670",
    "title": "2077년 「종전 전야」 주연 배우",
    "vendor": ""
   },
@@ -8960,7 +9000,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:676",
+   "src": "07b_npc-directory.md:678",
    "title": "수호관",
    "vendor": ""
   },
@@ -8983,7 +9023,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:677",
+   "src": "07b_npc-directory.md:679",
    "title": "수호관",
    "vendor": ""
   },
@@ -9006,7 +9046,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:678",
+   "src": "07b_npc-directory.md:680",
    "title": "수호관",
    "vendor": ""
   },
@@ -9032,7 +9072,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:679",
+   "src": "07b_npc-directory.md:681",
    "title": "수석 공작관",
    "vendor": "V27"
   },
@@ -9056,7 +9096,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:680",
+   "src": "07b_npc-directory.md:682",
    "title": "PX 관리관",
    "vendor": "V26"
   },
@@ -9082,7 +9122,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:681",
+   "src": "07b_npc-directory.md:683",
    "title": "기록관",
    "vendor": ""
   },
@@ -9105,7 +9145,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:682",
+   "src": "07b_npc-directory.md:684",
    "title": "통신병",
    "vendor": ""
   },
@@ -9125,7 +9165,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:683",
+   "src": "07b_npc-directory.md:685",
    "title": "제1랜스",
    "vendor": ""
   },
@@ -9145,7 +9185,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:684",
+   "src": "07b_npc-directory.md:686",
    "title": "제2랜스",
    "vendor": ""
   },
@@ -9165,7 +9205,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:685",
+   "src": "07b_npc-directory.md:687",
    "title": "제3랜스",
    "vendor": ""
   },
@@ -9187,7 +9227,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:686",
+   "src": "07b_npc-directory.md:688",
    "title": "연합단 기사",
    "vendor": ""
   },
@@ -9207,7 +9247,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:687",
+   "src": "07b_npc-directory.md:689",
    "title": "남산 분견대 부대장",
    "vendor": ""
   },
@@ -9227,7 +9267,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:688",
+   "src": "07b_npc-directory.md:690",
    "title": "남산 분견대 저격수",
    "vendor": ""
   },
@@ -9249,7 +9289,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:689",
+   "src": "07b_npc-directory.md:691",
    "title": "정문 수비",
    "vendor": ""
   },
@@ -9271,7 +9311,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:690",
+   "src": "07b_npc-directory.md:692",
    "title": "이촌 둔치 검문소장",
    "vendor": ""
   },
@@ -9291,7 +9331,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:691",
+   "src": "07b_npc-directory.md:693",
    "title": "이태원 고개 초소 근무",
    "vendor": ""
   },
@@ -9311,7 +9351,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:692",
+   "src": "07b_npc-directory.md:694",
    "title": "PX 경비",
    "vendor": ""
   },
@@ -9331,7 +9371,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:693",
+   "src": "07b_npc-directory.md:695",
    "title": "회수반 보조",
    "vendor": ""
   },
@@ -9351,7 +9391,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:694",
+   "src": "07b_npc-directory.md:696",
    "title": "영어 이름을 받지 못한 생도",
    "vendor": ""
   },
@@ -9371,7 +9411,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:695",
+   "src": "07b_npc-directory.md:697",
    "title": "생도 반장",
    "vendor": ""
   },
@@ -9391,7 +9431,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:696",
+   "src": "07b_npc-directory.md:698",
    "title": "다니엘 서의 조카",
    "vendor": ""
   },
@@ -9413,7 +9453,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:697",
+   "src": "07b_npc-directory.md:699",
    "title": "파워 아머 정비",
    "vendor": ""
   },
@@ -9435,7 +9475,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:698",
+   "src": "07b_npc-directory.md:700",
    "title": "병기창",
    "vendor": ""
   },
@@ -9457,7 +9497,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:699",
+   "src": "07b_npc-directory.md:701",
    "title": "회수반 지휘",
    "vendor": ""
   },
@@ -9480,7 +9520,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:700",
+   "src": "07b_npc-directory.md:702",
    "title": "의무실",
    "vendor": "V28"
   },
@@ -9502,7 +9542,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:701",
+   "src": "07b_npc-directory.md:703",
    "title": "파워 아머 훈련",
    "vendor": ""
   },
@@ -9524,7 +9564,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:702",
+   "src": "07b_npc-directory.md:704",
    "title": "삼각지 바리케이드 검문",
    "vendor": ""
   },
@@ -9544,7 +9584,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:703",
+   "src": "07b_npc-directory.md:705",
    "title": "회수반",
    "vendor": ""
   },
@@ -9566,7 +9606,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:704",
+   "src": "07b_npc-directory.md:706",
    "title": "PX 식당",
    "vendor": ""
   },
@@ -9586,7 +9626,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:705",
+   "src": "07b_npc-directory.md:707",
    "title": "HOLD THE BASE 테이프 관리",
    "vendor": ""
   },
@@ -9610,7 +9650,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:706",
+   "src": "07b_npc-directory.md:708",
    "title": "송신 엔지니어",
    "vendor": ""
   },
@@ -9635,7 +9675,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:707",
+   "src": "07b_npc-directory.md:709",
    "title": "자료실·아카이브",
    "vendor": ""
   },
@@ -9655,7 +9695,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:708",
+   "src": "07b_npc-directory.md:710",
    "title": "낭독자",
    "vendor": ""
   },
@@ -9677,7 +9717,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:709",
+   "src": "07b_npc-directory.md:711",
    "title": "S-01 후손",
    "vendor": ""
   },
@@ -9699,7 +9739,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:710",
+   "src": "07b_npc-directory.md:712",
    "title": "소식꾼",
    "vendor": ""
   },
@@ -9721,7 +9761,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:711",
+   "src": "07b_npc-directory.md:713",
    "title": "살림·원로",
    "vendor": ""
   },
@@ -9743,7 +9783,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:712",
+   "src": "07b_npc-directory.md:714",
    "title": "심부름꾼·전령",
    "vendor": ""
   },
@@ -9763,7 +9803,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:713",
+   "src": "07b_npc-directory.md:715",
    "title": "텐트 반장회 반장",
    "vendor": ""
   },
@@ -9783,7 +9823,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:714",
+   "src": "07b_npc-directory.md:716",
    "title": "자경대장",
    "vendor": ""
   },
@@ -9805,7 +9845,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:715",
+   "src": "07b_npc-directory.md:717",
    "title": "수선공",
    "vendor": "V29"
   },
@@ -9828,7 +9868,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:716",
+   "src": "07b_npc-directory.md:718",
    "title": "급식소 텐트 반장",
    "vendor": ""
   },
@@ -9848,7 +9888,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:717",
+   "src": "07b_npc-directory.md:719",
    "title": "아이",
    "vendor": ""
   },
@@ -9870,7 +9910,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:718",
+   "src": "07b_npc-directory.md:720",
    "title": "진료 천막",
    "vendor": ""
   },
@@ -9892,7 +9932,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:719",
+   "src": "07b_npc-directory.md:721",
    "title": "고물 교환상",
    "vendor": ""
   },
@@ -9914,7 +9954,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:720",
+   "src": "07b_npc-directory.md:722",
    "title": "태권도 사범",
    "vendor": ""
   },
@@ -9934,7 +9974,7 @@
    "services": [],
    "sex": "남",
    "species": "변",
-   "src": "07b_npc-directory.md:721",
+   "src": "07b_npc-directory.md:723",
    "title": "무리의 경계병",
    "vendor": ""
   },
@@ -9956,7 +9996,7 @@
    ],
    "sex": "여",
    "species": "변",
-   "src": "07b_npc-directory.md:722",
+   "src": "07b_npc-directory.md:724",
    "title": "무리의 물물교환 담당",
    "vendor": "V30"
   },
@@ -9976,7 +10016,7 @@
    "services": [],
    "sex": "남",
    "species": "변",
-   "src": "07b_npc-directory.md:723",
+   "src": "07b_npc-directory.md:725",
    "title": "막내",
    "vendor": ""
   },
@@ -9996,7 +10036,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:724",
+   "src": "07b_npc-directory.md:726",
    "title": "약탈자 두목",
    "vendor": ""
   },
@@ -10016,7 +10056,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:725",
+   "src": "07b_npc-directory.md:727",
    "title": "몸값 창구",
    "vendor": ""
   },
@@ -10038,7 +10078,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:726",
+   "src": "07b_npc-directory.md:728",
    "title": "장터 관리",
    "vendor": ""
   },
@@ -10060,7 +10100,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:727",
+   "src": "07b_npc-directory.md:729",
    "title": "철로 행상",
    "vendor": ""
   },
@@ -10082,7 +10122,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:728",
+   "src": "07b_npc-directory.md:730",
    "title": "탄약·무기 상인",
    "vendor": ""
   },
@@ -10104,7 +10144,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:729",
+   "src": "07b_npc-directory.md:731",
    "title": "정보·심부름",
    "vendor": ""
   },
@@ -10126,7 +10166,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:730",
+   "src": "07b_npc-directory.md:732",
    "title": "부품상",
    "vendor": ""
   },
@@ -10148,7 +10188,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:731",
+   "src": "07b_npc-directory.md:733",
    "title": "고철상",
    "vendor": ""
   },
@@ -10170,7 +10210,7 @@
    ],
    "sex": "여",
    "species": "구",
-   "src": "07b_npc-directory.md:732",
+   "src": "07b_npc-directory.md:734",
    "title": "학예사",
    "vendor": ""
   },
@@ -10192,7 +10232,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:733",
+   "src": "07b_npc-directory.md:735",
    "title": "은둔 노인",
    "vendor": ""
   },
@@ -10214,7 +10254,7 @@
    ],
    "sex": "여",
    "species": "구",
-   "src": "07b_npc-directory.md:734",
+   "src": "07b_npc-directory.md:736",
    "title": "대학 도서관 사서",
    "vendor": ""
   },
@@ -10234,7 +10274,7 @@
    "services": [],
    "sex": "",
    "species": "로",
-   "src": "07b_npc-directory.md:735",
+   "src": "07b_npc-directory.md:737",
    "title": "집사 로봇",
    "vendor": ""
   },
@@ -10257,7 +10297,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:736",
+   "src": "07b_npc-directory.md:738",
    "title": "낚시꾼",
    "vendor": ""
   },
@@ -10277,7 +10317,7 @@
    "services": [],
    "sex": "",
    "species": "로",
-   "src": "07b_npc-directory.md:737",
+   "src": "07b_npc-directory.md:739",
    "title": "S-01 견학 안내 로봇",
    "vendor": ""
   },
@@ -10297,7 +10337,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:738",
+   "src": "07b_npc-directory.md:740",
    "title": "이태원 고개 초소장",
    "vendor": ""
   },
@@ -10317,7 +10357,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:739",
+   "src": "07b_npc-directory.md:741",
    "title": "공작관",
    "vendor": ""
   },
@@ -10337,7 +10377,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:740",
+   "src": "07b_npc-directory.md:742",
    "title": "수습기사",
    "vendor": ""
   },
@@ -10357,7 +10397,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:741",
+   "src": "07b_npc-directory.md:743",
    "title": "생도",
    "vendor": ""
   },
@@ -10377,7 +10417,7 @@
    "services": [],
    "sex": "남",
    "species": "변",
-   "src": "07b_npc-directory.md:742",
+   "src": "07b_npc-directory.md:744",
    "title": "서울역 무리에서 도망친 어린 변종",
    "vendor": ""
   },
@@ -10397,7 +10437,7 @@
    "services": [],
    "sex": "남",
    "species": "변",
-   "src": "07b_npc-directory.md:743",
+   "src": "07b_npc-directory.md:745",
    "title": "큰돌 무리원",
    "vendor": ""
   },
@@ -10420,7 +10460,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:755",
+   "src": "07b_npc-directory.md:757",
    "title": "입주자대표회의 회장",
    "vendor": ""
   },
@@ -10446,7 +10486,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:756",
+   "src": "07b_npc-directory.md:758",
    "title": "관리소장",
    "vendor": ""
   },
@@ -10468,7 +10508,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:757",
+   "src": "07b_npc-directory.md:759",
    "title": "101동 동대표",
    "vendor": ""
   },
@@ -10488,7 +10528,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:758",
+   "src": "07b_npc-directory.md:760",
    "title": "110동 동대표",
    "vendor": ""
   },
@@ -10508,7 +10548,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:759",
+   "src": "07b_npc-directory.md:761",
    "title": "관리 사무소 경리",
    "vendor": ""
   },
@@ -10530,7 +10570,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:760",
+   "src": "07b_npc-directory.md:762",
    "title": "잡화점 '세이프마트' 주인",
    "vendor": "V31"
   },
@@ -10550,7 +10590,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:761",
+   "src": "07b_npc-directory.md:763",
    "title": "단지 원자로 기사장",
    "vendor": ""
   },
@@ -10572,7 +10612,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:762",
+   "src": "07b_npc-directory.md:764",
    "title": "단지 의원 의사",
    "vendor": ""
   },
@@ -10596,7 +10636,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:763",
+   "src": "07b_npc-directory.md:765",
    "title": "수리공",
    "vendor": ""
   },
@@ -10620,7 +10660,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:764",
+   "src": "07b_npc-directory.md:766",
    "title": "108동 옥상 망원경 지기",
    "vendor": ""
   },
@@ -10640,7 +10680,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:765",
+   "src": "07b_npc-directory.md:767",
    "title": "분양 홍보관 관리인",
    "vendor": ""
   },
@@ -10660,7 +10700,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:766",
+   "src": "07b_npc-directory.md:768",
    "title": "'연체 세대' 노역반장",
    "vendor": ""
   },
@@ -10682,7 +10722,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:767",
+   "src": "07b_npc-directory.md:769",
    "title": "2077년 분양 계약서 보관자",
    "vendor": ""
   },
@@ -10702,7 +10742,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:768",
+   "src": "07b_npc-directory.md:770",
    "title": "단지 학당 강사",
    "vendor": ""
   },
@@ -10724,7 +10764,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:769",
+   "src": "07b_npc-directory.md:771",
    "title": "정문 판독기 게이트 관리",
    "vendor": ""
   },
@@ -10746,7 +10786,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:770",
+   "src": "07b_npc-directory.md:772",
    "title": "비등록 청년",
    "vendor": ""
   },
@@ -10768,7 +10808,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:771",
+   "src": "07b_npc-directory.md:773",
    "title": "관리동 식당 주인",
    "vendor": ""
   },
@@ -10788,7 +10828,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:772",
+   "src": "07b_npc-directory.md:774",
    "title": "옥상 감시조장",
    "vendor": ""
   },
@@ -10808,7 +10848,7 @@
    "services": [],
    "sex": "",
    "species": "로",
-   "src": "07b_npc-directory.md:773",
+   "src": "07b_npc-directory.md:775",
    "title": "관리사무소 공지 방송 로봇",
    "vendor": ""
   },
@@ -10830,7 +10870,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:774",
+   "src": "07b_npc-directory.md:776",
    "title": "'등록 주민회' 장부 담당",
    "vendor": ""
   },
@@ -10850,7 +10890,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:775",
+   "src": "07b_npc-directory.md:777",
    "title": "철벽경호 강남 지사장",
    "vendor": ""
   },
@@ -10872,7 +10912,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:776",
+   "src": "07b_npc-directory.md:778",
    "title": "세이프빌 경비팀장",
    "vendor": ""
   },
@@ -10892,7 +10932,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:777",
+   "src": "07b_npc-directory.md:779",
    "title": "처리조 팀장",
    "vendor": ""
   },
@@ -10915,7 +10955,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:778",
+   "src": "07b_npc-directory.md:780",
    "title": "계약 담당",
    "vendor": "V34"
   },
@@ -10938,7 +10978,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:779",
+   "src": "07b_npc-directory.md:781",
    "title": "점포회 회장",
    "vendor": ""
   },
@@ -10958,7 +10998,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:780",
+   "src": "07b_npc-directory.md:782",
    "title": "1번 출구 셔터 지기",
    "vendor": ""
   },
@@ -10980,7 +11020,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:781",
+   "src": "07b_npc-directory.md:783",
    "title": "2077년 고속버스 기사",
    "vendor": ""
   },
@@ -11004,7 +11044,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:782",
+   "src": "07b_npc-directory.md:784",
    "title": "2077년 세진 협력사 3팀 기술자",
    "vendor": ""
   },
@@ -11026,7 +11066,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:783",
+   "src": "07b_npc-directory.md:785",
    "title": "3층 수경 재배장",
    "vendor": ""
   },
@@ -11048,7 +11088,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:784",
+   "src": "07b_npc-directory.md:786",
    "title": "심부름꾼",
    "vendor": ""
   },
@@ -11070,7 +11110,7 @@
    ],
    "sex": "여",
    "species": "구",
-   "src": "07b_npc-directory.md:785",
+   "src": "07b_npc-directory.md:787",
    "title": "2077년 터미널 약국 약사",
    "vendor": ""
   },
@@ -11092,7 +11132,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:786",
+   "src": "07b_npc-directory.md:788",
    "title": "수리점",
    "vendor": ""
   },
@@ -11114,7 +11154,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:787",
+   "src": "07b_npc-directory.md:789",
    "title": "무기·탄약 상인",
    "vendor": ""
   },
@@ -11139,7 +11179,7 @@
    "services": [],
    "sex": "",
    "species": "로",
-   "src": "07b_npc-directory.md:788",
+   "src": "07b_npc-directory.md:790",
    "title": "0311호 경비 로봇",
    "vendor": ""
   },
@@ -11163,7 +11203,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:789",
+   "src": "07b_npc-directory.md:791",
    "title": "각성회 응답자",
    "vendor": ""
   },
@@ -11187,7 +11227,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:790",
+   "src": "07b_npc-directory.md:792",
    "title": "원칙파 회수조장",
    "vendor": ""
   },
@@ -11211,7 +11251,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:791",
+   "src": "07b_npc-directory.md:793",
    "title": "2077년 타워 방재실 당직",
    "vendor": ""
   },
@@ -11231,7 +11271,7 @@
    "services": [],
    "sex": "",
    "species": "로",
-   "src": "07b_npc-directory.md:792",
+   "src": "07b_npc-directory.md:794",
    "title": "세진 갤러리 안내 로봇",
    "vendor": ""
   },
@@ -11253,7 +11293,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:793",
+   "src": "07b_npc-directory.md:795",
    "title": "송파 대기소 분소장",
    "vendor": ""
   },
@@ -11275,7 +11315,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:794",
+   "src": "07b_npc-directory.md:796",
    "title": "개통파 성향 신도",
    "vendor": ""
   },
@@ -11295,7 +11335,7 @@
    "services": [],
    "sex": "",
    "species": "로",
-   "src": "07b_npc-directory.md:795",
+   "src": "07b_npc-directory.md:797",
    "title": "학원 학습 보조 로봇",
    "vendor": ""
   },
@@ -11317,7 +11357,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:796",
+   "src": "07b_npc-directory.md:798",
    "title": "학원가 떠돌이 아이들 대장",
    "vendor": ""
   },
@@ -11337,7 +11377,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:797",
+   "src": "07b_npc-directory.md:799",
    "title": "부두목",
    "vendor": ""
   },
@@ -11359,7 +11399,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:798",
+   "src": "07b_npc-directory.md:800",
    "title": "원자로 버스 정비",
    "vendor": ""
   },
@@ -11382,7 +11422,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:799",
+   "src": "07b_npc-directory.md:801",
    "title": "가락 기착지 관리인",
    "vendor": ""
   },
@@ -11404,7 +11444,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:800",
+   "src": "07b_npc-directory.md:802",
    "title": "두머리소 경매인",
    "vendor": ""
   },
@@ -11426,7 +11466,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:801",
+   "src": "07b_npc-directory.md:803",
    "title": "장터 국밥집",
    "vendor": ""
   },
@@ -11448,7 +11488,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:802",
+   "src": "07b_npc-directory.md:804",
    "title": "압구정 단지의 마지막 주민",
    "vendor": ""
   },
@@ -11468,7 +11508,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:803",
+   "src": "07b_npc-directory.md:805",
    "title": "떠돌이 피아니스트",
    "vendor": ""
   },
@@ -11490,7 +11530,7 @@
    ],
    "sex": "여",
    "species": "구",
-   "src": "07b_npc-directory.md:804",
+   "src": "07b_npc-directory.md:806",
    "title": "2077년 후송 병동 간호사",
    "vendor": ""
   },
@@ -11512,7 +11552,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:805",
+   "src": "07b_npc-directory.md:807",
    "title": "2077년 법원 서기",
    "vendor": ""
   },
@@ -11532,7 +11572,7 @@
    "services": [],
    "sex": "",
    "species": "로",
-   "src": "07b_npc-directory.md:806",
+   "src": "07b_npc-directory.md:808",
    "title": "원자랜드 마스코트 퍼레이드 로봇",
    "vendor": ""
   },
@@ -11552,7 +11592,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:807",
+   "src": "07b_npc-directory.md:809",
    "title": "분류반 주무관",
    "vendor": ""
   },
@@ -11572,7 +11612,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:808",
+   "src": "07b_npc-directory.md:810",
    "title": "반포 검문소장",
    "vendor": ""
   },
@@ -11592,7 +11632,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:809",
+   "src": "07b_npc-directory.md:811",
    "title": "영동 검문소장",
    "vendor": ""
   },
@@ -11614,7 +11654,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:810",
+   "src": "07b_npc-directory.md:812",
    "title": "테헤란로 저격수",
    "vendor": ""
   },
@@ -11636,7 +11676,7 @@
    ],
    "sex": "여",
    "species": "구",
-   "src": "07b_npc-directory.md:811",
+   "src": "07b_npc-directory.md:813",
    "title": "2077년 경기장 장내 아나운서",
    "vendor": ""
   },
@@ -11656,7 +11696,7 @@
    "services": [],
    "sex": "",
    "species": "로",
-   "src": "07b_npc-directory.md:812",
+   "src": "07b_npc-directory.md:814",
    "title": "번개24 배송 로봇",
    "vendor": ""
   },
@@ -11681,7 +11721,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:820",
+   "src": "07b_npc-directory.md:822",
    "title": "장터 번영회장",
    "vendor": ""
   },
@@ -11702,7 +11742,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:821",
+   "src": "07b_npc-directory.md:823",
    "title": "조합장",
    "vendor": ""
   },
@@ -11726,7 +11766,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:822",
+   "src": "07b_npc-directory.md:824",
    "title": "장터 경비대장",
    "vendor": ""
   },
@@ -11748,7 +11788,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:823",
+   "src": "07b_npc-directory.md:825",
    "title": "두 머리 한우 거간꾼",
    "vendor": "V38"
   },
@@ -11771,7 +11811,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:824",
+   "src": "07b_npc-directory.md:826",
    "title": "무두장이",
    "vendor": "V35"
   },
@@ -11793,7 +11833,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:825",
+   "src": "07b_npc-directory.md:827",
    "title": "물새 집 원장",
    "vendor": ""
   },
@@ -11813,7 +11853,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:826",
+   "src": "07b_npc-directory.md:828",
    "title": "물새 집 아이",
    "vendor": ""
   },
@@ -11835,7 +11875,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:827",
+   "src": "07b_npc-directory.md:829",
    "title": "잡동사니·설계도 상인",
    "vendor": "V36"
   },
@@ -11857,7 +11897,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:828",
+   "src": "07b_npc-directory.md:830",
    "title": "국밥집 '장터 솥'",
    "vendor": ""
   },
@@ -11879,7 +11919,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:829",
+   "src": "07b_npc-directory.md:831",
    "title": "옷감 상인",
    "vendor": ""
   },
@@ -11901,7 +11941,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:830",
+   "src": "07b_npc-directory.md:832",
    "title": "고철상",
    "vendor": ""
   },
@@ -11925,7 +11965,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:831",
+   "src": "07b_npc-directory.md:833",
    "title": "잠실대교 다리지기 반장",
    "vendor": ""
   },
@@ -11945,7 +11985,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:832",
+   "src": "07b_npc-directory.md:834",
    "title": "화물선장",
    "vendor": ""
   },
@@ -11968,7 +12008,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:833",
+   "src": "07b_npc-directory.md:835",
    "title": "총포상",
    "vendor": ""
   },
@@ -11991,7 +12031,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:834",
+   "src": "07b_npc-directory.md:836",
    "title": "진공관·라디오 수리공",
    "vendor": ""
   },
@@ -12014,7 +12054,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:835",
+   "src": "07b_npc-directory.md:837",
    "title": "여관 '강안개' 주인",
    "vendor": ""
   },
@@ -12038,7 +12078,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:836",
+   "src": "07b_npc-directory.md:838",
    "title": "대장",
    "vendor": ""
   },
@@ -12058,7 +12098,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:837",
+   "src": "07b_npc-directory.md:839",
    "title": "부대장",
    "vendor": ""
   },
@@ -12081,7 +12121,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:838",
+   "src": "07b_npc-directory.md:840",
    "title": "지장 카드 기록원",
    "vendor": ""
   },
@@ -12103,7 +12143,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:839",
+   "src": "07b_npc-directory.md:841",
    "title": "신참 대원",
    "vendor": ""
   },
@@ -12126,7 +12166,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:840",
+   "src": "07b_npc-directory.md:842",
    "title": "가죽 공방주",
    "vendor": ""
   },
@@ -12146,7 +12186,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:841",
+   "src": "07b_npc-directory.md:843",
    "title": "공방 견습",
    "vendor": ""
   },
@@ -12168,7 +12208,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:842",
+   "src": "07b_npc-directory.md:844",
    "title": "정수 기술자",
    "vendor": ""
   },
@@ -12191,7 +12231,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:843",
+   "src": "07b_npc-directory.md:845",
    "title": "숲지기 사냥꾼",
    "vendor": ""
   },
@@ -12213,7 +12253,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:844",
+   "src": "07b_npc-directory.md:846",
    "title": "옥상 텃밭 노인",
    "vendor": ""
   },
@@ -12235,7 +12275,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:845",
+   "src": "07b_npc-directory.md:847",
    "title": "철로 끝 저격수",
    "vendor": ""
   },
@@ -12255,7 +12295,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:846",
+   "src": "07b_npc-directory.md:848",
    "title": "각성회 순례조장",
    "vendor": ""
   },
@@ -12277,7 +12317,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:847",
+   "src": "07b_npc-directory.md:849",
    "title": "공대 조교",
    "vendor": ""
   },
@@ -12299,7 +12339,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:848",
+   "src": "07b_npc-directory.md:850",
    "title": "정육점 구울",
    "vendor": ""
   },
@@ -12319,7 +12359,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:849",
+   "src": "07b_npc-directory.md:851",
    "title": "철물상",
    "vendor": ""
   },
@@ -12341,7 +12381,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:850",
+   "src": "07b_npc-directory.md:852",
    "title": "부품 수집꾼",
    "vendor": ""
   },
@@ -12364,7 +12404,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:851",
+   "src": "07b_npc-directory.md:853",
    "title": "보부상 회 대표",
    "vendor": ""
   },
@@ -12386,7 +12426,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:852",
+   "src": "07b_npc-directory.md:854",
    "title": "여관 '막차' 주인",
    "vendor": ""
   },
@@ -12406,7 +12446,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:853",
+   "src": "07b_npc-directory.md:855",
    "title": "시장 경비 반장",
    "vendor": ""
   },
@@ -12428,7 +12468,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:854",
+   "src": "07b_npc-directory.md:856",
    "title": "약재상",
    "vendor": ""
   },
@@ -12448,7 +12488,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:855",
+   "src": "07b_npc-directory.md:857",
    "title": "약탕 견습",
    "vendor": ""
   },
@@ -12468,7 +12508,7 @@
    "services": [],
    "sex": "",
    "species": "로",
-   "src": "07b_npc-directory.md:856",
+   "src": "07b_npc-directory.md:858",
    "title": "두뇌-4 개체",
    "vendor": ""
   },
@@ -12488,7 +12528,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:857",
+   "src": "07b_npc-directory.md:859",
    "title": "수문지기",
    "vendor": ""
   },
@@ -12510,7 +12550,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:858",
+   "src": "07b_npc-directory.md:860",
    "title": "구울 정비사",
    "vendor": ""
   },
@@ -12530,7 +12570,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:859",
+   "src": "07b_npc-directory.md:861",
    "title": "묘지기",
    "vendor": ""
   },
@@ -12550,7 +12590,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:860",
+   "src": "07b_npc-directory.md:862",
    "title": "산마을 회의 대표",
    "vendor": ""
   },
@@ -12572,7 +12612,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:861",
+   "src": "07b_npc-directory.md:863",
    "title": "배수지 관리인",
    "vendor": ""
   },
@@ -12594,7 +12634,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:862",
+   "src": "07b_npc-directory.md:864",
    "title": "약초꾼",
    "vendor": "V39"
   },
@@ -12616,7 +12656,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:863",
+   "src": "07b_npc-directory.md:865",
    "title": "경비대장·사냥꾼",
    "vendor": ""
   },
@@ -12638,7 +12678,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:864",
+   "src": "07b_npc-directory.md:866",
    "title": "의원·산파",
    "vendor": ""
   },
@@ -12658,7 +12698,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:865",
+   "src": "07b_npc-directory.md:867",
    "title": "마을 아이",
    "vendor": ""
   },
@@ -12680,7 +12720,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:866",
+   "src": "07b_npc-directory.md:868",
    "title": "펌프 기술자",
    "vendor": ""
   },
@@ -12700,7 +12740,7 @@
    "services": [],
    "sex": "",
    "species": "로",
-   "src": "07b_npc-directory.md:867",
+   "src": "07b_npc-directory.md:869",
    "title": "살림-2 개체",
    "vendor": ""
   },
@@ -12722,7 +12762,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:868",
+   "src": "07b_npc-directory.md:870",
    "title": "대로파 창고 분대장",
    "vendor": ""
   },
@@ -12742,7 +12782,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:869",
+   "src": "07b_npc-directory.md:871",
    "title": "산채파 두목",
    "vendor": ""
   },
@@ -12762,7 +12802,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:870",
+   "src": "07b_npc-directory.md:872",
    "title": "부두목",
    "vendor": ""
   },
@@ -12782,7 +12822,7 @@
    "services": [],
    "sex": "여",
    "species": "구",
-   "src": "07b_npc-directory.md:871",
+   "src": "07b_npc-directory.md:873",
    "title": "구울 사육사",
    "vendor": ""
   },
@@ -12804,7 +12844,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:872",
+   "src": "07b_npc-directory.md:874",
    "title": "호수 낚시꾼",
    "vendor": ""
   },
@@ -12826,7 +12866,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:873",
+   "src": "07b_npc-directory.md:875",
    "title": "취수장 관리인",
    "vendor": ""
   },
@@ -12848,7 +12888,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:874",
+   "src": "07b_npc-directory.md:876",
    "title": "천호 시장 통장",
    "vendor": ""
   },
@@ -12868,7 +12908,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:875",
+   "src": "07b_npc-directory.md:877",
    "title": "대로파 수금원",
    "vendor": ""
   },
@@ -12888,7 +12928,7 @@
    "services": [],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:876",
+   "src": "07b_npc-directory.md:878",
    "title": "취수장 기사",
    "vendor": ""
   },
@@ -12908,7 +12948,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:877",
+   "src": "07b_npc-directory.md:879",
    "title": "움막 은둔자 '선사'",
    "vendor": ""
   },
@@ -12930,7 +12970,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:878",
+   "src": "07b_npc-directory.md:880",
    "title": "304동 '동대표'",
    "vendor": ""
   },
@@ -12952,7 +12992,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:879",
+   "src": "07b_npc-directory.md:881",
    "title": "단지 길잡이",
    "vendor": ""
   },
@@ -12975,7 +13015,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:880",
+   "src": "07b_npc-directory.md:882",
    "title": "두목 '배기통'",
    "vendor": ""
   },
@@ -12995,7 +13035,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:881",
+   "src": "07b_npc-directory.md:883",
    "title": "요새 저격수",
    "vendor": ""
   },
@@ -13017,7 +13057,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:882",
+   "src": "07b_npc-directory.md:884",
    "title": "원자력 엔진 정비공",
    "vendor": ""
   },
@@ -13039,7 +13079,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:883",
+   "src": "07b_npc-directory.md:885",
    "title": "'번개 수집관' 탄산 수집가",
    "vendor": "V37"
   },
@@ -13061,7 +13101,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:884",
+   "src": "07b_npc-directory.md:886",
    "title": "잠실 우회로 수송대 상인",
    "vendor": "V55"
   },
@@ -13081,7 +13121,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:885",
+   "src": "07b_npc-directory.md:887",
    "title": "천호 사거리 시장 통장 보좌",
    "vendor": ""
   },
@@ -13110,7 +13150,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:892",
+   "src": "07b_npc-directory.md:894",
    "title": "상위",
    "vendor": ""
   },
@@ -13134,7 +13174,7 @@
    "services": [],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:893",
+   "src": "07b_npc-directory.md:895",
    "title": "부중대장",
    "vendor": ""
   },
@@ -13160,7 +13200,7 @@
    ],
    "sex": "여",
    "species": "구",
-   "src": "07b_npc-directory.md:894",
+   "src": "07b_npc-directory.md:896",
    "title": "통신병",
    "vendor": ""
   },
@@ -13184,7 +13224,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:895",
+   "src": "07b_npc-directory.md:897",
    "title": "상사",
    "vendor": "V42"
   },
@@ -13208,7 +13248,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:896",
+   "src": "07b_npc-directory.md:898",
    "title": "공병",
    "vendor": ""
   },
@@ -13230,7 +13270,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:897",
+   "src": "07b_npc-directory.md:899",
    "title": "야간 정찰조장",
    "vendor": ""
   },
@@ -13250,7 +13290,7 @@
    "services": [],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:898",
+   "src": "07b_npc-directory.md:900",
    "title": "저격수",
    "vendor": ""
   },
@@ -13272,7 +13312,7 @@
    ],
    "sex": "여",
    "species": "구",
-   "src": "07b_npc-directory.md:899",
+   "src": "07b_npc-directory.md:901",
    "title": "위생병",
    "vendor": ""
   },
@@ -13292,7 +13332,7 @@
    "services": [],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:900",
+   "src": "07b_npc-directory.md:902",
    "title": "분대장",
    "vendor": ""
   },
@@ -13314,7 +13354,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:901",
+   "src": "07b_npc-directory.md:903",
    "title": "굴진 로봇 정비",
    "vendor": ""
   },
@@ -13336,7 +13376,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:902",
+   "src": "07b_npc-directory.md:904",
    "title": "기록·묘역 관리",
    "vendor": ""
   },
@@ -13356,7 +13396,7 @@
    "services": [],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:903",
+   "src": "07b_npc-directory.md:905",
    "title": "성문 터 초소 경계병",
    "vendor": ""
   },
@@ -13378,7 +13418,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:904",
+   "src": "07b_npc-directory.md:906",
    "title": "취사병",
    "vendor": ""
   },
@@ -13398,7 +13438,7 @@
    "services": [],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:905",
+   "src": "07b_npc-directory.md:907",
    "title": "막내",
    "vendor": ""
   },
@@ -13420,7 +13460,7 @@
    "services": [],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:906",
+   "src": "07b_npc-directory.md:908",
    "title": "무전실 야간 당번",
    "vendor": ""
   },
@@ -13440,7 +13480,7 @@
    "services": [],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:907",
+   "src": "07b_npc-directory.md:909",
    "title": "정찰병",
    "vendor": ""
   },
@@ -13464,7 +13504,7 @@
    "services": [],
    "sex": "남",
    "species": "야구",
-   "src": "07b_npc-directory.md:908",
+   "src": "07b_npc-directory.md:910",
    "title": "중사",
    "vendor": ""
   },
@@ -13486,7 +13526,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:909",
+   "src": "07b_npc-directory.md:911",
    "title": "산장 주인",
    "vendor": ""
   },
@@ -13508,7 +13548,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:910",
+   "src": "07b_npc-directory.md:912",
    "title": "짐꾼·산길 안내",
    "vendor": ""
   },
@@ -13530,7 +13570,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:911",
+   "src": "07b_npc-directory.md:913",
    "title": "기관사·객차 자치회 대표",
    "vendor": ""
   },
@@ -13550,7 +13590,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:912",
+   "src": "07b_npc-directory.md:914",
    "title": "견습 기관사",
    "vendor": ""
   },
@@ -13573,7 +13613,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:913",
+   "src": "07b_npc-directory.md:915",
    "title": "자치회 서기",
    "vendor": "V40"
   },
@@ -13595,7 +13635,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:914",
+   "src": "07b_npc-directory.md:916",
    "title": "정비창 반장",
    "vendor": ""
   },
@@ -13615,7 +13655,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:915",
+   "src": "07b_npc-directory.md:917",
    "title": "선로 전령",
    "vendor": ""
   },
@@ -13637,7 +13677,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:916",
+   "src": "07b_npc-directory.md:918",
    "title": "식당칸",
    "vendor": ""
   },
@@ -13661,7 +13701,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:917",
+   "src": "07b_npc-directory.md:919",
    "title": "경비대장",
    "vendor": ""
   },
@@ -13683,7 +13723,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:918",
+   "src": "07b_npc-directory.md:920",
    "title": "의원칸 의사",
    "vendor": ""
   },
@@ -13703,7 +13743,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:919",
+   "src": "07b_npc-directory.md:921",
    "title": "각성회 북부 순례자",
    "vendor": ""
   },
@@ -13723,7 +13763,7 @@
    "services": [],
    "sex": "",
    "species": "로",
-   "src": "07b_npc-directory.md:920",
+   "src": "07b_npc-directory.md:922",
    "title": "돌봄-4 개체",
    "vendor": ""
   },
@@ -13743,7 +13783,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:921",
+   "src": "07b_npc-directory.md:923",
    "title": "6학년 3반 반장",
    "vendor": ""
   },
@@ -13763,7 +13803,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:922",
+   "src": "07b_npc-directory.md:924",
    "title": "졸업을 기다리는 어른",
    "vendor": ""
   },
@@ -13783,7 +13823,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:923",
+   "src": "07b_npc-directory.md:925",
    "title": "아이",
    "vendor": ""
   },
@@ -13808,7 +13848,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:924",
+   "src": "07b_npc-directory.md:926",
    "title": "원칙파 수장",
    "vendor": ""
   },
@@ -13832,7 +13872,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:925",
+   "src": "07b_npc-directory.md:927",
    "title": "회수 목록 대장",
    "vendor": "V41"
   },
@@ -13856,7 +13896,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:926",
+   "src": "07b_npc-directory.md:928",
    "title": "회수대장",
    "vendor": ""
   },
@@ -13878,7 +13918,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:927",
+   "src": "07b_npc-directory.md:929",
    "title": "교환창 담당",
    "vendor": ""
   },
@@ -13902,7 +13942,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:928",
+   "src": "07b_npc-directory.md:930",
    "title": "공작 정비사",
    "vendor": ""
   },
@@ -13924,7 +13964,7 @@
    ],
    "sex": "여",
    "species": "구",
-   "src": "07b_npc-directory.md:929",
+   "src": "07b_npc-directory.md:931",
    "title": "주임연구원",
    "vendor": ""
   },
@@ -13944,7 +13984,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:930",
+   "src": "07b_npc-directory.md:932",
    "title": "수유 고개파 두목",
    "vendor": ""
   },
@@ -13964,7 +14004,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:931",
+   "src": "07b_npc-directory.md:933",
    "title": "부두목",
    "vendor": ""
   },
@@ -13986,7 +14026,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:932",
+   "src": "07b_npc-directory.md:934",
    "title": "아마추어 무선사",
    "vendor": ""
   },
@@ -14006,7 +14046,7 @@
    "services": [],
    "sex": "",
    "species": "로",
-   "src": "07b_npc-directory.md:933",
+   "src": "07b_npc-directory.md:935",
    "title": "살림-2 개체",
    "vendor": ""
   },
@@ -14028,7 +14068,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:934",
+   "src": "07b_npc-directory.md:936",
    "title": "은둔 화가",
    "vendor": ""
   },
@@ -14051,7 +14091,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:935",
+   "src": "07b_npc-directory.md:937",
    "title": "곰 추적자",
    "vendor": "V43"
   },
@@ -14073,7 +14113,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:936",
+   "src": "07b_npc-directory.md:938",
    "title": "서북 장 대표",
    "vendor": ""
   },
@@ -14095,7 +14135,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:937",
+   "src": "07b_npc-directory.md:939",
    "title": "총포상",
    "vendor": ""
   },
@@ -14115,7 +14155,7 @@
    "services": [],
    "sex": "여",
    "species": "구",
-   "src": "07b_npc-directory.md:938",
+   "src": "07b_npc-directory.md:940",
    "title": "학원 원장",
    "vendor": ""
   },
@@ -14137,7 +14177,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:939",
+   "src": "07b_npc-directory.md:941",
    "title": "경계꾼",
    "vendor": ""
   },
@@ -14161,7 +14201,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:940",
+   "src": "07b_npc-directory.md:942",
    "title": "연합단 북부 정찰 기사",
    "vendor": ""
   },
@@ -14182,7 +14222,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:947",
+   "src": "07b_npc-directory.md:949",
    "title": "대표",
    "vendor": ""
   },
@@ -14203,7 +14243,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:948",
+   "src": "07b_npc-directory.md:950",
    "title": "실장",
    "vendor": ""
   },
@@ -14229,7 +14269,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:949",
+   "src": "07b_npc-directory.md:951",
    "title": "용병",
    "vendor": ""
   },
@@ -14249,7 +14289,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:950",
+   "src": "07b_npc-directory.md:952",
    "title": "고객 상담 창구",
    "vendor": ""
   },
@@ -14271,7 +14311,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:951",
+   "src": "07b_npc-directory.md:953",
    "title": "무기고 관리",
    "vendor": ""
   },
@@ -14293,7 +14333,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:952",
+   "src": "07b_npc-directory.md:954",
    "title": "의무관",
    "vendor": ""
   },
@@ -14315,7 +14355,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:953",
+   "src": "07b_npc-directory.md:955",
    "title": "훈련 교관",
    "vendor": ""
   },
@@ -14335,7 +14375,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:954",
+   "src": "07b_npc-directory.md:956",
    "title": "저격조 팀장",
    "vendor": ""
   },
@@ -14355,7 +14395,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:955",
+   "src": "07b_npc-directory.md:957",
    "title": "사환",
    "vendor": ""
   },
@@ -14375,7 +14415,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:956",
+   "src": "07b_npc-directory.md:958",
    "title": "계약 문서관",
    "vendor": ""
   },
@@ -14398,7 +14438,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:957",
+   "src": "07b_npc-directory.md:959",
    "title": "두목 '방열복'",
    "vendor": ""
   },
@@ -14420,7 +14460,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:958",
+   "src": "07b_npc-directory.md:960",
    "title": "의무병",
    "vendor": ""
   },
@@ -14440,7 +14480,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:959",
+   "src": "07b_npc-directory.md:961",
    "title": "이탈 희망자",
    "vendor": ""
   },
@@ -14460,7 +14500,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:960",
+   "src": "07b_npc-directory.md:962",
    "title": "두목",
    "vendor": ""
   },
@@ -14480,7 +14520,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:961",
+   "src": "07b_npc-directory.md:963",
    "title": "포로 행상",
    "vendor": ""
   },
@@ -14502,7 +14542,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:962",
+   "src": "07b_npc-directory.md:964",
    "title": "태성 연구원",
    "vendor": ""
   },
@@ -14522,7 +14562,7 @@
    "services": [],
    "sex": "여",
    "species": "구",
-   "src": "07b_npc-directory.md:963",
+   "src": "07b_npc-directory.md:965",
    "title": "세진 판독기 연구원",
    "vendor": ""
   },
@@ -14542,7 +14582,7 @@
    "services": [],
    "sex": "",
    "species": "로",
-   "src": "07b_npc-directory.md:964",
+   "src": "07b_npc-directory.md:966",
    "title": "생산 감독",
    "vendor": ""
   },
@@ -14564,7 +14604,7 @@
    ],
    "sex": "",
    "species": "로",
-   "src": "07b_npc-directory.md:965",
+   "src": "07b_npc-directory.md:967",
    "title": "생산 로봇",
    "vendor": ""
   },
@@ -14584,7 +14624,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:966",
+   "src": "07b_npc-directory.md:968",
    "title": "순례조장",
    "vendor": ""
   },
@@ -14604,7 +14644,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:967",
+   "src": "07b_npc-directory.md:969",
    "title": "순례 신도",
    "vendor": ""
   },
@@ -14624,7 +14664,7 @@
    "services": [],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:968",
+   "src": "07b_npc-directory.md:970",
    "title": "화물 하역 반장",
    "vendor": ""
   },
@@ -14646,7 +14686,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:969",
+   "src": "07b_npc-directory.md:971",
    "title": "관측자",
    "vendor": ""
   },
@@ -14666,7 +14706,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:970",
+   "src": "07b_npc-directory.md:972",
    "title": "옥상 농부·가장",
    "vendor": ""
   },
@@ -14686,7 +14726,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:971",
+   "src": "07b_npc-directory.md:973",
    "title": "옥상 농부",
    "vendor": ""
   },
@@ -14706,7 +14746,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:972",
+   "src": "07b_npc-directory.md:974",
    "title": "아이",
    "vendor": ""
   },
@@ -14726,7 +14766,7 @@
    "services": [],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:973",
+   "src": "07b_npc-directory.md:975",
    "title": "방송 기술자",
    "vendor": ""
   },
@@ -14746,7 +14786,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:974",
+   "src": "07b_npc-directory.md:976",
    "title": "목동 출장 반장",
    "vendor": ""
   },
@@ -14766,7 +14806,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:975",
+   "src": "07b_npc-directory.md:977",
    "title": "인솔조",
    "vendor": ""
   },
@@ -14788,7 +14828,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:976",
+   "src": "07b_npc-directory.md:978",
    "title": "목동",
    "vendor": ""
   },
@@ -14808,7 +14848,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:977",
+   "src": "07b_npc-directory.md:979",
    "title": "목동 딸",
    "vendor": ""
   },
@@ -14828,7 +14868,7 @@
    "services": [],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:978",
+   "src": "07b_npc-directory.md:980",
    "title": "방사능 구역 운송",
    "vendor": ""
   },
@@ -14850,7 +14890,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:979",
+   "src": "07b_npc-directory.md:981",
    "title": "탐사꾼",
    "vendor": ""
   },
@@ -14872,7 +14912,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:980",
+   "src": "07b_npc-directory.md:982",
    "title": "빌라 의원",
    "vendor": ""
   },
@@ -14892,7 +14932,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:981",
+   "src": "07b_npc-directory.md:983",
    "title": "고물상",
    "vendor": ""
   },
@@ -14914,7 +14954,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:982",
+   "src": "07b_npc-directory.md:984",
    "title": "5호선 기관사",
    "vendor": ""
   },
@@ -14936,7 +14976,7 @@
    ],
    "sex": "여",
    "species": "구",
-   "src": "07b_npc-directory.md:983",
+   "src": "07b_npc-directory.md:985",
    "title": "물재생센터 직원",
    "vendor": ""
   },
@@ -14958,7 +14998,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:984",
+   "src": "07b_npc-directory.md:986",
    "title": "밀매상",
    "vendor": "V44"
   },
@@ -14981,7 +15021,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:985",
+   "src": "07b_npc-directory.md:987",
    "title": "배수로 입구 정비 천막 주인",
    "vendor": "V45"
   },
@@ -15001,7 +15041,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:986",
+   "src": "07b_npc-directory.md:988",
    "title": "활주로파 이탈자",
    "vendor": ""
   },
@@ -15021,7 +15061,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:987",
+   "src": "07b_npc-directory.md:989",
    "title": "활주로파 이탈자",
    "vendor": ""
   },
@@ -15041,7 +15081,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:988",
+   "src": "07b_npc-directory.md:990",
    "title": "활주로파 이탈자",
    "vendor": ""
   },
@@ -15061,7 +15101,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:989",
+   "src": "07b_npc-directory.md:991",
    "title": "활주로파 이탈자",
    "vendor": ""
   },
@@ -15081,7 +15121,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:990",
+   "src": "07b_npc-directory.md:992",
    "title": "활주로파 이탈자",
    "vendor": ""
   },
@@ -15101,7 +15141,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:991",
+   "src": "07b_npc-directory.md:993",
    "title": "활주로파 이탈자",
    "vendor": ""
   },
@@ -15129,7 +15169,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:998",
+   "src": "07b_npc-directory.md:1000",
    "title": "권한대행",
    "vendor": ""
   },
@@ -15154,7 +15194,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:999",
+   "src": "07b_npc-directory.md:1001",
    "title": "등록관리실장",
    "vendor": ""
   },
@@ -15177,7 +15217,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1000",
+   "src": "07b_npc-directory.md:1002",
    "title": "태성 계열 국무위원",
    "vendor": ""
   },
@@ -15198,7 +15238,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1001",
+   "src": "07b_npc-directory.md:1003",
    "title": "공보관",
    "vendor": ""
   },
@@ -15220,7 +15260,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1002",
+   "src": "07b_npc-directory.md:1004",
    "title": "비서실장",
    "vendor": ""
   },
@@ -15242,7 +15282,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1003",
+   "src": "07b_npc-directory.md:1005",
    "title": "국무위원",
    "vendor": ""
   },
@@ -15262,7 +15302,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1004",
+   "src": "07b_npc-directory.md:1006",
    "title": "국무위원",
    "vendor": ""
   },
@@ -15284,7 +15324,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1005",
+   "src": "07b_npc-directory.md:1007",
    "title": "기획조정실장",
    "vendor": ""
   },
@@ -15304,7 +15344,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1006",
+   "src": "07b_npc-directory.md:1008",
    "title": "배급실장",
    "vendor": ""
   },
@@ -15324,7 +15364,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1007",
+   "src": "07b_npc-directory.md:1009",
    "title": "재건계획실장",
    "vendor": ""
   },
@@ -15348,7 +15388,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:1008",
+   "src": "07b_npc-directory.md:1010",
    "title": "2077년 장관 비서관",
    "vendor": ""
   },
@@ -15370,7 +15410,7 @@
    ],
    "sex": "여",
    "species": "구",
-   "src": "07b_npc-directory.md:1009",
+   "src": "07b_npc-directory.md:1011",
    "title": "2077년 한결방호 시설 기술자",
    "vendor": ""
   },
@@ -15394,7 +15434,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1010",
+   "src": "07b_npc-directory.md:1012",
    "title": "기록 보관소 주무관",
    "vendor": ""
   },
@@ -15414,7 +15454,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1011",
+   "src": "07b_npc-directory.md:1013",
    "title": "분류반 심사관",
    "vendor": ""
   },
@@ -15436,7 +15476,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1012",
+   "src": "07b_npc-directory.md:1014",
    "title": "벙커 의무실장",
    "vendor": ""
   },
@@ -15456,7 +15496,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1013",
+   "src": "07b_npc-directory.md:1015",
    "title": "원자로 운전원",
    "vendor": ""
   },
@@ -15476,7 +15516,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1014",
+   "src": "07b_npc-directory.md:1016",
    "title": "4등급 거주민",
    "vendor": ""
   },
@@ -15503,7 +15543,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1015",
+   "src": "07b_npc-directory.md:1017",
    "title": "계엄사령관 대령",
    "vendor": ""
   },
@@ -15525,7 +15565,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1016",
+   "src": "07b_npc-directory.md:1018",
    "title": "부사령관 겸 참모장",
    "vendor": ""
   },
@@ -15548,7 +15588,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1017",
+   "src": "07b_npc-directory.md:1019",
    "title": "소령",
    "vendor": ""
   },
@@ -15570,7 +15610,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1018",
+   "src": "07b_npc-directory.md:1020",
    "title": "회전익반장",
    "vendor": ""
   },
@@ -15595,7 +15635,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1019",
+   "src": "07b_npc-directory.md:1021",
    "title": "대위",
    "vendor": ""
   },
@@ -15617,7 +15657,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1020",
+   "src": "07b_npc-directory.md:1022",
    "title": "제2중대장",
    "vendor": "V46"
   },
@@ -15639,7 +15679,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1021",
+   "src": "07b_npc-directory.md:1023",
    "title": "기갑 근위대장·권한대행 경호대장",
    "vendor": ""
   },
@@ -15659,7 +15699,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1022",
+   "src": "07b_npc-directory.md:1024",
    "title": "분류반장",
    "vendor": ""
   },
@@ -15681,7 +15721,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1023",
+   "src": "07b_npc-directory.md:1025",
    "title": "양재 고개 검문소장",
    "vendor": ""
   },
@@ -15701,7 +15741,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1024",
+   "src": "07b_npc-directory.md:1026",
    "title": "헌릉로 소대장",
    "vendor": ""
   },
@@ -15721,7 +15761,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1025",
+   "src": "07b_npc-directory.md:1027",
    "title": "경부 요금소 검문 소대장",
    "vendor": ""
   },
@@ -15741,7 +15781,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1026",
+   "src": "07b_npc-directory.md:1028",
    "title": "버티버드 조종사",
    "vendor": ""
   },
@@ -15761,7 +15801,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1027",
+   "src": "07b_npc-directory.md:1029",
    "title": "버티버드 조종사",
    "vendor": ""
   },
@@ -15781,7 +15821,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1028",
+   "src": "07b_npc-directory.md:1030",
    "title": "분대장",
    "vendor": ""
   },
@@ -15805,7 +15845,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1029",
+   "src": "07b_npc-directory.md:1031",
    "title": "정비 하사",
    "vendor": ""
   },
@@ -15827,7 +15867,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1030",
+   "src": "07b_npc-directory.md:1032",
    "title": "관측병",
    "vendor": ""
   },
@@ -15847,7 +15887,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1031",
+   "src": "07b_npc-directory.md:1033",
    "title": "검문소 초병",
    "vendor": ""
   },
@@ -15867,7 +15907,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1032",
+   "src": "07b_npc-directory.md:1034",
    "title": "동원 신병",
    "vendor": ""
   },
@@ -15889,7 +15929,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1033",
+   "src": "07b_npc-directory.md:1035",
    "title": "온실 조합 대표",
    "vendor": "V32"
   },
@@ -15911,7 +15951,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1034",
+   "src": "07b_npc-directory.md:1036",
    "title": "양봉가",
    "vendor": ""
   },
@@ -15933,7 +15973,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1035",
+   "src": "07b_npc-directory.md:1037",
    "title": "유리 온실 수리",
    "vendor": ""
   },
@@ -15953,7 +15993,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1036",
+   "src": "07b_npc-directory.md:1038",
    "title": "납품 담당",
    "vendor": ""
   },
@@ -15973,7 +16013,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1037",
+   "src": "07b_npc-directory.md:1039",
    "title": "등록 거부 청년",
    "vendor": ""
   },
@@ -15995,7 +16035,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1038",
+   "src": "07b_npc-directory.md:1040",
    "title": "약초 의원",
    "vendor": ""
   },
@@ -16019,7 +16059,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1039",
+   "src": "07b_npc-directory.md:1041",
    "title": "탈영 계엄병",
    "vendor": ""
   },
@@ -16043,7 +16083,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1040",
+   "src": "07b_npc-directory.md:1042",
    "title": "남산 방송 통신원",
    "vendor": ""
   },
@@ -16065,7 +16105,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1041",
+   "src": "07b_npc-directory.md:1043",
    "title": "멧돼지 사냥꾼",
    "vendor": ""
   },
@@ -16089,7 +16129,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:1042",
+   "src": "07b_npc-directory.md:1044",
    "title": "2077년 정부 전용 열차 기관사",
    "vendor": ""
   },
@@ -16109,7 +16149,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1043",
+   "src": "07b_npc-directory.md:1045",
    "title": "4등급으로 강등된 전 사무관",
    "vendor": ""
   },
@@ -16132,7 +16172,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1044",
+   "src": "07b_npc-directory.md:1046",
    "title": "분류반 창구 주무관",
    "vendor": "V33"
   },
@@ -16154,7 +16194,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1045",
+   "src": "07b_npc-directory.md:1047",
    "title": "분류반 심사관 사무관",
    "vendor": ""
   },
@@ -16174,7 +16214,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1046",
+   "src": "07b_npc-directory.md:1048",
    "title": "온실촌 대표 서보람의 아들",
    "vendor": ""
   },
@@ -16194,7 +16234,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1047",
+   "src": "07b_npc-directory.md:1049",
    "title": "강등된 전 사무관 원재현의 딸",
    "vendor": ""
   },
@@ -16214,7 +16254,7 @@
    "services": [],
    "sex": "",
    "species": "인",
-   "src": "07b_npc-directory.md:1048",
+   "src": "07b_npc-directory.md:1050",
    "title": "4등급 거주민 지해원",
    "vendor": ""
   },
@@ -16237,7 +16277,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1055",
+   "src": "07b_npc-directory.md:1057",
    "title": "4호선 남쪽 터널지기",
    "vendor": ""
   },
@@ -16259,7 +16299,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1056",
+   "src": "07b_npc-directory.md:1058",
    "title": "버섯 재배사",
    "vendor": ""
   },
@@ -16284,7 +16324,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1057",
+   "src": "07b_npc-directory.md:1059",
    "title": "2호선 서쪽 터널 정찰 소년",
    "vendor": ""
   },
@@ -16307,7 +16347,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1058",
+   "src": "07b_npc-directory.md:1060",
    "title": "고시원 문제집 수집상",
    "vendor": ""
   },
@@ -16331,7 +16371,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1059",
+   "src": "07b_npc-directory.md:1061",
    "title": "동작역 파수-3 '정비' 당번",
    "vendor": ""
   },
@@ -16351,7 +16391,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1060",
+   "src": "07b_npc-directory.md:1062",
    "title": "남태령 지하 초소장",
    "vendor": ""
   },
@@ -16373,7 +16413,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1061",
+   "src": "07b_npc-directory.md:1063",
    "title": "밀통로 안내인",
    "vendor": ""
   },
@@ -16393,7 +16433,7 @@
    "services": [],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:1062",
+   "src": "07b_npc-directory.md:1064",
    "title": "영등포시장역 뒷문 문지기",
    "vendor": ""
   },
@@ -16415,7 +16455,7 @@
    "services": [],
    "sex": "여",
    "species": "구",
-   "src": "07b_npc-directory.md:1063",
+   "src": "07b_npc-directory.md:1065",
    "title": "운반조 반장",
    "vendor": ""
   },
@@ -16437,7 +16477,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1064",
+   "src": "07b_npc-directory.md:1066",
    "title": "여의도역 배전실 조사",
    "vendor": ""
   },
@@ -16460,7 +16500,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1065",
+   "src": "07b_npc-directory.md:1067",
    "title": "대기 구역 지킴이",
    "vendor": "V51"
   },
@@ -16485,7 +16525,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1066",
+   "src": "07b_npc-directory.md:1068",
    "title": "펌프 기술자",
    "vendor": ""
   },
@@ -16508,7 +16548,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:1067",
+   "src": "07b_npc-directory.md:1069",
    "title": "2077년 5호선 기관사",
    "vendor": ""
   },
@@ -16532,7 +16572,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1068",
+   "src": "07b_npc-directory.md:1070",
    "title": "마포역 환기구 초소",
    "vendor": ""
   },
@@ -16555,7 +16595,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1069",
+   "src": "07b_npc-directory.md:1071",
    "title": "환승 미로 지도 그리는 아이",
    "vendor": ""
   },
@@ -16579,7 +16619,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1070",
+   "src": "07b_npc-directory.md:1072",
    "title": "인력 대기실 관리",
    "vendor": ""
   },
@@ -16599,7 +16639,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1071",
+   "src": "07b_npc-directory.md:1073",
    "title": "환풍실에 숨은 탈출자",
    "vendor": ""
   },
@@ -16621,7 +16661,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1072",
+   "src": "07b_npc-directory.md:1074",
    "title": "들것 의료반 임시 진료",
    "vendor": ""
   },
@@ -16643,7 +16683,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1073",
+   "src": "07b_npc-directory.md:1075",
    "title": "물 상인 조합 합정역 관리인",
    "vendor": ""
   },
@@ -16666,7 +16706,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1074",
+   "src": "07b_npc-directory.md:1076",
    "title": "라디오 수리공",
    "vendor": ""
   },
@@ -16691,7 +16731,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1075",
+   "src": "07b_npc-directory.md:1077",
    "title": "기록물 거래상",
    "vendor": ""
   },
@@ -16713,7 +16753,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1076",
+   "src": "07b_npc-directory.md:1078",
    "title": "충정로 회수조장",
    "vendor": ""
   },
@@ -16735,7 +16775,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1077",
+   "src": "07b_npc-directory.md:1079",
    "title": "정보상",
    "vendor": ""
   },
@@ -16757,7 +16797,7 @@
    "services": [],
    "sex": "여",
    "species": "구",
-   "src": "07b_npc-directory.md:1078",
+   "src": "07b_npc-directory.md:1080",
    "title": "비상 통로 출입 대장 관리",
    "vendor": ""
   },
@@ -16781,7 +16821,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1079",
+   "src": "07b_npc-directory.md:1081",
    "title": "관제 중계 기둥 '정비'",
    "vendor": ""
   },
@@ -16805,7 +16845,7 @@
    ],
    "sex": "",
    "species": "로",
-   "src": "07b_npc-directory.md:1080",
+   "src": "07b_npc-directory.md:1082",
    "title": "시청역 승차권 검사",
    "vendor": ""
   },
@@ -16825,7 +16865,7 @@
    "services": [],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:1081",
+   "src": "07b_npc-directory.md:1083",
    "title": "환승 안내",
    "vendor": ""
   },
@@ -16850,7 +16890,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:1082",
+   "src": "07b_npc-directory.md:1084",
    "title": "지하철 지도 행상",
    "vendor": ""
   },
@@ -16870,7 +16910,7 @@
    "services": [],
    "sex": "남",
    "species": "변",
-   "src": "07b_npc-directory.md:1083",
+   "src": "07b_npc-directory.md:1085",
    "title": "서울역 무리에서 도망친 어린 변종",
    "vendor": ""
   },
@@ -16893,7 +16933,7 @@
    ],
    "sex": "여",
    "species": "구",
-   "src": "07b_npc-directory.md:1084",
+   "src": "07b_npc-directory.md:1086",
    "title": "의류 상가 재봉사",
    "vendor": ""
   },
@@ -16915,7 +16955,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:1085",
+   "src": "07b_npc-directory.md:1087",
    "title": "응급 대피 진료소의 의대생",
    "vendor": ""
   },
@@ -16936,7 +16976,7 @@
    "services": [],
    "sex": "남",
    "species": "변",
-   "src": "07b_npc-directory.md:1086",
+   "src": "07b_npc-directory.md:1088",
    "title": "서울역 변종 무리 대장",
    "vendor": ""
   },
@@ -16959,7 +16999,7 @@
    ],
    "sex": "여",
    "species": "구",
-   "src": "07b_npc-directory.md:1087",
+   "src": "07b_npc-directory.md:1089",
    "title": "감리실 생존자",
    "vendor": ""
   },
@@ -16979,7 +17019,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1088",
+   "src": "07b_npc-directory.md:1090",
    "title": "납치된 사당 행상",
    "vendor": ""
   },
@@ -16999,7 +17039,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1089",
+   "src": "07b_npc-directory.md:1091",
    "title": "정비 측실에 갇힌 회수 요원",
    "vendor": ""
   },
@@ -17023,7 +17063,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1090",
+   "src": "07b_npc-directory.md:1092",
    "title": "요새 지하 통로 검문",
    "vendor": ""
   },
@@ -17045,7 +17085,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1091",
+   "src": "07b_npc-directory.md:1093",
    "title": "동작대교 북단 지하 보급 담당",
    "vendor": ""
   },
@@ -17067,7 +17107,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1092",
+   "src": "07b_npc-directory.md:1094",
    "title": "번영회장",
    "vendor": ""
   },
@@ -17089,7 +17129,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1093",
+   "src": "07b_npc-directory.md:1095",
    "title": "수경 화훼·약초 재배",
    "vendor": ""
   },
@@ -17114,7 +17154,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1094",
+   "src": "07b_npc-directory.md:1096",
    "title": "세이프빌 거래 중개상",
    "vendor": ""
   },
@@ -17136,7 +17176,7 @@
    ],
    "sex": "여",
    "species": "구",
-   "src": "07b_npc-directory.md:1095",
+   "src": "07b_npc-directory.md:1097",
    "title": "2077년 고속버스 매표원",
    "vendor": ""
   },
@@ -17158,7 +17198,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:1096",
+   "src": "07b_npc-directory.md:1098",
    "title": "2077년 아쿠아리움 사육사",
    "vendor": ""
   },
@@ -17183,7 +17223,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1097",
+   "src": "07b_npc-directory.md:1099",
    "title": "세진 타워 셔터 '접속 대기'",
    "vendor": ""
   },
@@ -17203,7 +17243,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1098",
+   "src": "07b_npc-directory.md:1100",
    "title": "지하 등록 상담 창구",
    "vendor": ""
   },
@@ -17225,7 +17265,7 @@
    "services": [],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1099",
+   "src": "07b_npc-directory.md:1101",
    "title": "정부 선로 분기 셔터 경비",
    "vendor": ""
   },
@@ -17247,7 +17287,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:1100",
+   "src": "07b_npc-directory.md:1102",
    "title": "열차 1호 기관사",
    "vendor": ""
   },
@@ -17267,7 +17307,7 @@
    "services": [],
    "sex": "여",
    "species": "구",
-   "src": "07b_npc-directory.md:1101",
+   "src": "07b_npc-directory.md:1103",
    "title": "유실물 센터 접수",
    "vendor": ""
   },
@@ -17289,7 +17329,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1102",
+   "src": "07b_npc-directory.md:1104",
    "title": "폐승강장 은둔자",
    "vendor": ""
   },
@@ -17311,7 +17351,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1103",
+   "src": "07b_npc-directory.md:1105",
    "title": "역사 지하 장터 행상",
    "vendor": ""
   },
@@ -17333,7 +17373,7 @@
    ],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1104",
+   "src": "07b_npc-directory.md:1106",
    "title": "광진교 지하 창고지기",
    "vendor": ""
   },
@@ -17355,7 +17395,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1105",
+   "src": "07b_npc-directory.md:1107",
    "title": "4호선 셔터 앞 사냥꾼",
    "vendor": ""
   },
@@ -17375,7 +17415,7 @@
    "services": [],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:1106",
+   "src": "07b_npc-directory.md:1108",
    "title": "대피민 학생 구울 군집 곁의 강사",
    "vendor": ""
   },
@@ -17398,7 +17438,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1107",
+   "src": "07b_npc-directory.md:1109",
    "title": "펌프장 숨은 탈주자",
    "vendor": ""
   },
@@ -17420,7 +17460,7 @@
    "services": [],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:1108",
+   "src": "07b_npc-directory.md:1110",
    "title": "침투 터널 경계 초소",
    "vendor": ""
   },
@@ -17442,7 +17482,7 @@
    ],
    "sex": "남",
    "species": "인",
-   "src": "07b_npc-directory.md:1109",
+   "src": "07b_npc-directory.md:1111",
    "title": "하수로 물길잡이",
    "vendor": ""
   },
@@ -17464,7 +17504,7 @@
    "services": [],
    "sex": "여",
    "species": "인",
-   "src": "07b_npc-directory.md:1110",
+   "src": "07b_npc-directory.md:1112",
    "title": "대피 터널 남쪽 입구 경비",
    "vendor": ""
   },
@@ -17486,7 +17526,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:1111",
+   "src": "07b_npc-directory.md:1113",
    "title": "구두 수선 구울",
    "vendor": ""
   },
@@ -17508,7 +17548,7 @@
    ],
    "sex": "남",
    "species": "구",
-   "src": "07b_npc-directory.md:1112",
+   "src": "07b_npc-directory.md:1114",
    "title": "마영식의 2077년 영신통신 동료",
    "vendor": ""
   }

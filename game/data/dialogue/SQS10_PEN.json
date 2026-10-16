@@ -1,0 +1,113 @@
+{
+ "id": "SQS10_PEN",
+ "title": "대기실 철문 개폐기",
+ "loc": "L-R02-23",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "PULL": 3,
+  "SEEN": 7,
+  "DONE": 12
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S10_PEN == 1",
+   "to": "DONE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "쇠사슬 손잡이. 당기면 칸 문 다섯이 한꺼번에 풀린다. 백오십 명이 숨을 죽이고 이쪽을 본다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "손잡이를 당긴다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "PULL",
+     "id": "SQS10_PEN:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS10_PEN:1:1"
+    }
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S10_RAID == 0",
+   "to": "SEEN"
+  },
+  {
+   "op": "cmd",
+   "name": "s10",
+   "args": [
+    "pen"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "쇠사슬이 풀리는 소리. 칸 문 다섯이 동시에 열린다. 사람들이 선수 출입구로, 정문으로, 무너진 지붕 아래로 흩어진다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "감시 의자의 추심원이 벌떡 일어난다. \"야!\" — 그래도 손은 이미 사슬을 당겼다."
+  },
+  {
+   "op": "cmd",
+   "name": "s10",
+   "args": [
+    "raid"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s10",
+   "args": [
+    "pen"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "칸 문 다섯이 동시에 열린다. 백오십 명이 한꺼번에 쏟아져 나온다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "풀린 개폐기. 빈 칸 다섯."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S10.txt"
+}

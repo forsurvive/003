@@ -1,0 +1,141 @@
+# 고척 돔 인력 경매장 GD-01 그라운드(SD-09a L-R02-23 A · SD-04a §5.3 SQ-S10 · 단계 1-11i)
+# 40×28 · 북쪽 관중석(계단 콘크리트 · 좌석 줄 · 응원 막대) · 그라운드 인조 잔디 · 무너진 지붕 빛기둥 아래 경매 단상 · 분필 칠판
+# 출입구 2(SD-09a): 남쪽 정문(검문 — 월드) · 동쪽 선수 출입구(지하 대기실 GD-03) · 북서 관중석 계단 → GD-02(매점 · 중계석 · VIP 박스)
+# 경매는 사흘마다 10:00(GAME_DAY % 3 == 0) — 구매자 둘은 06~10시 덕아웃 술판, 10~11시 패 탁자. SQ_S10_OPEN = 경매일 06~11시(진행기).
+map GD-01 고척 돔 그라운드
+set bk
+grid
+###~~###################################
+###~~###################################
+###~~###################################
+#ssssssssssssssssssssssssssssssssssssss#
+#ssssssssssssssssssssssssssssssssssssss#
+#ssssssssssssssssssssssssssssssssssssss#
+#ssssssssssssssssssssssssssssssssssssss#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#gggggggggggggggggggggggggggggggg~~~~~~#
+#gggggggggggggggggggggggggggggggg~~~~~~~
+#gggggggggggggggggggggggggggggggg~~~~~~~
+#gggggggggggggggggggggggggggggggg~~~~~~#
+#gggggggggggggggggggggggggggggggg~~~~~~#
+#gggggggggggggggggggggggggggggggggggggg#
+#gggggggggggggggggggggggggggggggggggggg#
+#gggggggggggggggggggggggggggggggggggggg#
+#gggggggggggggggggggggggggggggggggggggg#
+#gggggggggggggggggggggggggggggggggggggg#
+#gggggggggggggggggggggggggggggggggggggg#
+#gggggggggggggggggggggggggggggggggggggg#
+#gggggggggggggggggggggggggggggggggggggg#
+#gggggggggggggggggggggggggggggggggggggg#
+#gggggggggggggggggggggggggggggggggggggg#
+#gggggggggggggggggggggggggggggggggggggg#
+#gggggggggggggggggggggggggggggggggggggg#
+#gggggggggggggggggggggggggggggggggggggg#
+#gggggggggggggggggggggggggggggggggggggg#
+###################~~###################
+end
+exit 19 27 W L-R02-23
+exit 20 27 W L-R02-23
+mark from_W 19 26 N
+exit 3 0 GD-02 from_GD-01
+exit 4 0 GD-02 from_GD-01
+mark from_GD-02 3 3 S
+prop stairs_up 3 2
+exit 39 9 GD-03 from_GD-01
+exit 39 10 GD-03 from_GD-01
+mark from_GD-03 38 9 W
+mark from_catwalk 23 12 W
+mark stage 20 13 S
+mark bid 20 17 N
+# 벽: 개막전 현수막 둘 · VIP 박스 유리창(경매일 09시부터 실루엣 — 진행기가 상태를 바꾼다)
+prop w_gd_banner 8 1
+prop w_gd_banner 30 1
+prop w_vip_glass 18 1
+text 19 2 "VIP 박스 유리창. 위층 관중석 한가운데." w=3 scene=SQS10_GLASS
+text 9 2 "2077년 개막전 현수막. '프로야구 개막 — 2077'. 그해 봄이 마지막 시즌이었다." w=2
+# 관중석(북쪽 계단): 좌석 줄 · 응원 막대
+prop gd_seats 6 4
+prop gd_seats2 9 4
+prop gd_seats 12 4
+prop gd_seats 24 4
+prop gd_seats2 27 4
+prop gd_seats 30 4
+prop gd_seats 33 4
+prop gd_seats2 7 6
+prop gd_seats 10 6
+prop gd_seats 13 6
+prop gd_seats 25 6
+prop gd_seats 28 6
+prop gd_seats2 31 6
+prop gd_seats 34 6
+prop cheer_sticks 16 5
+prop cheer_sticks 22 3
+prop cheer_sticks 36 3
+text 16 5 "응원 막대 한 쌍. 바람이 빠져 쭈글쭈글하다. 2077년 봄, 누군가 이걸 두드리며 소리를 질렀다."
+# 그라운드 한가운데: 경매 단상 · 빛기둥 · 칠판 · 장부함 · 밧줄
+prop gd_podium 18 13
+prop light_shaft 20 16
+text 20 16 "지붕이 무너진 구멍으로 빛이 기둥처럼 떨어진다. 단상 앞 '인력'이 서는 자리가 꼭 그 빛 속이다."
+prop gd_board 12 13
+text 12 13 "분필 칠판." w=3 scene=SQS10_BOARD
+prop ledger_box 22 12
+text 22 12 "단상 뒤 철제 장부함. 다이얼 자물쇠." scene=SQS10_LEDGERBOX
+text 24 12 "지붕 구멍에서 늘어진 밧줄. 위는 캣워크다." scene=SQS10_ROPE
+# 오늘의 1~3번(경매일): 단상 서쪽 줄 난간 안
+prop queue_rail 14 10 cond="SQ_S10_OPEN == 1 and SQ_S10_PEN == 0"
+prop detainee_a 14 11 cond="SQ_S10_OPEN == 1 and SQ_S10_PEN == 0"
+prop detainee_c 15 11 cond="SQ_S10_OPEN == 1 and SQ_S10_PEN == 0"
+prop detainee_b 16 11 cond="SQ_S10_OPEN == 1 and SQ_S10_PEN == 0"
+text 15 11 "오늘의 1~3번. 번호표 목걸이를 건 셋이 줄 난간 안에 앉았다. 3번은 허리가 굽은 노인이다." w=2 cond="SQ_S10_OPEN == 1 and SQ_S10_PEN == 0"
+# 구매자 패 탁자(10~11시 구매자가 앉는다)
+prop paddle_table 12 18
+prop paddle_table 26 18
+text 12 18 "구매자 패 탁자. 둥근 번호 패에 7 · 12 · 21. 패는 견적에게 받는다." w=2
+# 덕아웃(동쪽): 벤치 · 술판
+prop dugout_bench 34 8
+text 35 8 "덕아웃 벤치. 소주병 셋 · 화투 몇 장 · 뒤집힌 아이스박스. 경매 전 구매자들 술자리." w=2
+# 홈 플레이트 · 베이스 · 파울 선
+prop home_plate 20 23
+prop base_bag 28 16
+prop base_bag 11 16
+prop chalk_h 22 23
+prop chalk_h 23 23
+prop chalk_h 17 23
+prop chalk_v 20 24
+text 20 23 "홈 플레이트. 고무가 갈라졌다. 지금 이 돔에서 '홈'을 밟는 사람은 없다."
+# 무너진 지붕 · 잔해
+prop roof_debris 5 19
+prop roof_debris 30 21
+prop rubble 9 23
+prop rubble2 27 25
+prop rubble 3 14
+prop rubble2 36 16
+text 5 19 "무너진 지붕 트러스와 찢긴 흰 막. 떨어진 조명 틀에 전구 자리가 줄지어 비었다." w=2
+# 정문 검문
+prop sandbags 16 25
+prop sandbags 23 25
+prop drum_fire 36 24
+prop work_lamp 33 14
+prop work_lamp 7 14
+# 기라희: 경매 중 단상 앞 빛 속(2) · 풀려나 정문 앞(3)
+npc N-R02-040 20 15 S cond="SQ_S10_KIRA == 2"
+npc N-R02-040 22 23 N cond="SQ_S10_KIRA == 3" bark="번호표, 내가 벗어도 돼?"
+# 사람: 견적(사회자) · 구매자 둘(경매일만) · 새벽인력 경비(습격 전)
+npc N-R02-043 17 14 S cond="SQ_S10_HOST == 1" bark="사흘마다 열 시. 패는 나한테 받아."
+npc N-R02-508 35 10 W cond="SQ_S10_OPEN == 1 and GAME_HOUR < 10" bark="탱크마을은 연료 탱크 청소할 손이 모자라. 열 시 전에 한 잔 더."
+npc N-R02-509 37 11 W cond="SQ_S10_OPEN == 1 and GAME_HOUR < 10 and dead(\"N-R02-509\") == 0" bark="지상 노역은 비상정부가 일당을 준다. …전표로."
+npc N-R02-508 26 19 N cond="SQ_S10_OPEN == 1 and GAME_HOUR >= 10" bark="450까진 본다. 그 위는 세이프빌 몫이지."
+npc N-R02-509 12 19 N cond="SQ_S10_OPEN == 1 and GAME_HOUR >= 10" bark="오늘은 노역감 하나만."
+npc CR-435 18 25 N sheet=en_cr435_loco cond="SQ_S10_RAID == 0" bark="정문은 검문. 총은 넣어 두고 들어가."
+npc CR-435 21 25 N sheet=en_cr435_loco cond="SQ_S10_RAID == 0" bark="경매 보러 왔어? 사흘마다 열 시야."
+npc CR-435 25 15 W sheet=en_cr435_loco cond="SQ_S10_RAID == 0" bark="단상엔 올라가지 마."
+npc CR-438 30 13 S sheet=en_cr438_loco cond="SQ_S10_RAID == 0" bark="오늘 물건 상태 좋다. 지하에 백오십."
+npc CR-436 37 12 W sheet=en_cr436_loco cond="SQ_S10_RAID == 0" bark="지하는 직원만. 인력 보러 왔으면 견적한테 말해."
+mark raid_1 18 22 N
+mark raid_2 23 21 N
+mark raid_3 9 15 E
+mark raid_4 31 16 W
+mark raid_5 36 10 W
+mark raid_6 14 24 N
+mark raid_7 26 24 N
+mark raid_8 4 9 E

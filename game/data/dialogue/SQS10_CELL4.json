@@ -1,0 +1,58 @@
+{
+ "id": "SQS10_CELL4",
+ "title": "넷째 칸",
+ "loc": "L-R02-23",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "KNOWN": 4,
+  "EMPTY": 6
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S10_PEN == 1",
+   "to": "EMPTY"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "158번. 열네 살쯤. \"공다온. 노들. 엄마가 남문 앞 판잣집에 있어. …살아 있다고만 전해 줘.\""
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S10_KIRA == 4 and SQ_S10_PLACE == 2 and dead(\"N-R02-040\") == 0",
+   "to": "KNOWN"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "\"88번 언니가 노들로 갔대? 그럼 됐어. 언니가 전해 줄 거야.\""
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈 칸. 벽에 숯으로 '노들 남문'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S10.txt"
+}

@@ -453,6 +453,33 @@ def concrete_tex(seed):
     return a
 
 
+def turf_tex(seed):
+    """고척 돔 그라운드 인조 잔디(1-11i): 바랜 올리브 잔디 + 128px 깎은 결 줄무늬(짙은 띠, 경계만 2px 디더) +
+    성긴 세로 털 획 + 드문 닳아 빠진 자리(갈색 바닥천에 검은 고무 알갱이) + 볕에 마른 누런 털 조각. 쯔꾸르식 평평한 바탕."""
+    a = np.full((CELL, CELL), t("P30"), np.uint8)
+    rnd = np.random.default_rng(seed)
+    fine = rnd.random((CELL, CELL))
+    yy, _ = np.mgrid[0:CELL, 0:CELL]
+    ph = (yy % 128)
+    band = (ph >= 64) & (ph < 128)
+    edge = ((ph == 64) | (ph == 65) | (ph == 126) | (ph == 127)) & (fine < 0.5)
+    a[band & ~edge] = t("P29")                                          # 짙은 결(깎은 방향이 다른 줄)
+    dry = equalize(fbm(CELL, [(64, 0.7), (24, 0.3)], seed + 2))
+    a[(dry > 0.90) & (fine < 0.40)] = t("P31")                          # 볕에 바랜 털(성긴 디더)
+    a[(dry > 0.96) & (fine < 0.30)] = t("P32")
+    for _ in range(260):                                               # 털 획(세로 2px)
+        x, y = int(rnd.integers(CELL)), int(rnd.integers(CELL))
+        c = "P31" if a[y, x] == t("P30") else "P30"
+        put(a, x, y, c); put(a, x, (y + 1) % CELL, c)
+    big = equalize(fbm(CELL, [(48, 0.6), (16, 0.4)], seed + 1))
+    bald = big < 0.035
+    a[(big >= 0.035) & (big < 0.06) & (fine < 0.5)] = t("P28")          # 빠진 자리 테두리: 짓눌린 털
+    a[bald] = t("P18")                                                  # 바닥천
+    a[bald & (fine < 0.25)] = t("P17")
+    a[bald & (fine > 0.88)] = t("P02")                                  # 고무 알갱이
+    return a
+
+
 def concrete_out_tex(seed):
     """바깥 콘크리트 포장(골목·데크): 실내 판보다 거칠게 — 64px 타설 이음매, 가장자리 때, 금, 풀 난 이음매."""
     a = np.full((CELL, CELL), t("P06"), np.uint8)
@@ -904,10 +931,13 @@ def sets():
                  decals=["debris"], hard=1),
             dict(name="epoxy", A=epoxy_tex(331), B=None, spread=0, pri=0, rim=0, shade=1, vthr=256, dens=2,
                  decals=["paper", "debris"], hard=1),
+            # 1-11i 고척 돔: 그라운드 인조 잔디
+            dict(name="turf", A=turf_tex(341), B=None, spread=0, pri=0, rim=0, shade=1, vthr=256, dens=3,
+                 decals=["paper", "debris", "can"], hard=1),
         ],
         "mat_of": {"panel": 0, "panel_sheen": 0, "panel_scuff": 0, "guide_h": 0, "guide_v": 0, "guide_x": 0, "guide_t": 0, "grate_a": 1, "grate_b": 1, "grate_c": 1,
                    "lino_a": 2, "lino_b": 2, "clinic_a": 3, "clinic_b": 3, "concrete_a": 4, "carpet_a": 5, "wood_a": 6,
-                   "panel_mold": 7, "grate_mold": 8, "jangpan_a": 9, "terrazzo_a": 10, "tunnel_a": 11, "steps_a": 12, "epoxy_a": 13},
+                   "panel_mold": 7, "grate_mold": 8, "jangpan_a": 9, "terrazzo_a": 10, "tunnel_a": 11, "steps_a": 12, "epoxy_a": 13, "turf_a": 14},
         "force": {"guide_h": "guide_h", "guide_v": "guide_v", "guide_x": "guide_x", "guide_t": "guide_t"},
         "flag_of": {k: 1 for k in ("wall_top_s", "wall_top_w", "wall_top_ws", "wall_top", "face_top", "face_top_pipe", "face_top_vent",
                                    "face_bot", "face_bot_outlet", "balcony", "balcony_door")},

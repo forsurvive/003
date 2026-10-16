@@ -1,0 +1,103 @@
+{
+ "id": "SQS10_LEDGERBOX",
+ "title": "장부함",
+ "loc": "L-R02-23",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "KEY": 4,
+  "OPEN": 5,
+  "EMPTY": 8
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S10_LEDGER >= 1",
+   "to": "EMPTY"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "철제 장부함. 다이얼 자물쇠 네 칸. 옆면에 'SB — 고척 출납'."
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R02-043\")",
+   "to": "KEY"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "번호를 돌린다 — 4 · 0 · 8 · 8",
+     "tags": [],
+     "cond": "SQ_S10_CODE == 1",
+     "fx": "",
+     "to": "OPEN",
+     "id": "SQS10_LEDGERBOX:1:0"
+    },
+    {
+     "text": "다이얼에 귀를 댄다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "자물쇠 따기",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "OPEN",
+     "id": "SQS10_LEDGERBOX:1:1"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS10_LEDGERBOX:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "견적의 손등에 볼펜 글씨 — 네 자리. 번호가 맞는다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "함 안에 두꺼운 장부 한 권. '고척 구매자 목록'. 세이프빌 — 가사. 비상정부 — 지상 노역. 탱크마을 — 위험 작업. 날짜마다 번호와 값."
+  },
+  {
+   "op": "cmd",
+   "name": "s10",
+   "args": [
+    "ledger"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈 장부함. 뚜껑이 젖혀졌다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S10.txt"
+}
