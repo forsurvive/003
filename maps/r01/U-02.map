@@ -209,7 +209,7 @@ prop ticket 17 9
 prop ticket 32 7
 text 10 7 "누군가의 가방을 다른 누군가가 끌어안고 있다 — 주인은 옆자리에." w=2
 text 17 9 "바닥의 승차권. '2077-10-23 사당 → 서울대입구'."
-text 32 7 "승차권 한 장. '사당 → 봉천'. 봉천행은 2호선이 아니다 — 누군가 잘못 산 표다."
+text 32 7 "승차권 한 장. '사당 → 봉천'. 서울대입구 한 정거장 너머 — 집에 가던 표다. 손님마다 쥔 표의 행선지가 다르다."
 prop sd_gate 36 6
 prop sd_gate 36 7
 prop sd_gate 36 8
@@ -226,8 +226,24 @@ mark g5 19 8 E
 mark g6 22 9 N
 mark g7 26 7 S
 mark g8 29 9 N
-mark g9 33 8 W
-mark g10 9 10 E
+mark g9 22 4 E
+mark g10 16 12 W
 mark st1 38 7 S
 mark st2 44 9 W
 mark ju 40 8 W
+# 재미 검수(구현 뒤 ①): 선로가 끝까지 비어 있으면 군집을 비켜 간다 — 무너진 천장 잔해가 선로를 끊어 벤치 곁 길목을 지나게 한다. 선로 위에도 누운 손님 둘(g9 · g10)
+prop rubble 8 3
+prop rubble2 8 4
+prop rubble 8 5
+prop rubble2 27 3
+prop rubble 27 4
+prop rubble2 27 5
+prop rubble 20 11
+prop rubble2 20 12
+prop rubble 20 13
+prop rubble2 33 11
+prop rubble 33 12
+prop rubble2 33 13
+text 8 4 "무너진 천장 콘크리트. 선로가 끊겼다 — 승강장 벤치 곁으로 올라가야 지난다."
+prop backpack 24 9
+box 24 9 bag name="대피 가방 — 2077"

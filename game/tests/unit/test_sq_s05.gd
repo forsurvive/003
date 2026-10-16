@@ -149,9 +149,20 @@ func test_sq_s05_fence_lines(t) -> void:
 	var r := _host("2277. 10. 26.  14:00", "D-06", "from_U01")
 	var st: StoryState = r[1]
 	var c: SideS05 = r[2]
-	t.ok(_says(st, c, "SD_FENCE", "두 걸음"), "철망 1: 두 걸음 — 멈춘다")
-	t.ok(_says(st, c, "SD_FENCE", "막차 왔어요"), "철망 2: '…막차 왔어요?'")
-	t.ok(_says(st, c, "SD_FENCE", "숨소리"), "철망 3: 숨소리만")
+	var h: InteriorHost = r[0]
+	h.date_text = "2277. 10. 26.  04:00"
+	t.ok(_says(st, c, "SD_FENCE", "두 걸음"), "철망(새벽): 두 걸음 — 멈춘다")
+	h.date_text = "2277. 10. 26.  14:00"
+	t.ok(_says(st, c, "SD_FENCE", "막차 왔어요"), "철망(낮): '…막차 왔어요?'")
+	h.date_text = "2277. 10. 26.  18:00"
+	t.ok(_says(st, c, "SD_FENCE", "숨소리"), "철망(저녁): 숨소리만 — 날 · 시각마다 다르다")
+	h.date_text = "2277. 10. 26.  04:00"
+	st.vars.set_v("SQ_S05_SLEEPER", 1)
+	t.ok(not _says(st, c, "SD_FENCE", "두 걸음"), "서서 졸던 손님을 쓰러뜨렸으면 두 걸음 소리는 없다")
+	st.vars.set_v("SQ_S05_WOKE", Clock.abs_min(h.date_text) - 30)
+	t.ok(_says(st, c, "SD_FENCE", "서성이는"), "깨어 있으면 서성인다")
+	st.vars.set_v("SQ_S05_WOKE", 0)
+	h.date_text = "2277. 10. 26.  14:00"
 	t.eq(_play(st, c, "SD_FENCE"), [], "철망을 끝까지")
 	t.eq(st.quests.stage("SQ-S05"), 20, "철망 발소리 → 20")
 	t.eq(_v(st, "SQ_S05_GATE"), 0, "발소리만으론 문 경고를 들은 게 아니다")
@@ -168,13 +179,14 @@ func test_sq_s05_order_break(t) -> void:
 	t.eq(_alive(h, "CR-095").size(), 2, "서울대입구: 시궁쥐 둘")
 	st.vars.set_v("PC_ST", 4)
 	t.ok(not _says(st, c, "SQS05_IRONB", "빗장이 들려"), "힘 4: 쇠막대 선택지 없음")
-	st.vars.set_v("PC_ST", 7)
-	t.eq(_play(st, c, "SQS05_IRONB", ["쇠막대"]), [], "[힘 7] 빗장을 들어 올린다")
+	st.vars.set_v("PC_SKP_REPAIR", 30)
+	t.eq(_play(st, c, "SQS05_IRONB", ["철사"]), [], "[수리 25] 철사로 빗장을 조용히 든다")
 	t.eq(_v(st, "SQ_S05_DOOR"), 1, "철문 열림")
+	t.eq(_v(st, "SQ_S05_WOKE"), 0, "소리 없이")
 	h.enter("U-02", "from_W")
 	t.eq(st.quests.stage("SQ-S05"), 40, "서울대입구 쪽에서 먼저 → 10 → 40")
 	var gs := _alive(h, "CR-204")
-	t.eq(gs.size(), 8, "승강장 손님 여덟")
+	t.eq(gs.size(), 10, "승강장 손님 열(선로 위 둘)")
 	t.ok(gs.all(func(e): return e.asleep and e.doze in ["sit", "lie"]), "모두 앉거나 누워 존다")
 	t.eq(_alive(h, "CR-205").size(), 1, "역무원 하나")
 	t.ok(st.quests.stage("SQ-S05") < 50, "해법 전")
@@ -221,6 +233,11 @@ func test_sq_s05_doze_rules(t) -> void:
 	pc.movement = "sneak"
 	step.call()
 	t.ok(e.asleep, "웅크려 1.6칸: 그대로 존다")
+	h.player.loco.place(e.loco.logical + Vector2(0.8 * 32.0, 0))
+	pc.sneak = 60.0
+	step.call()
+	t.ok(e.asleep, "은신 60 · 웅크려 0.8칸: 그대로 존다(반 칸까지)")
+	h.player.loco.place(e.loco.logical + Vector2(1.6 * 32.0, 0))
 	pc.posture = "stand"
 	pc.movement = "move"
 	step.call()
@@ -308,13 +325,22 @@ func test_sq_s05_line_broken(t) -> void:
 	var k0 := _v(st, "V_KARMA")
 	h.enter("U-02", "from_E")
 	_walk_line(h, c, 3)
-	t.eq(_v(st, "SQ_S05_LINE"), 1, "행렬은 끝났다(깨짐)")
+	t.ok(c.proc.is_empty(), "행렬이 깨졌다")
 	var left := _alive(h, "CR-204")
-	t.ok(left.size() >= 1 and left.size() <= 7, "아직 측선에 들지 못한 손님이 깨어 적대(%d)" % left.size())
+	t.ok(left.size() >= 1 and left.size() <= 9, "아직 측선에 들지 못한 손님이 깨어 적대(%d)" % left.size())
 	t.ok(left.all(func(e): return not e.asleep and e.cmb.team == "enemy_s05"), "적대")
 	var gain := _v(st, "V_KARMA") - k0
-	t.ok(gain > 0 and gain < 100, "카르마 +100 × 들어간 비율(%d)" % gain)
-	t.eq(_v(st, "SQ_S05_SOL"), 1, "그래도 해법 A")
+	t.eq(gain, 10 * _v(st, "SQ_S05_ENT"), "카르마는 측선에 든 손님마다 +10(%d)" % gain)
+	t.eq([_v(st, "SQ_S05_LINE"), _v(st, "SQ_S05_SOL")], [0, 0], "반쯤 — 해법은 아직(세계가 '손님 없음'이라 하지 않는다)")
+	t.ok(_v(st, "SQ_S05_REMAIN") > 0, "남은 손님 수")
+	t.ok(_says(st, c, "SD_FENCE", "발소리가 줄었다"), "철망: 발소리가 줄었다")
+	t.ok(_says(st, c, "SQS05_SIGN", "손님 — "), "표지: 남은 손님 수")
+	h.date_text = "2277. 10. 26.  18:00"
+	h.enter("U-02", "from_E")
+	t.ok(not c.proc.is_empty(), "다시 앉은 손님은 다음 방문에 줄을 선다(방송은 계속)")
+	_walk_line(h, c)
+	t.eq([_v(st, "SQ_S05_LINE"), _v(st, "SQ_S05_SOL"), _v(st, "SQ_S05_REMAIN")], [1, 1, 0], "두 번째 행렬로 마무리: 해법 A")
+	t.eq(_v(st, "V_KARMA") - k0, 100, "모두 들어가면 +100")
 
 
 func test_sq_s05_line_offscreen(t) -> void:
@@ -365,15 +391,18 @@ func test_sq_s05_sol_c_ju(t) -> void:
 	var k0 := _v(st, "V_KARMA")
 	h.enter("U-03", "from_W")
 	h.enter("U-02", "from_W")
-	t.eq(_v(st, "SQ_S05_SOL"), 3, "해법 C")
-	t.eq(_alive(h, "CR-204").size(), 4, "봉천행 표의 절반이 떠나고 절반이 남는다")
+	t.eq(_alive(h, "CR-204").size(), 5, "봉천행 표의 절반이 떠나고 절반이 남는다")
+	t.eq([_v(st, "SQ_S05_SOL"), _v(st, "SQ_S05_REMAIN"), _v(st, "SQ_S05_DOOR")], [0, 5, 1], "반쯤 — 해법은 남은 손님까지 · 주성호가 빗장을 들었다")
+	t.ok(_says(st, c, "SQS05_SIDING", "남은 손님들은 아직"), "측선 문: 남은 손님들")
 	t.eq(_v(st, "V_KARMA") - k0, 50, "카르마 +50")
 	t.eq(_v(st, "SQ_S05_JU"), 3, "주성호는 봉천으로")
 	t.ok(h.combat.mates.get_mate("N-R02-018").is_empty(), "동행 끝")
-	for e in _alive(h, "CR-204"):
+	for e in _alive(h, "CR-204") + _alive(h, "CR-205"):
 		e.cmb.dead = true
 		c._on_down(e)
-	t.eq(_v(st, "SQ_S05_SOL"), 3, "남은 절반을 쓰러뜨려도 C로 남는다")
+	t.eq(_v(st, "SQ_S05_SOL"), 3, "남은 절반을 쓰러뜨리면 C로 마친다")
+	t.eq(st.quests.stage("SQ-S05"), 50, "→ 50")
+	t.ok(_says(st, c, "SQS05_SIGN", "주성호 인솔"), "표지: 봉천행 하차 — 주성호 인솔")
 	t.ok(_says(st, c, "SD_HUH", "구울 행상이 내려갔다고", ["서쪽 터널이 비었어요"], "ASK"), "보고: 구울 행상 판")
 	st.vars.set_v("GAME_DAY", 5)
 	c._on_day(5)
@@ -381,10 +410,10 @@ func test_sq_s05_sol_c_ju(t) -> void:
 	var other := SideS05.new()
 	other.host = h
 	other.st = h.st
-	t.eq(range(8).filter(func(i): return other._bongcheon(i)).size(), 4, "봉천행 표는 여덟 중 넷")
-	var picks := range(8).filter(func(i): return other._bongcheon(i))
+	t.eq(range(10).filter(func(i): return other._bongcheon(i)).size(), 5, "봉천행 표는 열 중 다섯")
+	var picks := range(10).filter(func(i): return other._bongcheon(i))
 	st.vars.set_v("P_REGNO", "S07-2260-0007")
-	t.ok(range(8).filter(func(i): return other._bongcheon(i)) != picks, "주인공(등록 번호)마다 다른 넷")
+	t.ok(range(10).filter(func(i): return other._bongcheon(i)) != picks, "주인공(등록 번호)마다 다른 다섯")
 
 
 func test_sq_s05_ju_quits(t) -> void:
@@ -446,3 +475,82 @@ func test_sq_s05_already_know(t) -> void:
 	st.vars.set_v("SA_MAKCHA_HEARD", 1)
 	h.enter("D-03", "from_D-02")
 	t.eq(st.quests.stage("SQ-S05"), 10, "이미 앎(성지후 · 허순자에게 들음): 사당에 들어서는 순간 10")
+
+
+func test_sq_s05_ju_with_broadcast(t) -> void:
+	var r := _host("2277. 10. 26.  10:00", "X-BC", "from_X-S07")
+	var h: InteriorHost = r[0]
+	var st: StoryState = r[1]
+	var c: SideS05 = r[2]
+	st.quests.set_stage("SQ-S05", 30)
+	st.vars.set_v("AFF_JH", 25)
+	_play(st, c, "MQ-102_JU", ["사당 서쪽", "같은 지하시장"])
+	st.vars.set_v("SQ_S05_ROBOT", 2)
+	c._cmd(["broadcast", "2"], func() -> void: pass)
+	var k0 := _v(st, "V_KARMA")
+	h.enter("U-03", "from_W")
+	h.enter("U-02", "from_W")
+	t.ok(not c.proc.is_empty(), "해 보고 싶은 짓: 방송을 켠 채 주성호와 — 봉천행은 서쪽으로, 나머지는 측선 행렬")
+	_walk_line(h, c)
+	t.eq([_v(st, "SQ_S05_SOL"), _v(st, "SQ_S05_ENT"), _v(st, "SQ_S05_EMPTY")], [3, 5, 1], "한 번에 갈라진다 — 해법 C(주성호가 말했다)")
+	t.eq(_v(st, "V_KARMA") - k0, 100, "카르마: 주성호 +50 · 측선 다섯 +50")
+
+
+func test_sq_s05_doors(t) -> void:
+	var r := _host("2277. 10. 26.  10:00", "U-03", "from_W")
+	var h: InteriorHost = r[0]
+	var st: StoryState = r[1]
+	var c: SideS05 = r[2]
+	st.vars.set_v("PC_ST", 7)
+	t.ok(_says(st, c, "SQS05_IRONB", "여럿이 한꺼번에", ["쇠막대"]), "쇠막대: 쩡 — 저편에서 일어나는 소리")
+	h.enter("U-02", "from_W")
+	t.ok(_alive(h, "CR-204").all(func(e): return not e.asleep), "그래서 들어서면 이미 서 있다")
+	var r2 := _host("2277. 10. 26.  10:00", "U-02", "from_W")
+	var h2: InteriorHost = r2[0]
+	var st2: StoryState = r2[1]
+	var c2: SideS05 = r2[2]
+	st2.vars.set_v("PC_SKP_REPAIR", 30)
+	t.eq(_play(st2, c2, "SQS05_IRON", ["기름 먹인 천"]), [], "낙성대 쪽: [수리 25] 조용히 뽑기")
+	t.ok(_alive(h2, "CR-204").all(func(e): return e.asleep), "아무도 깨지 않는다")
+	var r3 := _host("2277. 10. 26.  10:00", "U-02", "from_W")
+	var h3: InteriorHost = r3[0]
+	var st3: StoryState = r3[1]
+	var c3: SideS05 = r3[2]
+	t.eq(_play(st3, c3, "SQS05_IRON", ["소리가 난다"]), [], "그냥 뽑기")
+	t.ok(_alive(h3, "CR-204").all(func(e): return not e.asleep), "쇳소리: 승강장 전체가 일어난다")
+
+
+func test_sq_s05_huh_clock_seen(t) -> void:
+	var r := _host("2277. 10. 26.  06:05", "D-03", "from_D-02")
+	var h: InteriorHost = r[0]
+	var st: StoryState = r[1]
+	var c: SideS05 = r[2]
+	c._wind_tick()
+	t.eq(_v(st, "SQ_S05_WIND"), 1, "06:05: 태엽 시각")
+	h.refresh_npcs()
+	var a: Actor = h.ev.actors.get("N-R01-041")
+	t.ok(a != null and h.map.tile_of(a.loco.logical) == Vector2i(3, 3), "허순자가 벽시계 앞에서 등을 돌린다")
+	h.player.loco.place(Vector2(6 * 32 + 16, 7 * 32 + 16))
+	t.eq(h.theft_witness(), "", "서랍 곁 — 보는 사람 없음(반로아가 판 시각)")
+	h.date_text = "2277. 10. 26.  06:20"
+	c._wind_tick()
+	t.eq(_v(st, "SQ_S05_WIND"), 0, "06:20: 책상으로 돌아왔다")
+	t.eq(h.theft_witness(), "N-R01-041", "이제는 본다")
+	st.vars.set_v("SQ_S05_ROBOT", 2)
+	st.vars.set_v("PC_SKP_REPAIR", 30)
+	_play(st, c, "SD_BROADCAST", ["케이블"])
+	t.eq(_v(st, "SQ_S05_SEEN"), 1, "허순자 눈앞에서 방송")
+	t.ok(_says(st, c, "SD_HUH", "지금 내 앞에서"), "허순자: '지금 내 앞에서 그걸 올려?'")
+
+
+func test_sq_s05_ban_guide(t) -> void:
+	var r := _host("2277. 10. 26.  10:00", "D-02", "from_D-03")
+	var h: InteriorHost = r[0]
+	var st: StoryState = r[1]
+	var c: SideS05 = r[2]
+	st.vars.set_v("SQ_S05_SOL", 1)
+	st.vars.set_v("PC_CAPS", 50)
+	var t0 := Clock.abs_min(h.date_text)
+	t.ok(_says(st, c, "SD_BAN", "봉천 사다리 앞에 내려 줄게", ["터널은 어때"], "ASK"), "반로아: 해결 뒤 서쪽 안내")
+	c._cmd(["guide"], func() -> void: pass)
+	t.eq(Clock.abs_min(h.date_text) - t0, 60, "지하 안내: 한 시간")

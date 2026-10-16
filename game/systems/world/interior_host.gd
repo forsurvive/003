@@ -138,6 +138,7 @@ var _lights: Node2D
 var _flicker_t := 0.0
 var _tone_t := 0.0
 const LIGHT_PROPS := {"drum_fire": Vector2(0, -20), "guard_booth": Vector2(0, -26), "watchtower": Vector2(0, -78), "radar_beacon": Vector2(16, -10)}
+var extra_lights: Array = []                                        ## 진행기가 켠 빛 [[위치, 색], …] — 맵이 바뀌면 비운다
 const DARK_SETS := ["cv"]                                            ## 전기가 끊긴 지하(하수 · 빗물 암거 TS-I10 · 동굴 TS-I11)
 
 
@@ -231,6 +232,12 @@ func _draw_lights() -> void:
 			for i in 4:
 				var r := 64.0 * k * (1.0 - i * 0.22)
 				_lights.draw_circle(c, r, Color(col.r, col.g, col.b, (0.05 + i * 0.035) * light_k))
+	if light_k > 0.01:
+		for l in extra_lights:                                            # 진행기가 켠 빛(1-11e 낙성대 비상등 — 방송이 들어오면): [위치, 색]
+			for i in 4:
+				var r2 := 72.0 * (1.0 - i * 0.22)
+				var lc: Color = l[1]
+				_lights.draw_circle(l[0], r2, Color(lc.r, lc.g, lc.b, (0.05 + i * 0.035) * light_k))
 	if pip_light > 0.01 and player != null and is_instance_valid(player):
 		var pc: Vector2 = player.loco.render + Vector2(0, -16)
 		for i in 4:
@@ -295,6 +302,7 @@ func enter(map_id: String, mark: String = "", look: Dictionary = {}, at: Vector2
 			a.queue_free()
 	ev.actors.clear()
 	ev._bg.clear()
+	extra_lights.clear()
 	ev.cam_locked = false
 	var world_mode := WorldMap.covers(map_id)                       # 바깥(관악산 비탈·봉천 등)은 심리스 월드 하나(1-1)
 	var from_inside := map != null and not (map is WorldMap)

@@ -7,9 +7,10 @@
  "labels": {
   "START": 0,
   "QUIET": 4,
-  "PULL": 6,
-  "OPEN": 9,
-  "GO": 11
+  "SOFT": 6,
+  "PULL": 9,
+  "OPEN": 12,
+  "GO": 14
  },
  "ops": [
   {
@@ -59,12 +60,26 @@
    "op": "choice",
    "opts": [
     {
+     "text": "빗장 고리에 기름 먹인 천을 감고 천천히 돌려 뽑는다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 25
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "SOFT",
+     "id": "SQS05_IRON:2:0"
+    },
+    {
      "text": "빗장을 뽑는다(소리가 난다)",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "PULL",
-     "id": "SQS05_IRON:2:0"
+     "id": "SQS05_IRON:2:1"
     },
     {
      "text": "그만둔다",
@@ -72,9 +87,27 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "SQS05_IRON:2:1"
+     "id": "SQS05_IRON:2:2"
     }
    ]
+  },
+  {
+   "op": "cmd",
+   "name": "s05",
+   "args": [
+    "door",
+    "quiet"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "녹이 천에 먹혀 들어간다. 빗장이 한 마디씩, 숨소리보다 작게 빠진다. 철문이 안쪽으로 젖혀진다."
+  },
+  {
+   "op": "goto",
+   "to": "GO"
   },
   {
    "op": "cmd",

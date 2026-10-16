@@ -220,3 +220,5 @@ npc N-R01-045 14 31 N pose=lie cond="(GAME_HOUR < 6 or GAME_HOUR >= 20)"
 npc N-SA-R1 31 22 N look=E1-S3-HR04-H3-T03-2-PF12-HD00-EY00-PR011 cond="(GAME_HOUR < 6 or GAME_HOUR >= 20)" bark="땅 위는 볕이 좋은데 밤엔 여기가 낫지. 불이 있잖아."
 npc N-SA-R2 33 21 W look=F1-S2-HR06-H2-T04-2-PF12-HD00-EY00-PR011 route=fire:33,21,8;water:28,33,6 bark="당번이 버섯 국 끓이는 날은 줄이 길어."
 npc N-SA-R3 10 11 E look=M2-S3-HR03-H3-T11-2-PF12-HD00-EY00-PR013 route=line:10,11,7;tent:17,9,5 bark="빨래 건드리지 마. 그거 마르는 데 사흘 걸려."
+# SQ-S05 A 뒤 환승촌 아이들의 '막차 놀이'(SD-04a §4.5 기울기 체감)
+npc N-SA-K1 24 27 S look=K1-S3-HR02-H1-T01-2-PF12-HD00-EY00 cond="SQ_S05_SOL == 1 and SQ_S05_EMPTY == 1 and GAME_HOUR >= 7 and GAME_HOUR < 19" route=line:24,27,6;siding:30,27,4 bark="오늘 운행을 모두 마쳤습니다! …자, 다들 줄 서. 이번엔 네가 역무원."

@@ -1,0 +1,90 @@
+{
+ "id": "SQS05_SIGN",
+ "title": "서쪽 터널 표지",
+ "loc": "L-R01-18",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "SOME": 6,
+  "A": 8,
+  "B": 10,
+  "C": 12
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S05_EMPTY == 1 and SQ_S05_SOL == 1",
+   "to": "A"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S05_EMPTY == 1 and SQ_S05_SOL == 2",
+   "to": "B"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S05_EMPTY == 1 and SQ_S05_SOL == 3",
+   "to": "C"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S05_REMAIN > 0 and (SQ_S05_JU == 3 or SQ_S05_ENT > 0)",
+   "to": "SOME"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "표지. '서울대입구 방면 — 막차 기다리는 손님 있음(들어가지 마시오).'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "표지 아래 분필 숫자가 지워지고 다시 적혔다. '손님 — \\V[SQ_S05_REMAIN].'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'막차 기다리는 손님 있음'에 줄이 그어지고 그 아래 분필. '손님 모두 하차 — 측선. 막차 끝.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "표지 글씨 위에 분필로 굵게 덧칠했다. '손님 없음.' 그 옆에 누군가 작게 국화 한 송이를 그렸다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'막차 기다리는 손님 있음'에 줄. 그 아래 분필 두 줄. '봉천행 하차 — 주성호 인솔.' '나머지 손님 없음.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S05.txt"
+}

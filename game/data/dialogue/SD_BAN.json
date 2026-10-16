@@ -12,7 +12,8 @@
   "S5TIP2": 10,
   "GUIDE": 14,
   "TUNNEL": 18,
-  "S5WEST": 22
+  "S5WEST": 22,
+  "S5GUIDE": 24
  },
  "ops": [
   {
@@ -191,8 +192,51 @@
    "text": "서쪽 안내도 해. 사당에서 서울대입구까지 지하로. 봉천 사다리 앞에 내려 줄게. 10캡."
   },
   {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "데려다줘",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 10
+      }
+     ],
+     "cond": "PC_CAPS >= 10",
+     "fx": "",
+     "to": "S5GUIDE",
+     "id": "SD_BAN:3:0"
+    },
+    {
+     "text": "나중에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "ASK",
+     "id": "SD_BAN:3:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "caps(-10)"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-045",
+   "emo": "기본",
+   "text": "따라와. 레일 가운데로 걸어. 낙성대에선 말 걸지 말고."
+  },
+  {
+   "op": "cmd",
+   "name": "s05",
+   "args": [
+    "guide"
+   ]
+  },
+  {
    "op": "goto",
-   "to": "ASK"
+   "to": "END"
   },
   {
    "op": "end"

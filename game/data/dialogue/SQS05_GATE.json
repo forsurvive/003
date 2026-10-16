@@ -6,12 +6,13 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "SEONG": 5,
-  "WARN": 8,
-  "OPEN1": 11,
-  "AGAIN": 14,
-  "OPENED": 16,
-  "GO": 18
+  "SEONG": 6,
+  "CHALK": 9,
+  "WARN": 12,
+  "OPEN1": 15,
+  "AGAIN": 18,
+  "OPENED": 20,
+  "GO": 22
  },
  "ops": [
   {
@@ -28,6 +29,11 @@
    "op": "if",
    "cond": "known_dead(\"N-R01-044\") == 0 and (GAME_HOUR < 6 or GAME_HOUR >= 20)",
    "to": "SEONG"
+  },
+  {
+   "op": "if",
+   "cond": "known_dead(\"N-R01-044\") == 1 and (GAME_HOUR < 6 or GAME_HOUR >= 20)",
+   "to": "CHALK"
   },
   {
    "op": "line",
@@ -50,6 +56,22 @@
    "who": "N-R01-044",
    "emo": "기본",
    "text": "뛰지 마. 문 쾅 닫지 마. 총은 더더욱. 그 사람들 막차 놓칠까 봐 예민해. 하나 깨면 다 깨. 웅크리고 지나가."
+  },
+  {
+   "op": "goto",
+   "to": "OPEN1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "초소가 비었다. 철망 문 자물쇠가 풀린 채 걸려 있다. 기둥에 분필 글씨, 경비대 누군가의 손."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'뛰지 마. 문 쾅 닫지 마. 총은 더더욱. 하나 깨면 다 깬다 — 웅크리고 지나갈 것. 경비대.'"
   },
   {
    "op": "goto",

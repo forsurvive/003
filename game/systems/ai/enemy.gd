@@ -310,7 +310,7 @@ func think(dt: float, target: Combatant, nav, shots: Projectiles) -> void:   ## 
 		if asleep:                                                  # 잠(S4): 맞거나, 가까운 소리(0.5+)거나, 바로 옆까지 오면 깬다
 			var near := 1.5
 			if doze != "":                                          # 휴면: 서서 걸으면 2칸 · 웅크리면 1칸까지(서 있기만 하면 1.5칸)
-				near = 1.0 if target.posture == "crouch" else (2.0 if target.movement != "still" else 1.5)
+				near = (0.5 if target.sneak >= 50.0 else 1.0) if target.posture == "crouch" else (2.0 if target.movement != "still" else 1.5)
 			if hit or _heard >= 0.5 or (sees and dist_t <= near) or brain.gauge >= 50.0:
 				wake()
 			else:

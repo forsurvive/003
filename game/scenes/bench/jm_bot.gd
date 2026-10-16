@@ -230,6 +230,34 @@ func _ready() -> void:
 				["check", "SQ_S03_SOL == 3 and SQR_S03 == 3 and SQS03_STAGE == 70", "방금례에게 측정지 수치 — 원인 차단(C · 70 · 4막 이월)"],
 				["warp", "X-BS", "arrive"], ["wait", 1.0], ["talk", "N-R01-032"], ["wait", 2.0],
 				["check", "SQS03_STAGE == 100 and SQ_S03_REWARD == 1", "조수안 보고(100) · 사례 · 꼭지 필터"]]
+		"s5":                                                           # 1-11e SQ-S05 A: 밤 철망 문(성지후 경고 · 20) → 서쪽 터널(40) → 파수-3 끌기 → 역무실 방송 → 낙성대 행렬(A · 50) → 허순자 보고(100)
+			st.vars.set_v("PC_ST", 6)
+			st.vars.set_v("PC_SKP_REPAIR", 30)
+			host.date_text = "2277. 10. 27.  22:00"
+			host.enter("D-06", "from_U01")
+			plan = [["wait", 1.0], ["want", ["들어간다"]], ["scene", "SQS05_GATE"], ["until", "map:U-01", 15.0, "철망 문 — 성지후 경고 뒤 서쪽 터널로", "s5_gate"],
+				["wait", 1.5], ["check", "SQS05_STAGE == 40 and SQ_S05_GATE == 1", "철망 문 경고(20) · 터널에 들어섬(40)"], ["shot", "s5_tunnel"],
+				["hp", 9999], ["crouch", true], ["want", ["끌고"]], ["scene", "SQS05_ROBOT"], ["wait", 2.0], ["crouch", false],
+				["check", "SQ_S05_ROBOT == 2", "파수-3을 역무실로 끌어감(삼십 분)"],
+				["warp", "D-03", "from_D-02"], ["wait", 1.0], ["shot", "s5_office"], ["want", ["케이블"]], ["scene", "SD_BROADCAST"], ["wait", 2.0],
+				["check", "SQ_S05_BCAST == 1 and SQS05_STAGE == 40", "역무실 방송 — 매시 정각"],
+				["warp", "U-02", "from_E"], ["wait", 4.0], ["shot", "s5_line"], ["wait", 7.0], ["shot", "s5_line2"],
+				["until", "SQ_S05_EMPTY == 1", 90.0, "행렬: 손님들이 한 줄로 측선에 들어간다", "s5_line_end"],
+				["check", "SQ_S05_SOL == 1 and SQ_S05_ENT == 10 and SQS05_STAGE == 50", "해법 A — 열 명 모두 측선(50)"],
+				["warp", "D-03", "from_D-02"], ["wait", 1.0], ["want", ["서쪽 터널이 비었어요"]], ["talk", "N-R01-041"], ["wait", 2.0],
+				["check", "SQS05_STAGE == 100 and SQ_S05_REPORT == 1 and has(\"M-071\")", "허순자 보고(100) · 정기권 · 노선도 서쪽 칸"]]
+		"s5q":                                                          # 1-11e 휴면 군집: 서울대입구 쪽 철사로 조용히 → 웅크려(은신 60) 선로 잔해 길목 지나 개찰구까지 → 서서 걸으면 일제 기상
+			st.vars.set_v("PC_SKP_REPAIR", 30)
+			st.vars.set_v("PC_SKP_SNEAK", 60)
+			st.call_fn("give", ["M-071", 1])
+			host.date_text = "2277. 10. 27.  10:00"
+			host.enter("U-03", "from_W")
+			plan = [["wait", 1.0], ["shot", "s5q_snu"], ["want", ["철사"]], ["scene", "SQS05_IRONB"], ["until", "map:U-02", 15.0, "철사로 빗장을 조용히 — 낙성대 승강장", "s5q_in"],
+				["wait", 1.0], ["check", "SQ_S05_WOKE == 0 and SQS05_STAGE == 40", "아무도 깨지 않았다 · 순서 파괴 40"], ["hp", 9999],
+				["crouch", true], ["go", 14, 6, "U-02"], ["go", 30, 6, "U-02"], ["go", 38, 8, "U-02"], ["wait", 1.0], ["shot", "s5q_through"],
+				["check", "SQ_S05_WOKE == 0", "웅크려 군집 사이를 지나 개찰구까지(정기권 — 역무원이 비켜선다)"],
+				["crouch", false], ["go", 27, 7, "U-02"], ["wait", 2.0], ["shot", "s5q_wake"],
+				["check", "SQ_S05_WOKE > 0", "서서 걸어 2칸 안 — 승강장이 한꺼번에 일어난다"]]
 		"rd":                                                           # 1-11c SQ-S04: 21시 경보(봉천) → 민원실 철망 → 레이더 철조망(힘 6) → 돔 전지 회수(E) → 대장간 인도 → 마을이 철망을 연다
 			st.vars.set_v("PC_ST", 7)
 			host.combat.pc.hp = 99999.0

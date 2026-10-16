@@ -157,8 +157,9 @@ func _init() -> void:
 	# SQ-S05 환승촌 막차(1-11e, SD-04a §4.5 · SideS05): ARM MQ-102가 열린 분 · GATE 철망 문 경고 · IN U-01 들어섬 · BSEEN 테이프 칸 봄 · ROBOT 역무 파수-3(1 깨어 걷는 중 · 2 역무실) ·
 	# PASS 허순자 정기권(1 빌림 · 2 돌려줌) · TIP 반로아의 시각 · BCAST 방송(1 혼자 · 2 허순자가, BCAST_AT 분) · MAD 무단 방송 꾸중 · SOFT 허순자가 누그러짐 · SOL 해법(1 방송 · 2 소탕 · 3 구울의 말 · 4 정기권 통과) ·
 	# LEFT 떠난 손님 · WOKE 군집이 깨어남 · DOOR 철문 · JU 주성호(1 부탁 · 2 동행 · 3 갈라섬, JU_AT) · REPORT 보고 · FENCE 철망 횟수 · LINE 행렬을 봄 · PYO 표하경 할인 · RAT 터널 쥐 ·
-	# SLEEPER 선 채 잠든 손님 · MASK 가면 손님 · HOT 깨운 업보 · REWARD 사례
-	for k in "ARM GATE IN BSEEN ROBOT PASS TIP BCAST BCAST_AT MAD SOFT SOL LEFT WOKE DOOR JU JU_AT REPORT FENCE LINE PYO RAT SLEEPER MASK HOT REWARD AWAY".split(" "):
+	# SLEEPER 선 채 잠든 손님 · MASK 가면 손님 · HOT 깨운 업보 · REWARD 사례 · AWAY 주성호 노점 비움 · DAY 해법 날(소문 하루 늦게) ·
+	# REMAIN 남은 손님 · EMPTY 역무원까지 다 떠남 · ENT 측선에 든 손님 수 · WIND 허순자 태엽 시각 · SEEN 허순자 눈앞 방송
+	for k in "ARM GATE IN BSEEN ROBOT PASS TIP BCAST BCAST_AT MAD SOFT SOL LEFT WOKE DOOR JU JU_AT REPORT FENCE LINE PYO RAT SLEEPER MASK HOT REWARD AWAY DAY REMAIN EMPTY ENT WIND SEEN".split(" "):
 		vars.declare("SQ_S05_" + k, "int", 0)
 	for kv in [["SQH_BATT", -1], ["LR15_READ", 0], ["PD_R01_GS", 0], ["M303_BONUS", 0], ["PK_017", 0]]:   # 전지 인도처(HO) · LR-15 · 판도 PD-R01-2 각성회 · 편지 화술 +10(첫 1회) · 퍽 눈치(퍽 창은 1-12)
 		vars.declare(kv[0], "int", kv[1])

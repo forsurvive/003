@@ -6,26 +6,32 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "AGAIN": 10,
-  "ASK": 11,
-  "HIST": 12,
-  "MAP": 16,
-  "MAP2": 22,
-  "WEST": 24,
-  "WEST2": 29,
-  "PASS": 32,
-  "S5MAD": 35,
-  "S5MAD_OK": 39,
-  "S5SOFT": 41,
-  "S5PASS": 45,
-  "S5PAID": 47,
-  "S5ASKB": 51,
-  "S5REPORT": 58,
-  "S5R_A": 62,
-  "S5R_B": 64,
-  "S5PAY": 65
+  "AGAIN": 11,
+  "ASK": 12,
+  "HIST": 13,
+  "MAP": 17,
+  "MAP2": 23,
+  "WEST": 25,
+  "WEST2": 30,
+  "PASS": 33,
+  "S5MAD": 36,
+  "S5MAD_SEEN": 40,
+  "S5MAD_OK": 44,
+  "S5SOFT": 46,
+  "S5PASS": 50,
+  "S5PAID": 52,
+  "S5ASKB": 56,
+  "S5REPORT": 63,
+  "S5R_A": 67,
+  "S5R_B": 69,
+  "S5PAY": 70
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S05_SEEN == 1 and SQ_S05_MAD == 0",
+   "to": "S5MAD_SEEN"
+  },
   {
    "op": "if",
    "cond": "SQ_S05_BCAST == 1 and SQ_S05_MAD == 0 and SQ_S05_SOL != 1",
@@ -289,6 +295,26 @@
    "who": "N-R01-041",
    "emo": "기본",
    "text": "…서쪽에서 무슨 소리 나는지 경비대가 지금 보러 갔어. 결과 보고 다시 얘기해."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "SQ_S05_MAD = 1"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-041",
+   "emo": "분노",
+   "text": "지금 내 앞에서 그걸 올려? 쪽지 안 보여? '방송은 역장만.'"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-041",
+   "emo": "기본",
+   "text": "…올린 건 올린 거지. 서쪽에서 무슨 일이 나는지 같이 보자. 결과 보고 혼낼지 말지 정할게."
   },
   {
    "op": "goto",

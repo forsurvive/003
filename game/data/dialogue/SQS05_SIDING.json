@@ -6,9 +6,10 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "GUESTS": 4,
-  "PASSHOLDER": 8,
-  "HALF": 11
+  "GUESTS": 5,
+  "PASSHOLDER": 9,
+  "HALF": 12,
+  "CLOSED": 14
  },
  "ops": [
   {
@@ -18,8 +19,13 @@
   },
   {
    "op": "if",
-   "cond": "SQ_S05_SOL == 3",
+   "cond": "SQ_S05_JU == 3 and SQ_S05_REMAIN > 0",
    "to": "HALF"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S05_SOL == 3",
+   "to": "CLOSED"
   },
   {
    "op": "line",
@@ -72,7 +78,17 @@
    "op": "line",
    "who": "SYS",
    "emo": "기본",
-   "text": "셔터가 반쯤 올라가 있다. 안쪽에 봉천행 표를 쥔 사람들이 줄지어 서 있다."
+   "text": "셔터는 닫힌 채다. 봉천행 손님들이 떠난 벤치 자리마다 먼지 자국 — 남은 손님들은 아직 표를 쥐고 앉아 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "셔터는 닫힌 채다. 벤치가 비었다. 먼지 자국 위에 2077년 승차권 한 장."
   },
   {
    "op": "goto",

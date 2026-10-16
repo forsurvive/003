@@ -24,7 +24,9 @@ mark from_D-02 18 9 W
 prop sd_station_desk 4 6
 text 4 6 "역무실 책상. 노선도 단말 화면에 2·4호선 녹색 · 하늘색 줄이 희미하게 켜져 있다." scene=SD_ROUTEMAP
 box 5 6 sd_drawer owner=N-R01-041 name="역무실 서랍"
-npc N-R01-041 5 5 S
+# 재미 검수(구현 뒤 ④): 06:00 · 18:00 열 분은 벽시계 태엽을 감느라 등을 돌린다(반로아가 파는 시각 — SQ_S05_WIND는 SideS05가 세운다)
+npc N-R01-041 5 5 S cond="SQ_S05_WIND == 0"
+npc N-R01-041 3 3 N cond="SQ_S05_WIND == 1"
 prop radio_desk 10 4
 prop w_speaker 10 1
 # SQ-S05(1-11e): 역무 파수-3이 방송 설비 곁에 선다(측선에서 옮겨 온 뒤 — 한 곳에만, P3)
