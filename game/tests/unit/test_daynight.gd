@@ -33,6 +33,8 @@ func test_time_of_day_tones(t) -> void:
 	t.eq(TimeOfDay.light_k(22 * 60), 1.0, "밤엔 불빛 원판 다 켜짐")
 	t.eq(TimeOfDay.pip_k(22 * 60), 0.0, "그냥 밤엔 핍-보이 조명 꺼짐")
 	t.eq(TimeOfDay.pip_k(2 * 60), 1.0, "깊은 밤엔 핍-보이 조명(SD-16 §4.7 반경 96px)")
+	t.eq([TimeOfDay.fog_k(3 * 60), TimeOfDay.fog_k(270), TimeOfDay.fog_k(330), TimeOfDay.fog_k(390), TimeOfDay.fog_k(12 * 60)],
+		[0.0, 0.5, 1.0, 0.5, 0.0], "새벽 지면 안개: 04~05 차오름 · 05~06 가득 · 06~07 걷힘")
 	t.ok(not TimeOfDay.is_dark(Vector4.ZERO) and TimeOfDay.is_dark(TimeOfDay.TONES["새벽"]), "색조 유무")
 
 

@@ -129,6 +129,7 @@ var night := false                                                   ## 이야�
 var tone_now := Vector4.ZERO                                         ## 지금 화면 색조(시험 · 벤치)
 var pip_light := 0.0                                                 ## 핍-보이 조명 세기 0~1(깊은 밤 · 어두운 지하)
 var light_k := 0.0                                                   ## 빛 원판 세기 0~1
+var fog_k := 0.0                                                     ## 새벽 지면 안개 세기 0~1
 var _night_layer: CanvasLayer
 var _night_mat: ShaderMaterial
 var _light_layer: CanvasLayer
@@ -185,25 +186,29 @@ func _tone_update(force := false) -> void:
 	var t := Vector4.ZERO
 	var lk := 0.0
 	var pk := 0.0
+	var fk := 0.0
 	if map == null:
 		pass
 	elif outdoor():
 		t = TimeOfDay.TONES["밤"] if night else TimeOfDay.tone(m)
 		lk = 1.0 if night else TimeOfDay.light_k(m)
 		pk = 0.0 if night else TimeOfDay.pip_k(m)
+		fk = 0.0 if night else TimeOfDay.fog_k(m)
 	elif dark_inside():
 		t = TimeOfDay.TONES["실내 정전"]
 		lk = 1.0
 		pk = 1.0
-	if not force and t == tone_now and is_equal_approx(lk, light_k) and is_equal_approx(pk, pip_light):
+	if not force and t == tone_now and is_equal_approx(lk, light_k) and is_equal_approx(pk, pip_light) and is_equal_approx(fk, fog_k):
 		return
 	tone_now = t
 	light_k = lk
 	pip_light = pk
-	var on := TimeOfDay.is_dark(t)
+	fog_k = fk
+	var on := TimeOfDay.is_dark(t) or fk > 0.01
 	if on:
 		_ensure_tone_layers()
 		_night_mat.set_shader_parameter("tone", t)
+		_night_mat.set_shader_parameter("fog", fk)
 	if _night_layer != null:
 		_night_layer.visible = on
 		_light_layer.visible = on
@@ -246,6 +251,11 @@ func _night_tick(dt: float) -> void:
 			if p["name"] == "drum_fire":
 				map.set_prop_state(Vector2i(int(p["x"]), int(p["y"])), ["", "f1", "f2"][f])
 	_lights.queue_redraw()                                            # 핍-보이 조명은 주인공을 따라간다
+	if fog_k > 0.01:                                                  # 안개는 땅에 붙는다: 화면 왼쪽 위의 세상 좌표 · 화면이 덮는 세상 크기
+		var inv := get_viewport().get_canvas_transform().affine_inverse()
+		var vs := get_viewport().get_visible_rect().size
+		_night_mat.set_shader_parameter("cam", inv * Vector2.ZERO)
+		_night_mat.set_shader_parameter("view", inv.basis_xform(vs))
 
 
 func _index_scenes() -> void:

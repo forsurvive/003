@@ -63,6 +63,18 @@ static func pip_k(m: int) -> float:
 	return clampf((-tone(m).x - 70.0) / 30.0, 0.0, 1.0)
 
 
+## 새벽 지면 안개 세기(0~1, SD-16 §4.7 필터 2 덧씌우기 25%): 04~05 차오름 · 05~06 가득 · 06~07 걷힘
+static func fog_k(m: int) -> float:
+	m = posmod(m, 1440)
+	if m < 240 or m >= 420:
+		return 0.0
+	if m < 300:
+		return float(m - 240) / 60.0
+	if m < 360:
+		return 1.0
+	return float(420 - m) / 60.0
+
+
 ## 색조가 있나(층을 켤지)
 static func is_dark(v: Vector4) -> bool:
 	return absf(v.x) + absf(v.y) + absf(v.z) + absf(v.w) > 0.5
