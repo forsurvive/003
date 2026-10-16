@@ -91,7 +91,7 @@ func test_cr_glow_burst(t) -> void:
 	for i in 150:                                                           # 2.5초
 		c.tick(DT, true, st)
 	t.ok(c.rad.dose_at(a.loco.logical) < 5.0, "2초 뒤 지대가 걷힌다")
-	t.eq(int(c.stats.get("bursts", 0)), 1, "간격 10초 안에는 다시 터지지 않는다")
+	t.eq(int(c.stats.get("bursts", 0)), 1, "간격 8초 안에는 다시 터지지 않는다")
 	a.loco.place(_at(o, 1, 0) + Vector2(-200, 0))
 	var g2 := _foe(c, m, st, "CR-202", _at(o, 10, 5))
 	var f3 := _foe(c, m, st, "CR-200", _at(o, 12, 5))

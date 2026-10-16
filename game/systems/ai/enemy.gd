@@ -11,7 +11,7 @@ const DOGS := ["CR-104", "CR-095", "CR-107", "CR-106", "CR-108"]
 const GHOULS := ["CR-200", "CR-201", "CR-202", "CR-204", "CR-205", "CR-206", "CR-457", "CR-459", "CR-518"]   ## 방사능에 낫는 구울(SD-14 §7.2 '라드 100당 HP +1')
 const FERALS := ["CR-200", "CR-201", "CR-204", "CR-205", "CR-206"]            ## 빛나는 구울 폭발에 HP +30%를 받는 야생 구울
 const BURST_R := 4.0 * 32.0                       ## 빛나는 구울 방사능 폭발 반경(SD-14 CR-202 '반경 4타일')
-const BURST_CD := 10.0                            ## 폭발 간격(표에 없어 정함 — 구현 정합 SD-14 §7.2)
+const BURST_CD := 8.0                             ## 폭발 간격(SD-11 §7 구울 원형 표 '8초마다')
 const HOWL_BUFF := 20.0                           ## 들개 우두머리 울부짖기: 무리 속도 +15% · 피해 +20%(20초, 쿨 30초)
 const HOWL_CD := 30.0
 
@@ -834,7 +834,7 @@ func _specials(dt: float, target: Combatant) -> void:
 			cmb.hp = minf(cmb.max_hp, cmb.hp + _rad_heal)
 			_rad_heal = 0.0
 	var fighting := brain.state in [AIBrain.S.COMBAT, AIBrain.S.FRENZY]
-	if glow and fighting and burst_cb.is_valid():                   # 빛나는 구울: 표적이 4t 안이거나 다친 야생 구울이 곁에 있으면 터뜨린다
+	if glow and fighting and burst_cb.is_valid():                   # 빛나는 구울(8초마다): 표적이 4t 안이거나 다친 야생 구울이 곁에 있으면 터뜨린다
 		_burst_cd -= dt
 		if _burst_cd <= 0.0 and (loco.logical.distance_to(target.pos()) <= BURST_R or bool(burst_cb.call(self, true))):
 			_burst_cd = BURST_CD
