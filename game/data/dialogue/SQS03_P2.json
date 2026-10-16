@@ -1,0 +1,56 @@
+{
+ "id": "SQS03_P2",
+ "title": "검은 줄무늬",
+ "loc": "L-R01-08",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "CLEAN": 5
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S03_CLEAN == 1",
+   "to": "CLEAN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "벽을 타고 검은 줄무늬. 동쪽 창살로 갈수록 짙어진다 — 물이 그쪽, 산 위 갱도에서 내려온다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "줄무늬 속에 실 같은 뿌리. 물이 머무는 높이에서만 자란다."
+  },
+  {
+   "op": "cmd",
+   "name": "s03",
+   "args": [
+    "point",
+    "2"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "줄무늬가 잿빛으로 바랬다. 손톱으로 긁으면 가루가 된다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S03.txt"
+}

@@ -7,13 +7,14 @@
 class_name Enemy
 extends Actor
 
-const DOGS := ["CR-104", "CR-095", "CR-107", "CR-106", "CR-108", "CR-105", "CR-500", "CR-136"]
+const DOGS := ["CR-104", "CR-095", "CR-107", "CR-106", "CR-108", "CR-105", "CR-500", "CR-136", "CR-097"]
 const GHOULS := ["CR-200", "CR-201", "CR-202", "CR-204", "CR-205", "CR-206", "CR-457", "CR-459", "CR-518"]   ## 방사능에 낫는 구울(SD-14 §7.2 '라드 100당 HP +1')
 const FERALS := ["CR-200", "CR-201", "CR-204", "CR-205", "CR-206"]            ## 빛나는 구울 폭발에 HP +30%를 받는 야생 구울
 const BURST_R := 4.0 * 32.0                       ## 빛나는 구울 방사능 폭발 반경(SD-14 CR-202 '반경 4타일')
 const BURST_CD := 8.0                             ## 폭발 간격(SD-11 §7 구울 원형 표 '8초마다')
 const HOWL_BUFF := 20.0                           ## 들개 우두머리 울부짖기: 무리 속도 +15% · 피해 +20%(20초, 쿨 30초)
 const HOWL_CD := 30.0
+const RAT_CALL_CD := 20.0                       ## 왕쥐 찍찍 울음(SD-14 CR-097): 12t 안 시궁쥐 둘 호출 · 쿨 20초
 
 var brain: AIBrain
 var cmb := Combatant.new()
@@ -89,7 +90,7 @@ var _nade_cd := 0.0                           ## 개체 재사용(8초)
 var _hide_t := 0.0                            ## 표적이 엄폐 뒤에서 버틴 초(3초 넘으면 수류탄)
 var _burst_on := 0.0                          ## 연사 무기 점사 남은 초(0.6~1.2)
 var _burst_rest := 0.0                        ## 점사 뒤 쉬는 초(0.5~1.0)
-const SAY := {"howl": ["아우우우—!", "우워어어—!"], "flee": ["살려 줘!", "튀어!", "이건 못 해먹겠다!"], "surrender": ["쏘지 마! 항복이야!", "그만, 그만! 손 들었어!"],
+const SAY := {"howl": ["아우우우—!", "우워어어—!"], "rat_call": ["찌이익—!", "끼익! 끼익!"], "flee": ["살려 줘!", "튀어!", "이건 못 해먹겠다!"], "surrender": ["쏘지 마! 항복이야!", "그만, 그만! 손 들었어!"],
 	"drug": ["크흐… 이거면 돼…", "으아아!"], "nade": ["수류탄!", "받아라!"], "back": ["다시 간다!", "덤벼 봐!"], "alarm": ["저기다!", "여기야!"]}
 var _rng := RandomNumberGenerator.new()
 # 1-9e4 생물 특수(SD-14 §4.2 · §7.2 · SD-11 §9.2)
@@ -100,6 +101,7 @@ var _burst_cd := 3.0
 var _ring_t := -1.0                           ## 폭발 고리 그리기(0~0.5초)
 var howl_cb := Callable()                     ## (e): 무리에 울부짖기
 var _howl_cd := 0.0
+var call_cb: Callable                            ## 왕쥐 호출(InteriorCombat._rat_call)
 var buff_t := 0.0                             ## 울부짖기를 받은 남은 초(속도 +15% · 물기 +20%)
 var mine_list := Callable()                   ## () -> Array: 깔린 지뢰(들개 함정 회피)
 var _mine_skip := {}                          ## 지뢰 자리 -> 돌아가나(개체마다 지뢰 하나에 한 번 굴림, 50%)
@@ -131,6 +133,8 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 			sheet = "cr_cr500_loco"                                  # 외눈(1-11a, SD-04a §4.1 — 흰 털 · 왼눈 흉터 · 목줄과 인식표)
 		"CR-095":
 			sheet = "cr_cr095_loco"
+		"CR-097":
+			sheet = "cr_cr097_loco"                                  # 왕쥐(1-11d, SD-14 §4.1 — 한 치수 반 큰 몸 · 흉터 · 엉킨 꼬리 매듭)
 		"CR-136":
 			sheet = "cr_cr136_loco"                                  # 옴 너구리(1-T2 밤 몹, SD-14 §4.9 — 눈가 검은 띠 · 털 빠진 꼬리)
 		"CR-107":
@@ -879,6 +883,12 @@ func _specials(dt: float, target: Combatant) -> void:
 			_howl_cd = HOWL_CD
 			_say("howl", 1.4)
 			howl_cb.call(self)
+	if id == "CR-097" and fighting and call_cb.is_valid():               # 왕쥐: 교전에 들면 바로, 그 뒤 20초마다 찍찍 — 둘을 부른다
+		_howl_cd -= dt
+		if _howl_cd <= 0.0:
+			_howl_cd = RAT_CALL_CD
+			_say("rat_call", 1.2)
+			call_cb.call(self)
 	_apply_speed()
 
 

@@ -29,6 +29,21 @@
   "tier": "약",
   "xp": 5
  },
+ "CR-097": {
+  "_src": "14_creatures-enemies.md:418",
+  "attack": "물기 28",
+  "dr": 0,
+  "hp": 160,
+  "id": "CR-097",
+  "level": 7,
+  "name": "왕쥐 (시궁쥐 우두머리)",
+  "part_weights": "PW-C",
+  "pattern": "찍찍 울음으로 반경 12타일 안의 시궁쥐 2마리 호출(쿨 20초)",
+  "radius": 0.4,
+  "speed": 3.5,
+  "tier": "강",
+  "xp": 25
+ },
  "CR-104": {
   "_src": "14_creatures-enemies.md:443",
   "attack": "물기 8",
@@ -426,7 +441,7 @@
   "xp": 10
  },
  "CR-500": {
-  "_src": "14_creatures-enemies.md:1285",
+  "_src": "14_creatures-enemies.md:1287",
   "attack": "물기 18",
   "dr": 0,
   "hp": 260,
@@ -440,7 +455,7 @@
   "xp": 50
  },
  "CR-513": {
-  "_src": "14_creatures-enemies.md:1298",
+  "_src": "14_creatures-enemies.md:1300",
   "dr": 18,
   "hp": 60,
   "id": "CR-513",
@@ -451,7 +466,7 @@
   "xp": 65
  },
  "CR-534": {
-  "_src": "14_creatures-enemies.md:1468",
+  "_src": "14_creatures-enemies.md:1470",
   "dr": 12,
   "hp": 140,
   "id": "CR-534",

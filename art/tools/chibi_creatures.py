@@ -139,6 +139,10 @@ QUAD = {
                    skin=["P39", "P40", "P41"], eye="P54", tail="up", ears=True, mange=False, scars=True),
     "rat": dict(w=40, h=22, foot=(18, 19), px=2, body=(17, 13, 9, 5), head=(27, 12, 5, 4.5), leg=3, fur=["P03", "P04", "P05", "P06"],
                 skin=["P40", "P41", "P42"], eye="P54", tail="long", ears=True, mange=False),
+    # 왕쥐 CR-097(SD-14 §4.1 '대형 확대 스프라이트', SQ-S03 계곡 암거): 시궁쥐 우두머리 — 한 치수 반 큰 몸(같은 걸음 리그를 원래 크기로 그린다 —
+    # 늘린 그림이 아니다), 어두운 잿빛 털에 옴 자국 · 등의 긴 흉터 · 찢긴 귀 · 붉은 눈 · 누렇게 휜 앞니 · 꼬리 셋이 엉킨 매듭(쥐왕 전설)
+    "ratking": dict(w=62, h=32, foot=(27, 29), px=3, body=(26, 17, 13, 7), head=(40, 15, 7, 5.5), leg=4, fur=["P02", "P03", "P04", "P05"],
+                    skin=["P39", "P40", "P41"], eye="P54", tail="knot", ears=True, mange=True, ribs=False),
     # 옴 너구리 CR-136(SD-14 §4.9, 1-T2 밤 인카운터): 시궁쥐보다 둥글고 털이 부푼 잿빛 몸 · 눈가 검은 띠와 흰 눈썹 · 짧은 둥근 귀 ·
     # 털 빠진 꼬리(옴, 군데군데 분홍 살과 남은 검은 고리) · 몸통에도 옴 자국
     "raccoon": dict(w=46, h=24, foot=(22, 21), px=2, body=(21, 14, 10, 6), head=(32, 12, 6, 5.5), leg=3, fur=["P03", "P04", "P05", "P07"],
@@ -171,7 +175,7 @@ def quad(kind, frame=0, pose="walk"):
     body = Image.new("RGBA", img.size, CLEAR)
 
     def mange(nx, ny, col):
-        if q["mange"] and math.sin(nx * 7 + 2) * math.sin(ny * 6 - 1) > 0.6:
+        if q["mange"] and math.sin(nx * 7 + 2) * math.sin(ny * 6 - 1) > (0.9 if kind == "ratking" else 0.6):
             return ramp(q["skin"])[1]
         if q["mange"] and q.get("ribs", True) and ny > 0.1 and abs((nx * 6) % 1 - 0.5) < 0.12:
             return fur[0]                                                  # 드러난 갈비
@@ -240,6 +244,24 @@ def quad(kind, frame=0, pose="walk"):
         bd.ellipse([sx - 1, hyb - 1, sx + 3, hyb + 2], fill=fur[2])
         bd.point((sx + 3, hyb), fill=ramp(q["skin"])[2])
         bd.point((round(hxc + 1), hyb - 1), fill=C(q["eye"]))
+    if kind == "ratking":                                                  # 왕쥐: 뾰족한 주둥이 · 큰 둥근 귀(찢긴 끝) · 등의 긴 흉터 · 굽은 등 털 다발
+        sx = round(hxc + hrx - 2)
+        bd.polygon([(sx - 2, hyb - 3), (sx + 7, hyb + 1), (sx - 2, hyb + 4)], fill=fur[2])         # 길게 뺀 주둥이
+        bd.line([sx - 1, hyb + 3, sx + 5, hyb + 1], fill=fur[1])
+        bd.point((sx + 7, hyb + 1), fill=ramp(q["skin"])[2]); bd.point((sx + 6, hyb + 1), fill=ramp(q["skin"])[1])   # 분홍 코끝
+        ex = round(hxc - 3)
+        bd.ellipse([ex - 3, hyb - 10, ex + 3, hyb - 4], fill=fur[3])                                # 큰 둥근 귀
+        bd.ellipse([ex - 2, hyb - 9, ex + 2, hyb - 5], fill=ramp(q["skin"])[1])
+        bd.point((ex + 2, hyb - 10), fill=(0, 0, 0, 0)); bd.point((ex + 3, hyb - 9), fill=(0, 0, 0, 0)); bd.point((ex + 2, hyb - 9), fill=fur[0])   # 찢긴 끝
+        bd.arc([round(hxc - hrx), hyb - 6, round(hxc + 1), hyb + 6], 100, 260, fill=fur[0])         # 목 주름(머리와 몸을 가른다)
+        y0 = round(by - bob - bry + 2)
+        bd.line([round(bx - brx * 0.6), y0 + 1, round(bx + brx * 0.3), y0 - 1], fill=ramp(q["skin"])[1])
+        for k in range(4):
+            sx4 = round(bx - brx * 0.5 + k * 4)
+            bd.point((sx4, y0 - 1 + (k % 2)), fill=ramp(q["skin"])[0])
+        for k in range(4):
+            gx = round(bx - brx * 0.2 + k * 3)
+            bd.polygon([(gx - 1, y0 - 1), (gx, y0 - 4 + (k % 2)), (gx + 2, y0 - 1)], fill=fur[0])
     if q.get("scars"):                                                     # 사나운 들개: 곤두선 등 갈기(검푸른 털 위 뾰족 다발)
         for k in range(5):
             gx = round(bx - brx * 0.55 + k * 3)
@@ -269,9 +291,14 @@ def quad(kind, frame=0, pose="walk"):
         d.point((etip, round(hyc - bob) - 11), fill=(0, 0, 0, 0))
         d.point((etip, round(hyc - bob) - 10), fill=C("P01"))
     tx = round(bx - brx)
-    if kind == "rat":                                                     # 수염(먹선 밖)
+    if kind in ("rat", "ratking"):                                        # 수염(먹선 밖)
         sx2, sy2 = round(q["head"][0] + q["head"][2] + 2), round(q["head"][1] - bob)
         d.line([sx2, sy2, sx2 + 3, sy2 - 1], fill=C("P07")); d.line([sx2, sy2 + 1, sx2 + 3, sy2 + 2], fill=C("P07"))
+    if kind == "ratking":                                                 # 누렇게 휜 앞니 둘(먹선 밖으로 삐져나온다) · 붉은 눈 두 점
+        tx2, ty2 = round(q["head"][0] + q["head"][2] + 3), round(q["head"][1] - bob) + 3
+        d.line([tx2, ty2, tx2, ty2 + 2], fill=C("P49")); d.line([tx2 + 1, ty2, tx2 + 1, ty2 + 2], fill=C("P48"))
+        d.point((tx2, ty2 + 3), fill=C("P01"))
+        d.point((round(q["head"][0] + 2), round(q["head"][1] - bob) - 2), fill=C("P53"))
     if q["tail"] == "curl":                                               # 진돗개 말린 꼬리(등 위로 둥글게)
         cx0, cy0 = tx + 1, by - 7 - bob
         d.ellipse([cx0 - 5, cy0 - 5, cx0 + 3, cy0 + 3], fill=C("P01"))
@@ -288,6 +315,15 @@ def quad(kind, frame=0, pose="walk"):
         d.line([pts[1][0] - 1, pts[1][1] - 1, pts[1][0] - 1, pts[1][1] + 1], fill=C("P01"))
         d.point((pts[2][0] - 1, pts[2][1]), fill=C("P02"))
         d.point((pts[3][0], pts[3][1]), fill=fur[1])
+    elif q["tail"] == "knot":                                             # 왕쥐: 꼬리 셋이 엉덩이 뒤에서 한 매듭으로 엉켰다가 다시 갈라진다
+        sw = frame % 2
+        sk = ramp(q["skin"])
+        kx, ky = tx - 6, by + 3 - bob
+        for k, (dx, dy) in enumerate(((-9, 1 + sw), (-8, 5), (-6, -3 - sw))):
+            d.line([(tx + 1, by - 1 + k - bob), (kx, ky)], fill=sk[1], width=2 if k == 0 else 1)
+            d.line([(kx, ky), (kx + dx // 2, ky + dy // 2), (kx + dx, ky + dy)], fill=sk[k % 2 + 1])
+        d.ellipse([kx - 2, ky - 2, kx + 2, ky + 2], fill=sk[0])               # 매듭(굳은 피딱지 · 흙)
+        d.point((kx - 1, ky - 1), fill=sk[2]); d.point((kx + 1, ky), fill=C("P01"))
     else:
         pts = [(tx, by + 1 - bob), (tx - 5, by + 3), (tx - 10, by + 2 + (frame % 2)), (tx - 14, by + 4)]
         d.line(pts, fill=ramp(q["skin"])[1])

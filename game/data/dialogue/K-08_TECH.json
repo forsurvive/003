@@ -6,7 +6,7 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "SEEN": 6
+  "SEEN": 8
  },
  "ops": [
   {
@@ -21,6 +21,12 @@
    "text": "작업복 가슴 명찰 '설비과 정비 2팀'. 2214년 갱도 점검 근무표가 주머니에 접혀 있다."
   },
   {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "목에 볼트 인식표 — '정영수 · 2189'. 손에 꼭 쥔 수질 측정지."
+  },
+  {
    "op": "cmd",
    "name": "note",
    "args": [
@@ -29,7 +35,14 @@
   },
   {
    "op": "do",
-   "fx": "PL_TECH = 1"
+   "fx": "PL_TECH = 1; give(\"M-302\", 1); SQ_S03_TAGSEEN = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "s03",
+   "args": [
+    "sheet"
+   ]
   },
   {
    "op": "line",

@@ -19,8 +19,18 @@ exit 3 9 W L-R01-08
 mark from_W 2 8 N
 prop drain_valve 10 3
 text 10 3 "2077년 수질 측정 상자. 바늘이 '측정 불가'에 붙어 있다."
+text 11 3 "측정 상자 옆구리에 달린 소독 분무기. 통은 말랐지만 노즐은 멀쩡하다." scene=SQS03_BOX
 box 10 3 crate name="수질 측정 상자"
-text 20 3 "천장에 검은 곰팡이가 번졌다. 둥근 반점이 겹겹이 — 어디서 본 무늬다. 볼트 수경 농장 2동의 그 반점." w=3
+prop w_mold_colony 19 1
+# 군락에서 동쪽(볼트 갱도 창살 쪽)으로 이어지는 검은 줄기 — 갈수록 굵다(재미 검수 1-11d: '검은 길'이 물이 오는 쪽을 가리킨다)
+prop w_mold_streak 23 1
+prop w_mold_streak 27 1
+prop w_mold_streak2 32 1
+prop w_mold_streak2 39 1
+prop w_mold_streak3 44 1
+prop w_mold_streak3 48 1
+prop w_mold_streak3 52 1
+text 20 3 "천장에 검은 곰팡이가 번졌다. 둥근 반점이 겹겹이 — 어디서 본 무늬다. 볼트 수경 농장 2동의 그 반점." w=3 scene=SQS03_COLONY
 prop rubble 26 7
 prop remains 44 4
 text 44 4 "벽에 기대 앉은 해골. 볼트 작업복, 등판 번호 'S-07'. 손에 꼭 쥔 종이 한 장." scene=K-08_TECH
@@ -42,3 +52,14 @@ prop pipe_run 37 3
 prop pipe_run 38 3
 text 30 3 "옛 관로 이음 지점." scene=SQS02_JOINT
 text 37 3 "옛 관로 이음 지점." scene=SQS02_JOINT
+# SQ-S03 곰팡이의 근원(1-11d): 조사 지점 ② 검은 줄무늬(동쪽 창살로 갈수록 짙다) · 쥐구멍 · 시궁쥐 무리와 왕쥐 자리(진행기가 첫 진입 때 세운다)
+text 50 3 "벽을 타고 동쪽으로 검은 줄무늬. 창살 쪽으로 갈수록 짙어진다 — 물이 그쪽에서 온다." w=4 scene=SQS03_P2
+prop rathole 15 8
+prop rathole 47 8
+mark k1 24 5 W
+mark k2 28 7 W
+mark k3 33 4 W
+mark k4 38 6 W
+mark k5 42 5 W
+mark k6 46 7 W
+mark king 40 5 W

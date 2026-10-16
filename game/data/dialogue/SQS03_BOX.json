@@ -1,0 +1,55 @@
+{
+ "id": "SQS03_BOX",
+ "title": "수질 측정 상자",
+ "loc": "L-R01-08",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "HAVE": 5
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "2077년 수질 측정 상자. 바늘이 '측정 불가'에 붙어 있다."
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S03_SPRAY == 1",
+   "to": "HAVE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "뚜껑 안쪽 고무 받침에 시약 분무기 한 자루. 펌프를 눌러 보니 — 아직 쉭, 하고 숨을 쉰다."
+  },
+  {
+   "op": "cmd",
+   "name": "s03",
+   "args": [
+    "spray"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "분무기는 내가 챙겼다. 빈 받침에 2077년 시약 목록 — '살균제 배합: 세제 2 · 희석제 1'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S03.txt"
+}

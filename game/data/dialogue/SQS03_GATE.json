@@ -1,0 +1,145 @@
+{
+ "id": "SQS03_GATE",
+ "title": "갱도 중간 수문",
+ "loc": "L-R01-02",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "SHUT_NOW": 5,
+  "STUCK": 9,
+  "SHUT": 11,
+  "QUIET": 14
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S03_GATE == 2",
+   "to": "SHUT"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "갱도 중간 수문. 녹슨 기어 상자 위 손잡이 바퀴. 들린 판 아래로 물이 흘러간다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "판 아래 물이 미끈하다. 검은 실이 물살에 나부낀다 — 위에서, 볼트 쪽에서 내려오는 물이다."
+  },
+  {
+   "op": "cmd",
+   "name": "s03",
+   "args": [
+    "gate"
+   ]
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "기어에 기름을 먹이고 바퀴를 돌린다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 25
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "SHUT_NOW",
+     "id": "SQS03_GATE:1:0",
+     "fail": "STUCK"
+    },
+    {
+     "text": "바퀴를 온몸으로 비튼다",
+     "tags": [
+      {
+       "k": "stat",
+       "name": "힘",
+       "min": 6
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "SHUT_NOW",
+     "id": "SQS03_GATE:1:1",
+     "fail": "STUCK"
+    },
+    {
+     "text": "그냥 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS03_GATE:1:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s03",
+   "args": [
+    "shut"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "끼이익 — 판이 바닥까지 내려앉는다. 물이 판 앞에 고여 차오르기 시작한다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "위에서 물이 계속 민다. 막았을 뿐이다 — 이 물을 어디로 돌릴지는 위에서 정해야 한다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "바퀴가 반 바퀴 돌다 멈춘다. 기어 이가 녹으로 엉겼다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "수문이 닫혀 있다. 판 앞에 물이 고였다가 옆 배수구로 빠진다."
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S03_SOL == 3",
+   "to": "QUIET"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "판 아래로 흐르는 물이 없다. 볼트가 물길을 정화조로 돌렸다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S03.txt"
+}

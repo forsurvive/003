@@ -179,6 +179,7 @@ var mq106: Mq106                                   ## MQ-106 첫 번째 추적�
 var home: HomeBc                                   ## 봉천 옥탑방 거처(1-8b)
 var side_r01: SideR01                              ## 관악 사이드 퀘스트(1-11 — SQ-S01 외눈의 인식표)
 var side_s02: SideS02                              ## 관악 사이드 퀘스트(1-11b — SQ-S02 물 반 컵의 값)
+var side_s03: SideS03                              ## 관악 사이드 퀘스트(1-11d — SQ-S03 곰팡이의 근원)
 var side_s04: SideS04                              ## 관악 사이드 퀘스트(1-11c — SQ-S04 도성이 뒤척인다)
 var caravans: Caravans                             ## 순회 상인 일정(1-8d)
 var sol := 1                                       ## 1막 봇 해법(--sol=1~5, 0-10)
@@ -229,6 +230,10 @@ func _paths() -> void:
 		side_s02 = SideS02.new()
 		add_child(side_s02)
 		side_s02.setup(host, log_on)
+	if side_s03 == null:
+		side_s03 = SideS03.new()
+		add_child(side_s03)
+		side_s03.setup(host, log_on)
 	if side_s04 == null:
 		side_s04 = SideS04.new()
 		add_child(side_s04)

@@ -37,13 +37,9 @@ static func animal(st: StoryState, id: String) -> bool:
 	return str(st.npcs.get(id, {}).get("look", "")).begins_with("AN")
 
 
-## 이름 + 목적격 조사(을/를) — 받침으로 고른다
+## 이름 + 목적격 조사(을/를) — 조사 고르기는 Josa 한 곳
 static func obj(name: String) -> String:
-	if name == "":
-		return name
-	var c := name.unicode_at(name.length() - 1)
-	var jong := (c - 0xAC00) % 28 if c >= 0xAC00 and c <= 0xD7A3 else 0
-	return name + ("을" if jong != 0 else "를")
+	return name + Josa.pick("를", name) if name != "" else name
 
 
 static func named(st: StoryState, id: String) -> bool:

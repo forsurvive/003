@@ -421,6 +421,15 @@ func global_mult() -> float:
 	return m
 
 
+## 이 RE 무리에 그 개체가 있나(정의에는 id 칸이 없다 — 무리 구성으로 본다)
+static func _has_unit(d: Dictionary, cr: String) -> bool:
+	for g in d.get("groups", []):
+		for u in (g as Dictionary).get("units", []):
+			if str((u as Array)[0]) == cr:
+				return true
+	return false
+
+
 ## 후보 범주·세력에 걸리는 배수(§3.6): 밤 크리처·약탈자 · 새벽 인력 · 수배 순찰 · 레벨 차 · 행운 · 카르마
 func cat_mult(d: Dictionary, region: String, _t: Vector2i, night: bool) -> float:
 	var c := str(d.get("cat", ""))
@@ -445,6 +454,10 @@ func cat_mult(d: Dictionary, region: String, _t: Vector2i, night: bool) -> float
 			m *= 1.3                                                    # SQ-S02 우회 관로: 패거리가 사흘 동안 봉천 밤 습격을 늘린다(SD-04a §4.2 해법 B)
 		if int(st.vars.get_v("SQ_S02_IN")) == 4:
 			m *= 1.2                                                    # SQ-S02 묵인: 척후가 정확해진다(해법 d)
+	if night and _has_unit(d, "CR-136") and _t.x >= 0 and st.vars.has("SQ_S03_RACC_UNTIL") \
+			and int(st.vars.get_v("GAME_DAY")) < int(st.vars.get_v("SQ_S03_RACC_UNTIL")) \
+			and absi(_t.x - SideS03.BC_CENTER.x) <= SideS03.BC_R and absi(_t.y - SideS03.BC_CENTER.y) <= SideS03.BC_R:
+		m *= 1.3                                                        # SQ-S03 소각: 따뜻한 암거를 잃은 옴 너구리가 이레 동안 봉천 쪽으로(SD-04a §4.3 해법 A)
 	if night and c in ["creature", "raider"] and _t.x >= 0 and st.vars.has("SQH_BATT") and int(st.vars.get_v("SQH_BATT")) == 81 \
 			and absi(_t.x - SideS02.BC_CENTER.x) <= SideS02.BC_R and absi(_t.y - SideS02.BC_CENTER.y) <= SideS02.BC_R:
 		m *= 0.9                                                        # SQ-S04 전지를 대장간에: 계단마을 옥탑 조명 — 봉천 밤 RE −10%(SD-04a §4.4 인도처)

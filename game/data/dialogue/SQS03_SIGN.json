@@ -1,0 +1,42 @@
+{
+ "id": "SQS03_SIGN",
+ "title": "판자 안내",
+ "loc": "L-R01-10",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "OK": 3
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "판자 안내. '배수지 물 — 한 집 하루 두 통. 끓여 마실 것. 관리 조수안.'"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S03_CLEAN == 1",
+   "to": "OK"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'끓여 마실 것' 아래 분필로 덧쓴 글씨. '안 끓여도 됨.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S03.txt"
+}

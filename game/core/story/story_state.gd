@@ -140,6 +140,12 @@ func _init() -> void:
 	for k in ["ARM", "POSTED", "DAY0", "LEVEL", "OPEN", "PAID", "SOL", "B", "BJ", "BJ_AT", "CAMP", "CKILLS", "TDEAD", "DDEAD", "HOT", "NS_HOT", "GUARD", "MAP", "SIREN", "NKILLS", "HAND", "KNOW", "IN", "PIPEMAP", "J1", "J2", "AT", "TRAP_AT", "TRAP_DONE", "FIGHT", "NH_DEAD", "NH_KILLED", "EXILE_DAY", "STOP_DAY", "NIGHT_DAY", "HEARD", "REWARD", "DONE_DAY", "RAID_UNTIL", "SOL_E", "DRY_HINT", "SHADOW"]:
 		vars.declare("SQ_S02_" + k, "int", 0)
 	vars.declare("JC_PROB_BC", "int", 0)
+	# SQ-S03 곰팡이의 근원(1-11d, SD-04a §4.3 · SideS03): ARM MQ-101 끝난 날 · POSTED 게시판 쪽지 · WALL 이음 벽 얼룩 · P1 P2 P3 조사 지점 · SPRAY 분무기 · GATE 수문(1 살핌 · 2 닫음) ·
+	# NAME · TAGSEEN 정영수 · TAG 볼트 기록(1 · 2 · 3) · CALLS 인터컴 · VAULT 방금례(1 받음 · 2 수치) · SOL 처리(1 소각 · 2 약품 · 3 원인 차단) · CLEAN 맑아짐 · DRY_DAY C 마르기 시작 ·
+	# FILTER D 필터(FILTER_DAY · FILTER_N 며칠째 · SMELL 30일 뒤 곰팡내) · RACC_UNTIL 소각 뒤 너구리 · RAT RAT2 KING ERAT 쥐 무리 · IN · VISITS K-08 · REWARD · DRINKS 오늘 꼭지 · SAID · PIPE S02 B 표지
+	for k in "ARM POSTED WALL P1 P2 P3 SPRAY GATE NAME TAGSEEN TAG CALLS VAULT SOL CLEAN DRY_DAY FILTER FILTER_DAY FILTER_N SMELL RACC_UNTIL RAT RAT2 KING ERAT IN VISITS REWARD DRINKS SAID PIPE".split(" "):
+		vars.declare("SQ_S03_" + k, "int", 0)
+	vars.declare("SQR_S03", "int", 0)                                     # 4막 볼트 반응(SD-04a §4.3 정보 전파 — MQ-401 이월)
 	# SQ-S04 도성이 뒤척인다(1-11c, SD-04a §4.4 · SideS04): ARM MQ-102가 열린 분 · WAKE_AT 깨어날 21시 · WAKE 깨어난 분 · HELD 남솔이 철망 안 · DEADLINE 보호 기간 끝 ·
 	# OUT 나온 길(1 인증 · 2 파괴 · 3 은신 · 4 정비 · 5 만료 · 6 마을) · SLEEP 잠든 까닭(1 전지 회수 · 2 대기 · 3 정비 모드) · KILLED · TKILLED 부순 파수 · 감시포(비트) ·
 	# HOT 제압 중 · LOITER 아랫문 서성임 끝 · D 정비(1 오는 중 · 2 끝, D_AT) · TEST 시험 가동 · BATT 전지 회수 · F 단말 대기 · LETTER 편지 · AWAY 노량진(돌아오는 날) ·

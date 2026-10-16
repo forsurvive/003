@@ -1,0 +1,104 @@
+{
+ "id": "SQS03_TAP",
+ "title": "급수 꼭지",
+ "loc": "L-R01-10",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "DRINK": 4,
+  "SIP": 6,
+  "GULP": 7,
+  "SPENT": 9,
+  "DRY": 11
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S02_POSTED == 1 and SQ_S02_LEVEL == 0",
+   "to": "DRY"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "급수 꼭지. 붉은 핸들 아래 양동이 셋."
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S03_DRINKS >= 2",
+   "to": "SPENT"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "꼭지에서 한 모금 마신다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "DRINK",
+     "id": "SQS03_TAP:1:0"
+    },
+    {
+     "text": "그냥 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS03_TAP:1:1"
+    }
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S02_POSTED == 1 and SQ_S02_LEVEL <= 2 and SQ_S02_OPEN == 0",
+   "to": "SIP"
+  },
+  {
+   "op": "goto",
+   "to": "GULP"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "꼭지 옆 판자에 분필 글씨. '한 모금만. 아이들 몫.' — 그래도 한 모금은 한 모금이다."
+  },
+  {
+   "op": "cmd",
+   "name": "s03",
+   "args": [
+    "drink"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "오늘 몫은 이미 마셨다. 한 집 하루 두 통 — 꼭지에도 같은 규칙이 붙어 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "붉은 핸들을 돌리면 — 쇳소리만 난다. 아래 양동이가 말라 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S03.txt"
+}

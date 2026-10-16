@@ -11,6 +11,7 @@ var mq106: Mq106
 var side: SideR01                                    ## 관악 사이드 퀘스트(1-11a SQ-S01)
 var side2: SideS02                                   ## 관악 사이드 퀘스트(1-11b SQ-S02)
 var side4: SideS04                                   ## 관악 사이드 퀘스트(1-11c SQ-S04)
+var side3: SideS03                                   ## 관악 사이드 퀘스트(1-11d SQ-S03)
 var st: StoryState
 var route := "job"
 var shots := ""
@@ -79,6 +80,9 @@ func _ready() -> void:
 	side4 = SideS04.new()
 	add_child(side4)
 	side4.setup(host, true)
+	side3 = SideS03.new()
+	add_child(side3)
+	side3.setup(host, true)
 	host.combat.player_down.connect(host.on_pc_down)                  # 쓰러짐 → 생포 판정(진짜 진행 prologue와 같은 연결)
 	host.combat.equip("W-002", st)
 	match route:

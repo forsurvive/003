@@ -252,7 +252,12 @@ func test_sq_s02_bypass(t) -> void:
 	t.eq([_v(st, "SQ_S02_B"), _v(st, "SQ_S02_SOL"), st.quests.stage("SQ-S02")], [1, 2, 70], "해법 B 우회 관로 · 단계 70")
 	t.eq([st.count_of("M-010"), st.count_of("M-025")], [0, 0], "고철 넷 · 테이프 둘을 썼다")
 	t.eq(_v(st, "V_KARMA") - k0, 50, "카르마 +50")
+	t.eq([_v(st, "SQ_S03_PIPE"), st.quests.stage("SQ-S03")], [1, 0], "S03 넘김 표지만 — 단계는 S03 진행기 한 곳에서(P1)")
+	var c3 := SideS03.new()
+	c3.setup(h)
+	c3._process(1.0)
 	t.eq(st.quests.stage("SQ-S03"), 10, "SQ-S03 자동 발동(계곡 배수로 곰팡이)")
+	c3.free()
 	t.eq(_v(st, "SQ_S02_RAID_UNTIL"), _v(st, "GAME_DAY") + 3, "사흘 동안 봉천 밤 습격 +30%")
 	var en := Encounters.new(st, 3)
 	en.ctx["hour"] = 23

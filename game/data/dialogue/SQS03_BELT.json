@@ -1,0 +1,62 @@
+{
+ "id": "SQS03_BELT",
+ "title": "측실의 공구 벨트",
+ "loc": "L-R01-02",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "AGAIN": 6
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S03_NAME == 1",
+   "to": "AGAIN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "벽에 박힌 정비 사다리 고리 셋. 바닥에 삭은 공구 벨트 — 볼트 설비과 규격. 주머니에 접힌 종이."
+  },
+  {
+   "op": "cmd",
+   "name": "note",
+   "args": [
+    "E-01-BELT"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s03",
+   "args": [
+    "name"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "볼트는 이 사람을 기다리지 않았다. 다음 해에 창살을 용접했다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "삭은 공구 벨트. 쪽지는 내 주머니에 있다. '물에 냄새가 난다.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S03.txt"
+}

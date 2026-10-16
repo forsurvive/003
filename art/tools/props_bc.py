@@ -985,6 +985,10 @@ for _k in PROPS_GS:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_GS)
 from props_s04 import PROPS_S04, STATES_S04                           # 봉천 동 주민센터 · 관악 레이더 중계소(1-11c SQ-S04)
+from props_s03 import PROPS_S03, STATES_S03                           # 계곡 암거 곰팡이 · S-07 배수 갱도 · 봉천 배수지(1-11d SQ-S03)
+for _k in PROPS_S03:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_S03)
 for _k in PROPS_S04:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_S04)
@@ -1007,6 +1011,7 @@ STATES.update(STATES_CG)
 STATES.update(STATES_TRAP)
 STATES.update(STATES_BS)
 STATES.update(STATES_S04)
+STATES.update(STATES_S03)
 STATES.update(STATES_HOME)
 for _k, _v in burnt_states(PROPS).items():
     STATES.setdefault(_k, {}).update(_v)

@@ -317,6 +317,25 @@ func _howl(e: Enemy) -> void:
 				o.hear("pistol", e.loco.logical)
 	stats["howls"] = int(stats.get("howls", 0)) + 1
 
+## 왕쥐 찍찍 울음(SD-14 CR-097, 1-11d): 12t 안 같은 편 시궁쥐 가운데 아직 싸우지 않는 둘을 깨워 부른다. 새 쥐를 만들지 않는다(재미 검수 —
+## 수가 정해져 있어 밖에서 먼저 잡아 두는 꼼수가 산다). 부를 쥐가 없으면 '대답이 없다' — 왕쥐는 물러난다(SD-14 §4.1 무리 절반 이상 잃으면 후퇴)
+func _rat_call(e: Enemy) -> void:
+	var woke := 0
+	for o in enemies:
+		if woke >= 2:
+			break
+		if is_instance_valid(o) and o != e and not o.cmb.dead and str(o.row.get("id", "")) == "CR-095" and o.cmb.team == e.cmb.team \
+				and o.brain.state != AIBrain.S.COMBAT and o.loco.logical.distance_to(e.loco.logical) <= 12.0 * 32.0:
+			o.wake()
+			o.hear("pistol", e.loco.logical)
+			woke += 1
+	var left := enemies.filter(func(o): return is_instance_valid(o) and o != e and not o.cmb.dead and str(o.row.get("id", "")) == "CR-095" and o.cmb.team == e.cmb.team)
+	if woke == 0 and left.is_empty():
+		message.emit("찍찍… 대답이 없다. 왕쥐가 물러선다.")
+		e.brain.state = AIBrain.S.FLEE
+	stats["rat_calls"] = int(stats.get("rat_calls", 0)) + 1
+
+
 ## 1-9e2 적 무기(SD-14 주무기 글 → SD-13 무기 ID, SD-11 §7.4): 길 위 조우 · 생성 건물 적만 — 진행기가 세운 적은 다듬어 둔 장비 그대로(1막 이야기 전투 밸런스)
 const ENEMY_ARMS := {
 	"CR-420": [["W-005", 0.6], ["W-001", 0.4]],                        # 낡은 권총 / 개조 권총
@@ -375,6 +394,7 @@ func spawn(enemy_id: String, pos: Vector2, map: InteriorMap, st: StoryState = nu
 	e.rad_at = rad.dose_at                                              # 1-9e4: 구울 방사능 회복 · 빛나는 구울 폭발 · 울부짖기 · 들개 지뢰 회피
 	e.burst_cb = _glow_burst
 	e.howl_cb = _howl
+	e.call_cb = _rat_call
 	e.mine_list = func() -> Array: return ord.mines
 	e.cmb.robot = enemy_id.begins_with("CR-3")                          # SD-14 CR-3xx = 로봇(관제망 · 드론 · 포탑)
 	e.cmb.big = enemy_id == "CR-405"                                    # 파워 아머: 넘어짐 · 그물 · 넉백 면역(SD-11 §9.4)

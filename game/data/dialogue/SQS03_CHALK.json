@@ -1,0 +1,119 @@
+{
+ "id": "SQS03_CHALK",
+ "title": "분필 칠판",
+ "loc": "L-R01-10",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "REPORT": 7,
+  "COUNT": 11,
+  "BLACK": 13,
+  "BACK": 15,
+  "CLEAN": 17
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "분필 칠판 '급수 순번 — 아랫마을 → 계단참 → 윗마을. 한 집 하루 두 통.' 두 통의 '두'에 줄을 긋고 '한'."
+  },
+  {
+   "op": "if",
+   "cond": "SQS03_STAGE >= 70 and SQS03_STAGE < 100 and known_dead(\"N-R01-032\") == 1",
+   "to": "REPORT"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S03_SMELL == 1 and SQ_S03_CLEAN == 0",
+   "to": "BACK"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S03_FILTER == 1 and SQ_S03_CLEAN == 0 and SQ_S03_FILTER_N >= 25",
+   "to": "BLACK"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S03_FILTER == 1 and SQ_S03_CLEAN == 0",
+   "to": "COUNT"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S03_CLEAN == 1",
+   "to": "CLEAN"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "관리인이 없는 칠판. 분필을 들어 적는다 — '이음 벽 곰팡이, 근원 처리함. 물 맑아짐.'"
+  },
+  {
+   "op": "cmd",
+   "name": "s03",
+   "args": [
+    "report"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "다음 날이면 반상회 누군가가 이 줄을 읽을 것이다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "아래 새 줄, 조수안 글씨. '필터 \\V[SQ_S03_FILTER_N]일째 — 냄새 없음.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "아래 새 줄, 조수안 글씨. '필터 \\V[SQ_S03_FILTER_N]일째 — 필터가 검다. 갈아 끼울 것.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "아래 새 줄, 조수안 글씨. '필터가 한 달을 버텼다. 냄새 돌아옴. 근원은 그대로.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "아래 새 줄, 조수안 글씨. '이음 벽 닦음. 냄새 없음.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S03.txt"
+}

@@ -94,7 +94,7 @@ struct wall 15 33 4 2 seed=3 args='{"outlets": false, "vines": true}'
 struct wall 21 33 4 2 seed=4 args='{"outlets": false, "vines": true, "posters": [[40, 26, 0]]}'
 struct deck_edge 15 35 10 1 seed=5
 struct portal 12 40 16 2 seed=6
-text 19 39 "방폭문은 다시 굳게 닫혔다. 인터컴에는 잡음뿐이다." w=2
+text 19 39 "방폭문은 다시 굳게 닫혔다. 문설주에 인터컴." w=2 scene=SQS03_INTERCOM
 mark start 19 31 N
 mark from_vault 19 37 N
 prop exit_terminal 22 31

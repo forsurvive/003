@@ -6,25 +6,40 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "PAIDDAY": 8,
-  "DRY": 10,
-  "AFTER": 12,
-  "PLAIN": 14,
-  "TELL": 16,
-  "ASK": 21,
-  "WHERE": 22,
-  "BYPASS": 24,
-  "BYPASS2": 29,
-  "THANKS": 31,
-  "THANKS_B": 36,
-  "THANKS_BJ": 38,
-  "PAY": 39
+  "PAIDDAY": 9,
+  "DRY": 11,
+  "AFTER": 13,
+  "PLAIN": 15,
+  "TELL": 17,
+  "ASK": 22,
+  "WHERE": 23,
+  "BYPASS": 25,
+  "BYPASS2": 30,
+  "THANKS": 32,
+  "THANKS_B": 37,
+  "THANKS_BJ": 39,
+  "PAY": 40,
+  "S03ASK": 42,
+  "S03_WALL": 43,
+  "S03_D": 47,
+  "S03_D_OK": 49,
+  "S03_D_NO": 54,
+  "S03_DONE": 56,
+  "S03_DA": 61,
+  "S03_DB": 63,
+  "S03_PAY": 64,
+  "S03_PAYF": 68
  },
  "ops": [
   {
    "op": "if",
    "cond": "SQS02_STAGE >= 70 and SQ_S02_REWARD == 0",
    "to": "THANKS"
+  },
+  {
+   "op": "if",
+   "cond": "SQS03_STAGE >= 70 and SQS03_STAGE < 100",
+   "to": "S03_DONE"
   },
   {
    "op": "if",
@@ -89,7 +104,7 @@
   },
   {
    "op": "goto",
-   "to": "END"
+   "to": "S03ASK"
   },
   {
    "op": "line",
@@ -99,7 +114,7 @@
   },
   {
    "op": "goto",
-   "to": "END"
+   "to": "S03ASK"
   },
   {
    "op": "do",
@@ -154,12 +169,28 @@
      "id": "SQS02_SUAN:1:2"
     },
     {
+     "text": "저수조 벽의 검은 얼룩 말이야",
+     "tags": [],
+     "cond": "SQS03_STAGE >= 10 and SQS03_STAGE < 70 and SQ_S03_SAID == 0",
+     "fx": "",
+     "to": "S03_WALL",
+     "id": "SQS02_SUAN:1:3"
+    },
+    {
+     "text": "꼭지에 필터라도 달면?",
+     "tags": [],
+     "cond": "SQS03_STAGE >= 10 and SQS03_STAGE < 70 and SQ_S03_FILTER == 0",
+     "fx": "",
+     "to": "S03_D",
+     "id": "SQS02_SUAN:1:4"
+    },
+    {
      "text": "됐어",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "SQS02_SUAN:1:3"
+     "id": "SQS02_SUAN:1:5"
     }
    ]
   },
@@ -254,6 +285,200 @@
   {
    "op": "do",
    "fx": "give(\"I-056\", 5); caps(100); SQ_S02_REWARD = 1"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "저수조 벽의 검은 얼룩 말이야",
+     "tags": [],
+     "cond": "SQS03_STAGE >= 10 and SQS03_STAGE < 70 and SQ_S03_SAID == 0",
+     "fx": "",
+     "to": "S03_WALL",
+     "id": "SQS02_SUAN:2:0"
+    },
+    {
+     "text": "꼭지에 필터라도 달면?",
+     "tags": [],
+     "cond": "SQS03_STAGE >= 10 and SQS03_STAGE < 70 and SQ_S03_FILTER == 0",
+     "fx": "",
+     "to": "S03_D",
+     "id": "SQS02_SUAN:2:1"
+    },
+    {
+     "text": "됐어",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS02_SUAN:2:2"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "SQ_S03_SAID = 1"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-032",
+   "emo": "피곤",
+   "text": "봤구나. 끓여도 냄새는 안 빠져. 위쪽은 몰라. 관은 산에서 와."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-032",
+   "emo": "기본",
+   "text": "밸브실 계통도에 끊긴 점선이 하나 있어. 옛 관로. 거기 입구 거름망이 요새 시커매."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-032",
+   "emo": "기본",
+   "text": "필터? 꼭지 앞에 틀 하나 짜서 숯이랑 모래를 채우면 돼. 강판 한 장이랑 손 좋은 사람."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "강판으로 필터 틀을 짜서 꼭지에 단다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 25
+      }
+     ],
+     "cond": "has(\"M-013\") == 1",
+     "fx": "",
+     "to": "S03_D_OK",
+     "id": "SQS02_SUAN:3:0",
+     "fail": "S03_D_NO"
+    },
+    {
+     "text": "나중에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS02_SUAN:3:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "take(\"M-013\", 1)"
+  },
+  {
+   "op": "cmd",
+   "name": "s03",
+   "args": [
+    "filter"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "강판을 접어 틀을 짜고 숯과 모래를 켜켜이 채운다. 꼭지 물이 틀을 지나 맑게 떨어진다."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-032",
+   "emo": "기본",
+   "text": "위쪽 일은 위쪽 사람들 일이지. 우리 물은 우리가 거른다. …얼마나 버틸지는 칠판에 적어 둘게."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "틀이 맞지 않는다. 이음매에서 물이 샌다. 강판은 다시 쓸 수 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S03_SOL == 1",
+   "to": "S03_DA"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S03_SOL == 2",
+   "to": "S03_DB"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-032",
+   "emo": "놀람",
+   "text": "볼트가 물길을 돌렸다고? …그 산 위 사람들이 우리 말을 들었다는 거네."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-032",
+   "emo": "기본",
+   "text": "2주면 마른대. 꼭지 냄새도 날마다 조금씩 빠지겠지. 기다리는 건 잘해, 우리."
+  },
+  {
+   "op": "goto",
+   "to": "S03_PAY"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-032",
+   "emo": "놀람",
+   "text": "불을 질렀다고? …물은 맑아졌어. 너구리들이 내려온대, 따뜻한 데를 잃었다고. 밤엔 조심해."
+  },
+  {
+   "op": "goto",
+   "to": "S03_PAY"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-032",
+   "emo": "미소",
+   "text": "약품 냄새도 안 나. 배합을 맞췄구나. 하류 사람들이 이 물을 마셔."
+  },
+  {
+   "op": "cmd",
+   "name": "s03",
+   "args": [
+    "report"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S03_FILTER == 1",
+   "to": "S03_PAYF"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-032",
+   "emo": "기본",
+   "text": "반상회 몫이야. 그리고 이거 — 꼭지 필터. 이제 배수지 물은 안 끓여도 돼."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-032",
+   "emo": "기본",
+   "text": "반상회 몫이야. 네가 단 필터는 내가 갈아 끼울게. 이제 정말 안 끓여도 돼."
   },
   {
    "op": "goto",

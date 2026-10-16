@@ -1,0 +1,40 @@
+{
+ "id": "SQS03_P3",
+ "title": "출구 물길",
+ "loc": "L-R01-02",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "출구 물길. 바닥이 미끈하다 — 검은 막이 물살 따라 바깥으로 길게 끌려 나간다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "막은 갱도 안쪽, 산 위 볼트 쪽에서부터 이어져 내려온다."
+  },
+  {
+   "op": "cmd",
+   "name": "s03",
+   "args": [
+    "point",
+    "3"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S03.txt"
+}

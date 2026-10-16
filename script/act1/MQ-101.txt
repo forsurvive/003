@@ -399,6 +399,8 @@ SYS 맨 아래에 누렇게 바랜 2077년 공지 '대피소: 106동 지하주�
 * S04BACK
 ? (SQ_S02_POSTED == 1 and SQS02_STAGE < 70) or (has("M-301") and SQ_S02_HAND == 0) or SQ_S02_BJ == 1 -> S02
 * S02BACK
+? SQ_S03_POSTED == 1 and SQS03_STAGE < 20 -> S03N
+* S03BACK
 ? MQ101_STAGE == 50 and known_dead("C-010") == 1 and known_dead("C-057") == 1 -> ACTING2
 ? MQ101_RESULT == 1 -> R1
 ? MQ101_RESULT == 2 -> R2
@@ -413,6 +415,15 @@ SYS 맨 아래에 누렇게 바랜 2077년 공지 '대피소: 106동 지하주�
 ? SQ_S02_BJ == 1 -> S02BJ
 ? SQ_S02_POSTED == 1 and SQS02_STAGE < 70 -> S02W
 -> S02CMP
+* S03N
+? known_dead("N-R01-032") == 1 -> S03N2
+SYS 구석에 기름종이 쪽지. '배수지 저수조 이음 벽에 검은 것이 핌. 끓여도 냄새가 남. 본 사람 — 배수지 조수안.'
+@cmd s03 note
+-> S03BACK
+* S03N2
+SYS 구석에 기름종이 쪽지. '배수지 저수조 이음 벽에 검은 것이 핌. 끓여도 냄새가 남. 본 사람은 반상회로.'
+@cmd s03 note
+-> S03BACK
 * S04N
 ? dead("N-R01-028") == 1 -> S04N2
 SYS 맨 위에 급히 꽂은 쪽지. '솔이를 주민센터 앞 쇳덩이가 안고 갔음. 민원실 철망 안. 다치진 않음. 건드리면 쏨. — 망루 남태하'

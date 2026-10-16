@@ -1,0 +1,38 @@
+# S-07 배수 갱도 바깥 구간(SD-09a L-R01-02 · SD-04a §4.3 SQ-S03 · 단계 1-11d). 40×10.
+# 고정 지침 '볼트 출구는 정문 방폭문 하나': 이 갱도는 계곡 쪽 바깥 원형 철문(서쪽, 녹슬어 반쯤 열림)에서 시작해 중간 수문을 지나
+# 동쪽 끝 **볼트 쪽 용접 창살**(2215년)에서 끝난다 — 물만 지나가고 사람은 지나가지 못한다. 2214년 정비공은 이 창살이 문이던 시절 바깥으로 나왔다.
+# 측실(남쪽 오목한 자리, SD-09a의 E-02를 합침): 정비 사다리 자리 · 공구 벨트와 쪽지 '물에 냄새가 난다. 위로 올라가 보고 오겠다'.
+map E-01 S-07 배수 갱도
+set cv
+grid
+########################################
+########################################
+########################################
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+##########uuu###########################
+########################################
+end
+exit 0 5 W L-R01-02
+exit 0 6 W L-R01-02
+mark from_W 1 5 E
+prop w_hatch_open 1 1
+text 2 3 "바깥 원형 철문 안쪽. 바위로 위장한 문짝이 녹슬어 반쯤 열린 채 굳었다. 문짝 안쪽 2077년 표지 '한결건설 S-07 배수 출구 — 외부 개방 금지'." w=3
+text 5 6 "출구 물길. 바닥이 미끈하다 — 검은 막이 물살 따라 바깥으로 길게 끌려 나간다." w=3 scene=SQS03_P3
+prop rathole 8 7
+prop rathole 31 7
+mark r1 14 4 W
+mark r2 16 7 W
+mark r3 30 6 W
+mark x1 20 5 W
+mark x2 33 4 W
+prop backpack 11 8
+text 11 8 "측실. 벽에 박힌 정비 사다리 고리 셋. 바닥에 삭은 공구 벨트 — 주머니에 접힌 종이." w=3 scene=SQS03_BELT
+prop sluice_gate 24 4
+text 24 5 "갱도 중간 수문. 기어 상자 위 손잡이 바퀴." w=2 scene=SQS03_GATE
+text 24 6 "수문 아래 물." w=2 scene=SQS03_GATE
+prop w_weld_grate 36 1
+text 36 3 "갱도 끝 창살. 굵은 창살마다 용접 덩이 — 판에 'S-07'. 그 너머는 어둡고, 물만 새어 나온다." w=2 scene=SQS03_GRATE

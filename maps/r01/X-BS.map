@@ -69,13 +69,13 @@ prop pipe_run 22 10
 prop pipe_run 23 10
 text 19 10 "땅 위로 드러난 관. 관악산 쪽에서 내려와 밸브실로 들어간다. 손을 대면 차갑고 — 조용하다. 물 흐르는 소리가 없다." w=5
 prop water_tap 8 8
-text 8 8 "급수 꼭지. 붉은 핸들을 돌리면 — 쇳소리만 난다. 아래 양동이가 말라 있다." scene=SQS02_TANK
+text 8 8 "급수 꼭지. 붉은 핸들." scene=SQS03_TAP
 prop water_jug 4 8
 prop water_jug 5 8
 prop water_jug 6 8
 text 4 8 "꼭지 앞에 줄 선 물통. 통마다 집 번호를 칼로 새겼다. '312-3' '208' '94'. 맨 앞 통에 분필 '아이들 먼저'." w=3
 prop info_board 12 8
-text 12 8 "분필 칠판 '급수 순번 — 아랫마을 → 계단참 → 윗마을. 한 집 하루 두 통.' 두 통의 '두'에 줄을 긋고 '한'." 
+text 12 8 "분필 칠판." scene=SQS03_CHALK
 prop sandbags 20 12
 prop drum 22 9
 prop crate_o 3 11
@@ -91,7 +91,12 @@ prop bush_a 1 16
 prop tree_small 22 13
 prop tree_oak 2 2
 prop warn_board 9 15
-text 9 15 "판자 안내. '배수지 물 — 한 집 하루 두 통. 끓여 마실 것. 관리 조수안.'"
+text 9 15 "판자 안내." scene=SQS03_SIGN
 # 조수안(N-R01-032): 낮엔 저수조 마당, 저녁 · 밤엔 밸브실(K-32). 밸브실 문 앞 봉천 감시조 1(SD-09a)
 npc N-R01-032 13 11 S cond="GAME_HOUR >= 6 and GAME_HOUR < 18" route=yard:13,11,6;tap:9,9,5;door:16,9,3
 npc N-BC-1 20 9 S look=M2-S4-HR01-H1-T05-1-PF12-HD05-EY00 bark="밸브실은 조수안 씨 허락 없이 못 들어가. …물? 끓여 마셔."
+# SQ-S03 곰팡이의 근원(1-11d): 2호 저수조 이음 벽 아래 검은 얼룩(조사 = 단계 10 · 볼트 농장 기억으로 20) · 조사 지점 ① 옛 관 입 거름망
+prop mold_patch 10 7
+text 10 7 "두 저수조 사이 이음 벽. 물때 줄 아래로 검은 얼룩이 번졌다." w=2 scene=SQS03_WALL
+prop intake_screen 14 9
+text 14 9 "옛 관 입구. 2077년 거름망." scene=SQS03_P1

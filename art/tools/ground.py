@@ -564,9 +564,28 @@ def tunnel_tex(seed):
     nz = equalize(fbm(CELL, [(40, 0.5), (16, 0.5)], seed))
     a[nz < 0.16] = t("P04")
     a[nz > 0.93] = t("P06")
-    for k in range(0, CELL, 48):                                      # 거푸집 이음매
-        for i in range(CELL):
-            put(a, i, k, "P03"); put(a, i, k + 1, "P06")
+    # 거푸집 이음매(1-11d 손질): 물길을 가로지르는 세로 줄(암거 · 통로는 가로로 긴 맵 — 이음매는 흐름에 수직),
+    # 64px마다 · 줄마다 ±2px 어긋남 · 마디마다 1px 휨 · 군데군데 끊기고 모서리가 떨어져 나간 자국 — 화면 전체를 긋는 곧은 실선(렌더 이음새처럼 보임)이 되지 않게
+    for k in range(0, CELL, 64):
+        x0 = k + int(rnd.integers(-2, 3))
+        y = 0
+        while y < CELL:
+            seg = int(rnd.integers(6, 22))
+            gap = int(rnd.integers(2, 7)) if rnd.random() < 0.6 else 0
+            dx = int(rnd.integers(-1, 2)) if rnd.random() < 0.35 else 0
+            deep = rnd.random() < 0.35                                    # 깊게 팬 마디만 짙게, 나머지는 바탕보다 한 단만 어둡게
+            for j in range(seg):
+                yy = y + j
+                if yy >= CELL:
+                    break
+                put(a, (x0 + dx) % CELL, yy, "P03" if deep else "P04")
+                if j % 3 != 2:
+                    put(a, (x0 + dx + 1) % CELL, yy, "P06")
+            if rnd.random() < 0.3:                                    # 모서리 떨어진 자국(이음매 옆 2~3px 홈)
+                cy = y + int(rnd.integers(0, max(1, seg)))
+                for q in range(int(rnd.integers(2, 4))):
+                    put(a, (x0 + dx - 1 - q % 2) % CELL, (cy + q) % CELL, "P04")
+            y += seg + gap
     for _ in range(14):
         walk_line(a, rnd, int(rnd.integers(CELL)), int(rnd.integers(CELL)), int(rnd.integers(4, 10)), "P03", hi="P06")
     for _ in range(40):

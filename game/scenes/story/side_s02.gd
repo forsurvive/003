@@ -777,8 +777,7 @@ func _cmd(a: Array, done: Callable) -> void:
 				st.call_fn("karma", [50])
 				st.vars.set_v("SQ_S02_RAID_UNTIL", day() + 3)                   # 패거리가 사흘 동안 봉천 밤 습격을 늘린다(+30%)
 				_deed("SQS02_B", {"JC_BC": 10}, "관악 계곡 옛 관로가 이어져 봉천 배수지에 물이 돌아왔다")
-				if st.quests.stage("SQ-S03") == 0:
-					st.quests.set_stage("SQ-S03", 10)                          # 우회 관로가 계곡 배수로를 지난다 — 곰팡이(SQ-S03 자동 발동)
+				st.vars.set_v("SQ_S03_PIPE", 1)                                   # 우회 관로가 계곡 배수로를 지난다 — 곰팡이(SQ-S03 발동은 SideS03이 받는다)
 				host.hint("두 번째 이음 지점이 닫혔다. 관 속으로 물이 밀려 내려가는 소리.", 5.0)
 		"bj":                                                           # D: 황보서현에게 밸브 위치(다음 06시 분대)
 			if v("SQ_S02_BJ_AT") == 0:
