@@ -1,0 +1,156 @@
+{
+ "id": "SQS06_HATCH",
+ "title": "탄약고 해치",
+ "loc": "L-R01-30",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "FIRST": 5,
+  "AGAIN": 7,
+  "WARM": 9,
+  "GO": 11
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S06_JIN == 0 and SQ_S06_MET == 0",
+   "to": "FIRST"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S06_JIN == 0",
+   "to": "AGAIN"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S06_TOLD == 1 and SQ_S06_JIN == 5",
+   "to": "WARM"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "해치가 열린 채다. 아래는 조용하다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "내려간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "GO",
+     "id": "SQS06_HATCH:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS06_HATCH:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "해치를 들어 올리자 등유 냄새가 확 올라온다. 아래에서 무언가 툭 — 넘어지는 소리. 그리고 숨죽인 숨소리."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "내려간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "GO",
+     "id": "SQS06_HATCH:2:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS06_HATCH:2:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "해치 틈으로 램프 불빛이 새어 나온다. 아래에서 작게, \"…누구세요?\""
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "내려간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "GO",
+     "id": "SQS06_HATCH:3:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS06_HATCH:3:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "탄약고가 비었다. 등유 램프는 아직 따뜻하다. 간이침대 위 담요가 반쯤 끌려 나가 있다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "내려간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "GO",
+     "id": "SQS06_HATCH:4:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS06_HATCH:4:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s06",
+   "args": [
+    "go",
+    "Q-30",
+    "from_X"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S06.txt"
+}

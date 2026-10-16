@@ -1,6 +1,6 @@
 {
  "I-010": {
-  "_src": "13_items.md:833",
+  "_src": "13_items.md:835",
   "addict": "10%",
   "cat": "aid",
   "desc": "최대 HP +60, 지구력 +3, 힘 +2 · 4분",
@@ -13,7 +13,7 @@
   "weight": 0.0
  },
  "I-011": {
-  "_src": "13_items.md:834",
+  "_src": "13_items.md:836",
   "addict": "20%",
   "cat": "aid",
   "desc": "AP +30(현재·최대) · 4분",
@@ -26,7 +26,7 @@
   "weight": 0.0
  },
  "I-012": {
-  "_src": "13_items.md:835",
+  "_src": "13_items.md:837",
   "addict": "20%",
   "cat": "aid",
   "desc": "AP +40(현재·최대) · 4분",
@@ -39,7 +39,7 @@
   "weight": 0.0
  },
  "I-013": {
-  "_src": "13_items.md:836",
+  "_src": "13_items.md:838",
   "addict": "10%",
   "cat": "aid",
   "desc": "DR +25 · 4분",
@@ -52,7 +52,7 @@
   "weight": 0.0
  },
  "I-014": {
-  "_src": "13_items.md:837",
+  "_src": "13_items.md:839",
   "addict": "5%",
   "cat": "aid",
   "desc": "지능 +5, 인지력 +5 · 4분",
@@ -65,7 +65,7 @@
   "weight": 0.0
  },
  "I-015": {
-  "_src": "13_items.md:838",
+  "_src": "13_items.md:840",
   "addict": "없음",
   "cat": "aid",
   "desc": "지능 +5 · 4분",
@@ -78,7 +78,7 @@
   "weight": 0.0
  },
  "I-016": {
-  "_src": "13_items.md:839",
+  "_src": "13_items.md:841",
   "addict": "10%",
   "cat": "aid",
   "desc": "가하는 피해 +25% · 4분",
@@ -91,7 +91,7 @@
   "weight": 0.0
  },
  "I-017": {
-  "_src": "13_items.md:840",
+  "_src": "13_items.md:842",
   "addict": "15%",
   "cat": "aid",
   "desc": "지능 +3, 과학·의학 판정 +10 · 8분",
@@ -104,7 +104,7 @@
   "weight": 0.0
  },
  "I-018": {
-  "_src": "13_items.md:841",
+  "_src": "13_items.md:843",
   "addict": "10%",
   "cat": "aid",
   "desc": "최대 AP +20, 숙면 효과 해제 · 4분",
@@ -117,7 +117,7 @@
   "weight": 0.0
  },
  "I-019": {
-  "_src": "13_items.md:842",
+  "_src": "13_items.md:844",
   "addict": "15%",
   "cat": "aid",
   "desc": "가하는 피해 +15%, DR +10, 넘어뜨림 면역 · 2분",
@@ -130,7 +130,7 @@
   "weight": 0.0
  },
  "I-020": {
-  "_src": "13_items.md:843",
+  "_src": "13_items.md:845",
   "addict": "없음",
   "cat": "aid",
   "desc": "민첩성 +4, 지능 −3, 화염 저항 +25% · 4분",
@@ -143,7 +143,7 @@
   "weight": 1.0
  },
  "I-021": {
-  "_src": "13_items.md:844",
+  "_src": "13_items.md:846",
   "addict": "15%",
   "cat": "aid",
   "desc": "힘 +3, 최대 HP +20, 지능 −2 · 4분",
@@ -157,7 +157,7 @@
   "weight": 0.5
  },
  "I-093": {
-  "_src": "13_items.md:845",
+  "_src": "13_items.md:847",
   "addict": "25%",
   "cat": "aid",
   "desc": "방사능 저항 +50%, 방사능 경고(선량계 HUD·딸깍 소리) 꺼짐, 인지력 −2 · 4분",

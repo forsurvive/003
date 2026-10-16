@@ -1,0 +1,346 @@
+{
+ "id": "SQS06_CHECK",
+ "title": "다리목 검문",
+ "loc": "L-R01-20",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "NOUM": 3,
+  "WHO": 4,
+  "NOUM_ASK": 9,
+  "UNIFORM": 11,
+  "UNIFORM_NOUM": 14,
+  "UNIFORM_GO": 15,
+  "PAPERS": 17,
+  "PASS": 20,
+  "STALL": 23,
+  "BRIBE": 26,
+  "FAIL": 29,
+  "FLEE": 31,
+  "FIGHT": 33,
+  "BACK": 35
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "known_dead(\"N-R01-050\") == 1",
+   "to": "NOUM"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "기본",
+   "text": "정지. 다리는 판독기 구역입니다. 둘 다 등록증."
+  },
+  {
+   "op": "goto",
+   "to": "WHO"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "초소 앞 계엄병 둘이 총을 고쳐 든다. 분대장 자리는 비어 있다. \"정지. 등록증. …둘 다.\""
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S06_CLOTH == 0",
+   "to": "UNIFORM"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S06_PAPERS == 1",
+   "to": "PAPERS"
+  },
+  {
+   "op": "if",
+   "cond": "known_dead(\"N-R01-050\") == 1",
+   "to": "NOUM_ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "피곤",
+   "text": "등록증 없어? 둘 다? …노들섬 쪽은 통행세, 우리 쪽은 서류. 뭐가 나은지는 알아서."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "이 사람 내 짐꾼이에요. 등록증은 노들섬 조합에 맡겨 놨고요",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "보통"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PASS",
+     "id": "SQS06_CHECK:1:0",
+     "fail": "FAIL"
+    },
+    {
+     "text": "(하사의 지루한 얼굴) 노량진 학원가 이야기 아세요? 옛날 '대피 적성 학원'…",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "쉬움"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "STALL",
+     "id": "SQS06_CHECK:1:1",
+     "fail": "FAIL"
+    },
+    {
+     "text": "수고비입니다",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 100
+      }
+     ],
+     "cond": "PC_CAPS >= 100",
+     "fx": "",
+     "to": "BRIBE",
+     "id": "SQS06_CHECK:1:2"
+    },
+    {
+     "text": "돌아간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "BACK",
+     "id": "SQS06_CHECK:1:3"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "계엄병 하나가 진해원을 빤히 본다. 말로 넘길 사람이 없다 — 분대장이 있었으면 몰라도."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "수고비입니다",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 100
+      }
+     ],
+     "cond": "PC_CAPS >= 100",
+     "fx": "",
+     "to": "BRIBE",
+     "id": "SQS06_CHECK:2:0"
+    },
+    {
+     "text": "돌아간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "BACK",
+     "id": "SQS06_CHECK:2:1"
+    }
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "known_dead(\"N-R01-050\") == 1",
+   "to": "UNIFORM_NOUM"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "분노",
+   "text": "…그 전투복. 이름표 뗀 자리. 탈영병이다! 손 들어!"
+  },
+  {
+   "op": "goto",
+   "to": "UNIFORM_GO"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "계엄병 하나가 총구를 든다. \"그 전투복 — 이름표 뗀 자리! 탈영병이다!\""
+  },
+  {
+   "op": "line",
+   "who": "N-R01-064",
+   "emo": "놀람",
+   "text": "(숨이 멎는 소리)"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "진해원을 데리고 달아난다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "FLEE",
+     "id": "SQS06_CHECK:3:0"
+    },
+    {
+     "text": "싸운다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "FIGHT",
+     "id": "SQS06_CHECK:3:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "기본",
+   "text": "(판독기에 종이를 댄다. 삑.) …통과. 사진 칸이 비었네. 요즘 다 이래."
+  },
+  {
+   "op": "cmd",
+   "name": "s06",
+   "args": [
+    "pass",
+    "papers"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "피곤",
+   "text": "조합 짐꾼이면 조합이 알아서 하겠지. 가. 다리 위에서 뛰지 마."
+  },
+  {
+   "op": "cmd",
+   "name": "s06",
+   "args": [
+    "pass",
+    "talk"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "미소",
+   "text": "그 학원 내 할아버지가 다녔다던데. 적성 3등급 받고 — (한참 떠든다) …어, 너희 아직 있어? 가, 가. 교대 시간이야."
+  },
+  {
+   "op": "cmd",
+   "name": "s06",
+   "args": [
+    "pass",
+    "talk"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "기본",
+   "text": "(주머니에 넣는다) 아무것도 못 봤습니다. 다리 위에선 뛰지 마십시오."
+  },
+  {
+   "op": "cmd",
+   "name": "s06",
+   "args": [
+    "pass",
+    "bribe"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "분노",
+   "text": "웃기지 마. 둘 다 엎드려 — 분대!"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "진해원을 데리고 달아난다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "FLEE",
+     "id": "SQS06_CHECK:4:0"
+    },
+    {
+     "text": "싸운다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "FIGHT",
+     "id": "SQS06_CHECK:4:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s06",
+   "args": [
+    "flee"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "s06",
+   "args": [
+    "fight"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "계엄병들이 등 뒤에서 오래 쳐다본다."
+  },
+  {
+   "op": "cmd",
+   "name": "s06",
+   "args": [
+    "back"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S06.txt"
+}

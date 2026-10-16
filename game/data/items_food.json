@@ -1,6 +1,6 @@
 {
  "I-022": {
-  "_src": "13_items.md:852",
+  "_src": "13_items.md:854",
   "cat": "aid",
   "desc": "HP +10 · 라드 +2",
   "heal": 10,
@@ -11,7 +11,7 @@
   "weight": 0.5
  },
  "I-023": {
-  "_src": "13_items.md:853",
+  "_src": "13_items.md:855",
   "cat": "aid",
   "desc": "HP +8 · 라드 +2",
   "heal": 8,
@@ -22,7 +22,7 @@
   "weight": 0.5
  },
  "I-024": {
-  "_src": "13_items.md:854",
+  "_src": "13_items.md:856",
   "cat": "aid",
   "desc": "HP +5 · 라드 +3",
   "heal": 5,
@@ -33,7 +33,7 @@
   "weight": 0.2
  },
  "I-025": {
-  "_src": "13_items.md:855",
+  "_src": "13_items.md:857",
   "cat": "aid",
   "desc": "HP +15 · 라드 +3",
   "heal": 15,
@@ -44,7 +44,7 @@
   "weight": 1.0
  },
  "I-026": {
-  "_src": "13_items.md:856",
+  "_src": "13_items.md:858",
   "cat": "aid",
   "desc": "HP +10 · 라드 +2",
   "heal": 10,
@@ -55,7 +55,7 @@
   "weight": 0.5
  },
  "I-027": {
-  "_src": "13_items.md:857",
+  "_src": "13_items.md:859",
   "cat": "aid",
   "desc": "HP +12 · 라드 +3",
   "heal": 12,
@@ -66,7 +66,7 @@
   "weight": 0.5
  },
  "I-028": {
-  "_src": "13_items.md:858",
+  "_src": "13_items.md:860",
   "cat": "aid",
   "desc": "HP +5 · 라드 +2",
   "heal": 5,
@@ -77,7 +77,7 @@
   "weight": 0.2
  },
  "I-029": {
-  "_src": "13_items.md:859",
+  "_src": "13_items.md:861",
   "cat": "aid",
   "desc": "HP +4 · 라드 +1",
   "heal": 4,
@@ -88,7 +88,7 @@
   "weight": 0.2
  },
  "I-030": {
-  "_src": "13_items.md:860",
+  "_src": "13_items.md:862",
   "cat": "aid",
   "desc": "HP +5 · 라드 +0",
   "heal": 5,
@@ -99,7 +99,7 @@
   "weight": 0.2
  },
  "I-031": {
-  "_src": "13_items.md:861",
+  "_src": "13_items.md:863",
   "cat": "aid",
   "desc": "HP +25 · 라드 +0",
   "heal": 25,
@@ -110,7 +110,7 @@
   "weight": 1.0
  },
  "I-032": {
-  "_src": "13_items.md:862",
+  "_src": "13_items.md:864",
   "cat": "aid",
   "desc": "HP +20 · 라드 +0",
   "heal": 20,
@@ -121,7 +121,7 @@
   "weight": 1.0
  },
  "I-033": {
-  "_src": "13_items.md:863",
+  "_src": "13_items.md:865",
   "cat": "aid",
   "desc": "HP +8 · 라드 +2",
   "heal": 8,
@@ -132,7 +132,7 @@
   "weight": 0.5
  },
  "I-034": {
-  "_src": "13_items.md:864",
+  "_src": "13_items.md:866",
   "cat": "aid",
   "desc": "HP +6 · 라드 +3",
   "heal": 6,
@@ -143,7 +143,7 @@
   "weight": 0.5
  },
  "I-035": {
-  "_src": "13_items.md:865",
+  "_src": "13_items.md:867",
   "cat": "aid",
   "desc": "HP +10 · 라드 +2",
   "heal": 10,
@@ -154,7 +154,7 @@
   "weight": 0.5
  },
  "I-036": {
-  "_src": "13_items.md:866",
+  "_src": "13_items.md:868",
   "cat": "aid",
   "desc": "HP +5 · 라드 +3",
   "heal": 5,
@@ -165,7 +165,7 @@
   "weight": 0.5
  },
  "I-037": {
-  "_src": "13_items.md:867",
+  "_src": "13_items.md:869",
   "cat": "aid",
   "desc": "HP +8 · 라드 +4",
   "heal": 8,
@@ -176,7 +176,7 @@
   "weight": 0.5
  },
  "I-038": {
-  "_src": "13_items.md:868",
+  "_src": "13_items.md:870",
   "cat": "aid",
   "desc": "HP +20 · 라드 +5",
   "heal": 20,
@@ -187,7 +187,7 @@
   "weight": 1.0
  },
  "I-039": {
-  "_src": "13_items.md:869",
+  "_src": "13_items.md:871",
   "cat": "aid",
   "desc": "HP +15 · 라드 +2",
   "heal": 15,
@@ -198,7 +198,7 @@
   "weight": 0.3
  },
  "I-040": {
-  "_src": "13_items.md:870",
+  "_src": "13_items.md:872",
   "cat": "aid",
   "desc": "HP +25 · 라드 +3",
   "heal": 25,
@@ -209,7 +209,7 @@
   "weight": 1.0
  },
  "I-041": {
-  "_src": "13_items.md:871",
+  "_src": "13_items.md:873",
   "cat": "aid",
   "desc": "HP +30 · 라드 +8",
   "heal": 30,
@@ -220,7 +220,7 @@
   "weight": 1.0
  },
  "I-042": {
-  "_src": "13_items.md:872",
+  "_src": "13_items.md:874",
   "cat": "aid",
   "desc": "HP +20 · 라드 +4",
   "heal": 20,
@@ -231,7 +231,7 @@
   "weight": 0.5
  },
  "I-043": {
-  "_src": "13_items.md:873",
+  "_src": "13_items.md:875",
   "cat": "aid",
   "desc": "HP +12 · 라드 +4",
   "heal": 12,
@@ -242,7 +242,7 @@
   "weight": 0.5
  },
  "I-044": {
-  "_src": "13_items.md:874",
+  "_src": "13_items.md:876",
   "cat": "aid",
   "desc": "HP +5 · 라드 +5",
   "heal": 5,
@@ -253,7 +253,7 @@
   "weight": 0.2
  },
  "I-045": {
-  "_src": "13_items.md:875",
+  "_src": "13_items.md:877",
   "cat": "aid",
   "desc": "HP +8 · 라드 +0",
   "heal": 8,
@@ -264,7 +264,7 @@
   "weight": 0.2
  },
  "I-046": {
-  "_src": "13_items.md:876",
+  "_src": "13_items.md:878",
   "cat": "aid",
   "desc": "HP +10 · 라드 +0",
   "heal": 10,
@@ -275,7 +275,7 @@
   "weight": 0.5
  },
  "I-047": {
-  "_src": "13_items.md:877",
+  "_src": "13_items.md:879",
   "cat": "aid",
   "desc": "HP +22 · 라드 +3",
   "heal": 22,
@@ -286,7 +286,7 @@
   "weight": 0.5
  },
  "I-085": {
-  "_src": "13_items.md:878",
+  "_src": "13_items.md:880",
   "cat": "aid",
   "desc": "HP +20 · 라드 +5",
   "heal": 20,
@@ -297,7 +297,7 @@
   "weight": 0.5
  },
  "I-086": {
-  "_src": "13_items.md:879",
+  "_src": "13_items.md:881",
   "cat": "aid",
   "desc": "HP +10 · 라드 +5",
   "heal": 10,
@@ -308,7 +308,7 @@
   "weight": 0.5
  },
  "I-088": {
-  "_src": "13_items.md:880",
+  "_src": "13_items.md:882",
   "cat": "aid",
   "desc": "HP +8 · 라드 +0",
   "heal": 8,
@@ -319,7 +319,7 @@
   "weight": 0.2
  },
  "I-089": {
-  "_src": "13_items.md:881",
+  "_src": "13_items.md:883",
   "cat": "aid",
   "desc": "HP +25 · 라드 +2",
   "heal": 25,
@@ -330,7 +330,7 @@
   "weight": 0.5
  },
  "I-090": {
-  "_src": "13_items.md:882",
+  "_src": "13_items.md:884",
   "cat": "aid",
   "desc": "HP +20 · 라드 +0",
   "heal": 20,
@@ -341,7 +341,7 @@
   "weight": 0.5
  },
  "I-096": {
-  "_src": "13_items.md:883",
+  "_src": "13_items.md:885",
   "cat": "aid",
   "desc": "HP +10 · 라드 +0",
   "heal": 10,
@@ -352,7 +352,7 @@
   "weight": 0.3
  },
  "I-097": {
-  "_src": "13_items.md:884",
+  "_src": "13_items.md:886",
   "cat": "aid",
   "desc": "HP +20 · 라드 +0",
   "heal": 20,

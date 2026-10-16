@@ -7,7 +7,10 @@
  "labels": {
   "START": 0,
   "MINE": 3,
-  "REST": 4
+  "REST": 4,
+  "S6HIDE": 11,
+  "S6DONE": 13,
+  "S6GONE": 15
  },
  "ops": [
   {
@@ -36,6 +39,64 @@
    "who": "SYS",
    "emo": "기본",
    "text": "그 옆에 누렇게 바랜 종이. 2077년 계엄 포고문 '제7호'. 200년 차이가 나는 두 종이가 같은 서체다."
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S06_SOL == 1 or SQ_S06_SOL == 2 or SQ_S06_SOL == 3 or SQ_S06_SOL == 7 or SQ_S06_SOL == 9",
+   "to": "S6HIDE"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S06_JIN == 4 or SQ_S06_JIN == 5",
+   "to": "S6DONE"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S06_SOL == 6",
+   "to": "S6GONE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "맨 아래 새 전단. '탈영병 수배 — 진해원 일병, 스무 살. 생포 150캡. 시흥 고개 쪽 목격.' 사진 칸에 앳된 얼굴."
+  },
+  {
+   "op": "cmd",
+   "name": "s06",
+   "args": [
+    "flyer"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "맨 아래 새 전단. '탈영병 은닉자 신고 포상 300캡.' 이름 칸은 비었다. 인상착의 칸에 연필로 몇 줄."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "탈영병 전단 위에 붉은 도장 '처리 완료'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "탈영병 전단은 그대로다. 누군가 '실종'이라고 연필로 덧썼다."
   },
   {
    "op": "goto",

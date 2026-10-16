@@ -350,6 +350,16 @@
    "아픔": "CR-457_hurt.png",
    "피곤": "CR-457_tired.png"
   },
+  "N-HR-027": {
+   "기본": "N-HR-027_idle.png",
+   "놀람": "N-HR-027_surprise.png",
+   "말함": "N-HR-027_talk.png",
+   "미소": "N-HR-027_smile.png",
+   "분노": "N-HR-027_angry.png",
+   "슬픔": "N-HR-027_sad.png",
+   "아픔": "N-HR-027_hurt.png",
+   "피곤": "N-HR-027_tired.png"
+  },
   "N-PS-1": {
    "기본": "RB_sentry3_idle.png",
    "놀람": "RB_sentry3_surprise.png",
@@ -829,6 +839,16 @@
    "슬픔": "N-R01-062_sad.png",
    "아픔": "N-R01-062_hurt.png",
    "피곤": "N-R01-062_tired.png"
+  },
+  "N-R01-064": {
+   "기본": "N-R01-064_idle.png",
+   "놀람": "N-R01-064_surprise.png",
+   "말함": "N-R01-064_talk.png",
+   "미소": "N-R01-064_smile.png",
+   "분노": "N-R01-064_angry.png",
+   "슬픔": "N-R01-064_sad.png",
+   "아픔": "N-R01-064_hurt.png",
+   "피곤": "N-R01-064_tired.png"
   },
   "N-R01-501": {
    "기본": "N-R01-501_idle.png",

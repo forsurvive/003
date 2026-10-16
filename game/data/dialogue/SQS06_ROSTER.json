@@ -1,0 +1,64 @@
+{
+ "id": "SQS06_ROSTER",
+ "title": "2077 예비군 근무표",
+ "loc": "L-R01-30",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "SIGNED": 5,
+  "BLANK": 7
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "2077년 예비군 근무표. 10-21, 10-22, 10-23 — 칸마다 누군가의 이름. 마지막 칸 '10-24 근무자: (공란)'."
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S06_JIN == 3",
+   "to": "SIGNED"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S06_SOL == 6",
+   "to": "BLANK"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "그날 밤 이후로 아무도 근무를 서지 않았다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "공란 아래 연필 글씨. '2277 진해원 — 근무 끝.' 꾹꾹 눌러 써서 종이가 패였다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "공란은 공란 그대로다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S06.txt"
+}

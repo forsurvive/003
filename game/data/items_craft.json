@@ -1,6 +1,6 @@
 {
  "I-077": {
-  "_src": "13_items.md:1257",
+  "_src": "13_items.md:1261",
   "cat": "aid",
   "cooked": true,
   "desc": "HP +20 · 라드 +2 — 맑은 물로 끓였다",
@@ -12,7 +12,7 @@
   "weight": 0.5
  },
  "I-077+I-054": {
-  "_src": "13_items.md:1257",
+  "_src": "13_items.md:1261",
   "cat": "aid",
   "cooked": true,
   "desc": "HP +20 · 라드 +10 — 한강 물로 끓였다",
@@ -24,7 +24,7 @@
   "weight": 0.5
  },
  "I-077+I-055": {
-  "_src": "13_items.md:1257",
+  "_src": "13_items.md:1261",
   "cat": "aid",
   "cooked": true,
   "desc": "HP +20 · 라드 +6 — 빗물로 끓였다",
@@ -36,7 +36,7 @@
   "weight": 0.5
  },
  "I-077+I-056": {
-  "_src": "13_items.md:1257",
+  "_src": "13_items.md:1261",
   "cat": "aid",
   "cooked": true,
   "desc": "HP +20 · 라드 +4 — 관악산 약수로 끓였다",
@@ -48,7 +48,7 @@
   "weight": 0.5
  },
  "I-077+I-059": {
-  "_src": "13_items.md:1257",
+  "_src": "13_items.md:1261",
   "cat": "aid",
   "cooked": true,
   "desc": "HP +20 · 라드 +3 — 지하시장 정수로 끓였다",
@@ -60,7 +60,7 @@
   "weight": 0.5
  },
  "I-078": {
-  "_src": "13_items.md:1258",
+  "_src": "13_items.md:1262",
   "cat": "aid",
   "cooked": true,
   "desc": "HP +18 · 라드 +2 — 맑은 물로 끓였다",
@@ -72,7 +72,7 @@
   "weight": 0.5
  },
  "I-078+I-054": {
-  "_src": "13_items.md:1258",
+  "_src": "13_items.md:1262",
   "cat": "aid",
   "cooked": true,
   "desc": "HP +18 · 라드 +10 — 한강 물로 끓였다",
@@ -84,7 +84,7 @@
   "weight": 0.5
  },
  "I-078+I-055": {
-  "_src": "13_items.md:1258",
+  "_src": "13_items.md:1262",
   "cat": "aid",
   "cooked": true,
   "desc": "HP +18 · 라드 +6 — 빗물로 끓였다",
@@ -96,7 +96,7 @@
   "weight": 0.5
  },
  "I-078+I-056": {
-  "_src": "13_items.md:1258",
+  "_src": "13_items.md:1262",
   "cat": "aid",
   "cooked": true,
   "desc": "HP +18 · 라드 +4 — 관악산 약수로 끓였다",
@@ -108,7 +108,7 @@
   "weight": 0.5
  },
  "I-078+I-059": {
-  "_src": "13_items.md:1258",
+  "_src": "13_items.md:1262",
   "cat": "aid",
   "cooked": true,
   "desc": "HP +18 · 라드 +3 — 지하시장 정수로 끓였다",
@@ -120,7 +120,7 @@
   "weight": 0.5
  },
  "I-079": {
-  "_src": "13_items.md:1259",
+  "_src": "13_items.md:1263",
   "cat": "aid",
   "cooked": true,
   "desc": "HP +15 · 라드 +3 — 맑은 물로 끓였다",
@@ -132,7 +132,7 @@
   "weight": 0.5
  },
  "I-079+I-054": {
-  "_src": "13_items.md:1259",
+  "_src": "13_items.md:1263",
   "cat": "aid",
   "cooked": true,
   "desc": "HP +15 · 라드 +11 — 한강 물로 끓였다",
@@ -144,7 +144,7 @@
   "weight": 0.5
  },
  "I-079+I-055": {
-  "_src": "13_items.md:1259",
+  "_src": "13_items.md:1263",
   "cat": "aid",
   "cooked": true,
   "desc": "HP +15 · 라드 +7 — 빗물로 끓였다",
@@ -156,7 +156,7 @@
   "weight": 0.5
  },
  "I-079+I-056": {
-  "_src": "13_items.md:1259",
+  "_src": "13_items.md:1263",
   "cat": "aid",
   "cooked": true,
   "desc": "HP +15 · 라드 +5 — 관악산 약수로 끓였다",
@@ -168,7 +168,7 @@
   "weight": 0.5
  },
  "I-079+I-059": {
-  "_src": "13_items.md:1259",
+  "_src": "13_items.md:1263",
   "cat": "aid",
   "cooked": true,
   "desc": "HP +15 · 라드 +4 — 지하시장 정수로 끓였다",
@@ -180,7 +180,7 @@
   "weight": 0.5
  },
  "I-080": {
-  "_src": "13_items.md:1260",
+  "_src": "13_items.md:1264",
   "cat": "aid",
   "cooked": true,
   "desc": "HP +45 · 라드 +5 — 맑은 물로 끓였다",
@@ -193,7 +193,7 @@
   "weight": 0.5
  },
  "I-080+I-054": {
-  "_src": "13_items.md:1260",
+  "_src": "13_items.md:1264",
   "cat": "aid",
   "cooked": true,
   "desc": "HP +45 · 라드 +13 — 한강 물로 끓였다",
@@ -206,7 +206,7 @@
   "weight": 0.5
  },
  "I-080+I-055": {
-  "_src": "13_items.md:1260",
+  "_src": "13_items.md:1264",
   "cat": "aid",
   "cooked": true,
   "desc": "HP +45 · 라드 +9 — 빗물로 끓였다",
@@ -219,7 +219,7 @@
   "weight": 0.5
  },
  "I-080+I-056": {
-  "_src": "13_items.md:1260",
+  "_src": "13_items.md:1264",
   "cat": "aid",
   "cooked": true,
   "desc": "HP +45 · 라드 +7 — 관악산 약수로 끓였다",
@@ -232,7 +232,7 @@
   "weight": 0.5
  },
  "I-080+I-059": {
-  "_src": "13_items.md:1260",
+  "_src": "13_items.md:1264",
   "cat": "aid",
   "cooked": true,
   "desc": "HP +45 · 라드 +6 — 지하시장 정수로 끓였다",
@@ -245,7 +245,7 @@
   "weight": 0.5
  },
  "I-081": {
-  "_src": "13_items.md:1261",
+  "_src": "13_items.md:1265",
   "cat": "aid",
   "cooked": true,
   "desc": "HP +28 · 라드 +3",
@@ -257,7 +257,7 @@
   "weight": 0.5
  },
  "I-082": {
-  "_src": "13_items.md:1262",
+  "_src": "13_items.md:1266",
   "cat": "aid",
   "cooked": true,
   "desc": "HP +18 · 라드 0",
@@ -269,7 +269,7 @@
   "weight": 0.3
  },
  "I-083": {
-  "_src": "13_items.md:1263",
+  "_src": "13_items.md:1267",
   "cat": "aid",
   "cooked": true,
   "desc": "HP +22 · 라드 0",
@@ -281,7 +281,7 @@
   "weight": 0.5
  },
  "I-084": {
-  "_src": "13_items.md:1264",
+  "_src": "13_items.md:1268",
   "cat": "aid",
   "cooked": true,
   "desc": "HP +10 · 라드 −8",
@@ -293,7 +293,7 @@
   "weight": 0.5
  },
  "M-100": {
-  "_src": "13_items.md:1215",
+  "_src": "13_items.md:1219",
   "blueprint": "W-151",
   "cat": "misc",
   "copies": 4,
@@ -304,7 +304,7 @@
   "weight": 0.0
  },
  "M-101": {
-  "_src": "13_items.md:1216",
+  "_src": "13_items.md:1220",
   "blueprint": "W-152",
   "cat": "misc",
   "copies": 3,
@@ -315,7 +315,7 @@
   "weight": 0.0
  },
  "M-102": {
-  "_src": "13_items.md:1217",
+  "_src": "13_items.md:1221",
   "blueprint": "W-153",
   "cat": "misc",
   "copies": 3,
@@ -326,7 +326,7 @@
   "weight": 0.0
  },
  "M-103": {
-  "_src": "13_items.md:1218",
+  "_src": "13_items.md:1222",
   "blueprint": "W-154",
   "cat": "misc",
   "copies": 4,
@@ -337,7 +337,7 @@
   "weight": 0.0
  },
  "M-104": {
-  "_src": "13_items.md:1219",
+  "_src": "13_items.md:1223",
   "blueprint": "W-155",
   "cat": "misc",
   "copies": 3,
@@ -348,7 +348,7 @@
   "weight": 0.0
  },
  "M-105": {
-  "_src": "13_items.md:1220",
+  "_src": "13_items.md:1224",
   "blueprint": "W-156",
   "cat": "misc",
   "copies": 3,
@@ -359,7 +359,7 @@
   "weight": 0.0
  },
  "M-106": {
-  "_src": "13_items.md:1221",
+  "_src": "13_items.md:1225",
   "blueprint": "W-157",
   "cat": "misc",
   "copies": 3,

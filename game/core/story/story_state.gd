@@ -161,6 +161,14 @@ func _init() -> void:
 	# REMAIN 남은 손님 · EMPTY 역무원까지 다 떠남 · ENT 측선에 든 손님 수 · WIND 허순자 태엽 시각 · SEEN 허순자 눈앞 방송
 	for k in "ARM GATE IN BSEEN ROBOT PASS TIP BCAST BCAST_AT MAD SOFT SOL LEFT WOKE DOOR JU JU_AT REPORT FENCE LINE PYO RAT SLEEPER MASK HOT REWARD AWAY DAY REMAIN EMPTY ENT WIND SEEN".split(" "):
 		vars.declare("SQ_S05_" + k, "int", 0)
+	# SQ-S06 근무자: 공란(1-11f, SD-04a §4.6 · SideS06): JIN 진해원의 자리(0 탄약고 · 1 호위 · 2 짐칸 · 3 노들섬 남문 · 4 영창 · 5 계엄군 손 · 6 죽음 · 7 혼자 길 위) ·
+	# MET 만남 · FED 밥 · CLOTH 평상복 · PAPERS 등록증 · ROUTE 길 셋을 들음(2 해법 인물에게 물음) · CHECK 다리목(1 통과) · CARAVAN 짐칸 거래 · BOAT 배 · NOTE 황보서현 쪽지 ·
+	# PERSUADE 자수 설득 · TAG 군번줄 챙김 · DECOY 미끼 · SOL 해법(1 짐칸 · 2 등록증 · 3 배 · 4 자수 · 5 인도 · 6 처치 · 7 혼자 닿음 · 8 혼자 잡힘 · 9 남문) · TOLD 위치만 알림 ·
+	# LEADER 분대장과 마주친 횟수 · DISC 첫 접촉 분 · PHASE 수색 권역(0 없음 · 1 시흥 · 2 사당 · 3 봉천 · 4 노량진) · SQUADS 권역별 마주침(비트) · SOLO_DAY · SOLO_P 혼자 확률 ·
+	# JAIL_DAY 영창 날 · REWARD · DAY 해법 날 · HOT 수색조와 싸움 · FLYER 전단 · FOUND_AT · HID 숨은 곳 · SEEN_SG 사당 고개를 봄 · GATE_AT · CARGO_AT 짐칸 출발 분 · ARM
+	for k in "ARM JIN MET FED CLOTH PAPERS ROUTE CHECK CARAVAN BOAT NOTE PERSUADE TAG DECOY SOL TOLD LEADER DISC PHASE SQUADS SOLO_DAY SOLO_P JAIL_DAY REWARD DAY HOT FLYER FOUND_AT HID SEEN_SG GATE_AT CARGO_AT FOOD SALUTE KWON BFIGHT SAID NEAR KIND HOW UNI".split(" "):
+		vars.declare("SQ_S06_" + k, "int", 0)
+	vars.declare("SQE_DESERTER", "int", 0)                                # MQ-502 증인(노들섬에 닿은 진해원)
 	for kv in [["SQH_BATT", -1], ["LR15_READ", 0], ["PD_R01_GS", 0], ["M303_BONUS", 0], ["PK_017", 0]]:   # 전지 인도처(HO) · LR-15 · 판도 PD-R01-2 각성회 · 편지 화술 +10(첫 1회) · 퍽 눈치(퍽 창은 1-12)
 		vars.declare(kv[0], "int", kv[1])
 	for kv in [["CAPTURE_DAY", -1], ["CAPTURE_AT", 0], ["SB_COLLAR", 0], ["SB_CUFF", 0], ["CAPTURE_BY", 0]]:

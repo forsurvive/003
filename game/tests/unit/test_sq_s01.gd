@@ -323,8 +323,8 @@ func test_sq_s01_handoff(t) -> void:
 	t.eq(str(h.scene_for("N-R01-034").get("id", "")), "SQS01_NAMSOL", "남솔: 당번표 맨 위 '백설'")
 	t.eq(str(h.scene_for("C-015").get("id", "")), "SQS01_BAEK_WAG", "백구가 꼬리를 흔든다")
 	var heard := {"친구": 0, "106동": 0}
-	for i in 24:
-		if i == 12:
+	for i in 48:                                                           # 소문 풀이 퀘스트마다 늘어나므로 넉넉히 듣는다(1-11f S06 소문이 더해짐)
+		if i == 24:
 			st.vars.set_v("SQ_S01_SOL", 4)                                  # 낮잠 해법이었다면 '백구 친구'는 없다
 		var line := Rumors.pick(st, "R01", "N-R01-%03d" % (700 + i))
 		for k in heard:

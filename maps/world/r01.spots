@@ -84,3 +84,19 @@ prop info_board 7 1
 text 7 1 "빌라 현관 게시판. '반상회비 미납 세대 — 201호 · 302호 · 304호'. 그 아래 누군가 덧쓴 글씨 '302호 아들 전사. 미납 면제.'"
 prop scrap_pile 7 4
 box 7 4 trash name="빌라 앞 고물"
+
+# SQ-S06(1-11f): 다리목 검문 — 한강대교 남단 계단(SD-09a L-R01-20 '노들섬 남문 앞 · 북쪽으로 노들섬 다리 남단 계단'). 진해원과 함께 다리에 오르면 엄도현 검문(진행기 SideS06).
+spot @964,1156 4 2
+prop sandbags 0 1
+npc CR-401 3 1 W sheet=en_cr401_loco cond="SQ_S06_BFIGHT == 0" bark="다리는 판독기 구역입니다. 등록증."
+trigger 0 0 w=4 h=2 scene=SQS06_CHECK cond="SQ_S06_JIN == 1 and SQ_S06_CHECK == 0 and SQ_S06_NEAR == 1"
+
+# 노들섬 남문 관문(SD-09f §11.1 ⑧ · L-HR-02 남문 하다현 N-HR-027): 한 줄 다리 북쪽 끝 · 통행세 창구 · 조합 깃발. 섬 안은 2막(MQ-201) — 남문 앞까지만.
+spot @964,1143 6 3
+prop nd_toll 0 1
+text 0 1 "통행세 창구. '첫 통과 100캡 · 정기 30캡 — 노들섬 선주 조합'. 창구 안쪽 장부가 두껍다." w=2
+prop nd_flag 5 1
+text 5 1 "조합 깃발. 닻 문양 아래 기증 표식이 줄줄이 — 봉천 계단, 탱크마을 기름띠, 선유도 물방울."
+npc N-HR-027 3 1 S bark="남문 밖은 계엄 땅이야. 등록증 챙겨."
+npc N-R01-064 4 2 S look=M1-S2-HR02-H1-T03-2-PF01-HD00-EY00-PR033 cond="SQ_S06_JIN == 3" bark="여기선 등록증 안 봐요. …그게 좋아요."
+trigger 0 0 w=6 h=3 scene=SQS06_GATE cond="SQ_S06_JIN == 1 and SQ_S06_NEAR == 1"

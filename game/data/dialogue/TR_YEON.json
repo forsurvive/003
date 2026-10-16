@@ -8,9 +8,14 @@
   "START": 0,
   "AGAIN": 5,
   "ASK": 6,
-  "SHOP": 7,
-  "FIX": 9,
-  "ROAD": 11
+  "S6ASK": 7,
+  "S6CARGO": 11,
+  "S6CARGO_PAY": 14,
+  "S6CARGO_OK": 14,
+  "S6CARGO_NO": 17,
+  "SHOP": 19,
+  "FIX": 21,
+  "ROAD": 23
  },
  "ops": [
   {
@@ -72,14 +77,133 @@
      "id": "TR_YEON:1:2"
     },
     {
+     "text": "노들섬까지 검문 없이 가는 법 있어?",
+     "tags": [],
+     "cond": "SQ_S06_MET >= 1 and SQ_S06_JIN <= 1 and SQ_S06_ROUTE < 2",
+     "fx": "",
+     "to": "S6ASK",
+     "id": "TR_YEON:1:3"
+    },
+    {
+     "text": "사람 하나 노들섬까지 태워 줄 수 있어?",
+     "tags": [],
+     "cond": "SQ_S06_JIN == 1 and SQ_S06_NEAR == 1 and CARAVAN_V54 == 2 and SQ_S06_CARAVAN == 0",
+     "fx": "",
+     "to": "S6CARGO",
+     "id": "TR_YEON:1:4"
+    },
+    {
      "text": "됐다",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "TR_YEON:1:3"
+     "id": "TR_YEON:1:5"
     }
    ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "기본",
+   "text": "검문 없이? 노들섬 가는 땅길엔 다리목이 꼭 있어. 우린 짐으로 넘지. 짐소 배 밑에 사람 하나쯤은 들어가. 무릎 조심하고."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "기본",
+   "text": "수송대가 사당에 서 있을 때 와. 반나절 있다 떠나."
+  },
+  {
+   "op": "cmd",
+   "name": "s06",
+   "args": [
+    "asked"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "기본",
+   "text": "(진해원을 위아래로 훑는다) 짐소 배 밑에 사람 하나쯤은 들어가. 무릎 조심하고."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "피곤",
+   "text": "근데 다리목에서 엄 하사가 짐을 뒤져. 걸리면 나도 끝이야. 짐삯은 받아야겠어."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "노들섬 조합이 반길 사람이에요. 다리 경비가 늘 모자라다던데",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "쉬움"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "S6CARGO_OK",
+     "id": "TR_YEON:2:0",
+     "fail": "S6CARGO_NO"
+    },
+    {
+     "text": "짐삯",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 50
+      }
+     ],
+     "cond": "PC_CAPS >= 50",
+     "fx": "",
+     "to": "S6CARGO_PAY",
+     "id": "TR_YEON:2:1"
+    },
+    {
+     "text": "됐다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "ASK",
+     "id": "TR_YEON:2:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "미소",
+   "text": "좋아. 짐소 둘째 짐칸이야. 떠날 때 다리목에서 한 번 멈춰. 거기 와 있으려면 와 있고 — 없으면 내가 알아서 넘겨 볼게."
+  },
+  {
+   "op": "cmd",
+   "name": "s06",
+   "args": [
+    "cargo"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "피곤",
+   "text": "조합 핑계는 다들 대. 짐삯을 내든가."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
   },
   {
    "op": "cmd",

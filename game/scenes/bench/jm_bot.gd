@@ -13,6 +13,7 @@ var side2: SideS02                                   ## 관악 사이드 퀘스�
 var side4: SideS04                                   ## 관악 사이드 퀘스트(1-11c SQ-S04)
 var side3: SideS03                                   ## 관악 사이드 퀘스트(1-11d SQ-S03)
 var side5: SideS05                                   ## 관악 사이드 퀘스트(1-11e SQ-S05)
+var side6: SideS06                                   ## 관악 사이드 퀘스트(1-11f SQ-S06)
 var st: StoryState
 var route := "job"
 var shots := ""
@@ -87,6 +88,9 @@ func _ready() -> void:
 	side5 = SideS05.new()
 	add_child(side5)
 	side5.setup(host, true)
+	side6 = SideS06.new()
+	add_child(side6)
+	side6.setup(host, true)
 	host.combat.player_down.connect(host.on_pc_down)                  # 쓰러짐 → 생포 판정(진짜 진행 prologue와 같은 연결)
 	host.combat.equip("W-002", st)
 	match route:
@@ -246,6 +250,35 @@ func _ready() -> void:
 				["check", "SQ_S05_SOL == 1 and SQ_S05_ENT == 10 and SQS05_STAGE == 50", "해법 A — 열 명 모두 측선(50)"],
 				["warp", "D-03", "from_D-02"], ["wait", 1.0], ["want", ["서쪽 터널이 비었어요"]], ["talk", "N-R01-041"], ["wait", 2.0],
 				["check", "SQS05_STAGE == 100 and SQ_S05_REPORT == 1 and has(\"M-071\")", "허순자 보고(100) · 정기권 · 노선도 서쪽 칸"]]
+		"s6":                                                           # 1-11f SQ-S06 B: 탄약고 진해원(20) → 밥 · 평상복 · 등록증 → 시흥 고개 위로(호위) → 다리목 검문(판독기) → 노들섬 남문(반검문 · 100)
+			for kv in [["A-005", 1], ["M-062", 1], ["I-031", 1]]:
+				st.call_fn("give", kv)
+			host.date_text = "2277. 10. 27.  10:00"
+			host.enter("Q-30", "from_X")
+			plan = [["wait", 1.0], ["shot", "s6_bunker"], ["want", ["어디로", "노들섬까지"]], ["talk", "N-R01-064"], ["wait", 2.0],
+				["check", "SQ_S06_JIN == 1 and SQS06_STAGE == 20", "탄약고에서 만남(20) — 호위 시작"],
+				["want", ["할 말이 있어", "먹을 거"]], ["mate", "N-R01-064"], ["wait", 1.0],
+				["want", ["할 말이 있어", "이 옷으로"]], ["mate", "N-R01-064"], ["wait", 1.0],
+				["want", ["할 말이 있어", "등록증"]], ["mate", "N-R01-064"], ["wait", 1.0], ["shot", "s6_civvy"],
+				["check", "SQ_S06_FED == 1 and SQ_S06_CLOTH == 1 and SQ_S06_PAPERS == 1 and has(\"A-031\")", "밥 · 평상복 · 등록증 — 전투복은 주인공 손에"],
+				["warp", "X-SH", "from_Q-30"], ["wait", 1.5], ["gomark", "X-SH:s1"], ["wait", 1.0], ["shot", "s6_post"],
+				["check", "SQ_S06_JIN == 1", "시흥 고개 초소 위로 — 진해원이 따라 나온다"],
+				["warp", "X-SH", "@965,1163"], ["wait", 1.5], ["go", 965, 1157], ["until", "SQ_S06_CHECK == 3", 20.0, "다리목 검문 — 판독기 삑(등록증 통과)", "s6_check"],
+				["wait", 1.0], ["want", ["견습"]], ["go", 966, 1145], ["until", "SQ_S06_JIN == 3", 40.0, "노들섬 남문 — 하다현이 등록증을 밀어낸다", "s6_gate"],
+				["wait", 2.0], ["shot", "s6_after"],
+				["check", "SQ_S06_SOL == 2 and SQS06_STAGE == 100 and SQE_DESERTER == 1 and has(\"M-185\")", "해법 B — 노들섬(100) · 군번줄 · MQ-502 증인"]]
+		"s6s":                                                          # 1-11f 수색조: 첫 접촉 25시간 뒤 시흥 고개 — 평상복 · 등록증 진해원과 길을 걸으면 수색조가 선다 → 분대장 검문 통과
+			for kv in [["A-005", 1], ["M-062", 1]]:
+				st.call_fn("give", kv)
+			host.date_text = "2277. 10. 27.  10:00"
+			host.enter("Q-30", "from_X")
+			plan = [["wait", 1.0], ["want", ["어디로", "노들섬까지"]], ["talk", "N-R01-064"], ["wait", 1.0],
+				["want", ["할 말이 있어", "이 옷으로"]], ["mate", "N-R01-064"], ["wait", 1.0],
+				["want", ["할 말이 있어", "등록증"]], ["mate", "N-R01-064"], ["wait", 1.0],
+				["settime", "2277. 10. 28.  12:00"], ["warp", "X-SH", "arrive"], ["wait", 1.5], ["want", []], ["gomark", "X-SH:s2"], ["goen", "CR-403"],
+				["until", "SQ_S06_LEADER >= 1 or SQ_S06_SQUADS > 0", 30.0, "시흥 고개 — 수색조(상황은 그날 굴린 것)", "s6s_squad"],
+				["wait", 3.0], ["shot", "s6s_after"],
+				["check", "SQ_S06_SQUADS > 0 and SQS06_STAGE >= 30 and SQ_S06_JIN == 1", "수색조를 넘겼다(권역 한 번) · 진해원은 곁에"]]
 		"s5q":                                                          # 1-11e 휴면 군집: 서울대입구 쪽 철사로 조용히 → 웅크려(은신 60) 선로 잔해 길목 지나 개찰구까지 → 서서 걸으면 일제 기상
 			st.vars.set_v("PC_SKP_REPAIR", 30)
 			st.vars.set_v("PC_SKP_SNEAK", 60)
@@ -782,6 +815,25 @@ func _process(dt: float) -> void:
 			_next()
 		"crouch":
 			host.combat.crouch = bool(s[1])
+			_next()
+		"goen":                                                         # 가장 가까운 그 적(비적대 수색조 등)에게 걸어간다(1-11f)
+			var best: Enemy = null
+			for e in host.combat.enemies:
+				if is_instance_valid(e) and not e.cmb.dead and str(e.get_meta("enemy_id", "")) == str(s[1]) \
+						and (best == null or e.loco.logical.distance_to(host.player.loco.logical) < best.loco.logical.distance_to(host.player.loco.logical)):
+					best = e
+			if best == null or host.box.active or best.loco.logical.distance_to(host.player.loco.logical) < 64.0 or step_t > 40.0:
+				host.input_fn = func() -> Vector2: return Vector2.ZERO
+				_next()
+				return
+			host.input_fn = _walk.bind(best.loco.logical)
+		"mate":                                                         # 곁의 동행에게 말 건다(1-11f 진해원 — 동행 메뉴 '할 말이 있어')
+			var mm := host.combat.mates.get_mate(str(s[1]))
+			if mm.is_empty():
+				print("  [봇] 동행 없음: ", s[1])
+			else:
+				host.input_fn = func() -> Vector2: return Vector2.ZERO
+				host._mate_talk(mm)
 			_next()
 		"talkd":                                                        # 그 인물에게 바로 말 건다(나란히 선 사람 · 개 — 남솔과 백구, 1-11a)
 			var nd := _npc(str(s[1]))

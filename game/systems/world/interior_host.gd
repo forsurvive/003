@@ -137,7 +137,9 @@ var _light_layer: CanvasLayer
 var _lights: Node2D
 var _flicker_t := 0.0
 var _tone_t := 0.0
-const LIGHT_PROPS := {"drum_fire": Vector2(0, -20), "guard_booth": Vector2(0, -26), "watchtower": Vector2(0, -78), "radar_beacon": Vector2(16, -10)}
+const LIGHT_PROPS := {"oil_lamp": Vector2(0, -26), "drum_fire": Vector2(0, -20), "guard_booth": Vector2(0, -26), "watchtower": Vector2(0, -78), "radar_beacon": Vector2(16, -10)}
+var travel_block := Callable()                                     ## (lid) -> 막는 까닭 문자열("" = 막지 않음) — 진행기가 건다(1-11f)
+var travel_mul := 1.0                                               ## 빠른 이동 시간 배수(1-11f — 굶주린 동행 ×1.25)
 var extra_lights: Array = []                                        ## 진행기가 켠 빛 [[위치, 색], …] — 맵이 바뀌면 비운다
 const DARK_SETS := ["cv"]                                            ## 전기가 끊긴 지하(하수 · 빗물 암거 TS-I10 · 동굴 TS-I11)
 
@@ -229,6 +231,9 @@ func _draw_lights() -> void:
 			var c := Vector2(int(p["x"]) * 32 + 16 * int(p["w"]), (int(p["y"]) + int(p["h"])) * 32) + (off as Vector2)
 			var k := 1.0 + (0.06 if p["name"] == "drum_fire" and int(_flicker_t * 6.0) % 2 == 0 else 0.0)
 			var col := Color(1.0, 0.92, 0.6) if p["name"] != "radar_beacon" else Color(1.0, 0.7, 0.25)
+			if p["name"] == "oil_lamp":
+				col = Color(1.0, 0.78, 0.42)                                 # 등유 램프: 백열보다 주황(1-11f 탄약고)
+				k += 0.04 if int(_flicker_t * 5.0) % 3 == 0 else 0.0
 			for i in 4:
 				var r := 64.0 * k * (1.0 - i * 0.22)
 				_lights.draw_circle(c, r, Color(col.r, col.g, col.b, (0.05 + i * 0.035) * light_k))
@@ -384,6 +389,8 @@ func enter(map_id: String, mark: String = "", look: Dictionary = {}, at: Vector2
 		var km := combat.mates.get_mate(str(k["id"]))
 		if not km.is_empty():
 			(km["cmb"] as Combatant).hp = clampf(float(k["hp"]), 1.0, (km["cmb"] as Combatant).max_hp)
+			if str(k.get("mode", "follow")) == "escort":
+				km["mode"] = "escort"                                          # 호위 대상은 맵을 넘어도 호위(1-11f)
 	for id in combat.mates.away.keys():                               # 이 맵에 기다리게 두고 간 동행: 그 자리에 다시 세운다
 		var aw: Dictionary = combat.mates.away[id]
 		if str(aw["map"]) != cur_map:
@@ -2225,7 +2232,7 @@ func _handlers() -> void:
 # ---------------------------------------------------------------- 핍-보이·소지품
 func _load_items() -> void:
 	for f in ["items_aid", "items_food", "items_drink", "items_quest", "items_apparel", "items_misc_money", "items_misc_mat", "items_misc_func",
-			"items_chems", "items_misc_other", "items_apparel_head", "items_misc_crit", "items_junk", "items_ammo", "items_tokens", "items_craft", "items_side", "items_unique"]:          # 파이프라인이 SD-13 표에서 뽑은 아이템(1-4: 표 전체)
+			"items_chems", "items_misc_other", "items_apparel_head", "items_misc_crit", "items_junk", "items_ammo", "items_tokens", "items_craft", "items_side", "items_unique", "items_trade"]:          # 파이프라인이 SD-13 표에서 뽑은 아이템(1-4: 표 전체)
 		var p := "res://data/%s.json" % f
 		if FileAccess.file_exists(p):
 			items_db.merge(JSON.parse_string(FileAccess.get_file_as_string(p)))
@@ -2287,6 +2294,10 @@ func travel_check(lid: String) -> Array:
 		return [false, TRAVEL_MSG["F4"], 0]
 	if enc_live != null and enc_live.chasing():                       # 추적대가 다가오거나 싸우는 중(1-3)
 		return [false, TRAVEL_MSG["F8"], 0]
+	if travel_block.is_valid():                                        # 진행기가 막는 이동(1-11f — 전투복 차림 탈영병과 큰길은 못 간다)
+		var tb := str(travel_block.call(lid))
+		if tb != "":
+			return [false, tb, 0]
 	if story_hold:                                                     # 이야기 사건 중(MQ-106 무전·대치 등): 사건 무대를 빠른 이동으로 떠나지 않는다(SD-20 P4)
 		return [false, TRAVEL_MSG["F8"], 0]
 	if st.quests.stage("MQ-P4") < 100 or e.get("arrive") == null or busy or box.active or str(e.get("region", "")) == "R05":
@@ -2348,8 +2359,13 @@ func _arrive(lid: String, hours: int) -> void:
 	st.places.mark_seen(_last_tile)
 	cam.position = at.round()
 	cam.reset_smoothing()
-	advance_minutes(hours * 60)
-	_note("%s 도착 — %d시간이 지났다" % [str(e["name"]), hours])
+	for m in combat.mates.list:                                         # 따라오던 동행은 함께 도착한다(뒤 한 칸)
+		if str(m["mode"]) in ["follow", "escort"] and is_instance_valid(m["actor"]):
+			(m["actor"] as Actor).loco.place(at + Vector2(-32, 0))
+			(m["actor"] as Actor).position = (m["actor"] as Actor).loco.render
+	var mins := roundi(hours * 60 * travel_mul)
+	advance_minutes(mins)
+	_note("%s 도착 — %d시간이 지났다" % [str(e["name"]), roundi(mins / 60.0)])
 	enc_live.on_arrive.call_deferred()                                # 도착 지점 = 추적대 첫 출현 후보(SD-05 §6.2)
 
 

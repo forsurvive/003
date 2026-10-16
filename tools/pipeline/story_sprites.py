@@ -35,6 +35,10 @@ def map_looks():
     for f in glob.glob(os.path.join(DATA, "maps", "*.json")):
         if not os.path.basename(f).startswith("_"):
             out |= {n["look"] for n in json.load(open(f, encoding="utf-8")).get("npcs", []) if n.get("look")}
+    sp = os.path.join(DATA, "world", "spots_src.json")                  # 월드 발견 자리의 인물(1-11f — 노들섬 남문의 평상복 진해원 등)
+    if os.path.exists(sp):
+        for spot in json.load(open(sp, encoding="utf-8")).get("spots", []):
+            out |= {n["look"] for n in spot.get("data", {}).get("npcs", []) if n.get("look")}
     return out
 
 

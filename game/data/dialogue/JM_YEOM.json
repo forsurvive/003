@@ -7,7 +7,9 @@
  "labels": {
   "START": 0,
   "WANTED": 3,
-  "SHOP": 5
+  "SHOP": 6,
+  "S6PAPER": 8,
+  "TRADE": 11
  },
  "ops": [
   {
@@ -36,6 +38,38 @@
    "who": "N-R02-008",
    "emo": "기본",
    "text": "상인회랑 사이가 좋아지면 다시 와."
+  },
+  {
+   "op": "goto",
+   "to": "TRADE"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S06_MET >= 1 and SQ_S06_PAPERS == 0 and SQ_S06_JIN <= 1 and SQ_S06_ROUTE < 2",
+   "to": "S6PAPER"
+  },
+  {
+   "op": "goto",
+   "to": "TRADE"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-008",
+   "emo": "기본",
+   "text": "등록증? 사진 칸 빈 걸로 하나 있지. 60캡. 판독기는 속여. 눈은 못 속이고."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-008",
+   "emo": "기본",
+   "text": "들여다보는 놈 앞에선 내밀지 마. 그리고 옷부터 갈아입혀. 전투복에 등록증이면 웃음거리야."
+  },
+  {
+   "op": "cmd",
+   "name": "s06",
+   "args": [
+    "asked"
+   ]
   },
   {
    "op": "cmd",

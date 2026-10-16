@@ -182,6 +182,7 @@ var side_s02: SideS02                              ## 관악 사이드 퀘스트
 var side_s03: SideS03                              ## 관악 사이드 퀘스트(1-11d — SQ-S03 곰팡이의 근원)
 var side_s04: SideS04                              ## 관악 사이드 퀘스트(1-11c — SQ-S04 도성이 뒤척인다)
 var side_s05: SideS05                              ## 관악 사이드 퀘스트(1-11e — SQ-S05 환승촌 막차)
+var side_s06: SideS06                              ## 관악 사이드 퀘스트(1-11f — SQ-S06 근무자: 공란)
 var caravans: Caravans                             ## 순회 상인 일정(1-8d)
 var sol := 1                                       ## 1막 봇 해법(--sol=1~5, 0-10)
 
@@ -243,6 +244,10 @@ func _paths() -> void:
 		side_s05 = SideS05.new()
 		add_child(side_s05)
 		side_s05.setup(host, log_on)
+	if side_s06 == null:
+		side_s06 = SideS06.new()
+		add_child(side_s06)
+		side_s06.setup(host, log_on)
 
 
 func _act1(from: String) -> void:

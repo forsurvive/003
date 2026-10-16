@@ -8,12 +8,16 @@
   "START": 0,
   "AGAIN": 6,
   "ASK": 7,
-  "S5TIP": 8,
-  "S5TIP2": 10,
-  "GUIDE": 14,
-  "TUNNEL": 18,
-  "S5WEST": 22,
-  "S5GUIDE": 24
+  "S6ASK": 8,
+  "S6NOYEON": 13,
+  "S6NOYEOM": 15,
+  "S6ASKED": 16,
+  "S5TIP": 18,
+  "S5TIP2": 20,
+  "GUIDE": 24,
+  "TUNNEL": 28,
+  "S5WEST": 32,
+  "S5GUIDE": 34
  },
  "ops": [
   {
@@ -74,12 +78,20 @@
      "id": "SD_BAN:1:1"
     },
     {
+     "text": "노들섬까지 검문 안 거치고 가는 길 알아?",
+     "tags": [],
+     "cond": "SQ_S06_MET >= 1 and SQ_S06_JIN <= 1 and SQ_S06_ROUTE < 2",
+     "fx": "",
+     "to": "S6ASK",
+     "id": "SD_BAN:1:2"
+    },
+    {
      "text": "정기권 말인데 — 그거 말고 다른 비밀은 없어?",
      "tags": [],
      "cond": "SQS05_STAGE >= 10 and SQ_S05_TIP == 0 and SQ_S05_PASS == 0",
      "fx": "",
      "to": "S5TIP",
-     "id": "SD_BAN:1:2"
+     "id": "SD_BAN:1:3"
     },
     {
      "text": "됐어",
@@ -87,9 +99,62 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "SD_BAN:1:3"
+     "id": "SD_BAN:1:4"
     }
    ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-045",
+   "emo": "기본",
+   "text": "노들섬? 땅으로는 다리목을 꼭 지나. 땅 밑으로도 강은 못 건너고. 길은 셋이야 — 짐, 물, 종이."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-045",
+   "emo": "미소",
+   "text": "짐은 고개길 수송대 아줌마, 물은 수산시장 심 아저씨가 밤에, 종이는 지하시장 인쇄소. 누구 데려가는지는 안 물어볼게. 이건 공짜야."
+  },
+  {
+   "op": "if",
+   "cond": "known_dead(\"N-R01-040\") == 1",
+   "to": "S6NOYEON"
+  },
+  {
+   "op": "if",
+   "cond": "known_dead(\"N-R02-008\") == 1",
+   "to": "S6NOYEOM"
+  },
+  {
+   "op": "goto",
+   "to": "S6ASKED"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-045",
+   "emo": "슬픔",
+   "text": "…아, 수송대 아줌마는 이제 없지. 짐 길은 지웠어."
+  },
+  {
+   "op": "goto",
+   "to": "S6ASKED"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-045",
+   "emo": "슬픔",
+   "text": "인쇄소 아줌마 소식 들었어? 염희정 없으면 종이도 없어."
+  },
+  {
+   "op": "cmd",
+   "name": "s06",
+   "args": [
+    "asked"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
   },
   {
    "op": "line",

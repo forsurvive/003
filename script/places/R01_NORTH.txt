@@ -183,7 +183,25 @@ N-R01-057 [기본] 처음 보는 얼굴이네. 심도겸이야. 강에서 나는
 > 거래하자 -> SHOP
 > 저 냉동고는? -> FREEZER
 > 칠판 시세는? -> PRICE
+> 노들섬 가는 다른 길 없어? -> S6ASK ?? SQ_S06_MET >= 1 and SQ_S06_JIN <= 1 and SQ_S06_ROUTE < 2
+> 밤에 배를 띄운다던데 — 노들섬 남쪽까지 -> S6BOAT ?? SQ_S06_JIN == 1 and SQ_S06_NEAR == 1 and SQ_S06_BOAT == 0
 > 됐다 -> END
+# SQ-S06 해법 C 물길(SD-04a §4.6): 21시 뒤 30캡 → 진행기가 강 건너기 연출(SQS06_BOAT)을 연다
+* S6ASK
+N-R01-057 [기본] 땅으로는 다리목을 못 피해. 물로는 — 피하지. 밤 아홉 시 넘어서, 서른 캡. 다리 밑 그늘로.
+@cmd s06 asked
+-> MENU
+* S6BOAT
+? GAME_HOUR >= 5 and GAME_HOUR < 21 -> S6DAY
+N-R01-057 [기본] (진해원을 한 번 보고 아무것도 묻지 않는다) 서른 캡. 배 바닥에 엎드리는 값까지야.
+> [캡 30] 낸다 -> S6GO ?? PC_CAPS >= 30
+> 다음에 -> MENU
+* S6GO
+@cmd s06 boat
+-> END
+* S6DAY
+N-R01-057 [기본] 대낮에? 다리 위에서 다 보여. 해 지고 아홉 시 넘어서 와.
+-> MENU
 * SHOP
 @cmd trade VR25
 -> END

@@ -17,7 +17,12 @@ const GUARD_R := 5.0 * 32.0
 const STIM_AT := 0.35
 const REVIVE_S := 2.0
 const REVIVE_R := 1.5 * 32.0
-const CALM_S := 2.0                                ## 교전이 끝나고 이만큼 조용하면 '전투 종료'(회복 · 일어남)
+const CALM_S := 2.0
+const HIDE_R := 30.0 * 32.0                        ## 호위 대상(hide_far): 주인공이 이만큼 멀어지면 그 자리에 숨는다(SQ-S06 진해원 — SD-04a §4.6)
+const REGROUP_R := 2.5 * 32.0                      ## 숨은 호위 대상: 주인공이 이만큼 다가오면 다시 따라온다
+
+signal hid(id: String)                             ## 호위 대상이 숨었다(진행기가 한 줄을 띄운다)
+signal regrouped(id: String)                       ## 숨었던 호위 대상이 다시 따라온다                                ## 교전이 끝나고 이만큼 조용하면 '전투 종료'(회복 · 일어남)
 
 ## 인물 → 동행 자료(퀘스트 데이터 고정, SD-11 §8.2 '장비는 퀘스트 데이터'): 무기 · 성향 · 기본 HP · 소속(호감도 약호) · 대사
 const ROSTER := {
@@ -27,6 +32,8 @@ const ROSTER := {
 		"hello": "계약서엔 '같이 다닌다'고 돼 있소. 무슨 일이오.", "wait": "여기 서 있지. 계약은 계약이니까.", "follow": "앞장서시오. 등은 내가 맡지."},
 	"N-R02-018": {"weapon": "W-002", "style": "shooter", "hp": 90.0, "skill": 30.0, "fac": "JH",               # 주성호(봉천 구울 행상 — SQ-S05 해법 C, 1-11e)
 		"hello": "왜, 매끈이. 낙성대는 아직이야.", "wait": "여기서 숨 좀 돌릴게. 무릎이 말이 아니야.", "follow": "앞장서. 뛰지는 말고."},
+	"N-R01-064": {"weapon": "", "style": "escort", "hp": 70.0, "skill": 20.0, "fac": "BJ", "hide_far": true,        # 진해원(탈영병 — SQ-S06 호위 대상, 싸우지 않는다)
+		"hello": "…네? 아, 네. 저 여기 있어요.", "wait": "여기 숨어 있을게요. 꼭 와요.", "follow": "같이 가요. 뛰지는 마세요, 다리가…"},
 	"C-015": {"weapon": "", "style": "dog", "hp": 80.0, "bite": 15.0, "skill": 40.0, "fac": "JC_BC", "sheet": "cr_baekgu_loco",   # 백구(진돗개 — 물기 15, SD-14 CR-108)
 		"hello": "(백구가 꼬리를 한 번 친다.)", "wait": "(백구가 그 자리에 앉는다.)", "follow": "(백구가 일어나 앞장선다.)"},
 }
@@ -121,8 +128,8 @@ func get_mate(id: String) -> Dictionary:
 func bodies() -> Array:
 	var out: Array = []
 	for m in list:
-		if not m["down"] and is_instance_valid(m["actor"]):
-			out.append(m["cmb"])
+		if not m["down"] and m["mode"] != "hidden" and is_instance_valid(m["actor"]):
+			out.append(m["cmb"])                                         # 숨은 호위 대상은 표적이 아니다(보이지 않는 곳에서 죽지 않게)
 	return out
 
 
@@ -130,6 +137,8 @@ func set_mode(id: String, mode: String) -> void:
 	var m := get_mate(id)
 	if m.is_empty():
 		return
+	if mode == "follow" and str(m["style"]) == "escort":
+		mode = "escort"                                                # 호위 대상은 '따라와'도 호위(싸우지 않고 엄폐 · 멀어지면 숨음)
 	m["mode"] = mode
 	m["home"] = (m["actor"] as Actor).loco.logical
 
@@ -244,8 +253,18 @@ func tick(dt: float) -> void:
 			"escort":
 				if fight:
 					_hide(m, dt)
+				elif bool(row(str(m["id"])).get("hide_far", false)) and a.loco.logical.distance_to(player.loco.logical) > HIDE_R:
+					m["mode"] = "hidden"                                     # 너무 멀어졌다: 그 자리에 숨는다(돌아오면 다시 따라온다)
+					m["home"] = a.loco.logical
+					a.move(Vector2.ZERO, dt)
+					hid.emit(str(m["id"]))
 				else:
 					_follow(m, i, player, dt)
+			"hidden":
+				a.move(Vector2.ZERO, dt)
+				if not fight and a.loco.logical.distance_to(player.loco.logical) <= REGROUP_R:
+					m["mode"] = "escort"
+					regrouped.emit(str(m["id"]))
 			_:
 				if tgt != null and fight and not (c.crouch and _unseen(tgt)):
 					_engage(m, tgt, dt, true)
@@ -335,7 +354,7 @@ func _follow(m: Dictionary, i: int, player: Actor, dt: float) -> void:
 				sv = -sv
 			goal = a.loco.logical + sv * 32.0 + u * 8.0
 	var d := a.loco.logical.distance_to(player.loco.logical)
-	if d > LOST and not c.shots.world.line_of_sight(player.loco.logical, a.loco.logical):
+	if d > LOST and not bool(row(str(m["id"])).get("hide_far", false)) and not c.shots.world.line_of_sight(player.loco.logical, a.loco.logical):
 		var t := Vector2i(floori(goal.x / 32.0), floori(goal.y / 32.0))
 		a.loco.place(goal if not c.shots.world.is_solid(t) else player.loco.logical + back * 32.0)   # 너무 떨어지면 뒤 3t로(§8.2)
 		return
@@ -491,10 +510,10 @@ func leaving(map_id: String) -> Array:
 	var go: Array = []
 	for m in list:
 		var cmb: Combatant = m["cmb"]
-		if m["mode"] in ["wait", "guard"]:
+		if m["mode"] in ["wait", "guard", "hidden"]:
 			away[m["id"]] = {"map": map_id, "pos": [m["home"].x, m["home"].y], "hp": cmb.hp, "mode": m["mode"], "name": m["name"]}
 		else:
-			go.append({"id": m["id"], "hp": cmb.hp if not m["down"] else cmb.max_hp * 0.3, "name": m["name"]})
+			go.append({"id": m["id"], "hp": cmb.hp if not m["down"] else cmb.max_hp * 0.3, "name": m["name"], "mode": m["mode"]})   # 호위 모드는 맵을 넘어도 그대로
 	list.clear()
 	return go
 

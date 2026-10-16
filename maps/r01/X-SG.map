@@ -97,7 +97,8 @@ exit 23 4 Q-01 from_X
 mark from_Q-01 23 5 S
 text 25 3 "컨테이너 막사. '제7 검문대.' 연통에서 연기가 난다." w=2
 prop bj_barracks 26 6
-text 27 7 "둘째 막사. 문에 자물쇠. 창 철망 너머 2층 침대." w=2
+text 27 7 "둘째 막사. 문에 자물쇠. 창 철망 너머 2층 침대." w=2 cond="not (SQ_S06_JIN == 4 and GAME_DAY < SQ_S06_JAIL_DAY + 3)"
+text 27 7 "둘째 막사 — 영창. 창 철망 너머 2층 침대 끝에 진해원이 앉아 있다. 무릎을 끌어안고, 창 쪽을 보지 않는다." w=2 cond="SQ_S06_JIN == 4 and GAME_DAY < SQ_S06_JAIL_DAY + 3"
 prop bj_class_tent 23 13
 exit 24 15 Q-02 from_X
 mark from_Q-02 24 16 S
@@ -130,3 +131,4 @@ npc CR-401 18 8 N sheet=en_cr401_loco bark="옆길로 새는 사람 다 봅니�
 npc CR-401 22 5 W sheet=en_cr401_loco route=yard:22,5,8;tent:22,16,6 bark="공보방송 들었습니까? 자진 출석이 제일 빠릅니다."
 npc CR-401 26 15 W sheet=en_cr401_loco bark="불 쬐는 거 아니면 지나가십시오."
 npc CR-403 25 10 W sheet=en_cr403_loco bark="분대 전원 위치. 낙진 바람 불면 막사로."
+npc N-R01-064 22 15 S cond="SQ_S06_JIN == 4 and GAME_DAY >= SQ_S06_JAIL_DAY + 3" bark="(고개를 들지 않는다) 한 사람씩요. 판독기에 손 올리세요."

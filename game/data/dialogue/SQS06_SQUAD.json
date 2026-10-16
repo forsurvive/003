@@ -1,0 +1,279 @@
+{
+ "id": "SQS06_SQUAD",
+ "title": "계엄군 수색조",
+ "loc": "L-R01-30",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "REST": 6,
+  "FOLLOW": 8,
+  "AGAIN": 10,
+  "CHECK": 11,
+  "ALONE": 16,
+  "OK": 19,
+  "PASS": 22,
+  "SPOT": 25,
+  "HIDE": 28,
+  "FLEE": 30,
+  "FIGHT": 32,
+  "DECOY": 34
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S06_DECOY == 1",
+   "to": "DECOY"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S06_LEADER >= 2",
+   "to": "AGAIN"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S06_KIND == 1",
+   "to": "REST"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S06_KIND == 2",
+   "to": "FOLLOW"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-S1",
+   "emo": "기본",
+   "text": "(주민의 멱살을 놓고 돌아선다) 정지. 탈영병 수색 중이다. 스무 살, 남자, 계엄군 전투복. 봤나?"
+  },
+  {
+   "op": "goto",
+   "to": "CHECK"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-S1",
+   "emo": "피곤",
+   "text": "(수통을 내려놓으며 일어선다) 쉬는 중에 귀찮게… 거기 둘. 탈영병 수색 중이다. 스무 살, 남자."
+  },
+  {
+   "op": "goto",
+   "to": "CHECK"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-S1",
+   "emo": "기본",
+   "text": "거기 서. 아까부터 따라왔다. 걸음이 둘인데 하나가 군화 걸음이더군."
+  },
+  {
+   "op": "goto",
+   "to": "CHECK"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-S1",
+   "emo": "기본",
+   "text": "…지난번 그 일행이군. 또 보네. 이번엔 얼굴 좀 보자."
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S06_JIN != 1 or SQ_S06_HID == 1",
+   "to": "ALONE"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S06_CLOTH == 0",
+   "to": "SPOT"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S06_PAPERS == 1",
+   "to": "OK"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-S1",
+   "emo": "기본",
+   "text": "옆에 그 친구. 가방 열고, 등록증."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "봉천 사촌 동생이에요. 등록은 다음 주에 —",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "보통"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PASS",
+     "id": "SQS06_SQUAD:1:0",
+     "fail": "SPOT"
+    },
+    {
+     "text": "등을 돌려 천천히 멀어진다(웅크려 숨기)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "HIDE",
+     "id": "SQS06_SQUAD:1:1"
+    },
+    {
+     "text": "싸운다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "FIGHT",
+     "id": "SQS06_SQUAD:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-S1",
+   "emo": "기본",
+   "text": "못 봤으면 됐다. 보면 신고해. 생포 150캡."
+  },
+  {
+   "op": "cmd",
+   "name": "s06",
+   "args": [
+    "squad",
+    "pass"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-S1",
+   "emo": "기본",
+   "text": "(등록증을 훑는다) …사진 칸이 비었군. 요즘 다 이래. 가."
+  },
+  {
+   "op": "cmd",
+   "name": "s06",
+   "args": [
+    "squad",
+    "pass"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-S1",
+   "emo": "피곤",
+   "text": "다음 주에 등록 안 돼 있으면, 그땐 너도 같이 간다."
+  },
+  {
+   "op": "cmd",
+   "name": "s06",
+   "args": [
+    "squad",
+    "pass"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-S1",
+   "emo": "분노",
+   "text": "저놈이다! 분대, 둘러싸!"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-064",
+   "emo": "놀람",
+   "text": "(뒷걸음질)"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "진해원을 데리고 달아난다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "FLEE",
+     "id": "SQS06_SQUAD:2:0"
+    },
+    {
+     "text": "싸운다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "FIGHT",
+     "id": "SQS06_SQUAD:2:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s06",
+   "args": [
+    "squad",
+    "hide"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "s06",
+   "args": [
+    "flee"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "s06",
+   "args": [
+    "fight"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-S1",
+   "emo": "분노",
+   "text": "저기! 전투복! …아니, 잠깐. 너 누구야?"
+  },
+  {
+   "op": "cmd",
+   "name": "s06",
+   "args": [
+    "decoy"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S06.txt"
+}

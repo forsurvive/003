@@ -7,15 +7,17 @@
  "labels": {
   "START": 0,
   "TIER": 5,
-  "HOSTILE": 7,
-  "COLD": 9,
-  "WARM": 12,
-  "ISSUE": 16,
-  "LOST": 20,
-  "CARD": 22,
-  "SHOP": 23,
-  "SHOP2": 26,
-  "GRADE": 28
+  "S6LINE": 9,
+  "S6MED": 12,
+  "HOSTILE": 16,
+  "COLD": 18,
+  "WARM": 21,
+  "ISSUE": 25,
+  "LOST": 29,
+  "CARD": 31,
+  "SHOP": 32,
+  "SHOP2": 35,
+  "GRADE": 37
  },
  "ops": [
   {
@@ -47,12 +49,60 @@
   },
   {
    "op": "if",
+   "cond": "SQ_S06_PERSUADE == 1 and SQ_S06_JIN == 1 and SQ_S06_NEAR == 1 and known_dead(\"N-R01-047\") == 1",
+   "to": "S6MED"
+  },
+  {
+   "op": "if",
+   "cond": "(SQ_S06_SOL == 4 or SQ_S06_SOL == 5) and SQ_S06_KWON == 0",
+   "to": "S6LINE"
+  },
+  {
+   "op": "if",
    "cond": "AFF_BJ < 20",
    "to": "COLD"
   },
   {
    "op": "goto",
    "to": "WARM"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-048",
+   "emo": "슬픔",
+   "text": "진해원 일병 말인가요. …그 아이는 손이 떨렸어요. 판독기는 떨지 않는데."
+  },
+  {
+   "op": "do",
+   "fx": "SQ_S06_KWON = 1"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-048",
+   "emo": "기본",
+   "text": "(검문소장 자리를 한 번 본다) …소장님이 안 계시니, 제가 적겠습니다. 진해원 일병, 자진 복귀."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-064",
+   "emo": "슬픔",
+   "text": "네. 자진 복귀입니다."
+  },
+  {
+   "op": "cmd",
+   "name": "s06",
+   "args": [
+    "surrender",
+    "ok"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
   },
   {
    "op": "line",

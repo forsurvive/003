@@ -62,7 +62,8 @@ INSETS = [{"id": "X-S07", "mark": "from_vault", "at": (959, 1503)},          # �
           {"id": "X-BS", "center": (937, 1370), "lid": "L-R01-10", "arrive": "arrive"},
           {"id": "X-SS", "center": (868, 1578), "lid": "L-R01-31", "arrive": "arrive"},
           {"id": "X-NS", "center": (971, 1421), "lid": "L-R01-12", "arrive": "arrive", "urban": True},
-          {"id": "X-RD", "center": (990, 1561), "lid": "L-R01-04", "arrive": "arrive"}]                 # 관악 레이더 중계소(1-11c SQ-S04): 관악산 정상 화강암 능선
+          {"id": "X-RD", "center": (990, 1561), "lid": "L-R01-04", "arrive": "arrive"},
+          {"id": "X-SH", "center": (715, 1545), "lid": "L-R01-30", "arrive": "arrive"}]                 # 시흥 고개 초소(1-11f SQ-S06): 시흥동 남서 경계 고개                 # 관악 레이더 중계소(1-11c SQ-S04): 관악산 정상 화강암 능선
 START = (959, 1503)                                                          # 도달성 검사 출발점 = 볼트 정문
 WALKK = (1, 5, 6, 7, 8, 9, 10, 12, 13)                                       # 걷는 땅 종류(13 = 다리 상판)
 STAIR_GAP = 28

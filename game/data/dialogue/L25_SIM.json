@@ -7,9 +7,13 @@
  "labels": {
   "START": 0,
   "MENU": 5,
-  "SHOP": 6,
-  "FREEZER": 8,
-  "PRICE": 11
+  "S6ASK": 6,
+  "S6BOAT": 9,
+  "S6GO": 12,
+  "S6DAY": 14,
+  "SHOP": 16,
+  "FREEZER": 18,
+  "PRICE": 21
  },
  "ops": [
   {
@@ -67,14 +71,105 @@
      "id": "L25_SIM:1:2"
     },
     {
+     "text": "노들섬 가는 다른 길 없어?",
+     "tags": [],
+     "cond": "SQ_S06_MET >= 1 and SQ_S06_JIN <= 1 and SQ_S06_ROUTE < 2",
+     "fx": "",
+     "to": "S6ASK",
+     "id": "L25_SIM:1:3"
+    },
+    {
+     "text": "밤에 배를 띄운다던데 — 노들섬 남쪽까지",
+     "tags": [],
+     "cond": "SQ_S06_JIN == 1 and SQ_S06_NEAR == 1 and SQ_S06_BOAT == 0",
+     "fx": "",
+     "to": "S6BOAT",
+     "id": "L25_SIM:1:4"
+    },
+    {
      "text": "됐다",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "L25_SIM:1:3"
+     "id": "L25_SIM:1:5"
     }
    ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-057",
+   "emo": "기본",
+   "text": "땅으로는 다리목을 못 피해. 물로는 — 피하지. 밤 아홉 시 넘어서, 서른 캡. 다리 밑 그늘로."
+  },
+  {
+   "op": "cmd",
+   "name": "s06",
+   "args": [
+    "asked"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "if",
+   "cond": "GAME_HOUR >= 5 and GAME_HOUR < 21",
+   "to": "S6DAY"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-057",
+   "emo": "기본",
+   "text": "(진해원을 한 번 보고 아무것도 묻지 않는다) 서른 캡. 배 바닥에 엎드리는 값까지야."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "낸다",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 30
+      }
+     ],
+     "cond": "PC_CAPS >= 30",
+     "fx": "",
+     "to": "S6GO",
+     "id": "L25_SIM:2:0"
+    },
+    {
+     "text": "다음에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "MENU",
+     "id": "L25_SIM:2:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s06",
+   "args": [
+    "boat"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-057",
+   "emo": "기본",
+   "text": "대낮에? 다리 위에서 다 보여. 해 지고 아홉 시 넘어서 와."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
   },
   {
    "op": "cmd",

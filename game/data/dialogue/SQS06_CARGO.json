@@ -1,0 +1,268 @@
+{
+ "id": "SQS06_CARGO",
+ "title": "다리목 짐 검사",
+ "loc": "L-R01-20",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "NOUM": 5,
+  "OPT": 6,
+  "OK": 7,
+  "STALL": 10,
+  "BRIBE": 13,
+  "SNEAK": 16,
+  "LUCK": 19,
+  "NO": 21,
+  "FLEE": 24,
+  "FIGHT": 26
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "고개길 수송대가 다리목 앞에 선다. 짐소가 콧김을 뿜는다. 둘째 짐칸이 조금 무겁게 처져 있다."
+  },
+  {
+   "op": "if",
+   "cond": "known_dead(\"N-R01-050\") == 1",
+   "to": "NOUM"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "피곤",
+   "text": "수송대네. 짐 내려. …짐소 배 밑도."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "기본",
+   "text": "(고삐 쥔 손이 하얗다) 하사님, 오늘도 꼼꼼하시네."
+  },
+  {
+   "op": "goto",
+   "to": "OPT"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "계엄병 둘이 짐을 뒤진다. 하나가 짐소 배 밑으로 고개를 숙이려 한다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "하사님, 그 짐소 뒷발 조심하세요. 배 만지면 찹니다",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "보통"
+      }
+     ],
+     "cond": "known_dead(\"N-R01-050\") == 0",
+     "fx": "",
+     "to": "OK",
+     "id": "SQS06_CARGO:1:0",
+     "fail": "NO"
+    },
+    {
+     "text": "(하사의 지루한 얼굴) 노량진 학원가 이야기 아세요? 옛날 '대피 적성 학원'…",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "쉬움"
+      }
+     ],
+     "cond": "known_dead(\"N-R01-050\") == 0",
+     "fx": "",
+     "to": "STALL",
+     "id": "SQS06_CARGO:1:1",
+     "fail": "NO"
+    },
+    {
+     "text": "수고비입니다",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 100
+      }
+     ],
+     "cond": "PC_CAPS >= 100",
+     "fx": "",
+     "to": "BRIBE",
+     "id": "SQS06_CARGO:1:2"
+    },
+    {
+     "text": "짐소 그늘에 바짝 붙어 서서 숨소리를 덮는다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "은신",
+       "min": 40
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "SNEAK",
+     "id": "SQS06_CARGO:1:3"
+    },
+    {
+     "text": "끼어들지 않고 지켜본다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "LUCK",
+     "id": "SQS06_CARGO:1:4"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "피곤",
+   "text": "…찬다고? (손을 거둔다) 됐어. 가."
+  },
+  {
+   "op": "cmd",
+   "name": "s06",
+   "args": [
+    "cargo",
+    "pass"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "미소",
+   "text": "그 학원 내 할아버지가 다녔다던데. 적성 3등급 받고 — (한참 떠든다) …어, 아직 있어? 가, 가."
+  },
+  {
+   "op": "cmd",
+   "name": "s06",
+   "args": [
+    "cargo",
+    "pass"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "기본",
+   "text": "(주머니에 넣는다) 짐 이상 없음."
+  },
+  {
+   "op": "cmd",
+   "name": "s06",
+   "args": [
+    "cargo",
+    "pass"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "짐소 옆에 바짝 붙는다. 손전등이 배 밑을 훑다가 — 당신 그림자에 걸려 멈춘다. 한참. 손전등이 지나간다."
+  },
+  {
+   "op": "cmd",
+   "name": "s06",
+   "args": [
+    "cargo",
+    "pass"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "s06",
+   "args": [
+    "cargo",
+    "luck"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "분노",
+   "text": "웃기지 마. 배 밑 — 사람이다! 끌어내!"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-064",
+   "emo": "놀람",
+   "text": "(짐소 배 밑에서 굴러 나온다)"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "진해원을 데리고 달아난다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "FLEE",
+     "id": "SQS06_CARGO:2:0"
+    },
+    {
+     "text": "싸운다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "FIGHT",
+     "id": "SQS06_CARGO:2:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s06",
+   "args": [
+    "flee"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "s06",
+   "args": [
+    "fight"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S06.txt"
+}
