@@ -39,6 +39,8 @@ static func story(st: StoryState) -> Dictionary:
 	d["track"] = {"on": st.quests.tracked, "pins": st.quests.pinned.duplicate()}
 	d["book"] = st.book.to_dict()
 	d["enc"] = st.enc.duplicate(true)
+	d["radio"] = st.radio.to_dict()
+	d["deeds"] = st.deeds.to_dict()
 	return _sorted(d)
 
 
@@ -64,6 +66,10 @@ static func apply_story(st: StoryState, d: Dictionary) -> void:
 	st.book = NpcBook.new(st.npcs)
 	st.book.from_dict(d.get("book", {}))
 	st.enc = (d.get("enc", {}) as Dictionary).duplicate(true)
+	st.deeds = Deeds.new()
+	st.deeds.from_dict(d.get("deeds", {}))
+	st.radio = Radio.new()
+	st.radio.from_dict(d.get("radio", {}))                             # 옛 저장: 빈 사전 — 이미 참인 소식은 대기열 없이 순환으로(Radio.primed)
 	st.events.clear()
 
 

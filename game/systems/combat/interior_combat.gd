@@ -64,6 +64,7 @@ var buddy_weapon := "W-067":
 			mates.list[0]["w"] = weapons[v].duplicate()
 var armor_dr := Callable()                         ## 주인공 DR(입은 옷 × 상태, 1-8a) — 호스트가 준다
 var nav: InteriorNav
+var r_long := false                               ## 재장전 키를 0.6초 넘게 눌렀다(라디오 켜기 · 끄기 — 놓아도 재장전하지 않는다)
 var bot := {}                                     ## 봇 입력: {"aim", "fire", "crouch", "reload", "stim"}
 var popups: Array = []                            ## [글, 위치, 남은 초, 색]
 var stats := {"shots": 0, "hits": 0, "sneak": 0, "spotted": 0, "stims": 0, "downs": 0, "hurt": 0.0}
@@ -957,7 +958,7 @@ func _player(dt: float, player: Actor, st: StoryState) -> void:
 			mags[weapon_id] = int(mags.get(weapon_id, 0)) + _ammo_take(weapon_id, int(w["mag"]) - int(mags.get(weapon_id, 0)), st)
 		return
 	var ranged: bool = w["kind"] == "ranged"
-	if ranged and (bot.get("reload", false) if not bot.is_empty() else Input.is_action_just_pressed("reload")):
+	if ranged and (bot.get("reload", false) if not bot.is_empty() else (Input.is_action_just_released("reload") and not r_long)):
 		start_reload(st)
 		return
 	if Arms.fam(w) in ["thrown", "mine"]:

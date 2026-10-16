@@ -36,6 +36,8 @@ var rad_acc := 0.0                      ## 방사능(1-9d): PC_RADS에 아직 �
 var stat_tmp := {}                      ## 잠깐 능력치 보정(1-9e4 최루 기침 PE −2 등): 코드 -> 값. 저장하지 않는다(벗어나면 곧 풀린다)
 var rad_drug := {}                      ## 라드-X 류(1-9d): {"pct": 저항 %, "t": 남은 초, "id"}
 var places := PlaceLog.new()             ## 장소 발견 상태(1-2, SD-12 §5.5)
+var deeds := Deeds.new()                ## 행적 기록 · 정보 전파(1-10c, SD-06 §6): 세력은 알게 된 뒤에 반응한다
+var radio := Radio.new()                ## 라디오(1-10b, SD-12 §10): 켜기 · 맞춘 방송국 · 편성 위치 · 소식 대기열 · 방송 기록
 var book := NpcBook.new()               ## 인물 수첩(1-2, SD-12 §3.11)
 const ENEMY_FACTION := {"CR-401": "BJ", "CR-405": "BJ", "CR-435": "SB", "CR-436": "SB", "CR-437": "SB", "CR-438": "SB", "CR-534": "SB",
 	"CR-456": "JH", "CR-457": "JH", "CR-403": "BJ", "CR-420": "YT", "CR-421": "YT", "CR-423": "YT"}
@@ -103,6 +105,7 @@ func _init() -> void:
 	# 길 위 인카운터(1-E, SD-22): RE036_MET 떠돌이 고물상을 만난 적 · RE036_NEWS 길 소식 차례 · RE042_N 유해 쪽지 차례(같은 글이 연달아 나오지 않게)
 	for k in ["RE036_MET", "RE036_NEWS", "RE042_N"]:
 		vars.declare(k, "int", 0)
+	vars.declare("BC_DOUBT_DAY", "int", 0)                    # 정보 전파(1-10c): 걸어 들어감 소문이 봉천에 닿은 날 + 1 — 그날까지 봉천 사람들이 수군거린다(SD-20 N8)
 	# 거처(1-8b, SD-15 §7): HOME_BC 봉천 옥탑방(0 없음 · 1 내 방 · 2 압류) · HOME_BC_OK 조건이 찬 날(그다음 날부터 조만석이 열쇠를 준다) ·
 	# WELL_RESTED 숙면이 끝나는 절대 분(0 = 없음, SD-11 §11.5 경험치 +10% 12시간) · HOME_BC_NOTE 문 앞 알림(§7.7: 1 '출입 자제' 쪽지 · 2 읽음 · 3 압류 딱지 · 4 읽음 · 5 재개방) ·
 	# BAEKGU_NAP 오늘 백구가 옥탑방 문 앞에서 자는 날(하루 판정마다 굴림)

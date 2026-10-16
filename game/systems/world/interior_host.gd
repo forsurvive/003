@@ -26,6 +26,9 @@ var scenes_by_npc := {}                          ## 인물 ID -> [대화 장면,
 var input_vec := Vector2.ZERO                    ## 외부(봇·터치)가 넣는 이동 입력. 없으면 키보드
 var input_fn := Callable()                       ## 봇: 1/60초마다 다시 묻는 이동 입력(긴 프레임에서 칸 가운데를 지나쳐 맴돌지 않게)
 var use_keyboard := true
+var radio_icons: Texture2D                        ## 라디오 화자 24×24(송미래 · 남궁혁 · 공보방송 · 구내방송)
+var _r_hold := 0.0                                ## 재장전 키를 누른 초(0.6초 = 라디오)
+var _rctx := {}                                   ## 이번 프레임 라디오 수신 조건(그리기 · 핍-보이가 같이 쓴다)
 var act_held := false                             ## 터치 '상황' 단추를 누르고 있다(일으키기 2초)
 var cur_map := ""                                 ## 지금 맵 ID(대기 동행이 남는 자리)
 var touch_sprint := false                         ## 터치: 이동 스틱을 바깥 링 밖까지 0.3초 밀었다(SD-11 §15.5)
@@ -410,6 +413,7 @@ func _physics_process(dt: float) -> void:
 	_night_tick(dt)
 	_hurt_t = maxf(0.0, _hurt_t - dt)
 	_hud_t += dt
+	_radio_tick(dt)
 	_drain_events()
 	for n in notes:
 		n[1] -= dt
@@ -458,6 +462,7 @@ func _physics_process(dt: float) -> void:
 		else:
 			player.move(v, dt)
 		combat.mates.push = v                                            # 동행이 길목에서 비킨다(1-10a)
+		_nudge_npcs(v, dt)
 		if player.doll != null:
 			player.doll.position.y = 2.0 if combat.crouch else 0.0               # 웅크리면 2px 낮게(전용 그림 전까지)
 		var hold_act: bool = (use_keyboard and Input.is_action_pressed("interact")) or act_held
@@ -524,6 +529,27 @@ func _bring_buddy(id: String) -> void:
 		b._show()
 		combat.mates.add(id, b, _mate_name(id))
 		_sync_mates()
+
+
+## 일과 주민이 길을 막았다: 주인공이 0.6초 넘게 그쪽으로 밀어도 못 가면 그 사람이 옆으로 비켜 선다(서로 막혀 둘 다 서 있지 않게)
+var _push_t := 0.0
+
+
+func _nudge_npcs(v: Vector2, dt: float) -> void:
+	if v.length() < 0.2 or player.loco.motion != "idle":
+		_push_t = 0.0
+		return
+	_push_t += dt
+	if _push_t < 0.6:
+		return
+	_push_t = 0.0
+	var f := v.normalized()
+	for n in npcs:
+		if n["routine"] == null or not is_instance_valid(n["actor"]) or n.get("dead", false) or n["routine"].paused:
+			continue
+		var rel: Vector2 = n["actor"].loco.logical - player.loco.logical
+		if rel.length() < 44.0 and rel.normalized().dot(f) > 0.5:
+			n["routine"].step_aside(Vector2(signf(f.x) if absf(f.x) > 0.38 else 0.0, signf(f.y) if absf(f.y) > 0.38 else 0.0))
 
 
 func _mate_name(id: String) -> String:
@@ -1479,6 +1505,108 @@ func _draw_hud() -> void:
 		var owned := bp.ends_with("[소유]")
 		_txt(Vector2(320 + r / 2.0 + _shake_x(), 296 + b), bp, HUD_RED if owned else HU[6], HORIZONTAL_ALIGNMENT_CENTER)
 	_draw_mates(Vector2(8, 258 + b))
+	_draw_radio(vs, false)
+
+
+# ---------------------------------------------------------------- 라디오(1-10b, SD-12 §10 · SD-17 §4)
+const RADIO_WHO := {"송미래": 0, "남궁혁": 1, "공보방송": 2, "구내방송": 3}
+const UNDER_MAPS := ["D-", "J-", "Y-", "CG-", "K-08"]           ## 지하 실내(지하철역 · 지하상가 · 벙커 · 배수로): 신호 한 단계 나빠짐
+
+
+## 라디오 수신 조건(Radio.quality가 읽는다)
+func radio_ctx() -> Dictionary:
+	var mid := map.id if map != null else ""
+	var ctx := {"act": st.quests.cur_act(), "vault": mid.begins_with("V-"), "pip": pipboy_ok, "under": false, "clean01": false,
+		"public": st.vars.has("RADIO_PUBLIC") and int(st.vars.get_v("RADIO_PUBLIC")) >= 1,
+		"now": Clock.abs_min(date_text), "date": date_text}
+	if map is WorldMap and player != null:
+		var t: Vector2i = map.tile_of(player.loco.logical)
+		var rc: String = map.region_at(t)
+		ctx["clean01"] = rc in ["R06", "HR"] or (rc == "R02" and map.region_at(t + Vector2i(0, -24)) == "HR")   # 용산 · 한강(노들섬) · R02 북쪽 강변
+	elif map != null:
+		for pf in UNDER_MAPS:
+			if mid.begins_with(pf):
+				ctx["under"] = true
+	return ctx
+
+
+func _radio_tick(dt: float) -> void:
+	_rctx = radio_ctx()
+	_rctx["hold"] = box.active or ev.busy() or busy or pipboy != null
+	var r := st.radio
+	var fresh := r.tick(dt, st, _rctx)
+	if not fresh.is_empty() and hud_on:
+		var nm := Radio.station_name(str(fresh[0]))
+		if touch_layout:
+			hint("라디오에 %s%s 잡힌다 — 화면 위 [라디오]를 누르면 켜고 끈다" % [nm, Josa.pick("이", nm)], 6.0)
+		else:
+			hint("라디오에 %s%s 잡힌다 — R을 길게 누르면 켜고 끈다(핍-보이 데이터 > 라디오)" % [nm, Josa.pick("이", nm)], 6.0)
+	if use_keyboard and not box.active and pipboy == null and Input.is_action_pressed("reload"):
+		if Input.is_action_just_pressed("reload"):
+			_r_hold = 0.0
+			combat.r_long = false
+		_r_hold += dt
+		if _r_hold >= 0.6 and not combat.r_long:
+			combat.r_long = true
+			radio_toggle()
+
+
+## 켜기 · 끄기(R 길게 · 터치 표시 탭) — 알림 한 줄
+func radio_toggle() -> void:
+	var r := st.radio
+	if r.toggle(_rctx if not _rctx.is_empty() else radio_ctx()):
+		_note("라디오 켬: " + Radio.station_name(r.tuned))
+	elif Radio.receivable(_rctx if not _rctx.is_empty() else radio_ctx()).is_empty():
+		_note("잡히는 방송이 없다")
+	else:
+		_note("라디오 끔")
+
+
+## 화면에 라디오가 보이나(터치 표시 단추가 쓴다): 켜져 있거나 잡히는 방송국이 있다
+func radio_shown() -> bool:
+	return st.radio.on or not Radio.receivable(_rctx if not _rctx.is_empty() else radio_ctx()).is_empty()
+
+
+## HUD 라디오 표시(SD-12 §4.2: PC (520, 60) · 터치 (476, 112) 92×16) + 자막 띠(PC (120, 286) 400×2행 · 터치 (160, 8) 320×2행).
+## 자막 `[방송국] 화자: 문장` · 왼쪽 24×24 화자 얼굴 · 배경 60%. 화자 얼굴 · 띠는 12px 글(한 줄 33자, SD-12 §14.5). 교전 중에는 1행(SD-12 §10.1). 신호가 약하면 끊김 · ▒(SD-17 §7.6)
+func _draw_radio(vs: Vector2, touch: bool) -> void:
+	var r := st.radio
+	var rr := vs.x - 640.0
+	var ip := Vector2(476 + rr, 112) if touch else Vector2(520 + rr, 60)
+	if not r.on:
+		if touch and radio_shown():
+			_txt(ip, "[라디오] 끔", HU[3])
+		return
+	var q := Radio.quality(r.tuned, _rctx)
+	var tag: String = ["", " ·잡음", " ·약함"][clampi(q, 0, 2)]
+	var np := r.now_playing()
+	var lit: bool = np.get("kind", "") in ["line", "gap"] or fmod(_hud_t, 0.8) < 0.6     # 징글 · 휴지 중에는 표시만 깜빡
+	_txt(ip, "[라디오] %s%s" % [Radio.station_short(r.tuned), tag], HU[6] if lit else HU[4])
+	if str(np.get("kind", "")) != "line" or Radio.dropout(q, _hud_t):
+		return
+	var body := Radio.garble(str(np["text"]), q)
+	if str(np.get("sting", "")) != "":
+		body += " [%s]" % str(np["sting"])
+	var line := "[%s] %s: %s" % [Radio.station_short(r.tuned), str(np["who"]), body]
+	var w := 300.0 if touch else 400.0                                    # 터치: HP · AP 막대(8~168)와 얼굴이 겹치지 않게 (196, 8) 300폭(정합)
+	var band := Rect2(196 + rr / 2.0, 8, w, 34) if touch else Rect2(120 + rr / 2.0, 284 + vs.y - 360.0, w, 30)
+	var rows: Array = TextWrap.wrap(line, func(t: String) -> float: return font.get_string_size(t, HORIZONTAL_ALIGNMENT_LEFT, -1, 12).x, w - 10.0)
+	if combat.in_combat() and rows.size() > 1:
+		rows = [_clip(line, w - 10.0)]                                    # 교전 중: 1행
+		band.size.y = 17.0
+	band.size.y = minf(band.size.y, 4.0 + 13.0 * rows.size() + (4.0 if touch else 0.0))
+	banner.draw_rect(band, Color(0, 0, 0, 0.6))
+	banner.draw_rect(Rect2(band.position + Vector2(0.5, 0.5), band.size - Vector2.ONE), Color(HU[3], 0.6), false, 1.0)
+	for i in mini(2, rows.size()):
+		banner.draw_string(font, Vector2(band.position.x + 5, band.position.y + 2 + i * (16.0 if touch else 13.0) + font.get_ascent(12)),
+			str(rows[i]), HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("E9E4D8"))
+	if radio_icons == null and ResourceLoader.exists("res://assets/ui/radio_icons.png"):
+		radio_icons = load("res://assets/ui/radio_icons.png")
+	var who := int(RADIO_WHO.get(str(np["who"]), -1))
+	if radio_icons != null and who >= 0:                                    # 화자 얼굴 24×24(SD-12 §10.1) — 띠 왼쪽 바깥
+		var fp := band.position + Vector2(-27, roundf((band.size.y - 24.0) / 2.0))
+		banner.draw_rect(Rect2(fp - Vector2(1, 1), Vector2(26, 26)), HU[0])
+		banner.draw_texture_rect_region(radio_icons, Rect2(fp, Vector2(24, 24)), Rect2(who * 24, 0, 24, 24))
 
 
 ## 선량계(SD-11 §11.2 · §12.5 · SD-12 §5.6): 피폭 중에만. 반원 눈금(로그) · 바늘 · 초당 라드 · 단계가 오르면 1초 흔들림.
@@ -1539,6 +1667,7 @@ func _draw_hud_touch(vs: Vector2, c: Combatant, low: bool, ap: float) -> void:
 	if bp != "":
 		_txt(Vector2(320 + r / 2.0 + _shake_x(), 250 + vs.y - 360.0), bp, HUD_RED if bp.ends_with("[소유]") else HU[6], HORIZONTAL_ALIGNMENT_CENTER)
 	_draw_mates(Vector2(8, 152))
+	_draw_radio(vs, true)
 
 
 func _shake_x() -> float:
@@ -1947,7 +2076,7 @@ func status() -> Dictionary:
 		"rad_drug": st.rad_drug.duplicate(),
 		"dr": int(items_db.get(worn(), {}).get("dr", 0)) if st.items.has(worn()) else 0,
 		"tile": Vector2(map.tile_of(player.loco.logical)) if map is WorldMap and player != null else Vector2(-99, -99),
-		"world": map if map is WorldMap else null, "travel": travel_check}
+		"world": map if map is WorldMap else null, "travel": travel_check, "radio": radio_ctx()}
 
 
 # ---------------------------------------------------------------- 빠른 이동(SD-12 §5.6)
@@ -2073,6 +2202,7 @@ func advance_minutes(m: int) -> void:
 		date_text = Clock.add_minutes(date_text, step, st)
 		a += step
 		m -= step
+		st.deeds.tick(st, a)                                              # 정보 전파(1-10c): 그사이 도착한 소식을 시각 순서대로
 		if step == to6:
 			_daily()
 

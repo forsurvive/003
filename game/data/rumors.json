@@ -134,6 +134,21 @@
 "where": "*",
 "cond": "",
 "text": "캡은 병뚜껑인데, 사람 목숨보다 비싸게 굴러다녀."
+},
+{
+"where": "R01",
+"cond": "MQ106_RESULT == 4 and GAME_DAY <= BC_DOUBT_DAY",
+"text": "청계산에 제 발로 걸어 들어갔다며? 거기서 무슨 얘기를 했대."
+},
+{
+"where": "R01",
+"cond": "MQ106_RESULT == 4 and GAME_DAY <= BC_DOUBT_DAY",
+"text": "공보방송이 '출두 확인' 했다던데. 우리 편이긴 한 거야?"
+},
+{
+"where": "R01",
+"cond": "MQ106_RESULT == 4 and GAME_DAY <= BC_DOUBT_DAY",
+"text": "비상정부 벙커에서 사흘 자고 왔다는 사람이 저 사람이야. 말 조심해."
 }
 ]
 }

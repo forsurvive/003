@@ -739,7 +739,8 @@ func _finish(result: int) -> void:
 			st.vars.set_v("PD_R01_BJ", 10)
 		4:
 			st.call_fn("aff", ["BJ", 15])
-			st.call_fn("aff", ["JC", -3])                                 # 정착 −3(소문: 볼트 아이가 비상정부 벙커에 다녀왔다)
+			st.deeds.record(st, "인도", "R01", 2, {"JC": -3, "JC_BC": 0}, Clock.abs_min(host.date_text),   # 정착 −3은 소식이 닿을 때(1-10c, SD-06 §6) —
+				{"tag": "MQ106_WALK", "about": ["BJ"], "what": "청계산 벙커에 제 발로 다녀왔다"})   # 공보 '출두 확인' 공고(다음 정시) · 소문(봉천 12시간)
 			st.vars.set_v("WANTED_PRE", Wanted.value(st))                 # 출두 확인 전 값(사흘 뒤 되돌린다)
 			st.vars.set_v("WANTED_HOLD", v("GAME_DAY") + 3)              # 공고 → '출두 확인', 사흘 등급 1(§6.5 하한 예외 1회)
 			st.vars.set_v("PD_R01_BJ", 10)

@@ -53,7 +53,8 @@ var f10: Font
 var move_raw := 0.0                               ## 이동 스틱을 끈 거리(px)
 var move_out := 0.0                               ## 이동 스틱을 바깥 링 밖에 둔 초(질주 판정)
 var calm_t := 0.0                                 ## 교전 아닌 채로 지난 초(비전투 축소)
-var off_r := 0.0                                  ## 오른쪽 묶음을 화면 오른쪽 끝에 붙이는 이동량(넓은 화면)
+var off_r := 0.0
+var radio_t := -1.0                               ## 라디오 표시를 누른 초(0.6초 넘으면 핍-보이 라디오)                                  ## 오른쪽 묶음을 화면 오른쪽 끝에 붙이는 이동량(넓은 화면)
 
 
 func setup(h: InteriorHost, pause_: Callable) -> TouchHud:
@@ -81,6 +82,13 @@ func hidden() -> bool:
 
 
 func _process(dt: float) -> void:
+	if radio_t >= 0.0 and pressed.values().has("radio"):
+		radio_t += dt
+		if radio_t >= 0.6 and host.pipboy_ok:                             # 길게: 핍-보이 데이터 > 라디오
+			radio_t = -1.0
+			host.open_pipboy()
+			if host.pipboy != null:
+				host.pipboy.open_at(2, 4)
 	var vs := get_viewport().get_visible_rect().size
 	view.size = vs
 	off_r = vs.x - 640.0
@@ -198,6 +206,12 @@ func _input(e: InputEvent) -> void:
 	var p := _local(e.position)
 	if e is InputEventScreenTouch:
 		if e.pressed:
+			var rr := Rect2(476 + off_r - 2, 102, 96, 36)                  # 라디오 표시(판정 36, SD-12 §17.2)
+			if rr.has_point(p) and host.radio_shown():
+				radio_t = 0.0
+				pressed[e.index] = "radio"
+				get_viewport().set_input_as_handled()
+				return
 			var id := _btn_at(p)
 			if id != "":
 				pressed[e.index] = id
@@ -223,6 +237,9 @@ func _input(e: InputEvent) -> void:
 					tap_shot = 0.08                                    # 톡 쏘기 한 발
 				aim_id = -1
 				aim_v = Vector2.ZERO
+			if pressed.get(e.index, "") == "radio" and radio_t >= 0.0 and radio_t < 0.6:
+				host.radio_toggle()
+			radio_t = -1.0
 			pressed.erase(e.index)
 			get_viewport().set_input_as_handled()
 	else:

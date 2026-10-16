@@ -19,6 +19,7 @@ var paused := false
 var _stuck_t := 0.0
 var _last := Vector2.ZERO
 var _yield_t := 0.0
+var _aside := -1.0                               ## 비켜선 뒤 서 있는 남은 초(-1 = 아님)
 
 
 func _init(a: Actor, m, r: Array) -> void:
@@ -37,6 +38,18 @@ func target() -> Vector2:
 func tick(dt: float, player_pos: Vector2) -> void:
 	if paused or route.is_empty():
 		actor.move(Vector2.ZERO, dt)
+		return
+	if _aside >= 0.0:                                                  # 비켜서는 중: 옆 칸까지 걷고 잠깐 선다
+		if not path.is_empty():
+			while not path.is_empty() and arrived(actor.loco.render, path[0]):
+				path.remove_at(0)
+			if not path.is_empty():
+				path = walk_path(actor, path, dt)
+				return
+		actor.move(Vector2.ZERO, dt)
+		_aside -= dt
+		if _aside < 0.0:
+			path = with_start(map, actor.loco.render, target(), actor.floor_id)
 		return
 	if wait_t > 0.0:
 		wait_t -= dt
@@ -75,6 +88,22 @@ func tick(dt: float, player_pos: Vector2) -> void:
 	if _stuck_t > 2.0:
 		_stuck_t = 0.0
 		path = with_start(map, actor.loco.render, target(), actor.floor_id)
+
+
+## 주인공이 dir 쪽으로 밀고 있다(이 사람이 길을 막았다): 옆 칸(양쪽) → 앞 칸 차례로 빈 칸에 비켜 선다. 비킬 데가 없으면 false
+func step_aside(dir: Vector2) -> bool:
+	if _aside >= 0.0:
+		return true
+	var here: Vector2i = map.tile_of(actor.loco.logical)
+	var d := Vector2i(roundi(dir.x), roundi(dir.y))
+	var side := Vector2i(-d.y, d.x)
+	for c in [here + side, here - side, here + d, here + d + side, here + d - side]:
+		if c == here or map.is_solid(c):
+			continue
+		path = PackedVector2Array([Vector2(c.x * 32 + 16, c.y * 32 + 16)])
+		_aside = 3.0
+		return true
+	return false
 
 
 func _arrive() -> void:

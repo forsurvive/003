@@ -2,7 +2,8 @@
 ##   능력치: 상태(주민 그림·부위 막대·스팀팩) · S.P.E.C.I.A.L.(SD-10 §2.2 정의 + 생활기록부 문구) · 스킬 · 퍽 · 일반(카르마·등록 카드)
 ##   아이템: 무기 · 의복 · 구호품 · 잡화 · 탄약 (결정 = 장착/해제·사용, 1~8 = 단축키 지정)
 ##   데이터: 지역 지도 · 월드 지도(빠른 이동, 1-2 — systems/ui/pip_map.gd) · 퀘스트 · 기록
-##   아직 뺀 하위 탭(정합): 세력(1-10 무렵 판도와 함께), 라디오(1-10)
+##   데이터 > 라디오(1-10b, SD-12 §10.6): 방송국 목록(범위 밖 `(수신 불가)`) · 상세(로고 48×48 · 코너 · 진행자 · 신호) · 지난 소식 20 · 방송 기록
+##   아직 뺀 하위 탭(정합): 세력(1-10c 판도와 함께)
 ## 조작(SD-12 §3.2·§13.8): Tab·Esc 닫기, Q·E 주 탭, ←→ 하위 탭, ↑↓ 목록, Enter 사용, F1·F2·F3 주 탭 바로, J 퀘스트.
 ## 마우스·터치(마우스 흉내): 탭·하위 탭·줄을 누르고(고른 줄을 다시 누르면 사용), 아래 줄 [닫기]·오른쪽 위 전원 단추를 누르면 닫힌다.
 ## 열 때(§3.2): 기기가 아래에서 0.2초 올라오고 화면이 0.15초 켜진다(가로 주사선이 위아래로 벌어짐). 열어 둔 동안 시간이 멈춘다.
@@ -13,7 +14,7 @@ signal action(kind: String, id: String)              ## "equip"·"unequip"·"use
 
 const U := DocScreen.GREEN
 const TABS := ["능력치", "아이템", "데이터"]
-const SUBS := [["상태", "S.P.E.C.I.A.L.", "스킬", "퍽", "일반"], ["무기", "의복", "구호품", "잡화", "탄약"], ["지역 지도", "월드 지도", "퀘스트", "기록"]]
+const SUBS := [["상태", "S.P.E.C.I.A.L.", "스킬", "퍽", "일반"], ["무기", "의복", "구호품", "잡화", "탄약"], ["지역 지도", "월드 지도", "퀘스트", "기록", "라디오"]]
 const CATS := ["weapon", "apparel", "aid", "misc", "ammo"]
 const STAT_ORDER := ["ST", "PE", "EN", "CH", "IN", "AG", "LK"]
 const OPEN_S := 0.2
@@ -162,6 +163,24 @@ func _rows() -> Array:
 			out = _quest_rows()
 		[2, 3]:
 			out = _record_rows()
+		[2, 4]:
+			out = _radio_rows()
+	return out
+
+
+## 라디오 목록: 방송국(켜짐 · 수신 불가) + 지난 소식 + 방송 기록
+func _radio_rows() -> Array:
+	var r: Radio = st.radio
+	var ctx: Dictionary = info.get("radio", {})
+	var out: Array = []
+	for sid in r.listed(ctx):
+		var q := Radio.quality(sid, ctx)
+		out.append({"text": Radio.station_name(sid), "id": sid, "dim": q < 0,
+			"right": "(수신 불가)" if q < 0 else ("켜짐" if r.on and r.tuned == sid else "")})
+	if not r.news_log.is_empty():
+		out.append({"text": "지난 소식", "id": "past", "right": str(r.news_log.size())})
+	if not r.air_log.is_empty():
+		out.append({"text": "방송 기록", "id": "log", "right": str(r.air_log.size())})
 	return out
 
 
@@ -439,9 +458,64 @@ func _enter_label() -> String:
 			return "조리" if rows[sel]["id"] == Craft.BURNER else "—"
 		[2, 2]:
 			return "—" if rows[sel]["id"] == "" else ("추적 끄기" if rows[sel]["id"] == st.quests.tracked else "추적")
+		[2, 4]:
+			var rid := str(rows[sel]["id"])
+			if rid in ["past", "log"]:
+				return "—"
+			if Radio.quality(rid, info.get("radio", {})) < 0:
+				return "—"
+			return "끄기" if st.radio.on and st.radio.tuned == rid else "켜기"
 		[2, 3]:
 			return "지도에서 보기" if _npc_lid(str(rows[sel]["id"])) != "" else "—"
 	return "—"
+
+
+static var radio_logos: Texture2D
+
+
+## 라디오 상세(SD-12 §10.6): 로고 48×48(1비트, CRT 단색) · 이름 · 진행자 · 신호 · 지금 코너 · 지금 줄 / 지난 소식 · 방송 기록
+func _radio_page(id: String) -> void:
+	var r: Radio = st.radio
+	var ctx: Dictionary = info.get("radio", {})
+	if id in ["past", "log"]:
+		var rows_: Array = r.news_log if id == "past" else r.air_log
+		text(Vector2(264, 78), "지난 소식" if id == "past" else "방송 기록(최근 블록)", f12b, 12, U[6])
+		var y := 98.0
+		for e in rows_:
+			if y > 262.0:
+				break
+			var head := "[%s] %s" % [Radio.station_short(str(e["st"])), str(e.get("date", "")).get_slice("  ", 0)]
+			text(Vector2(264, y), head, f10, 10, U[4])
+			y += 13.0
+			var ls: Array = e["lines"]
+			var body := " ".join(ls.slice(0, 3).map(func(l): return str(l[1])))
+			y = _para(Vector2(272, y), body, U[5], 312.0) + 4.0
+		return
+	var q := Radio.quality(id, ctx)
+	if radio_logos == null and ResourceLoader.exists("res://assets/ui/radio_logos.png"):
+		radio_logos = load("res://assets/ui/radio_logos.png")
+	box(Rect2(263, 77, 50, 50), U[3], false)
+	if radio_logos != null:
+		var at := AtlasTexture.new()
+		at.atlas = radio_logos
+		at.region = Rect2(Radio.ORDER.find(id) * 48, 0, 48, 48)
+		face.texture = at
+		face.position = view.position + Vector2(264, 78)
+		face.modulate = Color(1, 1, 1, 1.0 if q >= 0 else 0.45)
+		face.visible = true
+	text(Vector2(322, 78), Radio.station_name(id), f12b, 12, U[6] if q >= 0 else U[3])
+	text(Vector2(322, 96), "진행: " + Radio.station_host(id), f10, 10, U[5])
+	text(Vector2(322, 110), "신호: " + ("수신 불가" if q < 0 else Radio.Q_NAME[q]), f10, 10, U[4])
+	var y := 136.0
+	text(Vector2(264, y), "지금: " + (r.corner(id) if q >= 0 else "—"), f10, 10, U[5])
+	y += 16.0
+	if r.on and r.tuned == id:
+		var np := r.now_playing()
+		if str(np.get("kind", "")) in ["line", "gap"]:
+			y = _para(Vector2(264, y), "%s: %s" % [str(np["who"]), Radio.garble(str(np["text"]), q)], U[6], 320.0)
+	else:
+		y = _para(Vector2(264, y), "[Enter] 이 방송국에 맞춰 켠다. 꺼 두어도 방송은 흐른다.", U[4], 320.0)
+	text(Vector2(264, 262), "필드: R 길게 = 켜기 · 끄기  /  음악 없음 — 자막 방송", f10, 10, U[3])
 
 
 func _detail() -> void:
@@ -451,6 +525,8 @@ func _detail() -> void:
 	var row: Dictionary = rows[sel]
 	var id: String = row["id"]
 	match [tab, sub[tab]]:
+		[2, 4]:
+			_radio_page(id)
 		[0, 0]:
 			if id == "body":
 				_body_page()
@@ -1024,6 +1100,12 @@ func _enter() -> void:
 		[1, 3]:
 			if id == Craft.BURNER:
 				action.emit("use", id)                                     # 휴대용 버너: 그 자리에서 조리(1-8c, SD-13 §7.9.5)
+		[2, 4]:
+			if not (id in ["past", "log"]) and Radio.quality(id, info.get("radio", {})) >= 0:
+				if st.radio.on and st.radio.tuned == id:
+					st.radio.on = false
+				else:
+					st.radio.tune(id)
 		[2, 2]:
 			if id != "":
 				st.quests.track(id)                                      # 추적(SD-12 §3.12) — 같은 줄을 다시 고르면 끈다
