@@ -5,14 +5,30 @@
  "npc": "N-BC-2",
  "cond": "V_ACT >= 1",
  "labels": {
-  "START": 0
+  "START": 0,
+  "NOLEAD": 3
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "dead(\"N-R01-028\") == 1",
+   "to": "NOLEAD"
+  },
   {
    "op": "line",
    "who": "N-BC-2",
    "emo": "기본",
    "text": "남태하 조장님 지시야. 밸브는 봉천이 지킨다. 패거리 그림자 보이면 깡통 줄부터 당겨."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-BC-2",
+   "emo": "기본",
+   "text": "조장님은 없어도 밸브는 봉천이 지킨다. 패거리 그림자 보이면 깡통 줄부터 당겨."
   },
   {
    "op": "goto",

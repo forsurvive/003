@@ -50,6 +50,7 @@ var turrets: Array = [null, null]
 var radar_props: Array = []
 var _radar_look := ""
 var helpers := false                     ## 남태하 감시조 둘(해법 B 지원)
+var _shut_day := -1                       ## 휴업 쪽지 안내를 띄운 날(하루 한 번)
 var _cast_said := false
 var _map_ref: InteriorMap = null
 
@@ -67,6 +68,15 @@ func setup(h: InteriorHost, is_log := false) -> void:
 
 func v(k: String) -> int:
 	return int(st.vars.get_v(k))
+
+
+## 감시조 앞장(1-X 교차 감사): 남태하가 죽었으면 오재윤, 둘 다 없으면 '감시조' — 안내 띠가 죽은 사람을 부르지 않는다(SD-20 P3). 뒤 조사는 받침대로
+func _lead(josa := "") -> String:
+	for id in ["N-R01-028", "N-R01-035"]:
+		if not st.is_dead(id):
+			var nm := st.npc_name(id)
+			return nm + (Josa.pick(josa, nm) if josa != "" else "")
+	return "감시조" + (Josa.pick(josa, "감시조") if josa != "" else "")
 
 
 func _log(s: String) -> void:
@@ -193,7 +203,7 @@ func _facts() -> void:
 		if v("SQ_S04_SLEEP") >= 1 and v("SQ_S04_VILLAGE_AT") > 0 and now >= v("SQ_S04_VILLAGE_AT"):
 			_out(6)                                                          # 파수가 잠들었다: 남태하가 철망을 비틀어 연다
 			if _zone() == "X-BC" or (_world() and _dist_mark("sentry") <= POST_R):
-				host.hint("남태하와 감시조가 주민센터로 달려간다. 잠든 파수 곁을 지나 철망을 비틀어 연다.", 6.0)
+				host.hint("%s 감시조가 주민센터로 달려간다. 잠든 파수 곁을 지나 철망을 비틀어 연다." % _lead("와"), 6.0)
 		elif v("SQ_S04_SLEEP") == 0 and now >= v("SQ_S04_DEADLINE") and v("SQ_S04_DEADLINE") > 0 and _safe_or_away():
 			_expire()
 	var up := 1 if _awake() and not _killed(0) and now >= v("SQ_S04_GUARD_BACK") else 0
@@ -239,7 +249,7 @@ func _wake() -> void:
 		_log("깨어나지 않음")
 		return
 	st.vars.set_v("SQ_S04_WAKE", _now())
-	if st.dead.has("N-R01-034"):
+	if st.is_dead("N-R01-034"):
 		st.vars.set_v("SQ_S04_WAKE", 0)                                     # 데려갈 아이가 없다(SD-20 N2) — 이번 깨어남은 소리 없이 지나간다
 		st.vars.set_v("SQ_S04_WAKE_AT", 0)
 		return
@@ -263,7 +273,7 @@ func _wake_scene() -> void:
 		return
 	if d <= SEE_R:
 		st.vars.set_v("SQ_S04_BELL", 1)
-		host.hint("21시. 망루에서 종이 울린다 — 땡, 땡, 땡. 남태하가 아랫문 쪽을 가리키며 소리친다. '쇳덩이가 솔이를 안고 간다!'", 7.0)
+		host.hint("21시. 망루에서 종이 울린다 — 땡, 땡, 땡. " + _lead("가") + " 아랫문 쪽을 가리키며 소리친다. '쇳덩이가 솔이를 안고 간다!'", 7.0)
 		_carry_start()
 	else:
 		st.vars.set_v("SQ_S04_BELL", 2)
@@ -542,7 +552,7 @@ func _on_killed(_eid: String, _alive: int) -> void:
 			_out(2)
 			st.call_fn("karma", [50])
 			_deed("SQS04_B", {"JC_BC": 6}, "봉천 주민센터 앞 파수 셋을 부수고 남솔을 꺼냈다", ["JC_BC"])
-			host.hint("파수 셋이 모두 멈췄다. 남태하와 감시조가 주민센터로 달려가 철망을 비틀어 연다.", 6.0)
+			host.hint("파수 셋이 모두 멈췄다. %s 감시조가 주민센터로 달려가 철망을 비틀어 연다." % _lead("와"), 6.0)
 		else:
 			host.hint("봉천의 파수 셋이 모두 멈췄다.", 4.0)
 		st.vars.set_v("SQ_S04_HOT", 0)
@@ -558,7 +568,7 @@ func _helpers_in() -> void:
 	var from := host.map.mark_pos("X-BC:land1")
 	for k in 2:
 		var id: String = ["N-R01-035", "N-R01-036"][k]
-		if st.dead.has(id):
+		if st.is_dead(id):
 			continue
 		host.ev._show_actor(id, from + Vector2((k * 2 - 1) * 40.0, 0), "S", _sheet(id))
 		var a: Actor = host.ev.actors.get(id)
@@ -756,7 +766,7 @@ func _ritual_tick() -> void:
 		return
 	var p := host.map.mark_pos("sentry")
 	host.ev._show_actor("N-R01-055", p + Vector2(-40, 32), "N", _sheet("N-R01-055"))
-	if v("AFF_GS") >= 20 and not st.dead.has("C-053"):
+	if v("AFF_GS") >= 20 and not st.is_dead("C-053"):
 		host.ev._show_actor("C-053", p + Vector2(48, 32), "N", _sheet("C-053"))
 	for id in ["N-R01-055", "C-053"]:
 		if host.ev.actors.has(id):
@@ -815,6 +825,9 @@ func _on_map(id: String) -> void:
 		_halt_scene = false
 		if v("SQ_S04_FIGHT") == 1:
 			st.vars.set_v("SQ_S04_FIGHT", 0)
+	if v("SQ_S04_LOITER") > _now() and _shut_day != day() and (id == "X-BC" or _zone() == "X-BC"):
+		_shut_day = day()                                                   # 휴업은 상인 앞에 가서야 아는 게 아니라 들어서면 보인다(1-X 재미 검수)
+		host.hint("가게 셔터마다 쪽지가 붙었다 — '쇳덩이 갈 때까지 휴업.'", 5.0)
 	if id == "K-33":
 		host.map.set_prop_state(Vector2i(10, 4), "413" if v("SQ_S04_WAKE") > 0 else "")
 		if v("SQ_S04_HELD") == 1:

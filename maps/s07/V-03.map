@@ -146,7 +146,7 @@ prop crate 50 36
 prop crate 51 36
 prop crate_metal 53 36
 text 36 36 "방망이 꽂이. 붉은 테이프를 감은 방망이에 '9회말'이라고 쓰여 있다."
-npc C-023 9 24 S route=교탁:10,25,12;평가관실:44,7,10;복도:30,16,3 bark="질문은 손 들고." cond="year() == 2277"
+npc C-023 9 24 S route=교탁:10,25,12;평가관실:44,7,10;복도:30,16,3 bark="질문은 손 들고." cond="year() == 2277 and MQP4_STAGE >= 30"
 mark p2_seat 6 8 N
 mark p2_desk 6 6 S
 npc C-023 7 3 S look=M1-S3-HR05-H1-T11-1-PF11-HD00-EY03 cond="year() == 2268" bark="질문은 손 들고."

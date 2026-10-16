@@ -387,6 +387,30 @@
   "weapon_main": "전투 산탄총 + 소방 도끼",
   "xp": 30
  },
+ "CR-466": {
+  "_src": "14_creatures-enemies.md:1231",
+  "dr": 8,
+  "hp": 70,
+  "id": "CR-466",
+  "level": 5,
+  "name": "계단마을 자경단원",
+  "part_weights": "PW-H",
+  "radius": 0.3,
+  "weapon_main": "사냥총 / 산탄총 / 각목",
+  "xp": 15
+ },
+ "CR-472": {
+  "_src": "14_creatures-enemies.md:1237",
+  "dr": 2,
+  "hp": 40,
+  "id": "CR-472",
+  "level": 3,
+  "name": "정착지 민병 (주민)",
+  "part_weights": "PW-H",
+  "radius": 0.3,
+  "weapon_main": "권총 / 각목 / 농기구",
+  "xp": 8
+ },
  "CR-473": {
   "_src": "14_creatures-enemies.md:1245",
   "dr": 4,

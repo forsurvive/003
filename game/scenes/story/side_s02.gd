@@ -375,7 +375,7 @@ func _on_killed(_eid: String, _alive: int) -> void:
 			e.set_meta("s02_dead", true)
 			if e == siren:
 				st.vars.set_v("SQ_S02_SIREN", 2)
-				st.dead["N-R01-062"] = st.year()
+				st.kill("N-R01-062")
 				_siren_drop(e)
 			else:
 				st.vars.set_v("SQ_S02_NKILLS", v("SQ_S02_NKILLS") + 1)
@@ -482,7 +482,7 @@ func _gate_spot(dy: int) -> Vector2:
 ## 22시 이후 윗문 쪽문: 남건희가 척후에게 물통을 받는다(단계 40 이후, 아직 모를 때만). 지켜보면 단계 60, 쪼그리지 않고 너무 다가가면 오늘 밤은 흩어진다
 func _night_tick() -> void:
 	var want := (hour() >= 22 or hour() < 1) and v("SQ_S02_MAP") == 1 and v("SQ_S02_KNOW") == 0 and v("SQ_S02_IN") == 0 \
-		and not st.dead.has("N-R01-039") and v("SQ_S02_NIGHT_DAY") != _night_key()
+		and not st.is_dead("N-R01-039") and v("SQ_S02_NIGHT_DAY") != _night_key()
 	if want and not night_on:
 		host.ev._show_actor("N-R01-039", _gate_spot(1), "N")
 		host.ev._show_actor("N-YT-2", _gate_spot(-1), "S", "en_cr420b_loco")
@@ -532,14 +532,14 @@ func _trap_start() -> void:
 	st.vars.set_v("SQ_S02_FIGHT", 1)
 	host.refresh_npcs()                                                    # 계단참 감시조는 전투 개체로 다시 세운다(맵 조건 SQ_S02_FIGHT == 0)
 	for g in TRAP_GUARDS:
-		if st.dead.has(str(g[0])):
+		if st.is_dead(str(g[0])):
 			continue
 		host.ev._show_actor(str(g[0]), host.map.mark_pos("X-BC:" + str(g[1])), "S")
 		var a: Actor = host.ev.actors.get(str(g[0]))
 		if a != null:
 			var c := host.combat.add_ally(str(g[0]), a, 60.0, "W-002")
 			c.hp_floor = 1.0                                                # 감시조는 쓰러져도 죽지 않는다(이 퀘스트의 판정은 남건희 하나)
-	if not st.dead.has("N-R01-039"):
+	if not st.is_dead("N-R01-039"):
 		host.ev._show_actor("N-R01-039", host.map.mark_pos("X-BC:land1") + Vector2(64, 0), "S")
 	var r := _rng("TRAP")
 	trap_foes.clear()
@@ -585,9 +585,9 @@ func _trap_result(guarded: bool) -> void:
 	st.vars.set_v("SQ_S02_TRAP_DONE", 1)
 	var r := RandomNumberGenerator.new()
 	r.seed = hash("S02TRAP:%d" % v("SQ_S02_TRAP_AT"))
-	var dead := not guarded and r.randf() < 0.5 and not st.dead.has("N-R01-039")
+	var dead := not guarded and r.randf() < 0.5 and not st.is_dead("N-R01-039")
 	if dead:
-		st.dead["N-R01-039"] = st.year()
+		st.kill("N-R01-039")
 		st.vars.set_v("SQ_S02_NH_DEAD", 1)
 		st.call_fn("karma", [-50])
 	st.vars.set_v("PD_BC", v("PD_BC") + 5)                                 # 판도 PD-R01-2 약탈 −5(습격조가 매복에 걸렸다)

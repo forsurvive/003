@@ -30,3 +30,4 @@ python3 tools/pipeline/world_chunks.py                  # 월드 굽기 → worl
 python3 tools/pipeline/expr_cases.py
 python3 tools/pipeline/portrait_export.py
 python3 tools/pipeline/story_sprites.py
+python3 tools/pipeline/quest_cross.py                   # 퀘스트 교차 정합 표(1-X, SD-20 §10) — 새 경고는 단위 시험이 막는다

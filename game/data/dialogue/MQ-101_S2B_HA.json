@@ -1,0 +1,26 @@
+{
+ "id": "MQ-101_S2B_HA",
+ "title": "하숙자 약국 — 이장 대행",
+ "loc": "L-R01-09",
+ "npc": "C-057",
+ "cond": "MQ101_STAGE == 30 and known_dead(\"C-010\") == 1 and (MQ101_TRADE == 0 or MQ101_WATER == 0)",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "C-057",
+   "emo": "기본",
+   "text": "캡하고 물은? 가게에서 한 번 사고팔아 봐. 물은 준 병 하나 따 보고."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/MQ-101.txt"
+}

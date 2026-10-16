@@ -20,6 +20,7 @@ var world                                     ## InteriorRoom 또는 ChunkWorld(
 var marks := {}
 var actors := {}                              ## 인물 ID -> Actor
 var cast_sheets := {}                         ## 인물 ID -> 시트 이름(story_cast.json)
+var is_dead := func(_id: String) -> bool: return false   ## 죽었나(호스트가 st.is_dead를 건다) — 죽은 인물은 무대에 세우지 않는다(SD-20 P3 · A28 안전망)
 var cam: Camera2D
 var overlay: CanvasLayer
 var fade_rect: ColorRect
@@ -231,6 +232,8 @@ func run(name: String, args: Array, done: Callable) -> void:
 
 
 func _show_actor(id: String, pos: Vector2, dir: String, sheet_name := "") -> void:
+	if is_dead.call(id):
+		return
 	if actors.has(id):
 		actors[id].queue_free()
 	var a := Actor.new()

@@ -83,7 +83,7 @@ prop battery_rack 33 33
 prop battery_rack 36 33
 prop crate_metal 50 38
 prop crate_metal 51 38
-npc N-R01-009 20 12 W route=원자로:20,12,10;계기:25,4,5;복도:16,27,3 bark="원자로는 오늘도 잘 돈다." cond="year() == 2277"
+npc N-R01-009 20 12 W route=원자로:20,12,10;계기:25,4,5;복도:16,27,3 bark="원자로는 오늘도 잘 돈다." cond="year() == 2277 and MQP4_STAGE >= 30"
 npc N-R01-014 41 13 N route=정화기:41,13,10;복도:44,27,4 bark="필터 갈 때가 지났어. 부품이 없어." cond="year() == 2277"
 box 2 19 crate w=2 owner=S7 name="설비 부품 상자"
 box 50 38 crate w=2 name="굴러다니는 상자"

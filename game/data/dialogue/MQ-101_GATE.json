@@ -6,10 +6,22 @@
  "cond": "MQ101_STAGE == 10",
  "labels": {
   "START": 0,
-  "BAEK": 8,
-  "CHIEF": 12
+  "GATE_DOG0": 10,
+  "GATE_TALK": 11,
+  "BAEK": 13,
+  "CHIEF": 17,
+  "CHIEF_GONE": 22,
+  "CHIEF_BOARD": 28,
+  "NOGUARD": 32,
+  "NOGUARD_HA": 38,
+  "NOGUARD_BOARD": 42
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "dead(\"N-R01-028\") == 1",
+   "to": "NOGUARD"
+  },
   {
    "op": "cmd",
    "name": "face",
@@ -38,6 +50,11 @@
    "to": "BAEK"
   },
   {
+   "op": "if",
+   "cond": "dead(\"C-015\") == 1",
+   "to": "GATE_TALK"
+  },
+  {
    "op": "cmd",
    "name": "balloon",
    "args": [
@@ -46,10 +63,25 @@
    ]
   },
   {
+   "op": "if",
+   "cond": "MQ101_DOG == 0",
+   "to": "GATE_DOG0"
+  },
+  {
    "op": "line",
    "who": "SYS",
    "emo": "기본",
    "text": "장벽 안쪽 개집에서 흰 개가 고개를 든다. 산에서 본 그 개다. 한 번 컹 짖고는 다시 엎드린다."
+  },
+  {
+   "op": "goto",
+   "to": "GATE_TALK"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "장벽 안쪽 개집에서 흰 개가 고개를 든다. 낯선 냄새에 한 번 컹 짖고는 다시 엎드린다."
   },
   {
    "op": "line",
@@ -84,6 +116,11 @@
    "fx": "aff(\"BC\", 3)"
   },
   {
+   "op": "if",
+   "cond": "known_dead(\"C-010\") == 1",
+   "to": "CHIEF_GONE"
+  },
+  {
    "op": "line",
    "who": "N-R01-028",
    "emo": "말함",
@@ -98,6 +135,137 @@
    "name": "hint",
    "args": [
     "312계단 꼭대기 옥탑 이장실 — 계단참 넷을 지난다",
+    "6"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "슬픔",
+   "text": "…이장님은 돌아가셨어. 옥탑방에서. 누가 그랬는지는 몰라."
+  },
+  {
+   "op": "if",
+   "cond": "known_dead(\"C-057\") == 1",
+   "to": "CHIEF_BOARD"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "기본",
+   "text": "마을 일은 부이장 하숙자 아줌마가 본다. 2단 골목 약국. 거기 가."
+  },
+  {
+   "op": "do",
+   "fx": "quest(\"MQ-101\", 20); xp(50)"
+  },
+  {
+   "op": "cmd",
+   "name": "hint",
+   "args": [
+    "2단 골목 하숙자 약국 — 이장 대행",
+    "6"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "슬픔",
+   "text": "부이장님도 없어. 지금은 반상회 게시판에 붙는 공고대로 산다. 볼일은 거기 적어."
+  },
+  {
+   "op": "do",
+   "fx": "quest(\"MQ-101\", 20); xp(50)"
+  },
+  {
+   "op": "cmd",
+   "name": "hint",
+   "args": [
+    "반상회 게시판 — 이장 · 부이장이 없는 동안 공고",
+    "6"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "아랫문 초소가 비어 있다. 의자 위에 감시조 완장 하나. 문설주에 분필 글씨 — '볼일은 꼭대기 옥탑방.'"
+  },
+  {
+   "op": "if",
+   "cond": "known_dead(\"C-010\") == 1 and known_dead(\"C-057\") == 0",
+   "to": "NOGUARD_HA"
+  },
+  {
+   "op": "if",
+   "cond": "known_dead(\"C-010\") == 1",
+   "to": "NOGUARD_BOARD"
+  },
+  {
+   "op": "do",
+   "fx": "quest(\"MQ-101\", 20); xp(50)"
+  },
+  {
+   "op": "cmd",
+   "name": "hint",
+   "args": [
+    "312계단 꼭대기 옥탑 이장실 — 계단참 넷을 지난다",
+    "6"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "그 아래 새 글씨가 덧쓰여 있다 — '이장 대행 하숙자. 2단 골목 약국.'"
+  },
+  {
+   "op": "do",
+   "fx": "quest(\"MQ-101\", 20); xp(50)"
+  },
+  {
+   "op": "cmd",
+   "name": "hint",
+   "args": [
+    "2단 골목 하숙자 약국 — 이장 대행",
+    "6"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "그 아래 새 글씨가 덧쓰여 있다 — '당분간 반상회 게시판 공고를 따를 것.'"
+  },
+  {
+   "op": "do",
+   "fx": "quest(\"MQ-101\", 20); xp(50)"
+  },
+  {
+   "op": "cmd",
+   "name": "hint",
+   "args": [
+    "반상회 게시판 — 이장 · 부이장이 없는 동안 공고",
     "6"
    ]
   },

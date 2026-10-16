@@ -42,7 +42,9 @@ func _log(s: String) -> void:
 
 ## 열쇠를 받을 때가 됐나(조건이 찬 다음 날부터)
 func key_due() -> bool:
-	return v("HOME_BC") == 0 and v("HOME_BC_OK") > 0 and v("GAME_DAY") > v("HOME_BC_OK") and not st.dead.has("C-010")   # 죽은 조만석은 장면에 서지 않는다(P3)
+	# 조만석이 죽었으면: 그 죽음이 알려지고 범인이 주인공으로 지목되지 않았을 때 하숙자 · 반상회 쪽지가 잇는다(1-X, P11 — 거처가 영영 닫히지 않게)
+	var chief_ok := not st.is_dead("C-010") or (st.known_dead("C-010") and not Crimes.knows_killer(st, "C-010"))
+	return v("HOME_BC") == 0 and v("HOME_BC_OK") > 0 and v("GAME_DAY") > v("HOME_BC_OK") and chief_ok
 
 
 func _process(dt: float) -> void:
@@ -120,7 +122,7 @@ func _on_map(id: String) -> void:
 ## 하루 판정(06:00): 백구 낮잠 굴림. 판의 씨앗 + 날짜로 정해서 불러와도 같다
 func _on_day(day: int) -> void:
 	var nap := 0
-	if v("HOME_BC") == 1 and not st.dead.has("C-015"):
+	if v("HOME_BC") == 1 and not st.is_dead("C-015"):
 		var rng := RandomNumberGenerator.new()
 		rng.seed = hash("baekgu|%d|%d" % [st.check_seed, day])
 		nap = 1 if rng.randf() < NAP_P else 0

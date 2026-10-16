@@ -628,7 +628,7 @@ def _setup():
     PROP_NAMES.update(prop_meta.keys())
     from script_compile import ENGINE_VARS
     known_vars = set(json.load(open(os.path.join(ROOT, "game", "data", "vars.json")))["vars"]) | ENGINE_VARS
-    known_fns = {"karma", "aff", "quest", "stage", "result", "give", "take", "has", "caps", "xp", "wanted", "stat", "skill", "year"}
+    known_fns = set(__import__("script_compile").FNS)                                          # 원고 함수 목록은 script_compile.FNS 한 곳(1-X — 컴파일러마다 따로 두면 새 함수를 모른다)
     scenes = set(json.load(open(os.path.join(ROOT, "game", "data", "dialogue", "_index.json")))["scenes"])
     return prop_meta, known_vars, known_fns, scenes
 

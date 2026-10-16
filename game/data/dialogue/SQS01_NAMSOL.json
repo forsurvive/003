@@ -3,14 +3,32 @@
  "title": "백구 밥 당번",
  "loc": "L-R01-09",
  "npc": "N-R01-034",
- "cond": "MQ101_STAGE >= 100 and (SQ_S01_FEED == 0 or SQH_TAG == 81 or (SQS01_STAGE >= 10 and SQS01_STAGE < 100)) and SQ_S04_HELD == 0 and SQ_S04_AWAY == 0 and (SQ_S04_OUT == 0 or SQ_S04_LETTER == 1)",
+ "cond": "MQ101_STAGE >= 100 and (SQ_S01_FEED == 0 or SQH_TAG == 81 or SQ_S01_BOWL == 1 or (SQS01_STAGE >= 10 and SQS01_STAGE < 100)) and SQ_S04_HELD == 0 and SQ_S04_AWAY == 0 and (SQ_S04_OUT == 0 or SQ_S04_LETTER == 1)",
  "labels": {
   "START": 0,
-  "FED": 5,
-  "HOWL": 8,
-  "NAMED": 10
+  "FED": 8,
+  "HOWL": 11,
+  "NAMED": 13,
+  "MISS": 15,
+  "WHERE": 17,
+  "BOWLTHANKS": 19
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "known_dead(\"C-015\") == 1",
+   "to": "MISS"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"C-015\") == 1",
+   "to": "WHERE"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S01_BOWL == 1",
+   "to": "BOWLTHANKS"
+  },
   {
    "op": "if",
    "cond": "SQH_TAG == 81",
@@ -161,6 +179,40 @@
    "who": "N-R01-034",
    "emo": "미소",
    "text": "당번표 맨 위 봤어? 백, 설. 내가 썼어. 엄청 옛날 이름이래. 백구네 할머니의 할머니의… 아무튼."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-034",
+   "emo": "슬픔",
+   "text": "백구 그릇에 내가 매일 물 채워. …그냥. 습관이야."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-034",
+   "emo": "기본",
+   "text": "백구가 어젯밤에 안 들어왔어. 산에 갔나 봐. 오면 밥 줄 거야."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "SQ_S01_BOWL = 2"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-034",
+   "emo": "미소",
+   "text": "나 없는 동안 백구 밥 준 거 너지? 그릇에서 고기 냄새 났어. 백구가 너 오는 쪽만 쳐다봐."
   },
   {
    "op": "goto",

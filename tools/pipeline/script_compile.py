@@ -37,7 +37,7 @@ SKILLS = ["물물교환", "중화기", "에너지 무기", "폭발물", "자물�
 FLAVORS = ["거짓말", "위협"]
 PARTICLES = ["은", "는", "이", "가", "을", "를", "과", "와", "으로", "로", "이나", "나", "이랑", "랑", "아", "야", "이다", "다", "이에요",
              "예요", "이었", "였", "이라", "라", "이든", "든"]
-FNS = {"karma", "aff", "quest", "stage", "result", "give", "take", "has", "caps", "xp", "wanted", "stat", "skill", "year", "worn", "blade"}
+FNS = {"karma", "aff", "quest", "stage", "result", "give", "take", "has", "caps", "xp", "wanted", "stat", "skill", "year", "worn", "blade", "dead", "known_dead", "killer_known", "confess", "victim"}
 CMDS = {"wait", "fade_in", "fade_out", "balloon", "move", "face", "shake", "year_card", "title_card", "sfx", "bgm", "cam", "show",
         "hide", "pose", "doc", "flash", "lamp", "unlit", "note", "reveal",
         "pipboy", "equip", "hurt", "buddy", "range", "hint", "hud",          # 0-7: 핍-보이·무기·연출 피해·일시 동행·사격장 단계·안내 띠
@@ -67,10 +67,10 @@ ENGINE_VARS = {"PC_ST", "PC_PE", "PC_EN", "PC_CH", "PC_IN", "PC_AG", "PC_LK", "P
                "SD_MET_HUH", "SD_MET_PYO", "SD_MET_WI", "SD_MET_SEONG", "SD_MET_BAN", "SD_MET_TAK", "SA_MAKCHA_HEARD", "SA_MAT_UNTIL", "SD_MAP_UG", "SD_BOARD_SEEN", "SD_LR05", "SD_LR09", "U02_OPEN",
                "SG_MET_HWANG", "SG_MET_KWON", "SG_REFUSED", "SG_ISSUED", "GS_MET_RJ", "GS_MET_HAN", "GS_MET_EUNSOL", "GS_MET_MA", "GS_MET_HA", "GS_CARD_SEEN", "GS_LR50", "BC_DOUBT_DAY",
                "SQ_S01_SOL", "SQ_S01_LEFT", "SQ_S01_LEFT_DAY", "SQ_S01_DROP", "SQ_S01_DROP_AT", "SQ_S01_TAG_DAY", "SQ_S01_DOG", "SQ_S01_FEED", "SQ_S01_COLL", "SQ_S01_BAIT",
-               "SQ_S01_BETRAY", "SQ_S01_CLEAR_DAY", "SQ_S01_KILLS", "SQ_S01_KILL_DAY", "SQ_S01_EOM", "SQ_S01_BC", "SQ_S01_NAP", "PK_045", "SQH_TAG"} | {"SQ_S02_" + k for k in (
+               "SQ_S01_BETRAY", "SQ_S01_CLEAR_DAY", "SQ_S01_KILLS", "SQ_S01_KILL_DAY", "SQ_S01_EOM", "SQ_S01_BC", "SQ_S01_NAP", "SQ_S01_BOWL", "PK_045", "SQH_TAG"} | {"SQ_S02_" + k for k in (
                "ARM POSTED DAY0 LEVEL OPEN PAID SOL B BJ BJ_AT CAMP CKILLS TDEAD DDEAD HOT NS_HOT GUARD MAP SIREN NKILLS HAND KNOW IN PIPEMAP J1 J2 AT "
-               "TRAP_AT TRAP_DONE FIGHT NH_DEAD NH_KILLED EXILE_DAY STOP_DAY NIGHT_DAY HEARD REWARD DONE_DAY RAID_UNTIL SOL_E DRY_HINT").split()} | {"JC_PROB_BC"} \
-    | {"SQ_S04_" + k for k in "ARM WAKE_AT WAKE HELD DEADLINE OUT SLEEP KILLED TKILLED HOT LOITER D D_AT TEST BATT F LETTER AWAY BELL RED HELP FENCE CHASE FIGHT UP GUARD_BACK VILLAGE_AT B PD_LOCK".split()} | {"SQH_BATT", "LR15_READ", "PD_R01_GS", "M303_BONUS", "PK_017"}   # 1-11c SQ-S04   # 1-11b SQ-S02   # 1-11a SQ-S01                                                        # 1-6 MQ-105             # 1-3 생포 · 1-4 해킹 통계
+               "TRAP_AT TRAP_DONE FIGHT NH_DEAD NH_KILLED EXILE_DAY STOP_DAY NIGHT_DAY HEARD REWARD DONE_DAY RAID_UNTIL SOL_E DRY_HINT SHADOW").split()} | {"JC_PROB_BC"} \
+    | {"SQ_S04_" + k for k in "ARM WAKE_AT WAKE HELD DEADLINE OUT SLEEP KILLED TKILLED HOT LOITER D D_AT TEST BATT F LETTER AWAY BELL RED HELP FENCE CHASE FIGHT UP GUARD_BACK VILLAGE_AT B PD_LOCK TICKET".split()} | {"SQH_BATT", "LR15_READ", "PD_R01_GS", "M303_BONUS", "PK_017"}   # 1-11c SQ-S04   # 1-11b SQ-S02   # 1-11a SQ-S01                                                        # 1-6 MQ-105             # 1-3 생포 · 1-4 해킹 통계
 UNNAMED = {"N-TRADER": "떠돌이 고물상", "N-REFUGEE": "피난민", "N-DOWNED": "쓰러진 민병", "N-HS-E1": "수송대 호위", "N-HS-E2": "수송대 호위",
            "CR-091": "짐소",                                                     # 1-8d 고개길 수송대
            "N-SA-G1": "승강장 경비", "N-SA-G2": "승강장 경비", "N-SA-G3": "승강장 경비", "N-SA-R1": "환승촌 주민", "N-SA-R2": "환승촌 주민",   # 1-8f 사당 환승촌

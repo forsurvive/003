@@ -181,6 +181,8 @@ func _enter_market(id: String) -> void:
 
 
 func _bring_park() -> void:
+	if st.is_dead("C-018"):                                             # 죽은 경호원은 다시 오지 않는다(동행은 기절뿐이지만 맵 주민일 때 죽을 수 있다)
+		return
 	host._bring_buddy("C-018")                                          # 계약 경호 구울: 소방 도끼(Companions.ROSTER — SD-14 CR-457과 같은 직종)
 
 
@@ -214,8 +216,7 @@ func _on_killed(_eid: String, alive: int) -> void:
 			if e.who == "C-013":
 				_hdc_dead()
 			elif e.who == "C-021":
-				st.vars.set_v("D_DS", 1)
-				st.dead["C-021"] = true
+				st.kill("C-021")                                       # 독사(생사는 st.dead 한 곳 — D_DS는 SD-03a에서 다니엘 서)
 				_log("독사 사망")
 	if host.map.id == "J-09" and alive == 0 and v("MQ103_NEST") == 0:
 		st.vars.set_v("MQ103_NEST", 1)
@@ -283,7 +284,7 @@ func _squad_arrives() -> void:
 			_search_t = 0.0                                               # 기계실·통로에 숨어 있으면 큰 방으로 돌아오는 순간 마주친다
 		return
 	var m := "from_Y-01" if host.map.id == "Y-02" else ("from_Y-00" if host.map.id == "Y-01" else "from_W")
-	if st.dead.has("C-034"):                                           # 선우진이 이미 죽었다(초소에서 등): 이름 없는 하사가 이끄는 수색조가 말없이 덮친다(SD-20 P3)
+	if st.is_dead("C-034"):                                           # 선우진이 이미 죽었다(초소에서 등): 이름 없는 하사가 이끄는 수색조가 말없이 덮친다(SD-20 P3)
 		host.ev.actors.erase("C-034")
 		_squad_fight()
 		_log("수색조 도착(선우진 없음)")
@@ -315,7 +316,7 @@ func _squad_fight() -> void:
 		e.brain.gauge = 100.0
 		_squad.append(e)
 	st.call_fn("aff", ["BJ", -10])
-	host.hint("수색조가 계단을 뛰어 내려와 덮쳐 온다!" if st.dead.has("C-034") else "선우진이 계단 위로 물러나며 무전을 친다. 수색조가 덮쳐 온다!", 5.0)
+	host.hint("수색조가 계단을 뛰어 내려와 덮쳐 온다!" if st.is_dead("C-034") else "선우진이 계단 위로 물러나며 무전을 친다. 수색조가 덮쳐 온다!", 5.0)
 
 
 ## 맵을 옮겨 지워진 적이 있나(쓰러뜨린 것과 놓친 것을 가른다 — SD-20 P1·N4)
@@ -657,7 +658,7 @@ func _sb_map(id: String) -> void:
 	if v("SB_RAID") == 1 and not st.boxes.has("sbclear:" + id):
 		for n in host.map.data.get("npcs", []):
 			var nid := str(n["id"])
-			if not SB_ROLE.has(nid) or st.dead.has(nid) or (nid == "C-013" and v("D_HDC") == 1):
+			if not SB_ROLE.has(nid) or st.is_dead(nid) or (nid == "C-013" and st.is_dead("C-013")):
 				continue
 			if host.map is WorldMap and host.map.zone_of(Vector2i(int(n["x"]), int(n["y"]))) != "X-SB":
 				continue
@@ -701,8 +702,7 @@ func _sb_hide_cage(x: int) -> void:
 
 ## 황두칠 사망(SD-03a §8.5 정면 습격: 카르마 +100 · 새벽 −30 · D_HDC): 허리춤 열쇠 · 외투 안주머니의 의뢰서 봉투
 func _hdc_dead() -> void:
-	st.vars.set_v("D_HDC", 1)
-	st.dead["C-013"] = true
+	st.kill("C-013")                                                  # D_HDC는 이 사실에서 계산된다(StoryState.DEAD_VARS)
 	st.call_fn("karma", [100])
 	st.call_fn("aff", ["SB", -30])
 	st.vars.set_v("SB_RAID", 2)

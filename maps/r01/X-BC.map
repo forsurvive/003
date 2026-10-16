@@ -119,6 +119,7 @@ prop sandbags 25 38
 prop stair_post 32 34
 prop board_bc 22 35
 text 22 35 "반상회 게시판." w=2 scene=X-BC_BOARD
+text 36 35 "개집 앞 밥그릇." scene=X-BC_BOWL
 prop kennel 35 34
 text 35 34 "백구 집. 옆 기둥에 '백구 밥 당번표'가 붙어 있다." w=2
 prop stall 10 34

@@ -32,7 +32,7 @@
   },
   {
    "op": "if",
-   "cond": "AFF_GS >= 20",
+   "cond": "AFF_GS >= 20 and dead(\"C-053\") == 0",
    "to": "EUN"
   },
   {

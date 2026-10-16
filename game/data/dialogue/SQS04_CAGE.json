@@ -9,7 +9,8 @@
   "ASLEEP": 4,
   "PICK": 6,
   "QUIET": 12,
-  "EMPTY": 14
+  "QUIET_NODOG": 15,
+  "EMPTY": 17
  },
  "ops": [
   {
@@ -151,10 +152,25 @@
    "to": "END"
   },
   {
+   "op": "if",
+   "cond": "known_dead(\"C-015\") == 1",
+   "to": "QUIET_NODOG"
+  },
+  {
    "op": "line",
    "who": "N-R01-034",
    "emo": "미소",
    "text": "열렸다! 백구 밥 주러 가야 해. 나 먼저 갈게!"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-034",
+   "emo": "미소",
+   "text": "열렸다! 엄마한테 먼저 갈게. 고마워!"
   },
   {
    "op": "goto",

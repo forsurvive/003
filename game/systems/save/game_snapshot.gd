@@ -54,7 +54,7 @@ static func apply_story(st: StoryState, d: Dictionary) -> void:
 	st.wear = {}
 	for k in d.get("wear", {}):
 		st.wear[k] = int(d["wear"][k])
-	st.dead = {}
+	st.dead.clear()                                                    # 같은 사전을 비운다(연출 · 대화가 이 사전을 함께 본다)
 	for k in d.get("dead", []):
 		st.dead[k] = true
 	st.portrait_alias = (d.get("alias", {}) as Dictionary).duplicate(true)

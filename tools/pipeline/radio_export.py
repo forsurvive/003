@@ -38,7 +38,7 @@ def main():
     known_vars = set(json.load(open(os.path.join(ROOT, "game", "data", "vars.json")))["vars"]) | ENGINE_VARS
     for q in json.load(open(os.path.join(ROOT, "game", "data", "quests.json")))["quests"]:
         known_vars |= {q.replace("-", "") + s for s in ("_STAGE", "_RESULT", "_SKIP")}
-    known_fns = {"karma", "aff", "quest", "stage", "result", "give", "take", "has", "caps", "xp", "wanted", "stat", "skill", "year"}
+    known_fns = set(__import__("script_compile").FNS)                                          # 원고 함수 목록은 script_compile.FNS 한 곳(1-X — 컴파일러마다 따로 두면 새 함수를 모른다)
     blocks, errs, warns, cur, seen = [], [], [], None, set()
     for i, ln in enumerate(open(SRC, encoding="utf-8").read().split("\n"), 1):
         s = ln.strip()

@@ -268,6 +268,10 @@ func _enemy_weapon(enemy_id: String, arm: String) -> Dictionary:
 		w["crit_dmg"] = 5.0
 		w["rate"] = float(w.get("rate", 2.0)) * 3.0
 		w["name"] = "감시포 기관총"
+	if enemy_id == "CR-466":                                          # 계단마을 자경단원(1-X, SD-14 §9.12): 사냥총 · 산탄총 — 자리마다 고정(같은 사람은 같은 총)
+		w = weapons.get("W-014" if hash(arm + str(enemy_id)) % 2 == 0 else "W-027", w).duplicate()
+	if enemy_id == "CR-472":                                          # 정착지 민병: 권총
+		w = weapons.get("W-002", w).duplicate()
 	if enemy_id in ["CR-436", "CR-534"]:                               # 기관단총(0-10 정합: 무기 표에 아직 없어 W-002 판정 + 연사 1.5배)
 		w["rate"] = float(w.get("rate", 2.0)) * 1.5
 	return w

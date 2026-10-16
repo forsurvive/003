@@ -35,6 +35,12 @@ const FAC_NAME := {"BJ": "비상정부", "YH": "연합단", "WP": "원칙파", "
 var list: Array = []                               ## 기록: {"id", "kind", "region", "place", "at", "pub", "attr", "about", "fx": {세력: 변화}, "known": {세력: 도착 분}, "tag", "what", "news"}
 var heard: Array = []                              ## 들은 소식(최근 30): {"fac", "what", "at", "route"}
 var seq := 0
+var kills := {}                                    ## 범죄(1-X, Crimes): 대상별 살해 수(학살 판정)
+var grudge := {}                                   ## 대상 → 1 원한(시간 회복 정지) · 2 영구 적대(−100 고정)
+var bodies: Array = []                             ## 목격 없는 살해의 시체: {"id", "tgt", "at", "find", "solve", "perm", "named", "region", "place"}
+var mourn := {}                                    ## 대상 → 죽음을 안 분(장례 · 수군거림)
+var known_killer := {}                             ## 인물 ID → true: 주인공이 죽인 것을 그 대상이 안다
+var victims := {}                                  ## 인물 ID → true: 주인공이 죽인 사람(아무도 몰라도 — 자백 판정용, 1-X)
 var last := 0                                      ## 마지막으로 처리한 게임 분
 
 
@@ -73,6 +79,11 @@ func tick(st: StoryState, now: int) -> void:
 	if last == 0:
 		last = now
 	_broadcasts(now)
+	var found := bodies.filter(func(b): return int(b["find"]) <= now)   # 시체 발견(SD-06 §6.4)을 먼저 — 그 기록도 이번 tick 안에 닿는다
+	found.sort_custom(func(x, y): return int(x["find"]) < int(y["find"]))
+	bodies = bodies.filter(func(b): return int(b["find"]) > now)
+	for b in found:
+		Crimes.find_body(st, b, int(b["find"]))
 	var evs: Array = []                                                # [도착 분, 기록, 세력, 경로]
 	for d in list:
 		for f in (d["fx"] as Dictionary).keys():
@@ -158,7 +169,16 @@ func _arrive(st: StoryState, d: Dictionary, f: String, when: int, route: String)
 
 ## 기록별 후속(SD-20 이월): 걸어 들어감(MQ-106 결과 4) 소문이 봉천에 닿으면 봉천 사람들이 하루 동안 수군거린다(N8 세계 반응)
 func _hook(st: StoryState, d: Dictionary, f: String) -> void:
+	if str(d["tag"]).begins_with("CRIME") and str(d["tag"]) != "CRIME_BODY":
+		for a in d.get("about", []):
+			known_killer[st.canon(str(a))] = true
 	match str(d["tag"]):
+		"CRIME_PERM":                                                  # 지도자 · 대표 살해 · 학살: 값 −100 고정, 영구 적대(SD-06 §3.5 강제 사건 · §3.8)
+			grudge[f] = 2
+			var k := "AFF_" + f
+			if st.vars.has(k):
+				st.vars.set_v(k, -100)
+				st.events.append({"kind": "aff", "key": k, "delta": 0, "value": -100})
 		"MQ106_WALK":
 			if f == "JC_BC" and st.vars.has("BC_DOUBT_DAY"):
 				st.vars.set_v("BC_DOUBT_DAY", int(st.vars.get_v("GAME_DAY")) + 1)
@@ -191,7 +211,8 @@ func knows(f: String, tag: String) -> bool:
 
 
 func to_dict() -> Dictionary:
-	return {"list": list.duplicate(true), "heard": heard.duplicate(true), "seq": seq, "last": last}
+	return {"list": list.duplicate(true), "heard": heard.duplicate(true), "seq": seq, "last": last, "kills": kills.duplicate(),
+		"grudge": grudge.duplicate(), "bodies": bodies.duplicate(true), "mourn": mourn.duplicate(), "known_killer": known_killer.keys(), "victims": victims.keys()}
 
 
 func from_dict(dd: Dictionary) -> void:
@@ -217,3 +238,24 @@ func from_dict(dd: Dictionary) -> void:
 		heard.append(y)
 	seq = int(dd.get("seq", 0))
 	last = int(dd.get("last", 0))
+	kills = {}
+	for k in dd.get("kills", {}):
+		kills[str(k)] = int(dd["kills"][k])
+	grudge = {}
+	for k in dd.get("grudge", {}):
+		grudge[str(k)] = int(dd["grudge"][k])
+	bodies = []
+	for b in dd.get("bodies", []):
+		var z: Dictionary = (b as Dictionary).duplicate()
+		for k in ["at", "find"]:
+			z[k] = int(z.get(k, 0))
+		bodies.append(z)
+	mourn = {}
+	for k in dd.get("mourn", {}):
+		mourn[str(k)] = int(dd["mourn"][k])
+	known_killer = {}
+	for k in dd.get("known_killer", []):
+		known_killer[str(k)] = true
+	victims = {}
+	for k in dd.get("victims", []):
+		victims[str(k)] = true

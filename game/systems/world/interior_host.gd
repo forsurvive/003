@@ -95,6 +95,7 @@ func _ready() -> void:
 	box.line_shown.connect(_on_line)
 	box.subject = _subject
 	ev = EventRunner.new()
+	ev.is_dead = st.is_dead
 	add_child(ev)
 	ev.attach(box)
 	Documents.attach(ev, st, self)
@@ -352,11 +353,17 @@ func enter(map_id: String, mark: String = "", look: Dictionary = {}, at: Vector2
 	player._show()
 	_last_tile = map.tile_of(player.loco.logical)
 	_spawn_npcs()
+	alarmed.clear()
 	if map_id == "V-00" and int(st.vars.get_v("V_ESCAPE")) >= 1 and st.quests.stage("MQ-P4") < 60:
 		map.set_gate(1.0)                                              # 탈출 중 레버로 다시 연 방폭문은 맵을 다시 열어도 열린 채
 	ev.actors["PC"] = player                                          # 연출 명령이 주인공도 부를 수 있다(move PC 표지 · face PC 방향, 0-9)
 	combat.on_map(map, player, st)
-	combat.set_residents(npcs)
+	sync_residents()
+	for n in npcs.duplicate():                                        # 적대 정착지(≤ −60)에 들어왔다: 자경단이 사격한다(SD-06 §4.3.8 · SD-14 §9.12)
+		var tg := Crimes.target(st, str(n["id"]))
+		if tg.begins_with("JC_") and Crimes.hostile(st, tg) and int(st.vars.get_v("V_ACT")) >= 1:
+			settlement_alarm.call_deferred(tg, "적대")
+			break
 	ev.setup(map, map_id, cam)
 	for k in keep_mates:
 		_bring_buddy(str(k["id"]))
@@ -402,7 +409,7 @@ func _spawn_npcs() -> void:
 		var cond: String = n.get("cond", "")
 		if cond != "" and not StoryExpr.test(cond, st):
 			continue
-		if st.dead.has(str(n["id"])):                                    # 죽인 주민은 다시 서지 않는다(SD-10 §6.3, 0-9)
+		if st.is_dead(str(n["id"])):                                    # 죽인 주민은 다시 서지 않는다(SD-10 §6.3, 0-9)
 			continue
 		_spawn_npc(i, n)
 
@@ -429,10 +436,10 @@ func refresh_npcs() -> void:
 	for i in map.data["npcs"].size():
 		var n: Dictionary = map.data["npcs"][i]
 		var cond: String = n.get("cond", "")
-		if live.has(i) or (cond != "" and not StoryExpr.test(cond, st)) or st.dead.has(str(n["id"])):
+		if live.has(i) or (cond != "" and not StoryExpr.test(cond, st)) or st.is_dead(str(n["id"])):
 			continue
 		_spawn_npc(i, n)
-	combat.set_residents(npcs)
+	sync_residents()
 
 
 func _spawn_npc(i: int, n: Dictionary) -> void:
@@ -971,6 +978,14 @@ func map_region(t: Vector2i) -> String:
 
 ## 쓰러진 적 자리에 유해(소지품 용기)를 둔다(SD-13 §9.3 세력·적 장비표). 바퀴·들개처럼 드롭이 없거나 고기만 주는 크리처는 두지 않는다
 func _on_enemy_down(e: Enemy) -> void:
+	if e.has_meta("militia") and e.who != "":                           # 총을 든 자경단원(먼저 쏜 쪽은 그들이다 — 카르마는 없다, 학살 수에는 든다)
+		st.kill(e.who)
+		var dd := st.deeds
+		var tg := str(e.get_meta("militia"))
+		dd.kills[tg] = int(dd.kills.get(tg, 0)) + 1
+		if int(dd.kills[tg]) >= Crimes.MASSACRE and int(dd.grudge.get(tg, 0)) < 2:
+			dd.record(st, "범죄", map_region(map.tile_of(e.loco.logical)), 2, {tg: 0}, Clock.abs_min(date_text),
+				{"tag": "CRIME_PERM", "what": "학살", "seen_by": [tg]})
 	var eid := str(e.get_meta("enemy_id", ""))
 	if not Loot.drops.has(eid) or eid in ["CR-002", "CR-104"]:
 		return
@@ -1363,16 +1378,83 @@ func _on_resident_down(id: String, killed: bool) -> void:
 	map.blockers.erase(a)
 	if killed:
 		n["dead"] = true
-		st.dead[id] = st.year()
+		st.kill(id)
 		st.vars.set_v("S7_KILLS", int(st.vars.get_v("S7_KILLS")) + 1)
 		if not bool(st.npcs.get(id, {}).get("evil", false)):
 			st.call_fn("karma", [-100])                                  # 악하지 않은 인물 살해(목격자가 없어도)
 		combat._pop(st.npc_name(id) + " 사망", a.loco.logical + Vector2(0, -20), Color("E04A35"))
 		st.book.died(id, date_text)                                     # 눈앞의 죽음 = 아는 죽음
+		_crime_kill(id, a.loco.logical)
 	else:
 		n["down_t"] = KO_SECS
 		n["down_kind"] = "ko"
 		combat._pop("기절", a.loco.logical + Vector2(0, -20), Color("E8C23A"))
+
+
+## 범죄 반응(1-X, SD-06 §3.4 · §6.4 · Crimes): 다른 주민이 10칸 안에서 보았나(눈 · 시야). 정착지 안에서 목격된 살인은 자경단을 깨운다(SD-14 §9.12)
+func _crime_kill(id: String, at: Vector2) -> void:
+	var seen := false
+	for n in npcs:
+		if str(n["id"]) == id or n.get("dead", false) or not is_instance_valid(n["actor"]) or float(n.get("down_t", 0.0)) > 0.0:
+			continue
+		var p: Vector2 = n["actor"].loco.logical
+		if p.distance_to(at) <= 320.0 and map.line_of_sight(p, at):
+			seen = true
+			break
+	var tgt := Crimes.target(st, id)
+	Crimes.on_kill(st, id, seen, map_region(map.tile_of(at)), Clock.abs_min(date_text), tgt.substr(3) if tgt.begins_with("JC_") else "")
+	if seen and tgt.begins_with("JC_"):
+		settlement_alarm(tgt, "동물" if Crimes.animal(st, id) else "살인", st.npc_name(id))
+
+
+var alarmed := {}                                    ## 이 맵에서 깨어난 정착지(대상 → true): 맵을 떠나면 잊는다 — 적대 단계면 들어올 때마다 다시 깬다
+
+
+## 자경단이 총을 든다(SD-14 §9.12 · SD-06 §4.3.8 적대 '사격'): 그 정착지의 자경단원(Crimes.GUARDS)은 그 모습 그대로 적(CR-466)이 되고,
+## 나머지 주민은 말을 섞지 않는다(talk). 아이는 공격 대상이 아니다. 같은 정착지 사람만.
+func settlement_alarm(tgt: String, why := "", who := "") -> void:
+	if alarmed.has(tgt):
+		return
+	alarmed[tgt] = true
+	var guards: Array = Crimes.GUARDS.get(tgt, [])
+	for n in npcs.duplicate():
+		var id := str(n["id"])
+		if not guards.has(id) or n.get("dead", false) or not is_instance_valid(n["actor"]) or Crimes.target(st, id) != tgt:
+			continue
+		var a: Actor = n["actor"]
+		var e := combat.spawn("CR-466", a.loco.logical, map, st, {"lv": 5, "sheet": a.sheet, "who": id, "dir": "S"})
+		e.loco.custom = {"run": {"frames": 6, "px": 4.0, "px_v": 3.0, "diag": 3.0, "contact": [0, 3], "speed_t": 3.2, "anim": "walk"}}   # 주민 시트엔 달리기 컷이 없다 — 걷기 컷 보폭으로(미끄러짐 없음)
+		e.set_meta("militia", tgt)
+		e.brain.gauge = 100.0
+		e.brain.state = AIBrain.S.COMBAT
+		map.remove_actor(a)
+		map.blockers.erase(a)
+		if ev.actors.get(id) == a:
+			ev.actors.erase(id)
+		a.queue_free()
+		npcs.erase(n)
+	sync_residents()
+	var line: String = Crimes.ALARM.get(why, Crimes.ALARM[""])
+	if line.contains("%s"):
+		line = line % Crimes.obj(who)
+	combat._pop(line, player.loco.logical + Vector2(0, -40), Color("E04A35"))
+
+
+## 적대 · 경보 중인 정착지 주민은 말을 섞지 않는다(SD-06 §4.3.8 적대 인사 · 상점 불가)
+func _hostile_bark(id: String) -> String:
+	var tgt := Crimes.target(st, id)
+	if tgt == "" or not (alarmed.has(tgt) or Crimes.hostile(st, tgt)):
+		return ""
+	if st.is_child(id):
+		return "……(아이가 뒷걸음질 쳐 어른 뒤로 숨는다)"
+	if not tgt.begins_with("JC"):
+		return "꺼져. 너하고는 말 안 해."
+	var lines: Array = HOSTILE_KILLER if Crimes.killer_known_by(st, tgt) else HOSTILE_OTHER   # 원인에 맞는 말(1-X 재미 검수 ③ — 살인이 아닌 적대에 '살인자'라 부르지 않는다)
+	return str(lines[absi(hash(id)) % lines.size()])
+
+
+const HOSTILE_KILLER := ["그 살인자다! 문 닫아!", "가까이 오지 마. 손 보이는 데 둬.", "…애들 들어가. 문 걸어.", "네가 한 짓, 마을이 다 안다."]
+const HOSTILE_OTHER := ["너한테 팔 건 없어. 가.", "볼트 손님 대접은 끝났어.", "문 닫아. 저 사람 또 왔다.", "…말 걸지 마."]
 
 
 func _down_tick(n: Dictionary, dt: float) -> void:
@@ -1476,6 +1558,11 @@ func box_prompt() -> String:
 	return "(E) 열기  " + nm + tag
 
 
+## 맵 인물 → 전투 주민 목록(한 곳): 아이는 공격 대상이 아니다(SD-11 §580 — StoryState.is_child). 진행기가 맵 인물을 떼어 낸 뒤에도 이것을 부른다
+func sync_residents() -> void:
+	combat.set_residents(npcs.filter(func(x): return not st.is_child(str(x["id"]))))
+
+
 func talk(n: Dictionary) -> void:
 	if n["routine"] != null:
 		n["routine"].talk_to(player.loco.logical)
@@ -1484,6 +1571,10 @@ func talk(n: Dictionary) -> void:
 		n["actor"]._show()
 	_talking = n
 	var g := scene_for(n["id"])
+	var hb := _hostile_bark(str(n["id"]))
+	if hb != "":
+		g = {"id": "bark_" + n["id"], "labels": {"START": 0}, "ops": [{"op": "line", "who": n["id"], "emo": "분노", "text": hb}, {"op": "end"}]}
+		_barking = true
 	if g.is_empty():
 		var own := str(n["bark"])                                     # 소문(1-4f): 이 사람이 들은 주인공 이야기 — 없으면 제 혼잣말
 		var rumor := "" if str(n["id"]).begins_with("CR-") else \

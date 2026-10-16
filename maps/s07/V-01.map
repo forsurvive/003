@@ -231,8 +231,8 @@ prop record_locker 49 38
 prop bench 55 40
 text 52 31 "구내방송 송출기 ST-11. 진공관이 데워지는 냄새가 난다."
 npc N-R01-011 40 36 S route=창구:35,32,8;창고:44,35,4 bark="배급 카드부터 보여 주세요." cond="year() == 2277"
-npc N-R01-013 51 38 N route=송출기:52,33,10;문:53,30,4;게시판:42,14,5 bark="S-07 구내방송입니다. 오늘의 평가 일정을 알려 드립니다." cond="year() == 2277"
-npc N-R01-023 14 20 E route=광장:14,20,10;식당:8,36,8 cond="year() == 2277 and MQP4_STAGE >= 20" bark="2196년 겨울에는 이 광장에 침대가 놓였지."
+npc N-R01-013 51 38 N route=송출기:52,33,10;문:53,30,4;게시판:42,14,5 bark="S-07 구내방송입니다. 오늘의 평가 일정을 알려 드립니다." cond="year() == 2277 and MQP4_STAGE != 20"
+npc N-R01-023 14 20 E route=광장:14,20,10;식당:8,36,8 cond="year() == 2277 and MQP4_STAGE >= 30" bark="2196년 겨울에는 이 광장에 침대가 놓였지."
 mark p4_meet 14 35 N
 npc C-001 20 31 S cond="year() == 2277 and MQP4_STAGE <= 10" bark="정오에 정문으로 모여 주세요."
 npc C-022 23 31 S cond="year() == 2277 and MQP4_STAGE <= 10" bark="…"

@@ -3,7 +3,7 @@
  "title": "반상회 총무",
  "loc": "L-R01-09",
  "npc": "N-R01-029",
- "cond": "has(\"M-158\") and SQS01_STAGE < 100",
+ "cond": "has(\"M-158\") and (SQS01_STAGE < 100 or SQH_TAG == 0)",
  "labels": {
   "START": 0,
   "ALIVE": 12,

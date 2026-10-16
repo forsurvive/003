@@ -1,5 +1,5 @@
 데이터 빌드 v0 — 오류 0
-  enemies: 31행
+  enemies: 33행
   items_aid: 12행
   items_apparel: 58행
   items_apparel_head: 31행
@@ -76,6 +76,10 @@
   - 14_creatures-enemies.md CR-456 · part_weights = 'PW-H' — 부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')
   - 14_creatures-enemies.md CR-457 · radius = 0.3 — 충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다
   - 14_creatures-enemies.md CR-457 · part_weights = 'PW-H' — 부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')
+  - 14_creatures-enemies.md CR-466 · radius = 0.3 — 충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다
+  - 14_creatures-enemies.md CR-466 · part_weights = 'PW-H' — 부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')
+  - 14_creatures-enemies.md CR-472 · radius = 0.3 — 충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다
+  - 14_creatures-enemies.md CR-472 · part_weights = 'PW-H' — 부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')
   - 14_creatures-enemies.md CR-473 · radius = 0.3 — 충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다
   - 14_creatures-enemies.md CR-473 · part_weights = 'PW-H' — 부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')
   - 14_creatures-enemies.md CR-500 · attack = '물기 18' — §10.2 보스 총람에 피해 열이 없다 — 외눈은 사나운 들개(물기 12)보다 한 단계 위, 백구(CR-536 물기 18)와 같은 핏줄

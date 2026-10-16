@@ -249,7 +249,7 @@ func _den_tick() -> void:
 
 
 func _one_alive() -> bool:
-	return v("SQ_S01_SOL") == 0 and v("SQ_S01_LEFT") == 0 and not st.dead.has("CR-500")
+	return v("SQ_S01_SOL") == 0 and v("SQ_S01_LEFT") == 0 and not st.is_dead("CR-500")
 
 
 func _rng() -> RandomNumberGenerator:
@@ -278,7 +278,7 @@ func _spawn_pack() -> void:
 	band = band_of(hour())
 	if v("SQ_S01_DROP") == 1:
 		_show_tag()
-	if v("SQ_S01_SOL") == 1 or st.dead.has("CR-500"):                  # 소탕 뒤: 사흘 지나면 변이 시궁쥐가 든다
+	if v("SQ_S01_SOL") == 1 or st.is_dead("CR-500"):                  # 소탕 뒤: 사흘 지나면 변이 시궁쥐가 든다
 		if day() >= v("SQ_S01_CLEAR_DAY") + 3:
 			var r := _rng()
 			for i in r.randi_range(3, 4):
@@ -409,7 +409,7 @@ func _on_killed(_eid: String, _alive: int) -> void:
 
 ## 해법 A: 외눈이 쓰러졌다 — 인식표는 몸에서(드롭 M-158). 남은 개는 끝까지 싸운다(진행기가 세운 적)
 func _one_down() -> void:
-	st.dead["CR-500"] = true
+	st.kill("CR-500")
 	st.vars.set_v("SQ_S01_NAP", 0)
 	stand_t = -1.0
 	if v("SQ_S01_SOL") == 0 and v("SQ_S01_LEFT") == 0:
@@ -635,13 +635,16 @@ func _nap_fail(text: String) -> void:
 func _cmd(a: Array, done: Callable) -> void:
 	match str(a[0]) if a.size() > 0 else "":
 		"dog":                                                          # 백구가 따라나선다(봉천 아랫문)
+			if st.is_dead("C-015"):                                       # 장면은 @npc C-015라 열리지 않지만, 명령만 따로 불려도 죽은 개는 따라오지 않는다
+				done.call()
+				return
 			st.vars.set_v("SQ_S01_DOG", 1)
 			var b: Actor = host.ev.actors.get("C-015")
 			if b != null:
 				for n in host.npcs.duplicate():                               # 맵 인물에서 떼어 낸다(맵 조건 SQ_S01_DOG != 1이 거짓이 돼도 다시 세울 때 치우지 않게)
 					if n["actor"] == b:
 						host.npcs.erase(n)
-				host.combat.set_residents(host.npcs)
+				host.sync_residents()                                         # 아이는 거른 채로(1-X)
 				host.ev.handlers["buddy"].call(["C-015"], func() -> void: pass)
 			_log("백구 동행")
 		"bait":

@@ -211,6 +211,8 @@ func _mq_cmd(a: Array, finish: Callable) -> void:
 		"night":
 			host.set_night(true)
 			host.date_text = "2277. 10. 23.  22:40"
+			# 밤 소동에 사람들이 집집마다 뛰어다닌다 — 아직 아무도 못 본 봉천의 시체는 이때 발견된다(1-X 재미 검수 ① · SD-06 §6.4, 지목 주사위는 이미 굴린 값)
+			Crimes.find_now(st, "JC_BC", Clock.abs_min(host.date_text))
 		"trackers":
 			pass                                                        # 아랫마당에 내려가면 배치(_on_map)
 		"fight":
@@ -354,7 +356,7 @@ func _stage_trackers() -> void:
 
 
 ## 백구의 경보(SD-03a §8.1 S4 '백구가 짖어 매복 위치를 알려 준다'): 밤 아랫마당에 추적조가 서 있는 동안 4초마다 백구 '!'·추적조 '?'.
-## 처음 한 번은 안내 줄. 백구는 MQ-101에서 죽지 않으므로(S1 사망 없음) 늘 짖는다.
+## 처음 한 번은 안내 줄. 백구가 그 사이 죽었으면(맵 주민 — 1-X) 짖는 개가 없다(조용히 넘어간다).
 var bark_t := 0.0
 var bark_hinted := false
 
@@ -411,7 +413,7 @@ func _start_fight() -> void:
 		e.brain.state = AIBrain.S.COMBAT                                  # 이미 마을을 노리고 왔다: 처음부터 교전
 		e.brain.gauge = 100.0
 	for d in DEFENDERS:
-		if st.dead.has(d[0]):
+		if st.is_dead(d[0]):
 			continue
 		var pos := host.map.mark_pos(d[1])
 		host.ev._show_actor(d[0], pos, "S")
@@ -437,8 +439,8 @@ func _fight_tick(_dt: float) -> void:
 		var tw := create_tween()
 		tw.tween_property(doksa, "position", doksa.position + Vector2(0, 160), 1.6)
 		tw.tween_callback(func() -> void: doksa.visible = false)
-	if is_instance_valid(doksa) and doksa.cmb.dead and doksa.cmb.killed_lethal and not st.dead.has("C-021"):
-		st.dead["C-021"] = true                                           # 독사 사살: 카르마 0(SD-03a §8.1 표)
+	if is_instance_valid(doksa) and doksa.cmb.dead and doksa.cmb.killed_lethal and not st.is_dead("C-021"):
+		st.kill("C-021")                                           # 독사 사살: 카르마 0(SD-03a §8.1 표)
 	var left := foes.filter(func(e): return is_instance_valid(e) and not e.cmb.dead and e.cmb.team == "enemy")
 	if left.is_empty() and not host.box.active:
 		fight = false
@@ -448,7 +450,7 @@ func _fight_tick(_dt: float) -> void:
 
 func _on_ally_down(id: String) -> void:
 	st.vars.set_v("MQ101_DEAD", v("MQ101_DEAD") + 1)
-	st.dead[id] = true
+	st.kill(id)
 
 
 ## 방어전에서 쓰러지면(정합: 생포 이벤트는 단계 0 범위 밖) 감시조가 계단참④로 끌어 올린다 — HP 절반
@@ -468,6 +470,9 @@ const RESULT_FX := {1: [0, 20, -15, 10, 5], 2: [25, 15, -5, 0, 0], 3: [0, 5, 0, 
 
 
 func _apply_result(r: int) -> void:
+	if r == 6:                                                          # 봉천이 문을 닫음(1-X) — 밤 결과가 아니다
+		res_applied = 6
+		return
 	res_applied = r
 	var fx: Array = RESULT_FX[r]
 	if int(fx[0]) != 0:
@@ -482,6 +487,24 @@ func _apply_result(r: int) -> void:
 	if after != "" and not host.box.active:
 		host.play_scene(after)
 	morning_due = true
+
+
+## 봉천이 문을 닫았다(1-X 교차 감사, SD-20 P11 · SD-06 §4.3.8 적대): MQ-101 진행 중에 봉천이 적대(≤ −60 — 대표 살해가 알려짐 · 학살 ·
+## 목격된 살인이 쌓임)가 되면 이장의 일은 이어질 수 없다. MQ-101을 사유와 함께 닫고(결과 6, 정합: SD-03a §8.1 표에 없는 값) 허브를 연다.
+## 깨진 글자를 읽을 사람은 소문(영등포 지하시장)과 경로 장소(O-02)로 찾는다. 밤 싸움 한가운데면 끝난 뒤에(P5).
+func _hostile_check() -> void:
+	var s := st.quests.stage("MQ-101")
+	if s == 0 or s >= 100 or not Crimes.hostile(st, "JC_BC"):
+		return
+	if host.box.active or host.ev.busy() or host.busy or (v("MQ101_NIGHT") == 2 and v("MQ101_RESULT") == 0):
+		return
+	res_applied = 6
+	morning_due = false
+	st.vars.set_v("MQ101_RESULT", 6)
+	st.quests.set_stage("MQ-101", 100)
+	if st.quests.stage("MQ-102") == 0:
+		st.quests.set_stage("MQ-102", 10)
+	host.hint("봉천은 문을 닫았다. 손목 기계의 깨진 글자를 읽을 사람은 혼자 찾아야 한다.", 7.0)
 
 
 ## 다음 날 아침: 밤 필터를 끄고 빌린 침대에서 깬다(조만석과 다음 일을 의논한다)
@@ -501,11 +524,20 @@ func _morning() -> void:
 		host.enter("B-01", "bed")
 		host.ev.run("fade_in", ["black", "10"], func() -> void:
 			host.busy = false
-			host.hint("아침이다 — 조만석과 다음 일을 의논한다", 6.0)))
+			host.hint("아침이다 — %s 다음 일을 의논한다" % _chief_role(), 6.0)))
+
+
+## 아침에 의논할 사람(A52 — 이름 대신 지금 그 일을 맡은 사람): 조만석 → 하숙자 → 반상회 게시판
+func _chief_role() -> String:
+	if not st.known_dead("C-010"):
+		return "조만석과"
+	if not st.known_dead("C-057"):
+		return "이장 대행 하숙자와"
+	return "반상회 게시판 공고를 보고"
 
 
 # ================================================================================================ 기울기 체감(SD-03a §8.1): 게시판·호칭
-const BOARD_STATE := {1: "torn", 2: "crumpled", 3: "crossed", 4: "rate", 5: "water"}
+const BOARD_STATE := {1: "torn", 2: "crumpled", 3: "crossed", 4: "rate", 5: "water", 6: "wanted"}   # 6 봉천이 문을 닫음(1-X): 수배 쪽지 그대로
 
 
 func _board() -> void:
@@ -513,7 +545,7 @@ func _board() -> void:
 		return
 	var s := ""
 	if v("MQ101_RESULT") != 0:
-		s = BOARD_STATE[v("MQ101_RESULT")]
+		s = str(BOARD_STATE.get(v("MQ101_RESULT"), "wanted"))
 	elif v("MQ101_NIGHT") >= 1:
 		s = "wanted"
 	host.map.set_prop_state(host.map.cell_local(22, 35), s)
@@ -524,6 +556,8 @@ const NIGHT_BARKS := {"N-R01-028": "쪽지 봤어. …이장님이 손님이라�
 	"N-R01-036": "새벽인력이 너 하나 때문에 왔다며? 마을이 무슨 죄야.",
 	"N-R01-033": "독사 놈들은 숫자를 세는 게 일이야. 우리 숫자도 세고 있을걸.",
 	"N-R01-034": "백구가 계속 짖어요. 무서워요."}
+const ABSENT_BARKS := {"N-R01-029": "이장님이 오늘은 안 내려오시네. 별일이야.", "N-R01-031": "옥탑방 문이 종일 닫혀 있더라.",
+	"N-R01-028": "이장님 못 봤어? 망루 교대 얘기 할 게 있는데."}
 const RESULT_BARKS := {
 	1: {"N-R01-028": "{name}! 어젯밤 계단 막은 거 잊지 않는다.", "N-R01-029": "{name}, 아침은 먹었어? 텃밭 상추 좀 가져가.",
 		"N-R01-034": "{name} 언니! 백구 밥 같이 줘요!", "N-R01-030": "{name}, 총 손볼 거 있으면 가져와. 공짜다.",
@@ -548,9 +582,15 @@ func _attitude() -> void:
 		var id := str(n["id"])
 		var b := ""
 		if r != 0:
-			b = str(RESULT_BARKS[r].get(id, ""))
+			b = str((RESULT_BARKS.get(r, {}) as Dictionary).get(id, ""))   # 6(문을 닫음)은 호스트의 적대 인사가 맡는다
 		elif v("MQ101_NIGHT") >= 1:
 			b = str(NIGHT_BARKS.get(id, ""))
+		elif st.is_dead("C-010") and not st.known_dead("C-010"):
+			b = str(ABSENT_BARKS.get(id, ""))                            # 아직 아무도 모른다 — '안 보인다'만(N12)
+		if id == "N-R01-034" and st.known_dead("C-015") and b.contains("백구"):
+			b = "…백구 그릇에 오늘도 물 채웠어요."                          # 죽은 개를 산 개처럼 말하지 않는다(1-X)
+		elif id == "N-R01-034" and st.is_dead("C-015") and b.contains("백구"):
+			b = "백구가 안 들어왔어요. 어디 갔지?"
 		if b != "":
 			n["bark"] = b.replace("{name}", nm)
 
@@ -573,6 +613,7 @@ func _process(dt: float) -> void:
 	_bark_tick(dt)
 	if res_applied == 0 and v("MQ101_RESULT") != 0 and not host.box.active and not host.ev.busy():
 		_apply_result(v("MQ101_RESULT"))
+	_hostile_check()
 	if morning_due and not host.box.active and not host.ev.busy() and not host.busy:
 		_morning()
 	if not lessons_hinted and st.quests.stage("MQ-101") == 30 and v("MQ101_TRADE") == 1 and v("MQ101_WATER") == 1 and v("MQ101_RAD") == 1:

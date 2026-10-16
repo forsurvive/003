@@ -1,0 +1,134 @@
+{
+ "id": "SQS02_SUAN_JO",
+ "title": "배수지 — 반상회 총무",
+ "loc": "L-R01-09",
+ "npc": "N-R01-029",
+ "cond": "known_dead(\"N-R01-032\") == 1 and SQ_S02_POSTED == 1 and (SQS02_STAGE < 70 or SQ_S02_REWARD == 0) and (has(\"M-158\") == 0 or SQS01_STAGE >= 50)",
+ "labels": {
+  "START": 0,
+  "ASK": 7,
+  "WHERE": 8,
+  "BYPASS": 10,
+  "THANKS": 14
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQS02_STAGE >= 70",
+   "to": "THANKS"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S02_HEARD == 1",
+   "to": "ASK"
+  },
+  {
+   "op": "do",
+   "fx": "SQ_S02_HEARD = 1"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-029",
+   "emo": "슬픔",
+   "text": "수안이가 없으니 배수지는 내가 봐. 반상회 총무가 할 일은 아니지만."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-029",
+   "emo": "기본",
+   "text": "상류 밸브가 또 잠겼어. 남부순환 패거리가 관을 틀어쥐고 하루 30캡을 내래."
+  },
+  {
+   "op": "if",
+   "cond": "SQS02_STAGE >= 10",
+   "to": "ASK"
+  },
+  {
+   "op": "do",
+   "fx": "quest(\"SQ-S02\", 10)"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "상류 밸브는 어디 있어?",
+     "tags": [],
+     "cond": "SQS02_STAGE >= 10 and SQS02_STAGE < 70",
+     "fx": "",
+     "to": "WHERE",
+     "id": "SQS02_SUAN_JO:1:0"
+    },
+    {
+     "text": "싸우지 않고 물을 돌릴 길은?",
+     "tags": [],
+     "cond": "SQS02_STAGE >= 20 and SQS02_STAGE < 70 and SQ_S02_PIPEMAP == 0",
+     "fx": "",
+     "to": "BYPASS",
+     "id": "SQS02_SUAN_JO:1:1"
+    },
+    {
+     "text": "됐어",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS02_SUAN_JO:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-029",
+   "emo": "기본",
+   "text": "수안이가 밸브실 벽에 계통도를 붙여 놨어. 산 쪽 붉은 × — 삼성산 능선 아래."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-029",
+   "emo": "기본",
+   "text": "수안이 노트에 옛 관로 얘기가 있더라. 관악 계곡 배수로를 지나 내려오는 거. 이음 지점 두 군데가 끊겼대."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-029",
+   "emo": "기본",
+   "text": "고철 넷, 공업용 테이프 둘. 이 지도 가져가. 수안이 글씨야."
+  },
+  {
+   "op": "do",
+   "fx": "SQ_S02_PIPEMAP = 1"
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-029",
+   "emo": "슬픔",
+   "text": "관에서 물 내려오는 소리, 수안이가 들었으면 좋았을 텐데."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-029",
+   "emo": "미소",
+   "text": "반상회 몫이야. 약수 다섯 병, 그리고 걷은 캡."
+  },
+  {
+   "op": "do",
+   "fx": "give(\"I-056\", 5); caps(100); SQ_S02_REWARD = 1"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S02.txt"
+}

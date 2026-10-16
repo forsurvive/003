@@ -683,7 +683,7 @@ def main():
     known_vars = set(json.load(open(os.path.join(ROOT, "game", "data", "vars.json")))["vars"]) | ENGINE_VARS
     for q in json.load(open(os.path.join(ROOT, "game", "data", "quests.json")))["quests"]:
         known_vars |= {q.replace("-", "") + s for s in ("_STAGE", "_RESULT", "_SKIP")}
-    known_fns = {"karma", "aff", "quest", "stage", "result", "give", "take", "has", "caps", "xp", "wanted", "stat", "skill", "year"}
+    known_fns = set(__import__("script_compile").FNS)                                          # 원고 함수 목록은 script_compile.FNS 한 곳(1-X — 컴파일러마다 따로 두면 새 함수를 모른다)
     npcs = json.load(open(os.path.join(ROOT, "game", "data", "npcs.json")))["npcs"]
     from script_compile import UNNAMED                                  # 이름 없는 인물(떠돌이 고물상·수송대 호위·짐소 등)
     npcs = dict(npcs, **{k: {"name": v} for k, v in UNNAMED.items()})

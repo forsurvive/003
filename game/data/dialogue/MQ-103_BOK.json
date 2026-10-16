@@ -6,19 +6,34 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "MENU": 5,
-  "ABOUT": 6,
-  "SHOP": 10,
-  "MA": 12,
-  "WHY": 15,
-  "JOB": 19,
-  "FEE": 26,
-  "WAITING": 30,
-  "REWARD": 32,
-  "HAVEPASS": 36,
-  "REGULAR": 38
+  "MENU": 7,
+  "ABOUT": 8,
+  "SHOP": 12,
+  "MA": 14,
+  "WHY": 17,
+  "JOB": 21,
+  "JOB_ALONE": 28,
+  "JOB_HINT": 31,
+  "FEE": 33,
+  "WAITING": 37,
+  "REWARD": 39,
+  "HAVEPASS": 43,
+  "REGULAR": 45,
+  "MA_DEAD": 47,
+  "MA_LOG": 50,
+  "MA_DEAD_KNEW": 57
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "known_dead(\"C-006\") == 1 and MQ103_STAGE < 40 and K_CODE == 0",
+   "to": "MA_DEAD"
+  },
+  {
+   "op": "if",
+   "cond": "known_dead(\"C-006\") == 1 and MQ103_STAGE < 40 and K_CODE == 1",
+   "to": "MA_DEAD_KNEW"
+  },
   {
    "op": "if",
    "cond": "MQ103_JOB == 2",
@@ -214,10 +229,37 @@
    "text": "상인들이 통로를 못 써. 둥지만 비워 주면 출입패를 주지."
   },
   {
+   "op": "if",
+   "cond": "known_dead(\"C-018\") == 1",
+   "to": "JOB_ALONE"
+  },
+  {
    "op": "line",
    "who": "C-050",
    "emo": "기본",
    "text": "북쪽 출구에 박춘삼이라고 있어. 50캡이면 등 뒤를 맡아 줄 거요."
+  },
+  {
+   "op": "goto",
+   "to": "JOB_HINT"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "슬픔",
+   "text": "등 뒤를 맡길 사람이 하나 있었는데. …혼자 가야겠소."
+  },
+  {
+   "op": "cmd",
+   "name": "hint",
+   "args": [
+    "남쪽 연결 통로(광장 남쪽)의 야생 구울 둥지를 비운다",
+    "8"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
   },
   {
    "op": "cmd",
@@ -304,6 +346,88 @@
    "who": "C-050",
    "emo": "미소",
    "text": "단골 왔네. 오늘은 뭘 보러 왔소?"
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "슬픔",
+   "text": "마 기사 일은 들었소. 배전실에서. …누가 그랬는지 상인회가 찾는 중이오."
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "그 양반 작업 단말에 시공 일지가 남아 있어. 회선 번호표도. 손목 그 기계 줄, 일지랑 대조하면 나올 거요."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "같이 봐 달라고 한다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "MA_LOG",
+     "id": "MQ-103_BOK:3:0"
+    },
+    {
+     "text": "다음에 오겠다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "MQ-103_BOK:3:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "노복희가 열쇠 꾸러미로 배전실 문을 열고, 마영식의 작업 단말 앞에 앉는다. 굽은 손가락이 일지 장을 넘긴다."
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "여기. '관리자 대장 회선 — S-07 출생 등록과 연결'. …볼트 양반, 당신 번호가 이 줄이오."
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "이건 주소가 아니라 사람이라는 뜻이오. 관제망이 당신을 열쇠로 본다는 거지."
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "슬픔",
+   "text": "마 기사가 살아 있었으면 줄마다 뭐가 뭔지 다 일러 줬을 텐데. 나는 여기까지요."
+  },
+  {
+   "op": "cmd",
+   "name": "jm",
+   "args": [
+    "decode"
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "K_CODE = 1; K_NET = 1"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "슬픔",
+   "text": "마 기사 일은 들었소. 그 양반이 읽어 주려던 걸, 당신은 벌써 다른 데서 알았나 보군."
   },
   {
    "op": "goto",

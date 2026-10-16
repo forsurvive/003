@@ -14,7 +14,8 @@
   "WHY": 20,
   "LAMP": 23,
   "WHAT": 26,
-  "SPLIT": 29
+  "SPLIT_GONE": 30,
+  "SPLIT": 32
  },
  "ops": [
   {
@@ -191,8 +192,23 @@
   },
   {
    "op": "if",
+   "cond": "GS_MET_EUNSOL >= 1 and known_dead(\"C-053\") == 1",
+   "to": "SPLIT_GONE"
+  },
+  {
+   "op": "if",
    "cond": "GS_MET_EUNSOL >= 1",
    "to": "SPLIT"
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "C-014",
+   "emo": "슬픔",
+   "text": "은솔 당번장 일은 들었어요. 그분들이 말하던 '개통'은… 이제 누가 말할까요."
   },
   {
    "op": "goto",

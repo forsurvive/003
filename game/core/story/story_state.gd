@@ -128,7 +128,7 @@ func _init() -> void:
 	# KILLS 쓰러뜨린 무리 수 · KILL_DAY 그날(72시간 뒤 다시 채움) · EOM 엄태경에게 소탕을 알림 · BC 봉천이 아직 모르는 해법 호감(돌아오면 반영 — 공개도 1, SD-06 §6) · NAP 지금 외눈이 둥지에서 잔다(진행기)
 	# PK_045 애니멀 프렌드 랭크(퍽 창은 1-12 — 지금은 변수만)
 	for k in ["SQ_S01_SOL", "SQ_S01_LEFT", "SQ_S01_LEFT_DAY", "SQ_S01_DROP", "SQ_S01_DROP_AT", "SQ_S01_TAG_DAY", "SQ_S01_DOG", "SQ_S01_FEED", "SQ_S01_COLL", "SQ_S01_BAIT",
-			"SQ_S01_BETRAY", "SQ_S01_CLEAR_DAY", "SQ_S01_KILLS", "SQ_S01_KILL_DAY", "SQ_S01_EOM", "SQ_S01_BC", "SQ_S01_NAP", "PK_045"]:
+			"SQ_S01_BETRAY", "SQ_S01_CLEAR_DAY", "SQ_S01_KILLS", "SQ_S01_KILL_DAY", "SQ_S01_EOM", "SQ_S01_BC", "SQ_S01_NAP", "SQ_S01_BOWL", "PK_045"]:
 		vars.declare(k, "int", 0)
 	vars.declare("SQH_TAG", "int", -1)
 	# SQ-S02 물 반 컵의 값(1-11b, SD-04a §4.2 · SideS02): ARM MQ-101 끝난 날 · POSTED 급수 제한 쪽지(DAY0 밸브가 잠긴 첫날) · LEVEL 수위계 칸 · OPEN 밸브(1 열림 · 2 물값 사흘, PAID 끝 날) ·
@@ -137,15 +137,15 @@ func _init() -> void:
 	# PIPEMAP 관로 지도 · J1 · J2 이음 지점(AT 주인공 곁 지점) · TRAP_AT 03시 함정(TRAP_DONE · FIGHT 싸우는 중) · NH_DEAD 남건희 죽음(NH_KILLED 주인공이) · EXILE_DAY 추방 날 ·
 	# STOP_DAY 대장간 간 날 · NIGHT_DAY 윗문 거래를 들킨 밤 · HEARD 조수안에게 들음 · REWARD 사례 · DONE_DAY 단계 70 날 · RAID_UNTIL 밤 습격 +30% 끝 날 · SOL_E 물값 봉천 +2 · DRY_HINT
 	# JC_PROB_BC 봉천 '문제 해결'(SD-04a §2.5 — 거처 조건 표지)
-	for k in ["ARM", "POSTED", "DAY0", "LEVEL", "OPEN", "PAID", "SOL", "B", "BJ", "BJ_AT", "CAMP", "CKILLS", "TDEAD", "DDEAD", "HOT", "NS_HOT", "GUARD", "MAP", "SIREN", "NKILLS", "HAND", "KNOW", "IN", "PIPEMAP", "J1", "J2", "AT", "TRAP_AT", "TRAP_DONE", "FIGHT", "NH_DEAD", "NH_KILLED", "EXILE_DAY", "STOP_DAY", "NIGHT_DAY", "HEARD", "REWARD", "DONE_DAY", "RAID_UNTIL", "SOL_E", "DRY_HINT"]:
+	for k in ["ARM", "POSTED", "DAY0", "LEVEL", "OPEN", "PAID", "SOL", "B", "BJ", "BJ_AT", "CAMP", "CKILLS", "TDEAD", "DDEAD", "HOT", "NS_HOT", "GUARD", "MAP", "SIREN", "NKILLS", "HAND", "KNOW", "IN", "PIPEMAP", "J1", "J2", "AT", "TRAP_AT", "TRAP_DONE", "FIGHT", "NH_DEAD", "NH_KILLED", "EXILE_DAY", "STOP_DAY", "NIGHT_DAY", "HEARD", "REWARD", "DONE_DAY", "RAID_UNTIL", "SOL_E", "DRY_HINT", "SHADOW"]:
 		vars.declare("SQ_S02_" + k, "int", 0)
 	vars.declare("JC_PROB_BC", "int", 0)
 	# SQ-S04 도성이 뒤척인다(1-11c, SD-04a §4.4 · SideS04): ARM MQ-102가 열린 분 · WAKE_AT 깨어날 21시 · WAKE 깨어난 분 · HELD 남솔이 철망 안 · DEADLINE 보호 기간 끝 ·
 	# OUT 나온 길(1 인증 · 2 파괴 · 3 은신 · 4 정비 · 5 만료 · 6 마을) · SLEEP 잠든 까닭(1 전지 회수 · 2 대기 · 3 정비 모드) · KILLED · TKILLED 부순 파수 · 감시포(비트) ·
 	# HOT 제압 중 · LOITER 아랫문 서성임 끝 · D 정비(1 오는 중 · 2 끝, D_AT) · TEST 시험 가동 · BATT 전지 회수 · F 단말 대기 · LETTER 편지 · AWAY 노량진(돌아오는 날) ·
 	# BELL 종(1 봄 · 2 들음 · 3 쪽지) · RED 남태하 · HELP 감시조 지원 · FENCE 철조망 · CHASE 이탈 경보 대기 · FIGHT 감시조가 싸우는 중 · UP 주민센터 파수가 서 있다 ·
-	# GUARD_BACK 노량진에서 돌아오는 분 · VILLAGE_AT 마을이 철망을 여는 분 · B 셋 다 부숨 · PD_LOCK 거점 '관악산 송신소' 공백 고정
-	for k in ["ARM", "WAKE_AT", "WAKE", "HELD", "DEADLINE", "OUT", "SLEEP", "KILLED", "TKILLED", "HOT", "LOITER", "D", "D_AT", "TEST", "BATT", "F", "LETTER", "AWAY", "BELL", "RED", "HELP", "FENCE", "CHASE", "FIGHT", "UP", "GUARD_BACK", "VILLAGE_AT", "B", "PD_LOCK"]:
+	# GUARD_BACK 노량진에서 돌아오는 분 · VILLAGE_AT 마을이 철망을 여는 분 · B 셋 다 부숨 · PD_LOCK 거점 '관악산 송신소' 공백 고정 · TICKET 주인공 번호표 0414(재미 검수)
+	for k in ["ARM", "WAKE_AT", "WAKE", "HELD", "DEADLINE", "OUT", "SLEEP", "KILLED", "TKILLED", "HOT", "LOITER", "D", "D_AT", "TEST", "BATT", "F", "LETTER", "AWAY", "BELL", "RED", "HELP", "FENCE", "CHASE", "FIGHT", "UP", "GUARD_BACK", "VILLAGE_AT", "B", "PD_LOCK", "TICKET"]:
 		vars.declare("SQ_S04_" + k, "int", 0)
 	for kv in [["SQH_BATT", -1], ["LR15_READ", 0], ["PD_R01_GS", 0], ["M303_BONUS", 0], ["PK_017", 0]]:   # 전지 인도처(HO) · LR-15 · 판도 PD-R01-2 각성회 · 편지 화술 +10(첫 1회) · 퍽 눈치(퍽 창은 1-12)
 		vars.declare(kv[0], "int", kv[1])
@@ -178,11 +178,55 @@ func load_data(dir: String = "res://data/") -> void:
 
 
 # ---------------------------------------------------------------- 식 언어 컨텍스트
+## 생사 변수(SD-03a §4 '인물 생사' — 정본 ID). 사실은 `dead` 한 곳(SD-20 P1): 변수는 dead에서 계산하고, 변수에 1을 쓰면 dead에 적는다.
+## (예전엔 진행기가 D_HDC를 따로 세우고 맵에서 쏴 죽이면 dead만 서서 두 사실이 갈렸다 · 독사를 D_DS(다니엘 서)에 적던 것 — 1-X에서 고침)
+const DEAD_VARS := {"D_JMS": "C-010", "D_BIH": "C-011", "D_MKJ": "C-012", "D_HDC": "C-013", "D_MYS": "C-006", "D_SMR": "C-008",
+	"D_DS": "C-005", "D_MXM": "C-007", "D_RJ": "C-014", "D_JL": "C-017", "D_BG": "C-015"}
+
+
+## 대표 ID(별칭 N-…은 첫 ID로 — 백구 C-015 = N-R01-027)
+func canon(id: String) -> String:
+	var ids: Array = npcs.get(id, {}).get("ids", [])
+	return str(ids[0]) if not ids.is_empty() else id
+
+
+## 죽었나(별칭 어느 쪽으로 적혔어도)
+func is_dead(id: String) -> bool:
+	if dead.has(id):
+		return true
+	for a in npcs.get(id, {}).get("ids", []):
+		if dead.has(str(a)):
+			return true
+	return false
+
+
+## 죽었고 알려졌나: 목격 없이 죽인 시체가 아직 발견 전이면 아무도 모른다(Crimes · Deeds.bodies)
+func known_dead(id: String) -> bool:
+	if not is_dead(id):
+		return false
+	var c := canon(id)
+	for b in deeds.bodies:
+		if canon(str(b["id"])) == c:
+			return false
+	return true
+
+
+## 죽음을 적는 한 곳(대표 ID · 그 해)
+func kill(id: String) -> void:
+	dead[canon(id)] = year()
+
+
 func get_var(name: String) -> Variant:
+	if DEAD_VARS.has(name):
+		return 1 if is_dead(DEAD_VARS[name]) else 0
 	return vars.get_v(name)
 
 
 func set_var(name: String, v: Variant) -> bool:
+	if DEAD_VARS.has(name):
+		if int(v) != 0:
+			kill(DEAD_VARS[name])
+		return true
 	return vars.set_v(name, v)
 
 
@@ -198,6 +242,9 @@ func call_fn(name: String, args: Array) -> Variant:
 				vars._err("알 수 없는 호감도 대상: " + str(args[0]))
 				return null
 			var was := int(vars.get_v(key)) if vars.has(key) else 0
+			if int(deeds.grudge.get(key.substr(4), 0)) >= 2:             # 영구 적대(1-X, SD-06 §3.8): −100 고정, 어떤 원천으로도 오르지 않는다
+				vars.set_v(key, -AFF_RANGE)
+				return -AFF_RANGE
 			var nv := vars.add(key, int(args[1]), -AFF_RANGE, AFF_RANGE)
 			events.append({"kind": "aff", "key": key, "delta": int(args[1]), "value": nv})
 			if key == "AFF_BJ" and vars.has("V_WANTED"):
@@ -253,6 +300,19 @@ func call_fn(name: String, args: Array) -> Variant:
 		"blade":                                                        # 날붙이 근접 무기(W-037~W-045)를 들었나(SD-04a §4.1 해법 D, 1-11a)
 			var b := Gear.base(wielded)
 			return 1 if b >= "W-037" and b <= "W-045" else 0
+		"dead":                                                         # 그 인물(C-·N-·CR- ID)이 죽었나(SD-20 P3 · §10 — 다른 인물 이야기를 하는 줄은 이 조건 뒤에서만)
+			return 1 if is_dead(str(args[0])) else 0
+		"known_dead":                                                   # 죽었고, 그 죽음이 알려졌나(목격 · 시체 발견 — 아직 아무도 못 본 시체면 0, SD-06 §6.4 · SD-20 P7)
+			return 1 if known_dead(str(args[0])) else 0
+		"killer_known":                                                 # 그 정착지 · 세력("BC" · "JC_BC")이 주인공을 '우리 사람을 죽인 자'로 아나(목격 · 지목 · 자백, 1-X)
+			var tk := str(args[0])
+			if not tk.begins_with("JC") and vars.has("AFF_JC_" + tk):
+				tk = "JC_" + tk
+			return 1 if Crimes.killer_known_by(self, tk) else 0
+		"confess":                                                      # 자백(1-X): 직접 죽였고 아무도 몰랐던 살인을 털어놓는다 — 지목된 살해와 같은 기록
+			return 1 if Crimes.confess(self, str(args[0]), str(args[1]) if args.size() > 1 else "R01", deeds.last, str(args[2]) if args.size() > 2 else "") else 0
+		"victim":                                                       # 주인공이 직접 죽인 사람인가(아무도 몰라도)
+			return 1 if deeds.victims.has(canon(str(args[0]))) else 0
 		"worn":                                                         # 입은 몸통 옷의 기본 ID(상태 떼고 — 낡은 볼트 점프슈트도 볼트 옷, 1-8a)
 			return Gear.base(str(vars.get_v("PC_TORSO")))
 		"stat":
@@ -379,6 +439,16 @@ func speech_chance(npc_id: String, diff: String) -> float:
 		fac = float(vars.get_v(fk))
 	return Speech.chance(stat("CH"), weapon_out, float(n.get("aff", 50)), fac, float(n.get("resp", 50)),
 		float(vars.get_v("V_KARMA") if vars.has("V_KARMA") else 0), skill("SPEECH"), diff)
+
+
+## 아이인가(SD-11 §580 · SD-18 '아동': 원작처럼 공격 대상이 아니다 — 맞지도 죽지도 않는다). 나이 1~15 또는 아이 몸(K)
+func is_child(id: String) -> bool:
+	var n: Dictionary = npcs.get(id, {})
+	var look := str(n.get("look", ""))
+	if look.begins_with("AN"):                                        # 동물(백구 AN-CR536 · 6살)은 나이가 어려도 아이가 아니다
+		return false
+	var age := int(n.get("age", 0))
+	return (age > 0 and age < 16) or look.begins_with("K")
 
 
 func npc_name(id: String) -> String:

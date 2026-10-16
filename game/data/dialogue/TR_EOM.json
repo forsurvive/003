@@ -10,14 +10,16 @@
   "ASK": 6,
   "SHOP": 7,
   "ONE": 9,
-  "ONE2": 17,
-  "BAIT": 19,
-  "TAG": 23,
-  "GIVE_EOM": 27,
-  "LEFT": 32,
-  "KILLED": 36,
-  "MT": 40,
-  "MT_RIDGE": 44
+  "ONE_TALK": 14,
+  "ONE2": 18,
+  "BAIT": 20,
+  "BAIT_NODOG": 25,
+  "TAG": 27,
+  "GIVE_EOM": 31,
+  "LEFT": 36,
+  "KILLED": 40,
+  "MT": 44,
+  "MT_RIDGE": 48
  },
  "ops": [
   {
@@ -135,6 +137,11 @@
    "text": "외눈 말이야. 지난달 별관 뒤에서 봤는데, 목에 쇠붙이가 반짝이더라. 개가 뭘 차고 다니는 건 처음 봤어."
   },
   {
+   "op": "if",
+   "cond": "dead(\"C-015\") == 1 or SQ_S01_DOG == 1 or MQ101_DOG == 1",
+   "to": "ONE_TALK"
+  },
+  {
    "op": "cmd",
    "name": "balloon",
    "args": [
@@ -208,10 +215,25 @@
    "text": "쇠붙이는 그대로 외눈 목에 남겠지만. 그건 외눈 거니까."
   },
   {
+   "op": "if",
+   "cond": "known_dead(\"C-015\") == 1",
+   "to": "BAIT_NODOG"
+  },
+  {
    "op": "line",
    "who": "N-R01-033",
    "emo": "기본",
    "text": "백구를 데려가 보는 것도 방법이야. 둘이 닮았거든. 털빛도, 귀도. 해 질 녘에 마당에서 마주치게 해 봐."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-033",
+   "emo": "슬픔",
+   "text": "백구가 있었으면 데려가 보라고 했을 거야. 둘이 꼭 닮았었거든."
   },
   {
    "op": "goto",

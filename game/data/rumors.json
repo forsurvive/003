@@ -37,6 +37,16 @@
 },
 {
 "where": "*",
+"cond": "MQ101_RESULT == 6",
+"text": "봉천이 정문을 닫았대. 볼트 옷 입은 애 하나 때문에. 무슨 짓을 했는지는 몰라도."
+},
+{
+"where": "*",
+"cond": "MQ101_RESULT == 6 and MQ102_C1 == 0 and K_CODE == 0",
+"text": "옛날 기계에 찍힌 글자를 읽는 구울이 영등포 지하시장 배전실에 산대. 이백 살이라나."
+},
+{
+"where": "*",
 "cond": "MQ102_ROBOT == 1",
 "text": "주민센터 앞 고철 로봇이 불을 켰다더라. 이백 년 만에. 누가 옆에 서 있었대."
 },
@@ -227,12 +237,17 @@
 },
 {
 "where": "R01",
-"cond": "SQ_S02_IN == 1 and GAME_DAY >= SQ_S02_EXILE_DAY",
+"cond": "SQ_S02_IN == 1 and GAME_DAY >= SQ_S02_EXILE_DAY and known_dead(\"C-010\") == 0",
 "text": "건희가 마을을 떠났대. 반상회에서 정했다나. 할머니 물통은 이장님이 채운대."
 },
 {
 "where": "R01",
-"cond": "SQ_S02_IN == 2",
+"cond": "SQ_S02_IN == 1 and GAME_DAY >= SQ_S02_EXILE_DAY and known_dead(\"C-010\") == 1",
+"text": "건희가 마을을 떠났대. 반상회에서 정했다나. 할머니 물통은 이웃들이 돌아가며 채운대."
+},
+{
+"where": "R01",
+"cond": "SQ_S02_IN == 2 and dead(\"N-R01-030\") == 0 and dead(\"N-R01-039\") == 0",
 "text": "남무진 대장간에 텃밭 하던 건희가 나와. 망치질이 아직 서툴러."
 },
 {
@@ -279,6 +294,21 @@
 "where": "R01",
 "cond": "SQH_BATT == 81",
 "text": "대장간 남씨가 옥탑에 불을 달았어. 밤에도 계단이 환해. 쇳덩이 심장이라던데."
+},
+{
+"where": "R01",
+"cond": "killer_known(\"BC\") == 1",
+"text": "볼트 옷 입은 애가 우리 사람을 쐈대. 봤다는 사람이 있어. 눈 마주치지 마."
+},
+{
+"where": "R01",
+"cond": "known_dead(\"C-010\") == 1 and killer_known(\"BC\") == 0",
+"text": "이장님 장례 치렀대. 누가 그랬는지는 아직 몰라. 감시조가 밤마다 계단 수를 다시 세."
+},
+{
+"where": "R01",
+"cond": "known_dead(\"C-015\") == 1",
+"text": "백구 없는 개집 보면 이상해. 그 녀석이 짖으면 마을이 다 깼는데."
 }
 ]
 }

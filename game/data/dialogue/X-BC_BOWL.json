@@ -1,0 +1,202 @@
+{
+ "id": "X-BC_BOWL",
+ "title": "개집 앞 밥그릇",
+ "loc": "L-R01-09",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "FED": 5,
+  "CAGED": 9,
+  "FULL": 12,
+  "GONE": 14,
+  "OUT": 16
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "known_dead(\"C-015\") == 1",
+   "to": "GONE"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"C-015\") == 1 or MQ101_DOG == 1 or SQ_S01_DOG == 1 or (HOME_BC == 1 and BAEKGU_NAP == 1)",
+   "to": "OUT"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S01_FEED == 1",
+   "to": "FULL"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "개집 앞 찌그러진 양은 그릇. 비어 있다. 바닥에 못으로 긁은 글씨 — '백구'."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "그릇에 고기를 놓는다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "I-036",
+       "n": 1
+      }
+     ],
+     "cond": "has(\"I-036\")",
+     "fx": "",
+     "to": "FED",
+     "id": "X-BC_BOWL:1:0"
+    },
+    {
+     "text": "그릇에 고기를 놓는다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "I-037",
+       "n": 1
+      }
+     ],
+     "cond": "has(\"I-037\")",
+     "fx": "",
+     "to": "FED",
+     "id": "X-BC_BOWL:1:1"
+    },
+    {
+     "text": "그릇에 고기를 놓는다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "I-038",
+       "n": 1
+      }
+     ],
+     "cond": "has(\"I-038\")",
+     "fx": "",
+     "to": "FED",
+     "id": "X-BC_BOWL:1:2"
+    },
+    {
+     "text": "그릇에 고기를 놓는다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "I-039",
+       "n": 1
+      }
+     ],
+     "cond": "has(\"I-039\")",
+     "fx": "",
+     "to": "FED",
+     "id": "X-BC_BOWL:1:3"
+    },
+    {
+     "text": "그릇에 고기를 놓는다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "I-040",
+       "n": 1
+      }
+     ],
+     "cond": "has(\"I-040\")",
+     "fx": "",
+     "to": "FED",
+     "id": "X-BC_BOWL:1:4"
+    },
+    {
+     "text": "그릇에 고기를 놓는다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "I-041",
+       "n": 1
+      }
+     ],
+     "cond": "has(\"I-041\")",
+     "fx": "",
+     "to": "FED",
+     "id": "X-BC_BOWL:1:5"
+    },
+    {
+     "text": "그냥 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "X-BC_BOWL:1:6"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "SQ_S01_FEED = 1"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S04_HELD == 1 or SQ_S04_AWAY == 1",
+   "to": "CAGED"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "그릇에 고기를 놓자 개집 안에서 흰 개가 고개를 든다. 냄새를 맡고, 손등을 한 번 핥고, 먹는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "SQ_S01_BOWL = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "그릇에 고기를 놓자 흰 개가 나와 먹는다. 다 먹고는 주민센터 쪽을 한참 바라본다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "그릇에 아직 고기 냄새가 남아 있다. 백구가 꼬리로 바닥을 한 번 친다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "개집 앞 찌그러진 양은 그릇. 누군가 물을 채워 두었다. 마실 개는 오지 않는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "개집 앞 찌그러진 양은 그릇. 개집이 비었다 — 주인은 지금 다른 데 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S01.txt"
+}

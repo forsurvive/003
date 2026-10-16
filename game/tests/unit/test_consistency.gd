@@ -85,3 +85,15 @@ func test_sd20_wanted_hold(t) -> void:
 	st.vars.set_v("WANTED_HOLD", 0)
 	Wanted.set_value(st, maxi(maxi(Wanted.value(st), int(st.vars.get_v("WANTED_PRE"))), 30))
 	t.eq(Wanted.value(st), 45, "사흘 뒤 출두 전 값(45)으로 — 출두가 수배를 깎아 주지 않는다")
+
+
+## SD-20 §10 교차 점검(1-X): 퀘스트끼리 부딪히는 곳(죽을 수 있는 인물 · 한 사람 두 곳 · 사실 소유 · 한 장뿐인 물건 · 겹치는 무대 · 막에 갇힌 퀘스트)을
+## tools/pipeline/quest_cross.py가 표로 뽑는다(build_data). 허용 목록에 이유 없이 남은 '새 경고'가 있으면 실패한다.
+func test_sd20_cross_table(t) -> void:
+	var p := "res://data/_cross_report.json"
+	t.ok(FileAccess.file_exists(p), "교차 정합 표가 있다(build_data가 만든다)")
+	if not FileAccess.file_exists(p):
+		return
+	var d: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(p))
+	t.ok(int(d.get("warn", 0)) > 0, "표가 실제로 퀘스트들을 읽었다(경고 %d)" % int(d.get("warn", 0)))
+	t.eq(d.get("new", []), [], "교차 정합 새 경고 0 — 고치거나 quest_cross_allow.yaml에 이유를 적는다")

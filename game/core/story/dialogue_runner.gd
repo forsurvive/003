@@ -51,6 +51,9 @@ func step() -> Dictionary:
 		match op["op"]:
 			"line":
 				var who := str(op["who"])
+				if who != "SYS" and who != "PC" and st.is_dead(who):  # 죽은 인물은 말하지 않는다(SD-20 P3 안전망 — 진행기가 연 장면에 그 사람 줄이 섞여 있어도)
+					pc += 1
+					continue
 				var name := "" if who == "SYS" else st.npc_name(who)
 				var f := TextFmt.format(str(op["text"]), st)
 				cur = {"type": "line", "who": who, "name": name, "emo": str(op.get("emo", "기본")), "text": f["text"],

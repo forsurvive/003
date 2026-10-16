@@ -75,7 +75,7 @@
        "n": 300
       }
      ],
-     "cond": "SB_BOUGHT == 0",
+     "cond": "SB_BOUGHT == 0 and dead(\"N-R02-040\") == 0",
      "fx": "",
      "to": "BUY88",
      "id": "MQ-105_HDC_BUY:1:2"
@@ -88,7 +88,7 @@
        "n": 400
       }
      ],
-     "cond": "SB_127 < 2",
+     "cond": "SB_127 < 2 and dead(\"N-R02-039\") == 0",
      "fx": "",
      "to": "BUY127",
      "id": "MQ-105_HDC_BUY:1:3"

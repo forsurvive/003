@@ -113,7 +113,7 @@ prop morgue_drawers 34 21
 prop exam_bed 32 25
 prop sink 38 21
 text 28 21 "냉동 안치실 서랍. 이름표 칸마다 같은 이름이 세대를 건너 되풀이된다." w=6
-npc C-025 17 6 W route=진찰대:17,6,6;약장:23,4,4;창고:30,8,5;복도:20,15,3 bark="손 씻고 들어와. 여긴 의무과야." cond="year() == 2277"
+npc C-025 17 6 W route=진찰대:17,6,6;약장:23,4,4;창고:30,8,5;복도:20,15,3 bark="손 씻고 들어와. 여긴 의무과야." cond="year() == 2277 and MQP4_STAGE >= 30"
 box 24 3 aid w=2 owner=S7 name="의무과 약품장"
 box 33 3 aid w=2 owner=S7 lock=25 name="약품장(잠김)"
 box 27 6 crate w=2 owner=S7 name="의무과 물품 상자"
