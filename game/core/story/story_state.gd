@@ -33,6 +33,7 @@ var stolen := {}                        ## 장물(SD-12 §9.2): 아이템 ID -> 
 var dead := {}                          ## 죽은 인물 ID -> true(0-9): 뒤 시대 맵에서 서지 않는다
 var hazards := {}                       ## 함정 · 환경 폭발(1-9c): "맵:x,y" -> "done"(터짐·발동) | "off"(해체) | "seen"(발견) | "open"(열린 차폐 용기, 1-9d)
 var rad_acc := 0.0                      ## 방사능(1-9d): PC_RADS에 아직 못 넣은 소수(틱당 최소 0.1)
+var stat_tmp := {}                      ## 잠깐 능력치 보정(1-9e4 최루 기침 PE −2 등): 코드 -> 값. 저장하지 않는다(벗어나면 곧 풀린다)
 var rad_drug := {}                      ## 라드-X 류(1-9d): {"pct": 저항 %, "t": 남은 초, "id"}
 var places := PlaceLog.new()             ## 장소 발견 상태(1-2, SD-12 §5.5)
 var book := NpcBook.new()               ## 인물 수첩(1-2, SD-12 §3.11)
@@ -297,6 +298,8 @@ func stat(name: String) -> int:
 	var v := int(vars.get_v("PC_" + c))
 	if c in ["EN", "AG", "ST"] and vars.has("PC_RADS"):
 		v = maxi(1, v - Radiation.penalty(int(vars.get_v("PC_RADS")), c))
+	if stat_tmp.has(c):                                               # 잠깐 보정(최루 기침 인지력 −2 등) — 저장하지 않는다
+		v = maxi(1, v + int(stat_tmp[c]))
 	return v
 
 

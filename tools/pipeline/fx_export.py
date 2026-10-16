@@ -49,6 +49,9 @@ SETS += [  # 1-9b 투척·설치(SD-11 §3.4 · §9.2): 던진 물체 4컷(구�
     ("boom_plasma", 8, lambda a, f: A.boom_tint(f, "plasma"), A.ANCHOR["mid96"], "mix", 96, 1),
     ("boom_pulse", 8, lambda a, f: A.boom_tint(f, "pulse"), A.ANCHOR["mid96"], "mix", 96, 1),
 ]
+SETS += [  # 1-9e4 빛나는 개체 오라(SD-16 §10.5 '덧그림 4프레임', 가산) — 기준점 = 발
+    ("aura_rad", 4, lambda a, f: A.aura_rad(f), (24.0, 44.0), "add", 48, 1),
+]
 SETS += [  # 1-9c 숨긴 함정(발견하면 바닥층에 그린다)
     ("trap_bear", 2, lambda a, f: A.trap("bear", f), A.ANCHOR["mid16"], "mix", 16, 1),
     ("trap_plate", 1, lambda a, f: A.trap("plate"), A.ANCHOR["mid16"], "mix", 16, 1),
@@ -56,7 +59,7 @@ SETS += [  # 1-9c 숨긴 함정(발견하면 바닥층에 그린다)
     ("trap_claymore", 1, lambda a, f: A.trap("claymore"), A.ANCHOR["mid16"], "mix", 16, 1),
     ("trap_shotgun", 1, lambda a, f: A.trap("shotgun"), (16.0, 16.0), "mix", 32, 1),
 ]
-TICKS = {"flame": 4, "boom": 3, "boom_smoke": 4, "boom_plasma": 3, "boom_pulse": 3}   # 컷당 틱(기본 2)
+TICKS = {"aura_rad": 6, "flame": 4, "boom": 3, "boom_smoke": 4, "boom_plasma": 3, "boom_pulse": 3}   # 컷당 틱(기본 2)
 
 
 def main():

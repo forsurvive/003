@@ -249,6 +249,44 @@ func _enemy_weapon(enemy_id: String, arm: String) -> Dictionary:
 
 signal enemy_down(e: Enemy)
 
+## 빛나는 구울 방사능 폭발(SD-14 CR-202): 반경 4t — 사람 · 짐승 · 아군 피해 5 + 방사능 5/초 2초(임시 방사능 지대),
+## 같은 반경의 야생 구울 HP +30%('먼저 잡아야 하는 적'). probe = 다친(70% 이하) 야생 구울이 곁에 있나만 묻는다
+func _glow_burst(e: Enemy, probe: bool) -> bool:
+	var at := e.loco.logical
+	if probe:
+		for o in enemies:
+			if is_instance_valid(o) and o != e and not o.cmb.dead and str(o.get_meta("enemy_id", "")) in Enemy.FERALS \
+					and o.cmb.hp < o.cmb.max_hp * 0.7 and o.loco.logical.distance_to(at) <= Enemy.BURST_R:
+				return true
+		return false
+	for o in enemies:
+		if not is_instance_valid(o) or o == e or o.cmb.dead or o.loco.logical.distance_to(at) > Enemy.BURST_R:
+			continue
+		var oid := str(o.get_meta("enemy_id", ""))
+		if oid in Enemy.FERALS:
+			o.cmb.hp = minf(o.cmb.max_hp, o.cmb.hp + o.cmb.max_hp * 0.3)
+		elif not oid in Enemy.GHOULS and o.cmb.team != e.cmb.team and not o.cmb.robot:
+			o.cmb.last_by = e.cmb.team
+			o.cmb.take({"hp": 5.0}, at)
+	if not pc.dead and pc.pos().distance_to(at) <= Enemy.BURST_R:
+		pc.last_by = e.cmb.team
+		pc.take({"hp": 5.0}, at)
+	ord.zones.append({"p": at, "r": Enemy.BURST_R, "t": 2.0, "kind": "rad", "team": e.cmb.team, "w": {"rad": 5.0}, "skill": 0.0})
+	stats["bursts"] = int(stats.get("bursts", 0)) + 1
+	return true
+
+
+## 들개 우두머리 울부짖기(SD-14 CR-106): 12t 안 같은 편 들개 — 20초 속도 +15% · 물기 +20%(쿨 30초). 듣고 깬다
+func _howl(e: Enemy) -> void:
+	for o in enemies:
+		if is_instance_valid(o) and not o.cmb.dead and o.style == "dog" and o.cmb.team == e.cmb.team \
+				and o.loco.logical.distance_to(e.loco.logical) <= 12.0 * 32.0:
+			o.buff_t = Enemy.HOWL_BUFF
+			o.wake()
+			if o.brain.state != AIBrain.S.COMBAT and o != e:
+				o.hear("pistol", e.loco.logical)
+	stats["howls"] = int(stats.get("howls", 0)) + 1
+
 ## 1-9e2 적 무기(SD-14 주무기 글 → SD-13 무기 ID, SD-11 §7.4): 길 위 조우 · 생성 건물 적만 — 진행기가 세운 적은 다듬어 둔 장비 그대로(1막 이야기 전투 밸런스)
 const ENEMY_ARMS := {
 	"CR-420": [["W-005", 0.6], ["W-001", 0.4]],                        # 낡은 권총 / 개조 권총
@@ -281,7 +319,7 @@ func _pick_arm(enemy_id: String, pos: Vector2) -> Dictionary:
 
 func spawn(enemy_id: String, pos: Vector2, map: InteriorMap, st: StoryState = null, opts: Dictionary = {}) -> Enemy:
 	var e := Enemy.new()
-	var arm := str(opts.get("arm", "baton" if enemy_id == "CR-473" else ("claw" if enemy_id in ["CR-200", "CR-201"] else "")))
+	var arm := str(opts.get("arm", "baton" if enemy_id == "CR-473" else ("claw" if enemy_id in ["CR-200", "CR-201", "CR-202"] else "")))
 	var generic := bool(opts.get("morale", str(map.data.get("id", "")).begins_with("G-")))   # 길 위 조우 · 생성 건물(1-9e)
 	var w := _enemy_weapon(enemy_id, arm)
 	var o2 := opts
@@ -301,6 +339,10 @@ func spawn(enemy_id: String, pos: Vector2, map: InteriorMap, st: StoryState = nu
 			ord.throw(from, to, e.nade_w, e.cmb.team, e.skill, 8.0)
 		e.squad_ok = func() -> bool: return _clock - float(_team_nade.get(e.cmb.team, -99.0)) >= 4.0
 	e.smoke_at = ord.in_zone
+	e.rad_at = rad.dose_at                                              # 1-9e4: 구울 방사능 회복 · 빛나는 구울 폭발 · 울부짖기 · 들개 지뢰 회피
+	e.burst_cb = _glow_burst
+	e.howl_cb = _howl
+	e.mine_list = func() -> Array: return ord.mines
 	e.cmb.robot = enemy_id.begins_with("CR-3")                          # SD-14 CR-3xx = 로봇(관제망 · 드론 · 포탑)
 	e.cmb.big = enemy_id == "CR-405"                                    # 파워 아머: 넘어짐 · 그물 · 넉백 면역(SD-11 §9.4)
 	e.set_meta("enemy_id", enemy_id)
@@ -675,6 +717,7 @@ func auto_hotkey(id: String) -> void:
 
 # ---------------------------------------------------------------- 매 프레임(진행기가 부른다)
 func tick(dt: float, free: bool, st: StoryState) -> void:
+	_st_ref = st
 	var player: Actor = pc.actor
 	if player == null:
 		return
@@ -958,8 +1001,9 @@ func _player(dt: float, player: Actor, st: StoryState) -> void:
 
 ## 1-9e3 질주(초당 AP 10, 회복 없음, AP 0이면 끝 · 숨참) · 구르기 무적(5컷 중 2~4번째) · 질주 발소리(5t)
 func _ap_move(dt: float, player: Actor) -> void:
+	_cough(dt, player)
 	var moving := player.loco.motion != "idle"
-	var want := sprint_want and moving and not _sprint_latch and focus_t < 0.0 and not player.rolling() and not crouch
+	var want := sprint_want and moving and not _sprint_latch and focus_t < 0.0 and not player.rolling() and not crouch and cough_t <= 0.0
 	var was := sprinting
 	sprinting = ap.tick(dt, want)
 	if not sprint_want:
@@ -977,6 +1021,25 @@ func _ap_move(dt: float, player: Actor) -> void:
 			for e in enemies:
 				if is_instance_valid(e):
 					e.hear("sprint", player.loco.logical)
+
+
+## 최루 기침(SD-14 §3 상태 '기침' · SD-13 W-058): 최루 지대 안이면 — 나온 뒤 4초까지 — 질주 불가 · AP 회복 −50% · 인지력 −2
+var cough_t := 0.0
+var _st_ref: StoryState
+
+
+func _cough(dt: float, player: Actor) -> void:
+	if ord.in_zone(player.loco.logical, "gas"):
+		if cough_t <= 0.0:
+			message.emit("콜록 — 최루 가스")
+		cough_t = 4.0
+	cough_t = maxf(0.0, cough_t - dt)
+	ap.regen_mult = 0.5 if cough_t > 0.0 else 1.0
+	if _st_ref != null:
+		if cough_t > 0.0:
+			_st_ref.stat_tmp["PE"] = -2
+		else:
+			_st_ref.stat_tmp.erase("PE")
 
 
 ## 회피 구르기(SD-11 §5.3): AP 20 · 0.35초 2.5t · 간격 0.5초. 과적 · 다리 손상이면 AP ×2 · 거리 ×0.6. 재장전 · 집중 조준이 끊긴다

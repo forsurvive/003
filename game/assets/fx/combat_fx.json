@@ -2,6 +2,19 @@
  "cell": 16,
  "dirs": 16,
  "sets": {
+  "aura_rad": {
+   "anchor": [
+    24.0,
+    44.0
+   ],
+   "blend": "add",
+   "cell": 48,
+   "dirs": 1,
+   "frames": 4,
+   "row": 81,
+   "ticks": 6,
+   "y": 1296
+  },
   "boom": {
    "anchor": [
     48.0,
@@ -440,9 +453,9 @@
    "cell": 16,
    "dirs": 1,
    "frames": 2,
-   "row": 81,
+   "row": 84,
    "ticks": 2,
-   "y": 1296
+   "y": 1344
   },
   "trap_claymore": {
    "anchor": [
@@ -453,9 +466,9 @@
    "cell": 16,
    "dirs": 1,
    "frames": 1,
-   "row": 84,
+   "row": 87,
    "ticks": 2,
-   "y": 1344
+   "y": 1392
   },
   "trap_plate": {
    "anchor": [
@@ -466,9 +479,9 @@
    "cell": 16,
    "dirs": 1,
    "frames": 1,
-   "row": 82,
+   "row": 85,
    "ticks": 2,
-   "y": 1312
+   "y": 1360
   },
   "trap_shotgun": {
    "anchor": [
@@ -479,9 +492,9 @@
    "cell": 32,
    "dirs": 1,
    "frames": 1,
-   "row": 85,
+   "row": 88,
    "ticks": 2,
-   "y": 1360
+   "y": 1408
   },
   "trap_wire": {
    "anchor": [
@@ -492,9 +505,9 @@
    "cell": 16,
    "dirs": 1,
    "frames": 1,
-   "row": 83,
+   "row": 86,
    "ticks": 2,
-   "y": 1328
+   "y": 1376
   },
   "zone_fire": {
    "anchor": [

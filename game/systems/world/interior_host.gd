@@ -409,7 +409,9 @@ func _physics_process(dt: float) -> void:
 			n["routine"].tick(dt, player.loco.logical)
 	talking = talking or pipboy != null or container != null or terminal != null or lockpick != null or wait_ui != null or craft_ui != null
 	if talking:
-		if not ev.drives(player):                                         # 연출이 주인공을 걷게 하는 중이면(move PC …) 멈추지 않는다
+		if player.rolling():
+			player.roll_step(dt)                                          # 대화 · 연출이 구르는 중에 시작돼도 0.35초를 마저 구른다
+		elif not ev.drives(player):                                         # 연출이 주인공을 걷게 하는 중이면(move PC …) 멈추지 않는다
 			player.move(Vector2.ZERO, dt)
 	else:
 		var v := input_vec

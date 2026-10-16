@@ -2,9 +2,10 @@
 # 단계 0-10: 변이 들개 · 새벽인력 추심원·인솔조원 · 독사(§10.4 이름 있는 NPC 표 — 열 이름이 '기본 Lv'·'기본 HP', XP 열 없음))
 # 1-E(SD-22): 들개 우두머리 CR-106 · 정착지 진돗개 CR-108 · 남부순환 패거리 약탈자 CR-420(총)·CR-421(총)·CR-423(근접)
 # 단계 1-4: 야생 구울 CR-200 · 떠돌이 구울 CR-201(§7 J-09 둥지) · 지하시장 경비 CR-456 · 계약 경호 구울 CR-457(§10 출입세·S5 가세)
+# 단계 1-9e4: 빛나는 구울 CR-202(§7.2 — 방사능 폭발 · 야생 구울 HP +30%)
 doc: 14_creatures-enemies.md
 id_column: ID
-rows: [CR-002, CR-095, CR-104, CR-106, CR-107, CR-108, CR-420, CR-421, CR-423, CR-200, CR-201, CR-401, CR-402, CR-403, CR-405, CR-435, CR-436, CR-437, CR-438, CR-456, CR-457, CR-473, CR-513, CR-534]
+rows: [CR-002, CR-095, CR-104, CR-106, CR-107, CR-108, CR-420, CR-421, CR-423, CR-200, CR-201, CR-202, CR-401, CR-402, CR-403, CR-405, CR-435, CR-436, CR-437, CR-438, CR-456, CR-457, CR-473, CR-513, CR-534]
 columns:
   ID: {field: id, type: id, pattern: "^CR-\\d{3}$", required: true}
   이름: {field: name, type: str, required: true}

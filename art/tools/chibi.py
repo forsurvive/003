@@ -9,7 +9,7 @@
 몸통 T01~T16(+GOWN 환자복) · 낡음 0~2 · 팔레트 PF00~PF12 · 머리 장비 HD01~HD18 · 눈 장비 EY01~EY08.
 색은 전부 마스터 64 + 교체 램프(피부·머리색·세력) 안에서 고른다.
 """
-import os, sys, math, random
+import os, sys, math, random, zlib
 from PIL import Image, ImageDraw
 
 sys.path.insert(0, os.path.dirname(__file__))
@@ -992,7 +992,7 @@ def _features(img, d, look, o, view, x0, y0, tw, th, hip_y, frame):
     # 낡음
     w = look.worn
     if w >= 1:
-        rnd = random.Random(hash((look.torso, w, view)) & 0xFFFF)
+        rnd = random.Random(zlib.crc32(f"{look.torso}|{w}|{view}".encode()) & 0xFFFF)   # 실행마다 같은 낡음 자국(문자열 hash()는 소금이 친다)
         for _ in range(2 * w):
             x, y = rnd.randint(x0 + 1, x0 + tw - 2), rnd.randint(y0 + 2, y0 + th - 2)
             if img.getpixel((x, y))[3]:

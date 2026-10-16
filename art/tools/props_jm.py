@@ -5,7 +5,7 @@
 배수 밸브 · 야생 구울 둥지 · 계단(위로) · 넘어진 파수 경비 로봇(봉천, MQ-102 잠든 로봇).
 props_bc.PROPS에 합쳐져 r01_props 아틀라스로 나간다(prop_export.export_r01).
 """
-import os, sys, random, math
+import os, sys, random, math, zlib
 from PIL import Image, ImageDraw
 
 sys.path.insert(0, os.path.dirname(__file__))
@@ -195,7 +195,7 @@ def toll_table():
 
 def stall(kind="clothes", seed=0):
     """노점 매대(2×1): 각목 다리 + 판 + 물건. 위에 백열등 줄. kind: clothes · parts · meds · food · water · forge."""
-    rnd = random.Random(seed + hash(kind) % 97)
+    rnd = random.Random(seed + zlib.crc32(kind.encode()) % 97)          # 문자열 hash()는 실행마다 달라 굽기마다 그림이 바뀌었다
     im = img(66, 48)
     d = ImageDraw.Draw(im)
     for x in (3, 60):

@@ -8,6 +8,12 @@ class_name Enemy
 extends Actor
 
 const DOGS := ["CR-104", "CR-095", "CR-107", "CR-106", "CR-108"]
+const GHOULS := ["CR-200", "CR-201", "CR-202", "CR-204", "CR-205", "CR-206", "CR-457", "CR-459", "CR-518"]   ## 방사능에 낫는 구울(SD-14 §7.2 '라드 100당 HP +1')
+const FERALS := ["CR-200", "CR-201", "CR-204", "CR-205", "CR-206"]            ## 빛나는 구울 폭발에 HP +30%를 받는 야생 구울
+const BURST_R := 4.0 * 32.0                       ## 빛나는 구울 방사능 폭발 반경(SD-14 CR-202 '반경 4타일')
+const BURST_CD := 10.0                            ## 폭발 간격(표에 없어 정함 — 구현 정합 SD-14 §7.2)
+const HOWL_BUFF := 20.0                           ## 들개 우두머리 울부짖기: 무리 속도 +15% · 피해 +20%(20초, 쿨 30초)
+const HOWL_CD := 30.0
 
 var brain: AIBrain
 var cmb := Combatant.new()
@@ -82,9 +88,22 @@ var _nade_cd := 0.0                           ## 개체 재사용(8초)
 var _hide_t := 0.0                            ## 표적이 엄폐 뒤에서 버틴 초(3초 넘으면 수류탄)
 var _burst_on := 0.0                          ## 연사 무기 점사 남은 초(0.6~1.2)
 var _burst_rest := 0.0                        ## 점사 뒤 쉬는 초(0.5~1.0)
-const SAY := {"flee": ["살려 줘!", "튀어!", "이건 못 해먹겠다!"], "surrender": ["쏘지 마! 항복이야!", "그만, 그만! 손 들었어!"],
+const SAY := {"howl": ["아우우우—!", "우워어어—!"], "flee": ["살려 줘!", "튀어!", "이건 못 해먹겠다!"], "surrender": ["쏘지 마! 항복이야!", "그만, 그만! 손 들었어!"],
 	"drug": ["크흐… 이거면 돼…", "으아아!"], "nade": ["수류탄!", "받아라!"], "back": ["다시 간다!", "덤벼 봐!"], "alarm": ["저기다!", "여기야!"]}
 var _rng := RandomNumberGenerator.new()
+# 1-9e4 생물 특수(SD-14 §4.2 · §7.2 · SD-11 §9.2)
+var glow := false                             ## 빛나는 구울(CR-202): 오라 덧그림 · 방사능 폭발
+var rad_at := Callable()                      ## (p) -> 라드/초(RadField.dose_at) — 구울은 방사능에 낫는다
+var burst_cb := Callable()                    ## (e, probe) -> bool: 폭발(probe면 '다친 야생 구울이 곁에 있나'만 묻는다)
+var _burst_cd := 3.0
+var _ring_t := -1.0                           ## 폭발 고리 그리기(0~0.5초)
+var howl_cb := Callable()                     ## (e): 무리에 울부짖기
+var _howl_cd := 0.0
+var buff_t := 0.0                             ## 울부짖기를 받은 남은 초(속도 +15% · 물기 +20%)
+var mine_list := Callable()                   ## () -> Array: 깔린 지뢰(들개 함정 회피)
+var _mine_skip := {}                          ## 지뢰 자리 -> 돌아가나(개체마다 지뢰 하나에 한 번 굴림, 50%)
+var _rad_heal := 0.0
+var _aura: Sprite2D
 ## 측정용(--ai-profile): 이번 프레임 층별 시간(마이크로초)과 횟수. 측정을 켜지 않으면 시계를 읽지 않는다.
 static var profiling := false
 static var prof := {"per": 0, "tac": 0, "act": 0, "n_per": 0, "n_tac": 0, "n_path": 0, "path": 0}
@@ -93,7 +112,7 @@ static var prof := {"per": 0, "tac": 0, "act": 0, "n_per": 0, "n_tac": 0, "n_pat
 func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w, opts: Dictionary = {}) -> void:
 	row = enemy_row
 	weapon = weapon_row
-	arm = str(opts.get("arm", "baton" if row["id"] == "CR-473" else ("claw" if row["id"] in ["CR-200", "CR-201"] else "")))
+	arm = str(opts.get("arm", "baton" if row["id"] == "CR-473" else ("claw" if row["id"] in ["CR-200", "CR-201", "CR-202"] else "")))
 	who = str(opts.get("who", ""))
 	stance = str(opts.get("stance", ""))
 	var is_roach: bool = row["id"] == "CR-002"
@@ -125,10 +144,24 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 			sheet = "cr_cr104_loco"                                  # 들개 우두머리(그림은 들개, 1-E2에서 따로)
 		"CR-108":
 			sheet = "cr_baekgu_loco"                                 # 진돗개(백구 그림을 빌린다)
+		"CR-202":
+			sheet = "en_cr200_loco"                                  # 빛나는 구울: 야생 구울(SG2) 위에 방사능 빛 덧그림(SD-16 §4.3 · §10.5)
+			glow = true
 	_rng.seed = int(pos.x * 7 + pos.y * 13)
 	if opts.has("sheet"):
 		sheet = str(opts["sheet"])
 	setup(sheet, pos, w)
+	if glow and CombatFx.has_set("aura_rad"):                       # 오라: 가산 덧그림 4컷(SD-16 §10.5) — 인물 그림 위
+		_aura = Sprite2D.new()
+		_aura.texture = CombatFx.sheet()
+		_aura.region_enabled = true
+		_aura.centered = false
+		var mat := CanvasItemMaterial.new()
+		mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+		_aura.material = mat
+		var a: Array = CombatFx.meta()["sets"]["aura_rad"]["anchor"]
+		_aura.position = -Vector2(a[0], a[1])
+		add_child(_aura)
 	style = "swarm" if is_roach else ("dog" if is_dog else ("melee" if arm in ["baton", "claw", "melee"] else "shooter"))
 	if is_dog:                                                       # 변이 들개(SD-14 §4.2): 4.5t/초, 지그재그로 달려와 문다
 		loco.custom = {"run": {"frames": 4, "px": 4.0, "diag": 4.0, "contact": [0, 2], "speed_t": float(row["speed"])},
@@ -233,8 +266,9 @@ func think(dt: float, target: Combatant, nav, shots: Projectiles) -> void:   ## 
 		var fwd: Vector2 = Locomotion.VEC[loco.facing].normalized()
 		var fov := brain.state == AIBrain.S.COMBAT or Perception.in_fov(fwd, to, brain.kind)   # 교전 중에는 표적을 계속 본다
 		var sm := sight_of(target)                                   # 고가(1-Rd): 다른 층이면 시야 거리 ×0.5, 상판 위·그늘 사이는 못 본다
-		var sees: bool = not target.dead and sm > 0.0 and dist_t <= Perception.sight_range(per) * sm
-		var rate: float = Perception.detect_rate(dist_t, per, {"movement": target.movement, "posture": target.posture,
+		var pe := per - (2.0 if gassed() else 0.0)                  # 최루(SD-13 W-058): 지대 안 인간형 인지력 −2
+		var sees: bool = not target.dead and sm > 0.0 and dist_t <= Perception.sight_range(pe) * sm
+		var rate: float = Perception.detect_rate(dist_t, pe, {"movement": target.movement, "posture": target.posture,
 			"sneak_skill": target.sneak, "alert": brain.alert(), "in_fov": fov}) * det_mul if sees else 0.0
 		var hit: bool = cmb.last_hit_from != Vector2.ZERO
 		if asleep:                                                  # 잠(S4): 맞거나, 가까운 소리(0.5+)거나, 바로 옆까지 오면 깬다
@@ -255,6 +289,7 @@ func think(dt: float, target: Combatant, nav, shots: Projectiles) -> void:   ## 
 		_morale(target)
 	var t1 := Time.get_ticks_usec() if profiling else 0
 	say_t = maxf(0.0, say_t - dt)
+	_specials(dt, target)
 	if _drug_t > 0.0:                                                  # 약물 투여(1.5초 정지) → 광란(§7.8 약탈자)
 		_drug_t -= dt
 		loco.step(Vector2.ZERO, dt)
@@ -404,6 +439,8 @@ func _act(dt: float, target: Combatant, shots: Projectiles) -> void:
 		_cool = maxf(0.0, _cool - dt)
 	if goal == "flee":
 		aim_dir = -1
+	if style == "dog" and input.length() > 0.2 and mine_list.is_valid():
+		input = _mine_dodge(input)
 	var f0 := loco.frames_advanced
 	move(steer(input), dt)
 	if goal == "flee":                                               # 궁지: 1초 넘게 한 걸음도 못 떼면 항복하거나 버틴다
@@ -464,7 +501,7 @@ func _bite(_dt: float, target: Combatant, to_t: Vector2) -> void:
 	_show()
 	_cool = 1.1
 	target.last_by = cmb.team
-	target.take({"hp": bite * (1.25 if frenzied else 1.0)}, loco.logical)
+	target.take({"hp": bite * (1.25 if frenzied else 1.0) * (1.2 if buff_t > 0.0 else 1.0)}, loco.logical)   # 울부짖기 +20%
 
 
 func _shoot(dt: float, target: Combatant, shots: Projectiles) -> void:
@@ -578,8 +615,14 @@ func _show() -> void:
 	elif cmb != null and not cmb.dead and frenzied:                     # 광란: 붉게 맥동(§7.2 '붉은 눈 이펙트'를 몸 색조로 키움)
 		var k := 0.5 + 0.5 * sin(_clock * 9.0)
 		sprite.modulate = Color(1.0 + 0.35 * k, 0.75 - 0.15 * k, 0.72 - 0.15 * k)
+	elif cmb != null and not cmb.dead and glow:                         # 빛나는 구울: 몸이 녹빛으로 맥동(오라와 같은 박자)
+		var k := 0.5 + 0.5 * sin(_clock * 5.0)
+		sprite.modulate = Color(0.95 + 0.08 * k, 1.08 + 0.17 * k, 0.82 + 0.06 * k)
 	elif cmb != null and not cmb.dead:
 		sprite.modulate = Color(1, 1, 1)
+	if _aura != null:
+		_aura.visible = cmb != null and not cmb.dead
+		_aura.region_rect = CombatFx.region("aura_rad", 0.0, int(_clock / 0.1) % 4)
 
 
 func _draw() -> void:
@@ -588,6 +631,14 @@ func _draw() -> void:
 	if cmb.ko:
 		draw_string(ui_font, Vector2(-8, -24), "zZ", HORIZONTAL_ALIGNMENT_LEFT, -1, 9, Color("8e9ba8"))
 		return
+	if _ring_t >= 0.0:                                              # 방사능 폭발 고리: 0.5초에 반경 4t까지 퍼진다(바깥 P56 · 안쪽 P57 점선)
+		var rr := lerpf(10.0, BURST_R, minf(1.0, _ring_t / 0.5))
+		var fade := 1.0 - _ring_t / 0.5
+		draw_arc(Vector2(0, -8), rr, 0.0, TAU, 48, Color(0.486, 0.839, 0.169, 0.85 * fade), 2.0)
+		for i in 24:
+			if i % 2 == 0:
+				var a0 := i * TAU / 24.0 + _ring_t * 2.0
+				draw_arc(Vector2(0, -8), rr - 3.0, a0, a0 + TAU / 48.0, 3, Color(0.83, 1.0, 0.416, fade), 1.0)
 	if swing_t > 0.0:                                              # 진압봉 휘두름: 앞쪽 호 한 획
 		var f: Vector2 = Locomotion.VEC[loco.facing].normalized()
 		draw_arc(Vector2(0, -12) + f * 8.0, 10.0, f.angle() - 0.9, f.angle() + 0.9, 6, Color("E9E4D8"), 2.0)
@@ -762,6 +813,68 @@ func _on_cripple(part: String) -> void:
 		"head":
 			_spread_add += 3.0
 			per *= 0.6
+
+
+## 최루 지대 안의 인간형(짐승 · 벌레 · 로봇 · 대형은 무시)
+func gassed() -> bool:
+	return smoke_at.is_valid() and style != "dog" and style != "swarm" and not cmb.robot and not cmb.big and bool(smoke_at.call(loco.logical, "gas"))
+
+
+## 1-9e4 생물 특수(매 프레임): 구울 방사능 회복 · 빛나는 구울 폭발 · 들개 우두머리 울부짖기 · 울부짖기 효과 시간
+func _specials(dt: float, target: Combatant) -> void:
+	buff_t = maxf(0.0, buff_t - dt)
+	if _ring_t >= 0.0:
+		_ring_t += dt
+		if _ring_t > 0.5:
+			_ring_t = -1.0
+	var id := str(row.get("id", ""))
+	if id in GHOULS and rad_at.is_valid() and cmb.hp < cmb.max_hp:  # 라드 100당 HP +1(저항 전 선량 — Z4 웅덩이 25라드/초면 초당 0.25)
+		_rad_heal += float(rad_at.call(loco.logical)) * dt / 100.0
+		if _rad_heal >= 0.05:
+			cmb.hp = minf(cmb.max_hp, cmb.hp + _rad_heal)
+			_rad_heal = 0.0
+	var fighting := brain.state in [AIBrain.S.COMBAT, AIBrain.S.FRENZY]
+	if glow and fighting and burst_cb.is_valid():                   # 빛나는 구울: 표적이 4t 안이거나 다친 야생 구울이 곁에 있으면 터뜨린다
+		_burst_cd -= dt
+		if _burst_cd <= 0.0 and (loco.logical.distance_to(target.pos()) <= BURST_R or bool(burst_cb.call(self, true))):
+			_burst_cd = BURST_CD
+			_ring_t = 0.0
+			burst_cb.call(self, false)
+	if id == "CR-106" and fighting and howl_cb.is_valid():          # 들개 우두머리: 교전에 들면 바로, 그 뒤 30초마다
+		_howl_cd -= dt
+		if _howl_cd <= 0.0:
+			_howl_cd = HOWL_CD
+			_say("howl", 1.4)
+			howl_cb.call(self)
+	_apply_speed()
+
+
+## 이동 배수 한 곳: 다리 손상(−50%, 도주 중 −70%) × 울부짖기(+15%)
+func _apply_speed() -> void:
+	var base := (0.3 if brain.state == AIBrain.S.FLEE else 0.5) if cmb.crippled.has("leg") else 1.0
+	loco.speed_mul = base * (1.15 if buff_t > 0.0 else 1.0)
+
+
+## 들개 함정 회피(SD-14 §4.2 '지뢰·덫 타일을 50% 확률로 돌아간다'): 앞 2.5t 안, 가는 줄에서 1.75t 안의 남의 지뢰를 옆으로 비켜 간다.
+## 굴림은 개체마다 지뢰 하나에 한 번(망설이다 밟는 일 없이 — 돌아가는 개는 끝까지 돌아간다)
+func _mine_dodge(input: Vector2) -> Vector2:
+	var v := input.normalized()
+	for m in mine_list.call():
+		if str(m.get("team", "")) == cmb.team:
+			continue
+		var d: Vector2 = (m["p"] as Vector2) - loco.logical
+		if d.length() > 80.0 or v.dot(d) <= 0.0 or absf(v.cross(d)) > 56.0:
+			continue
+		var key := str(m["p"])
+		if not _mine_skip.has(key):
+			_mine_skip[key] = _rng.randf() < 0.5
+		if not bool(_mine_skip[key]):
+			continue
+		var side := v.orthogonal()
+		if side.dot(d) > 0.0:
+			side = -side
+		return (v * 0.35 + side).normalized()
+	return input
 
 
 func _say(kind: String, secs: float = 1.6) -> void:

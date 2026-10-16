@@ -1,6 +1,6 @@
 {
  "A-055": {
-  "_src": "13_items.md:657",
+  "_src": "13_items.md:659",
   "bonus": "방사능 저항 +3%",
   "cat": "apparel",
   "desc": "방사능 저항 +3%",
@@ -14,7 +14,7 @@
   "weight": 5.0
  },
  "A-056": {
-  "_src": "13_items.md:658",
+  "_src": "13_items.md:660",
   "bonus": "+1 카리스마, 방사능 저항 +8%",
   "cat": "apparel",
   "desc": "+1 카리스마, 방사능 저항 +8%",
@@ -28,7 +28,7 @@
   "weight": 4.0
  },
  "A-057": {
-  "_src": "13_items.md:659",
+  "_src": "13_items.md:661",
   "bonus": "−1 카리스마, 방사능 저항 +5%, 적 탐지 표시 반경 +2타일",
   "cat": "apparel",
   "desc": "−1 카리스마, 방사능 저항 +5%, 적 탐지 표시 반경 +2타일",
@@ -42,7 +42,7 @@
   "weight": 5.0
  },
  "A-058": {
-  "_src": "13_items.md:660",
+  "_src": "13_items.md:662",
   "bonus": "방사능 저항 +5%",
   "cat": "apparel",
   "desc": "방사능 저항 +5%",
@@ -56,7 +56,7 @@
   "weight": 5.0
  },
  "A-059": {
-  "_src": "13_items.md:661",
+  "_src": "13_items.md:663",
   "bonus": "방사능 저항 +5%",
   "cat": "apparel",
   "desc": "방사능 저항 +5%",
@@ -70,7 +70,7 @@
   "weight": 5.0
  },
  "A-060": {
-  "_src": "13_items.md:662",
+  "_src": "13_items.md:664",
   "cat": "apparel",
   "desc": "",
   "dr": 4,
@@ -83,7 +83,7 @@
   "weight": 3.0
  },
  "A-061": {
-  "_src": "13_items.md:663",
+  "_src": "13_items.md:665",
   "cat": "apparel",
   "desc": "",
   "dr": 5,
@@ -96,7 +96,7 @@
   "weight": 3.0
  },
  "A-062": {
-  "_src": "13_items.md:664",
+  "_src": "13_items.md:666",
   "cat": "apparel",
   "desc": "",
   "dr": 5,
@@ -109,7 +109,7 @@
   "weight": 3.0
  },
  "A-063": {
-  "_src": "13_items.md:665",
+  "_src": "13_items.md:667",
   "bonus": "+1 인지력",
   "cat": "apparel",
   "desc": "+1 인지력",
@@ -123,7 +123,7 @@
   "weight": 3.0
  },
  "A-064": {
-  "_src": "13_items.md:666",
+  "_src": "13_items.md:668",
   "cat": "apparel",
   "desc": "",
   "dr": 6,
@@ -136,7 +136,7 @@
   "weight": 3.0
  },
  "A-065": {
-  "_src": "13_items.md:667",
+  "_src": "13_items.md:669",
   "bonus": "+1 인지력",
   "cat": "apparel",
   "desc": "+1 인지력",
@@ -150,7 +150,7 @@
   "weight": 1.0
  },
  "A-066": {
-  "_src": "13_items.md:668",
+  "_src": "13_items.md:670",
   "bonus": "+5 수리",
   "cat": "apparel",
   "desc": "+5 수리",
@@ -164,7 +164,7 @@
   "weight": 2.0
  },
  "A-067": {
-  "_src": "13_items.md:669",
+  "_src": "13_items.md:671",
   "bonus": "+1 행운",
   "cat": "apparel",
   "desc": "+1 행운",
@@ -178,7 +178,7 @@
   "weight": 0.5
  },
  "A-068": {
-  "_src": "13_items.md:670",
+  "_src": "13_items.md:672",
   "cat": "apparel",
   "desc": "",
   "dr": 1,
@@ -191,7 +191,7 @@
   "weight": 0.5
  },
  "A-069": {
-  "_src": "13_items.md:671",
+  "_src": "13_items.md:673",
   "bonus": "+3 은신",
   "cat": "apparel",
   "desc": "+3 은신",
@@ -205,7 +205,7 @@
   "weight": 0.5
  },
  "A-070": {
-  "_src": "13_items.md:672",
+  "_src": "13_items.md:674",
   "cat": "apparel",
   "desc": "",
   "dr": 4,
@@ -218,7 +218,7 @@
   "weight": 3.0
  },
  "A-071": {
-  "_src": "13_items.md:673",
+  "_src": "13_items.md:675",
   "bonus": "+5 과학, 각성회 대상 화술 +5. 머리카락 '표시'",
   "cat": "apparel",
   "desc": "+5 과학, 각성회 대상 화술 +5. 머리카락 '표시'",
@@ -232,7 +232,7 @@
   "weight": 0.5
  },
  "A-072": {
-  "_src": "13_items.md:674",
+  "_src": "13_items.md:676",
   "bonus": "+5 은신. 머리카락 '숨김'",
   "cat": "apparel",
   "desc": "+5 은신. 머리카락 '숨김'",
@@ -246,7 +246,7 @@
   "weight": 1.0
  },
  "A-073": {
-  "_src": "13_items.md:675",
+  "_src": "13_items.md:677",
   "bonus": "화염 저항 +10%",
   "cat": "apparel",
   "desc": "화염 저항 +10%",
@@ -260,7 +260,7 @@
   "weight": 2.0
  },
  "A-074": {
-  "_src": "13_items.md:676",
+  "_src": "13_items.md:678",
   "bonus": "방사능 저항 +10%. 정화통(I-066) 사용 중 최루·독가스 면역",
   "cat": "apparel",
   "desc": "방사능 저항 +10%. 정화통(I-066) 사용 중 최루·독가스 면역",
@@ -274,7 +274,7 @@
   "weight": 1.0
  },
  "A-075": {
-  "_src": "13_items.md:677",
+  "_src": "13_items.md:679",
   "bonus": "최루 지대 피해 −50%",
   "cat": "apparel",
   "desc": "최루 지대 피해 −50%",
@@ -288,7 +288,7 @@
   "weight": 3.0
  },
  "A-076": {
-  "_src": "13_items.md:678",
+  "_src": "13_items.md:680",
   "bonus": "섬광 무효(번개 수류탄·전기 섬광)",
   "cat": "apparel",
   "desc": "섬광 무효(번개 수류탄·전기 섬광)",
@@ -302,7 +302,7 @@
   "weight": 2.0
  },
  "A-077": {
-  "_src": "13_items.md:679",
+  "_src": "13_items.md:681",
   "bonus": "넘어뜨림 저항 +25%",
   "cat": "apparel",
   "desc": "넘어뜨림 저항 +25%",
@@ -316,7 +316,7 @@
   "weight": 2.0
  },
  "A-078": {
-  "_src": "13_items.md:688",
+  "_src": "13_items.md:690",
   "bonus": "인지력 4 이하일 때 +1 인지력",
   "cat": "apparel",
   "desc": "인지력 4 이하일 때 +1 인지력",
@@ -330,7 +330,7 @@
   "weight": 0.0
  },
  "A-079": {
-  "_src": "13_items.md:689",
+  "_src": "13_items.md:691",
   "bonus": "주간 야외에서 명중 +3%",
   "cat": "apparel",
   "desc": "주간 야외에서 명중 +3%",
@@ -344,7 +344,7 @@
   "weight": 0.0
  },
  "A-080": {
-  "_src": "13_items.md:690",
+  "_src": "13_items.md:692",
   "bonus": "섬광 효과 시간 −50%",
   "cat": "apparel",
   "desc": "섬광 효과 시간 −50%",
@@ -358,7 +358,7 @@
   "weight": 0.0
  },
  "A-081": {
-  "_src": "13_items.md:691",
+  "_src": "13_items.md:693",
   "bonus": "[신규] 어두운 실내·야간에 시야 반경 +3타일, +1 인지력",
   "cat": "apparel",
   "desc": "[신규] 어두운 실내·야간에 시야 반경 +3타일, +1 인지력",
@@ -372,7 +372,7 @@
   "weight": 1.0
  },
  "A-082": {
-  "_src": "13_items.md:692",
+  "_src": "13_items.md:694",
   "bonus": "+1 카리스마(약탈자·새벽인력 대상 화술 +5)",
   "cat": "apparel",
   "desc": "+1 카리스마(약탈자·새벽인력 대상 화술 +5)",
@@ -386,7 +386,7 @@
   "weight": 0.0
  },
  "A-084": {
-  "_src": "13_items.md:680",
+  "_src": "13_items.md:682",
   "bonus": "지하시장 구울 대상 화술 +5. 머리카락 '표시'",
   "cat": "apparel",
   "desc": "지하시장 구울 대상 화술 +5. 머리카락 '표시'",
@@ -400,7 +400,7 @@
   "weight": 0.0
  },
  "A-085": {
-  "_src": "13_items.md:681",
+  "_src": "13_items.md:683",
   "bonus": "고속터미널 점포회 대상 화술 +5",
   "cat": "apparel",
   "desc": "고속터미널 점포회 대상 화술 +5",
@@ -414,7 +414,7 @@
   "weight": 0.5
  },
  "A-086": {
-  "_src": "13_items.md:682",
+  "_src": "13_items.md:684",
   "bonus": "말벌 독 저항 +50%",
   "cat": "apparel",
   "desc": "말벌 독 저항 +50%",

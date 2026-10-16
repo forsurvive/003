@@ -509,3 +509,32 @@ def trap(kind, frame=0):
         d.rectangle([14, 16, 18, 17], fill=C("P18"))
         d.line([13, 17, 8, 26], fill=C("P07"))
     return im
+
+
+def aura_rad(frame, size=48):
+    """빛나는 개체 오라(SD-16 §10.5 '덧그림 4프레임', 가산): 몸 윤곽(발 기준 키 40px)을 따라 도는 녹색 테 + 위로 떠오르는 알갱이.
+    가산이라 어두운 지하에서 빛나 보이고, 밝은 바닥에서도 테가 성겨 허옇게 바래지 않는다. 기준점 = 발(24, 44)."""
+    img = Image.new("RGBA", (size, size), CLEAR)
+    cx, cy, rx, ry = 24.0, 26.0, 12.5, 19.0
+    for y in range(size):
+        for x in range(size):
+            dx, dy = (x + 0.5 - cx) / rx, (y + 0.5 - cy) / ry
+            d = math.hypot(dx, dy)
+            if 0.82 <= d <= 1.08:                                       # 윤곽 테: 4컷 동안 밝은 마디가 몸을 한 바퀴 돈다
+                ang = (math.degrees(math.atan2(dy, dx)) + 360.0) % 360.0
+                ph = (ang - frame * 90.0) % 360.0
+                if ph < 70.0 and (x + y) % 2 == 0:
+                    img.putpixel((x, y), C("P57" if ph < 25.0 else "P56"))
+                elif (x * 3 + y * 5 + frame) % 7 == 0:
+                    img.putpixel((x, y), C("P55"))
+    rnd = random.Random(29)
+    for i in range(9):                                                 # 떠오르는 알갱이: 컷마다 4px씩 위로, 꼭대기에서 사그라진다
+        bx, by0 = rnd.uniform(14, 34), rnd.uniform(18, 44)
+        y = by0 - frame * 4.0
+        if y < 4:
+            y += 40
+        tok = "P57" if y < 16 else ("P56" if y < 32 else "P55")
+        img.putpixel((int(bx), int(y)), C(tok))
+        if i % 3 == 0 and y > 1:
+            img.putpixel((int(bx), int(y) - 1), C("P55"))
+    return img
