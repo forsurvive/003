@@ -44,6 +44,21 @@
   "tier": "약",
   "xp": 5
  },
+ "CR-105": {
+  "_src": "14_creatures-enemies.md:444",
+  "attack": "물기 12",
+  "dr": 0,
+  "hp": 60,
+  "id": "CR-105",
+  "level": 4,
+  "name": "사나운 들개",
+  "part_weights": "PW-C",
+  "pattern": "뒤에서 물면 0.5초 경직. 포위 중 한 마리가 등 뒤로 돈다",
+  "radius": 0.28,
+  "speed": 4.5,
+  "tier": "중",
+  "xp": 10
+ },
  "CR-106": {
   "_src": "14_creatures-enemies.md:445",
   "attack": "물기 25",
@@ -326,6 +341,20 @@
   "special": "보안 제복 T02 + 헬멧 HD03. 순찰 3종(정문·무기고·관리동). 주인공에게는 진압봉만 휘두르고 권총은 위협 사격(빗나가게)만. 기절 25초 뒤 깨어나 경보",
   "weapon_main": "진압봉 / 보안부 권총",
   "xp": 10
+ },
+ "CR-500": {
+  "_src": "14_creatures-enemies.md:1285",
+  "attack": "물기 18",
+  "dr": 0,
+  "hp": 260,
+  "id": "CR-500",
+  "level": 6,
+  "name": "외눈",
+  "part_weights": "PW-C",
+  "pattern": "무리를 먼저 보내고 2층 난간에서 지켜본다 → 무리 절반 이하면 울부짖고 돌진 → HP 30% 이하 숲으로 도주(§10.3)",
+  "radius": 0.28,
+  "speed": 4.8,
+  "xp": 50
  },
  "CR-513": {
   "_src": "14_creatures-enemies.md:1298",

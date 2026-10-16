@@ -131,15 +131,17 @@ def extract_factions():
     return {"factions": out, "settlements": sub}
 
 
-QHEAD = re.compile(r"^### \d+\.\d+ (MQ-[A-Z0-9]+) (.+)$")
+QHEAD = re.compile(r"^### \d+\.\d+ ((?:MQ|SQ)-[A-Z0-9]+) (.+)$")
 
 
 def extract_quests():
     out = {}
-    src = "03a_main-story-part1.md"
-    for section, line, header, rows in tables(doc(src)):
+    srcs = ["03a_main-story-part1.md", "04a_side-quests-south.md"]   # 메인 · 남부 사이드(1-11, '단계 | 로그 | 완료 조건')
+    src = srcs[0]
+    rows_all = [(sx, t) for sx in srcs for t in tables(doc(sx))]
+    for src, (section, line, header, rows) in rows_all:
         m = QHEAD.match(section)
-        if not m or header[:3] != ["단계", "퀘스트 로그", "완료 조건"]:
+        if not m or header[:3] not in (["단계", "퀘스트 로그", "완료 조건"], ["단계", "로그", "완료 조건"]):
             continue
         qid, title = m.group(1), m.group(2).strip()
         stages = {}
@@ -150,13 +152,13 @@ def extract_quests():
                 continue
             stages[s] = {"log": cells[1].replace("**", "").strip(), "done": cells[2].strip(), "src": f"{src}:{ln}"}
         out[qid] = {"key": qid.replace("-", ""), "title": title, "stages": stages}
-    for need in ("MQ-P1", "MQ-P2", "MQ-P3", "MQ-P4", "MQ-101"):
+    for need in ("MQ-P1", "MQ-P2", "MQ-P3", "MQ-P4", "MQ-101", "SQ-S01"):
         if need not in out:
-            err(src, 0, f"단계 표가 없다: {need}")
+            err(srcs[0], 0, f"단계 표가 없다: {need}")
     # 퀘스트 장소(마커 후보, SD-12 §3.12): 퀘스트 절 '장소' 행의 이름을 장소 표(SD-09a~f, places.json) 이름과 맞춘다
     pj = os.path.join(OUT, "world", "places.json")
     places = json.load(open(pj, encoding="utf-8")) if os.path.exists(pj) else {}
-    for section, line, header, rows in tables(doc(src)):
+    for src, (section, line, header, rows) in rows_all:
         m = QHEAD.match(section)
         if not m or m.group(1) not in out or header[:2] != ["항목", "내용"]:
             continue

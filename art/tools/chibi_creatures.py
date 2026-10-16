@@ -130,6 +130,13 @@ QUAD = {
     # 경비견 CR-107(SD-14 §6, 새벽인력·약탈자 사육견): 검정·황갈 셰퍼드형, 선 귀, 검은 조끼 + 주황 띠(새벽인력 PF-05)
     "guard": dict(w=44, h=32, foot=(20, 29), px=4, body=(19, 18, 10, 6.5), head=(32, 13, 7.5, 6.5), leg=5, fur=["P01", "P02", "P03", "P18"],
                   skin=["P39", "P40", "P41"], eye="P49", tail="up", ears=True, mange=False, vest=True),
+    # 외눈 CR-500(SD-14 §10.3 · SD-04a SQ-S01): 백구와 같은 진돗개 핏줄의 늙은 우두머리 — 한 치수 큰 몸, 때 탄 흰 털, 왼눈 흉터,
+    # 뜯긴 귀 끝, 낡은 가죽 목줄과 2077년 인식표(금속 반짝임)
+    "oenun": dict(w=44, h=32, foot=(20, 29), px=4, body=(19, 17, 11, 7), head=(32, 11, 8, 7), leg=5, fur=["P05", "P06", "P08", "P09"],
+                  skin=["P39", "P40", "P41"], eye="P01", tail="curl", ears=True, mange=False, scar=True, tag=True),
+    # 사나운 들개 CR-105(SD-14 §4.7): 변이 들개보다 크고 어두운 털, 붉은 눈, 몸의 물린 흉터
+    "fierce": dict(w=44, h=32, foot=(20, 29), px=4, body=(19, 17, 11, 7), head=(32, 12, 8, 6.5), leg=5, fur=["P16", "P17", "P18", "P19"],
+                   skin=["P39", "P40", "P41"], eye="P54", tail="up", ears=True, mange=False, scars=True),
     "rat": dict(w=40, h=22, foot=(18, 19), px=2, body=(17, 13, 9, 5), head=(27, 12, 5, 4.5), leg=3, fur=["P03", "P04", "P05", "P06"],
                 skin=["P40", "P41", "P42"], eye="P54", tail="long", ears=True, mange=False),
 }
@@ -178,7 +185,7 @@ def quad(kind, frame=0, pose="walk"):
     _ellipse(body, hxc, hyc - bob, hrx, hry, fur)
     bd = ImageDraw.Draw(body)
     hyb = round(hyc - bob)
-    if kind == "jindo":                                                    # 진돗개(백구): 쫑긋 선 세모 귀 + 짧은 주둥이 + 검은 코·눈
+    if kind in ("jindo", "oenun"):                                         # 진돗개(백구 · 외눈): 쫑긋 선 세모 귀 + 짧은 주둥이 + 검은 코·눈
         ex = round(hxc - hrx * 0.25)
         bd.polygon([(ex - 3, hyb - 4), (ex, hyb - 11), (ex + 3, hyb - 4)], fill=fur[2])
         bd.polygon([(ex - 1, hyb - 5), (ex, hyb - 9), (ex + 1, hyb - 5)], fill=ramp(q["skin"])[1])
@@ -200,7 +207,7 @@ def quad(kind, frame=0, pose="walk"):
         bd.point((round(hxc + 1), hyb - 2), fill=C(q["eye"]))
         bd.line([round(hxc - hrx + 1), hyb + 3, round(hxc - hrx + 3), hyb + 6], fill=C("P26"), width=2)   # 목줄
         bd.point((round(hxc - hrx + 2), hyb + 6), fill=C("P07"))
-    elif kind == "dog":
+    elif kind in ("dog", "fierce"):
         ex = round(hxc - hrx * 0.45)                                       # 늘어진 귀
         bd.polygon([(ex - 2, hyb - 5), (ex + 3, hyb - 6), (ex - 3, hyb + 1)], fill=fur[0])
         sx = round(hxc + hrx - 2)                                          # 긴 주둥이 + 검은 코 + 이빨
@@ -217,9 +224,28 @@ def quad(kind, frame=0, pose="walk"):
         bd.ellipse([sx - 1, hyb - 1, sx + 3, hyb + 2], fill=fur[2])
         bd.point((sx + 3, hyb), fill=ramp(q["skin"])[2])
         bd.point((round(hxc + 1), hyb - 1), fill=C(q["eye"]))
+    if q.get("scars"):                                                     # 사나운 들개: 옆구리 물린 흉터 셋(분홍 살 + 그늘)
+        for k, (sx3, sy3) in enumerate(((bx - 4, by - 3), (bx + 1, by - 1), (bx + 5, by - 4))):
+            bd.line([sx3, sy3 - bob, sx3 + 2, sy3 + 2 - bob], fill=ramp(q["skin"])[1])
+            bd.point((sx3 + 1, sy3 + 2 - bob), fill=fur[0])
+    if q.get("tag"):                                                       # 외눈: 낡은 목줄 + 2077년 인식표 · 때 얼룩
+        nx0 = round(hxc - hrx + 1)
+        bd.line([nx0, hyb + 3, nx0 + 2, hyb + 7], fill=C("P18"), width=2)
+        bd.point((nx0 + 2, hyb + 8), fill=C("P07"))                         # 인식표(쇠)
+        bd.point((nx0 + 3, hyb + 8), fill=C("P49"))                         # 반짝임(놋쇠 테)
+        for gx, gy in ((bx - 5, by + 2), (bx + 3, by + 4), (bx - 1, by - 4)):
+            bd.point((gx, gy - bob), fill=fur[1])
     img.alpha_composite(body)
     img = outline(img)
     d = ImageDraw.Draw(img)
+    if q.get("scar"):                                                      # 외눈: 감긴 눈 위로 사선 흉터(먹선 위에 그어 또렷하게) · 귀 끝이 뜯겼다
+        ex2, ey2 = round(hxc + 1), round(hyc - bob) - 2
+        d.line([ex2 - 2, ey2 - 3, ex2 + 2, ey2 + 2], fill=C("P39"))
+        d.point((ex2, ey2), fill=C("P01")); d.point((ex2 + 1, ey2), fill=C("P01"))
+        d.point((ex2 - 1, ey2 - 2), fill=C("P40"))
+        etip = round(hxc - hrx * 0.25)
+        d.point((etip, round(hyc - bob) - 11), fill=(0, 0, 0, 0))
+        d.point((etip, round(hyc - bob) - 10), fill=C("P01"))
     tx = round(bx - brx)
     if kind == "rat":                                                     # 수염(먹선 밖)
         sx2, sy2 = round(q["head"][0] + q["head"][2] + 2), round(q["head"][1] - bob)
@@ -283,6 +309,10 @@ def quad_sleep(kind, breath=0):
     bd.polygon([(ex - 3, fy - 8), (ex - 4 + breath, fy - 14 - breath), (ex + 1, fy - 9)], fill=fur[2])
     bd.polygon([(ex - 2, fy - 9), (ex - 3 + breath, fy - 12 - breath), (ex, fy - 9)], fill=ramp(q["skin"])[1])
     bd.line([31, fy - 6, 33, fy - 6], fill=C("P01"))                       # 감은 눈(한 줄)
+    if q.get("tag"):                                                       # 외눈: 흉터 · 목줄과 인식표(턱 밑에 깔려 반짝)
+        bd.line([30, fy - 9, 34, fy - 4], fill=C("P39"))
+        bd.line([26, fy - 3, 28, fy - 1], fill=C("P18"), width=2)
+        bd.point((29, fy), fill=C("P07")); bd.point((30, fy), fill=C("P49"))
     img.alpha_composite(body)
     img = outline(img)
     d = ImageDraw.Draw(img)
@@ -417,7 +447,7 @@ def quad_sheet(kind):
     meta = {"frame": [q["w"], q["h"]], "foot": list(q["foot"]), "rows": ["E"], "mirror": {"W": "E"}, "style": "isaac",
             "motions": {"idle": {"start": 0, "count": 1}, "walk": {"start": 1, "count": 4, "px_per_frame": q["px"], "drive": "distance"},
                         "death": {"start": 5, "count": 3}}}
-    if kind == "jindo":                                                    # 백구 낮잠(1-8b): 숨쉬기 2컷
+    if kind in ("jindo", "oenun"):                                         # 백구 낮잠(1-8b) · 외눈 난간 낮잠(1-11a): 숨쉬기 2컷
         meta["motions"]["sleep"] = {"start": len(frames), "count": 2}
         frames += [quad_sleep(kind, 0), quad_sleep(kind, 1)]
     return frames, meta

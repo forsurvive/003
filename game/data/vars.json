@@ -605,6 +605,381 @@
    "src": "03a_main-story-part1.md:494",
    "type": "int"
   },
+  "SQS01_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS01_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS01_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS02_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS02_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS02_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS03_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS03_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS03_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS04_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS04_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS04_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS05_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS05_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS05_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS06_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS06_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS06_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS07_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS07_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS07_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS08_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS08_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS08_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS09_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS09_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS09_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS10_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS10_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS10_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS11_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS11_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS11_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS12_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS12_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS12_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS13_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS13_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS13_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS14_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS14_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS14_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS15_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS15_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS15_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS16_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS16_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS16_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS17_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS17_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS17_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS18_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS18_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS18_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS19_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS19_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS19_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS20_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS20_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS20_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS21_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS21_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS21_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS22_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS22_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS22_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS23_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS23_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS23_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS24_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS24_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS24_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS25_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS25_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "SQS25_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
   "S_CROSSED": {
    "default": 0,
    "src": "03a_main-story-part1.md:494",

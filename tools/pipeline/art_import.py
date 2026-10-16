@@ -84,7 +84,8 @@ def quad_sheets():
     """네발짐승(0-10): CR-104 변이 들개 · 백구(C-015 진돗개). 옆 그림만, 걷기 4컷(컷당 4px)."""
     import chibi_creatures as CC
     for kind, name in (("dog", "cr_cr104_loco"), ("jindo", "cr_baekgu_loco"), ("rat", "cr_cr095_loco"), ("guard", "cr_cr107_loco"),
-                       ("ox", "cr_cr090_loco"), ("ox_pack", "cr_cr091_loco")):          # 두머리소·짐소(1-8d)
+                       ("ox", "cr_cr090_loco"), ("ox_pack", "cr_cr091_loco"),
+                       ("oenun", "cr_cr500_loco"), ("fierce", "cr_cr105_loco")):          # 외눈 · 사나운 들개(1-11a)          # 두머리소·짐소(1-8d)
         frames, meta = CC.quad_sheet(kind)
         fw, fh = meta["frame"]
         sheet = Image.new("RGBA", (fw * len(frames), fh), (0, 0, 0, 0))

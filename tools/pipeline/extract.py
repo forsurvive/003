@@ -131,7 +131,10 @@ def run_schema(path, rep):
         for f, g in (sch.get("gaps") or {}).items():
             if g.get("only_missing") and f in rec:
                 continue
-            rec[f] = eval(g["default"], {"__builtins__": {}, "round": round}, env_fn(rec))
+            v = eval(g["default"], {"__builtins__": {}, "round": round}, env_fn(rec))
+            if v is None and g.get("skip_none"):                           # 이 행에는 채우지 않는다(보스 한 마리만 채우는 gaps)
+                continue
+            rec[f] = v
             rep.gaps.append(f"{doc} {rec.get('id', '')} · {f} = {rec[f]!r} — {g['why']}")
         for f, expr in (sch.get("check") or {}).items():
             exp = eval(expr, {"__builtins__": {}}, rec)
