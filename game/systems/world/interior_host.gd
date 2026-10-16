@@ -1381,7 +1381,7 @@ func _on_resident_down(id: String, killed: bool) -> void:
 		st.kill(id)
 		st.vars.set_v("S7_KILLS", int(st.vars.get_v("S7_KILLS")) + 1)
 		if not bool(st.npcs.get(id, {}).get("evil", false)):
-			st.call_fn("karma", [-100])                                  # 악하지 않은 인물 살해(목격자가 없어도)
+			st.call_fn("karma", [-25 if Crimes.animal(st, id) else -100])   # 악하지 않은 인물 살해(목격자가 없어도) · 마을 개는 −25(SQ-S01 '백구를 때림'과 같은 결, 리드 결정 2026-10-16)
 		combat._pop(st.npc_name(id) + " 사망", a.loco.logical + Vector2(0, -20), Color("E04A35"))
 		st.book.died(id, date_text)                                     # 눈앞의 죽음 = 아는 죽음
 		_crime_kill(id, a.loco.logical)

@@ -57,15 +57,17 @@ static func on_kill(st: StoryState, id: String, witnessed: bool, region: String,
 	if tgt == "":
 		return out
 	var dd := st.deeds
-	dd.kills[tgt] = int(dd.kills.get(tgt, 0)) + 1
+	var beast := animal(st, id)
+	if not beast:                                                     # 동물은 학살 셈에 넣지 않는다(리드 결정 2026-10-16 — SD-06 §3.4 정합)
+		dd.kills[tgt] = int(dd.kills.get(tgt, 0)) + 1
 	var leader := str(LEADERS.get(st.canon(id), "")) == tgt
-	var perm := leader or int(dd.kills[tgt]) >= MASSACRE
+	var perm := leader or int(dd.kills.get(tgt, 0)) >= MASSACRE
 	out["leader"] = leader
 	out["perm"] = perm
 	var who := st.npc_name(id)
 	dd.victims[st.canon(id)] = true
 	if witnessed:
-		var dv := -35 if named(st, id) else -20
+		var dv := -20 if beast else (-35 if named(st, id) else -20)   # 마을 개(이름 있어도) −20
 		var tag := "CRIME_PERM" if perm else "CRIME"
 		dd.record(st, "범죄", region, 3 if leader else 2, {tgt: 0 if perm else dv}, now,
 			{"tag": tag, "place": place, "what": "%s %s" % [who, "사살" if animal(st, id) else "살해"], "seen_by": [tgt], "about": [id]})
@@ -76,7 +78,7 @@ static func on_kill(st: StoryState, id: String, witnessed: bool, region: String,
 		var rng := RandomNumberGenerator.new()
 		rng.seed = seed
 		dd.bodies.append({"id": id, "tgt": tgt, "at": now, "find": now + rng.randi_range(FIND_MIN, FIND_MAX),
-			"solve": rng.randf() < SOLVE, "perm": perm, "named": named(st, id), "region": region, "place": place})
+			"solve": rng.randf() < SOLVE, "perm": perm, "named": named(st, id) and not beast, "region": region, "place": place})
 	return out
 
 

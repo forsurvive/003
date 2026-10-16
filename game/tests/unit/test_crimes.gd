@@ -284,3 +284,12 @@ func test_cross_persona_followups(t) -> void:
 	var bark := host._hostile_bark("N-R01-030")
 	t.ok(bark != "" and not bark.contains("살인자"), "살인 없이 적대(≤ −60)면 '살인자'라 부르지 않는다: " + bark)
 	host.ev.free()
+
+
+## 리드 결정(2026-10-16): 마을 개는 사람이 아니다 — 목격 −20 · 학살 셈 제외
+func test_animal_values(t) -> void:
+	var st := _st()
+	var o := Crimes.on_kill(st, "C-015", true, "R01", 100, "BC")
+	t.eq(int(st.vars.get_v("AFF_JC_BC")), -20, "백구 사살 목격 −20(사람 −35)")
+	t.ok(not bool(o["perm"]) and int(st.deeds.kills.get("JC_BC", 0)) == 0, "학살 셈에 들지 않는다")
+	t.ok(not Crimes.killer_known_by(st, "JC_BC"), "개를 쏜 것으로 '살인자'가 되지는 않는다")
