@@ -195,7 +195,7 @@ func explode(at: Vector2, w: Dictionary, skill: float, team: String, fl: int = 0
 	_rebucket()
 	var bw := {"dmg": base, "kind": "ranged", "crit_dmg": 0.0, "range_eff": 0.0, "condition": str(w.get("condition", "new"))}
 	for c in combatants:
-		if c.dead or c.team == "gone" or (team == "player" and c.team == "ally") or (team != "player" and c.team == "resident"):
+		if c.dead or c.team == "gone" or (team != "player" and c.team == "resident"):
 			continue
 		if c.fl() != fl:
 			continue
@@ -204,6 +204,8 @@ func explode(at: Vector2, w: Dictionary, skill: float, team: String, fl: int = 0
 		if d > outer:
 			continue
 		var ratio := 1.0 if d <= inner else lerpf(1.0, 0.25, (d - inner) / maxf(1.0, outer - inner))
+		if team == "player" and c.team == "ally":
+			ratio *= 0.5                                                # 오사(SD-11 §8.4): 주인공 폭발·화염·지뢰는 아군에게 ×0.5
 		var cover := _blast_cover(at, ctr)
 		if cover >= 2:
 			continue

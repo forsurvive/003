@@ -321,7 +321,7 @@ func _process(dt: float) -> void:
 	if _job.is_empty():
 		var pc = actors.get("PC")
 		for a in actors.values():
-			if is_instance_valid(a) and a != pc and not moving.has(a) and a.loco.motion != "idle":   # 주인공은 진행기가 걷게 한다
+			if is_instance_valid(a) and a != pc and not moving.has(a) and a.loco.motion != "idle" and not a.has_meta("mate") and not a.has_meta("routine"):   # 주인공은 진행기가, 동행은 전투 모듈이, 일과 인물은 일과가 걷게 한다
 				a.move(Vector2.ZERO, dt)
 		return
 	var j := _job

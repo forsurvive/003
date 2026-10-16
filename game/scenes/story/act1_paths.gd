@@ -144,7 +144,7 @@ func _on_map(id: String) -> void:
 		_enter_market(id)
 	if id != "J-06" and st.quests.stage("MQ-103") == 40:                # 해독 뒤 배전실을 나서면 끝(고백은 나중에도 들을 수 있다)
 		_finish()
-	if v("MQ103_HIRE") == 1 and v("MQ103_JOB") < 3 and host.combat.buddy == null:
+	if v("MQ103_HIRE") == 1 and v("MQ103_JOB") < 3 and host.combat.buddy == null and not host.combat.mates.away.has("C-018"):   # 기다리게 둔 박춘삼은 그 자리에
 		_bring_park()
 	if id == "J-01" and host.last_mark == "from_J-02":
 		_maybe_ambush()
@@ -181,11 +181,7 @@ func _enter_market(id: String) -> void:
 
 
 func _bring_park() -> void:
-	host._bring_buddy("C-018")
-	if host.combat.buddy != null:
-		host.buddy_id = "C-018"
-		host.buddy_name = "박춘삼"
-		host.combat.buddy_weapon = "W-049"                             # 계약 경호 구울: 소방 도끼(SD-14 CR-457과 같은 직종)
+	host._bring_buddy("C-018")                                          # 계약 경호 구울: 소방 도끼(Companions.ROSTER — SD-14 CR-457과 같은 직종)
 
 
 func _maybe_ambush() -> void:

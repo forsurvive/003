@@ -26,6 +26,8 @@ var scenes_by_npc := {}                          ## 인물 ID -> [대화 장면,
 var input_vec := Vector2.ZERO                    ## 외부(봇·터치)가 넣는 이동 입력. 없으면 키보드
 var input_fn := Callable()                       ## 봇: 1/60초마다 다시 묻는 이동 입력(긴 프레임에서 칸 가운데를 지나쳐 맴돌지 않게)
 var use_keyboard := true
+var act_held := false                             ## 터치 '상황' 단추를 누르고 있다(일으키기 2초)
+var cur_map := ""                                 ## 지금 맵 ID(대기 동행이 남는 자리)
 var touch_sprint := false                         ## 터치: 이동 스틱을 바깥 링 밖까지 0.3초 밀었다(SD-11 §15.5)
 var roll_req := false                             ## 터치 '구르기' 단추(한 번)
 var busy := false                                ## 전환·대화·연출 중
@@ -201,7 +203,8 @@ var last_mark := ""                              ## 마지막으로 들어온 �
 
 func enter(map_id: String, mark: String = "", look: Dictionary = {}, at: Vector2 = Vector2.INF) -> void:
 	last_mark = mark
-	var keep_buddy := buddy_id if combat.buddy != null and is_instance_valid(combat.buddy) else ""   # 일시 동행은 맵을 넘어 따라온다(0-9)
+	var keep_mates: Array = combat.mates.leaving(cur_map) if map != null else []   # 따라오는 동행은 맵을 넘고, 기다리는 동행은 그 맵에 남는다(1-10a)
+	cur_map = map_id
 	if map != null:
 		for n in npcs:
 			if is_instance_valid(n["actor"]):
@@ -280,8 +283,23 @@ func enter(map_id: String, mark: String = "", look: Dictionary = {}, at: Vector2
 	combat.on_map(map, player, st)
 	combat.set_residents(npcs)
 	ev.setup(map, map_id, cam)
-	if keep_buddy != "":
-		_bring_buddy(keep_buddy)
+	for k in keep_mates:
+		_bring_buddy(str(k["id"]))
+		var km := combat.mates.get_mate(str(k["id"]))
+		if not km.is_empty():
+			(km["cmb"] as Combatant).hp = clampf(float(k["hp"]), 1.0, (km["cmb"] as Combatant).max_hp)
+	for id in combat.mates.away.keys():                               # 이 맵에 기다리게 두고 간 동행: 그 자리에 다시 세운다
+		var aw: Dictionary = combat.mates.away[id]
+		if str(aw["map"]) != cur_map:
+			continue
+		combat.mates.away.erase(id)
+		var at2 := Vector2(float(aw["pos"][0]), float(aw["pos"][1]))
+		ev._show_actor(str(id), at2, "S", str(Companions.row(str(id)).get("sheet", "")))
+		if ev.actors.has(str(id)):
+			var wm := combat.mates.add(str(id), ev.actors[str(id)], str(aw.get("name", "")), str(aw.get("mode", "wait")))
+			if not wm.is_empty():
+				(wm["cmb"] as Combatant).hp = clampf(float(aw["hp"]), 1.0, (wm["cmb"] as Combatant).max_hp)
+	_sync_mates()
 	if world_mode and from_inside and enc_live != null:
 		enc_live.on_exit_interior.call_deferred()                    # 실내에서 밖으로 나온 순간도 판정 기회(SD-05 §6.1)
 	cam.limit_left = 0
@@ -353,6 +371,8 @@ func _spawn_npc(i: int, n: Dictionary) -> void:
 	if str(n.get("pose", "")) != "":
 		a.set_pose(str(n["pose"]))                                   # 맵 원고의 자세(pose=sleep 낮잠 등)
 	var r: NpcRoutine = NpcRoutine.new(a, map, n["route"]) if not n["route"].is_empty() else null
+	if r != null:
+		a.set_meta("routine", true)                                  # 일과로 걷는 인물: 이벤트 실행기가 세우지 않는다(일과가 걷기·멈춤을 맡는다)
 	npcs.append({"id": n["id"], "actor": a, "routine": r, "bark": n.get("bark", ""), "idx": i})
 	ev.actors[n["id"]] = a                                       # 연출 명령(move·face·balloon·pose)이 맵 인물을 부를 수 있게
 	map.blockers.append(a)
@@ -413,6 +433,7 @@ func _physics_process(dt: float) -> void:
 			player.roll_step(dt)                                          # 대화 · 연출이 구르는 중에 시작돼도 0.35초를 마저 구른다
 		elif not ev.drives(player):                                         # 연출이 주인공을 걷게 하는 중이면(move PC …) 멈추지 않는다
 			player.move(Vector2.ZERO, dt)
+		combat.mates.push = Vector2.ZERO
 	else:
 		var v := input_vec
 		if use_keyboard and v == Vector2.ZERO:
@@ -431,11 +452,19 @@ func _physics_process(dt: float) -> void:
 			while left > 0.0001:
 				var h := minf(left, 1.0 / 60.0)
 				left -= h
-				player.move(input_fn.call(), h)
+				var bv: Vector2 = input_fn.call()
+				v = bv
+				player.move(bv, h)
 		else:
 			player.move(v, dt)
+		combat.mates.push = v                                            # 동행이 길목에서 비킨다(1-10a)
 		if player.doll != null:
 			player.doll.position.y = 2.0 if combat.crouch else 0.0               # 웅크리면 2px 낮게(전용 그림 전까지)
+		var hold_act: bool = (use_keyboard and Input.is_action_pressed("interact")) or act_held
+		if hold_act and not box.active and not combat.mates.revive_target(player.loco.logical).is_empty():
+			combat.mates.revive_tick(player.loco.logical, dt, st)          # 동행 일으키기 2초 + 스팀팩(1-10a)
+		elif combat.mates.rev_prog >= 0.0:
+			combat.mates.rev_prog = -1.0                                   # 손을 떼면 처음부터
 		if use_keyboard and combat.can_disarm_here() and Input.is_action_pressed("interact") and not box.active:
 			combat.disarm_tick(dt, st)                                       # 웅크려 상호작용 길게 = 함정·지뢰 해체(1-9c, SD-11 §9.2)
 		elif use_keyboard and Input.is_action_just_pressed("interact") and not box.active:
@@ -488,12 +517,71 @@ func _bring_buddy(id: String) -> void:
 				break
 		if at != player.loco.logical:
 			break
-	ev._show_actor(id, at, "S")
+	ev._show_actor(id, at, "S", str(Companions.row(id).get("sheet", "")))
 	if ev.actors.has(id):
 		var b: Actor = ev.actors[id]
 		b.loco.facing = player.loco.facing
 		b._show()
-		combat.buddy = b
+		combat.mates.add(id, b, _mate_name(id))
+		_sync_mates()
+
+
+func _mate_name(id: String) -> String:
+	return st.npc_name(id).get_slice("(", 0).strip_edges()
+
+
+## 옛 이름(buddy_id · buddy_name — 저장 · 진행기가 읽는다)을 첫 동행에 맞춘다
+func _sync_mates() -> void:
+	if combat.mates.list.is_empty():
+		buddy_id = ""
+		buddy_name = ""
+	else:
+		buddy_id = str(combat.mates.list[0]["id"])
+		buddy_name = str(combat.mates.list[0]["name"])
+
+
+## 말 걸기(SD-12 §11.4 '대화하면 퀘스트가 정한 선택지만'): 동행 퀘스트 장면이 따로 없으면 '기다려 · 따라와' 두 가지만
+func _mate_talk(m: Dictionary) -> void:
+	var id := str(m["id"])
+	var r := Companions.row(id)
+	var waiting: bool = m["mode"] in ["wait", "guard"]
+	var ops: Array = [{"op": "line", "who": id, "emo": "기본", "text": str(r["hello"])}]
+	var opts: Array = []
+	if not scene_for(id).is_empty():                                    # 퀘스트 장면이 있는 동행: 그 이야기로도 갈 수 있다
+		opts.append({"text": "할 말이 있어", "tags": [], "cond": "", "fx": "", "to": "SCENE", "id": "MATE:%s:scene" % id})
+	if waiting:
+		opts.append({"text": "같이 가자", "tags": [], "cond": "", "fx": "", "to": "GO", "id": "MATE:%s:go" % id})
+	else:
+		opts.append({"text": "잠깐 여기서 기다려 줘", "tags": [], "cond": "", "fx": "", "to": "STAY", "id": "MATE:%s:stay" % id})
+	opts.append({"text": "아니야, 됐어", "tags": [], "cond": "", "fx": "", "to": "END", "id": "MATE:%s:end" % id})
+	ops.append({"op": "choice", "opts": opts})
+	var labels := {"START": 0}
+	labels["STAY"] = ops.size()
+	ops.append({"op": "cmd", "name": "mate", "args": [id, "wait"]})
+	ops.append({"op": "line", "who": id, "emo": "기본", "text": str(r["wait"])})
+	ops.append({"op": "goto", "to": "END"})
+	labels["GO"] = ops.size()
+	ops.append({"op": "cmd", "name": "mate", "args": [id, "follow"]})
+	ops.append({"op": "line", "who": id, "emo": "기본", "text": str(r["follow"])})
+	ops.append({"op": "goto", "to": "END"})
+	labels["SCENE"] = ops.size()
+	ops.append({"op": "cmd", "name": "mate_scene", "args": [id]})
+	ops.append({"op": "goto", "to": "END"})
+	labels["END"] = ops.size()
+	ops.append({"op": "end"})
+	box.open(st, {"id": "MATE_" + id, "title": str(m["name"]), "npc": id, "labels": labels, "ops": ops}, "START")
+
+
+## 앞에 선 동행(쓰러지지 않은, 46px 안 · 바라보는 쪽)
+func _mate_front() -> Dictionary:
+	var f: Vector2 = Locomotion.VEC[player.loco.facing].normalized()
+	for m in combat.mates.list:
+		if m["down"] or not is_instance_valid(m["actor"]):
+			continue
+		var v: Vector2 = (m["actor"] as Actor).loco.logical - player.loco.logical
+		if v.length() < 46.0 and v.normalized().dot(f) > 0.5:
+			return m
+	return {}
 
 
 ## 장소 발견(SD-12 §5.5): 반경 4타일 안에 들면 '발견' — 알림 · 발견 XP(마커 N은 구역 이름만, XP 없음)
@@ -578,6 +666,14 @@ func interact() -> bool:
 	var sur := combat.surrendered_near(player.loco.logical)             # 항복한 적(1-9e, SD-11 §7.5): 놓아준다
 	if sur != null:
 		combat.release(sur)
+		return true
+	if not combat.mates.revive_target(player.loco.logical).is_empty():   # 쓰러진 동행(1-10a): 누르고 있으면 일으킨다(_physics_process)
+		if int(st.items.get(InteriorCombat.STIMPAK, 0)) <= 0:
+			hint("스팀팩이 있어야 일으킬 수 있다.", 2.5)
+		return true
+	var mf := _mate_front()
+	if not mf.is_empty() and not combat.mates.fight:                   # 동행에게 말 걸기: 퀘스트 장면이 있으면 그것, 없으면 '기다려 · 같이 가자'
+		_mate_talk(mf)
 		return true
 	var f: Vector2 = Locomotion.VEC[player.loco.facing].normalized()
 	var best: Dictionary = {}
@@ -1199,6 +1295,10 @@ func interact_label() -> String:
 		return ""
 	if combat.surrendered_near(player.loco.logical) != null:
 		return "놓아준다"
+	if not combat.mates.revive_target(player.loco.logical).is_empty():
+		return "일으키기"
+	if not _mate_front().is_empty() and not combat.mates.fight:
+		return "말하기"
 	var f: Vector2 = Locomotion.VEC[player.loco.facing].normalized()
 	for n in npcs:
 		if is_instance_valid(n["actor"]) and not n.get("dead", false) and _same_floor(n["actor"]):
@@ -1378,9 +1478,7 @@ func _draw_hud() -> void:
 	if bp != "":
 		var owned := bp.ends_with("[소유]")
 		_txt(Vector2(320 + r / 2.0 + _shake_x(), 296 + b), bp, HUD_RED if owned else HU[6], HORIZONTAL_ALIGNMENT_CENTER)
-	if buddy_name != "" and combat.buddy != null:
-		_txt(Vector2(8, 258 + b), buddy_name, HU[5])
-		_bar(Vector2(8, 272 + b), 60.0, 1.0, "", HU[5])
+	_draw_mates(Vector2(8, 258 + b))
 
 
 ## 선량계(SD-11 §11.2 · §12.5 · SD-12 §5.6): 피폭 중에만. 반원 눈금(로그) · 바늘 · 초당 라드 · 단계가 오르면 1초 흔들림.
@@ -1440,9 +1538,7 @@ func _draw_hud_touch(vs: Vector2, c: Combatant, low: bool, ap: float) -> void:
 	var bp := box_prompt()
 	if bp != "":
 		_txt(Vector2(320 + r / 2.0 + _shake_x(), 250 + vs.y - 360.0), bp, HUD_RED if bp.ends_with("[소유]") else HU[6], HORIZONTAL_ALIGNMENT_CENTER)
-	if buddy_name != "" and combat.buddy != null:
-		_txt(Vector2(8, 152), buddy_name, HU[5])
-		_bar(Vector2(8, 166), 60.0, 1.0, "", HU[5])
+	_draw_mates(Vector2(8, 152))
 
 
 func _shake_x() -> float:
@@ -1457,6 +1553,19 @@ func _clip(t: String, w: float) -> String:
 	while n > 1 and font_s.get_string_size(t.substr(0, n) + "…", HORIZONTAL_ALIGNMENT_LEFT, -1, 10).x > w:
 		n -= 1
 	return t.substr(0, n).strip_edges() + "…"
+
+
+## 동행·지원 상태(SD-12 §4.2 · §11.4): 동행마다 한 줄 — `[동행] 이름` + HP 막대 + 상태(따라옴 · 기다림 · 쓰러짐). 최대 3행
+func _draw_mates(p: Vector2) -> void:
+	var y := 0.0
+	for m in combat.mates.list:
+		var cmb: Combatant = m["cmb"]
+		var st_txt := "쓰러짐" if m["down"] else ("기다림" if m["mode"] in ["wait", "guard"] else "")
+		_txt(p + Vector2(0, y), "[동행] %s" % str(m["name"]), HUD_RED if m["down"] else HU[5])
+		_bar(p + Vector2(0, y + 14), 52.0, cmb.hp / maxf(1.0, cmb.max_hp), "", HUD_RED if m["down"] else HU[5])
+		if st_txt != "":
+			_txt(p + Vector2(56, y + 10), st_txt, HU[6] if not m["down"] else HUD_RED)   # 막대 오른쪽(이름 줄 아래)
+		y += 24.0
 
 
 func _bar(p: Vector2, w: float, f: float, label: String, col: Color) -> void:
@@ -1505,10 +1614,15 @@ func _ring(c: Vector2) -> void:
 			continue
 		var q := (c + d / rad * 22.0).round()
 		banner.draw_colored_polygon(PackedVector2Array([q + Vector2(0, -2), q + Vector2(2, 0), q + Vector2(0, 2), q + Vector2(-2, 0)]), HUD_RED)
-	if combat.buddy != null and is_instance_valid(combat.buddy):
-		var d: Vector2 = combat.buddy.loco.logical - player.loco.logical
+	for m in combat.mates.list:                                         # 일시 동행: 푸른 원 + 테두리(SD-12 §4.3 · §11.4)
+		if not is_instance_valid(m["actor"]):
+			continue
+		var d: Vector2 = (m["actor"] as Actor).loco.logical - player.loco.logical
 		if d.length() <= rad:
-			banner.draw_circle((c + d / rad * 22.0).round(), 2.0, Color("4C7DC8"))
+			var q := (c + d / rad * 22.0).round()
+			banner.draw_circle(q, 3.0, HU[0])
+			banner.draw_circle(q, 2.0, Color("4C7DC8") if not m["down"] else Color("8E9BA8"))
+			banner.draw_arc(q, 3.0, 0, TAU, 10, HU[6], 1.0)
 	if enc_live != null and not enc_live.cur.is_empty():                 # 다가오는 추적대(비적대): 흰 마름모(SD-05 §6.9 예고)
 		for a in enc_live.cur.get("actors", []):
 			if not is_instance_valid(a):
@@ -1713,10 +1827,22 @@ func _handlers() -> void:
 		combat.damage(float(a[0]))
 		_hurt_t = 0.3
 		done.call()
+	ev.handlers["mate"] = func(a: Array, done: Callable) -> void:      # 동행 말 걸기: [인물, follow | wait](1-10a)
+		combat.mates.set_mode(str(a[0]), str(a[1]))
+		done.call()
+	ev.handlers["mate_scene"] = func(a: Array, done: Callable) -> void:   # 동행 메뉴에서 '할 말이 있어': 이 창이 닫힌 뒤 그 인물의 퀘스트 장면
+		var sid := str(a[0])
+		box.finished.connect(func() -> void:
+			var g := scene_for(sid)
+			if not g.is_empty():
+				talked.emit(sid, str(g.get("id", "")))
+				box.open.call_deferred(st, g), CONNECT_ONE_SHOT)
+		done.call()
 	ev.handlers["buddy"] = func(a: Array, done: Callable) -> void:     # 일시 동행 시작(인물 ID) · 끝(off)
 		var id := str(a[0])
 		if id == "off":
 			combat.buddy = null
+			combat.mates.away.clear()
 			buddy_name = ""
 			buddy_id = ""
 		elif ev.actors.has(id):
@@ -1725,9 +1851,8 @@ func _handlers() -> void:
 			for n in npcs:
 				if n["actor"] == b:
 					n["routine"] = null
-			combat.buddy = b
-			buddy_id = id
-			buddy_name = st.npc_name(id).get_slice("(", 0).strip_edges()
+			combat.mates.add(id, b, _mate_name(id))
+			_sync_mates()
 		done.call()
 	ev.handlers["refresh"] = func(_a: Array, done: Callable) -> void:   # 맵 인물·적을 지금 조건대로 다시 세운다(0-8, 적은 0-9)
 		refresh_npcs()

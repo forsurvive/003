@@ -100,6 +100,7 @@ func _process(dt: float) -> void:
 		if hidden():
 			_release_all()
 		else:
+			host.act_held = pressed.values().has("act")             # '상황' 단추를 누르고 있다(동행 일으키기 2초)
 			host.input_vec = move_v
 			host.touch_sprint = move_out >= SPRINT_S
 			_drive_combat()

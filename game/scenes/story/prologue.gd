@@ -1348,7 +1348,7 @@ func _auto_blocked() -> bool:
 
 func snapshot() -> Dictionary:
 	return {"story": GameSnapshot.story(host.st), "host": GameSnapshot.host(host),
-		"flow": {"phase": phase, "p4_fought": p4_fought, "buddy": host.buddy_id, "act1": act1.snapshot() if act1 != null else {}}}
+		"flow": {"phase": phase, "p4_fought": p4_fought, "buddy": host.buddy_id, "mates": host.combat.mates.snapshot(), "act1": act1.snapshot() if act1 != null else {}}}
 
 
 func save_to(kind: String, idx: int) -> Error:
@@ -1501,10 +1501,23 @@ func _load_game(path: String) -> void:
 	GameSnapshot.apply_host(host, w["host"])
 	if phase == "P4S6":                                            # 시스템 저장: 점검표부터 다시(→ 첫 풍경 → 1막)
 		host.play_scene.call_deferred("MQ-P4_S06")
-	var b := str(flow.get("buddy", ""))
-	if b != "" and host.ev.handlers.has("buddy"):
-		host.ev._show_actor(b, host.player.loco.logical + Vector2(-32, 0), "S")
-		host.ev.handlers["buddy"].call([b], func() -> void: pass)
+	var ms: Dictionary = flow.get("mates", {})                          # 일시 동행(1-10a): 곁의 동행 · 다른 맵에 기다리게 둔 동행
+	var here: Array = ms.get("here", [])
+	if here.is_empty() and str(flow.get("buddy", "")) != "":
+		here = [{"id": str(flow["buddy"])}]                              # 옛 저장: 동행 하나
+	for k in here:
+		var b := str(k["id"])
+		if b != "" and host.ev.handlers.has("buddy"):
+			host.ev._show_actor(b, host.player.loco.logical + Vector2(-32, 0), "S")
+			host.ev.handlers["buddy"].call([b], func() -> void: pass)
+			var mm := host.combat.mates.get_mate(b)
+			if not mm.is_empty():
+				mm["mode"] = str(k.get("mode", "follow"))
+				if k.has("hp"):
+					(mm["cmb"] as Combatant).hp = clampf(float(k["hp"]), 1.0, (mm["cmb"] as Combatant).max_hp)
+				if k.has("home"):
+					mm["home"] = Vector2(float(k["home"][0]), float(k["home"][1]))
+	host.combat.mates.away = (ms.get("away", {}) as Dictionary).duplicate(true)
 	if str(r["slot"].get("kind", "")) == "suspend":
 		SaveSlots.erase("suspend")                                     # 되감기 막기: 불러온 중단 저장은 지운다(§17.6)
 		if not auto:

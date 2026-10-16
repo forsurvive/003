@@ -43,8 +43,25 @@ var enemies: Array = []
 var _token_t := 0.0                                ## 공격 토큰 다시 나누기까지 남은 초
 var targets: Array = []                           ## [{"prop", "kind": "target"|"stealth", "cmb", "gauge", "seen_t", "down", "facing", "live"}]
 var stealth_live := false                         ## 은신 표적을 쓰는 중(사격장 2부) — 아니면 받침 뒤에 숨어 있다
-var buddy: Actor                                  ## 일시 동행(MQ-P2 하도윤): 따라오고, 가까운 바퀴를 대걸레 자루로 친다. 불사
-var buddy_weapon := "W-067"
+var mates: Companions                             ## 일시 동행(1-10a, SD-11 §8.2): 최대 2명 · 모드 · 기절 · 일으키기
+var pc_target: Enemy                              ## 주인공이 마지막으로 공격한 적(동행 엄호의 첫 표적)
+## 옛 이름(0-7 MQ-P2 · 1-4 박춘삼): 첫 동행의 몸. null을 넣으면 동행을 모두 뗀다. 몸을 넣으면 그 인물(meta npc_id)을 동행으로
+var buddy: Actor:
+	get:
+		return mates.first_actor() if mates != null else null
+	set(v):
+		if mates == null:
+			return
+		if v == null:
+			mates.clear()
+		else:
+			mates.add(str(v.get_meta("npc_id", "")), v, str(v.get_meta("npc_name", "")))
+## 옛 이름: 첫 동행의 무기를 바꾼다(퀘스트 자료가 정한 장비)
+var buddy_weapon := "W-067":
+	set(v):
+		buddy_weapon = v
+		if mates != null and not mates.list.is_empty() and weapons.has(v):
+			mates.list[0]["w"] = weapons[v].duplicate()
 var armor_dr := Callable()                         ## 주인공 DR(입은 옷 × 상태, 1-8a) — 호스트가 준다
 var nav: InteriorNav
 var bot := {}                                     ## 봇 입력: {"aim", "fire", "crouch", "reload", "stim"}
@@ -58,7 +75,6 @@ const AIM_HOLD_S := 1.0
 var _aim_real := false                            ## 조준점이 실제 점(봇·마우스·자동 조준이 잡은 표적)인가 — 아니면 바라보는 방향 그대로 쏜다
 var _auto_hit := false
 const AUTO_AIM_HALF := 15.0                       ## 고전 조작 자동 조준 반각(SD-11 §2.3 '원뿔 30°', 조준 보정 반각 15°)
-var _buddy_cool := 0.0
 var _rng := RandomNumberGenerator.new()
 ## 1-9a 무기 계열
 var ap := APPool.new(5)                            ## 행동력(SD-11 §5): 파워 공격·(구르기·질주는 호스트)
@@ -105,6 +121,7 @@ func _init() -> void:
 	enemy_rows = JSON.parse_string(FileAccess.get_file_as_string("res://data/enemies.json"))
 	shots = Projectiles.new()
 	add_child(shots)
+	mates = Companions.new(self)
 	ord = Ordnance.new()
 	ord.shots = shots
 	add_child(ord)
@@ -339,6 +356,9 @@ func spawn(enemy_id: String, pos: Vector2, map: InteriorMap, st: StoryState = nu
 			ord.throw(from, to, e.nade_w, e.cmb.team, e.skill, 8.0)
 		e.squad_ok = func() -> bool: return _clock - float(_team_nade.get(e.cmb.team, -99.0)) >= 4.0
 	e.smoke_at = ord.in_zone
+	e.cmb.hit.connect(func() -> void:
+		if e.cmb.last_by == "player":
+			pc_target = e)                                          # 동행 엄호의 첫 표적(§8.2)
 	e.rad_at = rad.dose_at                                              # 1-9e4: 구울 방사능 회복 · 빛나는 구울 폭발 · 울부짖기 · 들개 지뢰 회피
 	e.burst_cb = _glow_burst
 	e.howl_cb = _howl
@@ -364,6 +384,8 @@ func spawn(enemy_id: String, pos: Vector2, map: InteriorMap, st: StoryState = nu
 		if e.cmb.robot and not e.cmb.ko and _rng.randf() < 0.3:          # 처치된 로봇의 30%: 원자 전지 소형 폭발(SD-11 §9.3)
 			shots.explode.call_deferred(e.loco.logical + Vector2(0, -10), {"blast": 40.0, "proj": "robot", "condition": "new"}, 100.0, "env")
 		var by_pc: bool = e.cmb.last_by in ["player", "ally", ""]          # 교전(1-E): 다른 무리가 쓰러뜨린 적은 경험치·카르마가 없다
+		if e.cmb.last_by == "mate":                                     # 동행이 쓰러뜨림(1-10a): 주인공이 HP 30% 이상 깎았을 때만 XP(SD-11 §8.2)
+			by_pc = e.cmb.dmg_player >= e.cmb.max_hp * 0.3
 		_morale_death(e, by_pc, st)
 		if by_pc:
 			stats["downs"] += 1
@@ -524,7 +546,8 @@ func _allies(dt: float) -> void:
 ## (지금 대상은 1.5배 가까운 쪽이 나타날 때까지 유지). 노릴 편이 아무도 없으면 '아무도 아님'(죽은 허수아비)을 준다
 func _target_for(e: Enemy) -> Combatant:
 	var plain: bool = e.foes.size() == 2 and "player" in e.foes and "ally" in e.foes
-	if plain and allies.is_empty():
+	var mb: Array = mates.bodies()
+	if plain and allies.is_empty() and mb.is_empty():
 		return pc
 	var cand: Array = []
 	if "player" in e.foes:
@@ -533,6 +556,7 @@ func _target_for(e: Enemy) -> Combatant:
 		for a in allies:
 			if not (a["cmb"] as Combatant).dead:
 				cand.append(a["cmb"])
+		cand.append_array(mb)                                           # 쓰러진 동행은 표적에서 빠진다(§8.2 기절)
 	if not plain:
 		for o in enemies:
 			if is_instance_valid(o) and o != e and not o.cmb.dead and o.cmb.team in e.foes:
@@ -639,6 +663,8 @@ func _rebuild_list() -> void:
 	for a in allies:
 		if is_instance_valid(a["actor"]):
 			l.append(a["cmb"])
+	if mates != null:
+		l.append_array(mates.bodies())
 	for t in targets:
 		l.append(t["cmb"])
 	shots.combatants = l
@@ -763,7 +789,7 @@ func tick(dt: float, free: bool, st: StoryState) -> void:
 		_status(dt)
 		_heal(dt)
 		_targets(dt, player)
-		_buddy(dt)
+		mates.tick(dt)
 		_allies(dt)
 		_radiation(dt, st)
 	shots.step(step)
@@ -1552,45 +1578,6 @@ func _prop_state(t: Dictionary, state: String) -> void:
 		shots.world.set_prop_state(Vector2i(int(p["x"]), int(p["y"])), state)
 
 
-# ---------------------------------------------------------------- 일시 동행(하도윤)
-## 뒤 2~4t를 따라온다(SD-11 §8.2). 1.4t 안에 바퀴가 오면 대걸레 자루로 친다. 프롤로그 불사(SD-03a §6.4).
-func _buddy(dt: float) -> void:
-	if buddy == null or not is_instance_valid(buddy):
-		return
-	_buddy_cool = maxf(0.0, _buddy_cool - dt)
-	var w: Dictionary = weapons[buddy_weapon]
-	var near: Enemy = null
-	var nd := 1e9
-	for e in enemies:
-		if is_instance_valid(e) and not e.cmb.dead:
-			var d: float = e.loco.logical.distance_to(buddy.loco.logical)
-			if d < nd:
-				nd = d
-				near = e
-	if near != null and nd <= float(w["range_eff"]) * 32.0 + near.cmb.radius:
-		buddy.move(Vector2.ZERO, dt)
-		buddy.loco.facing = Locomotion.snap8(near.loco.logical - buddy.loco.logical, 0.0)
-		buddy._show()
-		if _buddy_cool <= 0.0:
-			_buddy_cool = 1.0 / float(w["rate"])
-			var r := CombatRules.resolve({"weapon": w, "skill": 15.0, "attacker": {"str": 5},
-				"part": CombatRules.pick_part(near.cmb.weights, _rng), "dr": near.cmb.dr})
-			near.cmb.take(r, buddy.loco.logical)
-			_swing_fx(buddy.loco.logical + Vector2(0, -10) + (near.loco.logical - buddy.loco.logical).normalized() * 18.0)
-		return
-	var goal: Vector2 = pc.pos()
-	if near != null and nd < 6.0 * 32.0:
-		goal = near.loco.logical                                         # 교전: 가까운 바퀴에게 간다
-	var d := buddy.loco.logical.distance_to(goal)
-	if near == null and d > 15.0 * 32.0:
-		buddy.loco.place(pc.pos() + (buddy.loco.logical - pc.pos()).normalized() * 96.0)   # 너무 떨어지면 뒤 3t로(§8.2)
-	elif d > (3.0 * 32.0 if near == null else 24.0):
-		buddy.mode = "run"
-		buddy.move(buddy.steer(goal - buddy.loco.logical), dt)
-	else:
-		buddy.move(Vector2.ZERO, dt)
-
-
 # ---------------------------------------------------------------- 그리기
 func _pop(text: String, at: Vector2, col: Color) -> void:
 	popups.append([text, at, 1.0, col])
@@ -1653,6 +1640,16 @@ func _draw() -> void:
 		draw_circle(rc, 11.0, Color(0.04, 0.06, 0.04, 0.8))
 		draw_arc(rc, 8.0, 0.0, TAU, 24, Color(0.3, 0.36, 0.3, 0.9), 1.0)
 		draw_arc(rc, 8.0, -PI / 2.0, -PI / 2.0 + TAU * disarm_prog, 24, Color("D4FF6A"), 3.0)
+	if mates.rev_prog >= 0.0 and pc.actor != null:                     # 동행 일으키기 진행 고리(2초, 1-10a)
+		var rc2 := pc.pos() + Vector2(0, -50)
+		draw_circle(rc2, 11.0, Color(0.04, 0.06, 0.04, 0.8))
+		draw_arc(rc2, 8.0, 0.0, TAU, 24, Color(0.3, 0.36, 0.3, 0.9), 1.0)
+		draw_arc(rc2, 8.0, -PI / 2.0, -PI / 2.0 + TAU * mates.rev_prog / Companions.REVIVE_S, 24, Color("7CF08E"), 3.0)
+	if mates.glare != null and is_instance_valid(mates.glare):         # 백구가 노려보는 숨은 적: 머리 위 흰 테두리 역삼각(SD-11 §8.2 '위치 표시')
+		var gp: Vector2 = (mates.glare.loco.logical + Vector2(0, -44)).round()
+		var tri := PackedVector2Array([gp + Vector2(-4, -4), gp + Vector2(4, -4), gp + Vector2(0, 1)])
+		draw_colored_polygon(tri, Color("0B0A0D"))
+		draw_polyline(PackedVector2Array([tri[0], tri[1], tri[2], tri[0]]), Color("E9E4D8"), 1.0)
 	if throw_hold >= 0.0 and pc.actor != null:                         # 투척 조준선(SD-11 §3.4): 누른 시간만큼 착지점까지 늘어나는 점선 포물선
 		var from: Vector2 = pc.pos() + Vector2(0, -10)
 		var d := minf(from.distance_to(throw_aim), throw_max_t * 32.0 * clampf(throw_hold / Ordnance.THROW_HOLD_S, 0.15, 1.0))

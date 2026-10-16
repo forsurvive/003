@@ -25,6 +25,7 @@ var can_ko := false                           ## 비살상 피해로 HP 0이면 
 var ko := false                               ## 기절 중(dead도 참: 맞지 않고 막지 않는다)
 var hp_floor := 0.0                           ## 이 밑으로 내려가지 않는다(죽지 않는 적)
 var killed_lethal := false                    ## 마지막 일격이 실총이었나(카르마)
+var dmg_player := 0.0                         ## 주인공이 깎은 HP 합(1-10a: 동행이 쓰러뜨린 적의 XP는 주인공이 30% 이상 깎았을 때만, SD-11 §8.2)
 var last_by := ""                             ## 마지막으로 때린 편(1-E: 교전 중 다른 무리가 쓰러뜨리면 경험치 없음 · 비적대 무리를 때리면 적대로)
 ## 1-9a 상태 이상(SD-11 §9.6): 지속 피해는 0.5초 틱 · 같은 종류는 시간만 갱신(세기는 큰 쪽) · 행동 제한은 끝난 뒤 1초 같은 종류 면역
 var dots := {}                                ## 종류(burn·shock·poison) -> [초당 피해, 남은 초]
@@ -53,6 +54,8 @@ func fl() -> int:
 func take(result: Dictionary, from: Vector2) -> void:
 	if dead or invuln:
 		return
+	if last_by == "player":
+		dmg_player += minf(maxf(0.0, hp), float(result["hp"]))
 	hp -= float(result["hp"])
 	last_hit_from = from
 	flash = 3
