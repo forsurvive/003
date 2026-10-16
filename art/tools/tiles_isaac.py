@@ -333,8 +333,14 @@ def guide_cross(down=True):
 
 
 def wall_top(edges):
-    img = new("P10")                                                   # 쯔꾸르식: 벽 윗면은 평평한 어둠
+    """벽 윗면(방 바깥): 포켓몬 골드식 — 방 밖은 아무것도 보이지 않는 검정(P01). 방과 맞닿은 쪽에만 벽 두께 띠(어두운 청회 4px)와
+    밝은 모서리 1px을 그어 방의 윤곽만 읽히게 한다(1-T3, 리드 지시: 실내에 들어가면 바깥이 보이지 않는다)."""
+    img = new("P01")
     d = ImageDraw.Draw(img)
+    band = {"s": [0, 27, 31, 31], "n": [0, 0, 31, 4], "w": [0, 0, 4, 31], "e": [27, 0, 31, 31]}
+    for e in ("n", "e", "s", "w"):
+        if e in edges:
+            d.rectangle(band[e], fill=C("P10"))
     for e, line_ in (("s", [0, 31, 31, 31]), ("n", [0, 0, 31, 0]), ("w", [0, 0, 0, 31]), ("e", [31, 0, 31, 31])):
         if e in edges:
             d.line(line_, fill=C("P13"))
@@ -694,6 +700,70 @@ def wall_face_sd(part, variant="plain", seed=0):
             d.rectangle([20, 10, 27, 15], fill=C("P02")); d.line([20, 10, 24, 14], fill=C("P07"))
             d.line([20, 17, 27, 17], fill=C("P09"))
     return img
+
+
+def wall_face_cv(part, variant="plain", seed=0):
+    """하수·빗물 암거 벽(TS-I10, 1-T3 — 관악 계곡 배수로 K-08 · 윤중제 배수로 Y-05): 거푸집 자국이 줄진 회색 콘크리트 상자 암거.
+    위는 둥근 모서리 그늘과 천장에서 번진 검은 곰팡이(S-07 수경 농장과 같은 곰팡이, H-R01-02), 허리에 물때 줄(평소 수위),
+    아래는 늘 젖은 짙은 띠와 물방울. 변형: pipe 옛 관 구멍(물이 흘러나옴) · vent 철근이 드러난 깨진 면 · stain 곰팡이 군락 · outlet 배수 창살."""
+    img = new("P05")
+    d = ImageDraw.Draw(img)
+    rnd = random.Random(seed * 31 + (1 if part == "top" else 2))
+    if part == "top":
+        d.rectangle([0, 0, 31, 5], fill=C("P02"))                     # 천장 모서리 그늘(둥근 헌치)
+        d.line([0, 0, 31, 0], fill=C("P01")); d.line([0, 6, 31, 6], fill=C("P04"))
+        d.line([0, 7, 31, 7], fill=C("P06"))
+        for y in (16, 26):                                             # 거푸집 판 자국
+            d.line([0, y, 31, y], fill=C("P04")); d.line([0, y + 1, 31, y + 1], fill=C("P06"))
+        for x in (0, 20):
+            d.line([x, 8, x, 31], fill=C("P04"))
+        for _ in range(3):                                             # 천장에서 번진 검은 곰팡이 점
+            x = rnd.randrange(1, 30)
+            d.rectangle([x, 6, x + rnd.randint(1, 3), 6 + rnd.randint(1, 3)], fill=C("P01"))
+            d.point((x + rnd.randint(-1, 3), 10 + rnd.randint(0, 3)), fill=C("P02"))
+        for _ in range(4):
+            d.point((rnd.randrange(0, 32), rnd.randrange(9, 31)), fill=C("P06"))
+        if variant == "pipe":                                          # 옛 관 구멍: 녹슨 테 · 안은 깜깜 · 흘러내린 물줄기
+            d.ellipse([9, 11, 22, 24], fill=C("P01")); d.ellipse([9, 11, 22, 24], outline=C("P24"))
+            d.arc([10, 12, 21, 23], 200, 340, fill=C("P25"))
+            d.line([15, 24, 15, 31], fill=C("P11")); d.line([16, 24, 16, 31], fill=C("P12"))
+        if variant == "vent":                                          # 깨진 면: 철근 둘이 드러남
+            d.polygon([(6, 12), (24, 10), (27, 22), (8, 25)], fill=C("P03"))
+            d.line([7, 16, 25, 15], fill=C("P24")); d.line([8, 20, 26, 19], fill=C("P25"))
+            d.point((5, 13), fill=C("P06")); d.point((26, 23), fill=C("P06"))
+        if variant == "stain":                                         # 곰팡이 군락
+            for _ in range(9):
+                x, y = rnd.randrange(3, 27), rnd.randrange(8, 26)
+                r = rnd.randint(1, 3)
+                d.ellipse([x - r, y - r, x + r, y + r], fill=C("P01"))
+                d.point((x + r, y - r), fill=C("P29"))
+    else:
+        d.line([0, 2, 31, 2], fill=C("P04")); d.line([0, 3, 31, 3], fill=C("P06"))
+        d.line([0, 0, 0, 13], fill=C("P04")); d.line([20, 0, 20, 13], fill=C("P04"))
+        d.rectangle([0, 9, 31, 11], fill=C("P29"))                    # 평소 수위 물때 줄(이끼 녹)
+        d.line([0, 9, 31, 9], fill=C("P30")); d.line([0, 12, 31, 12], fill=C("P04"))
+        d.rectangle([0, 13, 31, 28], fill=C("P03"))                    # 늘 젖은 아래 띠
+        d.line([0, 13, 31, 13], fill=C("P02"))
+        for _ in range(4):                                             # 물방울 · 흐른 자국
+            x = rnd.randrange(1, 31)
+            d.line([x, 13, x, 13 + rnd.randint(3, 10)], fill=C("P11"))
+            d.point((x, 14), fill=C("P13"))
+        d.rectangle([0, 29, 31, 31], fill=C("P02")); d.line([0, 29, 31, 29], fill=C("P01"))
+        if variant == "outlet":                                       # 배수 창살(바닥 쪽 네모 구멍)
+            d.rectangle([9, 17, 24, 28], fill=C("P01"))
+            for x in range(10, 24, 3):
+                d.line([x, 17, x, 28], fill=C("P12"))
+            d.line([9, 17, 24, 17], fill=C("P13"))
+    return img
+
+
+def cv_wall_tiles():
+    """하수·빗물 암거 벽(ts_cv_wall, TS-I10 — 1-T3): s07 벽과 같은 이름(윗면 wt_m은 같고 벽면만 젖은 콘크리트 암거)."""
+    out = {f"wt_{m}": wall_top({e for e, b in WALL_BITS if m & b}) for m in range(16)}
+    out.update({"face_top": wall_face_cv("top"), "face_top_pipe": wall_face_cv("top", "pipe", 1),
+                "face_top_vent": wall_face_cv("top", "stain", 2), "face_bot": wall_face_cv("bot"),
+                "face_bot_outlet": wall_face_cv("bot", "outlet")})
+    return out
 
 
 def sd_wall_tiles():

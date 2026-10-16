@@ -85,7 +85,7 @@ def quad_sheets():
     import chibi_creatures as CC
     for kind, name in (("dog", "cr_cr104_loco"), ("jindo", "cr_baekgu_loco"), ("rat", "cr_cr095_loco"), ("guard", "cr_cr107_loco"),
                        ("ox", "cr_cr090_loco"), ("ox_pack", "cr_cr091_loco"),
-                       ("oenun", "cr_cr500_loco"), ("fierce", "cr_cr105_loco")):          # 외눈 · 사나운 들개(1-11a)          # 두머리소·짐소(1-8d)
+                       ("oenun", "cr_cr500_loco"), ("fierce", "cr_cr105_loco"), ("raccoon", "cr_cr136_loco")):   # 옴 너구리(1-T2 밤 몹)          # 외눈 · 사나운 들개(1-11a)          # 두머리소·짐소(1-8d)
         frames, meta = CC.quad_sheet(kind)
         fw, fh = meta["frame"]
         sheet = Image.new("RGBA", (fw * len(frames), fh), (0, 0, 0, 0))
@@ -234,6 +234,7 @@ def main():
     tileset("ts_jm_wall", tiles_isaac.jm_wall_tiles())                # 영등포 지하상가 벽(1-4 지하시장)
     tileset("ts_bk_wall", tiles_isaac.bk_wall_tiles())                # 여의도 지하 벙커 벽(1-5 MQ-104)
     tileset("ts_sd_wall", tiles_isaac.sd_wall_tiles())                # 사당역 대합실 벽(1-8f 사당 환승촌)
+    tileset("ts_cv_wall", tiles_isaac.cv_wall_tiles())                # 하수 · 빗물 암거 벽(1-T3 TS-I10 — 관악 계곡 배수로 · 윤중제 배수로)
     import tiles_world                                             # 월드 건물·지형 구조(1-1)
     wt, wtab = tiles_world.build()
     nwd = tileset_grid("ts_world", wt, {"skins": wtab})

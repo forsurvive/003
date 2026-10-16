@@ -7,7 +7,7 @@
 class_name Enemy
 extends Actor
 
-const DOGS := ["CR-104", "CR-095", "CR-107", "CR-106", "CR-108", "CR-105", "CR-500"]
+const DOGS := ["CR-104", "CR-095", "CR-107", "CR-106", "CR-108", "CR-105", "CR-500", "CR-136"]
 const GHOULS := ["CR-200", "CR-201", "CR-202", "CR-204", "CR-205", "CR-206", "CR-457", "CR-459", "CR-518"]   ## 방사능에 낫는 구울(SD-14 §7.2 '라드 100당 HP +1')
 const FERALS := ["CR-200", "CR-201", "CR-204", "CR-205", "CR-206"]            ## 빛나는 구울 폭발에 HP +30%를 받는 야생 구울
 const BURST_R := 4.0 * 32.0                       ## 빛나는 구울 방사능 폭발 반경(SD-14 CR-202 '반경 4타일')
@@ -131,6 +131,8 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 			sheet = "cr_cr500_loco"                                  # 외눈(1-11a, SD-04a §4.1 — 흰 털 · 왼눈 흉터 · 목줄과 인식표)
 		"CR-095":
 			sheet = "cr_cr095_loco"
+		"CR-136":
+			sheet = "cr_cr136_loco"                                  # 옴 너구리(1-T2 밤 몹, SD-14 §4.9 — 눈가 검은 띠 · 털 빠진 꼬리)
 		"CR-107":
 			sheet = "cr_cr107_loco"                                  # 경비견(1-6, 새벽인력 조끼)
 		"CR-405":
@@ -173,8 +175,9 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 		add_child(_aura)
 	style = "swarm" if is_roach else ("dog" if is_dog else ("melee" if arm in ["baton", "claw", "melee"] else "shooter"))
 	if is_dog:                                                       # 변이 들개(SD-14 §4.2): 4.5t/초, 지그재그로 달려와 문다
-		loco.custom = {"run": {"frames": 4, "px": 4.0, "diag": 4.0, "contact": [0, 2], "speed_t": float(row["speed"])},
-			"walk": {"frames": 4, "px": 4.0, "diag": 4.0, "contact": [0, 2], "speed_t": float(row["speed"]) * 0.45}}
+		var qpx := float((meta.get("motions", {}) as Dictionary).get("walk", {}).get("px_per_frame", 4))   # 시트의 컷당 보폭(시궁쥐 · 너구리 2px) — 디딘 발이 미끄러지지 않게
+		loco.custom = {"run": {"frames": 4, "px": qpx, "diag": qpx, "contact": [0, 2], "speed_t": float(row["speed"])},
+			"walk": {"frames": 4, "px": qpx, "diag": qpx, "contact": [0, 2], "speed_t": float(row["speed"]) * 0.45}}
 		bite = float(str(row.get("attack", "물기 8")).get_slice(" ", 1))
 	if row["id"] == "CR-305":                                       # 파수-3: 사람과 같은 보폭 표(발 고정 6컷) · 무거워 뛰지 않는다(2.5t/초)
 		loco.custom = {"run": {"frames": 6, "px": 4.0, "px_v": 3.0, "diag": 3.0, "contact": [0, 3], "speed_t": float(row["speed"]), "anim": "walk"},

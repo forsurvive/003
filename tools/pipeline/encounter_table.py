@@ -18,8 +18,10 @@ OUT = os.path.join(ROOT, "game", "data", "world", "encounters.json")
 
 RE = {
     # ---- 적대 크리처
+    # 시간대(1-T2, SD-14 §2 표기 주 06~18 · 황 17~20 · 야 18~06 · §11.2 R01 '야간 교체: 들개 무리 +2'): 낮엔 들개가 사냥하고 신참이 길을 묻는다,
+    # 밤엔 바퀴 · 구울 · 시궁쥐 · 옴 너구리가 나오고 들개는 우두머리가 이끄는 큰 사냥 무리(RE-X05)로 바뀐다 — 같은 길도 시각마다 다른 몹(리드 지시 2026-10-16)
     "RE-001": {"name": "캠퍼스 들개 무리", "cat": "creature", "regions": ["R01"], "prefer": ["산지", "언덕"], "ban": ["업무"],
-               "time": "any", "night_w": 1.5, "weight": 8,
+               "time": [6, 20], "weight": 8,
                "groups": [{"side": "a", "units": [["CR-104", 3, 5]], "leader": ["CR-106", 0.25], "hostile": True}],
                "states": {"S1": 4, "S3": 3, "S4": 1, "S7": 1}, "sign": "howl", "wounded": 0.15},
     "RE-004": {"name": "시체 뜯는 바퀴", "cat": "creature", "regions": "*", "no_regions": ["R05"], "prefer": ["구도심", "시장", "공단"],
@@ -31,10 +33,25 @@ RE = {
                "groups": [{"side": "a", "units": [["CR-200", 3, 5]], "leader": ["CR-201", 0.35], "hostile": True}],
                "states": {"S1": 3, "S3": 2, "S2": 1}, "sign": "groan", "mix": [["CR-002", 1, 3, 0.2]]},
     "RE-X01": {"name": "떠도는 들개", "cat": "creature", "regions": "*", "no_regions": ["R05"], "prefer": ["황무지", "강변", "공단"],
-               "ban": ["업무"], "time": "any", "weight": 5,
+               "ban": ["업무"], "time": [6, 20], "weight": 5,
                "groups": [{"side": "a", "units": [["CR-104", 2, 4]], "hostile": True}],
                "states": {"S1": 3, "S3": 3, "S6": 1}, "sign": "howl", "wounded": 0.2,
                "note": "SD-05 RE-001의 전역 판본(들개 CR-104는 SD-14 전역 크리처) — 구현 정합 1-E"},
+    "RE-X05": {"name": "밤 사냥 들개", "cat": "creature", "regions": ["R01"], "prefer": ["산지", "언덕", "황무지"], "ban": ["업무"],
+               "time": "night", "weight": 7,
+               "groups": [{"side": "a", "units": [["CR-104", 4, 6], ["CR-105", 0, 1]], "leader": ["CR-106", 0.6], "hostile": True}],
+               "states": {"S1": 3, "S3": 2, "S2": 2}, "sign": "howl", "wounded": 0.1,
+               "note": "SD-14 §11.2 R01 야간 교체 '들개 무리 +2' · §4.2 우두머리 — 낮 들개(RE-001 · X01)의 밤 판본"},
+    "RE-X06": {"name": "시궁쥐 무리", "cat": "creature", "regions": ["R01", "R02"], "prefer": ["구도심", "시장", "공단", "지하철"],
+               "time": [19, 5], "weight": 6,
+               "groups": [{"side": "a", "units": [["CR-095", 3, 5]], "hostile": True}],
+               "states": {"S3": 4, "S1": 2}, "sign": "squeak",
+               "note": "SD-14 §4.1 시궁쥐(봉천 재개발 · 영등포 지하상가 외곽) — 밤에 굴에서 나온다"},
+    "RE-X07": {"name": "쓰레기 뒤지는 너구리", "cat": "creature", "regions": ["R01", "R02"], "prefer": ["구도심", "아파트", "강변", "시장"],
+               "time": [18, 6], "weight": 5,
+               "groups": [{"side": "a", "units": [["CR-136", 2, 4]], "hostile": True}],
+               "states": {"S3": 5, "S1": 1}, "sign": "rustle",
+               "note": "SD-14 §4.9 옴 너구리(시간 야) — 겁이 많아 보면 달아나고 궁지에 몰리면 문다(옴 25%는 상태 이상 체계와 함께)"},
     # ---- 적대 약탈자(남부순환 패거리, SD-14 F-04-C)
     "RE-002": {"name": "고가 아래 패거리", "cat": "raider", "regions": ["R01", "R02"], "prefer": ["고가", "큰길"], "ban": ["산지"],
                "time": "any", "night_w": 1.5, "weight": 8,

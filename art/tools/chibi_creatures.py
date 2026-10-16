@@ -139,6 +139,10 @@ QUAD = {
                    skin=["P39", "P40", "P41"], eye="P54", tail="up", ears=True, mange=False, scars=True),
     "rat": dict(w=40, h=22, foot=(18, 19), px=2, body=(17, 13, 9, 5), head=(27, 12, 5, 4.5), leg=3, fur=["P03", "P04", "P05", "P06"],
                 skin=["P40", "P41", "P42"], eye="P54", tail="long", ears=True, mange=False),
+    # 옴 너구리 CR-136(SD-14 §4.9, 1-T2 밤 인카운터): 시궁쥐보다 둥글고 털이 부푼 잿빛 몸 · 눈가 검은 띠와 흰 눈썹 · 짧은 둥근 귀 ·
+    # 털 빠진 꼬리(옴, 군데군데 분홍 살과 남은 검은 고리) · 몸통에도 옴 자국
+    "raccoon": dict(w=46, h=24, foot=(22, 21), px=2, body=(21, 14, 10, 6), head=(32, 12, 6, 5.5), leg=3, fur=["P03", "P04", "P05", "P07"],
+                    skin=["P40", "P41", "P42"], eye="P01", tail="mangy", ears=True, mange=True, ribs=False),
 }
 
 
@@ -169,7 +173,7 @@ def quad(kind, frame=0, pose="walk"):
     def mange(nx, ny, col):
         if q["mange"] and math.sin(nx * 7 + 2) * math.sin(ny * 6 - 1) > 0.6:
             return ramp(q["skin"])[1]
-        if q["mange"] and ny > 0.1 and abs((nx * 6) % 1 - 0.5) < 0.12:
+        if q["mange"] and q.get("ribs", True) and ny > 0.1 and abs((nx * 6) % 1 - 0.5) < 0.12:
             return fur[0]                                                  # 드러난 갈비
         return None
     _ellipse(body, bx, by - bob, brx, bry, fur, extra=mange)
@@ -216,6 +220,18 @@ def quad(kind, frame=0, pose="walk"):
         bd.point((sx + 6, hyb), fill=C("P01")); bd.point((sx + 5, hyb), fill=C("P01"))
         bd.point((sx + 2, hyb + 4), fill=C("P09")); bd.point((sx + 4, hyb + 4), fill=C("P09"))
         bd.point((round(hxc + 1), hyb - 2), fill=C(q["eye"]))
+    elif kind == "raccoon":                                                # 너구리: 둥근 귀 둘 · 눈가 검은 띠 · 흰 눈썹 · 뾰족한 검은 코
+        ex = round(hxc - 4)
+        bd.ellipse([ex - 1, hyb - 7, ex + 2, hyb - 4], fill=fur[0])                  # 먼 귀(그늘)
+        bd.ellipse([ex + 1, hyb - 8, ex + 5, hyb - 3], fill=fur[2])                  # 가까운 귀 · 흰 테 · 안쪽
+        bd.point((ex + 3, hyb - 6), fill=C("P02")); bd.point((ex + 3, hyb - 8), fill=C("P08"))
+        bd.rectangle([round(hxc - 3), hyb - 2, round(hxc + 4), hyb], fill=C("P01"))   # 눈가 띠
+        bd.point((round(hxc - 4), hyb - 1), fill=C("P02"))
+        bd.line([round(hxc - 1), hyb - 3, round(hxc + 3), hyb - 3], fill=C("P08"))   # 흰 눈썹
+        bd.point((round(hxc + 2), hyb - 1), fill=C("P54"))                         # 눈빛(밤에 빛난다)
+        sx = round(hxc + hrx - 1)
+        bd.ellipse([sx - 2, hyb, sx + 3, hyb + 3], fill=C("P08"))                  # 흰 주둥이
+        bd.point((sx + 3, hyb + 1), fill=C("P01")); bd.point((sx + 2, hyb + 1), fill=C("P01"))
     else:
         ex = round(hxc - 1)                                                # 동그란 귀(안쪽 분홍)
         bd.ellipse([ex - 2, hyb - 7, ex + 2, hyb - 3], fill=fur[2])
@@ -264,6 +280,14 @@ def quad(kind, frame=0, pose="walk"):
         d.point((cx0 - 1, cy0), fill=fur[1])
     elif q["tail"] == "up":
         d.line([(tx, by - 2 - bob), (tx - 3, by - 6 - bob), (tx - 4, by - 9 - bob + (frame % 2))], fill=fur[0], width=2)
+    elif q["tail"] == "mangy":                                            # 털 빠진 너구리 꼬리: 굵다 가늘어지고, 남은 털 고리 둘
+        sw = frame % 2
+        pts = [(tx + 1, by - bob), (tx - 4, by + 1 - sw), (tx - 8, by + 1), (tx - 11, by + 3 - sw)]
+        d.line(pts[:2], fill=fur[1], width=3)
+        d.line(pts[1:], fill=ramp(q["skin"])[1], width=2)
+        d.line([pts[1][0] - 1, pts[1][1] - 1, pts[1][0] - 1, pts[1][1] + 1], fill=C("P01"))
+        d.point((pts[2][0] - 1, pts[2][1]), fill=C("P02"))
+        d.point((pts[3][0], pts[3][1]), fill=fur[1])
     else:
         pts = [(tx, by + 1 - bob), (tx - 5, by + 3), (tx - 10, by + 2 + (frame % 2)), (tx - 14, by + 4)]
         d.line(pts, fill=ramp(q["skin"])[1])

@@ -22,9 +22,9 @@
   "id": "CR-095",
   "level": 2,
   "name": "변이 시궁쥐",
-  "part_weights": "PW-H",
+  "part_weights": "PW-C",
   "pattern": "2타일 거리에서 덤벼 문다(원작 '긴 근접 사거리'). 3~5마리",
-  "radius": 0.3,
+  "radius": 0.28,
   "speed": 3.5,
   "tier": "약",
   "xp": 5
@@ -103,6 +103,21 @@
   "speed": 4.5,
   "tier": "중(비적대)",
   "xp": 15
+ },
+ "CR-136": {
+  "_src": "14_creatures-enemies.md:638",
+  "attack": "물기 6 + 옴 25%",
+  "dr": 0,
+  "hp": 30,
+  "id": "CR-136",
+  "level": 2,
+  "name": "옴 너구리 (변이 너구리)",
+  "part_weights": "PW-C",
+  "pattern": "평소 겁이 많아 쓰레기를 뒤지다 도망친다. 궁지에 몰리면 문다",
+  "radius": 0.28,
+  "speed": 3.5,
+  "tier": "약",
+  "xp": 6
  },
  "CR-200": {
   "_src": "14_creatures-enemies.md:827",

@@ -121,61 +121,123 @@ func _ready() -> void:
 	layer.add_child(banner)
 
 
-# ---------------------------------------------------------------- 밤(0-10, SD-16 §4.7 상황 필터 + §10.6 빛 원판)
-var night := false
+# ---------------------------------------------------------------- 낮밤(0-10 밤 · 1-T1 하루 순환, SD-16 §4.7 상황 필터 1~5 · 11 + §10.6 빛 원판)
+## 바깥(월드 · 바깥 손 맵)은 시각을 따라 새벽 → 낮 → 노을 → 밤 → 깊은 밤 색조가 1시간씩 섞여 바뀐다(TimeOfDay).
+## 실내는 시각과 무관: 불 켜진 방은 색조 없음(포켓몬 골드처럼 바깥 하늘이 실내에 들어오지 않는다), 전기가 끊긴 암거 · 동굴(타일셋 cv)은
+## '실내 정전'에 핍-보이 조명. 이야기가 밤을 정하면(MQ-101 그날 밤 — set_night) 시각과 무관하게 밤.
+var night := false                                                   ## 이야기가 정한 밤(저장되는 값)
+var tone_now := Vector4.ZERO                                         ## 지금 화면 색조(시험 · 벤치)
+var pip_light := 0.0                                                 ## 핍-보이 조명 세기 0~1(깊은 밤 · 어두운 지하)
+var light_k := 0.0                                                   ## 빛 원판 세기 0~1
 var _night_layer: CanvasLayer
+var _night_mat: ShaderMaterial
 var _light_layer: CanvasLayer
 var _lights: Node2D
 var _flicker_t := 0.0
-const LIGHT_PROPS := {"drum_fire": Vector2(0, -20), "guard_booth": Vector2(0, -26), "watchtower": Vector2(0, -78)}
+var _tone_t := 0.0
+const LIGHT_PROPS := {"drum_fire": Vector2(0, -20), "guard_booth": Vector2(0, -26), "watchtower": Vector2(0, -78), "radar_beacon": Vector2(16, -10)}
+const DARK_SETS := ["cv"]                                            ## 전기가 끊긴 지하(하수 · 빗물 암거 TS-I10 · 동굴 TS-I11)
 
 
 func set_night(on: bool) -> void:
 	night = on
-	if on and _night_layer == null:
-		_night_layer = CanvasLayer.new()
-		_night_layer.layer = 1                                        # 맵(0층) 위, HUD·대화(8층~) 아래
-		add_child(_night_layer)
-		var r := ColorRect.new()
-		r.set_anchors_preset(Control.PRESET_FULL_RECT)                # 화면 전체(크기는 앵커가 정한다)
-		r.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		var m := ShaderMaterial.new()
-		m.shader = load("res://systems/display/night_tone.gdshader")
-		r.material = m
-		_night_layer.add_child(r)
-		_light_layer = CanvasLayer.new()
-		_light_layer.layer = 2
-		_light_layer.follow_viewport_enabled = true                  # 빛은 세상 좌표(카메라를 따라간다)
-		add_child(_light_layer)
-		_lights = Node2D.new()
-		var cm := CanvasItemMaterial.new()
-		cm.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
-		_lights.material = cm
-		_lights.draw.connect(_draw_lights)
-		_light_layer.add_child(_lights)
+	_tone_update(true)
+
+
+func _ensure_tone_layers() -> void:
+	if _night_layer != null:
+		return
+	_night_layer = CanvasLayer.new()
+	_night_layer.layer = 1                                        # 맵(0층) 위, HUD·대화(8층~) 아래
+	add_child(_night_layer)
+	var r := ColorRect.new()
+	r.set_anchors_preset(Control.PRESET_FULL_RECT)                # 화면 전체(크기는 앵커가 정한다)
+	r.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_night_mat = ShaderMaterial.new()
+	_night_mat.shader = load("res://systems/display/night_tone.gdshader")
+	r.material = _night_mat
+	_night_layer.add_child(r)
+	_light_layer = CanvasLayer.new()
+	_light_layer.layer = 2
+	_light_layer.follow_viewport_enabled = true                  # 빛은 세상 좌표(카메라를 따라간다)
+	add_child(_light_layer)
+	_lights = Node2D.new()
+	var cm := CanvasItemMaterial.new()
+	cm.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	_lights.material = cm
+	_lights.draw.connect(_draw_lights)
+	_light_layer.add_child(_lights)
+
+
+## 바깥인가(시각 색조를 받는 맵): 심리스 월드와 바깥 손 맵(set r01)
+func outdoor() -> bool:
+	return map != null and (map is WorldMap or str(map.data.get("set", "")) == "r01")
+
+
+## 불 꺼진 지하인가(실내 정전 + 핍-보이 조명)
+func dark_inside() -> bool:
+	return map != null and not outdoor() and (str(map.data.get("set", "")) in DARK_SETS or bool(map.data.get("dark", false)))
+
+
+## 지금 색조 · 빛 세기를 정한다(매 0.25초, 맵이 바뀌면 바로)
+func _tone_update(force := false) -> void:
+	var m := TimeOfDay.minute(date_text)
+	var t := Vector4.ZERO
+	var lk := 0.0
+	var pk := 0.0
+	if map == null:
+		pass
+	elif outdoor():
+		t = TimeOfDay.TONES["밤"] if night else TimeOfDay.tone(m)
+		lk = 1.0 if night else TimeOfDay.light_k(m)
+		pk = 0.0 if night else TimeOfDay.pip_k(m)
+	elif dark_inside():
+		t = TimeOfDay.TONES["실내 정전"]
+		lk = 1.0
+		pk = 1.0
+	if not force and t == tone_now and is_equal_approx(lk, light_k) and is_equal_approx(pk, pip_light):
+		return
+	tone_now = t
+	light_k = lk
+	pip_light = pk
+	var on := TimeOfDay.is_dark(t)
+	if on:
+		_ensure_tone_layers()
+		_night_mat.set_shader_parameter("tone", t)
 	if _night_layer != null:
 		_night_layer.visible = on
 		_light_layer.visible = on
 		_lights.queue_redraw()
 
 
-## 빛 원판: 반지름 64px 4단(가운데가 가장 밝다), 백열 P50. 디더·그라데이션 없이 단 색 띠(§10.6)
+## 빛 원판: 반지름 64px 4단(가운데가 가장 밝다), 백열 P50. 디더·그라데이션 없이 단 색 띠(§10.6). 핍-보이 조명은 주인공 둘레 96px 청록빛
 func _draw_lights() -> void:
 	if map == null:
 		return
-	for p in map.props:
-		var off: Variant = LIGHT_PROPS.get(p["name"])
-		if off == null:
-			continue
-		var c := Vector2(int(p["x"]) * 32 + 16 * int(p["w"]), (int(p["y"]) + int(p["h"])) * 32) + (off as Vector2)
-		var k := 1.0 + (0.06 if p["name"] == "drum_fire" and int(_flicker_t * 6.0) % 2 == 0 else 0.0)
+	if light_k > 0.01:
+		for p in map.props:
+			var off: Variant = LIGHT_PROPS.get(p["name"])
+			if off == null:
+				continue
+			var c := Vector2(int(p["x"]) * 32 + 16 * int(p["w"]), (int(p["y"]) + int(p["h"])) * 32) + (off as Vector2)
+			var k := 1.0 + (0.06 if p["name"] == "drum_fire" and int(_flicker_t * 6.0) % 2 == 0 else 0.0)
+			var col := Color(1.0, 0.92, 0.6) if p["name"] != "radar_beacon" else Color(1.0, 0.7, 0.25)
+			for i in 4:
+				var r := 64.0 * k * (1.0 - i * 0.22)
+				_lights.draw_circle(c, r, Color(col.r, col.g, col.b, (0.05 + i * 0.035) * light_k))
+	if pip_light > 0.01 and player != null and is_instance_valid(player):
+		var pc: Vector2 = player.loco.render + Vector2(0, -16)
 		for i in 4:
-			var r := 64.0 * k * (1.0 - i * 0.22)
-			_lights.draw_circle(c, r, Color(1.0, 0.92, 0.6, 0.05 + i * 0.035))
+			var r := TimeOfDay.PIP_R * (1.0 - i * 0.2)
+			_lights.draw_circle(pc, r, Color(0.55, 1.0, 0.85, (0.045 + i * 0.03) * pip_light))
 
 
 func _night_tick(dt: float) -> void:
-	if not night or map == null:
+	_tone_t += dt
+	if _tone_t >= 0.25:
+		_tone_t = 0.0
+		_tone_update()
+	if _night_layer == null or not _night_layer.visible or map == null:
 		return
 	_flicker_t += dt
 	var f := int(_flicker_t * 6.0) % 3
@@ -183,7 +245,7 @@ func _night_tick(dt: float) -> void:
 		for p in map.props:
 			if p["name"] == "drum_fire":
 				map.set_prop_state(Vector2i(int(p["x"]), int(p["y"])), ["", "f1", "f2"][f])
-		_lights.queue_redraw()
+	_lights.queue_redraw()                                            # 핍-보이 조명은 주인공을 따라간다
 
 
 func _index_scenes() -> void:
@@ -305,14 +367,20 @@ func enter(map_id: String, mark: String = "", look: Dictionary = {}, at: Vector2
 	_sync_mates()
 	if world_mode and from_inside and enc_live != null:
 		enc_live.on_exit_interior.call_deferred()                    # 실내에서 밖으로 나온 순간도 판정 기회(SD-05 §6.1)
-	cam.limit_left = 0
-	cam.limit_top = 0
-	cam.limit_right = map.size.x * 32
-	cam.limit_bottom = map.size.y * 32
+	if outdoor():                                                     # 바깥: 맵 끝에서 카메라가 멈춘다
+		cam.limit_left = 0
+		cam.limit_top = 0
+		cam.limit_right = map.size.x * 32
+		cam.limit_bottom = map.size.y * 32
+	else:                                                              # 실내 · 지하(1-T3, 포켓몬 골드식): 카메라는 늘 주인공 가운데 — 방 밖은 검은 어둠
+		cam.limit_left = -10000000
+		cam.limit_top = -10000000
+		cam.limit_right = 10000000
+		cam.limit_bottom = 10000000
+	RenderingServer.set_default_clear_color(Color("0B0A0D") if outdoor() else Color("1A181D"))   # 실내 바깥 = 벽 윗면과 같은 검정(P01)
 	cam.position = player.loco.logical.round()
 	cam.reset_smoothing()
-	if _lights != null:
-		_lights.queue_redraw()
+	_tone_update(true)
 	banner_text = map.zone_name() if map is WorldMap else map.data["name"]
 	banner_t = BANNER_SECS
 	map_entered.emit(map_id)

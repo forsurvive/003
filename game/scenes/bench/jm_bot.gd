@@ -35,6 +35,10 @@ var note_t := 0.0
 var fight_hp := 0.0                                 ## 싸움: 적 체력 합(피해를 주고 있나)
 var fight_n := 0
 var fight_still := 0.0
+var _stuck_p := Vector2.ZERO                         ## 걸음이 막힌 자리(움직이는 사람·짐승이 길을 막으면 옆으로 한 발 비켜 돈다)
+var _stuck_t := 0.0
+var _side_t := 0.0
+var _side_dir := Vector2.ZERO
 var step_map := 0                                   ## 걸음 단계를 시작한 맵 노드(출구를 밟아 맵이 바뀌면 그 단계는 끝 — 월드 안 구역 이름 바뀜은 아니다)
 
 
@@ -290,6 +294,9 @@ func _spot_find(lid: String, sub: String) -> Vector2i:
 		if str(sp.get("lid", "")) != lid:
 			continue
 		var data: Dictionary = sp["data"]
+		if (data.get("marks", {}) as Dictionary).has(sub):                    # 표지 이름(1-11c 주민센터 'sentry' — 파수 그림은 진행기가 세운다)
+			var mk: Array = data["marks"][sub]
+			return Vector2i(int(sp["at"][0]) + int(mk[0]), int(sp["at"][1]) + int(mk[1]))
 		for grp in ["texts", "props", "npcs", "boxes"]:
 			for e in data.get(grp, []):
 				if (str(e.get("text", "")) + str(e.get("name", "")) + str(e.get("id", ""))).contains(sub):
@@ -861,6 +868,8 @@ func _next() -> void:
 	i += 1
 	step_t = 0.0
 	_repath_t = -1.0
+	_stuck_t = 0.0
+	_side_t = 0.0
 	step_map = 0
 	path = PackedVector2Array()
 
@@ -884,6 +893,16 @@ func _walk(goal: Vector2) -> Vector2:
 	if (path.is_empty() and step_t - _repath_t > 0.5) or step_t < 0.05 or (int(step_t * 2.0) % 6 == 0 and step_t - _repath_t > 0.4):
 		path = NpcRoutine.with_start(host.map, p, goal, host.player.floor_id)
 		_repath_t = step_t                                                # 닿지 않는 목표에 매 틱 길찾기를 되풀이하지 않는다(0.5초에 한 번)
+	if p.distance_to(_stuck_p) > 3.0:
+		_stuck_p = p
+		_stuck_t = step_t
+	elif step_t - _stuck_t > 1.2 and _side_t <= step_t:                # 1.2초 제자리: 길 위에 몸이 선 것 — 옆으로 0.5초 비킨다
+		var fw := (goal - p).normalized() if path.is_empty() else NpcRoutine.step_dir(p, path[0])
+		_side_dir = Vector2(-fw.y, fw.x) * (1.0 if int(step_t) % 2 == 0 else -1.0)
+		_side_t = step_t + 0.5
+		_stuck_t = step_t
+	if _side_t > step_t:
+		return _side_dir
 	while path.size() > 0 and (NpcRoutine.arrived(p, path[0]) or (path.size() > 1 and p.distance_to(path[1]) <= path[0].distance_to(path[1]) + 2.0)):
 		path.remove_at(0)
 	if path.is_empty():
