@@ -473,6 +473,8 @@ static func after_hit(c: Combatant, w: Dictionary, pk: String, dist_t: float, r:
 	var lp := float(w.get("leg_pct", 0.0))
 	if lp > 0.0 and r.randf() * 100.0 < lp:
 		c.set_meta("leg_hurt", true)
+		if c.track_limbs:                                               # 다트 건 '다리 고정'(SD-11 §4.8): 다리 부위 피해 1,000 → 즉시 다리 손상(1-9e3)
+			c._limb_hit("leg", 1000.0)
 
 
 func _draw() -> void:

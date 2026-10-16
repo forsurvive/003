@@ -20,6 +20,7 @@ var roll_t := -1.0                            ## 구르는 중이면 0 이상
 var roll_vec := Vector2.ZERO
 var roll_dir := 2
 var roll_cool := 0.0
+var roll_mul := 1.0                           ## 구르기 거리 배수(과적 · 다리 손상 0.6, SD-11 §5.3)
 var _steer := Vector2.ZERO
 var _steer_at := -1
 ## 층(1-Rd, SD-16 §6.5 '층 ID'): 0 지면 · 1 고가 상판. 램프·비상계단 칸에서만 바뀐다(InteriorMap.floor_after)
@@ -163,7 +164,7 @@ func start_roll(dir_vec: Vector2) -> void:
 func roll_step(dt: float) -> void:
 	var a := loco.logical
 	var ft := _deck_pre()
-	var b: Vector2 = world.move_circle(a, a + roll_vec * ROLL_DIST / ROLL_TIME * dt, radius_px)
+	var b: Vector2 = world.move_circle(a, a + roll_vec * ROLL_DIST * roll_mul / ROLL_TIME * dt, radius_px)
 	loco.logical = b
 	_deck_post(ft)
 	loco.render = b.round()

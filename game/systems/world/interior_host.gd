@@ -26,6 +26,8 @@ var scenes_by_npc := {}                          ## 인물 ID -> [대화 장면,
 var input_vec := Vector2.ZERO                    ## 외부(봇·터치)가 넣는 이동 입력. 없으면 키보드
 var input_fn := Callable()                       ## 봇: 1/60초마다 다시 묻는 이동 입력(긴 프레임에서 칸 가운데를 지나쳐 맴돌지 않게)
 var use_keyboard := true
+var touch_sprint := false                         ## 터치: 이동 스틱을 바깥 링 밖까지 0.3초 밀었다(SD-11 §15.5)
+var roll_req := false                             ## 터치 '구르기' 단추(한 번)
 var busy := false                                ## 전환·대화·연출 중
 var banner: Control
 var banner_text := ""
@@ -417,7 +419,12 @@ func _physics_process(dt: float) -> void:
 			v = Vector2.ZERO
 		player.mode = "walk" if body == "toddler" or combat.crouch or combat.inject_t > 0.0 or combat.heavy_slow() else "run"
 		player.loco.custom = TODDLER_WALK if body == "toddler" else (CROUCH_WALK if combat.crouch else {})
-		if input_fn.is_valid():
+		_ap_input(v)                                                     # 1-9e3 질주 · 구르기(SD-11 §5.3)
+		if combat.sprinting:
+			player.mode = "sprint"
+		if player.rolling():
+			player.roll_step(dt)
+		elif input_fn.is_valid():
 			var left := dt
 			while left > 0.0001:
 				var h := minf(left, 1.0 / 60.0)
@@ -447,10 +454,24 @@ func _physics_process(dt: float) -> void:
 	combat.tick(dt, not talking, st)
 	var want := Vector2.ZERO                                              # 조준 쪽으로 카메라를 끈다(원거리 무기, 최대 3칸 — SD-12 §15 '카메라 리드')
 	if combat.armed() and combat.weapon()["kind"] == "ranged" and not talking:
-		want = ((combat._aim_point(player) - player.loco.logical) * 0.4).limit_length(96.0)
+		var lim := 192.0 if combat.scope_steady() else (128.0 if combat.aim_held else 96.0)   # 정조준 4칸 · 스코프 안정 6칸(1-9e3)
+		want = ((combat._aim_point(player) - player.loco.logical) * (0.6 if combat.scope_steady() else 0.4)).limit_length(lim)
 	cam_lead = cam_lead.lerp(want, 1.0 - exp(-dt * 5.0))
 	if not ev.cam_locked:
 		cam.position = (player.loco.logical + cam_lead).round()
+
+
+## 질주(누르는 동안 · 터치 링 밖 0.3초)와 회피 구르기(Space · 터치 단추 · 봇 dodge). 걸음마 · 웅크림 · 붙잡힘 · 과적 감속엔 못 뛴다.
+## 구르기는 어른 몸만(아이 · 아기 시트에 구르기 컷이 없다). 과적이면 AP ×2 · 거리 ×0.6(SD-11 §5.3)
+func _ap_input(v: Vector2) -> void:
+	var key := touch_sprint or (use_keyboard and Input.is_action_pressed("sprint")) or bool(combat.bot.get("sprint", false))
+	combat.sprint_want = key and v != Vector2.ZERO and body != "toddler" and not combat.crouch and not combat.pc.held() and not combat.heavy_slow()
+	var roll := roll_req or (use_keyboard and Input.is_action_just_pressed("dodge")) or bool(combat.bot.get("dodge", false))
+	roll_req = false
+	combat.bot.erase("dodge")
+	if roll and body == "adult" and not player.rolling():
+		var c := status_carry()
+		combat.try_roll(player, v, float(c[0]) > float(c[1]))
 
 
 ## 맵을 옮긴 뒤 동행을 주인공 등 뒤(바라보는 반대쪽) 가장 가까운 빈 칸에 세운다
@@ -1326,6 +1347,7 @@ func _draw_hud() -> void:
 		return
 	_bar(Vector2(70, 330 + b), 140.0, c.hp / maxf(1.0, c.max_hp), "HP", HUD_RED if low else HU[5])
 	_bar(Vector2(430 + r, 330 + b), 140.0, ap, "AP", HU[5])
+	_ap_ticks(Vector2(430 + r, 330 + b), 140.0)
 	if combat.armed() and combat.weapon()["kind"] == "ranged":
 		var t := "장전 중" if combat.reload_t > 0.0 else "%d/%d" % [int(combat.mags.get(combat.weapon_id, 0)), combat.ammo_left(st)]
 		_txt(Vector2(632 + r, 322 + b), t, HU[6], HORIZONTAL_ALIGNMENT_RIGHT)
@@ -1399,6 +1421,7 @@ func _draw_hud_touch(vs: Vector2, c: Combatant, low: bool, ap: float) -> void:
 	_bar(Vector2(28, 8), 140.0, c.hp / maxf(1.0, c.max_hp), "", HUD_RED if low else HU[5])
 	_txt(Vector2(8, 16), "AP", HU[5])
 	_bar(Vector2(28, 20), 140.0, ap, "", HU[5])
+	_ap_ticks(Vector2(28, 20), 140.0)
 	var det := combat.detect_state()
 	if det != "" and not (det == "위험" and fmod(_hud_t, 0.3) < 0.15):
 		_txt(Vector2(320 + r / 2.0, 48), "[%s]" % det, HU[5] if det == "숨음" else HUD_RED, HORIZONTAL_ALIGNMENT_CENTER)
@@ -1440,6 +1463,19 @@ func _bar(p: Vector2, w: float, f: float, label: String, col: Color) -> void:
 	banner.draw_rect(Rect2(p - Vector2(1, 1), Vector2(w + 2, 8)), HU[0])
 	banner.draw_rect(Rect2(p, Vector2(w, 6)), HU[2])
 	banner.draw_rect(Rect2(p, Vector2(roundf(w * clampf(f, 0.0, 1.0)), 6)), col)
+
+
+## AP 막대 눈금(SD-12 §17.2 '집중 사격 비용 눈금', 1-9e3): 든 원거리 무기의 집중 사격 비용마다 세로 눈금 · AP 0이면 '숨참'
+func _ap_ticks(p: Vector2, w: float) -> void:
+	var mx := maxf(1.0, combat.ap.max_ap)
+	if combat.armed() and combat.weapon()["kind"] == "ranged":
+		var cost := InteriorCombat.focus_cost(combat.weapon())
+		var k := cost
+		while k < mx - 0.5:
+			banner.draw_rect(Rect2(p + Vector2(roundf(w * k / mx), 0), Vector2(1, 6)), HU[0])
+			k += cost
+	if combat.ap.winded() or (combat._sprint_latch and combat.ap.ap < 10.0):
+		_txt(p + Vector2(w + 4, -3), "숨참", HUD_RED)
 
 
 func _txt(p: Vector2, t: String, col: Color, align := HORIZONTAL_ALIGNMENT_LEFT) -> void:

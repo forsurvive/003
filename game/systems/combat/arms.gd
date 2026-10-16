@@ -158,3 +158,9 @@ static func knockback(w: Dictionary, power: bool) -> float:
 		"melee2": return 1.0 if power else 0.3
 		"melee1", "unarmed": return 0.3 if power else 0.0
 	return 0.0
+
+
+## 저격 계열(스코프 안정 · 집중 사격 38 AP, SD-11 §3.4): 소총 계열 중 유효 사거리 14t 이상
+static func is_sniper(w: Dictionary) -> bool:
+	return fam(w) == "rifle" and float(w.get("range_eff", 0.0)) >= 14.0
+

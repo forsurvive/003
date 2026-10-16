@@ -80,6 +80,17 @@ var rad_shake := 0.0                              ## 단계가 오른 순간 선
 var rad_stage := 0
 var _rad_t := 0.0
 const NUKE_RAD := {"r": 4.0, "t": 20.0, "rad": 8.0}  ## 핵 투사기 폭심 지대(SD-11 §9.2 표)
+## 1-9e3 AP 행동(SD-11 §5.3): 질주 · 회피 구르기 · 집중 사격 + 저격 스코프 안정(§3.4)
+var sprint_want := false                          ## 호스트: 질주 키(또는 터치 링 밖 0.3초)를 누르고 움직이는 중
+var sprinting := false
+var _sprint_latch := false                        ## 숨이 차 끝난 질주: 키를 뗄 때까지 다시 못 뛴다
+var _sprint_snd := 0.0
+var focus_t := -1.0                               ## 집중 사격 조준 중(0.3초) — -1 = 아님
+var focus_req := false                            ## 터치 '집중' 단추
+var aim_held := false                             ## 정조준을 누르고 있다(카메라 리드 3 → 4칸)
+var scope_t := 0.0                                ## 저격 계열 정조준 · 멈춘 채 누른 초(0.6초면 안정)
+const FOCUS_AIM := 0.3
+const SCOPE_S := 0.6
 
 
 func _init() -> void:
@@ -705,7 +716,7 @@ func tick(dt: float, free: bool, st: StoryState) -> void:
 				e.cmb.last_sneak = false
 				_pop("기습 치명타 ×%d" % int(CombatRules.sneak_mult("ranged", false)), e.loco.logical + Vector2(0, -22), Color("E8C23A"))
 	if free:
-		ap.tick(dt, false)
+		_ap_move(dt, player)
 		_status(dt)
 		_heal(dt)
 		_targets(dt, player)
@@ -822,6 +833,14 @@ func _player(dt: float, player: Actor, st: StoryState) -> void:
 	if inject_t > 0.0:
 		inject_t -= dt
 		return
+	if player.rolling() or sprinting:                                 # 구르기 · 질주 중엔 쏘지도 재장전하지도 않는다(§5.3)
+		_charge = -1.0
+		throw_hold = -1.0
+		scope_t = 0.0
+		aim_held = false
+		if sprinting:
+			player.aim_dir = -1                                          # 질주는 전신이 달리는 쪽을 본다
+		return
 	if pc.held():                                                     # 1-9a: 넘어짐·기절·마비·그물 동안 공격 못 한다
 		_charge = -1.0
 		return
@@ -860,6 +879,7 @@ func _player(dt: float, player: Actor, st: StoryState) -> void:
 	# 조준 자세(상·하체 분리, SD-16 §5.10): 정조준을 누르고 있거나 · 쏜 뒤 1초 · 교전 중일 때만. 그 밖에는 전신이 걷는 쪽을 본다
 	# (조준하면서 90° 넘게 반대로 걸을 때만 뒷걸음 — SD-11 §2.4). 커서가 주인공 위에 겹쳐 있으면 조준하지 않는다.
 	var hold_aim: bool = Input.is_action_pressed("aim") if bot.is_empty() else bot.has("aim")
+	aim_held = hold_aim
 	var aiming_pose: bool = (hold_aim or aim_hold > 0.0 or in_combat()) and to.length() > 12.0
 	player.aim_dir = Locomotion.snap8(to, 0.0) if aiming_pose else -1
 	if reload_t > 0.0:
@@ -876,6 +896,10 @@ func _player(dt: float, player: Actor, st: StoryState) -> void:
 		return
 	if not ranged:
 		_melee_input(dt, player, w, to, st, fire)
+		return
+	var hold_scope: bool = Input.is_action_pressed("aim") if bot.is_empty() else bool(bot.get("aimed", false)) and bot.has("aim")
+	scope_t = scope_t + dt if Arms.is_sniper(w) and hold_scope and player.loco.motion == "idle" and focus_t < 0.0 else 0.0
+	if _focus_step(dt, player, w, aim, to, st):
 		return
 	var spin := float(w.get("spinup", 0.0))
 	if spin > 0.0:                                                     # 회전 기관포(SD-11 §3.4): 누르면 예열 뒤 연사, 예열 중에도 회전음
@@ -899,6 +923,8 @@ func _player(dt: float, player: Actor, st: StoryState) -> void:
 	var stance := Arms.aim_stance(w, aiming, crouch)
 	var assault := str(w.get("layer", "")) in ["R04", "R05", "R06"]
 	var sp := CombatRules.spread(sk, stance, player.loco.motion != "idle", str(w.get("condition", "new")), 1.0, 0.0, _recoil if assault else 0.0, float(w.get("min_spread", 1.0)))
+	if scope_steady():
+		sp = maxf(float(w.get("min_spread", 1.0)), sp * 0.5)            # 스코프 안정: 퍼짐 ×0.5 한 번 더(§3.4)
 	# 탄은 그려진 총의 총구에서 나가 조준점으로 간다(SD-16 §5 'muzzle'). 총 그림 방향 = 조준 중이면 조준 방향, 아니면 몸 방향.
 	# 총구 화염은 인형이 총과 같은 층에 그린다(N·NE 조준이면 머리 뒤).
 	var gdir: int = player.aim_dir if player.aim_dir >= 0 else player.loco.facing
@@ -928,6 +954,128 @@ func _player(dt: float, player: Actor, st: StoryState) -> void:
 	for e in enemies:
 		if is_instance_valid(e):
 			e.hear(str(w.get("sound", "pistol")), player.loco.logical)
+
+
+## 1-9e3 질주(초당 AP 10, 회복 없음, AP 0이면 끝 · 숨참) · 구르기 무적(5컷 중 2~4번째) · 질주 발소리(5t)
+func _ap_move(dt: float, player: Actor) -> void:
+	var moving := player.loco.motion != "idle"
+	var want := sprint_want and moving and not _sprint_latch and focus_t < 0.0 and not player.rolling() and not crouch
+	var was := sprinting
+	sprinting = ap.tick(dt, want)
+	if not sprint_want:
+		_sprint_latch = false
+	elif want and was and not sprinting and ap.winded():
+		_sprint_latch = true
+		message.emit("숨참 — 질주 끝")
+	pc.invuln = player.rolling() and player.roll_frame() in [1, 2, 3]
+	player.roll_cool = maxf(0.0, player.roll_cool - dt)
+	if sprinting:
+		pc.movement = "sprint"
+		_sprint_snd -= dt
+		if _sprint_snd <= 0.0:
+			_sprint_snd = 0.5
+			for e in enemies:
+				if is_instance_valid(e):
+					e.hear("sprint", player.loco.logical)
+
+
+## 회피 구르기(SD-11 §5.3): AP 20 · 0.35초 2.5t · 간격 0.5초. 과적 · 다리 손상이면 AP ×2 · 거리 ×0.6. 재장전 · 집중 조준이 끊긴다
+func try_roll(player: Actor, dir: Vector2, heavy := false) -> bool:
+	if player.rolling() or player.roll_cool > 0.0 or pc.held() or pc.big:
+		return false
+	var hurt := heavy or pc.has_meta("leg_hurt")
+	if not ap.spend(APPool.DODGE * (2.0 if hurt else 1.0)):
+		message.emit("숨참 — AP 부족")
+		return false
+	player.roll_mul = 0.6 if hurt else 1.0
+	reload_t = 0.0
+	focus_t = -1.0
+	player.loco.speed_mul = 1.0
+	sprinting = false
+	player.aim_dir = -1
+	player.start_roll(dir)
+	stats["rolls"] = int(stats.get("rolls", 0)) + 1
+	return true
+
+
+## 집중 사격 AP(SD-13에 AP 열이 없어 원작 표 기준값 — 구현 정합 SD-11 §5.3): 권총 17 · 기관단총 15 · 돌격소총 20 · 소총 25 · 저격 38 ·
+## 산탄총 25 · 중화기 35 · 미사일 45 · 핵 65
+static func focus_cost(w: Dictionary) -> float:
+	if w.has("ap"):
+		return float(w["ap"])
+	var pk := Arms.proj(w)
+	if pk == "nuke":
+		return 65.0
+	if pk == "missile":
+		return 45.0
+	match Arms.fam(w):
+		"pistol":
+			return 17.0
+		"shotgun":
+			return 25.0
+		"heavy", "minigun", "flamer", "launcher":
+			return 35.0
+	if Arms.is_sniper(w):
+		return 38.0
+	var rate := float(w.get("rate", 1.0))
+	return 15.0 if rate >= 9.0 else (20.0 if rate >= 5.0 else 25.0)
+
+
+func scope_steady() -> bool:
+	return scope_t >= SCOPE_S
+
+
+## 집중 사격: 누르면 AP를 내고 0.3초 조준(이동 50%) 뒤 무기 최소 퍼짐으로 쏜다 · 치명타 +15%p · 머리 가중 + 2 × 인지력.
+## 연사 무기는 원작 V.A.T.S. 점사 발수 max(1, ⌊연사력 ÷ 2.33⌋). 반환 true = 이번 틱은 집중 사격이 맡았다
+func _focus_step(dt: float, player: Actor, w: Dictionary, aim: Vector2, to: Vector2, st: StoryState) -> bool:
+	if focus_t >= 0.0:
+		focus_t += dt
+		player.aim_dir = Locomotion.snap8(to, 0.0)
+		if focus_t < FOCUS_AIM:
+			return true
+		focus_t = -1.0
+		player.loco.speed_mul = 1.0
+		var need := Arms.per_shot(w)
+		var n := maxi(1, floori(float(w.get("rate", 1.0)) / 2.33)) if float(w.get("rate", 1.0)) >= 5.0 else 1
+		var sk := float(st.skill(Arms.skill_name(w))) if st != null else 15.0
+		var per := st.stat("PE") if st != null else 5
+		var muzzle := player.loco.logical + Vector2(0, -14) + to.normalized() * 10.0
+		var fired := 0
+		for i in n:
+			if int(mags.get(weapon_id, 0)) < need:
+				break
+			var ang := CombatRules.shot_angle(rad_to_deg(to.angle()), float(w.get("min_spread", 1.0)), shots.rng)
+			if shots.fire_weapon(muzzle, ang, "player", w, sk, {"focused": true, "per": per, "fl": player.floor_id, "sneak_ok": true, "target": aim}) <= 0:
+				break
+			mags[weapon_id] = int(mags[weapon_id]) - need
+			fired += 1
+		if fired > 0:
+			cool = 1.0 / float(w["rate"])
+			stats["shots"] += fired
+			stats["focus"] = int(stats.get("focus", 0)) + 1
+			since_shot = 0.0
+			_wear_weapon(st, fired * 2)                                     # 집중 사격 열화 ×2(§5.3)
+			if player.doll != null:
+				player.doll.flash_face("fire", 0.2)
+			for e in enemies:
+				if is_instance_valid(e):
+					e.hear(str(w.get("sound", "pistol")), player.loco.logical)
+		return true
+	var want: bool = (Input.is_action_just_pressed("focus") if bot.is_empty() else bool(bot.get("focus", false))) or focus_req
+	focus_req = false
+	if not bot.is_empty():
+		bot.erase("focus")
+	if not want or cool > 0.0:
+		return false
+	if int(mags.get(weapon_id, 0)) < Arms.per_shot(w):
+		start_reload(st)
+		return true
+	if not ap.spend(focus_cost(w)):
+		message.emit("숨참 — AP 부족")
+		return true
+	focus_t = 0.0
+	player.loco.speed_mul = 0.5                                         # 조준 0.3초 동안 이동 50%(거리 구동 — 보폭 그대로)
+	return true
 
 
 ## 투척(SD-11 §3.4): 누르고 있으면 조준선이 착지점까지 늘어나고(1.2초에 최대 거리 6 + ⌊힘/2⌋t), 놓으면 던진다. 쿠킹 없음.
@@ -1409,6 +1557,9 @@ func _draw_cursor() -> void:
 		return
 	var sk := 15.0
 	var sp := CombatRules.spread(sk, "crouch" if crouch else "stand", a.loco.motion != "idle", "new", 1.0, 0.0, 0.0, float(w.get("min_spread", 1.0)))
+	if scope_steady() or focus_t >= 0.0:
+		sp = float(w.get("min_spread", 1.0)) * (1.0 if focus_t >= 0.0 else 2.0)   # 집중 조준 · 스코프 안정: 원이 조여든다
+		col = Color("E8C23A")
 	var r := clampf(d.length() * tan(deg_to_rad(sp)), 3.0, 40.0)
 	var far := d.length() > float(w["range_max"]) * 32.0
 	if reload_t > 0.0:

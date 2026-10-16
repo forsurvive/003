@@ -19,9 +19,14 @@ const MOVE_AREA := Rect2(0, 192, 280, 168)        ## 이동 스틱 활성 영역
 const AIM_AREA := Rect2(440, 192, 200, 168)       ## 조준 스틱 활성 영역(오른쪽 묶음 기준, 단추 밖)
 const MOVE_HOME := Vector2(72, 288)
 const AIM_HOME := Vector2(564, 284)
+const SPRINT_RING := 56.0                         ## 질주 링 지름 112(SD-12 §17.2): 바깥 링 밖까지 0.3초 밀면 질주(SD-11 §15.5)
+const SPRINT_S := 0.3
+const CALM_S := 3.0                               ## 교전이 끝나고 3초 뒤 집중 · 구르기 단추를 30%로(SD-12 §17.2 비전투 축소)
 ## 단추: id → [오른쪽 묶음?, 사각형(640×360 기준), 글]
 const BUTTONS := {
 	"act": [true, Rect2(408, 292, 48, 48), "상황"],
+	"focus": [true, Rect2(460, 296, 44, 44), "집중"],
+	"dodge": [true, Rect2(466, 244, 40, 40), "구르기"],
 	"reload": [true, Rect2(556, 196, 36, 36), "재장전"],
 	"crouch": [true, Rect2(596, 196, 36, 36), "웅크림"],
 	"heal": [true, Rect2(516, 152, 40, 36), "회복"],
@@ -45,6 +50,9 @@ var pressed := {}                                 ## 손가락 → 단추 id
 var flash := {}                                   ## 단추 id → 누름 표시 남은 초
 var view: Control
 var f10: Font
+var move_raw := 0.0                               ## 이동 스틱을 끈 거리(px)
+var move_out := 0.0                               ## 이동 스틱을 바깥 링 밖에 둔 초(질주 판정)
+var calm_t := 0.0                                 ## 교전 아닌 채로 지난 초(비전투 축소)
 var off_r := 0.0                                  ## 오른쪽 묶음을 화면 오른쪽 끝에 붙이는 이동량(넓은 화면)
 
 
@@ -83,6 +91,9 @@ func _process(dt: float) -> void:
 			flash.erase(k)
 	if aim_id >= 0:
 		aim_t += dt
+	move_out = move_out + dt if move_id >= 0 and move_raw >= RING else 0.0
+	if host != null:
+		calm_t = 0.0 if host.combat.in_combat() else calm_t + dt
 	if host != null:
 		host.touch_layout = on
 	if on and host != null:
@@ -90,6 +101,7 @@ func _process(dt: float) -> void:
 			_release_all()
 		else:
 			host.input_vec = move_v
+			host.touch_sprint = move_out >= SPRINT_S
 			_drive_combat()
 	view.queue_redraw()
 
@@ -136,10 +148,13 @@ func _release_all() -> void:
 	move_id = -1
 	aim_id = -1
 	move_v = Vector2.ZERO
+	move_raw = 0.0
+	move_out = 0.0
 	aim_v = Vector2.ZERO
 	pressed.clear()
 	if host != null:
 		host.input_vec = Vector2.ZERO
+		host.touch_sprint = false
 		if on:
 			host.combat.bot = {}
 
@@ -201,6 +216,7 @@ func _input(e: InputEvent) -> void:
 			if e.index == move_id:
 				move_id = -1
 				move_v = Vector2.ZERO
+				move_raw = 0.0
 			elif e.index == aim_id:
 				if aim_t <= TAP_S and aim_v.length() < DEAD:
 					tap_shot = 0.08                                    # 톡 쏘기 한 발
@@ -211,6 +227,7 @@ func _input(e: InputEvent) -> void:
 	else:
 		if e.index == move_id:
 			move_v = _stick(p - move_c)
+			move_raw = (p - move_c).length()
 			get_viewport().set_input_as_handled()
 		elif e.index == aim_id:
 			aim_v = _stick(p - aim_c)
@@ -233,6 +250,12 @@ func _press(id: String) -> void:
 	match id:
 		"act":
 			host.interact()
+		"focus":
+			calm_t = 0.0
+			c.focus_req = true                                         # 탭 = 조준 중이면 그 방향, 아니면 보조 표적으로 집중 사격
+		"dodge":
+			calm_t = 0.0
+			host.roll_req = true                                       # 방향 = 이동 스틱, 없으면 몸 반대쪽(뒤로)
 		"reload":
 			c.start_reload(host.st)
 		"crouch":
@@ -265,6 +288,8 @@ func _draw_hud() -> void:
 	var v := view
 	# 이동 스틱: 쥐지 않았으면 기본 자리에 흐리게
 	var mc := move_c if move_id >= 0 else MOVE_HOME
+	if move_id >= 0:                                                   # 질주 링(지름 112): 밀어 질주하면 노랗게
+		v.draw_arc(mc, SPRINT_RING, 0, TAU, 40, HOT if host.combat.sprinting or move_out >= SPRINT_S else Color(LINE, 0.25), 1.0)
 	_ring(mc, RING, 0.9 if move_id >= 0 else 0.45)
 	var mk := mc + move_v * RING
 	v.draw_circle(mk, KNOB, Color(LINE, 0.35 if move_id >= 0 else 0.2))
@@ -288,7 +313,16 @@ func _draw_hud() -> void:
 		var down: bool = flash.has(id) or pressed.values().has(id)
 		var rr := Rect2(r.position + (Vector2(0, 1) if down else Vector2.ZERO), r.size)
 		var lit: bool = (id == "crouch" and host.combat.crouch) or (id == "weapon" and host.combat.armed())
-		v.draw_rect(rr, Color(HOT, 0.45) if down else (Color(0.18, 0.55, 0.26, 0.5) if lit else FILL))
+		var fill: Color = Color(HOT, 0.45) if down else (Color(0.18, 0.55, 0.26, 0.5) if lit else FILL)
+		if id in ["focus", "dodge"]:                                    # AP 부족 = 회색(§15.5) · 교전 끝 3초 뒤 30%(§17.2)
+			var dim := 0.3 if calm_t >= CALM_S and not down else 1.0
+			var gray := not host.combat.ap.can(_ap_cost(id))
+			fill = Color(0.3, 0.3, 0.3, 0.35) if gray and not down else fill
+			v.draw_rect(rr, Color(fill, fill.a * dim))
+			v.draw_rect(Rect2(rr.position + Vector2(0.5, 0.5), rr.size - Vector2.ONE), Color(LINE, LINE.a * dim), false, 1.0)
+			_label(rr, label, Color(0.62, 0.62, 0.62, dim) if gray else Color(0.914, 0.894, 0.847, dim))
+			continue
+		v.draw_rect(rr, fill)
 		v.draw_rect(Rect2(rr.position + Vector2(0.5, 0.5), rr.size - Vector2.ONE), LINE, false, 1.0)
 		if id == "reload" and host.combat.armed() and host.combat.weapon()["kind"] == "ranged":
 			var mag := int(host.combat.mags.get(host.combat.weapon_id, 0))      # 두 줄: 재장전 / 탄창·여분 — 빈 탄창은 붉게
@@ -300,6 +334,13 @@ func _draw_hud() -> void:
 		elif id == "weapon":
 			label = str(host.items_db.get(host.combat.weapon_id, {}).get("name", "맨손")) if host.combat.weapon_id != "" else "맨손"
 		_label(rr, label)
+
+
+func _ap_cost(id: String) -> float:
+	if id == "dodge":
+		return APPool.DODGE
+	var c := host.combat
+	return InteriorCombat.focus_cost(c.weapon()) if c.armed() and c.weapon()["kind"] == "ranged" else 999.0
 
 
 func _ring(c: Vector2, r: float, a: float) -> void:
