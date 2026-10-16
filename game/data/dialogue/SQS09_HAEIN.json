@@ -6,23 +6,25 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "NAME": 8,
-  "TAKE": 13,
-  "KEEP": 17,
-  "DUE": 21,
-  "OUT": 23,
-  "WAIT": 25,
-  "WAIT2": 31,
-  "WAIT3": 33,
-  "OTHER": 35,
-  "GATE": 37,
-  "GATE_B": 44,
-  "REUNITE": 47,
-  "SOLD": 49,
-  "WIDOW": 51,
-  "AFTER": 53,
-  "AFTER_BC": 57,
-  "AFTER_JH": 59
+  "NAME": 9,
+  "TAKE": 14,
+  "KEEP": 18,
+  "DUE": 22,
+  "OUT": 24,
+  "WAIT": 26,
+  "WAIT2": 33,
+  "WAIT3": 35,
+  "WAIT4": 37,
+  "LINE": 39,
+  "OTHER": 41,
+  "GATE": 45,
+  "GATE_B": 52,
+  "REUNITE": 55,
+  "SOLD": 57,
+  "WIDOW": 59,
+  "AFTER": 61,
+  "AFTER_BC": 65,
+  "AFTER_JH": 67
  },
  "ops": [
   {
@@ -49,6 +51,11 @@
    "op": "if",
    "cond": "SQ_S09_START > 0 and GAME_DAY == SQ_S09_START + 5 and SB_127 <= 1",
    "to": "GATE"
+  },
+  {
+   "op": "if",
+   "cond": "SB_127 == 5",
+   "to": "LINE"
   },
   {
    "op": "if",
@@ -97,7 +104,7 @@
   },
   {
    "op": "if",
-   "cond": "SB_127 >= 2",
+   "cond": "SB_127 >= 2 and SB_127 != 5",
    "to": "OUT"
   },
   {
@@ -193,13 +200,18 @@
   },
   {
    "op": "if",
-   "cond": "SQ_S09_TOOK == 1 and SB_BOUGHT == 1 and SQ_S09_SOL1 == 0",
+   "cond": "SQ_S09_SPENT88 == 1 and SQ_S09_SAID88 == 0",
    "to": "OTHER"
   },
   {
    "op": "if",
    "cond": "SB_127 >= 2",
    "to": "OUT"
+  },
+  {
+   "op": "if",
+   "cond": "GAME_DAY >= SQ_S09_START + 6",
+   "to": "WAIT4"
   },
   {
    "op": "if",
@@ -245,7 +257,40 @@
    "op": "line",
    "who": "N-R02-050",
    "emo": "분노",
-   "text": "그 돈으로 다른 사람을 샀다면서요. 88번. …그 사람도 누군가의 이름이겠죠. 그래도 그이는요?"
+   "text": "오늘 새벽이에요. 네 시에 줄을 세운대요. 여섯 시면 트럭이…"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-050",
+   "emo": "슬픔",
+   "text": "정문 앞 줄에 섰대요. 번호표 127을 쥐고. 여섯 시면 트럭이 와요. …제발."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-050",
+   "emo": "분노",
+   "text": "그 돈으로 다른 사람을 샀다면서요. 88번 — 기라희. 노들 가는 길에 그 사람이 그러더래요, 볼트 사람이 값을 치러 줬다고."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-050",
+   "emo": "슬픔",
+   "text": "…그 사람도 누군가의 이름이겠죠. 그래도 그이는요? \\V[SQ_S09_DUE_M]월 \\V[SQ_S09_DUE_D]일이에요."
+  },
+  {
+   "op": "cmd",
+   "name": "s09",
+   "args": [
+    "said88"
+   ]
   },
   {
    "op": "goto",

@@ -12,12 +12,13 @@
   "ON_WAY": 14,
   "LINE": 16,
   "LINE_COLLAR": 19,
-  "LINE_BUY": 21,
-  "LINE_SNEAK": 24,
-  "HOME": 27,
-  "REUNITE": 30,
-  "SETTLED": 32,
-  "BC": 35
+  "LINE_UNCOL": 21,
+  "LINE_BUY": 24,
+  "LINE_SNEAK": 27,
+  "HOME": 30,
+  "REUNITE": 33,
+  "SETTLED": 35,
+  "BC": 38
  },
  "ops": [
   {
@@ -219,14 +220,45 @@
      "id": "SQS09_YJ:4:0"
     },
     {
+     "text": "(줄이 움직이는 틈에) 뒤판을 연다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "LINE_UNCOL",
+     "id": "SQS09_YJ:4:1"
+    },
+    {
      "text": "미안",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "SQS09_YJ:4:1"
+     "id": "SQS09_YJ:4:2"
     }
    ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "세 번째 선을 먼저. 표시등이 꺼진다. 채윤재가 숨을 참는다."
+  },
+  {
+   "op": "cmd",
+   "name": "s09",
+   "args": [
+    "uncol"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "LINE"
   },
   {
    "op": "line",

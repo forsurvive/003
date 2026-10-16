@@ -119,8 +119,8 @@ func tick() -> void:
 func _released() -> void:
 	if v("SB_127") != 2 or v("SQ_S09_SOL1") != 0:
 		return
-	if v("SB_RAID") == 1 or st.boxes.has("sbfreed6"):
-		_sol1(4)
+	if st.boxes.has("sbfreed6"):
+		_sol1(4)                                                           # D는 우리 칸을 다 열었을 때만(재미 검수 — 한 칸 열다 들킨 소동은 B)
 	else:
 		_sol1(2)
 
@@ -227,8 +227,8 @@ func _on_map(_id: String) -> void:
 			if v("SQ_S09_DOOR") == 1 and v("SB_127") <= 1 and host.ev.handlers.has("cage"):
 				host.ev.handlers["cage"].call(["open", 10, 8], func() -> void: pass)
 		"K-22":
-			if v("SB_127") == 4 and v("SQ_S09_PLACE") == 0 and stage() < 100:
-				host.play_scene.call_deferred("SQS09_REUNION")
+			if v("SB_127") == 4 and v("SQ_S09_PLACE") == 0 and stage() < 100 and not st.is_dead(YJ):
+				_reunion.call_deferred()
 		"K-23":
 			if v("SQ_S09_SOL2") == 3 or v("SQ_S09_CLOSED") == 1:
 				_rubble()
@@ -276,6 +276,7 @@ func _on_day(_d: int) -> void:
 	if v("SQ_S09_OUT") > 0 and (v("SB_127") == 2 or v("SB_127") == 3):
 		_sv("SB_127", 4)
 		_sv("SQ_S09_OUT", 0)
+		_sv("SQ_S09_WAITED", 1)                                           # 판자 앞에서 밤새 기다렸다 — 재회는 주인공이 와서 이름을 부른다
 	# 정착: 재회 다음 날 그곳에 선다
 	if v("SB_127") == 4 and v("SQ_S09_PLACE") in [2, 3]:
 		_sv("SB_127", 6 if v("SQ_S09_PLACE") == 2 else 7)
@@ -359,7 +360,15 @@ func _cmd(a: Array, done: Callable) -> void:
 		"alone":
 			_sv("SQ_S09_OUT", day())
 		"reunion":
-			host.box.finished.connect(func() -> void: host.play_scene.call_deferred("SQS09_REUNION"), CONNECT_ONE_SHOT)
+			host.box.finished.connect(func() -> void: _reunion.call_deferred(), CONNECT_ONE_SHOT)
+		"spent88":
+			if v("SQ_S09_TOOK") == 1:
+				_sv("SQ_S09_SPENT88", 1)                                   # 아내의 400으로 88번을 샀다(순서가 맞을 때만, 재미 검수 5)
+		"said88":
+			_sv("SQ_S09_SAID88", 1)
+		"soup":
+			host.combat.pc.hp = host.combat.pc.max_hp
+			host.hint("시래깃국 한 그릇. 몸이 데워진다.", 4.0)
 		"settle":
 			_settle(int(arg))
 		"gate":
@@ -396,7 +405,7 @@ func _sb(args: Array) -> void:
 
 ## 127번 칸 문: 목걸이가 풀렸거나 습격 중이면 판자 틈으로 나가고, 아니면 문만 열린다(재미 검수 4 — 확률 죽음 없음)
 func _open_cage() -> void:
-	var watched := v("SB_RAID") == 0 and v("CAPTURE_BY") != 1 and not (_hour() >= 2 and _hour() < 4)
+	var watched := v("SB_RAID") == 0 and not (_hour() >= 2 and _hour() < 4)   # 잡혀 온 사람도 남의 칸을 열면 본다(재미 검수 4)
 	if watched:
 		host.hint("감시 의자의 경비가 고개를 든다 — \"거기!\"", 4.0)
 		st.call_fn("aff", ["SB", -8])
@@ -418,6 +427,19 @@ func _leave_cage() -> void:
 	if v("SB_127") < 2:
 		_sv("SB_127", 2)
 	_released()
+
+
+## 재회 무대: 판자 앞에 채윤재를 세우고(맵 인물은 정착 뒤에만 — 한 사람 한 곳, 재미 검수 1) 장면이 끝나면 들인다
+func _reunion() -> void:
+	if host.map == null or _zone() != "K-22" or host.box.active:
+		return
+	var at := host.player.loco.logical + Vector2(-34, 0)
+	host.ev._show_actor("S9YJ", at, "E", str(host.ev.cast_sheets.get(YJ, "")))
+	host.box.finished.connect(func() -> void:
+		if host.ev.actors.has("S9YJ"):
+			host.ev.run("hide", ["S9YJ"], func() -> void: pass)
+		host.refresh_npcs(), CONNECT_ONE_SHOT)
+	host.play_scene("SQS09_REUNION")
 
 
 ## '같이 가자': 실시간 동행 대신 화면 전환(재미 검수 5) — 한 시간 뒤 구로 107동 문 앞
@@ -468,5 +490,8 @@ func _nap() -> void:
 	var mins := (26 * 60 - now) % (24 * 60)
 	host.ev.run("fade_out", ["black", "6"], func() -> void:
 		host.advance_minutes(maxi(1, mins))
-		host.hint("새벽 두 시. 감시 의자가 비었다. 옆 칸에서 속삭임 — \"세 번째 선이야.\"", 5.0)
+		if v("SB_127") < 2 and not st.is_dead(YJ):
+			host.hint("새벽 두 시. 감시 의자가 비었다. 옆 칸에서 속삭임 — \"세 번째 선이야.\"", 5.0)
+		else:
+			host.hint("새벽 두 시. 감시 의자가 비었다.", 4.0)
 		host.ev.run("fade_in", ["black", "6"], func() -> void: pass))

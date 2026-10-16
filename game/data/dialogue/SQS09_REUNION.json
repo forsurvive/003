@@ -6,16 +6,20 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "NUMBER": 4,
-  "NAME": 7,
-  "MONEY": 11,
-  "GIVE": 13,
-  "KEEPM": 16,
-  "PLACE": 19,
-  "STAY": 21,
-  "BC": 24,
-  "JH": 27,
-  "ALONE": 30
+  "WAITED": 4,
+  "KNOCK": 5,
+  "NUMBER": 7,
+  "NAME": 10,
+  "MONEY_CHK": 15,
+  "MONEY": 17,
+  "GIVE": 19,
+  "KEEPM": 22,
+  "THANKS": 25,
+  "PLACE": 27,
+  "STAY": 29,
+  "BC": 32,
+  "JH": 35,
+  "ALONE": 38
  },
  "ops": [
   {
@@ -24,10 +28,25 @@
    "to": "ALONE"
   },
   {
+   "op": "if",
+   "cond": "SQ_S09_WAITED == 1",
+   "to": "WAITED"
+  },
+  {
    "op": "line",
    "who": "SYS",
    "emo": "기본",
    "text": "손자국 판자 앞. 채윤재가 숨을 고른다. 판자 너머는 조용하다."
+  },
+  {
+   "op": "goto",
+   "to": "KNOCK"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-039",
+   "emo": "기본",
+   "text": "(판자 앞에 앉아 있다가 일어선다) 밤새 여기서 기다렸어. 혼자 두드리면 안 열어 줄 것 같아서. …네가 불러 줘."
   },
   {
    "op": "line",
@@ -85,7 +104,13 @@
    "op": "line",
    "who": "SYS",
    "emo": "기본",
-   "text": "판자가 젖혀진다. 채해인이 그 자리에 주저앉는다. 아이가 뛰어나와 그림 한 장을 뒤집어 보인다 — 목에 동그라미가 없는 아빠."
+   "text": "판자가 젖혀진다. 채해인이 그 자리에 주저앉는다."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-050",
+   "emo": "슬픔",
+   "text": "…윤재 씨."
   },
   {
    "op": "line",
@@ -94,13 +119,23 @@
    "text": "채윤재야. …다녀왔어."
   },
   {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "아이가 뛰어나와 그림 한 장을 뒤집어 보인다 — 목에 동그라미가 없는 아빠. \"아빠, 목 가벼워?\""
+  },
+  {
+   "op": "goto",
+   "to": "PLACE"
+  },
+  {
    "op": "if",
    "cond": "SQ_S09_TOOK == 1 and SQ_S09_SOL1 != 1",
    "to": "MONEY"
   },
   {
    "op": "goto",
-   "to": "PLACE"
+   "to": "THANKS"
   },
   {
    "op": "line",
@@ -141,7 +176,7 @@
   },
   {
    "op": "goto",
-   "to": "PLACE"
+   "to": "THANKS"
   },
   {
    "op": "do",
@@ -155,7 +190,17 @@
   },
   {
    "op": "goto",
-   "to": "PLACE"
+   "to": "THANKS"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-050",
+   "emo": "미소",
+   "text": "번호 말고 이름으로 데려와 줘서… 고마워요. 이 집 문은 이제 이름으로 두드려요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
   },
   {
    "op": "line",
@@ -208,7 +253,7 @@
   },
   {
    "op": "goto",
-   "to": "END"
+   "to": "MONEY_CHK"
   },
   {
    "op": "line",
@@ -226,7 +271,7 @@
   },
   {
    "op": "goto",
-   "to": "END"
+   "to": "MONEY_CHK"
   },
   {
    "op": "line",
@@ -244,7 +289,7 @@
   },
   {
    "op": "goto",
-   "to": "END"
+   "to": "MONEY_CHK"
   },
   {
    "op": "line",

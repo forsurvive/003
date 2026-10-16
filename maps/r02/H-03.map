@@ -143,5 +143,5 @@ text 10 8 "127번의 우리 문. 맹꽁이자물쇠." scene=SQS09_CAGE10
 text 22 8 "88번의 우리 문. 맹꽁이자물쇠." scene=H-03_CAGE
 text 28 8 "다른 우리 문. 맹꽁이자물쇠." scene=H-03_CAGE
 text 34 8 "다른 우리 문. 맹꽁이자물쇠." scene=H-03_CAGE
-# 1-11h SQ-S09: 감시 의자 경비 — 02~04시 교대에만 빈다(우리 열기 B의 창). 잡혀 온 사람은 감시하지 않는다(_sb_watch).
-npc CR-436 38 11 W sheet=en_cr436_loco cond="SB_RAID == 0 and CAPTURE_BY != 1 and (GAME_HOUR < 2 or GAME_HOUR >= 4)" bark="교대는 두 시. 그때까진 내가 본다."
+# 1-11h SQ-S09: 감시 의자 경비 — 02~04시 교대에만 빈다(우리 열기 B의 창). 잡혀 온 사람도 자기 칸 밖으로 나오면 본다(_sb_watch).
+npc CR-436 38 11 W sheet=en_cr436_loco cond="SB_RAID == 0 and (GAME_HOUR < 2 or GAME_HOUR >= 4)" bark="교대는 두 시. 그때까진 내가 본다."

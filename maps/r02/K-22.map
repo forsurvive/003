@@ -32,7 +32,7 @@ prop crt_tv 7 3
 prop w_kid_drawing 2 1
 text 2 2 "아이 그림. 아빠 · 엄마 · 나. 아빠 목에 동그라미를 그리고 숫자 '127'." w=2
 npc N-R02-050 5 5 S cond="not (SQ_S09_START > 0 and GAME_DAY == SQ_S09_START + 5 and SB_127 <= 1) and SB_127 != 6 and SB_127 != 7"
-npc N-R02-039 3 5 E cond="SB_127 == 4"
+npc N-R02-039 3 5 E cond="SB_127 == 4 and SQ_S09_PLACE > 0"
 prop water_jug 8 7
 # 판자 막은 세대
 text 10 3 "판자로 막은 현관 안쪽. '빈집'이라 쓴 판자 뒤에 살림이 그대로다. 나간 지 오래다." w=6

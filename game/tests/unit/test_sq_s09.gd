@@ -168,8 +168,8 @@ func test_sq_s09_cage_daylight_raid(t) -> void:
 	c.tick()
 	t.eq(_v(st, "SB_RAID"), 1, "낮에 열면 감시 의자 경비 — 습격")
 	t.eq(_v(st, "SB_127"), 2, "습격 소동에 목걸이를 따고 나간다")
-	t.eq(_v(st, "SQ_S09_SOL1"), 4, "해법 D")
-	t.eq(_v(st, "SQS_S09"), 1, "MQ-504 선해방 표지")
+	t.eq(_v(st, "SQ_S09_SOL1"), 2, "한 칸 열다 들킨 소동은 D가 아니다(우리를 다 열어야 D)")
+	t.eq(_v(st, "SQS_S09"), 0, "MQ-504 선해방 표지 없음")
 
 
 func test_sq_s09_ransom_a(t) -> void:
@@ -256,7 +256,7 @@ func test_sq_s09_reunion(t) -> void:
 	t.ok(_says(st, "SQS09_REUNION", "목에 동그라미가 없는 아빠"), "이름을 부르면 아이가 그림을 뒤집는다")
 	st.vars.set_v("MQ101_STAGE", 100)
 	st.vars.set_v("PC_CAPS", 900)
-	t.eq(_play(h, st, "SQS09_REUNION", ["127번", "채윤재", "돌려준다", "봉천"]), [], "재회 원고")
+	t.eq(_play(h, st, "SQS09_REUNION", ["127번", "채윤재", "봉천", "돌려준다"]), [], "재회 원고")
 	t.eq(_v(st, "PC_CAPS"), 500, "아내의 400을 돌려줬다")
 	t.eq(_v(st, "SQ_S09_PLACE"), 2, "봉천")
 	t.eq(st.quests.stage("SQ-S09"), 100, "100")
@@ -375,7 +375,11 @@ func test_sq_s09_deaths_and_odd(t) -> void:
 	var st3: StoryState = r3[1]
 	for kv in [["SQ_S09_WIFE", 1], ["SQ_S09_TOOK", 1], ["SB_BOUGHT", 1], ["SQ_S09_START", 4], ["SB_127", 1]]:
 		st3.vars.set_v(kv[0], kv[1])
-	t.ok(_says(st3, "SQS09_HAEIN", "다른 사람을 샀다면서요"), "그 돈으로 88번")
+	t.ok(not _says(st3, "SQS09_HAEIN", "다른 사람을 샀다면서요"), "돈을 받기 전에 산 88번은 탓하지 않는다")
+	st3.vars.set_v("SQ_S09_SPENT88", 1)
+	t.ok(_says(st3, "SQS09_HAEIN", "노들 가는 길에"), "그 돈으로 88번 — 소문 출처")
+	_play(r3[0], st3, "SQS09_HAEIN")
+	t.ok(not _says(st3, "SQS09_HAEIN", "다른 사람을 샀다면서요"), "한 번만")
 	# 6일째 정문
 	st3.vars.set_v("SQ_S09_TOOK", 0)
 	st3.vars.set_v("SB_BOUGHT", 0)
@@ -397,3 +401,58 @@ func test_sq_s09_deaths_and_odd(t) -> void:
 	h5.ev.handlers["s09"].call(["nap"], func() -> void: pass)
 	_pump(h5, 80)
 	t.eq(Clock.hour(h5.date_text), 2, "새벽 두 시")
+
+
+func test_sq_s09_fun_fixes(t) -> void:
+	var r := _host("2277. 10. 26.  10:00", "K-22", "from_W")
+	var h: InteriorHost = r[0]
+	var st: StoryState = r[1]
+	var c: SideS09 = r[2]
+	_play(h, st, "SQS09_HAEIN", ["채윤재", "돈을 받는다"])
+	# 줄에 선 사람은 '나온 사람'이 아니다
+	st.vars.set_v("SB_127", 5)
+	t.ok(_says(st, "SQS09_HAEIN", "정문 앞 줄에 섰대요"), "줄 판")
+	st.vars.set_v("SB_127", 1)
+	st.vars.set_v("GAME_DAY", 10)
+	t.ok(_says(st, "SQS09_HAEIN", "오늘 새벽이에요"), "7일째 새벽")
+	# 재회 무대: 채윤재는 정착 전엔 방 안에 없다
+	st.vars.set_v("GAME_DAY", 4)
+	st.vars.set_v("SB_127", 4)
+	h.enter("K-22", "from_W")
+	var inside := false
+	for n in h.npcs:
+		if str(n["id"]) == "N-R02-039" and is_instance_valid(n["actor"]) and n["actor"].visible:
+			inside = true
+	t.ok(not inside, "재회 전엔 방 안에 채윤재가 없다(판자 앞에 선다)")
+	c._reunion()                                                        # 맵에 들어설 때 지연 호출로 부른다(시험은 메인 루프가 없어 직접)
+	t.ok(h.ev.actors.has("S9YJ"), "판자 앞 무대 배우")
+	t.ok(h.box.active, "재회 장면이 열렸다")
+	t.ok(_says(st, "SQS09_REUNION", "윤재 씨"), "채해인의 첫마디")
+	t.ok(_says(st, "SQS09_REUNION", "목 가벼워"), "아이 한 줄")
+	st.vars.set_v("SQ_S09_WAITED", 1)
+	t.ok(_says(st, "SQS09_REUNION", "밤새 여기서 기다렸어"), "혼자 와서 기다린 판")
+	# 연습은 판정 없이 익힌다 → 생포 목걸이 [수리 25]
+	var r2 := _host("2277. 10. 26.  10:00", "H-05", "from_H-02")
+	var h2: InteriorHost = r2[0]
+	var st2: StoryState = r2[1]
+	_play(h2, st2, "H-05_PRACTICE", ["눈으로 익힌다"])
+	t.eq(_v(st2, "SQ_S09_LEARN"), 1, "판정 없이 익힘")
+	st2.vars.set_v("SB_COLLAR", 1)
+	st2.vars.set_v("PC_SKP_REPAIR", 30)
+	_play(h2, st2, "CAPTURE_COLLAR", ["세 번째 선부터"])
+	t.eq(_v(st2, "SB_COLLAR"), 0, "익힌 대로 [수리 25]")
+	# 단골 국 · 칠판 석방 명단
+	st.vars.set_v("SQ_S09_PLACE", 1)
+	st.vars.set_v("SQ_S09_START", 4)
+	t.ok(_says(st, "SQS09_GEUM", "국 한 그릇"), "길금순 단골")
+	st.vars.set_v("SQ_S09_SOL1", 3)
+	t.ok(_says(st, "SQS09_BOARD", "석방 명단"), "칠판 — 장부로 풀려남")
+	# 우리를 다 열면 D
+	var r3 := _host("2277. 10. 26.  10:00", "H-03", "from_yard")
+	var st3: StoryState = r3[1]
+	var c3: SideS09 = r3[2]
+	st3.vars.set_v("SB_127", 2)
+	st3.boxes["sbfreed6"] = {"open": true}
+	c3.tick()
+	t.eq(_v(st3, "SQ_S09_SOL1"), 4, "여섯을 다 열면 D")
+	t.eq(_v(st3, "SQS_S09"), 1, "MQ-504 선해방")

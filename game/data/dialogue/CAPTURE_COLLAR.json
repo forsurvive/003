@@ -47,12 +47,26 @@
      "id": "CAPTURE_COLLAR:1:1"
     },
     {
+     "text": "(연습용으로 익힌 대로) 세 번째 선부터.",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 25
+      }
+     ],
+     "cond": "SQ_S09_LEARN == 1 or SQ_S09_UNCOL == 1",
+     "fx": "",
+     "to": "OFF",
+     "id": "CAPTURE_COLLAR:1:2"
+    },
+    {
      "text": "(그대로 둔다)",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "CAPTURE_COLLAR:1:2"
+     "id": "CAPTURE_COLLAR:1:3"
     }
    ]
   },

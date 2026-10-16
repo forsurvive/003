@@ -10,9 +10,9 @@
   "LEDGER": 6,
   "KEY": 8,
   "BUY88": 14,
-  "BUY127": 20,
-  "REFUND": 27,
-  "MINE": 30
+  "BUY127": 21,
+  "REFUND": 28,
+  "MINE": 31
  },
  "ops": [
   {
@@ -168,6 +168,13 @@
    "args": [
     "buy",
     "88"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s09",
+   "args": [
+    "spent88"
    ]
   },
   {

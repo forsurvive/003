@@ -545,8 +545,8 @@ func _sb_watch(where: String) -> void:
 	if where == "X-SB" and not SB_YARD.has_point(_sb_local()):
 		_sb_warn = -1.0
 		return
-	if where == "H-03" and v("CAPTURE_BY") == 1:
-		return                                                          # 잡혀 온 사람은 우리 안이 제자리다
+	if where == "H-03" and v("CAPTURE_BY") == 1 and Rect2i(13, 3, 6, 5).has_point(host.map.tile_of(host.player.loco.logical)):
+		return                                                          # 잡혀 온 사람은 제 칸 안이 제자리다(칸 밖으로 나오면 감시 의자 경비가 본다 — 1-11h)
 	var seen := ""
 	var me: Vector2 = host.player.loco.logical
 	for n in host.npcs:

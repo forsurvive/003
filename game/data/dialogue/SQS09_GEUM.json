@@ -3,19 +3,22 @@
  "title": "쪽방 할매 길금순 — 통로",
  "loc": "L-R02-20",
  "npc": "N-R02-042",
- "cond": "V_ACT >= 1 and SQ_S09_START > 0 and (SB_127 == 2 or SQ_S09_NOTICE > 0 or SQ_S09_CLOSED == 1 or (SQ_S09_SOL1 > 0 and SQ_S09_REQ == 0 and SQ_S09_SOL2 == 0))",
+ "cond": "V_ACT >= 1 and SQ_S09_START > 0 and (SB_127 == 2 or SQ_S09_NOTICE > 0 or SQ_S09_CLOSED == 1 or (SQ_S09_SOL1 > 0 and SQ_S09_REQ == 0 and SQ_S09_SOL2 == 0) or (SQ_S09_PLACE > 0 and SQ_S09_PLACE != 9))",
  "labels": {
   "START": 0,
-  "HIDING": 7,
-  "NOTICE": 9,
-  "NOTICE_OPTS": 10,
-  "DOWN": 11,
-  "ORDER": 13,
-  "LIST": 15,
-  "AFTER": 18,
-  "CLOSED": 20,
-  "MENU": 21,
-  "SLEEP": 22
+  "PASSED": 9,
+  "REGULAR": 12,
+  "HIDING": 14,
+  "NOTICE": 16,
+  "NOTICE_OPTS": 17,
+  "DOWN": 18,
+  "ORDER": 20,
+  "LIST": 22,
+  "AFTER": 25,
+  "CLOSED": 27,
+  "MENU": 28,
+  "SOUP": 29,
+  "SLEEP": 32
  },
  "ops": [
   {
@@ -39,6 +42,16 @@
    "to": "HIDING"
   },
   {
+   "op": "if",
+   "cond": "SQ_S09_SOL2 == 0 and SQ_S09_REQ == 0 and (SQ_S09_SOL1 == 2 or SQ_S09_SOL1 == 4)",
+   "to": "PASSED"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S09_SOL2 == 0 and SQ_S09_REQ == 0 and SQ_S09_PLACE > 0",
+   "to": "REGULAR"
+  },
+  {
    "op": "line",
    "who": "N-R02-042",
    "emo": "기본",
@@ -54,6 +67,33 @@
   {
    "op": "goto",
    "to": "NOTICE_OPTS"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-042",
+   "emo": "기본",
+   "text": "그 사람 내 벽장으로 지나갔지. 마흔한 번째. …이 길, 오래 쓰게 해 줘. 다음 사람도 있으니까."
+  },
+  {
+   "op": "cmd",
+   "name": "s09",
+   "args": [
+    "req"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "NOTICE_OPTS"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-042",
+   "emo": "미소",
+   "text": "구로 그 집 사람들 소식 들었어. 이름으로 산다며. …단골이네, 이제."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
   },
   {
    "op": "line",
@@ -165,12 +205,20 @@
    "op": "choice",
    "opts": [
     {
+     "text": "국 한 그릇 얻어먹는다",
+     "tags": [],
+     "cond": "SQ_S09_PLACE > 0 and SQ_S09_PLACE != 9",
+     "fx": "",
+     "to": "SOUP",
+     "id": "SQS09_GEUM:2:0"
+    },
+    {
      "text": "눈을 붙이고 간다",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "SLEEP",
-     "id": "SQS09_GEUM:2:0"
+     "id": "SQS09_GEUM:2:1"
     },
     {
      "text": "일어선다",
@@ -178,9 +226,26 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "SQS09_GEUM:2:1"
+     "id": "SQS09_GEUM:2:2"
     }
    ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-042",
+   "emo": "미소",
+   "text": "시래깃국이야. 단골한테만 줘. 그 집 사람들이 우거지를 갖다 놨거든."
+  },
+  {
+   "op": "cmd",
+   "name": "s09",
+   "args": [
+    "soup"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
   },
   {
    "op": "line",

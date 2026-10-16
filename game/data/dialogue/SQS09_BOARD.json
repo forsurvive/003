@@ -6,14 +6,20 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "DUE": 4,
-  "STRUCK": 6
+  "DUE": 5,
+  "STRUCK": 7,
+  "FREED": 9
  },
  "ops": [
   {
    "op": "if",
    "cond": "SQ_S09_SOL1 == 2 or SQ_S09_SOL1 == 4 or SQ_S09_SOL2 == 1",
    "to": "STRUCK"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S09_SOL1 == 3",
+   "to": "FREED"
   },
   {
    "op": "if",
@@ -45,6 +51,16 @@
    "who": "SYS",
    "emo": "기본",
    "text": "칠판 맨 아래, 빨간 분필로 — '127번 — 결번'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "칠판 구석에 새 종이 — '석방 명단(장부 정리): 127 외'. 누가 꼼꼼히 압정을 박았다."
   },
   {
    "op": "goto",
