@@ -56,8 +56,11 @@ func test_sb_cages(t) -> void:
 		for p in d["props"]:
 			if str(p["name"]).begins_with("detainee") and r.has_point(Vector2i(int(p["x"]), int(p["y"]))):
 				people += 1
+		var seen := {}
 		for n in d["npcs"]:
-			if r.has_point(Vector2i(int(n["x"]), int(n["y"]))):
+			var key := "%s@%d,%d" % [n["id"], int(n["x"]), int(n["y"])]       # 같은 사람 · 같은 자리의 조건 판(1-11i 88번 소유 판)은 한 사람
+			if r.has_point(Vector2i(int(n["x"]), int(n["y"]))) and not seen.has(key):
+				seen[key] = true
 				people += 1
 	var want := 0
 	for x in Act1Paths.SB_CAGES:

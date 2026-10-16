@@ -6,9 +6,10 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "KEY": 4,
-  "OPEN": 5,
-  "EMPTY": 8
+  "KEY": 5,
+  "OPEN": 6,
+  "EMPTY": 9,
+  "WATCHED": 11
  },
  "ops": [
   {
@@ -26,6 +27,11 @@
    "op": "if",
    "cond": "dead(\"N-R02-043\")",
    "to": "KEY"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S10_HOST == 1 and SQ_S10_CAT == 0",
+   "to": "WATCHED"
   },
   {
    "op": "choice",
@@ -90,6 +96,22 @@
    "who": "SYS",
    "emo": "기본",
    "text": "빈 장부함. 뚜껑이 젖혀졌다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-043",
+   "emo": "기본",
+   "text": "(단상 옆에서 고개를 돌린다) 손님. 그 함은 내 손등이 열쇠라니까."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "견적의 눈이 떨어지지 않는다. 밤에 오든지, 위에서 내려오든지."
   },
   {
    "op": "goto",

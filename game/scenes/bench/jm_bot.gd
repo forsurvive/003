@@ -312,6 +312,23 @@ func _ready() -> void:
 				["warp", "K-20", "from_K-23"], ["wait", 1.0], ["shot", "s9_room"], ["want", ["같이 가자", "채윤재", "지하시장"]], ["talk", "N-R02-039"],
 				["until", "map:K-22", 20.0, "같이 가자 — 화면 전환 뒤 구로 107동", "s9_home"], ["wait", 5.0], ["shot", "s9_reunion"],
 				["check", "SQ_S09_PLACE == 3 and SQS09_STAGE == 100", "이름으로 재회 · 지하시장 정착(100)"]]
+		"s10":                                                          # 1-11i SQ-S10 A: 22번 칸 문(발동 · 진술 10) → 경매일 09시 고척 · 견적 패 → 귀빈석 예산 600(30) → 10시 박자 입찰 650 낙찰 · 계약서(100)
+			st.vars.set_v("PC_CAPS", 2000)
+			st.vars.set_v("PC_SKP_BARTER", 60)
+			st.vars.set_v("GAME_DAY", 4)
+			host.date_text = "2277. 10. 26.  14:00"
+			host.enter("H-03", "from_yard")
+			plan = [["wait", 1.0], ["go", 22, 9], ["want", ["기씨 집이라니", "기다려"]], ["use", 22, 8], ["wait", 2.0], ["shot", "s10_cage"],
+				["check", "SQ_S10_START == 4 and SQ_S10_TOLD == 1 and SQS10_STAGE == 10", "22번 칸 문 — 88번 기라희 · 할머니 이야기(10)"],
+				["setv", "GAME_DAY", 6], ["settime", "2277. 10. 28.  09:10"], ["warp", "GD-01", "from_W"], ["wait", 2.0],
+				["check", "SQ_S10_KIRA == 1 and SQ_S10_SEO == 1", "06시 고척 지하로 이송 · 09시 귀빈석 실루엣"], ["shot", "s10_ground"],
+				["want", ["구매자 패", "보증금을 낸다", "됐어"]], ["talk", "N-R02-043"], ["wait", 1.0], ["check", "SQ_S10_PADDLE == 1", "견적에게 7번 패(보증금 100)"],
+				["warp", "GD-02", "from_GD-01"], ["wait", 1.0], ["shot", "s10_vip"], ["want", ["물물교환 50", "그만둔다"]], ["talk", "N-R02-044"], ["wait", 1.0],
+				["check", "SQ_S10_BUDGET == 1 and SQS10_STAGE == 30", "귀빈석 — 예산 600을 털어놓음(30)"],
+				["warp", "GD-01", "from_GD-02"], ["wait", 1.0], ["want", ["!지켜본다", "!100 올린다", "!100 올린다", "!50 올린다", "계약서를 기라희에게"]],
+				["settime", "2277. 10. 28.  10:00"],
+				["until", "SQ_S10_KIRA == 3", 40.0, "10시 경매 — 박자 입찰 · 계약서", "s10_auction"], ["wait", 2.0], ["shot", "s10_free"],
+				["check", "SQ_S10_PRICE == 650 and SQR_S10 == 1 and SQS10_STAGE == 100", "650 낙찰(예산 600 + 50) · 계약서를 건넴(100)"]]
 		"s6s":                                                          # 1-11f 수색조: 첫 접촉 25시간 뒤 시흥 고개 — 평상복 · 등록증 진해원과 길을 걸으면 수색조가 선다 → 분대장 검문 통과
 			for kv in [["A-005", 1], ["M-062", 1]]:
 				st.call_fn("give", kv)
@@ -896,6 +913,9 @@ func _process(dt: float) -> void:
 			host.input_fn = _walk.bind(gd + (host.player.loco.logical - gd).normalized() * 34.0)
 		"settime":
 			host.date_text = str(s[1])
+			_next()
+		"setv":                                                         # 변수 바로 세우기(날짜를 건너뛸 때 GAME_DAY — 1-11i)
+			st.vars.set_v(str(s[1]), s[2])
 			_next()
 		"gomark":                                                       # 월드 손 맵 표지까지 걷는다(1-11a)
 			var gm: Vector2 = host.map.mark_pos(str(s[1]))

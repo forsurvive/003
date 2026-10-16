@@ -151,8 +151,8 @@ C-013 [기본] 우리는 사람 안 팔아. 빚을 팔지. 장부에 적힌 건 
 C-013 [기본] 고르셨나.
 > 장부를 좀 보자. 빚이 얼마짜리인지 -> LEDGER
 > [은신 50] (흥정하는 척 다가서서 허리춤 열쇠고리를 슬쩍 뺀다) -> KEY ?? SB_KEY == 0
-> [캡 300] 88번을 산다. 세이프빌로 갈 몸이라던데 -> BUY88 ?? SB_BOUGHT == 0 and dead("N-R02-040") == 0 and SQ_S10_START == 0 and SQ_S10_KIRA == 0
-> [캡 520] 88번을 뺀다. 고척에 붙였다던데 -> BUY88B ?? SB_BOUGHT == 0 and dead("N-R02-040") == 0 and SQ_S10_START > 0 and SQ_S10_KIRA == 0
+> [캡 300] 88번을 산다. 세이프빌로 갈 몸이라던데 -> BUY88 ?? SB_BOUGHT == 0 and dead("N-R02-040") == 0 and SQ_S10_KIRA == 0 and (SQ_S10_START == 0 or GAME_DAY < SQ_S10_AUCTION - 1)
+> [캡 520] 88번을 뺀다. 고척에 붙였다던데 -> BUY88B ?? SB_BOUGHT == 0 and dead("N-R02-040") == 0 and SQ_S10_KIRA == 0 and SQ_S10_START > 0 and GAME_DAY >= SQ_S10_AUCTION - 1
 > 88번은? -> GONE88 ?? SB_BOUGHT == 0 and dead("N-R02-040") == 0 and SQ_S10_KIRA == 1
 > [캡 400] 127번을 산다. 빚이 400이라던데 -> BUY127 ?? SB_127 < 2 and dead("N-R02-039") == 0
 > 내 현상금 이야기를 꺼낸다 -> MINE ?? PC_CAPS >= 1000

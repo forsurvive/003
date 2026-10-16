@@ -13,9 +13,11 @@
   "OPEN": 18,
   "CUFFED": 20,
   "EMPTY": 22,
-  "GONE": 24,
-  "OWNED": 26,
-  "RELEASE": 28
+  "CHALK": 26,
+  "CARVED": 28,
+  "GONE": 30,
+  "OWNED": 32,
+  "RELEASE": 34
  },
  "ops": [
   {
@@ -201,10 +203,40 @@
    "to": "END"
   },
   {
+   "op": "if",
+   "cond": "SQ_S10_KIRA == 1 or SQ_S10_KIRA == 2",
+   "to": "CHALK"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S10_KIRA == 6 or SQ_S10_KIRA == 8",
+   "to": "CARVED"
+  },
+  {
    "op": "line",
    "who": "SYS",
    "emo": "기본",
-   "text": "22번 칸이 비었다. 짚더미 위에 번호표 하나 — '88'."
+   "text": "22번 칸이 비었다. 벽 각인 '기씨 — 세이프빌 101동 대 분가' 위에 누가 '노들'이라고 덧썼다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "22번 칸이 비었다. 짚더미 옆 바닥에 분필로 '4 — 고척 10:00'. 반장이 옮길 칸을 적어 둔 자국."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "22번 칸이 비었다. 벽 각인만 남았다 — '기씨 — 세이프빌 101동 대 분가'. 그 밑의 '88'."
   },
   {
    "op": "goto",

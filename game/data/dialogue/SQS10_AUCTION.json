@@ -11,48 +11,49 @@
   "OLD": 10,
   "OLDNO": 14,
   "LOT4": 15,
-  "BJ300": 24,
-  "SEO300": 26,
-  "LATE": 28,
-  "CHK": 30,
-  "NOPAD": 32,
-  "NOPAD2": 34,
-  "PADDED": 36,
-  "PADDED2": 38,
-  "BEAT": 41,
-  "KS1": 46,
-  "KS2": 48,
-  "KS3": 50,
-  "KSD": 51,
-  "BOARD": 52,
-  "LBJ": 56,
-  "LSEO": 58,
-  "HESIT": 61,
-  "OPTS": 62,
-  "R50": 63,
-  "R100": 65,
-  "JUMP": 67,
-  "JUMPF": 70,
-  "RESP": 73,
-  "RFORE": 77,
-  "RBJ": 80,
-  "GLASS": 82,
-  "NEAR": 86,
-  "GIVE": 88,
-  "KIN": 93,
-  "KINF": 97,
-  "KINDONE": 100,
-  "SWAPDONE": 104,
-  "MINE": 109,
-  "CONTRACT": 112,
-  "FREE": 114,
-  "KEEP": 117,
-  "RESELL": 121,
-  "WATCH": 126,
-  "SOLD": 130,
-  "SOLDT": 135,
-  "SOLDB": 138,
-  "RAID": 140
+  "BJ300": 25,
+  "NONE300": 27,
+  "SEO300": 29,
+  "LATE": 31,
+  "CHK": 33,
+  "NOPAD": 35,
+  "NOPAD2": 37,
+  "PADDED": 39,
+  "PADDED2": 41,
+  "RESP": 44,
+  "RS2": 51,
+  "RS3": 53,
+  "RFORE": 55,
+  "RBJ": 58,
+  "KSCHK": 59,
+  "KS1": 63,
+  "KS2": 65,
+  "KS3": 67,
+  "KSD": 68,
+  "OPTS": 69,
+  "R50": 70,
+  "R100": 72,
+  "JUMP": 74,
+  "JUMPF": 77,
+  "GLASS": 80,
+  "NEAR": 85,
+  "GEND": 87,
+  "GIVE": 89,
+  "KIN": 94,
+  "KINF": 98,
+  "KINDONE": 101,
+  "SWAPDONE": 105,
+  "MINE": 110,
+  "CONTRACT": 113,
+  "FREE": 115,
+  "KEEP": 118,
+  "RESELL": 122,
+  "WATCH": 127,
+  "SOLD": 131,
+  "UNSOLD": 137,
+  "SOLDT": 139,
+  "SOLDB": 142,
+  "RAID": 144
  },
  "ops": [
   {
@@ -195,8 +196,13 @@
   },
   {
    "op": "if",
-   "cond": "dead(\"N-R02-508\")",
+   "cond": "SQ_S10_LEAD == 3",
    "to": "BJ300"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S10_LEAD == 9",
+   "to": "NONE300"
   },
   {
    "op": "line",
@@ -212,7 +218,17 @@
    "op": "line",
    "who": "SYS",
    "emo": "기본",
-   "text": "덕아웃 쪽 감독관 반경모가 패를 든다. 300."
+   "text": "덕아웃 쪽 감독관 반경모가 패를 든다. 300. 지상 노역 전표 뭉치가 무릎 위에서 흔들린다."
+  },
+  {
+   "op": "goto",
+   "to": "CHK"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "아무 패도 올라가지 않는다. 견적이 헛기침을 한다."
   },
   {
    "op": "goto",
@@ -247,7 +263,7 @@
   },
   {
    "op": "goto",
-   "to": "BEAT"
+   "to": "OPTS"
   },
   {
    "op": "line",
@@ -354,7 +370,7 @@
   },
   {
    "op": "goto",
-   "to": "BEAT"
+   "to": "OPTS"
   },
   {
    "op": "cmd",
@@ -372,12 +388,83 @@
   },
   {
    "op": "goto",
-   "to": "BEAT"
+   "to": "OPTS"
   },
   {
    "op": "if",
    "cond": "SQ_S10_LEAD == 0",
    "to": "MINE"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S10_LEAD == 2",
+   "to": "RFORE"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S10_LEAD == 3",
+   "to": "RBJ"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S10_PRICE >= 700",
+   "to": "RS3"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S10_PRICE >= 550",
+   "to": "RS2"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "유리창 너머 실루엣이 펜으로 장부를 따라 내려가며 패를 든다. \\V[SQ_S10_PRICE]."
+  },
+  {
+   "op": "goto",
+   "to": "KSCHK"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "실루엣이 장을 한 번 넘기고, 조금 늦게 패를 든다. \\V[SQ_S10_PRICE]."
+  },
+  {
+   "op": "goto",
+   "to": "KSCHK"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "실루엣이 펜을 내려놓는다. 패만 올라간다. \\V[SQ_S10_PRICE]."
+  },
+  {
+   "op": "goto",
+   "to": "KSCHK"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R02-508\")",
+   "to": "RBJ"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-508",
+   "emo": "기본",
+   "text": "(덕아웃 쪽에서 패를 든다) \\V[SQ_S10_PRICE]. …탱크 청소할 손이 급해서."
+  },
+  {
+   "op": "goto",
+   "to": "KSCHK"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "덕아웃 쪽 감독관 반경모가 패를 든다. \\V[SQ_S10_PRICE]. \"지상 노역은 이 값까지.\""
   },
   {
    "op": "if",
@@ -396,7 +483,7 @@
   },
   {
    "op": "goto",
-   "to": "BOARD"
+   "to": "OPTS"
   },
   {
    "op": "line",
@@ -430,57 +517,6 @@
    "args": [
     "ksaid"
    ]
-  },
-  {
-   "op": "if",
-   "cond": "SQ_S10_LEAD == 1",
-   "to": "LSEO"
-  },
-  {
-   "op": "if",
-   "cond": "dead(\"N-R02-508\")",
-   "to": "LBJ"
-  },
-  {
-   "op": "line",
-   "who": "SYS",
-   "emo": "기본",
-   "text": "칠판 현재가 \\V[SQ_S10_PRICE]. 십장 연석규의 패가 올라가 있다."
-  },
-  {
-   "op": "goto",
-   "to": "OPTS"
-  },
-  {
-   "op": "line",
-   "who": "SYS",
-   "emo": "기본",
-   "text": "칠판 현재가 \\V[SQ_S10_PRICE]. 감독관 반경모의 패가 올라가 있다."
-  },
-  {
-   "op": "goto",
-   "to": "OPTS"
-  },
-  {
-   "op": "line",
-   "who": "SYS",
-   "emo": "기본",
-   "text": "칠판 현재가 \\V[SQ_S10_PRICE]. 유리창 너머 실루엣의 패가 올라가 있다."
-  },
-  {
-   "op": "if",
-   "cond": "SQ_S10_PRICE > 520",
-   "to": "HESIT"
-  },
-  {
-   "op": "goto",
-   "to": "OPTS"
-  },
-  {
-   "op": "line",
-   "who": "SYS",
-   "emo": "기본",
-   "text": "실루엣의 손이 장부 위에서 한 번 멈췄다가, 다시 패를 든다."
   },
   {
    "op": "choice",
@@ -611,7 +647,7 @@
   },
   {
    "op": "goto",
-   "to": "BEAT"
+   "to": "MINE"
   },
   {
    "op": "cmd",
@@ -625,56 +661,11 @@
    "op": "line",
    "who": "SYS",
    "emo": "기본",
-   "text": "실루엣이 잠깐 멈추더니, 펜으로 무언가를 고쳐 쓰고 패를 든다."
+   "text": "실루엣이 잠깐 멈추더니, 펜으로 무언가를 고쳐 쓴다."
   },
   {
    "op": "goto",
    "to": "RESP"
-  },
-  {
-   "op": "if",
-   "cond": "SQ_S10_LEAD == 0",
-   "to": "BEAT"
-  },
-  {
-   "op": "if",
-   "cond": "SQ_S10_LEAD == 2",
-   "to": "RFORE"
-  },
-  {
-   "op": "line",
-   "who": "SYS",
-   "emo": "기본",
-   "text": "유리창 너머 패가 올라간다. \\V[SQ_S10_PRICE]."
-  },
-  {
-   "op": "goto",
-   "to": "BEAT"
-  },
-  {
-   "op": "if",
-   "cond": "dead(\"N-R02-508\")",
-   "to": "RBJ"
-  },
-  {
-   "op": "line",
-   "who": "N-R02-508",
-   "emo": "기본",
-   "text": "(덕아웃 쪽에서 패를 든다) \\V[SQ_S10_PRICE]. …탱크 청소할 손이 급해서."
-  },
-  {
-   "op": "goto",
-   "to": "BEAT"
-  },
-  {
-   "op": "line",
-   "who": "SYS",
-   "emo": "기본",
-   "text": "덕아웃 쪽 감독관 반경모가 패를 든다. \\V[SQ_S10_PRICE]. 지상 노역 전표 뭉치가 무릎 위에서 흔들린다."
-  },
-  {
-   "op": "goto",
-   "to": "BEAT"
   },
   {
    "op": "cmd",
@@ -685,7 +676,12 @@
   },
   {
    "op": "if",
-   "cond": "SQ_S10_PRICE + 100 > SQ_S10_CAPV",
+   "cond": "SQ_S10_CAPV - SQ_S10_PRICE <= 50",
+   "to": "GEND"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S10_CAPV - SQ_S10_PRICE <= 100",
    "to": "NEAR"
   },
   {
@@ -702,7 +698,17 @@
    "op": "line",
    "who": "SYS",
    "emo": "기본",
-   "text": "실루엣이 장부를 빠르게 넘긴다. 펜 끝이 한 줄에서 멈춘다 — 한 번, 많아야 한 번이 끝이다."
+   "text": "실루엣이 장부를 빠르게 넘긴다. 펜 끝이 한 줄에서 멈춘다 — 지금 크게 한 번 올리면 따라오지 못한다."
+  },
+  {
+   "op": "goto",
+   "to": "OPTS"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "실루엣이 펜을 내려놓았다. 장부가 덮였다 — 다음 한 번이면 끝이다."
   },
   {
    "op": "goto",
@@ -927,7 +933,7 @@
    "op": "line",
    "who": "N-R02-044",
    "emo": "기본",
-   "text": "(유리창이 열린다) …장사꾼이시네요. 800."
+   "text": "(유리창이 열린다) …장사꾼이시네요. 회장단 선까지만 드리죠. \\V[SQ_S10_CAPV]."
   },
   {
    "op": "line",
@@ -972,7 +978,7 @@
   },
   {
    "op": "goto",
-   "to": "BEAT"
+   "to": "OPTS"
   },
   {
    "op": "cmd",
@@ -980,6 +986,11 @@
    "args": [
     "lost"
    ]
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S10_KIRA == 1",
+   "to": "UNSOLD"
   },
   {
    "op": "line",
@@ -1003,8 +1014,18 @@
    "to": "END"
   },
   {
+   "op": "line",
+   "who": "N-R02-043",
+   "emo": "피곤",
+   "text": "…유찰. 4번은 지하로. 오늘 장사 공쳤네."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
    "op": "if",
-   "cond": "dead(\"N-R02-508\")",
+   "cond": "SQ_S10_LEAD == 3",
    "to": "SOLDB"
   },
   {

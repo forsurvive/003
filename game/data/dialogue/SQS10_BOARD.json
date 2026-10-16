@@ -8,7 +8,12 @@
   "START": 0,
   "NEXT88": 4,
   "SEEN": 6,
-  "STOP": 8
+  "R6": 13,
+  "R8": 16,
+  "R8B": 19,
+  "R5": 22,
+  "RFREE": 25,
+  "STOP": 28
  },
  "ops": [
   {
@@ -44,6 +49,116 @@
     "start",
     "2"
    ]
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S10_KIRA == 6",
+   "to": "R6"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S10_KIRA == 8 and SQ_S10_LEAD == 3",
+   "to": "R8B"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S10_KIRA == 8",
+   "to": "R8"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S10_KIRA == 5",
+   "to": "R5"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S10_DONE == 1 and SQ_S10_KIRA >= 3",
+   "to": "RFREE"
+  },
+  {
+   "op": "cmd",
+   "name": "s10",
+   "args": [
+    "board"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "맨 아랫줄에 지난 경기 결과 — '4번 낙찰 — 세이프빌'. 분필 글씨가 반듯하다."
+  },
+  {
+   "op": "cmd",
+   "name": "s10",
+   "args": [
+    "board"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "맨 아랫줄에 지난 경기 결과 — '4번 — 탱크마을'. 누가 그 옆에 작게 '88'이라고 덧썼다."
+  },
+  {
+   "op": "cmd",
+   "name": "s10",
+   "args": [
+    "board"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "맨 아랫줄에 지난 경기 결과 — '4번 — 비상정부 지상 노역'. 도장 자국이 분필 위에 찍혔다."
+  },
+  {
+   "op": "cmd",
+   "name": "s10",
+   "args": [
+    "board"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "맨 아랫줄에 지난 경기 결과 — '4번 — 귀빈석 따로 거래'. 견적의 글씨가 유난히 작다."
+  },
+  {
+   "op": "cmd",
+   "name": "s10",
+   "args": [
+    "board"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "맨 아랫줄에 지난 경기 결과 — '4번 — 풀려남'. 누가 지우려다 그만둔 자국."
   },
   {
    "op": "cmd",

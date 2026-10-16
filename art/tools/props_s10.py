@@ -1,7 +1,7 @@
 """고척 돔 인력 경매장(단계 1-11i SQ-S10 오늘의 4번 인력, SD-04a §5.3 · SD-09a L-R02-23 · SD-16 아이작풍).
   gd_podium        경매 단상(4×2): 철골 비계 위 널판 · 앞치마 천 '새벽인력' · 견적 연단(망치) · '인력'이 서는 동그라미 + 쇠사슬 기둥 · 번호 장대 '4'
   gd_board         분필 칠판(3×1, 세움): '오늘의 경기 / 인력 4번 경매 / 시작 10:00 / 현재가 300'
-                   상태 p350 … p1000(50캡 단위 — 현재가를 지우고 고쳐 쓴 자국) · sold_sv('4번 낙찰 — 세이프빌') · sold_tank('4번 — 탱크마을')
+                   상태 p350 … p1000(50캡 단위 — 현재가를 지우고 고쳐 쓴 자국) · sold_sv('4번 낙찰 — 세이프빌') · sold_tank('4번 — 탱크마을') · sold_bj('지상 노역')
                    · stop('세이프빌 구매 중단') · free('4번 — 풀려남') · raid(넘어져 금 간 칠판)
   gd_seats/2       관중석 좌석 줄(2×1): 계단 콘크리트 턱 위 플라스틱 의자 둘(파랑 · 주황 깨짐)
   w_vip_glass      VIP 박스 유리창(벽 3칸): 짙은 색유리 · 비스듬한 반사 · 상태 sil(장부를 든 기서윤 실루엣) · broken(깨짐)
@@ -93,6 +93,7 @@ PRICES = list(range(350, 1001, 50))                                  # 경매 �
 _BOARD = {"": ("현재가", "300", "P15"),
           "sold_sv": ("낙찰", "세이프빌", "P54"),
           "sold_tank": ("낙찰", "탱크마을", "P54"),
+          "sold_bj": ("낙찰", "지상 노역", "P54"),
           "stop": ("세이프빌", "구매 중단", "P49"),
           "free": ("4번", "풀려남", "P56")}
 _BOARD.update({"p%d" % v: ("현재가", str(v), "P15") for v in PRICES})
@@ -464,7 +465,7 @@ PROPS_S10 = {
 }
 
 STATES_S10 = {
-    "gd_board": {s: (lambda s=s: gd_board(s)) for s in ["p%d" % v for v in PRICES] + ["sold_sv", "sold_tank", "stop", "free", "raid"]},
+    "gd_board": {s: (lambda s=s: gd_board(s)) for s in ["p%d" % v for v in PRICES] + ["sold_sv", "sold_tank", "sold_bj", "stop", "free", "raid"]},
     "w_vip_glass": {"sil": lambda: w_vip_glass("sil"), "broken": lambda: w_vip_glass("broken")},
     "ledger_box": {"open": lambda: ledger_box("open")},
 }

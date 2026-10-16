@@ -11,8 +11,10 @@ const SEO_ID := "N-R02-044"                 ## 기서윤(세이프빌 대리인)
 const HOST_ID := "N-R02-043"                ## 견적(사회자)
 const CAP_SEO := 750                        ## 기서윤 상한
 const CAP_BUDGET := 600                     ## 예산을 털어놓으면([물물교환 50])
-const CAP_ALONE := 500                      ## 기서윤이 없을 때 십장 상한
-const FORE_ONCE := 450                      ## 기서윤이 있을 때 십장이 한 번 끼는 값
+const FORE_CAP := 450                       ## 탱크마을 십장 상한(탁현수 · 연석규가 말한 값) — 기서윤이 있으면 450에 한 번 끼고 빠진다
+const OVR_CAP := 550                        ## 기서윤이 없을 때 감독관 반경모가 한 번 따라오는 상한
+const FORE_ID := "N-R02-508"                ## 연석규(탱크마을 십장)
+const OVR_ID := "N-R02-509"                 ## 반경모(비상정부 지상 노역 감독관)
 const BOARD := Vector2i(13, 13)             ## GD-01 칠판
 const GLASS := {"GD-01": Vector2i(19, 1), "GD-02": Vector2i(26, 1)}
 const LBOX := Vector2i(22, 12)              ## GD-01 장부함
@@ -24,6 +26,7 @@ var st: StoryState
 var log_on := false
 var _t := 0.0
 var _gd: Array = []                         ## 이 맵에서 깨운 습격 적
+var _staging := false                       ## 경매 연출(어둡게 → 입찰 자리) 중
 
 
 func setup(h: InteriorHost, is_log := false) -> void:
@@ -142,7 +145,7 @@ func _flags() -> void:
 	var now := _now()
 	var aday := d % 3 == 0
 	var nf := {"OPEN": 1 if aday and now >= 360 and now < 660 else 0,
-		"HOST": 1 if not st.is_dead(HOST_ID) and q("RAID") == 0 else 0,
+		"HOST": 1 if not st.is_dead(HOST_ID) and q("RAID") == 0 and now >= 360 and now < 1320 else 0,   # 견적은 06~22시 단상 곁(밤엔 숙소 — 장부함이 빈다)
 		"SEO": 1 if aday and now >= 540 and now < 660 and not st.is_dead(SEO_ID) and q("STOP") == 0 else 0}
 	var changed := false
 	for k in nf:
@@ -193,7 +196,7 @@ func _clock() -> void:
 	if a == 0:
 		return
 	if q("KIRA") == 2:                                                    # 장면이 끊겼다(불러오기 등): 반쯤 된 상태 없이 그 자리부터(P10)
-		if not _box() and _zone() == "GD-01":
+		if not _box() and not _staging and _zone() == "GD-01":
 			host.play_scene("SQS10_AUCTION", "CONTRACT" if q("DONE") == 1 else "BEAT")
 		return
 	if q("KIRA") != 1 or q("DONE") == 1 or st.is_dead(HOST_ID) or st.is_dead(KIRA_ID) or q("RAID") == 1:
@@ -203,16 +206,29 @@ func _clock() -> void:
 	if d < a or (d == a and now < 600):
 		return
 	if d == a and now < 630:
-		if _zone() == "GD-01" and not _box():
+		if (_zone() == "GD-02" or _zone() == "GD-03") and not st.boxes.has("s10bell"):
+			st.boxes["s10bell"] = {"open": true}
+			host.hint("%s 망치 소리 — \"오늘의 1번!\" 그라운드로 가면 4번에 낄 수 있다(10:30까지)." % ("위에서" if _zone() == "GD-03" else "아래에서"), 6.0)
+		if _zone() == "GD-01" and not _box() and not _staging:
 			_sq("KIRA", 2)
 			if now >= 615:
 				_sq("LATE", 1)
 				_lot4()
-			host.refresh_npcs()
-			_props()
-			host.play_scene("SQS10_AUCTION")
+			_stage_auction()
 		return
 	_offstage()
+
+
+## 경매 연출(RPG 메이커식): 화면을 어둡게 → 단상 앞 입찰 자리(표지 bid)에 세움 → 밝게 → 장면
+func _stage_auction() -> void:
+	_staging = true
+	host.ev.run("fade_out", ["black", "4"], func() -> void:
+		host.enter("GD-01", "bid")
+		host.refresh_npcs()
+		_props()
+		host.ev.run("fade_in", ["black", "4"], func() -> void:
+			_staging = false
+			host.play_scene("SQS10_AUCTION")))
 
 
 ## 주인공 없이 끝난 경매(10:30)
@@ -224,11 +240,15 @@ func _offstage() -> void:
 	elif q("SWAP") == 1:
 		_swap_end()
 	elif _seo_in():
+		_sq("LEAD", 1)
 		_sq("KIRA", 6)
 		_sold_close()
-	else:
+	elif not st.is_dead(OVR_ID) or not st.is_dead(FORE_ID):
+		_sq("LEAD", 3 if not st.is_dead(OVR_ID) else 2)                   # 기서윤이 없으면 감독관이 가져간다(죽었으면 십장)
 		_sq("KIRA", 8)
 		_sold_close()
+	else:
+		_log("유찰 — 살 사람이 없다")                                     # 기라희는 지하 대기실에 남는다(칸 문 · 습격으로 빼낸다)
 	_log("주인공 없이 경매 끝 → %d" % q("KIRA"))
 	if _zone().begins_with("GD-"):
 		host.refresh_npcs()
@@ -256,13 +276,15 @@ func _refund() -> void:
 # ---------------------------------------------------------------- 경매 박자(재미 검수 2)
 func _lot4() -> void:
 	var seo := _seo_in()
+	var fore := not st.is_dead(FORE_ID)
+	var ovr := not st.is_dead(OVR_ID)
 	_sq("SEOIN", 1 if seo else 0)
-	_sq("CAPV", (CAP_BUDGET if q("BUDGET") == 1 else CAP_SEO) if seo else CAP_ALONE)
+	_sq("CAPV", (CAP_BUDGET if q("BUDGET") == 1 else CAP_SEO) if seo else (OVR_CAP if ovr else (FORE_CAP if fore else 0)))
 	_sq("PRICE", 300)
-	_sq("LEAD", 1 if seo else 2)
+	_sq("LEAD", 1 if seo else (2 if fore else (3 if ovr else 9)))
 	_sq("WATCH", 0)
-	if q("LATE") == 1:                                                    # 늦게 왔다: 십장이 이미 450을 들었다
-		_sq("PRICE", FORE_ONCE)
+	if q("LATE") == 1 and fore:                                           # 늦게 왔다: 십장이 이미 450을 들었다
+		_sq("PRICE", FORE_CAP)
 		_sq("LEAD", 2)
 		_sq("FORE", 1)
 	_props()
@@ -278,18 +300,23 @@ func _bid(step: int) -> void:
 ## 상대 패: 기서윤이 있으면 십장이 450에 한 번 끼고 빠진다 · 기서윤은 상한까지 50씩 · 없으면 십장이 500까지
 func _respond() -> void:
 	var p := q("PRICE")
+	var fore := not st.is_dead(FORE_ID)
 	if q("SEOIN") == 1 and q("KIN") != 1:
-		if q("FORE") == 0 and p < FORE_ONCE:
-			_sq("PRICE", FORE_ONCE)
+		if q("FORE") == 0 and fore and p < FORE_CAP:
+			_sq("PRICE", FORE_CAP)
 			_sq("LEAD", 2)
 			_sq("FORE", 1)
 		elif p + 50 <= q("CAPV"):
 			_sq("PRICE", p + 50)
 			_sq("LEAD", 1)
-	elif p + 50 <= q("CAPV"):
+	elif fore and p + 50 <= FORE_CAP:
 		_sq("PRICE", p + 50)
 		_sq("LEAD", 2)
 		_sq("FORE", 1)
+	elif not st.is_dead(OVR_ID) and p + 50 <= OVR_CAP and not st.boxes.has("s10ovr"):
+		st.boxes["s10ovr"] = {"open": true}                               # 감독관은 한 번만(550까지)
+		_sq("PRICE", p + 50)
+		_sq("LEAD", 3)
 	_ksay()
 	_props()
 
@@ -317,6 +344,11 @@ func _won() -> void:
 func _lost() -> void:
 	_sq("DONE", 1)
 	_up(40)
+	if q("LEAD") == 9:
+		_refund()                                                         # 유찰 — 기라희는 지하로(칸 문 · 습격)
+		host.refresh_npcs()
+		_props()
+		return
 	_sq("KIRA", 6 if q("LEAD") == 1 else 8)
 	_sold_close()
 	host.refresh_npcs()
@@ -432,6 +464,8 @@ func _on_map(_id: String) -> void:
 	if host.map == null:
 		return
 	_gd.clear()
+	if _zone() != "GD-01":
+		_sq("CAT", 0)
 	if _zone().begins_with("GD-"):
 		_flags()
 		_props()
@@ -455,7 +489,7 @@ func _props() -> void:
 	elif q("KIRA") == 2 and q("PRICE") > 300:
 		b = "p%d" % mini(q("PRICE"), 1000)
 	elif q("DONE") == 1:
-		b = {6: "sold_sv", 8: "sold_tank", 3: "free", 4: "free"}.get(q("KIRA"), "")
+		b = {6: "sold_sv", 8: "sold_bj" if q("LEAD") == 3 else "sold_tank", 3: "free", 4: "free"}.get(q("KIRA"), "")
 	host.map.set_prop_state(BOARD, b)
 	if q("LEDGER") >= 1:
 		host.map.set_prop_state(LBOX, "open")
@@ -580,7 +614,7 @@ func _cmd(a: Array, done: Callable) -> void:
 			_close(5, "소유")
 			host.refresh_npcs()
 		"resell":
-			st.call_fn("caps", [720])
+			st.call_fn("caps", [int(q("CAPV") * 0.9)])                         # 회장단 선(상한)에서 견적 수수료 열에 하나
 			_sq("KIRA", 6)
 			_sq("SOL", 7)
 			st.call_fn("karma", [-50])
@@ -651,6 +685,7 @@ func _cmd(a: Array, done: Callable) -> void:
 		"up":
 			host.go("GD-02", "from_catwalk")
 		"down":
+			_sq("CAT", 1)                                                     # 견적 눈 밖으로 단상 뒤에 내려왔다(장부함)
 			host.go("GD-01", "from_catwalk")
 		"release":
 			_sq("KIRA", 4)

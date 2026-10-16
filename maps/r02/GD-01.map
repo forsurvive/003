@@ -125,7 +125,7 @@ npc N-R02-043 17 14 S cond="SQ_S10_HOST == 1" bark="사흘마다 열 시. 패는
 npc N-R02-508 35 10 W cond="SQ_S10_OPEN == 1 and GAME_HOUR < 10" bark="탱크마을은 연료 탱크 청소할 손이 모자라. 열 시 전에 한 잔 더."
 npc N-R02-509 37 11 W cond="SQ_S10_OPEN == 1 and GAME_HOUR < 10 and dead(\"N-R02-509\") == 0" bark="지상 노역은 비상정부가 일당을 준다. …전표로."
 npc N-R02-508 26 19 N cond="SQ_S10_OPEN == 1 and GAME_HOUR >= 10" bark="450까진 본다. 그 위는 세이프빌 몫이지."
-npc N-R02-509 12 19 N cond="SQ_S10_OPEN == 1 and GAME_HOUR >= 10" bark="오늘은 노역감 하나만."
+npc N-R02-509 12 19 N cond="SQ_S10_OPEN == 1 and GAME_HOUR >= 10" bark="위층 손님이 안 오면 4번에도 한 번은 든다."
 npc CR-435 18 25 N sheet=en_cr435_loco cond="SQ_S10_RAID == 0" bark="정문은 검문. 총은 넣어 두고 들어가."
 npc CR-435 21 25 N sheet=en_cr435_loco cond="SQ_S10_RAID == 0" bark="경매 보러 왔어? 사흘마다 열 시야."
 npc CR-435 25 15 W sheet=en_cr435_loco cond="SQ_S10_RAID == 0" bark="단상엔 올라가지 마."

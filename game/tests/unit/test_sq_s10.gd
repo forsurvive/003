@@ -223,6 +223,10 @@ func test_sq_s10_ledger_cast_d(t) -> void:
 	t.eq(_play(h, st, "SQS10_CELL1", ["한강 물"]), [], "140번 탁현수 부탁")
 	t.eq(_v(st, "SQ_S10_CODE"), 1, "장부함 번호를 앎")
 	h.enter("GD-01", "from_GD-03")
+	c.tick()
+	t.eq(_play(h, st, "SQS10_LEDGERBOX"), [], "견적이 보는 앞 — 막힘")
+	t.eq(_v(st, "SQ_S10_LEDGER"), 0, "견적 눈앞에선 못 연다")
+	st.vars.set_v("SQ_S10_CAT", 1)                                         # 캣워크로 단상 뒤에 내려옴
 	t.eq(_play(h, st, "SQS10_LEDGERBOX", ["4 · 0 · 8 · 8"]), [], "장부함 원고")
 	t.eq([_v(st, "SQ_S10_LEDGER"), st.count_of("M-322")], [1, 1], "구매 장부 손에")
 	h.enter("K-06", "from_W")
@@ -248,6 +252,7 @@ func test_sq_s10_swap(t) -> void:
 	var c: SideS10 = r[2]
 	_moved(r, "09:30")
 	st.vars.set_v("SQ_S10_CODE", 1)
+	st.vars.set_v("SQ_S10_CAT", 1)
 	_play(h, st, "SQS10_LEDGERBOX", ["4 · 0 · 8 · 8"])
 	h.enter("GD-02", "from_GD-01")
 	c.tick()
@@ -287,6 +292,7 @@ func test_sq_s10_buy88_prices(t) -> void:
 	st.vars.set_v("SB_PASS", 1)
 	t.ok(_has(_opts(st, "MQ-105_HDC_BUY", "AGAIN"), "88번을 산다"), "발동 전 300")
 	r[2]._start("시험")
+	st.vars.set_v("GAME_DAY", 5)                                         # 520은 경매 전날부터
 	var o := _opts(st, "MQ-105_HDC_BUY", "AGAIN")
 	t.ok(_has(o, "88번을 뺀다"), "발동 뒤 520")
 	t.ok(not _has(o, "88번을 산다"), "300은 닫힘")
@@ -354,3 +360,59 @@ func test_sq_s10_late_and_deaths(t) -> void:
 	st3.kill(KIRA)
 	r3[2].tick()
 	t.eq(_v(st3, "SQR_S10"), 12, "기라희 사망 — 닫힘")
+
+
+func test_sq_s10_fun_fixes(t) -> void:
+	# 유리창: 상한까지 남은 값 셋(재미 검수 1)
+	var r := _started()
+	var h: InteriorHost = r[0]
+	var st: StoryState = r[1]
+	var c: SideS10 = r[2]
+	_moved(r, "08:00")
+	st.vars.set_v("SQ_S10_PADDLE", 1)
+	st.vars.set_v("PC_PE", 6)
+	h.date_text = "2277. 10. 28.  10:00"
+	c.tick()
+	t.eq(_play(h, st, "SQS10_AUCTION", ["지켜본다", "100 올린다", "100 올린다", "100 올린다", "인지력 5", "지켜본다", "지켜본다"]), [], "유리창 원고")
+	t.eq(_v(st, "SQ_S10_PRICE"), 750, "400 · 십장 450 · 550 · 600 · 700 · 기서윤 750(상한 — 유리창은 GEND)")
+	t.eq(_k(st), 6, "두 번 지켜보면 세이프빌")
+	# 기서윤이 없을 때(죽음): 십장 450 → 감독관 500 한 번 → 550이면 낙찰
+	var r2 := _started()
+	var h2: InteriorHost = r2[0]
+	var st2: StoryState = r2[1]
+	st2.kill("N-R02-044")
+	_moved(r2, "08:00")
+	st2.vars.set_v("SQ_S10_PADDLE", 1)
+	h2.date_text = "2277. 10. 28.  10:00"
+	r2[2].tick()
+	t.eq(_play(h2, st2, "SQS10_AUCTION", ["지켜본다", "100 올린다", "50 올린다", "50 올린다", "계약서를"]), [], "기서윤 없는 경매 원고")
+	t.eq(_v(st2, "SQ_S10_PRICE"), 600, "300 → 400 · 십장 450 → 500 · 감독관 550(한 번) → 600 낙찰")
+	t.eq(_k(st2), 3, "A")
+	# 아무도 살 사람이 없으면 유찰 — 지하에 남는다
+	var r3 := _started()
+	var st3: StoryState = r3[1]
+	for id in ["N-R02-044", "N-R02-508", "N-R02-509"]:
+		st3.kill(id)
+	_moved(r3, "10:40")
+	r3[2].tick()
+	t.eq([_k(st3), _v(st3, "SQ_S10_DONE")], [1, 1], "유찰 — 지하 대기실")
+	# 되팔기는 회장단 선(상한)에서 수수료를 뗀 값
+	var r4 := _started()
+	var h4: InteriorHost = r4[0]
+	var st4: StoryState = r4[1]
+	_moved(r4, "09:30")
+	st4.vars.set_v("SQ_S10_BUDGET", 1)
+	st4.vars.set_v("SQ_S10_PADDLE", 1)
+	h4.date_text = "2277. 10. 28.  10:00"
+	r4[2].tick()
+	var caps := _v(st4, "PC_CAPS")
+	t.eq(_play(h4, st4, "SQS10_AUCTION", ["지켜본다", "100 올린다", "100 올린다", "50 올린다", "되판다"]), [], "되팔기 원고")
+	t.eq(_v(st4, "PC_CAPS") - caps, 540 - 650, "650에 사서 600 − 10% = 540에 판다(손해)")
+	t.eq(_k(st4), 6, "되팖 — 세이프빌")
+	# 520은 경매 전날부터(그 전엔 300)
+	var r5 := _started()
+	var st5: StoryState = r5[1]
+	st5.vars.set_v("SB_PASS", 1)
+	t.ok(_has(_opts(st5, "MQ-105_HDC_BUY", "AGAIN"), "88번을 산다"), "발동 날(경매 이틀 전) — 아직 300")
+	st5.vars.set_v("GAME_DAY", 5)
+	t.ok(_has(_opts(st5, "MQ-105_HDC_BUY", "AGAIN"), "88번을 뺀다"), "경매 전날 — 520")
