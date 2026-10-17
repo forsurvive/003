@@ -37,7 +37,7 @@ mark board 19 6 N
 prop w_kh_vote 18 1
 text 18 2 "투표 전광판." w=3 scene=SQS11_VOTE
 prop kh_speaker 18 4
-text 18 4 "의장석. 연단 위에 비상 계엄 포고문 한 장. 의사봉은 내려친 자리에 그대로 놓였다." w=3
+text 18 4 "의장석." w=3 scene=SQS11_GAVEL
 # 의석(바깥 줄이 위로 휘어 반원)
 prop kh_seats 8 9
 prop kh_seats2 12 9
