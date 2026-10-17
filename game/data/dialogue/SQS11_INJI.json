@@ -6,23 +6,25 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "THREW": 8,
-  "SAT": 10,
-  "MENU": 12,
-  "ELEVEN": 13,
-  "DAY": 17,
-  "LEAF": 21,
-  "LIST": 25,
-  "GO": 32,
-  "NIGHT": 35,
-  "GIVEN": 39,
-  "WALK": 41,
-  "WAIT": 43,
-  "AFTER": 46,
-  "SOLD": 48,
-  "RADIO": 51,
-  "SOON": 54,
-  "KEPT": 56
+  "THREW": 9,
+  "SAT": 11,
+  "HELLO": 15,
+  "THREW2": 18,
+  "MENU": 20,
+  "ELEVEN": 21,
+  "DAY": 25,
+  "LEAF": 29,
+  "LIST": 33,
+  "GO": 40,
+  "NIGHT": 43,
+  "GIVEN": 47,
+  "WALK": 49,
+  "WAIT": 51,
+  "AFTER": 54,
+  "SOLD": 56,
+  "RADIO": 59,
+  "SOON": 62,
+  "KEPT": 64
  },
  "ops": [
   {
@@ -52,6 +54,11 @@
   },
   {
    "op": "if",
+   "cond": "SQ_S11_IMET == 1",
+   "to": "HELLO"
+  },
+  {
+   "op": "if",
    "cond": "MQ103_FOUNT >= 1 and SQ_S11_COIN == 0",
    "to": "THREW"
   },
@@ -76,6 +83,10 @@
    "text": "아까 캡 던졌지? 매끈이가 던지는 건 처음 봤어. 장사 잘될 거야."
   },
   {
+   "op": "do",
+   "fx": "SQ_S11_IMET = 1"
+  },
+  {
    "op": "line",
    "who": "N-R02-014",
    "emo": "기본",
@@ -88,6 +99,35 @@
     "start",
     "inji"
    ]
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "if",
+   "cond": "MQ103_FOUNT >= 1 and SQ_S11_COIN == 0",
+   "to": "THREW2"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-014",
+   "emo": "기본",
+   "text": "또 왔네. 앉아. 벤치는 넓어."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "do",
+   "fx": "SQ_S11_COIN = 1"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-014",
+   "emo": "미소",
+   "text": "아까 캡 던졌지? 매끈이가 던지는 건 처음 봤어. 장사 잘될 거야."
   },
   {
    "op": "choice",

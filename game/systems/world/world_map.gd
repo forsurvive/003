@@ -15,6 +15,14 @@ const HAZARD := ["car_wreck", "car_wreck2", "bus_wreck", "convoy_truck", "drum",
 	"rad_puddle", "rad_puddle2", "waste_drum", "rad_cask"]                                 ## 방사능 근원(1-9d): 웅덩이 · 폐기물 드럼 · 차폐 용기
 
 const WDIR := "res://data/world/"
+const SIGN_TEXT := {                              ## 1-B3 문 앞 떠돌이 분필 표식 — 실내 생성 결과에서 뽑았다(거짓말하지 않는다, SD-20 P1). 문마다 글은 굽기가 고른 sign_text, 없을 때만 이것
+	"skull": "문 앞 바닥에 분필 해골. 떠돌이들 말로 '안에 사람 같은 게 있다'.",
+	"claw": "문 앞 바닥에 분필로 그은 발톱 자국 세 줄. 떠돌이들 말로 '짐승 굴'.",
+	"trap": "분필 동그라미 속 톱니. 떠돌이들 말로 '덫 있음'. 누가 한 번 당하고 남겼다.",
+	"live": "분필로 그린 지붕과 연기 한 줄. 떠돌이들 말로 '누가 드나든다'.",
+	"x": "분필 동그라미 속 ✕. 떠돌이들 말로 '헛수고 — 안이 막혔다'.",
+	"water": "분필 물결 세 줄. 떠돌이들 말로 '물 받을 데 있음'.",
+}
 const L_FG := 0                                  ## 바닥·덮개 교대(칸 i: 바닥 2i, 덮개 2i+1)
 const L_SOLID := 3200
 const L_COVER := 4800
@@ -99,7 +107,7 @@ func load_map(map_id: String, st: StoryState = null) -> void:
 		ids.append(str(e["id"]))
 	for e in meta["insets"]:
 		var iid := str(e["id"])
-		var d: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/maps/%s.json" % iid))
+		var d: Dictionary = InteriorMap.read_data(iid)
 		var o := Vector2i(int(e["origin"][0]), int(e["origin"][1]))
 		insets.append({"id": iid, "origin": o, "size": Vector2i(int(e["size"][0]), int(e["size"][1])), "data": d})
 		var sp := "res://assets/maps/%s_struct.png" % iid                  # 손 맵 구조물 한 장(0-10)
@@ -142,6 +150,14 @@ func load_map(map_id: String, st: StoryState = null) -> void:
 				var mo: Array = mm.get("off", [0, 0])
 				dd["props"].append({"name": "door_mat", "x": at.x, "y": at.y + 1, "px": [at.x * T + int(mo[0]), (at.y + 1) * T + 1],
 					"sort_y": (at.y + 1) * T + 4})
+			if door.has("sign"):                                           # 1-B3 문 앞 분필 표식
+				var sa := Vector2i(int(door["sign_at"][0]), int(door["sign_at"][1]))
+				var sn := "chalk_" + str(door["sign"])
+				var sm: Dictionary = prop_meta.get(sn, {})
+				if not sm.is_empty():
+					var so: Array = sm.get("off", [0, 0])
+					dd["props"].append({"name": sn, "x": sa.x, "y": sa.y, "px": [sa.x * T + int(so[0]), sa.y * T + int(so[1])], "sort_y": sa.y * T + 2})
+					dd["texts"].append({"x": sa.x, "y": sa.y, "w": 1, "h": 1, "text": str(door.get("sign_text", SIGN_TEXT.get(str(door["sign"]), "")))})
 			continue
 		var pm: Dictionary = prop_meta.get(str(door["prop"]), {})
 		var off: Array = pm.get("off", [0, 0])

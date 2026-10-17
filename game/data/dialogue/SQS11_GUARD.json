@@ -3,21 +3,28 @@
  "title": "경비 파수-3",
  "loc": "L-R02-29",
  "npc": "N-PS-2",
- "cond": "SQ_S11_GUARD <= 1 or SQ_S11_GUARD == 3",
+ "cond": "SQ_S11_GUARD <= 3",
  "labels": {
   "START": 0,
-  "MENU": 3,
-  "AUTH": 4,
-  "QUERY": 8,
-  "LIST": 13,
-  "FIGHT": 20,
-  "INSIDE": 22
+  "MENU": 4,
+  "AUTH": 5,
+  "QUERY": 9,
+  "LIST": 14,
+  "FIGHT": 21,
+  "INSIDE": 23,
+  "CLOSED": 25,
+  "LIST2": 27
  },
  "ops": [
   {
    "op": "if",
    "cond": "SQ_S11_GUARD == 3",
    "to": "INSIDE"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S11_GUARD == 2",
+   "to": "CLOSED"
   },
   {
    "op": "line",
@@ -191,6 +198,72 @@
   {
    "op": "goto",
    "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-PS-2",
+   "emo": "기본",
+   "text": "조사 종결. 기록은 열람만 하십시오."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "(사망자 명단을 보여 준다)",
+     "tags": [],
+     "cond": "has(\"M-305\") >= 1 and SQ_S11_SHOWN == 0",
+     "fx": "",
+     "to": "LIST2",
+     "id": "SQS11_GUARD:2:0"
+    },
+    {
+     "text": "(물러난다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS11_GUARD:2:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "SQ_S11_SHOWN = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "명단을 얼굴판 앞에 펼친다. 진공관이 이름 열한 줄을 차례로 읽는다."
+  },
+  {
+   "op": "line",
+   "who": "N-PS-2",
+   "emo": "기본",
+   "text": "YD-0233. 해당 판독은 정확했습니다."
+  },
+  {
+   "op": "line",
+   "who": "N-PS-2",
+   "emo": "기본",
+   "text": "해당 판독은 정확했습니다. 해당 판독은…"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "같은 말이 세 번 되풀이되다 끊긴다. 가슴판 번호 YD-0233 — 단말 별첨의 판독 기체 번호다."
+  },
+  {
+   "op": "cmd",
+   "name": "s11",
+   "args": [
+    "march"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
   },
   {
    "op": "end"

@@ -25,6 +25,8 @@ const NEAR_R := 8.0                         ## 인지영이 '곁에 있다'
 const MEET_R := 6.0                         ## 순찰 분대장이 말을 거는 거리
 const WAKE_R := 3.0                         ## 경비 파수가 깨는 거리(웅크리면 1.5)
 const GUARD_CELL := Vector2i(4, 10)
+const HUB := Vector2i(812, 1084)            ## 여의도 환승센터 터(L-R02-28) — 이 근처에서만 판정 없이 지하로 숨는다
+const PLAZA := Vector2i(789, 1098)          ## 여의도 광장(2077-03-11 행진 자리) — 인지영 한 줄
 const KEY_BOX := Vector2i(19, 3)            ## K-29 무기 보관함(무기고 안)
 const PRINTER := Vector2i(6, 3)
 const STACK_DOOR := Vector2i(24, 9)         ## KH-03 제7 서고 문
@@ -223,6 +225,10 @@ func _escort_tick() -> void:
 		host.refresh_npcs()
 		host.hint("인지영이 걸음을 멈춘다. \"그 종이는 먼저 간 데로 갔네. 나는 벤치로 돌아갈게.\"", 6.0)
 		return
+	if host.map is WorldMap and q("ISAID") == 0 and _inji_dist() <= NEAR_R \
+			and Vector2(host.map.tile_of(host.player.loco.logical)).distance_to(Vector2(PLAZA)) <= 12.0:
+		_sq("ISAID", 1)                                                    # 그날의 자리를 지나며(재미 검수 F7)
+		_say("여기야. 3월 11일엔 여기 천팔백 명이 서 있었어. 지금은 착륙장이래.", 6.0)
 	if _mate().is_empty() and not host.combat.mates.away.has(INJI) and not _busy():
 		host._bring_buddy(INJI)                                            # 불러오기 뒤 · 맵을 건넌 뒤 다시 곁에
 		host.combat.mates.set_mode(INJI, "escort")
@@ -285,8 +291,10 @@ func _squad_tick() -> void:
 		_squad_live()
 		return
 	var h := _hour()
-	if h < 6 or h >= 20 or q("PDAY") == day() or _busy():
+	if h < 6 or h >= 20 or _busy():
 		return
+	if q("PDAY") == day() and (q("PCOUNT") >= 2 or Clock.abs_min(host.date_text) < q("PNEXT")):
+		return                                                             # 하루 두 번까지 — 숨어서 넘긴 뒤 한 시간이 지나면 다른 분대가 설 수 있다(재미 검수 ③)
 	if host.enc_live != null and host.enc_live.chasing():
 		return                                                             # 생포 추적대가 떠 있으면 미룬다(P4)
 	var t := host.map.tile_of(host.player.loco.logical)
@@ -312,9 +320,13 @@ func _squad_spawn(kind: int) -> void:
 	var c := _free_tile(host.map.tile_of(at))
 	if c.x < 0:
 		return
+	_sq("PCOUNT", q("PCOUNT") + 1 if q("PDAY") == day() else 1)
 	_sq("PDAY", day())
 	_sq("PKIND", kind)
 	_sq("PSAID", 0)
+	_sq("HIDEF", 0)
+	var mt := host.map.tile_of(me)
+	_sq("NEARHUB", 1 if Vector2(mt).distance_to(Vector2(HUB)) <= 14.0 else 0)
 	var men: Array = []
 	var lead: Enemy = null
 	for k in r.randi_range(3, 4):                                         # 원문 '계엄군 분대 4'(분대장 1 + 계엄병 2~3)
@@ -431,17 +443,20 @@ func _squad_done(why: String) -> void:
 func _patrol(what: String) -> void:
 	match what:
 		"talk", "pass":
+			_sq("PCOUNT", 2)
 			squad["state"] = "leave"
 			squad["t"] = 0.0
 			_squad_done("통과")
 		"hide":
-			_fade(30, "환승센터 계단 아래에서 숨을 죽인다. 군화 소리가 멀어진다.")
+			_sq("PNEXT", Clock.abs_min(host.date_text) + 90)
+			_fade(30, "숨을 죽인다. 군화 소리가 멀어진다.")
 			_squad_done("숨음")
 		"night":
 			var h := _hour()
 			_fade(maxi(30, (20 - h) * 60 - _mm()) if h < 20 else 30, "해가 진다. 여의도의 낮 순찰이 초소로 돌아간다.")
 			_squad_done("밤까지")
 		"fight":
+			_sq("PCOUNT", 2)
 			_squad_hostile()
 		"give":                                                            # 반출 검문에 원본을 내줬다 — 비상정부가 가졌다(행방 1)
 			_squad_done("회수")
@@ -496,6 +511,7 @@ func _guard_spawn(at: Vector2) -> void:
 func _on_down(e: Enemy) -> void:
 	if e.cmb.dead and e.has_meta("s11g"):
 		st.boxes["s11guard"] = {"open": true}
+		host.hint("부서진 가슴판이 굴러온다 — 'YD-0233'. 단말 별첨의 판독 기체 번호다.", 6.0)
 		_log("경비 파수 파괴")
 
 
@@ -628,9 +644,7 @@ func _on_day(d: int) -> void:
 			host.hint("여의도에서 '국회 문서 반출자를 찾는다'는 말이 돈다.", 6.0)
 		if held >= KEEP_DAYS:                                              # 7일 소지 → '보관'(원문 단계 100)
 			host.hint("원본을 든 지 이레. 이 종이는 이제 당신이 보관한다.", 6.0)
-			if v("SQH_LIST11") < 0 and _has(LIST_ID):
-				_list_to(0, "7일 보관")
-			_doc_to(0, "7일 보관")
+			_doc_to(0, "7일 보관")                                          # 명단은 건드리지 않는다(재미 검수 ① — 미룬 사람도 낭독은 남는다)
 
 
 # ---------------------------------------------------------------- 원고 명령(@cmd s11 …)

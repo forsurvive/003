@@ -349,9 +349,10 @@ func test_sq_s11_keep_7days(t) -> void:
 	t.ok(_has(_opts(st, "SQS11_BOX", "EMPTY"), "되돌려 넣는다"), "빈 상자 위 의사록 쪽지 판")
 	st.vars.set_v("GAME_DAY", 11)
 	r[2]._on_day(11)
-	t.eq([_v(st, "SQH_RECESS"), _v(st, "SQE_RECESS"), _v(st, "SQH_LIST11"), _v(st, "SQE_LIST11")], [0, 1, 0, 1], "7일 → 원본 · 명단 보관")
-	t.eq(st.quests.stage("SQ-S11"), 100, "보관으로 자동 종료")
+	t.eq([_v(st, "SQH_RECESS"), _v(st, "SQE_RECESS"), _v(st, "SQH_LIST11")], [0, 1, -1], "7일 → 원본만 보관(명단은 그대로 — 재미 검수 ①)")
+	t.ok(st.quests.stage("SQ-S11") < 100, "명단이 남아 있으면 열린 채")
 	t.eq([_items(st, "M-306"), _items(st, "M-305")], [1, 1], "보관 = 주인공 손에")
+	t.ok(_has(_opts(st, "SQS11_INJI", "MENU"), "사망자 명단"), "미룬 사람도 낭독은 남는다")
 
 
 func test_sq_s11_patrol_and_misc(t) -> void:

@@ -399,6 +399,10 @@ def _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kin
                 for k in ("arm", "who", "dir", "stance"):              # 0-9: 든 무기(baton|pistol) · 인물 ID(이름표) · 처음 방향 · hold(제자리)
                     if opt.get(k):
                         e[k] = opt[k]
+                if opt.get("sleep"):                                   # 1-B4 실내 상황: 자는 중(맞거나 소리에 깬다 — Enemy.setup_enemy)
+                    e["sleep"] = True
+                if opt.get("det"):                                     # 감지 배수(먹는 중 0.5 등)
+                    e["det"] = float(opt["det"])
                 if opt.get("route"):                                   # 순찰 경로: x,y,초;… (닿으면 그 초만큼 서서 둘러본다)
                     e["route"] = []
                     for part in [p for p in opt["route"].split(";") if p]:

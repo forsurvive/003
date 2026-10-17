@@ -70,8 +70,8 @@ func setup(w, map_id: String, camera: Camera2D = null) -> void:
 	var p := "res://data/maps/%s.json" % map_id
 	if w is WorldMap:
 		marks = w.marks                                                # 월드(1-1): 표지는 월드 좌표('구역:이름'과 이름 둘 다)
-	elif FileAccess.file_exists(p):
-		marks = JSON.parse_string(FileAccess.get_file_as_string(p))["marks"]
+	elif FileAccess.file_exists(p) or InteriorMap.exists(map_id):
+		marks = InteriorMap.read_data(map_id).get("marks", {})
 	cam = camera
 	if cam == null:
 		cam = Camera2D.new()

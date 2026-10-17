@@ -11,7 +11,10 @@ static func _load() -> void:
 		return
 	var idx: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/maps/_index.json"))["maps"]
 	for id in idx:
-		var d: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/maps/%s.json" % id))
+		if (idx[id] as Dictionary).has("pack"):
+			_edges[id] = [["W", Vector2i(-1, -1)]]                          # 생성 실내(1-B): 출구는 월드 하나뿐 — 시작 때 7천여 장을 풀지 않는다
+			continue
+		var d: Dictionary = InteriorMap.read_data(id)
 		_edges[id] = []
 		for e in d["exits"]:
 			if idx.has(e["to"]):

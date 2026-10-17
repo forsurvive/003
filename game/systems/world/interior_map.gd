@@ -67,14 +67,49 @@ static func _load_static() -> void:
 
 
 static func exists(map_id: String) -> bool:
-	return FileAccess.file_exists("res://data/maps/%s.json" % map_id)
+	return FileAccess.file_exists("res://data/maps/%s.json" % map_id) or _gen().has(map_id)
+
+
+static var _gen_idx := {}                       ## 생성 실내(1-B) ID -> [묶음 안 위치, 압축 길이, 원래 길이]
+
+
+static func _gen() -> Dictionary:
+	if _gen_idx.is_empty() and FileAccess.file_exists("res://data/maps/_index.json"):
+		var idx: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/maps/_index.json"))["maps"]
+		for k in idx:
+			if (idx[k] as Dictionary).has("pack"):
+				_gen_idx[k] = idx[k]["pack"]
+		if _gen_idx.is_empty():
+			_gen_idx[""] = []                                              # 묶음 없음 표지(다시 읽지 않게)
+	return _gen_idx
+
+
+## 맵 자료 한 장: 손 맵은 낱장 JSON, 생성 실내(G-x-y)는 gen.bin 묶음에서 풀어 읽는다(1-B — 7천여 장을 낱장으로 두지 않는다)
+static func read_data(map_id: String) -> Dictionary:
+	var p := "res://data/maps/%s.json" % map_id
+	if FileAccess.file_exists(p):
+		return JSON.parse_string(FileAccess.get_file_as_string(p))
+	var e: Variant = _gen().get(map_id)
+	if e == null or (e as Array).is_empty():
+		return {}
+	var f := FileAccess.open("res://data/maps/gen.bin", FileAccess.READ)
+	if f == null:
+		return {}
+	f.seek(int(e[0]))
+	var raw := f.get_buffer(int(e[1])).decompress(int(e[2]), FileAccess.COMPRESSION_DEFLATE)
+	return JSON.parse_string(raw.get_string_from_utf8())
+
+
+## 생성 실내 ID 전부(벤치 · 시험)
+static func gen_ids() -> Array:
+	return _gen().keys().filter(func(k): return str(k) != "")
 
 
 ## st가 있으면 소품·문패의 cond(시대·퀘스트)를 보고 고른다. 없으면 조건부 소품은 모두 뺀다(미리보기·시험)
 func load_map(map_id: String, st: StoryState = null) -> void:
 	_load_static()
 	id = map_id
-	data = JSON.parse_string(FileAccess.get_file_as_string("res://data/maps/%s.json" % map_id))
+	data = read_data(map_id)
 	size = Vector2i(int(data["size"][0]), int(data["size"][1]))
 	marks = data["marks"]
 	ext = bool(data.get("ext", false))

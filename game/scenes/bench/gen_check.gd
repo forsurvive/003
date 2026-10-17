@@ -32,14 +32,11 @@ func _ready() -> void:
 	host.hud_on = true
 	host.date_text = "2277. 10. 25.  14:00"
 	var want := {}                                                    # 종류(가게는 이름 끝)마다 하나
-	var dir := DirAccess.open("res://data/maps")
-	for f in dir.get_files():
-		if not f.begins_with("G-") or not f.ends_with(".json"):
-			continue
-		var d: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/maps/" + f))
+	for f in InteriorMap.gen_ids():                                   # 1-B: 생성 실내는 gen.bin 묶음 안
+		var d: Dictionary = InteriorMap.read_data(f)
 		var k := str(d.get("gen", ""))
 		if k == "shop":
-			for suf in ["슈퍼", "상회", "마트", "약국", "철물", "공구", "세탁", "크리닝", "분식", "김밥"]:
+			for suf in ["슈퍼", "상회", "마트", "약국", "철물", "공구", "세탁", "크리닝", "분식", "김밥", "다방", "커피숍", "미용실", "이용원", "비디오", "대여점", "노래방", "노래연습장"]:
 				if str(d["name"]).ends_with(suf):
 					k = "shop_" + suf
 		if str(d["name"]) == "버려진 집":
@@ -48,12 +45,18 @@ func _ready() -> void:
 			k += "_bath"
 		if not want.has(k):
 			want[k] = str(d["id"])
+		var rg: Variant = d.get("region", "")                          # 1-B: 권역마다 한 장 · 사연 방 · 장면 방
+		var rk := "reg_" + (str(rg) if rg is String else str(int(rg)))
+		if not want.has(rk):
+			want[rk] = str(d["id"])
+		if d.has("house") and str(d["house"]["mode"]) != "skim" and not want.has("house_" + str(d["house"]["mode"])):
+			want["house_" + str(d["house"]["mode"])] = str(d["id"])
 	for k in want:
 		queue.append(want[k])
 	queue.sort()
 	PlaceLog.load_db()
 	for d in PlaceLog.doors:                                          # 봉천 가까운 건물 문 하나(월드 출입 확인)
-		if str(d.get("kind", "")) == "facade" and int(d.get("lock", 0)) == 0:
+		if str(d.get("kind", "")) == "facade" and int(d.get("lock", 0)) == 0 and d.has("sign"):   # 1-B3: 문 앞 표식이 있는 문
 			if door.is_empty() or Vector2(int(d["at"][0]), int(d["at"][1])).distance_to(Vector2(892, 1362)) < Vector2(int(door["at"][0]), int(door["at"][1])).distance_to(Vector2(892, 1362)):
 				door = d
 	print("종류 %d: %s" % [queue.size(), str(want.keys())])
@@ -180,11 +183,9 @@ func _shot(tag: String) -> void:
 
 ## 쪽지 따라가기 한 쌍: 숨겨 둔 상자가 있는 가게와, 그 가게 이름을 적은 쪽지가 있는 집
 func _find_stash() -> void:
-	var dir := DirAccess.open("res://data/maps")
 	var maps := {}
-	for f in dir.get_files():
-		if f.begins_with("G-") and f.ends_with(".json"):
-			maps[f.get_basename()] = JSON.parse_string(FileAccess.get_file_as_string("res://data/maps/" + f))
+	for f in InteriorMap.gen_ids():
+		maps[f] = InteriorMap.read_data(f)
 	for k in maps:
 		for b in maps[k]["boxes"]:
 			if str(b["kind"]) == "stash" and stash_dst == "":

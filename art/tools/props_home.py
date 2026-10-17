@@ -721,6 +721,51 @@ def crate_army():
     return im
 
 
+# ================================================================================================ 1-B3 문 앞 분필 표식(떠돌이 표식 — 실내 생성 결과에서 뽑는다)
+def chalk_sign(kind="x"):
+    """문 앞 바닥의 떠돌이 분필 표식(바닥 장식, 1칸): x 막힘(동그라미 속 ✕) · skull 사람형 · 구울 · claw 짐승 굴 · trap 덫 · water 물 · live 사람 삶(지붕과 연기).
+    분필은 두 겹(굵은 회백 + 가는 흰)으로 긋고 낱알을 빼거나 어둡게 해 거친 결을 낸다. 표식은 거짓말하지 않는다(P1)."""
+    im = img(30, 26)
+    d = ImageDraw.Draw(im)
+    W_ = C("P07")                                                       # 번진 분필(어두운 쪽) · 그은 분필(밝은 쪽) — 팔레트 불투명만
+    S_ = C("P09")
+
+    def ln(pts, w=2):
+        d.line(pts, fill=W_, width=w + 1)
+        d.line(pts, fill=S_, width=1)
+    if kind == "x":
+        d.ellipse([3, 1, 26, 24], outline=W_, width=2); d.ellipse([4, 2, 25, 23], outline=S_, width=1)
+        ln([9, 7, 20, 18]); ln([20, 7, 9, 18])
+    elif kind == "skull":
+        d.ellipse([8, 0, 21, 12], outline=W_, width=2); d.ellipse([9, 1, 20, 11], outline=S_, width=1)
+        d.rectangle([11, 11, 18, 15], outline=S_)
+        d.rectangle([10, 5, 12, 7], fill=S_); d.rectangle([17, 5, 19, 7], fill=S_)
+        d.point((14, 13), fill=S_)
+        ln([4, 17, 25, 24]); ln([25, 17, 4, 24])
+    elif kind == "trap":
+        d.ellipse([3, 2, 26, 24], outline=W_, width=2); d.ellipse([4, 3, 25, 23], outline=S_, width=1)
+        ln([5, 13, 8, 8, 11, 17, 14, 8, 17, 17, 20, 8, 23, 17, 25, 12], 1)
+    elif kind == "claw":                                                # 짐승 굴: 비스듬한 발톱 자국 셋
+        for k in range(3):
+            ln([6 + k * 7, 3, 12 + k * 7, 22], 1)
+        d.ellipse([22, 18, 26, 22], outline=S_)
+    elif kind == "water":
+        for y in (5, 12, 19):
+            ln([3, y + 2, 7, y, 11, y + 2, 15, y, 19, y + 2, 23, y, 27, y + 2], 1)
+    else:                                                               # live
+        ln([5, 13, 15, 4, 25, 13]); ln([8, 13, 8, 23]); ln([22, 13, 22, 23]); ln([8, 23, 22, 23])
+        d.rectangle([13, 17, 16, 22], outline=S_)
+        ln([20, 6, 21, 3, 23, 1], 1)
+    rnd = random.Random({"x": 1, "skull": 2, "trap": 3, "water": 4, "live": 5, "claw": 6}[kind])
+    px = im.load()
+    for _ in range(70):                                                 # 분필 결: 낱알 빼기 · 옅게
+        x, y = rnd.randrange(30), rnd.randrange(26)
+        r_, g_, b_, a_ = px[x, y]
+        if a_:
+            px[x, y] = (0, 0, 0, 0) if rnd.random() < 0.5 else C("P06")
+    return im
+
+
 def _r(fn, fw, fh, kind="floor", down=2, dx=0, dy=0):
     return {"fn": fn, "foot": (fw, fh), "kind": kind, "down": down, "dx": dx, "dy": dy}
 
@@ -756,6 +801,7 @@ PROPS_HOME = {
     "steel_rack": _r(steel_rack, 2, 1, down=1),
     "pallet_sacks": _r(pallet_sacks, 1, 1),
     "door_mat": _r(door_mat, 0, 0, "deco", dx=2, dy=12),
+    **{"chalk_" + k: _r(lambda k=k: chalk_sign(k), 0, 0, "deco", dx=1, dy=3) for k in ("x", "skull", "claw", "trap", "water", "live")},   # 1-B3 문 앞 표식
     "anchor_desk": _r(anchor_desk, 2, 1),
     "crate_army": _r(crate_army, 1, 1),
     "tv_camera": _r(tv_camera, 1, 1),

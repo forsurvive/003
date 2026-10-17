@@ -42,6 +42,12 @@ var rules: Encounters
 var cur := {}
 var flash_t := 0.0                                ## 방위 링 붉은 점멸 남은 초
 var walkers: Array = []                           ## 끝난 뒤 떠나가는 비적대 개체 [[Enemy, 남은 초, 목적지]]
+## 쫓기다 생성 건물로 들어갔다(1-B4, 설계안 §7.3): {"re", "ids", "beast", "map"(실내 ID), "door"(월드 문 앞 칸), "t", "next"(긁는 소리)}
+## 저장하지 않는다 — 불러오면 무리는 잊힌다(길 위 RE와 같다, SD-22 §7 ④)
+var pursuit := {}
+const PURSUE_R := 12.0                            ## 문 들어설 때 이 안(타일)의 적대만 쫓아온다
+const BEAST_WAIT := 60.0                          ## 짐승이 문 앞에서 기다리는 실제 초
+const BEASTS := ["CR-002", "CR-095", "CR-097", "CR-104", "CR-105", "CR-106", "CR-108", "CR-136", "CR-107"]
 var _path_t := 0.0
 var _rng := RandomNumberGenerator.new()
 
@@ -89,6 +95,8 @@ func _hour() -> int:
 func tick(dt: float) -> void:
 	flash_t = maxf(0.0, flash_t - dt)
 	_tick_walkers(dt)
+	if not pursuit.is_empty():
+		_pursuit_tick(dt)
 	if not cur.is_empty():
 		_tick_cur(dt)
 		return
@@ -121,11 +129,25 @@ func on_arrive() -> void:
 		start(req)
 
 
-## 맵이 바뀌었다(문 전환): 전투 개체는 전투가 치웠다. 다가오던 무리·세운 소품은 사라진다(실내로 들어가면 놓침)
-func on_map_changed() -> void:
+## 맵이 바뀌었다(문 전환): 다가오던 무리·세운 소품은 사라진다. 다만 싸우던 적대가 문 가까이 있었고 들어간 곳이 생성 건물이면
+## 쫓아온다(1-B4) — 사람형은 몇 초 뒤 일부가 문을 열고 들어오고, 짐승은 문 앞에 남는다. 추적대(이야기 사건, P4)는 퀘스트 규칙이 먼저라 넘긴다
+func on_map_changed(to_id := "") -> void:
 	walkers.clear()
+	if not pursuit.is_empty() and str(to_id) != "W" and str(to_id) != str(pursuit["map"]):
+		pursuit = {}                                                      # 다른 곳으로 갔다(실내 → 실내)
 	if cur.is_empty():
 		return
+	if str(to_id).begins_with("G-") and str(cur.get("phase", "")) == "live" and str(cur.get("cat", "")) != "tracker" and not host.story_hold:
+		var me: Vector2 = host.player.loco.logical
+		var ids: Array = []
+		var beast := true
+		for e in cur.get("foes", []):
+			if is_instance_valid(e) and not e.cmb.dead and "player" in e.foes and e.loco.logical.distance_to(me) <= PURSUE_R * 32.0:
+				ids.append(str(e.get_meta("enemy_id", "")))
+				beast = beast and str(e.get_meta("enemy_id", "")) in BEASTS
+		if not ids.is_empty():
+			pursuit = {"re": str(cur["re"]), "cat": str(cur["cat"]), "ids": ids, "beast": beast, "map": str(to_id),
+				"door": host.map.tile_of(me), "t": 0.0, "next": 2.0, "in": _rng.randf_range(3.0, 6.0)}
 	_despawn_actors()
 	cur["props"] = []                                                   # 맵이 통째로 바뀌었다(소품 노드도 함께 사라졌다)
 	_end("lost")
@@ -698,6 +720,54 @@ func _leave(dt: float) -> void:
 
 
 ## 싸움 살피기: 주인공을 노리는 적대가 다 쓰러지면 끝(교전 비적대 생존자는 걸어 떠난다), 모두 멀어지고 시야가 끊기면 놓침(기억)
+## 쫓김 이어짐(1-B4): 실내에선 사람형이 들어오고(문 앞 칸) 짐승은 긁는다 · 밖으로 나오면 기다리던 짐승이 문 앞에 · 시간이 지나면 흩어짐
+func _pursuit_tick(dt: float) -> void:
+	var p := pursuit
+	p["t"] = float(p["t"]) + dt
+	var in_map: bool = host.map != null and not (host.map is WorldMap) and str(host.map.id) == str(p["map"])
+	if in_map and not bool(p["beast"]):
+		if float(p["t"]) >= float(p["in"]):
+			var n := maxi(1, int(ceil((p["ids"] as Array).size() * 0.6)))
+			var m: Array = host.map.marks.get("from_W", [])
+			if m.is_empty():
+				pursuit = {}
+				return
+			var at := Vector2(int(m[0]) * 32 + 16, int(m[1]) * 32 + 16)
+			for i in n:
+				var e: Enemy = host.combat.spawn(str(p["ids"][i]), at + Vector2((i % 2) * 32, 0), host.map, host.st,
+					{"lv": host.level(), "team": "enemy", "foes": ["player", "ally"], "morale": true})
+				e.brain.state = AIBrain.S.COMBAT
+				e.brain.gauge = 100.0
+			host.hint("문이 벌컥 열린다 — 쫓아 들어왔다.", 3.0)
+			rules.remember_pack(str(p["re"]), [])
+			pursuit = {}
+		return
+	if in_map:                                                            # 짐승: 문 밖에서 긁는다
+		if float(p["t"]) >= float(p["next"]) and float(p["t"]) < BEAST_WAIT:
+			p["next"] = float(p["t"]) + 9.0
+			host.hint("문 밖에서 긁는 소리가 난다. 아직 기다린다.", 2.5)
+		elif float(p["t"]) >= BEAST_WAIT:
+			host.hint("긁는 소리가 멎었다. 발소리가 멀어진다.", 3.0)
+			if str(p["cat"]) in ["creature", "raider", "clash"]:
+				rules.remember_pack(str(p["re"]), p["ids"])               # 놓친 무리로 기억(SD-22 §3.5)
+			pursuit = {}
+		return
+	if host.map is WorldMap and bool(p["beast"]) and float(p["t"]) < BEAST_WAIT:   # 같은 문으로 나왔다: 기다리던 짐승
+		var door: Vector2i = p["door"]
+		var me := _here()
+		if me.distance_to(door) <= 3.0:
+			var spots := _cluster(_snap_walk(door + Vector2i(0, 3), door), (p["ids"] as Array).size(), 1)
+			for i in mini(spots.size(), (p["ids"] as Array).size()):
+				var e: Enemy = host.combat.spawn(str(p["ids"][i]), Vector2(spots[i]) * 32.0 + Vector2(16, 16), host.map, host.st,
+					{"lv": host.level(), "team": "enemy", "foes": ["player", "ally"], "morale": true})
+				e.brain.state = AIBrain.S.COMBAT
+				e.brain.gauge = 100.0
+			host.hint("문 앞에서 기다리고 있었다!", 3.0)
+		pursuit = {}
+	elif host.map is WorldMap:
+		pursuit = {}
+
+
 func _fight_check() -> void:
 	_flee(get_process_delta_time())
 	if cur.is_empty():

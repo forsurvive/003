@@ -7,21 +7,22 @@
  "labels": {
   "START": 0,
   "AGAIN": 7,
-  "MENU": 8,
-  "WHAT": 9,
-  "SEE": 15,
-  "SHOWLEAF": 17,
-  "LEAFOPEN": 18,
-  "OPEN": 21,
-  "NOPE": 24,
-  "REPORT": 26,
-  "PLATE": 30,
-  "RED": 35,
-  "RETURN": 39,
-  "KEEP": 43,
-  "CAUGHT": 47,
-  "NEED": 51,
-  "BACK": 54
+  "MENU": 9,
+  "WHAT": 10,
+  "SEE": 16,
+  "SHOWLEAF": 18,
+  "LEAFOPEN": 19,
+  "OPEN": 22,
+  "NOPE": 25,
+  "REPORT": 27,
+  "PLATE": 31,
+  "RED": 36,
+  "RETURN": 40,
+  "KEEP": 44,
+  "CAUGHT": 48,
+  "NEED": 52,
+  "BACK": 55,
+  "GAV": 57
  },
  "ops": [
   {
@@ -60,6 +61,11 @@
   {
    "op": "goto",
    "to": "MENU"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S11_GAVEL == 1",
+   "to": "GAV"
   },
   {
    "op": "line",
@@ -462,6 +468,26 @@
   {
    "op": "goto",
    "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "SQ_S11_GAVEL = 2"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-027",
+   "emo": "놀람",
+   "text": "누가 의사봉을 쳤더군. 여기까지 울렸어. 정족수 미달이야."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-027",
+   "emo": "미소",
+   "text": "…그래도 이백 년 만에 난 소리야."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
   },
   {
    "op": "end"

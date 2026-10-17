@@ -1,0 +1,75 @@
+{
+ "id": "SQS11_GAVEL",
+ "title": "의장석",
+ "loc": "L-R02-01",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "HIT": 2
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "의장석. 연단 위에 비상 계엄 포고문 한 장. 의사봉은 내려친 자리에 그대로 놓였다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "의사봉을 친다",
+     "tags": [],
+     "cond": "SQ_S11_GAVEL == 0",
+     "fx": "",
+     "to": "HIT",
+     "id": "SQS11_GAVEL:1:0"
+    },
+    {
+     "text": "됐어",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS11_GAVEL:1:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "SQ_S11_GAVEL = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "의사봉이 내려친 자리를 다시 친다. 쿵. 돔 틈에서 비둘기 두 마리가 날아오른다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "전광판이 한 번 깜박인다 — '재석 1'. 곧 꺼진다."
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S11_CLAUSE == 0",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "제3항. '계엄이 해제되면 국회는 지체 없이 재개한다.' 해제된 적은 없다. 그래도 소리는 났다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S11.txt"
+}

@@ -6,7 +6,7 @@
 문 일부는 잠겼다(자물쇠 25·50 — 1-5 자물쇠 따기). 실내에서 나오면 그 문 앞 칸으로 돌아간다(출구 표지 '@x,y').
 권역: 1막(R01·R02)만. 다른 권역은 그 막 단계에서 연다.
 """
-import os, sys, json, glob, random, tempfile, re
+import os, sys, json, glob, random, tempfile, zlib, re
 from collections import deque
 
 sys.path.insert(0, os.path.dirname(__file__))
@@ -15,11 +15,29 @@ import map_compile as MC
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 OUT = os.path.join(ROOT, "game", "data", "maps")
 ROOMS = os.path.join(ROOT, "script", "world", "rooms.txt")
-REGIONS = ("R01", "R02")
-RATE = {"villa": 0.25, "house": 0.6, "apt": 0.5, "gov": 1.0, "shop": 0.16, "office": 0.6, "factory": 0.6}
+HOUSE = os.path.join(ROOT, "script", "world", "households.txt")   # 1-B2 가구 생성기 재료(사건 묶음 · 시간 층 · 건물 이름)
+REGIONS = ("R01", "R02", "R03", "R04", "R05", "R06", "R07", "R08", "R09", "R10", "R11", "HR", 0)   # 1-B(사용자 지시 2026-10-17): 전 권역 — 0 = 권역 표 밖(외곽 · 경계)
+RATE = {"villa": 1.0, "house": 1.0, "apt": 1.0, "gov": 1.0, "shop": 1.0, "office": 1.0, "factory": 1.0}   # 1-B: 모든 건물을 들어가 볼 수 있게(옛 값 빌라 .25 · 가게 .16 · 주택 · 사무 · 창고 .6)
+GEN_VER = 2                                                           # 생성기 판 — 틀 · 글 · 규칙을 바꾸면 올린다(캐시가 버려진다)
+# 권역 실내 적(SD-14 · SD-08 권역 결 — 그림 · 자료가 있는 것만, 없는 것은 같은 계열로 대체 · 정합 기록): 위협 → [(적, 확률, 최소, 최대)] — 앞에서부터 굴려 하나만
+ENEMY_ROLL = {
+    "R01": {1: [("CR-002", 0.3, 1, 2)], 2: [("CR-095", 0.35, 1, 3), ("CR-002", 0.25, 1, 2)], 3: [("CR-200", 0.15, 1, 2), ("CR-095", 0.35, 2, 3)]},
+    "R02": {1: [("CR-002", 0.3, 1, 2)], 2: [("CR-095", 0.35, 1, 3), ("CR-002", 0.25, 1, 2)], 3: [("CR-200", 0.3, 1, 2), ("CR-095", 0.35, 2, 3)]},
+    "R03": {1: [("CR-136", 0.25, 1, 2), ("CR-002", 0.25, 1, 2)], 2: [("CR-136", 0.3, 1, 2), ("CR-095", 0.3, 1, 3)], 3: [("CR-200", 0.3, 1, 3), ("CR-095", 0.3, 2, 3)]},
+    "R04": {1: [("CR-136", 0.3, 1, 2)], 2: [("CR-136", 0.3, 1, 3), ("CR-095", 0.3, 1, 2)], 3: [("CR-200", 0.3, 1, 2), ("CR-136", 0.3, 2, 3)]},
+    "R05": {1: [("CR-002", 0.3, 1, 2)], 2: [("CR-200", 0.25, 1, 2), ("CR-305", 0.12, 1, 1)], 3: [("CR-201", 0.25, 1, 2), ("CR-200", 0.3, 2, 3), ("CR-305", 0.15, 1, 1)]},
+    "R06": {1: [("CR-002", 0.3, 1, 2)], 2: [("CR-305", 0.15, 1, 1), ("CR-095", 0.3, 1, 3)], 3: [("CR-423", 0.2, 1, 2), ("CR-305", 0.2, 1, 2), ("CR-200", 0.3, 1, 3)]},
+    "R07": {1: [("CR-002", 0.25, 1, 2)], 2: [("CR-305", 0.15, 1, 1), ("CR-095", 0.3, 1, 2)], 3: [("CR-305", 0.2, 1, 2), ("CR-200", 0.3, 1, 3)]},
+    "R08": {1: [("CR-002", 0.3, 1, 3)], 2: [("CR-095", 0.4, 1, 3), ("CR-002", 0.3, 1, 2)], 3: [("CR-097", 0.08, 1, 1), ("CR-423", 0.18, 1, 2), ("CR-095", 0.4, 2, 4)]},
+    "R09": {1: [("CR-136", 0.25, 1, 1), ("CR-002", 0.25, 1, 2)], 2: [("CR-104", 0.3, 1, 2), ("CR-136", 0.3, 1, 2)], 3: [("CR-105", 0.25, 1, 2), ("CR-104", 0.3, 2, 3)]},
+    "R10": {1: [("CR-002", 0.3, 1, 2)], 2: [("CR-104", 0.25, 1, 2), ("CR-136", 0.3, 1, 2)], 3: [("CR-105", 0.2, 1, 2), ("CR-104", 0.3, 2, 3)]},
+    "R11": {1: [("CR-002", 0.3, 1, 2)], 2: [("CR-305", 0.2, 1, 1), ("CR-104", 0.3, 1, 2)], 3: [("CR-305", 0.25, 1, 2), ("CR-105", 0.25, 1, 2)]},
+    "HR": {1: [("CR-095", 0.3, 1, 2)], 2: [("CR-095", 0.35, 1, 3)], 3: [("CR-200", 0.3, 1, 2), ("CR-095", 0.3, 2, 3)]},
+}
 SHOP_PRE = ["행복", "대박", "새마을", "온누리", "희망", "튼튼", "제일", "깔끔", "백조", "엄마손", "골목", "동네", "우리", "만물", "별빛", "꼬마",
             "한빛", "보람", "새벽", "무지개", "은하", "소망", "다정", "늘봄", "해뜨는", "형제", "삼거리", "언덕", "둥지", "단골"]
-SHOP_SUF = {"conv": ["슈퍼", "상회", "마트"], "pharm": ["약국"], "hw": ["철물", "공구"], "laundry": ["세탁", "크리닝"], "snack": ["분식", "김밥"]}
+SHOP_SUF = {"conv": ["슈퍼", "상회", "마트"], "pharm": ["약국"], "hw": ["철물", "공구"], "laundry": ["세탁", "크리닝"], "snack": ["분식", "김밥"],
+            "tea": ["다방", "커피숍"], "salon": ["미용실", "이용원"], "video": ["비디오", "비디오 대여점"], "karaoke": ["노래방", "노래연습장"]}
 CACHE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "_cache", "gen_entries.json")
 
 
@@ -37,6 +55,175 @@ def read_pools():
     return pools
 
 
+def read_households():
+    """households.txt → {이름: {성|남|여|아이: [..]}, 생업: {권역: [..]}, 사건: [{name, cond, lines: [(자리, 글)]}], 층2/층3: [(소품, 글)], 이름표: {..}}"""
+    hh = {"이름": {}, "생업": {}, "사건": [], "층2": [], "층3": [], "이름표": {}}
+    cur = None
+    for raw in open(HOUSE, encoding="utf-8").read().split("\n"):
+        s = raw.strip()
+        if not s or s.startswith("#"):
+            continue
+        if s.startswith("@"):
+            head = s[1:].split()
+            k = head[0]
+            if k == "사건":
+                m = re.match(r"@사건 (.+?)(?: \[(.+)\])?$", s)
+                cur = {"name": m.group(1), "cond": m.group(2) or "", "lines": []}
+                hh["사건"].append(cur)
+            elif k in ("층2", "층3"):
+                cur = hh[k]
+            else:
+                cur = (k, head[1])
+            continue
+        if isinstance(cur, dict):
+            slot, txt = [t.strip() for t in s.split("|", 1)]
+            cur["lines"].append((slot, txt))
+        elif isinstance(cur, list):
+            pr, txt = [t.strip() for t in s.split("|", 1)]
+            cur.append((pr, txt))
+        elif cur and cur[0] == "이름":
+            hh["이름"][cur[1]] = s.split()
+        elif cur and cur[0] == "생업":
+            hh["생업"][cur[1]] = [t.strip() for t in s.split("·")]
+        elif cur and cur[0] == "이름표":
+            hh["이름표"][cur[1]] = s.split()
+    return hh
+
+
+NUM_KO = {1: "하나", 2: "둘", 3: "셋", 4: "넷", 5: "다섯", 6: "여섯", 7: "일곱"}
+LAYER2 = {"R02": 0.55, "R01": 0.40, "R09": 0.35, "R08": 0.35, "R07": 0.08, "R05": 0.20}   # 시간 층 ②(덧댄 살림) — R02 쪽방은 두껍게 · R07 강남은 봉인된 듯
+LAYER3 = {"R09": 0.30, "R01": 0.15, "R02": 0.15, "R07": 0.03}                              # 시간 층 ③(최근 며칠) — R09 산동네가 짙게
+RHYTHM = (0.70, 0.95)                                                  # 훑기 70% · 사연 25% · 장면 5%(설계안 §7.1c)
+
+
+JOSA = [("이랑", "랑"), ("을", "를"), ("은", "는"), ("과", "와"), ("아", "야"), ("이", "가")]   # (받침 있음, 없음) — 긴 것부터 · {성}은 '김가'처럼 성 뒤 '가'가 토씨가 아니라 건드리지 않는다
+
+
+def josa(t, key, val):
+    """자리 표시 뒤 토씨를 값의 끝 받침에 맞춘다: '{아이}야' → '지우야' · '예준아' / '{할머니}가' → '설정숙이'."""
+    if key == "{성}":
+        return t.replace(key, val)
+    last = val[-1] if val else ""
+    bat = "가" <= last <= "힣" and (ord(last) - 0xAC00) % 28 != 0
+    i = t.find(key)
+    while i >= 0:
+        rest = t[i + len(key):]
+        for b_, n_ in JOSA:
+            for form in (b_, n_):
+                if rest.startswith(form) and not (form in ("이", "가") and rest[len(form):len(form) + 1] in ("네", "씨")):
+                    rest = (b_ if bat else n_) + rest[len(form):]
+                    break
+            else:
+                continue
+            break
+        t = t[:i] + val + rest
+        i = t.find(key, i + len(val))
+    return t
+
+
+def roll_household(x, y, region, hh, taken_names):
+    """집 하나의 가구(1-B2): 성씨 · 식구 · 생업 · 그날 밤 사건 · 방 리듬. 배치 난수와 따로 굴린다(같은 문 = 같은 집)."""
+    r = random.Random(_h(x, y, 1077))
+    nm = hh["이름"]
+
+    def full(sex, sur=None):
+        for _ in range(12):
+            sn = sur or r.choice(nm["성"])
+            n = sn + r.choice(nm[sex])
+            if n not in taken_names:                                  # 이름 있는 NPC(SD-07)와 겹치지 않게
+                return n
+        return n
+    sur = r.choice(nm["성"])
+    f = {"성": sur, "집": sur + "씨네"}
+    roll = r.random()
+    kind = "혼자" if roll < 0.15 else ("노인" if roll < 0.30 else "가족")
+    kids, gran, exp = 0, False, False
+    if kind == "혼자":
+        n = 1
+    elif kind == "노인":
+        gran = True
+        f["할머니"] = full("여")
+        n = 1 + (r.random() < 0.5)
+    else:
+        f["아빠"] = full("남", sur)
+        f["엄마"] = full("여")
+        kids = r.choice([0, 1, 1, 2, 2]) if r.random() < 0.85 else 0
+        if kids:
+            f["아이"] = full("아이", sur)[len(sur):]
+        if kids > 1:
+            f["아이2"] = full("아이", sur)[len(sur):]
+        gran = r.random() < 0.25
+        if gran:
+            f["할머니"] = full("여")
+        exp = r.random() < 0.25
+        if exp:
+            f["원정"] = "큰아들 " + full("남", sur)[len(sur):]
+        n = 2 + kids + gran + exp
+    f["식구"], f["식구수"] = NUM_KO.get(n, str(n)), str(n)
+    nb = r.choice([s_ for s_ in nm["성"] if s_ != sur])
+    f["이웃"] = nb + "씨네"
+    f["고향"] = r.choice(nm["고향"])
+    f["번호"] = str(r.randint(101, 989))
+    jobs = hh["생업"].get(region) or [j for v in hh["생업"].values() for j in v]
+    f["생업"] = r.choice(jobs)
+    flags = {"아이": kids > 0, "원정": exp, "노인": gran, "혼자": kind == "혼자"}
+
+    def ok(ev):
+        for c in ev["cond"].split():
+            neg = c.startswith("!")
+            if flags.get(c.lstrip("!"), False) == neg:
+                return False
+        return True
+
+    def fill(t):
+        for k_ in re.findall(r"\{(.+?)\}", t):
+            if k_ not in f:
+                return None
+            t = josa(t, "{%s}" % k_, f[k_])
+        return t
+    cand = []
+    for ev in hh["사건"]:
+        if not ok(ev):
+            continue
+        ls = []
+        for sl, t in ev["lines"]:
+            t = r.choice(t.split(" || "))                              # 갈래 문장 — 집마다 하나
+            ls.append((sl, fill(t), "{" in t))
+        ls = [(sl, t, ph) for sl, t, ph in ls if t]
+        if len(ls) >= 2:
+            cand.append((ev["name"], ls))
+    rr = r.random()
+    mode = "skim" if rr < RHYTHM[0] else ("story" if rr < RHYTHM[1] else "scene")
+    ev = r.choice(cand) if cand else ("", [])
+    return {"f": f, "kind": kind, "kids": kids, "event": ev[0], "lines": [(sl, t) for sl, t, _ in ev[1]],
+            "own": {t for _, t, ph in ev[1] if ph}, "mode": mode,
+            "l2": r.random() < LAYER2.get(region, 0.30), "l3": r.random() < LAYER3.get(region, 0.10), "r": r}
+
+
+def building_name(x, y, style, hh, f=None):
+    """문 안내 · 실내 이름(설계안 §7.1d): '청솔빌라 102호' · '김씨네 대문' · '신일빌딩 사무실'. 이름표는 문 자리로 고른다(같은 문 = 같은 이름)."""
+    r = random.Random(_h(x, y, 2077))
+    tg = hh["이름표"]
+    if style == "villa":
+        if r.random() < 0.3:
+            b = r.choice(tg["연립"]) + "연립"
+            return "%s %s동 1층" % (b, r.choice("ABC")), b + " 현관"
+        b = r.choice(tg["빌라"]) + "빌라"
+        return "%s 10%d호" % (b, r.randint(1, 4)), b + " 현관"
+    if style == "house":
+        return "%s 단독주택" % f["집"], "%s 대문" % f["집"]
+    if style == "apt":
+        b = r.choice(tg["빌라"]) + "아파트"
+        return "%s %d동 현관" % (b, r.randint(1, 12) * 100 + r.randint(1, 9)), b + " 현관"
+    if style == "office":
+        b = r.choice(tg["상가"]) + "빌딩"
+        return "%s 사무실" % b, b + " 출입문"
+    if style == "factory":
+        b = r.choice(tg["상가"]) + r.choice(["물류", "공업사", "철공소", "상사", "운수"])
+        return "%s 창고" % b, b + " 창고 셔터"
+    return None, None
+
+
 class Plan:
     """실내 한 장: 격자 + 맵 명령. 소품을 놓을 때 칸이 비었는지 본다."""
 
@@ -51,6 +238,9 @@ class Plan:
         self.region = region
         self.fill = fill
         self.walls = set()
+        self.ev = {}                                                   # 1-B2: 자리 → 그 집 사건 줄(가구 생성기)
+        self.tags = []                                                 # 글 명령마다 (명령 번호, 자리, 사건 줄?, 쪽지 소품 명령 번호)
+        self._pool, self._ev = None, False
 
     def floor(self, x0, y0, x1, y1, ch=None):
         for y in range(y0, y1 + 1):
@@ -88,7 +278,14 @@ class Plan:
             self.text(x, 2, self.line(pool), w=w)
 
     def line(self, pool):
+        self._pool, self._ev = pool, False
+        if self.ev.get(pool):
+            self._ev = True
+            return self.ev[pool].pop(0)
         cand = [s for s in self.pools.get(pool, []) if s not in self.used]
+        hh = getattr(self, "hh", None)
+        if hh:                                                         # 1-B2: 살림 글도 그 집과 어긋나지 않게(아이 없는 집에 아이 · 원정 없는 집에 군복 사진)
+            cand = [s for s in cand if (hh["kids"] or "아이" not in s) and (hh["f"].get("원정") or "원정" not in s)]
         if not cand:
             return None
         s = self.rnd.choice(cand)
@@ -99,6 +296,8 @@ class Plan:
         if s:
             s = s.replace('"', "'")
             self.cmds.append(f'text {x} {y} "{s}"' + (f" w={w}" if w > 1 else "") + (f" h={h}" if h > 1 else ""))
+            self.tags.append([len(self.cmds) - 1, self._pool, self._ev, None])
+        self._pool, self._ev = None, False
 
     def note(self, x, y, pool):
         """바닥에 떨어진 쪽지: 종이 소품(밟고 지나갈 수 있다) + 조사 글. 맨바닥 글은 보이지 않아 찾을 수 없다."""
@@ -107,6 +306,7 @@ class Plan:
             self.cmds.append(f"prop note_ground {x} {y}")
             self.busy.add((x, y))
             self.text(x, y, s)
+            self.tags[-1][3] = len(self.cmds) - 2
 
     def box(self, x, y, kind, name, w=1, lock=0):
         self.cmds.append(f'box {x} {y} {kind} w={w} name="{name}"' + (f" lock={lock}" if lock else ""))
@@ -159,6 +359,8 @@ def tpl_home(p, bath=False):
     ex = rnd.randint(xa + 2, xb - 3)
     p.entrance(ex, *p.door)
     kids = rnd.random() < 0.55
+    if getattr(p, "hh", None):
+        kids = p.hh["kids"] > 0                                        # 1-B2: 아이 책상은 그 집에 아이가 있을 때만
     # 부엌: 위 벽에 싱크대·가스레인지·냉장고, 가운데 식탁
     xs = 1
     order = ["sink", "range", "fridge"]
@@ -170,13 +372,13 @@ def tpl_home(p, bath=False):
             xs += 1
         elif it == "fridge" and p.prop("fridge", xs, 3):
             p.box(xs, 3, "pantry", "냉장고")
-            p.text(xs, 3, p.line("home_fridge")) if rnd.random() < 0.5 else None
+            p.text(xs, 3, p.line("home_fridge")) if rnd.random() < 0.5 or p.ev.get("home_fridge") else None
             xs += 1
     ty = rnd.randint(6, 7)
     tx = max(1, (xa - 2) // 2)
     if p.prop("dining_table", tx, ty, 2):
         p.text(tx, ty, p.line("home_table"), w=2)
-    if rnd.random() < 0.6:
+    if rnd.random() < 0.6 or p.ev.get("home_note"):
         p.wall_text("w_calendar", rnd.randint(1, xa - 2), "home_note")
     # 거실
     lx0, lx1 = xa + 1, xb - 1
@@ -224,6 +426,116 @@ def tpl_home(p, bath=False):
         p.wall("w_mirror", xc + 3) if rnd.random() < 0.7 else None
     clutter(p, rnd.randint(0, 2), 8)
     return "home"
+
+
+HOME_SLOTS = {"home_table", "home_tv", "home_bed", "home_kid", "home_photo", "home_fridge", "home_shoe", "home_note"}
+
+
+def apply_rhythm(p):
+    """방 리듬(1-B2 · 설계안 §7.1c): 훑기 = 그 집 사건 줄 하나(없으면 살림 글 하나 — 재미 검수: 공용 글만 남으면 6천 채가 같은 말) ·
+    사연 = 그 집 사건 줄 전부 + 살림 글 하나 · 장면 = 다 둔다.
+    가구는 그대로 두고 조사 글만 줄인다(땅에 떨어진 쪽지는 소품째). 유해 · 소굴 글은 늘 남는다."""
+    mode = p.hh["mode"]
+    if mode == "scene":
+        return
+    home = [t for t in p.tags if t[1] in HOME_SLOTS]
+    evs = [t for t in home if t[2]]
+    plain = [t for t in home if not t[2]]
+    if mode == "skim":                                                 # 그 집만의 줄(이름 · 생업 · 식구가 든 줄)을 먼저
+        own = [t for t in evs if any(o.replace('"', "'") in p.cmds[t[0]] for o in p.hh["own"])]
+        pick = own or evs or plain
+        keep = {id(p.hh["r"].choice(pick))} if pick else set()
+    else:
+        keep = {id(t) for t in evs}
+        if plain:
+            keep.add(id(p.hh["r"].choice(plain)))
+    drop = set()
+    for t in home:
+        if id(t) not in keep:
+            drop.add(t[0])
+            if t[3] is not None:
+                drop.add(t[3])
+    p.cmds = [c for i, c in enumerate(p.cmds) if i not in drop]
+    p.tags = []
+
+
+def add_layers(p, hh_src):
+    """시간 층 ② 덧댄 살림 · ③ 최근 며칠의 흔적(설계안 §7.1b). 소품 하나 + 조사 글 하나씩. 들어온 자리 앞은 비운다."""
+    r = p.hh["r"]
+    keep = {(p.ex + i, p.H - 2 - j) for i in (-1, 0, 1, 2) for j in (0, 1, 2)}
+    got = []
+    for lay in ("l2", "l3"):
+        if not p.hh[lay]:
+            continue
+        pr, txt = r.choice(hh_src["층2" if lay == "l2" else "층3"])
+        pm = p.pm.get(pr)
+        if pm is None:
+            continue
+        fw, fh = max(1, pm["foot"][0]), max(1, pm["foot"][1])
+        if pm["kind"] == "wall":
+            xs = list(range(1, p.W - fw))
+            r.shuffle(xs)
+            for x in xs:
+                if p.wall(pr, x, 1, fw):
+                    p.text(x, 2, txt, w=fw)
+                    got.append(lay)
+                    break
+        else:
+            for (x, y) in p.spots(1, 4, p.W - 1 - fw, p.H - 2 - fh):
+                if any((x + i, y + j) in keep for i in range(fw) for j in range(fh)):
+                    continue
+                if p.prop(pr, x, y, fw, fh, solid=pm["kind"] != "deco"):
+                    p.busy.update((x + i, y + j) for i in range(fw) for j in range(fh))
+                    p.text(x, y, txt)
+                    got.append(lay)
+                    break
+    return got
+
+
+SIGN_RATE = {"skull": 50, "claw": 35, "trap": 50, "live": 60, "x": 40, "water": 15}
+BEASTS = {"CR-002", "CR-095", "CR-097", "CR-104", "CR-105", "CR-106", "CR-108", "CR-136"}   # 짐승 — 해골이 아니라 발톱 자국
+
+
+def door_sign(out, seed):
+    """문 앞 떠돌이 분필 표식(1-B3 · 설계안 §7.2): 실내 생성 결과에서 뽑는다 — 표식은 거짓말하지 않는다(P1).
+    해골 = 안에 적(바퀴 한두 마리는 빼고) · 덫 = 숨긴 함정 · 지뢰 · 부비트랩 · 집 = 최근 며칠 사람 기척 · ✕ = 무너져 막힘 · 물결 = 물 받을 데.
+    모든 문에 있지는 않다(떠돌이가 다녀간 문만 — 갈래마다 비율)."""
+    en = out.get("enemies", [])
+    props = {q["name"] for q in out.get("props", [])}
+    kind = None
+    if any(e_["id"] not in BEASTS for e_ in en):                     # 사람형 · 구울 · 로봇(재미 검수: 쥐 한 마리가 해골이면 표식이 벽지가 된다)
+        kind = "skull"
+    elif len(en) >= 2 or any(e_["id"] not in ("CR-002",) for e_ in en):
+        kind = "claw"
+    elif out.get("traps") or out.get("mines") or props & {"trap_parcel", "trap_vending"}:
+        kind = "trap"
+    elif "l3" in out.get("house", {}).get("layers", []):               # 기척은 층 ③에서만(장면 방이라고 거짓말하지 않는다)
+        kind = "live"
+    elif out.get("gen") == "collapsed":
+        kind = "x"
+    elif props & {"water_jug", "water_tank", "water_tank_s", "bathtub"}:
+        kind = "water"
+    if kind and _h(seed, 131) % 100 < SIGN_RATE[kind]:
+        return kind
+    return None
+
+
+def tpl_collapsed(p):
+    """무너져 막힌 1층(1-B 대체 틀 — 씨앗 12번이 다 실패한 건물도 들어가 볼 수 있게): 현관 · 계단참 한 칸. 안쪽은 무너진 천장에 막혔다.
+    그래도 용기 하나 · 조사 글 하나(빈 실내 금지)."""
+    rnd, W, H = p.rnd, p.W, p.H
+    p.floor(1, 3, W - 2, H - 2)
+    ex = W // 2
+    p.entrance(ex, *p.door)
+    for x in range(1, W - 1):                                         # 안쪽 줄은 무너진 천장
+        if rnd.random() < 0.75:
+            p.prop("rubble", x, 3)
+    p.text(ex, 3, "무너진 천장이 계단과 안쪽 복도를 막았다. 틈으로 찬바람만 나온다.") if not p.free(ex, 3) else None
+    for (x, y) in p.spots(1, 4, W - 2, H - 3)[:1]:
+        if p.prop("crate_o", x, y):
+            p.box(x, y, "stall", "현관 구석 상자")
+    clutter(p, rnd.randint(1, 2), 4)
+    return "collapsed"
 
 
 def tpl_den(p):
@@ -309,7 +621,7 @@ def tpl_gov(p):
     return "gov"
 
 
-SHOPS = ["conv", "pharm", "hw", "laundry", "snack"]
+SHOPS = ["conv", "pharm", "hw", "laundry", "snack", "tea", "salon", "video", "karaoke"]   # 1-B5: 다방 · 미용실 · 비디오 가게 · 노래방
 CLUTTER = [("rubble", 1, 3), ("rubble2", 1, 3), ("crate_o", 1, 2), ("scrap_pile", 2, 1), ("bone_pile", 1, 1), ("drum", 1, 1), ("plant_pot", 1, 1)]
 WALL_DECO = {"jm": ["w_poster_rad", "w_calendar", "wall_clock", "w_shelf"], "bk": ["w_window", "wall_clock", "w_calendar", "w_poster_rad"],
              "sb": ["w_stencil", "w_poster_rad", "w_sign_exit"], "bc": ["w_calendar", "wall_clock", "w_window"]}
@@ -426,6 +738,45 @@ def tpl_shop(p, kind):
                 p.box(x, y, "apartment", "맡긴 옷", w=2)
                 p.text(x, y, p.line("laundry_note"), w=2)
         counter(p)
+    elif kind == "tea":                                                 # 다방: 소파 칸 · 찻상 · 카운터 · 텔레비전
+        for x0 in range(1, W - 4, 5):
+            y0 = rnd.choice((4, 7))
+            if p.prop("sofa_home", x0, y0, 2):
+                if p.prop("low_table", x0, y0 + 1, 2) and rnd.random() < 0.5:
+                    p.text(x0, y0 + 1, p.line("tea_note"), w=2)
+        p.prop("crt_tv", W - 2, 3) and p.text(W - 2, 3, p.line("tea_note"))
+        for (x, y) in p.spots(1, 3, W - 3, 3)[:1]:
+            p.prop("tea_table", x, y) and p.box(x, y, "pantry", "찻장")
+        counter(p, pool="tea_note")
+    elif kind == "salon":                                               # 미용실: 벽 거울 줄 · 머리 감는 대 · 대기 소파
+        x = 1
+        while x < W - 2:
+            if p.wall("w_mirror", x):
+                p.text(x, 2, p.line("salon_note")) if rnd.random() < 0.3 else None
+            x += 2
+        for xx in range(1, W - 2, 2):
+            if p.prop("wash_basin", xx, 3) and rnd.random() < 0.3:
+                p.box(xx, 3, "apartment", "미용 도구 서랍")
+        for (x, y) in p.spots(1, 6, W - 3, 8)[:1]:
+            p.prop("sofa_home", x, y, 2) and p.text(x, y, p.line("salon_note"), w=2)
+        counter(p, pool="salon_note")
+    elif kind == "video":                                               # 비디오 가게: 테이프 진열대 줄 · 반납함 · 텔레비전
+        row_props(p, ["shop_shelf_goods", "shop_shelf_goods"], 3, 1, W - 3, 0.1, {"shop_shelf_goods": ("stall", "테이프 진열대", 0.6)})
+        row_props(p, ["shop_shelf_goods"], rnd.randint(6, 7), 2, W - 4, 0.35, {"shop_shelf_goods": ("stall", "테이프 진열대", 0.5)})
+        for (x, y) in p.spots(1, 5, W - 2, H - 4)[:1]:
+            p.prop("crt_tv", x, y) and p.text(x, y, p.line("video_note"))
+        counter(p, pool="video_note")
+    elif kind == "karaoke":                                             # 노래방: 칸막이 방 둘~셋(세로 칸막이는 위만 막고 아래로 트인다) · 소파 · 화면
+        xs = list(range(1 + 6, W - 3, 6))
+        for x in xs:
+            _vwall(p, x, 3, 6)
+        for x0 in [1] + [x + 1 for x in xs]:
+            if p.prop("sofa_home", x0, 5, 2):
+                if rnd.random() < 0.5:
+                    p.text(x0, 5, p.line("karaoke_note"), w=2)
+            if p.prop("crt_tv", x0 + 2, 3) and rnd.random() < 0.5:
+                p.text(x0 + 2, 3, p.line("karaoke_note"))
+        counter(p, pool="karaoke_note")
     else:                                                               # 분식집
         order = ["kitchen_sink", "gas_range", "fridge"] + (["gas_range"] if rnd.random() < 0.5 else [])
         rnd.shuffle(order)
@@ -534,37 +885,48 @@ def _ok(out):
 
 
 def _place_enemies(p, threat, region):
+    """권역 · 위협 적 표(ENEMY_ROLL). 실내 상황(1-B4 · 설계안 §7.3): 떠돌이 소굴의 사람형은 절반이 자는 중(웅크려 지나가거나 뒤치기) ·
+    유해가 있는 집의 짐승은 뜯어먹는 중(감지 0.5 — 먼저 볼 수 있다). 상황 판정은 따로 굴린다(배치 난수를 바꾸지 않는다)."""
     rnd = p.rnd
-    if threat <= 1:
-        roll = [("CR-002", 0.3, 1, 2)]
-    elif threat == 2:
-        roll = [("CR-095", 0.35, 1, 3), ("CR-002", 0.25, 1, 2)]
-    else:
-        roll = [("CR-200", 0.3 if region == "R02" else 0.15, 1, 2), ("CR-095", 0.35, 2, 3)]
+    tab = ENEMY_ROLL.get(region, ENEMY_ROLL["HR"])
+    roll = tab[max(1, min(3, threat))]
+    sit = random.Random(_h(len(p.cmds), p.W, p.H, p.ex))
+    feed = any(c.startswith("prop remains ") for c in p.cmds)
     for eid, ch, lo, hi in roll:
         if rnd.random() < ch:
             far = [(x, y) for (x, y) in p.spots(1, 3, p.W - 2, p.H - 3) if abs(x - p.ex) + abs(y - (p.H - 2)) >= 6]
             for (x, y) in far[:rnd.randint(lo, hi)]:
                 p.enemy(eid, x, y)
+                if getattr(p, "den", False) and eid not in BEASTS and sit.random() < 0.55:
+                    p.cmds[-1] += " sleep=1"
+                elif feed and eid in BEASTS:
+                    p.cmds[-1] += " det=0.5"
             break
 
 
-def build_one(spec, pools, prop_meta, known_vars, known_fns, scenes, tries=12):
+def build_one(spec, pools, prop_meta, known_vars, known_fns, scenes, tries=12, hh_src=None, npc_names=frozenset()):
     """문 하나 → (맵 JSON, 이름) 또는 None. 씨앗이 맞지 않으면 다음 씨앗(1-11j: 6 → 12 — 먼저 맞는 씨앗은 그대로라 기존 건물은 바뀌지 않는다)."""
     x, y, style, threat, region = spec["x"], spec["y"], spec["style"], spec["threat"], spec["region"]
     mid = f"G-{x}-{y}"
+    hh = roll_household(x, y, region, hh_src, npc_names) if hh_src and style in ("villa", "house") else None
+    bname, blabel = building_name(x, y, style, hh_src, hh["f"] if hh else None) if hh_src else (None, None)
     for k in range(tries):
         rnd = random.Random((x * 73856093) ^ (y * 19349663) ^ (k * 83492791))
-        if style in ("villa", "house"):
-            den = threat >= 2 and rnd.random() < 0.18
+        got = style
+        if spec.get("collapsed"):
+            nm = {"shop": "무너진 가게", "office": "무너진 사무동", "factory": "무너진 창고", "gov": "무너진 청사", "apt": "무너진 현관"}.get(style, "무너진 1층")
+            p = Plan(mid, nm, "bk", 14 + rnd.randint(0, 2), 9, "~", rnd, pools, region)
+        elif style in ("villa", "house"):
+            den = threat >= 2 and rnd.random() < 0.12
             if den:
-                p = Plan(mid, "버려진 집", "bc", 16, 12, "w", rnd, pools, region)
+                p = Plan(mid, (hh["f"]["집"] + "였던 집") if hh else "버려진 집", "bc", 16, 12, "w", rnd, pools, region)
+                p.den = True
             else:
                 bath = style == "house" and rnd.random() < 0.7
                 W = (26 if bath else 22) + rnd.randint(0, 1)
-                p = Plan(mid, "단독주택" if style == "house" else "빌라 1층 집", "bc", W, 13, "w", rnd, pools, region)
+                p = Plan(mid, bname or ("단독주택" if style == "house" else "빌라 1층 집"), "bc", W, 13, "w", rnd, pools, region)
         elif style == "apt":
-            p = Plan(mid, "아파트 현관", "bk", 18, 12, "t", rnd, pools, region)
+            p = Plan(mid, bname or "아파트 현관", "bk", 18, 12, "t", rnd, pools, region)
         elif style == "gov":
             p = Plan(mid, "주민센터 민원실", "bk", 22, 14, "t", rnd, pools, region)
         elif style == "shop":
@@ -572,20 +934,42 @@ def build_one(spec, pools, prop_meta, known_vars, known_fns, scenes, tries=12):
             nm = rnd.choice(SHOP_PRE) + rnd.choice(SHOP_SUF[kind])
             p = Plan(mid, nm, "jm", 16 + rnd.randint(0, 2), 12, ",", rnd, pools, region)
         elif style == "office":
-            p = Plan(mid, "사무실", "bk", 20, 12, "c", rnd, pools, region)
+            p = Plan(mid, bname or "사무실", "bk", 20, 12, "c", rnd, pools, region)
         else:
-            p = Plan(mid, "창고", "sb", 22, 13, "~", rnd, pools, region)
+            p = Plan(mid, bname or "창고", "sb", 22, 13, "~", rnd, pools, region)
         p.door = (x, y + 1)
-        if style in ("villa", "house"):
-            got = tpl_den(p) if p.name == "버려진 집" else tpl_home(p, bath=p.W >= 26)
+        p.pm = prop_meta
+        if hh and not spec.get("collapsed"):
+            p.hh = dict(hh, r=random.Random(_h(x, y, 1077, k)))         # 씨앗마다 새로(재시도해도 같은 집 · 같은 고름)
+            p.ev = {}
+            for sl, t in hh["lines"]:                                  # 훑기 방도 사건 줄을 놓고 리듬이 하나만 남긴다
+                p.ev.setdefault(sl, []).append(t)
+        if spec.get("collapsed"):
+            got = tpl_collapsed(p)
+        elif style in ("villa", "house"):
+            got = tpl_den(p) if getattr(p, "den", False) else tpl_home(p, bath=p.W >= 26)
+            if got == "den" and getattr(p, "hh", None) and hh["lines"]:      # 떠돌이 층 아래 살던 집 한 줄(층 ①)
+                sl, t_ = hh["lines"][0]
+                for (sx, sy) in p.spots(1, 4, p.W - 2, p.H - 4):
+                    if p.free(sx, sy):
+                        p.cmds.append(f"prop note_ground {sx} {sy}")
+                        p.busy.add((sx, sy))
+                        p.text(sx, sy, "벽지 틈에 끼어 남은 종이 한 장 — " + t_)
+                        break
             if got == "home" and rnd.random() < 0.22:
                 for (sx, sy) in p.spots(1, 4, p.W - 2, p.H - 3)[:1]:
                     if p.prop("remains", sx, sy):
                         p.text(sx, sy, p.line("home_remains"))
                         p.box(sx, sy, "corpse_scav", "유해")
-            if got == "home" and rnd.random() < 0.6:
+            if got == "home" and (rnd.random() < 0.6 or p.ev.get("home_note")):
                 for (sx, sy) in p.spots(1, 5, p.W - 2, p.H - 3)[:1]:
                     p.note(sx, sy, "home_note")
+            layers = []
+            if got == "home" and getattr(p, "hh", None):
+                apply_rhythm(p)
+                layers = add_layers(p, hh_src)
+            elif got == "den" and getattr(p, "hh", None):
+                p.hh = dict(p.hh, mode="den")
         elif style == "apt":
             tpl_apt(p)
         elif style == "gov":
@@ -606,18 +990,29 @@ def build_one(spec, pools, prop_meta, known_vars, known_fns, scenes, tries=12):
         os.unlink(path)
         out = MC.compile_map(m, prop_meta, known_vars, known_fns, scenes)
         if out is None or m.errors:
-            if k == tries - 1:
+            if k == tries - 1 and spec.get("collapsed"):                  # 보통 틀이 다 실패하면 대체 틀로 다시 하니 그때만 알린다
                 print("생성 실패", mid, m.errors[:2])
             continue
         if not _ok(out):
             continue
         out["region"] = region
-        out["gen"] = style
+        out["gen"] = style if not spec.get("collapsed") else "collapsed"
+        if blabel:
+            out["label"] = blabel                                      # 월드 문 안내(건물 이름)
+        if getattr(p, "hh", None):                                     # 가구 요약(1-B3 문 앞 표식은 이 결과에서 뽑는다 — P1)
+            f_ = hh["f"]
+            people = [f_[k_] for k_ in ("아빠", "엄마", "할머니") if k_ in f_] + [f_["성"] + f_[k_] for k_ in ("아이", "아이2") if k_ in f_]
+            if "원정" in f_:
+                people.append(f_["성"] + f_["원정"].split()[-1])
+            out["house"] = {"집": f_["집"], "kind": hh["kind"], "event": hh["event"],
+                            "mode": p.hh["mode"], "layers": layers, "people": people}
         for e in out["exits"]:
             e.pop("line", None)
         for n in out["npcs"]:
             n.pop("line", None)
         return out
+    if not spec.get("collapsed"):                                     # 1-B: 씨앗 12번이 다 실패하면 대체 틀로라도(무너져 막힌 1층)
+        return build_one(dict(spec, collapsed=True), pools, prop_meta, known_vars, known_fns, scenes, tries=6, hh_src=hh_src, npc_names=npc_names)
     return None
 
 
@@ -761,19 +1156,24 @@ def stash_chains(outs, pools, prop_meta):
     import math
     rnd = random.Random(2077)
     src = [k for k, (o, _, st) in sorted(outs.items()) if st in ("villa", "house", "office") and o.get("gen") != "den"]
+    cap = max(40, len(src) // 25)                                       # 1-B3: 건물 수에 비례(옛 40쌍 상한) · 3고리까지
     tgt = [k for k, (o, _, st) in sorted(outs.items()) if st == "shop"]
     rnd.shuffle(src)
     names = {}
-    for k in tgt:                                                       # 이름이 겹치는 가게는 가리키지 않는다(헷갈린다)
-        names.setdefault(outs[k][0]["name"], []).append(k)
+    for k in tgt:                                                       # 이름이 겹치는 가게는 가리키지 않는다(헷갈린다) — 1-B: 전 권역이라 '쪽지 둘레 150칸 안에서' 하나뿐
+        names.setdefault(outs[k][0]["name"], []).append(outs[k][1])
     used, n = set(), 0
-    for s_id in src[:60]:
+    queue = [(k, 1) for k in src[:cap * 3 // 2]]
+    while queue:
+        s_id, depth = queue.pop(0)
         (so, (sx, sy), _) = outs[s_id]
         cand = []
         for t_id in tgt:
             to, (tx, ty), _ = outs[t_id]
             d = math.hypot(tx - sx, ty - sy)
-            if t_id in used or len(names[to["name"]]) > 1 or not (25 <= d <= 90):
+            if t_id in used or t_id == s_id or not (25 <= d <= 90):
+                continue
+            if sum(1 for (ox, oy) in names[to["name"]] if math.hypot(ox - sx, oy - sy) <= 150) > 1:
                 continue
             cand.append((d, t_id))
         if not cand:
@@ -794,23 +1194,128 @@ def stash_chains(outs, pools, prop_meta):
             _add_prop(trial, prop_meta, "crate_army", cx, cy)
             trial["boxes"].append({"x": cx, "y": cy, "w": 1, "h": 1, "kind": "stash", "owner": "", "lock": 25 if rnd.random() < 0.4 else 0,
                                    "name": "숨겨 둔 상자", "cond": ""})
-            trial["texts"].append({"x": cx, "y": cy, "w": 1, "h": 1, "text": "국방색 상자. 위에 덮은 방수포를 누가 일부러 반듯하게 접어 두었다."})
+            jip = so.get("house", {}).get("집")
+            box_t = (rnd.choice(pools.get("stash_box", ["국방색 상자."])).replace("{집}", jip) if jip and depth == 1
+                     else "국방색 상자. 위에 덮은 방수포를 누가 일부러 반듯하게 접어 두었다.")
+            trial["texts"].append({"x": cx, "y": cy, "w": 1, "h": 1, "text": box_t})
             if _ok(trial):
                 outs[t_id] = (trial, (tx, ty), "shop")
                 placed = True
                 break
         if not placed:
             continue
-        line = rnd.choice(pools.get("stash_note", ["'{가게} {곳}. 여기서 {dir}으로 {far}.'"]))
+        pool = pools.get("stash_note" if depth == 1 else "stash_next", ["'{가게} {곳}. 여기서 {dir}으로 {far}.'"])
+        kids = so.get("house", {}).get("kind") == "가족" and any("아이" in t["text"] for t in so["texts"])
+        pool = [q for q in pool if kids or "아이" not in q and "아빠" not in q] or pool   # 아이 없는 집에 아이 글씨 쪽지는 없다
+        line = rnd.choice(pool)
         line = line.replace("{가게}", to["name"]).replace("{곳}", spot).replace("{dir}", dname).replace("{far}", far)
         (cx, cy) = cells_s[0]
         _add_prop(so, prop_meta, "note_ground", cx, cy)
         so["texts"].append({"x": cx, "y": cy, "w": 1, "h": 1, "text": line})
         used.add(t_id)
         n += 1
-        if n >= 40:
+        if depth < 3 and rnd.random() < 0.35:                          # 그 상자에서 다음 고리로(줄 맨 앞에 — 같은 사슬을 이어 만든다)
+            queue.insert(0, (t_id, depth + 1))
+        if n >= cap:
             break
     return n
+
+
+def neighbor_links(outs, prop_meta):
+    """이웃 고리(1-B3 · 설계안 §7.2): 같은 굽기에서 양쪽을 쓴다 — 한쪽만 있는 고리는 없다(P1).
+    ① '가게 외상' 집의 '구멍가게'를 40칸 안 가장 가까운 동네 가게 이름으로 바꾸고, 그 가게 바닥에 그 집 외상 장부 한 장.
+    ② '이웃 맡긴 열쇠' 집의 윗집 {이웃}이 30칸 안에 실제로 있으면, 그 집에 '열쇠는 아랫집 ○씨네에' 쪽지."""
+    import math
+    rnd = random.Random(1123)
+    shops = [(k, xy) for k, (o, xy, st) in sorted(outs.items()) if st == "shop" and any(o["name"].endswith(t) for t in ("슈퍼", "상회", "마트"))]
+    homes = {k: (o, xy) for k, (o, xy, st) in sorted(outs.items()) if o.get("house")}
+    by_jip = {}
+    for k, (o, xy) in homes.items():
+        by_jip.setdefault(o["house"]["집"], []).append((k, xy))
+    n1 = n2 = 0
+    for k, (o, (x, y)) in homes.items():
+        ev = o["house"].get("event")
+        if ev == "가게 외상" and any("구멍가게" in t["text"] for t in o["texts"]):
+            best = min(((math.hypot(sx - x, sy - y), sk) for sk, (sx, sy) in shops), default=None)
+            if best and best[0] <= 40:
+                so = outs[best[1]][0]
+                cells = _free_cell(so, rnd)
+                if cells:
+                    cx, cy = cells[0]
+                    for t in o["texts"]:
+                        t["text"] = t["text"].replace("구멍가게", so["name"])
+                    _add_prop(so, prop_meta, "note_ground", cx, cy)
+                    so["texts"].append({"x": cx, "y": cy, "w": 1, "h": 1,
+                                        "text": "계산대에서 떨어진 외상 장부 한 장. '%s — 쌀 반 말 · 라면 한 상자. 25일까지.' 그 아래 줄은 비었다." % o["house"]["집"]})
+                    n1 += 1
+        if ev == "이웃 맡긴 열쇠":
+            nb = [line for line in o["texts"] if "윗집" in line["text"]]
+            for jip, lst in by_jip.items():
+                if not nb or not any(jip in t["text"] for t in nb):
+                    continue
+                cand = [(math.hypot(hx - x, hy - y), hk) for hk, (hx, hy) in lst if hk != k and math.hypot(hx - x, hy - y) <= 30]
+                if not cand:
+                    continue
+                ho = outs[min(cand)[1]][0]
+                cells = _free_cell(ho, rnd)
+                if cells:
+                    cx, cy = cells[0]
+                    _add_prop(ho, prop_meta, "note_ground", cx, cy)
+                    ho["texts"].append({"x": cx, "y": cy, "w": 1, "h": 1,
+                                        "text": "문틈에 끼운 쪽지. '여행 다녀올게요. 열쇠는 아랫집 %s에. 화분 부탁해요.'" % o["house"]["집"]})
+                    n2 += 1
+                break
+    return n1, n2
+
+
+_CTX = {}                                                              # 병렬 일꾼이 물려받는 재료(fork)
+
+
+def _work(spec):
+    c = _CTX
+    return build_one(spec, c["pools"], c["prop_meta"], c["known_vars"], c["known_fns"], c["scenes"], hh_src=c["hh"], npc_names=c["npc_names"])
+
+
+def _gen_key(prop_meta):
+    """캐시 열쇠: 생성기 판 · 생성기 · 맵 변환기 · 사연 글 · 소품 자료가 같으면 같은 문 = 같은 실내."""
+    import hashlib
+    hs = hashlib.sha1(str(GEN_VER).encode())
+    for f in [os.path.abspath(__file__), os.path.join(os.path.dirname(os.path.abspath(__file__)), "map_compile.py"), ROOMS, HOUSE]:
+        hs.update(open(f, "rb").read())
+    hs.update(json.dumps(prop_meta, sort_keys=True, default=str).encode())
+    return hs.hexdigest()
+
+
+def _build_all(specs, pools, prop_meta, known_vars, known_fns, scenes, log=print):
+    """건물마다 독립 — 지난 결과 캐시(_cache/gen_cache.bin) · 나머지는 여러 프로세스로(1-B, 7천여 곳)."""
+    import pickle, multiprocessing as mp, time
+    t0 = time.time()
+    key = _gen_key(prop_meta)
+    cpath = os.path.join(os.path.dirname(CACHE), "gen_cache.bin")
+    old = {}
+    if os.path.exists(cpath):
+        try:
+            d = pickle.loads(zlib.decompress(open(cpath, "rb").read()))
+            if d.get("key") == key:
+                old = d["outs"]
+        except Exception:
+            old = {}
+    sk = lambda sp: "%d,%d,%s,%d,%s" % (sp["x"], sp["y"], sp["style"], sp["threat"], sp["region"])
+    need = [sp for sp in specs if sk(sp) not in old]
+    npcs = json.load(open(os.path.join(ROOT, "game", "data", "npcs.json"), encoding="utf-8"))["npcs"]
+    _CTX.update(pools=pools, prop_meta=prop_meta, known_vars=known_vars, known_fns=known_fns, scenes=scenes, hh=read_households(),
+                npc_names=frozenset(v.get("name", "") for v in npcs.values()))
+    if len(need) > 40:
+        with mp.get_context("fork").Pool(max(1, (os.cpu_count() or 2))) as pool:
+            res = pool.map(_work, need, chunksize=16)
+    else:
+        res = [_work(sp) for sp in need]
+    for sp, out in zip(need, res):
+        old[sk(sp)] = out
+    open(cpath, "wb").write(zlib.compress(pickle.dumps({"key": key, "outs": old}), 6))
+    log("실내 생성: %d곳(새로 %d · 캐시 %d) %.0f초" % (len(specs), len(need), len(specs) - len(need), time.time() - t0))
+    import copy
+    return [copy.deepcopy(old[sk(sp)]) for sp in specs]                # 쪽지 사슬이 고쳐 쓰므로 캐시와 떼어 둔다
 
 
 def run(entries, reach, threat, region_at, taken, log=print, cache=True, fixed=()):
@@ -819,7 +1324,8 @@ def run(entries, reach, threat, region_at, taken, log=print, cache=True, fixed=(
     if cache:                                                          # 따로 다시 돌릴 수 있게 후보·문 앞 칸·위협·권역을 남긴다
         os.makedirs(os.path.dirname(CACHE), exist_ok=True)
         H_, W_ = reach.shape
-        front = [[e["x"], e["y"] + 1] for e in entries if e["y"] + 1 < H_ and reach[e["y"] + 1, e["x"]]]
+        front = [[e["x"] + dx, e["y"] + 1] for e in entries for dx in (-1, 0, 1)            # 문 앞 칸 + 양옆(1-B3 표식 자리)
+                 if e["y"] + 1 < H_ and 0 <= e["x"] + dx < W_ and reach[e["y"] + 1, e["x"] + dx]]
         reg = [[region_at(cx * 40, cy * 40) for cx in range(W_ // 40)] for cy in range(H_ // 40)]
         json.dump({"W": W_, "H": H_, "entries": entries, "front": front, "threat": threat, "region": reg, "taken": [list(t) for t in taken],
                    "fixed": list(fixed)},
@@ -845,6 +1351,7 @@ def run(entries, reach, threat, region_at, taken, log=print, cache=True, fixed=(
         used.add((e["x"], e["y"]))
         doors.append({"lid": spec["lid"], "at": [e["x"], e["y"]], "to": spec["to"], "mark": spec.get("mark", "from_W"), "name": spec["name"],
                       "prop": "", "kind": "facade", "lock": int(spec.get("lock", 0))})
+    todo = []                                                          # 1-B: 먼저 고르고(순서 그대로) → 병렬 · 캐시로 만든다
     for e in entries:
         x, y, st = e["x"], e["y"], e["style"]
         if (x, y) in used:
@@ -861,7 +1368,10 @@ def run(entries, reach, threat, region_at, taken, log=print, cache=True, fixed=(
         cx, cy = x // 40, y // 40
         t = threat[cy][cx] if cy < len(threat) and cx < len(threat[cy]) else "1"
         t = int(t) if str(t).isdigit() else 1
-        out = build_one({"x": x, "y": y, "style": st, "threat": t, "region": rg}, pools, prop_meta, known_vars, known_fns, scenes)
+        todo.append((e, {"x": x, "y": y, "style": st, "threat": t, "region": rg}))
+    built = _build_all([sp for _, sp in todo], pools, prop_meta, known_vars, known_fns, scenes, log)
+    for (e, sp), out in zip(todo, built):
+        x, y, st = sp["x"], sp["y"], sp["style"]
         if out is None:
             continue
         outs[out["id"]] = (out, (x, y), st)
@@ -870,14 +1380,30 @@ def run(entries, reach, threat, region_at, taken, log=print, cache=True, fixed=(
         hv = _h(e["seed"], 91) % 100
         if st in ("villa", "house", "office", "factory") and hv < 18:
             lock = 25 if hv < 12 else 50
-        label = {"villa": "빌라 현관", "house": "대문", "apt": "아파트 현관", "gov": "주민센터", "shop": out["name"], "office": "사무동 출입문",
-                 "factory": "창고 셔터"}[st]
-        doors.append({"lid": "", "at": [x, y], "to": out["id"], "mark": "from_W", "name": label, "prop": "", "kind": "facade", "lock": lock})
+        label = out.get("label") or {"villa": "빌라 현관", "house": "대문", "apt": "아파트 현관", "gov": "주민센터", "shop": out["name"],
+                                     "office": "사무동 출입문", "factory": "창고 셔터"}[st]
+        door = {"lid": "", "at": [x, y], "to": out["id"], "mark": "from_W", "name": label, "prop": "", "kind": "facade", "lock": lock}
+        sg = door_sign(out, e["seed"])
+        if sg:
+            for dx in (1, -1):                                         # 문 앞 발판 옆 칸(걸어서 닿는 바닥)
+                if 0 <= x + dx < reach.shape[1] and reach[y + 1, x + dx]:
+                    lines = pools.get("sign_" + sg, [""])
+                    door["sign"], door["sign_at"] = sg, [x + dx, y + 1]
+                    door["sign_text"] = lines[_h(e["seed"], 137) % len(lines)]
+                    cnt["sign:" + sg] = cnt.get("sign:" + sg, 0) + 1
+                    break
+        doors.append(door)
         cnt[st] = cnt.get(st, 0) + 1
     n_stash = stash_chains(outs, pools, prop_meta)
-    for mid, (out, _, _) in outs.items():
-        json.dump(out, open(os.path.join(OUT, mid + ".json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
-    log("쪽지 따라가기(숨겨 둔 상자): %d쌍" % n_stash)
+    n_nb = neighbor_links(outs, prop_meta)
+    blob = bytearray()                                                 # 1-B: 낱장 JSON 대신 압축 묶음 하나(gen.bin — 실내마다 zlib, 월드 청크와 같은 방식)
+    for mid in sorted(outs):
+        raw = json.dumps(outs[mid][0], ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+        z = zlib.compress(raw, 9)
+        made[mid]["pack"] = [len(blob), len(z), len(raw)]
+        blob += z
+    open(os.path.join(OUT, "gen.bin"), "wb").write(bytes(blob))
+    log("쪽지 따라가기(숨겨 둔 상자): %d쌍 · 이웃 고리 외상 %d · 열쇠 %d · 묶음 %.1fMB" % (n_stash, n_nb[0], n_nb[1], len(blob) / 1e6))
     idx_path = os.path.join(OUT, "_index.json")
     idx = json.load(open(idx_path, encoding="utf-8")) if os.path.exists(idx_path) else {"maps": {}}
     idx["maps"] = {k: v for k, v in idx["maps"].items() if not k.startswith("G-")}

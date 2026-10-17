@@ -7,18 +7,20 @@
  "labels": {
   "START": 0,
   "MENU": 4,
-  "NAMES": 5,
-  "NAMESF": 10,
-  "HIDE": 13,
-  "NIGHT": 16,
-  "FIGHT": 19,
-  "DOC": 22,
-  "DMENU": 25,
-  "DTALK": 26,
-  "DTALKF": 29,
-  "DGIVE": 32,
-  "DPASS": 35,
-  "GONE": 39
+  "HIDE2": 5,
+  "HIDEF": 8,
+  "NAMES": 12,
+  "NAMESF": 18,
+  "HIDE": 21,
+  "NIGHT": 24,
+  "FIGHT": 27,
+  "DOC": 30,
+  "DMENU": 33,
+  "DTALK": 34,
+  "DTALKF": 37,
+  "DGIVE": 40,
+  "DPASS": 43,
+  "GONE": 47
  },
  "ops": [
   {
@@ -64,10 +66,25 @@
     {
      "text": "환승센터 터 지하로 몸을 숨긴다",
      "tags": [],
-     "cond": "",
+     "cond": "SQ_S11_NEARHUB == 1",
      "fx": "",
      "to": "HIDE",
      "id": "SQS11_PATROL:1:1"
+    },
+    {
+     "text": "무너진 건물 그늘로 인지영을 끌어당긴다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "은신",
+       "min": 50
+      }
+     ],
+     "cond": "SQ_S11_NEARHUB == 0 and SQ_S11_HIDEF == 0",
+     "fx": "",
+     "to": "HIDE2",
+     "id": "SQS11_PATROL:1:2",
+     "fail": "HIDEF"
     },
     {
      "text": "물러나서 밤을 기다린다",
@@ -75,7 +92,7 @@
      "cond": "",
      "fx": "",
      "to": "NIGHT",
-     "id": "SQS11_PATROL:1:2"
+     "id": "SQS11_PATROL:1:3"
     },
     {
      "text": "(총을 든다)",
@@ -83,9 +100,47 @@
      "cond": "",
      "fx": "",
      "to": "FIGHT",
-     "id": "SQS11_PATROL:1:3"
+     "id": "SQS11_PATROL:1:4"
     }
    ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "기울어진 간판 뒤 그늘. 인지영의 숨소리가 너무 크게 들린다. 군화 소리가 지나간다."
+  },
+  {
+   "op": "cmd",
+   "name": "s11",
+   "args": [
+    "patrol",
+    "hide"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "SQ_S11_HIDEF = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "인지영의 발이 느리다. 반쯤 숨었을 때 손전등이 그늘을 훑는다."
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P1",
+   "emo": "분노",
+   "text": "거기 구울! 숨는다고 안 보이는 줄 알아?"
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
   },
   {
    "op": "line",
@@ -97,13 +152,17 @@
    "op": "line",
    "who": "N-BJ-P2",
    "emo": "슬픔",
-   "text": "…최가람. 우리 할아버지 형님 이름입니다. 분대장님, 그냥 보내시죠."
+   "text": "…최가람. 저희 족보 맨 위에 순경 할아버지가 있습니다. 그 동생 이름이 최가람이라고. 분대장님, 그냥 보내시죠."
   },
   {
    "op": "line",
    "who": "N-BJ-P1",
    "emo": "기본",
    "text": "…지나가. 해 지기 전에 여의도에서 나가."
+  },
+  {
+   "op": "do",
+   "fx": "SQ_S11_PTALK = 1"
   },
   {
    "op": "cmd",
@@ -231,7 +290,7 @@
     {
      "text": "환승센터 터 지하로 몸을 숨긴다",
      "tags": [],
-     "cond": "",
+     "cond": "SQ_S11_NEARHUB == 1",
      "fx": "",
      "to": "HIDE",
      "id": "SQS11_PATROL:2:2"

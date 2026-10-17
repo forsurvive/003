@@ -203,8 +203,9 @@ func _init() -> void:
 	# ESCORT 인지영 동행(0 · 1 함께 · 2 기다림 · 3 끝) · READ 낭독 끝 · HELD_DAY 원본을 든 날 · SOL_L/SOL_D 결과 · REWARD 머리띠 · PLATE 제118석 쪽지 · VOTE 전광판 · CLAUSE 재개 조항 제3항 앎 ·
 	# TOOK 원본을 상자에서 꺼냄 · WARN 반출 소문(5일째) · PASS 선우진 인수증(낮 통행) · PDAY 순찰을 만난 날 · PKIND 순찰 종류(1 구울 · 2 문서) · PSAID 순찰 화술 실패 ·
 	# CASTL 명단 방송(1 넘김 · 2 송출) · CASTL_DAY · WOOQ/SUNQ 우도하 · 선우진에게 꺼낼 국회 기록이 있음(진행기) · SAGONG 골동품상 거절 들음 · COIN 분수 동전 대사 ·
-	# SAWLEAF 인지영이 유인물을 봄 · MET 의사록을 만남 · TOLD 보고서는 경찰서에 · SHOWN 파수에게 명단 · ATOFFICE 서장실 안(배관 방향) · WOOL/SUNL 사본을 건넴 · KNOWS 원본 자리 앎 · DONE 닫힘
-	for k in "START LEAF REPORT PRINT GUARD STACK ESCORT READ HELD_DAY SOL_L SOL_D REWARD PLATE VOTE CLAUSE TOOK WARN PASS PDAY PKIND PSAID CASTL CASTL_DAY WOOQ SUNQ SAGONG COIN SAWLEAF MET TOLD SHOWN ATOFFICE WOOL SUNL KNOWS DONE".split(" "):
+	# SAWLEAF 인지영이 유인물을 봄 · MET 의사록을 만남 · TOLD 보고서는 경찰서에 · SHOWN 파수에게 명단 · ATOFFICE 서장실 안(배관 방향) · WOOL/SUNL 사본을 건넴 · KNOWS 원본 자리 앎 · DONE 닫힘 ·
+	# IMET 인지영 첫 인사 · NEARHUB 환승센터 터 근처 · HIDEF 숨기 실패 · PTALK 순찰병 설득 · PCOUNT/PNEXT 하루 순찰 수 · 다음 · GAVEL 의사봉 · ISAID 광장 한 줄
+	for k in "START LEAF REPORT PRINT GUARD STACK ESCORT READ HELD_DAY SOL_L SOL_D REWARD PLATE VOTE CLAUSE TOOK WARN PASS PDAY PKIND PSAID CASTL CASTL_DAY WOOQ SUNQ SAGONG COIN SAWLEAF MET TOLD SHOWN ATOFFICE WOOL SUNL KNOWS DONE IMET NEARHUB HIDEF PTALK PCOUNT PNEXT GAVEL ISAID".split(" "):
 		vars.declare("SQ_S11_" + k, "int", 0)
 	vars.declare("SQR_S11", "int", 0)
 	for kv in [["SQH_LIST11", -1], ["SQH_RECESS", -1], ["SQE_LIST11", 0], ["SQE_RECESS", 0], ["SQK_MARCH", 0], ["NS_COOP", 0], ["PD_R02_KH", 0]]:   # 남산 협력 표시(SD-06 NS 협력 플래그) · 거점 '국회 폐허'(1 = BJ)

@@ -312,7 +312,7 @@ func enter(map_id: String, mark: String = "", look: Dictionary = {}, at: Vector2
 	var world_mode := WorldMap.covers(map_id)                       # 바깥(관악산 비탈·봉천 등)은 심리스 월드 하나(1-1)
 	var from_inside := map != null and not (map is WorldMap)
 	if enc_live != null:
-		enc_live.on_map_changed()
+		enc_live.on_map_changed(map_id)
 	map = WorldMap.new() if world_mode else InteriorMap.new()
 	map.load_map(map_id, st)
 	if not world_mode:                                                   # 자물쇠로 딴 문은 열린 채로 남는다(1-5)
@@ -877,7 +877,7 @@ func interact() -> bool:
 			return true
 		open_terminal(tm)
 		return true
-	var gd := _front_go(cells)
+	var gd := _front_go(_before_text(cells))
 	if not gd.is_empty():
 		_enter_go(gd)
 		return true
@@ -907,6 +907,16 @@ func interact() -> bool:
 						box.finished.connect(func() -> void: reveal_near(cc), CONNECT_ONE_SHOT)
 			return true
 	return false
+
+
+## 앞 칸 목록을 첫 조사 글 칸까지로 자른다(그 칸 포함 — 글과 문이 같은 칸이면 문). 1-B: 문 앞 표지 · 분필 표식이 먼 문에 가리지 않게
+func _before_text(cells: Array) -> Array:
+	var out: Array = []
+	for cc in cells:
+		out.append(cc)
+		if map.texts.has(cc) and not map.gos.has(cc):
+			break
+	return out
 
 
 ## 앞 칸의 들어가는 문(1-5e 월드 건물 1층 문) — 없으면 빈 사전
@@ -1549,7 +1559,7 @@ func box_prompt() -> String:
 					return "(E) 따기  %s  [잠김: %s]" % [str(dr.get("label", "문")), Lockpick.NAMES[gi]]
 				return "(E) 따기  %s  [잠김: %s · 자물쇠 따기 %d 필요]" % [str(dr.get("label", "문")), Lockpick.NAMES[gi], int(Lockpick.REQ[gi])]
 	if b.is_empty():
-		var gd := _front_go()
+		var gd := _front_go(_before_text(_front_cells()))
 		if not gd.is_empty():                                            # 건물 1층 문(1-5e)
 			var lv := int(gd.get("lock", 0))
 			var key := "wdoor:%d,%d" % [int(gd["at"][0]), int(gd["at"][1])]

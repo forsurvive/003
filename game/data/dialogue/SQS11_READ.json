@@ -5,7 +5,8 @@
  "npc": "",
  "cond": "V_ACT >= 1",
  "labels": {
-  "START": 0
+  "START": 0,
+  "R8": 19
  },
  "ops": [
   {
@@ -122,6 +123,17 @@
     "leaf",
     "7"
    ]
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S11_PTALK == 0",
+   "to": "R8"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "계단 아래 멀찍이, 아까 그 계엄병이 철모를 벗고 서 있다."
   },
   {
    "op": "line",
