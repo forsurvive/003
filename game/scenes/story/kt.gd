@@ -11,12 +11,14 @@ const LOBBY := "KT-01"
 const AQUA := "KT-02"
 const HAEUN := "N-R02-030"
 const RINGS := 3                                ## 벨 횟수(받지 않으면 그친다 — 다음에 들어서면 다시)
-const RING_GAP := 2.0
+const RING_GAP := 2.5
+const RING_NEAR := 14.0                         ## 벨은 인터폰에서 이만큼(칸) 안에 들어서야 울리기 시작한다(정문에서 20칸 — 뛰어도 못 받던 것, 재미 검수)
 const INTERCOM := Vector2i(22, 1)
 const DOOR_AT := Vector2i(15, 20)               ## 회전문 칸 앞(갇히는 자리)
 const REVOLVE_AT := Vector2i(14, 19)            ## 회전문 소품
 const TRAP_S := 10.0                            ## 갇힌 일개미가 유리를 깨고 나오기까지
-const LURE_R := 14.0                            ## 삐걱 소리가 닿는 거리(칸)
+const LURE_R := 40.0                            ## 삐걱 소리가 닿는 거리(칸) — 높은 로비 천장에 울려 로비 전체(재미 검수: 14칸은 정찰 길에 거의 안 닿았다)
+const SPIN_S := 4.0                             ## 한 번 밀면 날개가 이만큼 더 돈다 — 그사이 문 칸에 들어선 일개미가 갇힌다(나는 물러나 있어도 된다)
 const FUEL := ["화염방사기 연료", 30]           ## 발전기 연료 통을 들고 나가면(휘발유 — 화염방사기 연료로 쓴다)
 
 var host: InteriorHost
@@ -24,6 +26,8 @@ var st: StoryState
 var log_on := false
 var _ring_n := 0
 var _ring_t := 0.0
+var _ring_armed := false
+var _spin_t := 0.0
 var _trap_t := 0.0
 var _trapped: Dictionary = {}                    ## 갇힌 개미의 자리 · 행(깨고 나올 때 다시 세운다)
 
@@ -64,16 +68,32 @@ func _tc(c: Vector2i) -> Vector2:
 # ---------------------------------------------------------------- 맵에 들어섰다: 로비 벨
 func _on_map(id: String) -> void:
 	_ring_n = 0
+	_ring_armed = false
+	_spin_t = 0.0
 	_trapped = {}
 	_trap_t = 0.0
+	if v("REVOLVE") == 1:                                                 # 갇힌 개미를 두고 떠났다: 그사이 유리를 깨고 나갔다(반쯤 된 상태 없음, P10)
+		_sv("REVOLVE", 2)
 	if id == LOBBY and v("CALL") == 0 and not st.is_dead(HAEUN) and int(st.vars.get_v("V_ACT")) >= 1:
-		_ring_n = RINGS                                                   # 회전문 삐걱을 들은 어하은이 먼저 건다
-		_ring_t = 1.0
+		_ring_armed = true                                                # 회전문 삐걱을 들은 어하은이 먼저 건다 — 인터폰 가까이 오면 울린다
 
 
 func _process(dt: float) -> void:
 	if host == null or host.map == null:
 		return
+	if _ring_armed and _mid() == LOBBY and host.player != null:
+		if host.player.loco.logical.distance_to(_tc(INTERCOM)) / 32.0 <= RING_NEAR:
+			_ring_armed = false
+			_ring_n = RINGS
+			_ring_t = 0.2
+	if _spin_t > 0.0 and _mid() == LOBBY:                                  # 날개가 도는 동안 문 칸에 들어선 일개미는 갇힌다
+		_spin_t -= dt
+		var door := _tc(DOOR_AT)
+		for e in host.combat.enemies:
+			if is_instance_valid(e) and not e.cmb.dead and str(e.row.get("id", "")) == "CR-080" and e.loco.logical.distance_to(door) <= 1.6 * 32.0:
+				_spin_t = 0.0
+				_trap(e)
+				break
 	if _ring_n > 0 and _mid() == LOBBY:
 		_ring_t -= dt
 		if _ring_t <= 0.0:
@@ -104,6 +124,8 @@ func _cmd(a: Array, done: Callable) -> void:
 			_spin()
 		"tunnel":
 			_tunnel()
+		"jump":
+			_jump(str(a[1]) == "dry")
 	done.call()
 
 
@@ -136,13 +158,17 @@ func _power(n: int) -> void:
 func _spin() -> void:
 	if _mid() != LOBBY or v("REVOLVE") == 2:
 		return
-	host.hint("끼이이익 — 회전문이 반 바퀴 돈다. 로비 천장까지 울린다.", 2.5)
+	host.hint("끼이이익 — 회전문이 돈다. 로비 천장까지 울린다. 날개가 한참 더 돈다.", 2.5)
 	var door := _tc(DOOR_AT)
+	if v("REVOLVE") == 0:
+		_spin_t = SPIN_S
+		host.map.set_prop_state(REVOLVE_AT, "turn")
 	for e in host.combat.enemies:
 		if not is_instance_valid(e) or e.cmb.dead or str(e.row.get("id", "")) != "CR-080":
 			continue
 		var d: float = e.loco.logical.distance_to(door) / 32.0
 		if d <= 1.6 and v("REVOLVE") == 0:
+			_spin_t = 0.0
 			_trap(e)
 			return
 		if d <= LURE_R:
@@ -159,7 +185,7 @@ func _trap(e: Enemy) -> void:
 	host.combat.enemies.erase(e)
 	e.queue_free()
 	host.combat._rebuild_list()
-	host.map.set_prop_state(REVOLVE_AT, "turn")
+	host.map.set_prop_state(REVOLVE_AT, "trapped")
 	host.hint("회전문 칸에 일개미가 갇혔다. 유리를 긁는 소리 — 딱딱딱.", 3.0)
 	for o in host.combat.enemies:                                         # 냄새 길이 끊겼다: 남은 정찰은 길을 잃고 헤맨다
 		if is_instance_valid(o) and not o.cmb.dead and str(o.row.get("id", "")) == "CR-080":
@@ -177,6 +203,30 @@ func _break_out() -> void:
 	e.hear("impact", at)
 	host.hint("쨍그랑 — 회전문 유리가 깨지고 일개미가 튀어나온다.", 3.0)
 	_log("일개미가 회전문을 깨고 나옴")
+
+
+## 승강로에 뛰어내렸다: 그 자리에서 넘어진다(피해 · 소리) — 물이면 칸 지붕 해치가 무게에 꺼져 물속 칸이 열린다 · 말랐으면 더 아프고 칸 안으로
+func _jump(dry: bool) -> void:
+	_sv("HATCH", 1)
+	if host.combat.pc != null:
+		host.combat.pc.last_by = "env"
+		host.combat.pc.take({"hp": 15.0 if dry else 6.0}, host.player.loco.logical)
+		host.combat.pc.hold("down", 1.2)
+	_log("승강로에 뛰어내림(%s)" % ("마른 바닥" if dry else "물"))
+	if host.is_inside_tree():
+		host.go.call_deferred(AQUA, "shaft_bottom")
+		_splash.call_deferred(not dry)
+
+
+func _splash(wet: bool) -> void:
+	if not wet or host.map == null or _mid() != AQUA:
+		return
+	var at := host.player.loco.logical
+	for e in host.combat.enemies:                                         # 첨벙 — 물에 있는 것이 깬다
+		if is_instance_valid(e) and not e.cmb.dead and str(e.row.get("id", "")) == "CR-130":
+			e.hear("impact", at)
+			if e.loco.logical.distance_to(at) < 12.0 * 32.0:
+				e.wake()
 
 
 ## 유리 터널을 깼다: 물살에 그 자리에서 넘어지고(미끄러지지 않는다 — 넘어짐 · 피해) 터널이 허리 물로 남는다(다시 세움)

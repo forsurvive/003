@@ -29,7 +29,7 @@ SRC = os.path.join(ROOT, "script")
 OUT = os.path.join(ROOT, "game", "data", "dialogue")
 DATA = os.path.join(ROOT, "game", "data")
 
-EMOS = ["기본", "미소", "놀람", "분노", "슬픔", "피곤", "말함", "아픔"]
+EMOS = ["기본", "미소", "놀람", "분노", "슬픔", "피곤", "말함", "아픔", "목소리"]   # 목소리: 얼굴 없이 들리는 말(인터폰 · 무전 — 초상 자리에 스피커, 1-D5a)
 DIFFS = ["아주 쉬움", "쉬움", "보통", "어려움", "아주 어려움"]
 STATS = ["힘", "인지력", "지구력", "카리스마", "지능", "민첩성", "행운"]
 SKILLS = ["물물교환", "중화기", "에너지 무기", "폭발물", "자물쇠 따기", "의학", "근접 무기", "수리", "과학", "소형 화기", "은신", "화술",
@@ -79,7 +79,7 @@ ENGINE_VARS |= {"U02_" + k for k in ("GUIDE INTRO LIGHT LIGHT_DAY ASK HAL HAL_DA
 # UQ-04 7호 냉동 창고(1-D3, SD-05 UQ-04 · 1-D 계획 §9 · §9.6): 사실 한 곳 — 원고 script/act1/UQ-04.txt 머리 주석 · DS_VALVE 가공장 배수 밸브
 ENGINE_VARS |= {"UQ04_" + k for k in "KNOW OPEN OPEN_DAY LOCK DUE THAW THAW_DAY GONE LEFT COLD COLD_DAY BC BC_DAY SA SA_DAY JH JH_DAY LEAK FEUD FEUD_DAY RATK SHARD SHELF SOL REWARD LINK2 LINK3 FLED DATE SIGN PRICE BACK REFUND".split()} | {"DS_VALVE"}
 ENGINE_VARS |= {"GR_" + k for k in "CORE PUSH BUS CORE_DAY LV_A LV_B LV_C A B C STAFF STAFF_DAY STAFF_K KEY LOST SIGKEY WHISTLE MUSTER MUSTER_K REEFER DRIFT RATS SB SB_DAY ROOF CHART TAG PARK CHEER ESC GUIDE TIP MUSTER_DAY".split()}   # 1-D4 구로 차량기지
-ENGINE_VARS |= {"KT_" + k for k in "POWER POWER_DAY NOTE CALL RING RING2 MEM HOOK REVOLVE TUNNEL CAR QUEEN LOW".split()}   # 1-D5a 여의도 금탑
+ENGINE_VARS |= {"KT_" + k for k in "POWER POWER_DAY NOTE CALL RING RING2 MEM HOOK REVOLVE TUNNEL CAR QUEEN LOW CARTOLD HATCH KEY GRATE".split()}   # 1-D5a 여의도 금탑
 # 던전 정리 변수(1-D0, script/world/dungeons.txt): DG_<접미> 0 손 안 댐 · 1 정리 · 2 다시 들어섬 / _DAY 정리 · 재입주 날 / _ROLL 재입주를 굴린 날
 ENGINE_VARS |= {f"DG_{m}{s}" for m in re.findall(r"^@\s+([A-Z0-9]+)\s", open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "script", "world", "dungeons.txt"), encoding="utf-8").read(), re.M)
                 for s in ("", "_DAY", "_ROLL")}

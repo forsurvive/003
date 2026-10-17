@@ -402,10 +402,22 @@ func _draw_view() -> void:
 	if not sys:
 		var pr := Rect2(o + Vector2(24, 252), Vector2(96, 96))
 		view.draw_rect(pr, C["P17"])
-		face_rect.texture = _portrait(line_state["who"], _face(line_state["emo"]))
+		var voice: bool = str(line_state["emo"]) == "목소리"              # 얼굴 없이 들리는 말(인터폰 · 무전, 1-D5a): 초상 자리에 스피커 판 — 얼굴은 만날 때 처음 본다
+		face_rect.texture = null if voice else _portrait(line_state["who"], _face(line_state["emo"]))
 		face_rect.position = pr.position
 		face_rect.visible = face_rect.texture != null
-		if face_rect.texture == null:                                     # 초상 없는 무명 화자(길 위 사람·무명 적): 머리·어깨 실루엣
+		if voice:
+			var sc := pr.position + Vector2(48, 46)
+			view.draw_rect(Rect2(sc - Vector2(26, 34), Vector2(52, 68)), C["P48"])
+			view.draw_rect(Rect2(sc - Vector2(26, 34), Vector2(52, 68)), C["P01"], false, 2.0)
+			view.draw_circle(sc - Vector2(0, 8), 17.0, C["P49"])
+			for gy in range(-3, 4):
+				for gx in range(-3, 4):
+					if gx * gx + gy * gy <= 10:
+						view.draw_circle(sc - Vector2(0, 8) + Vector2(gx * 4, gy * 4), 1.2, C["P01"])
+			var lit: bool = fmod(talk_t, 0.5) < 0.25 and reveal < page_len
+			view.draw_circle(sc + Vector2(0, 22), 4.0, C["P56"] if lit else C["P02"])
+		elif face_rect.texture == null:                                   # 초상 없는 무명 화자(길 위 사람·무명 적): 머리·어깨 실루엣
 			var c := pr.position + Vector2(48, 40)
 			var sil: Color = C["P02"]
 			view.draw_colored_polygon(PackedVector2Array([c + Vector2(-34, 56), c + Vector2(-30, 34), c + Vector2(-16, 24), c + Vector2(16, 24),

@@ -464,11 +464,22 @@ func _ready() -> void:
 				["until", "KT_HOOK == 1 and KT_MEM == 1", 15.0, "인터폰 — 어하은(승강기 4번 · 망원경)", "kt_phone"], ["wait", 3.0],
 				["want", ["사다리"]], ["go", 14, 3, "KT-01"], ["use", 14, 2],
 				["until", "KT_CAR == 0", 2.0, "승강기 4번 승강로", "kt_shaft"], ["wait", 3.0], ["shot", "kt_aqua"],
-				["want", []], ["go", 20, 4, "KT-02"], ["go", 11, 7, "KT-02"], ["go", 4, 6, "KT-02"], ["want", ["A — 배수"]], ["use", 3, 5],
-				["until", "KT_POWER == 1", 10.0, "펌프실 — 배수(연료 한 통)", "kt_pump"], ["wait", 3.0], ["shot", "kt_drained"],
+				["want", []], ["go", 13, 8, "KT-02"], ["go", 10, 8, "KT-02"], ["go", 4, 6, "KT-02"], ["want", ["A — 배수"]], ["use", 3, 5],
+				["until", "KT_POWER == 1", 10.0, "펌프실 — 배수(연료 한 통)", "kt_pump"], ["wait", 3.0],
+				["go", 13, 8, "KT-02"], ["go", 18, 7, "KT-02"], ["wait", 1.0], ["shot", "kt_drained"],
 				["want", ["그만"]], ["wait", 1.0], ["go", 38, 6, "KT-02"], ["use", 38, 5],
 				["until", "KT_CAR == 1", 10.0, "물이 빠진 꺼진 칸", "kt_car"],
 				["check", "KT_POWER == 1 and KT_CALL >= 1", "배수 · 통화"]]
+		"ktj":                                                          # 1-D5a 금탑 엉뚱한 짓: 승강로에 뛰어내린다 → 물속 칸 → 사다리로 로비 → 어하은이 알아챈다
+			st.vars.set_v("GAME_DAY", 12)
+			host.date_text = "2277. 10. 30.  10:00"
+			host.enter("KT-01", "from_W")
+			plan = [["hp", 3000], ["noenc"], ["wait", 1.5], ["want", ["뛰어내린다"]], ["go", 14, 3, "KT-01"], ["use", 14, 2],
+				["until", "KT_HATCH == 1", 10.0, "승강로에 뛰어내림 — 칸 지붕 해치가 꺼짐", "ktj_jump"], ["wait", 3.0], ["shot", "ktj_bottom"], ["clear", ["CR-130"]],
+				["want", ["사다리"]], ["go", 39, 6, "KT-02"], ["use", 40, 6],
+				["until", "KT_CAR == 1", 10.0, "물속 칸 — 아이 신발 한 짝 → 점검 사다리로 로비", "ktj_car"], ["wait", 3.0],
+				["want", ["!끊는다"]], ["go", 22, 3, "KT-01"], ["use", 22, 2],
+				["until", "KT_CARTOLD == 1", 15.0, "어하은 — '숨소리가 달라요'", "ktj_phone"]]
 		"grp":                                                          # 1-D4 구로 엉뚱한 짓: 분실물 정기권을 역무원 박에게 돌려준다 → 박 퇴근 · 쥐 둥지 군번줄 → 떠돌이
 			st.vars.set_v("GAME_DAY", 12)
 			st.call_fn("give", ["M-071", 1])

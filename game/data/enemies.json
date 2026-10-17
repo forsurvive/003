@@ -75,7 +75,7 @@
   "xp": 60
  },
  "CR-095": {
-  "_src": "14_creatures-enemies.md:418",
+  "_src": "14_creatures-enemies.md:419",
   "attack": "물기 10",
   "dr": 0,
   "hp": 35,
@@ -90,7 +90,7 @@
   "xp": 5
  },
  "CR-096": {
-  "_src": "14_creatures-enemies.md:419",
+  "_src": "14_creatures-enemies.md:420",
   "attack": "물기 18",
   "dr": 0,
   "hp": 80,
@@ -105,7 +105,7 @@
   "xp": 15
  },
  "CR-097": {
-  "_src": "14_creatures-enemies.md:420",
+  "_src": "14_creatures-enemies.md:421",
   "attack": "물기 28",
   "dr": 0,
   "hp": 160,
@@ -120,7 +120,7 @@
   "xp": 25
  },
  "CR-104": {
-  "_src": "14_creatures-enemies.md:449",
+  "_src": "14_creatures-enemies.md:450",
   "attack": "물기 8",
   "dr": 0,
   "hp": 35,
@@ -135,7 +135,7 @@
   "xp": 5
  },
  "CR-105": {
-  "_src": "14_creatures-enemies.md:450",
+  "_src": "14_creatures-enemies.md:451",
   "attack": "물기 12",
   "dr": 0,
   "hp": 60,
@@ -150,7 +150,7 @@
   "xp": 10
  },
  "CR-106": {
-  "_src": "14_creatures-enemies.md:451",
+  "_src": "14_creatures-enemies.md:452",
   "attack": "물기 25",
   "dr": 0,
   "hp": 150,
@@ -165,7 +165,7 @@
   "xp": 25
  },
  "CR-107": {
-  "_src": "14_creatures-enemies.md:452",
+  "_src": "14_creatures-enemies.md:453",
   "attack": "물기 12",
   "dr": 0,
   "hp": 60,
@@ -180,7 +180,7 @@
   "xp": 15
  },
  "CR-108": {
-  "_src": "14_creatures-enemies.md:453",
+  "_src": "14_creatures-enemies.md:454",
   "attack": "물기 15",
   "dr": 0,
   "hp": 80,
@@ -195,7 +195,7 @@
   "xp": 15
  },
  "CR-121": {
-  "_src": "14_creatures-enemies.md:545",
+  "_src": "14_creatures-enemies.md:546",
   "attack": "집게 14",
   "dr": 10,
   "hp": 60,
@@ -210,7 +210,7 @@
   "xp": 10
  },
  "CR-130": {
-  "_src": "14_creatures-enemies.md:580",
+  "_src": "14_creatures-enemies.md:581",
   "attack": "물기 36",
   "dr": 0,
   "hp": 180,
@@ -225,7 +225,7 @@
   "xp": 30
  },
  "CR-136": {
-  "_src": "14_creatures-enemies.md:644",
+  "_src": "14_creatures-enemies.md:646",
   "attack": "물기 6 + 옴 25%",
   "dr": 0,
   "hp": 30,
@@ -240,7 +240,7 @@
   "xp": 6
  },
  "CR-200": {
-  "_src": "14_creatures-enemies.md:833",
+  "_src": "14_creatures-enemies.md:835",
   "attack": "근접 5",
   "dr": 0,
   "hp": 25,
@@ -255,7 +255,7 @@
   "xp": 7
  },
  "CR-201": {
-  "_src": "14_creatures-enemies.md:834",
+  "_src": "14_creatures-enemies.md:836",
   "attack": "근접 16",
   "dr": 5,
   "hp": 80,
@@ -270,7 +270,7 @@
   "xp": 15
  },
  "CR-202": {
-  "_src": "14_creatures-enemies.md:835",
+  "_src": "14_creatures-enemies.md:837",
   "attack": "근접 32 / 방사능 폭발(반경 4타일) 5 + 방사능 5/초(2초)",
   "dr": 0,
   "hp": 240,
@@ -285,7 +285,7 @@
   "xp": 35
  },
  "CR-204": {
-  "_src": "14_creatures-enemies.md:837",
+  "_src": "14_creatures-enemies.md:839",
   "attack": "근접 5",
   "dr": 0,
   "hp": 25,
@@ -300,7 +300,7 @@
   "xp": 7
  },
  "CR-205": {
-  "_src": "14_creatures-enemies.md:838",
+  "_src": "14_creatures-enemies.md:840",
   "attack": "경광봉 12",
   "dr": 5,
   "hp": 60,
@@ -315,7 +315,7 @@
   "xp": 15
  },
  "CR-206": {
-  "_src": "14_creatures-enemies.md:839",
+  "_src": "14_creatures-enemies.md:841",
   "attack": "근접 18",
   "dr": 0,
   "hp": 80,
@@ -330,7 +330,7 @@
   "xp": 20
  },
  "CR-305": {
-  "_src": "14_creatures-enemies.md:908",
+  "_src": "14_creatures-enemies.md:910",
   "attack": "손 레이저 30 ×2 / 머리 레이저 30",
   "dr": 5,
   "hp": 75,
@@ -345,7 +345,7 @@
   "xp": 10
  },
  "CR-306": {
-  "_src": "14_creatures-enemies.md:909",
+  "_src": "14_creatures-enemies.md:911",
   "attack": "CR-305와 같음",
   "dr": 5,
   "hp": 75,
@@ -360,7 +360,7 @@
   "xp": 10
  },
  "CR-313": {
-  "_src": "14_creatures-enemies.md:918",
+  "_src": "14_creatures-enemies.md:920",
   "attack": "전기 충격 8",
   "dr": 15,
   "hp": 150,
@@ -375,7 +375,7 @@
   "xp": 25
  },
  "CR-320": {
-  "_src": "14_creatures-enemies.md:927",
+  "_src": "14_creatures-enemies.md:929",
   "attack": "기관총 5(연사)",
   "dr": 10,
   "hp": 40,
@@ -389,7 +389,7 @@
   "xp": 7
  },
  "CR-401": {
-  "_src": "14_creatures-enemies.md:1072",
+  "_src": "14_creatures-enemies.md:1074",
   "dr": 18,
   "hp": 90,
   "id": "CR-401",
@@ -403,7 +403,7 @@
   "xp": 20
  },
  "CR-402": {
-  "_src": "14_creatures-enemies.md:1073",
+  "_src": "14_creatures-enemies.md:1075",
   "dr": 18,
   "hp": 90,
   "id": "CR-402",
@@ -417,7 +417,7 @@
   "xp": 25
  },
  "CR-403": {
-  "_src": "14_creatures-enemies.md:1074",
+  "_src": "14_creatures-enemies.md:1076",
   "dr": 22,
   "hp": 125,
   "id": "CR-403",
@@ -431,7 +431,7 @@
   "xp": 35
  },
  "CR-405": {
-  "_src": "14_creatures-enemies.md:1076",
+  "_src": "14_creatures-enemies.md:1078",
   "dr": 35,
   "hp": 170,
   "id": "CR-405",
@@ -445,7 +445,7 @@
   "xp": 40
  },
  "CR-420": {
-  "_src": "14_creatures-enemies.md:1126",
+  "_src": "14_creatures-enemies.md:1128",
   "dr": 5,
   "hp": 25,
   "id": "CR-420",
@@ -458,7 +458,7 @@
   "xp": 3
  },
  "CR-421": {
-  "_src": "14_creatures-enemies.md:1127",
+  "_src": "14_creatures-enemies.md:1129",
   "dr": 8,
   "hp": 55,
   "id": "CR-421",
@@ -471,7 +471,7 @@
   "xp": 10
  },
  "CR-423": {
-  "_src": "14_creatures-enemies.md:1129",
+  "_src": "14_creatures-enemies.md:1131",
   "dr": 5,
   "hp": 30,
   "id": "CR-423",
@@ -484,7 +484,7 @@
   "xp": 3
  },
  "CR-435": {
-  "_src": "14_creatures-enemies.md:1154",
+  "_src": "14_creatures-enemies.md:1156",
   "dr": 5,
   "hp": 60,
   "id": "CR-435",
@@ -498,7 +498,7 @@
   "xp": 15
  },
  "CR-436": {
-  "_src": "14_creatures-enemies.md:1155",
+  "_src": "14_creatures-enemies.md:1157",
   "dr": 12,
   "hp": 100,
   "id": "CR-436",
@@ -512,7 +512,7 @@
   "xp": 30
  },
  "CR-437": {
-  "_src": "14_creatures-enemies.md:1156",
+  "_src": "14_creatures-enemies.md:1158",
   "dr": 8,
   "hp": 80,
   "id": "CR-437",
@@ -526,7 +526,7 @@
   "xp": 15
  },
  "CR-438": {
-  "_src": "14_creatures-enemies.md:1157",
+  "_src": "14_creatures-enemies.md:1159",
   "dr": 15,
   "hp": 130,
   "id": "CR-438",
@@ -540,7 +540,7 @@
   "xp": 40
  },
  "CR-456": {
-  "_src": "14_creatures-enemies.md:1213",
+  "_src": "14_creatures-enemies.md:1215",
   "dr": 12,
   "hp": 90,
   "id": "CR-456",
@@ -554,7 +554,7 @@
   "xp": 20
  },
  "CR-457": {
-  "_src": "14_creatures-enemies.md:1214",
+  "_src": "14_creatures-enemies.md:1216",
   "dr": 18,
   "hp": 130,
   "id": "CR-457",
@@ -568,7 +568,7 @@
   "xp": 30
  },
  "CR-466": {
-  "_src": "14_creatures-enemies.md:1237",
+  "_src": "14_creatures-enemies.md:1239",
   "dr": 8,
   "hp": 70,
   "id": "CR-466",
@@ -580,7 +580,7 @@
   "xp": 15
  },
  "CR-472": {
-  "_src": "14_creatures-enemies.md:1243",
+  "_src": "14_creatures-enemies.md:1245",
   "dr": 2,
   "hp": 40,
   "id": "CR-472",
@@ -592,7 +592,7 @@
   "xp": 8
  },
  "CR-473": {
-  "_src": "14_creatures-enemies.md:1251",
+  "_src": "14_creatures-enemies.md:1253",
   "dr": 4,
   "hp": 36,
   "id": "CR-473",
@@ -606,7 +606,7 @@
   "xp": 10
  },
  "CR-500": {
-  "_src": "14_creatures-enemies.md:1293",
+  "_src": "14_creatures-enemies.md:1295",
   "attack": "물기 18",
   "dr": 0,
   "hp": 260,
@@ -620,7 +620,7 @@
   "xp": 50
  },
  "CR-513": {
-  "_src": "14_creatures-enemies.md:1306",
+  "_src": "14_creatures-enemies.md:1308",
   "dr": 18,
   "hp": 60,
   "id": "CR-513",
@@ -631,7 +631,7 @@
   "xp": 65
  },
  "CR-534": {
-  "_src": "14_creatures-enemies.md:1476",
+  "_src": "14_creatures-enemies.md:1478",
   "dr": 12,
   "hp": 140,
   "id": "CR-534",

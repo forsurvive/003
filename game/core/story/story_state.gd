@@ -233,7 +233,7 @@ func _init() -> void:
 	for k in "CORE PUSH BUS CORE_DAY LV_A LV_B LV_C A B C STAFF STAFF_DAY STAFF_K KEY LOST SIGKEY WHISTLE MUSTER MUSTER_K REEFER DRIFT RATS SB SB_DAY ROOF CHART TAG PARK CHEER ESC GUIDE TIP MUSTER_DAY".split(" "):
 		vars.declare("GR_" + k, "int", 0)
 	# 1-D5a 여의도 금탑(DG-KT): 뜻은 script/act1/KT.txt 머리 주석 — POWER 발전기 연료 한 통 · CALL 어하은 통화 · REVOLVE 회전문 · TUNNEL 유리 터널 · QUEEN 22층 여왕(1-D5b)
-	for k in "POWER POWER_DAY NOTE CALL RING RING2 MEM HOOK REVOLVE TUNNEL CAR QUEEN LOW".split(" "):
+	for k in "POWER POWER_DAY NOTE CALL RING RING2 MEM HOOK REVOLVE TUNNEL CAR QUEEN LOW CARTOLD HATCH KEY GRATE".split(" "):
 		vars.declare("KT_" + k, "int", 0)
 	Dungeon.load_db()                                                    # 던전 정리 변수(1-D0): DG_<접미> · _DAY · _ROLL
 	for did in Dungeon.db:

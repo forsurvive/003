@@ -106,12 +106,12 @@ func test_kt_drain(t) -> void:
 	var st: StoryState = r[1]
 	var c: Kt = r[2]
 	t.eq(_count(h, "CR-130"), 3, "메기 새끼 셋(물속 매복)")
-	t.ok(h.map.wet_at(Vector2i(33, 17)) == 2, "남동쪽 허리 물")
+	t.ok(h.map.wet_at(Vector2i(33, 18)) == 2, "남동쪽 허리 물")
 	t.eq(_play(st, c, "KT_PUMP", ["A — 배수"]), [], "배수 펌프")
 	t.ok(_v(st, "KT_POWER") == 1 and _v(st, "KT_POWER_DAY") == 10, "연료 한 통 — 배수(고른 날)")
 	t.eq(_count(h, "CR-130"), 0, "메기 새끼가 배수구로 쓸려 나감")
 	h.enter("KT-02", "pump")
-	t.ok(h.map.wet_at(Vector2i(33, 17)) == 0 and h.map.wet_at(Vector2i(39, 6)) == 0, "다시 들어서면 바닥이 말랐다(승강로 바닥까지)")
+	t.ok(h.map.wet_at(Vector2i(33, 18)) == 0 and h.map.wet_at(Vector2i(39, 6)) == 0 and h.map.wet_at(Vector2i(20, 7)) == 0, "다시 들어서면 바닥이 말랐다(홀 · 승강로 바닥까지)")
 	t.eq(_count(h, "CR-130"), 0, "마른 수족관엔 메기가 없다")
 	t.ok(_texts(st, "KT_PUMP").contains("배수관"), "펌프는 돌고 있다")
 	c._power(2)
@@ -178,34 +178,82 @@ func test_kt_phone(t) -> void:
 	t.ok(tape.contains("받는 사람이 없다") and not tape.contains("어하은입니다"), "죽음 판 — 녹음만")
 
 
-## 로비 벨: 통화한 적 없으면 들어설 때 세 번 울리고 그친다
+## 로비 벨: 통화한 적 없으면 인터폰 가까이(14칸) 들어설 때 세 번 울리고 그친다(정문에서 20칸 — 뛰어도 못 받던 것)
 func test_kt_ring(t) -> void:
 	var r := _host()
+	var h: InteriorHost = r[0]
 	var c: Kt = r[2]
-	t.eq(c._ring_n, Kt.RINGS, "로비에 들어서면 벨")
+	t.ok(c._ring_armed and c._ring_n == 0, "들어서면 벨이 준비된다(아직 안 울림)")
+	h.player.loco.logical = c._tc(Vector2i(22, 6))
+	c._process(0.3)
+	t.eq(c._ring_n, Kt.RINGS - 1, "인터폰 가까이 오면 첫 벨이 울린다(남은 두 번)")
 	var st: StoryState = r[1]
 	st.vars.set_v("KT_CALL", 1)
-	var h: InteriorHost = r[0]
 	h.enter("KT-01", "from_W")
-	t.eq(c._ring_n, 0, "통화했으면 벨이 없다")
+	t.ok(not c._ring_armed and c._ring_n == 0, "통화했으면 벨이 없다")
 
 
-## 회전문 꾀기: 곁의 일개미가 갇힘 → 깨고 나옴(깨짐 판) · 남은 정찰은 길을 잃는다
+## 회전문 꾀기(재미 검수 뒤): 밀면 날개가 4초 더 돈다 — 그사이 문 칸에 들어선 일개미가 갇힘 → 깨고 나옴 · 남은 정찰은 길을 잃는다 · 갇힌 채 떠나면 깨진 판으로 정리
 func test_kt_revolve(t) -> void:
 	var r := _host()
 	var h: InteriorHost = r[0]
 	var st: StoryState = r[1]
 	var c: Kt = r[2]
 	var ants: Array = h.combat.enemies.filter(func(e): return is_instance_valid(e) and str(e.row.get("id", "")) == "CR-080")
-	var a0: Enemy = ants[0]
-	a0.loco.logical = c._tc(Kt.DOOR_AT)
+	var far: Enemy = ants[0]
 	c._spin()
-	t.ok(_v(st, "KT_REVOLVE") == 1 and _count(h, "CR-080") == 1, "곁의 일개미가 회전문 칸에 갇힘")
+	t.ok(far.route.size() == 1 and c._spin_t > 0.0, "삐걱 — 로비 끝의 정찰도 소리 쪽으로(냄새 길을 벗어남)")
+	far.loco.logical = c._tc(Kt.DOOR_AT)
+	c._process(0.25)
+	t.ok(_v(st, "KT_REVOLVE") == 1 and _count(h, "CR-080") == 1, "날개가 도는 사이 문 칸에 들어선 일개미가 갇힘(나는 물러나 있어도 된다)")
 	var other: Enemy = h.combat.enemies.filter(func(e): return is_instance_valid(e) and str(e.row.get("id", "")) == "CR-080")[0]
 	t.ok(other.route.is_empty(), "냄새 길이 끊겨 남은 정찰이 길을 잃음")
 	c._trap_t = 0.0
 	c._process(0.1)
 	t.ok(_v(st, "KT_REVOLVE") == 2 and _count(h, "CR-080") == 2, "유리를 깨고 나옴 — 회전문 깨짐 판")
+	var r2 := _host()
+	var h2: InteriorHost = r2[0]
+	var st2: StoryState = r2[1]
+	var c2: Kt = r2[2]
+	var a2: Enemy = h2.combat.enemies.filter(func(e): return is_instance_valid(e) and str(e.row.get("id", "")) == "CR-080")[0]
+	a2.loco.logical = c2._tc(Kt.DOOR_AT)
+	c2._spin()
+	t.eq(_v(st2, "KT_REVOLVE"), 1, "갇힘")
+	h2.enter("KT-02", "from_W")
+	t.eq(_v(st2, "KT_REVOLVE"), 2, "갇힌 채 떠나면 그사이 깨고 나간 판(반쯤 된 상태 없음)")
+
+
+## 승강로에 뛰어내리기(엉뚱한 짓): 물이면 해치가 꺼져 물속 칸이 열린다 — 배수 없이도 꺼진 칸 · 꺼진 칸을 본 뒤 어하은이 알아챈다
+func test_kt_jump(t) -> void:
+	var r := _host()
+	var h: InteriorHost = r[0]
+	var st: StoryState = r[1]
+	var c: Kt = r[2]
+	t.eq(_play(st, c, "KT_SHAFT", ["뛰어내린다"]), [], "승강기 4번 — 뛰어내린다")
+	t.eq(_v(st, "KT_HATCH"), 1, "칸 지붕 해치가 꺼짐")
+	h.enter("KT-02", "shaft_bottom")
+	t.eq(_play(st, c, "KT_CAR", ["그만"]), [], "물속 칸을 더듬는다")
+	t.ok(_v(st, "KT_CAR") == 1 and _v(st, "KT_POWER") == 0, "배수 없이도 꺼진 칸")
+	t.ok(_texts(st, "KT_CAR").contains("젖은 채"), "물속 판 글")
+	var txt := _texts(st, "KT_PHONE")
+	t.ok(txt.contains("4번 칸에 내려가 보셨어요") or txt.contains("숨소리가 달라요"), "꺼진 칸을 보고 오면 어하은이 알아챈다")
+
+
+## 직원 길: 철망 문은 사육사 열쇠나 자물쇠 따기 · 홀은 발목 물(수염)
+func test_kt_paths(t) -> void:
+	var r := _host("KT-02", "pump")
+	var h: InteriorHost = r[0]
+	var st: StoryState = r[1]
+	var c: Kt = r[2]
+	t.ok(h.map.is_solid(Vector2i(11, 4)), "철망 문이 닫혀 있다")
+	t.ok(not _texts(st, "KT_GRATE").contains("사육사 열쇠로"), "열쇠가 없으면 열쇠 선택지가 없다")
+	t.eq(_play(st, c, "KT_LOCKER", ["챙긴다"]), [], "사물함 열쇠")
+	t.eq(_play(st, c, "KT_GRATE", ["사육사 열쇠로"]), [], "철망 문을 연다")
+	t.eq(_v(st, "KT_GRATE"), 1, "열림")
+	h.enter("KT-02", "grate_w")
+	t.ok(not h.map.is_solid(Vector2i(11, 4)), "다시 세우면 지나갈 수 있다")
+	t.ok(h.map.wet_at(Vector2i(20, 7)) == 1 and h.map.wet_at(Vector2i(20, 12)) == 0 and h.map.wet_at(Vector2i(20, 3)) == 0,
+		"홀은 발목 물 · 유리 터널과 철망 발판은 마른 길")
 
 
 ## 유리 터널을 깨면: 넘어짐 · 피해 · 다시 들어서면 터널이 허리 물

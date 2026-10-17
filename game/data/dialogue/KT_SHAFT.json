@@ -8,7 +8,9 @@
   "START": 0,
   "DRY": 4,
   "CHOOSE": 5,
-  "DOWN": 6
+  "JUMP": 6,
+  "JUMP_DRY": 11,
+  "DOWN": 14
  },
  "ops": [
   {
@@ -50,14 +52,69 @@
      "id": "KT_SHAFT:1:0"
     },
     {
+     "text": "그냥 뛰어내린다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "JUMP",
+     "id": "KT_SHAFT:1:1"
+    },
+    {
      "text": "그만둔다",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "KT_SHAFT:1:1"
+     "id": "KT_SHAFT:1:2"
     }
    ]
+  },
+  {
+   "op": "if",
+   "cond": "KT_POWER == 1",
+   "to": "JUMP_DRY"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "숨을 들이켜고 — 떨어진다. 첨벙. 허리 물에 처박혀 그 자리에 넘어진다. 물이 사방으로 튄다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "발밑에서 무언가 꺼진다. 칸 지붕 해치가 무게에 못 이겨 안으로 내려앉았다. 물속 칸이 입을 벌렸다."
+  },
+  {
+   "op": "cmd",
+   "name": "kt",
+   "args": [
+    "jump",
+    "wet"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "숨을 들이켜고 — 떨어진다. 쾅. 마른 칸 지붕에 무릎부터 떨어져 그 자리에 넘어진다. 지붕 해치가 꺼지며 칸 안으로 같이 떨어진다."
+  },
+  {
+   "op": "cmd",
+   "name": "kt",
+   "args": [
+    "jump",
+    "dry"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
   },
   {
    "op": "line",

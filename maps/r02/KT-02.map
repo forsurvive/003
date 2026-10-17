@@ -1,6 +1,6 @@
-# 여의도 금탑 KT-02 지하 수족관(침수 — SD-09a L-R02-05 · 1-D 계획 §11.3 · §11.7 · 단계 1-D5a). 44×24.
-# 서쪽 펌프실 · 사육사 휴게실(비상 발전기 한 통 · 직원 인터폰 · 쉼터) · 관람 홀(유리 터널 = 관람객 길 · 수조 위 철망 발판 = 직원 길) ·
-# 남동쪽 깨진 큰 수조 물(발목 · 허리 — 메기 새끼) · 동북 승강로 바닥(꺼진 칸 지붕 — 사다리로 로비) · 남동 둔치 비상구(월드 둘째 입구).
+# 여의도 금탑 KT-02 지하 수족관(침수 — SD-09a L-R02-05 · 1-D 계획 §11.3 · §11.7 · 단계 1-D5a, 구현 뒤 재미 검수 반영). 44×24.
+# 길 셋: 유리 터널(관람객 길 — 마른 길, 깨면 허리 물) · 수조 위 철망 발판(직원 길 — 물 밖 · 철망 문은 사육사 열쇠/자물쇠) · 홀 물(발목 — 메기 수염: 숨을 수 없다).
+# 동쪽 승강로 바닥(꺼진 칸 지붕 · 점검 사다리로 로비) · 남동 둔치 비상구(월드 둘째 입구 — 마른 계단참).
 map KT-02 금탑 지하 수족관
 set bk
 grid
@@ -8,24 +8,24 @@ grid
 ############################################
 ############################################
 #~~~~~~~~~~#=============================tt#
-#~~~~~~~~~~#=============================tt#
+#~~~~~~~~~~==============================tt#
 #~~~~~~~~~~#tttttttttttttttttttttttttFFFFFt#
 #~~~~~~~~~~#tttttttttttttttttttttttttFFFFFt#
-#~~~~~~~~~~~tttttttttttttttttttttttttFFFFFt#
-#~~~~~~~~~~~tttttttttttttttttttttttttFFFFFt#
-#~~~~~~~~~~#tttttttttttttttttttttttttFFFFFt#
-#~~~~~~~~~~#ttttttttttttttttttttttttttttttt#
-#~~~~~~~~~~#ttuuuuuuuuuuuuffffffffftttttttt#
-#~~~~~~~~~~#ttuuuuuuuuuuuuffffffffftttttttt#
-############ttuuuuuuuuuuuuffffffffftttttttt#
-############ttttttttttttfffffffffffffffffff#
-############ttttttttttttfffffffffffffffffff#
-############ttttttttttttffffffFFFFFFFFFFFFF#
-############ttttttttttttffffffFFFFFFFFFFFFF#
-############ttttttttttttffffffFFFFFFFFFFFFF#
-############ttttttttttttffffffFFFFFFFFFFFFF#
-############ttttttttttttffffffFFFFFFFFFFFFF#
-############ttttttttttttffffffFFFFFFFFFFFFF#
+#~~~~~~~~~~#ttfffffffffffffffffffffffFFFFFt#
+#~~~~~~~~~~~ttfffffffffffffffffffffffFFFFFt#
+#~~~~~~~~~~~ttttttttttttttttttttttfffFFFFFt#
+#~~~~~~~~~~#ttttttttttttttttttttttffftttttt#
+#~~~~~~~~~~#ttuuuuuuuuuuuuuuuuuuuuutttttttt#
+#~~~~~~~~~~#ttuuuuuuuuuuuuuuuuuuuuutttttttt#
+############ttuuuuuuuuuuuuuuuuuuuuutttttttt#
+############ttttttttttttttttttttttffftttttt#
+############ttttttttttttttttttttttffftttttt#
+############fffffffffffffffffffffffffffffff#
+############ffffffffffffffffffFFFFFFFFFFFFF#
+############ffffffffffffffffffFFFFFFFFFFFFF#
+############ffffffffffffffffffFFFFFFFFFFFFF#
+############ffffffffffffffffffFFFFFFFFFtttt#
+############ffffffffffffffffffFFFFFFFFFtttt#
 ########################################tt##
 ########################################tt##
 end
@@ -33,15 +33,17 @@ exit 40 23 W L-R02-05>from_river
 exit 41 23 W L-R02-05>from_river
 mark from_W 40 21 N
 mark from_river 40 21 N
-mark from_shaft 36 6 W
-mark from_KT-01 36 6 W
+mark from_shaft 39 4 W
+mark from_KT-01 39 4 W
+mark grate_w 12 4 E
+mark shaft_bottom 38 7 W
 mark pump 5 8 N
-mark tunnel_w 15 12 E
-mark grate_e 39 4 W
-drain 24 5 19 17 cond="KT_POWER == 1"
+mark tunnel_w 13 12 E
+mark hall 13 8 E
+drain 12 5 31 17 cond="KT_POWER == 1"
 flood 14 11 21 3 cond="KT_TUNNEL == 1 and KT_POWER != 1"
 dark cond="KT_POWER == 0 or KT_POWER == 3"
-# ---------------------------------------------------------------- 펌프실 · 사육사 휴게실
+# ---------------------------------------------------------------- 펌프실 · 사육사 휴게실(쉼터)
 prop pump_kt 3 4 cond="KT_POWER == 0"
 prop pump_kt 3 4 state=drain cond="KT_POWER == 1"
 prop pump_kt 3 4 state=lift cond="KT_POWER == 2"
@@ -56,32 +58,47 @@ prop note_ground 6 10
 text 6 10 "발전기 옆 상자에 쪽지가 테이프로 붙었다." scene=KT_NOTE
 prop locker_row2 1 10
 box 1 10 locker name="사육사 사물함"
+text 2 10 "사물함 문 안쪽." scene=KT_LOCKER
 prop cot 7 11
 text 9 11 "사육사 휴게실 구석." scene=KT_REST
-# ---------------------------------------------------------------- 관람 홀: 수조 · 산호 벽
+prop grate_gate_kt 11 4 cond="KT_GRATE == 0"
+text 11 4 "직원 통로 철망 문." scene=KT_GRATE
+# ---------------------------------------------------------------- 수조 줄 A(발판 아래 — 발판과 홀을 가른다)
 prop w_coral_kt 14 1
 prop w_coral_kt 30 1
 text 14 2 "산호 벽 '서울의 바다'. 철망 발판이 그 앞을 지난다 — 관람객은 못 올라가는 높이." w=2
-prop tank_kt 16 7
-text 16 8 "큰 수조 1 — 한강의 물고기. 물이 탁하다. 무언가 유리 쪽으로 다가왔다가 물러난다." w=4
-prop tank_kt 22 7
-text 22 8 "큰 수조 2 — 서해의 바다. 수초가 흔들린다." w=4
-prop tank_kt 16 15 state=dry
-text 16 16 "빈 수조. 마른 수초가 바닥에 누웠다." w=4
-prop tank_kt 28 7 state=broken
-text 28 8 "큰 수조 3 — 앞 유리에 별 모양 금. 물이 반으로 줄었다. 바닥이 이 물이다." w=4
-text 20 12 "유리 터널. 양쪽 유리 너머로 물빛이 일렁인다. 금 간 자리에서 물방울이 똑똑." w=3 scene=KT_TUNNEL
-text 30 4 "수조 위 철망 발판. 녹슨 격자 틈으로 아래 물빛 — 사육사가 다니던 길." w=3
+prop tank_kt 12 5
+prop tank_kt 16 5
+prop tank_kt 20 5 state=dry
+prop tank_kt 24 5
+prop tank_kt 28 5
+prop tank_kt 32 5
+text 20 4 "발판 아래 빈 수조. 마른 수초가 바닥에 누웠다." w=4
+text 30 4 "수조 위 철망 발판. 녹슨 격자 틈으로 아래 물빛 — 사육사가 다니던 길. 물 밖이라 수염이 닿지 않는다." w=3
+# ---------------------------------------------------------------- 수조 줄 B · C(유리 터널 양쪽 유리)
+prop tank_kt 14 9
+prop tank_kt 18 9
+prop tank_kt 22 9 state=broken
+prop tank_kt 26 9
+prop tank_kt 30 9
+prop tank_kt 14 14
+prop tank_kt 18 14
+prop tank_kt 22 14
+prop tank_kt 26 14
+prop tank_kt 30 14 state=dry
+text 18 11 "유리 터널. 양쪽 유리 너머 물빛이 일렁인다. 큰 그림자 하나가 유리 바로 너머에서 나를 따라 헤엄친다 — 보이지만 아직 닿지 않는다." w=3 scene=KT_TUNNEL
+text 22 10 "한강의 물고기 수조. 앞 유리에 별 모양 금. 금 간 자리에서 물방울이 똑똑." w=4
 prop rubble 38 12
 prop rubble 13 19
 # ---------------------------------------------------------------- 승강로 바닥(꺼진 칸 — 물에 잠긴 칸 지붕 · 점검 사다리)
-text 38 5 "승강로 바닥. 칸 지붕이 허리 물에 잠겼다. 벽에 점검 사다리가 위로 — 로비 승강기 4번 문." w=3 scene=KT_SHAFTUP cond="KT_POWER != 1"
-text 38 5 "물이 빠진 승강로 바닥. 찌그러진 칸이 기울어 있다. 문이 비틀려 열렸다." w=3 scene=KT_CAR cond="KT_POWER == 1"
-prop crate_o 40 7 cond="KT_POWER == 1"
-box 40 7 bag name="꺼진 칸 바닥의 소지품" cond="KT_POWER == 1"
+text 38 5 "승강로 바닥. 칸 지붕이 허리 물에 잠겼다. 벽에 점검 사다리가 위로 — 로비 승강기 4번 문." w=2 scene=KT_SHAFTUP cond="KT_POWER != 1"
+text 38 5 "물이 빠진 승강로 바닥. 찌그러진 칸이 기울어 있다. 문이 비틀려 열렸다." w=2 scene=KT_CAR cond="KT_POWER == 1"
+text 40 6 "꺼진 해치 구멍 — 물속 칸." scene=KT_CAR cond="KT_HATCH == 1 and KT_POWER != 1"
+prop crate_o 40 8 cond="KT_POWER == 1 or KT_HATCH == 1"
+box 40 8 bag name="꺼진 칸 — 승객들의 소지품" cond="KT_POWER == 1 or KT_HATCH == 1"
 # ---------------------------------------------------------------- 둔치 비상구
-text 40 21 "비상구 계단. 위에서 강바람과 물비린내. 둔치로 나간다." w=2
+text 40 21 "비상구 계단참. 위에서 강바람과 물비린내. 아래 허리 물 속에서 무언가 수염을 흔든다." w=2
 # ---------------------------------------------------------------- 메기 새끼(물속 매복 — 수염: 물에 발 담근 사람은 웅크려도 안다)
-enemy CR-130 33 17 lurk=1 lv=4 cond="KT_POWER != 1"
-enemy CR-130 38 19 lurk=1 lv=4 cond="KT_POWER != 1"
-enemy CR-130 29 12 lurk=1 lv=4 cond="KT_POWER != 1"
+enemy CR-130 24 8 lurk=1 lv=4 cond="KT_POWER != 1"
+enemy CR-130 28 18 lurk=1 lv=4 cond="KT_POWER != 1"
+enemy CR-130 36 19 lurk=1 lv=4 cond="KT_POWER != 1"
