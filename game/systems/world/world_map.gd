@@ -155,7 +155,7 @@ func load_map(map_id: String, st: StoryState = null) -> void:
 					"sort_y": (at.y + 1) * T + 4})
 			if door.has("sign"):                                           # 1-B3 문 앞 분필 표식
 				var sa := Vector2i(int(door["sign_at"][0]), int(door["sign_at"][1]))
-				var sn := "chalk_" + str(door["sign"])
+				var sn := str(door.get("sign_prop", "chalk_" + str(door["sign"])))   # 1-L: 다시 문 연 가게는 판자 세움 간판
 				var sm: Dictionary = prop_meta.get(sn, {})
 				if not sm.is_empty():
 					var so: Array = sm.get("off", [0, 0])

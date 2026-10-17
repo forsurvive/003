@@ -1322,6 +1322,115 @@ def tag_loot(outs, thr):
     return n_ev
 
 
+# 일반 장사꾼(1-L 계획 §4.1 · §9.2): 결 있는 장사꾼은 권역마다 결 하나당 둘까지(같은 결끼리 150칸 넘게 떨어져) · 떠돌이는 최근 사람 집(층 ③)에
+# 권역마다 여섯까지(장사꾼끼리 100칸 넘게). 적 · 함정 · 방사능 · 숨겨 둔 상자가 있는 실내는 고르지 않는다. 가게의 용기는 그 장사꾼 것이 된다(꺼내면 절도).
+TRADE_KIND = {"hw": "scrap", "pharm": "herb", "video": "parts", "karaoke": "parts", "laundry": "cloth", "salon": "cloth",
+              "snack": "food", "conv": "food", "tea": "food"}
+TRADE_LOOK = {"scrap": ["M1-S3-HR04-H1-T11-0-PF11-HD00-EY00", "M2-S4-HR01-H1-T05-1-PF12-HD05-EY00", "M1-S3-HR02-H1-T05-1-PF12-HD02-EY00"],
+              "herb": ["F1-S4-HR06-H2-T05-1-PF12-HD00-EY00", "E1-S3-HR04-H3-T03-2-PF12-HD00-EY00-PR011", "F1-S2-HR06-H2-T04-2-PF12-HD00-EY00-PR011"],
+              "parts": ["M1-S2-HR01-H1-T03-2-PF00-HD05-EY00-PR040", "M2-S5-HR03-H2-T10-2-PF00-HD00-EY00-PR040", "M2-S3-HR01-H1-T03-1-PF00-HD05-EY00"],
+              "cloth": ["F2-S4-HR05-H1-T06-2-PF12-HD03-EY00-PR041", "F1-S3-HR02-H1-T06-2-PF12-HD03-EY00-PR041", "M1-S3-HR02-H1-T04-2-PF12-HD00-EY00-PR011"],
+              "food": ["E1-S3-HR04-H3-T03-2-PF12-HD00-EY00-PR011", "M2-S3-HR03-H3-T11-2-PF12-HD00-EY00-PR013", "F1-S4-HR06-H2-T05-1-PF12-HD00-EY00"],
+              "drift": ["M2-S4-HR01-H1-T03-2-PF00-HD05-EY00", "M1-S4-HR01-H1-T06-2-PF12-HD03-EY00-PR041", "F2-S2-HR06-H2-T14-0-PF10-HD14-EY00-PR017"]}
+TRADE_TEXT = {"scrap": "담요 위에 고철이 무게별로 쌓였다. 저울 접시에 녹슨 볼트 셋.", "herb": "말린 풀 다발과 약병. 병마다 손글씨 — '열' · '배' · '라드'.",
+              "parts": "진공관이 솜에 싸여 줄지어 있다. 전지 상자 하나는 뚜껑이 열렸다.", "cloth": "개켜 둔 옷가지. 옷마다 실로 꿰맨 값표.",
+              "food": "솥에서 김이 오른다. 국 냄새 — 무엇을 끓였는지는 묻지 않는 게 낫다.", "drift": "잡동사니를 늘어놓은 담요. 하나도 같은 물건이 없다."}
+TRADE_BARK = {"scrap": "고철은 무게, 연장은 쓸모.", "herb": "아프면 와. 안 아파도 와.", "parts": "진공관 깨지지 않게 들고 와.",
+              "cloth": "입던 옷도 받아.", "food": "한 그릇 하고 가.", "drift": "구경은 공짜."}
+TRADE_SIGN = {"scrap": "판자 간판 '고철'. 문틈으로 등불 빛이 샌다 — 안에 사람이 있다.", "herb": "판자 간판 '약초'. 마른 풀 냄새가 문 밖까지 난다.",
+              "parts": "판자 간판 '부품'. 안에서 무언가를 두드리는 소리.", "cloth": "판자 간판 '헌옷'. 문고리에 옷걸이가 줄줄이 걸렸다.",
+              "food": "판자 간판 '국밥'. 연기가 문틈으로 나온다.", "drift": "판자 간판 '잡화'. 누가 여기 자리를 폈다."}
+
+
+def _place_trader(o, kind, prop_meta, rnd):
+    """실내 하나에 장사꾼 · 담요 자리 · 글을 놓는다(들어온 자리에서 모든 것에 닿아야 — 안 되면 None)."""
+    m = o["marks"]["from_W"]
+    W, H = o["size"]
+    cells = [c for c in _free_cell(o, rnd) if 4 <= c[1] <= H - 4 and abs(c[0] - m[0]) + abs(c[1] - m[1]) >= 4]
+    pm = prop_meta["trade_mat_lt"]
+    for (nx, ny) in cells[:14]:
+        for mx in (nx + 1, nx - 2):
+            if mx < 1 or mx + 1 > W - 2:
+                continue
+            if any(o["solid"][ny][xx] != "0" for xx in (mx, mx + 1)):
+                continue
+            trial = json.loads(json.dumps(o))
+            for xx in (mx, mx + 1):
+                trial["solid"][ny] = trial["solid"][ny][:xx] + "1" + trial["solid"][ny][xx + 1:]
+            row = trial["solid"][ny]
+            trial["solid"][ny] = row[:nx] + "1" + row[nx + 1:]                # 장사꾼이 선 칸도 막힌 셈 치고 닿는지 본다
+            if not _ok(trial):
+                continue
+            trial["solid"][ny] = row                                         # 사람 칸은 길에서 막지 않는다(실행 중 인물이 막는다)
+            trial["props"].append({"name": "trade_mat_lt", "x": mx, "y": ny, "px": [mx * 32 + pm["off"][0], ny * 32 + pm["off"][1]],
+                                   "sort_y": (ny + 1) * 32})
+            trial["texts"].append({"x": mx, "y": ny, "w": 2, "h": 1, "text": TRADE_TEXT[kind]})
+            look = TRADE_LOOK[kind][rnd.randrange(len(TRADE_LOOK[kind]))]
+            nid = "N-VG-" + {"scrap": "S1", "herb": "H1", "parts": "P1", "cloth": "C1", "food": "F1", "drift": "D1"}[kind]
+            trial["npcs"].append({"id": nid, "x": nx, "y": ny, "dir": "S", "route": [], "cond": "", "bark": TRADE_BARK[kind],
+                                  "look": look, "sheet": "st_look_" + look.lower().replace("-", "_")})
+            for b in trial["boxes"]:
+                b["owner"] = nid                                            # 이제 그 사람 가게다
+            trial["trader"] = kind
+            return trial
+    return None
+
+
+def place_traders(outs, doors, reach):
+    import math
+    prop_meta = _setup()[0]
+    rnd = random.Random(1102)
+    by_door = {d["to"]: d for d in doors}
+    placed = {}                                                          # 맵 → (결, x, y, 권역)
+
+    def clean(o):
+        return not o["enemies"] and not o.get("traps") and not any(b["kind"] == "stash" or b.get("hd") for b in o["boxes"])
+
+    def far_from(x, y, reg, kinds, dmin):
+        return all(math.hypot(x - px, y - py) >= dmin for (k, px, py, r) in placed.values() if r == reg and (kinds is None or k in kinds))
+
+    def put(mid, kind):
+        o, (x, y), st = outs[mid]
+        t = _place_trader(o, kind, prop_meta, random.Random(_h(x, y, 1102)))
+        if t is None:
+            return False
+        outs[mid] = (t, (x, y), st)
+        placed[mid] = (kind, x, y, o.get("region"))
+        d = by_door.get(mid)
+        if d:
+            d["name"] = o["name"] + " — 장사 함"
+            for dx in (1, -1):
+                if 0 <= x + dx < reach.shape[1] and reach[y + 1, x + dx]:
+                    d["sign"], d["sign_prop"], d["sign_at"], d["sign_text"] = "trade", "tboard_" + kind, [x + dx, y + 1], TRADE_SIGN[kind]
+                    break
+        return True
+    order = sorted(outs, key=lambda k: zlib.crc32(k.encode()))
+    for kind in ("scrap", "herb", "parts", "cloth", "food"):
+        per = {}
+        for mid in order:
+            o, (x, y), st = outs[mid]
+            if st != "shop" or TRADE_KIND.get(SHOPS[(x * 7 + y * 13) % len(SHOPS)]) != kind or not clean(o) or mid in placed:
+                continue
+            reg = o.get("region")
+            if per.get(reg, 0) >= 2 or not far_from(x, y, reg, {kind}, 150):
+                continue
+            if put(mid, kind):
+                per[reg] = per.get(reg, 0) + 1
+    per = {}
+    for mid in order:
+        o, (x, y), st = outs[mid]
+        if "l3" not in ((o.get("house") or {}).get("layers") or []) or not clean(o) or mid in placed:
+            continue
+        reg = o.get("region")
+        if per.get(reg, 0) >= 6 or not far_from(x, y, reg, None, 100):
+            continue
+        if put(mid, "drift"):
+            per[reg] = per.get(reg, 0) + 1
+    out = {mid: {"kind": k, "at": [x, y], "region": r} for mid, (k, x, y, r) in sorted(placed.items())}
+    json.dump(out, open(os.path.join(ROOT, "game", "data", "world", "traders.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=0)
+    return out
+
+
 def neighbor_links(outs, prop_meta):
     """이웃 고리(1-B3 · 설계안 §7.2): 같은 굽기에서 양쪽을 쓴다 — 한쪽만 있는 고리는 없다(P1).
     ① '가게 외상' 집의 '구멍가게'를 40칸 안 가장 가까운 동네 가게 이름으로 바꾸고, 그 가게 바닥에 그 집 외상 장부 한 장.
@@ -1504,6 +1613,12 @@ def run(entries, reach, threat, region_at, taken, log=print, cache=True, fixed=(
     n_nb = neighbor_links(outs, prop_meta)
     n_ev = tag_loot(outs, thr)                                         # 1-L: 쪽지 사슬 · 이웃 고리가 더한 용기까지 결 꼬리표
     log("파밍 v3 꼬리표: 실내 %d곳 · 사건 물건 %d집" % (len(outs), n_ev))
+    tr = place_traders(outs, doors, reach)                             # 1-L §4.1 · §9.2 다시 문 연 가게
+    tk = {}
+    for v in tr.values():
+        tk[(v["region"], v["kind"])] = tk.get((v["region"], v["kind"]), 0) + 1
+    log("다시 문 연 가게: %d곳 (R01 %s · R02 %s)" % (len(tr), {k: n for (r, k), n in tk.items() if r == "R01"},
+                                                     {k: n for (r, k), n in tk.items() if r == "R02"}))
     blob = bytearray()                                                 # 1-B: 낱장 JSON 대신 압축 묶음 하나(gen.bin — 실내마다 zlib, 월드 청크와 같은 방식)
     for mid in sorted(outs):
         raw = json.dumps(outs[mid][0], ensure_ascii=False, separators=(",", ":")).encode("utf-8")

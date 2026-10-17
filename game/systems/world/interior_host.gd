@@ -446,7 +446,7 @@ func _spawn_npcs() -> void:
 		var cond: String = n.get("cond", "")
 		if cond != "" and not StoryExpr.test(cond, st):
 			continue
-		if st.is_dead(str(n["id"])):                                    # 죽인 주민은 다시 서지 않는다(SD-10 §6.3, 0-9)
+		if st.is_dead(str(n["id"])) or st.is_dead("%s@%s" % [n["id"], map.id]):   # 죽인 주민은 다시 서지 않는다(SD-10 §6.3, 0-9 · 1-L 가게마다 장사꾼)
 			continue
 		_spawn_npc(i, n)
 
@@ -1163,12 +1163,42 @@ func open_lock(lv: int, skin: String, on_open: Callable, on_jam: Callable = Call
 
 func _open_container(b: Dictionary, c: Dictionary) -> void:
 	var cmax := float(status()["carry_max"])
+	var swap := str(b.get("kind", "")) == "swap"
+	if swap and bool(c.get("shut", false)):
+		say_text("상자 뚜껑에 분필 — '도둑 사절'. 안은 비었다. 다음 사람도 그럴 것이다.")
+		return
+	var before := _box_value(c["items"]) if swap else 0
 	container = ContainerScreen.new().setup(st, b, c, items_db, box_owner_label(b), cmax)
 	container.stole.connect(_on_stole.bind(b))
 	container.closed.connect(func(_ok: bool) -> void:
 		container = null
+		if swap:
+			_swap_after(c, before)
 		_after_theft())
 	add_child(container)
+
+
+func _box_value(items: Dictionary) -> int:
+	var v := 0
+	for id in items:
+		v += int(items_db.get(Gear.base(str(id)), {}).get("value", 0)) * int(items[id])
+	return v
+
+
+## 바꿈 상자(1-L §4.2): 두고 간 값보다 더 가져가면(5캡 넘게) 카르마 −2 · 표시 하나. 표시 셋이면 '도둑 사절' — 그 상자는 다시 차지 않는다
+func _swap_after(c: Dictionary, before: int) -> void:
+	var after := _box_value(c["items"])
+	if after < before - 5:
+		c["bad"] = int(c.get("bad", 0)) + 1
+		st.call_fn("karma", [-2])
+		if int(c["bad"]) >= 3:
+			c["shut"] = true
+			c["items"] = {}
+			hint("누군가 상자 뚜껑에 분필로 쓴다 — '도둑 사절'. 이 상자는 이제 비어 있을 것이다.", 5.0)
+		else:
+			hint("가져간 것이 두고 간 것보다 많다. 뚜껑 안쪽에 분필 줄이 하나 늘었다.", 4.0)
+	elif after > before + 5:
+		hint("두고 간 것이 가져간 것보다 많다. 다음 사람이 반길 것이다.", 3.5)
 
 
 # ---------------------------------------------------------------- 단말(SD-12 §7.4 · §8.1·§8.3 해킹, 1-4)
@@ -1252,10 +1282,15 @@ func open_terminal(t: Dictionary) -> void:
 var merchants := {}
 
 
-func shop_state(vid: String) -> Dictionary:
+## 상인 표(틀): 'VG_SCRAP@G-12-34'처럼 가게마다 따로 쓰는 일반 장사꾼(1-L §4.1)은 '@' 앞이 틀 이름
+func merchant_def(vid: String) -> Dictionary:
 	if merchants.is_empty() and FileAccess.file_exists("res://data/merchants.json"):
 		merchants = JSON.parse_string(FileAccess.get_file_as_string("res://data/merchants.json"))
-	var m: Dictionary = merchants.get(vid, {})
+	return merchants.get(vid.get_slice("@", 0), {})
+
+
+func shop_state(vid: String) -> Dictionary:
+	var m: Dictionary = merchant_def(vid)
 	var key := "shop:" + vid
 	var day := int(st.vars.get_v("GAME_DAY")) if st.vars.has("GAME_DAY") else 1
 	var base := int(m["caps_base"][0]) + int(m["caps_base"][1]) * level()
@@ -1291,7 +1326,12 @@ func shop_state(vid: String) -> Dictionary:
 				if vid == "V05" and id == "I-044" and st.vars.has("SQ_S05_PYO") and int(st.vars.get_v("SQ_S05_PYO")) == 1:
 					items[id] = int(r[1]) * 2                                 # SQ-S05 뒤 서쪽 측실 선반(SD-04a §4.5): 느타리 재고 2배
 		var caps := base if sh.is_empty() else mini(roundi(base * 1.5), maxi(base, roundi(int(sh["caps"]) * 0.5)))
-		sh = {"items": items, "caps": caps, "day": day, "total": int(sh.get("total", 0)), "slow": slow}
+		var want := ""
+		if m.has("want") and not (m["want"] as Array).is_empty():         # 요즘 찾는 것(1-L §9.2): 갱신마다 하나 — 그 물건은 ×1.5로 산다
+			var wr := RandomNumberGenerator.new()
+			wr.seed = hash("%s:want:%d:%d" % [vid, day / 3, st.check_seed])
+			want = str(m["want"][wr.randi() % (m["want"] as Array).size()])
+		sh = {"items": items, "caps": caps, "day": day, "total": int(sh.get("total", 0)), "slow": slow, "want": want}
 		st.boxes[key] = sh
 	return sh
 
@@ -1301,7 +1341,7 @@ func shop_state(vid: String) -> Dictionary:
 ## 한 단계를 고치면 메뉴가 다시 열린다(SD-15 '한 단계씩도 가능'). 상한(fix.cap)·계열(fix.kinds)·요율(fix.rate)은 상인 표가 정한다
 func fix_menu(vid: String, again: bool = false) -> void:
 	shop_state(vid)
-	var m: Dictionary = merchants.get(vid, {})
+	var m: Dictionary = merchant_def(vid)
 	var fx: Dictionary = m.get("fix", {})
 	var npc := str(m.get("npc", ""))
 	var lines: Array = fx.get("lines", ["어느 걸 손볼까?", "됐다. 또?", "손볼 게 없네."])
@@ -1327,9 +1367,7 @@ func fix_menu(vid: String, again: bool = false) -> void:
 
 ## 맡길 수 있는 일: [{"key", "to", "cost"}] — 정비사 계열 · 상한보다 나쁜 상태 · 파손 포함. 정비비는 한 단계 위까지
 func fix_jobs(vid: String) -> Array:
-	if merchants.is_empty():
-		shop_state(vid)                                                 # 상인 표를 아직 안 읽었다(대화 전 바로 부를 때)
-	var m: Dictionary = merchants.get(vid, {})
+	var m: Dictionary = merchant_def(vid)
 	var fx: Dictionary = m.get("fix", {})
 	if fx.is_empty():
 		return []
@@ -1356,8 +1394,13 @@ func fix_jobs(vid: String) -> Array:
 
 func open_trade(vid: String, done: Callable, k := [1.0, 1.0], greet := "", item_k := {}) -> TradeScreen:
 	player.move(Vector2.ZERO, 0.0)
+	if bool(merchant_def(vid).get("inst", false)) and not vid.contains("@"):
+		vid = "%s@%s" % [vid, map.id]                                    # 일반 장사꾼(1-L §4.1): 가게마다 따로 재고 · 캡
+	var want := str(shop_state(vid).get("want", ""))
+	if want != "" and greet == "":                                      # 요즘 찾는 것(§9.2)을 인사에 섞는다
+		greet = "%s 요즘은 %s 같은 거 찾아. 있으면 값 쳐 줄게." % [str(merchant_def(vid).get("greet", "")), str(items_db.get(want, {}).get("name", want))]
 	var sh := shop_state(vid)
-	var m: Dictionary = merchants.get(vid, {})
+	var m: Dictionary = merchant_def(vid)
 	var ak := st._aff_key(str(m.get("settle", "")))
 	var f := TradeScreen.tier_f(int(st.vars.get_v(ak)) if ak != "" else 0)
 	if f.is_empty():
@@ -1489,7 +1532,7 @@ func _on_resident_down(id: String, killed: bool) -> void:
 	map.blockers.erase(a)
 	if killed:
 		n["dead"] = true
-		st.kill(id)
+		st.kill(id + "@" + map.id if id.begins_with("N-VG-") else id)    # 일반 장사꾼(1-L)은 가게마다 한 사람 — 같은 결 다른 가게 사람은 살아 있다
 		st.vars.set_v("S7_KILLS", int(st.vars.get_v("S7_KILLS")) + 1)
 		if not bool(st.npcs.get(id, {}).get("evil", false)):
 			st.call_fn("karma", [-25 if Crimes.animal(st, id) else -100])   # 악하지 않은 인물 살해(목격자가 없어도) · 마을 개는 −25(SQ-S01 '백구를 때림'과 같은 결, 리드 결정 2026-10-16)

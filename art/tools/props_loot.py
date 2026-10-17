@@ -9,6 +9,7 @@
   bell_line_lt    방울 줄(덧그림): 용기 앞에 맨 실 · 작은 방울 셋(M-395)
   trade_mat_lt    장사꾼 자리(2×1): 헌 담요 위 물건 · 등불 · 저울
   w_trade_lt      장사 간판(벽 2칸): 판자에 손글씨 — 결마다 글이 다르다 / 상태 scrap · herb · parts · cloth · food · drift
+  tboard_*        문 앞 세움 간판(덧그림): A자 판자 · 결 두 글자(고철 · 약초 · 부품 · 헌옷 · 국밥 · 잡화)
   locker_rent_lt  빌린 물품 보관함(2×1): 철제 칸 여섯 · 번호표 · 자물쇠 / 상태 mine(내 칸에 분필 표시)
 props_bc.PROPS에 합쳐져 r01_props 아틀라스로 나간다. 위에서 빛(위 밝게 · 아래 어둡게), 반투명 없음."""
 import os
@@ -243,6 +244,28 @@ def locker_rent_lt(state=""):
     return im
 
 
+BOARD = {"scrap": ("고철", "P08"), "herb": ("약초", "P56"), "parts": ("부품", "P49"), "cloth": ("헌옷", "P42"), "food": ("국밥", "P27"),
+         "drift": ("잡화", "P07")}
+
+
+def tboard(kind="drift"):
+    """문 앞 세움 간판(덧그림 32×32 — 월드 문 옆 칸): 판자 두 장을 A자로 세움 · 앞판에 결 두 글자 · 다리 아래 그늘 · 꼭대기 끈에 깡통 하나."""
+    im = img(32, 32)
+    d = ImageDraw.Draw(im)
+    txt, col = BOARD.get(kind, BOARD["drift"])
+    _shadow(d, 6, 27, 30)
+    for (a, b2, c2, e2) in (((8, 29), (15, 3), (18, 3), (12, 29)), ((24, 29), (17, 3), (14, 3), (20, 29))):   # A자 다리 둘(먹선 + 나무)
+        d.polygon([a, b2, c2, e2], fill=C(INK))
+    d.line([(10, 28), (16, 5)], fill=C(WOOD[2])); d.line([(22, 28), (16, 5)], fill=C(WOOD[1]))
+    d.line([(11, 28), (16, 6)], fill=C(WOOD[3]))
+    d.polygon([(5, 8), (27, 8), (28, 23), (4, 23)], fill=C(INK))           # 앞판
+    d.polygon([(6, 9), (26, 9), (27, 22), (5, 22)], fill=C(WOOD[3]))
+    d.line([(6, 9), (26, 9)], fill=C(WOOD[4])); d.line([(5, 16), (27, 16)], fill=C(WOOD[1]))
+    put_text(im, txt, 8, 11, col, 8, "Galmuri7")
+    d.line([(16, 4), (16, 2)], fill=C("P05")); d.rectangle([14, 0, 18, 3], fill=C(INK)); d.point((15, 1), fill=C("P14"))
+    return im
+
+
 def _r(fn, fw, fh, kind="floor", down=2, dx=0, dy=0):
     return {"fn": fn, "foot": (fw, fh), "kind": kind, "down": down, "dx": dx, "dy": dy}
 
@@ -258,6 +281,7 @@ PROPS_LOOT = {
     "trade_mat_lt": _r(trade_mat_lt, 2, 1, down=-2),
     "w_trade_lt": _r(w_trade_lt, 2, 0, "wall", dx=0, dy=6),
     "locker_rent_lt": _r(locker_rent_lt, 2, 1, down=-2),
+    **{"tboard_" + k: _r(lambda k=k: tboard(k), 0, 0, "deco", dx=0, dy=0) for k in BOARD},   # 문 앞 세움 간판(§9.2)
 }
 STATES_LOOT = {
     "w_trade_lt": {s: (lambda s=s: w_trade_lt(s)) for s in TRADE_SIGN},

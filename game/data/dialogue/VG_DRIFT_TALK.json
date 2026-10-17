@@ -1,0 +1,192 @@
+{
+ "id": "VG_DRIFT_TALK",
+ "title": "떠돌이 장사꾼",
+ "loc": "",
+ "npc": "N-VG-D1",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "G0": 4,
+  "G2": 7,
+  "G3": 9,
+  "MENU": 11,
+  "SHOP": 12,
+  "NEWS": 14,
+  "N2": 21,
+  "N3": 23,
+  "N4": 25,
+  "BYE": 27
+ },
+ "ops": [
+  {
+   "op": "do",
+   "fx": "VG_TALK = VG_TALK + 1"
+  },
+  {
+   "op": "if",
+   "cond": "VG_TALK >= 3",
+   "to": "G0"
+  },
+  {
+   "op": "if",
+   "cond": "VG_TALK == 2",
+   "to": "G3"
+  },
+  {
+   "op": "if",
+   "cond": "VG_TALK == 1",
+   "to": "G2"
+  },
+  {
+   "op": "do",
+   "fx": "VG_TALK = 0"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-D1",
+   "emo": "기본",
+   "text": "다 받아. 다 싸게. 대신 예물 같은 거면 값 쳐 줘."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-D1",
+   "emo": "미소",
+   "text": "이 집 주인? 나야. 사흘째. 내일은 모르고."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-D1",
+   "emo": "피곤",
+   "text": "짐을 다 펴 놓으면 떠나기 싫어져. 그래서 반만 폈어."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "물건을 본다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SHOP",
+     "id": "VG_DRIFT_TALK:1:0"
+    },
+    {
+     "text": "이 동네는 어때?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "NEWS",
+     "id": "VG_DRIFT_TALK:1:1"
+    },
+    {
+     "text": "다음에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "BYE",
+     "id": "VG_DRIFT_TALK:1:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "trade",
+   "args": [
+    "VG_DRIFT"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "do",
+   "fx": "VG_NEWS = VG_NEWS + 1"
+  },
+  {
+   "op": "if",
+   "cond": "VG_NEWS == 1",
+   "to": "N2"
+  },
+  {
+   "op": "if",
+   "cond": "VG_NEWS == 2",
+   "to": "N3"
+  },
+  {
+   "op": "if",
+   "cond": "VG_NEWS == 3",
+   "to": "N4"
+  },
+  {
+   "op": "do",
+   "fx": "VG_NEWS = 0"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-D1",
+   "emo": "기본",
+   "text": "문설주에 분필 표시 봤어? 해골은 들어가지 마. 집 모양은 사람이 산다는 거야 — 나처럼."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-D1",
+   "emo": "기본",
+   "text": "수저 세트, 핸드백, 바둑판. 그런 걸 왜 사냐고? 정착지 사람들이 집을 꾸며. 다시 사람 사는 집처럼."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-D1",
+   "emo": "기본",
+   "text": "물건 숨길 데 찾아? 큰길 가는 사람이 많이 드나들어. 깊은 데는 짐승만 다니고. 고르는 건 네 몫이야."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-D1",
+   "emo": "기본",
+   "text": "바꿈 상자 알아? 하나 두고 하나 가져가는 거. 더 가져가면 다음 사람이 비어 있는 상자를 열지."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-D1",
+   "emo": "기본",
+   "text": "길에서 또 보자. 아니면 말고."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/encounters/TRADERS.txt"
+}

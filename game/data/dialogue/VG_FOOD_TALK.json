@@ -1,0 +1,192 @@
+{
+ "id": "VG_FOOD_TALK",
+ "title": "국밥 장수",
+ "loc": "",
+ "npc": "N-VG-F1",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "G0": 4,
+  "G2": 7,
+  "G3": 9,
+  "MENU": 11,
+  "SHOP": 12,
+  "NEWS": 14,
+  "N2": 21,
+  "N3": 23,
+  "N4": 25,
+  "BYE": 27
+ },
+ "ops": [
+  {
+   "op": "do",
+   "fx": "VG_TALK = VG_TALK + 1"
+  },
+  {
+   "op": "if",
+   "cond": "VG_TALK >= 3",
+   "to": "G0"
+  },
+  {
+   "op": "if",
+   "cond": "VG_TALK == 2",
+   "to": "G3"
+  },
+  {
+   "op": "if",
+   "cond": "VG_TALK == 1",
+   "to": "G2"
+  },
+  {
+   "op": "do",
+   "fx": "VG_TALK = 0"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-F1",
+   "emo": "기본",
+   "text": "국 한 그릇이면 하루는 버텨. 두 그릇이면 이틀이고."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-F1",
+   "emo": "미소",
+   "text": "오늘 국은 뭐냐고? 묻지 마. 뜨겁고 짜. 그거면 돼."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-F1",
+   "emo": "피곤",
+   "text": "솥 하나로 동네가 먹고 살아. 고기 가져오면 국 값 빼 줄게."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "물건을 본다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SHOP",
+     "id": "VG_FOOD_TALK:1:0"
+    },
+    {
+     "text": "이 동네는 어때?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "NEWS",
+     "id": "VG_FOOD_TALK:1:1"
+    },
+    {
+     "text": "다음에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "BYE",
+     "id": "VG_FOOD_TALK:1:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "trade",
+   "args": [
+    "VG_FOOD"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "do",
+   "fx": "VG_NEWS = VG_NEWS + 1"
+  },
+  {
+   "op": "if",
+   "cond": "VG_NEWS == 1",
+   "to": "N2"
+  },
+  {
+   "op": "if",
+   "cond": "VG_NEWS == 2",
+   "to": "N3"
+  },
+  {
+   "op": "if",
+   "cond": "VG_NEWS == 3",
+   "to": "N4"
+  },
+  {
+   "op": "do",
+   "fx": "VG_NEWS = 0"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-F1",
+   "emo": "기본",
+   "text": "편의점 진열대는 이백 년 전에 다 털렸어. 남은 건 이름표뿐이야."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-F1",
+   "emo": "기본",
+   "text": "찬장 깊숙한 데 비상 통조림 넣어 둔 집이 있어. 공습 대비한다고. 그런 집은 아직 찾을 게 있대."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-F1",
+   "emo": "기본",
+   "text": "쥐는 먹을 냄새를 따라와. 분식집, 편의점, 찬장 많은 집. 거기 갈 땐 발밑 봐."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-F1",
+   "emo": "기본",
+   "text": "빈집에 먹을 거 숨기지 마. 쥐가 먼저 찾고, 그다음엔 사람이 찾아."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-F1",
+   "emo": "미소",
+   "text": "배고프면 와."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/encounters/TRADERS.txt"
+}

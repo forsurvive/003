@@ -1,0 +1,192 @@
+{
+ "id": "VG_CLOTH_TALK",
+ "title": "옷 장수",
+ "loc": "",
+ "npc": "N-VG-C1",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "G0": 4,
+  "G2": 7,
+  "G3": 9,
+  "MENU": 11,
+  "SHOP": 12,
+  "NEWS": 14,
+  "N2": 21,
+  "N3": 23,
+  "N4": 25,
+  "BYE": 27
+ },
+ "ops": [
+  {
+   "op": "do",
+   "fx": "VG_TALK = VG_TALK + 1"
+  },
+  {
+   "op": "if",
+   "cond": "VG_TALK >= 3",
+   "to": "G0"
+  },
+  {
+   "op": "if",
+   "cond": "VG_TALK == 2",
+   "to": "G3"
+  },
+  {
+   "op": "if",
+   "cond": "VG_TALK == 1",
+   "to": "G2"
+  },
+  {
+   "op": "do",
+   "fx": "VG_TALK = 0"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-C1",
+   "emo": "기본",
+   "text": "입던 옷도 받아. 피 묻은 건 빨아 와."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-C1",
+   "emo": "미소",
+   "text": "그 옷은 어디서 났어? 소매가 좋네. 팔 생각 있으면 말해."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-C1",
+   "emo": "피곤",
+   "text": "세탁소 꼬리표가 아직 붙어 있는 옷이 있어. 10월 24일에 찾으러 온다던 옷이야."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "물건을 본다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SHOP",
+     "id": "VG_CLOTH_TALK:1:0"
+    },
+    {
+     "text": "이 동네는 어때?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "NEWS",
+     "id": "VG_CLOTH_TALK:1:1"
+    },
+    {
+     "text": "다음에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "BYE",
+     "id": "VG_CLOTH_TALK:1:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "trade",
+   "args": [
+    "VG_CLOTH"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "do",
+   "fx": "VG_NEWS = VG_NEWS + 1"
+  },
+  {
+   "op": "if",
+   "cond": "VG_NEWS == 1",
+   "to": "N2"
+  },
+  {
+   "op": "if",
+   "cond": "VG_NEWS == 2",
+   "to": "N3"
+  },
+  {
+   "op": "if",
+   "cond": "VG_NEWS == 3",
+   "to": "N4"
+  },
+  {
+   "op": "do",
+   "fx": "VG_NEWS = 0"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-C1",
+   "emo": "기본",
+   "text": "옷장은 열자마자 비었다고? 이 동네 사람들 다 그 옷 입고 다녀."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-C1",
+   "emo": "기본",
+   "text": "운동화, 핸드백 — 그런 거 있으면 가져와. 신을 거 없는 애들이 많아."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-C1",
+   "emo": "기본",
+   "text": "이삿짐 묶어 둔 집은 아직 뭐가 남았대. 그날 밤 이사를 못 갔으니까."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-C1",
+   "emo": "기본",
+   "text": "숨겨 둔 짐 털어 가는 애들 있어. 맨발 자국이 작으면 애야. 너무 혼내지 마."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-C1",
+   "emo": "기본",
+   "text": "추워지면 와. 외투는 늘 모자라."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/encounters/TRADERS.txt"
+}

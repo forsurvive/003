@@ -1,0 +1,192 @@
+{
+ "id": "VG_PARTS_TALK",
+ "title": "부품 장수",
+ "loc": "",
+ "npc": "N-VG-P1",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "G0": 4,
+  "G2": 7,
+  "G3": 9,
+  "MENU": 11,
+  "SHOP": 12,
+  "NEWS": 14,
+  "N2": 21,
+  "N3": 23,
+  "N4": 25,
+  "BYE": 27
+ },
+ "ops": [
+  {
+   "op": "do",
+   "fx": "VG_TALK = VG_TALK + 1"
+  },
+  {
+   "op": "if",
+   "cond": "VG_TALK >= 3",
+   "to": "G0"
+  },
+  {
+   "op": "if",
+   "cond": "VG_TALK == 2",
+   "to": "G3"
+  },
+  {
+   "op": "if",
+   "cond": "VG_TALK == 1",
+   "to": "G2"
+  },
+  {
+   "op": "do",
+   "fx": "VG_TALK = 0"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-P1",
+   "emo": "기본",
+   "text": "진공관은 깨지기 전에 가져와. 깨진 건 유리 값이야."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-P1",
+   "emo": "미소",
+   "text": "테이프 하나에 노래 열두 곡. 듣지는 못해도 자석테는 쓸 데가 있어."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-P1",
+   "emo": "피곤",
+   "text": "전지 하나 살려 보느라 밤샜어. 살았어. 그러니까 비싸."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "물건을 본다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SHOP",
+     "id": "VG_PARTS_TALK:1:0"
+    },
+    {
+     "text": "이 동네는 어때?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "NEWS",
+     "id": "VG_PARTS_TALK:1:1"
+    },
+    {
+     "text": "다음에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "BYE",
+     "id": "VG_PARTS_TALK:1:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "trade",
+   "args": [
+    "VG_PARTS"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "do",
+   "fx": "VG_NEWS = VG_NEWS + 1"
+  },
+  {
+   "op": "if",
+   "cond": "VG_NEWS == 1",
+   "to": "N2"
+  },
+  {
+   "op": "if",
+   "cond": "VG_NEWS == 2",
+   "to": "N3"
+  },
+  {
+   "op": "if",
+   "cond": "VG_NEWS == 3",
+   "to": "N4"
+  },
+  {
+   "op": "do",
+   "fx": "VG_NEWS = 0"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-P1",
+   "emo": "기본",
+   "text": "노래방 칸막이마다 마이크 선이 있어. 구리선이지. 어두운 데라 구울도 있고."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-P1",
+   "emo": "기본",
+   "text": "진공관 계산기, 라디오, 전기밥솥 — 그런 거 보이면 들고 와. 고물상보다 내가 더 쳐."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-P1",
+   "emo": "기본",
+   "text": "금고 안에 넣어 둔 거? 잠긴 금고는 털이꾼도 귀찮아해. 서랍은 아니고."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-P1",
+   "emo": "기본",
+   "text": "사무실 빈 책상은 다 뒤졌어. 머리핀 하나 안 남았어. 쓸 데 없는 서류만 남았지."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-P1",
+   "emo": "기본",
+   "text": "깨지 마. 진공관."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/encounters/TRADERS.txt"
+}

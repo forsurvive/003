@@ -79,7 +79,21 @@ func _value(id: String) -> int:
 func price(id: String, buying: bool) -> int:
 	if buying and item_k.has(id):
 		return price_of(_value(id), true, barter, f, [float(k[0]) * float(item_k[id]), k[1]])
+	if not buying and (mdef.has("likes") or str(state.get("want", "")) != ""):
+		return price_of(_value(id), false, barter, f, [k[0], float(k[1]) * sell_k(id)])
 	return price_of(_value(id), buying, barter, f, k)
+
+
+## 파는 값 배수(1-L §4.1 · §9.2): 그 상인의 결 물건 ×1.2 · 결 밖 ×0.8(떠돌이 · 일반 장사꾼) · 요즘 찾는 것 ×1.5. 판매 상한(§3.7)은 price_of가 그대로 지킨다
+func sell_k(id: String) -> float:
+	var base := Gear.base(id)
+	var kk := 1.0
+	if mdef.has("likes"):
+		var lk: Array = mdef.get("like_k", [1.2, 0.8])
+		kk = float(lk[0]) if base in (mdef["likes"] as Array) else float(lk[1])
+	if base == str(state.get("want", "")):
+		kk *= 1.5
+	return kk
 
 
 ## 이 상인이 사는 물건인가(§4.1): 퀘스트 아이템·가치 0은 안 산다. 전문 상인은 취급 분류만

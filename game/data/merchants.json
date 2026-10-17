@@ -1107,7 +1107,7 @@
  },
  "VG_SCRAP": {
   "name": "고물상",
-  "npc": "N-VG-SCRAP",
+  "npc": "N-VG-S1",
   "settle": "MS",
   "grade": "E",
   "renew": 3,
@@ -1240,7 +1240,7 @@
  },
  "VG_HERB": {
   "name": "약초꾼",
-  "npc": "N-VG-HERB",
+  "npc": "N-VG-H1",
   "settle": "MS",
   "grade": "E",
   "renew": 3,
@@ -1334,7 +1334,7 @@
  },
  "VG_PARTS": {
   "name": "부품 장수",
-  "npc": "N-VG-PARTS",
+  "npc": "N-VG-P1",
   "settle": "MS",
   "grade": "E",
   "renew": 3,
@@ -1414,7 +1414,7 @@
  },
  "VG_CLOTH": {
   "name": "옷 장수",
-  "npc": "N-VG-CLOTH",
+  "npc": "N-VG-C1",
   "settle": "MS",
   "grade": "E",
   "renew": 3,
@@ -1568,7 +1568,7 @@
  },
  "VG_FOOD": {
   "name": "국밥 장수",
-  "npc": "N-VG-FOOD",
+  "npc": "N-VG-F1",
   "settle": "MS",
   "grade": "E",
   "renew": 3,
@@ -1688,7 +1688,7 @@
  },
  "VG_DRIFT": {
   "name": "떠돌이 장사꾼",
-  "npc": "N-VG-DRIFT",
+  "npc": "N-VG-D1",
   "settle": "MS",
   "grade": "E",
   "renew": 2,

@@ -44,6 +44,7 @@
 | 장소:R01_R02 | N-R01-030 | C-009 C-028 N-R10-007 | 6 |  |  |  |
 | 장소:R02_SOUTH | N-R02-042 | N-R06-048 | 1 |  |  |  |
 | 장소:RE_WORLD | CR-403 CR-420 CR-438 N-DOWNED N-REFUGEE N-TRADER | N-R08-060 | 3 |  |  |  |
+| 장소:TRADERS | N-VG-C1 N-VG-D1 N-VG-F1 N-VG-H1 N-VG-P1 N-VG-S1 |  | 2 |  |  |  |
 | 전파 |  |  | 1 |  |  | ○ |
 | 프롤로그 | C-001 C-002 C-023 C-027 N-R01-010 |  | 15 | V-00 V-01 V-02 V-03 V-04 V-08 V-09 X-BC |  |  |
 

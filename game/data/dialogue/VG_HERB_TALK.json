@@ -1,0 +1,192 @@
+{
+ "id": "VG_HERB_TALK",
+ "title": "약초꾼",
+ "loc": "",
+ "npc": "N-VG-H1",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "G0": 4,
+  "G2": 7,
+  "G3": 9,
+  "MENU": 11,
+  "SHOP": 12,
+  "NEWS": 14,
+  "N2": 21,
+  "N3": 23,
+  "N4": 25,
+  "BYE": 27
+ },
+ "ops": [
+  {
+   "op": "do",
+   "fx": "VG_TALK = VG_TALK + 1"
+  },
+  {
+   "op": "if",
+   "cond": "VG_TALK >= 3",
+   "to": "G0"
+  },
+  {
+   "op": "if",
+   "cond": "VG_TALK == 2",
+   "to": "G3"
+  },
+  {
+   "op": "if",
+   "cond": "VG_TALK == 1",
+   "to": "G2"
+  },
+  {
+   "op": "do",
+   "fx": "VG_TALK = 0"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-H1",
+   "emo": "기본",
+   "text": "약은 비싸고 풀은 싸. 둘 다 아프면 먹는 거야."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-H1",
+   "emo": "미소",
+   "text": "어디 다쳤어? 얼굴을 보니 다친 덴 없는데, 배는 고파 보이네."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-H1",
+   "emo": "피곤",
+   "text": "이 약국 약장은 내가 왔을 때 이미 비어 있었어. 지금 칸은 내가 채운 거야."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "물건을 본다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SHOP",
+     "id": "VG_HERB_TALK:1:0"
+    },
+    {
+     "text": "이 동네는 어때?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "NEWS",
+     "id": "VG_HERB_TALK:1:1"
+    },
+    {
+     "text": "다음에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "BYE",
+     "id": "VG_HERB_TALK:1:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "trade",
+   "args": [
+    "VG_HERB"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "do",
+   "fx": "VG_NEWS = VG_NEWS + 1"
+  },
+  {
+   "op": "if",
+   "cond": "VG_NEWS == 1",
+   "to": "N2"
+  },
+  {
+   "op": "if",
+   "cond": "VG_NEWS == 2",
+   "to": "N3"
+  },
+  {
+   "op": "if",
+   "cond": "VG_NEWS == 3",
+   "to": "N4"
+  },
+  {
+   "op": "do",
+   "fx": "VG_NEWS = 0"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-H1",
+   "emo": "기본",
+   "text": "약국은 제일 먼저 털려. 약 찾던 사람들이 마지막까지 약국에 남았지 — 그러다 구울이 됐고."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-H1",
+   "emo": "기본",
+   "text": "버섯은 지하에서, 풀은 볕 드는 데서. 독 있는 놈 하나쯤은 섞여 있으니 나한테 먼저 보여."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-H1",
+   "emo": "기본",
+   "text": "남이 숨겨 둔 짐은 손대지 마. 주인이 밤에 돌아와. 나도 그렇게 돌아오거든."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-H1",
+   "emo": "기본",
+   "text": "독샘 같은 거 있으면 가져와. 그건 약도 되고 독도 돼. 값은 둘 다 쳐 줄게."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-H1",
+   "emo": "기본",
+   "text": "아프지 마. 아프면 오고."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/encounters/TRADERS.txt"
+}

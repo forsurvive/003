@@ -480,6 +480,16 @@ func _ready() -> void:
 				["until", "KT_CAR == 1", 10.0, "물속 칸 — 아이 신발 한 짝 → 점검 사다리로 로비", "ktj_car"], ["wait", 3.0],
 				["want", ["!끊는다"]], ["go", 22, 3, "KT-01"], ["use", 22, 2],
 				["until", "KT_CARTOLD == 1", 15.0, "어하은 — '숨소리가 달라요'", "ktj_phone"]]
+		"trd":                                                          # 1-L 파밍 v3 · 다시 문 연 가게: 문 앞 세움 간판 → 고물상 거래(결 매입 · 찾는 것) → 털린 살림집(보이는 빔)
+			st.vars.set_v("GAME_DAY", 5)
+			st.vars.set_v("V_ACT", 1)
+			host.date_text = "2277. 10. 26.  11:00"
+			host.ev.handlers["trade"] = func(a: Array, done: Callable) -> void: host.open_trade(str(a[0]), func(_c: int) -> void: done.call())
+			host.enter("W", "", {}, Vector2(943 * 32 + 16, 1410 * 32 + 16))
+			plan = [["noenc"], ["hp", 3000], ["wait", 2.0], ["shot", "trd_door"], ["go", 943, 1409], ["use", 943, 1408], ["wait", 2.0],
+				["check", "map:G-943-1408", "다시 문 연 고물상에 들어섰다"], ["shot", "trd_inside"],
+				["want", ["!물건을 본다", "다음에"]], ["talk", "N-VG-S1"], ["until", "win", 15.0, "고물상 거래 창(가게마다 따로 재고 · 찾는 것)", "trd_trade"], ["wait", 2.0], ["warp", "G-876-1245", "from_W"], ["wait", 2.0], ["shot", "trd_home"],
+				["warp", "G-896-1267", "from_W"], ["wait", 2.0], ["shot", "trd_home2"]]
 		"ktu":                                                          # 1-D5b 금탑 위층: 화물 칸 → 사무층 육아방(위장 · 냄새 줄) → 22층 → 옥상 → 60층 어하은 · 망원경 → 연회장 · 기단
 			st.vars.set_v("GAME_DAY", 12)
 			st.vars.set_v("KT_POWER", 2)
@@ -1235,6 +1245,8 @@ func _until(s: Array) -> bool:
 		ok2 = str(host.ev._job.get("kind", "")) == "card"
 	elif c == "side:stand":
 		ok2 = side != null and side.stand_t > 0.0
+	elif c == "win":                                                   # 대화 안에서 열린 거래 · 용기 창(1-L): 찍고 닫는다
+		ok2 = host.container != null
 	else:
 		ok2 = StoryExpr.test(c, st)
 	if ok2 or step_t > float(s[2]):
@@ -1246,7 +1258,15 @@ func _until(s: Array) -> bool:
 			_shot("until_fail")
 		checks.append([ok2, str(s[3])])
 		print("  [확인] %s %s (%.1f초)" % ["○" if ok2 else "×", s[3], step_t])
-		if ok2 and s.size() > 4:
+		if ok2 and c == "win":
+			print("  [봇] 창: ", host.container.title, " ", host.container.state.get("items", {}).size(), "줄 · 찾는 것 ", host.container.state.get("want", ""))
+			var wn := host.container
+			var nm := str(s[4]) if s.size() > 4 else "win"
+			get_tree().create_timer(0.5).timeout.connect(func() -> void:     # 창이 그려진 뒤 찍고 닫는다
+				_shot(nm)
+				if is_instance_valid(wn):
+					wn.close(true))
+		elif ok2 and s.size() > 4:
 			_shot(str(s[4]))
 		_next()
 		return true

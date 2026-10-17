@@ -201,8 +201,8 @@ static func contents(st: StoryState, map_id: String, b: Dictionary, region: Stri
 static func _restock(st: StoryState, k: String, map_id: String, b: Dictionary, t: int, cond: String, region: String) -> void:
 	_load()
 	var bx: Dictionary = st.boxes[k]
-	if not (bx["items"] as Dictionary).is_empty():
-		bx.erase("re_at")
+	if not (bx["items"] as Dictionary).is_empty() or bool(bx.get("shut", false)) or str(bx.get("mine", "")) != "":
+		bx.erase("re_at")                                                # 비지 않았다 · '도둑 사절' 바꿈 상자 · 내 은닉처(1-L)는 다시 차지 않는다
 		return
 	var rs = restock.get(str(b.get("kind", "")))
 	if rs == null or st.year() < 2277 or owned(b) or not (map_id == "W" or map_id.begins_with("G-")):
@@ -239,8 +239,9 @@ static func drop(enemy_id: String, seed_key: String, t: int = 1, cond_kind: Stri
 ## 대상: 볼트를 나온 뒤 생성 실내(G-) · 월드 길가(W)의 일반 용기. 손 맵 · 퀘스트 용기 · 볼트 시대는 옛 굴림 그대로
 static func is_v3(st: StoryState, map_id: String, b: Dictionary) -> bool:
 	_load()
+	var o := str(b.get("owner", ""))
 	return st.year() >= 2277 and (map_id == "W" or map_id.begins_with("G-")) and str(b.get("kind", "")) in (v3.get("kinds", []) as Array) \
-		and str(b.get("owner", "")) == ""
+		and (o == "" or o.begins_with("N-VG-"))                          # 다시 문 연 가게의 용기(장사꾼 것)도 같은 결로 굴린다
 
 
 static func place_of(map_id: String, b: Dictionary) -> String:
@@ -345,7 +346,7 @@ static func why_text(map_id: String, b: Dictionary, rng: RandomNumberGenerator) 
 
 ## 보이는 빔(§9.1): 아직 열지 않았어도 들어선 순간 바닥에 털린 자리가 보이나 — 굴림과 같은 씨앗(열어 보면 그대로 비었다)
 static func visibly_empty(st: StoryState, map_id: String, b: Dictionary) -> bool:
-	if not is_v3(st, map_id, b):
+	if not is_v3(st, map_id, b) or str(b.get("owner", "")) != "":         # 사람이 사는 가게의 용기는 털린 자리로 보이지 않는다
 		return false
 	var k := key(map_id, b, st.year())
 	if st.boxes.has(k):
