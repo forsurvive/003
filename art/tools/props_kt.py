@@ -1,0 +1,501 @@
+"""여의도 금탑 로비 · 지하 수족관 소품(단계 1-D5a, 1-D 계획 §11 · SD-09a L-R02-05 · SD-16 아이작풍).
+  revolving_kt    금빛 회전문(3×2): 금테 원통 · 유리 날개 넷 / 상태 turn(날개가 45도 돈 컷 — 삐걱)
+  info_desk_kt    안내 데스크(4×1): 흰 대리석 곡면 · 금빛 탑 로고 · 안내 책자 꽂이 · '오늘의 관람' 판
+  souvenir_kt     기념품 진열대(2×1): 금박 모형 탑 · 엽서 · 금 초콜릿 상자 / 상태 empty(빈 껍데기만)
+  queue_kt        관람객 줄 난간(3×1): 금빛 기둥 넷 · 붉은 띠(가운데 끊김)
+  stroller_kt     유모차(1×1): 줄이 끊긴 자리에 남은 것
+  w_elev_kt       승강기 문(벽 2칸): 놋쇠 문 · 층 표시 바늘 / 상태 open(검은 승강로 — 칸이 아래로 꺼짐 · 정원 초과 붉은 등)
+  w_cargo_kt      화물 승강기(벽 3칸): 잿빛 철문 · '화물 — 정원 15명' / 상태 live(초록 등 · 문 틈 빛)
+  ant_soil_kt     개미 흙벽(2×1): 비상계단을 막은 흙 · 구멍 · 긁힌 자국 · 반짝이는 냄새 줄 / 상태 quiet(구멍이 흙으로 막힘 — 여왕 처리 뒤)
+  scent_kt        냄새 길(덧그림 64×16): 바닥의 희미한 반짝임 점선
+  w_intercom_kt   전망대 직통 인터폰(벽 1칸): 놋쇠 판 · 둥근 스피커 · 버튼 / 상태 lit(통화 중 — 등)
+  safe_kt         기념품 가게 금고(1×1) / 상태 open
+  tank_kt         큰 수조(4×2): 두꺼운 유리 · 물 · 수초 · 산호 돌 / 상태 broken(금 가고 물이 반 · 바닥에 샘) · dry(빈 수조 · 마른 수초)
+  w_coral_kt      산호 벽(벽 2칸): 2077 수족관 장식 벽 — 색 바랜 산호 · 물고기 그림
+  pump_kt         펌프실 비상 발전기 + 배수 펌프(2×1) / 상태 drain(배수로 돎 — 관에 물) · lift(승강기로 — 전선에 불) · gone(연료 통 자리가 빔)
+  w_feedlog_kt    사육사 먹이 주기 일지(벽 1칸) · grate_kt 수조 위 직원 철망 발판(덧그림) · w_staff_phone_kt 관내 직원 인터폰(벽 1칸) / 상태 lit
+props_bc.PROPS에 합쳐져 r01_props 아틀라스로 나간다. 위에서 빛(위 밝게 · 아래 어둡게), 반투명 없음."""
+import os
+import random
+import sys
+
+from PIL import Image, ImageDraw
+
+sys.path.insert(0, os.path.dirname(__file__))
+import palette as P
+from struct_r01 import put_text
+
+C = lambda t: P.rgb(t) + (255,)
+INK = "P01"
+GOLD = ("P47", "P48", "P49", "P50")          # 금빛(어둠 → 빛)
+MARBLE = ("P06", "P07", "P08", "P09")
+WATER = ("P33", "P34", "P35", "P36", "P37")
+
+
+def img(w, h):
+    return Image.new("RGBA", (w, h), (0, 0, 0, 0))
+
+
+def _shadow(d, x0, x1, y):
+    for x in range(x0, x1):
+        for yy in (y, y + 1):
+            if (x + yy) % 2 == 0:
+                d.point((x, yy), fill=C("P02"))
+
+
+def _box(d, x0, y0, x1, y1, ramp, top=True):
+    """먹선 상자 · 위 밝은 띠 · 아래 그늘."""
+    d.rectangle([x0, y0, x1, y1], fill=C(INK))
+    d.rectangle([x0 + 1, y0 + 1, x1 - 1, y1 - 1], fill=C(ramp[1]))
+    if top:
+        d.line([x0 + 1, y0 + 1, x1 - 1, y0 + 1], fill=C(ramp[-1]))
+    d.line([x0 + 1, y1 - 1, x1 - 1, y1 - 1], fill=C(ramp[0]))
+
+
+# ================================================================================================ 로비
+def revolving_kt(state=""):
+    """금빛 회전문(3×2, 96×80): 위 금테 원통 지붕 · 둥근 바닥판 · 유리 날개 넷(위에서 본 +자 → 비스듬히) · 기둥 둘.
+    상태 turn = 날개가 45도 돈 컷(X자) — 한 칸 돌 때 번갈아 보여 삐걱 돈다 · broken = 날개 하나의 유리가 깨져 비고 바닥에 유리 조각(개미가 큰턱으로 깨고 나간 뒤)."""
+    im = img(96, 80)
+    d = ImageDraw.Draw(im)
+    _shadow(d, 6, 90, 76)
+    d.ellipse([6, 44, 89, 75], fill=C(INK)); d.ellipse([7, 45, 88, 74], fill=C("P05"))           # 바닥판
+    d.ellipse([12, 48, 83, 71], fill=C("P06"))
+    cx, cy = 47, 59
+    turn = state == "turn"
+    wings = [(-34, 0), (34, 0), (0, -12), (0, 12)] if not turn else [(-24, -9), (24, 9), (-24, 9), (24, -9)]
+    for wi, (wx, wy) in enumerate(wings):                                                       # 유리 날개(먹선 + 하늘빛 판 · 금테)
+        d.line([cx, cy - 22, cx + wx, cy + wy - 22], fill=C(GOLD[1]), width=2)
+        d.line([cx, cy, cx + wx, cy + wy], fill=C(GOLD[1]), width=2)
+        if state == "broken" and wi == 1:
+            d.line([cx + wx, cy + wy - 22, cx + wx, cy + wy], fill=C(GOLD[0]), width=2)
+            for k in range(6):
+                d.point((cx + wx // 2 + k * 3 - 6, cy + 8 + (k % 3)), fill=C("P15"))
+            continue
+        for k in range(1, 6):
+            t = k / 6
+            d.line([cx + wx * t, cy + wy * t - 21, cx + wx * t, cy + wy * t - 1], fill=C("P14" if k % 2 else "P15"))
+    d.rectangle([cx - 2, cy - 24, cx + 2, cy], fill=C(GOLD[2])); d.line([cx - 2, cy - 24, cx - 2, cy], fill=C(INK))
+    for x in (6, 86):                                                                           # 기둥
+        d.rectangle([x, 14, x + 4, 66], fill=C(INK)); d.rectangle([x + 1, 15, x + 3, 65], fill=C(GOLD[1])); d.line([x + 1, 15, x + 1, 65], fill=C(GOLD[3]))
+    d.ellipse([2, 4, 93, 26], fill=C(INK)); d.ellipse([3, 5, 92, 25], fill=C(GOLD[1]))            # 원통 지붕
+    d.ellipse([6, 7, 89, 21], fill=C(GOLD[2])); d.line([14, 9, 80, 9], fill=C(GOLD[3]))
+    put_text(im, "금빛", 38, 8, "P47", 8, "Galmuri7")
+    return im
+
+
+def info_desk_kt():
+    """안내 데스크(4×1, 128×52): 흰 대리석 곡면 앞판 · 금빛 탑 로고 · 위 책자 꽂이 · 뒤 '오늘의 관람' 세움판(60층 14:00~22:00 · 수족관 10:00~19:00)."""
+    im = img(128, 52)
+    d = ImageDraw.Draw(im)
+    _shadow(d, 4, 124, 48)
+    _box(d, 70, 0, 120, 22, ("P02", "P10", "P11"))                                             # 세움판
+    put_text(im, "오늘의관람", 74, 2, "P50", 8, "Galmuri7")
+    d.line([74, 13, 116, 13], fill=C("P13")); d.line([74, 17, 108, 17], fill=C("P13"))
+    d.rectangle([4, 20, 123, 46], fill=C(INK))
+    for x in range(5, 123):                                                                    # 곡면 앞판(가운데가 밝다 — 둥근 면)
+        t = abs(x - 64) / 60
+        col = MARBLE[3] if t < 0.3 else (MARBLE[2] if t < 0.7 else MARBLE[1])
+        d.line([x, 24, x, 45], fill=C(col))
+    d.rectangle([5, 21, 122, 24], fill=C("P09")); d.line([5, 25, 122, 25], fill=C(INK))         # 상판
+    rnd = random.Random(5)
+    for _ in range(9):                                                                          # 대리석 결
+        x = rnd.randint(8, 118); y = rnd.randint(28, 42)
+        d.line([x, y, x + rnd.randint(3, 8), y + rnd.randint(-1, 2)], fill=C("P06"))
+    d.polygon([(60, 42), (64, 28), (68, 42)], fill=C(GOLD[2])); d.line([64, 28, 64, 42], fill=C(GOLD[3]))   # 금빛 탑 로고
+    d.line([60, 42, 64, 28], fill=C(INK)); d.line([68, 42, 64, 28], fill=C(INK))
+    for i, x in enumerate((14, 22, 30)):                                                       # 책자 꽂이
+        d.rectangle([x, 14, x + 6, 22], fill=C(INK)); d.rectangle([x + 1, 15, x + 5, 21], fill=C(("P49", "P46", "P54")[i]))
+    return im
+
+
+def souvenir_kt(state=""):
+    """기념품 진열대(2×1, 64×56): 유리 진열장 두 단 · 금박 모형 탑 셋 · 엽서 꽂이 · 금 초콜릿 상자.
+    상태 empty = 모형 탑 하나만 넘어져 있고 상자는 뜯긴 빈 껍데기."""
+    im = img(64, 56)
+    d = ImageDraw.Draw(im)
+    _shadow(d, 2, 62, 52)
+    _box(d, 2, 4, 61, 50, ("P02", "P04", "P06"))
+    for y in (8, 26):                                                                           # 유리 단
+        d.rectangle([5, y, 58, y + 15], fill=C("P11")); d.line([5, y, 58, y], fill=C("P14")); d.line([6, y + 2, 12, y + 2], fill=C("P15"))
+    empty = state == "empty"
+    for i, x in enumerate((10, 26, 42)):
+        if empty and i != 1:
+            continue
+        if empty:
+            d.polygon([(x - 2, 22), (x + 12, 19), (x + 12, 22)], fill=C(GOLD[2])); d.line([x - 2, 22, x + 12, 19], fill=C(INK))
+            continue
+        d.polygon([(x, 22), (x + 4, 10), (x + 8, 22)], fill=C(GOLD[2])); d.line([x + 4, 10, x + 4, 22], fill=C(GOLD[3]))
+        d.line([x, 22, x + 4, 10], fill=C(INK)); d.line([x + 8, 22, x + 4, 10], fill=C(INK))
+    for i, x in enumerate((8, 20, 32)):                                                          # 금 초콜릿 상자
+        d.rectangle([x, 33, x + 9, 40], fill=C(INK)); d.rectangle([x + 1, 34, x + 8, 39], fill=C(GOLD[1] if not empty else "P05"))
+        if empty:
+            d.line([x + 1, 34, x + 8, 39], fill=C(INK))
+    for k in range(3):                                                                           # 엽서
+        d.rectangle([46 + k * 4, 30 + k, 50 + k * 4, 38 + k], fill=C(("P46", "P09", "P55")[k])); d.rectangle([46 + k * 4, 30 + k, 50 + k * 4, 38 + k], outline=C(INK))
+    return im
+
+
+def queue_kt():
+    """관람객 줄 난간(3×1, 96×36): 금빛 기둥 넷 · 붉은 띠 셋(가운데가 끊겨 바닥에 늘어짐)."""
+    im = img(96, 36)
+    d = ImageDraw.Draw(im)
+    _shadow(d, 4, 92, 32)
+    xs = (6, 34, 62, 88)
+    for i in range(3):
+        a, b = xs[i] + 2, xs[i + 1] + 1
+        if i == 1:
+            d.line([a, 10, a + 6, 22], fill=C("P52"), width=2); d.line([b, 10, b - 5, 24], fill=C("P52"), width=2)
+            d.line([a + 6, 23, a + 12, 30], fill=C("P51"), width=2)
+        else:
+            d.line([a, 10, (a + b) // 2, 13], fill=C("P53"), width=2); d.line([(a + b) // 2, 13, b, 10], fill=C("P53"), width=2)
+    for x in xs:
+        d.ellipse([x - 3, 28, x + 5, 33], fill=C(INK)); d.ellipse([x - 2, 29, x + 4, 32], fill=C(GOLD[1]))
+        d.rectangle([x, 6, x + 2, 30], fill=C(INK)); d.line([x + 1, 7, x + 1, 29], fill=C(GOLD[2]))
+        d.ellipse([x - 1, 3, x + 3, 8], fill=C(GOLD[3]))
+    return im
+
+
+def stroller_kt():
+    """유모차(1×1, 32×36): 2077 접이식 · 빛바랜 남색 덮개 · 바퀴 넷 · 손잡이 · 안에 작은 담요."""
+    im = img(32, 36)
+    d = ImageDraw.Draw(im)
+    _shadow(d, 4, 28, 32)
+    for x in (6, 22):
+        d.ellipse([x - 3, 25, x + 4, 32], fill=C(INK)); d.ellipse([x - 1, 27, x + 2, 30], fill=C("P05"))
+    d.line([7, 26, 24, 26], fill=C(INK)); d.line([24, 26, 28, 6], fill=C(INK), width=2); d.line([25, 6, 30, 6], fill=C(INK), width=2)
+    d.pieslice([3, 6, 23, 30], 180, 360, fill=C(INK)); d.pieslice([4, 7, 22, 29], 180, 360, fill=C("P44"))   # 덮개
+    d.line([5, 17, 21, 17], fill=C("P45")); d.line([8, 11, 18, 11], fill=C("P45"))
+    d.rectangle([4, 17, 23, 24], fill=C(INK)); d.rectangle([5, 18, 22, 23], fill=C("P12"))
+    d.rectangle([8, 18, 17, 21], fill=C("P41")); d.line([8, 18, 17, 18], fill=C("P42"))           # 담요
+    return im
+
+
+def w_elev_kt(state=""):
+    """승강기 문(벽 2칸, 64×64): 놋쇠 미닫이 두 짝 · 위 반달 층 표시(바늘) · 옆 호출 단추.
+    상태 open = 문이 반쯤 열려 검은 승강로 — 칸이 없다(아래로 꺼짐) · 문틀 위 '정원 초과' 붉은 등이 아직 켜져 있다."""
+    im = img(64, 64)
+    d = ImageDraw.Draw(im)
+    d.rectangle([4, 0, 59, 63], fill=C(INK)); d.rectangle([5, 1, 58, 62], fill=C("P06"))
+    d.pieslice([20, 2, 44, 22], 180, 360, fill=C(INK)); d.pieslice([21, 3, 43, 21], 180, 360, fill=C(GOLD[1]))
+    d.line([32, 12, 38 if state != "open" else 24, 5], fill=C(INK))
+    op = state == "open"
+    if op:
+        d.rectangle([10, 16, 53, 62], fill=C(INK))
+        d.rectangle([12, 18, 51, 62], fill=C("P01"))
+        for y in range(22, 62, 6):
+            d.line([14, y, 16, y], fill=C("P02")); d.line([47, y + 2, 49, y + 2], fill=C("P02"))       # 승강로 벽 볼트
+        d.line([30, 18, 30, 62], fill=C("P03")); d.line([33, 18, 33, 62], fill=C("P03"))             # 늘어진 줄
+        d.rectangle([10, 16, 17, 62], fill=C(GOLD[0])); d.rectangle([46, 16, 53, 62], fill=C(GOLD[0]))
+        d.rectangle([24, 8, 40, 13], fill=C(INK)); d.rectangle([25, 9, 39, 12], fill=C("P54"))
+        put_text(im, "초과", 26, 7, "P50", 8, "Galmuri7")
+    else:
+        for x0 in (10, 32):
+            d.rectangle([x0, 16, x0 + 21, 62], fill=C(INK)); d.rectangle([x0 + 1, 17, x0 + 20, 62], fill=C(GOLD[1]))
+            d.line([x0 + 2, 18, x0 + 2, 61], fill=C(GOLD[3]))
+            d.rectangle([x0 + 5, 26, x0 + 16, 52], outline=C(GOLD[0]))
+    d.rectangle([56, 30, 59, 38], fill=C(INK)); d.point((57, 32), fill=C("P49")); d.point((57, 35), fill=C("P49"))
+    return im
+
+
+def w_cargo_kt(state=""):
+    """화물 승강기(벽 3칸, 96×64): 잿빛 철 위아래 문 · 노랑 사선 띠 · '화물 — 정원 15명' 판 · 옆 등.
+    상태 live = 등이 초록 · 문 아랫단 틈으로 빛 · 판에 '운행'."""
+    im = img(96, 64)
+    d = ImageDraw.Draw(im)
+    d.rectangle([2, 0, 93, 63], fill=C(INK)); d.rectangle([3, 1, 92, 62], fill=C("P04"))
+    d.rectangle([10, 10, 85, 62], fill=C(INK)); d.rectangle([11, 11, 84, 35], fill=C("P05")); d.rectangle([11, 37, 84, 62], fill=C("P05"))
+    d.line([11, 36, 84, 36], fill=C(INK))
+    for y in (11, 37):
+        for x in range(12, 84, 8):
+            d.line([x, y + 1, x + 4, y + 1], fill=C("P06"))
+    for x in range(11, 84, 6):                                                                       # 노랑 사선 띠
+        d.line([x, 58, x + 3, 61], fill=C("P49")); d.line([x + 1, 58, x + 4, 61], fill=C("P01"))
+    d.rectangle([30, 2, 66, 9], fill=C("P09")); put_text(im, "화물15명", 31, 1, "P52", 8, "Galmuri7")
+    live = state == "live"
+    d.ellipse([86, 14, 92, 20], fill=C(INK)); d.ellipse([87, 15, 91, 19], fill=C("P56" if live else "P51"))
+    if live:
+        d.line([12, 61, 83, 61], fill=C("P50"))
+    return im
+
+
+def ant_soil_kt(state=""):
+    """개미 흙벽(2×1, 64×64): 비상계단 입구를 막은 흙더미(위로 솟음) · 둥근 굴 구멍 셋 · 큰턱 긁은 자국 · 흙에 박힌 계단 난간 끝 · 앞에 반짝이는 냄새 줄.
+    상태 quiet = 구멍이 흙으로 막히고 냄새 줄이 없다(여왕을 처리한 뒤)."""
+    im = img(64, 64)
+    d = ImageDraw.Draw(im)
+    _shadow(d, 2, 62, 60)
+    rnd = random.Random(80)
+    d.polygon([(0, 60), (4, 18), (14, 6), (30, 2), (48, 6), (60, 16), (63, 60)], fill=C(INK))
+    d.polygon([(1, 59), (5, 19), (15, 7), (30, 3), (47, 7), (59, 17), (62, 59)], fill=C("P18"))
+    for _ in range(140):                                                                             # 흙 알갱이(작은 덩이 · 위쪽 밝게)
+        x = rnd.randint(4, 59); y = rnd.randint(8, 58)
+        d.point((x, y), fill=C("P19" if y < 30 and rnd.random() < 0.6 else ("P17" if rnd.random() < 0.6 else "P20")))
+    for k in range(6):                                                                               # 긁힌 자국
+        x = 8 + k * 9; y = 22 + (k % 3) * 9
+        d.line([x, y, x + 5, y + 6], fill=C("P16")); d.line([x + 2, y, x + 7, y + 6], fill=C("P16"))
+    d.line([52, 4, 60, -2], fill=C("P05"), width=2)                                                  # 흙에 묻힌 난간 끝
+    quiet = state == "quiet"
+    for hx, hy, r in ((18, 40, 6), (40, 30, 5), (30, 52, 5)):
+        if quiet:
+            d.ellipse([hx - r, hy - r + 1, hx + r, hy + r - 1], fill=C("P17"))
+            continue
+        d.ellipse([hx - r - 1, hy - r - 1, hx + r + 1, hy + r + 1], fill=C("P16"))
+        d.ellipse([hx - r, hy - r, hx + r, hy + r], fill=C(INK))
+        d.arc([hx - r, hy - r, hx + r, hy + r], 200, 340, fill=C("P20"))
+    if not quiet:
+        for k in range(7):
+            d.point((16 + k * 6, 61 - (k % 2)), fill=C("P57" if k % 2 else "P32"))
+    return im
+
+
+def scent_kt():
+    """냄새 길(덧그림 64×16): 개미가 남긴 페로몬 줄 — 바닥에 희미한 연두 반짝임 점선(듬성듬성 · 한 칸 걸러 밝은 점)."""
+    im = img(64, 16)
+    d = ImageDraw.Draw(im)
+    rnd = random.Random(81)
+    for x in range(1, 63, 3):
+        y = 8 + int(2 * __import__("math").sin(x / 7.0)) + rnd.randint(-1, 1)
+        d.point((x, y), fill=C("P57" if x % 9 == 1 else "P31"))
+        if x % 9 == 1:
+            d.point((x, y - 1), fill=C("P32"))
+    return im
+
+
+def w_intercom_kt(state=""):
+    """전망대 직통 인터폰(벽 1칸, 32×44): 놋쇠 판 · 둥근 스피커 구멍 · 버튼 하나 · '60층 전망대 직통' 판.
+    상태 lit = 버튼 위 등이 켜짐(통화 중)."""
+    im = img(32, 48)
+    d = ImageDraw.Draw(im)
+    d.rectangle([6, 4, 25, 38], fill=C(INK)); d.rectangle([7, 5, 24, 37], fill=C(GOLD[1])); d.line([7, 5, 24, 5], fill=C(GOLD[3]))
+    d.ellipse([10, 9, 21, 20], fill=C(INK)); d.ellipse([11, 10, 20, 19], fill=C(GOLD[0]))
+    for yy in (12, 14, 16):
+        for xx in (13, 15, 17):
+            d.point((xx, yy), fill=C(INK))
+    d.ellipse([12, 24, 19, 31], fill=C(INK)); d.ellipse([13, 25, 18, 30], fill=C("P53"))
+    d.ellipse([14, 33, 17, 36], fill=C("P56" if state == "lit" else "P02"))
+    d.rectangle([4, 36, 27, 47], fill=C(INK)); d.rectangle([5, 37, 26, 46], fill=C("P09")); put_text(im, "60층", 8, 38, "P04", 8, "Galmuri7")
+    return im
+
+
+def safe_kt(state=""):
+    """기념품 가게 금고(1×1, 32×36): 작은 검은 금고 · 금빛 다이얼 · 손잡이 / 상태 open = 문이 열려 안이 빈 칸."""
+    im = img(32, 36)
+    d = ImageDraw.Draw(im)
+    _shadow(d, 4, 28, 32)
+    _box(d, 4, 6, 27, 31, ("P01", "P02", "P04"))
+    if state == "open":
+        d.rectangle([7, 9, 24, 28], fill=C("P01")); d.line([7, 9, 24, 9], fill=C("P03"))
+        d.polygon([(24, 9), (31, 6), (31, 31), (24, 28)], fill=C("P03")); d.line([24, 9, 31, 6], fill=C(INK))
+    else:
+        d.ellipse([11, 12, 20, 21], fill=C(INK)); d.ellipse([12, 13, 19, 20], fill=C(GOLD[2])); d.point((15, 14), fill=C(INK))
+        d.line([22, 18, 22, 25], fill=C(GOLD[1]), width=2)
+    return im
+
+
+# ================================================================================================ 지하 수족관
+def tank_kt(state=""):
+    """큰 수조(4×2, 128×80): 두꺼운 유리(위 테 · 반사 줄) · 푸른 물 · 바닥 모래 · 수초 · 산호 돌 · 거품.
+    상태 broken = 앞 유리에 별 모양 금 · 물이 반으로 줄어 수면선 · 앞 바닥으로 샌 자국. dry = 물이 다 빠지고 수초가 누렇게 말라 누움."""
+    im = img(128, 80)
+    d = ImageDraw.Draw(im)
+    _shadow(d, 2, 126, 76)
+    d.rectangle([2, 4, 125, 74], fill=C(INK)); d.rectangle([3, 5, 124, 73], fill=C("P11"))
+    lvl = {"": 10, "broken": 40, "dry": 80}.get(state, 10)
+    for y in range(6, 73):                                                                             # 물(위 밝게 → 아래 짙게)
+        if y < lvl:
+            d.line([4, y, 123, y], fill=C("P12"))
+            continue
+        k = min(4, max(0, 4 - (y - lvl) // 9))
+        d.line([4, y, 123, y], fill=C(WATER[k]))
+    if lvl < 73:
+        d.line([4, lvl, 123, lvl], fill=C("P37"))
+    d.rectangle([4, 64, 123, 72], fill=C("P21")); d.line([4, 64, 123, 64], fill=C("P22"))              # 모래
+    rnd = random.Random(82 + len(state))
+    for i in range(7):                                                                                 # 수초
+        x = 10 + i * 17 + rnd.randint(-3, 3)
+        h = rnd.randint(18, 34)
+        col = ("P31", "P30") if state != "dry" else ("P20", "P19")
+        if state == "dry":
+            d.line([x, 63, x + h // 2, 60], fill=C(col[0]))
+            continue
+        for j in range(h):
+            xx = x + int(2 * __import__("math").sin(j / 4.0 + i))
+            d.point((xx, 63 - j), fill=C(col[j % 2]))
+    for x0, c in ((30, "P27"), (88, "P41")):                                                           # 바위 위 가지 산호
+        d.ellipse([x0, 58, x0 + 18, 68], fill=C(INK)); d.ellipse([x0 + 1, 59, x0 + 17, 67], fill=C("P05" if state != "dry" else "P06"))
+        d.line([x0 + 3, 61, x0 + 14, 61], fill=C("P07"))
+        cc = c if state != "dry" else "P08"                                                            # 마르면 하얗게 바램
+        for bx, h in ((x0 + 5, 14), (x0 + 9, 18), (x0 + 13, 12)):
+            d.line([bx, 59, bx, 59 - h], fill=C(cc))
+            for k in range(1, h // 4):
+                yy = 59 - k * 4
+                d.line([bx, yy, bx + (2 if k % 2 else -2), yy - 3], fill=C(cc))
+            d.point((bx, 59 - h), fill=C("P42" if state != "dry" else "P09"))
+    if state == "":
+        for k in range(5):
+            d.ellipse([110, 54 - k * 9, 112, 56 - k * 9], outline=C("P37"))
+    d.rectangle([2, 2, 125, 6], fill=C(INK)); d.rectangle([3, 3, 124, 5], fill=C("P06"))               # 위 테
+    d.line([8, 10, 8, 40], fill=C("P15")); d.line([10, 10, 10, 24], fill=C("P15"))                      # 유리 반사
+    if state == "broken":
+        cx, cy = 70, 46
+        for a, b in ((-18, -10), (16, -12), (-12, 14), (20, 10), (2, -22), (-4, 20)):
+            d.line([cx, cy, cx + a, cy + b], fill=C("P09"))
+        d.ellipse([cx - 3, cy - 3, cx + 3, cy + 3], fill=C("P09"))
+        d.rectangle([60, 74, 100, 78], fill=C("P35")); d.line([60, 74, 100, 74], fill=C("P37"))
+    return im
+
+
+def w_coral_kt():
+    """산호 벽(벽 2칸, 64×64): 2077 수족관 장식 벽 — 색 바랜 산호 가지 · 물고기 그림 셋 · 아래 '서울의 바다' 판."""
+    im = img(64, 64)
+    d = ImageDraw.Draw(im)
+    d.rectangle([0, 0, 63, 63], fill=C(INK)); d.rectangle([1, 1, 62, 62], fill=C("P35"))
+    for y in range(1, 62):
+        if y % 6 == 0:
+            d.line([1, y, 62, y], fill=C("P34"))
+    rnd = random.Random(83)
+    for x0, c in ((10, "P40"), (30, "P27"), (48, "P41")):
+        d.line([x0, 58, x0, 34], fill=C(c), width=2)
+        for k in range(4):
+            yy = 54 - k * 6
+            d.line([x0, yy, x0 + rnd.choice([-6, 6]), yy - 5], fill=C(c))
+    for fx, fy, c in ((14, 14, "P49"), (40, 10, "P54"), (28, 24, "P46")):
+        d.ellipse([fx, fy, fx + 9, fy + 5], fill=C(c)); d.polygon([(fx, fy + 2), (fx - 4, fy - 1), (fx - 4, fy + 5)], fill=C(c))
+        d.point((fx + 7, fy + 2), fill=C(INK))
+    d.rectangle([10, 50, 54, 62], fill=C(INK)); d.rectangle([11, 51, 53, 61], fill=C("P09")); put_text(im, "서울의바다", 13, 52, "P44", 8, "Galmuri7")
+    return im
+
+
+def pump_kt(state=""):
+    """펌프실 비상 발전기 + 배수 펌프(2×1, 64×56): 왼쪽 붉은 발전기(연료 통 자리 · 계기) · 오른쪽 회색 펌프(굵은 관이 벽으로) · 사이 전환 손잡이.
+    상태 drain = 발전기 등 켜짐 · 손잡이 '배수' · 관에 물 흐름 · lift = 손잡이 '승강기' · 전선에 노란 불꽃 · gone = 연료 통 자리가 비고 계기가 죽음."""
+    im = img(64, 56)
+    d = ImageDraw.Draw(im)
+    _shadow(d, 2, 62, 52)
+    _box(d, 2, 16, 32, 48, ("P51", "P52", "P53"))                                                     # 발전기
+    for y in range(20, 44, 4):
+        d.line([5, y, 18, y], fill=C("P51"))
+    run = state in ("drain", "lift")
+    d.ellipse([21, 20, 29, 28], fill=C(INK)); d.ellipse([22, 21, 28, 27], fill=C("P09"))
+    d.line([25, 24, 27 if run else 23, 21 if run else 26], fill=C("P53"))
+    d.ellipse([22, 32, 27, 37], fill=C("P56" if run else "P02"))
+    if state != "gone":                                                                               # 연료 통(초록 철통)
+        d.rectangle([4, 4, 14, 16], fill=C(INK)); d.rectangle([5, 5, 13, 15], fill=C("P55")); d.line([6, 6, 12, 6], fill=C("P56"))
+        d.line([9, 2, 9, 4], fill=C(INK))
+    _box(d, 38, 22, 61, 48, ("P03", "P05", "P07"))                                                    # 펌프
+    d.ellipse([42, 26, 56, 40], fill=C(INK)); d.ellipse([43, 27, 55, 39], fill=C("P06"))
+    d.rectangle([50, 2, 56, 24], fill=C(INK)); d.rectangle([51, 3, 55, 23], fill=C("P05"))             # 굵은 관(위로)
+    if state == "drain":
+        for y in range(4, 22, 3):
+            d.point((53, y), fill=C("P37"))
+    d.rectangle([33, 30, 37, 44], fill=C(INK)); d.rectangle([34, 31, 36, 43], fill=C("P04"))           # 전환 손잡이
+    hx = 30 if state == "lift" else (40 if state == "drain" else 35)
+    d.line([35, 36, hx, 26], fill=C(INK), width=2); d.ellipse([hx - 2, 24, hx + 2, 28], fill=C("P49"))
+    if state == "lift":
+        d.line([4, 50, 30, 52, 60, 50], fill=C("P02"))
+        for x in (12, 26, 44):
+            d.point((x, 50), fill=C("P50")); d.point((x + 1, 49), fill=C("P49"))
+    return im
+
+
+def grate_kt():
+    """수조 위 직원 철망 발판(덧그림 64×32 = 2×1): 녹슨 격자 · 가장자리 각철 · 틈으로 아래 물빛 — 관람객 눈에 안 띄는 사육사 길."""
+    im = img(64, 32)
+    d = ImageDraw.Draw(im)
+    d.rectangle([0, 2, 63, 29], fill=C(INK))
+    for y in range(3, 29):
+        d.line([1, y, 62, y], fill=C(WATER[1] if y % 2 else WATER[2]))
+    for x in range(2, 63, 4):
+        d.line([x, 3, x, 28], fill=C("P04"))
+    for y in range(4, 29, 4):
+        d.line([1, y, 62, y], fill=C("P05"))
+    d.line([0, 2, 63, 2], fill=C("P06")); d.line([0, 29, 63, 29], fill=C("P02"))
+    rnd = random.Random(84)
+    for _ in range(14):
+        d.point((rnd.randint(2, 61), rnd.randint(4, 28)), fill=C("P25"))                              # 녹
+    return im
+
+
+def w_staff_phone_kt(state=""):
+    """관내 직원 인터폰(벽 1칸, 32×48): 잿빛 플라스틱 수화기 걸이 · 꼬인 줄 · '관내 — 전망대 9' 쪽지 / 상태 lit = 등."""
+    im = img(32, 48)
+    d = ImageDraw.Draw(im)
+    d.rectangle([7, 6, 24, 34], fill=C(INK)); d.rectangle([8, 7, 23, 33], fill=C("P07")); d.line([8, 7, 23, 7], fill=C("P09"))
+    d.rectangle([10, 9, 14, 30], fill=C(INK)); d.rectangle([11, 10, 13, 29], fill=C("P04"))            # 수화기
+    for y in range(30, 42, 2):
+        d.point((12 + (y // 2) % 2, y), fill=C(INK))                                                     # 꼬인 줄
+    for r in range(3):
+        for c in range(3):
+            d.point((17 + c * 2, 12 + r * 3), fill=C("P03"))
+    d.ellipse([17, 24, 21, 28], fill=C("P56" if state == "lit" else "P02"))
+    d.rectangle([4, 36, 27, 47], fill=C(INK)); d.rectangle([5, 37, 26, 46], fill=C("P50")); put_text(im, "관내9", 6, 38, "P04", 8, "Galmuri7")
+    return im
+
+
+def w_feedlog_kt():
+    """사육사 먹이 주기 일지(벽 1칸, 32×44): 클립보드 · 표 · 맨 아래 붉은 글씨 한 줄."""
+    im = img(32, 44)
+    d = ImageDraw.Draw(im)
+    d.rectangle([5, 4, 26, 40], fill=C(INK)); d.rectangle([6, 5, 25, 39], fill=C("P09"))
+    d.rectangle([11, 2, 20, 7], fill=C("P05")); d.line([11, 2, 20, 2], fill=C(INK))
+    for y in range(11, 32, 4):
+        d.line([8, y, 23, y], fill=C("P06")); d.line([14, y - 3, 14, y], fill=C("P06"))
+    d.line([8, 35, 22, 35], fill=C("P53")); d.line([8, 37, 18, 37], fill=C("P53"))
+    return im
+
+
+# ================================================================================================ 등록
+def _r(fn, fw, fh, kind="floor", down=2, dx=0, dy=0):
+    return {"fn": fn, "foot": (fw, fh), "kind": kind, "down": down, "dx": dx, "dy": dy}
+
+
+PROPS_KT = {
+    "revolving_kt": _r(revolving_kt, 3, 2, down=-2),
+    "info_desk_kt": _r(info_desk_kt, 4, 1, down=-2),
+    "souvenir_kt": _r(souvenir_kt, 2, 1, down=-2),
+    "queue_kt": _r(queue_kt, 3, 1, down=-2),
+    "stroller_kt": _r(stroller_kt, 1, 1, down=-2),
+    "w_elev_kt": _r(w_elev_kt, 2, 0, "wall", dx=0, dy=0),
+    "w_cargo_kt": _r(w_cargo_kt, 3, 0, "wall", dx=0, dy=0),
+    "ant_soil_kt": _r(ant_soil_kt, 2, 1, down=-2),
+    "scent_kt": _r(scent_kt, 0, 0, "deco"),
+    "w_intercom_kt": _r(w_intercom_kt, 1, 0, "wall", dx=0, dy=6),
+    "safe_kt": _r(safe_kt, 1, 1, down=-2),
+    "tank_kt": _r(tank_kt, 4, 2, down=-2),
+    "w_coral_kt": _r(w_coral_kt, 2, 0, "wall", dx=0, dy=0),
+    "pump_kt": _r(pump_kt, 2, 1, down=-2),
+    "w_feedlog_kt": _r(w_feedlog_kt, 1, 0, "wall", dx=0, dy=6),
+    "grate_kt": _r(grate_kt, 0, 0, "deco"),
+    "w_staff_phone_kt": _r(w_staff_phone_kt, 1, 0, "wall", dx=0, dy=6),
+}
+STATES_KT = {
+    "revolving_kt": {s: (lambda s=s: revolving_kt(s)) for s in ("turn", "broken")},
+    "souvenir_kt": {"empty": lambda: souvenir_kt("empty")},
+    "w_elev_kt": {"open": lambda: w_elev_kt("open")},
+    "w_cargo_kt": {"live": lambda: w_cargo_kt("live")},
+    "ant_soil_kt": {"quiet": lambda: ant_soil_kt("quiet")},
+    "w_intercom_kt": {"lit": lambda: w_intercom_kt("lit")},
+    "safe_kt": {"open": lambda: safe_kt("open")},
+    "tank_kt": {s: (lambda s=s: tank_kt(s)) for s in ("broken", "dry")},
+    "pump_kt": {s: (lambda s=s: pump_kt(s)) for s in ("drain", "lift", "gone")},
+    "w_staff_phone_kt": {"lit": lambda: w_staff_phone_kt("lit")},
+}
+
+
+if __name__ == "__main__":
+    out = sys.argv[1]
+    ims = [f["fn"]() for f in PROPS_KT.values()] + [fn() for st in STATES_KT.values() for fn in st.values()]
+    cols = 4
+    rows = [ims[i:i + cols] for i in range(0, len(ims), cols)]
+    W = max(sum(i.width + 4 for i in r) for r in rows) + 4
+    H = sum(max(i.height for i in r) + 4 for r in rows) + 4
+    sheet = Image.new("RGBA", (W, H), C("P05"))
+    y = 2
+    for r in rows:
+        x = 2
+        for i in r:
+            sheet.alpha_composite(i, (x, y))
+            x += i.width + 4
+        y += max(i.height for i in r) + 4
+    sheet.resize((sheet.width * 2, sheet.height * 2), Image.NEAREST).save(out)

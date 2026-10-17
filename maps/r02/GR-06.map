@@ -20,4 +20,6 @@ prop office_desk 6 3
 text 6 3 "신호원 책상. 낡은 무전기 · 찻잔 · 구내 배치도." w=2
 prop locker_row2 8 5
 text 8 5 "잠긴 신호원 함." w=2 scene=GR_LOCKER
+prop w_circuit_box 9 1
+text 9 2 "벽의 노란 스위치 함." scene=GR_BELL
 text 10 3 "창밖으로 구내가 한눈에. 주황 경광봉 둘이 객차 사이를 천천히 돈다 — 건널목 · 정비고 앞 · 개찰구."

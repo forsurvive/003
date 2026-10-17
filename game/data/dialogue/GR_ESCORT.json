@@ -1,0 +1,118 @@
+{
+ "id": "GR_ESCORT",
+ "title": "역무원의 안내",
+ "loc": "L-R02-25",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "AGAIN1": 4,
+  "AGAIN2": 6,
+  "CHOOSE": 7,
+  "OUT": 8,
+  "GIVE": 10
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "GR_ESC >= 2",
+   "to": "AGAIN2"
+  },
+  {
+   "op": "if",
+   "cond": "GR_ESC == 1",
+   "to": "AGAIN1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "주황 경광봉이 팔꿈치를 가볍게 누른다. '손님, 관계자 외 출입 금지입니다. 개찰구까지 모시겠습니다.'"
+  },
+  {
+   "op": "goto",
+   "to": "CHOOSE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "같은 경광봉, 같은 손. '또 뵙습니다, 손님. 이쪽입니다.' 흐린 눈이 정기권을 한 번 본다."
+  },
+  {
+   "op": "goto",
+   "to": "CHOOSE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "역무원은 말없이 개찰구 쪽을 가리킨다. 경광봉 끝이 조금 처졌다 — 지친 걸까, 2백 년 만에."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "순순히 따라 나간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "OUT",
+     "id": "GR_ESCORT:1:0"
+    },
+    {
+     "text": "정기권을 내민다 — '이거, 당신 거죠?'",
+     "tags": [],
+     "cond": "GR_GUIDE == 2 and GR_LOST == 1 and has(\"M-071\") == 1",
+     "fx": "",
+     "to": "GIVE",
+     "id": "GR_ESCORT:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "gr",
+   "args": [
+    "escort"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "역무원이 정기권을 받아 든다. 흐린 눈이 이름 칸에 오래 머문다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "갈라진 목소리. '…10월 31일까지. 제 겁니다. 찾고 있었습니다.'"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "정기권을 가슴 주머니에 넣고 모자챙을 바로 한다. '수고하셨습니다. 저는 — 퇴근하겠습니다.'"
+  },
+  {
+   "op": "cmd",
+   "name": "gr",
+   "args": [
+    "park"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/GR.txt"
+}

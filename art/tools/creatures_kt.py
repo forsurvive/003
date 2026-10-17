@@ -3,6 +3,8 @@
 - 병정 CR-081: 머리가 한 치수 크고 큰턱이 길다 · 배 끝 개미산 분사(spray 2컷 — 꽁무니를 앞으로 말아 뿜는다).
 - 여왕 CR-082: 96×64 · 배가 부풀어 마디 사이가 희게 늘어났다 · 날개 떨어진 자리 그루터기 · 알 낳기(lay 2컷) · 산성 침(spit 2컷).
 걷기는 발을 땅에 고정한 삼각 보행(컷마다 디딘 다리는 몸과 같이 뒤로 — 미끄러짐 없음, px_per_frame).
+- 변이 메기 새끼(SD-14 §5 CR-130의 어린 개체 — 지하 수족관): 64×28 · 넓적한 머리 · 수염 넷(위턱 긴 둘 · 턱밑 짧은 둘) · 올리브 잿빛 등에 흰 얼룩(변이) ·
+  흰 배 · 긴 뒷지느러미 · 둥근 꼬리. 헤엄(4컷 — 꼬리 쪽으로 갈수록 크게 휜다 · 물속이라 발 고정 대신 px_per_frame 2) · 물기(2) · 마른 바닥 퍼덕임(2) · 죽음(3).
 """
 import os, sys, math, random
 from PIL import Image, ImageDraw
@@ -195,12 +197,156 @@ def ant_sheet(kind):
     return frames, meta
 
 
+CAT = ramp(["P28", "P29", "P30", "P31", "P32"])            # 올리브 잿빛 등
+CAT_BELLY = [C("P07"), C("P08"), C("P09")]
+CAT_FRAME = (64, 28)
+CAT_FOOT = (30, 24)
+
+
+def _cat_spine(frame, pose):
+    """등뼈 점(꼬리 → 머리) 24개: 헤엄은 꼬리 쪽일수록 크게 휘는 물결 · 퍼덕임은 활처럼 휨 · 물기는 머리를 든다."""
+    pts = []
+    n = 24
+    for i in range(n):
+        t = i / (n - 1)                                         # 0 꼬리 끝 · 1 주둥이
+        x = 7 + t * 47
+        y = 15.0
+        if pose == "swim":
+            y += 2.6 * math.sin(frame * math.pi / 2 + t * 4.2) * (1 - t) ** 1.4
+        elif pose == "flop":
+            k = 1 if frame % 2 == 0 else -1
+            y += k * 5.5 * (2 * t - 1) ** 2 - k * 2.5               # 바닥에서 활처럼 — 머리 · 꼬리가 번갈아 들림
+        elif pose == "bite":
+            y -= (2.5 if frame else 1.0) * max(0.0, t - 0.6) / 0.4    # 머리를 들어 물기
+        pts.append((x, y, t))
+    return pts
+
+
+def _cat_r(t):
+    """몸 두께(반지름): 꼬리 자루 가늘게 → 몸통 → 넓적한 머리."""
+    if t < 0.12:
+        return 1.6 + t * 8
+    if t < 0.7:
+        return 2.6 + (t - 0.12) * 5.2
+    return 5.6 + (t - 0.7) * 6.0 - max(0.0, t - 0.92) * 34
+
+
+def catfish(frame=0, pose="swim", hurt=False):
+    W_, H_ = CAT_FRAME
+    img = Image.new("RGBA", (W_, H_), CLEAR)
+    pts = _cat_spine(frame, pose)
+    rnd = random.Random(130)
+    spots = [(rnd.uniform(0.2, 0.9), rnd.uniform(-0.85, 0.15), rnd.uniform(1.0, 2.1), rnd.choice([0, 0, 1])) for _ in range(9)]   # 변이 얼룩(몸에 붙은 좌표 — 헤엄쳐도 같이 휜다)
+    tail = pts[0]
+    d = ImageDraw.Draw(img)
+    # 꼬리지느러미(둥글게 — 몸 뒤에 먼저)
+    tx, ty, _ = tail
+    sw = 2.5 * math.sin(frame * math.pi / 2) if pose == "swim" else 0
+    d.polygon([(tx + 2, ty - 1), (tx - 6, ty - 5 + sw), (tx - 7, ty + sw), (tx - 6, ty + 5 + sw), (tx + 2, ty + 1)], fill=CAT[1])
+    d.line([(tx - 5, ty - 3 + sw), (tx - 1, ty)], fill=CAT[0]); d.line([(tx - 5, ty + 3 + sw), (tx - 1, ty)], fill=CAT[0])
+    # 긴 뒷지느러미(배 밑 뒤쪽 절반) · 작은 등지느러미
+    fin = [(x, y + _cat_r(t) * 0.8) for x, y, t in pts[2:13]]
+    d.polygon(fin + [(x, y + _cat_r(t) + 2.5 + (1 if i % 3 == 0 else 0)) for i, (x, y, t) in enumerate(reversed(pts[2:13]))], fill=CAT[1])
+    dx, dy, dt = pts[14]
+    d.polygon([(dx - 3, dy - _cat_r(dt) + 1), (dx + 1, dy - _cat_r(dt) - 4), (dx + 4, dy - _cat_r(dt) + 1)], fill=CAT[2])
+    body = Image.new("RGBA", (W_, H_), CLEAR)
+    for x, y, t in pts:                                         # 꼬리부터 머리 쪽으로 겹쳐 그린다
+        r = max(1.2, _cat_r(t))
+        ry = r * (0.74 if t > 0.72 else 1.0)                    # 머리는 넓적 · 납작
+
+        def skin(nx, ny, col, t=t, r=r):
+            if ny > 0.38 + 0.12 * math.sin(t * 9):
+                return CAT_BELLY[1] if ny < 0.78 else CAT_BELLY[0]          # 흰 배(경계가 물결)
+            for st_, sy, rad, dark in spots:
+                along = (t - st_) * 47 + nx * r * 0.5
+                across = (ny - sy) * r
+                if along * along + across * across < rad * rad:
+                    return C("P28") if dark else (C("P08") if rad > 1.6 else C("P32"))   # 변이 얼룩
+            return None
+        _ellipse_add(body, x, y, r + 0.3, ry + 0.3, CAT, skin)
+    img.alpha_composite(body)
+    img = outline(img)
+    d = ImageDraw.Draw(img)
+    hx, hy, _ = pts[-1]
+    open_m = pose == "bite" and frame == 1
+    # 입(넓게 찢어진 주둥이 선) · 눈(작고 위로)
+    if open_m:
+        d.polygon([(hx + 1, hy + 1), (hx - 6, hy + 2), (hx + 1, hy + 5)], fill=C("P52"))
+        d.line([(hx - 6, hy + 2), (hx + 1, hy + 1)], fill=INK); d.line([(hx - 6, hy + 2), (hx + 1, hy + 5)], fill=INK)
+    else:
+        d.line([(hx - 6, hy + 2), (hx + 1, hy + 2)], fill=INK)
+    d.point((hx - 6, hy - 3), fill=C("P54") if hurt else C("P49"))
+    d.point((hx - 6, hy - 4), fill=INK)
+    # 수염 넷: 위턱 긴 둘(물결에 따라 흔들림) · 턱밑 짧은 둘
+    wv = [0, 1, 0, -1][frame % 4] if pose != "flop" else 1
+    for k, (ax, ay, L_, up) in enumerate([(hx - 1, hy - 1, 13, -1), (hx - 2, hy, 11, 1), (hx - 1, hy + 4, 6, 1), (hx - 3, hy + 4, 5, 1)]):
+        col = C("P04") if k < 2 else C("P05")
+        pts_w = []
+        for j in range(L_ + 1):
+            u = j / L_
+            px_ = ax + j * (0.95 if k < 2 else 0.6)
+            py_ = ay + up * (u * u * (4 if k == 0 else 3)) + wv * u * 1.5 + (k >= 2) * u * 2
+            pts_w.append((min(W_ - 1, px_), min(H_ - 1, max(0, py_))))
+        d.line(pts_w, fill=col)
+    if hurt:
+        px = img.load()
+        for y in range(H_):
+            for x in range(W_):
+                if px[x, y][3] and px[x, y] != INK:
+                    px[x, y] = C("P09")
+    return img
+
+
+def _ellipse_add(img, cx, cy, rx, ry, col_ramp, extra=None):
+    """CC._ellipse와 같되 칸 밖은 건너뛰는 빠른 판(작은 타원을 여러 번 겹칠 때)."""
+    for y in range(max(0, int(cy - ry - 1)), min(img.height, int(cy + ry + 2))):
+        for x in range(max(0, int(cx - rx - 1)), min(img.width, int(cx + rx + 2))):
+            nx, ny = (x + 0.5 - cx) / rx, (y + 0.5 - cy) / ry
+            q = nx * nx + ny * ny
+            if q <= 1:
+                nz = math.sqrt(1 - q)
+                col = shade(col_ramp, nx * L[0] + ny * L[1] + nz * L[2], 0.6)
+                if extra:
+                    col = extra(nx, ny, col) or col
+                img.putpixel((x, y), col)
+
+
+def catfish_death():
+    """죽음 3컷: 옆으로 뒤집힘 → 흰 배를 위로 → 납작."""
+    W_, H_ = CAT_FRAME
+    base = catfish(0, "idle")
+    flip = base.transpose(Image.FLIP_TOP_BOTTOM)
+    out = []
+    f = Image.new("RGBA", (W_, H_), CLEAR)
+    f.alpha_composite(base.rotate(-12, resample=Image.NEAREST, center=CAT_FOOT))
+    out.append(f)
+    f = Image.new("RGBA", (W_, H_), CLEAR)
+    f.alpha_composite(flip.crop((0, 3, W_, H_)), (0, 5))
+    out.append(f)
+    sq = flip.resize((W_, H_ - 9), Image.NEAREST)
+    f = Image.new("RGBA", (W_, H_), CLEAR)
+    f.alpha_composite(sq, (0, 7))
+    out.append(f)
+    return out
+
+
+def catfish_sheet():
+    """메기 새끼 시트: idle 1 · walk(헤엄) 4 · bite 2 · flop 2 · death 3."""
+    frames = [catfish(0, "idle")] + [catfish(f, "swim") for f in range(4)] + [catfish(0, "bite"), catfish(1, "bite")] \
+        + [catfish(0, "flop"), catfish(1, "flop")] + catfish_death()
+    meta = {"frame": list(CAT_FRAME), "foot": list(CAT_FOOT), "rows": ["E"], "mirror": {"W": "E"}, "style": "isaac",
+            "motions": {"idle": {"start": 0, "count": 1}, "walk": {"start": 1, "count": 4, "px_per_frame": 2, "drive": "distance"},
+                        "attack": {"start": 5, "count": 2}, "flop": {"start": 7, "count": 2}, "death": {"start": 9, "count": 3}}}
+    return frames, meta
+
+
 if __name__ == "__main__":
     out = sys.argv[1]
     rows = []
     for k in ("worker", "soldier", "queen"):
         fr, _ = ant_sheet(k)
         rows.append(fr)
+    rows.append(catfish_sheet()[0])
     W = max(sum(f.width + 2 for f in r) for r in rows)
     H = sum(r[0].height + 4 for r in rows)
     sheet = Image.new("RGBA", (W, H), (176, 150, 110, 255))

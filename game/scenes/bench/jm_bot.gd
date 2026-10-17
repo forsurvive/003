@@ -448,7 +448,22 @@ func _ready() -> void:
 				["until", "GR_CORE == 1", 10.0, "7703 대기 출력", "gr_wake"], ["wait", 1.0], ["shot", "gr_core"],
 				["want", ["앞으로"]], ["use", 7, 9],
 				["until", "GR_C == 1", 15.0, "입환 C — 수송 열차 연결", "gr_push"], ["wait", 6.0], ["shot", "gr_depart"],
-				["check", "GR_STAFF == 2 and DG_GR == 1 and GR_PUSH == 1", "출발 진행 = 던전 정리 · 밀기 하나 남음"]]
+				["check", "GR_STAFF == 2 and DG_GR == 1 and GR_PUSH == 1", "출발 진행 = 던전 정리 · 밀기 하나 남음"],
+				["until", "GR_CHEER == 1", 15.0, "구내 — 역무원이 열차 곁에서 '출발 진행!'", "gr_cheer"], ["wait", 2.5], ["shot", "gr_cheer2"],
+				["until", "GR_MUSTER == 3", 10.0, "집결한 '안 간 사람들'이 수송 열차에 오른다", "gr_board"], ["wait", 6.0], ["shot", "gr_board2"]]
+		"grp":                                                          # 1-D4 구로 엉뚱한 짓: 분실물 정기권을 역무원 박에게 돌려준다 → 박 퇴근 · 쥐 둥지 군번줄 → 떠돌이
+			st.vars.set_v("GAME_DAY", 12)
+			st.call_fn("give", ["M-071", 1])
+			st.vars.set_v("GR_LOST", 1)
+			host.date_text = "2277. 10. 30.  10:00"
+			host.enter("X-GR", "gr_gate_in")
+			plan = [["hp", 3000], ["noenc"], ["wait", 1.5], ["want", ["정기권을 내민다"]], ["grgo", 57, 26],
+				["until", "GR_PARK >= 1", 40.0, "박에게 정기권 — '제 겁니다. 찾고 있었습니다.'", "grp_park"], ["wait", 3.0], ["shot", "grp_leave"],
+				["check", "has(\"M-071\") == 0 and GR_STAFF == 0", "정기권을 잃음 · 김은 아직 근무"],
+				["warp", "GR-04", "from_X"], ["wait", 1.0], ["want", ["집는다"]], ["go", 22, 5, "GR-04"], ["use", 22, 4],
+				["until", "GR_TAG == 1", 10.0, "쥐 둥지 — 군번줄 '최병규'", "grp_tag"],
+				["warp", "GR-03", "from_X"], ["wait", 1.0], ["want", ["부탁"]], ["talk", "N-GR-D1"],
+				["until", "GR_DRIFT == 3", 15.0, "떠돌이 — 부탁을 듣는 자리에서 군번줄을 건넨다", "grp_drift"]]
 		"s11p":                                                         # 1-11j SQ-S11 낮 호위: 공영방송 앞에서 국회 쪽으로 걸으면 여의도 순찰이 '구울 통행 금지' → 환승센터 터 지하로 숨는다 → 계단 낭독
 			st.call_fn("give", ["M-305", 1])
 			st.vars.set_v("GAME_DAY", 4)

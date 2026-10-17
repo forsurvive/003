@@ -175,7 +175,7 @@ func test_gr_days(t) -> void:
 	t.eq(_v(st2, "GR_SB"), 0, "소장 · 실장 둘 다 죽었으면 장부쟁이가 오지 않는다")
 
 
-## 떠돌이 부탁: 4번 칸 쥐 둥지를 비우면 보답
+## 떠돌이 부탁(재미 검수 뒤): 쥐가 물어 간 군번줄 찾기 — 쥐를 다 잡지 않아도 둥지에서 집을 수 있다 · 명부의 이름으로 이어진다
 func test_gr_drift(t) -> void:
 	var r := _host("GR-04", "from_X")
 	var h: InteriorHost = r[0]
@@ -189,8 +189,61 @@ func test_gr_drift(t) -> void:
 			h.combat.enemies.erase(e)
 	h.combat.enemy_killed.emit("CR-095", 0)
 	t.eq(_v(st, "GR_RATS"), 1, "쥐 둥지 비움")
+	t.eq(_play(st, c, "GR_DRIFT"), [], "쥐만 잡고 오면 — 군번줄은?")
+	t.eq(_v(st, "GR_DRIFT"), 1, "쥐만으로는 부탁이 끝나지 않는다")
+	t.eq(_play(st, c, "GR_NEST", ["집는다"]), [], "둥지에서 군번줄")
+	t.eq(_v(st, "GR_TAG"), 1, "군번줄 지님")
 	t.eq(_play(st, c, "GR_DRIFT"), [], "보답")
-	t.ok(_v(st, "GR_DRIFT") == 3 and int(st.items.get("I-006", 0)) >= 1, "통조림 · 부목")
+	t.ok(_v(st, "GR_DRIFT") == 3 and _v(st, "GR_TAG") == 2 and int(st.items.get("I-006", 0)) >= 1, "통조림 · 부목 · 군번줄은 떠돌이에게")
+	t.ok(_play(st, c, "GR_ROSTER").is_empty(), "출정 명부 — 군번줄의 이름(최병규)")
+	var r2 := _host("GR-04", "from_X")
+	var st2: StoryState = r2[1]
+	var c2: Gr = r2[2]
+	t.eq(_play(st2, c2, "GR_NEST", ["집는다"]), [], "부탁 전에 먼저 집어도")
+	t.eq(_play(st2, c2, "GR_DRIFT", ["부탁"]), [], "부탁을 듣는 자리에서 바로 건넨다")
+	t.eq(_v(st2, "GR_DRIFT"), 3, "부탁 끝")
+
+
+## 우회의 대가(재미 검수 ③): 억지로 연 냉장 화차는 절반 · 손으로 민 무개차는 소리(역무원이 서쪽 끝으로) · 독산 수첩 복선
+func test_gr_cost(t) -> void:
+	var r := _host()
+	var st: StoryState = r[1]
+	var c: Gr = r[2]
+	st.vars.set_v("GR_KEY", 1)
+	t.eq(_play(st, c, "GR_REEFER", ["냉장 3"]), [], "제자리 화차를 열쇠로")
+	t.ok(_v(st, "GR_REEFER") == 1 and int(st.items.get("I-004", 0)) == 1 and int(st.items.get("I-092", 0)) == 0, "밀봉이 터져 절반만")
+	c._cmd(["flat"], func() -> void: pass)
+	t.ok(_v(st, "GR_B") == 2 and c._alarm_at == Gr.FLAT_AT and c._alarm_until > c._now_s, "쿵 — 역무원이 서쪽 끝을 살피러 온다")
+	t.eq(_play(st, c, "GR_TIP"), [], "독산 4호 사냥꾼 수첩")
+	t.eq(_v(st, "GR_TIP"), 1, "읽은 사실이 남는다(냉장 화차 대사가 그걸 본다)")
+
+
+## 박에게 정기권(엉뚱한 짓): 안내하는 사람이 박일 때만 · 정기권을 잃고 박은 퇴근 · 남은 김이 쓰러지면 정리 · 휴게실 자리는 산 사람만
+func test_gr_park(t) -> void:
+	var r := _host()
+	var st: StoryState = r[1]
+	var c: Gr = r[2]
+	st.call_fn("give", ["M-071", 1])
+	st.vars.set_v("GR_LOST", 1)
+	st.vars.set_v("GR_GUIDE", 1)
+	t.ok(not _opts(st, "GR_ESCORT").any(func(x): return str(x).contains("정기권")), "김에게는 내밀 수 없다(이름 칸 '박')")
+	st.vars.set_v("GR_GUIDE", 2)
+	t.eq(_play(st, c, "GR_ESCORT", ["정기권"]), [], "박에게 정기권을 내민다")
+	t.ok(_v(st, "GR_PARK") == 10 and not bool(st.call_fn("has", ["M-071"])), "박이 퇴근 · 정기권을 잃는다")
+	t.eq(_v(st, "GR_STAFF"), 0, "김이 남아 아직 정리 아님")
+	c._on_kill("CR-205", 0)
+	t.ok(_v(st, "GR_STAFF_K") == 1 and _v(st, "GR_STAFF") == 1 and _v(st, "DG_GR") == 1, "김이 쓰러지면 구내가 빈다 — 정리")
+	var r2 := _host("GR-01", "from_a")
+	var h2: InteriorHost = r2[0]
+	var st2: StoryState = r2[1]
+	st2.vars.set_v("GR_STAFF", 2)
+	st2.vars.set_v("GR_STAFF_K", 2)
+	h2.enter("GR-02", "from_X")
+	var n := 0
+	for e in h2.combat.enemies:
+		if is_instance_valid(e) and str(e.row.get("id", "")) == "CR-205":
+			n += 1
+	t.eq(n, 1, "박이 쓰러진 판 — 휴게실 의자엔 김 하나")
 
 
 ## 수송 열차 '안 간 사람들': 휴면으로 앉아 있다 · 호루라기 '기립' → 비적대로 문 쪽 · 집결
@@ -209,3 +262,22 @@ func test_gr_muster(t) -> void:
 	t.eq(_v(st, "GR_MUSTER"), 1, "기립 · 집결")
 	t.ok(c.stayers.all(func(e): return not is_instance_valid(e) or (not e.asleep and e.cmb.team == "calm_gr")), "일어나서 비적대")
 	t.ok(_play(st, c, "GR_ROSTER").is_empty(), "출정 명부")
+
+
+## 열차가 이미 움직인 뒤 호루라기: 내리지 않고 고개를 들고 다시 앉는다(GR_MUSTER 3) — 다시 들어가도 덤비지 않는다
+func test_gr_aboard(t) -> void:
+	var r := _host("GR-01", "from_a")
+	var h: InteriorHost = r[0]
+	var st: StoryState = r[1]
+	var c: Gr = r[2]
+	st.vars.set_v("GR_C", 1)
+	st.vars.set_v("GR_WHISTLE", 1)
+	t.eq(_play(st, c, "GR_TRAIN", ["호루라기"]), [], "호루라기 — 이미 출발한 열차")
+	t.ok(_v(st, "GR_MUSTER") == 3 and _v(st, "GR_MUSTER_DAY") == 10, "다시 앉음")
+	h.enter("GR-04", "from_X")
+	h.enter("GR-01", "from_a")
+	var calm := 0
+	for e in h.combat.enemies:
+		if is_instance_valid(e) and str(e.row.get("id", "")) == "CR-204" and e.cmb.team == "calm_gr":
+			calm += 1
+	t.eq(calm, Gr.STAY, "다섯이 비적대로 앉아 있다")

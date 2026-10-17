@@ -60,5 +60,5 @@ music BGM-D01A
 refill 30 25 사람=CR-420,CR-421,CR-420 짐승=CR-095,CR-095,CR-095
 clear GR_STAFF >= 1
 chalk 0 chalk_claw "분필 — '역무원 = 주황 막대. 표 없으면 맞음. 정비고 깨우지 말 것.'"
-chalk 1 chalk_x "분필 가위표 — '역무원 퇴근함. 7703 출발했음(50m).'"
+chalk 1 chalk_x "분필 가위표 — '역무원 이제 없음. 구내 지나가도 됨.'"
 chalk 2 chalk_live "분필 사람 표시 — '고철단 들어앉음.'"

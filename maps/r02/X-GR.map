@@ -113,6 +113,7 @@ mark gr_c4 11 29 N
 mark gr_c5 22 33 N
 mark gr_view 37 22 W
 mark gr_west 1 22 W
+mark gr_va 31 14 W
 mark gr_mu1 45 35 N
 mark gr_mu2 46 35 N
 mark gr_mu3 47 35 N
@@ -258,7 +259,7 @@ prop switch_lever 37 18 cond="GR_LV_C == 0"
 prop switch_lever 37 18 state=thrown cond="GR_LV_C == 1"
 text 37 18 "전철기 레버 C." scene=GR_LEVER_C
 prop crossing_gr 40 14
-text 40 14 "건널목 경보기. 아래에 노란 단추 함." scene=GR_BELL
+text 40 14 "건널목 경보기. 기둥에 '시험 — 신호 초소' 꼬리표. 역무원이 지나가면 저절로 운다."
 text 21 11 "정비고 옆문. 철문에 '관계자 외 출입 금지'." scene=GR_SIDE
 prop sd_gate 62 24
 text 62 24 "직원 개찰구." scene=GR_GATE
@@ -271,9 +272,10 @@ text 47 34 "바닥에 흰 페인트 칸 다섯. '집결 — 제3 예비군'." w=
 # ---------------------------------------------------------------- 새벽인력 측량조(노심을 깨운 다음 날 06:00 — 장부 번호를 칠한다)
 npc N-GR-S1 24 14 W look=M2-S3-HR01-H1-T03-1-PF00-HD05-EY00 cond="GR_SB == 1 and GR_SB_DAY == GAME_DAY" bark="구로 기관차 하나, 장부 0417번. 움직이는 쇳덩이는 다 장부에 있어."
 npc N-GR-S2 25 13 S look=M1-S2-HR02-H1-T03-1-PF00-HD02-EY00 cond="GR_SB == 1 and GR_SB_DAY == GAME_DAY" bark="페인트 아껴. 물탱크도 칠해야 돼."
-# ---------------------------------------------------------------- 역무원 구울 둘(CR-205 — 정해진 길. 진행기가 정기권 · 열쇠꾸러미를 본다)
-enemy CR-205 38 25 cond="GR_STAFF == 0" arm=baton route=38,25,3;38,13,3;30,13,2;38,13,1;38,35,3
-enemy CR-205 58 26 cond="GR_STAFF == 0" arm=baton route=58,26,4;58,35,2;40,35,3;40,21,2;58,21,2
+# ---------------------------------------------------------------- 역무원 구울 둘(CR-205 — 정해진 길. 진행기가 정기권 · 열쇠꾸러미를 본다) · 첫째(38,25) 김 · 둘째(58,26) 박
+#   쓰러뜨리면 다시 서지 않는다(진행기가 우두머리처럼 기록) · '출발 진행'을 한 번 보여 준 뒤(GR_CHEER)엔 구내에 서지 않는다(휴게실 — 한 사람 한 곳)
+enemy CR-205 38 25 cond="GR_STAFF == 0 or (GR_STAFF == 2 and GR_CHEER == 0)" arm=baton route=38,25,3;38,13,3;30,13,2;38,13,1;38,35,3
+enemy CR-205 58 26 cond="GR_PARK == 0 and (GR_STAFF == 0 or (GR_STAFF == 2 and GR_CHEER == 0))" arm=baton route=58,26,4;58,35,2;40,35,3;40,21,2;58,21,2
 # ---------------------------------------------------------------- 짐승(선로 끝 · 화차 밑)
 enemy CR-095 5 22
 enemy CR-095 9 25

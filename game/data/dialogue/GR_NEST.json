@@ -1,0 +1,77 @@
+{
+ "id": "GR_NEST",
+ "title": "쥐 둥지",
+ "loc": "L-R02-25",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TAKE": 3,
+  "EMPTY": 6
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "GR_TAG >= 1",
+   "to": "EMPTY"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "좌석 쿠션을 다 파내 둥지를 틀었다. 솜 속에 깡통 뚜껑 · 단추 · 군번줄 하나."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "군번줄을 집는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TAKE",
+     "id": "GR_NEST:1:0"
+    },
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "GR_NEST:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "쇠 판 두 장. '최병규 · 구로 · 1급'. 줄이 이빨 자국으로 끊겼다."
+  },
+  {
+   "op": "cmd",
+   "name": "gr",
+   "args": [
+    "tag"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "솜 속에 깡통 뚜껑과 단추만 남았다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/GR.txt"
+}

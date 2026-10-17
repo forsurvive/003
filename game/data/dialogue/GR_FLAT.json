@@ -6,7 +6,8 @@
  "cond": "V_ACT >= 1 and GR_B == 0",
  "labels": {
   "START": 0,
-  "PUSH": 2
+  "PUSH": 2,
+  "NOISE": 7
  },
  "ops": [
   {
@@ -67,6 +68,28 @@
    "who": "SYS",
    "emo": "기본",
    "text": "담에 난 틈. 선로를 따라 나가면 안양천 둑이다."
+  },
+  {
+   "op": "if",
+   "cond": "GR_STAFF == 0",
+   "to": "NOISE"
+  },
+  {
+   "op": "cmd",
+   "name": "gr",
+   "args": [
+    "flat"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "구내 쪽에서 짧은 호루라기 — 주황 불빛 둘이 객차 사이로 이쪽을 향해 흔들린다. 소리가 너무 컸다."
   },
   {
    "op": "cmd",

@@ -139,6 +139,9 @@ func load_map(map_id: String, st: StoryState = null) -> void:
 				gg["x"] = int(g["x"]) + o.x
 				gg["y"] = int(g["y"]) + o.y
 				gg["key"] = "%s:%d,%d" % [iid, int(g["x"]), int(g["y"])]          # 한 번만 여는 칸의 기록 열쇠는 손 맵 좌표 그대로
+				for r in gg.get("route", []):                               # 적 순찰 길([x, y, 머무는 초])도 월드 좌표로(1-D4: 구로 역무원 · 본소 경비)
+					r[0] = int(r[0]) + o.x
+					r[1] = int(r[1]) + o.y
 				data[key].append(gg)
 	var dd := {"props": [], "doors": [], "signs": [], "exits": [], "texts": []}   # 지하로 내려가는 문(1-4): 계단 소품 + 2칸 출구
 	for door in PlaceLog.doors:
@@ -209,6 +212,9 @@ func load_map(map_id: String, st: StoryState = null) -> void:
 				gg["x"] = int(g["x"]) + so.x
 				gg["y"] = int(g["y"]) + so.y
 				gg["key"] = "%s:%d,%d" % [key, int(g["x"]), int(g["y"])]
+				for r in gg.get("route", []):
+					r[0] = int(r[0]) + so.x
+					r[1] = int(r[1]) + so.y
 				data[k2].append(gg)
 	if FileAccess.file_exists(WDIR + "pois.json"):                      # 길 위 발견물(1-4f, SD-08 §13.2): 소품은 청크에 구워져 있고 용기·조사 글만 여기서 단다
 		var pz: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(WDIR + "pois.json"))
