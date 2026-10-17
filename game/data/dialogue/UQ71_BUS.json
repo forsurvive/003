@@ -24,12 +24,12 @@
   },
   {
    "op": "if",
-   "cond": "UQ71_CORE == 2 or UQ71_CORE == 3",
+   "cond": "UQ71_CORE == 2 or UQ71_CORE == 3 or UQ71_CORE == 6",
    "to": "EMPTY"
   },
   {
    "op": "if",
-   "cond": "UQ71_CORE >= 4",
+   "cond": "UQ71_CORE == 4 or UQ71_CORE == 5",
    "to": "TORN"
   },
   {

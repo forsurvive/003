@@ -1,0 +1,91 @@
+{
+ "id": "GR_LOCKER",
+ "title": "신호원 함",
+ "loc": "L-R02-25",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "OPEN": 3,
+  "EMPTY": 6
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "GR_WHISTLE == 1",
+   "to": "EMPTY"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "잠긴 철함. '신호원 함 — 호루라기 · 깃발'."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "신호 초소 열쇠로 연다",
+     "tags": [],
+     "cond": "GR_SIGKEY == 1",
+     "fx": "",
+     "to": "OPEN",
+     "id": "GR_LOCKER:1:0"
+    },
+    {
+     "text": "자물쇠를 딴다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "자물쇠 따기",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "OPEN",
+     "id": "GR_LOCKER:1:1"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "GR_LOCKER:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "붉은 깃발, 초록 깃발, 그리고 은빛 호루라기. 끈에 '구내 집결 — 2회 길게'."
+  },
+  {
+   "op": "cmd",
+   "name": "gr",
+   "args": [
+    "whistle"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "깃발 둘만 남았다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/GR.txt"
+}

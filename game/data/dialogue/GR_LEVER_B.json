@@ -1,0 +1,135 @@
+{
+ "id": "GR_LEVER_B",
+ "title": "전철기 레버 B",
+ "loc": "L-R02-25",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "THROW": 4,
+  "BACK": 7,
+  "UNTHROW": 9,
+  "DONE": 12
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "손잡이에 'B — 선로 끝(인상선)'."
+  },
+  {
+   "op": "if",
+   "cond": "GR_B >= 1",
+   "to": "DONE"
+  },
+  {
+   "op": "if",
+   "cond": "GR_LV_B == 1",
+   "to": "BACK"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "레버를 넘긴다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "THROW",
+     "id": "GR_LEVER_B:1:0"
+    },
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "GR_LEVER_B:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "쿵. 서쪽 끝 이음매가 무개차 쪽으로 열린다."
+  },
+  {
+   "op": "cmd",
+   "name": "gr",
+   "args": [
+    "lever",
+    "B"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "레버가 넘어가 있다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "되돌린다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "UNTHROW",
+     "id": "GR_LEVER_B:2:0"
+    },
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "GR_LEVER_B:2:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "gr",
+   "args": [
+    "lever",
+    "B"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "레버를 되돌린다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "선로 끝은 이미 비었다. 레버가 꺾여 있으면 기관차는 빈 인상선으로 간다."
+  },
+  {
+   "op": "if",
+   "cond": "GR_LV_B == 1",
+   "to": "BACK"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/GR.txt"
+}

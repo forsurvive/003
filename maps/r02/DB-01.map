@@ -60,8 +60,8 @@ text 47 10 "남쪽 경고판. 누가 그 위에 숯으로 '버스 근처 X'라�
 # 차로: 반쯤 잠긴 원자력 통근 버스 · 잠긴 차 셋 · 마른 경사로의 잔해 하나
 prop bus_atomic_sunk 23 13 cond="UQ71_CORE == 0 and UQ71_SQP == 0"
 prop bus_atomic_sunk 23 13 state=haul cond="UQ71_CORE == 0 and UQ71_SQP >= 1"
-prop bus_atomic_sunk 23 13 state=cold cond="UQ71_CORE >= 1 and UQ71_CORE <= 3"
-prop bus_atomic_sunk 23 13 state=torn cond="UQ71_CORE >= 4"
+prop bus_atomic_sunk 23 13 state=cold cond="(UQ71_CORE >= 1 and UQ71_CORE <= 3) or UQ71_CORE == 6"
+prop bus_atomic_sunk 23 13 state=torn cond="UQ71_CORE == 4 or UQ71_CORE == 5"
 prop car_sunk 12 12
 prop car_sunk2 34 15
 prop car_sunk 17 16

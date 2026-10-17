@@ -1,0 +1,176 @@
+{
+ "id": "GR_DRIFT",
+ "title": "객차 떠돌이",
+ "loc": "L-R02-25",
+ "npc": "N-GR-D1",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "LOCO": 7,
+  "ASK": 11,
+  "WAIT": 14,
+  "DONE": 16,
+  "THANKS": 19,
+  "PACKING": 21
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "GR_DRIFT == 3",
+   "to": "THANKS"
+  },
+  {
+   "op": "if",
+   "cond": "GR_SB == 1",
+   "to": "PACKING"
+  },
+  {
+   "op": "if",
+   "cond": "GR_RATS == 1 and GR_DRIFT == 1",
+   "to": "DONE"
+  },
+  {
+   "op": "if",
+   "cond": "GR_DRIFT == 1",
+   "to": "WAIT"
+  },
+  {
+   "op": "line",
+   "who": "N-GR-D1",
+   "emo": "놀람",
+   "text": "…사람이네. 역무원인 줄 알았어. 표 있어? 없으면 저 주황 막대한테 맞아."
+  },
+  {
+   "op": "line",
+   "who": "N-GR-D1",
+   "emo": "기본",
+   "text": "여긴 내 칸이야. 겨울엔 객차가 낫거든 — 바람이 안 들어."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "정비고 기관차, 움직여요?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "LOCO",
+     "id": "GR_DRIFT:1:0"
+    },
+    {
+     "text": "부탁할 거 있어요?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "ASK",
+     "id": "GR_DRIFT:1:1"
+    },
+    {
+     "text": "그냥 지나가요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "GR_DRIFT:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-GR-D1",
+   "emo": "기본",
+   "text": "7703? 움직이긴 하지. 노심이 자고 있을 뿐이야. 깨우면 지붕이 웅웅 울어 — 구로 바닥 끝까지 들려."
+  },
+  {
+   "op": "line",
+   "who": "N-GR-D1",
+   "emo": "슬픔",
+   "text": "그 소리 들리면 새벽인력 놈들이 장부 들고 와. 움직이는 쇳덩이는 다 장부에 올리거든. 그럼 나도 짐 싸야지."
+  },
+  {
+   "op": "if",
+   "cond": "GR_DRIFT == 0",
+   "to": "ASK"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-GR-D1",
+   "emo": "기본",
+   "text": "4번 줄 '정비 대기' 칸에 쥐가 둥지를 틀었어. 밤마다 내 쪽으로 넘어와. 그것 좀 비워 주면 — 내가 모아 둔 거 나눠 줄게."
+  },
+  {
+   "op": "cmd",
+   "name": "gr",
+   "args": [
+    "drift",
+    "ask"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-GR-D1",
+   "emo": "기본",
+   "text": "4번 줄 쥐 둥지. 아직이지? 찍찍 소리가 그대로야."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-GR-D1",
+   "emo": "미소",
+   "text": "조용해졌어. 어젯밤엔 처음으로 푹 잤다. 이거 — 군납 통조림이랑 구급 부목. 겨울 날 거 빼고 다야."
+  },
+  {
+   "op": "cmd",
+   "name": "gr",
+   "args": [
+    "drift",
+    "done"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-GR-D1",
+   "emo": "미소",
+   "text": "쥐 없는 객차가 이렇게 넓은 줄 몰랐네."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-GR-D1",
+   "emo": "슬픔",
+   "text": "들었지? 아침에 장부쟁이 둘이 왔다 갔어. 기관차에 번호를 칠하더라. 다음엔 객차 차례야."
+  },
+  {
+   "op": "line",
+   "who": "N-GR-D1",
+   "emo": "기본",
+   "text": "내일은 개봉 쪽으로 갈 거야. …원망은 안 해. 쇳덩이가 움직이는 걸 보고 싶긴 했거든."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/GR.txt"
+}

@@ -1,0 +1,186 @@
+{
+ "id": "GR_LOCO",
+ "title": "원자력 기관차 7703",
+ "loc": "L-R02-25",
+ "npc": "",
+ "cond": "V_ACT >= 1 and GR_C == 0",
+ "labels": {
+  "START": 0,
+  "WAKE": 5,
+  "BUS": 9,
+  "IDLE": 13,
+  "PUSH": 15,
+  "SLEPT": 17
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "GR_CORE == 1",
+   "to": "IDLE"
+  },
+  {
+   "op": "if",
+   "cond": "GR_CORE == 2",
+   "to": "SLEPT"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "운전실. 계기마다 바늘이 바닥에 누웠다. 노심 칸 유리 돔 안이 어둡다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "계기판 아래 글씨 — '대기 출력: 냉각 펌프 수동 기동 후 노심 반응도 단계 1. 입환 시 2회 이내(노심 보호).'"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "노심 반응도를 대기 출력까지 올린다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "과학",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "WAKE",
+     "id": "GR_LOCO:1:0"
+    },
+    {
+     "text": "냉각 펌프를 손으로 돌려 깨운다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "WAKE",
+     "id": "GR_LOCO:1:1"
+    },
+    {
+     "text": "대방 버스 노심을 노심 칸에 꽂는다",
+     "tags": [],
+     "cond": "has(\"M-392\") == 1",
+     "fx": "",
+     "to": "BUS",
+     "id": "GR_LOCO:1:2"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "GR_LOCO:1:3"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "펌프가 끄르륵 — 돈다. 유리 돔 안에 초록빛이 고인다. 정비고 지붕이 낮게 웅웅 울린다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "표시등 셋이 켜진다. 대기 출력. 밀 수 있는 건 두 번."
+  },
+  {
+   "op": "cmd",
+   "name": "gr",
+   "args": [
+    "wake"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "노심 칸 해치를 연다. 단말이 깜박인다 — '규격 불일치: 세진 소형 버스형 / 점화용 임시 사용 가능'."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "대방 버스에서 꺼낸 통을 꽂는다. 쿵 — 불꽃 — 초록빛이 단번에 차오른다. 버스 노심은 이걸로 다 탈 것이다."
+  },
+  {
+   "op": "cmd",
+   "name": "gr",
+   "args": [
+    "bus"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "유리 돔 안의 초록빛. 계기 — '입환 남은 횟수 \\V[GR_PUSH]'."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "앞으로 — 입환",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "PUSH",
+     "id": "GR_LOCO:2:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "GR_LOCO:2:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "gr",
+   "args": [
+    "push"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "초록빛이 사그라졌다. 노심은 다시 잠들었다 — '노심 보호'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/GR.txt"
+}

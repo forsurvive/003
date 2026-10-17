@@ -1,0 +1,61 @@
+{
+ "id": "GR_BELL",
+ "title": "건널목 경보기",
+ "loc": "L-R02-25",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "PRESS": 2
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "노란 단추 함. '시험 — 누르면 울림'."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "단추를 누른다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "PRESS",
+     "id": "GR_BELL:1:0"
+    },
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "GR_BELL:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "땡땡땡땡 — 붉은 등이 번갈아 깜박인다. 객차 사이 어딘가에서 주황 불빛이 이쪽으로 돈다."
+  },
+  {
+   "op": "cmd",
+   "name": "gr",
+   "args": [
+    "bell"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/GR.txt"
+}

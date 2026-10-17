@@ -1,0 +1,23 @@
+# 구내 신호 초소(1-D 계획 §10.7 — 전철기 표 · 호루라기 · 단계 1-D4). 12×8.
+map GR-06 구내 신호 초소
+set sb
+grid
+############
+############
+############
+#,,,,,,,,,,#
+#,,,,,,,,,,#
+#,,,,,,,,,,#
+#,,,,,,,,,,#
+#####,,#####
+end
+exit 5 7 X-GR from_GR-06
+exit 6 7 X-GR from_GR-06
+mark from_X 5 6 N
+prop w_switch_chart 2 1
+text 2 2 "전철기 표." w=2 scene=GR_CHART
+prop office_desk 6 3
+text 6 3 "신호원 책상. 낡은 무전기 · 찻잔 · 구내 배치도." w=2
+prop locker_row2 8 5
+text 8 5 "잠긴 신호원 함." w=2 scene=GR_LOCKER
+text 10 3 "창밖으로 구내가 한눈에. 주황 경광봉 둘이 객차 사이를 천천히 돈다 — 건널목 · 정비고 앞 · 개찰구."

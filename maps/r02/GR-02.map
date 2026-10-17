@@ -1,0 +1,85 @@
+# 구로 차량기지 정비고(SD-09a L-R02-25 '정비고 — 원자력 기관차 1, 노심 정지' · 스킬북 BK-05-R02-02 열쇠함 · 1-D 계획 §10 · §10.7, 단계 1-D4). 44×22.
+# 기관차 7703(노심 정지) — [과학 50] · [수리 50] · 대방 버스 노심(M-392)으로 '대기 출력' → 운전실 '앞으로'(밀기 둘 · 버스 노심이면 셋) = 입환.
+# 동쪽 벽 선로 구멍으로 기관차가 나간다(진행기가 그림을 굴린다). 휴게실 = '출발 진행' 뒤 역무원 둘이 앉는 자리 · 무너진 피트 흙 = 굴쥐.
+map GR-02 구로 차량기지 정비고
+set sb
+dark cond="GR_CORE != 1"
+grid
+############################################
+############################################
+############################################
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#,,,,,,,,,#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#,,,,,,,,,#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#,,,,,,,,,#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#,,,,,,,,,#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeu
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeu
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeee==========eddddddeeeeeeee#
+#eeeeeeeeeeeeeeeee==========eddddddeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeddddddeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeddddddeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeddddddeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#############ee#######################e#####
+end
+exit 13 21 X-GR from_GR-02
+exit 14 21 X-GR from_GR-02
+exit 38 21 X-GR gr_side
+mark from_X 13 20 N
+mark side 38 20 N
+mark cab 7 10 N
+mark rest1 36 4 S
+mark rest2 39 4 S
+mark refill1 6 15 E
+mark refill2 24 17 W
+mark refill3 40 12 W
+prop rail_run2 1 9
+prop rail_run 5 9
+prop rail_run2 9 9
+prop rail_run 13 9
+prop rail_run2 17 9
+prop rail_run 21 9
+prop rail_run2 25 9
+prop rail_run 29 9
+prop rail_run2 33 9
+prop rail_run 37 9
+prop rail_run2 41 9
+prop loco_atomic 6 8 cond="GR_C == 0 and GR_CORE == 0"
+prop loco_atomic 6 8 state=idle cond="GR_C == 0 and GR_CORE == 1 and GR_SB == 0"
+prop loco_atomic 6 8 state=open cond="GR_C == 0 and GR_CORE == 2 and GR_SB == 0"
+prop loco_atomic 6 8 state=sb cond="GR_C == 0 and GR_CORE >= 1 and GR_SB == 1"
+text 6 9 "원자력 기관차 7703. 운전실 문." w=3 scene=GR_LOCO cond="GR_C == 0"
+text 10 9 "노심 칸. 유리 돔 안이 어둡다. 옆에 해치." w=3 scene=GR_LOCO cond="GR_C == 0"
+text 9 10 "기관차가 서 있던 자리. 선로 위 기름 자국만 길게 남았다 — 기관차는 2번 선로에 붙어 있다." w=4 cond="GR_C == 1"
+prop wall_terminal 4 1
+text 4 2 "운행 지령 단말." scene=GR_ORDER
+prop w_gov_notice 10 1
+text 10 2 "'원자력 기관차 정비 수칙 — 대기 출력은 두 번 밀면 다시 잠든다(노심 보호). 세 번째는 노심을 갈 것.'" w=2
+prop file_cabinet 26 3
+box 26 3 keybox name="정비고 열쇠함" lock=50
+text 27 3 "열쇠함 옆 책꽂이에 『열쇠 기능사 실기 대비』 한 권. 모서리가 닳았다."
+prop workbench 18 4
+text 18 4 "정비 작업대. 바이스에 연결기 부품이 물린 채 녹슬었다." w=2
+prop crate_army 22 16
+box 22 16 crate name="부품 상자"
+prop tool_chest 2 17
+box 2 17 toolbox name="공구 벽장"
+text 22 12 "정비 피트. 바닥 격자 아래로 기름 냄새. 손전등 하나가 거꾸로 박혀 있다." w=3
+text 31 11 "무너진 피트. 흙이 들어찼다. 흙이 봉긋봉긋 — 무언가 밑에서 다닌다." w=3
+prop pf_bench 35 4
+prop pf_bench 39 4
+prop w_gov_notice 36 1
+text 36 2 "휴게실 근무표. '역무 — 김 · 박 / 23일 06:00 교대'. 교대란은 비었다." w=2
+text 40 3 "휴게실 보온병 둘. 하나에 '김', 하나에 '박'."
+hush 1 3 32 17 cond="GR_CORE == 1"
+text 16 18 "기관 웅웅 소리가 정비고를 채운다. 제 발소리도 묻힌다." w=4 cond="GR_CORE == 1"
+enemy CR-096 31 13
+enemy CR-096 33 15
+enemy CR-095 20 15
+enemy CR-095 30 4

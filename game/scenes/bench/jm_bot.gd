@@ -21,6 +21,7 @@ var side11: SideS11                                 ## 여의도 사이드 퀘�
 var uq71: Uq71                                     ## 비표시 퀘스트 UQ-71(1-D1 대방 지하차도)
 var u02: U02Paths                                  ## U02 남태령 지하(1-D2)
 var uq04: Uq04                                     ## UQ-04 7호 냉동 창고(1-D3)
+var gr: Gr                                         ## 구로 차량기지(1-D4)
 var st: StoryState
 var route := "job"
 var shots := ""
@@ -119,6 +120,9 @@ func _ready() -> void:
 	uq04 = Uq04.new()
 	add_child(uq04)
 	uq04.setup(host, true)
+	gr = Gr.new()
+	add_child(gr)
+	gr.setup(host, true)
 	host.combat.player_down.connect(host.on_pc_down)                  # 쓰러짐 → 생포 판정(진짜 진행 prologue와 같은 연결)
 	host.combat.equip("W-002", st)
 	match route:
@@ -422,6 +426,29 @@ func _ready() -> void:
 				["until", "UQ04_COLD == 1", 10.0, "냉기를 굴로 — 둥지가 언다", "ds_cold"], ["wait", 2.0], ["shot", "ds_frost"],
 				["check", "UQ04_RATK == 2 and DG_DS == 1 and UQ04_DUE == 20", "언 왕쥐 = 던전 정리 · 냉동기 10일"],
 				["warp", "DS-02", "door7"], ["calm"], ["go", 28, 14, "DS-02"], ["wait", 1.5], ["shot", "ds_soil"]]
+		"gr":                                                           # 1-D4 구로 차량기지: 구내 → 검측차 열쇠 → 신호 초소 호루라기 · 전철기 표 → 수송 열차 '기립' · 기관사 열쇠꾸러미 →
+			st.vars.set_v("PC_SKP_SCIENCE", 60)                          #   레버 C → 정비고 7703 깨움 → 앞으로(입환 C) = 출발 진행(던전 정리)
+			st.vars.set_v("GAME_DAY", 12)
+			host.date_text = "2277. 10. 30.  10:00"
+			host.enter("X-GR", "arrive")
+			plan = [["hp", 3000], ["noenc"], ["wait", 2.0], ["shot", "gr_yard"],
+				["warp", "GR-05", "from_X"], ["wait", 1.0], ["go", 6, 4, "GR-05"], ["want", ["챙긴다"]], ["use", 6, 3],
+				["until", "GR_SIGKEY == 1", 10.0, "검측차 — 신호 초소 열쇠", "gr_inspect"],
+				["warp", "GR-06", "from_X"], ["wait", 1.0], ["go", 3, 3, "GR-06"], ["use", 3, 2],
+				["until", "GR_CHART == 1", 10.0, "전철기 표", "gr_chart"],
+				["go", 8, 4, "GR-06"], ["want", ["신호 초소 열쇠"]], ["use", 8, 5],
+				["until", "GR_WHISTLE == 1", 10.0, "신호원 함 — 호루라기", "gr_whistle"],
+				["warp", "GR-01", "from_a"], ["wait", 1.0], ["want", ["호루라기"]], ["go", 21, 5, "GR-01"],
+				["until", "GR_MUSTER == 1", 15.0, "수송 열차 — '기립!' 안 간 사람들이 줄지어 나간다", "gr_muster"], ["wait", 3.0], ["shot", "gr_train"],
+				["want", []], ["go", 66, 4, "GR-01"], ["want", ["챙긴다"]], ["use", 67, 4],
+				["until", "GR_KEY == 1", 10.0, "기관사 오재석 — 열쇠꾸러미", "gr_driver"],
+				["warp", "X-GR", "gr_view"], ["wait", 2.0], ["calm"], ["grgo", 37, 17], ["want", ["넘긴다"]], ["gruse", 37, 18],
+				["until", "GR_LV_C == 1", 10.0, "레버 C — 2번(수송)", "gr_lever"],
+				["warp", "GR-02", "from_X"], ["wait", 1.0], ["calm"], ["go", 7, 10, "GR-02"], ["want", ["과학 50"]], ["use", 7, 9],
+				["until", "GR_CORE == 1", 10.0, "7703 대기 출력", "gr_wake"], ["wait", 1.0], ["shot", "gr_core"],
+				["want", ["앞으로"]], ["use", 7, 9],
+				["until", "GR_C == 1", 15.0, "입환 C — 수송 열차 연결", "gr_push"], ["wait", 6.0], ["shot", "gr_depart"],
+				["check", "GR_STAFF == 2 and DG_GR == 1 and GR_PUSH == 1", "출발 진행 = 던전 정리 · 밀기 하나 남음"]]
 		"s11p":                                                         # 1-11j SQ-S11 낮 호위: 공영방송 앞에서 국회 쪽으로 걸으면 여의도 순찰이 '구울 통행 금지' → 환승센터 터 지하로 숨는다 → 계단 낭독
 			st.call_fn("give", ["M-305", 1])
 			st.vars.set_v("GAME_DAY", 4)
@@ -819,6 +846,10 @@ func _process(dt: float) -> void:
 		if s[0] != "fight":
 			return
 	match str(s[0]):
+		"grgo", "gruse":                                               # 구로 구내(월드 손 맵 X-GR) 좌표 → 월드 좌표(1-D4)
+			var o := gr.origin()
+			plan[i] = ["go" if str(s[0]) == "grgo" else "use", o.x + int(s[1]), o.y + int(s[2])]
+			return
 		"go":
 			if s.size() > 3 and host.map.id != str(s[3]) and step_map == 0:
 				return

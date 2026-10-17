@@ -1,0 +1,73 @@
+{
+ "id": "GR_TRAIN",
+ "title": "수송 열차 통로",
+ "loc": "L-R02-25",
+ "npc": "",
+ "cond": "GR_WHISTLE == 1 and GR_MUSTER == 0",
+ "labels": {
+  "START": 0,
+  "BLOW": 2
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "통로 좌석마다 군복이 앉아 있다. 고개를 숙인 채. 군화를 신은 발."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "호루라기를 분다 — '기립!'",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "BLOW",
+     "id": "GR_TRAIN:1:0"
+    },
+    {
+     "text": "조용히 지나간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "GR_TRAIN:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "삐익 — 삑!"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "철모가 하나, 둘 들린다. 마른 다리가 의자를 밀어낸다. 누가 갈라진 목소리로 — '기립.'"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "그들은 줄을 맞춰 문 쪽으로 걷는다. 군화 소리가 객차를 울린다. 200년 늦은 하차."
+  },
+  {
+   "op": "cmd",
+   "name": "gr",
+   "args": [
+    "muster"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/GR.txt"
+}

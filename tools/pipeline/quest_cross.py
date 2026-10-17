@@ -36,7 +36,7 @@ PROG = {
     "systems/world/encounter_live.gd": "인카운터", "core/story/encounters.gd": "인카운터", "core/story/rumors.gd": "소문",
     "core/story/radio.gd": "라디오", "core/story/wanted.gd": "수배", "systems/world/interior_host.gd": "엔진",
     "systems/world/world_map.gd": "엔진", "core/story/quest_log.gd": "엔진", "core/story/deeds.gd": "전파",
-    "scenes/story/uq71.gd": "UQ-71", "scenes/story/uq04.gd": "UQ-04", "systems/world/dungeon.gd": "던전", "scenes/story/u02.gd": "U02",
+    "scenes/story/uq71.gd": "UQ-71", "scenes/story/uq04.gd": "UQ-04", "scenes/story/gr.gd": "DG-GR", "systems/world/dungeon.gd": "던전", "scenes/story/u02.gd": "U02",
 }
 # 막 3개짜리 경로 묶음(MQ-102~105)은 한 진행기 — 변수 소유는 아래 접두로 나눈다
 NPC_RE = re.compile(r'"((?:C-\d{3}|N-[A-Z0-9]{2,4}-\d{3}|CR-\d{3}))"')

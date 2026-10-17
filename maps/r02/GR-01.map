@@ -1,0 +1,82 @@
+# 제3 예비군 수송 열차 객차 3량(SD-09a L-R02-25 환경 '동원 수송 — 제3 예비군 수송 열차' · 빈 군화 수십 켤레 · 1-D 계획 §10.4 · §10.7, 단계 1-D4).
+# 2077-10-23 23:05 출발 지령 · 23:07 기관사가 문을 열었다 — 다들 군화를 벗고 갔다(군화 소리 나면 잡힐까 봐). 남은 사람은 신발을 신은 채 자리에 앉아 구울이 됐다('안 간 사람들').
+# 진행기 Gr가 '안 간 사람들'(CR-204 군복 판, 휴면)을 표지 s1~s5에 세운다 · 신호 초소 호루라기를 불면 '기립' — 집결지로 걸어 나간다.
+map GR-01 제3 예비군 수송 열차
+set sb
+dark cond="GAME_DAY >= 0"
+grid
+########################################################################
+########################################################################
+########################################################################
+#wwwwwwwwwwwwwwwwwwwwwww#wwwwwwwwwwwwwwwwwwwwwww#wwwwwwwwwwwwwwwwwwwwww#
+#wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww#
+#wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww#
+#wwwwwwwwwwwwwwwwwwwwwww#wwwwwwwwwwwwwwwwwwwwwww#wwwwwwwwwwwwwwwwwwwwww#
+#####################ww######################ww#########################
+end
+exit 21 7 X-GR gr_c1
+exit 22 7 X-GR gr_c1
+exit 45 7 X-GR gr_c2
+exit 46 7 X-GR gr_c2
+mark from_a 21 6 N
+mark from_b 45 6 N
+mark front 66 4 E
+prop coach_seat 2 3
+prop coach_seat 5 3
+prop coach_seat 8 3 state=sat
+prop coach_seat 11 3
+prop coach_seat 14 3 state=empty
+prop coach_seat 17 3
+prop coach_seat 20 3
+prop coach_seat 26 3
+prop coach_seat 29 3
+prop coach_seat 32 3 state=sat
+prop coach_seat 35 3
+prop coach_seat 38 3 state=empty
+prop coach_seat 41 3
+prop coach_seat 44 3
+prop coach_seat 50 3
+prop coach_seat 53 3
+prop coach_seat 56 3 state=sat
+prop coach_seat 59 3
+prop coach_seat 2 6
+prop coach_seat 5 6 state=sat
+prop coach_seat 8 6
+prop coach_seat 11 6 state=empty
+prop coach_seat 14 6
+prop coach_seat 17 6
+prop coach_seat 26 6
+prop coach_seat 29 6 state=sat
+prop coach_seat 32 6
+prop coach_seat 35 6
+prop coach_seat 38 6
+prop coach_seat 41 6 state=empty
+prop coach_seat 50 6
+prop coach_seat 53 6
+prop coach_seat 56 6
+prop coach_seat 59 6 state=sat
+prop boots_rows 2 5 state=gap
+prop boots_rows 26 5 state=gap
+prop boots_rows 50 5 state=gap
+prop boots_rows 12 5
+prop boots_rows 36 5
+prop boots_rows 60 5
+prop w_gov_notice 10 1
+text 10 2 "객차 벽 공문. '동원 수송 — 제3 예비군 수송 열차 · 10월 23일 06:00 출발 · 군화 착용 · 정숙'." w=2
+prop w_gov_notice 34 1
+text 34 2 "벽에 붙은 출정 명부." w=2 scene=GR_ROSTER
+text 30 5 "통로 바닥. 군화가 발끝을 맞춰 줄지어 있다. 끈은 켤레마다 묶였다. 사이사이 비어 있는 자리 — 거기 사람은 신발을 신은 채다." w=3
+prop remains 67 4
+text 67 4 "기관사석 쪽 벽에 기대앉은 유해. 파란 제복 · 기관사 모자." w=2 scene=GR_DRIVER
+prop w_gov_notice 66 1
+text 66 2 "기관사석 칸막이에 볼펜 글씨. '23:07 문 연다. 미안하다.'" w=2
+trigger 20 4 w=3 h=2 scene=GR_TRAIN cond="GR_WHISTLE == 1 and GR_MUSTER == 0"
+trigger 44 4 w=3 h=2 scene=GR_TRAIN cond="GR_WHISTLE == 1 and GR_MUSTER == 0"
+mark s1 9 3 S
+mark s2 31 6 S
+mark s3 33 3 S
+mark s4 57 3 S
+mark s5 60 6 S
+mark refill1 16 4 E
+mark refill2 40 5 W
+mark refill3 62 4 W

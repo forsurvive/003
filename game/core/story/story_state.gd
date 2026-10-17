@@ -49,6 +49,7 @@ const UNNAMED := [["N-TRADER", "떠돌이 고물상", ""], ["N-REFUGEE", "피난
 	["N-DB-1", "대방 분대원", ""], ["N-DB-2", "대방 분대원", ""],          # 1-D1 UQ-71 대방 지하차도
 	["N-DS-B1", "봉천 감시조", "JC_BC"], ["N-DS-B2", "봉천 감시조", "JC_BC"], ["N-DS-S1", "승강장 경비", "JC_SA"], ["N-DS-S2", "승강장 경비", "JC_SA"],   # 1-D3 UQ-04 독산 7호 앞
 	["N-DS-J1", "상인회 짐꾼", ""], ["N-DS-J2", "상인회 짐꾼", ""],
+	["N-GR-D1", "객차 떠돌이", ""], ["N-GR-S1", "새벽인력 측량조", "SB"], ["N-GR-S2", "새벽인력 측량조", "SB"],   # 1-D4 구로 차량기지
 	["N-YT-1", "패거리 수금원", ""], ["N-YT-2", "패거리 척후", ""], ["N-BC-1", "봉천 감시조", "JC_BC"], ["N-BC-2", "봉천 감시조", "JC_BC"], ["N-BC-3", "봉천 감시조", "JC_BC"],   # 1-11b SQ-S02
 	["N-PS-1", "파수-3", ""],   # 1-11c SQ-S04 관제망 경비 로봇
 	["N-PS-2", "경비 파수-3", ""],   # 1-11j SQ-S11 영등포 경찰서 서장실 경비판
@@ -228,6 +229,9 @@ func _init() -> void:
 	for k in "KNOW OPEN OPEN_DAY LOCK DUE THAW THAW_DAY GONE LEFT COLD COLD_DAY BC BC_DAY SA SA_DAY JH JH_DAY LEAK FEUD FEUD_DAY RATK SHARD SHELF SOL REWARD LINK2 LINK3 FLED DATE SIGN PRICE BACK REFUND".split(" "):
 		vars.declare("UQ04_" + k, "int", 0)
 	vars.declare("DS_VALVE", "int", 0)
+	# 1-D4 구로 차량기지(DG-GR): 뜻은 script/act1/GR.txt 머리 주석 — CORE 기관차 · PUSH 남은 밀기 · LV_* 레버 · A · B · C 입환 결과 · STAFF 역무원 · MUSTER 안 간 사람들
+	for k in "CORE PUSH BUS CORE_DAY LV_A LV_B LV_C A B C STAFF STAFF_DAY STAFF_K KEY LOST SIGKEY WHISTLE MUSTER MUSTER_K REEFER DRIFT RATS SB SB_DAY ROOF CHART".split(" "):
+		vars.declare("GR_" + k, "int", 0)
 	Dungeon.load_db()                                                    # 던전 정리 변수(1-D0): DG_<접미> · _DAY · _ROLL
 	for did in Dungeon.db:
 		for sfx in ["", "_DAY", "_ROLL"]:

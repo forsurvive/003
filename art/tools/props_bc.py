@@ -1024,6 +1024,10 @@ from props_ds import PROPS_DS, STATES_DS                               # 독산 
 for _k in PROPS_DS:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_DS)
+from props_gr import PROPS_GR, STATES_GR                               # 구로 차량기지(1-D4): 객차 · 원자력 기관차 · 화차 · 검측차 · 전철기 레버 · 건널목 · 군화 줄
+for _k in PROPS_GR:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_GR)
 from props_trap import PROPS_TRAP, STATES_TRAP, burnt_states       # 함정 · 환경 폭발(1-9c, SD-11 §9.2 · §9.3)
 for _k in PROPS_TRAP:
     assert _k not in PROPS, _k
@@ -1042,6 +1046,7 @@ STATES.update(STATES_BK)
 STATES.update(STATES_CG)
 STATES.update(STATES_TRAP)
 STATES.update(STATES_DS)
+STATES.update(STATES_GR)
 STATES.update(STATES_BS)
 STATES.update(STATES_S04)
 STATES.update(STATES_S03)

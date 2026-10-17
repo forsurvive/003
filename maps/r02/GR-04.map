@@ -1,0 +1,38 @@
+# 4번 선로 '고장 — 정비 대기' 객차 — 시궁쥐 둥지(떠돌이의 부탁 · 1-D 계획 §10.7 · 단계 1-D4). 28×8.
+map GR-04 정비 대기 객차
+set sb
+dark cond="GAME_DAY >= 0"
+grid
+############################
+############################
+############################
+#wwwwwwwwwwwwwwwwwmmwwwwwww#
+#wwwwmmwwwwwwwwwwwwmwwwwwww#
+#wwwwwmwwwwwmwwwwwwwwwwwwww#
+#wwwwwwwwwwwwwwwwwwwmwwwwww#
+########################ww##
+end
+exit 24 7 X-GR gr_c4
+exit 25 7 X-GR gr_c4
+mark from_X 24 6 N
+prop coach_seat 2 3 state=empty
+prop coach_seat 8 3
+prop coach_seat 14 3 state=empty
+prop coach_seat 20 3
+prop coach_seat 2 6
+prop coach_seat 8 6 state=empty
+prop coach_seat 14 6
+prop rathole 5 4
+prop rathole 19 5
+prop scrap_pile 10 5
+box 10 5 trash name="쥐가 모은 고물"
+text 22 4 "좌석 쿠션을 다 파내 둥지를 틀었다. 솜 속에 깡통 뚜껑 · 단추 · 군번줄 하나." w=2
+prop w_gov_notice 12 1
+text 12 2 "'고장 — 정비 대기 · 제동 불량 · 운행 금지'. 날짜 칸에 '2077. 10. 2'까지만." w=2
+enemy CR-095 4 5
+enemy CR-095 9 4
+enemy CR-095 16 3
+enemy CR-095 21 5
+mark refill1 6 4 E
+mark refill2 16 5 W
+mark refill3 22 4 W

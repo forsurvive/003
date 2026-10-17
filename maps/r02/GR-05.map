@@ -1,0 +1,23 @@
+# 5번 선로 궤도 검측차(1-D 계획 §10.7 — 신호 초소 열쇠 · 검측 일지 · 단계 1-D4). 16×8.
+map GR-05 궤도 검측차
+set sb
+grid
+################
+################
+################
+#eeeeeeeeeeeeee#
+#eeeeeeeeeeeeee#
+#eeeeeeeeeeeeee#
+#eeeeeeeeeeeeee#
+###ee###########
+end
+exit 3 7 X-GR gr_c5
+exit 4 7 X-GR gr_c5
+mark from_X 3 6 N
+prop wall_terminal 9 1
+text 9 2 "검측 화면. '구내 5번 · 궤간 이상 없음 · 2077. 10. 22. 22:40 측정 종료'."
+prop office_desk 6 3
+text 6 3 "검측원 책상." w=2 scene=GR_INSPECT
+prop locker_row2 11 4
+box 11 4 locker w=2 name="검측원 사물함"
+text 13 6 "바닥에 레이저 측정 틀 부품. 렌즈는 깨졌다."

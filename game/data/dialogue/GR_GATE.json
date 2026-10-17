@@ -1,0 +1,69 @@
+{
+ "id": "GR_GATE",
+ "title": "직원 개찰구",
+ "loc": "L-R02-25",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "PASS": 2
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "직원 개찰구. 판독기 표시창이 깜박인다 — '정기권 · 사원증을 대 주십시오'."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "정기권을 댄다",
+     "tags": [],
+     "cond": "has(\"M-071\") == 1",
+     "fx": "",
+     "to": "PASS",
+     "id": "GR_GATE:1:0"
+    },
+    {
+     "text": "열쇠꾸러미의 개찰구 열쇠를 꽂는다",
+     "tags": [],
+     "cond": "GR_KEY == 1",
+     "fx": "",
+     "to": "PASS",
+     "id": "GR_GATE:1:1"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "GR_GATE:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "삑 — 차단기가 오른다. '좋은 하루 되십시오.' 2백 년째 같은 인사."
+  },
+  {
+   "op": "cmd",
+   "name": "gr",
+   "args": [
+    "gate"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/GR.txt"
+}

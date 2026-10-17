@@ -190,6 +190,7 @@ var side_s11: SideS11                                   ## 여의도 사이드 �
 var uq71: Uq71                                          ## 비표시 퀘스트 UQ-71 원자력 버스(1-D1 — 대방 지하차도)
 var u02: U02Paths                                       ## U02 남태령 지하(1-D2 — 터널 회로 UG-H01 · 밀통로 UG-H02 · 지하 초소)
 var uq04: Uq04                                          ## UQ-04 7호 냉동 창고(1-D3 — 독산 육가공 단지 DG-DS)
+var gr: Gr                                              ## 구로 차량기지 던전 DG-GR(1-D4 — 입환 · 출발 진행)
 var caravans: Caravans                             ## 순회 상인 일정(1-8d)
 var sol := 1                                       ## 1막 봇 해법(--sol=1~5, 0-10)
 
@@ -283,6 +284,10 @@ func _paths() -> void:
 		uq04 = Uq04.new()
 		add_child(uq04)
 		uq04.setup(host, log_on)
+	if gr == null:
+		gr = Gr.new()
+		add_child(gr)
+		gr.setup(host, log_on)
 
 
 func _act1(from: String) -> void:
