@@ -143,6 +143,26 @@ func load_map(map_id: String, st: StoryState = null) -> void:
 	wet = data.get("wet", [])
 	soil = data.get("soil", [])
 	soil_off = data.has("soil_off") and _cond_ok(str(data["soil_off"]), st)
+	var flooded: Array = []                                          # 1-D5a 물이 찬 사각형(flood cond=) — 침수 깊이 2 · 바닥은 허리 물
+	for fl in data.get("flood", []):
+		if _cond_ok(str(fl["cond"]), st):
+			flooded.append(fl)
+			wet = wet.duplicate()
+			for yy in range(int(fl["y"]), mini(int(fl["y"]) + int(fl["h"]), wet.size())):
+				var frow: String = wet[yy]
+				for xx in range(int(fl["x"]), mini(int(fl["x"]) + int(fl["w"]), frow.length())):
+					frow[xx] = "2"
+				wet[yy] = frow
+	var dried: Array = []                                            # 1-D5a 물이 빠진 사각형(drain cond=) — 침수 깊이 0 · 바닥은 젖은 콘크리트
+	for dr in data.get("drain", []):
+		if _cond_ok(str(dr["cond"]), st):
+			dried.append(dr)
+			wet = wet.duplicate()
+			for yy in range(int(dr["y"]), mini(int(dr["y"]) + int(dr["h"]), wet.size())):
+				var row: String = wet[yy]
+				for xx in range(int(dr["x"]), mini(int(dr["x"]) + int(dr["w"]), row.length())):
+					row[xx] = "0"
+				wet[yy] = row
 	hush = []
 	for h in data.get("hush", []):
 		if _cond_ok(str(h.get("cond", "")), st):
@@ -191,7 +211,15 @@ func load_map(map_id: String, st: StoryState = null) -> void:
 			var srow: String = data["solid"][y]
 			for x in size.x:
 				var w: int = int(data["wall"][y][x])
-				ground.put(x, y, int(data["floor"][y][x]), wall_deco if w >= 0 else -1)
+				var fid := int(data["floor"][y][x])
+				for fl in flooded:
+					if Rect2i(int(fl["x"]), int(fl["y"]), int(fl["w"]), int(fl["h"])).has_point(Vector2i(x, y)) and int(fl["floor"]) >= 0 and srow[x] != "1":
+						fid = int(fl["floor"])
+				for dr in dried:
+					if Rect2i(int(dr["x"]), int(dr["y"]), int(dr["w"]), int(dr["h"])).has_point(Vector2i(x, y)) and int(dr["floor"]) >= 0 \
+							and str(data["wet"][y][x]) != "0":                     # 물이 있던 칸만 마른 바닥으로
+						fid = int(dr["floor"])
+				ground.put(x, y, fid, wall_deco if w >= 0 else -1)
 				if w >= 0:
 					walls.set_cell(Vector2i(x, y), 0, Vector2i(w, 0))
 				solid[y * size.x + x] = 1 if srow[x] == "1" else 0

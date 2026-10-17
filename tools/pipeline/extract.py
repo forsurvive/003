@@ -74,6 +74,8 @@ def run_schema(path, rep):
             continue
         if sch.get("sections") and not any(sec.startswith(x) for x in sch["sections"]):   # 1-4: 여러 절(머리말 앞부분)
             continue
+        if sch.get("skip_sections") and any(sec.startswith(x) for x in sch["skip_sections"]):   # 1-D5a: 대응표처럼 같은 ID가 다시 나오는 절은 건너뛴다
+            continue
         if sch["id_column"] not in header:
             continue
         idx = {h: k for k, h in enumerate(header)}

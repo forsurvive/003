@@ -1028,6 +1028,10 @@ from props_gr import PROPS_GR, STATES_GR                               # 구로 
 for _k in PROPS_GR:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_GR)
+from props_kt import PROPS_KT, STATES_KT                               # 여의도 금탑 로비 · 수족관(1-D5a): 회전문 · 안내 데스크 · 승강기 · 개미 흙벽 · 수조 · 펌프 · 인터폰
+for _k in PROPS_KT:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_KT)
 from props_trap import PROPS_TRAP, STATES_TRAP, burnt_states       # 함정 · 환경 폭발(1-9c, SD-11 §9.2 · §9.3)
 for _k in PROPS_TRAP:
     assert _k not in PROPS, _k
@@ -1047,6 +1051,7 @@ STATES.update(STATES_CG)
 STATES.update(STATES_TRAP)
 STATES.update(STATES_DS)
 STATES.update(STATES_GR)
+STATES.update(STATES_KT)
 STATES.update(STATES_BS)
 STATES.update(STATES_S04)
 STATES.update(STATES_S03)

@@ -1,0 +1,50 @@
+[gd_resource type="SpriteFrames" load_steps=13 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/cr_cr080_loco.png" id="1"]
+
+[sub_resource type="AtlasTexture" id="a0"]
+atlas = ExtResource("1")
+region = Rect2(0, 0, 64, 40)
+
+[sub_resource type="AtlasTexture" id="a1"]
+atlas = ExtResource("1")
+region = Rect2(64, 0, 64, 40)
+
+[sub_resource type="AtlasTexture" id="a2"]
+atlas = ExtResource("1")
+region = Rect2(128, 0, 64, 40)
+
+[sub_resource type="AtlasTexture" id="a3"]
+atlas = ExtResource("1")
+region = Rect2(192, 0, 64, 40)
+
+[sub_resource type="AtlasTexture" id="a4"]
+atlas = ExtResource("1")
+region = Rect2(256, 0, 64, 40)
+
+[sub_resource type="AtlasTexture" id="a5"]
+atlas = ExtResource("1")
+region = Rect2(448, 0, 64, 40)
+
+[sub_resource type="AtlasTexture" id="a6"]
+atlas = ExtResource("1")
+region = Rect2(512, 0, 64, 40)
+
+[sub_resource type="AtlasTexture" id="a7"]
+atlas = ExtResource("1")
+region = Rect2(576, 0, 64, 40)
+
+[sub_resource type="AtlasTexture" id="a8"]
+atlas = ExtResource("1")
+region = Rect2(640, 0, 64, 40)
+
+[sub_resource type="AtlasTexture" id="a9"]
+atlas = ExtResource("1")
+region = Rect2(320, 0, 64, 40)
+
+[sub_resource type="AtlasTexture" id="a10"]
+atlas = ExtResource("1")
+region = Rect2(384, 0, 64, 40)
+
+[resource]
+animations = [{"frames": [{"duration": 1.0, "texture": SubResource("a0")}], "loop": true, "name": &"idle_E", "speed": 8.0}, {"frames": [{"duration": 1.0, "texture": SubResource("a1")}, {"duration": 1.0, "texture": SubResource("a2")}, {"duration": 1.0, "texture": SubResource("a3")}, {"duration": 1.0, "texture": SubResource("a4")}], "loop": true, "name": &"walk_E", "speed": 8.0}, {"frames": [{"duration": 1.0, "texture": SubResource("a5")}, {"duration": 1.0, "texture": SubResource("a6")}, {"duration": 1.0, "texture": SubResource("a7")}, {"duration": 1.0, "texture": SubResource("a8")}], "loop": false, "name": &"death_E", "speed": 8.0}, {"frames": [{"duration": 1.0, "texture": SubResource("a9")}, {"duration": 1.0, "texture": SubResource("a10")}], "loop": true, "name": &"bite_E", "speed": 8.0}]

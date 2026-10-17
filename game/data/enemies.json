@@ -29,6 +29,51 @@
   "tier": "중",
   "xp": 15
  },
+ "CR-080": {
+  "_src": "14_creatures-enemies.md:384",
+  "attack": "큰턱 7",
+  "dr": 0,
+  "hp": 30,
+  "id": "CR-080",
+  "level": 2,
+  "name": "왕개미 일개미",
+  "part_weights": "PW-B",
+  "pattern": "정면으로 몰려와 포위. 최대 5마리",
+  "radius": 0.28,
+  "speed": 2.5,
+  "tier": "약",
+  "xp": 5
+ },
+ "CR-081": {
+  "_src": "14_creatures-enemies.md:385",
+  "attack": "큰턱 24 / 개미산 분사 12(3타일, 방어구 내구도 −)",
+  "dr": 10,
+  "hp": 150,
+  "id": "CR-081",
+  "level": 6,
+  "name": "왕개미 병정",
+  "part_weights": "PW-B",
+  "pattern": "근접과 짧은 분사를 섞는다",
+  "radius": 0.4,
+  "speed": 3.0,
+  "tier": "중",
+  "xp": 25
+ },
+ "CR-082": {
+  "_src": "14_creatures-enemies.md:386",
+  "attack": "큰턱 25 / 산성 침 40(원거리 8타일)",
+  "dr": 15,
+  "hp": 750,
+  "id": "CR-082",
+  "level": 7,
+  "name": "왕개미 여왕",
+  "part_weights": "PW-B",
+  "pattern": "알 무더기에서 20초마다 일개미 1마리 생성(최대 4). 원거리가 정확하다",
+  "radius": 0.7,
+  "speed": 1.0,
+  "tier": "강",
+  "xp": 60
+ },
  "CR-095": {
   "_src": "14_creatures-enemies.md:418",
   "attack": "물기 10",
@@ -163,6 +208,21 @@
   "speed": 2.5,
   "tier": "약",
   "xp": 10
+ },
+ "CR-130": {
+  "_src": "14_creatures-enemies.md:580",
+  "attack": "물기 36",
+  "dr": 0,
+  "hp": 180,
+  "id": "CR-130",
+  "level": 8,
+  "name": "변이 메기",
+  "part_weights": "PW-E",
+  "pattern": "수염 감지: 침수 구역 안에서는 은신이 통하지 않는다",
+  "radius": 0.4,
+  "speed": 3.5,
+  "tier": "중",
+  "xp": 30
  },
  "CR-136": {
   "_src": "14_creatures-enemies.md:644",

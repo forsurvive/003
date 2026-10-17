@@ -50,6 +50,8 @@ SRC = os.path.join(ROOT, "maps")
 OUT = os.path.join(ROOT, "game", "data", "maps")
 TIL = os.path.join(ROOT, "game", "assets", "tiles")
 PROPS = os.path.join(ROOT, "game", "assets", "props")
+DRY_FLOOR_ID = -1
+WET_FLOOR_ID = -1
 FLOOR = {".": "panel", ",": "lino_a", "o": "clinic_a", "=": "grate_a", "~": "concrete_a", "c": "carpet_a", "w": "wood_a", "j": "jangpan_a", "t": "terrazzo_a", "u": "tunnel_a", "s": "steps_a", "e": "epoxy_a", "g": "turf_a", "f": "flood_a", "F": "flood_b", "d": "soil_a",
          "m": "panel_mold", "M": "grate_mold", "-": "guide_h", "|": "guide_v", "+": "guide_x", "^": "guide_t"}
 WALL = {"#", " "}
@@ -239,6 +241,10 @@ def compile_map(m, prop_meta, known_vars, known_fns, scenes=()):
     # 벽 자동 타일
     wt = tiles(f"{m.set}_wall" if os.path.exists(os.path.join(TIL, f"ts_{m.set}_wall.json")) else "s07_wall")
     ft = tiles("s07_int")
+    global DRY_FLOOR_ID
+    DRY_FLOOR_ID = ft[FLOOR["~"]]                                 # drain 지시어가 마른 칸에 까는 바닥(콘크리트)
+    global WET_FLOOR_ID
+    WET_FLOOR_ID = ft[FLOOR["F"]]                                 # flood 지시어가 잠긴 칸에 까는 바닥(허리 물)
     kind = [[None] * W for _ in range(H)]                         # 'top' / 'ftop' / 'fbot' / None(바닥)
     for y in range(H):
         for x in range(W):
@@ -364,6 +370,14 @@ def _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kin
                 if opt.get("cond"):
                     check_cond(opt["cond"], known_vars, known_fns)
                 out.setdefault("hush", []).append({"x": x, "y": y, "w": w, "h": h, "cond": opt.get("cond", "")})
+            elif c == "drain":                                      # 1-D5a 물이 빠진다(drain x y w h cond="식") — 식이 참이면 그 사각형의 침수 칸이 마르고 바닥은 젖은 콘크리트
+                x, y, w, h = int(pos[0]), int(pos[1]), int(pos[2]), int(pos[3])
+                check_cond(opt["cond"], known_vars, known_fns)
+                out.setdefault("drain", []).append({"x": x, "y": y, "w": w, "h": h, "cond": opt["cond"], "floor": DRY_FLOOR_ID})
+            elif c == "flood":                                      # 1-D5a 물이 찬다(flood x y w h cond="식") — 식이 참이면 그 사각형이 허리 물(깨진 유리 터널)
+                x, y, w, h = int(pos[0]), int(pos[1]), int(pos[2]), int(pos[3])
+                check_cond(opt["cond"], known_vars, known_fns)
+                out.setdefault("flood", []).append({"x": x, "y": y, "w": w, "h": h, "cond": opt["cond"], "floor": WET_FLOOR_ID})
             elif c == "soil_off":                                   # 1-D3 흙이 언다(soil_off cond="식") — 식이 참이면 굴쥐가 땅속으로 못 간다
                 check_cond(opt["cond"], known_vars, known_fns)
                 out["soil_off"] = opt["cond"]
@@ -422,6 +436,8 @@ def _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kin
                     e["boss"] = True
                 if opt.get("sleep"):                                   # 1-B4 실내 상황: 자는 중(맞거나 소리에 깬다 — Enemy.setup_enemy)
                     e["sleep"] = True
+                if opt.get("lv"):                                      # 1-D5a 어린 개체 · 장소 위협도 상한(메기 새끼 lv 4 — Enemy가 HP를 줄인다)
+                    e["lv"] = int(opt["lv"])
                 if opt.get("det"):                                     # 감지 배수(먹는 중 0.5 등)
                     e["det"] = float(opt["det"])
                 if opt.get("route"):                                   # 순찰 경로: x,y,초;… (닿으면 그 초만큼 서서 둘러본다)
@@ -614,7 +630,7 @@ def _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kin
         out["floor"] = floor_ids
         out["wall"] = wall_ids
         rows_ = [r for _, r in getattr(m, "rows", [])]
-        if any(("f" in r or "F" in r) for r in rows_):                 # 1-D 침수 깊이(0 마름 · 1 발목 · 2 허리) — 이동 배수 · 웅크림(SD-09f §3.5)
+        if any(("f" in r or "F" in r) for r in rows_) or out.get("flood"):   # 1-D 침수 깊이(0 마름 · 1 발목 · 2 허리) — 이동 배수 · 웅크림(SD-09f §3.5)
             out["wet"] = ["".join("1" if c == "f" else ("2" if c == "F" else "0") for c in r) for r in rows_]
         if any("d" in r for r in rows_):                                 # 1-D3 흙 칸(굴쥐 땅속 이동, SD-14 L423 — 흙 타일에서만)
             out["soil"] = ["".join("1" if c == "d" else "0" for c in r) for r in rows_]

@@ -1,0 +1,57 @@
+{
+ "id": "KT_SHAFTUP",
+ "title": "승강로 바닥",
+ "loc": "L-R02-05",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "UP": 2
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "칸 지붕이 허리 물에 잠겼다. 지붕 해치는 비틀려 안 열린다 — 물을 빼야 칸 안으로 들어갈 수 있겠다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "점검 사다리로 로비에 오른다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "UP",
+     "id": "KT_SHAFTUP:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KT_SHAFTUP:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "kt",
+   "args": [
+    "go",
+    "KT-01",
+    "from_shaft"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KT.txt"
+}

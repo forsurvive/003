@@ -1,0 +1,84 @@
+{
+ "id": "KT_CAR",
+ "title": "꺼진 승강기 칸",
+ "loc": "L-R02-05",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "KNOW": 4,
+  "REST": 5,
+  "UP": 7
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "물이 빠진 칸. 비틀린 문틈으로 들어간다. 바닥에 진흙과 — 가방 몇, 신발 몇, 작은 담요 하나."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "벽의 정원 표시판. '15'. 그 아래 누가 손톱으로 긁었다. 셀 수 없이 많은 짧은 줄."
+  },
+  {
+   "op": "if",
+   "cond": "KT_MEM == 1",
+   "to": "KNOW"
+  },
+  {
+   "op": "goto",
+   "to": "REST"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "그녀가 타지 않은 칸이다."
+  },
+  {
+   "op": "do",
+   "fx": "KT_CAR = 1"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "점검 사다리로 로비에 오른다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "UP",
+     "id": "KT_CAR:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KT_CAR:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "kt",
+   "args": [
+    "go",
+    "KT-01",
+    "from_shaft"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KT.txt"
+}

@@ -1,0 +1,87 @@
+{
+ "id": "KT_REVOLVE",
+ "title": "금빛 회전문",
+ "loc": "L-R02-05",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "SPIN": 4,
+  "TRAPPED": 6,
+  "BROKEN": 8
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "KT_REVOLVE == 2",
+   "to": "BROKEN"
+  },
+  {
+   "op": "if",
+   "cond": "KT_REVOLVE == 1",
+   "to": "TRAPPED"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "금테 회전문. 날개 하나를 밀면 끼이익 — 2백 년 묵은 삐걱 소리가 로비 천장까지 울린다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "날개를 민다(삐걱)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SPIN",
+     "id": "KT_REVOLVE:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KT_REVOLVE:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "kt",
+   "args": [
+    "spin"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "회전문 칸 안에서 일개미가 유리를 긁는다. 큰턱이 딱딱 — 오래 버티지는 못하겠다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "날개 하나의 유리가 깨져 비었다. 바닥에 유리 조각. 개미가 큰턱으로 깨고 나간 자리."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KT.txt"
+}

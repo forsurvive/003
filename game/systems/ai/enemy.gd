@@ -7,7 +7,7 @@
 class_name Enemy
 extends Actor
 
-const DOGS := ["CR-104", "CR-095", "CR-107", "CR-106", "CR-108", "CR-105", "CR-500", "CR-136", "CR-097", "CR-121", "CR-096", "CR-004"]
+const DOGS := ["CR-104", "CR-095", "CR-107", "CR-106", "CR-108", "CR-105", "CR-500", "CR-136", "CR-097", "CR-121", "CR-096", "CR-004", "CR-080", "CR-081", "CR-082", "CR-130"]
 const GHOULS := ["CR-200", "CR-201", "CR-202", "CR-204", "CR-205", "CR-206", "CR-457", "CR-459", "CR-518"]   ## 방사능에 낫는 구울(SD-14 §7.2 '라드 100당 HP +1')
 const FERALS := ["CR-200", "CR-201", "CR-204", "CR-205", "CR-206"]            ## 빛나는 구울 폭발에 HP +30%를 받는 야생 구울
 const BURST_R := 4.0 * 32.0                       ## 빛나는 구울 방사능 폭발 반경(SD-14 CR-202 '반경 4타일')
@@ -111,6 +111,7 @@ var bait_at := Callable()                     ## (p, r) -> Dictionary: 가장 �
 var _bait := {}                               ## 먹으러 가는 · 먹는 미끼 지대(지대 사전을 그대로 잡는다 — 먹을수록 빨리 사라진다)
 var eating := false
 var mole := false                             ## 굴쥐 CR-096: 흙 칸에서만 땅속으로(SD-14 L423)
+var aqua := false                             ## 변이 메기 CR-130(1-D5a): 물 칸(침수 1 · 2)에서만 움직인다 · 물에 선 사람은 수염으로 안다(은신 무효, SD-14 L580)
 var burrow := ""                              ## "" 땅 위 · under 땅속 · heave 들썩임 · emerge 솟음 · dig 파고듦
 var _bur_t := 0.0
 var _up_t := 0.0
@@ -171,6 +172,10 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 			sheet = "cr_cr004_loco"                                  # 알집바퀴(1-D3, SD-14 §3.1 — 배 끝 알집이 맥동)
 		"CR-136":
 			sheet = "cr_cr136_loco"
+		"CR-080", "CR-081", "CR-082":
+			sheet = "cr_%s_loco" % str(row["id"]).to_lower().replace("-", "")   # 왕개미 일개미 · 병정 · 여왕(1-D5 금탑, SD-14 §3.5 — 검은 광택 · 삼각 보행)
+		"CR-130":
+			sheet = "cr_cr130_loco"                                  # 변이 메기(새끼 — 1-D5a 금탑 수족관, SD-14 L580 — 넓적한 머리 · 수염 넷 · 흰 얼룩)
 		"CR-121":
 			sheet = "cr_cr121_loco"                                  # 변이 미국가재(1-D 대방 지하차도, SD-14 — 붉은 마디 몸 · 큰 집게 둘)
 		"CR-206":
@@ -288,6 +293,7 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 		var curl: bool = sprite != null and sprite.sprite_frames != null and sprite.sprite_frames.has_animation("sleep_E")
 		set_pose("sleep" if curl else "lie")                        # 웅크려 자는 그림이 있는 개(외눈 · 백구 핏줄)는 그 그림으로
 	mole = row["id"] == "CR-096"
+	aqua = row["id"] == "CR-130"
 	nest = row["id"] == "CR-004"
 	if nest:
 		set_pose("pulse")
@@ -354,8 +360,11 @@ func think(dt: float, target: Combatant, nav, shots: Projectiles) -> void:   ## 
 		var sm := sight_of(target)                                   # 고가(1-Rd): 다른 층이면 시야 거리 ×0.5, 상판 위·그늘 사이는 못 본다
 		var pe := per - (2.0 if gassed() else 0.0)                  # 최루(SD-13 W-058): 지대 안 인간형 인지력 −2
 		var sees: bool = not target.dead and sm > 0.0 and dist_t <= Perception.sight_range(pe) * sm
-		var rate: float = Perception.detect_rate(dist_t, pe, {"movement": target.movement, "posture": target.posture,
-			"sneak_skill": target.sneak, "alert": brain.alert(), "in_fov": fov}) * det_mul * (0.4 if eating else 1.0) * _hush_mul(target) if sees else 0.0
+		var whisk: bool = aqua and world is InteriorMap and (world as InteriorMap).wet_at((world as InteriorMap).tile_of(target.pos())) > 0
+		if whisk:                                                   # 메기 수염: 같은 물에 선 사람은 웅크려도 · 등 뒤여도 안다
+			fov = true
+		var rate: float = Perception.detect_rate(dist_t, pe, {"movement": "walk" if whisk else target.movement, "posture": "stand" if whisk else target.posture,
+			"sneak_skill": 0.0 if whisk else target.sneak, "alert": brain.alert(), "in_fov": fov}) * det_mul * (0.4 if eating else 1.0) * (1.0 if whisk else _hush_mul(target)) if sees else 0.0
 		var hit: bool = cmb.last_hit_from != Vector2.ZERO
 		if asleep:                                                  # 잠(S4): 맞거나, 가까운 소리(0.5+)거나, 바로 옆까지 오면 깬다
 			var near := 2.5 if lurk else 1.5
@@ -551,6 +560,10 @@ func _act(dt: float, target: Combatant, shots: Projectiles) -> void:
 		input = _mine_dodge(input)
 	if fixed:
 		input = Vector2.ZERO                                        # 감시포: 걷지 않는다(돌아서 쏜다)
+	if aqua and input.length() > 0.1 and world is InteriorMap:     # 메기: 다음 걸음이 마른 칸이면 물가에서 선다(물 밖으로 안 나온다)
+		var nxt := (world as InteriorMap).tile_of(loco.logical + input.normalized() * (radius_px + 6.0))
+		if (world as InteriorMap).wet_at(nxt) <= 0:
+			input = Vector2.ZERO
 	var f0 := loco.frames_advanced
 	move(steer(input), dt)
 	if goal == "flee":                                               # 궁지: 1초 넘게 한 걸음도 못 떼면 항복하거나 버틴다

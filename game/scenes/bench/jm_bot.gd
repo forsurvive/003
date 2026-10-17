@@ -22,6 +22,7 @@ var uq71: Uq71                                     ## 비표시 퀘스트 UQ-71(
 var u02: U02Paths                                  ## U02 남태령 지하(1-D2)
 var uq04: Uq04                                     ## UQ-04 7호 냉동 창고(1-D3)
 var gr: Gr                                         ## 구로 차량기지(1-D4)
+var kt: Kt                                         ## 여의도 금탑(1-D5a)
 var st: StoryState
 var route := "job"
 var shots := ""
@@ -123,6 +124,9 @@ func _ready() -> void:
 	gr = Gr.new()
 	add_child(gr)
 	gr.setup(host, true)
+	kt = Kt.new()
+	add_child(kt)
+	kt.setup(host, true)
 	host.combat.player_down.connect(host.on_pc_down)                  # 쓰러짐 → 생포 판정(진짜 진행 prologue와 같은 연결)
 	host.combat.equip("W-002", st)
 	match route:
@@ -451,6 +455,20 @@ func _ready() -> void:
 				["check", "GR_STAFF == 2 and DG_GR == 1 and GR_PUSH == 1", "출발 진행 = 던전 정리 · 밀기 하나 남음"],
 				["until", "GR_CHEER == 1", 15.0, "구내 — 역무원이 열차 곁에서 '출발 진행!'", "gr_cheer"], ["wait", 2.5], ["shot", "gr_cheer2"],
 				["until", "GR_MUSTER == 3", 10.0, "집결한 '안 간 사람들'이 수송 열차에 오른다", "gr_board"], ["wait", 6.0], ["shot", "gr_board2"]]
+		"kt":                                                           # 1-D5a 여의도 금탑: 회전문 → 로비 벨 · 인터폰(어하은) → 승강기 4번 승강로 → 수족관 → 펌프실 배수 → 꺼진 칸 → 로비
+			st.vars.set_v("GAME_DAY", 12)
+			host.date_text = "2277. 10. 30.  10:00"
+			host.enter("KT-01", "from_W")
+			plan = [["hp", 3000], ["noenc"], ["wait", 2.5], ["shot", "kt_lobby"],
+				["want", ["!승강기 4번", "!전망대에서", "끊는다"]], ["go", 22, 3, "KT-01"], ["use", 22, 2],
+				["until", "KT_HOOK == 1 and KT_MEM == 1", 15.0, "인터폰 — 어하은(승강기 4번 · 망원경)", "kt_phone"], ["wait", 3.0],
+				["want", ["사다리"]], ["go", 14, 3, "KT-01"], ["use", 14, 2],
+				["until", "KT_CAR == 0", 2.0, "승강기 4번 승강로", "kt_shaft"], ["wait", 3.0], ["shot", "kt_aqua"],
+				["want", []], ["go", 20, 4, "KT-02"], ["go", 11, 7, "KT-02"], ["go", 4, 6, "KT-02"], ["want", ["A — 배수"]], ["use", 3, 5],
+				["until", "KT_POWER == 1", 10.0, "펌프실 — 배수(연료 한 통)", "kt_pump"], ["wait", 3.0], ["shot", "kt_drained"],
+				["want", ["그만"]], ["wait", 1.0], ["go", 38, 6, "KT-02"], ["use", 38, 5],
+				["until", "KT_CAR == 1", 10.0, "물이 빠진 꺼진 칸", "kt_car"],
+				["check", "KT_POWER == 1 and KT_CALL >= 1", "배수 · 통화"]]
 		"grp":                                                          # 1-D4 구로 엉뚱한 짓: 분실물 정기권을 역무원 박에게 돌려준다 → 박 퇴근 · 쥐 둥지 군번줄 → 떠돌이
 			st.vars.set_v("GAME_DAY", 12)
 			st.call_fn("give", ["M-071", 1])

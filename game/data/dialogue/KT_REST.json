@@ -1,0 +1,26 @@
+{
+ "id": "KT_REST",
+ "title": "사육사 휴게실",
+ "loc": "L-R02-05",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "접이식 야전 침대 하나 · 커피 깡통 · 먼지 낀 라디오. 벽 너머 물소리가 일정하다. 여기서는 잠깐 눈을 붙여도 될 것 같다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KT.txt"
+}

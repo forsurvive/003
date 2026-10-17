@@ -1,0 +1,199 @@
+{
+ "id": "KT_PUMP",
+ "title": "비상 발전기 · 배수 펌프",
+ "loc": "L-R02-05",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "NOTE_HINT": 7,
+  "PICK": 8,
+  "DRAIN": 9,
+  "LIFT": 13,
+  "TAKE": 17,
+  "RUN_DRAIN": 20,
+  "RUN_LIFT": 22,
+  "GONE": 24
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "KT_POWER == 1",
+   "to": "RUN_DRAIN"
+  },
+  {
+   "op": "if",
+   "cond": "KT_POWER == 2",
+   "to": "RUN_LIFT"
+  },
+  {
+   "op": "if",
+   "cond": "KT_POWER == 3",
+   "to": "GONE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "붉은 비상 발전기. 연료 칸에 초록 철통 하나 — 가득 찼다. 옆 배수 펌프에서 굵은 관이 벽으로 올라간다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "전환 손잡이 둘. 'A — 배수 펌프' · 'B — 화물 승강기'. 연료 한 통이면 한쪽만 오래 돈다."
+  },
+  {
+   "op": "if",
+   "cond": "KT_NOTE == 1",
+   "to": "NOTE_HINT"
+  },
+  {
+   "op": "goto",
+   "to": "PICK"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "쪽지가 생각난다. '승강기면 스위치 B. 나는 22층 간다.'"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "A — 배수 펌프를 돌린다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "DRAIN",
+     "id": "KT_PUMP:1:0"
+    },
+    {
+     "text": "B — 화물 승강기에 전기를 넣는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "LIFT",
+     "id": "KT_PUMP:1:1"
+    },
+    {
+     "text": "연료 통을 빼서 챙긴다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TAKE",
+     "id": "KT_PUMP:1:2"
+    },
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KT_PUMP:1:3"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "시동 줄을 당긴다. 털털 — 부르릉. 손잡이를 A로. 펌프가 끄르륵 물을 빨아올린다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "관 속으로 물 흐르는 소리. 수족관 쪽에서 물이 낮아지는 소리 — 그리고 무언가 퍼덕이며 배수구 쪽으로 쓸려 가는 소리."
+  },
+  {
+   "op": "cmd",
+   "name": "kt",
+   "args": [
+    "power",
+    "1"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "시동 줄을 당긴다. 털털 — 부르릉. 손잡이를 B로. 머리 위 어딘가에서 — 딩."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "천장 너머로 쇠줄 감기는 소리. 그리고 그 소리를 따라 사각사각, 무언가 승강로를 타고 내려온다."
+  },
+  {
+   "op": "cmd",
+   "name": "kt",
+   "args": [
+    "power",
+    "2"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "연료 통을 뺀다. 묵직하다. 발전기가 텅 빈 소리를 낸다."
+  },
+  {
+   "op": "cmd",
+   "name": "kt",
+   "args": [
+    "power",
+    "3"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "발전기가 털털 돈다. 손잡이는 A. 배수관 속 물소리가 잦아든다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "발전기가 털털 돈다. 손잡이는 B. 위에서 쇠줄이 이따금 끼익."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "연료 칸이 비었다. 발전기는 식었다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KT.txt"
+}

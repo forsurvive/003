@@ -1,0 +1,54 @@
+{
+ "id": "KT_FEEDLOG",
+ "title": "먹이 주기 일지",
+ "loc": "L-R02-05",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "DRAINED": 5
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "클립보드의 표. 수조마다 먹이 · 시간 · 사육사 서명."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'10-23 14:00 메기 수조 이상 행동 — 유리를 들이받음. 수질 이상 없음. 원인 불명.'"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "맨 아래, 붉은 펜으로. '22:58 대피. 물고기들은 두고 간다. 사람부터.'"
+  },
+  {
+   "op": "if",
+   "cond": "KT_POWER == 1",
+   "to": "DRAINED"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "배수관 너머가 조용하다. 두고 간 물고기들을, 이번엔 내 손으로 내보냈다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KT.txt"
+}

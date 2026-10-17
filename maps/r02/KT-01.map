@@ -1,0 +1,98 @@
+# 여의도 금탑 KT-01 로비(SD-09a L-R02-05 A · 1-D 계획 §11.3 · §11.7 · 단계 1-D5a). 40×24.
+# 3층 높이 트인 홀: 북쪽 승강기 넷(하나는 칸이 꺼진 승강로 — 점검 사다리로 지하 수족관) · 화물 승강기 · 전망대 직통 인터폰 · 동북 비상계단(개미 흙벽) ·
+# 가운데 안내 데스크 · 서쪽 기념품 가게 · 동쪽 관람객 줄(끊긴 자리 유모차) · 남쪽 회전문과 옆 여닫이문(월드 정면).
+map KT-01 여의도 금탑 로비
+set bk
+grid
+########################################
+########################################
+########################################
+#tttttttttttttttttttttttttttttt~~~~~~~~#
+#tttttttttttttttttttttttttttttt~~~~~~~~#
+#tttttttttttttttttttttttttttttt~~~~~~~~#
+#tttttttttttttttttttttttttttttt~~~~~~~~#
+#tttttttttttttttttttttttttttttt~~~~~~~~#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+##################tttt##################
+##################tttt##################
+end
+exit 19 23 W L-R02-05
+exit 20 23 W L-R02-05
+mark from_W 19 21 N
+mark from_shaft 15 4 S
+mark from_KT-02 15 4 S
+mark lobby_mid 20 14 N
+mark ring 22 5 N
+# ---------------------------------------------------------------- 북쪽 승강기 홀
+prop w_elev_kt 5 1
+text 5 2 "일반 승강기 1. 놋쇠 문이 닫혀 있다. 층 표시 바늘이 '1'에 멈췄다." w=2
+prop w_elev_kt 8 1
+text 8 2 "일반 승강기 2. 문틈에 개미산 자국 — 금빛이 검게 탔다." w=2
+prop w_elev_kt 11 1
+text 11 2 "일반 승강기 3. 문 앞에 관람객 안내 '정원 15명 — 초과 시 운행하지 않습니다'." w=2
+prop w_elev_kt 14 1 state=open
+text 14 2 "일반 승강기 4. 문이 반쯤 열려 있다. 칸이 없다." w=2 scene=KT_SHAFT
+prop w_cargo_kt 18 1 cond="KT_POWER != 2"
+prop w_cargo_kt 18 1 state=live cond="KT_POWER == 2"
+text 18 2 "화물 승강기." w=3 scene=KT_CARGO
+prop w_intercom_kt 22 1 cond="KT_RING == 0"
+prop w_intercom_kt 22 1 state=lit cond="KT_RING >= 1"
+text 22 2 "놋쇠 인터폰. '60층 전망대 직통'." scene=KT_PHONE
+prop w_gov_notice 26 1
+text 26 2 "안내판 '금빛 빌딩 — 60층 전망대 · 지하 수족관 · 어린이 과학관(12층)'. 12층 글자 위에 개미 발자국 같은 흙 점."
+# ---------------------------------------------------------------- 동북 비상계단(개미 흙벽 — 4층부터가 아니라 바로 계단참까지 흘러내렸다)
+prop ant_soil_kt 34 3 cond="KT_QUEEN == 0"
+prop ant_soil_kt 34 3 state=quiet cond="KT_QUEEN == 1"
+text 34 4 "비상계단 입구를 흙이 막았다. 흙벽 너머에서 사각사각 긁는 소리. 시큼한 개미산 냄새." w=2 cond="KT_QUEEN == 0"
+text 34 4 "흙벽의 구멍이 흙으로 메워졌다. 긁는 소리가 그쳤다." w=2 cond="KT_QUEEN == 1"
+prop scent_kt 30 6 cond="KT_QUEEN == 0"
+prop scent_kt 26 7 cond="KT_QUEEN == 0"
+prop scent_kt 30 8 cond="KT_POWER == 2 and KT_QUEEN == 0"
+prop scent_kt 24 4 cond="KT_POWER == 2 and KT_QUEEN == 0"
+text 28 6 "바닥에 희미하게 반짝이는 줄. 흙벽에서 나와 로비를 한 바퀴 돌고 들어간다 — 개미가 다니는 냄새 길." w=3 cond="KT_QUEEN == 0"
+# ---------------------------------------------------------------- 가운데 안내 데스크
+prop info_desk_kt 17 9
+text 17 10 "안내 데스크. 방송 원고가 마이크 밑에 깔렸다." w=4 scene=KT_DESK
+# ---------------------------------------------------------------- 서쪽 기념품 가게
+prop souvenir_kt 3 6 state=empty
+text 3 7 "기념품 진열장. 금박 모형 탑이 하나만 넘어져 있다. 금 초콜릿 상자는 껍데기뿐." w=2
+prop souvenir_kt 3 10
+text 3 11 "안쪽 진열장은 그대로다. 금박 모형 탑 셋 · 엽서 · 금 초콜릿 상자." w=2
+box 3 10 stall w=2 name="기념품 진열장"
+prop safe_kt 7 13
+box 7 13 safe lock=50 name="기념품 가게 금고"
+prop wait_chairs 3 16
+# ---------------------------------------------------------------- 동쪽 관람객 줄(그날 밤 줄이 끊긴 자리)
+prop queue_kt 26 13
+prop queue_kt 26 16
+prop stroller_kt 30 15
+text 30 15 "유모차. 빛바랜 남색 덮개 · 작은 담요. 손잡이에 관람권 두 장 — '60층 전망대 · 어른 1 어린이 1 · 21:40'."
+box 30 15 bag name="유모차 바구니"
+# ---------------------------------------------------------------- 남쪽 회전문(꾀기 — 돌리면 삐걱)
+prop revolving_kt 14 19 cond="KT_REVOLVE < 2"
+prop revolving_kt 14 19 state=broken cond="KT_REVOLVE == 2"
+text 15 20 "금빛 회전문. 날개 사이로 강바람이 샌다." w=3 scene=KT_REVOLVE
+text 19 21 "회전문 옆 여닫이문. 유리에 금 간 '금빛 빌딩' 글자." w=2
+prop pillar 9 9
+prop pillar 30 9
+prop pillar 9 17
+prop pillar 34 17
+prop plant_pot 36 20
+prop plant_pot 2 20
+# ---------------------------------------------------------------- 개미 정찰(흙벽 틈 — 냄새 길을 따라 나왔다 들어간다)
+enemy CR-080 33 6 cond="KT_QUEEN == 0" route=33,6,3;28,7,1;24,9,2;28,12,1;33,9,2
+enemy CR-080 36 6 cond="KT_QUEEN == 0" route=36,6,4;36,10,2;31,13,2;36,8,1
+enemy CR-080 22 5 cond="KT_POWER == 2 and KT_QUEEN == 0" route=22,5,2;26,8,2;20,7,2

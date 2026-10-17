@@ -1090,6 +1090,16 @@
    "아픔": "N-R02-027_hurt.png",
    "피곤": "N-R02-027_tired.png"
   },
+  "N-R02-030": {
+   "기본": "N-R02-030_idle.png",
+   "놀람": "N-R02-030_surprise.png",
+   "말함": "N-R02-030_talk.png",
+   "미소": "N-R02-030_smile.png",
+   "분노": "N-R02-030_angry.png",
+   "슬픔": "N-R02-030_sad.png",
+   "아픔": "N-R02-030_hurt.png",
+   "피곤": "N-R02-030_tired.png"
+  },
   "N-R02-035": {
    "기본": "N-R02-035_idle.png",
    "놀람": "N-R02-035_surprise.png",

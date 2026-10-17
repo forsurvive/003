@@ -1,0 +1,38 @@
+{
+ "foot": [
+  30,
+  36
+ ],
+ "frame": [
+  64,
+  40
+ ],
+ "mirror": {
+  "W": "E"
+ },
+ "motions": {
+  "bite": {
+   "count": 2,
+   "start": 5
+  },
+  "death": {
+   "count": 4,
+   "start": 7
+  },
+  "idle": {
+   "count": 1,
+   "start": 0
+  },
+  "walk": {
+   "count": 4,
+   "drive": "distance",
+   "px_per_frame": 3,
+   "start": 1
+  }
+ },
+ "name": "cr_cr080_loco",
+ "rows": [
+  "E"
+ ],
+ "style": "isaac"
+}

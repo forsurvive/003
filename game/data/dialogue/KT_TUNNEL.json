@@ -1,0 +1,83 @@
+{
+ "id": "KT_TUNNEL",
+ "title": "유리 터널",
+ "loc": "L-R02-05",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "BREAK": 3,
+  "BROKEN": 7
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "KT_TUNNEL == 1",
+   "to": "BROKEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "금 간 유리 너머로 큰 그림자가 따라 헤엄친다. 보이지만 아직 닿지 않는다. 금 간 자리에서 물방울이 똑똑."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "금 간 유리를 개머리판으로 친다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "BREAK",
+     "id": "KT_TUNNEL:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KT_TUNNEL:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "쩍 — 금이 별처럼 번진다. 유리가 터지고 물이 한꺼번에 쏟아진다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "물살에 다리가 걸려 그 자리에 넘어진다. 일어나 보니 터널이 허리까지 잠겼다."
+  },
+  {
+   "op": "cmd",
+   "name": "kt",
+   "args": [
+    "tunnel"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "깨진 터널. 허리 물이 고였다. 펌프실 가는 길이 깊어졌다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KT.txt"
+}

@@ -104,12 +104,18 @@ def quad_sheets():
     """네발짐승(0-10): CR-104 변이 들개 · 백구(C-015 진돗개). 옆 그림만, 걷기 4컷(컷당 4px)."""
     import chibi_creatures as CC
     import creatures_ds as DS
+    import creatures_kt as KT
     for kind, name in (("dog", "cr_cr104_loco"), ("jindo", "cr_baekgu_loco"), ("rat", "cr_cr095_loco"), ("guard", "cr_cr107_loco"),
                        ("ox", "cr_cr090_loco"), ("ox_pack", "cr_cr091_loco"),
                        ("oenun", "cr_cr500_loco"), ("fierce", "cr_cr105_loco"), ("raccoon", "cr_cr136_loco"), ("ratking", "cr_cr097_loco"),
-                       ("mole", "cr_cr096_loco"), ("eggroach", "cr_cr004_loco"), ("eggroach_bare", "cr_cr004b_loco")):   # 1-D3 독산: 굴쥐 · 알집바퀴(맨몸 판)   # 옴 너구리(1-T2 밤 몹)          # 외눈 · 사나운 들개(1-11a)          # 두머리소·짐소(1-8d)
+                       ("mole", "cr_cr096_loco"), ("eggroach", "cr_cr004_loco"), ("eggroach_bare", "cr_cr004b_loco"),
+                       ("ant_worker", "cr_cr080_loco"), ("ant_soldier", "cr_cr081_loco"), ("ant_queen", "cr_cr082_loco"), ("catfish", "cr_cr130_loco")):   # 1-D5 금탑: 왕개미 셋 · 메기 새끼   # 1-D3 독산: 굴쥐 · 알집바퀴(맨몸 판)   # 옴 너구리(1-T2 밤 몹)          # 외눈 · 사나운 들개(1-11a)          # 두머리소·짐소(1-8d)
         if kind == "mole":
             frames, meta = DS.mole_sheet()
+        elif kind.startswith("ant_"):
+            frames, meta = KT.ant_sheet(kind[4:])
+        elif kind == "catfish":
+            frames, meta = KT.catfish_sheet()
         elif kind.startswith("eggroach"):
             frames, meta = DS.eggroach_sheet(kind.endswith("bare"))
         else:

@@ -1,0 +1,74 @@
+[gd_resource type="SpriteFrames" load_steps=19 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/cr_cr082_loco.png" id="1"]
+
+[sub_resource type="AtlasTexture" id="a0"]
+atlas = ExtResource("1")
+region = Rect2(0, 0, 96, 64)
+
+[sub_resource type="AtlasTexture" id="a1"]
+atlas = ExtResource("1")
+region = Rect2(96, 0, 96, 64)
+
+[sub_resource type="AtlasTexture" id="a2"]
+atlas = ExtResource("1")
+region = Rect2(192, 0, 96, 64)
+
+[sub_resource type="AtlasTexture" id="a3"]
+atlas = ExtResource("1")
+region = Rect2(288, 0, 96, 64)
+
+[sub_resource type="AtlasTexture" id="a4"]
+atlas = ExtResource("1")
+region = Rect2(384, 0, 96, 64)
+
+[sub_resource type="AtlasTexture" id="a5"]
+atlas = ExtResource("1")
+region = Rect2(1248, 0, 96, 64)
+
+[sub_resource type="AtlasTexture" id="a6"]
+atlas = ExtResource("1")
+region = Rect2(1344, 0, 96, 64)
+
+[sub_resource type="AtlasTexture" id="a7"]
+atlas = ExtResource("1")
+region = Rect2(1440, 0, 96, 64)
+
+[sub_resource type="AtlasTexture" id="a8"]
+atlas = ExtResource("1")
+region = Rect2(1536, 0, 96, 64)
+
+[sub_resource type="AtlasTexture" id="a9"]
+atlas = ExtResource("1")
+region = Rect2(480, 0, 96, 64)
+
+[sub_resource type="AtlasTexture" id="a10"]
+atlas = ExtResource("1")
+region = Rect2(576, 0, 96, 64)
+
+[sub_resource type="AtlasTexture" id="a11"]
+atlas = ExtResource("1")
+region = Rect2(864, 0, 96, 64)
+
+[sub_resource type="AtlasTexture" id="a12"]
+atlas = ExtResource("1")
+region = Rect2(960, 0, 96, 64)
+
+[sub_resource type="AtlasTexture" id="a13"]
+atlas = ExtResource("1")
+region = Rect2(672, 0, 96, 64)
+
+[sub_resource type="AtlasTexture" id="a14"]
+atlas = ExtResource("1")
+region = Rect2(768, 0, 96, 64)
+
+[sub_resource type="AtlasTexture" id="a15"]
+atlas = ExtResource("1")
+region = Rect2(1056, 0, 96, 64)
+
+[sub_resource type="AtlasTexture" id="a16"]
+atlas = ExtResource("1")
+region = Rect2(1152, 0, 96, 64)
+
+[resource]
+animations = [{"frames": [{"duration": 1.0, "texture": SubResource("a0")}], "loop": true, "name": &"idle_E", "speed": 8.0}, {"frames": [{"duration": 1.0, "texture": SubResource("a1")}, {"duration": 1.0, "texture": SubResource("a2")}, {"duration": 1.0, "texture": SubResource("a3")}, {"duration": 1.0, "texture": SubResource("a4")}], "loop": true, "name": &"walk_E", "speed": 8.0}, {"frames": [{"duration": 1.0, "texture": SubResource("a5")}, {"duration": 1.0, "texture": SubResource("a6")}, {"duration": 1.0, "texture": SubResource("a7")}, {"duration": 1.0, "texture": SubResource("a8")}], "loop": false, "name": &"death_E", "speed": 8.0}, {"frames": [{"duration": 1.0, "texture": SubResource("a9")}, {"duration": 1.0, "texture": SubResource("a10")}], "loop": true, "name": &"bite_E", "speed": 8.0}, {"frames": [{"duration": 1.0, "texture": SubResource("a11")}, {"duration": 1.0, "texture": SubResource("a12")}], "loop": true, "name": &"lay_E", "speed": 8.0}, {"frames": [{"duration": 1.0, "texture": SubResource("a13")}, {"duration": 1.0, "texture": SubResource("a14")}], "loop": true, "name": &"pulse_E", "speed": 8.0}, {"frames": [{"duration": 1.0, "texture": SubResource("a15")}, {"duration": 1.0, "texture": SubResource("a16")}], "loop": true, "name": &"spit_E", "speed": 8.0}]

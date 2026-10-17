@@ -1,0 +1,42 @@
+{
+ "foot": [
+  30,
+  24
+ ],
+ "frame": [
+  64,
+  28
+ ],
+ "mirror": {
+  "W": "E"
+ },
+ "motions": {
+  "attack": {
+   "count": 2,
+   "start": 5
+  },
+  "death": {
+   "count": 3,
+   "start": 9
+  },
+  "flop": {
+   "count": 2,
+   "start": 7
+  },
+  "idle": {
+   "count": 1,
+   "start": 0
+  },
+  "walk": {
+   "count": 4,
+   "drive": "distance",
+   "px_per_frame": 2,
+   "start": 1
+  }
+ },
+ "name": "cr_cr130_loco",
+ "rows": [
+  "E"
+ ],
+ "style": "isaac"
+}

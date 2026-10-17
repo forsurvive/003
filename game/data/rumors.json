@@ -599,6 +599,26 @@
 "where": "R02",
 "cond": "GR_MUSTER == 3 and GAME_DAY > GR_MUSTER_DAY",
 "text": "구로 수송 열차 창마다 철모가 보인대. 고개를 들고 앉아 있대. 전엔 다 숙이고 있었다는데."
+},
+{
+"where": "R02",
+"cond": "",
+"text": "여의도 금빛 탑 로비에 들어가면 인터폰이 운대. 60층에서 건다나. 받아 본 사람은 없고."
+},
+{
+"where": "R02",
+"cond": "KT_POWER == 1 and GAME_DAY > KT_POWER_DAY",
+"text": "여의도 둔치 배수구에 메기 새끼가 떴대. 하얗게. 금탑 지하 수족관 물을 누가 뺐다더라."
+},
+{
+"where": "R02",
+"cond": "KT_POWER == 2 and GAME_DAY > KT_POWER_DAY",
+"text": "금탑 1층 창에 밤새 작은 불이 켜져 있대. 승강기 '딩' 소리도 들리고. 근데 그 불 보고 개미가 내려온대."
+},
+{
+"where": "R02",
+"cond": "KT_REVOLVE == 2",
+"text": "금탑 회전문 유리 하나가 깨졌대. 안에서 깬 자국이라던데. 개미가 문에 끼었었나 봐."
 }
 ]
 }

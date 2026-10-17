@@ -77,9 +77,16 @@ DOORS = [{"lid": "L-R02-11", "near": (720, 1147), "to": "J-01", "mark": "from_W"
          {"lid": "L-UG-05", "near": (1101, 1481), "to": "NT-01", "mark": "from_top", "name": "남태령역 — 지하 초소 계단", "prop": "subway_stairs",
           "hint": "계단 아래에서 무전 잡음과 군화 소리. 입구 기둥에 붉은 페인트 '계엄 초소 · 무장 해제 후 접근'."},
          {"lid": "L-UG-02", "near": (943, 1360), "to": "U-03", "mark": "from_W", "name": "서울대입구역 — 감시조 사다리", "prop": "subway_stairs",   # 1-11e SQ-S05 봉천 북서
-          "hint": "무너진 역 입구에 봉천 감시조가 사다리를 걸어 두었다. 아래로 2호선 서울대입구역."}]
+          "hint": "무너진 역 입구에 봉천 감시조가 사다리를 걸어 두었다. 아래로 2호선 서울대입구역."},
+         # 1-D5a 여의도 금탑(DG-KT): 강변 둔치 비상구 계단(지하 수족관 관통 출구)을 먼저, 정면 회전문(로비 — 장소 도착 칸)을 뒤에
+         {"lid": "L-R02-05", "near": (889, 1124), "to": "KT-02", "mark": "from_river", "name": "여의도 금탑 — 둔치 비상구", "prop": "subway_stairs",
+          "hint": "둔치 쪽 비상구 계단. 아래에서 물비린내와 펌프 소리 없는 고요.",
+          "hints": [["KT_POWER == 1", "비상구 계단 아래가 말랐다. 배수구 쪽 둔치에 죽은 메기 새끼 몇이 하얗게 누웠다."]]},
+         {"lid": "L-R02-05", "near": (883, 1131), "to": "KT-01", "mark": "from_W", "name": "여의도 금탑 — 회전문", "kind": "facade",
+          "hint": "금빛 유리 기둥 사이 회전문. 바람이 불 때마다 삐걱 반 바퀴.",
+          "hints": [["KT_POWER == 2", "로비 1층 창에 작은 불이 켜져 있다. 회전문 너머에서 '딩' — 승강기 소리."]]}]
 # 손 실내가 붙는 건물의 양식(SD-21 §8): 도로망이 바뀌어도 그 자리에 건물이 선다
-ANCHOR_STYLE = {"K-33": "gov", "K-01": "gov", "K-29": "gov", "K-06": "office", "K-20": "villa", "K-22": "apt", "K-24": "office", "K-26": "gov", "GD-01": "gov", "KH-01": "gov", "DS-01": "factory", "DS-02": "factory"}
+ANCHOR_STYLE = {"K-33": "gov", "K-01": "gov", "K-29": "gov", "K-06": "office", "K-20": "villa", "K-22": "apt", "K-24": "office", "K-26": "gov", "GD-01": "gov", "KH-01": "gov", "DS-01": "factory", "DS-02": "factory", "KT-01": "office"}
 INSETS = [{"id": "X-S07", "mark": "from_vault", "at": (959, 1503)},          # 볼트 S-07 정문(L-R01-01)
           {"id": "X-BC", "center": (892, 1362)},                             # 봉천 계단마을(L-R01-09)
           {"id": "X-SB", "center": (632, 1329), "lid": "L-R02-19", "arrive": "arrive", "urban": True},   # 새벽인력 본소(1-6): 도착 칸 = 정문 앞 길

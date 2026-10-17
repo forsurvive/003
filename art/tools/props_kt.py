@@ -445,6 +445,123 @@ def w_feedlog_kt():
     return im
 
 
+# ================================================================================================ 1-D5b 위층(사무층 개미굴 · 22층 여왕방 · 연회장 · 60층 · 옥상)
+def egg_mound_kt(state=""):
+    """여왕방 알 무더기(3×2, 96×64): 흙 둔덕 위 젖빛 알 덩이 · 반짝이는 점액 · 둘레 흙 알갱이 / 상태 hatch(알 하나가 갈라져 일개미 머리)."""
+    im = img(96, 64)
+    d = ImageDraw.Draw(im)
+    _shadow(d, 4, 92, 60)
+    d.ellipse([2, 30, 93, 62], fill=C(INK)); d.ellipse([3, 31, 92, 61], fill=C("P18"))
+    d.ellipse([10, 34, 86, 58], fill=C("P19"))
+    rnd = random.Random(90)
+    eggs = [(rnd.randint(16, 76), rnd.randint(18, 44)) for _ in range(16)]
+    for i, (x, y) in enumerate(sorted(eggs, key=lambda e: e[1])):
+        d.ellipse([x - 6, y - 4, x + 6, y + 5], fill=C(INK))
+        d.ellipse([x - 5, y - 3, x + 5, y + 4], fill=C("P08"))
+        d.ellipse([x - 3, y - 2, x + 1, y + 1], fill=C("P09"))
+        if state == "hatch" and i == 9:
+            d.line([x - 4, y, x + 4, y - 1], fill=C(INK)); d.ellipse([x - 3, y - 6, x + 3, y - 1], fill=C("P02"))
+            d.line([x - 1, y - 6, x - 4, y - 10], fill=C("P02")); d.line([x + 1, y - 6, x + 4, y - 10], fill=C("P02"))
+    for _ in range(10):
+        x = rnd.randint(14, 80); y = rnd.randint(22, 48)
+        d.point((x, y), fill=C("P57"))                                                            # 점액 반짝임
+    return im
+
+
+def telescope_kt(state=""):
+    """60층 진공관 망원경(1×2, 32×64): 금빛 받침 · 굵은 경통 · 옆 진공관 함(유리관 셋) · 동전 투입구 / 상태 lit(관에 주황 불 · 렌즈 반짝)."""
+    im = img(32, 64)
+    d = ImageDraw.Draw(im)
+    _shadow(d, 6, 26, 60)
+    d.polygon([(10, 58), (16, 30), (22, 58)], fill=C(INK)); d.polygon([(11, 57), (16, 32), (21, 57)], fill=C(GOLD[1]))
+    d.line([16, 32, 16, 57], fill=C(GOLD[3]))
+    d.polygon([(4, 26), (24, 16), (28, 24), (8, 34)], fill=C(INK)); d.polygon([(5, 26), (24, 17), (27, 23), (8, 33)], fill=C("P04"))
+    d.line([6, 26, 24, 18], fill=C("P06"))
+    d.ellipse([22, 15, 30, 25], fill=C(INK)); d.ellipse([23, 16, 29, 24], fill=C("P15" if state == "lit" else "P12"))
+    d.ellipse([13, 27, 19, 33], fill=C(GOLD[2])); d.point((16, 30), fill=C(INK))                       # 받침 이음쇠
+    _box(d, 1, 38, 12, 52, ("P02", "P04", "P06"))
+    lit = state == "lit"
+    for k, x in enumerate((3, 6, 9)):
+        d.rectangle([x, 40, x + 1, 47], fill=C("P59" if lit else "P13")); d.point((x, 39), fill=C("P15"))
+    d.rectangle([4, 49, 9, 50], fill=C(INK))
+    return im
+
+
+def roof_gen_kt(state=""):
+    """옥상 소형 원자력 발전기(3×2, 96×64): 국방색 함 · 방사능 표지 · 냉각 지느러미 · 계기판 · 굵은 전선이 망원경 쪽으로 / 상태 live(초록 등 · 계기 바늘)."""
+    im = img(96, 64)
+    d = ImageDraw.Draw(im)
+    _shadow(d, 4, 92, 60)
+    _box(d, 4, 14, 70, 56, ("P28", "P29", "P31"))
+    for x in range(10, 66, 5):
+        d.line([x, 18, x, 52], fill=C("P28"))
+    d.ellipse([28, 24, 46, 42], fill=C(INK)); d.ellipse([29, 25, 45, 41], fill=C("P49"))
+    for a in (90, 210, 330):
+        import math as _m
+        cx, cy = 37, 33
+        d.pieslice([cx - 7, cy - 7, cx + 7, cy + 7], a - 30, a + 30, fill=C(INK))
+    d.ellipse([35, 31, 39, 35], fill=C("P49"))
+    _box(d, 72, 22, 92, 50, ("P02", "P04", "P06"))
+    live = state == "live"
+    d.ellipse([76, 26, 86, 36], fill=C(INK)); d.ellipse([77, 27, 85, 35], fill=C("P09"))
+    d.line([81, 31, 84 if live else 78, 28 if live else 34], fill=C("P53"))
+    d.ellipse([78, 40, 84, 46], fill=C("P56" if live else "P51"))
+    d.line([92, 44, 95, 60], fill=C(INK), width=2)
+    return im
+
+
+def gondola_kt(state=""):
+    """바깥 유리창 청소 곤돌라(3×1, 96×40): 철 바구니 · 난간 · 위로 쇠줄 둘 · 녹 · 걸레 양동이 / 상태 tilt(줄 하나가 끊겨 기운 판)."""
+    im = img(96, 40)
+    d = ImageDraw.Draw(im)
+    tilt = 6 if state == "tilt" else 0
+    d.line([12, 0, 12, 14 + tilt], fill=C("P05")); d.line([84, 0, 84, 14], fill=C("P05") if tilt == 0 else C("P03"))
+    d.polygon([(4, 16 + tilt), (92, 16), (92, 36), (4, 36 + tilt)], fill=C(INK))
+    d.polygon([(5, 17 + tilt), (91, 17), (91, 35), (5, 35 + tilt)], fill=C("P05"))
+    for x in range(8, 90, 8):
+        d.line([x, 18 + tilt * (92 - x) // 88, x, 34 + tilt * (92 - x) // 88], fill=C("P04"))
+    d.line([5, 17 + tilt, 91, 17], fill=C("P07"))
+    rnd = random.Random(91)
+    for _ in range(18):
+        d.point((rnd.randint(6, 90), rnd.randint(18, 34)), fill=C("P25"))
+    d.rectangle([40, 24, 48, 32], fill=C(INK)); d.rectangle([41, 25, 47, 31], fill=C("P45"))
+    return im
+
+
+def banquet_kt(state=""):
+    """2077 연회장 원탁(2×2, 64×64): 흰 식탁보 · 접시 · 잔 · 금빛 촛대 · 의자 둘레(넘어진 것 하나) / 상태 bones(식탁에 엎드린 해골 · 넘어진 잔)."""
+    im = img(64, 64)
+    d = ImageDraw.Draw(im)
+    _shadow(d, 4, 60, 58)
+    d.ellipse([4, 14, 59, 50], fill=C(INK)); d.ellipse([5, 15, 58, 49], fill=C("P09"))
+    d.ellipse([5, 30, 58, 49], fill=C("P08"))
+    for k in range(8):
+        import math as _m
+        a = k / 8 * 6.283
+        x = 31 + int(20 * _m.cos(a)); y = 31 + int(12 * _m.sin(a))
+        d.ellipse([x - 4, y - 2, x + 4, y + 2], fill=C("P07")); d.ellipse([x - 2, y - 1, x + 2, y + 1], fill=C("P09"))
+    d.rectangle([30, 18, 32, 30], fill=C(GOLD[1])); d.ellipse([28, 15, 34, 20], fill=C(GOLD[2]))
+    if state == "bones":
+        d.ellipse([12, 24, 24, 32], fill=C("P08")); d.ellipse([14, 22, 22, 28], fill=C("P09"))
+        d.point((16, 25), fill=C(INK)); d.point((19, 25), fill=C(INK))
+        d.line([40, 34, 46, 38], fill=C("P46"))
+    for x, y in ((2, 50), (54, 50), (28, 54)):
+        d.rectangle([x, y, x + 8, y + 8], fill=C(INK)); d.rectangle([x + 1, y + 1, x + 7, y + 7], fill=C("P52"))
+    return im
+
+
+def w_north_sign_kt():
+    """60층 망원경 옆 안내판(벽 2칸, 64×44): 2077 '맑은 날 북한 땅이 보입니다' — '북한' 위에 누가 매직으로 줄을 긋고 '북방'."""
+    im = img(64, 44)
+    d = ImageDraw.Draw(im)
+    d.rectangle([2, 4, 61, 40], fill=C(INK)); d.rectangle([3, 5, 60, 39], fill=C("P09"))
+    d.rectangle([3, 5, 60, 11], fill=C(GOLD[1]))
+    put_text(im, "맑은날", 6, 13, "P44", 8, "Galmuri7")
+    put_text(im, "북한", 6, 24, "P44", 8, "Galmuri7"); d.line([5, 29, 24, 28], fill=C(INK), width=2)
+    put_text(im, "북방", 28, 23, "P53", 8, "Galmuri7")
+    return im
+
+
 # ================================================================================================ 등록
 def _r(fn, fw, fh, kind="floor", down=2, dx=0, dy=0):
     return {"fn": fn, "foot": (fw, fh), "kind": kind, "down": down, "dx": dx, "dy": dy}
@@ -468,6 +585,12 @@ PROPS_KT = {
     "w_feedlog_kt": _r(w_feedlog_kt, 1, 0, "wall", dx=0, dy=6),
     "grate_kt": _r(grate_kt, 0, 0, "deco"),
     "w_staff_phone_kt": _r(w_staff_phone_kt, 1, 0, "wall", dx=0, dy=6),
+    "egg_mound_kt": _r(egg_mound_kt, 3, 2, down=-2),
+    "telescope_kt": _r(telescope_kt, 1, 1, down=-2),
+    "roof_gen_kt": _r(roof_gen_kt, 3, 2, down=-2),
+    "gondola_kt": _r(gondola_kt, 3, 1, down=-2),
+    "banquet_kt": _r(banquet_kt, 2, 2, down=-2),
+    "w_north_sign_kt": _r(w_north_sign_kt, 2, 0, "wall", dx=0, dy=6),
 }
 STATES_KT = {
     "revolving_kt": {s: (lambda s=s: revolving_kt(s)) for s in ("turn", "broken")},
@@ -480,6 +603,11 @@ STATES_KT = {
     "tank_kt": {s: (lambda s=s: tank_kt(s)) for s in ("broken", "dry")},
     "pump_kt": {s: (lambda s=s: pump_kt(s)) for s in ("drain", "lift", "gone")},
     "w_staff_phone_kt": {"lit": lambda: w_staff_phone_kt("lit")},
+    "egg_mound_kt": {"hatch": lambda: egg_mound_kt("hatch")},
+    "telescope_kt": {"lit": lambda: telescope_kt("lit")},
+    "roof_gen_kt": {"live": lambda: roof_gen_kt("live")},
+    "gondola_kt": {"tilt": lambda: gondola_kt("tilt")},
+    "banquet_kt": {"bones": lambda: banquet_kt("bones")},
 }
 
 
