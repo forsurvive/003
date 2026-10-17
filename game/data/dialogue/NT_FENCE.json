@@ -1,0 +1,132 @@
+{
+ "id": "NT_FENCE",
+ "title": "4호선 남쪽 터널 철망",
+ "loc": "L-R01-18",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "RATS": 4,
+  "MENU": 5,
+  "PICK": 6,
+  "OPEN": 9,
+  "GO": 10,
+  "IN": 11
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "U02_OPEN >= 1",
+   "to": "OPEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "철망 문에 자물쇠가 걸렸다. 너머는 레일이 어둠 속으로 휘어 내려간다. 바람이 차고 쥐 냄새가 난다."
+  },
+  {
+   "op": "if",
+   "cond": "DG_NT != 1",
+   "to": "RATS"
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "어둠 저편에서 찍찍 소리가 겹친다. 하나가 아니다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "철사로 자물쇠를 돌린다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "자물쇠 따기",
+       "min": 25
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PICK",
+     "id": "NT_FENCE:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "NT_FENCE:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "딸깍. 자물쇠가 고리째 빠진다. 문짝이 삐걱 열린다."
+  },
+  {
+   "op": "cmd",
+   "name": "u02",
+   "args": [
+    "open"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "GO"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "철망 문이 열려 있다. 안쪽 기둥에 빗장 자리."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "터널로 들어간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "IN",
+     "id": "NT_FENCE:2:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "NT_FENCE:2:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "u02",
+   "args": [
+    "go",
+    "NT-03",
+    "from_W"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/U02.txt"
+}

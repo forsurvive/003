@@ -1,5 +1,6 @@
 # 사당 고개 검문소 Q-01 막사(SD-09a L-R01-19 실내 · 단계 1-8g): 컨테이너 안 — 무기 보관대 · 수배 전단 게시판 · 무전실 · 2층 침대.
 # 낮에는 비어 있고(병력은 차단봉) 밤엔 검문소장 황보서현이 무전 당번을 선다. 무기 보관대는 잠겨 있다(자물쇠 50, 주인 검문소장 — 절도).
+# 1-D2: 바닥 점검구 ↔ 남태령역 대합실 천장 환기구(U02 수직 잠입) · 빈 낮에 무전을 대신 받을 수 있다(SG_RADIO 갈래 — U02_RADIO).
 map Q-01 제7 검문대 막사
 set bk
 grid
@@ -28,6 +29,11 @@ box 12 3 armory owner=N-R01-047 lock=50 name="무기 보관대"
 prop radio_desk 15 4
 prop w_speaker 15 1
 text 15 4 "무전기. 진공관 다이얼에 '청계산 · 여의도 · 한강대교 남단' 세 칸만 손때가 묻었다." scene=SG_RADIO
+# 1-D2 U02: 바닥 점검구 — 남태령역 대합실 천장 환기구와 덕트로 이어진다(아래에서 열어야 열린다)
+prop bk_floor_hatch 13 7 cond="U02_VENT == 0"
+prop bk_floor_hatch 13 7 state=open cond="U02_VENT >= 1"
+text 13 7 "바닥 점검구. 철판 뚜껑 밑으로 찬 덕트 바람이 샌다." scene=Q01_HATCH
+mark from_vent 13 6 S
 prop bunk 2 5
 prop bunk 4 5
 prop bunk 6 5

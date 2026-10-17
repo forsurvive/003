@@ -454,6 +454,36 @@
 "where": "R02",
 "cond": "UQ71_SQ == 9 and UQ71_CORE == 0 and GAME_DAY > UQ71_DAY",
 "text": "대방 분대장이 뻗었대. 근데 지하차도 그 통은 아직 물속에서 깜박인다더라."
+},
+{
+"where": "R01",
+"cond": "U02_LIGHT == 1 and GAME_DAY > U02_LIGHT_DAY",
+"text": "4호선 남쪽 굴에 불이 들어왔어. 사당 쪽만. 버섯 일꾼들이 밤에 물 길으러 나가더라."
+},
+{
+"where": "R01",
+"cond": "U02_LIGHT == 2 and GAME_DAY > U02_LIGHT_DAY",
+"text": "남쪽 굴 불을 끝까지 켰대. 밝아서 좋긴 한데, 남태령 초소에서 우리 걸음을 다 센다더라."
+},
+{
+"where": "R01",
+"cond": "U02_LIGHT == 3 and GAME_DAY > U02_LIGHT_DAY and GAME_DAY <= U02_LIGHT_DAY + 5",
+"text": "누가 남태령 초소 전깃줄을 끊었대. 계엄 애들이 굴까지 내려와서 터널지기 상자를 뒤집었다고."
+},
+{
+"where": "R01",
+"cond": "U02_HAL == 2 and GAME_DAY > U02_HAL_DAY",
+"text": "분류반 천막에 남태령 할매가 앉아 있더라. 번호표를 쥐고. 그 할매가 줄을 서는 건 처음 봤어."
+},
+{
+"where": "R01",
+"cond": "U02_HAL == 4 and GAME_DAY > U02_HAL_DAY",
+"text": "남태령 할매가 청계산으로 실려 갔대. 대피 측실 주전자가 식었다더라."
+},
+{
+"where": "R01",
+"cond": "U02_SOL == 3 and GAME_DAY > U02_HAL_DAY",
+"text": "남태령 굴 뒤쪽 갱이 무너졌대. 할매는 멀쩡하고. 쥐들만 길을 잃었지."
 }
 ]
 }

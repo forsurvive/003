@@ -1,6 +1,6 @@
 # 사당 환승촌 D-05 버섯 재배 측실(SD-09a L-R01-18 ③ · 단계 1-8f)
 # 30×20 · 4호선 남쪽 터널 정비 측실. 지하 느타리(I-044) 재배 선반 · 습도 물통 · '빛 들이지 마시오'. 낮 표하경(V05) · 버섯 일꾼.
-# 남동 철망 문 너머 4호선 남쪽 터널(U02 → 남태령)은 지하 구간 단계에서 — 반로아가 낮에 터널 앞에서 안내 손님을 기다린다.
+# 남동 철망 문 너머 4호선 남쪽 터널(U02 → 남태령, 1-D2 NT-03) — 반로아가 낮에 터널 앞에서 안내 손님을 기다린다(쥐 떼가 있으면 미룬다).
 map D-05 사당역 버섯 재배 측실
 set sd
 grid
@@ -61,12 +61,19 @@ prop drum 13 14
 prop sd_fence 22 14
 prop sd_fence 23 14
 prop sd_fence 24 14
-prop sd_fence 25 14
+prop sd_fence_gate 25 14 cond="U02_OPEN == 0"
+prop sd_fence_gate 25 14 state=open cond="U02_OPEN >= 1"
 prop sd_fence 26 14
 prop sd_fence 27 14
 prop sd_fence 28 14
-text 25 14 "철망 문. 너머는 4호선 남쪽 터널 — 남태령 방면. 바람이 차고 쥐 냄새가 난다. 자물쇠가 걸려 있다." w=3
+text 25 14 "철망 문. 너머는 4호선 남쪽 터널 — 남태령 방면. 바람이 차고 쥐 냄새가 난다." w=3 scene=NT_FENCE
+mark from_NT03 25 13 N
 prop work_lamp 15 4
 npc N-R01-042 16 6 S cond="GAME_HOUR >= 6 and GAME_HOUR < 20" route=shelf:16,6,8;tank:12,11,6 bark="빛 들이지 마. 버섯이 놀란다."
 npc N-SA-R4 7 11 N look=M1-S3-HR02-H1-T04-2-PF12-HD00-EY00-PR011 cond="GAME_HOUR >= 6 and GAME_HOUR < 20" route=a:7,11,6;b:20,8,6 bark="막내라고 불러. 여기서 일한 지 석 달. 어머니한테 캡 보내야 해서."
-npc N-R01-045 24 13 S cond="GAME_HOUR >= 6 and GAME_HOUR < 20" bark="검문소 밑으로 가는 길? 10캡이면 남태령까지 데려다줄게."
+npc N-R01-045 24 13 S cond="GAME_HOUR >= 6 and GAME_HOUR < 20 and DG_NT != 1 and U02_HAL == 0 and known_dead(\"N-UG-007\") == 0" bark="쥐 떼 때문에 오늘은 공쳤어. 철망에 귀 대 봐, 찍찍거리지?"
+npc N-R01-045 24 13 S cond="GAME_HOUR >= 6 and GAME_HOUR < 20 and DG_NT == 1 and U02_HAL == 0 and known_dead(\"N-UG-007\") == 0" bark="남태령? 10캡. 할매네 들를 거면 말하고."
+npc N-R01-045 24 13 S cond="GAME_HOUR >= 6 and GAME_HOUR < 20 and U02_HAL == 1 and known_dead(\"N-UG-007\") == 0" bark="할매가 애기들한테 붙들렸대. …나 때문은 아니지?"
+npc N-R01-045 24 13 S cond="GAME_HOUR >= 6 and GAME_HOUR < 20 and U02_HAL == 2 and known_dead(\"N-UG-007\") == 0" bark="할매가 위 분류반 천막에 앉아 있대. 보증 서 줄 어른 어디 없나."
+npc N-R01-045 24 13 S cond="GAME_HOUR >= 6 and GAME_HOUR < 20 and U02_HAL == 4 and known_dead(\"N-UG-007\") == 0" bark="할매가 청계산으로 갔대. 키 재 줄 사람이 없어."
+npc N-R01-045 24 13 S cond="GAME_HOUR >= 6 and GAME_HOUR < 20 and known_dead(\"N-UG-007\") == 1" bark="할매 없는 남태령은 가도 재미없어. 사탕도 없고."

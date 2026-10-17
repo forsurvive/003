@@ -1,0 +1,120 @@
+{
+ "id": "NT_DESK",
+ "title": "초소장 책상",
+ "loc": "L-UG-05",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "FORGE": 5,
+  "FORGEFAIL": 10,
+  "WATCHED": 13
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "U02_SHIFT == 0 and known_dead(\"N-UG-006\") == 0",
+   "to": "WATCHED"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "장부가 펼쳐져 있다. '통과 · 회차 · 벌금.' 벌금 칸 숫자가 자로 잰 듯 반듯하다. 맨 앞 장에 규정표 — 미등록 20 · 야간(20시~) 10 · 수배 인상 일치 30 · 동행 거부 기록 10 · 우호 감면 −10."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "뒤쪽엔 교대 근무표. 06시 · 18시 '지상 보고 — 초소장'."
+  },
+  {
+   "op": "do",
+   "fx": "U02_RULES = 1"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "교대 근무표에 '배수 맨홀 정비 — 초소 입회'를 써 넣는다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "과학",
+       "min": 45
+      }
+     ],
+     "cond": "U02_HAL == 1 and U02_FORGE_TRY == 0",
+     "fx": "",
+     "to": "FORGE",
+     "id": "NT_DESK:1:0",
+     "fail": "FORGEFAIL"
+    },
+    {
+     "text": "덮어 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "NT_DESK:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "엄태하의 각진 글씨를 흉내 내 근무표 빈칸에 한 줄을 더한다. 날짜를 맞추고, 도장 자리에 볼펜으로 동그라미."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "이제 맨홀 흔적은 '초소 입회 정비'다. 밀통이 아니다."
+  },
+  {
+   "op": "do",
+   "fx": "U02_FORGE_TRY = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "u02",
+   "args": [
+    "sol",
+    "2"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "글씨가 흔들렸다. 볼펜이 종이를 찢는다. 고칠수록 티가 난다 — 그만둔다."
+  },
+  {
+   "op": "do",
+   "fx": "U02_FORGE_TRY = 1"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "엄태하가 바로 앞에 있다. \"장부는 보는 게 아닙니다.\""
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/U02.txt"
+}

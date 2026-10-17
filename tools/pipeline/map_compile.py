@@ -356,6 +356,9 @@ def _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kin
                 if not (walk(x, y) if ext else floor(x, y)):
                     raise Err(f"출구 칸 ({x},{y})이 바닥이 아니다")
                 out["exits"].append({"x": x, "y": y, "to": to, "mark": mk, "line": ln})
+            elif c == "dark":                                       # 1-D2 조건부 어둠(dark cond="식"): 식이 참이면 불 꺼진 맵(핍-보이 조명) — 없으면 타일셋대로(cv = 늘 어둠)
+                check_cond(opt["cond"], known_vars, known_fns)
+                out["dark_if"] = opt["cond"]
             elif c == "mark":
                 name, x, y, d = pos[0], int(pos[1]), int(pos[2]), pos[3]
                 if d not in DIRS:
@@ -549,6 +552,9 @@ def _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kin
     for p in out["props"]:                                        # 우리 문(1-3 H-03)도 이야기에서 열린다: 열린 것으로 본다
         if p["name"] == "cage_door":
             block[p["y"]][p["x"]] = 0
+        if p["name"] == "bj_boom" and not ext:                    # 지하 초소 차단봉(1-D2)은 이야기로 지난다(@cmd u02 boom — 건너편에 선다)
+            for i in range(3):
+                block[p["y"]][p["x"] + i] = 0
     start = None
     for y in range(H):
         for x in range(W):

@@ -197,13 +197,18 @@ def squad_winch():
     return im
 
 
-def w_tunnel_lamp(lit=False):
-    """지하차도 벽 등(벽 소품 1칸): 철망 덮개 · 깨진 형광등. lit = 비상등(SD-09f §3.5 비상등 30%)이 붉게 남아 있다."""
+def w_tunnel_lamp(lit=False, on=False):
+    """지하차도 · 터널 벽 등(벽 소품 1칸): 철망 덮개 · 깨진 형광등. lit = 비상등(SD-09f §3.5 비상등 30%)이 붉게 남아 있다.
+    on = 회로를 되살려 형광등이 하얗게 켜졌다(U02 UG-H01 터널 조명) — 아래 벽에 빛 번짐 두 점."""
     im = img(30, 16)
     d = ImageDraw.Draw(im)
     d.rectangle([2, 4, 27, 12], fill=C("P04")); d.line([2, 4, 27, 4], fill=C("P06"))
-    d.rectangle([4, 6, 25, 10], fill=C("P53" if lit else "P02"))
-    if lit:
+    d.rectangle([4, 6, 25, 10], fill=C("P53" if lit else ("P15" if on else "P02")))
+    if on:
+        d.line([5, 7, 24, 7], fill=C("P09")); d.line([5, 8, 24, 8], fill=C("P09"))
+        for x in (8, 21):
+            d.point((x, 14), fill=C("P07")); d.point((x + 1, 15), fill=C("P06"))
+    elif lit:
         d.line([5, 7, 24, 7], fill=C("P54"))
     else:
         d.line([5, 8, 12, 8], fill=C("P07"))
@@ -227,4 +232,4 @@ PROPS_DG = {
     "w_tunnel_lamp": _r(w_tunnel_lamp, 1, 0, "wall", dx=1, dy=10),
 }
 STATES_DG = {"bus_atomic_sunk": {"cold": lambda: bus_atomic_sunk("cold"), "torn": lambda: bus_atomic_sunk("torn"), "haul": lambda: bus_atomic_sunk("haul")},
-             "w_tunnel_lamp": {"lit": lambda: w_tunnel_lamp(True)}}
+             "w_tunnel_lamp": {"lit": lambda: w_tunnel_lamp(True), "on": lambda: w_tunnel_lamp(False, True)}}

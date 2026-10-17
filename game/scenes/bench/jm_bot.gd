@@ -19,6 +19,7 @@ var side9: SideS09                                   ## 영등포 사이드 퀘�
 var side10: SideS10                                 ## 영등포 사이드 퀘스트(1-11i SQ-S10)
 var side11: SideS11                                 ## 여의도 사이드 퀘스트(1-11j SQ-S11)
 var uq71: Uq71                                     ## 비표시 퀘스트 UQ-71(1-D1 대방 지하차도)
+var u02: U02Paths                                  ## U02 남태령 지하(1-D2)
 var st: StoryState
 var route := "job"
 var shots := ""
@@ -111,6 +112,9 @@ func _ready() -> void:
 	uq71 = Uq71.new()
 	add_child(uq71)
 	uq71.setup(host, true)
+	u02 = U02Paths.new()
+	add_child(u02)
+	u02.setup(host, true)
 	host.combat.player_down.connect(host.on_pc_down)                  # 쓰러짐 → 생포 판정(진짜 진행 prologue와 같은 연결)
 	host.combat.equip("W-002", st)
 	match route:
@@ -376,6 +380,26 @@ func _ready() -> void:
 				["until", "UQ71_CORE == 1", 20.0, "허리 물에서 정지 레버 — 봉인", "db_seal"],
 				["check", "UQ71_STAGE == 100 and UQ71_SOL == 1", "해법 ① 봉인 · 끝"], ["crouch", false],
 				["go", 50, 13], ["go", 51, 13], ["until", "map:W", 20.0, "남쪽 입구로 나옴", "db_out"]]
+		"nt":                                                           # 1-D2 U02 남태령 지하: 사당 D-05 철망 문(자물쇠) → 터널 · 할매 길값 → 05시대에 기다렸다 교대 틈에 밀통로 →
+			st.vars.set_v("PC_SKP_LOCKPICK", 60)                         #   맨홀로 검문소 남쪽 → 지하 초소 계단 → 안쪽에서 정확한 벌금으로 차단봉 → 터널 회로 사당 측
+			st.vars.set_v("PC_SKP_REPAIR", 60)
+			st.vars.set_v("PC_CAPS", 300)
+			st.vars.set_v("GAME_DAY", 8)
+			host.date_text = "2277. 10. 26.  05:30"
+			host.enter("D-05", "from_D-02")
+			plan = [["hp", 3000], ["wait", 1.0], ["go", 25, 13, "D-05"], ["want", ["철사로", "터널로 들어간다"]], ["use", 25, 14],
+				["until", "map:NT-03", 15.0, "철망 문 자물쇠 — 4호선 남쪽 터널", "nt_tunnel"], ["check", "U02_OPEN == 1", "철망 문 열림"],
+				["warp", "NT-03", "from_shaft"], ["calm"], ["wait", 1.0], ["want", ["길이 있다던데요", "길값을 낸다", "됐어요"]], ["talk", "N-UG-007"],
+				["until", "U02_PATH == 1", 10.0, "할매 길값 30캡", "nt_hal"],
+				["go", 54, 2, "NT-03"], ["want", ["교대까지 기다린다", "올라간다", "제자리에 덮고"]], ["use", 54, 1],
+				["until", "map:W", 20.0, "교대 틈 — 밀통로로 과천대로 맨홀", "nt_manhole"],
+				["check", "U02_USED == 1 and U02_TRACE == 0", "덮개를 덮고 나왔다(흔적 없음)"],
+				["settime", "2277. 10. 26.  10:00"], ["warp", "NT-01", "in"], ["wait", 1.0], ["shot", "nt_post"], ["want", ["낸다"]], ["use", 20, 12],
+				["until", "U02_PASSED >= 1", 15.0, "지하 초소 — 정확한 벌금 · 차단봉", "nt_boom"],
+				["check", "PC_CAPS == 270 - U02_FEE and U02_FEE == 20 + 30 * U02_FW", "부른 값 그대로(미등록 20 + 수배 할증)"],
+				["warp", "NT-03", "ajae"], ["calm"], ["go", 16, 2, "NT-03"], ["want", ["사당 측 차단기만"]], ["use", 16, 1],
+				["until", "U02_LIGHT == 1", 10.0, "조명 회로 — 사당 측", "nt_light"], ["go", 22, 6, "NT-03"], ["wait", 1.0], ["shot", "nt_lamps"],
+				["check", "AFF_JC_SA >= 5 and U02_PATH == 1 and U02_HAL == 0", "회로 사당 측 · 할매는 측실에"]]
 		"s11p":                                                         # 1-11j SQ-S11 낮 호위: 공영방송 앞에서 국회 쪽으로 걸으면 여의도 순찰이 '구울 통행 금지' → 환승센터 터 지하로 숨는다 → 계단 낭독
 			st.call_fn("give", ["M-305", 1])
 			st.vars.set_v("GAME_DAY", 4)

@@ -1,0 +1,287 @@
+{
+ "id": "NT_VENT",
+ "title": "천장 환기구",
+ "loc": "L-UG-05",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "QUIET": 4,
+  "LOUD": 7,
+  "OPEN": 10,
+  "UP": 12,
+  "WELD": 16,
+  "HWANG": 18,
+  "SNEAK": 20,
+  "SEEN": 24,
+  "SEENOK": 29
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "U02_VENT == 3",
+   "to": "WELD"
+  },
+  {
+   "op": "if",
+   "cond": "U02_VENT >= 1",
+   "to": "OPEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "천장 가까이 큰 환기구. 덕트가 위로 이어진다 — 지상 막사 쪽이다. 격자 나사 넷. 상자를 쌓으면 손이 닿는다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "나사를 하나씩 푼다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 35
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "QUIET",
+     "id": "NT_VENT:1:0"
+    },
+    {
+     "text": "격자를 잡아 뜯는다",
+     "tags": [
+      {
+       "k": "stat",
+       "name": "힘",
+       "min": 6
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "LOUD",
+     "id": "NT_VENT:1:1"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "NT_VENT:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "나사 넷이 차례로 풀린다. 격자가 한쪽 나사에 매달려 내려온다."
+  },
+  {
+   "op": "cmd",
+   "name": "u02",
+   "args": [
+    "vent",
+    "1"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "OPEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "쾅 — 격자가 뜯겨 나간다. 개찰구 쪽에서 \"뭐야?\" 소리. 한동안 아무도 오지 않는다."
+  },
+  {
+   "op": "cmd",
+   "name": "u02",
+   "args": [
+    "vent",
+    "2"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "OPEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "환기구가 열려 있다. 덕트 안은 먼지와 쥐똥 — 그리고 위쪽에서 무전 잡음."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "덕트로 올라간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "UP",
+     "id": "NT_VENT:2:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "NT_VENT:2:1"
+    }
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "(GAME_HOUR < 6 or GAME_HOUR >= 20) and known_dead(\"N-R01-047\") == 0",
+   "to": "HWANG"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "팔꿈치로 덕트를 기어오른다. 한참 뒤 — 발밑 철판 틈으로 막사 불빛. 아무도 없다."
+  },
+  {
+   "op": "cmd",
+   "name": "u02",
+   "args": [
+    "go",
+    "Q-01",
+    "from_vent"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "환기구 격자가 용접됐다. 용접 자국이 아직 무지갯빛이다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "덕트 끝 철판 틈으로 막사 불빛 — 그리고 의자 등받이. 황보서현 소위가 무전기 앞에 앉아 있다. 두 칸 옆이다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "정시 호출을 기다렸다가 올라간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SNEAK",
+     "id": "NT_VENT:3:0"
+    },
+    {
+     "text": "그냥 밀고 올라간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SEEN",
+     "id": "NT_VENT:3:1"
+    },
+    {
+     "text": "내려간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "NT_VENT:3:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "u02",
+   "args": [
+    "wait_hour"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "무전기가 운다. \"제7 검문대, 이상 유무.\" 황보서현이 수화기를 들고 등을 돌린다. 지금이다."
+  },
+  {
+   "op": "cmd",
+   "name": "u02",
+   "args": [
+    "go",
+    "Q-01",
+    "from_vent"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "철판을 밀어 올리자 — 황보서현과 눈이 마주친다."
+  },
+  {
+   "op": "if",
+   "cond": "AFF_BJ >= 20",
+   "to": "SEENOK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-047",
+   "emo": "분노",
+   "text": "바닥에서 올라오는 관리 후보는 처음입니다. …내려가십시오. 이 구멍은 오늘 용접합니다."
+  },
+  {
+   "op": "cmd",
+   "name": "u02",
+   "args": [
+    "vent",
+    "3"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-047",
+   "emo": "기본",
+   "text": "바닥에서 올라오는 관리 후보는 처음입니다. (한숨) 못 본 걸로 하겠습니다. 나사는 다시 조입니다."
+  },
+  {
+   "op": "cmd",
+   "name": "u02",
+   "args": [
+    "vent",
+    "0"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/U02.txt"
+}

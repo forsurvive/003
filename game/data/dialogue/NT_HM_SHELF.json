@@ -1,0 +1,36 @@
+{
+ "id": "NT_HM_SHELF",
+ "title": "할매 선반의 사진",
+ "loc": "L-UG-01",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빛바랜 사진 한 장. 젊은 할매가 돌잡이 상 앞에서 아이를 안고 웃는다. 아이 손에 장난감 총."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "뒷면 연필 글씨 — '태하 돌. 엄 씨네 막내. 2246.'"
+  },
+  {
+   "op": "do",
+   "fx": "U02_PHOTO = 1"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/U02.txt"
+}

@@ -1,0 +1,129 @@
+# 남태령역 대합실 = 사당 고개 검문소의 지하 초소(L-UG-05 · SD-09f L787 · 1-D 계획 §8 · 단계 1-D2). 40×22.
+# 개찰구 열(12줄) = 검문 선. 북쪽 = 바깥 쪽(지상 계단 → 검문소 남쪽 · 엄태하 책상 · 초소 사물함 · 2077 안내문 위 새 공문) ·
+# 남쪽 = 안쪽(승강장 계단 · 2077 대기 줄 난간 · 창고 칸 천장 환기구 → 검문소 막사 Q-01). 차단봉(앵커)은 지상과 같은 판정 — 통과하면 올렸다 내리며 건너편에 선다(@cmd u02 boom).
+# 엄태하(N-UG-006)는 06 · 18시 교대 10분 동안 지상에 보고하러 올라간다(U02_SHIFT). 붙들린 할매(UG-H02)는 책상 옆 의자에 하루.
+map NT-01 남태령역 대합실 — 지하 초소
+set sd
+dark cond="U02_LIGHT == 3"
+grid
+###################tt###################
+###################tt###################
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+##########ttttttttttttttttttttttttttttt#
+##########ttttttttttttttttttttttttttttt#
+##########ttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+###################tt###################
+###################tt###################
+end
+exit 19 0 W L-UG-05>from_top
+exit 20 0 W L-UG-05>from_top
+exit 19 21 NT-02 from_N
+exit 20 21 NT-02 from_N
+mark from_top 19 2 S
+mark from_S 20 19 N
+mark from_vent 4 17 E
+mark out 20 9 S
+mark in 20 13 N
+mark desk 25 6 S
+prop stairs_up 19 1
+text 19 1 "지상 계단. 위에서 햇빛과 확성기 소리 — 검문소 남쪽 마당이다." w=2
+# ---------------------------------------------------------------- 북쪽 벽(바깥 쪽) — 2077 안내문 위 새 공문 · 확성기
+prop w_notice_ntr 8 0
+text 8 1 "개찰구 공문. 새 계엄 공문 '통행 금지' 밑으로 2077년 안내판 글씨가 비친다 — '과천 방면 통행 · 등록증 확인'." w=2 scene=NT_NOTICE
+prop w_speaker 30 0
+prop w_gov_notice 33 0
+text 33 1 "계엄 포고문 제7호. 지상 게시판과 같은 서체, 같은 날짜." 
+# ---------------------------------------------------------------- 초소장 책상 · 사물함(바깥 쪽)
+prop desk_metal 24 4
+text 24 4 "초소장 책상. 장부가 펼쳐져 있다 — '통과 · 회차 · 벌금' 세 칸. 벌금 칸 숫자가 자로 잰 듯 반듯하다." w=2 scene=NT_DESK
+prop folding_chair 22 6
+prop seized_locker 34 3
+box 34 3 locker owner=N-UG-006 lock=50 name="초소 사물함"
+text 35 3 "초소 사물함. 이름표 '엄태하 하사'. 자물쇠가 새것이다." 
+prop crate_metal 36 7
+box 36 7 armory owner=N-UG-006 lock=40 name="초소 탄약 상자"
+prop work_lamp 21 3
+prop work_lamp 31 8
+npc N-UG-006 25 6 S cond="U02_SHIFT == 0" bark="등록증. 없으면 이쪽 줄로."
+npc N-UG-007 22 7 E cond="U02_HAL == 1" bark="애기야, 할미 다리 저려. 의자 좀 바꿔 줘."
+npc CR-402 30 5 W sheet=en_cr402_loco route=a:30,5,8;b:12,5,8 bark="벌금 액수는 하사님이 정하십니다. 저는 세기만 합니다."
+# ---------------------------------------------------------------- 개찰구 열 = 검문 선(12줄) · 차단봉(앵커)
+prop sd_gate 2 12
+prop sd_gate 3 12
+prop sd_gate 4 12
+prop sd_gate 5 12
+prop sd_gate 6 12
+prop sd_gate 7 12
+prop sd_gate 8 12
+prop sd_gate 9 12
+prop sd_gate 10 12
+prop sd_gate 11 12
+prop sd_gate 12 12
+prop sd_gate 13 12
+prop sd_gate 14 12
+prop sd_gate 15 12
+prop sd_gate 16 12
+prop sd_gate 17 12
+prop sd_gate 18 12
+prop bj_boom 19 12
+prop sd_gate 22 12
+prop sd_gate 23 12
+prop sd_gate 24 12
+prop sd_gate 25 12
+prop sd_gate 26 12
+prop sd_gate 27 12
+prop sd_gate 28 12
+prop sd_gate 29 12
+prop sd_gate 30 12
+prop sd_gate 31 12
+prop sd_gate 32 12
+prop sd_gate 33 12
+prop sd_gate 34 12
+prop sd_gate 35 12
+prop sd_gate 36 12
+prop sd_gate 37 12
+prop sd_fence 1 12
+prop sd_fence 38 12
+text 19 12 "계엄 차단봉. 개찰구 가운데 날개를 뜯고 박았다. 적백 팔 — '정지 — 등록증 제시'." w=3 scene=NT_BOOM
+text 6 12 "판독기 개찰구. 날개마다 철사로 묶었다. 넘어가면 쏜다는 뜻이다." w=3
+npc CR-401 22 11 S sheet=en_cr401_loco cond="AFF_BJ > -60" bark="차단봉은 하사님 허락으로만 올라갑니다."
+npc CR-401 22 11 S sheet=en_cr401_loco cond="AFF_BJ <= -60" bark="물러서. 적성 분자는 이 선 안으로 못 들어온다."
+# ---------------------------------------------------------------- 안쪽(승강장 쪽) — 2077 대기 줄 난간 · 창고 칸 환기구
+prop sd_line_h 14 14
+prop sd_line_h 15 14
+prop sd_line_h 16 14
+prop sd_line_h 17 14
+prop sd_line_h 22 14
+prop sd_line_h 23 14
+prop sd_line_h 24 14
+prop sd_line_h 25 14
+prop remains 15 15
+prop remains 24 15
+prop bone_pile 26 16
+text 15 15 "개찰구 앞 해골. 웅크린 손에 번호표 — '0398'. 승강장 줄은 0417까지 있었다." scene=NT_QUEUE
+prop wait_chairs 30 16
+prop wait_chairs 33 16
+text 30 16 "대합실 의자. 2077년 등받이에 '등록 확인 대기석' 스티커. 그 위에 올해 담배빵 자국." w=2
+prop w_vent_nt 4 14 cond="U02_VENT == 0"
+prop w_vent_nt 4 14 state=open cond="U02_VENT >= 1"
+text 4 15 "천장 가까이 큰 환기구. 덕트가 위 — 검문소 막사 쪽으로 이어진다. 격자 나사 넷." scene=NT_VENT
+prop crate 3 17
+prop crate 5 18
+text 6 16 "창고 칸. 2077년 역무 물품 상자 · 녹슨 사다리 한 짝." w=2
+box 5 18 crate name="역무 창고 상자"
+prop rathole 8 19
+text 19 19 "승강장 계단. 내려가면 남태령역 승강장." w=2

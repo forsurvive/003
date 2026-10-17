@@ -60,6 +60,15 @@ DOORS = [{"lid": "L-R02-11", "near": (720, 1147), "to": "J-01", "mark": "from_W"
           "hint": "경사로 끝이 검은 물에 잠겼다. 안쪽 어딘가에서 희미한 초록빛이 일렁인다.",
           "hints": [["UQ71_CORE >= 1 and UQ71_CORE <= 3", "경사로 끝이 검은 물에 잠겼다. 물속이 어둡다 — 초록빛은 이제 없다."],
                     ["UQ71_CORE >= 4", "경사로 끝 물 위에 기름막과 길게 끌린 자국. 초록빛은 없다."]]},
+         # 1-D2 U02 남태령 지하(DG-NT): 지하 초소 계단은 검문소 남쪽(검문을 지난 쪽) · 밀통로 맨홀은 과천대로 남쪽(초소 사각) — 맨홀은 막히면 닫힌다(open)
+         # 같은 장소의 문이 둘이면 뒤 문이 장소 도착 칸이 된다 — 계단을 뒤에 둔다
+         {"lid": "L-UG-05", "near": (1111, 1492), "to": "NT-03", "mark": "from_shaft", "name": "과천대로 배수 맨홀", "prop": "manhole",
+          "hint": "녹슨 맨홀 뚜껑. 가장자리 흙이 최근에 긁혔다 — 누가 드나든다.", "open": "U02_PATH <= 1",
+          "hints": [["U02_PATH == 0", "녹슨 맨홀 뚜껑. 가장자리에 할머니 손 글씨 같은 분필 점 셋."],
+                    ["U02_PATH == 2", "맨홀 뚜껑 밑이 돌로 꽉 찼다. 아래 갱이 무너졌다."],
+                    ["U02_PATH == 3", "맨홀 뚜껑에 노란 테이프 — '계엄 봉인'. 용접 자국이 아직 새것이다."]]},
+         {"lid": "L-UG-05", "near": (1101, 1481), "to": "NT-01", "mark": "from_top", "name": "남태령역 — 지하 초소 계단", "prop": "subway_stairs",
+          "hint": "계단 아래에서 무전 잡음과 군화 소리. 입구 기둥에 붉은 페인트 '계엄 초소 · 무장 해제 후 접근'."},
          {"lid": "L-UG-02", "near": (943, 1360), "to": "U-03", "mark": "from_W", "name": "서울대입구역 — 감시조 사다리", "prop": "subway_stairs",   # 1-11e SQ-S05 봉천 북서
           "hint": "무너진 역 입구에 봉천 감시조가 사다리를 걸어 두었다. 아래로 2호선 서울대입구역."}]
 # 손 실내가 붙는 건물의 양식(SD-21 §8): 도로망이 바뀌어도 그 자리에 건물이 선다
@@ -1299,6 +1308,8 @@ def place_geo(R):
                       "hint": spec.get("hint", "계단을 내려가면 지하다.")})
         if spec.get("hints"):                                                # 조건부 문구(1-D: 안의 상태를 밖에서 — 첫 참인 줄, 없으면 hint)
             doors[-1]["hints"] = spec["hints"]
+        if spec.get("open"):                                                 # 1-D2 열림 식: 거짓이면 출구 칸 없이 문구만(막힌 맨홀)
+            doors[-1]["open"] = spec["open"]
         geo.setdefault(spec["lid"], {"bank": "S", "arrive": None})["arrive"] = [xx, yy + 1]
     import gen_interiors                                                     # 들어가 보는 건물(1-5e): 문 앞 칸이 걸어서 닿는 1층 문 일부 → 실내 'G-x-y'
     enc = json.load(open(os.path.join(OUT, "encounters.json"), encoding="utf-8"))

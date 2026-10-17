@@ -1,0 +1,234 @@
+# 4호선 남쪽 터널(사당 → 남태령, SD-09f U02 · §3.4 ST-5 · 1-D 계획 §8 · 단계 1-D2). 64×13 · 어둠(회로를 끝까지 살리면 밝다 — UG-H01).
+# 서쪽 끝 = 사당 D-05 버섯 측실 철망 문(안쪽에서는 빗장을 열고 나간다) · 동쪽 끝 = 남태령역 승강장 NT-02. 레일 두 줄(6 · 9줄) · 북쪽 측실 셋:
+#   ① 터널지기 사당 아재 초소(비상 전화함) ② 정비 측실(조명 회로 함 — UG-H01) ③ 대피 측실 = 남태령 할매의 집(뒤 벽 무너진 환기 갱 = 밀통로, UG-H02).
+# 2077 세 고리(1-D 계획 §6.2c): 멈춘 막차(차장 일지) → 할매 측실 벽 낙서 → 승강장 대기 줄 · 개찰구 안내문(NT-02 · NT-01).
+# 쥐 떼(던전 DG-NT): 왕쥐 CR-097 + 변이 시궁쥐 — 반로아가 안내를 미루는 까닭. 정리하면 30일 뒤부터 다시 든다(재채움).
+# 재미 검수(계획): 12칸마다 박자 — 키 재기 낙서 · 2077 대피 방송 스피커 · 발목 물 · 멈춘 전동차 · 무너진 침목 · 할매 짐수레(쪽지).
+map NT-03 4호선 남쪽 터널
+set cv
+dark cond="U02_LIGHT != 2"
+grid
+################################################################
+################################################################
+##uuuuuu######uuuuuu##########################uuuuuuuuuu########
+##uuuuuu######uuuuuu##########################uuuuuuuuuu########
+##uuuuuu######uuuuuu##########################uuuuuuuuuu########
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuufffuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuufffffffffuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuufffffffffuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+################################################################
+################################################################
+end
+exit 0 7 D-05 from_NT03
+exit 63 7 NT-02 from_W
+exit 0 8 D-05 from_NT03
+exit 63 8 NT-02 from_W
+mark from_W 2 7 E
+mark from_E 61 7 W
+mark from_shaft 54 3 S
+mark roa 57 8 W
+mark hal 50 3 S
+mark ajae 5 4 S
+mark refill1 26 7 E
+mark refill2 37 9 W
+mark refill3 44 7 W
+prop rail_h 1 6
+prop rail_h 1 9
+prop rail_h 2 6
+prop rail_h 2 9
+prop rail_h 3 6
+prop rail_h 3 9
+prop rail_h 4 6
+prop rail_h2 4 9
+prop rail_h2 5 6
+prop rail_h 5 9
+prop rail_h 6 6
+prop rail_h 6 9
+prop rail_h 7 6
+prop rail_h 7 9
+prop rail_h 8 6
+prop rail_h2 8 9
+prop rail_h 9 6
+prop rail_h 9 9
+prop rail_h2 10 6
+prop rail_h 10 9
+prop rail_h 11 6
+prop rail_h 11 9
+prop rail_h 12 6
+prop rail_h2 12 9
+prop rail_h 13 6
+prop rail_h 13 9
+prop rail_h 14 6
+prop rail_h 14 9
+prop rail_h2 15 6
+prop rail_h 15 9
+prop rail_h 16 6
+prop rail_h2 16 9
+prop rail_h 17 6
+prop rail_h 17 9
+prop rail_h 18 6
+prop rail_h 18 9
+prop rail_h 19 6
+prop rail_h2 20 6
+prop rail_h 21 6
+prop rail_h 22 6
+prop rail_h 23 6
+prop rail_h 24 6
+prop rail_h2 25 6
+prop rail_h 26 6
+prop rail_h 27 6
+prop rail_h 28 6
+prop rail_h2 28 9
+prop rail_h 29 6
+prop rail_h 29 9
+prop rail_h 30 9
+prop rail_h 31 9
+prop rail_h2 32 9
+prop rail_h 33 9
+prop rail_h 34 9
+prop rail_h 35 9
+prop rail_h2 36 9
+prop rail_h 37 9
+prop rail_h 38 6
+prop rail_h 38 9
+prop rail_h 39 6
+prop rail_h 39 9
+prop rail_h2 40 6
+prop rail_h 41 6
+prop rail_h 42 6
+prop rail_h 43 6
+prop rail_h 43 9
+prop rail_h 44 6
+prop rail_h2 44 9
+prop rail_h2 45 6
+prop rail_h 45 9
+prop rail_h 46 6
+prop rail_h 46 9
+prop rail_h 47 6
+prop rail_h 47 9
+prop rail_h 48 6
+prop rail_h2 48 9
+prop rail_h 49 6
+prop rail_h 49 9
+prop rail_h2 50 6
+prop rail_h 50 9
+prop rail_h 51 6
+prop rail_h 51 9
+prop rail_h 52 6
+prop rail_h2 52 9
+prop rail_h 53 6
+prop rail_h 53 9
+prop rail_h 54 6
+prop rail_h 54 9
+prop rail_h2 55 6
+prop rail_h 55 9
+prop rail_h 56 6
+prop rail_h2 56 9
+prop rail_h 57 6
+prop rail_h 57 9
+prop rail_h 58 6
+prop rail_h 58 9
+prop rail_h 59 6
+prop rail_h 59 9
+prop rail_h2 60 6
+prop rail_h2 60 9
+prop rail_h 61 6
+prop rail_h 61 9
+prop rail_h 62 6
+prop rail_h 62 9
+# ---------------------------------------------------------------- ① 터널지기 초소(사당 아재 N-UG-001 — UG-H01을 맡긴다)
+prop w_phone_box 4 0
+text 4 1 "비상 전화함. '관제실 직통.' 수화기를 들면 — 아무 소리도 없다. 아니, 아주 멀리서 쉬익 하는 바람 소리." scene=NT_PHONE
+prop cot 2 2
+prop oil_lamp 6 2
+prop work_lamp 3 4
+prop crate 2 4
+box 2 4 crate owner=N-UG-001 name="터널지기 상자"
+text 2 2 "야전 침대. 담요 밑에 손전등 건전지 껍데기가 수북하다." h=2
+npc N-UG-001 5 4 S bark="터널이 우는 날은 들어가지 마. 물 들어온다."
+prop w_chalk_height 9 3
+text 9 4 "키 재기 낙서. 분필 눈금 다섯 — '로아 9 · 10 · 11 · 12'. 맨 위 눈금엔 물음표만." scene=NT_HEIGHT
+# ---------------------------------------------------------------- 2077 대피 방송 스피커
+prop w_speaker 12 3
+text 12 4 "벽 스피커. 2077년 대피 방송이 녹음돼 있던 곳. 망이 찢겨 안에 쥐 둥지가 보인다."
+# ---------------------------------------------------------------- ② 정비 측실(조명 회로 함 — UG-H01)
+prop w_circuit_box 16 0 cond="U02_LIGHT == 0"
+prop w_circuit_box 16 0 state=sadang cond="U02_LIGHT == 1"
+prop w_circuit_box 16 0 state=full cond="U02_LIGHT == 2"
+prop w_circuit_box 16 0 state=cut cond="U02_LIGHT == 3"
+text 16 1 "조명 회로 함. 차단기 둘 — '사당 측' · '남태령 측'. 문이 반쯤 열려 있다." scene=NT_CIRCUIT
+prop tool_chest 18 2
+box 18 2 toolbox name="정비 공구함"
+prop rathole 14 4
+text 15 2 "정비 측실. 바닥에 2077년 작업 일지가 젖어 붙었다. 마지막 줄 — '23:29 정전. 비상등 30%. 복구 인원 없음.'" w=2
+# ---------------------------------------------------------------- 터널 등(회로 상태 — 사당 쪽만 · 끝까지)
+prop w_tunnel_lamp 8 3 cond="U02_LIGHT == 0 or U02_LIGHT == 3"
+prop w_tunnel_lamp 8 3 state=on cond="U02_LIGHT == 1 or U02_LIGHT == 2"
+prop w_tunnel_lamp 22 3 cond="U02_LIGHT == 0 or U02_LIGHT == 3"
+prop w_tunnel_lamp 22 3 state=on cond="U02_LIGHT == 1 or U02_LIGHT == 2"
+prop w_tunnel_lamp 28 3 cond="U02_LIGHT == 0 or U02_LIGHT == 3"
+prop w_tunnel_lamp 28 3 state=on cond="U02_LIGHT == 1 or U02_LIGHT == 2"
+prop w_tunnel_lamp 40 3 cond="U02_LIGHT != 2"
+prop w_tunnel_lamp 40 3 state=on cond="U02_LIGHT == 2"
+prop w_tunnel_lamp 44 3 cond="U02_LIGHT != 2"
+prop w_tunnel_lamp 44 3 state=on cond="U02_LIGHT == 2"
+prop w_tunnel_lamp 58 3 cond="U02_LIGHT != 2"
+prop w_tunnel_lamp 58 3 state=on cond="U02_LIGHT == 2"
+text 22 4 "터널 등. 철망 덮개 속 형광등." cond="U02_LIGHT == 0 or U02_LIGHT == 3"
+text 22 4 "터널 등이 켜졌다. 레일이 물비늘처럼 반짝인다 — 사당 쪽으로." cond="U02_LIGHT == 1 or U02_LIGHT == 2"
+# ---------------------------------------------------------------- 반로아 분필 화살표(안내를 받은 뒤 — 쥐 둥지 · 물 고인 데를 피해 가는 길)
+prop w_chalk_roa 24 3 cond="U02_GUIDE >= 1"
+text 24 4 "분필 화살표. '→ 로아.' 옆에 쥐 그림에 가위표 — 둥지 쪽은 가지 말라는 뜻이다." cond="U02_GUIDE >= 1"
+prop w_chalk_roa 41 3 cond="U02_GUIDE >= 1"
+text 41 4 "분필 화살표. '→ 로아.' 침목 무너진 데는 위쪽 레일 곁으로." cond="U02_GUIDE >= 1"
+# ---------------------------------------------------------------- 발목 물(배수 막힘)
+text 23 9 "발목까지 고인 물. 배수구가 쓰레기로 막혔다. 바닥 어딘가에서 찍찍 소리." w=3
+# ---------------------------------------------------------------- 멈춘 막차(2077 고리 ①)
+prop train_car4 30 5
+text 30 7 "멈춘 전동차. 행선 표시기에 붉은 글씨 '막차'가 굳었다. 문 하나가 반쯤 열려 있다." w=8 scene=NT_CAR
+prop luggage 28 7
+prop luggage2 38 8
+prop ticket 34 8
+prop backpack 36 8
+box 36 8 bag name="좌석 밑에서 끌려 나온 가방 — 2077"
+# ---------------------------------------------------------------- 무너진 침목(아래 레일 끊김)
+prop rubble 40 9
+prop rubble2 41 10
+prop rubble 42 9
+prop rubble2 40 10
+text 41 8 "무너진 천장 조각이 아래 레일을 덮었다. 위쪽 레일 곁으로만 지나간다." w=2
+# ---------------------------------------------------------------- ③ 대피 측실 = 남태령 할매의 집(밀통로 입구 — UG-H02)
+prop w_hm_shaft 53 0 cond="U02_PATH <= 1"
+prop w_hm_shaft 53 0 state=sealed cond="U02_PATH == 3"
+prop w_hm_shaft 53 0 state=collapsed cond="U02_PATH == 2"
+text 53 1 "측실 뒤 벽이 무너져 비스듬한 갱이 났다. 녹슨 쇠 발판. 위에서 바람이 샌다." w=2 scene=NT_SHAFT
+prop cot 46 2
+prop hm_shelf 47 2
+prop hm_stove 49 2
+prop oil_lamp 51 2
+prop folding_chair 51 3
+text 47 2 "사과 상자 선반. 빛바랜 사진 한 장 — 두 사람. 사탕 병 하나." scene=NT_HM_SHELF
+text 49 3 "깡통 화로. 주전자에서 김이 오른다. 컵이 둘이다." cond="U02_HAL == 0 and not known_dead(\"N-UG-007\")"
+text 49 3 "깡통 화로. 재가 식었다. 컵 둘이 엎어져 있다." cond="U02_HAL != 0 or known_dead(\"N-UG-007\")"
+text 48 1 "측실 벽에 2077년 낙서가 겹겹이 — '등록 안 된 사람은 여기서 기다리래' · '과천 가는 줄 아직' · '엄마 먼저 감'." w=4 scene=NT_HM_WALL
+npc N-UG-007 50 3 S cond="U02_HAL == 0" bark="저 애기가 눈 감을 때 지나가."
+prop backpack 55 2
+box 55 2 bag owner=N-UG-007 name="할매 보따리"
+prop hm_cart 57 5
+text 57 5 "할매 짐수레. 보따리 둘, 과천 쪽 군용 상자 하나. 끈에 쪽지가 끼워져 있다." w=2 scene=NT_CART
+# ---------------------------------------------------------------- 쥐 떼(던전 DG-NT 우두머리) · 밤 들개(조명이 꺼진 동안)
+enemy CR-097 34 9 boss=1
+enemy CR-095 24 8
+enemy CR-095 26 10
+enemy CR-095 37 10
+enemy CR-095 44 8
+prop rathole 33 10
+prop rathole 45 9
+enemy CR-104 11 8 cond="(GAME_HOUR >= 20 or GAME_HOUR < 6) and (U02_LIGHT == 0 or U02_LIGHT == 3)"
+enemy CR-104 15 9 cond="(GAME_HOUR >= 20 or GAME_HOUR < 6) and (U02_LIGHT == 0 or U02_LIGHT == 3)"
+# ---------------------------------------------------------------- 초소가 터널을 본다(회로 끝까지) · 회로를 끊은 다음 날 순찰
+npc CR-401 60 7 W sheet=en_cr401_loco cond="U02_LIGHT == 2 and not known_dead(\"N-UG-006\")" bark="불 들어오니까 터널 끝까지 다 보이네. 수고들 하셨어."
+npc CR-401 52 8 W sheet=en_cr401_loco route=a:58,8,6;b:39,7,6 cond="U02_LIGHT == 3 and GAME_DAY > U02_LIGHT_DAY and GAME_DAY <= U02_LIGHT_DAY + 3" bark="초소 회로 누가 끊었는지 찾는 중입니다. 협조 바랍니다."

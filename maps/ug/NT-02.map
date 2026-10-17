@@ -1,0 +1,189 @@
+# 남태령역 승강장(L-UG-05 · SD-09f §3.4 ST-1 '승강장' · 1-D 계획 §8 · 단계 1-D2). 40×17 · 초소 작업등이 켜져 있다(초소 회로를 끊으면 어둡다).
+# 북쪽 = 선로(사당 쪽 터널 NT-03에서 이어지고 동쪽 끝은 '선바위 방면' 무너짐) · 가운데 = 스크린도어 벽(4호선 하늘색 띠, 깨진 틈 둘로 오르내린다) ·
+# 남쪽 = 승강장. 역명판 '남태령' · 11시 29분 시계 · LR-09 광고판 · 노란 선 안쪽 대기 줄 해골(2077 고리 ③ — 등록 대기 번호표) · 동쪽 끝 대합실 계단(계단참 보초, 교대 때 비움).
+map NT-02 남태령역 승강장
+set sd
+dark cond="U02_LIGHT == 3"
+grid
+########################################
+########################################
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu####
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu####
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu####
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu####
+###########u#################u##########
+###########u#################u##########
+###########u#################u##########
+#tttttttttttttttttttttttttttttttttttttt#
+#ttttttttttttttttttttttttttttttttttttttt
+#ttttttttttttttttttttttttttttttttttttttt
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+########################################
+########################################
+end
+exit 0 3 NT-03 from_E
+exit 0 4 NT-03 from_E
+exit 39 10 NT-01 from_S
+exit 39 11 NT-01 from_S
+mark from_W 2 3 E
+mark from_N 37 10 W
+prop rail_h 1 3
+prop rail_h 1 5
+prop rail_h 2 3
+prop rail_h 2 5
+prop rail_h 3 3
+prop rail_h2 3 5
+prop rail_h2 4 3
+prop rail_h 4 5
+prop rail_h 5 3
+prop rail_h 5 5
+prop rail_h 6 3
+prop rail_h2 6 5
+prop rail_h 7 3
+prop rail_h 7 5
+prop rail_h2 8 3
+prop rail_h 8 5
+prop rail_h 9 3
+prop rail_h2 9 5
+prop rail_h 10 3
+prop rail_h 10 5
+prop rail_h 11 3
+prop rail_h 11 5
+prop rail_h2 12 3
+prop rail_h2 12 5
+prop rail_h 13 3
+prop rail_h 13 5
+prop rail_h 14 3
+prop rail_h 14 5
+prop rail_h 15 3
+prop rail_h2 15 5
+prop rail_h2 16 3
+prop rail_h 16 5
+prop rail_h 17 3
+prop rail_h 17 5
+prop rail_h 18 3
+prop rail_h2 18 5
+prop rail_h 19 3
+prop rail_h 19 5
+prop rail_h2 20 3
+prop rail_h 20 5
+prop rail_h 21 3
+prop rail_h2 21 5
+prop rail_h 22 3
+prop rail_h 22 5
+prop rail_h 23 3
+prop rail_h 23 5
+prop rail_h2 24 3
+prop rail_h2 24 5
+prop rail_h 25 3
+prop rail_h 25 5
+prop rail_h 26 3
+prop rail_h 26 5
+prop rail_h 27 3
+prop rail_h2 27 5
+prop rail_h2 28 3
+prop rail_h 28 5
+prop rail_h 29 3
+prop rail_h 29 5
+prop rail_h 30 3
+prop rail_h2 30 5
+prop rail_h 31 3
+prop rail_h 31 5
+prop rail_h2 32 3
+prop rail_h 32 5
+prop rail_h 33 3
+prop rail_h2 33 5
+prop rail_h 34 3
+prop rail_h 34 5
+prop sd_line_h 2 9
+prop sd_line_h 3 9
+prop sd_line_h 4 9
+prop sd_line_h 5 9
+prop sd_line_h 6 9
+prop sd_line_h 7 9
+prop sd_line_h 8 9
+prop sd_line_h 9 9
+prop sd_line_h 10 9
+prop sd_line_h 12 9
+prop sd_line_h 13 9
+prop sd_line_h 14 9
+prop sd_line_h 15 9
+prop sd_line_h 16 9
+prop sd_line_h 17 9
+prop sd_line_h 18 9
+prop sd_line_h 19 9
+prop sd_line_h 20 9
+prop sd_line_h 21 9
+prop sd_line_h 22 9
+prop sd_line_h 23 9
+prop sd_line_h 24 9
+prop sd_line_h 25 9
+prop sd_line_h 26 9
+prop sd_line_h 27 9
+prop sd_line_h 28 9
+prop sd_line_h 30 9
+prop sd_line_h 31 9
+prop sd_line_h 32 9
+prop sd_line_h 33 9
+prop sd_line_h 34 9
+prop sd_line_h 35 9
+prop sd_line_h 36 9
+prop sd_line_h 37 9
+# ---------------------------------------------------------------- 선로 쪽 벽(북) — 2077 광고 · 터널 등
+prop w_sd_ad 6 0
+text 6 1 "광고판 — LR-09. '서울 볼트 분양 — 지금 등록하면 가족 모두 자리 보장.' 그 밑에 누가 긁었다. '등록이 문제였다.'" w=2
+prop w_tunnel_lamp 16 0
+prop w_tunnel_lamp 26 0
+prop rubble 35 2
+prop rubble2 35 3
+prop rubble 35 4
+prop rubble2 35 5
+text 34 2 "선로 동쪽 끝이 무너졌다. 콘크리트 사이 녹슨 표지 — '선바위 · 과천 방면'." h=4
+# ---------------------------------------------------------------- 스크린도어 벽(가운데) · 역명판 · 시계
+prop w_screen_door4 1 7
+prop w_screen_door4 3 7
+prop w_screen_door4 5 7
+prop w_screen_door4 7 7
+prop w_screen_door4b 9 7
+text 11 6 "스크린도어 한 짝이 통째로 빠졌다. 선로와 승강장을 잇는 틈." h=3
+prop w_screen_door4 12 7
+prop w_name_ntr 14 7
+prop w_sd_clock 17 7
+prop w_screen_door4 18 7
+prop w_screen_door4 20 7
+prop w_screen_door4 22 7
+prop w_screen_door4 24 7
+prop w_screen_door4b 26 7
+text 29 6 "스크린도어 유리가 깨져 빠졌다. 사람이 지나다니는 틈이다." h=3
+prop w_screen_door4 30 7
+prop w_screen_door4 32 7
+prop w_screen_door4 34 7
+prop w_screen_door4 36 7
+text 15 8 "역명판. '남태령.' 앞 역 사당, 다음 역 선바위. 하늘색 띠." w=2
+text 17 8 "승강장 시계. 11시 29분에 멈췄다."
+text 3 8 "스크린도어. 유리에 아이 손바닥 자국 둘. 200년 동안 아무도 닦지 않았다." w=2
+# ---------------------------------------------------------------- 대기 구역 노란 선 안쪽(2077 고리 ③ — 등록 대기 줄)
+prop remains 4 10
+prop remains 5 10
+prop bone_pile 6 11
+prop remains 13 10
+prop remains 14 10
+prop remains 15 11
+prop remains 21 10
+prop bone_pile 22 10
+prop remains 31 10
+text 4 10 "노란 선 안쪽에 앉은 해골들. 줄을 맞췄다. 모두 같은 쪽 — 동쪽 계단을 본다." w=2 scene=NT_QUEUE
+text 13 10 "해골 손에 누런 종이표. '과천 방면 통행 등록 확인 — 대기 번호 0417.'" w=2 scene=NT_QUEUE
+prop pf_bench 3 13
+prop pf_bench 24 13
+text 24 13 "승강장 벤치. 끝자리에 우산이 기대 있다. 손잡이에 이름표 — '정○○, 과천.'" w=2
+prop crate 33 13
+box 33 13 bag name="유실물 바구니"
+prop w_speaker 28 7
+text 28 8 "승강장 스피커. 망 사이로 쥐 수염이 보였다 사라진다."
+# ---------------------------------------------------------------- 동쪽 끝 계단참(초소 보초 — 06 · 18시 교대 10분 동안 비움)
+text 38 9 "대합실 계단 쪽에서 무전 잡음과 군화 소리. 붉은 페인트 — '이 위 계엄 초소 · 무장 해제 후 접근'."
+npc CR-401 37 12 W sheet=en_cr401_loco cond="U02_SHIFT == 0 and AFF_BJ > -60" bark="여기서부터 초소입니다. 볼일 없으면 회차하십시오."
+npc CR-401 37 12 W sheet=en_cr401_loco cond="U02_SHIFT == 0 and AFF_BJ <= -60" bark="적성 분자. 한 걸음만 더 오면 쏩니다."

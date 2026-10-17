@@ -7,17 +7,20 @@
  "labels": {
   "START": 0,
   "TIER": 5,
-  "S6LINE": 9,
-  "S6MED": 12,
-  "HOSTILE": 16,
-  "COLD": 18,
-  "WARM": 21,
-  "ISSUE": 25,
-  "LOST": 29,
-  "CARD": 31,
-  "SHOP": 32,
-  "SHOP2": 35,
-  "GRADE": 37
+  "TIER2": 6,
+  "HALQ": 10,
+  "HALOK": 13,
+  "S6LINE": 17,
+  "S6MED": 20,
+  "HOSTILE": 24,
+  "COLD": 26,
+  "WARM": 29,
+  "ISSUE": 33,
+  "LOST": 37,
+  "CARD": 39,
+  "SHOP": 40,
+  "SHOP2": 43,
+  "GRADE": 45
  },
  "ops": [
   {
@@ -49,6 +52,11 @@
   },
   {
    "op": "if",
+   "cond": "U02_HAL == 2 and known_dead(\"N-UG-007\") == 0",
+   "to": "HALQ"
+  },
+  {
+   "op": "if",
    "cond": "SQ_S06_PERSUADE == 1 and SQ_S06_JIN == 1 and SQ_S06_NEAR == 1 and known_dead(\"N-R01-047\") == 1",
    "to": "S6MED"
   },
@@ -65,6 +73,76 @@
   {
    "op": "goto",
    "to": "WARM"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-048",
+   "emo": "기본",
+   "text": "남태령 지하에서 넘어온 할머니요? 밀통행 방조. 판독 불능이라 재교육 대상입니다. 사흘 뒤 청계산 호송."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-048",
+   "emo": "슬픔",
+   "text": "…저 나이에 번호표를 쥐여 드리는 건 저도 처음이에요."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "제가 보증하겠습니다 — 등록자 보증으로",
+     "tags": [],
+     "cond": "AFF_BJ >= 20",
+     "fx": "",
+     "to": "HALOK",
+     "id": "SG_KWON:1:0"
+    },
+    {
+     "text": "보증금을 내겠습니다",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "HALOK",
+     "id": "SG_KWON:1:1"
+    },
+    {
+     "text": "그렇군요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TIER2",
+     "id": "SG_KWON:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-048",
+   "emo": "기본",
+   "text": "보증인 기록 — 관리 후보 \\V[P_FULL]. 임시 4등급으로 적습니다. 할머니, 가셔도 돼요."
+  },
+  {
+   "op": "line",
+   "who": "N-UG-007",
+   "emo": "미소",
+   "text": "번호표는 기념으로 가져갈게. 애기 보여 줘야지."
+  },
+  {
+   "op": "cmd",
+   "name": "u02",
+   "args": [
+    "sol",
+    "5"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
   },
   {
    "op": "line",
@@ -135,7 +213,7 @@
      "cond": "",
      "fx": "",
      "to": "GRADE",
-     "id": "SG_KWON:1:0"
+     "id": "SG_KWON:2:0"
     },
     {
      "text": "됐습니다",
@@ -143,7 +221,7 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "SG_KWON:1:1"
+     "id": "SG_KWON:2:1"
     }
    ]
   },
@@ -172,7 +250,7 @@
      "cond": "",
      "fx": "",
      "to": "ISSUE",
-     "id": "SG_KWON:2:0"
+     "id": "SG_KWON:3:0"
     },
     {
      "text": "충성 등급이 뭐죠?",
@@ -180,7 +258,7 @@
      "cond": "",
      "fx": "",
      "to": "GRADE",
-     "id": "SG_KWON:2:1"
+     "id": "SG_KWON:3:1"
     },
     {
      "text": "됐습니다",
@@ -188,7 +266,7 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "SG_KWON:2:2"
+     "id": "SG_KWON:3:2"
     }
    ]
   },
@@ -231,7 +309,7 @@
      "cond": "",
      "fx": "",
      "to": "SHOP",
-     "id": "SG_KWON:3:0"
+     "id": "SG_KWON:4:0"
     },
     {
      "text": "충성 등급이 뭐죠?",
@@ -239,7 +317,7 @@
      "cond": "",
      "fx": "",
      "to": "GRADE",
-     "id": "SG_KWON:3:1"
+     "id": "SG_KWON:4:1"
     },
     {
      "text": "됐습니다",
@@ -247,7 +325,7 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "SG_KWON:3:2"
+     "id": "SG_KWON:4:2"
     }
    ]
   },

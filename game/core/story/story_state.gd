@@ -120,7 +120,7 @@ func _init() -> void:
 	for k in ["HOME_BC", "HOME_BC_OK", "WELL_RESTED", "HOME_BC_NOTE", "BAEKGU_NAP", "INFO_RUMOR_R01", "INFO_RUMOR_R02", "CARAVAN_V54", "MEDIC_AT", "TR_YEON_MET", "TR_SO_MET", "TR_EOM_MET"]:   # 정보상 장소 소문 산 수(1-8d)
 		vars.declare(k, "int", 0)
 	# 사당 환승촌(1-8f): 인물 첫 만남 · SA_MAKCHA_HEARD 서쪽 터널 '막차 손님' 들음(SQ-S05 '이미 앎') · SA_MAT_UNTIL 승강장 매트 빌린 끝 절대 분 ·
-	# SD_MAP_UG 노선도 봄 · SD_BOARD_SEEN 운행 칠판 봄 · SD_LR05 · SD_LR09 기록물 · U02_OPEN 4호선 남쪽 터널(지하 구간 단계에서 1)
+	# SD_MAP_UG 노선도 봄 · SD_BOARD_SEEN 운행 칠판 봄 · SD_LR05 · SD_LR09 기록물 · U02_OPEN 4호선 남쪽 터널 철망 문(1-D2: 1 열림)
 	for k in ["SD_MET_HUH", "SD_MET_PYO", "SD_MET_WI", "SD_MET_SEONG", "SD_MET_BAN", "SD_MET_TAK", "SA_MAKCHA_HEARD", "SA_MAT_UNTIL", "SD_MAP_UG", "SD_BOARD_SEEN", "SD_LR05", "SD_LR09", "U02_OPEN"]:
 		vars.declare(k, "int", 0)
 	# 사당 고개 검문소 · 노량진 관제 중계소(1-8g): 첫 만남 · SG_REFUSED 중립 '동행 요청' 거절(한 번 −10) · SG_ISSUED 임시 등록증 첫 발급 ·
@@ -216,6 +216,11 @@ func _init() -> void:
 	# SQP 끌어내기 진척(0 사슬만 · 1 버스가 기움 — 버스 그림 · 윈치 글) · N 그날 낮 분대 인원(2~4) · QUICK 큰집게를 잡아 기한이 당겨짐
 	for k in "CORE SQ HEARD DAY DUE SOL REWARD TALK SEEN SQP N QUICK".split(" "):
 		vars.declare("UQ71_" + k, "int", 0)
+	# U02 남태령 지하(1-D2, SD-09f U02 · 훅 UG-H01 · UG-H02): 뜻은 script/act1/U02.txt 머리 주석 — LIGHT 회로 · PATH 밀통로 · HAL 할매 · SOL 매듭 ·
+	# SHIFT 교대 틈 · FEE 벌금(FN 야간 · FW 수배 · FR 거부 · FS 회로 조사 · FD 우호 감면) · SIDE 선 쪽 · RADIO 막사 무전 · VENT 환기구 · RING1 막차 일지 · PHOTO 돌 사진
+	for k in ("GUIDE INTRO LIGHT LIGHT_DAY ASK HAL HAL_DAY HFEE PATH TRACE USED FOUND SOL SHIFT SIDE FEE FN FW FS FR FD HAGGLED PASSED RADIO GAP_DAY "
+			+ "PATROL_DAY VENT MET_EOM MET_HAL MET_AJAE BACKDOOR PHOTO PHOTO_TRY FORGE_TRY RING1 LASTFEE PATROL RULES").split(" "):
+		vars.declare("U02_" + k, "int", 0)
 	Dungeon.load_db()                                                    # 던전 정리 변수(1-D0): DG_<접미> · _DAY · _ROLL
 	for did in Dungeon.db:
 		for sfx in ["", "_DAY", "_ROLL"]:

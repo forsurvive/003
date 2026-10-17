@@ -5,14 +5,148 @@
  "npc": "",
  "cond": "V_ACT >= 1",
  "labels": {
-  "START": 0
+  "START": 0,
+  "NIGHT": 4,
+  "EMPTY": 7,
+  "OK": 9,
+  "LIE": 12,
+  "FAIL": 15
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "U02_RADIO == 0 and GAME_HOUR >= 6 and GAME_HOUR < 20",
+   "to": "EMPTY"
+  },
+  {
+   "op": "if",
+   "cond": "(GAME_HOUR < 6 or GAME_HOUR >= 20) and known_dead(\"N-R01-047\") == 0",
+   "to": "NIGHT"
+  },
   {
    "op": "line",
    "who": "SYS",
    "emo": "기본",
    "text": "무전기에서 짧은 호출이 반복된다. \"제7 검문대, 이상 유무.\" 아무도 받지 않는 시간엔 같은 말이 다섯 번 온다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "무전기가 운다. 황보서현이 수화기를 든다. \"제7 검문대, 이상 없음.\" 수화기를 내려놓고 이쪽을 본다."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-047",
+   "emo": "기본",
+   "text": "무전기는 만지는 게 아닙니다. 밤엔 제가 받습니다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "무전기가 같은 말을 되풀이한다. \"제7 검문대, 이상 유무. 제7 검문대, 이상 유무.\" 막사엔 아무도 없다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "수화기를 든다 — \"제7 검문대, 이상 없음.\"",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "보통"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "OK",
+     "id": "SG_RADIO:1:0",
+     "fail": "FAIL"
+    },
+    {
+     "text": "\"남태령 터널 쥐 떼 북상 — 지하 초소 교대 보고 늦어짐.\"",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "어려움"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "LIE",
+     "id": "SG_RADIO:1:1",
+     "fail": "FAIL"
+    },
+    {
+     "text": "내려놓는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SG_RADIO:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "\"…확인. 다음 정시 호출까지 대기.\" 무전기가 조용해진다. 아무 일도 없었다는 기록이 하나 는다."
+  },
+  {
+   "op": "cmd",
+   "name": "u02",
+   "args": [
+    "radio",
+    "1"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "잠깐의 잡음. \"…확인. 남태령 지하 초소, 교대 보고 20분 유예.\" 저쪽에서 누가 하품을 한다."
+  },
+  {
+   "op": "cmd",
+   "name": "u02",
+   "args": [
+    "radio",
+    "2"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "\"…그 목소리 누굽니까? 황보 소위님 아니신데.\" 잡음. \"남태령 지하, 사흘간 터널 순찰 늘려.\""
+  },
+  {
+   "op": "cmd",
+   "name": "u02",
+   "args": [
+    "radio",
+    "3"
+   ]
   },
   {
    "op": "goto",

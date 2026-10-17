@@ -1,0 +1,89 @@
+{
+ "id": "Q01_HATCH",
+ "title": "막사 바닥 점검구",
+ "loc": "L-R01-19",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "OPEN": 4,
+  "DOWN": 6,
+  "WELD": 8
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "U02_VENT == 3",
+   "to": "WELD"
+  },
+  {
+   "op": "if",
+   "cond": "U02_VENT >= 1",
+   "to": "OPEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "바닥 점검구. 뚜껑이 아래에서 나사로 잠겼다. 아래로 덕트 바람이 샌다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "점검구 뚜껑이 들려 있다. 아래는 덕트 — 남태령역 대합실로 이어진다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "내려간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "DOWN",
+     "id": "Q01_HATCH:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "Q01_HATCH:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "u02",
+   "args": [
+    "go",
+    "NT-01",
+    "from_vent"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "점검구 뚜껑 가장자리가 용접됐다. '수리 금지 — 제7 검문대.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/U02.txt"
+}

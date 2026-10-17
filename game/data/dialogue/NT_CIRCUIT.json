@@ -1,0 +1,205 @@
+{
+ "id": "NT_CIRCUIT",
+ "title": "조명 회로 함",
+ "loc": "L-UG-01",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "SADANG": 5,
+  "BOTH": 8,
+  "SNIP": 11,
+  "ONE": 14,
+  "FULL": 16,
+  "CUT": 18
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "U02_LIGHT == 1",
+   "to": "ONE"
+  },
+  {
+   "op": "if",
+   "cond": "U02_LIGHT == 2",
+   "to": "FULL"
+  },
+  {
+   "op": "if",
+   "cond": "U02_LIGHT == 3",
+   "to": "CUT"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "회로 함 문을 연다. 차단기 둘 — '사당 측' · '남태령 측'. 둘 다 내려가 있다. 남태령 측 선은 초소 배전반으로 이어진다는 꼬리표."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "사당 측 차단기만 올린다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 35
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "SADANG",
+     "id": "NT_CIRCUIT:1:0"
+    },
+    {
+     "text": "둘 다 올린다 — 터널 끝까지",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 35
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "BOTH",
+     "id": "NT_CIRCUIT:1:1"
+    },
+    {
+     "text": "남태령 측 선을 끊는다 — 초소 쪽 불도 꺼진다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 35
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "SNIP",
+     "id": "NT_CIRCUIT:1:2"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "NT_CIRCUIT:1:3"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "퍽 — 서쪽 터널 등이 하나씩 깜박이며 들어온다. 사당 쪽 레일이 젖은 은색으로 빛난다. 남태령 쪽은 여전히 어둡다."
+  },
+  {
+   "op": "cmd",
+   "name": "u02",
+   "args": [
+    "light",
+    "1"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "퍽, 퍽. 터널 등이 사당에서 남태령까지 줄지어 들어온다. 저 끝 초소 쪽에서 누가 \"어?\" 하고 소리친다."
+  },
+  {
+   "op": "cmd",
+   "name": "u02",
+   "args": [
+    "light",
+    "2"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "펜치로 남태령 측 구리선을 끊는다. 멀리 승강장 쪽 작업등이 한꺼번에 꺼지는 소리 — 그리고 욕설."
+  },
+  {
+   "op": "cmd",
+   "name": "u02",
+   "args": [
+    "light",
+    "3"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "사당 측 차단기만 올라가 있다. 남태령 측은 내려간 채."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "남태령 측도 올린다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 35
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "BOTH",
+     "id": "NT_CIRCUIT:2:0"
+    },
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "NT_CIRCUIT:2:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "차단기 둘 다 올라가 있다. 터널이 끝까지 밝다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "남태령 측 선이 끊겨 늘어졌다. 붉은 꼬리표 — '수리 금지 · 제7 검문대'. 새 자물쇠가 함 문에 걸렸다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/U02.txt"
+}

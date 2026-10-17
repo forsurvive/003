@@ -181,7 +181,11 @@ func outdoor() -> bool:
 
 ## 불 꺼진 지하인가(실내 정전 + 핍-보이 조명)
 func dark_inside() -> bool:
-	return map != null and not outdoor() and (str(map.data.get("set", "")) in DARK_SETS or bool(map.data.get("dark", false)))
+	if map == null or outdoor():
+		return false
+	if map.data.has("dark_if"):                                          # 1-D2 조건부 어둠(맵 'dark 식'): 회로를 살리면 밝고 끊으면 어둡다
+		return InteriorMap._cond_ok(str(map.data["dark_if"]), st)
+	return str(map.data.get("set", "")) in DARK_SETS or bool(map.data.get("dark", false))
 
 
 ## 지금 색조 · 빛 세기를 정한다(매 0.25초, 맵이 바뀌면 바로)

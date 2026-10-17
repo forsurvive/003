@@ -168,14 +168,16 @@ func load_map(map_id: String, st: StoryState = null) -> void:
 			if _cond_ok(str(hc[0]), st):
 				hint = str(hc[1])
 				break
+		var shut: bool = door.has("open") and not _cond_ok(str(door["open"]), st)   # 1-D2 막힌 입구(봉인 · 무너진 맨홀): 글만 남고 들어가지 못한다
 		for i in 2:
-			dd["exits"].append({"x": at.x + i, "y": at.y, "to": str(door["to"]), "mark": str(door["mark"])})
+			if not shut:
+				dd["exits"].append({"x": at.x + i, "y": at.y, "to": str(door["to"]), "mark": str(door["mark"])})
 			dd["texts"].append({"x": at.x + i, "y": at.y - 1, "w": 1, "h": 1, "text": str(door["name"]) + " — " + hint})
 		var dg := Dungeon.of_map(str(door["to"]))
-		if not dg.is_empty() and st != null:                             # 1-D 던전 입구 분필 표식: 정리 상태를 밖에서(사실 한 곳 — DG_ 변수)
-			var dsn: String = ["chalk_claw", "chalk_x", "chalk_live"][clampi(Dungeon.state(st, dg), 0, 2)]
-			var dst: String = ["분필로 그린 집게 — '물속에 뭐 있음. 엎드린 것도.'", "분필 가위표 — '가재 없음. 버스 옆 조심.'",
-				"분필 사람 표시 — '누가 들어앉았음.'"][clampi(Dungeon.state(st, dg), 0, 2)]
+		if not dg.is_empty() and st != null and not (dg.get("chalk", []) as Array).is_empty():   # 1-D 던전 입구 분필 표식: 정리 상태를 밖에서(사실 한 곳 — DG_ 변수 · 글은 던전 표)
+			var ch: Array = dg["chalk"][clampi(Dungeon.state(st, dg), 0, 2)]
+			var dsn := str(ch[0])
+			var dst := str(ch[1])
 			var csm: Dictionary = prop_meta.get(dsn, {})
 			var ca := Vector2i(at.x + 2, at.y)
 			if not csm.is_empty():

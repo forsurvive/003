@@ -1016,6 +1016,10 @@ from props_dg import PROPS_DG, STATES_DG                               # 던전(
 for _k in PROPS_DG:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_DG)
+from props_u02 import PROPS_U02, STATES_U02                            # U02 남태령 지하(1-D2): 4호선 승강장 · 멈춘 전동차 · 조명 회로 · 할매 측실 · 지하 초소
+for _k in PROPS_U02:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_U02)
 from props_trap import PROPS_TRAP, STATES_TRAP, burnt_states       # 함정 · 환경 폭발(1-9c, SD-11 §9.2 · §9.3)
 for _k in PROPS_TRAP:
     assert _k not in PROPS, _k
@@ -1043,6 +1047,7 @@ STATES.update(STATES_S10)
 STATES.update(STATES_S11)
 STATES.update(STATES_HOME)
 STATES.update(STATES_DG)
+STATES.update(STATES_U02)
 for _k, _v in burnt_states(PROPS).items():
     STATES.setdefault(_k, {}).update(_v)
 

@@ -26,7 +26,7 @@ def main():
                 errs.append(f"{i}: 머리 줄은 '@ 접미 이름'")
                 continue
             cur = {"id": "DG-" + m.group(1), "var": "DG_" + m.group(1), "name": m.group(2), "lid": "", "maps": [], "music": "",
-                   "refill": None, "clear": "", "bosses": [], "spots": []}
+                   "refill": None, "clear": "", "bosses": [], "spots": [], "chalk": [None, None, None]}
             if cur["id"] in out:
                 errs.append(f"{i}: 던전 ID 겹침 {cur['id']}")
             out[cur["id"]] = cur
@@ -72,6 +72,11 @@ def main():
                         raise ValueError(f"모르는 적 {bad}")
                     r[{"사람": "people", "짐승": "beasts"}[k]] = ids
                 cur["refill"] = r
+            elif w[0] == "chalk":                                       # chalk 상태 소품 "글" — 월드 입구 분필 표식(1-D2: 사람이 지키는 입구엔 없음)
+                m2 = re.match(r'^chalk\s+([012])\s+(\S+)\s+"(.+)"$', s)
+                if not m2:
+                    raise ValueError("chalk 줄은 'chalk 상태 소품 \"글\"'")
+                cur["chalk"][int(m2.group(1))] = [m2.group(2), m2.group(3)]
             elif w[0] == "clear":
                 expr = s[len("clear"):].strip()
                 MC.check_cond(expr, known_vars, FNS)
@@ -82,6 +87,10 @@ def main():
             errs.append(f"{i}: {e}")
     for d in out.values():
         d.pop("_marks", None)
+        if any(d["chalk"]) and not all(d["chalk"]):
+            errs.append(f"{d['id']}: chalk는 상태 0 · 1 · 2 셋을 모두 적거나 하나도 적지 않는다")
+        if not any(d["chalk"]):
+            d["chalk"] = []
         if not d["lid"] or not d["maps"]:
             errs.append(f"{d['id']}: lid · map이 있어야 한다")
         if not d["bosses"] and not d["clear"]:

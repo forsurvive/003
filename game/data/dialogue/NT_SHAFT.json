@@ -1,0 +1,297 @@
+{
+ "id": "NT_SHAFT",
+ "title": "무너진 환기 갱",
+ "loc": "L-UG-01",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "WAITNOW": 7,
+  "WHISTLE": 11,
+  "QUIET": 13,
+  "UP": 15,
+  "CLEAN": 17,
+  "TRACE": 20,
+  "RISK": 23,
+  "ASKHAL": 27,
+  "RUBBLE": 29,
+  "SEALED": 31,
+  "COLLAPSE": 33
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "U02_PATH == 2",
+   "to": "RUBBLE"
+  },
+  {
+   "op": "if",
+   "cond": "U02_PATH == 3",
+   "to": "SEALED"
+  },
+  {
+   "op": "if",
+   "cond": "U02_PATH == 0 and known_dead(\"N-UG-007\") == 0",
+   "to": "ASKHAL"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "녹슨 쇠 발판이 위로 이어진다. 바람이 내려온다. 위쪽 어딘가에서 군화 소리가 지나갈 때마다 흙이 떨어진다."
+  },
+  {
+   "op": "if",
+   "cond": "U02_SHIFT == 1",
+   "to": "QUIET"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "지금은 위에서 군화 소리가 오간다. 할매 말대로라면 — 아직 아니다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "교대까지 기다린다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "WAITNOW",
+     "id": "NT_SHAFT:1:0"
+    },
+    {
+     "text": "그래도 올라간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "RISK",
+     "id": "NT_SHAFT:1:1"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "NT_SHAFT:1:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "u02",
+   "args": [
+    "wait"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "U02_SHIFT == 1",
+   "to": "WHISTLE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "발판에 기대 한참을 기다린다. 호루라기가 울리지 않는다. 군화 소리가 계단참에 그대로 머문다 — 순찰이 늘었다. 오늘은 안 되겠다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "발판에 기대 기다린다. 위에서 호루라기 한 번. 군화 소리가 계단 쪽으로 멀어진다."
+  },
+  {
+   "op": "goto",
+   "to": "QUIET"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "위가 조용하다. 지금이다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "올라간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "UP",
+     "id": "NT_SHAFT:2:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "NT_SHAFT:2:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "발판을 하나씩 짚고 오른다. 배수관을 기어 한참 — 머리 위에 맨홀 뚜껑. 밀어 올리자 과천대로의 바람."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "뚜껑을 제자리에 덮고 간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "CLEAN",
+     "id": "NT_SHAFT:3:0"
+    },
+    {
+     "text": "서둘러 그냥 간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TRACE",
+     "id": "NT_SHAFT:3:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "뚜껑을 조심스레 내려놓고 가장자리 흙을 발로 쓸어 덮는다."
+  },
+  {
+   "op": "cmd",
+   "name": "u02",
+   "args": [
+    "climb",
+    "clean"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "뚜껑을 반쯤 걸쳐 둔 채 달린다."
+  },
+  {
+   "op": "cmd",
+   "name": "u02",
+   "args": [
+    "climb",
+    "trace"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "맨홀을 밀어 올리는 순간 — 바로 앞에 군화. \"정지! 맨홀이다!\" 손전등 불빛이 쏟아진다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "뚜껑을 놓고 미끄러져 내려온다. 위에서 고함과 호루라기. 오늘은 안 되겠다."
+  },
+  {
+   "op": "cmd",
+   "name": "u02",
+   "args": [
+    "caught"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "녹슨 쇠 발판이 위로 이어진다. 할매가 화로 앞에서 고개를 젓는다. \"그건 할미 길이야. 묻고 올라가.\""
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "갱이 돌무더기로 꽉 찼다. 부러진 버팀목 끝이 삐져나왔다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "판자 세 장에 노란 테이프 — '계엄 봉인'. 판자 너머에서 바람이 샌다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "버팀목을 쳐서 갱을 무너뜨린다 — 증거가 없으면 할 말도 없다",
+     "tags": [],
+     "cond": "U02_HAL == 1",
+     "fx": "",
+     "to": "COLLAPSE",
+     "id": "NT_SHAFT:4:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "NT_SHAFT:4:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "판자를 뜯고 버팀목을 발로 찬다. 한 번, 두 번 — 우르르. 먼지가 측실을 덮는다. 갱은 이제 없다."
+  },
+  {
+   "op": "cmd",
+   "name": "u02",
+   "args": [
+    "collapse"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/U02.txt"
+}
