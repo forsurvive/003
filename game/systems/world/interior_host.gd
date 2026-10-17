@@ -387,6 +387,7 @@ func enter(map_id: String, mark: String = "", look: Dictionary = {}, at: Vector2
 	player._show()
 	_last_tile = map.tile_of(player.loco.logical)
 	_spawn_npcs()
+	_lay_spills(map_id)
 	alarmed.clear()
 	if map_id == "V-00" and int(st.vars.get_v("V_ESCAPE")) >= 1 and st.quests.stage("MQ-P4") < 60:
 		map.set_gate(1.0)                                              # 탈출 중 레버로 다시 연 방폭문은 맵을 다시 열어도 열린 채
@@ -1074,6 +1075,32 @@ func _on_enemy_down(e: Enemy) -> void:
 		"cond": "", "key": "corpse:%s:%d,%d@%d:%d" % [map.id, c.x, c.y, int(st.vars.get_v("GAME_DAY")), Time.get_ticks_msec()]}
 
 
+## 보이는 빔(1-L §9.1): 생성 실내에 들어서면, 이미 털린 용기 앞 바닥 칸에 털린 자리 무늬(서랍 · 종이 · 문짝 · 분필 · 깨진 병)를 깐다.
+## 무늬는 용기 종류로 고른다(찬장 → 문짝 · 서랍 → 서랍 · 서류 → 종이 · 진열대 → 병 · 상자 → 분필). 막지 않는 덧그림이다
+const SPILL := {"pantry": "spill_door", "conv": "spill_glass", "apartment": "spill_drawer", "desk": "spill_drawer", "cabinet": "spill_paper",
+	"pharmacy": "spill_glass", "toolbox": "spill_chalk", "crate": "spill_chalk", "stall": "spill_chalk", "trash": "spill_chalk", "safe": "spill_paper"}
+
+
+func _lay_spills(map_id: String) -> void:
+	if not map_id.begins_with("G-") or map is WorldMap or st.year() < 2277:
+		return
+	var seen := {}
+	var used := {}
+	for c in map.boxes:
+		var b: Dictionary = map.boxes[c]
+		if seen.has(b) or not Loot.visibly_empty(st, map_id, b):
+			continue
+		seen[b] = true
+		var nm := str(SPILL.get(str(b.get("kind", "")), "spill_chalk"))
+		for i in int(b.get("w", 1)):                                      # 용기 앞(아래) 칸 — 비어 있는 바닥만
+			var fc := Vector2i(int(b["x"]) + i, int(b["y"]) + int(b.get("h", 1)))
+			if map.is_solid(fc) or used.has(fc) or map.boxes.has(fc) or not map.exit_at(fc).is_empty():
+				continue
+			map.add_runtime_prop(nm, fc)
+			used[fc] = true
+			break
+
+
 func box_lock_key(b: Dictionary) -> String:
 	return Loot.key(map.id, b, st.year())
 
@@ -1091,6 +1118,11 @@ func open_box(b: Dictionary) -> void:
 	player.move(Vector2.ZERO, 0.0)
 	if body == "toddler":                                                # 돌잔치의 아기는 용기를 못 연다
 		say_text("손이 닿지 않는다.")
+		return
+	if Loot.visibly_empty(st, map.id, b):                                # 보이는 빔(1-L §9.1): 창을 열지 않고 빈 이유 한 줄
+		var vc := box_contents(b)
+		vc["opened"] = int(vc.get("opened", 0)) + 1
+		say_text(Loot.empty_line(vc) if Loot.empty_line(vc) != "" else "비었다.")
 		return
 	var c := box_contents(b)
 	if box_locked(b):
@@ -1630,8 +1662,10 @@ func box_prompt() -> String:
 			tag = "  [잠김: %s]" % Lockpick.NAMES[gi]
 		else:
 			tag = "  [잠김: %s · 자물쇠 따기 %d 필요]" % [Lockpick.NAMES[gi], int(Lockpick.REQ[gi])]
-	elif box_contents(b)["items"].is_empty():
-		tag = "  [빈 상자]"
+	elif Loot.visibly_empty(st, map.id, b):
+		tag = "  [털린 자리]"                                             # 1-L §9.1 보이는 빔
+	elif box_contents(b)["items"].is_empty() and (int(box_contents(b).get("opened", 0)) > 0 or not Loot.is_v3(st, map.id, b)):
+		tag = "  [빈 상자]"                                               # 파밍 v3 닫힌 용기는 열어 봐야 안다(닫힌 빔 — 열면 반쯤은 무언가 있다)
 	if Loot.owned(b):
 		tag += "  [소유]"
 	return "(E) 열기  " + nm + tag

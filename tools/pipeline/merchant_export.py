@@ -190,6 +190,68 @@ MERCHANTS = {
         "stock": [["I-042", 4], ["I-097", 1], ["I-043", 2], ["I-036", 3]],
         "greet": "가물치 여섯 캡! 생물은 생물 값, 고기는 고기 값이야.",
     },
+    # ------------------------------------------------------------ 일반 장사꾼(1-L 계획 §4.1 · §9.2): 생성 실내 '다시 문 연 가게'에 앉은 무명 장사꾼 틀.
+    # inst = 가게마다 따로 재고 · 캡(상태 열쇠 shop:틀@맵) · likes = 결 물건은 ×1.2로 사고 나머지는 ×0.8 · want = 요즘 찾는 것(3일마다 하나, ×1.5)
+    "VG_SCRAP": {
+        "name": "고물상", "npc": "N-VG-SCRAP", "settle": "MS", "grade": "E", "renew": 3, "rate": 1.0, "pick": 6, "inst": True,
+        "buys": ["*"], "likes": ["mat"], "like_k": [1.2, 0.8],
+        "stock": [["M-010", 6], ["M-012", 3], ["M-025", 3], ["M-024", 2], ["M-013", 3], ["M-039", 1], ["I-067", 1], ["건설용 대못", 30],
+                  ["W-040", 1], ["W-043", 1], ["M-023", 2]],
+        "want": ["M-083", "M-085", "M-088", "M-030", "M-035", "M-036", "M-086"],
+        "greet": "쇠는 무게로, 쓸모는 눈으로 쳐.",
+        "fix": {"kinds": ["수제", "공구"], "cap": 1, "rate": 1.15, "lines": ["두드려 펴는 건 돼.", "됐다. 또?", "그건 내 망치로는 안 돼."]},
+    },
+    "VG_HERB": {
+        "name": "약초꾼", "npc": "N-VG-HERB", "settle": "MS", "grade": "E", "renew": 3, "rate": 1.1, "pick": 5, "inst": True,
+        "buys": ["*"], "likes": ["aid"], "like_k": [1.2, 0.8],
+        "stock": [["I-095", 4], ["I-044", 3], ["I-005", 2], ["I-003", 1], ["I-001", 1], ["I-007", 1], ["I-092", 1], ["M-029", 2]],
+        "want": ["I-088", "I-045", "M-026", "M-048", "I-020", "I-085"],
+        "greet": "약은 비싸. 풀은 싸고. 둘 다 아프면 먹는 거야.",
+    },
+    "VG_PARTS": {
+        "name": "부품 장수", "npc": "N-VG-PARTS", "settle": "MS", "grade": "E", "renew": 3, "rate": 1.0, "pick": 5, "inst": True,
+        "buys": ["*"], "likes": ["elec"], "like_k": [1.2, 0.8],
+        "stock": [["M-014", 2], ["M-012", 3], ["M-015", 2], ["M-016", 1], ["에너지 전지", 20], ["M-075", 2], ["M-019", 1]],
+        "want": ["M-083", "M-084", "M-085", "M-086", "M-088", "M-096", "M-017"],
+        "greet": "진공관은 깨지기 전에 가져와. 깨진 건 유리 값이야.",
+    },
+    "VG_CLOTH": {
+        "name": "옷 장수", "npc": "N-VG-CLOTH", "settle": "MS", "grade": "E", "renew": 3, "rate": 1.0, "pick": 5, "inst": True,
+        "buys": ["*"], "likes": ["cloth"], "like_k": [1.2, 0.8],
+        "stock": [["A-005", 1], ["A-006", 1], ["A-010", 1], ["A-016", 1], ["A-065", 1], ["A-017", 1], ["A-074", 1], ["M-043", 2]],
+        "want": ["M-094", "M-095", "M-093", "I-087", "M-021"],
+        "greet": "입던 옷도 받아. 피 묻은 건 빨아 와.",
+    },
+    "VG_FOOD": {
+        "name": "국밥 장수", "npc": "N-VG-FOOD", "settle": "MS", "grade": "E", "renew": 3, "rate": 1.0, "pick": 6, "inst": True,
+        "buys": ["*"], "likes": ["food"], "like_k": [1.2, 0.8],
+        "stock": [["I-030", 3], ["I-026", 2], ["I-035", 2], ["I-054", 4], ["I-055", 4], ["I-062", 2], ["I-060", 1], ["I-044", 2], ["I-036", 2]],
+        "want": ["I-038", "I-037", "I-042", "M-049", "I-043", "M-082"],
+        "greet": "국 한 그릇이면 하루는 버텨. 두 그릇이면 이틀이고.",
+    },
+    "VG_DRIFT": {
+        "name": "떠돌이 장사꾼", "npc": "N-VG-DRIFT", "settle": "MS", "grade": "E", "renew": 2, "rate": 1.05, "pick": 5, "inst": True,
+        "buys": ["*"], "likes": ["valuables"], "like_k": [1.2, 0.8],
+        "stock": [["M-010", 3], ["M-025", 1], [".32 구경탄", 12], ["10mm 탄", 12], ["I-001", 1], ["I-030", 2], ["I-055", 3], ["A-010", 1],
+                  ["W-013", 1], ["M-070", 3], ["M-046", 4]],
+        "want": ["M-080", "M-095", "M-097", "M-085", "M-089", "M-092"],
+        "greet": "다 받아. 다 싸게. 대신 예물이면 값 쳐 줘.",
+    },
+}
+
+# 결 묶음(likes) — 내보낼 때 아이템 ID 목록으로 푼다
+LIKE_GROUPS = {
+    "mat": lambda: list(json.load(open(os.path.join(DATA, "items_misc_mat.json"), encoding="utf-8"))),
+    "aid": lambda: list(json.load(open(os.path.join(DATA, "items_aid.json"), encoding="utf-8")))
+                   + list(json.load(open(os.path.join(DATA, "items_chems.json"), encoding="utf-8"))) + ["I-044", "M-026", "M-048"],
+    "elec": lambda: ["M-012", "M-014", "M-015", "M-016", "M-017", "M-018", "M-019", "M-031", "M-075", "M-083", "M-084", "M-085", "M-086",
+                     "M-088", "M-096", "에너지 전지", "마이크로퓨전 전지"],
+    "cloth": lambda: list(json.load(open(os.path.join(DATA, "items_apparel.json"), encoding="utf-8")))
+                     + list(json.load(open(os.path.join(DATA, "items_apparel_head.json"), encoding="utf-8"))),
+    "food": lambda: list(json.load(open(os.path.join(DATA, "items_food.json"), encoding="utf-8")))
+                    + list(json.load(open(os.path.join(DATA, "items_drink.json"), encoding="utf-8"))),
+    "valuables": lambda: ["M-080", "M-085", "M-089", "M-095", "M-097", "M-083", "M-084", "M-088", "M-092", "M-093", "M-094"],
+    "papers": lambda: ["M-002", "M-003", "M-004", "M-167"],
 }
 
 
@@ -206,6 +268,13 @@ def main():
             if n < 1:
                 bad.append(f"{vid}: 재고 수가 이상하다 {id_} {n}")
         m["caps_base"] = list(GRADES[m["grade"]])
+        if m.get("likes") and isinstance(m["likes"][0], str) and m["likes"][0] in LIKE_GROUPS:   # 결 묶음 → 아이템 ID(1-L)
+            m["likes"] = sorted({i for g in m["likes"] for i in LIKE_GROUPS[g]()})
+        for id_ in m.get("likes", []) + m.get("want", []):
+            if id_ not in ids:
+                bad.append(f"{vid}: 결 · 찾는 것에 모르는 아이템 {id_}")
+    MERCHANTS["V13"]["likes"] = sorted(LIKE_GROUPS["papers"]())          # 희정 인쇄: 서류 · 배급표 · 만 원권을 결로 산다(§9.2)
+    MERCHANTS["V13"]["like_k"] = [1.2, 1.0]
     if bad:
         print("상인 표 오류:", *bad, sep="\n  ")
         sys.exit(1)

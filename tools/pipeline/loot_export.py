@@ -71,9 +71,9 @@ FLAVOR = {
 }
 # 다시 채워짐(SD-22 §5.4 V2): 비운 뒤 [최소일, 최대일, 확률]. 길가·야외 용기 3~7일, 건물 안 생성 용기 7일 40%. 금고·손 배치·주인 있는 용기는 없음
 RESTOCK = {"bag": [3, 7, 1.0], "car": [3, 7, 1.0], "trash": [3, 6, 1.0], "corpse_scav": [4, 7, 1.0], "stall": [3, 5, 1.0],
-           "mushroom": [2, 4, 1.0], "crate": [5, 7, 0.7], "apartment": [7, 7, 0.4], "cabinet": [7, 7, 0.4], "desk": [7, 7, 0.4],
-           "conv": [7, 7, 0.4], "pantry": [7, 7, 0.4], "locker": [7, 7, 0.4], "toolbox": [7, 7, 0.4], "pharmacy": [7, 7, 0.4],
-           "academy": [7, 7, 0.4], "school_locker": [7, 7, 0.4], "civil": [7, 7, 0.4], "aid": [7, 7, 0.4],
+           "mushroom": [2, 4, 1.0], "crate": [10, 16, 0.4], "apartment": [14, 21, 0.2], "cabinet": [14, 21, 0.2], "desk": [14, 21, 0.2],
+           "conv": [14, 21, 0.2], "pantry": [14, 21, 0.2], "locker": [14, 21, 0.2], "toolbox": [14, 21, 0.2], "pharmacy": [14, 21, 0.2],
+           "academy": [14, 21, 0.2], "school_locker": [14, 21, 0.2], "civil": [14, 21, 0.2], "aid": [14, 21, 0.2],   # 1-L §2.1: 건물 안 14~21일 20%
            "carcass": [3, 5, 1.0]}                                       # 썩은 고기는 가공 라인에서 다시 떨어진다(쥐가 끌어 온다)
 
 # ---------------------------------------------------------------- 용기 종류
@@ -133,7 +133,79 @@ TABLES = {
     "keybox": ("정비고 열쇠함", [["M-070", 0.9, 1, 3], ["M-001", 0.6, 5, 20], ["M-012", 0.4, 1, 2], ["M-075", 0.25, 1, 1]]),   # 1-D4 구로: 열쇠 · 머리핀 · 구리선(스킬북 BK-05-R02-02는 장부 D-028)   # 1-D3 독산: 먹지 못하는 고기 = 던지는 미끼(SD-13 W-068)
     "stash": ("숨겨 둔 상자", [["M-001", 1.0, 25, 70], ["@ammo", 0.85, 8, 24], ["@meds", 0.7, 1, 2], ["I-001", 0.5, 1, 2],
                                ["@weapon", 0.3, 1, 1, 2], ["@food", 0.5, 1, 3], ["M-070", 0.4, 2, 4]]),
+    # ------------------------------------------------------------ 파밍 v3(1-L 계획 §2): 볼트를 나온 뒤 생성 실내 · 길가에서 장소 결로 바꿔 끼우는 서울 표
+    "kitchen": ("찬장", [["@food", 0.45, 1, 1], ["I-026", 0.2, 1, 1], ["M-049", 0.25, 1, 1], ["M-046", 0.3, 1, 1], ["M-044", 0.15, 1, 1]]),
+    "closet": ("옷장·서랍", [["@clothes", 0.5, 1, 1], ["@junk", 0.5, 1, 1], ["@papers", 0.3, 1, 2], ["M-093", 0.15, 1, 1], ["M-001", 0.12, 1, 6],
+                             ["@meds", 0.05, 1, 1]]),
+    "pharm_left": ("털린 약장", [["I-005", 0.35, 1, 1], ["M-087", 0.5, 1, 2], ["@meds", 0.25, 1, 1], ["I-095", 0.2, 1, 1], ["I-092", 0.05, 1, 1, 2],
+                                ["@chems", 0.08, 1, 1, 2]]),
+    "conv_left": ("털린 진열대", [["@food", 0.45, 1, 1], ["@drink", 0.35, 1, 1], ["I-053", 0.2, 1, 1], ["M-167", 0.15, 1, 1], ["I-065", 0.1, 1, 1]]),
+    "laundry": ("맡긴 옷", [["@clothes", 0.7, 1, 1], ["M-089", 0.2, 1, 1], ["M-021", 0.2, 1, 1], ["M-043", 0.15, 1, 1]]),
+    "snack": ("분식집 찬장", [["M-049", 0.4, 1, 2], ["M-082", 0.25, 1, 1], ["I-033", 0.15, 1, 1], ["M-047", 0.08, 1, 1], ["M-023", 0.2, 1, 1]]),
+    "tea": ("찻장", [["I-053", 0.3, 1, 1], ["I-060", 0.2, 1, 1], ["I-063", 0.06, 1, 1], ["M-081", 0.3, 1, 2], ["M-045", 0.1, 1, 1]]),
+    "salon": ("미용 도구 서랍", [["I-087", 0.25, 1, 1], ["M-022", 0.2, 1, 1], ["M-021", 0.2, 1, 1], ["M-029", 0.15, 1, 1], ["M-091", 0.2, 1, 1]]),
+    "video": ("테이프 진열대", [["M-075", 0.35, 1, 2], ["M-012", 0.2, 1, 1], ["M-014", 0.06, 1, 1], ["M-041", 0.1, 1, 1]]),
+    "karaoke": ("노래방 계산대", [["I-062", 0.25, 1, 2], ["I-060", 0.2, 1, 1], ["M-012", 0.3, 1, 1], ["M-015", 0.1, 1, 1], ["M-001", 0.2, 1, 5]]),
+    "sacks": ("포대", [["I-030", 0.25, 1, 2], ["M-010", 0.3, 1, 1], ["M-020", 0.05, 1, 1], ["M-091", 0.2, 1, 1]]),
+    "till": ("계산대 서랍", [["M-002", 0.4, 1, 6], ["M-167", 0.2, 1, 2], ["M-001", 0.15, 1, 5], ["M-070", 0.2, 1, 1], ["M-075", 0.1, 1, 1]]),
+    "safe_g": ("금고", [["M-002", 0.8, 5, 15], ["M-001", 0.5, 10, 30], ["@papers", 0.5, 1, 2], ["I-001", 0.25, 1, 1], ["M-014", 0.2, 1, 1]]),
+    # 그날 밤 사건(households.txt @사건)이 말하는 물건(§2.2) — 그 집 용기 하나
+    "moving": ("묶어 둔 이삿짐", [["M-080", 0.3, 1, 1], ["M-082", 0.3, 1, 1], ["M-081", 0.4, 1, 2], ["@clothes", 0.3, 1, 1], ["M-089", 0.15, 1, 1]]),
+    "ration": ("비상 통조림 칸", [["I-030", 0.5, 1, 2], ["I-026", 0.3, 1, 1], ["M-003", 0.4, 1, 3], ["I-005", 0.2, 1, 1]]),
+    "granny": ("약봉지 서랍", [["I-095", 0.4, 1, 2], ["I-005", 0.3, 1, 1], ["I-001", 0.12, 1, 1], ["M-042", 0.15, 1, 1]]),
+    "wedding": ("예물 칸", [["M-080", 0.5, 1, 1], ["M-095", 0.3, 1, 1], ["M-002", 0.4, 3, 10], ["@clothes", 0.3, 1, 1]]),
+    "pet": ("사료 칸", [["I-026", 0.3, 1, 1], ["M-043", 0.3, 1, 1], ["M-091", 0.2, 1, 1]]),
+    "ledger": ("장부 서랍", [["M-002", 0.4, 2, 6], ["M-003", 0.3, 1, 2], ["@papers", 0.4, 1, 1]]),
+    "letters": ("편지 묶음", [["@papers", 0.6, 1, 2], ["M-003", 0.3, 1, 2]]),
+    "gift": ("포장한 선물 상자", [["M-096", 0.4, 1, 1], ["M-041", 0.4, 1, 1], ["M-045", 0.3, 1, 2], ["I-028", 0.2, 1, 1]]),
 }
+
+# 파밍 v3(1-L 계획 §2.1): 장소 결 → {용기 종류 또는 '계산대'(이름이 '계산대'로 시작) → 바꿔 끼울 표}. '*'는 모든 결의 기본
+PLACE = {
+    "pharm": {"pharmacy": "pharm_left"}, "conv": {"conv": "conv_left"}, "laundry": {"apartment": "laundry"}, "snack": {"pantry": "snack"},
+    "tea": {"pantry": "tea"}, "salon": {"apartment": "salon"}, "video": {"stall": "video"}, "karaoke": {"계산대": "karaoke"},
+    "store": {"pantry": "sacks"},
+    "*": {"pantry": "kitchen", "apartment": "closet", "계산대": "till", "safe": "safe_g"},
+}
+# 사건 물건(§2.2): 사건 → [용기 종류들, 바꿔 끼울 표('' = 그대로), 빈 상자율 배수, 그 집 같은 종류 모두에 걸리나]
+EVENTS = {
+    "피난 짐": [["apartment"], "", 1.35, True], "이사 전날": [["apartment"], "moving", 0.7, False],
+    "공습 대비": [["pantry"], "ration", 0.5, False], "배급 줄": [["pantry"], "ration", 0.55, False],
+    "할머니 약": [["apartment"], "granny", 0.5, False], "결혼 준비": [["apartment"], "wedding", 0.6, False],
+    "공장 사고": [["apartment"], "toolbox", 0.6, False], "반려동물": [["pantry"], "pet", 0.6, False],
+    "가게 외상": [["apartment"], "ledger", 0.6, False], "하숙생": [["desk", "apartment"], "academy", 0.6, False],
+    "시험 전날": [["desk", "apartment"], "academy", 0.55, False], "원정 편지": [["apartment", "desk"], "letters", 0.6, False],
+    "대피소 등급 탈락": [["apartment", "pantry"], "", 0.8, True], "생일": [["apartment", "desk"], "gift", 0.5, False],   # §9.1
+}
+# 빈 상자율 · 양(§2.1): 결 기본 × 위협 × 잠김 × 함정/방사능 × 최근 사람 × 용기 배수. 줄 상한 · 캡 줄 확률 배수 · 시간 층 ②에서 빠지는 줄
+V3 = {
+    "empty": {"home": 0.74, "den": 0.5, "collapsed": 0.5, "conv": 0.82, "pharm": 0.88, "hw": 0.66, "laundry": 0.6, "snack": 0.75, "tea": 0.7,
+              "salon": 0.65, "video": 0.68, "karaoke": 0.6, "office": 0.72, "store": 0.7, "gov": 0.6, "apt": 0.7, "road": 0.4},
+    "threat": {"1": 1.15, "2": 1.0, "3": 0.75}, "lock": 0.6, "hard": 0.7, "l3": 1.1,
+    "kind_mul": {"stash": 0.0, "civil": 0.7, "corpse_scav": 0.8, "safe": 0.9},
+    "lines": 2, "lines_big": {"safe": 3, "stash": 3}, "caps": 0.35,
+    "kinds": ["bag", "car", "trash", "corpse_scav", "stall", "crate", "apartment", "cabinet", "desk", "conv", "pantry", "toolbox", "pharmacy",
+              "civil", "safe", "stash", "academy", "locker"],
+    "l2_drop": ["@food", "@meds", "@drink", "I-001", "I-030", "I-026", "I-095", "I-005"],
+    # §9.1 보이는 빔: 빈 상자 가운데 들어선 순간 바닥에 보이는 몫(결 기본율 × 이 값) · 빈 이유 글이 다른 곳을 가리키는 몫
+    "vis": {"*": 0.57, "conv": 0.73, "pharm": 0.7, "den": 0.3, "road": 0.0}, "lead": 0.12,
+}
+LOOT_TEXT = os.path.join(ROOT, "script", "world", "loot_text.txt")
+
+
+def read_why():
+    """빈 용기 글(script/world/loot_text.txt): '@열쇠' 다음 줄들 → {열쇠: [글]}"""
+    out, cur = {}, None
+    for ln in open(LOOT_TEXT, encoding="utf-8"):
+        ln = ln.rstrip("\n")
+        if not ln.strip() or ln.startswith("#"):
+            continue
+        if ln.startswith("@"):
+            cur = ln[1:].strip()
+            out.setdefault(cur, [])
+        elif cur:
+            out[cur].append(ln.strip())
+    return out
 
 # ---------------------------------------------------------------- 적·세력 드롭(§9.3, 크리처 §6.4·§7.3)
 DROPS = {
@@ -240,12 +312,26 @@ def main():
     for kind in RESTOCK:
         if kind not in TABLES:
             bad.append(f"다시 채움: 모르는 용기 {kind}")
+    for pl, m in PLACE.items():
+        for k, t in m.items():
+            if t not in TABLES or (k not in TABLES and k != "계산대"):
+                bad.append(f"장소 결 {pl}: 모르는 표 {k} → {t}")
+    for ev, (kinds, t, mul, _all) in EVENTS.items():
+        if (t and t not in TABLES) or any(k not in TABLES for k in kinds) or not 0 < mul < 2:
+            bad.append(f"사건 물건 {ev}: 값이 이상하다")
+    for k in V3["kinds"]:
+        if k not in TABLES:
+            bad.append(f"v3: 모르는 용기 {k}")
+    why = read_why()
+    if not why.get("*:*"):
+        bad.append("빈 용기 글: '*:*' 기본 글이 없다")
     if bad:
         print("루팅 표 오류:", *bad, sep="\n  ")
         sys.exit(1)
     pools = {k: {str(t): v for t, v in tiers.items()} for k, tiers in POOLS.items()}
     json.dump({"tables": out, "pools": pools, "drops": DROPS, "regions": {k: list(v) for k, v in REGION_TIER.items()},
-               "level_steps": LEVEL_STEPS, "flavor": FLAVOR, "restock": RESTOCK}, open(os.path.join(DATA, "loot.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+               "level_steps": LEVEL_STEPS, "flavor": FLAVOR, "restock": RESTOCK,
+               "place": PLACE, "events": EVENTS, "v3": V3, "why": why}, open(os.path.join(DATA, "loot.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     json.dump(junk, open(os.path.join(DATA, "items_junk.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1, sort_keys=True)
     json.dump(ammo, open(os.path.join(DATA, "items_ammo.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1, sort_keys=True)
     old = os.path.join(DATA, "loot_s07.json")

@@ -1032,6 +1032,10 @@ from props_kt import PROPS_KT, STATES_KT                               # 여의�
 for _k in PROPS_KT:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_KT)
+from props_loot import PROPS_LOOT, STATES_LOOT                        # 파밍 v3 · 보관 · 거래처(1-L): 털린 자리 무늬 · 바꿈 상자 · 방울 줄 · 장사 간판 · 보관함
+for _k in PROPS_LOOT:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_LOOT)
 from props_trap import PROPS_TRAP, STATES_TRAP, burnt_states       # 함정 · 환경 폭발(1-9c, SD-11 §9.2 · §9.3)
 for _k in PROPS_TRAP:
     assert _k not in PROPS, _k
@@ -1063,6 +1067,7 @@ STATES.update(STATES_S11)
 STATES.update(STATES_HOME)
 STATES.update(STATES_DG)
 STATES.update(STATES_U02)
+STATES.update(STATES_LOOT)
 for _k, _v in burnt_states(PROPS).items():
     STATES.setdefault(_k, {}).update(_v)
 

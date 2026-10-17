@@ -159,6 +159,12 @@ func _column(s: int, x: float) -> void:
 		scroll[s] = sel[s] - ROWS_VISIBLE + 1
 	if l.is_empty():
 		text(Vector2(x + 8, 70), "(비어 있음)", f10, 10, U[3])
+		var why := Loot.empty_line(state) if s == 1 and state.has("why") else ""
+		if why != "":                                                      # 1-L 빈 이유 글: 처음부터 빈 상자는 왜 비었는지 보인다
+			var ly := 90.0
+			for ln in TextWrap.wrap(why, func(t: String) -> float: return f10.get_string_size(t, HORIZONTAL_ALIGNMENT_LEFT, -1, 10).x, 260.0):
+				text(Vector2(x + 8, ly), ln, f10, 10, U[5])
+				ly += 15.0
 	for i in range(scroll[s], mini(l.size(), scroll[s] + ROWS_VISIBLE)):
 		var id: String = l[i]
 		var y: float = 64.0 + (i - int(scroll[s])) * 20.0

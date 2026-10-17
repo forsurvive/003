@@ -18,7 +18,7 @@ ROOMS = os.path.join(ROOT, "script", "world", "rooms.txt")
 HOUSE = os.path.join(ROOT, "script", "world", "households.txt")   # 1-B2 가구 생성기 재료(사건 묶음 · 시간 층 · 건물 이름)
 REGIONS = ("R01", "R02", "R03", "R04", "R05", "R06", "R07", "R08", "R09", "R10", "R11", "HR", 0)   # 1-B(사용자 지시 2026-10-17): 전 권역 — 0 = 권역 표 밖(외곽 · 경계)
 RATE = {"villa": 1.0, "house": 1.0, "apt": 1.0, "gov": 1.0, "shop": 1.0, "office": 1.0, "factory": 1.0}   # 1-B: 모든 건물을 들어가 볼 수 있게(옛 값 빌라 .25 · 가게 .16 · 주택 · 사무 · 창고 .6)
-GEN_VER = 2                                                           # 생성기 판 — 틀 · 글 · 규칙을 바꾸면 올린다(캐시가 버려진다)
+GEN_VER = 3                                                           # 생성기 판 — 틀 · 글 · 규칙을 바꾸면 올린다(캐시가 버려진다)
 # 권역 실내 적(SD-14 · SD-08 권역 결 — 그림 · 자료가 있는 것만, 없는 것은 같은 계열로 대체 · 정합 기록): 위협 → [(적, 확률, 최소, 최대)] — 앞에서부터 굴려 하나만
 ENEMY_ROLL = {
     "R01": {1: [("CR-002", 0.3, 1, 2)], 2: [("CR-095", 0.35, 1, 3), ("CR-002", 0.25, 1, 2)], 3: [("CR-200", 0.15, 1, 2), ("CR-095", 0.35, 2, 3)]},
@@ -884,24 +884,64 @@ def _ok(out):
     return len(seen) >= 20
 
 
-def _place_enemies(p, threat, region):
-    """권역 · 위협 적 표(ENEMY_ROLL). 실내 상황(1-B4 · 설계안 §7.3): 떠돌이 소굴의 사람형은 절반이 자는 중(웅크려 지나가거나 뒤치기) ·
-    유해가 있는 집의 짐승은 뜯어먹는 중(감지 0.5 — 먼저 볼 수 있다). 상황 판정은 따로 굴린다(배치 난수를 바꾸지 않는다)."""
+# 장소 결 몹(1-L 계획 §2.3): 권역 표(그 권역에 사는 것)는 그대로 두고, 장소가 부르는 것으로 가중 · 적이 있을 확률(위협 1/2/3)을 바꾼다.
+# 결 → ({적: 가중}, (확률 1, 2, 3), 장소 고유(권역 표에 없어도 부르는 사람형 — 그 위협부터)). 가중에 없는 권역 적은 0.5
+PLACE_MOB = {
+    "food": ({"CR-002": 2.5, "CR-095": 2.0, "CR-004": 1.0}, (0.35, 0.5, 0.6), {}),
+    "pharm": ({"CR-200": 2.5, "CR-201": 1.5, "CR-002": 0.6}, (0.25, 0.4, 0.55), {"CR-423": 3}),
+    "dark": ({"CR-200": 3.0, "CR-201": 1.0}, (0.25, 0.4, 0.55), {}),
+    "office": ({"CR-200": 2.0, "CR-201": 2.0, "CR-305": 1.0}, (0.25, 0.35, 0.5), {}),
+    "store": ({"CR-095": 2.0, "CR-096": 1.5, "CR-097": 0.3, "CR-136": 1.0}, (0.3, 0.45, 0.55), {}),
+    "home": ({"CR-104": 1.5, "CR-136": 1.5, "CR-002": 1.0, "CR-095": 0.8}, (0.15, 0.3, 0.45), {}),
+    "den": ({"CR-423": 3.0, "CR-420": 1.0}, (0.4, 0.6, 0.7), {"CR-423": 1, "CR-420": 2}),
+    "quiet": ({}, (0.0, 0.0, 0.0), {}),
+}
+PLACE_FAM = {"conv": "food", "snack": "food", "tea": "food", "pharm": "pharm", "karaoke": "dark", "video": "dark", "salon": "home",
+             "laundry": "home", "hw": "store"}
+
+
+def _mob_family(p, style):
+    if getattr(p, "den", False):
+        return "den"
+    if "l3" in getattr(p, "layers", []):
+        return "quiet"                                                 # 최근 사람이 드나드는 집: 짐승은 없다(사람이 있다 — 1-L §3.4)
+    if style == "shop":
+        return PLACE_FAM.get(getattr(p, "shop_kind", ""), "food")
+    return {"office": "office", "gov": "office", "factory": "store"}.get(style, "home")
+
+
+def _place_enemies(p, threat, region, style="villa"):
+    """장소 결 몹(1-L §2.3 · 1-B4 상황): 결 확률로 적이 있나 굴리고, 그 권역 · 그 위협 이하 적(+ 장소 고유 사람형)을 결 가중으로 하나 고른다.
+    떠돌이 소굴의 사람형은 절반이 자는 중 · 유해가 있는 집의 짐승은 뜯어먹는 중(감지 0.5). 상황 판정은 따로 굴린다."""
     rnd = p.rnd
     tab = ENEMY_ROLL.get(region, ENEMY_ROLL["HR"])
-    roll = tab[max(1, min(3, threat))]
+    th = max(1, min(3, threat))
+    fam = _mob_family(p, style)
+    wts, probs, own = PLACE_MOB[fam]
     sit = random.Random(_h(len(p.cmds), p.W, p.H, p.ex))
     feed = any(c.startswith("prop remains ") for c in p.cmds)
-    for eid, ch, lo, hi in roll:
-        if rnd.random() < ch:
-            far = [(x, y) for (x, y) in p.spots(1, 3, p.W - 2, p.H - 3) if abs(x - p.ex) + abs(y - (p.H - 2)) >= 6]
-            for (x, y) in far[:rnd.randint(lo, hi)]:
-                p.enemy(eid, x, y)
-                if getattr(p, "den", False) and eid not in BEASTS and sit.random() < 0.55:
-                    p.cmds[-1] += " sleep=1"
-                elif feed and eid in BEASTS:
-                    p.cmds[-1] += " det=0.5"
-            break
+    if rnd.random() >= probs[th - 1]:
+        return
+    cands = {}
+    for t in range(1, th + 1):
+        for eid, _ch, lo, hi in tab[t]:
+            cands[eid] = (lo, hi)
+    for eid, t0 in own.items():
+        if th >= t0:
+            cands.setdefault(eid, (1, 2))
+    if not cands:
+        return
+    ids = sorted(cands)
+    ws = [wts.get(e, 0.5) for e in ids]
+    eid = rnd.choices(ids, ws)[0]
+    lo, hi = cands[eid]
+    far = [(x, y) for (x, y) in p.spots(1, 3, p.W - 2, p.H - 3) if abs(x - p.ex) + abs(y - (p.H - 2)) >= 6]
+    for (x, y) in far[:rnd.randint(lo, hi)]:
+        p.enemy(eid, x, y)
+        if fam == "den" and eid not in BEASTS and sit.random() < 0.55:
+            p.cmds[-1] += " sleep=1"
+        elif feed and eid in BEASTS:
+            p.cmds[-1] += " det=0.5"
 
 
 def build_one(spec, pools, prop_meta, known_vars, known_fns, scenes, tries=12, hh_src=None, npc_names=frozenset()):
@@ -933,6 +973,7 @@ def build_one(spec, pools, prop_meta, known_vars, known_fns, scenes, tries=12, h
             kind = SHOPS[(x * 7 + y * 13) % len(SHOPS)]
             nm = rnd.choice(SHOP_PRE) + rnd.choice(SHOP_SUF[kind])
             p = Plan(mid, nm, "jm", 16 + rnd.randint(0, 2), 12, ",", rnd, pools, region)
+            p.shop_kind = kind
         elif style == "office":
             p = Plan(mid, bname or "사무실", "bk", 20, 12, "c", rnd, pools, region)
         else:
@@ -981,7 +1022,8 @@ def build_one(spec, pools, prop_meta, known_vars, known_fns, scenes, tries=12, h
         else:
             tpl_store(p)
         _traps(p, style, got if style in ("villa", "house") else style, threat)
-        _place_enemies(p, threat, region)
+        p.layers = layers if style in ("villa", "house") and got == "home" else []
+        _place_enemies(p, threat, region, style if not spec.get("collapsed") else "collapsed")
         _rads(p, style, got if style in ("villa", "house") else style, threat)   # 맨 뒤: 앞선 배치(적 · 상자 · 글)를 바꾸지 않는다
         with tempfile.NamedTemporaryFile("w", suffix=".map", delete=False, encoding="utf-8") as f:
             f.write(p.source())
@@ -1221,6 +1263,65 @@ def stash_chains(outs, pools, prop_meta):
     return n
 
 
+SHOP_PLACE = {"conv": "conv", "pharm": "pharm", "hw": "hw", "laundry": "laundry", "snack": "snack", "tea": "tea", "salon": "salon",
+              "video": "video", "karaoke": "karaoke"}
+HARD_PROPS = ("rad_", "trap_", "gas_pipe")
+
+
+def tag_loot(outs, thr):
+    """파밍 v3 꼬리표(1-L 계획 §2 · §9.1): 용기마다 결(pl) · 위협(th) · 함정/방사능(hd) · 시간 층(ly) · 사건(ev) · 가리키는 곳(ld)을 붙인다.
+    굴림은 게임이 판마다 한다(같은 판 같은 결과) — 생성기는 '어떤 곳인가'만 적는다. 가리키는 곳 = 25~90칸 안 가장 가까운 털이 소굴 · 최근 사람 집."""
+    import math
+    import loot_export as LE
+    hubs = []
+    for mid, (o, (x, y), st) in outs.items():
+        hh = o.get("house") or {}
+        if hh.get("mode") == "den" or "l3" in (hh.get("layers") or []):
+            hubs.append((x, y, mid))
+    n_ev = 0
+    for mid, (o, (x, y), st) in outs.items():
+        hh = o.get("house") or {}
+        if o.get("gen") == "collapsed":
+            pl = "collapsed"
+        elif st in ("villa", "house"):
+            pl = "den" if hh.get("mode") == "den" else "home"
+        elif st == "shop":
+            pl = SHOP_PLACE.get(SHOPS[(x * 7 + y * 13) % len(SHOPS)], "conv")
+        else:
+            pl = {"office": "office", "factory": "store", "gov": "gov", "apt": "apt"}.get(st, "home")
+        hard = 1 if (o.get("traps") or any(str(p_["name"]).startswith(HARD_PROPS) for p_ in o["props"])) else 0
+        ly = list(hh.get("layers") or [])
+        best = None
+        for (hx, hy, hid) in hubs:
+            d = math.hypot(hx - x, hy - y)
+            if hid != mid and 25 <= d <= 90 and (best is None or d < best[0]):
+                best = (d, hx, hy)
+        ld = []
+        if best:
+            ang = math.degrees(math.atan2(best[2] - y, best[1] - x))
+            ld = [DIR8[int(((ang + 22.5) % 360) // 45)], "골목 몇 개 건너" if best[0] < 40 else ("큰길 하나 건너" if best[0] < 65 else "한참 가서")]
+        ev = hh.get("event") if pl == "home" else None
+        evd = LE.EVENTS.get(ev) if ev else None
+        ev_kind = None
+        if evd:
+            have = [b["kind"] for b in o["boxes"]]
+            ev_kind = next((k for k in evd[0] if k in have), None)
+        ev_done = False
+        for b in o["boxes"]:
+            b["pl"], b["th"] = pl, int(thr.get(mid, 2))
+            if hard:
+                b["hd"] = 1
+            if ly:
+                b["ly"] = ly
+            if ld:
+                b["ld"] = ld
+            if ev_kind and b["kind"] == ev_kind and (evd[3] or not ev_done):
+                b["ev"] = ev
+                ev_done = True
+        n_ev += 1 if ev_done else 0
+    return n_ev
+
+
 def neighbor_links(outs, prop_meta):
     """이웃 고리(1-B3 · 설계안 §7.2): 같은 굽기에서 양쪽을 쓴다 — 한쪽만 있는 고리는 없다(P1).
     ① '가게 외상' 집의 '구멍가게'를 40칸 안 가장 가까운 동네 가게 이름으로 바꾸고, 그 가게 바닥에 그 집 외상 장부 한 장.
@@ -1373,11 +1474,13 @@ def run(entries, reach, threat, region_at, taken, log=print, cache=True, fixed=(
         t = int(t) if str(t).isdigit() else 1
         todo.append((e, {"x": x, "y": y, "style": st, "threat": t, "region": rg}))
     built = _build_all([sp for _, sp in todo], pools, prop_meta, known_vars, known_fns, scenes, log)
+    thr = {}
     for (e, sp), out in zip(todo, built):
         x, y, st = sp["x"], sp["y"], sp["style"]
         if out is None:
             continue
         outs[out["id"]] = (out, (x, y), st)
+        thr[out["id"]] = sp["threat"]
         made[out["id"]] = {"name": out["name"], "size": out["size"], "exits": ["W"]}
         lock = 0
         hv = _h(e["seed"], 91) % 100
@@ -1399,6 +1502,8 @@ def run(entries, reach, threat, region_at, taken, log=print, cache=True, fixed=(
         cnt[st] = cnt.get(st, 0) + 1
     n_stash = stash_chains(outs, pools, prop_meta)
     n_nb = neighbor_links(outs, prop_meta)
+    n_ev = tag_loot(outs, thr)                                         # 1-L: 쪽지 사슬 · 이웃 고리가 더한 용기까지 결 꼬리표
+    log("파밍 v3 꼬리표: 실내 %d곳 · 사건 물건 %d집" % (len(outs), n_ev))
     blob = bytearray()                                                 # 1-B: 낱장 JSON 대신 압축 묶음 하나(gen.bin — 실내마다 zlib, 월드 청크와 같은 방식)
     for mid in sorted(outs):
         raw = json.dumps(outs[mid][0], ensure_ascii=False, separators=(",", ":")).encode("utf-8")

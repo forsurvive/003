@@ -14,6 +14,10 @@ static var level_steps: Array = [7, 13, 19, 25]
 static var flavor := {}                          ## 자리 특색(SD-22 §5.4): 권역·지형 태그 → 묶음 → [[아이템, 등급]]
 static var restock := {}                         ## 다시 채움(SD-22 §5.4 V2): 용기 종류 → [최소일, 최대일, 확률]
 static var chunk_tags := {}                      ## 청크 지형 태그(world_chunks.chunk_tags): "cx,cy" → {"fab", "tags"}
+static var place := {}                           ## 파밍 v3(1-L §2.1): 장소 결 → {용기 종류 · '계산대' → 바꿔 끼울 표}
+static var events := {}                          ## 사건 물건(§2.2): 사건 → [용기 종류들, 표, 빈 상자율 배수, 모두]
+static var v3 := {}                              ## 빈 상자율 · 줄 상한 · 캡 배수 · 보이는 빔(§9.1)
+static var why := {}                             ## 빈 이유 글: 열쇠 → [글]
 const FLAVOR_P := 0.3
 
 
@@ -30,6 +34,10 @@ static func _load() -> void:
 		level_steps = d.get("level_steps", level_steps)
 		flavor = d.get("flavor", {})
 		restock = d.get("restock", {})
+		place = d.get("place", {})
+		events = d.get("events", {})
+		v3 = d.get("v3", {})
+		why = d.get("why", {})
 	var tp := "res://data/world/chunk_tags.json"
 	if FileAccess.file_exists(tp):
 		chunk_tags = JSON.parse_string(FileAccess.get_file_as_string(tp)).get("chunks", {})
@@ -176,7 +184,11 @@ static func contents(st: StoryState, map_id: String, b: Dictionary, region: Stri
 	var t := tier_of(st, region) if region != "" else 1
 	var cond := "loot" if st.year() >= 2277 else ""
 	if not st.boxes.has(k):
-		st.boxes[k] = {"items": roll(str(b["kind"]), seed_of(st, k, 0), t, cond, ctx_for(st, map_id, b, region)), "opened": 0, "taken": 0}
+		if is_v3(st, map_id, b):
+			var r := roll_v3(map_id, b, seed_of(st, k, 0), t, cond, ctx_for(st, map_id, b, region))
+			st.boxes[k] = {"items": r["items"], "opened": 0, "taken": 0, "why": r["why"], "vis": r["vis"]}
+		else:
+			st.boxes[k] = {"items": roll(str(b["kind"]), seed_of(st, k, 0), t, cond, ctx_for(st, map_id, b, region)), "opened": 0, "taken": 0}
 		if map_id.begins_with("G-") and str(b.get("name", "")) == "작업대" and st.year() >= 2277:
 			st.boxes[k]["items"]["W-151"] = 1                              # 시설 작업대 서랍의 완성 병뚜껑 지뢰 1개(SD-13 §7.9.1 원작 관습, 처음 한 번)
 	else:
@@ -208,13 +220,150 @@ static func _restock(st: StoryState, k: String, map_id: String, b: Dictionary, t
 	bx.erase("re_at")
 	bx["gen"] = gen + 1
 	if bool(bx.get("re_ok", true)):
-		bx["items"] = roll(str(b["kind"]), seed_of(st, k, gen + 1), t, cond, ctx_for(st, map_id, b, region))
+		if is_v3(st, map_id, b):                                         # 1-L: 다시 채움도 장소 결 · 빈 상자율 · 줄 상한 그대로(보이는 빔은 처음 한 번만)
+			var r := roll_v3(map_id, b, seed_of(st, k, gen + 1), t, cond, ctx_for(st, map_id, b, region))
+			bx["items"] = r["items"]
+			bx["why"] = r["why"]
+			bx["vis"] = false
+		else:
+			bx["items"] = roll(str(b["kind"]), seed_of(st, k, gen + 1), t, cond, ctx_for(st, map_id, b, region))
 
 
 ## 쓰러진 적의 소지품(§9.3): 적 ID 표 + 씨앗(맵·자리·날)
 static func drop(enemy_id: String, seed_key: String, t: int = 1, cond_kind: String = "enemy") -> Dictionary:
 	_load()
 	return roll_rows(drops.get(enemy_id, []), seed_key, t, cond_kind)
+
+
+# ---------------------------------------------------------------- 파밍 v3(1-L 계획 §2 · §9.1)
+## 대상: 볼트를 나온 뒤 생성 실내(G-) · 월드 길가(W)의 일반 용기. 손 맵 · 퀘스트 용기 · 볼트 시대는 옛 굴림 그대로
+static func is_v3(st: StoryState, map_id: String, b: Dictionary) -> bool:
+	_load()
+	return st.year() >= 2277 and (map_id == "W" or map_id.begins_with("G-")) and str(b.get("kind", "")) in (v3.get("kinds", []) as Array) \
+		and str(b.get("owner", "")) == ""
+
+
+static func place_of(map_id: String, b: Dictionary) -> String:
+	return str(b.get("pl", "road" if map_id == "W" else "home"))
+
+
+## 빈 상자율(§2.1): 결 기본 × 위협 × 잠김 × 함정/방사능 × 최근 사람 × 사건 × 용기 배수
+static func empty_p(map_id: String, b: Dictionary) -> float:
+	_load()
+	var pl := place_of(map_id, b)
+	var p := float((v3.get("empty", {}) as Dictionary).get(pl, 0.5))
+	p *= float((v3.get("threat", {}) as Dictionary).get(str(int(b.get("th", 2))), 1.0))
+	if int(b.get("lock", 0)) > 0:
+		p *= float(v3.get("lock", 0.6))
+	if int(b.get("hd", 0)) == 1:
+		p *= float(v3.get("hard", 0.7))
+	if "l3" in (b.get("ly", []) as Array):
+		p *= float(v3.get("l3", 1.1))
+	var ev := str(b.get("ev", ""))
+	if ev != "" and events.has(ev):
+		p *= float(events[ev][2])
+	p *= float((v3.get("kind_mul", {}) as Dictionary).get(str(b.get("kind", "")), 1.0))
+	return clampf(p, 0.0, 0.97)
+
+
+## 바꿔 끼울 표: 사건 표 → 결 표(이름이 '계산대'로 시작하면 '계산대' 열쇠 먼저) → 모든 결 기본 → 그대로
+static func table_of(map_id: String, b: Dictionary) -> String:
+	_load()
+	var kind := str(b.get("kind", ""))
+	var ev := str(b.get("ev", ""))
+	if ev != "" and events.has(ev) and str(events[ev][1]) != "" and kind in (events[ev][0] as Array):
+		return str(events[ev][1])
+	var till := str(b.get("name", "")).begins_with("계산대")
+	for pk in [place_of(map_id, b), "*"]:
+		var m: Dictionary = place.get(pk, {})
+		if till and m.has("계산대"):
+			return str(m["계산대"])
+		if m.has(kind):
+			return str(m[kind])
+	return kind
+
+
+## 굴림: {"items", "why"(빈 이유 글 — 비었을 때만), "vis"(보이는 빔 — 들어선 순간 바닥에 보인다)}. 같은 씨앗이면 같은 결과
+static func roll_v3(map_id: String, b: Dictionary, seed_key: String, t: int, cond_kind: String, ctx: Dictionary) -> Dictionary:
+	_load()
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash(seed_key + "|v3")
+	var u := rng.randf()
+	var pe := empty_p(map_id, b)
+	var vs: Dictionary = v3.get("vis", {})
+	var pv := pe * float(vs.get(place_of(map_id, b), vs.get("*", 0.0)))
+	if u < pe:
+		return {"items": {}, "why": why_text(map_id, b, rng), "vis": u < pv}
+	var rows: Array = []
+	var ly: Array = b.get("ly", [])
+	for r in (tables.get(table_of(map_id, b), {}).get("rows", []) as Array):
+		if "l2" in ly and str(r[0]) in (v3.get("l2_drop", []) as Array):
+			continue                                                     # 시간 층 ②: 200년 동안 누가 여기서 먹고 아팠다
+		var rr: Array = (r as Array).duplicate()
+		if str(rr[0]) == "M-001":
+			rr[1] = float(rr[1]) * float(v3.get("caps", 0.35))           # 상자에서 캡은 드물다 — 캡은 거래로 번다(원칙 4)
+		rows.append(rr)
+	var items := roll_rows(rows, seed_key, t, cond_kind, ctx)
+	var nmax := int((v3.get("lines_big", {}) as Dictionary).get(str(b.get("kind", "")), v3.get("lines", 2)))
+	if items.size() > nmax:
+		var ks := items.keys()
+		ks.sort()
+		for i in range(ks.size() - 1, 0, -1):
+			var j := rng.randi_range(0, i)
+			var tmp = ks[i]
+			ks[i] = ks[j]
+			ks[j] = tmp
+		var kept := {}
+		for kk in ks.slice(0, nmax):
+			kept[kk] = items[kk]
+		items = kept
+	return {"items": items, "why": why_text(map_id, b, rng) if items.is_empty() else "", "vis": false}
+
+
+## 빈 이유 글(§1 원칙 2): 사건 → 시간 층 → 결:용기 → 결:* → *:용기 → *:*. 12%는 다른 곳을 가리킨다(생성기가 고른 가까운 소굴 · 사람 사는 집)
+static func why_text(map_id: String, b: Dictionary, rng: RandomNumberGenerator) -> String:
+	_load()
+	var ld: Array = b.get("ld", [])
+	if ld.size() >= 2 and rng.randf() < float(v3.get("lead", 0.12)) and why.has("lead"):
+		var ll: Array = why["lead"]
+		return str(ll[rng.randi() % ll.size()]).replace("{dir}", str(ld[0])).replace("{far}", str(ld[1]))
+	var pl := place_of(map_id, b)
+	var kind := "계산대" if str(b.get("name", "")).begins_with("계산대") else str(b.get("kind", ""))
+	var keys: Array = []
+	var ev := str(b.get("ev", ""))
+	if ev != "":
+		keys.append("ev:" + ev)
+	for lay in (b.get("ly", []) as Array):
+		keys.append_array(["%s+%s:%s" % [pl, lay, kind], "%s+%s:*" % [pl, lay]])
+	keys.append_array(["%s:%s" % [pl, kind], pl + ":*", "*:" + kind, "*:*"])
+	for kk in keys:
+		if why.has(kk) and not (why[kk] as Array).is_empty():
+			var l: Array = why[kk]
+			return str(l[rng.randi() % l.size()])
+	return ""
+
+
+## 보이는 빔(§9.1): 아직 열지 않았어도 들어선 순간 바닥에 털린 자리가 보이나 — 굴림과 같은 씨앗(열어 보면 그대로 비었다)
+static func visibly_empty(st: StoryState, map_id: String, b: Dictionary) -> bool:
+	if not is_v3(st, map_id, b):
+		return false
+	var k := key(map_id, b, st.year())
+	if st.boxes.has(k):
+		var bx: Dictionary = st.boxes[k]
+		return bool(bx.get("vis", false)) and (bx["items"] as Dictionary).is_empty() and int(bx.get("taken", 0)) == 0 \
+			and int(bx.get("gen", 0)) == 0
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash(seed_of(st, k, 0) + "|v3")
+	var u := rng.randf()
+	var vs: Dictionary = v3.get("vis", {})
+	return u < empty_p(map_id, b) * float(vs.get(place_of(map_id, b), vs.get("*", 0.0)))
+
+
+## 빈 상자를 열었을 때 보일 글: 처음 굴려 빈 채였고 주인공이 아직 아무것도 꺼내지 않았을 때만(내가 비운 상자에 '누가 털었다'는 없다)
+static func empty_line(bx: Dictionary) -> String:
+	if not (bx.get("items", {}) as Dictionary).is_empty() or int(bx.get("taken", 0)) > 0:
+		return ""
+	return str(bx.get("why", ""))
 
 
 ## 주인이 있는 남의 물건인가(절도 판정 대상)
