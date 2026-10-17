@@ -1,0 +1,107 @@
+{
+ "id": "KT_EXPL",
+ "title": "탐험가 유해",
+ "loc": "L-R02-05",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "KNOW": 6,
+  "WALLET": 7,
+  "TAKE": 9,
+  "EMPTY": 12
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "KT_EXPL >= 2",
+   "to": "EMPTY"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "벽에 기대앉은 유해. 등산 배낭 · 녹은 장화 · 손에 쥔 연필. 벽에 연필로 '4층부터 막힘. 흙 너무 단단'."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "그 아래 작은 글씨가 이어진다. '알 무더기 점액 = 냄새. 줄 위에선 일개미가 비킴. 줄 밖에선 더듬이 세움. 병정은 안 속음 — 알 든 놈은 그냥 보냄. 물 조심.'"
+  },
+  {
+   "op": "if",
+   "cond": "KT_NOTE == 1",
+   "to": "KNOW"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "이름은 어디에도 없다."
+  },
+  {
+   "op": "goto",
+   "to": "WALLET"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "연필 글씨가 낯익다. 지하 발전기 쪽지 — '나는 22층 간다'. 그는 22층에 가지 못했다."
+  },
+  {
+   "op": "do",
+   "fx": "KT_EXPL = 1"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "품을 뒤진다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TAKE",
+     "id": "KT_EXPL:1:0"
+    },
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KT_EXPL:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "낡은 지갑. 캡 마흔 개를 고무줄로 묶었다. 고무줄 밑에 쪽지 '연료 통 값 — 갚을 것'."
+  },
+  {
+   "op": "do",
+   "fx": "caps(40); KT_EXPL = 2"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈 지갑만 남은 유해. 벽의 연필 글씨 '4층부터 막힘'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KT.txt"
+}

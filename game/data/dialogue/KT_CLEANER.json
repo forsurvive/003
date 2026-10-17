@@ -1,0 +1,32 @@
+{
+ "id": "KT_CLEANER",
+ "title": "청소부 쪽지",
+ "loc": "L-R02-05",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "쪽지. '10-23 바람 세서 철수 — 내일 아침 31층부터. 오른쪽 줄 갈아야 함, 사무실에 말할 것. 반장'."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "내일 아침은 오지 않았다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KT.txt"
+}

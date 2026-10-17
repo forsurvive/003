@@ -617,6 +617,31 @@
 },
 {
 "where": "R02",
+"cond": "KT_TOP == 2 and GAME_DAY > KT_TOP_DAY",
+"text": "금탑 꼭대기에 불이 들어왔대. 강 건너 마포 나루에서도 보인다더라. 밤에 그거 보고 길 찾는 사람이 생겼대."
+},
+{
+"where": "R02",
+"cond": "KT_TOP == 2 and GAME_DAY > KT_TOP_DAY",
+"text": "계엄군 관측조가 금탑 불빛 보고 밤 순찰 짠대. 여의도 밤길이 전보다 훤해졌다고. 좋은 건지 모르겠다."
+},
+{
+"where": "R02",
+"cond": "KT_QUEEN == 1 and GAME_DAY > KT_QUEEN_DAY",
+"text": "금탑 개미가 조용해졌대. 로비 흙벽에 냄새 줄이 없어졌다고. 누가 22층까지 올라갔다는데."
+},
+{
+"where": "R02",
+"cond": "KT_HEAT == 1 and KT_QUEEN == 0 and GAME_DAY > KT_GEN_DAY",
+"text": "금탑 위층 창에 불이 켜졌는데, 그 뒤로 개미 행렬이 꼭대기 쪽으로 올라간대. 불빛 따라."
+},
+{
+"where": "R02",
+"cond": "KT_OBS >= 1 and GAME_DAY > KT_OBS",
+"text": "금탑 관측조가 개미한테 쫓겨 내려왔대. 연회장 창가까지 개미 줄이 났다나. 누가 끌고 올라간 거 아니냐는 말도 있고."
+},
+{
+"where": "R02",
 "cond": "KT_REVOLVE == 2",
 "text": "금탑 회전문 유리 하나가 깨졌대. 안에서 깬 자국이라던데. 개미가 문에 끼었었나 봐."
 }

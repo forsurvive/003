@@ -36,6 +36,8 @@ const LAY_S := 20.0
 const LAY_MAX := 4
 const FRENZY_S := 8.0
 const CAST_S := 0.5                               ## 분사 · 침 · 알 낳기 동작(서서 한다)
+const TEAM := "ants"
+const STRANGER_R := 1.4                           ## 행렬이 낯선 냄새(군화 · 사람)와 이만큼 붙으면 멈칫 → 큰턱
 const N8 := [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1), Vector2i(1, 1), Vector2i(-1, 1), Vector2i(1, -1), Vector2i(-1, -1)]
 
 var map: InteriorMap
@@ -68,6 +70,9 @@ func setup(m: InteriorMap, c: InteriorCombat, s: StoryState) -> void:
 	for c2 in m.scent_cells():
 		cells[c2] = {"perm": true, "exp": INF, "born": 0.0}
 	active = not cells.is_empty() or c.enemies.any(func(e): return is_instance_valid(e) and str(e.row.get("id", "")) in ANTS)
+	for e in c.enemies:                                                # 개미는 제 편(ants) — 사람 무리(관측조 · 떠돌이)와 같은 편이 아니다
+		if is_instance_valid(e) and str(e.row.get("id", "")) in ANTS:
+			e.cmb.team = TEAM
 	spit_w = (c.weapons.get("W-002", {}) as Dictionary).duplicate()
 	spit_w.merge({"id": "ACID", "name": "산성 침", "dmg": SPIT_DMG, "crit_dmg": SPIT_DMG, "range_eff": SPIT_R, "range_max": SPIT_R + 1.0,
 		"proj": "acid", "kind": "ranged", "sound": "", "rate": 0.3}, true)
@@ -172,7 +177,10 @@ func tick(dt: float) -> void:
 		_frenzy_step(e, a, dt)
 		_cast_step(e, a, dt)
 		if slow:
+			if e.cmb.team != TEAM and not e.has_meta("ant_mad"):
+				e.cmb.team = TEAM                                           # 진행기가 새로 세운 개미(흙벽 · 알 무더기)도 제 편으로
 			_disguise(e, a, sstep)
+			_strangers(e)
 			if str(e.row.get("id", "")) == WORKER:
 				_follow(e, a, sstep)
 	_queen_step(dt)
@@ -386,6 +394,23 @@ func _disguise(e: Enemy, a: Dictionary, step: float) -> void:
 				e.route = []
 
 
+## 낯선 냄새: 사람 무리(관측조 · 구울)와 행렬이 붙으면 서로 적이 된다 — 행렬을 끌고 가면 싸움이 붙는다(재미 검수 엉뚱한 짓)
+func _strangers(e: Enemy) -> void:
+	for o in cmb.enemies:
+		if not is_instance_valid(o) or o == e or o.cmb.dead or is_ant(o) or o.cmb.team in e.foes:
+			continue
+		if o.loco.logical.distance_to(e.loco.logical) > STRANGER_R * 32.0 + e.radius_px:
+			continue
+		e.foes.append(o.cmb.team)
+		if not TEAM in o.foes:
+			o.foes.append(TEAM)
+		e.brain.gauge = 100.0
+		o.brain.gauge = 100.0
+		e.hear("impact", o.loco.logical)
+		o.hear("impact", e.loco.logical)
+		_say("행렬이 군화 냄새에 멈칫한다 — 큰턱이 벌어진다!")
+
+
 func _say(s: String) -> void:
 	if _hint_t <= 0.0:
 		_hint_t = 4.0
@@ -440,7 +465,7 @@ func _frenzy_step(e: Enemy, a: Dictionary, dt: float) -> void:
 		a["mad"] = FRENZY_S
 		e.set_meta("ant_mad", true)
 		e.cmb.team = "frenzy"
-		e.foes = ["enemy"]
+		e.foes = [TEAM, "enemy"]
 		e.brain.frenzy()
 		e.focus = null
 		note.emit("더듬이가 꺾였다 — %s가 미쳐서 제 무리를 문다!" % str(e.row.get("name", "개미")))
@@ -448,7 +473,7 @@ func _frenzy_step(e: Enemy, a: Dictionary, dt: float) -> void:
 		a["mad"] = float(a["mad"]) - dt
 		if float(a["mad"]) <= 0.0:
 			e.remove_meta("ant_mad")
-			e.cmb.team = "enemy"
+			e.cmb.team = TEAM
 			e.foes = ["player", "ally"]
 			e.focus = null
 			e.brain.gauge = 100.0
@@ -506,28 +531,36 @@ func ring_ok(mound: Vector2i) -> bool:
 	return false
 
 
-# ---------------------------------------------------------------- 그림: 냄새 줄(바닥에 희미한 반짝임 — 영구 줄은 호박빛 점선 · 발자국은 진한 점이 바래 간다)
+# ---------------------------------------------------------------- 그림: 냄새 줄(바닥에 칸끼리 이어지는 점선 — 영구 줄은 연두 반짝임이 천천히 흐르고 · 발자국은 옅은 노랑이 바래 간다)
+## 반투명 대신 밝은 점 + 바로 밑 어두운 점(흙 · 카펫 · 테라초 어디서나 읽히게, SD-16 §3.8)
+const LINKS := [Vector2i(1, 0), Vector2i(0, 1), Vector2i(1, 1), Vector2i(1, -1)]
+
+
 func _draw() -> void:
 	if not active:
 		return
+	var phase := int(clock * 6.0)
 	for k in cells:
 		var c: Dictionary = cells[k]
-		var o := Vector2(k) * 32.0
-		var h := int(k.x * 73 + k.y * 151)
-		if bool(c["perm"]):
-			var tw := 0.5 + 0.5 * sin(clock * 2.2 + float(h % 17))
-			for i in 4:
-				var p := o + Vector2(4 + (h >> (i * 3)) % 24, 6 + (h >> (i * 2 + 1)) % 20)
-				var col := Color("C4A56E") if (i + int(tw * 2.0)) % 3 == 0 else Color("7E8448")
-				col.a = 0.55 if i % 2 == 0 else 0.35
-				draw_rect(Rect2(p.floor(), Vector2(1, 1)), col)
-			if tw > 0.85:
-				draw_rect(Rect2((o + Vector2(10 + h % 12, 12 + h % 9)).floor(), Vector2(1, 1)), Color("E0C996"))
-		else:
-			var left := clampf((float(c["exp"]) - clock) / DRAW_S, 0.0, 1.0)
-			var n := 2 + int(left * 3.0)
+		var perm := bool(c["perm"])
+		var left := 1.0 if perm else clampf((float(c["exp"]) - clock) / DRAW_S, 0.0, 1.0)
+		var a := Vector2(k) * 32.0 + Vector2(16, 20)
+		var linked := false
+		for d in LINKS:
+			if not cells.has(k + d):
+				continue
+			linked = true
+			var b := Vector2(k + d) * 32.0 + Vector2(16, 20)
+			var n := int(a.distance_to(b) / 3.0)
 			for i in n:
-				var p := o + Vector2(6 + (h >> (i * 2)) % 20, 8 + (h >> (i * 3 + 2)) % 16)
-				var col := Color("D4FF6A") if left > 0.6 and i == 0 else Color("A5A86A")
-				col.a = 0.35 + 0.4 * left
-				draw_rect(Rect2(p.floor(), Vector2(1 if i % 2 else 2, 1)), col)
+				if not perm and (i + int(left * 8.0)) % 3 == 2:
+					continue                                              # 발자국 냄새: 성기게(바래 간다)
+				var w := roundf(sin(float(i + int(k.x) * 7 + int(k.y) * 3) * 0.9))   # 1픽셀 흔들림(개미 걸음처럼 — 자로 그은 줄이 아니게)
+				var p := (a.lerp(b, float(i) / float(n)) + (b - a).normalized().orthogonal() * w).floor()
+				var hi: bool = (i + phase + int(k.x) * 3 + int(k.y) * 5) % 6 == 0
+				var col := Color("D4FF6A") if hi and perm else (Color("A5A86A") if perm else (Color("FFEC9A") if left > 0.5 else Color("C4A56E")))
+				draw_rect(Rect2(p + Vector2(0, 1), Vector2(1, 1)), Color("1A181D"))
+				draw_rect(Rect2(p, Vector2(1, 1)), col)
+		if not linked:
+			draw_rect(Rect2(a.floor() + Vector2(0, 1), Vector2(2, 1)), Color("1A181D"))
+			draw_rect(Rect2(a.floor(), Vector2(2, 1)), Color("A5A86A") if perm else Color("FFEC9A"))

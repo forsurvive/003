@@ -1,0 +1,119 @@
+# 여의도 금탑 KT-03 사무층(4~21층 대표 — SD-09a L-R02-05 '사무층 묶음' · 1-D 계획 §11.9~11.10 · 단계 1-D5b). 48×26.
+# 같은 사무층이 18개 층 되풀이된다 — 한 장이 '대표 층'. 2077 분양 홍보관(금박 모형 · 시세판 · 상담 부스) · 개미가 뜯은 사무실 · 12층 어린이 과학관 임시 전시 ·
+# 위성 육아방(알 나르는 줄이 22층과 이어짐 — 위장을 얻는 곳) · 탕비실 쉼터 · 서남 계단참(로비 흙벽을 판 길 · 탐험가 유해) · 동북 계단(22층) ·
+# 화물 승강기(4층에 선다) · 동쪽 끝 20층 통유리(곤돌라가 기울어 멈춘 자리 — 깨고 들어온다).
+map KT-03 금탑 사무층
+set bk
+grid
+################################################
+################################################
+################################################
+#ttttttttttttttttttttt#ccccccccccccccccccc~~~~~#
+#ttttttttttttttttttttt#ccccccccccccccccccc~~~~~#
+#ttttttttttttttttttttt#ccccccccccccccccccc~~~~~#
+#ttttttttttttttttttttt#ccccccccccccccccccc~~~~~#
+#tttttttttttttttttttttccccccccccccccccccccccccc#
+#tttttttttttttttttttttccccccccccccccccccccccccc#
+#ttttttttttttttttttttt#cccccccccccccccccccccccc#
+#ttttttttttttttttttttt#cccccccccccccccccccccccc#
+#ttttttttttttttttttttt#cccccccccccccccccccccccc#
+#ttttttttttttttttttttt#cccccccccccccccccccccccc#
+###########ccc############ddd##########ccc######
+###########ccc############ddd##########ccc######
+###########ccc############ddd##########ccc######
+#~~~~~~#ttttttttttttt#ddddddddddddd#,,,,,,,,,,,#
+#~~~~~~#ttttttttttttt#ddddddddddddd#,,,,,,,,,,,#
+#~~~~~~#ttttttttttttt#ddddddddddddd#,,,,,,,,,,,#
+#~~~~~~~ttttttttttttt#ddddddddddddd#,,,,,,,,,,,#
+#~~~~~~~ttttttttttttt#ddddddddddddd#,,,,,,,,,,,#
+#~~~~~~#ttttttttttttt#ddddddddddddd#,,,,,,,,,,,#
+#~~~~~~#ttttttttttttt#ddddddddddddd#,,,,,,,,,,,#
+################################################
+################################################
+################################################
+end
+mark from_stair 3 19 E
+mark from_KT-01 3 19 E
+mark cargo 19 3 S
+mark from_window 44 8 W
+mark stair_up 44 4 N
+mark nursery 28 17 S
+exit 45 3 KT-04 from_stair
+exit 46 3 KT-04 from_stair
+# ---------------------------------------------------------------- 서남 비상계단참(로비 흙벽을 판 길) · 탐험가 유해
+text 2 16 "비상계단참. 벽에 층 번호가 페인트로 4, 5, 6… 위로 갈수록 흙이 짙다. 계단은 22층까지 — 같은 층이 열여덟 번 되풀이된다." w=3
+prop remains 4 21
+box 4 21 bag name="탐험가 유해 — 배낭" cond="KT_EXPL < 2"
+text 5 21 "벽에 기대앉은 유해. 등산 배낭 · 개미산에 녹은 장화." scene=KT_EXPL
+text 1 19 "아래로 — 로비 흙벽을 뚫은 굴." scene=KT_DOWN
+# ---------------------------------------------------------------- 분양 홍보관(2077 '금빛 빌딩 — 전 세대 완판')
+prop w_quote_kt 6 1
+text 7 2 "분양 시세판. 층마다 분양가 줄 — 맨 위 60층은 숫자 대신 '완판'. 누가 손톱으로 숫자를 긁었다." w=3
+prop model_kt 10 6 cond="KT_QUEEN == 0"
+prop model_kt 10 6 state=ant cond="KT_QUEEN == 1"
+text 10 8 "금박 분양 모형. 유리 상자 안 60층 탑 — 금박이 군데군데 뜯겨 나갔다. 개미가 금박을 굴로 날라 갔다." w=2
+prop sales_booth_kt 3 4
+text 3 5 "분양 상담 부스. 팸플릿 '하늘과 가장 가까운 주소 — 입주 2077년 11월'." w=2
+prop sales_booth_kt 15 4
+text 15 5 "상담 의자 위에 계약서 묶음. 서명란이 비었다. 날짜 '2077. 10. 23.'" w=2
+box 15 4 desk name="상담 부스 서랍"
+prop wait_chairs 3 10
+prop plant_pot 1 3
+prop plant_pot 20 3
+prop w_hose_kt 12 1 cond="KT_HOSE3 == 0"
+prop w_hose_kt 12 1 state=open cond="KT_HOSE3 == 1"
+text 12 2 "소화전 함. 호스가 감겨 있다 — 밸브를 돌리면 아직 물이 나올까." scene=KT_HOSE3 cond="KT_HOSE3 == 0"
+prop w_cargo_kt 18 1 state=live cond="KT_POWER == 2"
+prop w_cargo_kt 18 1 cond="KT_POWER != 2"
+text 19 2 "화물 승강기 — 4층." scene=KT_CARGO3 w=2
+# ---------------------------------------------------------------- 사무실(개미가 칸막이를 뜯어 굴 재료로)
+prop cubicle_kt 24 4
+prop cubicle_kt 28 4 state=ant
+prop cubicle_kt 32 4
+prop cubicle_kt 36 4 state=ant
+prop cubicle_kt 24 9
+prop cubicle_kt 36 9
+prop office_desk 31 10
+box 31 10 desk name="사무 책상 서랍"
+prop ant_hole_kt 29 9
+text 29 9 "바닥을 뚫은 개미 굴. 아래층에서 사각사각. 굴 둘레 흙이 반짝인다 — 여기서도 줄이 나와 위로 간다." w=2
+prop w_memo_kt 26 1
+text 27 2 "코르크 게시판. '10/23 23:00 전 직원 퇴근 — 분양 축하 회식 31층'. 귀퉁이가 큰턱에 찢겼다." w=2
+prop w_glass_kt 43 1 state=broken cond="KT_GOND == 2"
+prop w_glass_kt 43 1 cond="KT_GOND != 2"
+text 44 2 "동쪽 통유리(20층). 바깥은 강바람." scene=KT_WIN3 cond="KT_GOND != 2"
+text 44 2 "깨진 통유리. 바깥에 기운 곤돌라가 쇠줄 하나에 매달려 흔들린다." scene=KT_WIN3 cond="KT_GOND == 2"
+text 44 3 "동북 비상계단. 위로 22층 — 흙 냄새가 진하다. 계단을 오르내리는 사각사각 소리." w=3
+# ---------------------------------------------------------------- 12층 어린이 과학관 임시 전시(과학관 층이 사무층으로 옮겨 온 판)
+prop exhibit_kt 10 18 state=empty
+text 10 19 "어린이 과학관 임시 전시 '미래의 무기 — 광선총의 원리'. 유리 반구 아래 장난감 광선총. 옆 책 받침이 비었다 — 명판 '12층 과학관 문고'." w=2
+prop display_case 15 18
+text 15 19 "진열장. 진공관 모형 · '원자력 가정 시대' 그림책 · 어린이 우주복 헬멧." w=2
+box 15 18 cabinet name="과학관 진열장"
+prop kid_desk 18 21
+text 18 21 "어린이 실험 탁자. 크레파스 그림 — 금빛 탑 꼭대기에 불 하나."
+# ---------------------------------------------------------------- 위성 육아방(알 나르는 줄 — 22층과 이어짐)
+prop egg_mound_kt 26 18
+text 27 20 "위성 육아방의 알 무더기. 젖빛 알 · 끈적한 점액에서 시큼 달큰한 냄새." w=1 scene=KT_NURSE cond="KT_QUEEN == 0"
+prop soil_pillar_kt 23 17
+prop soil_pillar_kt 33 20
+# ---------------------------------------------------------------- 탕비실(쉼터)
+prop kitchen_sink 37 16
+prop fridge 40 16
+box 40 16 pantry name="탕비실 냉장고"
+prop cot 44 20
+text 43 20 "탕비실 구석. 누가 야전 침대를 들여놓았다. 문을 닫으면 개미 소리가 멀다." scene=KT_REST3
+prop extinguisher_kt 45 16 cond="KT_EXT3 == 0"
+prop extinguisher_kt 45 16 state=empty cond="KT_EXT3 == 1"
+text 45 17 "소화기. 압력계 바늘이 아직 초록." scene=KT_EXT3 cond="KT_EXT3 == 0"
+# ---------------------------------------------------------------- 냄새 길(로비 흙벽 → 홍보관 → 사무실 굴 → 동북 계단 · 육아방 고리)
+scent 4,20;9,20;9,17;12,14;12,11;16,7;24,7;30,7;36,7;40,3;44,3 cond="KT_QUEEN == 0"
+scent 27,7;27,16 cond="KT_QUEEN == 0"
+scent 27,16;24,16;24,21;30,21;30,16;27,16 cond="KT_QUEEN == 0"
+enemy CR-080 16 7 cond="KT_QUEEN == 0"
+enemy CR-080 30 7 cond="KT_QUEEN == 0"
+enemy CR-080 12 14 cond="KT_QUEEN == 0"
+enemy CR-080 24 21 cond="KT_QUEEN == 0"
+enemy CR-081 28 15 stance=hold dir=N cond="KT_QUEEN == 0 and KT_NURSE < 2"
+# 불을 먼저 켰다(여왕 전): 발전기 열 · 진동을 따라 줄이 위로 — 계단을 오르는 행렬이 하나 더
+enemy CR-080 40 3 cond="KT_HEAT == 1 and KT_QUEEN == 0"

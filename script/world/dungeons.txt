@@ -70,6 +70,12 @@ chalk 2 chalk_live "분필 사람 표시 — '고철단 들어앉음.'"
 lid L-R02-05
 map KT-01 로비 0
 map KT-02 지하수족관 -1
+map KT-03 사무층 1
+map KT-04 22층여왕방 2
+map KT-05 상층연회장 3
+map KT-06 60층전망대 4
+map KT-07 옥상 5
+map KT-08 기단옥상 0
 music BGM-D01A
 refill 30 25 사람=CR-201,CR-201 짐승=CR-080,CR-080
 clear KT_QUEEN >= 1

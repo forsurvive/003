@@ -1,0 +1,51 @@
+{
+ "id": "KT_ROOF_DOWN",
+ "title": "옥상 점검 해치",
+ "loc": "L-R02-05",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "GO": 1
+ },
+ "ops": [
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "사다리로 60층에 내려간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "GO",
+     "id": "KT_ROOF_DOWN:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KT_ROOF_DOWN:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "kt",
+   "args": [
+    "go",
+    "KT-06",
+    "from_roof"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KT.txt"
+}

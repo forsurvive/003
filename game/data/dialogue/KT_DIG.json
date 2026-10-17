@@ -1,0 +1,243 @@
+{
+ "id": "KT_DIG",
+ "title": "비상계단 흙벽",
+ "loc": "L-R02-05",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "DIG": 4,
+  "LOOK": 7,
+  "QUIETDIG": 9,
+  "QUIET": 13,
+  "QDIG": 15,
+  "HOLE": 19,
+  "UP": 21
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "KT_DIG >= 1",
+   "to": "HOLE"
+  },
+  {
+   "op": "if",
+   "cond": "KT_QUEEN == 1",
+   "to": "QUIET"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "비상계단 입구를 막은 흙벽. 흙 너머에서 사각사각 — 개미가 굴을 다듬는 소리."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "개머리판과 손으로 흙벽을 판다",
+     "tags": [
+      {
+       "k": "stat",
+       "name": "힘",
+       "min": 6
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "DIG",
+     "id": "KT_DIG:1:0"
+    },
+    {
+     "text": "흙벽 아래를 살핀다",
+     "tags": [
+      {
+       "k": "stat",
+       "name": "인지력",
+       "min": 6
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "LOOK",
+     "id": "KT_DIG:1:1"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KT_DIG:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "흙을 찍어 낸다. 퍽, 퍽. 흙 너머 사각사각이 멈췄다가 — 빨라진다. 저쪽에서도 판다. 이쪽으로."
+  },
+  {
+   "op": "cmd",
+   "name": "kt",
+   "args": [
+    "dig"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "흙벽 맨 아래, 반짝이는 줄 옆에 녹색 녹 자국. 개미산이 흙을 녹여 무르게 만든 자리 — 일개미가 드나드는 뒷구멍이다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "녹 자국을 어깨로 밀고 조용히 들어간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "QUIETDIG",
+     "id": "KT_DIG:2:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KT_DIG:2:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "흙이 쿠키처럼 부서진다. 몸을 비틀어 밀어 넣는다. 소리 없이 계단참이다."
+  },
+  {
+   "op": "do",
+   "fx": "KT_DIG = 2"
+  },
+  {
+   "op": "cmd",
+   "name": "kt",
+   "args": [
+    "go",
+    "KT-03",
+    "from_stair"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "흙벽이 조용하다. 긁는 소리도 냄새 줄도 없다. 이제는 그냥 흙이다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "흙벽을 파 계단을 연다",
+     "tags": [
+      {
+       "k": "stat",
+       "name": "힘",
+       "min": 6
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "QDIG",
+     "id": "KT_DIG:3:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KT_DIG:3:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "마른 흙이 무너진다. 계단이 위로 이어진다."
+  },
+  {
+   "op": "do",
+   "fx": "KT_DIG = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "kt",
+   "args": [
+    "go",
+    "KT-03",
+    "from_stair"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "사람이 지나갈 만큼 뚫린 굴. 안쪽으로 비상계단."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "계단을 오른다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "UP",
+     "id": "KT_DIG:4:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KT_DIG:4:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "kt",
+   "args": [
+    "go",
+    "KT-03",
+    "from_stair"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KT.txt"
+}

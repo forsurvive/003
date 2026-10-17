@@ -1,0 +1,42 @@
+{
+ "id": "KT_ELEV4",
+ "title": "승강기 4",
+ "loc": "L-R02-05",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "SEEN": 3
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "반쯤 열린 4번 문. 칸이 없다. 아래로 60층만큼 검다. 문틀에 '정원 15명'."
+  },
+  {
+   "op": "if",
+   "cond": "KT_CAR == 1",
+   "to": "SEEN"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "저 아래 물속에 비틀린 칸이 있다는 걸 안다. 정원 표시판의 손톱 자국도."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KT.txt"
+}

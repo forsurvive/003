@@ -1,0 +1,51 @@
+{
+ "id": "KT_DOWN5",
+ "title": "계단참 — 아래로 22층",
+ "loc": "L-R02-05",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "GO": 1
+ },
+ "ops": [
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "내려간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "GO",
+     "id": "KT_DOWN5:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KT_DOWN5:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "kt",
+   "args": [
+    "go",
+    "KT-04",
+    "from_up"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KT.txt"
+}

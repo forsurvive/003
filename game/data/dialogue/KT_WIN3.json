@@ -1,0 +1,94 @@
+{
+ "id": "KT_WIN3",
+ "title": "20층 통유리",
+ "loc": "L-R02-05",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "BROKEN": 4,
+  "GOND": 6,
+  "DOWN": 8
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "KT_GOND == 2",
+   "to": "GOND"
+  },
+  {
+   "op": "if",
+   "cond": "KT_GLASS20 == 1",
+   "to": "BROKEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "통유리 너머 강바람. 아래로 기단 지붕, 그 너머 둔치. 바깥 벽에 청소 곤돌라 쇠줄이 위로 지나간다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "깨진 통유리. 곤돌라는 없다. 쇠줄만 바람에 운다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "깨진 통유리 바깥에 기운 곤돌라. 쇠줄 하나가 실밥처럼 풀려 있다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "곤돌라에 올라 손 크랭크로 기단까지 내려간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "DOWN",
+     "id": "KT_WIN3:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KT_WIN3:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "끼익, 끼익. 한 바퀴에 한 뼘. 기운 바구니가 바람에 흔들린다 — 한참 만에 기단 지붕이다."
+  },
+  {
+   "op": "cmd",
+   "name": "kt",
+   "args": [
+    "gond",
+    "down"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KT.txt"
+}

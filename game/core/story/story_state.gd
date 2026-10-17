@@ -190,6 +190,7 @@ func _init() -> void:
 	vars.declare("SQR_S09", "int", 0)
 	vars.declare("SQS_S09", "int", 0)
 	vars.declare("PD_R02_SB", "int", 0)
+	vars.declare("PD_R02_BJ", "int", 0)                                  # 판도 R02 BJ 사건 보정(1-D5b UQ-68 — 관측조가 금탑 꼭대기 불을 쓴다, SD-05)
 	# SQ-S10 오늘의 4번 인력(1-11i, SD-04a §5.3 · SideS10): 기라희의 자리는 SQ_S10_KIRA 하나(0 우리 H-03 22 · 1 고척 지하 대기실 · 2 경매 무대 · 3 풀려나 고척 정문 앞 ·
 	# 4 정착(PLACE 1 봉천 · 2 노들 남문 앞 · 3 지하시장) · 5 세이프빌 식당(친척) · 6 세이프빌 112동 노역(팔림) · 7 주인공 소유(본소 22번 칸) · 8 다른 구매자(탱크마을)).
 	# AUCTION 그녀의 경매일(GAME_DAY) · OPEN 오늘이 경매일 06~11시 · HOST 견적이 고척에 있음 · SEO 기서윤이 VIP 박스에(경매일 09시~경매 끝) · PADDLE 내 패 · PRICE 현재가 ·
@@ -235,7 +236,7 @@ func _init() -> void:
 		vars.declare("GR_" + k, "int", 0)
 	# 1-D5a 여의도 금탑(DG-KT): 뜻은 script/act1/KT.txt 머리 주석 — POWER 발전기 연료 한 통 · CALL 어하은 통화 · REVOLVE 회전문 · TUNNEL 유리 터널 · QUEEN 22층 여왕(1-D5b)
 	#   1-D5b 위층: DIG 4층 흙벽 · ROPE 곤돌라 줄 · GOND 곤돌라 자리 · TOP 꼭대기 불 · MEET 어하은 첫 얼굴 · SHOE 신발 · NURSE 육아방 · HEAT 불 먼저(개미가 올라옴) 등
-	for k in "POWER POWER_DAY NOTE CALL RING RING2 MEM HOOK REVOLVE TUNNEL CAR QUEEN LOW CARTOLD HATCH KEY GRATE DIG ROPE GOND TOP TOP_DAY MEET VIEW SHOE NURSE EXPL HEAT OBS QUEEN_DAY CREW".split(" "):
+	for k in "POWER POWER_DAY NOTE CALL RING RING2 MEM HOOK REVOLVE TUNNEL CAR QUEEN LOW CARTOLD HATCH KEY GRATE DIG ROPE GOND TOP TOP_DAY MEET VIEW SHOE NURSE EXPL HEAT OBS QUEEN_DAY CREW EXT3 EXT4 EXT5 HOSE3 HOSE4 SWAT GLASS20 GLASS31 WIN6 GEN_DAY BACK".split(" "):
 		vars.declare("KT_" + k, "int", 0)
 	Dungeon.load_db()                                                    # 던전 정리 변수(1-D0): DG_<접미> · _DAY · _ROLL
 	for did in Dungeon.db:

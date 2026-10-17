@@ -1,0 +1,63 @@
+{
+ "id": "KT_SHAFT4",
+ "title": "화물 승강로 구멍",
+ "loc": "L-R02-05",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "DOWN": 2
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "뜯긴 승강장 문. 벽 사다리가 아래로 — 로비 화물 칸 지붕까지."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "사다리로 내려간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "DOWN",
+     "id": "KT_SHAFT4:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KT_SHAFT4:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "한참을 내려간다. 칸 지붕 해치로 떨어져 — 1층 로비."
+  },
+  {
+   "op": "cmd",
+   "name": "kt",
+   "args": [
+    "go",
+    "KT-01",
+    "cargo"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KT.txt"
+}

@@ -1,0 +1,100 @@
+{
+ "id": "KT_EGGS",
+ "title": "여왕의 알 무더기",
+ "loc": "L-R02-05",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "SMEAR": 3,
+  "EGG": 6,
+  "COLD": 9
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "KT_QUEEN == 1",
+   "to": "COLD"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "여왕의 알 무더기. 숨 쉬듯 들썩인다. 바로 곁에서 거대한 배가 맥동한다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "점액을 바른다(여왕 페로몬)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SMEAR",
+     "id": "KT_EGGS:1:0"
+    },
+    {
+     "text": "알 하나를 챙긴다",
+     "tags": [],
+     "cond": "has(\"M-394\") == 0",
+     "fx": "",
+     "to": "EGG",
+     "id": "KT_EGGS:1:1"
+    },
+    {
+     "text": "물러난다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KT_EGGS:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "진한 냄새가 손에 밴다. 여왕의 더듬이가 한 번 스치고 지나간다."
+  },
+  {
+   "op": "cmd",
+   "name": "kt",
+   "args": [
+    "smear"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "알 하나를 품에 안는다."
+  },
+  {
+   "op": "do",
+   "fx": "give(\"M-394\", 1)"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "알 무더기가 식었다. 더는 들썩이지 않는다. 흙 둔덕 위에 하얀 껍질만."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KT.txt"
+}

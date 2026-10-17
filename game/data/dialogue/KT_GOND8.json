@@ -1,0 +1,189 @@
+{
+ "id": "KT_GOND8",
+ "title": "유리창 청소 곤돌라",
+ "loc": "L-R02-05",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TIE": 4,
+  "TIED": 7,
+  "RIDE": 8,
+  "UNTIED": 11,
+  "AWAY": 14,
+  "PULL": 16
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "KT_GOND != 0",
+   "to": "AWAY"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "유리창 청소 곤돌라. 손 크랭크 · 쇠줄 둘이 탑 꼭대기까지. 오른쪽 줄이 녹슬어 실밥처럼 풀렸다."
+  },
+  {
+   "op": "if",
+   "cond": "KT_ROPE == 1",
+   "to": "TIED"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "녹슨 줄을 잡아매고 고정쇠를 감는다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 35
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "TIE",
+     "id": "KT_GOND8:1:0"
+    },
+    {
+     "text": "그대로 타고 크랭크를 돌린다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "UNTIED",
+     "id": "KT_GOND8:1:1"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KT_GOND8:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "풀린 가닥을 꼬아 고정쇠에 세 번 감는다. 당겨 본다 — 버틴다."
+  },
+  {
+   "op": "do",
+   "fx": "KT_ROPE = 1"
+  },
+  {
+   "op": "goto",
+   "to": "TIED"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "타고 크랭크를 돌린다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "RIDE",
+     "id": "KT_GOND8:2:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KT_GOND8:2:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "끼익, 끼익. 금빛 유리를 따라 오른다. 강바람이 바구니를 흔든다. 31층 — 연회장 창 앞에서 크랭크가 멎는다(청소 반장의 '31층부터'). 통유리를 걷어찬다."
+  },
+  {
+   "op": "cmd",
+   "name": "kt",
+   "args": [
+    "gond",
+    "31"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "끼익, 끼익. 오를수록 오른쪽 줄이 우는 소리. 20층쯤에서 — 툭. 바구니가 기울어 멈춘다. 발밑이 까마득하다. 바로 옆 통유리를 깨고 안으로 굴러 들어간다."
+  },
+  {
+   "op": "cmd",
+   "name": "kt",
+   "args": [
+    "gond",
+    "20"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "곤돌라가 없다. 쇠줄 둘이 위로 팽팽하다. 손 크랭크가 거치대에 남았다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "크랭크로 곤돌라를 끌어내린다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "PULL",
+     "id": "KT_GOND8:3:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KT_GOND8:3:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "한 바퀴에 한 뼘. 반 시간쯤 돌리자 곤돌라가 내려온다."
+  },
+  {
+   "op": "cmd",
+   "name": "kt",
+   "args": [
+    "gond",
+    "pull"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KT.txt"
+}

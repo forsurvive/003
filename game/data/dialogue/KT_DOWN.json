@@ -1,0 +1,57 @@
+{
+ "id": "KT_DOWN",
+ "title": "아래로 — 로비 흙벽 굴",
+ "loc": "L-R02-05",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "GO": 2
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "계단을 따라 흙굴이 아래로 이어진다. 1층 로비 흙벽으로."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "내려간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "GO",
+     "id": "KT_DOWN:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KT_DOWN:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "kt",
+   "args": [
+    "go",
+    "KT-01",
+    "from_KT-03"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KT.txt"
+}

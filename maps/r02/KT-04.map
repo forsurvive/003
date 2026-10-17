@@ -1,0 +1,75 @@
+# 여의도 금탑 KT-04 22층 여왕방(SD-09a L-R02-05 '여왕은 22층' · SD-14 §3.5 · 1-D 계획 §11.9~11.10 · 단계 1-D5b). 40×24.
+# 사무층 한 층을 통째로 흙으로 메운 알방: 알 무더기 · 흙 기둥(엄폐) · 병정 넷 · 여왕. 알 무더기 둘레 냄새 고리가 끊기면 일개미 생성이 멎는다.
+# 들어오는 길 셋: 서남 계단(사무층에서) · 북쪽 화물 승강로 구멍(로비 화물 칸 지붕 해치 — 알방 바닥으로 바로) · 동북 계단(31층 연회장에서 내려옴).
+map KT-04 금탑 22층 여왕방
+set bk
+grid
+########################################
+########################################
+########################################
+#ddddddddddddddddddddddddddddddddd~~~~~#
+#ddddddddddddddddddddddddddddddddd~~~~~#
+#ddddddddddddddddddddddddddddddddd~~~~~#
+#ddddddddddddddddddddddddddddddddd~~~~~#
+#dddddddddddddddddddddddddddddddddddddd#
+#dddddddddddddddddddddddddddddddddddddd#
+#dddddddddddddddddddddddddddddddddddddd#
+#dddddddddddddddddddddddddddddddddddddd#
+#dddddddddddddddddddddddddddddddddddddd#
+#dddddddddddddddddddddddddddddddddddddd#
+#dddddddddddddddddddddddddddddddddddddd#
+#dddddddddddddddddddddddddddddddddddddd#
+#dddddddddddddddddddddddddddddddddddddd#
+#dddddddddddddddddddddddddddddddddddddd#
+#~~~~~~dddddddddddddddddddddddddddddddd#
+#~~~~~~dddddddddddddddddddddddddddddddd#
+#~~~~~~dddddddddddddddddddddddddddddddd#
+#~~~~~~dddddddddddddddddddddddddddddddd#
+########################################
+########################################
+########################################
+end
+mark from_stair 3 19 E
+mark from_KT-03 3 19 E
+mark from_shaft 23 3 S
+mark from_up 36 4 W
+mark queen 19 11 N
+exit 37 3 KT-05 from_stair
+exit 38 3 KT-05 from_stair
+text 2 17 "계단참. 아래로 사무층." w=2 scene=KT_DOWN4
+text 35 4 "동북 계단참. 위로 31층 — 흙이 끊기고 붉은 카펫 냄새." w=2
+prop w_cargo_kt 22 1 state=live
+text 23 2 "화물 승강로 구멍. 벽에 녹슨 점검 사다리 — 아래로 로비 화물 칸 지붕." scene=KT_SHAFT4
+prop w_hose_kt 8 1 cond="KT_HOSE4 == 0"
+prop w_hose_kt 8 1 state=open cond="KT_HOSE4 == 1"
+text 8 2 "흙에 반쯤 묻힌 소화전 함. 유리 너머 감긴 호스." scene=KT_HOSE4 cond="KT_HOSE4 == 0"
+prop egg_mound_kt 18 6 cond="KT_QUEEN == 0"
+prop egg_mound_kt 18 6 state=hatch cond="KT_QUEEN == 1"
+text 19 8 "여왕의 알 무더기. 젖빛 알이 숨 쉬듯 들썩인다." scene=KT_EGGS
+prop soil_pillar_kt 10 8
+prop soil_pillar_kt 28 8
+prop soil_pillar_kt 12 15
+prop soil_pillar_kt 26 15
+prop soil_pillar_kt 16 13
+prop soil_pillar_kt 23 13
+prop cubicle_kt 4 4 state=ant
+prop cubicle_kt 31 16 state=ant
+box 31 16 desk name="흙에 묻힌 책상"
+prop remains 6 12
+box 6 12 bag name="흙에 반쯤 묻힌 유해"
+text 7 12 "흙벽에 박힌 유해. 2077년 사원증 '금빛 빌딩 관리팀'."
+prop extinguisher_kt 34 18 cond="KT_EXT4 == 0"
+prop extinguisher_kt 34 18 state=empty cond="KT_EXT4 == 1"
+text 34 19 "흙 속에 서 있는 소화기." scene=KT_EXT4 cond="KT_EXT4 == 0"
+# ---------------------------------------------------------------- 냄새 길: 알 무더기 고리 · 계단 · 승강로
+scent 16,5;22,5;22,9;16,9;16,5 cond="KT_QUEEN == 0"
+scent 3,19;9,13;13,9;16,9 cond="KT_QUEEN == 0"
+scent 22,9;28,15;33,10;36,7;36,4 cond="KT_QUEEN == 0"
+scent 22,5;23,4;23,3 cond="KT_QUEEN == 0"
+enemy CR-082 19 11 boss=1 dir=S
+enemy CR-081 14 9 cond="KT_QUEEN == 0"
+enemy CR-081 24 9 cond="KT_QUEEN == 0"
+enemy CR-081 15 16 cond="KT_QUEEN == 0"
+enemy CR-081 23 16 cond="KT_QUEEN == 0"
+enemy CR-080 9 13 cond="KT_QUEEN == 0"
+enemy CR-080 33 10 cond="KT_QUEEN == 0"

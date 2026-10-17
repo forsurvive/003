@@ -1,0 +1,66 @@
+{
+ "id": "KT_HOSE3",
+ "title": "소화전 함 — 사무층",
+ "loc": "L-R02-05",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "SPRAY": 2
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "붉은 소화전 함. 유리 너머 감긴 호스. 밸브 바퀴에 녹."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "밸브를 돌려 호스로 바닥을 쓴다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SPRAY",
+     "id": "KT_HOSE3:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KT_HOSE3:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "쿨럭 — 2백 년 묵은 녹물이 먼저, 그다음 맑은 물이 쏴아 쏟아진다. 바닥의 반짝이던 줄이 씻겨 나간다. 옷도 흠뻑 젖는다."
+  },
+  {
+   "op": "do",
+   "fx": "KT_HOSE3 = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "kt",
+   "args": [
+    "hose",
+    "here"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KT.txt"
+}

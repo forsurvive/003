@@ -1,0 +1,94 @@
+{
+ "id": "KT_WIN5",
+ "title": "31층 통유리",
+ "loc": "L-R02-05",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "BROKEN": 4,
+  "GOND": 6,
+  "DOWN": 8
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "KT_GOND == 1",
+   "to": "GOND"
+  },
+  {
+   "op": "if",
+   "cond": "KT_GLASS31 == 1",
+   "to": "BROKEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "통유리 너머 강 건너 불 꺼진 도시. 바깥 벽을 따라 청소 곤돌라 쇠줄 둘이 위아래로."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "깨진 통유리. 곤돌라는 내려갔다. 강바람이 연회장 현수막을 흔든다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "깨진 통유리 밖에 곤돌라가 매달려 있다. 잡아맨 줄이 팽팽하다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "곤돌라에 올라 손 크랭크로 기단까지 내려간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "DOWN",
+     "id": "KT_WIN5:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KT_WIN5:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "끼익, 끼익. 31층에서 기단까지 — 손바닥이 얼얼하다."
+  },
+  {
+   "op": "cmd",
+   "name": "kt",
+   "args": [
+    "gond",
+    "down"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KT.txt"
+}

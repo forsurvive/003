@@ -1,0 +1,65 @@
+{
+ "id": "KT_EXT4",
+ "title": "소화기 — 22층",
+ "loc": "L-R02-05",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "SPRAY": 2
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "흙 속에 선 소화기. 압력계 바늘이 노랑. 손잡이에 흙이 엉겨 붙었다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "분말을 뿌린다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SPRAY",
+     "id": "KT_EXT4:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KT_EXT4:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "픽, 피익 — 바늘이 노랑인 소화기다운 기침 소리. 흙 위로 하얀 가루가 흩어지고 반짝이던 줄이 잿빛으로 죽는다. 흙 기둥 너머에서 큰턱 부딪는 소리."
+  },
+  {
+   "op": "do",
+   "fx": "KT_EXT4 = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "kt",
+   "args": [
+    "ext"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KT.txt"
+}

@@ -1,0 +1,130 @@
+{
+ "id": "KT_GOND7",
+ "title": "옥상 곤돌라 거치대",
+ "loc": "L-R02-05",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "CALL": 4,
+  "HERE": 7,
+  "DOWN": 9,
+  "DEAD": 12
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "KT_TOP == 0",
+   "to": "DEAD"
+  },
+  {
+   "op": "if",
+   "cond": "KT_GOND == 3",
+   "to": "HERE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "권양기에 초록 등. 단추 '올림'. 쇠줄이 탑 아래로 늘어졌다 — 곤돌라는 아래 어딘가에."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "'올림'을 누른다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "CALL",
+     "id": "KT_GOND7:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KT_GOND7:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "권양기가 쇠줄을 감는다. 한참 뒤 — 곤돌라가 난간 너머로 떠오른다."
+  },
+  {
+   "op": "cmd",
+   "name": "kt",
+   "args": [
+    "gond",
+    "up"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "곤돌라가 거치대에 걸렸다. 단추 '내림'."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "타고 기단까지 내려간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "DOWN",
+     "id": "KT_GOND7:2:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KT_GOND7:2:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "권양기가 천천히 줄을 푼다. 금빛 유리가 눈앞으로 끝없이 흘러간다. 60층, 40층, 20층 — 기단 지붕."
+  },
+  {
+   "op": "cmd",
+   "name": "kt",
+   "args": [
+    "gond",
+    "down"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "녹슨 권양기. 전기가 없다. 손 크랭크도 떨어져 나갔다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KT.txt"
+}

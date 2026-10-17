@@ -1,0 +1,65 @@
+{
+ "id": "KT_EXT5",
+ "title": "주방 소화기",
+ "loc": "L-R02-05",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "SPRAY": 2
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "기름때 낀 주방 소화기. 손잡이가 끈적하다. 옆에 '튀김기 화재 시 — 물 금지' 스티커."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "분말을 뿌린다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SPRAY",
+     "id": "KT_EXT5:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KT_EXT5:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "치익 — 배식대 위로 하얀 눈이 내린다. 2백 년 묵은 케이크 받침에도. 바닥의 줄이 가루 밑에 묻힌다."
+  },
+  {
+   "op": "do",
+   "fx": "KT_EXT5 = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "kt",
+   "args": [
+    "ext"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KT.txt"
+}

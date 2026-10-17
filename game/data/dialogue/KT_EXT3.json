@@ -1,0 +1,65 @@
+{
+ "id": "KT_EXT3",
+ "title": "소화기 — 사무층",
+ "loc": "L-R02-05",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "SPRAY": 2
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "소화기. 압력계 바늘이 아직 초록."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "안전핀을 뽑고 바닥에 분말을 뿌린다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SPRAY",
+     "id": "KT_EXT3:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KT_EXT3:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "치익 — 하얀 분말 구름이 칸막이 사이로 번져 분양 팸플릿까지 덮는다. 바닥의 반짝임이 가루 밑에 묻힌다. 개미들이 더듬이를 헛휘두른다."
+  },
+  {
+   "op": "do",
+   "fx": "KT_EXT3 = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "kt",
+   "args": [
+    "ext"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KT.txt"
+}

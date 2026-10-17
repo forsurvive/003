@@ -1,0 +1,128 @@
+{
+ "id": "KT_SCOPE",
+ "title": "진공관 망원경",
+ "loc": "L-R02-05",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "DARK": 3,
+  "WARM": 5,
+  "LIGHT": 7,
+  "LOOK": 10,
+  "SEEN": 15
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "KT_TOP == 0",
+   "to": "DARK"
+  },
+  {
+   "op": "if",
+   "cond": "KT_TOP == 1",
+   "to": "WARM"
+  },
+  {
+   "op": "goto",
+   "to": "LOOK"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "꺼진 망원경. 진공관 셋이 차갑다. 굵은 전선이 천장으로 — 옥상 발전기에서 온다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "전선이 웅웅 운다. 받침 옆 손잡이 '점등'."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "손잡이를 내린다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "LIGHT",
+     "id": "KT_SCOPE:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KT_SCOPE:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "진공관 셋이 차례로 주황빛으로 데워진다. 렌즈가 반짝. 머리 위 어딘가에서 철컥 — 꼭대기 경관등이 켜졌다."
+  },
+  {
+   "op": "cmd",
+   "name": "kt",
+   "args": [
+    "scope"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "LOOK"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "눈을 댄다. 지금의 서울. 밤섬의 검은 숲 · 당인리 굴뚝 · 노들섬 불빛 몇 · 남산 꼭대기의 송신탑 그림자."
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R02-030\")",
+   "to": "SEEN"
+  },
+  {
+   "op": "if",
+   "cond": "KT_HEAT == 1 and KT_QUEEN == 0",
+   "to": "SEEN"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-030",
+   "emo": "미소",
+   "text": "오른쪽을 보시면 남산 타워가, 왼쪽을 보시면… 아무것도 없네요."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-030",
+   "emo": "슬픔",
+   "text": "그날 밤엔 강 건너가 다 불이었어요. 다리마다 차가 멈춰 서 있었고요. 섬광이 오기 십오 분 전까지 — 저는 이걸로 그걸 보고 있었어요."
+  },
+  {
+   "op": "cmd",
+   "name": "kt",
+   "args": [
+    "view"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KT.txt"
+}

@@ -480,6 +480,26 @@ func _ready() -> void:
 				["until", "KT_CAR == 1", 10.0, "물속 칸 — 아이 신발 한 짝 → 점검 사다리로 로비", "ktj_car"], ["wait", 3.0],
 				["want", ["!끊는다"]], ["go", 22, 3, "KT-01"], ["use", 22, 2],
 				["until", "KT_CARTOLD == 1", 15.0, "어하은 — '숨소리가 달라요'", "ktj_phone"]]
+		"ktu":                                                          # 1-D5b 금탑 위층: 화물 칸 → 사무층 육아방(위장 · 냄새 줄) → 22층 → 옥상 → 60층 어하은 · 망원경 → 연회장 · 기단
+			st.vars.set_v("GAME_DAY", 12)
+			st.vars.set_v("KT_POWER", 2)
+			st.vars.set_v("KT_CALL", 1)
+			host.date_text = "2277. 10. 30.  10:00"
+			host.enter("KT-01", "from_W")
+			plan = [["hp", 3000], ["noenc"], ["wait", 1.5], ["shot", "ktu_lobby"], ["want", ["위층 단추"]], ["go", 19, 3, "KT-01"], ["use", 19, 2],
+				["wait", 3.0], ["shot", "ktu_office"], ["clear", ["CR-081"]],
+				["want", ["!점액", "!알 하나", "그만"]], ["go", 27, 21, "KT-03"], ["use", 27, 20],
+				["until", "PC_SMELL > 0 and has(\"M-394\") == 1", 15.0, "육아방 — 위장 · 알", "ktu_nurse"], ["wait", 2.0], ["shot", "ktu_scent"],
+				["go", 40, 4, "KT-03"], ["go", 45, 3, "KT-03"], ["wait", 2.5], ["calm"], ["shot", "ktu_nest"],
+				["setv", "KT_QUEEN", 1], ["setv", "KT_TOP", 1], ["warp", "KT-07", "from_ladder"], ["wait", 1.5], ["shot", "ktu_roof"],
+				["warp", "KT-06", "from_roof"], ["wait", 1.5], ["shot", "ktu_deck"],
+				["want", ["!망원경 이야기", "내려가 보겠다"]], ["talk", "N-R02-030"],
+				["until", "KT_MEET == 1", 20.0, "어하은 첫 얼굴 — 4번 문 앞", "ktu_haeun"], ["wait", 3.0],
+				["want", ["손잡이"]], ["go", 30, 6, "KT-06"], ["use", 30, 5],
+				["until", "KT_TOP == 2 and KT_VIEW == 1", 20.0, "망원경 점등 — 지금의 서울 · 그녀의 2077", "ktu_scope"], ["wait", 3.0], ["shot", "ktu_lit"],
+				["check", "KT_TOP == 2 and KT_QUEEN == 1", "UQ-68 끝(사실)"],
+				["warp", "KT-05", "from_stair"], ["wait", 1.5], ["calm"], ["shot", "ktu_hall"],
+				["warp", "KT-08", "from_base"], ["wait", 1.5], ["shot", "ktu_base"]]
 		"grp":                                                          # 1-D4 구로 엉뚱한 짓: 분실물 정기권을 역무원 박에게 돌려준다 → 박 퇴근 · 쥐 둥지 군번줄 → 떠돌이
 			st.vars.set_v("GAME_DAY", 12)
 			st.call_fn("give", ["M-071", 1])

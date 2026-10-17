@@ -1,0 +1,78 @@
+# 여의도 금탑 KT-06 60층 전망대(SD-09a L-R02-05 · SD-05 UQ-68 · SD-07b N-R02-030 · 1-D 계획 §11.9~11.10 · 단계 1-D5b). 40×22.
+# 북쪽 승강기 넷 — 4번 문 앞 '정원 15명' 난간 안에 어하은이 2백 년째 줄을 서 있다(첫 얼굴). 동쪽 진공관 망원경 · '북방' 안내판 · 전망 지점.
+# 서남 매표소 뒤 쉼터 · 동남 계단(31층으로) · 동북 옥상 사다리(옥상 발전기). BJ가 국회 폐허를 쥐면(1막 뒤) 계엄군 관측소.
+map KT-06 금탑 60층 전망대
+set bk
+grid
+########################################
+########################################
+########################################
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#wwwwwwww#ttttttttttttttttttttttttttttt#
+#wwwwwwww#ttttttttttttttttttttttttttttt#
+#wwwwwwww#ttttttttttttttttttttttttttttt#
+#wwwwwwww#ttttttttttttttttttttttttt~~~~#
+#wwwwwwwwtttttttttttttttttttttttttt~~~~#
+#wwwwwwwwtttttttttttttttttttttttttt~~~~#
+########################################
+########################################
+########################################
+end
+mark from_stair 36 17 W
+mark from_KT-05 36 17 W
+mark from_roof 34 3 S
+mark view 30 6 N
+mark haeun 18 4 S
+exit 38 17 KT-05 from_up
+exit 38 18 KT-05 from_up
+text 36 16 "동남 계단. 아래로 연회장." w=2
+prop w_elev_kt 6 1
+prop w_elev_kt 10 1
+prop w_elev_kt 14 1
+prop w_elev_kt 18 1 state=open
+text 6 2 "승강기 1. 문에 '운행 중지'." w=2
+text 10 2 "승강기 2. 층 표시 바늘이 '60'에 멈췄다." w=2
+text 14 2 "승강기 3. 문틈에 끼인 관람권 반쪽." w=2
+text 19 2 "승강기 4. 문이 반쯤 열려 있다. 칸이 없다 — 아래로 60층만큼 검다." scene=KT_ELEV4
+prop rope_line_kt 16 5
+text 15 5 "'정원 15명' 줄 난간. 붉은 띠가 끊기지 않았다."
+prop queue_skel 12 4
+prop queue_skel2 22 4
+text 12 5 "줄을 선 채 쓰러진 관람객. 손에 관람권 '21:40'."
+npc N-R02-030 18 4 S cond="dead(\"N-R02-030\") == 0 and not (KT_HEAT == 1 and KT_QUEEN == 0)"
+npc N-R02-030 4 14 E cond="dead(\"N-R02-030\") == 0 and KT_HEAT == 1 and KT_QUEEN == 0"
+text 17 6 "4번 승강기 문 앞 바닥. 아이 신발 한 짝이 문 쪽을 보고 놓였다." cond="KT_SHOE == 1"
+prop telescope_kt 30 4 cond="KT_TOP < 2"
+prop telescope_kt 30 4 state=lit cond="KT_TOP >= 2"
+text 30 5 "진공관 망원경. 동전 투입구 옆 '서울의 밤 — 1회 3분'." scene=KT_SCOPE
+prop w_north_sign_kt 32 1
+text 33 2 "안내판 '맑은 날 북한 땅이 보입니다'. '북한'에 매직 줄 — 옆에 '북방'." w=2
+prop w_glass_kt 24 1
+prop w_glass_kt 27 1
+prop w_glass_kt 36 1
+text 25 2 "통유리. 남쪽으로 강 · 노들섬 · 남산의 검은 꼭대기." w=2 scene=KT_GLASS6
+prop w_ladder 34 1
+text 34 2 "옥상 점검 사다리. 위 해치에서 바람 소리." scene=KT_ROOF_UP
+# ---------------------------------------------------------------- 매표소 뒤 쉼터
+prop cash_counter 3 11
+text 4 12 "전망대 매표소. '어른 6,000 · 어린이 3,000 — 21:40 마지막 입장'." w=2
+prop cot 3 15
+text 4 16 "매표소 뒤 직원 쉼터. 어하은의 이름표가 걸린 사물함." scene=KT_REST6
+prop home_locker 6 13
+box 6 13 locker name="안내원 사물함"
+# ---------------------------------------------------------------- BJ 관측소(1막 뒤 · 국회 폐허를 BJ가 쥐었을 때)
+enemy CR-401 28 9 dir=N cond="V_ACT >= 2 and PD_R02_KH == 1"
+prop radio_desk 26 12 cond="V_ACT >= 2 and PD_R02_KH == 1"
+text 26 13 "계엄군 관측소 무전대. 관리자 인증 단말이 연결돼 있다." w=2 cond="V_ACT >= 2 and PD_R02_KH == 1"
+# ---------------------------------------------------------------- 불을 먼저 켰다(여왕 전) — 개미가 올라와 어하은은 매표소 뒤로
+scent 37,17;30,10;22,10 cond="KT_HEAT == 1 and KT_QUEEN == 0"
+enemy CR-080 30 10 cond="KT_HEAT == 1 and KT_QUEEN == 0"

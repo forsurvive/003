@@ -1,0 +1,42 @@
+{
+ "id": "KT_GLASS6",
+ "title": "60층 통유리",
+ "loc": "L-R02-05",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "통유리 너머 여의도 전체가 발밑. 남쪽 강 · 노들섬 · 남산의 검은 꼭대기. 북쪽 밤섬 너머 당인리 굴뚝."
+  },
+  {
+   "op": "if",
+   "cond": "KT_WIN6 == 1",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "KT_WIN6 = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "reveal",
+   "args": [
+    "R02"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KT.txt"
+}

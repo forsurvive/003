@@ -1,0 +1,107 @@
+{
+ "id": "KT_CARGO3",
+ "title": "화물 승강기 — 4층",
+ "loc": "L-R02-05",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "LIVE": 3,
+  "DOWN": 5,
+  "SHAFT": 8
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "KT_POWER == 2",
+   "to": "LIVE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "4층 화물 승강기 문. 호출 단추가 죽었다. 문틈으로 승강로 바람."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "초록 등. 칸이 4층에 서 있다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "1층으로 내려간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "DOWN",
+     "id": "KT_CARGO3:1:0"
+    },
+    {
+     "text": "칸 지붕 해치로 승강로를 오른다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SHAFT",
+     "id": "KT_CARGO3:1:1"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KT_CARGO3:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "딩. 칸이 떨며 내려간다."
+  },
+  {
+   "op": "cmd",
+   "name": "kt",
+   "args": [
+    "go",
+    "KT-01",
+    "cargo"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "해치를 밀고 승강로 사다리에 붙는다. 반짝이는 줄이 사다리를 따라 위로 — 22층에서 끝난다."
+  },
+  {
+   "op": "cmd",
+   "name": "kt",
+   "args": [
+    "go",
+    "KT-04",
+    "from_shaft"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KT.txt"
+}

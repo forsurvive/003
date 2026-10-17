@@ -1786,6 +1786,46 @@
    },
    "title": "7호 냉동 창고"
   },
+  "UQ-68": {
+   "key": "UQ68",
+   "places": [
+    "L-R02-05"
+   ],
+   "places_src": "05_misc-quests-encounters.md:970",
+   "stages": {
+    "10": {
+     "done": "인터폰 부탁 또는 60층 첫 대면",
+     "log": "어하은이 60층 망원경에 다시 불을 켜고 싶어 한다",
+     "src": "05_misc-quests-encounters.md:980"
+    },
+    "100": {
+     "done": "여왕 처리 + 망원경 점등(순서 무관)",
+     "log": "금탑 꼭대기에 다시 불이 들어왔다",
+     "src": "05_misc-quests-encounters.md:985"
+    },
+    "20": {
+     "done": "여왕 처리(발전기 · 점등보다 먼저 해도 된다)",
+     "log": "22층 여왕 개미가 금탑을 쥐고 있다",
+     "src": "05_misc-quests-encounters.md:981"
+    },
+    "30": {
+     "done": "옥상 발전기 [수리 50]",
+     "log": "옥상 원자력 발전기가 죽었다",
+     "src": "05_misc-quests-encounters.md:982"
+    },
+    "40": {
+     "done": "60층 망원경 점등",
+     "log": "망원경에 전기가 들어왔다",
+     "src": "05_misc-quests-encounters.md:983"
+    },
+    "50": {
+     "done": "22층 여왕 처리",
+     "log": "불이 켜졌다 — 열을 따라 개미 줄이 위로 올라온다",
+     "src": "05_misc-quests-encounters.md:984"
+    }
+   },
+   "title": "금탑 전망대"
+  },
   "UQ-71": {
    "key": "UQ71",
    "places": [

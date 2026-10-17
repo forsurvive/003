@@ -185,14 +185,14 @@ func test_ant_frenzy(t) -> void:
 	e.cmb._limb_hit("antenna", 1000.0)
 	t.ok(e.cmb.crippled.has("antenna"), "더듬이 부위 손상")
 	col.tick(0.1)
-	t.ok(e.cmb.team == "frenzy" and e.foes == ["enemy"] and e.brain.state == AIBrain.S.FRENZY, "광란 — 제 무리를 노린다")
+	t.ok(e.cmb.team == "frenzy" and "ants" in e.foes and e.brain.state == AIBrain.S.FRENZY, "광란 — 제 무리를 노린다")
 	var xp0 := int(st.vars.get_v("PC_XP"))
 	var o: Enemy = a[1]
 	o.cmb.last_by = "frenzy"
 	o.cmb.take({"hp": 999.0}, e.loco.logical)
 	t.ok(int(st.vars.get_v("PC_XP")) > xp0, "광란 개미가 문 개미의 XP는 주인공 몫")
 	col.tick(AntColony.FRENZY_S + 0.1)
-	t.ok(e.cmb.team == "enemy" and "player" in e.foes, "8초 뒤 광란이 풀린다")
+	t.ok(e.cmb.team == "ants" and "player" in e.foes, "8초 뒤 광란이 풀린다")
 
 
 func test_ant_lure(t) -> void:
@@ -208,3 +208,18 @@ func test_ant_lure(t) -> void:
 	col.tick(0.25)
 	col.tick(0.25)
 	t.ok(not e.route.is_empty() and col.scent_at(h.map.tile_of(e.route[-1][0])), "그 뒤 냄새 줄로 돌아간다")
+
+
+## 낯선 냄새: 행렬이 사람 무리(관측조)와 붙으면 서로 적 — 끌고 가면 싸움이 붙는다
+func test_ant_strangers(t) -> void:
+	var r := _host()
+	var h: InteriorHost = r[0]
+	var st: StoryState = r[1]
+	var col: AntColony = h.combat.colony
+	_away(h)
+	var e: Enemy = _ants(h)[0]
+	t.eq(e.cmb.team, "ants", "개미는 제 편")
+	var g := h.combat.spawn("CR-401", e.loco.logical + Vector2(30, 0), h.map, st, {})
+	col.tick(0.25)
+	t.ok(g.cmb.team in e.foes and "ants" in g.foes, "군화 냄새 — 서로 노린다")
+

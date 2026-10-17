@@ -824,6 +824,24 @@ def w_glass_kt(state=""):
     return im
 
 
+def w_memo_kt():
+    """사무층 코르크 게시판(벽 2칸, 64×44): 메모 쪽지 여럿 · 붉은 압정 · 가운데 '10/23 23:00 퇴근 — 31층 회식' · 큰턱에 찢긴 귀퉁이."""
+    im = img(64, 44)
+    d = ImageDraw.Draw(im)
+    d.rectangle([2, 4, 61, 40], fill=C(INK)); d.rectangle([3, 5, 60, 39], fill=C("P19"))
+    rnd = random.Random(98)
+    for k in range(18):
+        d.point((rnd.randint(4, 59), rnd.randint(6, 38)), fill=C("P18"))
+    for x, y, w, h, tok in ((6, 8, 12, 9, "P09"), (22, 7, 18, 12, "P22"), (44, 9, 12, 10, "P09"), (8, 22, 14, 10, "P50"), (40, 24, 14, 11, "P08")):
+        d.rectangle([x, y, x + w, y + h], fill=C(tok))
+        for ly in range(y + 3, y + h - 1, 3):
+            d.line([x + 2, ly, x + w - 2, ly], fill=C("P05"))
+        d.point((x + w // 2, y + 1), fill=C("P53"))
+    put_text(im, "23:00", 24, 8, "P53", 8, "Galmuri7")
+    d.polygon([(52, 38), (61, 30), (61, 39)], fill=C(INK))                                           # 찢긴 귀퉁이
+    return im
+
+
 # ================================================================================================ 등록
 def _r(fn, fw, fh, kind="floor", down=2, dx=0, dy=0):
     return {"fn": fn, "foot": (fw, fh), "kind": kind, "down": down, "dx": dx, "dy": dy}
@@ -866,6 +884,7 @@ PROPS_KT = {
     "w_banner_kt": _r(w_banner_kt, 4, 0, "wall", dx=0, dy=6),
     "rope_line_kt": _r(rope_line_kt, 3, 1, down=-2),
     "w_glass_kt": _r(w_glass_kt, 2, 0, "wall", dx=0, dy=6),
+    "w_memo_kt": _r(w_memo_kt, 2, 0, "wall", dx=0, dy=6),
 }
 STATES_KT = {
     "revolving_kt": {s: (lambda s=s: revolving_kt(s)) for s in ("turn", "broken", "trapped")},

@@ -1,0 +1,89 @@
+{
+ "id": "KT_NURSE",
+ "title": "위성 육아방 알 무더기",
+ "loc": "L-R02-05",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "MENU": 1,
+  "SMEAR": 2,
+  "EGG": 6
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "알 무더기. 젖빛 알마다 끈적한 점액 — 시큼 달큰한 냄새. 일개미들이 알을 하나씩 물고 위층 굴로 나른다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "점액을 손 · 목 · 옷깃에 바른다(여왕 페로몬)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SMEAR",
+     "id": "KT_NURSE:1:0"
+    },
+    {
+     "text": "알 하나를 챙긴다",
+     "tags": [],
+     "cond": "has(\"M-394\") == 0",
+     "fx": "",
+     "to": "EGG",
+     "id": "KT_NURSE:1:1"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KT_NURSE:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "손바닥이 끈적하다. 시큼 달큰한 냄새가 목덜미까지 밴다. 알을 나르던 일개미 하나가 더듬이를 멈추더니 — 다시 제 일로 돌아간다."
+  },
+  {
+   "op": "do",
+   "fx": "KT_NURSE = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "kt",
+   "args": [
+    "smear"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "알 하나를 두 손으로 든다. 따뜻하고, 안에서 무언가 꼼지락댄다. 문 앞 병정이 이쪽을 한 번 보고 — 큰턱을 내린다."
+  },
+  {
+   "op": "do",
+   "fx": "give(\"M-394\", 1); KT_NURSE = 1"
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KT.txt"
+}

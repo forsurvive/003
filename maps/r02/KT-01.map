@@ -54,10 +54,14 @@ text 22 2 "놋쇠 인터폰. '60층 전망대 직통'." scene=KT_PHONE
 prop w_gov_notice 26 1
 text 26 2 "안내판 '금빛 빌딩 — 60층 전망대 · 지하 수족관 · 어린이 과학관(12층)'. 12층 글자 위에 개미 발자국 같은 흙 점."
 # ---------------------------------------------------------------- 동북 비상계단(개미 흙벽 — 4층부터가 아니라 바로 계단참까지 흘러내렸다)
-prop ant_soil_kt 34 3 cond="KT_QUEEN == 0"
-prop ant_soil_kt 34 3 state=quiet cond="KT_QUEEN == 1"
-text 34 4 "비상계단 입구를 흙이 막았다. 흙벽 너머에서 사각사각 긁는 소리. 시큼한 개미산 냄새." w=2 cond="KT_QUEEN == 0"
-text 34 4 "흙벽의 구멍이 흙으로 메워졌다. 긁는 소리가 그쳤다." w=2 cond="KT_QUEEN == 1"
+prop ant_soil_kt 34 3 cond="KT_QUEEN == 0 and KT_DIG == 0"
+prop ant_soil_kt 34 3 state=quiet cond="KT_QUEEN == 1 and KT_DIG == 0"
+prop ant_soil_kt 34 3 state=dug cond="KT_DIG >= 1"
+text 34 4 "비상계단 입구를 흙이 막았다. 흙벽 너머에서 사각사각 긁는 소리. 시큼한 개미산 냄새." w=2 scene=KT_DIG cond="KT_QUEEN == 0 and KT_DIG == 0"
+text 34 4 "흙벽의 구멍이 흙으로 메워졌다. 긁는 소리가 그쳤다." w=2 scene=KT_DIG cond="KT_QUEEN == 1 and KT_DIG == 0"
+text 34 4 "사람이 지나갈 만큼 뚫린 흙굴. 안쪽으로 비상계단." w=2 scene=KT_DIG cond="KT_DIG >= 1"
+mark from_KT-03 34 5 S
+mark cargo 19 3 S
 prop scent_kt 30 6 cond="KT_QUEEN == 0"
 prop scent_kt 26 7 cond="KT_QUEEN == 0"
 prop scent_kt 30 8 cond="KT_POWER == 2 and KT_QUEEN == 0"

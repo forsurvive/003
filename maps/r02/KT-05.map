@@ -1,0 +1,87 @@
+# 여의도 금탑 KT-05 상층 연회장(31~59층 대표 — SD-09a L-R02-05 · 1-D 계획 §11.9~11.10 · 단계 1-D5b). 44×24.
+# 2077-10-23 '금빛 빌딩 개관 기념 만찬'이 멈춘 장면: 원탁 여섯 · 무대와 피아노 · 현수막. 동쪽 주방 · 경찰 특공대 대기실(W-016 · 쉼터).
+# 북쪽 통유리 하나가 31층 곤돌라 창(줄을 잡아맨 곤돌라가 닿는 곳). 1막 뒤 계엄군 관측조 둘. 불을 여왕보다 먼저 켜면 개미 줄이 여기까지 올라온다.
+map KT-05 금탑 상층 연회장
+set bk
+grid
+############################################
+############################################
+############################################
+#~~~~cccccccccccccccccccccccccc#,,,,,,,,,,,#
+#~~~~cccccccccccccccccccccccccc#,,,,,,,,,,,#
+#~~~~cccccccccccccccccccccccccc#,,,,,,,,,,,#
+#ccccccccccccccccccccccccccccccc,,,,,,,,,,,#
+#ccccccccccccccccccccccccccccccc,,,,,,,,,,,#
+#cccccccccccccccccccccccccccccc#,,,,,,,,,,,#
+#cccccccccccccccccccccccccccccc#,,,,,,,,,,,#
+#cccccccccccccccccccccccccccccc#,,,,,,,,,,,#
+#cccccccccccccccccccccccccccccc#############
+#cccccccccccccccccccccccccccccc#############
+#cccccccccccccccccccccccccccccc#############
+#cccccccccccccccccccccccccccccc#wwwwwwwwwww#
+#cccccccccccccccccccccccccccccc#wwwwwwwwwww#
+#cccccccccccccccccccccccccccccccwwwwwwwwwww#
+#~~~~cccccccccccccccccccccccccccwwwwwwwwwww#
+#~~~~cccccccccccccccccccccccccc#wwwwwwwwwww#
+#~~~~cccccccccccccccccccccccccc#wwwwwwwwwww#
+#~~~~cccccccccccccccccccccccccc#wwwwwwwwwww#
+############################################
+############################################
+############################################
+end
+mark from_stair 3 19 E
+mark from_KT-04 3 19 E
+mark from_gondola 27 3 S
+mark from_up 3 4 E
+mark hall 15 11 S
+exit 1 3 KT-06 from_stair
+exit 1 4 KT-06 from_stair
+text 2 17 "계단참. 아래로 22층 — 흙 냄새." w=2 scene=KT_DOWN5
+text 2 5 "서북 계단. 위로 60층 전망대. 계단참에 '전망대 관람객 전용' 금빛 화살표." w=2
+prop w_banner_kt 9 1
+text 10 2 "현수막 '금빛 빌딩 개관 기념 만찬 2077. 10. 23.'" w=3
+prop piano 17 3
+text 17 4 "그랜드 피아노. 보면대에 축가 악보 — 마지막 장이 펼쳐진 채."
+prop banquet_kt 4 6
+prop banquet_kt 10 6 state=bones
+prop banquet_kt 16 6
+prop banquet_kt 4 13
+prop banquet_kt 10 13
+prop banquet_kt 16 13 state=bones
+prop banquet_kt 22 13
+text 10 8 "원탁. 엎드린 해골이 아직 잔을 쥐고 있다. 자리표 '분양팀 김 ○○'." w=2
+text 16 15 "원탁. 의자 하나가 넘어졌다 — 누군가 일어나 창가로 갔다." w=2
+box 22 13 bag name="원탁 밑 핸드백"
+prop w_glass_kt 26 1 state=broken cond="KT_GOND == 1"
+prop w_glass_kt 26 1 cond="KT_GOND != 1"
+text 27 2 "북쪽 통유리(31층). 강 건너 불 꺼진 도시가 한눈에." scene=KT_WIN5 cond="KT_GOND != 1"
+text 27 2 "깨진 통유리 밖에 곤돌라가 쇠줄 둘에 매달려 있다." scene=KT_WIN5 cond="KT_GOND == 1"
+prop w_glass_kt 20 1
+prop plant_pot 29 19
+# ---------------------------------------------------------------- 주방
+prop kitchen_sink 33 3
+prop fridge 36 3
+box 36 3 pantry name="연회장 주방 냉장고"
+prop dining_table 38 7
+text 38 8 "배식대. 2백 년 묵은 케이크 받침에 '축 개관'." w=2
+prop extinguisher_kt 41 9 cond="KT_EXT5 == 0"
+prop extinguisher_kt 41 9 state=empty cond="KT_EXT5 == 1"
+text 41 9 "주방 소화기." scene=KT_EXT5 cond="KT_EXT5 == 0"
+# ---------------------------------------------------------------- 경찰 특공대 대기실(쉼터)
+prop gun_locker 33 14
+text 33 15 "특공대 총기함. 철문에 번호 자물쇠 · 경찰 휘장." scene=KT_SWAT
+text 35 15 "경찰 특공대 대기실. '귀빈 경호 — 개관 만찬 대기'. 벽에 근무표 — 10월 23일 밤 칸만 비었다." w=2
+prop bk_sofa 37 17
+prop cot 40 18
+text 40 19 "대기실 간이 침대. 문을 걸면 조용하다." scene=KT_REST5
+# ---------------------------------------------------------------- 원탁 하나를 도는 냄새 고리(정찰 개미 하나 — 케이크 부스러기 냄새 · 행렬을 끌고 올 목적지)
+scent 15,12;18,12;18,15;15,15;15,12 cond="KT_QUEEN == 0"
+enemy CR-080 15 12 cond="KT_QUEEN == 0"
+text 15 11 "원탁 둘레 바닥에 반짝이는 고리. 일개미 하나가 끝없이 돈다 — 2백 년 묵은 케이크 부스러기 냄새를 따라." w=2 cond="KT_QUEEN == 0"
+# ---------------------------------------------------------------- 1막 뒤 계엄군 관측조(창가 쌍안경 · 무전기)
+enemy CR-401 24 9 dir=N cond="V_ACT >= 2"
+enemy CR-403 28 11 dir=N cond="V_ACT >= 2"
+# ---------------------------------------------------------------- 불을 먼저 켰다(여왕 전): 발전기 열 · 진동을 따라 개미 줄이 연회장까지
+scent 2,19;10,11;20,11;26,5;27,4 cond="KT_HEAT == 1 and KT_QUEEN == 0"
+enemy CR-080 10 11 cond="KT_HEAT == 1 and KT_QUEEN == 0"
+enemy CR-080 20 11 cond="KT_HEAT == 1 and KT_QUEEN == 0"
