@@ -121,6 +121,101 @@ def roach_sheet():
     return frames, meta
 
 
+# ---------------------------------------------------------------- 변이 미국가재 CR-121 (칸 48×26, 발 기준점 (20, 23)) — 1-D 대방 지하차도
+# SD-14: 둔치 흙 굴에서 나온다 · 집게 14. 붉은 갈색 마디 몸통 · 앞으로 내민 큰 집게 둘(한쪽이 더 크다) · 부채꼴 꼬리 · 더듬이 두 가닥.
+# 걷기 다리 네 쌍이 두 묶음으로 번갈아 디딘다(디딘 다리는 컷마다 정확히 -2px — 세계에서 고정).
+CRAY_FOOT = (20, 23)
+CRAY_PX = 2
+CRAY = ramp(["P23", "P24", "P25", "P26", "P27"])
+
+
+def crayfish(frame=0, pose="walk", hurt=False, snap=0):
+    img = Image.new("RGBA", (48, 26), CLEAR)
+    d = ImageDraw.Draw(img)
+    legc = [C("P02"), C("P24")]
+    for far in (1, 0):                                                     # 다리 네 쌍
+        y0 = 15 - far * 2
+        for i, bx in enumerate((12, 16, 20, 24)):
+            grp = (i + far) % 2
+            ph = (frame + grp * 2) % 4 if pose == "walk" else 0
+            u = [2, 0, -1, 1][ph] if pose == "walk" else 0
+            lift = 0 if ph in (0, 1) else 1
+            fx, fy = bx + u + (i - 1), 22 - far * 3 - lift
+            kx, ky = bx + u // 2, y0 + 3 - lift
+            d.line([bx, y0, kx, ky], fill=legc[far])
+            d.line([kx, ky, fx, fy], fill=legc[far])
+    bob = 1 if pose == "walk" and frame % 2 else 0
+
+    def segs(nx, ny, col):
+        if int((nx + 1.2) * 6) % 2 == 0 and abs(ny) < 0.85:
+            return CRAY[1]                                                 # 마디 이음
+        if ny < -0.5 and -0.4 < nx < 0.5:
+            return CRAY[4]                                                 # 윤기
+        return None
+    body = Image.new("RGBA", (48, 26), CLEAR)
+    _ellipse(body, 18.5, 13.5 - bob, 10.5, 5.0, CRAY[:4], extra=segs)      # 배 마디
+    _ellipse(body, 29.5, 12.5 - bob, 5.5, 4.5, CRAY[1:5])                  # 머리가슴
+    bd = ImageDraw.Draw(body)
+    bd.polygon([(8, 10 - bob), (3, 7 - bob), (2, 13 - bob), (3, 18 - bob), (8, 16 - bob)], fill=CRAY[2])   # 부채꼴 꼬리
+    bd.line([(3, 9 - bob), (7, 12 - bob)], fill=CRAY[0]); bd.line([(3, 16 - bob), (7, 14 - bob)], fill=CRAY[0])
+    bd.point((32, 10 - bob), fill=C("P54") if hurt else C("P01"))       # 눈자루
+    bd.point((32, 9 - bob), fill=C("P02"))
+    img.alpha_composite(body)
+    img = outline(img)
+    # 집게: 몸과 따로 먹선을 둘러 앞으로 뻗는다(머리와 뭉치지 않게) — 먼 쪽(작은 것, 위)을 먼저, 가까운 쪽(큰 것, 아래)을 위에
+    for far, (ax, ay), (px_, py_), sz in ((1, (33, 10), (40, 6), 0.75), (0, (33, 14), (41, 17), 1.0)):
+        cl = Image.new("RGBA", (48, 26), CLEAR)
+        cd = ImageDraw.Draw(cl)
+        rr = CRAY[0:4] if far else CRAY[1:5]
+        py_ -= bob
+        cd.line([ax, ay - bob, px_ - 3, py_], fill=rr[1], width=2)        # 팔 마디
+        _ellipse(cl, px_ + 0.5, py_ + 0.5, 3.4 * sz + 0.4, 2.3 * sz + 0.4, rr[:4])
+        gap = 2 if snap else 1
+        tip = min(47, px_ + int(7 * sz))
+        cd.polygon([(px_ + 1, py_ - 1), (tip, py_ - gap - 1), (tip - 2, py_ - gap - 2)], fill=rr[3])      # 위 손가락
+        cd.polygon([(px_ + 1, py_ + 1), (tip - 1, py_ + gap), (tip - 3, py_ + gap + 1)], fill=rr[2])      # 아래 손가락
+        cl = outline(cl)
+        cd = ImageDraw.Draw(cl)
+        cd.line([(px_ + 2, py_), (tip - 2, py_ - (gap - 1))], fill=INK)  # 손가락 사이 틈
+        img.alpha_composite(cl)
+    d = ImageDraw.Draw(img)
+    t = frame % 3
+    d.line([(34, 9 - bob), (39, 4), (44, 2 + t), (47, 3 + t)], fill=CRAY[0])   # 긴 더듬이
+    d.line([(34, 10 - bob), (40, 7), (45, 7 - t // 2)], fill=C("P01"))
+    if hurt:
+        px = img.load()
+        for y in range(img.height):
+            for x in range(img.width):
+                if px[x, y][3] and px[x, y] != INK:
+                    px[x, y] = C("P09")
+    return img
+
+
+def crayfish_death():
+    """뒤집혀 다리 버둥 → 집게 늘어짐 → 껍데기만(4컷)."""
+    out = []
+    base = crayfish(0, "idle")
+    flip = base.transpose(Image.FLIP_TOP_BOTTOM)
+    for k in range(2):
+        f = Image.new("RGBA", (48, 26), CLEAR)
+        f.alpha_composite(flip.crop((0, 2, 48, 26)), (0, 2 + k))
+        out.append(f)
+    for k in range(2):
+        sq = base.resize((48, max(6, 26 - 7 * (k + 1))), Image.NEAREST)
+        f = Image.new("RGBA", (48, 26), CLEAR)
+        f.alpha_composite(sq, (0, 26 - sq.height - 2))
+        out.append(f)
+    return out
+
+
+def crayfish_sheet():
+    frames = [crayfish(0, "idle")] + [crayfish(f) for f in range(4)] + [crayfish(0, "idle", snap=1)] + crayfish_death()
+    meta = {"frame": [48, 26], "foot": list(CRAY_FOOT), "rows": ["E"], "mirror": {"W": "E"}, "style": "isaac",
+            "motions": {"idle": {"start": 0, "count": 1}, "walk": {"start": 1, "count": 4, "px_per_frame": CRAY_PX, "drive": "distance"},
+                        "attack": {"start": 5, "count": 1}, "death": {"start": 6, "count": 4}}}
+    return frames, meta
+
+
 # ---------------------------------------------------------------- 네발짐승(변이 들개·변이 시궁쥐): 큰 머리 + 작은 몸 + 짧은 다리
 QUAD = {
     "dog": dict(w=44, h=32, foot=(20, 29), px=4, body=(19, 18, 10, 6.5), head=(32, 13, 7.5, 6.5), leg=5, fur=["P17", "P18", "P19", "P20"],

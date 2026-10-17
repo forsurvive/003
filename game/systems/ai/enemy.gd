@@ -7,7 +7,7 @@
 class_name Enemy
 extends Actor
 
-const DOGS := ["CR-104", "CR-095", "CR-107", "CR-106", "CR-108", "CR-105", "CR-500", "CR-136", "CR-097"]
+const DOGS := ["CR-104", "CR-095", "CR-107", "CR-106", "CR-108", "CR-105", "CR-500", "CR-136", "CR-097", "CR-121"]
 const GHOULS := ["CR-200", "CR-201", "CR-202", "CR-204", "CR-205", "CR-206", "CR-457", "CR-459", "CR-518"]   ## 방사능에 낫는 구울(SD-14 §7.2 '라드 100당 HP +1')
 const FERALS := ["CR-200", "CR-201", "CR-204", "CR-205", "CR-206"]            ## 빛나는 구울 폭발에 HP +30%를 받는 야생 구울
 const BURST_R := 4.0 * 32.0                       ## 빛나는 구울 방사능 폭발 반경(SD-14 CR-202 '반경 4타일')
@@ -54,6 +54,7 @@ var bite := 8.0                               ## 들개 물기 피해(SD-14 표 
 var focus: Combatant                          ## 지금 노리는 대상(주인공·아군 감시조 — 진행기가 정한다, 0-10)
 var hold_dir := 2                             ## 제자리 경계 방향
 var det_mul := 1.0                            ## 감지 배수(1-E 상황: S3 먹이 중 0.5 · S4 잠 0.15 · S2 매복 1.2)
+var lurk := false                             ## 1-D 물속 매복(침수 구울 CR-206): 물 타일에서 보이지 않다가 2.5칸 안에 오면 일어나 덮친다(SD-14)
 var asleep := false                           ## 야영 중 잠(S4): 누워 있고, 맞거나 가까운 소리·탐지 게이지 50이면 깬다
 var doze := ""                                ## 휴면 군집(SD-14 §12 · SQ-S05): "sit" · "lie" · "stand" — 소리 · 맞음 · 가까이 선 걸음으로만 깬다
 var wake_cb := Callable()                     ## (e): 하나가 깨면 같은 무리가 한꺼번에(SD-14 '일제 기상') — 진행기가 준다
@@ -117,7 +118,7 @@ static var prof := {"per": 0, "tac": 0, "act": 0, "n_per": 0, "n_tac": 0, "n_pat
 func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w, opts: Dictionary = {}) -> void:
 	row = enemy_row
 	weapon = weapon_row
-	arm = str(opts.get("arm", "baton" if row["id"] == "CR-473" else ("claw" if row["id"] in ["CR-200", "CR-201", "CR-202", "CR-204"] else "")))
+	arm = str(opts.get("arm", "baton" if row["id"] == "CR-473" else ("claw" if row["id"] in ["CR-200", "CR-201", "CR-202", "CR-204", "CR-206"] else "")))
 	who = str(opts.get("who", ""))
 	stance = str(opts.get("stance", ""))
 	var is_roach: bool = row["id"] == "CR-002"
@@ -138,7 +139,11 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 		"CR-097":
 			sheet = "cr_cr097_loco"                                  # 왕쥐(1-11d, SD-14 §4.1 — 한 치수 반 큰 몸 · 흉터 · 엉킨 꼬리 매듭)
 		"CR-136":
-			sheet = "cr_cr136_loco"                                  # 옴 너구리(1-T2 밤 몹, SD-14 §4.9 — 눈가 검은 띠 · 털 빠진 꼬리)
+			sheet = "cr_cr136_loco"
+		"CR-121":
+			sheet = "cr_cr121_loco"                                  # 변이 미국가재(1-D 대방 지하차도, SD-14 — 붉은 마디 몸 · 큰 집게 둘)
+		"CR-206":
+			sheet = "en_cr206_loco"                                  # 침수 구울(1-D, SD-14 — 젖은 검정 누더기, 물속 매복)                                  # 옴 너구리(1-T2 밤 몹, SD-14 §4.9 — 눈가 검은 띠 · 털 빠진 꼬리)
 		"CR-107":
 			sheet = "cr_cr107_loco"                                  # 경비견(1-6, 새벽인력 조끼)
 		"CR-405":
@@ -242,6 +247,11 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 		asleep = true
 		det_mul = 0.3
 		set_pose(doze if doze != "stand" else "stand")
+	elif bool(opts.get("lurk", false)):
+		lurk = true
+		asleep = true
+		det_mul = 0.0
+		visible = false                                             # 물속에 엎드림(탐지 불가) — 일어서면 보인다
 	elif bool(opts.get("sleep", false)):
 		asleep = true
 		var curl: bool = sprite != null and sprite.sprite_frames != null and sprite.sprite_frames.has_animation("sleep_E")
@@ -263,6 +273,9 @@ func wake() -> void:
 	if not asleep:
 		return
 	asleep = false
+	if lurk:
+		lurk = false
+		visible = true                                              # 물보라와 함께 일어선다
 	set_pose("stand")
 	det_mul = maxf(det_mul, 1.0)
 	if doze != "":
@@ -308,7 +321,7 @@ func think(dt: float, target: Combatant, nav, shots: Projectiles) -> void:   ## 
 			"sneak_skill": target.sneak, "alert": brain.alert(), "in_fov": fov}) * det_mul if sees else 0.0
 		var hit: bool = cmb.last_hit_from != Vector2.ZERO
 		if asleep:                                                  # 잠(S4): 맞거나, 가까운 소리(0.5+)거나, 바로 옆까지 오면 깬다
-			var near := 1.5
+			var near := 2.5 if lurk else 1.5
 			if doze != "":                                          # 휴면: 서서 걸으면 2칸 · 웅크리면 1칸까지(서 있기만 하면 1.5칸)
 				near = (0.5 if target.sneak >= 50.0 else 1.0) if target.posture == "crouch" else (2.0 if target.movement != "still" else 1.5)
 			if hit or _heard >= 0.5 or (sees and dist_t <= near) or brain.gauge >= 50.0:

@@ -50,7 +50,7 @@ SRC = os.path.join(ROOT, "maps")
 OUT = os.path.join(ROOT, "game", "data", "maps")
 TIL = os.path.join(ROOT, "game", "assets", "tiles")
 PROPS = os.path.join(ROOT, "game", "assets", "props")
-FLOOR = {".": "panel", ",": "lino_a", "o": "clinic_a", "=": "grate_a", "~": "concrete_a", "c": "carpet_a", "w": "wood_a", "j": "jangpan_a", "t": "terrazzo_a", "u": "tunnel_a", "s": "steps_a", "e": "epoxy_a", "g": "turf_a",
+FLOOR = {".": "panel", ",": "lino_a", "o": "clinic_a", "=": "grate_a", "~": "concrete_a", "c": "carpet_a", "w": "wood_a", "j": "jangpan_a", "t": "terrazzo_a", "u": "tunnel_a", "s": "steps_a", "e": "epoxy_a", "g": "turf_a", "f": "flood_a", "F": "flood_b",
          "m": "panel_mold", "M": "grate_mold", "-": "guide_h", "|": "guide_v", "+": "guide_x", "^": "guide_t"}
 WALL = {"#", " "}
 DIRS = {"E", "SE", "S", "SW", "W", "NW", "N", "NE"}
@@ -399,6 +399,12 @@ def _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kin
                 for k in ("arm", "who", "dir", "stance"):              # 0-9: 든 무기(baton|pistol) · 인물 ID(이름표) · 처음 방향 · hold(제자리)
                     if opt.get(k):
                         e[k] = opt[k]
+                if opt.get("lurk"):                                    # 1-D 물속 매복(침수 구울): 물 칸('f' · 'F')에만
+                    if [r for _, r in m.rows][y][x:x + 1] not in ("f", "F"):
+                        raise Err(f"물속 매복 적 {eid} 자리 ({x},{y})가 물 칸이 아니다")
+                    e["lurk"] = True
+                if opt.get("boss"):                                    # 1-D0 우두머리: 쓰러뜨리면 다시 서지 않는다(SD-14 §11.3)
+                    e["boss"] = True
                 if opt.get("sleep"):                                   # 1-B4 실내 상황: 자는 중(맞거나 소리에 깬다 — Enemy.setup_enemy)
                     e["sleep"] = True
                 if opt.get("det"):                                     # 감지 배수(먹는 중 0.5 등)
@@ -589,6 +595,9 @@ def _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kin
         floor_ids, wall_ids = extra
         out["floor"] = floor_ids
         out["wall"] = wall_ids
+        rows_ = [r for _, r in getattr(m, "rows", [])]
+        if any(("f" in r or "F" in r) for r in rows_):                 # 1-D 침수 깊이(0 마름 · 1 발목 · 2 허리) — 이동 배수 · 웅크림(SD-09f §3.5)
+            out["wet"] = ["".join("1" if c == "f" else ("2" if c == "F" else "0") for c in r) for r in rows_]
     out["solid"] = ["".join(str(min(1, v)) for v in row) for row in solid]
     return out
 
@@ -742,7 +751,11 @@ def main():
             n.pop("line", None)
         json.dump(out, open(os.path.join(OUT, mid + ".json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
         index[mid] = {"name": out["name"], "size": out["size"], "exits": sorted({e["to"] for e in out["exits"]})}
-    json.dump({"maps": index}, open(os.path.join(OUT, "_index.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    ip = os.path.join(OUT, "_index.json")                              # 생성 실내(G-, gen.bin 묶음)는 굽기가 쓴 항목을 그대로 둔다(1-B — 맵 변환만 다시 돌려도 지워지지 않게)
+    if os.path.exists(ip) and os.path.exists(os.path.join(OUT, "gen.bin")):
+        old = json.load(open(ip, encoding="utf-8")).get("maps", {})
+        index.update({k: v for k, v in old.items() if k.startswith("G-") and "pack" in v})
+    json.dump({"maps": index}, open(ip, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print(f"월드 발견 자리: {len(spots)}곳")
     print(f"맵: {len(maps)}장 — " + ", ".join(f"{k} {v['size'][0]}×{v['size'][1]}" for k, v in sorted(index.items())))
 

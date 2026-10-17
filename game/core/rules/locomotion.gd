@@ -33,6 +33,7 @@ var _move_dir := -1
 var _stop_left := 0
 var frames_advanced := 0             ## 시험용: 누적 프레임 수
 var custom := {}                     ## 크리처 등 종별 모션 표(SD-16 §3.6.4: 종마다 데이터)
+var terrain_mul := 1.0               ## 바닥 배수(1-D 침수: 발목 0.8 · 허리 0.6, SD-09f §3.5) — 거리 구동이라 보폭 그대로 느려진다(미끄러짐 없음)
 var speed_mul := 1.0                 ## 속도 배수(다리 부위 손상 0.5 · 절뚝 도주 0.3 · 울부짖기 1.15 — 1-9e). 거리 구동이라 프레임도 같이 느려진다
 
 
@@ -84,7 +85,7 @@ func step(input: Vector2, dt: float, mode: String = "walk", aim_dir: int = -1, b
 		if not (blocked.call(logical, end) as Vector2).is_equal_approx(end):
 			_blocked(want, aim_dir)
 			return
-	var speed: float = m["speed_t"] * TILE * (BACK_SPEED if back else 1.0) * speed_mul
+	var speed: float = m["speed_t"] * TILE * (BACK_SPEED if back else 1.0) * speed_mul * terrain_mul
 	var dv: Vector2 = VEC[want].normalized() * speed * dt
 	var target := logical + dv
 	var arrived: Vector2 = target if not blocked.is_valid() else blocked.call(logical, target)

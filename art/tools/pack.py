@@ -105,7 +105,10 @@ ENEMIES = [("en_cr401_loco", "M1-S4-HR02-H1-T06-1-PF01-HD04-EY00-PR034", "rifle"
            ("en_trader_b_loco", "F2-S3-HR08-H2-T03-2-PF00-HD07-EY00", None),
            ("en_refugee_loco", "F1-S2-HR06-H1-T03-2-PF00-HD00-EY00", None),
            ("en_refugee_b_loco", "M1-S3-HR02-H2-T03-2-PF00-HD05-EY00", None),
-           ("en_downed_loco", "M1-S4-HR01-H1-T12-2-PF12-HD02-EY00", None)]
+           ("en_downed_loco", "M1-S4-HR01-H1-T12-2-PF12-HD02-EY00", None),
+           # 1-D 대방 지하차도: 침수 구울 CR-206(SD-14 — 무릎 물속에 엎드려 있다가 일어나 기습, '젖은 검정 팔레트' CR-628 판본과 같은 계열) —
+           # 야생 구울 몸 · 누더기를 검은 젖은 팔레트(PF-06)로
+           ("en_cr206_loco", "M1-SG2-HR00-H1-T16-2-PF06-HD00-EY00", None)]
 
 # 앉음(sit) 동작이 있는 적 시트(1-11e SQ-S05 「환승촌 막차」, SD-14 CR-204 · CR-205 · §12 휴면): 2077년 그날 밤 막차를 기다리던 대피민 구울 —
 # 퇴근길 양복 · 솜점퍼(목도리) · 가죽 외투 세 벌(무리 안에서 같은 얼굴만 나오지 않게) · 역무원 구울(제복 모자 + 경광봉)

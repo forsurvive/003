@@ -80,6 +80,26 @@ def roach_sheet():
     json.dump(meta, open(os.path.join(SPR, name + ".json"), "w"), ensure_ascii=False, sort_keys=True, indent=1)
 
 
+def crayfish_sheet():
+    """CR-121 변이 미국가재(1-D 대방 지하차도, art/tools/chibi_creatures.py): 옆(E)만 — idle 1, walk 4(컷당 2px), attack 1(집게 벌림), death 4."""
+    import chibi_creatures as CC
+    frames, meta = CC.crayfish_sheet()
+    fw, fh = meta["frame"]
+    sheet = Image.new("RGBA", (fw * len(frames), fh), (0, 0, 0, 0))
+    for i, f in enumerate(frames):
+        sheet.alpha_composite(f, (i * fw, 0))
+    name = "cr_cr121_loco"
+    sheet.save(os.path.join(SPR, name + ".png"))
+    mo = meta["motions"]
+    anims = [("idle_E", [(0, 0)], True), ("walk_E", [(mo["walk"]["start"] + i, 0) for i in range(mo["walk"]["count"])], True),
+             ("attack_E", [(mo["attack"]["start"], 0)], False),
+             ("death_E", [(mo["death"]["start"] + i, 0) for i in range(mo["death"]["count"])], False)]
+    open(os.path.join(SPR, name + ".tres"), "w", encoding="utf-8").write(
+        spriteframes_tres(f"res://assets/sprites/{name}.png", fw, fh, anims))
+    meta["name"] = name
+    json.dump(meta, open(os.path.join(SPR, name + ".json"), "w"), ensure_ascii=False, sort_keys=True, indent=1)
+
+
 def quad_sheets():
     """네발짐승(0-10): CR-104 변이 들개 · 백구(C-015 진돗개). 옆 그림만, 걷기 4컷(컷당 4px)."""
     import chibi_creatures as CC
@@ -222,6 +242,7 @@ def tileset_grid(name, tiles, extra=None, cols=32):
 def main():
     n = import_sheets()
     roach_sheet()
+    crayfish_sheet()
     quad_sheets()
     robot_sheets()
     sentry_sheets()

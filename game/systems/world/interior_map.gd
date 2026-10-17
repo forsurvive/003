@@ -12,6 +12,15 @@ var id := ""
 var data: Dictionary
 var size := Vector2i.ZERO
 var solid := PackedByteArray()                   ## [y * w + x] 1 = 막힘(벽·소품·잠긴 문)
+var wet: Array = []                               ## 1-D 침수 깊이 줄('0' 마름 · '1' 발목 · '2' 허리) — 없으면 빈 배열
+
+
+## 침수 깊이(0 · 1 · 2)
+func wet_at(t: Vector2i) -> int:
+	if wet.is_empty() or t.y < 0 or t.y >= wet.size():
+		return 0
+	var row: String = wet[t.y]
+	return int(row[t.x]) if t.x >= 0 and t.x < row.length() else 0
 var cover := PackedByteArray()                   ## [y * w + x] 엄폐(SD-11 §4.2): 2 높음(벽·키 큰 소품, 탄·시선을 막는다) · 1 낮음 · 0 없음
 var objects: Node2D                              ## y 정렬 층(소품·문·인물이 같은 층에서 앞뒤를 가린다)
 var doors: Array = []                            ## [{"node": Sprite2D, "x", "y", "locked", "closed": Rect2, "open": Rect2, "is_open"}]
@@ -110,6 +119,7 @@ func load_map(map_id: String, st: StoryState = null) -> void:
 	_load_static()
 	id = map_id
 	data = read_data(map_id)
+	wet = data.get("wet", [])
 	size = Vector2i(int(data["size"][0]), int(data["size"][1]))
 	marks = data["marks"]
 	ext = bool(data.get("ext", false))

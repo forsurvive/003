@@ -119,6 +119,21 @@
   "tier": "중(비적대)",
   "xp": 15
  },
+ "CR-121": {
+  "_src": "14_creatures-enemies.md:542",
+  "attack": "집게 14",
+  "dr": 10,
+  "hp": 60,
+  "id": "CR-121",
+  "level": 4,
+  "name": "변이 미국가재",
+  "part_weights": "PW-C",
+  "pattern": "둔치 흙 굴에서 나온다. 2~3마리",
+  "radius": 0.28,
+  "speed": 2.5,
+  "tier": "약",
+  "xp": 10
+ },
  "CR-136": {
   "_src": "14_creatures-enemies.md:641",
   "attack": "물기 6 + 옴 25%",
@@ -208,6 +223,21 @@
   "speed": 3.5,
   "tier": "중",
   "xp": 15
+ },
+ "CR-206": {
+  "_src": "14_creatures-enemies.md:836",
+  "attack": "근접 18",
+  "dr": 0,
+  "hp": 80,
+  "id": "CR-206",
+  "level": 6,
+  "name": "침수 구울",
+  "part_weights": "PW-H",
+  "pattern": "무릎 높이 물속에 엎드려 있다가 일어나 기습(물 타일에서 탐지 불가)",
+  "radius": 0.3,
+  "speed": 3.0,
+  "tier": "중",
+  "xp": 20
  },
  "CR-305": {
   "_src": "14_creatures-enemies.md:905",

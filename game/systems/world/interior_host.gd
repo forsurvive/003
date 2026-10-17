@@ -498,6 +498,29 @@ func _place_name() -> String:
 	return ("볼트 S-07 · " if map.id.begins_with("V-") else "관악 · ") + str(map.data["name"])
 
 
+const WET_MUL := [1.0, 0.8, 0.6]                  ## 침수 이동 배수(SD-09f §3.5: 발목 ×0.8 · 허리 ×0.6)
+var _wet_said := false
+
+
+## 1-D 침수: 발 딛은 칸의 물 깊이로 주인공 · 적의 걸음을 늦춘다. 허리 물에서는 웅크릴 수 없다(한 번 알림)
+func _wet_tick() -> void:
+	if map == null or player == null:
+		return
+	if map.wet.is_empty():
+		player.loco.terrain_mul = 1.0
+		return
+	var w: int = map.wet_at(map.tile_of(player.loco.logical))
+	player.loco.terrain_mul = WET_MUL[w]
+	if w == 2 and combat.crouch:
+		combat.crouch = false
+		if not _wet_said:
+			_wet_said = true
+			hint("물이 허리까지 찬다 — 웅크릴 수 없다.", 3.0)
+	for e in combat.enemies:
+		if is_instance_valid(e) and not e.cmb.dead:
+			e.loco.terrain_mul = WET_MUL[map.wet_at(map.tile_of(e.loco.logical))]
+
+
 func _physics_process(dt: float) -> void:
 	if map == null:
 		return
@@ -517,6 +540,7 @@ func _physics_process(dt: float) -> void:
 			banner_t = BANNER_SECS
 	banner_t = maxf(0.0, banner_t - dt)
 	_night_tick(dt)
+	_wet_tick()
 	_hurt_t = maxf(0.0, _hurt_t - dt)
 	_hud_t += dt
 	_radio_tick(dt)

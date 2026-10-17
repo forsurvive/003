@@ -584,6 +584,35 @@ def epoxy_tex(seed):
     return a
 
 
+def flood_tex(seed, deep=False):
+    """침수 바닥(1-D 던전 · SD-09f §3.5 침수 단계): 발목 물 = 터널 콘크리트가 비치는 탁한 물(바닥 이음매가 일렁여 보인다) ·
+    허리 물 = 바닥이 안 보이는 짙은 녹회색 물 + 기름막 · 떠다니는 부스러기. 잔물결은 가로로 길게(흐름 방향)."""
+    base = tunnel_tex(seed)
+    a = base.copy()
+    rnd = np.random.default_rng(seed + 7)
+    nz = equalize(fbm(CELL, [(48, 0.6), (12, 0.4)], seed + 11))
+    if not deep:
+        ys, xs = np.mgrid[0:CELL, 0:CELL]
+        veil = ((xs + ys) % 2 == 0) | (nz > 0.55)                          # 얇은 물막: 바닥 절반이 비친다
+        a[veil] = t("P12")
+        a[(nz > 0.82) & veil] = t("P13")
+        a[base == t("P03")] = t("P11")                                     # 이음매 홈은 물 아래 더 짙게
+    else:
+        a[:, :] = t("P11")
+        a[nz > 0.62] = t("P12")
+        a[nz < 0.12] = t("P10")
+        for x, y, r2 in scatter(seed + 23, 7):                             # 기름막(무지갯빛 대신 탁한 황록 한 줄)
+            if r2.random() < 0.35:
+                stamp(a, x, y, ["aab"], {"a": "P43", "b": "P12"})
+    for x, y, r2 in scatter(seed + 5, 11):                                 # 가로 잔물결(밝은 윗줄 + 짙은 아랫점)
+        if r2.random() < (0.7 if deep else 0.45):
+            stamp(a, x, y, ["aaa.", ".bb."], {"a": "P14" if deep else "P15", "b": "P10"})
+    for x, y, r2 in scatter(seed + 31, 5):                                 # 떠다니는 부스러기
+        if r2.random() < 0.3:
+            put(a, x, y, "P19")
+    return a
+
+
 def tunnel_tex(seed):
     """지하 연결 통로·배수구 콘크리트(1-4 J-09·J-10): 어둡고 축축한 판 + 물때 얼룩 + 거푸집 이음매 + 짧은 금."""
     a = np.full((CELL, CELL), t("P05"), np.uint8)
@@ -934,10 +963,16 @@ def sets():
             # 1-11i 고척 돔: 그라운드 인조 잔디
             dict(name="turf", A=turf_tex(341), B=None, spread=0, pri=0, rim=0, shade=1, vthr=256, dens=3,
                  decals=["paper", "debris", "can"], hard=1),
+            # 1-D 던전: 침수 바닥(발목 · 허리) — 이동 ×0.8 · ×0.6(웅크림 불가), SD-09f §3.5
+            dict(name="flood", A=flood_tex(351), B=None, spread=0, pri=0, rim=0, shade=1, vthr=256, dens=2,
+                 decals=["debris"], hard=1),
+            dict(name="flood_deep", A=flood_tex(361, deep=True), B=None, spread=0, pri=0, rim=0, shade=1, vthr=256, dens=1,
+                 decals=[], hard=1),
         ],
         "mat_of": {"panel": 0, "panel_sheen": 0, "panel_scuff": 0, "guide_h": 0, "guide_v": 0, "guide_x": 0, "guide_t": 0, "grate_a": 1, "grate_b": 1, "grate_c": 1,
                    "lino_a": 2, "lino_b": 2, "clinic_a": 3, "clinic_b": 3, "concrete_a": 4, "carpet_a": 5, "wood_a": 6,
-                   "panel_mold": 7, "grate_mold": 8, "jangpan_a": 9, "terrazzo_a": 10, "tunnel_a": 11, "steps_a": 12, "epoxy_a": 13, "turf_a": 14},
+                   "panel_mold": 7, "grate_mold": 8, "jangpan_a": 9, "terrazzo_a": 10, "tunnel_a": 11, "steps_a": 12, "epoxy_a": 13, "turf_a": 14,
+                   "flood_a": 15, "flood_b": 16},
         "force": {"guide_h": "guide_h", "guide_v": "guide_v", "guide_x": "guide_x", "guide_t": "guide_t"},
         "flag_of": {k: 1 for k in ("wall_top_s", "wall_top_w", "wall_top_ws", "wall_top", "face_top", "face_top_pipe", "face_top_vent",
                                    "face_bot", "face_bot_outlet", "balcony", "balcony_door")},

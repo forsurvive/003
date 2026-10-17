@@ -95,6 +95,22 @@
   "cover": 2,
   "solid": true
  },
+ "flood_a": {
+  "atlas": [
+   36,
+   0
+  ],
+  "cover": 0,
+  "solid": false
+ },
+ "flood_b": {
+  "atlas": [
+   37,
+   0
+  ],
+  "cover": 0,
+  "solid": false
+ },
  "grate_a": {
   "atlas": [
    0,

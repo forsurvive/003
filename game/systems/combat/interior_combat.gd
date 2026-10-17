@@ -181,6 +181,19 @@ static func derived(st: StoryState) -> Dictionary:
 	return {"hp_max": float(sp[en]["hp_lv1"]), "ap_max": float(sp[ag]["ap_max"])}
 
 
+const RESPAWN_DAYS := 3                           ## 셀 단위 리스폰 72게임시간(SD-14 §11.3) — 게임 날짜(06:00 하루 판정)로 센다
+
+
+## 이 자리 적이 다시 설 때가 됐나: 쓰러진 기록이 없거나, 우두머리가 아니고 3일이 지났다
+static func respawn_due(st: StoryState, key: String) -> bool:
+	if not st.boxes.has(key):
+		return true
+	var r: Dictionary = st.boxes[key]
+	if bool(r.get("boss", false)):
+		return false
+	return int(st.vars.get_v("GAME_DAY")) - int(r.get("day", 0)) >= RESPAWN_DAYS
+
+
 ## 맵이 바뀌었다: 표적·적을 새 맵에서 다시 만든다(주인공 HP는 그대로)
 func on_map(map: InteriorMap, player: Actor, st: StoryState) -> void:
 	for e in enemies:
@@ -228,7 +241,14 @@ func on_map(map: InteriorMap, player: Actor, st: StoryState) -> void:
 	set_stealth_live(stealth_live)
 	for row in map.data.get("enemies", []):
 		if InteriorMap._cond_ok(str(row.get("cond", "")), st):
-			spawn(str(row["id"]), Vector2(int(row["x"]) * 32 + 16, int(row["y"]) * 32 + 16), map, st, row)
+			var key := "kill:%s:%d,%d" % [str(map.data.get("id", "")), int(row["x"]), int(row["y"])]
+			if str(row.get("who", "")) == "" and st != null and not respawn_due(st, key):
+				continue                                                      # 1-D0: 쓰러뜨린 자리는 72게임시간(3일) 동안 비어 있다 · 우두머리는 다시 서지 않는다(SD-14 §11.3)
+			var e0 := spawn(str(row["id"]), Vector2(int(row["x"]) * 32 + 16, int(row["y"]) * 32 + 16), map, st, row)
+			if str(row.get("who", "")) == "":
+				e0.set_meta("spawn_key", key)
+				if bool(row.get("boss", false)):
+					e0.set_meta("boss", true)
 	_rebuild_list()
 	if st != null:
 		ap.max_ap = APPool.max_for(st.stat("AG"))
@@ -439,6 +459,8 @@ func spawn(enemy_id: String, pos: Vector2, map: InteriorMap, st: StoryState = nu
 		if e.who == "N-R01-018" and st != null and int(st.vars.get_v("MQP4_KEY")) == 0:   # 무기고 담당 권서준: 무기고 열쇠(0-9 정합)
 			st.vars.set_v("MQP4_KEY", 1)
 			message.emit("권서준의 허리춤에서 무기고 열쇠를 빼앗았다.")
+		if not e.cmb.ko and st != null and e.has_meta("spawn_key"):       # 1-D0 처치 기록(맵 자리 단위 · 저장에 남는다)
+			st.boxes[str(e.get_meta("spawn_key"))] = {"day": int(st.vars.get_v("GAME_DAY")), "boss": bool(e.get_meta("boss", false))}
 		if not e.cmb.ko:
 			enemy_down.emit(e)                                          # 유해(1-4 파밍): 호스트가 그 자리에 소지품 용기를 둔다
 		enemy_killed.emit(enemy_id, alive_enemies()))
