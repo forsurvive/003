@@ -1,0 +1,173 @@
+{
+ "id": "SQS11_BOX",
+ "title": "원본 보존 상자",
+ "loc": "L-R02-01",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TAKE": 6,
+  "EMPTY": 9,
+  "NOTE": 12,
+  "PUT": 14,
+  "HOME": 17
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQH_RECESS == 97",
+   "to": "HOME"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S11_TOOK == 1",
+   "to": "EMPTY"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "회색 보존 상자. 노끈을 풀자 누런 결의안 한 장."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'2077-10-21 전시 휴회 결의 — 계엄 기간 국회 기능 정지.'"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "조항은 한 줄이다. '국회는 계엄 기간 그 기능을 정지한다.'"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "가져간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TAKE",
+     "id": "SQS11_BOX:1:0"
+    },
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS11_BOX:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s11",
+   "args": [
+    "take"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "종이 한 장이 생각보다 무겁다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S11_WARN >= 1 and dead(\"N-R02-027\") == 0",
+   "to": "NOTE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈 보존 상자. 노끈만 열십자로 남았다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "(원본을 되돌려 넣는다)",
+     "tags": [],
+     "cond": "has(\"M-306\") >= 1 and SQH_RECESS < 0",
+     "fx": "",
+     "to": "PUT",
+     "id": "SQS11_BOX:2:0"
+    },
+    {
+     "text": "됐어",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS11_BOX:2:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈 보존 상자 위에 쪽지. '비워 둔다. 돌아오면 넣어 줘. — 의사록'"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "(원본을 되돌려 넣는다)",
+     "tags": [],
+     "cond": "has(\"M-306\") >= 1 and SQH_RECESS < 0",
+     "fx": "",
+     "to": "PUT",
+     "id": "SQS11_BOX:3:0"
+    },
+    {
+     "text": "됐어",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS11_BOX:3:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "원본을 상자에 넣고 노끈을 열십자로 묶는다."
+  },
+  {
+   "op": "cmd",
+   "name": "s11",
+   "args": [
+    "return"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "보존 상자. 노끈 매듭이 단정하다. 원본은 제자리에 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S11.txt"
+}

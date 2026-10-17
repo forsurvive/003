@@ -76,7 +76,10 @@ prop wall_terminal 28 1
 term 28 2 TM-J06D
 prop fountain_dry 18 13
 text 18 13 "물 없는 분수." w=3 h=2 scene=MQ-103_FOUNTAIN
-npc N-R02-014 15 15 E bark="2077년엔 여기 물이 나왔어. 동전 던지면 장사가 잘된다고들 했지."
+# 인지영(1-11j SQ-S11): 동행 중엔 벤치가 빈다 · 낭독 전 바크는 실마리('토요일마다 여의도에 갔지' — 재미 검수 8) · 낭독 뒤 · 죽은 뒤엔 벤치에 유인물 한 장
+npc N-R02-014 15 15 E cond="SQ_S11_ESCORT != 1 and SQ_S11_READ == 0" bark="토요일마다 여의도에 갔지. …요즘은 토요일이 언젠지도 몰라."
+npc N-R02-014 15 15 E cond="SQ_S11_ESCORT != 1 and SQ_S11_READ != 0" bark="이제 토요일이 끝났네. 일요일엔 뭘 하나."
+text 15 15 "빈 벤치. 누가 놓고 갔는지, 유인물 한 장 위에 캡 하나가 눌러져 있다. '종전'." cond="dead(\"N-R02-014\")"
 prop bench_o 14 17
 npc N-R02-012 23 11 S route=분수:23,11,6;게시판:9,4,5;벤치:21,16,6 bark="2077년 물건 있으면 보여 줘. 값은 내가 정하지만."
 npc N-R02-016 34 4 S bark="수리할 거 있어? 김민수야. 명찰 봐."

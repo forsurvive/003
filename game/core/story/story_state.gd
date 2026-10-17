@@ -48,6 +48,9 @@ const UNNAMED := [["N-TRADER", "떠돌이 고물상", ""], ["N-REFUGEE", "피난
 	["N-SA-R2", "환승촌 주민", "JC_SA"], ["N-SA-R3", "환승촌 주민", "JC_SA"], ["N-SA-R4", "버섯 일꾼", "JC_SA"],
 	["N-YT-1", "패거리 수금원", ""], ["N-YT-2", "패거리 척후", ""], ["N-BC-1", "봉천 감시조", "JC_BC"], ["N-BC-2", "봉천 감시조", "JC_BC"], ["N-BC-3", "봉천 감시조", "JC_BC"],   # 1-11b SQ-S02
 	["N-PS-1", "파수-3", ""],   # 1-11c SQ-S04 관제망 경비 로봇
+	["N-PS-2", "경비 파수-3", ""],   # 1-11j SQ-S11 영등포 경찰서 서장실 경비판
+	["N-BJ-S1", "수색조 분대장", "BJ"], ["N-BJ-S2", "수색조 계엄병", "BJ"],   # 1-11c · 1-11f 계엄군 수색조(1-11j: 게임 쪽 목록에 빠져 있던 것 — 이름표에 ID가 나오던 것)
+	["N-BJ-P1", "순찰 분대장", "BJ"], ["N-BJ-P2", "순찰 계엄병", "BJ"],   # 1-11j SQ-S11 여의도 낮 순찰
 	["N-GS-1", "각성회 신도", "GS"], ["N-GS-2", "각성회 신도", "GS"], ["N-GS-3", "각성회 신도", "GS"]]   # 1-8g 노량진 관제 중계소
 var enc := {}                           ## 인카운터 상태(1-3, Encounters): 안전 간격 · 오늘 추적대 수 · EP 사용 · 휴전
 var portrait_alias := {}                ## 인물 ID -> 초상화 키(맵에서 다른 시대 모습으로 선 인물: 2259년 아이 하도윤 등)
@@ -194,6 +197,18 @@ func _init() -> void:
 		vars.declare("SQ_S10_" + k, "int", 0)
 	vars.declare("SQR_S10", "int", 0)
 	vars.declare("SQS_S10", "int", 0)
+	# SQ-S11 토요일의 여의도(1-11j, SD-04a §5.4 · SideS11): 명단의 행방은 SQH_LIST11 하나(−1 아직 · 4 인지영 낭독 · 14 남산 · 1 계엄군 · 0 주인공 보관),
+	# 원본의 행방은 SQH_RECESS 하나(−1 아직 · 14 남산 · 1 비상정부 · 0 주인공 보관 · 97 기록관에 되돌림). SQE_LIST11 · SQE_RECESS = MQ-502 증거 · SQK_MARCH = 파수-3 240기를 앎(MQ-302 · S18).
+	# START 발동 · LEAF LR-11 읽음 · REPORT LR-12/별첨 읽음 · PRINT 출력 매수 · GUARD 경비 파수(0 대기 · 1 깨어 막음 · 2 비킴 · 3 배관 우회 · 9 파괴) · STACK 제7 서고 번호 앎(문 열림) ·
+	# ESCORT 인지영 동행(0 · 1 함께 · 2 기다림 · 3 끝) · READ 낭독 끝 · HELD_DAY 원본을 든 날 · SOL_L/SOL_D 결과 · REWARD 머리띠 · PLATE 제118석 쪽지 · VOTE 전광판 · CLAUSE 재개 조항 제3항 앎 ·
+	# TOOK 원본을 상자에서 꺼냄 · WARN 반출 소문(5일째) · PASS 선우진 인수증(낮 통행) · PDAY 순찰을 만난 날 · PKIND 순찰 종류(1 구울 · 2 문서) · PSAID 순찰 화술 실패 ·
+	# CASTL 명단 방송(1 넘김 · 2 송출) · CASTL_DAY · WOOQ/SUNQ 우도하 · 선우진에게 꺼낼 국회 기록이 있음(진행기) · SAGONG 골동품상 거절 들음 · COIN 분수 동전 대사 ·
+	# SAWLEAF 인지영이 유인물을 봄 · MET 의사록을 만남 · TOLD 보고서는 경찰서에 · SHOWN 파수에게 명단 · ATOFFICE 서장실 안(배관 방향) · WOOL/SUNL 사본을 건넴 · KNOWS 원본 자리 앎 · DONE 닫힘
+	for k in "START LEAF REPORT PRINT GUARD STACK ESCORT READ HELD_DAY SOL_L SOL_D REWARD PLATE VOTE CLAUSE TOOK WARN PASS PDAY PKIND PSAID CASTL CASTL_DAY WOOQ SUNQ SAGONG COIN SAWLEAF MET TOLD SHOWN ATOFFICE WOOL SUNL KNOWS DONE".split(" "):
+		vars.declare("SQ_S11_" + k, "int", 0)
+	vars.declare("SQR_S11", "int", 0)
+	for kv in [["SQH_LIST11", -1], ["SQH_RECESS", -1], ["SQE_LIST11", 0], ["SQE_RECESS", 0], ["SQK_MARCH", 0], ["NS_COOP", 0], ["PD_R02_KH", 0]]:   # 남산 협력 표시(SD-06 NS 협력 플래그) · 거점 '국회 폐허'(1 = BJ)
+		vars.declare(kv[0], "int", kv[1])
 	vars.declare("PD_R02_GD", "int", 0)                                  # 판도 PD-R02-5 새벽(고척 · 개봉 — 습격 −15 · 방송 −5, SD-04a §5.3)                                  # 판도 PD-R02-4 새벽(영등포 남부 — 우리 열기 −3 · 습격 −10 · 지하로 −5, SD-04a §5.2)
 	for kv in [["SQH_BATT", -1], ["LR15_READ", 0], ["PD_R01_GS", 0], ["M303_BONUS", 0], ["PK_017", 0]]:   # 전지 인도처(HO) · LR-15 · 판도 PD-R01-2 각성회 · 편지 화술 +10(첫 1회) · 퍽 눈치(퍽 창은 1-12)
 		vars.declare(kv[0], "int", kv[1])

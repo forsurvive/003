@@ -549,8 +549,8 @@ def _place_enemies(p, threat, region):
             break
 
 
-def build_one(spec, pools, prop_meta, known_vars, known_fns, scenes, tries=6):
-    """문 하나 → (맵 JSON, 이름) 또는 None. 씨앗이 맞지 않으면 다음 씨앗."""
+def build_one(spec, pools, prop_meta, known_vars, known_fns, scenes, tries=12):
+    """문 하나 → (맵 JSON, 이름) 또는 None. 씨앗이 맞지 않으면 다음 씨앗(1-11j: 6 → 12 — 먼저 맞는 씨앗은 그대로라 기존 건물은 바뀌지 않는다)."""
     x, y, style, threat, region = spec["x"], spec["y"], spec["style"], spec["threat"], spec["region"]
     mid = f"G-{x}-{y}"
     for k in range(tries):

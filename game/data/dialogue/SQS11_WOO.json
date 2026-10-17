@@ -1,0 +1,176 @@
+{
+ "id": "SQS11_WOO",
+ "title": "우도하",
+ "loc": "L-R02-06",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "MENU": 2,
+  "LIST": 3,
+  "LATE": 8,
+  "DOC": 11,
+  "DOC3": 15,
+  "DOCASK": 16,
+  "DOCGIVE": 17
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "dead(\"N-R02-026\")",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-026",
+   "emo": "기본",
+   "text": "여의도 기록? 뭔데. 송출할 만한 거면 다 받아."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "(사망자 명단을 건넨다)",
+     "tags": [],
+     "cond": "has(\"M-305\") >= 1 and SQ_S11_WOOL == 0",
+     "fx": "",
+     "to": "LIST",
+     "id": "SQS11_WOO:1:0"
+    },
+    {
+     "text": "(휴회 결의 원본을 보인다)",
+     "tags": [],
+     "cond": "has(\"M-306\") >= 1 and SQH_RECESS < 0",
+     "fx": "",
+     "to": "DOC",
+     "id": "SQS11_WOO:1:1"
+    },
+    {
+     "text": "됐어",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS11_WOO:1:2"
+    }
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "SQH_LIST11 >= 0",
+   "to": "LATE"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-026",
+   "emo": "슬픔",
+   "text": "열한 명. …송미래 누나가 다음 정시에 읽을 거야. 이름은 한 글자도 안 빼고."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-026",
+   "emo": "기본",
+   "text": "공보방송이 반박하겠지. '불법 집회 사고'라고. 그래도 이름은 이름이야."
+  },
+  {
+   "op": "cmd",
+   "name": "s11",
+   "args": [
+    "woo",
+    "list"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-026",
+   "emo": "기본",
+   "text": "사본이네. 이 명단, 벌써 다른 데로 갔잖아. …그래도 받아 둘게. 송출 목록에는 못 올리지만."
+  },
+  {
+   "op": "cmd",
+   "name": "s11",
+   "args": [
+    "woo",
+    "copy"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-026",
+   "emo": "놀람",
+   "text": "이게 원본이야? '국회는 계엄 기간 그 기능을 정지한다.'"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-026",
+   "emo": "기본",
+   "text": "봐, 스스로 멈췄다고. 누구에게도 넘기지 않았어. 넘겼으면 '이양한다'고 썼겠지."
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S11_CLAUSE == 1",
+   "to": "DOC3"
+  },
+  {
+   "op": "goto",
+   "to": "DOCASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-026",
+   "emo": "미소",
+   "text": "재개 조항 제3항까지? 그럼 더 분명해. 멈춘 건 다시 열 수 있다는 거니까."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "넘긴다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "DOCGIVE",
+     "id": "SQS11_WOO:2:0"
+    },
+    {
+     "text": "아직은",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "MENU",
+     "id": "SQS11_WOO:2:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-026",
+   "emo": "기본",
+   "text": "남산이 그 문장을 그대로 읽을 거야. 한 글자도 안 고치고. 뒤에 붙는 말만 우리 거지."
+  },
+  {
+   "op": "cmd",
+   "name": "s11",
+   "args": [
+    "woo",
+    "doc"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S11.txt"
+}

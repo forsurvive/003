@@ -1,0 +1,200 @@
+{
+ "id": "SQS11_GUARD",
+ "title": "경비 파수-3",
+ "loc": "L-R02-29",
+ "npc": "N-PS-2",
+ "cond": "SQ_S11_GUARD <= 1 or SQ_S11_GUARD == 3",
+ "labels": {
+  "START": 0,
+  "MENU": 3,
+  "AUTH": 4,
+  "QUERY": 8,
+  "LIST": 13,
+  "FIGHT": 20,
+  "INSIDE": 22
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S11_GUARD == 3",
+   "to": "INSIDE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "진공관 얼굴판이 켜진다. 가슴판 일련번호 'YD-0233'."
+  },
+  {
+   "op": "line",
+   "who": "N-PS-2",
+   "emo": "기본",
+   "text": "정지. 조사 중인 사건입니다. 서장실 출입을 제한합니다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "\"조사를 종결한다. 비켜라.\"",
+     "tags": [
+      {
+       "k": "admin"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "AUTH",
+     "id": "SQS11_GUARD:1:0"
+    },
+    {
+     "text": "\"3월 11일 판독 기록 조회.\"",
+     "tags": [],
+     "cond": "SQ_S11_REPORT == 1 or has(\"M-305\") >= 1 or SQ_S11_TOLD == 1",
+     "fx": "",
+     "to": "QUERY",
+     "id": "SQS11_GUARD:1:1"
+    },
+    {
+     "text": "(사망자 명단을 보여 준다)",
+     "tags": [],
+     "cond": "has(\"M-305\") >= 1 and SQ_S11_SHOWN == 0",
+     "fx": "",
+     "to": "LIST",
+     "id": "SQS11_GUARD:1:2"
+    },
+    {
+     "text": "(부순다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "FIGHT",
+     "id": "SQS11_GUARD:1:3"
+    },
+    {
+     "text": "(물러난다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS11_GUARD:1:4"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s11",
+   "args": [
+    "auth"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-PS-2",
+   "emo": "기본",
+   "text": "관리자 명령 확인. 사건 조사 종결 처리. 서장실 출입 제한을 해제합니다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "파수가 옆으로 한 걸음 비켜 선다. 바퀴가 녹슨 소리를 낸다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-PS-2",
+   "emo": "기본",
+   "text": "조회. 2077. 3. 11. 판독 1,840건. 적성 63. 사망 11. 판독 정확도 99.2%."
+  },
+  {
+   "op": "line",
+   "who": "N-PS-2",
+   "emo": "기본",
+   "text": "…조회 요청자 기록 열람 권한 확인. 사건 조사 종결 처리."
+  },
+  {
+   "op": "cmd",
+   "name": "s11",
+   "args": [
+    "query"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "파수가 옆으로 비켜 선다. 얼굴판이 한 번 깜박인다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "SQ_S11_SHOWN = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "명단을 얼굴판 앞에 펼친다. 진공관이 이름 열한 줄을 차례로 읽는다."
+  },
+  {
+   "op": "line",
+   "who": "N-PS-2",
+   "emo": "기본",
+   "text": "YD-0233. 해당 판독은 정확했습니다."
+  },
+  {
+   "op": "line",
+   "who": "N-PS-2",
+   "emo": "기본",
+   "text": "해당 판독은 정확했습니다. 해당 판독은…"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "같은 말이 세 번 되풀이되다 끊긴다. 가슴판 번호 YD-0233 — 단말 별첨의 판독 기체 번호다."
+  },
+  {
+   "op": "cmd",
+   "name": "s11",
+   "args": [
+    "march"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "cmd",
+   "name": "s11",
+   "args": [
+    "fight"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-PS-2",
+   "emo": "놀람",
+   "text": "정지. …서장실 안 인원 확인. 출입 기록 없음. 조사 중인 사건입니다."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S11.txt"
+}

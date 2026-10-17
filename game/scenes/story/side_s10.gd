@@ -681,6 +681,7 @@ func _cmd(a: Array, done: Callable) -> void:
 			st.call_fn("aff", ["SV", -8])
 			st.call_fn("aff", ["JC", 3])
 			st.call_fn("aff", ["SB", -1])                                     # 연동(JC +3 → SB −1)
+			st.vars.set_v("NS_COOP", int(st.vars.get_v("NS_COOP")) + 1)        # NS 협력(원문 D — 1-11j에 변수가 생김)
 			host.hint("내일 아침 남산 방송이 장부를 읽는다.", 4.0)
 		"up":
 			host.go("GD-02", "from_catwalk")

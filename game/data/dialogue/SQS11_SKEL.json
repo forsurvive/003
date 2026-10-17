@@ -1,0 +1,62 @@
+{
+ "id": "SQS11_SKEL",
+ "title": "앞마당 해골",
+ "loc": "L-R02-01",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "AGAIN": 6
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S11_LEAF == 1",
+   "to": "AGAIN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "잔디 속에 엎드린 해골. 손뼈 사이에 접힌 종이 한 장이 끼어 있다."
+  },
+  {
+   "op": "cmd",
+   "name": "note",
+   "args": [
+    "LR-11"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s11",
+   "args": [
+    "leaflet"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "종이 뒤에 연필 글씨. '매주 토요일 여의도. 다음 주엔 비가 와도.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "잔디 속 해골. 유인물을 꺼낸 손뼈가 조금 벌어져 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S11.txt"
+}

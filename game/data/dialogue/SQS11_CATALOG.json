@@ -1,0 +1,83 @@
+{
+ "id": "SQS11_CATALOG",
+ "title": "카드 목록함",
+ "loc": "L-R02-01",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "FIND": 3,
+  "KNOWN": 6
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S11_STACK == 1",
+   "to": "KNOWN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "카드 목록함. 서랍마다 누렇게 바랜 색인 카드가 빽빽하다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "2077년 10월 서랍을 뒤진다",
+     "tags": [
+      {
+       "k": "stat",
+       "name": "인지력",
+       "min": 6
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "FIND",
+     "id": "SQS11_CATALOG:1:0"
+    },
+    {
+     "text": "됐어",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS11_CATALOG:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'전시 휴회 결의(2077. 10. 21.) — 원본 · 제7 서고 · 보존 상자.' 카드 귀퉁이에 연필로 '1021'."
+  },
+  {
+   "op": "cmd",
+   "name": "s11",
+   "args": [
+    "stack"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'전시 휴회 결의 — 제7 서고.' 이미 아는 카드다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S11.txt"
+}

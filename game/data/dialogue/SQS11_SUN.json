@@ -1,0 +1,213 @@
+{
+ "id": "SQS11_SUN",
+ "title": "선우진",
+ "loc": "L-R02-28",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "MENU": 1,
+  "LIST": 2,
+  "LATE": 8,
+  "DOC": 11,
+  "DOC3": 15,
+  "ARGUE": 16,
+  "DOCASK": 18,
+  "DOCGIVE": 19
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "C-034",
+   "emo": "기본",
+   "text": "국회 쪽에서 기록물이 나왔다고 들었습니다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "(사망자 명단을 건넨다)",
+     "tags": [],
+     "cond": "has(\"M-305\") >= 1 and SQ_S11_SUNL == 0",
+     "fx": "",
+     "to": "LIST",
+     "id": "SQS11_SUN:1:0"
+    },
+    {
+     "text": "(휴회 결의 원본을 보인다)",
+     "tags": [],
+     "cond": "has(\"M-306\") >= 1 and SQH_RECESS < 0",
+     "fx": "",
+     "to": "DOC",
+     "id": "SQS11_SUN:1:1"
+    },
+    {
+     "text": "됐어",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS11_SUN:1:2"
+    }
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "SQH_LIST11 >= 0",
+   "to": "LATE"
+  },
+  {
+   "op": "line",
+   "who": "C-034",
+   "emo": "기본",
+   "text": "기록물은 정부 재산입니다. 인수증을 써 드리죠."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "선우진이 수첩을 찢어 몇 줄 적고 서명한다. '여의도 초소 — 기록물 인수. 소지자 통행 협조.'"
+  },
+  {
+   "op": "line",
+   "who": "C-034",
+   "emo": "기본",
+   "text": "이 인수증을 보이면 낮 순찰이 길을 비킵니다. 국회 쪽 검문도요."
+  },
+  {
+   "op": "cmd",
+   "name": "s11",
+   "args": [
+    "sun",
+    "list"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-034",
+   "emo": "기본",
+   "text": "사본이군요. 원본 명단은 이미 다른 곳으로 갔다고 들었습니다. …받아는 두죠."
+  },
+  {
+   "op": "cmd",
+   "name": "s11",
+   "args": [
+    "sun",
+    "copy"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-034",
+   "emo": "기본",
+   "text": "'국회는 계엄 기간 그 기능을 정지한다.' 정지된 권한이 허공에 뜰 수는 없습니다."
+  },
+  {
+   "op": "line",
+   "who": "C-034",
+   "emo": "기본",
+   "text": "권한을 비상정부에 맡겼다는 뜻입니다. 이 종이가 그 근거고요."
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S11_CLAUSE == 1",
+   "to": "DOC3"
+  },
+  {
+   "op": "goto",
+   "to": "DOCASK"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "\"재개 조항 제3항은? '계엄이 해제되면 지체 없이 재개한다.'\"",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "ARGUE",
+     "id": "SQS11_SUN:2:0"
+    },
+    {
+     "text": "넘긴다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "DOCGIVE",
+     "id": "SQS11_SUN:2:1"
+    },
+    {
+     "text": "아직은",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "MENU",
+     "id": "SQS11_SUN:2:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-034",
+   "emo": "기본",
+   "text": "해제는 아직입니다. 2077년 10월 21일 이후로 한 번도."
+  },
+  {
+   "op": "line",
+   "who": "C-034",
+   "emo": "기본",
+   "text": "…그 조항을 아는 사람은 처음 봅니다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "넘긴다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "DOCGIVE",
+     "id": "SQS11_SUN:3:0"
+    },
+    {
+     "text": "아직은",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "MENU",
+     "id": "SQS11_SUN:3:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-034",
+   "emo": "기본",
+   "text": "공보방송이 내일 읽을 겁니다. '국회 수복 — 권한 인계 문서 확보.' 돔에 깃발도 오르겠죠."
+  },
+  {
+   "op": "cmd",
+   "name": "s11",
+   "args": [
+    "sun",
+    "doc"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S11.txt"
+}

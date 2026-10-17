@@ -1,0 +1,79 @@
+# 무너진 국회 KH-02 본회의장(SD-09a L-R02-01 '돔 잔해 아래, 위협 3' · SD-04a §5.4 · 단계 1-11j)
+# 40×24 · 녹청 돔이 의석 위로 내려앉았다 · 명패는 모두 뒤집혔다 — 제118석 하나만 서 있다(반대 1표, 쪽지) · 의장석 위 비상 계엄 포고문 ·
+# 의장석 뒤 투표 전광판 '2077.10.21 재석 152 · 찬151 반1'(재미 검수 계획 2) · 야생 구울 넷이 전광판 앞을 지킨다
+map KH-02 국회 본회의장
+set bk
+grid
+########################################
+########################################
+########################################
+#cccccccccccccwwwwwwwwwwwwccccccccccccc#
+#cccccccccccccwwwwwwwwwwwwccccccccccccc#
+#cccccccccccccwwwwwwwwwwwwccccccccccccc#
+#cccccccccccccwwwwwwwwwwwwccccccccccccc#
+#cccccccccccccccccccccccccccccccccccccc#
+#cccccccccccccccccccccccccccccccccccccc#
+#cccccccccccccccccccccccccccccccccccccc#
+#cccccccccccccccccccccccccccccccccccccc#
+#cccccccccccccccccccccccccccccccccccccc#
+#cccccccccccccccccccccccccccccccccccccc#
+#cccccccccccccccccccccccccccccccccccccc#
+#cccccccccccccccccccccccccccccccccccccc#
+#cccccccccccccccccccccccccccccccccccccc#
+#cccccccccccccccccccccccccccccccccccccc#
+#cccccccccccccccccccccccccccccccccccccc#
+#cccccccccccccccccccccccccccccccccccccc#
+#cccccccccccccccccccccccccccccccccccccc#
+#cccccccccccccccccccccccccccccccccccccc#
+#cccccccccccccccccccccccccccccccccccccc#
+#cccccccccccccccccccccccccccccccccccccc#
+###################~~###################
+end
+exit 19 23 KH-01 from_KH-02
+exit 20 23 KH-01 from_KH-02
+mark from_KH-01 19 22 N
+mark board 19 6 N
+# 의장석 · 전광판 · 포고문
+prop w_kh_vote 18 1
+text 18 2 "투표 전광판." w=3 scene=SQS11_VOTE
+prop kh_speaker 18 4
+text 18 4 "의장석. 연단 위에 비상 계엄 포고문 한 장. 의사봉은 내려친 자리에 그대로 놓였다." w=3
+# 의석(바깥 줄이 위로 휘어 반원)
+prop kh_seats 8 9
+prop kh_seats2 12 9
+prop kh_seats 25 9
+prop kh_seats2 29 9
+prop kh_seats2 4 12
+prop kh_seats 8 12
+prop kh_seats2 12 12
+prop kh_seats 25 12
+prop kh_seats2 29 12
+prop kh_seats 33 12
+prop kh_seats 4 15
+prop kh_seats2 8 15
+prop kh_seats 25 15
+prop kh_seats2 29 15
+prop kh_seats 33 15
+prop kh_seats2 4 18
+prop kh_seats 8 18
+prop kh_seats2 12 18
+prop kh_seats 25 18
+prop kh_seats2 29 18
+prop kh_seats 33 18
+text 5 12 "의석 명패. 하나같이 뒤집혀 흰 뒷면만 보인다. 누가 언제 뒤집었는지는 의사록에 없다." w=3
+# 제118석 — 반대 1표
+prop kh_plate_note 30 18
+text 30 18 "서 있는 명패 하나 — '제118석'." scene=SQS11_PLATE
+# 돔 잔해 · 빛
+prop kh_dome_chunk 11 14
+text 12 14 "내려앉은 돔. 녹청 동판 아래로 의석 두 줄이 깔렸다." w=2
+prop light_shaft 15 12
+prop rubble 16 16
+prop rubble 21 20
+prop kh_column 2 4
+prop kh_column 37 4
+# 구울 넷 — 전광판 앞
+enemy CR-200 16 7
+enemy CR-200 22 7
+enemy CR-200 16 10
+enemy CR-200 23 10

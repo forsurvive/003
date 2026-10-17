@@ -6,11 +6,17 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "TRUCK": 5,
-  "LATER": 7,
-  "AFTER": 10
+  "TRUCK": 6,
+  "LATER": 8,
+  "AFTER": 11,
+  "S11": 13
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S11_SUNQ == 1",
+   "to": "S11"
+  },
   {
    "op": "if",
    "cond": "MQ104_SEARCH == 4",
@@ -67,6 +73,18 @@
    "who": "C-034",
    "emo": "기본",
    "text": "관리자 후보님. 전원이 들어오면 다시 뵙겠습니다. 그 전까지는 저도 할 일이 없습니다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "s11",
+   "args": [
+    "talk",
+    "SQS11_SUN"
+   ]
   },
   {
    "op": "goto",

@@ -1,0 +1,53 @@
+# 무너진 국회 KH-01 본관 로비(SD-09a L-R02-01 A · SD-04a §5.4 SQ-S11 · 단계 1-11j, 재미 검수 계획 2: 로비는 작게 · 귀빈 접견실 뺌)
+# 24×14 · 열주 홀(넷 — 하나는 꺾임) · 현판 · 안내 데스크(방명록) · 무너진 천장 빛 · 북쪽 본회의장 문(KH-02) · 북서 기록관 지하 계단(KH-03)
+map KH-01 국회 본관 로비
+set bk
+grid
+##~~#######~~###########
+##~~#######~~###########
+##~~#######~~###########
+#tttttttttttttttttttttt#
+#tttttttttttttttttttttt#
+#tttttttttttttttttttttt#
+#tttttttttttttttttttttt#
+#tttttttttttttttttttttt#
+#tttttttttttttttttttttt#
+#tttttttttttttttttttttt#
+#tttttttttttttttttttttt#
+#tttttttttttttttttttttt#
+#tttttttttttttttttttttt#
+###########~~###########
+end
+exit 11 13 W L-R02-01
+exit 12 13 W L-R02-01
+mark from_W 11 12 N
+exit 11 0 KH-02 from_KH-01
+exit 12 0 KH-02 from_KH-01
+mark from_KH-02 11 3 S
+exit 2 0 KH-03 from_KH-01
+exit 3 0 KH-03 from_KH-01
+mark from_KH-03 2 3 S
+prop stairs_up 2 2
+text 2 3 "기록관 지하로 내려가는 계단. 난간에 손 글씨 판 — '열람은 조용히. 의사록'." w=2
+# 벽: 현판 · 포고문
+prop w_kh_plaque 15 1
+text 15 2 "현판 '국회의사' — 마지막 '당' 자는 떨어져 자국만 남았다." w=3
+prop w_kh_notice 7 1
+text 7 2 "게시판 포고문. '비상 계엄 포고 제1호 — 모든 집회를 금한다. 2077. 10. 21.' 그 위에 누가 볼펜으로 '토요일엔?'"
+# 열주
+prop kh_column 6 5
+prop kh_column 9 5
+prop kh_column 14 5
+prop kh_column 17 5
+text 17 5 "꺾인 기둥. 굴러떨어진 토막에 군화 자국이 말라붙었다."
+# 안내 데스크 · 방명록
+prop gov_counter 3 9
+text 3 9 "안내 데스크. 방명록 마지막 줄 — '2077. 10. 20. 종전 행진 준비위 — 의원 면담 거절됨'. 다음 날 휴회했다." w=2
+prop wait_chairs 6 11
+# 무너진 천장
+prop rubble 19 8
+prop rubble 20 10
+prop light_shaft 19 9
+prop bone_pile 21 4
+text 21 4 "기둥 뒤에 웅크린 해골. 손에 쥔 출입증 '국회 사무처 — 속기'."
+enemy CR-095 19 4

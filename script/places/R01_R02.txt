@@ -19,6 +19,7 @@ SYS 빈 서랍. 봉투가 놓였던 자리에 먼지 자국만.
 @npc   -
 @cond  V_ACT >= 1
 @cmd note LR-11
+@cmd s11 leaflet
 SYS 유인물 끝에 볼펜 글씨. '토요일에 같이 가자. — 연수생 S-07 입주 예정자 명단엔 없음.'
 -> END
 

@@ -1,0 +1,127 @@
+{
+ "id": "SQS11_STEPS",
+ "title": "국회 정면 계단",
+ "loc": "L-R02-01",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "SELF": 5,
+  "READ": 7,
+  "LEAVES": 13,
+  "STONE": 15
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S11_READ == 1",
+   "to": "LEAVES"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S11_READ == 2",
+   "to": "STONE"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R02-014\") and has(\"M-305\") >= 1 and SQH_LIST11 < 0",
+   "to": "SELF"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "무너진 정면 계단. 열한 칸이 남았다. 칸마다 발자국처럼 움푹 닳은 자리가 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "무너진 정면 계단. 인지영이 읽고 싶어 했던 자리다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "(명단을 계단에 놓고 이름을 읽는다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "READ",
+     "id": "SQS11_STEPS:1:0"
+    },
+    {
+     "text": "그냥 간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS11_STEPS:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "강서연, 박도현, 윤미숙, 정한결. 목소리가 생각보다 작게 나온다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "오순례, 이재훈, 최가람, 남궁선. 바람이 종이 끝을 넘긴다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "한별, 서동민, 김말순. 마지막 이름 뒤에 아무도 대답하지 않는다."
+  },
+  {
+   "op": "cmd",
+   "name": "s11",
+   "args": [
+    "selfread"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "명단을 맨 윗 칸에 놓고 돌멩이 하나를 얹는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "계단 열한 칸에 유인물이 한 장씩. 한 장이 바람에 들썩이다가 다시 내려앉는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "맨 윗 칸에 돌멩이를 얹은 명단 한 장. 종이 끝만 바람에 떤다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S11.txt"
+}

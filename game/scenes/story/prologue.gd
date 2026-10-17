@@ -186,6 +186,7 @@ var side_s06: SideS06                              ## 관악 사이드 퀘스트
 var side_s08: SideS08                              ## 영등포 사이드 퀘스트(1-11g — SQ-S08 같은 명찰의 두 사람)
 var side_s09: SideS09                                   ## 영등포 사이드 퀘스트(1-11h — SQ-S09 127번)
 var side_s10: SideS10                                   ## 영등포 사이드 퀘스트(1-11i — SQ-S10 오늘의 4번 인력)
+var side_s11: SideS11                                   ## 여의도 사이드 퀘스트(1-11j — SQ-S11 토요일의 여의도)
 var caravans: Caravans                             ## 순회 상인 일정(1-8d)
 var sol := 1                                       ## 1막 봇 해법(--sol=1~5, 0-10)
 
@@ -263,6 +264,10 @@ func _paths() -> void:
 		side_s10 = SideS10.new()
 		add_child(side_s10)
 		side_s10.setup(host, log_on)
+	if side_s11 == null:
+		side_s11 = SideS11.new()
+		add_child(side_s11)
+		side_s11.setup(host, log_on)
 
 
 func _act1(from: String) -> void:

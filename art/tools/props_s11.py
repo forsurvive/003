@@ -9,7 +9,10 @@
   kh_flag        쓰러진 깃대(2×1): 앞마당의 녹슨 깃대 · 상태 bj(세워진 깃대 · 정통 대한민국 휘장 깃발)
   w_kh_plaque    '국회의사당' 현판(벽 3칸): 검은 돌판 · 금색 글씨 반쯤 떨어짐
   w_kh_notice    포고문 게시(벽 1칸): 누런 종이 · '비상 계엄 포고 제1호'
-  kh_bobble_base 흔들인형 받침(1×1): 유리 진열 받침 · 빈 자리(수집은 이월)
+  w_kh_vote      투표 전광판(벽 3칸): '2077.10.21 · 재석 152 · 찬151 반1' 호박색 점등(재미 검수 계획 2)
+  kh_plate_note  제118석 명패 + 쪽지(덧그림) · 상태 gone(쪽지 집어 감)
+  kh_catalog     카드 목록함(1×1, 높음): 서랍 4×3 · 상태 open(한 칸 빠짐)
+  dot_printer    도트 프린터(1×1): 연속 용지 · 상태 print(뽑은 종이가 늘어짐) — 경찰서 서장실 LR-12 출력
 props_bc.PROPS에 합쳐져 r01_props 아틀라스로 나간다."""
 import os
 import random
@@ -224,14 +227,79 @@ def w_kh_notice():
     return im
 
 
-def kh_bobble_base():
-    """흔들인형 받침(32×36): 유리 진열 상자 · 비어 있는 받침(먼지 자국 동그라미) — 수집은 이월."""
-    im = img(32, 36)
+def w_kh_vote():
+    """투표 전광판(96×46, 벽): 검은 판 · 호박색 점등 글자 셋째 줄까지 — '2077.10.21' · '재석 152' · '찬 151 반 1'.
+    판 테두리 녹 · 꺼진 칸(점 빠짐) 몇 개 · 아래 받침 쇠."""
+    im = img(96, 46)
     d = ImageDraw.Draw(im)
-    _shadow(d, 4, 28, 33)
-    d.rectangle([5, 22, 26, 32], fill=C(INK)); d.rectangle([6, 23, 25, 31], fill=C("P18")); d.line([6, 23, 25, 23], fill=C("P20"))
-    d.rectangle([7, 4, 24, 22], outline=C("P14"))
-    d.line([8, 5, 12, 21], fill=C("P15")); d.ellipse([12, 18, 19, 22], outline=C("P06"))
+    d.rectangle([1, 2, 94, 42], fill=C(INK)); d.rectangle([2, 3, 93, 41], fill=C("P12")); d.line([2, 3, 93, 3], fill=C("P14"))
+    d.rectangle([5, 6, 90, 38], fill=C("P02"))
+    rnd = random.Random(7)
+    for _ in range(40):                                                    # 꺼진 점등 칸(바닥 점)
+        d.point((rnd.randint(6, 89), rnd.randint(7, 37)), fill=C("P03"))
+    put_text(im, "2077.10.21", 14, 5, "P49", 7)
+    put_text(im, "재석 152", 20, 14, "P48", 8)
+    put_text(im, "찬151 반1", 14, 25, "P48", 8)
+    d.rectangle([30, 24, 49, 37], outline=C("P53"))                      # '반 1' 자리 붉은 테
+    for x in (12, 80):
+        d.rectangle([x, 42, x + 3, 45], fill=C("P05"))
+    return im
+
+
+def kh_plate_note(state=""):
+    """제118석 명패(32×22, 덧그림): 뒤집히지 않고 선 검은 명패 하나 · '118' 금색 · 밑에 접힌 쪽지(흰).
+    gone: 쪽지를 집어 간 뒤 명패만."""
+    im = img(32, 22)
+    d = ImageDraw.Draw(im)
+    d.polygon([(6, 18), (26, 18), (24, 6), (8, 6)], fill=C(INK)); d.polygon([(7, 17), (25, 17), (23, 7), (9, 7)], fill=C("P02"))
+    put_text(im, "118", 10, 7, "P49", 7)
+    if state != "gone":
+        d.polygon([(18, 15), (29, 13), (30, 20), (19, 21)], fill=C(INK)); d.polygon([(19, 16), (28, 14), (29, 19), (20, 20)], fill=C("P09"))
+        d.line([21, 17, 27, 16], fill=C("P05"))
+    return im
+
+
+def kh_catalog(state=""):
+    """카드 목록함(32×52): 나무 서랍장 4×3 칸 · 칸마다 놋쇠 손잡이와 흰 이름표 · 위 '색인' 판.
+    open: 가운데 칸 하나가 빠져 카드 묶음이 비죽 나옴."""
+    im = img(32, 52)
+    d = ImageDraw.Draw(im)
+    _shadow(d, 2, 30, 49)
+    d.rectangle([2, 4, 29, 48], fill=C(INK)); d.rectangle([3, 5, 28, 47], fill=C("P17")); d.line([3, 5, 28, 5], fill=C("P19"))
+    d.rectangle([7, 0, 24, 5], fill=C(INK)); d.rectangle([8, 1, 23, 4], fill=C("P18"))
+    for r in range(4):
+        for c in range(3):
+            x, y = 4 + c * 8, 8 + r * 10
+            if state == "open" and (r, c) == (2, 1):
+                d.rectangle([x - 1, y + 2, x + 8, y + 12], fill=C(INK)); d.rectangle([x, y + 3, x + 7, y + 11], fill=C("P18"))
+                for k in range(3):
+                    d.line([x + 1 + k * 2, y + 1, x + 1 + k * 2, y + 4], fill=C("P09"))
+                continue
+            d.rectangle([x, y, x + 6, y + 8], fill=C("P18")); d.line([x, y, x + 6, y], fill=C("P20"))
+            d.rectangle([x + 1, y + 2, x + 5, y + 3], fill=C("P08"))
+            d.point((x + 3, y + 6), fill=C("P48"))
+    return im
+
+
+def dot_printer(state=""):
+    """도트 프린터(32×40): 회색 상자 · 연속 용지(구멍 줄) 접혀 늘어진 꼬리 · 앞 초록 점등.
+    print: 방금 뽑은 종이가 길게 바닥까지 늘어지고 맨 끝이 말림."""
+    im = img(32, 40)
+    d = ImageDraw.Draw(im)
+    _shadow(d, 3, 29, 37)
+    d.rectangle([4, 20, 27, 34], fill=C(INK)); d.rectangle([5, 21, 26, 33], fill=C("P12"))     # 받침
+    d.rectangle([2, 10, 29, 20], fill=C(INK)); d.rectangle([3, 11, 28, 19], fill=C("P07")); d.line([3, 11, 28, 11], fill=C("P09"))
+    d.rectangle([6, 14, 25, 16], fill=C("P02"))
+    d.point((24, 18), fill=C("P45" if state == "print" else "P44"))
+    top = 2 if state != "print" else 0
+    d.rectangle([8, top, 23, 12], fill=C(INK)); d.rectangle([9, top + 1, 22, 12], fill=C("P09"))
+    for y in range(top + 2, 12, 2):
+        d.point((10, y), fill=C("P06")); d.point((21, y), fill=C("P06"))
+    if state == "print":
+        d.rectangle([9, 16, 22, 36], fill=C(INK)); d.rectangle([10, 16, 21, 35], fill=C("P09"))
+        for y in range(18, 34, 3):
+            d.line([12, y, 19 - (y % 2), y], fill=C("P05"))
+        d.arc([8, 32, 24, 40], 180, 360, fill=C("P08"), width=2)
     return im
 
 
@@ -251,7 +319,10 @@ PROPS_S11 = {
     "kh_flag": _r(kh_flag, 2, 1, down=-2),
     "w_kh_plaque": _r(w_kh_plaque, 3, 0, "wall", dx=0, dy=8),
     "w_kh_notice": _r(w_kh_notice, 1, 0, "wall", dx=0, dy=6),
-    "kh_bobble_base": _r(kh_bobble_base, 1, 1, down=-2),
+    "w_kh_vote": _r(w_kh_vote, 3, 0, "wall", dx=0, dy=6),
+    "kh_plate_note": _r(kh_plate_note, 0, 0, "deco"),
+    "kh_catalog": _r(kh_catalog, 1, 1, down=-2),
+    "dot_printer": _r(dot_printer, 1, 1, down=-2),
 }
 
 STATES_S11 = {
@@ -260,6 +331,9 @@ STATES_S11 = {
     "kh_box": {"open": lambda: kh_box("open")},
     "kh_stairs_step": {"leaf": lambda: kh_stairs_step("leaf")},
     "kh_flag": {"bj": lambda: kh_flag("bj")},
+    "kh_plate_note": {"gone": lambda: kh_plate_note("gone")},
+    "kh_catalog": {"open": lambda: kh_catalog("open")},
+    "dot_printer": {"print": lambda: dot_printer("print")},
 }
 
 

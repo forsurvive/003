@@ -1,0 +1,346 @@
+{
+ "id": "SQS11_PATROL",
+ "title": "여의도 순찰 분대",
+ "loc": "L-R02-03",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "MENU": 4,
+  "NAMES": 5,
+  "NAMESF": 10,
+  "HIDE": 13,
+  "NIGHT": 16,
+  "FIGHT": 19,
+  "DOC": 22,
+  "DMENU": 25,
+  "DTALK": 26,
+  "DTALKF": 29,
+  "DGIVE": 32,
+  "DPASS": 35,
+  "GONE": 39
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S11_PKIND == 2",
+   "to": "DOC"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R02-014\")",
+   "to": "GONE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "계엄군 순찰 분대가 길을 막는다. 총구가 인지영 쪽으로 기운다."
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P1",
+   "emo": "분노",
+   "text": "거기 구울. 여의도는 구울 통행 금지 구역이다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "(명단을 내민다) \"이 중에 아는 이름 있소.\"",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "보통"
+      }
+     ],
+     "cond": "has(\"M-305\") >= 1 and SQ_S11_PSAID == 0",
+     "fx": "",
+     "to": "NAMES",
+     "id": "SQS11_PATROL:1:0",
+     "fail": "NAMESF"
+    },
+    {
+     "text": "환승센터 터 지하로 몸을 숨긴다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "HIDE",
+     "id": "SQS11_PATROL:1:1"
+    },
+    {
+     "text": "물러나서 밤을 기다린다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "NIGHT",
+     "id": "SQS11_PATROL:1:2"
+    },
+    {
+     "text": "(총을 든다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "FIGHT",
+     "id": "SQS11_PATROL:1:3"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "분대장이 종이를 받아 훑는다. 뒤에 선 병사 하나가 어깨 너머로 들여다보다가 고개를 돌린다."
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P2",
+   "emo": "슬픔",
+   "text": "…최가람. 우리 할아버지 형님 이름입니다. 분대장님, 그냥 보내시죠."
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P1",
+   "emo": "기본",
+   "text": "…지나가. 해 지기 전에 여의도에서 나가."
+  },
+  {
+   "op": "cmd",
+   "name": "s11",
+   "args": [
+    "patrol",
+    "talk"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "SQ_S11_PSAID = 1"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P1",
+   "emo": "분노",
+   "text": "종이 쪼가리로 뭘 하겠다는 거냐. 돌아가."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "무너진 환승센터 계단 아래로 인지영을 끌어당긴다. 군화 소리가 머리 위를 지나간다."
+  },
+  {
+   "op": "cmd",
+   "name": "s11",
+   "args": [
+    "patrol",
+    "hide"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-014",
+   "emo": "기본",
+   "text": "밤에 가지. 그날도 밤이 길었어."
+  },
+  {
+   "op": "cmd",
+   "name": "s11",
+   "args": [
+    "patrol",
+    "night"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P1",
+   "emo": "분노",
+   "text": "사격 준비!"
+  },
+  {
+   "op": "cmd",
+   "name": "s11",
+   "args": [
+    "patrol",
+    "fight"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "계엄군 순찰 분대가 길을 막는다. 분대장이 가방을 턱으로 가리킨다."
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P1",
+   "emo": "기본",
+   "text": "국회 문서 반출자를 찾는 중이다. 가방 열어."
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S11_PASS == 1",
+   "to": "DPASS"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "\"국회? 거긴 구울하고 비둘기뿐이오.\"",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "보통"
+      }
+     ],
+     "cond": "SQ_S11_PSAID == 0",
+     "fx": "",
+     "to": "DTALK",
+     "id": "SQS11_PATROL:2:0",
+     "fail": "DTALKF"
+    },
+    {
+     "text": "(원본을 내준다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "DGIVE",
+     "id": "SQS11_PATROL:2:1"
+    },
+    {
+     "text": "환승센터 터 지하로 몸을 숨긴다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "HIDE",
+     "id": "SQS11_PATROL:2:2"
+    },
+    {
+     "text": "(총을 든다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "FIGHT",
+     "id": "SQS11_PATROL:2:3"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P1",
+   "emo": "기본",
+   "text": "…비둘기라. 됐다, 가."
+  },
+  {
+   "op": "cmd",
+   "name": "s11",
+   "args": [
+    "patrol",
+    "talk"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "SQ_S11_PSAID = 1"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P1",
+   "emo": "분노",
+   "text": "가방 열라고 했다."
+  },
+  {
+   "op": "goto",
+   "to": "DMENU"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P1",
+   "emo": "기본",
+   "text": "정부 재산 회수. 초소로 보낸다."
+  },
+  {
+   "op": "cmd",
+   "name": "s11",
+   "args": [
+    "patrol",
+    "give"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "선우진의 인수증을 내민다. 분대장이 서명을 들여다본다."
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P1",
+   "emo": "기본",
+   "text": "중위님 인수증이군. 협조 감사합니다. 지나가십시오."
+  },
+  {
+   "op": "cmd",
+   "name": "s11",
+   "args": [
+    "patrol",
+    "pass"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P1",
+   "emo": "기본",
+   "text": "…구울이 하나 있었던 것 같은데. 됐다, 지나가."
+  },
+  {
+   "op": "cmd",
+   "name": "s11",
+   "args": [
+    "patrol",
+    "talk"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S11.txt"
+}

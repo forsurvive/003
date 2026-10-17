@@ -34,6 +34,8 @@ const ROSTER := {
 		"hello": "왜, 매끈이. 낙성대는 아직이야.", "wait": "여기서 숨 좀 돌릴게. 무릎이 말이 아니야.", "follow": "앞장서. 뛰지는 말고."},
 	"N-R01-064": {"weapon": "", "style": "escort", "hp": 70.0, "skill": 20.0, "fac": "BJ", "hide_far": true,        # 진해원(탈영병 — SQ-S06 호위 대상, 싸우지 않는다)
 		"hello": "…네? 아, 네. 저 여기 있어요.", "wait": "여기 숨어 있을게요. 꼭 와요.", "follow": "같이 가요. 뛰지는 마세요, 다리가…"},
+	"N-R02-014": {"weapon": "", "style": "escort", "hp": 90.0, "skill": 20.0, "fac": "JH", "hide_far": true,   # 인지영(지하시장 원로 구울 — SQ-S11 호위 대상, 싸우지 않는다)
+		"hello": "응. 천천히 가자.", "wait": "여기 앉아 있을게. 이백 년 기다렸는데 뭘.", "follow": "가자. 계단까지."},
 	"C-015": {"weapon": "", "style": "dog", "hp": 80.0, "bite": 15.0, "skill": 40.0, "fac": "JC_BC", "sheet": "cr_baekgu_loco",   # 백구(진돗개 — 물기 15, SD-14 CR-108)
 		"hello": "(백구가 꼬리를 한 번 친다.)", "wait": "(백구가 그 자리에 앉는다.)", "follow": "(백구가 일어나 앞장선다.)"},
 }

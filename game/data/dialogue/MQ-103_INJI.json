@@ -5,36 +5,16 @@
  "npc": "N-R02-014",
  "cond": "V_ACT >= 1",
  "labels": {
-  "START": 0,
-  "THREW": 4
+  "START": 0
  },
  "ops": [
   {
-   "op": "if",
-   "cond": "MQ103_FOUNT >= 1",
-   "to": "THREW"
-  },
-  {
-   "op": "line",
-   "who": "N-R02-014",
-   "emo": "기본",
-   "text": "2077년엔 여기 물이 나왔어. 동전 던지면 장사가 잘된다고들 했지."
-  },
-  {
-   "op": "line",
-   "who": "N-R02-014",
-   "emo": "기본",
-   "text": "지금은 물은 없고 사람만 남았어. 장사는 그럭저럭이고."
-  },
-  {
-   "op": "goto",
-   "to": "END"
-  },
-  {
-   "op": "line",
-   "who": "N-R02-014",
-   "emo": "미소",
-   "text": "아까 캡 던졌지? 매끈이가 던지는 건 처음 봤어. 장사 잘될 거야."
+   "op": "cmd",
+   "name": "s11",
+   "args": [
+    "talk",
+    "SQS11_INJI"
+   ]
   },
   {
    "op": "goto",

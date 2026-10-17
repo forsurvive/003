@@ -17,6 +17,7 @@ var side6: SideS06                                   ## 관악 사이드 퀘스�
 var side8: SideS08                                   ## 영등포 사이드 퀘스트(1-11g SQ-S08)
 var side9: SideS09                                   ## 영등포 사이드 퀘스트(1-11h SQ-S09)
 var side10: SideS10                                 ## 영등포 사이드 퀘스트(1-11i SQ-S10)
+var side11: SideS11                                 ## 여의도 사이드 퀘스트(1-11j SQ-S11)
 var st: StoryState
 var route := "job"
 var shots := ""
@@ -103,6 +104,9 @@ func _ready() -> void:
 	side10 = SideS10.new()
 	add_child(side10)
 	side10.setup(host, true)
+	side11 = SideS11.new()
+	add_child(side11)
+	side11.setup(host, true)
 	host.combat.player_down.connect(host.on_pc_down)                  # 쓰러짐 → 생포 판정(진짜 진행 prologue와 같은 연결)
 	host.combat.equip("W-002", st)
 	match route:
@@ -329,6 +333,41 @@ func _ready() -> void:
 				["settime", "2277. 10. 28.  10:00"],
 				["until", "SQ_S10_KIRA == 3", 40.0, "10시 경매 — 박자 입찰 · 계약서", "s10_auction"], ["wait", 2.0], ["shot", "s10_free"],
 				["check", "SQ_S10_PRICE == 650 and SQR_S10 == 1 and SQS10_STAGE == 100", "650 낙찰(예산 600 + 50) · 계약서를 건넴(100)"]]
+		"s11":                                                          # 1-11j SQ-S11: 경찰서(파수가 깨어 막음 → 유치장 배관 우회 · 별첨 출력 30) → 기록관(의사록 · 서고 번호 · 원본 50) →
+			st.vars.set_v("PC_SKP_SNEAK", 60)                            #   밤 8시 지하시장 인지영과 국회 앞 계단(낭독 a · 머리띠) → 우도하에게 원본(남산 a · 100)
+			st.vars.set_v("PC_SKP_SPEECH", 60)
+			st.vars.set_v("GAME_DAY", 4)
+			host.date_text = "2277. 10. 26.  14:00"
+			host.enter("K-29", "from_W")
+			plan = [["wait", 1.0], ["want", ["물러난다"]], ["go", 6, 12], ["until", "SQ_S11_GUARD == 1", 10.0, "서장실 문 경비 파수-3이 깨어 막는다", "s11_guard"],
+				["wait", 1.5], ["want", ["소리 없이"]], ["go", 16, 3], ["use", 16, 2], ["until", "SQ_S11_ATOFFICE == 1", 15.0, "유치장 점검구 → 서장실 서류함 뒤(은신 우회)", "s11_pipe"],
+				["check", "SQ_S11_GUARD == 3", "배관 우회(파수는 문 앞 그대로)"], ["wait", 1.0], ["setv", "SQ_S11_REPORT", 1],
+				["want", ["사본을 뽑는다"]], ["go", 6, 4], ["use", 6, 3], ["wait", 2.0], ["shot", "s11_print"],
+				["check", "has(\"M-305\") and SQ_S11_PRINT == 1 and SQS11_STAGE == 30", "별첨 사망자 명단 출력(10 → 30)"],
+				["warp", "KH-03", "from_KH-01"], ["wait", 1.0], ["shot", "s11_archive"],
+				["want", ["!휴회 결의?", "!원본을 볼 수 있나", "지키는 사람이", "됐어"]], ["talk", "N-R02-027"], ["wait", 1.0],
+				["check", "SQ_S11_STACK == 1 and SQS11_STAGE == 40", "의사록 — 제7 서고 번호 1021(40)"],
+				["want", ["가져간다"]], ["go", 24, 10], ["go", 24, 6], ["use", 24, 5], ["wait", 1.5], ["shot", "s11_box"],
+				["check", "has(\"M-306\") and SQS11_STAGE == 50", "휴회 결의 원본이 손에(50)"],
+				["settime", "2277. 10. 26.  21:00"], ["warp", "J-03", "from_J-02"], ["wait", 1.0],
+				["want", ["사망자 명단을 보여", "같이 가자"]], ["talk", "N-R02-014"], ["wait", 1.0],
+				["check", "SQ_S11_ESCORT == 1", "인지영 — 밤에 국회 앞으로(호위)"],
+				["warp", "W", "L-R02-01"], ["wait", 2.0], ["want", []], ["gomark", "kh_read"],
+				["until", "SQ_S11_READ == 1", 40.0, "국회 정면 계단 — 열한 이름", "s11_read"], ["wait", 2.0], ["shot", "s11_leaves"],
+				["check", "SQH_LIST11 == 4 and has(\"A-084\")", "명단 a 낭독 · 종전 행진 머리띠"],
+				["warp", "K-06", "from_W"], ["wait", 1.0], ["want", ["여의도 기록", "휴회 결의 원본", "넘긴다"]], ["talk", "N-R02-026"], ["wait", 2.0],
+				["until", "SQH_RECESS == 14", 10.0, "우도하 — '스스로 멈췄다'(원본 a)", "s11_woo"],
+				["check", "SQR_S11 == 1 and SQS11_STAGE == 100", "두 기록이 자리를 찾았다(100)"]]
+		"s11p":                                                         # 1-11j SQ-S11 낮 호위: 공영방송 앞에서 국회 쪽으로 걸으면 여의도 순찰이 '구울 통행 금지' → 환승센터 터 지하로 숨는다 → 계단 낭독
+			st.call_fn("give", ["M-305", 1])
+			st.vars.set_v("GAME_DAY", 4)
+			host.date_text = "2277. 10. 26.  12:00"
+			host.enter("J-03", "from_J-02")
+			plan = [["wait", 1.0], ["want", ["사망자 명단을 보여", "같이 가자"]], ["talk", "N-R02-014"], ["wait", 1.0],
+				["check", "SQ_S11_ESCORT == 1", "낮 — 인지영과 출발"], ["warp", "W", "L-R02-06"], ["wait", 2.0], ["want", ["몸을 숨긴다"]], ["gomark", "kh_read"],
+				["until", "SQ_S11_PDAY == 4", 40.0, "여의도 낮 순찰 — 구울 통행 금지", "s11p_squad"], ["wait", 4.0], ["shot", "s11p_after"],
+				["want", []], ["gomark", "kh_read"], ["until", "SQ_S11_READ == 1", 60.0, "숨었다가 계단까지 — 열한 이름", "s11p_read"],
+				["check", "SQH_LIST11 == 4 and SQ_S11_PKIND == 1", "순찰을 넘기고 낭독"]]
 		"s6s":                                                          # 1-11f 수색조: 첫 접촉 25시간 뒤 시흥 고개 — 평상복 · 등록증 진해원과 길을 걸으면 수색조가 선다 → 분대장 검문 통과
 			for kv in [["A-005", 1], ["M-062", 1]]:
 				st.call_fn("give", kv)

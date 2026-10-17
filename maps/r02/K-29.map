@@ -1,5 +1,6 @@
 # 영등포 경찰서 폐허(SD-09a L-R02-29 C · 단계 1-5e) — 2077-03 '여의도 해산 사건'(파수-3 240기 투입, 사망 11명) 보고서 LR-12.
-# 26×15 · 왼쪽 서장실(단말 TM-K29 · LR-12) · 가운데 민원실·유치장 · 오른쪽 무기고(잠김 50, 파출소 무기 보관함) · 경비판 파수-3(대기, 깨어나지 않음).
+# 26×15 · 왼쪽 서장실(단말 TM-K29 · LR-12 · 1-11j 프린터) · 가운데 민원실·유치장 · 오른쪽 무기고(잠김 50, 파출소 무기 보관함 — 서장 열쇠 M-323).
+# 1-11j SQ-S11(SD-04a §5.4): 서장실 문 앞에 경비판 파수-3(N-PS-2, 대기 → 다가가면 깨어 막는다) · 유치장 점검구 ↔ 서장실 서류함 뒤 배관 통로(은신 우회).
 map K-29 영등포 경찰서
 set bk
 grid
@@ -11,9 +12,9 @@ grid
 #ttttttt#tttttttt#~~~~~~~#
 #ttttttt#tttttttt#~~~~~~~#
 #ttttttt#tttttttt####~####
-#ttttttt#tttttttt####~####
-#ttttttt#tttttttt####~####
-#ttttttt#tttttttt####~####
+####t####tttttttt####~####
+####t####tttttttt####~####
+####t####tttttttt####~####
 #tttttttttttttttttttttttt#
 #tttttttttttttttttttttttt#
 #tttttttttttttttttttttttt#
@@ -27,6 +28,8 @@ prop office_desk 2 5
 text 2 5 "서장 책상. 결재판에 '해산 작전 유공자 포상 상신'. 반려 도장 없이 결재됐다." w=2
 term 4 3 TM-K29
 prop terminal_desk 4 3
+prop dot_printer 6 3
+text 6 3 "도트 프린터." scene=SQS11_PRINT
 prop file_cabinet 1 3
 box 1 3 cabinet name="서장실 서류함"
 prop safe 7 3
@@ -58,5 +61,16 @@ prop gun_rack 23 3
 text 23 3 "총기 거치대. 진압용 산탄총 자리 열 칸 가운데 여덟이 비었다." w=2
 prop crate_army 24 6
 box 24 6 ammo name="탄약 상자"
-enemy CR-095 4 12
+enemy CR-095 2 12
+# 서장실 문 경비(1-11j): 0 대기 · 1 깨어 막음 · 3 배관으로 우회당함 — 문 칸에 선다 / 2 인증·조회로 물러섬 — 옆으로 / 9 파괴(맵 인물 없음)
+npc N-PS-2 4 10 S sheet=rb_cr306_loco cond="SQ_S11_GUARD <= 1 or SQ_S11_GUARD == 3"
+npc N-PS-2 6 12 W sheet=rb_cr306_loco cond="SQ_S11_GUARD == 2" bark="조사 종결. …기록은 열람만 하십시오."
+mark guard 4 10 S
+# 배관 통로(은신 우회): 유치장 안쪽 점검구 ↔ 서장실 서류함 뒤
+prop w_vent 16 1
+text 16 2 "유치장 안쪽 벽의 배관 점검구. 덮개 나사 둘이 빠져 있다." scene=SQS11_PIPE
+prop w_vent 2 1
+text 2 2 "서류함 뒤 배관 점검구." scene=SQS11_PIPE
+mark pipe_cell 16 3 S
+mark pipe_office 2 3 S
 enemy CR-095 21 12

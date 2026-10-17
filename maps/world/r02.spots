@@ -33,3 +33,36 @@ text 6 3 "우산 하나를 쥔 채 엎드린 유해. 정기권 지갑에 '신도
 prop backpack 9 3
 box 9 3 bag name="우산 사이 보따리"
 text 9 3 "우산 더미 사이에 밀어 넣은 보따리. 끈에 붉은 번호표 '214'." 
+
+# 무너진 국회 앞마당(L-R02-01 · 1-11j SQ-S11, SD-09a '앞마당 잔디밭' · SD-04a §5.4 낭독 자리). 정문(758,1058) 바로 앞 줄에 무너진 계단 열한 칸(낭독 — 칸마다 유인물),
+# 마당에 LR-11을 쥔 해골(발동 ③) · 쓰러진 깃대(원본 b면 휘장 깃발) · 돔에서 떨어진 동판 조각 · 들개(원문 왕개미 — 그림 · 자료 이월, SD-14 정합).
+spot @752,1060 13 4
+prop kh_column 0 0
+prop kh_column 12 0
+text 12 0 "꺾이지 않은 열주 하나. 대리석에 총알 자국이 줄지어 박혔다."
+prop kh_stairs_step 1 0
+prop kh_stairs_step 2 0
+prop kh_stairs_step 3 0
+prop kh_stairs_step 4 0
+prop kh_stairs_step 5 0
+prop kh_stairs_step 6 0
+prop kh_stairs_step 7 0
+prop kh_stairs_step 8 0
+prop kh_stairs_step 9 0
+prop kh_stairs_step 10 0
+prop kh_stairs_step 11 0
+text 1 0 "무너진 정면 계단." w=11 scene=SQS11_STEPS
+mark kh_steps 1 0 S
+mark kh_read 6 2 N
+prop kh_flag 9 2
+text 9 2 "깃대." w=2 scene=SQS11_FLAG
+mark kh_flag 9 2 S
+prop bone_pile 1 3
+
+spot L-R02-01 9 6 off=-4,8
+prop kh_dome_chunk 0 0
+text 1 0 "돔에서 떨어져 나온 녹청 동판 조각. 안쪽 늑재에 '1975'가 새겨져 있다." w=2
+prop remains 5 3
+text 5 3 "잔디 속에 엎드린 해골." scene=SQS11_SKEL
+enemy CR-104 1 5
+enemy CR-104 8 5

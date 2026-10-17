@@ -1,0 +1,42 @@
+{
+ "id": "SQS11_FLAG",
+ "title": "깃대",
+ "loc": "L-R02-01",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "BJ": 3
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "PD_R02_KH == 1",
+   "to": "BJ"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "잔디에 쓰러진 녹슨 깃대. 끝에 매달린 천 조각은 색이 다 빠졌다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "다시 세워진 깃대. 정통 대한민국 휘장 깃발. 공보방송이 '국회 수복'이라 부른 깃발이다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S11.txt"
+}
