@@ -40,6 +40,8 @@ prop w_shop_meds 18 1
 prop w_shutter3 21 1
 prop w_shutter 24 1
 prop w_shop_food 27 1
+prop w_price_luncheon 29 1 cond="UQ04_JH == 2"
+text 29 2 "판자 값표. '청솔 런천미트(군납) 15캡'. 귀퉁이에 짐표 — '독산 7호 · 함'." cond="UQ04_JH == 2"
 prop w_shutter2 30 1
 prop w_shop_forge 33 1
 prop w_sign_plaza 36 1

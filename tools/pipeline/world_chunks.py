@@ -46,6 +46,13 @@ DOORS = [{"lid": "L-R02-11", "near": (720, 1147), "to": "J-01", "mark": "from_W"
          {"lid": "L-R02-15", "near": (672, 1092), "to": "K-15", "mark": "from_W", "name": "영등포 구청 배급소", "kind": "facade"},   # 1-11g SQ-S08
          {"lid": "L-R02-23", "near": (535, 1259), "to": "GD-01", "mark": "from_W", "name": "고척 돔 인력 경매장 — 정문", "kind": "facade"},   # 1-11i SQ-S10
          {"lid": "L-R02-01", "near": (758, 1057), "to": "KH-01", "mark": "from_W", "name": "무너진 국회 — 본관 정문", "kind": "facade"},   # 1-11j SQ-S11
+         # 1-D3 독산 육가공 단지(DG-DS): 시흥대로 쪽 공장 건물 둘 — 뒤 철길 하역장(냉동 창고 동 관통 출구)을 먼저, 정문 하역장을 뒤에(장소 도착 칸)
+         {"lid": "L-R01-29", "near": (672, 1427), "to": "DS-02", "mark": "from_rail", "name": "독산 육가공 단지 — 뒤 철길 하역장", "kind": "facade",
+          "hint": "반쯤 들린 셔터 밑으로 녹슨 화물 철로가 들어간다. 안에서 찬 바람."},
+         {"lid": "L-R01-29", "near": (666, 1442), "to": "DS-01", "mark": "from_W", "name": "독산 육가공 단지 — 정문 하역장", "kind": "facade",
+          "hint": "파리 떼 윙윙 소리. 셔터 틈으로 썩은 고기 냄새가 밀려 나온다.",
+          "hints": [["UQ04_THAW == 1", "셔터 틈으로 새로 썩은 냄새가 밀려 나온다 — 단내가 섞였다. 깊은 칸이 녹은 모양이다."],
+                    ["DG_DS == 1", "셔터 틈의 썩은 냄새가 옅어졌다. 파리 소리도 드문드문하다."]]},
          {"lid": "L-R01-08", "near": (887, 1494), "to": "K-08", "mark": "from_W", "name": "관악 계곡 배수 암거", "prop": "drain_outlet",
           "hint": "콘크리트 암거 입구. 물비린내와 곰팡이 냄새가 흘러나온다."},
          {"lid": "L-R01-02", "near": (932, 1533), "to": "E-01", "mark": "from_W", "name": "S-07 배수 출구", "prop": "vault_drain_out",   # 1-11d SQ-S03 갱도 바깥 끝
@@ -72,7 +79,7 @@ DOORS = [{"lid": "L-R02-11", "near": (720, 1147), "to": "J-01", "mark": "from_W"
          {"lid": "L-UG-02", "near": (943, 1360), "to": "U-03", "mark": "from_W", "name": "서울대입구역 — 감시조 사다리", "prop": "subway_stairs",   # 1-11e SQ-S05 봉천 북서
           "hint": "무너진 역 입구에 봉천 감시조가 사다리를 걸어 두었다. 아래로 2호선 서울대입구역."}]
 # 손 실내가 붙는 건물의 양식(SD-21 §8): 도로망이 바뀌어도 그 자리에 건물이 선다
-ANCHOR_STYLE = {"K-33": "gov", "K-01": "gov", "K-29": "gov", "K-06": "office", "K-20": "villa", "K-22": "apt", "K-24": "office", "K-26": "gov", "GD-01": "gov", "KH-01": "gov"}
+ANCHOR_STYLE = {"K-33": "gov", "K-01": "gov", "K-29": "gov", "K-06": "office", "K-20": "villa", "K-22": "apt", "K-24": "office", "K-26": "gov", "GD-01": "gov", "KH-01": "gov", "DS-01": "factory", "DS-02": "factory"}
 INSETS = [{"id": "X-S07", "mark": "from_vault", "at": (959, 1503)},          # 볼트 S-07 정문(L-R01-01)
           {"id": "X-BC", "center": (892, 1362)},                             # 봉천 계단마을(L-R01-09)
           {"id": "X-SB", "center": (632, 1329), "lid": "L-R02-19", "arrive": "arrive", "urban": True},   # 새벽인력 본소(1-6): 도착 칸 = 정문 앞 길

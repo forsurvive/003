@@ -21,6 +21,27 @@ func wet_at(t: Vector2i) -> int:
 		return 0
 	var row: String = wet[t.y]
 	return int(row[t.x]) if t.x >= 0 and t.x < row.length() else 0
+var soil: Array = []                              ## 1-D3 흙 칸 줄('1' 흙) — 굴쥐가 땅속으로 다니는 칸(SD-14 L423)
+var soil_off := false                             ## 흙이 얼었다(맵 지시어 soil_off cond= — 냉기를 돌린 독산)
+
+
+var hush: Array = []                              ## 1-D3 소리 덮개 사각형(Rect2i — 맵을 열 때 조건을 본 것만): 파리 떼 칸
+
+
+## 소리 덮개 안인가(SD-13 · 1-D 계획 §9.6 — 파리 떼 윙윙 소리가 발소리를 덮는다)
+func hush_at(t: Vector2i) -> bool:
+	for r in hush:
+		if (r as Rect2i).has_point(t):
+			return true
+	return false
+
+
+## 흙 칸인가(얼었으면 아니다)
+func soil_at(t: Vector2i) -> bool:
+	if soil_off or soil.is_empty() or t.y < 0 or t.y >= soil.size():
+		return false
+	var row: String = soil[t.y]
+	return t.x >= 0 and t.x < row.length() and row[t.x] == "1"
 var cover := PackedByteArray()                   ## [y * w + x] 엄폐(SD-11 §4.2): 2 높음(벽·키 큰 소품, 탄·시선을 막는다) · 1 낮음 · 0 없음
 var objects: Node2D                              ## y 정렬 층(소품·문·인물이 같은 층에서 앞뒤를 가린다)
 var doors: Array = []                            ## [{"node": Sprite2D, "x", "y", "locked", "closed": Rect2, "open": Rect2, "is_open"}]
@@ -120,6 +141,12 @@ func load_map(map_id: String, st: StoryState = null) -> void:
 	id = map_id
 	data = read_data(map_id)
 	wet = data.get("wet", [])
+	soil = data.get("soil", [])
+	soil_off = data.has("soil_off") and _cond_ok(str(data["soil_off"]), st)
+	hush = []
+	for h in data.get("hush", []):
+		if _cond_ok(str(h.get("cond", "")), st):
+			hush.append(Rect2i(int(h["x"]), int(h["y"]), int(h["w"]), int(h["h"])))
 	size = Vector2i(int(data["size"][0]), int(data["size"][1]))
 	marks = data["marks"]
 	ext = bool(data.get("ext", false))
@@ -441,6 +468,19 @@ func unlock_door(x: int, y: int) -> bool:
 			for yy in [y, y + 1]:
 				_put_solid(x, yy, 0)
 			texts.erase(Vector2i(x, y + 1))
+			return true
+	return false
+
+
+## 다시 잠근다(1-D3 7호 문 — 번호 자물쇠): 막고 닫힌 그림으로
+func lock_door(x: int, y: int) -> bool:
+	for d in doors:
+		if int(d["x"]) == x and int(d["y"]) == y:
+			d["locked"] = true
+			d["is_open"] = false
+			(d["node"].texture as AtlasTexture).region = d["closed"]
+			for yy in [y, y + 1]:
+				_put_solid(x, yy, 1)
 			return true
 	return false
 

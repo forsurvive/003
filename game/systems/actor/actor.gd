@@ -16,6 +16,9 @@ var doll: Paperdoll                           ## 주인공: 실행 중 페이퍼
 const ROLL_TIME := 0.35
 const ROLL_DIST := 2.5 * 32.0
 const ROLL_GAP := 0.5
+## 자세 그림(시트에 '<자세>_E'가 있을 때): [속도 배수(8컷/초 기준), 걸어도 트나]
+const POSE_ANIMS := {"mound": [1.0, true], "heave": [1.2, true], "emerge": [0.6, true], "dig": [0.8, true], "eat": [0.5, false],
+	"pulse": [0.25, false], "crack": [1.0, false]}
 var roll_t := -1.0                            ## 구르는 중이면 0 이상
 var roll_vec := Vector2.ZERO
 var roll_dir := 2
@@ -191,6 +194,15 @@ func _show() -> void:
 		return
 	if meta.get("rows", []) == ["E"]:                                 # side-only sheets (creatures): E or mirrored W
 		dir = 4 if Locomotion.VEC[dir].x < 0 else 0
+	if POSE_ANIMS.has(pose) and sprite.sprite_frames.has_animation(pose + "_E") and (bool(POSE_ANIMS[pose][1]) or loco.motion == "idle"):
+		var pa := pose + "_E"                                          # 1-D3 자세 그림: 굴쥐 둔덕 · 들썩임 · 내밀기 · 파기(걸어도 그 그림) · 먹기 · 알집 맥동 · 갈라짐(서 있을 때만)
+		if sprite.animation != pa:
+			sprite.animation = pa
+		sprite.flip_h = dir == 4
+		sprite.speed_scale = float(POSE_ANIMS[pose][0])
+		if not sprite.is_playing():
+			sprite.play(pa)
+		return
 	if pose == "sleep" and loco.motion == "idle" and sprite.sprite_frames.has_animation("sleep_E"):   # 잠(백구 낮잠, 1-8b): 숨쉬기 2컷을 느리게 돈다
 		if sprite.animation != "sleep_E":
 			sprite.animation = "sleep_E"

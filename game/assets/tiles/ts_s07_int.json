@@ -231,6 +231,14 @@
   "cover": 0,
   "solid": false
  },
+ "soil_a": {
+  "atlas": [
+   38,
+   0
+  ],
+  "cover": 0,
+  "solid": false
+ },
  "steps_a": {
   "atlas": [
    33,

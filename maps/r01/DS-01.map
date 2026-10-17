@@ -1,0 +1,110 @@
+# 독산 육가공 단지 — 관리동 · 가공장(SD-09a L-R01-29 C · 위협 3 · 던전 DG-DS · 1-D 계획 §9 · §9.6, 단계 1-D3). 44×21.
+# 시흥대로 쪽 하역장(정문 · 월드 문 L-R01-29) → 왼쪽 위 관리동 사무실(일지 홀로테이프 — UQ-04 발동 · 2077 고리 하나) →
+# 오른쪽 가공장(갈고리 레일 · 컨베이어 · 절단대 · 썩은 고기 더미 = 미끼 W-068 줍는 곳) · 바닥 배수 도랑 끝에 알집바퀴 둥지(배수 밸브로 쓸어 낸다) →
+# 동쪽 끝 통로 = 냉동 창고 동(DS-02). 쥐 · 바퀴는 고기 냄새로 꾄다(미끼). 공용 냉동기가 죽은 쪽이라 내내 썩은 냄새.
+map DS-01 독산 육가공 단지
+set sb
+grid
+############################################
+############################################
+############################################
+#,,,,,,,,,,,,#eeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#,,,,,,,,,,,,#eeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#,,,,,,,,,,,,eeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#,,,,,,,,,,,,eeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#,,,,,,,,,,,,#eeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#,,,,,,,,,,,,#eeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+######,#######eeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+######,#######eeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+######,#######eeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#~~~~~~~~~~~~#eeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#~~~~~~~~~~~~#eeeeeeeeeeeeeeeemmmmeeeeeeeee#
+#~~~~~~~~~~~~#e=========================eee#
+#~~~~~~~~~~~~#eeeeeeeeeeeeeeeeeeeeemmmmeeee#
+#~~~~~~~~~~~~eeeeeeeeeeeeeeeeeeeeeemmmmeeee#
+#~~~~~~~~~~~~eeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#~~~~~~~~~~~~#eeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#~~~~~~~~~~~~#eeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#####~~#####################################
+end
+exit 5 20 W L-R01-29>from_W
+exit 6 20 W L-R01-29>from_W
+exit 43 8 DS-02 from_W
+exit 43 9 DS-02 from_W
+mark from_W 5 19 N
+mark from_DS02 42 8 W
+mark office 6 6 N
+mark hall 28 12 E
+mark valve 41 13 S
+# ---------------------------------------------------------------- 하역장(정문)
+prop forklift 2 13
+prop crate_army 10 13
+box 10 13 crate name="하역장 군납 상자"
+prop pallet_sacks 11 13
+prop scrap_pile 8 17
+box 8 17 trash name="하역장 고물 더미"
+prop w_shutter2 9 10
+text 9 11 "내려앉은 하역장 셔터. 안쪽에 분필 '독산 축산 물류 — 군납 7호 23일 06:00'. 그 밑에 다른 손으로 '안 옴'." w=2
+text 3 18 "바닥에 수레바퀴 자국이 마르다 굳었다. 셔터 쪽으로 가다 멈춘 자국 — 200년 전 마지막 출하."
+# ---------------------------------------------------------------- 관리동 사무실(일지 · 출퇴근 기록기)
+prop office_desk 2 4
+text 2 4 "관리 주임 책상." w=2 scene=UQ04_TAPE
+prop file_cabinet 1 7
+box 1 7 cabinet name="관리동 서류함"
+prop locker_row2 9 3
+box 9 3 locker w=2 name="작업복 사물함"
+prop typewriter_desk 6 7
+text 6 7 "타자기에 끼운 종이. '7호 출고 확인서 — 수령인 서명란 ______'. 서명란이 비었다." w=2
+prop w_punch 5 1
+text 5 2 "출퇴근 기록기." scene=UQ04_PUNCH
+prop w_calendar 8 1
+text 8 2 "2077년 10월 달력." scene=UQ04_CAL
+prop water_cooler 11 7
+# ---------------------------------------------------------------- 가공장(갈고리 레일 · 컨베이어 · 절단대 · 썩은 고기 더미)
+prop w_quarantine_ds 39 1
+text 39 2 "누런 공문. '두 머리 송아지 출하 금지 — 2077-09 축산 검역'. 귀퉁이에 파란 '보류' 테이프. 냉동 창고 동 쪽 문 옆에 붙었다." w=2
+prop w_gauge 25 1
+text 25 2 "공용 냉동기 압력계. 바늘이 0 아래로 꺾였다. 유리에 손가락으로 쓴 글씨 '22일 밤 23:00 — 1~6호 정지'."
+prop w_procedure 30 1
+text 30 2 "'위생 작업 순서 — 손 씻기 · 칼 소독 · 고기는 갈고리에 · 바닥 물청소는 도랑으로'. 도랑 쪽 글씨만 누가 동그라미를 쳤다." w=2
+prop hook_line 15 4
+prop hook_line 19 4
+prop hook_line 23 4 state=picked
+prop hook_line 27 4
+text 15 4 "갈고리에 걸린 고기 반쪽. 검게 썩어 굳었다. 파리가 일어났다 앉는다." w=2
+prop conveyor_ds 16 8
+prop conveyor_ds 20 8
+prop cut_table 25 8
+prop cut_table 29 8
+text 25 8 "절단대. 식칼이 도마에 박힌 채 녹슬었다. 저울 눈금이 2.3kg에 멈췄다." w=2
+prop carcass_pile 33 5
+box 33 5 carcass name="갈고리에서 떨어진 고기"
+text 33 6 "먹을 수 없는 고기. 하지만 냄새는 지독하다 — 쥐가 이 냄새를 따라온다. 몇 덩이 챙겨 던지면 미끼가 되겠다."
+prop carcass_pile 24 11
+box 24 11 carcass name="절단대 밑 고기 부스러기"
+prop carcass_pile 18 17
+box 18 17 carcass name="도랑가 고기 더미"
+prop flies_ds 34 4
+prop flies_ds 16 3
+prop flies_ds 25 10
+prop steel_rack 37 17
+box 37 17 crate name="포장재 선반"
+# 배수 도랑 끝: 알집바퀴 둥지 · 배수 밸브(쓸어 내면 알집이 떠내려간다 — 환경 해법)
+prop egg_drain 36 14 cond="DS_VALVE == 0"
+prop egg_drain 36 14 state=washed cond="DS_VALVE == 1"
+prop ds_valve 41 14 cond="DS_VALVE == 0"
+prop ds_valve 41 14 state=open cond="DS_VALVE == 1"
+text 41 14 "배수 밸브." scene=DS_VALVE
+text 30 14 "도랑 철망 칸마다 갈색 알집 껍질. 딸깍 — 어디선가 껍질 깨지는 소리." w=3 cond="DS_VALVE == 0"
+text 30 14 "물에 쓸려 내려간 도랑. 젖은 철망만 남았다." w=3 cond="DS_VALVE == 1"
+# ---------------------------------------------------------------- 적(던전 DG-DS 가공장 몫): 시궁쥐 셋 · 알집바퀴 · 큰바퀴 둘
+enemy CR-004 36 14 cond="DS_VALVE == 0"
+enemy CR-002 32 16
+enemy CR-002 38 12
+enemy CR-095 21 6
+enemy CR-095 30 11
+enemy CR-095 40 5
+# 재입주 자리(1-D0)
+mark refill1 20 12 E
+mark refill2 35 17 W
+mark refill3 8 15 E

@@ -103,10 +103,17 @@ def crayfish_sheet():
 def quad_sheets():
     """네발짐승(0-10): CR-104 변이 들개 · 백구(C-015 진돗개). 옆 그림만, 걷기 4컷(컷당 4px)."""
     import chibi_creatures as CC
+    import creatures_ds as DS
     for kind, name in (("dog", "cr_cr104_loco"), ("jindo", "cr_baekgu_loco"), ("rat", "cr_cr095_loco"), ("guard", "cr_cr107_loco"),
                        ("ox", "cr_cr090_loco"), ("ox_pack", "cr_cr091_loco"),
-                       ("oenun", "cr_cr500_loco"), ("fierce", "cr_cr105_loco"), ("raccoon", "cr_cr136_loco"), ("ratking", "cr_cr097_loco")):   # 옴 너구리(1-T2 밤 몹)          # 외눈 · 사나운 들개(1-11a)          # 두머리소·짐소(1-8d)
-        frames, meta = CC.quad_sheet(kind)
+                       ("oenun", "cr_cr500_loco"), ("fierce", "cr_cr105_loco"), ("raccoon", "cr_cr136_loco"), ("ratking", "cr_cr097_loco"),
+                       ("mole", "cr_cr096_loco"), ("eggroach", "cr_cr004_loco"), ("eggroach_bare", "cr_cr004b_loco")):   # 1-D3 독산: 굴쥐 · 알집바퀴(맨몸 판)   # 옴 너구리(1-T2 밤 몹)          # 외눈 · 사나운 들개(1-11a)          # 두머리소·짐소(1-8d)
+        if kind == "mole":
+            frames, meta = DS.mole_sheet()
+        elif kind.startswith("eggroach"):
+            frames, meta = DS.eggroach_sheet(kind.endswith("bare"))
+        else:
+            frames, meta = CC.quad_sheet(kind)
         fw, fh = meta["frame"]
         sheet = Image.new("RGBA", (fw * len(frames), fh), (0, 0, 0, 0))
         for i, f in enumerate(frames):
@@ -115,8 +122,8 @@ def quad_sheets():
         mo = meta["motions"]
         anims = [("idle_E", [(0, 0)], True), ("walk_E", [(mo["walk"]["start"] + i, 0) for i in range(mo["walk"]["count"])], True),
                  ("death_E", [(mo["death"]["start"] + i, 0) for i in range(mo["death"]["count"])], False)]
-        if "sleep" in mo:                                               # 백구 낮잠(1-8b): 숨쉬기 2컷 — 배우 자세 'sleep'이 튼다
-            anims.append(("sleep_E", [(mo["sleep"]["start"] + i, 0) for i in range(mo["sleep"]["count"])], True))
+        for extra in sorted(k for k in mo if k not in ("idle", "walk", "death")):   # 백구 낮잠 sleep(1-8b) · 굴쥐 mound/heave/emerge/dig/eat · 알집바퀴 pulse/crack(1-D3) — 배우 자세가 튼다
+            anims.append((extra + "_E", [(mo[extra]["start"] + i, 0) for i in range(mo[extra]["count"])], True))
         open(os.path.join(SPR, name + ".tres"), "w", encoding="utf-8").write(
             spriteframes_tres(f"res://assets/sprites/{name}.png", fw, fh, anims))
         meta["name"] = name

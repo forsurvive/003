@@ -360,6 +360,25 @@ func _rat_call(e: Enemy) -> void:
 	stats["rat_calls"] = int(stats.get("rat_calls", 0)) + 1
 
 
+## 알집바퀴 부화(SD-14 CR-004): 배 끝 뒤쪽에 큰바퀴 1~2 — 이 어미가 깐 산 큰바퀴가 6이면 멈춘다. 갓 깬 큰바퀴는 들썩인 소리 쪽으로 간다.
+## 경험치 · 바퀴 고기는 없다(끝없이 깨는 것을 잡아 키우지 못하게 — 처치 기록도 남기지 않는다)
+func _hatch(e: Enemy) -> void:
+	var map: InteriorMap = shots.world if shots.world is InteriorMap else null
+	if map == null:
+		return
+	var mine := enemies.filter(func(o): return is_instance_valid(o) and not o.cmb.dead and int(o.get_meta("mother", 0)) == e.get_instance_id())
+	var n := mini(1 + (1 if _rng.randf() < 0.5 else 0), Enemy.HATCH_MAX - mine.size())
+	var back := Vector2(1.0 if e.sprite.flip_h else -1.0, 0.0)
+	for i in n:
+		var p := e.loco.logical + back * 22.0 + Vector2(_rng.randf_range(-6, 6), _rng.randf_range(-8, 8))
+		if map.is_solid(map.tile_of(p)):
+			p = e.loco.logical
+		var r := spawn("CR-002", p, map, null, {"morale": false})
+		r.set_meta("mother", e.get_instance_id())
+		r.hear("pistol", pc.pos() if not pc.dead else e.loco.logical)
+	stats["hatched"] = int(stats.get("hatched", 0)) + maxi(0, n)
+
+
 ## 1-9e2 적 무기(SD-14 주무기 글 → SD-13 무기 ID, SD-11 §7.4): 길 위 조우 · 생성 건물 적만 — 진행기가 세운 적은 다듬어 둔 장비 그대로(1막 이야기 전투 밸런스)
 const ENEMY_ARMS := {
 	"CR-420": [["W-005", 0.6], ["W-001", 0.4]],                        # 낡은 권총 / 개조 권총
@@ -419,6 +438,8 @@ func spawn(enemy_id: String, pos: Vector2, map: InteriorMap, st: StoryState = nu
 	e.burst_cb = _glow_burst
 	e.howl_cb = _howl
 	e.call_cb = _rat_call
+	e.bait_at = ord.bait_near                                          # 1-D3 미끼(W-068) · 알집바퀴 부화
+	e.hatch_cb = _hatch
 	e.mine_list = func() -> Array: return ord.mines
 	e.cmb.robot = enemy_id.begins_with("CR-3")                          # SD-14 CR-3xx = 로봇(관제망 · 드론 · 포탑)
 	e.cmb.big = enemy_id == "CR-405"                                    # 파워 아머: 넘어짐 · 그물 · 넉백 면역(SD-11 §9.4)
@@ -444,6 +465,11 @@ func spawn(enemy_id: String, pos: Vector2, map: InteriorMap, st: StoryState = nu
 		if e.cmb.last_by == "mate":                                     # 동행이 쓰러뜨림(1-10a): 주인공이 HP 30% 이상 깎았을 때만 XP(SD-11 §8.2)
 			by_pc = e.cmb.dmg_player >= e.cmb.max_hp * 0.3
 		_morale_death(e, by_pc, st)
+		if enemy_id == "CR-004":                                          # 알집바퀴 처치: 주변(12t) 큰바퀴 50% 도주(SD-14 CR-004)
+			for o in enemies:
+				if is_instance_valid(o) and o != e and not o.cmb.dead and str(o.row.get("id", "")) == "CR-002" \
+						and o.loco.logical.distance_to(e.loco.logical) <= 12.0 * 32.0 and _rng.randf() < 0.5:
+					o.scatter_from(e.loco.logical, _rng.randf_range(8.0, 15.0))
 		if by_pc:
 			stats["downs"] += 1
 		if st != null and by_pc:
@@ -1528,7 +1554,7 @@ func auto_aim(player: Actor) -> Vector2:
 	var bd := 1e9
 	var cands: Array = []
 	for e in enemies:
-		if is_instance_valid(e) and not e.cmb.dead:
+		if is_instance_valid(e) and not e.cmb.dead and e.visible and not e.cmb.invuln:   # 숨은 적(물속 매복 · 땅속 굴쥐)은 겨누지 않는다
 			cands.append(e.loco.logical + Vector2(0, -6))
 	for t in targets:
 		if not t["down"] and t["live"]:

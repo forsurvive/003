@@ -6,18 +6,41 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "AGAIN": 6,
-  "GUARD": 8,
-  "BOTH": 11,
-  "BOTH_NOBOK": 14,
-  "REWARD": 16,
-  "REWARD_B": 20
+  "S8GO": 3,
+  "UQ04Q": 8,
+  "UQ04SELL": 10,
+  "UQ04PICKED": 13,
+  "UQ04GUARDQ": 14,
+  "UQ04GUARD": 16,
+  "UQ04DEAL": 17,
+  "UQ04SOLD": 18,
+  "UQ04BACK": 21,
+  "UQ04BIT": 24,
+  "UQ04BACKQ": 26,
+  "UQ04PAY": 28,
+  "UQ04NOPAY": 31,
+  "AGAIN": 34,
+  "GUARD": 36,
+  "BOTH": 39,
+  "BOTH_NOBOK": 42,
+  "REWARD": 44,
+  "REWARD_B": 48
  },
  "ops": [
   {
    "op": "if",
    "cond": "SQ_S08_SOL >= 1 and SQ_S08_SOL <= 3 and SQ_S08_REWARD == 0",
    "to": "REWARD"
+  },
+  {
+   "op": "if",
+   "cond": "UQ04_OPEN >= 1 and UQ04_JH == 0 and UQ04_THAW == 0 and UQ04_GONE < 40",
+   "to": "UQ04Q"
+  },
+  {
+   "op": "if",
+   "cond": "UQ04_JH >= 3 and UQ04_REFUND == 0",
+   "to": "UQ04BACK"
   },
   {
    "op": "if",
@@ -51,6 +74,197 @@
    "op": "line",
    "who": "N-R02-009",
    "emo": "기본",
+   "text": "06시 정각에 맞춘 시계가 오늘은 2분 늦습니다. 손님이 늦게 오신 거죠. 무슨 일로?"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "독산 7호 냉동 창고 자리와 번호, 팔게요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "UQ04SELL",
+     "id": "SQS08_HAM:1:0"
+    },
+    {
+     "text": "다른 볼일입니다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "S8GO",
+     "id": "SQS08_HAM:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-009",
+   "emo": "기본",
+   "text": "몇 상자입니까? …\\V[UQ04_LEFT]. (계산기를 두드린다) 상자당 다섯. 짐꾼 둘, 수레 하나, 이틀 — \\V[UQ04_PRICE]캡."
+  },
+  {
+   "op": "if",
+   "cond": "UQ04_LEFT < 40",
+   "to": "UQ04PICKED"
+  },
+  {
+   "op": "goto",
+   "to": "UQ04GUARDQ"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-009",
+   "emo": "기본",
+   "text": "마흔이 아니군요. 손님이 먼저 다녀가셨다는 뜻이죠. 값은 남은 상자대로 셉니다."
+  },
+  {
+   "op": "if",
+   "cond": "UQ04_BC >= 1 or UQ04_SA >= 1",
+   "to": "UQ04GUARD"
+  },
+  {
+   "op": "goto",
+   "to": "UQ04DEAL"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-009",
+   "emo": "기본",
+   "text": "다른 동네에도 알리셨다면 — 우리 짐꾼이 먼저 가야겠군요. 기록상으로는 먼저 간 사람 겁니다. 빈손으로 돌아오면 봉투 절반은 돌려받겠습니다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "그 값에 판다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "UQ04SOLD",
+     "id": "SQS08_HAM:2:0"
+    },
+    {
+     "text": "그만두겠다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS08_HAM:2:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-009",
+   "emo": "미소",
+   "text": "(봉투를 내민다) 거래는 기록됩니다. 출처는 적지 않습니다. 그게 이 바닥 예의죠."
+  },
+  {
+   "op": "cmd",
+   "name": "uq04",
+   "args": [
+    "sell"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "UQ04_JH == 4",
+   "to": "UQ04BIT"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-009",
+   "emo": "기본",
+   "text": "독산 짐꾼들이 빈 수레로 왔습니다. 7호 문 앞에 감시조가 서 있더군요. 거래는 기록됩니다 — 실패한 거래도요."
+  },
+  {
+   "op": "goto",
+   "to": "UQ04BACKQ"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-009",
+   "emo": "기본",
+   "text": "독산 짐꾼 둘이 물려서 왔습니다. 7호 안에 쥐가 — 쥐라기엔 너무 큰 게 선반 위에 앉아 있었다고요. 수레는 문 앞에 엎어 두고 왔답니다."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-009",
+   "emo": "기본",
+   "text": "치료비는 손님 앞으로 적어 뒀습니다."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-009",
+   "emo": "기본",
+   "text": "봉투 절반, \\V[UQ04_BACK]캡. 돌려주시면 장부에서 지웁니다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "돌려준다",
+     "tags": [],
+     "cond": "PC_CAPS >= UQ04_BACK",
+     "fx": "",
+     "to": "UQ04PAY",
+     "id": "SQS08_HAM:3:0"
+    },
+    {
+     "text": "못 준다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "UQ04NOPAY",
+     "id": "SQS08_HAM:3:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "uq04",
+   "args": [
+    "refund",
+    "pay"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-009",
+   "emo": "미소",
+   "text": "지웠습니다. 다음 거래도 기록되겠죠 — 깨끗하게."
+  },
+  {
+   "op": "goto",
+   "to": "S8GO"
+  },
+  {
+   "op": "cmd",
+   "name": "uq04",
+   "args": [
+    "refund",
+    "no"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-009",
+   "emo": "기본",
+   "text": "그럼 장부에 남겨 두죠. 상인회 장부는 잘 안 지워집니다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-009",
+   "emo": "기본",
    "text": "명부 보셨습니까. 그날 밤 출입 기록은 제가 직접 적었습니다. 2분 늦은 시계로."
   },
   {
@@ -62,7 +276,7 @@
      "cond": "SQ_S08_DEAD == 1",
      "fx": "",
      "to": "GUARD",
-     "id": "SQS08_HAM:1:0"
+     "id": "SQS08_HAM:4:0"
     },
     {
      "text": "둘 다 김민수로 살면 안 됩니까?",
@@ -70,7 +284,7 @@
      "cond": "SQ_S08_SOL == 0",
      "fx": "",
      "to": "BOTH",
-     "id": "SQS08_HAM:1:1"
+     "id": "SQS08_HAM:4:1"
     },
     {
      "text": "됐습니다",
@@ -78,7 +292,7 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "SQS08_HAM:1:2"
+     "id": "SQS08_HAM:4:2"
     }
    ]
   },

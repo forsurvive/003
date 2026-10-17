@@ -20,6 +20,7 @@ var side10: SideS10                                 ## 영등포 사이드 퀘�
 var side11: SideS11                                 ## 여의도 사이드 퀘스트(1-11j SQ-S11)
 var uq71: Uq71                                     ## 비표시 퀘스트 UQ-71(1-D1 대방 지하차도)
 var u02: U02Paths                                  ## U02 남태령 지하(1-D2)
+var uq04: Uq04                                     ## UQ-04 7호 냉동 창고(1-D3)
 var st: StoryState
 var route := "job"
 var shots := ""
@@ -115,6 +116,9 @@ func _ready() -> void:
 	u02 = U02Paths.new()
 	add_child(u02)
 	u02.setup(host, true)
+	uq04 = Uq04.new()
+	add_child(uq04)
+	uq04.setup(host, true)
 	host.combat.player_down.connect(host.on_pc_down)                  # 쓰러짐 → 생포 판정(진짜 진행 prologue와 같은 연결)
 	host.combat.equip("W-002", st)
 	match route:
@@ -400,15 +404,33 @@ func _ready() -> void:
 				["warp", "NT-03", "ajae"], ["calm"], ["go", 16, 2, "NT-03"], ["want", ["사당 측 차단기만"]], ["use", 16, 1],
 				["until", "U02_LIGHT == 1", 10.0, "조명 회로 — 사당 측", "nt_light"], ["go", 22, 6, "NT-03"], ["wait", 1.0], ["shot", "nt_lamps"],
 				["check", "AFF_JC_SA >= 5 and U02_PATH == 1 and U02_HAL == 0", "회로 사당 측 · 할매는 측실에"]]
+		"ds":                                                           # 1-D3 독산 육가공 단지 · UQ-04: 관리동 일지 → 배수 밸브(알집이 떠내려감) → 7호 번호 1022 →
+			st.vars.set_v("PC_SKP_REPAIR", 60)                           #   상자 열 개(④) → 제어반 냉기를 굴로(둥지 얼림 = 던전 정리 · 10일) → 언 흙 6호 굴쥐는 땅 위
+			st.vars.set_v("GAME_DAY", 10)
+			host.date_text = "2277. 10. 28.  10:00"
+			host.enter("DS-01", "from_W")
+			plan = [["hp", 3000], ["wait", 1.0], ["shot", "ds_dock"], ["go", 3, 5, "DS-01"], ["use", 3, 4],
+				["until", "UQ04_KNOW == 1", 10.0, "관리동 일지 홀로테이프 — 발동", "ds_tape"],
+				["warp", "DS-01", "valve"], ["calm"], ["want", ["수리 25"]], ["use", 41, 14],
+				["until", "DS_VALVE == 1", 10.0, "배수 밸브 — 알집이 떠내려감", "ds_valve"],
+				["warp", "DS-02", "door7"], ["calm"], ["wait", 1.0], ["shot", "ds_corridor"], ["go", 36, 11, "DS-02"], ["want", ["1 · 0 · 2 · 2"]], ["use", 36, 10],
+				["until", "UQ04_OPEN == 1", 10.0, "7호 번호 1022", "ds_open"],
+				["go", 34, 8, "DS-02"], ["go", 30, 5, "DS-02"], ["want", ["열 개"]], ["use", 30, 4],
+				["until", "UQ04_GONE == 10", 10.0, "상자 열 개(④ 직접 나름)", "ds_take"],
+				["check", "UQ04_SOL == 4 and UQ04_STAGE == 100", "닫힘 — 런천미트 · 꽁치"],
+				["go", 39, 4, "DS-02"], ["want", ["수리 50"]], ["use", 40, 4],
+				["until", "UQ04_COLD == 1", 10.0, "냉기를 굴로 — 둥지가 언다", "ds_cold"], ["wait", 2.0], ["shot", "ds_frost"],
+				["check", "UQ04_RATK == 2 and DG_DS == 1 and UQ04_DUE == 20", "언 왕쥐 = 던전 정리 · 냉동기 10일"],
+				["warp", "DS-02", "door7"], ["calm"], ["go", 28, 14, "DS-02"], ["wait", 1.5], ["shot", "ds_soil"]]
 		"s11p":                                                         # 1-11j SQ-S11 낮 호위: 공영방송 앞에서 국회 쪽으로 걸으면 여의도 순찰이 '구울 통행 금지' → 환승센터 터 지하로 숨는다 → 계단 낭독
 			st.call_fn("give", ["M-305", 1])
 			st.vars.set_v("GAME_DAY", 4)
 			host.date_text = "2277. 10. 26.  12:00"
 			host.enter("J-03", "from_J-02")
 			plan = [["wait", 1.0], ["want", ["사망자 명단을 보여", "같이 가자"]], ["talk", "N-R02-014"], ["wait", 1.0],
-				["check", "SQ_S11_ESCORT == 1", "낮 — 인지영과 출발"], ["warp", "W", "L-R02-06"], ["wait", 2.0], ["want", ["몸을 숨긴다"]], ["gomark", "kh_read"],
+				["check", "SQ_S11_ESCORT == 1", "낮 — 인지영과 출발"], ["noenc"], ["warp", "W", "L-R02-06"], ["wait", 2.0], ["want", ["몸을 숨긴다"]], ["gomark", "kh_read"],
 				["until", "SQ_S11_PDAY == 4", 40.0, "여의도 낮 순찰 — 구울 통행 금지", "s11p_squad"], ["wait", 4.0], ["shot", "s11p_after"],
-				["want", []], ["gomark", "kh_read"], ["until", "SQ_S11_READ == 1", 60.0, "숨었다가 계단까지 — 열한 이름", "s11p_read"],
+				["want", []], ["clear", ["CR-104", "CR-107"]], ["gomark", "kh_read"], ["until", "SQ_S11_READ == 1", 60.0, "숨었다가 계단까지 — 열한 이름", "s11p_read"],
 				["check", "SQH_LIST11 == 4 and SQ_S11_PKIND == 1", "순찰을 넘기고 낭독"]]
 		"s6s":                                                          # 1-11f 수색조: 첫 접촉 25시간 뒤 시흥 고개 — 평상복 · 등록증 진해원과 길을 걸으면 수색조가 선다 → 분대장 검문 통과
 			for kv in [["A-005", 1], ["M-062", 1]]:
@@ -960,6 +982,16 @@ func _process(dt: float) -> void:
 		"crouch":
 			host.combat.crouch = bool(s[1])
 			_next()
+		"clear":                                                        # 둘레 30칸의 그 짐승들을 걷어 낸다(월드 소장소에 사는 들개 등 — 다른 것을 보는 봇이 개 떼에 막히지 않게)
+			for e in host.combat.enemies.duplicate():
+				if is_instance_valid(e) and not e.cmb.dead and str(e.row.get("id", "")) in s[1] and e.loco.logical.distance_to(host.player.loco.logical) < 30.0 * 32.0:
+					host.combat.enemies.erase(e)
+					e.queue_free()
+			host.combat._rebuild_list()
+			_next()
+		"noenc":                                                        # 새 인카운터를 굴리지 않는다(인카운터는 시각 난수 — 다른 것을 보는 봇이 운에 기대지 않게)
+			host.enc_live.off = true
+			_next()
 		"calm":                                                         # 맵의 적을 멈춰 세운다(확인 봇: 싸움 없이 장치 · 장면만 본다 — 1-D)
 			for e in host.combat.enemies:
 				if is_instance_valid(e):
@@ -1113,6 +1145,9 @@ func _until(s: Array) -> bool:
 	if ok2 or step_t > float(s[2]):
 		if not ok2:
 			print("  [봇] 기다림 끝: 나 %s · 맵 %s · 교전 %s" % [str(host.map.tile_of(host.player.loco.logical)), host.map.id, str(host.combat.in_combat())])
+			for e in host.combat.enemies:                              # 무엇이 붙었나(실패 원인 읽기)
+				if is_instance_valid(e) and not e.cmb.dead and e.loco.logical.distance_to(host.player.loco.logical) < 20.0 * 32.0:
+					print("    적 %s %s · %s" % [str(e.row.get("id", "")), str(host.map.tile_of(e.loco.logical)), str(e.brain.state)])
 			_shot("until_fail")
 		checks.append([ok2, str(s[3])])
 		print("  [확인] %s %s (%.1f초)" % ["○" if ok2 else "×", s[3], step_t])

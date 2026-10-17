@@ -50,6 +50,7 @@ const BEAST_WAIT := 60.0                          ## 짐승이 문 앞에서 기
 const BEASTS := ["CR-002", "CR-095", "CR-097", "CR-104", "CR-105", "CR-106", "CR-108", "CR-136", "CR-107"]
 var _path_t := 0.0
 var _rng := RandomNumberGenerator.new()
+var off := false                                  ## 새 인카운터를 굴리지 않는다(확인 봇이 다른 것을 볼 때 — 시각 난수로 개 떼가 끼어드는 것을 막는다)
 
 
 func setup(h, seed_v := 0) -> EncounterLive:
@@ -73,7 +74,7 @@ func _here() -> Vector2i:
 
 
 func _ok() -> bool:
-	return host.map is WorldMap and host.clock_running() and cur.is_empty() and not host.story_hold
+	return not off and host.map is WorldMap and host.clock_running() and cur.is_empty() and not host.story_hold
 
 
 ## 판정 맥락(SD-22 §3.6 · §4.2): 청크 태그 · 길 위계 · 움직임 · 총성 · 시각 · 레벨

@@ -59,6 +59,10 @@ SETS += [  # 1-9c 숨긴 함정(발견하면 바닥층에 그린다)
     ("trap_claymore", 1, lambda a, f: A.trap("claymore"), A.ANCHOR["mid16"], "mix", 16, 1),
     ("trap_shotgun", 1, lambda a, f: A.trap("shotgun"), (16.0, 16.0), "mix", 32, 1),
 ]
+SETS += [  # 1-D3 미끼(W-068 썩은 고기): 바닥에 누운 고기 1컷 · 냄새 김과 파리 3컷
+    ("bait_lying", 1, lambda a, f: A.bait_meat(0, lying=True), A.ANCHOR["mid16"], "mix", 16, 1),
+    ("zone_bait", 3, lambda a, f: A.bait_wisp(f), (16.0, 16.0), "mix", 32, 1),
+]
 TICKS = {"aura_rad": 6, "flame": 4, "boom": 3, "boom_smoke": 4, "boom_plasma": 3, "boom_pulse": 3}   # 컷당 틱(기본 2)
 
 

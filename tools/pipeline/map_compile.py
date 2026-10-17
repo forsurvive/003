@@ -50,7 +50,7 @@ SRC = os.path.join(ROOT, "maps")
 OUT = os.path.join(ROOT, "game", "data", "maps")
 TIL = os.path.join(ROOT, "game", "assets", "tiles")
 PROPS = os.path.join(ROOT, "game", "assets", "props")
-FLOOR = {".": "panel", ",": "lino_a", "o": "clinic_a", "=": "grate_a", "~": "concrete_a", "c": "carpet_a", "w": "wood_a", "j": "jangpan_a", "t": "terrazzo_a", "u": "tunnel_a", "s": "steps_a", "e": "epoxy_a", "g": "turf_a", "f": "flood_a", "F": "flood_b",
+FLOOR = {".": "panel", ",": "lino_a", "o": "clinic_a", "=": "grate_a", "~": "concrete_a", "c": "carpet_a", "w": "wood_a", "j": "jangpan_a", "t": "terrazzo_a", "u": "tunnel_a", "s": "steps_a", "e": "epoxy_a", "g": "turf_a", "f": "flood_a", "F": "flood_b", "d": "soil_a",
          "m": "panel_mold", "M": "grate_mold", "-": "guide_h", "|": "guide_v", "+": "guide_x", "^": "guide_t"}
 WALL = {"#", " "}
 DIRS = {"E", "SE", "S", "SW", "W", "NW", "N", "NE"}
@@ -359,6 +359,14 @@ def _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kin
             elif c == "dark":                                       # 1-D2 조건부 어둠(dark cond="식"): 식이 참이면 불 꺼진 맵(핍-보이 조명) — 없으면 타일셋대로(cv = 늘 어둠)
                 check_cond(opt["cond"], known_vars, known_fns)
                 out["dark_if"] = opt["cond"]
+            elif c == "hush":                                       # 1-D3 소리 덮개(hush x y w h [cond=]) — 파리 떼 칸: 안에 선 사람을 짐승 · 사람이 덜 알아챈다(감지 ×0.6)
+                x, y, w, h = int(pos[0]), int(pos[1]), int(pos[2]), int(pos[3])
+                if opt.get("cond"):
+                    check_cond(opt["cond"], known_vars, known_fns)
+                out.setdefault("hush", []).append({"x": x, "y": y, "w": w, "h": h, "cond": opt.get("cond", "")})
+            elif c == "soil_off":                                   # 1-D3 흙이 언다(soil_off cond="식") — 식이 참이면 굴쥐가 땅속으로 못 간다
+                check_cond(opt["cond"], known_vars, known_fns)
+                out["soil_off"] = opt["cond"]
             elif c == "mark":
                 name, x, y, d = pos[0], int(pos[1]), int(pos[2]), pos[3]
                 if d not in DIRS:
@@ -608,6 +616,8 @@ def _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kin
         rows_ = [r for _, r in getattr(m, "rows", [])]
         if any(("f" in r or "F" in r) for r in rows_):                 # 1-D 침수 깊이(0 마름 · 1 발목 · 2 허리) — 이동 배수 · 웅크림(SD-09f §3.5)
             out["wet"] = ["".join("1" if c == "f" else ("2" if c == "F" else "0") for c in r) for r in rows_]
+        if any("d" in r for r in rows_):                                 # 1-D3 흙 칸(굴쥐 땅속 이동, SD-14 L423 — 흙 타일에서만)
+            out["soil"] = ["".join("1" if c == "d" else "0" for c in r) for r in rows_]
     out["solid"] = ["".join(str(min(1, v)) for v in row) for row in solid]
     return out
 

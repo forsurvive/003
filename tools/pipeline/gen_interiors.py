@@ -1341,7 +1341,7 @@ def run(entries, reach, threat, region_at, taken, log=print, cache=True, fixed=(
         nx, ny = spec["near"]
         best = None
         for e in entries:
-            if e["y"] + 1 < reach.shape[0] and reach[e["y"] + 1, e["x"]]:
+            if e["y"] + 1 < reach.shape[0] and reach[e["y"] + 1, e["x"]] and (e["x"], e["y"]) not in used:   # 한 장소에 문이 둘이면 서로 다른 1층 문(1-D3 독산)
                 dd = (e["x"] - nx) ** 2 + (e["y"] - ny) ** 2
                 if dd <= 30 * 30 and (best is None or dd < best[0]):
                     best = (dd, e)
@@ -1351,6 +1351,9 @@ def run(entries, reach, threat, region_at, taken, log=print, cache=True, fixed=(
         used.add((e["x"], e["y"]))
         doors.append({"lid": spec["lid"], "at": [e["x"], e["y"]], "to": spec["to"], "mark": spec.get("mark", "from_W"), "name": spec["name"],
                       "prop": "", "kind": "facade", "lock": int(spec.get("lock", 0))})
+        for k in ("hint", "hints", "open"):                              # 밖에서 읽는 안의 상태(1-D3 — 파리 소리 · 정리 · 녹음)
+            if spec.get(k):
+                doors[-1][k] = spec[k]
     todo = []                                                          # 1-B: 먼저 고르고(순서 그대로) → 병렬 · 캐시로 만든다
     for e in entries:
         x, y, st = e["x"], e["y"], e["style"]

@@ -341,12 +341,14 @@ ANCHOR = {"flash32": (15.5, 15.5), "flash16": (7.5, 7.5), "proj": (8.5, 8.5), "m
 
 # ================================================================ 단계 1-9b 투척·설치(SD-11 §3.4 · §9.2 · SD-13 §3.8.4)
 # 던진 물체(16칸 무방향 4컷 — 날며 구른다) · 놓인 지뢰(16칸 2컷 — 불빛 깜박임) · 지대(32칸 3컷, 일반 혼합 바둑판) · 플라스마·펄스 폭발(96칸)
-THROWN = ("frag", "plasma", "pulse", "molotov", "gas", "smoke", "nuka")
+THROWN = ("frag", "plasma", "pulse", "molotov", "gas", "smoke", "nuka", "bait")
 
 
 def thrown(kind, frame):
     """수류탄·화염병·통: 컷마다 90°씩 돈다(위에서 본 몸통 + 손잡이·심지 방향)."""
     img = Image.new("RGBA", (16, 16), CLEAR)
+    if kind == "bait":
+        return bait_meat(frame)
     a = math.radians(frame * 90 + 20)
     ux, uy = math.cos(a), math.sin(a)
     body = {"frag": ("P30", "P31", "P29"), "plasma": ("P03", "P04", "P02"), "pulse": ("P12", "P13", "P11"),
@@ -377,6 +379,46 @@ def thrown(kind, frame):
     elif kind in ("frag", "plasma", "pulse", "nuka"):                    # 안전 손잡이(스푼)
         _px(img, 8 + (ln + 0.4) * ux - 0.5, 8 + (ln + 0.4) * uy - 0.5, "P06")
         _px(img, 8 + (ln + 0.4) * ux + 1.2 * -uy - 0.5, 8 + (ln + 0.4) * uy + 1.2 * ux - 0.5, "P07")
+    return img
+
+
+def bait_meat(frame, lying=False):
+    """1-D3 미끼 W-068 썩은 고기: 거무죽죽한 붉은 살덩이 + 비죽 나온 흰 뼈 + 푸른곰팡이 점. 날 때는 90°씩 구르고, 떨어지면 납작하게 눕는다."""
+    img = Image.new("RGBA", (16, 16), CLEAR)
+    a = math.radians(frame * 90 + 35)
+    ux, uy = math.cos(a), math.sin(a)
+    sq = 0.7 if lying else 1.0
+    for y in range(16):
+        for x in range(16):
+            dx, dy = x + 0.5 - 8, (y + 0.5 - (9 if lying else 8)) / sq
+            t = dx * ux + dy * uy
+            s_ = -dx * uy + dy * ux
+            q = (t / 4.2) ** 2 + (s_ / 3.0) ** 2 + 0.25 * math.sin(t * 2.1 + s_)
+            if q <= 1.0:
+                tok = "P53" if s_ < -1.0 else ("P51" if s_ > 1.2 or q > 0.8 else "P52")
+                if (x * 5 + y * 3) % 13 == 0:
+                    tok = "P35"                                          # 곰팡이 점
+                if abs(s_ + 0.4) < 0.5 and -2.5 < t < 1.5 and (x + y) % 3 == 0:
+                    tok = "P21"                                          # 누런 비계 줄
+                img.putpixel((x, y), C(tok))
+    for k, tok in ((4.4, "P08"), (5.4, "P07"), (6.1, "P08")):              # 뼈 끝
+        _px(img, 8 + k * ux - 0.5, (9 if lying else 8) + k * uy * sq - 0.5, tok)
+    return img
+
+
+def bait_wisp(frame, size=32):
+    """미끼 냄새 지대(덩이 하나): 위로 꼬이는 누런 김 한 가닥 + 파리 둘셋(3컷 — 김이 흔들리고 파리가 자리를 바꾼다). 대부분 비어 있다."""
+    img = Image.new("RGBA", (size, size), CLEAR)
+    rnd = random.Random(91 + frame)
+    x0 = size // 2 + rnd.randint(-6, 6)
+    for k in range(9):                                                   # 꼬불거리는 김(바둑판 성긴 점 — 반투명 대신)
+        y = size - 6 - k * 2
+        x = x0 + round(2.0 * math.sin(k * 0.9 + frame * 2.1))
+        if (k + frame) % 2 == 0:
+            img.putpixel((x, y), C("P32" if k < 5 else "P31"))
+    for _ in range(2 + frame % 2):                                       # 파리
+        fx, fy = rnd.randint(4, size - 5), rnd.randint(4, size - 8)
+        img.putpixel((fx, fy), C("P01")); img.putpixel((fx + 1, fy - 1), C("P07"))
     return img
 
 

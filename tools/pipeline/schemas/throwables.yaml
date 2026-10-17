@@ -22,8 +22,8 @@ derive:
   blast: "num_in(dmg_text, '폭발 ', 0) + num_in(dmg_text, '플라스마 ', 0) + num_in(dmg_text, 'EMP ', 0)"
   blast_kind: "'emp' if 'EMP' in dmg_text else ('plasma' if '플라스마' in dmg_text else ('frag' if '폭발' in dmg_text else ''))"
   # 지대(SD-13 §3.8.4 비고 · SD-11 지대 판정): 화염 · 최루 · 연막
-  zone: "'fire' if '화염' in dmg_text else ('gas' if '최루' in dmg_text else ('smoke' if '연막' in dmg_text else ''))"
-  zone_r: "2.0 if '화염' in dmg_text else num_in(dmg_text, '지대 ', 0) + num_in(dmg_text, '연막 ', 0)"
+  zone: "'fire' if '화염' in dmg_text else ('gas' if '최루' in dmg_text else ('smoke' if '연막' in dmg_text else ('bait' if '미끼' in dmg_text else '')))"   # bait: 1-D3 썩은 고기 W-067
+  zone_r: "2.0 if '화염' in dmg_text else num_in(dmg_text, '지대 ', 0) + num_in(dmg_text, '연막 ', 0) + num_in(dmg_text, '냄새 ', 0)"
   zone_s: "5.0 if '화염' in dmg_text else num_in(dmg_text, '타일(', 0) + num_in(dmg_text, '타일, ', 0)"
   dot: "num_in(dmg_text, '화염 ', 0)"
   dot_s: "num_in(dmg_text, '/초(', 0)"

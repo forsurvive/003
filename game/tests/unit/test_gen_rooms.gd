@@ -23,14 +23,17 @@ func test_gen_doors(t) -> void:
 		var m: Dictionary = InteriorMap.read_data(mid)
 		kinds[str(m.get("gen", ""))] = true
 		var want := "@%d,%d" % [int(d["at"][0]), int(d["at"][1]) + 1]
+		var want2 := want
 		if str(d.get("lid", "")) != "":                                      # 손 실내(1-5e K-*): 장소 도착 칸 = 문 앞
 			want = str(d["lid"])
+			want2 = want + ">" + str(d.get("mark", ""))                      # 1-D3 정면 문이 둘인 장소(독산): 'L-ID>표지' = 그 표지로 드는 문 앞
 			PlaceLog.load_db()
 			var arr = PlaceLog.db.get(want, {}).get("arrive")
-			if arr == null or int(arr[0]) != int(d["at"][0]) or int(arr[1]) != int(d["at"][1]) + 1:
+			var fronts := doors.filter(func(o): return str(o.get("lid", "")) == want).map(func(o): return Vector2i(int(o["at"][0]), int(o["at"][1]) + 1))
+			if arr == null or not fronts.has(Vector2i(int(arr[0]), int(arr[1]))):
 				bad_exit += 1
 		for e in m["exits"]:
-			if str(e["to"]) == "W" and str(e["mark"]) != want:
+			if str(e["to"]) == "W" and str(e["mark"]) != want and str(e["mark"]) != want2:
 				bad_exit += 1
 		if not m["marks"].has("from_W"):
 			bad_exit += 1

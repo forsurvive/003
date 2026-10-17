@@ -1,0 +1,54 @@
+{
+ "foot": [
+  20,
+  21
+ ],
+ "frame": [
+  44,
+  24
+ ],
+ "mirror": {
+  "W": "E"
+ },
+ "motions": {
+  "death": {
+   "count": 3,
+   "start": 5
+  },
+  "dig": {
+   "count": 2,
+   "start": 15
+  },
+  "eat": {
+   "count": 2,
+   "start": 17
+  },
+  "emerge": {
+   "count": 2,
+   "start": 13
+  },
+  "heave": {
+   "count": 3,
+   "start": 10
+  },
+  "idle": {
+   "count": 1,
+   "start": 0
+  },
+  "mound": {
+   "count": 2,
+   "start": 8
+  },
+  "walk": {
+   "count": 4,
+   "drive": "distance",
+   "px_per_frame": 2,
+   "start": 1
+  }
+ },
+ "name": "cr_cr096_loco",
+ "rows": [
+  "E"
+ ],
+ "style": "isaac"
+}

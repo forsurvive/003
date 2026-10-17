@@ -990,6 +990,21 @@
    "src": "03a_main-story-part1.md:494",
    "type": "int"
   },
+  "UQ04_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "UQ04_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "UQ04_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
   "UQ71_RESULT": {
    "default": 0,
    "src": "quests",

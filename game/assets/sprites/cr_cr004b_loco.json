@@ -1,0 +1,42 @@
+{
+ "foot": [
+  26,
+  29
+ ],
+ "frame": [
+  60,
+  32
+ ],
+ "mirror": {
+  "W": "E"
+ },
+ "motions": {
+  "crack": {
+   "count": 2,
+   "start": 6
+  },
+  "death": {
+   "count": 4,
+   "start": 8
+  },
+  "idle": {
+   "count": 1,
+   "start": 0
+  },
+  "pulse": {
+   "count": 2,
+   "start": 0
+  },
+  "walk": {
+   "count": 4,
+   "drive": "distance",
+   "px_per_frame": 2,
+   "start": 2
+  }
+ },
+ "name": "cr_cr004b_loco",
+ "rows": [
+  "E"
+ ],
+ "style": "isaac"
+}

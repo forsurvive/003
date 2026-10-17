@@ -70,7 +70,7 @@ func _run(c: InteriorCombat, st: StoryState, secs: float) -> void:
 
 func test_ord_data(t) -> void:
 	var d: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/throwables.json"))
-	t.eq(d.size(), 8, "투척·설치 8종(W-057~W-064)")
+	t.eq(d.size(), 9, "투척·설치 9종(W-057~W-064 · 1-D3 미끼 W-068)")
 	t.eq(str(d["W-060"]["kind"]), "thrown", "파편 수류탄 = 투척")
 	t.eq(float(d["W-060"]["blast"]), 100.0, "폭발 100")
 	t.eq(float(d["W-060"]["fuse"]), 2.5, "신관 2.5초")

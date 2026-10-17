@@ -1500,6 +1500,16 @@
    "아픔": "L_m1_s3_hr02_h1_t05_1_pf12_hd02_ey00_hurt.png",
    "피곤": "L_m1_s3_hr02_h1_t05_1_pf12_hd02_ey00_tired.png"
   },
+  "st_look_m1_s3_hr02_h1_t06_2_pf12_hd00_ey00_pr041": {
+   "기본": "L_m1_s3_hr02_h1_t06_2_pf12_hd00_ey00_pr041_idle.png",
+   "놀람": "L_m1_s3_hr02_h1_t06_2_pf12_hd00_ey00_pr041_surprise.png",
+   "말함": "L_m1_s3_hr02_h1_t06_2_pf12_hd00_ey00_pr041_talk.png",
+   "미소": "L_m1_s3_hr02_h1_t06_2_pf12_hd00_ey00_pr041_smile.png",
+   "분노": "L_m1_s3_hr02_h1_t06_2_pf12_hd00_ey00_pr041_angry.png",
+   "슬픔": "L_m1_s3_hr02_h1_t06_2_pf12_hd00_ey00_pr041_sad.png",
+   "아픔": "L_m1_s3_hr02_h1_t06_2_pf12_hd00_ey00_pr041_hurt.png",
+   "피곤": "L_m1_s3_hr02_h1_t06_2_pf12_hd00_ey00_pr041_tired.png"
+  },
   "st_look_m1_s3_hr02_h1_t14_0_pf10_hd14_ey00_pr017": {
    "기본": "L_m1_s3_hr02_h1_t14_0_pf10_hd14_ey00_pr017_idle.png",
    "놀람": "L_m1_s3_hr02_h1_t14_0_pf10_hd14_ey00_pr017_surprise.png",

@@ -1,0 +1,178 @@
+# 독산 육가공 단지 — 냉동 창고 동(SD-09a L-R01-29 · SD-05 UQ-04 · 1-D 계획 §9 · §9.6, 단계 1-D3). 48×23 · 어둠(전기가 끊겼다 — 7호만 푸른 냉기).
+# 복도(11 · 12줄) 북쪽: 1호 검역 격리 칸(두 머리 송아지 뼈) · 3호(무너진 벽 너머 흙 — 굴로 이어짐) · 굴(흙 칸 — 왕쥐 둥지 · 굴쥐) · 7호(원자력 냉동기 · 번호 자물쇠 1022).
+# 복도 남쪽: 2호(마지막 밤 숨은 직원) · 4호(고기 사냥꾼 유해 — 구로 차량기지 냉동차 복선) · 5호(파리 떼 — 소리 덮개) · 6호(꺼진 흙 바닥 — 굴쥐) ·
+# 뒤 철길 하역장(냉동 화물칸 — 2077 고리 셋 · 관통 출구 = 옛 화물 철로 쪽 월드 문).
+# 굴쥐는 흙 칸(d)에서만 땅속으로(SD-14 L423). 냉기를 굴로 돌리면(UQ04_COLD) 흙이 얼고 · 굴 무리가 언 채 굳고 · 5호 파리가 죽는다(소리 덮개 사라짐) · 7호 선반이 땀을 흘린다.
+map DS-02 독산 냉동 창고 동
+set sb
+dark cond="GAME_DAY >= 0"
+soil_off cond="UQ04_COLD == 1"
+grid
+################################################
+################################################
+################################################
+#~~~~~~~#~~~~~~~#dddddddddd#oooooooooooooo######
+#~~~~~~~#~~~~~~~#dddddddddd#oooooooooooooo######
+#~~~~~~~#~~~~dddddddddddddd#oooooooooooooo######
+#~~~~~~~#~~~~dddddddddddddd#oooooooooooooo######
+#~~~~~~~#~~~~ddd#dddddddddd#oooooooooooooo######
+####~#######~#####################o#############
+####~#######~#####################o#############
+####~#######~#####################o#############
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+####~#######~#######~#######d###########~#######
+####~#######~#######~#######d###########~#######
+####~#######~#######~#######d###########~#######
+#~~~~~~~#~~~~~~~#~~~~~~~#ddddddd#~~~~~~~~~~~~~~#
+#~~~~~~~#~~~~~~~#~~~~~~~#ddddddd#~~~~~~~~~~~~~~~
+#~~~~~~~#~~~~~~~#~~~~~~~#ddddddd#~~~~~~~~~~~~~~~
+#~~~~~~~#~~~~~~~#~~~~~~~#ddddddd#--------------#
+#~~~~~~~#~~~~~~~#~~~~~~~#ddddddd#~~~~~~~~~~~~~~#
+################################################
+################################################
+end
+exit 0 11 DS-01 from_DS02
+exit 0 12 DS-01 from_DS02
+exit 47 17 W L-R01-29>from_rail
+exit 47 18 W L-R01-29>from_rail
+mark from_W 1 11 E
+mark from_rail 46 17 W
+mark door7 34 11 N
+mark nest 22 5 S
+mark panel 39 5 E
+# ---------------------------------------------------------------- 복도: 검역 공문 · 서리(냉기를 돌리면 번진다)
+prop w_quarantine_ds 5 9
+text 5 10 "창고 출입문 공문. '두 머리 송아지 출하 금지 — 2077-09 축산 검역'. 그 옆 1호 문틀에 파란 '보류' 테이프가 늘어졌다." w=2
+prop frost_patch 30 11 cond="UQ04_COLD == 1"
+prop frost_patch 24 12 cond="UQ04_COLD == 1"
+prop frost_patch 36 12 cond="UQ04_COLD == 1"
+prop frost_patch 18 11 cond="UQ04_COLD == 1"
+text 26 11 "복도 바닥에 서리가 번졌다. 숨이 하얗다. 굴 쪽 벽에서 얼음 깨지는 소리." w=4 cond="UQ04_COLD == 1"
+# ---------------------------------------------------------------- 1호 검역 격리 칸
+prop calf_bones 2 5
+text 2 5 "두 머리 송아지 뼈." w=2 scene=UQ04_CALF
+prop crate 6 3
+box 6 3 crate name="1호 검역 상자"
+# ---------------------------------------------------------------- 2호 마지막 밤 숨은 직원
+prop bedroll 2 18
+prop backpack 6 17
+box 6 17 bag name="숨은 직원의 가방"
+text 3 18 "침낭과 컵라면 그릇. 벽에 볼펜 낙서." w=2 scene=UQ04_NOTE2
+text 6 19 "낙서 밑에 다른 날짜가 이어진다. '24일 · 25일 · 26일 —' 그다음은 없다."
+# ---------------------------------------------------------------- 3호 무너진 벽 너머(흙더미 — 굴로 이어짐)
+prop rubble 10 4
+prop rubble2 11 6
+prop rathole 15 5
+text 14 7 "벽이 안쪽으로 무너져 흙이 쏟아졌다. 흙에 발톱 자국이 수십 줄 — 벽 너머로 굴이 이어진다." w=2
+# ---------------------------------------------------------------- 굴(흙 칸 — 왕쥐 둥지)
+prop bone_pile 24 4
+prop mud_burrow 19 6
+prop mud_burrow 25 6
+prop rathole 21 3
+prop frozen_ratking 21 4 cond="UQ04_RATK == 2 and UQ04_SHARD == 0"
+prop frozen_ratking 21 4 state=broken cond="UQ04_RATK == 2 and UQ04_SHARD == 1"
+text 21 4 "언 왕쥐." w=2 scene=UQ04_RATK cond="UQ04_RATK == 2"
+prop frost_patch 19 4 cond="UQ04_COLD == 1"
+prop frost_patch 24 6 cond="UQ04_COLD == 1"
+text 26 5 "굴 동쪽 벽에 쇠 그릴. 그 너머에서 차가운 바람이 새어 든다 — 7호 냉동기 배기구." cond="UQ04_COLD == 0"
+text 26 5 "그릴이 성에로 하얗게 덮였다. 바람이 칼처럼 차다." cond="UQ04_COLD == 1"
+box 24 4 corpse_scav name="둥지 속 뼈 더미"
+# ---------------------------------------------------------------- 7호(원자력 냉동기 · 번호 자물쇠)
+door 34 9 locked kind=steel "7호"
+prop w_keypad7 36 9 cond="UQ04_OPEN == 0 or UQ04_LOCK == 1"
+prop w_keypad7 36 9 state=open cond="UQ04_OPEN >= 1 and UQ04_LOCK == 0"
+text 36 10 "7호 번호 자물쇠." scene=UQ04_PAD
+text 34 11 "두꺼운 단열 문. '7 — 군 납품 · 관계자 외 출입 금지'. 문틈에서 하얀 김이 샌다." cond="UQ04_OPEN == 0"
+prop shelf_7ho 29 4 cond="UQ04_SHELF == 0"
+prop shelf_7ho 29 4 state=half cond="UQ04_SHELF == 1"
+prop shelf_7ho 29 4 state=empty cond="UQ04_SHELF == 2"
+prop shelf_7ho 29 4 state=sweat cond="UQ04_SHELF == 3"
+prop shelf_7ho 29 4 state=thaw cond="UQ04_SHELF == 4"
+prop shelf_7ho 29 4 state=gnawed cond="UQ04_SHELF == 5"
+prop shelf_7ho 32 4 cond="UQ04_SHELF == 0"
+prop shelf_7ho 32 4 state=half cond="UQ04_SHELF == 1"
+prop shelf_7ho 32 4 state=empty cond="UQ04_SHELF == 2"
+prop shelf_7ho 32 4 state=sweat cond="UQ04_SHELF == 3"
+prop shelf_7ho 32 4 state=thaw cond="UQ04_SHELF == 4"
+prop shelf_7ho 32 4 state=gnawed cond="UQ04_SHELF == 5"
+prop shelf_7ho 29 6 cond="UQ04_SHELF == 0"
+prop shelf_7ho 29 6 state=half cond="UQ04_SHELF == 1"
+prop shelf_7ho 29 6 state=empty cond="UQ04_SHELF == 2"
+prop shelf_7ho 29 6 state=sweat cond="UQ04_SHELF == 3"
+prop shelf_7ho 29 6 state=thaw cond="UQ04_SHELF == 4"
+prop shelf_7ho 29 6 state=gnawed cond="UQ04_SHELF == 5"
+text 29 4 "7호 비축 선반." w=5 scene=UQ04_SHELF
+text 29 6 "7호 비축 선반." w=2 scene=UQ04_SHELF
+prop ds_cold_panel 40 4 cond="UQ04_THAW == 0 and UQ04_COLD == 0"
+prop ds_cold_panel 40 4 state=redirect cond="UQ04_THAW == 0 and UQ04_COLD == 1"
+prop ds_cold_panel 40 4 state=dead cond="UQ04_THAW == 1"
+text 40 4 "냉동기 제어반." scene=UQ04_PANEL
+prop wall_terminal 38 1
+text 38 2 "출고 단말." scene=UQ04_TERM
+prop frost_patch 31 5 cond="UQ04_THAW == 0"
+prop frost_patch 37 6 cond="UQ04_THAW == 0"
+prop frost_patch 35 3 cond="UQ04_THAW == 0"
+prop flies_ds 31 5 cond="UQ04_THAW == 1"
+prop flies_ds 36 5 cond="UQ04_THAW == 1"
+prop frozen_ratking 36 6 cond="UQ04_RATK == 3 and UQ04_SHARD == 0"
+prop frozen_ratking 36 6 state=broken cond="UQ04_RATK == 3 and UQ04_SHARD == 1"
+text 36 6 "언 왕쥐." w=2 scene=UQ04_RATK cond="UQ04_RATK == 3"
+# ---------------------------------------------------------------- 4호 고기 사냥꾼의 유해(구로 쪽 복선)
+prop remains 11 18
+box 11 18 corpse_scav name="고기 사냥꾼의 유해"
+text 12 18 "고기 사냥꾼의 유해. 허리춤 수첩 마지막 장 — '독산 1~6호 꽝. 7호는 번호. 구로 차량기지 냉동차 — 거긴 아직 얼어 있다고 함. 다음엔 거기.'"
+prop crate_o 14 16
+box 14 16 crate name="사냥꾼의 짐 상자"
+# ---------------------------------------------------------------- 5호 파리 떼(소리 덮개 — 냉기를 돌리면 사라진다)
+prop carcass_pile 19 17
+box 19 17 carcass name="5호 걸이 밑 고기"
+prop hook_line 21 16
+prop flies_ds 18 16 cond="UQ04_COLD == 0"
+prop flies_ds 22 18 cond="UQ04_COLD == 0"
+prop flies_ds 19 19 cond="UQ04_COLD == 0"
+hush 17 16 7 5 cond="UQ04_COLD == 0"
+text 20 20 "파리 떼 윙윙 소리가 귀를 덮는다. 제 발소리도 안 들린다 — 쥐도 못 듣겠지." cond="UQ04_COLD == 0"
+text 20 20 "파리가 바닥에 떨어져 언 채 깔렸다. 조용하다. 너무 조용하다." cond="UQ04_COLD == 1"
+# ---------------------------------------------------------------- 6호 꺼진 흙 바닥(굴쥐)
+prop rathole 26 17
+prop rathole 30 19
+prop mud_burrow 28 18
+text 28 15 "6호 바닥이 꺼져 흙이 드러났다. 흙이 군데군데 봉긋하다 — 무언가 밑에서 다닌다." cond="UQ04_COLD == 0"
+text 28 15 "6호 흙이 얼어 돌처럼 굳었다. 봉긋한 자리마다 흙이 갈라졌다." cond="UQ04_COLD == 1"
+# ---------------------------------------------------------------- 뒤 철길 하역장(냉동 화물칸 — 관통 출구)
+prop reefer_wagon 35 16
+text 37 18 "냉동 화물칸." w=2 scene=UQ04_WAGON
+prop crate_army 44 16
+box 44 16 crate name="하역장 군납 상자"
+prop rail_stop 45 20
+text 45 18 "화물 철로가 셔터 밑으로 이어진다. 셔터가 반쯤 들려 바깥 빛이 샌다 — 옛 화물 철로 쪽으로 나갈 수 있다."
+# ---------------------------------------------------------------- 7호 앞을 지키는 정착민(UQ-04 결과의 풍경) · RE-045 대치
+npc N-DS-B1 32 12 N look=M2-S4-HR01-H1-T05-1-PF12-HD05-EY00 cond="UQ04_BC >= 1 and GAME_DAY > UQ04_BC_DAY and UQ04_THAW == 0 and UQ04_FEUD != 1 and UQ04_JH != 2 and UQ04_LEFT > 0" bark="이장님 몫이야. 하루 네 상자씩. 쥐 따라오면 큰일이라."
+npc N-DS-B2 33 12 N look=M1-S3-HR02-H1-T05-1-PF12-HD02-EY00 cond="UQ04_BC >= 1 and GAME_DAY > UQ04_BC_DAY and UQ04_THAW == 0 and UQ04_FEUD != 1 and UQ04_JH == 2 and GAME_DAY <= UQ04_JH_DAY + 4" bark="…누가 먼저 털어 갔어. 선반에 짐표 한 장만 남았네."
+npc N-DS-S1 36 12 N look=F1-S3-HR02-H1-T06-2-PF12-HD03-EY00-PR041 cond="UQ04_SA >= 1 and GAME_DAY > UQ04_SA_DAY and UQ04_THAW == 0 and UQ04_FEUD != 1 and UQ04_JH != 2 and UQ04_LEFT > 0" bark="환승촌 몫. 꽁치 한 깡통이면 넷이 하루 버텨."
+npc N-DS-S2 37 12 N look=F1-S3-HR02-H1-T06-2-PF12-HD03-EY00-PR041 cond="UQ04_SA >= 1 and GAME_DAY > UQ04_SA_DAY and UQ04_THAW == 0 and UQ04_FEUD != 1 and UQ04_JH == 2 and GAME_DAY <= UQ04_JH_DAY + 4" bark="여기 비었어. 상인회 수레 자국이야. 역장님께 뭐라고 하지."
+npc N-DS-J1 33 11 N look=M1-S2-HR01-H1-T03-2-PF00-HD05-EY00-PR040 cond="UQ04_JH == 1 and GAME_DAY >= UQ04_JH_DAY + 1 and UQ04_THAW == 0" bark="상인회 짐이오. 함 소장 짐표 있소. 비키쇼."
+npc N-DS-B1 31 12 E look=M2-S4-HR01-H1-T05-1-PF12-HD05-EY00 cond="UQ04_FEUD == 1"
+npc N-DS-B2 31 11 E look=M1-S3-HR02-H1-T05-1-PF12-HD02-EY00 cond="UQ04_FEUD == 1"
+npc N-DS-S1 37 12 W look=F1-S3-HR02-H1-T06-2-PF12-HD03-EY00-PR041 cond="UQ04_FEUD == 1"
+npc N-DS-S2 37 11 W look=M1-S3-HR02-H1-T06-2-PF12-HD00-EY00-PR041 cond="UQ04_FEUD == 1"
+trigger 28 11 w=3 h=2 scene=UQ04_FEUD cond="UQ04_FEUD == 1"
+# 상인회 짐꾼이 7호에 자리 잡은 왕쥐에게 물려 도망쳤다(UQ04_JH 4 — 재미 검수 '엉뚱한 짓')
+prop cart_tipped_ds 29 12 cond="UQ04_JH == 4"
+text 29 12 "엎어진 상인회 수레. 바퀴 하나가 아직 헛돈다. 손잡이에 짐표 '독산 7호 · 함', 문턱까지 끌린 핏자국." w=2 cond="UQ04_JH == 4"
+# ---------------------------------------------------------------- 적(던전 DG-DS 냉동 창고 몫): 굴 = 왕쥐(우두머리) · 시궁쥐 · 굴쥐 / 6호 굴쥐 / 3호 흙 굴쥐 · 하역장 시궁쥐
+enemy CR-097 22 5 boss=1 cond="UQ04_RATK == 0"
+enemy CR-097 36 5 cond="UQ04_RATK == 4"
+enemy CR-095 19 4 cond="UQ04_COLD == 0"
+enemy CR-095 25 3 cond="UQ04_COLD == 0"
+enemy CR-095 24 6 cond="UQ04_COLD == 0"
+enemy CR-096 20 6 cond="UQ04_COLD == 0"
+enemy CR-096 14 6
+enemy CR-096 28 18
+enemy CR-095 42 18
+enemy CR-095 9 11
+# 재입주 자리(1-D0 — 흙 칸이 아닌 바닥)
+mark refill1 6 12 E
+mark refill2 22 11 E
+mark refill3 42 17 W

@@ -110,6 +110,8 @@ static func _look(w: Dictionary) -> String:
 		return "gas"
 	if str(w.get("zone", "")) == "smoke":
 		return "smoke"
+	if str(w.get("zone", "")) == "bait":                               # 1-D3 미끼(W-068 썩은 고기)
+		return "bait"
 	match str(w.get("blast_kind", "")):
 		"emp": return "pulse"
 		"plasma": return "plasma"
@@ -223,6 +225,19 @@ func disarm_step(m: Dictionary, dt: float, skill: float) -> String:
 	return "busy"
 
 
+## 미끼(1-D3): p에서 r 안의 가장 가까운 냄새 지대(없으면 빈 사전)
+func bait_near(p: Vector2, r: float) -> Dictionary:
+	var best := {}
+	var bd := r
+	for z in zones:
+		if z["kind"] == "bait":
+			var d := (z["p"] as Vector2).distance_to(p)
+			if d <= bd:
+				bd = d
+				best = z
+	return best
+
+
 ## 지대 묻기: kind 지대 안인가(연막 · 최루 판정)
 func in_zone(p: Vector2, kind: String) -> bool:
 	for z in zones:
@@ -254,6 +269,9 @@ func _draw_ground() -> void:
 	for z in zones:
 		if z["kind"] == "fire":
 			_draw_zone(_ground, tex, z)
+		elif z["kind"] == "bait" and CombatFx.has_set("bait_lying"):     # 미끼: 바닥에 누운 고기(냄새 김 · 파리는 인물 위 층)
+			var rb := CombatFx.region("bait_lying", 0.0, 0)
+			_ground.draw_texture_rect_region(tex, Rect2((z["p"] as Vector2) - rb.size * 0.5, rb.size), rb)
 	for m in mines:
 		var on := float(m["arm"]) <= 0.0 and ((float(m["alarm"]) >= 0.0 and int(frame / 4) % 2 == 0) or int(frame / 40) % 2 == 0)
 		var rg := CombatFx.region("mine_" + str(m["kind"]), 0.0, 1 if on else 0)
@@ -268,7 +286,7 @@ static func _draw_zone(ci: CanvasItem, tex: Texture2D, z: Dictionary) -> void:
 	if not CombatFx.has_set(set_name):
 		return
 	var r := float(z["r"])
-	var n := maxi(1, int(r * r / (520.0 if z["kind"] == "fire" else 300.0)))
+	var n := maxi(1, int(r * r / (520.0 if z["kind"] == "fire" else (1400.0 if z["kind"] == "bait" else 300.0))))   # 미끼 냄새는 성기게(김 몇 가닥)
 	var k0 := int(float(z["t"]) * 5.0)
 	for i in n:
 		if float(z["t"]) < 1.0 and (i + k0) % 2 == 1:

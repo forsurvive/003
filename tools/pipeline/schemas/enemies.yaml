@@ -12,7 +12,8 @@
 # 1-D 던전(대방 지하차도): 변이 미국가재 CR-121(§4 — 집게 14, 2~3마리) · 침수 구울 CR-206(§7 — 무릎 물속에 엎드려 있다가 일어나 기습)
 doc: 14_creatures-enemies.md
 id_column: ID
-rows: [CR-002, CR-095, CR-104, CR-105, CR-106, CR-107, CR-108, CR-420, CR-421, CR-423, CR-200, CR-201, CR-202, CR-401, CR-402, CR-403, CR-405, CR-435, CR-436, CR-437, CR-438, CR-456, CR-457, CR-473, CR-500, CR-513, CR-534, CR-305, CR-313, CR-320, CR-136, CR-466, CR-472, CR-097, CR-204, CR-205, CR-306, CR-121, CR-206]
+# 1-D3 독산 육가공 단지: 알집바퀴 CR-004(§3.1 — 10초마다 큰바퀴 부화 · 동시 최대 6 · 처치 시 50% 도주) · 굴쥐 CR-096(§4.1 — 흙 칸 땅속 이동 · 흙 들썩임 1.0초)
+rows: [CR-002, CR-095, CR-104, CR-105, CR-106, CR-107, CR-108, CR-420, CR-421, CR-423, CR-200, CR-201, CR-202, CR-401, CR-402, CR-403, CR-405, CR-435, CR-436, CR-437, CR-438, CR-456, CR-457, CR-473, CR-500, CR-513, CR-534, CR-305, CR-313, CR-320, CR-136, CR-466, CR-472, CR-097, CR-204, CR-205, CR-306, CR-121, CR-206, CR-004, CR-096]
 columns:
   ID: {field: id, type: id, pattern: "^CR-\\d{3}$", required: true}
   이름: {field: name, type: str, required: true}
@@ -36,5 +37,5 @@ gaps:
   attack: {skip_none: true, default: "'물기 18' if id == 'CR-500' else None", only_missing: true, why: "§10.2 보스 총람에 피해 열이 없다 — 외눈은 사나운 들개(물기 12)보다 한 단계 위, 백구(CR-536 물기 18)와 같은 핏줄"}
   speed: {skip_none: true, default: "4.8 if id == 'CR-500' else (0 if id == 'CR-320' else None)", only_missing: true, why: "§10.2에 속도 열이 없다 — 들개(4.5)보다 조금 빠른 우두머리"}
   pattern: {skip_none: true, default: "'무리를 먼저 보내고 2층 난간에서 지켜본다 → 무리 절반 이하면 울부짖고 돌진 → HP 30% 이하 숲으로 도주(§10.3)' if id == 'CR-500' else None", only_missing: true, why: "§10.3 보스 상세 페이즈"}
-  radius: {default: "0.2 if id == 'CR-002' else (0.28 if id in ('CR-104', 'CR-105', 'CR-106', 'CR-107', 'CR-108', 'CR-500', 'CR-095', 'CR-136', 'CR-121') else (0.4 if id == 'CR-097' else 0.3))", why: "충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다"}
-  part_weights: {default: "'PW-A' if id == 'CR-002' else ('PW-C' if id in ('CR-104', 'CR-105', 'CR-106', 'CR-107', 'CR-108', 'CR-500', 'CR-095', 'CR-136', 'CR-097', 'CR-121') else 'PW-H')", why: "부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')"}
+  radius: {default: "0.2 if id == 'CR-002' else (0.28 if id in ('CR-104', 'CR-105', 'CR-106', 'CR-107', 'CR-108', 'CR-500', 'CR-095', 'CR-136', 'CR-121', 'CR-096') else (0.4 if id in ('CR-097', 'CR-004') else 0.3))", why: "충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다"}
+  part_weights: {default: "'PW-A' if id == 'CR-002' else ('PW-C' if id in ('CR-104', 'CR-105', 'CR-106', 'CR-107', 'CR-108', 'CR-500', 'CR-095', 'CR-136', 'CR-097', 'CR-121', 'CR-096') else ('PW-A' if id == 'CR-004' else 'PW-H'))", why: "부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')"}

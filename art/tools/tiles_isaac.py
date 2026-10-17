@@ -431,6 +431,7 @@ def s07_tiles():
         "turf_a": _gcrop("s07", "turf", 0),                       # 1-11i 고척 돔 그라운드
         "flood_a": _gcrop("s07", "flood", 0),                     # 1-D 던전 침수(발목 · 허리)
         "flood_b": _gcrop("s07", "flood_deep", 0),
+        "soil_a": _gcrop("s07", "soil", 0),                       # 1-D3 실내 흙 칸(굴쥐)
     }
 
 

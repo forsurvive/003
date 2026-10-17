@@ -242,6 +242,10 @@ QUAD = {
     # 털 빠진 꼬리(옴, 군데군데 분홍 살과 남은 검은 고리) · 몸통에도 옴 자국
     "raccoon": dict(w=46, h=24, foot=(22, 21), px=2, body=(21, 14, 10, 6), head=(32, 12, 6, 5.5), leg=3, fur=["P03", "P04", "P05", "P07"],
                     skin=["P40", "P41", "P42"], eye="P01", tail="mangy", ears=True, mange=True, ribs=False),
+    # 굴쥐 CR-096(SD-14 §4.1 '흙빛 팔레트 + 땅속에서 머리만 내민 전용 프레임', 1-D3 독산): 시궁쥐보다 낮고 통통한 흙빛 몸 · 귀는 털 속에 묻힌 점 ·
+    # 거의 감긴 작은 눈 · 넓적한 분홍 코 · 먹선 밖으로 튀어나온 누런 앞니 넷 · 앞발의 흰 굴 파기 발톱 · 뭉툭한 짧은 꼬리 · 털에 묻은 흙
+    "mole": dict(w=44, h=24, foot=(20, 21), px=2, body=(18, 13, 10, 5), head=(29, 13, 5.5, 4.8), leg=3, fur=["P16", "P17", "P18", "P19"],
+                 skin=["P40", "P41", "P42"], eye="P01", tail="stub", ears=False, mange=False, ribs=False),
 }
 
 
@@ -267,6 +271,10 @@ def quad(kind, frame=0, pose="walk"):
             col = fur[0] if far else fur[1]
             d.line([hx, by + 2 - bob, fx, fy - 1], fill=col, width=2)
             d.point((fx + 1, fy - 1), fill=C("P02"))
+            if kind == "mole" and end == "front":                          # 굴 파기 발톱: 앞발 끝 흰 갈퀴 셋(먼 발은 한 단 어둡게)
+                cl = C("P07") if far else C("P08")
+                d.line([fx + 1, fy, fx + 4, fy], fill=cl); d.point((fx + 3, fy - 1), fill=cl); d.point((fx + 4, fy - 1), fill=C("P07"))
+                d.point((fx + 2, fy + 1) if fy + 1 < q["h"] else (fx + 2, fy), fill=C("P06"))
     body = Image.new("RGBA", img.size, CLEAR)
 
     def mange(nx, ny, col):
@@ -331,6 +339,18 @@ def quad(kind, frame=0, pose="walk"):
         sx = round(hxc + hrx - 1)
         bd.ellipse([sx - 2, hyb, sx + 3, hyb + 3], fill=C("P08"))                  # 흰 주둥이
         bd.point((sx + 3, hyb + 1), fill=C("P01")); bd.point((sx + 2, hyb + 1), fill=C("P01"))
+    elif kind == "mole":                                                   # 굴쥐: 털 속에 묻힌 귀(점) · 넓적한 분홍 코 · 거의 감긴 눈 · 흙 묻은 털
+        sx = round(hxc + hrx - 2)
+        bd.ellipse([sx - 2, hyb - 1, sx + 4, hyb + 4], fill=fur[3])                                 # 밝은 넓적 주둥이
+        bd.line([sx - 1, hyb + 3, sx + 3, hyb + 3], fill=fur[1])
+        bd.rectangle([sx + 3, hyb, sx + 5, hyb + 1], fill=ramp(q["skin"])[1]); bd.point((sx + 5, hyb), fill=ramp(q["skin"])[2])
+        bd.line([round(hxc), hyb - 2, round(hxc + 2), hyb - 2], fill=C("P01"))                     # 실눈
+        bd.point((round(hxc + 1), hyb - 3), fill=fur[3])
+        bd.ellipse([round(hxc - 4), hyb - 4, round(hxc - 2), hyb - 2], fill=fur[0])                 # 털 속에 묻힌 귀
+        bd.arc([round(hxc - hrx - 1), hyb - 6, round(hxc), hyb + 6], 100, 260, fill=fur[0])         # 목 주름(머리와 몸을 가른다)
+        for gx, gy in ((bx - 6, by - 3), (bx - 1, by + 2), (bx + 4, by - 2), (bx - 3, by - 1)):
+            bd.point((round(gx), round(gy - bob)), fill=C("P21"))                                   # 털에 묻은 흙(밝은 알갱이)
+        bd.arc([round(bx - brx), round(by - bob - bry), round(bx + brx), round(by - bob + bry)], 200, 340, fill=fur[3])   # 등 윤곽 빛
     else:
         ex = round(hxc - 1)                                                # 동그란 귀(안쪽 분홍)
         bd.ellipse([ex - 2, hyb - 7, ex + 2, hyb - 3], fill=fur[2])
@@ -389,6 +409,10 @@ def quad(kind, frame=0, pose="walk"):
     if kind in ("rat", "ratking"):                                        # 수염(먹선 밖)
         sx2, sy2 = round(q["head"][0] + q["head"][2] + 2), round(q["head"][1] - bob)
         d.line([sx2, sy2, sx2 + 3, sy2 - 1], fill=C("P07")); d.line([sx2, sy2 + 1, sx2 + 3, sy2 + 2], fill=C("P07"))
+    if kind == "mole":                                                    # 굴쥐 앞니 넷(위 둘 · 아래 둘 — 입을 다물어도 먹선 밖으로)
+        tx2, ty2 = round(q["head"][0] + q["head"][2] + 1), round(q["head"][1] - bob) + 4
+        d.line([tx2, ty2, tx2, ty2 + 2], fill=C("P49")); d.line([tx2 + 1, ty2, tx2 + 1, ty2 + 1], fill=C("P48"))
+        d.point((tx2 + 1, ty2 + 2), fill=C("P01"))
     if kind == "ratking":                                                 # 누렇게 휜 앞니 둘(먹선 밖으로 삐져나온다) · 붉은 눈 두 점
         tx2, ty2 = round(q["head"][0] + q["head"][2] + 3), round(q["head"][1] - bob) + 3
         d.line([tx2, ty2, tx2, ty2 + 2], fill=C("P49")); d.line([tx2 + 1, ty2, tx2 + 1, ty2 + 2], fill=C("P48"))
@@ -419,6 +443,10 @@ def quad(kind, frame=0, pose="walk"):
             d.line([(kx, ky), (kx + dx // 2, ky + dy // 2), (kx + dx, ky + dy)], fill=sk[k % 2 + 1])
         d.ellipse([kx - 2, ky - 2, kx + 2, ky + 2], fill=sk[0])               # 매듭(굳은 피딱지 · 흙)
         d.point((kx - 1, ky - 1), fill=sk[2]); d.point((kx + 1, ky), fill=C("P01"))
+    elif q["tail"] == "stub":                                             # 굴쥐: 뭉툭한 짧은 꼬리(맨살)
+        sk = ramp(q["skin"])
+        d.line([(tx + 1, by + 1 - bob), (tx - 3, by + 2 - (frame % 2))], fill=sk[1], width=2)
+        d.point((tx - 4, by + 2 - (frame % 2)), fill=sk[0])
     else:
         pts = [(tx, by + 1 - bob), (tx - 5, by + 3), (tx - 10, by + 2 + (frame % 2)), (tx - 14, by + 4)]
         d.line(pts, fill=ramp(q["skin"])[1])

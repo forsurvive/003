@@ -47,6 +47,8 @@ const UNNAMED := [["N-TRADER", "떠돌이 고물상", ""], ["N-REFUGEE", "피난
 	["N-SA-G1", "승강장 경비", "JC_SA"], ["N-SA-G2", "승강장 경비", "JC_SA"], ["N-SA-G3", "승강장 경비", "JC_SA"], ["N-SA-R1", "환승촌 주민", "JC_SA"],   # 1-8f 사당 환승촌
 	["N-SA-R2", "환승촌 주민", "JC_SA"], ["N-SA-R3", "환승촌 주민", "JC_SA"], ["N-SA-R4", "버섯 일꾼", "JC_SA"],
 	["N-DB-1", "대방 분대원", ""], ["N-DB-2", "대방 분대원", ""],          # 1-D1 UQ-71 대방 지하차도
+	["N-DS-B1", "봉천 감시조", "JC_BC"], ["N-DS-B2", "봉천 감시조", "JC_BC"], ["N-DS-S1", "승강장 경비", "JC_SA"], ["N-DS-S2", "승강장 경비", "JC_SA"],   # 1-D3 UQ-04 독산 7호 앞
+	["N-DS-J1", "상인회 짐꾼", ""], ["N-DS-J2", "상인회 짐꾼", ""],
 	["N-YT-1", "패거리 수금원", ""], ["N-YT-2", "패거리 척후", ""], ["N-BC-1", "봉천 감시조", "JC_BC"], ["N-BC-2", "봉천 감시조", "JC_BC"], ["N-BC-3", "봉천 감시조", "JC_BC"],   # 1-11b SQ-S02
 	["N-PS-1", "파수-3", ""],   # 1-11c SQ-S04 관제망 경비 로봇
 	["N-PS-2", "경비 파수-3", ""],   # 1-11j SQ-S11 영등포 경찰서 서장실 경비판
@@ -221,6 +223,11 @@ func _init() -> void:
 	for k in ("GUIDE INTRO LIGHT LIGHT_DAY ASK HAL HAL_DAY HFEE PATH TRACE USED FOUND SOL SHIFT SIDE FEE FN FW FS FR FD HAGGLED PASSED RADIO GAP_DAY "
 			+ "PATROL_DAY VENT MET_EOM MET_HAL MET_AJAE BACKDOOR PHOTO PHOTO_TRY FORGE_TRY RING1 LASTFEE PATROL RULES").split(" "):
 		vars.declare("U02_" + k, "int", 0)
+	# UQ-04 7호 냉동 창고(1-D3, SD-05 UQ-04): 뜻은 script/act1/UQ-04.txt 머리 주석 — OPEN 7호 문 · GONE 나간 상자 · LEFT 남은 상자(보여 주기) · COLD 냉기를 굴로 ·
+	# DUE 냉동기 멈출 날 · BC · SA 알린 날 · JH 함준호 · FEUD RE-045 · RATK 왕쥐 · SHELF 선반 그림(보여 주기) · DS_VALVE 배수 밸브
+	for k in "KNOW OPEN OPEN_DAY LOCK DUE THAW THAW_DAY GONE LEFT COLD COLD_DAY BC BC_DAY SA SA_DAY JH JH_DAY LEAK FEUD FEUD_DAY RATK SHARD SHELF SOL REWARD LINK2 LINK3 FLED DATE SIGN PRICE BACK REFUND".split(" "):
+		vars.declare("UQ04_" + k, "int", 0)
+	vars.declare("DS_VALVE", "int", 0)
 	Dungeon.load_db()                                                    # 던전 정리 변수(1-D0): DG_<접미> · _DAY · _ROLL
 	for did in Dungeon.db:
 		for sfx in ["", "_DAY", "_ROLL"]:

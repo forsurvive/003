@@ -1020,6 +1020,10 @@ from props_u02 import PROPS_U02, STATES_U02                            # U02 남
 for _k in PROPS_U02:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_U02)
+from props_ds import PROPS_DS, STATES_DS                               # 독산 육가공 단지(1-D3): 가공 라인 · 냉동 창고 7호 · 굴 · 냉동 화물칸
+for _k in PROPS_DS:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_DS)
 from props_trap import PROPS_TRAP, STATES_TRAP, burnt_states       # 함정 · 환경 폭발(1-9c, SD-11 §9.2 · §9.3)
 for _k in PROPS_TRAP:
     assert _k not in PROPS, _k
@@ -1037,6 +1041,7 @@ STATES.update(STATES_JM)
 STATES.update(STATES_BK)
 STATES.update(STATES_CG)
 STATES.update(STATES_TRAP)
+STATES.update(STATES_DS)
 STATES.update(STATES_BS)
 STATES.update(STATES_S04)
 STATES.update(STATES_S03)

@@ -613,6 +613,28 @@ def flood_tex(seed, deep=False):
     return a
 
 
+def soil_tex(seed):
+    """실내 흙 칸(1-D3 독산 — 무너진 벽 너머 쥐 굴 · 꺼진 냉동실 바닥, SD-14 L423 굴쥐 땅속 이동 칸): 축축한 짙은 흙 + 부서진
+    콘크리트 조각 + 쥐가 판 작은 구멍과 긁힌 자국 + 젖은 얼룩. 바깥 흙(dirt)보다 한 단 어둡고 거칠다 — 바닥 타일 사이에서 '여기는 판다'가 읽히게."""
+    a = np.full((CELL, CELL), t("P17"), np.uint8)
+    nz = equalize(fbm(CELL, [(32, 0.6), (10, 0.4)], seed))
+    a[nz < 0.2] = t("P16")
+    a[nz > 0.86] = t("P18")
+    for x, y, rnd in scatter(seed + 3, 16):                         # 부서진 콘크리트 조각(밝은 윗면 + 그늘)
+        if rnd.random() < 0.35:
+            stamp(a, x, y, [".aa", "abb", ".cc"], {"a": "P06", "b": "P05", "c": "P03"})
+    for x, y, rnd in scatter(seed + 7, 23):                         # 쥐구멍(검은 타원 + 흙 테)
+        if rnd.random() < 0.3:
+            stamp(a, x, y, [".dd.", "deed", ".dd."], {"d": "P19", "e": "P01"})
+    for x, y, rnd in scatter(seed + 11, 9):                         # 발톱 긁힘(짧은 세 줄)
+        if rnd.random() < 0.25:
+            stamp(a, x, y, ["f.f.f", ".f.f."], {"f": "P16"})
+    for x, y, rnd in scatter(seed + 13, 7):                         # 흙 알갱이
+        if rnd.random() < 0.5:
+            put(a, x, y, "P19" if rnd.random() < 0.5 else "P16")
+    return a
+
+
 def tunnel_tex(seed):
     """지하 연결 통로·배수구 콘크리트(1-4 J-09·J-10): 어둡고 축축한 판 + 물때 얼룩 + 거푸집 이음매 + 짧은 금."""
     a = np.full((CELL, CELL), t("P05"), np.uint8)
@@ -968,11 +990,14 @@ def sets():
                  decals=["debris"], hard=1),
             dict(name="flood_deep", A=flood_tex(361, deep=True), B=None, spread=0, pri=0, rim=0, shade=1, vthr=256, dens=1,
                  decals=[], hard=1),
+            # 1-D3 독산: 실내 흙 칸(굴쥐가 파고드는 바닥)
+            dict(name="soil", A=soil_tex(371), B=None, spread=0, pri=0, rim=0, shade=1, vthr=256, dens=3,
+                 decals=["debris"], hard=1),
         ],
         "mat_of": {"panel": 0, "panel_sheen": 0, "panel_scuff": 0, "guide_h": 0, "guide_v": 0, "guide_x": 0, "guide_t": 0, "grate_a": 1, "grate_b": 1, "grate_c": 1,
                    "lino_a": 2, "lino_b": 2, "clinic_a": 3, "clinic_b": 3, "concrete_a": 4, "carpet_a": 5, "wood_a": 6,
                    "panel_mold": 7, "grate_mold": 8, "jangpan_a": 9, "terrazzo_a": 10, "tunnel_a": 11, "steps_a": 12, "epoxy_a": 13, "turf_a": 14,
-                   "flood_a": 15, "flood_b": 16},
+                   "flood_a": 15, "flood_b": 16, "soil_a": 17},
         "force": {"guide_h": "guide_h", "guide_v": "guide_v", "guide_x": "guide_x", "guide_t": "guide_t"},
         "flag_of": {k: 1 for k in ("wall_top_s", "wall_top_w", "wall_top_ws", "wall_top", "face_top", "face_top_pipe", "face_top_vent",
                                    "face_bot", "face_bot_outlet", "balcony", "balcony_door")},

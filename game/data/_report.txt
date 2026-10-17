@@ -1,5 +1,5 @@
 데이터 빌드 v0 — 오류 0
-  enemies: 39행
+  enemies: 41행
   items_aid: 12행
   items_apparel: 58행
   items_apparel_head: 31행
@@ -19,14 +19,18 @@
   skills_text: 13행
   special: 10행
   stats_text: 7행
-  throwables: 8행
+  throwables: 9행
   weapons: 59행
 공식 대조 통과: 50칸
 정합 목록(문서에 없는 필드, 기본값 사용):
   - 14_creatures-enemies.md CR-002 · radius = 0.2 — 충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다
   - 14_creatures-enemies.md CR-002 · part_weights = 'PW-A' — 부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')
+  - 14_creatures-enemies.md CR-004 · radius = 0.4 — 충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다
+  - 14_creatures-enemies.md CR-004 · part_weights = 'PW-A' — 부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')
   - 14_creatures-enemies.md CR-095 · radius = 0.28 — 충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다
   - 14_creatures-enemies.md CR-095 · part_weights = 'PW-C' — 부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')
+  - 14_creatures-enemies.md CR-096 · radius = 0.28 — 충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다
+  - 14_creatures-enemies.md CR-096 · part_weights = 'PW-C' — 부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')
   - 14_creatures-enemies.md CR-097 · radius = 0.4 — 충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다
   - 14_creatures-enemies.md CR-097 · part_weights = 'PW-C' — 부위 표 코드(SD-14 §3.1 본문 'PW-A', §9.1 'PW-H')
   - 14_creatures-enemies.md CR-104 · radius = 0.28 — 충돌 반지름은 SD-11 §4.3 크기 등급(소형 0.2t, 인간형 0.3t)에서 정한다. SD-14 행에 열이 없다
@@ -167,6 +171,8 @@
   - 13_items.md W-063 · arm_s = 1.0 — SD-13 §3.8.4: 지뢰는 설치 1초 뒤 활성
   - 13_items.md W-064 · fuse = 0.0 — SD-11 §3.4: 모든 수류탄 시간 신관 2.5초 — 지대 투척물(화염병·최루·연막)은 착탄 즉시
   - 13_items.md W-064 · arm_s = 1.0 — SD-13 §3.8.4: 지뢰는 설치 1초 뒤 활성
+  - 13_items.md W-068 · fuse = 0.0 — SD-11 §3.4: 모든 수류탄 시간 신관 2.5초 — 지대 투척물(화염병·최루·연막)은 착탄 즉시
+  - 13_items.md W-068 · arm_s = 0.0 — SD-13 §3.8.4: 지뢰는 설치 1초 뒤 활성
   - 13_items.md W-001 · crit_dmg = 7 — SD-13 표에 치명 피해 열이 없다(SD-11 부록 C 필드)
   - 13_items.md W-001 · min_spread = 1.0 — SD-13 표에 최소 퍼짐 열이 없다 — SD-11 §3.2 계열 범위(레이저·저격 0° · 기관단총·돌격 3° · 회전 기관포 4° · 그 밖 1°)
   - 13_items.md W-001 · cone = 0.0 — SD-13 표에 펠릿 원뿔 열이 없다 — SD-11 §3.2 산탄 6°~12°(짧을수록 넓게) · 화염 25°

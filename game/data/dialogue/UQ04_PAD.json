@@ -1,0 +1,343 @@
+{
+ "id": "UQ04_PAD",
+ "title": "7호 번호 자물쇠",
+ "loc": "L-R01-29",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "GUESS": 6,
+  "WRONG": 9,
+  "CODE": 11,
+  "HACK": 14,
+  "OPENED": 17,
+  "LOCK": 19,
+  "RELOCK": 22,
+  "TRAPPED": 25,
+  "RELOCK2": 26,
+  "TORN": 28,
+  "REOPEN": 30,
+  "THAWED": 33
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "UQ04_THAW == 1",
+   "to": "THAWED"
+  },
+  {
+   "op": "if",
+   "cond": "UQ04_OPEN >= 1 and UQ04_LOCK == 0",
+   "to": "OPENED"
+  },
+  {
+   "op": "if",
+   "cond": "UQ04_OPEN >= 1 and UQ04_LOCK == 1",
+   "to": "RELOCK"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "서리 낀 철판에 숫자판 열 칸. 위 등은 붉다. 문틈으로 냉기가 발목을 핥는다 — 이 건물에서 여기만 차다."
+  },
+  {
+   "op": "if",
+   "cond": "UQ04_KNOW == 0 and UQ04_DATE == 0",
+   "to": "GUESS"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "그 밤의 날짜, 10월 22일 — 1 · 0 · 2 · 2",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "CODE",
+     "id": "UQ04_PAD:1:0"
+    },
+    {
+     "text": "다른 번호를 눌러 본다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "WRONG",
+     "id": "UQ04_PAD:1:1"
+    },
+    {
+     "text": "판을 뜯어 회로를 잇는다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "과학",
+       "min": 45
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "HACK",
+     "id": "UQ04_PAD:1:2"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ04_PAD:1:3"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "네 자리. 판 귀퉁이에 매직 글씨 '7 — 날짜 바꿀 것'."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "무슨 날짜일까. 그 마지막 밤을 기억하는 것이 이 건물 어딘가에 남아 있을지도 — 사무실 벽이든, 누가 숨어 있던 칸이든."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "아무 번호나 눌러 본다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "WRONG",
+     "id": "UQ04_PAD:2:0"
+    },
+    {
+     "text": "판을 뜯어 회로를 잇는다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "과학",
+       "min": 45
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "HACK",
+     "id": "UQ04_PAD:2:1"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ04_PAD:2:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "삑 — 붉은 등이 두 번 깜박인다. 안에서 무언가 낮게 웅웅 돈다. 냉동기는 아직 산다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "딸깍. 등이 초록으로 바뀐다. 두꺼운 문이 안쪽으로 밀려 열리고 하얀 김이 바닥을 따라 쏟아진다."
+  },
+  {
+   "op": "cmd",
+   "name": "uq04",
+   "args": [
+    "open",
+    "1"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "판을 뜯는다. 전선 둘을 맞대자 불꽃이 튀고 — 딸깍. 문이 열린다. 판은 이제 엉망이지만 등은 초록이다."
+  },
+  {
+   "op": "cmd",
+   "name": "uq04",
+   "args": [
+    "open",
+    "2"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "7호 문이 열려 있다. 초록 등. 문틈 너머 선반의 서리선."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "문을 닫고 잠근다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "LOCK",
+     "id": "UQ04_PAD:3:0"
+    },
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ04_PAD:3:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "무거운 문을 밀어 닫는다. 딸깍. 붉은 등."
+  },
+  {
+   "op": "cmd",
+   "name": "uq04",
+   "args": [
+    "lock"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "7호 문은 잠겨 있다. 붉은 등."
+  },
+  {
+   "op": "if",
+   "cond": "UQ04_RATK == 3 and UQ04_SHARD == 0",
+   "to": "TRAPPED"
+  },
+  {
+   "op": "goto",
+   "to": "RELOCK2"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "귀를 대 본다. 아무 소리도 없다. 아까의 긁는 소리가 그쳤다."
+  },
+  {
+   "op": "if",
+   "cond": "UQ04_OPEN == 2",
+   "to": "TORN"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "그 밤의 날짜, 10월 22일 — 1 · 0 · 2 · 2",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "REOPEN",
+     "id": "UQ04_PAD:4:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ04_PAD:4:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "숫자판은 뜯긴 채 매달려 있다. 아까 맞댄 전선 둘이 늘어졌다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "그 밤의 날짜, 10월 22일 — 1 · 0 · 2 · 2",
+     "tags": [],
+     "cond": "UQ04_KNOW == 1 or UQ04_DATE == 1",
+     "fx": "",
+     "to": "REOPEN",
+     "id": "UQ04_PAD:5:0"
+    },
+    {
+     "text": "늘어진 전선을 다시 맞댄다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "REOPEN",
+     "id": "UQ04_PAD:5:1"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ04_PAD:5:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "딸깍. 초록 등. 김이 쏟아진다."
+  },
+  {
+   "op": "cmd",
+   "name": "uq04",
+   "args": [
+    "unlock"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "판의 등이 꺼졌다. 문은 반쯤 열린 채 굳었고, 문턱에 물이 고였다. 단내 섞인 썩은 냄새."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-04.txt"
+}

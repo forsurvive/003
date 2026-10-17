@@ -1,0 +1,97 @@
+{
+ "id": "DS_VALVE",
+ "title": "가공장 배수 밸브",
+ "loc": "L-R01-29",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TURN": 3,
+  "OPEN": 6
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "DS_VALVE == 1",
+   "to": "OPEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "도랑 끝 배수 밸브. 큰 붉은 바퀴가 녹으로 붙었다. 도랑 철망 칸마다 갈색 알집 껍질이 끼어 있다 — 딸깍, 딸깍."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "녹을 긁어 내고 바퀴를 돌린다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 25
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "TURN",
+     "id": "DS_VALVE:1:0"
+    },
+    {
+     "text": "바퀴를 억지로 돌린다",
+     "tags": [
+      {
+       "k": "stat",
+       "name": "힘",
+       "min": 6
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "TURN",
+     "id": "DS_VALVE:1:1"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "DS_VALVE:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "끼이익 — 바퀴가 돈다. 관 속에서 우르릉 소리가 나더니 도랑에 고인 물이 한꺼번에 쓸려 내려간다. 알집 껍질이 둥둥 떠서 철망 아래로 사라진다."
+  },
+  {
+   "op": "cmd",
+   "name": "uq04",
+   "args": [
+    "valve"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "밸브는 열려 있다. 도랑 바닥이 젖었고 알집은 없다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-04.txt"
+}

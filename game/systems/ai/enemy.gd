@@ -7,7 +7,7 @@
 class_name Enemy
 extends Actor
 
-const DOGS := ["CR-104", "CR-095", "CR-107", "CR-106", "CR-108", "CR-105", "CR-500", "CR-136", "CR-097", "CR-121"]
+const DOGS := ["CR-104", "CR-095", "CR-107", "CR-106", "CR-108", "CR-105", "CR-500", "CR-136", "CR-097", "CR-121", "CR-096", "CR-004"]
 const GHOULS := ["CR-200", "CR-201", "CR-202", "CR-204", "CR-205", "CR-206", "CR-457", "CR-459", "CR-518"]   ## 방사능에 낫는 구울(SD-14 §7.2 '라드 100당 HP +1')
 const FERALS := ["CR-200", "CR-201", "CR-204", "CR-205", "CR-206"]            ## 빛나는 구울 폭발에 HP +30%를 받는 야생 구울
 const BURST_R := 4.0 * 32.0                       ## 빛나는 구울 방사능 폭발 반경(SD-14 CR-202 '반경 4타일')
@@ -15,6 +15,15 @@ const BURST_CD := 8.0                             ## 폭발 간격(SD-11 §7 구
 const HOWL_BUFF := 20.0                           ## 들개 우두머리 울부짖기: 무리 속도 +15% · 피해 +20%(20초, 쿨 30초)
 const HOWL_CD := 30.0
 const RAT_CALL_CD := 20.0                       ## 왕쥐 찍찍 울음(SD-14 CR-097): 12t 안 시궁쥐 둘 호출 · 쿨 20초
+# 1-D3 독산(SD-14 CR-096 · CR-004 · SD-13 W-068 미끼)
+const BAIT_R := 10.0 * 32.0                     ## 미끼 냄새를 맡는 거리(교전 전 · 수색 · 놓침)
+const BAIT_FIGHT_R := 6.0 * 32.0                ## 교전 중이어도 표적이 이보다 멀면 미끼로 간다
+const MOLE_UP_S := 4.0                          ## 굴쥐가 땅 위에서 싸우는 초(그 뒤 흙이면 다시 판다)
+const MOLE_HEAVE_S := 1.0                       ## 흙 들썩임(예비 동작) — SD-14 CR-096 '1.0초'
+const MOLE_UNDER_SPD := 4.0 / 3.0               ## 땅속 4.0t/초 ÷ 땅 위 3.0t/초
+const HATCH_S := 10.0                           ## 알집바퀴 부화 간격(SD-14 CR-004 '10초마다')
+const HATCH_MAX := 6                            ## 동시 최대
+const STIR_S := 15.0                            ## 소리 · 맞음 · 서서 다가오는 사람에 들썩인 뒤 부화를 이어 가는 초
 
 var brain: AIBrain
 var cmb := Combatant.new()
@@ -94,8 +103,26 @@ var _hide_t := 0.0                            ## 표적이 엄폐 뒤에서 버�
 var _burst_on := 0.0                          ## 연사 무기 점사 남은 초(0.6~1.2)
 var _burst_rest := 0.0                        ## 점사 뒤 쉬는 초(0.5~1.0)
 const SAY := {"howl": ["아우우우—!", "우워어어—!"], "rat_call": ["찌이익—!", "끼익! 끼익!"], "flee": ["살려 줘!", "튀어!", "이건 못 해먹겠다!"], "surrender": ["쏘지 마! 항복이야!", "그만, 그만! 손 들었어!"],
-	"drug": ["크흐… 이거면 돼…", "으아아!"], "nade": ["수류탄!", "받아라!"], "back": ["다시 간다!", "덤벼 봐!"], "alarm": ["저기다!", "여기야!"]}
+	"drug": ["크흐… 이거면 돼…", "으아아!"], "nade": ["수류탄!", "받아라!"], "back": ["다시 간다!", "덤벼 봐!"], "alarm": ["저기다!", "여기야!"],
+	"click": ["딸깍.", "딸깍—", "따각."]}
 var _rng := RandomNumberGenerator.new()
+# 1-D3 미끼 · 굴쥐 · 알집바퀴
+var bait_at := Callable()                     ## (p, r) -> Dictionary: 가장 가까운 미끼 냄새 지대(Ordnance.bait_near — 전투 모듈이 준다)
+var _bait := {}                               ## 먹으러 가는 · 먹는 미끼 지대(지대 사전을 그대로 잡는다 — 먹을수록 빨리 사라진다)
+var eating := false
+var mole := false                             ## 굴쥐 CR-096: 흙 칸에서만 땅속으로(SD-14 L423)
+var burrow := ""                              ## "" 땅 위 · under 땅속 · heave 들썩임 · emerge 솟음 · dig 파고듦
+var _bur_t := 0.0
+var _up_t := 0.0
+var _soil_route: Array = []                   ## 땅속 길(흙 칸 가운데 점들)
+var _route_t := 0.0
+var _bur_goal := Vector2.INF
+var nest := false                             ## 알집바퀴 CR-004: 둥지(처음 자리)에서 거의 움직이지 않는다
+var bare := false                             ## 알집이 떠내려갔다(배수 밸브) — 부화 끝
+var hatch_cb := Callable()                    ## (e): 큰바퀴 1~2 부화(전투 모듈 — 동시 최대 6)
+var _stir := 0.0
+var _hatch_t := 0.0
+var _click := false
 # 1-9e4 생물 특수(SD-14 §4.2 · §7.2 · SD-11 §9.2)
 var glow := false                             ## 빛나는 구울(CR-202): 오라 덧그림 · 방사능 폭발
 var rad_at := Callable()                      ## (p) -> 라드/초(RadField.dose_at) — 구울은 방사능에 낫는다
@@ -138,6 +165,10 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 			sheet = "cr_cr095_loco"
 		"CR-097":
 			sheet = "cr_cr097_loco"                                  # 왕쥐(1-11d, SD-14 §4.1 — 한 치수 반 큰 몸 · 흉터 · 엉킨 꼬리 매듭)
+		"CR-096":
+			sheet = "cr_cr096_loco"                                  # 굴쥐(1-D3, SD-14 §4.1 — 흙빛 · 흰 발톱 · 땅속 전용 컷)
+		"CR-004":
+			sheet = "cr_cr004_loco"                                  # 알집바퀴(1-D3, SD-14 §3.1 — 배 끝 알집이 맥동)
 		"CR-136":
 			sheet = "cr_cr136_loco"
 		"CR-121":
@@ -256,6 +287,12 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 		asleep = true
 		var curl: bool = sprite != null and sprite.sprite_frames != null and sprite.sprite_frames.has_animation("sleep_E")
 		set_pose("sleep" if curl else "lie")                        # 웅크려 자는 그림이 있는 개(외눈 · 백구 핏줄)는 그 그림으로
+	mole = row["id"] == "CR-096"
+	nest = row["id"] == "CR-004"
+	if nest:
+		set_pose("pulse")
+	if mole and world is InteriorMap and world.soil_at(world.tile_of(pos)) and not asleep:
+		_set_burrow("under")                                        # 흙 칸에서 시작하면 땅속에 숨어 있다
 	_t_tac = _rng.randf() * 0.5                                    # 전술 갱신을 개체마다 엇갈리게(한 프레임 몰림 방지)
 	_t_per = _rng.randf() * 0.1
 
@@ -318,7 +355,7 @@ func think(dt: float, target: Combatant, nav, shots: Projectiles) -> void:   ## 
 		var pe := per - (2.0 if gassed() else 0.0)                  # 최루(SD-13 W-058): 지대 안 인간형 인지력 −2
 		var sees: bool = not target.dead and sm > 0.0 and dist_t <= Perception.sight_range(pe) * sm
 		var rate: float = Perception.detect_rate(dist_t, pe, {"movement": target.movement, "posture": target.posture,
-			"sneak_skill": target.sneak, "alert": brain.alert(), "in_fov": fov}) * det_mul if sees else 0.0
+			"sneak_skill": target.sneak, "alert": brain.alert(), "in_fov": fov}) * det_mul * (0.4 if eating else 1.0) * _hush_mul(target) if sees else 0.0
 		var hit: bool = cmb.last_hit_from != Vector2.ZERO
 		if asleep:                                                  # 잠(S4): 맞거나, 가까운 소리(0.5+)거나, 바로 옆까지 오면 깬다
 			var near := 2.5 if lurk else 1.5
@@ -330,6 +367,8 @@ func think(dt: float, target: Combatant, nav, shots: Projectiles) -> void:   ## 
 				sees = false
 				rate = 0.0
 		cmb.last_hit_from = Vector2.ZERO
+		if nest and not bare and (hit or _heard >= 0.3 or (sees and dist_t <= 8.0 and target.posture != "crouch")):
+			_stir = STIR_S                                            # 알집바퀴: 소리 · 맞음 · 서서 다가오는 사람에만 들썩인다(웅크려 숨으면 조용)
 		var was := brain.state
 		_intent = brain.tick(step, {"sees": sees and (fov or dist_t <= 3.0), "rate": rate * (0.6 if cmb.crippled.has("head") else 1.0), "target": target.pos(),
 			"hit": hit, "sound": _heard, "sound_at": _heard_at, "at_home": loco.logical.distance_to(brain.home) < 24.0})
@@ -353,6 +392,12 @@ func think(dt: float, target: Combatant, nav, shots: Projectiles) -> void:   ## 
 		return
 	if released:
 		_leave(dt, target, nav)
+		return
+	if mole and _mole_step(dt, target, nav):
+		queue_redraw()
+		return
+	if _bait_step(dt, target, nav):
+		queue_redraw()
 		return
 	_t_tac += dt
 	if _t_tac >= 0.5:                                              # 전술 층
@@ -397,6 +442,13 @@ func _tactics(target: Combatant, nav) -> void:
 		return
 	if goal == "surrender":
 		_path = PackedVector2Array()
+		return
+	if nest:                                                       # 알집바퀴: 둥지 2.5칸 안으로 들어온 표적만 문다 · 아니면 제자리로
+		_path = PackedVector2Array()
+		if goal == "engage" and target.pos().distance_to(brain.home) <= 2.5 * 32.0:
+			_repath(nav, target.pos())
+		elif loco.logical.distance_to(brain.home) > 16.0:
+			_repath(nav, brain.home)
 		return
 	if goal == "engage":
 		var d := loco.logical.distance_to(target.pos()) / 32.0
@@ -918,6 +970,23 @@ func _specials(dt: float, target: Combatant) -> void:
 			_howl_cd = HOWL_CD
 			_say("howl", 1.4)
 			howl_cb.call(self)
+	if nest and not bare and hatch_cb.is_valid():                     # 알집바퀴: 들썩인 동안 10초마다 부화 — 1초 전에 '딸깍'(자리를 알린다)
+		if _stir > 0.0:
+			_stir -= dt
+			_hatch_t += dt
+			if _hatch_t >= HATCH_S - 1.0 and not _click:
+				_click = true
+				_say("click", 1.0)
+				set_pose("crack")
+			if _hatch_t >= HATCH_S:
+				_hatch_t = 0.0
+				_click = false
+				set_pose("pulse")
+				hatch_cb.call(self)
+		elif pose == "crack":
+			_click = false
+			_hatch_t = 0.0
+			set_pose("pulse")
 	if id == "CR-097" and fighting and call_cb.is_valid():               # 왕쥐: 교전에 들면 바로, 그 뒤 20초마다 찍찍 — 둘을 부른다
 		_howl_cd -= dt
 		if _howl_cd <= 0.0:
@@ -930,7 +999,7 @@ func _specials(dt: float, target: Combatant) -> void:
 ## 이동 배수 한 곳: 다리 손상(−50%, 도주 중 −70%) × 울부짖기(+15%)
 func _apply_speed() -> void:
 	var base := (0.3 if brain.state == AIBrain.S.FLEE else 0.5) if cmb.crippled.has("leg") else 1.0
-	loco.speed_mul = base * (1.15 if buff_t > 0.0 else 1.0)
+	loco.speed_mul = base * (1.15 if buff_t > 0.0 else 1.0) * (MOLE_UNDER_SPD if burrow == "under" else 1.0)
 
 
 ## 들개 함정 회피(SD-14 §4.2 '지뢰·덫 타일을 50% 확률로 돌아간다'): 앞 2.5t 안, 가는 줄에서 1.75t 안의 남의 지뢰를 옆으로 비켜 간다.
@@ -1004,3 +1073,265 @@ func _cover_by(p: Vector2) -> bool:
 				return true
 	return false
 
+
+
+# ---------------------------------------------------------------- 1-D3 미끼(SD-13 W-068 썩은 고기)
+## 짐승(개 · 쥐 · 바퀴)이 냄새 지대로 가서 먹는다: 교전 전 · 수색 · 놓침이면 10칸 안, 교전 중이면 표적이 6칸 넘게 떨어졌을 때.
+## 먹는 동안 멈추고 감지 ×0.4(인지 층) · 지대가 빨리 줄어든다. 처리했으면 true(전술 · 행동 층을 건너뛴다)
+func _bait_step(dt: float, target: Combatant, nav) -> bool:
+	if not bait_at.is_valid() or not (style == "dog" or style == "swarm") or nest or asleep or brain.fleeing() or cmb.held():
+		_end_eat()
+		return false
+	var fighting := brain.state in [AIBrain.S.COMBAT, AIBrain.S.FRENZY]
+	if fighting and not target.dead and loco.logical.distance_to(target.pos()) <= BAIT_FIGHT_R:
+		_end_eat()
+		return false
+	if _bait.is_empty() or float(_bait.get("t", 0.0)) <= 0.0:
+		_bait = bait_at.call(loco.logical, BAIT_R)
+		_path = PackedVector2Array()
+		if _bait.is_empty():
+			_end_eat()
+			return false
+	var bp: Vector2 = _bait["p"]
+	var to := bp - loco.logical
+	if to.length() > 14.0:
+		if eating:
+			eating = false
+			set_pose("stand")
+		mode = "run" if fighting else "walk"
+		if _path.is_empty() or _path_i >= _path.size():
+			_repath(nav, bp)
+		var input := to
+		if _path_i < _path.size():
+			var wp: Vector2 = _path[_path_i]
+			if loco.logical.distance_to(wp) < 6.0:
+				_path_i += 1
+			input = wp - loco.logical
+		move(steer(input), dt)
+		return true
+	if not eating:
+		eating = true
+		set_pose("eat")
+	loco.step(Vector2.ZERO, dt)
+	loco.facing = Locomotion.snap8(to if to.length() > 1.0 else Vector2.RIGHT, 0.0)
+	_bait["t"] = float(_bait["t"]) - dt * 0.3                          # 여럿이 먹으면 더 빨리 없어진다
+	_show()
+	return true
+
+
+## 소리 덮개(1-D3 파리 떼 칸): 표적이 그 안에 서 있으면 감지 ×0.6
+func _hush_mul(target: Combatant) -> float:
+	return 0.6 if world is InteriorMap and not world.hush.is_empty() and world.hush_at(world.tile_of(target.pos())) else 1.0
+
+
+func _end_eat() -> void:
+	if eating or pose == "eat":
+		eating = false
+		set_pose("stand")
+	_bait = {}
+
+
+# ---------------------------------------------------------------- 1-D3 굴쥐(SD-14 CR-096 · L423)
+## 흙 칸에서만 땅속으로: 땅속은 보이지 않고 무적(움직일 때 흙 둔덕만 보인다) · 표적이 흙 칸(또는 1칸 곁)에 서면 그 발밑으로 와
+## 1.0초 들썩임 → 솟으며 물기 18 → 땅 위에서 4초 싸우고 흙이면 다시 판다. 표적이 흙에서 멀면 흙 가장자리에서 나와 땅 위로 쫓는다.
+## 흙 칸에 떨어진 미끼는 땅속에서도 맡고 나와 먹는다(땅 위 = 맞는다). 처리했으면 true
+func _mole_step(dt: float, target: Combatant, nav) -> bool:
+	match burrow:
+		"":
+			_up_t += dt
+			if _up_t >= MOLE_UP_S and not eating and not cmb.held() and _soil_here(loco.logical) and not brain.fleeing() and _dig_pays(target):
+				_set_burrow("dig")
+				return true
+			return false
+		"dig":
+			_bur_t += dt
+			loco.step(Vector2.ZERO, dt)
+			if _bur_t >= 0.5:
+				_set_burrow("under")
+			return true
+		"heave":
+			_bur_t += dt
+			loco.step(Vector2.ZERO, dt)
+			if _bur_t >= MOLE_HEAVE_S:
+				var bite_now := _bur_goal != Vector2.INF
+				_set_burrow("emerge")
+				var to := target.pos() - loco.logical
+				if bite_now and not target.dead and meets(target) and to.length() <= cmb.radius + target.radius + 1.1 * 32.0:
+					loco.facing = Locomotion.snap8(to, 0.0)
+					_cool = 1.1
+					target.last_by = cmb.team
+					target.take({"hp": bite * (1.25 if frenzied else 1.0)}, loco.logical)   # 발밑에서 솟으며 문다
+			return true
+		"emerge":
+			_bur_t += dt
+			loco.step(Vector2.ZERO, dt)
+			if _bur_t >= 0.4:
+				_set_burrow("")
+			return true
+		"under":
+			return _under_step(dt, target, nav)
+	return false
+
+
+func _set_burrow(b: String) -> void:
+	burrow = b
+	_bur_t = 0.0
+	match b:
+		"under":
+			cmb.invuln = true
+			visible = false
+			_soil_route = []
+			set_pose("mound")
+		"heave":
+			cmb.invuln = true
+			visible = true
+			set_pose("heave")
+		"emerge":
+			cmb.invuln = false
+			visible = true
+			set_pose("emerge")
+		"dig":
+			cmb.invuln = false
+			set_pose("dig")
+		_:
+			cmb.invuln = false
+			visible = true
+			_up_t = 0.0
+			set_pose("stand")
+
+
+## 다시 파고들 만한가: 싸우는 중이면 표적 곁 흙까지 땅속 길이 이어질 때만(아니면 땅 위로 쫓는다 — 들락날락하지 않게)
+func _dig_pays(target: Combatant) -> bool:
+	if not brain.state in [AIBrain.S.COMBAT, AIBrain.S.FRENZY] or target.dead:
+		return true
+	var c := _soil_near(world.tile_of(target.pos()), 1)
+	if c.x < 0:
+		return false
+	var me: Vector2i = world.tile_of(loco.logical)
+	return c == me or not _soil_bfs(me, c).is_empty()
+
+
+func _soil_here(p: Vector2) -> bool:
+	return world is InteriorMap and world.soil_at(world.tile_of(p))
+
+
+## 땅속: 미끼(흙 위) > 교전 중 표적 쪽 흙 > 가만히(보이지 않음)
+func _under_step(dt: float, target: Combatant, _nav) -> bool:
+	if not (world is InteriorMap) or world.soil_off:
+		_set_burrow("")                                               # 흙이 얼었다 — 땅 위로 밀려 나온다
+		return false
+	var goal := Vector2.INF
+	var why := ""
+	var z: Dictionary = bait_at.call(loco.logical, BAIT_R) if bait_at.is_valid() else {}
+	if not z.is_empty() and _soil_here(z["p"]):
+		goal = z["p"]
+		why = "bait"
+	elif brain.state in [AIBrain.S.COMBAT, AIBrain.S.FRENZY] and not target.dead:
+		var c := _soil_near(world.tile_of(target.pos()), 1)
+		if c.x >= 0:
+			goal = Vector2(c) * 32.0 + Vector2(16, 16)
+			why = "bite"
+		else:
+			c = _soil_near(world.tile_of(target.pos()), 12)
+			if c.x >= 0:
+				goal = Vector2(c) * 32.0 + Vector2(16, 16)
+				why = "edge"
+	_bur_goal = goal if why == "bite" else Vector2.INF
+	if goal == Vector2.INF:
+		visible = false
+		loco.step(Vector2.ZERO, dt)
+		return true
+	if loco.logical.distance_to(goal) < 10.0 or world.tile_of(loco.logical) == world.tile_of(goal):
+		visible = false
+		loco.step(Vector2.ZERO, dt)
+		if why != "bite" or target.pos().distance_to(goal) <= 1.6 * 32.0:
+			_set_burrow("heave")                                      # 미끼 · 흙 가장자리 · 발밑: 들썩이고 솟는다
+		return true
+	_route_t -= dt
+	if _soil_route.is_empty() or _route_t <= 0.0:
+		_route_t = 0.5
+		_soil_route = _soil_bfs(world.tile_of(loco.logical), world.tile_of(goal))
+	if _soil_route.is_empty():
+		visible = false
+		loco.step(Vector2.ZERO, dt)
+		if why == "edge" or why == "bite":
+			_bur_goal = Vector2.INF
+			_set_burrow("heave")                                      # 표적 쪽 흙과 이어지지 않았다(다른 흙 덩이) — 제자리에서 솟아 땅 위로 쫓는다
+		return true
+	var wp: Vector2 = _soil_route[0]
+	if loco.logical.distance_to(wp) < 5.0:
+		_soil_route.pop_front()
+		if _soil_route.is_empty():
+			return true
+		wp = _soil_route[0]
+	visible = true                                                  # 움직이는 흙 둔덕만 보인다
+	mode = "run"
+	_apply_speed()
+	move(wp - loco.logical, dt)
+	return true
+
+
+## c에서 r칸 안의 가장 가까운 흙 칸(없으면 (-1,-1))
+func _soil_near(c: Vector2i, r: int) -> Vector2i:
+	if world.soil_at(c):
+		return c
+	var best := Vector2i(-1, -1)
+	var bd := 1e9
+	for dy in range(-r, r + 1):
+		for dx in range(-r, r + 1):
+			var q := c + Vector2i(dx, dy)
+			if world.soil_at(q):
+				var d := Vector2(dx, dy).length_squared()
+				if d < bd:
+					bd = d
+					best = q
+	return best
+
+
+## 흙 칸만 지나는 4방향 너비 우선 길(칸 가운데 점들, 시작 칸 제외). 못 가면 빈 배열
+func _soil_bfs(a: Vector2i, b: Vector2i) -> Array:
+	if not world.soil_at(a) or not world.soil_at(b):
+		return []
+	var prev := {a: a}
+	var q: Array = [a]
+	var n := 0
+	while not q.is_empty() and n < 600:
+		var c: Vector2i = q.pop_front()
+		n += 1
+		if c == b:
+			var out: Array = []
+			while c != a:
+				out.push_front(Vector2(c) * 32.0 + Vector2(16, 16))
+				c = prev[c]
+			return out
+		for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+			var nx: Vector2i = c + d
+			if not prev.has(nx) and world.soil_at(nx) and not world.is_solid(nx):
+				prev[nx] = c
+				q.append(nx)
+	return []
+
+
+# ---------------------------------------------------------------- 1-D3 알집바퀴(SD-14 CR-004)
+## 배수 밸브로 알집이 떠내려갔다: 부화 끝 · 맨몸 그림 · 도망친다
+func wash() -> void:
+	if bare or cmb.dead:
+		return
+	bare = true
+	_stir = 0.0
+	_click = false
+	if ResourceLoader.exists("res://assets/sprites/cr_cr004b_loco.tres"):
+		sprite.sprite_frames = load("res://assets/sprites/cr_cr004b_loco.tres")
+	set_pose("stand")
+	nest = false
+	brain.flee(12.0)
+	_path = PackedVector2Array()
+
+
+## 어미가 죽어 흩어진다(SD-14 CR-004 '처치 시 주변 큰바퀴 50% 도주') — 사기 규칙과 따로
+func scatter_from(at: Vector2, secs: float) -> void:
+	if cmb.dead:
+		return
+	brain.last_seen = at
+	brain.flee(secs)
+	_path = PackedVector2Array()

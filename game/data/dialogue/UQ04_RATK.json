@@ -1,0 +1,77 @@
+{
+ "id": "UQ04_RATK",
+ "title": "언 왕쥐",
+ "loc": "L-R01-29",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "HIT": 3,
+  "BROKEN": 6
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "UQ04_SHARD == 1",
+   "to": "BROKEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "서리에 덮인 왕쥐. 꼬리 셋이 엉킨 매듭까지 하얗게 얼었다. 이빨 사이에 런천미트 깡통 조각."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "툭 쳐 본다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "HIT",
+     "id": "UQ04_RATK:1:0"
+    },
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ04_RATK:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "쩡 — 금이 가더니 조각조각 갈라진다. 얼음 조각 사이에서 굴러 나온 것들."
+  },
+  {
+   "op": "cmd",
+   "name": "uq04",
+   "args": [
+    "shard"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "얼음 조각과 뼈. 이제 녹으면 냄새가 날 것이다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-04.txt"
+}

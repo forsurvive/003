@@ -73,7 +73,8 @@ FLAVOR = {
 RESTOCK = {"bag": [3, 7, 1.0], "car": [3, 7, 1.0], "trash": [3, 6, 1.0], "corpse_scav": [4, 7, 1.0], "stall": [3, 5, 1.0],
            "mushroom": [2, 4, 1.0], "crate": [5, 7, 0.7], "apartment": [7, 7, 0.4], "cabinet": [7, 7, 0.4], "desk": [7, 7, 0.4],
            "conv": [7, 7, 0.4], "pantry": [7, 7, 0.4], "locker": [7, 7, 0.4], "toolbox": [7, 7, 0.4], "pharmacy": [7, 7, 0.4],
-           "academy": [7, 7, 0.4], "school_locker": [7, 7, 0.4], "civil": [7, 7, 0.4], "aid": [7, 7, 0.4]}
+           "academy": [7, 7, 0.4], "school_locker": [7, 7, 0.4], "civil": [7, 7, 0.4], "aid": [7, 7, 0.4],
+           "carcass": [3, 5, 1.0]}                                       # 썩은 고기는 가공 라인에서 다시 떨어진다(쥐가 끌어 온다)
 
 # ---------------------------------------------------------------- 용기 종류
 # 줄: [아이템 또는 @묶음, 확률, 최소, 최대, (처음 나오는 등급 — 없으면 1)]. 확률은 줄마다 따로. 빈 용기도 나온다('[빈 상자]').
@@ -128,6 +129,7 @@ TABLES = {
                                   ["@meds", 0.3, 1, 1], ["@scrap", 0.4, 1, 2], ["@junk", 0.3, 1, 1]]),
     # SQ-S02 밸브 캠프(1-11b, SD-04a §4.2): 척후 지도 M-301은 진행기가 넣고 뺀다(지도는 한 장 — 다른 데서 쥐었으면 없다)
     "scout_cache": ("패거리 상자", [["@ammo", 0.7, 4, 12], ["M-001", 0.7, 8, 30], ["@food", 0.5, 1, 2], ["I-055", 0.4, 1, 2], ["@scrap", 0.3, 1, 1]]),
+    "carcass": ("썩은 고기 더미", [["W-068", 1.0, 2, 3], ["@scrap", 0.15, 1, 1]]),   # 1-D3 독산: 먹지 못하는 고기 = 던지는 미끼(SD-13 W-068)
     "stash": ("숨겨 둔 상자", [["M-001", 1.0, 25, 70], ["@ammo", 0.85, 8, 24], ["@meds", 0.7, 1, 2], ["I-001", 0.5, 1, 2],
                                ["@weapon", 0.3, 1, 1, 2], ["@food", 0.5, 1, 3], ["M-070", 0.4, 2, 4]]),
 }
@@ -187,7 +189,7 @@ def ammo_items():
 def known_ids(extra=()):
     """게임이 아는 아이템 ID(아이템 표 전체 + 무기 + 탄약 이름). 상인 표 내보내기도 쓴다."""
     ids = set(extra)
-    wfiles = [os.path.join(DATA, f) for f in ("weapons.json", "weapons_craft.json") if os.path.exists(os.path.join(DATA, f))]
+    wfiles = [os.path.join(DATA, f) for f in ("weapons.json", "weapons_craft.json", "throwables.json") if os.path.exists(os.path.join(DATA, f))]
     for f in glob.glob(os.path.join(DATA, "items_*.json")) + wfiles:
         ids |= set(json.load(open(f, encoding="utf-8")).keys())
     for w in [v for f in wfiles for v in json.load(open(f, encoding="utf-8")).values()]:

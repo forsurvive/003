@@ -46,7 +46,7 @@ CMDS = {"wait", "fade_in", "fade_out", "balloon", "move", "face", "shake", "year
         "mq", "trade", "yd", "fix",                                                   # 0-10: 1막 진행기 사건 · 거래 창(상인 V번호)
         "meet", "memo", "obit",                                              # 1-2: 인물 수첩 등록 · 한 줄 메모 · 소식으로 안 죽음
         "re", "cage", "capture",                                             # 1-3: 인카운터 첫 분대 대화의 결말 · 우리 문 열기 · 생포(사흘 버팀)
-        "jm", "yd", "sb", "vb", "home", "info", "doctor", "rent", "s01", "s02", "s03", "s04", "s05", "s06", "s08", "s09", "s10", "s11", "uq71", "u02"}                                                                # 1-4: 1막 경로 진행기(지하시장·단서) 사건                                             # 1-3: 인카운터 첫 분대 대화의 결말 · 우리 문 열기 · 생포(사흘 버팀)
+        "jm", "yd", "sb", "vb", "home", "info", "doctor", "rent", "s01", "s02", "s03", "s04", "s05", "s06", "s08", "s09", "s10", "s11", "uq71", "u02", "uq04"}                                                                # 1-4: 1막 경로 진행기(지하시장·단서) 사건                                             # 1-3: 인카운터 첫 분대 대화의 결말 · 우리 문 열기 · 생포(사흘 버팀)
 ENGINE_VARS = {"PC_ST", "PC_PE", "PC_EN", "PC_CH", "PC_IN", "PC_AG", "PC_LK", "PC_TAG1", "PC_TAG2", "PC_TAG3", "PC_CAPS", "PC_XP",
                "PC_SEX", "PC_APT_PROXY",
                "MQP4_DUCT", "MQP4_FOLLOW", "MQP4_KEY", "MQP4_ARMORY", "MQP4_TALK", "MQP4_BJ_KO", "MQP4_SEC_KO", "MQP4_CAUGHT", "MQP4_DECOY",
@@ -76,6 +76,8 @@ ENGINE_VARS |= {"UQ71_" + k for k in "CORE SQ HEARD DAY DUE SOL REWARD TALK SEEN
 # U02 남태령 지하(1-D2, SD-09f U02 · L-UG-05 · 훅 UG-H01 · UG-H02 · 1-D 계획 §8): 사실 한 곳 — 원고 script/act1/U02.txt 머리 주석
 ENGINE_VARS |= {"U02_" + k for k in ("GUIDE INTRO LIGHT LIGHT_DAY ASK HAL HAL_DAY HFEE PATH TRACE USED FOUND SOL SHIFT SIDE FEE FN FW FS FR FD "
                                      "HAGGLED PASSED RADIO GAP_DAY PATROL_DAY VENT MET_EOM MET_HAL MET_AJAE BACKDOOR PHOTO PHOTO_TRY FORGE_TRY RING1 LASTFEE PATROL RULES").split()}
+# UQ-04 7호 냉동 창고(1-D3, SD-05 UQ-04 · 1-D 계획 §9 · §9.6): 사실 한 곳 — 원고 script/act1/UQ-04.txt 머리 주석 · DS_VALVE 가공장 배수 밸브
+ENGINE_VARS |= {"UQ04_" + k for k in "KNOW OPEN OPEN_DAY LOCK DUE THAW THAW_DAY GONE LEFT COLD COLD_DAY BC BC_DAY SA SA_DAY JH JH_DAY LEAK FEUD FEUD_DAY RATK SHARD SHELF SOL REWARD LINK2 LINK3 FLED DATE SIGN PRICE BACK REFUND".split()} | {"DS_VALVE"}
 # 던전 정리 변수(1-D0, script/world/dungeons.txt): DG_<접미> 0 손 안 댐 · 1 정리 · 2 다시 들어섬 / _DAY 정리 · 재입주 날 / _ROLL 재입주를 굴린 날
 ENGINE_VARS |= {f"DG_{m}{s}" for m in re.findall(r"^@\s+([A-Z0-9]+)\s", open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "script", "world", "dungeons.txt"), encoding="utf-8").read(), re.M)
                 for s in ("", "_DAY", "_ROLL")}
@@ -86,6 +88,8 @@ UNNAMED = {"N-TRADER": "떠돌이 고물상", "N-REFUGEE": "피난민", "N-DOWNE
            "N-YT-1": "패거리 수금원", "N-YT-2": "패거리 척후", "N-BC-1": "봉천 감시조", "N-BC-2": "봉천 감시조", "N-BC-3": "봉천 감시조",   # 1-11b SQ-S02
            "N-PS-1": "파수-3", "N-PS-2": "경비 파수-3", "N-BJ-S1": "수색조 분대장", "N-BJ-S2": "수색조 계엄병", "N-BJ-P1": "순찰 분대장", "N-BJ-P2": "순찰 계엄병",                                                   # 1-11c SQ-S04
            "N-DB-1": "대방 분대원", "N-DB-2": "대방 분대원",                      # 1-D1 UQ-71 대방 지하차도
+           "N-DS-B1": "봉천 감시조", "N-DS-B2": "봉천 감시조", "N-DS-S1": "승강장 경비", "N-DS-S2": "승강장 경비",   # 1-D3 UQ-04 독산 7호 앞
+           "N-DS-J1": "상인회 짐꾼", "N-DS-J2": "상인회 짐꾼",
            "N-GS-1": "각성회 신도", "N-GS-2": "각성회 신도", "N-GS-3": "각성회 신도"}   # 1-8g 노량진 관제 중계소
 DECISION = ["어느 편에 서겠", "편에 서겠습니까", "제안을 수락", "받아들이겠습니까", "어느 쪽을 택하", "누구 편이"]
 OLD_NAMES = ["강태오", "천웨이", "국민방송"]

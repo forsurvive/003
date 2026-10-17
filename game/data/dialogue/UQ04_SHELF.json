@@ -1,0 +1,209 @@
+{
+ "id": "UQ04_SHELF",
+ "title": "7호 비축 선반",
+ "loc": "L-R01-29",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "SWEAT": 6,
+  "GNAWED": 8,
+  "TAKE": 9,
+  "T10": 11,
+  "TALL": 14,
+  "T2": 17,
+  "EMPTY": 20,
+  "EMPTY_JH": 23,
+  "ROT": 25
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "UQ04_THAW == 1",
+   "to": "ROT"
+  },
+  {
+   "op": "if",
+   "cond": "UQ04_GONE >= 40",
+   "to": "EMPTY"
+  },
+  {
+   "op": "if",
+   "cond": "UQ04_RATK == 4",
+   "to": "GNAWED"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "국방색 상자가 칸마다 빼곡하다. '청솔 런천미트 — 군 납품 2077' · '꽁치 통조림 — 전시 비축'. 상자 위에 흰 서리선이 얇게 앉았다."
+  },
+  {
+   "op": "if",
+   "cond": "UQ04_COLD == 1",
+   "to": "SWEAT"
+  },
+  {
+   "op": "goto",
+   "to": "TAKE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "서리선이 어제보다 낮다. 아래 칸 상자 모서리에 물방울이 맺혔다 — 냉기를 굴로 돌린 뒤로 7호가 땀을 흘린다."
+  },
+  {
+   "op": "goto",
+   "to": "TAKE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "상자 몇이 찢겨 있다. 바닥에 이빨 자국 난 깡통이 굴러다닌다. 왕쥐의 냄새."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "남은 상자 — \\V[UQ04_LEFT]개쯤."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "상자 열 개를 내린다(런천미트 다섯 · 꽁치 다섯)",
+     "tags": [],
+     "cond": "UQ04_GONE <= 30",
+     "fx": "",
+     "to": "T10",
+     "id": "UQ04_SHELF:1:0"
+    },
+    {
+     "text": "남은 걸 다 내린다",
+     "tags": [],
+     "cond": "UQ04_GONE > 30",
+     "fx": "",
+     "to": "TALL",
+     "id": "UQ04_SHELF:1:1"
+    },
+    {
+     "text": "상자 두 개만 챙긴다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "T2",
+     "id": "UQ04_SHELF:1:2"
+    },
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ04_SHELF:1:3"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "uq04",
+   "args": [
+    "take",
+    "10"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "상자가 묵직하다. 언 깡통이 서로 부딪쳐 짤그락거린다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "uq04",
+   "args": [
+    "take",
+    "40"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "마지막 칸까지 비운다. 선반에 서리 자국만 네모나게 남는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "uq04",
+   "args": [
+    "take",
+    "2"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "깡통 둘. 손바닥이 얼얼하다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "선반이 비었다. 서리 자국이 상자 모양대로 네모나게 남았다."
+  },
+  {
+   "op": "if",
+   "cond": "UQ04_JH == 2",
+   "to": "EMPTY_JH"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "바닥에 수레바퀴 자국 둘. 상인회 짐표 한 장이 떨어져 있다 — '독산 7호 · 40 · 함'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "서리선이 사라졌다. 젖은 상자가 무너져 깡통이 녹물 섞인 웅덩이에 잠겼다. 파리가 7호까지 들어왔다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "200년을 버틴 냉기가 끝났다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-04.txt"
+}

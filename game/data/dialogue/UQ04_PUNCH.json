@@ -1,0 +1,30 @@
+{
+ "id": "UQ04_PUNCH",
+ "title": "출퇴근 기록기",
+ "loc": "L-R01-29",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "출퇴근 기록기. 마지막 카드가 꽂힌 채다 — '관리 주임 · 10. 22. 23:41 퇴근'. 그 뒤로 찍힌 카드는 없다."
+  },
+  {
+   "op": "do",
+   "fx": "UQ04_DATE = 1"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-04.txt"
+}
