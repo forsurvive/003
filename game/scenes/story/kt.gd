@@ -173,8 +173,7 @@ func _spin() -> void:
 			return
 		if d <= LURE_R:
 			e.hear("door", door)
-			e.route = [[door, 6.0]]                                          # 냄새 길을 벗어나 소리 쪽으로
-			e.set("_route_i", 0)
+			host.combat.colony.lure(e, door, 14.0)                           # 냄새 길을 벗어나 소리 쪽으로(14초 — 그 뒤 줄로 돌아간다)
 	_log("회전문 삐걱")
 
 
@@ -187,10 +186,9 @@ func _trap(e: Enemy) -> void:
 	host.combat._rebuild_list()
 	host.map.set_prop_state(REVOLVE_AT, "trapped")
 	host.hint("회전문 칸에 일개미가 갇혔다. 유리를 긁는 소리 — 딱딱딱.", 3.0)
-	for o in host.combat.enemies:                                         # 냄새 길이 끊겼다: 남은 정찰은 길을 잃고 헤맨다
+	for o in host.combat.enemies:                                         # 냄새 길이 끊겼다: 남은 정찰은 길을 잃고 헤맨다(갇힌 동안 · 20초)
 		if is_instance_valid(o) and not o.cmb.dead and str(o.row.get("id", "")) == "CR-080":
-			o.route = []
-			o.set("_route_i", 0)
+			host.combat.colony.lose(o, 20.0)
 	_log("일개미가 회전문에 갇힘")
 
 

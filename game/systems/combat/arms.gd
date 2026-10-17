@@ -7,9 +7,9 @@ extends RefCounted
 const T := 32.0
 ## 투사체 속도(타일/초, SD-11 §3.3). 레이저는 히트스캔(한 프레임에 끝까지 간다)
 const SPEED := {"bullet": 40.0, "pellet": 35.0, "plasma": 14.0, "dart": 25.0, "nail": 30.0, "missile": 10.0, "missile_max": 18.0,
-	"junk": 22.0, "flare": 25.0, "net": 20.0, "shock": 25.0, "tesla": 16.0, "flame": 6.0}
+	"junk": 22.0, "flare": 25.0, "net": 20.0, "shock": 25.0, "tesla": 16.0, "flame": 6.0, "acid": 12.0}
 ## 충돌 반지름(타일): 실탄 0.05 · 플라스마 0.15 · 미사일 0.2 · 화염 입자 0.3
-const RADIUS := {"plasma": 0.15, "missile": 0.2, "tesla": 0.2, "flame": 0.3, "nail": 0.08, "junk": 0.12}
+const RADIUS := {"plasma": 0.15, "missile": 0.2, "tesla": 0.2, "flame": 0.3, "nail": 0.08, "junk": 0.12, "acid": 0.15}
 ## 곡사(SD-11 §3.3 '곡사탄'): 비행 0.6~1.2초, 가짜 높이. 핵 투사기 최소 사거리 6t
 const ARC_MIN_T := {"nuke": 6.0, "grenade": 1.5}
 ## 폭발 반경(타일, 내부 / 외부) — SD-11 §9.2 표 + 정합(유탄 = 파편 수류탄, 미사일 1.0/3.0, 방전포 0.8/2.0)
@@ -101,7 +101,7 @@ static func flash(w: Dictionary) -> String:
 ## 투사체 그림 세트
 static func sprite(p: String) -> String:
 	return {"pellet": "pellet", "plasma": "plasma", "tesla": "tesla", "missile": "missile", "grenade": "shell", "nuke": "shell",
-		"nail": "nail", "dart": "dart", "junk": "junk", "flame": "flame"}.get(p, "bullet")
+		"nail": "nail", "dart": "dart", "junk": "junk", "flame": "flame", "acid": "acid"}.get(p, "bullet")
 
 
 static func speed(p: String) -> float:

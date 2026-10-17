@@ -106,6 +106,8 @@ func _ready() -> void:
 	add_child(enc_live)
 	combat.hurt.connect(func(_a: float) -> void: _hurt_t = 0.3)
 	combat.hurt.connect(_armor_hit)
+	combat.colony.note.connect(func(t: String) -> void: hint(t, 3.0))      # 1-D5b 왕개미 군체 알림(위장 씻김 · 더듬이 · 줄 끊김)
+	combat.colony.corrode.connect(func() -> void: _armor_hit(5.0))         # 개미산 분사: 방어구 내구도 −(SD-14 CR-081)
 	combat.armor_dr = pc_dr
 	combat.rad_items = items_db                                          # 옷의 방사능 저항(1-9d)
 	combat.resident_hit.connect(_on_resident_hit)
@@ -2443,6 +2445,8 @@ func _clock_step(dt: float) -> void:
 ## 게임 시간을 m분 보낸다. 06:00을 넘을 때마다 하루 판정(day_tick) — 사흘 구금·긴 잠처럼 여러 날을 한 번에 보내도
 ## 넘어간 06:00마다 한 번씩, 그 날짜(GAME_DAY)로 차례대로 부른다(SD-20 P6 시간 도약)
 func advance_minutes(m: int) -> void:
+	if int(st.vars.get_v("PC_SMELL")) > 0:                               # 여왕 페로몬 위장(1-D5b)도 기다린 만큼 날아간다
+		st.vars.set_v("PC_SMELL", maxi(0, int(st.vars.get_v("PC_SMELL")) - m))
 	if m >= 60:
 		Radiation.drug_tick(st, m * 2.0)                                     # 한꺼번에 보내는 시간(대기 · 수면 · 생포): 게임 1분 = 실시간 2초
 	var a := Clock.abs_min(date_text)

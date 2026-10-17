@@ -83,6 +83,7 @@ func _init() -> void:
 			"MQ101_BOARD", "MQ101_FIGHT", "PC_RADS", "PD_BC", "PD_R01", "GAME_DAY"]:
 		vars.declare(k, "int", 0)
 	vars.declare("PC_EYES", "str", "")                       # 쓴 눈 장비(아이템 ID — A-106 구울 가면, 1-11e)
+	vars.declare("PC_SMELL", "int", 0)                        # 몸에 바른 여왕 페로몬 남은 게임 분(1-D5b 왕개미 위장 — AntColony)
 	vars.declare("PC_TORSO", "str", "A-001")                # 입은 몸통 옷(아이템 ID) — 처음은 볼트 점프슈트(MQ-P2 지급)
 	Wanted.declare(self)                                   # 수배도 하루 누계·공고 인상착의(1-3)
 	# 생포(1-3, SD-03a §6.7): CAPTURE_DAY 마지막으로 잡힌 날(하루 1번) · CAPTURE_AT 잡힌 시각(분, 3일 계산) · SB_COLLAR 근태 목걸이(1 채워짐)
@@ -233,7 +234,8 @@ func _init() -> void:
 	for k in "CORE PUSH BUS CORE_DAY LV_A LV_B LV_C A B C STAFF STAFF_DAY STAFF_K KEY LOST SIGKEY WHISTLE MUSTER MUSTER_K REEFER DRIFT RATS SB SB_DAY ROOF CHART TAG PARK CHEER ESC GUIDE TIP MUSTER_DAY".split(" "):
 		vars.declare("GR_" + k, "int", 0)
 	# 1-D5a 여의도 금탑(DG-KT): 뜻은 script/act1/KT.txt 머리 주석 — POWER 발전기 연료 한 통 · CALL 어하은 통화 · REVOLVE 회전문 · TUNNEL 유리 터널 · QUEEN 22층 여왕(1-D5b)
-	for k in "POWER POWER_DAY NOTE CALL RING RING2 MEM HOOK REVOLVE TUNNEL CAR QUEEN LOW CARTOLD HATCH KEY GRATE".split(" "):
+	#   1-D5b 위층: DIG 4층 흙벽 · ROPE 곤돌라 줄 · GOND 곤돌라 자리 · TOP 꼭대기 불 · MEET 어하은 첫 얼굴 · SHOE 신발 · NURSE 육아방 · HEAT 불 먼저(개미가 올라옴) 등
+	for k in "POWER POWER_DAY NOTE CALL RING RING2 MEM HOOK REVOLVE TUNNEL CAR QUEEN LOW CARTOLD HATCH KEY GRATE DIG ROPE GOND TOP TOP_DAY MEET VIEW SHOE NURSE EXPL HEAT OBS QUEEN_DAY CREW".split(" "):
 		vars.declare("KT_" + k, "int", 0)
 	Dungeon.load_db()                                                    # 던전 정리 변수(1-D0): DG_<접미> · _DAY · _ROLL
 	for did in Dungeon.db:

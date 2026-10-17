@@ -10,7 +10,7 @@ const COND_DMG_MELEE := {"new": 1.0, "good": 0.82, "worn": 0.69, "poor": 0.57}
 const COND_CRIT := {"new": 1.0, "good": 0.65, "worn": 0.4, "poor": 0.15}
 const DR_CAP := 85.0
 const PART_MULT := {"head": 2.0, "torso": 1.0, "arm": 1.0, "leg": 1.0, "weapon": 0.0}
-const PART_HP := {"head": 0.25, "torso": 0.5, "arm": 0.3, "leg": 0.3}
+const PART_HP := {"head": 0.25, "torso": 0.5, "arm": 0.3, "leg": 0.3, "antenna": 0.1}   ## 더듬이(곤충 특수 부위, SD-11 §4.8 표 — 계수는 1-D5b 정합: 가는 부위 0.1)
 const HUMANOID_WEIGHTS := {"head": 12, "torso": 48, "arm": 20, "leg": 20}
 
 

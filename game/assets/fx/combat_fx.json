@@ -2,6 +2,32 @@
  "cell": 16,
  "dirs": 16,
  "sets": {
+  "acid": {
+   "anchor": [
+    8.0,
+    8.0
+   ],
+   "blend": "mix",
+   "cell": 16,
+   "dirs": 16,
+   "frames": 1,
+   "row": 94,
+   "ticks": 2,
+   "y": 1504
+  },
+  "acid_splat": {
+   "anchor": [
+    8.0,
+    8.0
+   ],
+   "blend": "mix",
+   "cell": 16,
+   "dirs": 1,
+   "frames": 3,
+   "row": 95,
+   "ticks": 4,
+   "y": 1520
+  },
   "aura_rad": {
    "anchor": [
     24.0,

@@ -25,6 +25,13 @@ var soil: Array = []                              ## 1-D3 흙 칸 줄('1' 흙) �
 var soil_off := false                             ## 흙이 얼었다(맵 지시어 soil_off cond= — 냉기를 돌린 독산)
 
 
+var scent: Array = []                             ## 1-D5b 왕개미 냄새 길 칸(Vector2i — 맵을 열 때 조건을 본 것만, AntColony가 읽는다)
+
+
+func scent_cells() -> Array:
+	return scent
+
+
 var hush: Array = []                              ## 1-D3 소리 덮개 사각형(Rect2i — 맵을 열 때 조건을 본 것만): 파리 떼 칸
 
 
@@ -163,6 +170,11 @@ func load_map(map_id: String, st: StoryState = null) -> void:
 				for xx in range(int(dr["x"]), mini(int(dr["x"]) + int(dr["w"]), row.length())):
 					row[xx] = "0"
 				wet[yy] = row
+	scent = []
+	for sc in data.get("scent", []):
+		if _cond_ok(str(sc.get("cond", "")), st):
+			for c in sc["cells"]:
+				scent.append(Vector2i(int(c[0]), int(c[1])))
 	hush = []
 	for h in data.get("hush", []):
 		if _cond_ok(str(h.get("cond", "")), st):

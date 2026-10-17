@@ -63,7 +63,11 @@ SETS += [  # 1-D3 미끼(W-068 썩은 고기): 바닥에 누운 고기 1컷 · �
     ("bait_lying", 1, lambda a, f: A.bait_meat(0, lying=True), A.ANCHOR["mid16"], "mix", 16, 1),
     ("zone_bait", 3, lambda a, f: A.bait_wisp(f), (16.0, 16.0), "mix", 32, 1),
 ]
-TICKS = {"aura_rad": 6, "flame": 4, "boom": 3, "boom_smoke": 4, "boom_plasma": 3, "boom_pulse": 3}   # 컷당 틱(기본 2)
+SETS += [  # 1-D5b 왕개미 산: 여왕 산성 침(16방향) · 산 튀김 3컷(맞은 자리 · 병정 분사 줄기)
+    ("acid", 1, lambda a, f: A.acid_glob(a), A.ANCHOR["mid16"], "mix", 16, 16),
+    ("acid_splat", 3, lambda a, f: A.acid_splat(f), A.ANCHOR["mid16"], "mix", 16, 1),
+]
+TICKS = {"acid_splat": 4, "aura_rad": 6, "flame": 4, "boom": 3, "boom_smoke": 4, "boom_plasma": 3, "boom_pulse": 3}   # 컷당 틱(기본 2)
 
 
 def main():

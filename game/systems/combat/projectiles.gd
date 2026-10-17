@@ -11,6 +11,7 @@ var world
 var rng := RandomNumberGenerator.new()
 var shots: Array = []                    ## {p, v, ang, life, team, weapon, skill, origin}
 var flashes: Array = []                  ## 총구 효과 {at, ang, set, age, born}
+var splats: Array = []                   ## 일반 혼합 튀김(1-D5b 개미산 · 산성 침이 맞은 자리) {at, ang, set, age, born}
 var sparks: Array = []                   ## 벽·엄폐물에 맞은 자리 불꽃 {at, ang, set, age, born}
 var marks: Array = []                    ## 탄흔 [pos, ttl]
 var _add: Node2D                         ## 가산 혼합 층(총구 화염·불꽃)
@@ -300,6 +301,8 @@ func step(dt: float) -> void:
 			if blk.x >= 0.0:
 				if float(s["weapon"].get("blast", 0.0)) > 0.0:
 					explode(blk - (s["v"] as Vector2).normalized() * 4.0, s["weapon"], float(s["skill"]), str(s["team"]), int(s.get("fl", 0)))
+				elif s["proj"] == "acid":                                  # 산성 침: 벽에 튀어 흐른다(불꽃 대신)
+					splats.append(_fx("acid_splat", blk, 0.0))
 				elif s["proj"] != "flame":
 					marks.append([blk, 20])
 					sparks.append(_fx("spark", blk, float(s["ang"])))
@@ -312,6 +315,8 @@ func step(dt: float) -> void:
 				_apply(hit, s, b)
 		elif hit != null:
 			_apply(hit, s, b)
+			if s["proj"] == "acid":
+				splats.append(_fx("acid_splat", b + Vector2(0, -4), 0.0))
 			if float(s["weapon"].get("blast", 0.0)) > 0.0:
 				explode(b, s["weapon"], float(s["skill"]), str(s["team"]), int(s.get("fl", 0)))
 			continue
@@ -331,6 +336,7 @@ func step(dt: float) -> void:
 	booms = booms.filter(func(bo): return CombatFx.frame_at("boom_smoke", float(bo["age"])) >= 0)
 	flashes = _aged(flashes, dt)
 	sparks = _aged(sparks, dt)
+	splats = _aged(splats, dt)
 	for m in marks:
 		m[1] -= 1
 	marks = marks.filter(func(m): return m[1] > 0)
@@ -516,6 +522,11 @@ func _draw() -> void:
 			at -= Vector2(0, float(s["h"]))
 		var r := CombatFx.region(spr, float(s["ang"]), _proj_frame(s))
 		draw_texture_rect_region(tex, Rect2(CombatFx.top_left(spr, at), r.size), r)
+	for f in splats:                                                 # 산 튀김(일반 혼합)
+		var k := CombatFx.frame_at(f["set"], f["age"])
+		if k >= 0:
+			var r := CombatFx.region(f["set"], f["ang"], k)
+			draw_texture_rect_region(tex, Rect2(CombatFx.top_left(f["set"], f["at"]), r.size), r)
 	for bo in booms:                                                 # 폭발 불덩이(연기 위) — 일반 혼합
 		var bs: String = bo.get("set", "boom")
 		var k := CombatFx.frame_at(bs, float(bo["age"]))

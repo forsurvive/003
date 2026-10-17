@@ -580,3 +580,59 @@ def aura_rad(frame, size=48):
         if i % 3 == 0 and y > 1:
             img.putpixel((int(bx), int(y) - 1), C("P55"))
     return img
+
+
+# ================================================================ 1-D5b 왕개미 산(SD-14 §3.5 CR-081 개미산 분사 · CR-082 산성 침)
+def acid_glob(angle, frame=0):
+    """여왕 산성 침: 누런 녹색 방울(심 밝은 연두 · 가장자리 올리브) + 뒤로 흩날리는 방울 셋. 일반 혼합(밝은 바닥에서도 보인다)."""
+    img = Image.new("RGBA", (16, 16), CLEAR)
+    a = math.radians(angle)
+    ux, uy = math.cos(a), math.sin(a)
+    cx, cy = 8.0, 8.0
+    for y in range(16):
+        for x in range(16):
+            dx, dy = x + 0.5 - cx, y + 0.5 - cy
+            t = dx * ux + dy * uy
+            s = abs(-dx * uy + dy * ux)
+            e = math.hypot(t * 0.8, s)                                     # 날아가는 쪽으로 조금 늘어진 방울
+            tok = None
+            if e <= 1.1:
+                tok = "P57"
+            elif e <= 2.2:
+                tok = "P32" if t > -0.5 else "P31"
+            elif e <= 3.0:
+                tok = "P30"
+            if tok:
+                img.putpixel((x, y), C(tok))
+    for k, (d, side) in enumerate(((4.5, 0.8), (6.5, -0.9), (8.0, 0.3))):   # 꼬리 방울(점점 작고 어둡게)
+        _px(img, cx - 0.5 - d * ux - side * uy, cy - 0.5 - d * uy + side * ux, ("P31", "P30", "P29")[k])
+    return img
+
+
+def acid_splat(frame, size=16):
+    """산 튀김(맞은 자리 · 병정 분사 줄기): 1컷 튀는 방울 · 2컷 퍼진 웅덩이와 김 · 3컷 성긴 얼룩(사그라듦). 일반 혼합."""
+    img = Image.new("RGBA", (size, size), CLEAR)
+    rnd = random.Random(53)
+    c = size / 2 - 0.5
+    if frame == 0:
+        for _ in range(7):
+            ang = rnd.uniform(0, math.tau)
+            r = rnd.uniform(1.5, 5.5)
+            _px(img, c + r * math.cos(ang), c + r * math.sin(ang) * 0.7, rnd.choice(("P57", "P32", "P31")))
+        for dx, dy in ((0, 0), (1, 0), (0, 1), (-1, 0)):
+            _px(img, c + dx, c + dy, "P57")
+    else:
+        rr = 3.5 if frame == 1 else 4.5
+        for y in range(size):
+            for x in range(size):
+                dx, dy = x - c, (y - c) / 0.6
+                d = math.hypot(dx, dy) + 0.6 * math.sin(x * 1.7 + y)
+                if d <= rr:
+                    edge = d > rr - 1.2
+                    if frame == 2 and (x + y) % 2:
+                        continue                                          # 3컷: 바둑판으로 성기게(반투명 대신)
+                    img.putpixel((x, y), C("P30" if edge else ("P31" if frame == 2 else "P32")))
+        if frame == 1:
+            for k in range(3):                                            # 김 한 줄(위로)
+                _px(img, c + (k % 2), c - 3 - k * 1.5, "P37" if k < 2 else "P36")
+    return img

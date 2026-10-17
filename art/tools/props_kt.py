@@ -253,6 +253,13 @@ def ant_soil_kt(state=""):
     if not quiet:
         for k in range(7):
             d.point((16 + k * 6, 61 - (k % 2)), fill=C("P57" if k % 2 else "P32"))
+        for x, y in ((46, 54), (49, 56), (44, 57)):                                                  # 흙벽 아래 개미산이 녹인 자리(관찰하면 보이는 녹 자국)
+            d.point((x, y), fill=C("P31"))
+    if state == "dug":                                                                               # 사람이 지나갈 만큼 판 굴(계단참이 보인다)
+        d.ellipse([16, 22, 48, 60], fill=C("P16")); d.ellipse([18, 24, 46, 60], fill=C(INK))
+        d.line([22, 52, 42, 52], fill=C("P04")); d.line([24, 46, 40, 46], fill=C("P03"))             # 안쪽 계단 디딤
+        for hx, hy in ((12, 58), (52, 58), (8, 50), (56, 52)):
+            d.ellipse([hx - 4, hy - 3, hx + 4, hy + 3], fill=C("P19"))
     return im
 
 
@@ -642,6 +649,181 @@ def w_north_sign_kt():
     return im
 
 
+
+# ================================================================================================ 1-D5b 위층(사무층 분양 홍보관 · 연회장 · 전망대 · 옥상 · 기단 옥상)
+def model_kt(state=""):
+    """분양 홍보관 금박 모형(2×2, 64×72): 검은 받침 위 유리 상자 · 금빛 60층 탑 모형 · 둘레 잿빛 작은 건물 · 파란 강 띠 · 명판 '금빛 빌딩 분양'.
+    상태 ant = 유리가 깨지고 탑 모형이 꺾여 누움 · 받침에 흙(개미가 금박을 뜯어 갔다)."""
+    im = img(64, 72)
+    d = ImageDraw.Draw(im)
+    _shadow(d, 2, 62, 68)
+    ant = state == "ant"
+    _box(d, 2, 50, 61, 66, ("P01", "P02", "P04"))
+    put_text(im, "분양", 24, 55, GOLD[2], 8, "Galmuri7")
+    d.rectangle([4, 40, 59, 50], fill=C(INK)); d.rectangle([5, 41, 58, 49], fill=C("P05"))
+    d.rectangle([5, 45, 58, 47], fill=C(WATER[3]))                                                  # 강 띠
+    for x, h in ((8, 6), (14, 9), (44, 7), (50, 10), (55, 5)):
+        d.rectangle([x, 44 - h, x + 4, 44], fill=C(INK)); d.rectangle([x + 1, 45 - h, x + 3, 43], fill=C("P07"))
+    if not ant:
+        d.polygon([(26, 44), (30, 6), (34, 6), (38, 44)], fill=C(INK))
+        d.polygon([(27, 43), (30, 8), (34, 8), (37, 43)], fill=C(GOLD[1]))
+        d.line([30, 9, 28, 42], fill=C(GOLD[3])); d.line([33, 9, 35, 30], fill=C(GOLD[2]))
+        for y in range(12, 42, 4):
+            d.line([28 + (42 - y) // 12, y, 36 - (42 - y) // 12, y], fill=C(GOLD[0]))
+    else:
+        d.polygon([(18, 42), (46, 34), (47, 38), (19, 46)], fill=C(INK))                             # 꺾여 누운 탑
+        d.polygon([(19, 43), (46, 35), (46, 37), (20, 45)], fill=C(GOLD[1]))
+        rnd = random.Random(95)
+        for _ in range(26):
+            d.point((rnd.randint(6, 58), rnd.randint(42, 49)), fill=C("P18" if rnd.random() < 0.6 else "P19"))
+    d.rectangle([3, 2, 60, 41], outline=C("P15"))                                                    # 유리 상자 테
+    d.line([4, 3, 4, 40], fill=C("P09")); d.line([5, 3, 20, 3], fill=C("P09"))
+    if ant:
+        d.line([40, 2, 48, 18], fill=C("P15")); d.line([48, 18, 44, 30], fill=C("P15")); d.line([48, 18, 58, 20], fill=C("P15"))
+    return im
+
+
+def sales_booth_kt():
+    """분양 상담 부스(2×1, 64×48): 흰 곡면 탁자 · 금빛 탑 표지 · 팸플릿 꽂이 · 상담 의자 둘 · '분양 상담' 판."""
+    im = img(64, 48)
+    d = ImageDraw.Draw(im)
+    _shadow(d, 2, 62, 44)
+    d.rectangle([2, 2, 61, 12], fill=C(INK)); d.rectangle([3, 3, 60, 11], fill=C(GOLD[1]))
+    put_text(im, "분양상담", 13, 3, "P01", 8, "Galmuri7")
+    _box(d, 2, 16, 61, 36, MARBLE)
+    d.rectangle([6, 20, 14, 30], fill=C(INK)); d.rectangle([7, 21, 13, 29], fill=C("P46"))            # 팸플릿
+    d.rectangle([16, 20, 24, 30], fill=C(INK)); d.rectangle([17, 21, 23, 29], fill=C(GOLD[2]))
+    d.polygon([(44, 32), (48, 18), (52, 32)], fill=C(INK)); d.polygon([(45, 31), (48, 20), (51, 31)], fill=C(GOLD[2]))
+    for x in (8, 40):
+        d.ellipse([x, 36, x + 14, 46], fill=C(INK)); d.ellipse([x + 1, 37, x + 13, 45], fill=C("P53"))
+    return im
+
+
+def w_quote_kt():
+    """분양 시세판(벽 3칸, 96×44): 2077 '금빛 빌딩 — 전 세대 완판' · 층별 분양가 줄 · 맨 아래 '10월 23일 계약분 입주 11월' — 누군가 숫자를 손톱으로 긁었다."""
+    im = img(96, 44)
+    d = ImageDraw.Draw(im)
+    d.rectangle([1, 3, 94, 41], fill=C(INK)); d.rectangle([2, 4, 93, 40], fill=C("P02"))
+    d.rectangle([2, 4, 93, 11], fill=C(GOLD[1]))
+    put_text(im, "전세대완판", 26, 4, "P01", 8, "Galmuri7")
+    rnd = random.Random(96)
+    for r in range(5):
+        y = 15 + r * 5
+        put_text(im, str(60 - r * 10), 5, y - 2, GOLD[3], 8, "Galmuri7")
+        for k in range(rnd.randint(4, 7)):
+            d.rectangle([24 + k * 9, y, 30 + k * 9, y + 2], fill=C("P56" if r else "P49"))
+    for k in range(5):
+        d.line([60 + k * 3, 14, 56 + k * 3, 38], fill=C("P05"))                                      # 긁힌 자국
+    return im
+
+
+def exhibit_kt(state=""):
+    """12층 어린이 과학관 전시대(2×1, 64×56): 유리 반구 아래 장난감 광선총 · 받침 명판 '광선총의 원리' · 옆 책 받침(책 한 권) / 상태 empty(책 받침이 빔)."""
+    im = img(64, 56)
+    d = ImageDraw.Draw(im)
+    _shadow(d, 2, 62, 52)
+    _box(d, 2, 30, 61, 50, ("P43", "P44", "P46"))
+    put_text(im, "광선총", 6, 36, "P09", 8, "Galmuri7")
+    d.ellipse([6, 6, 40, 34], fill=C(INK)); d.ellipse([7, 7, 39, 33], fill=C("P11"))
+    d.arc([8, 8, 38, 32], 190, 260, fill=C("P15"))
+    d.rectangle([14, 20, 30, 24], fill=C(INK)); d.rectangle([15, 21, 29, 23], fill=C("P53"))           # 장난감 광선총
+    d.rectangle([16, 24, 19, 29], fill=C(INK)); d.ellipse([28, 19, 33, 25], fill=C("P63"))
+    d.rectangle([44, 16, 58, 30], fill=C(INK)); d.rectangle([45, 17, 57, 29], fill=C("P04"))
+    if state != "empty":
+        d.rectangle([47, 12, 56, 27], fill=C(INK)); d.rectangle([48, 13, 55, 26], fill=C("P54"))
+        d.line([49, 15, 54, 15], fill=C("P09"))
+    return im
+
+
+def w_hose_kt(state=""):
+    """소화전 함(벽 1칸, 32×44): 붉은 철함 · 유리 창 안에 감긴 호스 · '소화전' 글 / 상태 open(문이 열리고 호스가 풀려 바닥으로)."""
+    im = img(32, 44)
+    d = ImageDraw.Draw(im)
+    d.rectangle([3, 4, 28, 40], fill=C(INK)); d.rectangle([4, 5, 27, 39], fill=C("P53"))
+    d.line([4, 5, 27, 5], fill=C("P54"))
+    put_text(im, "소화전", 5, 6, "P09", 8, "Galmuri7")
+    if state == "open":
+        d.rectangle([6, 17, 25, 37], fill=C(INK))
+        d.polygon([(26, 17), (31, 14), (31, 40), (26, 37)], fill=C("P52"))
+        d.line([16, 30, 14, 43], fill=C("P08"), width=3)
+    else:
+        d.rectangle([6, 17, 25, 37], fill=C("P11"))
+        for r in (8, 6, 4):
+            d.ellipse([16 - r, 27 - r, 16 + r, 27 + r], outline=C("P08"))
+        d.line([7, 18, 12, 18], fill=C("P15"))
+    return im
+
+
+def extinguisher_kt(state=""):
+    """소화기(1×1, 32×40): 붉은 통 · 검은 손잡이 · 호스 · 압력계 / 상태 empty(쓰러져 있고 주둥이에 흰 가루)."""
+    im = img(32, 40)
+    d = ImageDraw.Draw(im)
+    _shadow(d, 6, 26, 36)
+    if state == "empty":
+        d.rounded_rectangle([4, 24, 26, 34], 4, fill=C(INK)); d.rounded_rectangle([5, 25, 25, 33], 3, fill=C("P52"))
+        d.rectangle([26, 27, 29, 31], fill=C(INK))
+        for k in range(6):
+            d.point((28 + k % 3, 22 + k), fill=C("P09"))
+        return im
+    d.rounded_rectangle([10, 10, 22, 36], 4, fill=C(INK)); d.rounded_rectangle([11, 11, 21, 35], 3, fill=C("P53"))
+    d.line([12, 12, 12, 33], fill=C("P54"))
+    d.rectangle([12, 4, 20, 10], fill=C(INK)); d.line([20, 6, 26, 4], fill=C(INK), width=2)
+    d.ellipse([13, 14, 19, 20], fill=C(INK)); d.ellipse([14, 15, 18, 19], fill=C("P09"))
+    d.line([10, 12, 6, 26], fill=C(INK), width=2)
+    return im
+
+
+def w_banner_kt():
+    """연회장 현수막(벽 4칸, 128×40): 진홍 바탕 금빛 글 '금빛 빌딩 개관 기념 만찬 2077.10.23' · 오른쪽 끝이 찢겨 늘어짐."""
+    im = img(128, 40)
+    d = ImageDraw.Draw(im)
+    d.polygon([(2, 6), (125, 6), (122, 28), (116, 36), (112, 26), (2, 30)], fill=C(INK))
+    d.polygon([(3, 7), (124, 7), (121, 27), (116, 34), (112, 25), (3, 29)], fill=C("P52"))
+    d.line([3, 8, 123, 8], fill=C("P53"))
+    put_text(im, "개관기념만찬", 8, 10, GOLD[2], 8, "Galmuri7")
+    put_text(im, "2077.10.23", 66, 10, GOLD[3], 8, "Galmuri7")
+    d.line([3, 7, 3, 3], fill=C(INK)); d.line([124, 7, 124, 3], fill=C(INK))
+    return im
+
+
+def rope_line_kt():
+    """60층 4번 승강기 앞 '정원 15명' 줄 난간(3×1, 96×40): 금빛 기둥 넷 · 붉은 벨벳 띠(끊기지 않음) · 가운데 판 '정원 15명'."""
+    im = img(96, 40)
+    d = ImageDraw.Draw(im)
+    _shadow(d, 2, 94, 36)
+    for x in (4, 32, 60, 88):
+        d.rectangle([x, 10, x + 4, 34], fill=C(INK)); d.rectangle([x + 1, 11, x + 3, 33], fill=C(GOLD[1]))
+        d.ellipse([x - 1, 6, x + 5, 12], fill=C(GOLD[2])); d.rectangle([x - 2, 32, x + 6, 35], fill=C(INK))
+    for a, b in ((6, 34), (34, 62), (62, 90)):
+        d.arc([a, 10, b, 22], 0, 180, fill=C("P53"), width=2)
+    d.rectangle([38, 22, 58, 31], fill=C(INK)); d.rectangle([39, 23, 57, 30], fill=C("P09"))
+    put_text(im, "15", 43, 22, "P53", 8, "Galmuri7")
+    return im
+
+
+def w_glass_kt(state=""):
+    """바깥 통유리(벽 2칸, 64×44): 금빛 창틀 · 밤하늘과 강 건너 불 꺼진 도시 실루엣 / 상태 broken(가운데가 깨져 바람 — 곤돌라로 들어온 자리)."""
+    im = img(64, 44)
+    d = ImageDraw.Draw(im)
+    d.rectangle([1, 2, 62, 42], fill=C(INK)); d.rectangle([2, 3, 61, 41], fill=C("P43"))
+    d.rectangle([2, 3, 61, 16], fill=C("P10"))
+    rnd = random.Random(97)
+    x = 2
+    while x < 61:
+        w = rnd.randint(3, 7); h = rnd.randint(4, 14)
+        d.rectangle([x, 34 - h, x + w, 34], fill=C("P01"))
+        x += w + 1
+    d.rectangle([2, 34, 61, 41], fill=C(WATER[1]))
+    d.line([32, 3, 32, 41], fill=C(GOLD[1])); d.rectangle([1, 2, 62, 3], fill=C(GOLD[2]))
+    if state == "broken":
+        d.polygon([(16, 12), (28, 8), (44, 14), (40, 30), (22, 32), (14, 24)], fill=C("P01"))
+        for a, b in (((16, 12), (8, 6)), ((44, 14), (56, 8)), ((40, 30), (50, 38)), ((22, 32), (14, 40))):
+            d.line([a, b], fill=C("P15"))
+    else:
+        d.line([5, 5, 14, 5], fill=C("P15")); d.line([35, 5, 40, 5], fill=C("P15"))
+    return im
+
+
 # ================================================================================================ 등록
 def _r(fn, fw, fh, kind="floor", down=2, dx=0, dy=0):
     return {"fn": fn, "foot": (fw, fh), "kind": kind, "down": down, "dx": dx, "dy": dy}
@@ -675,13 +857,22 @@ PROPS_KT = {
     "cubicle_kt": _r(cubicle_kt, 2, 2, down=-2),
     "soil_pillar_kt": _r(soil_pillar_kt, 1, 1, down=-2),
     "ant_hole_kt": _r(ant_hole_kt, 0, 0, "deco"),
+    "model_kt": _r(model_kt, 2, 2, down=-2),
+    "sales_booth_kt": _r(sales_booth_kt, 2, 1, down=-2),
+    "w_quote_kt": _r(w_quote_kt, 3, 0, "wall", dx=0, dy=6),
+    "exhibit_kt": _r(exhibit_kt, 2, 1, down=-2),
+    "w_hose_kt": _r(w_hose_kt, 1, 0, "wall", dx=0, dy=6),
+    "extinguisher_kt": _r(extinguisher_kt, 1, 1, down=-2),
+    "w_banner_kt": _r(w_banner_kt, 4, 0, "wall", dx=0, dy=6),
+    "rope_line_kt": _r(rope_line_kt, 3, 1, down=-2),
+    "w_glass_kt": _r(w_glass_kt, 2, 0, "wall", dx=0, dy=6),
 }
 STATES_KT = {
     "revolving_kt": {s: (lambda s=s: revolving_kt(s)) for s in ("turn", "broken", "trapped")},
     "souvenir_kt": {"empty": lambda: souvenir_kt("empty")},
     "w_elev_kt": {"open": lambda: w_elev_kt("open")},
     "w_cargo_kt": {"live": lambda: w_cargo_kt("live")},
-    "ant_soil_kt": {"quiet": lambda: ant_soil_kt("quiet")},
+    "ant_soil_kt": {s: (lambda s=s: ant_soil_kt(s)) for s in ("quiet", "dug")},
     "w_intercom_kt": {"lit": lambda: w_intercom_kt("lit")},
     "safe_kt": {"open": lambda: safe_kt("open")},
     "tank_kt": {s: (lambda s=s: tank_kt(s)) for s in ("broken", "dry")},
@@ -693,6 +884,11 @@ STATES_KT = {
     "gondola_kt": {"tilt": lambda: gondola_kt("tilt")},
     "banquet_kt": {"bones": lambda: banquet_kt("bones")},
     "cubicle_kt": {"ant": lambda: cubicle_kt("ant")},
+    "model_kt": {"ant": lambda: model_kt("ant")},
+    "exhibit_kt": {"empty": lambda: exhibit_kt("empty")},
+    "w_hose_kt": {"open": lambda: w_hose_kt("open")},
+    "extinguisher_kt": {"empty": lambda: extinguisher_kt("empty")},
+    "w_glass_kt": {"broken": lambda: w_glass_kt("broken")},
 }
 
 

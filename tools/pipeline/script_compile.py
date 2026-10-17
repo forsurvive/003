@@ -52,7 +52,7 @@ ENGINE_VARS = {"PC_ST", "PC_PE", "PC_EN", "PC_CH", "PC_IN", "PC_AG", "PC_LK", "P
                "MQP4_DUCT", "MQP4_FOLLOW", "MQP4_KEY", "MQP4_ARMORY", "MQP4_TALK", "MQP4_BJ_KO", "MQP4_SEC_KO", "MQP4_CAUGHT", "MQP4_DECOY",
                "S7_THEFT_SEEN", "S7_ASSAULT", "S7_KILLS",
                "MQ101_DOG", "MQ101_TRADE", "MQ101_WATER", "MQ101_RAD", "MQ101_NIGHT", "MQ101_DEAD", "MQ101_TANK", "MQ101_ROOF", "MQ101_LOAN",
-               "MQ101_BOARD", "MQ101_FIGHT", "PC_RADS", "PD_BC", "PD_R01", "GAME_DAY", "PC_TORSO", "PC_EYES",
+               "MQ101_BOARD", "MQ101_FIGHT", "PC_RADS", "PD_BC", "PD_R01", "GAME_DAY", "PC_TORSO", "PC_EYES", "PC_SMELL",
                "WANTED_DAY", "WANTED_KILL_SUM", "WANTED_AUTH_SUM", "WANTED_LOOK",                            # 1-3 수배도
                "CAPTURE_DAY", "CAPTURE_AT", "SB_COLLAR", "SB_CUFF", "CAPTURE_BY", "STAT_HACKED", "STAT_LOCKS",
                "MQ104_FIRE", "MQ104_DESK", "MQ104_IDS", "MQ104_SEEN", "MQ104_ROLL", "MQ104_LOG", "MQ104_FILES", "MQ104_RIFLE",
@@ -79,7 +79,7 @@ ENGINE_VARS |= {"U02_" + k for k in ("GUIDE INTRO LIGHT LIGHT_DAY ASK HAL HAL_DA
 # UQ-04 7호 냉동 창고(1-D3, SD-05 UQ-04 · 1-D 계획 §9 · §9.6): 사실 한 곳 — 원고 script/act1/UQ-04.txt 머리 주석 · DS_VALVE 가공장 배수 밸브
 ENGINE_VARS |= {"UQ04_" + k for k in "KNOW OPEN OPEN_DAY LOCK DUE THAW THAW_DAY GONE LEFT COLD COLD_DAY BC BC_DAY SA SA_DAY JH JH_DAY LEAK FEUD FEUD_DAY RATK SHARD SHELF SOL REWARD LINK2 LINK3 FLED DATE SIGN PRICE BACK REFUND".split()} | {"DS_VALVE"}
 ENGINE_VARS |= {"GR_" + k for k in "CORE PUSH BUS CORE_DAY LV_A LV_B LV_C A B C STAFF STAFF_DAY STAFF_K KEY LOST SIGKEY WHISTLE MUSTER MUSTER_K REEFER DRIFT RATS SB SB_DAY ROOF CHART TAG PARK CHEER ESC GUIDE TIP MUSTER_DAY".split()}   # 1-D4 구로 차량기지
-ENGINE_VARS |= {"KT_" + k for k in "POWER POWER_DAY NOTE CALL RING RING2 MEM HOOK REVOLVE TUNNEL CAR QUEEN LOW CARTOLD HATCH KEY GRATE".split()}   # 1-D5a 여의도 금탑
+ENGINE_VARS |= {"KT_" + k for k in "POWER POWER_DAY NOTE CALL RING RING2 MEM HOOK REVOLVE TUNNEL CAR QUEEN LOW CARTOLD HATCH KEY GRATE DIG ROPE GOND TOP TOP_DAY MEET VIEW SHOE NURSE EXPL HEAT OBS QUEEN_DAY CREW".split()}   # 1-D5a·1-D5b 여의도 금탑
 # 던전 정리 변수(1-D0, script/world/dungeons.txt): DG_<접미> 0 손 안 댐 · 1 정리 · 2 다시 들어섬 / _DAY 정리 · 재입주 날 / _ROLL 재입주를 굴린 날
 ENGINE_VARS |= {f"DG_{m}{s}" for m in re.findall(r"^@\s+([A-Z0-9]+)\s", open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "script", "world", "dungeons.txt"), encoding="utf-8").read(), re.M)
                 for s in ("", "_DAY", "_ROLL")}

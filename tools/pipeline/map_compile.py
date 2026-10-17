@@ -370,6 +370,26 @@ def _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kin
                 if opt.get("cond"):
                     check_cond(opt["cond"], known_vars, known_fns)
                 out.setdefault("hush", []).append({"x": x, "y": y, "w": w, "h": h, "cond": opt.get("cond", "")})
+            elif c == "scent":                                      # 1-D5b 왕개미 냄새 길(scent x,y;x,y;… [cond=]) — 꺾은선(가로 · 세로 · 대각) 칸들. 일개미가 따라 걷는다
+                pts = [tuple(int(v) for v in q.split(",")) for q in pos[0].split(";") if q]
+                if len(pts) < 2:
+                    raise Err("scent는 점이 둘 이상이어야 한다")
+                if opt.get("cond"):
+                    check_cond(opt["cond"], known_vars, known_fns)
+                cells_ = []
+                for (x0, y0), (x1, y1) in zip(pts, pts[1:]):
+                    dx, dy = x1 - x0, y1 - y0
+                    if dx and dy and abs(dx) != abs(dy):
+                        raise Err(f"scent 마디 ({x0},{y0})→({x1},{y1})는 가로 · 세로 · 대각만")
+                    n = max(abs(dx), abs(dy))
+                    sx, sy = (dx > 0) - (dx < 0), (dy > 0) - (dy < 0)
+                    for k in range(n + 1):
+                        cx, cy = x0 + sx * k, y0 + sy * k
+                        if not floor(cx, cy):
+                            raise Err(f"scent 칸 ({cx},{cy})이 바닥이 아니다")
+                        if [cx, cy] not in cells_:
+                            cells_.append([cx, cy])
+                out.setdefault("scent", []).append({"cells": cells_, "cond": opt.get("cond", "")})
             elif c == "drain":                                      # 1-D5a 물이 빠진다(drain x y w h cond="식") — 식이 참이면 그 사각형의 침수 칸이 마르고 바닥은 젖은 콘크리트
                 x, y, w, h = int(pos[0]), int(pos[1]), int(pos[2]), int(pos[3])
                 check_cond(opt["cond"], known_vars, known_fns)

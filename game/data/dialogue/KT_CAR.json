@@ -6,13 +6,20 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "WET": 3,
-  "PLATE": 4,
-  "KNOW": 7,
-  "REST": 8,
-  "UP": 10
+  "WET": 4,
+  "TAKE": 5,
+  "AGAIN": 8,
+  "PLATE": 9,
+  "KNOW": 12,
+  "REST": 13,
+  "UP": 15
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "KT_CAR >= 1",
+   "to": "AGAIN"
+  },
   {
    "op": "if",
    "cond": "KT_POWER != 1",
@@ -26,13 +33,33 @@
   },
   {
    "op": "goto",
-   "to": "PLATE"
+   "to": "TAKE"
   },
   {
    "op": "line",
    "who": "SYS",
    "emo": "기본",
    "text": "허리 물 속으로 손을 넣어 더듬는다. 차갑다. 가방 끈, 어른 구두 — 그리고 손바닥만 한 아이 신발 한 짝. 젖은 채 건져 올린다."
+  },
+  {
+   "op": "do",
+   "fx": "give(\"M-393\", 1)"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "아이 신발 한 짝을 챙긴다. 끈이 손가락에 감긴다."
+  },
+  {
+   "op": "goto",
+   "to": "PLATE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "비틀린 칸. 가방 몇, 어른 신발 몇. 신발 한 짝이 놓였던 자리만 진흙이 패었다."
   },
   {
    "op": "line",

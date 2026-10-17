@@ -18,7 +18,7 @@ const ROLL_DIST := 2.5 * 32.0
 const ROLL_GAP := 0.5
 ## 자세 그림(시트에 '<자세>_E'가 있을 때): [속도 배수(8컷/초 기준), 걸어도 트나]
 const POSE_ANIMS := {"mound": [1.0, true], "heave": [1.2, true], "emerge": [0.6, true], "dig": [0.8, true], "eat": [0.5, false],
-	"pulse": [0.25, false], "crack": [1.0, false]}
+	"pulse": [0.25, false], "crack": [1.0, false], "spray": [1.0, false], "spit": [1.0, false], "lay": [0.6, false]}   # 1-D5b 왕개미 분사 · 산성 침 · 알 낳기
 var roll_t := -1.0                            ## 구르는 중이면 0 이상
 var roll_vec := Vector2.ZERO
 var roll_dir := 2

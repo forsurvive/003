@@ -36,7 +36,7 @@ var robot := false                            ## 로봇(관제망 로봇 피해 
 var big := false                              ## 대형(넉백·넉다운·그물 무효)
 var push := Vector2.ZERO                      ## 넉백 남은 거리(px) — 몸 주인이 걸음 규칙으로 옮긴다
 var limbs := {}                               ## 부위 체력(SD-11 §4.8, 1-9e): 부위 -> 남은 값(처음 맞을 때 최대 HP × 계수로 채운다)
-var crippled := {}                            ## 부위 손상: 부위 -> true(다리 · 팔 · 머리 · 몸통)
+var crippled := {}                            ## 부위 손상: 부위 -> true(다리 · 팔 · 머리 · 몸통 · 더듬이)
 var track_limbs := false                      ## 부위 체력을 셀지(적만 — 주인공 부위 손상은 SD-11 §11.4 단계에서)
 signal crippled_part(part: String)
 
@@ -77,7 +77,7 @@ func take(result: Dictionary, from: Vector2) -> void:
 ## 부위 체력(SD-11 §4.8): 부위 피해 = HP 피해 × 2 × 무기 배수. 바닥나면 부위 손상 + 0.6초 멈춤(상처를 붙잡는다)
 func _limb_hit(part: String, amt: float) -> void:
 	var key := "leg" if part.begins_with("leg") else ("arm" if part.begins_with("arm") else part)
-	if not key in ["head", "torso", "arm", "leg"] or crippled.has(key):
+	if not key in ["head", "torso", "arm", "leg", "antenna"] or crippled.has(key):
 		return
 	if not limbs.has(key):
 		limbs[key] = CombatRules.limb_hp(max_hp, key)

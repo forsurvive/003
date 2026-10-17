@@ -97,6 +97,7 @@ var rad_shake := 0.0                              ## 단계가 오른 순간 선
 var rad_stage := 0
 var _rad_t := 0.0
 const NUKE_RAD := {"r": 4.0, "t": 20.0, "rad": 8.0}  ## 핵 투사기 폭심 지대(SD-11 §9.2 표)
+var colony: AntColony
 ## 1-9e3 AP 행동(SD-11 §5.3): 질주 · 회피 구르기 · 집중 사격 + 저격 스코프 안정(§3.4)
 var sprint_want := false                          ## 호스트: 질주 키(또는 터치 링 밖 0.3초)를 누르고 움직이는 중
 var sprinting := false
@@ -131,6 +132,8 @@ func _init() -> void:
 	hazards.bind(shots, ord, weapons)
 	rad = RadField.new()
 	add_child(rad)
+	colony = AntColony.new()                                           # 1-D5b 왕개미 군체(냄새 길 · 위장 · 분사 · 여왕) — 냄새 길이나 왕개미가 있는 맵에서만 일한다
+	add_child(colony)
 	rad.bind(ord, hazards)
 	shots.nuked.connect(func(at: Vector2) -> void:
 		ord.zones.append({"p": at, "r": NUKE_RAD["r"] * 32.0, "t": NUKE_RAD["t"], "t0": NUKE_RAD["t"], "kind": "rad", "team": "env",
@@ -254,6 +257,7 @@ func on_map(map: InteriorMap, player: Actor, st: StoryState) -> void:
 			var e1 := spawn(str(row["id"]), Vector2(int(row["x"]) * 32 + 16, int(row["y"]) * 32 + 16), map, st, row)
 			e1.set_meta("spawn_key", str(row["refill_key"]))
 	_rebuild_list()
+	colony.setup(map, self, st)
 	if st != null:
 		ap.max_ap = APPool.max_for(st.stat("AG"))
 		ap.ap = minf(ap.ap, ap.max_ap)
@@ -461,7 +465,7 @@ func spawn(enemy_id: String, pos: Vector2, map: InteriorMap, st: StoryState = nu
 	e.cmb.died.connect(func() -> void:
 		if e.cmb.robot and not e.cmb.ko and _rng.randf() < 0.3:          # 처치된 로봇의 30%: 원자 전지 소형 폭발(SD-11 §9.3)
 			shots.explode.call_deferred(e.loco.logical + Vector2(0, -10), {"blast": 40.0, "proj": "robot", "condition": "new"}, 100.0, "env")
-		var by_pc: bool = e.cmb.last_by in ["player", "ally", ""]          # 교전(1-E): 다른 무리가 쓰러뜨린 적은 경험치·카르마가 없다
+		var by_pc: bool = e.cmb.last_by in ["player", "ally", "", "frenzy"]   # 교전(1-E): 다른 무리가 쓰러뜨린 적은 경험치·카르마가 없다 · 더듬이 광란 개미가 문 적은 주인공 몫(SD-11 §4.8)
 		if e.cmb.last_by == "mate":                                     # 동행이 쓰러뜨림(1-10a): 주인공이 HP 30% 이상 깎았을 때만 XP(SD-11 §8.2)
 			by_pc = e.cmb.dmg_player >= e.cmb.max_hp * 0.3
 		_morale_death(e, by_pc, st)
@@ -478,6 +482,9 @@ func spawn(enemy_id: String, pos: Vector2, map: InteriorMap, st: StoryState = nu
 				st.call_fn("xp", [int(enemy_rows[enemy_id]["xp"])])
 			if enemy_id == "CR-002":
 				st.call_fn("give", ["I-036", 1])                         # 바퀴 고기 100%(SD-14 §3.1)
+			if enemy_id == "CR-082":
+				st.call_fn("give", ["M-155", 1])                         # 여왕 페로몬 100%(SD-14 §3.5 드롭)
+				message.emit("여왕의 더듬이 밑 분비샘 — 여왕 페로몬을 긁어 담았다.")
 			if e.cmb.killed_lethal and enemy_id == "CR-473":             # 보안요원 사살: 카르마 -25(기절은 0, SD-03a §7.4)
 				st.call_fn("karma", [-25])
 				st.vars.set_v("MQP4_SEC_KO", int(st.vars.get_v("MQP4_SEC_KO")) + 1)
@@ -882,6 +889,10 @@ func tick(dt: float, free: bool, st: StoryState) -> void:
 		mates.tick(dt)
 		_allies(dt)
 		_radiation(dt, st)
+	colony.tick(step)
+	for z in ord.zones:                                                 # 불(화염병 · 화염방사기 지대)은 냄새 길을 태운다
+		if str(z["kind"]) == "fire" and colony.active:
+			colony.erase_at(z["p"], float(z["r"]) / 32.0)
 	shots.step(step)
 	ord.step(step, shots.combatants)
 	hazards.step(step, shots.combatants)

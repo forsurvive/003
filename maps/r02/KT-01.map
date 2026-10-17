@@ -99,6 +99,10 @@ prop rubble 7 19
 prop rubble 33 13
 text 33 13 "천장에서 떨어진 금빛 장식 패널. 2층 갤러리 난간이 위에서 비스듬히 내려다본다."
 # ---------------------------------------------------------------- 개미 정찰(흙벽 틈 — 냄새 길을 따라 나왔다 들어간다)
-enemy CR-080 33 6 cond="KT_QUEEN == 0" route=33,6,3;28,7,1;24,9,2;28,12,1;33,9,2
-enemy CR-080 36 6 cond="KT_QUEEN == 0" route=36,6,4;36,10,2;31,13,2;36,8,1
-enemy CR-080 22 5 cond="KT_POWER == 2 and KT_QUEEN == 0" route=22,5,2;26,8,2;20,7,2
+# 냄새 길(1-D5b 엔진 — 일개미는 순찰 길 대신 이 칸들을 따라 걷는다 · 고리를 돌고 흙벽으로 돌아간다)
+scent 34,4;34,5;33,6;28,6;25,9;25,11;26,12;30,12;33,9;33,6 cond="KT_QUEEN == 0"
+scent 35,4;36,5;36,10;34,12;30,12 cond="KT_QUEEN == 0"
+scent 20,7;22,5;25,8;25,9 cond="KT_POWER == 2 and KT_QUEEN == 0"
+enemy CR-080 33 6 cond="KT_QUEEN == 0"
+enemy CR-080 36 7 cond="KT_QUEEN == 0"
+enemy CR-080 22 5 cond="KT_POWER == 2 and KT_QUEEN == 0"

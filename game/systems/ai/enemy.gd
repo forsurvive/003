@@ -270,6 +270,8 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 	cmb.radius = float(row["radius"]) * 32.0
 	radius_px = cmb.radius
 	cmb.weights = {"head": 15, "torso": 55, "leg": 30} if is_roach else ({"head": 20, "torso": 50, "leg": 30} if is_dog else CombatRules.HUMANOID_WEIGHTS)
+	if str(row.get("part_weights", "")) == "PW-B":                    # 왕개미(PW-B, SD-11 §4.8 표 곤충): 머리 15 · 몸통 60 · 다리 15 · 더듬이 10(부위 손상 → 광란)
+		cmb.weights = {"head": 15, "torso": 60, "leg": 15, "antenna": 10}
 	per = 3.0 if is_roach else (4.0 if is_dog else 5.0)
 	brain = AIBrain.new(pos, per, "insect" if is_roach else "human")
 	if stance == "hold":
@@ -741,7 +743,7 @@ func _show() -> void:
 	super._show()
 	if cmb != null and cmb.flash > 0:
 		sprite.modulate = Color(4, 4, 4)
-	elif cmb != null and not cmb.dead and frenzied:                     # 광란: 붉게 맥동(§7.2 '붉은 눈 이펙트'를 몸 색조로 키움)
+	elif cmb != null and not cmb.dead and (frenzied or has_meta("ant_mad")):   # 광란(약물 · 더듬이 손상): 붉게 맥동(§7.2 '붉은 눈 이펙트'를 몸 색조로 키움)
 		var k := 0.5 + 0.5 * sin(_clock * 9.0)
 		sprite.modulate = Color(1.0 + 0.35 * k, 0.75 - 0.15 * k, 0.72 - 0.15 * k)
 	elif cmb != null and not cmb.dead and glow:                         # 빛나는 구울: 몸이 녹빛으로 맥동(오라와 같은 박자)
