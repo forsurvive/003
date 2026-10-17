@@ -187,6 +187,7 @@ var side_s08: SideS08                              ## 영등포 사이드 퀘스
 var side_s09: SideS09                                   ## 영등포 사이드 퀘스트(1-11h — SQ-S09 127번)
 var side_s10: SideS10                                   ## 영등포 사이드 퀘스트(1-11i — SQ-S10 오늘의 4번 인력)
 var side_s11: SideS11                                   ## 여의도 사이드 퀘스트(1-11j — SQ-S11 토요일의 여의도)
+var uq71: Uq71                                          ## 비표시 퀘스트 UQ-71 원자력 버스(1-D1 — 대방 지하차도)
 var caravans: Caravans                             ## 순회 상인 일정(1-8d)
 var sol := 1                                       ## 1막 봇 해법(--sol=1~5, 0-10)
 
@@ -268,6 +269,10 @@ func _paths() -> void:
 		side_s11 = SideS11.new()
 		add_child(side_s11)
 		side_s11.setup(host, log_on)
+	if uq71 == null:
+		uq71 = Uq71.new()
+		add_child(uq71)
+		uq71.setup(host, log_on)
 
 
 func _act1(from: String) -> void:

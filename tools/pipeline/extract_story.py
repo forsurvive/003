@@ -131,12 +131,12 @@ def extract_factions():
     return {"factions": out, "settlements": sub}
 
 
-QHEAD = re.compile(r"^### \d+\.\d+ ((?:MQ|SQ)-[A-Z0-9]+) (.+)$")
+QHEAD = re.compile(r"^### \d+\.\d+ ((?:MQ|SQ|UQ)-[A-Z0-9]+) (.+)$")
 
 
 def extract_quests():
     out = {}
-    srcs = ["03a_main-story-part1.md", "04a_side-quests-south.md"]   # 메인 · 남부 사이드(1-11, '단계 | 로그 | 완료 조건')
+    srcs = ["03a_main-story-part1.md", "04a_side-quests-south.md", "05_misc-quests-encounters.md"]   # 메인 · 남부 사이드(1-11, '단계 | 로그 | 완료 조건') · 비표시 퀘스트 단계표(1-D1 UQ-71)
     src = srcs[0]
     rows_all = [(sx, t) for sx in srcs for t in tables(doc(sx))]
     for src, (section, line, header, rows) in rows_all:

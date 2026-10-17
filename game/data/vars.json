@@ -990,6 +990,21 @@
    "src": "03a_main-story-part1.md:494",
    "type": "int"
   },
+  "UQ71_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "UQ71_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "UQ71_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
   "V_ACT": {
    "default": 0,
    "src": "03a_main-story-part1.md:492",

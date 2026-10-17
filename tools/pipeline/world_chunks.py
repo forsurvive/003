@@ -50,6 +50,16 @@ DOORS = [{"lid": "L-R02-11", "near": (720, 1147), "to": "J-01", "mark": "from_W"
           "hint": "콘크리트 암거 입구. 물비린내와 곰팡이 냄새가 흘러나온다."},
          {"lid": "L-R01-02", "near": (932, 1533), "to": "E-01", "mark": "from_W", "name": "S-07 배수 출구", "prop": "vault_drain_out",   # 1-11d SQ-S03 갱도 바깥 끝
           "hint": "바위 틈에 녹슨 원형 철문이 반쯤 열린 채 굳었다. 안에서 물이 흘러나온다."},
+         # 1-D1 대방 지하차도(DG-DB): 여의대방로가 경인선 철길 밑을 지나는 자리 — 철길 북쪽(신길 쪽) · 남쪽(대방역 쪽) 두 입구, 안에서 이어진다
+         {"lid": "L-R02-17", "near": (819, 1163), "to": "DB-01", "mark": "from_N", "name": "대방 지하차도 — 북쪽 입구", "prop": "underpass_mouth",
+          "hint": "경사로 끝이 검은 물에 잠겼다. 물비린내 사이로 쇳내가 난다.",
+          "hints": [["UQ71_CORE == 0 and UQ71_SQ == 0 and GAME_HOUR >= 6 and GAME_HOUR < 20",          # 재미 검수: 들어가기 전에 웅크릴 까닭(분대가 일하는 낮)
+                     "쇠사슬 한 줄이 경사로 아래 물속으로 팽팽하다. 안에서 윈치 끼익 소리와 욕설이 올라온다."],
+                    ["UQ71_CORE >= 4", "경사로에 버려진 윈치 자리. 사슬은 걷혀 갔고 물 위에 기름막만 남았다."]]},
+         {"lid": "L-R02-17", "near": (819, 1188), "to": "DB-01", "mark": "from_S", "name": "대방 지하차도 — 남쪽 입구", "prop": "underpass_mouth",
+          "hint": "경사로 끝이 검은 물에 잠겼다. 안쪽 어딘가에서 희미한 초록빛이 일렁인다.",
+          "hints": [["UQ71_CORE >= 1 and UQ71_CORE <= 3", "경사로 끝이 검은 물에 잠겼다. 물속이 어둡다 — 초록빛은 이제 없다."],
+                    ["UQ71_CORE >= 4", "경사로 끝 물 위에 기름막과 길게 끌린 자국. 초록빛은 없다."]]},
          {"lid": "L-UG-02", "near": (943, 1360), "to": "U-03", "mark": "from_W", "name": "서울대입구역 — 감시조 사다리", "prop": "subway_stairs",   # 1-11e SQ-S05 봉천 북서
           "hint": "무너진 역 입구에 봉천 감시조가 사다리를 걸어 두었다. 아래로 2호선 서울대입구역."}]
 # 손 실내가 붙는 건물의 양식(SD-21 §8): 도로망이 바뀌어도 그 자리에 건물이 선다
@@ -1287,6 +1297,8 @@ def place_geo(R):
         _, xx, yy = best
         doors.append({"lid": spec["lid"], "at": [xx, yy], "to": spec["to"], "mark": spec["mark"], "name": spec["name"], "prop": spec["prop"],
                       "hint": spec.get("hint", "계단을 내려가면 지하다.")})
+        if spec.get("hints"):                                                # 조건부 문구(1-D: 안의 상태를 밖에서 — 첫 참인 줄, 없으면 hint)
+            doors[-1]["hints"] = spec["hints"]
         geo.setdefault(spec["lid"], {"bank": "S", "arrive": None})["arrive"] = [xx, yy + 1]
     import gen_interiors                                                     # 들어가 보는 건물(1-5e): 문 앞 칸이 걸어서 닿는 1층 문 일부 → 실내 'G-x-y'
     enc = json.load(open(os.path.join(OUT, "encounters.json"), encoding="utf-8"))

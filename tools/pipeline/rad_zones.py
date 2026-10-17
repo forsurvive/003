@@ -22,6 +22,10 @@ CORE = {"김포 크레이터": [(8, 5), (20, 4)], "우면 크레이터": [(12, 4
 MAIN_LIDS = ("L-R01-01", "L-R01-09", "L-R01-18", "L-R01-19", "L-R01-23", "L-R02-19")
 
 
+# 이야기 결과로 생기는 지대(조건부 — 굽기는 웅덩이를 깔지 않고, 게임이 조건을 보고 켠다)
+COND_ZONES = [{"name": "신길 빌라 노심 잔해", "c": [763, 1194], "rings": [[10, 1]], "cond": "UQ71_CORE == 5"}]   # UQ-71 ③(SD-05 §3.17): Rad-1 영구
+
+
 def zones(src):
     out = []
     for e in src["radiation"]:
@@ -72,7 +76,7 @@ def main():
             hit.append("%s %s Z%d" % (p["lid"], p["name"], g))
         if g >= 3 and p["lid"] in MAIN_LIDS:
             bad.append(p["lid"])
-    json.dump({"zones": zs, "dose": {"1": 1, "2": 3, "3": 8, "4": 25, "5": 80}}, open(OUT, "w", encoding="utf-8"),
+    json.dump({"zones": zs + COND_ZONES, "dose": {"1": 1, "2": 3, "3": 8, "4": 25, "5": 80}}, open(OUT, "w", encoding="utf-8"),
               ensure_ascii=False, indent=1)
     print("방사능 구역 %d곳 → rad.json · 막 1 장소 중 구역 안 %d곳%s" % (len(zs), len(hit), (": " + " · ".join(hit)) if hit else ""))
     if bad:

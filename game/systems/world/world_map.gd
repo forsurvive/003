@@ -163,9 +163,25 @@ func load_map(map_id: String, st: StoryState = null) -> void:
 		var off: Array = pm.get("off", [0, 0])
 		dd["props"].append({"name": str(door["prop"]), "x": at.x, "y": at.y, "px": [at.x * T + int(off[0]), at.y * T + int(off[1])],
 			"sort_y": at.y * T})                                         # 땅에 뚫린 입구: 그 위를 걷는 사람이 앞에 그려진다
+		var hint := str(door.get("hint", "계단을 내려가면 지하다."))
+		for hc in door.get("hints", []):                                 # 1-D 조건부 문구: 안의 상태가 밖으로 새어 나온다(첫 참인 줄)
+			if _cond_ok(str(hc[0]), st):
+				hint = str(hc[1])
+				break
 		for i in 2:
 			dd["exits"].append({"x": at.x + i, "y": at.y, "to": str(door["to"]), "mark": str(door["mark"])})
-			dd["texts"].append({"x": at.x + i, "y": at.y - 1, "w": 1, "h": 1, "text": str(door["name"]) + " — " + str(door.get("hint", "계단을 내려가면 지하다."))})
+			dd["texts"].append({"x": at.x + i, "y": at.y - 1, "w": 1, "h": 1, "text": str(door["name"]) + " — " + hint})
+		var dg := Dungeon.of_map(str(door["to"]))
+		if not dg.is_empty() and st != null:                             # 1-D 던전 입구 분필 표식: 정리 상태를 밖에서(사실 한 곳 — DG_ 변수)
+			var dsn: String = ["chalk_claw", "chalk_x", "chalk_live"][clampi(Dungeon.state(st, dg), 0, 2)]
+			var dst: String = ["분필로 그린 집게 — '물속에 뭐 있음. 엎드린 것도.'", "분필 가위표 — '가재 없음. 버스 옆 조심.'",
+				"분필 사람 표시 — '누가 들어앉았음.'"][clampi(Dungeon.state(st, dg), 0, 2)]
+			var csm: Dictionary = prop_meta.get(dsn, {})
+			var ca := Vector2i(at.x + 2, at.y)
+			if not csm.is_empty():
+				var co: Array = csm.get("off", [0, 0])
+				dd["props"].append({"name": dsn, "x": ca.x, "y": ca.y, "px": [ca.x * T + int(co[0]), ca.y * T + int(co[1])], "sort_y": ca.y * T + 2})
+				dd["texts"].append({"x": ca.x, "y": ca.y, "w": 1, "h": 1, "text": dst})
 	_add_objects("W", dd, st, Vector2i.ZERO)
 	for sp in PlaceLog.spots:                                            # 발견 자리(1-4): 잠든 파수·길 위 유해·쪽지 — 구역 기준 좌표를 옮겨 붙인다
 		if not _cond_ok(str(sp.get("cond", "")), st):

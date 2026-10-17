@@ -22,6 +22,7 @@ python3 tools/pipeline/craft_export.py                   # 제작(1-8c, SD-13 §
 python3 tools/pipeline/loot_export.py
 python3 tools/pipeline/merchant_export.py
 python3 tools/pipeline/map_compile.py
+python3 tools/pipeline/dungeon_compile.py                 # 던전 표(1-D0): script/world/dungeons.txt → dungeons.json(맵 뒤에)
 python3 tools/pipeline/rumor_compile.py                  # 소문(1-4f): script/world/rumors.txt → rumors.json
 python3 tools/pipeline/struct_bake.py
 python3 tools/pipeline/world_extract.py                 # 월드(1-1): SD-08 표 → source.json

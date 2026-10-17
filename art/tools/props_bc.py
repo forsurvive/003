@@ -1012,6 +1012,10 @@ from props_s11 import PROPS_S11, STATES_S11                           # 무너�
 for _k in PROPS_S11:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_S11)
+from props_dg import PROPS_DG, STATES_DG                               # 던전(1-D): 대방 지하차도 침수 입구 · 원자력 버스 · 잠긴 차
+for _k in PROPS_DG:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_DG)
 from props_trap import PROPS_TRAP, STATES_TRAP, burnt_states       # 함정 · 환경 폭발(1-9c, SD-11 §9.2 · §9.3)
 for _k in PROPS_TRAP:
     assert _k not in PROPS, _k
@@ -1038,6 +1042,7 @@ STATES.update(STATES_S08)
 STATES.update(STATES_S10)
 STATES.update(STATES_S11)
 STATES.update(STATES_HOME)
+STATES.update(STATES_DG)
 for _k, _v in burnt_states(PROPS).items():
     STATES.setdefault(_k, {}).update(_v)
 

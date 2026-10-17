@@ -190,6 +190,8 @@ func _add_objects(map_id: String, d: Dictionary, st: StoryState, o: Vector2i) ->
 			_put_solid(o.x + int(c[0]), o.y + int(c[1]), 1)                     # 조건부 소품의 발 칸
 		var e: Dictionary = prop_meta[p["name"]]
 		var rect: Array = e["frames"][0] if e.has("frames") else e["rect"]
+		if str(p.get("state", "")) != "" and e.get("states", {}).has(str(p["state"])):   # 1-D: 원고가 정한 상태 그림(예: 노심이 빠진 버스 — 조건부 줄로 판을 가른다)
+			rect = e["states"][str(p["state"])]
 		var tall: bool = int(rect[3]) - int(e["foot"][1]) * T > 24          # 발 칸 위로 24px 넘게 서는 소품(사물함·선반) = 높은 엄폐
 		var fx := int(p["x"]) + o.x
 		var fy := int(p["y"]) + o.y

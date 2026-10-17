@@ -227,6 +227,17 @@ func _quest_rows() -> Array:
 		ids.sort_custom(func(x, y): return q.stage(x) < 100 and q.stage(y) >= 100)   # 진행 중 → 끝난 것
 		for id in ids:
 			out.append({"text": _qmark(id, "  ") + q.title(id), "id": id, "right": _short(q.path_tag(id)), "dim": q.stage(id) >= 100})
+	var memo: Array = []                                                  # 비표시 퀘스트(SD-05 §2.6): 제목 없이 '메모'에 사실 한 줄 · 끝나면 흐려지고 7게임일 뒤 사라진다
+	for id in q.defs:
+		if not id.begins_with("UQ") or q.stage(id) <= 0:
+			continue
+		var fin: Dictionary = st.boxes.get("uqdone:" + id, {})
+		if q.stage(id) >= 100 and not fin.is_empty() and int(st.vars.get_v("GAME_DAY")) - int(fin["day"]) > 7:
+			continue
+		memo.append({"text": "  - " + q.log_text(id, q.stage(id)), "id": "", "dim": q.stage(id) >= 100})
+	if not memo.is_empty():
+		out.append({"text": "— 기타 · 메모", "id": "", "dim": true})
+		out.append_array(memo)
 	return out
 
 

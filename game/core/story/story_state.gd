@@ -46,6 +46,7 @@ const UNNAMED := [["N-TRADER", "떠돌이 고물상", ""], ["N-REFUGEE", "피난
 	["N-HS-E1", "수송대 호위", "HS"], ["N-HS-E2", "수송대 호위", "HS"], ["CR-091", "짐소", ""],   # 1-8d 고개길 수송대
 	["N-SA-G1", "승강장 경비", "JC_SA"], ["N-SA-G2", "승강장 경비", "JC_SA"], ["N-SA-G3", "승강장 경비", "JC_SA"], ["N-SA-R1", "환승촌 주민", "JC_SA"],   # 1-8f 사당 환승촌
 	["N-SA-R2", "환승촌 주민", "JC_SA"], ["N-SA-R3", "환승촌 주민", "JC_SA"], ["N-SA-R4", "버섯 일꾼", "JC_SA"],
+	["N-DB-1", "대방 분대원", ""], ["N-DB-2", "대방 분대원", ""],          # 1-D1 UQ-71 대방 지하차도
 	["N-YT-1", "패거리 수금원", ""], ["N-YT-2", "패거리 척후", ""], ["N-BC-1", "봉천 감시조", "JC_BC"], ["N-BC-2", "봉천 감시조", "JC_BC"], ["N-BC-3", "봉천 감시조", "JC_BC"],   # 1-11b SQ-S02
 	["N-PS-1", "파수-3", ""],   # 1-11c SQ-S04 관제망 경비 로봇
 	["N-PS-2", "경비 파수-3", ""],   # 1-11j SQ-S11 영등포 경찰서 서장실 경비판
@@ -210,6 +211,15 @@ func _init() -> void:
 	vars.declare("SQR_S11", "int", 0)
 	for kv in [["SQH_LIST11", -1], ["SQH_RECESS", -1], ["SQE_LIST11", 0], ["SQE_RECESS", 0], ["SQK_MARCH", 0], ["NS_COOP", 0], ["PD_R02_KH", 0]]:   # 남산 협력 표시(SD-06 NS 협력 플래그) · 거점 '국회 폐허'(1 = BJ)
 		vars.declare(kv[0], "int", kv[1])
+	# UQ-71 원자력 버스(1-D1, SD-05 UQ-71 · 훅 H-R02-11 · DB-01): 노심의 행방은 UQ71_CORE 하나(0 버스 · 1 제자리 봉인 · 2 주인공 소지 · 3 팔림 · 4 분대가 가져감 · 5 신길에서 터짐) ·
+	# SQ 대방 분대(0 경사로에서 일함 · 1 돌아감 · 9 전멸) · HEARD 엿들음 · DAY 처음 본 날 · DUE 분대가 끌어낼 날 · SOL 해법 · REWARD · TALK 배수관과 말함 · SEEN 버스를 봄
+	# SQP 끌어내기 진척(0 사슬만 · 1 버스가 기움 — 버스 그림 · 윈치 글) · N 그날 낮 분대 인원(2~4) · QUICK 큰집게를 잡아 기한이 당겨짐
+	for k in "CORE SQ HEARD DAY DUE SOL REWARD TALK SEEN SQP N QUICK".split(" "):
+		vars.declare("UQ71_" + k, "int", 0)
+	Dungeon.load_db()                                                    # 던전 정리 변수(1-D0): DG_<접미> · _DAY · _ROLL
+	for did in Dungeon.db:
+		for sfx in ["", "_DAY", "_ROLL"]:
+			vars.declare(str(Dungeon.db[did]["var"]) + sfx, "int", 0)
 	vars.declare("PD_R02_GD", "int", 0)                                  # 판도 PD-R02-5 새벽(고척 · 개봉 — 습격 −15 · 방송 −5, SD-04a §5.3)                                  # 판도 PD-R02-4 새벽(영등포 남부 — 우리 열기 −3 · 습격 −10 · 지하로 −5, SD-04a §5.2)
 	for kv in [["SQH_BATT", -1], ["LR15_READ", 0], ["PD_R01_GS", 0], ["M303_BONUS", 0], ["PK_017", 0]]:   # 전지 인도처(HO) · LR-15 · 판도 PD-R01-2 각성회 · 편지 화술 +10(첫 1회) · 퍽 눈치(퍽 창은 1-12)
 		vars.declare(kv[0], "int", kv[1])

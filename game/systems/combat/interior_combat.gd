@@ -242,13 +242,17 @@ func on_map(map: InteriorMap, player: Actor, st: StoryState) -> void:
 	for row in map.data.get("enemies", []):
 		if InteriorMap._cond_ok(str(row.get("cond", "")), st):
 			var key := "kill:%s:%d,%d" % [str(map.data.get("id", "")), int(row["x"]), int(row["y"])]
-			if str(row.get("who", "")) == "" and st != null and not respawn_due(st, key):
-				continue                                                      # 1-D0: 쓰러뜨린 자리는 72게임시간(3일) 동안 비어 있다 · 우두머리는 다시 서지 않는다(SD-14 §11.3)
+			if str(row.get("who", "")) == "" and st != null and (not respawn_due(st, key) or (st.boxes.has(key) and Dungeon.keeps_dead(st, str(map.data.get("id", ""))))):
+				continue                                                      # 1-D0: 쓰러뜨린 자리는 72게임시간(3일) 동안 비어 있다 · 우두머리는 다시 서지 않는다(SD-14 §11.3) · 정리한 던전은 다시 서지 않는다(재입주는 따로)
 			var e0 := spawn(str(row["id"]), Vector2(int(row["x"]) * 32 + 16, int(row["y"]) * 32 + 16), map, st, row)
 			if str(row.get("who", "")) == "":
 				e0.set_meta("spawn_key", key)
 				if bool(row.get("boss", false)):
 					e0.set_meta("boss", true)
+	if st != null:                                                     # 1-D0 재입주: 정리한 던전에 30일 뒤 다른 무리가 든다(사람 먼저)
+		for row in Dungeon.refill_rows(st, str(map.data.get("id", "")), _rng):
+			var e1 := spawn(str(row["id"]), Vector2(int(row["x"]) * 32 + 16, int(row["y"]) * 32 + 16), map, st, row)
+			e1.set_meta("spawn_key", str(row["refill_key"]))
 	_rebuild_list()
 	if st != null:
 		ap.max_ap = APPool.max_for(st.stat("AG"))
@@ -461,6 +465,10 @@ func spawn(enemy_id: String, pos: Vector2, map: InteriorMap, st: StoryState = nu
 			message.emit("권서준의 허리춤에서 무기고 열쇠를 빼앗았다.")
 		if not e.cmb.ko and st != null and e.has_meta("spawn_key"):       # 1-D0 처치 기록(맵 자리 단위 · 저장에 남는다)
 			st.boxes[str(e.get_meta("spawn_key"))] = {"day": int(st.vars.get_v("GAME_DAY")), "boss": bool(e.get_meta("boss", false))}
+			var mid := str(shots.world.data.get("id", "")) if shots.world != null else ""
+			var dmsg := Dungeon.check_clear(st, mid) if bool(e.get_meta("boss", false)) else Dungeon.refill_check(st, mid)
+			if dmsg != "":
+				message.emit(dmsg)
 		if not e.cmb.ko:
 			enemy_down.emit(e)                                          # 유해(1-4 파밍): 호스트가 그 자리에 소지품 용기를 둔다
 		enemy_killed.emit(enemy_id, alive_enemies()))

@@ -18,6 +18,7 @@ var side8: SideS08                                   ## 영등포 사이드 퀘�
 var side9: SideS09                                   ## 영등포 사이드 퀘스트(1-11h SQ-S09)
 var side10: SideS10                                 ## 영등포 사이드 퀘스트(1-11i SQ-S10)
 var side11: SideS11                                 ## 여의도 사이드 퀘스트(1-11j SQ-S11)
+var uq71: Uq71                                     ## 비표시 퀘스트 UQ-71(1-D1 대방 지하차도)
 var st: StoryState
 var route := "job"
 var shots := ""
@@ -107,6 +108,9 @@ func _ready() -> void:
 	side11 = SideS11.new()
 	add_child(side11)
 	side11.setup(host, true)
+	uq71 = Uq71.new()
+	add_child(uq71)
+	uq71.setup(host, true)
 	host.combat.player_down.connect(host.on_pc_down)                  # 쓰러짐 → 생포 판정(진짜 진행 prologue와 같은 연결)
 	host.combat.equip("W-002", st)
 	match route:
@@ -358,6 +362,20 @@ func _ready() -> void:
 				["warp", "K-06", "from_W"], ["wait", 1.0], ["want", ["여의도 기록", "휴회 결의 원본", "넘긴다"]], ["talk", "N-R02-026"], ["wait", 2.0],
 				["until", "SQH_RECESS == 14", 10.0, "우도하 — '스스로 멈췄다'(원본 a)", "s11_woo"],
 				["check", "SQR_S11 == 1 and SQS11_STAGE == 100", "두 기록이 자리를 찾았다(100)"]]
+		"db":                                                           # 1-D1 대방 지하차도 · UQ-71: 북쪽 입구로 들어가 분대 등 뒤에서 웅크려 엿듣기(사흘 기한) → 펌프실 운전기사 메모 →
+			st.vars.set_v("PC_SKP_SCIENCE", 60)                          #   허리 물 버스에서 정지 레버로 봉인(카르마 · 지대 꺼짐) → 남쪽 입구로 나와 문 앞에 선다
+			st.vars.set_v("GAME_DAY", 8)
+			host.date_text = "2277. 10. 26.  10:00"
+			host.enter("DB-01", "from_N")
+			plan = [["hp", 3000], ["crouch", true], ["wait", 1.0], ["shot", "db_north"], ["go", 4, 14],
+				["until", "UQ71_HEARD == 1", 20.0, "분대 등 뒤에서 엿듣기", "db_hear"],
+				["check", "UQ71_STAGE == 20 and UQ71_DUE == 11 and UQ71_N >= 2", "단계 20 · 기한 사흘 · 그날 인원"],
+				["warp", "DB-01", "pump"], ["calm"], ["go", 29, 6], ["use", 30, 6],
+				["until", "UQ71_STAGE >= 30", 10.0, "펌프실 운전기사 메모(23:58)", "db_memo"],
+				["warp", "DB-01", "bus"], ["calm"], ["go", 25, 11], ["want", ["정지 레버를 당겨"]], ["use", 25, 12],
+				["until", "UQ71_CORE == 1", 20.0, "허리 물에서 정지 레버 — 봉인", "db_seal"],
+				["check", "UQ71_STAGE == 100 and UQ71_SOL == 1", "해법 ① 봉인 · 끝"], ["crouch", false],
+				["go", 50, 13], ["go", 51, 13], ["until", "map:W", 20.0, "남쪽 입구로 나옴", "db_out"]]
 		"s11p":                                                         # 1-11j SQ-S11 낮 호위: 공영방송 앞에서 국회 쪽으로 걸으면 여의도 순찰이 '구울 통행 금지' → 환승센터 터 지하로 숨는다 → 계단 낭독
 			st.call_fn("give", ["M-305", 1])
 			st.vars.set_v("GAME_DAY", 4)
@@ -917,6 +935,12 @@ func _process(dt: float) -> void:
 			_next()
 		"crouch":
 			host.combat.crouch = bool(s[1])
+			_next()
+		"calm":                                                         # 맵의 적을 멈춰 세운다(확인 봇: 싸움 없이 장치 · 장면만 본다 — 1-D)
+			for e in host.combat.enemies:
+				if is_instance_valid(e):
+					e.set_process(false)
+					e.set_physics_process(false)
 			_next()
 		"goen":                                                         # 가장 가까운 그 적(비적대 수색조 등)에게 걸어간다(1-11f)
 			var best: Enemy = null

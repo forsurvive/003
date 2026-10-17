@@ -353,6 +353,15 @@ func enter(map_id: String, mark: String = "", look: Dictionary = {}, at: Vector2
 	if world_mode and at == Vector2.INF and mark.begins_with("@"):     # 들어가 본 건물에서 나온다(1-5e): 그 문 앞 칸, 남쪽을 보고
 		var xy := mark.substr(1).split(",")
 		at = Vector2(int(xy[0]) * 32 + 16, int(xy[1]) * 32 + 16)
+	if world_mode and at == Vector2.INF and mark.begins_with("L-") and mark.contains(">"):   # 1-D 두 입구: 'L-ID>표지' = 그 장소의 문 가운데 이 표지로 드는 문 앞
+		PlaceLog.load_db()
+		var lm := mark.split(">")
+		for door in PlaceLog.doors:
+			if str(door.get("lid", "")) == lm[0] and str(door.get("mark", "")) == lm[1]:
+				at = Vector2(int(door["at"][0]) * 32 + 16, (int(door["at"][1]) + 1) * 32 + 16)
+				break
+		if at == Vector2.INF:
+			mark = lm[0]
 	if world_mode and at == Vector2.INF and mark.begins_with("L-"):    # 실내에서 월드의 장소로 나간다(1-3): 그 장소의 도착 칸
 		PlaceLog.load_db()
 		var arr = PlaceLog.db.get(mark, {}).get("arrive")
@@ -419,7 +428,7 @@ func enter(map_id: String, mark: String = "", look: Dictionary = {}, at: Vector2
 	cam.position = player.loco.logical.round()
 	cam.reset_smoothing()
 	_tone_update(true)
-	banner_text = map.zone_name() if map is WorldMap else map.data["name"]
+	banner_text = map.zone_name() if map is WorldMap else str(map.data["name"]) + _floor_tag()
 	banner_t = BANNER_SECS
 	map_entered.emit(map_id)
 
@@ -495,7 +504,14 @@ func _place_name() -> String:
 		var rn: String = map.region_name(map.region_at(map.tile_of(player.loco.logical))) if player != null else "서울"
 		var zn: String = map.zone_name()
 		return rn if zn == rn else "%s · %s" % [rn, zn]
+	if not Dungeon.of_map(map.id).is_empty():                          # 던전(1-D0): 이름 · 층
+		return str(map.data["name"]) + _floor_tag()
 	return ("볼트 S-07 · " if map.id.begins_with("V-") else "관악 · ") + str(map.data["name"])
+
+
+func _floor_tag() -> String:
+	var f := Dungeon.floor_of(map.id) if map != null else ""
+	return "" if f == "" else " · " + f
 
 
 const WET_MUL := [1.0, 0.8, 0.6]                  ## 침수 이동 배수(SD-09f §3.5: 발목 ×0.8 · 허리 ×0.6)
@@ -2666,6 +2682,10 @@ func _drain_events() -> void:
 				_note("수배 등급이 %s: %s" % ["올라갔습니다" if bool(e["up"]) else "내려갔습니다", Wanted.NAMES[int(e["grade"])]])
 	st.events.clear()
 	for q in st.quests.events:
+		if str(q.get("id", "")).begins_with("UQ"):                       # 비표시 퀘스트(SD-05 §2.6): 알림 없음 · 끝난 날만 적어 둔다(메모 줄이 7일 뒤 사라진다)
+			if str(q.get("kind", "")) == "done":
+				st.boxes["uqdone:" + str(q["id"])] = {"day": int(st.vars.get_v("GAME_DAY"))}
+			continue
 		match str(q.get("kind", "")):
 			"start":
 				_note("새 퀘스트: " + st.quests.title(str(q["id"])))

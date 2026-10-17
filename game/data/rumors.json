@@ -414,6 +414,46 @@
 "where": "R02",
 "cond": "SQ_S05_SOL >= 1 and SQ_S05_SOL <= 3 and GAME_DAY > SQ_S05_DAY + 1",
 "text": "사당에서 서울대입구까지 지하로 다닐 수 있게 됐대. 검문소 하나 덜 지나는 길이야."
+},
+{
+"where": "R02",
+"cond": "",
+"text": "대방 지하차도는 물이 허리까지 찬대. 2077년 막차가 아직 거기 잠겨 있다더라."
+},
+{
+"where": "R02",
+"cond": "UQ71_CORE == 5 and GAME_DAY > UQ71_REWARD",
+"text": "신길 빌라 옥상에서 초록 불이 번쩍했대. 대방 분대는 그날로 끝이고, 그 골목은 지금도 선량계가 운다나."
+},
+{
+"where": "R02",
+"cond": "UQ71_CORE == 1 and GAME_DAY > UQ71_REWARD and UQ71_SQ != 9",
+"text": "대방 지하차도 버스가 식었대. 누가 들어가서 재웠다는데, 분대 놈들이 사슬을 걷어 갔어."
+},
+{
+"where": "R02",
+"cond": "UQ71_CORE == 1 and GAME_DAY > UQ71_REWARD and UQ71_SQ == 9",
+"text": "대방 지하차도 버스가 식었대. 분대장 죽은 뒤로 들어간 사람이 있었나 봐."
+},
+{
+"where": "R02",
+"cond": "UQ71_CORE == 3 and GAME_DAY > UQ71_REWARD",
+"text": "지하시장 남쪽 통로에 불이 다 들어왔어. 상인회가 어디서 통을 하나 구했다더라."
+},
+{
+"where": "R02",
+"cond": "DG_DB == 1 and GAME_DAY > DG_DB_DAY",
+"text": "대방 지하차도 큰집게가 뻗었대. 이제 짐꾼들이 그 밑으로 질러간다더라."
+},
+{
+"where": "R02",
+"cond": "DG_DB == 2",
+"text": "대방 지하차도에 또 누가 들어앉았대. 비워 두면 오래 안 가."
+},
+{
+"where": "R02",
+"cond": "UQ71_SQ == 9 and UQ71_CORE == 0 and GAME_DAY > UQ71_DAY",
+"text": "대방 분대장이 뻗었대. 근데 지하차도 그 통은 아직 물속에서 깜박인다더라."
 }
 ]
 }

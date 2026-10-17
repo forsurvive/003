@@ -326,6 +326,10 @@ def _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kin
                     if pm["kind"] == "deco":
                         sort_y = y * 32 + 16
                 e = {"name": name, "x": x, "y": y, "px": [x * 32 + pm["off"][0], y * 32 + pm["off"][1]], "sort_y": sort_y}
+                if opt.get("state"):                                    # 1-D 상태 그림(조건부 줄로 판을 가른다 — 예: 노심이 빠진 버스)
+                    if opt["state"] not in pm.get("states", {}):
+                        raise Err(f"소품 '{name}'에 상태 그림 '{opt['state']}'이 없다({sorted(pm.get('states', {}))})")
+                    e["state"] = opt["state"]
                 if cond:
                     e["cond"] = cond
                     e["cells"] = cells if pm["kind"] not in ("wall", "deco") else []
@@ -724,8 +728,8 @@ def main():
     places = json.load(open(os.path.join(ROOT, "game", "data", "world", "places.json"), encoding="utf-8"))
     for mid, (out, m) in maps.items():                           # 출구 → 갈 맵·표지가 있는지
         for e in out["exits"]:
-            if e["to"] == "W":                                       # 월드로 나간다(1-3): 표지 = 장소 L-ID(그 장소의 도착 칸)
-                if e["mark"] not in places:
+            if e["to"] == "W":                                       # 월드로 나간다(1-3): 표지 = 장소 L-ID(그 장소의 도착 칸) · 'L-ID>표지' = 그 장소의 여러 입구 가운데 이 맵 표지로 드는 문 앞(1-D 두 입구)
+                if e["mark"].split(">")[0] not in places:
                     m.err(e["line"], f"월드 출구 표지는 장소 L-ID여야 한다: '{e['mark']}'")
                     errors += m.errors[-1:]
             elif e["to"] not in maps:
@@ -757,7 +761,7 @@ def main():
         index.update({k: v for k, v in old.items() if k.startswith("G-") and "pack" in v})
     json.dump({"maps": index}, open(ip, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print(f"월드 발견 자리: {len(spots)}곳")
-    print(f"맵: {len(maps)}장 — " + ", ".join(f"{k} {v['size'][0]}×{v['size'][1]}" for k, v in sorted(index.items())))
+    print(f"맵: {len(maps)}장 — " + ", ".join(f"{k} {v['size'][0]}×{v['size'][1]}" for k, v in sorted(index.items()) if not k.startswith("G-")))
 
 
 if __name__ == "__main__":

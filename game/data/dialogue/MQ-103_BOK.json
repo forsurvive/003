@@ -6,30 +6,37 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "MENU": 7,
-  "S8": 8,
-  "S8_BOTH": 12,
-  "S8_NO": 15,
-  "S8_PAY": 17,
-  "S8_ONE_B": 20,
-  "S8_ONE_A": 23,
-  "ABOUT": 26,
-  "SHOP": 30,
-  "MA": 32,
-  "WHY": 35,
-  "JOB": 39,
-  "JOB_ALONE": 46,
-  "JOB_HINT": 49,
-  "FEE": 51,
-  "WAITING": 55,
-  "REWARD": 57,
-  "HAVEPASS": 61,
-  "REGULAR": 63,
-  "MA_DEAD": 65,
-  "MA_LOG": 68,
-  "MA_DEAD_KNEW": 75
+  "MENU": 8,
+  "S8": 9,
+  "S8_BOTH": 13,
+  "S8_NO": 16,
+  "S8_PAY": 18,
+  "S8_ONE_B": 21,
+  "S8_ONE_A": 24,
+  "UQ71_CORE": 27,
+  "UQ71_SOLD": 30,
+  "ABOUT": 34,
+  "SHOP": 38,
+  "MA": 40,
+  "WHY": 43,
+  "JOB": 47,
+  "JOB_ALONE": 54,
+  "JOB_HINT": 57,
+  "FEE": 59,
+  "WAITING": 63,
+  "REWARD": 65,
+  "HAVEPASS": 69,
+  "REGULAR": 71,
+  "MA_DEAD": 73,
+  "MA_LOG": 76,
+  "MA_DEAD_KNEW": 83
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "has(\"M-392\") == 1",
+   "to": "UQ71_CORE"
+  },
   {
    "op": "if",
    "cond": "known_dead(\"C-006\") == 1 and MQ103_STAGE < 40 and K_CODE == 0",
@@ -244,6 +251,60 @@
   {
    "op": "line",
    "who": "C-050",
+   "emo": "놀람",
+   "text": "그 품에 든 거… 대방 지하차도 버스 통이오? (선량계를 들이댄다) 재워 놨군."
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "배전반 3번 줄이 반년째 죽어 있소. 이걸 물리면 남쪽 통로까지 불이 들어오지. 이백오십."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "판다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "UQ71_SOLD",
+     "id": "MQ-103_BOK:3:0"
+    },
+    {
+     "text": "아직은",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "MQ-103_BOK:3:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "take(\"M-392\", 1)"
+  },
+  {
+   "op": "cmd",
+   "name": "uq71",
+   "args": [
+    "sold"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "미소",
+   "text": "(견습생을 부른다) 공하경이, 3번 줄 갈자. …상인회가 기억하겠소."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
    "emo": "기본",
    "text": "셔터 올릴 순번 정하고, 싸움 말리고, 세금 걷지. 동네 반상회요."
   },
@@ -295,7 +356,7 @@
      "cond": "",
      "fx": "",
      "to": "JOB",
-     "id": "MQ-103_BOK:3:0"
+     "id": "MQ-103_BOK:4:0"
     },
     {
      "text": "면담료를 내겠다",
@@ -308,7 +369,7 @@
      "cond": "",
      "fx": "",
      "to": "FEE",
-     "id": "MQ-103_BOK:3:1"
+     "id": "MQ-103_BOK:4:1"
     },
     {
      "text": "그 사람을 꼭 만나야 하는 이유를 말한다",
@@ -316,7 +377,7 @@
      "cond": "",
      "fx": "",
      "to": "WHY",
-     "id": "MQ-103_BOK:3:2"
+     "id": "MQ-103_BOK:4:2"
     },
     {
      "text": "다시 생각해 보겠다",
@@ -324,7 +385,7 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "MQ-103_BOK:3:3"
+     "id": "MQ-103_BOK:4:3"
     }
    ]
   },
@@ -516,7 +577,7 @@
      "cond": "",
      "fx": "",
      "to": "MA_LOG",
-     "id": "MQ-103_BOK:4:0"
+     "id": "MQ-103_BOK:5:0"
     },
     {
      "text": "다음에 오겠다",
@@ -524,7 +585,7 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "MQ-103_BOK:4:1"
+     "id": "MQ-103_BOK:5:1"
     }
    ]
   },

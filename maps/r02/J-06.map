@@ -33,6 +33,7 @@ text 19 2 "천장 환풍구 덮개. 나사가 하나 빠져 있다. 남쪽 통�
 prop switchboard 2 3
 prop switchboard 5 3
 text 2 3 "배전반. 계기 바늘 셋이 200년째 같은 자리에서 떤다." w=2 scene=MQ-103_PANEL
+text 5 3 "배전반 3번 줄. 새로 물린 둥근 통에 '한결교통 통근 6번' 판이 그대로 붙어 있다. 바늘이 처음으로 오른쪽 끝까지 섰다." w=2 cond="UQ71_CORE == 3"
 text 5 3 "배전반. 굵은 전선관이 천장으로 올라간다. 상가 전체의 불이 여기서 나간다." w=2
 prop tube_rack 9 3
 prop tube_rack 11 3

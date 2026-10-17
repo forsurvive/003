@@ -1764,6 +1764,43 @@
     }
    },
    "title": "조종사의 망명"
+  },
+  "UQ-71": {
+   "key": "UQ71",
+   "places": [
+    "L-R02-11",
+    "L-R02-16",
+    "L-R02-17"
+   ],
+   "places_src": "05_misc-quests-encounters.md:928",
+   "stages": {
+    "10": {
+     "done": "엿듣기 또는 버스 조사",
+     "log": "대방 지하차도 버스 노심이 샌다",
+     "src": "05_misc-quests-encounters.md:939"
+    },
+    "100": {
+     "done": "봉인 · 판매 · 신길 섬광 가운데 하나",
+     "log": "노심의 일이 끝났다",
+     "src": "05_misc-quests-encounters.md:943"
+    },
+    "20": {
+     "done": "엿듣기(또는 분대 윈치를 보고 운전기사 메모를 읽음)",
+     "log": "대방 분대가 사흘 안에 노심을 끌어내려 한다",
+     "src": "05_misc-quests-encounters.md:940"
+    },
+    "30": {
+     "done": "펌프실 유해의 설명서 여백",
+     "log": "정지 레버는 운전석 밑 물속에 있다",
+     "src": "05_misc-quests-encounters.md:941"
+    },
+    "40": {
+     "done": "노심 꺼내기",
+     "log": "버스 노심이 아직 당신 가방에 있다",
+     "src": "05_misc-quests-encounters.md:942"
+    }
+   },
+   "title": "원자력 버스"
   }
  }
 }

@@ -58,6 +58,7 @@ RE = {
                "groups": [{"side": "a", "units": [["CR-420", 1, 2], ["CR-423", 1, 2], ["CR-421", 0, 1]], "hostile": True}],
                "states": {"S2": 4, "S4": 2, "S1": 2, "S3": 1}, "sign": "whistle", "mix": [["CR-104", 2, 3, 0.3]]},
     "RE-012": {"name": "대방 분대", "cat": "raider", "regions": ["R02"], "prefer": ["시장", "공단", "큰길"], "time": "any", "weight": 6,
+               "cond": "UQ71_SQ != 9",                                  # 1-D1 UQ-71: 배수관이 쓰러지거나 신길에서 터지면 분대 소멸(SD-05 §3.17 · UQ-10 비고)
                "groups": [{"side": "a", "units": [["CR-420", 1, 2], ["CR-421", 1, 1], ["CR-423", 1, 2]], "hostile": True}],
                "states": {"S1": 3, "S5": 2, "S4": 1}, "sign": "voices"},
     "RE-057": {"name": "혼자 온 신참", "cat": "raider", "regions": ["R01", "R02", "R07", "R08"], "time": "day", "weight": 2,

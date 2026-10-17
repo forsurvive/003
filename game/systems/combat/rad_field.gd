@@ -47,7 +47,7 @@ func setup(m, s: StoryState) -> void:
 	if m is WorldMap:
 		if _world_db.is_empty() and FileAccess.file_exists("res://data/world/rad.json"):
 			_world_db = JSON.parse_string(FileAccess.get_file_as_string("res://data/world/rad.json"))
-		world = _world_db.get("zones", [])
+		world = (_world_db.get("zones", []) as Array).filter(func(z): return InteriorMap._cond_ok(str(z.get("cond", "")), s))   # 조건부 지대(UQ-71 ③ 신길 빌라)
 	_sync_props()
 
 
