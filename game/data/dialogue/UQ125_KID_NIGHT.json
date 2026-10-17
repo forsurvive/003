@@ -1,0 +1,103 @@
+{
+ "id": "UQ125_KID_NIGHT",
+ "title": "털린 은닉처 — 새벽에 붙잡힌 아이",
+ "loc": "",
+ "npc": "N-UQ-K1",
+ "cond": "UQ125_KID == 5",
+ "labels": {
+  "START": 0,
+  "GO": 4,
+  "FOOD": 8
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-UQ-K1",
+   "emo": "놀람",
+   "text": "앗!"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "내 자리 앞에 쪼그려 앉아 있던 아이가 굳는다. 손에는 아직 아무것도 없다."
+  },
+  {
+   "op": "line",
+   "who": "N-UQ-K1",
+   "emo": "슬픔",
+   "text": "안 가져갔어요. 아직이요. …진짜예요."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "여긴 내 자리다. 다른 데로 가라",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "GO",
+     "id": "UQ125_KID_NIGHT:1:0"
+    },
+    {
+     "text": "배고프니?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "FOOD",
+     "id": "UQ125_KID_NIGHT:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-UQ-K1",
+   "emo": "기본",
+   "text": "…네. 대신 이거요. 다른 애들이 오면 이걸로 알 수 있어요."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "아이가 방울 줄 하나를 내려놓고 문 밖으로 사라진다."
+  },
+  {
+   "op": "cmd",
+   "name": "stash",
+   "args": [
+    "night_kid"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-UQ-K1",
+   "emo": "미소",
+   "text": "…조금요."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "아이가 고개를 끄덕이고는, 방울 줄 하나를 꺼내 바닥에 놓는다. '이거 매 두면 나 같은 애는 못 와요.' 그러고는 간다."
+  },
+  {
+   "op": "cmd",
+   "name": "stash",
+   "args": [
+    "night_kid"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-125.txt"
+}

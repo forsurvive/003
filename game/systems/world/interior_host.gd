@@ -1170,10 +1170,14 @@ func _open_container(b: Dictionary, c: Dictionary) -> void:
 	var before := _box_value(c["items"]) if swap else 0
 	container = ContainerScreen.new().setup(st, b, c, items_db, box_owner_label(b), cmax)
 	container.stole.connect(_on_stole.bind(b))
+	if stash != null:
+		stash.on_open(b, c, container)                                    # 보관 자리 · UQ-125(1-L): 삼기 단추 · 위험 한 줄 · 털린 흔적
 	container.closed.connect(func(_ok: bool) -> void:
 		container = null
 		if swap:
 			_swap_after(c, before)
+		if stash != null:
+			stash.on_close(b, c)
 		_after_theft())
 	add_child(container)
 
@@ -1282,6 +1286,9 @@ func open_terminal(t: Dictionary) -> void:
 var merchants := {}
 
 
+var stash: Node = null                          ## 보관 자리 · UQ-125 진행기(1-L, Stash) — 없으면 용기 창은 예전 그대로
+
+
 ## 상인 표(틀): 'VG_SCRAP@G-12-34'처럼 가게마다 따로 쓰는 일반 장사꾼(1-L §4.1)은 '@' 앞이 틀 이름
 func merchant_def(vid: String) -> Dictionary:
 	if merchants.is_empty() and FileAccess.file_exists("res://data/merchants.json"):
@@ -1326,12 +1333,19 @@ func shop_state(vid: String) -> Dictionary:
 				if vid == "V05" and id == "I-044" and st.vars.has("SQ_S05_PYO") and int(st.vars.get_v("SQ_S05_PYO")) == 1:
 					items[id] = int(r[1]) * 2                                 # SQ-S05 뒤 서쪽 측실 선반(SD-04a §4.5): 느타리 재고 2배
 		var caps := base if sh.is_empty() else mini(roundi(base * 1.5), maxi(base, roundi(int(sh["caps"]) * 0.5)))
+		var mine: Dictionary = sh.get("mine", {})                         # UQ-125 장물(1-L): 갱신해도 진열에 남는다(팔리기 전까지)
+		for id in mine:
+			items[id] = int(items.get(id, 0)) + int(mine[id])
 		var want := ""
 		if m.has("want") and not (m["want"] as Array).is_empty():         # 요즘 찾는 것(1-L §9.2): 갱신마다 하나 — 그 물건은 ×1.5로 산다
 			var wr := RandomNumberGenerator.new()
 			wr.seed = hash("%s:want:%d:%d" % [vid, day / 3, st.check_seed])
 			want = str(m["want"][wr.randi() % (m["want"] as Array).size()])
+		var old_sh := sh
 		sh = {"items": items, "caps": caps, "day": day, "total": int(sh.get("total", 0)), "slow": slow, "want": want}
+		if old_sh.has("mine"):
+			sh["mine"] = old_sh["mine"]
+			sh["mine_b"] = old_sh.get("mine_b", 0)
 		st.boxes[key] = sh
 	return sh
 
@@ -1400,6 +1414,11 @@ func open_trade(vid: String, done: Callable, k := [1.0, 1.0], greet := "", item_
 	if want != "" and greet == "":                                      # 요즘 찾는 것(§9.2)을 인사에 섞는다
 		greet = "%s 요즘은 %s 같은 거 찾아. 있으면 값 쳐 줄게." % [str(merchant_def(vid).get("greet", "")), str(items_db.get(want, {}).get("name", want))]
 	var sh := shop_state(vid)
+	if sh.has("mine"):                                                  # UQ-125 장물(1-L §5): 내 물건은 반값 — '알고 산 물건 아니다'
+		item_k = item_k.duplicate()
+		for id in (sh["mine"] as Dictionary):
+			item_k[id] = 0.5
+		greet = "그거? 며칠 전에 들어온 물건이야. 알고 산 건 아니니까 반값에 줘."
 	var m: Dictionary = merchant_def(vid)
 	var ak := st._aff_key(str(m.get("settle", "")))
 	var f := TradeScreen.tier_f(int(st.vars.get_v(ak)) if ak != "" else 0)
@@ -1415,6 +1434,8 @@ func open_trade(vid: String, done: Callable, k := [1.0, 1.0], greet := "", item_
 	t.closed.connect(func(_ok: bool) -> void:
 		container = null
 		sh["total"] = int(sh.get("total", 0)) + t.total
+		if stash != null:
+			stash.after_trade(vid)
 		done.call(t.total))
 	add_child(t)
 	return t

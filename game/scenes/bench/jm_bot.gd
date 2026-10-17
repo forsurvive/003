@@ -23,6 +23,7 @@ var u02: U02Paths                                  ## U02 남태령 지하(1-D2)
 var uq04: Uq04                                     ## UQ-04 7호 냉동 창고(1-D3)
 var gr: Gr                                         ## 구로 차량기지(1-D4)
 var kt: Kt                                         ## 여의도 금탑(1-D5a)
+var stash: Stash                                   ## 보관 자리 · UQ-125(1-L)
 var st: StoryState
 var route := "job"
 var shots := ""
@@ -127,6 +128,9 @@ func _ready() -> void:
 	kt = Kt.new()
 	add_child(kt)
 	kt.setup(host, true)
+	stash = Stash.new()
+	add_child(stash)
+	stash.setup(host, true)
 	host.combat.player_down.connect(host.on_pc_down)                  # 쓰러짐 → 생포 판정(진짜 진행 prologue와 같은 연결)
 	host.combat.equip("W-002", st)
 	match route:
@@ -490,6 +494,18 @@ func _ready() -> void:
 				["check", "map:G-943-1408", "다시 문 연 고물상에 들어섰다"], ["shot", "trd_inside"],
 				["want", ["!물건을 본다", "다음에"]], ["talk", "N-VG-S1"], ["until", "win", 15.0, "고물상 거래 창(가게마다 따로 재고 · 찾는 것)", "trd_trade"], ["wait", 2.0], ["warp", "G-876-1245", "from_W"], ["wait", 2.0], ["shot", "trd_home"],
 				["warp", "G-896-1267", "from_W"], ["wait", 2.0], ["shot", "trd_home2"]]
+		"stash":                                                        # 1-L 보관 자리 · UQ-125: 빈집 장롱을 비우고 삼기 → 물건 넣기 → 털림 → 흔적(10) → 빈집의 아이(30) → 나눠 주기(100)
+			st.vars.set_v("GAME_DAY", 6)
+			st.vars.set_v("V_ACT", 1)
+			host.date_text = "2277. 10. 27.  11:00"
+			host.enter("G-876-1245", "from_W")
+			plan = [["noenc"], ["hp", 3000], ["wait", 1.5], ["stash_open"], ["wait", 0.5], ["stash_claim"], ["shot", "stash_claim"], ["close"], ["wait", 0.5],
+				["check", "UQ125_R == 0", "내 자리로 삼았다"], ["setv", "GAME_DAY", 12], ["warp", "W", "L-R01-20"], ["wait", 1.0], ["stash_rob"],
+				["warp", "G-876-1245", "from_W"], ["wait", 1.5], ["stash_open"], ["wait", 1.0], ["shot", "stash_trace"], ["close"],
+				["check", "stage(\"UQ-125\") >= 10", "털린 자리를 열어 흔적을 보았다 — UQ-125 10"], ["warp_dest"], ["wait", 2.0], ["shot", "stash_kid"],
+				["check", "UQ125_KID == 1", "흔적이 가리킨 빈집에 아이가 있다"],
+				["want", ["먹을 건 가져라"]], ["talk", "N-UQ-K1"], ["until", "UQ125_R == 2", 25.0, "먹을 것은 아이 몫 — 나머지 · 방울 줄 둘", "stash_share"],
+				["check", "has(\"M-195\") == 1 and has(\"M-012\") == 1 and has(\"W-013\") == 1", "방울 줄 · 구리선 · 권총을 되찾았다"]]
 		"ktu":                                                          # 1-D5b 금탑 위층: 화물 칸 → 사무층 육아방(위장 · 냄새 줄) → 22층 → 옥상 → 60층 어하은 · 망원경 → 연회장 · 기단
 			st.vars.set_v("GAME_DAY", 12)
 			st.vars.set_v("KT_POWER", 2)
@@ -1191,6 +1207,37 @@ func _process(dt: float) -> void:
 			host.input_fn = func() -> Vector2: return Vector2.ZERO
 			if step_t >= float(s[1]):
 				_next()
+		"stash_open":                                                  # 1-L: 이 맵의 첫 '삼을 수 있는' 용기를 비우고 연다(내 자리면 그대로 연다)
+			for c in host.map.boxes:
+				var b: Dictionary = host.map.boxes[c]
+				var bc := host.box_contents(b)
+				if stash.is_mine(bc) or (str(b.get("kind", "")) in Stash.CLAIM_KINDS and str(b.get("owner", "")) == ""):
+					if not stash.is_mine(bc):
+						bc["items"] = {}
+					host.open_box(b)
+					break
+			_next()
+		"stash_claim":
+			if host.container != null:
+				host.container.stash_act.emit("claim")
+				host.container.state["items"] = {"W-013": 1, "M-096": 1, "I-030": 2, "M-012": 2, "M-001": 40}
+				print("  [봇] 내 자리: ", host.container.stash_line)
+			_next()
+		"stash_rob":                                                   # 날마다 판정 대신 바로 털게 한다(시험용 — 판정식은 단위 시험)
+			for k in stash.spots():
+				var sp: Dictionary = stash.spots()[k]
+				var rng := RandomNumberGenerator.new()
+				rng.seed = 5
+				stash._theft(k, sp, st.boxes[k], int(st.vars.get_v("GAME_DAY")), rng)
+				var bn := stash.bundle(int(stash.data()["qb"]))
+				print("  [봇] 털림 → ", bn.get("who", ""), " ", bn.get("dest", ""))
+				break
+			_next()
+		"warp_dest":
+			var bn2 := stash.bundle(int(stash.data()["qb"]))
+			if not bn2.is_empty():
+				host.enter(str(bn2["dest"]), "from_W")
+			_next()
 		"close":
 			if host.container != null:
 				print("  [봇] 용기 안: ", host.container.title, " ", host.container.state["items"])

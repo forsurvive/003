@@ -1428,6 +1428,16 @@ def place_traders(outs, doors, reach):
             per[reg] = per.get(reg, 0) + 1
     out = {mid: {"kind": k, "at": [x, y], "region": r} for mid, (k, x, y, r) in sorted(placed.items())}
     json.dump(out, open(os.path.join(ROOT, "game", "data", "world", "traders.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=0)
+    hide = {"den": [], "quiet": []}                                      # UQ-125 털이꾼이 자루를 두는 소굴 · 아이가 숨는 조용한 빈집(적 없음 · 장사꾼 없음)
+    for mid, (o, (x, y), st) in sorted(outs.items()):
+        if mid in placed:
+            continue
+        hh = o.get("house") or {}
+        if hh.get("mode") == "den":
+            hide["den"].append([mid, x, y, o.get("region")])
+        elif st in ("villa", "house") and not o["enemies"] and not o.get("traps") and o.get("gen") != "collapsed":
+            hide["quiet"].append([mid, x, y, o.get("region")])
+    json.dump(hide, open(os.path.join(ROOT, "game", "data", "world", "hideouts.json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
     return out
 
 

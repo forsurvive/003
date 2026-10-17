@@ -1786,6 +1786,29 @@
    },
    "title": "7호 냉동 창고"
   },
+  "UQ-125": {
+   "key": "UQ125",
+   "places": [],
+   "places_src": "05_misc-quests-encounters.md:991",
+   "stages": {
+    "10": {
+     "done": "털린 내 은닉처를 열어 흔적을 본다",
+     "log": "숨겨 둔 자리가 털렸다 — 흔적이 남아 있다",
+     "src": "05_misc-quests-encounters.md:1002"
+    },
+    "100": {
+     "done": "되찾음 · 나눠 줌 · 맡김 · 되삼 · 놓침",
+     "log": "털린 물건의 행방이 끝났다",
+     "src": "05_misc-quests-encounters.md:1004"
+    },
+    "30": {
+     "done": "흔적이 가리킨 빈집 · 소굴 · 가게에 들어선다",
+     "log": "털어 간 사람이 있는 곳에 닿았다",
+     "src": "05_misc-quests-encounters.md:1003"
+    }
+   },
+   "title": "털린 은닉처"
+  },
   "UQ-68": {
    "key": "UQ68",
    "places": [

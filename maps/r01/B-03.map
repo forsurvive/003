@@ -28,6 +28,7 @@ prop pharm_counter 6 6
 text 6 6 "유리 진열장. 스팀팩 몇 개와 끓여 말린 붕대." w=2
 mark counter 7 7 N
 npc C-057 7 5 S
+npc N-UQ-K1 14 5 W look=K1-S1-HR09-H2-T01-0-PF11-HD00-EY00 cond="UQ125_KID == 3 and UQ125_GUARD == 1" bark="그때 그 사람이다. 이건 이제 내 거예요. 할머니가 약 개는 거 가르쳐 줘요."   # 1-L UQ-125 맡긴 아이(P3 — 맡긴 곳 한 곳)
 prop cot 11 3
 prop iv_pole 12 3
 prop cot 13 3

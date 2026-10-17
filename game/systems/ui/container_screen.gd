@@ -8,6 +8,7 @@ class_name ContainerScreen
 extends DocScreen
 
 signal stole(first: bool)                        ## 소유 용기에서 꺼냈다(first: 이 용기의 이 시대 첫 절도)
+signal stash_act(what: String)                   ## 보관 자리(1-L §3 · §9.3): "claim" 내 자리로 삼기 · "release" 자리 놓기 · "bell" 방울 줄 매기
 
 const U := DocScreen.GREEN
 const ROWS_VISIBLE := 11
@@ -20,6 +21,9 @@ var side := 1                                    ## 0 내 소지품 · 1 용기
 var sel := [0, 0]
 var scroll := [0, 0]
 var carry_max := 150.0
+var stash_mode := ""                             ## "" · "claim"(비운 용기 — 삼을 수 있다) · "release"(내 자리)
+var stash_line := ""                             ## 그 자리의 위험을 세계 말로 한 줄(§9.3)
+var bell_ok := false                             ## 방울 줄을 맬 수 있다(내 자리 · M-195 소지 · 아직 안 맴)
 
 
 func setup(state_: StoryState, b: Dictionary, contents: Dictionary, items_db: Dictionary, owner_label: String, cmax: float) -> ContainerScreen:
@@ -123,6 +127,8 @@ func _draw_doc() -> void:
 	text(Vector2(596, 30), head, f12b, 12, tcol, HORIZONTAL_ALIGNMENT_RIGHT)
 	if owned and owner_name != "":
 		text(Vector2(596, 45), "주인: " + owner_name, f10, 10, Color(DocScreen.C["P54"], 0.9), HORIZONTAL_ALIGNMENT_RIGHT)
+	elif stash_line != "":
+		text(Vector2(596, 45), ("[내 자리] " if stash_mode == "release" else "") + stash_line, f10, 10, U[5], HORIZONTAL_ALIGNMENT_RIGHT)
 	v.draw_line(Vector2(36, 58), Vector2(604, 58), U[3])
 	v.draw_line(Vector2(320, 62), Vector2(320, 286), U[2])
 	for s in [0, 1]:
@@ -137,7 +143,12 @@ func _draw_doc() -> void:
 		text(Vector2(40, 295), _name(id) + "  —  " + info, f10, 10, U[5])
 	text(Vector2(600, 295), "무게 %s/%d" % [_num(_weight()), int(carry_max)], f10, 10, U[5], HORIZONTAL_ALIGNMENT_RIGHT)
 	var bx := 40.0
-	for b in [["move", "E 옮기기"], ["all", "Q 모두 가져가기"], ["close", "Tab 닫기"]]:
+	var btns := [["move", "E 옮기기"], ["all", "Q 모두 가져가기"], ["close", "Tab 닫기"]]
+	if stash_mode != "":
+		btns.append(["mine", "C 내 자리로 삼기" if stash_mode == "claim" else "C 자리 놓기"])
+	if bell_ok:
+		btns.append(["bell", "B 방울 줄 매기"])
+	for b in btns:
 		var w := tw(b[1], f10, 10) + 20.0
 		var r := Rect2(bx, 312, w, 20)
 		var on := item(str(b[0]), r)
@@ -202,6 +213,10 @@ func _unhandled_input(e: InputEvent) -> void:
 		close(true)
 	elif k == KEY_Q:
 		take_all()
+	elif k == KEY_C and stash_mode != "":
+		stash_act.emit(stash_mode)
+	elif k == KEY_B and bell_ok:
+		stash_act.emit("bell")
 	elif k in [KEY_E, KEY_ENTER, KEY_KP_ENTER, KEY_SPACE]:
 		move_sel(e.shift_pressed)
 	elif e.is_action_pressed("ui_up", true):
@@ -244,3 +259,7 @@ func _press(id: String) -> void:
 			take_all()
 		"close":
 			close(true)
+		"mine":
+			stash_act.emit(stash_mode)
+		"bell":
+			stash_act.emit("bell")

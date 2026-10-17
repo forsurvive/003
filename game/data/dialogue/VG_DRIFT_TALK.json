@@ -15,7 +15,10 @@
   "N2": 21,
   "N3": 23,
   "N4": 25,
-  "BYE": 27
+  "MINE": 27,
+  "MINE_OK": 29,
+  "MINE_NO": 33,
+  "BYE": 35
  },
  "ops": [
   {
@@ -83,12 +86,20 @@
      "id": "VG_DRIFT_TALK:1:0"
     },
     {
+     "text": "그 물건, 내 거다 — 긁힌 자국 봐",
+     "tags": [],
+     "cond": "UQ125_FENCE == 1 and UQ125_HERE == 1",
+     "fx": "",
+     "to": "MINE",
+     "id": "VG_DRIFT_TALK:1:1"
+    },
+    {
      "text": "이 동네는 어때?",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "NEWS",
-     "id": "VG_DRIFT_TALK:1:1"
+     "id": "VG_DRIFT_TALK:1:2"
     },
     {
      "text": "다음에",
@@ -96,7 +107,7 @@
      "cond": "",
      "fx": "",
      "to": "BYE",
-     "id": "VG_DRIFT_TALK:1:2"
+     "id": "VG_DRIFT_TALK:1:3"
     }
    ]
   },
@@ -169,6 +180,79 @@
    "who": "N-VG-D1",
    "emo": "기본",
    "text": "바꿈 상자 알아? 하나 두고 하나 가져가는 거. 더 가져가면 다음 사람이 비어 있는 상자를 열지."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-D1",
+   "emo": "놀람",
+   "text": "긁힌 자국? …아, 그거. 며칠 전에 들어온 물건이야. 알고 산 건 아니야."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "내가 긁어 둔 표시다. 다 안다",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "쉬움"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "MINE_OK",
+     "id": "VG_DRIFT_TALK:2:0",
+     "fail": "MINE_NO"
+    },
+    {
+     "text": "반값이면 되사겠다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SHOP",
+     "id": "VG_DRIFT_TALK:2:1"
+    },
+    {
+     "text": "됐다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "MENU",
+     "id": "VG_DRIFT_TALK:2:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-VG-D1",
+   "emo": "피곤",
+   "text": "…그래, 그래. 장물 들고 있다 소문나면 나만 손해지. 가져가. 이것도 — 다음엔 방울 달아."
+  },
+  {
+   "op": "do",
+   "fx": "UQ125_FENCE = 0"
+  },
+  {
+   "op": "cmd",
+   "name": "stash",
+   "args": [
+    "fence_free"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-VG-D1",
+   "emo": "기본",
+   "text": "표시야 누구나 긁지. 반값 — 그 이하로는 안 돼."
   },
   {
    "op": "goto",

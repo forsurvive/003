@@ -1,0 +1,264 @@
+{
+ "id": "UQ125_KID",
+ "title": "털린 은닉처 — 빈집의 아이",
+ "loc": "",
+ "npc": "N-UQ-K1",
+ "cond": "UQ125_KID == 1",
+ "labels": {
+  "START": 0,
+  "MENU": 5,
+  "TAKE": 6,
+  "SHARE": 10,
+  "GUARD": 16,
+  "GUARD2": 19,
+  "GUARD_GO": 21,
+  "SCARE": 28,
+  "LATER": 31,
+  "AFTER": 33
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "UQ125_R >= 1",
+   "to": "AFTER"
+  },
+  {
+   "op": "line",
+   "who": "N-UQ-K1",
+   "emo": "놀람",
+   "text": "…!"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "이불 더미 뒤에 아이 하나. 무릎 위에 낯익은 물건들 — 내 자리에 넣어 둔 것이다. 깡통 하나는 벌써 비었다."
+  },
+  {
+   "op": "line",
+   "who": "N-UQ-K1",
+   "emo": "슬픔",
+   "text": "주인 있는 줄 몰랐어요. 거기 아무도 안 와서… 빈 데인 줄 알았어요."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "그건 내 물건이다. 다 돌려받겠다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TAKE",
+     "id": "UQ125_KID:1:0"
+    },
+    {
+     "text": "먹을 건 가져라. 나머지만 돌려줘",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SHARE",
+     "id": "UQ125_KID:1:1"
+    },
+    {
+     "text": "혼자 지내니? 맡아 줄 사람이 있다",
+     "tags": [],
+     "cond": "UQ125_GUARD >= 1",
+     "fx": "",
+     "to": "GUARD",
+     "id": "UQ125_KID:1:2"
+    },
+    {
+     "text": "소리를 질러 쫓는다",
+     "tags": [
+      {
+       "k": "stat",
+       "name": "힘",
+       "min": 6
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "SCARE",
+     "id": "UQ125_KID:1:3"
+    },
+    {
+     "text": "생각해 보고 다시 오겠다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "LATER",
+     "id": "UQ125_KID:1:4"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-UQ-K1",
+   "emo": "슬픔",
+   "text": "…네."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "아이가 물건을 하나씩 내려놓는다. 마지막 깡통을 내려놓을 때 손이 떨렸다. 아이는 이불을 머리끝까지 뒤집어쓴다."
+  },
+  {
+   "op": "cmd",
+   "name": "stash",
+   "args": [
+    "kid_take"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-UQ-K1",
+   "emo": "놀람",
+   "text": "진짜요? …진짜죠?"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "아이가 먹을 것만 품에 끌어안고, 나머지를 앞으로 민다."
+  },
+  {
+   "op": "line",
+   "who": "N-UQ-K1",
+   "emo": "미소",
+   "text": "이거 알려 줄게요. 방울 줄이에요. 상자 앞에 매 두면 나 같은 애는 못 와요. 손대면 딸랑 — 그럼 도망가야 되거든요."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "아이가 실에 놋쇠 방울을 꿰어 보인다. 둘을 손에 쥐여 준다."
+  },
+  {
+   "op": "cmd",
+   "name": "stash",
+   "args": [
+    "kid_share"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "UQ125_GUARD == 2",
+   "to": "GUARD2"
+  },
+  {
+   "op": "line",
+   "who": "N-UQ-K1",
+   "emo": "놀람",
+   "text": "봉천 약국 할머니요? …거기 따뜻하대요."
+  },
+  {
+   "op": "goto",
+   "to": "GUARD_GO"
+  },
+  {
+   "op": "line",
+   "who": "N-UQ-K1",
+   "emo": "놀람",
+   "text": "사당 천막 의원 아줌마요? …거기 불이 있대요."
+  },
+  {
+   "op": "goto",
+   "to": "GUARD_GO"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "아이가 물건을 돌려주다가, 하나를 도로 집는다. 값나가는 것이 아니다 — 아이가 처음부터 손에 쥐고 있던 것."
+  },
+  {
+   "op": "line",
+   "who": "N-UQ-K1",
+   "emo": "미소",
+   "text": "이건… 이건 제 거 하면 안 돼요? 이것만요."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "대답을 기다리지 않고 아이가 그것을 주머니에 넣는다. 그리고 방울 줄 둘을 내민다."
+  },
+  {
+   "op": "line",
+   "who": "N-UQ-K1",
+   "emo": "기본",
+   "text": "이거 매는 법 알아요? 상자 앞에 이렇게 — 손대면 울려요. 나 같은 애는 그 소리에 도망가요."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "아이는 먼저 문 밖으로 나가 기다리지 않는다. 혼자 간다고 한다 — 길은 안다고."
+  },
+  {
+   "op": "cmd",
+   "name": "stash",
+   "args": [
+    "kid_guard"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "소리를 지르자 아이가 물건을 다 내팽개치고 뒷창으로 빠져나간다. 맨발 소리가 골목으로 멀어진다."
+  },
+  {
+   "op": "cmd",
+   "name": "stash",
+   "args": [
+    "kid_scare"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-UQ-K1",
+   "emo": "슬픔",
+   "text": "…여기 있을게요. 어디 갈 데도 없어요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-UQ-K1",
+   "emo": "기본",
+   "text": "…"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-125.txt"
+}
