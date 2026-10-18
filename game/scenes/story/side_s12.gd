@@ -19,6 +19,9 @@ const CARDS := 12
 const PRICE := 30                                                       ## 염희정 — 장당
 const KNOWN_DAYS := 3                                                   ## 판 일이 알려지는 날(공개도 1)
 const XP := 300
+const XP_SOLD := 100                                                    ## 판매로 끝남 — 같은 '정해짐'이 아니다
+const CARD_J := "M-415"                                                 ## 진재석 노점 상자 속 권이준의 신분증(한 장) — 되훔칠 수 있다
+const BOX_NAME := "부품 상자"
 
 var host: InteriorHost
 var st: StoryState
@@ -84,12 +87,15 @@ func start(why: String) -> void:
 	_catch_up()
 
 
-## 가족 손에 간(또는 자리에 놓인) 장 — 진재석은 맡아 두었다 회의에 들고 오므로 묶음에서 빠지지 않는다
+## 묶음을 떠난 장 — 가족 손 · 진재석 상자 · 기다리던 자리(3). 진재석 상자에서 되훔친 장은 묶음으로 돌아온다(STOLE).
+## EVID = 묶음 안에 남은 장(한 곳 — P1). 진재석 상자 속 장은 SQH_IDCARD 비트 1이 말하고, 회의 날 그가 들고 온다(MQ-502 몫)
 func _given_cards() -> int:
 	var n := 0
-	for k in ["s", "e"]:
+	for k in KEY:
 		if q(KEY[k]) == 3:
 			n += 1
+	if q("J") == 3 and q("STOLE") == 1:
+		n -= 1
 	return n
 
 
@@ -126,8 +132,12 @@ func _check_done() -> void:
 		return
 	_sq("DONE", 1)
 	_up(100)
-	st.call_fn("xp", [XP])
-	host.hint("관리 요원의 유족 — 신분증의 자리가 정해졌다.", 4.0)
+	if q("SOLD") == 1:
+		st.call_fn("xp", [XP_SOLD])
+		host.hint("관리 요원의 유족 — 이름들은 인쇄소 뒤칸에서 지워진다.", 4.0)
+	else:
+		st.call_fn("xp", [XP])
+		host.hint("관리 요원의 유족 — 신분증의 자리가 정해졌다.", 4.0)
 	want_save.emit("s12_done")
 
 
@@ -140,6 +150,31 @@ func _process(dt: float) -> void:
 		start("연락부")                                                # 단말 · 인지영이 먼저(묶음을 들고) — 따라 올림
 	elif q("START") > 0:
 		_catch_up()
+	if q("J") == 3 and q("STOLE") == 0 and _has(CARD_J):
+		_stole()
+
+
+## 진재석 노점 상자에서 권이준의 장을 되훔쳤다(절도 · 목격은 엔진 범죄 규칙) — 건넸던 사실(J 3 · 비트 1)은 그대로, 장은 묶음으로
+func _stole() -> void:
+	_sq("STOLE", 1)
+	if _has(BUNDLE):
+		st.call_fn("take", [CARD_J, 1])
+	st.call_fn("aff", ["JH", -2])
+	_sq("EVID", CARDS - _given_cards() if q("SOLD") == 0 else 0)
+	_log("상자에서 되훔침")
+
+
+## 진재석 노점 상자에 그 장을 실제 물건으로 둔다(J-02에 들 때마다 — 한 번만)
+func _stock_box() -> void:
+	if host.map == null or host.map.id != "J-02" or q("J") != 3 or q("STOLE") == 1 or q("BOXED") == 1 or st.is_dead(NPC["j"]):
+		return
+	for c in host.map.boxes:
+		var b: Dictionary = host.map.boxes[c]
+		if str(b.get("name", "")) == BOX_NAME:
+			var bx: Dictionary = host.box_contents(b)
+			bx["items"][CARD_J] = 1
+			_sq("BOXED", 1)
+			return
 
 
 # ---------------------------------------------------------------- 가족 앞에서
@@ -158,10 +193,20 @@ func keep(k: String) -> void:
 	st.vars.set_v("SQE_FAMILY", 1)
 	st.call_fn("karma", [15])
 	st.call_fn("aff", ["JH", 2])
+	if k == "j":
+		_sq("REWARD", q("REWARD") | 2)                                   # 진재석 진공관 '감정' — 그 말대로 해 준 손님(재미 검수: B가 맞는 답이 숫자로도 이기게)
 	_after_card()
 
 
-## 가족 손에(해법 A) — 강수아 · 문도하 장은 묶음에서 빠진다(회의 증거 −1) · 진재석은 맡아 둔다
+## 누구 가족인지 알게 됨(유품 · 얼굴 · 호수) — 0일 때만 1
+func know(k: String) -> void:
+	start("앎")
+	if q(KEY[k]) == 0:
+		_sq(KEY[k], 1)
+	_catch_up()
+
+
+## 가족 손에(해법 A) — 그 장은 묶음에서 빠진다(회의 증거 −1) · 진재석은 노점 상자에 맡아 둔다(회의 날 들고 옴 — 되훔칠 수 있음)
 func give(k: String) -> void:
 	if _resolved(k):
 		return
@@ -173,7 +218,7 @@ func give(k: String) -> void:
 	if k == "e":
 		_sq("REWARD", q("REWARD") | 1)                                   # 엄수연 약 상시 −15%(SD-04a §5.5 보상)
 	if k == "j":
-		_sq("REWARD", q("REWARD") | 2)                                   # 진재석 진공관 '감정' — 매입을 제값에(+10%)
+		_stock_box()
 	_after_card()
 
 
@@ -189,7 +234,7 @@ func lay(k: String) -> void:
 
 
 func _after_card() -> void:
-	_sq("EVID", CARDS - _given_cards())
+	_sq("EVID", CARDS - _given_cards() if q("SOLD") == 0 else 0)
 	var all := true
 	for kk in KEY:
 		if not _resolved(kk):
@@ -244,10 +289,12 @@ func _on_day(_d: int) -> void:
 
 
 func _on_map(id: String) -> void:
+	if id == "J-02":
+		_stock_box()
 	if not id.begins_with("J-") or v("V_ACT") < 1 or q("START") > 0 or not _has(BUNDLE):
 		return
 	start("지하시장")                                                  # 묶음을 들고 지하시장에 들면 자동(원문 발동)
-	host.hint("끈으로 묶은 신분증 묶음이 무겁다. 뒷면 '비상 연락' 칸에 이 상가 호수가 보인다 — (핍-보이 → 살펴보기)", 6.0)
+	host.hint("셔터마다 붙은 호수 — 'A-11', 'A-13'. 신분증 묶음 뒷면 '비상 연락' 칸에도 그 호수가 있었다(살펴보기)", 6.0)
 
 
 # ---------------------------------------------------------------- 명령(@cmd s12 …)
@@ -261,6 +308,10 @@ func _cmd(a: Array, done: Callable) -> void:
 			show(str(a[1]))
 		"keep":
 			keep(str(a[1]))
+		"know":
+			know(str(a[1]))
+		"log":
+			_sq("LOG", 1)                                                  # 엄수연에게 당직 일지 '10. 31.'을 알려 줌 — 간판 아래 분필이 늘어난다
 		"give":
 			give(str(a[1]))
 		"lay":

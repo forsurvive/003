@@ -11,10 +11,11 @@
   "S6PAPER": 8,
   "TRADE": 11,
   "S12ASK": 13,
-  "S12AGAIN": 17,
-  "S12PICK": 18,
-  "S12SELL": 19,
-  "TRADE2": 21
+  "S12MENU": 17,
+  "S12AGAIN": 18,
+  "S12PICK": 19,
+  "S12SELL": 20,
+  "TRADE2": 22
  },
  "ops": [
   {
@@ -88,7 +89,7 @@
   {
    "op": "if",
    "cond": "SQ_S12_YASK == 1",
-   "to": "S12AGAIN"
+   "to": "S12MENU"
   },
   {
    "op": "do",
@@ -105,10 +106,31 @@
    "to": "S12PICK"
   },
   {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "물건 좀 보자",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TRADE2",
+     "id": "JM_YEOM:1:0"
+    },
+    {
+     "text": "(신분증 묶음을 내민다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "S12AGAIN",
+     "id": "JM_YEOM:1:1"
+    }
+   ]
+  },
+  {
    "op": "line",
    "who": "N-R02-008",
    "emo": "기본",
-   "text": "그 묶음 아직 들고 다니네. \\V[SQ_S12_EVID]장, 장당 30. 값은 그대로야."
+   "text": "마음 바뀌었어? \\V[SQ_S12_EVID]장, 장당 30. 값은 그대로야."
   },
   {
    "op": "choice",
@@ -119,7 +141,7 @@
      "cond": "",
      "fx": "",
      "to": "S12SELL",
-     "id": "JM_YEOM:1:0"
+     "id": "JM_YEOM:2:0"
     },
     {
      "text": "이건 안 판다",
@@ -127,7 +149,7 @@
      "cond": "",
      "fx": "",
      "to": "TRADE2",
-     "id": "JM_YEOM:1:1"
+     "id": "JM_YEOM:2:1"
     }
    ]
   },

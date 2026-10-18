@@ -6,17 +6,22 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "REG": 6,
-  "SOLD": 8,
-  "ROLL": 10,
-  "BOX": 12,
-  "MENU": 13,
-  "FACE": 14,
-  "KWON": 16,
-  "KEEP": 21,
-  "GIVE": 24,
-  "RING": 27,
-  "SHOP": 31
+  "REG": 8,
+  "SOLD": 10,
+  "BROKE": 12,
+  "LIGHT": 14,
+  "ROLL": 16,
+  "BOX": 18,
+  "MENU": 19,
+  "FACE": 20,
+  "KWON": 22,
+  "KEEP": 27,
+  "GIVE": 30,
+  "RING": 33,
+  "RING0": 36,
+  "RINGK": 39,
+  "RING1": 40,
+  "SHOP": 44
  },
  "ops": [
   {
@@ -26,8 +31,18 @@
   },
   {
    "op": "if",
+   "cond": "SQ_S12_KNOWN == 1 and SQ_S12_J == 4",
+   "to": "BROKE"
+  },
+  {
+   "op": "if",
    "cond": "SQ_S12_J == 4",
    "to": "ROLL"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S12_J == 3 and SQ_S12_STOLE == 1",
+   "to": "LIGHT"
   },
   {
    "op": "if",
@@ -67,7 +82,27 @@
   },
   {
    "op": "goto",
-   "to": "SHOP"
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-005",
+   "emo": "분노",
+   "text": "출석 부른다며. 인쇄소에서 불렀냐. 장당 30에."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-005",
+   "emo": "기본",
+   "text": "상자가 가벼워졌더라. …회의에 들고 갈 거면 말을 하지. 출석은 부르는 거냐."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
   },
   {
    "op": "line",
@@ -223,6 +258,44 @@
   {
    "op": "goto",
    "to": "MENU"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S12_J == 0",
+   "to": "RING0"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S12_KNOWN == 1",
+   "to": "RINGK"
+  },
+  {
+   "op": "goto",
+   "to": "RING1"
+  },
+  {
+   "op": "cmd",
+   "name": "s12",
+   "args": [
+    "know",
+    "j"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-005",
+   "emo": "놀람",
+   "text": "…'이준 ♡ 2069'. 사위 놈 반지다. 이걸 어디서 — 여의도? 집결지 간다고 나간 그날 밤 그대로네."
+  },
+  {
+   "op": "goto",
+   "to": "RING1"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-005",
+   "emo": "기본",
+   "text": "…이건 받을게. 너 때문은 아니야."
   },
   {
    "op": "cmd",

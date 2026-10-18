@@ -6,17 +6,23 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "SOLD": 6,
-  "SAT": 8,
-  "MENU": 9,
-  "TRY": 10,
-  "SUA": 12,
-  "KEEP": 16,
-  "GIVE": 19,
-  "BOOK": 22,
-  "BOOK_ALONE": 28,
-  "SHOP": 30,
-  "RECESS": 32
+  "SOLD": 7,
+  "BROKE": 9,
+  "SAT": 11,
+  "SATK": 14,
+  "SATM": 15,
+  "MENU": 17,
+  "TRY": 18,
+  "SUA": 20,
+  "KEEP": 24,
+  "GIVE": 27,
+  "SEPT": 30,
+  "BOOK": 32,
+  "BOOK0": 34,
+  "BOOK1": 36,
+  "BOOK_ALONE": 42,
+  "SHOP": 44,
+  "RECESS": 46
  },
  "ops": [
   {
@@ -26,13 +32,18 @@
   },
   {
    "op": "if",
+   "cond": "SQ_S12_SB == 1",
+   "to": "SAT"
+  },
+  {
+   "op": "if",
    "cond": "SQ_S12_KNOWN == 1 and SQ_S12_S < 3",
    "to": "SOLD"
   },
   {
    "op": "if",
-   "cond": "SQ_S12_SB == 1",
-   "to": "SAT"
+   "cond": "SQ_S12_KNOWN == 1 and SQ_S12_S == 4",
+   "to": "BROKE"
   },
   {
    "op": "line",
@@ -63,8 +74,44 @@
   {
    "op": "line",
    "who": "N-R02-012",
+   "emo": "슬픔",
+   "text": "우리 애 이름, 회의 탁자에 올린다더니 인쇄소 탁자에 올렸구나. …그 달은 여전히 없고."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S12_KNOWN == 1",
+   "to": "SATK"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-012",
    "emo": "기본",
    "text": "앉아 있으니 장사가 안 되네. 괜찮아. 물건 볼 거면 말해."
+  },
+  {
+   "op": "goto",
+   "to": "SATM"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-012",
+   "emo": "기본",
+   "text": "이름을 팔았다며. …그래도 그 달은 돌아왔으니, 난 앉아 있을래."
+  },
+  {
+   "op": "if",
+   "cond": "has(\"M-003\") == 0",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-012",
+   "emo": "기본",
+   "text": "그 석 장은 네 거야. 나한테 되팔 생각은 마."
   },
   {
    "op": "choice",
@@ -102,12 +149,20 @@
      "id": "JM_SAGONG:1:3"
     },
     {
+     "text": "(전시 배급표 한 장을 내민다)",
+     "tags": [],
+     "cond": "has(\"M-003\") >= 1 and SQ_S12_SB == 0",
+     "fx": "",
+     "to": "SEPT",
+     "id": "JM_SAGONG:1:4"
+    },
+    {
      "text": "다음에",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "JM_SAGONG:1:4"
+     "id": "JM_SAGONG:1:5"
     }
    ]
   },
@@ -207,6 +262,39 @@
   {
    "op": "goto",
    "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-012",
+   "emo": "기본",
+   "text": "9월 거네. 그 달 것이 아니야. …장당 2캡은 쳐 줄게, 팔 거면."
+  },
+  {
+   "op": "goto",
+   "to": "SHOP"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S12_S == 0",
+   "to": "BOOK0"
+  },
+  {
+   "op": "goto",
+   "to": "BOOK1"
+  },
+  {
+   "op": "cmd",
+   "name": "s12",
+   "args": [
+    "know",
+    "s"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-012",
+   "emo": "놀람",
+   "text": "이 매듭… 우리 애 매듭이야. 강수아. 그 달 배급표 받으러 구청 들렀다 간다고 했어."
   },
   {
    "op": "cmd",

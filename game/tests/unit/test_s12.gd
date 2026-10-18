@@ -177,9 +177,15 @@ func test_s12_jin_keep(t) -> void:
 	t.eq(_v(st, "SQH_IDCARD") & 1, 0, "가족 손에 간 비트 없음")
 	p = _play(st, c, "JM_JIN")
 	t.ok(_said(p).contains("출석"), "다시 말 걸면 '출석 부르듯이'")
+	var m := Mq101.new()
+	m.host = r[0]
+	m.st = st
+	var k := m.trade_mult("VJ05")
+	t.ok(absf(float(k[0][1]) - 1.1) < 0.001, "말대로 해 준 손님 — 진공관 매입 +10%(B가 숫자로도 이긴다)")
+	m.free()
 
 
-## 진재석에게 건네면 — 노점 상자에 맡겨 둔다(증거는 줄지 않음) · 진공관 매입 +10%
+## 진재석에게 건네면 — 노점 상자에 맡겨 둔다(묶음에서 빠짐 · 상자에 실제 한 장) · 보상 없음 · 되훔치면 묶음으로
 func test_s12_jin_give(t) -> void:
 	var r := _host()
 	var h: InteriorHost = r[0]
@@ -189,16 +195,34 @@ func test_s12_jin_give(t) -> void:
 	c.start("시험")
 	_play(st, c, "JM_JIN", ["신분증", "장인어른"])
 	t.eq(c.q("J"), 3, "건넴(3)")
-	t.eq(c.q("EVID"), 12, "진재석은 맡아 둔다 — 증거 12 그대로")
+	t.eq(c.q("EVID"), 11, "상자에 맡긴 장은 묶음 밖 — 증거 11(P1 한 곳)")
 	t.eq(_v(st, "SQH_IDCARD") & 1, 1, "비트 1 권이준")
-	var m := Mq101.new()
-	m.host = h
-	m.st = st
-	var k := m.trade_mult("VJ05")
-	t.ok(absf(float(k[0][1]) - 1.1) < 0.001, "진공관 매입 +10%")
-	m.free()
+	t.eq(c.q("REWARD") & 2, 0, "건네기만 하면 감정 보상 없음")
+	var bx := {}
+	for cc in h.map.boxes:
+		if str(h.map.boxes[cc].get("name", "")) == "부품 상자":
+			bx = h.box_contents(h.map.boxes[cc])
+	t.eq(int(bx.get("items", {}).get("M-415", 0)), 1, "부품 상자 안에 권이준의 신분증 한 장")
 	var p := _play(st, c, "JM_JIN")
 	t.ok(_said(p).contains("노점 상자"), "상자 속 신분증 한 줄")
+	# 해 보고 싶은 짓: 상자에서 되훔침
+	bx["items"].erase("M-415")
+	st.call_fn("give", ["M-415", 1])
+	var jh0 := _v(st, "AFF_JH")
+	c._t = 1.0
+	c._process(0.1)
+	t.eq(c.q("STOLE"), 1, "되훔침")
+	t.eq(c.q("EVID"), 12, "묶음으로 돌아옴 — 증거 12")
+	t.eq(int(st.items.get("M-415", 0)), 0, "한 장은 묶음에 합쳐짐")
+	t.eq(c.q("J"), 3, "건넸던 사실은 그대로")
+	t.eq(_v(st, "AFF_JH") - jh0, -2, "JH −2")
+	p = _play(st, c, "JM_JIN")
+	t.ok(_said(p).contains("상자가 가벼워졌더라"), "진재석이 안다")
+	h.enter("J-03", "from_J-02")
+	h.enter("J-02", "from_J-03")
+	for cc in h.map.boxes:
+		if str(h.map.boxes[cc].get("name", "")) == "부품 상자":
+			t.eq(int(h.box_contents(h.map.boxes[cc])["items"].get("M-415", 0)), 0, "다시 들어와도 상자에 또 생기지 않음")
 
 
 ## 엄수연: 이름이 적힌 그것(A) — 증거 한 장이 진짜로 준다 · 약 −15%
@@ -281,7 +305,7 @@ func test_s12_remains(t) -> void:
 	t.eq(int(st.items.get("M-210", 0)), 1, "묶음은 여전히 하나")
 	t.eq(int(st.items.get("M-413", 0)), 1, "배급표 묶음")
 	p = _play(st, c, "SQS12_REM_M", ["푼다"])
-	t.ok(_said(p).contains("23시 29분"), "멈춘 시각")
+	t.ok(_said(p).contains("23:29"), "멈춘 시각")
 	t.eq(int(st.items.get("M-414", 0)), 1, "손목시계")
 	p = _play(st, c, "SQS12_REM_M")
 	t.ok(_said(p).contains("시계 자국"), "다시 보면 빈 손목")
@@ -313,17 +337,20 @@ func test_s12_sell(t) -> void:
 	t.eq(c.q("EVID"), 11, "한 장은 엄수연 손에")
 	var caps0 := _v(st, "PC_CAPS")
 	var k0 := _v(st, "V_KARMA")
+	var xp0 := _v(st, "PC_XP")
+	st.vars.set_v("SQ_S12_J", 4)
 	var p := _play(st, c, "JM_YEOM", ["이건 안 판다"])
 	t.eq(_errs(p), [], "염희정 오류 없음")
 	t.eq(c.q("YASK"), 1, "제안을 들음")
 	t.eq(c.q("SOLD"), 0, "안 팔았다")
-	p = _play(st, c, "JM_YEOM", ["묶음째"])
-	t.ok(_said(p).contains("11장"), "두 번째는 짧게 — 남은 장 수")
+	p = _play(st, c, "JM_YEOM", ["묶음을 내민다", "묶음째"])
+	t.ok(_said(p).contains("11장"), "두 번째는 내가 내밀 때만 — 남은 장 수")
 	t.eq(c.q("SOLD"), 1, "팔았다")
 	t.eq(_v(st, "PC_CAPS") - caps0, 330, "11장 × 30")
 	t.eq(_v(st, "V_KARMA") - k0, -25, "카르마 −25")
 	t.eq(int(st.items.get("M-210", 0)), 0, "묶음이 손을 떠남")
 	t.eq(c.stage(), 100, "판매로 완료")
+	t.eq(_v(st, "PC_XP") - xp0, 100, "판매 결말 XP 100(최선과 다름)")
 	var jh0 := _v(st, "AFF_JH")
 	st.vars.set_v("GAME_DAY", 12)
 	h.day_tick.emit(12)
@@ -333,7 +360,10 @@ func test_s12_sell(t) -> void:
 	t.eq(c.q("KNOWN"), 1, "사흘 뒤 알려짐")
 	t.eq(_v(st, "AFF_JH") - jh0, -3, "JH −3")
 	p = _play(st, c, "JM_JIN")
-	t.ok(_said(p).contains("인쇄소 뒤칸"), "진재석이 안다")
+	t.ok(_said(p).contains("인쇄소에서 불렀냐"), "회의 약속을 판 판 — 진재석")
+	st.call_fn("give", ["M-412", 1])
+	p = _play(st, c, "JM_JIN", ["반지"])
+	t.ok(_said(p).contains("너 때문은 아니야") and c.q("JR") == 1, "판 뒤에도 반지는 받는다")
 	p = _play(st, c, "JM_EOM")
 	t.ok(not _said(p).contains("팔았다면서"), "이미 건네받은 엄수연은 원망 대신 그 이름")
 
@@ -350,7 +380,7 @@ func test_s12_lay(t) -> void:
 	h.refresh_npcs()
 	var m2: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/maps/J-02.json"))
 	t.ok(str(m2).contains("SQS12_LAY_E"), "약 노점 자리")
-	var p := _play(st, c, "SQS12_LAY_E", ["신분증"])
+	var p := _play(st, c, "SQS12_LAY_E", ["A-13"])
 	t.eq(_errs(p), [], "내려놓기 오류 없음")
 	t.eq(c.q("E"), 3, "자리에 놓임(3)")
 	t.eq(c.q("LAYE"), 1, "자리 표시")
@@ -359,9 +389,64 @@ func test_s12_lay(t) -> void:
 	st.kill("C-050")
 	st.vars.set_v("SQ_S12_LAYJ", 0)
 	st.kill("N-R02-005")
-	p = _play(st, c, "SQS12_LAY_J", ["신분증"])
+	p = _play(st, c, "SQS12_LAY_J", ["A-11"])
 	t.ok(not _said(p).contains("노복희"), "노복희가 죽었으면 그 줄 없음")
 	t.eq(c.q("J"), 3, "진재석 자리에도")
+	# 재미 검수 버그: 신분증을 먼저 놓아도 유품을 이어 놓을 수 있다
+	st.call_fn("give", ["M-414", 1])
+	t.ok(_opts(st, "SQS12_LAY_E").any(func(o): return str(o).contains("근무 시계")), "놓은 뒤에도 시계 갈래")
+	p = _play(st, c, "SQS12_LAY_E", ["근무 시계"])
+	t.eq(c.q("EW"), 1, "시계도 놓음")
+	t.ok(_said(p).contains("신분증 곁에"), "신분증 곁에 둔다")
+
+
+## 누구 가족인지 모를 때 내려놓기 선택지가 이름을 알려 주지 않는다(P2)
+func test_s12_lay_noleak(t) -> void:
+	var r := _host()
+	var st: StoryState = r[1]
+	var c: SideS12 = r[2]
+	_bundle(st)
+	c.start("시험")
+	st.kill("N-R02-006")
+	var o := _opts(st, "SQS12_LAY_E")
+	t.ok(o.any(func(x): return str(x).contains("A-13")) and not o.any(func(x): return str(x).contains("문도하")), "선택지는 호수만")
+
+
+## 유품만(신분증 없이) — 한 단계 얕게: 누구 것인지 알게 되고, 이름은 아직
+func test_s12_watch_shallow(t) -> void:
+	var r := _host()
+	var st: StoryState = r[1]
+	var c: SideS12 = r[2]
+	st.call_fn("give", ["M-414", 1])
+	var p := _play(st, c, "JM_EOM", ["손목시계"])
+	t.ok(_said(p).contains("이름이 적힌 건요"), "얕은 반응 — 이름을 찾는다")
+	t.eq(c.q("E"), 1, "누구 가족인지 앎(1)")
+
+
+## 당직 일지를 읽었으면 '10. 31.'을 알려 줄 수 있다 — 분필이 바뀐다
+func test_s12_log(t) -> void:
+	var r := _host()
+	var st: StoryState = r[1]
+	var c: SideS12 = r[2]
+	_bundle(st)
+	c.start("시험")
+	st.vars.set_v("MQ104_LOG", 1)
+	st.vars.set_v("SQ_S12_E", 2)
+	_play(st, c, "JM_EOM", ["당직 일지"])
+	t.eq(c.q("LOG"), 1, "10. 31.")
+	var m2 := FileAccess.get_file_as_string("res://data/maps/J-02.json")
+	t.ok(m2.contains("10. 31."), "분필 글")
+
+
+## 사공민영에게 9월분(전시 배급표)을 내밀면 — 그 달 것이 아니다
+func test_s12_sept(t) -> void:
+	var r := _host("J-03", "from_J-02")
+	var st: StoryState = r[1]
+	var c: SideS12 = r[2]
+	st.call_fn("give", ["M-003", 1])
+	var p := _play(st, c, "JM_SAGONG", ["전시 배급표"])
+	t.ok(_said(p).contains("9월 거네"), "9월분")
+	t.eq(c.q("SB"), 0, "순회는 계속")
 
 
 ## 셋 모두 정해지면 100 · XP · JH +3(한 번)

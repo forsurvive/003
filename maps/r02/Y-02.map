@@ -53,29 +53,38 @@ mark auth 30 4 N
 prop w_procedure 18 1
 text 18 2 "'관리 요원 인수 절차 — 호송차 도착 시 3열 종대.' 그림 속 점 열둘이 그대로 앉아 있다." w=2
 prop seated_0 16 8
-text 16 8 "앉은 채 입구를 보는 유해. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS
+text 16 8 "1조 넷째 자리 유해. 고개가 옆자리 쪽으로 기울었다. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS cond="MQ104_IDS == 0"
+text 16 8 "1조 넷째 자리 유해. 고개가 옆자리 쪽으로 기울었다. 목에는 신분증 끈만 남았다." scene=MQ-104_REMAINS cond="MQ104_IDS == 1"
 prop seated_1 19 8
-text 19 8 "앉은 채 입구를 보는 유해. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS
+text 19 8 "2조 넷째 자리 유해. 등받이에 기대지 않고 꼿꼿이 앉았다. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS cond="MQ104_IDS == 0"
+text 19 8 "2조 넷째 자리 유해. 등받이에 기대지 않고 꼿꼿이 앉았다. 목에는 신분증 끈만 남았다." scene=MQ-104_REMAINS cond="MQ104_IDS == 1"
 prop seated_2 22 8
 text 22 8 "3조 끝자리 — 입구에서 가장 먼 유해. 왼 손목을 얼굴 앞으로 들어 올린 채 굳었다 — 시계를 보던 자세." scene=SQS12_REM_M
 prop seated_3 16 11
-text 16 11 "앉은 채 입구를 보는 유해. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS
+text 16 11 "1조 셋째 자리 유해. 구두 한 짝을 벗어 의자 밑에 가지런히 두었다. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS cond="MQ104_IDS == 0"
+text 16 11 "1조 셋째 자리 유해. 구두 한 짝을 벗어 의자 밑에 가지런히 두었다. 목에는 신분증 끈만 남았다." scene=MQ-104_REMAINS cond="MQ104_IDS == 1"
 prop seated_4 19 11
-text 19 11 "앉은 채 입구를 보는 유해. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS
+text 19 11 "2조 셋째 자리 유해. 팔짱을 낀 채 — 의자가 조금 뒤로 밀렸다. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS cond="MQ104_IDS == 0"
+text 19 11 "2조 셋째 자리 유해. 팔짱을 낀 채 — 의자가 조금 뒤로 밀렸다. 목에는 신분증 끈만 남았다." scene=MQ-104_REMAINS cond="MQ104_IDS == 1"
 prop seated_0 22 11
 text 22 11 "3조 셋째 자리 유해. 무릎 위에 끈으로 묶은 종이 묶음." scene=SQS12_REM_G
 prop seated_1 16 14
-text 16 14 "앉은 채 입구를 보는 유해. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS
+text 16 14 "1조 둘째 자리 유해. 안경을 쓴 채 굳었다 — 한쪽 알이 빠졌다. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS cond="MQ104_IDS == 0"
+text 16 14 "1조 둘째 자리 유해. 안경을 쓴 채 굳었다 — 한쪽 알이 빠졌다. 목에는 신분증 끈만 남았다." scene=MQ-104_REMAINS cond="MQ104_IDS == 1"
 prop seated_2 19 14
-text 19 14 "앉은 채 입구를 보는 유해. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS
+text 19 14 "2조 둘째 자리 유해. 무릎 위에 근무 모자를 얹었다. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS cond="MQ104_IDS == 0"
+text 19 14 "2조 둘째 자리 유해. 무릎 위에 근무 모자를 얹었다. 목에는 신분증 끈만 남았다." scene=MQ-104_REMAINS cond="MQ104_IDS == 1"
 prop seated_3 22 14
-text 22 14 "앉은 채 입구를 보는 유해. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS
+text 22 14 "3조 둘째 자리 유해. 한 손이 옆자리 등받이에 걸쳐 있다 — 셋째 자리 쪽으로. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS cond="MQ104_IDS == 0"
+text 22 14 "3조 둘째 자리 유해. 한 손이 옆자리 등받이에 걸쳐 있다 — 셋째 자리 쪽으로. 목에는 신분증 끈만 남았다." scene=MQ-104_REMAINS cond="MQ104_IDS == 1"
 prop seated_4 16 17
 text 16 17 "1조 맨 앞자리 — 입구에 가장 가까운 유해. 오른손이 무릎 위에서 무언가를 꼭 쥔 채 굳었다." scene=SQS12_REM_K
 prop seated_0 19 17
-text 19 17 "앉은 채 입구를 보는 유해. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS
+text 19 17 "2조 맨 앞자리 유해. 근무복 단추를 목까지 채웠다. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS cond="MQ104_IDS == 0"
+text 19 17 "2조 맨 앞자리 유해. 근무복 단추를 목까지 채웠다. 목에는 신분증 끈만 남았다." scene=MQ-104_REMAINS cond="MQ104_IDS == 1"
 prop seated_1 22 17
-text 22 17 "앉은 채 입구를 보는 유해. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS
+text 22 17 "3조 맨 앞자리 유해. 발치에 빈 물병 하나. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS cond="MQ104_IDS == 0"
+text 22 17 "3조 맨 앞자리 유해. 발치에 빈 물병 하나. 목에는 신분증 끈만 남았다." scene=MQ-104_REMAINS cond="MQ104_IDS == 1"
 prop auth_terminal 30 3
 text 30 3 "관리자 인증 단말. 핍-보이를 대는 받침에 손바닥 자국 같은 먼지가 비어 있다." scene=MQ-104_AUTH
 prop file_cabinet 32 3
