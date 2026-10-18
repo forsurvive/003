@@ -14049,6 +14049,10 @@
   "HD18": {
    "sheet": "pd_gear_hd18.png",
    "slot": "gear"
+  },
+  "HD19": {
+   "sheet": "pd_gear_hd19.png",
+   "slot": "gear"
   }
  },
  "palettes": {

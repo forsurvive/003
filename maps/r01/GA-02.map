@@ -1,0 +1,74 @@
+# 가산 아울렛 — 지하 물류 창고(SD-09a L-R01-28 · 1-D 계획 §12.6, 단계 1-D6). 40×24 · 어둠(비상등만).
+# 분류 컨베이어(멈춤) · 경찰 납품 상자(A-028 · 잠김 50 · 송장 '여의도 지구대') · 반품 더미 · 왕쥐 둥지 · 작업복 상자(잃는 선택 — 장면 GA_CRATE) · 기름통 · 하역장 셔터.
+# 새벽인력 우세(PD_R01_6 ≥ 10)면 낮에 인솔조 둘이 하역장 셔터 앞에서 상자를 기다린다(무명 · 대화 없음 · 바크만 — 사람이라 다른 무명처럼 맞으면 적이 된다).
+map GA-02 가산 아울렛 지하 물류 창고
+set sb
+dark cond="GAME_DAY >= 0"
+grid
+########################################
+########################################
+########################################
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+~eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+~eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+########################################
+########################################
+########################################
+end
+exit 0 4 GA-01 from_GA02
+exit 0 5 GA-01 from_GA02
+mark from_GA01 2 4 E
+mark dock 33 15 E
+mark crate 28 15 S
+prop conveyor_ds 6 8
+prop conveyor_ds 9 8
+prop conveyor_ds 12 8
+prop conveyor_ds 15 8
+text 10 9 "분류 컨베이어. 상자가 가다 선 채로 굳었다. 송장마다 '10/24 오전 배송'." w=4
+prop crate_police_ga 30 4
+box 30 4 police_crate lock=50 name="경찰 납품 상자"
+text 31 4 "송장. '경찰 기동대 진압복 — 여의도 지구대, 10/24 오전 수령 예정'. 받을 사람이 오지 않았다." w=1
+prop returns_ga 20 5
+box 20 5 returns w=2 name="반품 더미"
+prop returns_ga 23 12
+box 23 12 returns w=2 name="반품 더미"
+prop steel_rack 34 8
+box 34 8 crate w=2 name="창고 선반"
+prop rat_nest_ga 5 16
+text 5 17 "왕쥐 둥지. 찢은 옷감 · 솜 · 마네킹 팔 하나. 갉은 자국이 크다." w=2
+prop crate_suit_ga 28 15 cond="GA_BOX != 2"
+prop crate_suit_ga 28 15 state=burnt cond="GA_BOX == 2"
+box 28 15 suit_crate name="작업복 상자" cond="GA_BOX == 0 or GA_BOX == 3 or GA_BOX == 5"
+text 29 15 "꼬리표. '새벽인력 인솔조 — 목요일 수거'. 못이 반쯤 뽑혀 있다." scene=GA_CRATE cond="GA_BOX == 0"
+prop drum 26 16
+text 26 17 "기름통. 반쯤 찼다. 냄새가 독하다." w=1
+prop w_shutter_big 33 1
+text 34 3 "하역장 셔터. 아래가 반 뼘 들렸다. 밖에서 손수레 바퀴 자국이 들어와 있다." w=2
+prop pallet_sacks 36 17
+prop crate_o 37 12
+box 37 12 crate name="하역장 상자"
+# ---------------------------------------------------------------- 인솔조(새벽인력 우세 · 낮) — 바크만
+npc N-GA-S1 33 15 W look=M2-S4-HR01-H1-T05-1-PF12-HD05-EY00 cond="PD_R01_6 >= 10 and GAME_HOUR >= 6 and GAME_HOUR < 18 and GA_BOX != 3" bark="목요일 상자. 벌수 맞나 세어 봐."
+npc N-GA-S2 34 16 W look=M1-S3-HR02-H1-T05-1-PF12-HD02-EY00 cond="PD_R01_6 >= 10 and GAME_HOUR >= 6 and GAME_HOUR < 18 and GA_BOX != 3" bark="인력들 입힐 거야. 맞는 치수로."
+npc N-GA-S1 33 15 W look=M2-S4-HR01-H1-T05-1-PF12-HD05-EY00 cond="PD_R01_6 >= 10 and GAME_HOUR >= 6 and GAME_HOUR < 18 and GA_BOX == 3" bark="…우비? 이게 작업복이야? 패거리 놈들, 셈을 해 보자 이거지."
+# ---------------------------------------------------------------- 적: 쥐(사람이 아니라 냄새로 안다 — 마네킹 위장이 안 통한다) · 상자 지키는 약탈자
+enemy CR-097 6 15
+enemy CR-095 9 17
+enemy CR-095 4 13
+enemy CR-095 12 18
+enemy CR-423 25 14 cond="DG_GA == 0"

@@ -1036,6 +1036,10 @@ from props_loot import PROPS_LOOT, STATES_LOOT                        # 파밍 v
 for _k in PROPS_LOOT:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_LOOT)
+from props_ga import PROPS_GA, STATES_GA                              # 가산 아울렛(1-D6): 방독면 마네킹 · 진열창 · 행거 · 탈의실 커튼 · 에스컬레이터 · 단가 칠판 · 작업복 상자
+for _k in PROPS_GA:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_GA)
 from props_trap import PROPS_TRAP, STATES_TRAP, burnt_states       # 함정 · 환경 폭발(1-9c, SD-11 §9.2 · §9.3)
 for _k in PROPS_TRAP:
     assert _k not in PROPS, _k
@@ -1056,6 +1060,7 @@ STATES.update(STATES_TRAP)
 STATES.update(STATES_DS)
 STATES.update(STATES_GR)
 STATES.update(STATES_KT)
+STATES.update(STATES_GA)
 STATES.update(STATES_BS)
 STATES.update(STATES_S04)
 STATES.update(STATES_S03)

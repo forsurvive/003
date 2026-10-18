@@ -23,6 +23,7 @@ var u02: U02Paths                                  ## U02 남태령 지하(1-D2)
 var uq04: Uq04                                     ## UQ-04 7호 냉동 창고(1-D3)
 var gr: Gr                                         ## 구로 차량기지(1-D4)
 var kt: Kt                                         ## 여의도 금탑(1-D5a)
+var ga: Ga
 var stash: Stash                                   ## 보관 자리 · UQ-125(1-L)
 var st: StoryState
 var route := "job"
@@ -128,6 +129,9 @@ func _ready() -> void:
 	kt = Kt.new()
 	add_child(kt)
 	kt.setup(host, true)
+	ga = Ga.new()
+	add_child(ga)
+	ga.setup(host, true)
 	stash = Stash.new()
 	add_child(stash)
 	stash.setup(host, true)
@@ -474,6 +478,25 @@ func _ready() -> void:
 				["want", ["그만"]], ["wait", 1.0], ["go", 38, 6, "KT-02"], ["use", 38, 5],
 				["until", "KT_CAR == 1", 10.0, "물이 빠진 꺼진 칸", "kt_car"],
 				["check", "KT_POWER == 1 and KT_CALL >= 1", "배수 · 통화"]]
+		"ga":                                                           # 1-D6 가산 아울렛: 방독면을 쓰고 마네킹 줄에 선다 → 진열창 미끼(작업복 여벌) → 망꾼이 고개를 돌린다 → 지하 작업복 상자 넘김
+			st.vars.set_v("GAME_DAY", 12)
+			st.vars.set_v("V_ACT", 1)
+			st.call_fn("give", ["A-074", 1])
+			st.call_fn("give", ["A-001", 2])
+			st.call_fn("give", ["A-012", 1])
+			st.vars.set_v("PC_TORSO", "A-012")                             # 현장 작업복 차림(볼트 작업복이면 미끼가 소용없다 — 규칙대로)
+			st.vars.set_v("PC_HEAD", "A-074")
+			host.date_text = "2277. 10. 30.  10:00"
+			host.enter("GA-01", "from_sign")                              # 간판 사다리로(정문은 망꾼 3칸 안 — 들어서자마자 고개를 돌린다)
+			plan = [["hp", 3000], ["noenc"], ["calm"], ["wait", 1.5], ["shot", "ga_front"],
+				["go", 13, 21, "GA-01"], ["go", 13, 22, "GA-01"], ["wait", 1.5], ["check", "ga_pose", "방독면 · 줄 칸 · 멈춤 — 패거리 눈엔 마네킹"], ["shot", "ga_pose"],
+				["go", 13, 24, "GA-01"], ["go", 13, 29, "GA-01"], ["go", 18, 29, "GA-01"], ["want", ["입힌다"]], ["use", 18, 30],
+				["until", "GA_DECOY == 1", 15.0, "진열창 가운데 마네킹에 볼트 작업복", "ga_decoy"], ["check", "ga_lure", "패거리가 진열창으로 몰려간다(30초)"], ["wait", 2.0], ["shot", "ga_lure"],
+				["go", 21, 30, "GA-01"], ["until", "GA_SEEN == 1", 6.0, "줄 속 마네킹 하나가 고개를 돌린다 — 망꾼", "ga_lookout"], ["calm"],
+				["warp", "GA-02", "from_GA01"], ["wait", 1.0], ["calm"], ["shot", "ga_store"], ["check", "GA_CRATE_DAY == 12", "지하 작업복 상자를 처음 본 날"],
+				["go", 29, 16, "GA-02"], ["want", ["넘긴다"]], ["use", 29, 15],
+				["until", "GA_BOX == 1", 15.0, "작업복 상자 — 하역장 수거 칸으로 끌어다 둔다", "ga_crate"],
+				["check", "GA_BOX == 1 and GA_BOX_DAY == 12 and GA_DECOY == 1 and GA_SEEN == 1", "상자 넘김 · 미끼 · 망꾼(사실 한 곳)"]]
 		"ktj":                                                          # 1-D5a 금탑 엉뚱한 짓: 승강로에 뛰어내린다 → 물속 칸 → 사다리로 로비 → 어하은이 알아챈다
 			st.vars.set_v("GAME_DAY", 12)
 			host.date_text = "2277. 10. 30.  10:00"
@@ -1273,6 +1296,11 @@ func _process(dt: float) -> void:
 				ok = mq106.land_check
 			elif str(s[1]).begins_with("place_marked:"):
 				ok = st.places.get_state(str(s[1]).substr(13)) >= PlaceLog.MARKED
+			elif str(s[1]) == "ga_pose":
+				var gs: Array = host.combat.enemies.filter(func(e): return is_instance_valid(e) and not e.cmb.dead and str(e.row.get("id", "")) in Ga.GANG and e != ga._lookout)
+				ok = not gs.is_empty() and gs.all(func(e): return e.det_mul == 0.0 or e.brain.state == AIBrain.S.COMBAT)
+			elif str(s[1]) == "ga_lure":
+				ok = ga._lure_t > 0.0
 			elif str(s[1]) == "seen_guard":
 				ok = seen.has("guard_bark")
 			elif str(s[1]) == "seen_rumor":

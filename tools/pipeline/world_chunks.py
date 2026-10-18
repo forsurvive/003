@@ -46,6 +46,12 @@ DOORS = [{"lid": "L-R02-11", "near": (720, 1147), "to": "J-01", "mark": "from_W"
          {"lid": "L-R02-15", "near": (672, 1092), "to": "K-15", "mark": "from_W", "name": "영등포 구청 배급소", "kind": "facade"},   # 1-11g SQ-S08
          {"lid": "L-R02-23", "near": (535, 1259), "to": "GD-01", "mark": "from_W", "name": "고척 돔 인력 경매장 — 정문", "kind": "facade"},   # 1-11i SQ-S10
          {"lid": "L-R02-01", "near": (758, 1057), "to": "KH-01", "mark": "from_W", "name": "무너진 국회 — 본관 정문", "kind": "facade"},   # 1-11j SQ-S11
+         # 1-D6 가산 아울렛 거리(DG-GA): 아울렛 A관 건물 — 2층 옥외 간판 사다리(관통 출구)를 먼저, 정문(장소 도착 칸)을 뒤에
+         {"lid": "L-R01-28", "near": (636, 1374), "to": "GA-01", "mark": "from_sign", "name": "가산 아울렛 — 옥외 간판 사다리", "kind": "facade",
+          "hint": "간판 철골에 사다리가 매달렸다. 위층 깨진 창으로 이어진다."},
+         {"lid": "L-R01-28", "near": (630, 1380), "to": "GA-01", "mark": "from_W", "name": "가산 아울렛 A관 — 정문", "kind": "facade",
+          "hint": "깨진 유리문 너머 마네킹들이 줄지어 섰다. 모두 방독면을 썼다.",
+          "hints": [["DG_GA >= 1", "유리문 너머 마네킹 몇이 넘어져 있다. 안이 조용하다."]]},
          # 1-D3 독산 육가공 단지(DG-DS): 시흥대로 쪽 공장 건물 둘 — 뒤 철길 하역장(냉동 창고 동 관통 출구)을 먼저, 정문 하역장을 뒤에(장소 도착 칸)
          {"lid": "L-R01-29", "near": (672, 1427), "to": "DS-02", "mark": "from_rail", "name": "독산 육가공 단지 — 뒤 철길 하역장", "kind": "facade",
           "hint": "반쯤 들린 셔터 밑으로 녹슨 화물 철로가 들어간다. 안에서 찬 바람."},
@@ -89,7 +95,7 @@ DOORS = [{"lid": "L-R02-11", "near": (720, 1147), "to": "J-01", "mark": "from_W"
           "hint": "금빛 유리 기둥 사이 회전문. 바람이 불 때마다 삐걱 반 바퀴.",
           "hints": [["KT_POWER == 2", "로비 1층 창에 작은 불이 켜져 있다. 회전문 너머에서 '딩' — 승강기 소리."]]}]
 # 손 실내가 붙는 건물의 양식(SD-21 §8): 도로망이 바뀌어도 그 자리에 건물이 선다
-ANCHOR_STYLE = {"K-33": "gov", "K-01": "gov", "K-29": "gov", "K-06": "office", "K-20": "villa", "K-22": "apt", "K-24": "office", "K-26": "gov", "GD-01": "gov", "KH-01": "gov", "DS-01": "factory", "DS-02": "factory", "KT-01": "office"}
+ANCHOR_STYLE = {"K-33": "gov", "K-01": "gov", "K-29": "gov", "K-06": "office", "K-20": "villa", "K-22": "apt", "K-24": "office", "K-26": "gov", "GD-01": "gov", "KH-01": "gov", "DS-01": "factory", "DS-02": "factory", "KT-01": "office", "GA-01": "shop"}
 INSETS = [{"id": "X-S07", "mark": "from_vault", "at": (959, 1503)},          # 볼트 S-07 정문(L-R01-01)
           {"id": "X-BC", "center": (892, 1362)},                             # 봉천 계단마을(L-R01-09)
           {"id": "X-SB", "center": (632, 1329), "lid": "L-R02-19", "arrive": "arrive", "urban": True},   # 새벽인력 본소(1-6): 도착 칸 = 정문 앞 길

@@ -7,7 +7,7 @@
   items_drink: 17행
   items_food: 33행
   items_misc_crit: 20행
-  items_misc_func: 28행
+  items_misc_func: 29행
   items_misc_mat: 41행
   items_misc_money: 9행
   items_misc_other: 7행

@@ -149,7 +149,7 @@ func _rows() -> Array:
 				if c != cat:
 					continue
 				var n := int(st.items[id])
-				var on: bool = id == info.get("equipped", "") or id == info.get("worn", "")
+				var on: bool = id == info.get("equipped", "") or id == info.get("worn", "") or id == info.get("head", "") or id == info.get("eyes", "")
 				var hk := ""
 				for k in info.get("hotkeys", {}):
 					if info["hotkeys"][k] == id:
@@ -467,7 +467,10 @@ func _enter_label() -> String:
 		[1, 0]:
 			return "해제" if rows[sel]["id"] == info.get("equipped", "") else "장착"
 		[1, 1]:
-			return "입는 중" if rows[sel]["id"] == info.get("worn", "") else "갈아입기"
+			var rid: String = rows[sel]["id"]
+			if rid == info.get("head", "") or rid == info.get("eyes", ""):
+				return "벗기"                                                    # 머리 · 눈 장비(1-D6 방독면 · 1-11e 구울 가면)는 다시 고르면 벗는다
+			return "입는 중" if rid == info.get("worn", "") else "갈아입기"
 		[1, 2]:
 			return "사용"
 		[1, 3]:

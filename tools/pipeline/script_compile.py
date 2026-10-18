@@ -46,7 +46,7 @@ CMDS = {"wait", "fade_in", "fade_out", "balloon", "move", "face", "shake", "year
         "mq", "trade", "yd", "fix",                                                   # 0-10: 1막 진행기 사건 · 거래 창(상인 V번호)
         "meet", "memo", "obit",                                              # 1-2: 인물 수첩 등록 · 한 줄 메모 · 소식으로 안 죽음
         "re", "cage", "capture",                                             # 1-3: 인카운터 첫 분대 대화의 결말 · 우리 문 열기 · 생포(사흘 버팀)
-        "jm", "yd", "sb", "vb", "home", "info", "doctor", "rent", "stash", "s01", "s02", "s03", "s04", "s05", "s06", "s08", "s09", "s10", "s11", "uq71", "u02", "uq04", "gr", "kt"}                                                                # 1-4: 1막 경로 진행기(지하시장·단서) 사건                                             # 1-3: 인카운터 첫 분대 대화의 결말 · 우리 문 열기 · 생포(사흘 버팀)
+        "jm", "yd", "sb", "vb", "home", "info", "doctor", "rent", "stash", "s01", "s02", "s03", "s04", "s05", "s06", "s08", "s09", "s10", "s11", "uq71", "u02", "uq04", "gr", "kt", "ga"}                                                                # 1-4: 1막 경로 진행기(지하시장·단서) 사건                                             # 1-3: 인카운터 첫 분대 대화의 결말 · 우리 문 열기 · 생포(사흘 버팀)
 ENGINE_VARS = {"PC_ST", "PC_PE", "PC_EN", "PC_CH", "PC_IN", "PC_AG", "PC_LK", "PC_TAG1", "PC_TAG2", "PC_TAG3", "PC_CAPS", "PC_XP",
                "PC_SEX", "PC_APT_PROXY",
                "MQP4_DUCT", "MQP4_FOLLOW", "MQP4_KEY", "MQP4_ARMORY", "MQP4_TALK", "MQP4_BJ_KO", "MQP4_SEC_KO", "MQP4_CAUGHT", "MQP4_DECOY",
@@ -79,12 +79,13 @@ ENGINE_VARS |= {"U02_" + k for k in ("GUIDE INTRO LIGHT LIGHT_DAY ASK HAL HAL_DA
 # UQ-04 7호 냉동 창고(1-D3, SD-05 UQ-04 · 1-D 계획 §9 · §9.6): 사실 한 곳 — 원고 script/act1/UQ-04.txt 머리 주석 · DS_VALVE 가공장 배수 밸브
 ENGINE_VARS |= {"UQ04_" + k for k in "KNOW OPEN OPEN_DAY LOCK DUE THAW THAW_DAY GONE LEFT COLD COLD_DAY BC BC_DAY SA SA_DAY JH JH_DAY LEAK FEUD FEUD_DAY RATK SHARD SHELF SOL REWARD LINK2 LINK3 FLED DATE SIGN PRICE BACK REFUND".split()} | {"DS_VALVE"}
 ENGINE_VARS |= {"GR_" + k for k in "CORE PUSH BUS CORE_DAY LV_A LV_B LV_C A B C STAFF STAFF_DAY STAFF_K KEY LOST SIGKEY WHISTLE MUSTER MUSTER_K REEFER DRIFT RATS SB SB_DAY ROOF CHART TAG PARK CHEER ESC GUIDE TIP MUSTER_DAY".split()}   # 1-D4 구로 차량기지
+ENGINE_VARS |= {"GA_" + k for k in "SEEN BOX BOX_DAY BOX_DONE CRATE_DAY FEUD DECOY DECOY_DAY COUNTED TOLD BOSS".split()} | {"PD_R01_6", "PC_HEAD"}   # 1-D6 가산 아울렛
 ENGINE_VARS |= {"KT_" + k for k in "POWER POWER_DAY NOTE CALL RING RING2 MEM HOOK REVOLVE TUNNEL CAR QUEEN LOW CARTOLD HATCH KEY GRATE DIG ROPE GOND TOP TOP_DAY MEET VIEW SHOE NURSE EXPL HEAT OBS QUEEN_DAY CREW EXT3 EXT4 EXT5 HOSE3 HOSE4 SWAT GLASS20 GLASS31 WIN6 GEN_DAY BACK".split()}   # 1-D5a·1-D5b 여의도 금탑
 # 던전 정리 변수(1-D0, script/world/dungeons.txt): DG_<접미> 0 손 안 댐 · 1 정리 · 2 다시 들어섬 / _DAY 정리 · 재입주 날 / _ROLL 재입주를 굴린 날
 ENGINE_VARS |= {f"DG_{m}{s}" for m in re.findall(r"^@\s+([A-Z0-9]+)\s", open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "script", "world", "dungeons.txt"), encoding="utf-8").read(), re.M)
                 for s in ("", "_DAY", "_ROLL")}
 UNNAMED = {"N-TRADER": "떠돌이 고물상", "N-VG-S1": "고물상", "N-VG-H1": "약초꾼", "N-VG-P1": "부품 장수", "N-VG-C1": "옷 장수",
-           "N-VG-F1": "국밥 장수", "N-VG-D1": "떠돌이 장사꾼", "N-UQ-K1": "아이", "N-UQ-C1": "털이꾼",                    # 1-L 일반 장사꾼
+           "N-VG-F1": "국밥 장수", "N-VG-D1": "떠돌이 장사꾼", "N-UQ-K1": "아이", "N-UQ-C1": "털이꾼", "N-GA-B1": "패거리 두목", "N-GA-S1": "인솔조", "N-GA-S2": "인솔조",                    # 1-L 일반 장사꾼
            "N-REFUGEE": "피난민", "N-DOWNED": "쓰러진 민병", "N-HS-E1": "수송대 호위", "N-HS-E2": "수송대 호위",
            "CR-091": "짐소",                                                     # 1-8d 고개길 수송대
            "N-SA-G1": "승강장 경비", "N-SA-G2": "승강장 경비", "N-SA-G3": "승강장 경비", "N-SA-R1": "환승촌 주민", "N-SA-R2": "환승촌 주민",   # 1-8f 사당 환승촌

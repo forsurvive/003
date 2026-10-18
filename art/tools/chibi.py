@@ -6,7 +6,7 @@
 묶음 머리·챙·꽁지도 깊이에 맞게 앞뒤가 정해진다.
 
 외형 코드(SD-07b §3): 몸 M1 M2 F1 F2 E1 E2 K1 · 피부 S1~S6 SG1 SG2 · 머리 HR00~HR11 · 머리색 H1~H8 ·
-몸통 T01~T16(+GOWN 환자복) · 낡음 0~2 · 팔레트 PF00~PF12 · 머리 장비 HD01~HD18 · 눈 장비 EY01~EY08.
+몸통 T01~T16(+GOWN 환자복) · 낡음 0~2 · 팔레트 PF00~PF12 · 머리 장비 HD01~HD19(HD19 민방위 방독면 — 1-D6) · 눈 장비 EY01~EY08.
 색은 전부 마스터 64 + 교체 램프(피부·머리색·세력) 안에서 고른다.
 """
 import os, sys, math, random, zlib
@@ -549,6 +549,13 @@ class Head:
         elif g == "HD17":                                                    # 헤드램프
             self.shell(-0.42, ramp(["P02", "P02", "P03", "P04"]), 1.04, front_cut=-0.42)
             self.blob((0.0, -0.45, 1.02), (0.16, 0.12, 0.08), ramp(["P49", "P50", "P50", "P09"]))
+        elif g == "HD19":                                                    # 민방위 방독면(1-D6 · A-074): 얼굴을 덮는 고무 면체 + 입 앞 정화통 + 머리끈
+            rubber = ramp(["P01", "P02", "P03", "P05"])
+            self.plate(-0.4, 0.92, -0.05, rubber, 1.06)
+            can = ramp(["P28", "P29", "P30", "P31"])
+            self.blob((0.0, 0.66, 1.0), (0.24, 0.22, 0.2), can)
+            self.blob((0.0, 0.7, 1.16), (0.13, 0.12, 0.06), ramp(["P01", "P02", "P03", "P04"]))
+            self.band(rubber)                                                # 머리끈: 면체 가장자리에서 뒤통수로
         elif g == "HD18":                                                    # 밀짚모자: 넓은 챙
             st = ramp(["P19", "P20", "P21", "P22"])
             self.shell(-0.3, st, 1.08)
@@ -566,6 +573,34 @@ class Head:
             self.shell(1.0, dark, 1.06)
             for side in (-1, 1):
                 self.blob((side * 0.36, 0.15, 0.9), (0.2, 0.17, 0.12), ramp(["P61", "P62", "P63", "P63"]))
+
+    def plate(self, y_top, y_bot, z_min, col_ramp, scale=1.06):
+        """얼굴 면체(방독면): 머리 구 앞쪽(ez > z_min) 중 y_top < ey < y_bot 띠를 scale만큼 띄운 껍데기."""
+        n = int(70 * max(1.0, self.scale))
+        for i in range(n):
+            for j in range(2 * n):
+                u = math.pi * (i + 0.5) / n
+                v = 2 * math.pi * j / (2 * n)
+                ex, ey, ez = math.sin(u) * math.cos(v), -math.cos(u), math.sin(u) * math.sin(v)
+                if ez < z_min or not (y_top < ey < y_bot):
+                    continue
+                sx, sy, sz = self.to_screen(ex * scale, ey * scale, ez * scale)
+                nx, ny, nz = self.to_view(ex, ey, ez)
+                self.cv.put(sx, sy, sz * scale, shade(col_ramp, self.light(nx, ny, nz), 0.6))
+
+    def band(self, col_ramp):
+        """머리끈: 면체 가장자리(관자놀이 높이)에서 뒤통수를 감는 가는 띠."""
+        n = int(90 * max(1.0, self.scale))
+        for j in range(n):
+            v = math.pi * (j + 0.5) / n + math.pi                            # 뒤쪽 반 바퀴(ez < 0)
+            for ey in (-0.02, 0.06):
+                r = math.sqrt(max(0.0, 1.0 - ey * ey))
+                ex, ez = r * math.cos(v), r * math.sin(v)
+                if ez > 0.0:
+                    continue
+                sx, sy, sz = self.to_screen(ex * 1.07, ey * 1.07, ez * 1.07)
+                nx, ny, nz = self.to_view(ex, ey, ez)
+                self.cv.put(sx, sy, sz * 1.07, shade(col_ramp, self.light(nx, ny, nz), 0.6))
 
     def visor(self, y0, y1, col_ramp):
         n = int(50 * max(1.0, self.scale))
@@ -587,7 +622,7 @@ class Head:
         g = self.look.gear
         if e == "EY20":                                                      # 구울 백탁 눈: 안경이 아니라 눈 도장(eye_stamps)에서 그린다
             e = None
-        if not e and g != "HD09":
+        if not e and g not in ("HD09", "HD19"):
             return img
         d = ImageDraw.Draw(img)
         pts = []
@@ -595,6 +630,14 @@ class Head:
             sx, sy, sz = self.to_screen(side * 0.36, 0.2, math.sqrt(1 - 0.36 ** 2 - 0.04))
             pts.append((sx, sy, sz))
         vis = [p for p in pts if p[2] > 0.15]
+        if g == "HD19":                                                      # 방독면 렌즈: 둥근 유리 둘(테 · 비친 빛) — 뒤에서는 안 보인다
+            for (sx, sy, sz) in vis:
+                x, y = int(sx), int(sy)
+                d.ellipse([x - 4, y - 4, x + 3, y + 3], fill=C("P03"), outline=INK)
+                d.ellipse([x - 3, y - 3, x + 2, y + 2], fill=C("P11"))
+                d.point((x - 2, y - 2), fill=C("P14")); d.point((x - 1, y - 2), fill=C("P13"))
+            if not e:
+                return img
         if g == "HD09":                                                      # 풀페이스 헬멧 얼굴창
             if self.view != "N":
                 xs = [p[0] for p in vis] or [self.cx]

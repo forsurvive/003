@@ -22,7 +22,7 @@ BODIES = ["M1", "F1", "K1"]
 KID_FAMS = ["T01"]                                    # 아이 몸(K1, MQ-P2 열 살)은 볼트 작업복만
 HAIRS = ["HR00", "HR01", "HR02", "HR03", "HR04", "HR05", "HR06", "HR07", "HR08", "HR09", "HR10", "HR11"]
 GEARS = ["HD01", "HD02", "HD03", "HD04", "HD05", "HD06", "HD07", "HD08", "HD09", "HD10", "HD11", "HD12",
-         "HD13", "HD14", "HD15", "HD16", "HD17", "HD18"]
+         "HD13", "HD14", "HD15", "HD16", "HD17", "HD18", "HD19"]
 EYES = ["EY01", "EY02", "EY03", "EY04", "EY05", "EY06", "EY07", "EY08"]
 WEAPONS = ["pistol", "rifle", "smg", "baton", "bb", "pole", "shotgun", "laser", "minigun", "flamer", "launcher", "knife", "bat", "sledge", "grenade"]   # 1-9a: 8계열 손 무기
 MOTIONS = [("idle", 1), ("walk", 6), ("run", 6), ("roll", 5)]

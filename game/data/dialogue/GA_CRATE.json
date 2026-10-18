@@ -1,0 +1,127 @@
+{
+ "id": "GA_CRATE",
+ "title": "작업복 상자 꼬리표",
+ "loc": "L-R01-28",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "WATCHED": 4,
+  "MENU": 6,
+  "GIVE": 7,
+  "BURN": 10,
+  "LEAVE": 13
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "못 박은 나무 상자. 꼬리표에 굵은 매직 — '새벽인력 인솔조 — 목요일 수거'. 틈으로 카키색 현장 작업복이 개켜진 것이 보인다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "패거리가 마네킹과 행거에서 벗겨 모은 것이다. 벌당 5캡에 새벽인력 '인력'들이 입을 옷."
+  },
+  {
+   "op": "if",
+   "cond": "PD_R01_6 >= 10 and GAME_HOUR >= 6 and GAME_HOUR < 18",
+   "to": "WATCHED"
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "하역장 셔터 앞에서 인솔조 둘이 담배를 나눠 피우며 이쪽을 본다. 보는 눈이 있다."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "하역장 수거 칸으로 끌어다 둔다(넘긴다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "GIVE",
+     "id": "GA_CRATE:1:0"
+    },
+    {
+     "text": "기름을 끼얹고 불을 붙인다",
+     "tags": [],
+     "cond": "not (PD_R01_6 >= 10 and GAME_HOUR >= 6 and GAME_HOUR < 18)",
+     "fx": "",
+     "to": "BURN",
+     "id": "GA_CRATE:1:1"
+    },
+    {
+     "text": "그냥 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "LEAVE",
+     "id": "GA_CRATE:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "상자를 끌어 하역장 셔터 앞 분필 동그라미 안에 놓는다. 인솔조가 오면 그대로 실어 갈 것이다."
+  },
+  {
+   "op": "cmd",
+   "name": "ga",
+   "args": [
+    "box",
+    "1"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "기름통을 기울여 상자 위에 붓는다. 성냥 한 개비. 개킨 작업복이 한 겹씩 말리며 타오른다. 매운 연기가 천장에 고인다."
+  },
+  {
+   "op": "cmd",
+   "name": "ga",
+   "args": [
+    "box",
+    "2"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "상자를 그대로 둔다. (상자를 열면 안의 것을 직접 바꿔 넣을 수도 있다.)"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/GA.txt"
+}

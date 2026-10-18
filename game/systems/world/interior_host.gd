@@ -12,6 +12,7 @@ signal talked(npc_id: String, scene: String)
 signal day_tick(day: int)                          ## 게임 시간 06:00을 넘었다(SD-05 §6.4 하루 판정, 1-3)
 signal pc_died                                     ## 주인공이 쓰러졌고 생포도 아니다(1막 이후 — 진행이 마지막 저장을 연다)
 signal slept(hours: int)                           ## 침대에서 잤다(SD-12 §13.2 '수면 뒤' 자동 저장)
+signal box_closed(box: Dictionary, contents: Dictionary)   ## 용기 창을 닫았다(1-D6 가산 작업복 상자 바꿔치기 판정 등 — 진행기가 듣는다)
 
 const BANNER_SECS := 2.4
 
@@ -348,6 +349,12 @@ func enter(map_id: String, mark: String = "", look: Dictionary = {}, at: Vector2
 	player.world = map
 	if player.doll != null and worn() != "A-001" and torso_of(worn()) != "":
 		player.doll.set_look({"torso": torso_of(worn())})                 # 갈아입은 옷(0-10)
+	var head_on := str(st.vars.get_v("PC_HEAD"))
+	if player.doll != null and head_on != "":
+		if st.items.has(head_on):
+			player.doll.set_look({"gear": str(items_db.get(Gear.base(head_on), {}).get("layer", ""))})   # 쓴 머리 장비(1-D6)
+		else:
+			st.vars.set_v("PC_HEAD", "")                                   # 팔았거나 잃었다
 	var eyes_on := str(st.vars.get_v("PC_EYES"))
 	if player.doll != null and eyes_on != "":
 		if st.items.has(eyes_on):
@@ -1178,6 +1185,7 @@ func _open_container(b: Dictionary, c: Dictionary) -> void:
 			_swap_after(c, before)
 		if stash != null:
 			stash.on_close(b, c)
+		box_closed.emit(b, c)
 		_after_theft())
 	add_child(container)
 
@@ -2432,7 +2440,7 @@ func status() -> Dictionary:
 		"stimpak_id": InteriorCombat.STIMPAK, "carry": carry, "carry_max": 150 + 10 * st.stat("ST"), "caps": int(st.vars.get_v("PC_CAPS")),
 		"place": _place_name(), "hotkeys": combat.hotkeys,
 		"karma": int(st.vars.get_v("V_KARMA")) if st.vars.has("V_KARMA") else 0,
-		"worn": worn(), "rads": int(st.vars.get_v("PC_RADS")), "rad_rate": snappedf(combat.rad_rate, 0.01), "rad_res": Radiation.resist(st, items_db),
+		"worn": worn(), "head": str(st.vars.get_v("PC_HEAD")), "eyes": str(st.vars.get_v("PC_EYES")), "rads": int(st.vars.get_v("PC_RADS")), "rad_rate": snappedf(combat.rad_rate, 0.01), "rad_res": Radiation.resist(st, items_db),
 		"rad_drug": st.rad_drug.duplicate(),
 		"dr": int(items_db.get(worn(), {}).get("dr", 0)) if st.items.has(worn()) else 0,
 		"tile": Vector2(map.tile_of(player.loco.logical)) if map is WorldMap and player != null else Vector2(-99, -99),
@@ -2682,6 +2690,13 @@ func torso_of(id: String) -> String:
 
 func wear(id: String) -> void:
 	var it: Dictionary = items_db.get(Gear.base(id), {})
+	if st.items.has(id) and str(it.get("slot", "")).begins_with("머리"):   # 머리 장비(1-D6 — A-074 민방위 방독면 HD19): 한 번 더 고르면 벗는다
+		var hon := str(st.vars.get_v("PC_HEAD")) != id
+		st.vars.set_v("PC_HEAD", id if hon else "")
+		if player != null and player.doll != null:
+			player.doll.set_look({"gear": str(it.get("layer", "")) if hon else ""})
+		_note("%s %s" % [str(it.get("name", id)), "씀" if hon else "벗음"])
+		return
 	if st.items.has(id) and str(it.get("slot", "")).begins_with("눈"):     # 눈 장비(1-11e — A-106 구울 가면): 한 번 더 고르면 벗는다
 		var on := str(st.vars.get_v("PC_EYES")) != id
 		st.vars.set_v("PC_EYES", id if on else "")

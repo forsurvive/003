@@ -43,7 +43,7 @@ var book := NpcBook.new()               ## 인물 수첩(1-2, SD-12 §3.11)
 const ENEMY_FACTION := {"CR-401": "BJ", "CR-405": "BJ", "CR-435": "SB", "CR-436": "SB", "CR-437": "SB", "CR-438": "SB", "CR-534": "SB",
 	"CR-456": "JH", "CR-457": "JH", "CR-403": "BJ", "CR-420": "YT", "CR-421": "YT", "CR-423": "YT"}
 const UNNAMED := [["N-TRADER", "떠돌이 고물상", ""], ["N-VG-S1", "고물상", ""], ["N-VG-H1", "약초꾼", ""], ["N-VG-P1", "부품 장수", ""],
-	["N-VG-C1", "옷 장수", ""], ["N-VG-F1", "국밥 장수", ""], ["N-VG-D1", "떠돌이 장사꾼", ""], ["N-UQ-K1", "아이", ""], ["N-UQ-C1", "털이꾼", ""], ["N-REFUGEE", "피난민", ""], ["N-DOWNED", "쓰러진 민병", "JC_BC"],
+	["N-VG-C1", "옷 장수", ""], ["N-VG-F1", "국밥 장수", ""], ["N-VG-D1", "떠돌이 장사꾼", ""], ["N-UQ-K1", "아이", ""], ["N-UQ-C1", "털이꾼", ""], ["N-GA-B1", "패거리 두목", ""], ["N-GA-S1", "인솔조", "SB"], ["N-GA-S2", "인솔조", "SB"], ["N-REFUGEE", "피난민", ""], ["N-DOWNED", "쓰러진 민병", "JC_BC"],
 	["N-HS-E1", "수송대 호위", "HS"], ["N-HS-E2", "수송대 호위", "HS"], ["CR-091", "짐소", ""],   # 1-8d 고개길 수송대
 	["N-SA-G1", "승강장 경비", "JC_SA"], ["N-SA-G2", "승강장 경비", "JC_SA"], ["N-SA-G3", "승강장 경비", "JC_SA"], ["N-SA-R1", "환승촌 주민", "JC_SA"],   # 1-8f 사당 환승촌
 	["N-SA-R2", "환승촌 주민", "JC_SA"], ["N-SA-R3", "환승촌 주민", "JC_SA"], ["N-SA-R4", "버섯 일꾼", "JC_SA"],
@@ -121,6 +121,12 @@ func _init() -> void:
 	# UQ-125 털린 은닉처(1-L, SD-05 §3.20): 진행기 Stash만 쓴다 — WHO 범인 · HERE 범인 자리 · KID 아이 · GUARD 맡길 사람 · FENCE 장물 진열 · R 결과
 	for k in ["UQ125_WHO", "UQ125_HERE", "UQ125_KID", "UQ125_GUARD", "UQ125_FENCE", "UQ125_R"]:
 		vars.declare(k, "int", 0)
+	# 가산 아울렛(1-D6, 1-D 계획 §12.6): 진행기 Ga만 쓴다 — SEEN 망꾼 · BOX 작업복 상자(1 넘김 · 2 태움 · 3 바꿔치기 · 4 인솔조가 가져감 · 5 빈 상자) ·
+	# BOX_DAY 고른 날 · BOX_DONE 판도에 반영됨 · CRATE_DAY 상자를 처음 본 날 · FEUD 인솔조와 패거리가 틀어짐 · DECOY 진열창 미끼 · COUNTED 재고 세기에 걸림 ·
+	# TOLD 놓친 소문 표지 · BOSS 두목 처리(던전 정리 식) · PD_R01_6 판도 PD-R01-6 사건 보정(+ 새벽인력 · − 약탈자, SD-08 §13) · PC_HEAD 쓴 머리 장비(아이템 ID — A-074 방독면)
+	for k in ["GA_SEEN", "GA_BOX", "GA_BOX_DAY", "GA_BOX_DONE", "GA_CRATE_DAY", "GA_FEUD", "GA_DECOY", "GA_DECOY_DAY", "GA_COUNTED", "GA_TOLD", "GA_BOSS", "PD_R01_6"]:
+		vars.declare(k, "int", 0)
+	vars.declare("PC_HEAD", "str", "")
 	vars.declare("BC_DOUBT_DAY", "int", 0)                    # 정보 전파(1-10c): 걸어 들어감 소문이 봉천에 닿은 날 + 1 — 그날까지 봉천 사람들이 수군거린다(SD-20 N8)
 	# 거처(1-8b, SD-15 §7): HOME_BC 봉천 옥탑방(0 없음 · 1 내 방 · 2 압류) · HOME_BC_OK 조건이 찬 날(그다음 날부터 조만석이 열쇠를 준다) ·
 	# WELL_RESTED 숙면이 끝나는 절대 분(0 = 없음, SD-11 §11.5 경험치 +10% 12시간) · HOME_BC_NOTE 문 앞 알림(§7.7: 1 '출입 자제' 쪽지 · 2 읽음 · 3 압류 딱지 · 4 읽음 · 5 재개방) ·

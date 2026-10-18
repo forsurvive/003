@@ -25,6 +25,7 @@
                                  단말(SD-12 §7.4, 1-4): 그 칸(보통 책상 위 단말 소품)을 조사하면 단말 화면. 내용은 script/terms/*.txt.
   enemy ID x y [cond="식"] [arm=baton|pistol] [who=인물ID] [dir=방향] [stance=hold] [route=x,y,초;…]
                                  적(SD-14). route면 순찰(닿으면 그 초만큼 서서 둘러본다), stance=hold면 제자리 경계(0-9).
+  pose x y w h                   마네킹 줄 칸(1-D6 가산 — 방독면 위장이 통하는 칸, 진행기가 읽는다)
   prop·sign·npc에도 cond="식"을 붙일 수 있다(시대·퀘스트에 따라 있다 없다 — 예: year() == 2259).
   npc에 look=외형코드(SD-07b)를 주면 그 모습 시트로 선다(예: 2259년의 아기 하도윤).
 검사: 격자 폭·글자, 벽 두께(위아래 방 사이 3칸), 소품 발 칸이 바닥·겹침 없음, 벽 소품은 벽면 윗칸, 문 자리, 출구 칸이
@@ -394,6 +395,9 @@ def _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kin
                 x, y, w, h = int(pos[0]), int(pos[1]), int(pos[2]), int(pos[3])
                 check_cond(opt["cond"], known_vars, known_fns)
                 out.setdefault("drain", []).append({"x": x, "y": y, "w": w, "h": h, "cond": opt["cond"], "floor": DRY_FLOOR_ID})
+            elif c == "pose":                                       # 1-D6 마네킹 줄 칸(pose x y w h) — 방독면을 쓰고 이 칸에 멈춰 서면 사람 눈엔 마네킹(진행기 Ga)
+                x, y, w, h = int(pos[0]), int(pos[1]), int(pos[2]), int(pos[3])
+                out.setdefault("pose", []).append({"x": x, "y": y, "w": w, "h": h})
             elif c == "flood":                                      # 1-D5a 물이 찬다(flood x y w h cond="식") — 식이 참이면 그 사각형이 허리 물(깨진 유리 터널)
                 x, y, w, h = int(pos[0]), int(pos[1]), int(pos[2]), int(pos[3])
                 check_cond(opt["cond"], known_vars, known_fns)

@@ -32,6 +32,16 @@ func scent_cells() -> Array:
 	return scent
 
 
+## 1-D6 마네킹 줄 칸(pose 지시어 — 진행기 Ga가 읽는다)
+func pose_cells() -> Dictionary:
+	var out := {}
+	for r in data.get("pose", []):
+		for yy in int(r["h"]):
+			for xx in int(r["w"]):
+				out[Vector2i(int(r["x"]) + xx, int(r["y"]) + yy)] = true
+	return out
+
+
 var hush: Array = []                              ## 1-D3 소리 덮개 사각형(Rect2i — 맵을 열 때 조건을 본 것만): 파리 떼 칸
 
 

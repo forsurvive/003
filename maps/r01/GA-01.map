@@ -1,0 +1,199 @@
+# 가산 아울렛 거리 — 아울렛 A관(SD-09a L-R01-28 · 1-D 계획 §12.5 · §12.6 · §12.7, 단계 1-D6). 48×34 · 위 2층 · 아래 1층(한 맵 — 멈춘 에스컬레이터 둘).
+# 1층: 진열창(정문 옆 — 판도 · 정리 · 미끼가 보인다) · 마네킹 줄 넷(pose — 방독면을 쓰고 멈춰 서면 사람 눈엔 마네킹) · 행거 · 전시 특가 진열대 ·
+#   탈의실 여섯(커튼 칸 — 갈아입으면 쫓던 패거리가 놓친다) · 계산대(영수증 — 금탑 31층 연회장) · 점장실 공문 · 지하 계단.
+# 2층: 패거리 거래 자리 · 단가 칠판('S-07 작업복 3,000 — 생포만') · 두목 책상(재고 장부 '마네킹 312') · 마네킹 창고 · 옥외 간판 사다리(월드 둘째 문).
+# 두목(우두머리, N-GA-B1)은 장부를 들고 1층 마네킹 줄을 세며 돈다(재고 세기 — 진행기 Ga). 망꾼 하나는 처음에 마네킹 줄 속에 마네킹인 척 서 있다.
+map GA-01 가산 아울렛 A관
+set sb
+grid
+################################################
+###########################################tt###
+###########################################tt###
+#tttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttt#
+####ss#########################ss###############
+####ss#########################ss###############
+####ss#########################ss###############
+####ss#########################ss##c#c#c#c#c#c##
+#tttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttt#
+~tttttttttttttttttttttttttttttttttttttttttttttt#
+~tttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttt#
+######################tt########################
+######################tt########################
+end
+exit 22 33 W L-R01-28>from_W
+exit 23 33 W L-R01-28>from_W
+exit 43 1 W L-R01-28>from_sign
+exit 44 1 W L-R01-28>from_sign
+exit 0 29 GA-02 from_GA01
+exit 0 30 GA-02 from_GA01
+mark from_W 22 31 N
+mark from_sign 43 3 S
+mark from_GA02 2 29 E
+mark lookout 21 28 S
+mark window 18 29 S
+mark count0 26 6 S
+mark fit1 35 15 S
+mark fit2 37 15 S
+mark fit3 39 15 S
+mark fit4 41 15 S
+mark fit5 43 15 S
+mark fit6 45 15 S
+# ---------------------------------------------------------------- 마네킹 줄(1층) — 짝수 칸 마네킹, 홀수 칸이 서 있을 자리
+pose 8 19 23 1
+prop mann_ga 8 19
+prop mann_ga2 10 19
+prop mann_ga 12 19
+prop mann_ga2 14 19
+prop mann_ga 16 19
+prop mann_ga2 18 19
+prop mann_ga 20 19
+prop mann_ga2 22 19
+prop mann_ga 24 19
+prop mann_ga2 26 19
+prop mann_ga 28 19
+prop mann_ga2 30 19
+pose 8 22 23 1
+prop mann_ga2 8 22
+prop mann_ga 10 22
+prop mann_ga2 12 22 cond="DG_GA == 0"
+prop mann_ga2 12 22 state=fallen cond="DG_GA >= 1"
+prop mann_ga 14 22
+prop mann_ga2 16 22
+prop mann_ga 18 22
+prop mann_ga2 20 22
+prop mann_ga 22 22
+prop mann_ga2 24 22
+prop mann_ga 26 22
+prop mann_ga2 28 22
+prop mann_ga 30 22
+pose 8 25 23 1
+prop mann_ga 8 25
+prop mann_ga2 10 25
+prop mann_ga 12 25
+prop mann_ga2 14 25
+prop mann_ga 16 25
+prop mann_ga2 18 25
+prop mann_ga 20 25
+prop mann_ga2 22 25
+prop mann_ga 24 25
+prop mann_ga2 26 25 cond="DG_GA == 0"
+prop mann_ga2 26 25 state=fallen cond="DG_GA >= 1"
+prop mann_ga 28 25
+prop mann_ga2 30 25
+pose 8 28 23 1
+prop mann_ga2 8 28
+prop mann_ga 10 28
+prop mann_ga2 12 28
+prop mann_ga 14 28
+prop mann_ga2 16 28 cond="DG_GA == 0"
+prop mann_ga2 16 28 state=fallen cond="DG_GA >= 1"
+prop mann_ga 18 28
+prop mann_ga2 20 28
+prop mann_ga 22 28
+prop mann_ga2 24 28
+prop mann_ga 26 28
+prop mann_ga2 28 28
+prop mann_ga 30 28
+text 9 19 "마네킹 줄. 하나같이 방독면을 썼다. 사람 키에 사람 몸 — 가만히 서 있으면 누가 누군지 모르겠다." w=3
+# ---------------------------------------------------------------- 진열창(정문 옆) — 상태 그림: 판도(PD_R01_6) · 정리(DG_GA) · 미끼(GA_DECOY)
+prop window_ga 17 30 cond="DG_GA == 0 and GA_DECOY == 0 and PD_R01_6 > -10 and PD_R01_6 < 10"
+prop window_ga 17 30 state=tag cond="DG_GA == 0 and GA_DECOY == 0 and PD_R01_6 >= 10"
+prop window_ga 17 30 state=target cond="DG_GA == 0 and GA_DECOY == 0 and PD_R01_6 <= -10"
+prop window_ga 17 30 state=fallen cond="DG_GA >= 1 and GA_DECOY == 0"
+prop window_ga 17 30 state=decoy cond="DG_GA == 0 and GA_DECOY == 1 and PD_R01_6 > -10 and PD_R01_6 < 10"
+prop window_ga 17 30 state=decoy_tag cond="DG_GA == 0 and GA_DECOY == 1 and PD_R01_6 >= 10"
+prop window_ga 17 30 state=decoy_target cond="DG_GA == 0 and GA_DECOY == 1 and PD_R01_6 <= -10"
+prop window_ga 17 30 state=decoy_fallen cond="DG_GA >= 1 and GA_DECOY == 1"
+text 17 30 "진열창. 방독면을 쓴 마네킹 셋 — '전시 특가 · 방호 우비 2+1'." w=3 scene=GA_WINDOW
+# ---------------------------------------------------------------- 매장(1층 오른쪽)
+prop rack_ga 35 20
+box 35 20 outlet_rack w=2 name="옷 행거"
+prop rack_ga 39 20
+box 39 20 outlet_rack w=2 name="옷 행거"
+prop rack_ga 43 20
+box 43 20 outlet_rack w=2 name="옷 행거"
+prop rack_ga 35 24
+box 35 24 outlet_rack w=2 name="옷 행거"
+prop rack_ga 39 24
+box 39 24 outlet_rack w=2 name="옷 행거"
+prop rack_ga 43 24
+box 43 24 outlet_rack w=2 name="옷 행거"
+prop raincoat_ga 36 28
+box 36 28 raincoat w=2 name="전시 특가 진열대"
+text 38 28 "손글씨 '2+1'. 노란 방호 우비가 개켜 쌓였다. 견본 방독면은 끈이 끊겼다." w=1
+prop cash_counter 42 28
+box 42 28 till w=2 name="계산대 서랍"
+text 44 28 "구겨진 영수증. '2077-10-23 22:51 방호 우비 2+1 — 3벌'. 뒷면 배송 메모: '금빛 빌딩 31층 연회장 — 개관 만찬 직원 유니폼 40벌, 24일 오전'." w=2
+prop curtain_ga 35 15 pass=1
+prop curtain_ga 37 15 pass=1
+prop curtain_ga 39 15 pass=1
+prop curtain_ga 41 15 pass=1
+prop curtain_ga 43 15 pass=1
+prop curtain_ga 45 15 pass=1
+prop w_mirror 39 13
+text 39 15 "탈의실 거울에 립스틱 글. '줄 안에 서 — 고개 돌리지 마'. 그 아래 누가 덧썼다. '얼굴도 가리고.'"
+text 45 15 "탈의실. 커튼을 치면 밖에서 안이 안 보인다. 거울 앞에서 갈아입을 수 있다."
+prop office_desk 2 17
+box 2 17 desk w=2 name="점장실 책상"
+text 2 18 "점장실 공문. '전시 이벤트 — 전 마네킹 방독면 착용. 시민 경각심 고취. 본사 지시'. 결재 도장이 반쯤 찍혔다." w=2
+prop w_poster_rad 7 14
+prop plant_pot 1 21
+prop plant_pot 46 31
+text 1 29 "지하 물류 창고 계단. 아래에서 쥐 냄새와 기름 냄새." w=1 h=2
+# ---------------------------------------------------------------- 에스컬레이터(멈춤) — 밟고 오른다
+prop escalator_ga 4 13 pass=1
+prop escalator_ga 31 13 pass=1
+text 4 15 "멈춘 에스컬레이터. 위층에서 사람 목소리." w=2
+# ---------------------------------------------------------------- 2층: 거래 자리 · 단가 칠판 · 두목 책상 · 마네킹 창고 · 간판 사다리
+prop w_board_ga 10 1
+text 10 3 "단가 칠판. '고철 kg 2 · 옷 벌 5'. 붉은 분필로 크게 — 'S-07 작업복 3,000. 생포만!'" w=2
+prop trade_mat_lt 9 6
+box 9 6 gang_goods w=2 name="패거리 거래 물건"
+text 11 6 "거래 자리. 작업복 견본이 개켜 있고, 장부 쪽지에 '새벽인력 인솔조 — 목요일 수거 · 벌당 5캡'." w=1
+prop office_desk 24 4
+prop ledger_ga 24 4
+box 24 4 desk w=2 name="두목 책상"
+text 26 4 "재고 장부. '마네킹 312' — 붉게 동그라미. 줄마다 숫자를 세 번씩 고쳐 썼다." w=1
+prop mann_pile_ga 30 8
+box 30 8 mask_pile w=2 name="마네킹 무더기"
+prop mann_pile_ga 34 8
+prop mann_ga 38 6
+prop mann_ga2 40 6
+prop mann_ga 38 9
+text 32 8 "마네킹 창고. 팔다리가 엉킨 더미. 셀 수 있으면 세 봐라 — 312라는데." w=2
+prop w_sign_ladder 40 1
+text 43 3 "깨진 창 밖으로 옥외 간판 철골. 사다리 손잡이가 아울렛 거리 쪽으로 내려간다." w=2
+prop drum_fire 18 9
+prop crate_o 20 9
+box 20 9 crate name="패거리 짐 상자"
+# ---------------------------------------------------------------- 적: 약탈자(새벽인력과 거래하는 떠돌이 패거리)
+enemy CR-421 26 6 who=N-GA-B1 cond="DG_GA == 0"
+enemy CR-421 21 28 stance=hold dir=S cond="DG_GA == 0"
+enemy CR-423 12 7 cond="DG_GA == 0"
+enemy CR-423 33 5 cond="DG_GA == 0"
+enemy CR-421 40 10 cond="DG_GA == 0 and PD_R01_6 <= -10"
+enemy CR-423 33 21 route=33,17,3;33,30,3 cond="DG_GA == 0"
+enemy CR-421 40 29 stance=hold dir=W cond="DG_GA == 0"
+# ---------------------------------------------------------------- 정리 30일 뒤: 떠돌이 장사꾼(다시 문 연 가게 — 1-L)
+npc N-VG-D1 43 29 W look=M1-S3-HR04-H1-T11-0-PF11-HD00-EY00 cond="DG_GA >= 1 and GAME_DAY >= DG_GA_DAY + 30" bark="마네킹 사이에서 장사하니 손님이 둘인 줄 알아. 하나는 늘 안 사."
