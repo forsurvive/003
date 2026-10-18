@@ -1,0 +1,122 @@
+# 문래 철공소 골목(SD-09a L-R02-14 · 672·1158 · 교역소 #11 · 1-D 계획 §13.5 '문래 골목이 다시 올 곳', 단계 1-D7). 월드에 찍는 손 맵 44×22.
+# 북쪽 철골 철공소 셋(모두 들어간다): MR-01 성씨 선반(성태경 — 무기 수리 · 개조 · '이번 주 깎는 것' 칠판) · MR-02 연 용접(연시헌 — 방어구 수리) ·
+#   MR-03 용두식 금형(용두식 — 금형 장인 · ②의 중개 · 본사 전보 조각 셋째). 골목 바닥 = 200년 쌓인 쇳가루가 굳어 반짝이는 길 = 결과판:
+#   금형 ① 리어카 바퀴 자국 · ② 인솔조 장화 자국. 남쪽 철판 담(협동조합 · 대문) 너머 도림로 · 동쪽 · 서쪽 끝은 큰길.
+map X-MR 문래 철공소 골목
+set r01
+grid
+_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX_____
+_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX__-__
+_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX__-__
+_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX_____
+_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX__-__
+_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX__-__
+_HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH_____
+_HHHHHHHDHHHHHHHHHHHHDHHHHHHHHHHDHHHHHH__-__
+_cccccccccccccccccccccccccccccccccccccc__-__
+_cccccccccccccccccccccccccccccccccccccc_____
+_cccccccccccccccccccccccccccccccccccccc__-__
+_::::::::::::::::::::::::::::::::::::::__-__
+_::::::::::::::::::::::::::::::::::::::_____
+_cccccccccccccccccccccccccccccccccccccc__-__
+_cccccccccccccccccccccccccccccccccccccc__-__
+_cccccccccccccccccccccccccccccccccccccc_____
+_SSSSSSSSSSSSSSSSScccSSSSSSSSSSSSSSSSSS__-__
+_SSSSSSSSSSSSSSSSScccSSSSSSSSSSSSSSSSSS__-__
+____________________________________________
+-_---_---_---_---_---_---_---_---_---_---_--
+____________________________________________
+____________________________________________
+end
+levels
+11111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111
+11111111111111111111111111111111111111111111
+end
+struct tin_roof 1 0 13 6 seed=1 args='{"edges": "nwe"}'
+struct steel_shed 1 6 13 2 seed=2 args='{"doors": [[7, "shutter"]], "sign": "성씨 선반", "sub": "총열 · 선반 · 무기 개조", "beams": 2}'
+struct tin_roof 14 0 12 6 seed=3 args='{"edges": "nwe"}'
+struct steel_shed 14 6 12 2 seed=4 args='{"doors": [[7, "steel"]], "sign": "연 용접", "sub": "방어구 수리 · 철판 · 용접", "beams": 2}'
+struct tin_roof 26 0 13 6 seed=5 args='{"edges": "nwe", "skylights": true}'
+struct steel_shed 26 6 13 2 seed=6 args='{"doors": [[6, "steel"]], "sign": "용두식 금형", "sub": "금형 · 사출 · 정밀 가공", "beams": 3}'
+struct steel_fence 1 16 38 2 seed=7 args='{"gate": [17, 19], "stencil": [4, "문래 철공 협동조합"]}'
+exit 8 7 MR-01 from_X
+mark from_MR-01 8 8 S
+exit 21 7 MR-02 from_X
+mark from_MR-02 21 8 S
+exit 32 7 MR-03 from_X
+mark from_MR-03 32 8 S
+mark arrive 19 19 N
+mark alley 19 12 N
+# ---------------------------------------------------------------- 쇳가루 길(결과판)
+prop dust_mr 3 11
+prop dust_mr2 6 12
+prop dust_mr3 10 11
+prop dust_mr 14 12
+prop dust_mr2 17 11
+prop dust_mr3 23 12
+prop dust_mr 27 11
+prop dust_mr2 30 12
+prop dust_mr3 35 11
+prop dust_mr 37 12
+prop dust_mr2 12 13
+prop dust_mr3 25 10
+text 19 11 "쇳가루 길. 200년 동안 떨어진 쇳밥이 굳어 골목 바닥이 반짝인다. 밟으면 사각거린다 — 오늘 지나간 발자국이 고스란히 남는다." w=3
+prop tracks_mr 5 11 cond="UQ69_DIE == 2"
+prop tracks_mr 9 12 cond="UQ69_DIE == 2"
+prop tracks_mr 13 11 cond="UQ69_DIE == 2"
+prop tracks_mr 17 12 cond="UQ69_DIE == 2"
+text 7 12 "리어카 바퀴 자국 — 하역장에서 성씨 선반 셔터까지 쇳가루 위에 깊게 패였다. 무거운 걸 실었다." w=2 cond="UQ69_DIE == 2"
+prop boots_mr 24 11 cond="UQ69_DIE == 3"
+prop boots_mr 28 12 cond="UQ69_DIE == 3"
+prop boots_mr 32 11 cond="UQ69_DIE == 3"
+prop boots_mr 36 12 cond="UQ69_DIE == 3"
+text 30 12 "장화 자국 — 같은 밑창이 넷, 대문에서 용두식 금형 셔터까지 줄지어 왔다 갔다. 새벽인력 인솔조 것이다." w=2 cond="UQ69_DIE == 3"
+# ---------------------------------------------------------------- 골목 살림(남쪽 담 아래)
+prop hm_cart 4 14
+text 5 14 "리어카. 바퀴 축에 기름이 번들거린다. 손잡이에 '성씨 — 빌려 가면 죽는다'." w=1
+prop scrap_pile 8 15
+box 8 15 trash w=2 name="고철 더미"
+prop anvil 12 14
+text 12 15 "모루. 골목 공용 — 쇳덩이 하나가 식다 만 채 올려져 있다."
+prop workbench 23 14
+prop scrap_pile2 27 15
+box 27 15 trash w=2 name="고철 더미"
+prop drum_fire 31 14
+text 31 15 "드럼통 불. 철공소 사람들이 퇴근하며 손을 녹인다. 아침엔 쇳가루가 불 위로 날린다."
+prop gun_locker 35 14
+box 35 14 mr_locker name="공구 사물함" cond="MR_LOCKER >= 1"
+text 36 14 "협동조합 공구 사물함. 칸마다 자물쇠 — 빈 칸 하나에 '성씨에게 말하면 빌려줌'." w=1 scene=MR_LOCKER
+prop tboard_parts 15 9
+text 16 9 "골목 입간판 '부품'. 그 아래 분필로 '총 고쳐 드립니다 · 총열 새로 뽑음(금형 있을 때)'. 괄호 안은 나중에 덧쓴 글씨." w=1
+prop stall_forge 4 9
+text 6 9 "성씨 선반 바깥 작업대. 숫돌 · 줄칼 · 식은 쇠토막. 손님 총은 여기서 먼저 들여다본다." w=1
+prop stall_parts 29 9
+text 31 9 "용두식 금형 앞 좌판. 나사 · 스프링 · 공이 — 칸마다 분필 값. 주인은 안에서 나오지 않는다." w=1
+prop waste_drum 13 15
+prop pallet_sacks 20 14
+prop info_board 37 9
+text 37 10 "협동조합 게시판. '수레 대여 — 성씨 · 용접 — 연 · 금형 — 용 · 밤 10시 이후 망치질 금지'." w=1
+# ---------------------------------------------------------------- 사람(바깥 — 낮)
+npc N-MR-W1 26 13 W look=M2-S4-HR02-H1-T12-2-PF00-HD00-EY00 cond="GAME_HOUR >= 7 and GAME_HOUR < 19" route=bench:24,13,6;fire:30,13,4 bark="쇳가루 길 밟을 땐 살살. 다 보이거든, 누가 다녀갔는지."
+npc N-MR-W2 11 13 E look=F2-S3-HR04-H1-T12-1-PF00-HD00-EY00 cond="GAME_HOUR >= 6 and GAME_HOUR < 12" bark="성씨 리어카 또 나갔네. 뭘 실어 오려고."
+npc N-MR-W1 31 13 W look=M2-S4-HR02-H1-T12-2-PF00-HD00-EY00 cond="GAME_HOUR >= 19 or GAME_HOUR < 2" bark="망치는 열 시까지야. 그다음은 불 쬐는 시간."

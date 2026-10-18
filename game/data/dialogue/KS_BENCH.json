@@ -1,0 +1,26 @@
+{
+ "id": "KS_BENCH",
+ "title": "엎드린 작업자",
+ "loc": "L-R02-21",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "작업대에 엎드린 해골들. 장갑을 낀 채다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KS.txt"
+}

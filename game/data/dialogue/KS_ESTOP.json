@@ -1,0 +1,26 @@
+{
+ "id": "KS_ESTOP",
+ "title": "비상정지 단추",
+ "loc": "L-R02-21",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "붉은 버섯 단추. 라인 전체 정지 — 공장장 승인."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KS.txt"
+}

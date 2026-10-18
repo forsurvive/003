@@ -1,0 +1,96 @@
+# 구로 공단 지식산업센터 — 1층 화물 로비(SD-09a L-R02-21 · 1-D 계획 §13.5, 단계 1-D7). 40×24.
+# 정문(월드 문 L-R02-21) → 로비: 출근 기록기 · 카드꽂이(카드 전부 10/23 출근만 — 퇴근 기록 없음) · 안내 데스크 · 경비실(녹화 모니터 = 본사 전보 조각 둘째) ·
+#   계단(공장층 KS-02) · 동쪽 하역장(납품 상자 · 데크 크레인 줄이 내려오는 자리 = 금형 하역 · 다음 06:00 수레) · 서쪽 아래 L-UG-12 지하철 연결 통로(내려앉음 — 장부).
+# 프레스 소리가 위층에서 4초마다 쿵 — 라인은 아직 돈다(진행기 Ks). 하역장 쥐는 크레인 화물칸이 내려오면 깬다.
+map KS-01 지식산업센터 화물 로비
+set sb
+grid
+########################################
+##############ss########################
+##############ss########################
+#.......#tttttttttttttt#~~~~~~~~~~~~~~~#
+#.......#tttttttttttttt#~~~~~~~~~~~~~~~#
+#.......#tttttttttttttt#~~~~~~~~~~~~~~~#
+#.......#tttttttttttttt#~~~~~~~~~~~~~~~#
+####.####tttttttttttttt#~~~~~~~~~~~~~~~#
+####.####tttttttttttttt#~~~~~~~~~~~~~~~#
+####.####tttttttttttttt#~~~~~~~~~~~~~~~#
+#tttttttttttttttttttttt#~~~~~~~~~~~~~~~#
+#tttttttttttttttttttttt~~~~~~~~~~~~~~~~#
+#tttttttttttttttttttttt~~~~~~~~~~~~~~~~#
+#tttttttttttttttttttttt~~~~~~~~~~~~~~~~#
+#tttttttttttttttttttttt#~~~~~~~~~~~~~~~#
+#tttttttttttttttttttttt#~~~~~~~~~~~~~~~#
+#tttttttttttttttttttttt#~~~~~~~~~~~~~~~#
+#~~tttttttttttttttttttt#~~~~~~~~~~~~~~~#
+#~~tttttttttttttttttttt#~~~~~~~~~~~~~~~#
+#~~tttttttttttttttttttt#~~~~~~~~~~~~~~~#
+#~~tttttttttttttttttttt#~~~~~~~~~~~~~~~#
+#tttttttttttttttttttttt#~~~~~~~~~~~~~~~#
+##########tt############################
+##########tt############################
+end
+exit 10 23 W L-R02-21>from_W
+exit 11 23 W L-R02-21>from_W
+exit 14 1 KS-02 from_KS01
+exit 15 1 KS-02 from_KS01
+mark from_W 10 20 N
+mark from_KS02 14 3 S
+mark clock 17 3 N
+mark drop 31 9 S
+mark dock 31 12 N
+# ---------------------------------------------------------------- 로비
+prop w_clock_ks 17 1
+prop w_cards_ks 18 1 cond="KS_CARD == 0"
+prop w_cards_ks 18 1 state=punched cond="KS_CARD >= 1"
+text 17 3 "출근 기록기와 카드꽂이. 누런 근태 카드가 빽빽하다 — 전부 '출근' 칸에만. 찍힌 시각은 하나같이 2077-10-23 07:4x. '퇴근' 칸은 비었다." w=3 scene=KS_CARD
+prop w_whiteboard 11 1
+text 11 3 "주간 생산 일정. '10월 4주 — 3라인 태성 협력 총열 금형 · 24일(일) 특근'. 그 아래 붉게 '할당 미달 시 퇴근 없음'." w=2
+prop guard_desk 15 7
+box 15 7 desk w=2 name="안내 데스크"
+text 17 7 "방문객 명부. 마지막 줄 '10/23 08:10 태성 본사 — 납기 독촉'. 서명 칸은 잉크가 번졌다." w=1
+prop wait_chairs 4 13
+prop wait_chairs 4 15
+prop plant_pot 21 4
+prop plant_pot 21 20
+prop remains 7 19
+text 8 19 "작업복 유골 하나가 정문 쪽으로 엎어졌다. 목에 건 카드 지갑 — 카드는 출근만 찍혀 있다." w=1
+prop pipe_run 12 12
+text 14 12 "천장에서 쿵 — 쿵 — 일정한 박자. 위층 프레스가 아직 돈다. 박자 사이에 컨베이어가 한 칸 끌리는 소리." w=2
+# ---------------------------------------------------------------- 경비실(녹화 모니터 = 전보 조각 둘째)
+prop wall_terminal 3 1
+text 2 3 "경비실 녹화 모니터. 화면 구석이 아직 흐리게 켜졌다 — 10/23 08:31 팩스 수신 화면이 멈춰 있다." w=3 scene=KS_MONITOR
+prop locker_row2 5 3
+box 5 3 ks_guard w=2 name="경비 사물함"
+prop office_desk 2 5
+box 2 5 desk w=2 name="경비 책상"
+text 4 5 "순찰 일지. '07:50 3라인 프레스 소음 민원 — 공장장 "할당 끝나면 끈다"'. 다음 줄은 없다." w=2
+# ---------------------------------------------------------------- 지하철 연결 통로(L-UG-12 — 장부)
+prop rubble 1 18
+prop rubble2 2 19
+prop evac_sign 1 16
+text 1 17 "지하철 2호선 구로디지털단지역 연결 통로. 셔터가 반쯤 내려앉았고 콘크리트가 쏟아졌다. 아래에서 찬바람이 올라온다." w=2 h=4
+# ---------------------------------------------------------------- 하역장(납품 · 크레인 하역 자리 · 수레)
+prop w_shutter_big 28 1
+text 29 3 "하역장 셔터. 쇠사슬로 묶였다. 바깥 화물 도로로 손수레 바퀴 자국이 나 있다 — 사람이 드나든다." w=3
+prop w_elev_kt 35 1
+text 36 3 "화물 승강기. 멈춤. 문 틈으로 승강로 — 공장층까지 케이블이 녹슬었다." w=2
+prop slot_ks 31 9
+text 32 9 "바닥에 노란 테 — '크레인 하역 위치'. 천장 구멍으로 위층 외벽 데크의 갈고리 줄이 늘어졌다." w=1
+prop die_mold 30 9 cond="UQ69_DIE == 6"
+text 30 10 "태성 총열 금형. 크레인으로 내려 둔 자리 — 다음 새벽 수레가 오면 실어 간다." scene=KS_DROP cond="UQ69_DIE == 6"
+prop pallet_sacks 26 6
+prop pallet_sacks 36 16
+prop crate_o 34 12
+box 34 12 ks_dock name="납품 대기 상자"
+text 35 12 "송장. '태성 정밀 — 총열 반제품 40본 · 10/24 오전 출하'. 상자는 비었다. 누가 먼저 다녀갔다." w=1
+prop steel_rack 37 7
+box 37 7 ks_parts w=1 name="부품 선반"
+prop drum 25 20
+prop crate_o 27 18
+box 27 18 crate name="깨진 납품 상자"
+prop rathole 37 20
+# ---------------------------------------------------------------- 적: 하역장 쥐(사람 냄새 · 크레인 소리에 깬다)
+enemy CR-095 30 16
+enemy CR-095 34 18
+enemy CR-095 27 11

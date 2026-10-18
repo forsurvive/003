@@ -52,6 +52,10 @@ DOORS = [{"lid": "L-R02-11", "near": (720, 1147), "to": "J-01", "mark": "from_W"
          {"lid": "L-R01-28", "near": (630, 1380), "to": "GA-01", "mark": "from_W", "name": "가산 아울렛 A관 — 정문", "kind": "facade",
           "hint": "깨진 유리문 너머 마네킹들이 줄지어 섰다. 모두 방독면을 썼다.",
           "hints": [["DG_GA >= 1", "유리문 너머 마네킹 몇이 넘어져 있다. 안이 조용하다."]]},
+         # 1-D7 구로 공단 지식산업센터(DG-KS): 아파트형 공장 화물 로비 정문 — 4초마다 프레스가 쿵(문 앞 안내 한 줄 · 확정안 '첫 1분')
+         {"lid": "L-R02-21", "near": (684, 1338), "to": "KS-01", "mark": "from_W", "name": "구로 공단 지식산업센터 — 화물 로비", "kind": "facade",
+          "hint": "쿵 … 쿵 … 일정한 박자. 안에서 아직 기계가 돈다.",
+          "hints": [["KS_LINE < 0", "안이 조용하다. 박자가 멎었다."]]},
          # 1-D3 독산 육가공 단지(DG-DS): 시흥대로 쪽 공장 건물 둘 — 뒤 철길 하역장(냉동 창고 동 관통 출구)을 먼저, 정문 하역장을 뒤에(장소 도착 칸)
          {"lid": "L-R01-29", "near": (672, 1427), "to": "DS-02", "mark": "from_rail", "name": "독산 육가공 단지 — 뒤 철길 하역장", "kind": "facade",
           "hint": "반쯤 들린 셔터 밑으로 녹슨 화물 철로가 들어간다. 안에서 찬 바람."},
@@ -95,7 +99,7 @@ DOORS = [{"lid": "L-R02-11", "near": (720, 1147), "to": "J-01", "mark": "from_W"
           "hint": "금빛 유리 기둥 사이 회전문. 바람이 불 때마다 삐걱 반 바퀴.",
           "hints": [["KT_POWER == 2", "로비 1층 창에 작은 불이 켜져 있다. 회전문 너머에서 '딩' — 승강기 소리."]]}]
 # 손 실내가 붙는 건물의 양식(SD-21 §8): 도로망이 바뀌어도 그 자리에 건물이 선다
-ANCHOR_STYLE = {"K-33": "gov", "K-01": "gov", "K-29": "gov", "K-06": "office", "K-20": "villa", "K-22": "apt", "K-24": "office", "K-26": "gov", "GD-01": "gov", "KH-01": "gov", "DS-01": "factory", "DS-02": "factory", "KT-01": "office", "GA-01": "shop"}
+ANCHOR_STYLE = {"K-33": "gov", "K-01": "gov", "K-29": "gov", "K-06": "office", "K-20": "villa", "K-22": "apt", "K-24": "office", "K-26": "gov", "GD-01": "gov", "KH-01": "gov", "DS-01": "factory", "DS-02": "factory", "KT-01": "office", "GA-01": "shop", "KS-01": "office"}
 INSETS = [{"id": "X-S07", "mark": "from_vault", "at": (959, 1503)},          # 볼트 S-07 정문(L-R01-01)
           {"id": "X-BC", "center": (892, 1362)},                             # 봉천 계단마을(L-R01-09)
           {"id": "X-SB", "center": (632, 1329), "lid": "L-R02-19", "arrive": "arrive", "urban": True},   # 새벽인력 본소(1-6): 도착 칸 = 정문 앞 길
@@ -109,7 +113,8 @@ INSETS = [{"id": "X-S07", "mark": "from_vault", "at": (959, 1503)},          # �
           {"id": "X-NS", "center": (971, 1421), "lid": "L-R01-12", "arrive": "arrive", "urban": True},
           {"id": "X-RD", "center": (990, 1561), "lid": "L-R01-04", "arrive": "arrive"},
           {"id": "X-SH", "center": (715, 1545), "lid": "L-R01-30", "arrive": "arrive"},
-          {"id": "X-GR", "center": (589, 1287), "lid": "L-R02-25", "arrive": "arrive", "urban": True}]   # 구로 차량기지 구내(1-D4 던전 DG-GR): 안양천 동쪽 · 경인선 옆                 # 시흥 고개 초소(1-11f SQ-S06): 시흥동 남서 경계 고개                 # 관악 레이더 중계소(1-11c SQ-S04): 관악산 정상 화강암 능선
+          {"id": "X-GR", "center": (589, 1287), "lid": "L-R02-25", "arrive": "arrive", "urban": True},   # 구로 차량기지 구내(1-D4 던전 DG-GR): 안양천 동쪽 · 경인선 옆
+          {"id": "X-MR", "center": (672, 1158), "lid": "L-R02-14", "arrive": "arrive", "urban": True}]   # 문래 철공소 골목(1-D7 UQ-69): 도림천 서쪽 철공소 거리                 # 시흥 고개 초소(1-11f SQ-S06): 시흥동 남서 경계 고개                 # 관악 레이더 중계소(1-11c SQ-S04): 관악산 정상 화강암 능선
 START = (959, 1503)                                                          # 도달성 검사 출발점 = 볼트 정문
 WALKK = (1, 5, 6, 7, 8, 9, 10, 12, 13)                                       # 걷는 땅 종류(13 = 다리 상판)
 STAIR_GAP = 28

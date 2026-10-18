@@ -10,6 +10,8 @@
     estop_ks        비상정지 기둥(1×1): 노란 기둥 · 붉은 버섯 단추 · '비상정지' / 상태 pressed(눌림 · 회전등 꺼짐)
     deck_crane_ks   외벽 화물 데크 크레인(2×2): 철골 데크 · 지브 크레인 · 갈고리 · 화물칸 / 상태 lowered(화물칸이 내려감 — 빈 갈고리)
     chimney_ks      옥상 굴뚝(1×2): 벽돌 굴뚝 · 분필 낙서 '퇴근하고 싶다'
+    conveyor_ks     라인 컨베이어(3×1): 고무 벨트 · 반제품 총열 소재 · 브래킷 / 상태 step(박자 한 칸 뒤)
+    slot_ks         라인 작업 위치(바닥 덮개 1×1): 노란 페인트 테 · 발바닥 — 라인 칸
 props_bc.PROPS에 합쳐져 r01_props 아틀라스로 나간다. 위에서 빛(위 밝게 · 아래 어둡게), 반투명 없음."""
 import os
 import random
@@ -250,6 +252,65 @@ def chimney_ks():
     return im
 
 
+def conveyor_ks(phase=0):
+    """라인 컨베이어(3×1, 96×46): 짙은 고무 벨트 · 양끝 롤러 · 철 다리 · 안전 빗금 테 · 반제품 총열 소재 둘 · 찍힌 브래킷 하나.
+    phase 1 = 박자 한 칸 뒤(벨트 줄무늬 · 소재가 반 칸 앞으로) — 진행기가 4초 주기마다 두 상태를 갈아 끼운다."""
+    im = img(96, 46)
+    d = ImageDraw.Draw(im)
+    _shadow(d, 4, 92, 42)
+    for x in (8, 46, 84):
+        d.rectangle([x, 22, x + 3, 41], fill=C(STEEL[0])); d.line([x + 3, 22, x + 3, 41], fill=C(STEEL[2]))
+    d.rectangle([2, 24, 93, 27], fill=C(INK))
+    _hazard(d, 3, 25, 92, 26)                                                          # 벨트 아래 안전 빗금 테
+    d.rectangle([2, 10, 93, 24], fill=C(INK)); d.rectangle([3, 11, 92, 23], fill=C("P02"))
+    off = 2 if phase else 0
+    for x in range(5 + off, 90, 4):
+        d.line([x, 13, x, 22], fill=C("P03"))
+    d.rectangle([3, 11, 92, 12], fill=C("P04"))
+    for x in (4, 88):
+        d.ellipse([x - 3, 9, x + 4, 25], fill=C(STEEL[1])); d.ellipse([x - 1, 13, x + 2, 20], fill=C(STEEL[3]))
+        d.point((x, 16), fill=C(INK))
+    s = 8 if phase else 0
+    for x0 in (14 + s, 52 + s):                                                       # 반제품 총열 소재(둥근 강봉 — 윗면 하이라이트 · 끝 단면)
+        d.rectangle([x0, 9, x0 + 18, 16], fill=C(INK))
+        d.rectangle([x0 + 1, 10, x0 + 17, 15], fill=C(IRON[2]))
+        d.line([x0 + 1, 10, x0 + 17, 10], fill=C(IRON[4])); d.line([x0 + 1, 15, x0 + 17, 15], fill=C(IRON[0]))
+        d.ellipse([x0 + 15, 9, x0 + 20, 16], fill=C(IRON[3])); d.point((x0 + 17, 12), fill=C(INK))
+    bx = 36 + s                                                                        # 찍힌 브래킷(ㄱ자 철판 · 구멍 둘)
+    d.polygon([(bx, 8), (bx + 8, 8), (bx + 8, 12), (bx + 4, 12), (bx + 4, 17), (bx, 17)], fill=C(INK))
+    d.polygon([(bx + 1, 9), (bx + 7, 9), (bx + 7, 11), (bx + 3, 11), (bx + 3, 16), (bx + 1, 16)], fill=C(STEEL[3]))
+    d.point((bx + 6, 10), fill=C(INK)); d.point((bx + 2, 14), fill=C(INK))
+    d.rectangle([78, 28, 90, 36], fill=C(INK)); d.rectangle([79, 29, 89, 35], fill=C(STEEL[1]))   # 라인 번호판
+    d.point((81, 31), fill=C(SAFE[2])); d.point((84, 31), fill=C(SAFE[2])); d.point((87, 31), fill=C(SAFE[2]))
+    return im
+
+
+def slot_ks():
+    """라인 작업 위치(1×1, 32×32 바닥 덮개): 노란 페인트 네모 테 · 발바닥 두 개 · '작업 위치' — 200년 밟혀 반쯤 벗겨졌다."""
+    im = img(32, 32)
+    d = ImageDraw.Draw(im)
+    rnd = random.Random(71)
+    for x in range(2, 30):
+        for y in (2, 3, 28, 29):
+            if rnd.random() > 0.18:
+                d.point((x, y), fill=C(SAFE[2]))
+    for y in range(4, 28):
+        for x in (2, 3, 28, 29):
+            if rnd.random() > 0.18:
+                d.point((x, y), fill=C(SAFE[2]))
+    for fx, fy in ((9, 10), (18, 12)):                                                 # 신발 자국(바랜 페인트 — 앞굽 · 뒷굽 둘로 끊김)
+        for x in range(fx, fx + 5):
+            for y in range(fy, fy + 6):
+                if (x + y) % 2 == 0 and rnd.random() > 0.25:
+                    d.point((x, y), fill=C(SAFE[2]))
+            for y in range(fy + 8, fy + 12):
+                if (x + y) % 2 == 0 and rnd.random() > 0.25 and fx < x < fx + 4:
+                    d.point((x, y), fill=C(SAFE[2]))
+    for _ in range(18):
+        d.point((rnd.randint(4, 27), rnd.randint(4, 27)), fill=C("P04"))
+    return im
+
+
 def _r(fn, fw, fh, kind="floor", down=2, dx=0, dy=0):
     return {"fn": fn, "foot": (fw, fh), "kind": kind, "down": down, "dx": dx, "dy": dy}
 
@@ -264,6 +325,8 @@ PROPS_KS = {
     "estop_ks": _r(lambda: estop_ks(), 1, 1, down=-2),
     "deck_crane_ks": _r(lambda: deck_crane_ks(), 2, 2, down=-2),
     "chimney_ks": _r(chimney_ks, 1, 2, down=-2),
+    "conveyor_ks": _r(lambda: conveyor_ks(), 3, 1, down=-2),
+    "slot_ks": _r(slot_ks, 1, 1, "deco", down=0),
 }
 STATES_KS = {
     "w_cards_ks": {"punched": lambda: w_cards_ks("punched")},
@@ -272,6 +335,7 @@ STATES_KS = {
     "bench_skel_ks": {"stamped": lambda: bench_skel_ks("stamped")},
     "estop_ks": {"pressed": lambda: estop_ks("pressed")},
     "deck_crane_ks": {"lowered": lambda: deck_crane_ks("lowered")},
+    "conveyor_ks": {"step": lambda: conveyor_ks(1)},
 }
 
 

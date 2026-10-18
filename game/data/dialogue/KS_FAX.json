@@ -1,0 +1,26 @@
+{
+ "id": "KS_FAX",
+ "title": "용두식 책상 팩스",
+ "loc": "L-R02-14",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "누런 팩스 용지 — 태성 정밀 본사 협력사 공문."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KS.txt"
+}

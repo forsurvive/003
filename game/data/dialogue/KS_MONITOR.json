@@ -1,0 +1,26 @@
+{
+ "id": "KS_MONITOR",
+ "title": "경비실 녹화 모니터",
+ "loc": "L-R02-21",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "흐린 화면에 팩스 수신 화면이 멈춰 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KS.txt"
+}

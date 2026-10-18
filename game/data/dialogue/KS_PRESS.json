@@ -1,0 +1,26 @@
+{
+ "id": "KS_PRESS",
+ "title": "3라인 프레스",
+ "loc": "L-R02-21",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "램 아래 볼스터에 태성 총열 금형이 물려 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KS.txt"
+}

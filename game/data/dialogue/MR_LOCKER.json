@@ -1,0 +1,26 @@
+{
+ "id": "MR_LOCKER",
+ "title": "공구 사물함",
+ "loc": "L-R02-14",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "협동조합 공구 사물함. 칸마다 자물쇠."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KS.txt"
+}

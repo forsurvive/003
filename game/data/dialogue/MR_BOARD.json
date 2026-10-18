@@ -1,0 +1,26 @@
+{
+ "id": "MR_BOARD",
+ "title": "이번 주 깎는 것",
+ "loc": "L-R02-14",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "칠판에 분필 — 품목 · 수량 · 재료 있으면 가져와."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KS.txt"
+}

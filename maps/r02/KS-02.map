@@ -1,0 +1,178 @@
+# 구로 공단 지식산업센터 — 공장층(SD-09a L-R02-21 '금형 기계 · 산업 로봇' · 1-D 계획 §13.5, 단계 1-D7). 48×32.
+# 라인 셋(y 14 · 19 · 24): 금형 프레스 · 컨베이어 · 작업 위치(노란 테). 4초 주기 — 프레스 쿵(0.8초 소리 묻힘) → 컨베이어 한 칸 → 로봇 팔 → 감시포 회전(진행기 Ks).
+# 3라인 프레스에 태성 총열 금형이 물렸다(UQ-69 발동 ②). 성형-4 CR-326 둘(라인 이탈 작업자를 부른다 · 경고 셋 뒤 감시포) · 감시포 1형 CR-320 둘(동쪽 끝 · 바로 아래 사각).
+# 북쪽: 생산 게시판 '10월 103%'(표창) · 엎드린 해골 작업대 넷. 서쪽 위 품질 관리실(모준서 · 타자기 · 교범 서가 · 쉼터). 동쪽 아래 외벽 화물 데크(크레인 → 1층 하역장).
+# 비상정지 단추는 동쪽 끝 감시포 둘 사이(오타 '1030%' 판의 길). 동쪽 위 계단 → 옥상(KS-03).
+map KS-02 지식산업센터 공장층
+set sb
+grid
+################################################
+############################################ss##
+############################################ss##
+#...........#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#...........#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#...........#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#...........#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#...........#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#...........#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+######.######eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+######.######eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+######.######eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#=====#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#=====#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#=====#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#=====#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee======#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee======#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#=====#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#=====#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#=====#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#=====#
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee#=====#
+##############ss################################
+##############ss################################
+end
+exit 14 31 KS-01 from_KS02
+exit 15 31 KS-01 from_KS02
+exit 44 1 KS-03 from_KS02
+exit 45 1 KS-03 from_KS02
+mark from_KS01 14 29 N
+mark from_KS03 44 3 S
+mark qc 6 8 N
+mark mo 5 6 S
+mark deck 43 24 E
+mark estop 40 19 E
+mark press3 16 25 N
+# ---------------------------------------------------------------- 1라인
+prop press_ks 15 14 cond="KS_LINE >= 0"
+prop press_ks 15 14 state=off cond="KS_LINE < 0"
+prop conveyor_ks 18 14 cond="KS_LINE >= 0"
+prop conveyor_ks 18 14 state=step cond="KS_LINE < 0"
+prop conveyor_ks 21 14 cond="KS_LINE >= 0"
+prop conveyor_ks 21 14 state=step cond="KS_LINE < 0"
+prop conveyor_ks 24 14 cond="KS_LINE >= 0"
+prop conveyor_ks 24 14 state=step cond="KS_LINE < 0"
+prop conveyor_ks 27 14 cond="KS_LINE >= 0"
+prop conveyor_ks 27 14 state=step cond="KS_LINE < 0"
+prop conveyor_ks 30 14 cond="KS_LINE >= 0"
+prop conveyor_ks 30 14 state=step cond="KS_LINE < 0"
+prop slot_ks 20 15
+mark slot11 20 15 N
+prop slot_ks 26 15
+mark slot12 26 15 N
+prop slot_ks 32 15
+mark slot13 32 15 N
+mark line1 34 15 W
+text 34 14 "1라인 끝. 바닥에 '작업 위치' 노란 테 셋 — 쿵 하는 동안은 발소리가 안 들린다." w=2
+# ---------------------------------------------------------------- 2라인
+prop press_ks 15 19 cond="KS_LINE >= 0"
+prop press_ks 15 19 state=off cond="KS_LINE < 0"
+prop conveyor_ks 18 19 cond="KS_LINE >= 0"
+prop conveyor_ks 18 19 state=step cond="KS_LINE < 0"
+prop conveyor_ks 21 19 cond="KS_LINE >= 0"
+prop conveyor_ks 21 19 state=step cond="KS_LINE < 0"
+prop conveyor_ks 24 19 cond="KS_LINE >= 0"
+prop conveyor_ks 24 19 state=step cond="KS_LINE < 0"
+prop conveyor_ks 27 19 cond="KS_LINE >= 0"
+prop conveyor_ks 27 19 state=step cond="KS_LINE < 0"
+prop conveyor_ks 30 19 cond="KS_LINE >= 0"
+prop conveyor_ks 30 19 state=step cond="KS_LINE < 0"
+prop slot_ks 20 20
+mark slot21 20 20 N
+prop slot_ks 26 20
+mark slot22 26 20 N
+prop slot_ks 32 20
+mark slot23 32 20 N
+mark line2 34 20 W
+text 34 19 "2라인 끝. 바닥에 '작업 위치' 노란 테 셋 — 쿵 하는 동안은 발소리가 안 들린다." w=2
+# ---------------------------------------------------------------- 3라인
+prop press_ks 15 24 cond="KS_LINE >= 0"
+prop press_ks 15 24 state=off cond="KS_LINE < 0"
+prop conveyor_ks 18 24 cond="KS_LINE >= 0"
+prop conveyor_ks 18 24 state=step cond="KS_LINE < 0"
+prop conveyor_ks 21 24 cond="KS_LINE >= 0"
+prop conveyor_ks 21 24 state=step cond="KS_LINE < 0"
+prop conveyor_ks 24 24 cond="KS_LINE >= 0"
+prop conveyor_ks 24 24 state=step cond="KS_LINE < 0"
+prop conveyor_ks 27 24 cond="KS_LINE >= 0"
+prop conveyor_ks 27 24 state=step cond="KS_LINE < 0"
+prop conveyor_ks 30 24 cond="KS_LINE >= 0"
+prop conveyor_ks 30 24 state=step cond="KS_LINE < 0"
+prop slot_ks 20 25
+mark slot31 20 25 N
+prop slot_ks 26 25
+mark slot32 26 25 N
+prop slot_ks 32 25
+mark slot33 32 25 N
+mark line3 34 25 W
+text 34 24 "3라인 끝. 바닥에 '작업 위치' 노란 테 셋 — 쿵 하는 동안은 발소리가 안 들린다." w=2
+text 15 25 "3라인 프레스. 램 아래 볼스터에 묵직한 금형이 물려 있다 — 각인 '태성 정밀 TS-P 7.62 총열'. 박자마다 빈 강봉을 찍는다." w=2 scene=KS_PRESS cond="UQ69_DIE == 0 or UQ69_DIE == 4"
+text 15 25 "3라인 프레스. 금형이 빠진 볼스터가 휑하다. 램은 허공을 찍는다." w=2 cond="UQ69_DIE != 0 and UQ69_DIE != 4"
+text 15 14 "1라인 프레스. 브래킷 금형 — 찍어 낸 'ㄱ'자 철판이 상자에 넘친다. 200년 치." w=2
+text 15 19 "2라인 프레스. 금형이 쪼개졌다. 램은 빈 볼스터를 박자대로 친다." w=2
+# ---------------------------------------------------------------- 게시판 · 엎드린 작업자
+prop w_board_ks 24 1 cond="KS_LINE >= 0 and KS_AWARD == 0"
+prop w_board_ks 24 1 state=award cond="KS_LINE >= 0 and KS_AWARD >= 1"
+prop w_board_ks 24 1 state=off cond="KS_LINE < 0"
+text 24 3 "생산 할당 게시판. '10월 목표 달성률 103% — 우수 라인 표창'. 막대그래프 맨 끝 칸만 붉다. 표창장 날짜 10/23." w=2 scene=KS_BOARD
+prop bench_skel_ks 17 5 cond="KS_STAMP == 0"
+prop bench_skel_ks 17 5 state=stamped cond="KS_STAMP >= 1"
+prop bench_skel_ks 21 5 cond="KS_STAMP == 0"
+prop bench_skel_ks 21 5 state=stamped cond="KS_STAMP >= 1"
+prop bench_skel_ks 29 5 cond="KS_STAMP == 0"
+prop bench_skel_ks 29 5 state=stamped cond="KS_STAMP >= 1"
+prop bench_skel_ks 33 5 cond="KS_STAMP == 0"
+prop bench_skel_ks 33 5 state=stamped cond="KS_STAMP >= 1"
+text 17 6 "작업대에 엎드린 작업복 해골 둘. 장갑을 낀 채 — 손 옆에 반쯤 깎은 부품." w=2 scene=KS_BENCH
+text 21 6 "엎드린 해골 둘. 하나는 작업 일지 위에 뺨을 댔다. '10/23 — 할당 끝나면 퇴근'." w=2 scene=KS_BENCH
+text 29 6 "엎드린 해골 둘. 의자 다리에 매어 둔 도시락 가방. 지퍼가 닫혀 있다." w=2 scene=KS_BENCH
+text 33 6 "엎드린 해골 둘. 작업복 등판에 '세진 부품' 자수. 한 손이 다른 손 위에 얹혔다." w=2 scene=KS_BENCH
+# ---------------------------------------------------------------- 품질 관리실(모준서 · 타자기 · 교범 · 쉼터)
+prop office_desk 3 5
+prop typewriter_ks 3 5
+text 3 6 "세진 사무용 타자기. 서식 종이가 끼워져 있다 — '월간 생산 할당 통보서 / 11월 / 목표: ____'." w=2 scene=KS_TYPE
+prop gs_manual_shelf 8 3
+box 8 3 ks_manual w=2 name="정비 교범 서가"
+prop file_cabinet 10 5
+box 10 5 ks_qc name="품질 관리 서류함"
+text 10 6 "불량 판정표 묶음. 맨 위 '10/23 3라인 — 불량 0. 우수'. 도장은 공장장 모준서." w=1
+prop w_whiteboard 4 1
+text 4 3 "화이트보드. '11월 할당 — 본사 통보 대기'. 그 아래 바를 정(正) 자가 벽 끝까지 이어졌다. 날을 세다 만 자국." w=2
+prop cot 9 7
+text 10 8 "접이식 간이침대. 모포가 각 잡혀 개켜 있다. 모준서는 눕지 않는다." w=1
+npc N-R02-049 5 6 S cond="UQ69_PAPER != 3 or KS_STAMP == 0" bark="10월 할당 103%. 11월 목표는 아직 안 내려왔어."
+npc N-R02-049 20 6 S cond="UQ69_PAPER == 3 and KS_STAMP >= 1" bark="…다들 퇴근했어. 나만 남았지. 괜찮아. 공장장은 원래 마지막에 나가."
+# ---------------------------------------------------------------- 서쪽 사물함 · 부품
+prop locker_row2 2 14
+box 2 14 ks_locker w=2 name="작업자 사물함"
+prop locker_row2 2 18
+box 2 18 ks_locker w=2 name="작업자 사물함"
+text 4 16 "사물함 문 안쪽에 붙인 사진 — 놀이공원 앞 가족 넷. 뒷면 '11월 셋째 주 휴가'." w=1
+prop steel_rack 7 27
+box 7 27 ks_parts w=1 name="부품 선반"
+prop pallet_sacks 10 27
+prop drum 3 27
+prop rathole 1 23
+# ---------------------------------------------------------------- 동쪽 끝: 감시포 둘 · 비상정지
+prop estop_ks 40 19 cond="KS_ESTOP == 0"
+prop estop_ks 40 19 state=pressed cond="KS_ESTOP >= 1"
+text 40 20 "비상정지 단추. 노란 기둥 위 붉은 버섯 머리 — '라인 전체 정지 · 공장장 승인'." scene=KS_ESTOP
+# ---------------------------------------------------------------- 외벽 화물 데크(크레인 → 1층 하역장)
+prop deck_crane_ks 44 22 cond="UQ69_DIE != 6"
+prop deck_crane_ks 44 22 state=lowered cond="UQ69_DIE == 6"
+text 43 24 "외벽 화물 데크. 지브 크레인 · 화물칸 · 수동 권양기. 아래로 1층 하역장 천장 구멍이 뚫렸다." w=2 scene=KS_CRANE
+text 44 28 "난간 너머 구로 공단. 줄지은 지붕들 — 굴뚝 하나에서도 연기가 안 난다." w=2
+# ---------------------------------------------------------------- 적: 성형-4 둘 · 감시포 둘(진행기 Ks가 박자 · 경고 · 적대를 맡는다) · 쥐
+enemy CR-326 35 15 route=35,15,2;23,15,2 cond="KS_LINE >= 0"
+enemy CR-326 23 25 route=23,25,2;35,25,2 cond="KS_LINE >= 0"
+enemy CR-320 38 12 stance=hold dir=W cond="KS_LINE >= 0"
+enemy CR-320 38 26 stance=hold dir=W cond="KS_LINE >= 0"
+enemy CR-095 6 22
+enemy CR-095 9 25

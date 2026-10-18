@@ -80,12 +80,15 @@ ENGINE_VARS |= {"U02_" + k for k in ("GUIDE INTRO LIGHT LIGHT_DAY ASK HAL HAL_DA
 ENGINE_VARS |= {"UQ04_" + k for k in "KNOW OPEN OPEN_DAY LOCK DUE THAW THAW_DAY GONE LEFT COLD COLD_DAY BC BC_DAY SA SA_DAY JH JH_DAY LEAK FEUD FEUD_DAY RATK SHARD SHELF SOL REWARD LINK2 LINK3 FLED DATE SIGN PRICE BACK REFUND".split()} | {"DS_VALVE"}
 ENGINE_VARS |= {"GR_" + k for k in "CORE PUSH BUS CORE_DAY LV_A LV_B LV_C A B C STAFF STAFF_DAY STAFF_K KEY LOST SIGKEY WHISTLE MUSTER MUSTER_K REEFER DRIFT RATS SB SB_DAY ROOF CHART TAG PARK CHEER ESC GUIDE TIP MUSTER_DAY".split()}   # 1-D4 구로 차량기지
 ENGINE_VARS |= {"GA_" + k for k in "SEEN BOX BOX_DAY BOX_DONE CRATE_DAY FEUD DECOY DECOY_DAY COUNTED TOLD BOSS PICK PAID".split()} | {"PD_R01_6", "PC_HEAD"}   # 1-D6 가산 아울렛
+ENGINE_VARS |= {"UQ69_" + k for k in "PAPER DIE DEST DEST_DAY HEARD MET T1 T2 T3 FORGE SPOT SPOT_X SPOT_Y HALF HALF_DAY DONE_DAY REWARD TOLD".split()} \
+    | {"KS_" + k for k in "LINE ALARM WARN ESTOP CARD CARD_N WORK WORK_N WORK_DAY AWARD STAMP CRANE TOLD SEEN".split()} \
+    | {"MR_" + k for k in "LOCKER LOCKER_DAY BOARD BOARD_WK FEET".split()}   # 1-D7 지식산업센터 · 문래(원고 script/act1/KS.txt 머리 주석)
 ENGINE_VARS |= {"KT_" + k for k in "POWER POWER_DAY NOTE CALL RING RING2 MEM HOOK REVOLVE TUNNEL CAR QUEEN LOW CARTOLD HATCH KEY GRATE DIG ROPE GOND TOP TOP_DAY MEET VIEW SHOE NURSE EXPL HEAT OBS QUEEN_DAY CREW EXT3 EXT4 EXT5 HOSE3 HOSE4 SWAT GLASS20 GLASS31 WIN6 GEN_DAY BACK".split()}   # 1-D5a·1-D5b 여의도 금탑
 # 던전 정리 변수(1-D0, script/world/dungeons.txt): DG_<접미> 0 손 안 댐 · 1 정리 · 2 다시 들어섬 / _DAY 정리 · 재입주 날 / _ROLL 재입주를 굴린 날
 ENGINE_VARS |= {f"DG_{m}{s}" for m in re.findall(r"^@\s+([A-Z0-9]+)\s", open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "script", "world", "dungeons.txt"), encoding="utf-8").read(), re.M)
                 for s in ("", "_DAY", "_ROLL")}
 UNNAMED = {"N-TRADER": "떠돌이 고물상", "N-VG-S1": "고물상", "N-VG-H1": "약초꾼", "N-VG-P1": "부품 장수", "N-VG-C1": "옷 장수",
-           "N-VG-F1": "국밥 장수", "N-VG-D1": "떠돌이 장사꾼", "N-UQ-K1": "아이", "N-UQ-C1": "털이꾼", "N-GA-B1": "패거리 두목", "N-GA-S1": "인솔조", "N-GA-S2": "인솔조",                    # 1-L 일반 장사꾼
+           "N-VG-F1": "국밥 장수", "N-VG-D1": "떠돌이 장사꾼", "N-UQ-K1": "아이", "N-UQ-C1": "털이꾼", "N-GA-B1": "패거리 두목", "N-GA-S1": "인솔조", "N-GA-S2": "인솔조", "N-MR-W1": "문래 철공", "N-MR-W2": "문래 철공",                    # 1-L 일반 장사꾼
            "N-REFUGEE": "피난민", "N-DOWNED": "쓰러진 민병", "N-HS-E1": "수송대 호위", "N-HS-E2": "수송대 호위",
            "CR-091": "짐소",                                                     # 1-8d 고개길 수송대
            "N-SA-G1": "승강장 경비", "N-SA-G2": "승강장 경비", "N-SA-G3": "승강장 경비", "N-SA-R1": "환승촌 주민", "N-SA-R2": "환승촌 주민",   # 1-8f 사당 환승촌

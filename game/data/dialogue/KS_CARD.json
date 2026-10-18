@@ -1,0 +1,26 @@
+{
+ "id": "KS_CARD",
+ "title": "출근 기록기",
+ "loc": "L-R02-21",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "카드꽂이에 누런 근태 카드가 빽빽하다. 전부 출근 칸에만 꽂혔다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KS.txt"
+}

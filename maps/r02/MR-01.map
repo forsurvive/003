@@ -1,0 +1,46 @@
+# 문래 — 성씨 선반(SD-09a L-R02-14 · 성태경 N-R02-021 '선반 성씨' 무기 수리 · 개조, 단계 1-D7). 22×14.
+# 선반(돌면 상태 run) · 총열 걸이 · 작업대 · 사무실(왼쪽 위 — 스킬북 BK-04-R02-01 자리 · 장부 D-187) · '이번 주 깎는 것' 칠판(다른 던전 전리품 작은 부탁 — 주마다 하나).
+# 금형 ②(새벽인력)로 갔으면 성태경 개조가 끊기고 작업대에 근태 목걸이 부품이 쌓인다(원문 연출 · 판도 PD-R02-2).
+map MR-01 성씨 선반
+set sb
+grid
+######################
+######################
+######################
+#wwwwww#~~~~~~~~~~~~~#
+#wwwwww#~~~~~~~~~~~~~#
+#wwwwww#~~~~~~~~~~~~~#
+####w###~~~~~~~~~~~~~#
+####w###~~~~~~~~~~~~~#
+####w###~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~#
+#~~~~~~~~~~~~~~~~~~~~#
+#######~~#############
+#######~~#############
+end
+exit 7 13 X-MR from_MR-01
+exit 8 13 X-MR from_MR-01
+mark from_X 7 11 N
+mark lathe 14 6 S
+prop lathe_mr 13 5 state=run cond="GAME_HOUR >= 7 and GAME_HOUR < 22 and dead(\"N-R02-021\") == 0"
+prop lathe_mr 13 5 cond="GAME_HOUR < 7 or GAME_HOUR >= 22 or dead(\"N-R02-021\") == 1"
+text 13 6 "선반. 척에 물린 강봉이 반짝인다 — 강선 없는 총열 소재. 받침 위에 깎다 만 것들이 줄지었다." w=2
+prop hide_rack 18 3
+text 18 4 "총열 걸이. 손으로 깎은 총열 여섯 — 길이가 다 조금씩 다르다. 강선 대신 매끈하다." w=2
+prop workbench 10 9
+box 10 9 mr_bench w=2 owner=N-R02-021 name="작업대 서랍"
+prop collar_bench 15 9 cond="UQ69_DIE == 3"
+text 15 10 "근태 목걸이 부품 — 숫자 판 · 고리 · 잠금쇠. 상자째 쌓였다. 성씨 선반이 깎는다. 새벽인력 주문." w=2 cond="UQ69_DIE == 3"
+prop die_mold 16 9 cond="UQ69_DIE == 2"
+text 16 10 "태성 총열 금형. 선반 옆에 볼트로 박아 고정했다. 그 앞에 갓 뽑은 총열 셋 — 강선이 곧다." w=2 cond="UQ69_DIE == 2"
+prop blackboard_hw 11 1
+text 11 3 "칠판 '이번 주 깎는 것'. 분필로 품목 · 수량 · '재료 있으면 가져와'." w=3 scene=MR_BOARD
+prop office_desk 2 4
+box 2 4 ledger w=2 owner=N-R02-021 name="사무실 책상"
+prop bookshelf_home 5 3
+text 5 4 "철공소 사무실 책꽂이. 기능사 실기 책 · 거래 장부 · 2077년 달력(10월에서 멈춤)." w=1
+prop drum 19 10
+prop scrap_pile 1 10
+npc N-R02-021 14 6 S cond="GAME_HOUR >= 7 and GAME_HOUR < 22" bark="금형만 있으면 총열을 새로 뽑는다."
+npc N-R02-021 3 5 S cond="GAME_HOUR < 7 or GAME_HOUR >= 22" bark="…잔다. 내일 와."

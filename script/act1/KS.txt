@@ -1,0 +1,80 @@
+# 구로 공단 지식산업센터(L-R02-21) · 문래 철공소 골목(L-R02-14) — UQ-69 「문래 금형」(SD-05 §3.21 · 1-D 계획 §13.5, 단계 1-D7). 초안: Claude. 리드 검수 대기.
+# 뼈대(1-D7b 맵 연결용) — 1-D7c에서 장면 본문 · 진행기 Ks(@cmd ks …)를 채운다.
+
+@scene KS_CARD  출근 기록기  (L-R02-21)
+@npc   -
+@cond  V_ACT >= 1
+SYS 카드꽂이에 누런 근태 카드가 빽빽하다. 전부 출근 칸에만 꽂혔다.
+-> END
+
+@scene KS_MONITOR  경비실 녹화 모니터  (L-R02-21)
+@npc   -
+@cond  V_ACT >= 1
+SYS 흐린 화면에 팩스 수신 화면이 멈춰 있다.
+-> END
+
+@scene KS_DROP  하역장 금형  (L-R02-21)
+@npc   -
+@cond  V_ACT >= 1
+SYS 크레인으로 내려 둔 금형이다.
+-> END
+
+@scene KS_PRESS  3라인 프레스  (L-R02-21)
+@npc   -
+@cond  V_ACT >= 1
+SYS 램 아래 볼스터에 태성 총열 금형이 물려 있다.
+-> END
+
+@scene KS_BOARD  생산 할당 게시판  (L-R02-21)
+@npc   -
+@cond  V_ACT >= 1
+SYS 10월 목표 달성률 103% — 우수 라인 표창.
+-> END
+
+@scene KS_BENCH  엎드린 작업자  (L-R02-21)
+@npc   -
+@cond  V_ACT >= 1
+SYS 작업대에 엎드린 해골들. 장갑을 낀 채다.
+-> END
+
+@scene KS_TYPE  타자기  (L-R02-21)
+@npc   -
+@cond  V_ACT >= 1
+SYS 서식 종이가 끼워져 있다 — 월간 생산 할당 통보서.
+-> END
+
+@scene KS_ESTOP  비상정지 단추  (L-R02-21)
+@npc   -
+@cond  V_ACT >= 1
+SYS 붉은 버섯 단추. 라인 전체 정지 — 공장장 승인.
+-> END
+
+@scene KS_CRANE  외벽 화물 데크  (L-R02-21)
+@npc   -
+@cond  V_ACT >= 1
+SYS 지브 크레인과 화물칸. 아래로 1층 하역장.
+-> END
+
+@scene KS_CHIMNEY  옥상 굴뚝  (L-R02-21)
+@npc   -
+@cond  V_ACT >= 1
+SYS 분필 낙서 — 퇴근하고 싶다. 벽돌 틈에 누런 종이.
+-> END
+
+@scene KS_FAX  용두식 책상 팩스  (L-R02-14)
+@npc   -
+@cond  V_ACT >= 1
+SYS 누런 팩스 용지 — 태성 정밀 본사 협력사 공문.
+-> END
+
+@scene MR_BOARD  이번 주 깎는 것  (L-R02-14)
+@npc   -
+@cond  V_ACT >= 1
+SYS 칠판에 분필 — 품목 · 수량 · 재료 있으면 가져와.
+-> END
+
+@scene MR_LOCKER  공구 사물함  (L-R02-14)
+@npc   -
+@cond  V_ACT >= 1
+SYS 협동조합 공구 사물함. 칸마다 자물쇠.
+-> END
