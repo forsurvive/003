@@ -11,20 +11,21 @@
   "HELLO": 15,
   "THREW2": 18,
   "MENU": 20,
-  "ELEVEN": 21,
-  "DAY": 25,
-  "LEAF": 29,
-  "LIST": 33,
-  "GO": 40,
-  "NIGHT": 43,
-  "GIVEN": 47,
-  "WALK": 49,
-  "WAIT": 51,
-  "AFTER": 54,
-  "SOLD": 56,
-  "RADIO": 59,
-  "SOON": 62,
-  "KEPT": 64
+  "S12": 21,
+  "ELEVEN": 27,
+  "DAY": 31,
+  "LEAF": 35,
+  "LIST": 39,
+  "GO": 46,
+  "NIGHT": 49,
+  "GIVEN": 53,
+  "WALK": 55,
+  "WAIT": 57,
+  "AFTER": 60,
+  "SOLD": 62,
+  "RADIO": 65,
+  "SOON": 68,
+  "KEPT": 70
  },
  "ops": [
   {
@@ -165,14 +166,58 @@
      "id": "SQS11_INJI:1:3"
     },
     {
+     "text": "(벙커에서 거둔 신분증 묶음을 보여 준다)",
+     "tags": [],
+     "cond": "has(\"M-210\") >= 1 and SQ_S12_LOOK == 0 and SQ_S12_SOLD == 0",
+     "fx": "",
+     "to": "S12",
+     "id": "SQS11_INJI:1:4"
+    },
+    {
      "text": "됐어",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "SQS11_INJI:1:4"
+     "id": "SQS11_INJI:1:5"
     }
    ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "인지영이 사진을 하나씩 등불에 비춘다. 세 장에서 손이 멈춘다."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-014",
+   "emo": "슬픔",
+   "text": "이 아이는 재석이 사위. 이 아이는 민영이 딸, 수아. 이 사람은 수연이 남편이고."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-014",
+   "emo": "기본",
+   "text": "그날 밤 셋 다 셔터 앞에서 배웅했어. 집결지 간다고. 호송차가 온다고."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-014",
+   "emo": "기본",
+   "text": "재석이는 부품 노점, 수연이는 약 노점. 민영이는 이 광장을 빙빙 돌아. 뭘 찾는지 아무도 안 물어."
+  },
+  {
+   "op": "cmd",
+   "name": "s12",
+   "args": [
+    "look",
+    "inji"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
   },
   {
    "op": "line",

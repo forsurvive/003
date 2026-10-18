@@ -1,0 +1,134 @@
+{
+ "id": "SQS12_REM_M",
+ "title": "3조 끝자리 유해",
+ "loc": "L-R02-02",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "ID": 3,
+  "TAKE": 6,
+  "WRIST": 9,
+  "WATCH": 11,
+  "EMPTY": 14
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "MQ104_IDS == 0",
+   "to": "ID"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "신분증 끈만 남은 목. 왼 손목을 얼굴 앞으로 들어 올린 채다."
+  },
+  {
+   "op": "goto",
+   "to": "WRIST"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "목에 건 신분증 — 관리 요원 문도하. 3조 맨 끝, 마지막 서명. 왼 손목을 얼굴 앞으로 들어 올린 채 굳었다."
+  },
+  {
+   "op": "do",
+   "fx": "MQ104_SEEN = 1"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "신분증을 하나씩 거둔다 — 언젠가 이름을 불러 줄 사람에게",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TAKE",
+     "id": "SQS12_REM_M:1:0"
+    },
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "WRIST",
+     "id": "SQS12_REM_M:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "열두 장. 권이준, 민서아, 장유준 … 강수아, 문도하. 손이 닿을 때마다 먼지가 조금씩 내려앉는다."
+  },
+  {
+   "op": "do",
+   "fx": "give(\"M-210\", 1); MQ104_IDS = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "yd",
+   "args": [
+    "look"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S12_ET == 1",
+   "to": "EMPTY"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "손목의 시계를 푼다(유해는 그대로 둔다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "WATCH",
+     "id": "SQS12_REM_M:2:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS12_REM_M:2:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "SQ_S12_ET = 1; give(\"M-414\", 1)"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "태엽 손목시계. 바늘이 23시 29분에 멈췄다. 당직 일지의 '23:29 정전'과 같은 시각."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "들어 올린 손목에 시계 자국만 하얗게 남았다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S12.txt"
+}

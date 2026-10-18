@@ -987,7 +987,8 @@ func list_give() -> void:
 	_sv("LIST", 2)
 	_sv("LIST_DAY", day())
 	st.call_fn("karma", [10])
-	st.call_fn("xp", [50])                                              # 남산 방송 협력(SD-03a 코드 14) — 다음 날 06:00 낭독(radio.txt N-U04-L)
+	st.call_fn("xp", [50])
+	st.vars.set_v("NS_COOP", int(st.vars.get_v("NS_COOP")) + 1)        # 남산 방송 협력(SD-06 NS 협력) — 다음 날 06:00 낭독(radio.txt N-U04-L)
 
 
 func _on_down(e: Enemy) -> void:

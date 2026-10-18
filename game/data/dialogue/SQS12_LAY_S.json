@@ -1,0 +1,137 @@
+{
+ "id": "SQS12_LAY_S",
+ "title": "사공민영의 벤치",
+ "loc": "L-R02-11",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "CARD": 3,
+  "BOOK": 6,
+  "NOTE": 9,
+  "DONE": 12,
+  "DONE2": 15
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S12_LAYS == 1",
+   "to": "DONE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈 벤치 끝. 2077년 물건을 모으던 사람이 앉던 자리."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "(강수아의 신분증을 방석 위에 놓는다)",
+     "tags": [],
+     "cond": "has(\"M-210\") >= 1 and SQ_S12_S < 3 and SQ_S12_SOLD == 0",
+     "fx": "",
+     "to": "CARD",
+     "id": "SQS12_LAY_S:1:0"
+    },
+    {
+     "text": "(10월분 배급표 묶음을 놓는다)",
+     "tags": [],
+     "cond": "has(\"M-413\") >= 1 and SQ_S12_SB == 0",
+     "fx": "",
+     "to": "BOOK",
+     "id": "SQS12_LAY_S:1:1"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS12_LAY_S:1:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s12",
+   "args": [
+    "lay",
+    "s"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "어머니가 이백 년 모은 2077년 물건들 곁에 딸의 이름이 놓였다."
+  },
+  {
+   "op": "goto",
+   "to": "NOTE"
+  },
+  {
+   "op": "cmd",
+   "name": "s12",
+   "args": [
+    "item",
+    "s"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "그 달 배급표. 한 장도 뜯기지 않은 채로 어머니 자리에 돌아왔다."
+  },
+  {
+   "op": "goto",
+   "to": "NOTE"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"C-050\") == 1",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "다음 날 아침, 방석 옆에 노복희의 글씨 — '22:31 출석'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R02-014\") == 1",
+   "to": "DONE2"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "방석 옆에 '22:31 출석'. 인지영이 가끔 그 자리를 본다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "방석 옆에 '22:31 출석'. 옆 벤치도 비었다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S12.txt"
+}

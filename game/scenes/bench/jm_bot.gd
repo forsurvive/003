@@ -17,6 +17,7 @@ var side6: SideS06                                   ## 관악 사이드 퀘스�
 var side8: SideS08                                   ## 영등포 사이드 퀘스트(1-11g SQ-S08)
 var side9: SideS09                                   ## 영등포 사이드 퀘스트(1-11h SQ-S09)
 var side10: SideS10                                 ## 영등포 사이드 퀘스트(1-11i SQ-S10)
+var side12: SideS12                                 ## 지하시장 사이드 퀘스트(1-11k SQ-S12)
 var side11: SideS11                                 ## 여의도 사이드 퀘스트(1-11j SQ-S11)
 var uq71: Uq71                                     ## 비표시 퀘스트 UQ-71(1-D1 대방 지하차도)
 var u02: U02Paths                                  ## U02 남태령 지하(1-D2)
@@ -118,6 +119,9 @@ func _ready() -> void:
 	side11 = SideS11.new()
 	add_child(side11)
 	side11.setup(host, true)
+	side12 = SideS12.new()
+	add_child(side12)
+	side12.setup(host, true)
 	uq71 = Uq71.new()
 	add_child(uq71)
 	uq71.setup(host, true)
@@ -402,6 +406,25 @@ func _ready() -> void:
 				["warp", "K-06", "from_W"], ["wait", 1.0], ["want", ["여의도 기록", "휴회 결의 원본", "넘긴다"]], ["talk", "N-R02-026"], ["wait", 2.0],
 				["until", "SQH_RECESS == 14", 10.0, "우도하 — '스스로 멈췄다'(원본 a)", "s11_woo"],
 				["check", "SQR_S11 == 1 and SQS11_STAGE == 100", "두 기록이 자리를 찾았다(100)"]]
+		"s12":                                                          # 1-11k SQ-S12: 벙커 Y-02 세 자리(신분증 거두기 · 반지 · 배급표 묶음 · 손목시계) → 살펴보기(발동) →
+			st.vars.set_v("GAME_DAY", 6)                                 #   관리사무소 연락부(호수 따라가기 30) → 진재석 회의 탁자 · 엄수연 건넴(40) ·
+			host.date_text = "2277. 10. 28.  10:00"                      #   사공민영 배급표 묶음(순회를 접음) · 강수아 장 맡기기 → 셋 모두(100)
+			host.enter("Y-02", "from_Y-01")
+			plan = [["wait", 1.0], ["want", ["거둔다", "편다"]], ["go", 16, 18], ["use", 16, 17], ["wait", 1.5], ["shot", "s12_seat"],
+				["check", "has(\"M-210\") and has(\"M-412\") and MQ104_IDS == 1", "1조 맨 앞(입구 쪽) — 신분증 거두기 · 쥔 손의 반지"],
+				["want", ["든다"]], ["go", 23, 11], ["use", 22, 11], ["wait", 1.0], ["want", ["푼다"]], ["go", 23, 8], ["use", 22, 8], ["wait", 1.0],
+				["check", "has(\"M-413\") and has(\"M-414\")", "3조 셋째 배급표 묶음 · 3조 끝 23:29 손목시계"],
+				["want", []], ["examine", "M-210"], ["wait", 2.0], ["check", "SQ_S12_START >= 1 and SQ_S12_EVID == 12", "살펴보기 — 뒷면 세 호수 · 발동"],
+				["warp", "J-04", "from_J-03"], ["wait", 1.0], ["go", 3, 4], ["use", 2, 4], ["hack", 2], ["wait", 1.0],
+				["check", "SQ_S12_LOOK == 1 and SQ_S12_J == 1 and SQ_S12_S == 1 and SQ_S12_E == 1", "연락부 — A-11 · B-04 · A-13 호수 따라가기"],
+				["warp", "J-02", "from_J-03"], ["wait", 1.0], ["want", ["신분증", "회의 탁자", "다음에"]], ["talk", "N-R02-005"], ["wait", 1.0],
+				["check", "SQ_S12_J == 4 and SQE_FAMILY == 1", "진재석 — '출석 부르듯이'(회의 탁자)"],
+				["want", ["신분증", "건넨다", "손목시계", "다음에"]], ["talk", "N-R02-006"], ["wait", 1.0], ["shot", "s12_eom"],
+				["check", "SQ_S12_E == 3 and SQ_S12_EW == 1 and SQ_S12_EVID == 11", "엄수연 — 이름을 손에(증거 11) · 23:29"],
+				["warp", "J-03", "from_J-02"], ["wait", 1.0], ["want", ["배급표 묶음"]], ["talk", "N-R02-012"], ["wait", 1.5],
+				["check", "SQ_S12_SB == 1 and has(\"M-003\")", "사공민영 — 그 달 배급표(순회를 접는다)"],
+				["want", ["강수아", "회의 탁자", "다음에"]], ["talk", "N-R02-012"], ["wait", 1.5], ["shot", "s12_bench"],
+				["check", "SQ_S12_S == 4 and SQ_S12_DONE == 1 and SQS12_STAGE == 100", "셋의 자리가 정해졌다(100)"]]
 		"db":                                                           # 1-D1 대방 지하차도 · UQ-71: 북쪽 입구로 들어가 분대 등 뒤에서 웅크려 엿듣기(사흘 기한) → 펌프실 운전기사 메모 →
 			st.vars.set_v("PC_SKP_SCIENCE", 60)                          #   허리 물 버스에서 정지 레버로 봉인(카르마 · 지대 꺼짐) → 남쪽 입구로 나와 문 앞에 선다
 			st.vars.set_v("GAME_DAY", 8)
@@ -1242,7 +1265,7 @@ func _process(dt: float) -> void:
 					return
 				menu_t = 0.0
 				_shot("hack_menu")
-				tm._open_entry(0)
+				tm._open_entry(int(s[1]) if s.size() > 1 else 0)          # ["hack", n] — n번째 항목(기본 0)
 			elif tm.mode == "read" and menu_t < 1.5:
 				menu_t += get_process_delta_time()
 				if menu_t >= 1.5:

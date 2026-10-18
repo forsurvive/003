@@ -57,13 +57,13 @@ text 16 8 "앉은 채 입구를 보는 유해. 목에 건 신분증이 먼지에
 prop seated_1 19 8
 text 19 8 "앉은 채 입구를 보는 유해. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS
 prop seated_2 22 8
-text 22 8 "앉은 채 입구를 보는 유해. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS
+text 22 8 "3조 끝자리 — 입구에서 가장 먼 유해. 왼 손목을 얼굴 앞으로 들어 올린 채 굳었다 — 시계를 보던 자세." scene=SQS12_REM_M
 prop seated_3 16 11
 text 16 11 "앉은 채 입구를 보는 유해. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS
 prop seated_4 19 11
 text 19 11 "앉은 채 입구를 보는 유해. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS
 prop seated_0 22 11
-text 22 11 "앉은 채 입구를 보는 유해. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS
+text 22 11 "3조 셋째 자리 유해. 무릎 위에 끈으로 묶은 종이 묶음." scene=SQS12_REM_G
 prop seated_1 16 14
 text 16 14 "앉은 채 입구를 보는 유해. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS
 prop seated_2 19 14
@@ -71,7 +71,7 @@ text 19 14 "앉은 채 입구를 보는 유해. 목에 건 신분증이 먼지�
 prop seated_3 22 14
 text 22 14 "앉은 채 입구를 보는 유해. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS
 prop seated_4 16 17
-text 16 17 "앉은 채 입구를 보는 유해. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS
+text 16 17 "1조 맨 앞자리 — 입구에 가장 가까운 유해. 오른손이 무릎 위에서 무언가를 꼭 쥔 채 굳었다." scene=SQS12_REM_K
 prop seated_0 19 17
 text 19 17 "앉은 채 입구를 보는 유해. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS
 prop seated_1 22 17

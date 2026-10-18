@@ -9,7 +9,12 @@
   "WANTED": 3,
   "SHOP": 6,
   "S6PAPER": 8,
-  "TRADE": 11
+  "TRADE": 11,
+  "S12ASK": 13,
+  "S12AGAIN": 17,
+  "S12PICK": 18,
+  "S12SELL": 19,
+  "TRADE2": 21
  },
  "ops": [
   {
@@ -70,6 +75,74 @@
    "args": [
     "asked"
    ]
+  },
+  {
+   "op": "if",
+   "cond": "has(\"M-210\") >= 1 and SQ_S12_START >= 1 and SQ_S12_SOLD == 0",
+   "to": "S12ASK"
+  },
+  {
+   "op": "goto",
+   "to": "TRADE2"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S12_YASK == 1",
+   "to": "S12AGAIN"
+  },
+  {
+   "op": "do",
+   "fx": "SQ_S12_YASK = 1"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-008",
+   "emo": "기본",
+   "text": "그 묶음, 2077년 관리 요원증이지? 사진 칸 떼어 쓰게. 장당 30. 이름은 지워 줄게."
+  },
+  {
+   "op": "goto",
+   "to": "S12PICK"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-008",
+   "emo": "기본",
+   "text": "그 묶음 아직 들고 다니네. \\V[SQ_S12_EVID]장, 장당 30. 값은 그대로야."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "판다(묶음째)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "S12SELL",
+     "id": "JM_YEOM:1:0"
+    },
+    {
+     "text": "이건 안 판다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TRADE2",
+     "id": "JM_YEOM:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s12",
+   "args": [
+    "sell"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-008",
+   "emo": "기본",
+   "text": "이름이 붙어 있으면 아무도 못 써. 지워야 쓸모가 생기지."
   },
   {
    "op": "cmd",

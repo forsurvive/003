@@ -186,6 +186,7 @@ var side_s06: SideS06                              ## 관악 사이드 퀘스트
 var side_s08: SideS08                              ## 영등포 사이드 퀘스트(1-11g — SQ-S08 같은 명찰의 두 사람)
 var side_s09: SideS09                                   ## 영등포 사이드 퀘스트(1-11h — SQ-S09 127번)
 var side_s10: SideS10                                   ## 영등포 사이드 퀘스트(1-11i — SQ-S10 오늘의 4번 인력)
+var side_s12: SideS12                                   ## 지하시장 사이드 퀘스트(1-11k — SQ-S12 관리 요원의 유족)
 var side_s11: SideS11                                   ## 여의도 사이드 퀘스트(1-11j — SQ-S11 토요일의 여의도)
 var uq71: Uq71                                          ## 비표시 퀘스트 UQ-71 원자력 버스(1-D1 — 대방 지하차도)
 var u02: U02Paths                                       ## U02 남태령 지하(1-D2 — 터널 회로 UG-H01 · 밀통로 UG-H02 · 지하 초소)
@@ -279,6 +280,11 @@ func _paths() -> void:
 		side_s11 = SideS11.new()
 		add_child(side_s11)
 		side_s11.setup(host, log_on)
+	if side_s12 == null:
+		side_s12 = SideS12.new()
+		add_child(side_s12)
+		side_s12.setup(host, log_on)
+		side_s12.want_save.connect(func(_w: String) -> void: request_auto("event"))   # 신분증의 자리가 정해짐(1-11k)
 	if uq71 == null:
 		uq71 = Uq71.new()
 		add_child(uq71)

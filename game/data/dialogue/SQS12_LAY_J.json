@@ -1,0 +1,121 @@
+{
+ "id": "SQS12_LAY_J",
+ "title": "진재석의 노점 자리",
+ "loc": "L-R02-11",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "CARD": 3,
+  "RING": 6,
+  "NOTE": 9,
+  "DONE": 12
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S12_LAYJ == 1",
+   "to": "DONE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "부품 노점 자리. 진공관 상자가 뚜껑 덮인 채 남았다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "(권이준의 신분증을 상자 위에 놓는다)",
+     "tags": [],
+     "cond": "has(\"M-210\") >= 1 and SQ_S12_J < 3 and SQ_S12_SOLD == 0",
+     "fx": "",
+     "to": "CARD",
+     "id": "SQS12_LAY_J:1:0"
+    },
+    {
+     "text": "(반지를 상자 위에 놓는다)",
+     "tags": [],
+     "cond": "has(\"M-412\") >= 1 and SQ_S12_JR == 0",
+     "fx": "",
+     "to": "RING",
+     "id": "SQS12_LAY_J:1:1"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS12_LAY_J:1:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s12",
+   "args": [
+    "lay",
+    "j"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "사위와 장인의 이름이 같은 상자 위에 놓였다."
+  },
+  {
+   "op": "goto",
+   "to": "NOTE"
+  },
+  {
+   "op": "cmd",
+   "name": "s12",
+   "args": [
+    "item",
+    "j"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "반지를 신분증 곁에 둔다. 고지식한 사위는 반지를 놓지 않았다."
+  },
+  {
+   "op": "goto",
+   "to": "NOTE"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"C-050\") == 1",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "다음 날 아침, 상자 뚜껑에 노복희의 글씨 — '21:04 출석'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "상자 뚜껑에 '21:04 출석'. 누가 매일 먼지를 턴다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S12.txt"
+}

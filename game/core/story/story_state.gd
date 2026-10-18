@@ -239,6 +239,10 @@ func _init() -> void:
 	for k in "START LEAF REPORT PRINT GUARD STACK ESCORT READ HELD_DAY SOL_L SOL_D REWARD PLATE VOTE CLAUSE TOOK WARN PASS PDAY PKIND PSAID CASTL CASTL_DAY WOOQ SUNQ SAGONG COIN SAWLEAF MET TOLD SHOWN ATOFFICE WOOL SUNL KNOWS DONE IMET NEARHUB HIDEF PTALK PCOUNT PNEXT GAVEL ISAID".split(" "):
 		vars.declare("SQ_S11_" + k, "int", 0)
 	vars.declare("SQR_S11", "int", 0)
+	for k in "START CARDS LOOK J S E JR SB EW JT ST ET SOLD SOLD_DAY KNOWN EVID YASK LAYJ LAYS LAYE DONE REWARD HINT".split(" "):   # 1-11k SQ-S12 관리 요원의 유족(원고 SQ-S12.txt 머리 주석)
+		vars.declare("SQ_S12_" + k, "int", 0)
+	vars.declare("SQH_IDCARD", "int", 0)
+	vars.declare("SQE_FAMILY", "int", 0)
 	for kv in [["SQH_LIST11", -1], ["SQH_RECESS", -1], ["SQE_LIST11", 0], ["SQE_RECESS", 0], ["SQK_MARCH", 0], ["NS_COOP", 0], ["PD_R02_KH", 0]]:   # 남산 협력 표시(SD-06 NS 협력 플래그) · 거점 '국회 폐허'(1 = BJ)
 		vars.declare(kv[0], "int", kv[1])
 	# UQ-71 원자력 버스(1-D1, SD-05 UQ-71 · 훅 H-R02-11 · DB-01): 노심의 행방은 UQ71_CORE 하나(0 버스 · 1 제자리 봉인 · 2 주인공 소지 · 3 팔림 · 4 분대가 가져감 · 5 신길에서 터짐) ·

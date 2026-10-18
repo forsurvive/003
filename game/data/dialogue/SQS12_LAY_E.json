@@ -1,0 +1,121 @@
+{
+ "id": "SQS12_LAY_E",
+ "title": "엄수연의 노점 자리",
+ "loc": "L-R02-11",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "CARD": 3,
+  "WATCH": 6,
+  "NOTE": 9,
+  "DONE": 12
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S12_LAYE == 1",
+   "to": "DONE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "약 노점 자리. 약상자 위에 먼지가 앉았다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "(문도하의 신분증을 약상자 위에 놓는다)",
+     "tags": [],
+     "cond": "has(\"M-210\") >= 1 and SQ_S12_E < 3 and SQ_S12_SOLD == 0",
+     "fx": "",
+     "to": "CARD",
+     "id": "SQS12_LAY_E:1:0"
+    },
+    {
+     "text": "(멈춘 손목시계를 놓는다)",
+     "tags": [],
+     "cond": "has(\"M-414\") >= 1 and SQ_S12_EW == 0",
+     "fx": "",
+     "to": "WATCH",
+     "id": "SQS12_LAY_E:1:1"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS12_LAY_E:1:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s12",
+   "args": [
+    "lay",
+    "e"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "그이는 집결지 간다고 했다. 호송차가 온다고. 이름이 여기 돌아왔다."
+  },
+  {
+   "op": "goto",
+   "to": "NOTE"
+  },
+  {
+   "op": "cmd",
+   "name": "s12",
+   "args": [
+    "item",
+    "e"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "23:29에 멈춘 시계를 약상자 위에 둔다."
+  },
+  {
+   "op": "goto",
+   "to": "NOTE"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"C-050\") == 1",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "다음 날 아침, 간판 아래 노복희의 분필 — '23:25'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "간판 아래 분필 '23:25'. 매일 누가 덧쓴다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S12.txt"
+}
