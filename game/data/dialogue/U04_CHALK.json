@@ -1,0 +1,39 @@
+{
+ "id": "U04_CHALK",
+ "title": "분필 판 — 레일 말",
+ "loc": "L-UG-06",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "분필 판 '레일 말'. 두 번 — 간다. 세 번 — 서라. 길게 한 번 — 사람 있음."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "네 번 빠르게 — 하지 마(깬다). 맨 아래 덧쓴 줄 '여의도 공병 — 길게 하나, 둘'."
+  },
+  {
+   "op": "cmd",
+   "name": "u04",
+   "args": [
+    "know"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/U04.txt"
+}

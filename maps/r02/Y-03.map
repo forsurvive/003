@@ -22,6 +22,7 @@ exit 9 13 Y-02 from_Y-03
 exit 10 13 Y-02 from_Y-03
 mark from_Y-02 9 12 N
 mark from_Y-05 15 3 S
+mark from_U4 17 4 S
 prop air_handler 3 4
 text 3 4 "공조기. 아직 돈다. 이 벙커에서 소리를 내는 건 이것 하나뿐이다." w=2 h=2
 prop generator_bk 8 4
@@ -32,3 +33,7 @@ prop tool_chest 1 10
 box 1 10 toolbox name="정비 공구함"
 prop drum 17 11
 prop drum 16 11
+# 1-D10 U04: 여의도역 배전실 점검구 B-7에서 내려오는 배선 통로 사다리(MQ-104 지하 우회 · 넷째 탈출로 — 올라가면 벙커를 나선 셈)
+prop w_hatch_ug 17 1 state=open
+text 17 3 "천장 배선 통로 덮개. 굵은 전선 다발을 따라 사다리가 위로 — 스텐실 'B-7 여의도역 배전실'." w=1 scene=U04_HATCH_UP cond="U04_HATCH == 1"
+

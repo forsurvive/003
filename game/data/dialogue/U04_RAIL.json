@@ -1,0 +1,168 @@
+{
+ "id": "U04_RAIL",
+ "title": "레일",
+ "loc": "L-UG-06",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "LISTEN": 2,
+  "T2": 4,
+  "T3": 6,
+  "TL": 8,
+  "TL2": 10,
+  "T4": 12
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "발밑 레일이 차갑다. 귀를 대면 멀리서 오는 소리가 들린다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "레일에 귀를 댄다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "LISTEN",
+     "id": "U04_RAIL:1:0"
+    },
+    {
+     "text": "두 번 두드린다(간다)",
+     "tags": [],
+     "cond": "U04_KNOW == 1",
+     "fx": "",
+     "to": "T2",
+     "id": "U04_RAIL:1:1"
+    },
+    {
+     "text": "세 번 두드린다(서라)",
+     "tags": [],
+     "cond": "U04_KNOW == 1",
+     "fx": "",
+     "to": "T3",
+     "id": "U04_RAIL:1:2"
+    },
+    {
+     "text": "길게 한 번(사람 있음)",
+     "tags": [],
+     "cond": "U04_KNOW == 1",
+     "fx": "",
+     "to": "TL",
+     "id": "U04_RAIL:1:3"
+    },
+    {
+     "text": "길게 하나, 둘(운반조 지나감)",
+     "tags": [],
+     "cond": "U04_KNOW == 1",
+     "fx": "",
+     "to": "TL2",
+     "id": "U04_RAIL:1:4"
+    },
+    {
+     "text": "네 번 빠르게",
+     "tags": [],
+     "cond": "U04_KNOW == 1",
+     "fx": "",
+     "to": "T4",
+     "id": "U04_RAIL:1:5"
+    },
+    {
+     "text": "막대로 아무렇게나 두드려 본다",
+     "tags": [],
+     "cond": "U04_KNOW == 0",
+     "fx": "",
+     "to": "T4",
+     "id": "U04_RAIL:1:6"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "U04_RAIL:1:7"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "u04",
+   "args": [
+    "listen"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "u04",
+   "args": [
+    "tap",
+    "2"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "u04",
+   "args": [
+    "tap",
+    "3"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "u04",
+   "args": [
+    "tap",
+    "L"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "u04",
+   "args": [
+    "tap",
+    "L2"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "u04",
+   "args": [
+    "tap",
+    "4"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/U04.txt"
+}

@@ -1,0 +1,177 @@
+# 5호선 영등포시장역(L-UG-06 · SD-09f L800 · 1-D 계획 §16.6 · 단계 1-D10). 44×26.
+# 북: 지상 계단(월드 L-UG-06) · 지하시장 '후문' 셔터(J-09 남쪽 연결 통로 — '지하시장 후문 — 손님 환영, 피부 불문', 고상민 N-UG-008 · JH 적대면 용접).
+# 대합실: 운반조 화로(쉼터) · 분필 판(두드림 말) · 개찰구 · 분실물 함. 승강장: 소민서(N-UG-009, 운반조 반장 — 운송 의뢰 · 수레) · 운반조 레일 수레 차고(서쪽 끝).
+# 선로: 레일 두 줄(18 · 21 — 수레는 18줄) → 동쪽 터널 A(U4-02). 시궁쥐(지하상가 판본 CR-605 → 자료가 없어 CR-095) · 큰바퀴.
+map U4-01 5호선 대합실 · 승강장
+set sd
+grid
+####ss##############################tt######
+####ss##############################tt######
+####ss##############################tt######
+#tttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttt#
+####################ss######################
+####################ss######################
+####################ss######################
+#tttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttt#
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+############################################
+############################################
+############################################
+end
+exit 4 0 W L-UG-06
+exit 5 0 W L-UG-06
+exit 36 0 J-09 from_U401
+exit 37 0 J-09 from_U401
+exit 43 17 U4-02 from_W
+exit 43 18 U4-02 from_W
+exit 43 19 U4-02 from_W
+exit 43 20 U4-02 from_W
+exit 43 21 U4-02 from_W
+exit 43 22 U4-02 from_W
+mark from_top 4 4 S
+mark from_J09 36 4 S
+mark from_E 41 18 W
+mark cart_home 3 18 E
+mark garage 4 16 S
+mark sit_fire 6 6 N
+# ---------------------------------------------------------------- 대합실
+prop shutter_jm 36 2
+text 36 3 "지하시장 후문 셔터. 초록 페인트 '후문 — 피부불문'. 셔터 너머가 영등포 지하상가 남쪽 연결 통로다." w=2 scene=U04_BACKDOOR
+prop sd_station_desk 32 4
+npc N-UG-008 34 5 S cond="dead(\"N-UG-008\") == 0" bark="후문입니다. 승차권은 필요 없습니다. 피부도요."
+text 33 6 "역무실 창구. 2077년 '승차권 발매 중지 — 대피 열차만 운행' 안내문 위에 분필로 '운반조 출발 22시'." w=2
+prop drum_fire 5 5 state=f1
+prop cot 2 4
+text 3 7 "운반조 화로. 연탄 둘이 아직 붉다. 둘러앉은 깡통 의자에 손때가 반들반들하다." w=2
+prop sd_scrap_wall 11 3
+text 12 4 "분필 판. 크게 '레일 말'. 아래 줄마다 — '두 번: 간다 · 세 번: 서라 · 길게 한 번: 사람 있음 · 네 번 빠르게: 하지 마(깬다)'. 맨 아래 덧쓴 줄 '신길 깸 — 천 감아'." w=3 scene=U04_CHALK
+prop crate_metal 28 4
+box 28 4 u04_lost name="분실물 함"
+prop evac_sign 40 4
+text 40 5 "대피 안내 '5호선 대피 열차 — 여의나루(대심도) 방면. 신길 · 여의도 만원 시 계속 이동'." w=1
+prop sd_gate 3 8
+prop sd_gate 5 8
+prop sd_gate 7 8
+prop sd_gate 9 8
+prop sd_gate 11 8
+prop sd_gate 13 8
+prop sd_gate_open 15 8
+prop sd_gate_open 18 8
+prop sd_gate 20 8
+prop sd_gate 22 8
+prop sd_gate 24 8
+prop sd_gate 26 8
+prop sd_gate 28 8
+prop sd_gate 30 8
+# ---------------------------------------------------------------- 승강장 · 차고
+npc N-UG-009 6 15 S cond="dead(\"N-UG-009\") == 0" bark="수레 쓸 거면 말해. 바퀴에 천은 감고 가."
+prop pf_bench 12 14
+prop pf_bench 28 14
+text 9 14 "운반조 차고 칠판. '수레 1 — 출고 · 반납은 반장에게'. 그 밑에 짐 적는 칸: 진공관 · 닭 · 전지." w=2
+prop rail_stop 1 18
+text 20 15 "승강장 끝 노란 선. 선로 쪽으로 쇠막대 하나가 기대 서 있다 — 레일 두드리는 막대." w=2
+enemy CR-095 36 20 cond="DG_U04 == 0"
+enemy CR-095 39 19 cond="DG_U04 == 0"
+enemy CR-095 41 21 cond="DG_U04 == 0"
+enemy CR-002 25 22 cond="DG_U04 == 0"
+# ---------------------------------------------------------------- 레일(이음매 6칸마다 — rail_h2)
+prop rail_h 1 18
+prop rail_h 2 18
+prop rail_h 3 18
+prop rail_h 4 18
+prop rail_h 5 18
+prop rail_h2 6 18
+prop rail_h 7 18
+prop rail_h 8 18
+prop rail_h 9 18
+prop rail_h 10 18
+prop rail_h 11 18
+prop rail_h2 12 18
+prop rail_h 13 18
+prop rail_h 14 18
+prop rail_h 15 18
+prop rail_h 16 18
+prop rail_h 17 18
+prop rail_h2 18 18
+prop rail_h 19 18
+prop rail_h 20 18
+prop rail_h 21 18
+prop rail_h 22 18
+prop rail_h 23 18
+prop rail_h2 24 18
+prop rail_h 25 18
+prop rail_h 26 18
+prop rail_h 27 18
+prop rail_h 28 18
+prop rail_h 29 18
+prop rail_h2 30 18
+prop rail_h 31 18
+prop rail_h 32 18
+prop rail_h 33 18
+prop rail_h 34 18
+prop rail_h 35 18
+prop rail_h2 36 18
+prop rail_h 37 18
+prop rail_h 38 18
+prop rail_h 39 18
+prop rail_h 40 18
+prop rail_h 41 18
+prop rail_h2 42 18
+prop rail_h 43 18
+prop rail_h 1 21
+prop rail_h 2 21
+prop rail_h 3 21
+prop rail_h 4 21
+prop rail_h 5 21
+prop rail_h2 6 21
+prop rail_h 7 21
+prop rail_h 8 21
+prop rail_h 9 21
+prop rail_h 10 21
+prop rail_h 11 21
+prop rail_h2 12 21
+prop rail_h 13 21
+prop rail_h 14 21
+prop rail_h 15 21
+prop rail_h 16 21
+prop rail_h 17 21
+prop rail_h2 18 21
+prop rail_h 19 21
+prop rail_h 20 21
+prop rail_h 21 21
+prop rail_h 22 21
+prop rail_h 23 21
+prop rail_h2 24 21
+prop rail_h 25 21
+prop rail_h 26 21
+prop rail_h 27 21
+prop rail_h 28 21
+prop rail_h 29 21
+prop rail_h2 30 21
+prop rail_h 31 21
+prop rail_h 32 21
+prop rail_h 33 21
+prop rail_h 34 21
+prop rail_h 35 21
+prop rail_h2 36 21
+prop rail_h 37 21
+prop rail_h 38 21
+prop rail_h 39 21
+prop rail_h 40 21
+prop rail_h 41 21
+prop rail_h2 42 21
+prop rail_h 43 21

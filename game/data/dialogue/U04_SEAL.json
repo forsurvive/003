@@ -1,0 +1,32 @@
+{
+ "id": "U04_SEAL",
+ "title": "운반조 방수 셔터",
+ "loc": "L-UG-08",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "운반조 방수 셔터. 페인트 '하저 — 밧줄은 계약한 사람만'. 셔터 너머 물소리가 크다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "안쪽에서 빗장을 질렀다. 이쪽에서 열 수 있는 손잡이는 없다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/U04.txt"
+}

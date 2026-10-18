@@ -1,0 +1,95 @@
+{
+ "id": "U04_BOARD",
+ "title": "배전반 B-7",
+ "loc": "L-UG-07",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "FIX": 3,
+  "NOFIX": 6,
+  "FIXED": 8
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "U04_WOO >= 2",
+   "to": "FIXED"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "뽑혀 늘어진 선들. 회로표 반쪽에 '1 대합실 · 2 승강장 · 3 시세판 · 4 ……'. 나머지 칸은 비었다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "선을 하나씩 대 보며 회로표를 채운다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 50
+      }
+     ],
+     "cond": "dead(\"N-UG-010\") == 0 and AFF_BJ > -60 and U04_RUSH == 0",
+     "fx": "",
+     "to": "FIX",
+     "id": "U04_BOARD:1:0",
+     "fail": "NOFIX"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "U04_BOARD:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "u04",
+   "args": [
+    "board"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "넷째 칸 '벙커 B-7 — 집결지 인증 단말'. 우다현이 어깨 너머로 본다. '…맞네. 점검구 열쇠는 내가 있어.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "선 끝에서 불꽃이 튄다. 손끝이 저리다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "회로표가 다 찼다. 넷째 칸 '벙커 B-7 — 집결지 인증 단말'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/U04.txt"
+}

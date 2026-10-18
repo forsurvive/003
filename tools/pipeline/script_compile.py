@@ -46,7 +46,7 @@ CMDS = {"wait", "fade_in", "fade_out", "balloon", "move", "face", "shake", "year
         "mq", "trade", "yd", "fix",                                                   # 0-10: 1막 진행기 사건 · 거래 창(상인 V번호)
         "meet", "memo", "obit",                                              # 1-2: 인물 수첩 등록 · 한 줄 메모 · 소식으로 안 죽음
         "re", "cage", "capture",                                             # 1-3: 인카운터 첫 분대 대화의 결말 · 우리 문 열기 · 생포(사흘 버팀)
-        "jm", "yd", "sb", "vb", "home", "info", "doctor", "rent", "stash", "s01", "s02", "s03", "s04", "s05", "s06", "s08", "s09", "s10", "s11", "uq71", "u02", "uq04", "gr", "kt", "ga", "ks", "hp", "yt"}                                                                # 1-4: 1막 경로 진행기(지하시장·단서) 사건                                             # 1-3: 인카운터 첫 분대 대화의 결말 · 우리 문 열기 · 생포(사흘 버팀)
+        "jm", "yd", "sb", "vb", "home", "info", "doctor", "rent", "stash", "s01", "s02", "s03", "s04", "s05", "s06", "s08", "s09", "s10", "s11", "uq71", "u02", "uq04", "gr", "kt", "ga", "ks", "hp", "yt", "u04"}                                                                # 1-4: 1막 경로 진행기(지하시장·단서) 사건                                             # 1-3: 인카운터 첫 분대 대화의 결말 · 우리 문 열기 · 생포(사흘 버팀)
 ENGINE_VARS = {"PC_ST", "PC_PE", "PC_EN", "PC_CH", "PC_IN", "PC_AG", "PC_LK", "PC_TAG1", "PC_TAG2", "PC_TAG3", "PC_CAPS", "PC_XP",
                "PC_SEX", "PC_APT_PROXY",
                "MQP4_DUCT", "MQP4_FOLLOW", "MQP4_KEY", "MQP4_ARMORY", "MQP4_TALK", "MQP4_BJ_KO", "MQP4_SEC_KO", "MQP4_CAUGHT", "MQP4_DECOY",
@@ -86,7 +86,8 @@ ENGINE_VARS |= {"UQ69_" + k for k in "PAPER DIE DEST DEST_DAY HEARD MET T1 T2 T3
 ENGINE_VARS |= {"HP_" + k for k in "DAY0 LOST BLUR BLUR_DAY WAY TRUST CUT OVR OVR_END NIGHT GEN MASK VISIT VISIT_DAY PUSH_DAY BED ASK1 ASK2 ASK3 OJ MOVE_DAY SKIP MORGUE PHASE SAT LETTER MET TOLD DONE_DAY VON SEEN VMASK LTOLD".split()} \
     | {"RQ47_" + k for k in "N WK LAST".split()} | {"DG_STOP"}   # 1-D8 여의도 대학병원 · UQ-126 · RQ-47(원고 script/act1/HP.txt 머리 주석)
 ENGINE_VARS |= {"YT_" + k for k in "FORGE FORGE_T TEMP LOCK UNK DEAD_DM ESCORT POWER MOUND SEEN GATE1 CLERK_SEEN ROBOT_OK ELEV INC INC_DAY R DOZE DMTAKE HBTAKE OJTAKE TAPE SG KBN UPC UP NOCARD CUP CUPSEEN TRAP NO HK2 HK3 SIDE CTAPE CDONE BUMP_DAY".split()} \
-    | {"UQ06_" + k for k in "RESULT DAY ASKED MET GONE BACK TOLD HEARD RADIO".split()}   # 1-D9 유리탑 3동 · 증권가 객장 · UQ-06(원고 script/act1/YT.txt 머리 주석)
+    | {"UQ06_" + k for k in "RESULT DAY ASKED MET GONE BACK TOLD HEARD RADIO".split()} \
+    | {"U04_" + k for k in "CART_MAP CART_X CART_LOAD CLOTH JOB JOB_DMG RUN RUN_DAY KNOW ENG WOO RUSH HATCH LIST LIST_DAY GHOUL SK QK SCATTER CLEAR CARR_DAY YIELD TAP SEEN DIG HEARD RIDE CART_NEAR JOB_DAY BACK WEAR RAM GNO TAPJH LOUD CDIR".split()}   # 1-D10 U04 여의도 지하(진행기 U04 · 원고 U04.txt 머리 주석)   # 1-D9 유리탑 3동 · 증권가 객장 · UQ-06(원고 script/act1/YT.txt 머리 주석)
 ENGINE_VARS |= {"KT_" + k for k in "POWER POWER_DAY NOTE CALL RING RING2 MEM HOOK REVOLVE TUNNEL CAR QUEEN LOW CARTOLD HATCH KEY GRATE DIG ROPE GOND TOP TOP_DAY MEET VIEW SHOE NURSE EXPL HEAT OBS QUEEN_DAY CREW EXT3 EXT4 EXT5 HOSE3 HOSE4 SWAT GLASS20 GLASS31 WIN6 GEN_DAY BACK".split()}   # 1-D5a·1-D5b 여의도 금탑
 # 던전 정리 변수(1-D0, script/world/dungeons.txt): DG_<접미> 0 손 안 댐 · 1 정리 · 2 다시 들어섬 / _DAY 정리 · 재입주 날 / _ROLL 재입주를 굴린 날
 ENGINE_VARS |= {f"DG_{m}{s}" for m in re.findall(r"^@\s+([A-Z0-9]+)\s", open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "script", "world", "dungeons.txt"), encoding="utf-8").read(), re.M)

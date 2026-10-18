@@ -1,0 +1,42 @@
+{
+ "id": "U04_BACKDOOR",
+ "title": "지하시장 후문 셔터",
+ "loc": "L-UG-06",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "WELD": 3
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "AFF_JH <= -60",
+   "to": "WELD"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "셔터는 반쯤 올라가 있다. 위로 지하상가 남쪽 통로의 불빛과 국물 냄새."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "셔터 이음매마다 붉은 용접 자국. 초록 페인트 '후문' 위로 누가 크게 가위표를 쳤다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/U04.txt"
+}

@@ -1,0 +1,301 @@
+# 5호선 터널 A — 영등포시장 → 신길 → 여의도(SD-09f U04 · 1-D 계획 §16.6 · 단계 1-D10). 110×15 · 늘 어둠.
+# 실제 노선: 영등포시장 · 신길(1·5호선 환승) · 여의도 — 원문 06→07은 신길을 건너뛰어, 가운데에 무너진 신길역 승강장을 둔다(장소 기준점은 그대로).
+# 레일 두 줄(7 · 10 — 수레는 7줄) · 이음매 6칸마다 · 북쪽 대피선(운반조 수레가 비켜서는 곳) · 신길 승강장(휴면 대피민 여섯 = 그날 여의나루 '미입장' — 진행기 U04가 세운다)
+# · 측실(운반조 중계 사물함 — 셋째 운송 뒤 보관 자리) · 동쪽 끝 내리막(여의도 방면).
+map U4-02 5호선 터널 — 영등포시장 · 신길 · 여의도
+set cv
+grid
+##############################################################################################################
+##############################################################################################################
+##############################################################################################################
+######################uuuuuuuu##############ttttttttttttttttttttttt##~~~~~~###################################
+######################uuuuuuuu##############ttttttttttttttttttttttt##~~~~~~###################################
+######################uuuuuuuu##############ttttttttttttttttttttttt##~~~~~~###################################
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+##############################################################################################################
+##############################################################################################################
+##############################################################################################################
+end
+exit 0 6 U4-01 from_E
+exit 0 7 U4-01 from_E
+exit 0 8 U4-01 from_E
+exit 0 9 U4-01 from_E
+exit 0 10 U4-01 from_E
+exit 0 11 U4-01 from_E
+exit 109 6 U4-03 from_W
+exit 109 7 U4-03 from_W
+exit 109 8 U4-03 from_W
+exit 109 9 U4-03 from_W
+exit 109 10 U4-03 from_W
+exit 109 11 U4-03 from_W
+mark from_W 2 7 E
+mark from_E 107 7 W
+mark siding 26 4 E
+mark s1 47 4 S
+mark s2 50 3 S
+mark s3 53 5 S
+mark s4 57 4 S
+mark s5 60 3 S
+mark s6 63 5 S
+mark relay 71 4 S
+# ---------------------------------------------------------------- 대피선
+prop rail_stop 29 4
+text 24 5 "대피선. 레일 한 줄이 짧게 갈라져 벽에서 끝난다. 차막이에 운반조 분필 '마주 오면 두 번 — 여기로'." w=2
+# ---------------------------------------------------------------- 신길 무너진 승강장(1호선 환승 통로는 흙에 막힘)
+text 45 3 "신길역 승강장 안내판. '신길 → 여의도 방면 대피소 만원. 다음 대피소: 여의나루(대심도)'. 판 아래 번호표가 흩어져 있다 — 0393, 0394…" w=2
+prop queue_rail 48 5
+prop queue_rail 54 5
+prop queue_rail 60 5
+prop queue_skel 51 4
+prop queue_skel2 55 3
+prop queue_skel3 62 4
+prop rubble 64 3
+prop rubble2 65 4
+text 55 5 "줄 선 채 잠든 사람들." w=4 scene=U04_SINGIL
+text 64 5 "1호선 환승 통로. 흙과 철근이 천장까지 차올랐다. 틈으로 마른 바람이 샌다." w=2 scene=U04_DIG
+# ---------------------------------------------------------------- 측실(운반조 중계)
+prop locker_rent_lt 70 3
+box 70 3 locker w=2 name="운반조 중계 사물함" claim=760,1115 th=2 cond="U04_RUN >= 3"
+text 72 5 "운반조 측실. 벽에 분필 '중계 — 반장 허락 받은 사람만'. 바닥에 젖은 수레 바퀴 자국." w=2 scene=U04_RELAY
+prop crate_o 73 3
+box 73 3 u04_relay name="측실 궤짝"
+# ---------------------------------------------------------------- 내리막(여의도 방면)
+prop chalk_h 90 6
+prop chalk_h 96 6
+prop chalk_h 102 6
+text 92 6 "벽 분필 '↘ 여의도 내리막 — 수레 탄 사람은 브레이크'. 화살표가 갈수록 굵어진다." w=2
+enemy CR-095 35 9 cond="DG_U04 == 0"
+enemy CR-095 82 8 cond="DG_U04 == 0"
+# ---------------------------------------------------------------- 레일(이음매 6칸마다 — rail_h2)
+prop rail_h2 0 7
+prop rail_h 1 7
+prop rail_h 2 7
+prop rail_h 3 7
+prop rail_h 4 7
+prop rail_h 5 7
+prop rail_h2 6 7
+prop rail_h 7 7
+prop rail_h 8 7
+prop rail_h 9 7
+prop rail_h 10 7
+prop rail_h 11 7
+prop rail_h2 12 7
+prop rail_h 13 7
+prop rail_h 14 7
+prop rail_h 15 7
+prop rail_h 16 7
+prop rail_h 17 7
+prop rail_h2 18 7
+prop rail_h 19 7
+prop rail_h 20 7
+prop rail_h 21 7
+prop rail_h 22 7
+prop rail_h 23 7
+prop rail_h2 24 7
+prop rail_h 25 7
+prop rail_h 26 7
+prop rail_h 27 7
+prop rail_h 28 7
+prop rail_h 29 7
+prop rail_h2 30 7
+prop rail_h 31 7
+prop rail_h 32 7
+prop rail_h 33 7
+prop rail_h 34 7
+prop rail_h 35 7
+prop rail_h2 36 7
+prop rail_h 37 7
+prop rail_h 38 7
+prop rail_h 39 7
+prop rail_h 40 7
+prop rail_h 41 7
+prop rail_h2 42 7
+prop rail_h 43 7
+prop rail_h 44 7
+prop rail_h 45 7
+prop rail_h 46 7
+prop rail_h 47 7
+prop rail_h2 48 7
+prop rail_h 49 7
+prop rail_h 50 7
+prop rail_h 51 7
+prop rail_h 52 7
+prop rail_h 53 7
+prop rail_h2 54 7
+prop rail_h 55 7
+prop rail_h 56 7
+prop rail_h 57 7
+prop rail_h 58 7
+prop rail_h 59 7
+prop rail_h2 60 7
+prop rail_h 61 7
+prop rail_h 62 7
+prop rail_h 63 7
+prop rail_h 64 7
+prop rail_h 65 7
+prop rail_h2 66 7
+prop rail_h 67 7
+prop rail_h 68 7
+prop rail_h 69 7
+prop rail_h 70 7
+prop rail_h 71 7
+prop rail_h2 72 7
+prop rail_h 73 7
+prop rail_h 74 7
+prop rail_h 75 7
+prop rail_h 76 7
+prop rail_h 77 7
+prop rail_h2 78 7
+prop rail_h 79 7
+prop rail_h 80 7
+prop rail_h 81 7
+prop rail_h 82 7
+prop rail_h 83 7
+prop rail_h2 84 7
+prop rail_h 85 7
+prop rail_h 86 7
+prop rail_h 87 7
+prop rail_h 88 7
+prop rail_h 89 7
+prop rail_h2 90 7
+prop rail_h 91 7
+prop rail_h 92 7
+prop rail_h 93 7
+prop rail_h 94 7
+prop rail_h 95 7
+prop rail_h2 96 7
+prop rail_h 97 7
+prop rail_h 98 7
+prop rail_h 99 7
+prop rail_h 100 7
+prop rail_h 101 7
+prop rail_h2 102 7
+prop rail_h 103 7
+prop rail_h 104 7
+prop rail_h 105 7
+prop rail_h 106 7
+prop rail_h 107 7
+prop rail_h2 108 7
+prop rail_h 109 7
+prop rail_h2 0 10
+prop rail_h 1 10
+prop rail_h 2 10
+prop rail_h 3 10
+prop rail_h 4 10
+prop rail_h 5 10
+prop rail_h2 6 10
+prop rail_h 7 10
+prop rail_h 8 10
+prop rail_h 9 10
+prop rail_h 10 10
+prop rail_h 11 10
+prop rail_h2 12 10
+prop rail_h 13 10
+prop rail_h 14 10
+prop rail_h 15 10
+prop rail_h 16 10
+prop rail_h 17 10
+prop rail_h2 18 10
+prop rail_h 19 10
+prop rail_h 20 10
+prop rail_h 21 10
+prop rail_h 22 10
+prop rail_h 23 10
+prop rail_h2 24 10
+prop rail_h 25 10
+prop rail_h 26 10
+prop rail_h 27 10
+prop rail_h 28 10
+prop rail_h 29 10
+prop rail_h2 30 10
+prop rail_h 31 10
+prop rail_h 32 10
+prop rail_h 33 10
+prop rail_h 34 10
+prop rail_h 35 10
+prop rail_h2 36 10
+prop rail_h 37 10
+prop rail_h 38 10
+prop rail_h 39 10
+prop rail_h 40 10
+prop rail_h 41 10
+prop rail_h2 42 10
+prop rail_h 43 10
+prop rail_h 44 10
+prop rail_h 45 10
+prop rail_h 46 10
+prop rail_h 47 10
+prop rail_h2 48 10
+prop rail_h 49 10
+prop rail_h 50 10
+prop rail_h 51 10
+prop rail_h 52 10
+prop rail_h 53 10
+prop rail_h2 54 10
+prop rail_h 55 10
+prop rail_h 56 10
+prop rail_h 57 10
+prop rail_h 58 10
+prop rail_h 59 10
+prop rail_h2 60 10
+prop rail_h 61 10
+prop rail_h 62 10
+prop rail_h 63 10
+prop rail_h 64 10
+prop rail_h 65 10
+prop rail_h2 66 10
+prop rail_h 67 10
+prop rail_h 68 10
+prop rail_h 69 10
+prop rail_h 70 10
+prop rail_h 71 10
+prop rail_h2 72 10
+prop rail_h 73 10
+prop rail_h 74 10
+prop rail_h 75 10
+prop rail_h 76 10
+prop rail_h 77 10
+prop rail_h2 78 10
+prop rail_h 79 10
+prop rail_h 80 10
+prop rail_h 81 10
+prop rail_h 82 10
+prop rail_h 83 10
+prop rail_h2 84 10
+prop rail_h 85 10
+prop rail_h 86 10
+prop rail_h 87 10
+prop rail_h 88 10
+prop rail_h 89 10
+prop rail_h2 90 10
+prop rail_h 91 10
+prop rail_h 92 10
+prop rail_h 93 10
+prop rail_h 94 10
+prop rail_h 95 10
+prop rail_h2 96 10
+prop rail_h 97 10
+prop rail_h 98 10
+prop rail_h 99 10
+prop rail_h 100 10
+prop rail_h 101 10
+prop rail_h2 102 10
+prop rail_h 103 10
+prop rail_h 104 10
+prop rail_h 105 10
+prop rail_h 106 10
+prop rail_h 107 10
+prop rail_h2 108 10
+prop rail_h 109 10
+prop rail_h 22 4
+prop rail_h 23 4
+prop rail_h2 24 4
+prop rail_h 25 4
+prop rail_h 26 4
+prop rail_h 27 4
+prop rail_h 28 4

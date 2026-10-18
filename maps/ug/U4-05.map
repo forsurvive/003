@@ -1,0 +1,185 @@
+# 5호선 여의나루역(L-UG-08 · SD-09f L657 · 1-D 계획 §16.6 · 단계 1-D10). 52×41 · 대심도 대피소.
+# 북: 지상 출입구(월드 L-UG-08 — 여의도 한강공원, 관통 출구) · 대합실(홍보판 · 기건희 N-UG-012 · 셋째 운송 뒤 운반조 쉼터) · B3 정비 사무실(자물쇠 25 — M-215 수문 핸들, 2막 MQ-203 지름길).
+# 긴 에스컬레이터(B2 → B4) · 대심도 승강장 · 선로 끝 차막이(수레는 여기까지 — 끝 구간은 손으로).
+# 남: 판독기 문이 반쯤 닫힌 채 굳은 대기 구역(문틈 한 칸 · 해골 행렬 · 휴면 대피민 열 — 진행기 U04가 세운다 · 순복 N-UG-011 · 대기 명단 단말 UG-H03)
+#   · 노란 선 너머 물에 잠긴 끝(LR-11 '종전'을 쥔 손 — MQ-203 몫) · 운반조 방수 셔터(하저 터널 — 사람이 닫은 문, 1막엔 닫힘).
+map U4-05 대심도 대피소 · 선로 끝
+set sd
+grid
+##############################################ss####
+##############################################ss####
+##############################################ss####
+#tttttttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttttttt#
+######~#################ss##########################
+######~#################ss##########################
+######~#################ss##########################
+#~~~~~~~~~~~~#ttttttttttttttttttttttttttttttttttttt#
+#~~~~~~~~~~~~#ttttttttttttttttttttttttttttttttttttt#
+#~~~~~~~~~~~~#ttttttttttttttttttttttttttttttttttttt#
+#~~~~~~~~~~~~#ttttttttttttttttttttttttttttttttttttt#
+#~~~~~~~~~~~~#ttttttttttttttttttttttttttttttttttttt#
+#~~~~~~~~~~~~#ttttttttttttttttttttttttttttttttttttt#
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuutttttttttttttt#
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuutttttttttttttt#
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuutttttttttttttt#
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuutttttttttttttt#
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuutttttttttttttt#
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuutttttttttttttt#
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuutttttttttttttt#
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuutttttttttttttt#
+########################################ttt#########
+########################################ttt#########
+########################################ttt#########
+#tttttttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttfffffff#
+#tttttttttttttttttttttttttttttttttttttttttttfffffff#
+#tttttttttttttttttttttttttttttttttttttttttttfffffff#
+#tttttttttttttttttttttttttttttttttttttttttttfffffff#
+##############################################tt####
+####################################################
+####################################################
+end
+exit 46 0 W L-UG-08
+exit 47 0 W L-UG-08
+exit 0 19 U4-04 from_E
+exit 0 20 U4-04 from_E
+exit 0 21 U4-04 from_E
+exit 0 22 U4-04 from_E
+exit 0 23 U4-04 from_E
+exit 0 24 U4-04 from_E
+exit 0 25 U4-04 from_E
+exit 0 26 U4-04 from_E
+mark from_top 46 4 S
+mark from_W 2 20 E
+mark cart_end 33 20 W
+mark seat 21 35 N
+mark q1 6 31 S
+mark q2 10 33 S
+mark q3 14 31 S
+mark q4 18 33 S
+mark q5 24 31 S
+mark q6 28 34 S
+mark q7 32 31 S
+mark q8 36 33 S
+mark q9 9 36 S
+mark q10 30 36 S
+# ---------------------------------------------------------------- 대합실
+text 20 3 "홍보판 '서울에서 가장 깊은 승강장(미확인)'. 누가 '미확인'에 동그라미를 쳤다." w=2
+npc N-UG-012 8 6 S cond="dead(\"N-UG-012\") == 0" bark="펌프는 살아 있어. 손잡이만 없어."
+prop drum_fire 40 5 state=f1 cond="U04_RUN >= 3"
+prop cot 43 4 cond="U04_RUN >= 3"
+text 41 7 "운반조 쉼터. 화로 · 야전 침대 · 젖은 밧줄 타래. 벽 분필 '여의나루 중계 — 셋째 짐부터'." w=2 cond="U04_RUN >= 3"
+door 6 11 locked lock=25 "B3 정비 사무실"
+text 25 9 "긴 에스컬레이터. 층 카운터 'B2 → B4'. 계단처럼 걸어 내려간다." w=1
+# ---------------------------------------------------------------- B3 정비 사무실
+prop home_locker 2 13
+box 2 13 u04_pump name="정비 사무실 사물함"
+text 6 15 "정비 사무실 책상. 펌프 일지 마지막 장 '2호 배수 펌프 이상 없음 — 수문 핸들은 사물함에'. 기건희의 새 글씨로 '아직 있음'." w=2
+# ---------------------------------------------------------------- 대심도 승강장 · 선로 끝
+prop pf_bench 18 14
+prop evac_sign 30 13
+text 30 14 "대피 안내 '대심도 대피소 — 정원 1,200명'. 정원 위에 누가 매직으로 '3,000'." w=1
+prop rail_stop 36 20
+prop rail_stop 36 23
+text 37 21 "선로 끝 차막이. 여기서 짐을 내려 에스컬레이터로 들고 올라간다. 바닥에 운반조 끈 자국." w=1
+# ---------------------------------------------------------------- 반쯤 굳은 판독기 문 · 대기 구역
+prop door_shelter 40 29
+text 42 28 "판독기 문이 반쯤 닫힌 채 굳었다. 문틈에 낀 해골 팔이 2077년 주민등록증을 쥐고 있다 — '3등급 → 4등급 재산정' 도장. 틈은 한 사람 몸만 빠진다." w=1
+npc N-UG-011 39 31 N cond="dead(\"N-UG-011\") == 0" bark="이 사람들, 아직 차례를 기다려."
+prop queue_rail 8 32
+prop queue_rail 16 32
+prop queue_rail 26 32
+prop queue_rail 34 32
+prop queue_skel 12 30
+prop queue_skel2 20 31
+prop queue_skel3 27 30
+prop queue_skel 33 35
+prop queue_skel2 15 36
+prop idterm_yt 3 30
+text 3 31 "대기 명단 단말. 판독기 진공관 하나가 아직 희미하게 켜져 있다. 출력 단추 '대기 구역 명단'." w=1 scene=U04_LIST
+text 21 35 "대기 줄의 빈자리. 바닥 번호 '0398'." w=1 scene=U04_SEAT
+text 46 33 "노란 선. 그 너머 대기 줄 끝이 검은 물에 잠겼다. 물 위로 손 하나 — 젖지 않게 높이 든 종이 한 장." w=2 scene=U04_LR11
+prop shutter_yt 46 38
+text 46 37 "운반조 방수 셔터. 페인트 '하저 — 밧줄은 계약한 사람만'. 셔터 너머에서 물소리가 크다." w=2 scene=U04_SEAL
+# ---------------------------------------------------------------- 레일(이음매 6칸마다 — rail_h2)
+prop rail_h2 0 20
+prop rail_h 1 20
+prop rail_h 2 20
+prop rail_h 3 20
+prop rail_h 4 20
+prop rail_h 5 20
+prop rail_h2 6 20
+prop rail_h 7 20
+prop rail_h 8 20
+prop rail_h 9 20
+prop rail_h 10 20
+prop rail_h 11 20
+prop rail_h2 12 20
+prop rail_h 13 20
+prop rail_h 14 20
+prop rail_h 15 20
+prop rail_h 16 20
+prop rail_h 17 20
+prop rail_h2 18 20
+prop rail_h 19 20
+prop rail_h 20 20
+prop rail_h 21 20
+prop rail_h 22 20
+prop rail_h 23 20
+prop rail_h2 24 20
+prop rail_h 25 20
+prop rail_h 26 20
+prop rail_h 27 20
+prop rail_h 28 20
+prop rail_h 29 20
+prop rail_h2 30 20
+prop rail_h 31 20
+prop rail_h 32 20
+prop rail_h 33 20
+prop rail_h 34 20
+prop rail_h 35 20
+prop rail_h2 0 23
+prop rail_h 1 23
+prop rail_h 2 23
+prop rail_h 3 23
+prop rail_h 4 23
+prop rail_h 5 23
+prop rail_h2 6 23
+prop rail_h 7 23
+prop rail_h 8 23
+prop rail_h 9 23
+prop rail_h 10 23
+prop rail_h 11 23
+prop rail_h2 12 23
+prop rail_h 13 23
+prop rail_h 14 23
+prop rail_h 15 23
+prop rail_h 16 23
+prop rail_h 17 23
+prop rail_h2 18 23
+prop rail_h 19 23
+prop rail_h 20 23
+prop rail_h 21 23
+prop rail_h 22 23
+prop rail_h 23 23
+prop rail_h2 24 23
+prop rail_h 25 23
+prop rail_h 26 23
+prop rail_h 27 23
+prop rail_h 28 23
+prop rail_h 29 23
+prop rail_h2 30 23
+prop rail_h 31 23
+prop rail_h 32 23
+prop rail_h 33 23
+prop rail_h 34 23
+prop rail_h 35 23

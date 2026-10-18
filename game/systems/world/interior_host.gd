@@ -537,6 +537,9 @@ func _floor_tag() -> String:
 
 const WET_MUL := [1.0, 0.8, 0.6]                  ## 침수 이동 배수(SD-09f §3.5: 발목 ×0.8 · 허리 ×0.6)
 var _wet_said := false
+var last_move := Vector2.ZERO                      ## 이번 프레임 주인공 이동 입력(1-D10 수레 밀기 판정)
+var interact_pre: Array[Callable] = []             ## 조사 키 — 다른 무엇보다 먼저 묻는 진행기 고리(참이면 그것으로 끝)
+var interact_post: Array[Callable] = []            ## 조사 키 — 앞에 아무것도 없을 때 묻는 진행기 고리
 var carry_mul := 1.0                               ## 들고 걷는 짐 배수(1-D7 금형 M-395 과적 0.6 — 진행기 Ks가 정한다). 침수 배수와 곱한다
 
 
@@ -606,6 +609,7 @@ func _physics_process(dt: float) -> void:
 		elif not ev.drives(player):                                         # 연출이 주인공을 걷게 하는 중이면(move PC …) 멈추지 않는다
 			player.move(Vector2.ZERO, dt)
 		combat.mates.push = Vector2.ZERO
+		last_move = Vector2.ZERO
 	else:
 		var v := input_vec
 		if use_keyboard and v == Vector2.ZERO:
@@ -629,6 +633,7 @@ func _physics_process(dt: float) -> void:
 				player.move(bv, h)
 		else:
 			player.move(v, dt)
+		last_move = v                                                    # 1-D10 수레 밀기: 진행기가 이번 걸음의 방향을 읽는다
 		combat.mates.push = v                                            # 동행이 길목에서 비킨다(1-10a)
 		_nudge_npcs(v, dt)
 		if player.doll != null:
@@ -857,6 +862,9 @@ func go(map_id: String, mark: String) -> void:
 func interact() -> bool:
 	if box.active:                                                   # 대화·서류 중에는 새로 말을 걸지 않는다(장면이 처음부터 다시 열린다)
 		return false
+	for hk in interact_pre:                                          # 진행기 먼저(1-D10 수레를 탄 채 브레이크 등)
+		if hk.call():
+			return true
 	var sur := combat.surrendered_near(player.loco.logical)             # 항복한 적(1-9e, SD-11 §7.5): 놓아준다
 	if sur != null:
 		combat.release(sur)
@@ -967,6 +975,9 @@ func interact() -> bool:
 					st.boxes[fk] = {"done": true}
 					if str(map.text_fx[cc]) == "reveal_near":
 						box.finished.connect(func() -> void: reveal_near(cc), CONNECT_ONE_SHOT)
+			return true
+	for hk in interact_post:                                         # 아무것도 없을 때 진행기(1-D10 레일에 귀 대기 · 두드리기)
+		if hk.call():
 			return true
 	return false
 

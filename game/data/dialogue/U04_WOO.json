@@ -1,0 +1,116 @@
+{
+ "id": "U04_WOO",
+ "title": "우다현",
+ "loc": "L-UG-07",
+ "npc": "N-UG-010",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "MENU": 3,
+  "RUSHED": 4,
+  "DONE": 6,
+  "HELP": 8,
+  "LINE": 10
+ },
+ "ops": [
+  {
+   "op": "cmd",
+   "name": "u04",
+   "args": [
+    "woo_meet"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "U04_RUSH == 1 and U04_WOO < 2",
+   "to": "RUSHED"
+  },
+  {
+   "op": "line",
+   "who": "N-UG-010",
+   "emo": "기본",
+   "text": "이 배선, 벙커로 이어져 있어. 당신도 알지?"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "벙커는 내가 먼저 다녀왔다",
+     "tags": [],
+     "cond": "MQ104_STAGE >= 100",
+     "fx": "",
+     "to": "DONE",
+     "id": "U04_WOO:1:0"
+    },
+    {
+     "text": "같이 열자. 회로표 맞춰 줄게",
+     "tags": [],
+     "cond": "U04_WOO < 2 and U04_RUSH == 0",
+     "fx": "",
+     "to": "HELP",
+     "id": "U04_WOO:1:1"
+    },
+    {
+     "text": "선로 통제선은 왜 쳤어?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "LINE",
+     "id": "U04_WOO:1:2"
+    },
+    {
+     "text": "다음에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "U04_WOO:1:3"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-UG-010",
+   "emo": "분노",
+   "text": "소리 내고 다니더니. 점검구 앞엔 지뢰 깔았어. 먼저 여는 쪽이 임자니까."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-UG-010",
+   "emo": "놀람",
+   "text": "당신이 먼저 갔군. 인증 단말 화면 봤어? …보고서엔 '선행 접근자 있음'이라고만 쓸게."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-UG-010",
+   "emo": "기본",
+   "text": "배전반 B-7. 회로표 반쪽이 없어. 맞춰 주면 점검구는 같이 열어."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-UG-010",
+   "emo": "기본",
+   "text": "선로로 오가는 게 운반조만은 아니니까. 운반조면 신호를 알 거고."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/U04.txt"
+}

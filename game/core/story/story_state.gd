@@ -140,6 +140,8 @@ func _init() -> void:
 	for k in ["YT_FORGE", "YT_FORGE_T", "YT_TEMP", "YT_LOCK", "YT_UNK", "YT_DEAD_DM", "YT_ESCORT", "YT_POWER", "YT_MOUND", "YT_SEEN", "YT_GATE1", "YT_CLERK_SEEN",
 			"YT_ROBOT_OK", "YT_ELEV", "YT_INC", "YT_INC_DAY", "YT_R", "YT_DOZE", "YT_DMTAKE", "YT_HBTAKE", "YT_OJTAKE", "YT_TAPE", "YT_SG", "YT_KBN", "YT_UPC", "YT_UP", "YT_NOCARD", "YT_CUP", "YT_CUPSEEN", "YT_TRAP", "YT_NO", "YT_HK2", "YT_HK3", "YT_SIDE", "YT_CTAPE", "YT_CDONE", "YT_BUMP_DAY", "UQ06_RADIO", "UQ06_RESULT", "UQ06_DAY", "UQ06_ASKED", "UQ06_MET", "UQ06_GONE", "UQ06_BACK", "UQ06_TOLD", "UQ06_HEARD"]:
 		vars.declare(k, "int", 0)
+	for k in "CART_MAP CART_X CART_LOAD CLOTH JOB JOB_DMG RUN RUN_DAY KNOW ENG WOO RUSH HATCH LIST LIST_DAY GHOUL SK QK SCATTER CLEAR CARR_DAY YIELD TAP SEEN DIG HEARD RIDE CART_NEAR JOB_DAY BACK WEAR RAM GNO TAPJH LOUD CDIR".split(" "):
+		vars.declare("U04_" + k, "int", 0)                                   # 1-D10 U04 여의도 지하(진행기 U04)
 	vars.declare("BC_DOUBT_DAY", "int", 0)                    # 정보 전파(1-10c): 걸어 들어감 소문이 봉천에 닿은 날 + 1 — 그날까지 봉천 사람들이 수군거린다(SD-20 N8)
 	# 거처(1-8b, SD-15 §7): HOME_BC 봉천 옥탑방(0 없음 · 1 내 방 · 2 압류) · HOME_BC_OK 조건이 찬 날(그다음 날부터 조만석이 열쇠를 준다) ·
 	# WELL_RESTED 숙면이 끝나는 절대 분(0 = 없음, SD-11 §11.5 경험치 +10% 12시간) · HOME_BC_NOTE 문 앞 알림(§7.7: 1 '출입 자제' 쪽지 · 2 읽음 · 3 압류 딱지 · 4 읽음 · 5 재개방) ·

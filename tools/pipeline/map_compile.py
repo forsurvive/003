@@ -517,6 +517,10 @@ def _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kin
                      "owner": opt.get("owner", ""), "lock": int(opt.get("lock", 0)), "name": opt.get("name", ""), "cond": opt.get("cond", "")}
                 if e["cond"]:
                     check_cond(e["cond"], known_vars, known_fns)
+                if opt.get("claim"):                                 # 손 맵의 보관 자리(1-D10 신길 중계 사물함): claim=월드X,월드Y(털림 판정 자리) · th=위협도
+                    wx, wy = opt["claim"].split(",")
+                    e["claim"] = [int(wx), int(wy)]
+                    e["th"] = int(opt.get("th", 2))
                 if not (0 <= x < W and 0 <= y < H):
                     raise Err(f"용기 ({x},{y})가 맵 밖이다")
                 if any(b["x"] == x and b["y"] == y for b in out["boxes"]):
@@ -600,7 +604,7 @@ def _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kin
     for p in out["props"]:                                        # 우리 문(1-3 H-03)도 이야기에서 열린다: 열린 것으로 본다
         if p["name"] == "cage_door":
             block[p["y"]][p["x"]] = 0
-        if p["name"] in ("gate_yt", "shutter_yt"):                 # 유리탑 판독기 게이트 · 연결 통로 셔터(1-D9)는 카드로 열린다
+        if p["name"] in ("gate_yt", "shutter_yt", "shutter_jm"):   # 유리탑 판독기 게이트 · 연결 통로 셔터(1-D9) · 지하시장 후문 셔터(1-D10)는 이야기로 열린다
             for i in range(2):
                 block[p["y"]][p["x"] + i] = 0
         if p["name"] == "bj_boom" and not ext:                    # 지하 초소 차단봉(1-D2)은 이야기로 지난다(@cmd u02 boom — 건너편에 선다)

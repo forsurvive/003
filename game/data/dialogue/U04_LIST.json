@@ -1,0 +1,109 @@
+{
+ "id": "U04_LIST",
+ "title": "대기 명단 단말",
+ "loc": "L-UG-08",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "PRINT": 3,
+  "LOUD": 6,
+  "DONE": 10
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "U04_LIST >= 1",
+   "to": "DONE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "판독기 진공관 하나가 희미하게 켜져 있다. 출력 단추 '대기 구역 명단'. 뒤로 잠든 줄이 길다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "숨을 죽이고 단추를 누른다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "은신",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PRINT",
+     "id": "U04_LIST:1:0",
+     "fail": "LOUD"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "U04_LIST:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "u04",
+   "args": [
+    "list_take"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "진공관이 웅 하고 데워진다. 종이가 천천히 밀려 나온다. 줄 선 사람들은 깨지 않는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "u04",
+   "args": [
+    "list_take"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "u04",
+   "args": [
+    "wake_q"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "출력기가 덜컥 걸린다. 쇳소리. 줄 선 사람들이 한꺼번에 고개를 든다 — 종이는 이미 손에 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "출력 단추에 먼지가 닦인 자국. 명단은 한 번 뽑으면 진공관이 꺼진다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/U04.txt"
+}

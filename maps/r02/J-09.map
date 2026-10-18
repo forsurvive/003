@@ -14,14 +14,19 @@ uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu#
 uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu#
 #uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu#
 #uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu#
-######################################################################
+##################################################uu##################
+##################################################uu##################
+##################################################uu##################
 end
 exit 0 5 W L-UG-13
 exit 0 6 W L-UG-13
 exit 65 0 J-03 from_J-09
 exit 66 0 J-03 from_J-09
+exit 50 11 U4-01 from_J09
+exit 51 11 U4-01 from_J09
 mark from_W 1 5 E
 mark from_J-03 65 3 S
+mark from_U401 50 8 N
 mark vent 40 3 N
 mark nest 30 5 W
 prop stairs_up 65 2
@@ -63,3 +68,6 @@ text 56 3 "모래주머니 몇 개. 누군가 둥지 쪽을 막으려다 그만�
 # 1-11h SQ-S09: 쪽방 통로와 이은 구멍(SQ_S09_WALL)
 text 3 3 "천장에 새로 뚫린 구멍. 버팀목 사이로 바람." scene=SQS09_UP cond="SQ_S09_WALL == 1"
 mark from_K-23 4 3 E
+# 1-D10 U04: 남쪽 끝 '후문' 계단 — 5호선 영등포시장역(U4-01)으로 내려간다(운반조 길 · MQ-103 우회 입구)
+text 52 8 "계단 입구 위 초록 페인트 '후문 → 영등포시장역 · 운반조'. 아래에서 레일 쇠 냄새." w=2
+

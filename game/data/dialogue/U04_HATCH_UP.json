@@ -1,0 +1,55 @@
+{
+ "id": "U04_HATCH_UP",
+ "title": "배선 통로 사다리",
+ "loc": "L-R02-02",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "UP": 2
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "굵은 전선 다발을 따라 사다리가 위로 이어진다. 끝에 'B-7 여의도역 배전실'."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "사다리로 올라간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "UP",
+     "id": "U04_HATCH_UP:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "U04_HATCH_UP:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "u04",
+   "args": [
+    "hatch_up"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/U04.txt"
+}

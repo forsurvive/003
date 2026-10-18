@@ -1,0 +1,160 @@
+{
+ "id": "U04_CART",
+ "title": "운반조 레일 수레",
+ "loc": "L-UG-06",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "LOAD": 2,
+  "UNLOAD": 5,
+  "RIDE": 8,
+  "WRAP": 10,
+  "CARRY": 13
+ },
+ "ops": [
+  {
+   "op": "cmd",
+   "name": "u04",
+   "args": [
+    "cart_info"
+   ]
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "짐을 싣는다",
+     "tags": [],
+     "cond": "(has(\"M-406\") + has(\"M-407\") + has(\"M-408\") + has(\"M-409\")) >= 1 and U04_CART_LOAD == 0",
+     "fx": "",
+     "to": "LOAD",
+     "id": "U04_CART:1:0"
+    },
+    {
+     "text": "짐을 내려 든다",
+     "tags": [],
+     "cond": "U04_CART_LOAD >= 6 and U04_CART_LOAD <= 9",
+     "fx": "",
+     "to": "UNLOAD",
+     "id": "U04_CART:1:1"
+    },
+    {
+     "text": "올라탄다(내리막)",
+     "tags": [],
+     "cond": "U04_RIDE == 1",
+     "fx": "",
+     "to": "RIDE",
+     "id": "U04_CART:1:2"
+    },
+    {
+     "text": "대피민을 내려 업는다",
+     "tags": [],
+     "cond": "U04_CART_LOAD == 10",
+     "fx": "",
+     "to": "CARRY",
+     "id": "U04_CART:1:3"
+    },
+    {
+     "text": "바퀴에 천을 감는다",
+     "tags": [],
+     "cond": "has(\"M-411\") >= 1 and U04_CLOTH == 0",
+     "fx": "",
+     "to": "WRAP",
+     "id": "U04_CART:1:4"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "U04_CART:1:5"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "u04",
+   "args": [
+    "load"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "짐을 수레에 묶는다. 밀면 간다 — 바퀴가 이음매를 칠 때마다 덜컹."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "u04",
+   "args": [
+    "unload"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "짐을 내려 들었다. 걸음이 무겁다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "u04",
+   "args": [
+    "ride"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "u04",
+   "args": [
+    "wrap"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "헌 천을 바퀴에 감아 묶는다. 이음매 스물쯤이면 닳아 풀릴 것이다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "u04",
+   "args": [
+    "ghoul_carry"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "마른 몸을 등에 업는다. 가볍다. 숨 대신 쉰 소리가 귀 옆에서 난다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/U04.txt"
+}

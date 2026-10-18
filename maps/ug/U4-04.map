@@ -1,0 +1,246 @@
+# 5호선 터널 B — 여의도 → 여의나루(대심도 내리막, SD-09f U04 · 1-D 계획 §16.6 · 단계 1-D10). 100×15 · 늘 어둠.
+# 레일 두 줄(7 · 10 — 수레는 7줄) · 서쪽 6~70칸이 내리막(수레를 타면 질주 · 브레이크) · 북쪽 운반조 쉼 칸(분필 운행표 — 원문 X06 수위표는 하저 터널 몫이라 쓰지 않는다)
+# · 동쪽 아래 선로 침수 웅덩이(침수 구울 매복).
+map U4-04 5호선 터널 — 여의도 · 여의나루
+set cv
+grid
+####################################################################################################
+####################################################################################################
+####################################################################################################
+########################################uuuuuuu#####################################################
+########################################uuuuuuu#####################################################
+########################################uuuuuuu#####################################################
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuufffffffffuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuufffffffffuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuufffffffffuuuuuuuuuuuuuuuuu
+####################################################################################################
+####################################################################################################
+####################################################################################################
+end
+exit 0 6 U4-03 from_E
+exit 0 7 U4-03 from_E
+exit 0 8 U4-03 from_E
+exit 0 9 U4-03 from_E
+exit 0 10 U4-03 from_E
+exit 0 11 U4-03 from_E
+exit 99 6 U4-05 from_W
+exit 99 7 U4-05 from_W
+exit 99 8 U4-05 from_W
+exit 99 9 U4-05 from_W
+exit 99 10 U4-05 from_W
+exit 99 11 U4-05 from_W
+mark from_W 2 7 E
+mark from_E 97 7 W
+text 8 6 "벽 분필 '여기서부터 대심도 — 수레 탄 사람은 브레이크 손잡이 확인'. 레일이 눈에 띄게 아래로 기운다." w=2
+prop chalk_h 20 6
+prop chalk_h 34 6
+prop chalk_h 48 6
+prop chalk_h 62 6
+text 43 3 "운반조 쉼 칸. 분필 운행표 — '매일 밤 10~11시 통과 · 짝숫날 여의나루 → 영등포 둘 · 홀숫날 영등포 → 여의나루 셋 · 신길 깸 — 천 감아 · 여의도 공병 — 길게 하나, 둘 · 여의나루 문은 수레 못 지나감 — 손으로'." w=3
+prop cot 45 3
+enemy CR-206 77 10 lurk=1 cond="DG_U04 == 0"
+enemy CR-095 58 9 cond="DG_U04 == 0"
+# ---------------------------------------------------------------- 레일(이음매 6칸마다 — rail_h2)
+prop rail_h2 0 7
+prop rail_h 1 7
+prop rail_h 2 7
+prop rail_h 3 7
+prop rail_h 4 7
+prop rail_h 5 7
+prop rail_h2 6 7
+prop rail_h 7 7
+prop rail_h 8 7
+prop rail_h 9 7
+prop rail_h 10 7
+prop rail_h 11 7
+prop rail_h2 12 7
+prop rail_h 13 7
+prop rail_h 14 7
+prop rail_h 15 7
+prop rail_h 16 7
+prop rail_h 17 7
+prop rail_h2 18 7
+prop rail_h 19 7
+prop rail_h 20 7
+prop rail_h 21 7
+prop rail_h 22 7
+prop rail_h 23 7
+prop rail_h2 24 7
+prop rail_h 25 7
+prop rail_h 26 7
+prop rail_h 27 7
+prop rail_h 28 7
+prop rail_h 29 7
+prop rail_h2 30 7
+prop rail_h 31 7
+prop rail_h 32 7
+prop rail_h 33 7
+prop rail_h 34 7
+prop rail_h 35 7
+prop rail_h2 36 7
+prop rail_h 37 7
+prop rail_h 38 7
+prop rail_h 39 7
+prop rail_h 40 7
+prop rail_h 41 7
+prop rail_h2 42 7
+prop rail_h 43 7
+prop rail_h 44 7
+prop rail_h 45 7
+prop rail_h 46 7
+prop rail_h 47 7
+prop rail_h2 48 7
+prop rail_h 49 7
+prop rail_h 50 7
+prop rail_h 51 7
+prop rail_h 52 7
+prop rail_h 53 7
+prop rail_h2 54 7
+prop rail_h 55 7
+prop rail_h 56 7
+prop rail_h 57 7
+prop rail_h 58 7
+prop rail_h 59 7
+prop rail_h2 60 7
+prop rail_h 61 7
+prop rail_h 62 7
+prop rail_h 63 7
+prop rail_h 64 7
+prop rail_h 65 7
+prop rail_h2 66 7
+prop rail_h 67 7
+prop rail_h 68 7
+prop rail_h 69 7
+prop rail_h 70 7
+prop rail_h 71 7
+prop rail_h2 72 7
+prop rail_h 73 7
+prop rail_h 74 7
+prop rail_h 75 7
+prop rail_h 76 7
+prop rail_h 77 7
+prop rail_h2 78 7
+prop rail_h 79 7
+prop rail_h 80 7
+prop rail_h 81 7
+prop rail_h 82 7
+prop rail_h 83 7
+prop rail_h2 84 7
+prop rail_h 85 7
+prop rail_h 86 7
+prop rail_h 87 7
+prop rail_h 88 7
+prop rail_h 89 7
+prop rail_h2 90 7
+prop rail_h 91 7
+prop rail_h 92 7
+prop rail_h 93 7
+prop rail_h 94 7
+prop rail_h 95 7
+prop rail_h2 96 7
+prop rail_h 97 7
+prop rail_h 98 7
+prop rail_h 99 7
+prop rail_h2 0 10
+prop rail_h 1 10
+prop rail_h 2 10
+prop rail_h 3 10
+prop rail_h 4 10
+prop rail_h 5 10
+prop rail_h2 6 10
+prop rail_h 7 10
+prop rail_h 8 10
+prop rail_h 9 10
+prop rail_h 10 10
+prop rail_h 11 10
+prop rail_h2 12 10
+prop rail_h 13 10
+prop rail_h 14 10
+prop rail_h 15 10
+prop rail_h 16 10
+prop rail_h 17 10
+prop rail_h2 18 10
+prop rail_h 19 10
+prop rail_h 20 10
+prop rail_h 21 10
+prop rail_h 22 10
+prop rail_h 23 10
+prop rail_h2 24 10
+prop rail_h 25 10
+prop rail_h 26 10
+prop rail_h 27 10
+prop rail_h 28 10
+prop rail_h 29 10
+prop rail_h2 30 10
+prop rail_h 31 10
+prop rail_h 32 10
+prop rail_h 33 10
+prop rail_h 34 10
+prop rail_h 35 10
+prop rail_h2 36 10
+prop rail_h 37 10
+prop rail_h 38 10
+prop rail_h 39 10
+prop rail_h 40 10
+prop rail_h 41 10
+prop rail_h2 42 10
+prop rail_h 43 10
+prop rail_h 44 10
+prop rail_h 45 10
+prop rail_h 46 10
+prop rail_h 47 10
+prop rail_h2 48 10
+prop rail_h 49 10
+prop rail_h 50 10
+prop rail_h 51 10
+prop rail_h 52 10
+prop rail_h 53 10
+prop rail_h2 54 10
+prop rail_h 55 10
+prop rail_h 56 10
+prop rail_h 57 10
+prop rail_h 58 10
+prop rail_h 59 10
+prop rail_h2 60 10
+prop rail_h 61 10
+prop rail_h 62 10
+prop rail_h 63 10
+prop rail_h 64 10
+prop rail_h 65 10
+prop rail_h2 66 10
+prop rail_h 67 10
+prop rail_h 68 10
+prop rail_h 69 10
+prop rail_h 70 10
+prop rail_h 71 10
+prop rail_h2 72 10
+prop rail_h 73 10
+prop rail_h 74 10
+prop rail_h 75 10
+prop rail_h 76 10
+prop rail_h 77 10
+prop rail_h2 78 10
+prop rail_h 79 10
+prop rail_h 80 10
+prop rail_h 81 10
+prop rail_h 82 10
+prop rail_h 83 10
+prop rail_h2 84 10
+prop rail_h 85 10
+prop rail_h 86 10
+prop rail_h 87 10
+prop rail_h 88 10
+prop rail_h 89 10
+prop rail_h2 90 10
+prop rail_h 91 10
+prop rail_h 92 10
+prop rail_h 93 10
+prop rail_h 94 10
+prop rail_h 95 10
+prop rail_h2 96 10
+prop rail_h 97 10
+prop rail_h 98 10
+prop rail_h 99 10

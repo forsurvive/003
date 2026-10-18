@@ -196,6 +196,7 @@ var ks: Ks                                              ## 구로 공단 지식�
 var ga: Ga                                              ## 가산 아울렛 거리 DG-GA(1-D6 — 눈 속이기 · 작업복 상자 · 진열창)
 var hp: Hp                                              ## 여의도 대학병원 DG-HP(1-D8 — 병원 시계 · 차임 대형 · 면회 · 약길)
 var yt: Yt                                              ## 여의도 유리탑 3동 DG-YT · 증권가 객장 UQ-06(1-D9 — 사원증 판독 · 로봇 대조 · 테이프)
+var u04: U04                                            ## 여의도 지하 U04(1-D10 — 레일 수레 · 귀 대기 · 두드림 · 운송 · UG-H03)
 var stash: Stash                                        ## 보관 자리 · 털림 · UQ-125 털린 은닉처(1-L)
 var caravans: Caravans                             ## 순회 상인 일정(1-8d)
 var sol := 1                                       ## 1막 봇 해법(--sol=1~5, 0-10)
@@ -316,6 +317,11 @@ func _paths() -> void:
 		add_child(yt)
 		yt.setup(host, log_on)
 		yt.want_save.connect(func(_w: String) -> void: request_auto("event"))   # 마감 종(1-D9 UQ-06)
+	if u04 == null:
+		u04 = U04.new()
+		add_child(u04)
+		u04.setup(host, log_on)
+		u04.want_save.connect(func(_w: String) -> void: request_auto("event"))   # 운송 한 번 · 대기 줄 빈자리(1-D10)
 	if stash == null:
 		stash = Stash.new()
 		add_child(stash)

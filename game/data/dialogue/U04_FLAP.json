@@ -1,0 +1,48 @@
+{
+ "id": "U04_FLAP",
+ "title": "진공관 플랩 시세판",
+ "loc": "L-UG-07",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "CLOSED": 4
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "UQ06_RESULT == 1",
+   "to": "CLOSED"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "셋째 줄만 또렷하다 — '태성중공업 ▲ 전쟁 수혜'. 나머지 플랩은 넘어가다 멈췄다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "판 아래 명판 '세진 금융정보 — 증권가 객장 회선'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "플랩이 끝까지 넘어갔다. 머리에 '장 마감'. 증권가 객장과 같은 회선이다 — 누가 마감가를 넣었다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/U04.txt"
+}

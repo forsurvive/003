@@ -1,0 +1,43 @@
+{
+ "id": "U04_LR11",
+ "title": "노란 선 너머",
+ "loc": "L-UG-08",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "노란 선 너머 대기 줄 끝이 검은 물에 잠겼다. 물 위로 손 하나 — 젖지 않게 높이 든 종이 한 장."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "손을 뻗어도 닿지 않는다. 물은 깊고 차다."
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-UG-011\") == 1",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-UG-011",
+   "emo": "기본",
+   "text": "그 사람 건 그 사람이 쥐고 있어."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/U04.txt"
+}

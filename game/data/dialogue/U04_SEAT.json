@@ -1,0 +1,103 @@
+{
+ "id": "U04_SEAT",
+ "title": "대기 줄의 빈자리",
+ "loc": "L-UG-08",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "DOWN": 4,
+  "DOWNX": 10,
+  "SAT": 14
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "U04_GHOUL == 3",
+   "to": "SAT"
+  },
+  {
+   "op": "if",
+   "cond": "U04_GHOUL == 2",
+   "to": "DOWN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "대기 줄의 빈자리. 바닥 번호 '0398'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "u04",
+   "args": [
+    "seat"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "U04_GNO != 5",
+   "to": "DOWNX"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "등의 사람을 빈자리에 내려 앉힌다. 번호표와 바닥 번호가 같다."
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-UG-011\") == 1",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-UG-011",
+   "emo": "놀람",
+   "text": "신길에서 왔구나. 0398번, 미입장. …차례 왔어요. 앉아 쉬어요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "등의 사람을 빈자리에 내려 앉힌다. 번호표의 끝자리가 바닥 번호와 다르다."
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-UG-011\") == 1",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-UG-011",
+   "emo": "슬픔",
+   "text": "0398번 자리인데… 번호가 닳았네. 괜찮아요, 빈자리는 다 같은 자리야. 앉아 쉬어요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "0398번 자리에 앉은 사람이 고개를 숙이고 잔다. 번호표를 쥔 손이 펴져 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/U04.txt"
+}

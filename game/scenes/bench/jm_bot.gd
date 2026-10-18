@@ -27,6 +27,7 @@ var ga: Ga
 var ks: Ks                                         ## 구로 공단 지식산업센터 · 문래(1-D7)
 var hosp: Hp                                       ## 여의도 대학병원(1-D8)
 var yt: Yt                                         ## 여의도 유리탑 3동 · 증권가 객장(1-D9)
+var u04: U04                                       ## 여의도 지하 U04(1-D10)
 var stash: Stash                                   ## 보관 자리 · UQ-125(1-L)
 var st: StoryState
 var route := "job"
@@ -144,6 +145,9 @@ func _ready() -> void:
 	yt = Yt.new()
 	add_child(yt)
 	yt.setup(host, true)
+	u04 = U04.new()
+	add_child(u04)
+	u04.setup(host, true)
 	stash = Stash.new()
 	add_child(stash)
 	stash.setup(host, true)
@@ -561,6 +565,35 @@ func _ready() -> void:
 				["go", 15, 4, "SG-01"], ["want", ["시세 테이프"]], ["use", 15, 3], ["wait", 2.0], ["shot", "yt_board"],
 				["check", "UQ06_RESULT == 1 and has(\"M-405\") == 1 and UQ06_STAGE == 100", "전광판 — 마감 종 · 테이프는 지워졌다 · UQ-06 끝"],
 				["want", ["구울이 됐어"]], ["talk", "N-R02-032"], ["check", "UQ06_ASKED == 1", "'…그럼 아직 심부름 중이네요.'"]]
+		"u04":                                                            # 1-D10 여의도 지하: 소민서 진공관 운송 · 천 감기 · 레일 말 → 수레에 싣고 민다(발 고정 — 수레가 비켜야 간다) → 승강장 끝에서 수레가 따라 넘어감 →
+			#   천 감고 신길 앞(줄이 깨지 않는다) → 내리막에 올라타 여의도로 → '길게 하나, 둘' 공병 통제선 → 터널 B 내리막 · 브레이크 → 여의나루 차막이 → 손으로 기건희에게
+			st.vars.set_v("GAME_DAY", 12)
+			st.vars.set_v("V_ACT", 1)
+			host.date_text = "2277. 10. 30.  10:00"
+			host.enter("U4-01", "from_top")
+			plan = [["hp", 3000], ["noenc"], ["clear", ["CR-095", "CR-002"]], ["wait", 1.5], ["shot", "u04_station"],
+				["want", ["짐을 받는다", "진공관"]], ["talk", "N-UG-009"], ["wait", 0.5], ["check", "U04_JOB == 6 and has(\"M-406\") == 1", "소민서 — 진공관 짐"],
+				["want", ["바퀴에 천을", "레일 말", "다음에"]], ["talk", "N-UG-009"], ["wait", 0.5], ["check", "U04_CLOTH == 1 and U04_KNOW == 1", "바퀴 천 · 레일 말"],
+				["go", 2, 18, "U4-01"], ["want", ["싣는다"]], ["use", 3, 18], ["wait", 0.5], ["check", "U04_CART_LOAD == 6", "진공관을 수레에"], ["shot", "u04_cart"],
+				["hold", 1, 0, "U04_CART_X >= 41", 60.0, "걸어 들어가 민다 — 승강장 끝까지"],
+				["go", 42, 17, "U4-01"], ["go", 43, 17, "U4-01"], ["until", "map:U4-02", 10.0, "터널 A로"],
+				["check", "U04_CART_MAP == 2 and U04_CART_X == 3", "수레가 따라 넘어왔다"], ["clear", ["CR-095"]],
+				["hold", 1, 0, "U04_CART_X >= 92", 120.0, "터널 A — 신길 앞을 천 감고"], ["check", "u04_quiet", "신길 줄이 깨지 않았다(천)"], ["shot", "u04_singil"],
+				["clear", ["CR-095"]], ["u04go"], ["want", ["올라탄다"]], ["use", 0, 0, "cart"], ["wait", 0.5], ["check", "u04_riding", "내리막 — 올라탔다"],
+				["until", "map:U4-03", 30.0, "탄 채로 여의도역"], ["until", "u04_stopped", 30.0, "브레이크 없이 — 공병 모래주머니에 쿵"], ["check", "U04_RAM == 1", "들이받음 하나(초소가 화낸다)"], ["clear", ["CR-200"]], ["shot", "u04_yd"],
+				["go", 30, 19, "U4-03"], ["want", ["길게 하나, 둘"]], ["use", 30, 20], ["use", 30, 20], ["wait", 0.5], ["check", "U04_ENG == 1", "운반조 신호 — 공병 통제선이 걷힌다"],
+				["u04go"], ["hold", 1, 0, "U04_CART_X >= 44", 60.0, "통제선 틈으로 민다"],
+				["go", 43, 19, "U4-03"], ["go", 46, 19, "U4-03"], ["go", 47, 19, "U4-03"], ["until", "map:U4-04", 10.0, "터널 B로"],
+				["check", "U04_CART_MAP == 4", "수레가 따라 넘어왔다"], ["clear", ["CR-095", "CR-206"]],
+				["hold", 1, 0, "U04_CART_X >= 8", 20.0, "내리막 머리까지"],
+				["u04go"], ["want", ["올라탄다"]], ["use", 0, 0, "cart"], ["wait", 0.5], ["check", "u04_riding", "대심도 내리막 — 올라탔다"],
+				["until", "U04_CART_X >= 36", 30.0, "질주"], ["use", 0, 0, "brake"], ["until", "u04_stopped", 15.0, "브레이크 — 선다"], ["shot", "u04_brake"],
+				["check", "U04_CART_X < 70", "내리막 끝 전에 섰다"], ["clear", ["CR-095", "CR-206"]],
+				["u04go"], ["hold", 1, 0, "U04_CART_X >= 96", 90.0, "터널 B 끝까지"],
+				["go", 98, 8, "U4-04"], ["go", 99, 8, "U4-04"], ["until", "map:U4-05", 10.0, "여의나루로"],
+				["u04go"], ["hold", 1, 0, "U04_CART_X >= 34", 30.0, "차막이까지"], ["shot", "u04_naru"],
+				["u04go"], ["want", ["내려"]], ["use", 0, 0, "cart"], ["wait", 0.5], ["check", "has(\"M-406\") == 1 and U04_CART_LOAD == 0", "차막이 — 짐을 손으로"],
+				["want", ["다음에"]], ["talk", "N-UG-012"], ["wait", 1.0], ["check", "U04_RUN == 1 and U04_JOB == 9 and has(\"M-409\") == 1", "기건희 — 운임 · 돌아오는 펌프 부품"], ["shot", "u04_kigun"]]
 		"hosp":                                                           # 1-D8 대학병원: 1층 → 7층 반수빈(첫 대화 · 사정) → 칠판 → 지하 회진 행진 → 방재실 배식 차임(덮어쓰기 — 7층이 흐림) → 면회 시간 흐린 침상 곁 → 보급 → 약길 ① 편지 → 금하람
 			st.vars.set_v("GAME_DAY", 12)
 			st.vars.set_v("V_ACT", 1)
@@ -1064,6 +1097,17 @@ func _process(dt: float) -> void:
 		if s[0] != "fight":
 			return
 	match str(s[0]):
+		"u04go":                                                        # 1-D10 수레 뒤 칸으로(레일 방향 동쪽으로 밀 자리)
+			plan[i] = ["go", u04.cart_x() - 1, u04._row(), host.map.id]
+			return
+		"hold":                                                         # 1-D10 한 방향으로 계속 걷는다(수레 밀기 — 막히면 서고, 수레가 비키면 간다)
+			host.input_fn = func() -> Vector2: return Vector2(float(s[1]), float(s[2]))
+			var okh := StoryExpr.test(str(s[3]), st)
+			if okh or step_t > float(s[4]):
+				host.input_fn = func() -> Vector2: return Vector2.ZERO
+				checks.append([okh, str(s[5])])
+				print("  [확인] %s %s (%.1f초 · 수레 %s %d)" % ["○" if okh else "×", s[5], step_t, u04.cart_map(), u04.cart_x()])
+				_next()
 		"grgo", "gruse":                                               # 구로 구내(월드 손 맵 X-GR) 좌표 → 월드 좌표(1-D4)
 			var o := gr.origin()
 			plan[i] = ["go" if str(s[0]) == "grgo" else "use", o.x + int(s[1]), o.y + int(s[2])]
@@ -1124,6 +1168,10 @@ func _process(dt: float) -> void:
 			host.input_fn = _walk.bind(goal + (p - goal).normalized() * 34.0)
 		"use":
 			host.input_fn = func() -> Vector2: return Vector2.ZERO
+			if s.size() > 3 and str(s[3]) == "cart":                       # 1-D10 바로 앞 수레를 본다
+				s = ["use", u04.cart_x(), u04._row()]
+			elif s.size() > 3 and str(s[3]) == "brake":                    # 1-D10 탄 채 조사 키(브레이크)
+				s = ["use", u04.cart_x() + 3, u04._row()]
 			host.player.loco.facing = Locomotion.snap8(Vector2(int(s[1]) * 32 + 16, int(s[2]) * 32 + 16) - host.player.loco.logical, 0.0)
 			host.player._show()
 			host.interact()
@@ -1414,6 +1462,10 @@ func _process(dt: float) -> void:
 				ok = hosp._phase == 3 and fs2.size() >= 3 and fs2.all(func(e): return (e.has_meta("hp_go") and int(e.get_meta("hp_go")) == 3) or (e.asleep and e.doze == "stand"))
 				if not ok:
 					print("  [봇] 대형 %d · %s" % [hosp._phase, str(fs2.map(func(e): return [e.who, e.get_meta("hp_go", -1), e.asleep, e.doze, e.brain.state]))])
+			elif str(s[1]) == "u04_quiet":
+				ok = u04._stayers.size() == 6 and u04._stayers.all(func(e): return is_instance_valid(e) and e.asleep)
+			elif str(s[1]) == "u04_riding":
+				ok = u04._riding
 			elif str(s[1]) == "ks_carry":
 				ok = is_equal_approx(host.carry_mul, Ks.CARRY_MUL)
 			elif str(s[1]) == "ga_lure":
@@ -1447,6 +1499,8 @@ func _until(s: Array) -> bool:
 		ok2 = host.map.id == c.substr(4)
 	elif c == "card":
 		ok2 = seen.has("card") or str(host.ev._job.get("kind", "")) == "card"
+	elif c == "u04_stopped":
+		ok2 = not u04._riding and not u04._ride_carry
 	elif c == "side:stand":
 		ok2 = side != null and side.stand_t > 0.0
 	elif c == "win":                                                   # 대화 안에서 열린 거래 · 용기 창(1-L): 찍고 닫는다

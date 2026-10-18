@@ -122,7 +122,7 @@ func _up(n: int) -> void:
 # ---------------------------------------------------------------- 내 자리(§3.1)
 ## 삼을 수 있나: "" = 된다 · 아니면 까닭(창에 단추를 안 띄운다)
 func can_claim(map_id: String, b: Dictionary, c: Dictionary) -> String:
-	if st.year() < 2277 or not (map_id == "W" or map_id.begins_with("G-")):
+	if st.year() < 2277 or not (map_id == "W" or map_id.begins_with("G-") or b.has("claim")):
 		return "여기는 내 자리로 삼을 수 없다"                          # 손 맵 · 볼트 시대(§6 #17 · #18)
 	if not (str(b.get("kind", "")) in CLAIM_KINDS) or str(b.get("owner", "")) != "":
 		return "남의 자리다"                                             # 주인 있는 용기 · 바꿈 상자(§9.4 #28 · #35)
@@ -138,6 +138,8 @@ func is_mine(c: Dictionary) -> bool:
 
 
 func _wpos(map_id: String, b: Dictionary) -> Vector2i:
+	if b.has("claim"):                                                   # 손 맵 보관 자리(claim=월드 좌표): 털림 판정은 그 월드 자리로
+		return Vector2i(int(b["claim"][0]), int(b["claim"][1]))
 	if map_id.begins_with("G-"):
 		var p := map_id.split("-")
 		return Vector2i(int(p[1]), int(p[2]))

@@ -1,0 +1,42 @@
+{
+ "id": "U04_RELAY",
+ "title": "운반조 측실",
+ "loc": "L-UG-06",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "MINE": 3
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "U04_RUN >= 3",
+   "to": "MINE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "운반조 측실. 분필 '중계 — 반장 허락 받은 사람만'. 사물함은 자물쇠 대신 끈으로 묶였다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "사물함 하나에 분필로 새 이름표 — 내 몫이다. 반장이 셋째 짐 뒤에 비워 뒀다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/U04.txt"
+}
