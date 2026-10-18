@@ -6,8 +6,8 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "TAKE": 7,
-  "AGAIN": 10
+  "TAKE": 8,
+  "AGAIN": 11
  },
  "ops": [
   {
@@ -38,6 +38,10 @@
    "who": "SYS",
    "emo": "기본",
    "text": "'안 간 사람들도 있다. 내가 기다리겠다고 했다. 열차는 어디로도 안 간다.'"
+  },
+  {
+   "op": "do",
+   "fx": "HP_OJ = 1"
   },
   {
    "op": "line",

@@ -57,7 +57,7 @@ prop cubicle_kt 31 16 state=ant
 box 31 16 desk name="흙에 묻힌 책상"
 prop remains 6 12
 box 6 12 bag name="흙에 반쯤 묻힌 유해"
-text 7 12 "흙벽에 박힌 유해. 2077년 사원증 '금빛 빌딩 관리팀'."
+text 7 12 "흙벽에 박힌 유해. 2077년 사원증 '금빛 빌딩 관리팀'." scene=HP_TAG
 prop extinguisher_kt 34 18 cond="KT_EXT4 == 0"
 prop extinguisher_kt 34 18 state=empty cond="KT_EXT4 == 1"
 text 34 19 "흙 속에 서 있는 소화기." scene=KT_EXT4 cond="KT_EXT4 == 0"

@@ -1809,6 +1809,32 @@
    },
    "title": "털린 은닉처"
   },
+  "UQ-126": {
+   "key": "UQ126",
+   "places": [
+    "L-R02-09",
+    "L-R02-11"
+   ],
+   "places_src": "05_misc-quests-encounters.md:1040",
+   "stages": {
+    "10": {
+     "done": "반수빈 첫 대화",
+     "log": "여의도 대학병원 7층에 구울 병동이 있다",
+     "src": "05_misc-quests-encounters.md:1050"
+    },
+    "100": {
+     "done": "교역(①) · 들것 정류지(②) · 이주(③)",
+     "log": "병동의 약길이 정해졌다",
+     "src": "05_misc-quests-encounters.md:1052"
+    },
+    "20": {
+     "done": "반수빈에게 사정을 들음 · 처치실 빈 봉지",
+     "log": "들것이 끊긴 뒤 병동 약이 바닥났다",
+     "src": "05_misc-quests-encounters.md:1051"
+    }
+   },
+   "title": "병동 7층"
+  },
   "UQ-68": {
    "key": "UQ68",
    "places": [

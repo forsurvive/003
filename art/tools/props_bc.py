@@ -1048,6 +1048,10 @@ from props_ks import PROPS_KS, STATES_KS                              # 구로 �
 for _k in PROPS_KS:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_KS)
+from props_hp import PROPS_HP, STATES_HP                              # 여의도 대학병원(1-D8): 방송 단말 · 면회 게시판 · 냉동 칸 · 간호사실 · 분류 띠 · 차트 · 들것 · 구울 환자 병상
+for _k in PROPS_HP:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_HP)
 from props_trap import PROPS_TRAP, STATES_TRAP, burnt_states       # 함정 · 환경 폭발(1-9c, SD-11 §9.2 · §9.3)
 for _k in PROPS_TRAP:
     assert _k not in PROPS, _k
@@ -1071,6 +1075,7 @@ STATES.update(STATES_KT)
 STATES.update(STATES_GA)
 STATES.update(STATES_MR)
 STATES.update(STATES_KS)
+STATES.update(STATES_HP)
 STATES.update(STATES_BS)
 STATES.update(STATES_S04)
 STATES.update(STATES_S03)

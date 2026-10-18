@@ -21,7 +21,9 @@ uniform int shade[16];
 uniform int vthr[16];
 uniform int dens[16];
 uniform int hard[16];
-uniform int soft[16];                            // 자연 재질: 서로 만나면 테 없이 2×2 디더로 섞는다(바이옴 전이)
+uniform int soft[16];
+uniform int curb[16];                            // 연석 띠(px): 낮은 재질과 만나는 가장자리(보도 — 1-R v2) · 색은 curb_rgb(팔레트 그대로)
+uniform ivec3 curb_rgb[8];                            // 자연 재질: 서로 만나면 테 없이 2×2 디더로 섞는다(바이옴 전이)
 uniform int boff[32];
 uniform int dlist[128];
 uniform int dcount[16];
@@ -43,6 +45,11 @@ ivec2 cell_at(int tx, int ty) {
 ivec2 nz(int x, int y) {
 	vec4 c = texelFetch(noise, ivec2(x & 255, y & 255), 0);
 	return ivec2(int(round(c.r * 255.0)), int(round(c.b * 255.0)));
+}
+
+bool low_nb(int x, int y, int m0) {
+	ivec2 c = cell_at(x, y);
+	return pri[mat_of[c.x]] < pri[m0] && c.y != 1 && c.y != 3;
 }
 
 uint thash(int tx, int ty) {
@@ -119,6 +126,8 @@ void fragment() {
 	}
 	bool dark = false;
 	bool deep = false;
+	bool curb_on = false;
+	int ck = 1;
 	if (second != NEG) {
 		int margin = win_s - second;
 		int pw = pri[win_m];
@@ -127,7 +136,8 @@ void fragment() {
 		int band = pw > ps ? rim[win_m] : ((pw == ps || rim[sec_m] > 0) ? shade[win_m] : 0);
 		bool both_soft = soft[win_m] == 1 && soft[sec_m] == 1;
 		if (both_soft) band = 0;
-		dark = band > 0 && margin < band * 768;
+		dark = band > 0 && margin < band * 768 && curb[win_m] == 0;       // 연석 재질은 연석 띠가 테두리를 대신한다
+
 		if (both_soft && margin < 7680) {                                  // 경계에서 10px 안쪽: 50% → 0% 디더 섞기
 			int p_mix = ((7680 - margin) * 128) / 7680;
 			int hp = int((thash(X >> 1, Y >> 1) >> 5u) & 255u);
@@ -143,6 +153,28 @@ void fragment() {
 	int q1 = (fx - 16) * (fx - 16) * 36 + (fy + 3) * (fy + 3) * 169;
 	if ((own.y == 2 && q0 <= 6084) || (fn == 2 && q1 <= 6084)) dark = true;
 
+	int cw = curb[m0];
+	if (cw > 0 && win_m == m0) {                                          // 연석(1-R v2): 낮은 이웃 타일 쪽 가장자리에서 cw px — 곧은 띠 · 바깥 모서리 네모
+		int dd = 99;
+		bool lN = low_nb(tx, ty - 1, m0);
+		bool lS = low_nb(tx, ty + 1, m0);
+		bool lW = low_nb(tx - 1, ty, m0);
+		bool lE = low_nb(tx + 1, ty, m0);
+		if (lN) dd = min(dd, fy);
+		if (lS) dd = min(dd, 31 - fy);
+		if (lW) dd = min(dd, fx);
+		if (lE) dd = min(dd, 31 - fx);
+		if (!lN && !lW && low_nb(tx - 1, ty - 1, m0)) dd = min(dd, max(fx, fy));
+		if (!lN && !lE && low_nb(tx + 1, ty - 1, m0)) dd = min(dd, max(31 - fx, fy));
+		if (!lS && !lW && low_nb(tx - 1, ty + 1, m0)) dd = min(dd, max(fx, 31 - fy));
+		if (!lS && !lE && low_nb(tx + 1, ty + 1, m0)) dd = min(dd, max(31 - fx, 31 - fy));
+		if (dd < cw) {
+			curb_on = true;
+			ck = dd == 0 ? 0 : (dd == cw - 1 ? 3 : (int((thash(X, Y) >> 7u) & 7u) == 0 ? 2 : 1));
+		}
+	}
+	bool walld = deep || (fn == 1 && fy < 5) || (cell_at(tx - 1, ty).y == 1 && fx < 2) || (cell_at(tx + 1, ty).y == 1 && fx > 29)
+		|| (own.y == 2 && q0 <= 6084) || (fn == 2 && q1 <= 6084);
 	int oxw = (win_m * 73) & 255;
 	int oyw = (win_m * 151) & 255;
 	int var = nz(X + oxw, Y + oyw).y > vthr[win_m] ? 1 : 0;
@@ -150,6 +182,10 @@ void fragment() {
 	int bx = boff[win_m * 2] * var;
 	int by = boff[win_m * 2 + 1] * var;
 	vec4 outc = texelFetch(atlas, ivec2(col * cell + ((X + bx) & (cell - 1)), win_m * cell + ((Y + by) & (cell - 1))), 0);
+	if (curb_on) {
+		ivec3 cc = curb_rgb[ck + (walld ? 4 : 0)];
+		outc = vec4(vec3(cc) / 255.0, 1.0);
+	}
 
 	uint h = thash(tx, ty);
 	int fo = force[own.x];

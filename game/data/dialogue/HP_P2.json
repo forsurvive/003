@@ -1,0 +1,104 @@
+{
+ "id": "HP_P2",
+ "title": "남궁호",
+ "loc": "L-R02-09",
+ "npc": "N-HP-P2",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TELL": 6,
+  "TOLD": 7,
+  "DONE": 11
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "HP_ASK2 == 2",
+   "to": "DONE"
+  },
+  {
+   "op": "if",
+   "cond": "HP_OJ == 1",
+   "to": "TELL"
+  },
+  {
+   "op": "line",
+   "who": "N-HP-P2",
+   "emo": "기본",
+   "text": "2호선 기관사 남궁호. 그날 밤 구로 기지에 동기가 있었어요. 오재석. 7703 편성 예비군 수송."
+  },
+  {
+   "op": "line",
+   "who": "N-HP-P2",
+   "emo": "기본",
+   "text": "그 녀석이 열차를 몰았는지, 문을 열었는지. 그것만 알면 돼요."
+  },
+  {
+   "op": "do",
+   "fx": "HP_ASK2 = 1"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "오재석의 수첩 이야기를 한다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TOLD",
+     "id": "HP_P2:1:0"
+    },
+    {
+     "text": "말하지 않는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "HP_P2:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-HP-P2",
+   "emo": "기본",
+   "text": "'나는 문을 열었다'. …그 녀석답네요. 열차는 안 몰았구나."
+  },
+  {
+   "op": "line",
+   "who": "N-HP-P2",
+   "emo": "슬픔",
+   "text": "다들 신발을 벗고 갔다고요. 군화 소리 날까 봐. (한참 웃는다) 기관사가 승객 신발까지 챙겼네."
+  },
+  {
+   "op": "cmd",
+   "name": "hp",
+   "args": [
+    "ask",
+    "2"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-HP-P2",
+   "emo": "기본",
+   "text": "재석이는 문을 열었어요. 난 그걸로 됐어요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/HP.txt"
+}

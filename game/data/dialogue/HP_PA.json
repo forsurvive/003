@@ -1,0 +1,163 @@
+{
+ "id": "HP_PA",
+ "title": "방재실 원내 방송 단말",
+ "loc": "L-R02-09",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "CUTOFF": 4,
+  "PICK": 5,
+  "C1": 6,
+  "C2": 8,
+  "C3": 10,
+  "C4": 12,
+  "C5": 14
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "차임 단추 다섯. 회로 표시등 — 지하 · 1층 · 7층. 누르면 그 시각표 칸이 두 시간 동안 이 건물의 '지금'이 된다."
+  },
+  {
+   "op": "if",
+   "cond": "HP_CUT >= 1",
+   "to": "CUTOFF"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "7층 표시등도 켜져 있다. 7층도 이 방송을 듣는다."
+  },
+  {
+   "op": "goto",
+   "to": "PICK"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "7층 표시등은 꺼져 있다. 7층은 이 방송을 듣지 않는다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "기상 차임 — 칸 앞에 눕는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "C1",
+     "id": "HP_PA:1:0"
+    },
+    {
+     "text": "회진 차임 — 복도를 한 줄로 돈다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "C2",
+     "id": "HP_PA:1:1"
+    },
+    {
+     "text": "배식 차임 — 주방 배식차 앞에 선다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "C3",
+     "id": "HP_PA:1:2"
+    },
+    {
+     "text": "면회 차임 — 조문 의자에 앉는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "C4",
+     "id": "HP_PA:1:3"
+    },
+    {
+     "text": "소등 차임 — 깨어 돌아다닌다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "C5",
+     "id": "HP_PA:1:4"
+    },
+    {
+     "text": "손대지 않는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "HP_PA:1:5"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "hp",
+   "args": [
+    "call",
+    "1"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "hp",
+   "args": [
+    "call",
+    "2"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "hp",
+   "args": [
+    "call",
+    "3"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "hp",
+   "args": [
+    "call",
+    "4"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "hp",
+   "args": [
+    "call",
+    "5"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/HP.txt"
+}

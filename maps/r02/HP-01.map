@@ -1,0 +1,150 @@
+# 여의도 대학병원 — 1층 응급실 · 로비(SD-09a L-R02-09 L967 · 1-D 계획 §14.7, 단계 1-D8). 40×24. 실제 병원명은 쓰지 않는다.
+# 정문 회전문(월드 문 L-R02-09) → 로비: 접수(원내 방송 시각표 — 정시 차임) · 분류 구역(바닥 색 띠 빨강 · 노랑 · 초록 · 검정, 응급 침상 넷) ·
+#   간호사 대기실(『응급 구조사 2급 문제집』 BK-06-R02-02 — 장부 D-187과 같은 처리) · 계단 둘(서쪽 7층 · 동쪽 지하) · 멈춘 승강기.
+# 소등(22:00~06:30) 뒤엔 지하 야생 구울 둘(N-HP-F4 · F5)이 응급실 복도까지 올라와 배회한다(진행기 Hp · HP_NIGHT).
+map HP-01 여의도 대학병원
+set bk
+grid
+########################################
+##ss#############ss#####################
+##ss#############ss#####################
+#tttttttttttttttttttt#ooooooooooooooooo#
+#tttttttttttttttttttt#ooooooooooooooooo#
+#ttttttttttttttttttttoooooooooooooooooo#
+#ttttttttttttttttttttoooooooooooooooooo#
+#tttttttttttttttttttt#ooooooooooooooooo#
+#tttttttttttttttttttt#ooooooooooooooooo#
+#tttttttttttttttttttt#ooooooooooooooooo#
+#tttttttttttttttttttt#ooooooooooooooooo#
+#tttttttttttttttttttt#ooooooooooooooooo#
+#tttttttttttttttttttt#ooooooooooooooooo#
+#tttttttttttttttttttt#ooooooooooooooooo#
+#tttttttttttttttttttt###################
+#tttttttttttttttttttt###################
+#tttttttttttttttttttt###################
+#tttttttttttttttttttt#,,,,,,,,,,,,,,,,,#
+#tttttttttttttttttttt#,,,,,,,,,,,,,,,,,#
+#tttttttttttttttttttt,,,,,,,,,,,,,,,,,,#
+#tttttttttttttttttttt#,,,,,,,,,,,,,,,,,#
+#tttttttttttttttttttt#,,,,,,,,,,,,,,,,,#
+#########tt#############################
+#########tt#############################
+end
+exit 9 23 W L-R02-09>from_W
+exit 10 23 W L-R02-09>from_W
+exit 2 1 HP-02 from_HP01
+exit 3 1 HP-02 from_HP01
+exit 17 1 HP-03 from_HP01
+exit 18 1 HP-03 from_HP01
+mark from_W 9 20 N
+mark from_HP02 2 3 S
+mark from_HP03 17 3 S
+mark pa1 7 5 N
+# ---------------------------------------------------------------- 로비 · 접수
+prop gov_counter 6 3
+prop w_pa_hp 8 1
+text 7 3 "접수대 위 원내 방송 스피커와 시각표. '06:30 기상 · 09:00 회진 · 12:00 배식 · 14:00 면회 · 22:00 소등'. 스피커가 아직 지직거린다." w=3 scene=HP_PA1
+prop w_elevator 11 1
+text 11 3 "승강기. 층 표시등이 '7'에서 멈췄다. 문틈에 휠체어 바퀴 하나가 끼었다. 위층에서 정시마다 차임 소리가 내려온다." w=2
+prop w_whiteboard 13 1
+text 13 3 "진료과 안내판. '7층 — 장기 입원(방사선 피폭 환자 병동)'. 누가 분필로 덧썼다 — '면회는 두 시부터'." w=2
+prop wait_chairs 4 9
+prop wait_chairs 4 12
+prop wait_chairs 12 9
+prop wait_chairs 12 12
+text 6 10 "대기 의자 줄. 번호표 기계 '0477'. 의자마다 먼지 쌓인 소지품 — 우산 · 가방 · 아이 신발 한 짝." w=2
+prop plant_pot 1 20
+prop plant_pot 20 20
+prop remains 15 16
+text 16 16 "로비 바닥의 유골. 손목에 환자 팔찌 — '10/23 내원 · 분류 노랑'. 노랑은 기다리는 색이다." w=1 scene=HP_DAD
+prop pillar 8 15
+prop pillar 14 7
+prop rubble 3 17
+# ---------------------------------------------------------------- 응급실 분류 구역(바닥 색 띠)
+prop triage_hp 23 5 pass=1
+prop triage_hp 23 7 state=y pass=1
+prop triage_hp 23 9 state=g pass=1
+prop triage_hp 23 11 state=k pass=1
+prop triage_hp 24 5 pass=1
+prop triage_hp 24 7 state=y pass=1
+prop triage_hp 24 9 state=g pass=1
+prop triage_hp 24 11 state=k pass=1
+prop triage_hp 25 5 pass=1
+prop triage_hp 25 7 state=y pass=1
+prop triage_hp 25 9 state=g pass=1
+prop triage_hp 25 11 state=k pass=1
+prop triage_hp 26 5 pass=1
+prop triage_hp 26 7 state=y pass=1
+prop triage_hp 26 9 state=g pass=1
+prop triage_hp 26 11 state=k pass=1
+prop triage_hp 27 5 pass=1
+prop triage_hp 27 7 state=y pass=1
+prop triage_hp 27 9 state=g pass=1
+prop triage_hp 27 11 state=k pass=1
+prop triage_hp 28 5 pass=1
+prop triage_hp 28 7 state=y pass=1
+prop triage_hp 28 9 state=g pass=1
+prop triage_hp 28 11 state=k pass=1
+prop triage_hp 29 5 pass=1
+prop triage_hp 29 7 state=y pass=1
+prop triage_hp 29 9 state=g pass=1
+prop triage_hp 29 11 state=k pass=1
+prop triage_hp 30 5 pass=1
+prop triage_hp 30 7 state=y pass=1
+prop triage_hp 30 9 state=g pass=1
+prop triage_hp 30 11 state=k pass=1
+prop triage_hp 31 5 pass=1
+prop triage_hp 31 7 state=y pass=1
+prop triage_hp 31 9 state=g pass=1
+prop triage_hp 31 11 state=k pass=1
+prop triage_hp 32 5 pass=1
+prop triage_hp 32 7 state=y pass=1
+prop triage_hp 32 9 state=g pass=1
+prop triage_hp 32 11 state=k pass=1
+prop triage_hp 33 5 pass=1
+prop triage_hp 33 7 state=y pass=1
+prop triage_hp 33 9 state=g pass=1
+prop triage_hp 33 11 state=k pass=1
+prop triage_hp 34 5 pass=1
+prop triage_hp 34 7 state=y pass=1
+prop triage_hp 34 9 state=g pass=1
+prop triage_hp 34 11 state=k pass=1
+prop triage_hp 35 5 pass=1
+prop triage_hp 35 7 state=y pass=1
+prop triage_hp 35 9 state=g pass=1
+prop triage_hp 35 11 state=k pass=1
+prop triage_hp 36 5 pass=1
+prop triage_hp 36 7 state=y pass=1
+prop triage_hp 36 9 state=g pass=1
+prop triage_hp 36 11 state=k pass=1
+prop triage_hp 37 5 pass=1
+prop triage_hp 37 7 state=y pass=1
+prop triage_hp 37 9 state=g pass=1
+prop triage_hp 37 11 state=k pass=1
+prop hosp_bed_x 24 3
+prop hosp_bed_x 28 3
+prop iv_pole 25 3
+prop hosp_bed_x 32 3
+prop hosp_bed_x 36 3
+text 24 5 "빨강 띠 — '즉시'. 침상 시트에 '1·2등급 우선' 도장. 2077년 10월 23일, 이 띠를 밟은 사람이 가장 먼저 들어갔다." w=4
+text 30 7 "노랑 띠 — '대기'. 띠 위에 신발 자국이 겹겹이 남았다. 오래 서 있던 자리다." w=3
+text 34 9 "초록 띠 — '귀가'. 이 띠 끝 문은 밖에서 판자로 막혔다." w=3
+text 25 11 "검정 띠 — '기대'. 기대 환자. 이 띠는 계단 아래 지하로 이어진다고 화살표가 말한다." w=3
+prop cot 37 12
+box 37 12 hp_er name="응급 카트"
+prop med_shelf 30 3
+box 30 3 hp_er w=2 name="응급실 약장"
+# ---------------------------------------------------------------- 간호사 대기실
+prop cot 23 18
+prop cot 23 20
+prop bk_desk 30 17
+box 30 17 hp_nurse w=2 name="간호사 책상"
+text 32 18 "책상 위 문제집. 『응급 구조사 2급 문제집』 — 반쯤 풀었다. 여백에 '반 선생님 체크'. 빨간 동그라미가 많다." w=2
+prop home_locker 36 17
+box 36 17 hp_locker name="간호사 사물함"
+prop water_cooler 34 20
+text 26 19 "벽 근무표. 마지막 달 칸은 한 이름으로 다 찼다 — '반수빈'. 그 옆에 다른 글씨로 '선배 쉬세요'(차미영)." w=2
+npc C-067 8 6 E cond="MEDIC_AT == 3" bark="7병동 몫은 접수대에 놨어요. 다친 사람 먼저."
+# ---------------------------------------------------------------- 밤(소등): 지하 야생 구울 둘이 올라온다
+enemy CR-200 19 4 who=N-HP-F4 route=19,4,3;5,6,2;8,19,3;19,15,2 cond="dead(\"N-HP-F4\") == 0 and HP_NIGHT == 1 and HP_GEN == 0"
+enemy CR-200 30 8 who=N-HP-F5 route=30,8,3;24,12,2;36,10,2;21,6,3 cond="dead(\"N-HP-F5\") == 0 and HP_NIGHT == 1 and HP_GEN == 0"

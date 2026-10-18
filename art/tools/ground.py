@@ -326,6 +326,47 @@ def paver_tex(seed, weathered=False):
     return a
 
 
+def sidewalk_tex(seed):
+    """보도(1-R 도로 경계 v2, 리드 지시 2026-10-18 '벽돌 모양은 도로 경계로 어울리지 않는다'): 16px 네모 콘크리트 판을 줄 맞춰 깐다.
+    판마다 경사 테 없이 한 색(낮은 대비) + 위·왼 이음매 한 줄(판보다 한 단 어둡게) · 골재 점 · 드문 금 · 빠진 판(흙) · 이음매 풀.
+    차도 쪽 가장자리는 화강암 연석 띠가 따로 그린다(재질 curb — 셰이더 · render 같은 식)."""
+    a = np.zeros((CELL, CELL), np.uint8)
+    rnd = np.random.default_rng(seed)
+    tones = ["P07"] * 15 + ["P06"]                                     # 거의 한 톤(바둑판으로 보이지 않게) — 드물게 한 단 어두운 판
+    for row in range(CELL // 16):
+        for col in range(CELL // 16):
+            x0, y0 = col * 16, row * 16
+            base = tones[rnd.integers(len(tones))]
+            joint = "P%02d" % DARK[t(base)]
+            r = rnd.random()
+            if r < 0.012:                                              # 빠진 판: 흙이 드러났다
+                for y in range(y0, y0 + 16):
+                    for x in range(x0, x0 + 16):
+                        put(a, x, y, "P18" if rnd.random() < 0.8 else "P17")
+                for i in range(16):
+                    put(a, x0 + i, y0, "P05"); put(a, x0, y0 + i, "P05")
+                    put(a, x0 + i, y0 + 15, "P19"); put(a, x0 + 15, y0 + i, "P19")
+                continue
+            for y in range(y0, y0 + 16):
+                for x in range(x0, x0 + 16):
+                    put(a, x, y, base)
+            for i in range(16):
+                put(a, x0 + i, y0, joint); put(a, x0, y0 + i, joint)
+            for _ in range(2):                                         # 골재 점(아주 옅게 — 판보다 한 단 어둡게만)
+                put(a, x0 + 2 + rnd.integers(12), y0 + 2 + rnd.integers(12), joint)
+            if r > 0.955:                                              # 금 간 판(꺾은선 하나)
+                x, y = x0 + 3 + rnd.integers(8), y0 + 1
+                for k in range(13):
+                    put(a, x, y, joint)
+                    if k % 3 == 2:
+                        x += 1 if rnd.random() < 0.5 else -1
+                    y += 1
+    for _ in range(40):                                                # 이음매에 난 풀(가로 이음매에 두세 포기)
+        x0, y0 = 16 * rnd.integers(CELL // 16), 16 * rnd.integers(CELL // 16)
+        stamp(a, x0 + rnd.integers(2, 13), y0 - 1, [".a.", "bab"], {"a": "P31", "b": "P30"})
+    return a
+
+
 def tile_tex(img32):
     """구조물 타일(계단 등): 32px 타일을 되풀이(월드 좌표 & 31 = 타일 안 좌표)."""
     arr = np.array(img32.convert("RGB"))
@@ -917,10 +958,10 @@ def sets():
                  vthr=150, dens=14, decals=["dirt_lt1", "grass_dk1", "flowers", "pebbles", "clover", "bush"], hard=0, boff=(141, 83)),
             dict(name="grass_dense", A=grass_tex(121, True), B=grass_tex(121, True, dry=True), spread=8, soft=1, pri=7, rim=1, shade=1,
                  vthr=165, dens=16, decals=["grass_lt1", "grass_lt2", "grass_dk1", "bush", "flowers", "clover"], hard=0, boff=(59, 173)),
-            dict(name="asphalt", A=asphalt_tex(131), B=asphalt_tex(131, worn=True), spread=2, pri=9, rim=1, shade=1, vthr=140, dens=14,
+            dict(name="asphalt", A=asphalt_tex(131), B=asphalt_tex(131, worn=True), spread=2, pri=9, rim=1, shade=2, vthr=140, dens=14,
                  decals=["asph_lt1", "asph_dk1", "oil", "debris", "pothole", "patch", "paper"], hard=0, boff=(113, 37)),
-            dict(name="pavers", A=paver_tex(141, weathered=True), B=paver_tex(141, weathered=True), spread=0, pri=10, rim=1, shade=0, vthr=256, dens=6,
-                 decals=["paper", "butts", "leaves"], hard=1),                # 인공 바닥: 곧은 연석 가장자리(섞지 않음)
+            dict(name="pavers", A=sidewalk_tex(141), B=None, spread=0, pri=10, rim=1, shade=0, vthr=256, dens=6, curb=4,
+                 decals=["paper", "butts", "leaves"], hard=1),                # 보도: 네모 콘크리트 판 + 차도 쪽 화강암 연석 4px(1-R v2)
             dict(name="stairs", A=tile_tex(TI.stairs()), B=tile_tex(TI.stairs()), spread=0, pri=11, rim=0, shade=0, vthr=255, dens=0,
                  decals=[], hard=1),
             dict(name="stairs_rail", A=tile_tex(TI.stairs_rail()), B=tile_tex(TI.stairs_rail()), spread=0, pri=11, rim=0, shade=0, vthr=255,
@@ -1024,7 +1065,8 @@ class GroundSet:
         self.vthr = np.array([d["vthr"] for d in mats], np.int64)
         self.dens = np.array([d["dens"] * 256 // 100 for d in mats], np.int64)
         self.hard = np.array([d["hard"] for d in mats], np.int64)
-        self.soft = np.array([d.get("soft", 0) for d in mats], np.int64)      # 자연 재질(흙·풀·진흙·바위·잔해): 서로 만나면 테 없이 디더로 섞는다
+        self.soft = np.array([d.get("soft", 0) for d in mats], np.int64)
+        self.curb = np.array([d.get("curb", 0) for d in mats], np.int64)      # 연석 띠(px): 낮은 재질과 만나는 가장자리 — 차도 쪽 테 · 화강암 · 점 · 안쪽 이음매      # 자연 재질(흙·풀·진흙·바위·잔해): 서로 만나면 테 없이 디더로 섞는다
         self.boff = np.array([d.get("boff", (0, 0)) for d in mats], np.int64)
         self.dlist = np.full((self.M, 8), 0, np.int64)
         self.dcount = np.zeros(self.M, np.int64)
@@ -1116,7 +1158,7 @@ class GroundSet:
         # 2×2px 조각 디더로 섞는다(경계 위 50% → 멀어질수록 0%). 길·포장·물가는 오토타일 테 그대로
         both_soft = has2 & (self.soft[win_m] == 1) & (self.soft[sec_c] == 1)
         band = np.where(both_soft, 0, band)
-        dark = has2 & (band > 0) & (margin < band * 768)
+        dark = has2 & (band > 0) & (margin < band * 768) & (self.curb[win_m] == 0)   # 연석 재질은 연석 띠가 테두리를 대신한다
         DB = 7680
         p_mix = np.where(both_soft & (margin < DB), ((DB - np.minimum(margin, DB)) * 128) // DB, 0)
         hp = (thash(X >> 1, Y >> 1) >> 5) & 255
@@ -1133,6 +1175,24 @@ class GroundSet:
         q0 = (fx - 16) ** 2 * 36 + (fy - 29) ** 2 * 169                  # 소품 그림자 타원(가로 13 · 세로 6, 아래 타일로 3px 넘친다)
         q1 = (fx - 16) ** 2 * 36 + (fy + 3) ** 2 * 169
         dark |= ((f0 == 2) & (q0 <= 6084)) | ((fN == 2) & (q1 <= 6084))
+        walld = deep | ((fN == 1) & (fy < 5)) | ((fW == 1) & (fx < 2)) | ((fE == 1) & (fx > 29)) | ((f0 == 2) & (q0 <= 6084)) | ((fN == 2) & (q1 <= 6084))
+        # 연석(1-R v2): 자기 타일이 연석 재질이고 이웃 타일이 더 낮은 재질(벽 · 구조물 덮개 제외)이면 그 쪽 타일 가장자리에서 cw px — 곧은 띠 · 바깥 모서리는 네모
+        cw = self.curb[m0]
+
+        def lowp(cx, cy):
+            return (self.pri[self.mat_of[at(ids, cx, cy)]] < self.pri[m0]) & ~np.isin(at(flags, cx, cy), (1, 3))
+        lN, lS, lW, lE = lowp(tx, ty - 1), lowp(tx, ty + 1), lowp(tx - 1, ty), lowp(tx + 1, ty)
+        dd = np.full(X.shape, 99, np.int64)
+        dd = np.where(lN, np.minimum(dd, fy), dd)
+        dd = np.where(lS, np.minimum(dd, 31 - fy), dd)
+        dd = np.where(lW, np.minimum(dd, fx), dd)
+        dd = np.where(lE, np.minimum(dd, 31 - fx), dd)
+        for (ox_, oy_, a_, b_) in ((-1, -1, lN, lW), (1, -1, lN, lE), (-1, 1, lS, lW), (1, 1, lS, lE)):
+            cd = np.maximum(fx if ox_ < 0 else 31 - fx, fy if oy_ < 0 else 31 - fy)
+            dd = np.where(lowp(tx + ox_, ty + oy_) & ~a_ & ~b_, np.minimum(dd, cd), dd)
+        curb_on = (cw > 0) & (win_m == m0) & (dd < cw)
+        ck = np.where(dd == 0, 0, np.where(dd == cw - 1, 3, np.where(((thash(X, Y) >> 7) & 7) == 0, 2, 1)))
+        curb_px = np.array(CURB_COL + [int(DARK[k]) for k in CURB_COL], np.int64)[ck + 4 * walld.astype(np.int64)]
         # A·B 벌
         oxm, oym = (win_m * 73) & 255, (win_m * 151) & 255
         var = (B[(Y + oym) & 255, (X + oxm) & 255] > self.vthr[win_m]).astype(np.int64)
@@ -1140,6 +1200,7 @@ class GroundSet:
         col = var + 2 * level
         bx, by = self.boff[win_m, 0] * var, self.boff[win_m, 1] * var        # B 벌은 어긋난 자리에서 읽는다(되풀이 주기 깨기)
         out = self.atlas[win_m * CELL + ((Y + by) & (CELL - 1)), col * CELL + ((X + bx) & (CELL - 1))].astype(np.int64)
+        out = np.where(curb_on, curb_px, out)
         # 잔 소품
         hsh = thash(tx, ty)
         force = self.force[own_id]
@@ -1169,11 +1230,15 @@ class GroundSet:
         idx_img(self.decal).save(os.path.join(out_dir, f"ground_decals_{self.name}.png"))
         Image.fromarray(self.noise, "RGBA").save(os.path.join(out_dir, "ground_noise.png"))
         meta = {"set": self.name, "cell": CELL, "materials": self.names, "spread": self.spread.tolist(), "pri": self.pri.tolist(),
-                "rim": self.rim.tolist(), "shade": self.shade.tolist(),
+                "rim": self.rim.tolist(), "shade": self.shade.tolist(), "curb": self.curb.tolist(),
+                "curb_rgb": [int(c) for i in CURB_COL + [int(DARK[k]) for k in CURB_COL] for c in PAL[i]],
                 "vthr": self.vthr.tolist(), "boff": self.boff.ravel().tolist(), "dens": self.dens.tolist(), "hard": self.hard.tolist(), "soft": self.soft.tolist(),
                 "dlist": self.dlist.ravel().tolist(), "dcount": self.dcount.tolist(), "mat_of": self.mat_of.tolist(),
                 "force": self.force.tolist(), "flag_of": self.flag_of.tolist()}
         json.dump(meta, open(os.path.join(out_dir, f"ground_{self.name}.json"), "w"), indent=1)
+
+
+CURB_COL = [t("P04"), t("P08"), t("P07"), t("P06")]                  # 연석: 차도 쪽 테 · 화강암 몸 · 점 · 안쪽 이음매(그늘 벌은 DARK로 한 단씩)
 
 
 def thash(tx, ty):

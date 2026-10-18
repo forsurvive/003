@@ -40,7 +40,7 @@ import story_expr as SE
 _TERMS = os.path.join(ROOT, "game", "data", "terminals.json")
 terms_db = json.load(open(_TERMS, encoding="utf-8"))["terms"] if os.path.exists(_TERMS) else {}
 
-LOOK_RE = re.compile(r"^(M1|M2|F1|F2|E1|E2|K1)-S[1-6G][12]?-HR\d\d-H\d-T\d\d-\d-PF\d\d-HD\d\d-EY\d\d(-PR\d+)?$")
+LOOK_RE = re.compile(r"^(M1|M2|F1|F2|E1|E2|K1)-S[1-6G][12]?-HR\d\d-H\d-(?:T\d\d|GOWN)-\d-PF\d\d-HD\d\d-EY\d\d(-PR\d+)?$")
 
 
 def look_sheet(code):

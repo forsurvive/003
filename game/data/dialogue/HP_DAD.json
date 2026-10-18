@@ -1,0 +1,84 @@
+{
+ "id": "HP_DAD",
+ "title": "로비의 유해",
+ "loc": "L-R02-09",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TAKE": 4,
+  "AGAIN": 7
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "has(\"M-398\", 1) == 1 or HP_ASK3 == 2",
+   "to": "AGAIN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "손목에 환자 팔찌 — '10/23 내원 · 분류 노랑'. 가슴 주머니에 접은 종이가 꽂혀 있다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'도윤아 아빠 왔다 감. 두 시에 다시 올게. 1층에서 기다릴게.' 7층 소아 병동 이름표 스티커가 붙었다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "쪽지를 챙긴다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TAKE",
+     "id": "HP_DAD:1:0"
+    },
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "HP_DAD:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "hp",
+   "args": [
+    "take",
+    "M-398"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "쪽지를 편다. 볼펜 글씨가 번졌다. 접는 자국을 따라 다시 접는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "노랑 팔찌. 기다리는 색이다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/HP.txt"
+}

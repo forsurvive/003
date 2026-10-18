@@ -194,6 +194,7 @@ var gr: Gr                                              ## 구로 차량기지 �
 var kt: Kt                                              ## 여의도 금탑 던전 DG-KT(1-D5a — 로비 · 지하 수족관)
 var ks: Ks                                              ## 구로 공단 지식산업센터 · 문래 DG-KS(1-D7 — 라인 박자 · 출근 카드 · 11월 서류 · 금형)
 var ga: Ga                                              ## 가산 아울렛 거리 DG-GA(1-D6 — 눈 속이기 · 작업복 상자 · 진열창)
+var hp: Hp                                              ## 여의도 대학병원 DG-HP(1-D8 — 병원 시계 · 차임 대형 · 면회 · 약길)
 var stash: Stash                                        ## 보관 자리 · 털림 · UQ-125 털린 은닉처(1-L)
 var caravans: Caravans                             ## 순회 상인 일정(1-8d)
 var sol := 1                                       ## 1막 봇 해법(--sol=1~5, 0-10)
@@ -300,6 +301,10 @@ func _paths() -> void:
 		ga = Ga.new()
 		add_child(ga)
 		ga.setup(host, log_on)
+	if hp == null:
+		hp = Hp.new()
+		add_child(hp)
+		hp.setup(host, log_on)
 	if ks == null:
 		ks = Ks.new()
 		add_child(ks)

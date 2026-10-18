@@ -1,0 +1,212 @@
+{
+ "id": "HP_BED",
+ "title": "침상 차트",
+ "loc": "L-R02-09",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "VISIT": 8,
+  "SIT": 10,
+  "BLUR": 13,
+  "BLUR_VISIT": 17,
+  "LIE": 18,
+  "LIE_BAN": 22,
+  "GONE": 24,
+  "MOVED": 26
+ },
+ "ops": [
+  {
+   "op": "cmd",
+   "name": "hp",
+   "args": [
+    "bed"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "HP_BED == 0",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "HP_LOST >= HP_BED and HP_BED <= 3",
+   "to": "GONE"
+  },
+  {
+   "op": "if",
+   "cond": "HP_WAY == 3 and HP_BED <= 5",
+   "to": "MOVED"
+  },
+  {
+   "op": "if",
+   "cond": "HP_BLUR == HP_BED",
+   "to": "BLUR"
+  },
+  {
+   "op": "if",
+   "cond": "GAME_HOUR >= 14 and GAME_HOUR < 16",
+   "to": "VISIT"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "환자는 잠들어 있다. 모포 위에 놓인 손이 가끔 시트 주름을 편다. 면회 시간이 아니다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "면회 시간. 환자가 눈을 뜨고 의자 쪽으로 고개를 돌린다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "곁에 앉아 이름을 불러 준다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SIT",
+     "id": "HP_BED:1:0"
+    },
+    {
+     "text": "그냥 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "HP_BED:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "hp",
+   "args": [
+    "visit"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "환자가 자기 이름을 따라 말한다. 차트의 체온 선 끝에 반수빈이 작은 동그라미를 친다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "머리맡에 노란 쪽지 — '?'. 환자가 같은 말을 되풀이한다. \"오늘 몇 일이에요? …아, 그 말 아까 했나.\""
+  },
+  {
+   "op": "if",
+   "cond": "GAME_HOUR >= 14 and GAME_HOUR < 16",
+   "to": "BLUR_VISIT"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "면회 시간이 아니다. 두 시가 되면 곁에 앉을 수 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "곁에 앉아 이름을 불러 준다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SIT",
+     "id": "HP_BED:2:0"
+    },
+    {
+     "text": "보호자인 척 아는 이름을 댄다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "LIE",
+     "id": "HP_BED:2:1"
+    },
+    {
+     "text": "그냥 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "HP_BED:2:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "hp",
+   "args": [
+    "visit"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "\"…왔구나. 늦었잖아.\" 환자가 내 손을 잡는다. 아무 이름이나 댔는데, 환자는 그 이름을 오래 기다린 사람처럼 부른다."
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R02-031\") == 0",
+   "to": "LIE_BAN"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-031",
+   "emo": "기본",
+   "text": "(복도 끝에서) 착한 거짓말은 병원에서 처방이에요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈 침상. 모포가 각 잡혀 개어 있다. 차트 마지막 줄에 반수빈 글씨 — '지하로. 이름표 붙임.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈 침상. 차트에 '지하시장 이송 — 상가 병상'. 모포를 가져갔다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/HP.txt"
+}

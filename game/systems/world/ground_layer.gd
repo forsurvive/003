@@ -5,7 +5,7 @@ class_name GroundLayer
 extends Node2D
 
 const DIR := "res://assets/ground/"
-const PARAMS := ["mat_of", "force", "spread", "pri", "rim", "shade", "vthr", "dens", "hard", "soft", "boff", "dlist", "dcount", "flag_of"]
+const PARAMS := ["mat_of", "force", "spread", "pri", "rim", "shade", "vthr", "dens", "hard", "soft", "curb", "boff", "dlist", "dcount", "flag_of"]
 static var _sets := {}
 var set_name: String
 var origin: Vector2i
@@ -24,7 +24,12 @@ static func get_set(name: String) -> Dictionary:
 		var st := {"meta": meta, "atlas": load(DIR + "ground_%s.png" % name), "decals": load(DIR + "ground_decals_%s.png" % name),
 			"noise": load(DIR + "ground_noise.png"), "shader": load("res://systems/world/ground.gdshader"), "ints": {}}
 		for k in PARAMS:                                                # 표는 한 번만 변환(붙이기 예산)
-			st["ints"][k] = _ints(meta[k])
+			st["ints"][k] = _ints(meta.get(k, []))
+		var cr: Array = []                                              # 연석 색(1-R v2): 보통 넷 + 그늘 넷, 팔레트 그대로
+		var cv: Array = meta.get("curb_rgb", [])
+		for i in range(0, cv.size() - 2, 3):
+			cr.append(Vector3i(int(cv[i]), int(cv[i + 1]), int(cv[i + 2])))
+		st["curb_rgb"] = cr
 		_sets[name] = st
 	return _sets[name]
 
@@ -60,6 +65,8 @@ func setup(name: String, o: Vector2i, s: Vector2i) -> void:
 	for k in PARAMS:
 		if k != "flag_of":
 			mat.set_shader_parameter(k, st["ints"][k])
+	if not (st["curb_rgb"] as Array).is_empty():
+		mat.set_shader_parameter("curb_rgb", st["curb_rgb"])
 	material = mat
 	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 

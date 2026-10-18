@@ -1,0 +1,83 @@
+{
+ "id": "HP_GEN",
+ "title": "비상 발전기",
+ "loc": "L-R02-09",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "FIX": 3,
+  "DONE": 6
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "HP_GEN == 1",
+   "to": "DONE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "출력선 하나가 '영안실 냉동' 단자에서 뽑혀 늘어졌다. 다시 꽂고 냉동 칸을 돌리면, 칸 앞의 사람들은 소등 차임에도 깨지 않을 것이다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "출력선을 다시 물리고 냉동 칸을 돌린다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "FIX",
+     "id": "HP_GEN:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "HP_GEN:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "hp",
+   "args": [
+    "gen"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "발전기가 기침하듯 돌기 시작한다. 영안실 쪽에서 낮은 냉기 소리. 냉동 칸 표시등이 초록으로 바뀐다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "발전기가 낮게 돈다. 영안실 냉동 칸 표시등이 초록이다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/HP.txt"
+}

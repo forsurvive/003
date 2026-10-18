@@ -1,0 +1,78 @@
+{
+ "id": "HP_TAG",
+ "title": "흙벽의 유해",
+ "loc": "L-R02-05",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TAKE": 3,
+  "AGAIN": 6
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "has(\"M-397\", 1) == 1 or HP_ASK1 == 2",
+   "to": "AGAIN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "흙벽에 박힌 유해. 목에 건 사원증 — '금빛 빌딩 관리팀 변수아'. 사진 속 앞머리가 삐뚤게 잘렸다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "사원증을 떼어 간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TAKE",
+     "id": "HP_TAG:1:0"
+    },
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "HP_TAG:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "hp",
+   "args": [
+    "take",
+    "M-397"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "줄이 삭아 쉽게 끊어진다. 사원증 뒷면에 볼펜 — '엄마 7층 면회 2시'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "흙벽의 유해. 목에 사원증 줄 자국만 남았다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/HP.txt"
+}

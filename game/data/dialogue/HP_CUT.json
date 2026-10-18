@@ -1,0 +1,83 @@
+{
+ "id": "HP_CUT",
+ "title": "7층 회로 차단기",
+ "loc": "L-R02-09",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "SNEAK": 4,
+  "DOWN": 7
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "HP_CUT == 1",
+   "to": "DOWN"
+  },
+  {
+   "op": "if",
+   "cond": "HP_CUT == 2",
+   "to": "DOWN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "차단기 손잡이에 반창고 — '7병동 — 손대지 마세요'. 손잡이는 위로 올라가 있다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "몰래 내린다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SNEAK",
+     "id": "HP_CUT:1:0"
+    },
+    {
+     "text": "그냥 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "HP_CUT:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "hp",
+   "args": [
+    "cut",
+    "2"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "딸깍. 7층 스피커의 지직거림이 멎는다. 복도가 이상하게 조용하다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "차단기가 내려가 있다. 7층 스피커가 조용하다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/HP.txt"
+}

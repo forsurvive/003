@@ -8,6 +8,8 @@
     triage_hp       분류 구역 바닥 띠(바닥 덮개 1×1): 빨강 · 노랑 · 초록 · 검정 색 띠(상태 y · g · k로 색)
     w_chart_hp      침대 머리 차트(벽 덮개 1칸): 클립보드 · 이름표 · 체온표 / 상태 faded(줄이 끊김 — 퇴원)
     gurney_hp       영안실 들것(2×1): 바퀴 들것 · 흰 시트 · 발목 이름표
+    bed_ghoul_hp    구울 환자 병상(1×2): 병상(props_r01n.hosp_bed) 위 구울 환자 — 베개 위 머리 · 모포 덮은 몸 / 상태 empty(빈 침상 · 모포를 갬)
+                    · blur(같은 자세 — 머리맡 물음표 쪽지) · mask(가면 쓴 주인공이 13번 침상에 누움 — 13번만)
 props_bc.PROPS에 합쳐져 r01_props 아틀라스로 나간다. 위에서 빛(위 밝게 · 아래 어둡게), 반투명 없음."""
 import os
 import sys
@@ -17,6 +19,7 @@ from PIL import Image, ImageDraw
 sys.path.insert(0, os.path.dirname(__file__))
 import palette as P
 from struct_r01 import put_text
+from props_r01n import hosp_bed
 
 C = lambda t: P.rgb(t) + (255,)
 INK = "P01"
@@ -177,6 +180,38 @@ def gurney_hp():
     return im
 
 
+GHOUL = ("P38", "P39", "P40", "P41")
+
+
+def bed_ghoul_hp(state=""):
+    """구울 환자 병상(1×2, 34×66): 병상 위 — 벗겨진 갈색 피부 머리(눈구멍 · 귀 없음) · 모포를 가슴까지. empty = 갠 모포 · blur = 머리맡 쪽지."""
+    im = hosp_bed(True)
+    d = ImageDraw.Draw(im)
+    if state == "empty":
+        d.rectangle([3, 26, 30, 58], fill=C("P08")); d.line([4, 27, 4, 57], fill=C("P09"))     # 모포를 걷어 시트만
+        _box(d, 8, 44, 25, 52, ("P11", "P12", "P13", "P14"))                                   # 갠 모포
+        return im
+    d.ellipse([9, 9, 24, 23], fill=C(INK)); d.ellipse([10, 10, 23, 22], fill=C(GHOUL[1]))     # 머리(벗겨진 갈색)
+    for (x, y, c) in ((12, 11, 3), (15, 10, 2), (20, 12, 0), (11, 15, 2), (21, 16, 3), (17, 21, 0), (13, 20, 2), (19, 19, 2)):
+        d.point((x, y), fill=C(GHOUL[c]))                                                  # 얼룩 · 벗겨진 자리
+    d.line([14, 11, 16, 11], fill=C(GHOUL[2])); d.line([18, 20, 20, 20], fill=C(GHOUL[3]))
+    d.rectangle([12, 15, 14, 17], fill=C(GHOUL[0])); d.rectangle([18, 15, 20, 17], fill=C(GHOUL[0]))   # 꺼진 눈두덩
+    d.point((13, 16), fill=C(INK)); d.point((19, 16), fill=C(INK))
+    d.line([15, 20, 17, 20], fill=C(GHOUL[0]))                                             # 입
+    if state == "mask":                                                                    # 가면 — 피부가 너무 고르다
+        d.ellipse([10, 10, 23, 22], fill=C("P41")); d.line([11, 11, 21, 11], fill=C("P42"))
+        d.point((13, 16), fill=C(INK)); d.point((19, 16), fill=C(INK)); d.line([15, 19, 17, 19], fill=C("P39"))
+    d.polygon([(3, 24), (30, 22), (30, 58), (3, 58)], fill=C("P12"))                         # 모포
+    d.polygon([(3, 24), (30, 22), (30, 26), (3, 28)], fill=C("P14"))
+    for (x, y) in ((8, 26), (24, 25)):                                                       # 모포 위 손
+        d.rectangle([x, y, x + 3, y + 2], fill=C(INK)); d.rectangle([x + 1, y, x + 2, y + 1], fill=C(GHOUL[2]))
+    d.line([9, 44, 22, 42], fill=C("P11"))
+    if state == "blur":
+        d.rectangle([24, 9, 31, 15], fill=C(INK)); d.rectangle([25, 10, 30, 14], fill=C("P50"))
+        put_text(im, "?", 25, 7, "P53", 8, "Galmuri7")
+    return im
+
+
 def _r(fn, fw, fh, kind="floor", down=2, dx=0, dy=0):
     return {"fn": fn, "foot": (fw, fh), "kind": kind, "down": down, "dx": dx, "dy": dy}
 
@@ -189,12 +224,14 @@ PROPS_HP = {
     "triage_hp": _r(lambda: triage_hp(), 1, 1, "deco", down=0),
     "w_chart_hp": _r(lambda: w_chart_hp(), 1, 0, "wall", dx=0, dy=8),
     "gurney_hp": _r(gurney_hp, 2, 1, down=-2),
+    "bed_ghoul_hp": _r(lambda: bed_ghoul_hp(), 1, 2),
 }
 STATES_HP = {
     "w_visit_hp": {"off": lambda: w_visit_hp("off")},
     "morgue_hp": {"open": lambda: morgue_hp("open"), "cold": lambda: morgue_hp("cold")},
     "triage_hp": {"y": lambda: triage_hp("y"), "g": lambda: triage_hp("g"), "k": lambda: triage_hp("k")},
     "w_chart_hp": {"faded": lambda: w_chart_hp("faded")},
+    "bed_ghoul_hp": {"empty": lambda: bed_ghoul_hp("empty"), "blur": lambda: bed_ghoul_hp("blur"), "mask": lambda: bed_ghoul_hp("mask")},
 }
 
 

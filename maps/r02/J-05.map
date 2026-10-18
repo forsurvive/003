@@ -38,3 +38,13 @@ text 8 7 "진료 접수대. '수혈 팩 삽니다 — 1팩 15캡.' 그 밑에 '�
 prop screen_partition 14 11
 prop screen_partition 15 11
 prop water_cooler 19 12
+# ---------------------------------------------------------------- 여의도 대학병원 7병동(1-D8 UQ-126): ① 교역 표 · ③ 이주 병상
+text 6 9 "접수대 앞 판지. '수혈 없음 — 이번 주 몫은 7층.' 그 밑에 누가 연필로 '7층이 어딘데'." w=2 cond="HP_WAY == 1 and dead(\"C-051\") == 0"
+prop bed_ghoul_hp 2 11 cond="HP_WAY == 3"
+prop bed_ghoul_hp 4 11 cond="HP_WAY == 3"
+prop bed_ghoul_hp 6 11 state=empty cond="HP_WAY == 3"
+text 4 13 "옮겨 온 병상 셋. 머리맡마다 7병동 차트. 상가 셔터에 반수빈 글씨 — '개점 기상 · 정오 배식 · 두 시 면회 · 폐점 소등'." w=3 cond="HP_WAY == 3"
+npc N-R02-031 7 13 W look=F2-SG1-HR06-H4-T13-2-PF00-HD00-EY00-PR037 cond="HP_WAY == 3 and dead(\"N-R02-031\") == 0"
+npc N-HP-P1 1 13 E look=F2-SG1-HR03-H4-GOWN-1-PF00-HD00-EY00-PR021 pose=sit cond="HP_WAY == 3 and dead(\"N-HP-P1\") == 0"
+npc N-HP-P3 3 14 N look=K1-SG1-HR01-H1-GOWN-0-PF00-HD00-EY00 pose=sit cond="HP_WAY == 3 and dead(\"N-HP-P3\") == 0"
+npc N-HP-P2 8 11 W look=M2-SG1-HR00-H2-GOWN-1-PF00-HD00-EY00-PR014 pose=sit cond="HP_WAY == 3 and dead(\"N-HP-P2\") == 0"

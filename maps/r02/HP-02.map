@@ -1,0 +1,148 @@
+# 여의도 대학병원 — 7층 구울 병동(SD-09a L-R02-09 · 1-D 계획 §14.7). 44×24. 비적대 구울 환자 열둘(2077년 환자) · 수간호사 반수빈 N-R02-031.
+# 병실 넷: 701(변미숙 · 탁정오 · 오재민) · 702(남궁호 · 길순례 · 하예림) · 703(기도윤 · 문덕배 · 빈 13번 침상) · 704 창가(차미영 · 윤상철 · 표경애 · 정소라).
+# 말하는 환자는 병실마다 하나(N-HP-P1~P4) — 나머지 여덟은 침상 · 차트(진행기가 흐림 · 잃음 상태를 칠한다). 간호사실: 칠판 '다음 차트 정리 ○일' · 7층 회로 차단기 · 방송 단말.
+# 면회(14:00~16:00): 반수빈이 복도 의자를 정리한다(원문) · 말하는 환자들이 복도 의자에 나와 앉는다. 휴게실 창 너머 금탑 — KT_TOP 불.
+map HP-02 여의도 대학병원 7층
+set bk
+grid
+############################################
+############################################
+############################################
+#oooooooooo#oooooooooo#oooooooooo#wwwwwwwww#
+#oooooooooo#oooooooooo#oooooooooo#wwwwwwwww#
+#oooooooooo#oooooooooo#oooooooooo#wwwwwwwww#
+#oooooooooo#oooooooooo#oooooooooo#wwwwwwwww#
+#oooooooooo#oooooooooo#oooooooooo#wwwwwwwww#
+#####oo#########oo#########oo#####wwwwwwwww#
+#####oo#########oo#########oo#####wwwwwwwww#
+#####oo#########oo#########oo#####wwwwwwwww#
+#ssooooooooooooooooooooooooooooooowwwwwwwww#
+#ssooooooooooooooooooooooooooooooowwwwwwwww#
+#ssooooooooooooooooooooooooooooooowwwwwwwww#
+######oo########,,#########..#####wwwwwwwww#
+######oo########,,#########..#####wwwwwwwww#
+######oo########,,#########..#####wwwwwwwww#
+#oooooooooo#,,,,,,,,,,#..........#wwwwwwwww#
+#oooooooooo#,,,,,,,,,,#..........#wwwwwwwww#
+#oooooooooo#,,,,,,,,,,#..........#wwwwwwwww#
+#oooooooooo#,,,,,,,,,,#..........#wwwwwwwww#
+#oooooooooo#,,,,,,,,,,#..........#wwwwwwwww#
+############################################
+############################################
+end
+exit 1 11 HP-01 from_HP02
+exit 1 12 HP-01 from_HP02
+exit 1 13 HP-01 from_HP02
+mark from_HP01 3 12 E
+mark board 19 17 N
+mark bed13 8 19 N
+mark station 15 19 N
+mark visit 10 12 N
+# ---------------------------------------------------------------- 침상(1~8 말 없는 환자 — 차트 순서 = 흐린 순서 · 9~12 말하는 환자의 빈 침상)
+prop bed_ghoul_hp 2 3 cond="HP_LOST < 1 and HP_BLUR != 1 and HP_WAY != 3"
+prop bed_ghoul_hp 2 3 state=blur cond="HP_LOST < 1 and HP_BLUR == 1 and HP_WAY != 3"
+prop bed_ghoul_hp 2 3 state=empty cond="HP_LOST >= 1 or not (HP_WAY != 3)"
+prop w_chart_hp 2 1
+text 2 5 "1번 침상 차트 — 탁정오. 70대 · 국회 앞 은행 경비원 · 보호자 칸 '아들(원정군)'." scene=HP_BED
+prop bed_ghoul_hp 13 3 cond="HP_LOST < 2 and HP_BLUR != 2 and HP_WAY != 3"
+prop bed_ghoul_hp 13 3 state=blur cond="HP_LOST < 2 and HP_BLUR == 2 and HP_WAY != 3"
+prop bed_ghoul_hp 13 3 state=empty cond="HP_LOST >= 2 or not (HP_WAY != 3)"
+prop w_chart_hp 13 1
+text 13 5 "2번 침상 차트 — 길순례. 80대 · 영등포 시장 떡집 · 보호자 칸 '손주 둘'." scene=HP_BED
+prop bed_ghoul_hp 8 3 cond="HP_LOST < 3 and HP_BLUR != 3 and HP_WAY != 3"
+prop bed_ghoul_hp 8 3 state=blur cond="HP_LOST < 3 and HP_BLUR == 3 and HP_WAY != 3"
+prop bed_ghoul_hp 8 3 state=empty cond="HP_LOST >= 3 or not (HP_WAY != 3)"
+prop w_chart_hp 8 1
+text 8 5 "3번 침상 차트 — 오재민. 20대 · 배달 기사 · 보호자 칸 비었음 — '사장님?'." scene=HP_BED
+prop bed_ghoul_hp 19 3 cond="HP_LOST < 4 and HP_BLUR != 4 and HP_WAY != 3"
+prop bed_ghoul_hp 19 3 state=blur cond="HP_LOST < 4 and HP_BLUR == 4 and HP_WAY != 3"
+prop bed_ghoul_hp 19 3 state=empty cond="HP_LOST >= 4 or not (HP_WAY != 3)"
+prop w_chart_hp 19 1
+text 19 5 "4번 침상 차트 — 하예림. 18세 · 수험생 · 보호자 칸 '엄마'." scene=HP_BED
+prop bed_ghoul_hp 4 17 cond="HP_LOST < 5 and HP_BLUR != 5 and HP_WAY != 3"
+prop bed_ghoul_hp 4 17 state=blur cond="HP_LOST < 5 and HP_BLUR == 5 and HP_WAY != 3"
+prop bed_ghoul_hp 4 17 state=empty cond="HP_LOST >= 5 or not (HP_WAY != 3)"
+prop w_chart_hp 4 15
+text 4 19 "5번 침상 차트 — 문덕배. 60대 · 독산 육가공 단지 반장 · 보호자 칸 '아내'." scene=HP_BED
+prop bed_ghoul_hp 30 3 cond="HP_LOST < 6 and HP_BLUR != 6 and 1 == 1"
+prop bed_ghoul_hp 30 3 state=blur cond="HP_LOST < 6 and HP_BLUR == 6 and 1 == 1"
+prop bed_ghoul_hp 30 3 state=empty cond="HP_LOST >= 6 or not (1 == 1)"
+prop w_chart_hp 30 1
+text 30 5 "6번 침상 차트 — 정소라. 30대 · 방송국 분장사 · 창가 · '금탑 불 보이는 자리'." scene=HP_BED
+prop bed_ghoul_hp 26 3 cond="HP_LOST < 7 and HP_BLUR != 7 and 1 == 1"
+prop bed_ghoul_hp 26 3 state=blur cond="HP_LOST < 7 and HP_BLUR == 7 and 1 == 1"
+prop bed_ghoul_hp 26 3 state=empty cond="HP_LOST >= 7 or not (1 == 1)"
+prop w_chart_hp 26 1
+text 26 5 "7번 침상 차트 — 윤상철. 40대 · 구로 공단 금형공 · 창가." scene=HP_BED
+prop bed_ghoul_hp 28 3 cond="HP_LOST < 8 and HP_BLUR != 8 and 1 == 1"
+prop bed_ghoul_hp 28 3 state=blur cond="HP_LOST < 8 and HP_BLUR == 8 and 1 == 1"
+prop bed_ghoul_hp 28 3 state=empty cond="HP_LOST >= 8 or not (1 == 1)"
+prop w_chart_hp 28 1
+text 28 5 "8번 침상 차트 — 표경애. 50대 · 교회 성가대 · 창가." scene=HP_BED
+prop bed_ghoul_hp 5 3 state=empty
+prop w_chart_hp 5 1
+text 5 5 "9번 침상 차트 — 변미숙. 40대 · 보호자 칸 '딸 변수아 — 금탑 근무'." scene=HP_BED
+prop bed_ghoul_hp 16 3 state=empty
+prop w_chart_hp 16 1
+text 16 5 "10번 침상 차트 — 남궁호. 50대 · 2호선 기관사 · 보호자 칸 '7703 편성 동료'." scene=HP_BED
+prop bed_ghoul_hp 2 17 state=empty
+prop w_chart_hp 2 15
+text 2 19 "11번 침상 차트 — 기도윤. 9세 · 소아 병동에서 옮겨 옴 · 보호자 칸 '아빠'." scene=HP_BED
+prop bed_ghoul_hp 24 3 state=empty
+prop w_chart_hp 24 1
+text 24 5 "12번 침상 차트 — 차미영. 30대 · 이 병원 간호사(환자복) · 보호자 칸에 직접 '없음'." scene=HP_BED
+prop bed_ghoul_hp 8 17 state=empty cond="HP_MASK == 0"
+prop bed_ghoul_hp 8 17 state=mask cond="HP_MASK == 1"
+prop w_chart_hp 8 15
+text 8 19 "13번 침상. 차트 꽂이가 비었다. 시트는 갈아 끼운 지 얼마 안 됐다 — 누군가 늘 하나를 비워 둔다." scene=HP_BED13
+prop iv_pole 3 3
+prop iv_pole 14 3
+prop iv_pole 6 17
+prop iv_pole 25 3
+# ---------------------------------------------------------------- 말하는 환자(병실마다 하나 — 면회 시간엔 복도 의자)
+npc N-HP-P1 6 6 N look=F2-SG1-HR03-H4-GOWN-1-PF00-HD00-EY00-PR021 pose=sit cond="(GAME_HOUR < 14 or GAME_HOUR >= 16) and HP_WAY != 3 and dead(\"N-HP-P1\") == 0"
+npc N-HP-P1 8 12 N look=F2-SG1-HR03-H4-GOWN-1-PF00-HD00-EY00-PR021 pose=sit cond="GAME_HOUR >= 14 and GAME_HOUR < 16 and HP_WAY != 3 and dead(\"N-HP-P1\") == 0"
+npc N-HP-P2 17 6 N look=M2-SG1-HR00-H2-GOWN-1-PF00-HD00-EY00-PR014 pose=sit cond="(GAME_HOUR < 14 or GAME_HOUR >= 16) and HP_WAY != 3 and dead(\"N-HP-P2\") == 0"
+npc N-HP-P2 19 12 N look=M2-SG1-HR00-H2-GOWN-1-PF00-HD00-EY00-PR014 pose=sit cond="GAME_HOUR >= 14 and GAME_HOUR < 16 and HP_WAY != 3 and dead(\"N-HP-P2\") == 0"
+npc N-HP-P3 3 20 N look=K1-SG1-HR01-H1-GOWN-0-PF00-HD00-EY00 pose=sit cond="(GAME_HOUR < 14 or GAME_HOUR >= 16) and HP_WAY != 3 and HP_MASK == 0 and dead(\"N-HP-P3\") == 0"
+npc N-HP-P3 12 12 N look=K1-SG1-HR01-H1-GOWN-0-PF00-HD00-EY00 pose=sit cond="GAME_HOUR >= 14 and GAME_HOUR < 16 and HP_WAY != 3 and HP_MASK == 0 and dead(\"N-HP-P3\") == 0"
+npc N-HP-P4 25 6 N look=F1-SG1-HR05-H3-GOWN-1-PF00-HD00-EY00-PR037 pose=sit cond="(GAME_HOUR < 14 or GAME_HOUR >= 16) and 1 == 1 and dead(\"N-HP-P4\") == 0"
+npc N-HP-P4 30 12 N look=F1-SG1-HR05-H3-GOWN-1-PF00-HD00-EY00-PR037 pose=sit cond="GAME_HOUR >= 14 and GAME_HOUR < 16 and 1 == 1 and dead(\"N-HP-P4\") == 0"
+npc N-HP-P3 3 20 N look=K1-SG1-HR01-H1-GOWN-0-PF00-HD00-EY00 pose=sit cond="HP_MASK == 1 and HP_WAY != 3 and (GAME_HOUR < 14 or GAME_HOUR >= 16) and dead(\"N-HP-P3\") == 0"
+npc N-HP-P3 9 19 W look=K1-SG1-HR01-H1-GOWN-0-PF00-HD00-EY00 pose=sit cond="HP_MASK == 1 and HP_WAY != 3 and GAME_HOUR >= 14 and GAME_HOUR < 16 and dead(\"N-HP-P3\") == 0" bark="(13번 침상 곁 의자에 앉아 발을 흔든다) 아저씨도 면회 기다려요?"
+# ---------------------------------------------------------------- 복도 · 면회 의자
+prop wait_chairs 8 11
+prop wait_chairs 19 11
+prop wait_chairs 30 11
+prop wait_chairs 12 11
+prop w_visit_hp 12 9 cond="HP_WAY != 3"
+prop w_visit_hp 12 9 state=off cond="HP_WAY == 3"
+text 13 11 "병동 게시판. '면회 시간 14:00~16:00'. 압정 쪽지마다 같은 질문 — '오늘 오나요?' 날짜는 없다." w=2
+prop w_photo 23 9
+text 23 11 "복도 액자 — '2077 친절 병동 표창 · 7병동 수간호사 반수빈'. 사진 속 사람은 아직 피부가 있다." w=1
+# ---------------------------------------------------------------- 간호사실
+prop station_hp 13 17
+prop w_whiteboard 19 15
+text 19 17 "간호사실 칠판." w=2 scene=HP_BOARD
+prop w_pa_hp 15 15
+text 15 17 "간호사실 방송 단말과 7층 회로 차단기. 차단기 손잡이에 반창고로 '7병동 — 손대지 마세요'." scene=HP_CUT
+prop med_shelf 20 18
+box 20 18 hp_ward w=1 name="병동 약장" owner=N-R02-031
+npc N-R02-031 15 19 N look=F2-SG1-HR06-H4-T13-2-PF00-HD00-EY00-PR037 cond="(GAME_HOUR < 14 or GAME_HOUR >= 16) and HP_WAY != 3"
+npc N-R02-031 20 12 W look=F2-SG1-HR06-H4-T13-2-PF00-HD00-EY00-PR037 cond="GAME_HOUR >= 14 and GAME_HOUR < 16 and HP_WAY != 3" bark="(의자를 한 줄로 맞춘다) 면회 시간이에요. 조용히요."
+# ---------------------------------------------------------------- 처치실(비었다 — 붕대 선반)
+prop steel_rack 24 17
+box 24 17 hp_treat name="처치실 선반"
+prop hosp_bed_x 30 17
+text 27 19 "처치실. 수액 걸이가 빈 채로 줄 서 있다. 바닥 수거함엔 빈 라드어웨이 봉지만 — 날짜를 매직으로 적어 두었다. 마지막 날짜는 꽤 오래전이다." w=3
+# ---------------------------------------------------------------- 휴게실(창 — 금탑)
+prop w_window 35 1
+prop w_window 38 1
+prop w_window 41 1
+text 38 3 "휴게실 창. 강 건너가 아니라 바로 옆 — 금탑이 손에 잡힐 듯 서 있다. 꼭대기 층에 불빛이 하나 깜빡인다." w=3 cond="KT_TOP >= 1"
+text 38 3 "휴게실 창. 바로 옆 금탑이 검게 서 있다. 꼭대기도 깜깜하다." w=3 cond="KT_TOP == 0"
+prop bk_sofa 36 8
+prop tea_table 37 11
+text 36 13 "휴게실 탁자 위 바둑판. 흑이 한 수 앞섰다. 두는 사람이 둘인데 한 사람은 오늘 안 나왔다." w=2
+prop bookshelf_home 41 17
+prop plant_pot 34 20

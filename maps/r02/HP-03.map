@@ -1,0 +1,133 @@
+# 여의도 대학병원 — 지하 약제부 · 방재실 · 주방 · 영안실 · 장례식장(SD-09a L-R02-09 '지하 영안실 쪽 야생 구울 CR-200 ×5' · 1-D 계획 §14.7). 44×24.
+# 야생 구울 다섯(옛 직원 — 원무과 · 조리원 · 경비 · 방사선사 · 조무사, N-HP-F1~F5)과 잃은 환자(N-HP-L1~L3)는 차임마다 다른 대형(진행기 Hp):
+#   기상 냉동 칸 앞에 누움 · 회진 복도를 한 줄로 행진 · 배식 주방 배식차 앞에 섬 · 면회 조문 의자에 앉음 · 휴식 서서 졸기 · 소등 배회(둘은 1층으로).
+# 방재실: 원내 방송 단말(아무 차임이나 지금 — 2시간 덮어쓰기) · 비상 발전기(냉동 칸 재가동 [수리 50] — 정리).
+map HP-03 여의도 대학병원 지하
+set bk
+grid
+############################################
+############################################
+############################################
+#,,,,,,,,,,,,#........#eeeeeeeeeeeeeeeeeeee#
+#,,,,,,,,,,,,#........#eeeeeeeeeeeeeeeeeeee#
+#,,,,,,,,,,,,#........#eeeeeeeeeeeeeeeeeeee#
+#,,,,,,,,,,,,#........#eeeeeeeeeeeeeeeeeeee#
+#,,,,,,,,,,,,#........#eeeeeeeeeeeeeeeeeeee#
+######,,#########..###########ee############
+######,,#########..###########ee############
+######,,#########..###########ee############
+#ss~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#ss~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#ss~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+########~~############cc############cc######
+########~~############cc############cc######
+########~~############cc############cc######
+#~~~~~~~~~~~~~~~~#ccccccccccccccccccccccccc#
+#~~~~~~~~~~~~~~~~#ccccccccccccccccccccccccc#
+#~~~~~~~~~~~~~~~~#ccccccccccccccccccccccccc#
+#~~~~~~~~~~~~~~~~#ccccccccccccccccccccccccc#
+#~~~~~~~~~~~~~~~~#ccccccccccccccccccccccccc#
+############################################
+############################################
+end
+exit 1 11 HP-01 from_HP03
+exit 1 12 HP-01 from_HP03
+exit 1 13 HP-01 from_HP03
+mark from_HP01 3 12 E
+mark pa 18 5 N
+mark gen 15 5 N
+mark f_lie_1 3 19 N
+mark f_lie_2 5 19 N
+mark f_lie_3 7 19 N
+mark f_lie_4 9 19 N
+mark f_lie_5 11 19 N
+mark f_lie_6 13 19 N
+mark f_lie_7 13 20 N
+mark f_lie_8 15 20 N
+mark f_eat_1 32 6 N
+mark f_eat_2 33 6 N
+mark f_eat_3 35 6 N
+mark f_eat_4 36 6 N
+mark f_eat_5 34 7 N
+mark f_eat_6 31 5 N
+mark f_eat_7 37 5 N
+mark f_eat_8 33 5 N
+mark f_sit_1 25 19 N
+mark f_sit_2 26 19 N
+mark f_sit_3 29 19 N
+mark f_sit_4 30 19 N
+mark f_sit_5 33 19 N
+mark f_sit_6 34 19 N
+mark f_sit_7 37 19 N
+mark f_sit_8 38 19 N
+mark f_rest_1 8 12 N
+mark f_rest_2 15 12 N
+mark f_rest_3 24 12 N
+mark f_rest_4 33 12 N
+mark f_rest_5 39 12 N
+mark f_rest_6 11 11 N
+mark f_rest_7 28 13 N
+mark f_rest_8 36 11 N
+mark f_walk_1 4 12 N
+mark f_walk_2 6 5 N
+mark f_walk_3 6 12 N
+mark f_walk_4 17 12 N
+mark f_walk_5 30 12 N
+mark f_walk_6 30 5 N
+mark f_walk_7 30 12 N
+mark f_walk_8 40 12 N
+# ---------------------------------------------------------------- 약제부(약은 박하다 — 라드어웨이 몇 · 수혈 팩 냉장고는 전원이 죽어 다 상함)
+prop pharm_counter 4 7
+prop med_shelf 2 3
+box 2 3 hp_pharm w=2 name="약장(자물쇠 50)" lock=50
+prop med_shelf 5 3
+box 5 3 hp_pharm2 w=2 name="약장"
+prop fridge 9 3
+text 9 5 "혈액 냉장고. 전원 표시등이 꺼졌다. 수혈 팩마다 검게 변했다 — 상한 피는 쓸 수 없다. 냉장 칸 손잡이에 '7병동 몫' 견출지." w=2
+text 11 5 "조제 기록부. 마지막 장 '라드어웨이 — 7병동 주 3 · 수혈 주 2'. 그 아래 다른 글씨 '들것 안 옴. 남은 것 처치실로'." w=1
+# ---------------------------------------------------------------- 방재실(방송 단말 · 비상 발전기)
+prop w_pa_hp 18 1
+text 18 3 "방재실 원내 방송 단말. 차임 단추 다섯과 층 회로 표시등 — 지하 · 1층 · 7층. 시각표를 지금 틀 수 있다." scene=HP_PA
+prop generator_bk 15 3
+text 15 5 "비상 발전기. 연료계는 반. 출력선 하나가 '영안실 냉동'에서 뽑혀 바닥에 늘어졌다." w=2 scene=HP_GEN
+prop bk_desk 20 6
+text 20 5 "방재 일지. 10/23 23:10 '소등 방송 정상'. 10/24부터 매일 같은 글씨 '방송 정상' — 200년치. 서명 반." w=1
+# ---------------------------------------------------------------- 주방(배식차)
+prop hm_cart 34 4
+text 34 6 "배식차. 식판 마흔 칸이 다 비었다. 칸마다 병실 번호 견출지 — 701 · 702 · 703 · 704 …" w=2
+prop hm_stove 25 3
+prop kitchen_sink 28 3
+prop steel_rack 40 3
+box 40 3 hp_kitchen name="식자재 선반"
+text 26 5 "조리대 위 국자 셋. 손잡이가 닳아 손가락 자국이 났다. 배식 차임이 울리면 이 앞에 누가 줄을 선다." w=2
+# ---------------------------------------------------------------- 영안실(냉동 칸 · 들것)
+prop morgue_hp 2 17 cond="HP_GEN == 0"
+prop morgue_hp 2 17 state=cold cond="HP_GEN == 1"
+prop morgue_hp 6 17 state=open cond="HP_GEN == 0"
+prop morgue_hp 6 17 state=cold cond="HP_GEN == 1"
+prop morgue_hp 11 17 cond="HP_GEN == 0"
+prop morgue_hp 11 17 state=cold cond="HP_GEN == 1"
+prop gurney_hp 4 21
+prop gurney_hp 13 21
+text 9 18 "냉동 칸. 칸마다 이름표 — '원무과' '조리' '경비' '방사선' '간호조무'. 이름 대신 부서. 칸은 안에서 열렸다." w=2
+text 14 18 "새 이름표 꽂이. 반수빈의 글씨로 비워 둔 줄이 셋." w=1 cond="HP_LOST == 0"
+text 14 18 "새 이름표 꽂이. 반수빈의 글씨 — 7병동에서 내려온 사람의 이름이 적혔다." w=1 cond="HP_LOST >= 1"
+# ---------------------------------------------------------------- 장례식장 조문 대기실(의자 줄 — 면회 시간엔 그들이 앉는다)
+prop wait_chairs 25 18
+prop wait_chairs 29 18
+prop wait_chairs 33 18
+prop wait_chairs 37 18
+prop w_photo 30 15
+text 30 17 "영정 사진 자리. 액자만 줄지어 있고 사진은 없다. 마지막 사진틀에 '10/23 — 미상'." w=2
+prop low_table 21 20
+text 21 19 "조문록. 펼친 장에 이름 대신 시각이 적혔다 — '14:00' '14:00' '14:00'. 면회 시간이다." w=1
+prop plant_pot 41 17
+# ---------------------------------------------------------------- 야생 구울(옛 직원 다섯 + 잃은 환자 셋) — 진행기가 차임 대형으로 다시 세운다
+enemy CR-200 3 19 who=N-HP-F1 cond="dead(\"N-HP-F1\") == 0"
+enemy CR-200 5 19 who=N-HP-F2 cond="dead(\"N-HP-F2\") == 0"
+enemy CR-200 7 19 who=N-HP-F3 cond="dead(\"N-HP-F3\") == 0"
+enemy CR-200 9 19 who=N-HP-F4 cond="dead(\"N-HP-F4\") == 0 and (HP_NIGHT == 0 or HP_GEN == 1)"
+enemy CR-200 11 19 who=N-HP-F5 cond="dead(\"N-HP-F5\") == 0 and (HP_NIGHT == 0 or HP_GEN == 1)"
+enemy CR-200 13 19 who=N-HP-L1 cond="HP_LOST >= 1 and dead(\"N-HP-L1\") == 0"
+enemy CR-200 13 20 who=N-HP-L2 cond="HP_LOST >= 2 and dead(\"N-HP-L2\") == 0"
+enemy CR-200 15 20 who=N-HP-L3 cond="HP_LOST >= 3 and dead(\"N-HP-L3\") == 0"

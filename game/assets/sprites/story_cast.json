@@ -95,6 +95,7 @@
   "N-R02-026": "st_n_r02_026",
   "N-R02-027": "st_n_r02_027",
   "N-R02-030": "st_n_r02_030",
+  "N-R02-031": "st_n_r02_031",
   "N-R02-035": "st_n_r02_035",
   "N-R02-036": "st_n_r02_036",
   "N-R02-037": "st_n_r02_037",
@@ -123,10 +124,13 @@
   "st_look_f1_s2_hr06_h2_t04_2_pf12_hd00_ey00_pr011": "st_look_f1_s2_hr06_h2_t04_2_pf12_hd00_ey00_pr011",
   "st_look_f1_s3_hr02_h1_t06_2_pf12_hd03_ey00_pr041": "st_look_f1_s3_hr02_h1_t06_2_pf12_hd03_ey00_pr041",
   "st_look_f1_s4_hr06_h2_t05_1_pf12_hd00_ey00": "st_look_f1_s4_hr06_h2_t05_1_pf12_hd00_ey00",
+  "st_look_f1_sg1_hr05_h3_gown_1_pf00_hd00_ey00_pr037": "st_look_f1_sg1_hr05_h3_gown_1_pf00_hd00_ey00_pr037",
   "st_look_f2_s2_hr06_h2_t14_0_pf10_hd14_ey00_pr017": "st_look_f2_s2_hr06_h2_t14_0_pf10_hd14_ey00_pr017",
   "st_look_f2_s2_hr08_h4_t11_2_pf11_hd00_ey02": "st_look_f2_s2_hr08_h4_t11_2_pf11_hd00_ey02",
   "st_look_f2_s3_hr04_h1_t12_1_pf00_hd00_ey00": "st_look_f2_s3_hr04_h1_t12_1_pf00_hd00_ey00",
   "st_look_f2_s4_hr05_h1_t06_2_pf12_hd03_ey00_pr041": "st_look_f2_s4_hr05_h1_t06_2_pf12_hd03_ey00_pr041",
+  "st_look_f2_sg1_hr03_h4_gown_1_pf00_hd00_ey00_pr021": "st_look_f2_sg1_hr03_h4_gown_1_pf00_hd00_ey00_pr021",
+  "st_look_f2_sg1_hr06_h4_t13_2_pf00_hd00_ey00_pr037": "st_look_f2_sg1_hr06_h4_t13_2_pf00_hd00_ey00_pr037",
   "st_look_k1_s1_hr00_h1_t01_0_pf11_hd00_ey00": "st_look_k1_s1_hr00_h1_t01_0_pf11_hd00_ey00",
   "st_look_k1_s1_hr09_h2_t01_0_pf11_hd00_ey00": "st_look_k1_s1_hr09_h2_t01_0_pf11_hd00_ey00",
   "st_look_k1_s2_hr00_h1_t01_0_pf11_hd00_ey00": "st_look_k1_s2_hr00_h1_t01_0_pf11_hd00_ey00",
@@ -138,6 +142,7 @@
   "st_look_k1_s4_hr00_h1_t01_0_pf11_hd00_ey00": "st_look_k1_s4_hr00_h1_t01_0_pf11_hd00_ey00",
   "st_look_k1_s5_hr00_h1_t01_0_pf11_hd00_ey00": "st_look_k1_s5_hr00_h1_t01_0_pf11_hd00_ey00",
   "st_look_k1_s6_hr00_h1_t01_0_pf11_hd00_ey00": "st_look_k1_s6_hr00_h1_t01_0_pf11_hd00_ey00",
+  "st_look_k1_sg1_hr01_h1_gown_0_pf00_hd00_ey00": "st_look_k1_sg1_hr01_h1_gown_0_pf00_hd00_ey00",
   "st_look_m1_s2_hr01_h1_t03_2_pf00_hd05_ey00_pr040": "st_look_m1_s2_hr01_h1_t03_2_pf00_hd05_ey00_pr040",
   "st_look_m1_s2_hr02_h1_t03_1_pf00_hd02_ey00": "st_look_m1_s2_hr02_h1_t03_1_pf00_hd02_ey00",
   "st_look_m1_s2_hr02_h1_t03_2_pf01_hd00_ey00_pr033": "st_look_m1_s2_hr02_h1_t03_2_pf01_hd00_ey00_pr033",
@@ -154,6 +159,7 @@
   "st_look_m2_s4_hr01_h1_t05_1_pf12_hd05_ey00": "st_look_m2_s4_hr01_h1_t05_1_pf12_hd05_ey00",
   "st_look_m2_s4_hr02_h1_t02_1_pf11_hd03_ey00": "st_look_m2_s4_hr02_h1_t02_1_pf11_hd03_ey00",
   "st_look_m2_s4_hr02_h1_t12_2_pf00_hd00_ey00": "st_look_m2_s4_hr02_h1_t12_2_pf00_hd00_ey00",
-  "st_look_m2_s5_hr03_h2_t10_2_pf00_hd00_ey00_pr040": "st_look_m2_s5_hr03_h2_t10_2_pf00_hd00_ey00_pr040"
+  "st_look_m2_s5_hr03_h2_t10_2_pf00_hd00_ey00_pr040": "st_look_m2_s5_hr03_h2_t10_2_pf00_hd00_ey00_pr040",
+  "st_look_m2_sg1_hr00_h2_gown_1_pf00_hd00_ey00_pr014": "st_look_m2_sg1_hr00_h2_gown_1_pf00_hd00_ey00_pr014"
  }
 }
