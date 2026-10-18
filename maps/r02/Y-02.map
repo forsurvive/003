@@ -59,7 +59,8 @@ prop seated_1 19 8
 text 19 8 "2조 넷째 자리 유해. 등받이에 기대지 않고 꼿꼿이 앉았다. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS cond="MQ104_IDS == 0"
 text 19 8 "2조 넷째 자리 유해. 등받이에 기대지 않고 꼿꼿이 앉았다. 목에는 신분증 끈만 남았다." scene=MQ-104_REMAINS cond="MQ104_IDS == 1"
 prop seated_2 22 8
-text 22 8 "3조 끝자리 — 입구에서 가장 먼 유해. 왼 손목을 얼굴 앞으로 들어 올린 채 굳었다 — 시계를 보던 자세." scene=SQS12_REM_M
+text 22 8 "3조 끝자리 — 입구에서 가장 먼 유해. 왼 손목을 얼굴 앞으로 들어 올린 채 굳었다 — 시계를 보던 자세." scene=SQS12_REM_M cond="SQ_S12_ET == 0"
+text 22 8 "3조 끝자리 — 입구에서 가장 먼 유해. 들어 올린 손목에 시계 자국만 하얗다." scene=SQS12_REM_M cond="SQ_S12_ET == 1"
 prop seated_3 16 11
 text 16 11 "1조 셋째 자리 유해. 구두 한 짝을 벗어 의자 밑에 가지런히 두었다. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS cond="MQ104_IDS == 0"
 text 16 11 "1조 셋째 자리 유해. 구두 한 짝을 벗어 의자 밑에 가지런히 두었다. 목에는 신분증 끈만 남았다." scene=MQ-104_REMAINS cond="MQ104_IDS == 1"
@@ -67,7 +68,8 @@ prop seated_4 19 11
 text 19 11 "2조 셋째 자리 유해. 팔짱을 낀 채 — 의자가 조금 뒤로 밀렸다. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS cond="MQ104_IDS == 0"
 text 19 11 "2조 셋째 자리 유해. 팔짱을 낀 채 — 의자가 조금 뒤로 밀렸다. 목에는 신분증 끈만 남았다." scene=MQ-104_REMAINS cond="MQ104_IDS == 1"
 prop seated_0 22 11
-text 22 11 "3조 셋째 자리 유해. 무릎 위에 끈으로 묶은 종이 묶음." scene=SQS12_REM_G
+text 22 11 "3조 셋째 자리 유해. 무릎 위에 끈으로 묶은 종이 묶음." scene=SQS12_REM_G cond="SQ_S12_ST == 0"
+text 22 11 "3조 셋째 자리 유해. 빈 무릎에 끈 자국만 먼지에 남았다." scene=SQS12_REM_G cond="SQ_S12_ST == 1"
 prop seated_1 16 14
 text 16 14 "1조 둘째 자리 유해. 안경을 쓴 채 굳었다 — 한쪽 알이 빠졌다. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS cond="MQ104_IDS == 0"
 text 16 14 "1조 둘째 자리 유해. 안경을 쓴 채 굳었다 — 한쪽 알이 빠졌다. 목에는 신분증 끈만 남았다." scene=MQ-104_REMAINS cond="MQ104_IDS == 1"
@@ -78,7 +80,8 @@ prop seated_3 22 14
 text 22 14 "3조 둘째 자리 유해. 한 손이 옆자리 등받이에 걸쳐 있다 — 셋째 자리 쪽으로. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS cond="MQ104_IDS == 0"
 text 22 14 "3조 둘째 자리 유해. 한 손이 옆자리 등받이에 걸쳐 있다 — 셋째 자리 쪽으로. 목에는 신분증 끈만 남았다." scene=MQ-104_REMAINS cond="MQ104_IDS == 1"
 prop seated_4 16 17
-text 16 17 "1조 맨 앞자리 — 입구에 가장 가까운 유해. 오른손이 무릎 위에서 무언가를 꼭 쥔 채 굳었다." scene=SQS12_REM_K
+text 16 17 "1조 맨 앞자리 — 입구에 가장 가까운 유해. 오른손이 무릎 위에서 무언가를 꼭 쥔 채 굳었다." scene=SQS12_REM_K cond="SQ_S12_JT == 0"
+text 16 17 "1조 맨 앞자리 — 입구에 가장 가까운 유해. 펴진 오른손이 무릎 위에 놓였다." scene=SQS12_REM_K cond="SQ_S12_JT == 1"
 prop seated_0 19 17
 text 19 17 "2조 맨 앞자리 유해. 근무복 단추를 목까지 채웠다. 목에 건 신분증이 먼지에 덮였다." scene=MQ-104_REMAINS cond="MQ104_IDS == 0"
 text 19 17 "2조 맨 앞자리 유해. 근무복 단추를 목까지 채웠다. 목에는 신분증 끈만 남았다." scene=MQ-104_REMAINS cond="MQ104_IDS == 1"
@@ -103,4 +106,4 @@ prop crate_army 2 24
 prop crate_army 3 24
 box 2 24 crate w=2 name="비상 식량 상자"
 prop water_cooler 2 4
-text 37 20 "벽에 연필로 그은 줄. 다섯 개씩 묶어 아홉. 그 뒤로는 없다."
+text 37 20 "벽에 연필로 그은 줄 아홉. 하루에 하나씩 — 10. 23.부터. 그 뒤로는 없다."
