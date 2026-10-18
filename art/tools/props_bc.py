@@ -1040,6 +1040,10 @@ from props_ga import PROPS_GA, STATES_GA                              # 가산 �
 for _k in PROPS_GA:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_GA)
+from props_mr import PROPS_MR, STATES_MR                              # 문래 철공소 골목 · 지식산업센터 금형(1-D7): 선반 · 용접대 · 쇳가루 길 · 간판 · 태성 금형
+for _k in PROPS_MR:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_MR)
 from props_trap import PROPS_TRAP, STATES_TRAP, burnt_states       # 함정 · 환경 폭발(1-9c, SD-11 §9.2 · §9.3)
 for _k in PROPS_TRAP:
     assert _k not in PROPS, _k
@@ -1061,6 +1065,7 @@ STATES.update(STATES_DS)
 STATES.update(STATES_GR)
 STATES.update(STATES_KT)
 STATES.update(STATES_GA)
+STATES.update(STATES_MR)
 STATES.update(STATES_BS)
 STATES.update(STATES_S04)
 STATES.update(STATES_S03)
