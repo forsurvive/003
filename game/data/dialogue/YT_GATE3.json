@@ -11,9 +11,10 @@
   "R3": 7,
   "R4": 9,
   "AFTER": 11,
-  "HACK": 14,
-  "HACK_FAIL": 17,
-  "LOCK": 19
+  "LOCK_OPEN": 14,
+  "HACK": 16,
+  "HACK_FAIL": 19,
+  "LOCK": 21
  },
  "ops": [
   {
@@ -155,6 +156,16 @@
    "to": "END"
   },
   {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "판독 판에 빨간 엑스. 날개는 접힌 채 굳었다 — 비상 개방. 지나갈 수 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
    "op": "cmd",
    "name": "yt",
    "args": [
@@ -181,6 +192,11 @@
   {
    "op": "goto",
    "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "YT_HK3 == 1",
+   "to": "LOCK_OPEN"
   },
   {
    "op": "line",

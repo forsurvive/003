@@ -40,7 +40,7 @@
 | UQ-04 | C-010 N-DS-B1 N-DS-B2 N-DS-S1 N-DS-S2 | N-HR-031 N-R06-047 | 3 |  |  |  |
 | UQ-125 | N-UQ-C1 N-UQ-K1 |  | 0 |  |  |  |
 | UQ-71 | N-DB-1 N-R02-048 | N-HR-013 N-R06-056 | 1 |  |  |  |
-| YT | N-R02-032 N-YTB-2 | N-R03-018 N-R05-034 | 5 |  |  |  |
+| YT | N-R02-032 N-YTB-2 | N-R03-018 N-R05-034 N-R09-044 | 5 |  |  |  |
 | 상인 순회 | C-067 |  | 2 |  |  |  |
 | 수배 |  |  | 5 |  |  |  |
 | 엔진 |  |  | 19 |  |  |  |
@@ -127,7 +127,7 @@
 - N-R08-031 나사: CAPTURE, MQ-102~105, MQ-106, MQ-P4, U02
 - N-R08-060 열쇠: GR, HOME_BC, HP, KS, KT, MQ-102~105, MQ-106, MQ-P3, MQ-P4, SQ-S08, SQ-S10, 장소:RE_WORLD
 - N-R09-039 철모: GR, MQ-P4, SQ-S11
-- N-R09-044 발자국: MQ-106, SQ-S01, SQ-S05, SQ-S11
+- N-R09-044 발자국: MQ-106, SQ-S01, SQ-S05, SQ-S11, YT
 - N-R10-013 경보: GR, 장소:R01_NORTH
 - N-R10-028 수수료: MQ-102~105, SQ-S10
 - N-UG-007 남태령 할매: SADANG, SAGOGAE, U02

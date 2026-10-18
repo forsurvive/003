@@ -11,29 +11,31 @@
   "R3": 9,
   "R4": 11,
   "AFTER": 13,
-  "HABORAM": 22,
-  "HB_OK": 24,
-  "HB_NO": 27,
-  "TWO": 31,
-  "TWO_UP": 35,
-  "TWO_OK": 37,
-  "TWO_NO": 40,
-  "TWO_ERR": 44,
-  "NO_INC": 48,
-  "ESCORT": 50,
-  "DOMI": 52,
-  "DOMI_OK": 55,
-  "DOMI_NO": 58,
-  "DOMI_DEAD": 62,
-  "OVERTIME": 67,
-  "OT_OK": 69,
-  "OT_NO": 72,
-  "DEADCARD": 76,
-  "PICK": 78,
-  "PICK_FAIL": 81,
-  "OPEN": 83,
-  "LOCK": 86,
-  "INC": 88
+  "HABORAM": 23,
+  "HB_UP": 25,
+  "HB_OK": 27,
+  "HB_NO": 30,
+  "TWO": 34,
+  "TWO_UP": 38,
+  "TWO_OK": 40,
+  "TWO_NO": 43,
+  "TWO_ERR": 47,
+  "NO_INC": 51,
+  "ESCORT": 53,
+  "DOMI": 55,
+  "DOMI_OK": 58,
+  "DOMI_NO": 61,
+  "DOMI_DEAD": 65,
+  "DD_QUIET": 71,
+  "OVERTIME": 73,
+  "OT_OK": 75,
+  "OT_NO": 78,
+  "DEADCARD": 82,
+  "PICK": 84,
+  "PICK_FAIL": 87,
+  "OPEN": 89,
+  "LOCK": 92,
+  "INC": 94
  },
  "ops": [
   {
@@ -205,6 +207,11 @@
    "to": "TWO"
   },
   {
+   "op": "if",
+   "cond": "YT_R == 10",
+   "to": "HB_UP"
+  },
+  {
    "op": "line",
    "who": "SYS",
    "emo": "기본",
@@ -218,7 +225,7 @@
    "op": "line",
    "who": "SYS",
    "emo": "기본",
-   "text": "스피커: '하보람 님. 2동 7층 퇴실 기록이 없습니다. 23:21 이후 승강기는 정지했습니다.' 잠깐의 정적. '…어떻게 올라오셨습니까?'"
+   "text": "스피커: '하보람 님. 2동 7층 퇴실 기록이 없습니다. 이 층까지 판독 기록도 없습니다.' 잠깐의 정적. '…어떻게 올라오셨습니까?'"
   },
   {
    "op": "choice",
@@ -260,6 +267,56 @@
      "fx": "",
      "to": "HB_OK",
      "id": "YT_READ18:2:3",
+     "fail": "HB_NO"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "스피커: '하보람 님, 승강기 판독 확인. 그런데 2동 7층 퇴실 기록이 없습니다. 3동 18층 용무 — 사유를 말씀해 주십시오.'"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "\"퇴근.\"",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "HB_NO",
+     "id": "YT_READ18:3:0"
+    },
+    {
+     "text": "\"잔업.\"",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "HB_NO",
+     "id": "YT_READ18:3:1"
+    },
+    {
+     "text": "\"보도국 사본 전달. 22시 50분 요청 건.\"",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "HB_OK",
+     "id": "YT_READ18:3:2"
+    },
+    {
+     "text": "\"계엄 통에 퇴실 판독을 빼먹었어요. 송출실 지원이에요.\"",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "쉬움"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "HB_OK",
+     "id": "YT_READ18:3:3",
      "fail": "HB_NO"
     }
    ]
@@ -337,7 +394,7 @@
      "cond": "",
      "fx": "",
      "to": "TWO_OK",
-     "id": "YT_READ18:3:0",
+     "id": "YT_READ18:4:0",
      "fail": "TWO_NO"
     },
     {
@@ -352,7 +409,7 @@
      "cond": "",
      "fx": "",
      "to": "TWO_OK",
-     "id": "YT_READ18:3:1",
+     "id": "YT_READ18:4:1",
      "fail": "TWO_NO"
     },
     {
@@ -361,7 +418,7 @@
      "cond": "",
      "fx": "",
      "to": "TWO_ERR",
-     "id": "YT_READ18:3:2"
+     "id": "YT_READ18:4:2"
     },
     {
      "text": "그만둔다",
@@ -369,7 +426,7 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "YT_READ18:3:3"
+     "id": "YT_READ18:4:3"
     }
    ]
   },
@@ -394,7 +451,7 @@
      "cond": "",
      "fx": "",
      "to": "TWO_OK",
-     "id": "YT_READ18:4:0",
+     "id": "YT_READ18:5:0",
      "fail": "TWO_NO"
     },
     {
@@ -409,7 +466,7 @@
      "cond": "",
      "fx": "",
      "to": "TWO_OK",
-     "id": "YT_READ18:4:1",
+     "id": "YT_READ18:5:1",
      "fail": "TWO_NO"
     },
     {
@@ -418,7 +475,7 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "YT_READ18:4:2"
+     "id": "YT_READ18:5:2"
     }
    ]
   },
@@ -533,7 +590,7 @@
      "cond": "",
      "fx": "",
      "to": "DOMI_OK",
-     "id": "YT_READ18:5:0",
+     "id": "YT_READ18:6:0",
      "fail": "DOMI_NO"
     },
     {
@@ -548,7 +605,7 @@
      "cond": "",
      "fx": "",
      "to": "DOMI_OK",
-     "id": "YT_READ18:5:1",
+     "id": "YT_READ18:6:1",
      "fail": "DOMI_NO"
     },
     {
@@ -557,7 +614,7 @@
      "cond": "",
      "fx": "",
      "to": "DOMI_DEAD",
-     "id": "YT_READ18:5:2"
+     "id": "YT_READ18:6:2"
     },
     {
      "text": "그만둔다",
@@ -565,7 +622,7 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "YT_READ18:5:3"
+     "id": "YT_READ18:6:3"
     }
    ]
   },
@@ -625,6 +682,11 @@
    "text": "스피커가 오래 지직거린다. '…사망 처리 사원 출입 시도. 보안 사고 1건. 도미란 — 사망 처리. 미확인 생물 — 격리.'"
   },
   {
+   "op": "if",
+   "cond": "KT_QUEEN == 1 or DG_YT == 1",
+   "to": "DD_QUIET"
+  },
+  {
    "op": "line",
    "who": "SYS",
    "emo": "기본",
@@ -635,6 +697,16 @@
    "who": "SYS",
    "emo": "기본",
    "text": "판독기 불은 영영 붉게 굳는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "계단참 옆 기계실 틈으로 셔터가 쿵 내려온다. 셔터 너머는 조용하다 — 가둘 것도 남지 않았다. 판독기 불은 영영 붉게 굳는다."
   },
   {
    "op": "goto",
@@ -655,7 +727,7 @@
      "cond": "",
      "fx": "",
      "to": "OT_NO",
-     "id": "YT_READ18:6:0"
+     "id": "YT_READ18:7:0"
     },
     {
      "text": "\"장애 대응.\"",
@@ -663,7 +735,7 @@
      "cond": "",
      "fx": "",
      "to": "OT_NO",
-     "id": "YT_READ18:6:1"
+     "id": "YT_READ18:7:1"
     },
     {
      "text": "\"송출 지원.\"",
@@ -671,7 +743,7 @@
      "cond": "",
      "fx": "",
      "to": "OT_OK",
-     "id": "YT_READ18:6:2"
+     "id": "YT_READ18:7:2"
     },
     {
      "text": "\"계엄 상황이라 대리 출입입니다.\"",
@@ -685,7 +757,7 @@
      "cond": "",
      "fx": "",
      "to": "OT_OK",
-     "id": "YT_READ18:6:3",
+     "id": "YT_READ18:7:3",
      "fail": "OT_NO"
     }
    ]
@@ -808,7 +880,7 @@
      "cond": "",
      "fx": "",
      "to": "PICK",
-     "id": "YT_READ18:7:0",
+     "id": "YT_READ18:8:0",
      "fail": "PICK_FAIL"
     },
     {
@@ -817,7 +889,7 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "YT_READ18:7:1"
+     "id": "YT_READ18:8:1"
     }
    ]
   },
@@ -842,7 +914,7 @@
      "cond": "",
      "fx": "",
      "to": "PICK",
-     "id": "YT_READ18:8:0",
+     "id": "YT_READ18:9:0",
      "fail": "PICK_FAIL"
     },
     {
@@ -851,7 +923,7 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "YT_READ18:8:1"
+     "id": "YT_READ18:9:1"
     }
    ]
   },

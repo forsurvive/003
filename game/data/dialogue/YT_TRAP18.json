@@ -1,0 +1,94 @@
+{
+ "id": "YT_TRAP18",
+ "title": "기계실 틈 격리 셔터",
+ "loc": "L-R02-08",
+ "npc": "",
+ "cond": "V_ACT >= 1 and YT_TRAP == 1",
+ "labels": {
+  "START": 0,
+  "FREE": 2,
+  "NOFREE": 5
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "내려온 격리 셔터. '미확인 생물 격리 — 해제는 관리자 확인 후.' 셔터 너머 기계실 부품함이 있던 쪽이다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "셔터 걸쇠 상자를 따서 해제한다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "자물쇠 따기",
+       "min": 75
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "FREE",
+     "id": "YT_TRAP18:1:0",
+     "fail": "NOFREE"
+    },
+    {
+     "text": "옆 제어함에 '격리 해제'를 친다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "과학",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "FREE",
+     "id": "YT_TRAP18:1:1",
+     "fail": "NOFREE"
+    },
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "YT_TRAP18:1:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "untrap"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "셔터가 덜컹 오른다. 기계실 쪽 어둠에서 흙 냄새가 다시 밀려온다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "걸쇠가 꿈쩍 않는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/YT.txt"
+}

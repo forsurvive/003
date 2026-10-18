@@ -6,18 +6,27 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "STEAL": 6,
-  "WAKE": 9,
-  "AWAY": 12,
-  "TAKEN": 14,
-  "EMPTY": 16,
-  "RODE": 18
+  "GIVE": 8,
+  "HOLD": 11,
+  "TAKEBACK": 13,
+  "GONE": 16,
+  "STEAL": 18,
+  "WAKE": 21,
+  "AWAY": 24,
+  "TAKEN": 26,
+  "EMPTY": 28,
+  "RODE": 30
  },
  "ops": [
   {
    "op": "if",
    "cond": "dead(\"N-YTB-1\") == 1",
    "to": "EMPTY"
+  },
+  {
+   "op": "if",
+   "cond": "YT_CDONE == 1",
+   "to": "GONE"
   },
   {
    "op": "if",
@@ -31,7 +40,12 @@
   },
   {
    "op": "if",
-   "cond": "has(\"M-401\") >= 1",
+   "cond": "YT_CTAPE == 1",
+   "to": "HOLD"
+  },
+  {
+   "op": "if",
+   "cond": "YT_NOCARD == 1",
    "to": "TAKEN"
   },
   {
@@ -59,14 +73,107 @@
      "fail": "WAKE"
     },
     {
+     "text": "(시세 테이프를 무릎에 살며시 올려 둔다)",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "은신",
+       "min": 50
+      }
+     ],
+     "cond": "has(\"M-404\") >= 1",
+     "fx": "",
+     "to": "GIVE",
+     "id": "YT_CLERK:1:1",
+     "fail": "WAKE"
+    },
+    {
      "text": "그냥 둔다",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "YT_CLERK:1:1"
+     "id": "YT_CLERK:1:2"
     }
    ]
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "ctape"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "테이프가 무릎에 놓인다. 마른 손가락이 릴을 감싸 쥔다. 입술이 달싹인다 — '…객장. 23시 전까지.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "구울이 무릎의 테이프를 두 손으로 감싼 채 존다. 밤을 기다리는 것 같다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "(테이프를 도로 집는다)",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "은신",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "TAKEBACK",
+     "id": "YT_CLERK:2:0",
+     "fail": "WAKE"
+    },
+    {
+     "text": "그냥 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "YT_CLERK:2:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "ctape_back"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "손가락을 하나씩 편다. 테이프가 다시 내 손에 있다. 구울의 손이 빈 무릎을 더듬는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈 소파. 쿠션 자국 위에 승차권 반쪽. 증권가 통로 쪽으로 마른 발자국이 한 줄 나 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
   },
   {
    "op": "cmd",
@@ -119,8 +226,32 @@
    "text": "구울이 빈 목을 쥔 채 존다."
   },
   {
-   "op": "goto",
-   "to": "END"
+   "op": "choice",
+   "opts": [
+    {
+     "text": "(시세 테이프를 무릎에 살며시 올려 둔다)",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "은신",
+       "min": 50
+      }
+     ],
+     "cond": "has(\"M-404\") >= 1",
+     "fx": "",
+     "to": "GIVE",
+     "id": "YT_CLERK:3:0",
+     "fail": "WAKE"
+    },
+    {
+     "text": "그냥 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "YT_CLERK:3:1"
+    }
+   ]
   },
   {
    "op": "line",

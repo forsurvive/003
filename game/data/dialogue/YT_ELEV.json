@@ -6,14 +6,16 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "R": 4,
-  "R2": 6,
-  "R3": 8,
-  "R4": 10,
-  "AFTER": 12,
-  "UPSTAIRS": 15,
-  "DEAD": 18,
-  "LOCK": 20
+  "C18": 5,
+  "PICK": 6,
+  "R": 7,
+  "R2": 9,
+  "R3": 11,
+  "R4": 13,
+  "AFTER": 15,
+  "UPSTAIRS": 18,
+  "DEAD": 21,
+  "LOCK": 23
  },
  "ops": [
   {
@@ -27,10 +29,25 @@
    "to": "DEAD"
   },
   {
+   "op": "if",
+   "cond": "YT_CUP == 1",
+   "to": "C18"
+  },
+  {
    "op": "line",
    "who": "SYS",
    "emo": "기본",
    "text": "층 표시등 '1'. 호출 단추 옆 빨강 판독기."
+  },
+  {
+   "op": "goto",
+   "to": "PICK"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "층 표시등이 '18'에 멈춰 있다. 누가 타고 올라갔다. 호출하면 내려올 것이다."
   },
   {
    "op": "choice",
