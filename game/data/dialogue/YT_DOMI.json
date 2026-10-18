@@ -1,0 +1,69 @@
+{
+ "id": "YT_DOMI",
+ "title": "판독 홀 앞 의자의 유해",
+ "loc": "L-R02-08",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TAKE": 4
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "판독 홀 앞 의자의 유해. 무릎 위에 테이프 감는 흰 장갑. 몸이 셔터 쪽으로 기울었다. 사원증 '도미란 대리 — 3동 파견(송출)'."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "의자 다리 옆에 볼펜으로 쓴 쪽지 '기범 씨 23:00 감아 둠. 승강기 멈춤? 계단으로 와요 — 미란 23:24'."
+  },
+  {
+   "op": "if",
+   "cond": "YT_DMTAKE == 1",
+   "to": "END"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "(사원증을 푼다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TAKE",
+     "id": "YT_DOMI:1:0"
+    },
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "YT_DOMI:1:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "YT_DMTAKE = 1; give(\"M-402\", 1)"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "카드는 차갑지 않다. 로봇의 렌즈가 잠깐 이쪽을 향했다가 돌아간다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/YT.txt"
+}

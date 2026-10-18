@@ -131,7 +131,7 @@ def extract_factions():
     return {"factions": out, "settlements": sub}
 
 
-QHEAD = re.compile(r"^### \d+\.\d+ ((?:MQ|SQ|UQ)-[A-Z0-9]+) (.+)$")
+QHEAD = re.compile(r"^(?:### \d+\.\d+|####) ((?:MQ|SQ|UQ)-[A-Z0-9]+) (.+)$")   # '#### UQ-06 …'(권역 절 아래 한 퀘스트, 1-D9)도 단계 표가 있으면
 
 
 def extract_quests():

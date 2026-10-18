@@ -298,22 +298,22 @@
    "places": [
     "L-R02-19"
    ],
-   "places_src": "03a_main-story-part1.md:1274",
+   "places_src": "03a_main-story-part1.md:1275",
    "stages": {
     "10": {
      "done": "본소 안 진입",
      "log": "새벽인력 본소에 들어간다",
-     "src": "03a_main-story-part1.md:1282"
+     "src": "03a_main-story-part1.md:1283"
     },
     "20": {
      "done": "장부 열람 → K_CODE",
      "log": "황두칠의 장부를 본다",
-     "src": "03a_main-story-part1.md:1283"
+     "src": "03a_main-story-part1.md:1284"
     },
     "30": {
      "done": "HO_LEDGER 결정(가지고 나가기도 결정이다)",
      "log": "장부를 어떻게 할지 행동한다",
-     "src": "03a_main-story-part1.md:1284"
+     "src": "03a_main-story-part1.md:1285"
     }
    },
    "title": "현상금의 주인"
@@ -326,7 +326,7 @@
     "10": {
      "done": "아래 해법 중 하나",
      "log": "계엄사령관의 수색대를 따돌린다",
-     "src": "03a_main-story-part1.md:1327"
+     "src": "03a_main-story-part1.md:1328"
     }
    },
    "title": "첫 번째 추적자"
@@ -338,22 +338,22 @@
    "places": [
     "L-HR-01"
    ],
-   "places_src": "03a_main-story-part1.md:1373",
+   "places_src": "03a_main-story-part1.md:1374",
    "stages": {
     "10": {
      "done": "섬 진입",
      "log": "노들섬을 건너 강 북쪽으로 간다",
-     "src": "03a_main-story-part1.md:1381"
+     "src": "03a_main-story-part1.md:1382"
     },
     "20": {
      "done": "아래 해법",
      "log": "선주 조합장에게 통행 허락을 받거나, 허락 없이 건넌다",
-     "src": "03a_main-story-part1.md:1382"
+     "src": "03a_main-story-part1.md:1383"
     },
     "30": {
      "done": "북단 진입 → S_CROSSED",
      "log": "한강대교 북단에 닿는다",
-     "src": "03a_main-story-part1.md:1383"
+     "src": "03a_main-story-part1.md:1384"
     }
    },
    "title": "노들섬"
@@ -365,27 +365,27 @@
    "places": [
     "L-R06-12"
    ],
-   "places_src": "03a_main-story-part1.md:1474",
+   "places_src": "03a_main-story-part1.md:1475",
    "stages": {
     "10": {
      "done": "분견대 초소 통과",
      "log": "남산 방송국을 찾아간다",
-     "src": "03a_main-story-part1.md:1482"
+     "src": "03a_main-story-part1.md:1483"
     },
     "20": {
      "done": "방송실 대화",
      "log": "송미래와 이야기한다",
-     "src": "03a_main-story-part1.md:1483"
+     "src": "03a_main-story-part1.md:1484"
     },
     "30": {
      "done": "[수리 50] 또는 [과학 50]",
      "log": "(선택) 송신 진공관 수리를 돕는다",
-     "src": "03a_main-story-part1.md:1484"
+     "src": "03a_main-story-part1.md:1485"
     },
     "40": {
      "done": "방송실 출입문",
      "log": "방송실을 나선다",
-     "src": "03a_main-story-part1.md:1485"
+     "src": "03a_main-story-part1.md:1486"
     }
    },
    "title": "남산의 목소리"
@@ -397,27 +397,27 @@
    "places": [
     "L-R06-01"
    ],
-   "places_src": "03a_main-story-part1.md:1515",
+   "places_src": "03a_main-story-part1.md:1516",
    "stages": {
     "10": {
      "done": "정문 통과",
      "log": "용산 요새에 들어간다",
-     "src": "03a_main-story-part1.md:1522"
+     "src": "03a_main-story-part1.md:1523"
     },
     "20": {
      "done": "회의실",
      "log": "연합단 단장을 만난다",
-     "src": "03a_main-story-part1.md:1523"
+     "src": "03a_main-story-part1.md:1524"
     },
     "30": {
      "done": "아래 행동",
      "log": "손님 숙소에서 나온다",
-     "src": "03a_main-story-part1.md:1524"
+     "src": "03a_main-story-part1.md:1525"
     },
     "40": {
      "done": "테이프 3개 또는 [과학 50]",
      "log": "(선택) 기록관을 돕는다",
-     "src": "03a_main-story-part1.md:1525"
+     "src": "03a_main-story-part1.md:1526"
     }
    },
    "title": "용산 요새"
@@ -427,27 +427,27 @@
    "key": "MQ301",
    "path": true,
    "places": [],
-   "places_src": "03a_main-story-part1.md:1586",
+   "places_src": "03a_main-story-part1.md:1587",
    "stages": {
     "10": {
      "done": "B1 진입",
      "log": "당인리 지하 원자력 발전소에 들어간다",
-     "src": "03a_main-story-part1.md:1595"
+     "src": "03a_main-story-part1.md:1596"
     },
     "20": {
      "done": "세 계통 조사",
      "log": "발전소의 세 계통(배수·냉각·제어)을 확인한다",
-     "src": "03a_main-story-part1.md:1596"
+     "src": "03a_main-story-part1.md:1597"
     },
     "30": {
      "done": "재가동 / 봉인 / 과부하",
      "log": "원자로를 어떻게 할지 주제어실에서 정한다",
-     "src": "03a_main-story-part1.md:1597"
+     "src": "03a_main-story-part1.md:1598"
     },
     "40": {
      "done": "지상 진입",
      "log": "기동 키를 들고 발전소를 나선다(또는 두고 나선다)",
-     "src": "03a_main-story-part1.md:1598"
+     "src": "03a_main-story-part1.md:1599"
     }
    },
    "title": "당인리"
@@ -459,32 +459,32 @@
    "places": [
     "L-R07-01"
    ],
-   "places_src": "03a_main-story-part1.md:1648",
+   "places_src": "03a_main-story-part1.md:1649",
    "stages": {
     "10": {
      "done": "로비",
      "log": "세진전자 타워에 들어간다",
-     "src": "03a_main-story-part1.md:1657"
+     "src": "03a_main-story-part1.md:1658"
     },
     "20": {
      "done": "협력자 과제 또는 단독 경로",
      "log": "위층으로 오르는 길을 찾는다",
-     "src": "03a_main-story-part1.md:1658"
+     "src": "03a_main-story-part1.md:1659"
     },
     "30": {
      "done": "101층",
      "log": "설계자의 방을 찾는다",
-     "src": "03a_main-story-part1.md:1659"
+     "src": "03a_main-story-part1.md:1660"
     },
     "40": {
      "done": "생체 인증",
      "log": "수석 연구실 금고를 연다",
-     "src": "03a_main-story-part1.md:1660"
+     "src": "03a_main-story-part1.md:1661"
     },
     "50": {
      "done": "1층 출구",
      "log": "테이프를 들고 타워를 나선다(또는 맡기고 나선다)",
-     "src": "03a_main-story-part1.md:1661"
+     "src": "03a_main-story-part1.md:1662"
     }
    },
    "title": "세진전자 타워"
@@ -494,22 +494,22 @@
    "key": "MQ303",
    "path": true,
    "places": [],
-   "places_src": "03a_main-story-part1.md:1709",
+   "places_src": "03a_main-story-part1.md:1710",
    "stages": {
     "10": {
      "done": "기지 경계",
      "log": "북한산의 중국군 잔존병 기지를 찾는다",
-     "src": "03a_main-story-part1.md:1718"
+     "src": "03a_main-story-part1.md:1719"
     },
     "20": {
      "done": "아래 해법",
      "log": "기지 지휘관을 만나거나, 터널로 가는 길을 확보한다",
-     "src": "03a_main-story-part1.md:1719"
+     "src": "03a_main-story-part1.md:1720"
     },
     "30": {
      "done": "터널 하층 끝(관제 본부 하층 차단벽 앞) 도달 또는 지도 확보",
      "log": "침투 터널이 어디로 이어지는지 확인한다",
-     "src": "03a_main-story-part1.md:1720"
+     "src": "03a_main-story-part1.md:1721"
     }
    },
    "title": "끝나지 않은 명령"
@@ -1771,40 +1771,66 @@
     "10": {
      "done": "관리동 홀로테이프(일지)",
      "log": "독산 냉동 창고 7호가 아직 얼어 있다",
-     "src": "05_misc-quests-encounters.md:950"
+     "src": "05_misc-quests-encounters.md:959"
     },
     "100": {
      "done": "봉천 · 사당에 알림 · 함준호에게 팖 · 직접 나름 가운데 하나(처음 것)",
      "log": "7호 고기의 행방이 정해졌다",
-     "src": "05_misc-quests-encounters.md:952"
+     "src": "05_misc-quests-encounters.md:961"
     },
     "20": {
      "done": "번호 자물쇠(일지의 날짜) 또는 [과학 45]",
      "log": "7호 문이 열렸다",
-     "src": "05_misc-quests-encounters.md:951"
+     "src": "05_misc-quests-encounters.md:960"
     }
    },
    "title": "7호 냉동 창고"
   },
+  "UQ-06": {
+   "key": "UQ06",
+   "places": [
+    "L-R02-07",
+    "L-R02-08"
+   ],
+   "places_src": "05_misc-quests-encounters.md:302",
+   "stages": {
+    "10": {
+     "done": "경상현 첫 대화",
+     "log": "증권가 객장 구울은 장이 아직 안 끝났다고 믿는다",
+     "src": "05_misc-quests-encounters.md:311"
+    },
+    "100": {
+     "done": "테이프를 전광판에(①) · 공영방송에 넘김(②) · 가짜 마감(③)",
+     "log": "10월 23일의 장이 정리됐다",
+     "src": "05_misc-quests-encounters.md:313"
+    },
+    "20": {
+     "done": "경상현에게 들음 · 또는 테이프를 손에 넣음",
+     "log": "마감 테이프는 유리탑 3동 18층 송출실에 있다",
+     "src": "05_misc-quests-encounters.md:312"
+    }
+   },
+   "title": "마지막 시세"
+  },
   "UQ-125": {
    "key": "UQ125",
    "places": [],
-   "places_src": "05_misc-quests-encounters.md:991",
+   "places_src": "05_misc-quests-encounters.md:1000",
    "stages": {
     "10": {
      "done": "털린 내 은닉처를 열어 흔적을 본다",
      "log": "숨겨 둔 자리가 털렸다 — 흔적이 남아 있다",
-     "src": "05_misc-quests-encounters.md:1002"
+     "src": "05_misc-quests-encounters.md:1011"
     },
     "100": {
      "done": "되찾음 · 나눠 줌 · 맡김 · 되삼 · 놓침",
      "log": "털린 물건의 행방이 끝났다",
-     "src": "05_misc-quests-encounters.md:1004"
+     "src": "05_misc-quests-encounters.md:1013"
     },
     "30": {
      "done": "흔적이 가리킨 빈집 · 소굴 · 가게에 들어선다",
      "log": "털어 간 사람이 있는 곳에 닿았다",
-     "src": "05_misc-quests-encounters.md:1003"
+     "src": "05_misc-quests-encounters.md:1012"
     }
    },
    "title": "털린 은닉처"
@@ -1815,22 +1841,22 @@
     "L-R02-09",
     "L-R02-11"
    ],
-   "places_src": "05_misc-quests-encounters.md:1040",
+   "places_src": "05_misc-quests-encounters.md:1049",
    "stages": {
     "10": {
      "done": "반수빈 첫 대화",
      "log": "여의도 대학병원 7층에 구울 병동이 있다",
-     "src": "05_misc-quests-encounters.md:1050"
+     "src": "05_misc-quests-encounters.md:1059"
     },
     "100": {
      "done": "교역(①) · 들것 정류지(②) · 이주(③)",
      "log": "병동의 약길이 정해졌다",
-     "src": "05_misc-quests-encounters.md:1052"
+     "src": "05_misc-quests-encounters.md:1061"
     },
     "20": {
      "done": "반수빈에게 사정을 들음 · 처치실 빈 봉지",
      "log": "들것이 끊긴 뒤 병동 약이 바닥났다",
-     "src": "05_misc-quests-encounters.md:1051"
+     "src": "05_misc-quests-encounters.md:1060"
     }
    },
    "title": "병동 7층"
@@ -1840,37 +1866,37 @@
    "places": [
     "L-R02-05"
    ],
-   "places_src": "05_misc-quests-encounters.md:970",
+   "places_src": "05_misc-quests-encounters.md:979",
    "stages": {
     "10": {
      "done": "인터폰 부탁 또는 60층 첫 대면",
      "log": "어하은이 60층 망원경에 다시 불을 켜고 싶어 한다",
-     "src": "05_misc-quests-encounters.md:980"
+     "src": "05_misc-quests-encounters.md:989"
     },
     "100": {
      "done": "여왕 처리 + 망원경 점등(순서 무관)",
      "log": "금탑 꼭대기에 다시 불이 들어왔다",
-     "src": "05_misc-quests-encounters.md:985"
+     "src": "05_misc-quests-encounters.md:994"
     },
     "20": {
      "done": "여왕 처리(발전기 · 점등보다 먼저 해도 된다)",
      "log": "22층 여왕 개미가 금탑을 쥐고 있다",
-     "src": "05_misc-quests-encounters.md:981"
+     "src": "05_misc-quests-encounters.md:990"
     },
     "30": {
      "done": "옥상 발전기 [수리 50]",
      "log": "옥상 원자력 발전기가 죽었다",
-     "src": "05_misc-quests-encounters.md:982"
+     "src": "05_misc-quests-encounters.md:991"
     },
     "40": {
      "done": "60층 망원경 점등",
      "log": "망원경에 전기가 들어왔다",
-     "src": "05_misc-quests-encounters.md:983"
+     "src": "05_misc-quests-encounters.md:992"
     },
     "50": {
      "done": "22층 여왕 처리",
      "log": "불이 켜졌다 — 열을 따라 개미 줄이 위로 올라온다",
-     "src": "05_misc-quests-encounters.md:984"
+     "src": "05_misc-quests-encounters.md:993"
     }
    },
    "title": "금탑 전망대"
@@ -1881,32 +1907,32 @@
     "L-R02-14",
     "L-R02-21"
    ],
-   "places_src": "05_misc-quests-encounters.md:1019",
+   "places_src": "05_misc-quests-encounters.md:1028",
    "stages": {
     "10": {
      "done": "성태경 대화 또는 공장 프레스 조사",
      "log": "구로 공단 공장 프레스에 총열 금형이 물려 있다",
-     "src": "05_misc-quests-encounters.md:1029"
+     "src": "05_misc-quests-encounters.md:1038"
     },
     "100": {
      "done": "문래(①) · 새벽인력(②) · 공장 재가동(③)",
      "log": "금형의 자리가 정해졌다",
-     "src": "05_misc-quests-encounters.md:1033"
+     "src": "05_misc-quests-encounters.md:1042"
     },
     "20": {
      "done": "모준서 첫 대면",
      "log": "모준서는 11월 할당 서류가 와야 금형을 준다",
-     "src": "05_misc-quests-encounters.md:1030"
+     "src": "05_misc-quests-encounters.md:1039"
     },
     "30": {
      "done": "서류(위조 · 전보 · 설득) 또는 강탈",
      "log": "11월 목표가 정해졌다",
-     "src": "05_misc-quests-encounters.md:1031"
+     "src": "05_misc-quests-encounters.md:1040"
     },
     "40": {
      "done": "금형을 꺼냄(들고 있음 · 하역장)",
      "log": "금형이 공장 밖으로 나왔다",
-     "src": "05_misc-quests-encounters.md:1032"
+     "src": "05_misc-quests-encounters.md:1041"
     }
    },
    "title": "문래 금형"
@@ -1918,32 +1944,32 @@
     "L-R02-16",
     "L-R02-17"
    ],
-   "places_src": "05_misc-quests-encounters.md:928",
+   "places_src": "05_misc-quests-encounters.md:937",
    "stages": {
     "10": {
      "done": "엿듣기 또는 버스 조사",
      "log": "대방 지하차도 버스 노심이 샌다",
-     "src": "05_misc-quests-encounters.md:939"
+     "src": "05_misc-quests-encounters.md:948"
     },
     "100": {
      "done": "봉인 · 판매 · 신길 섬광 가운데 하나",
      "log": "노심의 일이 끝났다",
-     "src": "05_misc-quests-encounters.md:943"
+     "src": "05_misc-quests-encounters.md:952"
     },
     "20": {
      "done": "엿듣기(또는 분대 윈치를 보고 운전기사 메모를 읽음)",
      "log": "대방 분대가 사흘 안에 노심을 끌어내려 한다",
-     "src": "05_misc-quests-encounters.md:940"
+     "src": "05_misc-quests-encounters.md:949"
     },
     "30": {
      "done": "펌프실 유해의 설명서 여백",
      "log": "정지 레버는 운전석 밑 물속에 있다",
-     "src": "05_misc-quests-encounters.md:941"
+     "src": "05_misc-quests-encounters.md:950"
     },
     "40": {
      "done": "노심 꺼내기",
      "log": "버스 노심이 아직 당신 가방에 있다",
-     "src": "05_misc-quests-encounters.md:942"
+     "src": "05_misc-quests-encounters.md:951"
     }
    },
    "title": "원자력 버스"

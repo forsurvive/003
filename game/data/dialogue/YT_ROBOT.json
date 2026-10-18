@@ -1,0 +1,185 @@
+{
+ "id": "YT_ROBOT",
+ "title": "경비 로봇",
+ "loc": "L-R02-08",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "OK": 7,
+  "ESCORT": 9,
+  "INC": 11,
+  "MENU": 13,
+  "RULES": 14,
+  "RULES_FAIL": 17,
+  "SMASH": 19,
+  "BROKEN": 23
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "YT_LOCK == 1",
+   "to": "BROKEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "세진 시큐리티 경비 로봇. 가슴 화면 '집행 수칙 — 대조 · 격리'."
+  },
+  {
+   "op": "if",
+   "cond": "YT_ESCORT == 1",
+   "to": "ESCORT"
+  },
+  {
+   "op": "if",
+   "cond": "YT_INC == 1",
+   "to": "INC"
+  },
+  {
+   "op": "if",
+   "cond": "YT_ROBOT_OK == 1",
+   "to": "OK"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "렌즈가 나를 따라 움직인다. '신원 미확인. 판독기를 이용하십시오.'"
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'송출실 출입 허가. 반출 물품은 판독 홀에서 신고하십시오.'"
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "로봇이 한 걸음 옆에 붙어 있다. '동행 중. 물품 반출은 금지입니다.'"
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'보안 사고 처리 중. 격리 해제는 관리자 확인 후.'"
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "점검 단자로 집행 수칙을 읽는다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "과학",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "RULES",
+     "id": "YT_ROBOT:1:0",
+     "fail": "RULES_FAIL"
+    },
+    {
+     "text": "(로봇을 부순다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SMASH",
+     "id": "YT_ROBOT:1:1"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "YT_ROBOT:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'수칙 23:21 개정 — 1. 판독 기록과 신원을 대조한다. 2. 불일치는 격리한다. 3. 사람을 해치지 않는다. 4. 관리자 부재 시 이 수칙은 갱신되지 않는다.'"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "4번 줄 끝에 날짜가 없다. 200년째 '부재'다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "점검 단자 덮개가 안 열린다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "smash"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "쇠파이프 소리가 홀에 울린다. 렌즈가 깨지고 가슴 화면이 마지막 줄을 띄운다 — '보안 사고 — 전 층 판독 봉쇄.'"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "건물 전체에서 판독기 불이 한꺼번에 빨갛게 바뀌는 소리가 난다. 딸깍, 딸깍, 딸깍."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "쓰러진 경비 로봇. 가슴 화면에 '전 층 판독 봉쇄'가 멈춰 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/YT.txt"
+}

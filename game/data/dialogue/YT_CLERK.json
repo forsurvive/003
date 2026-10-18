@@ -1,0 +1,134 @@
+{
+ "id": "YT_CLERK",
+ "title": "로비 소파",
+ "loc": "L-R02-08",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "STEAL": 5,
+  "WAKE": 8,
+  "AWAY": 11,
+  "TAKEN": 13,
+  "EMPTY": 15
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "dead(\"N-YTB-1\") == 1",
+   "to": "EMPTY"
+  },
+  {
+   "op": "if",
+   "cond": "YT_DOZE == 0",
+   "to": "AWAY"
+  },
+  {
+   "op": "if",
+   "cond": "has(\"M-401\") >= 1",
+   "to": "TAKEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "해진 정장 구울이 소파에 기대 존다. 목에 걸린 빨강 사원증 '남기범 서기 — 3동 임시'. 숨소리 대신 입술이 달싹인다 — '테이프… 23시 전까지…'"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "목걸이 줄을 살며시 푼다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "은신",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "STEAL",
+     "id": "YT_CLERK:1:0",
+     "fail": "WAKE"
+    },
+    {
+     "text": "그냥 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "YT_CLERK:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "steal"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "줄이 풀린다. 구울의 손가락이 빈 목을 한 번 더듬고 다시 늘어진다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "wake"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "줄이 걸린다. 구울의 눈이 번쩍 뜨인다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "소파가 비었다. 쿠션이 사람 모양으로 꺼져 있다. 승강기 쪽에서 무언가 긁는 소리가 난다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "구울이 빈 목을 쥔 채 존다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈 소파. 쿠션에 사람 모양 자국만."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/YT.txt"
+}

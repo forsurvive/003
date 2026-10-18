@@ -1,0 +1,120 @@
+{
+ "id": "YT_DECK",
+ "title": "테이프 데크",
+ "loc": "L-R02-08",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TAKE": 4,
+  "WATCHED": 8,
+  "EMPTY": 13
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "YT_TAPE == 1",
+   "to": "EMPTY"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "송출 랙 데크에 테이프가 감겨 있다. 끝에 손글씨 '10/23 연장장 마감 — 객장 전달(기범)'. 라벨 '송출 후 자동 소거 — 재사용 테이프'."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "한 번 돌리면 지워진다. 들을 수 있는 건 단 한 번이다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "테이프를 꺼낸다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TAKE",
+     "id": "YT_DECK:1:0"
+    },
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "YT_DECK:1:1"
+    }
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "YT_ESCORT == 1 and YT_LOCK == 0",
+   "to": "WATCHED"
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "tape"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "릴이 손바닥에 떨어진다. 가볍다. 200년 묵은 마감가가 이 안에 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "tape"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "robot",
+    "inc"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "로봇의 렌즈가 테이프를 쫓는다. '반출 금지 물품. 보안 사고 1건. 격리합니다.'"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "판독 홀 쪽 셔터가 단단히 걸리는 소리. 테이프는 이미 내 손에 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈 데크. 릴 축만 헛돈다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/YT.txt"
+}

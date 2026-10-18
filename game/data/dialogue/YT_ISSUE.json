@@ -1,0 +1,384 @@
+{
+ "id": "YT_ISSUE",
+ "title": "사원증 발급 단말",
+ "loc": "L-R02-08",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "FAIL": 4,
+  "IN": 6,
+  "C3": 8,
+  "T3A": 10,
+  "T3B": 12,
+  "T3C": 14,
+  "T3D": 16,
+  "T3E": 18,
+  "C4": 20,
+  "T4A": 22,
+  "T4B": 24,
+  "T4C": 26,
+  "T4D": 28,
+  "T4E": 30,
+  "PRINTED": 32,
+  "DONE": 34,
+  "LOCK": 36
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "YT_LOCK == 1",
+   "to": "LOCK"
+  },
+  {
+   "op": "if",
+   "cond": "YT_FORGE > 0",
+   "to": "DONE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'세진 출입 관리 — 등급 갱신 · 재발급. 관리자 인증 필요.'"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "관리자 메뉴로 들어간다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "과학",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "IN",
+     "id": "YT_ISSUE:1:0",
+     "fail": "FAIL"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "YT_ISSUE:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "화면이 '인증 실패'를 세 번 깜빡이고 처음으로 돌아간다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "관리자 메뉴. '갱신할 카드를 홈에 넣으십시오. 등급 — 3동. 발급 시각을 입력하십시오(24시).'"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "(오정택 카드를 넣는다)",
+     "tags": [],
+     "cond": "has(\"M-403\") >= 1",
+     "fx": "",
+     "to": "C3",
+     "id": "YT_ISSUE:2:0"
+    },
+    {
+     "text": "(하보람 카드를 넣는다)",
+     "tags": [],
+     "cond": "has(\"M-072\") >= 1",
+     "fx": "",
+     "to": "C4",
+     "id": "YT_ISSUE:2:1"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "YT_ISSUE:2:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "오정택 · 2동 · 파랑. 발급 시각?"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "22:30",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "T3A",
+     "id": "YT_ISSUE:3:0"
+    },
+    {
+     "text": "22:50",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "T3B",
+     "id": "YT_ISSUE:3:1"
+    },
+    {
+     "text": "23:10",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "T3C",
+     "id": "YT_ISSUE:3:2"
+    },
+    {
+     "text": "23:30",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "T3D",
+     "id": "YT_ISSUE:3:3"
+    },
+    {
+     "text": "지금 시각 그대로",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "T3E",
+     "id": "YT_ISSUE:3:4"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "forge",
+    "3",
+    "1350"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "PRINTED"
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "forge",
+    "3",
+    "1370"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "PRINTED"
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "forge",
+    "3",
+    "1390"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "PRINTED"
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "forge",
+    "3",
+    "1410"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "PRINTED"
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "forge",
+    "3",
+    "0"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "PRINTED"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "하보람 · 2동 · 파랑. 발급 시각?"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "22:30",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "T4A",
+     "id": "YT_ISSUE:4:0"
+    },
+    {
+     "text": "22:50",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "T4B",
+     "id": "YT_ISSUE:4:1"
+    },
+    {
+     "text": "23:10",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "T4C",
+     "id": "YT_ISSUE:4:2"
+    },
+    {
+     "text": "23:30",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "T4D",
+     "id": "YT_ISSUE:4:3"
+    },
+    {
+     "text": "지금 시각 그대로",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "T4E",
+     "id": "YT_ISSUE:4:4"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "forge",
+    "4",
+    "1350"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "PRINTED"
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "forge",
+    "4",
+    "1370"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "PRINTED"
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "forge",
+    "4",
+    "1390"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "PRINTED"
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "forge",
+    "4",
+    "1410"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "PRINTED"
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "forge",
+    "4",
+    "0"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "PRINTED"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "카드 프린터가 덜컥거리며 카드 띠를 빨갛게 덧칠한다. '갱신 완료.' 화면 한쪽에 작은 글씨 — '발급 기록이 남습니다.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'갱신 기록 1건. 같은 단말의 두 번째 갱신은 관리자 대면 확인이 필요합니다.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "화면이 붉다. '보안 사고 — 발급 중지.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/YT.txt"
+}

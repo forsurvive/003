@@ -1,0 +1,135 @@
+{
+ "id": "YT_ROBOT_IN",
+ "title": "판독 홀 — 송출실 문턱",
+ "loc": "L-R02-08",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "C1": 3,
+  "TALK_OK": 6,
+  "TALK_NO": 9
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "YT_ROBOT_OK == 1 or YT_LOCK == 1",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "송출실에서 홀로 나서자 경비 로봇의 렌즈가 돌아온다. '미확인 출입 1건. 판독 기록이 없습니다. 신원을 밝히십시오.'"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "(남기범 카드를 내민다)",
+     "tags": [],
+     "cond": "has(\"M-401\") >= 1",
+     "fx": "",
+     "to": "C1",
+     "id": "YT_ROBOT_IN:1:0"
+    },
+    {
+     "text": "\"환풍구 점검 나왔습니다.\"",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "보통"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "TALK_OK",
+     "id": "YT_ROBOT_IN:1:1",
+     "fail": "TALK_NO"
+    },
+    {
+     "text": "점검 단자에 '점검 모드'를 친다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "과학",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "TALK_OK",
+     "id": "YT_ROBOT_IN:1:2",
+     "fail": "TALK_NO"
+    },
+    {
+     "text": "대답하지 않는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TALK_NO",
+     "id": "YT_ROBOT_IN:1:3"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "robot",
+    "ok"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'남기범 서기님 — 송출실 심부름. 판독 누락 1건을 기록합니다. …도미란 대리님이 기다리셨습니다.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "robot",
+    "ok"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'확인. 판독 누락 1건을 기록합니다.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "robot",
+    "inc"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'보안 사고 1건. 격리합니다.' 계단참 쪽 셔터가 단단히 걸리는 소리."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/YT.txt"
+}

@@ -1,0 +1,49 @@
+{
+ "id": "YT_SHUT18_IN",
+ "title": "셔터 안쪽 단추",
+ "loc": "L-R02-08",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "HOLD": 4
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "YT_INC == 1 and YT_LOCK == 0",
+   "to": "HOLD"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "단추를 누른다. 셔터가 오른다."
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "open18"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "단추가 눌리지 않는다. 로봇의 스피커: '보안 사고 처리 중 — 격리. 해제는 관리자 확인 후.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/YT.txt"
+}

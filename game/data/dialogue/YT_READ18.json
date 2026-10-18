@@ -1,0 +1,491 @@
+{
+ "id": "YT_READ18",
+ "title": "판독 홀 셔터",
+ "loc": "L-R02-08",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "R1": 4,
+  "R2": 6,
+  "R3": 8,
+  "R4": 10,
+  "AFTER": 12,
+  "ESCORT": 19,
+  "DOMI": 21,
+  "DOMI_OK": 24,
+  "DOMI_NO": 27,
+  "DOMI_DEAD": 30,
+  "OVERTIME": 34,
+  "OT_OK": 36,
+  "OT_NO": 39,
+  "DEADCARD": 42,
+  "PICK": 44,
+  "PICK_FAIL": 47,
+  "OPEN": 49,
+  "LOCK": 52
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "YT_LOCK == 1",
+   "to": "LOCK"
+  },
+  {
+   "op": "if",
+   "cond": "YT_ROBOT_OK == 1",
+   "to": "OPEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빨강 판독기. '3동 18층 — 본사 등급.' 셔터 너머에서 규칙적인 기계음. 판독기 옆 스피커가 켜진다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "(남기범 카드를 댄다)",
+     "tags": [],
+     "cond": "has(\"M-401\") >= 1",
+     "fx": "",
+     "to": "R1",
+     "id": "YT_READ18:1:0"
+    },
+    {
+     "text": "(도미란 카드를 댄다)",
+     "tags": [],
+     "cond": "has(\"M-402\") >= 1",
+     "fx": "",
+     "to": "R2",
+     "id": "YT_READ18:1:1"
+    },
+    {
+     "text": "(오정택 카드를 댄다)",
+     "tags": [],
+     "cond": "has(\"M-403\") >= 1",
+     "fx": "",
+     "to": "R3",
+     "id": "YT_READ18:1:2"
+    },
+    {
+     "text": "(하보람 카드를 댄다)",
+     "tags": [],
+     "cond": "has(\"M-072\") >= 1",
+     "fx": "",
+     "to": "R4",
+     "id": "YT_READ18:1:3"
+    },
+    {
+     "text": "판독기 덮개를 따서 셔터 모터를 직결한다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "자물쇠 따기",
+       "min": 75
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PICK",
+     "id": "YT_READ18:1:4",
+     "fail": "PICK_FAIL"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "YT_READ18:1:5"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "read",
+    "18",
+    "1"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "AFTER"
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "read",
+    "18",
+    "2"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "AFTER"
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "read",
+    "18",
+    "3"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "AFTER"
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "read",
+    "18",
+    "4"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "AFTER"
+  },
+  {
+   "op": "if",
+   "cond": "YT_R == 1",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "YT_R == 3",
+   "to": "ESCORT"
+  },
+  {
+   "op": "if",
+   "cond": "YT_R == 5",
+   "to": "DOMI"
+  },
+  {
+   "op": "if",
+   "cond": "YT_R == 6",
+   "to": "OVERTIME"
+  },
+  {
+   "op": "if",
+   "cond": "YT_R == 7",
+   "to": "DEADCARD"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "스피커: '등급 부족. 신원을 확인할 수 없습니다.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "스피커: '임시 출입증 — 집행 후 발급. 동행이 필요합니다.' 셔터가 오른다. 경비 로봇이 앞으로 나와 한 걸음 옆에 선다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "스피커: '도미란 대리님은 이미 이 층에 계십니다.' 잠깐의 정적. '…저분은 누구십니까?'"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "셔터 아래 틈으로, 판독 홀 앞 의자에 앉은 유해의 신발 끝이 보인다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "\"당번 교대입니다. 도미란 대리님 다음 근무자.\"",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "보통"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "DOMI_OK",
+     "id": "YT_READ18:2:0",
+     "fail": "DOMI_NO"
+    },
+    {
+     "text": "스피커 아래 점검 단자에 '점검 모드'를 친다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "과학",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "DOMI_OK",
+     "id": "YT_READ18:2:1",
+     "fail": "DOMI_NO"
+    },
+    {
+     "text": "\"저 사람이 도미란이다. 이미 죽었다.\"",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "DOMI_DEAD",
+     "id": "YT_READ18:2:2"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "YT_READ18:2:3"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "robot",
+    "ok"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "스피커: '근무 교대 확인. 송출실 출입 허가.' 셔터가 오른다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "robot",
+    "no"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "스피커: '확인 불가. 18층 출입을 보류합니다.' 셔터가 꿈쩍 않는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "robot",
+    "dead"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "스피커가 오래 지직거린다. '…사망 처리 사원 출입 시도. 보안 사고 1건. 도미란 — 사망 처리.'"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "판독기 불이 영영 붉게 굳는다. 셔터 너머 기계음이 한 박자 늦어진다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "스피커: '오정택 과장님. 퇴근하신 분이 다시 오셨군요. 잔업 사유를 말씀해 주십시오.'"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "\"정산 마감.\"",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "OT_NO",
+     "id": "YT_READ18:3:0"
+    },
+    {
+     "text": "\"장애 대응.\"",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "OT_NO",
+     "id": "YT_READ18:3:1"
+    },
+    {
+     "text": "\"송출 지원.\"",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "OT_OK",
+     "id": "YT_READ18:3:2"
+    },
+    {
+     "text": "\"계엄 상황이라 대리 출입입니다.\"",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "쉬움"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "OT_OK",
+     "id": "YT_READ18:3:3",
+     "fail": "OT_NO"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "robot",
+    "ok"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "스피커: '18층 — 송출 지원 확인. 잔업 기록을 남깁니다.' 셔터가 오른다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "robot",
+    "no"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "스피커: '사유가 근무지와 맞지 않습니다. 출입을 보류합니다.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "스피커: '사망 처리 사원. 판독 거부.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "pick18"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "덮개가 열린다. 모터 선 둘을 맞대자 셔터가 덜컹 오른다. 스피커: '…미확인 출입 1건.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "자물쇠 핀이 녹에 붙어 돌지 않는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "셔터는 올라가 있다. 판독기 불이 녹색이다."
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "read",
+    "18",
+    "9"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "판독기에 빨간 엑스. 셔터는 반쯤 올라간 채 굳었다 — 허리를 숙이면 지나간다."
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "read",
+    "18",
+    "0"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/YT.txt"
+}

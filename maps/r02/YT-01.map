@@ -77,6 +77,8 @@ prop planter_l 34 18
 prop pillar 12 16
 prop pillar 26 16
 prop bk_sofa 22 17
+text 22 17 "로비 소파. 해진 정장 차림 구울이 낮이면 여기 앉아 존다 — 목에 빨강 사원증이 흔들린다." w=2 scene=YT_CLERK
+enemy CR-200 21 16 who=N-YTB-1 cond="dead(\"N-YTB-1\") == 0"
 prop remains 25 13
 text 25 13 "로비 소파 옆 유해. 사원증 줄만 남고 카드는 없다. 누가 먼저 가져갔다." w=1
 prop rubble 6 17

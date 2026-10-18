@@ -1,0 +1,63 @@
+{
+ "id": "YT_HABORAM",
+ "title": "칸막이 사이 유해",
+ "loc": "L-R02-08",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TAKE": 3
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "칸막이 사이에 웅크린 유해. 사원증 목걸이 '하보람 — 2동 협력사(파랑)'. 손에 쥔 종이컵에 '기범 씨 거'."
+  },
+  {
+   "op": "if",
+   "cond": "YT_HBTAKE == 1",
+   "to": "END"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "(목걸이를 푼다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TAKE",
+     "id": "YT_HABORAM:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "YT_HABORAM:1:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "YT_HBTAKE = 1; give(\"M-072\", 1)"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "카드 뒷면에 볼펜 '퇴근 못 함 — 승강기 서서'. 그는 2동에서 그날 밤을 넘기지 못했다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/YT.txt"
+}

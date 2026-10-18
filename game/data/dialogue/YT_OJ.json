@@ -1,0 +1,63 @@
+{
+ "id": "YT_OJ",
+ "title": "오정택 과장 자리",
+ "loc": "L-R02-08",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TAKE": 3
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "이름표 '오정택 과장'. 퇴근 기록 카드 '10/23 18:12 퇴근'. 메모 '잔업 사유 쓰는 법: 정산 마감 · 장애 대응 · 송출 지원 중 하나'."
+  },
+  {
+   "op": "if",
+   "cond": "YT_OJTAKE == 1",
+   "to": "END"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "(책상 위 사원증을 집는다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TAKE",
+     "id": "YT_OJ:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "YT_OJ:1:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "YT_OJTAKE = 1; give(\"M-403\", 1)"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "파랑 사원증. 사진 속 남자가 넥타이를 반쯤 풀었다. 그날 그는 제때 퇴근했다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/YT.txt"
+}

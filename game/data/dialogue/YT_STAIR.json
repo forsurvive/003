@@ -1,0 +1,155 @@
+{
+ "id": "YT_STAIR",
+ "title": "비상 계단 판독기",
+ "loc": "L-R02-08",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "R": 3,
+  "R2": 5,
+  "R3": 7,
+  "R4": 9,
+  "AFTER": 11,
+  "LOCK": 14
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "YT_LOCK == 1",
+   "to": "LOCK"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "비상 계단 철문 옆 빨강 판독기. '3동 직원 외 출입 금지 — 계단 이용 시에도 판독.'"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "(남기범 카드를 댄다)",
+     "tags": [],
+     "cond": "has(\"M-401\") >= 1",
+     "fx": "",
+     "to": "R",
+     "id": "YT_STAIR:1:0"
+    },
+    {
+     "text": "(도미란 카드를 댄다)",
+     "tags": [],
+     "cond": "has(\"M-402\") >= 1",
+     "fx": "",
+     "to": "R2",
+     "id": "YT_STAIR:1:1"
+    },
+    {
+     "text": "(오정택 카드를 댄다)",
+     "tags": [],
+     "cond": "has(\"M-403\") >= 1",
+     "fx": "",
+     "to": "R3",
+     "id": "YT_STAIR:1:2"
+    },
+    {
+     "text": "(하보람 카드를 댄다)",
+     "tags": [],
+     "cond": "has(\"M-072\") >= 1",
+     "fx": "",
+     "to": "R4",
+     "id": "YT_STAIR:1:3"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "YT_STAIR:1:4"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "read",
+    "st",
+    "1"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "AFTER"
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "read",
+    "st",
+    "2"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "AFTER"
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "read",
+    "st",
+    "3"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "AFTER"
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "read",
+    "st",
+    "4"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "AFTER"
+  },
+  {
+   "op": "if",
+   "cond": "YT_R >= 1",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "붉은 불. 철문 잠금쇠는 그대로다 — 자물쇠를 직접 따는 수밖에."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "판독기에 빨간 엑스. 철문은 자물쇠로만 열린다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/YT.txt"
+}

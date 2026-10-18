@@ -665,7 +665,11 @@ N-R02-026 [기본] 이 송출관 하나면 남산 출력이 두 배야. …저 �
 > (고척 구매 장부를 건넨다) -> GIVE ?? has("M-322") >= 1 and SQ_S10_CAST == 0
 > 고척 중계석 쪽지 -> NOTE ?? SQ_S10_BOOTH == 1 and SQ_S10_CAST == 0
 > (여의도 기록을 꺼낸다) -> S11 ?? SQ_S11_WOOQ == 1
+> (유리탑 18층 시세 테이프를 꺼낸다) -> YT_TAPE ?? has("M-404") >= 1 and UQ06_RESULT == 0
 > 됐어 -> END
+* YT_TAPE
+@cmd yt woo
+-> END
 * S11
 @cmd s11 talk SQS11_WOO
 -> END

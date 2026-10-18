@@ -1,0 +1,99 @@
+{
+ "id": "YT_POWER",
+ "title": "승강기 비상 전지 함",
+ "loc": "L-R02-08",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "UP": 4,
+  "ON": 8,
+  "LOCK": 10
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "YT_LOCK == 1",
+   "to": "LOCK"
+  },
+  {
+   "op": "if",
+   "cond": "YT_POWER == 1",
+   "to": "ON"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "바늘이 0에 붙었다. 손잡이 아래 '집행 모드 — 승강기 운행 중지(23:21). 비상 시 수동 복귀'."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "손잡이를 끝까지 올린다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "UP",
+     "id": "YT_POWER:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "YT_POWER:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "power"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "쿵 — 건물 어딘가에서 모터가 숨을 쉰다. 승강기 홀 층 표시등에 '1'이 들어온다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "로비 쪽에서 무언가 바닥을 긁으며 일어선다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "바늘이 녹색 칸에 떨고 있다. 승강기는 돈다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "바늘이 다시 0에 붙었다. '보안 사고 — 승강기 정지.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/YT.txt"
+}

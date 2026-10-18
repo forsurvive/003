@@ -134,3 +134,4 @@ music BGM-D13
 clear YT_MOUND == 1
 chalk 0 chalk_skull "분필 해골 — '판독기가 이름을 부름. 죽은 사람 카드 쓰지 말 것.'"
 chalk 1 chalk_x "분필 가위표 — '18층 개미 길 끊김. 로봇은 손대지 말 것.'"
+chalk 2 chalk_live "분필 사람 표시 — '누가 들어앉았음.'"

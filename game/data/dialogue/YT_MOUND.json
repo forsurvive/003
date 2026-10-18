@@ -1,0 +1,77 @@
+{
+ "id": "YT_MOUND",
+ "title": "창가 흙 둔덕",
+ "loc": "L-R02-08",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "CLEAR": 3,
+  "DONE": 6
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "YT_MOUND == 1",
+   "to": "DONE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "창가 화분 사이 흙 둔덕. 굴마다 개미 냄새가 진하다. 금탑 쪽 창으로 개미 길이 이어진다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "흙 둔덕을 걷어 창밖으로 쏟는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "CLEAR",
+     "id": "YT_MOUND:1:0"
+    },
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "YT_MOUND:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "mound"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "흙이 18층 아래로 흩어진다. 굴 속에서 일개미 몇이 더듬이를 휘젓다 창틀 너머로 물러난다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈 화분. 흙 냄새가 옅다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/YT.txt"
+}

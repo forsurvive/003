@@ -1,0 +1,209 @@
+{
+ "id": "YT_GATE3",
+ "title": "3동 게이트",
+ "loc": "L-R02-08",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "R": 3,
+  "R2": 5,
+  "R3": 7,
+  "R4": 9,
+  "AFTER": 11,
+  "HACK": 14,
+  "HACK_FAIL": 17,
+  "LOCK": 19
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "YT_LOCK == 1",
+   "to": "LOCK"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빨강 판독 판. '3동 — 본사 등급. 계엄 시 등급 분리.' 날개 너머 3동 승강기 홀."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "(남기범 카드를 댄다)",
+     "tags": [],
+     "cond": "has(\"M-401\") >= 1",
+     "fx": "",
+     "to": "R",
+     "id": "YT_GATE3:1:0"
+    },
+    {
+     "text": "(도미란 카드를 댄다)",
+     "tags": [],
+     "cond": "has(\"M-402\") >= 1",
+     "fx": "",
+     "to": "R2",
+     "id": "YT_GATE3:1:1"
+    },
+    {
+     "text": "(오정택 카드를 댄다)",
+     "tags": [],
+     "cond": "has(\"M-403\") >= 1",
+     "fx": "",
+     "to": "R3",
+     "id": "YT_GATE3:1:2"
+    },
+    {
+     "text": "(하보람 카드를 댄다)",
+     "tags": [],
+     "cond": "has(\"M-072\") >= 1",
+     "fx": "",
+     "to": "R4",
+     "id": "YT_GATE3:1:3"
+    },
+    {
+     "text": "판독 판 덮개를 열고 날개 회로를 직결한다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "과학",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "HACK",
+     "id": "YT_GATE3:1:4",
+     "fail": "HACK_FAIL"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "YT_GATE3:1:5"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "read",
+    "g3",
+    "1"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "AFTER"
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "read",
+    "g3",
+    "2"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "AFTER"
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "read",
+    "g3",
+    "3"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "AFTER"
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "read",
+    "g3",
+    "4"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "AFTER"
+  },
+  {
+   "op": "if",
+   "cond": "YT_R >= 1",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "붉은 불. '등급 부족.' 유리 날개가 꿈쩍하지 않는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "hack",
+    "g3"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "덮개 안 진공관 둘을 엇갈려 끼운다. 날개가 접힌다. 판독 판이 이름 대신 '미확인'을 깜빡인다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "손끝이 찌릿하다. 덮개 안 배선이 엉켜 어디가 날개 회로인지 모르겠다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "판독 판에 빨간 엑스. 날개는 접힌 채 굳었지만 그 너머 승강기 홀 판독기도 다 붉다."
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "read",
+    "g3",
+    "0"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/YT.txt"
+}

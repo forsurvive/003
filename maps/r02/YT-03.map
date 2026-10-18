@@ -33,12 +33,12 @@ end
 exit 3 22 YT-01 from_stair
 mark from_stair 3 18 N
 mark from_elev 10 14 S
-mark from_vent 30 14 S
+mark from_vent 36 4 S
 mark hall_in 6 9 N
 mark robot 11 5 S
 mark domi 6 4 S
 mark deck 30 4 N
-mark vent 30 13 N
+mark vent 36 3 N
 # ---------------------------------------------------------------- 계단참 · 승강기 홀
 prop shutter_yt 6 12
 text 6 13 "판독 홀 방화 셔터. 옆 빨강 판독기 '3동 18층 — 본사 등급'. 셔터 너머에서 규칙적인 기계음이 들린다." w=2 scene=YT_READ18
@@ -49,29 +49,27 @@ prop w_sign_exit 2 11
 text 3 15 "비상 계단 18층 계단참. 벽에 페인트 '18'. 아래 칸 손잡이에 사원증 줄이 하나 묶여 있다 — 누가 올라오다 여기서 풀었다." w=1
 prop remains 12 18
 # ---------------------------------------------------------------- 기계실(환풍구 · 개미)
-prop w_vent 30 11
-text 30 13 "기계실 바닥 덕트 구멍. 2동 7층 환풍구로 이어진다. 흙이 덕트 안까지 깔렸다." w=1 scene=YT_VENT18
+text 30 13 "기계실. 공조기가 멎었고 덕트마다 흙이 막혀 있다. 개미 다리 소리가 벽 속에서 오간다." w=1
 prop tank_water 20 14
 prop wall_pipes 24 11
 prop crate_metal 34 17
 box 34 17 yt_rack name="기계실 부품함"
-scent 30,13;30,16;24,16;16,16;12,16 cond="KT_QUEEN == 0 and DG_YT == 0"
+scent 30,14;30,16;24,16;18,16 cond="KT_QUEEN == 0 and DG_YT == 0"
 enemy CR-080 28 16 cond="KT_QUEEN == 0 and DG_YT == 0"
 enemy CR-080 22 18 cond="KT_QUEEN == 0 and DG_YT == 0"
 # ---------------------------------------------------------------- 판독 홀
-prop metro_robot_stand 11 4
+prop metro_robot_stand 11 4 cond="YT_LOCK == 0"
+prop metro_robot_down 11 4 cond="YT_LOCK == 1"
 text 11 5 "세진 시큐리티 경비 로봇. 가슴 화면에 '집행 수칙 — 대조 · 격리'. 렌즈가 셔터 쪽을 본다." w=1 scene=YT_ROBOT
 prop guard_chair 6 3
 prop remains 6 4
 text 6 4 "판독 홀 앞 의자의 유해. 무릎 위에 테이프 감는 장갑. 사원증 목걸이 '도미란 대리 — 3동 파견(송출)'. 문 쪽으로 몸을 기울인 채다." w=1 scene=YT_DOMI
-box 6 4 corpse_scav name="도미란의 유해"
 prop wait_chairs 14 7
 prop plant_pot 20 8
 prop w_reader_yt 22 1 state=r
 text 21 3 "송출실 안내 '세진 금융정보 시세 송출 — 관계자 외 출입 금지'. 판독기 불이 빨갛다." w=2
 # ---------------------------------------------------------------- 시세 송출실
 prop rack_yt 29 3
-box 29 3 yt_tape w=2 name="테이프 데크"
 text 31 4 "데크 라벨 '송출 후 자동 소거 — 재사용 테이프'. 릴에 감긴 테이프 끝에 손글씨 '10/23 연장장 마감 — 객장 전달(기범)'." w=1 scene=YT_DECK
 prop rack_yt 34 3
 prop terminal_desk 26 7
@@ -79,5 +77,11 @@ text 26 8 "송출 단말. 마지막 송신 '22:58 회선 거부 — 관제망 �
 prop mound_yt 37 8 cond="KT_QUEEN == 0 and DG_YT == 0"
 prop mound_yt 33 8 cond="KT_QUEEN == 0 and DG_YT == 0"
 text 35 8 "창가 화분 사이 흙 둔덕. 금탑 쪽 창으로 개미 길이 이어진다. 걷어 내면 냄새 길이 끊길 것이다." w=2 scene=YT_MOUND
-prop w_window 33 1
+prop w_window 31 1
+prop w_vent 36 1
+text 36 3 "송출실 천장 환풍구. 덮개가 떨어졌다. 흙 냄새 — 2동 7층에서 올라오는 덕트다." w=1 scene=YT_VENT18
+text 6 9 "셔터 안쪽 개폐 단추. '판독 홀 → 계단참'." w=2 scene=YT_SHUT18_IN
+trigger 23 6 h=2 scene=YT_ROBOT_IN cond="YT_ROBOT_OK == 0 and YT_LOCK == 0"
+prop crate_metal 25 3
+box 25 3 yt_rack name="송출 부품함"
 enemy CR-080 35 6 cond="KT_QUEEN == 0 and DG_YT == 0"
