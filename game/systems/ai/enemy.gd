@@ -202,6 +202,8 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 			sheet = "rb_cr305_loco"                                  # 파수-3(1-11c SQ-S04, SD-16 §7.4 — 이족 · 방패 팔 · CRT 얼굴판 · 관제망 휘장)
 		"CR-320":
 			sheet = "rb_cr320_loco"                                  # 감시포 1형(기둥 위 원통 포탑 — 제자리)
+		"CR-326":
+			sheet = "rb_cr326_loco"                                  # 성형-4(1-D7 지식산업센터 — 궤도 받침 · 관절 팔 · 렌즈, 작업 2컷)
 		"CR-106":
 			sheet = "cr_cr104_loco"                                  # 들개 우두머리(그림은 들개, 1-E2에서 따로)
 		"CR-108":
@@ -231,6 +233,9 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 			"walk": {"frames": 4, "px": qpx, "diag": qpx, "contact": [0, 2], "speed_t": float(row["speed"]) * 0.45}}
 		bite = float(str(row.get("attack", "물기 8")).get_slice(" ", 1))
 	if row["id"] == "CR-305":                                       # 파수-3: 사람과 같은 보폭 표(발 고정 6컷) · 무거워 뛰지 않는다(2.5t/초)
+		loco.custom = {"run": {"frames": 6, "px": 4.0, "px_v": 3.0, "diag": 3.0, "contact": [0, 3], "speed_t": float(row["speed"]), "anim": "walk"},
+			"walk": {"frames": 6, "px": 4.0, "px_v": 3.0, "diag": 3.0, "contact": [0, 3], "speed_t": float(row["speed"]) * 0.7}}
+	if row["id"] == "CR-326":                                       # 성형-4: 궤도 돌기를 사람 보폭 표로 그렸다(옆 4 · 앞뒤 · 대각 3px — 바닥에 닿은 돌기가 세계에 고정)
 		loco.custom = {"run": {"frames": 6, "px": 4.0, "px_v": 3.0, "diag": 3.0, "contact": [0, 3], "speed_t": float(row["speed"]), "anim": "walk"},
 			"walk": {"frames": 6, "px": 4.0, "px_v": 3.0, "diag": 3.0, "contact": [0, 3], "speed_t": float(row["speed"]) * 0.7}}
 	fixed = float(row.get("speed", 1.0)) <= 0.0                       # 포탑(감시포): 제자리에서 돌기만 한다

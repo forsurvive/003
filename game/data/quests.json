@@ -1849,6 +1849,42 @@
    },
    "title": "금탑 전망대"
   },
+  "UQ-69": {
+   "key": "UQ69",
+   "places": [
+    "L-R02-14",
+    "L-R02-21"
+   ],
+   "places_src": "05_misc-quests-encounters.md:1019",
+   "stages": {
+    "10": {
+     "done": "성태경 대화 또는 공장 프레스 조사",
+     "log": "문래에서 총열 금형 이야기를 들었다 — 구로 공단 지식산업센터 공장층 프레스에 물려 있다",
+     "src": "05_misc-quests-encounters.md:1029"
+    },
+    "100": {
+     "done": "문래(①) · 새벽인력(②) · 공장 재가동(③)",
+     "log": "금형의 자리가 정해졌다",
+     "src": "05_misc-quests-encounters.md:1033"
+    },
+    "20": {
+     "done": "모준서 첫 대면",
+     "log": "공장장 모준서는 '11월 할당' 서류가 와야 금형을 내준다",
+     "src": "05_misc-quests-encounters.md:1030"
+    },
+    "30": {
+     "done": "서류(위조 · 전보 · 설득) 또는 강탈",
+     "log": "11월 목표가 정해졌다",
+     "src": "05_misc-quests-encounters.md:1031"
+    },
+    "40": {
+     "done": "금형을 꺼냄(들고 있음 · 하역장)",
+     "log": "금형이 공장 밖으로 나왔다",
+     "src": "05_misc-quests-encounters.md:1032"
+    }
+   },
+   "title": "문래 금형"
+  },
   "UQ-71": {
    "key": "UQ71",
    "places": [

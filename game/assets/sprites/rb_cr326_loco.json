@@ -1,0 +1,36 @@
+{
+ "foot": [
+  32,
+  60
+ ],
+ "frame": [
+  64,
+  64
+ ],
+ "motions": {
+  "death": {
+   "count": 4,
+   "start": 7
+  },
+  "idle": {
+   "count": 1,
+   "start": 0
+  },
+  "walk": {
+   "count": 6,
+   "start": 1
+  },
+  "work": {
+   "count": 2,
+   "start": 11
+  }
+ },
+ "name": "rb_cr326_loco",
+ "rows": [
+  "S",
+  "SE",
+  "E",
+  "NE",
+  "N"
+ ]
+}

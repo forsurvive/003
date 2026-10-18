@@ -136,6 +136,21 @@ def dust_mr(seed=0):
     return im
 
 
+def tracks_mr(kind="cart"):
+    """쇳가루 길 위 자국(덮개 1×1): cart = 리어카 바퀴 두 줄(세로) · boots = 인솔조 장화 자국(굵은 밑창 무늬) — 칸을 막지 않는다."""
+    im = img(32, 32)
+    d = ImageDraw.Draw(im)
+    if kind == "cart":
+        for x in (9, 22):
+            for y in range(0, 32, 2):
+                d.point((x, y), fill=C("P15")); d.point((x + 1, y + 1), fill=C("P14"))
+    else:
+        for (x, y) in ((8, 4), (19, 12), (9, 20), (20, 27)):
+            d.rounded_rectangle([x, y, x + 5, y + 4], radius=2, outline=C("P15"))
+            d.line([x + 1, y + 2, x + 4, y + 2], fill=C("P14"))
+    return im
+
+
 def w_sign_mr():
     """철공소 간판(벽 2칸, 64×36): 녹슨 양철판 · 리벳 · '선반·용접·총기수리' · 페인트로 덧쓴 '성씨'."""
     im = img(64, 36)
@@ -181,6 +196,8 @@ PROPS_MR = {
     "dust_mr2": _r(lambda: dust_mr(1), 1, 1, "deco", down=0),
     "dust_mr3": _r(lambda: dust_mr(2), 1, 1, "deco", down=0),
     "w_sign_mr": _r(w_sign_mr, 2, 0, "wall", dx=0, dy=4),
+    "tracks_mr": _r(lambda: tracks_mr("cart"), 1, 1, "deco", down=0),
+    "boots_mr": _r(lambda: tracks_mr("boots"), 1, 1, "deco", down=0),
     "die_mold": _r(die_mold, 1, 1, down=-2),
 }
 STATES_MR = {
