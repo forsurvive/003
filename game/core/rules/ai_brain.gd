@@ -56,6 +56,8 @@ func tick(dt: float, p: Dictionary) -> Dictionary:
 		last_seen = p.get("sound_at", last_seen)
 		if state == S.IDLE or state == S.RETURN:
 			_go(S.SUSPICIOUS)
+	if last_seen == Vector2.ZERO and gauge >= DETECT_AT and p.has("target"):
+		last_seen = p["target"]                                         # 진행기가 경계치만 채워 깨웠다(본 적 없음): 알려 준 상대 자리로 — (0,0)으로 찾아가다 돌아서지 않게
 	if p.get("hit", false) and not state in [S.COMBAT, S.FLEE, S.FRENZY]:   # 도주 · 광란 중엔 맞아도 그대로, 항복 중에 맞으면 다시 교전
 		gauge = DETECT_AT
 		_go(S.COMBAT)

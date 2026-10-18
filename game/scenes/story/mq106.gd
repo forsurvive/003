@@ -41,6 +41,9 @@ var _seen_kills := 0
 var _poll := 0.0                                     ## 발동 판정 주기(0.5초) — SD-20 P5 안전한 순간까지 미룬다
 var why_wait := ""                                   ## 미루는 이유(봇·디버그)
 const STAGE_ZONES := ["X-SB"]                        ## 다른 퀘스트의 닫힌 무대(본소 담 안): 여기서는 내려앉지 않는다
+const POST_LID := "L-R02-28"                         ## 여의도 임시 초소(MQ-104 S5 호송차) — 하도윤이 아직 차에 있으면 둘레에서는 미룬다
+const POST_R := 64                                   ## 초소 둘레(칸): 벙커 해치 17칸 · 윤중제 배수구 59칸이 다 든다
+var _post := Vector2i(-1, -1)
 
 
 func setup(h: InteriorHost, is_log := false) -> void:
@@ -104,10 +107,22 @@ func unsafe() -> String:
 	if v("SB_RAID") == 1 or v("MQ103_AMBUSH") == 1:
 		return "습격·매복 중"
 	var me: Vector2 = host.player.loco.logical
+	if v("V_DOYUN") == 1 and v("MQ104_DOYUN") == 0 and _post_at() != Vector2i(-1, -1) \
+			and Vector2(_post_at()).distance_to(me / 32.0) <= POST_R:
+		return "다른 퀘스트 무대(여의도 초소 — 호송차의 하도윤)"           # 104 S5 구출 기회(놓치면 다음 날 아침 이송, act1_paths)
 	for e in host.combat.enemies:
 		if is_instance_valid(e) and not e.cmb.dead and e.brain.gauge >= AIBrain.DETECT_AT and e.loco.logical.distance_to(me) <= 20.0 * 32.0:
 			return "교전 중"
 	return ""
+
+
+func _post_at() -> Vector2i:
+	if _post == Vector2i(-1, -1):
+		for sp in PlaceLog.spots:
+			if str(sp.get("lid", "")) == POST_LID:
+				_post = Vector2i(int(sp["at"][0]), int(sp["at"][1]))
+				break
+	return _post
 
 
 func _on_map(id: String) -> void:
@@ -376,6 +391,7 @@ func _engage(_attack: bool) -> void:
 		var e := host.combat.spawn(cr, pos, host.map, st, opts)
 		e.set_meta("capture", "BJ")
 		e.brain.gauge = 100.0
+		e.brain.last_seen = host.player.loco.logical                  # 방금 마주 섰던 자리 — 시야 밖이면 거기로 찾아온다(비워 두면 (0,0)으로 가다 돌아섰다)
 		if id == "C-031":
 			_yoon = e
 			e.cmb.hp_floor = e.cmb.max_hp * 0.39                       # 이 퀘스트에서는 죽지 않는다(40%에서 물러남)

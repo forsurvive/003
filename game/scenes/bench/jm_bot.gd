@@ -539,19 +539,19 @@ func _ready() -> void:
 			host.enter("HP-01", "from_W")
 			plan = [["hp", 3000], ["noenc"], ["wait", 1.5], ["shot", "hp_lobby"],
 				["warp", "HP-02", "from_HP01"], ["wait", 1.5], ["shot", "hp_ward"],
-				["want", ["사정", "그만 간다"]], ["talk", "N-R02-031"],
+				["go", 16, 19, "HP-02"], ["want", ["!사정", "그만 간다"]], ["talk", "N-R02-031"],
 				["until", "HP_MET == 1 and HP_TOLD == 1 and HP_DAY0 == 12", 10.0, "반수빈 — 첫 대화 · 사정(병동 시계는 이날부터)", "hp_ban"],
 				["go", 19, 18, "HP-02"], ["use", 19, 17], ["wait", 1.0], ["shot", "hp_board"],
 				["warp", "HP-03", "from_HP01"], ["calm"], ["wait", 1.0], ["check", "hp_march", "회진 — 옛 직원 다섯이 깨어 복도를 한 줄로 돈다"], ["shot", "hp_march"],
-				["go", 17, 12, "HP-03"], ["go", 17, 5, "HP-03"], ["go", 18, 4, "HP-03"], ["want", ["배식"]], ["use", 18, 3],
-				["until", "HP_OVR == 3", 10.0, "방재실 단말 — 배식 차임(두 시간 덮어쓰기)", "hp_call"], ["check", "hp_eat", "배식 대형 — 주방 배식차 쪽으로"],
+				["go", 17, 12, "HP-03"], ["go", 17, 5, "HP-03"], ["go", 18, 4, "HP-03"], ["want", ["!배식"]], ["use", 18, 3],
+				["until", "HP_OVR == 3", 10.0, "방재실 단말 — 배식 차임(두 시간 덮어쓰기)", "hp_call"], ["wait", 1.0], ["check", "hp_eat", "배식 대형 — 주방 배식차 쪽으로"],
 				["check", "HP_BLUR == 1 and HP_PUSH_DAY == 12", "제때 아닌 차임을 7층도 들었다 — 차트 1번 흐림"],
 				["hours", 4], ["warp", "HP-02", "from_HP01"], ["wait", 1.0],
-				["want", ["곁에 앉아"]], ["go", 2, 6, "HP-02"], ["use", 2, 5],
+				["want", ["!곁에 앉아"]], ["go", 2, 6, "HP-02"], ["use", 2, 5],
 				["until", "HP_BLUR == 0", 10.0, "면회 시간 — 흐린 탁정오 곁에 앉아 이름을 부른다", "hp_visit"], ["shot", "hp_visit"],
-				["want", ["보급품", "그만 간다"]], ["talk", "N-R02-031"],
+				["go", 21, 12, "HP-02"], ["want", ["!보급품", "그만 간다"]], ["talk", "N-R02-031"],
 				["until", "RQ47_N == 1", 10.0, "RQ-47 — 라드어웨이 셋 · 수혈 팩 둘", "hp_supply"],
-				["want", ["약길", "지하시장", "그만 간다"]], ["talk", "N-R02-031"],
+				["go", 21, 12, "HP-02"], ["want", ["!약길", "!지하시장", "그만 간다"]], ["talk", "N-R02-031"],
 				["until", "HP_LETTER == 1", 10.0, "약길 ① — 반수빈 편지", "hp_letter"],
 				["warp", "J-05", "from_J-03"], ["wait", 1.0], ["want", ["200년", "괜찮다"]], ["talk", "C-051"],
 				["until", "HP_WAY == 1", 10.0, "금하람 — 주마다 피 둘을 7층 몫으로", "hp_geum"],
@@ -938,7 +938,7 @@ func _sb_plan() -> void:
 				["check", "SB_FREED >= 6 and V_KARMA >= 100", "'인력' 여섯을 풀어 줌(카르마 +100)"],
 				["want", ["[수리 50]"]], ["go", 40, 5], ["wait", 1.5], ["check", "SB_COLLAR == 0", "목걸이 해제(수리 50)"]]
 		"sb_raid":
-			plan += [["want", ["총을 꺼낸다"]], W.call(22, 37), ["wait", 1.0], ["check", "SB_RAID == 1", "정문에서 총 → 정면 습격"],
+			plan += [["hp", 3000], ["want", ["총을 꺼낸다"]], W.call(22, 37), ["wait", 1.0], ["check", "SB_RAID == 1", "정문에서 총 → 정면 습격"],   # 맵에 든 뒤 체력(시작 때 넣은 값은 맵 진입에서 200으로 돌아감)
 				["fight"], ["shot", "sb_raid_yard"], W.call(19, 11), W.call(19, 10), ["fight"], ["go", 4, 3, "H-02"], ["go", 4, 0], ["wait", 1.0],
 				["fight"], ["go", 28, 11, "H-04"], ["fight"], ["shot", "sb_hdc_down"], ["wait", 2.0],
 				["check", "D_HDC == 1 and SB_RAID == 2 and SB_READ == 1", "황두칠 사살 → 외투의 의뢰서(K_CODE)"]]
@@ -1007,6 +1007,8 @@ func _process(dt: float) -> void:
 		_finish("시간 초과")
 		return
 	_box(dt)
+	if str(host.ev._job.get("kind", "")) == "card":
+		seen["card"] = true                                          # 막 제목 카드는 싸움 단계 안에서 떴다 질 수 있다 — 본 적이 있으면 'card' 기다림이 넘어간다
 	if i >= plan.size():
 		return
 	var s: Array = plan[i]
@@ -1075,7 +1077,13 @@ func _process(dt: float) -> void:
 				host.input_fn = func() -> Vector2: return Vector2.ZERO
 				host.player.loco.facing = Locomotion.snap8(goal - p, 0.0)
 				host.player._show()
-				if host.interact() or step_t >= 30.0:
+				var started := false
+				if p.distance_to(goal) > 46.0 and step_t >= 3.0:          # 가구에 막혀 46px 안으로 못 들어감(침낭 · 계산대) — 앞 칸 소품이 먼저 잡히니 바로 말을 건다
+					host.talk(n)
+					started = true
+				elif p.distance_to(goal) <= 46.0:
+					started = host.interact()
+				if started or step_t >= 30.0:
 					if step_t >= 30.0:
 						print("  [봇] 말 걸기 실패: ", s[1], " 거리 ", p.distance_to(goal), " 맵 ", host.map.id, " ", host.map.tile_of(p), " 상대 ", host.map.tile_of(goal))
 						_shot("talkfail")
@@ -1305,7 +1313,9 @@ func _process(dt: float) -> void:
 			if step_t >= float(s[1]):
 				_next()
 		"stash_open":                                                  # 1-L: 이 맵의 첫 '삼을 수 있는' 용기를 비우고 연다(내 자리면 그대로 연다)
-			for c in host.map.boxes:
+			var keys: Array = host.map.boxes.keys()
+			keys.sort_custom(func(p, q): return int(str(host.map.boxes[p].get("kind", "")) == "apartment") > int(str(host.map.boxes[q].get("kind", "")) == "apartment"))   # 장롱 먼저
+			for c in keys:
 				var b: Dictionary = host.map.boxes[c]
 				var bc := host.box_contents(b)
 				if stash.is_mine(bc) or (str(b.get("kind", "")) in Stash.CLAIM_KINDS and str(b.get("owner", "")) == ""):
@@ -1368,8 +1378,10 @@ func _process(dt: float) -> void:
 				var fs: Array = hosp.ferals().filter(func(e): return str(e.who) in Hp.FERALS.slice(0, 5))
 				ok = fs.size() >= 3 and fs.all(func(e): return not e.asleep and e.route.size() >= 6)
 			elif str(s[1]) == "hp_eat":
-				var fs2: Array = hosp.ferals()
-				ok = hosp._phase == 3 and not fs2.is_empty() and fs2.all(func(e): return (e.has_meta("hp_go") and int(e.get_meta("hp_go")) == 3) or (e.asleep and e.doze == "stand"))
+				var fs2: Array = hosp.ferals().filter(func(e): return e.brain.state != AIBrain.S.COMBAT)   # 주인공을 본(교전) 개체는 차임을 따르지 않는다
+				ok = hosp._phase == 3 and fs2.size() >= 3 and fs2.all(func(e): return (e.has_meta("hp_go") and int(e.get_meta("hp_go")) == 3) or (e.asleep and e.doze == "stand"))
+				if not ok:
+					print("  [봇] 대형 %d · %s" % [hosp._phase, str(fs2.map(func(e): return [e.who, e.get_meta("hp_go", -1), e.asleep, e.doze, e.brain.state]))])
 			elif str(s[1]) == "ks_carry":
 				ok = is_equal_approx(host.carry_mul, Ks.CARRY_MUL)
 			elif str(s[1]) == "ga_lure":
@@ -1402,7 +1414,7 @@ func _until(s: Array) -> bool:
 	elif c.begins_with("map:"):
 		ok2 = host.map.id == c.substr(4)
 	elif c == "card":
-		ok2 = str(host.ev._job.get("kind", "")) == "card"
+		ok2 = seen.has("card") or str(host.ev._job.get("kind", "")) == "card"
 	elif c == "side:stand":
 		ok2 = side != null and side.stand_t > 0.0
 	elif c == "win":                                                   # 대화 안에서 열린 거래 · 용기 창(1-L): 찍고 닫는다
