@@ -452,8 +452,10 @@ def city(r, src, seed=4120, anchors=()):
                     continue
                 st = STYLES[z]
                 gap, wr, hr, fr = FORM[st]
-                bw = int(rng.integers(wr[0], wr[1] + 1))
-                bh = int(rng.integers(hr[0], hr[1] + 1))
+                # 크기 · 층 · 씨앗은 그 자리(x, y) 해시로(난수 한 줄기로 뽑으면 고정 건물 하나만 더해도 그 뒤 도시 전체가 다시 짜인다 —
+                # 생성 실내 ID · 은닉처가 흔들림. 1-D8에서 고침): 바뀐 자리 둘레만 바뀐다
+                bw = wr[0] + _h(x, y, 11) % (wr[1] - wr[0] + 1)
+                bh = hr[0] + _h(x, y, 13) % (hr[1] - hr[0] + 1)
                 x1, y1 = min(x + bw, W), min(y + bh, H)
                 win = occ[y:y1, x:x1]
                 if win.any():
@@ -462,9 +464,9 @@ def city(r, src, seed=4120, anchors=()):
                         continue
                     x1 = x + free_w
                 blds.append({"x": int(x), "y": int(y), "w": int(x1 - x), "h": int(y1 - y), "style": st,
-                             "floors": int(rng.integers(fr[0], fr[1] + 1)), "seed": int(rng.integers(1 << 30))})
+                             "floors": int(fr[0] + _h(x, y, 17) % (fr[1] - fr[0] + 1)), "seed": int(_h(x, y, 19) & ((1 << 30) - 1))})
                 bid[y:y1, x:x1] = len(blds)
-                g = gap if st != "apt" else int(rng.integers(6, 9))      # 아파트는 동 사이(앞뒤) 간격이 넓다
+                g = gap if st != "apt" else 6 + _h(x, y, 23) % 3          # 아파트는 동 사이(앞뒤) 간격이 넓다
                 occ[max(0, y - gap):min(H, y1 + g), max(0, x - gap):min(W, x1 + gap)] = True
                 last = x1 + gap
     r["bid"] = bid

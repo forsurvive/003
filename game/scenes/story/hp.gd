@@ -206,6 +206,7 @@ func _on_map(id: String) -> void:
 		return
 	_sv("NIGHT", 1 if phase() == 5 and v("GEN") == 0 else 0)
 	if id == BASE or id == LOBBY:
+		_place_floor(id)
 		_formation(true)
 
 
@@ -361,6 +362,25 @@ func _night_walk(e) -> void:
 		pts.append([_tc(Vector2i(int(r[0]), int(r[1]))), float(r[2])])
 	e.route = pts
 	e._route_i = 0
+
+
+## 맵에 막 들어섰다: 맵 원고의 적은 진행기보다 먼저 서므로, 지금 밤낮에 맞게 F4 · F5를 이 층에 두거나 치운다(자리에서 바로)
+func _place_floor(id: String) -> void:
+	var night := v("NIGHT") == 1
+	for w in NIGHT_UP:
+		if st.is_dead(w):
+			continue
+		var here := ferals().filter(func(e): return str(e.who) == w)
+		var belongs := (id == LOBBY and night) or (id == BASE and not night)
+		if not belongs:
+			for e in here:
+				host.combat.enemies.erase(e)
+				e.queue_free()
+		elif here.is_empty():
+			var at: Vector2i = STAIR_1 if id == LOBBY else STAIR_B
+			var e2: Enemy = host.combat.spawn("CR-200", _tc(at), host.map, st, {"who": w})
+			e2.who = w
+			e2.wake_cb = _group_wake
 
 
 ## 소등이 시작 · 끝났다 — F4 · F5가 계단으로 층을 옮긴다(보이는 자리에서)

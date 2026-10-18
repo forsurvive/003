@@ -208,6 +208,7 @@ func test_hp_push(t) -> void:
 	c.cut(1)
 	t.ok(_v(st, "HP_CUT") == 0, "믿음 없이는 끊어 주지 않는다")
 	c.cut(2)
+	st.vars.set_v("HP_OVR", 0)
 	c._phase = 1
 	c._chime(2)
 	t.ok(_v(st, "HP_BLUR") == 1 and _v(st, "HP_TRUST") == 0, "몰래 끊으면 다음 차임에 들킨다 · 흐림")
@@ -243,7 +244,7 @@ func test_hp_ways(t) -> void:
 	c._cmd(["told"], func() -> void: pass)
 	t.ok(st.quests.stage("UQ-126") == 20, "단계 20")
 	var jh := _v(st, "AFF_JH")
-	c.set_way(1)
+	c._cmd(["way", "1"], func() -> void: pass)
 	t.ok(_v(st, "HP_WAY") == 1 and _v(st, "AFF_JH") == jh + 2 and not c.clock_on(), "① 교역 — JH +2 · 시계 멈춤")
 	t.ok(st.quests.stage("UQ-126") == 100, "약길이 정해지면 끝")
 	st.kill("C-051")
@@ -330,4 +331,8 @@ func test_hp_morgue(t) -> void:
 	t.ok("N-HP-L1" in w and "N-HP-L2" in w and not "N-HP-L3" in w, "잃은 환자 둘 — 이름표 구울 %s" % str(w))
 	c._cmd(["gen"], func() -> void: pass)
 	c._formation(false)
-	t.ok(_v(st, "HP_GEN") == 1 and _v(st, "PHASE_X") == 0, "냉동 칸 재가동")
+	t.ok(_v(st, "HP_GEN") == 1 and c.ferals().all(func(e): return int(e.get_meta("hp_go", 0)) == 1), "냉동 칸 재가동 — 칸 앞으로 걸어간다")
+	for e in c.ferals():
+		e.loco.place(e.route[0][0])
+	c._settle()
+	t.ok(c.ferals().all(func(e): return e.asleep and e.doze == "lie"), "닿으면 칸 앞에 누워 잠든다")
