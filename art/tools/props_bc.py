@@ -1044,6 +1044,10 @@ from props_mr import PROPS_MR, STATES_MR                              # 문래 �
 for _k in PROPS_MR:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_MR)
+from props_ks import PROPS_KS, STATES_KS                              # 구로 공단 지식산업센터(1-D7): 출근 기록기 · 카드꽂이 · 프레스 · 생산 게시판 · 해골 작업대 · 타자기 · 비상정지 · 데크 크레인 · 굴뚝
+for _k in PROPS_KS:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_KS)
 from props_trap import PROPS_TRAP, STATES_TRAP, burnt_states       # 함정 · 환경 폭발(1-9c, SD-11 §9.2 · §9.3)
 for _k in PROPS_TRAP:
     assert _k not in PROPS, _k
@@ -1066,6 +1070,7 @@ STATES.update(STATES_GR)
 STATES.update(STATES_KT)
 STATES.update(STATES_GA)
 STATES.update(STATES_MR)
+STATES.update(STATES_KS)
 STATES.update(STATES_BS)
 STATES.update(STATES_S04)
 STATES.update(STATES_S03)
