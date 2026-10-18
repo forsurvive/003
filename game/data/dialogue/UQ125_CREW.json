@@ -1,0 +1,209 @@
+{
+ "id": "UQ125_CREW",
+ "title": "털린 은닉처 — 낮의 털이꾼 소굴",
+ "loc": "",
+ "npc": "N-UQ-C1",
+ "cond": "UQ125_HERE == 1",
+ "labels": {
+  "START": 0,
+  "MENU": 3,
+  "TALK_OK": 4,
+  "TALK_NO": 8,
+  "MENU2": 11,
+  "PAY": 12,
+  "FIGHT": 16,
+  "LEAVE": 19
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "안쪽 타이어 더미 옆에 낯익은 자루가 놓여 있다. 쇠지레를 내려놓던 사람들이 고개를 든다."
+  },
+  {
+   "op": "line",
+   "who": "N-UQ-C1",
+   "emo": "기본",
+   "text": "길 잃었냐? 여긴 가게 아니다."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "그 자루, 내 거다. 일 크게 만들 생각은 없다",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "어려움"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "TALK_OK",
+     "id": "UQ125_CREW:1:0",
+     "fail": "TALK_NO"
+    },
+    {
+     "text": "수고비 줄 테니 자루 내놔",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 30
+      }
+     ],
+     "cond": "PC_CAPS >= 30",
+     "fx": "",
+     "to": "PAY",
+     "id": "UQ125_CREW:1:1"
+    },
+    {
+     "text": "손을 쓰겠다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "FIGHT",
+     "id": "UQ125_CREW:1:2"
+    },
+    {
+     "text": "잘못 들어왔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "LEAVE",
+     "id": "UQ125_CREW:1:3"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-UQ-C1",
+   "emo": "피곤",
+   "text": "…빈집인 줄 알았지. 주인 있는 줄 알았으면 안 건드렸어. 들고 가."
+  },
+  {
+   "op": "line",
+   "who": "N-UQ-C1",
+   "emo": "기본",
+   "text": "입구 못에 걸린 방울도 가져가. 그거 매 두면 우리 같은 놈은 그냥 지나가. 시끄러운 건 질색이라."
+  },
+  {
+   "op": "cmd",
+   "name": "stash",
+   "args": [
+    "crew_talk"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-UQ-C1",
+   "emo": "분노",
+   "text": "주운 놈이 임자야. 그 말 한 번 더 하면 쇠지레가 대답한다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "둘이 쇠지레를 다시 집는다. 아직 휘두르지는 않는다."
+  },
+  {
+   "op": "goto",
+   "to": "MENU2"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "…수고비면 되겠나",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 30
+      }
+     ],
+     "cond": "PC_CAPS >= 30",
+     "fx": "",
+     "to": "PAY",
+     "id": "UQ125_CREW:2:0"
+    },
+    {
+     "text": "손을 쓰겠다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "FIGHT",
+     "id": "UQ125_CREW:2:1"
+    },
+    {
+     "text": "물러난다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "LEAVE",
+     "id": "UQ125_CREW:2:2"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "caps(-30)"
+  },
+  {
+   "op": "line",
+   "who": "N-UQ-C1",
+   "emo": "기본",
+   "text": "…셈이 빠르네. 자루 들고 가. 방울은 덤이다 — 다음엔 우리 수고 좀 덜어 줘."
+  },
+  {
+   "op": "cmd",
+   "name": "stash",
+   "args": [
+    "crew_pay"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-UQ-C1",
+   "emo": "분노",
+   "text": "그래, 그렇게 나와야 재밌지."
+  },
+  {
+   "op": "cmd",
+   "name": "stash",
+   "args": [
+    "crew_fight"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-UQ-C1",
+   "emo": "기본",
+   "text": "그래. 나가는 문은 저쪽이다. 자루는 — 우리가 잘 쓸게."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-125.txt"
+}

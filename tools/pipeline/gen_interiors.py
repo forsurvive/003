@@ -1341,6 +1341,20 @@ TRADE_SIGN = {"scrap": "판자 간판 '고철'. 문틈으로 등불 빛이 샌�
               "parts": "판자 간판 '부품'. 안에서 무언가를 두드리는 소리.", "cloth": "판자 간판 '헌옷'. 문고리에 옷걸이가 줄줄이 걸렸다.",
               "food": "판자 간판 '국밥'. 연기가 문틈으로 나온다.", "drift": "판자 간판 '잡화'. 누가 여기 자리를 폈다."}
 
+# 가게마다 다른 목소리(1-L 재미 검수 ②): 그 집이 원래 무엇이었나(거래 창 인사) · 권역 한 줄(머리 위 말). 사람 · 장소 이름은 대지 않는다(P1)
+TRADE_FORMER = {"conv": ["편의점 자리야. 냉장고는 비어도 문은 잠겨.", "번개24 간판은 그대로 뒀어. 사람들이 그걸 보고 와."],
+                "pharm": ["약국 선반은 내가 다 닦았어. 약은 없고.", "약국 자리라 아픈 사람이 먼저 와."],
+                "hw": ["철물점 자리라 못은 넉넉해.", "공구 벽은 원래 주인이 걸어 둔 그대로야."],
+                "laundry": ["빨래방 자리야. 세탁기는 이제 옷장이지.", "물만 있으면 빨래도 해 줄 텐데."],
+                "snack": ["분식집 솥은 원래 있던 거야.", "떡볶이 냄새? 벽에 밴 거야. 떡은 없어."],
+                "tea": ["다방 자리라 커피 냄새가 배어 있어. 커피는 없어.", "다방 의자는 푹신해. 앉아도 돼, 사면."],
+                "salon": ["미용실 거울은 안 깼어. 손님이 제 얼굴 보고 사.", "가위는 안 팔아. 그건 내 거."],
+                "video": ["비디오 가게였어. 테이프는 다 뜯어 부품 했지.", "포스터 속 배우는 이제 아무도 몰라."],
+                "karaoke": ["노래방 기계 속 진공관이 쓸 만했어.", "방음벽이라 밤에 조용해. 그래서 여기 앉았어."],
+                "house": ["이 집 주인? 나야. 사흘째. 내일은 모르고.", "주인이 돌아오면 비켜 줄 거야. 아직은 안 왔어.", "자리 깔 데가 여기밖에 없더라."]}
+TRADE_REGION = {"R01": ["산바람 불면 장사 접어.", "계단 동네 사람들은 값을 깎아.", "산 쪽은 밤에 가지 마."],
+                "R02": ["굴뚝 쪽 물은 마시지 마.", "강바람에 쇠가 빨리 녹아.", "철길 따라오면 금방이야."]}
+
 
 def _place_trader(o, kind, prop_meta, rnd):
     """실내 하나에 장사꾼 · 담요 자리 · 글을 놓는다(들어온 자리에서 모든 것에 닿아야 — 안 되면 None)."""
@@ -1382,6 +1396,7 @@ def place_traders(outs, doors, reach):
     rnd = random.Random(1102)
     by_door = {d["to"]: d for d in doors}
     placed = {}                                                          # 맵 → (결, x, y, 권역)
+    voice = {}                                                           # 맵 → 그 가게 인사(원래 무엇이었나)
 
     def clean(o):
         return not o["enemies"] and not o.get("traps") and not any(b["kind"] == "stash" or b.get("hd") for b in o["boxes"])
@@ -1396,6 +1411,14 @@ def place_traders(outs, doors, reach):
             return False
         outs[mid] = (t, (x, y), st)
         placed[mid] = (kind, x, y, o.get("region"))
+        lr = random.Random(_h(x, y, 1103))
+        former = SHOPS[(x * 7 + y * 13) % len(SHOPS)] if st == "shop" else "house"
+        voice[mid] = lr.choice(TRADE_FORMER[former])
+        reg_l = TRADE_REGION.get(o.get("region"), [])
+        if reg_l and lr.random() < 0.6:
+            for n in t["npcs"]:
+                if n["id"].startswith("N-VG-"):
+                    n["bark"] = lr.choice(reg_l)                            # 같은 결이라도 동네 말이 다르다
         d = by_door.get(mid)
         if d:
             d["name"] = o["name"] + " — 장사 함"
@@ -1426,7 +1449,7 @@ def place_traders(outs, doors, reach):
             continue
         if put(mid, "drift"):
             per[reg] = per.get(reg, 0) + 1
-    out = {mid: {"kind": k, "at": [x, y], "region": r} for mid, (k, x, y, r) in sorted(placed.items())}
+    out = {mid: {"kind": k, "at": [x, y], "region": r, "greet": voice.get(mid, "")} for mid, (k, x, y, r) in sorted(placed.items())}
     json.dump(out, open(os.path.join(ROOT, "game", "data", "world", "traders.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=0)
     hide = {"den": [], "quiet": []}                                      # UQ-125 털이꾼이 자루를 두는 소굴 · 아이가 숨는 조용한 빈집(적 없음 · 장사꾼 없음)
     for mid, (o, (x, y), st) in sorted(outs.items()):

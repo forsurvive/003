@@ -348,6 +348,9 @@ func _column(s: int, x: float) -> void:
 		if int(st.stolen.get(id, 0)) > 0 and s == 0:
 			text(Vector2(tag_x, y + 4), "[장물]", f10, 10, U[0] if on else DocScreen.C["P54"])
 			tag_x += tw("[장물]", f10, 10) + 4
+		if s == 1 and int((state.get("mine", {}) as Dictionary).get(id, 0)) > 0:  # 1-L UQ-125: 털린 내 물건 — 흔적 없이 들러도 알아본다(재미 검수 ②)
+			text(Vector2(tag_x, y + 4), "(긁힌 자국)", f10, 10, U[0] if on else DocScreen.C["P54"])
+			tag_x += tw("(긁힌 자국)", f10, 10) + 4
 		if n_in > 0:
 			text(Vector2(tag_x, y + 4), ("판다 %d" if s == 0 else "산다 %d") % n_in, f10, 10, U[0] if on else U[6])
 		text(Vector2(x + 270, y + 4), "%d캡" % price(id, s == 1), f10, 10, U[0] if on else U[5], HORIZONTAL_ALIGNMENT_RIGHT)

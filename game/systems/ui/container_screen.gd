@@ -168,9 +168,15 @@ func _column(s: int, x: float) -> void:
 		scroll[s] = sel[s]
 	elif sel[s] >= scroll[s] + ROWS_VISIBLE:
 		scroll[s] = sel[s] - ROWS_VISIBLE + 1
+	var trace := str(state.get("trace", "")) if s == 1 else ""
+	if trace != "":                                                        # 1-L 털린 흔적: 힌트로 흘려보내지 않고 창에 남는다(재미 검수 ①)
+		var ty := 90.0 if l.is_empty() else 64.0 + mini(l.size(), ROWS_VISIBLE) * 20.0 + 8.0
+		for ln in TextWrap.wrap("털린 흔적 — " + trace, func(t: String) -> float: return f10.get_string_size(t, HORIZONTAL_ALIGNMENT_LEFT, -1, 10).x, 260.0):
+			text(Vector2(x + 8, ty), ln, f10, 10, DocScreen.C["P54"])
+			ty += 15.0
 	if l.is_empty():
 		text(Vector2(x + 8, 70), "(비어 있음)", f10, 10, U[3])
-		var why := Loot.empty_line(state) if s == 1 and state.has("why") else ""
+		var why := Loot.empty_line(state) if s == 1 and state.has("why") and trace == "" else ""
 		if why != "":                                                      # 1-L 빈 이유 글: 처음부터 빈 상자는 왜 비었는지 보인다
 			var ly := 90.0
 			for ln in TextWrap.wrap(why, func(t: String) -> float: return f10.get_string_size(t, HORIZONTAL_ALIGNMENT_LEFT, -1, 10).x, 260.0):

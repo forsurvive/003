@@ -506,6 +506,18 @@ func _ready() -> void:
 				["check", "UQ125_KID == 1", "흔적이 가리킨 빈집에 아이가 있다"],
 				["want", ["먹을 건 가져라"]], ["talk", "N-UQ-K1"], ["until", "UQ125_R == 2", 25.0, "먹을 것은 아이 몫 — 나머지 · 방울 줄 둘", "stash_share"],
 				["check", "has(\"M-195\") == 1 and has(\"M-012\") == 1 and has(\"W-013\") == 1", "방울 줄 · 구리선 · 권총을 되찾았다"]]
+		"stashc":                                                       # 1-L⑦ 털이꾼 갈래: 삼기 → 털이꾼 털림 → 흔적 → 낮 소굴(말이 통함 · 장면) → 수고비 30캡(R 10)
+			st.vars.set_v("GAME_DAY", 6)
+			st.vars.set_v("V_ACT", 1)
+			st.vars.set_v("PC_CAPS", 200)
+			host.date_text = "2277. 10. 27.  11:00"
+			host.enter("G-876-1245", "from_W")
+			plan = [["noenc"], ["hp", 3000], ["wait", 1.5], ["stash_open"], ["wait", 0.5], ["stash_claim"], ["close"], ["wait", 0.5],
+				["setv", "GAME_DAY", 12], ["setv", "GAME_HOUR", 13], ["warp", "W", "L-R01-20"], ["wait", 1.0], ["stash_rob", "crew"],
+				["warp", "G-876-1245", "from_W"], ["wait", 1.5], ["stash_open"], ["wait", 1.0], ["shot", "stashc_trace"], ["close"],
+				["check", "stage(\"UQ-125\") >= 10 and UQ125_WHO == 2", "털이꾼 흔적 — UQ-125 10"], ["warp_dest"], ["wait", 1.0],
+				["want", ["수고비"]], ["until", "UQ125_R == 10", 25.0, "낮 소굴 — 말이 통하는 털이꾼 · 수고비로 자루를 돌려받음", "stashc_talk"],
+				["check", "has(\"M-195\") == 1 and has(\"W-013\") == 1 and PC_CAPS < 200", "자루 · 방울 줄 둘 · 30캡을 냈다"]]
 		"ktu":                                                          # 1-D5b 금탑 위층: 화물 칸 → 사무층 육아방(위장 · 냄새 줄) → 22층 → 옥상 → 60층 어하은 · 망원경 → 연회장 · 기단
 			st.vars.set_v("GAME_DAY", 12)
 			st.vars.set_v("KT_POWER", 2)
@@ -1228,7 +1240,7 @@ func _process(dt: float) -> void:
 				var sp: Dictionary = stash.spots()[k]
 				var rng := RandomNumberGenerator.new()
 				rng.seed = 5
-				stash._theft(k, sp, st.boxes[k], int(st.vars.get_v("GAME_DAY")), rng)
+				stash._theft(k, sp, st.boxes[k], int(st.vars.get_v("GAME_DAY")), rng, str(s[1]) if s.size() > 1 else "")
 				var bn := stash.bundle(int(stash.data()["qb"]))
 				print("  [봇] 털림 → ", bn.get("who", ""), " ", bn.get("dest", ""))
 				break

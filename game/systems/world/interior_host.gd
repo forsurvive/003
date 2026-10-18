@@ -1411,8 +1411,11 @@ func open_trade(vid: String, done: Callable, k := [1.0, 1.0], greet := "", item_
 	if bool(merchant_def(vid).get("inst", false)) and not vid.contains("@"):
 		vid = "%s@%s" % [vid, map.id]                                    # 일반 장사꾼(1-L §4.1): 가게마다 따로 재고 · 캡
 	var want := str(shop_state(vid).get("want", ""))
+	var own := _shop_voice(vid) if greet == "" else ""                  # 그 가게 목소리(재미 검수 ②): 원래 무엇이던 집인가
 	if want != "" and greet == "":                                      # 요즘 찾는 것(§9.2)을 인사에 섞는다
-		greet = "%s 요즘은 %s 같은 거 찾아. 있으면 값 쳐 줄게." % [str(merchant_def(vid).get("greet", "")), str(items_db.get(want, {}).get("name", want))]
+		greet = "%s 요즘은 %s 같은 거 찾아." % [own if own != "" else str(merchant_def(vid).get("greet", "")), str(items_db.get(want, {}).get("name", want))]
+	elif own != "":
+		greet = own
 	var sh := shop_state(vid)
 	if sh.has("mine"):                                                  # UQ-125 장물(1-L §5): 내 물건은 반값 — '알고 산 물건 아니다'
 		item_k = item_k.duplicate()
@@ -1439,6 +1442,17 @@ func open_trade(vid: String, done: Callable, k := [1.0, 1.0], greet := "", item_
 		done.call(t.total))
 	add_child(t)
 	return t
+
+
+var _tr_voice := {}
+
+
+func _shop_voice(vid: String) -> String:
+	if not vid.contains("@"):
+		return ""
+	if _tr_voice.is_empty() and FileAccess.file_exists("res://data/world/traders.json"):
+		_tr_voice = JSON.parse_string(FileAccess.get_file_as_string("res://data/world/traders.json"))
+	return str(_tr_voice.get(vid.get_slice("@", 1), {}).get("greet", ""))
 
 
 ## 절도(SD-12 §9.2·SD-10 §6.3): 이 용기의 이 시대 첫 절도에 카르마 −5(주인이 악인이 아니면 — 볼트 주민은 모두 아니다).

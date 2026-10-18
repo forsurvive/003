@@ -174,3 +174,41 @@ func test_stash_age(t) -> void:
 	t.eq(str(s.bundle(1)["state"]), "gone", "30일 — 행방이 끝났다")
 	t.eq(int(st.vars.get_v("UQ125_R")), 9, "놓침")
 	h.free()
+
+
+## 재미 검수 반영(1-L⑦): 첫 털림 오름 · 맡기기의 대가 · 지켜본 털림 · 낮 소굴의 말 판
+func test_stash_review(t) -> void:
+	var r := _host()
+	var h: InteriorHost = r[0]
+	var s: Stash = r[1]
+	var st: StoryState = r[2]
+	var sp := {"since": 1, "th": 2}
+	t.eq(s._ramp(sp, 3), 0.0, "유예 안에는 오름 없음")
+	t.eq(s._ramp(sp, 9), 0.05, "유예 뒤 하루 +1%p")
+	t.eq(s._ramp(sp, 40), 0.12, "상한 12%")
+	t.eq(s._favorite({"items": {"W-013": 1, "I-030": 2, "M-001": 30}}), "W-013", "장난감이 없으면 아이는 처음 집은 것(값진 것)을 고집한다 — 맡기기의 대가")
+	t.eq(s._favorite({"items": {"W-013": 1, "M-096": 1}}), "M-096", "장난감이 있으면 장난감")
+	var b := _first_box(h, Stash.CLAIM_KINDS)
+	var c := _claim(h, s, b)
+	c["items"] = {"W-013": 1, "M-001": 120, "I-030": 2}
+	var k := Loot.key(h.map.id, b, 2277)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 3
+	s._theft(k, s.spots()[k], c, 12, rng, "crew", true)
+	var bn := s.bundle(int(s.data()["qb"]))
+	if str(bn.get("who", "")) == "crew":
+		t.ok(str(c["trace"]).begins_with("내가 본 것"), "지켜봤으면 흔적 대신 내가 본 것")
+		t.eq(st.quests.stage("UQ-125"), 10, "지켜본 털림은 단계 10이 바로 열린다")
+		var den := str(bn["dest"])
+		st.vars.set_v("GAME_HOUR", 13)
+		h.enter(den, "from_W")
+		t.ok(not s._crew_calm().is_empty(), "낮 소굴의 털이꾼은 말이 통한다(먼저 치기 전)")
+		t.eq(st.quests.stage("UQ-125"), 30, "소굴에 들어서면 단계 30")
+		s._cmd(["crew_talk"], func() -> void: pass)
+		t.eq(int(st.items.get("W-013", 0)), 1, "말로 자루를 돌려받았다")
+		t.eq(int(st.vars.get_v("UQ125_R")), 8, "결과 = 털이꾼에게 말로")
+		t.eq(int(st.items.get("M-195", 0)), 2, "입구 방울 줄 둘")
+	else:
+		t.ok(false, "털이꾼으로 고정한 털림이 소굴을 찾지 못했다: " + str(bn.get("who", "")))
+	t.eq(s._ramp(sp, 40), 0.0, "퀘스트가 열린 뒤엔 오름 없음")
+	h.free()

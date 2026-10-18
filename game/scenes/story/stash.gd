@@ -16,15 +16,24 @@ const P_TH := {1: 0.03, 2: 0.018, 3: 0.009}
 const BELL := "M-195"
 const KID := "N-UQ-K1"
 const KID_LOOK := "K1-S1-HR09-H2-T01-0-PF11-HD00-EY00"
+const CREW := "N-UQ-C1"
+const CREW_LOOK := "M2-S4-HR01-H1-T03-2-PF00-HD05-EY00"
 const XP := {1: 70, 2: 90, 3: 110}
 const HELD_DAYS := 7                       ## 아이는 먹을 것을 다 먹고 · 털이꾼은 장물로 넘긴다
 const SOLD_DAYS := 14                      ## 장물이 팔린다
 const GONE_DAYS := 30                      ## 행방이 끝난다(소멸)
 const GUARDS := [["C-057", "AFF_JC_BC", "하숙자"], ["N-R01-046", "AFF_JC_SA", "탁순복"]]   ## 아이를 맡길 수 있는 사람(살아 있고 적대가 아님)
+const GONE_LINE := {"kid": "빈집 쪽 골목이 조용하다. 사탕 껍질도, 맨발 자국도 이제 없다 — 그 아이는 다른 데로 갔다.",
+	"crew": "소굴 쪽에서 들은 말: '그 자루? 진작 넘겼지.' 내 물건은 이제 누구 손에 있는지 모른다.",
+	"fence": "그 가게 진열이 바뀌었다. 긁힌 자국 난 물건은 하나도 없다 — 팔렸다.",
+	"gone": "털린 자리는 그대로다. 찾을 길은 끝났다."}
+const CREW_T := "calm_uq125"                ## 낮의 털이꾼 소굴 · 잠복 털이꾼: 먼저 치거나 자루에 손대기 전엔 말이 통한다
 const TRADE_V := {"scrap": "VG_SCRAP", "herb": "VG_HERB", "parts": "VG_PARTS", "cloth": "VG_CLOTH", "food": "VG_FOOD", "drift": "VG_DRIFT"}
 
 var host: InteriorHost
 var st: StoryState
+var _talk_due := false                     ## 낮 소굴에 들어섰다 — 안전한 순간에 털이꾼 장면(UQ125_CREW)
+var _t := 0.0
 var log_on := false
 var _hide := {}
 var _traders := {}
@@ -41,9 +50,44 @@ func setup(h: InteriorHost, is_log := false) -> void:
 	if not st.npcs.has(KID):                                           # 아이는 공격 대상이 아니다(SD-11 · StoryState.is_child: 외형 K)
 		st.npcs[KID] = {"name": "아이"}
 	st.npcs[KID]["look"] = KID_LOOK
+	if not st.npcs.has(CREW):                                          # 털이꾼 말 상대(UQ125_CREW 초상)
+		st.npcs[CREW] = {"name": "털이꾼"}
+	st.npcs[CREW]["look"] = CREW_LOOK
 	for f in [["res://data/world/hideouts.json", "_hide"], ["res://data/world/traders.json", "_traders"]]:
 		if FileAccess.file_exists(f[0]):
 			set(f[1], JSON.parse_string(FileAccess.get_file_as_string(f[0])))
+
+
+func _process(dt: float) -> void:
+	_t += dt
+	if _t < 0.4 or not _talk_due:
+		return
+	_t = 0.0
+	if host.map == null or not _safe():
+		return
+	_talk_due = false
+	if _crew_calm().is_empty():
+		return
+	st.portrait_alias[CREW] = "st_look_" + CREW_LOOK.to_lower().replace("-", "_")   # 말 상대 초상(맵 인물이 아니라 무리의 목소리)
+	host.play_scene("UQ125_CREW")
+
+
+func _safe() -> bool:
+	if host.box.active or host.ev.busy() or host.busy or host.story_hold or host.locked:
+		return false
+	return host.pipboy == null and host.container == null and host.wait_ui == null and host.terminal == null and host.lockpick == null
+
+
+func _crew_calm() -> Array:
+	return host.combat.enemies.filter(func(e): return is_instance_valid(e) and not e.cmb.dead and e.cmb.team == CREW_T)
+
+
+## 말이 끝났다(자루에 손댐 · 장면에서 싸움을 고름): 같은 무리 모두 적으로
+func _crew_turn() -> void:
+	for e in _crew_calm():
+		e.cmb.team = "enemy_uq125"
+		e.foes = ["player", "ally"]
+		e.wake()
 
 
 func _log(s: String) -> void:
@@ -136,6 +180,8 @@ func on_open(b: Dictionary, c: Dictionary, scr: ContainerScreen) -> void:
 		scr.stash_mode = "claim"
 		scr.stash_line = risk_text(mid, b, c)
 	scr.stash_act.connect(func(what: String) -> void: _act(what, b, c, scr))
+	if int(c.get("sack", 0)) > 0:
+		_crew_turn()                                                    # 깨어 있는 털이꾼 앞에서 자루를 연다 — 말은 끝났다
 	if c.has("trace") and not bool(c.get("trace_seen", false)):        # 털린 흔적(§3.2): 열어서 처음 본다 — 퀘스트가 붙은 묶음이면 UQ-125 10
 		c["trace_seen"] = true
 		host.hint(str(c["trace"]), 8.0)
@@ -158,7 +204,7 @@ func on_close(b: Dictionary, c: Dictionary) -> void:
 	bn["state"] = "back"
 	host.st.call_fn("give", [BELL, 2])
 	host.hint("자루를 되찾았다. 소굴 입구 못에 방울 줄 둘이 걸려 있다 — 챙겼다.", 5.0)
-	_done(bn, 2 if _asleep_all() else 1)
+	_done(bn, 7 if _asleep_all() else 1)
 
 
 func _asleep_all() -> bool:
@@ -237,7 +283,7 @@ func _on_day(_d: int) -> void:
 		var rng := RandomNumberGenerator.new()
 		rng.seed = hash("%s|%d|%d" % [k, today, st.check_seed])        # 같은 판 같은 날 같은 결과 — 불러와도 바뀌지 않는다(§6 #5)
 		var b := {"th": s["th"], "lock": s["lock"], "kind": s["kind"]}
-		if rng.randf() >= risk(b, c):
+		if rng.randf() >= risk(b, c) + _ramp(s, today):
 			continue
 		var here := host.map != null and host.map.id == str(s["map"])
 		if int(d["seen"].get(str(s["map"]), -99)) >= today - 1 and not here:
@@ -255,6 +301,13 @@ func _on_day(_d: int) -> void:
 		_theft(k, s, c, today, rng)
 
 
+## 첫 털림 오름(재미 검수 ③): 퀘스트가 아직이면 유예가 끝난 날부터 하루 +1%p(상한 12%) — 언제 올지는 씨앗이 정하되 한 번은 온다
+func _ramp(s: Dictionary, today: int) -> float:
+	if st.quests.stage(QID) > 0 or int(data()["qb"]) > 0:
+		return 0.0
+	return clampf(0.01 * float(today - int(s["since"]) - GRACE), 0.0, 0.12)
+
+
 func _value(items: Dictionary) -> int:
 	var t := 0
 	for id in items:
@@ -270,7 +323,7 @@ func _quest_item(id: String) -> bool:
 
 
 ## 털림(§3.2 · §3.3): 가치 높은 순으로 50~80% · 캡은 절반 · 퀘스트 물건은 남긴다. 범인 · 행방은 그때 정한다(P1)
-func _theft(k: String, s: Dictionary, c: Dictionary, today: int, rng: RandomNumberGenerator) -> void:
+func _theft(k: String, s: Dictionary, c: Dictionary, today: int, rng: RandomNumberGenerator, only := "", watched := false) -> void:
 	var d := data()
 	var items: Dictionary = c["items"]
 	var ids: Array = items.keys().filter(func(x): return not _quest_item(str(x)) and str(x) != "M-001")
@@ -290,7 +343,7 @@ func _theft(k: String, s: Dictionary, c: Dictionary, today: int, rng: RandomNumb
 		if int(items[id]) <= 0:
 			items.erase(id)
 	var gear := got.keys().any(func(x): return str(x).begins_with("W-") or str(x).begins_with("A-"))
-	var dest := _dest(s, gear or sum >= 80, rng)
+	var dest := _dest(s, gear or sum >= 80, rng, only)
 	d["n"] = int(d["n"]) + 1
 	var quest := st.quests.stage(QID) == 0 and int(d["qb"]) == 0
 	var bn := {"id": int(d["n"]), "key": k, "map": s["map"], "spot": s["name"], "day": today, "items": got, "who": dest[0], "dest": dest[1],
@@ -304,12 +357,17 @@ func _theft(k: String, s: Dictionary, c: Dictionary, today: int, rng: RandomNumb
 	c["trace"] = _trace(bn, s, dest)
 	c["trace_seen"] = false
 	c["trace_b"] = bn["id"]
+	if watched and str(dest[0]) == "crew":                              # 지켜봤다(재미 검수 덤): 흔적 대신 내가 본 것 — 단계 10이 바로 열린다
+		c["trace"] = "내가 본 것 — 쇠지레를 든 둘이 내 자리를 털어 자루를 메고 %s으로, %s." % [dest[3], dest[2]]
+		c["trace_seen"] = true
+		if bool(bn["quest"]):
+			_open_quest(bn)
 	s["rest"] = today + 7
 	_log("털림 %s → %s %s (%d)" % [k, dest[0], dest[1], sum])
 
 
 ## 행방: [범인, 맵, 거리 말, 방위 말]. 아이는 위협 1 · 덫이 없을 때만 · 장물아비는 값진 묶음 50% · 그 밖 털이꾼 · 아무 데도 없으면 'gone'
-func _dest(s: Dictionary, rich: bool, rng: RandomNumberGenerator) -> Array:
+func _dest(s: Dictionary, rich: bool, rng: RandomNumberGenerator, only := "") -> Array:
 	var wp := Vector2i(int(s["wx"]), int(s["wy"]))
 	var order: Array = []
 	if int(s["th"]) <= 1:
@@ -317,6 +375,8 @@ func _dest(s: Dictionary, rich: bool, rng: RandomNumberGenerator) -> Array:
 	if rich and rng.randf() < 0.5:
 		order.push_front("fence")
 	order.append_array(["crew", "fence"])
+	if only != "":
+		order.push_front(only)
 	for who in order:
 		var best := ["", 1e9]
 		if who == "fence":
@@ -435,6 +495,10 @@ func _on_map(mid: String) -> void:
 	d["seen"][mid] = day()
 	_sv("HERE", 0)
 	for bn in (d["bundles"] as Array):
+		if str(bn["map"]) == mid and str(bn["state"]) in ["gone", "sold"] and bool(bn.get("quest", false)) and not bool(bn.get("told", false)):
+			bn["told"] = true
+			host.hint(str(GONE_LINE.get(str(bn["who"]), GONE_LINE["gone"])), 6.0)
+	for bn in (d["bundles"] as Array):
 		if str(bn["dest"]) != mid or not (str(bn["state"]) in ["held", "fenced"]):
 			continue
 		_sv("HERE", 1)
@@ -455,7 +519,7 @@ func _open_quest(bn: Dictionary) -> void:
 		_up(10)                                                         # 비표시 — 기타 묶음 메모 줄은 단계 로그(SD-05 §2.6)
 
 
-func _free_cell(min_from_door: int) -> Vector2i:
+func _free_cell(min_from_door: int, front := false) -> Vector2i:
 	var m := host.map
 	var door := m.tile_of(m.mark_pos("from_W")) if m.marks.has("from_W") else Vector2i(1, 1)
 	var best := Vector2i(-1, -1)
@@ -463,6 +527,8 @@ func _free_cell(min_from_door: int) -> Vector2i:
 		for x in range(1, int(m.data["size"][0]) - 1):
 			var c := Vector2i(x, y)
 			if m.is_solid(c) or m.boxes.has(c) or absi(c.x - door.x) + absi(c.y - door.y) < min_from_door:
+				continue
+			if front and (m.is_solid(c + Vector2i(0, 1)) or m.boxes.has(c + Vector2i(0, 1)) or m.is_solid(c + Vector2i(1, 0))):
 				continue
 			if best.x < 0 or c.y < best.y:
 				best = c
@@ -472,9 +538,13 @@ func _free_cell(min_from_door: int) -> Vector2i:
 func _stage_kid(bn: Dictionary) -> void:
 	if int(st.vars.get_v("UQ125_KID")) >= 2:
 		return
-	var c := _free_cell(4)
+	var c := _free_cell(4, true)
+	if c.x < 0:
+		c = _free_cell(4)
 	if c.x < 0:
 		return
+	if not host.map.is_solid(c + Vector2i(0, 1)):
+		host.map.add_runtime_prop("bedroll", c + Vector2i(0, 1))       # 이불 더미 — 아이는 그 뒤에
 	(host.map.data["npcs"] as Array).append({"id": KID, "x": c.x, "y": c.y, "dir": "S", "route": [], "cond": "UQ125_KID <= 1",
 		"bark": "…", "look": KID_LOOK, "sheet": "st_look_" + KID_LOOK.to_lower().replace("-", "_")})
 	_sv("KID", 1)
@@ -513,12 +583,20 @@ func _stage_crew(bn: Dictionary) -> void:
 			var p := Vector2i(x, y)
 			if placed >= n or host.map.is_solid(p) or host.map.boxes.has(p) or p.distance_to(c) < 2.0 or p.distance_to(c) > 6.0:
 				continue
-			var e := host.combat.spawn("CR-423", Vector2(x * 32 + 16, y * 32 + 16), host.map, st, {"sleep": night})
+			var o: Dictionary = {"sleep": night} if night else {"team": CREW_T, "foes": []}
+			var e := host.combat.spawn("CR-423", Vector2(x * 32 + 16, y * 32 + 16), host.map, st, o)
 			if e != null:
 				e.set_meta("uq125", bn["id"])
 				e.set_meta("asleep", night)
 				placed += 1
 	bn["staged"] = day()
+	bn["sack_k"] = k
+	if not night:
+		for e in host.combat.enemies:                                   # 소굴 식구 모두 한 무리 — 먼저 치면 다 같이 돌아선다
+			if is_instance_valid(e) and not e.cmb.dead and str(e.row.get("id", "")) in ["CR-423", "CR-420"]:
+				e.cmb.team = CREW_T
+				e.foes = []
+		_talk_due = true
 
 
 # ---------------------------------------------------------------- 잠복(§9.3)
@@ -534,12 +612,38 @@ func _ambush(k: String, s: Dictionary, c: Dictionary, rng: RandomNumberGenerator
 			host.hint("새벽, 문이 삐걱인다. 작은 그림자 하나가 내 자리 앞에 쪼그려 앉았다.", 6.0)
 			return
 	var door := host.map.tile_of(host.map.mark_pos("from_W")) if host.map.marks.has("from_W") else Vector2i(2, 2)
+	var crew: Array = []
+	var front := [int(s["x"]), int(s["y"]) + 1, 6.0]
 	for i in 2:
-		var e := host.combat.spawn("CR-423", Vector2((door.x + i - 1) * 32 + 16, (door.y - 1) * 32 + 16), host.map, st, {})
+		var e := host.combat.spawn("CR-423", Vector2((door.x + i - 1) * 32 + 16, (door.y - 1) * 32 + 16), host.map, st,
+			{"team": CREW_T, "foes": [], "route": [[door.x + i - 1, door.y - 1, 1.0], [front[0] + i, front[1], 6.0]]})
 		if e != null:
 			e.set_meta("uq125", -1)
-	host.hint("새벽, 문이 삐걱인다 — 쇠지레를 든 둘이 들어온다. 이쪽을 보고 멈칫한다.", 6.0)
+			crew.append(e)
+	host.hint("새벽, 문이 삐걱인다 — 쇠지레를 든 둘이 들어온다. 이쪽은 못 봤다. 지켜볼까, 나설까.", 7.0)
 	_log("잠복: 털이꾼 %s" % k)
+	var today := day()
+	var mid := str(s["map"])
+	host.get_tree().create_timer(14.0).timeout.connect(func() -> void: _ambush_end(k, mid, crew, today))
+
+
+## 잠복 끝: 털이꾼이 아직 말이 통하는 채(아무도 안 쳤다)면 털고 나간다 — 묶음 · 행방이 생긴다(P1). 맵을 떠났어도 같다(흔적만 보통 글)
+func _ambush_end(k: String, mid: String, crew: Array, today: int) -> void:
+	var calm := crew.filter(func(e): return is_instance_valid(e) and not e.cmb.dead and e.cmb.team == CREW_T)
+	var gone := host.map == null or host.map.id != mid
+	if calm.is_empty() and not gone:
+		return                                                          # 싸웠다 · 쫓아냈다 — 털림 없음
+	var s: Dictionary = spots().get(k, {})
+	var c: Dictionary = st.boxes.get(k, {})
+	if s.is_empty() or c.is_empty() or _value(c.get("items", {})) < MIN_VALUE:
+		return
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash("%s|%d|w" % [k, today])
+	_theft(k, s, c, today, rng, "crew", not gone)
+	for e in calm:
+		host.combat.drop_enemy(e)
+	if not gone:
+		host.hint(str(c.get("trace", "")), 7.0)
 
 
 # ---------------------------------------------------------------- 원고 명령(@cmd stash …)
@@ -565,6 +669,7 @@ func _cmd(a: Array, done: Callable) -> void:
 			st.call_fn("give", [BELL, 2])
 			if fav != "":
 				data()["kid_fav"] = fav
+				host.hint("%s — 아이 주머니로 들어갔다. 돌려 달라고 하지 않았다." % str(host.items_db.get(Gear.base(fav), {}).get("name", fav)), 5.0)
 			_kid_leave(3)
 			_done(bn, 3)
 		"kid_scare":                                                    # 겁준다 — 물건만 두고 달아난다(−2)
@@ -576,6 +681,23 @@ func _cmd(a: Array, done: Callable) -> void:
 			st.call_fn("give", [BELL, 1])
 			_sv("KID", 0)
 			host.refresh_npcs()
+		"crew_talk", "crew_pay":                                       # 낮 소굴에서 말로 · 수고비로(R 8 · 10) — 자루를 돌려받고 입구 방울 줄 둘
+			var cb := _crew_bundle()
+			if not cb.is_empty():
+				var sk := str(cb.get("sack_k", ""))
+				if st.boxes.has(sk):
+					var sc: Dictionary = st.boxes[sk]
+					for id in (sc["items"] as Dictionary):
+						if str(id) == "M-001":
+							st.call_fn("caps", [int(sc["items"][id])])
+						else:
+							st.call_fn("give", [id, int(sc["items"][id])])
+					sc["items"] = {}
+				cb["state"] = "back"
+				st.call_fn("give", [BELL, 2])
+				_done(cb, 8 if what == "crew_talk" else 10)
+		"crew_fight":
+			_crew_turn()
 		"fence_free":                                                   # [화술 30] 긁힌 자국을 보여 줌 — 그냥 돌려받는다
 			var fb := _fence_bundle()
 			if not fb.is_empty():
@@ -589,6 +711,13 @@ func _cmd(a: Array, done: Callable) -> void:
 				fb["state"] = "back"
 				_done(fb, 5)
 	done.call()
+
+
+func _crew_bundle() -> Dictionary:
+	for bn in (data()["bundles"] as Array):
+		if str(bn["who"]) == "crew" and str(bn["state"]) == "held" and str(bn["dest"]) == host.map.id:
+			return bn
+	return {}
 
 
 func _fence_bundle() -> Dictionary:
@@ -649,8 +778,10 @@ func _favorite(bn: Dictionary) -> String:
 	for id in it:
 		if str(id).begins_with("M-08") or str(id).begins_with("M-09"):
 			return str(id)
-	var f := _food_ids(bn)
-	return str(f[0]) if not f.is_empty() else ""
+	for id in it:
+		if str(id) != "M-001":
+			return str(id)                                              # 털 때 가장 먼저 집은 것 — 무기일 수도 있다
+	return ""
 
 
 func _kid_leave(state: int) -> void:
