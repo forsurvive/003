@@ -5,14 +5,46 @@
  "npc": "",
  "cond": "V_ACT >= 1",
  "labels": {
-  "START": 0
+  "START": 0,
+  "MINE": 4,
+  "LATE": 6
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "MR_LOCKER == 1",
+   "to": "MINE"
+  },
   {
    "op": "line",
    "who": "SYS",
    "emo": "기본",
-   "text": "협동조합 공구 사물함. 칸마다 자물쇠."
+   "text": "협동조합 공구 사물함. 칸마다 자물쇠 — 빈 칸 하나에 '성씨에게 말하면 빌려줌'."
+  },
+  {
+   "op": "if",
+   "cond": "MR_LOCKER == 2",
+   "to": "LATE"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "내 칸. 열쇠는 주머니에 있다. 성씨가 골목을 지키는 동안은 아무도 손대지 않는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "내 칸 자물쇠가 바뀌었다. 쪽지 — '기한 지남. 짐은 성씨가 맡음.'"
   },
   {
    "op": "goto",

@@ -192,6 +192,7 @@ var u02: U02Paths                                       ## U02 남태령 지하(
 var uq04: Uq04                                          ## UQ-04 7호 냉동 창고(1-D3 — 독산 육가공 단지 DG-DS)
 var gr: Gr                                              ## 구로 차량기지 던전 DG-GR(1-D4 — 입환 · 출발 진행)
 var kt: Kt                                              ## 여의도 금탑 던전 DG-KT(1-D5a — 로비 · 지하 수족관)
+var ks: Ks                                              ## 구로 공단 지식산업센터 · 문래 DG-KS(1-D7 — 라인 박자 · 출근 카드 · 11월 서류 · 금형)
 var ga: Ga                                              ## 가산 아울렛 거리 DG-GA(1-D6 — 눈 속이기 · 작업복 상자 · 진열창)
 var stash: Stash                                        ## 보관 자리 · 털림 · UQ-125 털린 은닉처(1-L)
 var caravans: Caravans                             ## 순회 상인 일정(1-8d)
@@ -299,6 +300,11 @@ func _paths() -> void:
 		ga = Ga.new()
 		add_child(ga)
 		ga.setup(host, log_on)
+	if ks == null:
+		ks = Ks.new()
+		add_child(ks)
+		ks.setup(host, log_on)
+		ks.want_save.connect(func(_w: String) -> void: request_auto("shelter"))   # 품질 관리실 쉼터(1-D7 확정안 F11)
 	if stash == null:
 		stash = Stash.new()
 		add_child(stash)

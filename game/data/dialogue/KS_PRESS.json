@@ -5,14 +5,120 @@
  "npc": "",
  "cond": "V_ACT >= 1",
  "labels": {
-  "START": 0
+  "START": 0,
+  "ASK": 8,
+  "FREE": 10,
+  "TAKE": 12,
+  "WELD": 14,
+  "EMPTY": 16
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "UQ69_DIE == 4",
+   "to": "WELD"
+  },
+  {
+   "op": "if",
+   "cond": "UQ69_DIE != 0",
+   "to": "EMPTY"
+  },
   {
    "op": "line",
    "who": "SYS",
    "emo": "기본",
-   "text": "램 아래 볼스터에 태성 총열 금형이 물려 있다."
+   "text": "볼스터에 물린 금형 — 각인 '태성 정밀 TS-P 7.62 총열'. 램이 박자마다 내려와 빈 강봉을 찍는다."
+  },
+  {
+   "op": "cmd",
+   "name": "ks",
+   "args": [
+    "seen"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "KS_LINE < 0 or KS_ALARM == 1",
+   "to": "FREE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "볼트 여섯이 금형을 붙잡고 있다. 램이 내려오는 사이에 손을 넣을 수는 없다. 라인이 서야 뺄 수 있다."
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R02-049\") == 0",
+   "to": "ASK"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "품질 관리실 유리창 너머에서 공장장이 이쪽을 본다. 라인을 세우는 건 그의 결재다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "램이 멎었다. 볼트 여섯을 풀면 금형이 빠진다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "금형을 뺀다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TAKE",
+     "id": "KS_PRESS:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KS_PRESS:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "ks",
+   "args": [
+    "take"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "금형이 볼스터에 박힌 채 박자대로 반제품을 찍는다. '11월 목표 110%'. 빼려면 라인을 부숴야 한다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "금형이 빠진 볼스터. 램이 허공을 찍는다."
   },
   {
    "op": "goto",

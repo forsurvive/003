@@ -42,5 +42,5 @@ prop bookshelf_home 5 3
 text 5 4 "철공소 사무실 책꽂이. 기능사 실기 책 · 거래 장부 · 2077년 달력(10월에서 멈춤)." w=1
 prop drum 19 10
 prop scrap_pile 1 10
-npc N-R02-021 14 6 S cond="GAME_HOUR >= 7 and GAME_HOUR < 22" bark="금형만 있으면 총열을 새로 뽑는다."
+npc N-R02-021 16 7 W cond="GAME_HOUR >= 7 and GAME_HOUR < 22" bark="금형만 있으면 총열을 새로 뽑는다."
 npc N-R02-021 3 5 S cond="GAME_HOUR < 7 or GAME_HOUR >= 22" bark="…잔다. 내일 와."

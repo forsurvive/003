@@ -530,6 +530,7 @@ func _floor_tag() -> String:
 
 const WET_MUL := [1.0, 0.8, 0.6]                  ## 침수 이동 배수(SD-09f §3.5: 발목 ×0.8 · 허리 ×0.6)
 var _wet_said := false
+var carry_mul := 1.0                               ## 들고 걷는 짐 배수(1-D7 금형 M-395 과적 0.6 — 진행기 Ks가 정한다). 침수 배수와 곱한다
 
 
 ## 1-D 침수: 발 딛은 칸의 물 깊이로 주인공 · 적의 걸음을 늦춘다. 허리 물에서는 웅크릴 수 없다(한 번 알림)
@@ -537,10 +538,10 @@ func _wet_tick() -> void:
 	if map == null or player == null:
 		return
 	if map.wet.is_empty():
-		player.loco.terrain_mul = 1.0
+		player.loco.terrain_mul = carry_mul
 		return
 	var w: int = map.wet_at(map.tile_of(player.loco.logical))
-	player.loco.terrain_mul = WET_MUL[w]
+	player.loco.terrain_mul = WET_MUL[w] * carry_mul
 	if w == 2 and combat.crouch:
 		combat.crouch = false
 		if not _wet_said:

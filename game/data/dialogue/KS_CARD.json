@@ -5,14 +5,163 @@
  "npc": "",
  "cond": "V_ACT >= 1",
  "labels": {
-  "START": 0
+  "START": 0,
+  "AGAIN": 4,
+  "PUNCH": 6,
+  "OUT": 9,
+  "CLOCKOUT": 12,
+  "BYE": 16,
+  "DEAD": 18
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "KS_ALARM == 1",
+   "to": "DEAD"
+  },
   {
    "op": "line",
    "who": "SYS",
    "emo": "기본",
-   "text": "카드꽂이에 누런 근태 카드가 빽빽하다. 전부 출근 칸에만 꽂혔다."
+   "text": "누런 근태 카드 수백 장. 전부 '출근' 칸에만 꽂혔다. 찍힌 시각은 하나같이 2077-10-23 07:4x. '퇴근' 칸은 텅 비었다."
+  },
+  {
+   "op": "if",
+   "cond": "KS_CARD >= 1",
+   "to": "AGAIN"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "카드 하나를 뽑아 기록기에 찍는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "PUNCH",
+     "id": "KS_CARD:1:0"
+    },
+    {
+     "text": "퇴근 칸에 카드를 꽂아 본다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "OUT",
+     "id": "KS_CARD:1:1"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KS_CARD:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "내가 찍은 카드가 출근 칸 맨 앞에 꽂혀 있다. 라인의 로봇들은 지금 나를 그 이름으로 안다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "다른 카드로 바꿔 찍는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "PUNCH",
+     "id": "KS_CARD:2:0"
+    },
+    {
+     "text": "내 카드를 퇴근 칸에 꽂아 본다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "OUT",
+     "id": "KS_CARD:2:1"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KS_CARD:2:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "ks",
+   "args": [
+    "card"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "천장 스피커가 지직거린다. '출근 확인. 라인 배치 대기.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "UQ69_PAPER == 3 and KS_CARD >= 1",
+   "to": "CLOCKOUT"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "퇴근 칸 투입구가 녹으로 막혔다. 카드가 들어가지 않는다. 200년 동안 아무도 밀어 넣지 않은 자리다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "퇴근 칸 투입구의 녹을 누가 손톱으로 긁어냈다. 카드를 밀어 넣고 레버를 당긴다. 찰칵 — '퇴근 · 2277'."
+  },
+  {
+   "op": "if",
+   "cond": "GAME_DAY == KS_STAMP and dead(\"N-R02-049\") == 0",
+   "to": "BYE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "로비가 조용하다. 위층에서도 쿵 소리가 나지 않는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-049",
+   "emo": "미소",
+   "text": "…수고했어. 너도 퇴근이다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "기록기 시계가 멈췄다. 카드꽂이 위로 회전등 불빛이 붉게 지나간다."
   },
   {
    "op": "goto",

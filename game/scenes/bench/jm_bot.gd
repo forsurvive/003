@@ -24,6 +24,7 @@ var uq04: Uq04                                     ## UQ-04 7호 냉동 창고(1
 var gr: Gr                                         ## 구로 차량기지(1-D4)
 var kt: Kt                                         ## 여의도 금탑(1-D5a)
 var ga: Ga
+var ks: Ks                                         ## 구로 공단 지식산업센터 · 문래(1-D7)
 var stash: Stash                                   ## 보관 자리 · UQ-125(1-L)
 var st: StoryState
 var route := "job"
@@ -132,6 +133,9 @@ func _ready() -> void:
 	ga = Ga.new()
 	add_child(ga)
 	ga.setup(host, true)
+	ks = Ks.new()
+	add_child(ks)
+	ks.setup(host, true)
 	stash = Stash.new()
 	add_child(stash)
 	stash.setup(host, true)
@@ -497,6 +501,30 @@ func _ready() -> void:
 				["go", 29, 16, "GA-02"], ["want", ["넘긴다"]], ["use", 29, 15],
 				["until", "GA_BOX == 1", 15.0, "작업복 상자 — 하역장 수거 칸으로 끌어다 둔다", "ga_crate"],
 				["check", "GA_BOX == 1 and GA_BOX_DAY == 12 and GA_DECOY == 1 and GA_SEEN == 1", "상자 넘김 · 미끼 · 망꾼(사실 한 곳)"]]
+		"ks":                                                           # 1-D7 지식산업센터: 출근 카드 → 공장층(라인이 작업자를 노리지 않는다) → 모준서 → 타자기 '이관' → 금형 → 데크 크레인 → 문래 성태경 → 하역장 분필 → 다음 06:00 리어카
+			st.vars.set_v("GAME_DAY", 12)
+			st.vars.set_v("V_ACT", 1)
+			st.vars.set_v("PC_SKP_" + st.skill_key("과학"), 60)
+			host.date_text = "2277. 10. 30.  10:00"
+			host.enter("KS-01", "from_W")
+			plan = [["hp", 3000], ["noenc"], ["wait", 2.0], ["shot", "ks_lobby"],
+				["want", ["카드 하나를"]], ["go", 18, 4, "KS-01"], ["use", 18, 3],
+				["until", "KS_CARD == 1", 10.0, "출근 기록기 — 죽은 작업자의 카드를 찍는다", "ks_card"],
+				["warp", "KS-02", "from_KS01"], ["wait", 2.0], ["check", "ks_calm", "라인 설비는 작업자를 노리지 않는다(경보 없음)"], ["shot", "ks_floor"],
+				["go", 6, 29, "KS-02"], ["go", 6, 12, "KS-02"], ["go", 6, 8, "KS-02"], ["want", ["그만 가"]], ["talk", "N-R02-049"],
+				["check", "UQ69_MET == 1", "공장장 모준서 첫 대면"],
+				["want", ["본사 서식", "이관"]], ["go", 4, 7, "KS-02"], ["use", 3, 6],
+				["until", "UQ69_PAPER == 1 and KS_LINE == -1", 10.0, "타자기 — 11월 목표 '금형 협력사 이관 — 문래'", "ks_paper"], ["wait", 2.0], ["shot", "ks_stopped"],
+				["want", ["금형을 뺀다"]], ["go", 6, 12, "KS-02"], ["go", 6, 26, "KS-02"], ["go", 15, 26, "KS-02"], ["use", 15, 25],
+				["until", "UQ69_DIE == 1", 10.0, "3라인 프레스에서 금형을 뺀다", "ks_take"], ["check", "ks_carry", "과적 — 걸음이 느려진다"],
+				["want", ["금형만 싣고"]], ["go", 40, 26, "KS-02"], ["go", 40, 24, "KS-02"], ["go", 43, 24, "KS-02"], ["use", 43, 24],
+				["until", "UQ69_DIE == 6", 10.0, "외벽 데크 크레인 → 1층 하역장", "ks_crane"],
+				["warp", "MR-01", "from_X"], ["wait", 1.0], ["shot", "ks_seong"], ["go", 7, 8, "MR-01"], ["go", 15, 8, "MR-01"], ["want", ["그만 간다"]], ["talk", "N-R02-021"],
+				["check", "UQ69_HEARD == 1", "성태경 — 금형 얘기(리어카)"],
+				["warp", "KS-01", "from_KS02"], ["wait", 1.0], ["clear", ["CR-095"]], ["want", ["그만둔다"]], ["go", 31, 11, "KS-01"], ["use", 30, 10], ["wait", 2.0], ["shot", "ks_dest"],
+				["check", "UQ69_DEST == 2 and UQ69_DIE == 6", "하역장 금형에 이관 통보서 — 성씨 리어카가 알아서(분필 없이)"],
+				["hours", 22], ["check", "UQ69_DIE == 2 and UQ69_DONE_DAY >= 12", "다음 06:00 — 리어카가 문래로(사실 한 곳)"],
+				["warp", "X-MR", "arrive"], ["wait", 2.0], ["shot", "ks_alley"]]
 		"ktj":                                                          # 1-D5a 금탑 엉뚱한 짓: 승강로에 뛰어내린다 → 물속 칸 → 사다리로 로비 → 어하은이 알아챈다
 			st.vars.set_v("GAME_DAY", 12)
 			host.date_text = "2277. 10. 30.  10:00"
@@ -1189,6 +1217,9 @@ func _process(dt: float) -> void:
 		"settime":
 			host.date_text = str(s[1])
 			_next()
+		"hours":                                                        # 시계를 몇 시간 넘긴다(06:00을 넘으면 하루 판정 — 1-D7 수레)
+			host.advance_minutes(int(s[1]) * 60)
+			_next()
 		"setv":                                                         # 변수 바로 세우기(날짜를 건너뛸 때 GAME_DAY — 1-11i)
 			st.vars.set_v(str(s[1]), s[2])
 			_next()
@@ -1299,6 +1330,11 @@ func _process(dt: float) -> void:
 			elif str(s[1]) == "ga_pose":
 				var gs: Array = host.combat.enemies.filter(func(e): return is_instance_valid(e) and not e.cmb.dead and str(e.row.get("id", "")) in Ga.GANG and e != ga._lookout)
 				ok = not gs.is_empty() and gs.all(func(e): return e.det_mul == 0.0 or e.brain.state == AIBrain.S.COMBAT)
+			elif str(s[1]) == "ks_calm":
+				var us := ks.units()
+				ok = us.size() == 4 and us.all(func(e): return not ("player" in e.foes)) and not ks._hot
+			elif str(s[1]) == "ks_carry":
+				ok = is_equal_approx(host.carry_mul, Ks.CARRY_MUL)
 			elif str(s[1]) == "ga_lure":
 				ok = ga._lure_t > 0.0
 			elif str(s[1]) == "seen_guard":

@@ -5,14 +5,156 @@
  "npc": "",
  "cond": "V_ACT >= 1",
  "labels": {
-  "START": 0
+  "START": 0,
+  "D2": 4,
+  "D2P": 7,
+  "D3": 9,
+  "MENU": 11,
+  "TO2": 12,
+  "TO3": 15,
+  "LIFT": 18
  },
  "ops": [
   {
    "op": "line",
    "who": "SYS",
    "emo": "기본",
-   "text": "크레인으로 내려 둔 금형이다."
+   "text": "하역장 바닥의 태성 총열 금형. 새벽에 수레가 오면 실어 간다 — 어느 쪽 수레가 올지 표시해 둬야 한다."
+  },
+  {
+   "op": "if",
+   "cond": "UQ69_DEST == 2",
+   "to": "D2"
+  },
+  {
+   "op": "if",
+   "cond": "UQ69_DEST == 3",
+   "to": "D3"
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "if",
+   "cond": "UQ69_PAPER == 1",
+   "to": "D2P"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "금형에 분필 — '성씨 선반'. 새벽에 리어카가 온다."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "금형에 결재 통보서가 테이프로 붙었다 — '금형 협력사 이관 — 문래'. 새벽에 성씨 리어카가 온다."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "금형에 분필 — '용두식 → 새벽인력'. 새벽에 손수레가 온다."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "분필로 '성씨 선반'이라 쓴다(리어카)",
+     "tags": [],
+     "cond": "UQ69_DEST != 2 and (UQ69_HEARD == 1 or UQ69_PAPER == 1) and (dead(\"N-R02-021\") == 0 or dead(\"N-R02-022\") == 0)",
+     "fx": "",
+     "to": "TO2",
+     "id": "KS_DROP:1:0"
+    },
+    {
+     "text": "분필로 '용두식 → 새벽인력'이라 쓴다(손수레)",
+     "tags": [],
+     "cond": "UQ69_DEST != 3 and UQ69_TOLD == 1 and dead(\"N-R02-504\") == 0 and not (dead(\"C-013\") == 1 and dead(\"C-049\") == 1)",
+     "fx": "",
+     "to": "TO3",
+     "id": "KS_DROP:1:1"
+    },
+    {
+     "text": "금형을 다시 든다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "LIFT",
+     "id": "KS_DROP:1:2"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KS_DROP:1:3"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "ks",
+   "args": [
+    "dest",
+    "2"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "새벽 여섯 시. 리어카 바퀴 소리를 기다리면 된다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "ks",
+   "args": [
+    "dest",
+    "3"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "새벽 여섯 시. 장화 신은 손수레가 올 것이다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "ks",
+   "args": [
+    "lift"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "다시 든다. 묵직하다."
   },
   {
    "op": "goto",

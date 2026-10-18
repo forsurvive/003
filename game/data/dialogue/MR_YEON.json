@@ -1,0 +1,154 @@
+{
+ "id": "MR_YEON",
+ "title": "용접공 연시헌",
+ "loc": "L-R02-14",
+ "npc": "N-R02-022",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "HEIR": 4,
+  "CARRY": 6,
+  "HAND": 9,
+  "MENU": 12,
+  "FIX": 13,
+  "SHOP": 15
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "dead(\"N-R02-021\") == 1 and has(\"M-395\") == 1",
+   "to": "CARRY"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R02-021\") == 1",
+   "to": "HEIR"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-022",
+   "emo": "기본",
+   "text": "…불꽃 보지 마. 눈 버려."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-022",
+   "emo": "슬픔",
+   "text": "…형님 일은 내가 잇는다. 수리만. 총열은 형님 손이었어."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-022",
+   "emo": "슬픔",
+   "text": "그거, 형님이 기다리던 금형이지."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-022",
+   "emo": "기본",
+   "text": "…내가 받을게. 총열은 못 뽑아도, 금형은 이 골목에 있어야 해."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "금형을 건넨다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "HAND",
+     "id": "MR_YEON:1:0"
+    },
+    {
+     "text": "아직은",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "MENU",
+     "id": "MR_YEON:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "ks",
+   "args": [
+    "give",
+    "2"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-022",
+   "emo": "기본",
+   "text": "…고마워. 형님 선반 옆에 둔다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "방어구를 맡긴다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "FIX",
+     "id": "MR_YEON:2:0"
+    },
+    {
+     "text": "철판 · 부품을 산다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SHOP",
+     "id": "MR_YEON:2:1"
+    },
+    {
+     "text": "그만 간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "MR_YEON:2:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "fix",
+   "args": [
+    "VMR2"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "trade",
+   "args": [
+    "VMR2"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KS.txt"
+}

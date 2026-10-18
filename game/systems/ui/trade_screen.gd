@@ -77,6 +77,12 @@ func _value(id: String) -> int:
 
 
 func price(id: String, buying: bool) -> int:
+	if buying and st != null and int(st.vars.get_v("UQ69_DIE")) == 2 and str(db.get(Gear.base(id), {}).get("cat", "")) == "weapon":
+		return maxi(1, roundi(_price(id, buying) * 0.95))               # UQ-69 ①: 문래가 총열을 뽑는다 — 무기 값 −5%(SD-05 §3.21)
+	return _price(id, buying)
+
+
+func _price(id: String, buying: bool) -> int:
 	if buying and item_k.has(id):
 		return price_of(_value(id), true, barter, f, [float(k[0]) * float(item_k[id]), k[1]])
 	if not buying and (mdef.has("likes") or str(state.get("want", "")) != ""):

@@ -1,0 +1,144 @@
+{
+ "id": "MR_YONG",
+ "title": "금형 장인 용두식",
+ "loc": "L-R02-14",
+ "npc": "N-R02-504",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "DEAL": 5,
+  "HAND": 10,
+  "NOSB": 13,
+  "PAY": 15,
+  "DONE": 19
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "UQ69_REWARD == 1",
+   "to": "PAY"
+  },
+  {
+   "op": "if",
+   "cond": "UQ69_DIE == 3",
+   "to": "DONE"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-504",
+   "emo": "기본",
+   "text": "금형은 사람보다 오래 산다. 주인만 바뀌지."
+  },
+  {
+   "op": "if",
+   "cond": "UQ69_HEARD >= 1 or has(\"M-395\") == 1",
+   "to": "DEAL"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"C-013\") == 1 and dead(\"C-049\") == 1",
+   "to": "NOSB"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-504",
+   "emo": "기본",
+   "text": "태성 총열 금형? 성씨가 눈독 들이는 그거. …나한테 넘겨. 새벽인력이 400캡 쳐 준다."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-504",
+   "emo": "기본",
+   "text": "근태 목걸이 잠금쇠를 찍겠다더군. 성씨 선반도 그 주문을 맡게 될 거고. 캡은 확실해."
+  },
+  {
+   "op": "do",
+   "fx": "UQ69_TOLD = 1"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "금형을 넘긴다(400캡)",
+     "tags": [],
+     "cond": "has(\"M-395\") == 1",
+     "fx": "",
+     "to": "HAND",
+     "id": "MR_YONG:1:0"
+    },
+    {
+     "text": "생각해 보죠",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "MR_YONG:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "ks",
+   "args": [
+    "give",
+    "3"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-504",
+   "emo": "미소",
+   "text": "장화 신은 놈들이 내일 가지러 온다. 이 골목은 앞으로 바빠지겠어."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-504",
+   "emo": "기본",
+   "text": "새벽인력? 소장도 실장도 죽었다며. 살 사람이 없으면 값도 없지."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-504",
+   "emo": "기본",
+   "text": "수레로 온 금형 값. 400캡. 세어 봐."
+  },
+  {
+   "op": "do",
+   "fx": "UQ69_REWARD = 2"
+  },
+  {
+   "op": "do",
+   "fx": "caps(400)"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-504",
+   "emo": "기본",
+   "text": "새벽인력이 잘 쓰고 있어. 성씨는 나랑 말을 안 하지."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KS.txt"
+}

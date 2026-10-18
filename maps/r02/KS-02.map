@@ -3,7 +3,7 @@
 # 3라인 프레스에 태성 총열 금형이 물렸다(UQ-69 발동 ②). 성형-4 CR-326 둘(라인 이탈 작업자를 부른다 · 경고 셋 뒤 감시포) · 감시포 1형 CR-320 둘(동쪽 끝 · 바로 아래 사각).
 # 북쪽: 생산 게시판 '10월 103%'(표창) · 엎드린 해골 작업대 넷. 서쪽 위 품질 관리실(모준서 · 타자기 · 교범 서가 · 쉼터). 동쪽 아래 외벽 화물 데크(크레인 → 1층 하역장).
 # 비상정지 단추는 동쪽 끝 감시포 둘 사이(오타 '1030%' 판의 길). 동쪽 위 계단 → 옥상(KS-03).
-map KS-02 지식산업센터 공장층
+map KS-02 구로 공단 지식산업센터
 set sb
 grid
 ################################################
@@ -65,10 +65,13 @@ prop conveyor_ks 30 14 cond="KS_LINE >= 0"
 prop conveyor_ks 30 14 state=step cond="KS_LINE < 0"
 prop slot_ks 20 15
 mark slot11 20 15 N
+text 20 15 "작업 위치. 노란 테." scene=KS_SLOT
 prop slot_ks 26 15
 mark slot12 26 15 N
+text 26 15 "작업 위치. 노란 테." scene=KS_SLOT
 prop slot_ks 32 15
 mark slot13 32 15 N
+text 32 15 "작업 위치. 노란 테." scene=KS_SLOT
 mark line1 34 15 W
 text 34 14 "1라인 끝. 바닥에 '작업 위치' 노란 테 셋 — 쿵 하는 동안은 발소리가 안 들린다." w=2
 # ---------------------------------------------------------------- 2라인
@@ -86,10 +89,13 @@ prop conveyor_ks 30 19 cond="KS_LINE >= 0"
 prop conveyor_ks 30 19 state=step cond="KS_LINE < 0"
 prop slot_ks 20 20
 mark slot21 20 20 N
+text 20 20 "작업 위치. 노란 테." scene=KS_SLOT
 prop slot_ks 26 20
 mark slot22 26 20 N
+text 26 20 "작업 위치. 노란 테." scene=KS_SLOT
 prop slot_ks 32 20
 mark slot23 32 20 N
+text 32 20 "작업 위치. 노란 테." scene=KS_SLOT
 mark line2 34 20 W
 text 34 19 "2라인 끝. 바닥에 '작업 위치' 노란 테 셋 — 쿵 하는 동안은 발소리가 안 들린다." w=2
 # ---------------------------------------------------------------- 3라인
@@ -107,10 +113,13 @@ prop conveyor_ks 30 24 cond="KS_LINE >= 0"
 prop conveyor_ks 30 24 state=step cond="KS_LINE < 0"
 prop slot_ks 20 25
 mark slot31 20 25 N
+text 20 25 "작업 위치. 노란 테." scene=KS_SLOT
 prop slot_ks 26 25
 mark slot32 26 25 N
+text 26 25 "작업 위치. 노란 테." scene=KS_SLOT
 prop slot_ks 32 25
 mark slot33 32 25 N
+text 32 25 "작업 위치. 노란 테." scene=KS_SLOT
 mark line3 34 25 W
 text 34 24 "3라인 끝. 바닥에 '작업 위치' 노란 테 셋 — 쿵 하는 동안은 발소리가 안 들린다." w=2
 text 15 25 "3라인 프레스. 램 아래 볼스터에 묵직한 금형이 물려 있다 — 각인 '태성 정밀 TS-P 7.62 총열'. 박자마다 빈 강봉을 찍는다." w=2 scene=KS_PRESS cond="UQ69_DIE == 0 or UQ69_DIE == 4"
@@ -145,10 +154,11 @@ box 10 5 ks_qc name="품질 관리 서류함"
 text 10 6 "불량 판정표 묶음. 맨 위 '10/23 3라인 — 불량 0. 우수'. 도장은 공장장 모준서." w=1
 prop w_whiteboard 4 1
 text 4 3 "화이트보드. '11월 할당 — 본사 통보 대기'. 그 아래 바를 정(正) 자가 벽 끝까지 이어졌다. 날을 세다 만 자국." w=2
+text 5 6 "빈 의자. 모포가 각 잡혀 개켜 있고, 책상 위 결재 도장 손잡이에 쪽지 — '퇴근. 수고들 했다.'" w=2 cond="UQ69_PAPER == 3 and KS_STAMP >= 1 and GAME_DAY > KS_STAMP"
 prop cot 9 7
 text 10 8 "접이식 간이침대. 모포가 각 잡혀 개켜 있다. 모준서는 눕지 않는다." w=1
 npc N-R02-049 5 6 S cond="UQ69_PAPER != 3 or KS_STAMP == 0" bark="10월 할당 103%. 11월 목표는 아직 안 내려왔어."
-npc N-R02-049 20 6 S cond="UQ69_PAPER == 3 and KS_STAMP >= 1" bark="…다들 퇴근했어. 나만 남았지. 괜찮아. 공장장은 원래 마지막에 나가."
+npc N-R02-049 20 6 S cond="UQ69_PAPER == 3 and KS_STAMP >= 1 and GAME_DAY <= KS_STAMP" bark="…다들 퇴근했어. 나만 남았지. 괜찮아. 공장장은 원래 마지막에 나가."
 # ---------------------------------------------------------------- 서쪽 사물함 · 부품
 prop locker_row2 2 14
 box 2 14 ks_locker w=2 name="작업자 사물함"

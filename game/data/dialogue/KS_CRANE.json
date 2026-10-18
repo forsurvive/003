@@ -5,14 +5,90 @@
  "npc": "",
  "cond": "V_ACT >= 1",
  "labels": {
-  "START": 0
+  "START": 0,
+  "DIE": 3,
+  "DOWN": 4,
+  "RIDE": 6
  },
  "ops": [
   {
    "op": "line",
    "who": "SYS",
    "emo": "기본",
-   "text": "지브 크레인과 화물칸. 아래로 1층 하역장."
+   "text": "지브 크레인과 철망 화물칸, 수동 권양기. 아래로 1층 하역장 천장 구멍이 뚫렸다."
+  },
+  {
+   "op": "if",
+   "cond": "has(\"M-395\") == 1",
+   "to": "DIE"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "화물칸에 타고 내려간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "RIDE",
+     "id": "KS_CRANE:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KS_CRANE:1:1"
+    }
+   ]
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "화물칸에 금형만 싣고 하역장으로 내린다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "DOWN",
+     "id": "KS_CRANE:2:0"
+    },
+    {
+     "text": "금형과 함께 화물칸에 타고 내려간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "RIDE",
+     "id": "KS_CRANE:2:1"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KS_CRANE:2:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "ks",
+   "args": [
+    "crane"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "ks",
+   "args": [
+    "ride"
+   ]
   },
   {
    "op": "goto",

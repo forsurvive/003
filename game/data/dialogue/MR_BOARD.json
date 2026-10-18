@@ -5,14 +5,76 @@
  "npc": "",
  "cond": "V_ACT >= 1",
  "labels": {
-  "START": 0
+  "START": 0,
+  "GIVE": 4,
+  "SB": 6,
+  "DEAD": 8
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "dead(\"N-R02-021\") == 1",
+   "to": "DEAD"
+  },
+  {
+   "op": "if",
+   "cond": "UQ69_DIE == 3",
+   "to": "SB"
+  },
+  {
+   "op": "cmd",
+   "name": "ks",
+   "args": [
+    "boardshow"
+   ]
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "칠판에 적힌 재료를 건넨다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "GIVE",
+     "id": "MR_BOARD:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "MR_BOARD:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "ks",
+   "args": [
+    "req"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
   {
    "op": "line",
    "who": "SYS",
    "emo": "기본",
-   "text": "칠판에 분필 — 품목 · 수량 · 재료 있으면 가져와."
+   "text": "칠판이 지워지고 '근태 목걸이 잠금쇠 — 400개'. 새벽인력 주문서가 압정에 꽂혔다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "칠판의 마지막 줄 — 아무도 지우지 않았다."
   },
   {
    "op": "goto",

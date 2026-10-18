@@ -1,0 +1,342 @@
+{
+ "id": "MR_SEONG",
+ "title": "선반 성씨 성태경",
+ "loc": "L-R02-14",
+ "npc": "N-R02-021",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "AGAIN": 9,
+  "CARRY": 11,
+  "HAND": 14,
+  "MINE": 18,
+  "SOLD": 20,
+  "MENU": 22,
+  "FIX": 23,
+  "FIXN": 26,
+  "SHOP": 28,
+  "LOCK": 30,
+  "RENT": 34,
+  "LOCKED": 37,
+  "LATE": 39
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "UQ69_DIE == 3",
+   "to": "SOLD"
+  },
+  {
+   "op": "if",
+   "cond": "UQ69_DIE == 2",
+   "to": "MINE"
+  },
+  {
+   "op": "if",
+   "cond": "has(\"M-395\") == 1",
+   "to": "CARRY"
+  },
+  {
+   "op": "if",
+   "cond": "UQ69_HEARD == 1",
+   "to": "AGAIN"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-021",
+   "emo": "기본",
+   "text": "총? 줘 봐. …선반 성씨다. 고칠 건 고치고, 못 고칠 건 못 고친다고 말한다."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-021",
+   "emo": "기본",
+   "text": "금형만 있으면 총열을 새로 뽑는다. 구로 공단 지식산업센터 3라인 — 태성 총열 금형이 아직 프레스에 물려 있다더군."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-021",
+   "emo": "기본",
+   "text": "공장장 구울이 안 내준대. 서류 타령이래. 가져오면 이 골목 총값이 내린다. 하역장에 내려 두면 리어카도 보내 주고."
+  },
+  {
+   "op": "cmd",
+   "name": "ks",
+   "args": [
+    "heard"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-021",
+   "emo": "기본",
+   "text": "왔어? 금형 소식은?"
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-021",
+   "emo": "놀람",
+   "text": "…그거. 그 무게. 이미 들고 왔네."
+  },
+  {
+   "op": "cmd",
+   "name": "ks",
+   "args": [
+    "heard"
+   ]
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "금형을 건넨다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "HAND",
+     "id": "MR_SEONG:1:0"
+    },
+    {
+     "text": "아직은 — 다른 데도 알아보고요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "MENU",
+     "id": "MR_SEONG:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-021",
+   "emo": "미소",
+   "text": "선반 옆에 볼트로 박는다. 오늘 밤부터 총열을 뽑아."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-021",
+   "emo": "기본",
+   "text": "이 골목 총값 내린다. 연합 쪽 사람들한테도 말해 두지."
+  },
+  {
+   "op": "cmd",
+   "name": "ks",
+   "args": [
+    "give",
+    "2"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-021",
+   "emo": "미소",
+   "text": "금형이 돈다. 강선이 곧아. 총 가져와 — 총열째 새로 갈아 준다."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-021",
+   "emo": "분노",
+   "text": "근태 목걸이 잠금쇠 찍느라 바빠. 총은 딴 데 가. …방어구면 연가한테 맡기든지."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "총을 손본다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "FIX",
+     "id": "MR_SEONG:2:0"
+    },
+    {
+     "text": "물건을 사고판다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SHOP",
+     "id": "MR_SEONG:2:1"
+    },
+    {
+     "text": "협동조합 공구 사물함 얘기",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "LOCK",
+     "id": "MR_SEONG:2:2"
+    },
+    {
+     "text": "그만 간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "MR_SEONG:2:3"
+    }
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "UQ69_DIE == 2",
+   "to": "FIXN"
+  },
+  {
+   "op": "cmd",
+   "name": "fix",
+   "args": [
+    "VMR1"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "fix",
+   "args": [
+    "VMR1N"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "trade",
+   "args": [
+    "VMR1"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "MR_LOCKER == 1",
+   "to": "LOCKED"
+  },
+  {
+   "op": "if",
+   "cond": "MR_LOCKER == 2",
+   "to": "LATE"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-021",
+   "emo": "기본",
+   "text": "빈 칸 하나. 7일 25캡. 내가 골목에 있으니 아무도 못 손대."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "빌린다",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 25
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "RENT",
+     "id": "MR_SEONG:3:0"
+    },
+    {
+     "text": "됐어요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "MENU",
+     "id": "MR_SEONG:3:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "ks",
+   "args": [
+    "rent"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-021",
+   "emo": "기본",
+   "text": "열쇠. 7일 지나면 내가 꺼내 맡아 둔다. 밀린 값 내면 돌려주고."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-021",
+   "emo": "기본",
+   "text": "네 칸이야. 기한 안 지났어."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-021",
+   "emo": "기본",
+   "text": "기한 지났어. 짐은 내가 맡아 뒀지. 하나도 안 비었어. 25캡 내면 다시 연다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "낸다",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 25
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "RENT",
+     "id": "MR_SEONG:4:0"
+    },
+    {
+     "text": "나중에요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "MENU",
+     "id": "MR_SEONG:4:1"
+    }
+   ]
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KS.txt"
+}

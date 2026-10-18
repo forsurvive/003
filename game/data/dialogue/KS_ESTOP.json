@@ -5,14 +5,87 @@
  "npc": "",
  "cond": "V_ACT >= 1",
  "labels": {
-  "START": 0
+  "START": 0,
+  "HOT": 4,
+  "PUSH": 6,
+  "DONE": 10
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "KS_ESTOP == 1",
+   "to": "DONE"
+  },
+  {
+   "op": "if",
+   "cond": "KS_LINE == 1",
+   "to": "HOT"
+  },
   {
    "op": "line",
    "who": "SYS",
    "emo": "기본",
-   "text": "붉은 버섯 단추. 라인 전체 정지 — 공장장 승인."
+   "text": "붉은 버섯 단추. 그 아래 열쇠 구멍 — '공장장 승인'. 열쇠가 꽂히지 않으면 눌리지 않는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "과부하 표시등이 빨갛게 깜박인다. 단추가 승인 없이 반쯤 내려앉았다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "비상정지 단추를 누른다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "PUSH",
+     "id": "KS_ESTOP:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KS_ESTOP:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "쾅. 라인 전체가 한숨처럼 멎는다. 프레스 램이 반쯤 내려온 채 굳는다."
+  },
+  {
+   "op": "cmd",
+   "name": "ks",
+   "args": [
+    "estop"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "품질 관리실 쪽에서 외침 — '누가 정지를…!' 그리고 조용해진다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "눌린 단추. 회전등이 꺼져 있다."
   },
   {
    "op": "goto",

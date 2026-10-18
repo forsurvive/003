@@ -1,0 +1,71 @@
+{
+ "id": "KS_SLOT",
+ "title": "작업 위치",
+ "loc": "L-R02-21",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "WORK": 3,
+  "STOP": 5
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "KS_LINE < 0",
+   "to": "STOP"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "노란 테 안에 바랜 발바닥 자국 둘. 200년 전 누군가 하루 여덟 시간 서 있던 자리."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "하루 일한다(8시간 — 출근 카드)",
+     "tags": [],
+     "cond": "KS_CARD >= 1",
+     "fx": "",
+     "to": "WORK",
+     "id": "KS_SLOT:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KS_SLOT:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "ks",
+   "args": [
+    "work"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "라인이 섰다. 이제 아무도 이 자리에 서지 않는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KS.txt"
+}
