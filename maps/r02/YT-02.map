@@ -1,0 +1,95 @@
+# 여의도 유리탑 2동 — 7층 세진전자 협력사 사무실(SD-09a L-R02-08 '2동 사무층(세진전자 협력사 사무실)' · 1-D 계획 §15.7, 단계 1-D9). 40×24.
+# 지하 상가 2동 연결 계단(파랑 게이트) → 칸막이 사무실(책상마다 2077년 사람 흔적 — 달력 · 쪽지 · 퇴근 기록) · 인사실(사원증 발급 단말 · 발급 대장 —
+#   마지막 줄 22:40 남기범 3동 임시 카드) · 탕비실 · 서비스 기사 교육실(『세진 서비스 기사 교육 교재』 BK-08-R02-02 — 장부 D-187과 같은 처리).
+# 천장 환풍구 → 3동 18층 기계실(YT-03 — 일개미 냄새 길). 일개미는 여의도공원에서 번진 무리(금탑 여왕의 전초 — 여왕을 정리했으면 적다).
+map YT-02 유리탑 2동 협력사 사무층
+set bk
+grid
+########################################
+########################################
+########################################
+#ccccccccccccccccccccccccc#cccccccccccc#
+#ccccccccccccccccccccccccc#cccccccccccc#
+#ccccccccccccccccccccccccc#cccccccccccc#
+#ccccccccccccccccccccccccc#cccccccccccc#
+#cccccccccccccccccccccccccccccccccccccc#
+#cccccccccccccccccccccccccccccccccccccc#
+#ccccccccccccccccccccccccc#cccccccccccc#
+#ccccccccccccccccccccccccc#cccccccccccc#
+#ccccccccccccccccccccccccc#cccccccccccc#
+##########c#####################w#######
+##########c#####################w#######
+##########c#####################w#######
+#wwwwwwwwwwwwww#wwwwwwwwwwwwwwwwwwwwwww#
+#wwwwwwwwwwwwww#wwwwwwwwwwwwwwwwwwwwwww#
+#wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww#
+#wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww#
+#wwwwwwwwwwwwww#wwwwwwwwwwwwwwwwwwwwwww#
+#wwwwwwwwwwwwww#wwwwwwwwwwwwwwwwwwwwwww#
+######ss################################
+######ss################################
+######ss################################
+end
+exit 6 23 YT-01 from_YT02
+exit 7 23 YT-01 from_YT02
+door 10 13 "탕비실"
+door 32 13 "교육실"
+mark from_YT01 6 19 N
+mark from_vent 20 4 S
+mark vent 20 3 N
+# ---------------------------------------------------------------- 칸막이 사무실
+prop screen_partition 4 5
+prop screen_partition 4 8
+prop screen_partition 12 5
+prop screen_partition 12 8
+prop desk 2 4
+box 2 4 yt_desk w=2 name="도미란 자리 서랍"
+text 2 5 "칸막이 이름표 '도미란 대리 — 3동 파견(송출)'. 책상 달력 10월 23일에 빨간 동그라미 '야간 당번 18층'. 서랍 위 쪽지 '기범 씨, 마감 테이프는 내가 감아 둘게요. 22시 넘어서 올라와요 — 미란'." w=2
+prop desk 6 4
+box 6 4 yt_desk w=2 name="책상 서랍"
+text 6 5 "이름표 '오정택 과장'. 퇴근 기록 카드가 꽂혀 있다 — '10/23 18:12 퇴근'. 메모 '잔업 사유 쓰는 법: 정산 마감 · 장애 대응 · 송출 지원 중 하나'." w=2
+prop desk 10 4
+box 10 4 yt_desk w=2 name="막내 자리 서랍"
+text 10 5 "이름표 '남기범 서기'. 의자 등받이에 걸린 정장 윗도리가 없다. 모니터 테두리에 포스트잇 '3동 심부름 — 객장에 마감 테이프(통로 셔터 23시 전까지)'." w=2
+prop desk 14 7
+box 14 7 desk w=2 name="책상 서랍"
+prop desk 18 7
+prop desk 22 4
+text 22 5 "창가 자리. 화분 흙이 책상 위로 넘쳤고, 흙 사이로 작은 굴이 셋. 개미 다리가 바스락거린다." w=2
+prop mound_yt 24 4 cond="KT_QUEEN == 0 and DG_YT == 0"
+prop file_cabinet 1 10
+prop file_cabinet 2 10
+prop w_calendar 8 1
+prop w_vent 20 1
+text 20 3 "천장 환풍구. 덮개가 떨어져 있고 흙 냄새가 내려온다. 기어 올라가면 3동으로 이어진다고 덕트 표시가 말한다 — '3동 18F 기계실'." w=1 scene=YT_VENT
+prop remains2 16 10
+text 16 10 "칸막이 사이 유해. 사원증 목걸이만 남았다. 카드는 '2동 협력사 — 파랑'. 이름은 '하보람'." w=1 scene=YT_HABORAM
+# ---------------------------------------------------------------- 인사실
+prop idterm_yt 30 4
+text 30 5 "사원증 발급 단말. 화면 '세진 출입 관리 — 등급 갱신 · 재발급'. 카드 넣는 홈 옆에 '발급 시각 입력(24시)'." w=1 scene=YT_ISSUE
+prop teacher_desk 33 4
+text 34 5 "발급 대장. 마지막 쪽 마지막 줄 '10/23 22:40 · 남기범(2동) · 3동 임시 · 사유: 송출실 심부름 · 발급 담당 박'. 그 아래로 줄이 그어지지 않았다." w=2 scene=YT_LEDGER
+prop file_cabinet 37 4
+prop w_whiteboard 33 1
+text 28 9 "인사실 화이트보드. '계엄 단계 상향 시 임시 출입증 효력 정지 — 관제망 지침(10/22 하달)'." w=2
+# ---------------------------------------------------------------- 탕비실
+prop sink 2 16
+prop water_cooler 5 16
+prop canteen_table 8 18
+text 9 18 "탕비실 식탁. 종이컵 일곱 개가 나란히. 컵마다 매직으로 이름 — 그중 '기범'만 커피가 말라붙지 않았다. 마시지 않고 나갔다." w=2
+prop locker_row3 11 16
+box 11 16 locker w=3 name="탕비실 사물함"
+# ---------------------------------------------------------------- 서비스 기사 교육실
+prop blackboard 26 13
+prop desk 18 17
+prop desk 22 17
+prop desk 26 18
+prop desk 30 17
+prop bookshelf 35 16
+text 35 17 "교육 교재 서가. 『세진 서비스 기사 교육 교재』가 반쯤 꽂혀 있다 — 표지에 '진공관 판독기 정비 · 출입 등급 단말 편'." w=2
+text 26 17 "칠판. '판독기 등급은 카드에 쓰인 값이 아니라 발급 기록과 맞춰 읽는다. 발급 순서가 거꾸로면 무효.'" w=2
+# ---------------------------------------------------------------- 일개미(공원에서 번진 무리)
+scent 22,4;20,4;18,6;16,6;13,9;4,9 cond="KT_QUEEN == 0 and DG_YT == 0"
+enemy CR-080 21 5 cond="KT_QUEEN == 0 and DG_YT == 0"
+enemy CR-080 12 9 cond="KT_QUEEN == 0 and DG_YT == 0"
+enemy CR-080 30 18 cond="DG_YT == 0"

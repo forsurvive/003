@@ -85,6 +85,8 @@ ENGINE_VARS |= {"UQ69_" + k for k in "PAPER DIE DEST DEST_DAY HEARD MET T1 T2 T3
     | {"MR_" + k for k in "LOCKER LOCKER_DAY BOARD BOARD_WK FEET".split()}   # 1-D7 지식산업센터 · 문래(원고 script/act1/KS.txt 머리 주석)
 ENGINE_VARS |= {"HP_" + k for k in "DAY0 LOST BLUR BLUR_DAY WAY TRUST CUT OVR OVR_END NIGHT GEN MASK VISIT VISIT_DAY PUSH_DAY BED ASK1 ASK2 ASK3 OJ MOVE_DAY SKIP MORGUE PHASE SAT LETTER MET TOLD DONE_DAY VON SEEN VMASK LTOLD".split()} \
     | {"RQ47_" + k for k in "N WK LAST".split()} | {"DG_STOP"}   # 1-D8 여의도 대학병원 · UQ-126 · RQ-47(원고 script/act1/HP.txt 머리 주석)
+ENGINE_VARS |= {"YT_" + k for k in "FORGE FORGE_T TEMP LOCK UNK DEAD_DM ESCORT POWER MOUND SEEN GATE1 CLERK_SEEN ROBOT_OK ELEV INC INC_DAY".split()} \
+    | {"UQ06_" + k for k in "RESULT DAY ASKED MET GONE BACK TOLD HEARD".split()}   # 1-D9 유리탑 3동 · 증권가 객장 · UQ-06(원고 script/act1/YT.txt 머리 주석)
 ENGINE_VARS |= {"KT_" + k for k in "POWER POWER_DAY NOTE CALL RING RING2 MEM HOOK REVOLVE TUNNEL CAR QUEEN LOW CARTOLD HATCH KEY GRATE DIG ROPE GOND TOP TOP_DAY MEET VIEW SHOE NURSE EXPL HEAT OBS QUEEN_DAY CREW EXT3 EXT4 EXT5 HOSE3 HOSE4 SWAT GLASS20 GLASS31 WIN6 GEN_DAY BACK".split()}   # 1-D5a·1-D5b 여의도 금탑
 # 던전 정리 변수(1-D0, script/world/dungeons.txt): DG_<접미> 0 손 안 댐 · 1 정리 · 2 다시 들어섬 / _DAY 정리 · 재입주 날 / _ROLL 재입주를 굴린 날
 ENGINE_VARS |= {f"DG_{m}{s}" for m in re.findall(r"^@\s+([A-Z0-9]+)\s", open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "script", "world", "dungeons.txt"), encoding="utf-8").read(), re.M)

@@ -1,0 +1,57 @@
+# 여의도 증권가 — 증권사 객장(SD-09a L-R02-07 L955 · SD-05 UQ-06 L298 · 1-D 계획 §15.7, 단계 1-D9). 40×20.
+# 남쪽 정문(월드 문 L-R02-07) · 북서 지하 계단(유리탑 3동 연결 통로 → YT-01 — 2077년 남기범이 테이프를 들고 오려던 길).
+# 객장 전광판(단말 — 테이프를 넣으면 마감 종 · UQ-06 ①) · 시세판 아래 경상현(N-R02-032, 2077년 객장 직원 구울 · 비적대) · 금고실 잔해(지폐 다발 — 가치 0).
+map SG-01 여의도 증권가 객장
+set bk
+grid
+##ss####################################
+##ss####################################
+##ss####################################
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+###################tt###################
+###################tt###################
+###################tt###################
+end
+exit 19 19 W L-R02-07>from_W
+exit 20 19 W L-R02-07>from_W
+exit 2 0 YT-01 from_SG01
+exit 3 0 YT-01 from_SG01
+mark from_W 19 15 N
+mark from_YT01 2 4 S
+mark board 16 4 N
+mark kyung 16 5 S
+prop w_ticker_sg 14 1 cond="UQ06_RESULT != 1"
+prop w_ticker_sg 14 1 state=close cond="UQ06_RESULT == 1"
+text 15 3 "객장 전광판 단말. 테이프 넣는 홈 위에 '마감 시세 수동 입력'. 화면은 '종합 ▼99.9%'에서 멈췄다." w=3 scene=YT_BOARD
+npc N-R02-032 16 5 S cond="dead(\"N-R02-032\") == 0 and UQ06_GONE == 0"
+prop wait_chairs 8 9
+prop wait_chairs 12 9
+prop wait_chairs 20 9
+prop wait_chairs 24 9
+prop wait_chairs 8 12
+prop wait_chairs 12 12
+prop wait_chairs 20 12
+prop wait_chairs 24 12
+text 10 10 "객장 의자 줄. 의자마다 주문표가 꽂혀 있다 — 전부 '매수'. 23시 주문." w=2
+prop cash_counter 30 4
+text 31 5 "상담 창구. 유리 칸막이에 '전시 연장장 10:00~23:00 · 마감 시세 23:10 송출'." w=2
+prop safe_big 35 13
+text 35 14 "금고실 잔해. 문이 반쯤 녹아 열렸다. 2077년 지폐 다발이 젖은 종이 덩어리가 됐다. 값은 없다." w=1
+prop rubble 33 15
+prop rubble2 37 11
+prop remains 28 14
+prop plant_pot 1 15
+text 2 5 "지하 연결 통로 계단. '유리탑 방면'. 셔터는 저쪽 끝에 있다." w=1

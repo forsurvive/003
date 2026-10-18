@@ -600,6 +600,9 @@ def _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kin
     for p in out["props"]:                                        # 우리 문(1-3 H-03)도 이야기에서 열린다: 열린 것으로 본다
         if p["name"] == "cage_door":
             block[p["y"]][p["x"]] = 0
+        if p["name"] in ("gate_yt", "shutter_yt"):                 # 유리탑 판독기 게이트 · 연결 통로 셔터(1-D9)는 카드로 열린다
+            for i in range(2):
+                block[p["y"]][p["x"] + i] = 0
         if p["name"] == "bj_boom" and not ext:                    # 지하 초소 차단봉(1-D2)은 이야기로 지난다(@cmd u02 boom — 건너편에 선다)
             for i in range(3):
                 block[p["y"]][p["x"] + i] = 0

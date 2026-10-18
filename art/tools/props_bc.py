@@ -1052,6 +1052,10 @@ from props_hp import PROPS_HP, STATES_HP                              # 여의�
 for _k in PROPS_HP:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_HP)
+from props_yt import PROPS_YT, STATES_YT                              # 여의도 유리탑 3동 · 증권가 객장(1-D9): 판독기 게이트 · 벽 판독기 · 안내판 · 방화 셔터 · 발급 단말 · 송출 랙 · 화분 둔덕 · 객장 전광판
+for _k in PROPS_YT:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_YT)
 from props_trap import PROPS_TRAP, STATES_TRAP, burnt_states       # 함정 · 환경 폭발(1-9c, SD-11 §9.2 · §9.3)
 for _k in PROPS_TRAP:
     assert _k not in PROPS, _k
@@ -1076,6 +1080,7 @@ STATES.update(STATES_GA)
 STATES.update(STATES_MR)
 STATES.update(STATES_KS)
 STATES.update(STATES_HP)
+STATES.update(STATES_YT)
 STATES.update(STATES_BS)
 STATES.update(STATES_S04)
 STATES.update(STATES_S03)

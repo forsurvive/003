@@ -124,3 +124,13 @@ clear HP_MORGUE == 1 or HP_GEN == 1
 chalk 0 chalk_skull "분필 해골 — '지하는 차임대로 움직임. 밤엔 1층까지 올라옴.'"
 chalk 1 chalk_x "분필 가위표 — '지하 조용함. 7층은 사람(?) 있음 — 해치지 말 것.'"
 chalk 2 chalk_live "분필 사람 표시 — '누가 들어앉았음.'"
+
+@ YT 여의도 유리탑 3동
+lid L-R02-08
+map YT-01 로비 0
+map YT-02 2동7층 0
+map YT-03 18층 0
+music BGM-D13
+clear YT_MOUND == 1
+chalk 0 chalk_skull "분필 해골 — '판독기가 이름을 부름. 죽은 사람 카드 쓰지 말 것.'"
+chalk 1 chalk_x "분필 가위표 — '18층 개미 길 끊김. 로봇은 손대지 말 것.'"

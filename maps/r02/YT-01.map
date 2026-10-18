@@ -1,0 +1,132 @@
+# 여의도 유리탑 3동 — 1층 로비 · 공용 지하 상가(SD-09a L-R02-08 L961 · 1-D 계획 §15.7, 단계 1-D9). 40×32. 가상 업무 단지(B 랜드마크).
+# 서쪽 회전문(월드 문 L-R02-08) → 로비: 깨진 커튼월 바람 · 안내판 '연결통로 폐쇄 — 1·2·3동 출입 등급 분리'(23:21 관제망 집행 모드) ·
+#   북쪽 게이트 둘(1동 방문 초록 — 아무 카드나 받고 마지막 기록을 읽어 준다 · 3동 빨강 — 승강기 홀 · 비상 계단) · 경비실(판독 로그 · 승강기 비상 전지).
+# 멈춘 에스컬레이터 → 공용 지하 상가: 다시 문 연 김밥집(쉼터 · 장사꾼) · 구두 수선 · 편의점 터 · 남쪽 2동 연결 통로(파랑 게이트 → 2동 사무층 YT-02) ·
+#   동쪽 아래 증권가 연결 통로(셔터 · 빨강 판독기 → 객장 지하 SG-01 — 2077년 남기범이 테이프를 들고 가려던 길).
+# 배달부 서기 남기범(야생 구울 · 목에 22:40 발급 빨강 카드): 로비를 떠돌다 밤 22:40~23:21엔 3동 게이트로 가 승강기 문을 긁는다(진행기 Yt).
+map YT-01 여의도 유리탑 3동
+set bk
+grid
+####################################s###
+####################################s###
+####################################s###
+#ttttttttt#,,,,,,,,,,,#tttttttttttttttt#
+#ttttttttt#,,,,,,,,,,,#tttttttttttttttt#
+#ttttttttt#,,,,,,,,,,,#tttttttttttttttt#
+#ttttttttt#,,,,,,,,,,,#tttttttttttttttt#
+#ttttttttt#,,,,,,,,,,,#tttttttttttttttt#
+#ttttttttt#,,,,,,,,,,,#tttttttttttttttt#
+####tt##########,#############tt########
+####tt##########,#############tt########
+####tt##########,#############tt########
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+ttttttttttttttttttttttttttttttttttttttt#
+ttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+###################ss###################
+###################ss###################
+###################ss###################
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttt#
+######tt##########################uu####
+######tt##########################uu####
+######tt##########################uu####
+end
+exit 0 15 W L-R02-08>from_W
+exit 0 16 W L-R02-08>from_W
+exit 36 0 YT-03 from_stair
+exit 6 31 YT-02 from_YT01
+exit 7 31 YT-02 from_YT01
+exit 34 31 SG-01 from_YT01
+exit 35 31 SG-01 from_YT01
+door 36 1 locked lock=75 kind=steel "비상 계단"
+door 16 10 "경비실"
+mark from_W 2 15 E
+mark from_YT02 6 27 N
+mark from_SG01 34 27 N
+mark from_stair 36 3 S
+mark from_elev 27 4 S
+mark gate1 4 12 N
+mark gate3 30 12 N
+mark elev 27 3 N
+mark clerk_home 12 15 S
+mark shutter 34 28 N
+# ---------------------------------------------------------------- 로비
+prop w_board_yt 9 10
+text 9 12 "로비 안내판. 1동 · 2동 · 3동 색 칸 위에 붉은 종이가 덧붙었다 — '연결통로 폐쇄. 계엄 시 1·2·3동 출입 등급 분리. 판독기 등급을 확인하십시오.' 종이 아래 인쇄 시각 '2077. 10. 23. 23:21'." w=2
+prop gate_yt 4 11 state=g
+text 4 11 "1동 방문 게이트(초록). 판독 판에 '방문 — 등급 무관'. 1동 쪽은 천장이 내려앉아 막혔다. 카드를 대면 이름과 마지막 출입 기록을 읽어 준다." w=2 scene=YT_GATE1
+prop gate_yt 30 11 state=r
+text 30 11 "3동 게이트(빨강). 판독 판에 '3동 — 본사 등급'. 날개 유리에 손바닥 자국이 겹겹이 — 안쪽이 아니라 바깥쪽에서." w=2 scene=YT_GATE3
+prop info_desk_kt 17 13
+text 18 14 "안내 데스크. 방문객 명부 마지막 장 '10/23 22:10 · 남기범(2동 세진협력) · 3동 송출실 심부름'. 그 아래 줄은 비었다." w=2
+prop w_window 2 10
+prop w_window 24 10
+prop w_window 36 10
+text 36 12 "커튼월 유리가 깨진 자리. 바람이 로비 안으로 분다. 밖으로 금탑이 보인다." w=2
+prop planter_l 3 18
+prop planter_l 34 18
+prop pillar 12 16
+prop pillar 26 16
+prop bk_sofa 22 17
+prop remains 25 13
+text 25 13 "로비 소파 옆 유해. 사원증 줄만 남고 카드는 없다. 누가 먼저 가져갔다." w=1
+prop rubble 6 17
+prop rubble2 31 14
+# ---------------------------------------------------------------- 1동 연결 통로(무너짐 — 막다른 곳)
+prop rubble 2 4
+prop rubble2 5 4
+prop rubble 7 5
+prop remains2 3 7
+text 4 7 "1동 연결 통로. 천장 판과 유리가 무너져 통로를 메웠다. 그 아래 우산 하나." w=2
+# ---------------------------------------------------------------- 경비실
+prop guard_desk 13 4
+box 13 4 yt_guard w=2 name="경비 책상"
+prop slogan_crt 16 1
+text 17 3 "판독 로그 화면. 녹색 글자가 아직 흐른다 — '23:21 관제망 집행 모드 · 등급 필터 가동 · 이후 발급분 무효'. 그 위 줄 '22:40 임시 발급 1건(3동) 2동 인사'." w=3 scene=YT_LOG
+prop switchboard 20 4
+text 20 5 "승강기 비상 전지 함. 바늘이 0에 붙었다. 손잡이에 '집행 모드 — 승강기 운행 중지(23:21)'. 다시 올릴 수 있을 것 같다." w=1 scene=YT_POWER
+prop guard_chair 14 6
+prop home_locker 11 7
+box 11 7 locker name="경비 사물함"
+# ---------------------------------------------------------------- 3동 승강기 홀
+prop w_elevator 27 1
+text 27 3 "3동 승강기. 층 표시등이 꺼졌다. 호출 단추 옆 빨강 판독기. 문 아래쪽이 손톱 자국으로 하얗게 긁혀 있다." w=2 scene=YT_ELEV
+prop w_reader_yt 29 1 state=r
+prop w_reader_yt 37 1 state=r
+text 37 3 "비상 계단 철문 옆 빨강 판독기. '3동 직원 외 출입 금지 — 계단 이용 시에도 판독'." w=1 scene=YT_STAIR
+prop wait_chairs 24 6
+prop plant_pot 33 7
+text 31 5 "벽 층 안내. '18층 — 시세 송출실(세진 금융정보)'. 그 아래 손글씨 '당번 도미란 대리 내선 1802'." w=2
+# ---------------------------------------------------------------- 공용 지하 상가
+text 19 21 "멈춘 에스컬레이터. 계단처럼 걸어 내려간다. 손잡이 고무가 녹아 손에 묻는다." w=2
+prop w_shop_food 3 21
+prop snack_counter 3 24
+text 4 25 "다시 문 연 김밥집 자리. 연탄 화로 위 은박 냄비. 벽에 '김밥 한 줄 — 병뚜껑 5'." w=2
+prop folding_chair 7 25
+prop folding_chair 8 26
+prop w_shop_repair 12 21
+prop workbench 12 24
+box 12 24 yt_shop name="구두 수선 선반"
+text 14 24 "구두 수선 부스. 구두약 통에 '세진 2동 김 과장님 — 10/24 찾아가세요'." w=1
+prop w_shop_water 21 21
+prop shop_shelf_goods 22 24
+box 22 24 yt_shop name="편의점 진열대"
+prop shop_shelf 25 24
+text 24 26 "편의점 터. 진열대는 거의 비었다. 계산대 위 영수증 '10/23 22:31 컵라면 1 · 삼각김밥 1 — 남기범'." w=2
+prop remains 29 26
+prop rubble 31 24
+# 2동 연결 통로(파랑 게이트)
+prop gate_yt 6 29 state=b
+text 6 29 "2동 연결 게이트(파랑). '2동 — 협력사 등급 이상'. 날개 너머 2동 계단." w=2 scene=YT_GATE2
+# 증권가 연결 통로(셔터 · 빨강 판독기)
+prop shutter_yt 34 29
+text 34 28 "증권가 연결 통로 방화 셔터. 빨강 판독기 하나. 셔터 아래 바닥에 '객장 방면 →' 화살표가 반쯤 보인다." w=2 scene=YT_SHUT
