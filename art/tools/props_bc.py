@@ -1056,6 +1056,10 @@ from props_yt import PROPS_YT, STATES_YT                              # 여의�
 for _k in PROPS_YT:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_YT)
+from props_u04 import PROPS_U04, STATES_U04                          # U04 여의도 지하(1-D10): 진공관 플랩 시세판 · 지하시장 후문 셔터 · 배전반 · 벽 점검구 · 대피소 판독기 문 · 운반조 레일 수레
+for _k in PROPS_U04:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_U04)
 from props_trap import PROPS_TRAP, STATES_TRAP, burnt_states       # 함정 · 환경 폭발(1-9c, SD-11 §9.2 · §9.3)
 for _k in PROPS_TRAP:
     assert _k not in PROPS, _k
@@ -1081,6 +1085,7 @@ STATES.update(STATES_MR)
 STATES.update(STATES_KS)
 STATES.update(STATES_HP)
 STATES.update(STATES_YT)
+STATES.update(STATES_U04)
 STATES.update(STATES_BS)
 STATES.update(STATES_S04)
 STATES.update(STATES_S03)

@@ -6,17 +6,23 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "STEAL": 5,
-  "WAKE": 8,
-  "AWAY": 11,
-  "TAKEN": 13,
-  "EMPTY": 15
+  "STEAL": 6,
+  "WAKE": 9,
+  "AWAY": 12,
+  "TAKEN": 14,
+  "EMPTY": 16,
+  "RODE": 18
  },
  "ops": [
   {
    "op": "if",
    "cond": "dead(\"N-YTB-1\") == 1",
    "to": "EMPTY"
+  },
+  {
+   "op": "if",
+   "cond": "YT_CUP == 1",
+   "to": "RODE"
   },
   {
    "op": "if",
@@ -121,6 +127,16 @@
    "who": "SYS",
    "emo": "기본",
    "text": "빈 소파. 쿠션에 사람 모양 자국만."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈 소파. 쿠션에 사람 모양 자국. 승강기 층 표시등이 '18'에 멈춰 있다 — 200년 만에 올라갔다."
   },
   {
    "op": "goto",

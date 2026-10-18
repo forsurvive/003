@@ -1,0 +1,107 @@
+{
+ "id": "YT_SHUT_BACK",
+ "title": "연결 통로 셔터 뒷면",
+ "loc": "L-R02-08",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "PICK": 5,
+  "PICK_FAIL": 8,
+  "OPEN": 10
+ },
+ "ops": [
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "side"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "YT_SIDE == 0",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "YT_SG == 1",
+   "to": "OPEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "셔터 뒷면. 판독기는 상가 쪽에 있다. 바닥 가까이 붉은 칠 걸쇠 — '화재 시 수동 개방'. 녹이 슬어 손잡이가 굳었다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "녹슨 걸쇠를 핀으로 달래 비튼다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "자물쇠 따기",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PICK",
+     "id": "YT_SHUT_BACK:1:0",
+     "fail": "PICK_FAIL"
+    },
+    {
+     "text": "돌아선다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "YT_SHUT_BACK:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "sgpick"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "걸쇠가 빠진다. 셔터가 끼익 올라간다. 상가 쪽 판독기가 이름 대신 '미확인'을 깜빡인다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "걸쇠 속 스프링이 녹에 붙어 꿈쩍 않는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "셔터는 올라가 있다. 위로 지하 상가 불빛."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/YT.txt"
+}

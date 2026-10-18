@@ -51,7 +51,7 @@ door 36 1 locked lock=75 kind=steel "비상 계단"
 door 16 10 "경비실"
 mark from_W 2 15 E
 mark from_YT02 6 27 N
-mark from_SG01 34 27 N
+mark from_SG01 34 30 N
 mark from_stair 36 3 S
 mark from_elev 27 4 S
 mark gate1 4 12 N
@@ -74,11 +74,11 @@ prop w_window 36 10
 text 36 12 "커튼월 유리가 깨진 자리. 바람이 로비 안으로 분다. 밖으로 금탑이 보인다." w=2
 prop planter_l 3 18
 prop planter_l 34 18
-prop pillar 12 16
-prop pillar 26 16
+prop planter_p 12 16
+prop planter_p 26 16
 prop bk_sofa 22 17
 text 22 17 "로비 소파. 해진 정장 차림 구울이 낮이면 여기 앉아 존다 — 목에 빨강 사원증이 흔들린다." w=2 scene=YT_CLERK
-enemy CR-200 21 16 who=N-YTB-1 cond="dead(\"N-YTB-1\") == 0"
+enemy CR-200 21 16 who=N-YTB-1 cond="dead(\"N-YTB-1\") == 0 and YT_CUP == 0 and YT_CDONE == 0"
 prop remains 25 13
 text 25 13 "로비 소파 옆 유해. 사원증 줄만 남고 카드는 없다. 누가 먼저 가져갔다." w=1
 prop rubble 6 17
@@ -112,7 +112,8 @@ text 31 5 "벽 층 안내. '18층 — 시세 송출실(세진 금융정보)'. �
 text 19 21 "멈춘 에스컬레이터. 계단처럼 걸어 내려간다. 손잡이 고무가 녹아 손에 묻는다." w=2
 prop w_shop_food 3 21
 prop snack_counter 3 24
-text 4 25 "다시 문 연 김밥집 자리. 연탄 화로 위 은박 냄비. 벽에 '김밥 한 줄 — 병뚜껑 5'." w=2
+text 4 25 "다시 문 연 김밥집 연탄 화로 위 은박 냄비. 벽에 '김밥 한 줄 — 병뚜껑 5'." w=2
+npc N-YTB-2 6 24 S look=F1-S4-HR06-H2-T05-1-PF12-HD00-EY00 bark="김밥 한 줄 병뚜껑 다섯. 연탄은 내일도 있어."
 prop folding_chair 7 25
 prop folding_chair 8 26
 prop w_shop_repair 12 21
@@ -131,4 +132,5 @@ prop gate_yt 6 29 state=b
 text 6 29 "2동 연결 게이트(파랑). '2동 — 협력사 등급 이상'. 날개 너머 2동 계단." w=2 scene=YT_GATE2
 # 증권가 연결 통로(셔터 · 빨강 판독기)
 prop shutter_yt 34 29
+text 34 29 "연결 통로 셔터 뒷면." w=2 scene=YT_SHUT_BACK
 text 34 28 "증권가 연결 통로 방화 셔터. 빨강 판독기 하나. 셔터 아래 바닥에 '객장 방면 →' 화살표가 반쯤 보인다." w=2 scene=YT_SHUT

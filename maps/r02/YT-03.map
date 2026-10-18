@@ -73,7 +73,7 @@ prop rack_yt 29 3
 text 31 4 "데크 라벨 '송출 후 자동 소거 — 재사용 테이프'. 릴에 감긴 테이프 끝에 손글씨 '10/23 연장장 마감 — 객장 전달(기범)'." w=1 scene=YT_DECK
 prop rack_yt 34 3
 prop terminal_desk 26 7
-text 26 8 "송출 단말. 마지막 송신 '22:58 회선 거부 — 관제망 우선(경계경보 09:47 이후)'. 수동 전달 요청 1건." w=1
+text 26 8 "송출 단말. 마지막 송신 '22:58 회선 거부 — 관제망 우선(경계경보 09:47 이후)'. 수동 전달 요청 2건 — '객장 전광판(증권가) — 남기범 서기 지참' · '사본 요청 — 공영방송 보도국 22:50(여의도 송출실)'. 아래 빨간 줄 '재사용 테이프 — 송출 1회 후 소거. 둘 중 하나.'" w=1
 prop mound_yt 37 8 cond="KT_QUEEN == 0 and DG_YT == 0"
 prop mound_yt 33 8 cond="KT_QUEEN == 0 and DG_YT == 0"
 text 35 8 "창가 화분 사이 흙 둔덕. 금탑 쪽 창으로 개미 길이 이어진다. 걷어 내면 냄새 길이 끊길 것이다." w=2 scene=YT_MOUND
@@ -85,3 +85,7 @@ trigger 23 6 h=2 scene=YT_ROBOT_IN cond="YT_ROBOT_OK == 0 and YT_LOCK == 0"
 prop crate_metal 25 3
 box 25 3 yt_rack name="송출 부품함"
 enemy CR-080 35 6 cond="KT_QUEEN == 0 and DG_YT == 0"
+# 서기 남기범 — 비상 전지가 살아 있을 때 제 카드로 승강기를 타고 올라와 도미란 곁에서 존다(진행기 Yt YT_CUP)
+enemy CR-200 7 4 who=N-YTB-1 cond="YT_CUP == 1 and dead(\"N-YTB-1\") == 0"
+text 7 5 "도미란 곁의 정장 구울." w=1 scene=YT_CLERK18 cond="YT_CUP == 1"
+text 14 16 "기계실 틈." h=2 scene=YT_TRAP18 cond="YT_TRAP == 1"

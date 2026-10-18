@@ -1,0 +1,124 @@
+{
+ "id": "YT_CLERK18",
+ "title": "도미란 곁의 서기",
+ "loc": "L-R02-08",
+ "npc": "",
+ "cond": "V_ACT >= 1 and YT_CUP == 1",
+ "labels": {
+  "START": 0,
+  "STEAL": 5,
+  "WAKE": 8,
+  "TAKEN": 11,
+  "EMPTY": 13
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "dead(\"N-YTB-1\") == 1",
+   "to": "EMPTY"
+  },
+  {
+   "op": "if",
+   "cond": "YT_NOCARD == 1",
+   "to": "TAKEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "도미란의 의자 곁에 정장 구울이 앉아 존다. 머리가 그녀 어깨 쪽으로 기울었다. 목에 빨강 사원증 '남기범 서기 — 3동 임시'."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "입술이 달싹인다 — '테이프… 받아 가요…'"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "목걸이 줄을 살며시 푼다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "은신",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "STEAL",
+     "id": "YT_CLERK18:1:0",
+     "fail": "WAKE"
+    },
+    {
+     "text": "그냥 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "YT_CLERK18:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "steal18"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "줄이 풀린다. 구울은 깨지 않는다. 심부름은 끝났으니까."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "yt",
+   "args": [
+    "wake"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "줄이 걸린다. 구울의 눈이 번쩍 뜨인다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈 목의 구울이 도미란 곁에서 존다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "도미란의 의자 곁 바닥. 누군가 오래 앉아 있던 자국."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/YT.txt"
+}

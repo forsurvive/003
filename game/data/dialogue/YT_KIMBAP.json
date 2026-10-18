@@ -1,0 +1,206 @@
+{
+ "id": "YT_KIMBAP",
+ "title": "김밥집 주인",
+ "loc": "L-R02-08",
+ "npc": "N-YTB-2",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "G1": 4,
+  "G2": 6,
+  "MENU": 8,
+  "SHOP": 9,
+  "CLERK": 11,
+  "CLERK_D": 14,
+  "NEWS": 16,
+  "N2": 22,
+  "N3": 24,
+  "BYE": 26
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "UQ06_RESULT == 1",
+   "to": "G1"
+  },
+  {
+   "op": "if",
+   "cond": "YT_LOCK == 1",
+   "to": "G2"
+  },
+  {
+   "op": "line",
+   "who": "N-YTB-2",
+   "emo": "기본",
+   "text": "김밥 한 줄 병뚜껑 다섯. 속은 묻지 말고. 로비 그 양반 깨우지만 마."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-YTB-2",
+   "emo": "미소",
+   "text": "위에서 종소리가 났대. 증권가 쪽. 이 동네에 종 칠 일이 남았는 줄 몰랐네."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-YTB-2",
+   "emo": "피곤",
+   "text": "위층 판독기가 죄다 빨개졌어. 깡통 하나 부순 값이 그거야. 이젠 개미 구멍으로나 다녀."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "먹을 걸 본다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SHOP",
+     "id": "YT_KIMBAP:1:0"
+    },
+    {
+     "text": "로비 소파 그 구울은?",
+     "tags": [],
+     "cond": "dead(\"N-YTB-1\") == 0",
+     "fx": "",
+     "to": "CLERK",
+     "id": "YT_KIMBAP:1:1"
+    },
+    {
+     "text": "로비 소파 그 구울, 내가 쓰러뜨렸다",
+     "tags": [],
+     "cond": "dead(\"N-YTB-1\") == 1",
+     "fx": "",
+     "to": "CLERK_D",
+     "id": "YT_KIMBAP:1:2"
+    },
+    {
+     "text": "위층 사람들 얘기 들은 거 있어?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "NEWS",
+     "id": "YT_KIMBAP:1:3"
+    },
+    {
+     "text": "다음에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "BYE",
+     "id": "YT_KIMBAP:1:4"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "trade",
+   "args": [
+    "VYT"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-YTB-2",
+   "emo": "기본",
+   "text": "남 서기. 낮엔 소파에서 졸아. 밤 열 시 사십 분이면 일어나서 3동 승강기 문을 긁고. 열한 시 이십 분 넘으면 제풀에 돌아와. 매일 그 시각이야."
+  },
+  {
+   "op": "line",
+   "who": "N-YTB-2",
+   "emo": "기본",
+   "text": "목에 빨간 카드 걸었지. 졸 때 건드리면 몰라도, 눈 뜬 다음엔 사람 안 가려. 조용히 다녀."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-YTB-2",
+   "emo": "피곤",
+   "text": "그랬구나. 밤마다 긁는 소리가 없어서 이상했어. 이백 년 심부름이었는데."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "do",
+   "fx": "YT_KBN = YT_KBN + 1"
+  },
+  {
+   "op": "if",
+   "cond": "YT_KBN == 1",
+   "to": "N2"
+  },
+  {
+   "op": "if",
+   "cond": "YT_KBN == 2",
+   "to": "N3"
+  },
+  {
+   "op": "do",
+   "fx": "YT_KBN = 0"
+  },
+  {
+   "op": "line",
+   "who": "N-YTB-2",
+   "emo": "기본",
+   "text": "2동 계단 위에 사무실 하나 통째로 있어. 사람들 퇴근한 그대로라더라. 책상마다 쪽지가 붙었대."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-YTB-2",
+   "emo": "기본",
+   "text": "경비실 화면은 아직 글자가 흘러. 밤 열한 시 이십일 분 뒤로는 카드가 다 무효라나. 그 전 카드는 아직 먹힌대."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-YTB-2",
+   "emo": "기본",
+   "text": "18층엔 깡통 경비가 서 있어. 쏘진 않아. 묻기만 하지. 근데 그거 부수면 위층 문이 다 잠긴대 — 지나간 고물꾼이 그러더라."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-YTB-2",
+   "emo": "기본",
+   "text": "또 와. 연탄은 내일도 있어."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/YT.txt"
+}

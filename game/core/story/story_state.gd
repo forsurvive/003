@@ -138,7 +138,7 @@ func _init() -> void:
 		vars.declare(k, "int", 0)
 	# 여의도 유리탑 3동 · 증권가 객장(1-D9, 1-D 계획 §15.7 · SD-05 UQ-06): 진행기 Yt만 쓴다 — 뜻은 script/act1/YT.txt 머리 주석
 	for k in ["YT_FORGE", "YT_FORGE_T", "YT_TEMP", "YT_LOCK", "YT_UNK", "YT_DEAD_DM", "YT_ESCORT", "YT_POWER", "YT_MOUND", "YT_SEEN", "YT_GATE1", "YT_CLERK_SEEN",
-			"YT_ROBOT_OK", "YT_ELEV", "YT_INC", "YT_INC_DAY", "YT_R", "YT_DOZE", "YT_DMTAKE", "YT_HBTAKE", "YT_OJTAKE", "YT_TAPE", "YT_SG", "UQ06_RADIO", "UQ06_RESULT", "UQ06_DAY", "UQ06_ASKED", "UQ06_MET", "UQ06_GONE", "UQ06_BACK", "UQ06_TOLD", "UQ06_HEARD"]:
+			"YT_ROBOT_OK", "YT_ELEV", "YT_INC", "YT_INC_DAY", "YT_R", "YT_DOZE", "YT_DMTAKE", "YT_HBTAKE", "YT_OJTAKE", "YT_TAPE", "YT_SG", "YT_KBN", "YT_UPC", "YT_UP", "YT_NOCARD", "YT_CUP", "YT_CUPSEEN", "YT_TRAP", "YT_NO", "YT_HK2", "YT_HK3", "YT_SIDE", "YT_CTAPE", "YT_CDONE", "YT_BUMP_DAY", "UQ06_RADIO", "UQ06_RESULT", "UQ06_DAY", "UQ06_ASKED", "UQ06_MET", "UQ06_GONE", "UQ06_BACK", "UQ06_TOLD", "UQ06_HEARD"]:
 		vars.declare(k, "int", 0)
 	vars.declare("BC_DOUBT_DAY", "int", 0)                    # 정보 전파(1-10c): 걸어 들어감 소문이 봉천에 닿은 날 + 1 — 그날까지 봉천 사람들이 수군거린다(SD-20 N8)
 	# 거처(1-8b, SD-15 §7): HOME_BC 봉천 옥탑방(0 없음 · 1 내 방 · 2 압류) · HOME_BC_OK 조건이 찬 날(그다음 날부터 조만석이 열쇠를 준다) ·

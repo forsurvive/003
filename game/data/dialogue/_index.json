@@ -495,6 +495,7 @@
   "X-SB_HATCH",
   "YT_BOARD",
   "YT_CLERK",
+  "YT_CLERK18",
   "YT_DECK",
   "YT_DOMI",
   "YT_ELEV",
@@ -504,6 +505,7 @@
   "YT_GATE3",
   "YT_HABORAM",
   "YT_ISSUE",
+  "YT_KIMBAP",
   "YT_LEDGER",
   "YT_LOG",
   "YT_MOUND",
@@ -514,6 +516,7 @@
   "YT_ROBOT_IN",
   "YT_SHUT",
   "YT_SHUT18_IN",
+  "YT_SHUT_BACK",
   "YT_STAIR",
   "YT_VENT",
   "YT_VENT18"

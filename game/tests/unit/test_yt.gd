@@ -84,7 +84,7 @@ func test_yt_data(t) -> void:
 	for m in ["YT-01", "YT-02", "YT-03", "SG-01"]:
 		t.ok(FileAccess.file_exists("res://data/maps/%s.json" % m), "맵 %s" % m)
 	for s in ["YT_GATE1", "YT_GATE2", "YT_GATE3", "YT_STAIR", "YT_LOG", "YT_POWER", "YT_ELEV", "YT_SHUT", "YT_CLERK", "YT_OJ", "YT_HABORAM", "YT_LEDGER", "YT_ISSUE",
-			"YT_VENT", "YT_VENT18", "YT_ELEV18", "YT_READ18", "YT_SHUT18_IN", "YT_ROBOT", "YT_ROBOT_IN", "YT_DOMI", "YT_DECK", "YT_MOUND", "UQ06_KS", "YT_BOARD"]:
+			"YT_VENT", "YT_VENT18", "YT_ELEV18", "YT_READ18", "YT_SHUT18_IN", "YT_ROBOT", "YT_ROBOT_IN", "YT_DOMI", "YT_DECK", "YT_MOUND", "UQ06_KS", "YT_BOARD", "YT_SHUT_BACK", "YT_CLERK18", "YT_KIMBAP"]:
 		t.ok(FileAccess.file_exists("res://data/dialogue/%s.json" % s), "장면 %s" % s)
 	var r := _host()
 	var h: InteriorHost = r[0]
@@ -137,16 +137,27 @@ func test_yt_gates(t) -> void:
 
 
 func test_yt_robot_paths(t) -> void:
-	# ① 남기범 카드 — 그날 밤의 심부름꾼: 바로 통과
-	var r := _host("YT-03", "from_stair")
+	# ① 남기범 카드 — 올라온 길(계단 판독)이 그 카드면 그날 밤의 심부름꾼: 바로 통과
+	var r := _host("YT-01", "from_W")
 	var h: InteriorHost = r[0]
 	var st: StoryState = r[1]
 	var c: Yt = r[2]
-	t.ok(h.map.is_solid(Yt.SHUT_18), "18층 셔터는 닫혀 있다")
 	st.call_fn("give", ["M-401", 1])
+	t.eq(_play(st, c, "YT_STAIR", ["남기범"]), [], "1층 계단 판독")
+	h.enter("YT-03", "from_stair")
+	t.eq(_v(st, "YT_UP"), 1, "올라온 길의 판독 = 남기범")
+	t.ok(h.map.is_solid(Yt.SHUT_18), "18층 셔터는 닫혀 있다")
 	t.eq(_play(st, c, "YT_READ18", ["남기범"]), [], "남기범 판독")
 	t.eq(_v(st, "YT_ROBOT_OK"), 1, "로봇 대조 통과")
 	t.ok(not h.map.is_solid(Yt.SHUT_18), "셔터가 오른다")
+	# ①' 남기범 카드인데 판독 없이(딴 자물쇠 · 환풍구) 올라옴 — '두 곳에' 질문
+	r = _host("YT-03", "from_stair")
+	h = r[0]
+	st = r[1]
+	c = r[2]
+	st.call_fn("give", ["M-401", 1])
+	t.eq(_play(st, c, "YT_READ18", ["남기범", "계단으로 올라왔습니다"]), [], "두 곳에 — 화술")
+	t.eq(_v(st, "YT_ROBOT_OK"), 1, "판독 누락 정정")
 	# ② 도미란 카드 — 질문 → 화술로 교대
 	r = _host("YT-03", "from_stair")
 	h = r[0]
@@ -208,11 +219,16 @@ func test_yt_vent_and_smash(t) -> void:
 	t.eq(_v(st, "YT_INC"), 1, "대답 없음 — 보안 사고")
 	t.eq(_play(st, c, "YT_ROBOT", ["부순다"]), [], "로봇 부숨 원고")
 	t.eq(_v(st, "YT_LOCK"), 1, "전 층 판독 봉쇄")
-	t.ok(not h.map.is_solid(Yt.SHUT_18), "셔터는 반쯤 오른 채 굳어 지나간다")
+	t.ok(h.map.is_solid(Yt.SHUT_18), "셔터는 닫힌 채 굳었다(총의 대가 — 길이 쉬워지지 않는다)")
+	t.eq(_play(st, c, "YT_SHUT18_IN"), [], "안쪽 단추")
+	t.ok(not h.map.is_solid(Yt.SHUT_18), "봉쇄 뒤엔 안쪽 수동 단추로 나간다")
 	st.call_fn("give", ["M-401", 1])
 	t.eq(_play(st, c, "YT_ELEV18"), [], "승강기 원고")
 	h.enter("YT-01", "from_W")
-	t.ok(not h.map.is_solid(Yt.GATE3), "봉쇄 뒤 3동 날개도 접힌 채 굳었다")
+	t.ok(h.map.is_solid(Yt.GATE3), "봉쇄 뒤 3동 날개는 닫힌 채")
+	t.eq(_play(st, c, "YT_GATE3", ["남기범"]), ["선택지 없음: 남기범"], "카드 선택지가 없다(빨간 엑스)")
+	t.eq(_play(st, c, "YT_GATE3", ["직결"]), [], "직결")
+	t.ok(not h.map.is_solid(Yt.GATE3), "직결하면 날개가 접힌다")
 	var o := _opts(st, "YT_GATE1")
 	t.ok(o.is_empty(), "봉쇄 — 1동 시험대도 빨간 엑스(선택지 없음)")
 
@@ -300,3 +316,154 @@ func test_yt_tape_woo_and_fake(t) -> void:
 	t.eq(_play(st, c, "YT_BOARD", ["시세 테이프"]), [], "진짜 테이프")
 	t.eq(_v(st, "UQ06_RESULT"), 1, "①로 바뀜")
 	t.eq(_v(st, "UQ06_BACK"), 0, "돌아온 표시도 지움")
+
+
+## 1-D9 구현 뒤 재미 검수 반영(D9f): 빈 목의 서기 · 전지와 승강기 · 하보람 대조 · 불일치 둘 = 격리 · 도미란 '사망 확정'의 값 · 셔터 뒷면 · 우도하 확인
+func test_yt_fun(t) -> void:
+	# 카드를 훔치면 밤 반사 때 게이트가 안 열린다
+	var r := _host("YT-01", "from_W", "10:00")
+	var h: InteriorHost = r[0]
+	var st: StoryState = r[1]
+	var c: Yt = r[2]
+	t.eq(_play(st, c, "YT_CLERK", ["목걸이"]), [], "카드 풀기")
+	t.eq(_v(st, "YT_NOCARD"), 1, "서기 목이 비었다")
+	_at(h, st, "22:50")
+	c._clerk_step(false)
+	t.ok(h.map.is_solid(Yt.GATE3), "빈 목 — 3동 게이트 판독 실패(닫힌 채)")
+	# 전지를 올리면 서기가 제 카드로 승강기를 타고 18층 도미란 곁으로
+	r = _host("YT-01", "from_W", "10:00")
+	h = r[0]
+	st = r[1]
+	c = r[2]
+	t.eq(_play(st, c, "YT_POWER", ["끝까지"]), [], "전지 원고")
+	var e = c._clerk()
+	t.ok(e != null and not e.asleep, "서기가 일어났다")
+	t.ok(e.brain.state != AIBrain.S.COMBAT, "덤비지 않는다(승강기로 간다)")
+	t.ok(not h.map.is_solid(Yt.GATE3), "그의 카드로 게이트가 열린다")
+	e.loco.place(Vector2(Yt.ELEV_1) * 32.0 + Vector2(16, 16))
+	c._clerk_step(false)
+	t.eq(_v(st, "YT_CUP"), 1, "승강기로 18층")
+	t.ok(c._clerk() == null, "로비에서 빠졌다(인물은 한 곳)")
+	t.ok(not st.is_dead("N-YTB-1"), "죽음 기록 아님")
+	h.enter("YT-03", "from_stair")
+	var e2 = c._clerk()
+	t.ok(e2 != null and e2.asleep, "18층 도미란 곁에서 존다")
+	t.eq(_play(st, c, "YT_CLERK18", ["목걸이"]), [], "18층에서 카드 풀기")
+	t.ok(st.items.has("M-401"), "빨강 카드")
+	t.eq(_play(st, c, "YT_READ18", ["남기범", "이어받았습니다"]), [], "'이미 이 층에' — 이어받음")
+	t.eq(_v(st, "YT_ROBOT_OK"), 1, "통과")
+	# 하보람(위조 진짜) — 2동 퇴실 기록 없음: 비상 계단이 정답, 둘 틀리면 격리
+	r = _host("YT-03", "from_stair")
+	h = r[0]
+	st = r[1]
+	c = r[2]
+	st.call_fn("give", ["M-072", 1])
+	c.forge(4, 1380)
+	t.eq(_play(st, c, "YT_READ18", ["하보람", "승강기로"]), [], "틀린 답")
+	t.eq(_v(st, "YT_NO"), 1, "불일치 1")
+	t.eq(_v(st, "YT_INC"), 0, "아직 격리 아님")
+	t.eq(_play(st, c, "YT_READ18", ["하보람", "2동 연결 통로"]), [], "또 틀림")
+	t.eq(_v(st, "YT_INC"), 1, "불일치 2 — 보안 사고")
+	var o := _opts(st, "YT_READ18")
+	t.ok(o.size() == 2 and str(o[0]).contains("자물쇠"), "격리 — 카드 대신 자물쇠만")
+	r = _host("YT-03", "from_stair")
+	h = r[0]
+	st = r[1]
+	c = r[2]
+	st.call_fn("give", ["M-072", 1])
+	c.forge(4, 1380)
+	t.eq(_play(st, c, "YT_READ18", ["하보람", "비상 계단으로"]), [], "맞는 답")
+	t.eq(_v(st, "YT_ROBOT_OK"), 1, "퇴실 기록 정정")
+	# 도미란 카드를 의자에서 풀면 로봇이 묻는다 — '이미 죽었다' → 기계실 격리 셔터(개미를 가둔다)
+	t.ok(not h.map.is_solid(Yt.TRAP_18), "기계실 틈은 열려 있다")
+	t.eq(_play(st, c, "YT_DOMI", ["사원증을 푼다", "이미 죽었다"]), [], "사망 확정")
+	t.eq(_v(st, "YT_DEAD_DM"), 1, "도미란 사망 처리")
+	t.ok(h.map.is_solid(Yt.TRAP_18) and h.map.is_solid(Yt.TRAP_18 + Vector2i(0, 1)), "기계실 틈 셔터가 내려왔다")
+	h.enter("YT-01", "from_W")
+	h.enter("YT-03", "from_stair")
+	t.ok(h.map.is_solid(Yt.TRAP_18), "다시 와도 내려온 채")
+	# 객장에서 올라오면 셔터 뒤(통로 쪽)에 선다 — 걸쇠를 따야 상가로
+	r = _host("YT-01", "from_SG01")
+	h = r[0]
+	st = r[1]
+	c = r[2]
+	t.ok(h.map.tile_of(h.player.loco.logical).y > Yt.SHUT_SG.y, "셔터 아래(통로 쪽)에 선다")
+	t.ok(h.map.is_solid(Yt.SHUT_SG), "셔터는 닫혀 있다")
+	t.eq(_play(st, c, "YT_SHUT_BACK", ["걸쇠"]), [], "뒷면 걸쇠")
+	t.eq(_v(st, "YT_SG"), 1, "통로가 열렸다")
+	t.ok(not h.map.is_solid(Yt.SHUT_SG), "셔터가 오른다")
+	# 우도하: 넘기기 전에 잃는 것을 말해 준다 · 도로 넣으면 그대로
+	r = _host("SG-01", "from_W")
+	st = r[1]
+	c = r[2]
+	st.call_fn("give", ["M-404", 1])
+	st.vars.set_v("SQ_S10_CAST", 2)
+	t.ok(_opts(st, "SQS10_WOO").any(func(x): return str(x).contains("시세 테이프")), "S10 D를 끝낸 뒤에도 테이프 메뉴가 열린다")
+	t.eq(_play(st, c, "SQS10_WOO", ["시세 테이프", "도로 넣는다"]), [], "도로 넣음")
+	t.ok(st.items.has("M-404") and _v(st, "UQ06_RESULT") == 0, "테이프 그대로")
+	t.eq(_play(st, c, "SQS10_WOO", ["시세 테이프", "넘긴다"]), [], "넘김")
+	t.eq(_v(st, "UQ06_RESULT"), 2, "② 남산")
+	# 김밥집 주인: 장사 · 서기 시각 힌트
+	t.ok(FileAccess.get_file_as_string("res://data/merchants.json").contains("N-YTB-2"), "김밥집 장사 표")
+
+
+## 재검수 반영(D9g): 서기 무릎에 테이프 → 밤 반사 때 통로로 배달 · 빈 목이면 셔터에 부딪고 돌아옴 · 하보람 승강기 판 · 방송 전날 · 김밥집이 서기 사정을 앎
+func test_yt_deliver(t) -> void:
+	var r := _host("YT-01", "from_W", "10:00")
+	var h: InteriorHost = r[0]
+	var st: StoryState = r[1]
+	var c: Yt = r[2]
+	st.call_fn("give", ["M-404", 1])
+	t.eq(_play(st, c, "YT_CLERK", ["테이프를 무릎"]), [], "무릎에 테이프")
+	t.eq(_v(st, "YT_CTAPE"), 1, "테이프는 서기에게(물건은 한 곳)")
+	t.ok(not st.items.has("M-404"), "내 손엔 없다")
+	t.eq(_play(st, c, "YT_KIMBAP", ["로비 소파 그 구울은", "다음에"]), [], "김밥집 — 무릎의 릴 판")
+	_at(h, st, "22:50")
+	c._clerk_step(false)
+	var e = c._clerk()
+	t.ok(e != null and not e.route.is_empty(), "밤 — 통로 쪽으로 걷는다")
+	e.loco.place(Vector2(Yt.SG_FRONT) * 32.0 + Vector2(16, 16))
+	c._clerk_step(false)
+	t.eq(_v(st, "YT_CDONE"), 1, "200년 만의 배달")
+	t.eq(_v(st, "UQ06_RESULT"), 1, "① 마감(서기가 넣음)")
+	t.ok(not h.map.is_solid(Yt.SHUT_SG), "그의 카드로 통로 셔터가 열렸다")
+	t.ok(c._clerk() == null, "로비에서 빠졌다")
+	t.eq(st.quests.stage("UQ-06"), 100, "UQ-06 끝")
+	h.enter("SG-01", "from_W")
+	var fe = c._clerk()
+	t.ok(fe != null and fe.asleep, "객장 전광판 곁에서 존다")
+	t.eq(_play(st, c, "UQ06_KS", []), [], "경상현 — '남 서기 왔어요'")
+	# 빈 목으로는 셔터에서 부딪고 돌아온다(테이프는 그대로 무릎에)
+	r = _host("YT-01", "from_W", "10:00")
+	h = r[0]
+	st = r[1]
+	c = r[2]
+	t.eq(_play(st, c, "YT_CLERK", ["목걸이"]), [], "카드 풀기")
+	st.call_fn("give", ["M-404", 1])
+	t.eq(_play(st, c, "YT_CLERK", ["테이프를 무릎"]), [], "빈 목에 테이프")
+	_at(h, st, "22:50")
+	c._clerk_step(false)
+	e = c._clerk()
+	e.loco.place(Vector2(Yt.SG_FRONT) * 32.0 + Vector2(16, 16))
+	c._clerk_step(false)
+	t.eq(_v(st, "YT_CDONE"), 0, "판독 실패 — 배달 못 함")
+	t.eq(_v(st, "YT_CTAPE"), 1, "테이프는 여전히 그의 무릎에")
+	t.ok(h.map.is_solid(Yt.SHUT_SG), "셔터는 닫힌 채")
+	# 하보람 — 승강기로 왔으면 '사유?'(정직한 답이 틀리지 않게)
+	r = _host("YT-03", "from_stair")
+	h = r[0]
+	st = r[1]
+	c = r[2]
+	st.call_fn("give", ["M-072", 1])
+	c.forge(4, 1380)
+	st.vars.set_v("YT_UP", 4)
+	t.eq(_play(st, c, "YT_READ18", ["하보람", "보도국 사본"]), [], "승강기 판 — 사유")
+	t.eq(_v(st, "YT_ROBOT_OK"), 1, "사본 전달 — 통과")
+	# 우도하에게 넘긴 그날: 경상현은 '내일 아침 튼다던데요'
+	r = _host("SG-01", "from_W")
+	st = r[1]
+	c = r[2]
+	st.call_fn("give", ["M-404", 1])
+	c.woo()
+	t.eq(_v(st, "UQ06_RADIO"), 1, "아직 방송 전")
+	t.eq(_play(st, c, "UQ06_KS", []), [], "방송 전날 대사")

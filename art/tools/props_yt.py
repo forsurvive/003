@@ -5,6 +5,7 @@
     w_reader_yt   벽 판독기(벽 1칸): 카드 홈 · 등급 띠 / 상태 g · b · r · ok(초록 체크) · no(빨간 엑스)
     w_board_yt    로비 안내판(벽 2칸): '연결통로 폐쇄' · 1·2·3동 색 칸 · 계엄 붉은 띠
     shutter_yt    연결 통로 방화 셔터(2×1): 내려온 철 셔터 · 노랑 검정 띠 · 바닥 걸쇠 / 상태 up(올라감 — 셔터 통만)
+    shutter_yt_v  세로 벽 틈 방화 셔터(1×2): 위에서 본 내려온 셔터 판 · 노랑 검정 윗면 띠 · 양 끝 레일 / 상태 up(바닥 레일만 — 틈이 비었다)
     idterm_yt     사원증 발급 단말(1×1): 베이지 단말 · 초록 화면 · 카드 프린터 · 반쯤 나온 카드
     rack_yt       시세 송출 랙(2×2): 회색 랙 · 릴 테이프 데크 둘 · 숫자 창 · '시세 송출' 판 / 상태 empty(릴 하나가 빠짐)
     mound_yt      창가 화분 개미 둔덕(1×1): 사무실 화분 · 흙 둔덕 · 굴 구멍 / 상태 dry(마른 둔덕 — 전초가 끊김)
@@ -141,6 +142,32 @@ def shutter_yt(state=""):
     return im
 
 
+def shutter_yt_v(state=""):
+    """세로 벽 틈 방화 셔터(1×2, 32×72): 세로 벽 사이에 내려온 셔터를 위에서 비스듬히 본 판 — 윗면(노랑 검정 띠) · 옆면 골 · 양 끝 레일 기둥.
+    up = 셔터가 천장 통으로 올라가 바닥에 레일 홈 두 줄만 보인다."""
+    im = img(32, 72)
+    d = ImageDraw.Draw(im)
+    d.rectangle([10, 0, 21, 5], fill=C(INK)); d.rectangle([11, 1, 20, 4], fill=C(STEEL[3]))       # 위 레일 기둥
+    d.rectangle([10, 66, 21, 71], fill=C(INK)); d.rectangle([11, 67, 20, 70], fill=C(STEEL[1]))   # 아래 레일 기둥
+    if state == "up":
+        for x in (12, 19):
+            d.line([x, 6, x, 65], fill=C(STEEL[0]))
+            d.line([x + 1, 6, x + 1, 65], fill=C(STEEL[2]))
+        return im
+    d.rectangle([11, 5, 20, 66], fill=C(INK))
+    d.rectangle([12, 6, 19, 18], fill=C(STEEL[2]))                                                # 윗면(셔터 날 끝)
+    for y in range(6, 18, 4):
+        d.polygon([(12, y), (19, y + 2), (19, y + 4), (12, y + 2)], fill=C("P49"))
+    d.rectangle([12, 19, 19, 65], fill=C(STEEL[1]))                                               # 옆면 골판
+    for y in range(21, 64, 3):
+        d.line([12, y, 19, y], fill=C(STEEL[0])); d.line([12, y + 1, 19, y + 1], fill=C(STEEL[3]))
+    d.line([13, 30, 17, 40], fill=C(STEEL[4]))                                                    # 긁힌 자국
+    d.rectangle([14, 48, 17, 52], fill=C(INK)); d.point((15, 50), fill=C(STEEL[4]))              # 걸쇠
+    for y in range(6, 66, 2):
+        d.point((21, y), fill=C("P02"))                                                           # 오른쪽 그늘
+    return im
+
+
 def idterm_yt():
     """사원증 발급 단말(1×1, 32×40): 베이지 몸 · 초록 화면 글줄 · 카드 프린터 · 반쯤 나온 흰 카드(파란 띠)."""
     im = img(32, 40)
@@ -245,6 +272,7 @@ PROPS_YT = {
     "w_reader_yt": _r(lambda: w_reader_yt(), 1, 0, "wall", dx=0, dy=4),
     "w_board_yt": _r(w_board_yt, 2, 0, "wall", dx=0, dy=0),
     "shutter_yt": _r(lambda: shutter_yt(), 2, 1, down=-2),
+    "shutter_yt_v": _r(lambda: shutter_yt_v(), 1, 2, down=0),
     "idterm_yt": _r(idterm_yt, 1, 1, down=-2),
     "rack_yt": _r(lambda: rack_yt(), 2, 2, down=-2),
     "mound_yt": _r(lambda: mound_yt(), 1, 1, down=-2),
@@ -254,6 +282,7 @@ STATES_YT = {
     "gate_yt": {k: (lambda k=k: gate_yt(k)) for k in ("g", "b", "r", "open")},
     "w_reader_yt": {k: (lambda k=k: w_reader_yt(k)) for k in ("g", "b", "r", "ok", "no")},
     "shutter_yt": {"up": lambda: shutter_yt("up")},
+    "shutter_yt_v": {"up": lambda: shutter_yt_v("up")},
     "rack_yt": {"empty": lambda: rack_yt("empty")},
     "mound_yt": {"dry": lambda: mound_yt("dry")},
     "w_ticker_sg": {"close": lambda: w_ticker_sg("close")},

@@ -26,6 +26,7 @@ var kt: Kt                                         ## 여의도 금탑(1-D5a)
 var ga: Ga
 var ks: Ks                                         ## 구로 공단 지식산업센터 · 문래(1-D7)
 var hosp: Hp                                       ## 여의도 대학병원(1-D8)
+var yt: Yt                                         ## 여의도 유리탑 3동 · 증권가 객장(1-D9)
 var stash: Stash                                   ## 보관 자리 · UQ-125(1-L)
 var st: StoryState
 var route := "job"
@@ -140,6 +141,9 @@ func _ready() -> void:
 	hosp = Hp.new()
 	add_child(hosp)
 	hosp.setup(host, true)
+	yt = Yt.new()
+	add_child(yt)
+	yt.setup(host, true)
 	stash = Stash.new()
 	add_child(stash)
 	stash.setup(host, true)
@@ -529,6 +533,34 @@ func _ready() -> void:
 				["check", "UQ69_DEST == 2 and UQ69_DIE == 6", "하역장 금형에 이관 통보서 — 성씨 리어카가 알아서(분필 없이)"],
 				["hours", 22], ["check", "UQ69_DIE == 2 and UQ69_DONE_DAY >= 12", "다음 06:00 — 리어카가 문래로(사실 한 곳)"],
 				["warp", "X-MR", "arrive"], ["wait", 2.0], ["shot", "ks_alley"]]
+		"yt":                                                             # 1-D9 유리탑: 소파의 서기 목에서 카드(은신) → 3동 게이트 → 비상 계단 → 18층 판독(로봇 — 남기범 심부름) → 테이프 · 화분 전초 → 증권가 셔터 → 객장 경상현 → 전광판 마감 종
+			st.vars.set_v("GAME_DAY", 12)
+			st.vars.set_v("V_ACT", 1)
+			st.vars.set_v("PC_SKP_" + st.skill_key("은신"), 100)
+			host.date_text = "2277. 10. 30.  10:00"
+			host.enter("YT-01", "from_W")
+			plan = [["hp", 3000], ["noenc"], ["wait", 1.5], ["shot", "yt_lobby"],
+				["go", 22, 18, "YT-01"], ["want", ["목걸이"]], ["use", 22, 17], ["wait", 0.5],
+				["check", "has(\"M-401\") == 1 and YT_DOZE == 1", "졸던 서기의 목에서 진짜 빨강 카드(22:40 발급)"],
+				["go", 30, 12, "YT-01"], ["want", ["!남기범"]], ["use", 30, 11], ["wait", 0.5], ["shot", "yt_gate3"],
+				["check", "YT_R == 1", "3동 게이트 — '어서 오십시오, 남기범 서기님'"],
+				["go", 30, 10, "YT-01"], ["go", 37, 4, "YT-01"], ["want", ["!남기범"]], ["use", 37, 3], ["wait", 0.5],
+				["go", 36, 2, "YT-01"], ["go", 36, 0, "YT-01"], ["wait", 1.0],
+				["until", "map:YT-03", 10.0, "비상 계단 철문 → 18층"],
+				["go", 6, 14, "YT-03"], ["want", ["!남기범"]], ["use", 6, 13], ["wait", 1.0], ["shot", "yt_read18"],
+				["check", "YT_ROBOT_OK == 1", "18층 로봇 — 남기범 심부름 확인 · 셔터가 오른다"],
+				["clear", ["CR-080"]], ["go", 6, 9, "YT-03"], ["go", 22, 6, "YT-03"], ["go", 31, 5, "YT-03"], ["want", ["꺼낸다"]], ["use", 31, 4], ["wait", 0.5],
+				["check", "has(\"M-404\") == 1 and YT_INC == 0", "시세 테이프(10-23 연장장)"],
+				["go", 35, 7, "YT-03"], ["want", ["걷어"]], ["use", 35, 8], ["wait", 0.5], ["shot", "yt_deck"],
+				["check", "YT_MOUND == 1", "창가 개미 전초를 걷어 냄(정리)"],
+				["go", 22, 6, "YT-03"], ["go", 6, 9, "YT-03"], ["go", 3, 19, "YT-03"], ["go", 3, 22, "YT-03"], ["wait", 1.0],
+				["go", 30, 12, "YT-01"], ["go", 19, 19, "YT-01"], ["go", 19, 24, "YT-01"], ["go", 34, 27, "YT-01"], ["want", ["!남기범"]], ["use", 34, 28], ["wait", 0.5],
+				["check", "YT_SG == 1", "증권가 연결 통로 셔터"],
+				["go", 34, 31, "YT-01"], ["wait", 1.0], ["until", "map:SG-01", 10.0, "통로 끝 — 객장 지하"],
+				["want", ["됐다"]], ["talk", "N-R02-032"], ["check", "UQ06_MET == 1", "경상현 — '그거… 오늘 치예요?'"],
+				["go", 15, 4, "SG-01"], ["want", ["시세 테이프"]], ["use", 15, 3], ["wait", 2.0], ["shot", "yt_board"],
+				["check", "UQ06_RESULT == 1 and has(\"M-405\") == 1 and UQ06_STAGE == 100", "전광판 — 마감 종 · 테이프는 지워졌다 · UQ-06 끝"],
+				["want", ["구울이 됐어"]], ["talk", "N-R02-032"], ["check", "UQ06_ASKED == 1", "'…그럼 아직 심부름 중이네요.'"]]
 		"hosp":                                                           # 1-D8 대학병원: 1층 → 7층 반수빈(첫 대화 · 사정) → 칠판 → 지하 회진 행진 → 방재실 배식 차임(덮어쓰기 — 7층이 흐림) → 면회 시간 흐린 침상 곁 → 보급 → 약길 ① 편지 → 금하람
 			st.vars.set_v("GAME_DAY", 12)
 			st.vars.set_v("V_ACT", 1)

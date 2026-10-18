@@ -186,20 +186,35 @@
    "op": "line",
    "who": "SYS",
    "emo": "기본",
-   "text": "판독 판에 빨간 엑스. 날개는 반쯤 접힌 채 굳어, 몸을 옆으로 틀면 빠져나갈 수 있다."
+   "text": "판독 판에 빨간 엑스. 날개는 닫힌 채 굳었다. 2동 쪽 계단이 유리 너머에 있다."
   },
   {
-   "op": "cmd",
-   "name": "yt",
-   "args": [
-    "read",
-    "g2",
-    "0"
+   "op": "choice",
+   "opts": [
+    {
+     "text": "판독 판 덮개를 열고 날개 회로를 직결한다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "과학",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "HACK",
+     "id": "YT_GATE2:2:0",
+     "fail": "HACK_FAIL"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "YT_GATE2:2:1"
+    }
    ]
-  },
-  {
-   "op": "goto",
-   "to": "END"
   },
   {
    "op": "end"
