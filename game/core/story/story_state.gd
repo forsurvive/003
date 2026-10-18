@@ -123,8 +123,8 @@ func _init() -> void:
 		vars.declare(k, "int", 0)
 	# 가산 아울렛(1-D6, 1-D 계획 §12.6): 진행기 Ga만 쓴다 — SEEN 망꾼 · BOX 작업복 상자(1 넘김 · 2 태움 · 3 바꿔치기 · 4 인솔조가 가져감 · 5 빈 상자) ·
 	# BOX_DAY 고른 날 · BOX_DONE 판도에 반영됨 · CRATE_DAY 상자를 처음 본 날 · FEUD 인솔조와 패거리가 틀어짐 · DECOY 진열창 미끼 · COUNTED 재고 세기에 걸림 ·
-	# TOLD 놓친 소문 표지 · BOSS 두목 처리(던전 정리 식) · PD_R01_6 판도 PD-R01-6 사건 보정(+ 새벽인력 · − 약탈자, SD-08 §13) · PC_HEAD 쓴 머리 장비(아이템 ID — A-074 방독면)
-	for k in ["GA_SEEN", "GA_BOX", "GA_BOX_DAY", "GA_BOX_DONE", "GA_CRATE_DAY", "GA_FEUD", "GA_DECOY", "GA_DECOY_DAY", "GA_COUNTED", "GA_TOLD", "GA_BOSS", "PD_R01_6"]:
+	# TOLD 놓친 소문 표지 · BOSS 두목 처리(던전 정리 식) · PICK 인솔조 수거 날 · PAID 넘김 봉투 받음 · PD_R01_6 판도 PD-R01-6 사건 보정(+ 새벽인력 · − 약탈자, SD-08 §13) · PC_HEAD 쓴 머리 장비(아이템 ID — A-074 방독면)
+	for k in ["GA_SEEN", "GA_BOX", "GA_BOX_DAY", "GA_BOX_DONE", "GA_CRATE_DAY", "GA_FEUD", "GA_DECOY", "GA_DECOY_DAY", "GA_COUNTED", "GA_TOLD", "GA_BOSS", "GA_PICK", "GA_PAID", "PD_R01_6"]:
 		vars.declare(k, "int", 0)
 	vars.declare("PC_HEAD", "str", "")
 	vars.declare("BC_DOUBT_DAY", "int", 0)                    # 정보 전파(1-10c): 걸어 들어감 소문이 봉천에 닿은 날 + 1 — 그날까지 봉천 사람들이 수군거린다(SD-20 N8)

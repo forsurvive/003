@@ -17,7 +17,7 @@
    "op": "line",
    "who": "SYS",
    "emo": "기본",
-   "text": "못 박은 나무 상자. 꼬리표에 굵은 매직 — '새벽인력 인솔조 — 목요일 수거'. 틈으로 카키색 현장 작업복이 개켜진 것이 보인다."
+   "text": "못 박은 나무 상자. 꼬리표에 굵은 매직 — '새벽인력 인솔조 — 사흘째 아침 수거'. 틈으로 카키색 현장 작업복이 개켜진 것이 보인다."
   },
   {
    "op": "line",
@@ -27,7 +27,7 @@
   },
   {
    "op": "if",
-   "cond": "PD_R01_6 >= 10 and GAME_HOUR >= 6 and GAME_HOUR < 18",
+   "cond": "(PD_R01_6 >= 10 or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead(\"C-013\") == 1 and dead(\"C-049\") == 1)",
    "to": "WATCHED"
   },
   {
@@ -58,7 +58,7 @@
     {
      "text": "기름을 끼얹고 불을 붙인다",
      "tags": [],
-     "cond": "not (PD_R01_6 >= 10 and GAME_HOUR >= 6 and GAME_HOUR < 18)",
+     "cond": "not ((PD_R01_6 >= 10 or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead(\"C-013\") == 1 and dead(\"C-049\") == 1))",
      "fx": "",
      "to": "BURN",
      "id": "GA_CRATE:1:1"
@@ -113,7 +113,7 @@
    "op": "line",
    "who": "SYS",
    "emo": "기본",
-   "text": "상자를 그대로 둔다. (상자를 열면 안의 것을 직접 바꿔 넣을 수도 있다.)"
+   "text": "상자를 그대로 둔다. 반쯤 뽑힌 못이 손가락 한 마디만큼 튀어나와 있다."
   },
   {
    "op": "goto",

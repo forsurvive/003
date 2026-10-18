@@ -135,8 +135,14 @@ def window_ga(state=""):
     _box(d, 1, 54, 94, 68, WOOD)                                           # 단
     d.line([3, 60, 92, 60], fill=C(WOOD[1]))
     decoy = state.startswith("decoy")
-    base = state.split("_", 1)[1] if decoy and "_" in state else ("" if decoy else state)
+    taken = state.startswith("taken")                                      # 미끼 다음 날: 패거리가 가운데 마네킹을 끌고 올라갔다 — 받침대만
+    base = state.split("_", 1)[1] if (decoy or taken) and "_" in state else ("" if (decoy or taken) else state)
     for i, (body, torso, no) in enumerate((("M1", "T03", 41), ("F1", "T12", 42), ("M1", "T11", 43))):
+        if taken and i == 1:
+            dd = ImageDraw.Draw(im)
+            _stand(dd, i * 30 - 2 + 20, 54)
+            dd.line([i * 30 + 12, 58, i * 30 + 30, 66], fill=C(WOOD[0]))      # 끌고 간 자국
+            continue
         suit = decoy and i == 1                                            # 미끼: 가운데가 볼트 작업복을 입고 서 있다(넘어진 줄 사이에서도)
         m = mann(body, torso, "" if suit else base, suit=suit, no=no)
         im.alpha_composite(m, (i * 30 - 2, 4))
@@ -230,8 +236,9 @@ def escalator_ga():
     return im
 
 
-def w_board_ga():
-    """단가 칠판(벽 2칸, 64×40): 나무 테 · 검은 판 · 분필 '고철 kg2 옷 벌5' · 붉은 'S-07 3,000 생포만'."""
+def w_board_ga(state=""):
+    """단가 칠판(벽 2칸, 64×40): 나무 테 · 검은 판 · 분필 '고철 kg2 옷 벌5' · 붉은 'S-07 3,000 생포만'.
+    crossed: 미끼 다음 날 — '3,000'에 분필 줄 두 번 · 그 위에 흰 분필 '마네킹'."""
     im = img(64, 40)
     d = ImageDraw.Draw(im)
     _box(d, 1, 2, 62, 37, WOOD)
@@ -240,6 +247,23 @@ def w_board_ga():
     put_text(im, "S-07 3,000", 6, 15, "P53", 8, "Galmuri7")
     put_text(im, "생포만!", 6, 24, "P53", 8, "Galmuri7")
     d.line([40, 30, 56, 30], fill=C("P08"))
+    if state == "crossed":
+        d = ImageDraw.Draw(im)
+        d.line([24, 19, 52, 18], fill=C("P09")); d.line([24, 21, 52, 20], fill=C("P09"))
+        put_text(im, "마네킹", 34, 23, "P09", 8, "Galmuri7")
+    return im
+
+
+def mann_tied(state=""):
+    """묶인 마네킹(1×1, 40×56): 받침대 없이 기둥에 밧줄로 묶임 · 볼트 작업복(미끼) — bare는 작업복을 벗긴 뒤 플라스틱 몸."""
+    im = img(40, 56)
+    d = ImageDraw.Draw(im)
+    _shadow(d, 8, 33, 54)
+    d.rectangle([18, 2, 22, 53], fill=C(WOOD[0])); d.line([19, 3, 19, 52], fill=C(WOOD[2]))   # 기둥
+    im.alpha_composite(_figure("F1", "T12", state != "bare"), (0, 5))
+    d = ImageDraw.Draw(im)
+    for y in (27, 36, 44):                                                 # 밧줄 세 바퀴
+        d.line([9, y, 31, y + 1], fill=C("P02")); d.line([9, y + 1, 31, y + 2], fill=C("P01"))
     return im
 
 
@@ -372,7 +396,7 @@ def _r(fn, fw, fh, kind="floor", down=2, dx=0, dy=0):
 
 
 _MSTATES = ("tag", "target", "fallen")
-_WSTATES = ("tag", "target", "fallen", "decoy", "decoy_tag", "decoy_target", "decoy_fallen")
+_WSTATES = ("tag", "target", "fallen", "decoy", "decoy_tag", "decoy_target", "decoy_fallen", "taken", "taken_tag", "taken_target", "taken_fallen")
 PROPS_GA = {
     "mann_ga": _r(lambda: mann("M1", "T03"), 1, 1, down=-2),
     "mann_ga2": _r(lambda: mann("F1", "T12"), 1, 1, down=-2),
@@ -381,7 +405,7 @@ PROPS_GA = {
     "raincoat_ga": _r(raincoat_ga, 2, 1, down=-2),
     "curtain_ga": _r(curtain_ga, 1, 1, "deco", down=0),          # 칸을 막지 않는 덮개(탈의실 칸 안에 설 수 있다)
     "escalator_ga": _r(escalator_ga, 2, 3, "deco", down=0),      # 밟고 오르는 덮개 — 1층과 2층을 잇는 바닥 통로 위에 깐다
-    "w_board_ga": _r(w_board_ga, 2, 0, "wall", dx=0, dy=6),
+    "w_board_ga": _r(lambda: w_board_ga(), 2, 0, "wall", dx=0, dy=6),
     "w_sign_ladder": _r(w_sign_ladder, 2, 0, "wall", dx=0, dy=2),
     "crate_police_ga": _r(crate_police_ga, 1, 1, down=-2),
     "crate_suit_ga": _r(crate_suit_ga, 1, 1, down=-2),
@@ -389,12 +413,15 @@ PROPS_GA = {
     "rat_nest_ga": _r(rat_nest_ga, 2, 1, down=-2),
     "mann_pile_ga": _r(mann_pile_ga, 2, 1, down=-2),
     "ledger_ga": _r(ledger_ga, 0, 0, "deco"),
+    "mann_tied": _r(mann_tied, 1, 1, down=-2),
 }
 STATES_GA = {
     "mann_ga": {s: (lambda s=s: mann("M1", "T03", s, no=17)) for s in _MSTATES},
     "mann_ga2": {s: (lambda s=s: mann("F1", "T12", s, no=29)) for s in _MSTATES},
     "window_ga": {s: (lambda s=s: window_ga(s)) for s in _WSTATES},
     "crate_suit_ga": {s: (lambda s=s: crate_suit_ga(s)) for s in ("burnt", "swapped", "empty")},
+    "w_board_ga": {"crossed": lambda: w_board_ga("crossed")},
+    "mann_tied": {"bare": lambda: mann_tied("bare")},
 }
 
 

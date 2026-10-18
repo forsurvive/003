@@ -14,7 +14,7 @@ func test_meta_complete(t) -> void:
 		t.ok(ResourceLoader.exists("res://assets/paperdoll/" + f["sheet"]), key + " 몸 시트")
 	for hr in ["HR00", "HR03", "HR06", "HR07", "HR07h", "HR11"]:
 		t.ok(meta["heads"].has("M1:" + hr) and meta["heads"].has("F1:" + hr), hr + " 머리 시트")
-	t.eq(meta["overlays"].size(), 26, "머리 장비 18 + 눈 장비 8")
+	t.eq(meta["overlays"].size(), 27, "머리 장비 19(1-D6 HD19 방독면) + 눈 장비 8")
 	t.eq((meta["faces"] as Array).size(), 5, "표정 5")
 	for k in ["S1", "S3", "S6", "SG1"]:
 		t.eq(meta["palettes"]["skin"][k].size(), 5, "피부 램프 5")

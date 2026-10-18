@@ -2,10 +2,15 @@
 ##   원고: script/act1/GA.txt(진열창 GA_WINDOW · 작업복 상자 GA_CRATE). 맵: GA-01 A관(1층 마네킹 줄 · 2층 패거리) · GA-02 지하 물류 창고.
 ## 동사 '눈을 속인다': 방독면(A-074 — 머리 칸 PC_HEAD)을 쓰고 · 마네킹 줄 칸(맵 사실 pose)에 · 서서 멈춰 있으면 사람 눈엔 마네킹(감지 배수 0).
 ##   방독면 없이 줄 안이면 0.5(의심) · 뛰거나 쏘면 깨진다 · 쥐는 냄새로 안다(배수를 건드리지 않는다 — 금탑 페로몬과 반대 축).
-##   망꾼: 처음엔 줄 속 '마네킹'(보이지 않는 적 + 마네킹 그림) — 3칸 안에 들면 고개를 돌린다(GA_SEEN 1 · 당하면서 배운다).
-##   재고 세기: 두목이 장부를 들고 줄 통로를 돈다 — 마네킹인 척하는 나를 지나치면 그 줄 셈이 하나 는다 → 줄 끝에서 '313?' → 그 칸으로 되돌아온다.
+##   망꾼: 처음엔 줄 속 '마네킹'(보이지 않는 적 + 마네킹 그림) — 6칸에서 기척 · 3칸 안에 들면 고개를 돌리고 2층으로 뛰며 외친다(GA_SEEN 1 —
+##   덤비지 않는다 · 두목이 곧장 세기를 시작한다: 첫 장치가 둘째 장치를 부른다). 쏘아 맞히면 그 자리에서 싸운다.
+##   재고 세기: 두목이 장부를 들고 줄 통로를 돈다(숫자를 중얼거린다) — 마네킹인 척하는 나를 지나치면 그 줄 셈이 하나 는다 → 줄 끝에서 '313?' → 그 칸으로
+##   되돌아온다. 한 번 걸린 뒤로는 줄마다 두 번 걷는다(GA_COUNTED). 망꾼이 비운 자리에 서면 셈이 맞는다 — 한 바퀴는 '망꾼, 졸지 마', 다음 바퀴엔 의심.
 ## 옷이 세계와 이어진다: 볼트 작업복(A-001) 차림이면 패거리가 알아보고(한 번 외침) 생포 표지 SB(새벽인력 우리 — 황두칠 · 구만호가 둘 다 죽었으면 없음).
-##   탈의실 칸에서 다른 몸통 옷으로 갈아입으면 쫓던 사람 적이 놓친다(60초에 한 번).
+##   탈의실 칸에서 다른 몸통 옷으로 갈아입으면 쫓던 사람 적이 놓친다(60초에 한 번 · 5칸 안에서 지켜보던 자는 놓치지 않는다).
+## 작업복 상자: 우비 묶음 M-196은 3벌로 센다 — 벌수(작업복 + 우비×3)가 다섯이 차야 바꿔치기, 모자라면 빈 상자. 수거 날(GA_PICK = 처음 본 날 + 3) 낮엔
+##   인솔조가 하역장에 와 있다(보는 눈) · 그다음 06:00에 실어 간 것으로 친다 · 넘겼으면 다음에 들를 때 봉투 25캡(GA_PAID).
+## 진열창 미끼: 다음 06:00에 패거리가 가운데 마네킹을 2층 칠판 옆에 묶어 둔다(GA_DECOY 2 · 칠판 '3,000'에 줄) — 거기서 작업복을 되찾는다(3).
 ## 잃는 선택: 작업복 상자(GA_BOX 하나 — P1) · 판도 반영은 다음 06:00에 한 번(P6) · 소문은 하루 늦게(P7). 세기 · 미끼 · 놓침은 맵을 떠나면 휘발(A119).
 class_name Ga
 extends Node
@@ -21,9 +26,14 @@ const SUIT := "A-012"
 const RAINCOAT := "M-196"
 const STILL_S := 0.6                           ## 이만큼 멈춰 있어야 마네킹으로 보인다
 const LOOK_R := 3.0                            ## 망꾼이 고개를 돌리는 거리(칸)
+const SENSE_R := 6.0                           ## 망꾼 기척(말없이 고개만 — 한 번)
+const RUN_S := 10.0                            ## 드러난 망꾼이 2층으로 뛰는 동안(그 사이엔 나를 보지 않는다)
+const RUN_TO := Vector2i(22, 7)                ## 망꾼이 뛰어가 서는 곳(두목 책상 앞)
+const COAT_N := 3                              ## 우비 묶음 하나 = 3벌(전시 특가 2+1)
+const PAY := 25                                ## 넘김 봉투(벌당 5캡 × 5)
 const LOSE_GAP := 60.0                         ## 탈의실에서 놓치기 — 이 초에 한 번
 const LURE_S := 30.0                           ## 진열창 미끼에 몰려가 서성이는 초
-const PICKUP_DAYS := 3                         ## 상자를 처음 본 날부터 이만큼 지나 06:00 인솔조가 그냥 가져간다
+const PICKUP_DAYS := 3                         ## 상자를 처음 본 날부터 이만큼 지난 날이 수거 날(인솔조가 낮에 하역장에 온다 — 그다음 06:00에 실어 간 것으로 친다)
 const LOOKOUT_AT := Vector2i(21, 28)
 const WINDOW_AT := Vector2i(17, 30)
 const WINDOW_MARK := Vector2i(18, 29)
@@ -32,6 +42,8 @@ const FITTING := [Vector2i(35, 15), Vector2i(37, 15), Vector2i(39, 15), Vector2i
 const AISLES := [20, 23, 26, 29]               ## 줄 통로(줄 y + 1) — 두목이 걸으며 그 위 줄을 센다
 ## 재고 세기 길: 책상 → 줄 넷을 번갈아(왼 → 오 · 오 → 왼) → 책상
 const COUNT_ROUTE := [[26, 6, 12.0], [8, 20, 1.0], [30, 20, 1.0], [30, 23, 0.5], [8, 23, 1.0], [8, 26, 0.5], [30, 26, 1.0], [30, 29, 0.5], [8, 29, 1.0]]
+const TIE_AT := Vector2i(13, 3)                ## 미끼 다음 날 묶인 마네킹(2층 칠판 옆)
+const BOARD_AT := Vector2i(10, 1)
 const PD_DELTA := {1: 10, 2: -10, 3: -5, 4: 5, 5: -5}   ## GA_BOX → 판도 PD-R01-6 사건 보정(+ 새벽인력 · − 약탈자)
 
 var host: InteriorHost
@@ -52,6 +64,11 @@ var _clock := 0.0
 var _torso := ""
 var _lure_t := 0.0
 var _tick := 0.0
+var _sensed := false
+var _runner: Enemy = null                      ## 2층으로 뛰는 망꾼
+var _run_t := 0.0
+var _nap := false                              ## 망꾼 빈자리에서 한 바퀴 넘어갔다('졸지 마')
+var _said_x := -99                             ## 두목이 마지막으로 중얼거린 칸
 
 
 func setup(h: InteriorHost, is_log := false) -> void:
@@ -106,7 +123,8 @@ func worn() -> String:
 ## 인솔조가 지금 하역장에 있나(판도 새벽인력 우세 · 낮 06~18 — 맵 npc 조건과 같은 식)
 func watched() -> bool:
 	var h := int(st.vars.get_v("GAME_HOUR"))
-	return _mid() == STORE and int(st.vars.get_v("PD_R01_6")) >= 10 and h >= 6 and h < 18 and sb_alive()
+	var here := int(st.vars.get_v("PD_R01_6")) >= 10 or v("PICK") == int(st.vars.get_v("GAME_DAY"))
+	return _mid() == STORE and here and h >= 6 and h < 18 and sb_alive()
 
 
 # ---------------------------------------------------------------- 맵에 들어섰다: 망꾼 · 두목 · 상자 첫날
@@ -121,12 +139,21 @@ func _on_map(id: String) -> void:
 	_check = {}
 	_shouted = false
 	_lure_t = 0.0
+	_sensed = false
+	_runner = null
+	_run_t = 0.0
+	_nap = false
+	_said_x = -99
 	_torso = str(st.vars.get_v("PC_TORSO"))
 	if not id.begins_with("GA-"):
 		return
 	_pose = host.map.pose_cells()
 	if id == STORE and v("CRATE_DAY") == 0:
 		_sv("CRATE_DAY", day())
+	if id == STORE and v("BOX") == 1 and v("BOX_DONE") == 1 and v("PAID") == 0:   # 넘긴 상자 값 — 분필 동그라미 안 봉투
+		_sv("PAID", 1)
+		st.call_fn("caps", [PAY])
+		host.hint("셔터 앞 분필 동그라미 안에 봉투 하나. '벌당 5캡 — 수고.' 인솔조 글씨다. (+%d캡)" % PAY, 4.0)
 	if id != HALL:
 		return
 	for e in host.combat.enemies:
@@ -135,8 +162,13 @@ func _on_map(id: String) -> void:
 		var t := host.map.tile_of(e.loco.logical)
 		if str(e.who) == BOSS:
 			_boss = e
-			for r in COUNT_ROUTE:
+			for i in COUNT_ROUTE.size():
+				var r: Array = COUNT_ROUTE[i]
 				e.route.append([_tc(Vector2i(int(r[0]), int(r[1]))), float(r[2])])
+				if v("COUNTED") >= 1 and i >= 2 and i % 2 == 0:                 # 한 번 걸린 뒤: 줄마다 되돌아 한 번 더 센다
+					var b: Array = COUNT_ROUTE[i - 1]
+					e.route.append([_tc(Vector2i(int(b[0]), int(b[1]))), 0.5])
+					e.route.append([_tc(Vector2i(int(r[0]), int(r[1]))), 0.5])
 		elif t == LOOKOUT_AT and v("SEEN") == 0:
 			_lookout = e
 			e.det_mul = 0.0
@@ -167,10 +199,14 @@ func _process(dt: float) -> void:
 		return
 	_tick = 0.1
 	var posing := posing_at(pt)
+	if _run_t > 0.0:
+		_run_t -= 0.1
 	for e in host.combat.enemies:
 		if not _gang(e) or e == _lookout:
 			continue
-		if e.brain.state == AIBrain.S.COMBAT:
+		if e == _runner and _run_t > 0.0:
+			e.det_mul = 0.0
+		elif e.brain.state == AIBrain.S.COMBAT:
 			e.det_mul = 1.0
 		elif posing == 2:
 			e.det_mul = 0.0
@@ -198,27 +234,43 @@ func _watch_lookout(pt: Vector2i) -> void:
 	if not is_instance_valid(_lookout) or _lookout.cmb.dead:
 		_reveal(false)
 		return
-	var hit := _lookout.brain.state == AIBrain.S.COMBAT                  # 쏘아 맞혔다 — 마네킹이 비명을 지른다
-	if hit or Vector2(pt).distance_to(Vector2(LOOKOUT_AT)) <= LOOK_R:
-		_reveal(true)
+	var hit := _lookout.brain.state == AIBrain.S.COMBAT                  # 쏘아 맞혔다(또는 싸움이 붙었다) — 그 자리에서 덤빈다
+	var dist := Vector2(pt).distance_to(Vector2(LOOKOUT_AT))
+	if hit or dist <= LOOK_R:
+		_reveal(true, hit)
+	elif dist <= SENSE_R and not _sensed:
+		_sensed = true
+		host.hint("줄 속 마네킹 하나 — 방금 고개가 이쪽으로 돈 것 같다. …기분 탓인가.", 3.0)
 
 
-func _reveal(alive: bool) -> void:
+func _reveal(alive: bool, hit := false) -> void:
 	_sv("SEEN", 1)
 	if not _mann.is_empty():
 		host.map.remove_runtime_prop(_mann)
 		_mann = {}
-	if alive and is_instance_valid(_lookout):
+	if alive and is_instance_valid(_lookout) and hit:                     # 맞았다: 그 자리에서 덤빈다
 		_lookout.visible = true
 		_lookout.det_mul = 1.0
 		_lookout.brain.gauge = AIBrain.DETECT_AT
 		_lookout.brain.last_seen = host.player.loco.logical
 		_lookout.brain._go(AIBrain.S.COMBAT)
-		host.combat._pop("…!", _lookout.loco.logical + Vector2(0, -30), Color("E8C860"))
-		host.hint("마네킹 하나가 고개를 돌린다 — 방독면 너머로 눈이 있다. 사람이다!", 3.5)
-		for e in host.combat.enemies:
-			if _gang(e) and e != _lookout:
-				e.hear("pistol", _lookout.loco.logical)            # 고함 — 12칸(총소리만큼 울린다)
+		host.combat._pop("악!", _lookout.loco.logical + Vector2(0, -30), Color("E05040"))
+		host.hint("쏜 마네킹이 비명을 지른다 — 사람이었다!", 3.0)
+	elif alive and is_instance_valid(_lookout):                           # 들켰다: 덤비지 않고 2층으로 뛰며 외친다 — 두목이 곧장 센다
+		_lookout.visible = true
+		_lookout.det_mul = 0.0
+		_lookout.stance = ""
+		_lookout.brain.gauge = 0.0
+		_lookout.brain.home = _tc(RUN_TO)
+		_lookout.brain._go(AIBrain.S.RETURN)
+		_runner = _lookout
+		_run_t = RUN_S
+		host.combat._pop("줄에 하나 늘었다!", _lookout.loco.logical + Vector2(0, -30), Color("E8C860"))
+		host.hint("마네킹 하나가 고개를 돌린다 — 방독면 너머로 눈이 있다. 사람이다! 그는 덤비지 않고 에스컬레이터 쪽으로 뛴다.", 4.0)
+		if _boss != null and is_instance_valid(_boss) and not _boss.cmb.dead and _boss.brain.state == AIBrain.S.IDLE:
+			_boss._route_i = 1                                                # 책상에서 일어나 첫 줄부터
+			_boss._route_wait = 0.0
+			host.combat._pop("처음부터 다시 센다.", _boss.loco.logical + Vector2(0, -30), Color("C8C0A8"))
 	elif is_instance_valid(_lookout):
 		_lookout.visible = true
 	_lookout = null
@@ -239,14 +291,40 @@ func _count(pt: Vector2i, posing: int) -> void:
 		_extra = Vector2i(-99, -99)
 		return
 	var aisle := bt.y if bt.y in AISLES else -1
-	if aisle != _aisle:                                                   # 줄 끝: 이 줄에서 하나 더 셌으면 '313?'
+	if _aisle == -99:                                                    # 이 줄은 맞게 셌다 — 줄 끝까지 넘어간다
+		if aisle == -1:
+			_aisle = -1
+		return
+	if aisle != _aisle:                                 # 줄 끝: 이 줄에서 하나 더 셌으면 '313?'
 		if _aisle != -1 and _extra.y == _aisle - 1:
 			_doubt(_extra)
 		_aisle = aisle
 		_extra = Vector2i(-99, -99)
 		return
+	if aisle != -1 and bt.x % 4 == 0 and bt.x != _said_x:                   # 중얼거림: 줄마다 열세 개 — 마지막 줄 끝이 312
+		_said_x = bt.x
+		var n := 260 + AISLES.find(aisle) * 13 + int(absi(bt.x - 8) / 2.0)
+		host.combat._pop("…%d, %d…" % [n, n + 1], _boss.loco.logical + Vector2(0, -30), Color("A8A090"))
 	if aisle != -1 and posing == 2 and pt.y == aisle - 1 and absi(pt.x - bt.x) <= 1:
+		if pt == LOOKOUT_AT and v("SEEN") >= 1 and not _lookout_home():        # 망꾼이 비운 자리 — 셈이 맞는다
+			if not _nap:
+				_nap = true
+				host.combat._pop("312. 망꾼, 졸지 마.", _boss.loco.logical + Vector2(0, -30), Color("C8C0A8"))
+				host.hint("두목이 장부 끝으로 방독면을 툭 치고 지나간다.", 2.5)
+				_aisle = -99                                                    # 이 줄은 맞게 셌다
+			elif _extra != pt:
+				host.combat._pop("…대답을 안 하네?", _boss.loco.logical + Vector2(0, -30), Color("E8C860"))
+				_extra = pt
+			return
 		_extra = pt
+
+
+## 망꾼 자리에 지금 누가 서 있나(망꾼이 아직 숨어 있거나 돌아와 섰다)
+func _lookout_home() -> bool:
+	for e in host.combat.enemies:
+		if _gang(e) and host.map.tile_of(e.loco.logical) == LOOKOUT_AT:
+			return true
+	return false
 
 
 func _doubt(cell: Vector2i) -> void:
@@ -312,6 +390,8 @@ func _fitting(pt: Vector2i) -> void:
 	var lost := 0
 	for e in host.combat.enemies:
 		if _gang(e) and e.brain.state in [AIBrain.S.COMBAT, AIBrain.S.SEARCH, AIBrain.S.LOST, AIBrain.S.SUSPICIOUS]:
+			if e.brain.state == AIBrain.S.COMBAT and e.loco.logical.distance_to(host.player.loco.logical) <= 5.0 * 32.0:
+				continue                                                          # 커튼 안으로 들어가는 걸 바로 앞에서 본 자는 속지 않는다
 			e.brain.gauge = 0.0
 			e.brain._go(AIBrain.S.RETURN)
 			lost += 1
@@ -339,6 +419,8 @@ func _window_state() -> String:
 	var base := "fallen" if int(st.vars.get_v("DG_GA")) >= 1 else ("tag" if pd >= 10 else ("target" if pd <= -10 else ""))
 	if v("DECOY") == 1:
 		return "decoy" if base == "" else "decoy_" + base
+	if v("DECOY") >= 2:
+		return "taken" if base == "" else "taken_" + base
 	return base
 
 
@@ -406,6 +488,12 @@ func box(n: int) -> void:
 
 ## 상자를 닫았다: 작업복이 남았나 · 우비가 들었나(바꿔치기 3 · 빈 상자 5) — 인솔조가 보고 있으면 그 자리에서 들킨다
 func _on_box(b: Dictionary, c: Dictionary) -> void:
+	if str(b.get("kind", "")) == "decoy_mann" and v("DECOY") == 2 and not (c["items"] as Dictionary).keys().any(func(k): return str(k).split("@")[0] == VAULT):
+		_sv("DECOY", 3)                                                       # 묶인 마네킹에서 작업복을 되찾았다
+		if host.map != null:
+			host.map.set_prop_state(TIE_AT, "bare")
+		_log("묶인 마네킹에서 작업복을 되찾음")
+		return
 	if str(b.get("kind", "")) != "suit_crate" or v("BOX") != 0:
 		return
 	var suits := 0
@@ -416,31 +504,39 @@ func _on_box(b: Dictionary, c: Dictionary) -> void:
 			suits += int(c["items"][k])
 		elif base == RAINCOAT:
 			coats += int(c["items"][k])
-	var r := 0
-	if coats >= 1 and suits < 5:
-		r = 3
-	elif suits == 0:
-		r = 5
-	if r == 0:
-		return
+	if suits >= 5:
+		return                                                                # 그대로(손을 댔어도 벌수가 다 있다)
+	var r := 3 if coats >= 1 and suits + coats * COAT_N >= 5 else 5           # 벌수가 차면 바꿔치기 · 모자라면 빈 상자(패거리 탓)
 	if watched():                                                          # 셔터 앞 인솔조가 본다 — 그 자리에서 상자째 실어 간다
 		_sv("BOX", 4)
 		_sv("BOX_DAY", day())
 		(c["items"] as Dictionary).clear()
 		host.hint("'어이 — 거기, 상자에서 손 떼!' 인솔조 둘이 달려와 상자를 통째로 손수레에 싣는다. 모자란 벌수를 세며 혀를 찬다.", 4.5)
+		if host.map != null:
+			host.map.set_prop_state(CRATE_AT, "empty")
+			host.map.boxes.erase(CRATE_AT)
 		_log("상자 손댐 — 인솔조에게 들킴(그 자리 수거)")
 		return
 	_sv("BOX", r)
 	_sv("BOX_DAY", day())
-	_log("작업복 상자 %s(작업복 %d · 우비 %d)" % ["바꿔치기" if r == 3 else "빈 상자", suits, coats])
+	if host.map != null and _mid() == STORE:
+		host.map.set_prop_state(CRATE_AT, "swapped" if r == 3 else "empty")
+		host.map.boxes.erase(CRATE_AT)                                     # 결과는 하나(P1) — 닫은 뒤로는 다시 열어 되돌리지 못한다
+	_log("작업복 상자 %s(작업복 %d · 우비 묶음 %d)" % ["바꿔치기" if r == 3 else "빈 상자", suits, coats])
 
 
 # ---------------------------------------------------------------- 하루 판정(06:00): 판도 반영 한 번 · 사흘 뒤 인솔조 수거
 func _on_day(d: int) -> void:
-	if v("BOX") == 0 and v("CRATE_DAY") > 0 and d >= v("CRATE_DAY") + PICKUP_DAYS and sb_alive():
+	if v("PICK") == 0 and v("CRATE_DAY") > 0 and d >= v("CRATE_DAY") + PICKUP_DAYS and sb_alive():
+		_sv("PICK", d)                                                       # 수거 날: 낮 동안 인솔조가 하역장 셔터 앞에(맵 npc 조건 · watched)
+		_log("수거 날 — 인솔조가 하역장에")
+	elif v("BOX") == 0 and v("PICK") > 0 and d > v("PICK") and sb_alive():
 		_sv("BOX", 4)
-		_sv("BOX_DAY", d - 1)                                                # 오늘 아침 실어 갔다 — 반영도 오늘(반쯤 된 상태 없음, P10)
+		_sv("BOX_DAY", d - 1)                                                # 수거 날 저녁에 실어 갔다 — 반영은 지금(반쯤 된 상태 없음, P10)
 		_log("인솔조가 상자를 그냥 가져감")
+	if v("DECOY") == 1 and int(st.vars.get_v("DG_GA")) == 0 and d > v("DECOY_DAY"):
+		_sv("DECOY", 2)                                                      # 밤사이 패거리가 3,000캡짜리를 '생포'해 2층으로 끌고 갔다
+		_log("미끼 마네킹을 패거리가 끌고 감")
 	var bx := v("BOX")
 	if bx >= 1 and v("BOX_DONE") == 0 and d > v("BOX_DAY"):
 		_sv("BOX_DONE", 1)

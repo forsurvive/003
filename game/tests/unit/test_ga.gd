@@ -167,12 +167,23 @@ func test_ga_lookout(t) -> void:
 	var c: Ga = r[2]
 	t.ok(c._lookout != null and not c._lookout.visible and c._lookout.det_mul == 0.0, "망꾼 — 줄 속 마네킹(보이지 않음 · 감지 0)")
 	t.ok(not c._mann.is_empty(), "망꾼 자리 마네킹 그림")
-	_stand(h, c, Vector2i(23, 31))
-	t.eq(_v(st, "GA_SEEN"), 0, "멀면 그대로")
+	_stand(h, c, Vector2i(26, 31))
+	t.ok(_v(st, "GA_SEEN") == 0 and c._sensed, "6칸 — 기척만(고개가 돈 것 같다)")
 	var lo := c._lookout
+	var boss := c._boss
+	boss._route_i = 5
 	_stand(h, c, Vector2i(21, 30))
 	t.eq(_v(st, "GA_SEEN"), 1, "3칸 안 — 고개를 돌린다")
-	t.ok(lo.visible and lo.brain.state == AIBrain.S.COMBAT, "망꾼이 드러나 덤빈다")
+	t.ok(lo.visible and lo.brain.state == AIBrain.S.RETURN and c._runner == lo and lo.det_mul == 0.0, "망꾼은 덤비지 않고 2층으로 뛴다(그사이 나를 보지 않는다)")
+	t.eq(boss._route_i, 1, "두목이 첫 줄부터 다시 센다")
+	var r3 := _host()
+	var h3: InteriorHost = r3[0]
+	var c3: Ga = r3[2]
+	var lo3 := c3._lookout
+	lo3.brain._go(AIBrain.S.COMBAT)
+	c3._tick = 0.0
+	c3._process(0.01)
+	t.ok(_v(r3[1], "GA_SEEN") == 1 and lo3.visible and lo3.brain.state == AIBrain.S.COMBAT and c3._runner == null, "쏘아 맞히면 그 자리에서 덤빈다")
 	var r2 := _host()
 	t.ok((r2[2] as Ga)._lookout == null or (r2[1] as StoryState) != st, "새 판")
 	var st3: StoryState = r2[1]
@@ -220,6 +231,7 @@ func test_ga_decoy(t) -> void:
 	t.eq(_v(st, "GA_DECOY"), 1, "미끼 섰다")
 	t.eq(_v(st, "GA_DECOY_DAY"), 10, "미끼 날(소문은 다음 날)")
 	t.ok(c._lure_t > 0.0, "작업복 차림이 아니면 패거리가 몰려간다")
+	t.eq(h.map.set_prop_state(Ga.WINDOW_AT, c._window_state()), "window_ga", "진열창 미끼 그림")
 	t.eq(st.count_of("A-001"), n0 - 1, "작업복 한 벌을 가져갔다")
 	c._tick = 0.0
 	c._process(0.1)
@@ -231,6 +243,35 @@ func test_ga_decoy(t) -> void:
 	st.vars.set_v("PC_TORSO", "A-001")
 	c.decoy()
 	t.ok(_v(st, "GA_DECOY") == 1 and c._lure_t <= 0.0, "나도 작업복 차림이면 몰려가지 않는다")
+	st.vars.set_v("GAME_DAY", 11)
+	h.day_tick.emit(11)
+	t.eq(_v(st, "GA_DECOY"), 2, "다음 06:00 — 패거리가 3,000캡짜리를 끌고 올라갔다")
+	t.ok(_texts(st, "GA_WINDOW").contains("받침대만"), "진열창 가운데가 비었다")
+	t.ok(not _opts(st, "GA_WINDOW").contains("벗긴다") and not _opts(st, "GA_WINDOW").contains("입힌다"), "벗기기 · 다시 입히기 없음")
+	h.enter("GA-01", "from_sign")
+	t.ok(h.map.boxes.has(Ga.TIE_AT), "2층 칠판 옆 묶인 마네킹")
+	var tb: Dictionary = h.map.boxes[Ga.TIE_AT]
+	var tc := h.box_contents(tb)
+	t.ok((tc["items"] as Dictionary).keys().any(func(k): return str(k).split("@")[0] == "A-001"), "작업복이 그대로 입혀져 있다")
+	(tc["items"] as Dictionary).clear()
+	h.box_closed.emit(tb, tc)
+	t.eq(_v(st, "GA_DECOY"), 3, "작업복을 되찾았다")
+
+
+func _texts(st: StoryState, id: String) -> String:
+	var dr := DialogueRunner.new(st)
+	var cur := dr.start(_scene(id))
+	var out := ""
+	var g := 0
+	while cur["type"] != "end" and g < 200:
+		g += 1
+		if cur.has("text"):
+			out += str(cur["text"]) + "\n"
+		if cur["type"] == "choices":
+			cur = dr.choose(cur["opts"].size() - 1)
+		else:
+			cur = dr.advance()
+	return out
 
 
 func _crate(h: InteriorHost) -> Dictionary:
@@ -271,10 +312,20 @@ func test_ga_crate(t) -> void:
 	var h2: InteriorHost = r2[0]
 	var st2: StoryState = r2[1]
 	var cc := _crate(h2)
+	var bx2: Dictionary = h2.map.boxes[Ga.CRATE_AT]
 	(cc["items"] as Dictionary).clear()
+	cc["items"]["A-012"] = 2
 	cc["items"]["M-196"] = 1
-	h2.box_closed.emit(h2.map.boxes[Ga.CRATE_AT], cc)
-	t.eq(_v(st2, "GA_BOX"), 3, "바꿔치기")
+	h2.box_closed.emit(bx2, cc)
+	t.eq(_v(st2, "GA_BOX"), 3, "바꿔치기(작업복 둘 + 우비 묶음 = 다섯 벌)")
+	t.ok(not h2.map.boxes.has(Ga.CRATE_AT), "닫은 뒤로는 다시 열어 되돌리지 못한다")
+	var rs := _host("GA-02", "from_GA01")
+	var hs: InteriorHost = rs[0]
+	var cs := _crate(hs)
+	(cs["items"] as Dictionary).clear()
+	cs["items"]["M-196"] = 1
+	hs.box_closed.emit(hs.map.boxes[Ga.CRATE_AT], cs)
+	t.eq(_v(rs[1], "GA_BOX"), 5, "작업복을 다 빼고 우비 하나 — 벌수가 모자라 빈 상자로 들킨다")
 	st2.vars.set_v("GAME_DAY", 11)
 	h2.day_tick.emit(11)
 	t.ok(_v(st2, "PD_R01_6") == -5 and _v(st2, "GA_FEUD") == 1, "인솔조와 패거리가 틀어진다(−5)")
@@ -290,8 +341,8 @@ func test_ga_crate(t) -> void:
 	var r4 := _host("GA-02", "from_GA01")
 	var h4: InteriorHost = r4[0]
 	var st4: StoryState = r4[1]
-	st4.vars.set_v("PD_R01_6", 10)
-	t.ok(not _opts(st4, "GA_CRATE").contains("불을"), "보는 눈이 있으면 태우기 없음")
+	st4.vars.set_v("GA_PICK", 10)
+	t.ok(not _opts(st4, "GA_CRATE").contains("불을"), "수거 날 낮 — 보는 눈이 있으면 태우기 없음")
 	var c4 := _crate(h4)
 	(c4["items"] as Dictionary).clear()
 	c4["items"]["M-196"] = 1
@@ -304,10 +355,14 @@ func test_ga_crate(t) -> void:
 	for dd in [11, 12]:
 		st5.vars.set_v("GAME_DAY", dd)
 		h5.day_tick.emit(dd)
-	t.eq(_v(st5, "GA_BOX"), 0, "이틀까지는 그대로")
+	t.ok(_v(st5, "GA_BOX") == 0 and _v(st5, "GA_PICK") == 0, "이틀까지는 그대로")
 	st5.vars.set_v("GAME_DAY", 13)
 	h5.day_tick.emit(13)
-	t.ok(_v(st5, "GA_BOX") == 4 and _v(st5, "PD_R01_6") == 5, "사흘 뒤 06:00 인솔조가 가져감(+5 · 반쯤 된 상태 없음)")
+	t.ok(_v(st5, "GA_PICK") == 13 and _v(st5, "GA_BOX") == 0, "사흘째 — 수거 날(인솔조가 낮에 하역장에)")
+	t.ok((r5[2] as Ga).watched(), "수거 날 낮엔 보는 눈")
+	st5.vars.set_v("GAME_DAY", 14)
+	h5.day_tick.emit(14)
+	t.ok(_v(st5, "GA_BOX") == 4 and _v(st5, "PD_R01_6") == 5, "다음 06:00 — 실어 간 것으로(+5 · 반쯤 된 상태 없음)")
 	var r6 := _host("GA-02", "from_GA01")
 	var h6: InteriorHost = r6[0]
 	var st6: StoryState = r6[1]
@@ -323,6 +378,11 @@ func test_ga_crate(t) -> void:
 	st7.vars.set_v("GAME_DAY", 11)
 	(r7[0] as InteriorHost).day_tick.emit(11)
 	t.ok(_v(st7, "GA_BOX") == 1 and _v(st7, "PD_R01_6") == 10, "넘김 — 새벽인력 쪽으로 +10")
+	var caps := _v(st7, "PC_CAPS")
+	(r7[0] as InteriorHost).enter("GA-02", "from_GA01")
+	t.ok(_v(st7, "GA_PAID") == 1 and _v(st7, "PC_CAPS") == caps + 25, "다음에 들르면 봉투 25캡")
+	(r7[0] as InteriorHost).enter("GA-02", "from_GA01")
+	t.eq(_v(st7, "PC_CAPS"), caps + 25, "봉투는 한 번")
 
 
 func test_ga_count(t) -> void:
@@ -370,6 +430,39 @@ func test_ga_count(t) -> void:
 	c2._tick = 0.0
 	c2._process(0.01)
 	t.ok(_v(st2, "GA_COUNTED") == 0 and c2._boss.brain.state == AIBrain.S.RETURN, "'312. 잘못 셌나.'")
+	# 한 번 걸린 뒤로는 줄마다 두 번
+	st.vars.set_v("DG_GA", 0)
+	h.enter("GA-01", "from_sign")
+	t.ok(c._boss != null and c._boss.route.size() > Ga.COUNT_ROUTE.size(), "걸린 뒤로는 줄마다 되돌아 한 번 더 센다")
+	# 망꾼이 비운 자리: 한 바퀴는 '졸지 마', 다음 바퀴엔 의심
+	var r4 := _host()
+	var h4: InteriorHost = r4[0]
+	var st4: StoryState = r4[1]
+	var c4: Ga = r4[2]
+	st4.vars.set_v("PC_HEAD", "A-074")
+	var lo: Enemy = c4._lookout
+	c4._reveal(true)
+	lo.loco.logical = _tc(Ga.RUN_TO)
+	_stand(h4, c4, Ga.LOOKOUT_AT)
+	for x in [20, 21, 22]:
+		c4._boss.loco.logical = _tc(Vector2i(x, 29))
+		c4._tick = 0.0
+		c4._process(0.01)
+	t.ok(c4._nap and c4._check.is_empty(), "망꾼 자리 — '312. 망꾼, 졸지 마.'(셈이 맞는다)")
+	c4._boss.loco.logical = _tc(Vector2i(8, 30))
+	c4._tick = 0.0
+	c4._process(0.01)
+	c4._boss.loco.logical = _tc(Vector2i(20, 31))
+	c4._tick = 0.0
+	c4._process(0.01)
+	for x in [20, 21, 22]:
+		c4._boss.loco.logical = _tc(Vector2i(x, 29))
+		c4._tick = 0.0
+		c4._process(0.01)
+	c4._boss.loco.logical = _tc(Vector2i(8, 30))
+	c4._tick = 0.0
+	c4._process(0.01)
+	t.ok(not c4._check.is_empty(), "다음 바퀴 — '…대답을 안 하네?' 되돌아온다")
 
 
 func test_ga_fitting(t) -> void:
@@ -400,6 +493,18 @@ func test_ga_fitting(t) -> void:
 	(r2[1] as StoryState).vars.set_v("PC_TORSO", "A-012")
 	c2._process(0.01)
 	t.ok(g2.all(func(e): return e.brain.state == AIBrain.S.SEARCH), "탈의실 밖에서는 놓치지 않는다")
+	var r3 := _host()
+	var h3: InteriorHost = r3[0]
+	var c3: Ga = r3[2]
+	var g3 := _gang(h3).filter(func(e): return e != c3._lookout)
+	var near: Enemy = g3[0]
+	for e in g3:
+		e.brain._go(AIBrain.S.COMBAT)
+	h3.player.loco.logical = _tc(Ga.FITTING[2])
+	near.loco.logical = _tc(Ga.FITTING[2] + Vector2i(0, 3))
+	(r3[1] as StoryState).vars.set_v("PC_TORSO", "A-012")
+	c3._process(0.01)
+	t.ok(near.brain.state == AIBrain.S.COMBAT, "바로 앞에서 본 자는 속지 않는다")
 
 
 func test_ga_boss(t) -> void:

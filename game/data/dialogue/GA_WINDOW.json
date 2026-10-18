@@ -6,20 +6,26 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "TAG": 6,
-  "TARGET": 8,
-  "FALLEN": 10,
-  "DECOY": 12,
-  "MENU": 14,
-  "DRESS": 15,
-  "NOSPARE": 19,
-  "UNDRESS": 21
+  "TAG": 7,
+  "TARGET": 9,
+  "FALLEN": 11,
+  "TAKEN": 13,
+  "DECOY": 15,
+  "MENU": 17,
+  "DRESS": 18,
+  "NOSPARE": 22,
+  "UNDRESS": 24
  },
  "ops": [
   {
    "op": "if",
    "cond": "GA_DECOY == 1",
    "to": "DECOY"
+  },
+  {
+   "op": "if",
+   "cond": "GA_DECOY >= 2",
+   "to": "TAKEN"
   },
   {
    "op": "if",
@@ -71,6 +77,16 @@
    "who": "SYS",
    "emo": "기본",
    "text": "진열창 마네킹이 모두 쓰러져 있다. 방독면 하나가 유리에 금을 그으며 굴러 멈췄다."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "가운데 마네킹 자리가 비었다. 받침대만 남았다. 바닥에 무언가 끌고 간 자국이 에스컬레이터 쪽으로 이어진다."
   },
   {
    "op": "goto",

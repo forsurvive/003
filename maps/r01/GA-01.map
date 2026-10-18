@@ -121,6 +121,10 @@ prop window_ga 17 30 cond="DG_GA == 0 and GA_DECOY == 0 and PD_R01_6 > -10 and P
 prop window_ga 17 30 state=tag cond="DG_GA == 0 and GA_DECOY == 0 and PD_R01_6 >= 10"
 prop window_ga 17 30 state=target cond="DG_GA == 0 and GA_DECOY == 0 and PD_R01_6 <= -10"
 prop window_ga 17 30 state=fallen cond="DG_GA >= 1 and GA_DECOY == 0"
+prop window_ga 17 30 state=taken cond="DG_GA == 0 and GA_DECOY >= 2 and PD_R01_6 > -10 and PD_R01_6 < 10"
+prop window_ga 17 30 state=taken_tag cond="DG_GA == 0 and GA_DECOY >= 2 and PD_R01_6 >= 10"
+prop window_ga 17 30 state=taken_target cond="DG_GA == 0 and GA_DECOY >= 2 and PD_R01_6 <= -10"
+prop window_ga 17 30 state=taken_fallen cond="DG_GA >= 1 and GA_DECOY >= 2"
 prop window_ga 17 30 state=decoy cond="DG_GA == 0 and GA_DECOY == 1 and PD_R01_6 > -10 and PD_R01_6 < 10"
 prop window_ga 17 30 state=decoy_tag cond="DG_GA == 0 and GA_DECOY == 1 and PD_R01_6 >= 10"
 prop window_ga 17 30 state=decoy_target cond="DG_GA == 0 and GA_DECOY == 1 and PD_R01_6 <= -10"
@@ -128,20 +132,20 @@ prop window_ga 17 30 state=decoy_fallen cond="DG_GA >= 1 and GA_DECOY == 1"
 text 17 30 "진열창. 방독면을 쓴 마네킹 셋 — '전시 특가 · 방호 우비 2+1'." w=3 scene=GA_WINDOW
 # ---------------------------------------------------------------- 매장(1층 오른쪽)
 prop rack_ga 35 20
-box 35 20 outlet_rack w=2 name="옷 행거"
+box 35 20 outlet_rack w=2 name="남성복 행거"
 prop rack_ga 39 20
-box 39 20 outlet_rack w=2 name="옷 행거"
+box 39 20 outlet_rack w=2 name="여성복 행거"
 prop rack_ga 43 20
-box 43 20 outlet_rack w=2 name="옷 행거"
+box 43 20 outlet_rack w=2 name="아동복 행거"
 prop rack_ga 35 24
-box 35 24 outlet_rack w=2 name="옷 행거"
+box 35 24 outlet_rack w=2 name="등산복 행거"
 prop rack_ga 39 24
-box 39 24 outlet_rack w=2 name="옷 행거"
+box 39 24 outlet_rack w=2 name="정장 행거"
 prop rack_ga 43 24
-box 43 24 outlet_rack w=2 name="옷 행거"
+box 43 24 outlet_rack w=2 name="작업복 행거"
 prop raincoat_ga 36 28
 box 36 28 raincoat w=2 name="전시 특가 진열대"
-text 38 28 "손글씨 '2+1'. 노란 방호 우비가 개켜 쌓였다. 견본 방독면은 끈이 끊겼다." w=1
+text 38 28 "손글씨 '2+1'. 노란 방호 우비가 개켜 쌓였다. 견본 방독면 하나는 끈이 아직 성하다." w=1
 prop cash_counter 42 28
 box 42 28 till w=2 name="계산대 서랍"
 text 44 28 "구겨진 영수증. '2077-10-23 22:51 방호 우비 2+1 — 3벌'. 뒷면 배송 메모: '금빛 빌딩 31층 연회장 — 개관 만찬 직원 유니폼 40벌, 24일 오전'." w=2
@@ -154,6 +158,10 @@ prop curtain_ga 45 15 pass=1
 prop w_mirror 39 13
 text 39 15 "탈의실 거울에 립스틱 글. '줄 안에 서 — 고개 돌리지 마'. 그 아래 누가 덧썼다. '얼굴도 가리고.'"
 text 45 15 "탈의실. 커튼을 치면 밖에서 안이 안 보인다. 거울 앞에서 갈아입을 수 있다."
+text 35 15 "탈의실 바닥에 찢긴 가격표. '정가 89,000 → 특가 29,000'. 누가 숫자 위에 손톱으로 줄을 그었다."
+text 37 15 "커튼 안쪽에 크레용 낙서 — 방독면 쓴 사람 셋과 작은 사람 하나. 작은 사람만 얼굴이 있다."
+text 41 15 "벽 고리에 직원 명찰이 걸려 있다. 'A관 2층 · 판매 · 한소영'. 뒷면에 '23일 마감조'."
+text 43 15 "의자 위에 방독면 정화통 하나. 포장도 안 뜯었다. 끈 없는 방독면엔 쓸모가 없다."
 prop office_desk 2 17
 box 2 17 desk w=2 name="점장실 책상"
 text 2 18 "점장실 공문. '전시 이벤트 — 전 마네킹 방독면 착용. 시민 경각심 고취. 본사 지시'. 결재 도장이 반쯤 찍혔다." w=2
@@ -166,11 +174,16 @@ prop escalator_ga 4 13 pass=1
 prop escalator_ga 31 13 pass=1
 text 4 15 "멈춘 에스컬레이터. 위층에서 사람 목소리." w=2
 # ---------------------------------------------------------------- 2층: 거래 자리 · 단가 칠판 · 두목 책상 · 마네킹 창고 · 간판 사다리
-prop w_board_ga 10 1
+prop w_board_ga 10 1 cond="GA_DECOY < 2"
+prop w_board_ga 10 1 state=crossed cond="GA_DECOY >= 2"
+prop mann_tied 13 3 cond="GA_DECOY == 2"
+prop mann_tied 13 3 state=bare cond="GA_DECOY == 3"
+box 13 3 decoy_mann name="묶인 마네킹" cond="GA_DECOY == 2"
+text 14 3 "기둥에 밧줄로 묶인 마네킹. 파란 작업복 등판에 붉은 분필 — '3,000'에 줄 두 번. 누가 생포해 왔다가 플라스틱인 걸 알았다." w=1 cond="GA_DECOY == 2"
 text 10 3 "단가 칠판. '고철 kg 2 · 옷 벌 5'. 붉은 분필로 크게 — 'S-07 작업복 3,000. 생포만!'" w=2
 prop trade_mat_lt 9 6
 box 9 6 gang_goods w=2 name="패거리 거래 물건"
-text 11 6 "거래 자리. 작업복 견본이 개켜 있고, 장부 쪽지에 '새벽인력 인솔조 — 목요일 수거 · 벌당 5캡'." w=1
+text 11 6 "거래 자리. 작업복 견본이 개켜 있고, 장부 쪽지에 '새벽인력 인솔조 — 수거는 처음 본 날부터 사흘째 · 벌당 5캡'." w=1
 prop office_desk 24 4
 prop ledger_ga 24 4
 box 24 4 desk w=2 name="두목 책상"
