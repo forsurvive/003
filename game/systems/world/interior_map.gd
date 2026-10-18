@@ -69,6 +69,7 @@ var gos := {}                                    ## Vector2i -> 들어가는 문
 var terms := {}                                  ## Vector2i -> 단말(1-4): {"x","y","w","h","id","cond"}
 var boxes := {}                                  ## Vector2i -> 용기(0-9): {"x","y","w","h","kind","owner","lock","name","cond"} — 조건은 조사할 때 본다
 var text_meta := {}                              ## Vector2i -> {"cond", "seq": [글…], "scene", "key"} — 여러 번 조사하는 글(0-7)
+var text_alt := {}                               ## Vector2i -> [메타…] — 같은 칸에 조건이 다른 장면 글이 여럿(1-11k: 유품을 거둔 뒤 글) — 조사하는 순간 조건이 맞는 첫 것
 var marks := {}
 var actors: Array = []                           ## 문을 여는 인물(주인공·NPC)
 var props: Array = []                            ## [{"name", "x", "y", "w", "h", "node"}] — 연출이 상태 그림을 바꾼다
@@ -323,8 +324,17 @@ func _add_objects(map_id: String, d: Dictionary, st: StoryState, o: Vector2i) ->
 				if live or not texts.has(c):
 					texts[c] = t["text"]
 				if staged or t.has("cond"):
-					text_meta[c] = {"cond": t.get("cond", ""), "seq": t.get("seq", []), "scene": t.get("scene", ""),
+					var meta := {"cond": t.get("cond", ""), "seq": t.get("seq", []), "scene": t.get("scene", ""),
 						"key": "%s:%d,%d" % [map_id, int(t["x"]), int(t["y"])], "plain": plain}
+					if staged and text_meta.has(c) and str(text_meta[c].get("scene", "")) != "":
+						if not text_alt.has(c):
+							text_alt[c] = [text_meta[c]]
+						meta["plain"] = str(text_meta[c].get("plain", ""))
+						text_alt[c].append(meta)
+						if live:
+							text_meta[c] = meta
+					else:
+						text_meta[c] = meta
 
 
 ## 칸 쓰기·읽기(월드는 청크 자료에 쓴다 — WorldMap이 덮어쓴다)

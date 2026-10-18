@@ -954,6 +954,10 @@ func interact() -> bool:
 	for cc in cells:
 		if map.texts.has(cc):
 			var m: Dictionary = map.text_meta.get(cc, {})
+			for alt in map.text_alt.get(cc, []):                            # 같은 칸 여러 장면 글 — 지금 조건이 맞는 첫 것(1-11k)
+				if InteriorMap._cond_ok(str(alt["cond"]), st):
+					m = alt
+					break
 			if not m.is_empty():
 				if not InteriorMap._cond_ok(str(m["cond"]), st):
 					if str(m.get("plain", "")) != "":                         # 장면 조건이 아니면 그 자리의 보통 글(0-9)

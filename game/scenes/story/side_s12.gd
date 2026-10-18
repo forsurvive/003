@@ -245,12 +245,14 @@ func _after_card() -> void:
 	_catch_up()
 
 
-## 유품(해법 C) — 가족마다 풍경 하나가 바뀐다
-func item(k: String) -> void:
+## 유품(해법 C) — 가족마다 풍경 하나가 바뀐다 · at_lay = 죽은 가족의 자리에 놓음(소문이 '죽기 전에 받았나 / 놓였나'를 가른다)
+func item(k: String, at_lay := false) -> void:
 	if q(ITEM_FLAG[k]) == 1 or not _has(ITEM[k]):
 		return
 	st.call_fn("take", [ITEM[k], 1])
 	_sq(ITEM_FLAG[k], 1)
+	if at_lay:
+		_sq("LAYI" + KEY[k], 1)
 	st.call_fn("karma", [25])
 	st.call_fn("aff", ["JH", 1])
 	if k == "s" and not st.is_dead(NPC["s"]):
@@ -282,6 +284,7 @@ func look(why: String) -> void:
 
 # ---------------------------------------------------------------- 하루 · 맵
 func _on_day(_d: int) -> void:
+	_sq("DAYK", day() % 3)                                               # 정해진 뒤 한 줄을 날마다 바꾼다(원고 ROLL · HELD · CALL · SAT)
 	if q("SOLD") == 1 and q("KNOWN") == 0 and day() >= q("SOLD_DAY") + KNOWN_DAYS:
 		_sq("KNOWN", 1)                                                  # 인쇄소 뒤칸 일이 시장에 돈다(공개도 1)
 		st.call_fn("aff", ["JH", -3])
@@ -291,10 +294,21 @@ func _on_day(_d: int) -> void:
 func _on_map(id: String) -> void:
 	if id == "J-02":
 		_stock_box()
+	_late_hint(id)
 	if not id.begins_with("J-") or v("V_ACT") < 1 or q("START") > 0 or not _has(BUNDLE):
 		return
 	start("지하시장")                                                  # 묶음을 들고 지하시장에 들면 자동(원문 발동)
-	host.hint("셔터마다 붙은 호수 — 'A-11', 'A-13'. 신분증 묶음 뒷면 '비상 연락' 칸에도 그 호수가 있었다(살펴보기)", 6.0)
+	_sq("HINTD", day())
+	host.hint("셔터마다 2077년 호수가 붙어 있다.", 4.0)                 # 재검수: 첫날은 여기까지 — 분필 · 셔터 · 연락부 · 인지영으로 찾는 맛을 남긴다
+
+
+## 하루가 지나도 셋 다 모르면 그때 묶음 뒷면 이야기까지
+func _late_hint(id: String) -> void:
+	if not id.begins_with("J-") or q("START") == 0 or q("HINTD") == 0 or q("HINTD") < 0 or day() <= q("HINTD"):
+		return
+	if q("J") == 0 and q("S") == 0 and q("E") == 0 and _has(BUNDLE):
+		host.hint("신분증 묶음 뒷면 '비상 연락' 칸 — 'A-11', 'B-04', 'A-13'. 이 상가 호수다(살펴보기)", 6.0)
+	_sq("HINTD", -1)
 
 
 # ---------------------------------------------------------------- 명령(@cmd s12 …)
@@ -317,7 +331,7 @@ func _cmd(a: Array, done: Callable) -> void:
 		"lay":
 			lay(str(a[1]))
 		"item":
-			item(str(a[1]))
+			item(str(a[1]), a.size() > 2 and str(a[2]) == "lay")
 		"sell":
 			sell()
 	done.call()

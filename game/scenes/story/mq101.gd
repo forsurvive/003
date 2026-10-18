@@ -294,9 +294,12 @@ func trade_mult(vid: String) -> Array:
 	if vid == "V11" and st.vars.has("SQ_S12_REWARD") and v("SQ_S12_REWARD") & 1:   # SQ-S12 보상(SD-04a §5.5): 엄수연 약 상시 −15% — 그이 이름을 돌려준 손님
 		k = [k[0] * 0.85, k[1]]
 		greet = "그이 이름 찾아 준 사람이잖아요. 약값은 덜 받아요."
-	if vid == "VJ05" and st.vars.has("SQ_S12_REWARD") and v("SQ_S12_REWARD") & 2:   # SQ-S12: 진재석 진공관 감정(원문 '무료 감정') — 매입을 제값에(+10%)
-		k = [k[0], k[1] * 1.10]
-		greet = "사위 놈 신분증 들고 온 사람이야. 진공관은 내가 제값 쳐 줘."
+	if vid == "VJ05" and st.vars.has("SQ_S12_REWARD") and v("SQ_S12_REWARD") & 2:   # SQ-S12: 진재석 진공관 감정(원문 '무료 감정') — 회의 탁자를 약속한 손님 매입 +10%
+		if v("SQ_S12_KNOWN") == 0:
+			k = [k[0], k[1] * 1.10]
+			greet = "사위 놈 신분증 들고 온 사람이야. 진공관은 내가 제값 쳐 줘."
+		else:
+			greet = "진공관 값은 쳐 줘. 약속값은 아니고."             # 약속을 판 일이 알려진 뒤(재검수 — 판 뒤 인사가 BROKE와 부딪치던 것)
 	if vid == "V05" and st.vars.has("SQ_S05_PYO") and v("SQ_S05_PYO") == 1:   # SQ-S05 보상(SD-04a §4.5): 표하경 상시 −15% — 서쪽 측실 선반
 		k = [k[0] * 0.85, k[1]]
 		greet = "서쪽 측실 선반 몫이야. 너한테는 싸게."

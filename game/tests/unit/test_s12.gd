@@ -364,6 +364,13 @@ func test_s12_sell(t) -> void:
 	st.call_fn("give", ["M-412", 1])
 	p = _play(st, c, "JM_JIN", ["반지"])
 	t.ok(_said(p).contains("너 때문은 아니야") and c.q("JR") == 1, "판 뒤에도 반지는 받는다")
+	st.vars.set_v("SQ_S12_REWARD", 2)
+	var mm := Mq101.new()
+	mm.host = h
+	mm.st = st
+	var kk := mm.trade_mult("VJ05")
+	t.ok(absf(float(kk[0][1]) - 1.0) < 0.001 and str(kk[1]).contains("약속값"), "알려진 뒤엔 +10% 없음 · '약속값은 아니고'")
+	mm.free()
 	p = _play(st, c, "JM_EOM")
 	t.ok(not _said(p).contains("팔았다면서"), "이미 건네받은 엄수연은 원망 대신 그 이름")
 
@@ -397,6 +404,7 @@ func test_s12_lay(t) -> void:
 	t.ok(_opts(st, "SQS12_LAY_E").any(func(o): return str(o).contains("근무 시계")), "놓은 뒤에도 시계 갈래")
 	p = _play(st, c, "SQS12_LAY_E", ["근무 시계"])
 	t.eq(c.q("EW"), 1, "시계도 놓음")
+	t.eq(c.q("LAYIE"), 1, "죽은 뒤 자리에 놓았다(소문 판)")
 	t.ok(_said(p).contains("신분증 곁에"), "신분증 곁에 둔다")
 
 
@@ -445,7 +453,7 @@ func test_s12_sept(t) -> void:
 	var c: SideS12 = r[2]
 	st.call_fn("give", ["M-003", 1])
 	var p := _play(st, c, "JM_SAGONG", ["전시 배급표"])
-	t.ok(_said(p).contains("9월 거네"), "9월분")
+	t.ok(_said(p).contains("10월 거 아니네"), "9월분")
 	t.eq(c.q("SB"), 0, "순회는 계속")
 
 
@@ -470,6 +478,51 @@ func test_s12_done(t) -> void:
 	c.give("s")
 	t.eq(_v(st, "AFF_JH") - jh0, 9, "두 번 주지 않음")
 	t.eq(_v(st, "SQH_IDCARD"), 2 | 4, "비트 2 · 4")
+
+
+## 날마다 바뀌는 한 줄 · 진입 힌트는 첫날 호수까지, 하루 지나도 모르면 뒷면 이야기
+func test_s12_day_lines(t) -> void:
+	var r := _host("J-03", "from_J-02")
+	var h: InteriorHost = r[0]
+	var st: StoryState = r[1]
+	var c: SideS12 = r[2]
+	_bundle(st)
+	h.hints.clear()
+	h.enter("J-02", "from_J-03")
+	t.ok(_hints(h).contains("셔터마다") and not _hints(h).contains("B-04"), "첫날 힌트는 호수까지")
+	c.keep("j")
+	var said := {}
+	for d in [11, 12, 13]:
+		st.vars.set_v("GAME_DAY", d)
+		h.day_tick.emit(d)
+		said[_said(_play(st, c, "JM_JIN"))] = 1
+	t.eq(said.size(), 3, "진재석 정해진 뒤 한 줄이 사흘 동안 셋 다 다름")
+	st.vars.set_v("SQ_S12_J", 0)
+	st.vars.set_v("SQ_S12_HINTD", 10)
+	h.hints.clear()
+	h.enter("J-03", "from_J-02")
+	t.ok(_hints(h).contains("B-04"), "하루 지나도 셋 다 모르면 뒷면 이야기")
+
+
+func _hints(h: InteriorHost) -> String:
+	return " / ".join(h.hints.map(func(x): return str(x[0])))
+
+
+## 같은 칸에 조건이 다른 장면 글 둘(유품 전/뒤) — 맵에 머문 채 조건이 바뀌어도 조사하면 맞는 쪽 장면이 열린다(엔진 text_alt)
+func test_s12_same_cell(t) -> void:
+	var r := _host("Y-02", "from_Y-01")
+	var h: InteriorHost = r[0]
+	var st: StoryState = r[1]
+	var c := Vector2i(16, 17)
+	t.ok(h.map.text_alt.has(c) and h.map.text_alt[c].size() == 2, "1조 맨 앞자리 글 둘")
+	t.eq(str(h.map.text_meta[c]["cond"]), "SQ_S12_JT == 0", "들어올 때 맞는 쪽")
+	st.vars.set_v("SQ_S12_JT", 1)
+	var pick := ""
+	for alt in h.map.text_alt[c]:
+		if InteriorMap._cond_ok(str(alt["cond"]), st):
+			pick = str(alt["cond"])
+			break
+	t.eq(pick, "SQ_S12_JT == 1", "머문 채 반지를 거둔 뒤엔 다른 쪽")
 
 
 ## 저장/불러오기 — 변수 한 곳
