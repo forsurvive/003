@@ -6,9 +6,10 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "VISIT": 7,
-  "GIVE": 12,
-  "DONE": 17
+  "VISIT": 9,
+  "FAKE": 14,
+  "GIVE": 18,
+  "DONE": 23
  },
  "ops": [
   {
@@ -22,9 +23,21 @@
    "to": "GIVE"
   },
   {
+   "op": "cmd",
+   "name": "hp",
+   "args": [
+    "von"
+   ]
+  },
+  {
    "op": "if",
-   "cond": "GAME_HOUR >= 14 and GAME_HOUR < 16",
+   "cond": "HP_VON == 1",
    "to": "VISIT"
+  },
+  {
+   "op": "if",
+   "cond": "HP_VON == 2",
+   "to": "FAKE"
   },
   {
    "op": "line",
@@ -65,6 +78,26 @@
    "who": "N-HP-P1",
    "emo": "기본",
    "text": "그쪽은 누구 보러 왔어요? 아, 나 보러? 그럼 앉아요."
+  },
+  {
+   "op": "do",
+   "fx": "HP_ASK1 = 1"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-HP-P1",
+   "emo": "미소",
+   "text": "(침대에 일어나 앉아 머리를 매만진다) 차임 울렸죠? 수아 오겠다. 엘리베이터 타면 금방이래요."
+  },
+  {
+   "op": "line",
+   "who": "N-HP-P1",
+   "emo": "기본",
+   "text": "…창이 왜 이렇게 밝지. 두 시가 이렇게 밝았나."
   },
   {
    "op": "do",

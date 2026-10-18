@@ -99,6 +99,40 @@ def dist_field(poly, reach, field=None, value=None):
     return d
 
 
+def dist_vertex(poly, reach, d):
+    """폴리선에서 칸 꼭짓점(정수 좌표, (H+1)×(W+1))까지의 거리와 어느 쪽인지(진행 방향 왼쪽 +1 · 오른쪽 −1, reach 안만)."""
+    out = np.full(d.shape, np.inf, np.float32)
+    side = np.zeros(d.shape, np.int8)
+    for a, b in zip(poly[:-1], poly[1:]):
+        x0, x1 = int(max(0, min(a[0], b[0]) - reach)), int(min(W, max(a[0], b[0]) + reach + 1))
+        y0, y1 = int(max(0, min(a[1], b[1]) - reach)), int(min(H, max(a[1], b[1]) + reach + 1))
+        if x1 < x0 or y1 < y0:
+            continue
+        ys, xs = np.mgrid[y0:y1 + 1, x0:x1 + 1].astype(np.float32)
+        ab = b - a
+        L2 = float(ab @ ab) or 1e-6
+        t = np.clip(((xs - a[0]) * ab[0] + (ys - a[1]) * ab[1]) / L2, 0, 1)
+        dd = np.hypot(xs - (a[0] + t * ab[0]), ys - (a[1] + t * ab[1]))
+        sub = out[y0:y1 + 1, x0:x1 + 1]
+        sd = side[y0:y1 + 1, x0:x1 + 1]
+        bt = dd < sub
+        sub[bt] = dd[bt]
+        sd[bt] = np.where(ab[0] * (ys - a[1]) - ab[1] * (xs - a[0]) >= 0, 1, -1)[bt]
+    return out, side
+
+
+# 도로 경계 v3(SD-16 §6.4 · 리드 지시 2026-10-18 '실제 도로 경계처럼'): 간선의 연석선 · 보도 바깥선을 칸 꼭짓점의 거리로 굽는다.
+# 바닥 셰이더가 꼭짓점 값을 이중선형으로 이어 연석을 곧은 한 줄(대각선 도로도 계단 없이)로, 보도를 같은 폭으로 그린다.
+# 위계 번호(바닥 덮개 바이트 위 3비트): 1 H4 · 2 H3 · 3 H2 · 4 H1 · 5 교차로(중앙선 · 분리대 없음)
+EDGE_CLS = {"H4": 1, "H3": 2, "H2": 3, "H1": 4}
+EDGE_Q = 16                                                              # 1/16칸(2px) 단위
+EDGE_Z = 96                                                              # 0의 바이트 값(−6칸 ~ +9.9칸)
+
+
+def edge_byte(v):
+    return np.clip(np.round(np.where(np.isfinite(v), v, 99.0) * EDGE_Q) + EDGE_Z, 0, 255).astype(np.uint8)
+
+
 def bake(src):
     rng = np.random.default_rng(277)
     ys, xs = np.mgrid[0:H, 0:W].astype(np.float32)
@@ -211,6 +245,13 @@ def bake(src):
     roads.sort(key=lambda a: order[a["cls"]])                            # 높은 위계가 나중에 덮는다(교차로에서 큰길이 이어진다)
     cls_map = np.zeros((H, W), np.uint8)                                 # 칸의 간선 위계(1~4, 0 = 간선 아님)
     land = (kind == 1) | (kind == 5) | (kind == 6)
+    edge_E = np.full((H + 1, W + 1), np.inf, np.float32)                 # 꼭짓점: 가장 가까운 연석선까지(칸)
+    edge_S = np.full((H + 1, W + 1), np.inf, np.float32)                 # 꼭짓점: 보도 바깥선까지(칸)
+    edge_U = np.ones((H + 1, W + 1), np.int8)                            # 꼭짓점: 가장 가까운 연석의 간선 중앙선 어느 쪽(분리대 · 중앙선을 부호 있는 거리로 잇는다)
+    edge_ec = np.full((H, W), np.inf, np.float32)                        # 칸 중심 값(위계 고르기)
+    edge_sc = np.full((H, W), np.inf, np.float32)
+    edge_cls = np.zeros((H, W), np.uint8)
+    nin = np.zeros((H, W), np.uint8)                                     # 칸 중심이 차도 안인 간선 수(2 이상 = 교차로)
     for a in roads:
         car, med, walk = RN.SECTION[a["cls"]]
         full = car + 2 * walk
@@ -229,6 +270,17 @@ def bake(src):
             kind[side] = 8
         elevated |= road & (el > 0.5)
         a["width"] = full
+        e_c = d - car / 2.0                                              # 칸 중심: 연석선까지(음수 = 차도 안)
+        nin += (e_c < 0) & land
+        better = e_c < edge_ec
+        edge_ec[better] = e_c[better]
+        edge_sc[better] = (d - full / 2.0)[better]
+        edge_cls[better] = EDGE_CLS[a["cls"]]
+        dv, sv = dist_vertex(Q, full / 2.0 + 3.0, edge_E)
+        bt = dv - car / 2.0 < edge_E
+        edge_E[bt] = (dv - car / 2.0)[bt]
+        edge_U[bt] = sv[bt]
+        np.minimum(edge_S, dv - full / 2.0, out=edge_S)
     # 철도: 지상 구간만    # 철도: 지상 구간만(SD-08 §6.4). 2호선 순환은 지상·지하가 섞여 있으나 원문이 구간을 나누지 않았다 → 지상 1호선만(구현 정합)
     for r in src["rails"]:
         if "지상" not in r["name"]:
@@ -258,7 +310,8 @@ def bake(src):
     # 높이 단(SD-08 §6.1·SD-16 §6.5): 150m 미만은 경사만(단 0), 150m부터 50m마다 암벽 1단
     level = np.where(hgt >= 150, ((hgt - 150) // 50 + 1), 0).astype(np.int8)
     return {"kind": kind, "hgt": hgt.astype(np.int16), "level": level, "use": use, "region": region, "elevated": elevated,
-            "play": play, "band": band, "roads": roads, "cls": cls_map}
+            "play": play, "band": band, "roads": roads, "cls": cls_map,
+            "edge_E": edge_E, "edge_S": edge_S, "edge_U": edge_U, "edge_sc": edge_sc, "edge_cls": np.where(nin >= 2, 5, edge_cls).astype(np.uint8)}
 
 
 # ④ 블록·필지(SD-16 §6.6 프리팹 층의 자리): 동네 길로 블록을 나누고 권역 성격대로 건물 발자국을 놓는다.
@@ -473,6 +526,19 @@ def city(r, src, seed=4120, anchors=()):
     r["street"] = street
     r["alley"] = alley
     r["zone"] = zone
+    # 도로 경계 v3(동네 길 · 콘크리트 골목): 같은 생성기를 칸 꼭짓점에서 다시 재어(RN.local_fields_vertex) 마지막 길 마스크에 맞춘다 —
+    # 둘레 네 칸이 모두 길이면 음수, 모두 아니면 양수, 섞이면 잰 값 그대로. 거리가 없는 길(단지 정문 · 문 앞 골목)은 칸 경계에서 끊긴다.
+    # 바닥 셰이더가 꼭짓점 값을 이중선형으로 이어 곧은 가장자리 · 측구를 그린다
+    fsv, fav = RN.local_fields_vertex(r, fab, land_ok, hs)
+
+    def vfix(fv, mask):
+        p_ = np.pad(mask, 1)
+        n4 = p_[:-1, :-1].astype(np.int8) + p_[1:, :-1] + p_[:-1, 1:] + p_[1:, 1:]
+        v = np.where(np.isfinite(fv), fv, np.where(n4 > 0, -0.5, 2.0))
+        v = np.where(n4 == 4, np.minimum(v, -0.05), np.where(n4 == 0, np.maximum(v, 0.05), v))
+        return np.clip(v, -6.0, 2.0).astype(np.float32)
+    r["lstreet_v"] = vfix(fsv, street)
+    r["lalley_v"] = vfix(fav, alley & ~np.isin(fab, [1, 6]) & (kind == 1))
     r["buildings"] = blds
     # 나무: 산지·구릉 숲(SD-16 §6.7 '숲은 마른 침엽 오브젝트 밀도'), 빈 땅 드문드문
     # 밀도는 높이(잡음 섞은 바이옴 높이)에 따라 이어진다: 평지 0.01 → 구릉 0.04 → 산지 0.10(등고선 한 줄에서 숲이 뚝 끊기지 않게).

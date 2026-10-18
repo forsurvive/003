@@ -883,7 +883,38 @@ def build():
         reg_grid[cy_][cx_] = code
     json.dump(tags, open(os.path.join(OUT, "chunk_tags.json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
     log("청크 태그: " + ", ".join("%s %d" % (k_, sum(1 for v in tags["chunks"].values() if k_ in v["tags"])) for k_ in TAGS))
-    return {"dk_code": EV["code"], "dk_top": EV["top"], "dk_low": EV["low"], "ev_stats": EV["stats"], "pois": pois, "r05": r05, "region_grid": reg_grid, "street": r["street"], "bridges": cross, "routes": routes, "floor": floor, "gflag": gflag, "solid": solid, "cover": cover, "level": level, "stair": stair, "body": body,
+    # 도로 경계 v3(SD-16 §6.4): 간선 둘레 칸에 위계(덮개 바이트 위 3비트)와 칸 왼쪽 위 꼭짓점의 연석선 · 보도 바깥선 거리(B · A 바이트)
+    rcm = (r["edge_sc"] < 1.0) & (r["edge_cls"] > 0) & np.isin(kind, (1, 5, 6, 7, 8, 9)) & ~inmask   # 동네 길 · 골목 칸도 넣는다(보도가 끊기지 않게)
+    # 보도를 따라 나란히 붙은 동네 길 · 골목 띠(바깥 이웃이 길이 아닌 칸)는 바깥 땅으로 — 계단처럼 보도에 붙지 않게.
+    # 보도에 수직으로 닿는 길(바깥 이웃도 길)은 그대로 둔다
+    lane_t = (r["street"] | r["alley"] | r["track"]) & rcm & (r["edge_sc"] >= 0)
+    gy_, gx_ = np.gradient(np.where(np.isfinite(r["edge_sc"]), r["edge_sc"], 9.0))
+    hx_ = np.abs(gx_) >= np.abs(gy_)
+    ox_ = np.where(hx_, np.sign(gx_), 0).astype(np.int64)
+    oy_ = np.where(hx_, 0, np.sign(gy_)).astype(np.int64)
+    ys_, xs_ = np.nonzero(lane_t)
+    nx_, ny_ = np.clip(xs_ + ox_[ys_, xs_], 0, W - 1), np.clip(ys_ + oy_[ys_, xs_], 0, H - 1)
+    anyl = r["street"] | r["alley"] | r["track"]
+    par = ~anyl[ny_, nx_]
+    floor[ys_[par], xs_[par]] = floor[ny_[par], nx_[par]]
+    r["street"][ys_[par], xs_[par]] = False
+    log("보도에 나란한 길 띠 %d칸을 바깥 땅으로" % int(par.sum()))
+    rcls = np.where(rcm, r["edge_cls"], 0).astype(np.uint8)
+    rcls |= (r["street"] & rcm).astype(np.uint8) << 4                       # 덮개 바이트 6비트: 동네 길 칸(보도 바깥 아스팔트는 그대로)
+    rcls |= ((r["edge_U"][:H, :W] < 0).astype(np.uint8) << 3)              # 덮개 바이트 5비트(위계 << 2 뒤): 왼쪽 위 꼭짓점이 중앙선 오른쪽
+    # 동네 길 · 콘크리트 골목(위계 6): 꼭짓점 = 둘레 네 칸 중심 값의 평균. 꼭짓점 주인 — 보도 바깥선 2칸 안은 간선, 그 밖은 동네 길
+    art_v = r["edge_S"] < 2.0
+    Ev = np.where(art_v, r["edge_E"], r["lstreet_v"])
+    Sv = np.where(art_v, r["edge_S"], r["lalley_v"])
+    loc_ok = ~(art_v[:-1, :-1] | art_v[1:, :-1] | art_v[:-1, 1:] | art_v[1:, 1:])
+    lv = np.minimum(r["lstreet_v"], r["lalley_v"])
+    lc = (lv[:-1, :-1] + lv[1:, :-1] + lv[:-1, 1:] + lv[1:, 1:]) / 4.0
+    lmask = (lc < 1.0) & loc_ok & ~rcm & np.isin(kind, (1, 5, 6, 7)) & ~inmask
+    rcls[lmask] = (rcls[lmask] & 8) | 6
+    edge_b = WB.edge_byte(Ev[:H, :W])
+    edge_a = WB.edge_byte(Sv[:H, :W])
+    log("도로 경계 v3: 간선 둘레 %d칸(교차로 %d) · 동네 길 · 골목 %d칸" % (int(rcm.sum()), int(((rcls & 7) == 5).sum()), int(lmask.sum())))
+    return {"rcls": rcls, "edge_b": edge_b, "edge_a": edge_a, "dk_code": EV["code"], "dk_top": EV["top"], "dk_low": EV["low"], "ev_stats": EV["stats"], "pois": pois, "r05": r05, "region_grid": reg_grid, "street": r["street"], "bridges": cross, "routes": routes, "floor": floor, "gflag": gflag, "solid": solid, "cover": cover, "level": level, "stair": stair, "body": body,
             "deco": deco, "trees": tree_list, "props": props, "shadows": shadows, "insets": insets, "play": play, "band": r["band"],
             "reach": reach, "miss": miss, "wet": wet, "core": core, "kind": kind, "entries": entries}
 
@@ -1190,6 +1221,8 @@ def export(R):
             parts = [fg.tobytes()] + [R[k][sl].astype(np.uint8).tobytes() for k in ("solid", "cover", "level", "stair")]
             parts += [R[k][sl].astype("<u2").tobytes() for k in ("body", "deco")]
             parts += [R["dk_code"][sl].astype(np.uint8).tobytes()] + [R[k][sl].astype("<u2").tobytes() for k in ("dk_top", "dk_low")]   # 고가(1-Rd)
+            gx = (R["gflag"][sl].astype(np.uint8) | (R["rcls"][sl] << 2)).astype(np.uint8)
+            parts += [np.stack([R["floor"][sl].astype(np.uint8), gx, R["edge_b"][sl], R["edge_a"][sl]], -1).tobytes()]   # 바닥 층 RGBA8(도로 경계 v3)
             ci = cy * NCX + cx
             tl = trees[tree_chunk == ci]
             pb = struct.pack("<H", len(tl)) + b"".join(struct.pack("<BBH", int(t[0]) - cx * CS, int(t[1]) - cy * CS, int(t[2])) for t in tl)
@@ -1207,7 +1240,7 @@ def export(R):
     ed = json.load(open(ep, encoding="utf-8"))
     ed["sites"] = R["pois"].get("sites", [])
     json.dump(ed, open(ep, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"), default=int)
-    meta = {"chunks": [NCX, NCY], "chunk_size": CS, "tile": 32, "size": [W, H], "layers": ["floor+gflag 교대", "solid", "cover", "level", "stair", "body16", "deco16", "deck", "deck_top16", "deck_low16", "trees", "shadows"], "deck": True,
+    meta = {"chunks": [NCX, NCY], "chunk_size": CS, "tile": 32, "size": [W, H], "layers": ["floor+gflag 교대", "solid", "cover", "level", "stair", "body16", "deco16", "deck", "deck_top16", "deck_low16", "ground_rgba", "trees", "shadows"], "deck": True, "edge": True,
             "offsets": offs, "props": R["props"], "start": list(START),
             "regions": json.load(open(WB.SRC, encoding="utf-8"))["region"],
             "region_names": {"R01": "관악", "R02": "여의도·영등포", "R03": "마포·상암", "R04": "서강·선유도", "R05": "도심",
@@ -1410,7 +1443,8 @@ def sample(R, x0, y0, w, h, out):
     sl = (slice(y0 - pad, y0 + h + pad), slice(x0 - pad, x0 + w + pad))
     gs = G.load("r01")
     img = gs.render(R["floor"][sl].astype(np.int64), None, x0 - pad, y0 - pad, x0 * 32, y0 * 32, w * 32, h * 32,
-                    flags=R["gflag"][sl].astype(np.int64)).convert("RGBA")
+                    flags=(R["gflag"][sl].astype(np.int64) | (R["rcls"][sl].astype(np.int64) << 2)),
+                    edge=(R["edge_b"][sl].astype(np.int64), R["edge_a"][sl].astype(np.int64))).convert("RGBA")
     sh = Image.new("RGBA", img.size, (0, 0, 0, 0))
     d = ImageDraw.Draw(sh)
     for (bx, by, bw, bh, F) in R["shadows"]:

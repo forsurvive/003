@@ -1,17 +1,18 @@
 ## 바닥 합성 층(SD-16 §6.10): 타일 격자 한 구역의 바닥을 셰이더 하나로 그린다(ground.gdshader).
-## id_map = 구역 + 한 칸 테두리. 테두리는 이웃 구역이 붙으면 채우고(put), 그 전에는 가장자리를 늘려 둔다.
+## id_map = 구역 + 한 칸 테두리(RGBA8: 바닥 · 덮개(아래 2비트) + 도로 위계(위 3비트) · 연석선 거리 · 보도 바깥선 거리 — 도로 경계 v3).
+## 테두리는 이웃 구역이 붙으면 채우고(put), 그 전에는 가장자리를 늘려 둔다. 도로 거리가 없는 칸은 255(멀다).
 ## 같은 식의 파이썬 판(art/tools/ground.py)과 픽셀 단위로 같아야 한다(scenes/bench/ground_check).
 class_name GroundLayer
 extends Node2D
 
 const DIR := "res://assets/ground/"
-const PARAMS := ["mat_of", "force", "spread", "pri", "rim", "shade", "vthr", "dens", "hard", "soft", "curb", "boff", "dlist", "dcount", "flag_of"]
+const PARAMS := ["mat_of", "force", "spread", "pri", "rim", "shade", "vthr", "dens", "hard", "soft", "curb", "boff", "dlist", "dcount", "flag_of", "rd_mat", "rd_car", "rd_med"]
 static var _sets := {}
 var set_name: String
 var origin: Vector2i
 var size: Vector2i
 var img: Image
-var bytes: PackedByteArray                    ## RG8 원자료(칸당 2바이트): set_pixel보다 빠르다
+var bytes: PackedByteArray                    ## RGBA8 원자료(칸당 4바이트): set_pixel보다 빠르다
 var tex: ImageTexture
 var mat: ShaderMaterial
 var flag_of: PackedInt32Array
@@ -51,7 +52,10 @@ func setup(name: String, o: Vector2i, s: Vector2i) -> void:
 	var m: Dictionary = st["meta"]
 	flag_of = st["ints"]["flag_of"]
 	bytes = PackedByteArray()
-	bytes.resize((s.x + 2) * (s.y + 2) * 2)
+	bytes.resize((s.x + 2) * (s.y + 2) * 4)
+	for i in range((s.x + 2) * (s.y + 2)):
+		bytes[i * 4 + 2] = 255
+		bytes[i * 4 + 3] = 255
 	_filled = PackedByteArray()
 	_filled.resize((s.x + 2) * (s.y + 2))
 	mat = ShaderMaterial.new()
@@ -78,20 +82,22 @@ func put(tx: int, ty: int, ground: int, deco: int) -> void:
 	if x < 0 or y < 0 or x > size.x + 1 or y > size.y + 1:
 		return
 	var i := y * (size.x + 2) + x
-	bytes[i * 2] = ground
-	bytes[i * 2 + 1] = flag_of[deco] if deco >= 0 and deco < flag_of.size() else 0
+	bytes[i * 4] = ground
+	bytes[i * 4 + 1] = flag_of[deco] if deco >= 0 and deco < flag_of.size() else 0
 	_filled[i] = 1
 
 
-## 덮개 값을 바로 넣는다(바깥 맵 0-10: 0 없음 · 1 벽 · 2 소품 · 3 평평한 구조물).
-func put_flag(tx: int, ty: int, ground: int, flag: int) -> void:
+## 덮개 값을 바로 넣는다(바깥 맵 0-10: 0 없음 · 1 벽 · 2 소품 · 3 평평한 구조물). eb · ea: 도로 경계 v3 거리 바이트(없으면 255).
+func put_flag(tx: int, ty: int, ground: int, flag: int, eb := 255, ea := 255) -> void:
 	var x := tx - origin.x + 1
 	var y := ty - origin.y + 1
 	if x < 0 or y < 0 or x > size.x + 1 or y > size.y + 1:
 		return
 	var i := y * (size.x + 2) + x
-	bytes[i * 2] = ground
-	bytes[i * 2 + 1] = flag
+	bytes[i * 4] = ground
+	bytes[i * 4 + 1] = flag
+	bytes[i * 4 + 2] = eb
+	bytes[i * 4 + 3] = ea
 	_filled[i] = 1
 
 
@@ -105,19 +111,18 @@ func fill(ground: Array, deco: Array) -> void:
 		for x in size.x:
 			var dv: int = deco[row + x]
 			var i := base + x
-			bytes[i * 2] = ground[row + x]
-			bytes[i * 2 + 1] = flag_of[dv] if dv >= 0 and dv < nf else 0
+			bytes[i * 4] = ground[row + x]
+			bytes[i * 4 + 1] = flag_of[dv] if dv >= 0 and dv < nf else 0
 			_filled[i] = 1
 
 
-## 구역 안쪽 전부를 RG8 행 복사로(월드 청크 1-1: 바닥·덮개 값이 교대로 든 src[off …], 행 우선 size.x × size.y).
+## 구역 안쪽 전부를 RGBA8 행 복사로(월드 청크: 바닥 · 덮개 · 도로 거리 둘이 칸마다 든 src[off …], 행 우선 size.x × size.y).
 ## 덮개 값은 바로 넣는다(put_flag와 같다). 칸마다 부르는 put보다 수십 배 빠르다(붙이기 예산 4ms).
-func fill_rg(src: PackedByteArray, off: int) -> void:
+func fill_rgba(src: PackedByteArray, off: int) -> void:
 	var w := size.x + 2
-	var edge := PackedByteArray()
-	edge.resize(2)
+	var edge := PackedByteArray([0, 0, 255, 255])
 	var out := PackedByteArray()
-	out.resize(w * 2)
+	out.resize(w * 4)
 	var fil := PackedByteArray()
 	fil.resize(w)
 	var frow := PackedByteArray()
@@ -127,11 +132,11 @@ func fill_rg(src: PackedByteArray, off: int) -> void:
 	frow[w - 1] = 0
 	for y in size.y:
 		out.append_array(edge)
-		out.append_array(src.slice(off + y * size.x * 2, off + (y + 1) * size.x * 2))
+		out.append_array(src.slice(off + y * size.x * 4, off + (y + 1) * size.x * 4))
 		out.append_array(edge)
 		fil.append_array(frow)
 	var tail := PackedByteArray()
-	tail.resize(w * 2)
+	tail.resize(w * 4)
 	out.append_array(tail)
 	var ft := PackedByteArray()
 	ft.resize(w)
@@ -155,12 +160,12 @@ func pad() -> void:
 		var i := p.y * w + p.x
 		if _filled[i] == 0:
 			var j := clampi(p.y, 1, size.y) * w + clampi(p.x, 1, size.x)
-			bytes[i * 2] = bytes[j * 2]
-			bytes[i * 2 + 1] = bytes[j * 2 + 1]
+			for c in 4:
+				bytes[i * 4 + c] = bytes[j * 4 + c]
 
 
 func commit() -> void:
-	img = Image.create_from_data(size.x + 2, size.y + 2, false, Image.FORMAT_RG8, bytes)
+	img = Image.create_from_data(size.x + 2, size.y + 2, false, Image.FORMAT_RGBA8, bytes)
 	if tex == null:
 		tex = ImageTexture.create_from_image(img)
 		mat.set_shader_parameter("id_map", tex)

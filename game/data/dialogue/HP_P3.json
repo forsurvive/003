@@ -6,8 +6,9 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "GIVE": 6,
-  "DONE": 11
+  "FAKE": 8,
+  "GIVE": 12,
+  "DONE": 17
  },
  "ops": [
   {
@@ -21,6 +22,18 @@
    "to": "GIVE"
   },
   {
+   "op": "cmd",
+   "name": "hp",
+   "args": [
+    "von"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "HP_VON == 2",
+   "to": "FAKE"
+  },
+  {
    "op": "line",
    "who": "N-HP-P3",
    "emo": "기본",
@@ -31,6 +44,26 @@
    "who": "N-HP-P3",
    "emo": "기본",
    "text": "아빠는 노란 팔찌 찼어요. 기다리는 색이래요."
+  },
+  {
+   "op": "do",
+   "fx": "HP_ASK3 = 1"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-HP-P3",
+   "emo": "미소",
+   "text": "면회 차임! (계단 쪽으로 고개를 쭉 뺀다) 아빠 온다. 두 시에 온다고 했어요."
+  },
+  {
+   "op": "line",
+   "who": "N-HP-P3",
+   "emo": "기본",
+   "text": "…아빠 발소리는 쿵쿵 나는데. 아직 안 나요."
   },
   {
    "op": "do",

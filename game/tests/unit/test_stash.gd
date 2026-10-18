@@ -4,7 +4,7 @@
 extends RefCounted
 
 
-func _host(map_id := "G-876-1245") -> Array:
+func _host(map_id := "G-880-1244") -> Array:
 	var st := StoryState.new()
 	st.load_data()
 	for q in ["MQ-P1", "MQ-P2", "MQ-P3", "MQ-P4", "MQ-101"]:

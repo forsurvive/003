@@ -133,7 +133,7 @@ func _init() -> void:
 			"KS_WORK_DAY", "KS_AWARD", "KS_STAMP", "KS_CRANE", "KS_TOLD", "KS_SEEN", "MR_LOCKER", "MR_LOCKER_DAY", "MR_BOARD", "MR_BOARD_WK", "MR_FEET"]:
 		vars.declare(k, "int", 0)
 	# 여의도 대학병원(1-D8, 1-D 계획 §14.7 · SD-05 §3.22 UQ-126 · RQ-47): 진행기 Hp만 쓴다 — 뜻은 script/act1/HP.txt 머리 주석
-	for k in ["HP_DAY0", "HP_LOST", "HP_BLUR", "HP_BLUR_DAY", "HP_WAY", "HP_TRUST", "HP_CUT", "HP_OVR", "HP_OVR_END", "HP_NIGHT", "HP_GEN", "HP_MASK", "HP_VISIT", "HP_VISIT_DAY", "HP_PUSH_DAY", "HP_BED", "HP_ASK1", "HP_ASK2", "HP_ASK3", "HP_OJ", "HP_MOVE_DAY", "HP_SKIP", "HP_MORGUE", "HP_PHASE", "HP_SAT", "HP_LETTER", "HP_MET", "HP_TOLD", "HP_DONE_DAY",
+	for k in ["HP_DAY0", "HP_LOST", "HP_BLUR", "HP_BLUR_DAY", "HP_WAY", "HP_TRUST", "HP_CUT", "HP_OVR", "HP_OVR_END", "HP_NIGHT", "HP_GEN", "HP_MASK", "HP_VISIT", "HP_VISIT_DAY", "HP_PUSH_DAY", "HP_BED", "HP_ASK1", "HP_ASK2", "HP_ASK3", "HP_OJ", "HP_MOVE_DAY", "HP_SKIP", "HP_MORGUE", "HP_PHASE", "HP_SAT", "HP_LETTER", "HP_MET", "HP_TOLD", "HP_DONE_DAY", "HP_VON", "HP_SEEN", "HP_VMASK", "HP_LTOLD",
 			"RQ47_N", "RQ47_WK", "RQ47_LAST", "DG_STOP"]:
 		vars.declare(k, "int", 0)
 	vars.declare("BC_DOUBT_DAY", "int", 0)                    # 정보 전파(1-10c): 걸어 들어감 소문이 봉천에 닿은 날 + 1 — 그날까지 봉천 사람들이 수군거린다(SD-20 N8)

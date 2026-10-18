@@ -156,8 +156,18 @@ func _on_day(d: int) -> void:
 		_log("이주 — 지하시장 진료소 곁")
 	if v("WAY") == 2 and way_ok() and posmod(d, 7) == 4:
 		_sv("DAY0", d)                                                # 들것이 들렀다(이레에 하루 — 접수대 약 상자)
+	_skip_week(d)
 	_ward_clock(d)
 	_quest()
+
+
+## 보급을 한 주 걸렀다(첫 납품 뒤 · 직접 나르는 길일 때) — 반수빈이 다음 대화 첫머리에 한 번 말한다(HP_SKIP 1 → 원고가 2)
+func _skip_week(d: int) -> void:
+	var n := int(st.vars.get_v("RQ47_N"))
+	if n == 0 or v("SKIP") != 0 or v("WAY") >= 2 or st.is_dead(BAN):
+		return
+	if int(d / 7.0) + 1 >= int(st.vars.get_v("RQ47_WK")) + 2:
+		_sv("SKIP", 1)
 
 
 func _ward_clock(d: int) -> void:
@@ -236,8 +246,9 @@ func _process(dt: float) -> void:
 ## 차임이 울렸다(제때든 덮어쓰기든)
 func _chime(ph: int) -> void:
 	host.hint("천장 스피커 차임 — '%s 시간입니다.'" % PHASE_NAME[ph], 3.0)
-	if v("CUT") == 2 and v("OVR") == 0:
-		_sv("TRUST", 0)                                               # 몰래 끊은 회로 — 반수빈이 안다(다음 대화)
+	if v("CUT") == 2 and v("OVR") == 0 and v("SEEN") == 0:
+		_sv("TRUST", 0)                                               # 몰래 끊은 회로 — 제때 차임이 7층에 안 울렸다: 반수빈이 안다(다음 대화 첫마디)
+		_sv("SEEN", 1)
 		_push()
 
 
@@ -441,6 +452,9 @@ func _cmd(a: Array, done: Callable) -> void:
 			visit(int(a[1]) if a.size() > 1 else 0)
 		"bed":
 			_sv("BED", bed_here())
+			_sv("VON", visit_on())
+		"von":
+			_sv("VON", visit_on())
 		"cut":
 			cut(int(a[1]))
 		"call":
@@ -503,14 +517,25 @@ func supply() -> void:
 		st.call_fn("karma", [10])
 	if v("WAY") == 1:
 		st.call_fn("aff", ["JH", 2])
+	if n == 1 and v("TRUST") == 0 and v("CUT") != 2:
+		_sv("TRUST", 1)                                               # 첫 보급 — 약을 들고 온 사람이면 7층 회로를 맡긴다
+	_sv("SKIP", 0)
 	_sv("DAY0", day())                                                # 약이 들어왔다 — 시계를 다시 잰다
 	_log("RQ-47 %d회" % n)
 
 
-## 면회: 14~16시 — 흐린 환자 곁에 앉으면 돌아온다 · 셋째 면회부터 반수빈이 믿는다(7층 회로)
+## 7층이 듣는 '지금'이 면회인가: 0 아님 · 1 제때(14~16시) · 2 지하에서 튼 가짜(회로가 이어져 있을 때만 들린다)
+func visit_on() -> int:
+	var natural := phase_of(_minute()) == 4
+	var ward := phase() if v("CUT") == 0 else phase_of(_minute())
+	if ward != 4:
+		return 0
+	return 1 if natural else 2
+
+
+## 면회(제때만): 흐린 환자 곁에 앉으면 돌아온다 · 서로 다른 날 셋째 면회 또는 한 면회 시간에 다른 침상 셋 → 반수빈이 믿는다(7층 회로)
 func visit(bed: int) -> void:
-	var m := _minute()
-	if m < 840 or m >= 960:
+	if visit_on() != 1:
 		return
 	var b := bed if bed > 0 else v("BED")
 	if b > 0 and b == v("BLUR"):
@@ -520,8 +545,15 @@ func visit(bed: int) -> void:
 	if v("VISIT_DAY") != day():
 		_sv("VISIT_DAY", day())
 		_sv("VISIT", v("VISIT") + 1)
-		if v("VISIT") >= 3 and v("TRUST") == 0 and v("CUT") != 2:
-			_sv("TRUST", 1)
+		_sv("VMASK", 0)
+	if b > 0:
+		_sv("VMASK", v("VMASK") | (1 << b))
+	var beds := 0
+	for i in 13:
+		if v("VMASK") & (1 << i):
+			beds += 1
+	if (v("VISIT") >= 3 or beds >= 3) and v("TRUST") == 0 and v("CUT") != 2:
+		_sv("TRUST", 1)
 
 
 ## 주인공이 서서 바라보는 침상(차트 번호 — 없으면 0)
@@ -543,7 +575,21 @@ func bed_here() -> int:
 func cut(n: int) -> void:
 	if n == 1 and v("TRUST") == 0:
 		return
+	if n == 2 and ban_sees():
+		_sv("TRUST", 0)                                               # 보는 앞에서 — 그 자리에서 잡힌다(믿음은 처음부터)
+		_sv("VISIT", 0)
+		_sv("VMASK", 0)
+		return
+	if n != 2:
+		_sv("SEEN", 0)
 	_sv("CUT", n)
+
+
+## 반수빈이 차단기를 보고 있나: 살아 있고 · 간호사실에 있다(면회 시간엔 복도 의자 앞 — 그때만 몰래 내릴 수 있다)
+func ban_sees() -> bool:
+	if st.is_dead(BAN) or v("WAY") == 3:
+		return false
+	return phase_of(_minute()) != 4
 
 
 ## 방재실 단말: 그 차임 칸이 두 시간 동안 이 건물의 '지금' — 7층이 들으면(회로 연결) 제때 아닌 차임은 병동을 흐린다

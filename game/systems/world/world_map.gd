@@ -33,7 +33,8 @@ const L_DECO := 12800
 const L_DECK := 16000                            ## 고가(1-Rd): 상판 부호 1바이트 · 위층 그림 2바이트 · 아래층 그림 2바이트
 const L_DKTOP := 17600
 const L_DKLOW := 20800
-var L_TAIL := 16000                              ## 나무·그림자 목록 시작(고가 층이 있으면 24000)
+const L_RGBA := 24000                            ## 바닥 층 RGBA8(도로 경계 v3): 바닥 · 덮개+위계 · 연석선 거리 · 보도 바깥선 거리
+var L_TAIL := 16000                              ## 나무·그림자 목록 시작(고가 층이 있으면 24000 · 도로 경계 층까지 30400)
 const SHADOW := Color(0, 0, 0, 0.35)
 const SPR_PER_FRAME := 40
 
@@ -73,7 +74,7 @@ func load_map(map_id: String, st: StoryState = null) -> void:
 	size = Vector2i(int(meta["size"][0]), int(meta["size"][1]))
 	ext = true
 	has_deck = bool(meta.get("deck", false))
-	L_TAIL = 24000 if has_deck else 16000
+	L_TAIL = (30400 if bool(meta.get("edge", false)) else 24000) if has_deck else 16000
 	tree_names = meta["props"]
 	if world_ts == null:
 		world_ts = load("res://assets/tiles/ts_world.tres")
@@ -408,7 +409,7 @@ func _attach(k: Vector2i, a: PackedByteArray) -> void:
 	var nodes: Array = []
 	var g := GroundLayer.new()                                           # 바닥 합성(SD-16 §6.10)
 	g.setup("r01", o, Vector2i(cs, cs))
-	g.fill_rg(a, L_FG)
+	g.fill_rgba(a, L_RGBA)
 	for dy in range(-1, 2):                                              # 이웃 청크와 테두리를 서로 채운다(경계 섞임이 이어지게)
 		for dx in range(-1, 2):
 			var nk := k + Vector2i(dx, dy)
@@ -520,7 +521,8 @@ func _share_ring(k: Vector2i, a: PackedByteArray, dst: GroundLayer) -> void:
 	for ty in range(y0, y1 + 1):
 		for tx in range(x0, x1 + 1):
 			var i := (ty - so.y) * cs + (tx - so.x)
-			dst.put_flag(tx, ty, a[L_FG + i * 2], a[L_FG + i * 2 + 1])
+			var j := L_RGBA + i * 4
+			dst.put_flag(tx, ty, a[j], a[j + 1], a[j + 2], a[j + 3])
 
 
 func _detach(k: Vector2i) -> void:

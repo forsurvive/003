@@ -78,6 +78,13 @@ var _clock_acc := 0.0
 var enc_live: EncounterLive                                       ## 인카운터 진행(1-3)
 var story_hold := false                                           ## 이야기 사건 중(MQ-106 버티버드 등): 무작위 인카운터를 세우지 않는다(1-7)
 var capture_hooks := {}                                           ## 잡은 쪽 → 진행기 함수(1-7: "BJ" 계엄군 생포 · "BJ_HANDOVER" 새벽인력 인계 → 청계산 귀빈실)
+static var track := false                                         ## 시험 실행기 전용: 만든 host를 모아 시험마다 치운다(트리 밖 host 누수로 전체 시험이 14GB에서 OOM)
+static var made: Array = []
+
+
+func _init() -> void:
+	if track:
+		made.append(self)
 
 
 func _ready() -> void:

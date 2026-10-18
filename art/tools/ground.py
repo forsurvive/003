@@ -989,6 +989,7 @@ def sets():
                    "pavers": 4, "pavers_b": 4, "stairs": 5, "stairs_rail": 6, "concrete_o": 7,
                    "water_deep": 8, "water_mid": 9, "water_shallow": 10, "mud": 11, "rock_floor": 12, "rubble": 13, "ballast": 14},
         "force": {"asphalt_lane": "lane"},
+        "road": {"asphalt": 3, "pavers": 4, "median": 2, "concrete": 7},
         "flag_of": {"brick": 1, "brick_window": 1, "wall_face": 1, "wall_face_cap": 1, "granite_rock": 2, "scrap_barrier": 2, "drum": 2},
     }
     s07 = {
@@ -1091,14 +1092,20 @@ class GroundSet:
             self.decal[32:64, i * 32:(i + 1) * 32] = np.where(a == 255, 255, DARK[np.minimum(a, 63)])
         self.noise = noise_tex()
         self.names = [d["name"] for d in mats]
+        rd = spec.get("road")                                            # 도로 경계 v3: 차도 · 보도 · 분리대 화단 재질과 위계별 차도 반폭 · 분리대 반폭(px)
+        self.rd_mat = (rd["asphalt"], rd["pavers"], rd["median"], rd["concrete"]) if rd else None
+        self.rd_car = np.array(RD_CAR, np.int64)
+        self.rd_med = np.array(RD_MED, np.int64)
 
     # ---------------- 정수 합성(셰이더와 같은 식)
-    def render(self, ids, deco, ox, oy, x0, y0, w, h, flags=None):
+    def render(self, ids, deco, ox, oy, x0, y0, w, h, flags=None, edge=None):
         """ids·deco: 타일 격자 [ty][tx](deco = 덮개 아틀라스 번호, 없으면 -1), 격자 (0,0) = 월드 타일 (ox, oy).
         flags를 주면 deco 대신 덮개 값(0 없음 · 1 벽 · 2 소품 · 3 평평한 구조물: 섞지 않고 그늘도 없음)을 바로 쓴다.
+        flags 위 3비트 = 도로 위계(도로 경계 v3), edge = (연석선 거리 바이트, 보도 바깥선 거리 바이트) — 칸 왼쪽 위 꼭짓점 값.
         반환: 월드 픽셀 (x0..x0+w, y0..y0+h) RGBA."""
         ids = np.asarray(ids, np.int64)
-        flags = np.asarray(flags, np.int64) if flags is not None else self.flag_of_tile(np.asarray(deco, np.int64))
+        flags_raw = np.asarray(flags, np.int64) if flags is not None else self.flag_of_tile(np.asarray(deco, np.int64))
+        flags = flags_raw & 3
         gh, gw = ids.shape
 
         def at(arr, tx, ty):
@@ -1193,6 +1200,83 @@ class GroundSet:
         curb_on = (cw > 0) & (win_m == m0) & (dd < cw)
         ck = np.where(dd == 0, 0, np.where(dd == cw - 1, 3, np.where(((thash(X, Y) >> 7) & 7) == 0, 2, 1)))
         curb_px = np.array(CURB_COL + [int(DARK[k]) for k in CURB_COL], np.int64)[ck + 4 * walld.astype(np.int64)]
+        # 도로 경계 v3(리드 지시 2026-10-18 '실제 도로 경계처럼'): 간선 둘레 칸은 꼭짓점 거리(연석선 E · 보도 바깥선 S)를 이중선형으로 이어
+        # 차도 · 배수 그늘 · 연석(곧은 한 줄) · 같은 폭 보도 · 바깥 테 · 중앙분리대(양쪽 연석 + 화단) · 노란 겹 중앙선(닳음)을 픽셀마다 정한다
+        paint = np.zeros(X.shape, bool)
+        pcol = np.zeros(X.shape, np.int64)
+        if edge is not None and self.rd_mat is not None:
+            eb, ea = np.asarray(edge[0], np.int64), np.asarray(edge[1], np.int64)
+            rc = (at(flags_raw, tx, ty) >> 2) & 7
+            on = (rc > 0) & (rc <= 5)
+            ex1, ey1 = 2 * fx + 1, 2 * fy + 1
+            ex0, ey0 = 64 - ex1, 64 - ey1
+            q = [(tx, ty, ex0 * ey0), (tx + 1, ty, ex1 * ey0), (tx, ty + 1, ex0 * ey1), (tx + 1, ty + 1, ex1 * ey1)]
+            E = sum(wq * (at(eb, cx, cy) - 96) for cx, cy, wq in q)               # 연석선까지 px × 2048(음수 = 차도)
+            S = sum(wq * (at(ea, cx, cy) - 96) for cx, cy, wq in q)               # 보도 바깥선까지 px × 2048
+            K = 2048
+            asp, pav, medm = self.rd_mat[:3]
+            car = self.rd_car[rc]
+            mh = self.rd_med[rc]
+            sg = [1 - 2 * ((at(flags_raw, cx, cy) >> 5) & 1) for cx, cy, _ in q]   # 꼭짓점이 중앙선 어느 쪽 — 부호 있는 거리로 이어야 분리대 · 중앙선이 곧다
+            c = np.abs(sum(wq * sg[i] * (at(eb, cx, cy) - 96 + car // 2) for i, (cx, cy, wq) in enumerate(q)))   # 중앙선까지
+            road = on & (E < 0)
+            med = road & (mh > 0) & (c < mh * K)
+            m_in = mh * K - c
+            med_curb = med & (m_in < 2 * K)
+            cline = road & ~med & (mh == 0) & (rc <= 4) & (c >= K) & (c < 3 * K) & (R[(Y >> 2) & 255, (X >> 2) & 255] >= 70)
+            gutter = road & ~med & (E >= -2 * K)
+            CW = RD_CURB
+            kerb = on & (E >= 0) & (E < CW * K)
+            walk = on & (E >= CW * K) & (S < 0)
+            edging = walk & (S >= -K)
+            outside = on & ~road & ~kerb & ~walk
+            isrd = lambda m: (m == asp) | (m == pav)
+            a00, a10, a01, a11 = at(ea, tx, ty), at(ea, tx + 1, ty), at(ea, tx, ty + 1), at(ea, tx + 1, ty + 1)
+            gx, gy = (a10 + a11) - (a00 + a01), (a01 + a11) - (a00 + a10)
+            hx = np.abs(gx) >= np.abs(gy)
+            m_out = self.mat_of[at(ids, tx + np.where(hx, np.sign(gx), 0), ty + np.where(hx, 0, np.sign(gy)))]
+            sub = np.where(isrd(m0), m_out, m0)
+            sub = np.where(isrd(sub), 0, sub)
+            nm = np.where(road & ~med, asp, win_m)
+            nm = np.where(med, medm, nm)
+            nm = np.where(walk, pav, nm)
+            local = ((at(flags_raw, tx, ty) >> 6) & 1) == 1                  # 동네 길 칸: 보도 바깥 아스팔트는 그 길 몫
+            nm = np.where(outside & isrd(win_m) & ~local, sub, nm)
+            win_m = np.where(on, nm, win_m)
+            dark = np.where(on, walld | gutter | edging | (outside & dark), dark)
+            curb_on = curb_on & ~on
+            kd = np.maximum(E, 0) // K
+            kk = np.where(kd == 0, 0, np.where(kd == CW - 1, 3, np.where(((thash(X, Y) >> 7) & 7) == 0, 2, 1)))
+            md = np.maximum(m_in, 0) // K
+            wd = 4 * walld.astype(np.int64)
+            rgb = np.array(CURB_COL + [int(DARK[k]) for k in CURB_COL] + [RD_LINE, int(DARK[RD_LINE])], np.int64)
+            pcol = np.where(kerb, rgb[kk + wd], pcol)
+            pcol = np.where(med_curb, rgb[np.where(md == 0, 0, 1) + wd], pcol)
+            pcol = np.where(cline, rgb[8 + walld.astype(np.int64)], pcol)
+            paint = kerb | med_curb | cline
+            # 동네 길 · 콘크리트 골목(위계 6): B = 길 가장자리, A = 골목 가장자리 — 곧은 가장자리 + 길 쪽 3px 콘크리트 측구(바깥 1px 이음 그늘)
+            lo = rc == 6
+            conc = self.rd_mat[3]
+            L, LA = E, S
+            st = lo & (L < 0)
+            gut = lo & (L >= 0) & (L < RD_GUT * K)
+            al = lo & ~st & ~gut & (LA < 0)
+            lout = lo & ~st & ~gut & ~al
+            isl = lambda m: (m == asp) | (m == pav) | (m == conc)
+            b00, b10, b01, b11 = at(eb, tx, ty), at(eb, tx + 1, ty), at(eb, tx, ty + 1), at(eb, tx + 1, ty + 1)
+            useb = L <= LA
+            lgx = np.where(useb, (b10 + b11) - (b00 + b01), gx)
+            lgy = np.where(useb, (b01 + b11) - (b00 + b10), gy)
+            lhx = np.abs(lgx) >= np.abs(lgy)
+            l_out = self.mat_of[at(ids, tx + np.where(lhx, np.sign(lgx), 0), ty + np.where(lhx, 0, np.sign(lgy)))]
+            lsub = np.where(isl(m0), l_out, m0)
+            lsub = np.where(isl(lsub), 0, lsub)
+            nm = np.where(st, asp, win_m)
+            nm = np.where(gut | al, conc, nm)
+            nm = np.where(lout & isl(win_m), lsub, nm)
+            win_m = np.where(lo, nm, win_m)
+            dark = np.where(lo, walld | (gut & (L < K)) | (al & (LA >= -K)) | (lout & dark), dark)
+            curb_on = curb_on & ~lo
         # A·B 벌
         oxm, oym = (win_m * 73) & 255, (win_m * 151) & 255
         var = (B[(Y + oym) & 255, (X + oxm) & 255] > self.vthr[win_m]).astype(np.int64)
@@ -1201,6 +1285,7 @@ class GroundSet:
         bx, by = self.boff[win_m, 0] * var, self.boff[win_m, 1] * var        # B 벌은 어긋난 자리에서 읽는다(되풀이 주기 깨기)
         out = self.atlas[win_m * CELL + ((Y + by) & (CELL - 1)), col * CELL + ((X + bx) & (CELL - 1))].astype(np.int64)
         out = np.where(curb_on, curb_px, out)
+        out = np.where(paint, pcol, out)
         # 잔 소품
         hsh = thash(tx, ty)
         force = self.force[own_id]
@@ -1213,7 +1298,7 @@ class GroundSet:
         sx = np.where(flip == 1, 31 - sx, sx)
         inside = (sx >= 0) & (sx < 32) & (sy >= 0) & (sy < 32)
         dv = self.decal[np.clip(sy, 0, 31) + 32 * dark.astype(np.int64), di * 32 + np.clip(sx, 0, 31)].astype(np.int64)
-        use = has & inside & (dv != 255)
+        use = has & inside & (dv != 255) & ~paint
         out = np.where(use, dv, out)
         rgba = np.zeros((h, w, 4), np.uint8)
         rgba[..., :3] = PAL[out]
@@ -1231,7 +1316,8 @@ class GroundSet:
         Image.fromarray(self.noise, "RGBA").save(os.path.join(out_dir, "ground_noise.png"))
         meta = {"set": self.name, "cell": CELL, "materials": self.names, "spread": self.spread.tolist(), "pri": self.pri.tolist(),
                 "rim": self.rim.tolist(), "shade": self.shade.tolist(), "curb": self.curb.tolist(),
-                "curb_rgb": [int(c) for i in CURB_COL + [int(DARK[k]) for k in CURB_COL] for c in PAL[i]],
+                "curb_rgb": [int(c) for i in CURB_COL + [int(DARK[k]) for k in CURB_COL] + [RD_LINE, int(DARK[RD_LINE])] for c in PAL[i]],
+                "rd_mat": list(self.rd_mat) if self.rd_mat else [-1, -1, -1, -1], "rd_car": RD_CAR, "rd_med": RD_MED, "rd_curb": RD_CURB,
                 "vthr": self.vthr.tolist(), "boff": self.boff.ravel().tolist(), "dens": self.dens.tolist(), "hard": self.hard.tolist(), "soft": self.soft.tolist(),
                 "dlist": self.dlist.ravel().tolist(), "dcount": self.dcount.tolist(), "mat_of": self.mat_of.tolist(),
                 "force": self.force.tolist(), "flag_of": self.flag_of.tolist()}
@@ -1239,6 +1325,12 @@ class GroundSet:
 
 
 CURB_COL = [t("P04"), t("P08"), t("P07"), t("P06")]                  # 연석: 차도 쪽 테 · 화강암 몸 · 점 · 안쪽 이음매(그늘 벌은 DARK로 한 단씩)
+RD_CURB = 4                                                          # 도로 경계 v3 연석 폭(px)
+RD_GUT = 3                                                           # 동네 길 측구(L형 콘크리트) 폭(px)
+RD_LINE = t("P48")                                                   # 노란 겹 중앙선(바랜 황토 — 닳은 자리는 비움)
+# 위계(0 없음 · 1 H4 · 2 H3 · 3 H2 · 4 H1 · 5 교차로)별 차도 반폭 · 분리대 반폭(px) — road_net.SECTION(칸) × 16
+RD_CAR = [0, 64, 80, 96, 160, 0, 0, 0]
+RD_MED = [0, 0, 0, 16, 16, 0, 0, 0]
 
 
 def thash(tx, ty):

@@ -6,41 +6,52 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "QUIET": 6,
-  "FIRST": 8,
-  "AGAIN": 12,
-  "AGAIN_BLUR": 16,
-  "AGAIN_LOST": 18,
-  "MENU": 20,
-  "TELL": 21,
-  "TELL_CLOCK": 27,
-  "GIVE": 29,
-  "GIVE_NO": 34,
-  "WAYS": 36,
-  "WAYS_EARLY": 42,
-  "WAYS_LETTER": 44,
-  "W1": 46,
-  "W1_DEAD": 51,
-  "W2": 53,
-  "W2_DEAD": 58,
-  "W3": 60,
-  "W3_OK": 63,
-  "W3_FAIL": 68,
-  "WAY_1": 70,
-  "WAY_2": 72,
-  "CIRCUIT": 74,
-  "CIRCUIT_CUT": 80,
-  "CIRCUIT_ON": 83,
-  "CIRCUIT_REJOIN": 85,
-  "CIRCUIT_SNEAK": 88,
-  "CIRCUIT_NO": 92,
-  "DOC": 94,
-  "SHOP": 96,
-  "BYE": 98,
-  "BYE_VISIT": 101,
-  "MARKET": 103
+  "QUIET": 7,
+  "FIRST": 9,
+  "AGAIN": 13,
+  "AGAIN_BLUR": 19,
+  "AGAIN_LOST": 21,
+  "AGAIN_SKIP": 23,
+  "MENU": 27,
+  "TELL": 28,
+  "TELL_CLOCK": 34,
+  "GIVE": 36,
+  "GIVE_NO": 41,
+  "WAYS": 43,
+  "WAYS_EARLY": 49,
+  "WAYS_LETTER": 51,
+  "W1": 53,
+  "W1_DEAD": 58,
+  "W2": 60,
+  "W2_DEAD": 65,
+  "W3": 67,
+  "W3_OK": 70,
+  "W3_FAIL": 75,
+  "WAY_1": 77,
+  "WAY_2": 79,
+  "CIRCUIT": 81,
+  "CIRCUIT_CUT": 88,
+  "CIRCUIT_ON": 91,
+  "CIRCUIT_REJOIN": 93,
+  "CIRCUIT_SNEAK": 96,
+  "CIRCUIT_QUIET": 100,
+  "CIRCUIT_NO": 102,
+  "LTAG": 104,
+  "DOC": 108,
+  "SHOP": 110,
+  "BYE": 112,
+  "BYE_VISIT": 116,
+  "BYE_FAKE": 118,
+  "MARKET": 121
  },
  "ops": [
+  {
+   "op": "cmd",
+   "name": "hp",
+   "args": [
+    "von"
+   ]
+  },
   {
    "op": "if",
    "cond": "HP_WAY == 3",
@@ -109,6 +120,16 @@
   },
   {
    "op": "if",
+   "cond": "HP_CUT == 2 and HP_SEEN == 1",
+   "to": "CIRCUIT_SNEAK"
+  },
+  {
+   "op": "if",
+   "cond": "HP_SKIP == 1",
+   "to": "AGAIN_SKIP"
+  },
+  {
+   "op": "if",
    "cond": "HP_BLUR > 0",
    "to": "AGAIN_BLUR"
   },
@@ -142,6 +163,26 @@
    "who": "N-R02-031",
    "emo": "슬픔",
    "text": "지하에 이름표가 하나 늘었어요. 내려가는 걸 막지 못한 건 나예요."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "do",
+   "fx": "HP_SKIP = 2"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-031",
+   "emo": "피곤",
+   "text": "지난주엔 아무도 안 왔어요. 7번 침대에 모포를 한 장 더 덮었어요. 열이 나면 다들 추워해요."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-031",
+   "emo": "기본",
+   "text": "탓하는 거 아니에요. 적어 두는 거예요. 차트는 원래 그래요."
   },
   {
    "op": "goto",
@@ -183,12 +224,20 @@
      "id": "HP_BAN:1:3"
     },
     {
+     "text": "지하에서 이름표 단 환자를 쓰러뜨렸다고 말한다",
+     "tags": [],
+     "cond": "HP_LTOLD == 0 and (dead(\"N-HP-L1\") == 1 or dead(\"N-HP-L2\") == 1 or dead(\"N-HP-L3\") == 1)",
+     "fx": "",
+     "to": "LTAG",
+     "id": "HP_BAN:1:4"
+    },
+    {
      "text": "치료를 받는다",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "DOC",
-     "id": "HP_BAN:1:4"
+     "id": "HP_BAN:1:5"
     },
     {
      "text": "약을 판다",
@@ -196,7 +245,7 @@
      "cond": "",
      "fx": "",
      "to": "SHOP",
-     "id": "HP_BAN:1:5"
+     "id": "HP_BAN:1:6"
     },
     {
      "text": "그만 간다",
@@ -204,7 +253,7 @@
      "cond": "",
      "fx": "",
      "to": "BYE",
-     "id": "HP_BAN:1:6"
+     "id": "HP_BAN:1:7"
     }
    ]
   },
@@ -575,8 +624,13 @@
   },
   {
    "op": "if",
-   "cond": "HP_CUT == 2",
+   "cond": "HP_CUT == 2 and HP_SEEN == 1",
    "to": "CIRCUIT_SNEAK"
+  },
+  {
+   "op": "if",
+   "cond": "HP_CUT == 2",
+   "to": "CIRCUIT_QUIET"
   },
   {
    "op": "if",
@@ -683,7 +737,7 @@
    "op": "line",
    "who": "N-R02-031",
    "emo": "분노",
-   "text": "차단기, 그쪽이 내렸죠. 스피커가 조용하니까 다들 시간을 잃었어요. 하나가 흐려졌어요."
+   "text": "(보자마자) 차단기, 그쪽이 내렸죠. 차임 시간인데 스피커가 조용했어요. 다들 지금 몇 시냐고 물어요. 칠판 봐요."
   },
   {
    "op": "line",
@@ -707,7 +761,37 @@
    "op": "line",
    "who": "N-R02-031",
    "emo": "기본",
+   "text": "(천장을 본다) 스피커가 오늘따라 조용하네요. 지직거리지도 않고. 다음 차임 때 보면 알겠죠."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-031",
+   "emo": "기본",
    "text": "스피커요? 7층 차단기는 내 거예요. 손대지 마요."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "do",
+   "fx": "HP_LTOLD = 1"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-031",
+   "emo": "슬픔",
+   "text": "(차트철을 끌어안는다) 이름표 읽었어요? …읽었으면 말하지 마요. 누군지는 내가 알아요."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-031",
+   "emo": "기본",
+   "text": "지하에서라도 끝났으면 됐어요. 차트 맨 아래 줄은 내가 그을게요. 그건 남한테 못 시켜요."
   },
   {
    "op": "goto",
@@ -737,7 +821,12 @@
   },
   {
    "op": "if",
-   "cond": "GAME_HOUR >= 14 and GAME_HOUR < 16",
+   "cond": "HP_VON == 2",
+   "to": "BYE_FAKE"
+  },
+  {
+   "op": "if",
+   "cond": "HP_VON == 1",
    "to": "BYE_VISIT"
   },
   {
@@ -755,6 +844,22 @@
    "who": "N-R02-031",
    "emo": "기본",
    "text": "면회 시간이에요. 아무 침대 곁에나 앉아 봐요. 다들 누가 와 주길 기다려요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-031",
+   "emo": "분노",
+   "text": "방금 면회 차임, 지하에서 튼 거죠. 다들 일어나 앉아서 계단만 봐요. 아무도 안 올라오는데."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-031",
+   "emo": "기본",
+   "text": "가짜 면회는 처방이 아니에요."
   },
   {
    "op": "goto",

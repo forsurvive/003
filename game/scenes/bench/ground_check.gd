@@ -5,6 +5,7 @@ extends Node2D
 
 const SIZE := Vector2i(20, 11)
 var ORIGIN := Vector2i(160, 165)
+var fixture := ""
 
 
 func _ready() -> void:
@@ -13,12 +14,25 @@ func _ready() -> void:
 	for a in OS.get_cmdline_user_args():
 		if a.begins_with("--region="):
 			which = a.substr(9)
+		elif a.begins_with("--fixture="):
+			fixture = a.substr(10)
 		elif a.begins_with("--origin="):
 			var xy := a.substr(9).split(",")
 			ORIGIN = Vector2i(int(xy[0]), int(xy[1]))
 	if which == "s07":
 		var room := InteriorRoom.new()
 		add_child(room)
+		return
+	if which == "rd":                                                   # 도로 경계 v3: 파이썬이 만든 시험 자료(테두리 포함 격자)
+		var fx: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(fixture))
+		var gr := GroundLayer.new()
+		gr.setup("r01", ORIGIN, SIZE)
+		for y in SIZE.y + 2:
+			for x in SIZE.x + 2:
+				gr.put_flag(ORIGIN.x - 1 + x, ORIGIN.y - 1 + y, int(fx["ids"][y][x]), int(fx["flags"][y][x]), int(fx["eb"][y][x]), int(fx["ea"][y][x]))
+		gr.commit()
+		position = -Vector2(ORIGIN * 32)
+		add_child(gr)
 		return
 	var idx: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/chunks/_index.json"))
 	var cs := int(idx["chunk_size"])

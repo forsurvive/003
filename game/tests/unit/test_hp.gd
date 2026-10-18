@@ -207,11 +207,17 @@ func test_hp_push(t) -> void:
 	c.cut(0)
 	c.cut(1)
 	t.ok(_v(st, "HP_CUT") == 0, "믿음 없이는 끊어 주지 않는다")
+	st.vars.set_v("HP_TRUST", 1)
 	c.cut(2)
+	t.ok(_v(st, "HP_CUT") == 0 and _v(st, "HP_TRUST") == 0, "반수빈이 간호사실에 있을 때(10시) 몰래 내리면 그 자리에서 잡힌다 · 믿음은 처음부터")
+	var h: InteriorHost = r[0]
+	h.date_text = "2277. 11. 01.  14:30"
+	c.cut(2)
+	t.ok(_v(st, "HP_CUT") == 2 and _v(st, "HP_SEEN") == 0, "면회 시간(복도 의자 앞)엔 몰래 내릴 수 있다 — 아직 모른다")
 	st.vars.set_v("HP_OVR", 0)
 	c._phase = 1
 	c._chime(2)
-	t.ok(_v(st, "HP_BLUR") == 1 and _v(st, "HP_TRUST") == 0, "몰래 끊으면 다음 차임에 들킨다 · 흐림")
+	t.ok(_v(st, "HP_BLUR") == 1 and _v(st, "HP_TRUST") == 0 and _v(st, "HP_SEEN") == 1, "몰래 끊으면 다음 차임에 들킨다 · 흐림")
 
 
 func test_hp_supply(t) -> void:
@@ -226,6 +232,7 @@ func test_hp_supply(t) -> void:
 	st.call_fn("give", ["I-004", 4])
 	c.supply()
 	t.ok(_v(st, "RQ47_N") == 1 and _v(st, "PC_CAPS") == caps + 50 and int(st.call_fn("has", ["I-002", 3])) == 1, "납품 — 50캡 · 라드어웨이 셋 · 수혈 팩 둘")
+	t.ok(_v(st, "HP_TRUST") == 1, "첫 보급 — 반수빈이 7층 회로를 맡긴다")
 	c.supply()
 	t.ok(_v(st, "RQ47_N") == 1, "주 한 번")
 	st.vars.set_v("RQ47_N", 3)
@@ -336,3 +343,73 @@ func test_hp_morgue(t) -> void:
 		e.loco.place(e.route[0][0])
 	c._settle()
 	t.ok(c.ferals().all(func(e): return e.asleep and e.doze == "lie"), "닿으면 칸 앞에 누워 잠든다")
+
+
+## 재미 검수 반영(구현 뒤): 가짜 면회 · 한 면회 시간에 침상 셋 · 거른 주 · 침상마다 다른 목소리 · 들킴 장면 · 이름표 구울
+func test_hp_fun(t) -> void:
+	var r := _host("HP-02", "from_HP01", "10:00")
+	var h: InteriorHost = r[0]
+	var st: StoryState = r[1]
+	var c: Hp = r[2]
+	c._cmd(["met"], func() -> void: pass)
+	t.eq(c.visit_on(), 0, "10시 — 면회 아님")
+	c.call_chime(4)
+	t.eq(c.visit_on(), 2, "지하에서 튼 면회 차임 — 7층엔 가짜 면회")
+	t.ok(_v(st, "HP_BLUR") == 1, "가짜 차임도 제때 아닌 차임 — 하나가 흐려진다")
+	c.visit(1)
+	t.ok(_v(st, "HP_BLUR") == 1 and _v(st, "HP_VISIT") == 0, "가짜 면회는 처방이 아니다(흐림 그대로 · 면회로 안 침)")
+	var e := _play(st, c, "HP_BAN", ["그만 간다"])
+	t.ok(e.is_empty(), "반수빈 — 가짜 면회 인사 %s" % str(e))
+	st.vars.set_v("HP_TRUST", 1)
+	c.cut(1)
+	t.eq(c.visit_on(), 0, "7층 회로가 끊기면 지하 차임은 7층에 안 들린다")
+	c.cut(0)
+	st.vars.set_v("HP_TRUST", 0)
+	st.vars.set_v("HP_OVR", 0)
+	h.date_text = "2277. 11. 01.  14:30"
+	t.eq(c.visit_on(), 1, "14시 30분 — 제때 면회")
+	for b in [2, 3, 4]:
+		c.visit(b)
+	t.ok(_v(st, "HP_VISIT") == 1 and _v(st, "HP_TRUST") == 1, "한 면회 시간에 서로 다른 침상 셋 — 반수빈이 믿는다")
+	c.visit(1)
+	t.ok(_v(st, "HP_BLUR") == 0, "제때 면회로 흐린 탁정오가 돌아온다")
+	# 침상마다 다른 목소리(흐림 땐 그 사람 말을 되풀이)
+	var seen := {}
+	var dr := DialogueRunner.new(st)
+	for b in range(1, 9):
+		st.vars.set_v("HP_BED", b)
+		var sc := _scene("HP_BED")
+		var cur := dr.start(sc)
+		while cur["type"] == "cmd":
+			if str(cur["args"][0]) == "bed":
+				st.vars.set_v("HP_VON", 1)                            # 시험: 칸 대신 침상 번호를 직접(칸 계산은 bed_here)
+			cur = dr.advance()
+		var line := str(cur.get("text", ""))
+		cur = dr.advance()
+		line += str(cur.get("text", ""))
+		seen[line] = b
+	t.eq(seen.size(), 8, "말 없는 여덟의 면회 문장이 침상마다 다르다")
+	# 거른 주
+	r = _host("HP-02", "from_HP01", "10:00")
+	st = r[1]
+	c = r[2]
+	c._cmd(["met"], func() -> void: pass)
+	st.call_fn("give", ["I-002", 3])
+	st.call_fn("give", ["I-004", 2])
+	c.supply()
+	c._on_day(14)
+	t.eq(_v(st, "HP_SKIP"), 0, "다음 주 안에는 걸렀다고 하지 않는다")
+	c._on_day(21)
+	t.eq(_v(st, "HP_SKIP"), 1, "한 주를 통째로 거르면 반수빈이 적어 둔다")
+	e = _play(st, c, "HP_BAN", ["그만 간다"])
+	t.ok(e.is_empty() and _v(st, "HP_SKIP") == 2, "거른 주 한 줄 — 한 번만 %s" % str(e))
+	# 들킴 장면(보는 앞) · 이름표 구울
+	r = _host("HP-02", "from_HP01", "10:00")
+	st = r[1]
+	c = r[2]
+	e = _play(st, c, "HP_CUT", ["몰래"])
+	t.ok(e.is_empty() and _v(st, "HP_CUT") == 0, "보는 앞에서 차단기 — 그 자리에서 잡힘 %s" % str(e))
+	st.vars.set_v("HP_MET", 1)
+	st.kill("N-HP-L1")
+	e = _play(st, c, "HP_BAN", ["이름표", "그만 간다"])
+	t.ok(e.is_empty() and _v(st, "HP_LTOLD") == 1, "이름표 구울을 쓰러뜨렸다고 말하면 반수빈이 차트를 닫는다 %s" % str(e))

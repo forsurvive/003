@@ -25,6 +25,7 @@ var gr: Gr                                         ## 구로 차량기지(1-D4)
 var kt: Kt                                         ## 여의도 금탑(1-D5a)
 var ga: Ga
 var ks: Ks                                         ## 구로 공단 지식산업센터 · 문래(1-D7)
+var hosp: Hp                                       ## 여의도 대학병원(1-D8)
 var stash: Stash                                   ## 보관 자리 · UQ-125(1-L)
 var st: StoryState
 var route := "job"
@@ -136,6 +137,9 @@ func _ready() -> void:
 	ks = Ks.new()
 	add_child(ks)
 	ks.setup(host, true)
+	hosp = Hp.new()
+	add_child(hosp)
+	hosp.setup(host, true)
 	stash = Stash.new()
 	add_child(stash)
 	stash.setup(host, true)
@@ -525,6 +529,33 @@ func _ready() -> void:
 				["check", "UQ69_DEST == 2 and UQ69_DIE == 6", "하역장 금형에 이관 통보서 — 성씨 리어카가 알아서(분필 없이)"],
 				["hours", 22], ["check", "UQ69_DIE == 2 and UQ69_DONE_DAY >= 12", "다음 06:00 — 리어카가 문래로(사실 한 곳)"],
 				["warp", "X-MR", "arrive"], ["wait", 2.0], ["shot", "ks_alley"]]
+		"hosp":                                                           # 1-D8 대학병원: 1층 → 7층 반수빈(첫 대화 · 사정) → 칠판 → 지하 회진 행진 → 방재실 배식 차임(덮어쓰기 — 7층이 흐림) → 면회 시간 흐린 침상 곁 → 보급 → 약길 ① 편지 → 금하람
+			st.vars.set_v("GAME_DAY", 12)
+			st.vars.set_v("V_ACT", 1)
+			st.vars.set_v("PC_SKP_" + st.skill_key("화술"), 100)
+			st.call_fn("give", ["I-002", 3])
+			st.call_fn("give", ["I-004", 2])
+			host.date_text = "2277. 10. 30.  10:00"
+			host.enter("HP-01", "from_W")
+			plan = [["hp", 3000], ["noenc"], ["wait", 1.5], ["shot", "hp_lobby"],
+				["warp", "HP-02", "from_HP01"], ["wait", 1.5], ["shot", "hp_ward"],
+				["want", ["사정", "그만 간다"]], ["talk", "N-R02-031"],
+				["until", "HP_MET == 1 and HP_TOLD == 1 and HP_DAY0 == 12", 10.0, "반수빈 — 첫 대화 · 사정(병동 시계는 이날부터)", "hp_ban"],
+				["go", 19, 18, "HP-02"], ["use", 19, 17], ["wait", 1.0], ["shot", "hp_board"],
+				["warp", "HP-03", "from_HP01"], ["calm"], ["wait", 1.0], ["check", "hp_march", "회진 — 옛 직원 다섯이 깨어 복도를 한 줄로 돈다"], ["shot", "hp_march"],
+				["go", 17, 12, "HP-03"], ["go", 17, 5, "HP-03"], ["go", 18, 4, "HP-03"], ["want", ["배식"]], ["use", 18, 3],
+				["until", "HP_OVR == 3", 10.0, "방재실 단말 — 배식 차임(두 시간 덮어쓰기)", "hp_call"], ["check", "hp_eat", "배식 대형 — 주방 배식차 쪽으로"],
+				["check", "HP_BLUR == 1 and HP_PUSH_DAY == 12", "제때 아닌 차임을 7층도 들었다 — 차트 1번 흐림"],
+				["hours", 4], ["warp", "HP-02", "from_HP01"], ["wait", 1.0],
+				["want", ["곁에 앉아"]], ["go", 2, 6, "HP-02"], ["use", 2, 5],
+				["until", "HP_BLUR == 0", 10.0, "면회 시간 — 흐린 탁정오 곁에 앉아 이름을 부른다", "hp_visit"], ["shot", "hp_visit"],
+				["want", ["보급품", "그만 간다"]], ["talk", "N-R02-031"],
+				["until", "RQ47_N == 1", 10.0, "RQ-47 — 라드어웨이 셋 · 수혈 팩 둘", "hp_supply"],
+				["want", ["약길", "지하시장", "그만 간다"]], ["talk", "N-R02-031"],
+				["until", "HP_LETTER == 1", 10.0, "약길 ① — 반수빈 편지", "hp_letter"],
+				["warp", "J-05", "from_J-03"], ["wait", 1.0], ["want", ["200년", "괜찮다"]], ["talk", "C-051"],
+				["until", "HP_WAY == 1", 10.0, "금하람 — 주마다 피 둘을 7층 몫으로", "hp_geum"],
+				["check", "HP_LETTER == 2 and DG_STOP == 0", "교역 길 — 들것 정류지는 그대로(사실 한 곳)"], ["wait", 1.0], ["shot", "hp_sign"]]
 		"ktj":                                                          # 1-D5a 금탑 엉뚱한 짓: 승강로에 뛰어내린다 → 물속 칸 → 사다리로 로비 → 어하은이 알아챈다
 			st.vars.set_v("GAME_DAY", 12)
 			host.date_text = "2277. 10. 30.  10:00"
@@ -540,19 +571,19 @@ func _ready() -> void:
 			st.vars.set_v("V_ACT", 1)
 			host.date_text = "2277. 10. 26.  11:00"
 			host.ev.handlers["trade"] = func(a: Array, done: Callable) -> void: host.open_trade(str(a[0]), func(_c: int) -> void: done.call())
-			host.enter("W", "", {}, Vector2(943 * 32 + 16, 1410 * 32 + 16))
-			plan = [["noenc"], ["hp", 3000], ["wait", 2.0], ["shot", "trd_door"], ["go", 943, 1409], ["use", 943, 1408], ["wait", 2.0],
-				["check", "map:G-943-1408", "다시 문 연 고물상에 들어섰다"], ["shot", "trd_inside"],
-				["want", ["!물건을 본다", "다음에"]], ["talk", "N-VG-S1"], ["until", "win", 15.0, "고물상 거래 창(가게마다 따로 재고 · 찾는 것)", "trd_trade"], ["wait", 2.0], ["warp", "G-876-1245", "from_W"], ["wait", 2.0], ["shot", "trd_home"],
-				["warp", "G-896-1267", "from_W"], ["wait", 2.0], ["shot", "trd_home2"]]
+			host.enter("W", "", {}, Vector2(918 * 32 + 16, 1294 * 32 + 16))
+			plan = [["noenc"], ["hp", 3000], ["wait", 2.0], ["shot", "trd_door"], ["go", 918, 1293], ["use", 918, 1292], ["wait", 2.0],
+				["check", "map:G-918-1292", "다시 문 연 고물상에 들어섰다"], ["shot", "trd_inside"],
+				["want", ["!물건을 본다", "다음에"]], ["talk", "N-VG-S1"], ["until", "win", 15.0, "고물상 거래 창(가게마다 따로 재고 · 찾는 것)", "trd_trade"], ["wait", 2.0], ["warp", "G-880-1244", "from_W"], ["wait", 2.0], ["shot", "trd_home"],
+				["warp", "G-855-1243", "from_W"], ["wait", 2.0], ["shot", "trd_home2"]]
 		"stash":                                                        # 1-L 보관 자리 · UQ-125: 빈집 장롱을 비우고 삼기 → 물건 넣기 → 털림 → 흔적(10) → 빈집의 아이(30) → 나눠 주기(100)
 			st.vars.set_v("GAME_DAY", 6)
 			st.vars.set_v("V_ACT", 1)
 			host.date_text = "2277. 10. 27.  11:00"
-			host.enter("G-876-1245", "from_W")
+			host.enter("G-880-1244", "from_W")
 			plan = [["noenc"], ["hp", 3000], ["wait", 1.5], ["stash_open"], ["wait", 0.5], ["stash_claim"], ["shot", "stash_claim"], ["close"], ["wait", 0.5],
 				["check", "UQ125_R == 0", "내 자리로 삼았다"], ["setv", "GAME_DAY", 12], ["warp", "W", "L-R01-20"], ["wait", 1.0], ["stash_rob"],
-				["warp", "G-876-1245", "from_W"], ["wait", 1.5], ["stash_open"], ["wait", 1.0], ["shot", "stash_trace"], ["close"],
+				["warp", "G-880-1244", "from_W"], ["wait", 1.5], ["stash_open"], ["wait", 1.0], ["shot", "stash_trace"], ["close"],
 				["check", "stage(\"UQ-125\") >= 10", "털린 자리를 열어 흔적을 보았다 — UQ-125 10"], ["warp_dest"], ["wait", 2.0], ["shot", "stash_kid"],
 				["check", "UQ125_KID == 1", "흔적이 가리킨 빈집에 아이가 있다"],
 				["want", ["먹을 건 가져라"]], ["talk", "N-UQ-K1"], ["until", "UQ125_R == 2", 25.0, "먹을 것은 아이 몫 — 나머지 · 방울 줄 둘", "stash_share"],
@@ -562,10 +593,10 @@ func _ready() -> void:
 			st.vars.set_v("V_ACT", 1)
 			st.vars.set_v("PC_CAPS", 200)
 			host.date_text = "2277. 10. 27.  11:00"
-			host.enter("G-876-1245", "from_W")
+			host.enter("G-880-1244", "from_W")
 			plan = [["noenc"], ["hp", 3000], ["wait", 1.5], ["stash_open"], ["wait", 0.5], ["stash_claim"], ["close"], ["wait", 0.5],
 				["setv", "GAME_DAY", 12], ["setv", "GAME_HOUR", 13], ["warp", "W", "L-R01-20"], ["wait", 1.0], ["stash_rob", "crew"],
-				["warp", "G-876-1245", "from_W"], ["wait", 1.5], ["stash_open"], ["wait", 1.0], ["shot", "stashc_trace"], ["close"],
+				["warp", "G-880-1244", "from_W"], ["wait", 1.5], ["stash_open"], ["wait", 1.0], ["shot", "stashc_trace"], ["close"],
 				["check", "stage(\"UQ-125\") >= 10 and UQ125_WHO == 2", "털이꾼 흔적 — UQ-125 10"], ["warp_dest"], ["wait", 1.0],
 				["want", ["수고비"]], ["until", "UQ125_R == 10", 25.0, "낮 소굴 — 말이 통하는 털이꾼 · 수고비로 자루를 돌려받음", "stashc_talk"],
 				["check", "has(\"M-195\") == 1 and has(\"W-013\") == 1 and PC_CAPS < 200", "자루 · 방울 줄 둘 · 30캡을 냈다"]]
@@ -1333,6 +1364,12 @@ func _process(dt: float) -> void:
 			elif str(s[1]) == "ks_calm":
 				var us := ks.units()
 				ok = us.size() == 4 and us.all(func(e): return not ("player" in e.foes)) and not ks._hot
+			elif str(s[1]) == "hp_march":
+				var fs: Array = hosp.ferals().filter(func(e): return str(e.who) in Hp.FERALS.slice(0, 5))
+				ok = fs.size() >= 3 and fs.all(func(e): return not e.asleep and e.route.size() >= 6)
+			elif str(s[1]) == "hp_eat":
+				var fs2: Array = hosp.ferals()
+				ok = hosp._phase == 3 and not fs2.is_empty() and fs2.all(func(e): return (e.has_meta("hp_go") and int(e.get_meta("hp_go")) == 3) or (e.asleep and e.doze == "stand"))
 			elif str(s[1]) == "ks_carry":
 				ok = is_equal_approx(host.carry_mul, Ks.CARRY_MUL)
 			elif str(s[1]) == "ga_lure":

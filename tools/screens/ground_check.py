@@ -1,5 +1,6 @@
 """바닥 합성 대조(SD-16 §6.10): Godot GroundLayer(셰이더)와 art/tools/ground.py(파이썬 정수 판)가 같은 구역을 픽셀 단위로 같게 그리는지.
 r01·r01b: 시험 구역 두 곳(20×11타일) 바닥만. s07: 실내 방 전체(벽 타일 포함, 같은 아틀라스로 파이썬에서 덮는다).
+rd: 도로 경계 v3 — 대각선 간선 둘(H3 중앙선 · H2 분리대)과 교차 · 벽 그늘을 지어낸 구역(파이썬이 만든 자료를 Godot이 그대로 읽는다).
 출력: 다른 픽셀 수(0이어야 통과), game/reports/ground_check_<구역>.png(위 Godot · 아래 파이썬).
 실행: python3 tools/screens/ground_check.py  (Xvfb + godot 필요)"""
 import os, sys, json, subprocess, tempfile
@@ -8,6 +9,7 @@ from PIL import Image
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.join(ROOT, "art", "tools"))
+sys.path.insert(0, os.path.join(ROOT, "tools", "pipeline"))
 import ground as G
 
 GAME = os.path.join(ROOT, "game")
@@ -15,9 +17,88 @@ SW, SH = 20, 11
 R01 = {"r01": (160, 165), "r01b": (196, 205)}                  # 정문 마당·옹벽·비탈길 / 흙·풀 두 가지·아스팔트·소품 그림자
 
 
+RD_O = (300, 300)
+
+
+def rd_fixture():
+    """도로 경계 v3 시험 자료: (SH+2)×(SW+2) 격자(테두리 포함) — 바닥 번호 · 덮개+위계 · 꼭짓점 거리 바이트 둘."""
+    import world_bake as WB
+    tid = G.tile_ids("r01_ext")
+    gw, gh = SW + 2, SH + 2
+    E = np.full((gh + 1, gw + 1), np.inf)
+    S = np.full((gh + 1, gw + 1), np.inf)
+    U = np.ones((gh + 1, gw + 1), int)
+    ec = np.full((gh, gw), np.inf)
+    sc = np.full((gh, gw), np.inf)
+    cls = np.zeros((gh, gw), int)
+    nin = np.zeros((gh, gw), int)
+    vy, vx = np.mgrid[0:gh + 1, 0:gw + 1].astype(float)
+    cy, cx = vy[:gh, :gw] + 0.5, vx[:gh, :gw] + 0.5
+    for (a, b, car, med, walk, k) in (((-2.0, 13.0), (24.0, -1.5), 5, 0, 1, 2), ((3.0, -2.0), (15.0, 15.0), 6, 1, 2, 3)):
+        a, b = np.array(a), np.array(b)
+        ab = b - a
+
+        def dist(x, y):
+            t = np.clip(((x - a[0]) * ab[0] + (y - a[1]) * ab[1]) / (ab @ ab), 0, 1)
+            return np.hypot(x - (a[0] + t * ab[0]), y - (a[1] + t * ab[1]))
+        dv, dc = dist(vx, vy), dist(cx, cy)
+        bv = dv - car / 2 < E
+        U[bv] = np.where(ab[0] * (vy - a[1]) - ab[1] * (vx - a[0]) >= 0, 1, -1)[bv]
+        E = np.minimum(E, dv - car / 2)
+        S = np.minimum(S, dv - (car + 2 * walk) / 2)
+        e_c = dc - car / 2
+        nin += e_c < 0
+        bt = e_c < ec
+        ec[bt], sc[bt], cls[bt] = e_c[bt], (dc - (car + 2 * walk) / 2)[bt], k
+    cls = np.where(nin >= 2, 5, cls)
+    ids = np.full((gh, gw), tid["dirt_a"], int)
+    ids[(cx + cy * 0.6) % 7 < 2.5] = tid["dirt_grass_a"]
+    ids[sc < 0] = tid["pavers"]
+    ids[ec < 0] = tid["asphalt"]
+    flags = np.zeros((gh, gw), int)
+    flags[1:3, 15:19] = 1                                                # 벽(그늘이 보도 · 연석에 지는지)
+    flags[8, 3] = 2
+    ids[9:12, 17] = tid["asphalt"]                                       # 보도에 닿는 동네 길(6비트)
+    flags[9:12, 17] |= 1 << 6
+    rcl = np.where(sc < 1.0, cls, 0)
+    rcl = rcl | ((U[:gh, :gw] < 0).astype(int) << 3)
+    # 동네 길(대각선, 폭 2.4) · 콘크리트 골목(가로, 폭 1.2): 칸 중심 거리 → 길 마스크에 맞춤 → 꼭짓점 평균(world_bake · world_chunks와 같은 식)
+    ls = np.abs((cx - 13.0) * 0.8 - (cy - 13.0) * 0.6) - 1.2
+    la = np.where(cx > 16, np.abs(cy - 4.5) - 0.6, np.inf)
+    smask, amask = ls < 0, (la < 0) & ~(ls < 0)
+    ids[smask & (sc >= 1.0)] = tid["asphalt"]
+    ids[amask & (sc >= 1.0)] = tid["concrete_o"]
+
+    def cfield(f, msk):
+        v = np.where(np.isfinite(f), f, np.where(msk, -0.5, 2.0))
+        return np.clip(np.where(msk, np.minimum(v, -0.05), np.maximum(v, 0.05)), -6, 2)
+
+    def vavg(c):
+        p_ = np.pad(c, 1, mode="edge")
+        return (p_[:-1, :-1] + p_[1:, :-1] + p_[:-1, 1:] + p_[1:, 1:]) / 4.0
+    lc, ac = cfield(ls, smask), cfield(la, amask)
+    art_v = S < 2.0
+    Ev, Sv = np.where(art_v, E, vavg(lc)), np.where(art_v, S, vavg(ac))
+    loc_ok = ~(art_v[:-1, :-1] | art_v[1:, :-1] | art_v[:-1, 1:] | art_v[1:, 1:])
+    lm = (np.minimum(lc, ac) < 1.0) & loc_ok & (sc >= 1.0)
+    rcl = np.where(lm, (rcl & 8) | 6, rcl)
+    return {"ids": ids.tolist(), "flags": (flags | (rcl << 2)).tolist(),
+            "eb": WB.edge_byte(Ev[:gh, :gw]).astype(int).tolist(), "ea": WB.edge_byte(Sv[:gh, :gw]).astype(int).tolist()}
+
+
+def ref_rd(fx):
+    OX, OY = RD_O
+    return G.load("r01").render(np.array(fx["ids"]), None, OX - 1, OY - 1, OX * 32, OY * 32, SW * 32, SH * 32, flags=np.array(fx["flags"]),
+                                edge=(np.array(fx["eb"]), np.array(fx["ea"]))).convert("RGB")
+
+
 def shoot(region, tmp):
     out = os.path.join(tmp, f"g_{region}.png")
     extra = [f"--origin={R01[region][0]},{R01[region][1]}"] if region in R01 else []
+    if region == "rd":
+        fp = os.path.join(tmp, "rd_fixture.json")
+        json.dump(rd_fixture(), open(fp, "w"))
+        extra = [f"--origin={RD_O[0]},{RD_O[1]}", f"--fixture={fp}"]
     subprocess.run(["xvfb-run", "-a", "-s", "-screen 0 1280x720x24", "godot", "--path", GAME, "res://scenes/bench/ground_check.tscn",
                     "--write-movie", out, "--fixed-fps", "1", "--quit-after", "2", "--", f"--region={region[:3]}"] + extra,
                    check=True, capture_output=True, timeout=300)
@@ -94,7 +175,10 @@ def main():
     ok = True
     os.makedirs(os.path.join(GAME, "reports"), exist_ok=True)
     with tempfile.TemporaryDirectory() as tmp:
-        for region, ref in (("r01", ref_r01), ("r01b", lambda: ref_r01("r01b")), ("s07", ref_s07)):
+        only = [a for a in sys.argv[1:] if not a.startswith("-")]
+        for region, ref in (("r01", ref_r01), ("r01b", lambda: ref_r01("r01b")), ("s07", ref_s07), ("rd", lambda: ref_rd(rd_fixture()))):
+            if only and region not in only:
+                continue
             g = shoot(region, tmp)
             r = ref()
             w, h = min(g.width, r.width), min(g.height, r.height)          # 화면(640×360) 안의 공통 부분

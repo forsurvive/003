@@ -182,20 +182,23 @@ def arterials(river_lines):
     return out
 
 
-def voronoi(shape, S, jit, seed, box=None):
+def voronoi(shape, S, jit, seed, box=None, vert=False):
     """흔들린 격자 점(칸마다 1개)의 보로노이: 반환 (가까운 두 점 사이 이등분선까지 거리, 가장 가까운 점 번호, 둘째 점 번호, 점 거리, 점 x, 점 y).
-    box = (x0, y0, x1, y1)이면 그 안만 계산(밖은 큰 값)"""
+    box = (x0, y0, x1, y1)이면 그 안만 계산(밖은 큰 값). vert = 칸 꼭짓점((H+1)×(W+1), 정수 좌표)에서(도로 경계 v3 — 같은 점 · 같은 변)"""
     H, W = shape
     x0, y0, x1, y1 = box if box else (0, 0, W, H)
     x0, y0 = max(0, x0), max(0, y0)
     x1, y1 = min(W, x1), min(H, y1)
+    if vert:
+        x1, y1 = min(W + 1, x1 + 1), min(H + 1, y1 + 1)
     rng = np.random.default_rng(seed)
     gh, gw = H // S + 5, W // S + 5
     jx = (rng.random((gh, gw)) - 0.5) * jit
     jy = (rng.random((gh, gw)) - 0.5) * jit
     ys, xs = np.mgrid[y0:y1, x0:x1].astype(np.float32)
-    xs += 0.5
-    ys += 0.5
+    if not vert:
+        xs += 0.5
+        ys += 0.5
     by = (ys // S).astype(np.int32) + 2
     bx = (xs // S).astype(np.int32) + 2
     d1 = np.full(xs.shape, 1e9, np.float32)
@@ -226,6 +229,8 @@ def voronoi(shape, S, jit, seed, box=None):
             p1y = np.where(closer, sy, p1y)
     sep = np.maximum(1e-3, np.hypot(p2x - p1x, p2y - p1y))
     bis = (d2 - d1) / (2 * sep)
+    if vert:
+        shape = (H + 1, W + 1)
     full_b = np.full(shape, 1e9, np.float32)
     full_i1 = np.zeros(shape, np.int32)
     full_i2 = np.zeros(shape, np.int32)
@@ -301,8 +306,10 @@ def fabric_map(r, src, soft_h):
     blocked = (kind >= 2) & (kind <= 4) | (kind == 7) | (kind == 8) | (kind == 9) | (kind == 10) | (kind == 11)
     S, jit, cw, ckeep = COLLECTOR
     cb, ci1, ci2, _, _, _ = voronoi((H, W), S, jit, 9091)
-    coll = (cb < cw / 2) & keep_edges(ci1, ci2, ckeep, 9091)              # 일부 변을 지워 블록 크기가 들쭉날쭉(벌집 무늬 방지)
+    ck = keep_edges(ci1, ci2, ckeep, 9091)
+    coll = (cb < cw / 2) & ck              # 일부 변을 지워 블록 크기가 들쭉날쭉(벌집 무늬 방지)
     r["collector"] = coll
+    r["collector_f"] = np.where(ck, cb - cw / 2.0, np.inf).astype(np.float32)   # 도로 경계 v3: 길 가장자리까지(칸, 음수 = 길 안)
     free_c = (~(blocked | coll)[:hh * C, :ww * C]).reshape(hh, C, ww, C).mean(axis=(1, 3)) > 0.6
     lab, n = _label(free_c)
     hc = hint[C // 2::C, C // 2::C][:hh, :ww]
@@ -355,12 +362,89 @@ def fabric_map(r, src, soft_h):
     return fab
 
 
+def _vdil(m):
+    """칸 마스크 → 꼭짓점 마스크(둘레 네 칸 중 하나라도)"""
+    p = np.pad(m, 1)
+    return p[:-1, :-1] | p[1:, :-1] | p[:-1, 1:] | p[1:, 1:]
+
+
+def _vavg(a):
+    p = np.pad(a, 1, mode="edge")
+    return (p[:-1, :-1] + p[1:, :-1] + p[:-1, 1:] + p[1:, 1:]) / 4.0
+
+
+def local_fields_vertex(r, fab, land, soft_h, seed=4120):
+    """도로 경계 v3: local_streets와 같은 생성기 · 같은 씨앗으로, 칸 꼭짓점((H+1)×(W+1))에서 동네 길 · 골목 가장자리까지의 거리(칸, 음수 = 길 안).
+    칸 중심 값을 평균하면 좁은 골목(폭 1.2칸)이 쐐기처럼 줄었다 늘었다 한다 — 꼭짓점에서 바로 잰다"""
+    H, W = fab.shape
+    fs = np.full((H + 1, W + 1), np.inf, np.float32)
+    fa = np.full((H + 1, W + 1), np.inf, np.float32)
+
+    def fmin(f, v, msk):
+        np.minimum(f, np.where(msk, v, np.inf).astype(np.float32), out=f)
+    for k, name in enumerate(FABRICS):
+        mt = (fab == k) & land
+        if not mt.any():
+            continue
+        m = _vdil(mt)
+        yy, xx = np.nonzero(mt)
+        box = (int(xx.min()) - 8, int(yy.min()) - 8, int(xx.max()) + 9, int(yy.max()) + 9)
+        main, sub = STREETS[name]
+        if main:
+            S, jit, w, keep = main
+            b, i1, i2, dd, px, py = voronoi((H, W), S, jit, seed + 11 * k, box, vert=True)
+            ke = keep_edges(i1, i2, keep, seed + k) & m
+            fmin(fa if name == "F7" else fs, b - w / 2, ke)
+            if name == "F5":
+                fmin(fs, np.maximum(10.0 - b, b - 12.5), m)
+            del b, i1, i2, dd, px, py
+        if sub:
+            S, jit, w, keep = sub
+            b, i1, i2, dd, px, py = voronoi((H, W), S, jit, seed + 13 * k + 5, box, vert=True)
+            fmin(fa, b - w / 2, keep_edges(i1, i2, keep, seed + 7 * k + 3) & m)
+            del b, i1, i2, dd, px, py
+    ys, xs = np.mgrid[0:H + 1, 0:W + 1].astype(np.float32)
+    xs -= 0.5                                                              # local_streets의 칸 (x, y) = 점 (x, y)와 같은 좌표계
+    ys -= 0.5
+    pl = _vdil((fab == 2) & land)
+    for a, b_, ang, S in PLANNED:
+        x0, y0, x1, y1 = box_tiles(a, b_)
+        sl = (slice(max(0, y0), y1 + 1), slice(max(0, x0), x1 + 1))
+        th = np.deg2rad(ang)
+        u = (xs[sl] * np.cos(th) + ys[sl] * np.sin(th)) / S
+        v = (-xs[sl] * np.sin(th) + ys[sl] * np.cos(th)) / S
+        sub_f = fs[sl]
+        fmin(sub_f, np.minimum(np.abs(u - np.round(u)), np.abs(v - np.round(v))) * S - 1.6, pl[sl])
+    gy, gx = np.gradient(soft_h.astype(np.float32))
+    g = np.hypot(gx, gy)
+    k = 9
+    a = np.pad(g, k, mode="edge")
+    c = a.cumsum(0).cumsum(1)
+    c = np.pad(c, ((1, 0), (1, 0)))
+    n = 2 * k + 1
+    gs = (c[n:n + H, n:n + W] - c[0:H, n:n + W] - c[n:n + H, 0:W] + c[0:H, 0:W]) / (n * n) + 0.25
+    q = _vavg(soft_h / gs) / 15.0
+    fmin(fs, np.abs(q - np.round(q)) * 15.0 - 1.2, _vdil((fab == 1) & land))
+    if "collector" in r:
+        S_, jit_, cw, ckeep = COLLECTOR
+        cb, ci1, ci2, _, _, _ = voronoi((H, W), S_, jit_, 9091, vert=True)
+        cf = np.where(keep_edges(ci1, ci2, ckeep, 9091), cb - cw / 2.0, np.inf)
+        fmin(fs, cf, _vdil(land & ~np.isin(fab, [1, 2, 4, 6])))
+        fmin(fa, cf, _vdil(land & (fab == 6)))
+    return fs, fa
+
+
 def local_streets(r, fab, land, soft_h, seed=4120):
     """결별 동네 길(H5) · 골목(H6) · 흙길(F7). 반환 (street, alley, track)"""
     H, W = fab.shape
     street = np.zeros((H, W), bool)
     alley = np.zeros((H, W), bool)
     track = np.zeros((H, W), bool)
+    fs = np.full((H, W), np.inf, np.float32)                               # 도로 경계 v3: 칸 중심에서 동네 길 가장자리까지(칸, 음수 = 길 안)
+    fa = np.full((H, W), np.inf, np.float32)                               # 골목 · 흙길 가장자리까지
+
+    def fmin(f, v, msk):
+        np.minimum(f, np.where(msk, v, np.inf).astype(np.float32), out=f)
     ys, xs = np.mgrid[0:H, 0:W].astype(np.float32)
     for k, name in enumerate(FABRICS):
         m = (fab == k) & land
@@ -372,11 +456,14 @@ def local_streets(r, fab, land, soft_h, seed=4120):
         if main:
             S, jit, w, keep = main
             b, i1, i2, dd, px, py = voronoi((H, W), S, jit, seed + 11 * k, box)
-            line = (b < w / 2) & keep_edges(i1, i2, keep, seed + k) & m
+            ke = keep_edges(i1, i2, keep, seed + k) & m
+            line = (b < w / 2) & ke
             if name == "F7":
                 track |= line
+                fmin(fa, b - w / 2, ke)
             else:
                 street |= line
+                fmin(fs, b - w / 2, ke)
             if name == "F5":                                               # 단지 순환로 + 정문 둘(SD-21 §5 F5)
                 ring = (b >= 10.0) & (b < 12.5) & (dd > 12.0) & m
                 ang = np.arctan2(ys - py, xs - px)
@@ -385,11 +472,14 @@ def local_streets(r, fab, land, soft_h, seed=4120):
                 db = np.abs(((ang - g0 - np.pi) + np.pi) % (2 * np.pi) - np.pi)
                 gate = (np.minimum(da, db) * np.maximum(dd, 1.0) < 1.8) & (b < 11.0) & m
                 street |= ring | gate
+                fmin(fs, np.maximum(10.0 - b, b - 12.5), m)
             del b, i1, i2, dd, px, py
         if sub:
             S, jit, w, keep = sub
             b, i1, i2, dd, px, py = voronoi((H, W), S, jit, seed + 13 * k + 5, box)
-            alley |= (b < w / 2) & keep_edges(i1, i2, keep, seed + 7 * k + 3) & m
+            ke = keep_edges(i1, i2, keep, seed + 7 * k + 3) & m
+            alley |= (b < w / 2) & ke
+            fmin(fa, b - w / 2, ke)
             del b, i1, i2, dd, px, py
     # 계획 격자(F3): 그 시가지 축 방위각의 격자
     for a, b_, ang, S in PLANNED:
@@ -400,6 +490,8 @@ def local_streets(r, fab, land, soft_h, seed=4120):
         v = (-xs[sl] * np.sin(th) + ys[sl] * np.cos(th)) / S
         g = (np.abs(u - np.round(u)) * S < 1.6) | (np.abs(v - np.round(v)) * S < 1.6)
         street[sl] |= g & (fab[sl] == 2) & land[sl]
+        sub_f = fs[sl]
+        fmin(sub_f, np.minimum(np.abs(u - np.round(u)), np.abs(v - np.round(v))) * S - 1.6, (fab[sl] == 2) & land[sl])
     # 언덕(F2): 높이 결을 따라 감기는 길(등고선 간격 13칸쯤) — 경사를 곧장 오르는 차도는 없다
     gy, gx = np.gradient(soft_h.astype(np.float32))
     g = np.hypot(gx, gy)
@@ -413,9 +505,14 @@ def local_streets(r, fab, land, soft_h, seed=4120):
     q = hn / 15.0
     contour = (np.abs(q - np.round(q)) * 15.0 < 1.2) & (fab == 1) & land
     street |= contour
+    fmin(fs, np.abs(q - np.round(q)) * 15.0 - 1.2, (fab == 1) & land)
     if "collector" in r:                                                   # 집산로: 큰 블록 경계(언덕 F2·계획 F3·황무지 F7 제외)
         street |= r["collector"] & land & ~np.isin(fab, [1, 2, 4, 6])
         track |= r["collector"] & land & (fab == 6)
+        if "collector_f" in r:
+            fmin(fs, r["collector_f"], land & ~np.isin(fab, [1, 2, 4, 6]))
+            fmin(fa, r["collector_f"], land & (fab == 6))
+    r["street_f"], r["alley_f"] = fs, fa
     alley &= ~street
     track &= ~street
     return street, alley, track
