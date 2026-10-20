@@ -1,0 +1,36 @@
+{
+ "id": "K24_DESK",
+ "title": "원장 책상",
+ "loc": "L-R01-24",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "원장 책상. 타자기에 끼운 종이 '학부모님께 — 검사가 연기되었습니다. 환불은'에서 멈췄다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "책상 유리 밑에 쪽지 한 장. 원장 글씨 — '금고: 우리 자랑 다음에 그날.'"
+  },
+  {
+   "op": "do",
+   "fx": "FQ_GS02_CODE = 1"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-GS-02.txt"
+}

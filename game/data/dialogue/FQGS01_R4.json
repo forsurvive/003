@@ -1,0 +1,233 @@
+{
+ "id": "FQGS01_R4",
+ "title": "마당 4번 파수",
+ "loc": "L-R01-23",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TAGOK": 4,
+  "OK": 8,
+  "CLUMSY": 11,
+  "DONE": 14,
+  "LATE": 17,
+  "LATEOK": 19,
+  "LOOK": 22
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "FQ_GS01_R4 >= 1",
+   "to": "DONE"
+  },
+  {
+   "op": "if",
+   "cond": "FQGS01_STAGE == 0 or FQGS01_STAGE >= 100",
+   "to": "LOOK"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "잠든 파수-3, 가슴 판에 '4'. 목 식별 태그 고리가 비었다. 고리 둘레만 녹이 덜 슬었다 — 얼마 전까지 있었다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "식별 태그를 목 고리에 끼우고, 닦고, 정비 카드를 끼운다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "M-418",
+       "n": 1
+      }
+     ],
+     "cond": "FQ_GS01_CARDS >= 1",
+     "fx": "",
+     "to": "TAGOK",
+     "id": "FQGS01_R4:1:0"
+    },
+    {
+     "text": "태그 없이 닦고 기름을 친 뒤 정비 카드를 끼운다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 25
+      }
+     ],
+     "cond": "FQ_GS01_CARDS >= 1",
+     "fx": "",
+     "to": "OK",
+     "id": "FQGS01_R4:1:1"
+    },
+    {
+     "text": "(서툴게) 닦고 기름을 친 뒤 정비 카드를 끼운다",
+     "tags": [],
+     "cond": "FQ_GS01_CARDS >= 1",
+     "fx": "",
+     "to": "CLUMSY",
+     "id": "FQGS01_R4:1:2"
+    },
+    {
+     "text": "(정비 카드가 없다 — 대기실 정비 카드용 천공기에서 뚫어 온다)",
+     "tags": [],
+     "cond": "FQ_GS01_CARDS == 0",
+     "fx": "",
+     "to": "END",
+     "id": "FQGS01_R4:1:3"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQGS01_R4:1:4"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "gs01",
+   "args": [
+    "tag"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "gs01",
+   "args": [
+    "robot",
+    "4"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "쇳조각이 고리에 딸깍 맞는다. 'SJ-G70 · 동작 중계 04'. 4번의 목이 다시 무거워졌다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "gs01",
+   "args": [
+    "robot",
+    "4"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈 고리는 그대로다. 가슴 판에 '당번 \\V[P_REGNO]'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "gs01",
+   "args": [
+    "robot",
+    "4",
+    "clumsy"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "기름이 빈 고리로 흘러 들어간다. 닦아 낸다. 카드는 끼웠다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_GS01_TAG == 1",
+   "to": "LATE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "가슴 판에 '당번 \\V[P_REGNO]'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "가슴 판에 '당번 \\V[P_REGNO]'. 목 고리는 아직 비었다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "식별 태그를 끼운다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "M-418",
+       "n": 1
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "LATEOK",
+     "id": "FQGS01_R4:2:0"
+    },
+    {
+     "text": "그냥 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQGS01_R4:2:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "gs01",
+   "args": [
+    "tag"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "딸깍. 'SJ-G70 · 동작 중계 04'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "잠든 파수-3, 가슴 판에 '4'. 목에 걸려 있어야 할 식별 태그 고리가 비었다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-GS-01.txt"
+}

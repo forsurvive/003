@@ -159,7 +159,7 @@ def robot_sheets():
 def salim_sheets():
     """선거 관리 살림-2(1-11l SQ-S13, art/tools/robot_salim.py): 투표함지기 2호(N-R02-028) · 개표 4호(N-R02-029). 옆(E)만, 부양 — idle 4 · walk 4 · death 4."""
     import robot_salim as RS
-    for kind, name in (("ballot", "rb_ballot2_loco"), ("count", "rb_count4_loco")):
+    for kind, name in (("ballot", "rb_ballot2_loco"), ("count", "rb_count4_loco"), ("proxy", "rb_proxy_loco")):   # proxy: 학원 원장 대행(1-12b)
         frames, meta = RS.salim_sheet(kind)
         fw, fh = meta["frame"]
         sheet = Image.new("RGBA", (fw * len(frames), fh), (0, 0, 0, 0))

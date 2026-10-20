@@ -20,6 +20,7 @@ var side10: SideS10                                 ## 영등포 사이드 퀘�
 var side12: SideS12                                 ## 지하시장 사이드 퀘스트(1-11k SQ-S12)
 var side13: SideS13                                 ## 볼트 S-02 사이드 퀘스트(1-11l SQ-S13)
 var jc01: FqJc01                                    ## 세력 퀘스트 FQ-JC-01 계단 물길(1-12a)
+var fqgs: FqGs                                       ## 세력 퀘스트 FQ-GS-01 정비 당번 · FQ-GS-02 천공기(1-12b)
 var side11: SideS11                                 ## 여의도 사이드 퀘스트(1-11j SQ-S11)
 var uq71: Uq71                                     ## 비표시 퀘스트 UQ-71(1-D1 대방 지하차도)
 var u02: U02Paths                                  ## U02 남태령 지하(1-D2)
@@ -130,6 +131,9 @@ func _ready() -> void:
 	jc01 = FqJc01.new()
 	add_child(jc01)
 	jc01.setup(host, true)
+	fqgs = FqGs.new()
+	add_child(fqgs)
+	fqgs.setup(host, true)
 	uq71 = Uq71.new()
 	add_child(uq71)
 	uq71.setup(host, true)
@@ -488,6 +492,50 @@ func _ready() -> void:
 				["check", "FQ_JC01_CRACK == 1", "유입구 균열 고침"],
 				["warp", "B-01", "from_X-BC"], ["wait", 1.0], ["want", []], ["talk", "C-010"], ["wait", 2.0],
 				["check", "FQJC01_STAGE == 100 and has(\"W-101\") and has(\"M-136\")", "보고(100) · 이장님의 엽총 · 계단마을 증표"]]
+		"gs01":                                                         # 1-12b FQ-GS-01: 오상구 당번표(10) → 대기실 정비 카드 → 마당 1 · 2 · 4번 → 살림 ① 천 → 살림 ② 둥지 쥐 · 태그 →
+			st.vars.set_v("AFF_GS", 25)                                  #   3번에 전원을 안 내리고 기름부터 → 깨어남 → [관리자 인증] → 오상구 보고(100) · 진공관 둘
+			st.vars.set_v("PC_SKP_REPAIR", 60)                           #   (X-GS 원점 883,1183 — 월드 칸 = 원점 + 손 맵 칸)
+			st.vars.set_v("V_REGCARD", 4)
+			st.vars.set_v("GAME_DAY", 5)
+			st.vars.set_v("GAME_HOUR", 7)
+			host.date_text = "2277. 10. 28.  07:00"
+			host.enter("X-GS", "arrive")
+			plan = [["hp", 3000], ["wait", 1.0], ["go", 906, 1191], ["wait", 1.0], ["shot", "gs01_canopy"],
+				["want", ["당번을 서겠습니다"]], ["talk", "N-R01-503"], ["wait", 1.5],
+				["check", "FQGS01_STAGE == 10 and FQ_GS01_WARN == 1", "오상구 당번표(10) · '3번은 전원부터'"],
+				["warp", "GS-01", "from_X"], ["wait", 1.0], ["want", ["정비 카드 여섯 장"]], ["go", 13, 13, "GS-01"], ["use", 13, 12], ["wait", 1.5], ["shot", "gs01_punch"],
+				["check", "FQ_GS01_CARDS == 6", "정비 카드 여섯 장"],
+				["warp", "X-GS", "from_GS-01"], ["wait", 1.0],
+				["want", ["위에서 아래로"]], ["go", 888, 1200], ["use", 888, 1199], ["wait", 1.5],
+				["want", ["분필 글씨는 남기고"]], ["go", 892, 1201], ["use", 892, 1200], ["wait", 1.5],
+				["want", ["태그 없이"]], ["go", 902, 1201], ["use", 902, 1200], ["wait", 1.5],
+				["check", "FQ_GS01_R1 == 1 and FQ_GS01_R2 == 1 and FQ_GS01_R4 == 1 and FQGS01_STAGE == 20", "마당 1 · 2 · 4번(20)"],
+				["want", ["천을 풀어", "번호 순서대로"]], ["go", 907, 1189], ["use", 907, 1188], ["wait", 1.5],
+				["check", "FQ_GS01_R5 == 2", "살림 ① 천을 풀고 다시 감음"],
+				["want", ["뚜껑을 연다"]], ["go", 908, 1189], ["use", 908, 1188], ["wait", 1.5], ["fight"], ["wait", 1.0],
+				["want", ["둥지를 쓸어", "집진통을 닦고"]], ["go", 908, 1189], ["use", 908, 1188], ["wait", 1.5],
+				["check", "FQ_GS01_R6 == 3 and has(\"M-418\") and FQ_GS01_PAPER == 1", "살림 ② 둥지 쥐 · 4번 태그 · 2077 청소 확인서"],
+				["want", ["닦고, 관절에 기름", "관리자 인증"]], ["go", 905, 1189], ["use", 905, 1188], ["wait", 3.0], ["shot", "gs01_wake"],
+				["check", "FQ_GS01_R3 == 2 and FQGS01_STAGE == 30", "3번이 깨어남 → [관리자 인증](30)"],
+				["want", []], ["talk", "N-R01-503"], ["wait", 2.0], ["shot", "gs01_done"],
+				["check", "FQGS01_STAGE == 100 and has(\"M-014\")", "오상구 보고(100) · 진공관"]]
+		"gs02":                                                         # 1-12b FQ-GS-02: 학원 K-24 자습석 한 시간 → 원장 대행이 원장실 옆문을 엶 → 채점기 [수리 50] 바늘 →
+			st.vars.set_v("AFF_GS", 25)                                  #   중계소 류정 '…벌써요?' → 바늘 건넴(100) → 대기실 등록용 천공기가 다시 돈다
+			st.vars.set_v("PC_SKP_REPAIR", 60)
+			st.vars.set_v("GS_MET_RJ", 1)
+			st.vars.set_v("GAME_DAY", 6)
+			st.vars.set_v("GAME_HOUR", 13)
+			host.date_text = "2277. 10. 29.  13:00"
+			host.enter("K-24", "from_W")
+			plan = [["hp", 3000], ["wait", 1.0], ["calm"], ["go", 18, 12, "K-24"], ["wait", 1.0], ["shot", "gs02_door"],
+				["want", ["자습석에 앉아"]], ["go", 3, 13, "K-24"], ["use", 3, 12], ["wait", 2.0],
+				["check", "FQ_GS02_DOOR == 1 and FQ_GS02_SAT == 1", "자습 한 시간 → 원장실 면담(옆문)"],
+				["go", 24, 12, "K-24"], ["wait", 1.0], ["shot", "gs02_office"],
+				["want", ["바늘 뭉치만"]], ["go", 29, 4, "K-24"], ["use", 29, 3], ["wait", 1.5], ["shot", "gs02_grader"],
+				["check", "GS02_GRADER == 2 and has(\"M-420\")", "채점기 바늘 분리(P1 GS02_GRADER 2)"],
+				["warp", "GS-02", "from_X"], ["wait", 1.0], ["want", ["천공 바늘 묶음을 건넨다", "됐습니다"]], ["talk", "C-014"], ["wait", 2.0],
+				["check", "FQGS02_STAGE == 100 and FQ_GS02_EARLY == 1", "류정 '…벌써요?' → 건넴(100)"],
+				["warp", "GS-01", "from_X"], ["wait", 1.5], ["shot", "gs02_punch"]]
 		"db":                                                           # 1-D1 대방 지하차도 · UQ-71: 북쪽 입구로 들어가 분대 등 뒤에서 웅크려 엿듣기(사흘 기한) → 펌프실 운전기사 메모 →
 			st.vars.set_v("PC_SKP_SCIENCE", 60)                          #   허리 물 버스에서 정지 레버로 봉인(카르마 · 지대 꺼짐) → 남쪽 입구로 나와 문 앞에 선다
 			st.vars.set_v("GAME_DAY", 8)

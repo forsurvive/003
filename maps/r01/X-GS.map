@@ -86,11 +86,24 @@ prop gs_lamp_line2 18 20
 prop gs_lamp_line 21 20
 prop gs_lamp_line2 24 20
 text 6 20 "대기등 램프 줄. 녹색 전구가 다섯에 하나꼴로 켜져 있다. 흰 천 조각이 바람에 운다." w=2
-prop sentry_down 5 16
-prop sentry_down 9 17
-prop sentry_down 19 17
-text 9 17 "잠든 파수-3. 정비 당번이 닦아 둔 몸통이 반짝인다. 관절마다 기름 냄새. 눈은 꺼져 있다." w=2
-text 5 16 "파수-3. 가슴 판에 천공 카드 한 장이 끼워져 있다 — '대기 6203 정비 완료'." w=2
+# 잠든 로봇 여섯(1-12b FQ-GS-01 · SD-04d §9.3 '파수-3 4 · 살림-2 2'): 마당 1 · 2 · 4번(한가람 몫) + 정비고 차양 3번 파수 · 살림-2 둘.
+#   상태 그림은 진행기 FqGs가 맵에 들 때 맞춘다(정비 카드 · 태그 · 퓨즈). 4번은 목 식별 태그가 없다(태그는 살림-2 집진통 쥐 둥지에).
+prop gs_sentry_maint 5 16 state=tag
+prop gs_sentry_maint 9 17 state=tag
+prop gs_sentry_maint 19 17
+text 5 16 "파수-3, 가슴 판에 '1'. 천공 카드 한 장 — '대기 6203 정비 완료'." w=2 scene=FQGS01_R1
+text 9 17 "잠든 파수-3, 가슴 판에 '2'. 정비 당번이 닦아 둔 몸통이 반짝인다. 관절마다 기름 냄새." w=2 scene=FQGS01_R2
+text 19 17 "잠든 파수-3, 가슴 판에 '4'. 목에 걸려 있어야 할 식별 태그 고리가 비었다." w=2 scene=FQGS01_R4
+# 정비고 = 점검 마당 북동쪽 트인 차양(계획 §4 GS-01): 3번 파수(대기등이 또렷 — 밤에 계단 아래에서도 보인다) · 살림-2 둘 · 퓨즈함
+prop gs_canopy 22 5
+prop gs_sentry_maint 22 5 state=three
+prop gs_fuse_box 21 5
+prop gs_salim_wrap 24 5
+prop gs_salim_bin 25 5
+text 22 5 "가슴 판에 '3'. 다른 로봇과 달리 머리 위 대기등이 또렷하게 녹색이다. 등판에 퓨즈함." w=2 scene=FQGS01_R3
+text 24 5 "잠든 살림-2. 흰 천이 관절마다 감겨 있다. 천 밑에서 걸레 팔이 아주 느리게 바닥을 훔친다." scene=FQGS01_R5
+text 25 5 "잠든 살림-2. 등 뒤 원통형 집진통 뚜껑 틈에서 지푸라기가 삐져나왔다. 안에서 바스락." scene=FQGS01_R6
+text 26 6 "정비고 차양. 기둥에 녹색 페인트로 '정비'. 기둥에 당번표가 압정으로 꽂혀 있다." w=2 scene=FQGS01_POST
 prop gs_kneel 13 11
 prop gs_kneel 15 11
 prop gs_kneel 14 12
@@ -101,8 +114,8 @@ text 21 12 "순례자 의자. 등받이에 '대기 번호 순서대로'." w=2
 prop drum 25 9
 prop drum 25 10
 text 25 9 "물통. 대기실 식수. 통마다 녹색 페인트로 번호." h=2
-prop laundry_line 23 5
-text 23 5 "빨랫줄. 흰 로브가 줄지어 말라 간다. 다 같은 옷인데 기운 자리가 다 다르다." w=2
+prop laundry_line 21 8
+text 21 8 "빨랫줄. 흰 로브가 줄지어 말라 간다. 다 같은 옷인데 기운 자리가 다 다르다." w=2
 prop tuft 7 23
 prop tuft2 20 24
 prop tuft 1 15
@@ -114,5 +127,6 @@ prop streetlamp 17 23
 text 14 24 "언덕 계단 아래 표지. '동작 관제 중계소 — 대기 중. 조용히.'" w=1
 npc N-R01-055 7 15 E cond="GAME_HOUR >= 6 and GAME_HOUR < 20 and SQ_S04_D != 1" route=bot1:7,15,8;bot2:11,18,6 bark="부품 교환은 정비 당번장한테. 대기 6203이야."
 npc C-053 18 15 W cond="GAME_HOUR >= 6 and GAME_HOUR < 20" bark="대기는 충분히 했어요. 이제 연결할 차례예요."
+npc N-R01-503 26 7 W cond="GAME_HOUR >= 7 and GAME_HOUR < 20 and GAME_HOUR != 11 and GAME_HOUR != 16" bark="닦는 건 우리가 하고, 깨는 건 수호자가 정해요."
 npc N-GS-1 19 11 S look=M1-S3-HR02-H1-T14-0-PF10-HD14-EY00-PR017 route=yard:19,11,7;bench:22,13,6 bark="대기 중이신 분, 안내해 드릴까요? 대기실은 아래예요."
 npc N-GS-2 3 18 E look=F2-S2-HR06-H2-T14-0-PF10-HD14-EY00-PR017 bark="흰 천은 매일 새로 묶어요. 바람이 대기음을 실어 가니까."

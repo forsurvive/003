@@ -1,11 +1,14 @@
 {
  "id": "GS_PUNCH",
- "title": "대기실 천공기",
+ "title": "정비 카드용 천공기",
  "loc": "L-R01-23",
  "npc": "",
  "cond": "V_ACT >= 1",
  "labels": {
-  "START": 0
+  "START": 0,
+  "BROKEN": 5,
+  "DUTY": 7,
+  "CARDS": 9
  },
  "ops": [
   {
@@ -15,10 +18,74 @@
    "text": "쇠 레버를 누르자 딸깍, 빈 카드에 구멍 하나가 뚫린다. 옆 신도가 고개를 든다."
   },
   {
+   "op": "if",
+   "cond": "FQGS01_STAGE >= 10 and FQGS01_STAGE < 100 and FQ_GS01_CARDS == 0",
+   "to": "DUTY"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_GS02_DONE == 0",
+   "to": "BROKEN"
+  },
+  {
    "op": "line",
    "who": "N-GS-3",
    "emo": "미소",
-   "text": "대기 번호 받으시게요? 열두 줄을 다 채우면 돼요. 이름은 안 써요. 번호만."
+   "text": "그건 정비 카드용이에요. 대기 번호는 가운데 등록용으로 뚫어요. 열두 줄을 다 채우면 돼요. 이름은 안 써요. 번호만."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-GS-3",
+   "emo": "미소",
+   "text": "그건 정비 카드용이에요. 대기 번호는 가운데 등록용으로 뚫는데… 바늘이 부러졌어요. 새 분들이 사흘째 기다려요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-GS-3",
+   "emo": "미소",
+   "text": "정비 당번이세요? 당번 번호 칸만 뚫으면 돼요. 여섯 장."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "정비 카드 여섯 장을 뚫는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "CARDS",
+     "id": "GS_PUNCH:1:0"
+    },
+    {
+     "text": "나중에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "GS_PUNCH:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "gs01",
+   "args": [
+    "cards"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "딸깍, 딸깍. 당번 번호 칸에 \\V[P_REGNO]. 여섯 장 모두 같은 자리에 같은 구멍. 손끝에 쇠 냄새가 밴다."
   },
   {
    "op": "goto",

@@ -1,0 +1,257 @@
+{
+ "id": "FQGS01_R6",
+ "title": "집진통이 바스락거리는 살림-2",
+ "loc": "L-R01-23",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "OPEN": 6,
+  "NEST": 9,
+  "EMPTY": 11,
+  "EMPTIED": 17,
+  "WORK": 18,
+  "OK": 19,
+  "CLUMSY": 22,
+  "DONE": 25,
+  "LOOK": 27
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "FQ_GS01_R6 >= 3",
+   "to": "DONE"
+  },
+  {
+   "op": "if",
+   "cond": "FQGS01_STAGE == 0 or FQGS01_STAGE >= 100",
+   "to": "LOOK"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_GS01_R6 == 2",
+   "to": "EMPTIED"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_GS01_R6 == 1",
+   "to": "NEST"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "잠든 살림-2. 등 뒤 집진통 뚜껑이 조금 들려 있다. 안에서 바스락, 바스락."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "뚜껑을 연다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "OPEN",
+     "id": "FQGS01_R6:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQGS01_R6:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "gs01",
+   "args": [
+    "nest"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "뚜껑을 젖히자 털 뭉치가 튀어나온다 — 쥐다! 지푸라기와 천 조각으로 지은 둥지 속에서 뭔가 반짝인다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "집진통 속 둥지. 지푸라기, 흰 천 조각, 그리고 반짝이는 쇳조각 하나."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "둥지를 쓸어 내고 집진통을 비운다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "EMPTY",
+     "id": "FQGS01_R6:2:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQGS01_R6:2:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "gs01",
+   "args": [
+    "empty"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "반짝이던 건 식별 태그다 — 'SJ-G70 · 동작 중계 04'. 마당 4번의 목에서 빠진 것."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "바닥에 2077년 집진 찌꺼기가 눌어붙어 있다. 그 속에 접힌 종이 한 장."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'세진 살림-2 방문 청소 확인서. 대한 대피 적성 학원 원장실. 2077. 10. 22. 특이 사항: 금고 번호판 — 닦지 말 것(원장님 지시. 손때로 번호를 기억하신다고).'"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "이 살림-2는 학원가에서 일하던 기계다."
+  },
+  {
+   "op": "goto",
+   "to": "WORK"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "비운 집진통. 안쪽 벽에 2077년 찌꺼기 자국만 남았다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "집진통을 닦고, 기름을 치고, 정비 카드를 끼운다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 25
+      }
+     ],
+     "cond": "FQ_GS01_CARDS >= 1",
+     "fx": "",
+     "to": "OK",
+     "id": "FQGS01_R6:3:0"
+    },
+    {
+     "text": "(서툴게) 닦고 기름을 친다",
+     "tags": [],
+     "cond": "FQ_GS01_CARDS >= 1",
+     "fx": "",
+     "to": "CLUMSY",
+     "id": "FQGS01_R6:3:1"
+    },
+    {
+     "text": "(정비 카드가 없다 — 대기실 정비 카드용 천공기에서 뚫어 온다)",
+     "tags": [],
+     "cond": "FQ_GS01_CARDS == 0",
+     "fx": "",
+     "to": "END",
+     "id": "FQGS01_R6:3:2"
+    },
+    {
+     "text": "나중에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQGS01_R6:3:3"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "gs01",
+   "args": [
+    "robot",
+    "6"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈 집진통이 다시 맞물린다. 정비 카드는 등판에."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "gs01",
+   "args": [
+    "robot",
+    "6",
+    "clumsy"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "뚜껑이 한 번에 안 닫힌다. 세 번 만에 닫았다. 정비 카드는 등판에."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "등판에 정비 카드 — '당번 \\V[P_REGNO]'. 집진통이 조용하다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "잠든 살림-2. 등 뒤 원통형 집진통 뚜껑 틈에서 지푸라기가 삐져나왔다. 안에서 바스락."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-GS-01.txt"
+}

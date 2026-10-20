@@ -9,13 +9,17 @@
   "HOSTILE": 7,
   "AGAIN": 9,
   "ASK": 10,
-  "S04": 11,
-  "S04B": 16,
-  "SHOP": 20,
-  "PRICEY": 23,
-  "BOT": 26,
-  "NOSOL": 29,
-  "AFTERSOL": 30
+  "FUSE": 11,
+  "TAG": 15,
+  "REPORT": 18,
+  "HEAD": 21,
+  "S04": 24,
+  "S04B": 29,
+  "SHOP": 33,
+  "PRICEY": 36,
+  "BOT": 39,
+  "NOSOL": 42,
+  "AFTERSOL": 43
  },
  "ops": [
   {
@@ -113,14 +117,138 @@
      "id": "GS_HAN:1:3"
     },
     {
+     "text": "3번 등판에서 빠진 퓨즈를 보여 준다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "M-419",
+       "n": 1
+      }
+     ],
+     "cond": "AFF_GS >= -19",
+     "fx": "",
+     "to": "FUSE",
+     "id": "GS_HAN:1:4"
+    },
+    {
+     "text": "파수 식별 태그를 넘긴다(20캡)",
+     "tags": [
+      {
+       "k": "item",
+       "id": "M-418",
+       "n": 1
+      }
+     ],
+     "cond": "AFF_GS >= -19 and FQ_GS01_TAG == 1",
+     "fx": "",
+     "to": "TAG",
+     "id": "GS_HAN:1:5"
+    },
+    {
+     "text": "정비고 여섯 대를 다 닦았습니다. 오상구 당번이… 없어서요",
+     "tags": [],
+     "cond": "known_dead(\"N-R01-503\") == 1 and FQGS01_STAGE >= 10 and FQGS01_STAGE < 100 and FQ_GS01_R1 >= 1 and FQ_GS01_R2 >= 1 and FQ_GS01_R3 >= 1 and FQ_GS01_R4 >= 1 and FQ_GS01_R5 >= 2 and FQ_GS01_R6 >= 3",
+     "fx": "",
+     "to": "REPORT",
+     "id": "GS_HAN:1:6"
+    },
+    {
+     "text": "채점기 천공 머리에서 바늘만 뽑아 주세요",
+     "tags": [
+      {
+       "k": "item",
+       "id": "M-421",
+       "n": 1
+      }
+     ],
+     "cond": "known_dead(\"N-R01-503\") == 1 and FQGS02_STAGE >= 10 and FQGS02_STAGE < 100",
+     "fx": "",
+     "to": "HEAD",
+     "id": "GS_HAN:1:7"
+    },
+    {
      "text": "됐습니다",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "GS_HAN:1:4"
+     "id": "GS_HAN:1:8"
     }
    ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-055",
+   "emo": "놀람",
+   "text": "이거 3번 거잖아. 녹색 띠에 '3'."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-055",
+   "emo": "기본",
+   "text": "…어디서 빠졌는지는 안 물을게. 오늘 밤 다시 끼워 둘게. 3번은 등이 밝아야 3번이야."
+  },
+  {
+   "op": "cmd",
+   "name": "gs01",
+   "args": [
+    "fuseback"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-055",
+   "emo": "기본",
+   "text": "'SJ-G70 · 동작 중계 04'. 4번 거네. 쥐가 물어 갔구나. 내가 걸어 둘게. 수호자 것은 수호자에게."
+  },
+  {
+   "op": "cmd",
+   "name": "gs01",
+   "args": [
+    "tagsell"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-055",
+   "emo": "슬픔",
+   "text": "상구가 하던 걸 끝까지 했구나. 당번표에 동그라미는 내가 칠게."
+  },
+  {
+   "op": "cmd",
+   "name": "gs01",
+   "args": [
+    "done"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-055",
+   "emo": "기본",
+   "text": "상구가 있었으면 금방인데. …줘 봐. 바늘은 열두 개, 머리는 버리고."
+  },
+  {
+   "op": "cmd",
+   "name": "gs02",
+   "args": [
+    "head"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
   },
   {
    "op": "line",

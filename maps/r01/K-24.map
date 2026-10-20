@@ -29,7 +29,7 @@ mark lectern 9 4 S
 prop blackboard_hw 6 1
 text 6 2 "칠판. 왼쪽에 '수능 D-26', 오른쪽에 '대피 적성 D-3'. 가운데 지우다 만 글씨 — '3번 정답: 가장 가까운 지하'." w=4
 prop w_calendar 2 1
-text 2 2 "2077년 10월 달력. 27일에 붉은 동그라미 '대피 적성 검사'. 23일 칸에는 '모의고사 마지막 회'."
+text 2 2 "2077년 10월 달력. 27일에 붉은 동그라미 '대피 적성 검사'. 23일 칸에는 '모의고사 마지막 회'." scene=K24_CAL
 prop lectern 8 4
 prop tutor_bot 13 3
 text 13 3 "과외-3 조교 로봇. 바퀴가 책상 다리에 묶여 있다. 화면에 '3번'." scene=K-24_TUTOR
@@ -43,25 +43,29 @@ prop desk 11 9
 prop desk 15 9
 box 15 9 academy w=2 name="수강생 책상"
 text 3 9 "책상 모서리에 칼로 판 글씨. '1등급 받으면 엄마랑 지하 3층.'" w=2
+# 원장 대행(1-12b FQ-GS-02, SD-04d §9.4 '학원 관리 로봇 살림-2'): 자습 감독 — 원장실 문 앞과 강의실 끝을 오간다
+npc N-K24-P1 19 12 W sheet=rb_proxy_loco route=door:19,12,7;back:4,10,6 bark="자습 시간입니다. 수강생은 자습석으로."
 prop study_carrel 2 12
 prop study_carrel 5 12
 prop study_carrel 13 12
 prop study_carrel 16 12
-text 2 12 "자습석 단말. 화면마다 같은 글이 타 들어가 있다 — '국가 대피 적성 검사 연기 공지(2077. 10. 24.)'." w=2
+text 2 12 "자습석 단말. 화면마다 같은 글이 타 들어가 있다 — '국가 대피 적성 검사 연기 공지(2077. 10. 24.)'." w=2 scene=K24_CARREL
 box 16 12 desk w=2 name="자습석 서랍"
 prop plant_pot 19 3
 npc N-R01-056 9 4 S
-# 원장실
+# 원장실 — 강의실 쪽 옆문(1-12b: 잠김 [자물쇠 따기 25] · 원장 대행이 보고 있으면 막는다 · 복사실 무너진 벽으로도 들어온다)
+prop k24_side_door 21 12 cond="FQ_GS02_DOOR == 0"
+prop k24_side_door_open 21 12 cond="FQ_GS02_DOOR != 0"
 prop w_roster 25 1
-text 25 2 "벽의 합격 현수막. '2076 대피 적성 1등급 37명 배출 — 지하 3층 직행!' 이름 칸은 볕에 다 바랬다." w=2
+text 25 2 "벽의 합격 현수막. '2076 대피 적성 1등급 37명 배출 — 지하 3층 직행!' 이름 칸은 볕에 다 바랬다." w=2 scene=K24_BANNER
 prop file_cabinet 22 3
 box 22 3 cabinet name="원장실 서류함"
 prop grader 29 3
 text 29 3 "전산 모의고사 채점기. 마지막 천공 카드가 반쯤 걸린 채 멈췄다." scene=K-24_GRADER
 prop typewriter_desk 25 6
-text 25 6 "원장 책상. 타자기에 끼운 종이 '학부모님께 — 검사가 연기되었습니다. 환불은'에서 멈췄다." w=2
+text 25 6 "원장 책상. 타자기에 끼운 종이 '학부모님께 — 검사가 연기되었습니다. 환불은'에서 멈췄다." w=2 scene=K24_DESK
 prop safe_big 30 11
-box 30 11 safe lock=50 name="원장 금고"
+box 30 11 k24_safe lock=50 name="원장 금고"
 prop bookshelf 22 10
 # 복사실(옆 건물과 맞닿은 벽이 무너졌다)
 prop steel_rack 34 3

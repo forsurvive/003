@@ -1,0 +1,86 @@
+{
+ "id": "FQGS02_REG",
+ "title": "등록용 천공기",
+ "loc": "L-R01-23",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "HINT": 7,
+  "EMPTY": 9,
+  "FIXED": 11
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "FQ_GS02_DONE >= 1",
+   "to": "FIXED"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "레버 끝의 바늘이 부러져 걸렸다. 앞판에 쪽지 — '바늘 부러짐'. 서명 자리는 번져서 읽히지 않는다."
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-GS-5\") == 1 or dead(\"N-GS-6\") == 1",
+   "to": "EMPTY"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "그 앞에 빈 카드를 든 사람 둘. 한 사람은 사흘째라고 했다."
+  },
+  {
+   "op": "line",
+   "who": "N-GS-5",
+   "emo": "슬픔",
+   "text": "번호를 못 받으면 아직 대기도 못 하는 거래요. 대기 전의 대기."
+  },
+  {
+   "op": "if",
+   "cond": "FQGS02_STAGE == 0 and AFF_GS >= 20 and known_dead(\"C-014\") == 0",
+   "to": "HINT"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-GS-6",
+   "emo": "기본",
+   "text": "류정 안내자님이 걱정이 많으세요. 대기등 앞에 계실 거예요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "천공기 앞 바닥에 빈 카드 한 장이 떨어져 있다. 기다리던 자리가 비었다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "딸깍, 딸깍. 새 순례자가 자기 카드에 구멍 열두 줄을 직접 뚫는다. 바늘은 학원에서 온 것이다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-GS-02.txt"
+}

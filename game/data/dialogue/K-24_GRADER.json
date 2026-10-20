@@ -5,9 +5,44 @@
  "npc": "",
  "cond": "V_ACT >= 1",
  "labels": {
-  "START": 0
+  "START": 0,
+  "SAME": 9,
+  "STUCK": 10,
+  "TUBE": 11,
+  "RUN": 15,
+  "M135": 17,
+  "NEEDLE": 21,
+  "NEVER": 25,
+  "RIP": 27,
+  "BUNDLE": 31,
+  "GONE": 34,
+  "STUCKCARD": 37,
+  "TAKE": 38,
+  "WRECK": 39
  },
  "ops": [
+  {
+   "op": "cmd",
+   "name": "gs02",
+   "args": [
+    "seen"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "GS02_GRADER == 3",
+   "to": "WRECK"
+  },
+  {
+   "op": "if",
+   "cond": "GS02_GRADER == 2",
+   "to": "GONE"
+  },
+  {
+   "op": "if",
+   "cond": "GS02_GRADER == 1",
+   "to": "RUN"
+  },
   {
    "op": "line",
    "who": "SYS",
@@ -27,12 +62,312 @@
    "text": "진공관이 하나 나갔다. 갈아 끼우면 다시 채점할지도 모른다 — 200년 기다린 누군가의 답안을."
   },
   {
+   "op": "if",
+   "cond": "FQGS02_STAGE >= 10 and FQGS02_STAGE < 100",
+   "to": "SAME"
+  },
+  {
+   "op": "goto",
+   "to": "STUCK"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "머리판 명판 — '세진 천공 채점기 SJ-T6'. 중계소 대기실 천공기와 같은 글자다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "나간 진공관을 갈아 끼운다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "M-014",
+       "n": 1
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "TUBE",
+     "id": "K-24_GRADER:1:0"
+    },
+    {
+     "text": "머리판을 열고 천공 바늘 뭉치만 분리한다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "NEEDLE",
+     "id": "K-24_GRADER:1:1"
+    },
+    {
+     "text": "머리판째 뜯어낸다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "RIP",
+     "id": "K-24_GRADER:1:2"
+    },
+    {
+     "text": "받이에 쌓인 답안 카드 묶음을 챙긴다",
+     "tags": [],
+     "cond": "FQ_GS02_BUNDLE == 0",
+     "fx": "",
+     "to": "BUNDLE",
+     "id": "K-24_GRADER:1:3"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "K-24_GRADER:1:4"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "gs02",
+   "args": [
+    "tube"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "진공관이 데워지는 냄새. 채점기가 200년 만에 딸깍인다. 걸린 카드가 끝까지 빨려 들어갔다가 받이로 떨어진다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "뒷면에 붉은 도장 — '국어 92 · 행정 적성 2등급'. 그 아래 연필 '권성민'. 채점된 답안 카드."
+  },
+  {
+   "op": "goto",
+   "to": "RUN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "채점기가 켜져 있다. 투입구 위 창 셋이 노랗다. 다음 카드를 기다린다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "머리판을 열고 천공 바늘 뭉치만 분리한다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "NEEDLE",
+     "id": "K-24_GRADER:2:0"
+    },
+    {
+     "text": "우편으로 온 대기자 천공 카드를 넣어 본다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "M-135",
+       "n": 1
+      }
+     ],
+     "cond": "FQ_GS02_M135 == 0",
+     "fx": "",
+     "to": "M135",
+     "id": "K-24_GRADER:2:1"
+    },
+    {
+     "text": "머리판째 뜯어낸다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "RIP",
+     "id": "K-24_GRADER:2:2"
+    },
+    {
+     "text": "받이에 쌓인 답안 카드 묶음을 챙긴다",
+     "tags": [],
+     "cond": "FQ_GS02_BUNDLE == 0",
+     "fx": "",
+     "to": "BUNDLE",
+     "id": "K-24_GRADER:2:3"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "K-24_GRADER:2:4"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "gs02",
+   "args": [
+    "m135"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "딸깍딸깍. 대기자 카드가 들어갔다 나온다. 출력 띠 — '수험 번호 없음. 응답 12행 중 판독 3. 등급: 판독 불능.'"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "카드는 상하지 않았다. 학원 기계는 학원 기계의 말을 할 뿐이다."
+  },
+  {
+   "op": "goto",
+   "to": "RUN"
+  },
+  {
+   "op": "cmd",
+   "name": "gs02",
+   "args": [
+    "needle"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "머리판 나사 넷. 바늘 뭉치가 통째로 빠진다 — 열두 개, 다 살아 있다. 기름종이에 싼다."
+  },
+  {
+   "op": "if",
+   "cond": "FQ_GS02_SCORED == 0",
+   "to": "NEVER"
+  },
+  {
    "op": "goto",
    "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "걸린 카드는 그 자리에 남았다. 이제 이 기계로는 영영 채점되지 않는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "gs02",
+   "args": [
+    "rip"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "머리판을 잡고 비튼다. 선이 끊기고 놋쇠 머리가 통째로 뜯긴다. 바늘이 박힌 채다 — 뽑으려면 정비 손이 필요하다."
+  },
+  {
+   "op": "if",
+   "cond": "FQ_GS02_SCORED == 0",
+   "to": "NEVER"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "gs02",
+   "args": [
+    "bundle"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "고무줄로 묶은 답안 카드 수십 장. 수험 번호 칸마다 연필 숫자, '국어 3번' 줄에 같은 자리 구멍. 2077. 10. 23. 모의고사 마지막 회."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "머리판이 열린 채 비었다. 바늘 자리 열두 구멍."
+  },
+  {
+   "op": "if",
+   "cond": "FQ_GS02_SCORED == 0",
+   "to": "STUCKCARD"
+  },
+  {
+   "op": "goto",
+   "to": "TAKE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "걸린 카드는 반쯤 들어간 그대로다 — '권성민'."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "받이에 쌓인 답안 카드 묶음을 챙긴다",
+     "tags": [],
+     "cond": "FQ_GS02_BUNDLE == 0",
+     "fx": "",
+     "to": "BUNDLE",
+     "id": "K-24_GRADER:3:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "K-24_GRADER:3:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "머리판째 뜯긴 자리에서 끊긴 선이 늘어졌다. 받이에 쏟아진 카드 몇 장."
+  },
+  {
+   "op": "goto",
+   "to": "TAKE"
   },
   {
    "op": "end"
   }
  ],
- "src": "script/places/R01_NORTH.txt"
+ "src": "script/act1/FQ-GS-02.txt"
 }

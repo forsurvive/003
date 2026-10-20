@@ -56,7 +56,8 @@ const UNNAMED := [["N-TRADER", "떠돌이 고물상", ""], ["N-VG-S1", "고물�
 	["N-PS-2", "경비 파수-3", ""],   # 1-11j SQ-S11 영등포 경찰서 서장실 경비판
 	["N-BJ-S1", "수색조 분대장", "BJ"], ["N-BJ-S2", "수색조 계엄병", "BJ"],   # 1-11c · 1-11f 계엄군 수색조(1-11j: 게임 쪽 목록에 빠져 있던 것 — 이름표에 ID가 나오던 것)
 	["N-BJ-P1", "순찰 분대장", "BJ"], ["N-BJ-P2", "순찰 계엄병", "BJ"],   # 1-11j SQ-S11 여의도 낮 순찰
-	["N-GS-1", "각성회 신도", "GS"], ["N-GS-2", "각성회 신도", "GS"], ["N-GS-3", "각성회 신도", "GS"]]   # 1-8g 노량진 관제 중계소
+	["N-GS-1", "각성회 신도", "GS"], ["N-GS-2", "각성회 신도", "GS"], ["N-GS-3", "각성회 신도", "GS"],   # 1-8g 노량진 관제 중계소
+	["N-GS-5", "새 순례자", ""], ["N-GS-6", "새 순례자", ""], ["N-GS-R3", "3번 파수", ""], ["N-K24-P1", "원장 대행", ""]]   # 1-12b FQ-GS-01 · GS-02(순례자는 아직 등록 전 — 각성회 소속 아님)
 var enc := {}                           ## 인카운터 상태(1-3, Encounters): 안전 간격 · 오늘 추적대 수 · EP 사용 · 휴전
 var portrait_alias := {}                ## 인물 ID -> 초상화 키(맵에서 다른 시대 모습으로 선 인물: 2259년 아이 하도윤 등)
 
@@ -251,6 +252,15 @@ func _init() -> void:
 	# 배수지 수위는 S02 진행기 level() 한 곳이 min(BASE S02 몫, CAP 빗물 몫)으로 셈(P1). CUT 흙막이가 생긴 날 · NEST 둥지(0 · 1 처치 · 2 떠내려감) · CRACK 균열 고침
 	for k in "ARM CUT POSTED SPOUT DOG FORK1 FORK2 SHELTER KNOW FLOW NEST ROSTER LEAK CRACK REWARD DONE SAID BETRAY CAP BASE SEEN PERC KING TALK GIFT".split(" "):
 		vars.declare("FQ_JC01_" + k, "int", 5 if k in ["CAP", "BASE"] else 0)   # ROSTER 빗물 당번표를 읽음 · PERC 흙 자국을 읽음 · TALK 물당번과 말함 · GIFT 7동 보답
+	# FQ-GS-01 정비 당번 · FQ-GS-02 천공기(1-12b, SD-04d §9.3 · §9.4 · 진행기 fq_gs.gd 머리 주석): R1~R6 로봇마다 한 일 · FUSE 3번 퓨즈(1 뺌 · 2 압수 · 3 되끼움) ·
+	# GS_ROBOT MQ-505 개통파가 깨울 로봇 증감(−1 = 3번) · GS_OPEN 개통파의 힘(−2~+3) · GS_TRUTH 등록 카드 · 대기의 진실(0~3) · GS02_GRADER 학원 채점기 한 대(0 걸림 · 1 돎 · 2 바늘 뽑힘 · 3 뜯김 — UQ-62가 읽는다)
+	for k in "FLYER ROSTER R1 R2 R3 R4 R5 R6 CARDS TAG FUSE FUSE_DAY DIM POWER WAKE WAKE_DAY CLUMSY PAPER DONE SEEN WARN HURT".split(" "):
+		vars.declare("FQ_GS01_" + k, "int", 0)
+	for k in "OFFER DOOR SAT CALL BANNER CAL CODE SAFE SCORED M135 BUNDLE NAME TRUTH HEAD DONE EARLY TUTOR SEEN".split(" "):
+		vars.declare("FQ_GS02_" + k, "int", 0)
+	for k in ["GS_OPEN", "GS_TRUTH", "GS_ROBOT", "GS02_GRADER"]:
+		if not vars.has(k):
+			vars.declare(k, "int", 0)
 	vars.declare("SQE_FAMILY", "int", 0)
 	for kv in [["SQH_LIST11", -1], ["SQH_RECESS", -1], ["SQE_LIST11", 0], ["SQE_RECESS", 0], ["SQK_MARCH", 0], ["NS_COOP", 0], ["PD_R02_KH", 0]]:   # 남산 협력 표시(SD-06 NS 협력 플래그) · 거점 '국회 폐허'(1 = BJ)
 		vars.declare(kv[0], "int", kv[1])

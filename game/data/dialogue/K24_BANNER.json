@@ -1,0 +1,30 @@
+{
+ "id": "K24_BANNER",
+ "title": "합격 현수막",
+ "loc": "L-R01-24",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "벽의 합격 현수막. '2076 대피 적성 1등급 37명 배출 — 지하 3층 직행!' 이름 칸은 볕에 다 바랬다."
+  },
+  {
+   "op": "do",
+   "fx": "FQ_GS02_BANNER = 1"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-GS-02.txt"
+}

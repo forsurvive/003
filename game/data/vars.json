@@ -180,6 +180,36 @@
    "src": "03a_main-story-part1.md:501",
    "type": "int"
   },
+  "FQGS01_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "FQGS01_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "FQGS01_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "FQGS02_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "FQGS02_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "FQGS02_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
   "FQJC01_RESULT": {
    "default": 0,
    "src": "quests",

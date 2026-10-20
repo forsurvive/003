@@ -1,0 +1,269 @@
+{
+ "id": "FQGS01_R3",
+ "title": "정비고 3번 파수",
+ "loc": "L-R01-23",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "BATT": 7,
+  "CARD": 8,
+  "DIMMED": 12,
+  "OFF": 14,
+  "MENU": 15,
+  "POWER": 16,
+  "OIL": 19,
+  "OILC": 21,
+  "FUSE": 23,
+  "DONE": 25,
+  "DONEDIM": 28,
+  "WRECK": 30,
+  "LOOK": 32
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "FQ_GS01_R3 == 3",
+   "to": "WRECK"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_GS01_R3 >= 1",
+   "to": "DONE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "다가가자 3번의 머리가 덜컥, 한 칸 이쪽으로 돈다. 눈은 꺼진 채다."
+  },
+  {
+   "op": "if",
+   "cond": "FQGS01_STAGE == 0 or FQGS01_STAGE >= 100",
+   "to": "LOOK"
+  },
+  {
+   "op": "cmd",
+   "name": "gs01",
+   "args": [
+    "seen"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "SQH_BATT == 7",
+   "to": "BATT"
+  },
+  {
+   "op": "goto",
+   "to": "CARD"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "대기등 함에서 늘어진 예비 전원 선이 3번 등판까지 와 있다. 산꼭대기 돔에서 뽑아 온 그 전지다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "정비 카드 꽂이 맨 위, 다른 카드보다 훨씬 누런 한 장 — 2077년 손글씨. '3번 — 가장 가까운 지하로 대피 완료.'"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_GS01_FUSE == 1",
+   "to": "DIMMED"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_GS01_POWER == 1",
+   "to": "OFF"
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "퓨즈함이 비었다. 대기등이 어제보다 어둡다."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "등판 전원 스위치는 내려가 있다. 대기등은 그대로 켜져 있다 — 그 등은 다른 선이다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "등판 전원 스위치를 내린다",
+     "tags": [],
+     "cond": "FQ_GS01_POWER == 0 and FQ_GS01_FUSE != 1",
+     "fx": "",
+     "to": "POWER",
+     "id": "FQGS01_R3:1:0"
+    },
+    {
+     "text": "닦고, 관절에 기름을 치고, 정비 카드를 끼운다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 25
+      }
+     ],
+     "cond": "FQ_GS01_CARDS >= 1",
+     "fx": "",
+     "to": "OIL",
+     "id": "FQGS01_R3:1:1"
+    },
+    {
+     "text": "(서툴게) 닦고 기름을 친 뒤 정비 카드를 끼운다",
+     "tags": [],
+     "cond": "FQ_GS01_CARDS >= 1",
+     "fx": "",
+     "to": "OILC",
+     "id": "FQGS01_R3:1:2"
+    },
+    {
+     "text": "(정비 카드가 없다 — 대기실 정비 카드용 천공기에서 뚫어 온다)",
+     "tags": [],
+     "cond": "FQ_GS01_CARDS == 0",
+     "fx": "",
+     "to": "END",
+     "id": "FQGS01_R3:1:3"
+    },
+    {
+     "text": "등판 퓨즈함에서 퓨즈를 몰래 뺀다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 50
+      }
+     ],
+     "cond": "FQ_GS01_FUSE == 0",
+     "fx": "",
+     "to": "FUSE",
+     "id": "FQGS01_R3:1:4"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQGS01_R3:1:5"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "gs01",
+   "args": [
+    "power"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "딸깍. 등판 안쪽 진공관들의 웅웅거림이 멎는다. 대기등은 그래도 켜져 있다."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "cmd",
+   "name": "gs01",
+   "args": [
+    "oil"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "gs01",
+   "args": [
+    "oil",
+    "clumsy"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "gs01",
+   "args": [
+    "fuse"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_GS01_FUSE == 1",
+   "to": "DONEDIM"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "맨 위 누런 카드 아래 새 카드 — '당번 \\V[P_REGNO]'. 대기등이 또렷하다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "맨 위 누런 카드 아래 새 카드 — '당번 \\V[P_REGNO]'. 퓨즈함이 비었고 대기등이 흐리다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "3번의 가슴 판이 갈라졌다. 대기등은 꺼졌다. 누군가 그 위에 흰 천을 덮어 놓았다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "가슴 판에 '3'. 다른 로봇과 달리 머리 위 대기등이 또렷하게 녹색이다. 등판에 퓨즈함."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-GS-01.txt"
+}

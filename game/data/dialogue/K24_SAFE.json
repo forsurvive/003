@@ -1,0 +1,117 @@
+{
+ "id": "K24_SAFE",
+ "title": "원장 금고",
+ "loc": "L-R01-24",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "PAPER": 3,
+  "DIAL": 4,
+  "RIGHT": 5,
+  "WRONG": 8,
+  "PICK": 10
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "원장 금고. 번호판 단추 열 개 가운데 2 · 3 · 7만 손때로 반들거린다."
+  },
+  {
+   "op": "if",
+   "cond": "FQ_GS01_PAPER == 1",
+   "to": "PAPER"
+  },
+  {
+   "op": "goto",
+   "to": "DIAL"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "그 청소 확인서 — '금고 번호판, 닦지 말 것. 손때로 번호를 기억하신다고'. 그래서 손때가 남았다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "3 · 7 · 2 · 3을 누른다",
+     "tags": [],
+     "cond": "FQ_GS02_BANNER == 1 and FQ_GS02_CAL == 1",
+     "fx": "",
+     "to": "RIGHT",
+     "id": "K24_SAFE:1:0"
+    },
+    {
+     "text": "2 · 3 · 3 · 7을 누른다",
+     "tags": [],
+     "cond": "FQ_GS02_BANNER == 1 and FQ_GS02_CAL == 1",
+     "fx": "",
+     "to": "WRONG",
+     "id": "K24_SAFE:1:1"
+    },
+    {
+     "text": "다이얼을 귀로 딴다(자물쇠 따기 50)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "PICK",
+     "id": "K24_SAFE:1:2"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "K24_SAFE:1:3"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "3, 7, 2, 3. 철컥 — 무거운 문이 한 뼘 밀려 나온다. 우리 자랑 다음에 그날."
+  },
+  {
+   "op": "cmd",
+   "name": "gs02",
+   "args": [
+    "code"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "딸깍. 열리지 않는다. 번호판 불이 한 번 깜박이고 꺼진다."
+  },
+  {
+   "op": "goto",
+   "to": "DIAL"
+  },
+  {
+   "op": "cmd",
+   "name": "gs02",
+   "args": [
+    "safepick"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-GS-02.txt"
+}

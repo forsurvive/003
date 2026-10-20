@@ -1,0 +1,30 @@
+{
+ "id": "K24_CAL",
+ "title": "학원 달력",
+ "loc": "L-R01-24",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "2077년 10월 달력. 27일에 붉은 동그라미 '대피 적성 검사'. 23일 칸에는 '모의고사 마지막 회'."
+  },
+  {
+   "op": "do",
+   "fx": "FQ_GS02_CAL = 1"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-GS-02.txt"
+}

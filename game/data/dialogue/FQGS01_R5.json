@@ -1,0 +1,216 @@
+{
+ "id": "FQGS01_R5",
+ "title": "천을 감은 살림-2",
+ "loc": "L-R01-23",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "UNWRAP": 5,
+  "BARE": 7,
+  "REWRAP": 9,
+  "FOLD": 12,
+  "CLUMSY": 15,
+  "DONE": 18,
+  "LOOK": 20
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "FQ_GS01_R5 >= 2",
+   "to": "DONE"
+  },
+  {
+   "op": "if",
+   "cond": "FQGS01_STAGE == 0 or FQGS01_STAGE >= 100",
+   "to": "LOOK"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_GS01_R5 == 1",
+   "to": "BARE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "잠든 살림-2. 흰 천이 관절마다 감겨 있다. 매듭마다 연필로 대기 번호 — 신도들이 한 사람씩 감아 준 천이다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "천을 풀어 관절을 드러낸다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "UNWRAP",
+     "id": "FQGS01_R5:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQGS01_R5:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "gs01",
+   "args": [
+    "unwrap"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "천을 풀자 걸레 팔이 드러난다. 자면서도 바닥을 훔치고 있다 — 한 뼘, 돌아와서 또 한 뼘. 200년 동안 닦은 자리만 콘크리트가 하얗다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "관절마다 먼지가 떡이 졌다. 풀어 둔 천이 옆에 개켜 있다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "관절을 닦고 기름을 친 뒤, 천을 번호 순서대로 다시 감아 준다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 25
+      }
+     ],
+     "cond": "FQ_GS01_CARDS >= 1",
+     "fx": "",
+     "to": "REWRAP",
+     "id": "FQGS01_R5:2:0"
+    },
+    {
+     "text": "관절을 닦고 기름을 친 뒤, 천은 개어 머리맡에 둔다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 25
+      }
+     ],
+     "cond": "FQ_GS01_CARDS >= 1",
+     "fx": "",
+     "to": "FOLD",
+     "id": "FQGS01_R5:2:1"
+    },
+    {
+     "text": "(서툴게) 닦고 기름을 친다",
+     "tags": [],
+     "cond": "FQ_GS01_CARDS >= 1",
+     "fx": "",
+     "to": "CLUMSY",
+     "id": "FQGS01_R5:2:2"
+    },
+    {
+     "text": "(정비 카드가 없다 — 대기실 정비 카드용 천공기에서 뚫어 온다)",
+     "tags": [],
+     "cond": "FQ_GS01_CARDS == 0",
+     "fx": "",
+     "to": "END",
+     "id": "FQGS01_R5:2:3"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQGS01_R5:2:4"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "gs01",
+   "args": [
+    "robot",
+    "5"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "번호 순서대로 다시 감는다. 매듭 하나는 내 번호로. 정비 카드는 걸레 팔 손목에."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "gs01",
+   "args": [
+    "robot",
+    "5"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "천을 개어 머리맡에 둔다. 걸레 팔이 천 끝을 한 번 훔치고 지나간다. 정비 카드는 손목에."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "gs01",
+   "args": [
+    "robot",
+    "5",
+    "clumsy"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "기름 묻은 손으로 천을 만졌다. 매듭마다 검은 지문. …정비 카드는 손목에."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "걸레 팔 손목에 정비 카드 — '당번 \\V[P_REGNO]'. 자면서 바닥을 훔친다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "잠든 살림-2. 흰 천이 관절마다 감겨 있다. 천 밑에서 걸레 팔이 아주 느리게 바닥을 훔친다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-GS-01.txt"
+}

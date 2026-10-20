@@ -22,27 +22,28 @@ def img(w, h):
 
 # ================================================================================================ 정비고 차양
 def canopy():
-    """트인 차양(3×1 발 — 앞 기둥 둘만 막는다): 녹슨 함석 지붕 · 쇠 기둥 · 지붕 끝에 흰 천 · 기둥에 녹색 번호 '정비'.
+    """트인 차양(4칸 폭, 발 — 앞 기둥 둘만 막는다): 녹슨 함석 지붕 · 쇠 기둥 · 지붕 끝에 흰 천 · 기둥에 녹색 번호 '정비'.
     지붕은 그림 위쪽(북쪽)에 걸리고 아래는 비어 그 밑을 걷는다(발 칸은 기둥 자리)."""
-    im = img(96, 70)
+    W = 128
+    im = img(W, 70)
     d = ImageDraw.Draw(im)
-    d.polygon([(0, 14), (96, 14), (92, 26), (4, 26)], fill=C(INK))
-    d.polygon([(1, 15), (95, 15), (91, 25), (5, 25)], fill=C("P12"))
-    for x in range(4, 92, 6):                                             # 골함석 골
+    d.polygon([(0, 14), (W, 14), (W - 4, 26), (4, 26)], fill=C(INK))
+    d.polygon([(1, 15), (W - 1, 15), (W - 5, 25), (5, 25)], fill=C("P12"))
+    for x in range(4, W - 4, 6):                                             # 골함석 골
         d.line([x, 16, x + 1, 24], fill=C("P11"))
         d.point((x + 3, 18), fill=C("P13"))
-    for x in (12, 40, 70):                                                # 녹 얼룩
+    for x in (12, 40, 70, 101):                                                # 녹 얼룩
         d.ellipse([x, 17, x + 7, 22], fill=C("P27"))
         d.point((x + 2, 19), fill=C("P28"))
-    d.line([5, 25, 91, 25], fill=C("P10"))
-    for x in (8, 84):                                                     # 앞 기둥
+    d.line([5, 25, W - 5, 25], fill=C("P10"))
+    for x in (8, W - 12):                                                     # 앞 기둥
         d.rectangle([x, 25, x + 4, 66], fill=C(INK))
         d.rectangle([x + 1, 25, x + 3, 65], fill=C("P11"))
         d.line([x + 1, 25, x + 1, 65], fill=C("P13"))
         d.ellipse([x - 2, 63, x + 6, 69], fill=C("P02"))
     d.rectangle([7, 40, 14, 47], fill=C("P56")); put_text(im, "정", 8, 40, "P09", size=8)   # 기둥 녹색 표식
-    d.rectangle([83, 40, 90, 47], fill=C("P56")); put_text(im, "비", 84, 40, "P09", size=8)
-    for x in range(10, 88, 13):                                           # 지붕 끝 흰 천 조각
+    d.rectangle([W - 13, 40, W - 6, 47], fill=C("P56")); put_text(im, "비", W - 12, 40, "P09", size=8)
+    for x in range(10, W - 8, 13):                                           # 지붕 끝 흰 천 조각
         d.polygon([(x, 25), (x + 6, 25), (x + 4, 32), (x + 1, 30)], fill=C("P09"))
         d.point((x + 3, 27), fill=C("P08"))
     return im
@@ -117,12 +118,13 @@ def _card(d, x, y):
 
 def sentry_maint(state=""):
     """정비고 파수-3(2×1): props_jm 넘어진 파수와 같은 몸. 상태 — "" 식별 태그 없음(목 고리가 빔) · tag 태그를 끼움 ·
-    card 정비 카드를 끼움 · three 3번(머리 대기등이 또렷하게 밝음) · three_dim 3번 퓨즈를 뺌(등이 꺼져 간다) · three_card 3번 정비 끝."""
+    card 태그 + 정비 카드 · bare_card 태그 없이 정비 카드 · three 3번(머리 대기등이 또렷하게 밝음) · three_dim 3번 퓨즈를 뺌(등이 꺼져 간다) ·
+    three_card 3번 정비 끝 · three_dimcard 퓨즈를 뺀 채 정비 끝."""
     import props_jm as JM
     im = JM.sentry_down(state in ("three", "three_card"))
     d = ImageDraw.Draw(im)
     if state.startswith("three"):
-        lit = state != "three_dim"
+        lit = not state.startswith("three_dim")
         d.rectangle([52, 17, 54, 20], fill=C(INK))                        # 얼굴판 위 등 받침
         d.ellipse([49, 10, 57, 18], fill=C(INK))
         d.ellipse([50, 11, 56, 17], fill=C("P56" if lit else "P05"))
@@ -133,11 +135,11 @@ def sentry_maint(state=""):
         else:
             d.point((52, 13), fill=C("P06"))
         put_text(im, "3", 60, 10, "P56" if lit else "P07", size=8)
-    if state in ("tag",):
+    if state in ("tag", "card"):
         d.rectangle([30, 22, 34, 26], fill=C("P48")); d.point((32, 24), fill=C(INK))
-    elif state == "":
+    elif state in ("", "bare_card"):
         d.arc([28, 20, 36, 28], 200, 340, fill=C("P05"))                 # 빈 목 고리
-    if state in ("card", "three_card"):
+    if state in ("card", "bare_card", "three_card", "three_dimcard"):
         _card(d, 34, 14)
     return im
 
@@ -178,9 +180,46 @@ def grader_state(state="run"):
         d.polygon([(10, 29), (21, 29), (21, 38), (10, 38)], fill=C("P21"))   # 다 찍힌 카드가 받이로 내려옴
         for y in (31, 33, 35):
             d.point((13, y), fill=C(INK)); d.point((17, y), fill=C(INK))
-    else:
+    elif state == "noneedle":
         d.rectangle([7, 4, 24, 9], fill=C(INK)); d.rectangle([8, 5, 23, 8], fill=C("P02"))   # 열린 머리판
         d.line([24, 4, 29, 0], fill=C("P48"))
+    else:                                                                 # wreck: 머리판째 뜯겨 나간 자리 · 끊긴 선 · 쏟아진 카드
+        d.rectangle([6, 2, 25, 10], fill=C(INK)); d.rectangle([7, 3, 24, 9], fill=C("P02"))
+        for (x0, y0, x1, y1, c) in ((10, 3, 8, 0, "P53"), (15, 3, 17, 0, "P48"), (20, 3, 23, 1, "P56")):
+            d.line([x0, y0, x1, y1], fill=C(c))
+        d.line([12, 14, 16, 20], fill=C(INK)); d.line([16, 20, 14, 25], fill=C(INK))   # 앞판 금
+        for (x, y) in ((2, 36), (24, 38), (27, 34)):
+            d.rectangle([x, y, x + 5, y + 3], fill=C("P21")); d.point((x + 2, y + 1), fill=C(INK))
+    return im
+
+
+# ================================================================================================ 학원 원장실 옆문
+def side_door(state="shut"):
+    """K-24 원장실 입구(세로 벽 틈 1×1): 정면에서 본 짙은 나무 문 — 놋쇠 손잡이 · 문패 '원장실' · 아래 문틈 그림자.
+    open: 문짝이 안쪽(동쪽)으로 젖혀져 벽 쪽에 붙은 얇은 판만 보인다(발 칸을 막지 않는 deco 판으로 쓴다)."""
+    im = img(34, 60)
+    d = ImageDraw.Draw(im)
+    if state == "open":
+        d.rectangle([26, 10, 33, 58], fill=C(INK))
+        d.rectangle([27, 11, 32, 57], fill=C("P18"))
+        d.line([28, 12, 28, 56], fill=C("P19"))
+        d.rectangle([29, 32, 31, 35], fill=C("P48"))
+        d.rectangle([1, 54, 25, 58], fill=C("P02"))                          # 바닥에 떨어진 문틀 그림자
+        return im
+    d.rectangle([0, 6, 33, 59], fill=C(INK))                                  # 문틀
+    d.rectangle([1, 7, 32, 58], fill=C("P17"))
+    d.rectangle([3, 9, 30, 57], fill=C(INK))
+    d.rectangle([4, 10, 29, 56], fill=C("P18"))                               # 문짝
+    for y in (13, 33):                                                        # 판 두 장(위 · 아래 굽도리)
+        d.rectangle([7, y, 26, y + 16], fill=C("P17"))
+        d.rectangle([8, y + 1, 25, y + 15], fill=C("P19"))
+        d.line([8, y + 1, 25, y + 1], fill=C("P20"))
+    d.rectangle([9, 17, 24, 23], fill=C(INK)); d.rectangle([10, 18, 23, 22], fill=C("P09"))   # 문패
+    d.line([12, 20, 21, 20], fill=C("P04"))                                  # 문패 글줄(1배율에서 글자 대신 줄 — 이름은 조사 글이 말한다)
+    d.ellipse([23, 33, 28, 38], fill=C(INK)); d.ellipse([24, 34, 27, 37], fill=C("P48"))   # 손잡이
+    d.point((25, 35), fill=C("P50"))
+    d.rectangle([24, 40, 26, 43], fill=C(INK))                                # 열쇠 구멍 판
+    d.line([4, 56, 29, 56], fill=C("P02"))
     return im
 
 
@@ -196,14 +235,16 @@ PROPS_GS2 = {
     "gs_sentry_maint": _r(sentry_maint, 2, 1, down=-2),
     "gs_fuse_box": _r(fuse_box, 0, 0, "deco"),
     "gs_punch_reg": _r(card_punch_broken, 1, 1, down=-2),
+    "k24_side_door": _r(side_door, 1, 1, down=-2),
+    "k24_side_door_open": _r(lambda: side_door("open"), 0, 0, "deco"),
 }
 
 STATES_GS2 = {
     "gs_salim_wrap": {s: (lambda s=s: salim_wrap(s)) for s in ("bare", "done")},
     "gs_salim_bin": {s: (lambda s=s: salim_bin(s)) for s in ("nest", "done")},
-    "gs_sentry_maint": {s: (lambda s=s: sentry_maint(s)) for s in ("tag", "card", "three", "three_dim", "three_card")},
+    "gs_sentry_maint": {s: (lambda s=s: sentry_maint(s)) for s in ("tag", "card", "bare_card", "three", "three_dim", "three_card", "three_dimcard")},
     "gs_fuse_box": {"out": lambda: fuse_box("out")},
-    "grader": {s: (lambda s=s: grader_state(s)) for s in ("run", "noneedle")},
+    "grader": {s: (lambda s=s: grader_state(s)) for s in ("run", "noneedle", "wreck")},
 }
 
 

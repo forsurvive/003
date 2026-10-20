@@ -1,0 +1,174 @@
+{
+ "id": "FQGS01_POST",
+ "title": "정비고 당번표",
+ "loc": "L-R01-23",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "GONE": 7,
+  "GONE2": 10,
+  "SIGN": 12,
+  "MINE": 16,
+  "DONE": 18
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "압정으로 꽂은 당번표. 칸마다 대기 번호와 날짜, 마지막 칸에 '오상구'."
+  },
+  {
+   "op": "if",
+   "cond": "FQGS01_STAGE >= 100",
+   "to": "DONE"
+  },
+  {
+   "op": "if",
+   "cond": "FQGS01_STAGE >= 10",
+   "to": "MINE"
+  },
+  {
+   "op": "if",
+   "cond": "AFF_GS < 20",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "known_dead(\"N-R01-503\") == 1",
+   "to": "GONE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "맨 아래 빈칸 옆에 연필 — '당번 구함. 3번은 전원부터.'"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "빈칸에 내 번호를 적는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SIGN",
+     "id": "FQGS01_POST:1:0"
+    },
+    {
+     "text": "그냥 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQGS01_POST:1:1"
+    }
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "known_dead(\"N-R01-055\") == 1",
+   "to": "GONE2"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "오상구 이름 위에 검은 줄. 그 아래 한가람의 글씨 — '당번 구함. 3번은 전원부터. 정비 카드는 대기실에서.'"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "빈칸에 내 번호를 적는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SIGN",
+     "id": "FQGS01_POST:2:0"
+    },
+    {
+     "text": "그냥 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQGS01_POST:2:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "맨 아래 두 이름 위에 검은 줄. 누군가 떨리는 글씨로 덧붙였다 — '당번 구함. 3번은 전원부터.'"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "빈칸에 내 번호를 적는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SIGN",
+     "id": "FQGS01_POST:3:0"
+    },
+    {
+     "text": "그냥 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQGS01_POST:3:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "gs01",
+   "args": [
+    "roster"
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "FQ_GS01_WARN = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "연필로 \\V[P_REGNO]. 당번표 맨 아래 칸이 처음으로 사람 번호가 아닌 숫자로 찼다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "맨 아래 칸에 내 번호 \\V[P_REGNO]. 그 옆 작은 글씨 — '3번은 전원부터.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "내 번호 옆에 동그라미 여섯. 누가 그렸는지 모르는 작은 대기등 그림."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-GS-01.txt"
+}

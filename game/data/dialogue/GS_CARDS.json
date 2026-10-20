@@ -6,7 +6,12 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "MINE": 3
+  "MORE": 3,
+  "TOP": 4,
+  "FIRSTROW": 7,
+  "STUDROW": 9,
+  "MY": 10,
+  "MINE": 12
  },
  "ops": [
   {
@@ -14,6 +19,51 @@
    "who": "SYS",
    "emo": "기본",
    "text": "신도들이 손으로 뚫은 누런 천공 카드 수십 장. 구멍 열두 줄마다 대기 번호와 날짜."
+  },
+  {
+   "op": "if",
+   "cond": "FQ_GS02_DONE >= 1",
+   "to": "MORE"
+  },
+  {
+   "op": "goto",
+   "to": "TOP"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "아래 칸에 새 카드가 늘었다. 구멍 가장자리가 아직 하얗다 — 학원 바늘로 뚫은 것."
+  },
+  {
+   "op": "if",
+   "cond": "FQ_GS02_NAME == 1",
+   "to": "FIRSTROW"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_GS02_NAME == 2",
+   "to": "STUDROW"
+  },
+  {
+   "op": "goto",
+   "to": "MY"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "맨 윗줄에 누런 답안 카드 묶음. 류정의 글씨 — '첫 등록자들. 2077. 10. 23.'"
+  },
+  {
+   "op": "goto",
+   "to": "MY"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "맨 윗줄에 누런 답안 카드 묶음. 류정의 글씨 — '학생들. 2077. 10. 23.'"
   },
   {
    "op": "if",

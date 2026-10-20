@@ -12,7 +12,7 @@
   items_misc_money: 9행
   items_misc_other: 7행
   items_quest: 50행
-  items_side: 93행
+  items_side: 99행
   items_trade: 1행
   items_unique: 1행
   karma_titles: 35행
