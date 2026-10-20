@@ -6,15 +6,21 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "HINT": 7,
-  "EMPTY": 9,
-  "FIXED": 11
+  "HINT": 8,
+  "EMPTY": 10,
+  "TONIGHT": 12,
+  "FIXED": 14
  },
  "ops": [
   {
    "op": "if",
-   "cond": "FQ_GS02_DONE >= 1",
+   "cond": "FQ_GS02_DONE >= 1 and GAME_DAY > FQ_GS02_DONE",
    "to": "FIXED"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_GS02_DONE >= 1",
+   "to": "TONIGHT"
   },
   {
    "op": "line",
@@ -63,6 +69,16 @@
    "who": "SYS",
    "emo": "기본",
    "text": "천공기 앞 바닥에 빈 카드 한 장이 떨어져 있다. 기다리던 자리가 비었다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "부러진 바늘 옆에 새 쪽지 — '오늘 밤 바늘 갈이. 내일 아침부터 등록.' 순례자 둘이 빈 카드를 무릎에 올려놓고 웃는다."
   },
   {
    "op": "goto",

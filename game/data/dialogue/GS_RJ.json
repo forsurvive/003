@@ -6,28 +6,31 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "AGAIN": 10,
-  "NEEDLE": 13,
-  "EARLY": 19,
-  "HOSTILE": 24,
-  "WARY": 26,
-  "NEUTRAL": 28,
-  "ASK": 31,
-  "GIVE": 32,
-  "GIVE2": 36,
-  "GIVE3": 37,
-  "HEADQ": 39,
-  "HEADQ2": 42,
-  "CARDS": 44,
-  "STUDENT": 47,
-  "OWNER": 51,
-  "FIRST": 55,
-  "M135": 58,
-  "WHY": 62,
-  "LAMP": 65,
-  "WHAT": 68,
-  "SPLIT_GONE": 72,
-  "SPLIT": 74
+  "AGAIN": 11,
+  "NEEDLE": 14,
+  "EARLY": 20,
+  "EARLYN": 24,
+  "EARLY2": 25,
+  "HOSTILE": 28,
+  "WARY": 30,
+  "NEUTRAL": 32,
+  "ASK": 35,
+  "GIVE": 36,
+  "GIVE2": 40,
+  "GIVE3": 41,
+  "HEADQ": 43,
+  "HEADQ2": 46,
+  "HEADQ3": 49,
+  "CARDS": 52,
+  "STUDENT": 55,
+  "OWNER": 59,
+  "FIRST": 63,
+  "M135": 66,
+  "WHY": 70,
+  "LAMP": 73,
+  "WHAT": 76,
+  "SPLIT_GONE": 80,
+  "SPLIT": 82
  },
  "ops": [
   {
@@ -78,6 +81,11 @@
    "args": [
     "C-014"
    ]
+  },
+  {
+   "op": "if",
+   "cond": "FQGS02_STAGE == 0 and AFF_GS >= 20",
+   "to": "NEEDLE"
   },
   {
    "op": "goto",
@@ -139,10 +147,25 @@
    "text": "운영자님. 카드를 찍는 바늘이 부러졌어요. 같은 기계가 학원가에 —"
   },
   {
+   "op": "if",
+   "cond": "has(\"M-420\") == 1",
+   "to": "EARLYN"
+  },
+  {
    "op": "line",
    "who": "SYS",
    "emo": "기본",
-   "text": "류정이 손에 든 것을 본다. 세진 천공기 바늘이다."
+   "text": "류정이 손에 든 것을 본다. 바늘이 박힌 채 뜯긴 놋쇠 천공 머리다."
+  },
+  {
+   "op": "goto",
+   "to": "EARLY2"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "류정이 손에 든 것을 본다. 기름종이에 싼 세진 천공기 바늘이다."
   },
   {
    "op": "line",
@@ -330,10 +353,31 @@
    "to": "ASK"
   },
   {
+   "op": "if",
+   "cond": "known_dead(\"N-R01-055\") == 1 or SQ_S04_D == 1",
+   "to": "HEADQ3"
+  },
+  {
    "op": "line",
    "who": "C-014",
    "emo": "기본",
    "text": "머리째요? …정비 손이 필요하겠네요. 마당의 정비 당번장한테 가져가 보세요."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "C-014",
+   "emo": "슬픔",
+   "text": "머리째요? 정비 손이 이제 저희한텐 없어요."
+  },
+  {
+   "op": "line",
+   "who": "C-014",
+   "emo": "기본",
+   "text": "…그 학원 기계, 수리 기사가 오기로 했었다면서요. 기사가 쓸 예비 부품을 어딘가 넣어 뒀을 거예요. 원장실 같은 데."
   },
   {
    "op": "goto",
@@ -363,7 +407,7 @@
      "id": "GS_RJ:2:0"
     },
     {
-     "text": "채점된 권성민의 카드를 보여 준다. 이 이름의 주인은 신림 고시촌에 아직 있을지도 모른다",
+     "text": "채점된 권성민의 카드를 보여 준다. 이 이름의 주인이 아직 어딘가 살아 있을지도 모른다",
      "tags": [
       {
        "k": "item",

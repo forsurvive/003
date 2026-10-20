@@ -41,16 +41,17 @@ prop bedroll 26 9
 prop bedroll2 29 5
 prop bedroll2 29 9
 text 5 5 "침낭 줄. 머리맡마다 천공 카드 한 장 — 각자의 대기 번호." w=1
+text 8 5 "새 침낭 둘. 머리맡에 막 뚫은 카드 — 구멍 가장자리가 아직 하얗다. 학원 바늘로 뚫은 번호다." cond="FQ_GS02_DONE != 0 and GAME_DAY > FQ_GS02_DONE"
 # 천공기 셋(1-12b): 가운데가 등록용(바늘 부러짐 — FQ-GS-02가 고칠 때까지) · 양옆은 정비 카드용(다른 기계, GS_PUNCH)
 prop gs_card_punch 13 12
-prop gs_punch_reg 16 12 cond="FQ_GS02_DONE == 0"
-prop gs_card_punch 16 12 cond="FQ_GS02_DONE != 0"
+prop gs_punch_reg 16 12 cond="FQ_GS02_DONE == 0 or GAME_DAY <= FQ_GS02_DONE"
+prop gs_card_punch 16 12 cond="FQ_GS02_DONE != 0 and GAME_DAY > FQ_GS02_DONE"
 prop gs_card_punch 19 12
 text 13 12 "정비 카드용 천공기. 레버 옆에 '정비 — 당번 번호 칸만'." scene=GS_PUNCH
 text 19 12 "정비 카드용 천공기. 손잡이에 흰 천이 감겨 반들거린다." scene=GS_PUNCH
 text 16 12 "등록용 천공기. 새 신도는 여기서 자기 카드를 직접 뚫는다. 구멍 열두 줄 — 매뉴얼의 등록 양식 그대로." scene=FQGS02_REG
-npc N-GS-5 15 13 N look=M1-S2-HR03-H2-T14-0-PF10-HD14-EY00-PR017 cond="FQ_GS02_DONE == 0" bark="바늘이 언제 고쳐질까요. 빈 카드만 사흘째 들고 있어요."
-npc N-GS-6 17 13 N look=F1-S3-HR05-H1-T14-0-PF10-HD14-EY00-PR017 pose=sit cond="FQ_GS02_DONE == 0" bark="번호가 없으면 수호자가 우릴 못 읽는대요."
+npc N-GS-5 15 13 N look=M1-S2-HR03-H2-T14-0-PF10-HD14-EY00-PR017 cond="FQ_GS02_DONE == 0 or GAME_DAY <= FQ_GS02_DONE" bark="바늘이 언제 고쳐질까요. 빈 카드만 들고 기다려요."
+npc N-GS-6 17 13 N look=F1-S3-HR05-H1-T14-0-PF10-HD14-EY00-PR017 pose=sit cond="FQ_GS02_DONE == 0 or GAME_DAY <= FQ_GS02_DONE" bark="번호가 없으면 수호자가 우릴 못 읽는대요."
 prop laundry_line 3 13
 prop laundry_line 26 13
 prop drum 29 3
@@ -59,7 +60,7 @@ prop water_jug 28 3
 text 29 3 "물통. 저수조 바닥에서 아직 물이 스민다. 끓여 마신다." w=2
 prop wall_clock 4 1
 prop w_poster_rad 25 1
-text 4 2 "벽시계. 대기음 시각에만 맞춘다. 하루 네 번."
+text 4 2 "벽시계. 대기음 시각에만 맞춘다. 하루 네 번 — 06 · 11 · 16 · 21시. 그때마다 대기실이 빈다."
 prop crate 2 3
 box 2 3 pantry owner=C-014 name="대기실 식량 상자"
 prop work_lamp 9 7

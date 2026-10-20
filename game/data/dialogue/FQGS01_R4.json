@@ -6,15 +6,22 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "TAGOK": 4,
-  "OK": 8,
-  "CLUMSY": 11,
-  "DONE": 14,
-  "LATE": 17,
-  "LATEOK": 19,
-  "LOOK": 22
+  "TAGOK": 5,
+  "OK": 9,
+  "CLUMSY": 12,
+  "DONE": 15,
+  "SOLD": 19,
+  "LATE": 21,
+  "LATEOK": 23,
+  "LOOK": 26,
+  "COLD": 28
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "AFF_GS <= -20 and FQGS01_STAGE >= 10 and FQGS01_STAGE < 100",
+   "to": "COLD"
+  },
   {
    "op": "if",
    "cond": "FQ_GS01_R4 >= 1",
@@ -156,10 +163,25 @@
    "to": "LATE"
   },
   {
+   "op": "if",
+   "cond": "FQ_GS01_TAG == 3",
+   "to": "SOLD"
+  },
+  {
    "op": "line",
    "who": "SYS",
    "emo": "기본",
    "text": "가슴 판에 '당번 \\V[P_REGNO]'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "목 고리에 'SJ-G70 · 동작 중계 04'. 정비 당번장이 건 태그다 — 고리 옆에 번호 카드 '6203'이 하나 더 끼워져 있다."
   },
   {
    "op": "goto",
@@ -220,6 +242,16 @@
    "who": "SYS",
    "emo": "기본",
    "text": "잠든 파수-3, 가슴 판에 '4'. 목에 걸려 있어야 할 식별 태그 고리가 비었다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "신도 둘이 차양 앞을 막아선다. '응답 없는 분은 수호자 몸에 손대지 마세요.' 차양 밑 당번은 등을 돌린 채 걸레만 짠다."
   },
   {
    "op": "goto",

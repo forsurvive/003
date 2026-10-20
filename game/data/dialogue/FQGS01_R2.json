@@ -6,12 +6,19 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "OK": 4,
-  "CLUMSY": 7,
-  "DONE": 10,
-  "LOOK": 12
+  "OK": 5,
+  "CLUMSY": 8,
+  "DONE": 11,
+  "DONE2": 14,
+  "LOOK": 16,
+  "COLD": 18
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "AFF_GS <= -20 and FQGS01_STAGE >= 10 and FQGS01_STAGE < 100",
+   "to": "COLD"
+  },
   {
    "op": "if",
    "cond": "FQ_GS01_R2 >= 1",
@@ -109,6 +116,11 @@
    "to": "END"
   },
   {
+   "op": "if",
+   "cond": "FQ_GS01_R2 == 2",
+   "to": "DONE2"
+  },
+  {
    "op": "line",
    "who": "SYS",
    "emo": "기본",
@@ -122,7 +134,27 @@
    "op": "line",
    "who": "SYS",
    "emo": "기본",
+   "text": "방패 팔 안쪽에 '착한'만 남은 분필 글씨. 가슴 판 카드 — '당번 \\V[P_REGNO]'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
    "text": "잠든 파수-3, 가슴 판에 '2'. 정비 당번이 닦아 둔 몸통이 반짝인다. 관절마다 기름 냄새."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "신도 둘이 차양 앞을 막아선다. '응답 없는 분은 수호자 몸에 손대지 마세요.' 차양 밑 당번은 등을 돌린 채 걸레만 짠다."
   },
   {
    "op": "goto",

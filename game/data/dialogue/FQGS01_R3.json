@@ -6,21 +6,27 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "BATT": 7,
-  "CARD": 8,
-  "DIMMED": 12,
-  "OFF": 14,
-  "MENU": 15,
-  "POWER": 16,
-  "OIL": 19,
-  "OILC": 21,
-  "FUSE": 23,
-  "DONE": 25,
-  "DONEDIM": 28,
-  "WRECK": 30,
-  "LOOK": 32
+  "BATT": 8,
+  "CARD": 9,
+  "DIMMED": 13,
+  "OFF": 15,
+  "MENU": 16,
+  "POWER": 17,
+  "OIL": 20,
+  "OILC": 22,
+  "FUSE": 24,
+  "DONE": 26,
+  "DONEDIM": 29,
+  "WRECK": 31,
+  "LOOK": 33,
+  "COLD": 35
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "AFF_GS <= -20 and FQGS01_STAGE >= 10 and FQGS01_STAGE < 100",
+   "to": "COLD"
+  },
   {
    "op": "if",
    "cond": "FQ_GS01_R3 == 3",
@@ -256,6 +262,16 @@
    "who": "SYS",
    "emo": "기본",
    "text": "가슴 판에 '3'. 다른 로봇과 달리 머리 위 대기등이 또렷하게 녹색이다. 등판에 퓨즈함."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "신도 둘이 차양 앞을 막아선다. '응답 없는 분은 수호자 몸에 손대지 마세요.' 차양 밑 당번은 등을 돌린 채 걸레만 짠다."
   },
   {
    "op": "goto",

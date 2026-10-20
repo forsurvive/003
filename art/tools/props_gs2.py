@@ -125,16 +125,17 @@ def sentry_maint(state=""):
     d = ImageDraw.Draw(im)
     if state.startswith("three"):
         lit = not state.startswith("three_dim")
+        amber = state == "three_amber"
         d.rectangle([52, 17, 54, 20], fill=C(INK))                        # 얼굴판 위 등 받침
         d.ellipse([49, 10, 57, 18], fill=C(INK))
-        d.ellipse([50, 11, 56, 17], fill=C("P56" if lit else "P05"))
+        d.ellipse([50, 11, 56, 17], fill=C(("P59" if amber else "P56") if lit else "P05"))
         if lit:
-            d.ellipse([51, 12, 54, 14], fill=C("P57"))
+            d.ellipse([51, 12, 54, 14], fill=C("P60" if amber else "P57"))
             for (x, y) in ((46, 12), (60, 14), (53, 8), (47, 18), (59, 9)):
-                d.point((x, y), fill=C("P57"))
+                d.point((x, y), fill=C("P60" if amber else "P57"))
         else:
             d.point((52, 13), fill=C("P06"))
-        put_text(im, "3", 60, 10, "P56" if lit else "P07", size=8)
+        put_text(im, "3", 60, 10, ("P59" if amber else "P56") if lit else "P07", size=8)
     if state in ("tag", "card"):
         d.rectangle([30, 22, 34, 26], fill=C("P48")); d.point((32, 24), fill=C(INK))
     elif state in ("", "bare_card"):
@@ -242,7 +243,7 @@ PROPS_GS2 = {
 STATES_GS2 = {
     "gs_salim_wrap": {s: (lambda s=s: salim_wrap(s)) for s in ("bare", "done")},
     "gs_salim_bin": {s: (lambda s=s: salim_bin(s)) for s in ("nest", "done")},
-    "gs_sentry_maint": {s: (lambda s=s: sentry_maint(s)) for s in ("tag", "card", "bare_card", "three", "three_dim", "three_card", "three_dimcard")},
+    "gs_sentry_maint": {s: (lambda s=s: sentry_maint(s)) for s in ("tag", "card", "bare_card", "three", "three_dim", "three_card", "three_dimcard", "three_amber")},
     "gs_fuse_box": {"out": lambda: fuse_box("out")},
     "grader": {s: (lambda s=s: grader_state(s)) for s in ("run", "noneedle", "wreck")},
 }

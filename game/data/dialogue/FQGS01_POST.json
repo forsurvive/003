@@ -10,7 +10,8 @@
   "GONE2": 10,
   "SIGN": 12,
   "MINE": 16,
-  "DONE": 18
+  "SELF": 19,
+  "DONE": 23
  },
  "ops": [
   {
@@ -151,6 +152,34 @@
    "who": "SYS",
    "emo": "기본",
    "text": "맨 아래 칸에 내 번호 \\V[P_REGNO]. 그 옆 작은 글씨 — '3번은 전원부터.'"
+  },
+  {
+   "op": "if",
+   "cond": "known_dead(\"N-R01-503\") == 1 and (known_dead(\"N-R01-055\") == 1 or SQ_S04_D == 1) and FQ_GS01_R1 >= 1 and FQ_GS01_R2 >= 1 and FQ_GS01_R3 >= 1 and FQ_GS01_R4 >= 1 and FQ_GS01_R5 >= 2 and FQ_GS01_R6 >= 3",
+   "to": "SELF"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "보고할 당번이 없다. 연필로 내 번호 옆에 동그라미 여섯을 그린다."
+  },
+  {
+   "op": "cmd",
+   "name": "gs01",
+   "args": [
+    "done"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "차양 기둥 아래에 누가 진공관 둘을 천에 싸서 두고 갔다. 쪽지 — '정비고 예비품. 당번 몫.'"
   },
   {
    "op": "goto",

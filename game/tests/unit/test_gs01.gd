@@ -290,7 +290,8 @@ func test_gs02_offer_and_grader(t) -> void:
 	t.eq(_v(st, "AFF_GS") - aff, 8, "GS +8")
 	t.eq(_v(st, "PC_CAPS") - caps, 50, "헌금 50캡")
 	t.eq(_v(st, "PD_R01_GS") - pd, 3, "판도 +3")
-	t.ok(_says(st, c, "FQGS02_REG", "학원에서 온 것"), "등록용 천공기가 다시 돈다")
+	st.vars.set_v("GAME_DAY", _v(st, "GAME_DAY") + 1)
+	t.ok(_says(st, c, "FQGS02_REG", "학원에서 온 것"), "다음 날 등록용 천공기가 다시 돈다")
 
 
 func test_gs02_tube_first_and_m135(t) -> void:
@@ -342,6 +343,7 @@ func test_gs02_door_safe_cards(t) -> void:
 	t.eq(h.map.is_solid(c.DOOR), false, "발 칸이 트임")
 	_play(st, c, "K24_BANNER")
 	_play(st, c, "K24_CAL")
+	_play(st, c, "K24_DESK")
 	t.ok(_has_opt(st, "K24_SAFE", "3 · 7 · 2 · 3"), "현수막 37 · 달력 23 → 번호")
 	_play(st, c, "K24_SAFE", ["3 · 7 · 2 · 3"])
 	var b: Dictionary = h.map.boxes.get(c.SAFE, {})
@@ -372,3 +374,55 @@ func test_gs02_rj_dead_fails(t) -> void:
 	st.kill("C-014")
 	c.tick()
 	t.eq(st.quests.stage("FQ-GS-02"), 200, "류정 사망 = 실패(영구 적대)")
+
+
+func test_gs01_review_fixes(t) -> void:
+	var a := _host()
+	var h: InteriorHost = a[0]
+	var st: StoryState = a[1]
+	var c: FqGs = a[2]
+	_duty(st, c)
+	_play(st, c, "FQGS01_R2", ["(서툴게)"])
+	t.eq(_v(st, "FQ_GS01_R2"), 2, "서툰 2번 = 따로 남음")
+	t.ok(_says(st, c, "FQGS01_R2", "'착한'만 남은"), "2번 글이 서툰 손질을 기억")
+	_play(st, c, "FQGS01_R3", ["닦고, 관절에 기름"])
+	_play(st, c, "FQGS01_WAKE", ["맞선다"])
+	t.ok(c._bot != null, "맞섬")
+	c._bot.loco.logical = c._home3() + Vector2(400, 0)
+	c.tick()
+	t.eq(c._bot, null, "관할 밖 — 적을 치움")
+	t.eq(_v(st, "FQ_GS01_WAKE"), 0, "다시 누움")
+	t.eq(_v(st, "FQ_GS01_R3"), 0, "부서지지 않음 · 정비는 다시")
+	t.ok(_says(st, c, "FQGS01_OH", "계단 앞에서 돌아섰대요", ["됐습니다"]), "오상구가 그 이야기를 한다")
+	t.ok(host_lights(h) > 0, "3번 대기등 빛")
+	st.vars.set_v("AFF_GS", -30)
+	t.ok(_says(st, c, "FQGS01_R1", "막아선다"), "각성회 경계면 신도가 막는다")
+	h.free()
+	var b := _host()
+	var st2: StoryState = b[1]
+	st2.kill("N-R01-503")
+	st2.kill("N-R01-055")
+	_play(st2, b[2], "FQGS01_POST", ["빈칸에 내 번호"])
+	_play(st2, b[2], "GS_PUNCH", ["정비 카드 여섯 장"])
+	_all_six(st2, b[2])
+	t.ok(_says(st2, b[2], "FQGS01_POST", "동그라미 여섯"), "보고할 사람이 없으면 당번표에 스스로")
+	t.eq(st2.quests.stage("FQ-GS-01"), 100, "끝(멈춘 판 없음, P10)")
+
+
+func test_gs02_tonight(t) -> void:
+	var a := _host("K-24", "from_W")
+	var st: StoryState = a[1]
+	var c: FqGs = a[2]
+	st.vars.set_v("GS_MET_RJ", 0)
+	t.ok(_says(st, c, "GS_RJ", "바늘이 부러졌어요"), "첫 만남에서 바로 부탁")
+	st.call_fn("give", ["M-420", 1])
+	_play(st, c, "GS_RJ", ["천공 바늘 묶음을 건넨다", "됐습니다"])
+	t.eq(st.quests.stage("FQ-GS-02"), 100, "끝")
+	t.ok(_says(st, c, "FQGS02_REG", "오늘 밤 바늘 갈이"), "그날은 아직 — 오늘 밤 갈이(P6)")
+	st.vars.set_v("GAME_DAY", _v(st, "GAME_DAY") + 1)
+	t.ok(_says(st, c, "FQGS02_REG", "학원에서 온 것"), "다음 날 다시 돈다")
+	t.ok(_says(st, c, "K24_SAFE", "무엇을 누를지 아직 모른다"), "쪽지 없이는 번호를 못 누른다")
+
+
+func host_lights(h: InteriorHost) -> int:
+	return h.extra_lights.filter(func(l: Array) -> bool: return l.size() > 2 and str(l[2]) == "gs3").size()

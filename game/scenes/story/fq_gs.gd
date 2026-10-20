@@ -16,6 +16,7 @@ const DOOR := Vector2i(21, 12)            ## K-24 원장실 옆문
 const SAFE := Vector2i(30, 11)            ## K-24 원장 금고
 const GRADER := Vector2i(29, 3)
 const WATCH_PX := 128.0                   ## 원장 대행이 옆문을 보는 거리(4칸)
+const LEASH := 9                         ## 깨어난 3번의 관할(칸) — 넘으면 '관할 구역 이탈'로 차양에 돌아가 눕는다
 const ROBOT_CELLS := {1: Vector2i(5, 16), 2: Vector2i(9, 17), 3: Vector2i(22, 5), 4: Vector2i(19, 17), 5: Vector2i(24, 5), 6: Vector2i(25, 5)}
 
 var host: InteriorHost
@@ -132,8 +133,7 @@ func tick() -> void:
 		if not is_instance_valid(_bot) or _bot.cmb.dead:
 			_bot = null
 			_wrecked()
-		elif _zone() != "X-GS":
-			_bot = null
+		elif _zone() != "X-GS" or _bot.loco.logical.distance_to(_home3()) > LEASH * 32.0:
 			_calmed()
 
 
@@ -143,7 +143,8 @@ func _on_day(d: int) -> void:
 
 
 func _on_map(id: String) -> void:
-	_bot = null if _bot != null and not is_instance_valid(_bot) else _bot
+	if _bot != null and (not is_instance_valid(_bot) or id != "X-GS"):
+		_bot = null                                                      # 맵이 바뀌면 적도 함께 치워진다 — 3번은 차양에 다시 누웠다
 	if id == "X-GS":
 		if v1("WAKE") == 1 and _bot == null:
 			_s1("WAKE", 0)                                               # 떠난 사이 오상구가 정비 모드로 눕혀 두었다
@@ -160,13 +161,29 @@ func _props_xgs() -> void:
 	var r4 := v1("R4") >= 1
 	m.set_prop_state(_cell("X-GS", ROBOT_CELLS[4]), ("card" if r4 else "tag") if tagged else ("bare_card" if r4 else ""))
 	var r3 := v1("R3")
-	var dim := v1("FUSE") == 1 or r3 == 3
+	var dim := v1("FUSE") == 1 or r3 == 3 or (v1("FUSE") == 3 and day() <= v1("FUSE_DAY"))   # 한가람은 '오늘 밤' 끼운다(P6)
 	var st3 := "three_dim" if dim else "three"
 	if r3 in [1, 2]:
 		st3 = "three_dimcard" if dim else "three_card"
+	if v1("WAKE") == 1:
+		st3 = "three_amber"
 	m.set_prop_state(_cell("X-GS", ROBOT_CELLS[3]), st3)
+	_lamp(not dim)
 	m.set_prop_state(_cell("X-GS", ROBOT_CELLS[5]), ["", "bare", "done"][clampi(v1("R5"), 0, 2)])
 	m.set_prop_state(_cell("X-GS", ROBOT_CELLS[6]), ["", "nest", "nest", "done"][clampi(v1("R6"), 0, 3)])
+
+
+## 3번 대기등 빛(밤에 계단 아래서도 보인다 — 계획 §4). 깨면 앰버
+func _lamp(lit: bool) -> void:
+	host.extra_lights = host.extra_lights.filter(func(l: Array) -> bool: return l.size() < 3 or str(l[2]) != "gs3")
+	if lit:
+		var col := Color(1.0, 0.62, 0.2) if v1("WAKE") == 1 else Color(0.5, 1.0, 0.45)
+		host.extra_lights.append([_home3() + Vector2(0, -24), col, "gs3"])
+
+
+func _home3() -> Vector2:
+	var c := _cell("X-GS", ROBOT_CELLS[3])
+	return Vector2((c.x + 1) * 32, c.y * 32 + 16)
 
 
 func _props_k24() -> void:
@@ -186,12 +203,16 @@ func _oil(clumsy: bool) -> void:
 	if v1("POWER") == 0 and v1("FUSE") != 1:
 		_s1("WAKE", 1)                                                   # 순서: 전원을 안 내리고 기름부터 — 반쯤 깬 3번이 일어난다(확률 아님)
 		_s1("WAKE_DAY", day())
+		_props_xgs()
 		_log("3번이 깨어남")
 		host.box.finished.connect(func() -> void: host.play_scene("FQGS01_WAKE"), CONNECT_ONE_SHOT)
 		return
 	_robot(3, clumsy)
+	if v1("FUSE") == 1:
+		host.hint("퓨즈가 빠진 3번은 기름이 스며도 꿈쩍하지 않는다.", 4.0)
+	else:
+		host.hint("닦고 기름을 친 뒤 전원을 다시 올린다. 3번은 그대로 잔다.", 4.0)
 	_s1("POWER", 0)
-	host.hint("닦고 기름을 친 뒤 전원을 다시 올린다. 3번은 그대로 잔다.", 4.0)
 
 
 func _auth() -> void:
@@ -233,9 +254,17 @@ func _wrecked() -> void:
 	_log("3번 부숨")
 
 
+## 관할 구역 이탈(흰 천 말뚝 밖 · 마당 밖): 3번이 스스로 돌아가 눕는다 — 적을 치우고 소품을 되살린다(한 몸, P3)
 func _calmed() -> void:
-	_s1("WAKE", 0)                                                       # 맞서다 떠났다 — 오상구가 정비 모드로 눕힌다(정비는 다시)
-	_log("3번이 다시 누움")
+	if _bot != null and is_instance_valid(_bot) and not _bot.cmb.dead:
+		host.combat.drop_enemy(_bot)
+	_bot = null
+	_s1("WAKE", 0)                                                       # 정비는 다시(R3 그대로)
+	if v1("HURT") == 0:
+		_s1("HURT", 1)                                                   # 다음에 오상구가 '계단 앞에서 돌아섰대요'
+	_show_three()
+	host.hint("3번이 흰 천 말뚝 앞에서 멈춘다. \"관할 구역 이탈. 대기 위치로 복귀합니다.\" 차양으로 걸어 돌아가 눕는다.", 6.0)
+	_log("3번 관할 이탈 — 다시 누움")
 
 
 func _show_three() -> void:
@@ -275,12 +304,17 @@ func _fuse_back() -> void:
 	if v1("FUSE") == 1 and v1("R3") != 3:
 		st.vars.set_v("GS_ROBOT", gv("GS_ROBOT") + 1)                    # 한가람이 그날 밤 다시 끼운다 — 벌 없이 대사로(계획 §4)
 	_s1("FUSE", 3)
+	_s1("FUSE_DAY", day())                                               # 대기등은 다음 날부터 다시 밝다
 	_s1("DIM", maxi(v1("DIM"), 2))
 
 
 # ---------------------------------------------------------------- GS-01: 로봇 손질
-func _robot(i: int, clumsy: bool) -> void:
+func _robot(i: int, clumsy: bool, how := "") -> void:
 	var done_v: int = {5: 2, 6: 3}.get(i, 1)
+	if i == 2 and clumsy:
+		done_v = 2                                                       # 분필 '착한'만 남음(오상구가 기억한다)
+	if i == 5 and how == "fold":
+		done_v = 3                                                       # 천을 개어 둠
 	if i == 3 and v1("R3") == 2:
 		return
 	_s1("R%d" % i, done_v)
@@ -346,7 +380,7 @@ func _cmd1(a: Array, done: Callable) -> void:
 		"cards":
 			_s1("CARDS", 6)
 		"robot":
-			_robot(int(a[1]), a.size() > 2 and str(a[2]) == "clumsy")
+			_robot(int(a[1]), a.size() > 2 and str(a[2]) == "clumsy", str(a[2]) if a.size() > 2 else "")
 		"seen":
 			_s1("SEEN", 1)
 			start1()
@@ -360,6 +394,7 @@ func _cmd1(a: Array, done: Callable) -> void:
 			_fight()
 		"flee":
 			_s1("WAKE", 0)
+			_props_xgs()
 		"fuse":
 			_fuse()
 		"fuseback":

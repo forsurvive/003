@@ -6,17 +6,23 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "OPEN": 6,
-  "NEST": 9,
-  "EMPTY": 11,
-  "EMPTIED": 17,
-  "WORK": 18,
-  "OK": 19,
-  "CLUMSY": 22,
-  "DONE": 25,
-  "LOOK": 27
+  "OPEN": 7,
+  "NEST": 10,
+  "EMPTY": 12,
+  "EMPTIED": 18,
+  "WORK": 19,
+  "OK": 20,
+  "CLUMSY": 23,
+  "DONE": 26,
+  "LOOK": 28,
+  "COLD": 30
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "AFF_GS <= -20 and FQGS01_STAGE >= 10 and FQGS01_STAGE < 100",
+   "to": "COLD"
+  },
   {
    "op": "if",
    "cond": "FQ_GS01_R6 >= 3",
@@ -244,6 +250,16 @@
    "who": "SYS",
    "emo": "기본",
    "text": "잠든 살림-2. 등 뒤 원통형 집진통 뚜껑 틈에서 지푸라기가 삐져나왔다. 안에서 바스락."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "신도 둘이 차양 앞을 막아선다. '응답 없는 분은 수호자 몸에 손대지 마세요.' 차양 밑 당번은 등을 돌린 채 걸레만 짠다."
   },
   {
    "op": "goto",
