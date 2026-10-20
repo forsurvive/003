@@ -63,3 +63,22 @@ mark k4 38 6 W
 mark k5 42 5 W
 mark k6 46 7 W
 mark king 40 5 W
+# FQ-JC-01 계단 물길(1-12a, SD-04d §10.3): 암거 입구 — 계곡 취수 보에서 내려오던 빗물을 신림 고시원 7동 물당번들이 흙막이로 막아 서쪽 옛 배수 홈으로 돌렸다.
+# 흙막이(3상태) · 호실 번호 물통 줄 · 2077 분배함 · 웅덩이 둥지(시궁쥐 셋 — 흙막이가 생긴 뒤에만, 진행기 FqJc01이 '처치'를 센다). 상태 그림은 진행기가 맵에 들 때 맞춘다.
+prop bucket_row 3 3 cond="FQ_JC01_CUT > 0"
+text 3 3 "물통 줄." w=3 scene=FQJC01_BUCKET cond="FQ_JC01_CUT > 0"
+prop mud_dam 6 4 cond="FQ_JC01_CUT > 0"
+text 6 4 "흙막이." w=2 scene=FQJC01_DAM cond="FQ_JC01_CUT > 0"
+prop dist_box 8 3
+text 8 3 "녹슨 분배함." scene=FQJC01_VALVE
+prop pool_nest 9 7 cond="FQ_JC01_CUT > 0"
+text 9 7 "고인 웅덩이." scene=FQJC01_NEST cond="FQ_JC01_CUT > 0"
+enemy CR-095 8 7 cond="FQ_JC01_CUT > 0 and FQ_JC01_NEST == 0"
+enemy CR-095 10 6 cond="FQ_JC01_CUT > 0 and FQ_JC01_NEST == 0"
+enemy CR-095 10 8 cond="FQ_JC01_CUT > 0 and FQ_JC01_NEST == 0"
+mark jc_dam 6 5 N
+mark jc_nest 9 6 S
+npc C-015 4 8 N sheet=cr_baekgu_loco cond="FQ_JC01_DOG == 5 and FQ_JC01_FLOW == 0" bark="(백구가 흙막이를 향해 낮게 으르렁거린다. 꼬리는 내리지 않았다.)"
+# 재미 검수(구현 뒤) 반영: 근무표대로 03~06시 흙막이를 보수하는 7동 물당번 둘(호실 번호뿐 — '사람 보이면 철수, 싸우지 말 것'). 철수한 날 밤엔 다시 오지 않는다(SAID).
+npc N-JC-W1 4 4 E look=M1-S2-HR03-H2-T03-1-PF00-HD05-EY00 cond="GAME_HOUR >= 3 and GAME_HOUR < 6 and FQ_JC01_CUT > 0 and FQ_JC01_SAID != GAME_DAY"
+npc N-JC-W2 5 6 N look=F1-S3-HR05-H1-T10-2-PF00-HD00-EY00 cond="GAME_HOUR >= 3 and GAME_HOUR < 6 and FQ_JC01_CUT > 0 and FQ_JC01_SAID != GAME_DAY and FQ_JC01_FLOW == 0" bark="(마대를 다지던 손을 멈추고 동료를 본다. 7-108.)"

@@ -1,0 +1,78 @@
+{
+ "id": "FQJC01_BAEK",
+ "title": "백구 — 흙 냄새",
+ "loc": "L-R01-09",
+ "npc": "C-015",
+ "cond": "V_ACT >= 1 and FQJC01_STAGE >= 10 and FQJC01_STAGE < 100 and FQ_JC01_FLOW == 0 and FQ_JC01_DOG in [0, 2, 3] and FQ_JC01_BETRAY == 0 and SQ_S01_DOG != 1 and not (SQS01_STAGE >= 10 and SQS01_STAGE < 100 and SQ_S01_SOL == 0 and SQ_S01_LEFT == 0)",
+ "labels": {
+  "START": 0,
+  "KNOW": 3,
+  "ASK": 4,
+  "GO": 5
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "백구가 코를 땅에 박고 아랫문 쪽을 본다. 꼬리가 낮게 흔들린다."
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S01_DOG >= 1",
+   "to": "KNOW"
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "외눈 굴에 같이 갔던 냄새를 기억하는지, 백구가 먼저 일어나 주인공 무릎에 머리를 부빈다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "가자, 백구야. 흙 냄새 따라가",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "GO",
+     "id": "FQJC01_BAEK:1:0"
+    },
+    {
+     "text": "여기 있어",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQJC01_BAEK:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "jc01",
+   "args": [
+    "dog"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "백구가 짧게 한 번 짖고 앞장선다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-JC-01.txt"
+}

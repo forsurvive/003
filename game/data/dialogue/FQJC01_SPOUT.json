@@ -1,0 +1,87 @@
+{
+ "id": "FQJC01_SPOUT",
+ "title": "312계단 홈통",
+ "loc": "L-R01-09",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "PLAIN": 7,
+  "BACK": 9,
+  "HALF": 11
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "FQ_JC01_CUT == 0",
+   "to": "PLAIN"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JC01_FLOW == 1",
+   "to": "BACK"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JC01_FLOW == 2",
+   "to": "HALF"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "312계단 옆 홈통. 계곡 수로 물이 배수지로 내려가던 길이다. 바짝 말랐다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "홈 바닥에 젖은 흙이 남쪽 아랫문 쪽으로 끌려간 자국. 누가 흙 묻은 마대를 끌고 지나갔다."
+  },
+  {
+   "op": "cmd",
+   "name": "jc01",
+   "args": [
+    "spout"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "312계단 옆 홈통. 함석 홈 안으로 물이 졸졸 흘러 배수지 쪽으로 내려간다. 손을 대면 차갑다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "홈통에 물소리가 돌아왔다. 계단참 아이 하나가 손바닥을 대 보고 웃는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "홈통 물이 반 줄기로 흐른다. 나머지 반은 계곡에서 서쪽 — 고시원 쪽으로 갈라졌다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-JC-01.txt"
+}

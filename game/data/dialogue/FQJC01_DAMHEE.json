@@ -1,0 +1,77 @@
+{
+ "id": "FQJC01_DAMHEE",
+ "title": "반상회 총무 조담희 — 이제 빗물",
+ "loc": "L-R01-09",
+ "npc": "N-R01-029",
+ "cond": "V_ACT >= 1 and FQ_JC01_CUT > 0 and FQJC01_STAGE < 10 and SQS02_STAGE >= 70 and has(\"M-158\") == 0 and (known_dead(\"N-R01-032\") == 0 or SQ_S02_REWARD == 1)",
+ "labels": {
+  "START": 0,
+  "NOONE": 7,
+  "HA": 9
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-R01-029",
+   "emo": "기본",
+   "text": "밸브는 됐고, 이제 빗물이야."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-029",
+   "emo": "피곤",
+   "text": "312계단 홈통이 말랐어. 빗물 당번표를 붙여 놨는데 당번들이 계곡까지 내려갈 엄두를 못 내."
+  },
+  {
+   "op": "cmd",
+   "name": "jc01",
+   "args": [
+    "start"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "known_dead(\"C-010\") == 1 and known_dead(\"C-057\") == 1",
+   "to": "NOONE"
+  },
+  {
+   "op": "if",
+   "cond": "known_dead(\"C-010\") == 1",
+   "to": "HA"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-029",
+   "emo": "기본",
+   "text": "이장님한테 가 봐. 수로는 이장님이 제일 잘 알아."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-029",
+   "emo": "슬픔",
+   "text": "물어볼 어른도 이제 없네. 계곡 암거 입구까지 가 봐 줘. 고쳐 주면 반상회가 갚을게."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-029",
+   "emo": "슬픔",
+   "text": "하숙자 아줌마한테 가 봐. 이장님 없으니 수로 일은 그 집이 봐."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-JC-01.txt"
+}

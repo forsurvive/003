@@ -1,0 +1,62 @@
+{
+ "id": "FQJC01_HA",
+ "title": "부이장 하숙자 — 계단 물길",
+ "loc": "L-R01-09",
+ "npc": "C-057",
+ "cond": "V_ACT >= 1 and known_dead(\"C-010\") == 1 and FQ_JC01_CUT > 0 and FQ_JC01_POSTED < 2 and FQ_JC01_FLOW == 0 and FQJC01_STAGE < 100 and AFF_JC_BC >= -19",
+ "labels": {
+  "START": 0,
+  "NODOG": 5,
+  "TELL": 6
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "C-057",
+   "emo": "피곤",
+   "text": "홈통이 말랐어. 이장님 계셨으면 벌써 계곡에 사람 보냈을 거야."
+  },
+  {
+   "op": "line",
+   "who": "C-057",
+   "emo": "기본",
+   "text": "아랫물은 관악 계곡 취수 보에서 수로 타고 와. 거기 어딘가 막혔겠지."
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"C-015\") == 1",
+   "to": "NODOG"
+  },
+  {
+   "op": "line",
+   "who": "C-057",
+   "emo": "기본",
+   "text": "백구 데려가. 이장님이 늘 그랬어, 그놈 코가 당신 눈보다 낫다고."
+  },
+  {
+   "op": "goto",
+   "to": "TELL"
+  },
+  {
+   "op": "line",
+   "who": "C-057",
+   "emo": "슬픔",
+   "text": "백구도 없고…. 게시판에 담희가 붙인 빗물 당번표 봐. 빗물받이가 어디로 빠지는지 적혀 있어."
+  },
+  {
+   "op": "cmd",
+   "name": "jc01",
+   "args": [
+    "told"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-JC-01.txt"
+}

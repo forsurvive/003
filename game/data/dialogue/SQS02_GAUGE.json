@@ -6,13 +6,31 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "HIGH": 6,
-  "HIGH2": 9,
-  "MID": 11,
-  "LOW": 13,
-  "FULL": 15
+  "HIGH": 9,
+  "HIGH2": 12,
+  "MID": 14,
+  "LOW": 16,
+  "FULL": 18,
+  "RAIN3": 20,
+  "RAINLEAK": 22,
+  "RAINSPLIT": 24
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "FQ_JC01_CAP < FQ_JC01_BASE and FQ_JC01_FLOW == 0",
+   "to": "RAIN3"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JC01_CAP < FQ_JC01_BASE and FQ_JC01_CRACK == 0",
+   "to": "RAINLEAK"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JC01_CAP < FQ_JC01_BASE",
+   "to": "RAINSPLIT"
+  },
   {
    "op": "if",
    "cond": "SQ_S02_LEVEL >= 5",
@@ -93,6 +111,36 @@
    "who": "SYS",
    "emo": "기본",
    "text": "수위계 다섯 칸이 푸르게 차 있다. 유리관 안에서 물이 가늘게 흔들린다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "수위계가 셋째 칸에서 멈췄다. 윗관 쪽 바늘은 떨리는데 — 계곡 수로 유입구 쪽 바늘은 바닥에 붙었다. 분필 '아랫물 끊김 — 반상회'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "수위계가 한 칸 모자라게 떨린다. 유입구 쪽에서 쉭쉭 새는 소리. 칠판에 누가 덧적었다. '샌다 — 반상회.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "수위계가 넷째 칸에서 선다. 분필 '계곡 물 반 — 고시원과 나눔'."
   },
   {
    "op": "goto",

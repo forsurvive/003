@@ -1,0 +1,90 @@
+{
+ "id": "ZJC01_JO",
+ "title": "이장 조만석 — 물길 어떻게 됐어",
+ "loc": "L-R01-09",
+ "npc": "C-010",
+ "cond": "V_ACT >= 1 and FQJC01_STAGE >= 10 and FQJC01_STAGE < 100 and (FQ_JC01_POSTED == 2 or FQ_JC01_FLOW > 0)",
+ "labels": {
+  "START": 0,
+  "SAWNOTE": 6,
+  "SAWDAM": 8,
+  "FLOWED": 10,
+  "LEAK": 12
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "FQ_JC01_FLOW > 0 and FQ_JC01_CRACK == 0",
+   "to": "LEAK"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JC01_FLOW > 0",
+   "to": "FLOWED"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JC01_SEEN == 1",
+   "to": "SAWDAM"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JC01_KNOW == 1",
+   "to": "SAWNOTE"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "계곡 암거 입구야. 남쪽 아랫문으로 나가서 큰길 따라. 빗물받이마다 흙 자국 봐."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "놀람",
+   "text": "고시원 7동 물당번? …그 사람들도 빗물 받아 사는구나. 우리랑 같네."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "흙막이를 봤다고. 메우든 가르든 네가 봤으니 네가 정해. 물은 한 줄기야 — 둘이 나눠 마시면 둘 다 덜 마시는 거고."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "놀람",
+   "text": "홈통에 물소리가 돌아왔던데 — 네가 했어? 배수지 유입구도 한번 봐 줘. 오래 마른 관은 물이 돌면 꼭 어디가 새."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "홈통 물소리는 돌아왔는데 수위계가 떨기만 한대. 배수지 유입구 이음매일 거야. 테이프 두 개에 고철 덧대면 막혀. 손재주 있으면 깎아서 다시 물리고."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-JC-01.txt"
+}

@@ -1,0 +1,244 @@
+{
+ "id": "FQJC01_WATCH",
+ "title": "7동 물당번",
+ "loc": "L-R01-08",
+ "npc": "N-JC-W1",
+ "cond": "V_ACT >= 1 and FQ_JC01_CUT > 0",
+ "labels": {
+  "START": 0,
+  "WHY": 6,
+  "SPLITT": 9,
+  "GO_OK": 14,
+  "GO_FAIL": 19,
+  "DRY": 23,
+  "HALF": 25
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "FQ_JC01_FLOW == 1",
+   "to": "DRY"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JC01_FLOW == 2",
+   "to": "HALF"
+  },
+  {
+   "op": "line",
+   "who": "N-JC-W1",
+   "emo": "놀람",
+   "text": "…사람이다. 7-108, 손 놔. 싸우지 말랬어."
+  },
+  {
+   "op": "line",
+   "who": "N-JC-W1",
+   "emo": "기본",
+   "text": "(두 손을 들어 보인다) 물 훔치러 온 거 아니에요. 아니, 맞나. …흙막이 옆 쪽지, 우리가 썼어요."
+  },
+  {
+   "op": "cmd",
+   "name": "jc01",
+   "args": [
+    "talk"
+   ]
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "왜 봉천 물을 돌렸어?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "WHY",
+     "id": "FQJC01_WATCH:1:0"
+    },
+    {
+     "text": "같이 분배함 밸브를 돌리자. 반씩",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SPLITT",
+     "id": "FQJC01_WATCH:1:1"
+    },
+    {
+     "text": "흙막이를 거둬. 봉천 아이들 물이야",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "보통"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "GO_OK",
+     "id": "FQJC01_WATCH:1:2",
+     "fail": "GO_FAIL"
+    },
+    {
+     "text": "그냥 간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQJC01_WATCH:1:3"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-JC-W1",
+   "emo": "피곤",
+   "text": "고시원 7동 옥상 물탱크가 3주째 말랐어요. 빗물받이는 다 봉천 쪽으로 빠지고. 계곡 물 한 줄기만 빌렸어요."
+  },
+  {
+   "op": "line",
+   "who": "N-JC-W1",
+   "emo": "기본",
+   "text": "분배함 밸브는 우리 손으론 안 돌아가요. 녹이 슬어서. 그래서 마대로 막은 거고."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "같이 분배함 밸브를 돌리자. 반씩",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SPLITT",
+     "id": "FQJC01_WATCH:2:0"
+    },
+    {
+     "text": "흙막이를 거둬. 봉천 아이들 물이야",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "보통"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "GO_OK",
+     "id": "FQJC01_WATCH:2:1",
+     "fail": "GO_FAIL"
+    },
+    {
+     "text": "그냥 간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQJC01_WATCH:2:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-JC-W1",
+   "emo": "놀람",
+   "text": "…같이요? (뒤를 돌아본다) 7-108, 쇠지레."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "둘이 쇠지레를 밸브 손잡이에 끼우고 주인공이 셋째 손을 보탠다. 녹이 비명을 지르며 돈다. 물이 두 줄기로 갈라진다."
+  },
+  {
+   "op": "cmd",
+   "name": "jc01",
+   "args": [
+    "split"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-JC-W1",
+   "emo": "미소",
+   "text": "반 줄기. 반이면 돼요. 들키면 그때 이야기하자고 썼는데 — 들켜서 다행이네."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-JC-W1",
+   "emo": "슬픔",
+   "text": "…아이들 물이라. 그 말엔 우리도 할 말이 없네."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "둘이 마대를 하나씩 끌어내 서쪽 홈에 던져 넣는다. 물이 동쪽 수로로 돌아 들어간다."
+  },
+  {
+   "op": "cmd",
+   "name": "jc01",
+   "args": [
+    "yield"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-JC-W1",
+   "emo": "피곤",
+   "text": "비 오면 우리 몫도 좀 남겨 줘요. 봉천 분들한테 그렇게 전해 줘요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-JC-W1",
+   "emo": "기본",
+   "text": "…철수. 근무표대로."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "둘이 물통 하나씩을 들고 서쪽 옛 배수 홈을 따라 어둠 속으로 물러난다."
+  },
+  {
+   "op": "cmd",
+   "name": "jc01",
+   "args": [
+    "flee"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-JC-W1",
+   "emo": "슬픔",
+   "text": "마른 통 세러 왔어요. 근무표에 그렇게 적혀 있으니까."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-JC-W1",
+   "emo": "미소",
+   "text": "반 줄기 덕에 7동 옥상 통이 반은 찼어요. 고마워요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-JC-01.txt"
+}

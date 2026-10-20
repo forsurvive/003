@@ -1,0 +1,203 @@
+{
+ "id": "FQJC01_FORK2",
+ "title": "빗물받이 — 둘째 갈림",
+ "loc": "L-R01-08",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "DOG": 7,
+  "PAW": 9,
+  "SELF": 11,
+  "READ": 13,
+  "S": 15,
+  "E": 18,
+  "DONE2": 21,
+  "AFTER": 23
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "FQ_JC01_FLOW > 0",
+   "to": "AFTER"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JC01_FORK2 == 1",
+   "to": "DONE2"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빗물받이 앞에서 길이 갈린다. 동쪽 하수구 뚜껑 쪽과, 남쪽 비탈 아래 계곡 암거 쪽."
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"C-015\") == 0 and (FQ_JC01_DOG == 1 or SQ_S01_DOG == 1)",
+   "to": "DOG"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JC01_DOG == 5",
+   "to": "PAW"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JC01_PERC == 1 or FQ_JC01_ROSTER == 1",
+   "to": "SELF"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "흙이 덜 마른 쪽을 찾는다",
+     "tags": [
+      {
+       "k": "stat",
+       "name": "인지력",
+       "min": 6
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "READ",
+     "id": "FQJC01_FORK2:1:0"
+    },
+    {
+     "text": "남쪽 비탈 아래로",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "S",
+     "id": "FQJC01_FORK2:1:1"
+    },
+    {
+     "text": "동쪽 하수구를 연다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "E",
+     "id": "FQJC01_FORK2:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "백구가 하수구 뚜껑에 코를 박았다가 크게 재채기한다. 그러고는 비탈 아래로 짖으며 달려 내려간다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "백구를 따라 비탈 아래로",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "S",
+     "id": "FQJC01_FORK2:2:0"
+    },
+    {
+     "text": "하수구를 연다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "E",
+     "id": "FQJC01_FORK2:2:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "백구 발자국이 비탈 아래로 이어진다. 암거 입구 쪽에서 짧게 짖는 소리."
+  },
+  {
+   "op": "goto",
+   "to": "S"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "같은 마대 끈 자국이 비탈 아래로 이어진다. 끌고 간 사람이 같다."
+  },
+  {
+   "op": "goto",
+   "to": "S"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "비탈 쪽 흙만 아직 축축하다. 마대에서 흘린 흙덩이가 띄엄띄엄."
+  },
+  {
+   "op": "goto",
+   "to": "S"
+  },
+  {
+   "op": "cmd",
+   "name": "jc01",
+   "args": [
+    "fork2",
+    "1"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "비탈 아래 계곡 배수 암거 입구. 안쪽에서 물 고이는 소리와 — 사람 손을 탄 흙 냄새."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "jc01",
+   "args": [
+    "fork2",
+    "2"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "하수구 아래는 쥐 굴이다. 물길은 아니다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "비탈 아래 계곡 배수 암거 입구로 마대 끈 자국이 이어진다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빗물받이. 비탈 아래 암거 쪽에서 물소리가 올라온다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-JC-01.txt"
+}

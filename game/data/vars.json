@@ -180,6 +180,21 @@
    "src": "03a_main-story-part1.md:501",
    "type": "int"
   },
+  "FQJC01_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "FQJC01_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "FQJC01_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
   "FW_BJ": {
    "default": 0,
    "src": "03a_main-story-part1.md:498",

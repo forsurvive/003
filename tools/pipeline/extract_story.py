@@ -131,12 +131,12 @@ def extract_factions():
     return {"factions": out, "settlements": sub}
 
 
-QHEAD = re.compile(r"^(?:### \d+\.\d+|####) ((?:MQ|SQ|UQ)-[A-Z0-9]+) (.+)$")   # '#### UQ-06 …'(권역 절 아래 한 퀘스트, 1-D9)도 단계 표가 있으면
+QHEAD = re.compile(r"^(?:### \d+\.\d+|####) ((?:MQ|SQ|UQ)-[A-Z0-9]+|FQ-[A-Z]{2}-\d+) (.+)$")   # FQ-JC-01(SD-04d 세력 라인, 1-12a)   # '#### UQ-06 …'(권역 절 아래 한 퀘스트, 1-D9)도 단계 표가 있으면
 
 
 def extract_quests():
     out = {}
-    srcs = ["03a_main-story-part1.md", "04a_side-quests-south.md", "05_misc-quests-encounters.md"]   # 메인 · 남부 사이드(1-11, '단계 | 로그 | 완료 조건') · 비표시 퀘스트 단계표(1-D1 UQ-71)
+    srcs = ["03a_main-story-part1.md", "04a_side-quests-south.md", "05_misc-quests-encounters.md", "04d_faction-questlines.md"]   # 메인 · 남부 사이드(1-11, '단계 | 로그 | 완료 조건') · 비표시 퀘스트 단계표(1-D1 UQ-71)
     src = srcs[0]
     rows_all = [(sx, t) for sx in srcs for t in tables(doc(sx))]
     for src, (section, line, header, rows) in rows_all:
@@ -152,6 +152,22 @@ def extract_quests():
                 continue
             stages[s] = {"log": cells[1].replace("**", "").strip(), "done": cells[2].strip(), "src": f"{src}:{ln}"}
         out[qid] = {"key": qid.replace("-", ""), "title": title, "stages": stages}
+    # 세력 퀘스트(SD-04d, 1-12a): 단계표가 따로 없고 '항목 | 내용' 표의 로그 칸에 '10 …<br>20 …'으로 적혀 있다.
+    # 원문 '로그'는 기획 문장이라 퀘스트 목표 30자(SD-18 §8.3)를 넘는다 — 구현할 때 '로그(30자)' 행을 덧대고, 그 행이 있는 퀘스트만 뽑는다.
+    for src, (section, line, header, rows) in rows_all:
+        m = QHEAD.match(section)
+        if not m or not m.group(1).startswith("FQ-") or header[:2] != ["항목", "내용"]:
+            continue
+        for ln, cells in rows:
+            if cells[0] != "로그(30자)":
+                continue
+            stages = {}
+            for part in re.split(r"<br\s*/?>", cells[1]):
+                mm = re.match(r"\s*(\d+)\s+(.+)", part.replace("**", ""))
+                if mm:
+                    stages[mm.group(1)] = {"log": mm.group(2).strip(), "done": "", "src": f"{src}:{ln}"}
+            if stages:
+                out[m.group(1)] = {"key": m.group(1).replace("-", ""), "title": m.group(2).strip(), "stages": stages}
     for need in ("MQ-P1", "MQ-P2", "MQ-P3", "MQ-P4", "MQ-101", "SQ-S01"):
         if need not in out:
             err(srcs[0], 0, f"단계 표가 없다: {need}")
@@ -163,7 +179,7 @@ def extract_quests():
         if not m or m.group(1) not in out or header[:2] != ["항목", "내용"]:
             continue
         for ln, cells in rows:
-            if cells[0] == "장소":
+            if cells[0] == "장소" or (cells[0] == "제공·장소" and m.group(1).startswith("FQ-")):   # 세력 퀘스트는 '제공·장소' 한 칸(SD-04d)
                 txt = cells[1]
                 hits = sorted({lid for lid, p in places.items() if p["name"] in txt and p["region"] != "UG"})
                 for lid in re.findall(r"L-[A-Z0-9]+-\d+", txt):

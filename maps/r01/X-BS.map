@@ -100,3 +100,7 @@ prop mold_patch 10 7
 text 10 7 "두 저수조 사이 이음 벽. 물때 줄 아래로 검은 얼룩이 번졌다." w=2 scene=SQS03_WALL
 prop intake_screen 14 9
 text 14 9 "옛 관 입구. 2077년 거름망." scene=SQS03_P1
+# FQ-JC-01(1-12a): 계곡 수로 유입구 — 윗관(S02 급수관, 15~23,10)과 다른 관. 물길을 되찾으면 이음매에서 쉭쉭 샌다(단계 40 · S03 저수조 벽과 다른 칸)
+prop inlet_leak 2 10 cond="FQ_JC01_CRACK == 0"
+prop inlet_leak 2 10 state=patched cond="FQ_JC01_CRACK == 1"
+text 2 10 "계곡 수로 유입구." scene=FQJC01_INLET

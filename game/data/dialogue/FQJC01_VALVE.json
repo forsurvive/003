@@ -1,0 +1,134 @@
+{
+ "id": "FQJC01_VALVE",
+ "title": "녹슨 분배함",
+ "loc": "L-R01-08",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "SPLITS": 5,
+  "SPLIT": 6,
+  "PLAIN": 9,
+  "OPEN": 11,
+  "SHUT": 13
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "2077년 분배함. 명판 '관악 계곡 취수 — 봉천 / 신림 분기'. 손잡이에 녹이 두껍게 앉았다."
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JC01_CUT == 0",
+   "to": "PLAIN"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JC01_FLOW == 2",
+   "to": "OPEN"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JC01_FLOW == 1",
+   "to": "SHUT"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "밸브를 풀어 물을 반씩 가른다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "SPLIT",
+     "id": "FQJC01_VALVE:1:0"
+    },
+    {
+     "text": "고철 둘을 덧대 억지로 반을 가른다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 30
+      }
+     ],
+     "cond": "has(\"M-010\", 2) == 1",
+     "fx": "",
+     "to": "SPLITS",
+     "id": "FQJC01_VALVE:1:1"
+    },
+    {
+     "text": "그냥 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQJC01_VALVE:1:2"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "take(\"M-010\", 2)"
+  },
+  {
+   "op": "cmd",
+   "name": "jc01",
+   "args": [
+    "split"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "녹슨 밸브가 끼익 돈다. 물이 두 줄기로 갈라져 하나는 수로로, 하나는 서쪽 홈으로 흐른다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "신림 쪽 분기는 잠겨 있다. 물은 모두 봉천 수로로 든다. 쓸 일이 없어 보인다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "밸브가 반쯤 열려 있다. 물이 두 줄기로 흐른다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "서쪽 홈을 메워 둔 뒤라 분기 쪽은 말랐다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-JC-01.txt"
+}

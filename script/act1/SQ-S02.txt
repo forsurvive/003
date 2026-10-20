@@ -10,13 +10,30 @@
 @cond  V_ACT >= 1
 ? SQS02_STAGE >= 70 and SQ_S02_REWARD == 0 -> THANKS
 ? SQS03_STAGE >= 70 and SQS03_STAGE < 100 -> S03_DONE
+? SQ_S02_POSTED == 0 and FQ_JC01_CAP < 5 -> JCRAIN
 ? SQ_S02_POSTED == 0 -> PLAIN
+? SQS02_STAGE >= 70 and FQ_JC01_CAP < 5 -> JCRAIN
 ? SQS02_STAGE >= 70 -> AFTER
 ? SQ_S02_HEARD == 0 -> TELL
 ? SQ_S02_OPEN == 2 -> PAIDDAY
 ? SQ_S02_LEVEL == 0 -> DRY
+? FQ_JC01_CAP < 5 -> JCBOTH
 N-R01-032 [피곤] 왔어? 수위계 봤지. 오늘도 한 칸.
 -> ASK
+* JCBOTH
+N-R01-032 [피곤] 윗물은 패거리가 잠갔고, 아랫물은 끊겼어. 수위계가 양쪽에서 깎여.
+-> ASK
+* JCRAIN
+? FQ_JC01_FLOW == 0 -> JCCUT
+? FQ_JC01_CRACK == 0 -> JCLEAK
+N-R01-032 [기본] 넷에서 서. 나머지 한 칸은 고시원 몫이래. …뭐, 우리도 빗물 얻어 쓰는 처지니까.
+-> S03ASK
+* JCCUT
+N-R01-032 [피곤] 윗관은 물소리가 나는데 수위계가 셋에서 안 올라. 계곡 수로가 끊긴 거야. 수로는 마을 거니까 이장님한테 가 봐.
+-> S03ASK
+* JCLEAK
+N-R01-032 [기본] 수로 물은 돌아왔는데 유입구 이음매가 새. 수위계가 한 칸 모자라게 떨기만 해. 칠판에 '샌다' 적어 놨어.
+-> S03ASK
 * PAIDDAY
 N-R01-032 [기본] 물이 내려와. 누가 패거리한테 물값을 냈대. …사흘이야. 나흘째엔 또 잠겨.
 -> ASK
@@ -159,6 +176,9 @@ N-R01-029 [미소] 반상회 몫이야. 약수 다섯 병, 그리고 걷은 캡.
 @scene SQS02_GAUGE  수위계  (L-R01-10)
 @npc   -
 @cond  V_ACT >= 1
+? FQ_JC01_CAP < FQ_JC01_BASE and FQ_JC01_FLOW == 0 -> RAIN3
+? FQ_JC01_CAP < FQ_JC01_BASE and FQ_JC01_CRACK == 0 -> RAINLEAK
+? FQ_JC01_CAP < FQ_JC01_BASE -> RAINSPLIT
 ? SQ_S02_LEVEL >= 5 -> FULL
 ? SQ_S02_LEVEL >= 4 -> HIGH
 ? SQ_S02_LEVEL >= 2 -> MID
@@ -181,16 +201,29 @@ SYS 수위계 마지막 한 칸. 내일이면 붉은 띠다.
 * FULL
 SYS 수위계 다섯 칸이 푸르게 차 있다. 유리관 안에서 물이 가늘게 흔들린다.
 -> END
+* RAIN3
+SYS 수위계가 셋째 칸에서 멈췄다. 윗관 쪽 바늘은 떨리는데 — 계곡 수로 유입구 쪽 바늘은 바닥에 붙었다. 분필 '아랫물 끊김 — 반상회'.
+-> END
+* RAINLEAK
+SYS 수위계가 한 칸 모자라게 떨린다. 유입구 쪽에서 쉭쉭 새는 소리. 칠판에 누가 덧적었다. '샌다 — 반상회.'
+-> END
+* RAINSPLIT
+SYS 수위계가 넷째 칸에서 선다. 분필 '계곡 물 반 — 고시원과 나눔'.
+-> END
 
 @scene SQS02_TANK  저수조  (L-R01-10)
 @npc   -
 @cond  V_ACT >= 1
 SYS 원형 콘크리트 저수조. 2077년 글씨 '수질 1등급' 아래 붉은 페인트 '끓여 마셔'.
+? SQ_S02_LEVEL == 4 -> FOUR
 ? SQ_S02_LEVEL < 5 -> DRY
 SYS 벽에 귀를 대면 안에서 물 흐르는 소리가 낮게 울린다.
 -> END
 * DRY
 SYS 벽을 두드리면 속이 텅 빈 소리가 난다. 물때 줄이 지금 수위보다 한참 위에 있다.
+-> END
+* FOUR
+SYS 벽에 귀를 대면 물소리가 난다. 물때 줄보다 한 뼘 아래에서 찰랑인다.
 -> END
 
 # ---------------------------------------------------------------- 삼성산 능선: 상류 밸브 · 패거리 수금원
@@ -415,7 +448,7 @@ N-R01-028 [기본] 둘 보내지. 밸브 앞에 모래주머니 쌓고 교대로
 ? SQ_S02_IN == 2 -> SMITH
 ? SQ_S02_IN == 3 and SQ_S02_TRAP_DONE == 1 -> AFTERTRAP
 ? SQ_S02_IN == 3 -> WAIT
-? SQ_S02_POSTED == 1 and SQ_S02_LEVEL < 5 -> DRY
+? SQ_S02_LEVEL < 5 -> DRY
 N-R01-039 [기본] 상추가 또 녹았어. 계단 텃밭은 볕이 반나절이라.
 -> END
 * DRY

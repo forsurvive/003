@@ -1,0 +1,152 @@
+{
+ "id": "FQJC01_INLET",
+ "title": "계곡 수로 유입구",
+ "loc": "L-R01-10",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "DRYCRACK": 6,
+  "FIX": 7,
+  "FIXS": 8,
+  "FIXED": 9,
+  "FIXDRY": 13,
+  "PLAIN": 15,
+  "PATCHED": 17
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "FQ_JC01_CRACK == 1",
+   "to": "PATCHED"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JC01_CUT == 0",
+   "to": "PLAIN"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JC01_FLOW == 0",
+   "to": "DRYCRACK"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "계곡 수로 유입구로 물이 돌아 들어온다 — 그런데 이음매에서 쉭쉭 샌다. 금이 손가락 길이만큼."
+  },
+  {
+   "op": "cmd",
+   "name": "jc01",
+   "args": [
+    "leak"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "FIX"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "계곡 수로 유입구가 바짝 말랐다. 이음매에 실금 하나. 물이 돌면 새겠다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "이음매를 깎아 내고 다시 물린다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "FIXED",
+     "id": "FQJC01_INLET:1:0"
+    },
+    {
+     "text": "고철 다섯을 덧대고 공업용 테이프 둘로 감는다",
+     "tags": [],
+     "cond": "has(\"M-010\", 5) == 1 and has(\"M-025\", 2) == 1",
+     "fx": "",
+     "to": "FIXS",
+     "id": "FQJC01_INLET:1:1"
+    },
+    {
+     "text": "나중에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQJC01_INLET:1:2"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "take(\"M-010\", 5); take(\"M-025\", 2)"
+  },
+  {
+   "op": "cmd",
+   "name": "jc01",
+   "args": [
+    "fix"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JC01_FLOW == 0",
+   "to": "FIXDRY"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "이음매가 조용해졌다. 수위계 유리관 안에서 물이 한 칸 더 올라선다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "마른 이음매를 다시 물렸다. 물이 돌아와도 여기서는 새지 않을 것이다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "계곡 수로 유입구. 빗물이 졸졸 든다. 윗관과 다른 관이다 — 녹슨 명판 '관악 계곡 취수'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "계곡 수로 유입구. 이음매를 다시 물린 자리가 반들반들하다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-JC-01.txt"
+}

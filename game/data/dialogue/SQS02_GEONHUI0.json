@@ -29,7 +29,7 @@
   },
   {
    "op": "if",
-   "cond": "SQ_S02_POSTED == 1 and SQ_S02_LEVEL < 5",
+   "cond": "SQ_S02_LEVEL < 5",
    "to": "DRY"
   },
   {

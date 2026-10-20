@@ -1,0 +1,74 @@
+{
+ "id": "FQJC01_NEST",
+ "title": "고인 웅덩이",
+ "loc": "L-R01-08",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "ORPHAN": 5,
+  "EMPTY": 7,
+  "DROWNED": 9
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "FQ_JC01_NEST == 2",
+   "to": "DROWNED"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JC01_NEST == 1",
+   "to": "EMPTY"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S03_KING == 2",
+   "to": "ORPHAN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "웅덩이 둘레에 지푸라기, 비닐, 털 뭉치. 새끼 쥐 소리. 암거 안쪽 깊은 데서 굵은 울음이 받는다 — 어미가 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "웅덩이 둘레에 지푸라기, 비닐, 털 뭉치. 새끼 쥐 소리만 난다. 주인 잃은 둥지다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈 둥지. 지푸라기만 젖어 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "물에 잠긴 둥지. 지푸라기가 동동 떠 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-JC-01.txt"
+}

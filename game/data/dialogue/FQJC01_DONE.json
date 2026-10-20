@@ -1,0 +1,180 @@
+{
+ "id": "FQJC01_DONE",
+ "title": "이장 조만석 — 물길이 다시 흐른다",
+ "loc": "L-R01-09",
+ "npc": "C-010",
+ "cond": "V_ACT >= 1 and FQJC01_STAGE >= 10 and FQJC01_STAGE < 100 and FQ_JC01_FLOW > 0 and FQ_JC01_CRACK == 1",
+ "labels": {
+  "START": 0,
+  "KNOWFILL": 5,
+  "SPLIT": 7,
+  "PAY": 11,
+  "UPPER": 13,
+  "WATER": 14,
+  "LINE": 15,
+  "DOGHIT": 17,
+  "LAST": 18,
+  "GIFT": 22,
+  "COLD": 26
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "AFF_JC_BC <= -20",
+   "to": "COLD"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JC01_FLOW == 2",
+   "to": "SPLIT"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "미소",
+   "text": "홈통에 물소리 들었어. 312계단 애들이 손 대 보고 난리야."
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JC01_KNOW == 1",
+   "to": "KNOWFILL"
+  },
+  {
+   "op": "goto",
+   "to": "PAY"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "슬픔",
+   "text": "7동 쪽지 봤다고? …그 사람들 물통은 이제 마르겠네. 우리 물이니 우리가 쓰는 거지만."
+  },
+  {
+   "op": "goto",
+   "to": "PAY"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "반을 갈랐다고. 수위계는 넷에서 서겠네. …고시원 사람들도 목마르긴 하지."
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "피곤",
+   "text": "담희가 벌써 한 소리 했어. 우리 물을 왜 남을 주냐고. 반상회 몫 사례는 좀 줄었다. 그건 내가 못 막았어."
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "미소",
+   "text": "그래도 반은 반이야. 난 그렇게 말했다."
+  },
+  {
+   "op": "goto",
+   "to": "LINE"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JC01_BASE < 5",
+   "to": "UPPER"
+  },
+  {
+   "op": "goto",
+   "to": "WATER"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "피곤",
+   "text": "아랫물은 돌아왔어. 윗관만 남았지 — 그건 밸브 일이고."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "조만석이 약수 두 병을 내민다. 반상회가 따로 챙겨 둔 몫이라고 한다."
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JC01_BETRAY == 1 and dead(\"C-015\") == 0",
+   "to": "DOGHIT"
+  },
+  {
+   "op": "goto",
+   "to": "LAST"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "슬픔",
+   "text": "백구는 아직 너를 피하더라. 개는 오래 기억해."
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "물은 위에서 아래로 흘러. 근데 계단마을은 아래서 위로 사는 동네라 늘 거꾸로야."
+  },
+  {
+   "op": "cmd",
+   "name": "jc01",
+   "args": [
+    "done"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "AFF_JC_BC >= 20",
+   "to": "GIFT"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "조만석이 벽장에서 기름 먹인 천에 싼 긴 것을 꺼낸다."
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "우리 아버지 엽총이야. 이장 노릇 하라고 물려받았는데, 나는 쏠 줄을 몰라. 마을 일 하는 손에 있는 게 낫지."
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "미소",
+   "text": "그리고 이거. 계단마을 증표. 문 앞에서 이거 보이면 아무도 안 막아."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "분노",
+   "text": "물은 고맙다. 마을 물이니까. 근데 너한테 줄 건 없어."
+  },
+  {
+   "op": "cmd",
+   "name": "jc01",
+   "args": [
+    "done"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-JC-01.txt"
+}

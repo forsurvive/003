@@ -1,6 +1,6 @@
 {
  "A-001": {
-  "_src": "13_items.md:597",
+  "_src": "13_items.md:599",
   "bonus": "+2 과학, +2 화술",
   "cat": "apparel",
   "desc": "+2 과학, +2 화술",
@@ -14,7 +14,7 @@
   "weight": 1.0
  },
  "A-002": {
-  "_src": "13_items.md:598",
+  "_src": "13_items.md:600",
   "bonus": "+5 수리, +5 자물쇠 따기",
   "cat": "apparel",
   "desc": "+5 수리, +5 자물쇠 따기",
@@ -28,7 +28,7 @@
   "weight": 1.0
  },
  "A-003": {
-  "_src": "13_items.md:599",
+  "_src": "13_items.md:601",
   "bonus": "+2 (볼트별 지정 스킬 1개, SD-09)",
   "cat": "apparel",
   "desc": "+2 (볼트별 지정 스킬 1개, SD-09)",
@@ -42,7 +42,7 @@
   "weight": 1.0
  },
  "A-004": {
-  "_src": "13_items.md:600",
+  "_src": "13_items.md:602",
   "cat": "apparel",
   "desc": "",
   "dr": 12,
@@ -55,7 +55,7 @@
   "weight": 15.0
  },
  "A-005": {
-  "_src": "13_items.md:601",
+  "_src": "13_items.md:603",
   "bonus": "무늬별 +1 SPECIAL 1개(민첩·카리스마·행운 중)",
   "cat": "apparel",
   "desc": "무늬별 +1 SPECIAL 1개(민첩·카리스마·행운 중)",
@@ -69,7 +69,7 @@
   "weight": 2.0
  },
  "A-006": {
-  "_src": "13_items.md:602",
+  "_src": "13_items.md:604",
   "bonus": "+5 화술",
   "cat": "apparel",
   "desc": "+5 화술",
@@ -83,7 +83,7 @@
   "weight": 2.0
  },
  "A-007": {
-  "_src": "13_items.md:603",
+  "_src": "13_items.md:605",
   "bonus": "+1 카리스마, +5 물물교환",
   "cat": "apparel",
   "desc": "+1 카리스마, +5 물물교환",
@@ -97,7 +97,7 @@
   "weight": 2.0
  },
  "A-008": {
-  "_src": "13_items.md:604",
+  "_src": "13_items.md:606",
   "bonus": "+5 과학",
   "cat": "apparel",
   "desc": "+5 과학",
@@ -111,7 +111,7 @@
   "weight": 1.0
  },
  "A-009": {
-  "_src": "13_items.md:605",
+  "_src": "13_items.md:607",
   "bonus": "+5 물물교환",
   "cat": "apparel",
   "desc": "+5 물물교환",
@@ -125,7 +125,7 @@
   "weight": 1.0
  },
  "A-010": {
-  "_src": "13_items.md:606",
+  "_src": "13_items.md:608",
   "bonus": "소지 한도 +10",
   "cat": "apparel",
   "desc": "소지 한도 +10",
@@ -139,7 +139,7 @@
   "weight": 2.0
  },
  "A-011": {
-  "_src": "13_items.md:607",
+  "_src": "13_items.md:609",
   "bonus": "+5 수리, +5 과학",
   "cat": "apparel",
   "desc": "+5 수리, +5 과학",
@@ -153,7 +153,7 @@
   "weight": 2.0
  },
  "A-012": {
-  "_src": "13_items.md:608",
+  "_src": "13_items.md:610",
   "bonus": "+5 수리, +5 방사능 저항",
   "cat": "apparel",
   "desc": "+5 수리, +5 방사능 저항",
@@ -167,7 +167,7 @@
   "weight": 4.0
  },
  "A-013": {
-  "_src": "13_items.md:609",
+  "_src": "13_items.md:611",
   "bonus": "+5 의학",
   "cat": "apparel",
   "desc": "+5 의학",
@@ -181,7 +181,7 @@
   "weight": 1.0
  },
  "A-014": {
-  "_src": "13_items.md:610",
+  "_src": "13_items.md:612",
   "bonus": "+5 과학",
   "cat": "apparel",
   "desc": "+5 과학",
@@ -195,7 +195,7 @@
   "weight": 1.0
  },
  "A-015": {
-  "_src": "13_items.md:611",
+  "_src": "13_items.md:613",
   "bonus": "화염 저항 +25%",
   "cat": "apparel",
   "desc": "화염 저항 +25%",
@@ -209,7 +209,7 @@
   "weight": 10.0
  },
  "A-016": {
-  "_src": "13_items.md:612",
+  "_src": "13_items.md:614",
   "cat": "apparel",
   "desc": "",
   "dr": 3,
@@ -222,7 +222,7 @@
   "weight": 3.0
  },
  "A-017": {
-  "_src": "13_items.md:613",
+  "_src": "13_items.md:615",
   "bonus": "+5 물물교환",
   "cat": "apparel",
   "desc": "+5 물물교환",
@@ -236,7 +236,7 @@
   "weight": 3.0
  },
  "A-018": {
-  "_src": "13_items.md:614",
+  "_src": "13_items.md:616",
   "bonus": "방사능 저항 +10, +5 물물교환",
   "cat": "apparel",
   "desc": "방사능 저항 +10, +5 물물교환",
@@ -250,7 +250,7 @@
   "weight": 3.0
  },
  "A-019": {
-  "_src": "13_items.md:615",
+  "_src": "13_items.md:617",
   "bonus": "+5 물물교환, +5 화술",
   "cat": "apparel",
   "desc": "+5 물물교환, +5 화술",
@@ -264,7 +264,7 @@
   "weight": 5.0
  },
  "A-020": {
-  "_src": "13_items.md:616",
+  "_src": "13_items.md:618",
   "cat": "apparel",
   "desc": "",
   "dr": 16,
@@ -277,7 +277,7 @@
   "weight": 15.0
  },
  "A-021": {
-  "_src": "13_items.md:617",
+  "_src": "13_items.md:619",
   "bonus": "+3 근접 무기",
   "cat": "apparel",
   "desc": "+3 근접 무기",
@@ -291,7 +291,7 @@
   "weight": 15.0
  },
  "A-022": {
-  "_src": "13_items.md:618",
+  "_src": "13_items.md:620",
   "bonus": "+3 비무장",
   "cat": "apparel",
   "desc": "+3 비무장",
@@ -305,7 +305,7 @@
   "weight": 12.0
  },
  "A-023": {
-  "_src": "13_items.md:619",
+  "_src": "13_items.md:621",
   "cat": "apparel",
   "desc": "",
   "dr": 24,
@@ -318,7 +318,7 @@
   "weight": 15.0
  },
  "A-024": {
-  "_src": "13_items.md:620",
+  "_src": "13_items.md:622",
   "cat": "apparel",
   "desc": "",
   "dr": 28,
@@ -331,7 +331,7 @@
   "weight": 18.0
  },
  "A-025": {
-  "_src": "13_items.md:621",
+  "_src": "13_items.md:623",
   "bonus": "−1 민첩성",
   "cat": "apparel",
   "desc": "−1 민첩성",
@@ -345,7 +345,7 @@
   "weight": 30.0
  },
  "A-026": {
-  "_src": "13_items.md:622",
+  "_src": "13_items.md:624",
   "bonus": "−1 민첩성",
   "cat": "apparel",
   "desc": "−1 민첩성",
@@ -359,7 +359,7 @@
   "weight": 30.0
  },
  "A-027": {
-  "_src": "13_items.md:623",
+  "_src": "13_items.md:625",
   "cat": "apparel",
   "desc": "",
   "dr": 18,
@@ -372,7 +372,7 @@
   "weight": 8.0
  },
  "A-028": {
-  "_src": "13_items.md:624",
+  "_src": "13_items.md:626",
   "bonus": "최루 지대 피해 −50%",
   "cat": "apparel",
   "desc": "최루 지대 피해 −50%",
@@ -386,7 +386,7 @@
   "weight": 18.0
  },
  "A-029": {
-  "_src": "13_items.md:625",
+  "_src": "13_items.md:627",
   "bonus": "+5 소형 화기",
   "cat": "apparel",
   "desc": "+5 소형 화기",
@@ -400,7 +400,7 @@
   "weight": 20.0
  },
  "A-030": {
-  "_src": "13_items.md:626",
+  "_src": "13_items.md:628",
   "bonus": "+5 소형 화기",
   "cat": "apparel",
   "desc": "+5 소형 화기",
@@ -414,7 +414,7 @@
   "weight": 5.0
  },
  "A-031": {
-  "_src": "13_items.md:627",
+  "_src": "13_items.md:629",
   "bonus": "+5 소형 화기, 방사능 저항 +5",
   "cat": "apparel",
   "desc": "+5 소형 화기, 방사능 저항 +5",
@@ -428,7 +428,7 @@
   "weight": 22.0
  },
  "A-032": {
-  "_src": "13_items.md:628",
+  "_src": "13_items.md:630",
   "bonus": "+1 카리스마, +5 화술",
   "cat": "apparel",
   "desc": "+1 카리스마, +5 화술",
@@ -442,7 +442,7 @@
   "weight": 3.0
  },
  "A-033": {
-  "_src": "13_items.md:629",
+  "_src": "13_items.md:631",
   "cat": "apparel",
   "desc": "",
   "dr": 32,
@@ -455,7 +455,7 @@
   "weight": 25.0
  },
  "A-034": {
-  "_src": "13_items.md:630",
+  "_src": "13_items.md:632",
   "cat": "apparel",
   "desc": "",
   "dr": 28,
@@ -468,7 +468,7 @@
   "weight": 25.0
  },
  "A-035": {
-  "_src": "13_items.md:631",
+  "_src": "13_items.md:633",
   "bonus": "+5 에너지 무기",
   "cat": "apparel",
   "desc": "+5 에너지 무기",
@@ -482,7 +482,7 @@
   "weight": 25.0
  },
  "A-036": {
-  "_src": "13_items.md:632",
+  "_src": "13_items.md:634",
   "bonus": "+1 카리스마, 연합단 대상 화술 +10",
   "cat": "apparel",
   "desc": "+1 카리스마, 연합단 대상 화술 +10",
@@ -496,7 +496,7 @@
   "weight": 2.0
  },
  "A-037": {
-  "_src": "13_items.md:633",
+  "_src": "13_items.md:635",
   "bonus": "+5 수리",
   "cat": "apparel",
   "desc": "+5 수리",
@@ -510,7 +510,7 @@
   "weight": 25.0
  },
  "A-038": {
-  "_src": "13_items.md:634",
+  "_src": "13_items.md:636",
   "bonus": "+5 은신",
   "cat": "apparel",
   "desc": "+5 은신",
@@ -524,7 +524,7 @@
   "weight": 20.0
  },
  "A-039": {
-  "_src": "13_items.md:635",
+  "_src": "13_items.md:637",
   "bonus": "+15 은신, 웅크림 중 스텔스 필드 +5. 고글 헬멧 일체(SD-16 T15)",
   "cat": "apparel",
   "desc": "+15 은신, 웅크림 중 스텔스 필드 +5. 고글 헬멧 일체(SD-16 T15)",
@@ -538,7 +538,7 @@
   "weight": 20.0
  },
  "A-040": {
-  "_src": "13_items.md:636",
+  "_src": "13_items.md:638",
   "bonus": "+5 근접 무기, 중국군 잔존병 대상 화술 +10",
   "cat": "apparel",
   "desc": "+5 근접 무기, 중국군 잔존병 대상 화술 +10",
@@ -552,7 +552,7 @@
   "weight": 3.0
  },
  "A-041": {
-  "_src": "13_items.md:637",
+  "_src": "13_items.md:639",
   "bonus": "+5 은신",
   "cat": "apparel",
   "desc": "+5 은신",
@@ -566,7 +566,7 @@
   "weight": 15.0
  },
  "A-042": {
-  "_src": "13_items.md:638",
+  "_src": "13_items.md:640",
   "bonus": "+5 근접 무기, 협박 화술 +10",
   "cat": "apparel",
   "desc": "+5 근접 무기, 협박 화술 +10",
@@ -580,7 +580,7 @@
   "weight": 12.0
  },
  "A-043": {
-  "_src": "13_items.md:639",
+  "_src": "13_items.md:641",
   "bonus": "+5 과학, 각성회 대상 화술 +10",
   "cat": "apparel",
   "desc": "+5 과학, 각성회 대상 화술 +10",
@@ -594,7 +594,7 @@
   "weight": 3.0
  },
  "A-044": {
-  "_src": "13_items.md:640",
+  "_src": "13_items.md:642",
   "bonus": "+5 소형 화기",
   "cat": "apparel",
   "desc": "+5 소형 화기",
@@ -608,7 +608,7 @@
   "weight": 10.0
  },
  "A-045": {
-  "_src": "13_items.md:641",
+  "_src": "13_items.md:643",
   "bonus": "방사능 저항 +15",
   "cat": "apparel",
   "desc": "방사능 저항 +15",
@@ -622,7 +622,7 @@
   "weight": 15.0
  },
  "A-046": {
-  "_src": "13_items.md:642",
+  "_src": "13_items.md:644",
   "bonus": "+5 소형 화기",
   "cat": "apparel",
   "desc": "+5 소형 화기",
@@ -636,7 +636,7 @@
   "weight": 12.0
  },
  "A-047": {
-  "_src": "13_items.md:643",
+  "_src": "13_items.md:645",
   "bonus": "방사능 저항 +30%, 최루·독가스 면역",
   "cat": "apparel",
   "desc": "방사능 저항 +30%, 최루·독가스 면역",
@@ -650,7 +650,7 @@
   "weight": 5.0
  },
  "A-048": {
-  "_src": "13_items.md:644",
+  "_src": "13_items.md:646",
   "bonus": "방사능 저항 +40%",
   "cat": "apparel",
   "desc": "방사능 저항 +40%",
@@ -664,7 +664,7 @@
   "weight": 5.0
  },
  "A-049": {
-  "_src": "13_items.md:645",
+  "_src": "13_items.md:647",
   "bonus": "방사능 저항 +50%",
   "cat": "apparel",
   "desc": "방사능 저항 +50%",
@@ -678,7 +678,7 @@
   "weight": 8.0
  },
  "A-050": {
-  "_src": "13_items.md:646",
+  "_src": "13_items.md:648",
   "bonus": "+2 힘, −2 민첩성, 방사능 저항 +10%",
   "cat": "apparel",
   "desc": "+2 힘, −2 민첩성, 방사능 저항 +10%",
@@ -692,7 +692,7 @@
   "weight": 45.0
  },
  "A-051": {
-  "_src": "13_items.md:647",
+  "_src": "13_items.md:649",
   "bonus": "방사능 저항 +25%",
   "cat": "apparel",
   "desc": "방사능 저항 +25%",
@@ -706,7 +706,7 @@
   "weight": 40.0
  },
  "A-052": {
-  "_src": "13_items.md:648",
+  "_src": "13_items.md:650",
   "bonus": "+1 힘, −1 민첩성, 방사능 저항 +20%, 전용 헬멧과 세트 시 '계엄군 아군 신호'(§5.7)",
   "cat": "apparel",
   "desc": "+1 힘, −1 민첩성, 방사능 저항 +20%, 전용 헬멧과 세트 시 '계엄군 아군 신호'(§5.7)",
@@ -720,7 +720,7 @@
   "weight": 42.0
  },
  "A-053": {
-  "_src": "13_items.md:649",
+  "_src": "13_items.md:651",
   "bonus": "+2 힘, −1 민첩성, 방사능 저항 +15%",
   "cat": "apparel",
   "desc": "+2 힘, −1 민첩성, 방사능 저항 +15%",
@@ -734,7 +734,7 @@
   "weight": 45.0
  },
  "A-054": {
-  "_src": "13_items.md:650",
+  "_src": "13_items.md:652",
   "bonus": "+2 힘, −1 민첩성, 방사능 저항 +15%, +5 수리",
   "cat": "apparel",
   "desc": "+2 힘, −1 민첩성, 방사능 저항 +15%, +5 수리",
@@ -748,7 +748,7 @@
   "weight": 45.0
  },
  "A-083": {
-  "_src": "13_items.md:651",
+  "_src": "13_items.md:653",
   "bonus": "+5 근접 무기, 약탈자 대상 화술 +10",
   "cat": "apparel",
   "desc": "+5 근접 무기, 약탈자 대상 화술 +10",
@@ -762,7 +762,7 @@
   "weight": 15.0
  },
  "A-087": {
-  "_src": "13_items.md:652",
+  "_src": "13_items.md:654",
   "bonus": "착용 중 수배 공고 인상착의와 항상 다르게 판정(무명 NPC 알아보기 확률 ×0.5, SD-12 §9.7). 계엄군이 다시 목격하면 공고가 '맞춤 외투 차림'으로 갱신된다",
   "cat": "apparel",
   "desc": "착용 중 수배 공고 인상착의와 항상 다르게 판정(무명 NPC 알아보기 확률 ×0.5, SD-12 §9.7). 계엄군이 다시 목격하면 공고가 '맞춤 외투 차림'으로 갱신된다",
@@ -776,7 +776,7 @@
   "weight": 2.0
  },
  "A-088": {
-  "_src": "13_items.md:653",
+  "_src": "13_items.md:655",
   "bonus": "+1 카리스마",
   "cat": "apparel",
   "desc": "+1 카리스마",
@@ -790,7 +790,7 @@
   "weight": 1.0
  },
  "A-089": {
-  "_src": "13_items.md:654",
+  "_src": "13_items.md:656",
   "bonus": "+5 근접 무기, 약탈자 대상 화술 +5",
   "cat": "apparel",
   "desc": "+5 근접 무기, 약탈자 대상 화술 +5",

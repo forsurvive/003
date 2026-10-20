@@ -1,6 +1,6 @@
 {
  "W-153": {
-  "_src": "13_items.md:347",
+  "_src": "13_items.md:349",
   "ammo": "건설용 대못",
   "ammo_id": "건설용 대못",
   "ammo_per_shot": 1,
@@ -46,7 +46,7 @@
   "weight": 9.0
  },
  "W-154": {
-  "_src": "13_items.md:348",
+  "_src": "13_items.md:350",
   "ammo": "잡동사니(무게 있는 잡화 아무거나)",
   "ammo_id": "잡동사니",
   "ammo_per_shot": 1,
@@ -92,7 +92,7 @@
   "weight": 8.0
  },
  "W-155": {
-  "_src": "13_items.md:349",
+  "_src": "13_items.md:351",
   "ammo": "—",
   "ammo_id": "",
   "ammo_per_shot": 1,
@@ -142,7 +142,7 @@
   "weight": 3.0
  },
  "W-156": {
-  "_src": "13_items.md:350",
+  "_src": "13_items.md:352",
   "ammo": "마취 다트",
   "ammo_id": "마취 다트",
   "ammo_per_shot": 1,
@@ -192,7 +192,7 @@
   "weight": 3.0
  },
  "W-157": {
-  "_src": "13_items.md:351",
+  "_src": "13_items.md:353",
   "ammo": "—",
   "ammo_id": "",
   "ammo_per_shot": 1,

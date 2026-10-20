@@ -1,0 +1,101 @@
+{
+ "id": "FQJC01_HA_DONE",
+ "title": "부이장 하숙자 — 물길이 다시 흐른다",
+ "loc": "L-R01-09",
+ "npc": "C-057",
+ "cond": "V_ACT >= 1 and known_dead(\"C-010\") == 1 and FQJC01_STAGE >= 10 and FQJC01_STAGE < 100 and FQ_JC01_FLOW > 0 and FQ_JC01_CRACK == 1",
+ "labels": {
+  "START": 0,
+  "SPLIT": 4,
+  "PAY": 5,
+  "GIFT": 8,
+  "COLD": 12
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "AFF_JC_BC <= -20",
+   "to": "COLD"
+  },
+  {
+   "op": "line",
+   "who": "C-057",
+   "emo": "미소",
+   "text": "약국 앞 물통이 찼어. 고마워."
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JC01_FLOW == 2",
+   "to": "SPLIT"
+  },
+  {
+   "op": "goto",
+   "to": "PAY"
+  },
+  {
+   "op": "line",
+   "who": "C-057",
+   "emo": "기본",
+   "text": "반은 고시원 몫으로 갈랐다며. …이장님이었어도 그랬을 거야."
+  },
+  {
+   "op": "cmd",
+   "name": "jc01",
+   "args": [
+    "done"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "AFF_JC_BC >= 20",
+   "to": "GIFT"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "하숙자가 약장 맨 아래 칸에서 기름 먹인 천 꾸러미를 꺼낸다."
+  },
+  {
+   "op": "line",
+   "who": "C-057",
+   "emo": "슬픔",
+   "text": "이장님 엽총이야. 쏠 줄도 모르면서 닦기는 매일 닦았어. 마을 일 하는 사람한테 가는 게 맞아."
+  },
+  {
+   "op": "line",
+   "who": "C-057",
+   "emo": "기본",
+   "text": "이것도. 계단마을 증표."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-057",
+   "emo": "기본",
+   "text": "물은 고마워. 그래도 너한테 내줄 건 없어. 마을 사람들 눈이 있어서."
+  },
+  {
+   "op": "cmd",
+   "name": "jc01",
+   "args": [
+    "done"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-JC-01.txt"
+}

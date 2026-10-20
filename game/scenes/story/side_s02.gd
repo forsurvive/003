@@ -192,11 +192,27 @@ func _facts() -> void:
 			_finish("7일")
 
 
-## 수위계 칸(0~5): 쪽지 전 · 밸브가 열림 · 물값 기간은 5. 닫힌 날부터 하루 한 칸 — 첫날 4, 닷새째 0(물값 2배)
+## 수위계 칸(0~5) = min(윗물 몫, 빗물 몫) — 배수지에 드는 물 두 갈래를 한 곳에서 셈(SD-20 P1, 1-12a FQ-JC-01).
+## 윗물(S02 상류 밸브): 쪽지 전 · 밸브가 열림 · 물값 기간은 5. 닫힌 날부터 하루 한 칸 — 첫날 4, 닷새째 0(물값 2배).
+## 빗물(JC-01 계곡 수로): 신림 고시원 7동 물당번 흙막이 전 5 · 막힘 3 · 다 메움 5 · 분배 밸브로 나눔 4 · 물길을 되찾았는데 유입구 균열이 남았으면 −1.
+## 두 몫은 FQ_JC01_BASE · FQ_JC01_CAP에 적어 둔다(원고가 '누구 탓인지' 가른다 — 윗물은 패거리가 잠갔고 아랫물은 끊겼어).
 func level() -> int:
-	if v("SQ_S02_POSTED") == 0 or v("SQ_S02_OPEN") != 0:
+	var base := 5
+	if v("SQ_S02_POSTED") == 1 and v("SQ_S02_OPEN") == 0:
+		base = clampi(4 - (day() - v("SQ_S02_DAY0")), 0, 5)
+	var cap := rain_cap()
+	st.vars.set_v("FQ_JC01_BASE", base)
+	st.vars.set_v("FQ_JC01_CAP", cap)
+	return mini(base, cap)
+
+
+func rain_cap() -> int:
+	if v("FQ_JC01_CUT") == 0:
 		return 5
-	return clampi(4 - (day() - v("SQ_S02_DAY0")), 0, 5)
+	var f := v("FQ_JC01_FLOW")
+	if f == 0:
+		return 3
+	return (5 if f == 1 else 4) - (1 if v("FQ_JC01_CRACK") == 0 else 0)
 
 
 func _finish(why: String) -> void:
@@ -219,7 +235,7 @@ func _solved(sol: int) -> void:
 	if stage() < 70:
 		_up(70)
 		st.vars.set_v("SQ_S02_DONE_DAY", day())
-	st.vars.set_v("SQ_S02_LEVEL", 5)
+	st.vars.set_v("SQ_S02_LEVEL", level())                                # 윗물이 돌아왔다 — 빗물 몫이 막혀 있으면 거기서 멈춘다(1-12a)
 
 
 # ---------------------------------------------------------------- 하루 판정(06:00)

@@ -112,3 +112,20 @@ text 4 0 "뒤차 뒷유리에 손가락 글씨가 남았다. '등록증 있는 �
 prop crate_o 8 2
 box 8 2 stash name="잡초에 덮인 군용 상자"
 text 8 1 "잡초 속 군용 상자. 뚜껑 안쪽 연필 글씨 — '할매 몫, 보름마다. 청계산 쪽 불빛 조심. 밤새 안 꺼짐. — 곽'"
+
+# FQ-JC-01 계단 물길(1-12a, SD-04d §10.3): 봉천 아랫문에서 관악 계곡 배수 암거(K-08 입구 887·1494)로 내려가는 길의 갈림 둘.
+# 갈림마다 빗물받이 · 흙탕 자국 — 백구가 갈래마다 다르게 군다(판다 = 새 흙 · 재채기 = 쥐 · 으르렁 = 담배). 백구가 없으면 [인지력 6] 또는 빗물 당번표.
+spot @886,1407 3 2
+prop rain_grate 1 0 cond="FQ_JC01_CUT > 0"
+text 1 0 "빗물받이. 흙탕 자국이 세 갈래로 번졌다." scene=FQJC01_FORK1 cond="FQ_JC01_CUT > 0"
+trigger 0 0 w=3 h=2 scene=FQJC01_FORK1 cond="FQ_JC01_CUT > 0 and FQ_JC01_FLOW == 0 and FQ_JC01_FORK1 == 0 and FQJC01_STAGE >= 10"
+spot @884,1468 3 2
+prop rain_grate 1 0 cond="FQ_JC01_CUT > 0"
+text 1 0 "빗물받이. 흙이 덜 마른 자국이 남쪽으로 끌려 내려갔다." scene=FQJC01_FORK2 cond="FQ_JC01_CUT > 0"
+trigger 0 0 w=3 h=2 scene=FQJC01_FORK2 cond="FQ_JC01_CUT > 0 and FQ_JC01_FLOW == 0 and FQ_JC01_FORK2 == 0 and FQJC01_STAGE >= 10"
+# 헛길(으르렁): 고시원 7동 물당번 쉼터 터 — 담배꽁초 · 근무표 · 고철 몇 개. 의자와 상자는 늘 있고, 근무표 · 상자 내용은 흙막이가 생긴 뒤(물당번이 드나든 뒤)에만.
+spot @875,1452 4 2
+prop crate_o 0 1
+prop bench_o 2 1
+box 0 1 trash name="물당번 쉼터 상자" cond="FQ_JC01_CUT > 0"
+text 2 1 "벽돌 위 판자 의자. 발밑에 담배꽁초가 수북하다. 판자에 압정으로 꽂은 종이." w=2 scene=FQJC01_SHELTER cond="FQ_JC01_CUT > 0"

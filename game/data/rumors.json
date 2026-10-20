@@ -197,7 +197,7 @@
 },
 {
 "where": "R01",
-"cond": "SQ_S02_POSTED == 1 and SQ_S02_LEVEL < 5 and SQ_S02_LEVEL > 0",
+"cond": "SQ_S02_LEVEL < 5 and SQ_S02_LEVEL > 0",
 "text": "물통 두 개 들고 312계단 오르는 애들 봤어? 한 통은 반만 찼더라."
 },
 {
@@ -324,6 +324,36 @@
 "where": "R01",
 "cond": "SQ_S03_SOL == 3",
 "text": "볼트가 물길을 돌렸대. 산 위 사람들도 귀는 있나 봐."
+},
+{
+"where": "R01",
+"cond": "FQ_JC01_CUT > 0 and FQ_JC01_FLOW == 0",
+"text": "312계단 홈통이 말랐어. 계곡 쪽 누가 마대 끌고 가는 걸 봤대. 새벽에."
+},
+{
+"where": "R01",
+"cond": "FQ_JC01_FLOW == 1",
+"text": "봉천이 물길을 되찾았대. 7동은 다시 빗물 받기지 뭐. 누구 목이든 마르긴 마찬가지야."
+},
+{
+"where": "R01",
+"cond": "FQ_JC01_FLOW == 1 and FQ_JC01_KNOW == 1 and FQJC01_STAGE >= 100",
+"text": "흙막이 메운 사람이 7동 쪽지를 읽었대. 이장님한테 그렇게 말했대. …난 뭐라 안 해."
+},
+{
+"where": "R01",
+"cond": "FQ_JC01_FLOW == 2",
+"text": "계곡 물을 반씩 갈랐대. 고시원 사람이 홈통 앞에 와서 고개 숙이고 갔어."
+},
+{
+"where": "R01",
+"cond": "FQ_JC01_FLOW == 2 and FQJC01_STAGE >= 100",
+"text": "담희 언니가 그러는데, 우리 물을 왜 남 주냐고 반상회가 한참 시끄러웠대."
+},
+{
+"where": "R01",
+"cond": "FQ_JC01_NEST == 2",
+"text": "암거 쥐 둥지가 물에 쓸려 갔대. 계곡 쥐들이 며칠 시끄러웠어."
 },
 {
 "where": "R01",

@@ -1,0 +1,270 @@
+{
+ "id": "FQJC01_DAM",
+ "title": "흙막이",
+ "loc": "L-R01-08",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "NESTWARN": 7,
+  "OPTS": 8,
+  "FILLS": 9,
+  "FILL": 13,
+  "SPLITS": 17,
+  "SPLIT": 18,
+  "BREACH": 22,
+  "KING": 26,
+  "FILLED": 28,
+  "SPLITD": 30
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "FQ_JC01_FLOW == 1",
+   "to": "FILLED"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JC01_FLOW == 2",
+   "to": "SPLITD"
+  },
+  {
+   "op": "cmd",
+   "name": "jc01",
+   "args": [
+    "seen"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "흙막이. 마대 자루에 흙을 채워 세 겹으로 쌓았다. 계곡에서 내려오던 물이 여기서 막혀 서쪽 옛 배수 홈으로 꺾인다. 홈 끝에 물통이 줄지어 놓였다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "마대 하나에 매직 글씨 '7동'."
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JC01_NEST == 0",
+   "to": "NESTWARN"
+  },
+  {
+   "op": "goto",
+   "to": "OPTS"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "흙막이 바로 옆 웅덩이에서 찍찍 소리. 마대를 끌어내면 깰 거다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "마대를 끌어내 서쪽 홈을 메운다 — 물을 전부 봉천 쪽으로",
+     "tags": [
+      {
+       "k": "stat",
+       "name": "힘",
+       "min": 6
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "FILL",
+     "id": "FQJC01_DAM:1:0"
+    },
+    {
+     "text": "고철 다섯으로 서쪽 홈 입구를 막는다",
+     "tags": [],
+     "cond": "has(\"M-010\", 5) == 1",
+     "fx": "",
+     "to": "FILLS",
+     "id": "FQJC01_DAM:1:1"
+    },
+    {
+     "text": "옆 분배함 밸브를 풀어 물을 반씩 가른다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "SPLIT",
+     "id": "FQJC01_DAM:1:2"
+    },
+    {
+     "text": "분배함에 고철 둘을 덧대 억지로 반을 가른다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 30
+      }
+     ],
+     "cond": "has(\"M-010\", 2) == 1",
+     "fx": "",
+     "to": "SPLITS",
+     "id": "FQJC01_DAM:1:3"
+    },
+    {
+     "text": "마대 한쪽만 터서 물을 웅덩이로 쏟는다",
+     "tags": [
+      {
+       "k": "stat",
+       "name": "힘",
+       "min": 6
+      }
+     ],
+     "cond": "FQ_JC01_NEST == 0",
+     "fx": "",
+     "to": "BREACH",
+     "id": "FQJC01_DAM:1:4"
+    },
+    {
+     "text": "그냥 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQJC01_DAM:1:5"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "take(\"M-010\", 5)"
+  },
+  {
+   "op": "cmd",
+   "name": "jc01",
+   "args": [
+    "fill"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "고철 다섯 덩이를 서쪽 홈 입구에 비스듬히 박아 넣는다. 흙탕물이 고철에 부딪혀 돌아서더니 — 동쪽 수로로 들어간다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "jc01",
+   "args": [
+    "fill"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "마대를 하나씩 끌어내 서쪽 홈에 처박는다. 흙탕물이 한 번 뒤채더니 — 동쪽 수로로 물이 돌아 들어간다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "홈 끝 물통들 위로 흐르던 물줄기가 가늘어지다 끊긴다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "take(\"M-010\", 2)"
+  },
+  {
+   "op": "cmd",
+   "name": "jc01",
+   "args": [
+    "split"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "녹슨 밸브가 끼익 돈다. 2077년 글씨 '봉천 / 신림 분기' 화살표 두 개. 물이 두 줄기로 갈라져 하나는 수로로, 하나는 서쪽 홈으로 흐른다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "물통들 위로 가는 물줄기가 다시 떨어진다. 반 줄기다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "jc01",
+   "args": [
+    "breach"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "마대 한쪽 귀퉁이를 찢어 젖힌다. 고였던 물이 한꺼번에 웅덩이로 쏟아져 둥지를 쓸고 간다. 찍찍거리던 소리가 물소리에 묻힌다."
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S03_KING == 1",
+   "to": "KING"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "암거 안쪽 깊은 데서 젖은 울음이 한 번 울리고 잦아든다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "서쪽 홈을 마대로 메웠다. 물은 모두 수로로 든다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "분배함 밸브가 반쯤 열려 있다. 물이 두 줄기로 갈라져 흐른다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-JC-01.txt"
+}

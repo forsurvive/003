@@ -1,0 +1,124 @@
+{
+ "id": "FQJC01_BUCKET",
+ "title": "물통 줄",
+ "loc": "L-R01-08",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "DRY": 7,
+  "HALF": 10,
+  "GIFT": 14
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "FQ_JC01_FLOW == 1",
+   "to": "DRY"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JC01_FLOW == 2",
+   "to": "HALF"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "물통 열한 개가 홈 끝에 줄지어 섰다. 통마다 칼로 새긴 호실 번호. '7-201' '7-305' '7-108'…."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "맨 앞 통 손잡이에 비닐로 싼 쪽지."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'봉천 분들께. 우리도 3주째 빗물을 못 받았습니다. 계곡 물 한 줄기만 나눠 주세요. 들키면 그때 이야기합시다. — 7동 물당번 일동'"
+  },
+  {
+   "op": "cmd",
+   "name": "jc01",
+   "args": [
+    "know"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "물통들이 말라 간다. 맨 앞 통 쪽지는 그대로 매달려 있다."
+  },
+  {
+   "op": "cmd",
+   "name": "jc01",
+   "args": [
+    "know"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JC01_GIFT > 0 and GAME_DAY > FQ_JC01_GIFT",
+   "to": "GIFT"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "물통마다 반쯤 찼다. 맨 앞 통 쪽지 아래 연필로 한 줄이 더 적혔다. '고맙습니다.'"
+  },
+  {
+   "op": "cmd",
+   "name": "jc01",
+   "args": [
+    "know"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "물통마다 반쯤 찼다. 맨 앞 통 손잡이에 끈으로 묶은 꾸러미 — '봉천 분께. 반 줄기 값. 7동.'"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "고철 두 덩이와 공업용 테이프 한 롤이 들어 있다."
+  },
+  {
+   "op": "do",
+   "fx": "give(\"M-010\", 2); give(\"M-025\", 1)"
+  },
+  {
+   "op": "cmd",
+   "name": "jc01",
+   "args": [
+    "gift"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-JC-01.txt"
+}

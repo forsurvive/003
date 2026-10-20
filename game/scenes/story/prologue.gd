@@ -188,6 +188,7 @@ var side_s09: SideS09                                   ## 영등포 사이드 �
 var side_s10: SideS10                                   ## 영등포 사이드 퀘스트(1-11i — SQ-S10 오늘의 4번 인력)
 var side_s12: SideS12                                   ## 지하시장 사이드 퀘스트(1-11k — SQ-S12 관리 요원의 유족)
 var side_s13: SideS13                                   ## 볼트 S-02 사이드 퀘스트(1-11l — SQ-S13 제752차 개표)
+var fq_jc01: FqJc01                                     ## 세력 퀘스트 FQ-JC-01 계단 물길(1-12a — 봉천 빗물 수로 · 7동 물당번 흙막이)
 var side_s11: SideS11                                   ## 여의도 사이드 퀘스트(1-11j — SQ-S11 토요일의 여의도)
 var uq71: Uq71                                          ## 비표시 퀘스트 UQ-71 원자력 버스(1-D1 — 대방 지하차도)
 var u02: U02Paths                                       ## U02 남태령 지하(1-D2 — 터널 회로 UG-H01 · 밀통로 UG-H02 · 지하 초소)
@@ -291,6 +292,11 @@ func _paths() -> void:
 		add_child(side_s13)
 		side_s13.setup(host, log_on)
 		side_s13.want_save.connect(func(_w: String) -> void: request_auto("event"))   # 무산 · 개표 · 끝(1-11l)
+	if fq_jc01 == null:
+		fq_jc01 = FqJc01.new()
+		add_child(fq_jc01)
+		fq_jc01.setup(host, log_on)
+		fq_jc01.want_save.connect(func(_w: String) -> void: request_auto("event"))   # 물길을 정함 · 끝(1-12a)
 	if uq71 == null:
 		uq71 = Uq71.new()
 		add_child(uq71)

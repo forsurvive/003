@@ -6,29 +6,33 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "PAIDDAY": 9,
-  "DRY": 11,
-  "AFTER": 13,
-  "PLAIN": 15,
-  "TELL": 17,
-  "ASK": 22,
-  "WHERE": 23,
-  "BYPASS": 25,
-  "BYPASS2": 30,
-  "THANKS": 32,
-  "THANKS_B": 37,
-  "THANKS_BJ": 41,
-  "PAY": 42,
-  "S03ASK": 44,
-  "S03_WALL": 45,
-  "S03_D": 49,
-  "S03_D_OK": 51,
-  "S03_D_NO": 56,
-  "S03_DONE": 58,
-  "S03_DA": 63,
-  "S03_DB": 65,
-  "S03_PAY": 66,
-  "S03_PAYF": 70
+  "JCBOTH": 12,
+  "JCRAIN": 14,
+  "JCCUT": 18,
+  "JCLEAK": 20,
+  "PAIDDAY": 22,
+  "DRY": 24,
+  "AFTER": 26,
+  "PLAIN": 28,
+  "TELL": 30,
+  "ASK": 35,
+  "WHERE": 36,
+  "BYPASS": 38,
+  "BYPASS2": 43,
+  "THANKS": 45,
+  "THANKS_B": 50,
+  "THANKS_BJ": 54,
+  "PAY": 55,
+  "S03ASK": 57,
+  "S03_WALL": 58,
+  "S03_D": 62,
+  "S03_D_OK": 64,
+  "S03_D_NO": 69,
+  "S03_DONE": 71,
+  "S03_DA": 76,
+  "S03_DB": 78,
+  "S03_PAY": 79,
+  "S03_PAYF": 83
  },
  "ops": [
   {
@@ -43,8 +47,18 @@
   },
   {
    "op": "if",
+   "cond": "SQ_S02_POSTED == 0 and FQ_JC01_CAP < 5",
+   "to": "JCRAIN"
+  },
+  {
+   "op": "if",
    "cond": "SQ_S02_POSTED == 0",
    "to": "PLAIN"
+  },
+  {
+   "op": "if",
+   "cond": "SQS02_STAGE >= 70 and FQ_JC01_CAP < 5",
+   "to": "JCRAIN"
   },
   {
    "op": "if",
@@ -67,6 +81,11 @@
    "to": "DRY"
   },
   {
+   "op": "if",
+   "cond": "FQ_JC01_CAP < 5",
+   "to": "JCBOTH"
+  },
+  {
    "op": "line",
    "who": "N-R01-032",
    "emo": "피곤",
@@ -75,6 +94,56 @@
   {
    "op": "goto",
    "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-032",
+   "emo": "피곤",
+   "text": "윗물은 패거리가 잠갔고, 아랫물은 끊겼어. 수위계가 양쪽에서 깎여."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JC01_FLOW == 0",
+   "to": "JCCUT"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JC01_CRACK == 0",
+   "to": "JCLEAK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-032",
+   "emo": "기본",
+   "text": "넷에서 서. 나머지 한 칸은 고시원 몫이래. …뭐, 우리도 빗물 얻어 쓰는 처지니까."
+  },
+  {
+   "op": "goto",
+   "to": "S03ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-032",
+   "emo": "피곤",
+   "text": "윗관은 물소리가 나는데 수위계가 셋에서 안 올라. 계곡 수로가 끊긴 거야. 수로는 마을 거니까 이장님한테 가 봐."
+  },
+  {
+   "op": "goto",
+   "to": "S03ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-032",
+   "emo": "기본",
+   "text": "수로 물은 돌아왔는데 유입구 이음매가 새. 수위계가 한 칸 모자라게 떨기만 해. 칠판에 '샌다' 적어 놨어."
+  },
+  {
+   "op": "goto",
+   "to": "S03ASK"
   },
   {
    "op": "line",

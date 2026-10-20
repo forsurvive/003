@@ -19,6 +19,7 @@ var side9: SideS09                                   ## 영등포 사이드 퀘�
 var side10: SideS10                                 ## 영등포 사이드 퀘스트(1-11i SQ-S10)
 var side12: SideS12                                 ## 지하시장 사이드 퀘스트(1-11k SQ-S12)
 var side13: SideS13                                 ## 볼트 S-02 사이드 퀘스트(1-11l SQ-S13)
+var jc01: FqJc01                                    ## 세력 퀘스트 FQ-JC-01 계단 물길(1-12a)
 var side11: SideS11                                 ## 여의도 사이드 퀘스트(1-11j SQ-S11)
 var uq71: Uq71                                     ## 비표시 퀘스트 UQ-71(1-D1 대방 지하차도)
 var u02: U02Paths                                  ## U02 남태령 지하(1-D2)
@@ -126,6 +127,9 @@ func _ready() -> void:
 	side13 = SideS13.new()
 	add_child(side13)
 	side13.setup(host, true)
+	jc01 = FqJc01.new()
+	add_child(jc01)
+	jc01.setup(host, true)
 	uq71 = Uq71.new()
 	add_child(uq71)
 	uq71.setup(host, true)
@@ -453,6 +457,37 @@ func _ready() -> void:
 				["warp", "SV-01", "from_SV02"], ["wait", 1.0], ["want", ["그대로", "그대로", "그대로", "그대로", "그대로"]], ["talk", "N-R02-028"], ["wait", 2.0],
 				["until", "SQ_S13_DONE == 1", 10.0, "열쇠가 주인을 찾았다", "s13_done"],
 				["check", "SQS13_STAGE == 100 and SQ_S13_LOOT == 1", "100 · 창고"]]
+		"jc01":                                                         # 1-12a FQ-JC-01: 게시판 쪽지 · 빗물 당번표(10) → 이장실 조만석 → 백구 동행(20) → 홈통 → 아랫문 큰길 첫 갈림(백구가 판 자리) →
+			st.vars.set_v("PC_ST", 7)                                    #   비탈 둘째 갈림 → 계곡 암거 둥지 쥐 · 흙막이 [힘 6] 다 메움(30) → 배수지 유입구 새는 소리(40) · [수리 50] →
+			st.vars.set_v("PC_SKP_REPAIR", 60)                           #   조만석 보고(100) · 봉천 우호면 이장님의 엽총
+			st.vars.set_v("AFF_JC_BC", 15)
+			host.date_text = "2277. 10. 30.  09:00"
+			jc01.tick()
+			st.vars.set_v("GAME_DAY", 8)
+			jc01._on_day(8)
+			side2.tick()
+			host.enter("X-BC", "from_X-S07")
+			plan = [["hp", 3000], ["wait", 1.0], ["scene", "X-BC_BOARD"], ["wait", 1.5],
+				["check", "FQJC01_STAGE == 10 and FQ_JC01_ROSTER == 1 and FQ_JC01_CAP == 3", "게시판 쪽지 · 빗물 당번표(10) · 빗물 몫 3"],
+				["warp", "B-01", "from_X-BC"], ["wait", 1.0], ["want", ["가 볼게"]], ["talk", "C-010"], ["wait", 1.5], ["shot", "jc01_chief"],
+				["check", "FQ_JC01_POSTED == 2", "조만석 — 윗관 · 아랫물 두 갈래"],
+				["warp", "X-BC", "from_B-01"], ["wait", 1.0], ["want", ["가자"]], ["talkd", "C-015"], ["wait", 1.5],
+				["check", "FQ_JC01_DOG == 1 and FQJC01_STAGE == 20", "백구 동행(20)"],
+				["go", 888, 1373], ["scene", "FQJC01_SPOUT"], ["wait", 1.0], ["shot", "jc01_spout"],
+				["want", ["판 자리"]], ["go", 887, 1408], ["wait", 2.0], ["shot", "jc01_fork1"],
+				["check", "FQ_JC01_FORK1 == 1", "첫 갈림: 백구가 판 자리(남쪽 큰길)"],
+				["want", ["백구를 따라"]], ["go", 885, 1469], ["wait", 2.0], ["shot", "jc01_fork2"],
+				["check", "FQ_JC01_FORK2 == 1", "둘째 갈림: 비탈 아래 암거 입구"],
+				["warp", "K-08", "from_W"], ["wait", 1.5], ["fight"], ["wait", 1.0],
+				["check", "FQ_JC01_NEST == 1", "웅덩이 둥지 쥐 셋 처치"],
+				["want", ["마대를 끌어내"]], ["go", 6, 5, "K-08"], ["use", 6, 4], ["wait", 2.0], ["shot", "jc01_dam"],
+				["check", "FQ_JC01_FLOW == 1 and FQJC01_STAGE == 30", "흙막이 다 메움(30)"],
+				["warp", "X-BS", "arrive"], ["wait", 1.0],
+				["check", "FQ_JC01_LEAK == 1 and FQJC01_STAGE == 40 and SQ_S02_LEVEL == 4", "유입구 새는 소리(40) · 수위 넷"],
+				["want", ["수리 50"]], ["go", 926, 1372], ["use", 926, 1371], ["wait", 1.5], ["shot", "jc01_inlet"],
+				["check", "FQ_JC01_CRACK == 1", "유입구 균열 고침"],
+				["warp", "B-01", "from_X-BC"], ["wait", 1.0], ["want", []], ["talk", "C-010"], ["wait", 2.0],
+				["check", "FQJC01_STAGE == 100 and has(\"W-101\") and has(\"M-136\")", "보고(100) · 이장님의 엽총 · 계단마을 증표"]]
 		"db":                                                           # 1-D1 대방 지하차도 · UQ-71: 북쪽 입구로 들어가 분대 등 뒤에서 웅크려 엿듣기(사흘 기한) → 펌프실 운전기사 메모 →
 			st.vars.set_v("PC_SKP_SCIENCE", 60)                          #   허리 물 버스에서 정지 레버로 봉인(카르마 · 지대 꺼짐) → 남쪽 입구로 나와 문 앞에 선다
 			st.vars.set_v("GAME_DAY", 8)

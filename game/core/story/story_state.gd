@@ -51,7 +51,7 @@ const UNNAMED := [["N-TRADER", "떠돌이 고물상", ""], ["N-VG-S1", "고물�
 	["N-DS-B1", "봉천 감시조", "JC_BC"], ["N-DS-B2", "봉천 감시조", "JC_BC"], ["N-DS-S1", "승강장 경비", "JC_SA"], ["N-DS-S2", "승강장 경비", "JC_SA"],   # 1-D3 UQ-04 독산 7호 앞
 	["N-DS-J1", "상인회 짐꾼", ""], ["N-DS-J2", "상인회 짐꾼", ""],
 	["N-GR-D1", "객차 떠돌이", ""], ["N-GR-S1", "새벽인력 측량조", "SB"], ["N-GR-S2", "새벽인력 측량조", "SB"],   # 1-D4 구로 차량기지
-	["N-YT-1", "패거리 수금원", ""], ["N-YT-2", "패거리 척후", ""], ["N-BC-1", "봉천 감시조", "JC_BC"], ["N-BC-2", "봉천 감시조", "JC_BC"], ["N-BC-3", "봉천 감시조", "JC_BC"],   # 1-11b SQ-S02
+	["N-YT-1", "패거리 수금원", ""], ["N-YT-2", "패거리 척후", ""], ["N-BC-1", "봉천 감시조", "JC_BC"], ["N-BC-2", "봉천 감시조", "JC_BC"], ["N-BC-3", "봉천 감시조", "JC_BC"], ["N-JC-W1", "7동 물당번", ""], ["N-JC-W2", "7동 물당번", ""],   # 1-11b SQ-S02 · 1-12a FQ-JC-01(신림 고시원 7동 물당번 — 호실 번호뿐)
 	["N-PS-1", "파수-3", ""],   # 1-11c SQ-S04 관제망 경비 로봇
 	["N-PS-2", "경비 파수-3", ""],   # 1-11j SQ-S11 영등포 경찰서 서장실 경비판
 	["N-BJ-S1", "수색조 분대장", "BJ"], ["N-BJ-S2", "수색조 계엄병", "BJ"],   # 1-11c · 1-11f 계엄군 수색조(1-11j: 게임 쪽 목록에 빠져 있던 것 — 이름표에 ID가 나오던 것)
@@ -247,6 +247,10 @@ func _init() -> void:
 		for b in ["B", "K", "E", "T", "W", "I", "P"]:
 			vars.declare("SQ_S13_%s_%s" % [a, b], "int", 0)
 	vars.declare("SQH_IDCARD", "int", 0)
+	# FQ-JC-01 계단 물길(1-12a, SD-04d §10.3 · 진행기 fq_jc01.gd 머리 주석): 물길의 상태는 FLOW 하나(0 막힘 · 1 다 메움 · 2 분배 밸브로 나눔 — UQ-62 '나눔' 사실) ·
+	# 배수지 수위는 S02 진행기 level() 한 곳이 min(BASE S02 몫, CAP 빗물 몫)으로 셈(P1). CUT 흙막이가 생긴 날 · NEST 둥지(0 · 1 처치 · 2 떠내려감) · CRACK 균열 고침
+	for k in "ARM CUT POSTED SPOUT DOG FORK1 FORK2 SHELTER KNOW FLOW NEST ROSTER LEAK CRACK REWARD DONE SAID BETRAY CAP BASE SEEN PERC KING TALK GIFT".split(" "):
+		vars.declare("FQ_JC01_" + k, "int", 5 if k in ["CAP", "BASE"] else 0)   # ROSTER 빗물 당번표를 읽음 · PERC 흙 자국을 읽음 · TALK 물당번과 말함 · GIFT 7동 보답
 	vars.declare("SQE_FAMILY", "int", 0)
 	for kv in [["SQH_LIST11", -1], ["SQH_RECESS", -1], ["SQE_LIST11", 0], ["SQE_RECESS", 0], ["SQK_MARCH", 0], ["NS_COOP", 0], ["PD_R02_KH", 0]]:   # 남산 협력 표시(SD-06 NS 협력 플래그) · 거점 '국회 폐허'(1 = BJ)
 		vars.declare(kv[0], "int", kv[1])
