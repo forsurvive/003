@@ -1,0 +1,145 @@
+# SV-01 볼트 S-02 아트리움(SD-09a L-R02-04 L924 · SD-04a §5.6 SQ-S13, 단계 1-11l). 계획 docs/seoul-fallout/_plans/1-11l_SQ-S13_plan.md §6.
+# 40×26 · 북쪽 계단(지상 톱니 문) · 선거 벽보 여섯(기호 1~6 + 사진 틀 — 정당명 없음) · 투표함 더미 · 계단 앞 두 무리 해골(파랑 · 주황 띠)과 '재검표 요구 — 기각' ·
+#   투표함지기 2호(N-R02-028) · 후보 등록부 · 기표소 다섯 · 투표함 · 공고 칠판 · 야생 구울 여섯(유인하면 거주 구역으로 — SQ_S13_LURE).
+# 서쪽 = 거주 구역(SV-03) · 동쪽 = 개표실(SV-02) · 남쪽 = 오버시어실(SV-04). 유권자는 도착하면(V 2) 줄에, 찍고 나오면(V 3) 남쪽에 선다.
+map SV-01 S-02 아트리움
+set s07
+grid
+##################...###################
+##################...###################
+##################...###################
+#..............=========...............#
+#..............=========...............#
+#..............=========...............#
+#..............=========...............#
+#..............=========...............#
+#..............=========................
+#.......................................
+#......................................#
+#......................................#
+.......................................#
+.......................................#
+#......................................#
+#......................................#
+#......................................#
+#....,,,,,,,,,,,,,,,,,,,,,,,,,.........#
+#....,,,,,,,,,,,,,,,,,,,,,,,,,.........#
+#....,,,,,,,,,,,,,,,,,,,,,,,,,.........#
+#....,,,,,,,,,,,,,,,,,,,,,,,,,.........#
+#....,,,,,,,,,,,,,,,,,,,,,,,,,.........#
+#......................................#
+###################.####################
+###################.####################
+###################.####################
+end
+
+exit 19 0 W L-R02-04>from_W
+exit 18 0 W L-R02-04>from_W
+exit 20 0 W L-R02-04>from_W
+exit 0 12 SV-03 from_SV01
+exit 0 13 SV-03 from_SV01
+exit 39 8 SV-02 from_SV01
+exit 39 9 SV-02 from_SV01
+exit 19 25 SV-04 from_SV01
+mark from_W 19 3 S
+mark from_SV03 1 12 E
+mark from_SV02 38 8 W
+mark from_SV04 19 22 N
+mark robot 19 10 S
+mark booth_1 7 19 N
+mark booth_2 10 19 N
+mark booth_3 13 19 N
+mark booth_4 16 19 N
+mark booth_5 19 19 N
+mark box_front 23 19 N
+
+# 벽보 여섯(기호 1~6) — 당선자가 공약을 붙이면 그 기호 벽보에 쪽지(pledge)
+prop w_poster_vote 3 1 cond="SQ_S13_PLEDGE != 1"
+prop w_poster_vote 3 1 state=pledge cond="SQ_S13_PLEDGE == 1"
+prop w_poster_vote 5 1 state=2 cond="SQ_S13_PLEDGE != 2"
+prop w_poster_vote 5 1 state=pledge cond="SQ_S13_PLEDGE == 2"
+prop w_poster_vote 7 1 state=3 cond="SQ_S13_PLEDGE != 3"
+prop w_poster_vote 7 1 state=pledge cond="SQ_S13_PLEDGE == 3"
+prop w_poster_vote 31 1 state=4
+prop w_poster_vote 33 1 state=5
+prop w_poster_vote 35 1 state=6
+text 3 3 "선거 벽보 — 기호 1 · 2 · 3. 사진 틀은 비고 이름 칸은 빈칸. 140년 동안 누구의 이름도 붙지 않았다." w=5 cond="SQ_S13_PLEDGE == 0"
+text 3 3 "선거 벽보. 당선자의 기호 칸에 손글씨 쪽지 — '창고는 같이 씁시다.'" w=5 cond="SQ_S13_PLEDGE >= 1"
+text 31 3 "선거 벽보 — 기호 4 · 5 · 6. 귀퉁이마다 압정 자국이 수백 개. 매달 새로 붙였던 자리다." w=5
+prop w_board_vote 24 1 cond="SQ_S13_BOARD == 0"
+prop w_board_vote 24 1 state=fail cond="SQ_S13_BOARD == 1"
+prop w_board_vote 24 1 state=term cond="SQ_S13_BOARD == 2"
+prop w_board_vote 24 1 state=next cond="SQ_S13_BOARD == 3"
+text 24 3 "공고 칠판. '제752차 선거 — 유권자를 기다립니다.' 분필 글씨가 날마다 덧쓰여 굵다." w=2 cond="SQ_S13_BOARD == 0"
+text 24 3 "공고 칠판. '제752차 선거 무산. 재공고합니다.' 아래에 무산을 세는 작대기가 늘어 간다." w=2 cond="SQ_S13_BOARD == 1"
+text 24 3 "공고 칠판. '임기 4년 — 다음 선거 1,460일 뒤.' 실험이 끝났다는 줄이 맨 아래 작게." w=2 cond="SQ_S13_BOARD == 2"
+text 24 3 "공고 칠판. '제753차 선거 — 다음 달.' 2호는 다시 매달을 센다." w=2 cond="SQ_S13_BOARD == 3"
+
+# 계단 앞 — 2131년 내전의 마지막 줄. 파란 띠 무리와 주황 띠 무리가 마주 쓰러졌다
+prop skel_sash 16 5
+prop skel_sash 17 7
+prop skel_sash 15 6
+prop skel_sash 21 5 state=orange
+prop skel_sash 22 7 state=orange
+prop skel_sash 23 6 state=orange
+prop printout_pile 19 6
+text 15 5 "파란 띠를 두른 해골들. 손마다 투표용지를 한 장씩 쥐었다." w=3 h=3
+text 21 5 "주황 띠를 두른 해골들. 계단 쪽을 향해 쓰러졌다 — 아래로 내려가려던 자세." w=3 h=3
+text 19 6 "개표기 출력지 한 장. '제643차 — 재검표 요구 · 기각.' 날짜는 2131. 07." scene=SQS13_STAIRS
+
+# 투표함 더미 — 수천 개
+prop ballot_pile 2 4
+prop ballot_pile 2 8
+prop ballot_pile 34 4
+prop ballot_pile 35 12
+prop ballot_pile 32 21
+prop ballot_pile 2 20
+text 2 4 "투표함 더미. 봉인된 채 쌓였다. 상자마다 회차 번호 — 312, 313, 314…" w=2
+text 34 4 "투표함 더미. 맨 위 상자 봉인에 '제750차'." w=2
+text 32 21 "투표함 더미. 바닥에 쏟아진 용지가 누렇다. 대부분 백지." w=2
+
+# 후보 등록부 · 기표소 다섯 · 투표함
+prop reg_stand_sv 12 12
+text 12 12 "후보 등록부. 칸은 셋 — 기호는 등록한 순서대로. 첫 칸에 흐린 글씨 자국이 남았다." scene=SQS13_REG
+prop vote_booth 7 18 cond="SQ_S13_BOOTH != 1"
+prop vote_booth 7 18 state=in cond="SQ_S13_BOOTH == 1"
+prop vote_booth 10 18 cond="SQ_S13_BOOTH != 2"
+prop vote_booth 10 18 state=in cond="SQ_S13_BOOTH == 2"
+prop vote_booth 13 18 cond="SQ_S13_BOOTH != 3"
+prop vote_booth 13 18 state=in cond="SQ_S13_BOOTH == 3"
+prop vote_booth 16 18 cond="SQ_S13_BOOTH != 4"
+prop vote_booth 16 18 state=in cond="SQ_S13_BOOTH == 4"
+prop vote_booth 19 18 cond="SQ_S13_BOOTH != 5"
+prop vote_booth 19 18 state=in cond="SQ_S13_BOOTH == 5"
+text 19 18 "기표소. 선반에 기표 도장 하나. 끈이 닳아 반쯤 끊겼다." scene=SQS13_BOOTH
+prop ballot_box_sv 23 18 cond="SQ_S13_CAST == 0"
+prop ballot_box_sv 23 18 state=full cond="SQ_S13_CAST >= 1"
+text 23 18 "투표함. 봉인 줄에 '제752차'. 비어 있다." cond="SQ_S13_CAST == 0"
+text 23 18 "투표함. 봉인 줄에 '제752차'. 투입구에 용지 끝이 비죽 나왔다." cond="SQ_S13_CAST >= 1"
+
+# 투표함지기 2호 — 로봇은 꺼지거나 부서지면 없다(SQ_S13_OFF)
+npc N-R02-028 19 10 S sheet=rb_ballot2_loco cond="SQ_S13_OFF == 0" bark="제752차 선거가 다가옵니다. 소중한 한 표를 행사합시다."
+
+# 유권자(도착 V 2 = 줄 · 찍음 V 3 = 남쪽)
+npc C-050 8 15 N cond="SQ_S13_V_B == 2" bark="줄은 섰어. 장부는 놓고 왔고."
+npc C-050 8 22 N cond="SQ_S13_V_B == 3" bark="찍었어. 결과 보고 갈게."
+npc N-R02-032 10 15 N cond="SQ_S13_V_K == 2" bark="기호 1번 시세부터 봐야 해요."
+npc N-R02-032 10 22 N cond="SQ_S13_V_K == 3" bark="시세 확인했어요. 결과 기다려요."
+npc N-R02-030 12 15 N cond="SQ_S13_V_E == 2" bark="오늘은 안내원 말고 손님이에요."
+npc N-R02-030 12 22 N cond="SQ_S13_V_E == 3" bark="투표함에 인사했어요."
+npc N-R02-019 14 15 N cond="SQ_S13_V_T == 2" bark="한 장은 한 장이지. 줄은 줄이고."
+npc N-R02-019 14 22 N cond="SQ_S13_V_T == 3" bark="접어서 넣었어. 한 장."
+npc N-R02-051 16 15 N cond="SQ_S13_V_W == 2" bark="환자 없으면 끝까지 있을게요."
+npc N-R02-051 16 22 N cond="SQ_S13_V_W == 3" bark="찍었어요. 손 닦고요."
+npc N-R02-014 18 15 N cond="SQ_S13_V_I == 2" bark="이름 읽을 차례를 기다리는 중이야."
+npc N-R02-014 18 22 N cond="SQ_S13_V_I == 3" bark="적었어. 소리 내지 않고."
+npc N-R02-020 20 15 N cond="SQ_S13_V_P == 2" bark="총은 문 앞에 두고 왔어. 규칙이래서."
+npc N-R02-020 20 22 N cond="SQ_S13_V_P == 3" bark="한 발 쐈어."
+
+# 야생 구울 여섯 — 2호 방송을 거주 구역 쪽으로 돌려 유인하면(LURE) 그쪽으로 몰려간다
+enemy CR-200 6 10 cond="SQ_S13_LURE == 0"
+enemy CR-200 9 14 cond="SQ_S13_LURE == 0"
+enemy CR-200 28 11 cond="SQ_S13_LURE == 0"
+enemy CR-200 33 16 cond="SQ_S13_LURE == 0"
+enemy CR-200 25 21 cond="SQ_S13_LURE == 0"
+enemy CR-200 13 21 cond="SQ_S13_LURE == 0"

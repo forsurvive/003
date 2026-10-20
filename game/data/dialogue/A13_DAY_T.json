@@ -1,0 +1,66 @@
+{
+ "id": "A13_DAY_T",
+ "title": "탁우빈",
+ "loc": "L-R02-04",
+ "npc": "N-R02-019",
+ "cond": "SQ_S13_V_T == 4 and SQ_S13_SAID_T == 0",
+ "labels": {
+  "START": 0,
+  "CUT": 5,
+  "BETRAY": 7
+ },
+ "ops": [
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "said",
+    "T"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S13_CUT_T >= 1 and SQ_S13_BL_T == 1",
+   "to": "BETRAY"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S13_CUT_T >= 1",
+   "to": "CUT"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "미소",
+   "text": "투표한 날이다. 시장 칠판에 적어 놨어 — '오늘 들어온 물건: 한 표'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "분노",
+   "text": "명부 방송 들었다. 시장 반장 몫을 깎더라. 지상도 지하도 그 방송은 똑같이 들었어."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "분노",
+   "text": "나 당신 찍었다. 시장 반장이 볼트 사람한테 한 장. 그 한 장 값이 명부에선 깎이더라."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S13.txt"
+}

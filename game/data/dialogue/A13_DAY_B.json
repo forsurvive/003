@@ -1,0 +1,83 @@
+{
+ "id": "A13_DAY_B",
+ "title": "노복희",
+ "loc": "L-R02-04",
+ "npc": "C-050",
+ "cond": "SQ_S13_V_B == 4 and SQ_S13_SAID_B == 0",
+ "labels": {
+  "START": 0,
+  "CUT": 5,
+  "CHAIN": 6,
+  "BETRAY": 8
+ },
+ "ops": [
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "said",
+    "B"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S13_CUT_B >= 1 and SQ_S13_BL_B == 1",
+   "to": "BETRAY"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S13_CUT_B >= 1",
+   "to": "CUT"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "미소",
+   "text": "투표한 날이라. 2077년 이후로 처음이야. 장부에 적어 뒀어 — '제752차, 노복희 투표함'."
+  },
+  {
+   "op": "goto",
+   "to": "CHAIN"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "분노",
+   "text": "명부 방송 들었어. 상인회장 몫을 깎더구먼. 비밀 투표라며? 장부엔 다 적혀."
+  },
+  {
+   "op": "cmd",
+   "name": "chain",
+   "args": [
+    "C-050",
+    "A13_"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "분노",
+   "text": "나 당신 찍었어. 상인회장이 볼트 양반 이름에 도장 찍었다고. 그런데 명부엔 0이더라."
+  },
+  {
+   "op": "cmd",
+   "name": "chain",
+   "args": [
+    "C-050",
+    "A13_"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S13.txt"
+}

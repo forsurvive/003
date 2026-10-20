@@ -2358,6 +2358,19 @@ func _handlers() -> void:
 				talked.emit(sid, str(g.get("id", "")))
 				box.open.call_deferred(st, g), CONNECT_ONE_SHOT)
 		done.call()
+	ev.handlers["chain"] = func(a: Array, done: Callable) -> void:      # 퀘스트 앞 장면 뒤 평소 이야기로(1-11l): chain 인물ID 건너뛸_접두 — 이 창이 닫힌 뒤 접두가 다른 첫 장면
+		var sid := str(a[0])
+		var skip := str(a[1]) if a.size() > 1 else ""
+		box.finished.connect(func() -> void:
+			for g in scenes_by_npc.get(sid, []):
+				if skip != "" and str(g.get("id", "")).begins_with(skip):
+					continue
+				var cond: String = g.get("cond", "")
+				if cond == "" or StoryExpr.test(cond, st):
+					talked.emit(sid, str(g.get("id", "")))
+					box.open.call_deferred(st, g)
+					return, CONNECT_ONE_SHOT)
+		done.call()
 	ev.handlers["buddy"] = func(a: Array, done: Callable) -> void:     # 일시 동행 시작(인물 ID) · 끝(off)
 		var id := str(a[0])
 		if id == "off":

@@ -1,0 +1,99 @@
+{
+ "id": "A13_DAY_K",
+ "title": "경상현",
+ "loc": "L-R02-04",
+ "npc": "N-R02-032",
+ "cond": "SQ_S13_V_K == 4 and SQ_S13_SAID_K == 0",
+ "labels": {
+  "START": 0,
+  "LIED": 6,
+  "CUT": 8,
+  "CHAIN": 9,
+  "BETRAY": 11
+ },
+ "ops": [
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "said",
+    "K"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S13_CUT_K >= 1 and SQ_S13_BL_K == 1",
+   "to": "BETRAY"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S13_CUT_K >= 1",
+   "to": "CUT"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S13_LIE == 1",
+   "to": "LIED"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-032",
+   "emo": "미소",
+   "text": "투표한 날이에요. 오늘 장은 — 마감했어요. 처음으로요."
+  },
+  {
+   "op": "goto",
+   "to": "CHAIN"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-032",
+   "emo": "기본",
+   "text": "기호 1번, 반등 안 하던데요. …그래도 찍은 건 찍은 거예요."
+  },
+  {
+   "op": "goto",
+   "to": "CHAIN"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-032",
+   "emo": "슬픔",
+   "text": "명부 방송에 제 이름이 나왔어요. 하락 마감이네요."
+  },
+  {
+   "op": "cmd",
+   "name": "chain",
+   "args": [
+    "N-R02-032",
+    "A13_"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-032",
+   "emo": "슬픔",
+   "text": "저 손님 찍었어요. 기호 1번. …명부엔 하락으로 적혔더라고요. 손절당한 기분이에요."
+  },
+  {
+   "op": "cmd",
+   "name": "chain",
+   "args": [
+    "N-R02-032",
+    "A13_"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S13.txt"
+}

@@ -1,0 +1,48 @@
+{
+ "id": "SQS13_PLAQUE",
+ "title": "명패 벽",
+ "loc": "L-R02-04",
+ "npc": "",
+ "cond": "SQ_S13_START >= 1",
+ "labels": {
+  "START": 0,
+  "NEW": 4
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "놋쇠 명패 750개. '제1차 당선 오버시어'부터 '제750차'까지. 같은 이름이 열두 번 붙은 줄도 있다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "맨 끝 한 칸은 빈 틀. 틀 아래 작은 글씨 — '제751차 — 당선자 없음'."
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S13_WIN >= 1 and SQ_S13_WIN <= 10",
+   "to": "NEW"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈 틀 옆에 새 틀이 하나 더 박혔다. '제752차'. 명패는 아직 새겨지는 중이다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S13.txt"
+}

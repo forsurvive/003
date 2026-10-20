@@ -77,8 +77,9 @@ term 28 2 TM-J06D
 prop fountain_dry 18 13
 text 18 13 "물 없는 분수." w=3 h=2 scene=MQ-103_FOUNTAIN
 # 인지영(1-11j SQ-S11): 동행 중엔 벤치가 빈다 · 낭독 전 바크는 실마리('토요일마다 여의도에 갔지' — 재미 검수 8) · 낭독 뒤 · 죽은 뒤엔 벤치에 유인물 한 장
-npc N-R02-014 15 15 E cond="SQ_S11_ESCORT != 1 and SQ_S11_READ == 0" bark="토요일마다 여의도에 갔지. …요즘은 토요일이 언젠지도 몰라."
-npc N-R02-014 15 15 E cond="SQ_S11_ESCORT != 1 and SQ_S11_READ != 0" bark="이제 토요일이 끝났네. 일요일엔 뭘 하나."
+npc N-R02-014 15 15 E cond="(SQ_S11_ESCORT != 1 and SQ_S11_READ == 0) and SQ_S13_V_I != 2 and SQ_S13_V_I != 3" bark="토요일마다 여의도에 갔지. …요즘은 토요일이 언젠지도 몰라."
+npc N-R02-014 15 15 E cond="(SQ_S11_ESCORT != 1 and SQ_S11_READ != 0) and SQ_S13_V_I != 2 and SQ_S13_V_I != 3" bark="이제 토요일이 끝났네. 일요일엔 뭘 하나."
+text 15 15 "연락부 책상에 쪽지 — '볼트 투표. 이름 하나 적고 옴. 인지영'." cond="SQ_S13_V_I == 2 or SQ_S13_V_I == 3"
 text 15 15 "빈 벤치. 누가 놓고 갔는지, 유인물 한 장 위에 캡 하나가 눌러져 있다. '종전'." cond="dead(\"N-R02-014\")"
 prop bench_o 14 17
 npc N-R02-012 23 11 S route=분수:23,11,6;게시판:9,4,5;벤치:21,16,6 cond="SQ_S12_SB == 0" bark="2077년 10월분 배급표 있어? 그 달 것만. 다른 달은 넘쳐."
@@ -114,7 +115,8 @@ prop chief_desk 3 24
 prop file_cabinet 1 23
 box 1 23 cabinet owner=C-050 name="상인회 서류함"
 prop file_cabinet 1 25
-npc C-050 5 24 E
+npc C-050 5 24 E cond="SQ_S13_V_B != 2 and SQ_S13_V_B != 3"
+text 5 24 "상인회 자리에 장부를 덮고 그 위에 쪽지 — '투표하러 감. 장부 손대지 마. 노복희'." cond="SQ_S13_V_B == 2 or SQ_S13_V_B == 3"
 prop screen_partition 7 22
 prop screen_partition 8 22
 text 3 24 "상인회장 책상. 장부 세 권과 출입패 상자. '등록 같은 거 없는 사람들'의 이름이 줄지어 적혀 있다." w=2

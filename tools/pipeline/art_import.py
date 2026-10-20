@@ -156,6 +156,26 @@ def robot_sheets():
         json.dump(meta, open(os.path.join(SPR, name + ".json"), "w"), ensure_ascii=False, sort_keys=True, indent=1)
 
 
+def salim_sheets():
+    """선거 관리 살림-2(1-11l SQ-S13, art/tools/robot_salim.py): 투표함지기 2호(N-R02-028) · 개표 4호(N-R02-029). 옆(E)만, 부양 — idle 4 · walk 4 · death 4."""
+    import robot_salim as RS
+    for kind, name in (("ballot", "rb_ballot2_loco"), ("count", "rb_count4_loco")):
+        frames, meta = RS.salim_sheet(kind)
+        fw, fh = meta["frame"]
+        sheet = Image.new("RGBA", (fw * len(frames), fh), (0, 0, 0, 0))
+        for i, f in enumerate(frames):
+            sheet.alpha_composite(f, (i * fw, 0))
+        sheet.save(os.path.join(SPR, name + ".png"))
+        mo = meta["motions"]
+        anims = [("idle_E", [(mo["idle"]["start"] + i, 0) for i in range(mo["idle"]["count"])], True),
+                 ("walk_E", [(mo["walk"]["start"] + i, 0) for i in range(mo["walk"]["count"])], True),
+                 ("death_E", [(mo["death"]["start"] + i, 0) for i in range(mo["death"]["count"])], False)]
+        open(os.path.join(SPR, name + ".tres"), "w", encoding="utf-8").write(
+            spriteframes_tres(f"res://assets/sprites/{name}.png", fw, fh, anims))
+        meta["name"] = name
+        json.dump(meta, open(os.path.join(SPR, name + ".json"), "w"), ensure_ascii=False, sort_keys=True, indent=1)
+
+
 def sentry_sheets():
     """관제망 경비 로봇(1-11c SQ-S04, art/tools/robot_sentry.py): 파수-3 CR-305(깨어남 앰버) · 아이를 안은 판 · 감시포 1형 CR-320.
     사람 시트처럼 다섯 줄(S · SE · E · NE · N, W 쪽은 거울) — idle · walk 6(사람과 같은 보폭 표 · 발 고정) · death 4."""
@@ -263,6 +283,7 @@ def main():
     crayfish_sheet()
     quad_sheets()
     robot_sheets()
+    salim_sheets()
     sentry_sheets()
     import tiles_isaac                                             # 아이작풍 타일(이름·순서는 이전 판과 같다)
     r01 = tiles_isaac.r01_tiles()

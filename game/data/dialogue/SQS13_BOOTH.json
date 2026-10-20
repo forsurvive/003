@@ -1,0 +1,196 @@
+{
+ "id": "SQS13_BOOTH",
+ "title": "기표소",
+ "loc": "L-R02-04",
+ "npc": "",
+ "cond": "SQ_S13_START >= 1",
+ "labels": {
+  "START": 0,
+  "USED": 4,
+  "BALLOT": 6,
+  "BALMENU": 10,
+  "V1": 11,
+  "V2": 13,
+  "V3": 15,
+  "V9": 17,
+  "V0": 20,
+  "OUT": 21
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S13_VOTING == 1 and SQ_S13_PCV == 0",
+   "to": "BALLOT"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S13_VOTING >= 1",
+   "to": "USED"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "기표소 다섯. 커튼이 반쯤 삭았다. 선반에 기표 도장 — 아직 아무도 쓰지 않은 붉은 잉크."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "당신은 이미 찍었다. 비밀 투표 — 칸막이 앞에서 기다린다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "show_reg"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "커튼을 친다. 투표용지 — 기호 1 · 2 · 3, 그리고 맨 아래 빈칸."
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S13_RT == 0",
+   "to": "BALMENU"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "(세칙 제9조 — 동수면 연장자. 2077년에 이미 어른이던 구울이 이긴다. 한 표가 갈림을 정한다.)"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "기호 1번에 찍는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "V1",
+     "id": "SQS13_BOOTH:1:0"
+    },
+    {
+     "text": "기호 2번에 찍는다",
+     "tags": [],
+     "cond": "SQ_S13_C2 != 0",
+     "fx": "",
+     "to": "V2",
+     "id": "SQS13_BOOTH:1:1"
+    },
+    {
+     "text": "기호 3번에 찍는다",
+     "tags": [],
+     "cond": "SQ_S13_C3 != 0",
+     "fx": "",
+     "to": "V3",
+     "id": "SQS13_BOOTH:1:2"
+    },
+    {
+     "text": "빈칸에 '투표함지기 2호'라고 쓴다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "V9",
+     "id": "SQS13_BOOTH:1:3"
+    },
+    {
+     "text": "아무 데도 찍지 않고 접는다(백지)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "V0",
+     "id": "SQS13_BOOTH:1:4"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "voteno",
+    "1"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "OUT"
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "voteno",
+    "2"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "OUT"
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "voteno",
+    "3"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "OUT"
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "vote",
+    "9"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "볼펜으로 또박또박 — '투표함지기 2호'. 커튼 너머 2호의 띠가 한 번 흔들린 것 같다."
+  },
+  {
+   "op": "goto",
+   "to": "OUT"
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "vote",
+    "0"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "용지를 접어 투표함에 넣는다. 줄 서 있던 유권자가 하나씩 칸막이로 든다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S13.txt"
+}

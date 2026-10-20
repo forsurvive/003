@@ -1,0 +1,82 @@
+{
+ "id": "A13_DAY_W",
+ "title": "위서하",
+ "loc": "L-R02-04",
+ "npc": "N-R02-051",
+ "cond": "SQ_S13_V_W == 4 and SQ_S13_SAID_W == 0",
+ "labels": {
+  "START": 0,
+  "BROKE": 6,
+  "CUT": 8,
+  "BETRAY": 10
+ },
+ "ops": [
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "said",
+    "W"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S13_CUT_W >= 1 and SQ_S13_BL_W == 1",
+   "to": "BETRAY"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S13_PROMISE == 1 and SQ_S13_CUTS >= 1",
+   "to": "BROKE"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S13_CUT_W >= 1",
+   "to": "CUT"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-051",
+   "emo": "미소",
+   "text": "투표한 날이에요. 들것 일지에 적었어요 — '오늘 환자 없음. 투표함.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-051",
+   "emo": "분노",
+   "text": "아무도 안 빼겠다면서요. 명부 방송 다 들었어요. 들것 의료반은 들은 걸 잊지 않아요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-051",
+   "emo": "슬픔",
+   "text": "제 몫이 깎였대요. 약품 칸에서 빼면 돼요. …괜찮아요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-051",
+   "emo": "분노",
+   "text": "저 당신 찍었어요. 약속 듣고요. 비밀 투표라서 모르셨겠죠. …그래서 더 아파요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S13.txt"
+}

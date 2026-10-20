@@ -18,6 +18,7 @@ var side8: SideS08                                   ## 영등포 사이드 퀘�
 var side9: SideS09                                   ## 영등포 사이드 퀘스트(1-11h SQ-S09)
 var side10: SideS10                                 ## 영등포 사이드 퀘스트(1-11i SQ-S10)
 var side12: SideS12                                 ## 지하시장 사이드 퀘스트(1-11k SQ-S12)
+var side13: SideS13                                 ## 볼트 S-02 사이드 퀘스트(1-11l SQ-S13)
 var side11: SideS11                                 ## 여의도 사이드 퀘스트(1-11j SQ-S11)
 var uq71: Uq71                                     ## 비표시 퀘스트 UQ-71(1-D1 대방 지하차도)
 var u02: U02Paths                                  ## U02 남태령 지하(1-D2)
@@ -122,6 +123,9 @@ func _ready() -> void:
 	side12 = SideS12.new()
 	add_child(side12)
 	side12.setup(host, true)
+	side13 = SideS13.new()
+	add_child(side13)
+	side13.setup(host, true)
 	uq71 = Uq71.new()
 	add_child(uq71)
 	uq71.setup(host, true)
@@ -425,6 +429,30 @@ func _ready() -> void:
 				["check", "SQ_S12_SB == 1 and has(\"M-003\")", "사공민영 — 그 달 배급표(순회를 접는다)"],
 				["want", ["강수아", "회의 탁자", "다음에"]], ["talk", "N-R02-012"], ["wait", 1.5], ["shot", "s12_bench"],
 				["check", "SQ_S12_S == 4 and SQ_S12_DONE == 1 and SQS12_STAGE == 100", "셋의 자리가 정해졌다(100)"]]
+		"s13":                                                          # 1-11l SQ-S13: 아트리움(2호 첫 만남 · 등록증 · [과학 25] 방송 유인 30) → 지하시장 노복희 부탁(밤 열 시) →
+			st.vars.set_v("PC_SKP_SCIENCE", 60)                          #   나머지 넷은 약속을 바로 세움(경상현 18 · 탁우빈 18 · 어하은 19 · 표강윤 19 — 같은 창) → 시계를 넘겨 다섯 도착(50) →
+			st.vars.set_v("PC_SKP_SPEECH", 100)                          #   등록부 '내 이름'(40) → 2호 '투표를 시작하자' → 기표소 기호 1번 → 칸막이 다섯 → 개표실 4호 발표(60) → 명부 그대로(100)
+			st.vars.set_v("GAME_DAY", 6)
+			host.date_text = "2277. 10. 28.  10:00"
+			host.enter("SV-01", "from_W")
+			plan = [["hp", 3000], ["wait", 1.0], ["shot", "s13_atrium"], ["want", ["볼트 방송"]], ["talk", "N-R02-028"], ["wait", 1.5],
+				["check", "SQ_S13_MET2 == 1 and SQ_S13_LURE == 1 and has(\"M-416\") and SQS13_STAGE == 30", "2호 — 등록증 · 방송 유인(30)"],
+				["warp", "J-03", "from_J-02"], ["wait", 1.0], ["want", ["투표하러", "구울도 유권자"]], ["talk", "C-050"], ["wait", 1.5],
+				["check", "SQ_S13_V_B == 1 and SQ_S13_T_B == 166", "노복희 — 장부 닫고 밤 열 시"],
+				["setv", "SQ_S13_V_K", 1], ["setv", "SQ_S13_T_K", 162], ["setv", "SQ_S13_V_T", 1], ["setv", "SQ_S13_T_T", 162],
+				["setv", "SQ_S13_V_E", 1], ["setv", "SQ_S13_T_E", 163], ["setv", "SQ_S13_V_P", 1], ["setv", "SQ_S13_T_P", 163],
+				["warp", "SV-01", "from_W"], ["hours", 12], ["wait", 2.0],
+				["until", "SQ_S13_HERE == 5", 10.0, "다섯 도착(18 · 18 · 19 · 19 · 22 — 6시간 창 안)", "s13_here"],
+				["check", "SQS13_STAGE == 50", "50"],
+				["want", ["내 이름"]], ["go", 12, 13], ["use", 12, 12], ["wait", 1.0], ["check", "SQ_S13_C1 == 1", "등록부 기호 1 = 주인공"],
+				["want", ["투표를 시작하자"]], ["talk", "N-R02-028"], ["wait", 1.0], ["check", "SQ_S13_VOTING == 1", "투표 시작"],
+				["want", ["기호 1번"]], ["go", 19, 19], ["use", 19, 18], ["wait", 1.0],
+				["until", "SQ_S13_VOTING == 2", 30.0, "칸막이 다섯 — 마감", "s13_booth"],
+				["warp", "SV-02", "from_SV01"], ["wait", 1.0], ["want", []], ["talk", "N-R02-029"], ["wait", 2.0], ["shot", "s13_count"],
+				["check", "SQ_S13_VOTING == 3 and SQ_S13_WIN != 0 and SQS13_STAGE == 60", "4호 개표 발표(60)"],
+				["warp", "SV-01", "from_SV02"], ["wait", 1.0], ["want", ["그대로", "그대로", "그대로", "그대로", "그대로"]], ["talk", "N-R02-028"], ["wait", 2.0],
+				["until", "SQ_S13_DONE == 1", 10.0, "열쇠가 주인을 찾았다", "s13_done"],
+				["check", "SQS13_STAGE == 100 and SQ_S13_LOOT == 1", "100 · 창고"]]
 		"db":                                                           # 1-D1 대방 지하차도 · UQ-71: 북쪽 입구로 들어가 분대 등 뒤에서 웅크려 엿듣기(사흘 기한) → 펌프실 운전기사 메모 →
 			st.vars.set_v("PC_SKP_SCIENCE", 60)                          #   허리 물 버스에서 정지 레버로 봉인(카르마 · 지대 꺼짐) → 남쪽 입구로 나와 문 앞에 선다
 			st.vars.set_v("GAME_DAY", 8)

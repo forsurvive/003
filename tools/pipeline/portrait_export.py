@@ -70,6 +70,21 @@ def main():
                 img.save(path)
                 made += 1
             index[sid][emo] = name
+    import robot_salim as RL                                          # 선거 관리 살림-2(1-11l SQ-S13): 투표함지기 2호 · 개표 4호 — 앞 렌즈 표정 8종
+    for sid, kind, stem in (("N-R02-028", "ballot", "RB_ballot2"), ("rb_ballot2_loco", "ballot", "RB_ballot2"),
+                            ("N-R02-029", "count", "RB_count4"), ("rb_count4_loco", "count", "RB_count4")):
+        index[sid] = {}
+        for emo in EMOS:
+            name = f"{stem}_{K.PORTRAIT_EXPR[emo]}.png"
+            path = os.path.join(OUT, name)
+            if not os.path.exists(path):
+                img = RL.salim_portrait(emo, kind)
+                bad = {px[:3] for px in img.getdata() if px[3] and px[:3] not in ALLOWED_SET()}
+                if bad:
+                    raise SystemExit(f"{name}: 팔레트 밖 색 {sorted(bad)[:4]}")
+                img.save(path)
+                made += 1
+            index[sid][emo] = name
     import robot_sentry as RS                                         # 파수-3(1-11c SQ-S04): CRT 얼굴판 표정 8종 — 무명 화자 N-PS-1 · 시트 이름
     for sid in ("N-PS-1", "N-PS-2", "CR-305", "rb_cr305_loco", "rb_cr305_carry_loco"):   # N-PS-2 경찰서 경비 파수(1-11j)
         index[sid] = {}

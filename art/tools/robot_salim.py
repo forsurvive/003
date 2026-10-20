@@ -1,0 +1,330 @@
+"""세진 살림-2(SJ-H66 가사 부양, SD-14 §8.2 '은색 구체 팔 3') 변형 — 볼트 S-02 선거 관리 로봇 둘(아이작풍, 단계 1-11l SQ-S13).
+
+- 투표함지기 2호(N-R02-028): 어깨에서 비스듬히 두른 크림 선거 띠(붉은 가장자리) · 아래 팔이 든 작은 투표함 · 앞 팔이 흔드는 투표용지 · 옆면에 덧칠한 '2'.
+- 개표 4호(N-R02-029): 앞 팔 끝이 계수기(놋쇠 상자 · 숫자 창) · 몸통 아래 출력구에서 '재검표' 출력지 띠가 늘어진다 · 옆면 '4'.
+- 공통: 은색 구체 몸 · 정수리에서 뻗은 눈줄기 셋(앞 눈이 크다) · 아래 분사구 불꽃. 발이 없다 — 몸은 그림자 위 18px에 떠서 1px씩 흔들리고,
+  그림자는 제자리(미끄러짐 규칙과 무관). 옆(E)만 그리고 W는 뒤집는다(robots.py 살핌-1과 같은 형식): idle 4 · walk 4 · death 4.
+- 빛은 왼쪽 위: 몸 오른쪽 아래에 초승달 그늘, 왼쪽 위에 반짝임. 반투명 없음 · 팔레트 UI 묶음 안의 색만.
+"""
+import os
+import sys
+
+from PIL import Image, ImageDraw
+
+sys.path.insert(0, os.path.dirname(__file__))
+import palette as P
+
+FW, FH = 56, 62
+FOOT = (26, 58)                      # 그림자 가운데 = 노드 발 기준점
+INK = "P01"
+SILVER = ("P04", "P05", "P06", "P08", "P09")    # 깊은 그늘 · 그늘 · 바탕 · 빛 · 반짝
+
+
+def C(t):
+    return P.rgb(t)
+
+
+def img(w=FW, h=FH):
+    return Image.new("RGBA", (w, h), (0, 0, 0, 0))
+
+
+def _shadow(d, cx, cy, rx):
+    for y in range(cy - 2, cy + 3):
+        for x in range(cx - rx, cx + rx + 1):
+            e = ((x - cx) / rx) ** 2 + ((y - cy) / 2.6) ** 2
+            if e <= 0.45 or (e <= 1.0 and (x + y) % 2 == 0):
+                d.point((x, y), fill=C("P02"))
+
+
+def _digit(d, x, y, n, col="P53"):
+    """손으로 덧칠한 숫자(3×5 획). 2와 4만 쓴다."""
+    c = C(col)
+    if n == 2:
+        d.line([x, y, x + 2, y], fill=c); d.line([x + 2, y, x + 2, y + 2], fill=c)
+        d.line([x + 2, y + 2, x, y + 2], fill=c); d.line([x, y + 2, x, y + 4], fill=c); d.line([x, y + 4, x + 3, y + 4], fill=c)
+    else:
+        d.line([x, y, x, y + 2], fill=c); d.line([x, y + 2, x + 3, y + 2], fill=c); d.line([x + 2, y, x + 2, y + 4], fill=c)
+    d.point((x - 1, y + 1), fill=C("P52"))                            # 붓 삐침
+
+
+def _arm(d, pts, col="P05"):
+    """가는 관절 팔: 먹선 2px 위에 금속 1px."""
+    d.line(pts, fill=C(INK), width=3)
+    d.line(pts, fill=C(col), width=1)
+    for p in pts[1:-1]:
+        d.point(p, fill=C("P08"))                                     # 관절 반짝
+
+
+def _eye(d, x0, y0, x1, y1, r, blink=False, big=False):
+    """눈줄기: 몸에서 렌즈까지 줄기 + 렌즈(검은 고리 · 유리 · 청록 눈동자)."""
+    d.line([x0, y0, x1, y1], fill=C(INK), width=2)
+    d.point((x0, y0), fill=C("P06"))
+    d.ellipse([x1 - r - 1, y1 - r - 1, x1 + r + 1, y1 + r + 1], fill=C(INK))
+    d.ellipse([x1 - r, y1 - r, x1 + r, y1 + r], fill=C("P02"))
+    if not blink:
+        if big:
+            d.rectangle([x1 - 1, y1 - 1, x1 + 1, y1 + 1], fill=C("P62")); d.point((x1, y1 - 1), fill=C("P63"))
+        else:
+            d.point((x1, y1), fill=C("P62"))
+    d.point((x1 - r + 1, y1 - r + 1), fill=C("P08"))
+
+
+def salim(frame=0, pose="idle", kind="ballot"):
+    """살림-2 한 컷. pose: idle | walk | death(frame 0~3). kind: ballot(투표함지기 2호) | count(개표 4호)."""
+    if pose == "death":
+        return _death(frame, kind)
+    im = img()
+    d = ImageDraw.Draw(im)
+    fx, fy = FOOT
+    bob = [0, -1, -1, 0][frame % 4]
+    lean = 1 if pose == "walk" else 0
+    swing = [0, 1, 0, -1][frame % 4] if pose == "walk" else [0, 0, 1, 0][frame % 4]
+    cx, cy = fx + lean, fy - 30 + bob                                # 구체 가운데(바닥에서 30px 위)
+    r = 11
+    _shadow(d, fx, fy, 10 if bob == 0 else 9)
+    # 분사구(아래) + 불꽃
+    fl = ([2, 3, 2, 4] if pose == "idle" else [4, 6, 5, 6])[frame % 4]
+    d.polygon([(cx - 4, cy + r - 1), (cx + 4, cy + r - 1), (cx + 2, cy + r + 3), (cx - 2, cy + r + 3)], fill=C(INK))
+    d.polygon([(cx - 3, cy + r - 1), (cx + 3, cy + r - 1), (cx + 1, cy + r + 2), (cx - 1, cy + r + 2)], fill=C("P04"))
+    d.line([cx - 1, cy + r + 4, cx - 1, cy + r + 3 + fl], fill=C("P59"))
+    d.line([cx, cy + r + 4, cx, cy + r + 4 + fl], fill=C("P60"))
+    d.line([cx + 1, cy + r + 4, cx + 1, cy + r + 3 + fl - 1], fill=C("P59"))
+    d.point((cx, cy + r + 4), fill=C("P50"))
+    # 뒤 팔(몸 뒤에 먼저): 뒤로 접힌 집게
+    _arm(d, [(cx - r + 2, cy + 2), (cx - r - 3, cy + 5 + swing), (cx - r - 5, cy + 9 + swing)])
+    d.line([cx - r - 6, cy + 9 + swing, cx - r - 4, cy + 11 + swing], fill=C(INK))
+    # 뒤 눈줄기(몸 뒤)
+    _eye(d, cx - 4, cy - r + 1, cx - 9, cy - r - 7, 2, blink=frame % 4 == 2)
+    # 몸: 외곽 → 은 바탕 → 그늘 초승달 → 빛
+    d.ellipse([cx - r - 1, cy - r - 1, cx + r + 1, cy + r + 1], fill=C(INK))
+    d.ellipse([cx - r, cy - r, cx + r, cy + r], fill=C(SILVER[1]))
+    d.ellipse([cx - r, cy - r, cx + r - 2, cy + r - 2], fill=C(SILVER[2]))
+    d.ellipse([cx - r + 2, cy - r + 2, cx - 1, cy - 1], fill=C(SILVER[3]))
+    d.ellipse([cx - r + 4, cy - r + 4, cx - r + 6, cy - r + 6], fill=C(SILVER[4]))
+    d.arc([cx - r, cy - r, cx + r, cy + r], 30, 120, fill=C(SILVER[0]))
+    # 이음 띠(적도) + 리벳
+    d.line([cx - r + 1, cy + 3, cx + r - 1, cy + 3], fill=C(SILVER[0]))
+    for x in range(cx - r + 3, cx + r - 2, 4):
+        d.point((x, cy + 4), fill=C("P09"))
+    if kind == "ballot":
+        _digit(d, cx - 8, cy + 5, 2)                                    # 띠 아래(이음 띠 밑)에 덧칠
+    else:
+        _digit(d, cx - 7, cy - 6, 4)
+    if kind == "ballot":
+        # 선거 띠: 왼쪽 위 → 오른쪽 아래로 비스듬히(크림 · 붉은 가장자리)
+        for t in range(-r + 2, r - 1):
+            x = cx + t
+            y = cy - 3 + t // 2
+            if (x - cx) ** 2 + (y - cy) ** 2 < (r - 1) ** 2:
+                d.point((x, y - 1), fill=C("P53"))
+                d.point((x, y), fill=C("P09"))
+                d.point((x, y + 1), fill=C("P09" if t % 5 else "P08"))
+                d.point((x, y + 2), fill=C("P52"))
+    else:
+        # 출력구(몸 아래 앞쪽) + 늘어진 '재검표' 출력지 띠(컷마다 길이가 조금 변한다)
+        d.rectangle([cx + 1, cy + 6, cx + 7, cy + 8], fill=C(INK))
+        d.line([cx + 2, cy + 7, cx + 6, cy + 7], fill=C("P02"))
+        ln = 6 + [0, 1, 2, 1][frame % 4]
+        for k in range(ln):
+            y = cy + 8 + k
+            x = cx + 3 + (1 if (k // 3) % 2 else 0)
+            d.line([x, y, x + 2, y], fill=C("P09"))
+            d.point((x + 3, y), fill=C(INK))
+            if k % 2 == 0:
+                d.point((x + 1, y), fill=C("P04"))                    # 찍힌 글줄
+        d.point((cx + 3, cy + 8 + ln), fill=C(INK)); d.point((cx + 5, cy + 8 + ln), fill=C(INK))
+    # 앞 눈줄기 둘(가운데 · 앞 — 앞 눈이 크다)
+    _eye(d, cx, cy - r, cx + 1, cy - r - 9, 2, blink=frame % 4 == 3)
+    _eye(d, cx + 5, cy - r + 2, cx + 11, cy - r - 4, 3, blink=frame % 4 == 3, big=True)
+    # 앞 팔과 아래 팔
+    if kind == "ballot":
+        # 아래 팔: 작은 투표함(흰 상자 · 투입구 · 붉은 봉인)
+        _arm(d, [(cx + 6, cy + r - 3), (cx + 9, cy + r + 2), (cx + 13, cy + r + 3)])
+        bx, by = cx + 12, cy + r - 1
+        d.rectangle([bx, by, bx + 9, by + 7], fill=C(INK))
+        d.rectangle([bx + 1, by + 1, bx + 8, by + 6], fill=C("P09"))
+        d.line([bx + 1, by + 6, bx + 8, by + 6], fill=C("P07"))
+        d.line([bx + 3, by + 2, bx + 6, by + 2], fill=C(INK))          # 투입구
+        d.point((bx + 7, by + 4), fill=C("P53"))                       # 봉인
+        # 앞 팔: 투표용지 한 장을 흔든다
+        tip = (cx + r + 6, cy - 2 - swing)
+        _arm(d, [(cx + r - 1, cy), (cx + r + 3, cy + 1), tip])
+        px, py = tip
+        d.rectangle([px - 1, py - 6, px + 3, py], fill=C(INK))
+        d.rectangle([px, py - 5, px + 2, py - 1], fill=C("P09"))
+        d.point((px + 1, py - 3), fill=C("P53"))                       # 기표 도장
+    else:
+        # 앞 팔: 계수기(놋쇠 상자 · 숫자 창) — 누르는 컷에 엄지 레버가 내려간다
+        tip = (cx + r + 5, cy + 2)
+        _arm(d, [(cx + r - 1, cy + 1), (cx + r + 2, cy + 3), tip])
+        kx, ky = tip
+        d.rectangle([kx, ky - 4, kx + 7, ky + 3], fill=C(INK))
+        d.rectangle([kx + 1, ky - 3, kx + 6, ky + 2], fill=C("P48"))
+        d.line([kx + 1, ky + 2, kx + 6, ky + 2], fill=C("P47"))
+        d.rectangle([kx + 2, ky - 2, kx + 5, ky], fill=C("P02"))
+        d.point((kx + 3, ky - 1), fill=C("P62")); d.point((kx + 4, ky - 1), fill=C("P62"))
+        lev = 1 if frame % 2 else 0
+        d.line([kx + 6, ky - 5 + lev, kx + 8, ky - 6 + lev], fill=C(INK))
+        # 아래 팔: 접혀 몸에 붙음
+        _arm(d, [(cx + 4, cy + r - 2), (cx + 7, cy + r + 2), (cx + 10, cy + r + 1)])
+    return im
+
+
+def _death(frame, kind):
+    """0 불꽃 튐(떠 있음) · 1 기울며 떨어짐 · 2 바닥에 닿아 튐 · 3 금 간 채 누움(눈 꺼짐, 띠 · 출력지가 바닥에 흩어짐)."""
+    fx, fy = FOOT
+    if frame <= 1:
+        base = salim(1, "idle", kind)
+        out = img()
+        drop = [0, 11][frame]
+        out.alpha_composite(base.crop((0, 0, FW, fy - 4)), (0, drop))
+        d = ImageDraw.Draw(out)
+        _shadow(d, fx, fy, 9 + frame)
+        for (sx, sy, c) in [(fx + 7, fy - 42, "P50"), (fx - 9, fy - 34, "P60"), (fx + 12, fy - 30, "P63"), (fx - 2, fy - 46, "P50")]:
+            d.point((sx, sy + drop), fill=C(c))
+            d.point((sx + (1 if frame else -1), sy + drop - 1), fill=C(c))
+        return out
+    out = img()
+    d = ImageDraw.Draw(out)
+    cx, cy = fx, fy - 8 - (2 if frame == 2 else 0)
+    r = 10
+    _shadow(d, fx, fy, 12)
+    d.ellipse([cx - r - 1, cy - r, cx + r + 1, cy + r - 1], fill=C(INK))
+    d.ellipse([cx - r, cy - r + 1, cx + r, cy + r - 2], fill=C(SILVER[2]))
+    d.chord([cx - r, cy - r + 1, cx + r, cy + r - 2], 200, 320, fill=C(SILVER[1]))
+    d.line([cx - r + 1, cy + 2, cx + r - 1, cy + 2], fill=C(SILVER[0]))
+    _digit(d, cx - 6, cy - 5, 2 if kind == "ballot" else 4)
+    d.line([cx - 3, cy - 8, cx, cy - 3], fill=C(INK)); d.line([cx, cy - 3, cx - 2, cy + 1], fill=C(INK))   # 금
+    for (ex, ey) in ((cx + 9, cy - 10), (cx + 13, cy - 6)):            # 꺾인 눈줄기 · 꺼진 렌즈
+        d.line([cx + 4, cy - 7, ex, ey], fill=C(INK), width=2)
+        d.ellipse([ex - 2, ey - 2, ex + 2, ey + 2], fill=C("P02"))
+    if kind == "ballot":
+        d.rectangle([cx - 18, cy + 3, cx - 10, cy + 8], fill=C(INK)); d.rectangle([cx - 17, cy + 4, cx - 11, cy + 7], fill=C("P09"))   # 굴러간 투표함
+        d.point((cx - 12, cy + 5), fill=C("P53"))
+        d.line([cx + 12, cy + 7, cx + 18, cy + 8], fill=C("P09")); d.point((cx + 15, cy + 7), fill=C("P53"))   # 흩어진 용지
+    else:
+        for k in range(12):                                            # 바닥에 풀린 출력지
+            d.point((cx + 8 + k, cy + 7 + (k % 3 == 0)), fill=C("P09"))
+        d.rectangle([cx - 17, cy + 2, cx - 11, cy + 7], fill=C(INK)); d.rectangle([cx - 16, cy + 3, cx - 12, cy + 6], fill=C("P48"))   # 계수기
+    if frame == 2:
+        d.point((cx - 10, cy - 10), fill=C("P50")); d.point((cx + 11, cy - 11), fill=C("P60"))
+    else:
+        d.point((cx - 5, cy - r - 2), fill=C("P05")); d.point((cx - 4, cy - r - 4), fill=C("P04"))   # 연기 한 올
+    return out
+
+
+def salim_sheet(kind="ballot"):
+    """시트 프레임 목록과 메타(robots.salpim_sheet와 같은 형식): idle 4 · walk 4 · death 4."""
+    frames = [salim(i, "idle", kind) for i in range(4)] + [salim(i, "walk", kind) for i in range(4)] + \
+             [salim(i, "death", kind) for i in range(4)]
+    meta = {"frame": [FW, FH], "foot": list(FOOT), "dirs": ["E"],
+            "motions": {"idle": {"start": 0, "count": 4}, "walk": {"start": 4, "count": 4}, "death": {"start": 8, "count": 4}},
+            "hover": True}
+    return frames, meta
+
+
+def salim_portrait(emo="기본", kind="ballot"):
+    """대화 초상화(96×96, 투명 바탕): 은색 구체를 가까이서 — 눈줄기 셋 · 옆면 숫자 · 2호는 선거 띠, 4호는 계수기와 출력지.
+    표정은 앞 렌즈 하나로(살핌-1과 같은 말법): 기본 점 · 말함 깜박 줄 · 놀람 고리 · 미소 반달 · 슬픔 처짐 · 분노 붉은 점 · 아픔 금 · 피곤 반쯤 닫힘."""
+    im = img(96, 96)
+    d = ImageDraw.Draw(im)
+    cx, cy, r = 44, 56, 28
+    # 뒤 · 가운데 눈줄기(몸 뒤)
+    for (x0, y0, x1, y1, rr) in ((cx - 10, cy - r + 4, cx - 22, cy - r - 14, 5), (cx, cy - r, cx + 2, cy - r - 18, 5)):
+        d.line([x0, y0, x1, y1], fill=C(INK), width=4); d.line([x0, y0, x1, y1], fill=C("P05"), width=2)
+        d.ellipse([x1 - rr - 2, y1 - rr - 2, x1 + rr + 2, y1 + rr + 2], fill=C(INK)); d.ellipse([x1 - rr, y1 - rr, x1 + rr, y1 + rr], fill=C("P02"))
+        d.ellipse([x1 - 2, y1 - 2, x1 + 2, y1 + 2], fill=C("P62"))
+    d.ellipse([cx - r - 2, cy - r - 2, cx + r + 2, cy + r + 2], fill=C(INK))
+    d.ellipse([cx - r, cy - r, cx + r, cy + r], fill=C(SILVER[1]))
+    d.ellipse([cx - r, cy - r, cx + r - 6, cy + r - 6], fill=C(SILVER[2]))
+    d.ellipse([cx - r + 6, cy - r + 6, cx - 4, cy - 4], fill=C(SILVER[3]))
+    d.ellipse([cx - r + 10, cy - r + 10, cx - r + 15, cy - r + 15], fill=C(SILVER[4]))
+    d.arc([cx - r, cy - r, cx + r, cy + r], 30, 120, fill=C(SILVER[0]), width=2)
+    d.line([cx - r + 3, cy + 8, cx + r - 3, cy + 8], fill=C(SILVER[0]), width=2)
+    for x in range(cx - r + 6, cx + r - 4, 8):
+        d.rectangle([x, cy + 10, x + 1, cy + 11], fill=C("P09"))
+    n = 2 if kind == "ballot" else 4                                    # 옆면 숫자(굵은 붓)
+    col = C("P53")
+    ox, oy = (cx - 18, cy + 13) if n == 2 else (cx - 20, cy - 16)       # 2호는 띠 아래
+    if n == 2:
+        d.line([ox, oy, ox + 8, oy], fill=col, width=3); d.line([ox + 8, oy, ox + 8, oy + 6], fill=col, width=3)
+        d.line([ox + 8, oy + 6, ox, oy + 6], fill=col, width=3); d.line([ox, oy + 6, ox, oy + 12], fill=col, width=3); d.line([ox, oy + 12, ox + 9, oy + 12], fill=col, width=3)
+    else:
+        d.line([ox, oy, ox, oy + 7], fill=col, width=3); d.line([ox, oy + 7, ox + 10, oy + 7], fill=col, width=3); d.line([ox + 7, oy, ox + 7, oy + 13], fill=col, width=3)
+    if kind == "ballot":                                                # 선거 띠
+        for t in range(-r + 4, r - 3):
+            x = cx + t; y = cy - 4 + t // 2
+            if (x - cx) ** 2 + (y - cy) ** 2 < (r - 2) ** 2:
+                d.line([x, y - 3, x, y - 2], fill=C("P53")); d.line([x, y - 1, x, y + 3], fill=C("P09")); d.line([x, y + 4, x, y + 5], fill=C("P52"))
+    else:                                                               # 출력구 + 늘어진 출력지
+        d.rectangle([cx + 2, cy + 16, cx + 18, cy + 21], fill=C(INK)); d.line([cx + 4, cy + 18, cx + 16, cy + 18], fill=C("P02"))
+        d.rectangle([cx + 6, cy + 21, cx + 14, cy + 40], fill=C(INK)); d.rectangle([cx + 7, cy + 21, cx + 13, cy + 40], fill=C("P09"))
+        for k in range(23, 40, 3):
+            d.line([cx + 8, cy + k, cx + 12 - (k % 2), cy + k], fill=C("P04"))
+    ex, ey = cx + 24, cy - r - 4                                        # 앞 눈줄기와 렌즈
+    d.line([cx + 12, cy - r + 6, ex, ey], fill=C(INK), width=4); d.line([cx + 12, cy - r + 6, ex, ey], fill=C("P05"), width=2)
+    d.ellipse([ex - 13, ey - 13, ex + 13, ey + 13], fill=C(INK))
+    d.ellipse([ex - 11, ey - 11, ex + 11, ey + 11], fill=C("P02"))
+    eye = C("P62"); hi = C("P63")
+    if emo == "놀람":
+        d.ellipse([ex - 8, ey - 8, ex + 8, ey + 8], outline=eye, width=2); d.ellipse([ex - 2, ey - 2, ex + 2, ey + 2], fill=hi)
+    elif emo == "미소":
+        d.arc([ex - 7, ey - 6, ex + 7, ey + 6], 200, 340, fill=eye, width=3)
+    elif emo == "슬픔":
+        d.line([ex - 8, ey - 1, ex + 2, ey - 5], fill=C("P45"), width=3); d.ellipse([ex - 3, ey + 2, ex + 3, ey + 6], fill=C("P45"))
+    elif emo == "분노":
+        d.ellipse([ex - 5, ey - 5, ex + 5, ey + 5], fill=C("P53")); d.line([ex - 9, ey - 9, ex + 3, ey - 5], fill=C("P53"), width=2)
+    elif emo == "아픔":
+        d.ellipse([ex - 4, ey - 4, ex + 4, ey + 4], fill=C("P59"))
+        d.line([ex - 10, ey - 6, ex - 2, ey + 2], fill=C("P07")); d.line([ex - 2, ey + 2, ex + 4, ey + 10], fill=C("P07"))
+    elif emo == "피곤":
+        d.rectangle([ex - 7, ey, ex + 7, ey + 4], fill=eye); d.rectangle([ex - 11, ey - 11, ex + 11, ey - 1], fill=C(SILVER[2]))
+    elif emo == "말함":
+        for k in (-4, 0, 4):
+            d.line([ex - 7, ey + k, ex + 7, ey + k], fill=eye)
+    else:
+        d.ellipse([ex - 5, ey - 5, ex + 5, ey + 5], fill=eye); d.rectangle([ex - 1, ey - 4, ex + 1, ey - 2], fill=hi)
+    d.point((ex - 7, ey - 7), fill=C("P08")); d.point((ex - 6, ey - 8), fill=C("P08"))
+    if kind == "ballot":                                                # 아래 팔이 든 투표함
+        d.line([cx + 18, cy + r - 8, cx + 30, cy + r + 2], fill=C(INK), width=5); d.line([cx + 18, cy + r - 8, cx + 30, cy + r + 2], fill=C("P05"), width=3)
+        d.rectangle([cx + 26, cy + r - 4, cx + 50, cy + r + 14], fill=C(INK)); d.rectangle([cx + 28, cy + r - 2, cx + 48, cy + r + 12], fill=C("P09"))
+        d.line([cx + 28, cy + r + 12, cx + 48, cy + r + 12], fill=C("P07"), width=2)
+        d.line([cx + 33, cy + r + 1, cx + 43, cy + r + 1], fill=C(INK), width=2)
+        d.ellipse([cx + 42, cy + r + 5, cx + 46, cy + r + 9], fill=C("P53"))
+    else:                                                               # 앞 팔 끝 계수기
+        d.line([cx + r - 2, cy + 2, cx + r + 8, cy + 8], fill=C(INK), width=5); d.line([cx + r - 2, cy + 2, cx + r + 8, cy + 8], fill=C("P05"), width=3)
+        kx, ky = cx + r + 6, cy - 2
+        d.rectangle([kx, ky, kx + 18, ky + 18], fill=C(INK)); d.rectangle([kx + 2, ky + 2, kx + 16, ky + 16], fill=C("P48"))
+        d.line([kx + 2, ky + 16, kx + 16, ky + 16], fill=C("P47"), width=2)
+        d.rectangle([kx + 4, ky + 5, kx + 14, ky + 11], fill=C("P02"))
+        for i in range(3):
+            d.rectangle([kx + 5 + i * 3, ky + 7, kx + 6 + i * 3, ky + 9], fill=C("P62"))
+    return im
+
+
+def check_palette():
+    ok = P.allowed_set("UI")
+    bad = set()
+    for kind in ("ballot", "count"):
+        for f in salim_sheet(kind)[0] + [salim_portrait(e, kind) for e in ("기본", "놀람", "미소", "슬픔", "분노", "아픔", "피곤", "말함")]:
+            for px in f.get_flattened_data():
+                if px[3] and tuple(px[:3]) not in ok:
+                    bad.add("#%02X%02X%02X" % px[:3])
+    return bad
+
+
+if __name__ == "__main__":
+    out = sys.argv[1] if len(sys.argv) > 1 else "/tmp/salim.png"
+    rows = []
+    for kind in ("ballot", "count"):
+        fr, _ = salim_sheet(kind)
+        rows.append(fr)
+    sheet = Image.new("RGBA", (FW * 12, FH * 2 + 100), (70, 66, 74, 255))
+    for j, fr in enumerate(rows):
+        for i, f in enumerate(fr):
+            sheet.alpha_composite(f, (i * FW, j * FH))
+    for i, (kind, emo) in enumerate([(k, e) for k in ("ballot", "count") for e in ("기본", "말함", "놀람", "미소")]):
+        sheet.alpha_composite(salim_portrait(emo, kind), (i * 98, FH * 2 + 2))
+    sheet = sheet.resize((sheet.width * 2, sheet.height * 2), Image.NEAREST)
+    sheet.save(out)
+    print("팔레트 밖:", sorted(check_palette()) or "없음")

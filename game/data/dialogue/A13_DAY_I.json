@@ -1,0 +1,83 @@
+{
+ "id": "A13_DAY_I",
+ "title": "인지영",
+ "loc": "L-R02-04",
+ "npc": "N-R02-014",
+ "cond": "SQ_S13_V_I == 4 and SQ_S13_SAID_I == 0",
+ "labels": {
+  "START": 0,
+  "CUT": 5,
+  "CHAIN": 6,
+  "BETRAY": 8
+ },
+ "ops": [
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "said",
+    "I"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S13_CUT_I >= 1 and SQ_S13_BL_I == 1",
+   "to": "BETRAY"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S13_CUT_I >= 1",
+   "to": "CUT"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-014",
+   "emo": "미소",
+   "text": "투표한 날이야. 연락부 명부 맨 끝에 한 줄 — '제752차 투표 · 인지영'."
+  },
+  {
+   "op": "goto",
+   "to": "CHAIN"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-014",
+   "emo": "슬픔",
+   "text": "명부 방송 들었어. 내 이름이 깎이는 소리를 2백 년 만에 들었네."
+  },
+  {
+   "op": "cmd",
+   "name": "chain",
+   "args": [
+    "N-R02-014",
+    "A13_"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-014",
+   "emo": "슬픔",
+   "text": "당신 이름 적었어. 연락부 글씨로. 그 이름이 내 몫을 깎았네."
+  },
+  {
+   "op": "cmd",
+   "name": "chain",
+   "args": [
+    "N-R02-014",
+    "A13_"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S13.txt"
+}

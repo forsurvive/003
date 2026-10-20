@@ -1,0 +1,42 @@
+{
+ "id": "A13_SUSP_B",
+ "title": "노복희",
+ "loc": "L-R02-04",
+ "npc": "C-050",
+ "cond": "SQ_S13_KNOWN == 1 and SQ_S13_V_B == 4 and SQ_S13_SUSP_B == 0",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "susp",
+    "B"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "그 개표실 깡통이 날마다 '재검표 요구'를 뱉는다며. 장부가 안 맞으면 누가 손댄 거야. 장사 30년이면 알아."
+  },
+  {
+   "op": "cmd",
+   "name": "chain",
+   "args": [
+    "C-050",
+    "A13_"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S13.txt"
+}

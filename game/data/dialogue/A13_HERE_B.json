@@ -1,0 +1,164 @@
+{
+ "id": "A13_HERE_B",
+ "title": "노복희",
+ "loc": "L-R02-04",
+ "npc": "C-050",
+ "cond": "SQ_S13_V_B in [2, 3]",
+ "labels": {
+  "START": 0,
+  "P_OK": 3,
+  "P_NO": 6,
+  "P_AGAIN": 9,
+  "T_OK": 11,
+  "T_NO": 14,
+  "DONE": 16
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S13_V_B == 3",
+   "to": "DONE"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "왔어. 도청기 없나 칸막이부터 볼 거야. 상인회 표는 상인회 사람한테 가."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "\"제게 한 표만 주세요.\"",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "보통"
+      }
+     ],
+     "cond": "SQ_S13_ASK_B == 0 and SQ_S13_VOTING <= 1",
+     "fx": "",
+     "to": "P_OK",
+     "id": "A13_HERE_B:1:0",
+     "fail": "P_NO"
+    },
+    {
+     "text": "다시 한 번만 부탁드려요",
+     "tags": [],
+     "cond": "SQ_S13_ASK_B == 2",
+     "fx": "",
+     "to": "P_AGAIN",
+     "id": "A13_HERE_B:1:1"
+    },
+    {
+     "text": "\"빈칸에 '투표함지기 2호'라고 써 주실래요?\"",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "쉬움"
+      }
+     ],
+     "cond": "SQ_S13_TWO_B == 0 and SQ_S13_VOTING <= 1",
+     "fx": "",
+     "to": "T_OK",
+     "id": "A13_HERE_B:1:2",
+     "fail": "T_NO"
+    },
+    {
+     "text": "(물러난다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "A13_HERE_B:1:3"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "plead",
+    "B"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "미소",
+   "text": "볼트 양반한테? …장부에 적어 둬. 빚이야."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "SQ_S13_ASK_B = 2"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "표는 내 거야. 상인회 거고."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "분노",
+   "text": "한 표 가지고 왜 이래. 장사꾼한테 같은 흥정 두 번 하는 거 아냐."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "two",
+    "B"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "미소",
+   "text": "그 깡통 이름을? 140년 혼자 떠들었으면 한 표쯤 받아도 되지."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "장난은 장부 밖에서 해."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "찍었어. 결과 보고 갈게."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S13.txt"
+}

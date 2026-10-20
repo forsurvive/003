@@ -1,0 +1,162 @@
+{
+ "id": "A13_ASK_I",
+ "title": "인지영",
+ "loc": "L-R02-04",
+ "npc": "N-R02-014",
+ "cond": "SQ_S13_MET2 == 1 and SQ_S13_DONE == 0 and SQ_S13_V_I in [0, 9]",
+ "labels": {
+  "START": 0,
+  "ASK": 2,
+  "READ": 5,
+  "AGAIN": 8,
+  "OK": 11,
+  "NO": 14,
+  "CHAIN": 15
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-R02-014",
+   "emo": "기본",
+   "text": "선거라… 연락부는 이름을 적는 일이야. 이름을 고르는 일은 오랜만이네."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "투표하러 가요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "ASK",
+     "id": "A13_ASK_I:1:0"
+    },
+    {
+     "text": "(다른 얘기)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "CHAIN",
+     "id": "A13_ASK_I:1:1"
+    }
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S11_READ != 0",
+   "to": "READ"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S13_EASY_I == 1",
+   "to": "AGAIN"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "\"연락부 한 표가 있어야 다섯이 돼요.\"",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "쉬움"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "OK",
+     "id": "A13_ASK_I:2:0",
+     "fail": "NO"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "CHAIN",
+     "id": "A13_ASK_I:2:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-014",
+   "emo": "미소",
+   "text": "토요일에 이름을 같이 읽어 준 사람 부탁인데. 연락부 닫고 저녁 여덟 시."
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "ask",
+    "I",
+    "20"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "CHAIN"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-014",
+   "emo": "피곤",
+   "text": "지난번엔 이름만 적고 왔지. 밤 열 시."
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "ask",
+    "I",
+    "22"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "CHAIN"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-014",
+   "emo": "기본",
+   "text": "그래. 연락부 닫고 밤 열 시. 지하 길로."
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "ask",
+    "I",
+    "22"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "CHAIN"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-014",
+   "emo": "기본",
+   "text": "오늘은 받아 적을 이름이 많아. 다음에."
+  },
+  {
+   "op": "cmd",
+   "name": "chain",
+   "args": [
+    "N-R02-014",
+    "A13_"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S13.txt"
+}

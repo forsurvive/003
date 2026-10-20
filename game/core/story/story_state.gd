@@ -241,6 +241,11 @@ func _init() -> void:
 	vars.declare("SQR_S11", "int", 0)
 	for k in "START CARDS LOOK J S E JR SB EW JT ST ET SOLD SOLD_DAY KNOWN EVID YASK LAYJ LAYS LAYE DONE REWARD HINT STOLE BOXED LOG LAYIJ LAYIS LAYIE DAYK HINTD".split(" "):   # 1-11k SQ-S12 관리 요원의 유족(원고 SQ-S12.txt 머리 주석)
 		vars.declare("SQ_S12_" + k, "int", 0)
+	for k in "START MET2 SAFE LURE BOARD FAILS PLEDGE BOOTH CAST OFF PILE LOOT RULE C1 C2 C3 VOTING PCV WIN TURN FRAUD KNOWN FRAUD_DAY CUTS PROMISE DONE OPEN LIE ROLL INVALID HERE N1 N2 N3 NB CARD AUTH NOM RO RT RA RC RE".split(" "):   # 1-11l SQ-S13 제752차 개표(진행기 side_s13.gd 머리 주석)
+		vars.declare("SQ_S13_" + k, "int", 0)
+	for a in "V T BL ASK EASY TWO CUT HEARD SAID SUSP".split(" "):   # 유권자마다(B 노복희 · K 경상현 · E 어하은 · T 탁우빈 · W 위서하 · I 인지영 · P 표강윤)
+		for b in ["B", "K", "E", "T", "W", "I", "P"]:
+			vars.declare("SQ_S13_%s_%s" % [a, b], "int", 0)
 	vars.declare("SQH_IDCARD", "int", 0)
 	vars.declare("SQE_FAMILY", "int", 0)
 	for kv in [["SQH_LIST11", -1], ["SQH_RECESS", -1], ["SQE_LIST11", 0], ["SQE_RECESS", 0], ["SQK_MARCH", 0], ["NS_COOP", 0], ["PD_R02_KH", 0]]:   # 남산 협력 표시(SD-06 NS 협력 플래그) · 거점 '국회 폐허'(1 = BJ)

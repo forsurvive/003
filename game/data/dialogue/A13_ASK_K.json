@@ -1,0 +1,209 @@
+{
+ "id": "A13_ASK_K",
+ "title": "경상현",
+ "loc": "L-R02-04",
+ "npc": "N-R02-032",
+ "cond": "SQ_S13_MET2 == 1 and SQ_S13_DONE == 0 and SQ_S13_V_K in [0, 9]",
+ "labels": {
+  "START": 0,
+  "ASK": 2,
+  "FREE": 6,
+  "AGAIN": 9,
+  "LIE": 12,
+  "OK": 16,
+  "NO": 19,
+  "CHAIN": 20
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-R02-032",
+   "emo": "기본",
+   "text": "선거요? 볼트 선거면… 후보 기호가 있겠네요. 기호 1번은 뭐예요?"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "투표하러 가요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "ASK",
+     "id": "A13_ASK_K:1:0"
+    },
+    {
+     "text": "(다른 얘기)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "CHAIN",
+     "id": "A13_ASK_K:1:1"
+    }
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "UQ06_RESULT != 0",
+   "to": "FREE"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S13_EASY_K == 1",
+   "to": "AGAIN"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-032",
+   "emo": "기본",
+   "text": "장이 안 끝났어요. 마감 시세가 들어오기 전엔 객장을 못 비워요. 마감 전엔 못 나가요."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "\"기호 1번이 '반등'이래요.\"",
+     "tags": [
+      {
+       "k": "flavor",
+       "text": "거짓말"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "LIE",
+     "id": "A13_ASK_K:2:0"
+    },
+    {
+     "text": "\"마감은 내일도 와요. 한 표는 오늘뿐이에요.\"",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "쉬움"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "OK",
+     "id": "A13_ASK_K:2:1",
+     "fail": "NO"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "CHAIN",
+     "id": "A13_ASK_K:2:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-032",
+   "emo": "미소",
+   "text": "장 끝났잖아요. 이제 시간 많아요. 오후 네 시에 갈게요 — 지하 길로요."
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "ask",
+    "K",
+    "16"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "CHAIN"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-032",
+   "emo": "피곤",
+   "text": "지난번엔 기다리다 왔어요. 저녁 여섯 시. 이번엔 꼭요."
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "ask",
+    "K",
+    "18"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "CHAIN"
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "lie",
+    "1"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-032",
+   "emo": "놀람",
+   "text": "반등이요? 기호 1번이 반등이면 가야죠. 장 마감하고 저녁 여섯 시."
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "ask",
+    "K",
+    "18"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "CHAIN"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-032",
+   "emo": "기본",
+   "text": "한 표는 오늘뿐… 그 말 객장에서 들었으면 좋았을 텐데. 저녁 여섯 시에요."
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "ask",
+    "K",
+    "18"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "CHAIN"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-032",
+   "emo": "기본",
+   "text": "죄송해요, 손님. 시세판을 봐야 해서."
+  },
+  {
+   "op": "cmd",
+   "name": "chain",
+   "args": [
+    "N-R02-032",
+    "A13_"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S13.txt"
+}

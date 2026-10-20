@@ -1,0 +1,67 @@
+{
+ "id": "SQS13_CRATE",
+ "title": "비축 상자",
+ "loc": "L-R02-04",
+ "npc": "",
+ "cond": "SQ_S13_LOOT == 0",
+ "labels": {
+  "START": 0,
+  "TAKE": 2,
+  "SKIP17": 5
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "비축 상자. 2077년 선거 공탁금 금고 · 진공관 · 세진 회로 기판 · 볼트 점프슈트(S-02)."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "챙긴다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TAKE",
+     "id": "SQS13_CRATE:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS13_CRATE:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "break"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "not (SQ_S13_OFF == 0)",
+   "to": "SKIP17"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-028",
+   "emo": "분노",
+   "text": "(볼트 방송) 경고. 비축 창고 무단 개방. 공금 횡령입니다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S13.txt"
+}

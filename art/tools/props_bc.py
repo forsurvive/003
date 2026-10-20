@@ -1060,6 +1060,10 @@ from props_u04 import PROPS_U04, STATES_U04                          # U04 여�
 for _k in PROPS_U04:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_U04)
+from props_sv import PROPS_SV, STATES_SV                              # 볼트 S-02 '끝없는 선거' · 영등포 역전 시장(1-11l SQ-S13): 벽보 · 투표함 · 기표소 · 등록부 · 개표기 · 출력지 · 공고 칠판 · 명패 벽 · 띠 해골 · 바리케이드 · 톱니 문 · 시장 아치
+for _k in PROPS_SV:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_SV)
 from props_trap import PROPS_TRAP, STATES_TRAP, burnt_states       # 함정 · 환경 폭발(1-9c, SD-11 §9.2 · §9.3)
 for _k in PROPS_TRAP:
     assert _k not in PROPS, _k
@@ -1086,6 +1090,7 @@ STATES.update(STATES_KS)
 STATES.update(STATES_HP)
 STATES.update(STATES_YT)
 STATES.update(STATES_U04)
+STATES.update(STATES_SV)
 STATES.update(STATES_BS)
 STATES.update(STATES_S04)
 STATES.update(STATES_S03)

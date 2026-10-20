@@ -48,8 +48,9 @@ text 15 5 "'정원 15명' 줄 난간. 붉은 띠가 끊기지 않았다."
 prop queue_skel 12 4
 prop queue_skel2 22 4
 text 12 5 "줄을 선 채 쓰러진 관람객. 손에 관람권 '21:40'."
-npc N-R02-030 18 4 S cond="dead(\"N-R02-030\") == 0 and not (KT_HEAT == 1 and KT_QUEEN == 0)"
-npc N-R02-030 4 14 E cond="dead(\"N-R02-030\") == 0 and KT_HEAT == 1 and KT_QUEEN == 0"
+npc N-R02-030 18 4 S cond="(dead(\"N-R02-030\") == 0 and not (KT_HEAT == 1 and KT_QUEEN == 0)) and SQ_S13_V_E != 2 and SQ_S13_V_E != 3"
+text 18 4 "전망대 안내대에 팻말 — '안내원 투표 중. 계단으로 내려갔습니다. 곧 돌아옵니다.'" cond="SQ_S13_V_E == 2 or SQ_S13_V_E == 3"
+npc N-R02-030 4 14 E cond="(dead(\"N-R02-030\") == 0 and KT_HEAT == 1 and KT_QUEEN == 0) and SQ_S13_V_E != 2 and SQ_S13_V_E != 3"
 text 17 6 "4번 승강기 문 앞 바닥. 아이 신발 한 짝이 문 쪽을 보고 놓였다." cond="KT_SHOE == 1"
 prop telescope_kt 30 4 cond="KT_TOP < 2"
 prop telescope_kt 30 4 state=lit cond="KT_TOP >= 2"

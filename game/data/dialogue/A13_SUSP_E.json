@@ -1,0 +1,42 @@
+{
+ "id": "A13_SUSP_E",
+ "title": "어하은",
+ "loc": "L-R02-04",
+ "npc": "N-R02-030",
+ "cond": "SQ_S13_KNOWN == 1 and SQ_S13_V_E == 4 and SQ_S13_SUSP_E == 0",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "susp",
+    "E"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-030",
+   "emo": "슬픔",
+   "text": "4호가 날마다 재검표를 요구한대요. 정원보다 많이 태운 칸은 떨어져요. 숫자를 속이면 안 돼요."
+  },
+  {
+   "op": "cmd",
+   "name": "chain",
+   "args": [
+    "N-R02-030",
+    "A13_"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S13.txt"
+}

@@ -1,0 +1,382 @@
+{
+ "id": "SQS13_REG",
+ "title": "후보 등록부",
+ "loc": "L-R02-04",
+ "npc": "",
+ "cond": "SQ_S13_START >= 1",
+ "labels": {
+  "START": 0,
+  "REGMENU": 6,
+  "R1": 7,
+  "RB": 9,
+  "RK": 11,
+  "RE": 13,
+  "RT": 15,
+  "RW": 17,
+  "RI": 19,
+  "RP": 21,
+  "R2": 23,
+  "R2_OFF": 27,
+  "DONE": 29,
+  "FULL": 32,
+  "CLOSED": 34,
+  "FORGE": 36,
+  "FORGE_NO": 43
+ },
+ "ops": [
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "show_reg"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S13_VOTING >= 1",
+   "to": "CLOSED"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S13_C3 != 0",
+   "to": "FULL"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "칸은 셋. 기호는 적힌 순서대로 매겨진다. 볼펜이 끈에 묶여 있다."
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S13_RO == 0",
+   "to": "REGMENU"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "(세칙 제3조 — 먼저 적은 이름이 기호 1번이다. 기호만 보고 찍는 사람이 있다면 그 표는 첫 칸으로 간다.)"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "내 이름을 적는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "R1",
+     "id": "SQS13_REG:1:0"
+    },
+    {
+     "text": "노복희의 이름을 적는다",
+     "tags": [],
+     "cond": "SQ_S13_V_B == 2",
+     "fx": "",
+     "to": "RB",
+     "id": "SQS13_REG:1:1"
+    },
+    {
+     "text": "경상현의 이름을 적는다",
+     "tags": [],
+     "cond": "SQ_S13_V_K == 2",
+     "fx": "",
+     "to": "RK",
+     "id": "SQS13_REG:1:2"
+    },
+    {
+     "text": "어하은의 이름을 적는다",
+     "tags": [],
+     "cond": "SQ_S13_V_E == 2",
+     "fx": "",
+     "to": "RE",
+     "id": "SQS13_REG:1:3"
+    },
+    {
+     "text": "탁우빈의 이름을 적는다",
+     "tags": [],
+     "cond": "SQ_S13_V_T == 2",
+     "fx": "",
+     "to": "RT",
+     "id": "SQS13_REG:1:4"
+    },
+    {
+     "text": "위서하의 이름을 적는다",
+     "tags": [],
+     "cond": "SQ_S13_V_W == 2",
+     "fx": "",
+     "to": "RW",
+     "id": "SQS13_REG:1:5"
+    },
+    {
+     "text": "인지영의 이름을 적는다",
+     "tags": [],
+     "cond": "SQ_S13_V_I == 2",
+     "fx": "",
+     "to": "RI",
+     "id": "SQS13_REG:1:6"
+    },
+    {
+     "text": "표강윤의 이름을 적는다",
+     "tags": [],
+     "cond": "SQ_S13_V_P == 2",
+     "fx": "",
+     "to": "RP",
+     "id": "SQS13_REG:1:7"
+    },
+    {
+     "text": "'투표함지기 2호'라고 적는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "R2",
+     "id": "SQS13_REG:1:8"
+    },
+    {
+     "text": "유권자 없이 — 등록부와 투표함을 통째로 꾸민다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "과학",
+       "min": 75
+      }
+     ],
+     "cond": "SQ_S13_CAST == 0 and SQ_S13_HERE == 0 and SQ_S13_FRAUD == 0",
+     "fx": "",
+     "to": "FORGE",
+     "id": "SQS13_REG:1:9",
+     "fail": "FORGE_NO"
+    },
+    {
+     "text": "(그만둔다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS13_REG:1:10"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "reg",
+    "1"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "DONE"
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "regk",
+    "B"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "DONE"
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "regk",
+    "K"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "DONE"
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "regk",
+    "E"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "DONE"
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "regk",
+    "T"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "DONE"
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "regk",
+    "W"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "DONE"
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "regk",
+    "I"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "DONE"
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "regk",
+    "P"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "DONE"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S13_OFF != 0",
+   "to": "R2_OFF"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "펜 끝이 칸에 닿자마자 2호가 몸통째 돌아본다."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-028",
+   "emo": "기본",
+   "text": "선거 관리 요원은 피선거권이 없습니다. 제6조. …그 칸은 지우겠습니다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "꺼진 2호의 이름을 칸에 적는다. 아무도 지우러 오지 않는다. 등록부엔 남지만, 개표할 기계도 없다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "show_reg"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "이름 옆에 기호가 찍힌다. 같은 이름은 두 번 적히지 않는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "칸이 다 찼다. 기호 1 · 2 · 3."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "등록 마감. 투표가 시작된 뒤엔 칸을 고칠 수 없다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈 용지 다섯 장에 다섯 가지 필체로 기표한다. 봉인 줄을 뜯었다 다시 붙인다. 등록부 첫 칸엔 당신 이름."
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "reg",
+    "1"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "forge"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S13_OFF != 0",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-028",
+   "emo": "기본",
+   "text": "…투표함 무게 감지. 유권자 기록 확인. 개표 결과 — 관리자님 당선."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-028",
+   "emo": "기본",
+   "text": "투표율 100% 미달 기록. 실험을 계속합니다. 제753차 선거는 다음 달."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "봉인 줄이 비뚤게 붙었다. 2호의 렌즈가 그쪽에 오래 머문다. 손을 뗀다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S13.txt"
+}

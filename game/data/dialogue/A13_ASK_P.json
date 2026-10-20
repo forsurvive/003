@@ -1,0 +1,189 @@
+{
+ "id": "A13_ASK_P",
+ "title": "표강윤",
+ "loc": "L-R02-04",
+ "npc": "N-R02-020",
+ "cond": "SQ_S13_MET2 == 1 and SQ_S13_DONE == 0 and SQ_S13_V_P in [0, 9]",
+ "labels": {
+  "START": 0,
+  "ASK": 2,
+  "OK": 4,
+  "AGAIN": 6,
+  "TIME": 7,
+  "AT13": 8,
+  "AT19": 10,
+  "AT13N": 13,
+  "NO": 16
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-R02-020",
+   "emo": "기본",
+   "text": "10mm는 오늘 들어왔어. 값은 어제랑 같고. …선거? 볼트에서?"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "투표하러 가요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "ASK",
+     "id": "A13_ASK_P:1:0"
+    },
+    {
+     "text": "(다른 얘기)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "A13_ASK_P:1:1"
+    }
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S13_EASY_P == 1",
+   "to": "AGAIN"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "\"한 발이면 돼요. 한 표.\"",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "쉬움"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "OK",
+     "id": "A13_ASK_P:2:0",
+     "fail": "NO"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "A13_ASK_P:2:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-020",
+   "emo": "미소",
+   "text": "한 발이라. 점심 장 끝나고 오후 한 시."
+  },
+  {
+   "op": "goto",
+   "to": "TIME"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-020",
+   "emo": "피곤",
+   "text": "지난번엔 헛걸음. 오후 한 시."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "그 시각에 오세요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "AT13",
+     "id": "A13_ASK_P:3:0"
+    },
+    {
+     "text": "\"가게 닫고 저녁에 와 주실래요?\"",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "보통"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "AT19",
+     "id": "A13_ASK_P:3:1",
+     "fail": "AT13N"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "ask",
+    "P",
+    "13"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-020",
+   "emo": "기본",
+   "text": "가게 닫고 저녁 일곱 시. 총은 메고 간다."
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "ask",
+    "P",
+    "19"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-020",
+   "emo": "기본",
+   "text": "저녁엔 탄 받으러 가. 한 시야."
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "ask",
+    "P",
+    "13"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-020",
+   "emo": "기본",
+   "text": "가게 비우면 도둑 들어. 다음에."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S13.txt"
+}

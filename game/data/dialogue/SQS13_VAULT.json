@@ -1,0 +1,113 @@
+{
+ "id": "SQS13_VAULT",
+ "title": "비축 창고 문",
+ "loc": "L-R02-04",
+ "npc": "",
+ "cond": "SQ_S13_START >= 1",
+ "labels": {
+  "START": 0,
+  "BREAK": 3,
+  "SKIP16": 7,
+  "NO": 9,
+  "OPENED": 11
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S13_LOOT >= 1",
+   "to": "OPENED"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "전자 자물쇠에 '당선 오버시어 열쇠'. 열쇠 구멍은 놋쇠, 패널은 진공관."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "패널을 열어 오버시어 인증을 건너뛴다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "과학",
+       "min": 75
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "BREAK",
+     "id": "SQS13_VAULT:1:0",
+     "fail": "NO"
+    },
+    {
+     "text": "(그만둔다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS13_VAULT:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "진공관 두 알을 빼고 인증 회로를 이어 붙인다. 걸쇠가 떨어진다."
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "break"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "not (SQ_S13_OFF == 0)",
+   "to": "SKIP16"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-028",
+   "emo": "분노",
+   "text": "(볼트 방송) 경고. 비축 창고 무단 개방. 공금 횡령입니다. 공금 횡령입니다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "상자 몫을 모두 챙긴다. 명부도, 열쇠도 없이."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "패널이 짧게 울고 꺼진다. 다시 켜질 때까지 손을 뗀다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "창고 문이 열려 있다. 몫을 나눈 자리."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S13.txt"
+}

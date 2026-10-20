@@ -1,0 +1,34 @@
+{
+ "id": "A13_SUSP_P",
+ "title": "표강윤",
+ "loc": "L-R02-04",
+ "npc": "N-R02-020",
+ "cond": "SQ_S13_KNOWN == 1 and SQ_S13_V_P == 4 and SQ_S13_SUSP_P == 0",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "susp",
+    "P"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-020",
+   "emo": "기본",
+   "text": "개표기 진공관을 바꿔 끼운 놈이 있다더라. 조준기 영점 몰래 돌린 거랑 같지."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S13.txt"
+}

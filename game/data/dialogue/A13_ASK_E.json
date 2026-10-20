@@ -1,0 +1,218 @@
+{
+ "id": "A13_ASK_E",
+ "title": "어하은",
+ "loc": "L-R02-04",
+ "npc": "N-R02-030",
+ "cond": "SQ_S13_MET2 == 1 and SQ_S13_DONE == 0 and SQ_S13_V_E in [0, 9]",
+ "labels": {
+  "START": 0,
+  "ASK": 2,
+  "TOUR": 7,
+  "HEARD": 12,
+  "AGAIN": 16,
+  "OK": 19,
+  "NO": 22,
+  "ANTS": 24,
+  "CHAIN": 25
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-R02-030",
+   "emo": "놀람",
+   "text": "선거요? 볼트 선거라면… 저 같은 사람도 유권자예요?"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "투표하러 같이 가요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "ASK",
+     "id": "A13_ASK_E:1:0"
+    },
+    {
+     "text": "(다른 얘기)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "CHAIN",
+     "id": "A13_ASK_E:1:1"
+    }
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "KT_HEAT == 1 and KT_QUEEN == 0",
+   "to": "ANTS"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S13_EASY_E == 1",
+   "to": "AGAIN"
+  },
+  {
+   "op": "if",
+   "cond": "KT_MEM == 1",
+   "to": "HEARD"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-030",
+   "emo": "기본",
+   "text": "그럼 안내부터 해 드릴게요. 금빛 빌딩 60층 전망대는 2077년 기준 서울에서 —"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "끝까지 듣는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TOUR",
+     "id": "A13_ASK_E:2:0"
+    },
+    {
+     "text": "\"안내는 다음에요. 투표는 오늘이에요.\"",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "쉬움"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "OK",
+     "id": "A13_ASK_E:2:1",
+     "fail": "NO"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "안내가 길다. 한강 다리 열한 개의 이름, 63층이 아니라 60층인 이유, 정원 15명. 끝까지 듣는다."
+  },
+  {
+   "op": "do",
+   "fx": "SQ_S13_HEARD_E = 1"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-030",
+   "emo": "미소",
+   "text": "끝까지 들어 주신 분은 2백 년 만이에요. 전망대 닫고 해 지면 갈게요 — 저녁 일곱 시. 계단으로요. 승강기는 안 타요."
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "ask",
+    "E",
+    "19"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "CHAIN"
+  },
+  {
+   "op": "do",
+   "fx": "SQ_S13_HEARD_E = 1"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-030",
+   "emo": "미소",
+   "text": "4번 승강기 얘기 들어 주신 분이잖아요. 갈게요. 전망대 닫고 저녁 일곱 시. 계단으로요."
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "ask",
+    "E",
+    "19"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "CHAIN"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-030",
+   "emo": "슬픔",
+   "text": "지난번엔 정원이 안 찼죠. 이번엔 시간 맞춰 주세요. 저녁 일곱 시."
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "ask",
+    "E",
+    "19"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "CHAIN"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-030",
+   "emo": "기본",
+   "text": "…네. 안내는 다음에요. 저녁 일곱 시, 전망대 닫고요."
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "ask",
+    "E",
+    "19"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "CHAIN"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-030",
+   "emo": "슬픔",
+   "text": "죄송해요. 전망대를 비울 수가 없어요. 손님이 오실지도 모르잖아요."
+  },
+  {
+   "op": "goto",
+   "to": "CHAIN"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-030",
+   "emo": "슬픔",
+   "text": "지금은 못 내려가요. 22층에 그게 있는 동안은요."
+  },
+  {
+   "op": "cmd",
+   "name": "chain",
+   "args": [
+    "N-R02-030",
+    "A13_"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S13.txt"
+}

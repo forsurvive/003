@@ -1,0 +1,249 @@
+{
+ "id": "A13_HERE_K",
+ "title": "경상현",
+ "loc": "L-R02-04",
+ "npc": "N-R02-032",
+ "cond": "SQ_S13_V_K in [2, 3]",
+ "labels": {
+  "START": 0,
+  "QUIZ": 4,
+  "L_YES": 6,
+  "L_NO": 9,
+  "MENU": 11,
+  "P_OK": 12,
+  "P_NO": 15,
+  "P_AGAIN": 18,
+  "T_OK": 20,
+  "T_NO": 23,
+  "DONE": 25
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S13_V_K == 3",
+   "to": "DONE"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S13_LIE == 0 and SQ_S13_C1 != 0",
+   "to": "QUIZ"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-032",
+   "emo": "기본",
+   "text": "기호 1번 찍으려고요. 1번은 언제나 1번이니까."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-032",
+   "emo": "기본",
+   "text": "근데요, 기호 1번이 '반등'이에요?"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "\"네, 1번이 반등이에요.\"",
+     "tags": [
+      {
+       "k": "flavor",
+       "text": "거짓말"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "L_YES",
+     "id": "A13_HERE_K:1:0"
+    },
+    {
+     "text": "\"아니요. 1번은 그냥 먼저 적은 사람이에요.\"",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "L_NO",
+     "id": "A13_HERE_K:1:1"
+    },
+    {
+     "text": "(대답하지 않는다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "MENU",
+     "id": "A13_HERE_K:1:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "lie",
+    "1"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-032",
+   "emo": "미소",
+   "text": "역시. 내일은 반등합니다."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "lie",
+    "2"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-032",
+   "emo": "슬픔",
+   "text": "기호 1번 '반등'은 없어요? 그럼… 백지로 할게요. 내일은 반등합니다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "\"제게 한 표만 주세요.\"",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "보통"
+      }
+     ],
+     "cond": "SQ_S13_ASK_K == 0 and SQ_S13_VOTING <= 1",
+     "fx": "",
+     "to": "P_OK",
+     "id": "A13_HERE_K:2:0",
+     "fail": "P_NO"
+    },
+    {
+     "text": "다시 한 번만 부탁드려요",
+     "tags": [],
+     "cond": "SQ_S13_ASK_K == 2",
+     "fx": "",
+     "to": "P_AGAIN",
+     "id": "A13_HERE_K:2:1"
+    },
+    {
+     "text": "\"빈칸에 '투표함지기 2호'라고 써 주실래요?\"",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "쉬움"
+      }
+     ],
+     "cond": "SQ_S13_TWO_K == 0 and SQ_S13_VOTING <= 1",
+     "fx": "",
+     "to": "T_OK",
+     "id": "A13_HERE_K:2:2",
+     "fail": "T_NO"
+    },
+    {
+     "text": "(물러난다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "A13_HERE_K:2:3"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "plead",
+    "K"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-032",
+   "emo": "미소",
+   "text": "손님이 반등이면 손님 찍을게요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "SQ_S13_ASK_K = 2"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-032",
+   "emo": "기본",
+   "text": "저는 기호 보고 찍어요. 이름은 잘 몰라서요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-032",
+   "emo": "분노",
+   "text": "한 표 가지고 왜 이래요. 호가 두 번 부르면 값 떨어져요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "two",
+    "K"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-032",
+   "emo": "놀람",
+   "text": "2호요? 기호에 없는 종목이네… 상장 첫날이라 치죠."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-032",
+   "emo": "기본",
+   "text": "없는 종목은 안 사요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-032",
+   "emo": "기본",
+   "text": "시세 확인했어요. 결과 기다려요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S13.txt"
+}

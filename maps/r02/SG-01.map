@@ -36,7 +36,7 @@ mark kyung 16 5 S
 prop w_ticker_sg 14 1 cond="UQ06_RESULT != 1"
 prop w_ticker_sg 14 1 state=close cond="UQ06_RESULT == 1"
 text 15 3 "객장 전광판 단말. 테이프 넣는 홈 위에 '마감 시세 수동 입력'. 화면은 '종합 ▼99.9%'에서 멈췄다." w=3 scene=YT_BOARD
-npc N-R02-032 16 5 S cond="dead(\"N-R02-032\") == 0 and UQ06_GONE == 0"
+npc N-R02-032 16 5 S cond="(dead(\"N-R02-032\") == 0 and UQ06_GONE == 0) and SQ_S13_V_K != 2 and SQ_S13_V_K != 3"
 # 테이프를 안고 통로로 내려온 서기 남기범(YT_CDONE) — 전광판 곁 의자에서 존다(200년 만의 배달)
 enemy CR-200 17 4 who=N-YTB-1 cond="YT_CDONE == 1 and dead(\"N-YTB-1\") == 0"
 text 18 4 "전광판 곁 의자에 정장 구울이 앉아 존다. 빈 무릎. 목에 빨강 사원증." w=1 cond="YT_CDONE == 1"

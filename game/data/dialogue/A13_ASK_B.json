@@ -1,0 +1,162 @@
+{
+ "id": "A13_ASK_B",
+ "title": "노복희",
+ "loc": "L-R02-04",
+ "npc": "C-050",
+ "cond": "SQ_S13_MET2 == 1 and SQ_S13_DONE == 0 and SQ_S13_V_B in [0, 9]",
+ "labels": {
+  "START": 0,
+  "ASK": 2,
+  "REG": 5,
+  "AGAIN": 8,
+  "OK": 11,
+  "NO": 14,
+  "CHAIN": 15
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "볼트 선거? S-02 그 로봇이 아직도 떠든다고? 140년을 혼자서."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "투표하러 같이 가 주세요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "ASK",
+     "id": "A13_ASK_B:1:0"
+    },
+    {
+     "text": "(다른 얘기)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "CHAIN",
+     "id": "A13_ASK_B:1:1"
+    }
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "JM_REG == 1",
+   "to": "REG"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S13_EASY_B == 1",
+   "to": "AGAIN"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "\"구울도 유권자래요. 상인회장 한 표면 다들 따라와요.\"",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "쉬움"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "OK",
+     "id": "A13_ASK_B:2:0",
+     "fail": "NO"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "CHAIN",
+     "id": "A13_ASK_B:2:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "미소",
+   "text": "상인회 단골 부탁이면 가야지. 장부 일찍 닫고 — 저녁 여덟 시에 볼트 아트리움."
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "ask",
+    "B",
+    "20"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "CHAIN"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "피곤",
+   "text": "지난번엔 가서 기다리다 왔어. 이번엔 시간 맞춰 줘. 밤 열 시."
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "ask",
+    "B",
+    "22"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "CHAIN"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "한 표라. 장부 닫고 밤 열 시. 지하 길로 갈 거야 — 낮엔 여의도 순찰이 구울을 안 들여보내."
+  },
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "ask",
+    "B",
+    "22"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "CHAIN"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "장사꾼이 표 찍으러 볼트까지? 바빠. 다음에."
+  },
+  {
+   "op": "cmd",
+   "name": "chain",
+   "args": [
+    "C-050",
+    "A13_"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S13.txt"
+}

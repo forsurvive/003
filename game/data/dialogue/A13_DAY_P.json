@@ -1,0 +1,66 @@
+{
+ "id": "A13_DAY_P",
+ "title": "표강윤",
+ "loc": "L-R02-04",
+ "npc": "N-R02-020",
+ "cond": "SQ_S13_V_P == 4 and SQ_S13_SAID_P == 0",
+ "labels": {
+  "START": 0,
+  "CUT": 5,
+  "BETRAY": 7
+ },
+ "ops": [
+  {
+   "op": "cmd",
+   "name": "s13",
+   "args": [
+    "said",
+    "P"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S13_CUT_P >= 1 and SQ_S13_BL_P == 1",
+   "to": "BETRAY"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S13_CUT_P >= 1",
+   "to": "CUT"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-020",
+   "emo": "미소",
+   "text": "투표한 날이네. 오늘은 10mm 한 상자 1캡 깎아 준다. 오늘만."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-020",
+   "emo": "분노",
+   "text": "명부에서 내 몫을 깎았더라. 총포상한테 할인받는 사람은 없어, 이제."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-020",
+   "emo": "분노",
+   "text": "한 발, 당신한테 쐈어. 돌아온 건 명부에서 깎인 몫이고."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S13.txt"
+}
