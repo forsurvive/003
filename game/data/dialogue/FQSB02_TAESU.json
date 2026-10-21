@@ -129,7 +129,7 @@
   },
   {
    "op": "if",
-   "cond": "UQ08_SAFE == 1 and FQ_SB02_DAY >= UQ08_SAFE_AT + 1440",
+   "cond": "UQ08_SAFE == 1 and FQ_SB02_DAY >= UQ08_SAFE_AT + 1440 and (UQ08_WIRE_AT == 0 or FQ_SB02_DAY < UQ08_WIRE_AT)",
    "to": "FREE_S"
   },
   {

@@ -27,6 +27,10 @@ N-SB-L1 [기본] 한강철교 남단까지. 출장소 사람이 열 시까지 �
 @cmd sb02 start
 SYS 반장이 허리춤 원격기 단추 넷을 차례로 누른다. 목걸이 불빛이 붉은색에서 초록으로 바뀐다.
 N-SB-L1 [기본] 담에서 떼어 냈다. 이제 목걸이는 이 원격기 말만 들어. 출발. 고가 타고 간다. 뛰지 마. 내 손가락이 놀라.
+? UQ08_SAFE == 1 and FQ_SB02_DAY >= UQ08_SAFE_AT + 1440 and (UQ08_WIRE_AT == 0 or FQ_SB02_DAY < UQ08_WIRE_AT) -> GO_NEW
+-> END
+* GO_NEW
+SYS 넷의 목걸이 뒤판 땜이 새것이다. 운송 전날 밤 새 목걸이로 바꿔 채운 모양이다.
 -> END
 * DONE
 N-SB-L1 [기본] 오늘 호위는 찼어.
@@ -74,7 +78,7 @@ N-R02-506 [놀람] …진짜? (목걸이를 움켜쥔다) 이거, 봉천 어른�
 @cmd sb02 taesu 4
 -> END
 * FREE
-? UQ08_SAFE == 1 and FQ_SB02_DAY >= UQ08_SAFE_AT + 1440 -> FREE_S
+? UQ08_SAFE == 1 and FQ_SB02_DAY >= UQ08_SAFE_AT + 1440 and (UQ08_WIRE_AT == 0 or FQ_SB02_DAY < UQ08_WIRE_AT) -> FREE_S
 SYS 원격기 단추를 누르자 목걸이 불빛이 꺼진다. 아이가 목을 쓸어 본다.
 -> FREE_GO
 * FREE_S
@@ -255,14 +259,14 @@ N-SB-L1 [분노] 호위가 줄을 판다고? …(허리춤을 더듬는다) 원�
 @cmd sb02 patrol 3
 -> END
 * HAND_R
-? UQ08_SAFE == 1 and FQ_SB02_DAY >= UQ08_SAFE_AT + 1440 -> HAND_RS
+? UQ08_SAFE == 1 and FQ_SB02_DAY >= UQ08_SAFE_AT + 1440 and (UQ08_WIRE_AT == 0 or FQ_SB02_DAY < UQ08_WIRE_AT) -> HAND_RS
 SYS 원격기 단추 넷을 차례로 누른다. 목걸이 불빛이 하나씩 꺼진다. 방범대가 절단기를 꺼낸다.
 N-SB-L1 [분노] (빈 허리춤을 더듬는다) …원격기. 너였어. (뒷걸음친다) 기억해 둔다.
 @cmd sb02 patrol 4
 -> END
 * HAND_RS
 SYS 원격기 단추 넷을 차례로 누른다. 목걸이가 하나씩 딸깍 — 두 쪽으로 벌어져 떨어진다. 방범대 절단기가 할 일이 없다.
-N-SB-L1 [분노] (빈 허리춤을 더듬는다) …원격기. 너였어. (떨어진 목걸이 하나를 주워 뒤판을 본다) …이 땜. 끄라고 했지, 열라고 한 적은 없는데. …철사.
+N-SB-L1 [분노] (빈 허리춤을 더듬는다) …원격기. 너였어. (떨어진 목걸이 하나를 주워 뒤판을 본다) …이 땜. 끄라고 했지, 열라고 한 적은 없는데. …철사. (뒷걸음친다) 기억해 둔다.
 ! UQ08_HEAT = UQ08_HEAT + 1
 @cmd sb02 patrol 4
 -> END

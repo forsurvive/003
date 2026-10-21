@@ -3,6 +3,8 @@
               상태 fixed(바로 섬 · 진공관 셋 주황 빛 · 짐칸에 끈 묶은 꾸러미 · 태엽 열쇠)
   scale_beam  시장 반장 추 저울(2×1) — 나무 받침 · 쇠 저울대 · 왼쪽 고철 접시(자릿세 고철) · 오른쪽 추 접시와 추 셋.
               기본 = 추 쪽 받침에 쇠판을 덧댐(접시 밑 검은 판 · 저울대가 고철 쪽으로 덜 기움) · 상태 fixed(쇠판 떼어 냄 · 새 눈금 딱지)
+  stool_goggles  철사의 빈 의자(1×1, UQ-08) — 둥근 나무 의자 위에 고글 하나(가죽 끈 · 두 알 — 기본 = 맨 알 · 상태 lens = 한쪽 알에 세진 렌즈 푸른 빛)
+  w_soot       벽 그을음(벽 1×0, UQ-08) — 부채꼴로 번진 검은 그을음 · 가운데 터진 자국 · 아래 분필 글씨 몇 줄
 props_bc.PROPS에 합쳐져 r01_props 아틀라스로 나간다."""
 import math
 import os
@@ -12,7 +14,7 @@ from PIL import Image, ImageDraw
 
 sys.path.insert(0, os.path.dirname(__file__))
 import palette as P
-from props_bc_in import box3, WOOD
+from props_bc_in import box3, WOOD, stool
 
 C = lambda t: P.rgb(t) + (255,)
 INK = "P01"
@@ -181,6 +183,34 @@ def canbox_sheet():
     return _walk_sheet(canbox_frame)
 
 
+def stool_goggles(state=""):
+    """빈 나무 의자 위 고글(22×26) — 주인 없는 자리."""
+    im = stool()
+    d = ImageDraw.Draw(im)
+    d.arc([2, 1, 19, 10], 200, 340, fill=C("P17"))                     # 가죽 끈(의자 위에 늘어짐)
+    for i, x in enumerate((5, 12)):
+        d.ellipse([x, 3, x + 5, 8], fill=C(INK))
+        lens = "P46" if (state == "lens" and i == 1) else "P13"
+        d.ellipse([x + 1, 4, x + 4, 7], fill=C(lens))
+        d.point((x + 2, 4), fill=C("P09"))                               # 반짝
+    d.line([10, 6, 12, 6], fill=C(INK))                                  # 코다리
+    return im
+
+
+def w_soot():
+    """벽 그을음(30×34): 부채꼴 검댕 · 가운데 갈라진 자국 · 분필 글씨 줄."""
+    im = img(30, 34)
+    d = ImageDraw.Draw(im)
+    for r, col in ((14, "P02"), (10, "P01")):
+        d.pieslice([15 - r, 18 - r, 15 + r, 18 + r], 180, 360, fill=C(col))
+    for (x0, y0, x1, y1) in ((15, 18, 9, 6), (15, 18, 20, 5), (15, 18, 25, 11), (15, 18, 4, 12)):
+        d.line([x0, y0, x1, y1], fill=C("P03"))                          # 터진 결
+    d.ellipse([12, 15, 18, 20], fill=C("P04"))
+    for y, w in ((24, 18), (28, 12)):
+        d.line([6, y, 6 + w, y], fill=C("P09"))                          # 분필 글씨 '시험 중 오작동'
+    return im
+
+
 def _r(fn, fw, fh, kind="floor", down=2, dx=0, dy=0):
     return {"fn": fn, "foot": (fw, fh), "kind": kind, "down": down, "dx": dx, "dy": dy}
 
@@ -188,10 +218,13 @@ def _r(fn, fw, fh, kind="floor", down=2, dx=0, dy=0):
 PROPS_UQ2 = {
     "toy_robot": _r(toy_robot, 0, 0, "deco"),
     "scale_beam": _r(scale_beam, 2, 1),
+    "stool_goggles": _r(stool_goggles, 1, 1, down=-2),
+    "w_soot": _r(w_soot, 1, 0, "wall", dx=1, dy=2),
 }
 STATES_UQ2 = {
     "toy_robot": {"fixed": lambda: toy_robot("fixed")},
     "scale_beam": {"fixed": lambda: scale_beam("fixed"), "swap": lambda: scale_beam("swap")},
+    "stool_goggles": {"lens": lambda: stool_goggles("lens")},
 }
 
 

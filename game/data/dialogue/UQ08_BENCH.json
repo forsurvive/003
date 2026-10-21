@@ -47,7 +47,7 @@
   },
   {
    "op": "if",
-   "cond": "UQ08_SAFE == 1 and UQ08_REVERT != UQ08_INSPECT and (GAME_DAY == UQ08_INSPECT - 1 or (GAME_DAY == UQ08_INSPECT and GAME_HOUR < 9))",
+   "cond": "UQ08_SAFE == 1 and SB_RAID == 0 and dead(\"N-R02-038\") == 0 and UQ08_WIRE_PEND == 0 and UQ08_REVERT != UQ08_INSPECT and (GAME_DAY == UQ08_INSPECT - 1 or (GAME_DAY == UQ08_INSPECT and GAME_HOUR < 9))",
    "to": "SAMPLE"
   },
   {
@@ -58,7 +58,7 @@
    "op": "line",
    "who": "SYS",
    "emo": "기본",
-   "text": "조립대 끝에 '검수 견본' 꼬리표가 달린 목걸이 하나. 뒤판 안 — 그날 바꿔 물린 선 그대로다. 철사는 바이스 쪽에 등을 돌리고 있다."
+   "text": "조립대 끝에 어제 실장이 골라 '검수 견본' 꼬리표를 달아 두고 간 목걸이 하나. 봉인 납을 비틀어 뒤판을 열면 — 그날 바꿔 물린 선 그대로다. 철사는 바이스 쪽에 등을 돌리고 있다."
   },
   {
    "op": "choice",

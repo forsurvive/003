@@ -668,7 +668,9 @@ C-006 [기본] 진공관 얘기라면 들어 줄게. 그 얘기는 아니고.
 ? UQ07_MA_SAID == 0 and UQ07_TOY == 2 and UQ07_RES == 2 -> U7MA_SAID
 ? UQ07_MA_SAID == 0 and UQ07_TOY == 2 and UQ07_RES == 1 and UQ07_STOLE == 1 -> U7MA_HOT
 ? UQ07_MA_SAID == 0 and UQ07_TOY == 2 and UQ07_RES == 4 -> U7MA_SELF
+? UQ08_LENS == 3 and UQ08_MA_SAID == 0 and UQ08_MA_SOLD == 1 -> U8MA_YOU
 ? UQ08_LENS == 3 and UQ08_MA_SAID == 0 -> U8MA
+? UQ08_BOOM == 1 and UQ08_MA_BOOM == 0 and GAME_DAY >= UQ08_BOOM_DAY + 1 and GAME_DAY <= UQ08_BOOM_DAY + 14 -> U8MA_BOOM
 * AFTER2
 ? MQ103_CONF == 1 -> FRIEND
 C-006 [기본] 메모는 잘 갖고 있어? 진공관 있으면 15캡에 사.
@@ -692,9 +694,21 @@ C-006 [기본] 왔어? 진공관 있으면 15캡. 정비는 1할 빼 줄게.
 ! UQ08_MA_SAID = 1
 C-006 [기본] (랙 맨 위 칸을 턱으로 가리킨다) 세진 광학 대물렌즈가 하나 흘러들어왔어. 수술 현미경 거야. 고물상 손을 셋은 거쳤겠지. 쓸 데 있으면 120.
 -> AFTER2
+* U8MA_BOOM
+! UQ08_MA_BOOM = 1
+C-006 [기본] 본소 마당에서 목걸이가 터졌다며. 목걸이 따러 온 손님이 그러더라. …내 해제 손님 늘겠네. (웃지 않는다) 농담이야.
+-> AFTER2
+* U8MA_YOU
+! UQ08_MA_SAID = 1
+C-006 [기본] 네가 팔고 간 세진 렌즈, 아직 랙에 있어. 수술 현미경 대물렌즈 — 저런 건 아무도 안 사 가. 되사 가려면 120.
+-> AFTER2
 * U8BUY
 ! give("M-432", 1); UQ08_LENS = 1
+? UQ08_MA_SOLD == 1 -> U8BUY_Y
 C-006 [기본] (융에 싸서 내민다) 어디서 왔는지는 묻지 마. 나도 안 물었으니까.
+-> END
+* U8BUY_Y
+C-006 [기본] (융에 싸서 내민다) 판 값보다 비싸게 되사는 게 장사야.
 -> END
 # ---------------------------------------------------------------- UQ-07 ② 마영식에게 먼저 말한다(1-12h, 원문 [화술 25] = 쉬움)
 * U7MA

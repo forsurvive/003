@@ -14,11 +14,12 @@
   "LINE_COLLAR": 19,
   "LINE_UNCOL": 21,
   "LINE_BUY": 24,
-  "LINE_SNEAK": 27,
-  "HOME": 30,
-  "REUNITE": 33,
-  "SETTLED": 35,
-  "BC": 38
+  "LINE_BUY2": 28,
+  "LINE_SNEAK": 31,
+  "HOME": 34,
+  "REUNITE": 37,
+  "SETTLED": 39,
+  "BC": 42
  },
  "ops": [
   {
@@ -261,10 +262,32 @@
    "to": "LINE"
   },
   {
+   "op": "if",
+   "cond": "dead(\"N-R02-038\") == 1 or UQ08_WIRE == 1",
+   "to": "LINE_BUY2"
+  },
+  {
    "op": "line",
    "who": "N-R02-035",
    "emo": "기본",
-   "text": "(봉투를 세어 본다) 트럭 자리 하나 빈다고 큰일 나진 않지. …철사, 이놈 목걸이 따. 127번 — 매각."
+   "text": "(봉투를 세어 본다) 트럭 자리 하나 빈다고 큰일 나진 않지. …작업실 데려가서 목걸이 따. 127번 — 매각."
+  },
+  {
+   "op": "cmd",
+   "name": "s09",
+   "args": [
+    "linebuy"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-035",
+   "emo": "기본",
+   "text": "(봉투를 세어 본다) 트럭 자리 하나 빈다고 큰일 나진 않지. …목걸이는 실장실에서 푼다. 127번 — 매각."
   },
   {
    "op": "cmd",

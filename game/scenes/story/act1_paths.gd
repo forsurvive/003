@@ -554,6 +554,12 @@ func _sb_watch(where: String) -> void:
 	var seen := ""
 	var me: Vector2 = host.player.loco.logical
 	for n in host.npcs:
+		if str(n["id"]) == "N-R02-038":                                 # 철사는 감시를 안 선다 — 눈이 멀어 가고, 렌즈를 낀 뒤엔 그걸 준 사람이다(UQ-08 재미 검수 · 서사 대조 중3)
+			if v("UQ08_LENS") == 2 and v("UQ08_TAGSAID") == 0 and not host.combat.crouch and is_instance_valid(n["actor"]) \
+					and n["actor"].loco.logical.distance_to(me) <= 4.0 * 32.0:
+				st.vars.set_v("UQ08_TAGSAID", 1)
+				host.combat._pop("(고글 너머로) …너구나. 표찰은 좀 달고 다녀.", n["actor"].loco.logical + Vector2(0, -40), Color("D8C890"))
+			continue
 		if SB_ROLE.has(str(n["id"])) and is_instance_valid(n["actor"]) and n["actor"].visible \
 				and n["actor"].loco.logical.distance_to(me) <= 6.0 * 32.0 and not host.combat.crouch \
 				and host.map.line_of_sight(n["actor"].loco.logical, me):
@@ -587,7 +593,7 @@ func _sb_collar(inside: bool) -> void:
 	if _collar <= 0.0:
 		_collar = -1.0
 		st.vars.set_v("SB_COLLAR", 0)
-		if v("UQ08_SAFE") == 1 and v("CAPTURE_AT") >= v("UQ08_SAFE_AT") + 1440:   # UQ-08 ② 뒤 감긴 목걸이 — 담 밖 기폭 신호에 '원격 해제 = 무조건 열림'(계획 1-12h §8b S5)
+		if v("UQ08_SAFE") == 1 and v("CAPTURE_AT") >= v("UQ08_SAFE_AT") + 1440 and (v("UQ08_WIRE_AT") == 0 or v("CAPTURE_AT") < v("UQ08_WIRE_AT")):   # UQ-08 ② 뒤 감긴 목걸이 — 담 밖 기폭 신호에 '원격 해제 = 무조건 열림'(계획 1-12h §8b S5)
 			st.vars.set_v("UQ08_HEAT", v("UQ08_HEAT") + 1)
 			st.vars.set_v("UQ08_SNAP_DAY", int(st.vars.get_v("GAME_DAY")))
 			host.hint("삑, 삑 — 딸깍. 목걸이가 두 쪽으로 벌어져 발치에 떨어진다. 뒤판 땜 자국이 낯익다.", 5.0)

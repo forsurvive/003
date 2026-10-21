@@ -34,6 +34,8 @@ const PLATE_BACK := 3                      ## 떼어 간 쇠판 → 새 쇠판�
 const SWAP_BACK := 2                       ## 옮겨 붙인 쇠판 → 원상까지
 # UQ-08: 검수 · 오작동 · 렌즈
 const WIRE := "N-R02-038"                  ## 철사
+const CHIEF := "C-049"                     ## 실장 구만호(검수하는 사람)
+const MA_SHOP := "V09"                     ## 마영식 상점(세진 부품 랙)
 const SCOPE_AT := Vector2i(5, 5)           ## HP-04 안과 수술 현미경(대물렌즈 M-432)
 const INSPECT_GAP := 30                    ## 실장 검수 간격(날) — 원문 '30일마다'
 const INSPECT_H := 9                       ## 검수 시각(칠판 '09:00')
@@ -245,11 +247,12 @@ func _on_box_closed(b: Dictionary, _c: Dictionary) -> void:
 		_log("마영식 부품 상자에서 진공관을 훔침")
 
 
-## 손 · 용기 · 은닉처 어디든 가진 수(맡겨 둔 로봇은 잃은 게 아니다 — 물건 하나가 둘이 되지 않게, 서사 대조 중7)
+## 손 · 용기 · 은닉처 어디든 가진 수(맡겨 둔 로봇은 잃은 게 아니다 — 물건 하나가 둘이 되지 않게, 서사 대조 중7) · 상점 진열(shop:)은 판 것이라 뺀다
 func _owned_anywhere(id: String) -> int:
 	var n := st.count_of(id)
 	for k in st.boxes:
-		n += int(st.boxes[k].get("items", {}).get(id, 0))
+		if not str(k).begins_with("shop:"):
+			n += int(st.boxes[k].get("items", {}).get(id, 0))
 	return n
 
 
@@ -554,45 +557,62 @@ func _uq08_day(d: int) -> void:
 	# 렌즈를 잃음(팔기 · 버리기 · 털림 — 어디든 가진 수 0) → 마영식 랙으로 흘러간다(P10 — 다시 살 수 있다)
 	if v("UQ08_LENS") == 1 and _owned_anywhere("M-432") == 0:
 		_sv("UQ08_LENS", 3)
+		for k in st.boxes:                                               # 상점에 팔았으면 그 진열에서 빠져 마영식 랙으로(물건은 한 곳 — P3)
+			if str(k).begins_with("shop:") and st.boxes[k].get("items", {}).has("M-432"):
+				st.boxes[k]["items"].erase("M-432")
+				if str(k) == "shop:" + MA_SHOP:
+					_sv("UQ08_MA_SOLD", 1)                               # 마영식에게 직접 판 판 — '네가 팔고 간 렌즈'(서사 대조 중7)
 		_log("세진 렌즈를 잃음 — 마영식 랙으로")
-	# ③ 또는 받고 둠: 30일 뒤 마당에서 오작동(412번) — 철사가 아직 그 눈으로 감을 때만
+	# ③ 또는 받고 둠: 30일 뒤 마당에서 오작동(389번) — 철사가 아직 그 눈으로 감을 때만
 	if v("UQ08_BOOM") == 0 and v("UQ08_MET") == 1 and v("UQ08_RES") in [0, 3] and not gone:
 		var base := v("UQ08_DAY") if v("UQ08_RES") == 3 else v("UQ08_MET_DAY")
 		if d >= base + BOOM_DAYS:
 			_sv("UQ08_BOOM", 1)
 			_sv("UQ08_BOOM_DAY", d)
-			_log("본소 마당 목걸이 오작동(412번)")
+			_log("본소 마당 목걸이 오작동(389번)")
 			if _mid() == "X-SB" or _mid().begins_with("H-0"):
 				host.hint("담 너머 마당에서 퍽 — 짧은 소리. 누가 소리를 지르고, 곧 조용해진다.", 5.0)
+	# 철사 · 실장이 죽거나 습격 — 검수 예고(칠판 · 철사 · 견본)도 닫는다(서사 대조 중2 — 값 한 곳)
+	if v("UQ08_INSPECT") > 0 and (st.is_dead(WIRE) or st.is_dead(CHIEF) or v("SB_RAID") != 0):
+		_sv("UQ08_INSPECT", 0)
 	# 철사가 죽거나 본소 습격 — 결말 전이면 소멸(4.2b 38)
 	var s8: int = st.quests.stage("UQ-08")
 	if (st.is_dead(WIRE) or v("SB_RAID") != 0) and s8 > 0 and s8 < 100:
 		st.quests.set_stage("UQ-08", 90)
 
 
-## 실장 검수(②만): 그 날 09:00 — 작업실에 주인공이 있으면 나갈 때까지 미룬다(눈앞에서 사람이 사라지지 않게)
+## 실장 검수(②만): 그 날 09:00 — 작업실에 있으면 눈앞에서 견본을 연다(재미 검수 '엉뚱한 짓'). 발각이면 철사가 사라지는 건 주인공이 나간 뒤(P4)
 func _inspect_tick() -> void:
+	if v("UQ08_WIRE_PEND") == 1 and _mid() != "H-05":
+		_sv("UQ08_WIRE_PEND", 0)
+		_sv("UQ08_WIRE", 1)                                              # 문을 나선 뒤 — 빈 의자
+		return
 	var due := v("UQ08_INSPECT")
-	if v("UQ08_SAFE") != 1 or v("UQ08_WIRE") != 0 or due <= 0:
+	if v("UQ08_SAFE") != 1 or v("UQ08_WIRE") != 0 or v("UQ08_WIRE_PEND") != 0 or due <= 0:
 		return
-	if day() < due or (day() == due and _hour() < INSPECT_H) or _mid() == "H-05":
+	if day() < due or (day() == due and _hour() < INSPECT_H):
 		return
-	if st.is_dead(WIRE) or v("SB_RAID") != 0:
-		_sv("UQ08_INSPECT", 0)                                           # 철사가 없으면 판정 멈춤(만든 목걸이는 남는다)
+	if st.is_dead(WIRE) or v("SB_RAID") != 0 or st.is_dead(CHIEF):
+		_sv("UQ08_INSPECT", 0)                                           # 철사 · 실장이 없으면 판정 멈춤(만든 목걸이는 남는다)
 		return
 	var n := v("UQ08_CHECK_N") + 1
+	var here := _mid() == "H-05"
 	_sv("UQ08_CHECK_N", n)
 	_sv("UQ08_INSPECT", due + INSPECT_GAP)
-	if v("UQ08_REVERT") == due:
-		_log("검수 %d회 — 견본을 되돌려 둠(통과)" % n)
-		return
 	var p := mini(100, CATCH_P + HEAT_P * v("UQ08_HEAT"))
-	if _roll("u8chk:%d" % n, p):
+	if v("UQ08_REVERT") == due or not _roll("u8chk:%d" % n, p):
+		_log("검수 %d회 — 통과(%s)" % [n, "견본 되돌림" if v("UQ08_REVERT") == due else "%d%%" % p])
+		if here:
+			host.hint("문 밖에서 구만호 목소리 — '철사, 견본.' 철사가 꼬리표 달린 목걸이를 들고 나갔다 온다. 문 너머로 '…곧네.'", 6.0)
+		return
+	_sv("UQ08_WIRE_AT", Clock.abs_min(host.date_text))
+	_sv("UQ08_WIRE_DAY", day())
+	st.call_fn("aff", ["SB", -8])
+	_log("검수 %d회 — 발각(%d%%) · 철사 실종" % [n, p])
+	if here:
+		_sv("UQ08_WIRE_PEND", 1)
+		host.hint("문 밖에서 구만호 목소리 — '철사, 견본.' 철사가 나갔다가 한참 만에 돌아온다. 얼굴이 하얗다. 문 너머에서 '…이따 나 좀 보지.' 철사가 인두를 내려놓는다.", 7.0)
+	else:
 		_sv("UQ08_WIRE", 1)
-		_sv("UQ08_WIRE_DAY", day())
-		st.call_fn("aff", ["SB", -8])
-		_log("검수 %d회 — 발각(%d%%) · 철사 실종" % [n, p])
 		if _mid() == "X-SB" or _mid().begins_with("H-0"):
 			host.refresh_npcs()
-	else:
-		_log("검수 %d회 — 통과(%d%%)" % [n, p])

@@ -11,11 +11,12 @@
   "NOBOOK": 11,
   "TERMS": 12,
   "GO": 15,
-  "DONE": 19,
-  "NOJOB": 21,
-  "COLD": 23,
-  "GHOUL": 25,
-  "HOT": 27
+  "GO_NEW": 20,
+  "DONE": 22,
+  "NOJOB": 24,
+  "COLD": 26,
+  "GHOUL": 28,
+  "HOT": 30
  },
  "ops": [
   {
@@ -130,6 +131,21 @@
    "who": "N-SB-L1",
    "emo": "기본",
    "text": "담에서 떼어 냈다. 이제 목걸이는 이 원격기 말만 들어. 출발. 고가 타고 간다. 뛰지 마. 내 손가락이 놀라."
+  },
+  {
+   "op": "if",
+   "cond": "UQ08_SAFE == 1 and FQ_SB02_DAY >= UQ08_SAFE_AT + 1440 and (UQ08_WIRE_AT == 0 or FQ_SB02_DAY < UQ08_WIRE_AT)",
+   "to": "GO_NEW"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "넷의 목걸이 뒤판 땜이 새것이다. 운송 전날 밤 새 목걸이로 바꿔 채운 모양이다."
   },
   {
    "op": "goto",

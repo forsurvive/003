@@ -21,18 +21,21 @@
   "SHOP": 44,
   "FIX": 46,
   "AFTER": 48,
-  "AFTER2": 53,
-  "FRIEND": 56,
-  "U8MA": 58,
-  "U8BUY": 61,
-  "U7MA": 64,
-  "U7MA_OK": 65,
-  "U7MA_NG": 71,
-  "U7MA_SAID": 74,
-  "U7MA_GONE": 77,
-  "U7MA_HOT": 80,
-  "U7MA_SELF": 84,
-  "S04BATT": 87
+  "AFTER2": 55,
+  "FRIEND": 58,
+  "U8MA": 60,
+  "U8MA_BOOM": 63,
+  "U8MA_YOU": 66,
+  "U8BUY": 69,
+  "U8BUY_Y": 73,
+  "U7MA": 75,
+  "U7MA_OK": 76,
+  "U7MA_NG": 82,
+  "U7MA_SAID": 85,
+  "U7MA_GONE": 88,
+  "U7MA_HOT": 91,
+  "U7MA_SELF": 95,
+  "S04BATT": 98
  },
  "ops": [
   {
@@ -413,8 +416,18 @@
   },
   {
    "op": "if",
+   "cond": "UQ08_LENS == 3 and UQ08_MA_SAID == 0 and UQ08_MA_SOLD == 1",
+   "to": "U8MA_YOU"
+  },
+  {
+   "op": "if",
    "cond": "UQ08_LENS == 3 and UQ08_MA_SAID == 0",
    "to": "U8MA"
+  },
+  {
+   "op": "if",
+   "cond": "UQ08_BOOM == 1 and UQ08_MA_BOOM == 0 and GAME_DAY >= UQ08_BOOM_DAY + 1 and GAME_DAY <= UQ08_BOOM_DAY + 14",
+   "to": "U8MA_BOOM"
   },
   {
    "op": "if",
@@ -585,13 +598,56 @@
   },
   {
    "op": "do",
+   "fx": "UQ08_MA_BOOM = 1"
+  },
+  {
+   "op": "line",
+   "who": "C-006",
+   "emo": "기본",
+   "text": "본소 마당에서 목걸이가 터졌다며. 목걸이 따러 온 손님이 그러더라. …내 해제 손님 늘겠네. (웃지 않는다) 농담이야."
+  },
+  {
+   "op": "goto",
+   "to": "AFTER2"
+  },
+  {
+   "op": "do",
+   "fx": "UQ08_MA_SAID = 1"
+  },
+  {
+   "op": "line",
+   "who": "C-006",
+   "emo": "기본",
+   "text": "네가 팔고 간 세진 렌즈, 아직 랙에 있어. 수술 현미경 대물렌즈 — 저런 건 아무도 안 사 가. 되사 가려면 120."
+  },
+  {
+   "op": "goto",
+   "to": "AFTER2"
+  },
+  {
+   "op": "do",
    "fx": "give(\"M-432\", 1); UQ08_LENS = 1"
+  },
+  {
+   "op": "if",
+   "cond": "UQ08_MA_SOLD == 1",
+   "to": "U8BUY_Y"
   },
   {
    "op": "line",
    "who": "C-006",
    "emo": "기본",
    "text": "(융에 싸서 내민다) 어디서 왔는지는 묻지 마. 나도 안 물었으니까."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-006",
+   "emo": "기본",
+   "text": "(융에 싸서 내민다) 판 값보다 비싸게 되사는 게 장사야."
   },
   {
    "op": "goto",

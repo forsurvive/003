@@ -26,17 +26,20 @@ prop collar_bench 8 4
 text 3 4 "목걸이 조립대. 고리 · 뇌관 통 · 표시등. 부품마다 일련번호를 새겼다. 장부 번호와 같다." w=2 scene=UQ08_BENCH
 text 8 4 "고장 난 목걸이 하나가 바이스에 물려 있다. 해제 연습용이다." w=2 scene=H-05_PRACTICE
 npc N-R02-038 9 6 N cond="SB_RAID == 0 and UQ08_WIRE == 0 and UQ08_LENS != 2" bark="목걸이는 거짓말을 안 해. 사람이 하지."
-npc N-R02-038 9 6 N cond="SB_RAID == 0 and UQ08_WIRE == 0 and UQ08_LENS == 2" bark="(고글 렌즈를 소매로 닦는다) 땜이 곧으니까 잠이 다 와."
-text 9 6 "빈 의자. 작업대 위에 고글 하나 — 한쪽 알에 세진 광학 렌즈가 끼워진 채다. 인두는 식었다." cond="UQ08_WIRE == 1 and UQ08_LENS == 2"
-text 9 6 "빈 의자. 작업대 위에 고글 하나. 인두는 식었다." cond="UQ08_WIRE == 1 and UQ08_LENS != 2"
+npc N-R02-038 9 6 N cond="SB_RAID == 0 and UQ08_WIRE == 0 and UQ08_LENS == 2" bark="(고글 렌즈를 소매로 닦는다) 너 눈썹에 흉 있는 거 알았어?"
+prop stool_goggles 9 6 state=lens cond="UQ08_WIRE == 1 and UQ08_LENS == 2"
+prop stool_goggles 9 6 cond="UQ08_WIRE == 1 and UQ08_LENS != 2"
+text 9 6 "빈 의자. 의자 위에 고글 하나 — 한쪽 알에 세진 광학 렌즈가 끼워진 채다. 인두는 식었다." cond="UQ08_WIRE == 1 and UQ08_LENS == 2"
+text 9 6 "빈 의자. 의자 위에 고글 하나. 인두는 식었다." cond="UQ08_WIRE == 1 and UQ08_LENS != 2"
 prop w_collars 5 1
 prop w_collars 12 1
 text 5 2 "목걸이 걸이. 붉은 표시등이 줄지어 깜박인다."
+prop w_soot 12 1
 text 12 2 "벽 그을음. 부채꼴로 까맣다. 분필로 — '시험 중 오작동. 시험대라 다행.'"
 prop workbench 14 4
 box 14 4 toolbox w=2 name="작업대 서랍"
 text 14 4 "작업대 위 『열쇠 기능사 실기 대비』. 철사가 책갈피다." w=2
-text 16 4 "작업대 끝, 철사가 앉는 쪽." scene=UQ08_DESK
+text 16 4 "작업대 끝, 철사가 책과 공구를 두는 쪽." scene=UQ08_DESK
 prop tool_chest 17 3
 box 17 3 toolbox name="공구 상자"
 prop steel_rack 14 10

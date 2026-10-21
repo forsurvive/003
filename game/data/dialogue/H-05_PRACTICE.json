@@ -106,7 +106,7 @@
   },
   {
    "op": "if",
-   "cond": "dead(\"N-R02-038\") == 0 and SB_RAID == 0 and UQ08_WIRE == 0 and UQ08_VISE == 0",
+   "cond": "dead(\"N-R02-038\") == 0 and SB_RAID == 0 and UQ08_WIRE == 0 and UQ08_WIRE_PEND == 0 and UQ08_VISE == 0",
    "to": "VISE"
   },
   {
