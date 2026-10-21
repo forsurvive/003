@@ -23,6 +23,18 @@ const LOOK_S := 5.0                        ## 뒤돌아보는 간격(초)
 const SPOT_R := 6.0                        ## 뒤돌아볼 때 움직이는 주인공을 알아채는 거리(칸) — 웅크리면 절반
 const FIND_R := 8.0                        ## 둥지 앞에 닿을 때 이 안에 있으면 새끼를 본다
 const PUP_DAYS := 30                       ## 처음 본 뒤 그냥 두면 새끼가 혼자 산으로 가는 날
+# UQ-05: 누렁이가 처지는 자리 넷(X-NS 칸 — 남서 비탈 · 남동 덤불 · 버스 뒤 풀밭 · 동쪽 고갯마루, 날 씨앗) · 정류장 앞(닿으면 데려다줌)
+const NS_SPOTS := [Vector2i(4, 20), Vector2i(28, 20), Vector2i(10, 8), Vector2i(27, 3)]
+const NS_MID := Vector2i(15, 11)
+const NS_NEAR := 40.0                      ## 잃는 순간 주인공이 고개에서 이만큼 안이면 다음 바퀴로(허공에서 소가 생기지 않게)
+const SD_CARAVAN := Vector2i(22, 12)       ## X-SD 수송대 짐소 자리
+const SD_POST := Vector2i(20, 12)          ## X-SD 광장 말뚝(위강윤 대여 소 자리)
+const BC_CARAVAN := Vector2i(24, 38)       ## X-BC 수송대 짐소 자리
+const COW_HOME_R := 6.0                    ## 정류장 앞 이 칸 안에 닿으면 데려다줌
+const COW_LOSE_R := 14.0                   ## 주인공이 이보다 멀어지면 누렁이가 선다(놓음)
+const COW_GAP := 2.0                       ## 주인공 뒤 이 칸쯤에서 따라온다
+const DOG_X := [990, 1090]                 ## 남부순환로 동쪽(낙성대 → 사당) — 소 냄새에 들개 무리가 한 번 붙는다
+const SEEN_R := 25.0                       ## 사당 광장에서 이 안에서 잡으면 위강윤이 본다(낮)
 
 var host: InteriorHost
 var st: StoryState
@@ -35,6 +47,11 @@ var _dog_phase := ""                       ## go · stay · sit · back
 var _dog_t := 0.0
 var _look_t := 0.0
 var _pc_last := Vector2.ZERO
+var _cow: Actor = null                     ## 끌려오는 누렁이(UQ05_COW 2) — 월드 맵에서만
+var _cow_path := PackedVector2Array()
+var _cow_rp := 0.0
+var _cow_home := false
+var _last_v54 := -1
 
 
 func setup(h: InteriorHost, is_log := false) -> void:
@@ -43,6 +60,7 @@ func setup(h: InteriorHost, is_log := false) -> void:
 	log_on = is_log
 	host.ev.handlers["uqr"] = _cmd
 	host.day_tick.connect(_on_day)
+	host.map_entered.connect(_on_map)
 
 
 func v(k: String) -> int:
@@ -68,6 +86,7 @@ func _roll(tag: String, pct: int) -> bool:
 
 func _process(dt: float) -> void:
 	_dog_frame(dt)
+	_cow_frame(dt)
 	_t += dt
 	if _t < 1.0:
 		return
@@ -75,6 +94,7 @@ func _process(dt: float) -> void:
 	_relay_tick()
 	_outing_tick()
 	_dog_frame(0.0)
+	_cow_tick()
 
 
 # ---------------------------------------------------------------- UQ-01 24시
@@ -306,6 +326,7 @@ func _on_day(d: int) -> void:
 		_sv("UQ02_GONE_DAY", d)                                      # 그냥 두면 새끼는 백구 밥으로 커서 혼자 산으로(소멸 — 바크로만)
 		_log("새끼가 혼자 산으로 감")
 	_uq03_day(d)
+	_cow_day(d)
 
 
 # ---------------------------------------------------------------- UQ-03 다리목 하사의 배급표
@@ -337,6 +358,191 @@ func _uq03_day(d: int) -> void:
 		if host.map is WorldMap:
 			host.refresh_npcs()
 		_log("엄도현 근무지 이탈")
+
+
+# ---------------------------------------------------------------- UQ-05 누렁이
+func _ns(c: Vector2i) -> Vector2i:
+	return WorldMap.origin_of("X-NS") + c
+
+
+func _cow_tile() -> Vector2i:
+	return Vector2i(v("UQ05_CX"), v("UQ05_CY"))
+
+
+## 1초마다: 고개에서 잃기(V54 봉천 → 길 위 전환) · 사당 소식 출처 · 끌고 가는 동안의 놓음 · 정류장 닿음 · 들개 한 번
+func _cow_tick() -> void:
+	var now := v("CARAVAN_V54")
+	if _last_v54 == 1 and now == 0:
+		_cow_lose()
+	_last_v54 = now
+	var c := v("UQ05_COW")
+	if (c == 1 or c == 2 or c == 4 or c == 5) and now == 2 and v("UQ05_TOLD") == 0:
+		_sv("UQ05_TOLD", 1)                                          # 수송대가 사당에 닿은 뒤에야 위강윤이 안다(P7)
+	if c != 2:
+		return
+	if not (host.map is WorldMap) or _cow == null or not is_instance_valid(_cow):
+		_cow_drop("")
+		return
+	var ct: Vector2i = host.map.tile_of(_cow.loco.logical)
+	_sv("UQ05_CX", ct.x)
+	_sv("UQ05_CY", ct.y)
+	if _cow_home:
+		return
+	var d := _cow.loco.logical.distance_to(host.player.loco.logical) / 32.0
+	if d > COW_LOSE_R:
+		_cow_drop("누렁이가 멈춰 섰다. 고삐가 땅에 끌린다.")
+		return
+	var at := _cow_arrive(ct)
+	if at > 0:
+		_cow_home = true
+		_sv("UQ05_AT", at)
+		host.play_scene.call_deferred("UQ05_BACK")
+		return
+	var pt: Vector2i = host.map.tile_of(host.player.loco.logical)
+	if v("UQ05_DOGS") == 0 and pt.x >= DOG_X[0] and pt.x <= DOG_X[1] and host.enc_live != null:
+		if host.enc_live.start({"re": "RE-X01", "state": "S1", "src": "uq05"}):
+			_sv("UQ05_DOGS", 1)
+			_log("누렁이 냄새에 들개")
+
+
+func _cow_arrive(ct: Vector2i) -> int:
+	var cv := v("CARAVAN_V54")
+	if cv == 2 and Vector2(ct).distance_to(Vector2(WorldMap.origin_of("X-SD") + SD_CARAVAN)) <= COW_HOME_R:
+		return 1
+	if cv == 1 and Vector2(ct).distance_to(Vector2(WorldMap.origin_of("X-BC") + BC_CARAVAN)) <= COW_HOME_R:
+		return 1
+	if Vector2(ct).distance_to(Vector2(WorldMap.origin_of("X-SD") + SD_POST)) <= COW_HOME_R:
+		return 2
+	return 0
+
+
+## 봉천 → 사당 구간이 시작될 때(V54 1 → 0) 한 번: 연보경을 만난 뒤 · MQ-106 교전 · S06 짐칸 해법 · 주인공이 고개 가까이면 다음 바퀴
+func _cow_lose() -> void:
+	if v("UQ05_COW") != 0 or v("UQ05_LOST_DAY") != 0 or v("TR_YEON_MET") == 0 or st.is_dead("N-R01-040"):
+		return
+	var m6: int = st.quests.stage("MQ-106")
+	if (m6 > 0 and m6 < 100) or v("SQ_S06_CARAVAN") == 1:
+		return
+	if host.map is WorldMap and host.player != null:
+		var near: float = Vector2(host.map.tile_of(host.player.loco.logical)).distance_to(Vector2(_ns(NS_MID)))
+		if near < NS_NEAR:
+			return
+	var d := day()
+	var k := absi(hash("uq05:%d:%s" % [d, str(st.vars.get_v("P_REGNO"))]))
+	_sv("UQ05_COW", 1)
+	_sv("UQ05_LOST_DAY", d)
+	_sv("UQ05_ABSENT", 1)
+	_sv("UQ05_SPOT", k % NS_SPOTS.size())
+	var t := _ns(NS_SPOTS[k % NS_SPOTS.size()])
+	_sv("UQ05_CX", t.x)
+	_sv("UQ05_CY", t.y)
+	var hr := int(st.vars.get_v("GAME_HOUR"))
+	_sv("UQ05_CAUSE", 1 if not st.is_dead("N-R01-062") else (3 if hr >= 6 and hr < 20 and (k >> 4) % 2 == 0 else 2))
+	_cow_entry()
+	_log("누렁이를 고개에서 잃음(자리 %d · 까닭 %d)" % [v("UQ05_SPOT"), v("UQ05_CAUSE")])
+
+
+## 월드 맵 인물 목록에 처진 누렁이 한 줄(놓아둔 자리 UQ05_CX · CY) — 맵을 다시 읽을 때마다 붙인다
+func _cow_entry() -> void:
+	if not (host.map is WorldMap):
+		return
+	var e: Dictionary = {}
+	for n in host.map.data["npcs"]:
+		if n.get("uq05", false):
+			e = n
+	if e.is_empty():
+		e = {"id": "N-UQ5-COW", "dir": "S", "route": [], "sheet": "cr_cr091_loco", "uq05": true,
+			"cond": "UQ05_COW == 1 and (stage(\"MQ-106\") == 0 or stage(\"MQ-106\") >= 100)",
+			"bark": "(두 머리 누렁소가 짐을 진 채 풀을 뜯는다. 끊긴 고삐가 풀에 감겼다.)"}
+		host.map.data["npcs"].append(e)
+	e["x"] = v("UQ05_CX")
+	e["y"] = v("UQ05_CY")
+	host.refresh_npcs()
+
+
+func _on_map(_id: String) -> void:
+	if v("UQ05_COW") == 2 and _cow == null:
+		_cow_drop("")                                                # 불러오기 · 실내 · 생포 · 빠른 이동: 그 자리에 놓음(P10)
+	if host.map is WorldMap and v("UQ05_COW") >= 1:
+		_cow_entry()
+
+
+## 놓음: 끌던 자리에서 풀을 뜯는다(UQ05_COW 1)
+func _cow_drop(msg: String) -> void:
+	if _cow != null and is_instance_valid(_cow):
+		var ct := Vector2i(int(_cow.loco.logical.x) / 32, int(_cow.loco.logical.y) / 32)
+		_sv("UQ05_CX", ct.x)
+		_sv("UQ05_CY", ct.y)
+		if host.map is WorldMap:
+			host.map.remove_actor(_cow)
+		_cow.queue_free()
+	_cow = null
+	_cow_home = false
+	_sv("UQ05_COW", 1)
+	if msg != "":
+		host.hint(msg, 4.0)
+	_cow_entry()
+
+
+func _cow_spawn() -> void:
+	_cow = Actor.new()
+	_cow.setup("cr_cr091_loco", _px(_cow_tile()), host.map)
+	_cow.mode = "walk"
+	host.map.add_actor(_cow)
+	_cow._show()
+	_cow_path = PackedVector2Array()
+	_cow_rp = 0.0
+	_cow_home = false
+
+
+## 매 프레임: 주인공 뒤 COW_GAP칸으로 걷는다(걷기 속도 3.0 — 발 고정 걸음). 싸움 중엔 겁먹고 선다
+func _cow_frame(dt: float) -> void:
+	if _cow == null or dt <= 0.0:
+		return
+	if not is_instance_valid(_cow) or not (host.map is WorldMap):
+		_cow = null
+		return
+	if _cow_home or host.combat.alive_enemies() > 0:
+		_cow.move(Vector2.ZERO, dt)
+		return
+	var me := host.player.loco.logical
+	if _cow.loco.logical.distance_to(me) <= COW_GAP * 32.0:
+		_cow.move(Vector2.ZERO, dt)
+		_cow_path = PackedVector2Array()
+		return
+	_cow_rp -= dt
+	if _cow_path.is_empty() or _cow_rp <= 0.0:
+		_cow_rp = 0.8
+		_cow_path = NpcRoutine.with_start(host.map, _cow.loco.logical, me)
+	if _cow_path.is_empty():
+		_cow.move(Vector2.ZERO, dt)
+		return
+	_cow_path = NpcRoutine.walk_path(_cow, _cow_path, dt)
+
+
+func _cow_day(d: int) -> void:
+	var c := v("UQ05_COW")
+	if c == 1:
+		var lim := 3 if not st.is_dead("N-R01-062") else 7          # 척후가 살아 있으면 3일 뒤 끌고 감 · 아니면 들개에 쫓겨 7일 뒤
+		if d >= v("UQ05_LOST_DAY") + lim and (v("UQ05_SAW") == 0 or lim == 7):
+			_sv("UQ05_COW", 5)
+			if lim == 3:
+				_sv("UQ05_SPILL", 1)                                  # 꾸러미는 척후 캠프 버스 안에 남는다(재미 검수 §8.4)
+			_up("UQ-05", 10)
+			st.quests.set_stage("UQ-05", 100)
+			if host.map is WorldMap:
+				host.refresh_npcs()
+			_log("누렁이 사라짐(%s)" % ("척후" if lim == 3 else "들개"))
+	c = v("UQ05_COW")
+	if c == 4 or c == 5:
+		if d >= v("UQ05_LOST_DAY") + 7 and v("UQ05_ABSENT") == 1:
+			_sv("UQ05_ABSENT", 2)                                     # 위강윤에게 빌린 소
+			_sv("UQ05_NEWCOW_DAY", d)
+			if host.map != null:
+				host.refresh_npcs()
+	if v("UQ05_PACK") == 1 and (st.count_of("M-429") == 0 or d >= v("UQ05_PACK_DAY") + 7):
+		_sv("UQ05_PACK", 3)                                          # 갖기(팔았거나 7일) — 카르마 −10 한 번
+		st.call_fn("karma", [-10])
 
 
 func _tickets() -> int:
@@ -423,6 +629,41 @@ func _cmd(a: Array, done: Callable) -> void:
 			_sv("UQ03_REPORT_DAY", day())
 			_sv("UQ03_DAY", day())
 			_log("황보서현에게 알림 — 엄도현 강등")
+		"cow_lead":
+			if v("UQ05_COW") == 1 and host.map is WorldMap:
+				_sv("UQ05_COW", 2)
+				_sv("UQ05_LEAD", int(a[1]) if a.size() > 1 else 1)
+				_up("UQ-05", 10)
+				_up("UQ-05", 20)
+				host.refresh_npcs()
+				_cow_spawn()
+		"cow_home":
+			if _cow != null and is_instance_valid(_cow):
+				host.map.remove_actor(_cow)
+				_cow.queue_free()
+			_cow = null
+			_cow_home = false
+			_sv("UQ05_COW", 3)
+			_sv("UQ05_ABSENT", 0)
+			if host.map != null:
+				host.refresh_npcs()
+		"cow_kill":
+			_sv("UQ05_COW", 4)
+			st.call_fn("karma", [-25])
+			st.call_fn("give", ["M-430", 1])
+			if v("UQ05_PACK") == 0:
+				st.call_fn("give", ["M-429", 1])
+				_sv("UQ05_PACK", 1)
+				_sv("UQ05_PACK_DAY", day())
+			var hr := int(st.vars.get_v("GAME_HOUR"))
+			var post := Vector2(WorldMap.origin_of("X-SD") + SD_POST)
+			if Vector2(_cow_tile()).distance_to(post) <= SEEN_R and hr >= 6 and hr < 20 and not st.is_dead("N-R01-043"):
+				_sv("UQ05_KILL_SEEN", 1)
+				_sv("UQ05_REFUSE_DAY", day() + 3)                          # 위강윤이 봤다 — 수송대 3일 거래 거부
+				host.hint("광장 쪽에서 위강윤이 이쪽을 본다. 말없이 고개를 돌린다.", 5.0)
+			st.quests.set_stage("UQ-05", 100)
+			if host.map != null:
+				host.refresh_npcs()
 		"v24_count":
 			_sv("V24_TICKETS", _tickets())
 		"v24":

@@ -101,7 +101,7 @@ func test_world_streaming(t) -> void:
 
 func test_world_places(t) -> void:
 	PlaceLog.load_db()
-	t.eq(PlaceLog.db.size(), 425, "장소 425곳(SD-08 §11 · SD-09a~f)")
+	t.eq(PlaceLog.db.size(), 426, "장소 426곳(SD-08 §11 · SD-09a~f 425 + 1-12g 노량진 번개24 L-R01-33)")
 	var p := PlaceLog.new()
 	t.eq(int(PlaceLog.db["L-R01-09"]["xp"]), 25, "봉천 계단마을 = 주요(정착지) 25 XP")
 	t.eq(int(PlaceLog.db["L-R01-01"]["xp"]), 0, "볼트 S-07 = 통계 제외 0 XP")

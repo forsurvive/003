@@ -43,7 +43,7 @@ var book := NpcBook.new()               ## 인물 수첩(1-2, SD-12 §3.11)
 const ENEMY_FACTION := {"CR-401": "BJ", "CR-405": "BJ", "CR-435": "SB", "CR-436": "SB", "CR-437": "SB", "CR-438": "SB", "CR-534": "SB",
 	"CR-456": "JH", "CR-457": "JH", "CR-403": "BJ", "CR-420": "YT", "CR-421": "YT", "CR-423": "YT"}
 const UNNAMED := [["N-TRADER", "떠돌이 고물상", ""], ["N-VG-S1", "고물상", ""], ["N-VG-H1", "약초꾼", ""], ["N-VG-P1", "부품 장수", ""],
-	["N-VG-C1", "옷 장수", ""], ["N-VG-F1", "국밥 장수", ""], ["N-VG-D1", "떠돌이 장사꾼", ""], ["N-UQ-K1", "아이", ""], ["N-UQ-C1", "털이꾼", ""], ["N-GA-B1", "패거리 두목", ""], ["N-GA-S1", "인솔조", "SB"], ["N-GA-S2", "인솔조", "SB"], ["N-REFUGEE", "피난민", ""], ["N-DOWNED", "쓰러진 민병", "JC_BC"],
+	["N-VG-C1", "옷 장수", ""], ["N-VG-F1", "국밥 장수", ""], ["N-VG-D1", "떠돌이 장사꾼", ""], ["N-UQ-K1", "아이", ""], ["N-UQ-C1", "털이꾼", ""], ["N-GA-B1", "패거리 두목", ""], ["N-GA-S1", "인솔조", "SB"], ["N-GA-S2", "인솔조", "SB"], ["N-UQ5-COW", "누렁이", ""], ["N-REFUGEE", "피난민", ""], ["N-DOWNED", "쓰러진 민병", "JC_BC"],
 	["N-HS-E1", "수송대 호위", "HS"], ["N-HS-E2", "수송대 호위", "HS"], ["CR-091", "짐소", ""],   # 1-8d 고개길 수송대
 	["N-SA-G1", "승강장 경비", "JC_SA"], ["N-SA-G2", "승강장 경비", "JC_SA"], ["N-SA-G3", "승강장 경비", "JC_SA"], ["N-SA-R1", "환승촌 주민", "JC_SA"],   # 1-8f 사당 환승촌
 	["N-SA-R2", "환승촌 주민", "JC_SA"], ["N-SA-R3", "환승촌 주민", "JC_SA"], ["N-SA-R4", "버섯 일꾼", "JC_SA"],
@@ -307,9 +307,9 @@ func _init() -> void:
 	for k in "HEARD HOW END END_DAY BARK_UNTIL SEE_OFF_UNTIL DOG_OUT LEG SPOT ROUTE PAW_DAY CARRY SAW TOLD_EOM WITNESS FOLLOW GONE_DAY NAMED SOLNA_TOLD PUP_SPOT".split(" "):
 		vars.declare("UQ02_" + k, "int", 0)
 	vars.declare("UQ02_NAME", "str", "")
-	for k in "RES DAY GOT_DAY PASS EOM EOM_DAY MOM_MET DELIVER_DAY BACK_READ COLD RE104 LATE PHOTO_GIVEN REPORT_DAY TOLD_MOM".split(" "):
+	for k in "RES DAY GOT_DAY PASS EOM EOM_DAY MOM_MET DELIVER_DAY BACK_READ COLD RE104 LATE PHOTO_GIVEN REPORT_DAY TOLD_MOM MOMSAID".split(" "):
 		vars.declare("UQ03_" + k, "int", 0)
-	for k in "COW PACK LOST_DAY CAUSE SPOT KILL_SEEN REFUSE_DAY DISC NEWCOW_DAY HEARD LEAD DOGS PEND TOLD SAW REWARD SPILL".split(" "):
+	for k in "COW PACK LOST_DAY CAUSE SPOT KILL_SEEN REFUSE_DAY DISC NEWCOW_DAY HEARD LEAD DOGS PEND TOLD SAW REWARD SPILL ABSENT CX CY PACK_DAY AT RES MEAT".split(" "):
 		vars.declare("UQ05_" + k, "int", 0)
 	vars.declare("RE104_N", "int", 0)
 	# 1-D4 구로 차량기지(DG-GR): 뜻은 script/act1/GR.txt 머리 주석 — CORE 기관차 · PUSH 남은 밀기 · LV_* 레버 · A · B · C 입환 결과 · STAFF 역무원 · MUSTER 안 간 사람들

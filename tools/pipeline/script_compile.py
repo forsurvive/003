@@ -83,8 +83,8 @@ ENGINE_VARS |= {"U02_" + k for k in ("GUIDE INTRO LIGHT LIGHT_DAY ASK HAL HAL_DA
 ENGINE_VARS |= {"UQ04_" + k for k in "KNOW OPEN OPEN_DAY LOCK DUE THAW THAW_DAY GONE LEFT COLD COLD_DAY BC BC_DAY SA SA_DAY JH JH_DAY LEAK FEUD FEUD_DAY RATK SHARD SHELF SOL REWARD LINK2 LINK3 FLED DATE SIGN PRICE BACK REFUND".split()} | {"DS_VALVE"}
 # R01 비표시 퀘스트 넷(1-12g, SD-05 §3.23~§3.26 · 진행기 UqR01): 뜻은 script/act1/UQ-01 · 02 · 03 · 05.txt 머리 주석
 ENGINE_VARS |= {"UQ01_" + k for k in "TALKS SOL CODE RELAY RELAYED LR13 FAILED HINT THEFT_DAY WITNESS SEEN SEEN_SAID BAN_DAY GUEST SERVED TIN_SAID TIN_BC".split()} | {"V24_" + k for k in "HOSTILE WEEK N1 N2 N3 N4 TICKETS SEEN".split()} \
-    | {"UQ02_" + k for k in "HEARD HOW END END_DAY BARK_UNTIL SEE_OFF_UNTIL DOG_OUT LEG SPOT ROUTE PAW_DAY CARRY SAW TOLD_EOM WITNESS FOLLOW GONE_DAY NAMED SOLNA_TOLD PUP_SPOT NAME".split()} | {"UQ03_" + k for k in "RES DAY GOT_DAY PASS EOM EOM_DAY MOM_MET DELIVER_DAY BACK_READ COLD RE104 LATE PHOTO_GIVEN REPORT_DAY TOLD_MOM".split()} \
-    | {"UQ05_" + k for k in "COW PACK LOST_DAY CAUSE SPOT KILL_SEEN REFUSE_DAY DISC NEWCOW_DAY HEARD LEAD DOGS PEND TOLD SAW REWARD SPILL".split()} | {"RE104_N"}
+    | {"UQ02_" + k for k in "HEARD HOW END END_DAY BARK_UNTIL SEE_OFF_UNTIL DOG_OUT LEG SPOT ROUTE PAW_DAY CARRY SAW TOLD_EOM WITNESS FOLLOW GONE_DAY NAMED SOLNA_TOLD PUP_SPOT NAME".split()} | {"UQ03_" + k for k in "RES DAY GOT_DAY PASS EOM EOM_DAY MOM_MET DELIVER_DAY BACK_READ COLD RE104 LATE PHOTO_GIVEN REPORT_DAY TOLD_MOM MOMSAID".split()} \
+    | {"UQ05_" + k for k in "COW PACK LOST_DAY CAUSE SPOT KILL_SEEN REFUSE_DAY DISC NEWCOW_DAY HEARD LEAD DOGS PEND TOLD SAW REWARD SPILL ABSENT CX CY PACK_DAY AT RES MEAT".split()} | {"RE104_N"}
 ENGINE_VARS |= {"GR_" + k for k in "CORE PUSH BUS CORE_DAY LV_A LV_B LV_C A B C STAFF STAFF_DAY STAFF_K KEY LOST SIGKEY WHISTLE MUSTER MUSTER_K REEFER DRIFT RATS SB SB_DAY ROOF CHART TAG PARK CHEER ESC GUIDE TIP MUSTER_DAY".split()}   # 1-D4 구로 차량기지
 ENGINE_VARS |= {"GA_" + k for k in "SEEN BOX BOX_DAY BOX_DONE CRATE_DAY FEUD DECOY DECOY_DAY COUNTED TOLD BOSS PICK PAID".split()} | {"PD_R01_6", "PC_HEAD"}   # 1-D6 가산 아울렛
 ENGINE_VARS |= {"UQ69_" + k for k in "PAPER DIE DEST DEST_DAY HEARD MET T1 T2 T3 ASKED HALF DONE_DAY REWARD TOLD".split()} \
@@ -102,7 +102,7 @@ ENGINE_VARS |= {f"DG_{m}{s}" for m in re.findall(r"^@\s+([A-Z0-9]+)\s", open(os.
 UNNAMED = {"N-TRADER": "떠돌이 고물상", "N-VG-S1": "고물상", "N-VG-H1": "약초꾼", "N-VG-P1": "부품 장수", "N-VG-C1": "옷 장수",
            "N-VG-F1": "국밥 장수", "N-VG-D1": "떠돌이 장사꾼", "N-UQ-K1": "아이", "N-UQ-C1": "털이꾼", "N-GA-B1": "패거리 두목", "N-GA-S1": "인솔조", "N-GA-S2": "인솔조", "N-MR-W1": "문래 철공", "N-MR-W2": "문래 철공", "N-HP-F1": "원무과 직원", "N-HP-F2": "조리원", "N-HP-F3": "야간 경비", "N-HP-F4": "방사선사", "N-HP-F5": "간호조무사", "N-HP-L1": "탁정오", "N-HP-L2": "길순례", "N-HP-L3": "오재민", "N-HP-P1": "변미숙", "N-HP-P2": "남궁호", "N-HP-P3": "기도윤", "N-HP-P4": "차미영", "N-YTB-1": "남기범", "N-YTB-2": "김밥집 주인",                    # 1-L 일반 장사꾼
            "N-REFUGEE": "피난민", "N-DOWNED": "쓰러진 민병", "N-HS-E1": "수송대 호위", "N-HS-E2": "수송대 호위",
-           "CR-091": "짐소",                                                     # 1-8d 고개길 수송대
+           "CR-091": "짐소", "N-UQ5-COW": "누렁이",                                                     # 1-8d 고개길 수송대
            "N-SA-G1": "승강장 경비", "N-SA-G2": "승강장 경비", "N-SA-G3": "승강장 경비", "N-SA-R1": "환승촌 주민", "N-SA-R2": "환승촌 주민",   # 1-8f 사당 환승촌
            "N-SA-R3": "환승촌 주민", "N-SA-R4": "버섯 일꾼", "N-SA-K1": "환승촌 아이",
            "N-YT-1": "패거리 수금원", "N-YT-2": "패거리 척후", "N-BC-1": "봉천 감시조", "N-BC-2": "봉천 감시조", "N-BC-3": "봉천 감시조", "N-JC-W1": "7동 물당번", "N-JC-W2": "7동 물당번",   # 1-11b SQ-S02 · 1-12a FQ-JC-01

@@ -81,7 +81,7 @@ uint thash(int tx, int ty) {
 }
 
 // 동네 길 · 콘크리트 골목(위계 6): B = 길 가장자리 거리, A = 골목 가장자리 거리 — 곧은 가장자리 + 길 쪽 측구(파이썬 render와 같은 식)
-void road_local(int X, int Y, int tx, int ty, int fx, int fy, int m0, ivec4 r00, ivec4 r10, ivec4 r01, ivec4 r11, bool walld,
+void road_local(int X, int Y, int tx, int ty, int fx, int fy, int m0, ivec4 r00, ivec4 r10, ivec4 r01, ivec4 r11, bool walld, bool dark_rd,
 		inout int win_m, inout bool dark, inout bool curb_on) {
 	int ex1 = 2 * fx + 1;
 	int ey1 = 2 * fy + 1;
@@ -104,7 +104,7 @@ void road_local(int X, int Y, int tx, int ty, int fx, int fy, int m0, ivec4 r00,
 	if (st) win_m = rd_mat[0];
 	if (gut || al) win_m = rd_mat[3];
 	if (lout && is_rdl(win_m)) win_m = sub;
-	dark = walld || (gut && L < K) || (al && LA >= -K) || (lout && dark);
+	dark = walld || (gut && L < K) || (al && LA >= -K) || (lout && dark && !dark_rd);
 	curb_on = false;
 }
 
@@ -173,6 +173,7 @@ void fragment() {
 		}
 	}
 	bool dark = false;
+	bool dark_rd = false;                                                  // 길 재질이 낀 칸 모양 그늘 띠(도로 경계 v3 칸은 버린다)
 	bool deep = false;
 	bool curb_on = false;
 	int ck = 1;
@@ -185,6 +186,7 @@ void fragment() {
 		bool both_soft = soft[win_m] == 1 && soft[sec_m] == 1;
 		if (both_soft) band = 0;
 		dark = band > 0 && margin < band * 768 && curb[win_m] == 0;       // 연석 재질은 연석 띠가 테두리를 대신한다
+		dark_rd = dark && (is_rdl(win_m) || is_rdl(sec_m));
 
 		if (both_soft && margin < 7680) {                                  // 경계에서 10px 안쪽: 50% → 0% 디더 섞기
 			int p_mix = ((7680 - margin) * 128) / 7680;
@@ -234,7 +236,7 @@ void fragment() {
 		ivec4 r11 = raw_at(tx + 1, ty + 1);
 		if (rc == 6) {
 			rc = 0;
-			road_local(X, Y, tx, ty, fx, fy, m0, r00, r10, r01, r11, walld, win_m, dark, curb_on);
+			road_local(X, Y, tx, ty, fx, fy, m0, r00, r10, r01, r11, walld, dark_rd, win_m, dark, curb_on);
 		}
 	}
 	if (rc > 0) {
@@ -266,13 +268,13 @@ void fragment() {
 		int gy = (r01.a + r11.a) - (r00.a + r10.a);
 		bool hx = abs(gx) >= abs(gy);
 		int m_out = mat_of[cell_at(tx + (hx ? sign(gx) : 0), ty + (hx ? 0 : sign(gy))).x];
-		int sub = is_rd(m0) ? m_out : m0;
-		if (is_rd(sub)) sub = 0;
+		int sub = is_rdl(m0) ? m_out : m0;                                  // 보도 밖: 길 재질(아스팔트 · 보도 · 콘크리트 골목) 칸 모양은 버리고 바깥 땅
+		if (is_rdl(sub)) sub = 0;
 		if (road && !med) win_m = rd_mat[0];
 		if (med) win_m = rd_mat[2];
 		if (walk) win_m = rd_mat[1];
-		if (outside && is_rd(win_m) && ((r00.g >> 6) & 1) == 0) win_m = sub;   // 동네 길 칸(6비트)의 보도 바깥 아스팔트는 그 길 몫
-		dark = walld || gutter || edging || (outside && dark);
+		if (outside && is_rdl(win_m) && ((r00.g >> 6) & 1) == 0) win_m = sub;   // 동네 길 칸(6비트)의 보도 바깥 아스팔트는 그 길 몫
+		dark = walld || gutter || edging || (outside && dark && !dark_rd);
 		curb_on = false;
 		int wd = walld ? 4 : 0;
 		if (kerb) {

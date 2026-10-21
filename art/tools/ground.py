@@ -1166,6 +1166,11 @@ class GroundSet:
         both_soft = has2 & (self.soft[win_m] == 1) & (self.soft[sec_c] == 1)
         band = np.where(both_soft, 0, band)
         dark = has2 & (band > 0) & (margin < band * 768) & (self.curb[win_m] == 0)   # 연석 재질은 연석 띠가 테두리를 대신한다
+        if getattr(self, "rd_mat", None) is not None and len(self.rd_mat) >= 4:      # 길 재질이 낀 칸 모양 그늘 띠(도로 경계 v3 칸은 버린다)
+            rdl4 = lambda m: (m == self.rd_mat[0]) | (m == self.rd_mat[1]) | (m == self.rd_mat[3])
+            dark_rd = dark & (rdl4(win_m) | (has2 & rdl4(sec_c)))
+        else:
+            dark_rd = np.zeros_like(dark)
         DB = 7680
         p_mix = np.where(both_soft & (margin < DB), ((DB - np.minimum(margin, DB)) * 128) // DB, 0)
         hp = (thash(X >> 1, Y >> 1) >> 5) & 255
@@ -1235,15 +1240,16 @@ class GroundSet:
             gx, gy = (a10 + a11) - (a00 + a01), (a01 + a11) - (a00 + a10)
             hx = np.abs(gx) >= np.abs(gy)
             m_out = self.mat_of[at(ids, tx + np.where(hx, np.sign(gx), 0), ty + np.where(hx, 0, np.sign(gy)))]
-            sub = np.where(isrd(m0), m_out, m0)
-            sub = np.where(isrd(sub), 0, sub)
+            isrdl = lambda m: (m == asp) | (m == pav) | (m == self.rd_mat[3])
+            sub = np.where(isrdl(m0), m_out, m0)                             # 보도 밖: 길 재질(아스팔트 · 보도 · 콘크리트 골목) 칸 모양은 버리고 바깥 땅
+            sub = np.where(isrdl(sub), 0, sub)
             nm = np.where(road & ~med, asp, win_m)
             nm = np.where(med, medm, nm)
             nm = np.where(walk, pav, nm)
             local = ((at(flags_raw, tx, ty) >> 6) & 1) == 1                  # 동네 길 칸: 보도 바깥 아스팔트는 그 길 몫
-            nm = np.where(outside & isrd(win_m) & ~local, sub, nm)
+            nm = np.where(outside & isrdl(win_m) & ~local, sub, nm)
             win_m = np.where(on, nm, win_m)
-            dark = np.where(on, walld | gutter | edging | (outside & dark), dark)
+            dark = np.where(on, walld | gutter | edging | (outside & dark & ~dark_rd), dark)
             curb_on = curb_on & ~on
             kd = np.maximum(E, 0) // K
             kk = np.where(kd == 0, 0, np.where(kd == CW - 1, 3, np.where(((thash(X, Y) >> 7) & 7) == 0, 2, 1)))
@@ -1275,7 +1281,7 @@ class GroundSet:
             nm = np.where(gut | al, conc, nm)
             nm = np.where(lout & isl(win_m), lsub, nm)
             win_m = np.where(lo, nm, win_m)
-            dark = np.where(lo, walld | (gut & (L < K)) | (al & (LA >= -K)) | (lout & dark), dark)
+            dark = np.where(lo, walld | (gut & (L < K)) | (al & (LA >= -K)) | (lout & dark & ~dark_rd), dark)
             curb_on = curb_on & ~lo
         # A·B 벌
         oxm, oym = (win_m * 73) & 255, (win_m * 151) & 255

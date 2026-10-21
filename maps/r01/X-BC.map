@@ -640,9 +640,12 @@ prop tree_oak2 56 40
 prop tree_oak 58 40
 prop tree_pine 59 40
 # 순회 상인(1-8d, SD-15 §4.3): 고개길 수송대 V54(정류장 12시간 · 54시간 한 바퀴)와 순회 의료반 V56(7일 중 0~1일째) — 첫날 밤(MQ-101)이 지난 뒤부터
-npc CR-091 24 38 E sheet=cr_cr091_loco cond="CARAVAN_V54 == 1 and MQ101_RESULT > 0" bark="(짐소 두 머리가 번갈아 콧김을 뿜는다.)"
+# UQ-05 누렁이(1-12g): 짐소 자리 한 값 UQ05_ABSENT(0 누렁이 · 1 없음 — 호위가 짐을 짐 · 2 위강윤에게 빌린 소)
+npc CR-091 24 38 E sheet=cr_cr091_loco cond="CARAVAN_V54 == 1 and MQ101_RESULT > 0 and UQ05_ABSENT == 0" bark="(짐소 두 머리가 번갈아 콧김을 뿜는다.)"
+npc CR-091 24 38 E sheet=cr_cr091_loco cond="CARAVAN_V54 == 1 and MQ101_RESULT > 0 and UQ05_ABSENT == 2" bark="(빌린 짐소가 고삐를 당긴다. 호위가 '빌린 소라 말을 안 들어' 하고 투덜댄다.)"
 npc N-R01-040 26 37 S cond="CARAVAN_V54 == 1 and MQ101_RESULT > 0" bark="고개길 수송대! 옷·가죽·방독면!"
-npc N-HS-E1 22 37 S look=M1-S2-HR01-H1-T03-2-PF00-HD05-EY00-PR040 cond="CARAVAN_V54 == 1 and MQ101_RESULT > 0" bark="짐 건드리지 마쇼."
+npc N-HS-E1 22 37 S look=M1-S2-HR01-H1-T03-2-PF00-HD05-EY00-PR040 cond="CARAVAN_V54 == 1 and MQ101_RESULT > 0 and UQ05_ABSENT != 1" bark="짐 건드리지 마쇼."
+npc N-HS-E1 22 37 S look=M1-S2-HR01-H1-T03-2-PF00-HD05-EY00-PR040 cond="CARAVAN_V54 == 1 and MQ101_RESULT > 0 and UQ05_ABSENT == 1" bark="(등짐을 내려놓으며) 소가 없으니 사람이 소다."
 npc N-HS-E2 27 36 W look=M2-S5-HR03-H2-T10-2-PF00-HD00-EY00-PR040 cond="CARAVAN_V54 == 1 and MQ101_RESULT > 0" bark="사당까지 반나절이야. 비 오면 하루고."
 npc C-067 24 26 S cond="MEDIC_AT == 1 and MQ101_RESULT > 0" bark="다친 사람 먼저. 줄은 그다음."
 # 1-11h SQ-S09: 봉천에 자리 잡은 채윤재 · 채해인(고향)

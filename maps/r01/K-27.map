@@ -31,5 +31,5 @@ prop low_table 5 4
 text 5 5 "낮은 상. 숟가락 하나 · 그릇 하나. 그 옆에 접은 종이 — 빌라 반상회비 명단 사본, '302호 아들 전사. 미납 면제.'" w=2
 prop bucket 10 6
 prop bandaji 1 5
-box 1 5 home w=2 owner=N-R01-507 name="낡은 반닫이"
+box 1 5 granny w=2 owner=N-R01-507 name="낡은 반닫이"
 npc N-R01-507 7 4 W cond="dead(\"N-R01-507\") == 0"

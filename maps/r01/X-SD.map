@@ -96,7 +96,8 @@ prop sd_post 18 11
 prop sd_post 23 11
 text 18 11 "캐러밴 말뚝. 쇠고리마다 밧줄 자국이 반들반들하다. 두 머리 한우를 매는 자리."
 text 23 11 "말뚝. 밧줄 끝에 이름표 — '위강윤 대여 · 하루 40캡.'"
-npc CR-091 20 12 W sheet=cr_cr091_loco bark="(짐소가 두 머리로 번갈아 여물통을 뒤진다.)"
+# 위강윤의 대여 소 — 수송대에 빌려준 동안(UQ-05 ABSENT 2)은 수송대와 함께 다닌다(한 소는 한 곳에, P3)
+npc CR-091 20 12 W sheet=cr_cr091_loco cond="UQ05_ABSENT != 2" bark="(짐소가 두 머리로 번갈아 여물통을 뒤진다.)"
 prop drum 16 11
 prop drum 16 12
 prop water_jug 17 13
@@ -107,11 +108,14 @@ prop crate_o 24 15
 prop scrap_pile 18 17
 text 18 17 "고철 더미. 칸막이를 고칠 때 쓰려고 모아 둔 함석 · 보닛 · 철판." w=2
 text 21 15 "짐 자루. '노들섬 남단 — 조합 창고' 꼬리표." w=2
-npc N-R01-043 19 9 S cond="GAME_HOUR >= 6 and GAME_HOUR < 20" route=post:19,9,8;sacks:22,14,5 bark="노들섬 가는 길? 수송대 오면 같이 붙어. 혼자 가면 고개에서 털려."
+npc N-R01-043 19 9 S cond="GAME_HOUR >= 6 and GAME_HOUR < 20 and (UQ05_ABSENT != 1 or UQ05_TOLD == 0)" route=post:19,9,8;sacks:22,14,5 bark="노들섬 가는 길? 수송대 오면 같이 붙어. 혼자 가면 고개에서 털려."
+npc N-R01-043 19 9 S cond="GAME_HOUR >= 6 and GAME_HOUR < 20 and UQ05_ABSENT == 1 and UQ05_TOLD == 1" route=post:19,9,8;sacks:22,14,5 bark="연보경네 누렁이가 고개에서 빠졌대. 찾아오면 사례는 아줌마가 하겠지."
 npc N-R01-040 21 13 S cond="CARAVAN_V54 == 2 and V_ACT >= 1" bark="고개길 수송대! 사당에선 반나절 쉬고 노들섬으로!"
-npc N-HS-E1 19 14 S look=M1-S2-HR01-H1-T03-2-PF00-HD05-EY00-PR040 cond="CARAVAN_V54 == 2 and V_ACT >= 1" bark="짐 건드리지 마쇼."
+npc N-HS-E1 19 14 S look=M1-S2-HR01-H1-T03-2-PF00-HD05-EY00-PR040 cond="CARAVAN_V54 == 2 and V_ACT >= 1 and UQ05_ABSENT != 1" bark="짐 건드리지 마쇼."
+npc N-HS-E1 19 14 S look=M1-S2-HR01-H1-T03-2-PF00-HD05-EY00-PR040 cond="CARAVAN_V54 == 2 and V_ACT >= 1 and UQ05_ABSENT == 1" bark="(등짐을 내려놓으며) 소가 없으니 사람이 소다."
 npc N-HS-E2 24 13 W look=M2-S5-HR03-H2-T10-2-PF00-HD00-EY00-PR040 cond="CARAVAN_V54 == 2 and V_ACT >= 1" bark="노들섬까지 여섯 시간. 고개 넘으면 검문소야."
-npc CR-091 22 12 W sheet=cr_cr091_loco cond="CARAVAN_V54 == 2 and V_ACT >= 1" bark="(짐 실은 짐소가 무릎을 꿇고 쉰다.)"
+npc CR-091 22 12 W sheet=cr_cr091_loco cond="CARAVAN_V54 == 2 and V_ACT >= 1 and UQ05_ABSENT == 0" bark="(짐 실은 짐소가 무릎을 꿇고 쉰다.)"
+npc CR-091 22 12 W sheet=cr_cr091_loco cond="CARAVAN_V54 == 2 and V_ACT >= 1 and UQ05_ABSENT == 2" bark="(빌린 짐소가 무릎 꿇기를 거부한다.)"
 prop car_wreck2 21 5
 text 22 6 "버스 잔해. 과천행. 바퀴를 떼어 칸막이 기둥으로 썼다. 안에서 행상들이 비를 피한다." w=3 h=2
 prop kiosk_ruin 7 3

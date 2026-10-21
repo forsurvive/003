@@ -9,17 +9,19 @@
   "AGAIN": 5,
   "ASK": 6,
   "SHOP": 7,
-  "ONE": 9,
-  "ONE_TALK": 14,
-  "ONE2": 18,
-  "BAIT": 20,
-  "BAIT_NODOG": 25,
-  "TAG": 27,
-  "GIVE_EOM": 31,
-  "LEFT": 36,
-  "KILLED": 40,
-  "MT": 44,
-  "MT_RIDGE": 48
+  "UQ02_PUP": 9,
+  "UQ05_MEAT": 12,
+  "ONE": 16,
+  "ONE_TALK": 21,
+  "ONE2": 25,
+  "BAIT": 27,
+  "BAIT_NODOG": 32,
+  "TAG": 34,
+  "GIVE_EOM": 38,
+  "LEFT": 43,
+  "KILLED": 47,
+  "MT": 51,
+  "MT_RIDGE": 55
  },
  "ops": [
   {
@@ -105,12 +107,28 @@
      "id": "TR_EOM:1:5"
     },
     {
+     "text": "개천 배수구에서 새끼 들개를 봤어요",
+     "tags": [],
+     "cond": "stage(\"UQ-02\") == 20 and UQ02_END == 0",
+     "fx": "",
+     "to": "UQ02_PUP",
+     "id": "TR_EOM:1:6"
+    },
+    {
+     "text": "고기 꾸러미를 판다(두 머리 소)",
+     "tags": [],
+     "cond": "has(\"M-430\") == 1 and UQ05_MEAT == 0",
+     "fx": "",
+     "to": "UQ05_MEAT",
+     "id": "TR_EOM:1:7"
+    },
+    {
      "text": "됐다",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "TR_EOM:1:6"
+     "id": "TR_EOM:1:8"
     }
    ]
   },
@@ -124,6 +142,42 @@
   {
    "op": "goto",
    "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-033",
+   "emo": "기본",
+   "text": "백구 새끼? …들개 새끼는 크면 들개야. 마을에 두려면 백구가 가르쳐야 하고, 산에 두면 산이 가르치지."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-033",
+   "emo": "피곤",
+   "text": "어느 쪽이 나은지는 나도 몰라. 둘 다 사는 법이야."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-033",
+   "emo": "놀람",
+   "text": "(꾸러미를 펴 본다) 이 가죽… 두 머리 누렁소? 수송대 거 아냐?"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-033",
+   "emo": "기본",
+   "text": "…고기는 고기지. 팔십. 어디서 났는지는 안 물어. 나도 안 들은 걸로 하고."
+  },
+  {
+   "op": "do",
+   "fx": "take(\"M-430\", 1); caps(80); UQ05_MEAT = 1"
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
   },
   {
    "op": "if",

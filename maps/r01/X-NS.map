@@ -89,3 +89,5 @@ prop boulder_s 26 6
 prop sandbags 9 15
 prop sandbags 21 15
 prop bucket 17 17
+# UQ-05 누렁이(1-12g): 척후가 소를 끌고 간 판 — 꾸러미는 동쪽 버스 안에 남는다(재미 검수 §8.4)
+text 19 12 "버스 안쪽, 좌석 밑에 무언가 끈에 묶여 있다." scene=UQ05_BUS cond="UQ05_SPILL == 1"

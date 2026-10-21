@@ -63,6 +63,7 @@ var hole_r := 0.0
 static var world_ts: TileSet
 static var ts_cols := 32
 static var tree_names: Array = []
+var rail_chunks := {}                            ## 철길 덧그림이 있는 청크(레일 · 침목 — tools/pipeline/rail_art.py)
 
 
 func load_map(map_id: String, st: StoryState = null) -> void:
@@ -76,6 +77,9 @@ func load_map(map_id: String, st: StoryState = null) -> void:
 	has_deck = bool(meta.get("deck", false))
 	L_TAIL = (30400 if bool(meta.get("edge", false)) else 24000) if has_deck else 16000
 	tree_names = meta["props"]
+	rail_chunks = {}
+	for c in meta.get("rails", []):
+		rail_chunks[Vector2i(int(c[0]), int(c[1]))] = true
 	if world_ts == null:
 		world_ts = load("res://assets/tiles/ts_world.tres")
 		ts_cols = int(JSON.parse_string(FileAccess.get_file_as_string("res://assets/tiles/ts_world.json"))["cols"])
@@ -424,6 +428,16 @@ func _attach(k: Vector2i, a: PackedByteArray) -> void:
 	g.commit()
 	_tiles_ground.add_child(g)
 	nodes.append(g)
+	if rail_chunks.has(k):                                               # 철길 덧그림: 바닥 바로 위(그림자 · 구조 아래)
+		var rp := "res://assets/world/rails/rail_%d_%d.png" % [k.x, k.y]
+		if ResourceLoader.exists(rp):
+			var rs := Sprite2D.new()
+			rs.texture = load(rp)
+			rs.centered = false
+			rs.position = Vector2(o * T)
+			rs.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+			_tiles_ground.add_child(rs)
+			nodes.append(rs)
 	var body := TileMapLayer.new()                                       # 구조 타일(건물·암벽·다리·성곽)
 	body.tile_set = world_ts
 	var dec := TileMapLayer.new()                                        # 덧층(옥상 설비·벼랑 끝)

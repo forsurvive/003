@@ -3,7 +3,7 @@
  "title": "노량진 번개24 — 번개 점원",
  "loc": "L-R01-33",
  "npc": "N-R01-508",
- "cond": "V24_HOSTILE == 0",
+ "cond": "V24_HOSTILE == 0 and dead(\"N-R01-508\") == 0",
  "labels": {
   "START": 0,
   "RED": 6,

@@ -19,6 +19,7 @@ import numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import world_bake as WB
 import road_net as RN
+import rail_art as RA
 import elevated as EVB
 import rad_zones as RZ
 
@@ -312,7 +313,11 @@ def build():
     t0 = time.time()
     src = json.load(open(WB.SRC, encoding="utf-8"))
     r = WB.bake(src)
-    WB.city(r, src, anchors=[(d["near"][0], d["near"][1], ANCHOR_STYLE.get(d["to"], "gov")) for d in DOORS if d.get("kind") == "facade"])
+    sp0 = os.path.join(OUT, "spots_src.json")                               # 좌표 고정 발견 자리('@x,y')는 건물이 덮지 않게 비워 둔다
+    fixed = [(int(sp["tile"][0]), int(sp["tile"][1]), int(sp["w"]), int(sp["h"])) for sp in
+             (json.load(open(sp0, encoding="utf-8"))["spots"] if os.path.exists(sp0) else []) if "lid" not in sp]
+    WB.city(r, src, anchors=[(d["near"][0], d["near"][1], ANCHOR_STYLE.get(d["to"], "gov")) for d in DOORS if d.get("kind") == "facade"],
+            reserve=fixed)
     kind = r["kind"]
     lvl = r["level"].astype(np.int16)
     play = r["play"]
@@ -931,21 +936,36 @@ def build():
     r["street"][ys_[par], xs_[par]] = False
     log("보도에 나란한 길 띠 %d칸을 바깥 땅으로" % int(par.sum()))
     rcls = np.where(rcm, r["edge_cls"], 0).astype(np.uint8)
-    rcls |= (r["street"] & rcm).astype(np.uint8) << 4                       # 덮개 바이트 6비트: 동네 길 칸(보도 바깥 아스팔트는 그대로)
     rcls |= ((r["edge_U"][:H, :W] < 0).astype(np.uint8) << 3)              # 덮개 바이트 5비트(위계 << 2 뒤): 왼쪽 위 꼭짓점이 중앙선 오른쪽
-    # 동네 길 · 콘크리트 골목(위계 6): 꼭짓점 = 둘레 네 칸 중심 값의 평균. 꼭짓점 주인 — 보도 바깥선 2칸 안은 간선, 그 밖은 동네 길
+    # 동네 길 · 콘크리트 골목(위계 6): 꼭짓점 = 둘레 네 칸 중심 값의 평균. 꼭짓점 주인 — 보도 바깥선 2칸 안은 간선, 그 밖은 동네 길.
+    # 간선 꼭짓점에도 동네 길 · 골목 거리를 작은 쪽으로 겹친다(사용자 지적 2026-10-21 '끊긴 도로'): 간선 둘레 칸도 곧은 가장자리로 그리고
+    # (예전엔 2~3칸 고리가 칸 모양 네모로 남았다), 보도에 닿는 동네 길은 보도를 뚫고 차도까지 연석을 두른 길 입구가 된다.
+    # 보도에 나란한 띠를 땅으로 돌린 칸(위)은 꼭짓점 값도 길 밖으로 다시 누른다
+    p_ = np.pad(r["street"], 1)
+    n4s = p_[:-1, :-1].astype(np.int8) + p_[1:, :-1] + p_[:-1, 1:] + p_[1:, 1:]
+    lsv = np.where(n4s == 0, np.maximum(r["lstreet_v"], 0.05), r["lstreet_v"])
     art_v = r["edge_S"] < 2.0
-    Ev = np.where(art_v, r["edge_E"], r["lstreet_v"])
-    Sv = np.where(art_v, r["edge_S"], r["lalley_v"])
-    loc_ok = ~(art_v[:-1, :-1] | art_v[1:, :-1] | art_v[:-1, 1:] | art_v[1:, 1:])
-    lv = np.minimum(r["lstreet_v"], r["lalley_v"])
+    # 길 입구만: 동네 길 거리장 기울기가 간선 거리장 기울기와 약 32° 넘게 엇갈리는 꼭짓점(보도를 가로지르는 길) — 나란히 붙은 길이 보도를 먹지 않게
+    def cross_ok(fa_, fb_):
+        ay_, ax_ = np.gradient(np.where(np.isfinite(fa_), np.clip(fa_, -6, 9), 9.0))
+        by_, bx_ = np.gradient(np.where(np.isfinite(fb_), np.clip(fb_, -6, 9), 9.0))
+        c_ = np.abs(ax_ * bx_ + ay_ * by_) / (np.hypot(ax_, ay_) * np.hypot(bx_, by_) + 1e-6)
+        return c_ < 0.85
+    mouth_s = art_v & cross_ok(r["edge_E"], lsv)
+    mouth_a = art_v & cross_ok(r["edge_S"], r["lalley_v"])
+    Ev = np.where(mouth_s, np.minimum(r["edge_E"], lsv), np.where(art_v, r["edge_E"], lsv))
+    Sv = np.where(mouth_a, np.minimum(r["edge_S"], r["lalley_v"]), np.where(art_v, r["edge_S"], r["lalley_v"]))
+    lv = np.minimum(lsv, r["lalley_v"])
     lc = (lv[:-1, :-1] + lv[1:, :-1] + lv[:-1, 1:] + lv[1:, 1:]) / 4.0
-    lmask = (lc < 1.0) & loc_ok & ~rcm & np.isin(kind, (1, 5, 6, 7)) & ~inmask
+    lmask = (lc < 1.0) & ~rcm & np.isin(kind, (1, 5, 6, 7)) & ~inmask
     rcls[lmask] = (rcls[lmask] & 8) | 6
     edge_b = WB.edge_byte(Ev[:H, :W])
     edge_a = WB.edge_byte(Sv[:H, :W])
+    # 철길 덧그림 재료(rail_art — 레일 · 침목 · 건널목): 지상 철도 폴리선 · 그려도 되는 칸 · 포장 바닥 칸
+    rail = {"polys": RA.rail_polys(src, WB), "ok": RA.ok_cells({"kind": kind, "level": level, "body": body}, inmask),
+            "paved": np.isin(floor, [rid[n] for n in ("asphalt", "asphalt_lane", "pavers", "concrete_o")])}
     log("도로 경계 v3: 간선 둘레 %d칸(교차로 %d) · 동네 길 · 골목 %d칸" % (int(rcm.sum()), int(((rcls & 7) == 5).sum()), int(lmask.sum())))
-    return {"rcls": rcls, "edge_b": edge_b, "edge_a": edge_a, "dk_code": EV["code"], "dk_top": EV["top"], "dk_low": EV["low"], "ev_stats": EV["stats"], "pois": pois, "r05": r05, "region_grid": reg_grid, "street": r["street"], "bridges": cross, "routes": routes, "floor": floor, "gflag": gflag, "solid": solid, "cover": cover, "level": level, "stair": stair, "body": body,
+    return {"rail": rail, "rcls": rcls, "edge_b": edge_b, "edge_a": edge_a, "dk_code": EV["code"], "dk_top": EV["top"], "dk_low": EV["low"], "ev_stats": EV["stats"], "pois": pois, "r05": r05, "region_grid": reg_grid, "street": r["street"], "bridges": cross, "routes": routes, "floor": floor, "gflag": gflag, "solid": solid, "cover": cover, "level": level, "stair": stair, "body": body,
             "deco": deco, "trees": tree_list, "props": props, "shadows": shadows, "insets": insets, "play": play, "band": r["band"],
             "reach": reach, "miss": miss, "wet": wet, "core": core, "kind": kind, "entries": entries}
 
@@ -1265,6 +1285,30 @@ def export(R):
             offs.append([len(blob), len(z), len(raw)])
             blob += z
     open(os.path.join(OUT, "world.bin"), "wb").write(bytes(blob))
+    # 철길 덧그림: 레일이 지나는 청크마다 1280px RGBA 한 장(game/assets/world/rails — 게임은 바닥 층 바로 위에 얹는다)
+    from PIL import Image
+    rdir = os.path.join(ROOT, "game", "assets", "world", "rails")
+    os.makedirs(rdir, exist_ok=True)
+    for f in os.listdir(rdir):
+        if f.endswith(".png"):
+            os.remove(os.path.join(rdir, f))
+    rl = R["rail"]
+    rail_chunks = []
+    for cy in range(NCY):
+        for cx in range(NCX):
+            if not offs[cy * NCX + cx][1]:
+                continue
+            x0p, y0p = cx * CS * 32, cy * CS * 32
+            near = any(((np.asarray(p)[:, 0] > cx * CS - 4) & (np.asarray(p)[:, 0] < (cx + 1) * CS + 4)
+                        & (np.asarray(p)[:, 1] > cy * CS - 4) & (np.asarray(p)[:, 1] < (cy + 1) * CS + 4)).any() for p in rl["polys"])
+            if not near:
+                continue
+            ov = RA.draw(rl["polys"], x0p, y0p, CS * 32, CS * 32, R["rcls"], R["edge_b"], R["edge_a"], rl["paved"], rl["ok"])
+            if not ov[..., 3].any():
+                continue
+            Image.fromarray(ov, "RGBA").save(os.path.join(rdir, "rail_%d_%d.png" % (cx, cy)), optimize=True)
+            rail_chunks.append([cx, cy])
+    log("철길 덧그림: 청크 %d장" % len(rail_chunks))
     pz = {k: v for k, v in R["pois"].items() if k != "sites"}
     json.dump(pz, open(os.path.join(OUT, "pois.json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"), default=int)
     ep = os.path.join(OUT, "encounters.json")                               # 소장소의 사람·크리처 자리(1-W) → 인카운터 자료(가까이 오면 그 RE)
@@ -1277,7 +1321,7 @@ def export(R):
             "region_names": {"R01": "관악", "R02": "여의도·영등포", "R03": "마포·상암", "R04": "서강·선유도", "R05": "도심",
                              "R06": "용산·남산", "R07": "강남", "R08": "동부", "R09": "북부 산악", "R10": "서부 평야", "R11": "청계산",
                              "HR": "한강"},                                   # SD-08 §7 권역 이름(배너·장소 표시)
-            "insets": [{"id": i["id"], "origin": list(i["rect"][:2]), "size": list(i["rect"][2:]), "base": i["base"]} for i in R["insets"]],
+            "rails": rail_chunks, "insets": [{"id": i["id"], "origin": list(i["rect"][:2]), "size": list(i["rect"][2:]), "base": i["base"]} for i in R["insets"]],
             "unreached": [m[0] for m in R["miss"]], "routes": R["routes"], "bridges": [{"name": c[0], "state": c[1], "linked": bool(c[2])} for c in R["bridges"]], "water_chunks": [m[0] for m in R["wet"]], "sealed_core": [m[0] for m in R["core"]]}
     json.dump(meta, open(os.path.join(OUT, "world.json"), "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
     log("내보내기: 청크 %d · 원자료 %.1fMB → 압축 %.2fMB" % (sum(1 for o in offs if o[1]), raw_total / 1e6, len(blob) / 1e6))
@@ -1484,6 +1528,11 @@ def sample(R, x0, y0, w, h, out):
         s = F * 16
         X1, Y0, Y1 = (bx + bw - x0) * 32, (by - y0) * 32, (by + bh - y0) * 32
         d.polygon([(X1, Y0), (X1 + s, Y0 + s), (X1 + s, Y1), (X1, Y1)], fill=(0, 0, 0, 89))
+    rl = R["rail"]                                                           # 철길 덧그림(바닥 바로 위 — 그림자 아래)
+    ov = RA.draw(rl["polys"], x0 * 32, y0 * 32, w * 32, h * 32, R["rcls"], R["edge_b"], R["edge_a"], rl["paved"], rl["ok"])
+    if ov[..., 3].any():
+        from PIL import Image as _I
+        img.alpha_composite(_I.fromarray(ov, "RGBA"))
     img.alpha_composite(sh)
     for ins in R["insets"]:                                                  # 손 맵 구조물 한 장(0-10 패럴랙스 그림)
         ox, oy, iw, ih = ins["rect"]

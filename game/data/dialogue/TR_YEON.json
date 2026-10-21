@@ -6,19 +6,50 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "AGAIN": 5,
-  "ASK": 6,
-  "S6ASK": 7,
-  "S6CARGO": 11,
-  "S6CARGO_PAY": 14,
-  "S6CARGO_OK": 14,
-  "S6CARGO_NO": 17,
-  "SHOP": 19,
-  "FIX": 21,
-  "UQ01": 23,
-  "ROAD": 27
+  "AGAIN": 9,
+  "ASK": 10,
+  "U5_REFUSE": 11,
+  "U5_PAY": 13,
+  "U5_PAY_NOWI": 17,
+  "U5_PAY3": 20,
+  "U5_TELL": 23,
+  "U5_TELL1": 28,
+  "U5_TELL2": 30,
+  "U5_TELL_END": 31,
+  "U5_PACK": 34,
+  "U5_PACK2": 39,
+  "S6ASK": 42,
+  "S6NOCOW": 46,
+  "S6CARGO": 48,
+  "S6CARGO_PAY": 51,
+  "S6CARGO_OK": 51,
+  "S6CARGO_NO": 54,
+  "SHOP": 56,
+  "FIX": 58,
+  "UQ01": 60,
+  "ROAD": 64
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "UQ05_REFUSE_DAY > GAME_DAY",
+   "to": "U5_REFUSE"
+  },
+  {
+   "op": "if",
+   "cond": "UQ05_PEND == 1",
+   "to": "U5_PAY"
+  },
+  {
+   "op": "if",
+   "cond": "UQ05_PEND == 3",
+   "to": "U5_PAY3"
+  },
+  {
+   "op": "if",
+   "cond": "(UQ05_COW == 1 or UQ05_COW == 2) and UQ05_HEARD == 0 and TR_YEON_MET >= 1",
+   "to": "U5_TELL"
+  },
   {
    "op": "if",
    "cond": "TR_YEON_MET >= 1",
@@ -96,10 +127,26 @@
     {
      "text": "사람 하나 노들섬까지 태워 줄 수 있어?",
      "tags": [],
-     "cond": "SQ_S06_JIN == 1 and SQ_S06_NEAR == 1 and CARAVAN_V54 == 2 and SQ_S06_CARAVAN == 0",
+     "cond": "SQ_S06_JIN == 1 and SQ_S06_NEAR == 1 and CARAVAN_V54 == 2 and SQ_S06_CARAVAN == 0 and UQ05_ABSENT != 1",
      "fx": "",
      "to": "S6CARGO",
      "id": "TR_YEON:1:5"
+    },
+    {
+     "text": "사람 하나 노들섬까지 태워 줄 수 있어?",
+     "tags": [],
+     "cond": "SQ_S06_JIN == 1 and SQ_S06_NEAR == 1 and CARAVAN_V54 == 2 and SQ_S06_CARAVAN == 0 and UQ05_ABSENT == 1",
+     "fx": "",
+     "to": "S6NOCOW",
+     "id": "TR_YEON:1:6"
+    },
+    {
+     "text": "누렁이 짐 꾸러미를 돌려준다",
+     "tags": [],
+     "cond": "has(\"M-429\") == 1",
+     "fx": "",
+     "to": "U5_PACK",
+     "id": "TR_YEON:1:7"
     },
     {
      "text": "됐다",
@@ -107,9 +154,161 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "TR_YEON:1:6"
+     "id": "TR_YEON:1:8"
     }
    ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "슬픔",
+   "text": "오늘은 장사 안 해. 누렁이 생각나서. …사당 앞이었다며. 위강윤이 봤대."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R01-043\") == 1",
+   "to": "U5_PAY_NOWI"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "미소",
+   "text": "위강윤한테 들었어. 누렁이 데려다 말뚝에 매 놓고 갔다며. 이거 받아 — 사당에서 받아 온 정화통. 앞으로 내 물건은 십 프로 빼 줄게."
+  },
+  {
+   "op": "do",
+   "fx": "give(\"I-066\", 2); aff(\"JC\", 1); UQ05_DISC = 1; UQ05_REWARD = 1; UQ05_PEND = 2"
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "미소",
+   "text": "사당 광장 말뚝에 누렁이가 매여 있더라. 매듭이 서툴던데 — 너지? 이거 받아, 정화통. 앞으로 내 물건은 십 프로 빼 줄게."
+  },
+  {
+   "op": "do",
+   "fx": "give(\"I-066\", 2); aff(\"JC\", 1); UQ05_DISC = 1; UQ05_REWARD = 1; UQ05_PEND = 2"
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "미소",
+   "text": "누렁이 말뚝에 매어 놓고 간 거 너지? 짐도 소도 다 찾아 줬네. 앞으로 내 물건은 십 프로 빼 줄게. 사례는 꾸러미 때 했으니까."
+  },
+  {
+   "op": "do",
+   "fx": "UQ05_DISC = 1; UQ05_PEND = 2"
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "피곤",
+   "text": "누렁이를 고개에서 잃었어. 낙성대 고개."
+  },
+  {
+   "op": "if",
+   "cond": "UQ05_CAUSE == 1",
+   "to": "U5_TELL1"
+  },
+  {
+   "op": "if",
+   "cond": "UQ05_CAUSE == 2",
+   "to": "U5_TELL2"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "기본",
+   "text": "계엄 순찰 확성기가 바로 옆에서 터졌어. 소가 놀라서 고삐를 끊고 비탈로 내뺐지."
+  },
+  {
+   "op": "goto",
+   "to": "U5_TELL_END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "분노",
+   "text": "척후 놈들 총소리에 고삐가 끊겼지. 소를 노린 건지 짐을 노린 건지."
+  },
+  {
+   "op": "goto",
+   "to": "U5_TELL_END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "기본",
+   "text": "들개 떼가 붙었어. 호위가 쫓는 사이에 누렁이가 비탈로 내뺐지."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "기본",
+   "text": "짐도 등에 진 채야. 찾아오면 사례할게. 고개 넘을 때마다 눈은 돌리는데, 우리 걸음으로 비탈은 못 뒤져."
+  },
+  {
+   "op": "do",
+   "fx": "UQ05_HEARD = 1; quest(\"UQ-05\", 10)"
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "if",
+   "cond": "UQ05_REWARD == 1",
+   "to": "U5_PACK2"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "놀람",
+   "text": "내 꾸러미! 꼬리표 그대로네. (풀어 본다) 하나도 안 비었어."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "미소",
+   "text": "이거 받아, 정화통. …누렁이는 아직 고개에 있어? 사람이 소를 찾아 주는 세상은 아닌데."
+  },
+  {
+   "op": "do",
+   "fx": "take(\"M-429\", 1); karma(25); aff(\"JC\", 1); give(\"I-066\", 2); xp(60); UQ05_PACK = 2; UQ05_REWARD = 1; quest(\"UQ-05\", 100)"
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "미소",
+   "text": "꾸러미까지. 이건 덤으로 고마워."
+  },
+  {
+   "op": "do",
+   "fx": "take(\"M-429\", 1); UQ05_PACK = 2"
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
   },
   {
    "op": "line",
@@ -129,6 +328,16 @@
    "args": [
     "asked"
    ]
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "피곤",
+   "text": "지금은 소가 없어. 사람 숨길 데가 없어. 호위들이 짐을 지고 다니는 판이야."
   },
   {
    "op": "goto",

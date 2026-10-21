@@ -156,3 +156,23 @@
 "X3 FQ-SB-01 FQ_SB02_TOLD": 같은 사실 한 곳(P1) — 구만호가 일당을 주며 '운송조 호위가 하나 모자라'고 알려 준 사실 · SB-02 출발 줄(FQSB02_YARD SENT 판)이 읽는다
 "X7 FQSB02_TAESU N-R02-506": 운송 중 장면(@npc -)은 진행기가 세운 행렬 · 상판 밑의 오태수 배우에게만 연다(fq_sb.gd _interact2 · cv["taesu"]) — 봉천 X-BC 배치(TWHERE 3 · 끝난 뒤 · 추심 날 낮 집 안)와는 단계로 배타(1-12f 서사 대조 A217)
 "X7 FQSB02_TAESU_L N-R02-506": 위와 같음(대리 반장 판)
+# ---- 1-12g UQ-01 「24시」 · UQ-02 「백구의 밥그릇」 · UQ-03 「다리목 하사의 배급표」 · UQ-05 「누렁이」
+"X1 UQ-01 N-R01-038 언급": K11_GUEST는 밤손님 npc cond가 석라희 생존을 봄(K-11.map) · UQ01_CASE '석라희가 쇠줄을 말아 넣어 뒀다'는 지난 일(그가 죽어도 사실)
+"X1 UQ-02 N-R01-029": 위와 같음
+"X1 UQ-02 C-015 언급": UQ02_HEAR · TAG는 트리거 cond가 백구 생존을 봄 · GIVE는 dead("C-015")면 NODOG(빈 개집) · FREE는 dead면 짖는 소리 줄을 건너뜀 · TAG '백구 동생'은 이름(죽어도 이름)
+"X1 UQ-05 N-R01-040 언급": UQ05_COW · UQ05_BUS의 '연보경'은 짐 꼬리표에 쓴 글씨(그가 죽어도 꼬리표는 그대로)
+"X3 MQ-102~105 UQ03_GOT_DAY": UQ-03 갈래를 엄도현 장면(MQ-105_BJ_IDLE) 안에 둠(대화 장면은 이름순 첫 참 — A106) — 같은 사실 한 곳(P1)
+"X3 MQ-102~105 UQ03_PASS": 위와 같음(사진을 건넴)
+"X3 MQ-102~105 UQ03_RES": 위와 같음(결과 한 값)
+"X3 MQ-102~105 UQ03_MOMSAID": 위와 같음(엄도현 '어머니 소식' 한 번)
+"X3 SAGOGAE UQ03_RES": UQ-03 ② 알린다는 황보서현 장면(SG_HWANG) 안 갈래 — 같은 결과 한 값(P1)
+"X3 TRAVEL UQ05_DISC": UQ-05 사례 · 거부 · 짐 돌려주기는 연보경 장면(TR_YEON) · 고기 매입은 엄태경 장면(TR_EOM) 안 갈래 — 같은 사실 한 곳(P1)
+"X3 TRAVEL UQ05_HEARD": 위와 같음
+"X3 TRAVEL UQ05_MEAT": 위와 같음
+"X3 TRAVEL UQ05_PACK": 위와 같음
+"X3 TRAVEL UQ05_PEND": 위와 같음
+"X3 TRAVEL UQ05_REWARD": 위와 같음
+"X3 쓰기만 UQ02_HEARD": X-BC 엿듣기 트리거 cond(UQ02_HEARD == 0)가 읽는다 — 맵 조건은 도구가 세지 않음
+"X3 쓰기만 UQ02_NAME": 이름표 장면 본문 '{UQ02_NAME}'이 읽는다(문자열 변수 끼워 넣기)
+"X3 쓰기만 UQ05_RES": 결과 기록(데려다줌 1 · 위강윤 2 · 허순자 3 · 아무도 4) — 시험과 2막 수송대 후일담(MQ-201 노들섬 남단 정류)이 읽을 값
+"X3 쓰기만 UQ05_SPILL": X-NS 버스 조사 글 cond(UQ05_SPILL == 1)가 읽는다 — 맵 조건

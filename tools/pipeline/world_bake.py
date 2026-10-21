@@ -11,6 +11,7 @@ python3 tools/pipeline/world_bake.py [--preview art/samples/43_world_bake.png]
 import os, sys, json, math
 import numpy as np
 import road_net as RN
+import road_link as RL
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 SRC = os.path.join(ROOT, "game", "data", "world", "source.json")
@@ -395,8 +396,9 @@ def rock_frac(r):
     return r["rockf"]
 
 
-def city(r, src, seed=4120, anchors=()):
-    """anchors: [(x, y, 양식)] — 손 실내 문이 붙을 장소에 반드시 세울 건물(SD-21 §8 재접속). 길·골목 위면 그 칸을 땅으로 되돌린다"""
+def city(r, src, seed=4120, anchors=(), reserve=()):
+    """anchors: [(x, y, 양식)] — 손 실내 문이 붙을 장소에 반드시 세울 건물(SD-21 §8 재접속). 길·골목 위면 그 칸을 땅으로 되돌린다.
+    reserve: [(x, y, w, h)] — 건물을 짓지 않을 칸(좌표가 고정된 월드 발견 자리 '@x,y' — 진행기 상수 · 원고가 그 칸에 기댄다)"""
     kind, use, region, level = r["kind"], r["use"], r["region"], r["level"]
     rng = np.random.default_rng(seed)
     buildable = (kind == 1) & ((use == 0) | (use == 1) | (use == 3) | (use == 4)) & (level == 0)
@@ -456,6 +458,10 @@ def city(r, src, seed=4120, anchors=()):
     bid = np.zeros((H, W), np.int32)
     blds = []
     arter = r.get("cls", np.zeros((H, W), np.uint8)) > 0
+    for (rx, ry, rw, rh) in reserve:                                      # 고정 발견 자리 둘레 1칸까지 비운다
+        occ[max(0, ry - 1):ry + rh + 1, max(0, rx - 1):rx + rw + 1] = True
+    fronts = np.zeros((H, W), bool)
+    occ_base = occ.copy()
     for ax, ay, st in anchors:                                            # 고정 건물 먼저(간선·물·성곽·단 위는 피해 가장 가까운 자리)
         gap, wr, hr, fr = FORM[st]
         bw, bh = (wr[0] + wr[1]) // 2, (hr[0] + hr[1]) // 2
@@ -487,10 +493,23 @@ def city(r, src, seed=4120, anchors=()):
         track[sl] = False
         front = (slice(yy + bh, yy + bh + 2), slice(xx, xx + bw))          # 문 앞 두 줄은 비워 걸어서 닿게
         alley[front] |= (kind[front] == 1)
+        fronts[front] |= (kind[front] == 1)
         blds.append({"x": int(xx), "y": int(yy), "w": int(bw), "h": int(bh), "style": st,
                      "floors": int(min(fr[1], bh - 2)), "seed": int(_h(ax, ay, 77))})
         bid[sl] = len(blds)
         occ[max(0, yy - gap):yy + bh + gap + 2, max(0, xx - gap):xx + bw + gap] = True
+    # 길 연결 후처리(road_link — 사용자 지적 2026-10-21 '끊긴 도로'): 막다른 끝을 앞의 길 · 간선에 잇고, 간선에 안 닿는 섬은 잇거나 지운다.
+    # 고정 건물이 길을 끊은 자리 · 문 앞 두 줄도 여기서 이어진다. 이은 칸은 길로(채우기가 비워 둔다), 지운 칸은 다시 지을 수 있는 땅으로
+    hub = ((kind == 7) & ~street) | (kind == 8) | (kind == 9)
+    passable = land_ok & (bid == 0)
+    segs, removed = RL.link(street, alley, track, hub, passable, fab, keep=fronts, log=lambda m: print("  " + m))
+    kind[street & (kind == 1)] = 7
+    kind[removed & (kind == 7) & ~hub & ~street] = 1
+    anchor_zone = occ & ~occ_base
+    occ |= street | alley | track
+    base_ok = (kind == 1) & ((use == 0) | (use == 1) | (use == 3) | (use == 4)) & (level == 0) & ~((fab == 6) & (cluster < 0.66))
+    occ[removed & base_ok & ~anchor_zone & ~street & ~alley & ~track] = False
+    r["link_segs"] = segs
     order = rng.permutation(4)
     for oy in (order[0] % 2, 1 - order[0] % 2):
         for y in range(oy, H - 4, 2):
@@ -530,6 +549,8 @@ def city(r, src, seed=4120, anchors=()):
     # 둘레 네 칸이 모두 길이면 음수, 모두 아니면 양수, 섞이면 잰 값 그대로. 거리가 없는 길(단지 정문 · 문 앞 골목)은 칸 경계에서 끊긴다.
     # 바닥 셰이더가 꼭짓점 값을 이중선형으로 이어 곧은 가장자리 · 측구를 그린다
     fsv, fav = RN.local_fields_vertex(r, fab, land_ok, hs)
+    np.minimum(fsv, RL.vertex_field(segs, fsv.shape, {"street"}), out=fsv)          # 이은 길도 곧은 가장자리로
+    np.minimum(fav, RL.vertex_field(segs, fav.shape, {"alley", "track"}), out=fav)
 
     def vfix(fv, mask):
         p_ = np.pad(mask, 1)

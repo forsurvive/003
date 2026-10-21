@@ -1,0 +1,30 @@
+{
+ "id": "UQ05_BUS",
+ "title": "낙성대 고개 — 버스 안",
+ "loc": "L-R01-12",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "버스 좌석 밑에 끈 묶인 천 꾸러미. 꼬리표 '한강 행상 조합 · 연보경'. 꾸러미 옆 바닥에 두 머리 소의 굽 자국 — 그리고 핏자국."
+  },
+  {
+   "op": "do",
+   "fx": "give(\"M-429\", 1); UQ05_PACK = 1; UQ05_PACK_DAY = GAME_DAY; UQ05_SPILL = 2"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-05.txt"
+}
