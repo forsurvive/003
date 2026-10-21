@@ -587,7 +587,7 @@ func _ready() -> void:
 				["warp", "W", "gt_yard"], ["wait", 2.0], ["calm"], ["go", _spot_o("L-R07-12").x + 5, _spot_o("L-R07-12").y + 4],
 				["go", _spot_o("L-R07-12").x + 8, _spot_o("L-R07-12").y + 3],
 				["until", "FQ_JH02_YARD == 1", 15.0, "승차장 — 영등포 막차 앞에서 멈춘다", "jh02_yard"],
-				["warp", "W", "gt_tunnel"], ["wait", 2.0], ["calm"], ["go", _spot_o("L-R07-13").x + 1, _spot_o("L-R07-13").y + 3],
+				["warp", "W", "gt_tunnel"], ["wait", 2.0], ["calm"], ["want", ["내일 아침 지하시장에서"]], ["go", _spot_o("L-R07-13").x + 1, _spot_o("L-R07-13").y + 3],
 				["go", _spot_o("L-R07-13").x + 3, _spot_o("L-R07-13").y + 2],
 				["until", "FQ_JH02_TAK == 3", 15.0, "반포 쪽 맨홀 — 혼자 운반조 길로", "jh02_tunnel"],
 				["hours", 21], ["wait", 1.0], ["check", "FQ_JH02_TAK == 4", "다음 날 06시 뒤 — J-03 칸막이 앞"],

@@ -125,7 +125,8 @@ prop screen_partition 7 22
 prop screen_partition 8 22
 text 3 24 "상인회장 책상. 장부 세 권과 출입패 상자. '등록 같은 거 없는 사람들'의 이름이 줄지어 적혀 있다." w=2 scene=FQJH02_LEDGER
 npc N-UG-501 9 22 W cond="FQ_JH02_TAK == 4" bark="(칸막이 앞에서 코트 단추를 만지작거린다)"
-npc N-J03-R1 12 25 W look=M1-S2-HR03-H2-T10-1-PF00-HD02-EY00-PR050 cond="FQ_JH02_RUMOR == 1 and FQ_JH02_KNOWN == 0" bark="고터 탁 영감 말이야, 아직 그 코트 입고 시간표 앞에 서 있더라. 외상 갚았다던데 — 누가 그래?"
+npc N-J03-R1 12 25 W look=M1-S2-HR03-H2-T10-1-PF00-HD02-EY00-PR050 cond="FQ_JH02_RUMOR == 1 and FQ_JH02_KNOWN == 0 and FQ_JH02_PAY == 0" bark="고터 탁 영감 말이야, 아직 밤마다 시간표 앞에 서 있더라. 외상 갚았다던데 — 누가 그래?"
+npc N-J03-R1 12 25 W look=M1-S2-HR03-H2-T10-1-PF00-HD02-EY00-PR050 cond="FQ_JH02_RUMOR == 1 and FQ_JH02_KNOWN == 0 and FQ_JH02_PAY > 0" bark="고터 탁 영감이 노 사장 앞으로 캡을 맡겼다던데. 받았소? 영감은 아직 밤마다 시간표 앞에 서 있더라."
 prop planter 2 27
 prop radio_desk 35 24
 text 35 24 "안내 방송실 마이크. '고객 여러분께 안내 말씀 드립니다.' 2077년 그대로의 첫마디를 아직도 쓴다."

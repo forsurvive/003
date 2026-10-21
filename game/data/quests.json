@@ -171,32 +171,32 @@
    "places": [
     "L-R01-23"
    ],
-   "places_src": "04d_faction-questlines.md:1048",
+   "places_src": "04d_faction-questlines.md:1050",
    "stages": {
     "10": {
      "done": "",
      "log": "정비고의 잠든 로봇 여섯 대가 정비를 기다린다.",
-     "src": "04d_faction-questlines.md:1050"
+     "src": "04d_faction-questlines.md:1052"
     },
     "100": {
      "done": "",
      "log": "오늘의 정비가 끝났다.",
-     "src": "04d_faction-questlines.md:1050"
+     "src": "04d_faction-questlines.md:1052"
     },
     "20": {
      "done": "",
      "log": "로봇마다 외장을 닦고 관절에 기름을 친다.",
-     "src": "04d_faction-questlines.md:1050"
+     "src": "04d_faction-questlines.md:1052"
     },
     "200": {
      "done": "",
      "log": "각성회가 정비고 문을 닫았다.",
-     "src": "04d_faction-questlines.md:1050"
+     "src": "04d_faction-questlines.md:1052"
     },
     "30": {
      "done": "",
      "log": "3번 로봇의 대기등이 다른 로봇보다 밝다.",
-     "src": "04d_faction-questlines.md:1050"
+     "src": "04d_faction-questlines.md:1052"
     }
    },
    "title": "정비 당번"
@@ -206,37 +206,37 @@
    "places": [
     "L-R01-24"
    ],
-   "places_src": "04d_faction-questlines.md:1071",
+   "places_src": "04d_faction-questlines.md:1073",
    "stages": {
     "10": {
      "done": "",
      "log": "각성회 등록 천공기의 바늘이 부러졌다.",
-     "src": "04d_faction-questlines.md:1073"
+     "src": "04d_faction-questlines.md:1075"
     },
     "100": {
      "done": "",
      "log": "중계소 천공기가 다시 돌아간다.",
-     "src": "04d_faction-questlines.md:1073"
+     "src": "04d_faction-questlines.md:1075"
     },
     "20": {
      "done": "",
      "log": "같은 기종이 학원가 전산 채점실에 있다.",
-     "src": "04d_faction-questlines.md:1073"
+     "src": "04d_faction-questlines.md:1075"
     },
     "200": {
      "done": "",
      "log": "류정이 죽었다. 천공기는 멈춘 채다.",
-     "src": "04d_faction-questlines.md:1073"
+     "src": "04d_faction-questlines.md:1075"
     },
     "30": {
      "done": "",
      "log": "채점기는 2077년 모의고사 답안을 찍다 멈췄다.",
-     "src": "04d_faction-questlines.md:1073"
+     "src": "04d_faction-questlines.md:1075"
     },
     "40": {
      "done": "",
      "log": "천공 바늘 묶음이 손에 있다.",
-     "src": "04d_faction-questlines.md:1073"
+     "src": "04d_faction-questlines.md:1075"
     }
    },
    "title": "천공기"
@@ -248,32 +248,32 @@
     "L-R01-09",
     "L-R01-10"
    ],
-   "places_src": "04d_faction-questlines.md:1189",
+   "places_src": "04d_faction-questlines.md:1191",
    "stages": {
     "10": {
      "done": "",
      "log": "계단마을 빗물 수로가 막혀 물탱크가 반이다.",
-     "src": "04d_faction-questlines.md:1191"
+     "src": "04d_faction-questlines.md:1193"
     },
     "100": {
      "done": "",
      "log": "계단마을 물길이 다시 흐른다.",
-     "src": "04d_faction-questlines.md:1191"
+     "src": "04d_faction-questlines.md:1193"
     },
     "20": {
      "done": "",
      "log": "백구가 수로를 따라 냄새를 맡는다.",
-     "src": "04d_faction-questlines.md:1191"
+     "src": "04d_faction-questlines.md:1193"
     },
     "30": {
      "done": "",
      "log": "계곡 암거 입구에 흙막이가 있다. 신림 쪽이다.",
-     "src": "04d_faction-questlines.md:1191"
+     "src": "04d_faction-questlines.md:1193"
     },
     "40": {
      "done": "",
      "log": "배수지 유입구 이음매가 샌다.",
-     "src": "04d_faction-questlines.md:1191"
+     "src": "04d_faction-questlines.md:1193"
     }
    },
    "title": "계단 물길"

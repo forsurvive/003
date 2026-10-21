@@ -6,12 +6,15 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "TAK": 3
+  "TAK": 3,
+  "ALONE": 6,
+  "TOGETHER": 9,
+  "WALK": 12
  },
  "ops": [
   {
    "op": "if",
-   "cond": "FQ_JH02_TAK == 2 and dead(\"N-UG-501\") == 0",
+   "cond": "FQ_JH02_TAK == 2 and FQ_JH02_TUNNEL == 0 and dead(\"N-UG-501\") == 0",
    "to": "TAK"
   },
   {
@@ -37,6 +40,35 @@
    "text": "먼저 가서 노 사장한테… 아니, 아무 말도 하지 마. 내가 할게."
   },
   {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "그럼 내일 아침 지하시장에서 봬요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "ALONE",
+     "id": "GT_TUNNEL:1:0"
+    },
+    {
+     "text": "같이 내려가요(운반조 길 — 내일 아침 지하시장 후문)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TOGETHER",
+     "id": "GT_TUNNEL:1:1"
+    },
+    {
+     "text": "지상으로 끝까지 같이 걸어요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "WALK",
+     "id": "GT_TUNNEL:1:2"
+    }
+   ]
+  },
+  {
    "op": "cmd",
    "name": "jh02",
    "args": [
@@ -48,6 +80,40 @@
    "who": "SYS",
    "emo": "기본",
    "text": "탁만수가 코트 자락을 여미고 사다리를 내려간다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-UG-501",
+   "emo": "미소",
+   "text": "같이? 물길이 무릎까지야. …그래, 구두는 내가 말려 줄게."
+  },
+  {
+   "op": "cmd",
+   "name": "jh02",
+   "args": [
+    "together"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "jh02",
+   "args": [
+    "walk"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-UG-501",
+   "emo": "놀람",
+   "text": "지상으로 끝까지? (하늘을 한 번 본다) …200년 만에 뒤꿈치 좀 닳겠네. 가."
   },
   {
    "op": "goto",

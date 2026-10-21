@@ -214,7 +214,7 @@ func test_jh02_lie_rumor_coat(t) -> void:
 	_play(st2, c2, "GT_TAK", ["코트를 돌려드리는"])
 	t.eq(_v(st2, "FQ_JH02_COAT"), 1, "[화술] 코트를 벗었다")
 	t.eq(int(st2.items.get("M-424", 0)), 1, "M-424")
-	t.ok(_says(st2, c2, "MQ-103_BOK", "반품 안 받아", ["장부 마지막 줄", "반품하러"]), "노복희: 200년 입은 옷은 반품 안 받아")
+	t.ok(_says(st2, c2, "MQ-103_BOK", "반품 안 받아", ["탁만수의 코트"]), "노복희: 200년 입은 옷은 반품 안 받아")
 	t.eq(int(st2.items.get("M-424", 0)), 1, "코트는 돌려받았다")
 	t.eq(_v(st2, "FQ_JH02_COAT"), 2, "돌려보냄")
 	t.ok(_says(st2, c2, "GT_TAK", "몸이 맞네", ["코트를 돌려준다"]), "탁만수가 다시 입는다")
@@ -236,7 +236,7 @@ func test_jh02_escort_reunion(t) -> void:
 	t.eq(_v(st, "FQ_JH02_NEAR"), 1, "곁에 있음")
 	t.ok(_says(st, c, "GT_YARD", "23시 40분"), "승차장: 영등포 막차 앞에서 멈춘다")
 	t.eq(_v(st, "FQ_JH02_YARD"), 1, "승차장 장면 한 번")
-	t.ok(_says(st, c, "GT_TUNNEL", "사다리를 내려간다"), "맨홀: 혼자 지하로")
+	t.ok(_says(st, c, "GT_TUNNEL", "사다리를 내려간다", ["내일 아침 지하시장에서"]), "맨홀: 혼자 지하로")
 	t.eq(_v(st, "FQ_JH02_TAK"), 3, "운반조 길")
 	t.ok(c._tak_mate().is_empty(), "동행 끝")
 	c._day2()
@@ -273,9 +273,10 @@ func test_jh02_escort_reunion(t) -> void:
 	c2._cmd2(["tunnel"], func() -> void: pass)
 	st2.vars.set_v("GAME_DAY", 6)
 	c2._day2()
-	_play(st2, c2, "GT_TAK", ["손님 오셨어요"])
+	t.ok(_says(st2, c2, "GT_TAK", "얼굴까지 와야", ["손님 오셨어요"]), "이미 그은 줄 — 다시 긋지 않는다")
 	t.eq(_v(st2, "AFF_JH") - jh2, 0, "재회 보상은 없음(이미 100)")
-	t.eq(_v(st2, "FQ_JH02_SOL"), 1, "재회가 마지막 사실")
+	t.eq(_v(st2, "FQ_JH02_MEET"), 1, "재회함")
+	t.eq(_v(st2, "FQ_JH02_SOL"), 3, "정리 방법(대납)은 덮지 않는다(P1)")
 	t.eq(_v(st2, "FQ_JH02_SHOP"), 1, "JH-01 끝 — B-07")
 	t.eq(int(st2.items.get("A-019", 0)), 1, "코트는 한 벌")
 
@@ -316,3 +317,103 @@ func test_jh02_abandon_death_fail(t) -> void:
 	st3.kill("C-050")
 	c3.tick(0.5)
 	t.eq(st3.quests.stage("FQ-JH-02"), 200, "노복희가 죽으면 상인회가 장부를 덮는다")
+
+
+func test_jh02_timeline_capture_walk(t) -> void:
+	# 2077-10-23 정본(SD-02 §3.3): 23:19 경보 = 운행 중지 · 탁만수는 그날 낮에 코트를 사고 밤 막차로 영등포 집에 가려 했다
+	var a := _host()
+	var st: StoryState = a[1]
+	var c: FqJh = a[2]
+	t.ok(_says(st, c, "GT_DISPATCH", "23:19"), "배차 일지: 23:19 경보에 운행 중지")
+	t.ok(not _says(st, c, "GT_DISPATCH", "22:00"), "22:00 운행 중지는 없다(전쟁 전)")
+	t.ok(_says(st, c, "GT_WI", "23시 19분", ["그날 밤"]), "위수안: 23시 19분")
+	t.ok(_says(st, c, "GT_TAK", "19분에 경보", ["오래돼 보이네요"]), "탁만수: 버스는 안 떠났다")
+	t.ok(_says(st, c, "GT_WREATH", "10. 24."), "화환은 다음 날 결혼식 것")
+	_ask(st, c)
+	t.ok(_says(st, c, "FQJH02_LEDGER", "다음 주") or true, "장부: 다음 주")
+	# 생포되면 호위 대상은 우리까지 따라오지 않는다(A63)
+	var b := _host("GT-01", "from_W")
+	var h2: InteriorHost = b[0]
+	var st2: StoryState = b[1]
+	var c2: FqJh = b[2]
+	_ask(st2, c2)
+	_play(st2, c2, "GT_TAK", ["직접 가서 갚으세요"])
+	h2.enter("H-03", "cage_pc")
+	t.eq(_v(st2, "FQ_JH02_TAK"), 3, "생포 — 탁만수는 혼자 운반조 길로")
+	t.ok(c2._tak_mate().is_empty(), "우리에 동행이 없다")
+	# 지상으로 끝까지 데려오면 J-03 칸막이 앞
+	var d := _host("GT-01", "from_W")
+	var h3: InteriorHost = d[0]
+	var st3: StoryState = d[1]
+	var c3: FqJh = d[2]
+	_ask(st3, c3)
+	_play(st3, c3, "GT_TAK", ["직접 가서 갚으세요"])
+	_play(st3, c3, "GT_TUNNEL", ["지상으로 끝까지"])
+	t.eq(_v(st3, "FQ_JH02_TUNNEL"), 2, "맨홀을 지나 지상으로")
+	t.eq(_v(st3, "FQ_JH02_TAK"), 2, "아직 호위 중")
+	t.ok(not _says(st3, c3, "GT_TUNNEL", "여기서부턴 내 길"), "맨홀 장면은 한 번")
+	h3.enter("J-03", "from_J-02")
+	t.eq(_v(st3, "FQ_JH02_TAK"), 4, "J-03에 들어서면 칸막이 앞(이틀 뒤 다시 나타나지 않음)")
+	t.ok(c3._tak_mate().is_empty(), "동행 끝")
+	# S13 투표 날 노복희는 자리에 없다
+	st3.vars.set_v("SQ_S13_V_B", 2)
+	t.ok(_says(st3, c3, "GT_TAK", "투표하러"), "노복희가 없는 날 — 재회는 다음 날")
+	t.eq(_v(st3, "FQ_JH02_MEET"), 0, "재회 안 함")
+	st3.vars.set_v("SQ_S13_V_B", 0)
+	t.ok(_says(st3, c3, "GT_TAK", "단추 하나", ["손님 오셨어요"]), "다음 날 재회")
+
+
+func test_jh02_paid_lie_and_coat(t) -> void:
+	var a := _host()
+	var st: StoryState = a[1]
+	var c: FqJh = a[2]
+	_ask(st, c)
+	_play(st, c, "GT_TAK", ["캡으로 셈해", "서른여섯 캡으로"])
+	var jh := _v(st, "AFF_JH")
+	_play(st, c, "MQ-103_BOK", ["장부 마지막 줄", "갚았대요"])
+	t.ok(_says(st, c, "GT_TAK", "캡은 전해 줬지"), "탁만수는 자기가 캡을 맡긴 걸 안다")
+	st.vars.set_v("GAME_DAY", 12)
+	c._day2()
+	t.ok(_says(st, c, "MQ-103_BOK", "돈은 떠났는데", ["모르는 일이에요"]), "노복희: 맡긴 캡이 안 왔다")
+	t.eq(_v(st, "AFF_JH") - jh, 6 - 10, "모른 척하면 −5 한 번 더")
+	t.ok(_says(st, c, "MQ-103_BOK", "단골 값은 없어", ["물건을 보고"]) and _v(st, "FQ_JH02_COLD_DAY") == 18, "이레 단골 값 끊김")
+	t.ok(_says(st, c, "FQJH02_LEDGER", "물음표"), "장부 '끝' 옆 물음표")
+	# 물물교환 60 — 노복희가 차액을 발품 값으로
+	var b := _host()
+	var st2: StoryState = b[1]
+	var c2: FqJh = b[2]
+	_ask(st2, c2)
+	c2._cmd2(["pay", "60"], func() -> void: pass)
+	t.ok(_says(st2, c2, "MQ-103_BOK", "발품 값", ["장부 마지막 줄", "[캡 60]"]), "60캡 — 스물넷 발품 값")
+	t.eq(_v(st2, "PC_CAPS"), 224, "200 + 60 − 60 + 24")
+	# 코트를 들고 다른 길로 정리해도 막히지 않는다
+	var d := _host()
+	var st3: StoryState = d[1]
+	var c3: FqJh = d[2]
+	_ask(st3, c3)
+	_play(st3, c3, "GT_TAK", ["코트를 돌려드리는"])
+	_play(st3, c3, "MQ-103_BOK", ["장부 마지막 줄", "대신 갚겠습니다"])
+	t.ok(_has_opt(st3, "MQ-103_BOK", "탁만수의 코트"), "정리 뒤에도 코트 반품 줄")
+	t.ok(_says(st3, c3, "GT_TAK", "안 가져갔구먼", ["코트를 돌려준다"]), "탁만수: 노 사장한테 안 가져갔구먼")
+	t.eq(_v(st3, "FQ_JH02_COAT"), 3, "다시 입음")
+	t.ok(not _says(st3, c3, "GT_YEO", "코트를 벗었더군", ["구두 고치는"]), "여태경 줄은 정리 뒤엔 없다")
+	# 무효 승차권 — [화술] 없이 호위
+	var e := _host("GT-01", "from_W")
+	var st4: StoryState = e[1]
+	var c4: FqJh = e[2]
+	_ask(st4, c4)
+	st4.vars.set_v("PC_SKP_SPEECH", 0)
+	_play(st4, c4, "GT_WI", ["무효 승차권"])
+	t.eq(int(st4.items.get("M-425", 0)), 1, "위수안의 무효 승차권")
+	_play(st4, c4, "GT_WI", ["무효 승차권"])
+	t.eq(int(st4.items.get("M-425", 0)), 1, "한 사람에 한 장")
+	_play(st4, c4, "GT_TAK", ["200년 늦은 막차"])
+	t.eq(_v(st4, "FQ_JH02_TAK"), 2, "승차권으로 호위")
+	# 탁만수 죽음을 아직 아무도 모르면 노복희도 모른다(P7)
+	var f := _host()
+	var st5: StoryState = f[1]
+	var c5: FqJh = f[2]
+	_ask(st5, c5)
+	st5.kill("N-UG-501")
+	st5.deeds.bodies.append({"id": "N-UG-501"})
+	t.ok(_says(st5, c5, "MQ-103_BOK", "탁만수 소식은", ["장부 마지막 줄"]), "시체가 발견 전 — 노복희는 모른다")

@@ -18,7 +18,7 @@
   },
   {
    "op": "if",
-   "cond": "FQ_JH02_DONE >= 1 and FQ_JH02_SOL == 1",
+   "cond": "FQ_JH02_TAK == 5",
    "to": "GONE"
   },
   {

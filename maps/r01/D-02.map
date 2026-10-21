@@ -209,7 +209,8 @@ prop med_shelf 46 25
 text 46 27 "천막 의원. 휘장에 붉은 천으로 십자를 꿰매 붙였다. '의원 — 아픈 사람 먼저, 돈은 나중.'" w=2 h=2
 text 49 27 "환자용 야전 침대. 시트가 깨끗하다. 이 환승촌에서 제일 깨끗한 천일 것이다." h=2
 npc N-R01-046 48 29 S bark="어디 보자. 방사능은 많이, 겁은 더 많이 먹었네."
-npc N-UQ-K1 46 30 E look=K1-S1-HR09-H2-T01-0-PF11-HD00-EY00 cond="UQ125_KID == 3 and UQ125_GUARD == 2" bark="그때 그 사람이다. 이건 이제 내 거예요. 여기 불 있어요. 따뜻해요."   # 1-L UQ-125 맡긴 아이
+npc N-UQ-K1 46 30 E look=K1-S1-HR09-H2-T01-0-PF11-HD00-EY00 cond="UQ125_KID == 3 and UQ125_GUARD == 2 and dead(\"N-R01-046\") == 0" bark="그때 그 사람이다. 이건 이제 내 거예요. 여기 불 있어요. 따뜻해요."   # 1-L UQ-125 맡긴 아이
+npc N-UQ-K1 46 30 E look=K1-S1-HR09-H2-T01-0-PF11-HD00-EY00 cond="UQ125_KID == 3 and UQ125_GUARD == 2 and dead(\"N-R01-046\") == 1" bark="불이 꺼졌어요. 아저씨가 다시 안 피워요. …그냥 여기 있을래요."   # 1-12d 교차 점검: 맡은 어른이 죽은 뒤(A190)
 prop sd_tent_y 36 30
 text 36 30 "표하경의 천막. 입구에 버섯 봉지가 줄지어 걸렸다. '빛 들이지 마.'" w=2 h=2
 prop sd_rent_mat 40 33

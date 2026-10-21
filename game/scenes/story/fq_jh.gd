@@ -187,6 +187,7 @@ func _on_day(_d: int) -> void:
 
 # ---------------------------------------------------------------- 맵
 func _on_map(id: String) -> void:
+	_map2(id)
 	for k in _live:
 		_live[k] = []
 	for k in _out:
@@ -683,7 +684,8 @@ func _drop_tak() -> void:
 
 func _on_hid(id: String) -> void:
 	if id == TAK:
-		host.hint("탁만수가 버스 그늘에 쪼그려 앉았다 — 돌아와 곁에 서면 다시 따라온다.", 5.0)
+		var where := "버스 그늘에 쪼그려 앉았다" if host.map is WorldMap else "벽에 등을 기대고 쪼그려 앉았다"
+		host.hint("탁만수가 %s — 돌아와 곁에 서면 다시 따라온다." % where, 5.0)
 
 
 func _on_regrouped(id: String) -> void:
@@ -702,6 +704,7 @@ func _day2() -> void:
 			_s2("TAK", 3)
 			_s2("ARRIVE_DAY", d + 1)
 			_s2("NEAR", 0)
+			host.hint("탁만수를 두고 온 지 하루. 그는 기다리다 혼자 운반조 길로 갔을 것이다 — '혼자 갈게'.", 6.0)
 			_log("JH-02 탁만수 혼자 지하로")
 	elif v2("TAK") == 3 and d >= v2("ARRIVE_DAY") and not st.is_dead(TAK):
 		_s2("TAK", 4)                                                     # 운반조 길로 영등포 — 상인회 칸막이 앞에서 망설인다(다음에 J-03에 들어올 때 선다)
@@ -746,10 +749,9 @@ func _caught() -> void:
 
 
 func _reunion() -> void:
-	var first := st.quests.stage(Q2) < 100
-	if first:
-		_solve(1)
-	_s2("SOL", 1)                                                         # 재회가 마지막 사실(대납 · 거짓 뒤에 와도 — 보상은 한 번)
+	if st.quests.stage(Q2) < 100:
+		_solve(1)                                                         # 재회로 처음 정리(SOL 1) — 대납 · 지폐 · 거짓 뒤에 온 재회는 정리 방법을 덮지 않는다(P1, 장부 사이 지폐 글이 남게)
+	_s2("MEET", 1)
 	_s2("TAK", 5)
 	_s2("SHOP", 1 if st.quests.stage(Q1) == 100 else 2)                  # JH-01을 끝냈으면 B구역 빈 칸 B-07 · 아니면 광장 노점(그 자리에 머문다, P3)
 	_log("JH-02 재회(가게 %d)" % v2("SHOP"))
@@ -810,10 +812,57 @@ func _cmd2(a: Array, done: Callable) -> void:
 			_caught()
 		"reunion":
 			_reunion()
+		"repay":
+			_log("JH-02 맡은 캡을 돌려줌")                                # 캡은 원고 [캡 n]이 뗐다 — 들킴(−5)만 남는다
+		"deny":
+			st.call_fn("aff", ["JH", -5])                                 # 맡은 캡을 쥐고 모른 척 — 한 번 더 −5 · 단골 값 이레
+			_s2("COLD_DAY", day() + 6)
+		"walk":
+			_s2("TUNNEL", 2)                                              # 맨홀을 지나 지상으로 끝까지 — J-03에 들어서면 칸막이 앞(_map2)
+		"together":
+			_together()
 		"reunion_dead":
-			_s2("SOL", 6)
+			if v2("SOL") == 0:
+				_s2("SOL", 6)
 			_s2("TAK", 5)
 			_s2("SHOP", 2)
 			if st.quests.stage(Q2) < 100:
 				st.quests.set_stage(Q2, 200)
 	done.call()
+
+
+## 맵에 들어설 때(JH-02): 생포 무대엔 따라가지 않는다(A63) · 지상으로 끝까지 데려왔으면 J-03 칸막이 앞에 선다
+func _map2(id: String) -> void:
+	if v2("TAK") != 2:
+		return
+	if id in ["H-03", "CG-05"]:
+		_drop_tak()                                                       # 붙잡히는 틈에 탁만수는 운반조 길로 몸을 숨긴다 — 다음 날 J-03(호위 끝, P3)
+		_s2("TAK", 3)
+		_s2("ARRIVE_DAY", day() + 1)
+		_s2("NEAR", 0)
+		_log("JH-02 생포 — 탁만수 혼자 지하로")
+	elif id == "J-03":
+		_drop_tak()
+		_s2("TAK", 4)
+		_s2("NEAR", 0)
+		host.refresh_npcs.call_deferred()
+		host.hint("탁만수: \"…맨홀은 안 탔네. 200년 만에 지상으로 끝까지 걸었어. 뒤꿈치가 다 닳았다.\" 그가 칸막이 앞에 선다.", 6.0)
+		_log("JH-02 J-03까지 함께 걸어옴")
+
+
+## 맨홀로 함께 내려간다: 운반조 길(물길 — 맵 없음, U18과 함께 이월)은 장면으로 건너뛰고 다음 날 06시 지하시장 남쪽 통로로(P6)
+func _together() -> void:
+	_drop_tak()
+	_s2("TAK", 3)
+	_s2("TUNNEL", 3)
+	_s2("NEAR", 0)
+	_s2("ARRIVE_DAY", day() + 1)
+	var t := Clock.parse(host.date_text)
+	var mins := 24 * 60 - (int(t[3]) * 60 + int(t[4])) + 6 * 60 if not t.is_empty() else 12 * 60
+	host.busy = true
+	host.ev.run("fade_out", ["black", "6"], func() -> void:
+		host.advance_minutes(mins)                                        # 06시 하루 판정이 TAK 3 → 4(칸막이 앞)
+		host.enter("J-09", "from_J-03")
+		host.hint("무릎까지 차는 물길을 밤새 걸었다. 분필 화살표가 끝나는 곳 — 영등포 지하시장 남쪽 통로. 탁만수가 먼저 광장 쪽으로 간다.", 6.0)
+		host.ev.run("fade_in", ["black", "6"], func() -> void: host.busy = false))
+	_log("JH-02 함께 운반조 길")

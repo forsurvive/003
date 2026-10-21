@@ -262,7 +262,7 @@ func _init() -> void:
 	# MOTOR 구동부(0 빠짐 · 1 고침 · 2 내림 · 3 휨) · LEAK J-11로 샘(1 샘 · 2 잡음) · SF · SI 떠도는 쥐(앞 · 안) · KOUT 둥지를 막힌 왕쥐 · OPEN 사슬(1 열쇠 · 2 땀/들어옴 · 3 폭파)
 	for k in "OPEN HA HB HC WA WB WC TA TB TC MOTOR LEAK KING KOUT NEST SHOP_M SHOP_S MINSU DONE CLEAR WARN CRUSH SF SI REOPEN LEAK_N KAWAY BUY TIPS".split(" "):
 		vars.declare("FQ_JH01_" + k, "int", 0)
-	for k in "SEEN SHOP ASK KNOW MET TAK PAY SOL LIE_DAY RUMOR KNOWN COLD_DAY COAT DONE YARD ARRIVE_DAY TUNNEL NEAR".split(" "):                                       # FQ-JH-02 외상 장부(1-12d): SEEN 장부 줄을 봄 · TAK 탁만수가 있는 곳(0 · 1 고터 좌판 · 2 호위 중 · 3 지하로 감 · 4 J-03 칸막이 앞 · 5 새 가게 — SHOP 1 B-07 · 2 J-03 광장 노점) · NEAR 호위 중 곁에 있음 · PAY 탁만수가 맡긴 외상값 · SOL 정리 방법(1 재회 · 2 환산 · 3 대납 · 4 지폐 · 5 거짓 · 6 한쪽이 죽음) · LIE_DAY · RUMOR · KNOWN · COLD_DAY 단골 값 끊김 · COAT M-424(1 지님 · 2 노복희가 돌려보냄 · 3 주인에게 · 4 잃음)
+	for k in "SEEN SHOP ASK KNOW MET TAK PAY SOL LIE_DAY RUMOR KNOWN COLD_DAY COAT DONE YARD ARRIVE_DAY TUNNEL NEAR MEET".split(" "):                                       # FQ-JH-02 외상 장부(1-12d): SEEN 장부 줄을 봄 · TAK 탁만수가 있는 곳(0 · 1 고터 좌판 · 2 호위 중 · 3 지하로 감 · 4 J-03 칸막이 앞 · 5 새 가게 — SHOP 1 B-07 · 2 J-03 광장 노점) · NEAR 호위 중 곁에 있음 · PAY 탁만수가 맡긴 외상값 · SOL 정리 방법(1 재회 · 2 환산 · 3 대납 · 4 지폐 · 5 거짓 · 6 한쪽이 죽음) · LIE_DAY · RUMOR · KNOWN · COLD_DAY 단골 값 끊김 · COAT M-424(0 입음 · 1 주인공이 지님 · 2 노복희가 돌려보냄 · 3 다시 입음 · 4 잃음) · MEET 재회함 · TUNNEL 맨홀(1 혼자 · 2 지상으로 끝까지 · 3 함께 운반조 길)
 		vars.declare("FQ_JH02_" + k, "int", 0)
 	vars.declare("GT_COT_UNTIL", "int", 0)                          # 고터 지하상가 침상 칸 빌린 끝 절대 분(1-12d)
 	for k in ["GS_OPEN", "GS_TRUTH", "GS_ROBOT", "GS02_GRADER"]:

@@ -243,6 +243,18 @@ func test_s13_dead_voter(t) -> void:
 	st.kill("N-R02-019")
 	c.ask("T", 14)
 	t.eq(c.q("V_T"), 0, "죽은 사람에게는 약속 없음")
+	# 아트리움에 도착한 뒤 죽으면 유권자 수에서 빠진다 — 죽은 사람이 투표하지 않는다(1-12d 교차 점검)
+	var r2 := _host()
+	var st2: StoryState = r2[1]
+	var c2: SideS13 = r2[2]
+	_gather(st2, c2)
+	t.eq(c2.q("V_K"), 2, "경상현 도착")
+	var here := c2.present()
+	st2.kill("N-R02-032")
+	_hour(st2, c2, 10 * 24 + 21)
+	t.eq(c2.q("V_K"), 9, "도착 뒤 사망 — 빠짐")
+	t.eq(c2.present(), here - 1, "유권자 수 하나 줆")
+	t.eq(c2.q("HERE"), here - 1, "원고가 읽는 수도 같이")
 
 
 ## 다섯이 겹치게 — 50 · 등록(기호 = 등록순) · 투표 시작 · 칸막이 · 개표(투표율 100% → 임기 4년)

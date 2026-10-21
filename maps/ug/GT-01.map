@@ -67,8 +67,9 @@ prop w_shutter_big 41 1
 text 41 2 "3구역 셔터. 용접 자국과 쇠사슬 세 겹. 분필 — '대피민 휴면 — 열지 말 것. 번영회'." w=3
 # 탁만수 구두 수선 좌판(JH-02)
 prop gt_shoe_stall 20 12
-npc N-UG-501 21 11 S cond="FQ_JH02_TAK == 0 or FQ_JH02_TAK == 1" bark="굽 갈아 줄까? 밑창은 사람 따라 닳아."
+npc N-UG-501 21 11 S cond="(FQ_JH02_TAK == 0 or FQ_JH02_TAK == 1) and GAME_HOUR >= 2 and GAME_HOUR < 22" bark="굽 갈아 줄까? 밑창은 사람 따라 닳아."
 text 20 12 "구두 수선 좌판. 구두골 옆에 낡은 코트가 걸려 있었던 못 자국 — 주인이 입고 나갔다." w=2 cond="FQ_JH02_TAK >= 2 and dead(\"N-UG-501\") == 0"
+text 20 12 "구두 수선 좌판. 비었다. 밤이다 — 주인은 매표소 쪽 시간표 앞에 서 있을 것이다." w=2 cond="(FQ_JH02_TAK == 0 or FQ_JH02_TAK == 1) and (GAME_HOUR >= 22 or GAME_HOUR < 2) and dead(\"N-UG-501\") == 0"
 text 20 12 "구두 수선 좌판. 망치와 구두골이 그대로다. 공동체 누군가 흰 국화 한 송이를 올려 두었다." w=2 cond="dead(\"N-UG-501\") == 1"
 # 무진 잡화(낮엔 세이프빌 왕복)
 prop stall_parts 30 12

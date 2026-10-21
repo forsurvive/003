@@ -140,6 +140,29 @@ def rent_cot():
     return im
 
 
+# ================================================================================================ 고속버스(4×2)
+def express_bus(seed=3):
+    """2077 고속버스(승차장 7번 — 영등포행 23:40, 출발 못 함): 시내버스 잔해와 같은 몸에 남색 띠 · 앞 행선 '고속' ·
+    옆 행선판 '영등포' · 문이 닫힌 채(운전석은 안에서 잠김). 4×2 발. 그날 밤 23:19 경보로 그대로 선 버스."""
+    import props_site as S
+    rnd = random.Random(seed + 70)
+    im = S.bus_wreck(seed)
+    d = ImageDraw.Draw(im)
+    d.rectangle([6, 34, 125, 42], fill=C("P44")); d.line([8, 34, 123, 34], fill=C("P45")); d.line([8, 42, 123, 42], fill=C("P43"))   # 남색 띠(고속)
+    d.rectangle([66, 36, 76, 56], fill=C("P21")); d.rectangle([66, 36, 76, 56], outline=C("P20")); d.line([71, 37, 71, 55], fill=C("P20"))   # 닫힌 문
+    d.rounded_rectangle([4, 16, 14, 56], 6, fill=C("P20"))
+    d.rectangle([5, 19, 13, 28], fill=C("P01"))                          # 앞 행선(주황 점등 글씨 — 꺼진 채 바랬다)
+    put_text(im, "고", 5, 18, "P59", 8, "Galmuri7")
+    d.ellipse([6, 44, 11, 49], fill=C("P49"))
+    d.rectangle([84, 44, 117, 55], fill=C("P21")); d.rectangle([84, 44, 117, 55], outline=C("P02"))   # 옆 행선판(창 밑)
+    put_text(im, "영등포", 87, 46, "P02", 8, "Galmuri7")
+    put_text(im, "고속", 22, 44, "P09", 8, "Galmuri7")
+    for _ in range(5):                                                    # 창 먼지에 손가락 글씨 자국
+        x = rnd.randint(18, 110)
+        d.line([x, 21, x + 2, 26], fill=C("P12"))
+    return im
+
+
 # ================================================================================================ 등록
 def _r(fn, fw, fh, kind="floor", down=2, dx=0, dy=0):
     return {"fn": fn, "foot": (fw, fh), "kind": kind, "down": down, "dx": dx, "dy": dy}
@@ -152,6 +175,7 @@ PROPS_GT = {
     "w_timetable": _r(w_timetable, 2, 0, "wall", dx=0, dy=2),
     "gt_shoe_stall": _r(shoe_stall, 2, 1, down=-2),
     "gt_rent_cot": _r(rent_cot, 1, 2, down=-2),
+    "gt_express_bus": _r(express_bus, 4, 2, down=-4),
 }
 
 STATES_GT = {

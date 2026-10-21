@@ -139,6 +139,11 @@ func _arrivals() -> void:
 	var n := now_h()
 	var changed := false
 	for k in VOTERS:
+		if q("V_" + k) == 2 and st.is_dead(VOTERS[k]):
+			_sq("V_" + k, 9)                                              # 도착한 뒤 죽었다 — 유권자 수에서 빠진다(죽은 사람이 투표하지 않게, 1-12d 교차 점검)
+			_seq.erase(k)
+			changed = true
+			continue
 		if q("V_" + k) != 1 or n < q("T_" + k):
 			continue
 		if st.is_dead(VOTERS[k]):
@@ -292,6 +297,17 @@ func _vote_tick(dt: float) -> void:
 			_refresh()
 		return
 	var k: String = _seq[0]
+	if st.is_dead(VOTERS[k]):
+		_sq("V_" + k, 9)                                                  # 차례를 기다리다 죽었다 — 건너뛴다(비면 개표로)
+		_sq("BOOTH", 0)
+		_seq.pop_front()
+		_seq_t = 0.0
+		_sq("HERE", present())
+		if _seq.is_empty():
+			_sq("VOTING", 2)
+			host.hint("투표함지기 2호: \"투표를 마감합니다. 개표는 개표실에서.\"", 4.0)
+		_refresh()
+		return
 	var slot := 1 + (q("CAST") % 5)
 	if q("BOOTH") == 0 and _seq_t > 0.6:
 		_sq("BOOTH", slot)                                             # 칸막이가 닫히고 발이 보인다

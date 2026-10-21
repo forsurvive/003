@@ -7,8 +7,9 @@
  "labels": {
   "START": 0,
   "TAPE": 3,
-  "FAKE": 11,
-  "DONE": 16
+  "FAKE": 12,
+  "DONE": 18,
+  "EMPTY": 20
  },
  "ops": [
   {
@@ -88,6 +89,11 @@
    "to": "END"
   },
   {
+   "op": "if",
+   "cond": "UQ06_GONE == 1 or SQ_S13_V_K == 2 or SQ_S13_V_K == 3",
+   "to": "EMPTY"
+  },
+  {
    "op": "line",
    "who": "N-R02-032",
    "emo": "놀람",
@@ -122,6 +128,11 @@
    "to": "END"
   },
   {
+   "op": "if",
+   "cond": "UQ06_GONE == 1 or SQ_S13_V_K == 2 or SQ_S13_V_K == 3",
+   "to": "EMPTY"
+  },
+  {
    "op": "line",
    "who": "N-R02-032",
    "emo": "놀람",
@@ -136,6 +147,16 @@
    "who": "SYS",
    "emo": "기본",
    "text": "전광판에 '10.23 장 마감'. 숫자들이 굳은 채 빛난다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "시세판 아래 의자가 비어 있다. 마감 종이 빈 객장에 울린다 — 그 종을 기다리던 사람은 오늘 여기 없다."
   },
   {
    "op": "goto",
