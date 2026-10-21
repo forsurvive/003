@@ -265,8 +265,8 @@ func _barks() -> void:
 
 
 func _on_day(_d: int) -> void:
-	# C 장부: HO_LEDGER 8 · 99 → 다음 06시 '석방 명단' — 정문 앞(재미 검수 7: 씨앗 없이 고정)
-	if v("SB_127") <= 1 and (v("HO_LEDGER") == 8 or v("HO_LEDGER") == 99 or v("SB_DEBT") == 1) and not st.is_dead(YJ):
+	# C 장부: 정착지에 넘김(HO_LEDGER 8x — 1막은 조만석 81, SD-03a §8.5 구현 정합) · 태움 99 → 다음 06시 '석방 명단' — 정문 앞(재미 검수 7: 씨앗 없이 고정)
+	if v("SB_127") <= 1 and ((v("HO_LEDGER") >= 80 and v("HO_LEDGER") < 90) or v("HO_LEDGER") == 99 or v("SB_DEBT") == 1) and not st.is_dead(YJ):
 		_sv("SB_127", 3)
 		_sv("SQ_S09_UNCOL", 1)
 		if v("SQ_S09_SOL1") == 0:

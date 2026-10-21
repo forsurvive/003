@@ -199,7 +199,7 @@ func test_sq_s09_ledger_c(t) -> void:
 	var st: StoryState = r[1]
 	var c: SideS09 = r[2]
 	st.vars.set_v("SQ_S09_START", 4)
-	st.vars.set_v("HO_LEDGER", 8)
+	st.vars.set_v("HO_LEDGER", 81)  # MQ-105가 실제로 쓰는 값(80번대 — 장부 가져옴)
 	t.eq(_v(st, "SB_127"), 0, "장부를 넘긴 날은 아직 우리")
 	c._on_day(5)
 	t.eq(_v(st, "SB_127"), 3, "다음 06시 석방 명단 — 정문 앞")

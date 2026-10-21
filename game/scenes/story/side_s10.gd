@@ -526,7 +526,7 @@ func _on_day(_d: int) -> void:
 		_sq("STOP", 1)
 		_log("남산 방송 — 세이프빌 구매 중단")
 	# 본소 장부(MQ-105 C · 소각): 경매 전이면 '석방 명단' — 노들로
-	if q("KIRA") == 0 and (v("HO_LEDGER") == 8 or v("HO_LEDGER") == 99 or v("SB_DEBT") == 1) and not st.is_dead(KIRA_ID):
+	if q("KIRA") == 0 and ((v("HO_LEDGER") >= 80 and v("HO_LEDGER") < 90) or v("HO_LEDGER") == 99 or v("SB_DEBT") == 1) and not st.is_dead(KIRA_ID):
 		_settle_now(2)
 		if q("START") > 0:
 			_sq("SOL", 6)

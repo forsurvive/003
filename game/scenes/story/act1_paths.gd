@@ -218,6 +218,9 @@ func _on_killed(_eid: String, alive: int) -> void:
 			elif e.who == "C-021":
 				st.kill("C-021")                                       # 독사(생사는 st.dead 한 곳 — D_DS는 SD-03a에서 다니엘 서)
 				_log("독사 사망")
+			elif e.who != "":
+				st.kill(e.who)                                         # 이름 있는 본소 사람(구만호 · 빨간펜 · 십장 · 소개비 · 철사)도 생사는 한 곳(P3) — KS · GA · GR · FQ-SB가 dead()로 본다(1-12f 교차 점검)
+				_log("본소 인물 사망 %s" % e.who)
 	if host.map.id == "J-09" and alive == 0 and v("MQ103_NEST") == 0:
 		st.vars.set_v("MQ103_NEST", 1)
 		if v("MQ103_JOB") == 1:
