@@ -56,6 +56,8 @@ N-R01-040 [기본] 노들섬 남단은 조합 땅이야. 짐을 늘리고 싶으
 @scene TR_SO  순회 의료반 들것  (L-R01-09)
 @npc   C-067
 @cond  V_ACT >= 1
+# FQ-JH-03 지상 배달(1-12e): 상자는 그녀가 있는 정류지 어디서든 받는다(배달처는 사람) — 대기 동안은 수산시장(MEDIC_AT 4, 낮 경매장 · 밤 뒤 터)
+? FQ_JH03_BOX == 1 and has("M-426") == 1 -> JH03
 ? TR_SO_MET >= 1 -> AGAIN
 C-067 [기본] 소윤희. 들것 하나에 약 상자 둘, 이레에 한 번 이 길을 돌아요. 봉천, 영등포 지하상가, 강 건너.
 C-067 [기본] 비상정부 장부엔 '미등록 의료 행위자'로 적혀 있대요. 그러니 검문소 근처에선 안 봐요. 다쳤으면 지금 말해요.
@@ -84,6 +86,71 @@ C-067 [기본] 그럼 여의도. 강 건너 가는 길에 하루. 흑석은 다�
 > 됐다 -> END
 * DOC
 @cmd doctor V56
+-> END
+# ---------------------------------------------------------------- FQ-JH-03 건넴
+* JH03
+? MEDIC_AT == 4 and (GAME_HOUR < 6 or GAME_HOUR >= 18) -> JH03_N
+? MEDIC_AT == 4 -> JH03_D
+C-067 [기본] 지하시장 상자? 수산시장에서 기다리다 왔어요. 순회는 순회라서.
+-> JH03_GIVE
+* JH03_D
+C-067 [기본] (경매장 지붕 아래 접이 들것에서 일어선다) 지하시장 상자죠? 검문소 코앞이라 오래 못 있어요.
+-> JH03_GIVE
+* JH03_N
+C-067 [기본] (시장 뒤 터, 손전등을 아래로 돌린다) 낮엔 경매장, 밤엔 여기. 불빛 줄여요.
+* JH03_GIVE
+? FQ_JH03_PARK == 1 and FQ_JH03_NEAR == 1 and dead("C-018") == 0 -> JH03_GIVE_P
+> [물건:M-426 1] 상자를 건넨다 -> JH03_TAKE
+> 다음에 -> ASK
+* JH03_GIVE_P
+C-018 [기본] (상자 쪽으로 턱짓만 한다) 계약서엔 '수산시장 들것 반장 앞'이야. 여기까지.
+> [물건:M-426 1] 상자를 건넨다 -> JH03_TAKE
+> 다음에 -> ASK
+* JH03_TAKE
+SYS 소윤희가 뚜껑을 열고 칸을 손가락으로 센다. 스팀팩, 라드어웨이, 붕대.
+? FQ_JH03_SHORT == 1 -> JH03_SHORT
+? FQ_JH03_BAND == 1 -> JH03_BAND
+C-067 [미소] 어디서 왔든 약은 약이죠.
+-> JH03_PAY
+* JH03_SHORT
+C-067 [기본] …하나 모자라네요. (당신을 한 번 보고 아무것도 묻지 않는다) 적어 둘게요. 상인회 쪽지에.
+-> JH03_PAY
+* JH03_BAND
+C-067 [미소] 붕대가 비었네. …아, 저 팔에 있네. 어디서 왔든 약은 약이죠.
+* JH03_PAY
+? FQ_JH03_SOL == 5 -> JH03_FREE
+@cmd jh03 deliver
+C-067 [기본] 상인회 봉투예요. 백오십 캡. 지하 사람들한테 고맙다고 — 아니, 그냥 받았다고 전해 줘요.
+? FQ_JH03_END == 5 and FQ_JH03_RIVER == 1 and dead("C-018") == 0 -> JH03_RIVER
+? FQ_JH03_END == 5 and dead("C-018") == 0 -> JH03_PARK
+-> END
+* JH03_FREE
+@cmd jh03 deliver
+C-067 [기본] 상인회가 문을 닫았다고요? …봉투는 없지만 상자는 받을게요. 약은 약이니까.
+-> END
+* JH03_PARK
+? FQ_JH03_FLED == GAME_DAY and FQ_JH03_NIGHT == 0 -> JH03_PARK_F
+? FQ_JH03_NIGHT == 0 and FQ_JH03_CLOCK >= 45 and FQ_JH03_CLOCK < 120 -> JH03_PARK_L
+C-018 [기본] 계약은 배달까지. 돌아가는 건 내 길로 간다.
+-> JH03_PARK_GO
+* JH03_PARK_F
+C-018 [기본] 분대가 네 얼굴 봤어. 강은 다음에. 계약은 배달까지야.
+-> JH03_PARK_GO
+* JH03_PARK_L
+C-018 [기본] (하늘을 본다) 강 한번 보려 했는데. 애매하네. …계약은 배달까지야.
+* JH03_PARK_GO
+? FQ_JH03_ID == 1 -> JH03_PARK_ID
+@cmd jh03 part
+-> END
+* JH03_RIVER
+C-018 [기본] (하늘을 본다) 해가 아직 높네. …남은 건 내 시간이야. 강 좀 보고 갈게.
+? FQ_JH03_ID == 1 -> JH03_PARK_ID
+@cmd jh03 part
+-> END
+* JH03_PARK_ID
+@cmd jh03 idback
+C-018 [기본] 빌린 주민증. 계약서엔 없는 줄이지만 돌려준다.
+@cmd jh03 part
 -> END
 * SHOP
 @cmd trade V56

@@ -6,16 +6,37 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "AGAIN": 5,
-  "ASK": 6,
-  "ASK_HP": 8,
-  "STOP": 10,
-  "STOP_YD": 13,
-  "ASK2": 16,
-  "DOC": 17,
-  "SHOP": 19
+  "AGAIN": 6,
+  "ASK": 7,
+  "ASK_HP": 9,
+  "STOP": 11,
+  "STOP_YD": 14,
+  "ASK2": 17,
+  "DOC": 18,
+  "JH03": 20,
+  "JH03_D": 24,
+  "JH03_N": 26,
+  "JH03_GIVE": 27,
+  "JH03_GIVE_P": 29,
+  "JH03_TAKE": 31,
+  "JH03_SHORT": 36,
+  "JH03_BAND": 38,
+  "JH03_PAY": 39,
+  "JH03_FREE": 45,
+  "JH03_PARK": 48,
+  "JH03_PARK_F": 52,
+  "JH03_PARK_L": 54,
+  "JH03_PARK_GO": 55,
+  "JH03_RIVER": 58,
+  "JH03_PARK_ID": 62,
+  "SHOP": 66
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "FQ_JH03_BOX == 1 and has(\"M-426\") == 1",
+   "to": "JH03"
+  },
   {
    "op": "if",
    "cond": "TR_SO_MET >= 1",
@@ -158,6 +179,296 @@
    "name": "doctor",
    "args": [
     "V56"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "MEDIC_AT == 4 and (GAME_HOUR < 6 or GAME_HOUR >= 18)",
+   "to": "JH03_N"
+  },
+  {
+   "op": "if",
+   "cond": "MEDIC_AT == 4",
+   "to": "JH03_D"
+  },
+  {
+   "op": "line",
+   "who": "C-067",
+   "emo": "기본",
+   "text": "지하시장 상자? 수산시장에서 기다리다 왔어요. 순회는 순회라서."
+  },
+  {
+   "op": "goto",
+   "to": "JH03_GIVE"
+  },
+  {
+   "op": "line",
+   "who": "C-067",
+   "emo": "기본",
+   "text": "(경매장 지붕 아래 접이 들것에서 일어선다) 지하시장 상자죠? 검문소 코앞이라 오래 못 있어요."
+  },
+  {
+   "op": "goto",
+   "to": "JH03_GIVE"
+  },
+  {
+   "op": "line",
+   "who": "C-067",
+   "emo": "기본",
+   "text": "(시장 뒤 터, 손전등을 아래로 돌린다) 낮엔 경매장, 밤엔 여기. 불빛 줄여요."
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_PARK == 1 and FQ_JH03_NEAR == 1 and dead(\"C-018\") == 0",
+   "to": "JH03_GIVE_P"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "상자를 건넨다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "M-426",
+       "n": 1
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "JH03_TAKE",
+     "id": "TR_SO:4:0"
+    },
+    {
+     "text": "다음에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "ASK",
+     "id": "TR_SO:4:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "(상자 쪽으로 턱짓만 한다) 계약서엔 '수산시장 들것 반장 앞'이야. 여기까지."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "상자를 건넨다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "M-426",
+       "n": 1
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "JH03_TAKE",
+     "id": "TR_SO:5:0"
+    },
+    {
+     "text": "다음에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "ASK",
+     "id": "TR_SO:5:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "소윤희가 뚜껑을 열고 칸을 손가락으로 센다. 스팀팩, 라드어웨이, 붕대."
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_SHORT == 1",
+   "to": "JH03_SHORT"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_BAND == 1",
+   "to": "JH03_BAND"
+  },
+  {
+   "op": "line",
+   "who": "C-067",
+   "emo": "미소",
+   "text": "어디서 왔든 약은 약이죠."
+  },
+  {
+   "op": "goto",
+   "to": "JH03_PAY"
+  },
+  {
+   "op": "line",
+   "who": "C-067",
+   "emo": "기본",
+   "text": "…하나 모자라네요. (당신을 한 번 보고 아무것도 묻지 않는다) 적어 둘게요. 상인회 쪽지에."
+  },
+  {
+   "op": "goto",
+   "to": "JH03_PAY"
+  },
+  {
+   "op": "line",
+   "who": "C-067",
+   "emo": "미소",
+   "text": "붕대가 비었네. …아, 저 팔에 있네. 어디서 왔든 약은 약이죠."
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_SOL == 5",
+   "to": "JH03_FREE"
+  },
+  {
+   "op": "cmd",
+   "name": "jh03",
+   "args": [
+    "deliver"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-067",
+   "emo": "기본",
+   "text": "상인회 봉투예요. 백오십 캡. 지하 사람들한테 고맙다고 — 아니, 그냥 받았다고 전해 줘요."
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_END == 5 and FQ_JH03_RIVER == 1 and dead(\"C-018\") == 0",
+   "to": "JH03_RIVER"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_END == 5 and dead(\"C-018\") == 0",
+   "to": "JH03_PARK"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "jh03",
+   "args": [
+    "deliver"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-067",
+   "emo": "기본",
+   "text": "상인회가 문을 닫았다고요? …봉투는 없지만 상자는 받을게요. 약은 약이니까."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_FLED == GAME_DAY and FQ_JH03_NIGHT == 0",
+   "to": "JH03_PARK_F"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_NIGHT == 0 and FQ_JH03_CLOCK >= 45 and FQ_JH03_CLOCK < 120",
+   "to": "JH03_PARK_L"
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "계약은 배달까지. 돌아가는 건 내 길로 간다."
+  },
+  {
+   "op": "goto",
+   "to": "JH03_PARK_GO"
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "분대가 네 얼굴 봤어. 강은 다음에. 계약은 배달까지야."
+  },
+  {
+   "op": "goto",
+   "to": "JH03_PARK_GO"
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "(하늘을 본다) 강 한번 보려 했는데. 애매하네. …계약은 배달까지야."
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_ID == 1",
+   "to": "JH03_PARK_ID"
+  },
+  {
+   "op": "cmd",
+   "name": "jh03",
+   "args": [
+    "part"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "(하늘을 본다) 해가 아직 높네. …남은 건 내 시간이야. 강 좀 보고 갈게."
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_ID == 1",
+   "to": "JH03_PARK_ID"
+  },
+  {
+   "op": "cmd",
+   "name": "jh03",
+   "args": [
+    "part"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "jh03",
+   "args": [
+    "idback"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "빌린 주민증. 계약서엔 없는 줄이지만 돌려준다."
+  },
+  {
+   "op": "cmd",
+   "name": "jh03",
+   "args": [
+    "part"
    ]
   },
   {

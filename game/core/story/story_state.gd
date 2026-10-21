@@ -56,6 +56,7 @@ const UNNAMED := [["N-TRADER", "떠돌이 고물상", ""], ["N-VG-S1", "고물�
 	["N-PS-2", "경비 파수-3", ""],   # 1-11j SQ-S11 영등포 경찰서 서장실 경비판
 	["N-BJ-S1", "수색조 분대장", "BJ"], ["N-BJ-S2", "수색조 계엄병", "BJ"],   # 1-11c · 1-11f 계엄군 수색조(1-11j: 게임 쪽 목록에 빠져 있던 것 — 이름표에 ID가 나오던 것)
 	["N-BJ-P1", "순찰 분대장", "BJ"], ["N-BJ-P2", "순찰 계엄병", "BJ"],   # 1-11j SQ-S11 여의도 낮 순찰
+	["N-BJ-C1", "다리목 검문조장", "BJ"], ["N-SB-R1", "새벽인력 모집원", "SB"],   # 1-12e FQ-JH-03 노량진로 이동 검문 · 수산시장 모집원
 	["N-GS-1", "각성회 신도", "GS"], ["N-GS-2", "각성회 신도", "GS"], ["N-GS-3", "각성회 신도", "GS"],   # 1-8g 노량진 관제 중계소
 	["N-GS-5", "새 순례자", ""], ["N-GS-6", "새 순례자", ""], ["N-GS-R3", "3번 파수", ""], ["N-K24-P1", "원장 대행", ""]]   # 1-12b FQ-GS-01 · GS-02(순례자는 아직 등록 전 — 각성회 소속 아님)
 var enc := {}                           ## 인카운터 상태(1-3, Encounters): 안전 간격 · 오늘 추적대 수 · EP 사용 · 휴전
@@ -264,6 +265,8 @@ func _init() -> void:
 		vars.declare("FQ_JH01_" + k, "int", 0)
 	for k in "SEEN SHOP ASK KNOW MET TAK PAY SOL LIE_DAY RUMOR KNOWN COLD_DAY COAT DONE YARD ARRIVE_DAY TUNNEL NEAR MEET".split(" "):                                       # FQ-JH-02 외상 장부(1-12d): SEEN 장부 줄을 봄 · TAK 탁만수가 있는 곳(0 · 1 고터 좌판 · 2 호위 중 · 3 지하로 감 · 4 J-03 칸막이 앞 · 5 새 가게 — SHOP 1 B-07 · 2 J-03 광장 노점) · NEAR 호위 중 곁에 있음 · PAY 탁만수가 맡긴 외상값 · SOL 정리 방법(1 재회 · 2 환산 · 3 대납 · 4 지폐 · 5 거짓 · 6 한쪽이 죽음) · LIE_DAY · RUMOR · KNOWN · COLD_DAY 단골 값 끊김 · COAT M-424(0 입음 · 1 주인공이 지님 · 2 노복희가 돌려보냄 · 3 다시 입음 · 4 잃음) · MEET 재회함 · TUNNEL 맨홀(1 혼자 · 2 지상으로 끝까지 · 3 함께 운반조 길)
 		vars.declare("FQ_JH02_" + k, "int", 0)
+	for k in "PARK BOX CLOCK LAST OUT END CHECK ID REC WAIT SOL SHORT BAND HURT NEAR ROOM ALONE KNOWN TOLD SKY BACK OFFER DONE NIGHT SPOT RIVER RESCUED GOSSIP BARK FLED".split(" "):                                       # FQ-JH-03 지상 배달(1-12e, 계획 §5.1): PARK 박춘삼 자리(0 일과 · 1 계약 동행 · 2 돌아감 BACK날 · 3 넘겨짐) · BOX M-426(1 받음 · 2 건넴 · 3 팖) · CLOCK 낮 지상 분 · LAST 잰 절대 분 · OUT 박춘삼이 지상 · END 계약 끝 까닭 · CHECK 이동 검문 · ID 위조 주민증 · REC 모집원 · WAIT 소윤희 대기 끝 절대 분 · SOL 결과(1 함께 · 2 혼자 · 3 팖 · 4 반수빈 · 5 덮음) · NIGHT 건넨 곳(0 낮 경매장 · 1 밤 뒤 터 · 2 그 밖, 재미 검수 §5.5) · CHECK 10 엄도현 무전 · 11 무전으로 통과 · BARK 길 위 바크 비트 · FLED 검문 부름을 무시하고 빠진 날(그날은 강가 없음 · 엄도현이 앎)
+		vars.declare("FQ_JH03_" + k, "int", 0)
 	vars.declare("GT_COT_UNTIL", "int", 0)                          # 고터 지하상가 침상 칸 빌린 끝 절대 분(1-12d)
 	for k in ["GS_OPEN", "GS_TRUTH", "GS_ROBOT", "GS02_GRADER"]:
 		if not vars.has(k):
@@ -453,6 +456,8 @@ func call_fn(name: String, args: Array) -> Variant:
 			return 1 if b >= "W-037" and b <= "W-045" else 0
 		"dead":                                                         # 그 인물(C-·N-·CR- ID)이 죽었나(SD-20 P3 · §10 — 다른 인물 이야기를 하는 줄은 이 조건 뒤에서만)
 			return 1 if is_dead(str(args[0])) else 0
+		"met":                                                          # 그 인물을 만나 인물 수첩에 올렸나(이름을 댈 수 있나 — 1-12e 검문에서 엄도현 하사 이름 대기)
+			return 1 if book.knows(str(args[0])) else 0
 		"known_dead":                                                   # 죽었고, 그 죽음이 알려졌나(목격 · 시체 발견 — 아직 아무도 못 본 시체면 0, SD-06 §6.4 · SD-20 P7)
 			return 1 if known_dead(str(args[0])) else 0
 		"killer_known":                                                 # 그 정착지 · 세력("BC" · "JC_BC")이 주인공을 '우리 사람을 죽인 자'로 아나(목격 · 지목 · 자백, 1-X)

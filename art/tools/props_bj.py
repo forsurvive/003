@@ -156,6 +156,44 @@ def issuer():
     return im
 
 
+def sawhorse():
+    """이동 검문 접이 차단대(2×1, 1-12e FQ-JH-03 다리목 분대): 감색 A자 쇠다리 둘 + 적백 판자 · 스텐실 '검문' · 호박 점멸등 · 다리를 누른 모래주머니.
+    고정 초소의 차단봉(bj_boom)과 달리 분대가 들고 다니는 것 — 다리 접는 고리와 손잡이 끈이 보인다."""
+    im = img(66, 44)
+    d = ImageDraw.Draw(im)
+    for x0 in (8, 50):                                                                         # A자 다리 둘(앞다리 · 뒷다리)
+        d.line([x0, 20, x0 - 5, 40], fill=C("P43"), width=2); d.line([x0, 20, x0 + 5, 40], fill=C("P44"), width=2)
+        d.line([x0 - 3, 32, x0 + 3, 32], fill=C("P12"))                                         # 접는 고리 막대
+    for x0 in (3, 45):                                                                         # 다리 누른 모래주머니
+        d.rounded_rectangle([x0, 37, x0 + 11, 42], radius=2, fill=C("P21")); d.line([x0 + 1, 38, x0 + 10, 38], fill=C("P22"))
+    for i, x in enumerate(range(2, 64, 8)):                                                    # 적백 판자
+        d.rectangle([x, 9, min(x + 7, 63), 21], fill=C("P53" if i % 2 else "P09"))
+    d.line([2, 9, 63, 9], fill=C("P07")); d.line([2, 21, 63, 21], fill=C(INK))
+    w = _tw("검문")
+    d.rectangle([33 - w // 2 - 2, 10, 33 + w // 2 + 1, 20], fill=C("P09"))                   # 스텐실 칸
+    put_text(im, "검문", 33 - w // 2, 11, "P43", 8, "Galmuri7")
+    d.rectangle([52, 2, 57, 9], fill=C("P11")); d.rectangle([53, 3, 56, 6], fill=C("P47")); d.point((54, 4), fill=C("P48"))   # 호박 점멸등
+    d.line([20, 22, 22, 27], fill=C("P18")); d.line([22, 27, 26, 22], fill=C("P18"))           # 손잡이 끈
+    return im
+
+
+def reader_tripod():
+    """판독기 삼각대(1×1, 이동 검문): 쇠 삼각대 위 판독기 머리(둥근 렌즈 · 바늘 눈금 · 호박 불) + 바닥 축전지 상자로 늘어진 선."""
+    im = img(32, 56)
+    d = ImageDraw.Draw(im)
+    d.line([15, 26, 5, 52], fill=C("P12"), width=2); d.line([16, 26, 27, 52], fill=C("P12"), width=2)   # 다리 셋
+    d.line([16, 26, 17, 50], fill=C("P14"))
+    d.rectangle([13, 24, 18, 28], fill=C("P11"))                                                # 머리 받침
+    d.rectangle([6, 6, 25, 24], fill=C("P43")); d.rectangle([7, 7, 24, 23], fill=C("P44"))      # 판독기 머리(감색 함)
+    d.line([7, 7, 24, 7], fill=C("P15"))
+    d.ellipse([9, 9, 18, 18], fill=C("P02")); d.ellipse([11, 11, 16, 16], fill=C("P10")); d.point((12, 12), fill=C("P09"))   # 렌즈
+    d.rectangle([19, 10, 23, 15], fill=C("P21")); d.line([20, 14, 22, 11], fill=C("P53"))      # 바늘 눈금(끝까지 돈 채)
+    d.point((21, 20), fill=C("P47"))                                                            # 호박 불
+    d.rectangle([1, 46, 9, 53], fill=C("P29")); d.line([1, 46, 9, 46], fill=C("P31"))          # 축전지 상자
+    d.line([7, 22, 4, 34], fill=C("P02")); d.line([4, 34, 5, 46], fill=C("P02"))                # 늘어진 선
+    return im
+
+
 def _r(fn, fw, fh, kind="floor", down=2, dx=0, dy=0):
     return {"fn": fn, "foot": (fw, fh), "kind": kind, "down": down, "dx": dx, "dy": dy}
 
@@ -169,4 +207,6 @@ PROPS_BJ = {
     "bj_board": _r(wanted_board, 2, 1, down=-2),
     "bj_flag": _r(bj_flag, 1, 1, down=-4),
     "bj_issuer": _r(issuer, 1, 1, down=-2),
+    "bj_sawhorse": _r(sawhorse, 2, 1, down=-2),
+    "bj_reader_tripod": _r(reader_tripod, 1, 1, down=-2),
 }

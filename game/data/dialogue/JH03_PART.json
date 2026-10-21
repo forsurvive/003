@@ -1,0 +1,85 @@
+{
+ "id": "JH03_PART",
+ "title": "계약 끝",
+ "loc": "L-R01-25",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "LEFT": 5,
+  "ID": 6,
+  "IDBACK": 8,
+  "GO": 10
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "dead(\"C-018\") == 1",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_END == 2",
+   "to": "LEFT"
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "(걸음을 멈추고 계약서를 펴, 맨 아랫줄을 손톱으로 짚는다) 여기까지야."
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "상자는 네가 끝까지 들고 가. 반장한테 내 이름은 빼고."
+  },
+  {
+   "op": "goto",
+   "to": "ID"
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "의료반이 수산시장을 떠났대. 계약서엔 '수산시장까지'야. 상자는 네가 들고 반장을 따라가."
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_ID == 1",
+   "to": "IDBACK"
+  },
+  {
+   "op": "goto",
+   "to": "GO"
+  },
+  {
+   "op": "cmd",
+   "name": "jh03",
+   "args": [
+    "idback"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "빌린 주민증. 계약서엔 없는 줄이지만 돌려준다."
+  },
+  {
+   "op": "cmd",
+   "name": "jh03",
+   "args": [
+    "part"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-JH-03.txt"
+}

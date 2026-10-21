@@ -16,7 +16,8 @@ LEGS = [("L-R01-01", "L-R01-09", 52, "볼트 → 봉천"),
         ("L-R01-09", "L-R01-25", 80, "봉천 → 노량진(25)"),
         ("L-R01-09", "L-R02-11", 120, "봉천 → 영등포 지하시장"),
         ("L-R02-11", "L-R02-02", 60, "지하시장 → 여의도 벙커"),
-        ("L-R02-11", "L-R02-19", 100, "지하시장 → 새벽인력 본소")]
+        ("L-R02-11", "L-R02-19", 100, "지하시장 → 새벽인력 본소"),
+        ("L-R02-11", "L-R01-25", 60, "지하시장 → 수산시장(FQ-JH-03 지상 배달)")]
 DK_NONE, DK_DECK, DK_RAIL, DK_RAMP, DK_WALL, DK_PILLAR, DK_BROKEN, DK_STAIR, DK_JUNK = range(9)
 TOP = {DK_DECK, DK_RAIL, DK_PILLAR, DK_BROKEN, DK_JUNK}
 LINK = {DK_RAMP, DK_STAIR}

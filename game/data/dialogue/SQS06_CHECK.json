@@ -8,18 +8,19 @@
   "START": 0,
   "NOUM": 3,
   "WHO": 4,
-  "NOUM_ASK": 9,
-  "UNIFORM": 11,
-  "UNIFORM_NOUM": 14,
-  "UNIFORM_GO": 15,
-  "PAPERS": 17,
-  "PASS": 20,
-  "STALL": 23,
-  "BRIBE": 26,
-  "FAIL": 29,
-  "FLEE": 31,
-  "FIGHT": 33,
-  "BACK": 35
+  "JH03_SHOT": 10,
+  "NOUM_ASK": 12,
+  "UNIFORM": 14,
+  "UNIFORM_NOUM": 17,
+  "UNIFORM_GO": 18,
+  "PAPERS": 20,
+  "PASS": 23,
+  "STALL": 26,
+  "BRIBE": 29,
+  "FAIL": 32,
+  "FLEE": 34,
+  "FIGHT": 36,
+  "BACK": 38
  },
  "ops": [
   {
@@ -52,6 +53,11 @@
    "op": "if",
    "cond": "SQ_S06_PAPERS == 1",
    "to": "PAPERS"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_CHECK == 6 and known_dead(\"N-R01-050\") == 0",
+   "to": "JH03_SHOT"
   },
   {
    "op": "if",
@@ -122,6 +128,33 @@
   },
   {
    "op": "line",
+   "who": "N-R01-050",
+   "emo": "분노",
+   "text": "…노량진로에서 내 분대원을 쏜 사람이군요. 말도, 돈도 안 받습니다. 다리는 못 건넙니다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "돌아간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "BACK",
+     "id": "SQS06_CHECK:2:0"
+    },
+    {
+     "text": "싸운다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "FIGHT",
+     "id": "SQS06_CHECK:2:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
    "who": "SYS",
    "emo": "기본",
    "text": "계엄병 하나가 진해원을 빤히 본다. 말로 넘길 사람이 없다 — 분대장이 있었으면 몰라도."
@@ -140,7 +173,7 @@
      "cond": "PC_CAPS >= 100",
      "fx": "",
      "to": "BRIBE",
-     "id": "SQS06_CHECK:2:0"
+     "id": "SQS06_CHECK:3:0"
     },
     {
      "text": "돌아간다",
@@ -148,7 +181,7 @@
      "cond": "",
      "fx": "",
      "to": "BACK",
-     "id": "SQS06_CHECK:2:1"
+     "id": "SQS06_CHECK:3:1"
     }
    ]
   },
@@ -188,7 +221,7 @@
      "cond": "",
      "fx": "",
      "to": "FLEE",
-     "id": "SQS06_CHECK:3:0"
+     "id": "SQS06_CHECK:4:0"
     },
     {
      "text": "싸운다",
@@ -196,7 +229,7 @@
      "cond": "",
      "fx": "",
      "to": "FIGHT",
-     "id": "SQS06_CHECK:3:1"
+     "id": "SQS06_CHECK:4:1"
     }
    ]
   },
@@ -287,7 +320,7 @@
      "cond": "",
      "fx": "",
      "to": "FLEE",
-     "id": "SQS06_CHECK:4:0"
+     "id": "SQS06_CHECK:5:0"
     },
     {
      "text": "싸운다",
@@ -295,7 +328,7 @@
      "cond": "",
      "fx": "",
      "to": "FIGHT",
-     "id": "SQS06_CHECK:4:1"
+     "id": "SQS06_CHECK:5:1"
     }
    ]
   },

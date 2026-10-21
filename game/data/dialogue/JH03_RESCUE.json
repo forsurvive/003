@@ -1,0 +1,44 @@
+{
+ "id": "JH03_RESCUE",
+ "title": "되찾은 박춘삼",
+ "loc": "L-R01-25",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "dead(\"C-018\") == 1",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "(손목을 털며) 120캡에 날 팔고, 총알값 들여 다시 샀네. 장사 못 하는구먼."
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "계약은 여기서 끝이야. 상자는 네가 들고 가. 상가엔 내가 말할 거고 — 내 입으로."
+  },
+  {
+   "op": "cmd",
+   "name": "jh03",
+   "args": [
+    "rescued"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-JH-03.txt"
+}

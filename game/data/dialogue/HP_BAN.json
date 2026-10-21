@@ -6,43 +6,46 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "QUIET": 7,
-  "FIRST": 9,
-  "AGAIN": 13,
-  "AGAIN_BLUR": 19,
-  "AGAIN_LOST": 21,
-  "AGAIN_SKIP": 23,
-  "MENU": 27,
-  "TELL": 28,
-  "TELL_CLOCK": 34,
-  "GIVE": 36,
-  "GIVE_NO": 41,
-  "WAYS": 43,
-  "WAYS_EARLY": 49,
-  "WAYS_LETTER": 51,
-  "W1": 53,
-  "W1_DEAD": 58,
-  "W2": 60,
-  "W2_DEAD": 65,
-  "W3": 67,
-  "W3_OK": 70,
-  "W3_FAIL": 75,
-  "WAY_1": 77,
-  "WAY_2": 79,
-  "CIRCUIT": 81,
-  "CIRCUIT_CUT": 88,
-  "CIRCUIT_ON": 91,
-  "CIRCUIT_REJOIN": 93,
-  "CIRCUIT_SNEAK": 96,
-  "CIRCUIT_QUIET": 100,
-  "CIRCUIT_NO": 102,
-  "LTAG": 104,
-  "DOC": 108,
-  "SHOP": 110,
-  "BYE": 112,
-  "BYE_VISIT": 116,
-  "BYE_FAKE": 118,
-  "MARKET": 121
+  "JH03": 8,
+  "JH03_GIVE": 10,
+  "JH03_SHORT": 14,
+  "QUIET": 16,
+  "FIRST": 18,
+  "AGAIN": 22,
+  "AGAIN_BLUR": 28,
+  "AGAIN_LOST": 30,
+  "AGAIN_SKIP": 32,
+  "MENU": 36,
+  "TELL": 37,
+  "TELL_CLOCK": 43,
+  "GIVE": 45,
+  "GIVE_NO": 50,
+  "WAYS": 52,
+  "WAYS_EARLY": 58,
+  "WAYS_LETTER": 60,
+  "W1": 62,
+  "W1_DEAD": 67,
+  "W2": 69,
+  "W2_DEAD": 74,
+  "W3": 76,
+  "W3_OK": 79,
+  "W3_FAIL": 84,
+  "WAY_1": 86,
+  "WAY_2": 88,
+  "CIRCUIT": 90,
+  "CIRCUIT_CUT": 97,
+  "CIRCUIT_ON": 100,
+  "CIRCUIT_REJOIN": 102,
+  "CIRCUIT_SNEAK": 105,
+  "CIRCUIT_QUIET": 109,
+  "CIRCUIT_NO": 111,
+  "LTAG": 113,
+  "DOC": 117,
+  "SHOP": 119,
+  "BYE": 121,
+  "BYE_VISIT": 125,
+  "BYE_FAKE": 127,
+  "MARKET": 130
  },
  "ops": [
   {
@@ -51,6 +54,11 @@
    "args": [
     "von"
    ]
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_BOX == 1 and has(\"M-426\") == 1 and known_dead(\"C-067\") == 1",
+   "to": "JH03"
   },
   {
    "op": "if",
@@ -82,6 +90,71 @@
   {
    "op": "goto",
    "to": "FIRST"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-031",
+   "emo": "슬픔",
+   "text": "지하시장 약 상자네요. 뚜껑에 소 반장 이름. …받을 사람이 없어서 여기까지 왔군요."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "7병동에 건넨다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "M-426",
+       "n": 1
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "JH03_GIVE",
+     "id": "HP_BAN:1:0"
+    },
+    {
+     "text": "다음에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "AGAIN",
+     "id": "HP_BAN:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "jh03",
+   "args": [
+    "deliver_ban"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_SHORT == 1",
+   "to": "JH03_SHORT"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-031",
+   "emo": "기본",
+   "text": "7병동 몫이 한 달 늘었네요. 상인회 봉투는 소 반장이 맡던 거라… 여기 있어요. 백오십."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-031",
+   "emo": "기본",
+   "text": "스팀팩 칸이 하나 비었네요. 적어 둘게요. 차트는 원래 그래요. …봉투는 여기 있어요. 백오십."
+  },
+  {
+   "op": "goto",
+   "to": "END"
   },
   {
    "op": "line",
@@ -197,7 +270,7 @@
      "cond": "",
      "fx": "",
      "to": "TELL",
-     "id": "HP_BAN:1:0"
+     "id": "HP_BAN:2:0"
     },
     {
      "text": "보급품을 내놓는다(라드어웨이 셋 · 수혈 팩 둘)",
@@ -205,7 +278,7 @@
      "cond": "",
      "fx": "",
      "to": "GIVE",
-     "id": "HP_BAN:1:1"
+     "id": "HP_BAN:2:1"
     },
     {
      "text": "약길 이야기를 한다",
@@ -213,7 +286,7 @@
      "cond": "",
      "fx": "",
      "to": "WAYS",
-     "id": "HP_BAN:1:2"
+     "id": "HP_BAN:2:2"
     },
     {
      "text": "7층 스피커 이야기를 한다",
@@ -221,7 +294,7 @@
      "cond": "",
      "fx": "",
      "to": "CIRCUIT",
-     "id": "HP_BAN:1:3"
+     "id": "HP_BAN:2:3"
     },
     {
      "text": "지하에서 이름표 단 환자를 쓰러뜨렸다고 말한다",
@@ -229,7 +302,7 @@
      "cond": "HP_LTOLD == 0 and (dead(\"N-HP-L1\") == 1 or dead(\"N-HP-L2\") == 1 or dead(\"N-HP-L3\") == 1)",
      "fx": "",
      "to": "LTAG",
-     "id": "HP_BAN:1:4"
+     "id": "HP_BAN:2:4"
     },
     {
      "text": "치료를 받는다",
@@ -237,7 +310,7 @@
      "cond": "",
      "fx": "",
      "to": "DOC",
-     "id": "HP_BAN:1:5"
+     "id": "HP_BAN:2:5"
     },
     {
      "text": "약을 판다",
@@ -245,7 +318,7 @@
      "cond": "",
      "fx": "",
      "to": "SHOP",
-     "id": "HP_BAN:1:6"
+     "id": "HP_BAN:2:6"
     },
     {
      "text": "그만 간다",
@@ -253,7 +326,7 @@
      "cond": "",
      "fx": "",
      "to": "BYE",
-     "id": "HP_BAN:1:7"
+     "id": "HP_BAN:2:7"
     }
    ]
   },
@@ -373,7 +446,7 @@
      "cond": "",
      "fx": "",
      "to": "W1",
-     "id": "HP_BAN:2:0"
+     "id": "HP_BAN:3:0"
     },
     {
      "text": "들것 의료반을 다시 부르자고 한다",
@@ -381,7 +454,7 @@
      "cond": "",
      "fx": "",
      "to": "W2",
-     "id": "HP_BAN:2:1"
+     "id": "HP_BAN:3:1"
     },
     {
      "text": "병동을 옮기자고 한다",
@@ -389,7 +462,7 @@
      "cond": "",
      "fx": "",
      "to": "W3",
-     "id": "HP_BAN:2:2"
+     "id": "HP_BAN:3:2"
     },
     {
      "text": "나중에 하자고 한다",
@@ -397,7 +470,7 @@
      "cond": "",
      "fx": "",
      "to": "MENU",
-     "id": "HP_BAN:2:3"
+     "id": "HP_BAN:3:3"
     }
    ]
   },
@@ -426,7 +499,7 @@
      "cond": "",
      "fx": "",
      "to": "W2",
-     "id": "HP_BAN:3:0"
+     "id": "HP_BAN:4:0"
     },
     {
      "text": "병동을 옮기자고 한다",
@@ -434,7 +507,7 @@
      "cond": "",
      "fx": "",
      "to": "W3",
-     "id": "HP_BAN:3:1"
+     "id": "HP_BAN:4:1"
     },
     {
      "text": "기다린다",
@@ -442,7 +515,7 @@
      "cond": "",
      "fx": "",
      "to": "MENU",
-     "id": "HP_BAN:3:2"
+     "id": "HP_BAN:4:2"
     }
    ]
   },
@@ -546,7 +619,7 @@
      "cond": "",
      "fx": "",
      "to": "W3_OK",
-     "id": "HP_BAN:4:0",
+     "id": "HP_BAN:5:0",
      "fail": "W3_FAIL"
     },
     {
@@ -555,7 +628,7 @@
      "cond": "",
      "fx": "",
      "to": "MENU",
-     "id": "HP_BAN:4:1"
+     "id": "HP_BAN:5:1"
     }
    ]
   },
@@ -658,7 +731,7 @@
      "cond": "",
      "fx": "",
      "to": "CIRCUIT_CUT",
-     "id": "HP_BAN:5:0"
+     "id": "HP_BAN:6:0"
     },
     {
      "text": "그대로 두자고 한다",
@@ -666,7 +739,7 @@
      "cond": "",
      "fx": "",
      "to": "MENU",
-     "id": "HP_BAN:5:1"
+     "id": "HP_BAN:6:1"
     }
    ]
   },
@@ -703,7 +776,7 @@
      "cond": "",
      "fx": "",
      "to": "CIRCUIT_REJOIN",
-     "id": "HP_BAN:6:0"
+     "id": "HP_BAN:7:0"
     },
     {
      "text": "그대로 둔다",
@@ -711,7 +784,7 @@
      "cond": "",
      "fx": "",
      "to": "MENU",
-     "id": "HP_BAN:6:1"
+     "id": "HP_BAN:7:1"
     }
    ]
   },

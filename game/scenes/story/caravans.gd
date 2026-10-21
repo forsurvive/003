@@ -3,6 +3,8 @@
 ##   CARAVAN_V54 = 1 봉천 아랫문 안 마당 · 2 사당 4번 출구 광장(1-8f) · 3 노들섬 남단(2막 노들섬과 함께) · 0 길 위(정류장 사이 6시간).
 ## · V56 순회 의료반(소윤희): 7일 주기 — 0~1일째 봉천 · 2~3일째 영등포 지하상가 북쪽 출구 · 나머지는 강 건너(탱크마을·뚝섬). MEDIC_AT 1·2·0.
 ##   1-D8 UQ-126 ②: 추가 정류지(DG_STOP 1)가 여의도 대학병원이면 4일째는 병원 1층(MEDIC_AT 3) — 그만큼 강 건너가 하루 준다.
+##   1-12e FQ-JH-03: 상자를 든 주인공을 기다리는 동안(FQ_JH03_WAIT까지) 노량진 수산시장(MEDIC_AT 4) — 다른 정류지는 빈다.
+##   배달 성공(SOL 1 — 박춘삼과 함께, 원문 '의료반 대기 위치 +1')이면 5일째는 지하시장 진료소 앞(J-03, MEDIC_AT 5) — 강 건너가 또 하루 준다(DG_STOP과 따로 센다).
 ## 정류장에 있는 동안 그 맵에 들어와 있으면 인물을 바로 세우고 치운다(refresh_npcs). 같은 인물은 한 곳에만(SD-20 P3).
 class_name Caravans
 extends Node
@@ -29,10 +31,12 @@ static func v54_at(abs_min: int) -> int:
 	return stop + 1 if hh % leg < V54_STAY_H else 0
 
 
-static func medic_at(day: int, stop := 0) -> int:
+static func medic_at(day: int, stop := 0, jh := false) -> int:
 	var d := posmod(day, MEDIC_CYCLE)
 	if d == 4 and stop == 1:
 		return 3
+	if d == 5 and jh:
+		return 5
 	return 1 if d <= 1 else (2 if d <= 3 else 0)
 
 
@@ -49,7 +53,12 @@ func tick() -> void:
 	if host.date_text == "" or not st.vars.has("CARAVAN_V54"):
 		return
 	var a := v54_at(Clock.abs_min(host.date_text))
-	var b := medic_at(int(st.vars.get_v("GAME_DAY")), int(st.vars.get_v("DG_STOP")) if not st.is_dead("C-067") else 0)
+	var now := Clock.abs_min(host.date_text)
+	var b := medic_at(int(st.vars.get_v("GAME_DAY")), int(st.vars.get_v("DG_STOP")), int(st.vars.get_v("FQ_JH03_SOL")) == 1)
+	if int(st.vars.get_v("FQ_JH03_BOX")) == 1 and now < int(st.vars.get_v("FQ_JH03_WAIT")):
+		b = 4                                                                  # 상자를 기다리는 동안은 수산시장 한 곳(P3)
+	if st.is_dead("C-067"):
+		b = 0
 	if a == int(st.vars.get_v("CARAVAN_V54")) and b == int(st.vars.get_v("MEDIC_AT")):
 		return
 	st.vars.set_v("CARAVAN_V54", a)

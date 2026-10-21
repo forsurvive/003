@@ -5,14 +5,173 @@
  "npc": "N-R01-050",
  "cond": "V_ACT >= 1",
  "labels": {
-  "START": 0
+  "START": 0,
+  "JH03": 4,
+  "JH03_RADIO": 10,
+  "JH03_RADIO_W": 16,
+  "JH03_RADIO_NO": 18,
+  "JH03_SENT": 20,
+  "JH03_THANKS": 22,
+  "JH03_FLED": 24,
+  "JH03_SHOT": 26
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "FQ_JH03_CHECK == 6",
+   "to": "JH03_SHOT"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_BOX == 1 and FQ_JH03_PARK == 1 and FQ_JH03_NEAR == 1 and dead(\"C-018\") == 0",
+   "to": "JH03"
+  },
   {
    "op": "line",
    "who": "N-R01-050",
    "emo": "기본",
    "text": "노량진 다리목 초소입니다. 강 건너는 판독기 구역. 등록증 없으면 돌아가십시오."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "기본",
+   "text": "(박춘삼을 한 번 보고 상자를 본다) 분대는 노량진로에 나가 있는데 여기로 오셨군요."
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_CHECK == 11",
+   "to": "JH03_THANKS"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_CHECK == 10",
+   "to": "JH03_SENT"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_FLED == GAME_DAY",
+   "to": "JH03_FLED"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "기본",
+   "text": "상자가 의료반 거면 가십시오. 이 초소는 다리 건너는 사람만 봅니다. …판독기는 못 본 걸로 하겠습니다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "분대에 무전 좀 넣어 주세요. 노량진로로 가야 해서요",
+     "tags": [],
+     "cond": "FQ_JH03_CHECK == 0 or FQ_JH03_CHECK == 1 or FQ_JH03_CHECK == 5 or FQ_JH03_CHECK == 7",
+     "fx": "",
+     "to": "JH03_RADIO",
+     "id": "MQ-105_BJ_IDLE:1:0"
+    },
+    {
+     "text": "알겠습니다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "MQ-105_BJ_IDLE:1:1"
+    }
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "V_WANTED >= 30",
+   "to": "JH03_RADIO_W"
+  },
+  {
+   "op": "if",
+   "cond": "AFF_BJ <= -40",
+   "to": "JH03_RADIO_NO"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "기본",
+   "text": "(무전기를 든다) 다리목 하나, 노량진로 분대. 상자 든 민간인 하나, 계약 경호 구울 하나. 의료반 약이다. 판독기 생략. 이상."
+  },
+  {
+   "op": "cmd",
+   "name": "jh03",
+   "args": [
+    "radio"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "피곤",
+   "text": "조장이 투덜대겠지만 받을 겁니다. 제 이름 달고 가는 거니, 거기서 사고는 치지 마십시오."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "기본",
+   "text": "…그 얼굴, 공보 전단에서 봤습니다. 전단 얼굴로 무전 부탁은 곤란합니다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "기본",
+   "text": "그건 제가 나설 일이 아닙니다. 아무나 보증하라고 이 계급장 단 거 아니에요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "기본",
+   "text": "무전은 넣었습니다. 조장 앞에서 제 이름 대십시오."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "미소",
+   "text": "분대가 잘 받았답니다. 조장이 '하사님 구울 친구'라더군요. …농담입니다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "기본",
+   "text": "검문조가 아침에 얼굴 하나를 놓쳤다던데. 상자 든 사람이라고. …당신이군요. 오늘은 무전 못 넣습니다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "분노",
+   "text": "노량진로에서 분대원을 쏜 사람이군요. …여기서 쏘진 않겠습니다. 다리 쪽으론 오지 마십시오."
   },
   {
    "op": "goto",

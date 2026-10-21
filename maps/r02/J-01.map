@@ -73,7 +73,12 @@ npc CR-456 13 11 E sheet=en_cr456_loco bark="출입세. 매끈이는 50캡."
 trigger 14 12 scene=MQ-103_TOLL cond="MQ103_GATE == 0"
 trigger 15 12 scene=MQ-103_TOLL cond="MQ103_GATE == 0"
 npc N-R02-013 17 13 N bark="셔터 안은 조용해. 소란은 우리가 다 막거든."
-npc C-018 24 15 W bark="일감 있으면 불러. 하루 50캡, 총값은 따로."
+npc C-018 24 15 W cond="FQ_JH03_PARK == 0 and FQ_JH03_RESCUED == 0" bark="일감 있으면 불러. 하루 50캡, 총값은 따로."
+npc C-018 24 15 W cond="FQ_JH03_PARK == 0 and FQ_JH03_RESCUED == 1" bark="계약서 새로 썼어. 너는 빼고."
+# FQ-JH-03 지상 배달(1-12e): 계약 동안(PARK 1) · 돌아가는 날(2) · 넘겨진 뒤(3 · 4)엔 이 자리가 빈다(P3). 우호 +20이 되면 그의 발밑에 상자와 계약서가 먼저 보인다(재미 검수 F1).
+prop crate_army 25 15 cond="FQJH03_STAGE <= 10 and FQ_JH03_BOX == 0 and AFF_JH >= 20 and dead(\"C-018\") == 0"
+text 25 15 "국방색 약 상자. 붉은 십자 천에 '노량진 들것 의료반행 — 손대면 박춘삼이 안다'. 뚜껑 위 손글씨 계약서가 돌에 눌려 있다 — 맨 아랫줄 '해 떠 있는 동안 두 시간'." cond="FQJH03_STAGE <= 10 and FQ_JH03_BOX == 0 and AFF_JH >= 20 and dead(\"C-018\") == 0"
+text 24 15 "박춘삼이 서 있던 자리. 벽에 압정 자국 하나 — 계약서를 붙여 두던 자리다." cond="FQ_JH03_PARK == 3"
 prop bench_o 21 16
 prop crate_o 2 15
 box 2 15 stall owner=C-050 name="상인회 물품 상자"

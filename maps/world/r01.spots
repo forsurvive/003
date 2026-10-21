@@ -51,6 +51,27 @@ text 1 4 "저울. 눈금에 '검정필 2076'. 바늘이 0에 돌아오지 않는
 npc N-R01-057 6 5 N
 box 10 5 stall name="생선 상자" cond="V_ACT >= 1"
 prop crate_o 10 5
+# FQ-JH-03 지상 배달(1-12e): 상자를 기다리는 동안(MEDIC_AT 4) 낮엔 경매장 지붕 아래 접이 들것 옆 — 밤엔 시장 뒤 터(아래 자리)
+prop cot 0 5 cond="MEDIC_AT == 4"
+npc C-067 1 6 N cond="MEDIC_AT == 4 and GAME_HOUR >= 6 and GAME_HOUR < 18" bark="검문소 코앞이라 오래 못 있어요. 지하시장 상자, 아직이에요?"
+npc N-R02-051 3 6 W cond="MEDIC_AT == 4 and GAME_HOUR >= 6 and GAME_HOUR < 18 and SQ_S13_V_W != 2 and SQ_S13_V_W != 3" bark="반장님, 분대가 또 노량진로에 섰대요."
+text 0 5 "접이 들것. 손잡이에 붉은 천 — 들것 의료반 표식. 들것 밑에 빈 약 상자 둘." cond="MEDIC_AT == 4"
+
+# 시장 뒤 터(SD-06 §12.3 고정 매복 지점 '노량진 수산시장 터' — 1-12e FQ-JH-03 밤 대기). 낮엔 빈 터, 밤엔 소윤희가 손전등을 낮춰 기다린다.
+# 낮에 30분 넘게 남기고 건넸으면 박춘삼이 해 질 녘까지 강가 쪽 턱에 앉아 있다(남은 시간은 그의 몫, FQ_JH03_RIVER — 북쪽 출구 자리와 배타: PARK 2인 날).
+spot @893,1151 6 4
+prop tarp_pile 0 0
+prop crate_army 5 0
+text 0 0 "방수포 더미. 아래에 생선 상자 판자 — 누가 여기서 자고 간 자국." 
+text 5 0 "빈 탄약 상자. 안쪽에 분필로 날짜 셋, 모두 밤 시각이다."
+npc C-067 2 1 S cond="MEDIC_AT == 4 and (GAME_HOUR < 6 or GAME_HOUR >= 18)" bark="불빛 줄여요. 밤엔 여기서 받아요."
+npc C-018 4 2 N cond="FQ_JH03_RIVER == 1 and FQ_JH03_PARK == 2 and GAME_DAY == FQ_JH03_DONE and GAME_HOUR >= 6 and GAME_HOUR < 18" bark="(강을 본 채 말이 없다)"
+
+# 샛강 둑길(1-12e FQ-JH-03 우회 — 재미 검수: 페이드 대신 걷는 길). 들것 의료반이 쓰던 낮 우회로라는 걸 지형이 말한다.
+spot @868,1135 4 2
+prop cot 0 0
+text 0 0 "뒤집힌 접이 들것. 손잡이에 바랜 붉은 천. 바퀴 하나가 둑 비탈로 굴러가 있다."
+text 2 0 "콘크리트 둑에 분필 화살표 — '의료반 우회로 · 낮엔 여기로 · 다리목 분대 눈 12칸'. 그 아래 다른 글씨로 '고마워요'." w=2
 
 # 동작 국립묘지(L-R01-22, SD-09a B · 단계 1-7c): 이름 없는 비석 비탈 · 빈 기념탑 받침 · 2077 전시 합동 안치소(귀환 유해 상자 — 상자·꼬리표까지만).
 # 묘지기 길덕수(N-R01-052) — 인수 대장(훅 H-R01-06 앞부분). 밤에는 변이 멧돼지(1-11 인카운터와 함께).

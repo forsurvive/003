@@ -7,63 +7,70 @@
  "labels": {
   "START": 0,
   "MENU": 8,
-  "JH01": 10,
-  "JH01_AGAIN": 17,
-  "JH01_FIX": 19,
-  "JH01_FIX_DEAD": 22,
-  "JH01_PICKED": 24,
-  "JH01_KEY": 28,
-  "JH01_DONE": 35,
-  "JH01_CRUSH": 38,
-  "JH01_LEAK": 41,
-  "JH01_PAY": 43,
-  "JH01_TWO": 48,
-  "JH01_ONE": 50,
-  "JH01_CASH": 51,
-  "JH01_CASH_PICK": 55,
-  "COLD": 59,
-  "JH02_CAUGHT": 61,
-  "JH02_CAUGHT_P": 66,
-  "JH02_REPAY": 69,
-  "JH02_DENY": 72,
-  "JH02": 75,
-  "JH02_ASK": 77,
-  "JH02_LATER": 81,
-  "JH02_MORE": 84,
-  "JH02_S08": 89,
-  "JH02_SOMIN": 93,
-  "JH02_MENU": 95,
-  "JH02_PAY": 98,
-  "JH02_PAY60": 102,
-  "JH02_BILLS": 106,
-  "JH02_SUB": 110,
-  "JH02_COAT": 113,
-  "JH02_LIE": 117,
-  "JH02_DEAD": 122,
-  "JH02_DONE": 125,
-  "S8": 128,
-  "S8_BOTH": 132,
-  "S8_NO": 135,
-  "S8_PAY": 137,
-  "S8_ONE_B": 140,
-  "S8_ONE_A": 143,
-  "UQ71_CORE": 146,
-  "UQ71_SOLD": 149,
-  "ABOUT": 153,
-  "SHOP": 157,
-  "MA": 159,
-  "WHY": 162,
-  "JOB": 166,
-  "JOB_ALONE": 173,
-  "JOB_HINT": 176,
-  "FEE": 178,
-  "WAITING": 182,
-  "REWARD": 184,
-  "HAVEPASS": 188,
-  "REGULAR": 190,
-  "MA_DEAD": 192,
-  "MA_LOG": 195,
-  "MA_DEAD_KNEW": 202
+  "JH01": 12,
+  "JH01_AGAIN": 19,
+  "JH01_FIX": 21,
+  "JH01_FIX_DEAD": 24,
+  "JH01_PICKED": 26,
+  "JH01_KEY": 30,
+  "JH01_DONE": 37,
+  "JH01_CRUSH": 40,
+  "JH01_LEAK": 43,
+  "JH01_PAY": 45,
+  "JH01_TWO": 50,
+  "JH01_ONE": 52,
+  "JH01_CASH": 53,
+  "JH01_CASH_PICK": 57,
+  "JH03_ALONE": 61,
+  "JH03_TOLD": 65,
+  "JH03_TOLD_GONE": 72,
+  "JH03_TOLD_Q": 74,
+  "JH03_TOLD_N": 76,
+  "JH03_TOLD_BAN": 78,
+  "JH03_SOLD": 80,
+  "COLD": 84,
+  "JH02_CAUGHT": 86,
+  "JH02_CAUGHT_P": 91,
+  "JH02_REPAY": 94,
+  "JH02_DENY": 97,
+  "JH02": 100,
+  "JH02_ASK": 102,
+  "JH02_LATER": 106,
+  "JH02_MORE": 109,
+  "JH02_S08": 114,
+  "JH02_SOMIN": 118,
+  "JH02_MENU": 120,
+  "JH02_PAY": 123,
+  "JH02_PAY60": 127,
+  "JH02_BILLS": 131,
+  "JH02_SUB": 135,
+  "JH02_COAT": 138,
+  "JH02_LIE": 142,
+  "JH02_DEAD": 147,
+  "JH02_DONE": 150,
+  "S8": 153,
+  "S8_BOTH": 157,
+  "S8_NO": 160,
+  "S8_PAY": 162,
+  "S8_ONE_B": 165,
+  "S8_ONE_A": 168,
+  "UQ71_CORE": 171,
+  "UQ71_SOLD": 174,
+  "ABOUT": 178,
+  "SHOP": 182,
+  "MA": 184,
+  "WHY": 187,
+  "JOB": 191,
+  "JOB_ALONE": 198,
+  "JOB_HINT": 201,
+  "FEE": 203,
+  "WAITING": 207,
+  "REWARD": 209,
+  "HAVEPASS": 213,
+  "REGULAR": 215,
+  "MA_DEAD": 217,
+  "MA_LOG": 220,
+  "MA_DEAD_KNEW": 227
  },
  "ops": [
   {
@@ -111,6 +118,16 @@
    "op": "if",
    "cond": "FQ_JH02_RUMOR == 1 and FQ_JH02_KNOWN == 0 and FQ_JH02_SOL == 5",
    "to": "JH02_CAUGHT"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_TOLD == 0 and FQ_JH03_SOL >= 1 and FQ_JH03_SOL <= 4",
+   "to": "JH03_TOLD"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_TOLD == 0 and FQ_JH03_KNOWN == 1",
+   "to": "JH03_SOLD"
   },
   {
    "op": "choice",
@@ -194,12 +211,20 @@
      "id": "MQ-103_BOK:1:8"
     },
     {
+     "text": "지상 배달 말인데요",
+     "tags": [],
+     "cond": "FQJH03_STAGE == 0 and AFF_JH >= 20 and known_dead(\"C-018\") == 1",
+     "fx": "",
+     "to": "JH03_ALONE",
+     "id": "MQ-103_BOK:1:9"
+    },
+    {
      "text": "(인사만 한다)",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "MQ-103_BOK:1:9"
+     "id": "MQ-103_BOK:1:10"
     }
    ]
   },
@@ -456,6 +481,129 @@
   {
    "op": "goto",
    "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "슬픔",
+   "text": "박 씨가 하던 일이 있었어. 수산시장 들것 의료반에 약 한 상자. 지상 일이라 그 사람 계약서대로만 갔는데."
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "계약서 쓸 사람이 없으니, 혼자 갈 사람한테 줄게. 반장은 내일 저녁까지 경매장에 있대."
+  },
+  {
+   "op": "cmd",
+   "name": "jh03",
+   "args": [
+    "alone"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "cmd",
+   "name": "jh03",
+   "args": [
+    "told"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_SOL == 4",
+   "to": "JH03_TOLD_BAN"
+  },
+  {
+   "op": "if",
+   "cond": "known_dead(\"C-067\") == 1",
+   "to": "JH03_TOLD_GONE"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_NIGHT == 1",
+   "to": "JH03_TOLD_N"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_NIGHT == 2",
+   "to": "JH03_TOLD_Q"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "미소",
+   "text": "소윤희가 쪽지를 보냈어. '어디서 왔든 약은 약' — 그 사람 말버릇이야. 대낮에 경매장 한복판이었다며."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "슬픔",
+   "text": "들것 반장이 상자 받았다고 쪽지를 보냈었어. 그게 마지막 쪽지가 됐네. …약은 약이라던 사람이."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "미소",
+   "text": "소윤희가 쪽지를 보냈어. 정류지에서 조용히 받았대. '어디서 왔든 약은 약' — 그 사람 말버릇이야."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "미소",
+   "text": "소윤희 쪽지가 왔어. 밤에 뒤 터에서 받았대. 조용히 한 건 좋은데, 약 냄새 맡은 놈들이 있었다며."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "슬픔",
+   "text": "들것 반장이 없으니 여의도 병원으로 갔구나. 7병동 몫이 한 달 늘었대. …그 사람 말버릇이 생각나네."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "cmd",
+   "name": "jh03",
+   "args": [
+    "told"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "분노",
+   "text": "국 씨가 북쪽 출구 박 씨 자리에서 계약서를 주웠어. 새벽인력 도장이 찍혀 있더군."
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "우리 사람을 판 손님한테 셔터는 반만 올라가. 기억해 둬."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
   },
   {
    "op": "line",

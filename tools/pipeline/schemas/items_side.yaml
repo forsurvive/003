@@ -13,7 +13,7 @@ columns:
   태그: {field: kind, type: str}
 derive:
   cat: "'misc'"
-  weight: "0"                            # §7.10: 퀘스트 아이템은 무게 0(예외 M-319 · M-383은 표에)
+  weight: "num_in(' '.join([str(quest), str(source), str(desc)]), '무게 ', 0)"   # §7.10: 퀘스트 아이템은 무게 0 — 표에 '무게 n'을 적은 행만 그 값(M-319 · M-383 · M-424 · M-426 등, 1-12e)
   value: "0"
   tag: "'퀘스트'"
 gaps:

@@ -115,6 +115,9 @@ text 30 2 "다 올린 셔터 'B-04 사공 수선'. 선반에 2077년 10월분 �
 text 30 2 "반쯤 내린 셔터 'B-04 사공 수선'. 분필 '광장에 있음'이 지워져 간다." cond="dead(\"N-R02-012\") == 1"
 text 21 16 "빈 벤치 끝. 누가 앉던 자리인지 방석이 눌려 있다." scene=SQS12_LAY_S cond="dead(\"N-R02-012\") == 1"
 npc N-R02-016 34 4 S cond="FQ_JH01_SHOP_M != 1" bark="수리할 거 있어? 김민수야. 명찰 봐."
+# FQ-JH-03 성공 뒤(박춘삼과 배달 — 원문 '의료반 대기 위치 +1'): 이레 중 5일째 들것이 진료소 앞에(caravans.gd MEDIC_AT 5)
+npc C-067 32 4 W cond="MEDIC_AT == 5" bark="지하로 내려오는 건 처음엔 무서웠어요. 지금은 계단 수를 세요. 마흔둘."
+prop cot 31 4 cond="MEDIC_AT == 5"
 prop chief_desk 3 24
 prop file_cabinet 1 23
 box 1 23 cabinet owner=C-050 name="상인회 서류함"

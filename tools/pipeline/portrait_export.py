@@ -37,7 +37,8 @@ def main():
     sheet_look = {nm: code for nm, code, _w in PK.ENEMIES}
     en_look |= {"N-YT-1": sheet_look["en_cr421_loco"], "N-YT-2": sheet_look["en_cr420b_loco"]}   # 1-11b 무명 패거리 화자: 진행기가 세우는 그 그림(수금원 · 척후)과 같은 얼굴
     en_look |= {"N-BJ-S1": sheet_look["en_cr403_loco"], "N-BJ-S2": sheet_look["en_cr401_loco"],      # 계엄군 수색조(1-11c · 1-11f) · 여의도 순찰(1-11j): 진행기가 세우는 분대장 · 계엄병 얼굴
-               "N-BJ-P1": sheet_look["en_cr403_loco"], "N-BJ-P2": sheet_look["en_cr401_loco"]}
+               "N-BJ-P1": sheet_look["en_cr403_loco"], "N-BJ-P2": sheet_look["en_cr401_loco"],
+               "N-BJ-C1": sheet_look["en_cr403_loco"], "N-SB-R1": sheet_look["en_cr435_loco"]}   # 1-12e FQ-JH-03 다리목 분대장 · 새벽인력 모집원
     for sid in sorted(speakers) + sorted(looks):
         look = looks.get(sid) or npcs.get(sid, {}).get("look", "") or en_look.get(sid, "")
         if not look or look.split("-")[0] in ("AN", "RB", "BY", "OBJ") or "·" in look:

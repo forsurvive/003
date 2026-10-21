@@ -1,0 +1,121 @@
+{
+ "id": "EXAMINE_M426",
+ "title": "의약품 상자",
+ "loc": "L-R02-11",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "GONE": 3,
+  "LIST": 4,
+  "SHORT": 6,
+  "OPT": 7,
+  "TAKE": 8,
+  "BAND": 11
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "known_dead(\"C-067\") == 1",
+   "to": "GONE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "국방색 약 상자. 뚜껑 안쪽에 분필로 '수산시장 들것 반장 소윤희 앞'. 스팀팩 둘, 라드어웨이 하나, 붕대 한 묶음."
+  },
+  {
+   "op": "goto",
+   "to": "LIST"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "국방색 약 상자. 뚜껑 안쪽 분필 이름 — 받을 사람은 이제 없다. 스팀팩 둘, 라드어웨이 하나, 붕대 한 묶음. 여의도 병원 7병동이라면 받을 것이다."
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_SHORT == 1",
+   "to": "SHORT"
+  },
+  {
+   "op": "goto",
+   "to": "OPT"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "스팀팩 칸 하나가 비었다. 상자를 받을 사람은 칸을 셀 것이다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "스팀팩 하나를 꺼낸다",
+     "tags": [],
+     "cond": "FQ_JH03_SHORT == 0",
+     "fx": "",
+     "to": "TAKE",
+     "id": "EXAMINE_M426:1:0"
+    },
+    {
+     "text": "박춘삼 팔에 붕대를 감는다",
+     "tags": [],
+     "cond": "FQ_JH03_HURT == 1 and FQ_JH03_BAND == 0 and FQ_JH03_NEAR == 1 and FQ_JH03_PARK == 1 and dead(\"C-018\") == 0",
+     "fx": "",
+     "to": "BAND",
+     "id": "EXAMINE_M426:1:1"
+    },
+    {
+     "text": "뚜껑을 닫는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "EXAMINE_M426:1:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "jh03",
+   "args": [
+    "take_stim"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "스팀팩 하나를 꺼냈다. 빈 칸이 눈에 띈다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "jh03",
+   "args": [
+    "band"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "(팔을 내민다) …약은 약이지. 반장한테는 내가 말해."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-JH-03.txt"
+}

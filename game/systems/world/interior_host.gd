@@ -149,6 +149,8 @@ var _flicker_t := 0.0
 var _tone_t := 0.0
 const LIGHT_PROPS := {"oil_lamp": Vector2(0, -26), "drum_fire": Vector2(0, -20), "guard_booth": Vector2(0, -26), "watchtower": Vector2(0, -78), "radar_beacon": Vector2(16, -10)}
 var travel_block := Callable()                                     ## (lid) -> 막는 까닭 문자열("" = 막지 않음) — 진행기가 건다(1-11f)
+var travel_blocks: Array = []                                       ## 더 거는 막음들(같은 꼴, 1-12e — 진행기 여럿이 하나를 덮어쓰지 않게)
+var wait_vetoes: Array = []                                         ## () -> 기다리기 · 잠을 막는 까닭(""이면 막지 않음) — 진행기가 건다(1-12e 박춘삼 계약 '지상에서 자자고?')
 var travel_mul := 1.0                                               ## 빠른 이동 시간 배수(1-11f — 굶주린 동행 ×1.25)
 var extra_lights: Array = []                                        ## 진행기가 켠 빛 [[위치, 색], …] — 맵이 바뀌면 비운다
 const DARK_SETS := ["cv"]                                            ## 전기가 끊긴 지하(하수 · 빗물 암거 TS-I10 · 동굴 TS-I11)
@@ -2510,6 +2512,10 @@ func travel_check(lid: String) -> Array:
 		var tb := str(travel_block.call(lid))
 		if tb != "":
 			return [false, tb, 0]
+	for f in travel_blocks:                                            # 1-12e: 낮 지상 계약 동행(박춘삼)과 큰길 빠른 이동은 못 간다
+		var tb2 := str((f as Callable).call(lid))
+		if tb2 != "":
+			return [false, tb2, 0]
 	if story_hold:                                                     # 이야기 사건 중(MQ-106 무전·대치 등): 사건 무대를 빠른 이동으로 떠나지 않는다(SD-20 P4)
 		return [false, TRAVEL_MSG["F8"], 0]
 	if st.quests.stage("MQ-P4") < 100 or e.get("arrive") == null or busy or box.active or str(e.get("region", "")) == "R05":
@@ -3058,6 +3064,10 @@ func wait_block() -> String:
 		return "쫓기고 있다. 쉴 수 없다."
 	if combat.rad_dose > 0.0:
 		return "방사능 지대에서는 쉴 수 없다."                               # SD-11 §11.2 · SD-12 §7.6
+	for f in wait_vetoes:                                              # 진행기가 거는 막음(1-12e 계약 동행이 지상에서 쉬기를 거절)
+		var why := str((f as Callable).call())
+		if why != "":
+			return why
 	return ""
 
 

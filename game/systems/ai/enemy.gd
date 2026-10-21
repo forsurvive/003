@@ -370,7 +370,7 @@ func think(dt: float, target: Combatant, nav, shots: Projectiles) -> void:   ## 
 		var whisk: bool = aqua and world is InteriorMap and (world as InteriorMap).wet_at((world as InteriorMap).tile_of(target.pos())) > 0
 		if whisk:                                                   # 메기 수염: 같은 물에 선 사람은 웅크려도 · 등 뒤여도 안다
 			fov = true
-		var rate: float = Perception.detect_rate(dist_t, pe, {"movement": "walk" if whisk else target.movement, "posture": "stand" if whisk else target.posture,
+		var rate: float = Perception.detect_rate(dist_t, pe, {"movement": "move" if whisk else target.movement, "posture": "stand" if whisk else target.posture,
 			"sneak_skill": 0.0 if whisk else target.sneak, "alert": brain.alert(), "in_fov": fov}) * det_mul * (0.4 if eating else 1.0) * (1.0 if whisk else _hush_mul(target)) if sees else 0.0
 		var hit: bool = cmb.last_hit_from != Vector2.ZERO
 		if asleep:                                                  # 잠(S4): 맞거나, 가까운 소리(0.5+)거나, 바로 옆까지 오면 깬다

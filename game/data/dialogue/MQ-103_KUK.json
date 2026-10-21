@@ -6,13 +6,19 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "AFTER": 4
+  "AFTER": 5,
+  "JH03_SOLD": 7
  },
  "ops": [
   {
    "op": "if",
    "cond": "MQ103_AMBUSH == 2",
    "to": "AFTER"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_KNOWN == 1",
+   "to": "JH03_SOLD"
   },
   {
    "op": "line",
@@ -35,6 +41,16 @@
    "who": "N-R02-013",
    "emo": "미소",
    "text": "아까 그 장부쟁이들 말이야. 상인회 손님 건드리면 이렇게 돼."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-013",
+   "emo": "분노",
+   "text": "박 형님 자리에 계약서만 남았더라. 새벽인력 도장 찍힌 거. …그쪽이 같이 나갔지."
   },
   {
    "op": "goto",

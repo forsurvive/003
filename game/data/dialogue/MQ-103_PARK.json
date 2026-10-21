@@ -6,13 +6,56 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "OFFER": 6,
-  "HIRE": 9,
-  "SOLO": 13,
-  "HIRED": 15,
-  "DONE": 17
+  "HINT": 15,
+  "OFFER": 17,
+  "HIRE": 20,
+  "SOLO": 24,
+  "HIRED": 26,
+  "HIRED_JH03": 29,
+  "DONE": 31,
+  "DONE_JH03": 35,
+  "JH03_OFFER": 37,
+  "JH03_OFFER2": 43,
+  "JH03_ASK": 44,
+  "JH03_WHY": 45,
+  "JH03_FULL": 49,
+  "JH03_LATER": 51,
+  "JH03_TAKE": 53,
+  "JH03_MATE": 57,
+  "JH03_TIME": 59,
+  "JH03_TIME_N": 65,
+  "JH03_TIME_1": 67,
+  "JH03_TIME_2": 69,
+  "JH03_TIME_END": 70,
+  "JH03_PUMP": 72,
+  "JH03_DETOUR": 74,
+  "JH03_STOP": 76,
+  "JH03_STOP_ID": 80,
+  "JH03_RIVER": 84,
+  "JH03_IDBACK": 86,
+  "JH03_AFTER": 89,
+  "JH03_AFTER_R": 94,
+  "JH03_AFTER_N": 96,
+  "JH03_AFTER_D": 98,
+  "JH03_COLD": 100,
+  "JH03_SOLDBOX": 102
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "FQ_JH03_PARK == 1",
+   "to": "JH03_MATE"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_RIVER == 1 and FQ_JH03_PARK == 2",
+   "to": "JH03_RIVER"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_ID == 1 and FQ_JH03_PARK == 0",
+   "to": "JH03_IDBACK"
+  },
   {
    "op": "if",
    "cond": "MQ103_HIRE == 1 and MQ103_JOB < 2",
@@ -22,6 +65,31 @@
    "op": "if",
    "cond": "MQ103_JOB == 1",
    "to": "OFFER"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_RESCUED == 1 and FQ_JH03_PARK == 0",
+   "to": "JH03_COLD"
+  },
+  {
+   "op": "if",
+   "cond": "FQJH03_STAGE == 0 and AFF_JH >= 20 and (MQ103_HIRE != 1 or MQ103_JOB >= 3)",
+   "to": "JH03_OFFER"
+  },
+  {
+   "op": "if",
+   "cond": "FQJH03_STAGE == 10 and FQ_JH03_BOX == 0 and AFF_JH >= 20 and (MQ103_HIRE != 1 or MQ103_JOB >= 3)",
+   "to": "JH03_OFFER2"
+  },
+  {
+   "op": "if",
+   "cond": "FQJH03_STAGE >= 100 and FQ_JH03_PARK == 0 and FQ_JH03_SOL != 3",
+   "to": "JH03_AFTER"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_SOL == 3 and FQ_JH03_PARK == 0",
+   "to": "JH03_SOLDBOX"
   },
   {
    "op": "if",
@@ -35,10 +103,25 @@
    "text": "일감 있으면 불러. 하루 50캡, 총값은 따로."
   },
   {
+   "op": "if",
+   "cond": "AFF_JH >= 0 and AFF_JH < 20 and FQJH03_STAGE == 0",
+   "to": "HINT"
+  },
+  {
    "op": "line",
    "who": "C-018",
    "emo": "기본",
    "text": "지금은 없어 보이네. 그럼 지나가."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "회장님이 널 좀 더 믿으면, 지상 일 하나 있어."
   },
   {
    "op": "goto",
@@ -120,6 +203,21 @@
    "text": "앞장서. 남쪽 통로는 광장 남쪽 끝이야."
   },
   {
+   "op": "if",
+   "cond": "AFF_JH >= 20 and FQJH03_STAGE == 0",
+   "to": "HIRED_JH03"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "지상 일도 하나 있는데, 하루 50캡 계약이 먼저야. 둥지부터 끝내."
+  },
+  {
    "op": "goto",
    "to": "END"
   },
@@ -128,6 +226,449 @@
    "who": "C-018",
    "emo": "미소",
    "text": "둥지 얘기 다 퍼졌어. 이제 '볼트 양반' 소리는 안 듣겠네."
+  },
+  {
+   "op": "if",
+   "cond": "MQ103_HIRE == 1 and MQ103_JOB == 2 and AFF_JH >= 20 and FQJH03_STAGE == 0",
+   "to": "DONE_JH03"
+  },
+  {
+   "op": "if",
+   "cond": "AFF_JH >= 0 and AFF_JH < 20 and FQJH03_STAGE == 0",
+   "to": "HINT"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "지상 일 하나 있는데, 회장님한테 둥지 값부터 받아 와. 계약은 하나씩이야."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "(품에서 접힌 종이를 꺼낸다) 지상 일이야. 상인회 약 한 상자, 노량진 수산시장 들것 의료반까지."
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "계약서 읽어 봐. 맨 아랫줄."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "손글씨 계약서. 맨 아랫줄에 '경호인은 해 떠 있는 동안 지상에 두 시간 넘게 있지 않는다 — 박춘삼'."
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "계약서에 '해 떠 있는 동안 두 시간'이라고 적혀 있어. 내가 쓴 계약서야. 그래서 지키는 거고."
+  },
+  {
+   "op": "cmd",
+   "name": "jh03",
+   "args": [
+    "offer"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "JH03_ASK"
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "계약서 아직 갖고 있어. 상자도 그대로고."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "계약한다",
+     "tags": [],
+     "cond": "FQ_JH03_ROOM == 1",
+     "fx": "",
+     "to": "JH03_TAKE",
+     "id": "MQ-103_PARK:2:0"
+    },
+    {
+     "text": "계약한다",
+     "tags": [],
+     "cond": "FQ_JH03_ROOM == 0",
+     "fx": "",
+     "to": "JH03_FULL",
+     "id": "MQ-103_PARK:2:1"
+    },
+    {
+     "text": "왜 두 시간이야?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "JH03_WHY",
+     "id": "MQ-103_PARK:2:2"
+    },
+    {
+     "text": "나중에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "JH03_LATER",
+     "id": "MQ-103_PARK:2:3"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "낮엔 계엄 순찰이 돌고, 판독 불능자 사냥도 낮에 많아."
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "두 시간이면 들킬 확률이 내가 견딜 만큼이야."
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "밤엔 걷는 거야. 쉬는 건 지하에서. 지상에서 자자는 놈하곤 계약 안 해."
+  },
+  {
+   "op": "goto",
+   "to": "JH03_ASK"
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "줄이 길구먼. 데리고 다니는 사람이 둘이면 내 자리가 없어. 자리 비면 와."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "상자는 여기 있어. 의료반은 기다려 주지 않지만, 약은 금방 안 상해."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "jh03",
+   "args": [
+    "take"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "미소",
+   "text": "계약 성립. 상자는 네가 들어. 무게 10이야 — 등이 휘어도 내 일 아니고."
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "반장은 내일 저녁까지 수산시장에서 기다린대. 그 뒤엔 순회 돌고."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "왜. 시간 아깝다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "몇 시야?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "JH03_TIME",
+     "id": "MQ-103_PARK:3:0"
+    },
+    {
+     "text": "샛강 쪽으로 돌자",
+     "tags": [],
+     "cond": "FQ_JH03_CHECK == 1 or FQ_JH03_CHECK == 7",
+     "fx": "",
+     "to": "JH03_DETOUR",
+     "id": "MQ-103_PARK:3:1"
+    },
+    {
+     "text": "계약 끝내자. 돌아가",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "JH03_STOP",
+     "id": "MQ-103_PARK:3:2"
+    },
+    {
+     "text": "아니야",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "MQ-103_PARK:3:3"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "내 손목시계는 200년째 23시 29분이야. 전기 시계라."
+  },
+  {
+   "op": "if",
+   "cond": "GAME_HOUR < 6 or GAME_HOUR >= 18",
+   "to": "JH03_TIME_N"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_CLOCK < 60",
+   "to": "JH03_TIME_1"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_CLOCK < 90",
+   "to": "JH03_TIME_2"
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "(하늘을 본다) 반 시간도 안 남았어."
+  },
+  {
+   "op": "goto",
+   "to": "JH03_TIME_END"
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "밤엔 시계 볼 일 없어. 밤은 계약서 밖이야."
+  },
+  {
+   "op": "goto",
+   "to": "JH03_TIME_END"
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "(하늘을 본다) 해가 아직 넉넉해. 한 시간은 넘게."
+  },
+  {
+   "op": "goto",
+   "to": "JH03_TIME_END"
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "(하늘을 본다) 한 시간쯤. 많이 쳐서."
+  },
+  {
+   "op": "if",
+   "cond": "UQ71_STAGE >= 10",
+   "to": "JH03_PUMP"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "대방 지하차도 가 봤다며. 펌프실 문 잠그면 해 안 들어. 쉬려면 거기야."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "jh03",
+   "args": [
+    "detour"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "계약 파기는 네 쪽이야. 상자는 네가 끝까지 들고 가."
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_ID == 1",
+   "to": "JH03_STOP_ID"
+  },
+  {
+   "op": "cmd",
+   "name": "jh03",
+   "args": [
+    "part",
+    "7"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "jh03",
+   "args": [
+    "idback"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "빌린 주민증. 계약서엔 없는 줄이지만 돌려준다."
+  },
+  {
+   "op": "cmd",
+   "name": "jh03",
+   "args": [
+    "part",
+    "7"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "(강을 본 채) 갈색이네. 200년 전엔 회색이었는데."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "jh03",
+   "args": [
+    "idback"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "네 주민증. 빌린 건 돌려준다. 계약서엔 없는 줄이지만."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_RIVER == 1",
+   "to": "JH03_AFTER_R"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_NIGHT == 1 and FQ_JH03_SOL == 1",
+   "to": "JH03_AFTER_N"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_SOL == 1",
+   "to": "JH03_AFTER_D"
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "반장이 상자 받았다며. 내 이름은 빠졌겠지. 계약서대로야."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "미소",
+   "text": "강가에 앉은 게 200년 만이었어. …다음 계약서엔 '강가 30분' 줄을 넣을까 봐."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "밤길은 계약서 밖이었는데. 뒤 터 그놈들, 냄새를 어떻게 맡았는지."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "대낮에 경매장 한복판으로 들어갔지. 상인들 눈이 다 이쪽이었어. 판독기보다 무섭더라."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "계약서 새로 썼어. 너는 빼고."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-018",
+   "emo": "기본",
+   "text": "상자가 경매장 저울에 올라갔다며. 계약서엔 '배달'이라고 썼는데."
   },
   {
    "op": "goto",

@@ -22,6 +22,8 @@ var side13: SideS13                                 ## 볼트 S-02 사이드 퀘
 var jc01: FqJc01                                    ## 세력 퀘스트 FQ-JC-01 계단 물길(1-12a)
 var fqgs: FqGs                                       ## 세력 퀘스트 FQ-GS-01 정비 당번 · FQ-GS-02 천공기(1-12b)
 var fqjh: FqJh                                       ## 세력 퀘스트 FQ-JH-01 B구역 셔터(1-12c)
+var fqjh3: FqJh3                                     ## 세력 퀘스트 FQ-JH-03 지상 배달(1-12e)
+var cara: Caravans                                   ## 순회 일정(소윤희 MEDIC_AT — 1-12e 수산시장 대기)
 var side11: SideS11                                 ## 여의도 사이드 퀘스트(1-11j SQ-S11)
 var uq71: Uq71                                     ## 비표시 퀘스트 UQ-71(1-D1 대방 지하차도)
 var u02: U02Paths                                  ## U02 남태령 지하(1-D2)
@@ -138,6 +140,12 @@ func _ready() -> void:
 	fqjh = FqJh.new()
 	add_child(fqjh)
 	fqjh.setup(host, true)
+	fqjh3 = FqJh3.new()
+	add_child(fqjh3)
+	fqjh3.setup(host, true)
+	cara = Caravans.new()
+	add_child(cara)
+	cara.setup(host)
 	uq71 = Uq71.new()
 	add_child(uq71)
 	uq71.setup(host, true)
@@ -594,6 +602,33 @@ func _ready() -> void:
 				["warp", "J-03", "from_J-02"], ["wait", 1.5], ["calm"], ["want", ["손님 오셨어요"]], ["go", 10, 22, "J-03"], ["talk", "N-UG-501"], ["wait", 3.0], ["shot", "jh02_reunion"],
 				["check", "FQJH02_STAGE == 100 and FQ_JH02_SOL == 1 and FQ_JH02_SHOP == 2 and has(\"A-019\")", "재회(100) · 장사꾼 코트 · 광장 노점"],
 				["warp", "J-02", "from_J-03"], ["wait", 1.0], ["warp", "J-03", "from_J-02"], ["wait", 1.5], ["go", 34, 14, "J-03"], ["wait", 1.0], ["shot", "jh02_stall"]]
+		"jh03":                                                         # 1-12e FQ-JH-03: 북쪽 출구 박춘삼 계약(20) → 지상으로 걸어서 노량진로(낮 시계가 돈다) → 다리목 이동 검문
+			st.vars.set_v("AFF_JH", 25)                                  #   [화술 보통] 서류(30분) → 수산시장(40) → 모집원 거절 → 소윤희에게 건넴(100) — 최단 길 낮 시계 실측(계획 §4 · §5.4)
+			st.vars.set_v("MQ103_JOB", 3)
+			st.vars.set_v("MQ103_HIRE", 2)
+			st.vars.set_v("PC_SKP_SPEECH", 100)
+			st.vars.set_v("GAME_DAY", 8)
+			st.quests.set_stage("MQ-101", 100)                           # 세계 시계가 도는 때(clock_running) — 걸은 시간이 낮 시계에 실제로 쌓이게
+			st.vars.set_v("MQ101_NIGHT", 3)
+			host.date_text = "2277. 10. 26.  09:00"
+			host.enter("J-01", "from_J-02")
+			var mk := _spot_o("L-R01-25")
+			plan = [["hp", 3000], ["wait", 1.0], ["shot", "jh03_box"], ["want", ["계약한다"]], ["go", 24, 16, "J-01"], ["talk", "C-018"], ["wait", 1.5],
+				["check", "FQJH03_STAGE == 20 and FQ_JH03_BOX == 1 and FQ_JH03_PARK == 1 and has(\"M-426\")", "계약 — 상자 · 동행(20)"],
+				["warp", "W", "L-R02-11"], ["wait", 2.0], ["noenc"], ["calm"],
+				["go", 770, 1154], ["go", 820, 1159], ["wait", 1.0],
+				["check", "FQ_JH03_BARK == 1", "대방 지하차도 입구 — 박춘삼 길 위 바크(계약서 얘기 없이)"], ["go", 845, 1166],
+				["check", "FQ_JH03_OUT == 1 and FQ_JH03_NEAR == 1", "박춘삼이 곁 · 지상"], ["check", "FQ_JH03_CLOCK > 0", "지상 낮 — 시계가 돈다"],
+				["want", ["수산시장 들것 의료반 약"]], ["go", 851, 1168], ["shot", "jh03_post"], ["go", 857, 1169],
+				["until", "FQ_JH03_CHECK == 4", 25.0, "다리목 이동 검문 — 서류 반 시간", "jh03_check"],
+				["want", ["꺼지라고 한다"]], ["go", 878, 1169], ["go", mk.x + 2, mk.y + 4],
+				["until", "FQJH03_STAGE >= 40", 10.0, "수산시장 — 소윤희가 기다린다(40)", "jh03_market"],
+				["until", "FQ_JH03_NEAR == 1", 10.0, "박춘삼이 곁에 따라와 섰다", "jh03_near"],
+				["want", ["상자를 건넨다"]], ["go", mk.x + 2, mk.y + 5], ["talk", "C-067"], ["wait", 3.0], ["shot", "jh03_done"],
+				["check", "FQJH03_STAGE == 100 and FQ_JH03_SOL == 1 and FQ_JH03_NIGHT == 0", "박춘삼과 대낮에 건넴(100 · 공개도 2)"],
+				["check", "FQ_JH03_CLOCK >= 40 and FQ_JH03_CLOCK <= 90", "최단 길(서류) 낮 시계 40~90분 — 예산 120분의 3분의 1~3분의 2"],
+				["check", "FQ_JH03_SKY >= 8 and FQ_JH03_BARK == 5", "첫 신호(쌓인 30분) · 경매장 칠판 바크"],
+				["check", "FQ_JH03_RIVER == 0 and FQ_JH03_NIGHT == 0", "서류 30분을 썼으니 강가 상 없음(75분 넘게 남겨야) · 경매장 판"]]
 		"db":                                                           # 1-D1 대방 지하차도 · UQ-71: 북쪽 입구로 들어가 분대 등 뒤에서 웅크려 엿듣기(사흘 기한) → 펌프실 운전기사 메모 →
 			st.vars.set_v("PC_SKP_SCIENCE", 60)                          #   허리 물 버스에서 정지 레버로 봉인(카르마 · 지대 꺼짐) → 남쪽 입구로 나와 문 앞에 선다
 			st.vars.set_v("GAME_DAY", 8)
