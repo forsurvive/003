@@ -232,6 +232,10 @@ QUAD = {
     # 사나운 들개 CR-105(SD-14 §4.7): 변이 들개보다 크고 어두운 털, 붉은 눈, 몸의 물린 흉터
     "fierce": dict(w=44, h=32, foot=(20, 29), px=4, body=(19, 17, 11, 7), head=(32, 12, 8, 6.5), leg=5, fur=["P10", "P11", "P12", "P13"],
                    skin=["P39", "P40", "P41"], eye="P54", tail="up", ears=True, mange=False, scars=True),
+    # 들개 새끼(1-12g UQ-02 — 어미 잃은 변이 들개 새끼, 데려오면 마을 강아지 CR-108 판본): 들개 털빛을 한 단 밝게 · 머리가 몸만큼 큼 ·
+    # 늘어진 귀 · 짧은 다리 · 옴 없음(아직 어리다) · 한쪽 귀 끝만 흰 털(백구가 핥아 준 자리 — 바크 · 이름표 그림과 같은 표지)
+    "pup": dict(w=32, h=24, foot=(14, 21), px=2, body=(13, 14, 6.5, 4), head=(22, 10, 6.5, 5.5), leg=3, fur=["P18", "P19", "P20", "P21"],
+                skin=["P39", "P40", "P41"], eye="P01", tail="tick", ears=True, mange=False, ribs=False),
     "rat": dict(w=40, h=22, foot=(18, 19), px=2, body=(17, 13, 9, 5), head=(27, 12, 5, 4.5), leg=3, fur=["P03", "P04", "P05", "P06"],
                 skin=["P40", "P41", "P42"], eye="P54", tail="long", ears=True, mange=False),
     # 왕쥐 CR-097(SD-14 §4.1 '대형 확대 스프라이트', SQ-S03 계곡 암거): 시궁쥐 우두머리 — 한 치수 반 큰 몸(같은 걸음 리그를 원래 크기로 그린다 —
@@ -318,6 +322,15 @@ def quad(kind, frame=0, pose="walk"):
         bd.point((round(hxc + 1), hyb - 2), fill=C(q["eye"]))
         bd.line([round(hxc - hrx + 1), hyb + 3, round(hxc - hrx + 3), hyb + 6], fill=C("P26"), width=2)   # 목줄
         bd.point((round(hxc - hrx + 2), hyb + 6), fill=C("P07"))
+    elif kind == "pup":                                                    # 새끼: 큰 늘어진 귀(끝 흰 털) · 짧고 둥근 주둥이 · 큰 검은 눈
+        ex = round(hxc - hrx * 0.4)
+        bd.polygon([(ex - 3, hyb - 4), (ex + 3, hyb - 5), (ex - 2, hyb + 3)], fill=fur[0])
+        bd.point((ex + 1, hyb - 5), fill=C("P09")); bd.point((ex + 2, hyb - 5), fill=C("P08"))   # 귀 윗단 흰 털(백구가 핥아 준 자리)
+        sx = round(hxc + hrx - 2)
+        bd.ellipse([sx - 1, hyb, sx + 3, hyb + 3], fill=fur[3])
+        bd.point((sx + 3, hyb + 1), fill=C("P01"))
+        bd.rectangle([round(hxc), hyb - 3, round(hxc) + 1, hyb - 2], fill=C(q["eye"]))
+        bd.point((round(hxc), hyb - 3), fill=C("P09"))
     elif kind in ("dog", "fierce"):
         ex = round(hxc - hrx * 0.45)                                       # 늘어진 귀
         bd.polygon([(ex - 2, hyb - 5), (ex + 3, hyb - 6), (ex - 3, hyb + 1)], fill=fur[0])
@@ -424,6 +437,10 @@ def quad(kind, frame=0, pose="walk"):
         d.ellipse([cx0 - 4, cy0 - 4, cx0 + 2, cy0 + 2], fill=fur[2])
         d.arc([cx0 - 3, cy0 - 3, cx0 + 1, cy0 + 1], 200, 20, fill=fur[3])
         d.point((cx0 - 1, cy0), fill=fur[1])
+    elif q["tail"] == "tick":                                             # 새끼: 짧게 치켜든 꼬리(걷는 컷마다 흔들림)
+        w = frame % 2
+        d.line([(tx, by - 1 - bob), (tx - 2, by - 3 - bob), (tx - 2 - w, by - 5 - bob)], fill=fur[1])
+        d.point((tx - 2 - w, by - 6 - bob), fill=fur[2])
     elif q["tail"] == "up":
         d.line([(tx, by - 2 - bob), (tx - 3, by - 6 - bob), (tx - 4, by - 9 - bob + (frame % 2))], fill=fur[0], width=2)
     elif q["tail"] == "mangy":                                            # 털 빠진 너구리 꼬리: 굵다 가늘어지고, 남은 털 고리 둘

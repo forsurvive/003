@@ -4,6 +4,8 @@
 - 개표 4호(N-R02-029): 앞 팔 끝이 계수기(놋쇠 상자 · 숫자 창) · 몸통 아래 출력구에서 '재검표' 출력지 띠가 늘어진다 · 옆면 '4'.
 - 원장 대행(K-24 '대한 대피 적성 학원', 1-12b FQ-GS-02): 앞 팔에 출석부(갈색 판 · 흰 종이 · 놋쇠 집게) · 아래 팔에 자습 종(놋쇠 손종) ·
   몸통 앞 남색 명찰 띠('원장 대행' 흰 획). 숫자 덧칠 없음 — 학원 기물이라 번호 대신 명찰.
+- 번개 점원(노량진 번개24 · V24, 1-12g UQ-01): 번개24 제복 도장 — 구체 위쪽 반을 청솔 하늘청으로 칠하고 적도에 주황 띠(번개 꺾쇠) ·
+  흰 명찰 '24' · 앞 팔에 바코드 판독기(회색 상자 · 붉은 빛) · 아래 팔에 배급표 펀치(놋쇠 집게). 이름 없는 기체(SD-07b — 번호는 명찰의 '24'뿐).
 - 공통: 은색 구체 몸 · 정수리에서 뻗은 눈줄기 셋(앞 눈이 크다) · 아래 분사구 불꽃. 발이 없다 — 몸은 그림자 위 18px에 떠서 1px씩 흔들리고,
   그림자는 제자리(미끄러짐 규칙과 무관). 옆(E)만 그리고 W는 뒤집는다(robots.py 살핌-1과 같은 형식): idle 4 · walk 4 · death 4.
 - 빛은 왼쪽 위: 몸 오른쪽 아래에 초승달 그늘, 왼쪽 위에 반짝임. 반투명 없음 · 팔레트 UI 묶음 안의 색만.
@@ -71,6 +73,23 @@ def _eye(d, x0, y0, x1, y1, r, blink=False, big=False):
     d.point((x1 - r + 1, y1 - r + 1), fill=C("P08"))
 
 
+def _clerk_paint(d, cx, cy, r):
+    """번개24 제복 도장: 위 반구 하늘청(빛 쪽은 밝게) · 적도 주황 띠와 흰 번개 꺾쇠 · 흰 명찰 '24'(먹 두 획)."""
+    for y in range(cy - r + 1, cy + 2):
+        for x in range(cx - r + 1, cx + r):
+            if (x - cx) ** 2 + (y - cy) ** 2 < (r - 0.5) ** 2:
+                lit = (x - cx) + (y - cy) < -r * 0.6
+                shade = (x - cx) > r * 0.45 or (x - cx) + (y - cy) > r * 0.3
+                d.point((x, y), fill=C("P46" if lit else ("P44" if shade else "P45")))
+    d.point((cx - r + 5, cy - r + 5), fill=C("P09"))                   # 칠 위 반짝
+    d.line([cx - r + 1, cy + 2, cx + r - 1, cy + 2], fill=C("P27"))      # 주황 띠
+    d.line([cx - r + 2, cy + 3, cx + r - 2, cy + 3], fill=C("P26"))
+    d.line([cx - 2, cy + 1, cx, cy + 3], fill=C("P09")); d.line([cx, cy + 3, cx + 1, cy + 1], fill=C("P09"))   # 번개 꺾쇠
+    d.rectangle([cx - 8, cy - 5, cx - 3, cy - 2], fill=C(INK))         # 흰 명찰 '24'
+    d.rectangle([cx - 7, cy - 4, cx - 4, cy - 3], fill=C("P09"))
+    d.point((cx - 6, cy - 4), fill=C(INK)); d.point((cx - 5, cy - 3), fill=C(INK))
+
+
 def salim(frame=0, pose="idle", kind="ballot"):
     """살림-2 한 컷. pose: idle | walk | death(frame 0~3). kind: ballot(투표함지기 2호) | count(개표 4호)."""
     if pose == "death":
@@ -108,6 +127,8 @@ def salim(frame=0, pose="idle", kind="ballot"):
     d.line([cx - r + 1, cy + 3, cx + r - 1, cy + 3], fill=C(SILVER[0]))
     for x in range(cx - r + 3, cx + r - 2, 4):
         d.point((x, cy + 4), fill=C("P09"))
+    if kind == "clerk":
+        _clerk_paint(d, cx, cy, r)
     if kind == "ballot":
         _digit(d, cx - 8, cy + 5, 2)                                    # 띠 아래(이음 띠 밑)에 덧칠
     elif kind == "count":
@@ -144,7 +165,26 @@ def salim(frame=0, pose="idle", kind="ballot"):
     _eye(d, cx, cy - r, cx + 1, cy - r - 9, 2, blink=frame % 4 == 3)
     _eye(d, cx + 5, cy - r + 2, cx + 11, cy - r - 4, 3, blink=frame % 4 == 3, big=True)
     # 앞 팔과 아래 팔
-    if kind == "proxy":
+    if kind == "clerk":
+        # 아래 팔: 배급표 펀치(놋쇠 집게 — 걷는 컷엔 접힘, 서 있을 땐 딸깍)
+        _arm(d, [(cx + 6, cy + r - 3), (cx + 9, cy + r + 1), (cx + 12, cy + r)])
+        bx, by = cx + 12, cy + r - 1
+        bite = 1 if (pose == "idle" and frame % 4 == 1) else 0
+        d.line([bx, by, bx + 4, by - 1 + bite], fill=C(INK), width=2); d.line([bx, by + 2, bx + 4, by + 3 - bite], fill=C(INK), width=2)
+        d.point((bx + 1, by), fill=C("P48")); d.point((bx + 1, by + 2), fill=C("P48")); d.point((bx + 3, by + 1), fill=C("P49"))
+        # 앞 팔: 바코드 판독기(회색 손잡이 상자 · 붉은 판독 빛 — 컷마다 깜박)
+        tip = (cx + r + 5, cy - 1 - (swing if pose == "walk" else 0))
+        _arm(d, [(cx + r - 1, cy), (cx + r + 2, cy + 1), tip])
+        px, py = tip
+        d.rectangle([px - 1, py - 4, px + 6, py + 2], fill=C(INK))
+        d.rectangle([px, py - 3, px + 5, py + 1], fill=C("P06"))
+        d.line([px, py + 1, px + 5, py + 1], fill=C("P04"))
+        d.point((px + 1, py - 2), fill=C("P08"))
+        if frame % 2 == 0:
+            d.line([px + 7, py - 2, px + 8, py - 2], fill=C("P53")); d.point((px + 9, py - 2), fill=C("P52"))
+        else:
+            d.point((px + 6, py - 2), fill=C("P52"))
+    elif kind == "proxy":
         # 아래 팔: 자습 종(놋쇠 손종 — 걷는 컷에 흔들린다)
         _arm(d, [(cx + 6, cy + r - 3), (cx + 9, cy + r + 1), (cx + 12, cy + r + 1)])
         bx, by = cx + 12, cy + r - 2 + (swing if pose == "walk" else 0)
@@ -219,6 +259,9 @@ def _death(frame, kind):
     d.line([cx - r + 1, cy + 2, cx + r - 1, cy + 2], fill=C(SILVER[0]))
     if kind == "proxy":
         d.rectangle([cx - 6, cy - 4, cx + 3, cy - 2], fill=C("P44")); d.line([cx - 5, cy - 3, cx + 2, cy - 3], fill=C("P09"))
+    elif kind == "clerk":
+        d.chord([cx - r, cy - r + 1, cx + r, cy + r - 2], 180, 360, fill=C("P45"))
+        d.line([cx - r + 1, cy + 1, cx + r - 1, cy + 1], fill=C("P27"))
     else:
         _digit(d, cx - 6, cy - 5, 2 if kind == "ballot" else 4)
     d.line([cx - 3, cy - 8, cx, cy - 3], fill=C(INK)); d.line([cx, cy - 3, cx - 2, cy + 1], fill=C(INK))   # 금
@@ -229,6 +272,10 @@ def _death(frame, kind):
         d.rectangle([cx - 18, cy + 3, cx - 10, cy + 8], fill=C(INK)); d.rectangle([cx - 17, cy + 4, cx - 11, cy + 7], fill=C("P09"))   # 굴러간 투표함
         d.point((cx - 12, cy + 5), fill=C("P53"))
         d.line([cx + 12, cy + 7, cx + 18, cy + 8], fill=C("P09")); d.point((cx + 15, cy + 7), fill=C("P53"))   # 흩어진 용지
+    elif kind == "clerk":
+        d.rectangle([cx - 17, cy + 3, cx - 11, cy + 8], fill=C(INK)); d.rectangle([cx - 16, cy + 4, cx - 12, cy + 7], fill=C("P06"))   # 떨어진 판독기
+        for k in range(3):                                             # 흩어진 영수증
+            d.line([cx + 10 + k * 3, cy + 6 + (k % 2), cx + 11 + k * 3, cy + 6 + (k % 2)], fill=C("P09"))
     elif kind == "proxy":
         d.rectangle([cx - 18, cy + 2, cx - 11, cy + 8], fill=C(INK)); d.rectangle([cx - 17, cy + 3, cx - 12, cy + 7], fill=C("P19"))   # 떨어진 출석부
         d.rectangle([cx - 16, cy + 4, cx - 13, cy + 6], fill=C("P09"))
@@ -274,10 +321,25 @@ def salim_portrait(emo="기본", kind="ballot"):
     d.line([cx - r + 3, cy + 8, cx + r - 3, cy + 8], fill=C(SILVER[0]), width=2)
     for x in range(cx - r + 6, cx + r - 4, 8):
         d.rectangle([x, cy + 10, x + 1, cy + 11], fill=C("P09"))
+    if kind == "clerk":                                                 # 번개24 제복 도장(위 반구 하늘청 · 주황 띠 · 흰 명찰)
+        for y in range(cy - r + 2, cy + 7):
+            for x in range(cx - r + 2, cx + r - 1):
+                if (x - cx) ** 2 + (y - cy) ** 2 < (r - 1) ** 2:
+                    lit = (x - cx) + (y - cy) < -r * 0.6
+                    shade = (x - cx) > r * 0.45 or (x - cx) + (y - cy) > r * 0.3
+                    d.point((x, y), fill=C("P46" if lit else ("P44" if shade else "P45")))
+        d.ellipse([cx - r + 10, cy - r + 10, cx - r + 14, cy - r + 14], fill=C("P09"))
+        d.line([cx - r + 2, cy + 7, cx + r - 2, cy + 7], fill=C("P27"), width=3); d.line([cx - r + 3, cy + 9, cx + r - 3, cy + 9], fill=C("P26"))
+        d.line([cx - 4, cy + 5, cx, cy + 9], fill=C("P09"), width=2); d.line([cx, cy + 9, cx + 3, cy + 5], fill=C("P09"), width=2)
+        d.rectangle([cx - 22, cy - 12, cx - 6, cy - 2], fill=C(INK)); d.rectangle([cx - 20, cy - 10, cx - 8, cy - 4], fill=C("P09"))
+        d.line([cx - 18, cy - 9, cx - 15, cy - 9], fill=C(INK)); d.line([cx - 15, cy - 9, cx - 15, cy - 7], fill=C(INK)); d.line([cx - 15, cy - 7, cx - 18, cy - 5], fill=C(INK)); d.line([cx - 18, cy - 5, cx - 15, cy - 5], fill=C(INK))
+        d.line([cx - 13, cy - 9, cx - 13, cy - 7], fill=C(INK)); d.line([cx - 13, cy - 7, cx - 10, cy - 7], fill=C(INK)); d.line([cx - 11, cy - 9, cx - 11, cy - 5], fill=C(INK))
     n = 2 if kind == "ballot" else 4                                    # 옆면 숫자(굵은 붓)
     col = C("P53")
     ox, oy = (cx - 18, cy + 13) if n == 2 else (cx - 20, cy - 16)       # 2호는 띠 아래
-    if kind == "proxy":                                                 # 남색 명찰 띠 '원장 대행'
+    if kind == "clerk":
+        pass
+    elif kind == "proxy":                                                 # 남색 명찰 띠 '원장 대행'
         d.rectangle([cx - 20, cy - 8, cx + 10, cy + 4], fill=C(INK)); d.rectangle([cx - 18, cy - 6, cx + 8, cy + 2], fill=C("P44"))
         d.line([cx - 18, cy + 2, cx + 8, cy + 2], fill=C("P43"))
         for k, x in enumerate(range(cx - 15, cx + 6, 5)):              # 흰 획 넷(글자 넷의 자리)
@@ -321,7 +383,13 @@ def salim_portrait(emo="기본", kind="ballot"):
     else:
         d.ellipse([ex - 5, ey - 5, ex + 5, ey + 5], fill=eye); d.rectangle([ex - 1, ey - 4, ex + 1, ey - 2], fill=hi)
     d.point((ex - 7, ey - 7), fill=C("P08")); d.point((ex - 6, ey - 8), fill=C("P08"))
-    if kind == "proxy":                                                 # 아래 팔 자습 종 · 앞 팔 출석부
+    if kind == "clerk":                                                 # 앞 팔 바코드 판독기(붉은 빛)
+        d.line([cx + r - 2, cy + 2, cx + r + 6, cy + 4], fill=C(INK), width=5); d.line([cx + r - 2, cy + 2, cx + r + 6, cy + 4], fill=C("P05"), width=3)
+        kx, ky = cx + r + 2, cy - 6
+        d.rectangle([kx, ky, kx + 18, ky + 14], fill=C(INK)); d.rectangle([kx + 2, ky + 2, kx + 16, ky + 12], fill=C("P06"))
+        d.line([kx + 2, ky + 12, kx + 16, ky + 12], fill=C("P04"), width=2); d.rectangle([kx + 3, ky + 3, kx + 6, ky + 5], fill=C("P08"))
+        d.line([kx + 19, ky + 4, kx + 22, ky + 4], fill=C("P53"), width=2)
+    elif kind == "proxy":                                                 # 아래 팔 자습 종 · 앞 팔 출석부
         d.line([cx + 18, cy + r - 8, cx + 28, cy + r + 2], fill=C(INK), width=5); d.line([cx + 18, cy + r - 8, cx + 28, cy + r + 2], fill=C("P05"), width=3)
         bx, by = cx + 30, cy + r
         d.rectangle([bx - 2, by - 6, bx + 2, by], fill=C(INK)); d.rectangle([bx - 1, by - 5, bx + 1, by], fill=C("P19"))
@@ -356,7 +424,7 @@ def salim_portrait(emo="기본", kind="ballot"):
 def check_palette():
     ok = P.allowed_set("UI")
     bad = set()
-    for kind in ("ballot", "count", "proxy"):
+    for kind in ("ballot", "count", "proxy", "clerk"):
         for f in salim_sheet(kind)[0] + [salim_portrait(e, kind) for e in ("기본", "놀람", "미소", "슬픔", "분노", "아픔", "피곤", "말함")]:
             for px in f.get_flattened_data():
                 if px[3] and tuple(px[:3]) not in ok:
@@ -367,15 +435,15 @@ def check_palette():
 if __name__ == "__main__":
     out = sys.argv[1] if len(sys.argv) > 1 else "/tmp/salim.png"
     rows = []
-    for kind in ("ballot", "count", "proxy"):
+    for kind in ("ballot", "count", "proxy", "clerk"):
         fr, _ = salim_sheet(kind)
         rows.append(fr)
-    sheet = Image.new("RGBA", (FW * 12, FH * 3 + 100), (70, 66, 74, 255))
+    sheet = Image.new("RGBA", (FW * 12, FH * 4 + 100), (70, 66, 74, 255))
     for j, fr in enumerate(rows):
         for i, f in enumerate(fr):
             sheet.alpha_composite(f, (i * FW, j * FH))
-    for i, (kind, emo) in enumerate([(k, e) for k in ("count", "proxy") for e in ("기본", "말함", "놀람", "분노")]):
-        sheet.alpha_composite(salim_portrait(emo, kind), (i * 98 % (FW * 12 - 96), FH * 3 + 2))
+    for i, (kind, emo) in enumerate([(k, e) for k in ("clerk",) for e in ("기본", "말함", "놀람", "분노", "미소", "피곤")]):
+        sheet.alpha_composite(salim_portrait(emo, kind), (i * 98, FH * 4 + 2))
     sheet = sheet.resize((sheet.width * 2, sheet.height * 2), Image.NEAREST)
     sheet.save(out)
     print("팔레트 밖:", sorted(check_palette()) or "없음")

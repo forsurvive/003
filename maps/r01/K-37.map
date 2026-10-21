@@ -1,0 +1,34 @@
+# 노량진 번개24(새 장소 L-R01-33 · SD-15 V24 R01 지점 · SD-05 UQ-01 ① '점포 이관 신청' · 단계 1-12g): 노량진로 북쪽 상가 1층.
+# 16×10 · 2077년이 끝나지 않은 가게 — 불이 켜져 있고 진열대는 반쯤 찼고(배급표로만 판다) 계산대 뒤 번개 점원 로봇(이름 없는 기체, 명찰 '24').
+# 로봇은 하루 종일 창구(일과 한 줄 — N14). 냉장 진열대는 켜져 있다(봉천점과 대조). 손님 의자 둘 · 2077 배급 안내문.
+map K-37 노량진 번개24
+set bk
+grid
+################
+################
+################
+#tttttttttttttt#
+#tttttttttttttt#
+#tttttttttttttt#
+#tttttttttttttt#
+#tttttttttttttt#
+#tttttttttttttt#
+#######tt#######
+end
+exit 7 9 W L-R01-33
+exit 8 9 W L-R01-33
+mark from_W 7 8 N
+mark window 3 5 N
+prop v24_counter 2 4
+text 2 4 "번개24 창구. 배급표 투입구가 놋쇠 테 속에서 반짝인다." w=2 scene=V24_DESK
+prop cold_case 10 3 state=lit
+text 10 3 "냉장 진열대. 불이 켜져 있다. 냉기가 유리에 서렸다 — 이백 년째." w=2
+prop shop_shelf_goods 5 6
+prop shop_shelf_can 9 6
+text 5 7 "진열대. 삼각김밥 포장이 줄 맞춰 섰다. 유통기한 칸에는 모두 '2077. 10. 24.'" w=2
+text 9 7 "통조림 진열대. 값표는 원이 아니라 '배급 1단위'." w=2
+prop w_civil_sign 13 1
+text 13 2 "벽 안내문(2077). '전시 배급표 결제 점포 — 등록 등급에 따라 구입 품목이 제한됩니다.'" scene=V24_NOTICE
+prop wait_chairs 12 7
+prop door_mat 7 8
+npc N-R01-508 3 3 S sheet=rb_clerk24_loco cond="V24_HOSTILE == 0"

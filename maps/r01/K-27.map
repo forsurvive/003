@@ -1,0 +1,33 @@
+# 상도 언덕 빌라촌 반지하 — 엄옥순의 방(SD-09a L-R01-27 · SD-05 UQ-03 「다리목 하사의 배급표」 · 단계 1-12g).
+# 12×8 · 302호가 있던 빌라(LR-06 국가 유공 통지서 '302호 아들 전사')의 반지하 한 칸. 이불 · 화로 · 낮은 상 · 땅 높이 창 ·
+# 벽에 2077 군복 소년 사진(302호에서 주운 것 — 엄옥순은 '우리 아들 사진'이라 부른다, 계획 §3.3) · 반상회비 명단 사본.
+# 엄옥순 일과(원고 머리 한 줄 — N14): 늘 이 방(미등록자 — 낮엔 문을 잠그고 화로 곁, 밤엔 이불). 골목엔 나가지 않는다.
+map K-27 상도 빌라 반지하
+set bk
+grid
+############
+############
+############
+#tttttttttt#
+#tttttttttt#
+#tttttttttt#
+#tttttttttt#
+####tt######
+end
+exit 4 7 W L-R01-27
+exit 5 7 W L-R01-27
+mark from_W 4 6 N
+mark ok 7 4 W
+prop w_window 3 1
+prop w_window 8 1
+text 3 2 "땅 높이 창. 골목을 지나는 발목만 보인다." w=2
+prop w_soldier_photo 6 1
+text 6 2 "액자 속 사진. 2077년 원정군 정복을 입은 앳된 얼굴." scene=UQ03_PHOTO
+prop bedroll 1 3
+prop hm_stove 9 3
+text 9 4 "화로. 숯이 반쯤 탔다. 그 위 양은 냄비 — 멀건 국." w=2
+prop low_table 5 4
+text 5 5 "낮은 상. 숟가락 하나 · 그릇 하나. 그 옆에 접은 종이 — 빌라 반상회비 명단 사본, '302호 아들 전사. 미납 면제.'" w=2
+prop bucket 10 6
+box 1 6 home owner=N-R01-507 name="이불 궤"
+npc N-R01-507 7 4 W cond="dead(\"N-R01-507\") == 0"

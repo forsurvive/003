@@ -1,0 +1,46 @@
+# 봉천 번개24(SD-09a L-R01-11 · SD-05 UQ-01 「24시」 · 단계 1-12g): 청솔식품 번개24 봉천점 폐허를 고친 잡화점 — 남부순환로 변 상가 1층.
+# 18×11 · 왼쪽 계산대(진공관 금전등록기 — 잠김/고침/뜯김) 뒤 석라희 · 뒤 벽 냉장 진열대(잠김/켜짐) · 가운데 진열대 셋 · 오른쪽 음료 냉장고 ·
+# 냉장고 문에 2077-10-23 삼각김밥 진열 표(L447) · 계산대 아래 LR-13 점장 업무 일지 · 벽 LR-48 광고.
+# 석라희 일과(원고 머리 한 줄 — N14): 24시간 카운터. 02~05시엔 카운터 의자에서 꾸벅 존다(문은 열고 불은 켜 둔 채, 계획 G4).
+map K-11 봉천 번개24
+set bk
+grid
+##################
+##################
+##################
+#tttttttttttttttt#
+#tttttttttttttttt#
+#tttttttttttttttt#
+#tttttttttttttttt#
+#tttttttttttttttt#
+#tttttttttttttttt#
+#tttttttttttttttt#
+########tt########
+end
+exit 8 10 W L-R01-11
+exit 9 10 W L-R01-11
+mark from_W 8 9 N
+mark counter 3 5 N
+mark doze 3 3 S
+prop w_shop_food 8 1
+text 8 2 "벽에 바랜 광고 — '뉴카-콜라 말고 번개사이다! 짜릿함은 국산이 낫다.' 2077년 여름 판촉물(LR-48)." w=2 scene=K11_LR48
+prop tube_register 2 4
+prop tube_register 2 4 state=fixed cond="UQ01_SOL == 1 or UQ01_SOL == 2"
+prop tube_register 2 4 state=gutted cond="UQ01_SOL == 3"
+text 2 4 "진공관 금전등록기." w=2 scene=UQ01_REG
+text 1 5 "계산대 아래 칸. 먼지 앉은 공책." scene=K11_LR13
+prop cold_case 11 3
+prop cold_case 11 3 state=lit cond="UQ01_SOL == 1 or UQ01_SOL == 2"
+text 11 3 "냉장 진열대." w=2 scene=UQ01_CASE
+prop w_rice_chart 13 1
+text 13 2 "냉장고 문에 붙은 삼각김밥 진열 표. 날짜 칸 '2077. 10. 23.' — 시간마다 파란 체크가 셋. 22시 칸은 비었다." scene=K11_CHART
+prop drink_fridge 15 3
+box 15 3 conv owner=N-R01-038 name="음료 냉장고"
+prop shop_shelf 5 6
+prop shop_shelf_can 9 6
+prop shop_shelf_goods 13 6
+box 5 6 conv w=2 owner=N-R01-038 name="진열대"
+box 9 6 conv w=2 owner=N-R01-038 name="통조림 진열대"
+text 13 7 "진열대. 빈 칸마다 값표만 남았다 — '1,500원'. 그 아래 연필로 '2캡'." w=2
+prop door_mat 8 9
+npc N-R01-038 3 3 S cond="dead(\"N-R01-038\") == 0"

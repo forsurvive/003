@@ -44,6 +44,12 @@ DOORS = [{"lid": "L-R02-11", "near": (720, 1147), "to": "J-01", "mark": "from_W"
          {"lid": "L-R01-24", "near": (870, 1171), "to": "K-24", "mark": "from_W", "name": "노량진 학원가 — 대한 대피 적성 학원", "kind": "facade"},   # 1-7c R01 북쪽
          {"lid": "L-R01-26", "near": (980, 1207), "to": "K-26", "mark": "from_W", "name": "흑석 대학병원", "kind": "facade"},
          {"lid": "L-R01-32", "near": (906, 1402), "to": "K-33", "mark": "from_W", "name": "봉천 동 주민센터", "kind": "facade"},   # 1-11c SQ-S04 민원실
+         # 1-12g R01 UQ: 봉천 번개24(남부순환로 남쪽 상가 1층 — 장소 표 좌표 866·1342는 X-BC 숲이라 산문 '남쪽 30타일 · 남부순환로 변'을 따름) ·
+         # 노량진 번개24(새 장소 L-R01-33, 노량진로 북쪽 상가) · 상도 빌라촌 반지하(엄옥순 — UQ-03)
+         {"lid": "L-R01-11", "near": (863, 1392), "to": "K-11", "mark": "from_W", "name": "봉천 번개24", "kind": "facade",
+          "hint": "처마 띠 라이트박스 '번개24'. 밤에도 불이 켜져 있다 — 24시간이라고 쓰여 있다."},
+         {"lid": "L-R01-33", "near": (905, 1170), "to": "K-37", "mark": "from_W", "name": "노량진 번개24", "kind": "facade",
+          "hint": "유리문 안이 환하다. 진열대가 반쯤 찼다. 계산대 뒤에서 무언가 둥둥 떠 있다."},
          {"lid": "L-R02-15", "near": (672, 1092), "to": "K-15", "mark": "from_W", "name": "영등포 구청 배급소", "kind": "facade"},   # 1-11g SQ-S08
          {"lid": "L-R02-23", "near": (535, 1259), "to": "GD-01", "mark": "from_W", "name": "고척 돔 인력 경매장 — 정문", "kind": "facade"},   # 1-11i SQ-S10
          {"lid": "L-R02-01", "near": (758, 1057), "to": "KH-01", "mark": "from_W", "name": "무너진 국회 — 본관 정문", "kind": "facade"},   # 1-11j SQ-S11
@@ -124,7 +130,7 @@ DOORS = [{"lid": "L-R02-11", "near": (720, 1147), "to": "J-01", "mark": "from_W"
           "hint": "금빛 유리 기둥 사이 회전문. 바람이 불 때마다 삐걱 반 바퀴.",
           "hints": [["KT_POWER == 2", "로비 1층 창에 작은 불이 켜져 있다. 회전문 너머에서 '딩' — 승강기 소리."]]}]
 # 손 실내가 붙는 건물의 양식(SD-21 §8): 도로망이 바뀌어도 그 자리에 건물이 선다
-ANCHOR_STYLE = {"K-33": "gov", "K-01": "gov", "K-29": "gov", "K-06": "office", "K-20": "villa", "K-22": "apt", "K-24": "office", "K-26": "gov", "GD-01": "gov", "KH-01": "gov", "DS-01": "factory", "DS-02": "factory", "KT-01": "office", "GA-01": "shop", "KS-01": "office", "HP-01": "gov", "YT-01": "office", "SG-01": "office"}
+ANCHOR_STYLE = {"K-11": "shop", "K-37": "shop", "K-27": "villa", "K-33": "gov", "K-01": "gov", "K-29": "gov", "K-06": "office", "K-20": "villa", "K-22": "apt", "K-24": "office", "K-26": "gov", "GD-01": "gov", "KH-01": "gov", "DS-01": "factory", "DS-02": "factory", "KT-01": "office", "GA-01": "shop", "KS-01": "office", "HP-01": "gov", "YT-01": "office", "SG-01": "office"}
 INSETS = [{"id": "X-S07", "mark": "from_vault", "at": (959, 1503)},          # 볼트 S-07 정문(L-R01-01)
           {"id": "X-BC", "center": (892, 1362)},                             # 봉천 계단마을(L-R01-09)
           {"id": "X-SB", "center": (632, 1329), "lid": "L-R02-19", "arrive": "arrive", "urban": True},   # 새벽인력 본소(1-6): 도착 칸 = 정문 앞 길

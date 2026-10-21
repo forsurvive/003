@@ -1080,6 +1080,10 @@ from props_gs2 import PROPS_GS2, STATES_GS2                            # 노량�
 for _k in PROPS_GS2:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_GS2)
+from props_uq import PROPS_UQ, STATES_UQ                              # R01 비표시 퀘스트(1-12g UQ-01 · 02 · 03 · 05): 진공관 등록기 · 냉장 진열대 · 진열 표 · 배수구 · 새끼 둥지 · 끊긴 고삐 · 군복 사진 · V24 창구
+for _k in PROPS_UQ:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_UQ)
 from props_trap import PROPS_TRAP, STATES_TRAP, burnt_states       # 함정 · 환경 폭발(1-9c, SD-11 §9.2 · §9.3)
 for _k in PROPS_TRAP:
     assert _k not in PROPS, _k
@@ -1111,6 +1115,7 @@ STATES.update(STATES_JC)
 STATES.update(STATES_GS2)
 STATES.update(STATES_JH)
 STATES.update(STATES_GT)
+STATES.update(STATES_UQ)
 STATES.update(STATES_BS)
 STATES.update(STATES_S04)
 STATES.update(STATES_S03)
