@@ -7,11 +7,12 @@
  "labels": {
   "START": 0,
   "NOPOISON": 5,
-  "PLATE": 7,
-  "BAIT": 9,
-  "PLATED": 11,
-  "BAITED": 13,
-  "QUIET": 15
+  "NOPOISON2": 8,
+  "PLATE": 10,
+  "BAIT": 12,
+  "PLATED": 14,
+  "BAITED": 16,
+  "QUIET": 18
  },
  "ops": [
   {
@@ -85,10 +86,25 @@
    ]
   },
   {
+   "op": "if",
+   "cond": "dead(\"N-R02-006\") == 1",
+   "to": "NOPOISON2"
+  },
+  {
    "op": "line",
    "who": "SYS",
    "emo": "기본",
    "text": "말벌 독낭이면 쥐도 견디지 못할 것이다. 광장 약방 엄수연이 독낭을 사들인다던데 — 팔기도 할지 모른다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "말벌 독낭이면 쥐도 견디지 못할 것이다. 약방은 문을 닫았다 — 말벌 둥지라도 찾아야 한다."
   },
   {
    "op": "goto",
