@@ -6,20 +6,21 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "AGAIN": 11,
-  "SHORT": 14,
-  "DELIVER": 17,
-  "DELIVER_CAN": 20,
-  "DELIVER_LATE": 25,
-  "DELIVER2": 27,
-  "BACK": 32,
-  "AFTER": 35,
-  "TOLD_PHOTO": 37,
-  "MISSING": 40,
-  "TELL": 42,
-  "TELL_SOUP": 48,
-  "TELL_HELD": 51,
-  "TELL_DEAD": 54
+  "NONEWS": 12,
+  "AGAIN": 14,
+  "SHORT": 17,
+  "DELIVER": 20,
+  "DELIVER_CAN": 23,
+  "DELIVER_LATE": 28,
+  "DELIVER2": 30,
+  "BACK": 35,
+  "AFTER": 38,
+  "TOLD_PHOTO": 40,
+  "MISSING": 43,
+  "TELL": 45,
+  "TELL_SOUP": 51,
+  "TELL_HELD": 54,
+  "TELL_DEAD": 57
  },
  "ops": [
   {
@@ -49,8 +50,13 @@
   },
   {
    "op": "if",
-   "cond": "stage(\"UQ-03\") >= 20",
+   "cond": "UQ03_DELIVER_DAY > 0",
    "to": "AFTER"
+  },
+  {
+   "op": "if",
+   "cond": "stage(\"UQ-03\") >= 20",
+   "to": "NONEWS"
   },
   {
    "op": "if",
@@ -72,6 +78,16 @@
   {
    "op": "do",
    "fx": "UQ03_MOM_MET = 1"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-507",
+   "emo": "기본",
+   "text": "또 왔네. 화로 옆에 앉아요. …도현이 소식 있으면 알려 줘요. 다리목엔 내가 못 가니까."
   },
   {
    "op": "goto",
@@ -271,7 +287,7 @@
     {
      "text": "(아는 대로 말해 준다)",
      "tags": [],
-     "cond": "UQ03_EOM >= 2 or known_dead(\"N-R01-050\") == 1",
+     "cond": "UQ03_KNOWGONE == 1 or known_dead(\"N-R01-050\") == 1",
      "fx": "",
      "to": "TELL",
      "id": "UQ03_MOM:3:0"

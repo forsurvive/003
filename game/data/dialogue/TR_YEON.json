@@ -6,30 +6,34 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "AGAIN": 10,
-  "ASK": 11,
-  "U5_REFUSE": 12,
-  "U5_PAY": 14,
-  "U5_PAY_NOWI": 18,
-  "U5_PAY3": 21,
-  "U5_GONE": 24,
-  "U5_GONE1": 28,
-  "U5_TELL": 31,
-  "U5_TELL1": 36,
-  "U5_TELL2": 38,
-  "U5_TELL_END": 39,
-  "U5_PACK": 42,
-  "U5_PACK2": 47,
-  "S6ASK": 50,
-  "S6NOCOW": 54,
-  "S6CARGO": 56,
-  "S6CARGO_PAY": 59,
-  "S6CARGO_OK": 59,
-  "S6CARGO_NO": 62,
-  "SHOP": 64,
-  "FIX": 66,
-  "UQ01": 68,
-  "ROAD": 72
+  "AGAIN": 11,
+  "ASK": 12,
+  "U5_REFUSE": 13,
+  "U5_PAY": 15,
+  "U5_PAY_NOWI": 19,
+  "U5_PAY3": 22,
+  "U5_GONE": 25,
+  "U5_GONE1": 29,
+  "U5_TELL": 32,
+  "U5_TELL1": 37,
+  "U5_TELL2": 39,
+  "U5_TELL_END": 40,
+  "U5_PACK": 43,
+  "U5_PACK_COLD": 49,
+  "U5_PACK2": 52,
+  "S6ASK": 55,
+  "S6NOCOW": 59,
+  "S6CARGO": 61,
+  "S6CARGO_NOUM": 65,
+  "S6CARGO_ASK": 66,
+  "S6CARGO_PAY": 67,
+  "S6CARGO_OK": 67,
+  "S6CARGO_NO": 70,
+  "SHOP": 72,
+  "FIX": 74,
+  "UQ01": 76,
+  "UQ01_NOW": 81,
+  "ROAD": 84
  },
  "ops": [
   {
@@ -46,6 +50,11 @@
    "op": "if",
    "cond": "UQ05_PEND == 3",
    "to": "U5_PAY3"
+  },
+  {
+   "op": "if",
+   "cond": "UQ05_PEND == 4",
+   "to": "U5_PAY_NOWI"
   },
   {
    "op": "if",
@@ -313,6 +322,11 @@
   },
   {
    "op": "if",
+   "cond": "UQ05_KILL_SEEN == 1",
+   "to": "U5_PACK_COLD"
+  },
+  {
+   "op": "if",
    "cond": "UQ05_REWARD == 1",
    "to": "U5_PACK2"
   },
@@ -331,6 +345,20 @@
   {
    "op": "do",
    "fx": "take(\"M-429\", 1); karma(25); aff(\"JC\", 1); give(\"I-066\", 2); xp(60); UQ05_PACK = 2; UQ05_REWARD = 1; quest(\"UQ-05\", 100)"
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "기본",
+   "text": "(꾸러미를 받아 든다. 당신 얼굴은 보지 않는다) …짐은 짐이니까. 고맙다는 말은 안 할게."
+  },
+  {
+   "op": "do",
+   "fx": "take(\"M-429\", 1); UQ05_PACK = 2"
   },
   {
    "op": "goto",
@@ -390,10 +418,25 @@
    "text": "(진해원을 위아래로 훑는다) 짐소 배 밑에 사람 하나쯤은 들어가. 무릎 조심하고."
   },
   {
+   "op": "if",
+   "cond": "(dead(\"N-R01-050\") == 1 or UQ03_EOM >= 2)",
+   "to": "S6CARGO_NOUM"
+  },
+  {
    "op": "line",
    "who": "N-R01-040",
    "emo": "피곤",
    "text": "근데 다리목에서 엄 하사가 짐을 뒤져. 걸리면 나도 끝이야. 짐삯은 받아야겠어."
+  },
+  {
+   "op": "goto",
+   "to": "S6CARGO_ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "피곤",
+   "text": "근데 다리목 분대장이 새로 왔어. 엄 하사보다 깐깐해. 걸리면 나도 끝이야. 짐삯은 받아야겠어."
   },
   {
    "op": "choice",
@@ -492,10 +535,32 @@
    "text": "번개24 라희? 등록기 두드리던 그 애. 노량진 로봇 얘기를 내가 해 줬지. 진짜 받아 왔네."
   },
   {
+   "op": "if",
+   "cond": "CARAVAN_V54 == 1",
+   "to": "UQ01_NOW"
+  },
+  {
    "op": "line",
    "who": "N-R01-040",
    "emo": "기본",
    "text": "다음에 봉천 설 때 내가 꽂아 줄게. 짐 사이에 끼워 두면 안 잃어버려."
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "relay"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "기본",
+   "text": "지금 봉천이잖아. 짐 정리하고 가는 길에 꽂아 줄게. 라희 얼굴 좀 보자."
   },
   {
    "op": "cmd",

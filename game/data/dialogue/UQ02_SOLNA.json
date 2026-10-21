@@ -58,7 +58,7 @@
   },
   {
    "op": "do",
-   "fx": "UQ02_HOW = 2; quest(\"UQ-02\", 20)"
+   "fx": "UQ02_HOW = 2; UQ02_SOLNA_TOLD = GAME_DAY; quest(\"UQ-02\", 20)"
   },
   {
    "op": "goto",

@@ -12,11 +12,12 @@
   "OK": 12,
   "STALL": 15,
   "BRIBE": 18,
-  "SNEAK": 21,
-  "LUCK": 24,
-  "NO": 26,
-  "FLEE": 29,
-  "FIGHT": 31
+  "BRIBE_N": 22,
+  "SNEAK": 25,
+  "LUCK": 28,
+  "NO": 30,
+  "FLEE": 33,
+  "FIGHT": 35
  },
  "ops": [
   {
@@ -27,7 +28,7 @@
   },
   {
    "op": "if",
-   "cond": "(known_dead(\"N-R01-050\") == 1 or UQ03_EOM >= 2)",
+   "cond": "(dead(\"N-R01-050\") == 1 or UQ03_EOM >= 2)",
    "to": "NOUM"
   },
   {
@@ -93,7 +94,7 @@
        "diff": "보통"
       }
      ],
-     "cond": "(known_dead(\"N-R01-050\") == 0 and UQ03_EOM < 2) and UQ03_RES != 3",
+     "cond": "(dead(\"N-R01-050\") == 0 and UQ03_EOM < 2) and UQ03_RES != 3",
      "fx": "",
      "to": "OK",
      "id": "SQS06_CARGO:1:0",
@@ -108,7 +109,7 @@
        "diff": "쉬움"
       }
      ],
-     "cond": "(known_dead(\"N-R01-050\") == 0 and UQ03_EOM < 2) and UQ03_RES != 3",
+     "cond": "(dead(\"N-R01-050\") == 0 and UQ03_EOM < 2) and UQ03_RES != 3",
      "fx": "",
      "to": "STALL",
      "id": "SQS06_CARGO:1:1",
@@ -202,8 +203,31 @@
    "to": "END"
   },
   {
+   "op": "if",
+   "cond": "(dead(\"N-R01-050\") == 1 or UQ03_EOM >= 2)",
+   "to": "BRIBE_N"
+  },
+  {
    "op": "line",
    "who": "N-R01-050",
+   "emo": "기본",
+   "text": "(주머니에 넣는다) 짐 이상 없음."
+  },
+  {
+   "op": "cmd",
+   "name": "s06",
+   "args": [
+    "cargo",
+    "pass"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-C2",
    "emo": "기본",
    "text": "(주머니에 넣는다) 짐 이상 없음."
   },

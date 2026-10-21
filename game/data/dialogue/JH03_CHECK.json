@@ -36,7 +36,7 @@
  "ops": [
   {
    "op": "if",
-   "cond": "FQ_JH03_CHECK == 10 and FQ_JH03_PARK == 1 and FQ_JH03_NEAR == 1 and dead(\"C-018\") == 0 and (known_dead(\"N-R01-050\") == 0 and UQ03_EOM < 2) and V_WANTED < 30",
+   "cond": "FQ_JH03_CHECK == 10 and FQ_JH03_PARK == 1 and FQ_JH03_NEAR == 1 and dead(\"C-018\") == 0 and (dead(\"N-R01-050\") == 0 and UQ03_EOM < 2) and V_WANTED < 30",
    "to": "RADIO"
   },
   {
@@ -153,7 +153,7 @@
     {
      "text": "엄도현 하사를 압니다 — 초소에 물어보세요",
      "tags": [],
-     "cond": "met(\"N-R01-050\") == 1 and (known_dead(\"N-R01-050\") == 0 and UQ03_EOM < 2) and AFF_BJ > -40 and UQ03_RES != 3",
+     "cond": "met(\"N-R01-050\") == 1 and (dead(\"N-R01-050\") == 0 and UQ03_EOM < 2) and AFF_BJ > -40 and UQ03_RES != 3",
      "fx": "",
      "to": "NAME",
      "id": "JH03_CHECK:1:4"

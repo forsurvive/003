@@ -14,18 +14,20 @@
   "UNIFORM_NOUM": 17,
   "UNIFORM_GO": 18,
   "PAPERS": 20,
-  "PASS": 23,
-  "STALL": 26,
-  "BRIBE": 29,
-  "FAIL": 32,
-  "FLEE": 34,
-  "FIGHT": 36,
-  "BACK": 38
+  "PAPERS_N": 24,
+  "PASS": 27,
+  "STALL": 30,
+  "BRIBE": 33,
+  "BRIBE_N": 37,
+  "FAIL": 40,
+  "FLEE": 42,
+  "FIGHT": 44,
+  "BACK": 46
  },
  "ops": [
   {
    "op": "if",
-   "cond": "(known_dead(\"N-R01-050\") == 1 or UQ03_EOM >= 2)",
+   "cond": "(dead(\"N-R01-050\") == 1 or UQ03_EOM >= 2)",
    "to": "NOUM"
   },
   {
@@ -42,7 +44,7 @@
    "op": "line",
    "who": "SYS",
    "emo": "기본",
-   "text": "초소 앞 계엄병 둘이 총을 고쳐 든다. 분대장 자리는 비어 있다. \"정지. 등록증. …둘 다.\""
+   "text": "초소 앞 계엄병 둘이 총을 고쳐 든다. 엄 하사 자리엔 낯선 분대장이 서 있다. \"정지. 등록증. …둘 다.\""
   },
   {
    "op": "if",
@@ -56,12 +58,12 @@
   },
   {
    "op": "if",
-   "cond": "FQ_JH03_CHECK == 6 and (known_dead(\"N-R01-050\") == 0 and UQ03_EOM < 2)",
+   "cond": "FQ_JH03_CHECK == 6 and (dead(\"N-R01-050\") == 0 and UQ03_EOM < 2)",
    "to": "JH03_SHOT"
   },
   {
    "op": "if",
-   "cond": "(known_dead(\"N-R01-050\") == 1 or UQ03_EOM >= 2)",
+   "cond": "(dead(\"N-R01-050\") == 1 or UQ03_EOM >= 2)",
    "to": "NOUM_ASK"
   },
   {
@@ -157,7 +159,7 @@
    "op": "line",
    "who": "SYS",
    "emo": "기본",
-   "text": "계엄병 하나가 진해원을 빤히 본다. 말로 넘길 사람이 없다 — 분대장이 있었으면 몰라도."
+   "text": "계엄병 하나가 진해원을 빤히 본다. 새 분대장은 말을 받지 않는 얼굴이다 — 엄 하사였으면 몰라도."
   },
   {
    "op": "choice",
@@ -187,7 +189,7 @@
   },
   {
    "op": "if",
-   "cond": "(known_dead(\"N-R01-050\") == 1 or UQ03_EOM >= 2)",
+   "cond": "(dead(\"N-R01-050\") == 1 or UQ03_EOM >= 2)",
    "to": "UNIFORM_NOUM"
   },
   {
@@ -234,10 +236,33 @@
    ]
   },
   {
+   "op": "if",
+   "cond": "(dead(\"N-R01-050\") == 1 or UQ03_EOM >= 2)",
+   "to": "PAPERS_N"
+  },
+  {
    "op": "line",
    "who": "N-R01-050",
    "emo": "기본",
    "text": "(판독기에 종이를 댄다. 삑.) …통과. 사진 칸이 비었네. 요즘 다 이래."
+  },
+  {
+   "op": "cmd",
+   "name": "s06",
+   "args": [
+    "pass",
+    "papers"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-C2",
+   "emo": "기본",
+   "text": "(판독기에 종이를 댄다. 삑.) …통과. 사진 칸이 비었군. 요즘 다 이래."
   },
   {
    "op": "cmd",
@@ -288,10 +313,33 @@
    "to": "END"
   },
   {
+   "op": "if",
+   "cond": "(dead(\"N-R01-050\") == 1 or UQ03_EOM >= 2)",
+   "to": "BRIBE_N"
+  },
+  {
    "op": "line",
    "who": "N-R01-050",
    "emo": "기본",
    "text": "(주머니에 넣는다) 아무것도 못 봤습니다. 다리 위에선 뛰지 마십시오."
+  },
+  {
+   "op": "cmd",
+   "name": "s06",
+   "args": [
+    "pass",
+    "bribe"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-C2",
+   "emo": "기본",
+   "text": "(주머니에 넣는다) 아무것도 못 봤다. 다리 위에선 뛰지 마라."
   },
   {
    "op": "cmd",

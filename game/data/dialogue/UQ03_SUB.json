@@ -7,10 +7,12 @@
  "labels": {
   "START": 0,
   "WHERE": 3,
-  "WHERE_DEAD": 7,
-  "WHERE_HELD": 9,
-  "LEDGER": 11,
-  "GIVE": 13
+  "WHERE_DEAD": 10,
+  "WHERE_DEAD_B": 12,
+  "WHERE_LOST": 14,
+  "WHERE_HELD": 16,
+  "LEDGER": 19,
+  "GIVE": 21
  },
  "ops": [
   {
@@ -47,8 +49,18 @@
   },
   {
    "op": "if",
-   "cond": "dead(\"N-R01-050\") == 1",
+   "cond": "known_dead(\"N-R01-050\") == 1 and UQ03_EOM >= 1",
+   "to": "WHERE_DEAD_B"
+  },
+  {
+   "op": "if",
+   "cond": "known_dead(\"N-R01-050\") == 1",
    "to": "WHERE_DEAD"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R01-050\") == 1",
+   "to": "WHERE_LOST"
   },
   {
    "op": "if",
@@ -60,6 +72,10 @@
    "who": "N-BJ-C2",
    "emo": "피곤",
    "text": "엄 병장은 근무지 이탈. 수배 명단에 올랐습니다. …다른 용무 없으면 가십시오."
+  },
+  {
+   "op": "do",
+   "fx": "UQ03_KNOWGONE = 1"
   },
   {
    "op": "goto",
@@ -79,7 +95,31 @@
    "op": "line",
    "who": "N-BJ-C2",
    "emo": "기본",
+   "text": "엄 병장은 없습니다. 묻지 마십시오. 분대가 아직 그 얘기를 못 합니다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-C2",
+   "emo": "피곤",
+   "text": "연락이 끊겼습니다. 순찰 나갔다가. …찾는 중입니다. 다른 용무 없으면 가십시오."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-C2",
+   "emo": "기본",
    "text": "영창입니다. 사당 고개. 그 이상은 말 못 합니다."
+  },
+  {
+   "op": "do",
+   "fx": "UQ03_KNOWGONE = 1"
   },
   {
    "op": "goto",

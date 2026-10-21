@@ -1,24 +1,25 @@
 {
  "id": "UQ05_BACK",
  "title": "누렁이를 데려왔다",
- "loc": "L-R01-30",
+ "loc": "L-R01-18",
  "npc": "",
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
   "YEON": 9,
-  "YEON_C1": 14,
-  "YEON_PAY": 15,
-  "YEON_AGAIN": 19,
-  "WI": 23,
-  "WI_AGAIN": 30,
-  "WI_DEAD": 34,
-  "TIE": 38,
-  "TIE_NOWI": 41,
-  "TIE2": 42,
-  "TIE_AGAIN": 47,
-  "TIE_NOPEND": 50,
-  "HEO": 53
+  "YEON_C2": 15,
+  "YEON_C1": 17,
+  "YEON_PAY": 18,
+  "YEON_AGAIN": 22,
+  "WI": 26,
+  "WI_AGAIN": 33,
+  "WI_DEAD": 37,
+  "TIE": 41,
+  "TIE_NOWI": 44,
+  "TIE2": 45,
+  "TIE_AGAIN": 50,
+  "TIE_NOPEND": 53,
+  "HEO": 56
  },
  "ops": [
   {
@@ -43,7 +44,7 @@
   },
   {
    "op": "if",
-   "cond": "dead(\"N-R01-041\") == 0 and SQ_S05_WIND != 2",
+   "cond": "dead(\"N-R01-041\") == 0 and SQ_S05_WIND == 0",
    "to": "HEO"
   },
   {
@@ -84,10 +85,25 @@
    "to": "YEON_C1"
   },
   {
+   "op": "if",
+   "cond": "UQ05_CAUSE == 2",
+   "to": "YEON_C2"
+  },
+  {
    "op": "line",
    "who": "N-R01-040",
    "emo": "피곤",
    "text": "그날 소리가 그렇게 클 줄 누가 알았어. 고삐를 놓친 건 나야."
+  },
+  {
+   "op": "goto",
+   "to": "YEON_PAY"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "피곤",
+   "text": "들개 떼가 그렇게 붙을 줄 누가 알았어. 고삐를 놓친 건 나야."
   },
   {
    "op": "goto",
@@ -248,7 +264,7 @@
   },
   {
    "op": "do",
-   "fx": "karma(25); xp(60); UQ05_PEND = 1; UQ05_RES = 2; quest(\"UQ-05\", 20); quest(\"UQ-05\", 100)"
+   "fx": "karma(25); xp(60); UQ05_PEND = 4; UQ05_RES = 2; quest(\"UQ-05\", 20); quest(\"UQ-05\", 100)"
   },
   {
    "op": "if",

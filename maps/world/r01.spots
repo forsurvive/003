@@ -163,7 +163,7 @@ prop culvert 3 0
 text 3 0 "남부순환로 밑 빗물 배수구. 관 안은 깜깜하고 가는 물줄기가 개천으로 떨어진다." w=2
 prop pup_nest 1 1 cond="UQ02_END == 0 and UQ02_GONE_DAY == 0"
 prop pup_nest 1 1 state=empty cond="UQ02_END != 0 or UQ02_GONE_DAY != 0"
-text 1 1 "덤불 속 마른 풀 둥지. 밥알 · 뼈 조각." scene=UQ02_NEST cond="UQ02_END == 0 and UQ02_GONE_DAY == 0 and UQ02_CARRY == 0 and dead(\"C-015\") == 0"
+text 1 1 "덤불 속 마른 풀 둥지. 밥알 · 뼈 조각." scene=UQ02_NEST cond="UQ02_END == 0 and UQ02_GONE_DAY == 0 and UQ02_CARRY == 0 and dead(\"C-015\") == 0 and MQ101_STAGE >= 100"
 text 1 1 "덤불 속 마른 풀 둥지. 새끼를 내려놓을 수 있다." scene=UQ02_PUTBACK cond="UQ02_CARRY == 1"
 text 1 1 "덤불 속 마른 풀 둥지. 작은 뼈와 털 뭉치뿐이다. 밥을 물어 오던 개가 끊긴 지 오래다." cond="dead(\"C-015\") == 1 and UQ02_END == 0 and UQ02_CARRY == 0"
 npc N-R01-509 1 2 E sheet=cr_pup_loco cond="UQ02_END == 0 and UQ02_GONE_DAY == 0 and UQ02_CARRY == 0 and MQ101_STAGE >= 100 and dead(\"C-015\") == 0"

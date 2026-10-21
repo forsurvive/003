@@ -104,6 +104,9 @@ func _process(dt: float) -> void:
 func _relay_tick() -> void:
 	if v("UQ01_RELAY") != 1:
 		return
+	if st.is_dead("N-R01-038"):
+		_sv("UQ01_RELAY", 0)                                         # 받을 사람이 없다 — 카드는 연보경 짐에 남는다
+		return
 	if st.is_dead("N-R01-040"):
 		_sv("UQ01_RELAY", 0)
 		_log("연보경 사망 — 카드 전달 끊김(노량진 재발급)")
@@ -310,13 +313,17 @@ func _up(qid: String, n: int) -> void:
 
 
 func _on_day(d: int) -> void:
-	if v("UQ01_SOL") == 3 and v("UQ01_SEEN") == 0 and v("UQ01_THEFT_DAY") > 0 and d > v("UQ01_THEFT_DAY") and v("UQ01_WITNESS") == 0:
+	if v("UQ01_SOL") == 3 and v("UQ01_SEEN") == 0 and v("UQ01_THEFT_DAY") > 0 and d >= v("UQ01_THEFT_DAY") and v("UQ01_WITNESS") == 0:
 		_sv("UQ01_WITNESS", 1)                                       # 판정은 한 번 — 씨앗 = 뜯은 날(불러오기로 다시 굴리지 못함)
 		if _roll("seen:%d" % v("UQ01_THEFT_DAY"), SEEN_P):
 			_sv("UQ01_SEEN", 1)
 			st.call_fn("aff", ["BC", -6])
 			_log("석라희가 뜯은 사람을 알아챔(BC −6 · 가격 +10%)")
-	_sv("UQ01_GUEST", d if (not st.is_dead("N-R01-038") and _roll("guest:%d" % d, GUEST_P)) else 0)
+	# 밤손님은 오늘 밤(다음 자정 뒤 03시 — GAME_DAY는 자정에 넘어간다)
+	_sv("UQ01_GUEST", d + 1 if (not st.is_dead("N-R01-038") and _roll("guest:%d" % d, GUEST_P)) else 0)
+	var s1: int = st.quests.stage("UQ-01")
+	if st.is_dead("N-R01-038") and s1 > 0 and s1 < 100:
+		st.quests.set_stage("UQ-01", 90)                              # 석라희가 죽으면 소멸(계획 §4.1-6)
 	var wk := (d - 1) / 7
 	if wk != v("V24_WEEK"):
 		_sv("V24_WEEK", wk)
@@ -378,6 +385,10 @@ func _cow_tick() -> void:
 		_cow_lose()
 	_last_v54 = now
 	var c := v("UQ05_COW")
+	if c == 3 and v("UQ05_ABSENT") == 1 and now == 2:
+		_sv("UQ05_ABSENT", 0)                                        # 말뚝의 누렁이를 수송대가 데려감
+		if host.map != null:
+			host.refresh_npcs()
 	if (c == 1 or c == 2 or c == 4 or c == 5) and now == 2 and v("UQ05_TOLD") == 0:
 		_sv("UQ05_TOLD", 1)                                          # 수송대가 사당에 닿은 뒤에야 위강윤이 안다(P7)
 	host.lead_walk = c == 2 and _cow != null and is_instance_valid(_cow) and not _cow_home
@@ -617,7 +628,9 @@ func _cmd(a: Array, done: Callable) -> void:
 			_sv("UQ02_END_DAY", day())
 			_sv("UQ02_BARK_UNTIL", day() + 7)
 			var hr := int(st.vars.get_v("GAME_HOUR"))
-			if v("UQ02_HOW") == 2 and (hr >= 22 or hr < 1) and not st.is_dead("N-R01-034"):   # 남솔은 들은 그날 밤 몰래 따라 나온다(P7 — 그 자리에 있었다)
+			var told := v("UQ02_SOLNA_TOLD")
+			var tonight := (hr >= 22 and day() == told) or (hr < 1 and day() == told + 1)
+			if v("UQ02_HOW") == 2 and tonight and not st.is_dead("N-R01-034") and v("SQ_S04_HELD") == 0 and v("SQ_S04_AWAY") == 0:   # 남솔은 들은 그날 밤 몰래 따라 나온다(P7 — 그 자리에 있었다)
 				_sv("UQ02_WITNESS", 1)
 				st.call_fn("aff", ["BC", -8])
 				host.hint("덤불 뒤에서 작은 숨소리 — 남솔이다. 남솔이 울면서 아랫문 쪽으로 달려간다.", 5.0)
@@ -655,7 +668,8 @@ func _cmd(a: Array, done: Callable) -> void:
 			_cow_home = false
 			host.lead_walk = false
 			_sv("UQ05_COW", 3)
-			_sv("UQ05_ABSENT", 0)
+			# 수송대 앞이면 바로 수송대 짐소 · 말뚝(위강윤 · 밤)이면 다음 사당 정류까지 말뚝에(한 소는 한 곳에, P3) · 허순자가 맡으면 공동 짐소(수송대는 빌린 소)
+			_sv("UQ05_ABSENT", 0 if v("UQ05_AT") == 1 else (2 if v("UQ05_RES") == 3 else 1))
 			if host.map != null:
 				host.refresh_npcs()
 		"cow_kill":

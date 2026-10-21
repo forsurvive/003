@@ -338,9 +338,41 @@ func test_uq_fun_branches(t) -> void:
 	st.vars.set_v("UQ03_EOM", 4)
 	st.vars.set_v("UQ03_SOUP", 1)
 	st.vars.set_v("UQ03_TOLD_MOM", 0)
+	t.ok(not _has_opt(st, "UQ03_MOM", "아는 대로"), "탈영을 들은 적 없으면 말해 줄 수 없음(N7)")
+	st.vars.set_v("UQ03_KNOWGONE", 1)
 	t.ok(_says(st, c, "UQ03_MOM", "국은 늘 따뜻해", ["아는 대로"]), "국 전언을 엄옥순에게")
 	st.vars.set_v("TR_YEON_MET", 1)
 	st.vars.set_v("UQ05_COW", 5)
 	st.vars.set_v("UQ05_SPILL", 1)
 	t.ok(_says(st, c, "TR_YEON", "고기 굽는 연기"), "척후가 끌고 간 뒤 연보경 — 버스 쪽 연기(출처 호위)")
 	t.eq(_v(st, "UQ05_GONE_SAID"), 1, "한 번만")
+
+
+# ---------------------------------------------------------------- 서사 대조 반영(1-12g)
+func test_uq_audit_fixes(t) -> void:
+	var a := _host()
+	var st: StoryState = a[1]
+	var c: UqR01 = a[2]
+	c._on_day(6)
+	t.ok(_v(st, "UQ01_GUEST") == 0 or _v(st, "UQ01_GUEST") == 7, "밤손님 날은 다음 자정 뒤(오늘 06시엔 이미 지난 03시가 아님)")
+	st.vars.set_v("UQ01_SOL", 3)
+	st.vars.set_v("UQ01_THEFT_DAY", 8)
+	c._on_day(8)
+	t.eq(_v(st, "UQ01_WITNESS"), 1, "새벽에 뜯으면 그날 06시에 목격 판정")
+	# 엄옥순: 전하지 않고 끝난 판(알림 · 갖기)엔 '배급표는 받았는데'가 없다
+	st.quests.set_stage("UQ-03", 100)
+	st.vars.set_v("UQ03_RES", 2)
+	st.vars.set_v("UQ03_MOM_MET", 1)
+	t.ok(_says(st, c, "UQ03_MOM", "소식 있으면 알려 줘요"), "전하지 않았으면 NONEWS")
+	# 누렁이를 말뚝에(위강윤 낮) — 수송대가 사당에 설 때까지 말뚝
+	st.vars.set_v("UQ05_COW", 1)
+	st.vars.set_v("UQ05_AT", 2)
+	st.vars.set_v("CARAVAN_V54", 1)
+	_play(st, c, "UQ05_BACK")
+	t.eq(_v(st, "UQ05_COW"), 3, "데려다줌")
+	t.eq(_v(st, "UQ05_ABSENT"), 1, "봉천 수송대엔 아직 없음 — 사당 말뚝에(한 소는 한 곳에)")
+	c._last_v54 = 1
+	c._cow_tick()
+	st.vars.set_v("CARAVAN_V54", 2)
+	c._cow_tick()
+	t.eq(_v(st, "UQ05_ABSENT"), 0, "수송대가 사당에 서면 데려감")

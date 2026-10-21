@@ -6,27 +6,28 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "UQ03_ASK": 11,
-  "UQ03_MOM": 13,
-  "UQ03_ASK2": 15,
-  "UQ03_TAKE": 18,
-  "UQ03_MOMDEAD": 21,
-  "UQ03_LATE": 24,
-  "UQ03_PHOTO": 26,
-  "UQ03_PHOTO_LATE": 29,
-  "UQ03_PHOTO2": 31,
-  "UQ03_CANS_SAY": 35,
-  "UQ03_BAG": 37,
-  "UQ03_BAG2": 42,
-  "UQ03_DEMOTED": 44,
-  "JH03": 46,
-  "JH03_RADIO": 52,
-  "JH03_RADIO_W": 58,
-  "JH03_RADIO_NO": 60,
-  "JH03_SENT": 62,
-  "JH03_THANKS": 64,
-  "JH03_FLED": 66,
-  "JH03_SHOT": 68
+  "UQ03_IDLE_M": 11,
+  "UQ03_ASK": 13,
+  "UQ03_MOM": 15,
+  "UQ03_ASK2": 17,
+  "UQ03_TAKE": 20,
+  "UQ03_MOMDEAD": 23,
+  "UQ03_LATE": 26,
+  "UQ03_PHOTO": 28,
+  "UQ03_PHOTO_LATE": 31,
+  "UQ03_PHOTO2": 33,
+  "UQ03_CANS_SAY": 37,
+  "UQ03_BAG": 39,
+  "UQ03_BAG2": 44,
+  "UQ03_DEMOTED": 46,
+  "JH03": 48,
+  "JH03_RADIO": 54,
+  "JH03_RADIO_W": 60,
+  "JH03_RADIO_NO": 62,
+  "JH03_SENT": 64,
+  "JH03_THANKS": 66,
+  "JH03_FLED": 68,
+  "JH03_SHOT": 70
  },
  "ops": [
   {
@@ -51,7 +52,7 @@
   },
   {
    "op": "if",
-   "cond": "UQ03_GOT_DAY > 0 and known_dead(\"N-R01-507\") == 1 and UQ03_PASS == 0 and UQ03_MOMSAID == 0",
+   "cond": "UQ03_GOT_DAY > 0 and known_dead(\"N-R01-507\") == 1 and UQ03_PASS == 0 and UQ03_MOMSAID == 0 and (stage(\"UQ-03\") == 10 or UQ03_RES == 3)",
    "to": "UQ03_MOMDEAD"
   },
   {
@@ -66,13 +67,13 @@
   },
   {
    "op": "if",
-   "cond": "stage(\"UQ-03\") == 0 and known_dead(\"N-R01-507\") == 0 and UQ03_MOM_MET == 1 and met(\"N-R01-050\") == 1 and AFF_BJ > -60 and V_WANTED < 80 and FQ_JH03_CHECK != 6",
-   "to": "UQ03_MOM"
+   "cond": "stage(\"UQ-03\") == 0 and known_dead(\"N-R01-507\") == 0 and met(\"N-R01-050\") == 1 and AFF_BJ > -60 and V_WANTED < 80 and FQ_JH03_CHECK != 6 and ((GAME_HOUR >= 6 and GAME_HOUR < 8) or (GAME_HOUR >= 18 and GAME_HOUR < 20))",
+   "to": "UQ03_ASK"
   },
   {
    "op": "if",
-   "cond": "stage(\"UQ-03\") == 0 and known_dead(\"N-R01-507\") == 0 and met(\"N-R01-050\") == 1 and AFF_BJ > -60 and V_WANTED < 80 and FQ_JH03_CHECK != 6 and ((GAME_HOUR >= 6 and GAME_HOUR < 8) or (GAME_HOUR >= 18 and GAME_HOUR < 20))",
-   "to": "UQ03_ASK"
+   "cond": "stage(\"UQ-03\") == 0 and known_dead(\"N-R01-507\") == 0 and UQ03_MOM_MET == 1 and met(\"N-R01-050\") == 1 and AFF_BJ > -60 and V_WANTED < 80 and FQ_JH03_CHECK != 6",
+   "to": "UQ03_IDLE_M"
   },
   {
    "op": "line",
@@ -83,6 +84,33 @@
   {
    "op": "goto",
    "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "기본",
+   "text": "노량진 다리목 초소입니다. 강 건너는 판독기 구역. 등록증 없으면 돌아가십시오."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "상도 빌라에서 어머님을 뵀어요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "UQ03_MOM",
+     "id": "MQ-105_BJ_IDLE:1:0"
+    },
+    {
+     "text": "알겠습니다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "MQ-105_BJ_IDLE:1:1"
+    }
+   ]
   },
   {
    "op": "line",
@@ -125,7 +153,7 @@
      "cond": "",
      "fx": "",
      "to": "UQ03_TAKE",
-     "id": "MQ-105_BJ_IDLE:1:0"
+     "id": "MQ-105_BJ_IDLE:2:0"
     },
     {
      "text": "다음에",
@@ -133,7 +161,7 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "MQ-105_BJ_IDLE:1:1"
+     "id": "MQ-105_BJ_IDLE:2:1"
     }
    ]
   },
@@ -225,7 +253,7 @@
      "cond": "UQ03_CANS == 1",
      "fx": "",
      "to": "UQ03_CANS_SAY",
-     "id": "MQ-105_BJ_IDLE:2:0"
+     "id": "MQ-105_BJ_IDLE:3:0"
     },
     {
      "text": "(고개를 끄덕인다)",
@@ -233,7 +261,7 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "MQ-105_BJ_IDLE:2:1"
+     "id": "MQ-105_BJ_IDLE:3:1"
     }
    ]
   },
@@ -331,7 +359,7 @@
      "cond": "(FQ_JH03_CHECK == 0 or FQ_JH03_CHECK == 1 or FQ_JH03_CHECK == 5 or FQ_JH03_CHECK == 7) and UQ03_RES != 3",
      "fx": "",
      "to": "JH03_RADIO",
-     "id": "MQ-105_BJ_IDLE:3:0"
+     "id": "MQ-105_BJ_IDLE:4:0"
     },
     {
      "text": "알겠습니다",
@@ -339,7 +367,7 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "MQ-105_BJ_IDLE:3:1"
+     "id": "MQ-105_BJ_IDLE:4:1"
     }
    ]
   },

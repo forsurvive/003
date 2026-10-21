@@ -658,7 +658,7 @@ func _ready() -> void:
 				["check", "UQ05_COW == 2", "멀어지지 않고 따라옴(걷기 3.0)"],
 				["go", sd.x + 4, sd.y + 12], ["go", sd.x + 17, sd.y + 12],
 				["until", "UQ05_COW == 3", 25.0, "사당 광장 말뚝 — 데려다줌", "uq05_home"],
-				["check", "UQ05_PEND == 1 and UQ05_ABSENT == 0 and UQ05_RES == 2", "위강윤이 맡음 — 사례는 연보경이 다음에"]]
+				["check", "UQ05_PEND == 1 and UQ05_RES == 2 and (UQ05_ABSENT == 1 or CARAVAN_V54 == 2)", "위강윤이 맡음 — 다음 사당 정류까지 말뚝 · 사례는 연보경이 다음에"], ["shot", "uq05_post"]]
 		"sb02", "sb02f":                                                # 1-12f FQ-SB-02(sb02f: 방범대와 싸우는 갈래): 04시 본소 마당 출발 줄(갈고리) → 서부간선 고가 상판 → 북 램프 끝 오태수 탈주(데려옴) →
 			st.vars.set_v("AFF_SB", 25)                                  #   신도림 쉬는 박자 → 노량진로 끝 방범대([화술 보통] 통과) → 철교 남단 노들 경비 60캡 → 인수원 인계(넷 · 10시 전 · M-129)
 			st.vars.set_v("PC_CAPS", 500)

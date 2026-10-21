@@ -384,13 +384,17 @@ N-R01-050 [기본] …명단에 볼트 작업복 줄이 있던데. 그 줄은 �
 # UQ-03 다리목 하사의 배급표(1-12g, SD-05 §3.25 · 원고 UQ-03.txt 머리 주석): 사진 · 냉담 · 가방 · 강등 · 부탁(교대 06~08 · 18~20) · 어머니를 먼저 뵌 사람
 ? stage("UQ-03") == 30 and has("M-428") == 1 -> UQ03_PHOTO
 ? UQ03_RES == 3 -> UQ03_BAG
-? UQ03_GOT_DAY > 0 and known_dead("N-R01-507") == 1 and UQ03_PASS == 0 and UQ03_MOMSAID == 0 -> UQ03_MOMDEAD
+? UQ03_GOT_DAY > 0 and known_dead("N-R01-507") == 1 and UQ03_PASS == 0 and UQ03_MOMSAID == 0 and (stage("UQ-03") == 10 or UQ03_RES == 3) -> UQ03_MOMDEAD
 ? stage("UQ-03") == 10 and UQ03_COLD >= 1 -> UQ03_LATE
 ? UQ03_EOM == 1 -> UQ03_DEMOTED
-? stage("UQ-03") == 0 and known_dead("N-R01-507") == 0 and UQ03_MOM_MET == 1 and met("N-R01-050") == 1 and AFF_BJ > -60 and V_WANTED < 80 and FQ_JH03_CHECK != 6 -> UQ03_MOM
 ? stage("UQ-03") == 0 and known_dead("N-R01-507") == 0 and met("N-R01-050") == 1 and AFF_BJ > -60 and V_WANTED < 80 and FQ_JH03_CHECK != 6 and ((GAME_HOUR >= 6 and GAME_HOUR < 8) or (GAME_HOUR >= 18 and GAME_HOUR < 20)) -> UQ03_ASK
+? stage("UQ-03") == 0 and known_dead("N-R01-507") == 0 and UQ03_MOM_MET == 1 and met("N-R01-050") == 1 and AFF_BJ > -60 and V_WANTED < 80 and FQ_JH03_CHECK != 6 -> UQ03_IDLE_M
 N-R01-050 [기본] 노량진 다리목 초소입니다. 강 건너는 판독기 구역. 등록증 없으면 돌아가십시오.
 -> END
+* UQ03_IDLE_M
+N-R01-050 [기본] 노량진 다리목 초소입니다. 강 건너는 판독기 구역. 등록증 없으면 돌아가십시오.
+> 상도 빌라에서 어머님을 뵀어요 -> UQ03_MOM
+> 알겠습니다 -> END
 * UQ03_ASK
 N-R01-050 [피곤] (철모를 벗어 머리를 턴다) 교대 시간입니다. …잠깐, 사적인 부탁 하나 해도 됩니까.
 -> UQ03_ASK2

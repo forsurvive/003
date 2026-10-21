@@ -64,14 +64,14 @@ SYS 오래 걸린다. 두 머리가 차례로 고개를 떨군다. 고기를 발
 -> END
 
 # ================================================================ 데려다줌(진행기가 정류장 앞에 닿으면 연다 — UQ05_AT 1 수송대 앞 · 2 사당 광장 말뚝)
-@scene UQ05_BACK  누렁이를 데려왔다  (L-R01-30)
+@scene UQ05_BACK  누렁이를 데려왔다  (L-R01-18)
 @npc   -
 @cond  V_ACT >= 1
 ? UQ05_AT == 1 and dead("N-R01-040") == 0 -> YEON
 ? dead("N-R01-043") == 0 and GAME_HOUR >= 6 and GAME_HOUR < 20 -> WI
 ? dead("N-R01-040") == 0 -> TIE
 ? dead("N-R01-043") == 0 -> TIE
-? dead("N-R01-041") == 0 and SQ_S05_WIND != 2 -> HEO
+? dead("N-R01-041") == 0 and SQ_S05_WIND == 0 -> HEO
 SYS 광장 말뚝에 누렁이를 맨다. 받아 줄 사람이 없다. 누렁이가 여물통에 머리 둘을 들이민다.
 ! karma(25); UQ05_RES = 4; quest("UQ-05", 100)
 @cmd uqr cow_home
@@ -80,7 +80,11 @@ SYS 광장 말뚝에 누렁이를 맨다. 받아 줄 사람이 없다. 누렁이
 N-R01-040 [놀람] 누렁아! (두 머리를 번갈아 쓰다듬는다) …어디서 찾았어. 고개에 두고 온 줄 알았는데.
 ? UQ05_REWARD == 1 -> YEON_AGAIN
 ? UQ05_CAUSE == 1 -> YEON_C1
+? UQ05_CAUSE == 2 -> YEON_C2
 N-R01-040 [피곤] 그날 소리가 그렇게 클 줄 누가 알았어. 고삐를 놓친 건 나야.
+-> YEON_PAY
+* YEON_C2
+N-R01-040 [피곤] 들개 떼가 그렇게 붙을 줄 누가 알았어. 고삐를 놓친 건 나야.
 -> YEON_PAY
 * YEON_C1
 N-R01-040 [분노] 척후 놈들. 소한테 쏘는 놈들이 사람한텐 안 쏘겠어.
@@ -120,7 +124,7 @@ SYS 광장 말뚝에 고삐를 맨다. 밤엔 위강윤이 개찰구 초소에 �
 SYS 광장 말뚝에 고삐를 맨다. 관리인 없는 광장 — 수송대가 다음에 서면 누렁이를 볼 것이다.
 * TIE2
 ? UQ05_REWARD == 1 -> TIE_AGAIN
-! karma(25); xp(60); UQ05_PEND = 1; UQ05_RES = 2; quest("UQ-05", 20); quest("UQ-05", 100)
+! karma(25); xp(60); UQ05_PEND = 4; UQ05_RES = 2; quest("UQ-05", 20); quest("UQ-05", 100)
 ? dead("N-R01-040") == 1 -> TIE_NOPEND
 @cmd uqr cow_home
 -> END

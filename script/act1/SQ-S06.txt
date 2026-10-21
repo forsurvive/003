@@ -176,16 +176,16 @@ N-R01-064 [미소] 챙겨 주신 거 있으니까, 해 볼 만해요. 노들섬 
 @scene SQS06_CHECK  다리목 검문  (L-R01-20)
 @npc   -
 @cond  V_ACT >= 1
-? (known_dead("N-R01-050") == 1 or UQ03_EOM >= 2) -> NOUM
+? (dead("N-R01-050") == 1 or UQ03_EOM >= 2) -> NOUM
 N-R01-050 [기본] 정지. 다리는 판독기 구역입니다. 둘 다 등록증.
 -> WHO
 * NOUM
-SYS 초소 앞 계엄병 둘이 총을 고쳐 든다. 분대장 자리는 비어 있다. "정지. 등록증. …둘 다."
+SYS 초소 앞 계엄병 둘이 총을 고쳐 든다. 엄 하사 자리엔 낯선 분대장이 서 있다. "정지. 등록증. …둘 다."
 * WHO
 ? SQ_S06_CLOTH == 0 -> UNIFORM
 ? SQ_S06_PAPERS == 1 -> PAPERS
-? FQ_JH03_CHECK == 6 and (known_dead("N-R01-050") == 0 and UQ03_EOM < 2) -> JH03_SHOT
-? (known_dead("N-R01-050") == 1 or UQ03_EOM >= 2) -> NOUM_ASK
+? FQ_JH03_CHECK == 6 and (dead("N-R01-050") == 0 and UQ03_EOM < 2) -> JH03_SHOT
+? (dead("N-R01-050") == 1 or UQ03_EOM >= 2) -> NOUM_ASK
 N-R01-050 [피곤] 등록증 없어? 둘 다? …노들섬 쪽은 통행세, 우리 쪽은 서류. 뭐가 나은지는 알아서.
 > [화술 보통] 이 사람 내 짐꾼이에요. 등록증은 노들섬 조합에 맡겨 놨고요 -> PASS | FAIL
 > [화술 쉬움] (하사의 지루한 얼굴) 노량진 학원가 이야기 아세요? 옛날 '대피 적성 학원'… -> STALL | FAIL
@@ -197,11 +197,11 @@ N-R01-050 [분노] …노량진로에서 내 분대원을 쏜 사람이군요. �
 > 돌아간다 -> BACK
 > 싸운다 -> FIGHT
 * NOUM_ASK
-SYS 계엄병 하나가 진해원을 빤히 본다. 말로 넘길 사람이 없다 — 분대장이 있었으면 몰라도.
+SYS 계엄병 하나가 진해원을 빤히 본다. 새 분대장은 말을 받지 않는 얼굴이다 — 엄 하사였으면 몰라도.
 > [캡 100] 수고비입니다 -> BRIBE ?? PC_CAPS >= 100
 > 돌아간다 -> BACK
 * UNIFORM
-? (known_dead("N-R01-050") == 1 or UQ03_EOM >= 2) -> UNIFORM_NOUM
+? (dead("N-R01-050") == 1 or UQ03_EOM >= 2) -> UNIFORM_NOUM
 N-R01-050 [분노] …그 전투복. 이름표 뗀 자리. 탈영병이다! 손 들어!
 -> UNIFORM_GO
 * UNIFORM_NOUM
@@ -211,7 +211,12 @@ N-R01-064 [놀람] (숨이 멎는 소리)
 > 진해원을 데리고 달아난다 -> FLEE
 > 싸운다 -> FIGHT
 * PAPERS
+? (dead("N-R01-050") == 1 or UQ03_EOM >= 2) -> PAPERS_N
 N-R01-050 [기본] (판독기에 종이를 댄다. 삑.) …통과. 사진 칸이 비었네. 요즘 다 이래.
+@cmd s06 pass papers
+-> END
+* PAPERS_N
+N-BJ-C2 [기본] (판독기에 종이를 댄다. 삑.) …통과. 사진 칸이 비었군. 요즘 다 이래.
 @cmd s06 pass papers
 -> END
 * PASS
@@ -223,7 +228,12 @@ N-R01-050 [미소] 그 학원 내 할아버지가 다녔다던데. 적성 3등�
 @cmd s06 pass talk
 -> END
 * BRIBE
+? (dead("N-R01-050") == 1 or UQ03_EOM >= 2) -> BRIBE_N
 N-R01-050 [기본] (주머니에 넣는다) 아무것도 못 봤습니다. 다리 위에선 뛰지 마십시오.
+@cmd s06 pass bribe
+-> END
+* BRIBE_N
+N-BJ-C2 [기본] (주머니에 넣는다) 아무것도 못 봤다. 다리 위에선 뛰지 마라.
 @cmd s06 pass bribe
 -> END
 * FAIL
@@ -352,7 +362,7 @@ N-R01-057 [기본] 넌 내릴 일 없잖아. 돌아간다.
 @npc   -
 @cond  V_ACT >= 1
 SYS 고개길 수송대가 다리목 앞에 선다. 짐소가 콧김을 뿜는다. 둘째 짐칸이 조금 무겁게 처져 있다.
-? (known_dead("N-R01-050") == 1 or UQ03_EOM >= 2) -> NOUM
+? (dead("N-R01-050") == 1 or UQ03_EOM >= 2) -> NOUM
 # UQ-03 사진을 건넴(1-12g, 계획 §3.3): 그의 분대는 주인공 일행의 짐을 안 연다 — 엄도현 근무 중 · 수배 2등급 이하일 때만. 갖기(RES 3)면 거울로 더 꼼꼼하다(화술 갈래 없음 · 은신 60)
 ? UQ03_PASS == 1 and UQ03_EOM == 0 and V_WANTED < 60 -> UQ03_PASS
 N-R01-050 [피곤] 수송대네. 짐 내려. …짐소 배 밑도.
@@ -366,8 +376,8 @@ N-R01-040 [놀람] (고삐를 쥔 채 당신을 본다) …뭘 어떻게 한 거
 * NOUM
 SYS 계엄병 둘이 짐을 뒤진다. 하나가 짐소 배 밑으로 고개를 숙이려 한다.
 * OPT
-> [화술 보통] 하사님, 그 짐소 뒷발 조심하세요. 배 만지면 찹니다 -> OK | NO ?? (known_dead("N-R01-050") == 0 and UQ03_EOM < 2) and UQ03_RES != 3
-> [화술 쉬움] (하사의 지루한 얼굴) 노량진 학원가 이야기 아세요? 옛날 '대피 적성 학원'… -> STALL | NO ?? (known_dead("N-R01-050") == 0 and UQ03_EOM < 2) and UQ03_RES != 3
+> [화술 보통] 하사님, 그 짐소 뒷발 조심하세요. 배 만지면 찹니다 -> OK | NO ?? (dead("N-R01-050") == 0 and UQ03_EOM < 2) and UQ03_RES != 3
+> [화술 쉬움] (하사의 지루한 얼굴) 노량진 학원가 이야기 아세요? 옛날 '대피 적성 학원'… -> STALL | NO ?? (dead("N-R01-050") == 0 and UQ03_EOM < 2) and UQ03_RES != 3
 > [캡 100] 수고비입니다 -> BRIBE ?? PC_CAPS >= 100
 > [은신 40] 짐소 그늘에 바짝 붙어 서서 숨소리를 덮는다 -> SNEAK ?? UQ03_RES != 3 or UQ03_EOM >= 2
 > [은신 60] 짐소 그늘에 붙는다 — 하사가 당신을 유난히 본다 -> SNEAK ?? UQ03_RES == 3 and UQ03_EOM < 2
@@ -381,7 +391,12 @@ N-R01-050 [미소] 그 학원 내 할아버지가 다녔다던데. 적성 3등�
 @cmd s06 cargo pass
 -> END
 * BRIBE
+? (dead("N-R01-050") == 1 or UQ03_EOM >= 2) -> BRIBE_N
 N-R01-050 [기본] (주머니에 넣는다) 짐 이상 없음.
+@cmd s06 cargo pass
+-> END
+* BRIBE_N
+N-BJ-C2 [기본] (주머니에 넣는다) 짐 이상 없음.
 @cmd s06 cargo pass
 -> END
 * SNEAK

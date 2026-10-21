@@ -6,11 +6,13 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "FED": 5,
-  "CAGED": 9,
-  "FULL": 12,
-  "GONE": 14,
-  "OUT": 16
+  "HALF": 6,
+  "MEAT": 7,
+  "FED": 8,
+  "CAGED": 12,
+  "FULL": 15,
+  "GONE": 17,
+  "OUT": 19
  },
  "ops": [
   {
@@ -29,10 +31,25 @@
    "to": "FULL"
   },
   {
+   "op": "if",
+   "cond": "UQ02_PAW_DAY > 0 and UQ02_PAW_DAY >= GAME_DAY - 1 and UQ02_END == 0",
+   "to": "HALF"
+  },
+  {
    "op": "line",
    "who": "SYS",
    "emo": "기본",
    "text": "개집 앞 찌그러진 양은 그릇. 비어 있다. 바닥에 못으로 긁은 글씨 — '백구'."
+  },
+  {
+   "op": "goto",
+   "to": "MEAT"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "개집 앞 찌그러진 양은 그릇. 보리밥이 반쯤 남았다 — 고기는 없다. 바닥에 못으로 긁은 글씨 — '백구'."
   },
   {
    "op": "choice",

@@ -96,6 +96,8 @@ prop sd_post 18 11
 prop sd_post 23 11
 text 18 11 "캐러밴 말뚝. 쇠고리마다 밧줄 자국이 반들반들하다. 두 머리 한우를 매는 자리."
 text 23 11 "말뚝. 밧줄 끝에 이름표 — '위강윤 대여 · 하루 40캡.'"
+# UQ-05 말뚝에 매인 누렁이(위강윤이 맡음 · 밤 말뚝) — 다음 사당 정류 때 수송대로
+npc N-UQ5-COW 17 12 E sheet=cr_cr091_loco cond="UQ05_COW == 3 and UQ05_ABSENT == 1" bark="(말뚝에 매인 누렁소. 귀 꼬리표 '한강 행상 조합 · 연보경'. 수송대를 기다린다.)"
 # 위강윤의 대여 소 — 수송대에 빌려준 동안(UQ-05 ABSENT 2)은 수송대와 함께 다닌다(한 소는 한 곳에, P3)
 npc CR-091 20 12 W sheet=cr_cr091_loco cond="UQ05_ABSENT != 2" bark="(짐소가 두 머리로 번갈아 여물통을 뒤진다.)"
 prop drum 16 11

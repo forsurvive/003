@@ -3,7 +3,7 @@
  "title": "개집 앞 — 조담희와 남솔",
  "loc": "L-R01-09",
  "npc": "N-R01-029",
- "cond": "MQ101_STAGE >= 100 and stage(\"UQ-02\") == 0",
+ "cond": "MQ101_STAGE >= 100 and UQ02_HEARD == 0 and UQ02_END == 0",
  "labels": {
   "START": 0,
   "TELL": 8,
@@ -45,7 +45,7 @@
    "op": "line",
    "who": "SYS",
    "emo": "기본",
-   "text": "조담희가 텃밭 쪽으로 간다. 남솔이 그릇을 내려놓고 아랫문 쪽을 한 번 본다."
+   "text": "조담희가 당번표를 접어 앞치마에 넣고 돌아선다. 남솔이 그릇을 내려놓고 아랫문 쪽을 한 번 본다."
   },
   {
    "op": "do",
@@ -55,7 +55,7 @@
    "op": "choice",
    "opts": [
     {
-     "text": "(조담희가 간 뒤) 남솔아, 백구 밤에 어디 가는지 알지?",
+     "text": "(조담희가 돌아선 사이) 남솔아, 백구 밤에 어디 가는지 알지?",
      "tags": [
       {
        "k": "speech",
@@ -99,7 +99,7 @@
   },
   {
    "op": "do",
-   "fx": "UQ02_HOW = 2; quest(\"UQ-02\", 20)"
+   "fx": "UQ02_HOW = 2; UQ02_SOLNA_TOLD = GAME_DAY; quest(\"UQ-02\", 20)"
   },
   {
    "op": "goto",

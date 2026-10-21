@@ -13,7 +13,7 @@
 @scene JH03_CHECK  다리목 이동 검문  (L-R01-20)
 @npc   -
 @cond  V_ACT >= 1
-? FQ_JH03_CHECK == 10 and FQ_JH03_PARK == 1 and FQ_JH03_NEAR == 1 and dead("C-018") == 0 and (known_dead("N-R01-050") == 0 and UQ03_EOM < 2) and V_WANTED < 30 -> RADIO
+? FQ_JH03_CHECK == 10 and FQ_JH03_PARK == 1 and FQ_JH03_NEAR == 1 and dead("C-018") == 0 and (dead("N-R01-050") == 0 and UQ03_EOM < 2) and V_WANTED < 30 -> RADIO
 ? FQ_JH03_SPOT == 1 -> SPOT
 ? FQ_JH03_CHECK == 7 -> AGAIN
 ? FQ_JH03_PARK != 1 or FQ_JH03_NEAR == 0 or dead("C-018") == 1 -> ALONE
@@ -29,7 +29,7 @@ C-018 [기본] 빨리 끝나면 강이나 보고 가고.
 > 임시 등록증을 내민다 — "이 사람, 제가 보증합니다" -> PASS ?? has("M-120") == 1 and AFF_BJ >= 20
 > [화술 보통] 수산시장 들것 의료반 약입니다. 반장 소윤희 앞이에요 -> TALK_OK | TALK_NO ?? known_dead("C-067") == 0
 > [화술 보통] 여의도 병원 7병동 약입니다. 들것 반장 몫이었어요 -> TALK_OK | TALK_NO ?? known_dead("C-067") == 1
-> 엄도현 하사를 압니다 — 초소에 물어보세요 -> NAME ?? met("N-R01-050") == 1 and (known_dead("N-R01-050") == 0 and UQ03_EOM < 2) and AFF_BJ > -40 and UQ03_RES != 3
+> 엄도현 하사를 압니다 — 초소에 물어보세요 -> NAME ?? met("N-R01-050") == 1 and (dead("N-R01-050") == 0 and UQ03_EOM < 2) and AFF_BJ > -40 and UQ03_RES != 3
 > 그냥 줄을 선다 -> QUEUE_NO ?? has("M-062") == 0
 > 돌아가겠다고 한다 -> BACK
 > 싸운다 -> FIGHT

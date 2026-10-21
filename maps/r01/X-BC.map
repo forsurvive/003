@@ -261,14 +261,16 @@ npc N-R01-026 11 33 S cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0"
 npc C-015 37 35 W sheet=cr_baekgu_loco cond="MQ101_DOG != 1 and SQ_S01_DOG != 1 and FQ_JC01_DOG != 1 and FQ_JC01_DOG != 5 and (HOME_BC != 1 or BAEKGU_NAP != 1) and UQ02_DOG_OUT == 0 and UQ02_BARK_UNTIL < GAME_DAY and not (UQ02_SEE_OFF_UNTIL >= GAME_DAY and GAME_HOUR >= 6 and GAME_HOUR < 20)"
 npc C-015 37 35 W sheet=cr_baekgu_loco cond="MQ101_DOG != 1 and SQ_S01_DOG != 1 and FQ_JC01_DOG != 1 and FQ_JC01_DOG != 5 and (HOME_BC != 1 or BAEKGU_NAP != 1) and UQ02_DOG_OUT == 0 and UQ02_BARK_UNTIL >= GAME_DAY" bark="왈! 왈! (당신을 보고 이를 드러낸다)"
 npc C-015 29 40 S sheet=cr_baekgu_loco cond="MQ101_DOG != 1 and SQ_S01_DOG != 1 and FQ_JC01_DOG != 1 and FQ_JC01_DOG != 5 and (HOME_BC != 1 or BAEKGU_NAP != 1) and UQ02_DOG_OUT == 0 and UQ02_BARK_UNTIL < GAME_DAY and UQ02_SEE_OFF_UNTIL >= GAME_DAY and GAME_HOUR >= 6 and GAME_HOUR < 20" bark="(아랫문 앞에 앉아 길 쪽을 본다. 당신이 지나가면 꼬리를 한 번 친다.)"
-npc N-R01-034 38 34 W cond="(MQ101_NIGHT == 0 or MQ101_RESULT != 0) and SQ_S04_HELD == 0 and SQ_S04_AWAY == 0 and (UQ02_WITNESS == 0 or GAME_DAY >= UQ02_END_DAY + 7)" route=kennel:38,34,6;yard:33,36,4
+npc N-R01-034 38 34 W cond="(MQ101_NIGHT == 0 or MQ101_RESULT != 0) and SQ_S04_HELD == 0 and SQ_S04_AWAY == 0 and (UQ02_WITNESS == 0 or GAME_DAY >= UQ02_END_DAY + 7) and not (UQ02_END == 2 and GAME_DAY < UQ02_END_DAY + 7)" route=kennel:38,34,6;yard:33,36,4
+npc N-R01-034 38 34 W cond="(MQ101_NIGHT == 0 or MQ101_RESULT != 0) and SQ_S04_HELD == 0 and SQ_S04_AWAY == 0 and UQ02_END == 2 and GAME_DAY < UQ02_END_DAY + 7" route=kennel:38,34,6;yard:33,36,4 bark="아기 개 산에서 잘 살겠지? …백구가 밤마다 그쪽 보고 짖어."
 # UQ-02 ③을 남솔이 본 뒤 7일(UQ02_WITNESS): 개집 근처에 오지 않고 계단 위에서 등을 돌린다
 npc N-R01-034 42 30 S cond="UQ02_WITNESS == 1 and GAME_DAY < UQ02_END_DAY + 7 and dead(\"N-R01-034\") == 0 and SQ_S04_HELD == 0 and SQ_S04_AWAY == 0" bark="…저리 가."
 # SQ-S02(1-11b): 남건희 — 낮엔 계단 텃밭(22시 이후엔 윗문 쪽문 — 진행기가 세운다) · 고발 다음 날부터는 없다
 npc N-R01-039 20 27 S cond="V_ACT >= 1 and (SQ_S02_IN != 1 or GAME_DAY < SQ_S02_EXILE_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 22 and SQ_S02_FIGHT == 0" route=garden:20,27,6;alley:12,27,4
 npc N-R01-029 16 28 S cond="(MQ101_NIGHT == 0 or MQ101_RESULT != 0) and not (MQ101_STAGE >= 100 and GAME_HOUR >= 7 and GAME_HOUR < 9)" route=garden:16,28,6;alley:24,28,4
 # 조담희 일과(1-12g UQ-02 — 원고 머리 한 줄, N14): 반상회 총무로 07~09시 개집 앞 밥 당번표를 본다(MQ-101 뒤)
-npc N-R01-029 34 36 E cond="MQ101_STAGE >= 100 and GAME_HOUR >= 7 and GAME_HOUR < 9"
+npc N-R01-029 34 36 E cond="MQ101_STAGE >= 100 and GAME_HOUR >= 7 and GAME_HOUR < 9 and UQ02_GONE_DAY == 0"
+npc N-R01-029 34 36 E cond="MQ101_STAGE >= 100 and GAME_HOUR >= 7 and GAME_HOUR < 9 and UQ02_GONE_DAY > 0" bark="백구 요새 밥 다 먹더라. 남기던 게 끝났어."
 npc N-R01-030 46 35 W cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0"
 npc N-R01-031 39 21 S cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0" route=school:39,21,6;stair:33,22,3
 npc N-R01-033 52 37 W cond="(MQ101_NIGHT == 0 or MQ101_RESULT != 0) and not (UQ02_SAW == 1 and UQ02_END == 0)"

@@ -6,22 +6,23 @@
  "cond": "(GAME_HOUR < 2 or GAME_HOUR >= 5) and GAME_DAY >= UQ01_BAN_DAY",
  "labels": {
   "START": 0,
-  "FIRST": 7,
-  "RELAYED": 11,
-  "SEEN_NOW": 15,
-  "HQ": 19,
-  "TIN": 23,
-  "MENU": 26,
-  "SHOP": 27,
-  "SHOPN": 30,
-  "REG": 32,
-  "REG_DEAD": 38,
-  "CARD": 41,
-  "RCPT": 48,
-  "FIX": 53,
-  "FIX_NO": 60,
-  "TUBE": 63,
-  "TUBE2": 66
+  "COLD": 8,
+  "FIRST": 10,
+  "RELAYED": 14,
+  "SEEN_NOW": 18,
+  "HQ": 22,
+  "TIN": 26,
+  "MENU": 29,
+  "SHOP": 30,
+  "SHOPN": 33,
+  "REG": 35,
+  "REG_DEAD": 41,
+  "CARD": 44,
+  "RCPT": 51,
+  "FIX": 56,
+  "FIX_NO": 63,
+  "TUBE": 66,
+  "TUBE2": 69
  },
  "ops": [
   {
@@ -36,12 +37,12 @@
   },
   {
    "op": "if",
-   "cond": "UQ01_SOL == 3 and UQ01_SEEN == 0 and UQ01_SEEN_SAID == 0",
+   "cond": "UQ01_SOL == 3 and UQ01_SEEN == 0 and UQ01_SEEN_SAID == 0 and UQ01_WITNESS == 1",
    "to": "HQ"
   },
   {
    "op": "if",
-   "cond": "UQ01_SERVED > 0 and UQ01_SERVED == GAME_DAY - 1 and UQ01_TIN_SAID != GAME_DAY",
+   "cond": "UQ01_SERVED > 0 and UQ01_SERVED == GAME_DAY and UQ01_TIN_SAID != GAME_DAY",
    "to": "TIN"
   },
   {
@@ -50,10 +51,25 @@
    "to": "FIRST"
   },
   {
+   "op": "if",
+   "cond": "UQ01_SEEN == 1 and UQ01_SOL == 0",
+   "to": "COLD"
+  },
+  {
    "op": "line",
    "who": "N-R01-038",
    "emo": "기본",
    "text": "어서 와. 24시야. 문은 늘 열려 있어."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-038",
+   "emo": "피곤",
+   "text": "…왔네. 문은 열려 있어. 너한텐 값이 좀 비싸. 나사 넷 값이야."
   },
   {
    "op": "goto",
@@ -274,7 +290,7 @@
   },
   {
    "op": "if",
-   "cond": "dead(\"N-R01-040\") == 1",
+   "cond": "known_dead(\"N-R01-040\") == 1",
    "to": "REG_DEAD"
   },
   {

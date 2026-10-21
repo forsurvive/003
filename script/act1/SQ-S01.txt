@@ -93,7 +93,12 @@ N-R01-029 [기본] 그래. 주운 사람 거지. …그래도 언제든 가져�
 ? SQ_S01_BOWL == 1 -> BOWLTHANKS
 ? SQH_TAG == 81 -> NAMED
 ? SQ_S01_FEED == 1 -> HOWL
+? UQ02_PAW_DAY > 0 and UQ02_PAW_DAY >= GAME_DAY - 1 and UQ02_END == 0 -> HALFBOWL
 N-R01-034 [기본] 오늘 백구 밥 당번 나야. 근데 그릇이 비었어. 엄마가 고기는 아끼래.
+-> ASKMEAT
+* HALFBOWL
+N-R01-034 [기본] 오늘 백구 밥 당번 나야. 보리밥은 반이나 남겼는데 고기는 없어. 엄마가 고기는 아끼래.
+* ASKMEAT
 N-R01-034 [기본] 고기 있으면 저 그릇에 하나만 놔 줄래? 백구는 아무거나 다 먹어.
 > [물건:I-036 1] 그릇에 놓는다 -> FED ?? has("I-036")
 > [물건:I-037 1] 그릇에 놓는다 -> FED ?? has("I-037")
@@ -130,7 +135,12 @@ N-R01-034 [미소] 나 없는 동안 백구 밥 준 거 너지? 그릇에서 고
 ? known_dead("C-015") == 1 -> GONE
 ? dead("C-015") == 1 or MQ101_DOG == 1 or SQ_S01_DOG == 1 or (HOME_BC == 1 and BAEKGU_NAP == 1) -> OUT
 ? SQ_S01_FEED == 1 -> FULL
+? UQ02_PAW_DAY > 0 and UQ02_PAW_DAY >= GAME_DAY - 1 and UQ02_END == 0 -> HALF
 SYS 개집 앞 찌그러진 양은 그릇. 비어 있다. 바닥에 못으로 긁은 글씨 — '백구'.
+-> MEAT
+* HALF
+SYS 개집 앞 찌그러진 양은 그릇. 보리밥이 반쯤 남았다 — 고기는 없다. 바닥에 못으로 긁은 글씨 — '백구'.
+* MEAT
 > [물건:I-036 1] 그릇에 고기를 놓는다 -> FED ?? has("I-036")
 > [물건:I-037 1] 그릇에 고기를 놓는다 -> FED ?? has("I-037")
 > [물건:I-038 1] 그릇에 고기를 놓는다 -> FED ?? has("I-038")
@@ -161,9 +171,14 @@ SYS 개집 앞 찌그러진 양은 그릇. 개집이 비었다 — 주인은 지
 @scene SQS01_BAEK  백구  (L-R01-09)
 @npc   C-015
 @cond  SQS01_STAGE >= 10 and SQS01_STAGE < 100 and SQ_S01_LEFT == 0 and SQ_S01_SOL == 0 and SQ_S01_DOG != 1 and SQ_S01_BETRAY == 0
+? GAME_DAY < UQ02_BARK_UNTIL -> GROWL
 ? MQ101_DOG == 2 or SQ_S01_FEED == 1 or AFF_JC_BC >= 20 -> GO
 SYS 흰 개가 코를 한 번 킁킁대더니, 다시 앞발에 턱을 얹는다. 아직은 낯선 사람이다.
 ? MQ101_STAGE >= 100 and SQ_S01_FEED == 0 -> HINT
+-> END
+# UQ-02 ③ 새끼를 죽인 뒤 7일(UQ02_BARK_UNTIL): 백구는 이를 드러낸다 — 따라나서지 않는다
+* GROWL
+SYS 백구가 이를 드러낸다. 낮게 으르렁거리며 개집 안으로 물러난다. 오늘은 따라나서지 않는다.
 -> END
 * HINT
 SYS 개집 옆 빈 밥그릇. 남솔이 오늘 밥 당번이라고 했다.

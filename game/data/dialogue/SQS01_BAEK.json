@@ -6,10 +6,16 @@
  "cond": "SQS01_STAGE >= 10 and SQS01_STAGE < 100 and SQ_S01_LEFT == 0 and SQ_S01_SOL == 0 and SQ_S01_DOG != 1 and SQ_S01_BETRAY == 0",
  "labels": {
   "START": 0,
-  "HINT": 4,
-  "GO": 6
+  "GROWL": 5,
+  "HINT": 7,
+  "GO": 9
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "GAME_DAY < UQ02_BARK_UNTIL",
+   "to": "GROWL"
+  },
   {
    "op": "if",
    "cond": "MQ101_DOG == 2 or SQ_S01_FEED == 1 or AFF_JC_BC >= 20",
@@ -25,6 +31,16 @@
    "op": "if",
    "cond": "MQ101_STAGE >= 100 and SQ_S01_FEED == 0",
    "to": "HINT"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "백구가 이를 드러낸다. 낮게 으르렁거리며 개집 안으로 물러난다. 오늘은 따라나서지 않는다."
   },
   {
    "op": "goto",
