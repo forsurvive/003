@@ -31,6 +31,11 @@ static func abs_min(s: String) -> int:
 	return days * 1440 + int(t[3]) * 60 + int(t[4])
 
 
+## 요일(0 월 ~ 6 일): 2277. 1. 1.이 월요일(1-12h UQ-10 — 대방 덤 수거는 목요일). 못 읽으면 0(월)
+static func weekday(s: String) -> int:
+	return (abs_min(s) / 1440) % 7
+
+
 ## 시(0~23). 못 읽으면 12
 static func hour(s: String) -> int:
 	var t := parse(s)

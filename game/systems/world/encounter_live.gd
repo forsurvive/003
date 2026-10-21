@@ -186,8 +186,8 @@ func start(req: Dictionary) -> bool:
 	if cat == "tracker" and n > CAP_TRACKER:
 		gs[0]["ids"] = (gs[0]["ids"] as Array).slice(0, CAP_TRACKER)
 		n = CAP_TRACKER
-	if host.combat.alive_enemies() + n > int(CAP.get(Encounters.threat_at(_here()), 12)):
-		return false                                                     # 활성 상한: 다음 판정으로 미룬다
+	if not bool(req.get("force", false)) and host.combat.alive_enemies() + n > int(CAP.get(Encounters.threat_at(_here()), 12)):
+		return false                                                     # 활성 상한: 다음 판정으로 미룬다(퀘스트가 정한 사건 force는 건너뜀 — 1-12h UQ-10 습격)
 	_efl = host.player.floor_id if host.map.has_deck and not req.has("at") else 0
 	_pick_state = state
 	_pick_cat = cat

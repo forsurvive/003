@@ -1,0 +1,724 @@
+{
+ "id": "UQ10_T",
+ "title": "탁우빈",
+ "loc": "L-R02-12",
+ "npc": "N-R02-019",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "MENU": 12,
+  "ROOM": 13,
+  "ROOM_O": 16,
+  "PUBBED": 18,
+  "SWAP": 20,
+  "SWAP_YOU": 25,
+  "TAKEN": 27,
+  "TAKEN_YOU": 31,
+  "NSEEN": 33,
+  "CAUGHT_SAID": 36,
+  "BOX_SAID": 39,
+  "BROKE": 42,
+  "CONF": 45,
+  "CONF_MENU": 46,
+  "CONF_FREE": 48,
+  "FREE_OK": 49,
+  "TALK": 54,
+  "TALK_NG": 61,
+  "EXT0": 63,
+  "PUBWARN": 68,
+  "DEAL": 70,
+  "MISSED": 74,
+  "PAY": 77,
+  "PAY1": 78,
+  "PAY4": 81,
+  "FREE": 84,
+  "REFUND": 88,
+  "EXT": 90,
+  "OUSTED": 92,
+  "O_WARN": 97,
+  "O_HELD": 99,
+  "O_TOLD": 101
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "GAME_HOUR < 6 or GAME_HOUR >= 20",
+   "to": "ROOM"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_BOSS >= 1",
+   "to": "OUSTED"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_RES == 2",
+   "to": "PUBBED"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_PLATE == 2 and UQ10_PSAID == 0",
+   "to": "SWAP"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_PLATE == 1 and UQ10_PSAID == 0",
+   "to": "TAKEN"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_NSEEN == 1",
+   "to": "NSEEN"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_NOTICED == 1",
+   "to": "CAUGHT_SAID"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_BOXT == 1 and UQ10_BOXSAID == 0 and UQ10_CHECKED >= 1",
+   "to": "BOX_SAID"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_RES == 6",
+   "to": "BROKE"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_RES == 3",
+   "to": "DEAL"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_RES == 4",
+   "to": "EXT"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "기본",
+   "text": "자릿세는 고철이면 무게로, 캡이면 캡으로. 뭐 달 거 있어?"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "저울 얘기를 하자",
+     "tags": [],
+     "cond": "UQ10_CHECKED >= 1 and (UQ10_RES == 0 or UQ10_RES == 6)",
+     "fx": "",
+     "to": "CONF",
+     "id": "UQ10_T:1:0"
+    },
+    {
+     "text": "(돌아선다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ10_T:1:1"
+    }
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_RES == 2",
+   "to": "ROOM_O"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "놀람",
+   "text": "(자다 깨어 요 위에서 몸을 일으킨다) …남의 방에서 뭐 해. 장 닫았어. 자릿세는 내일."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "피곤",
+   "text": "(자다 깨어 돌아눕는다) …남의 방에서 뭐 해. 반장 방도 이제 이름뿐이야."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "분노",
+   "text": "내일 아침이면 반장도 끝이야. 말 시키지 마."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "UQ10_PSAID = 1"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "분노",
+   "text": "(장부를 탁 덮는다) 오늘 아침 저울이 고철 쪽으로 넘어가더라. 상인들은 신이 났고."
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_NSEEN >= 1 or UQ10_NOTICED >= 1",
+   "to": "SWAP_YOU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "기본",
+   "text": "어젯밤 시장에 낯선 발자국이 있더라. 저울 앞에서 멈췄고. …너 어젯밤 어디 있었어."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "분노",
+   "text": "받침 밑 쇠판이 혼자 걸어갔을 리는 없지. 내 저울 만진 게 너지."
+  },
+  {
+   "op": "goto",
+   "to": "CONF"
+  },
+  {
+   "op": "do",
+   "fx": "UQ10_PSAID = 1"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_NSEEN >= 1 or UQ10_NOTICED >= 1",
+   "to": "TAKEN_YOU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "분노",
+   "text": "내 저울 받침에서 뭐가 없어졌어. 시장 사람 짓은 아니야. …낯선 얼굴은 너뿐이고."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "분노",
+   "text": "내 저울 받침에서 쇠판이 없어졌어. 못 자국만 넷. …네 손이지."
+  },
+  {
+   "op": "goto",
+   "to": "CONF"
+  },
+  {
+   "op": "do",
+   "fx": "UQ10_NSEEN = 2"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "기본",
+   "text": "밤에 내 저울 거적 들춘 게 너지. 위층 창에선 다 보여."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "do",
+   "fx": "UQ10_NOTICED = 2"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "분노",
+   "text": "내 저울에 코 박던 놈이네. 고철 안 달 거면 비켜 서."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "do",
+   "fx": "UQ10_BOXSAID = 1"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "분노",
+   "text": "위층 내 방 상자가 비었더라. 누가 들어왔어. …시장 사람은 아니고."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "피곤",
+   "text": "대납 끊긴 지 세 주야. 쇠판 다시 박았어. 대방 애들 셈은 기다려 주지 않거든."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "기본",
+   "text": "이번엔 뭘로 막을래."
+  },
+  {
+   "op": "goto",
+   "to": "CONF_MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "놀람",
+   "text": "…. (장부를 덮는다) 무슨 저울."
+  },
+  {
+   "op": "if",
+   "cond": "(UQ71_SQ == 9 and GAME_DAY > UQ71_SQ_DAY)",
+   "to": "CONF_FREE"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "\"덤은 대방 분대로 가죠. 보호비요.\"",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "어려움"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "TALK",
+     "id": "UQ10_T:2:0",
+     "fail": "TALK_NG"
+    },
+    {
+     "text": "\"배수관이 보호비를 세금으로 바꾼대요. 경사로에서 들었어요.\"",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "보통"
+      }
+     ],
+     "cond": "UQ71_HEARD == 1",
+     "fx": "",
+     "to": "TALK",
+     "id": "UQ10_T:2:1",
+     "fail": "TALK_NG"
+    },
+    {
+     "text": "상인들한테 말하기 전에 입막음값을 내시죠",
+     "tags": [],
+     "cond": "UQ10_EXTORT == 0",
+     "fx": "",
+     "to": "EXT0",
+     "id": "UQ10_T:2:2"
+    },
+    {
+     "text": "상인들 앞에서 말하겠다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "PUBWARN",
+     "id": "UQ10_T:2:3"
+    },
+    {
+     "text": "(그만둔다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ10_T:2:4"
+    }
+   ]
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "\"대방 애들은 흩어졌다던데, 덤은 어디로 가요?\"",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "보통"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "FREE_OK",
+     "id": "UQ10_T:3:0",
+     "fail": "TALK_NG"
+    },
+    {
+     "text": "상인들한테 말하기 전에 입막음값을 내시죠",
+     "tags": [],
+     "cond": "UQ10_EXTORT == 0",
+     "fx": "",
+     "to": "EXT0",
+     "id": "UQ10_T:3:1"
+    },
+    {
+     "text": "상인들 앞에서 말하겠다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "PUBWARN",
+     "id": "UQ10_T:3:2"
+    },
+    {
+     "text": "(그만둔다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ10_T:3:3"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "피곤",
+   "text": "…대방 애들이 흩어진 뒤로는 내 주머니로 갔어. 버릇이 무섭지."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "기본",
+   "text": "쇠판 뗄게. 오늘. 상인들한테는… 말하든 말든."
+  },
+  {
+   "op": "do",
+   "fx": "UQ10_RES = 3; UQ10_FREE = 1; karma(10); quest(\"UQ-10\", 100)"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "xp"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "피곤",
+   "text": "(한숨) …맞아. 덤은 대방 애들 몫이야. 목요일마다. 안 주면 시장을 턴다더라."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "분노",
+   "text": "그 덤이 이 시장 노점들 지켰어. 상인들은 알면서 모르는 척해."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "기본",
+   "text": "저울은 고칠게. 대신 보호비를 네가 대신 내. 주에 50캡. …배수관만 없으면 이 돈 안 내."
+  },
+  {
+   "op": "do",
+   "fx": "UQ10_RES = 3; karma(10); quest(\"UQ-10\", 100)"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "xp"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "deal"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "PAY"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "분노",
+   "text": "증거 있어? 시장 반장 저울을 의심하면 이 시장에서 장사 못 해."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "분노",
+   "text": "…얼마."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "피곤",
+   "text": "(궤짝에서 캡 자루를 꺼내 던진다) 150. 이걸로 끝이야. 다시는 내 저울 얘기 하지 마."
+  },
+  {
+   "op": "do",
+   "fx": "caps(150); karma(-25); UQ10_RES = 4; UQ10_EXTORT = 1; quest(\"UQ-10\", 100)"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "xp"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "분노",
+   "text": "말해 봐. 그 덤이 너희 노점 지켰다고 내가 말할 테니."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "(UQ71_SQ == 9 and GAME_DAY > UQ71_SQ_DAY) and UQ10_FREE == 0",
+   "to": "FREE"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_MISS > UQ10_MSAID",
+   "to": "MISSED"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "기본",
+   "text": "저울은 이제 정직해. 목요일 몫만 늦지 마. 배수관만 없으면 이 돈 안 내."
+  },
+  {
+   "op": "goto",
+   "to": "PAY"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "msaid"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "피곤",
+   "text": "이번 주 몫이 비었어. 남쪽 노점 하나 털렸다. …다들 내 탓이라고 하겠지."
+  },
+  {
+   "op": "goto",
+   "to": "PAY"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "이번 주 몫을 낸다",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 50
+      }
+     ],
+     "cond": "UQ10_PAY_UNTIL < UQ10_DUE + 21",
+     "fx": "",
+     "to": "PAY1",
+     "id": "UQ10_T:4:0"
+    },
+    {
+     "text": "넉 주 치를 한 번에 낸다",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 200
+      }
+     ],
+     "cond": "UQ10_PAY_UNTIL < UQ10_DUE",
+     "fx": "",
+     "to": "PAY4",
+     "id": "UQ10_T:4:1"
+    },
+    {
+     "text": "다음에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ10_T:4:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "pay",
+    "1"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "기본",
+   "text": "목요일에 내가 갖다준다. 네 이름은 안 대."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "pay",
+    "4"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "놀람",
+   "text": "넉 주? …배수관이 그 전에 뻗으면 남은 건 돌려주지. 장부에 적어 둔다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "refund"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "미소",
+   "text": "들었어? 대방 애들이 흩어졌대. …이제 보호비 안 내도 돼."
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_REFUND > 0",
+   "to": "REFUND"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "기본",
+   "text": "(캡 자루를 내민다) 남은 선불이야. 장부에 적어 뒀잖아."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "분노",
+   "text": "또 왔어? 한 번 줬으면 끝이야. 저울은 내 거고."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_RAID == 1 or UQ10_RAID == 3",
+   "to": "O_HELD"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_RAID == 2 or UQ10_RAID == 4",
+   "to": "O_TOLD"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_RAID == 0 and UQ10_RAID_DAY > 0 and GAME_DAY == UQ10_RAID_DAY - 1",
+   "to": "O_WARN"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "피곤",
+   "text": "(구석 노점 거적 위에 고철 몇 토막) 반장은 이제 내가 아니야. 난 고철 장수고. 한 장은 한 장이지."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "기본",
+   "text": "(손가락으로 날을 센다) 덤 끊긴 뒤 첫 목요일이 내일이야. 대방 셈은 목요일이지. 어귀에 선 저 둘, 셈 보러 온 거야."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "피곤",
+   "text": "…막았다며. 운이 좋았네. 다음엔 덤 없이 어떻게 버티나 보자."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "분노",
+   "text": "내가 뭐랬어. 그 덤이 노점을 지켰다고 했지."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-10.txt"
+}

@@ -5,7 +5,9 @@
  "npc": "N-R02-019",
  "cond": "SQ_S13_KNOWN == 1 and SQ_S13_V_T == 4 and SQ_S13_SUSP_T == 0",
  "labels": {
-  "START": 0
+  "START": 0,
+  "KNOWN": 5,
+  "OUSTED": 7
  },
  "ops": [
   {
@@ -17,10 +19,40 @@
    ]
   },
   {
+   "op": "if",
+   "cond": "UQ10_BOSS >= 1",
+   "to": "OUSTED"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_RES == 3 or UQ10_RES == 4 or UQ10_RES == 6",
+   "to": "KNOWN"
+  },
+  {
    "op": "line",
    "who": "N-R02-019",
    "emo": "기본",
    "text": "저울 눈금 만진 장사꾼은 시장에서 쫓겨나. 볼트 개표기 눈금도 누가 만졌다던데."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "피곤",
+   "text": "(눈을 피한다) 볼트 개표기 눈금도 누가 만졌다던데. …저울 얘긴 우리끼리 끝났잖아."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "피곤",
+   "text": "저울 눈금 만진 장사꾼은 시장에서 쫓겨나. 내가 알지. …볼트 개표기 눈금도 누가 만졌다던데."
   },
   {
    "op": "goto",

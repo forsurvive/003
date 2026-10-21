@@ -56,21 +56,22 @@
   "S8_ONE_A": 168,
   "UQ71_CORE": 171,
   "UQ71_SOLD": 174,
-  "ABOUT": 178,
-  "SHOP": 182,
-  "MA": 184,
-  "WHY": 187,
-  "JOB": 191,
-  "JOB_ALONE": 198,
-  "JOB_HINT": 201,
-  "FEE": 203,
-  "WAITING": 207,
-  "REWARD": 209,
-  "HAVEPASS": 213,
-  "REGULAR": 215,
-  "MA_DEAD": 217,
-  "MA_LOG": 220,
-  "MA_DEAD_KNEW": 227
+  "UQ71_SOLD2": 179,
+  "ABOUT": 181,
+  "SHOP": 185,
+  "MA": 187,
+  "WHY": 190,
+  "JOB": 194,
+  "JOB_ALONE": 201,
+  "JOB_HINT": 204,
+  "FEE": 206,
+  "WAITING": 210,
+  "REWARD": 212,
+  "HAVEPASS": 216,
+  "REGULAR": 218,
+  "MA_DEAD": 220,
+  "MA_LOG": 223,
+  "MA_DEAD_KNEW": 230
  },
  "ops": [
   {
@@ -1278,10 +1279,25 @@
    ]
   },
   {
+   "op": "if",
+   "cond": "dead(\"N-R02-017\") == 1",
+   "to": "UQ71_SOLD2"
+  },
+  {
    "op": "line",
    "who": "C-050",
    "emo": "미소",
    "text": "(견습생을 부른다) 공하경이, 3번 줄 갈자. …상인회가 기억하겠소."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "슬픔",
+   "text": "(견습생 자리를 한 번 보고, 직접 줄을 감는다) …상인회가 기억하겠소."
   },
   {
    "op": "goto",

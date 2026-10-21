@@ -1,0 +1,483 @@
+{
+ "id": "UQ10_M1",
+ "title": "국밥 장수",
+ "loc": "L-R02-12",
+ "npc": "N-YM-1",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "LIGHTER": 8,
+  "GENEROUS": 10,
+  "HONEST": 12,
+  "MENU": 13,
+  "SHOP": 14,
+  "FAIR": 16,
+  "DEADTAK": 18,
+  "PUB": 20,
+  "P_SCALE": 23,
+  "P_PYO": 25,
+  "P_WORD": 27,
+  "P_NEW": 29,
+  "LATER": 31,
+  "P_GO": 33,
+  "P_AGAIN": 36,
+  "P_END": 37,
+  "P_END2": 39,
+  "AFTER": 43,
+  "A_MEET": 52,
+  "A_WARN": 54,
+  "A_WARN_P": 57,
+  "A_EARLY": 59,
+  "A_HELD": 61,
+  "A_HELD3": 63,
+  "A_FLED": 65,
+  "A_ROBBED": 67,
+  "MENU2": 68
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "dead(\"N-R02-019\") == 1 and UQ10_RES != 2",
+   "to": "DEADTAK"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_RES == 3",
+   "to": "FAIR"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_RES == 2",
+   "to": "AFTER"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_RES == 4",
+   "to": "LIGHTER"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_PLATE == 2 and GAME_DAY > UQ10_PLATE_DAY",
+   "to": "GENEROUS"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_HIDE_UNTIL >= GAME_DAY and UQ10_HEARD == 1",
+   "to": "HONEST"
+  },
+  {
+   "op": "line",
+   "who": "N-YM-1",
+   "emo": "기본",
+   "text": "국밥 6캡. 고철로 내면 반장 저울에 달고."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-YM-1",
+   "emo": "피곤",
+   "text": "요즘 저울이 더 가벼워. 반장 주머니에 구멍이라도 났나."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-YM-1",
+   "emo": "미소",
+   "text": "오늘 저울 후하네? 고철 한 관에 한 관 반 값이야! 반장 얼굴이 흙빛이고."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-YM-1",
+   "emo": "놀람",
+   "text": "요즘 저울이 정직하네? 반장이 무슨 바람이 불었나."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "물건을 본다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SHOP",
+     "id": "UQ10_M1:1:0"
+    },
+    {
+     "text": "반장 저울에 쇠판이 덧대져 있어요",
+     "tags": [],
+     "cond": "UQ10_CHECKED >= 1 and UQ10_RES != 2 and UQ10_RES != 3 and dead(\"N-R02-019\") == 0",
+     "fx": "",
+     "to": "PUB",
+     "id": "UQ10_M1:1:1"
+    },
+    {
+     "text": "(돌아선다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ10_M1:1:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "trade",
+   "args": [
+    "VR12F"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-YM-1",
+   "emo": "미소",
+   "text": "요즘 저울이 정직해졌어. 반장이 웬일이래. 국밥값이 남아."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-YM-1",
+   "emo": "피곤",
+   "text": "죽은 사람 저울 탓해 뭐 해. 저울은 상인 회의가 내렸어. 국밥은 6캡 그대로고."
+  },
+  {
+   "op": "goto",
+   "to": "MENU2"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S13_V_T >= 1 and SQ_S13_V_T <= 3",
+   "to": "LATER"
+  },
+  {
+   "op": "line",
+   "who": "N-YM-1",
+   "emo": "놀람",
+   "text": "(국자를 내려놓는다) …봤어? 증거 있어?"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "(저울 받침을 들춰 보인다)",
+     "tags": [],
+     "cond": "UQ10_PLATE == 0 and UQ10_HIDE_UNTIL < GAME_DAY",
+     "fx": "",
+     "to": "P_SCALE",
+     "id": "UQ10_M1:2:0"
+    },
+    {
+     "text": "(덧댄 쇠판을 내민다)",
+     "tags": [],
+     "cond": "has(\"M-433\") == 1",
+     "fx": "",
+     "to": "P_GO",
+     "id": "UQ10_M1:2:1"
+    },
+    {
+     "text": "(장부 뒷장을 내민다)",
+     "tags": [],
+     "cond": "has(\"M-434\") == 1",
+     "fx": "",
+     "to": "P_GO",
+     "id": "UQ10_M1:2:2"
+    },
+    {
+     "text": "(위층에서 가져온 새 쇠판을 내민다)",
+     "tags": [],
+     "cond": "has(\"M-435\") == 1 and has(\"M-433\") == 0",
+     "fx": "",
+     "to": "P_NEW",
+     "id": "UQ10_M1:2:3"
+    },
+    {
+     "text": "표강윤 씨 화약 저울로 달아 봤어요",
+     "tags": [],
+     "cond": "UQ10_CHECKED == 2 and dead(\"N-R02-020\") == 0 and SQ_S13_V_P != 2 and SQ_S13_V_P != 3",
+     "fx": "",
+     "to": "P_PYO",
+     "id": "UQ10_M1:2:4"
+    },
+    {
+     "text": "그냥 봤어요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "P_WORD",
+     "id": "UQ10_M1:2:5"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "반장 자리 옆으로 가 추 접시 받침을 들춘다. 검은 쇠판. 노점 넷이 하나둘 모여든다."
+  },
+  {
+   "op": "goto",
+   "to": "P_GO"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-020",
+   "emo": "기본",
+   "text": "(총포상 노점에서 건너온다) 내 화약 저울로 달았어. 반장 저울에서 반 관 나온 고철이 내 저울로 한 관 넘어."
+  },
+  {
+   "op": "goto",
+   "to": "P_GO"
+  },
+  {
+   "op": "line",
+   "who": "N-YM-1",
+   "emo": "피곤",
+   "text": "봤다는 사람만 있으면 뭐 해. 반장이 아니라면 아닌 거야."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-YM-1",
+   "emo": "기본",
+   "text": "(쇠판을 뒤집어 본다) 못 구멍이 없잖아. 박힌 적 없는 쇠판은 그냥 쇠판이지. 저울에서 뗀 걸 가져와."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-YM-1",
+   "emo": "기본",
+   "text": "반장이 볼트 선거 간다고 들떠 있어. 투표 끝나고 하자. 지금 시장 뒤집으면 표도 날아가."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_RES == 4",
+   "to": "P_AGAIN"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "분노",
+   "text": "(장부를 끌어안고 일어선다) 그래, 덤 받았다. 그 덤이 너희 노점 지켰어. 대방 애들이 이 시장을 왜 안 털었는지 생각해 봐."
+  },
+  {
+   "op": "goto",
+   "to": "P_END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "분노",
+   "text": "(장부를 끌어안고 일어선다) 돈 받고 또 팔아? …그래, 덤 받았다. 그 덤이 너희 노점 지켰어."
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-YM-2\") == 1",
+   "to": "P_END2"
+  },
+  {
+   "op": "line",
+   "who": "N-YM-2",
+   "emo": "분노",
+   "text": "지켜? 우리 고철로 우리 목을 산 거지."
+  },
+  {
+   "op": "line",
+   "who": "N-YM-1",
+   "emo": "기본",
+   "text": "내일 아침 상인 회의야. 저울은 오늘 밤 내린다."
+  },
+  {
+   "op": "do",
+   "fx": "UQ10_RES = 2; UQ10_PUB_DAY = GAME_DAY; karma(25); quest(\"UQ-10\", 100)"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "xp"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_RAID == 1",
+   "to": "A_HELD"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_RAID == 3",
+   "to": "A_HELD3"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_RAID == 2",
+   "to": "A_FLED"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_RAID == 4",
+   "to": "A_ROBBED"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_RAID == 0 and UQ10_EARLY == 1",
+   "to": "A_EARLY"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_RAID == 0 and UQ10_RAID_DAY > 0 and GAME_DAY == UQ10_RAID_DAY - 1",
+   "to": "A_WARN"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_BOSS == 0",
+   "to": "A_MEET"
+  },
+  {
+   "op": "line",
+   "who": "N-YM-1",
+   "emo": "미소",
+   "text": "새 저울로 다니까 국밥값이 남아. 네 그릇은 덜 받을게."
+  },
+  {
+   "op": "goto",
+   "to": "MENU2"
+  },
+  {
+   "op": "line",
+   "who": "N-YM-1",
+   "emo": "기본",
+   "text": "내일 아침 상인 회의야. 반장 자리 누가 앉을지 정해."
+  },
+  {
+   "op": "goto",
+   "to": "MENU2"
+  },
+  {
+   "op": "line",
+   "who": "N-YM-1",
+   "emo": "놀람",
+   "text": "오늘 아침 손님이 셋뿐이야. 다들 어귀를 피해 — 대방 정찰 둘이 서서 노점을 세고 있어."
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R02-020\") == 0 and UQ10_BOSS == 1",
+   "to": "A_WARN_P"
+  },
+  {
+   "op": "goto",
+   "to": "MENU2"
+  },
+  {
+   "op": "line",
+   "who": "N-YM-1",
+   "emo": "기본",
+   "text": "표 반장 말로는 내일 아침이래. 목요일이니까."
+  },
+  {
+   "op": "goto",
+   "to": "MENU2"
+  },
+  {
+   "op": "line",
+   "who": "N-YM-1",
+   "emo": "분노",
+   "text": "정찰을 쐈어? …안 돌아가면 본대가 더 빨리 와. 오늘 안에 온다."
+  },
+  {
+   "op": "goto",
+   "to": "MENU2"
+  },
+  {
+   "op": "line",
+   "who": "N-YM-1",
+   "emo": "미소",
+   "text": "덤 없이도 지켰다. …아니, 네가 지켰지. 네 그릇은 덜 받을게."
+  },
+  {
+   "op": "goto",
+   "to": "MENU2"
+  },
+  {
+   "op": "line",
+   "who": "N-YM-1",
+   "emo": "미소",
+   "text": "표 반장이 탄을 나눠 줬어. 어귀에서 막았어. 노점 하나 안 깨졌어."
+  },
+  {
+   "op": "goto",
+   "to": "MENU2"
+  },
+  {
+   "op": "line",
+   "who": "N-YM-1",
+   "emo": "분노",
+   "text": "남쪽 노점이 털렸어. 그날 어귀에서 무슨 일이 있었던 거야. 너도 있었잖아."
+  },
+  {
+   "op": "goto",
+   "to": "MENU2"
+  },
+  {
+   "op": "line",
+   "who": "N-YM-1",
+   "emo": "슬픔",
+   "text": "남쪽 노점이 털렸어. 거적까지 가져갔어. 그날 너 어디 있었어."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "물건을 본다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SHOP",
+     "id": "UQ10_M1:3:0"
+    },
+    {
+     "text": "(돌아선다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ10_M1:3:1"
+    }
+   ]
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-10.txt"
+}

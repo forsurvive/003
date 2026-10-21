@@ -1,0 +1,120 @@
+{
+ "id": "UQ10_LEDGER",
+ "title": "자릿세 장부",
+ "loc": "L-R02-12",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TEAR": 7,
+  "TORN": 9,
+  "WATCHED": 12,
+  "CLOSED": 14
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "(GAME_HOUR < 6 or GAME_HOUR >= 20) and dead(\"N-R02-019\") == 0 and SQ_S13_V_T != 2 and SQ_S13_V_T != 3",
+   "to": "WATCHED"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_RES == 2 and UQ10_BOSS >= 1",
+   "to": "CLOSED"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "낮은 상 위 자릿세 장부. 날짜마다 노점 넷의 고철 무게가 적혔다."
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_PAGE == 1",
+   "to": "TORN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "맨 뒷장만 글씨가 다르다 — '대방 — 목. 두 관 반.' '대방 — 목. 세 관.' 덤의 무게가 주마다 늘었다."
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "ledger"
+   ]
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "뒷장을 뜯어 간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TEAR",
+     "id": "UQ10_LEDGER:1:0"
+    },
+    {
+     "text": "(덮어 둔다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ10_LEDGER:1:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "give(\"M-434\", 1); UQ10_PAGE = 1"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "맨 뒷장이 뜯겨 나갔다. 다음 장에 '대방 — 목'이 눌린 자국으로 비쳐 보인다."
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "ledger"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "분노",
+   "text": "(자다 깨어 요 위에서 몸을 일으킨다) 그거 내려놔. 남의 장부야."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "장부가 반쯤 비었다. 반장 몫 칸이 지워졌다 — 상인 회의가 앞장들을 뜯어 갔다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-10.txt"
+}

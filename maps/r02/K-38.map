@@ -1,0 +1,39 @@
+# 영등포 역전 시장 2층 반장 방(SD-09a L-R02-12 · SD-05 UQ-10 · 단계 1-12h 재미 검수 R7): 시장 동쪽 상가 2층(시장 칸에 맞붙은 건물) — 탁우빈(N-R02-019)의 밤 자리(20~06, P3).
+# 14×9 · 시장 쪽 창(아래로 반장 자리와 추 저울이 내려다보인다 — 밤 저울 판정 '위층 창에선 다 보여') · 요 · 낮은 상 위 자릿세 장부(뒷장 '대방 — 목', M-434) ·
+# 여분 쇠판 상자(owner 탁우빈 — 쇠판 M-433) · 덤 고철 자루 · 2077년 시장 번영회 달력. 낮엔 비어 있다(몰래 들어오는 증거 길) · 밤엔 탁우빈이 잔다.
+# 들어오는 길: 상가 1층 문(월드 DOORS L-R02-12 → K-38) → 계단참.
+map K-38 역전 시장 2층 반장 방
+set bc
+grid
+##############
+##############
+##############
+#jjjjjjjjjjjj#
+#jjjjjjjjjjjj#
+#jjjjjjjjjjjj#
+#jjjjjjjjjjjj#
+#jjjjjjjjjjjj#
+#####jj#######
+end
+exit 5 8 W L-R02-12
+exit 6 8 W L-R02-12
+mark from_W 5 7 N
+prop w_window 9 1
+text 9 2 "시장 쪽 창. 아래로 반장 자리와 추 저울이 내려다보인다. 밤에도 저울 거적이 다 보인다." w=2
+prop w_calendar 3 1
+text 3 2 "벽 달력 — '영등포시장 번영회 2077'. 인쇄된 날짜는 지우고 칸마다 손으로 다시 썼다. 목요일마다 동그라미, 옆에 작은 글씨 '덤'." cond="not (UQ10_RES == 2 and UQ10_BOSS >= 1)"
+text 3 2 "벽 달력 — 손으로 다시 쓴 날짜 칸. 목요일 동그라미 위에 누가 굵게 가위표를 쳤다." cond="UQ10_RES == 2 and UQ10_BOSS >= 1"
+prop yo_bed 10 4
+text 10 4 "얇은 요. 베개 밑에 캡 자루 하나가 납작하다." h=2
+prop low_table 3 4
+text 3 4 "낮은 상 위 자릿세 장부." w=2 scene=UQ10_LEDGER
+prop crate_o 11 7
+box 11 7 uq10_plates owner=N-R02-019 name="쇠판 상자"
+prop scrap_pile 1 6 cond="UQ10_RES != 2 and UQ10_RES != 3"
+text 1 6 "덤 고철 자루 셋. 자루마다 분필 — '대방 — 목'. 목요일에 나갈 몫이다." w=2 cond="UQ10_RES != 2 and UQ10_RES != 3 and not (UQ71_SQ == 9 and GAME_DAY > UQ71_SQ_DAY)"
+text 1 6 "덤 고철 자루 셋. '대방 — 목'에 줄을 긋고 '창고'. 이제 나갈 데가 없는 몫이다." w=2 cond="UQ10_RES != 2 and UQ10_RES != 3 and (UQ71_SQ == 9 and GAME_DAY > UQ71_SQ_DAY)"
+prop heater 7 3
+prop folding_chair 9 3
+text 9 3 "창가 접이의자. 앉으면 시장이 다 내려다보인다 — 반장 자리, 저울, 어귀까지." 
+prop shoe_rack 6 7
+npc N-R02-019 9 5 W cond="(GAME_HOUR >= 20 or GAME_HOUR < 6) and SQ_S13_V_T != 2 and SQ_S13_V_T != 3" bark="(요 위에서 코를 곤다)"

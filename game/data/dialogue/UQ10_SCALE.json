@@ -1,0 +1,335 @@
+{
+ "id": "UQ10_SCALE",
+ "title": "반장 추 저울",
+ "loc": "L-R02-12",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "DAY": 11,
+  "CAUGHT": 16,
+  "NIGHT": 19,
+  "AWAY": 21,
+  "NMENU": 22,
+  "NLOOK": 23,
+  "NTAKE": 26,
+  "NSWAP": 29,
+  "COVERED": 32,
+  "NEW": 34,
+  "FIXED": 36,
+  "NOOWNER": 38,
+  "SWAPPED": 40,
+  "TAKEN": 42,
+  "HIDDEN": 44
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "UQ10_RES == 2 and UQ10_BOSS == 0",
+   "to": "COVERED"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_RES == 2",
+   "to": "NEW"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_RES == 3",
+   "to": "FIXED"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R02-019\") == 1",
+   "to": "NOOWNER"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_PLATE == 2",
+   "to": "SWAPPED"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_PLATE == 1",
+   "to": "TAKEN"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_HIDE_UNTIL >= GAME_DAY",
+   "to": "HIDDEN"
+  },
+  {
+   "op": "if",
+   "cond": "GAME_HOUR < 6 or GAME_HOUR >= 20",
+   "to": "NIGHT"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S13_V_T == 2 or SQ_S13_V_T == 3",
+   "to": "AWAY"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "반장 자리 옆 추 저울. 왼쪽 접시엔 오늘 받은 고철, 오른쪽엔 추 셋. 탁우빈이 바로 옆에서 자릿세 장부를 넘긴다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "추 접시 받침을 슬쩍 본다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 25
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "DAY",
+     "id": "UQ10_SCALE:1:0"
+    },
+    {
+     "text": "저울대가 기우는 각을 눈으로 잰다",
+     "tags": [
+      {
+       "k": "stat",
+       "name": "인지력",
+       "min": 6
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "DAY",
+     "id": "UQ10_SCALE:1:1"
+    },
+    {
+     "text": "(그만둔다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ10_SCALE:1:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "look_day"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_NOTICED == 1",
+   "to": "CAUGHT"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "추 접시 받침 밑에 검은 쇠판 한 장. 고철을 반 관은 더 올려야 균형이 맞는다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "탁우빈은 장부에서 눈을 떼지 않았다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "추 접시 받침 밑에 검은 쇠판 한 장 — 그 순간 장부 넘기던 손이 멈춘다."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "분노",
+   "text": "남의 저울에 코 박지 마. 고철 달 거 아니면 비켜."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "장이 닫혔다. 저울에 거적이 덮였다. 위층 창 하나에만 불빛."
+  },
+  {
+   "op": "goto",
+   "to": "NMENU"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "반장 자리가 비었다. 저울에 거적이 덮였다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "거적을 들추고 받침을 본다",
+     "tags": [],
+     "cond": "UQ10_NSAW == 0",
+     "fx": "",
+     "to": "NLOOK",
+     "id": "UQ10_SCALE:2:0"
+    },
+    {
+     "text": "쇠판을 떼어 간다",
+     "tags": [],
+     "cond": "UQ10_NSAW == 1",
+     "fx": "",
+     "to": "NTAKE",
+     "id": "UQ10_SCALE:2:1"
+    },
+    {
+     "text": "쇠판을 고철 접시 쪽 받침으로 옮겨 붙인다",
+     "tags": [],
+     "cond": "UQ10_NSAW == 1",
+     "fx": "",
+     "to": "NSWAP",
+     "id": "UQ10_SCALE:2:2"
+    },
+    {
+     "text": "(그대로 둔다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ10_SCALE:2:3"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "추 접시 받침 밑에 검은 쇠판 한 장. 못 넷으로 박았다. 고철 쪽을 반 관은 더 올려야 균형이 맞는다."
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "look_night"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "NMENU"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "못을 하나씩 뽑는다. 손바닥만 한 쇠판이 묵직하다. 받침에 네모난 못 자국이 남는다."
+  },
+  {
+   "op": "do",
+   "fx": "give(\"M-433\", 1); UQ10_PLATE = 1; UQ10_PLATE_DAY = GAME_DAY"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "쇠판을 떼어 고철 접시 받침 밑에 다시 박는다. 저울대가 반대로 기운다 — 내일은 고철이 무겁게 달릴 것이다."
+  },
+  {
+   "op": "do",
+   "fx": "UQ10_PLATE = 2; UQ10_PLATE_DAY = GAME_DAY"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "저울에 거적이 덮였다. 분필 — '쓰지 말 것 — 상인 회의'. 받침 밑 쇠판은 아직 그대로."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "새 저울. 기둥에 새 눈금 딱지 — '상인 회의 검정'. 받침 밑이 깨끗하다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "받침 밑이 깨끗하다. 못 자국 넷만 — 탁우빈이 손수 쇠판을 뗐다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "주인 없는 추 저울에 거적이 덮였다. 분필 — '쓰지 말 것'. 거적 밑 받침에 쇠판 한 장."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "쇠판이 고철 접시 받침 밑에 박혀 있다. 저울대가 고철 쪽으로 무겁게 기운다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "추 접시 받침에 네모난 못 자국 넷. 쇠판이 없다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "받침 밑이 깨끗하다. 네모난 못 자국 넷만 — 누가 쇠판을 급히 뗐다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-10.txt"
+}

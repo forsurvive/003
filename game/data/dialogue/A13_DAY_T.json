@@ -6,8 +6,10 @@
  "cond": "SQ_S13_V_T == 4 and SQ_S13_SAID_T == 0",
  "labels": {
   "START": 0,
-  "CUT": 5,
-  "BETRAY": 7
+  "DAY_OUT": 7,
+  "CUT_OUT": 9,
+  "CUT": 11,
+  "BETRAY": 13
  },
  "ops": [
   {
@@ -17,6 +19,16 @@
     "said",
     "T"
    ]
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_BOSS >= 1 and SQ_S13_CUT_T >= 1",
+   "to": "CUT_OUT"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_BOSS >= 1",
+   "to": "DAY_OUT"
   },
   {
    "op": "if",
@@ -33,6 +45,26 @@
    "who": "N-R02-019",
    "emo": "미소",
    "text": "투표한 날이다. 시장 칠판에 적어 놨어 — '오늘 들어온 물건: 한 표'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "미소",
+   "text": "투표한 날이다. 구석 노점 거적에 분필로 적었어 — '한 표'. 반장 칠판은 이제 내 것이 아니니까."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "분노",
+   "text": "명부 방송 들었다. 고철 장수 몫까지 깎더라. 반장 자리 잃고 표 값까지."
   },
   {
    "op": "goto",

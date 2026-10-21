@@ -6,17 +6,26 @@
  "cond": "SQ_S13_MET2 == 1 and SQ_S13_DONE == 0 and SQ_S13_V_T in [0, 9]",
  "labels": {
   "START": 0,
-  "ASK": 2,
-  "GHOUL": 5,
-  "OK": 7,
-  "AGAIN": 9,
-  "TIME": 10,
-  "AT14": 11,
-  "AT18": 13,
-  "AT14N": 16,
-  "NO": 19
+  "ASK": 3,
+  "GHOUL": 7,
+  "OK": 9,
+  "AGAIN": 11,
+  "TIME": 12,
+  "AT14": 13,
+  "AT18": 15,
+  "AT14N": 18,
+  "NO": 21,
+  "OUT_ASK": 23,
+  "OUT_OK": 25,
+  "OUT_NO": 27,
+  "OTHER": 29
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "GAME_HOUR < 6 or GAME_HOUR >= 20",
+   "to": "OTHER"
+  },
   {
    "op": "line",
    "who": "N-R02-019",
@@ -39,10 +48,15 @@
      "tags": [],
      "cond": "",
      "fx": "",
-     "to": "END",
+     "to": "OTHER",
      "id": "A13_ASK_T:1:1"
     }
    ]
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_BOSS >= 1",
+   "to": "OUT_ASK"
   },
   {
    "op": "if",
@@ -192,6 +206,72 @@
    "who": "N-R02-019",
    "emo": "기본",
    "text": "시장 비우면 자릿세는 누가 걷어. 다음에."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "피곤",
+   "text": "반장 한 표? 이제 고철 장수 한 표야. …나 쫓아낸 사람이 부탁하니 웃기네."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "\"고철 장수 한 표도 한 장이잖아요.\"",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "보통"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "OUT_OK",
+     "id": "A13_ASK_T:4:0",
+     "fail": "OUT_NO"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "A13_ASK_T:4:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "기본",
+   "text": "한 장은 한 장이지. 고철 정리하고 오후 두 시."
+  },
+  {
+   "op": "goto",
+   "to": "TIME"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-019",
+   "emo": "기본",
+   "text": "고철 장수 자리 비워 봐야 아무도 안 찾아. 그래도 안 가."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "chain",
+   "args": [
+    "N-R02-019",
+    "A13_"
+   ]
   },
   {
    "op": "goto",

@@ -99,10 +99,11 @@ func _process(dt: float) -> void:
 	_t = 0.0
 	if v("SQ") == 0 and st.is_dead(LEADER):
 		_sv("SQ", 9)                                                     # 분대장이 쓰러지면 나머지는 흩어진다(UQ-10 비고: 대방 분대 습격도 사라진다)
+		_sv("SQ_DAY", day())                                             # 흩어진 날 — 역전 시장엔 소문이 하루 늦게 닿는다(1-12h UQ-10, N12)
 		_sv("DUE", 0)
 		_log("배수관 사망 — 분대 흩어짐")
 		if _mid() == MAP and v("CORE") == 0:                            # 배수관 품의 협박문 초안(P2: 엿듣지 못했어도 분대가 노심을 노린 까닭을 안다)
-			host.hint("배수관 품에서 구겨진 종이 — '역전 시장 상인회 귀하. 신길 빌라 옥상의 초록 불을 보거든 다음 달부터…' 쓰다 만 협박문이다.", 8.0)
+			host.hint("배수관 품에서 구겨진 종이 — '역전 시장 반장 귀하. 신길 빌라 옥상의 초록 불을 보거든 다음 달부터…' 쓰다 만 협박문이다.", 8.0)
 			_start("협박문")
 			_up(20)
 	if v("QUICK") == 0 and int(st.vars.get_v("DG_DB")) >= 1 and v("CORE") == 0 and v("SQ") == 0 and v("DUE") > day() + 1:
@@ -147,6 +148,7 @@ func _on_day(d: int) -> void:
 			return
 		_sv("CORE", 5)
 		_sv("SQ", 9)
+		_sv("SQ_DAY", day())
 		if not st.is_dead(LEADER):
 			st.kill(LEADER)
 			st.book.died(LEADER, host.date_text)                          # 소식으로 안 죽음(수첩)

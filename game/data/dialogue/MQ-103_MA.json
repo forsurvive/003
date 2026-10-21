@@ -21,15 +21,16 @@
   "SHOP": 44,
   "FIX": 46,
   "AFTER": 48,
-  "AFTER2": 51,
-  "FRIEND": 54,
-  "U7MA": 56,
-  "U7MA_OK": 57,
-  "U7MA_NG": 63,
-  "U7MA_SAID": 66,
-  "U7MA_HOT": 69,
-  "U7MA_SELF": 73,
-  "S04BATT": 76
+  "AFTER2": 52,
+  "FRIEND": 55,
+  "U7MA": 57,
+  "U7MA_OK": 58,
+  "U7MA_NG": 64,
+  "U7MA_SAID": 67,
+  "U7MA_GONE": 70,
+  "U7MA_HOT": 73,
+  "U7MA_SELF": 77,
+  "S04BATT": 80
  },
  "ops": [
   {
@@ -88,14 +89,6 @@
      "fx": "",
      "to": "SHOP",
      "id": "MQ-103_MA:1:1"
-    },
-    {
-     "text": "공하경 일을 먼저 말한다",
-     "tags": [],
-     "cond": "UQ07_HEARD == 1 and UQ07_RES == 0 and UQ07_MA_NO == 0 and dead(\"N-R02-017\") == 0",
-     "fx": "",
-     "to": "U7MA",
-     "id": "MQ-103_MA:1:2"
     }
    ]
   },
@@ -398,6 +391,11 @@
   },
   {
    "op": "if",
+   "cond": "UQ07_MA_SAID == 0 and UQ07_TOY == 2 and dead(\"N-R02-017\") == 1",
+   "to": "U7MA_GONE"
+  },
+  {
+   "op": "if",
    "cond": "UQ07_MA_SAID == 0 and UQ07_TOY == 2 and UQ07_RES == 2",
    "to": "U7MA_SAID"
   },
@@ -466,7 +464,7 @@
     {
      "text": "공하경 일을 먼저 말한다",
      "tags": [],
-     "cond": "UQ07_HEARD == 1 and UQ07_RES == 0 and UQ07_MA_NO == 0 and dead(\"N-R02-017\") == 0",
+     "cond": "UQ07_TOLD == 1 and UQ07_RES == 0 and UQ07_MA_NO == 0 and dead(\"N-R02-017\") == 0",
      "fx": "",
      "to": "U7MA",
      "id": "MQ-103_MA:5:4"
@@ -523,7 +521,7 @@
     {
      "text": "공하경 일을 먼저 말한다",
      "tags": [],
-     "cond": "UQ07_HEARD == 1 and UQ07_RES == 0 and UQ07_MA_NO == 0 and dead(\"N-R02-017\") == 0",
+     "cond": "UQ07_TOLD == 1 and UQ07_RES == 0 and UQ07_MA_NO == 0 and dead(\"N-R02-017\") == 0",
      "fx": "",
      "to": "U7MA",
      "id": "MQ-103_MA:6:3"
@@ -562,7 +560,7 @@
    "op": "line",
    "who": "C-006",
    "emo": "미소",
-   "text": "(웃음을 참다 터뜨린다) 담요 밑에 그거? 진작 알았어. 짐칸 용접 자국이 내 솜씨보다 낫더라."
+   "text": "(웃음을 참다 터뜨린다) 담요 밑에 그거? 진작 알았어. 짐칸에 리벳 박은 솜씨가 내 솜씨보다 낫더라."
   },
   {
    "op": "line",
@@ -621,8 +619,22 @@
   {
    "op": "line",
    "who": "C-006",
+   "emo": "슬픔",
+   "text": "광장 쪽 덜컹 소리는 아직 들려. …하경이 솜씨야. 그 애 손은 저기 남았네."
+  },
+  {
+   "op": "do",
+   "fx": "UQ07_MA_SAID = 1"
+  },
+  {
+   "op": "goto",
+   "to": "AFTER2"
+  },
+  {
+   "op": "line",
+   "who": "C-006",
    "emo": "기본",
-   "text": "부품 상자에 관이 셋 비더라. (눈을 가늘게 뜨고 본다)"
+   "text": "부품 상자에 관이 비더라. (눈을 가늘게 뜨고 본다)"
   },
   {
    "op": "line",

@@ -1,0 +1,152 @@
+{
+ "id": "UQ10_P",
+ "title": "표강윤",
+ "loc": "L-R02-12",
+ "npc": "N-R02-020",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "MENU": 2,
+  "WEIGH": 3,
+  "SHOP": 9,
+  "BOSS": 11,
+  "BOSS_HELD": 15,
+  "BOSS_ROBBED": 17
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "UQ10_BOSS == 1",
+   "to": "BOSS"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-020",
+   "emo": "기본",
+   "text": "탄 볼 거야? 세서 판다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "물건을 본다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SHOP",
+     "id": "UQ10_P:1:0"
+    },
+    {
+     "text": "(반장 저울에 반 관으로 달린 고철을 내민다) 달아 봐 주세요",
+     "tags": [
+      {
+       "k": "item",
+       "id": "M-010",
+       "n": 1
+      }
+     ],
+     "cond": "(UQ10_HEARD == 1 or UQ10_CHECKED >= 1) and UQ10_CHECKED != 2 and UQ10_RES != 2 and UQ10_RES != 3",
+     "fx": "",
+     "to": "WEIGH",
+     "id": "UQ10_P:1:1"
+    },
+    {
+     "text": "(돌아선다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ10_P:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-020",
+   "emo": "기본",
+   "text": "화약 저울로 고철을? (눈금을 들여다본다) …한 관이 조금 넘네."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-020",
+   "emo": "놀람",
+   "text": "반장 저울에선 이게 반 관이었다고? (고철을 노점 밑에 던진다) 이건 값으로 쳐 둔다."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-020",
+   "emo": "분노",
+   "text": "반장 저울이 가볍다는 말, 장난이 아니었네. 상인들 앞에서 말할 거면 불러. 내가 단다."
+  },
+  {
+   "op": "do",
+   "fx": "UQ10_CHECKED = 2"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "checked"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "trade",
+   "args": [
+    "VR12"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_RAID == 1 or UQ10_RAID == 3",
+   "to": "BOSS_HELD"
+  },
+  {
+   "op": "if",
+   "cond": "UQ10_RAID == 2 or UQ10_RAID == 4",
+   "to": "BOSS_ROBBED"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-020",
+   "emo": "기본",
+   "text": "반장 노릇은 처음이야. 저울은 상인 회의 검정. 10mm는 여전히 내 노점에서."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-020",
+   "emo": "미소",
+   "text": "반장 첫 달에 탄 셀 일이 생길 줄이야. 막았으니 됐지. 10mm는 값 그대로."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-020",
+   "emo": "피곤",
+   "text": "반장 첫 달에 털렸어. 탁 씨 말이 반은 맞았지. …나머지 반은 내가 메운다."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-10.txt"
+}

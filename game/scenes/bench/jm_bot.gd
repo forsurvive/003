@@ -672,15 +672,36 @@ func _ready() -> void:
 			st.call_fn("give", ["M-014", 3])
 			host.date_text = "2277. 10. 29.  10:00"
 			host.enter("J-03", "from_J-02")
-			plan = [["hp", 3000], ["wait", 1.0], ["want", []], ["talk", "N-JM-K1"], ["wait", 1.5], ["shot", "uq07_kid"],
+			plan = [["hp", 3000], ["wait", 1.0], ["want", []], ["talk", "N-JM-K1"], ["wait", 1.5], ["shot", "uq07_kid"],   # 쪽지(손수 건넨 판)는 단위 시험 test_uq07_kid_seen_and_note
 				["check", "UQ07_KID_SEEN == 1", "광장 아이를 먼저 봄 — '배송이요'"],
 				["warp", "J-06", "from_J-03"], ["wait", 1.5], ["check", "UQ07_VISIT == 2", "배전실 둘째 입장"],
 				["go", 8, 9, "J-06"], ["until", "UQ07_HEARD == 1", 10.0, "공하경 혼잣말 — 진공관 셋(10)", "uq07_hear"],
 				["want", ["광장에서 상자 끄는 그 애?", "진공관 셋을 건넨다"]], ["talk", "N-R02-017"], ["wait", 2.0], ["shot", "uq07_give"],
 				["check", "UQ07_RES == 1 and UQ07_TOY == 1 and UQ07_DISC == 1 and UQ07_STAGE == 100", "① 진공관 셋 — 오늘 밤 납땜(100) · 정비 ×0.8"],
 				["hours", 23], ["wait", 1.0], ["check", "UQ07_TOY == 2", "다음 06:00 — 아이 손(지금 09시 — 아이는 08~18시 광장)"],
-				["warp", "J-03", "from_J-06"], ["wait", 1.0], ["until", "UQ07_NOTE == 1", 10.0, "배송 1호가 쪽지를 끌고 옴", "uq07_note"],
+				["warp", "J-03", "from_J-06"], ["wait", 4.0], ["check", "UQ07_TOY == 2 and UQ07_NOTE == 0", "아이 손 — ①은 공하경이 고친 판이라 쪽지 없음(아이는 '하경 언니가'라고 믿음, A211)"],
 				["want", []], ["talk", "N-JM-K1"], ["wait", 1.5], ["shot", "uq07_kid_after"]]
+		"uq10":                                                         # 1-12h UQ-10 저울추: 역전 시장 수군댐(10) → 밤 저울 쇠판 떼기(20) → 국밥 장수 앞 공개(②, 100) →
+			st.vars.set_v("GAME_DAY", 6)                                 #   상인 회의(표 반장) → 2층 반장 방 → 전날 어귀 정찰 둘 → 습격 날 아침 실전(RE-012) 막음
+			st.vars.set_v("PC_SKP_REPAIR", 30)
+			st.quests.set_stage("MQ-101", 100)
+			host.date_text = "2277. 10. 29.  10:00"
+			var mo := _spot_o("L-R02-12")                               # 시장 스팟 원점(15×9 — 저울 9,5 · 국밥 장수 2,2)
+			host.enter("W", "", {}, Vector2(mo.x + 11, mo.y + 8) * 32.0 + Vector2(16, 16))
+			plan = [["hp", 3000], ["wait", 2.0], ["noenc"], ["calm"], ["go", mo.x + 10, mo.y + 7],
+				["until", "UQ10_HEARD == 1", 10.0, "노점 둘의 수군댐(10)", "uq10_hear"],
+				["hours", 12], ["wait", 1.0], ["want", ["거적을 들추고", "쇠판을 떼어 간다"]], ["go", mo.x + 9, mo.y + 6], ["use", mo.x + 9, mo.y + 5], ["wait", 2.5], ["shot", "uq10_night"],
+				["check", "UQ10_PLATE == 1 and UQ10_CHECKED >= 1 and UQ10_STAGE == 20 and has(\"M-433\")", "밤 저울 — 쇠판을 떼어 감(20)"],
+				["hours", 11], ["wait", 1.0], ["want", ["쇠판이 덧대져", "덧댄 쇠판을 내민다"]], ["talk", "N-YM-1"], ["wait", 3.0], ["shot", "uq10_public"],
+				["check", "UQ10_RES == 2 and UQ10_STAGE == 100", "상인들 앞 공개(②, 100)"],
+				["warp", "K-38", "from_W"], ["wait", 1.5], ["calm"], ["shot", "uq10_room"],
+				["warp", "W", "L-R02-12"], ["wait", 1.5], ["calm"],
+				["hours", 22], ["wait", 1.0], ["check", "UQ10_BOSS == 1 and UQ10_RAID_DAY > 0", "다음 아침 상인 회의 — 표 반장 · 습격 날"],
+				["setv", "UQ10_RAID_DAY", 9], ["warp", "W", "L-R02-12"], ["wait", 1.5], ["calm"], ["go", mo.x + 7, mo.y + 3], ["wait", 1.5], ["shot", "uq10_scouts"],
+				["check", "GAME_DAY == UQ10_RAID_DAY - 1", "습격 전날 — 어귀에 대방 정찰 둘(예고 출처)"],
+				["hours", 25], ["wait", 1.0], ["until", "UQ10_RAID == 5", 10.0, "습격 날 아침 — 대방 분대 실전", "uq10_raid"], ["wait", 6.0], ["shot", "uq10_raiders"],
+				["fight"], ["wait", 2.0], ["fight"], ["wait", 2.0], ["fight"], ["wait", 2.0], ["fight"],
+				["until", "UQ10_RAID == 1", 40.0, "습격을 막음", "uq10_held"]]
 		"sb02", "sb02f":                                                # 1-12f FQ-SB-02(sb02f: 방범대와 싸우는 갈래): 04시 본소 마당 출발 줄(갈고리) → 서부간선 고가 상판 → 북 램프 끝 오태수 탈주(데려옴) →
 			st.vars.set_v("AFF_SB", 25)                                  #   신도림 쉬는 박자 → 노량진로 끝 방범대([화술 보통] 통과) → 철교 남단 노들 경비 60캡 → 인수원 인계(넷 · 10시 전 · M-129)
 			st.vars.set_v("PC_CAPS", 500)

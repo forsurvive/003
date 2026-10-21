@@ -59,7 +59,9 @@ const UNNAMED := [["N-TRADER", "떠돌이 고물상", ""], ["N-VG-S1", "고물�
 	["N-BJ-C1", "다리목 검문조장", "BJ"], ["N-SB-R1", "새벽인력 모집원", "SB"], ["N-SB-L1", "인솔 반장", "SB"], ["N-SB-H1", "출장소 인수원", "SB"], ["N-JY-P1", "방범대 조장", ""], ["N-ND-G1", "노들 남문 경비", "JC_ND"],   # 1-12f FQ-SB-02   # 1-12e FQ-JH-03 노량진로 이동 검문 · 수산시장 모집원
 	["N-GS-1", "각성회 신도", "GS"], ["N-GS-2", "각성회 신도", "GS"], ["N-GS-3", "각성회 신도", "GS"],   # 1-8g 노량진 관제 중계소
 	["N-GS-5", "새 순례자", ""], ["N-GS-6", "새 순례자", ""], ["N-GS-R3", "3번 파수", ""], ["N-K24-P1", "원장 대행", ""],
-	["N-BG-G1", "밤손님", "BC"], ["N-BJ-C2", "다리목 분대장", "BJ"], ["N-DS-E1", "탈영병", ""], ["N-DS-E2", "탈영병", ""]]   # 1-12g UQ-01 · UQ-03 · RE-104   # 1-12b FQ-GS-01 · GS-02(순례자는 아직 등록 전 — 각성회 소속 아님)
+	["N-BG-G1", "밤손님", "BC"], ["N-BJ-C2", "다리목 분대장", "BJ"], ["N-DS-E1", "탈영병", ""], ["N-DS-E2", "탈영병", ""],
+	["N-JM-K1", "광장 아이", "JH"], ["N-YM-1", "국밥 장수", ""], ["N-YM-2", "부품 장수", ""],   # 1-12h UQ-07 · UQ-10(재미 검수: 게임 쪽 목록에 빠져 이름표에 ID가 나오던 것)
+	["N-DB-S1", "대방 정찰", "", "evil"], ["N-DB-S2", "대방 정찰", "", "evil"]]   # 1-12h UQ-10 역전 시장 어귀(UQ-71 지하차도 분대원 N-DB-1 · 2와 다른 사람 — P3)   # 1-12g UQ-01 · UQ-03 · RE-104   # 1-12b FQ-GS-01 · GS-02(순례자는 아직 등록 전 — 각성회 소속 아님)
 var enc := {}                           ## 인카운터 상태(1-3, Encounters): 안전 간격 · 오늘 추적대 수 · EP 사용 · 휴전
 var portrait_alias := {}                ## 인물 ID -> 초상화 키(맵에서 다른 시대 모습으로 선 인물: 2259년 아이 하도윤 등)
 
@@ -287,7 +289,7 @@ func _init() -> void:
 	# UQ-71 원자력 버스(1-D1, SD-05 UQ-71 · 훅 H-R02-11 · DB-01): 노심의 행방은 UQ71_CORE 하나(0 버스 · 1 제자리 봉인 · 2 주인공 소지 · 3 팔림 · 4 분대가 가져감 · 5 신길에서 터짐) ·
 	# SQ 대방 분대(0 경사로에서 일함 · 1 돌아감 · 9 전멸) · HEARD 엿들음 · DAY 처음 본 날 · DUE 분대가 끌어낼 날 · SOL 해법 · REWARD · TALK 배수관과 말함 · SEEN 버스를 봄
 	# SQP 끌어내기 진척(0 사슬만 · 1 버스가 기움 — 버스 그림 · 윈치 글) · N 그날 낮 분대 인원(2~4) · QUICK 큰집게를 잡아 기한이 당겨짐
-	for k in "CORE SQ HEARD DAY DUE SOL REWARD TALK SEEN SQP N QUICK".split(" "):
+	for k in "CORE SQ HEARD DAY DUE SOL REWARD TALK SEEN SQP N QUICK SQ_DAY".split(" "):
 		vars.declare("UQ71_" + k, "int", 0)
 	# U02 남태령 지하(1-D2, SD-09f U02 · 훅 UG-H01 · UG-H02): 뜻은 script/act1/U02.txt 머리 주석 — LIGHT 회로 · PATH 밀통로 · HAL 할매 · SOL 매듭 ·
 	# SHIFT 교대 틈 · FEE 벌금(FN 야간 · FW 수배 · FR 거부 · FS 회로 조사 · FD 우호 감면) · SIDE 선 쪽 · RADIO 막사 무전 · VENT 환기구 · RING1 막차 일지 · PHOTO 돌 사진
@@ -313,8 +315,10 @@ func _init() -> void:
 		vars.declare("UQ05_" + k, "int", 0)
 	vars.declare("RE104_N", "int", 0)
 	# R02 비표시 퀘스트(1-12h, SD-05 §3.4): 뜻은 script/act1/UQ-07 · 10.txt 머리 주석 — 진행기 UqR02
-	for k in "VISIT HEARD RES DISC TOY KDAY ME KID_SEEN STOLE MA_NO MA_SAID KSAID NOTE SELF LOST LOST_DAY LOST_SAID".split(" "):
+	for k in "VISIT HEARD RES DISC TOY KDAY ME KID_SEEN STOLE MA_NO MA_SAID KSAID NOTE SELF LOST LOST_DAY LOST_SAID TOLD".split(" "):
 		vars.declare("UQ07_" + k, "int", 0)
+	for k in "HEARD CHECKED LEDGER PAGE HIDE_UNTIL NOTICED NSAW NSEEN NROLL PLATE PLATE_DAY PSAID RES PUB_DAY XP EXTORT BOSS RAID_DAY RAID PAY_UNTIL MISS MSAID ROB_DAY FREE REFUND DUE BOXT BOXSAID EARLY".split(" "):
+		vars.declare("UQ10_" + k, "int", 0)
 	# 1-D4 구로 차량기지(DG-GR): 뜻은 script/act1/GR.txt 머리 주석 — CORE 기관차 · PUSH 남은 밀기 · LV_* 레버 · A · B · C 입환 결과 · STAFF 역무원 · MUSTER 안 간 사람들
 	for k in "CORE PUSH BUS CORE_DAY LV_A LV_B LV_C A B C STAFF STAFF_DAY STAFF_K KEY LOST SIGKEY WHISTLE MUSTER MUSTER_K REEFER DRIFT RATS SB SB_DAY ROOF CHART TAG PARK CHEER ESC GUIDE TIP MUSTER_DAY".split(" "):
 		vars.declare("GR_" + k, "int", 0)
@@ -354,6 +358,8 @@ func load_data(dir: String = "res://data/") -> void:
 	for kv in UNNAMED:                                                # 길 위 무명 사람(1-E 인카운터 화자, SD-22) — 이름표는 직함, 수첩에 없음
 		if not npcs.has(kv[0]):
 			npcs[kv[0]] = {"name": kv[1], "title": kv[1], "faction": kv[2], "ids": [kv[0]], "unnamed": true}
+			if kv.size() > 3 and str(kv[3]) == "evil":
+				npcs[kv[0]]["evil"] = true                               # 약탈자 무명(대방 정찰) — 쏴도 주민 살해 카르마가 아니다
 	book = NpcBook.new(npcs)
 
 

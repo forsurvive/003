@@ -1,0 +1,125 @@
+{
+ "id": "UQ10_HEAR",
+ "title": "역전 시장 — 수군댐",
+ "loc": "L-R02-12",
+ "npc": "N-YM-1",
+ "cond": "UQ10_HEARD == 0",
+ "labels": {
+  "START": 0,
+  "GONE": 8,
+  "M2ONLY": 10,
+  "ALONE": 13,
+  "ALONE_GONE": 17,
+  "HEARD": 18
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "dead(\"N-YM-1\") == 1",
+   "to": "M2ONLY"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-YM-2\") == 1",
+   "to": "ALONE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "국밥 솥 김 너머로 노점 둘이 머리를 맞댄다. 반장 자리 쪽은 보지 않는다."
+  },
+  {
+   "op": "line",
+   "who": "N-YM-1",
+   "emo": "기본",
+   "text": "(목소리를 낮춘다) 반장 저울이 가벼워. 고철 한 관 올리면 반 관 값이야."
+  },
+  {
+   "op": "if",
+   "cond": "(UQ71_SQ == 9 and GAME_DAY > UQ71_SQ_DAY)",
+   "to": "GONE"
+  },
+  {
+   "op": "line",
+   "who": "N-YM-2",
+   "emo": "피곤",
+   "text": "쉿. 목요일마다 덤 실은 수레가 대방 쪽으로 가는 거 봤지."
+  },
+  {
+   "op": "line",
+   "who": "N-YM-1",
+   "emo": "기본",
+   "text": "그래도 그 덕에 우리 노점은 안 털렸잖아. …그 덕인지 그 탓인지."
+  },
+  {
+   "op": "goto",
+   "to": "HEARD"
+  },
+  {
+   "op": "line",
+   "who": "N-YM-2",
+   "emo": "피곤",
+   "text": "쉿. 대방 애들은 흩어졌다는데 덤은 여전해. 이젠 2층으로 올라가."
+  },
+  {
+   "op": "goto",
+   "to": "HEARD"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "부품 노점 장수가 혼자 저울 쪽을 흘끔거린다."
+  },
+  {
+   "op": "line",
+   "who": "N-YM-2",
+   "emo": "피곤",
+   "text": "(혼잣말) 반장 저울이 가벼워. 고철 한 관 올리면 반 관 값이야. 국밥 할매가 있었으면 같이 따졌을 텐데."
+  },
+  {
+   "op": "goto",
+   "to": "HEARD"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "국밥 솥 김 너머로 국밥 장수가 혼자 중얼거린다."
+  },
+  {
+   "op": "if",
+   "cond": "(UQ71_SQ == 9 and GAME_DAY > UQ71_SQ_DAY)",
+   "to": "ALONE_GONE"
+  },
+  {
+   "op": "line",
+   "who": "N-YM-1",
+   "emo": "피곤",
+   "text": "(혼잣말) 반장 저울이 가벼워. 목요일마다 덤 실은 수레가 대방 쪽으로 가. 그 덕인지 그 탓인지, 노점은 안 털렸지."
+  },
+  {
+   "op": "goto",
+   "to": "HEARD"
+  },
+  {
+   "op": "line",
+   "who": "N-YM-1",
+   "emo": "피곤",
+   "text": "(혼잣말) 반장 저울이 가벼워. 대방 애들은 흩어졌다는데 덤은 여전히 2층으로 올라가."
+  },
+  {
+   "op": "do",
+   "fx": "UQ10_HEARD = 1; quest(\"UQ-10\", 10)"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-10.txt"
+}

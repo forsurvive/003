@@ -46,15 +46,18 @@ prop crate 17 3
 box 17 3 ma_parts owner=C-006 name="부품 상자"
 prop cot 21 10
 text 21 10 "야전 침대. 담요 밑에 2077년 영신통신 작업복이 개켜져 있다." h=2
-npc N-R02-017 6 10 E cond="UQ07_RES == 0" bark="(인두 끝을 후 불며) 배전반 쪽은 밟지 마세요. 선이 다 살아 있어요."
-npc N-R02-017 6 10 E cond="UQ07_RES != 0 and UQ07_TOY == 2" bark="(담요 자락이 납작하다) 광장에 나가 봤어요? 덜컹 소리 나면 걔예요."
-npc N-R02-017 6 10 E cond="UQ07_RES != 0 and (UQ07_TOY == 1 or UQ07_TOY == 3)" bark="(인두를 내려놓고 손끝을 분다) 첫 납땜은 손가락이 먼저 데요."
+npc N-R02-017 6 10 E cond="GAME_HOUR >= 6 and GAME_HOUR < 20 and UQ07_RES == 0" bark="(인두 끝을 후 불며) 배전반 쪽은 밟지 마세요. 선이 다 살아 있어요."
+npc N-R02-017 6 10 E cond="GAME_HOUR >= 6 and GAME_HOUR < 20 and UQ07_RES != 0 and UQ07_TOY == 2" bark="(담요 자락이 납작하다) 광장에 나가 봤어요? 덜컹 소리 나면 걔예요."
+npc N-R02-017 6 10 E cond="GAME_HOUR >= 6 and GAME_HOUR < 20 and UQ07_RES != 0 and UQ07_RES != 3 and UQ07_TOY == 1" bark="(인두를 내려놓고 손끝을 분다) 첫 납땜은 손가락이 먼저 데요."
+npc N-R02-017 6 10 E cond="GAME_HOUR >= 6 and GAME_HOUR < 20 and UQ07_RES == 3 and (UQ07_TOY == 1 or UQ07_TOY == 3)" bark="(담요를 갠다) 관 없이 종을 달다니. …다음엔 저도 그렇게 해 볼래요."
 prop stool 7 11
 # 1-12h UQ-07: 공하경 의자 옆 담요 밑 태엽 배송 로봇(마영식 작업대에서 먼 쪽 — 몰래 고치는 물건). 자리 한 값 UQ07_TOY(원고 UQ-07.txt 머리 주석)
 prop toy_robot 8 11 cond="UQ07_TOY == 0"
 prop toy_robot 8 11 state=fixed cond="UQ07_TOY == 1"
 text 8 11 "담요 자락 밑에 양철 장난감 — 태엽 자동차에 짐칸을 얹었다. 짐칸 옆구리에 분필로 '배송'. 등판의 관 자리 셋이 비었다." cond="UQ07_TOY == 0"
 text 8 11 "담요 위에 양철 로봇. 짐칸에 끈 묶은 꾸러미가 실렸다. 내일 아침이면 광장으로 간다." cond="UQ07_TOY == 1"
+prop toy_robot 8 11 cond="UQ07_TOY == 5"
+text 8 11 "담요 위에 반쯤 고친 양철 로봇과 진공관 셋. 납땜 인두가 식은 채 놓였다." cond="UQ07_TOY == 5"
 prop work_lamp 9 9
 prop work_lamp 18 13
 prop crate_o 2 14
