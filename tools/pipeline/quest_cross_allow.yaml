@@ -154,3 +154,5 @@
 "X1 FQ-SB-01 N-R01-039 언급": 위와 같음(출근부 줄) · 조만석 GEON 줄은 dead("N-R01-039") == 0일 때만(1-12f)
 "X1 FQ-SB-02 N-R02-041": 운송 장면은 모두 진행기가 연다(@npc -) — 갈고리가 죽었거나 SQ-S09 고척 노선이면 FQ_SB02_LEAD 1 → 같은 장면의 _L 판(FQ-SB-02L.txt, 인솔 반장 N-SB-L1)을 연다 · 길에서 쓰러지면 조원이 대리(fq_sb.gd _check_fallen · sc())
 "X3 FQ-SB-01 FQ_SB02_TOLD": 같은 사실 한 곳(P1) — 구만호가 일당을 주며 '운송조 호위가 하나 모자라'고 알려 준 사실 · SB-02 출발 줄(FQSB02_YARD SENT 판)이 읽는다
+"X7 FQSB02_TAESU N-R02-506": 운송 중 장면(@npc -)은 진행기가 세운 행렬 · 상판 밑의 오태수 배우에게만 연다(fq_sb.gd _interact2 · cv["taesu"]) — 봉천 X-BC 배치(TWHERE 3 · 끝난 뒤 · 추심 날 낮 집 안)와는 단계로 배타(1-12f 서사 대조 A217)
+"X7 FQSB02_TAESU_L N-R02-506": 위와 같음(대리 반장 판)

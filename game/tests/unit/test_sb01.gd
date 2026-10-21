@@ -319,3 +319,103 @@ func test_sb01_cut_and_fallback(t) -> void:
 	t.ok(StoryExpr.test(str(_scene("FQSB01_HDC")["cond"]), st2), "구만호 사망 → 황두칠 장면")
 	_play(st2, r2[2], "FQSB01_HDC", ["하겠다"])
 	t.eq(_v(st2, "FQ_SB01_WHO"), 2, "황두칠이 줌")
+
+
+## 서사 정합(1-12f 재검수): 3쪽 출동 명단의 날짜는 치는 순간 정해지고, 종이에 적힌 날과 봉천에 추심원이 서는 날이 한 값
+func test_sb01_due_on_page3(t) -> void:
+	var r := _host()
+	var st: StoryState = r[1]
+	var c: FqSb = r[2]
+	_take(st, c)
+	st.vars.set_v("FQ_SB01_TYPED", 2)
+	var said := _said(_play(st, c, "FQSB01_TYPE"))
+	t.eq(_v(st, "FQ_SB01_DUE_M"), 11, "3쪽을 치는 순간 날짜가 선다(다음 달)")
+	var due := _v(st, "FQ_SB01_DUE")
+	t.ok(said.contains("11월 3일"), "서식 머리: 11월 3일(하루)")
+	t.ok(not said.contains("11. 5.") and not said.contains("11. 8."), "줄마다 다른 날짜 없음")
+	st.vars.set_v("FQ_SB01_TYPED", 3)
+	(r[0] as InteriorHost).date_text = "2277. 11. 02.  10:00"           # 한 달 가까이 지나 내도
+	_play(st, c, "FQSB01_GU")
+	t.eq(_v(st, "FQ_SB01_DUE"), due, "낸 날이 늦어도 종이에 적힌 날 그대로")
+
+
+## 1-12f 서사 대조(계획 §6.5 #45~59): 조만석 남건희 줄은 SQ-S02가 밝힌 것만 · 마을을 판 판은 차갑게 · 3쪽 사망 줄은 유족 승계 ·
+## 장부를 태운 손 / 없어진 장부 / 목걸이 찬 목 · 줄 수 말은 뺀 줄이 없을 때만
+func test_sb01_narrative_fixes(t) -> void:
+	for d in range(1, 60):
+		var r := _host()
+		var st: StoryState = r[1]
+		var c: FqSb = r[2]
+		st.vars.set_v("GAME_DAY", d)
+		_take(st, c)
+		st.vars.set_v("FQ_SB01_X4", 1)
+		if c.caught():
+			continue
+		st.vars.set_v("FQ_SB01_TYPED", 3)
+		_play(st, c, "FQSB01_GU")
+		var said := _said(_play(st, c, "FQSB01_JO", ["봉천 이름을 뺐다"]))
+		t.ok(said.contains("입이 가벼워") and not said.contains("윗문"), "SQ-S02 전: '윗문 밖' 비밀은 말하지 않는다(P2)")
+		st.vars.set_v("FQ_SB01_TOLD", 0)
+		st.vars.set_v("SQ_S02_IN", 1)
+		t.ok(_said(_play(st, c, "FQSB01_JO", ["봉천 이름을 뺐다"])).contains("봉천 사람이 아니야"), "쫓아낸 판")
+		st.vars.set_v("FQ_SB01_TOLD", 0)
+		st.vars.set_v("SQ_S02_IN", 2)
+		t.ok(_said(_play(st, c, "FQSB01_JO", ["봉천 이름을 뺐다"])).contains("대장간"), "타이른 판")
+		st.vars.set_v("FQ_SB01_TOLD", 0)
+		st.vars.set_v("MQ101_RESULT", 5)
+		t.ok(_said(_play(st, c, "FQSB01_JO", ["봉천 이름을 뺐다"])).contains("봉천을 판 손"), "마을을 판 판은 차갑게")
+		break
+	# 3쪽: 죽은 사람 줄은 유족 승계
+	var r2 := _host()
+	var st2: StoryState = r2[1]
+	var c2: FqSb = r2[2]
+	_take(st2, c2)
+	st2.kill("N-R01-035")
+	st2.vars.set_v("FQ_SB01_TYPED", 2)
+	var p3 := _said(_play(st2, c2, "FQSB01_TYPE"))
+	t.ok(p3.contains("오재윤(사망 — 유족 승계)"), "3쪽 사망 줄")
+	t.ok(p3.contains("남은 집마다 추심원 하나"), "출동 인원은 남은 줄 수대로")
+	# 장부 상태에 따른 첫 줄
+	var r3 := _host()
+	var st3: StoryState = r3[1]
+	st3.vars.set_v("SB_DEBT", 1)
+	t.ok(_said(_play(st3, r3[2], "FQSB01_GU", ["됐다"])).contains("태운 손이 그 손"), "태운 사람을 알아본다")
+	st3.vars.set_v("SB_DEBT", 0)
+	st3.vars.set_v("HO_LEDGER", 1)
+	t.ok(_said(_play(st3, r3[2], "FQSB01_GU", ["됐다"])).contains("금고에서 없어졌다며"), "계엄군에 넘긴 판도 같은 줄(누가 가졌는지는 말 안 함)")
+	st3.vars.set_v("SB_COLLAR", 1)
+	t.ok(_said(_play(st3, r3[2], "FQSB01_GU")).contains("번호 찬 목"), "목걸이 찬 채면 일을 주지 않는다")
+	t.eq(st3.quests.stage("FQ-SB-01"), 0, "받지 않음")
+
+
+## 1-12f 서사 대조(#48~52): 추심 날 X-BC — 죽은 사람은 유족 바크 · 장부가 정착지 손이면 문 밖 하나 · 보낼 사람이 없으면 없음
+func test_sb01_due_day_map(t) -> void:
+	var mp: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/maps/X-BC.json"))
+	var st := StoryState.new()
+	st.load_data()
+	st.quests.set_stage("MQ-101", 100)
+	st.vars.set_v("FQ_SB01_DUE", 40)
+	st.vars.set_v("GAME_DAY", 40)
+	st.vars.set_v("GAME_HOUR", 10)
+	var shown := func() -> Array:
+		var out := []
+		for n in mp["npcs"]:
+			if str(n["id"]) in ["CR-436", "CR-437"] and StoryExpr.test(str(n.get("cond", "")), st):
+				out.append(str(n.get("bark", "")))
+		return out
+	var b: Array = shown.call()
+	t.eq(b.size(), 6, "다섯 집 + 번호 줄")
+	t.ok(not " ".join(b).contains("윗문"), "추심원은 남건희의 밤길을 모른다")
+	t.ok(not " ".join(b).contains("218"), "번호 줄은 번호를 읽지 않는다")
+	st.kill("N-R01-026")
+	b = shown.call()
+	t.ok(" ".join(b).contains("고철 선금 180 — 유족 승계"), "죽은 오봉수 집은 유족 바크")
+	t.eq(b.size(), 6, "같은 자리 하나만(배타)")
+	st.vars.set_v("HO_LEDGER", 81)
+	b = shown.call()
+	t.eq(b.size(), 1, "장부가 봉천 손: 아랫문 밖 하나")
+	t.ok(str(b[0]).contains("출입 금지?"), "실랑이 바크")
+	st.vars.set_v("HO_LEDGER", 0)
+	for who in ["C-049", "C-013", "C-021"]:
+		st.kill(who)
+	t.eq((shown.call() as Array).size(), 0, "보낼 사람이 없으면 추심조 없음")

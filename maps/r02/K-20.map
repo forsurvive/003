@@ -51,7 +51,8 @@ text 28 3 "벽장 문틈으로 바람이 샌다. 안쪽 벽지가 들떠 있다.
 npc N-R02-042 26 4 S
 prop plant_pot 28 5
 # 복도
-npc N-R02-041 9 12 E cond="SQ_S09_SOL2 != 2 and (GAME_HOUR < 4 or GAME_HOUR >= 10)" route=a:9,12,8;b:22,12,6 bark="줄 맞춰. 낙오하면 장부에 이자 붙는다."
+npc N-R02-041 9 12 E cond="SQ_S09_SOL2 != 2 and (GAME_HOUR < 4 or GAME_HOUR >= 10) and FQ_SB02_RES != 3 and FQ_SB02_RES != 5 and FQ_SB02_RES != 6" route=a:9,12,8;b:22,12,6 bark="줄 맞춰. 낙오하면 장부에 이자 붙는다."
+npc N-R02-041 9 12 E cond="SQ_S09_SOL2 != 2 and (GAME_HOUR < 4 or GAME_HOUR >= 10) and (FQ_SB02_RES == 3 or FQ_SB02_RES == 5 or FQ_SB02_RES == 6)" route=a:9,12,8;b:22,12,6 bark="(목걸이 줄을 감다가 이쪽을 보고 손을 멈춘다)"
 npc CR-437 4 13 S sheet=en_cr437_loco cond="SQ_S09_SOL2 != 2" bark="쉬는 시간이야. 말 걸지 마."
 prop drum 1 14
 prop shoe_rack 16 11

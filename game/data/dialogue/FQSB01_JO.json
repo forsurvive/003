@@ -3,17 +3,28 @@
  "title": "이장 조만석 — 출근부",
  "loc": "L-R01-09",
  "npc": "C-010",
- "cond": "V_ACT >= 1 and (FQ_SB01_RES == 2 or FQ_SB01_RES == 4) and FQ_SB01_TOLD == 0",
+ "cond": "V_ACT >= 1 and MQ101_STAGE >= 100 and (FQ_SB01_RES == 2 or FQ_SB01_RES == 4) and FQ_SB01_TOLD == 0",
  "labels": {
   "START": 0,
-  "PAID": 2,
-  "TELL": 5,
-  "CHK": 7,
-  "GEON": 9,
-  "TOLD": 10,
-  "PASS": 12
+  "COLD": 3,
+  "OPEN": 4,
+  "PAID": 5,
+  "COLDPAID": 9,
+  "TELL": 11,
+  "COLDTELL": 14,
+  "CHK": 15,
+  "GEON": 17,
+  "GEON_OUT": 21,
+  "GEON_SMITH": 23,
+  "TOLD": 24,
+  "PASS": 26
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "MQ101_RESULT == 5",
+   "to": "COLD"
+  },
   {
    "op": "line",
    "who": "C-010",
@@ -21,15 +32,33 @@
    "text": "왔나. 얼굴이 뭘 들고 온 얼굴이네."
   },
   {
+   "op": "goto",
+   "to": "OPEN"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "(눈을 안 맞춘다) …자네가 또 무슨 일로."
+  },
+  {
    "op": "choice",
    "opts": [
     {
      "text": "새벽인력 출근부에서 봉천 이름을 뺐다",
      "tags": [],
-     "cond": "FQ_SB01_RES == 2",
+     "cond": "FQ_SB01_RES == 2 and FQ_SB01_X1 + FQ_SB01_X2 + FQ_SB01_X3 + FQ_SB01_X4 + FQ_SB01_X5 + FQ_SB01_X6 + FQ_SB01_X7 + FQ_SB01_X8 + FQ_SB01_X9 > 0",
      "fx": "",
      "to": "TELL",
      "id": "FQSB01_JO:1:0"
+    },
+    {
+     "text": "새벽인력 장부의 봉천 빚 몇 줄에 '완납' 도장을 찍었다",
+     "tags": [],
+     "cond": "FQ_SB01_RES == 2 and FQ_SB01_X1 + FQ_SB01_X2 + FQ_SB01_X3 + FQ_SB01_X4 + FQ_SB01_X5 + FQ_SB01_X6 + FQ_SB01_X7 + FQ_SB01_X8 + FQ_SB01_X9 == 0",
+     "fx": "",
+     "to": "TELL",
+     "id": "FQSB01_JO:1:1"
     },
     {
      "text": "새벽인력 출근부의 봉천 빚 몇 줄을 내 캡으로 갚았다",
@@ -37,7 +66,7 @@
      "cond": "FQ_SB01_RES == 4",
      "fx": "",
      "to": "PAID",
-     "id": "FQSB01_JO:1:1"
+     "id": "FQSB01_JO:1:2"
     },
     {
      "text": "다른 얘기",
@@ -45,9 +74,14 @@
      "cond": "",
      "fx": "",
      "to": "PASS",
-     "id": "FQSB01_JO:1:2"
+     "id": "FQSB01_JO:1:3"
     }
    ]
+  },
+  {
+   "op": "if",
+   "cond": "MQ101_RESULT == 5",
+   "to": "COLDPAID"
   },
   {
    "op": "line",
@@ -69,13 +103,34 @@
    "op": "line",
    "who": "C-010",
    "emo": "기본",
-   "text": "(한참 말이 없다) …이름을 뺐다고. 그쪽 장부에서."
+   "text": "(한참 말이 없다) 봉천을 판 손이 봉천 빚을 갚았다고. …갚은 건 갚은 거지. 그 말은 마을에 전하겠네."
+  },
+  {
+   "op": "goto",
+   "to": "CHK"
+  },
+  {
+   "op": "if",
+   "cond": "MQ101_RESULT == 5",
+   "to": "COLDTELL"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "(한참 말이 없다) …봉천 줄을 덜었다고. 그쪽 장부에서."
   },
   {
    "op": "line",
    "who": "C-010",
    "emo": "기본",
    "text": "빚이 없어진 건 아니야. 추심조가 덜 올라올 뿐이지. …그게 어디야. 고맙네."
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "(한참 말이 없다) 봉천을 판 손이 봉천 줄을 덜었다고. …덜린 건 덜린 거지. 마을에 전하겠네."
   },
   {
    "op": "if",
@@ -87,10 +142,40 @@
    "to": "TOLD"
   },
   {
+   "op": "if",
+   "cond": "SQ_S02_IN == 1",
+   "to": "GEON_OUT"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S02_IN == 2",
+   "to": "GEON_SMITH"
+  },
+  {
    "op": "line",
    "who": "C-010",
    "emo": "기본",
-   "text": "남건희 그놈 줄도 손댔나? …그 녀석한텐 말하지 말게. 입이 가볍고, 밤엔 윗문 밖에 나가."
+   "text": "남건희 그놈 줄도 손댔나? …그 녀석한텐 말하지 말게. 입이 가벼워."
+  },
+  {
+   "op": "goto",
+   "to": "TOLD"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "남건희 줄도? …그 녀석은 이제 봉천 사람이 아니야. 할머니한테는 내가 말하지."
+  },
+  {
+   "op": "goto",
+   "to": "TOLD"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "남건희 줄도? …요즘 대장간에서 망치 잡더군. 그 녀석한텐 말하지 말게. 아직 입이 가벼워."
   },
   {
    "op": "cmd",

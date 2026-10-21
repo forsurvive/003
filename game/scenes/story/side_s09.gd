@@ -431,7 +431,7 @@ func _leave_cage() -> void:
 
 ## 재회 무대: 판자 앞에 채윤재를 세우고(맵 인물은 정착 뒤에만 — 한 사람 한 곳, 재미 검수 1) 장면이 끝나면 들인다
 func _reunion() -> void:
-	if host.map == null or _zone() != "K-22" or host.box.active:
+	if not is_instance_valid(host) or host.map == null or _zone() != "K-22" or host.box.active:   # 미뤄 부른 사이 호스트가 사라졌으면(시험 해제 · 맵 교체) 그만
 		return
 	var at := host.player.loco.logical + Vector2(-34, 0)
 	host.ev._show_actor("S9YJ", at, "E", str(host.ev.cast_sheets.get(YJ, "")))

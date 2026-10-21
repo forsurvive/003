@@ -394,7 +394,7 @@ func test_sb02_late(t) -> void:
 	t.eq(_v(st, "FQ_SB02_LATE"), 1, "늦었다")
 	t.eq(c._pending2, "FQSB02_HAND", "곧장 인수원 장면(LATE 판)")
 	var caps0 := _v(st, "PC_CAPS")
-	t.ok(_said(_play(st, c, "FQSB02_HAND")).contains("문 닫았어"), "출장소가 문 닫았다")
+	t.ok(_said(_play(st, c, "FQSB02_HAND")).contains("배가 떠났어"), "출장소 배가 떠났다")
 	t.eq(_v(st, "FQ_SB02_RES"), 2, "RES 2")
 	t.eq(_v(st, "PC_CAPS") - caps0, 75, "일당 반")
 	t.eq(_v(st, "AFF_SB"), -6, "SB +4")
@@ -526,7 +526,7 @@ func test_sb02_yard_watch(t) -> void:
 			t.eq(_v(st, "SB_RAID"), 1, "표찰도 일도 없으면: 들켜서 습격")
 
 
-## 재미 검수 반영(1-12f): 데려온 오태수를 신도림 뒤 원격기로 풀어 줌 → TAESU 4 · FREE · 인계 '하나는 신도림에서' · 돌려주면 들킴
+## 재미 검수 반영(1-12f): 데려온 오태수를 신도림 뒤 원격기로 풀어 줌 → TAESU 4 · FREE · 인계 '하나는 길에서 없어졌어' · 돌려주면 들킴
 func test_sb02_free_remote(t) -> void:
 	var r := _host()
 	var h: InteriorHost = r[0]
@@ -555,8 +555,8 @@ func test_sb02_free_remote(t) -> void:
 	c._events()
 	_play(st, c, "FQSB02_TOLL", ["낸다"])
 	var said := _said(_play(st, c, "FQSB02_HAND", ["그냥 넘긴다", "돌려준다"]))
-	t.ok(said.contains("신도림에서 불이 꺼졌어"), "인계: 하나는 신도림에서")
-	t.ok(said.contains("하나 꺼졌네"), "돌려주면 불빛을 센다")
+	t.ok(said.contains("하나는 길에서 없어졌어"), "인계: 하나는 길에서 없어졌다(갈고리는 원격기가 없다)")
+	t.ok(said.contains("단추 하나가 눌린 채"), "돌려주면 눌린 단추로 안다")
 	t.eq(_v(st, "FQ_SB02_SEEN"), 2, "돌려주면 들킴")
 	t.eq(_v(st, "FQ_SB02_RES"), 1, "운송은 끝까지(셋)")
 	t.eq(_v(st, "FQ_SB02_N"), 3, "인계 셋")
@@ -591,7 +591,7 @@ func test_sb02_unhook(t) -> void:
 	t.eq(st.quests.stage("FQ-SB-02"), 100, "끝")
 
 
-## 재미 검수 반영: 일부러 늦춤(찾는 척 60분 · 한 시간 쉬자) · 보고 LIE의 '다 보였어' 판(판정은 명령 앞)
+## 재미 검수 반영: 일부러 늦춤(찾는 척 60분 · 두 시간 쉬자 — 조는 틈) · 보고 LIE의 '다 보였어' 판(판정은 명령 앞)
 func test_sb02_stall(t) -> void:
 	var r := _host()
 	var h: InteriorHost = r[0]
@@ -611,8 +611,9 @@ func test_sb02_stall(t) -> void:
 	c._s2("LEG", int(c._meta["sindorim"]) + 1)
 	c._events()
 	var m1 := c.now()
-	_play(st, c, "FQSB02_REST", ["한 시간 쉬자"])
-	t.eq(c.now() - m1, 60, "쉬자 — 60분(화술 100)")
+	_play(st, c, "FQSB02_REST", ["두 시간 쉬자"])
+	t.eq(c.now() - m1, 120, "쉬자 — 120분(화술 100)")
+	t.ok(c._holding(), "쉰 끝에 갈고리가 존다 — 허리춤 틈이 남는다")
 
 
 ## 재미 검수 반영: 앞서 나가 정찰하면 줄이 서지 않는다 · 뒤로 멀어지면 선다
@@ -632,3 +633,62 @@ func test_sb02_ahead(t) -> void:
 	h.player.loco.logical = ld.loco.logical + (ld.loco.logical - ahead_t).normalized() * 30 * 32
 	c._lag_tick()
 	t.ok(bool(c.cv.get("lag", false)), "뒤로 30칸이면 선다")
+
+
+## 1-12f 서사 대조(계획 §6.5 #61~70 · D-296): 출발 때 목걸이를 원격기에 묶음 · 인계 뒤 배로 · 통행세는 경비 개인 뒷돈 ·
+## 오태수 자리 한 값(TWHERE) · K-20 숙소 갈고리가 운송 결과를 기억함(맨 위 갈래 · 지시서도 차갑게)
+func test_sb02_narrative_fixes(t) -> void:
+	var r := _host()
+	var st: StoryState = r[1]
+	var c: FqSb = r[2]
+	st.vars.set_v("AFF_SB", 25)
+	c.tick2()
+	var y := _said(_play(st, c, "FQSB02_YARD", ["호위 서겠다"]))
+	t.ok(y.contains("담에서 떼어 냈다"), "출발: 담 → 원격기")
+	c._s2("TAESU", 2)
+	c._s2("REST", 1)
+	c._s2("REMOTE", 1)
+	c._s2("PATROL", 2)
+	c.cv["patrol_done"] = true
+	c._s2("LEG", c.points().size())
+	c._events()
+	var toll := _said(_play(st, c, "FQSB02_TOLL", ["낸다"]))
+	t.ok(toll.contains("조합장은 모르는 값"), "통행세 = 경비 뒷돈(MQ-201 '몰래'와 같은 사실)")
+	var hand := _said(_play(st, c, "FQSB02_HAND", ["그냥 넘긴다", "돌려준다"]))
+	t.ok(hand.contains("거룻배") and not hand.contains("침목"), "인계 뒤 배로 섬 남쪽 선착장")
+	t.eq(_v(st, "FQ_SB02_RES"), 1, "끝까지")
+	t.eq(_v(st, "FQ_SB02_TWHERE"), 1, "오태수 자리: 출장소")
+	t.ok(not hand.contains("다음에도 새벽 네 시"), "다시 서지 않는 줄을 약속하지 않는다")
+	# 숨겨 준 판 · 늦은 판 · 방범대 판의 자리
+	for k in [[4, 1, 3], [2, 2, 2], [2, 3, 4], [3, 1, 5], [2, 6, 5]]:
+		var r2 := _host()
+		var c2: FqSb = r2[2]
+		_go(r2[1], c2)
+		c2._s2("TAESU", k[0])
+		c2._finish2(k[1])
+		t.eq(_v(r2[1], "FQ_SB02_TWHERE"), k[2], "TAESU %d · RES %d → 자리 %d" % k)
+	# K-20 숙소: 맨 위 갈래가 운송 결과를 기억한다
+	var r3 := _host()
+	var st3: StoryState = r3[1]
+	var c3: FqSb = r3[2]
+	st3.vars.set_v("FQ_SB02_RES", 6)
+	t.ok(_said(_play(st3, c3, "SQS09_GALGORI")).contains("기억하고 있어"), "인계 지점에서 끈 판: '기억해 둔다'의 회수")
+	st3.vars.set_v("FQ_SB02_RES", 5)
+	t.ok(_said(_play(st3, c3, "SQS09_GALGORI")).contains("총 겨눈 호위"), "흩어짐 판")
+	st3.vars.set_v("FQ_SB02_RES", 1)
+	st3.vars.set_v("FQ_SB02_REMOTE", 2)
+	st3.vars.set_v("FQ_SB02_SEEN", 2)
+	t.ok(_said(_play(st3, c3, "SQS09_GALGORI")).contains("네 이름 옆에"), "원격기 분실 — 본 판")
+	st3.vars.set_v("FQ_SB02_SEEN", 0)
+	t.ok(_said(_play(st3, c3, "SQS09_GALGORI")).contains("몇이나 됐을까"), "원격기 분실 — 의심 판")
+	st3.vars.set_v("FQ_SB02_RES", 3)
+	st3.vars.set_v("SQ_S09_ORDER", 1)
+	t.ok(_said(_play(st3, c3, "SQS09_GALGORI", ["지시서"])).contains("따르는 건 서명이지"), "배신 판에도 지시서는 받는다(S09 길이 막히지 않게)")
+	var mp: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/maps/K-20.json"))
+	st3.vars.set_v("GAME_HOUR", 12)
+	var n := 0
+	for np in mp["npcs"]:
+		if str(np["id"]) == "N-R02-041" and StoryExpr.test(str(np.get("cond", "")), st3):
+			n += 1
+			t.ok(not str(np.get("bark", "")).contains("줄 맞춰"), "배신 판 바크는 차갑게")
+	t.eq(n, 1, "K-20 갈고리는 한 명(배타 조건)")

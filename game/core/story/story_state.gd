@@ -271,10 +271,10 @@ func _init() -> void:
 	# SB01 SEED 받은 날(발각 씨앗) · X1~X9 2쪽에서 뺀 줄 · PD1~PD9 옛 장부 '완납' 도장 · DRAWER 도장 서랍을 땀 · AWAY 구만호가 감독 책상을 비움(진행기) ·
 	#   BLANK 1쪽 2077. 10. 24. 빈칸(1 비워 둠 · 2 '배차 없음' · 3 '그날 밤 전쟁') · RES 결과(1 그대로 · 2 뺌/완납 안 들킴 · 3 발각) · TOLD 조만석에게 말함 · WHO 일을 준 사람(1 구만호 · 2 황두칠 · 3 독사) · BACK '어디 갔었어' 한 번
 	# SB02 DAY 출발한 날 · LEG 선두가 지난 경유점 · TAESU 오태수(0 줄 · 1 달아남 · 2 데려옴 · 3 못 본 척 · 4 숨겨 줌 · 5 죽음) · SEEN 갈고리가 봄 · PATROL 방범대(1 싸움 · 2 화술 · 3 넘김) ·
-	#   TOLL 통행세(1 냄 · 2 화술 30 · 3 갈고리가 냄) · N 인계한 인력 · LATE 10시 넘겨 닿음 · RES 결과(1 끝까지 · 2 늦음 · 3 방범대 · 4 빠짐 · 5 흩어짐) · LEAD 인솔(0 갈고리 · 1 대리 반장) · TOLD 구만호가 운송을 알려 줌
+	#   TOLL 통행세(1 냄 · 2 화술 30 · 3 갈고리가 냄) · N 인계한 인력 · LATE 10시 넘겨 닿음 · RES 결과(1 끝까지 · 2 늦음 · 3 방범대 · 4 빠짐 · 5 흩어짐 · 6 인계 지점에서 끔) · TWHERE 오태수 자리(1 출장소 · 2 본소 대기 · 3 봉천 · 4 방범대 · 5 행방 모름) · LEAD 인솔(0 갈고리 · 1 대리 반장) · TOLD 구만호가 운송을 알려 줌
 	for k in "SEED X1 X2 X3 X4 X5 X6 X7 X8 X9 PD1 PD2 PD3 PD4 PD5 PD6 PD7 PD8 PD9 STAMP DRAWER AWAY BLANK RES TOLD WHO BACK TYPED LURE LURE_DAY SUS EXTRA DUE DUE_M DUE_D THX1 THX2 THX3 THX4 THX5 OWE WHERE".split(" "):
 		vars.declare("FQ_SB01_" + k, "int", 0)
-	for k in "DAY LEG TAESU SEEN PATROL TOLL N LATE RES LEAD TOLD REMOTE SCOUT DETOUR REST SNEAK TRIED FREE".split(" "):
+	for k in "DAY LEG TAESU SEEN PATROL TOLL N LATE RES LEAD TOLD REMOTE SCOUT DETOUR REST SNEAK TRIED FREE TWHERE".split(" "):
 		vars.declare("FQ_SB02_" + k, "int", 0)
 	vars.declare("GT_COT_UNTIL", "int", 0)                          # 고터 지하상가 침상 칸 빌린 끝 절대 분(1-12d)
 	for k in ["GS_OPEN", "GS_TRUTH", "GS_ROBOT", "GS02_GRADER"]:

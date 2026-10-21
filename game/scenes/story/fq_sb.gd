@@ -179,6 +179,9 @@ func _cmd1(a: Array, done: Callable) -> void:
 			host.advance_minutes(60)
 			_where_tick()
 			_log("%d쪽 끝" % n)
+		"due":                                                            # 3쪽 출동 명단의 날짜 — 치는 순간 정한다(종이와 추심 날이 한 값, 1-12f 재검수)
+			if v1("DUE") == 0:
+				_set_due()
 		"pick":
 			_want_pick = true
 		"lure":                                                           # [화술] 꼬드기기 — 하루 한 번
@@ -201,7 +204,7 @@ func _cmd1(a: Array, done: Callable) -> void:
 				_s1("TOLD", 1)
 				st.call_fn("aff", ["BC", 8])
 				st.deeds.record(st, "faction", "R01", 1, {}, now(), {"tag": "FQSB01_TOLD", "place": "BC",
-					"what": "누군가 새벽인력 출근부에서 봉천 이름을 뺐다고 이장이 들었다", "seen_by": ["BC"], "about": []})
+					"what": ("누군가 새벽인력 출근부의 봉천 빚 몇 줄을 제 캡으로 갚았다고 이장이 들었다" if v1("RES") == 4 else ("누군가 새벽인력 출근부에서 봉천 이름을 뺐다고 이장이 들었다" if removed() > 0 else "누군가 새벽인력 장부의 봉천 빚에 '완납' 도장을 찍었다고 이장이 들었다")), "seen_by": ["BC"], "about": []})
 		"thx":
 			if a.size() > 1:
 				_s1("THX" + str(a[1]), 1)
@@ -302,7 +305,8 @@ func _finish(paid: bool) -> void:
 		st.call_fn("aff", ["KD", -1])
 	else:
 		st.call_fn("aff", ["SB", -5])
-	_set_due()
+	if v1("DUE") == 0:
+		_set_due()                                                    # 3쪽을 치며 이미 정했으면 그 날짜 그대로
 	st.deeds.record(st, "faction", "R02", 0, {}, now(), {"tag": "FQSB01_DONE", "place": "SB", "what": "본소 출근부가 새 장부로 옮겨졌다", "seen_by": ["SB"], "about": []})
 	st.quests.set_stage(Q1, 100)
 	_where_tick()
@@ -727,6 +731,7 @@ func _drop_out() -> void:
 	if not walking():
 		return
 	_s2("RES", 4)
+	_set_twhere()
 	st.call_fn("aff", ["SB", -3])
 	st.quests.set_stage(Q2, 100)
 	_clear()
@@ -771,7 +776,7 @@ func _check_fallen() -> bool:
 		cv["lead"] = alive[0]
 		cv["men"].erase(alive[0])
 		_s2("LEAD", 1)
-		host.hint("인솔조원: \"조장이 쓰러졌다. …출장소까진 간다. 내가 끈다.\"", 4.0)
+		host.hint("인솔조원: \"조장이 쓰러졌다. …철교 남단까진 간다. 내가 끈다.\"", 4.0)
 	return false
 
 
@@ -797,6 +802,7 @@ func _scatter2() -> void:
 	if not walking():
 		return
 	_s2("RES", 5)
+	_set_twhere()
 	st.call_fn("aff", ["SB", -10])
 	st.deeds.record(st, "faction", "R02", 1, {}, now(), {"tag": "FQSB02_SCATTER", "place": "SB", "what": "운송조 호위가 인솔조에게 총을 겨눴다", "seen_by": ["SB"], "about": []})
 	st.quests.set_stage(Q2, 200)
@@ -911,9 +917,32 @@ func _patrol_fight(team_sb: String, sb_foes: Array, jy_foes: Array) -> void:
 	host.combat._rebuild_list()
 
 
+## 오태수 자리(계획 §6.5 — P1): 운송이 끝날 때 한 번. 1 출장소(섬으로) · 2 본소 대기(늦음) · 3 봉천 아랫마당 · 4 방범대가 데려감 · 5 행방 모름.
+## 형 재회(D-291) · 봉천 배치는 이 값만 읽는다. 죽었으면 생사 장부가 먼저(P3).
+func _set_twhere() -> void:
+	if v2("TWHERE") != 0:
+		return
+	var t := v2("TAESU")
+	var w := 1
+	if t == 4:
+		w = 3                                                         # 숨김 · 풀어 줌
+	elif t == 3:
+		w = 5                                                         # 고가에서 달아난 채
+	else:
+		match v2("RES"):
+			2:
+				w = 2
+			3:
+				w = 4
+			5, 6:
+				w = 5
+	_s2("TWHERE", w)
+
+
 ## 결과(원문 §6.4 · 계획 §5.3 · §6)
 func _finish2(res: int) -> void:
 	_s2("RES", res)
+	_set_twhere()
 	var n := v2("N")
 	match res:
 		1:
@@ -990,7 +1019,7 @@ func _interact2() -> bool:
 		elif now() < _hold_until and host.combat.crouch and v2("TRIED") == 0:
 			host.play_scene(sc("FQSB02_POCKET"))
 		else:
-			host.hint(("갈고리: " if v2("LEAD") == 0 else "인솔 반장: ") + "\"줄 뒤에 붙어. 말은 출장소 가서.\"", 3.0)
+			host.hint(("갈고리: " if v2("LEAD") == 0 else "인솔 반장: ") + "\"줄 뒤에 붙어. 말은 인계 지점 가서.\"", 3.0)
 		return true
 	if best == cv.get("taesu") and v2("TAESU") == 1:
 		var ld := lead()
@@ -1083,6 +1112,8 @@ func _cmd2(a: Array, done: Callable) -> void:
 					cv["taesu"] = null
 					if was_out:
 						cv["hold"] = "report"
+					elif not seen:                                            # 걷는 중 몰래 — 갈고리는 누가 했는지 모르지만 줄이 준 건 안다
+						host.hint(("갈고리" if v2("LEAD") == 0 else "인솔 반장") + ": (줄을 센다) \"…셋? 하나 어디 갔어.\" (줄 뒤를 한참 본다)", 5.0)
 		"report":                                                         # 0 '못 찾았다' · 1 '도망치게 뒀다'
 			if v2("TAESU") != 2 and v2("SEEN") != 2 and (v2("SEEN") == 1 or (a.size() > 1 and int(a[1]) == 1)):
 				_s2("SEEN", 2)
@@ -1092,8 +1123,10 @@ func _cmd2(a: Array, done: Callable) -> void:
 				cv["taesu"] = null
 			_esc_at = -1
 			_release()
-		"stall":                                                          # 일부러 늦춤(찾는 척 · 한 시간 쉬자) — 같은 날 안 시간 도약(P6)
+		"stall":                                                          # 일부러 늦춤(찾는 척 · 두 시간 쉬자) — 시간 도약(P6, 06시를 넘으면 하루 판정)
 			host.advance_minutes(int(a[1]) if a.size() > 1 else 60)
+			if a.size() > 2 and str(a[2]) == "rest":
+				_hold_until = now() + REST_MIN                                # 쉰 끝에 갈고리가 존다 — 허리춤 틈은 그대로(재검수 ②)
 			_log("늦춤 · %s" % host.date_text)
 		"unhook":                                                         # 인계 지점에서 원격기로 넷을 끔 — 인력은 둔치로 흩어짐(RES 6)
 			_s2("N", 0)

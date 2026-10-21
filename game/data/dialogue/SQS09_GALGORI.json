@@ -6,9 +6,14 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "CLOCK": 4,
-  "HAND": 6,
-  "HAND2": 8
+  "SB_GUN": 8,
+  "SB_SOLD": 10,
+  "SB_LOST": 12,
+  "SB_LOST2": 14,
+  "CLOCK": 16,
+  "HAND": 18,
+  "HAND2": 20,
+  "HAND2_COLD": 24
  },
  "ops": [
   {
@@ -22,10 +27,70 @@
    "to": "CLOCK"
   },
   {
+   "op": "if",
+   "cond": "FQ_SB02_RES == 5",
+   "to": "SB_GUN"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB02_RES == 3 or FQ_SB02_RES == 6",
+   "to": "SB_SOLD"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB02_REMOTE == 2 and FQ_SB02_SEEN == 2",
+   "to": "SB_LOST"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB02_REMOTE == 2",
+   "to": "SB_LOST2"
+  },
+  {
    "op": "line",
    "who": "N-R02-041",
    "emo": "기본",
    "text": "줄 맞춰. 낙오하면 장부에 이자 붙는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "분노",
+   "text": "(등을 돌린 채) 내 줄에 총 겨눈 호위가 내 숙소엔 왜 와. 볼일 없으면 나가."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "분노",
+   "text": "철교 남단. 목걸이 넷. …기억해 둔다고 했지. 아직 기억하고 있어."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "기본",
+   "text": "원격기 값은 장부에 있어. '분실' — 네 이름 옆에. …모른다고 했지. 장부는 기억해."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "기본",
+   "text": "원격기 하나가 안 돌아왔어. 장부엔 '분실'. …그 새벽에 내 허리춤 근처에 있던 놈이 몇이나 됐을까."
   },
   {
    "op": "goto",
@@ -69,10 +134,33 @@
    ]
   },
   {
+   "op": "if",
+   "cond": "FQ_SB02_RES == 3 or FQ_SB02_RES == 5 or FQ_SB02_RES == 6",
+   "to": "HAND2_COLD"
+  },
+  {
    "op": "line",
    "who": "N-R02-041",
    "emo": "놀람",
    "text": "실장님 서명…? 가리봉은 비우고 고척 노선으로. (지시서를 접어 품에 넣는다) 짐 싸. 이동한다."
+  },
+  {
+   "op": "cmd",
+   "name": "s09",
+   "args": [
+    "sol2",
+    "2"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "분노",
+   "text": "(서명을 오래 들여다본다) …네 손을 거쳐 온 종이라. 서명은 실장님 거 맞네. 따르는 건 서명이지 네가 아니다. (품에 넣는다) 짐 싸. 이동한다."
   },
   {
    "op": "cmd",

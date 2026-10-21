@@ -67,7 +67,7 @@ prop ledger_shelf 26 3
 prop ledger_shelf 29 3
 prop ledger_shelf 32 3
 text 23 3 "출근부 선반. 아래 칸일수록 누렇다. 맨 아래 2108년 첫 장부 표지에 '근면' 스티커." w=2 scene=H-02_FIRSTBOOK
-text 26 3 "출근부 선반. 2150년대부터 표지 글씨가 바뀐다. 황씨 집안 글씨다." w=8
+text 26 3 "출근부 선반. 2150년대 묶음부터 표지에 '번호'라는 칸이 붙는다. 표지 글씨는 2108년 첫 권부터 같은 집안 손이다." w=8
 prop office_desk 34 6
 npc N-R02-036 35 5 S cond="SB_RAID == 0" bark="번호만 불러. 이름은 장부에 있어."
 prop w_roster 36 1
