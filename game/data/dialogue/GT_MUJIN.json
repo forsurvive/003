@@ -1,0 +1,100 @@
+{
+ "id": "GT_MUJIN",
+ "title": "고속터미널 무진",
+ "loc": "L-UG-39",
+ "npc": "N-UG-040",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "SHOP": 2,
+  "FIX": 4,
+  "ROAD": 6
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-UG-040",
+   "emo": "미소",
+   "text": "세이프빌 사람들은 값은 안 깎아. 대신 사람을 깎지. 난 양쪽에 다 웃어."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "물건을 본다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SHOP",
+     "id": "GT_MUJIN:1:0"
+    },
+    {
+     "text": "고쳐 줄 수 있어요?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "FIX",
+     "id": "GT_MUJIN:1:1"
+    },
+    {
+     "text": "세이프빌 가는 길은?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "ROAD",
+     "id": "GT_MUJIN:1:2"
+    },
+    {
+     "text": "다음에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "GT_MUJIN:1:3"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "trade",
+   "args": [
+    "VGT2"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "fix",
+   "args": [
+    "VGT2"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-UG-040",
+   "emo": "기본",
+   "text": "낮에만 다녀. 밤엔 세이프빌 문이 안 열려. 등록증 없는 얼굴은 낮에도 잘 안 열리고."
+  },
+  {
+   "op": "line",
+   "who": "N-UG-040",
+   "emo": "기본",
+   "text": "너도 가 볼 거면 무진이 보냈다고 해. 문지기가 한 번은 웃어 줄 거야. 두 번은 안 웃고."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/GT.txt"
+}

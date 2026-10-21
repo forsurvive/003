@@ -75,7 +75,7 @@ def w_ticket_booth():
     d = ImageDraw.Draw(im)
     d.rectangle([0, 0, 95, 61], fill=C("P12"))
     d.rectangle([2, 2, 93, 13], fill=C(INK))                              # 전광판
-    put_text(im, "부산 23:50 매진", 10, 2, "P59", size=8)
+    put_text(im, "부산23:50 매진", 2, 2, "P59", size=8)
     for i in range(3):
         x0 = 4 + i * 31
         d.rectangle([x0, 18, x0 + 27, 46], fill=C("P13")); d.rectangle([x0, 18, x0 + 27, 46], outline=C("P11"))
@@ -121,8 +121,22 @@ def shoe_stall():
     d.line([52, 18, 58, 14], fill=C("P17")); d.rectangle([56, 12, 60, 15], fill=C("P06"))   # 망치
     d.ellipse([4, 17, 10, 21], fill=C("P48")); d.ellipse([5, 17, 9, 19], fill=C("P02"))    # 구두약 깡통
     d.rectangle([22, 36, 34, 39], fill=C("P05")); d.line([24, 39, 22, 45], fill=C("P05")); d.line([32, 39, 34, 45], fill=C("P05"))   # 의자
-    d.rectangle([38, 2, 62, 10], fill=C("P21")); d.rectangle([38, 2, 62, 10], outline=C("P17"))
-    put_text(im, "구두 수선", 39, 1, "P02", size=8)
+    d.rectangle([34, 1, 63, 11], fill=C("P21")); d.rectangle([34, 1, 63, 11], outline=C("P17"))
+    put_text(im, "구두수선", 35, 1, "P02", size=8)
+    return im
+
+
+# ================================================================================================ 침상 칸(1×2)
+def rent_cot():
+    """침상 칸(32×60, 세로): 쇠파이프 간이침대 · 회색 담요 · 꽃 이름 꼬리표(번호 대신 — 안개꽃 · 백합 · 수국)."""
+    im = img(32, 60)
+    d = ImageDraw.Draw(im)
+    d.rectangle([3, 8, 28, 56], fill=C("P06")); d.rectangle([3, 8, 28, 56], outline=C("P04"))
+    d.rectangle([5, 10, 26, 18], fill=C("P09")); d.line([5, 18, 26, 18], fill=C("P07"))        # 베개
+    d.rectangle([5, 20, 26, 54], fill=C("P12")); d.line([5, 30, 26, 30], fill=C("P13"))        # 담요
+    for x in (3, 28):
+        d.line([x, 56, x, 59], fill=C("P05"))
+    d.rectangle([20, 2, 30, 8], fill=C("P09")); d.point((25, 5), fill=C("P53"))               # 꽃 꼬리표
     return im
 
 
@@ -137,6 +151,7 @@ PROPS_GT = {
     "w_ticket_booth": _r(w_ticket_booth, 3, 0, "wall", dx=0, dy=2),
     "w_timetable": _r(w_timetable, 2, 0, "wall", dx=0, dy=2),
     "gt_shoe_stall": _r(shoe_stall, 2, 1, down=-2),
+    "gt_rent_cot": _r(rent_cot, 1, 2, down=-2),
 }
 
 STATES_GT = {

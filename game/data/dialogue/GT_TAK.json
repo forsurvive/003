@@ -1,0 +1,708 @@
+{
+ "id": "GT_TAK",
+ "title": "구두 수선 탁만수",
+ "loc": "L-UG-39",
+ "npc": "N-UG-501",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "COAT0": 8,
+  "ASKED": 12,
+  "MENU": 15,
+  "GO": 16,
+  "GOFAIL": 20,
+  "CAPS": 22,
+  "CAPS36B": 24,
+  "CAPS36": 25,
+  "CAPS60": 28,
+  "COAT": 31,
+  "COATNO": 35,
+  "ESCORTING": 37,
+  "COATBACK": 39,
+  "COATBACK2": 42,
+  "COATLOST": 45,
+  "AFTER": 48,
+  "AFTER2": 53,
+  "AFTER3": 55,
+  "AFTER4": 57,
+  "AFTER5": 59,
+  "AFTERGO": 60,
+  "GO2": 61,
+  "SHOP": 65,
+  "REUNION": 67,
+  "MEET": 71,
+  "MEET_COAT": 77,
+  "MEET_SHOP": 78,
+  "MEET_B": 82,
+  "REUNION_LIE": 85,
+  "REUNION_DEAD": 92
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "FQ_JH02_TAK == 4",
+   "to": "REUNION"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH02_TAK == 5",
+   "to": "SHOP"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH02_TAK == 2",
+   "to": "ESCORTING"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH02_COAT == 2",
+   "to": "COATBACK"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH02_SOL >= 2",
+   "to": "AFTER"
+  },
+  {
+   "op": "if",
+   "cond": "FQJH02_STAGE >= 10 and FQJH02_STAGE < 100",
+   "to": "ASKED"
+  },
+  {
+   "op": "line",
+   "who": "N-UG-501",
+   "emo": "기본",
+   "text": "굽 갈아 줄까? 밑창은 사람 따라 닳아. 빨리 걷는 사람은 앞이, 망설이는 사람은 뒤꿈치가."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "그 코트, 오래돼 보이네요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "COAT0",
+     "id": "GT_TAK:1:0"
+    },
+    {
+     "text": "다음에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "GT_TAK:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "jh02",
+   "args": [
+    "met"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-UG-501",
+   "emo": "기본",
+   "text": "2077년 거야. 영등포 지하상가에서 샀지. …빚진 데가 있어. 값을 아직 못 치렀거든."
+  },
+  {
+   "op": "line",
+   "who": "N-UG-501",
+   "emo": "슬픔",
+   "text": "그날 영등포행 막차를 놓쳤어. 그 뒤로 200년. 갚으러 가기엔 좀 늦었지."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "jh02",
+   "args": [
+    "met"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-UG-501",
+   "emo": "놀람",
+   "text": "…노 사장? 복희 의류 노복희? (코트 깃을 여민다) 살아 계셔? 그 장부도?"
+  },
+  {
+   "op": "line",
+   "who": "N-UG-501",
+   "emo": "슬픔",
+   "text": "18만 원이었지. 그날 밤 그 코트 입고 대피소 들어갔어. 그 코트 덕에 살았는지도 몰라."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "직접 가서 갚으세요. 노 사장님이 기다려요",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "쉬움"
+      }
+     ],
+     "cond": "FQ_JH02_COAT == 0 or FQ_JH02_COAT == 3",
+     "fx": "",
+     "to": "GO",
+     "id": "GT_TAK:2:0",
+     "fail": "GOFAIL"
+    },
+    {
+     "text": "그때 돈을 지금 캡으로 셈해 주세요",
+     "tags": [],
+     "cond": "FQ_JH02_PAY == 0",
+     "fx": "",
+     "to": "CAPS",
+     "id": "GT_TAK:2:1"
+    },
+    {
+     "text": "그 코트를 돌려드리는 것도 셈이죠",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "보통"
+      }
+     ],
+     "cond": "FQ_JH02_COAT == 0",
+     "fx": "",
+     "to": "COAT",
+     "id": "GT_TAK:2:2",
+     "fail": "COATNO"
+    },
+    {
+     "text": "생각해 보세요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "GT_TAK:2:3"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-UG-501",
+   "emo": "슬픔",
+   "text": "창피해서 그래. 200년 외상 진 얼굴로 그 가게 앞에 서는 게."
+  },
+  {
+   "op": "line",
+   "who": "N-UG-501",
+   "emo": "기본",
+   "text": "…그래, 가지. 대신 지상은 한 칸만이야. 승차장 지나 반포 쪽 맨홀까지만 같이 가 줘. 거기서부턴 운반조 길로 내가 가."
+  },
+  {
+   "op": "cmd",
+   "name": "jh02",
+   "args": [
+    "escort"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-UG-501",
+   "emo": "슬픔",
+   "text": "못 가. 얼굴을 못 들어. …돈으로 하자. 그게 덜 창피해."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-UG-501",
+   "emo": "기본",
+   "text": "만 원짜리 열여덟 장. 지금 시세로 치면 장당 2캡 — 서른여섯 캡이야."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "서른여섯 캡으로 하죠",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "CAPS36",
+     "id": "GT_TAK:3:0"
+    },
+    {
+     "text": "코트 한 벌 값이었잖아요. 그 코트, 지금 60캡이에요",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "물물교환",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "CAPS60",
+     "id": "GT_TAK:3:1",
+     "fail": "CAPS36B"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-UG-501",
+   "emo": "기본",
+   "text": "코트 값은 코트 값이고, 돈은 돈이지. 서른여섯."
+  },
+  {
+   "op": "cmd",
+   "name": "jh02",
+   "args": [
+    "pay",
+    "36"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-UG-501",
+   "emo": "기본",
+   "text": "(캡을 센다) 노 사장한테 전해 줘. …얼굴은 못 보여 드린다고."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "jh02",
+   "args": [
+    "pay",
+    "60"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-UG-501",
+   "emo": "미소",
+   "text": "…그래, 코트 한 벌 값이지. 이걸로 장부가 맞으면 됐어."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-UG-501",
+   "emo": "놀람",
+   "text": "돌려주라고? (한참 코트를 내려다본다) …셈은 셈이지."
+  },
+  {
+   "op": "cmd",
+   "name": "jh02",
+   "args": [
+    "coat"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "탁만수가 코트를 벗어 건넨다. 팔꿈치가 반들반들하다. 코트를 벗은 그는 한 뼘 작아 보인다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-UG-501",
+   "emo": "기본",
+   "text": "이걸 벗으라고? 이건 옷이 아니라 내 200년이야."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-UG-501",
+   "emo": "기본",
+   "text": "가. 고개는 숙이고 갈게. 승차장에서 한 번만 쉬자."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "has(\"M-424\") == 0",
+   "to": "COATLOST"
+  },
+  {
+   "op": "line",
+   "who": "N-UG-501",
+   "emo": "놀람",
+   "text": "돌아왔네, 내 코트. 노 사장이 안 받았지? …그 양반답다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "코트를 돌려준다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "M-424",
+       "n": 1
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "COATBACK2",
+     "id": "GT_TAK:4:0"
+    },
+    {
+     "text": "조금 더 갖고 있을게요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "GT_TAK:4:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "jh02",
+   "args": [
+    "coatback"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-UG-501",
+   "emo": "미소",
+   "text": "(코트를 입고 단추를 채운다) 이제야 몸이 맞네."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-UG-501",
+   "emo": "슬픔",
+   "text": "내 코트는? …(한참 빈손을 본다) 됐어. 200년 입었으면 됐지. 장부 셈만 맞으면 돼."
+  },
+  {
+   "op": "cmd",
+   "name": "jh02",
+   "args": [
+    "coatlost"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH02_SOL == 2",
+   "to": "AFTER2"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH02_SOL == 3",
+   "to": "AFTER3"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH02_SOL == 4",
+   "to": "AFTER4"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH02_SOL == 5",
+   "to": "AFTER5"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-UG-501",
+   "emo": "미소",
+   "text": "노 사장이 받았대? …고마워. 굽 갈 일 있으면 와. 반값이야."
+  },
+  {
+   "op": "goto",
+   "to": "AFTERGO"
+  },
+  {
+   "op": "line",
+   "who": "N-UG-501",
+   "emo": "기본",
+   "text": "남이 내 빚을 갚았다며. 그럼 이제 내가 너한테 빚졌네. 굽은 공짜로 갈아 줄게."
+  },
+  {
+   "op": "goto",
+   "to": "AFTERGO"
+  },
+  {
+   "op": "line",
+   "who": "N-UG-501",
+   "emo": "미소",
+   "text": "만 원짜리로 갚았다고? 하하. 그게 제일 맞는 돈이지. 그 종이, 나도 장롱에 몇 장 있었는데."
+  },
+  {
+   "op": "goto",
+   "to": "AFTERGO"
+  },
+  {
+   "op": "line",
+   "who": "N-UG-501",
+   "emo": "기본",
+   "text": "노 사장 소식은? …아니, 됐어. 모르는 게 나아. (코트 단추를 만지작거린다)"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "돈은 갚았어도 얼굴은 아직이잖아요. 같이 가요",
+     "tags": [],
+     "cond": "FQ_JH02_TAK <= 1 and (FQ_JH02_COAT == 0 or FQ_JH02_COAT == 3)",
+     "fx": "",
+     "to": "GO2",
+     "id": "GT_TAK:5:0"
+    },
+    {
+     "text": "다음에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "GT_TAK:5:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-UG-501",
+   "emo": "슬픔",
+   "text": "…얼굴 값은 안 갚았지. 그건 캡으로 안 되는 거고."
+  },
+  {
+   "op": "line",
+   "who": "N-UG-501",
+   "emo": "기본",
+   "text": "지상은 한 칸만이야. 승차장 지나 반포 쪽 맨홀까지. 거기서부턴 운반조 길로 내가 가."
+  },
+  {
+   "op": "cmd",
+   "name": "jh02",
+   "args": [
+    "escort"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-UG-501",
+   "emo": "미소",
+   "text": "굽 갈아 줄까? 여기선 구두 신고 다니는 사람이 많아서 일이 넘쳐. 셔터가 올라간 동네라 그런가."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"C-050\") == 1",
+   "to": "REUNION_DEAD"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH02_SOL == 5",
+   "to": "REUNION_LIE"
+  },
+  {
+   "op": "line",
+   "who": "N-UG-501",
+   "emo": "슬픔",
+   "text": "(칸막이 앞에서 코트 단추를 만지작거린다) 먼저 말 좀 걸어 줄래? 노 사장한테."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "노 사장님, 손님 오셨어요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "MEET",
+     "id": "GT_TAK:6:0"
+    },
+    {
+     "text": "조금 더 있다가요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "GT_TAK:6:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "노복희가 장부에서 고개를 든다. 한참 코트를 본다."
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "놀람",
+   "text": "…그 코트. 단추 하나 바꿔 달았네."
+  },
+  {
+   "op": "line",
+   "who": "N-UG-501",
+   "emo": "슬픔",
+   "text": "18만 원. 200년 늦었어."
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "미소",
+   "text": "장부를 덮으려면 마지막 줄이 맞아야 돼. 200년 걸렸네. (줄을 긋는다)"
+  },
+  {
+   "op": "if",
+   "cond": "FQJH02_STAGE < 100",
+   "to": "MEET_COAT"
+  },
+  {
+   "op": "goto",
+   "to": "MEET_SHOP"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "(주인공에게) 코트 한 벌 값은 코트 한 벌로. 우리 가게 마지막 겨울 코트야. 입어."
+  },
+  {
+   "op": "if",
+   "cond": "FQJH01_STAGE == 100",
+   "to": "MEET_B"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "돈은 됐고. 광장 노점 한 칸 비었어. 구두 고칠 데가 없어서 다들 맨발이야."
+  },
+  {
+   "op": "cmd",
+   "name": "jh02",
+   "args": [
+    "reunion"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "돈은 됐고. B구역에 빈 칸 있어. 쥐 나간 데. 구두 고칠 데가 없어서 다들 맨발이야."
+  },
+  {
+   "op": "cmd",
+   "name": "jh02",
+   "args": [
+    "reunion"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "노복희가 장부에서 고개를 든다. 코트를 보고, 주인공을 본다."
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "분노",
+   "text": "…갚았다더니. 장부는 맞춰도 사람은 안 맞췄네."
+  },
+  {
+   "op": "line",
+   "who": "N-UG-501",
+   "emo": "놀람",
+   "text": "갚았다고 했어? (주인공을 본다) …내가 갚으러 왔어. 지금."
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "(줄을 다시 긋는다) 이번엔 진짜로."
+  },
+  {
+   "op": "cmd",
+   "name": "jh02",
+   "args": [
+    "caught"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "jh02",
+   "args": [
+    "reunion"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-UG-501",
+   "emo": "슬픔",
+   "text": "…노 사장이. (코트 깃을 여민다) 장부는 누가 덮어."
+  },
+  {
+   "op": "cmd",
+   "name": "jh02",
+   "args": [
+    "reunion_dead"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-JH-02.txt"
+}

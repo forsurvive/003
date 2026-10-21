@@ -1,0 +1,48 @@
+{
+ "id": "GT_TIMETABLE",
+ "title": "2077 출발 시각표",
+ "loc": "L-UG-39",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "SMUDGE": 4
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "2077 고속버스 출발 시각표. 부산 23:50 · 광주 23:10 · 대전 22:40 · 영등포 23:40."
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-UG-501\") == 0 and FQ_JH02_TAK <= 1",
+   "to": "SMUDGE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "맨 아랫줄 영등포 23:40만 손때가 까맣다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "맨 아랫줄 영등포 23:40만 손때가 까맣다. 누가 밤마다 이 줄을 짚는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/GT.txt"
+}

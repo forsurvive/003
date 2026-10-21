@@ -1,0 +1,57 @@
+# 고속터미널 지하상가 GT-02 꽃상가 구역(SD-09f L-UG-39 앵커 '수경 화단' · 환경 ① 2077-10-23 결혼식 화환 예약 꼬리표, 단계 1-12d)
+# 36×18 · 서쪽 상가 1구역(GT-01). 원자 전지 조명 아래 수경 화단 여덟 — 약초 · 식용 꽃 · 2077 결혼식 품종. 표라희(약초 · 꽃 · 해독 재료).
+map GT-02 꽃상가 구역
+set jm
+grid
+####################################
+####################################
+####################################
+#tttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttt#
+ttttttttttttttttttttttttttttttttttt#
+ttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttt#
+####################################
+end
+exit 0 8 GT-01 from_GT-02
+exit 0 9 GT-01 from_GT-02
+mark from_GT-01 1 8 E
+prop w_shutter 3 1
+text 3 2 "'신부 꽃집'. 셔터 아래 문턱에 바스러진 부케 하나." w=2
+prop w_shop_clothes 7 1
+text 7 2 "'영원 플라워'. 셔터를 다 올렸다. 지금은 표라희의 씨앗 창고." w=2
+prop w_shutter2 11 1
+prop w_shutter3 15 1
+prop w_shutter 19 1
+prop w_shutter2 23 1
+prop w_shutter3 27 1
+prop w_shutter 31 1
+prop gt_wreath_rack 4 4
+text 4 4 "화환 진열대. 꼬리표 — '2077. 10. 23. 결혼식 화환 예약 접수 · 신랑 측 · 오후 6시'." w=2 scene=GT_WREATH
+prop gt_wreath_rack 26 4
+text 26 4 "화환 진열대. 마른 화환 두 개. 리본 글씨 '축 결혼' — 반쯤 바랬다." w=2
+prop gt_hydro_bed 6 7
+prop gt_hydro_bed 11 7
+prop gt_hydro_bed 16 7
+prop gt_hydro_bed 21 7
+prop gt_hydro_bed 6 12
+prop gt_hydro_bed 11 12
+prop gt_hydro_bed 16 12
+prop gt_hydro_bed 21 12
+text 6 7 "수경 화단. 원자 전지 조명 아래 흰 꽃이 핀다. 꽃잎에 물방울 — 조명 열기에 맺혔다." w=2 scene=GT_BED
+box 16 12 crate w=2 owner=N-UG-039 name="꽃 수확 상자"
+npc N-UG-039 27 9 W bark="이건 2077년 결혼식 꽃 품종이에요. 아직도 피어요."
+prop planter_l 30 13
+prop planter_s 33 6
+prop drum 32 15
+text 32 15 "물 드럼통. 수조로 내려가는 호스 셋. 손으로 쓴 물 당번표 '월 · 수 · 금 표라희'."
+prop work_lamp 13 15

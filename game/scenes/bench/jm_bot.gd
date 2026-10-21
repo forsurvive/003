@@ -571,6 +571,29 @@ func _ready() -> void:
 				["check", "FQ_JH01_SHOP_M == 1 and FQ_JH01_SHOP_S == 1", "다음 날 재개장(광장을 떠났다 오면)"],
 				["warp", "J-03", "from_J-08"], ["wait", 1.5], ["go", 30, 4, "J-03"], ["wait", 1.0], ["shot", "jh01_sagong"],
 				["warp", "J-08", "from_J-03"], ["wait", 1.5], ["calm"], ["go", 8, 5, "J-08"], ["wait", 1.0], ["shot", "jh01_shops"]]
+		"jh02":                                                         # 1-12d FQ-JH-02: 상인회 책상 네 번째 장부(훅) → 노복희 부탁(10) → 고터 지하상가 탁만수(30) →
+			st.vars.set_v("AFF_JH", 12)                                  #   [화술 쉬움] 호위 → 승차장 '영등포 23:40' → 반포 쪽 맨홀(혼자 지하로) → 다음 날 J-03 칸막이 앞 → 재회(100) → 광장 노점
+			st.vars.set_v("PC_SKP_SPEECH", 100)
+			st.vars.set_v("GAME_DAY", 6)
+			host.date_text = "2277. 10. 29.  10:00"
+			host.enter("J-03", "from_J-02")
+			plan = [["hp", 3000], ["wait", 1.0], ["want", []], ["go", 3, 25, "J-03"], ["use", 3, 24], ["wait", 1.5], ["shot", "jh02_ledger"],
+				["check", "FQ_JH02_SEEN == 1", "네 번째 장부 마지막 줄(훅)"],
+				["want", ["장부 마지막 줄", "자세히 듣는다"]], ["talk", "C-050"], ["wait", 1.5],
+				["check", "FQJH02_STAGE == 10", "노복희 부탁(10)"],
+				["warp", "GT-01", "from_W"], ["wait", 1.5], ["calm"], ["shot", "jh02_gt"],
+				["want", ["직접 가서 갚으세요"]], ["go", 22, 11, "GT-01"], ["talk", "N-UG-501"], ["wait", 2.0],
+				["check", "FQ_JH02_TAK == 2 and FQJH02_STAGE == 30", "탁만수 호위 시작(30)"],
+				["warp", "W", "gt_yard"], ["wait", 2.0], ["calm"], ["go", _spot_o("L-R07-12").x + 5, _spot_o("L-R07-12").y + 4],
+				["go", _spot_o("L-R07-12").x + 8, _spot_o("L-R07-12").y + 3],
+				["until", "FQ_JH02_YARD == 1", 15.0, "승차장 — 영등포 막차 앞에서 멈춘다", "jh02_yard"],
+				["warp", "W", "gt_tunnel"], ["wait", 2.0], ["calm"], ["go", _spot_o("L-R07-13").x + 1, _spot_o("L-R07-13").y + 3],
+				["go", _spot_o("L-R07-13").x + 3, _spot_o("L-R07-13").y + 2],
+				["until", "FQ_JH02_TAK == 3", 15.0, "반포 쪽 맨홀 — 혼자 운반조 길로", "jh02_tunnel"],
+				["hours", 21], ["wait", 1.0], ["check", "FQ_JH02_TAK == 4", "다음 날 06시 뒤 — J-03 칸막이 앞"],
+				["warp", "J-03", "from_J-02"], ["wait", 1.5], ["calm"], ["want", ["손님 오셨어요"]], ["go", 10, 22, "J-03"], ["talk", "N-UG-501"], ["wait", 3.0], ["shot", "jh02_reunion"],
+				["check", "FQJH02_STAGE == 100 and FQ_JH02_SOL == 1 and FQ_JH02_SHOP == 2 and has(\"A-019\")", "재회(100) · 장사꾼 코트 · 광장 노점"],
+				["warp", "J-02", "from_J-03"], ["wait", 1.0], ["warp", "J-03", "from_J-02"], ["wait", 1.5], ["go", 34, 14, "J-03"], ["wait", 1.0], ["shot", "jh02_stall"]]
 		"db":                                                           # 1-D1 대방 지하차도 · UQ-71: 북쪽 입구로 들어가 분대 등 뒤에서 웅크려 엿듣기(사흘 기한) → 펌프실 운전기사 메모 →
 			st.vars.set_v("PC_SKP_SCIENCE", 60)                          #   허리 물 버스에서 정지 레버로 봉인(카르마 · 지대 꺼짐) → 남쪽 입구로 나와 문 앞에 선다
 			st.vars.set_v("GAME_DAY", 8)

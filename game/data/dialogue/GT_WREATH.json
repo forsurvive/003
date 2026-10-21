@@ -1,0 +1,48 @@
+{
+ "id": "GT_WREATH",
+ "title": "화환 진열대",
+ "loc": "L-UG-39",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "NOONE": 4
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "마른 화환 두 개. 꼬리표 — '2077. 10. 23. 결혼식 화환 예약 접수 · 신랑 측 · 오후 6시 · 영등포 예식장'."
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-UG-039\") == 1",
+   "to": "NOONE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "받으러 오지 않은 화환이다. 표라희는 이걸 버리지 않는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "받으러 오지 않은 화환이다. 수경 화단을 돌보던 사람이 없어도, 아무도 이걸 치우지 않는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/GT.txt"
+}

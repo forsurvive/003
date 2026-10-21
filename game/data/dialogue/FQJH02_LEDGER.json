@@ -1,0 +1,77 @@
+{
+ "id": "FQJH02_LEDGER",
+ "title": "상인회장 책상",
+ "loc": "L-R02-11",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "CLOSED": 6,
+  "BILLS": 9
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "상인회장 책상. 장부 세 권과 출입패 상자. '등록 같은 거 없는 사람들'의 이름이 줄지어 적혀 있다."
+  },
+  {
+   "op": "if",
+   "cond": "FQJH02_STAGE >= 100",
+   "to": "CLOSED"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "맨 밑에 깔린 네 번째 장부 — 표지에 '복희 의류 외상 2077'. 펼친 장마다 줄이 그어졌다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "마지막 줄 하나만 안 그어졌다. '탁만수 · 코트 한 벌 · 180,000 · 10. 23.'"
+  },
+  {
+   "op": "cmd",
+   "name": "jh02",
+   "args": [
+    "seen"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH02_SOL == 4",
+   "to": "BILLS"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "네 번째 장부가 덮여 있다. 표지에 노복희 글씨 — '끝'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "네 번째 장부가 덮여 있다. 표지 사이로 2077년 만 원짜리 지폐 끝이 비죽 나와 있다. 표지에 '끝'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-JH-02.txt"
+}

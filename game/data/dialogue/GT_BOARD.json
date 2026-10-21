@@ -1,0 +1,64 @@
+{
+ "id": "GT_BOARD",
+ "title": "번영회 공고판",
+ "loc": "L-UG-39",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "GONE": 5,
+  "MOURN": 7
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "번영회 공고판. '침상 칸 10캡 — 사무실' · '세이프빌 전기 공급 협상 중 — 번영회장' · '3구역 셔터 손대지 말 것'."
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH02_DONE >= 1 and FQ_JH02_SOL == 1",
+   "to": "GONE"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-UG-501\") == 1",
+   "to": "MOURN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "귀퉁이에 손글씨. '구두 굽 갈이 · 밑창 · 탁만수 — 좌판에 없으면 시간표 앞'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "귀퉁이 손글씨에 줄이 그어졌다. 그 밑에 다른 글씨 — '탁 영감 영등포로 이사. 굽은 이제 무진이.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "귀퉁이 손글씨 옆에 검은 리본 한 줄."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/GT.txt"
+}

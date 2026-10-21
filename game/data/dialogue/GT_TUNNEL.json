@@ -1,0 +1,61 @@
+{
+ "id": "GT_TUNNEL",
+ "title": "열린 맨홀",
+ "loc": "L-R07-13",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TAK": 3
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "FQ_JH02_TAK == 2 and dead(\"N-UG-501\") == 0",
+   "to": "TAK"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "열린 맨홀. 사다리 가로대에 분필 화살표와 '운반조' 표식. 밑에서 물 흐르는 소리."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-UG-501",
+   "emo": "기본",
+   "text": "여기서부턴 내 길이야. 운반조 표식만 따라가면 영등포 지하시장 후문이 나와. 내일 아침이면 닿아."
+  },
+  {
+   "op": "line",
+   "who": "N-UG-501",
+   "emo": "슬픔",
+   "text": "먼저 가서 노 사장한테… 아니, 아무 말도 하지 마. 내가 할게."
+  },
+  {
+   "op": "cmd",
+   "name": "jh02",
+   "args": [
+    "tunnel"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "탁만수가 코트 자락을 여미고 사다리를 내려간다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-JH-02.txt"
+}

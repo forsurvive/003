@@ -1,0 +1,55 @@
+{
+ "id": "GT_YARD",
+ "title": "승차장 7번",
+ "loc": "L-R07-12",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TAK": 3
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "FQ_JH02_TAK == 2 and FQ_JH02_YARD == 0 and dead(\"N-UG-501\") == 0",
+   "to": "TAK"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "승차장 7번 표지. 기둥에 붙은 2077 시간표 — 맨 아랫줄 '영등포 막차 23:40'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "jh02",
+   "args": [
+    "yard"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-UG-501",
+   "emo": "슬픔",
+   "text": "(시간표 앞에서 멈춘다) 23시 40분. 이거 탔으면 그날 밤 영등포에 있었어. 옷값 갚고, 대피소도 거기서 갔겠지."
+  },
+  {
+   "op": "line",
+   "who": "N-UG-501",
+   "emo": "기본",
+   "text": "…놓친 걸 200년 들고 다녔네. 가자. 맨홀은 저쪽이야."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-JH-02.txt"
+}

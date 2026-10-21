@@ -8,27 +8,28 @@
   "START": 0,
   "TOP": 3,
   "MENU": 6,
-  "JOB": 7,
-  "J6": 10,
-  "J7": 13,
-  "J8": 16,
-  "ONJOB": 19,
-  "NOKIGUN": 21,
-  "CARTHOME": 25,
-  "LOSTP": 28,
-  "RECOVERED": 31,
-  "NOKIGUN2": 35,
-  "BACKJOB": 37,
-  "RETURN": 40,
-  "RETURN2": 45,
-  "RETURN2L": 48,
-  "RETURN3": 50,
-  "CLOTH": 52,
-  "UNCLOTH": 55,
-  "TEACH": 58,
-  "WHERE": 62,
-  "SEAL": 64,
-  "SHOP": 66
+  "TAK": 7,
+  "JOB": 11,
+  "J6": 14,
+  "J7": 17,
+  "J8": 20,
+  "ONJOB": 23,
+  "NOKIGUN": 25,
+  "CARTHOME": 29,
+  "LOSTP": 32,
+  "RECOVERED": 35,
+  "NOKIGUN2": 39,
+  "BACKJOB": 41,
+  "RETURN": 44,
+  "RETURN2": 49,
+  "RETURN2L": 52,
+  "RETURN3": 54,
+  "CLOTH": 56,
+  "UNCLOTH": 59,
+  "TEACH": 62,
+  "WHERE": 66,
+  "SEAL": 68,
+  "SHOP": 70
  },
  "ops": [
   {
@@ -138,14 +139,45 @@
      "id": "U04_SOMIN:1:8"
     },
     {
+     "text": "고터 지하상가에 구두 고치는 구울 알아?",
+     "tags": [],
+     "cond": "FQJH02_STAGE == 10 and FQ_JH02_KNOW == 0",
+     "fx": "",
+     "to": "TAK",
+     "id": "U04_SOMIN:1:9"
+    },
+    {
      "text": "다음에",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "U04_SOMIN:1:9"
+     "id": "U04_SOMIN:1:10"
     }
    ]
+  },
+  {
+   "op": "line",
+   "who": "N-UG-009",
+   "emo": "기본",
+   "text": "탁 영감? 고터 상가 1구역 구두 수선. 밤마다 승차장 시간표 앞에 서 있어. 2077년 코트를 입고."
+  },
+  {
+   "op": "line",
+   "who": "N-UG-009",
+   "emo": "기본",
+   "text": "우리 수레가 고터 맨홀까지 가. 영감도 그 길은 알아. 안 올 뿐이지."
+  },
+  {
+   "op": "cmd",
+   "name": "jh02",
+   "args": [
+    "know"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
   },
   {
    "op": "line",

@@ -1,0 +1,26 @@
+{
+ "id": "GT_YARD_BUS",
+ "title": "고속버스",
+ "loc": "L-R07-12",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "행선판 '영등포 23:40'. 운전석 문은 안에서 잠겼다. 창문 먼지에 손가락 글씨 — 이름 몇 개와 '내일 첫차'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/GT.txt"
+}

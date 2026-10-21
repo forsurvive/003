@@ -1,0 +1,44 @@
+# 고속터미널 지하상가 GT-03 터미널 사무동 지하(SD-09f L-UG-39 '터미널 사무동 지하(배차 일지, 매표소 단말 — 위수안)' · 환경 ② 전광판 '부산 23:50 매진', 단계 1-12d)
+# 30×14 · 북쪽 상가 1구역(GT-01). 서쪽 매표소 · 대합실 의자 · 동쪽 관리실(배차 일지 · 상가 관리실 서랍). 동쪽 끝 3호선 승강장 계단은 공동체가 막아 둠(U18).
+map GT-03 터미널 사무동 지하
+set jm
+grid
+##############tt##############
+##############tt##############
+##############tt##############
+#tttttttttttttttttt#ttttttttt#
+#tttttttttttttttttt#ttttttttt#
+#tttttttttttttttttt#ttttttttt#
+#tttttttttttttttttt#ttttttttt#
+#tttttttttttttttttt#ttttttttt#
+#tttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttt#
+#tttttttttttttttttt#ttttttttt#
+#tttttttttttttttttt#ttttttttt#
+#tttttttttttttttttt#ttttttttt#
+##############################
+end
+exit 14 0 GT-01 from_GT-03
+exit 15 0 GT-01 from_GT-03
+mark from_GT-01 14 3 S
+prop w_ticket_booth 2 1
+text 3 2 "매표소. 가운데 창구만 불이 켜져 있다." w=3
+npc N-UG-041 4 3 S bark="부산행 23시 50분, 지연입니다. 200년째요."
+prop w_timetable 8 1
+text 8 2 "2077 출발 시각표. 맨 아랫줄 '영등포 23:40'에 손때가 까맣다." w=2 scene=GT_TIMETABLE
+prop bench_o 4 8
+prop bench_o 8 8
+prop bench_o 12 8
+prop bench_o 4 11
+prop bench_o 8 11
+text 8 11 "대합실 의자. 등받이에 볼펜 낙서 — '23:40 영등포 막차 놓침. 내일 첫차.' 날짜는 없다." w=2
+# 관리실
+prop office_desk 22 4
+text 22 4 "배차 일지. 2077. 10. 23. 22:00 이후 칸이 비었고, 맨 아래 한 줄 — '전 차량 운행 중지. 승객은 지하상가로'." w=2 scene=GT_DISPATCH
+prop file_cabinet 27 3
+box 27 3 cabinet name="상가 관리실 서랍"
+prop typewriter_desk 24 10
+prop w_shutter_big 25 1
+text 25 2 "3호선 승강장 계단. 셔터를 내리고 철판까지 댔다. 분필 '세이프빌 순찰 — 이 길로 오지 말 것'." w=3
+prop work_lamp 10 6
+prop work_lamp 24 7

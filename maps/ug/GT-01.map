@@ -1,0 +1,89 @@
+# 고속터미널 지하상가 GT-01 상가 1구역(SD-09f L-UG-39 '상가 1구역(상점 거리, 번영회 사무실)', 단계 1-12d FQ-JH-02)
+# 46×20 · 서쪽 계단 = 월드 고속터미널역 입구 · 동쪽 꽃상가(GT-02) · 남쪽 터미널 사무동 지하(GT-03) · 북동 3구역 봉쇄 셔터(대피민 구울 휴면 — 열지 않는다).
+# 정착지 연합 비가맹 자치 공동체(약호 GT). 번영회장 여태경(사무실) · 고속터미널 무진(잡화 · 물물교환 · 하급 수리 — 낮엔 세이프빌 왕복) · 탁만수(구두 수선 좌판, JH-02).
+# 상점 거리 셔터 상호는 2077년 그대로 덧칠(꽃 · 한복 · 혼수 이불 · 안경 — 결혼식 손님 거리).
+map GT-01 고속터미널 지하상가 1구역
+set jm
+grid
+##############################################
+##############################################
+##############################################
+#ttttttttt#tttttttttttttttttttttttttttttttttt#
+#ttttttttt#tttttttttttttttttttttttttttttttttt#
+#ttttttttt#tttttttttttttttttttttttttttttttttt#
+#ttttttttt#tttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttt#
+tttttttttttttttttttttttttttttttttttttttttttttt
+tttttttttttttttttttttttttttttttttttttttttttttt
+#tttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttttttttttttttttttttttt#
+######################tt######################
+end
+exit 0 9 W L-UG-39
+exit 0 10 W L-UG-39
+exit 45 9 GT-02 from_GT-01
+exit 45 10 GT-02 from_GT-01
+exit 22 19 GT-03 from_GT-01
+exit 23 19 GT-03 from_GT-01
+mark from_W 1 9 E
+mark from_GT-02 44 9 W
+mark from_GT-03 22 18 N
+mark tak_seat 21 11 S
+prop w_sign_welcome 2 1
+text 2 2 "손글씨 현판 '고터 지하상가 번영회 — 등록증 없어도 손님'. 그 밑에 작게 '세이프빌 사람도 손님'." w=2
+npc N-GT-M1 2 8 E look=M1-S3-HR02-H1-T06-1-PF01-HD04-EY00-PR034 bark="장사하러 왔으면 들어가. 싸우러 왔으면 나가고."
+npc N-GT-M2 2 11 E look=F1-S2-HR07-H3-T03-0-PF12-HD00-EY00-PR007 bark="총은 넣어 둬. 여긴 꽃 냄새 나는 데야."
+prop board_bc 6 9 state=official
+text 6 9 "번영회 공고판. '침상 칸 10캡 — 사무실' · '세이프빌 전기 공급 협상 중' · '3구역 셔터 손대지 말 것'." scene=GT_BOARD
+# 번영회 사무실(서쪽 칸막이 안)
+prop office_desk 3 4
+prop file_cabinet 1 3
+box 1 3 cabinet owner=N-UG-038 name="번영회 서류함"
+npc N-UG-038 4 5 S bark="거래 허가는 여기서. 장사 규칙은 하나야 — 꽃 밟지 말 것."
+text 3 4 "번영회 장부. 세이프빌 거래 기록 · 침상 칸 대장 · 맨 뒤 장 '2077 대피민 명단 — 이 상가에서 밤을 난 사람'." w=2 scene=GT_LEDGER
+prop planter_p 8 4
+prop screen_partition 9 7
+# 상점 거리(북쪽 벽)
+prop w_shop_clothes 12 1
+text 12 2 "'명희 한복'. 셔터에 2077-10-23 날짜가 찍힌 대여 예약표가 아직 꽂혀 있다." w=2
+prop w_shutter 15 1
+prop w_shutter2 18 1
+text 18 2 "'혼수 이불'. 셔터 아래로 솜이 삐져나왔다. 쥐가 아니라 사람이 꺼내 간 자리." w=2
+prop w_shop_parts 21 1
+prop w_shutter3 24 1
+text 24 2 "'광명 안경'. 반쯤 올린 셔터 안 진열대에 안경테만 수십 개. 렌즈는 하나도 없다." w=2
+prop w_shutter 27 1
+prop w_shop_meds 30 1
+prop w_shutter2 33 1
+prop w_shutter3 36 1
+prop w_shutter_big 41 1
+text 41 2 "3구역 셔터. 용접 자국과 쇠사슬 세 겹. 분필 — '대피민 휴면 — 열지 말 것. 번영회'." w=3
+# 탁만수 구두 수선 좌판(JH-02)
+prop gt_shoe_stall 20 12
+npc N-UG-501 21 11 S cond="FQ_JH02_TAK == 0 or FQ_JH02_TAK == 1" bark="굽 갈아 줄까? 밑창은 사람 따라 닳아."
+text 20 12 "구두 수선 좌판. 구두골 옆에 낡은 코트가 걸려 있었던 못 자국 — 주인이 입고 나갔다." w=2 cond="FQ_JH02_TAK >= 2 and dead(\"N-UG-501\") == 0"
+text 20 12 "구두 수선 좌판. 망치와 구두골이 그대로다. 공동체 누군가 흰 국화 한 송이를 올려 두었다." w=2 cond="dead(\"N-UG-501\") == 1"
+# 무진 잡화(낮엔 세이프빌 왕복)
+prop stall_parts 30 12
+npc N-UG-040 31 11 S cond="GAME_HOUR >= 17 or GAME_HOUR < 8" bark="세이프빌 사람들은 값은 안 깎아. 대신 사람을 깎지."
+text 30 12 "잡화 좌판. 분필 — '무진 — 세이프빌 다녀옴. 해 지면.'" w=2 cond="GAME_HOUR >= 8 and GAME_HOUR < 17"
+# 침상 칸(번영회 10캡)
+prop gt_rent_cot 36 15
+prop gt_rent_cot 39 15
+prop gt_rent_cot 42 15
+text 36 16 "침상 칸. 번호 대신 꽃 이름이 붙어 있다 — '안개꽃 · 백합 · 수국'." w=8
+prop crate_o 44 17
+box 44 17 trash name="상가 고물 상자"
+prop work_lamp 14 8
+prop work_lamp 28 8
+prop work_lamp 40 8
+prop bench_o 26 15
+prop plant_pot 12 16
+prop plant_pot 34 12

@@ -6,12 +6,19 @@
 ## 구동부: 0 기어 빠짐 · 1 고침 · 2 내림(안쪽을 가둔다) · 3 휨(셔터 칸에 선 몹을 깔았다 — 틈이 남아 못 가둔다). 안쪽 굴이 열린 채 내리면 쥐가 굴로 J-11에 샌다.
 ## 다 됨(40): 굴 셋이 닫히고 · 앞쪽에 쥐가 없고 · 안쪽은 비었거나 셔터로 가뒀고 · J-11로 샌 쥐가 없을 때. 노복희에게 알리면 100.
 ## 실패(200): 노복희 사망(영구 적대 SD-06 §10.10) · 셔터 폭파(영구 적대) · 지하시장 적대(AFF_JH ≤ −60).
+##
+## FQ-JH-02 「2077년 외상 장부」(단계 1-12d, SD-04d §8.4). 원고: script/act1/FQ-JH-02.txt · MQ-103.txt(노복희 JH02_*) · GT.txt(고터 지하상가) · U04.txt(소민서 귀띔).
+## 탁만수가 있는 곳은 FQ_JH02_TAK 한 곳(P1): 0 · 1 고터 좌판 · 2 호위 중(지상 한 청크) · 3 운반조 길로 혼자(다음 날 06시 뒤) · 4 J-03 칸막이 앞 · 5 새 가게(SHOP 1 B-07 · 2 J-03 광장).
+## 정리(SOL)는 한 번만 보상(단계 100은 하나 — 재회가 뒤에 와도 보상 없이 결과만): 2 환산 · 3 대납 · 4 지폐 · 5 거짓(7일 뒤 소문 −5) · 1 재회 · 6 한쪽이 죽음.
 class_name FqJh
 extends Node
 
 signal want_save(why: String)
 
 const Q1 := "FQ-JH-01"
+const Q2 := "FQ-JH-02"
+const TAK := "N-UG-501"                                                 ## 탁만수(고터 구두 수선 구울)
+const TAK_NEAR := 4.0                                                   ## 호위 중 '곁에 있다'(칸)
 const HOLES := {"a": Vector2i(17, 4), "b": Vector2i(32, 8), "c": Vector2i(43, 11)}   ## 쥐굴 소품 자리(J-08)
 const HOLE_OUT := {"a": Vector2i(17, 5), "b": Vector2i(32, 9), "c": Vector2i(43, 12)}  ## 쥐가 나오는 칸
 const WAVES := {"a": 2, "b": 2, "c": 3}
@@ -38,6 +45,9 @@ func setup(h: InteriorHost, is_log := false) -> void:
 	st = h.st
 	log_on = is_log
 	host.ev.handlers["jh01"] = _cmd1
+	host.ev.handlers["jh02"] = _cmd2
+	host.combat.mates.hid.connect(_on_hid)
+	host.combat.mates.regrouped.connect(_on_regrouped)
 	host.map_entered.connect(_on_map)
 	host.day_tick.connect(_on_day)
 	host.combat.shots.exploded.connect(_on_blast)
@@ -105,6 +115,7 @@ func tick(dt := 0.5) -> void:
 	if s > 0 and s < 100 and (st.known_dead("C-050") or gv("AFF_JH") <= -60):
 		st.quests.set_stage(Q1, 200)                                      # 노복희 사망 · 적대: 상인회가 셔터를 다시 감는다
 		_log("실패(적대 · 노복희)")
+	_tick2()
 	for k in HOLES:
 		if hole(k) == 2 and now() >= v1("T" + k.to_upper()) + 60:
 			_poisoned(k)
@@ -166,6 +177,7 @@ func _inner(p: Vector2) -> bool:
 
 
 func _on_day(_d: int) -> void:
+	_day2()
 	if v1("DONE") > 0 and day() > v1("DONE") and v1("REOPEN") == 0:
 		if _zone() in ["J-03", "J-08"]:
 			_s1("REOPEN", 2)                                              # 보는 앞에서 셔터가 바뀌지 않게 — 다음에 들어올 때 연다
@@ -586,4 +598,222 @@ func _cmd1(a: Array, done: Callable) -> void:
 			_nest()
 		"done":
 			_done()
+	done.call()
+
+
+# ================================================================ FQ-JH-02 2077년 외상 장부
+func v2(k: String) -> int:
+	return int(st.vars.get_v("FQ_JH02_" + k))
+
+
+func _s2(k: String, n: int) -> void:
+	st.vars.set_v("FQ_JH02_" + k, n)
+
+
+func _up2(n: int) -> void:
+	var s := st.quests.stage(Q2)
+	if s < n and s < 100:
+		st.quests.set_stage(Q2, n)
+		_log("JH-02 단계 %d" % n)
+
+
+func _tak_mate() -> Dictionary:
+	return host.combat.mates.get_mate(TAK)
+
+
+func _tak_dist() -> float:
+	var m := _tak_mate()
+	if m.is_empty() or not is_instance_valid(m["actor"]) or str(m["mode"]) == "hidden":
+		return 1e9
+	return (m["actor"] as Actor).loco.logical.distance_to(host.player.loco.logical) / 32.0
+
+
+func _tick2() -> void:
+	var s := st.quests.stage(Q2)
+	if s > 0 and s < 100 and (st.known_dead("C-050") or gv("AFF_JH") <= -60):
+		st.quests.set_stage(Q2, 200)                                      # 장부를 받을 사람이 없다 · 상가가 등을 돌렸다 — 상인회가 장부를 덮는다
+		_log("JH-02 실패(노복희 · 적대)")
+	if s >= 10 and s < 100:                                               # 따라 올림(P2): 이미 만났거나 이미 들었으면
+		if v2("KNOW") == 1 or v2("MET") == 1:
+			_up2(20)
+		if v2("MET") == 1:
+			_up2(30)
+	if v2("TAK") != 2:
+		_s2("NEAR", 0)
+		return
+	if st.is_dead(TAK):
+		_drop_tak()
+		_s2("TAK", 0)
+		_s2("NEAR", 0)
+		host.hint("탁만수가 쓰러졌다. 코트 자락이 바닥에 펼쳐진다. 영등포까지는 이제 아무도 안 간다.", 6.0)
+		_log("JH-02 호위 중 탁만수 사망")
+		return
+	if host.player == null:
+		return
+	if _tak_mate().is_empty() and not host.combat.mates.away.has(TAK) and not _paused():
+		host._bring_buddy(TAK)                                            # 불러오기 뒤 · 맵을 건넌 뒤 다시 곁에
+		host.combat.mates.set_mode(TAK, "escort")
+	_s2("NEAR", 1 if _tak_dist() <= TAK_NEAR else 0)                     # 승차장 · 맨홀 발판(r07.spots)은 그가 곁에 있을 때만 장면을 연다
+
+
+func _join_tak() -> void:
+	for n in host.npcs.duplicate():                                        # 좌판의 탁만수를 동행으로 떼어 낸다(맵 인물 다시 세우기가 지우지 않게)
+		if str(n["id"]) == TAK:
+			host.npcs.erase(n)
+			if is_instance_valid(n["actor"]):
+				host.map.blockers.erase(n["actor"])
+			host.sync_residents()
+	if _tak_mate().is_empty():
+		if host.ev.actors.has(TAK):
+			host.ev.handlers["buddy"].call([TAK], func() -> void: pass)
+		else:
+			host._bring_buddy(TAK)
+	host.combat.mates.set_mode(TAK, "escort")
+
+
+func _drop_tak() -> void:
+	if not _tak_mate().is_empty():
+		var a = _tak_mate()["actor"]
+		host.combat.mates.remove(TAK)
+		host._sync_mates()
+		if is_instance_valid(a) and host.ev.actors.has(TAK):
+			host.ev.run("hide", [TAK], func() -> void: pass)
+	host.combat.mates.away.erase(TAK)
+
+
+func _on_hid(id: String) -> void:
+	if id == TAK:
+		host.hint("탁만수가 버스 그늘에 쪼그려 앉았다 — 돌아와 곁에 서면 다시 따라온다.", 5.0)
+
+
+func _on_regrouped(id: String) -> void:
+	if id == TAK:
+		host.hint("탁만수가 코트 깃을 세우고 일어난다. \"가.\"", 4.0)
+
+
+## 06시 하루 판정(P6): 버려둔 호위 · 운반조 길 도착 · 거짓말 소문
+func _day2() -> void:
+	var d := day()
+	if v2("TAK") == 2 and d >= v2("ARRIVE_DAY") and not st.is_dead(TAK):
+		if _tak_dist() <= TAK_NEAR:
+			_s2("ARRIVE_DAY", d + 1)                                      # 아직 곁에서 함께 걷는 중 — 하루 더
+		else:
+			_drop_tak()                                                   # 하루가 지났다 — '혼자 갈게'(지상 구간 위험은 없던 일로, 계획 §2 JH-02 #6)
+			_s2("TAK", 3)
+			_s2("ARRIVE_DAY", d + 1)
+			_s2("NEAR", 0)
+			_log("JH-02 탁만수 혼자 지하로")
+	elif v2("TAK") == 3 and d >= v2("ARRIVE_DAY") and not st.is_dead(TAK):
+		_s2("TAK", 4)                                                     # 운반조 길로 영등포 — 상인회 칸막이 앞에서 망설인다(다음에 J-03에 들어올 때 선다)
+		_log("JH-02 탁만수 J-03 도착")
+	if v2("SOL") == 5 and v2("KNOWN") == 0 and v2("RUMOR") == 0 and d >= v2("LIE_DAY") + 7 \
+			and not st.is_dead(TAK) and v2("TAK") <= 1:
+		_s2("RUMOR", 1)                                                   # 고터 운반조 한 사람이 J-03에 서서 말한다(P7 출처 — 그가 노복희에게 전한다)
+		_log("JH-02 소문(7일)")
+
+
+func _solve(n: int) -> void:
+	if st.quests.stage(Q2) >= 100:
+		return                                                            # 단계 100(또는 덮음 200)은 하나 — 두 번째 정리는 보상 없음(P1)
+	_s2("SOL", n)
+	_s2("DONE", day())
+	if n == 6:
+		st.call_fn("aff", ["JH", 2])                                      # 받을 사람 · 갚을 사람 중 하나가 없다 — 줄은 그냥 덮는다(계획 §2 #4)
+		st.quests.set_stage(Q2, 200)
+		_log("JH-02 덮음(죽음)")
+		want_save.emit("jh02")
+		return
+	st.call_fn("aff", ["JH", 6])                                          # 원문 JH +6 · 연동 BJ ▽1 · SB ▽1 · SV ▽1(SD-04d §10 표)
+	st.call_fn("aff", ["BJ", -1])
+	st.call_fn("aff", ["SB", -1])
+	st.call_fn("aff", ["SV", -1])
+	st.call_fn("xp", [250])
+	st.call_fn("give", ["A-019", 1])                                      # 장사꾼 코트 — '코트 한 벌 값은 코트 한 벌로'
+	if n == 5:
+		_s2("LIE_DAY", day())
+	st.quests.set_stage(Q2, 100)
+	_log("JH-02 끝(%d)" % n)
+	want_save.emit("jh02")
+
+
+func _caught() -> void:
+	if v2("KNOWN") == 1:
+		return
+	_s2("KNOWN", 1)
+	_s2("COLD_DAY", day() + 2)                                            # 사흘(오늘 포함) 단골 값 끊김
+	st.call_fn("aff", ["JH", -5])
+	_log("JH-02 거짓말 들킴")
+
+
+func _reunion() -> void:
+	var first := st.quests.stage(Q2) < 100
+	if first:
+		_solve(1)
+	_s2("SOL", 1)                                                         # 재회가 마지막 사실(대납 · 거짓 뒤에 와도 — 보상은 한 번)
+	_s2("TAK", 5)
+	_s2("SHOP", 1 if st.quests.stage(Q1) == 100 else 2)                  # JH-01을 끝냈으면 B구역 빈 칸 B-07 · 아니면 광장 노점(그 자리에 머문다, P3)
+	_log("JH-02 재회(가게 %d)" % v2("SHOP"))
+
+
+func _cmd2(a: Array, done: Callable) -> void:
+	match str(a[0]) if a.size() > 0 else "":
+		"seen":
+			_s2("SEEN", 1)
+		"ask":
+			_s2("ASK", 1)
+			_up2(10)
+		"know":
+			_s2("KNOW", 1)
+			_up2(10)
+			_up2(20)
+		"met":
+			_s2("MET", 1)
+			if v2("TAK") == 0:
+				_s2("TAK", 1)
+			if st.quests.stage(Q2) >= 10:
+				_up2(20)
+				_up2(30)
+		"escort":
+			if not st.is_dead(TAK) and v2("TAK") <= 1:
+				_s2("TAK", 2)
+				_s2("ARRIVE_DAY", day() + 1)
+				_join_tak()
+				_log("JH-02 호위 시작")
+		"yard":
+			_s2("YARD", 1)
+		"tunnel":
+			_drop_tak()
+			_s2("TAK", 3)
+			_s2("TUNNEL", 1)
+			_s2("NEAR", 0)
+			_s2("ARRIVE_DAY", day() + 1)
+			want_save.emit("jh02")
+			_log("JH-02 맨홀 — 혼자 지하로")
+		"pay":
+			var n := int(a[1]) if a.size() > 1 else 36
+			if v2("PAY") == 0:
+				_s2("PAY", n)
+				st.call_fn("caps", [n])                                   # 탁만수가 맡긴 외상값(노복희에게 [캡 n]으로 건넨다)
+		"coat":
+			if v2("COAT") == 0:
+				_s2("COAT", 1)
+				st.call_fn("give", ["M-424", 1])
+		"coatoff":
+			_s2("COAT", 2)
+		"coatback":
+			_s2("COAT", 3)
+		"coatlost":
+			_s2("COAT", 4)                                                # 맡긴 코트를 잃었다(팔거나 버림) — 재회 길은 닫힌다(그 코트 없이는 그 가게 앞에 안 선다)
+		"sol":
+			_solve(int(a[1]) if a.size() > 1 else 2)
+		"caught":
+			_caught()
+		"reunion":
+			_reunion()
+		"reunion_dead":
+			_s2("SOL", 6)
+			_s2("TAK", 5)
+			_s2("SHOP", 2)
+			if st.quests.stage(Q2) < 100:
+				st.quests.set_stage(Q2, 200)
 	done.call()

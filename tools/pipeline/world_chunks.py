@@ -30,6 +30,7 @@ W, H = WB.W, WB.H
 NCX, NCY = W // CS, H // CS
 # 월드 → 실내 문(1-4, 지하로 내려가는 계단): 장소 L-ID · 요청 자리(타일) · 갈 실내 맵·표지 · 상호작용 이름
 DOORS = [{"lid": "L-R02-11", "near": (720, 1147), "to": "J-01", "mark": "from_W", "name": "영등포 지하상가 북쪽 출구", "prop": "subway_stairs"},
+         {"lid": "L-UG-39", "near": (1192, 1219), "to": "GT-01", "mark": "from_W", "name": "고속터미널역 — 지하상가 계단", "prop": "subway_stairs"},   # 1-12d FQ-JH-02 · 고터 지하상가 정착지(GT)
          {"lid": "L-R02-13", "near": (734, 1156), "to": "J-02", "mark": "from_mall", "name": "역사 쇼핑몰 지하 통로", "prop": "subway_stairs_mall"},
          {"lid": "L-UG-13", "near": (672, 1099), "to": "J-09", "mark": "from_W", "name": "영등포구청역 지하 통로", "prop": "subway_stairs_st"},
          {"lid": "L-R02-02", "near": (812, 1086), "to": "Y-00", "mark": "from_W", "name": "환승센터 터 승강장 해치", "prop": "bunker_hatch"},     # 1-5 여의도 지하 벙커

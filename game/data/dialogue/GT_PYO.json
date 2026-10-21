@@ -1,0 +1,74 @@
+{
+ "id": "GT_PYO",
+ "title": "표라희",
+ "loc": "L-UG-39",
+ "npc": "N-UG-039",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "SHOP": 2,
+  "LIGHT": 4
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-UG-039",
+   "emo": "미소",
+   "text": "이건 2077년 결혼식 꽃 품종이에요. 아직도 피어요. 이름 불러 줄래요? 얘는 '신부', 얘는 '들러리'."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "꽃이랑 약초를 본다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SHOP",
+     "id": "GT_PYO:1:0"
+    },
+    {
+     "text": "조명이 꺼지면 어떻게 돼요?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "LIGHT",
+     "id": "GT_PYO:1:1"
+    },
+    {
+     "text": "다음에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "GT_PYO:1:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "trade",
+   "args": [
+    "VGT1"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-UG-039",
+   "emo": "슬픔",
+   "text": "사흘이면 잎이 처지고, 이레면 끝이에요. 그래서 전지 이야기만 나오면 다들 조용해져요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/GT.txt"
+}

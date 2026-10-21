@@ -3007,7 +3007,7 @@ func _draw_banner() -> void:
 # ---------------------------------------------------------------- 침대·대기·수면(1-8b, SD-12 §7.6 · SD-11 §11.5)
 const BEDS := {"yo_bed": "요", "cot": "야전 침대", "bedroll": "침낭", "bedroll2": "침낭", "hosp_bed": "병원 침대", "vip_bed": "침대",
 	"bunk": "2층 침대", "straw_mat": "거적", "straw_mat2": "거적", "sd_rent_mat": "승강장 매트"}
-const RENT_BEDS := {"sd_rent_mat": ["SA_MAT_UNTIL", "표하경에게 10캡을 내면 하룻밤 쓸 수 있는 매트다."]}   ## 돈 내고 빌리는 잠자리(SD-15 §5.5): 빌린 동안 '소유 침대'(숙면)
+const RENT_BEDS := {"sd_rent_mat": ["SA_MAT_UNTIL", "표하경에게 10캡을 내면 하룻밤 쓸 수 있는 매트다."], "gt_rent_cot": ["GT_COT_UNTIL", "번영회 사무실에 10캡을 내면 하룻밤 쓸 수 있는 침상 칸이다."]}   ## 돈 내고 빌리는 잠자리(SD-15 §5.5): 빌린 동안 '소유 침대'(숙면)
 const OTHERS_MAPS := ["B-", "J-", "H-", "K-", "V-", "X-", "D-"]          ## 정착지·손 실내의 침대는 주인이 있다(거처 침대만 예외)
 
 

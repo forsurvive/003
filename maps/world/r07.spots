@@ -1,0 +1,20 @@
+# 월드 발견 자리 — 강남(R07). 문법: map_compile.compile_spots 참조(spot 줄 아래 명령은 구역 왼쪽 위 기준 좌표).
+
+# 고속터미널 승차장(L-R07-12, SD-09f L-UG-39 · 단계 1-12d FQ-JH-02): 2077-10-23 밤 운행 중지된 고속버스 · 승차장 표지 · 녹슨 시간표 기둥.
+# JH-02 호위의 한 장면 — 탁만수가 '영등포행 막차' 앞에서 멈춘다(표지 gt_yard). 지상 한 청크는 여기서 반포 쪽 통로(gt_tunnel)까지.
+spot L-R07-12 11 6 off=8,-6
+prop bus_wreck 1 1
+text 1 1 "고속버스. 행선판 '영등포 23:40'. 창문마다 먼지에 손가락으로 쓴 이름." w=3 scene=GT_YARD_BUS
+prop bus_stop 7 1
+text 7 1 "승차장 7번 표지. 기둥에 붙은 2077 시간표 — 맨 아랫줄 '영등포 막차 23:40'." scene=GT_YARD
+mark gt_yard 7 3 N
+trigger 5 2 w=5 h=3 scene=GT_YARD cond="FQ_JH02_TAK == 2 and FQ_JH02_YARD == 0 and FQ_JH02_NEAR == 1"
+prop rubble 9 4
+prop drum 4 4
+
+# 반포 쪽 지하 통로 입구(L-R07-13 반포 강변 아파트 동쪽 · 단계 1-12d): 운반조가 쓰는 지하 길 — 탁만수는 여기서부터 혼자 간다(그 길은 U18 터미널 지하와 함께).
+spot L-R07-13 5 4 off=14,10
+prop manhole 2 1 state=open
+text 2 1 "열린 맨홀. 사다리 가로대에 분필 화살표와 '운반조' 표식. 밑에서 물 흐르는 소리." w=2 scene=GT_TUNNEL
+mark gt_tunnel 2 3 N
+trigger 0 2 w=5 h=2 scene=GT_TUNNEL cond="FQ_JH02_TAK == 2 and FQ_JH02_NEAR == 1"

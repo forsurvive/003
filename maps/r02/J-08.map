@@ -42,6 +42,9 @@ npc N-R02-016 6 3 S cond="FQ_JH01_SHOP_M == 1" bark="B-06. 셔터 안쪽이 넓�
 prop w_shop_bshop 10 1 state=half cond="FQ_JH02_SHOP == 1"
 prop w_shutter2 10 1 cond="FQ_JH02_SHOP != 1"
 text 10 2 "B-07. 셔터가 안쪽으로 휘었다. 무언가 셔터를 밀고 나오려다 그만두었다." w=2 cond="FQ_JH02_SHOP != 1"
+prop gt_shoe_stall 10 4 cond="FQ_JH02_SHOP == 1"
+npc N-UG-501 11 3 S cond="FQ_JH02_TAK == 5 and FQ_JH02_SHOP == 1" bark="B-07. 굽 갈아 줄까? 셔터 반만 올렸어. 다 올리면 쑥스러워서."
+text 10 2 "반쯤 올린 셔터 'B-07'. 셔터 밑에 분필로 '구두 수선 · 탁'. 안쪽에서 망치 소리가 일정하다." w=2 cond="FQ_JH02_SHOP == 1"
 prop w_shutter 14 1
 text 14 2 "B-08. '시계 · 도장'. 진열장 유리에 쥐 발자국이 별자리처럼 찍혔다." w=2
 prop w_shutter3 18 1
