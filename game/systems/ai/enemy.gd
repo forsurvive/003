@@ -416,6 +416,9 @@ func think(dt: float, target: Combatant, nav, shots: Projectiles) -> void:   ## 
 	if _bait_step(dt, target, nav):
 		queue_redraw()
 		return
+	if led and brain.state == AIBrain.S.RETURN:
+		brain.state = AIBrain.S.IDLE                                    # 진행기가 이끄는 사람은 출발 자리로 돌아가지 않는다(싸움 뒤 줄로 — 1-12f)
+		brain.gauge = 0.0
 	if led and brain.state == AIBrain.S.IDLE:
 		queue_redraw()
 		return

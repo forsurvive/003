@@ -6,15 +6,24 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "THREE": 7,
-  "FOUR": 9,
-  "SIGN": 10,
-  "REMOTE": 14,
-  "GIVEBACK": 16,
-  "KEEP": 19,
-  "PAY": 21,
-  "TAG": 25,
-  "LATE": 27
+  "THREE": 8,
+  "THREE_S": 10,
+  "FOUR": 12,
+  "SIGN": 13,
+  "CHOOSE": 15,
+  "UNHOOK": 17,
+  "SIGN2": 22,
+  "REMOTE": 26,
+  "GIVEBACK": 29,
+  "REMOTE_F": 32,
+  "GIVEBACK_F": 34,
+  "GIVEBACK_F2": 38,
+  "KEEP": 41,
+  "KEEP2": 45,
+  "PAY": 47,
+  "TAG": 51,
+  "TAG_ME": 54,
+  "LATE": 56
  },
  "ops": [
   {
@@ -39,6 +48,11 @@
    "op": "if",
    "cond": "FQ_SB02_N == 4",
    "to": "FOUR"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB02_N == 3 and FQ_SB02_FREE == 1",
+   "to": "THREE_S"
   },
   {
    "op": "if",
@@ -68,8 +82,83 @@
   {
    "op": "line",
    "who": "N-SB-L1",
+   "emo": "피곤",
+   "text": "셋. …하나는 신도림에서 불이 꺼졌어. 장부엔 그렇게 적어."
+  },
+  {
+   "op": "goto",
+   "to": "SIGN"
+  },
+  {
+   "op": "line",
+   "who": "N-SB-L1",
    "emo": "기본",
    "text": "넷. 다 왔어."
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB02_REMOTE == 1",
+   "to": "CHOOSE"
+  },
+  {
+   "op": "goto",
+   "to": "SIGN2"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "소매 속 원격기가 손바닥에 닿는다. 단추 몇 개, 불빛 몇 개."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "(원격기 단추를 모두 누른다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "UNHOOK",
+     "id": "FQSB02_HAND_L:1:0"
+    },
+    {
+     "text": "(그냥 넘긴다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SIGN2",
+     "id": "FQSB02_HAND_L:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "단추를 차례로 누른다. 목걸이 불빛이 하나씩 꺼진다. 인력들이 서로를 본다 — 그리고 둔치 갈대밭으로 흩어진다."
+  },
+  {
+   "op": "line",
+   "who": "N-SB-H1",
+   "emo": "놀람",
+   "text": "뭐야 — 서! (장부에 펜을 댄다) …본소 운송조, 도착 0."
+  },
+  {
+   "op": "line",
+   "who": "N-SB-L1",
+   "emo": "분노",
+   "text": "(빈 허리춤을 더듬는다) …원격기. 너였어. (뒷걸음친다) 기억해 둔다."
+  },
+  {
+   "op": "cmd",
+   "name": "sb02",
+   "args": [
+    "unhook"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
   },
   {
    "op": "line",
@@ -93,6 +182,11 @@
    "to": "PAY"
   },
   {
+   "op": "if",
+   "cond": "FQ_SB02_FREE == 1",
+   "to": "REMOTE_F"
+  },
+  {
    "op": "line",
    "who": "N-SB-L1",
    "emo": "기본",
@@ -107,7 +201,7 @@
      "cond": "",
      "fx": "",
      "to": "GIVEBACK",
-     "id": "FQSB02_HAND_L:1:0"
+     "id": "FQSB02_HAND_L:2:0"
     },
     {
      "text": "모른다",
@@ -115,7 +209,7 @@
      "cond": "",
      "fx": "",
      "to": "KEEP",
-     "id": "FQSB02_HAND_L:1:1"
+     "id": "FQSB02_HAND_L:2:1"
     }
    ]
   },
@@ -138,6 +232,79 @@
    "to": "PAY"
   },
   {
+   "op": "line",
+   "who": "N-SB-L1",
+   "emo": "기본",
+   "text": "(허리춤을 더듬는다) …원격기 어디 갔어?"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "(원격기를 돌려준다) 길에 떨어져 있더라",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "GIVEBACK_F",
+     "id": "FQSB02_HAND_L:3:0"
+    },
+    {
+     "text": "모른다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "KEEP",
+     "id": "FQSB02_HAND_L:3:1"
+    }
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB02_SEEN == 2",
+   "to": "GIVEBACK_F2"
+  },
+  {
+   "op": "cmd",
+   "name": "sb02",
+   "args": [
+    "remote",
+    "0"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-SB-L1",
+   "emo": "분노",
+   "text": "(낚아채 불빛을 센다) …하나 꺼졌네. 신도림에서. 네 이름 옆에 줄 하나."
+  },
+  {
+   "op": "goto",
+   "to": "PAY"
+  },
+  {
+   "op": "cmd",
+   "name": "sb02",
+   "args": [
+    "remote",
+    "0"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-SB-L1",
+   "emo": "분노",
+   "text": "(낚아채 불빛을 센다) …하나 꺼졌네. 줄은 이미 그어 놨어."
+  },
+  {
+   "op": "goto",
+   "to": "PAY"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB02_SEEN == 2",
+   "to": "KEEP2"
+  },
+  {
    "op": "cmd",
    "name": "sb02",
    "args": [
@@ -150,6 +317,24 @@
    "who": "N-SB-L1",
    "emo": "분노",
    "text": "…장부에 적는다. 네 이름 옆에."
+  },
+  {
+   "op": "goto",
+   "to": "PAY"
+  },
+  {
+   "op": "cmd",
+   "name": "sb02",
+   "args": [
+    "remote",
+    "1"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-SB-L1",
+   "emo": "분노",
+   "text": "…또 모른다고. 네 이름 옆에 줄이 두 개가 됐네."
   },
   {
    "op": "cmd",
@@ -174,10 +359,25 @@
    "to": "END"
   },
   {
+   "op": "if",
+   "cond": "FQ_SB01_EXTRA == 1",
+   "to": "TAG_ME"
+  },
+  {
    "op": "line",
    "who": "N-SB-L1",
    "emo": "기본",
    "text": "(번호표 목걸이 하나를 던진다) 네 번호다. 이름은 장부에 있고."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-SB-L1",
+   "emo": "미소",
+   "text": "(번호표 목걸이 하나를 던진다) 실장님이 그러더라. 출근부에 제 이름 친 놈 있다고. …번호 없는 이름은 장부에 못 올라가. 네 번호다."
   },
   {
    "op": "goto",

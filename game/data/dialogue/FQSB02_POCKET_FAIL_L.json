@@ -5,14 +5,38 @@
  "npc": "",
  "cond": "V_ACT >= 1",
  "labels": {
-  "START": 0
+  "START": 0,
+  "AGAIN": 4
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "FQ_SB02_SEEN == 2",
+   "to": "AGAIN"
+  },
   {
    "op": "line",
    "who": "N-SB-L1",
    "emo": "분노",
    "text": "(손목을 낚아챈다) 손 치워. …호위가 원격기를 왜 만져. 네 이름 옆에 줄 하나."
+  },
+  {
+   "op": "cmd",
+   "name": "sb02",
+   "args": [
+    "pocket",
+    "0"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-SB-L1",
+   "emo": "분노",
+   "text": "(손목을 낚아챈다) 또 너야. …네 이름 옆에 줄이 두 개가 됐네."
   },
   {
    "op": "cmd",

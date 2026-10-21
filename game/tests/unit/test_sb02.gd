@@ -373,7 +373,7 @@ func test_sb02_hand(t) -> void:
 	_play(st2, c2, "FQSB02_TOLL", ["갈고리에게"])
 	var said2 := _said(_play(st2, c2, "FQSB02_HAND"))
 	t.ok(said2.contains("셋. 하나는 고가에서"), "셋 — 고가에서 하나")
-	t.eq(_v(st2, "PC_CAPS") - caps1, 90, "갈고리가 내면 일당에서 깐다(90)")
+	t.eq(_v(st2, "PC_CAPS") - caps1, 70, "갈고리에게 맡기면 통행세 + 품 20을 깐다(70)")
 	t.ok(not st2.items.has("M-129"), "우호 아니면 목걸이 없음")
 
 
@@ -524,3 +524,111 @@ func test_sb02_yard_watch(t) -> void:
 			t.eq(_v(st, "SB_RAID"), 0, "출근부 일꾼: 습격 없음")
 		else:
 			t.eq(_v(st, "SB_RAID"), 1, "표찰도 일도 없으면: 들켜서 습격")
+
+
+## 재미 검수 반영(1-12f): 데려온 오태수를 신도림 뒤 원격기로 풀어 줌 → TAESU 4 · FREE · 인계 '하나는 신도림에서' · 돌려주면 들킴
+func test_sb02_free_remote(t) -> void:
+	var r := _host()
+	var h: InteriorHost = r[0]
+	var st: StoryState = r[1]
+	var c: FqSb = r[2]
+	_go(st, c)
+	c._s2("LEG", int(c._meta["ramp_n"]) + 1)
+	c._events()
+	c.cv["seen_now"] = 0
+	_play(st, c, "FQSB02_TAESU", ["줄로 돌아가자"])
+	_play(st, c, "FQSB02_REPORT")
+	t.eq(_v(st, "FQ_SB02_TAESU"), 2, "데려왔다")
+	c._s2("REMOTE", 1)
+	c._s2("REST", 1)
+	c.cv["seen_now"] = 0
+	var k0 := _v(st, "V_KARMA")
+	_play(st, c, "FQSB02_TAESU", ["원격기로 목걸이를"])
+	t.eq(_v(st, "FQ_SB02_TAESU"), 4, "풀어 줌 → 봉천")
+	t.eq(_v(st, "FQ_SB02_FREE"), 1, "원격기로")
+	t.eq(_v(st, "V_KARMA") - k0, 50, "카르마 +50")
+	t.eq(c.cv["folk"].size(), 3, "줄에서 빠짐")
+	t.eq(_v(st, "AFF_SB"), -10, "안 보였으면 손해 없음")
+	c._s2("PATROL", 2)
+	c.cv["patrol_done"] = true
+	c._s2("LEG", c.points().size())
+	c._events()
+	_play(st, c, "FQSB02_TOLL", ["낸다"])
+	var said := _said(_play(st, c, "FQSB02_HAND", ["그냥 넘긴다", "돌려준다"]))
+	t.ok(said.contains("신도림에서 불이 꺼졌어"), "인계: 하나는 신도림에서")
+	t.ok(said.contains("하나 꺼졌네"), "돌려주면 불빛을 센다")
+	t.eq(_v(st, "FQ_SB02_SEEN"), 2, "돌려주면 들킴")
+	t.eq(_v(st, "FQ_SB02_RES"), 1, "운송은 끝까지(셋)")
+	t.eq(_v(st, "FQ_SB02_N"), 3, "인계 셋")
+
+
+## 재미 검수 반영: 인계 지점에서 원격기로 넷을 끔 → RES 6(+100 · SB −10 · 일당 없음 · 행적)
+func test_sb02_unhook(t) -> void:
+	var r := _host()
+	var st: StoryState = r[1]
+	var c: FqSb = r[2]
+	st.vars.set_v("AFF_SB", 25)
+	_go(st, c)
+	c._s2("TAESU", 2)
+	c._s2("REST", 1)
+	c._s2("REMOTE", 1)
+	c._s2("PATROL", 2)
+	c.cv["patrol_done"] = true
+	c._s2("LEG", c.points().size())
+	c._events()
+	_play(st, c, "FQSB02_TOLL", ["낸다"])
+	var caps0 := _v(st, "PC_CAPS")
+	var k0 := _v(st, "V_KARMA")
+	var said := _said(_play(st, c, "FQSB02_HAND", ["원격기 단추를 모두"]))
+	t.ok(said.contains("도착 0"), "인수원: 도착 0")
+	t.eq(_v(st, "FQ_SB02_RES"), 6, "RES 6")
+	t.eq(_v(st, "FQ_SB02_N"), 0, "넘긴 사람 없음")
+	t.eq(_v(st, "V_KARMA") - k0, 100, "카르마 +100")
+	t.eq(_v(st, "AFF_SB"), 15, "SB −10")
+	t.eq(_v(st, "PC_CAPS"), caps0, "일당 없음")
+	t.ok(not st.items.has("M-129"), "목걸이 없음")
+	t.ok(_has_deed(st, "FQSB02_UNHOOK"), "행적")
+	t.eq(st.quests.stage("FQ-SB-02"), 100, "끝")
+
+
+## 재미 검수 반영: 일부러 늦춤(찾는 척 60분 · 한 시간 쉬자) · 보고 LIE의 '다 보였어' 판(판정은 명령 앞)
+func test_sb02_stall(t) -> void:
+	var r := _host()
+	var h: InteriorHost = r[0]
+	var st: StoryState = r[1]
+	var c: FqSb = r[2]
+	_go(st, c)
+	c._s2("LEG", int(c._meta["ramp_n"]) + 1)
+	c._events()
+	c.cv["seen_now"] = 1
+	_play(st, c, "FQSB02_TAESU", ["못 본 척"])
+	t.eq(_v(st, "FQ_SB02_SEEN"), 1, "보였다")
+	var m0 := c.now()
+	var said := _said(_play(st, c, "FQSB02_REPORT", ["찾는 척"]))
+	t.eq(c.now() - m0, 60, "찾는 척 — 60분")
+	t.ok(said.contains("상판 끝에서 다 보였어"), "보였으면 '다 보였어' 판")
+	t.eq(_v(st, "AFF_SB"), -16, "SB −6")
+	c._s2("LEG", int(c._meta["sindorim"]) + 1)
+	c._events()
+	var m1 := c.now()
+	_play(st, c, "FQSB02_REST", ["한 시간 쉬자"])
+	t.eq(c.now() - m1, 60, "쉬자 — 60분(화술 100)")
+
+
+## 재미 검수 반영: 앞서 나가 정찰하면 줄이 서지 않는다 · 뒤로 멀어지면 선다
+func test_sb02_ahead(t) -> void:
+	var r := _host()
+	var h: InteriorHost = r[0]
+	var st: StoryState = r[1]
+	var c: FqSb = r[2]
+	_go(st, c)
+	var ld := c.lead()
+	var pts := c.points()
+	var j := mini(int(c.cv["i"]) + 6, pts.size() - 1)
+	var ahead_t: Vector2 = c._px(pts[j][0])
+	h.player.loco.logical = ld.loco.logical.move_toward(ahead_t, 20 * 32)
+	c._lag_tick()
+	t.ok(not bool(c.cv.get("lag", false)), "앞(20칸)이면 서지 않음")
+	h.player.loco.logical = ld.loco.logical + (ld.loco.logical - ahead_t).normalized() * 30 * 32
+	c._lag_tick()
+	t.ok(bool(c.cv.get("lag", false)), "뒤로 30칸이면 선다")

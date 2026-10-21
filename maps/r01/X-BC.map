@@ -632,6 +632,7 @@ npc C-067 24 26 S cond="MEDIC_AT == 1 and MQ101_RESULT > 0" bark="다친 사람 
 npc N-R02-039 12 30 E cond="SB_127 == 6" bark="고향 맞더라. 봉천 계단 냄새."
 npc N-R02-050 13 30 W cond="SB_127 == 6"
 npc N-R02-040 15 30 W cond="SQ_S10_KIRA == 4 and SQ_S10_PLACE == 1" bark="계단 고치는 거 배워. 번호 말고 이름으로 불러 줘."
+npc N-R02-506 14 37 S cond="FQ_SB02_TAESU == 4 and FQSB02_STAGE >= 100" bark="(목걸이 자국을 옷깃으로 가린다) …엄마한텐 아직 말 못 했어. 철교 얘기는."
 
 # 1-12f FQ-SB-01: 3쪽 날짜(FQ_SB01_DUE — 낸 날의 다음 달 3일) 08~18시, 출동 명단에 남은 이름 있는 사람 집 앞에 추심원(독사 아님 — SB-03 일정과 겹침 없음, P3). MQ-101이 끝난 뒤만.
 npc CR-436 13 33 W sheet=en_cr436_loco cond="FQ_SB01_DUE > 0 and GAME_DAY == FQ_SB01_DUE and GAME_HOUR >= 8 and GAME_HOUR < 18 and MQ101_STAGE >= 100 and FQ_SB01_X1 == 0 and FQ_SB01_PD1 == 0" bark="고철 선금 180. 고철로 받아 줄 테니 저울 꺼내."

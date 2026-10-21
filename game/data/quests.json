@@ -171,32 +171,32 @@
    "places": [
     "L-R01-23"
    ],
-   "places_src": "04d_faction-questlines.md:1057",
+   "places_src": "04d_faction-questlines.md:1060",
    "stages": {
     "10": {
      "done": "",
      "log": "정비고의 잠든 로봇 여섯 대가 정비를 기다린다.",
-     "src": "04d_faction-questlines.md:1059"
+     "src": "04d_faction-questlines.md:1062"
     },
     "100": {
      "done": "",
      "log": "오늘의 정비가 끝났다.",
-     "src": "04d_faction-questlines.md:1059"
+     "src": "04d_faction-questlines.md:1062"
     },
     "20": {
      "done": "",
      "log": "로봇마다 외장을 닦고 관절에 기름을 친다.",
-     "src": "04d_faction-questlines.md:1059"
+     "src": "04d_faction-questlines.md:1062"
     },
     "200": {
      "done": "",
      "log": "각성회가 정비고 문을 닫았다.",
-     "src": "04d_faction-questlines.md:1059"
+     "src": "04d_faction-questlines.md:1062"
     },
     "30": {
      "done": "",
      "log": "3번 로봇의 대기등이 다른 로봇보다 밝다.",
-     "src": "04d_faction-questlines.md:1059"
+     "src": "04d_faction-questlines.md:1062"
     }
    },
    "title": "정비 당번"
@@ -206,37 +206,37 @@
    "places": [
     "L-R01-24"
    ],
-   "places_src": "04d_faction-questlines.md:1080",
+   "places_src": "04d_faction-questlines.md:1083",
    "stages": {
     "10": {
      "done": "",
      "log": "각성회 등록 천공기의 바늘이 부러졌다.",
-     "src": "04d_faction-questlines.md:1082"
+     "src": "04d_faction-questlines.md:1085"
     },
     "100": {
      "done": "",
      "log": "중계소 천공기가 다시 돌아간다.",
-     "src": "04d_faction-questlines.md:1082"
+     "src": "04d_faction-questlines.md:1085"
     },
     "20": {
      "done": "",
      "log": "같은 기종이 학원가 전산 채점실에 있다.",
-     "src": "04d_faction-questlines.md:1082"
+     "src": "04d_faction-questlines.md:1085"
     },
     "200": {
      "done": "",
      "log": "류정이 죽었다. 천공기는 멈춘 채다.",
-     "src": "04d_faction-questlines.md:1082"
+     "src": "04d_faction-questlines.md:1085"
     },
     "30": {
      "done": "",
      "log": "채점기는 2077년 모의고사 답안을 찍다 멈췄다.",
-     "src": "04d_faction-questlines.md:1082"
+     "src": "04d_faction-questlines.md:1085"
     },
     "40": {
      "done": "",
      "log": "천공 바늘 묶음이 손에 있다.",
-     "src": "04d_faction-questlines.md:1082"
+     "src": "04d_faction-questlines.md:1085"
     }
    },
    "title": "천공기"
@@ -248,32 +248,32 @@
     "L-R01-09",
     "L-R01-10"
    ],
-   "places_src": "04d_faction-questlines.md:1198",
+   "places_src": "04d_faction-questlines.md:1201",
    "stages": {
     "10": {
      "done": "",
      "log": "계단마을 빗물 수로가 막혀 물탱크가 반이다.",
-     "src": "04d_faction-questlines.md:1200"
+     "src": "04d_faction-questlines.md:1203"
     },
     "100": {
      "done": "",
      "log": "계단마을 물길이 다시 흐른다.",
-     "src": "04d_faction-questlines.md:1200"
+     "src": "04d_faction-questlines.md:1203"
     },
     "20": {
      "done": "",
      "log": "백구가 수로를 따라 냄새를 맡는다.",
-     "src": "04d_faction-questlines.md:1200"
+     "src": "04d_faction-questlines.md:1203"
     },
     "30": {
      "done": "",
      "log": "계곡 암거 입구에 흙막이가 있다. 신림 쪽이다.",
-     "src": "04d_faction-questlines.md:1200"
+     "src": "04d_faction-questlines.md:1203"
     },
     "40": {
      "done": "",
      "log": "배수지 유입구 이음매가 샌다.",
-     "src": "04d_faction-questlines.md:1200"
+     "src": "04d_faction-questlines.md:1203"
     }
    },
    "title": "계단 물길"
@@ -283,37 +283,37 @@
    "places": [
     "L-R02-11"
    ],
-   "places_src": "04d_faction-questlines.md:929",
+   "places_src": "04d_faction-questlines.md:932",
    "stages": {
     "10": {
      "done": "",
      "log": "B구역 셔터 너머로 쥐 떼가 드나든다.",
-     "src": "04d_faction-questlines.md:931"
+     "src": "04d_faction-questlines.md:934"
     },
     "100": {
      "done": "",
      "log": "B구역이 다시 열렸다.",
-     "src": "04d_faction-questlines.md:931"
+     "src": "04d_faction-questlines.md:934"
     },
     "20": {
      "done": "",
      "log": "B구역 안쪽에 쥐굴 입구가 세 곳 있다.",
-     "src": "04d_faction-questlines.md:931"
+     "src": "04d_faction-questlines.md:934"
     },
     "200": {
      "done": "",
      "log": "상인회가 B구역 셔터를 다시 감았다.",
-     "src": "04d_faction-questlines.md:931"
+     "src": "04d_faction-questlines.md:934"
     },
     "30": {
      "done": "",
      "log": "쥐굴 입구가 하나씩 막힌다.",
-     "src": "04d_faction-questlines.md:931"
+     "src": "04d_faction-questlines.md:934"
     },
     "40": {
      "done": "",
      "log": "B구역이 조용하다. 노복희에게 알린다.",
-     "src": "04d_faction-questlines.md:931"
+     "src": "04d_faction-questlines.md:934"
     }
    },
    "title": "B구역 셔터"
@@ -324,32 +324,32 @@
     "L-R07-12",
     "L-UG-39"
    ],
-   "places_src": "04d_faction-questlines.md:944",
+   "places_src": "04d_faction-questlines.md:947",
    "stages": {
     "10": {
      "done": "",
      "log": "노복희 외상 장부에 안 그어진 줄이 있다.",
-     "src": "04d_faction-questlines.md:946"
+     "src": "04d_faction-questlines.md:949"
     },
     "100": {
      "done": "",
      "log": "외상 장부의 마지막 줄이 정리됐다.",
-     "src": "04d_faction-questlines.md:946"
+     "src": "04d_faction-questlines.md:949"
     },
     "20": {
      "done": "",
      "log": "탁만수는 고터 지하상가에서 구두를 고친다.",
-     "src": "04d_faction-questlines.md:946"
+     "src": "04d_faction-questlines.md:949"
     },
     "200": {
      "done": "",
      "log": "상인회가 장부를 덮었다.",
-     "src": "04d_faction-questlines.md:946"
+     "src": "04d_faction-questlines.md:949"
     },
     "30": {
      "done": "",
      "log": "탁만수는 200년 전 코트를 입고 있다.",
-     "src": "04d_faction-questlines.md:946"
+     "src": "04d_faction-questlines.md:949"
     }
    },
    "title": "2077년 외상 장부"
@@ -361,37 +361,37 @@
     "L-R01-25",
     "L-R02-17"
    ],
-   "places_src": "04d_faction-questlines.md:959",
+   "places_src": "04d_faction-questlines.md:962",
    "stages": {
     "10": {
      "done": "",
      "log": "상인회 약 상자를 수산시장 의료반에.",
-     "src": "04d_faction-questlines.md:961"
+     "src": "04d_faction-questlines.md:964"
     },
     "100": {
      "done": "",
      "log": "의약품이 들것 의료반에 닿았다.",
-     "src": "04d_faction-questlines.md:961"
+     "src": "04d_faction-questlines.md:964"
     },
     "20": {
      "done": "",
      "log": "박춘삼은 낮 지상에 두 시간만 있는다.",
-     "src": "04d_faction-questlines.md:961"
+     "src": "04d_faction-questlines.md:964"
     },
     "200": {
      "done": "",
      "log": "상인회 약 상자가 길에서 사라졌다.",
-     "src": "04d_faction-questlines.md:961"
+     "src": "04d_faction-questlines.md:964"
     },
     "30": {
      "done": "",
      "log": "다리목 분대가 노량진 길을 막는다.",
-     "src": "04d_faction-questlines.md:961"
+     "src": "04d_faction-questlines.md:964"
     },
     "40": {
      "done": "",
      "log": "소윤희가 수산시장에서 기다린다.",
-     "src": "04d_faction-questlines.md:961"
+     "src": "04d_faction-questlines.md:964"
     }
    },
    "title": "지상 배달"
@@ -438,42 +438,42 @@
     "L-HR-03",
     "L-R02-24"
    ],
-   "places_src": "04d_faction-questlines.md:712",
+   "places_src": "04d_faction-questlines.md:714",
    "stages": {
     "10": {
      "done": "",
      "log": "인솔조가 인력 넷을 철교 남단으로 옮긴다.",
-     "src": "04d_faction-questlines.md:714"
+     "src": "04d_faction-questlines.md:716"
     },
     "100": {
      "done": "",
      "log": "운송이 끝났다.",
-     "src": "04d_faction-questlines.md:714"
+     "src": "04d_faction-questlines.md:716"
     },
     "20": {
      "done": "",
      "log": "운송조가 신도림 환승 고가에 올랐다.",
-     "src": "04d_faction-questlines.md:714"
+     "src": "04d_faction-questlines.md:716"
     },
     "200": {
      "done": "",
      "log": "운송조가 길에서 흩어졌다.",
-     "src": "04d_faction-questlines.md:714"
+     "src": "04d_faction-questlines.md:716"
     },
     "30": {
      "done": "",
      "log": "인력 한 명이 고가 끝에서 사라졌다.",
-     "src": "04d_faction-questlines.md:714"
+     "src": "04d_faction-questlines.md:716"
     },
     "40": {
      "done": "",
      "log": "한강철교 남단에 방범대 조끼들이 서 있다.",
-     "src": "04d_faction-questlines.md:714"
+     "src": "04d_faction-questlines.md:716"
     },
     "50": {
      "done": "",
      "log": "운송조가 철교 남단 인계 지점에 닿았다.",
-     "src": "04d_faction-questlines.md:714"
+     "src": "04d_faction-questlines.md:716"
     }
    },
    "title": "현장 운송"

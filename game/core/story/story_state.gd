@@ -274,7 +274,7 @@ func _init() -> void:
 	#   TOLL 통행세(1 냄 · 2 화술 30 · 3 갈고리가 냄) · N 인계한 인력 · LATE 10시 넘겨 닿음 · RES 결과(1 끝까지 · 2 늦음 · 3 방범대 · 4 빠짐 · 5 흩어짐) · LEAD 인솔(0 갈고리 · 1 대리 반장) · TOLD 구만호가 운송을 알려 줌
 	for k in "SEED X1 X2 X3 X4 X5 X6 X7 X8 X9 PD1 PD2 PD3 PD4 PD5 PD6 PD7 PD8 PD9 STAMP DRAWER AWAY BLANK RES TOLD WHO BACK TYPED LURE LURE_DAY SUS EXTRA DUE DUE_M DUE_D THX1 THX2 THX3 THX4 THX5 OWE WHERE".split(" "):
 		vars.declare("FQ_SB01_" + k, "int", 0)
-	for k in "DAY LEG TAESU SEEN PATROL TOLL N LATE RES LEAD TOLD REMOTE SCOUT DETOUR REST SNEAK TRIED".split(" "):
+	for k in "DAY LEG TAESU SEEN PATROL TOLL N LATE RES LEAD TOLD REMOTE SCOUT DETOUR REST SNEAK TRIED FREE".split(" "):
 		vars.declare("FQ_SB02_" + k, "int", 0)
 	vars.declare("GT_COT_UNTIL", "int", 0)                          # 고터 지하상가 침상 칸 빌린 끝 절대 분(1-12d)
 	for k in ["GS_OPEN", "GS_TRUTH", "GS_ROBOT", "GS02_GRADER"]:

@@ -3,7 +3,7 @@
  "title": "대장장이 남무진",
  "loc": "L-R01-09",
  "npc": "N-R01-030",
- "cond": "V_ACT >= 1 and FQ_SB01_DUE > 0 and GAME_DAY >= FQ_SB01_DUE and GAME_DAY <= FQ_SB01_DUE + 2 and FQ_SB01_THX2 == 0 and (FQ_SB01_X2 == 1 or FQ_SB01_PD2 == 1) and FQ_SB01_RES != 3",
+ "cond": "V_ACT >= 1 and FQ_SB01_DUE > 0 and GAME_DAY >= FQ_SB01_DUE and FQ_SB01_THX2 == 0 and (FQ_SB01_X2 == 1 or FQ_SB01_PD2 == 1) and FQ_SB01_RES != 3",
  "labels": {
   "START": 0
  },

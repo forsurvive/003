@@ -431,6 +431,25 @@ func _pdist(p: Vector2) -> float:
 	return host.player.loco.logical.distance_to(p) / 32.0 if host.player != null else 1e9
 
 
+## 주인공이 선두보다 앞(앞 경유점에 더 가깝다)이고 40칸 안이면 정찰 — 줄은 서지 않는다(1-12f 재미 검수)
+func _ahead(ld: Enemy) -> bool:
+	var pts := points()
+	var j := mini(int(cv.get("i", 0)) + 6, pts.size() - 1)
+	if j < 0 or _pdist(ld.loco.logical) > LOST_R:
+		return false
+	var t := _px(pts[j][0])
+	return host.player.loco.logical.distance_to(t) < ld.loco.logical.distance_to(t)
+
+
+## 행렬에서 가장 가까운 사람까지(칸) — 줄이 12칸 넘게 늘어서므로 선두까지가 아니라 줄 꼬리에 붙었는지를 본다
+func _cv_dist() -> float:
+	var best := 1e9
+	for a in [cv.get("lead")] + cv.get("men", []) + cv.get("folk", []):
+		if _ok(a):
+			best = minf(best, _pdist(a.loco.logical))
+	return best
+
+
 func _ok(a) -> bool:
 	return a != null and is_instance_valid(a) and not (a is Enemy and (a as Enemy).cmb.dead)
 
@@ -523,8 +542,11 @@ func _spawn(base: Vector2i, fl: int, phase: String) -> void:
 		var e := host.combat.spawn(str(specs[k][0]), _px(c), host.map, st, {"lv": 8, "team": "calm_sb02", "foes": [], "sheet": str(specs[k][1])})
 		e.led = true
 		e.mode = "walk"
+		_pace(e)
 		if k == 0 and v2("LEAD") == 0:
 			e.who = HOOK
+		if k > 0:
+			_pace(e, 1.2)
 		if fl != 0:
 			e.set_floor(fl)
 		men.append(e)
@@ -546,10 +568,25 @@ func _spawn(base: Vector2i, fl: int, phase: String) -> void:
 	_log("행렬 섬(%s · 경유점 %d)" % [phase, v2("LEG")])
 
 
+## 행렬 걸음(칸/초) — 적 걷기는 기본 속도 × 0.45(약 1칸/초)라 483칸이 게임 4시간이 된다(봇이 찾음). 줄 모두 같은 걸음, 따르는 사람은 조금 빠르게(흔적을 따라잡게)
+const PACE := 2.5
+
+
+func _pace(a: Actor, k := 1.0) -> void:
+	var w: Dictionary = a.loco.custom.get("walk", {}).duplicate()
+	if w.is_empty():
+		w = {"frames": 6, "px": 4.0, "px_v": 3.0, "diag": 3.0, "contact": [0, 3]}
+	w["speed_t"] = PACE * k
+	var c: Dictionary = a.loco.custom.duplicate()
+	c["walk"] = w
+	a.loco.custom = c
+
+
 func _person(sheet: String, c: Vector2i, fl: int) -> Actor:
 	var a := Actor.new()
 	a.setup(sheet, _px(c), host.map)
 	a.mode = "walk"
+	_pace(a, 1.2)
 	host.map.add_actor(a)
 	if fl != 0:
 		a.set_floor(fl)
@@ -641,6 +678,8 @@ func _reach(i: int) -> void:
 	cv["path"] = PackedVector2Array()
 	cv["stuck"] = 0.0
 	_s2("LEG", i + 1)
+	if (i + 1) % 10 == 0:
+		_log("경유점 %d · %s" % [i + 1, host.date_text])
 
 
 func _holding() -> bool:
@@ -657,13 +696,14 @@ func _lag_tick() -> void:
 	var ld := lead()
 	if ld == null:
 		return
-	var d := _pdist(ld.loco.logical)
-	if d > LAG_R and str(cv.get("hold", "")) == "":
+	var d := _cv_dist()
+	if d > LAG_R and str(cv.get("hold", "")) == "" and not _ahead(ld):
 		if _lag_at < 0:
 			_lag_at = now()
 		cv["lag"] = now() - _lag_at < WAIT_MAX
 		if not bool(cv["lag"]) and not _gave_up:
 			_gave_up = true
+			_log("호위 없이 간다(%.0f칸 · %s)" % [d, host.date_text])
 			host.hint("갈고리: \"호위 없이 간다.\"" if v2("LEAD") == 0 else "인솔 반장: \"호위 없이 간다.\"", 4.0)
 		_bark_t += 0.5
 		if bool(cv["lag"]) and _bark_t >= 8.0:
@@ -743,6 +783,8 @@ func _patrol_won() -> void:
 			en.cmb.team = "calm_sb02"
 			en.foes = []
 			en.brain.state = AIBrain.S.IDLE
+			en.brain.gauge = 0.0
+			en.brain.home = en.loco.logical
 	host.combat._rebuild_list()
 	_patrol = []
 	cv["fight"] = false
@@ -881,13 +923,18 @@ func _finish2(res: int) -> void:
 			st.call_fn("karma", [-mini(200, 50 * n)])
 			st.call_fn("aff", ["ND", -5])
 			st.call_fn("xp", [300])
-			st.call_fn("caps", [90 if v2("TOLL") == 3 else 150])
+			st.call_fn("caps", [70 if v2("TOLL") == 3 else 150])           # 갈고리에게 맡기면 통행세 60 + 품 20을 일당에서 깜
 			st.deeds.record(st, "faction", "HR", 2, {}, now(), {"tag": "FQSB02_HANDED", "place": "ND",
 				"what": "새벽인력 운송조가 한강철교 남단에서 인력 %d을 넘겼다" % n, "seen_by": ["ND"], "about": []})
 		2:
 			st.call_fn("aff", ["SB", 4])
 			st.call_fn("xp", [300])
 			st.call_fn("caps", [75])
+		6:
+			st.call_fn("aff", ["SB", -10])
+			st.call_fn("karma", [100])
+			st.deeds.record(st, "faction", "HR", 1, {}, now(), {"tag": "FQSB02_UNHOOK", "place": "ND",
+				"what": "새벽인력 운송조의 목걸이가 철교 남단에서 한꺼번에 꺼졌다 — 호위가 원격기를 쥐고 있었다", "seen_by": ["SB"], "about": []})
 		3:
 			st.call_fn("aff", ["SB", -10])
 			st.call_fn("karma", [100])
@@ -957,6 +1004,12 @@ func _interact2() -> bool:
 			host.play_scene("FQSB02_SCOUT")
 			return true
 		return false
+	if best in cv.get("folk", []) and str(best.get_meta("sb02_folk", "")) == TAESU and v2("TAESU") == 2 and v2("REMOTE") == 1:
+		var ld2 := lead()                                                 # 데려온 오태수 — 원격기를 쥐었으면 풀어 줄 수 있다(1-12f 재미 검수)
+		var far2 := ld2 == null or ld2.loco.logical.distance_to(best.loco.logical) / 32.0 > 12.0
+		cv["seen_now"] = 0 if (host.combat.crouch or far2) else 1
+		host.play_scene("FQSB02_TAESU")
+		return true
 	if best in cv.get("folk", []) or best == cv.get("taesu"):
 		host.hint(str(FOLK_BARKS[_bark_i % FOLK_BARKS.size()]), 3.0)
 		_bark_i += 1
@@ -1012,6 +1065,24 @@ func _cmd2(a: Array, done: Callable) -> void:
 					_fade(cv.get("taesu"))
 					cv["taesu"] = null
 					cv["hold"] = "report"
+				5:                                                    # 원격기로 목걸이를 끄고 풀어 줌(1-12f 재미 검수 — 탈주 때든 데려온 뒤든)
+					var was_out := v2("TAESU") == 1
+					_s2("TAESU", 4)
+					_s2("FREE", 1)
+					st.call_fn("karma", [50])
+					if seen and v2("SEEN") != 2:
+						_s2("SEEN", 2)
+						st.call_fn("aff", ["SB", -6])
+					var ta = cv.get("taesu")
+					if not was_out:
+						for f in cv.get("folk", []):
+							if str(f.get_meta("sb02_folk", "")) == TAESU:
+								ta = f
+						cv["folk"].erase(ta)
+					_fade(ta)
+					cv["taesu"] = null
+					if was_out:
+						cv["hold"] = "report"
 		"report":                                                         # 0 '못 찾았다' · 1 '도망치게 뒀다'
 			if v2("TAESU") != 2 and v2("SEEN") != 2 and (v2("SEEN") == 1 or (a.size() > 1 and int(a[1]) == 1)):
 				_s2("SEEN", 2)
@@ -1021,6 +1092,14 @@ func _cmd2(a: Array, done: Callable) -> void:
 				cv["taesu"] = null
 			_esc_at = -1
 			_release()
+		"stall":                                                          # 일부러 늦춤(찾는 척 · 한 시간 쉬자) — 같은 날 안 시간 도약(P6)
+			host.advance_minutes(int(a[1]) if a.size() > 1 else 60)
+			_log("늦춤 · %s" % host.date_text)
+		"unhook":                                                         # 인계 지점에서 원격기로 넷을 끔 — 인력은 둔치로 흩어짐(RES 6)
+			_s2("N", 0)
+			_s2("REMOTE", 2)
+			_finish2(6)
+			_after_hand(false)
 		"pocket":
 			if a.size() > 1 and int(a[1]) == 1:
 				_s2("TRIED", 1)
@@ -1094,6 +1173,9 @@ func _cmd2(a: Array, done: Callable) -> void:
 		"remote":
 			if a.size() > 1 and int(a[1]) == 0:
 				_s2("REMOTE", 0)
+				if v2("FREE") == 1 and v2("SEEN") != 2:                   # 불빛 하나가 꺼져 있다 — 돌려주면 들킨다
+					_s2("SEEN", 2)
+					st.call_fn("aff", ["SB", -6])
 			else:
 				_s2("REMOTE", 2)                                          # 버려진다(아이템이 아니다 — 다른 퀘스트로 새지 않게)
 				if v2("SEEN") != 2:
@@ -1103,6 +1185,8 @@ func _cmd2(a: Array, done: Callable) -> void:
 			_finish2(1)
 			_after_hand(false)
 		"late":
+			if v2("REMOTE") == 1:
+				_s2("REMOTE", 2)                                          # 들고 온 원격기는 버려진다(아이템 아님) — 인수원이 없으니 끌 자리도 없다
 			_finish2(2)
 			_after_hand(true)
 	done.call()

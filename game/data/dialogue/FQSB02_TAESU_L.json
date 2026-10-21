@@ -10,7 +10,8 @@
   "LOOKAWAY": 6,
   "HIDE": 8,
   "FREE": 11,
-  "AFTER": 15
+  "AFTER": 15,
+  "AFTER_Q": 18
  },
  "ops": [
   {
@@ -119,14 +120,14 @@
    "op": "line",
    "who": "N-R02-506",
    "emo": "놀람",
-   "text": "…꺼졌어. (배수로로 뛴다) 봉천에서 봐."
+   "text": "…꺼졌어. (뛴다) 봉천 아랫마당. 엄마한텐 아직 말 못 했어. …봉천에서 봐."
   },
   {
    "op": "cmd",
    "name": "sb02",
    "args": [
     "taesu",
-    "4"
+    "5"
    ]
   },
   {
@@ -134,10 +135,42 @@
    "to": "END"
   },
   {
+   "op": "if",
+   "cond": "FQ_SB02_TAESU != 2",
+   "to": "AFTER_Q"
+  },
+  {
    "op": "line",
    "who": "N-R02-506",
    "emo": "피곤",
    "text": "(줄 맨 뒤에서 고개를 숙이고 있다) ……"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "(원격기로 목걸이를 끈다) 이제 안 터져. 뛰어",
+     "tags": [],
+     "cond": "FQ_SB02_REMOTE == 1",
+     "fx": "",
+     "to": "FREE",
+     "id": "FQSB02_TAESU_L:2:0"
+    },
+    {
+     "text": "(그냥 둔다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQSB02_TAESU_L:2:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-506",
+   "emo": "피곤",
+   "text": "(고개를 숙이고 있다) ……"
   },
   {
    "op": "goto",

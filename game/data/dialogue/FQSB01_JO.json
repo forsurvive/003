@@ -3,13 +3,15 @@
  "title": "이장 조만석 — 출근부",
  "loc": "L-R01-09",
  "npc": "C-010",
- "cond": "V_ACT >= 1 and FQ_SB01_RES == 2 and FQ_SB01_TOLD == 0",
+ "cond": "V_ACT >= 1 and (FQ_SB01_RES == 2 or FQ_SB01_RES == 4) and FQ_SB01_TOLD == 0",
  "labels": {
   "START": 0,
-  "TELL": 2,
-  "GEON": 6,
-  "TOLD": 7,
-  "PASS": 9
+  "PAID": 2,
+  "TELL": 5,
+  "CHK": 7,
+  "GEON": 9,
+  "TOLD": 10,
+  "PASS": 12
  },
  "ops": [
   {
@@ -24,10 +26,18 @@
     {
      "text": "새벽인력 출근부에서 봉천 이름을 뺐다",
      "tags": [],
-     "cond": "",
+     "cond": "FQ_SB01_RES == 2",
      "fx": "",
      "to": "TELL",
      "id": "FQSB01_JO:1:0"
+    },
+    {
+     "text": "새벽인력 출근부의 봉천 빚 몇 줄을 내 캡으로 갚았다",
+     "tags": [],
+     "cond": "FQ_SB01_RES == 4",
+     "fx": "",
+     "to": "PAID",
+     "id": "FQSB01_JO:1:1"
     },
     {
      "text": "다른 얘기",
@@ -35,9 +45,25 @@
      "cond": "",
      "fx": "",
      "to": "PASS",
-     "id": "FQSB01_JO:1:1"
+     "id": "FQSB01_JO:1:2"
     }
    ]
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "놀람",
+   "text": "자네 캡으로 갚았다고? …그건 빚이 없어진 거네. 추심조가 덜 오는 게 아니라."
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "(모자를 벗었다 쓴다) 봉천 사람은 빚진 건 안 잊어. 갚아 준 것도."
+  },
+  {
+   "op": "goto",
+   "to": "CHK"
   },
   {
    "op": "line",
@@ -64,7 +90,7 @@
    "op": "line",
    "who": "C-010",
    "emo": "기본",
-   "text": "남건희 그놈 이름도 뺐나? …그 녀석한텐 말하지 말게. 입이 가볍고, 밤엔 윗문 밖에 나가."
+   "text": "남건희 그놈 줄도 손댔나? …그 녀석한텐 말하지 말게. 입이 가볍고, 밤엔 윗문 밖에 나가."
   },
   {
    "op": "cmd",

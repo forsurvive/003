@@ -92,8 +92,14 @@ func _draw_doc() -> void:
 			arrows(564, y + 5, on, on)
 			text(Vector2(620, y + 3), "건너뜀" if skip[tail] else "그대로", f8, 8, C["P05"] if can else C["P07"], HORIZONTAL_ALIGNMENT_RIGHT)
 		hline(330, 624, y + 24, C["P07"])
-	var note := "구만호가 감독 책상에서 이쪽을 본다 — 줄을 건너뛸 수 없다." if watched else "감독 책상이 비었다. 빨간펜은 등을 돌리고 번호를 센다."
-	text(Vector2(16, 332), note, f10, 10, C["P54"] if watched else C["P08"])                 # 책상 위 글 — 밝게
+	var n_skip := 0
+	for k in skip:
+		if skip[k]:
+			n_skip += 1
+	var loud := not watched and n_skip >= 4                                  # 넷 넘게 빼면 발각 40%(원문) — 치기 전에 셋으로 줄일 여지(1-12f 재미 검수)
+	var note := "구만호가 감독 책상에서 이쪽을 본다 — 줄을 건너뛸 수 없다." if watched else \
+		("빨간펜이 고개를 든다 — 봉천 묶음 줄을 센다." if loud else "감독 책상이 비었다. 빨간펜은 등을 돌리고 번호를 센다.")
+	text(Vector2(16, 332), note, f10, 10, C["P54"] if watched or loud else C["P08"])         # 책상 위 글 — 밝게
 	var labels := [["later", "나중에", typed_at < 0.0], ["ok", "타자 친다", typed_at < 0.0]]
 	for i in labels.size():
 		var r := Rect2(628 - 84 * (labels.size() - i), 328, 78, 18)

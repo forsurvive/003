@@ -633,7 +633,7 @@ func _ready() -> void:
 				["check", "FQ_JH03_CLOCK >= 40 and FQ_JH03_CLOCK <= 90", "최단 길(서류) 낮 시계 40~90분 — 예산 120분의 3분의 1~3분의 2"],
 				["check", "FQ_JH03_SKY >= 8 and FQ_JH03_BARK == 5", "첫 신호(쌓인 30분) · 경매장 칠판 바크"],
 				["check", "FQ_JH03_RIVER == 0 and FQ_JH03_NIGHT == 0", "서류 30분을 썼으니 강가 상 없음(75분 넘게 남겨야) · 경매장 판"]]
-		"sb02":                                                         # 1-12f FQ-SB-02: 04시 본소 마당 출발 줄(갈고리) → 서부간선 고가 상판 → 북 램프 끝 오태수 탈주(데려옴) →
+		"sb02", "sb02f":                                                # 1-12f FQ-SB-02(sb02f: 방범대와 싸우는 갈래): 04시 본소 마당 출발 줄(갈고리) → 서부간선 고가 상판 → 북 램프 끝 오태수 탈주(데려옴) →
 			st.vars.set_v("AFF_SB", 25)                                  #   신도림 쉬는 박자 → 노량진로 끝 방범대([화술 보통] 통과) → 철교 남단 노들 경비 60캡 → 인수원 인계(넷 · 10시 전 · M-129)
 			st.vars.set_v("PC_CAPS", 500)
 			st.vars.set_v("PC_SKP_SPEECH", 100)
@@ -645,16 +645,16 @@ func _ready() -> void:
 			st.vars.set_v("FQ_SB01_RES", 1)
 			host.date_text = "2277. 10. 26.  04:05"
 			host.enter("W", "X-SB:yard_mid")
-			plan = [["hp", 3000], ["wait", 1.5], ["noenc"], ["calm"], ["shot", "sb02_yard"], ["sbgo", "lead"], ["want", ["호위 서겠다"]], ["sbtalk"], ["wait", 1.5],
+			plan = [["hp", 3000], ["wait", 1.5], ["noenc"], ["shot", "sb02_yard"], ["sbgo", "lead"], ["want", ["호위 서겠다"]], ["sbtalk"], ["wait", 1.5],
 				["check", "FQSB02_STAGE == 10 and FQ_SB02_LEAD == 0 and FQ_SB02_DAY > 0", "출발 줄 — 갈고리(10)"],
 				["sbfollow", "FQSB02_STAGE >= 30", 150.0, "고가 상판 → 북 램프 끝 — 오태수 탈주(30)", "sb02_escape"],
 				["check", "FQ_SB02_TAESU == 1", "오태수가 상판 밑으로"], ["wait", 2.0],
 				["sbgo", "taesu"], ["want", ["줄로 돌아가자"]], ["sbtalk"], ["wait", 1.5], ["check", "FQ_SB02_TAESU == 2 and FQ_SB02_SEEN == 0", "오태수를 데려옴(봤다는 줄 없음)"],
-				["sbgo", "lead"], ["wait", 2.0],
+				["sbgo", "lead"], ["wait", 2.0], ["want", ["말없이 기다린다"]],
 				["sbfollow", "FQ_SB02_REST == 1", 90.0, "신도림 — 쉬는 박자", "sb02_rest"],
-				["want", ["[화술 보통] 오늘은 길만"]],
+				["want", ["싸운다" if route == "sb02f" else "오늘은 길만"]],
 				["sbfollow", "FQSB02_STAGE >= 40", 200.0, "노량진로 끝 — 자율방범대(40)", "sb02_patrol"], ["wait", 3.0],
-				["check", "FQ_SB02_PATROL == 2", "화술로 통과"],
+				["check", "FQ_SB02_PATROL == %d" % (1 if route == "sb02f" else 2), "싸움(인솔조 대 방범대)" if route == "sb02f" else "화술로 통과"],
 				["want", ["[캡 60] 낸다"]],
 				["sbfollow", "FQSB02_STAGE >= 50", 120.0, "한강철교 남단 인계 지점(50)", "sb02_hand"],
 				["until", "FQSB02_STAGE == 100", 30.0, "인계 끝(100)", "sb02_done"],
@@ -1634,9 +1634,15 @@ func _process(dt: float) -> void:
 					_shot(str(s[4]))
 				_next()
 				return
+			if int(step_t / 10.0) != int((step_t - get_process_delta_time()) / 10.0):            # 10초마다 행렬 상태(봇 로그)
+				var ldd = fqsb.lead()
+				print("  [봇] 행렬 %.0f초 · %s · 경유점 %d · 선두 %s 상태 %s · 나 %s · hold=%s lag=%s · 단계 %d" % [step_t, host.date_text, int(st.vars.get_v("FQ_SB02_LEG")),
+					str(host.map.tile_of(ldd.loco.logical)) if ldd else "-", str(ldd.brain.state) if ldd else "-", host.cur_map + str(host.map.tile_of(host.player.loco.logical)),
+					str(fqsb.cv.get("hold", "")), str(fqsb.cv.get("lag", "")), int(st.quests.stage("FQ-SB-02"))])
 			if not fqsb.cv.is_empty() and fqsb.lead() != null:
 				var tr: Array = fqsb.cv["trail"]
-				var tail: Vector2 = tr[maxi(0, tr.size() - 1 - 9 * FqSb.GAP)]
+				var n_f: int = fqsb.cv["men"].size() + fqsb.cv["folk"].size() + 1     # 줄 맨 뒤 사람 한 칸 뒤
+				var tail: Vector2 = tr[maxi(0, tr.size() - 1 - n_f * FqSb.GAP)]
 				host.input_fn = _walk.bind(tail)
 		"chase":                                                        # 대치 중 들개를 쏘아 쫓는다(외눈은 쏘지 않는다)
 			host.input_fn = func() -> Vector2: return Vector2.ZERO

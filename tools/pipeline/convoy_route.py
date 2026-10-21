@@ -199,7 +199,7 @@ def main():
     if best is not None:
         out["hide"] = [best[1], best[2]]
     json.dump(out, open(OUT, "w", encoding="utf-8"), ensure_ascii=False)
-    walk = 3.0
+    walk = 2.5                                            # FqSb.PACE(행렬 걸음 칸/초)
     print("운송 경로(FQ-SB-02): %d칸 · 도로 %d%% · 상판 %d칸 · 경유점 %d · 걸음 %.0f초(게임 %.0f분)%s" % (
         tiles, out["road_pct"], deck_n, len(wp), tiles / walk, tiles / walk / 2.0,
         (" · 우회 신도림→인계 %d칸(본길 %d칸)" % (len(det), len(full) - marks["sindorim_raw"])) if det else " · 우회 없음"))

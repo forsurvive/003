@@ -6,10 +6,12 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "LIE": 3,
-  "SEEN": 7,
-  "TRUTH": 9,
-  "BACK": 12
+  "STALL": 3,
+  "LIE": 6,
+  "SEEN": 10,
+  "TRUTH": 13,
+  "TRUTH2": 17,
+  "BACK": 20
  },
  "ops": [
   {
@@ -35,14 +37,47 @@
      "id": "FQSB02_REPORT_L:1:0"
     },
     {
+     "text": "(한참 찾는 척하다 온다) 못 찾았다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "STALL",
+     "id": "FQSB02_REPORT_L:1:1"
+    },
+    {
      "text": "도망치게 뒀다",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "TRUTH",
-     "id": "FQSB02_REPORT_L:1:1"
+     "id": "FQSB02_REPORT_L:1:2"
     }
    ]
+  },
+  {
+   "op": "cmd",
+   "name": "sb02",
+   "args": [
+    "stall",
+    "60"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "상판 밑 그늘을 한 시간 동안 뒤지는 척한다. 해가 고가 난간 위로 올라온다."
+  },
+  {
+   "op": "line",
+   "who": "N-SB-L1",
+   "emo": "피곤",
+   "text": "(시계를 본다) 한 시간. …그 시간이면 셋을 더 데려왔겠다."
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB02_SEEN == 1",
+   "to": "SEEN"
   },
   {
    "op": "cmd",
@@ -51,11 +86,6 @@
     "report",
     "0"
    ]
-  },
-  {
-   "op": "if",
-   "cond": "FQ_SB02_SEEN == 1",
-   "to": "SEEN"
   },
   {
    "op": "line",
@@ -68,10 +98,41 @@
    "to": "END"
   },
   {
+   "op": "cmd",
+   "name": "sb02",
+   "args": [
+    "report",
+    "0"
+   ]
+  },
+  {
    "op": "line",
    "who": "N-SB-L1",
    "emo": "분노",
    "text": "상판 끝에서 다 보였어. 그 애 옆에 서 있던 거. …장부에서 하나 지워. 네 이름 옆엔 줄 하나 긋고."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB02_SEEN == 2",
+   "to": "TRUTH2"
+  },
+  {
+   "op": "cmd",
+   "name": "sb02",
+   "args": [
+    "report",
+    "1"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-SB-L1",
+   "emo": "분노",
+   "text": "뒀다고? …호위가. (침을 뱉는다) 넷이 셋. 네 이름 옆에 줄 하나 긋는다."
   },
   {
    "op": "goto",
@@ -89,7 +150,7 @@
    "op": "line",
    "who": "N-SB-L1",
    "emo": "분노",
-   "text": "뒀다고? …호위가. (침을 뱉는다) 넷이 셋. 네 이름 옆에 줄 하나 긋는다."
+   "text": "뒀다고? …알아. 다 봤으니까. 네 이름 옆 줄은 이미 그어 놨어."
   },
   {
    "op": "goto",
