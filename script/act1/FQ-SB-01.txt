@@ -1,0 +1,452 @@
+# FQ-SB-01 「출근부」(SD-04d §6.3 · 단계 1-12f). 진행기: scenes/story/fq_sb.gd(@cmd sb01 …). 2쪽 줄 고르기 화면: systems/ui/documents/ledger_copy.gd(@cmd doc ledger).
+# 초안: Claude (SD-19 §9.3 단계 2). 리드 검수 대기.
+# 계획 docs/seoul-fallout/_plans/1-12f_FQ-SB-01-02_plan.md §4(설계 · 예상 밖 행동 21 · 엔진 덧붙임).
+# 발동: 마당 칠판(X-SB_BOARD, MQ-105.txt) 옆 쪽지 → 실장 구만호(AFF_SB ≥ −19). 구만호 사망 → 황두칠 · 둘 다 사망 → 독사(SD-04d §6.1 대체 제공자).
+# 그날 동선(N14): 구만호는 04~06시 마당(인력시장 번호 부르기 — 황두칠 곁) · 12~13시 2층 실장실(점심) · 그 밖엔 2층 실장실, 출근부 일이 걸려 있는 동안은 1층 출근부실 감독 책상.
+#   빨간펜(N-R02-036)은 늘 출근부실 제 책상 — 줄 수를 세는 사람(발각 판정의 몸).
+# 정합: 선반 맨 아래 '2108년 첫 장부'(H-02 · 쪽지 SB-RULE '장부 제1권 2108. 3. 1.')는 빚 장부 첫 권 — 출근부는 2077 서식(SD-06 F-05 기원)이라 30년 더 오래됐다.
+#   1쪽 2077. 10. 23. 줄은 그날 밤 23:13(SD-02 §3.3) 전 — 평범한 새벽 배차(X8). MQ-504 연계는 PD(완납 도장) 줄만 값으로 남긴다(2막).
+# 장면 넘기기: FQSB01_* 장면이 ID 순서로 MQ-105 · SQ-S09 장면보다 먼저 잡힌다 — '다른 얘기'는 @cmd sb01 pass(같은 사람 다음 장면).
+
+# ---------------------------------------------------------------- 실장 구만호
+@scene FQSB01_GU  실장 구만호 — 출근부  (L-R02-19)
+@npc   C-049
+@cond  V_ACT >= 1 and SB_RAID == 0 and AFF_SB > -60 and FQSB01_STAGE < 100
+? FQ_SB01_WHERE == 2 and GAME_HOUR >= 6 -> YARD
+? FQSB01_STAGE == 0 -> OFFER
+? FQ_SB01_TYPED >= 3 -> SUBMIT
+? FQ_SB01_BACK == 0 and GAME_DAY > FQ_SB01_SEED + 1 -> LONG
+C-049 [기본] 타자기는 저쪽이야. 쪽 순서대로. 한 쪽에 한 시간.
+-> MENU
+* LONG
+! FQ_SB01_BACK = 1
+C-049 [기본] 어디 갔었어. …장부는 기다려. 사람이 안 기다려서 그렇지.
+-> MENU
+* MENU
+> [화술 보통] 마당에 인력 사러 손님이 왔습니다 -> LURE | LURE_NO ?? FQ_SB01_TYPED < 3 and FQ_SB01_LURE_DAY != GAME_DAY
+> 127번 — 채윤재 얘기다 -> S09 ?? SQ_S09_START > 0 and SB_127 <= 1
+> 됐다 -> END
+* YARD
+C-049 [기본] (마당을 두리번거린다) 손님 어디 있어? …정문 십장도 모른다는데.
+-> END
+* LURE
+C-049 [기본] 손님? 이 시간에? …(주판을 덮는다) 금방 와. 손대지 마.
+@cmd sb01 lure 1
+-> END
+* LURE_NO
+C-049 [기본] (눈을 안 뗀다) 손님은 갈고리가 받아. 넌 타자기나 쳐.
+@cmd sb01 lure 0
+-> END
+* OFFER
+? SB_DEBT == 1 -> BURNT
+? HO_LEDGER >= 80 and HO_LEDGER < 90 -> GIVEN
+C-049 [기본] (주판알을 튕기다 멈춘다) 글 알아? 숫자 말고 글.
+-> OFFER2
+* BURNT
+C-049 [기본] 소장님 장부가 탔다며. 출근부는 안 탔어. 빚은 종이 두 장에 적히거든.
+-> OFFER2
+* GIVEN
+C-049 [기본] 장부 한 권 없어졌다고 빚이 없어지나. 출근부가 있지.
+-> OFFER2
+* OFFER2
+> 게시판 쪽지 — 장부 정리 일 -> ASK
+> 127번 — 채윤재 얘기다 -> S09 ?? SQ_S09_START > 0 and SB_127 <= 1
+> 됐다 -> END
+* ASK
+? AFF_SB < -19 -> NOTYET
+C-049 [기본] 출근부 옮겨 적기. 2077년 것부터 올해 것까지 새 장부로. 세 번에 나눠 쳐.
+C-049 [기본] 선반 맨 아래가 처음인 줄 알지. 그건 빚 장부 첫 권이고. 출근부는 서른 해 더 묵었어. 창고에서 꺼내 놨다.
+C-049 [기본] 나는 출근부실 감독 책상에 있어. 네 시엔 마당에서 번호 부르고, 열두 시엔 올라가서 밥 먹고.
+> 하겠다 -> TAKE
+> 다음에 -> END
+* TAKE
+C-049 [기본] 일당 100. 틀린 글자는 안 받아. …장부는 사람을 안 미워해. 숫자만 세지. 그래서 무서운 거고.
+@cmd sb01 take 1
+-> END
+* NOTYET
+C-049 [기본] 본소 사람 아니면 장부 못 만져. 본소 일부터 해 보든가, 소장님 눈에 들든가.
+-> END
+* SUBMIT
+C-049 [기본] 다 쳤어? 줘 봐.
+SYS 구만호가 새 장부를 받는다. 손가락 끝이 줄을 하나씩 짚고 내려간다.
+@cmd sb01 submit
+? FQ_SB01_EXTRA == 2 -> EX2
+? FQ_SB01_EXTRA == 1 -> EX1
+-> EXDONE
+* EX1
+C-049 [기본] 맨 아래 이 이름은 뭐야. …번호 없는 이름은 장부에 안 올라가. 번호는 갈고리가 줘.
+-> EXDONE
+* EX2
+? dead("N-R02-036") == 1 -> EX2B
+N-R02-036 [기본] 열 줄? 아홉 줄이었는데.
+* EX2B
+C-049 [기본] 실장 이름을 미수금에 넣어? …재밌네. 지워.
+* EXDONE
+? FQ_SB01_RES == 3 -> CAUGHT
+? FQ_SB01_BLANK == 2 -> B2
+? FQ_SB01_BLANK == 3 -> B3
+C-049 [기본] 10월 24일은 빈칸으로 뒀네. 잘했어. 빈칸은 빈칸이야.
+-> PAY
+* B2
+C-049 [기본] '배차 없음'. 맞지. 그날부터 서른 해 동안 배차가 없었으니까.
+-> PAY
+* B3
+C-049 [기본] 장부에 감상은 안 적어. …지울 필요는 없고.
+-> PAY
+* PAY
+? FQ_SB01_RES == 2 -> QUIET
+C-049 [기본] 봉천 아홉 줄, 다 있네. 깨끗해. 다음 달 추심조가 고마워할 거야.
+-> FEE
+* QUIET
+C-049 [기본] …봉천 줄이 적네. 올해 봉천이 부지런했나.
+-> FEE
+* FEE
+SYS 구만호가 일당 전표 한 장을 내민다. '일당 100 — 실장 구만호'.
+? AFF_SB >= -19 -> CONVOY
+-> END
+* CONVOY
+C-049 [기본] 그리고 — 운송조 호위가 하나 모자라. 새벽 네 시에 마당으로 나와. 갈고리 찾아.
+@cmd sb01 convoy
+-> END
+* CAUGHT
+? dead("N-R02-036") == 1 -> CAUGHT_SELF
+N-R02-036 [기본] (옛 장부를 펼쳐 놓고 빨간 펜으로 줄을 센다) 실장님. 봉천 묶음이 안 맞아요.
+-> CAUGHT2
+* CAUGHT_SELF
+SYS 구만호가 옛 장부를 펼쳐 놓고 직접 줄을 센다. 빨간펜의 빈 책상 쪽은 보지 않는다.
+* CAUGHT2
+? FQ_SB01_STAMP == 1 -> CAUGHT_ST
+C-049 [분노] 줄이 비었어. 내가 모를 것 같아?
+-> CHOOSE
+* CAUGHT_ST
+C-049 [분노] 이 도장, 내 서랍 거야. 인주가 아직 안 말랐네.
+* CHOOSE
+C-049 [기본] 장부는 사람을 안 봐줘. 숫자만 맞으면 돼. …다시 칠래, 네가 낼래.
+> 빈 줄 빚을 내가 낸다({FQ_SB01_OWE}캡) -> PAYOFF ?? FQ_SB01_OWE > 0 and PC_CAPS >= FQ_SB01_OWE
+> 다시 친다 -> RETYPE
+* PAYOFF
+@cmd sb01 payoff
+C-049 [기본] (캡을 센다. 두 번 센다) …맞네. '완납'. 남의 빚을 사는 사람은 처음 보네. 일당은 일당대로.
+? AFF_SB >= -19 -> CONVOY
+-> END
+* RETYPE
+@cmd sb01 retype
+C-049 [기본] 빈 줄은 빨간펜이 채워. 일당은 없어.
+-> END
+* S09
+@cmd sb01 pass FQSB01_GU DEAL
+-> END
+
+# ---------------------------------------------------------------- 대체 제공자: 소장 황두칠(구만호 사망) · 독사(둘 다 사망)
+@scene FQSB01_HDC  소장 황두칠 — 출근부  (L-R02-19)
+@npc   C-013
+@cond  V_ACT >= 1 and SB_RAID == 0 and AFF_SB > -60 and dead("C-049") == 1 and FQSB01_STAGE < 100 and (FQSB01_STAGE == 0 or FQ_SB01_TYPED >= 3)
+? FQ_SB01_TYPED >= 3 -> SUBMIT
+C-013 [기본] 구만호 자리가 비었어. 출근부는 안 비고. …글 아는 사람 찾는다.
+> 장부 정리 일 — 하겠다 -> ASK
+> 다른 얘기 -> PASS
+* ASK
+? AFF_SB < -19 -> NOTYET
+C-013 [기본] 2077년 것부터 올해 것까지 새 장부로. 세 번에 나눠. 감독은 없어 — 빨간펜이 줄은 센다.
+@cmd sb01 take 2
+-> END
+* NOTYET
+C-013 [기본] 장부는 식구한테만 맡겨. 너는 아직 손님이야.
+-> END
+* SUBMIT
+C-013 [기본] (새 장부를 넘겨받아 마지막 장만 본다) 구만호 글씨보다 낫네.
+@cmd sb01 submit
+? FQ_SB01_RES == 3 -> CAUGHT
+C-013 [기본] 일당은 전표로. 구만호가 하던 대로.
+-> END
+* CAUGHT
+N-R02-036 [기본] 소장님, 봉천 묶음이 안 맞아요. 옛 장부랑 줄 수가 달라요.
+C-013 [분노] 장부는 사람을 안 봐줘. 일당은 없어.
+-> END
+* PASS
+@cmd sb01 pass FQSB01_HDC
+-> END
+
+@scene FQSB01_DOK  추심원 독사 — 출근부  (L-R02-19)
+@npc   C-021
+@cond  V_ACT >= 1 and SB_RAID == 0 and AFF_SB > -60 and dead("C-049") == 1 and dead("C-013") == 1 and FQSB01_STAGE < 100 and (FQSB01_STAGE == 0 or FQ_SB01_TYPED >= 3)
+? FQ_SB01_TYPED >= 3 -> SUBMIT
+C-021 [기본] 소장실도 실장실도 비었어. 장부는 남았고. 빚은 사람보다 오래 살아.
+> 장부 정리 일 — 하겠다 -> ASK
+> 다른 얘기 -> PASS
+* ASK
+? AFF_SB < -19 -> NOTYET
+C-021 [기본] 옮겨 적어. 세 번. 이름 하나라도 빠지면 내가 직접 받으러 간다.
+@cmd sb01 take 3
+-> END
+* NOTYET
+C-021 [기본] 너한테 장부를? 내가 웃기지.
+-> END
+* SUBMIT
+C-021 [기본] 봉천 줄만 볼게. 내가 받으러 갈 데니까.
+@cmd sb01 submit
+? FQ_SB01_RES == 3 -> CAUGHT
+C-021 [기본] …됐어. 일당.
+-> END
+* CAUGHT
+C-021 [분노] 빈 줄이 있네. 장부는 사람을 안 봐줘. 일당은 없어.
+-> END
+* PASS
+@cmd sb01 pass FQSB01_DOK
+-> END
+
+# ---------------------------------------------------------------- 타자기(H-02 출근부실)
+@scene FQSB01_TYPE  타자기  (L-R02-19)
+@npc   -
+@cond  V_ACT >= 1
+? SB_RAID != 0 -> RAID
+? FQSB01_STAGE == 0 -> IDLE
+? FQSB01_STAGE >= 100 -> AFTER
+? FQ_SB01_TYPED >= 3 -> DONE
+? FQ_SB01_TYPED == 2 -> P3
+? FQ_SB01_TYPED == 1 -> P2
+-> P1
+* RAID
+SYS 타자기가 바닥에 엎어져 있다. 활자대가 몇 개 휘었다.
+-> END
+* IDLE
+SYS 빈 새 장부가 끼워진 타자기. 맨 윗줄에 '출근부 — 정리본'만 쳐져 있다.
+-> END
+* DONE
+SYS 새 장부는 다 쳤다. 실장에게 낸다.
+-> END
+* AFTER
+? FQ_SB01_RES == 3 -> AFTER3
+SYS 타자기에 새 빈 장부가 다시 끼워져 있다. 누군가 내년 것을 칠 것이다.
+-> END
+* AFTER3
+SYS 새 장부 봉천 묶음에 빨간 글씨 줄이 끼어 있다. 빨간펜의 글씨다.
+-> END
+* P1
+SYS 2077년 철제 서류함. 녹슨 걸쇠 아래 누런 출근부 묶음. 서식 머리 — '새벽인력 · 전시 노역 알선 · 출근부'.
+SYS '2077. 10. 23. 05:00 배차 — 평택 정비창 하역 22명. 일당 각 40.' 반듯한 볼펜 글씨다.
+SYS '2077. 10. 24.' 날짜만 있고, 아래는 비었다. 칸이 서른한 줄.
+SYS 몇 장 뒤 연필 글씨. '배차 없음. 일당 칸 — 쌀 한 되.' 해는 적혀 있지 않다.
+SYS 2108. 3. 1. 묶음부터 서식에 없던 칸 하나가 손으로 그어져 있다. 칸 머리 — '빚'.
+SYS 2150년대 묶음부터는 이름 옆에 번호가 붙는다. 이름 칸이 빈 줄에도 번호는 있다.
+SYS 옮겨 친다. 10월 24일 줄에서 손이 멈춘다.
+> 빈칸은 빈칸으로 친다 -> P1A
+> '배차 없음'이라고 친다 -> P1B
+> '그날 밤 전쟁'이라고 친다 -> P1C
+> 나중에 친다 -> END
+* P1A
+! FQ_SB01_BLANK = 1
+-> P1END
+* P1B
+! FQ_SB01_BLANK = 2
+-> P1END
+* P1C
+! FQ_SB01_BLANK = 3
+-> P1END
+* P1END
+SYS 타닥, 타닥. 200년이 한 시간 만에 새 종이로 옮겨 간다.
+@cmd sb01 page 1
+-> END
+* P2
+? FQ_SB01_AWAY == 0 -> P2W
+SYS 감독 책상이 비었다. 빨간펜은 제 책상에서 등을 돌리고 번호를 센다.
+-> P2D
+* P2W
+SYS 구만호가 감독 책상에서 이쪽을 본다. 주판알이 멈춰 있다.
+* P2D
+SYS 올해 출근부, 봉천 계단마을 묶음. 줄 끝마다 붉은 글씨 '미수'.
+@cmd doc ledger
+? FQ_SB01_TYPED >= 2 -> P2END
+SYS 손을 뗐다. 나중에 친다.
+-> END
+* P2END
+SYS 봉천 묶음 맨 아래, 빈 줄이 하나 남았다.
+> 그대로 둔다 -> P2GO
+> 한 줄 더 친다 — 내 이름 -> EXTRA1
+> 한 줄 더 친다 — 구만호 -> EXTRA2 ?? dead("C-049") == 0
+* EXTRA1
+! FQ_SB01_EXTRA = 1
+SYS 타닥, 타닥. 내 이름. 번호 칸은 비워 둔다.
+-> P2GO
+* EXTRA2
+! FQ_SB01_EXTRA = 2
+SYS 타닥, 타닥. '구만호 — 실장 — 미수: 웃음 한 번.'
+* P2GO
+@cmd sb01 page 2
+-> END
+* P3
+SYS 마지막 쪽 서식 — '2277. 11. 추심조 출동 명단'. 2쪽에서 옮긴 봉천 줄이 그대로 내려온다.
+? FQ_SB01_X1 == 0 and FQ_SB01_PD1 == 0 -> R1
+-> Q2
+* R1
+SYS '11. 3. 오봉수 — 고철 선금 180. 추심원 독사.'
+* Q2
+? FQ_SB01_X2 == 0 and FQ_SB01_PD2 == 0 -> R2
+-> Q3
+* R2
+SYS '11. 3. 남무진 — 숯 · 고철 선대 200. 추심원 독사.'
+* Q3
+? FQ_SB01_X3 == 0 and FQ_SB01_PD3 == 0 -> R3
+-> Q4
+* R3
+SYS '11. 5. 오재윤 — 위약금 60. 인력 대체 가능.'
+* Q4
+? FQ_SB01_X4 == 0 and FQ_SB01_PD4 == 0 -> R4
+-> Q5
+* R4
+SYS '11. 5. 남건희 — 선급 일당 90. 인력 대체 가능.'
+* Q5
+? FQ_SB01_X5 == 0 and FQ_SB01_PD5 == 0 -> R5
+-> Q6
+* R5
+SYS '11. 8. 오영자 — 약품 대납 120. 가게 압류 검토.'
+* Q6
+? FQ_SB01_X6 + FQ_SB01_X7 + FQ_SB01_X8 + FQ_SB01_X9 + FQ_SB01_PD6 + FQ_SB01_PD7 + FQ_SB01_PD8 + FQ_SB01_PD9 >= 4 -> Q7
+SYS '11. 9. 번호 218 · 233 · 240 · 251 중 남은 줄 — 인력 대체 가능.'
+* Q7
+? FQ_SB01_X1 + FQ_SB01_X2 + FQ_SB01_X3 + FQ_SB01_X4 + FQ_SB01_X5 + FQ_SB01_X6 + FQ_SB01_X7 + FQ_SB01_X8 + FQ_SB01_X9 + FQ_SB01_PD1 + FQ_SB01_PD2 + FQ_SB01_PD3 + FQ_SB01_PD4 + FQ_SB01_PD5 + FQ_SB01_PD6 + FQ_SB01_PD7 + FQ_SB01_PD8 + FQ_SB01_PD9 >= 9 -> EMPTY
+SYS 명단 맨 아래 칸 '출동 인원 — 추심원 1 · 인솔조원 2'.
+-> P3END
+* EMPTY
+SYS 봉천 칸이 비었다. 서식 아래 빈 줄만 길다.
+* P3END
+@cmd sb01 page 3
+-> END
+
+# ---------------------------------------------------------------- 실장 감독 책상(도장 서랍 [자물쇠 25])
+@scene FQSB01_DRAWER  실장 감독 책상  (L-R02-19)
+@npc   -
+@cond  V_ACT >= 1
+? FQSB01_STAGE == 0 or FQSB01_STAGE >= 100 -> PLAIN
+? FQ_SB01_DRAWER == 1 -> OPEN
+SYS 실장 감독 책상. 주판 · 붉은 인주 · 잠긴 서랍 하나.
+> 서랍을 딴다(자물쇠 25) -> PICK ?? FQ_SB01_AWAY == 1
+> 그만둔다 -> END
+* PLAIN
+SYS 실장 감독 책상. 주판알이 반쯤 올라가 있다. 서랍은 잠겨 있다.
+-> END
+* PICK
+@cmd sb01 pick
+-> END
+* OPEN
+? FQ_SB01_AWAY == 0 -> WATCH
+SYS 서랍 안에 '완납' 고무도장과 붉은 인주. 옆에 올해 옛 장부 봉천 묶음.
+? FQ_SB01_TYPED >= 2 -> LATE
+> 도장 — 오봉수 줄 -> S1 ?? FQ_SB01_PD1 == 0 and FQ_SB01_X1 == 0
+> 도장 — 남무진 줄 -> S2 ?? FQ_SB01_PD2 == 0 and FQ_SB01_X2 == 0
+> 도장 — 오재윤 줄 -> S3 ?? FQ_SB01_PD3 == 0 and FQ_SB01_X3 == 0
+> 도장 — 남건희 줄 -> S4 ?? FQ_SB01_PD4 == 0 and FQ_SB01_X4 == 0
+> 도장 — 오영자 줄 -> S5 ?? FQ_SB01_PD5 == 0 and FQ_SB01_X5 == 0
+> 도장 — 번호 218 줄 -> S6 ?? FQ_SB01_PD6 == 0 and FQ_SB01_X6 == 0
+> 도장 — 번호 233 줄 -> S7 ?? FQ_SB01_PD7 == 0 and FQ_SB01_X7 == 0
+> 도장 — 번호 240 줄 -> S8 ?? FQ_SB01_PD8 == 0 and FQ_SB01_X8 == 0
+> 도장 — 번호 251 줄 -> S9 ?? FQ_SB01_PD9 == 0 and FQ_SB01_X9 == 0
+> 서랍을 닫는다 -> END
+* WATCH
+SYS 구만호가 앉아 있다. 실장 책상이다.
+-> END
+* LATE
+SYS 봉천 줄은 이미 새 장부로 옮겼다. 도장은 늦었다.
+-> END
+* S1
+! FQ_SB01_PD1 = 1; FQ_SB01_STAMP = 1
+-> STAMPED
+* S2
+! FQ_SB01_PD2 = 1; FQ_SB01_STAMP = 1
+-> STAMPED
+* S3
+! FQ_SB01_PD3 = 1; FQ_SB01_STAMP = 1
+-> STAMPED
+* S4
+! FQ_SB01_PD4 = 1; FQ_SB01_STAMP = 1
+-> STAMPED
+* S5
+! FQ_SB01_PD5 = 1; FQ_SB01_STAMP = 1
+-> STAMPED
+* S6
+! FQ_SB01_PD6 = 1; FQ_SB01_STAMP = 1
+-> STAMPED
+* S7
+! FQ_SB01_PD7 = 1; FQ_SB01_STAMP = 1
+-> STAMPED
+* S8
+! FQ_SB01_PD8 = 1; FQ_SB01_STAMP = 1
+-> STAMPED
+* S9
+! FQ_SB01_PD9 = 1; FQ_SB01_STAMP = 1
+-> STAMPED
+* STAMPED
+SYS 쿵. 붉은 '완납'. 옛 장부 줄이 한 줄, 빚이 아니게 된다 — 종이 위에서는.
+-> OPEN
+
+# ---------------------------------------------------------------- 출근부실 빨간펜 · 쪽지
+@scene FQSB01_PEN  출근부 반장 빨간펜  (L-R02-19)
+@npc   N-R02-036
+@cond  V_ACT >= 1 and SB_RAID == 0 and FQSB01_STAGE >= 10 and FQSB01_STAGE < 100
+N-R02-036 [기본] (고개를 안 든다) 번호만 불러. 줄은 내가 세.
+? FQ_SB01_TYPED >= 2 and FQ_SB01_X1 + FQ_SB01_X2 + FQ_SB01_X3 + FQ_SB01_X4 + FQ_SB01_X5 + FQ_SB01_X6 + FQ_SB01_X7 + FQ_SB01_X8 + FQ_SB01_X9 >= 4 -> THIN
+? FQ_SB01_AWAY == 1 -> AWAY
+-> END
+* THIN
+N-R02-036 [기본] (새 장부를 곁눈질한다) …오늘 장부가 얇네?
+-> END
+* AWAY
+N-R02-036 [기본] 실장님 자리 비었다고 손이 가벼워지진 마. 줄 수는 장부가 기억해.
+-> END
+
+# ---------------------------------------------------------------- 봉천 이장 조만석(뺀 이름을 알림 — 공개도 1)
+@scene FQSB01_JO  이장 조만석 — 출근부  (L-R01-09)
+@npc   C-010
+@cond  V_ACT >= 1 and FQ_SB01_RES == 2 and FQ_SB01_TOLD == 0
+C-010 [기본] 왔나. 얼굴이 뭘 들고 온 얼굴이네.
+> 새벽인력 출근부에서 봉천 이름을 뺐다 -> TELL
+> 다른 얘기 -> PASS
+* TELL
+C-010 [기본] (한참 말이 없다) …이름을 뺐다고. 그쪽 장부에서.
+C-010 [기본] 빚이 없어진 건 아니야. 추심조가 덜 올라올 뿐이지. …그게 어디야. 고맙네.
+? FQ_SB01_X4 == 1 or FQ_SB01_PD4 == 1 -> GEON
+-> TOLD
+* GEON
+C-010 [기본] 남건희 그놈 이름도 뺐나? …그 녀석한텐 말하지 말게. 입이 가볍고, 밤엔 윗문 밖에 나가.
+* TOLD
+@cmd sb01 told
+-> END
+* PASS
+@cmd sb01 pass FQSB01_JO
+-> END
+
+# ---------------------------------------------------------------- 추심 날(FQ_SB01_DUE — 3쪽 날짜) 뒤 사흘: 뺀 · 완납 줄의 이름 있는 사람이 첫 말에 한 줄(출처: '추심조가 안 왔다', P7)
+@scene FQSB01_THX1  고물상 오봉수  (L-R01-09)
+@npc   N-R01-026
+@cond  V_ACT >= 1 and FQ_SB01_DUE > 0 and GAME_DAY >= FQ_SB01_DUE and GAME_DAY <= FQ_SB01_DUE + 2 and FQ_SB01_THX1 == 0 and (FQ_SB01_X1 == 1 or FQ_SB01_PD1 == 1) and FQ_SB01_RES != 3
+N-R01-026 [기본] 이상하지. 올해는 고철 선금 받으러 아무도 안 왔어. 장부가 나를 잊었나? 잊어 주면 고맙지.
+@cmd sb01 thx 1
+-> END
+
+@scene FQSB01_THX2  대장장이 남무진  (L-R01-09)
+@npc   N-R01-030
+@cond  V_ACT >= 1 and FQ_SB01_DUE > 0 and GAME_DAY >= FQ_SB01_DUE and GAME_DAY <= FQ_SB01_DUE + 2 and FQ_SB01_THX2 == 0 and (FQ_SB01_X2 == 1 or FQ_SB01_PD2 == 1) and FQ_SB01_RES != 3
+N-R01-030 [기본] (망치를 내려놓는다) 숯값 받으러 올 날인데 안 왔어. 쇠는 두드리면 펴지는데, 빚은 안 펴지거든. …누가 폈나.
+@cmd sb01 thx 2
+-> END
+
+@scene FQSB01_THX3  마을 청년 오재윤  (L-R01-09)
+@npc   N-R01-035
+@cond  V_ACT >= 1 and FQ_SB01_DUE > 0 and GAME_DAY >= FQ_SB01_DUE and GAME_DAY <= FQ_SB01_DUE + 2 and FQ_SB01_THX3 == 0 and (FQ_SB01_X3 == 1 or FQ_SB01_PD3 == 1) and FQ_SB01_RES != 3
+N-R01-035 [기본] 위약금 받으러 온다던 날이 지났어. 계단참에서 하루 종일 총 들고 기다렸는데. …안 와서 다행이지, 뭐.
+@cmd sb01 thx 3
+-> END
+
+@scene FQSB01_THX4  마을 청년 남건희  (L-R01-09)
+@npc   N-R01-039
+@cond  V_ACT >= 1 and FQ_SB01_DUE > 0 and GAME_DAY >= FQ_SB01_DUE and GAME_DAY <= FQ_SB01_DUE + 2 and FQ_SB01_THX4 == 0 and (FQ_SB01_X4 == 1 or FQ_SB01_PD4 == 1) and FQ_SB01_RES != 3
+N-R01-039 [놀람] 일당 떼먹은 거, 안 받으러 왔어. 누가 대신 갚았대? …누가 시켰는데? 나 아무한테도 말 안 했어.
+@cmd sb01 thx 4
+-> END
+
+@scene FQSB01_THX5  미용실 오영자  (L-R01-09)
+@npc   N-R01-501
+@cond  V_ACT >= 1 and FQ_SB01_DUE > 0 and GAME_DAY >= FQ_SB01_DUE and GAME_DAY <= FQ_SB01_DUE + 2 and FQ_SB01_THX5 == 0 and (FQ_SB01_X5 == 1 or FQ_SB01_PD5 == 1) and FQ_SB01_RES != 3
+N-R01-501 [기본] 올해는 우리 집을 건너뛰더라. 누가 그랬는지 몰라도. …머리 다듬을 일 있으면 와. 공짜로 해 줄게, 한 번은.
+@cmd sb01 thx 5
+-> END

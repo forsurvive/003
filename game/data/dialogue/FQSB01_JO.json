@@ -1,0 +1,97 @@
+{
+ "id": "FQSB01_JO",
+ "title": "이장 조만석 — 출근부",
+ "loc": "L-R01-09",
+ "npc": "C-010",
+ "cond": "V_ACT >= 1 and FQ_SB01_RES == 2 and FQ_SB01_TOLD == 0",
+ "labels": {
+  "START": 0,
+  "TELL": 2,
+  "GEON": 6,
+  "TOLD": 7,
+  "PASS": 9
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "왔나. 얼굴이 뭘 들고 온 얼굴이네."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "새벽인력 출근부에서 봉천 이름을 뺐다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TELL",
+     "id": "FQSB01_JO:1:0"
+    },
+    {
+     "text": "다른 얘기",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "PASS",
+     "id": "FQSB01_JO:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "(한참 말이 없다) …이름을 뺐다고. 그쪽 장부에서."
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "빚이 없어진 건 아니야. 추심조가 덜 올라올 뿐이지. …그게 어디야. 고맙네."
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB01_X4 == 1 or FQ_SB01_PD4 == 1",
+   "to": "GEON"
+  },
+  {
+   "op": "goto",
+   "to": "TOLD"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "남건희 그놈 이름도 뺐나? …그 녀석한텐 말하지 말게. 입이 가볍고, 밤엔 윗문 밖에 나가."
+  },
+  {
+   "op": "cmd",
+   "name": "sb01",
+   "args": [
+    "told"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "sb01",
+   "args": [
+    "pass",
+    "FQSB01_JO"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-SB-01.txt"
+}

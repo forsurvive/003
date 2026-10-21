@@ -44,7 +44,7 @@ PROG = {
     # 1-11 이후 진행기(1-12d 교차 점검 보강 — 빠져 있어 진행기의 생사 판정 · 변수 쓰기가 교차 표에 안 잡혔다). '|'는 한 진행기가 맡은 단위 여럿
     "scenes/story/side_s03.gd": "SQ-S03", "scenes/story/side_s05.gd": "SQ-S05", "scenes/story/side_s06.gd": "SQ-S06", "scenes/story/side_s08.gd": "SQ-S08",
     "scenes/story/side_s09.gd": "SQ-S09", "scenes/story/side_s10.gd": "SQ-S10", "scenes/story/side_s11.gd": "SQ-S11", "scenes/story/side_s12.gd": "SQ-S12",
-    "scenes/story/side_s13.gd": "SQ-S13", "scenes/story/fq_jc01.gd": "FQ-JC-01", "scenes/story/fq_gs.gd": "FQ-GS-01|FQ-GS-02", "scenes/story/fq_jh.gd": "FQ-JH-01|FQ-JH-02", "scenes/story/fq_jh3.gd": "FQ-JH-03",
+    "scenes/story/side_s13.gd": "SQ-S13", "scenes/story/fq_jc01.gd": "FQ-JC-01", "scenes/story/fq_gs.gd": "FQ-GS-01|FQ-GS-02", "scenes/story/fq_jh.gd": "FQ-JH-01|FQ-JH-02", "scenes/story/fq_jh3.gd": "FQ-JH-03", "scenes/story/fq_sb.gd": "FQ-SB-01|FQ-SB-02",
     "scenes/story/ga.gd": "GA", "scenes/story/hp.gd": "HP", "scenes/story/ks.gd": "KS", "scenes/story/yt.gd": "YT", "scenes/story/u04.gd": "U04", "scenes/story/stash.gd": "UQ-125",
 }
 # 막 3개짜리 경로 묶음(MQ-102~105)은 한 진행기 — 변수 소유는 아래 접두로 나눈다

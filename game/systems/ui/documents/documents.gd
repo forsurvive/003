@@ -20,6 +20,8 @@ static func make(doc_name: String, st: StoryState) -> DocScreen:
 			return AptitudeCard.new().setup(st)
 		"result":
 			return ResultSheet.new().setup(st)
+		"ledger":
+			return LedgerCopy.new().setup(st)                                 # FQ-SB-01 출근부 2쪽(1-12f)
 	push_error("서류 이름을 모른다: " + doc_name)
 	return null
 

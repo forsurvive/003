@@ -47,7 +47,7 @@ text 21 2 "단체 사진. '새벽인력 창립 170주년 — 2278년 1월 1일'.
 npc CR-437 20 5 W sheet=en_cr437_loco cond="SB_RAID == 0" route=a:20,5,6;b:32,5,6 bark="2층은 소장님 손님만."
 # 실장실(구만호)
 prop office_desk 6 13
-npc C-049 7 12 S cond="SB_RAID == 0" bark="장부는 소장님 거고, 숫자는 내 거야."
+npc C-049 7 12 S cond="SB_RAID == 0 and FQ_SB01_WHERE == 0" bark="장부는 소장님 거고, 숫자는 내 거야."
 prop file_cabinet 2 11
 box 2 11 cabinet name="실장실 서류함"
 prop safe 14 11

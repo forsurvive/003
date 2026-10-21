@@ -632,3 +632,11 @@ npc C-067 24 26 S cond="MEDIC_AT == 1 and MQ101_RESULT > 0" bark="다친 사람 
 npc N-R02-039 12 30 E cond="SB_127 == 6" bark="고향 맞더라. 봉천 계단 냄새."
 npc N-R02-050 13 30 W cond="SB_127 == 6"
 npc N-R02-040 15 30 W cond="SQ_S10_KIRA == 4 and SQ_S10_PLACE == 1" bark="계단 고치는 거 배워. 번호 말고 이름으로 불러 줘."
+
+# 1-12f FQ-SB-01: 3쪽 날짜(FQ_SB01_DUE — 낸 날의 다음 달 3일) 08~18시, 출동 명단에 남은 이름 있는 사람 집 앞에 추심원(독사 아님 — SB-03 일정과 겹침 없음, P3). MQ-101이 끝난 뒤만.
+npc CR-436 13 33 W sheet=en_cr436_loco cond="FQ_SB01_DUE > 0 and GAME_DAY == FQ_SB01_DUE and GAME_HOUR >= 8 and GAME_HOUR < 18 and MQ101_STAGE >= 100 and FQ_SB01_X1 == 0 and FQ_SB01_PD1 == 0" bark="고철 선금 180. 고철로 받아 줄 테니 저울 꺼내."
+npc CR-436 48 35 W sheet=en_cr436_loco cond="FQ_SB01_DUE > 0 and GAME_DAY == FQ_SB01_DUE and GAME_HOUR >= 8 and GAME_HOUR < 18 and MQ101_STAGE >= 100 and FQ_SB01_X2 == 0 and FQ_SB01_PD2 == 0" bark="숯값 200. 망치 소리 그만 내고 장부 소리 좀 듣자."
+npc CR-436 32 29 W sheet=en_cr436_loco cond="FQ_SB01_DUE > 0 and GAME_DAY == FQ_SB01_DUE and GAME_HOUR >= 8 and GAME_HOUR < 18 and MQ101_STAGE >= 100 and FQ_SB01_X3 == 0 and FQ_SB01_PD3 == 0" bark="위약금 60. 총 들고 계단 지키는 건 일당에 안 들어가."
+npc CR-436 22 27 W sheet=en_cr436_loco cond="FQ_SB01_DUE > 0 and GAME_DAY == FQ_SB01_DUE and GAME_HOUR >= 8 and GAME_HOUR < 18 and MQ101_STAGE >= 100 and FQ_SB01_X4 == 0 and FQ_SB01_PD4 == 0" bark="선급 일당 90. 밤에 윗문 밖 나가는 거 다 알아."
+npc CR-436 12 28 W sheet=en_cr436_loco cond="FQ_SB01_DUE > 0 and GAME_DAY == FQ_SB01_DUE and GAME_HOUR >= 8 and GAME_HOUR < 18 and MQ101_STAGE >= 100 and FQ_SB01_X5 == 0 and FQ_SB01_PD5 == 0" bark="약품 대납 120. 가위는 압류 목록 맨 위야."
+npc CR-437 30 31 N sheet=en_cr437_loco cond="FQ_SB01_DUE > 0 and GAME_DAY == FQ_SB01_DUE and GAME_HOUR >= 8 and GAME_HOUR < 18 and MQ101_STAGE >= 100 and FQ_SB01_X6 + FQ_SB01_PD6 + FQ_SB01_X7 + FQ_SB01_PD7 + FQ_SB01_X8 + FQ_SB01_PD8 + FQ_SB01_X9 + FQ_SB01_PD9 < 4" bark="(번호표를 넘긴다) 218 · 233 · 240 · 251 — 이름 없는 집도 번호는 있어."

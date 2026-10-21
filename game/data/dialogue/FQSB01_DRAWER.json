@@ -1,0 +1,292 @@
+{
+ "id": "FQSB01_DRAWER",
+ "title": "실장 감독 책상",
+ "loc": "L-R02-19",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "PLAIN": 4,
+  "PICK": 6,
+  "OPEN": 8,
+  "WATCH": 12,
+  "LATE": 14,
+  "S1": 16,
+  "S2": 18,
+  "S3": 20,
+  "S4": 22,
+  "S5": 24,
+  "S6": 26,
+  "S7": 28,
+  "S8": 30,
+  "S9": 32,
+  "STAMPED": 34
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "FQSB01_STAGE == 0 or FQSB01_STAGE >= 100",
+   "to": "PLAIN"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB01_DRAWER == 1",
+   "to": "OPEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "실장 감독 책상. 주판 · 붉은 인주 · 잠긴 서랍 하나."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "서랍을 딴다(자물쇠 25)",
+     "tags": [],
+     "cond": "FQ_SB01_AWAY == 1",
+     "fx": "",
+     "to": "PICK",
+     "id": "FQSB01_DRAWER:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQSB01_DRAWER:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "실장 감독 책상. 주판알이 반쯤 올라가 있다. 서랍은 잠겨 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "sb01",
+   "args": [
+    "pick"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB01_AWAY == 0",
+   "to": "WATCH"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "서랍 안에 '완납' 고무도장과 붉은 인주. 옆에 올해 옛 장부 봉천 묶음."
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB01_TYPED >= 2",
+   "to": "LATE"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "도장 — 오봉수 줄",
+     "tags": [],
+     "cond": "FQ_SB01_PD1 == 0 and FQ_SB01_X1 == 0",
+     "fx": "",
+     "to": "S1",
+     "id": "FQSB01_DRAWER:2:0"
+    },
+    {
+     "text": "도장 — 남무진 줄",
+     "tags": [],
+     "cond": "FQ_SB01_PD2 == 0 and FQ_SB01_X2 == 0",
+     "fx": "",
+     "to": "S2",
+     "id": "FQSB01_DRAWER:2:1"
+    },
+    {
+     "text": "도장 — 오재윤 줄",
+     "tags": [],
+     "cond": "FQ_SB01_PD3 == 0 and FQ_SB01_X3 == 0",
+     "fx": "",
+     "to": "S3",
+     "id": "FQSB01_DRAWER:2:2"
+    },
+    {
+     "text": "도장 — 남건희 줄",
+     "tags": [],
+     "cond": "FQ_SB01_PD4 == 0 and FQ_SB01_X4 == 0",
+     "fx": "",
+     "to": "S4",
+     "id": "FQSB01_DRAWER:2:3"
+    },
+    {
+     "text": "도장 — 오영자 줄",
+     "tags": [],
+     "cond": "FQ_SB01_PD5 == 0 and FQ_SB01_X5 == 0",
+     "fx": "",
+     "to": "S5",
+     "id": "FQSB01_DRAWER:2:4"
+    },
+    {
+     "text": "도장 — 번호 218 줄",
+     "tags": [],
+     "cond": "FQ_SB01_PD6 == 0 and FQ_SB01_X6 == 0",
+     "fx": "",
+     "to": "S6",
+     "id": "FQSB01_DRAWER:2:5"
+    },
+    {
+     "text": "도장 — 번호 233 줄",
+     "tags": [],
+     "cond": "FQ_SB01_PD7 == 0 and FQ_SB01_X7 == 0",
+     "fx": "",
+     "to": "S7",
+     "id": "FQSB01_DRAWER:2:6"
+    },
+    {
+     "text": "도장 — 번호 240 줄",
+     "tags": [],
+     "cond": "FQ_SB01_PD8 == 0 and FQ_SB01_X8 == 0",
+     "fx": "",
+     "to": "S8",
+     "id": "FQSB01_DRAWER:2:7"
+    },
+    {
+     "text": "도장 — 번호 251 줄",
+     "tags": [],
+     "cond": "FQ_SB01_PD9 == 0 and FQ_SB01_X9 == 0",
+     "fx": "",
+     "to": "S9",
+     "id": "FQSB01_DRAWER:2:8"
+    },
+    {
+     "text": "서랍을 닫는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQSB01_DRAWER:2:9"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "구만호가 앉아 있다. 실장 책상이다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "봉천 줄은 이미 새 장부로 옮겼다. 도장은 늦었다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "FQ_SB01_PD1 = 1; FQ_SB01_STAMP = 1"
+  },
+  {
+   "op": "goto",
+   "to": "STAMPED"
+  },
+  {
+   "op": "do",
+   "fx": "FQ_SB01_PD2 = 1; FQ_SB01_STAMP = 1"
+  },
+  {
+   "op": "goto",
+   "to": "STAMPED"
+  },
+  {
+   "op": "do",
+   "fx": "FQ_SB01_PD3 = 1; FQ_SB01_STAMP = 1"
+  },
+  {
+   "op": "goto",
+   "to": "STAMPED"
+  },
+  {
+   "op": "do",
+   "fx": "FQ_SB01_PD4 = 1; FQ_SB01_STAMP = 1"
+  },
+  {
+   "op": "goto",
+   "to": "STAMPED"
+  },
+  {
+   "op": "do",
+   "fx": "FQ_SB01_PD5 = 1; FQ_SB01_STAMP = 1"
+  },
+  {
+   "op": "goto",
+   "to": "STAMPED"
+  },
+  {
+   "op": "do",
+   "fx": "FQ_SB01_PD6 = 1; FQ_SB01_STAMP = 1"
+  },
+  {
+   "op": "goto",
+   "to": "STAMPED"
+  },
+  {
+   "op": "do",
+   "fx": "FQ_SB01_PD7 = 1; FQ_SB01_STAMP = 1"
+  },
+  {
+   "op": "goto",
+   "to": "STAMPED"
+  },
+  {
+   "op": "do",
+   "fx": "FQ_SB01_PD8 = 1; FQ_SB01_STAMP = 1"
+  },
+  {
+   "op": "goto",
+   "to": "STAMPED"
+  },
+  {
+   "op": "do",
+   "fx": "FQ_SB01_PD9 = 1; FQ_SB01_STAMP = 1"
+  },
+  {
+   "op": "goto",
+   "to": "STAMPED"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "쿵. 붉은 '완납'. 옛 장부 줄이 한 줄, 빚이 아니게 된다 — 종이 위에서는."
+  },
+  {
+   "op": "goto",
+   "to": "OPEN"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-SB-01.txt"
+}

@@ -1,0 +1,136 @@
+{
+ "id": "FQSB01_DOK",
+ "title": "추심원 독사 — 출근부",
+ "loc": "L-R02-19",
+ "npc": "C-021",
+ "cond": "V_ACT >= 1 and SB_RAID == 0 and AFF_SB > -60 and dead(\"C-049\") == 1 and dead(\"C-013\") == 1 and FQSB01_STAGE < 100 and (FQSB01_STAGE == 0 or FQ_SB01_TYPED >= 3)",
+ "labels": {
+  "START": 0,
+  "ASK": 3,
+  "NOTYET": 7,
+  "SUBMIT": 9,
+  "CAUGHT": 14,
+  "PASS": 16
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "FQ_SB01_TYPED >= 3",
+   "to": "SUBMIT"
+  },
+  {
+   "op": "line",
+   "who": "C-021",
+   "emo": "기본",
+   "text": "소장실도 실장실도 비었어. 장부는 남았고. 빚은 사람보다 오래 살아."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "장부 정리 일 — 하겠다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "ASK",
+     "id": "FQSB01_DOK:1:0"
+    },
+    {
+     "text": "다른 얘기",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "PASS",
+     "id": "FQSB01_DOK:1:1"
+    }
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "AFF_SB < -19",
+   "to": "NOTYET"
+  },
+  {
+   "op": "line",
+   "who": "C-021",
+   "emo": "기본",
+   "text": "옮겨 적어. 세 번. 이름 하나라도 빠지면 내가 직접 받으러 간다."
+  },
+  {
+   "op": "cmd",
+   "name": "sb01",
+   "args": [
+    "take",
+    "3"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-021",
+   "emo": "기본",
+   "text": "너한테 장부를? 내가 웃기지."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-021",
+   "emo": "기본",
+   "text": "봉천 줄만 볼게. 내가 받으러 갈 데니까."
+  },
+  {
+   "op": "cmd",
+   "name": "sb01",
+   "args": [
+    "submit"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB01_RES == 3",
+   "to": "CAUGHT"
+  },
+  {
+   "op": "line",
+   "who": "C-021",
+   "emo": "기본",
+   "text": "…됐어. 일당."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-021",
+   "emo": "분노",
+   "text": "빈 줄이 있네. 장부는 사람을 안 봐줘. 일당은 없어."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "sb01",
+   "args": [
+    "pass",
+    "FQSB01_DOK"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-SB-01.txt"
+}

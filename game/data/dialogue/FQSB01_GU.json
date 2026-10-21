@@ -1,0 +1,597 @@
+{
+ "id": "FQSB01_GU",
+ "title": "실장 구만호 — 출근부",
+ "loc": "L-R02-19",
+ "npc": "C-049",
+ "cond": "V_ACT >= 1 and SB_RAID == 0 and AFF_SB > -60 and FQSB01_STAGE < 100",
+ "labels": {
+  "START": 0,
+  "LONG": 6,
+  "MENU": 9,
+  "YARD": 10,
+  "LURE": 12,
+  "LURE_NO": 15,
+  "OFFER": 18,
+  "BURNT": 22,
+  "GIVEN": 24,
+  "OFFER2": 26,
+  "ASK": 27,
+  "TAKE": 32,
+  "NOTYET": 35,
+  "SUBMIT": 37,
+  "EX1": 43,
+  "EX2": 45,
+  "EX2B": 47,
+  "EXDONE": 48,
+  "B2": 53,
+  "B3": 55,
+  "PAY": 57,
+  "QUIET": 60,
+  "FEE": 62,
+  "CONVOY": 65,
+  "CAUGHT": 68,
+  "CAUGHT_SELF": 71,
+  "CAUGHT2": 72,
+  "CAUGHT_ST": 75,
+  "CHOOSE": 76,
+  "PAYOFF": 78,
+  "RETYPE": 82,
+  "S09": 85
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "FQ_SB01_WHERE == 2 and GAME_HOUR >= 6",
+   "to": "YARD"
+  },
+  {
+   "op": "if",
+   "cond": "FQSB01_STAGE == 0",
+   "to": "OFFER"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB01_TYPED >= 3",
+   "to": "SUBMIT"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB01_BACK == 0 and GAME_DAY > FQ_SB01_SEED + 1",
+   "to": "LONG"
+  },
+  {
+   "op": "line",
+   "who": "C-049",
+   "emo": "기본",
+   "text": "타자기는 저쪽이야. 쪽 순서대로. 한 쪽에 한 시간."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "do",
+   "fx": "FQ_SB01_BACK = 1"
+  },
+  {
+   "op": "line",
+   "who": "C-049",
+   "emo": "기본",
+   "text": "어디 갔었어. …장부는 기다려. 사람이 안 기다려서 그렇지."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "마당에 인력 사러 손님이 왔습니다",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "보통"
+      }
+     ],
+     "cond": "FQ_SB01_TYPED < 3 and FQ_SB01_LURE_DAY != GAME_DAY",
+     "fx": "",
+     "to": "LURE",
+     "id": "FQSB01_GU:1:0",
+     "fail": "LURE_NO"
+    },
+    {
+     "text": "127번 — 채윤재 얘기다",
+     "tags": [],
+     "cond": "SQ_S09_START > 0 and SB_127 <= 1",
+     "fx": "",
+     "to": "S09",
+     "id": "FQSB01_GU:1:1"
+    },
+    {
+     "text": "됐다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQSB01_GU:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-049",
+   "emo": "기본",
+   "text": "(마당을 두리번거린다) 손님 어디 있어? …정문 십장도 모른다는데."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-049",
+   "emo": "기본",
+   "text": "손님? 이 시간에? …(주판을 덮는다) 금방 와. 손대지 마."
+  },
+  {
+   "op": "cmd",
+   "name": "sb01",
+   "args": [
+    "lure",
+    "1"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-049",
+   "emo": "기본",
+   "text": "(눈을 안 뗀다) 손님은 갈고리가 받아. 넌 타자기나 쳐."
+  },
+  {
+   "op": "cmd",
+   "name": "sb01",
+   "args": [
+    "lure",
+    "0"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "SB_DEBT == 1",
+   "to": "BURNT"
+  },
+  {
+   "op": "if",
+   "cond": "HO_LEDGER >= 80 and HO_LEDGER < 90",
+   "to": "GIVEN"
+  },
+  {
+   "op": "line",
+   "who": "C-049",
+   "emo": "기본",
+   "text": "(주판알을 튕기다 멈춘다) 글 알아? 숫자 말고 글."
+  },
+  {
+   "op": "goto",
+   "to": "OFFER2"
+  },
+  {
+   "op": "line",
+   "who": "C-049",
+   "emo": "기본",
+   "text": "소장님 장부가 탔다며. 출근부는 안 탔어. 빚은 종이 두 장에 적히거든."
+  },
+  {
+   "op": "goto",
+   "to": "OFFER2"
+  },
+  {
+   "op": "line",
+   "who": "C-049",
+   "emo": "기본",
+   "text": "장부 한 권 없어졌다고 빚이 없어지나. 출근부가 있지."
+  },
+  {
+   "op": "goto",
+   "to": "OFFER2"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "게시판 쪽지 — 장부 정리 일",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "ASK",
+     "id": "FQSB01_GU:2:0"
+    },
+    {
+     "text": "127번 — 채윤재 얘기다",
+     "tags": [],
+     "cond": "SQ_S09_START > 0 and SB_127 <= 1",
+     "fx": "",
+     "to": "S09",
+     "id": "FQSB01_GU:2:1"
+    },
+    {
+     "text": "됐다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQSB01_GU:2:2"
+    }
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "AFF_SB < -19",
+   "to": "NOTYET"
+  },
+  {
+   "op": "line",
+   "who": "C-049",
+   "emo": "기본",
+   "text": "출근부 옮겨 적기. 2077년 것부터 올해 것까지 새 장부로. 세 번에 나눠 쳐."
+  },
+  {
+   "op": "line",
+   "who": "C-049",
+   "emo": "기본",
+   "text": "선반 맨 아래가 처음인 줄 알지. 그건 빚 장부 첫 권이고. 출근부는 서른 해 더 묵었어. 창고에서 꺼내 놨다."
+  },
+  {
+   "op": "line",
+   "who": "C-049",
+   "emo": "기본",
+   "text": "나는 출근부실 감독 책상에 있어. 네 시엔 마당에서 번호 부르고, 열두 시엔 올라가서 밥 먹고."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "하겠다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TAKE",
+     "id": "FQSB01_GU:3:0"
+    },
+    {
+     "text": "다음에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQSB01_GU:3:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-049",
+   "emo": "기본",
+   "text": "일당 100. 틀린 글자는 안 받아. …장부는 사람을 안 미워해. 숫자만 세지. 그래서 무서운 거고."
+  },
+  {
+   "op": "cmd",
+   "name": "sb01",
+   "args": [
+    "take",
+    "1"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-049",
+   "emo": "기본",
+   "text": "본소 사람 아니면 장부 못 만져. 본소 일부터 해 보든가, 소장님 눈에 들든가."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-049",
+   "emo": "기본",
+   "text": "다 쳤어? 줘 봐."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "구만호가 새 장부를 받는다. 손가락 끝이 줄을 하나씩 짚고 내려간다."
+  },
+  {
+   "op": "cmd",
+   "name": "sb01",
+   "args": [
+    "submit"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB01_EXTRA == 2",
+   "to": "EX2"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB01_EXTRA == 1",
+   "to": "EX1"
+  },
+  {
+   "op": "goto",
+   "to": "EXDONE"
+  },
+  {
+   "op": "line",
+   "who": "C-049",
+   "emo": "기본",
+   "text": "맨 아래 이 이름은 뭐야. …번호 없는 이름은 장부에 안 올라가. 번호는 갈고리가 줘."
+  },
+  {
+   "op": "goto",
+   "to": "EXDONE"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R02-036\") == 1",
+   "to": "EX2B"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-036",
+   "emo": "기본",
+   "text": "열 줄? 아홉 줄이었는데."
+  },
+  {
+   "op": "line",
+   "who": "C-049",
+   "emo": "기본",
+   "text": "실장 이름을 미수금에 넣어? …재밌네. 지워."
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB01_RES == 3",
+   "to": "CAUGHT"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB01_BLANK == 2",
+   "to": "B2"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB01_BLANK == 3",
+   "to": "B3"
+  },
+  {
+   "op": "line",
+   "who": "C-049",
+   "emo": "기본",
+   "text": "10월 24일은 빈칸으로 뒀네. 잘했어. 빈칸은 빈칸이야."
+  },
+  {
+   "op": "goto",
+   "to": "PAY"
+  },
+  {
+   "op": "line",
+   "who": "C-049",
+   "emo": "기본",
+   "text": "'배차 없음'. 맞지. 그날부터 서른 해 동안 배차가 없었으니까."
+  },
+  {
+   "op": "goto",
+   "to": "PAY"
+  },
+  {
+   "op": "line",
+   "who": "C-049",
+   "emo": "기본",
+   "text": "장부에 감상은 안 적어. …지울 필요는 없고."
+  },
+  {
+   "op": "goto",
+   "to": "PAY"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB01_RES == 2",
+   "to": "QUIET"
+  },
+  {
+   "op": "line",
+   "who": "C-049",
+   "emo": "기본",
+   "text": "봉천 아홉 줄, 다 있네. 깨끗해. 다음 달 추심조가 고마워할 거야."
+  },
+  {
+   "op": "goto",
+   "to": "FEE"
+  },
+  {
+   "op": "line",
+   "who": "C-049",
+   "emo": "기본",
+   "text": "…봉천 줄이 적네. 올해 봉천이 부지런했나."
+  },
+  {
+   "op": "goto",
+   "to": "FEE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "구만호가 일당 전표 한 장을 내민다. '일당 100 — 실장 구만호'."
+  },
+  {
+   "op": "if",
+   "cond": "AFF_SB >= -19",
+   "to": "CONVOY"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-049",
+   "emo": "기본",
+   "text": "그리고 — 운송조 호위가 하나 모자라. 새벽 네 시에 마당으로 나와. 갈고리 찾아."
+  },
+  {
+   "op": "cmd",
+   "name": "sb01",
+   "args": [
+    "convoy"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R02-036\") == 1",
+   "to": "CAUGHT_SELF"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-036",
+   "emo": "기본",
+   "text": "(옛 장부를 펼쳐 놓고 빨간 펜으로 줄을 센다) 실장님. 봉천 묶음이 안 맞아요."
+  },
+  {
+   "op": "goto",
+   "to": "CAUGHT2"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "구만호가 옛 장부를 펼쳐 놓고 직접 줄을 센다. 빨간펜의 빈 책상 쪽은 보지 않는다."
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB01_STAMP == 1",
+   "to": "CAUGHT_ST"
+  },
+  {
+   "op": "line",
+   "who": "C-049",
+   "emo": "분노",
+   "text": "줄이 비었어. 내가 모를 것 같아?"
+  },
+  {
+   "op": "goto",
+   "to": "CHOOSE"
+  },
+  {
+   "op": "line",
+   "who": "C-049",
+   "emo": "분노",
+   "text": "이 도장, 내 서랍 거야. 인주가 아직 안 말랐네."
+  },
+  {
+   "op": "line",
+   "who": "C-049",
+   "emo": "기본",
+   "text": "장부는 사람을 안 봐줘. 숫자만 맞으면 돼. …다시 칠래, 네가 낼래."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "빈 줄 빚을 내가 낸다(\\V[FQ_SB01_OWE]캡)",
+     "tags": [],
+     "cond": "FQ_SB01_OWE > 0 and PC_CAPS >= FQ_SB01_OWE",
+     "fx": "",
+     "to": "PAYOFF",
+     "id": "FQSB01_GU:4:0"
+    },
+    {
+     "text": "다시 친다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "RETYPE",
+     "id": "FQSB01_GU:4:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "sb01",
+   "args": [
+    "payoff"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-049",
+   "emo": "기본",
+   "text": "(캡을 센다. 두 번 센다) …맞네. '완납'. 남의 빚을 사는 사람은 처음 보네. 일당은 일당대로."
+  },
+  {
+   "op": "if",
+   "cond": "AFF_SB >= -19",
+   "to": "CONVOY"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "sb01",
+   "args": [
+    "retype"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-049",
+   "emo": "기본",
+   "text": "빈 줄은 빨간펜이 채워. 일당은 없어."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "sb01",
+   "args": [
+    "pass",
+    "FQSB01_GU",
+    "DEAL"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-SB-01.txt"
+}

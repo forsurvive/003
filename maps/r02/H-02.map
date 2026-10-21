@@ -74,6 +74,12 @@ prop w_roster 36 1
 text 36 2 "벽 출근부. 번호마다 빨간 줄. 빨간펜이 그은 줄이다." w=2
 box 34 6 desk w=2 name="빨간펜의 책상"
 prop folding_chair 25 6
+# 1-12f FQ-SB-01 출근부: 타자기(새 장부) · 실장 감독 책상(도장 서랍 [자물쇠 25]) · 일하는 동안 구만호가 감독 책상에(04~06시 마당 · 12~13시 2층 점심엔 빈다)
+prop typewriter_desk 23 7
+text 23 7 "세진 사무용 타자기. 새 장부가 끼워져 있다." w=2 scene=FQSB01_TYPE
+prop office_desk 28 6
+text 28 6 "실장 감독 책상. 주판 · 붉은 인주 · 잠긴 서랍." w=2 scene=FQSB01_DRAWER
+npc C-049 28 5 S cond="SB_RAID == 0 and FQ_SB01_WHERE == 1" bark="틀린 글자는 안 받아."
 # 매점
 prop shop_shelf 23 12
 prop shop_shelf 26 12

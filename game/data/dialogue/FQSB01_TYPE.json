@@ -1,0 +1,502 @@
+{
+ "id": "FQSB01_TYPE",
+ "title": "타자기",
+ "loc": "L-R02-19",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "RAID": 7,
+  "IDLE": 9,
+  "DONE": 11,
+  "AFTER": 13,
+  "AFTER3": 16,
+  "P1": 18,
+  "P1A": 26,
+  "P1B": 28,
+  "P1C": 30,
+  "P1END": 32,
+  "P2": 35,
+  "P2W": 38,
+  "P2D": 39,
+  "P2END": 44,
+  "EXTRA1": 46,
+  "EXTRA2": 49,
+  "P2GO": 51,
+  "P3": 53,
+  "R1": 56,
+  "Q2": 57,
+  "R2": 59,
+  "Q3": 60,
+  "R3": 62,
+  "Q4": 63,
+  "R4": 65,
+  "Q5": 66,
+  "R5": 68,
+  "Q6": 69,
+  "Q7": 71,
+  "EMPTY": 74,
+  "P3END": 75
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SB_RAID != 0",
+   "to": "RAID"
+  },
+  {
+   "op": "if",
+   "cond": "FQSB01_STAGE == 0",
+   "to": "IDLE"
+  },
+  {
+   "op": "if",
+   "cond": "FQSB01_STAGE >= 100",
+   "to": "AFTER"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB01_TYPED >= 3",
+   "to": "DONE"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB01_TYPED == 2",
+   "to": "P3"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB01_TYPED == 1",
+   "to": "P2"
+  },
+  {
+   "op": "goto",
+   "to": "P1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "타자기가 바닥에 엎어져 있다. 활자대가 몇 개 휘었다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈 새 장부가 끼워진 타자기. 맨 윗줄에 '출근부 — 정리본'만 쳐져 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "새 장부는 다 쳤다. 실장에게 낸다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB01_RES == 3",
+   "to": "AFTER3"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "타자기에 새 빈 장부가 다시 끼워져 있다. 누군가 내년 것을 칠 것이다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "새 장부 봉천 묶음에 빨간 글씨 줄이 끼어 있다. 빨간펜의 글씨다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "2077년 철제 서류함. 녹슨 걸쇠 아래 누런 출근부 묶음. 서식 머리 — '새벽인력 · 전시 노역 알선 · 출근부'."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'2077. 10. 23. 05:00 배차 — 평택 정비창 하역 22명. 일당 각 40.' 반듯한 볼펜 글씨다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'2077. 10. 24.' 날짜만 있고, 아래는 비었다. 칸이 서른한 줄."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "몇 장 뒤 연필 글씨. '배차 없음. 일당 칸 — 쌀 한 되.' 해는 적혀 있지 않다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "2108. 3. 1. 묶음부터 서식에 없던 칸 하나가 손으로 그어져 있다. 칸 머리 — '빚'."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "2150년대 묶음부터는 이름 옆에 번호가 붙는다. 이름 칸이 빈 줄에도 번호는 있다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "옮겨 친다. 10월 24일 줄에서 손이 멈춘다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "빈칸은 빈칸으로 친다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "P1A",
+     "id": "FQSB01_TYPE:1:0"
+    },
+    {
+     "text": "'배차 없음'이라고 친다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "P1B",
+     "id": "FQSB01_TYPE:1:1"
+    },
+    {
+     "text": "'그날 밤 전쟁'이라고 친다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "P1C",
+     "id": "FQSB01_TYPE:1:2"
+    },
+    {
+     "text": "나중에 친다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQSB01_TYPE:1:3"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "FQ_SB01_BLANK = 1"
+  },
+  {
+   "op": "goto",
+   "to": "P1END"
+  },
+  {
+   "op": "do",
+   "fx": "FQ_SB01_BLANK = 2"
+  },
+  {
+   "op": "goto",
+   "to": "P1END"
+  },
+  {
+   "op": "do",
+   "fx": "FQ_SB01_BLANK = 3"
+  },
+  {
+   "op": "goto",
+   "to": "P1END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "타닥, 타닥. 200년이 한 시간 만에 새 종이로 옮겨 간다."
+  },
+  {
+   "op": "cmd",
+   "name": "sb01",
+   "args": [
+    "page",
+    "1"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB01_AWAY == 0",
+   "to": "P2W"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "감독 책상이 비었다. 빨간펜은 제 책상에서 등을 돌리고 번호를 센다."
+  },
+  {
+   "op": "goto",
+   "to": "P2D"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "구만호가 감독 책상에서 이쪽을 본다. 주판알이 멈춰 있다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "올해 출근부, 봉천 계단마을 묶음. 줄 끝마다 붉은 글씨 '미수'."
+  },
+  {
+   "op": "cmd",
+   "name": "doc",
+   "args": [
+    "ledger"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB01_TYPED >= 2",
+   "to": "P2END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "손을 뗐다. 나중에 친다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "봉천 묶음 맨 아래, 빈 줄이 하나 남았다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "P2GO",
+     "id": "FQSB01_TYPE:2:0"
+    },
+    {
+     "text": "한 줄 더 친다 — 내 이름",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "EXTRA1",
+     "id": "FQSB01_TYPE:2:1"
+    },
+    {
+     "text": "한 줄 더 친다 — 구만호",
+     "tags": [],
+     "cond": "dead(\"C-049\") == 0",
+     "fx": "",
+     "to": "EXTRA2",
+     "id": "FQSB01_TYPE:2:2"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "FQ_SB01_EXTRA = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "타닥, 타닥. 내 이름. 번호 칸은 비워 둔다."
+  },
+  {
+   "op": "goto",
+   "to": "P2GO"
+  },
+  {
+   "op": "do",
+   "fx": "FQ_SB01_EXTRA = 2"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "타닥, 타닥. '구만호 — 실장 — 미수: 웃음 한 번.'"
+  },
+  {
+   "op": "cmd",
+   "name": "sb01",
+   "args": [
+    "page",
+    "2"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "마지막 쪽 서식 — '2277. 11. 추심조 출동 명단'. 2쪽에서 옮긴 봉천 줄이 그대로 내려온다."
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB01_X1 == 0 and FQ_SB01_PD1 == 0",
+   "to": "R1"
+  },
+  {
+   "op": "goto",
+   "to": "Q2"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'11. 3. 오봉수 — 고철 선금 180. 추심원 독사.'"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB01_X2 == 0 and FQ_SB01_PD2 == 0",
+   "to": "R2"
+  },
+  {
+   "op": "goto",
+   "to": "Q3"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'11. 3. 남무진 — 숯 · 고철 선대 200. 추심원 독사.'"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB01_X3 == 0 and FQ_SB01_PD3 == 0",
+   "to": "R3"
+  },
+  {
+   "op": "goto",
+   "to": "Q4"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'11. 5. 오재윤 — 위약금 60. 인력 대체 가능.'"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB01_X4 == 0 and FQ_SB01_PD4 == 0",
+   "to": "R4"
+  },
+  {
+   "op": "goto",
+   "to": "Q5"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'11. 5. 남건희 — 선급 일당 90. 인력 대체 가능.'"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB01_X5 == 0 and FQ_SB01_PD5 == 0",
+   "to": "R5"
+  },
+  {
+   "op": "goto",
+   "to": "Q6"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'11. 8. 오영자 — 약품 대납 120. 가게 압류 검토.'"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB01_X6 + FQ_SB01_X7 + FQ_SB01_X8 + FQ_SB01_X9 + FQ_SB01_PD6 + FQ_SB01_PD7 + FQ_SB01_PD8 + FQ_SB01_PD9 >= 4",
+   "to": "Q7"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'11. 9. 번호 218 · 233 · 240 · 251 중 남은 줄 — 인력 대체 가능.'"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB01_X1 + FQ_SB01_X2 + FQ_SB01_X3 + FQ_SB01_X4 + FQ_SB01_X5 + FQ_SB01_X6 + FQ_SB01_X7 + FQ_SB01_X8 + FQ_SB01_X9 + FQ_SB01_PD1 + FQ_SB01_PD2 + FQ_SB01_PD3 + FQ_SB01_PD4 + FQ_SB01_PD5 + FQ_SB01_PD6 + FQ_SB01_PD7 + FQ_SB01_PD8 + FQ_SB01_PD9 >= 9",
+   "to": "EMPTY"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "명단 맨 아래 칸 '출동 인원 — 추심원 1 · 인솔조원 2'."
+  },
+  {
+   "op": "goto",
+   "to": "P3END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "봉천 칸이 비었다. 서식 아래 빈 줄만 길다."
+  },
+  {
+   "op": "cmd",
+   "name": "sb01",
+   "args": [
+    "page",
+    "3"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-SB-01.txt"
+}

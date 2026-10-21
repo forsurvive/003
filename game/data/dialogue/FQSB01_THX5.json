@@ -1,0 +1,34 @@
+{
+ "id": "FQSB01_THX5",
+ "title": "미용실 오영자",
+ "loc": "L-R01-09",
+ "npc": "N-R01-501",
+ "cond": "V_ACT >= 1 and FQ_SB01_DUE > 0 and GAME_DAY >= FQ_SB01_DUE and GAME_DAY <= FQ_SB01_DUE + 2 and FQ_SB01_THX5 == 0 and (FQ_SB01_X5 == 1 or FQ_SB01_PD5 == 1) and FQ_SB01_RES != 3",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-R01-501",
+   "emo": "기본",
+   "text": "올해는 우리 집을 건너뛰더라. 누가 그랬는지 몰라도. …머리 다듬을 일 있으면 와. 공짜로 해 줄게, 한 번은."
+  },
+  {
+   "op": "cmd",
+   "name": "sb01",
+   "args": [
+    "thx",
+    "5"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-SB-01.txt"
+}

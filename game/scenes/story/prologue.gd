@@ -192,6 +192,7 @@ var fq_jc01: FqJc01                                     ## 세력 퀘스트 FQ-J
 var fq_gs: FqGs                                         ## 세력 퀘스트 FQ-GS-01 정비 당번 · FQ-GS-02 천공기(1-12b — 중계소 정비고 · 학원 채점기)
 var fq_jh: FqJh                                         ## 세력 퀘스트 FQ-JH-01 B구역 셔터(1-12c — 지하시장 B구역 쥐굴 · 구동부)
 var fq_jh3: FqJh3                                       ## 세력 퀘스트 FQ-JH-03 지상 배달(1-12e — 박춘삼 계약 · 낮 지상 시계 · 이동 검문 · 모집원)
+var fq_sb: FqSb                                         ## 세력 퀘스트 FQ-SB-01 출근부 · SB-02 현장 운송(1-12f — 타자 3쪽 · 구만호 자리 · 운송조 행렬)
 var side_s11: SideS11                                   ## 여의도 사이드 퀘스트(1-11j — SQ-S11 토요일의 여의도)
 var uq71: Uq71                                          ## 비표시 퀘스트 UQ-71 원자력 버스(1-D1 — 대방 지하차도)
 var u02: U02Paths                                       ## U02 남태령 지하(1-D2 — 터널 회로 UG-H01 · 밀통로 UG-H02 · 지하 초소)
@@ -315,6 +316,11 @@ func _paths() -> void:
 		add_child(fq_jh3)
 		fq_jh3.setup(host, log_on)
 		fq_jh3.want_save.connect(func(_w: String) -> void: request_auto("event"))   # 계약 · 배달 · 넘김(1-12e)
+	if fq_sb == null:
+		fq_sb = FqSb.new()
+		add_child(fq_sb)
+		fq_sb.setup(host, log_on)
+		fq_sb.want_save.connect(func(_w: String) -> void: request_auto("event"))     # 받음 · 냄 · 운송 출발 · 끝(1-12f)
 	if uq71 == null:
 		uq71 = Uq71.new()
 		add_child(uq71)

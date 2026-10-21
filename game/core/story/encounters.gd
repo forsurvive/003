@@ -145,7 +145,7 @@ func on_arrive(t: Vector2i, night: bool, region: String) -> Dictionary:
 	last_chunk = Vector2i(t.x / CHUNK, t.y / CHUNK)
 	if near_settlement(t):
 		return {}
-	var tr := _tracker(1.0 if _tracker_p() > 0.0 else 0.0)
+	var tr := _tracker((1.0 if _tracker_p() > 0.0 else 0.0) * sb01_bc(t))
 	return {"re": tr, "src": "arrive", "state": "S1"} if tr != "" else {}
 
 
@@ -166,7 +166,7 @@ func _roll(src: String, t: Vector2i, p: float, night: bool, region: String) -> D
 	if roll >= pe:
 		e["calm"] = minf(CALM_MAX, float(e.get("calm", 0.0)) + CALM_STEP)
 		return {}
-	var re := _tracker(_tracker_p())                                 # ① 추적대 끼워 넣기
+	var re := _tracker(_tracker_p() * sb01_bc(t))                    # ① 추적대 끼워 넣기(FQ-SB-01 봉천 배수)
 	if re == "":
 		re = cand                                                    # ③ 구역 기본 표
 	if re == "":
@@ -270,6 +270,19 @@ func _site_check(t: Vector2i, now: int, night: bool, region: String = "") -> Dic
 
 
 # ---------------------------------------------------------------- 표
+## FQ-SB-01 출근부(SD-04d §6.3 · 1-12f): 이름을 빼거나 '완납'으로 만들고 들키지 않았으면(RES 2 · 대납 4) 봉천 반경(SideS02.BC_CENTER · BC_R)의
+## 새벽인력 무리 · 생포 추적대 끼워 넣기가 절반 — 이 값 하나(FQ_SB01_RES)를 두 곳이 읽는다(P1).
+func sb01_bc(t: Vector2i) -> float:
+	if t.x < 0 or not st.vars.has("FQ_SB01_RES"):
+		return 1.0
+	var r := int(st.vars.get_v("FQ_SB01_RES"))
+	if r != 2 and r != 4:
+		return 1.0
+	if absi(t.x - SideS02.BC_CENTER.x) <= SideS02.BC_R and absi(t.y - SideS02.BC_CENTER.y) <= SideS02.BC_R:
+		return 0.5
+	return 1.0
+
+
 ## 추적대 끼워 넣기 확률(수배 등급 → 0·5·10·15·20%). 오늘 상한을 다 썼거나 추적대가 꺼져 있으면 0
 func _tracker_p() -> float:
 	if not tracker_on():
@@ -441,6 +454,8 @@ func cat_mult(d: Dictionary, region: String, _t: Vector2i, night: bool) -> float
 		m *= 2.0                                                        # 새벽 04~06 인력시장
 	if c == "patrol":
 		m *= 1.0 + 0.1 * Wanted.grade(st)
+	if str(d.get("faction", "")) == "SB":
+		m *= sb01_bc(_t)                                                # FQ-SB-01: 봉천 출동 명단에서 이름을 뺐다 — 봉천 반경 새벽인력 무리 −50%
 	if c == "creature" and _t.x >= 0 and st.vars.has("SQ_S01_SOL") and int(st.vars.get_v("SQ_S01_SOL")) == 1 \
 			and absi(_t.x - SideR01.PD_CENTER.x) <= SideR01.PD_R and absi(_t.y - SideR01.PD_CENTER.y) <= SideR01.PD_R:
 		m *= 0.7                                                        # SQ-S01 소탕: PD-R01-1 크리처 인카운터 −30%(SD-04a §4.1 해법 A)

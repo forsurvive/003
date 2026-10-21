@@ -6,7 +6,10 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "STRUCK": 5
+  "STRUCK": 5,
+  "NOTE0": 6,
+  "NOTE_HDC": 11,
+  "SHUT": 13
  },
  "ops": [
   {
@@ -34,13 +37,54 @@
   },
   {
    "op": "goto",
-   "to": "END"
+   "to": "NOTE0"
   },
   {
    "op": "line",
    "who": "SYS",
    "emo": "기본",
    "text": "그 줄 위에 가로로 굵은 줄이 하나 그어져 있다. 지운 게 아니라 그은 것이다."
+  },
+  {
+   "op": "if",
+   "cond": "SB_RAID != 0 or AFF_SB <= -60 or FQSB01_STAGE != 0",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"C-049\") == 1 and dead(\"C-013\") == 1 and dead(\"C-021\") == 1",
+   "to": "SHUT"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"C-049\") == 1",
+   "to": "NOTE_HDC"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "칠판 옆 못에 쪽지 한 장. '장부 정리 일용직 1명 — 글 아는 사람. 일당 100. 실장실(2층).'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "칠판 옆 못에 쪽지 한 장. '장부 정리 일용직 1명. 실장 자리 비었음 — 소장에게.' 글씨가 바뀌었다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "칠판 옆 못에 찢긴 쪽지 귀퉁이만 남았다. '…장부실 폐쇄'."
   },
   {
    "op": "goto",

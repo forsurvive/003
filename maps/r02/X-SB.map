@@ -205,6 +205,8 @@ npc CR-435 17 26 E sheet=en_cr435_loco cond="SB_RAID == 0" bark="일자리 찾�
 npc C-021 26 17 E cond="SB_RAID == 0 and MQ101_STAGE >= 50" bark="장부에 적힌 건 다 빚이야. 너도 적혀 있고."
 npc N-R02-037 15 13 S cond="SB_RAID == 0 and GAME_HOUR >= 4 and GAME_HOUR < 6" bark="자, 7번! 등 튼튼, 이빨 성함. 오늘 시작가 40캡!"
 npc C-013 18 13 S cond="SB_RAID == 0 and D_HDC == 0 and ((GAME_HOUR >= 4 and GAME_HOUR < 6) or SB_TALK == 2)" bark="값은 장부가 정해. 난 도장만 찍지."
+# 1-12f FQ-SB-01: 실장 구만호의 일과(원고 FQ-SB-01.txt 머리 — 04~06시 인력시장 번호 부르기는 마당, 그 밖엔 2층 실장실 · 출근부 일 동안은 1층 출근부실 감독 책상)
+npc C-049 21 13 S cond="SB_RAID == 0 and FQ_SB01_WHERE == 2" bark="(장부를 펼쳐 든다) 7번부터 불러. 6번까진 어제 거야."
 trigger 21 37 scene=X-SB_GATE w=3 h=1 cond="SB_PASS == 0 and SB_RAID == 0 and V_ACT >= 1"
 
 # ---------------------------------------------------------------- 뒷마당 사육장(H-07)

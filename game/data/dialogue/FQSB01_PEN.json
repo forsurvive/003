@@ -1,0 +1,58 @@
+{
+ "id": "FQSB01_PEN",
+ "title": "출근부 반장 빨간펜",
+ "loc": "L-R02-19",
+ "npc": "N-R02-036",
+ "cond": "V_ACT >= 1 and SB_RAID == 0 and FQSB01_STAGE >= 10 and FQSB01_STAGE < 100",
+ "labels": {
+  "START": 0,
+  "THIN": 4,
+  "AWAY": 6
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-R02-036",
+   "emo": "기본",
+   "text": "(고개를 안 든다) 번호만 불러. 줄은 내가 세."
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB01_TYPED >= 2 and FQ_SB01_X1 + FQ_SB01_X2 + FQ_SB01_X3 + FQ_SB01_X4 + FQ_SB01_X5 + FQ_SB01_X6 + FQ_SB01_X7 + FQ_SB01_X8 + FQ_SB01_X9 >= 4",
+   "to": "THIN"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB01_AWAY == 1",
+   "to": "AWAY"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-036",
+   "emo": "기본",
+   "text": "(새 장부를 곁눈질한다) …오늘 장부가 얇네?"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-036",
+   "emo": "기본",
+   "text": "실장님 자리 비었다고 손이 가벼워지진 마. 줄 수는 장부가 기억해."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-SB-01.txt"
+}
