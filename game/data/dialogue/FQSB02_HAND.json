@@ -1,0 +1,214 @@
+{
+ "id": "FQSB02_HAND",
+ "title": "출장소 인수원",
+ "loc": "L-HR-03",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "THREE": 7,
+  "FOUR": 9,
+  "SIGN": 10,
+  "REMOTE": 14,
+  "GIVEBACK": 16,
+  "KEEP": 19,
+  "PAY": 21,
+  "TAG": 25,
+  "LATE": 27
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "FQ_SB02_LATE == 1",
+   "to": "LATE"
+  },
+  {
+   "op": "line",
+   "who": "N-SB-H1",
+   "emo": "기본",
+   "text": "(철교 쪽에서 내려와 장부를 편다) 본소 운송조. 몇?"
+  },
+  {
+   "op": "cmd",
+   "name": "sb02",
+   "args": [
+    "hand"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB02_N == 4",
+   "to": "FOUR"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB02_N == 3 and FQ_SB02_TAESU >= 3",
+   "to": "THREE"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "피곤",
+   "text": "\\V[FQ_SB02_N]. …나머진 길에서 잃었어. 장부엔 그렇게 적어."
+  },
+  {
+   "op": "goto",
+   "to": "SIGN"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "기본",
+   "text": "셋. 하나는 고가에서 장부 밖으로."
+  },
+  {
+   "op": "goto",
+   "to": "SIGN"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "기본",
+   "text": "넷. 다 왔어."
+  },
+  {
+   "op": "line",
+   "who": "N-SB-H1",
+   "emo": "기본",
+   "text": "(목걸이 번호를 하나씩 부른다) 철교로. 줄 맞춰."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "인력이 인수원을 따라 철교 침목 위로 올라간다. 강바람에 줄이 흔들린다. 뒤돌아보는 사람은 없다."
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB02_REMOTE == 1",
+   "to": "REMOTE"
+  },
+  {
+   "op": "goto",
+   "to": "PAY"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "기본",
+   "text": "(허리춤을 더듬는다) …원격기 어디 갔어?"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "(원격기를 돌려준다) 길에 떨어져 있더라",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "GIVEBACK",
+     "id": "FQSB02_HAND:1:0"
+    },
+    {
+     "text": "모른다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "KEEP",
+     "id": "FQSB02_HAND:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "sb02",
+   "args": [
+    "remote",
+    "0"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "기본",
+   "text": "(낚아챈다) …길에 떨어질 물건이 아니야."
+  },
+  {
+   "op": "goto",
+   "to": "PAY"
+  },
+  {
+   "op": "cmd",
+   "name": "sb02",
+   "args": [
+    "remote",
+    "1"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "분노",
+   "text": "…장부에 적는다. 네 이름 옆에."
+  },
+  {
+   "op": "cmd",
+   "name": "sb02",
+   "args": [
+    "pay"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "AFF_SB >= 20",
+   "to": "TAG"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "기본",
+   "text": "일당. …다음에도 새벽 네 시."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "기본",
+   "text": "(번호표 목걸이 하나를 던진다) 네 번호다. 이름은 장부에 있고."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "분노",
+   "text": "(빈 철교 남단을 본다) 출장소가 문 닫았어. 열 시 지났다고. …다시 본소로."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "목걸이 줄이 말없이 돌아선다. 오늘은 강을 건너지 않는다."
+  },
+  {
+   "op": "cmd",
+   "name": "sb02",
+   "args": [
+    "late"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-SB-02.txt"
+}

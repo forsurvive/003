@@ -633,6 +633,33 @@ func _ready() -> void:
 				["check", "FQ_JH03_CLOCK >= 40 and FQ_JH03_CLOCK <= 90", "최단 길(서류) 낮 시계 40~90분 — 예산 120분의 3분의 1~3분의 2"],
 				["check", "FQ_JH03_SKY >= 8 and FQ_JH03_BARK == 5", "첫 신호(쌓인 30분) · 경매장 칠판 바크"],
 				["check", "FQ_JH03_RIVER == 0 and FQ_JH03_NIGHT == 0", "서류 30분을 썼으니 강가 상 없음(75분 넘게 남겨야) · 경매장 판"]]
+		"sb02":                                                         # 1-12f FQ-SB-02: 04시 본소 마당 출발 줄(갈고리) → 서부간선 고가 상판 → 북 램프 끝 오태수 탈주(데려옴) →
+			st.vars.set_v("AFF_SB", 25)                                  #   신도림 쉬는 박자 → 노량진로 끝 방범대([화술 보통] 통과) → 철교 남단 노들 경비 60캡 → 인수원 인계(넷 · 10시 전 · M-129)
+			st.vars.set_v("PC_CAPS", 500)
+			st.vars.set_v("PC_SKP_SPEECH", 100)
+			st.vars.set_v("PC_SKP_SNEAK", 60)
+			st.vars.set_v("GAME_DAY", 8)
+			st.quests.set_stage("MQ-101", 100)
+			st.vars.set_v("MQ101_NIGHT", 3)
+			st.quests.set_stage("FQ-SB-01", 100)
+			st.vars.set_v("FQ_SB01_RES", 1)
+			host.date_text = "2277. 10. 26.  04:05"
+			host.enter("W", "X-SB:yard_mid")
+			plan = [["hp", 3000], ["wait", 1.5], ["noenc"], ["calm"], ["shot", "sb02_yard"], ["sbgo", "lead"], ["want", ["호위 서겠다"]], ["sbtalk"], ["wait", 1.5],
+				["check", "FQSB02_STAGE == 10 and FQ_SB02_LEAD == 0 and FQ_SB02_DAY > 0", "출발 줄 — 갈고리(10)"],
+				["sbfollow", "FQSB02_STAGE >= 30", 150.0, "고가 상판 → 북 램프 끝 — 오태수 탈주(30)", "sb02_escape"],
+				["check", "FQ_SB02_TAESU == 1", "오태수가 상판 밑으로"], ["wait", 2.0],
+				["sbgo", "taesu"], ["want", ["줄로 돌아가자"]], ["sbtalk"], ["wait", 1.5], ["check", "FQ_SB02_TAESU == 2 and FQ_SB02_SEEN == 0", "오태수를 데려옴(봤다는 줄 없음)"],
+				["sbgo", "lead"], ["wait", 2.0],
+				["sbfollow", "FQ_SB02_REST == 1", 90.0, "신도림 — 쉬는 박자", "sb02_rest"],
+				["want", ["[화술 보통] 오늘은 길만"]],
+				["sbfollow", "FQSB02_STAGE >= 40", 200.0, "노량진로 끝 — 자율방범대(40)", "sb02_patrol"], ["wait", 3.0],
+				["check", "FQ_SB02_PATROL == 2", "화술로 통과"],
+				["want", ["[캡 60] 낸다"]],
+				["sbfollow", "FQSB02_STAGE >= 50", 120.0, "한강철교 남단 인계 지점(50)", "sb02_hand"],
+				["until", "FQSB02_STAGE == 100", 30.0, "인계 끝(100)", "sb02_done"],
+				["check", "FQ_SB02_RES == 1 and FQ_SB02_N == 4 and FQ_SB02_TOLL == 1 and FQ_SB02_LATE == 0", "끝까지 운송 · 넷 · 통행세 60 · 10시 전"],
+				["check", "has(\"M-129\") == 1 and PC_CAPS == 590", "번호표 목걸이(우호) · 일당 150 − 통행세 60"]]
 		"db":                                                           # 1-D1 대방 지하차도 · UQ-71: 북쪽 입구로 들어가 분대 등 뒤에서 웅크려 엿듣기(사흘 기한) → 펌프실 운전기사 메모 →
 			st.vars.set_v("PC_SKP_SCIENCE", 60)                          #   허리 물 버스에서 정지 레버로 봉인(카르마 · 지대 꺼짐) → 남쪽 입구로 나와 문 앞에 선다
 			st.vars.set_v("GAME_DAY", 8)
@@ -1582,6 +1609,35 @@ func _process(dt: float) -> void:
 					str(host.map.tile_of(side.one.loco.logical)) if is_instance_valid(side.one) else "-"])
 				_shot("gomark")
 				_next()
+		"sbgo":                                                         # 1-12f 행렬 사람 곁으로(갈고리 · 오태수)
+			var who = fqsb.lead() if str(s[1]) == "lead" else fqsb.cv.get("taesu")
+			if who == null or not is_instance_valid(who) or step_t > 30.0:
+				host.input_fn = func() -> Vector2: return Vector2.ZERO
+				_next()
+				return
+			host.input_fn = _walk.bind((who as Node2D).loco.logical + Vector2(0, 24))
+			if host.player.loco.logical.distance_to((who as Node2D).loco.logical) < 34.0:
+				host.input_fn = func() -> Vector2: return Vector2.ZERO
+				_next()
+		"sbtalk":
+			host.input_fn = func() -> Vector2: return Vector2.ZERO
+			if not host.box.active:
+				fqsb._interact2()
+			_next()
+		"sbfollow":                                                     # 행렬 꼬리를 따라 걷는다(조건이 서거나 시간이 다 되면)
+			var okf := StoryExpr.test(str(s[1]), st)
+			if okf or step_t > float(s[2]):
+				host.input_fn = func() -> Vector2: return Vector2.ZERO
+				checks.append([okf, str(s[3])])
+				print("  [확인] %s %s (%.1f초 · 경유점 %d · %s)" % ["○" if okf else "×", s[3], step_t, int(st.vars.get_v("FQ_SB02_LEG")), host.date_text])
+				if s.size() > 4:
+					_shot(str(s[4]))
+				_next()
+				return
+			if not fqsb.cv.is_empty() and fqsb.lead() != null:
+				var tr: Array = fqsb.cv["trail"]
+				var tail: Vector2 = tr[maxi(0, tr.size() - 1 - 9 * FqSb.GAP)]
+				host.input_fn = _walk.bind(tail)
 		"chase":                                                        # 대치 중 들개를 쏘아 쫓는다(외눈은 쏘지 않는다)
 			host.input_fn = func() -> Vector2: return Vector2.ZERO
 			var dogs: Array = side.pack.filter(func(e): return is_instance_valid(e) and e != side.one and not e.cmb.dead and not e.released)

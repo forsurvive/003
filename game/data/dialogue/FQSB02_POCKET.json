@@ -1,0 +1,84 @@
+{
+ "id": "FQSB02_POCKET",
+ "title": "갈고리의 허리춤",
+ "loc": "L-R02-24",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TAKE": 3,
+  "TRIED": 6
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "FQ_SB02_TRIED == 1",
+   "to": "TRIED"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "갈고리가 등을 돌리고 담배 연기를 뱉는다. 허리춤 원격기가 손 닿는 데 있다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "원격기를 슬쩍한다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "은신",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "TAKE",
+     "id": "FQSB02_POCKET:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQSB02_POCKET:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "sb02",
+   "args": [
+    "pocket",
+    "1"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "손가락 두 개로 고리를 들어 올린다. 원격기가 소매 속으로 들어온다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "갈고리가 허리춤에 손을 얹고 서 있다. 두 번은 안 된다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-SB-02.txt"
+}

@@ -1,0 +1,227 @@
+{
+ "id": "FQSB02_PATROL",
+ "title": "자율방범대 순찰조",
+ "loc": "L-HR-03",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "FIGHT": 5,
+  "TALK": 7,
+  "NOTALK": 10,
+  "HAND": 13,
+  "HAND_R": 17,
+  "WAVED": 21,
+  "READY": 24
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "FQ_SB02_PATROL == 2",
+   "to": "WAVED"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB02_PATROL == 3",
+   "to": "READY"
+  },
+  {
+   "op": "line",
+   "who": "N-JY-P1",
+   "emo": "기본",
+   "text": "거기. 그 목걸이들, 우리한테 두고 가."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "분노",
+   "text": "방범대가 장부에 끼어들어? 길 비켜."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "싸운다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "FIGHT",
+     "id": "FQSB02_PATROL:1:0"
+    },
+    {
+     "text": "오늘은 길만 지나간다. 다음 줄은 안 끌고 온다",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "보통"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "TALK",
+     "id": "FQSB02_PATROL:1:1",
+     "fail": "NOTALK"
+    },
+    {
+     "text": "인력을 방범대에 넘긴다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "HAND",
+     "id": "FQSB02_PATROL:1:2"
+    },
+    {
+     "text": "(원격기로 목걸이를 모두 끄고) 넘긴다",
+     "tags": [],
+     "cond": "FQ_SB02_REMOTE == 1",
+     "fx": "",
+     "to": "HAND_R",
+     "id": "FQSB02_PATROL:1:3"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "sb02",
+   "args": [
+    "patrol",
+    "1"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-JY-P1",
+   "emo": "기본",
+   "text": "…오늘만이야. 오순례 대장님이 들으면 안 좋아하실 텐데."
+  },
+  {
+   "op": "cmd",
+   "name": "sb02",
+   "args": [
+    "patrol",
+    "2"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-JY-P1",
+   "emo": "분노",
+   "text": "말로는 안 돼. 목걸이 줄 앞에선."
+  },
+  {
+   "op": "cmd",
+   "name": "sb02",
+   "args": [
+    "patrol",
+    "1"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "목걸이 줄 쪽으로 손짓한다. \"가.\" 방범대가 목걸이 절단기를 꺼낸다."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "분노",
+   "text": "호위가 줄을 판다고? …터뜨릴 거야. 하나라도 움직이면."
+  },
+  {
+   "op": "cmd",
+   "name": "sb02",
+   "args": [
+    "patrol",
+    "3"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "원격기 단추 넷을 차례로 누른다. 목걸이 불빛이 하나씩 꺼진다. 방범대가 절단기를 꺼낸다."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "분노",
+   "text": "(빈 허리춤을 더듬는다) …원격기. 너였어. (뒷걸음친다) 기억해 둔다."
+  },
+  {
+   "op": "cmd",
+   "name": "sb02",
+   "args": [
+    "patrol",
+    "4"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-JY-P1",
+   "emo": "기본",
+   "text": "(손짓으로 길을 연다) 지나가. 말 맞춘 대로야."
+  },
+  {
+   "op": "cmd",
+   "name": "sb02",
+   "args": [
+    "patrol",
+    "2"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "방범대가 이미 길 양쪽에 둘러서 있다. 절단기 날이 새벽빛에 번쩍인다."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "분노",
+   "text": "…매복? 호위, 너 —"
+  },
+  {
+   "op": "cmd",
+   "name": "sb02",
+   "args": [
+    "patrol",
+    "3"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-SB-02.txt"
+}

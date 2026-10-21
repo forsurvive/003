@@ -53,7 +53,7 @@
   },
   {
    "op": "if",
-   "cond": "FQ_SB01_X4 == 1 or FQ_SB01_PD4 == 1",
+   "cond": "(FQ_SB01_X4 == 1 or FQ_SB01_PD4 == 1) and dead(\"N-R01-039\") == 0",
    "to": "GEON"
   },
   {

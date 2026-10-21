@@ -29,14 +29,15 @@
   "QUIET": 60,
   "FEE": 62,
   "CONVOY": 65,
-  "CAUGHT": 68,
-  "CAUGHT_SELF": 71,
-  "CAUGHT2": 72,
-  "CAUGHT_ST": 75,
-  "CHOOSE": 76,
-  "PAYOFF": 78,
-  "RETYPE": 82,
-  "S09": 85
+  "CONVOY_L": 69,
+  "CAUGHT": 72,
+  "CAUGHT_SELF": 75,
+  "CAUGHT2": 76,
+  "CAUGHT_ST": 79,
+  "CHOOSE": 80,
+  "PAYOFF": 82,
+  "RETYPE": 86,
+  "S09": 89
  },
  "ops": [
   {
@@ -123,7 +124,7 @@
    "op": "line",
    "who": "C-049",
    "emo": "기본",
-   "text": "(마당을 두리번거린다) 손님 어디 있어? …정문 십장도 모른다는데."
+   "text": "(마당을 두리번거린다) 손님 어디 있어? …정문에도 그런 사람 없다는데."
   },
   {
    "op": "goto",
@@ -452,10 +453,32 @@
    "to": "END"
   },
   {
+   "op": "if",
+   "cond": "dead(\"N-R02-041\") == 1 or SQ_S09_SOL2 == 2",
+   "to": "CONVOY_L"
+  },
+  {
    "op": "line",
    "who": "C-049",
    "emo": "기본",
    "text": "그리고 — 운송조 호위가 하나 모자라. 새벽 네 시에 마당으로 나와. 갈고리 찾아."
+  },
+  {
+   "op": "cmd",
+   "name": "sb01",
+   "args": [
+    "convoy"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-049",
+   "emo": "기본",
+   "text": "그리고 — 운송조 호위가 하나 모자라. 새벽 네 시에 마당으로 나와. 오늘 인솔은 반장이 끈다."
   },
   {
    "op": "cmd",

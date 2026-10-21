@@ -1,0 +1,170 @@
+{
+ "id": "FQSB02_YARD",
+ "title": "인솔조장 갈고리 — 출발 줄",
+ "loc": "L-R02-19",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "SENT": 8,
+  "TERMS": 9,
+  "GO": 12,
+  "DONE": 15,
+  "NOJOB": 17,
+  "COLD": 19,
+  "GHOUL": 21,
+  "HOT": 23
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "FQSB02_STAGE >= 100",
+   "to": "DONE"
+  },
+  {
+   "op": "if",
+   "cond": "FQSB01_STAGE != 100",
+   "to": "NOJOB"
+  },
+  {
+   "op": "if",
+   "cond": "AFF_SB < -19",
+   "to": "COLD"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH03_PARK == 1",
+   "to": "GHOUL"
+  },
+  {
+   "op": "if",
+   "cond": "V_WANTED >= 30",
+   "to": "HOT"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB02_TOLD == 1",
+   "to": "SENT"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "기본",
+   "text": "(목걸이 줄을 세며) 넷. 호위가 하나 모자라. …네가 그 하나냐."
+  },
+  {
+   "op": "goto",
+   "to": "TERMS"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "기본",
+   "text": "(목걸이 줄을 세며) 넷. …실장님이 보낸 호위가 너냐. 출근부 쓴 손이라더니."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "기본",
+   "text": "우린 물건 안 날라. 사람 날라. 물건은 도망을 안 가잖아."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "기본",
+   "text": "한강철교 남단까지. 출장소 사람이 열 시까지 거기 서 있어. 넘기면 끝. 줄 뒤에 붙고, 앞으로 너무 나서지 마."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "호위 서겠다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "GO",
+     "id": "FQSB02_YARD:1:0"
+    },
+    {
+     "text": "오늘은 아니다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQSB02_YARD:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "sb02",
+   "args": [
+    "start"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "기본",
+   "text": "출발. 고가 타고 간다. 뛰지 마. 목걸이가 놀라."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "기본",
+   "text": "오늘 호위는 찼어."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "기본",
+   "text": "장부에 이름 없는 놈은 호위 안 써. 실장님한테 가서 일부터 받아."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "기본",
+   "text": "(눈을 안 맞춘다) 너한테 등 맡길 일은 없어."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "기본",
+   "text": "구울 데리고 인솔? 판독기에 걸려. 혼자 와."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "기본",
+   "text": "네 얼굴 붙은 전단이 철교 앞에도 있어. 추적조 달고 오는 호위는 안 써."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-SB-02.txt"
+}

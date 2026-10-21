@@ -57,6 +57,7 @@ var _route_i := 0
 var _route_wait := 0.0
 var _look_base := 2
 var stance := ""                              ## "hold": 제자리 경계(정문 계엄군)
+var led := false                              ## 진행기가 걸음을 준다(1-12f 운송 행렬): 평시(IDLE)엔 제 걸음이 없고, 경계 · 교전이 붙으면 AI가 넘겨받는다
 var fixed := false                            ## 제자리 고정(감시포 — 몸은 돌고 걷지 않는다, 1-11c)
 var level := 1                                ## 실제 레벨(장소 상한을 건 뒤)
 var bite := 8.0                               ## 들개 물기 피해(SD-14 표 '물기 n')
@@ -413,6 +414,9 @@ func think(dt: float, target: Combatant, nav, shots: Projectiles) -> void:   ## 
 		queue_redraw()
 		return
 	if _bait_step(dt, target, nav):
+		queue_redraw()
+		return
+	if led and brain.state == AIBrain.S.IDLE:
 		queue_redraw()
 		return
 	_t_tac += dt

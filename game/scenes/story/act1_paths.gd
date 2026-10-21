@@ -542,8 +542,9 @@ func _sb_tick() -> void:
 
 ## 표찰 없이 담 안에 선 사람: 6칸 안 · 서 있음(웅크리면 못 봄) → 경고 한 번, 3초 뒤에도 보이면 습격
 func _sb_watch(where: String) -> void:
-	if v("SB_RAID") != 0 or v("SB_DEAL") == 1 or v("SB_PASS") == 1 or v("SB_PASS") == 2 or where == "" or host.box.active or host.ev.busy():
-		_sb_warn = -1.0
+	if v("SB_RAID") != 0 or v("SB_DEAL") == 1 or v("SB_PASS") == 1 or v("SB_PASS") == 2 or where == "" or host.box.active or host.ev.busy() \
+			or (st.quests.stage("FQ-SB-01") >= 10 and st.quests.stage("FQ-SB-01") < 200):
+		_sb_warn = -1.0                                                 # 출근부 일꾼(FQ-SB-01을 받음 — 끊김 200 전)은 마당 사람이다(1-12f)
 		return
 	if where == "X-SB" and not SB_YARD.has_point(_sb_local()):
 		_sb_warn = -1.0

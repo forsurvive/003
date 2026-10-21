@@ -10,7 +10,9 @@
   "NOTYET": 7,
   "SUBMIT": 9,
   "CAUGHT": 14,
-  "PASS": 17
+  "CAUGHT_SELF": 17,
+  "CAUGHT2": 18,
+  "PASS": 20
  },
  "ops": [
   {
@@ -107,10 +109,25 @@
    "to": "END"
   },
   {
+   "op": "if",
+   "cond": "dead(\"N-R02-036\") == 1",
+   "to": "CAUGHT_SELF"
+  },
+  {
    "op": "line",
    "who": "N-R02-036",
    "emo": "기본",
    "text": "소장님, 봉천 묶음이 안 맞아요. 옛 장부랑 줄 수가 달라요."
+  },
+  {
+   "op": "goto",
+   "to": "CAUGHT2"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "황두칠이 옛 장부 봉천 묶음을 펼쳐 손가락으로 줄을 센다. 손가락이 한 줄에서 멈춘다."
   },
   {
    "op": "line",

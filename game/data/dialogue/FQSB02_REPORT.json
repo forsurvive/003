@@ -1,0 +1,121 @@
+{
+ "id": "FQSB02_REPORT",
+ "title": "인솔조장 갈고리 — 탈주",
+ "loc": "L-R02-24",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "LIE": 3,
+  "SEEN": 7,
+  "TRUTH": 9,
+  "BACK": 12
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "FQ_SB02_TAESU == 2",
+   "to": "BACK"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "기본",
+   "text": "못 찾았어?"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "못 찾았다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "LIE",
+     "id": "FQSB02_REPORT:1:0"
+    },
+    {
+     "text": "도망치게 뒀다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TRUTH",
+     "id": "FQSB02_REPORT:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "sb02",
+   "args": [
+    "report",
+    "0"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB02_SEEN == 1",
+   "to": "SEEN"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "기본",
+   "text": "…장부에서 하나 지워. 넷이 셋. 출장소엔 셋이라고 해."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "분노",
+   "text": "상판 끝에서 다 보였어. 그 애 옆에 서 있던 거. …장부에서 하나 지워. 네 이름 옆엔 줄 하나 긋고."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "sb02",
+   "args": [
+    "report",
+    "1"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "분노",
+   "text": "뒀다고? …호위가. (침을 뱉는다) 넷이 셋. 네 이름 옆에 줄 하나 긋는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "sb02",
+   "args": [
+    "report",
+    "0"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "기본",
+   "text": "(아이 목걸이 불빛을 확인한다) 다시 넷. 가자. 여섯 시 전엔 신도림 지나야 해."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-SB-02.txt"
+}

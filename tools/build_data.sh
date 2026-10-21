@@ -11,6 +11,7 @@ python3 tools/pipeline/unique_weapons.py               # 고유 무기(1-12a, D-
 python3 tools/pipeline/encounter_table.py             # 인카운터 표(1-E, SD-22): RE 행·범주 가중 → encounters.json(적 자료 뒤에)
 python3 tools/pipeline/extract_story.py
 python3 tools/pipeline/extract_docs.py
+python3 tools/pipeline/script_variants.py               # 원고 변형판(1-12f — FQ-SB-02 대리 반장 판)
 python3 tools/pipeline/script_compile.py
 python3 tools/pipeline/note_compile.py                  # 종이 기록물(1-5): script/notes → notes.json
 python3 tools/pipeline/term_compile.py                  # 단말(1-4): script/terms → terminals.json
@@ -29,6 +30,7 @@ python3 tools/pipeline/struct_bake.py
 python3 tools/pipeline/world_extract.py                 # 월드(1-1): SD-08 표 → source.json
 python3 tools/pipeline/rad_zones.py                    # 방사능 구역(1-9d): source.json → rad.json(굽기가 고리 안에 웅덩이·드럼·표지판)
 python3 tools/pipeline/world_chunks.py                  # 월드 굽기 → world.bin(손 맵·타일셋 뒤에)
+python3 tools/pipeline/convoy_route.py                  # FQ-SB-02 운송 행렬 경로 굽기(1-12f — 구운 월드 뒤에)
 python3 tools/pipeline/expr_cases.py
 python3 tools/pipeline/portrait_export.py
 python3 tools/pipeline/story_sprites.py

@@ -1,0 +1,107 @@
+{
+ "id": "FQSB02_SCOUT_L",
+ "title": "자율방범대 순찰조 — 혼자",
+ "loc": "L-HR-03",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "PASS": 2,
+  "NOPASS": 5,
+  "SET": 7
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-JY-P1",
+   "emo": "기본",
+   "text": "(호루라기를 입에서 뗀다) 거기 서. …혼자네. 뒤에 목걸이 줄 달고 오는 거 다 보여."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "오늘은 그냥 보내 줘. 다음엔 안 와",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "쉬움"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PASS",
+     "id": "FQSB02_SCOUT_L:1:0",
+     "fail": "NOPASS"
+    },
+    {
+     "text": "인솔조를 넘길 테니 길에서 기다려",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SET",
+     "id": "FQSB02_SCOUT_L:1:1"
+    },
+    {
+     "text": "그냥 간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQSB02_SCOUT_L:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-JY-P1",
+   "emo": "기본",
+   "text": "…오늘만이야. 오순례 대장님이 들으면 안 좋아하실 텐데."
+  },
+  {
+   "op": "cmd",
+   "name": "sb02",
+   "args": [
+    "scout",
+    "2"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-JY-P1",
+   "emo": "분노",
+   "text": "그 말은 다들 해. 목걸이 줄이 오면 우리가 막는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-JY-P1",
+   "emo": "놀람",
+   "text": "…인솔조 쪽 사람이 그 말을? (뒤에 대고 손짓한다) 둘러서. 목걸이부터 끊는다."
+  },
+  {
+   "op": "cmd",
+   "name": "sb02",
+   "args": [
+    "scout",
+    "3"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-SB-02L.txt"
+}

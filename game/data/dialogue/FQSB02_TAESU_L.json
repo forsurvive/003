@@ -1,0 +1,151 @@
+{
+ "id": "FQSB02_TAESU_L",
+ "title": "달아난 아이 오태수",
+ "loc": "L-R02-24",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "BACK": 3,
+  "LOOKAWAY": 6,
+  "HIDE": 8,
+  "FREE": 11,
+  "AFTER": 15
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "FQ_SB02_TAESU >= 2",
+   "to": "AFTER"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-506",
+   "emo": "슬픔",
+   "text": "봉천 사람이지? 우리 엄마한테… 아니다. 그냥 가."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "줄로 돌아가자",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "BACK",
+     "id": "FQSB02_TAESU_L:1:0"
+    },
+    {
+     "text": "(못 본 척 돌아선다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "LOOKAWAY",
+     "id": "FQSB02_TAESU_L:1:1"
+    },
+    {
+     "text": "숨겨 줄게. 배수로로 가",
+     "tags": [],
+     "cond": "FQ_SB02_SNEAK == 1",
+     "fx": "",
+     "to": "HIDE",
+     "id": "FQSB02_TAESU_L:1:2"
+    },
+    {
+     "text": "(원격기로 목걸이를 끈다) 이제 안 터져. 뛰어",
+     "tags": [],
+     "cond": "FQ_SB02_REMOTE == 1",
+     "fx": "",
+     "to": "FREE",
+     "id": "FQSB02_TAESU_L:1:3"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-506",
+   "emo": "슬픔",
+   "text": "…(목걸이를 만지작거린다) 응."
+  },
+  {
+   "op": "cmd",
+   "name": "sb02",
+   "args": [
+    "taesu",
+    "2"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "sb02",
+   "args": [
+    "taesu",
+    "3"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-506",
+   "emo": "놀람",
+   "text": "…진짜? (상판 밑 배수로 쪽으로 기어간다) 봉천 아랫마당. 엄마한텐 아직 말 못 했어."
+  },
+  {
+   "op": "cmd",
+   "name": "sb02",
+   "args": [
+    "taesu",
+    "4"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "원격기 단추를 누르자 목걸이 불빛이 꺼진다. 아이가 목을 쓸어 본다."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-506",
+   "emo": "놀람",
+   "text": "…꺼졌어. (배수로로 뛴다) 봉천에서 봐."
+  },
+  {
+   "op": "cmd",
+   "name": "sb02",
+   "args": [
+    "taesu",
+    "4"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-506",
+   "emo": "피곤",
+   "text": "(줄 맨 뒤에서 고개를 숙이고 있다) ……"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-SB-02L.txt"
+}

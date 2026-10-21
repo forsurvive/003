@@ -1,0 +1,278 @@
+# 자동 생성 — tools/pipeline/script_variants.py가 script/act1/FQ-SB-02.txt에서 만든다. 고치려면 원본을 고칠 것.
+
+@scene FQSB02_YARD_L  인솔 반장 — 출발 줄  (L-R02-19)
+@npc   -
+@cond  V_ACT >= 1
+? FQSB02_STAGE >= 100 -> DONE
+? FQSB01_STAGE != 100 -> NOJOB
+? AFF_SB < -19 -> COLD
+? FQ_JH03_PARK == 1 -> GHOUL
+? V_WANTED >= 30 -> HOT
+? FQ_SB02_TOLD == 1 -> SENT
+N-SB-L1 [기본] (목걸이 줄을 세며) 넷. 호위가 하나 모자라. …네가 그 하나냐.
+-> TERMS
+* SENT
+N-SB-L1 [기본] (목걸이 줄을 세며) 넷. …실장님이 보낸 호위가 너냐. 출근부 쓴 손이라더니.
+* TERMS
+N-SB-L1 [기본] 우린 물건 안 날라. 사람 날라. 물건은 도망을 안 가잖아.
+N-SB-L1 [기본] 한강철교 남단까지. 출장소 사람이 열 시까지 거기 서 있어. 넘기면 끝. 줄 뒤에 붙고, 앞으로 너무 나서지 마.
+> 호위 서겠다 -> GO
+> 오늘은 아니다 -> END
+* GO
+@cmd sb02 start
+N-SB-L1 [기본] 출발. 고가 타고 간다. 뛰지 마. 목걸이가 놀라.
+-> END
+* DONE
+N-SB-L1 [기본] 오늘 호위는 찼어.
+-> END
+* NOJOB
+N-SB-L1 [기본] 장부에 이름 없는 놈은 호위 안 써. 실장님한테 가서 일부터 받아.
+-> END
+* COLD
+N-SB-L1 [기본] (눈을 안 맞춘다) 너한테 등 맡길 일은 없어.
+-> END
+* GHOUL
+N-SB-L1 [기본] 구울 데리고 인솔? 판독기에 걸려. 혼자 와.
+-> END
+* HOT
+N-SB-L1 [기본] 네 얼굴 붙은 전단이 철교 앞에도 있어. 추적조 달고 오는 호위는 안 써.
+-> END
+
+@scene FQSB02_ESCAPE_L  고가 끝  (L-R02-24)
+@npc   -
+@cond  V_ACT >= 1
+SYS 북쪽 램프를 내려서는 참에 줄 맨 뒤 하나가 난간을 넘는다. 목걸이 단 아이 — 열 몇 살. 상판 밑 그늘로 떨어진다.
+N-SB-L1 [분노] 하나 빠졌다! 호위, 찾아 와. 우린 줄 지킨다. …서른 분. 그 뒤엔 내가 간다.
+@cmd sb02 escape
+-> END
+
+@scene FQSB02_TAESU_L  달아난 아이 오태수  (L-R02-24)
+@npc   -
+@cond  V_ACT >= 1
+? FQ_SB02_TAESU >= 2 -> AFTER
+N-R02-506 [슬픔] 봉천 사람이지? 우리 엄마한테… 아니다. 그냥 가.
+> 줄로 돌아가자 -> BACK
+> (못 본 척 돌아선다) -> LOOKAWAY
+> 숨겨 줄게. 배수로로 가 -> HIDE ?? FQ_SB02_SNEAK == 1
+> (원격기로 목걸이를 끈다) 이제 안 터져. 뛰어 -> FREE ?? FQ_SB02_REMOTE == 1
+* BACK
+N-R02-506 [슬픔] …(목걸이를 만지작거린다) 응.
+@cmd sb02 taesu 2
+-> END
+* LOOKAWAY
+@cmd sb02 taesu 3
+-> END
+* HIDE
+N-R02-506 [놀람] …진짜? (상판 밑 배수로 쪽으로 기어간다) 봉천 아랫마당. 엄마한텐 아직 말 못 했어.
+@cmd sb02 taesu 4
+-> END
+* FREE
+SYS 원격기 단추를 누르자 목걸이 불빛이 꺼진다. 아이가 목을 쓸어 본다.
+N-R02-506 [놀람] …꺼졌어. (배수로로 뛴다) 봉천에서 봐.
+@cmd sb02 taesu 4
+-> END
+* AFTER
+N-R02-506 [피곤] (줄 맨 뒤에서 고개를 숙이고 있다) ……
+-> END
+
+@scene FQSB02_REPORT_L  인솔 반장 — 탈주  (L-R02-24)
+@npc   -
+@cond  V_ACT >= 1
+? FQ_SB02_TAESU == 2 -> BACK
+N-SB-L1 [기본] 못 찾았어?
+> 못 찾았다 -> LIE
+> 도망치게 뒀다 -> TRUTH
+* LIE
+@cmd sb02 report 0
+? FQ_SB02_SEEN == 1 -> SEEN
+N-SB-L1 [기본] …장부에서 하나 지워. 넷이 셋. 출장소엔 셋이라고 해.
+-> END
+* SEEN
+N-SB-L1 [분노] 상판 끝에서 다 보였어. 그 애 옆에 서 있던 거. …장부에서 하나 지워. 네 이름 옆엔 줄 하나 긋고.
+-> END
+* TRUTH
+@cmd sb02 report 1
+N-SB-L1 [분노] 뒀다고? …호위가. (침을 뱉는다) 넷이 셋. 네 이름 옆에 줄 하나 긋는다.
+-> END
+* BACK
+@cmd sb02 report 0
+N-SB-L1 [기본] (아이 목걸이 불빛을 확인한다) 다시 넷. 가자. 여섯 시 전엔 신도림 지나야 해.
+-> END
+
+@scene FQSB02_REST_L  신도림 — 쉬는 줄  (L-R02-24)
+@npc   -
+@cond  V_ACT >= 1
+SYS 신도림 고가 밑. 행렬이 선다. 목걸이 단 인력이 바닥에 쪼그려 앉는다.
+N-SB-L1 [피곤] 담배 한 대. …(허리춤 목줄 원격기를 습관처럼 만지작거린다. 단추 넷, 불빛 넷.)
+N-SB-L1 [기본] 다섯 분. 물 마실 사람 마셔. 목걸이 차고 뛰면 어떻게 되는지는 다들 알지.
+-> END
+
+@scene FQSB02_POCKET_L  반장의 허리춤  (L-R02-24)
+@npc   -
+@cond  V_ACT >= 1
+? FQ_SB02_TRIED == 1 -> TRIED
+SYS 반장이 등을 돌리고 담배 연기를 뱉는다. 허리춤 원격기가 손 닿는 데 있다.
+> [은신 50] 원격기를 슬쩍한다 -> TAKE
+> 그만둔다 -> END
+* TAKE
+@cmd sb02 pocket 1
+SYS 손가락 두 개로 고리를 들어 올린다. 원격기가 소매 속으로 들어온다.
+-> END
+* TRIED
+SYS 반장이 허리춤에 손을 얹고 서 있다. 두 번은 안 된다.
+-> END
+
+@scene FQSB02_POCKET_FAIL_L  반장의 허리춤 — 들킴  (L-R02-24)
+@npc   -
+@cond  V_ACT >= 1
+N-SB-L1 [분노] (손목을 낚아챈다) 손 치워. …호위가 원격기를 왜 만져. 네 이름 옆에 줄 하나.
+@cmd sb02 pocket 0
+-> END
+
+@scene FQSB02_SCOUT_L  자율방범대 순찰조 — 혼자  (L-HR-03)
+@npc   -
+@cond  V_ACT >= 1
+N-JY-P1 [기본] (호루라기를 입에서 뗀다) 거기 서. …혼자네. 뒤에 목걸이 줄 달고 오는 거 다 보여.
+> [화술 쉬움] 오늘은 그냥 보내 줘. 다음엔 안 와 -> PASS | NOPASS
+> 인솔조를 넘길 테니 길에서 기다려 -> SET
+> 그냥 간다 -> END
+* PASS
+N-JY-P1 [기본] …오늘만이야. 오순례 대장님이 들으면 안 좋아하실 텐데.
+@cmd sb02 scout 2
+-> END
+* NOPASS
+N-JY-P1 [분노] 그 말은 다들 해. 목걸이 줄이 오면 우리가 막는다.
+-> END
+* SET
+N-JY-P1 [놀람] …인솔조 쪽 사람이 그 말을? (뒤에 대고 손짓한다) 둘러서. 목걸이부터 끊는다.
+@cmd sb02 scout 3
+-> END
+
+@scene FQSB02_TELL_L  인솔 반장 — 앞에 방범대  (L-R02-24)
+@npc   -
+@cond  V_ACT >= 1
+N-SB-L1 [기본] 왜. 앞에 뭐 있어?
+> 노량진로 끝에 방범대 셋. 남쪽으로 돌자 -> DETOUR
+> 아무것도 -> END
+* DETOUR
+N-SB-L1 [기본] 방범대? …대방 쪽 남쪽 큰길로 돈다. 시간 잡아먹겠네. 열 시는 안 기다려 준다.
+@cmd sb02 detour
+-> END
+
+@scene FQSB02_PATROL_L  자율방범대 순찰조  (L-HR-03)
+@npc   -
+@cond  V_ACT >= 1
+? FQ_SB02_PATROL == 2 -> WAVED
+? FQ_SB02_PATROL == 3 -> READY
+N-JY-P1 [기본] 거기. 그 목걸이들, 우리한테 두고 가.
+N-SB-L1 [분노] 방범대가 장부에 끼어들어? 길 비켜.
+> 싸운다 -> FIGHT
+> [화술 보통] 오늘은 길만 지나간다. 다음 줄은 안 끌고 온다 -> TALK | NOTALK
+> 인력을 방범대에 넘긴다 -> HAND
+> (원격기로 목걸이를 모두 끄고) 넘긴다 -> HAND_R ?? FQ_SB02_REMOTE == 1
+* FIGHT
+@cmd sb02 patrol 1
+-> END
+* TALK
+N-JY-P1 [기본] …오늘만이야. 오순례 대장님이 들으면 안 좋아하실 텐데.
+@cmd sb02 patrol 2
+-> END
+* NOTALK
+N-JY-P1 [분노] 말로는 안 돼. 목걸이 줄 앞에선.
+@cmd sb02 patrol 1
+-> END
+* HAND
+SYS 목걸이 줄 쪽으로 손짓한다. "가." 방범대가 목걸이 절단기를 꺼낸다.
+N-SB-L1 [분노] 호위가 줄을 판다고? …터뜨릴 거야. 하나라도 움직이면.
+@cmd sb02 patrol 3
+-> END
+* HAND_R
+SYS 원격기 단추 넷을 차례로 누른다. 목걸이 불빛이 하나씩 꺼진다. 방범대가 절단기를 꺼낸다.
+N-SB-L1 [분노] (빈 허리춤을 더듬는다) …원격기. 너였어. (뒷걸음친다) 기억해 둔다.
+@cmd sb02 patrol 4
+-> END
+* WAVED
+N-JY-P1 [기본] (손짓으로 길을 연다) 지나가. 말 맞춘 대로야.
+@cmd sb02 patrol 2
+-> END
+* READY
+SYS 방범대가 이미 길 양쪽에 둘러서 있다. 절단기 날이 새벽빛에 번쩍인다.
+N-SB-L1 [분노] …매복? 호위, 너 —
+@cmd sb02 patrol 3
+-> END
+
+@scene FQSB02_TOLL_L  노들 남문 경비  (L-HR-03)
+@npc   -
+@cond  V_ACT >= 1
+N-ND-G1 [기본] 조합 다리 발밑으로 사람 나르는 값. 오늘은 두 배 — 60.
+N-SB-L1 [기본] 정가 서른인데. …호위, 네가 해결해.
+> [캡 60] 낸다 -> PAY
+> [화술 보통] 정가 30. 다리는 안 건넌다 -> HALF | NOHALF
+> 반장에게 맡긴다 -> HOOK
+* PAY
+@cmd sb02 toll 1
+N-ND-G1 [기본] (캡을 센다) 섬에 들이는 건 아니야. 발밑만이야.
+-> END
+* HALF
+@cmd sb02 toll 2
+N-ND-G1 [기본] …서른. 다음엔 두 배야.
+-> END
+* NOHALF
+N-ND-G1 [기본] 육십. 싫으면 돌아가.
+> [캡 60] 낸다 -> PAY
+> 반장에게 맡긴다 -> HOOK
+* HOOK
+@cmd sb02 toll 3
+N-SB-L1 [기본] (캡을 세서 넘긴다) 이건 네 일당에서 깐다.
+-> END
+
+@scene FQSB02_HAND_L  출장소 인수원  (L-HR-03)
+@npc   -
+@cond  V_ACT >= 1
+? FQ_SB02_LATE == 1 -> LATE
+N-SB-H1 [기본] (철교 쪽에서 내려와 장부를 편다) 본소 운송조. 몇?
+@cmd sb02 hand
+? FQ_SB02_N == 4 -> FOUR
+? FQ_SB02_N == 3 and FQ_SB02_TAESU >= 3 -> THREE
+N-SB-L1 [피곤] {FQ_SB02_N}. …나머진 길에서 잃었어. 장부엔 그렇게 적어.
+-> SIGN
+* THREE
+N-SB-L1 [기본] 셋. 하나는 고가에서 장부 밖으로.
+-> SIGN
+* FOUR
+N-SB-L1 [기본] 넷. 다 왔어.
+* SIGN
+N-SB-H1 [기본] (목걸이 번호를 하나씩 부른다) 철교로. 줄 맞춰.
+SYS 인력이 인수원을 따라 철교 침목 위로 올라간다. 강바람에 줄이 흔들린다. 뒤돌아보는 사람은 없다.
+? FQ_SB02_REMOTE == 1 -> REMOTE
+-> PAY
+* REMOTE
+N-SB-L1 [기본] (허리춤을 더듬는다) …원격기 어디 갔어?
+> (원격기를 돌려준다) 길에 떨어져 있더라 -> GIVEBACK
+> 모른다 -> KEEP
+* GIVEBACK
+@cmd sb02 remote 0
+N-SB-L1 [기본] (낚아챈다) …길에 떨어질 물건이 아니야.
+-> PAY
+* KEEP
+@cmd sb02 remote 1
+N-SB-L1 [분노] …장부에 적는다. 네 이름 옆에.
+* PAY
+@cmd sb02 pay
+? AFF_SB >= 20 -> TAG
+N-SB-L1 [기본] 일당. …다음에도 새벽 네 시.
+-> END
+* TAG
+N-SB-L1 [기본] (번호표 목걸이 하나를 던진다) 네 번호다. 이름은 장부에 있고.
+-> END
+* LATE
+N-SB-L1 [분노] (빈 철교 남단을 본다) 출장소가 문 닫았어. 열 시 지났다고. …다시 본소로.
+SYS 목걸이 줄이 말없이 돌아선다. 오늘은 강을 건너지 않는다.
+@cmd sb02 late
+-> END
+
+@scene FQSB02_LEFT_L  운송조 — 호위 없이  (L-R02-19)
+@npc   -
+@cond  V_ACT >= 1
+SYS 행렬이 더는 기다리지 않는다. 멀리서 반장 목소리 — "호위 없이 간다."
+-> END

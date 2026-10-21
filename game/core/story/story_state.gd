@@ -56,7 +56,7 @@ const UNNAMED := [["N-TRADER", "떠돌이 고물상", ""], ["N-VG-S1", "고물�
 	["N-PS-2", "경비 파수-3", ""],   # 1-11j SQ-S11 영등포 경찰서 서장실 경비판
 	["N-BJ-S1", "수색조 분대장", "BJ"], ["N-BJ-S2", "수색조 계엄병", "BJ"],   # 1-11c · 1-11f 계엄군 수색조(1-11j: 게임 쪽 목록에 빠져 있던 것 — 이름표에 ID가 나오던 것)
 	["N-BJ-P1", "순찰 분대장", "BJ"], ["N-BJ-P2", "순찰 계엄병", "BJ"],   # 1-11j SQ-S11 여의도 낮 순찰
-	["N-BJ-C1", "다리목 검문조장", "BJ"], ["N-SB-R1", "새벽인력 모집원", "SB"],   # 1-12e FQ-JH-03 노량진로 이동 검문 · 수산시장 모집원
+	["N-BJ-C1", "다리목 검문조장", "BJ"], ["N-SB-R1", "새벽인력 모집원", "SB"], ["N-SB-L1", "인솔 반장", "SB"], ["N-SB-H1", "출장소 인수원", "SB"], ["N-JY-P1", "방범대 조장", ""], ["N-ND-G1", "노들 남문 경비", "JC_ND"],   # 1-12f FQ-SB-02   # 1-12e FQ-JH-03 노량진로 이동 검문 · 수산시장 모집원
 	["N-GS-1", "각성회 신도", "GS"], ["N-GS-2", "각성회 신도", "GS"], ["N-GS-3", "각성회 신도", "GS"],   # 1-8g 노량진 관제 중계소
 	["N-GS-5", "새 순례자", ""], ["N-GS-6", "새 순례자", ""], ["N-GS-R3", "3번 파수", ""], ["N-K24-P1", "원장 대행", ""]]   # 1-12b FQ-GS-01 · GS-02(순례자는 아직 등록 전 — 각성회 소속 아님)
 var enc := {}                           ## 인카운터 상태(1-3, Encounters): 안전 간격 · 오늘 추적대 수 · EP 사용 · 휴전
@@ -274,7 +274,7 @@ func _init() -> void:
 	#   TOLL 통행세(1 냄 · 2 화술 30 · 3 갈고리가 냄) · N 인계한 인력 · LATE 10시 넘겨 닿음 · RES 결과(1 끝까지 · 2 늦음 · 3 방범대 · 4 빠짐 · 5 흩어짐) · LEAD 인솔(0 갈고리 · 1 대리 반장) · TOLD 구만호가 운송을 알려 줌
 	for k in "SEED X1 X2 X3 X4 X5 X6 X7 X8 X9 PD1 PD2 PD3 PD4 PD5 PD6 PD7 PD8 PD9 STAMP DRAWER AWAY BLANK RES TOLD WHO BACK TYPED LURE LURE_DAY SUS EXTRA DUE DUE_M DUE_D THX1 THX2 THX3 THX4 THX5 OWE WHERE".split(" "):
 		vars.declare("FQ_SB01_" + k, "int", 0)
-	for k in "DAY LEG TAESU SEEN PATROL TOLL N LATE RES LEAD TOLD REMOTE SCOUT DETOUR REST".split(" "):
+	for k in "DAY LEG TAESU SEEN PATROL TOLL N LATE RES LEAD TOLD REMOTE SCOUT DETOUR REST SNEAK TRIED".split(" "):
 		vars.declare("FQ_SB02_" + k, "int", 0)
 	vars.declare("GT_COT_UNTIL", "int", 0)                          # 고터 지하상가 침상 칸 빌린 끝 절대 분(1-12d)
 	for k in ["GS_OPEN", "GS_TRUTH", "GS_ROBOT", "GS02_GRADER"]:

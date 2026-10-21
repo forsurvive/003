@@ -1,6 +1,6 @@
 # 퀘스트 교차 정합 표 (자동 — tools/pipeline/quest_cross.py)
 
-> SD-20 §10. 경고 132 · 허용 132 · **새 경고 0**. 허용은 `tools/pipeline/quest_cross_allow.yaml`에 이유와 함께.
+> SD-20 §10. 경고 140 · 허용 140 · **새 경고 0**. 허용은 `tools/pipeline/quest_cross_allow.yaml`에 이유와 함께.
 
 ## 단위별 발자국
 | 단위 | 인물(세움·말함) | 이름 언급 | 쓰는 변수 | 손 맵 무대 | 막 상한 | 시한 |
@@ -14,6 +14,9 @@
 | FQ-JH-01 | C-050 FQ-JH-01 FQ-JH-02 N-R02-012 N-R02-016 N-UG-501 | C-050 N-R02-006 N-R02-048 N-R03-018 N-R06-047 N-R08-060 N-R09-044 N-R10-035 | 1 | J-08 J-09 |  |  |
 | FQ-JH-02 | C-050 FQ-JH-01 FQ-JH-02 N-R02-012 N-R02-016 N-UG-501 | C-027 C-050 N-R06-048 N-R10-013 N-UG-501 | 1 |  |  |  |
 | FQ-JH-03 | C-018 C-050 FQ-JH-03 M-062 M-426 N-BJ-C1 N-SB-R1 | C-018 C-067 | 0 |  |  |  |
+| FQ-SB-01 | C-010 C-013 C-021 C-049 FQ-SB-01 FQ-SB-02 N-R01-026 N-R01-030 N-R01-035 N-R01-039 N-R01-501 N-R02-036 N-R02-041 N-R02-50 | C-049 N-R01-026 N-R01-030 N-R01-035 N-R01-039 N-R01-501 N-R05-034 | 14 |  |  | ○ |
+| FQ-SB-02 | C-013 C-021 C-049 FQ-SB-01 FQ-SB-02 N-JY-P1 N-ND-G1 N-R02-041 N-R02-506 N-SB-H1 | C-065 N-R06-049 | 1 |  |  | ○ |
+| FQ-SB-02L | N-JY-P1 N-ND-G1 N-R02-506 N-SB-H1 N-SB-L1 | C-065 N-R06-049 | 0 |  |  |  |
 | GA | A-001 A-012 A-074 GA-01 GA-02 M-196 N-GA-B1 |  | 1 |  |  |  |
 | GR | N-GR-D1 | N-R07-044 N-R08-060 N-R09-039 N-R10-013 | 4 |  |  |  |
 | GT | N-UG-038 N-UG-039 N-UG-040 N-UG-041 | N-R10-013 N-UG-039 N-UG-041 N-UG-501 | 0 |  |  |  |
@@ -70,47 +73,52 @@
 - C-004 육지환: MQ-106, MQ-P4
 - C-008 송미래: SQ-S10, SQ-S11
 - C-009 한유리: MQ-102~105, MQ-106, 장소:R01_R02
-- C-010 조만석: FQ-JC-01, HOME_BC, MQ-101, MQ-102~105, SQ-S02, SQ-S09, UQ-04
-- C-013 황두칠: KS, MQ-102~105
+- C-010 조만석: FQ-JC-01, FQ-SB-01, HOME_BC, MQ-101, MQ-102~105, SQ-S02, SQ-S09, UQ-04
+- C-013 황두칠: FQ-SB-01, FQ-SB-02, KS, MQ-102~105
 - C-014 류정: FQ-GS-01, FQ-GS-02, JUNGGYE
 - C-015 백구: FQ-JC-01, HOME_BC, MQ-101, MQ-P4, SQ-S01, SQ-S04, TRAVEL
 - C-018 박춘삼: FQ-JH-03, MQ-102~105, SQ-S09, TRAVEL, 장소:R01_NORTH
 - C-019 파수-3: FQ-GS-01, SADANG
-- C-021 독사: MQ-101, MQ-102~105
+- C-021 독사: FQ-SB-01, FQ-SB-02, MQ-101, MQ-102~105
 - C-022 도경철: MQ-P1, MQ-P2, MQ-P3, MQ-P4
 - C-023 차명수: MQ-P2, MQ-P3, 프롤로그
 - C-024 방금례: MQ-P1, MQ-P2, MQ-P4, SQ-S03
 - C-027 지우: FQ-JH-02, HP, KS, MQ-P2, SQ-S09, SQ-S10, SQ-S13, 프롤로그
 - C-028 한유정: MQ-106, 장소:R01_R02
 - C-034 선우진: MQ-102~105, SQ-S11
-- C-049 구만호: KS, MQ-102~105, SQ-S09
+- C-049 구만호: FQ-SB-01, FQ-SB-02, KS, MQ-102~105, SQ-S09
 - C-050 노복희: FQ-JH-01, FQ-JH-02, FQ-JH-03, MQ-102~105, SQ-S08, SQ-S12, SQ-S13
 - C-051 금하람: HP, JM_PEOPLE
 - C-053 은솔: JUNGGYE, SQ-S04
 - C-057 하숙자: FQ-JC-01, HOME_BC, MQ-101, UQ-125
-- C-065 오순례: SQ-S08, SQ-S11
+- C-065 오순례: FQ-SB-02, FQ-SB-02L, SQ-S08, SQ-S11
 - C-067 소윤희: FQ-JH-03, HP, MQ-102~105, TRAVEL, 상인 순회
 - FQ-GS-01 : FQ-GS-01, FQ-GS-02
 - FQ-GS-02 : FQ-GS-01, FQ-GS-02
 - FQ-JH-01 : FQ-JH-01, FQ-JH-02
 - FQ-JH-02 : FQ-JH-01, FQ-JH-02
+- FQ-SB-01 : FQ-SB-01, FQ-SB-02
+- FQ-SB-02 : FQ-SB-01, FQ-SB-02
 - M-062 : FQ-JH-03, SQ-S06
 - N-HR-013 물살: KT, SQ-S03, SQ-S06, UQ-71
 - N-HR-031 녹물: FQ-GS-01, KT, UQ-04
 - N-HR-043 망루: MQ-101, SQ-S02, SQ-S04
+- N-JY-P1 : FQ-SB-02, FQ-SB-02L
+- N-ND-G1 : FQ-SB-02, FQ-SB-02L
 - N-R01-007 하로운: MQ-P1, MQ-P2, MQ-P4
 - N-R01-010 송새봄: MQ-P1, 프롤로그
 - N-R01-011 전도하: MQ-P1, MQ-P2
 - N-R01-023 조안민: MQ-P1, MQ-P4
+- N-R01-026 오봉수: FQ-SB-01, MQ-101
 - N-R01-028 남태하: MQ-101, SQ-S02, SQ-S04
 - N-R01-029 조담희: FQ-JC-01, MQ-101, SQ-S01, SQ-S02
-- N-R01-030 남무진: MQ-101, 장소:R01_R02
+- N-R01-030 남무진: FQ-SB-01, MQ-101, 장소:R01_R02
 - N-R01-032 조수안: MQ-101, SQ-S02, SQ-S03
 - N-R01-033 엄태경: MQ-101, TRAVEL
 - N-R01-034 남솔: MQ-101, SQ-S01, SQ-S04
-- N-R01-035 오재윤: SQ-S02, SQ-S04
+- N-R01-035 오재윤: FQ-SB-01, SQ-S02, SQ-S04
 - N-R01-036 조하진: MQ-101, SQ-S02, SQ-S04
-- N-R01-039 남건희: MQ-101, SQ-S02
+- N-R01-039 남건희: FQ-SB-01, MQ-101, SQ-S02
 - N-R01-040 연보경: SADANG, SQ-S06, TRAVEL
 - N-R01-041 허순자: SADANG, SQ-S05
 - N-R01-044 성지후: SADANG, SQ-S05
@@ -133,25 +141,27 @@
 - N-R02-030 어하은: DG-KT, KT, SQ-S13
 - N-R02-032 경상현: SQ-S13, YT
 - N-R02-035 십장: MQ-102~105, SQ-S09, SQ-S10
-- N-R02-036 : MQ-102~105, SQ-S09
+- N-R02-036 : FQ-SB-01, MQ-102~105, SQ-S09
 - N-R02-037 : MQ-102~105, SQ-S10
 - N-R02-038 : MQ-102~105, SQ-S09
 - N-R02-039 127번: CAPTURE, MQ-102~105, SQ-S09, SQ-S10
 - N-R02-040 88번: MQ-102~105, SQ-S09, SQ-S10
+- N-R02-041 : FQ-SB-01, FQ-SB-02, SQ-S09
 - N-R02-042 길금순: SQ-S09, SQ-S10, 장소:R02_SOUTH
 - N-R02-047 이자: CAPTURE, MQ-102~105, SADANG, SQ-S09, SQ-S10
 - N-R02-048 배수관: FQ-JH-01, KT, U02, UQ-71
 - N-R02-050 채해인: SQ-S09, SQ-S10
+- N-R02-506 오태수: FQ-SB-01, FQ-SB-02, FQ-SB-02L
 - N-R03-018 병뚜껑: FQ-JH-01, MQ-101, MQ-102~105, YT
 - N-R03-024 저울: MQ-101, MQ-102~105, SQ-S13, 장소:R01_NORTH
 - N-R03-503 펜치: FQ-GS-01, U02
 - N-R05-031 문고리: FQ-GS-02, HOME_BC
 - N-R05-033 빗장: MQ-102~105, SQ-S05, U02, U04
-- N-R05-034 걸쇠: SQ-S04, SQ-S13, YT
+- N-R05-034 걸쇠: FQ-SB-01, SQ-S04, SQ-S13, YT
 - N-R06-046 벽돌: FQ-JC-01, KS
 - N-R06-047 철판: FQ-JH-01, KT, MQ-102~105, SQ-S02, SQ-S09, SQ-S10, U02, UQ-04
 - N-R06-048 기둥: FQ-GS-01, FQ-JH-02, KT, SADANG, SQ-S03, SQ-S04, SQ-S05, U02, 장소:R02_SOUTH
-- N-R06-049 난간: HP, KT, SQ-S06, TRAVEL
+- N-R06-049 난간: FQ-SB-02, FQ-SB-02L, HP, KT, SQ-S06, TRAVEL
 - N-R06-052 레일: SADANG, SQ-S05, U02, U04
 - N-R06-056 집게: CAPTURE, UQ-71, 장소:R01_NORTH
 - N-R07-041 선생님: HP, JM_PEOPLE, MQ-102~105, TRAVEL, 장소:R01_NORTH
@@ -164,6 +174,7 @@
 - N-R09-044 발자국: FQ-JC-01, FQ-JH-01, MQ-106, SQ-S01, SQ-S05, SQ-S11, YT
 - N-R10-013 경보: FQ-JH-02, GR, GT, 장소:R01_NORTH
 - N-R10-028 수수료: MQ-102~105, SQ-S10
+- N-SB-H1 : FQ-SB-02, FQ-SB-02L
 - N-UG-007 남태령 할매: SADANG, SAGOGAE, U02
 - N-UG-009 소민서: MQ-102~105, U04
 - N-UG-026 안내 3호: SADANG, SQ-S05
@@ -205,9 +216,16 @@
 - 23:50 · 장면 GT_TIMETABLE · 2077 고속버스 출발 시각표. 부산 23:50 · 광주 23:10 · 대전 22:40 · 영등포 23:40.
 - 23:52 · 맵 V-00 · 정문 제어실 단말: 장문석 오버시어 일지 — 2077-10-23 23:52 문을 닫음.
 
-## X1 (83, 새 0)
+## X1 (90, 새 0)
 - 허용 `FQ-JH-02 C-050 언급` C-050(노복희)의 이름이 대사에 — 장면 FQJH02_LEDGER, 죽었을 때 판 없음 — 네 번째 장부 표지 '복희 의류 외상 2077'은 2077년 종이 기록 — 노복희가 죽어도 장부 글씨는 남는다(죽으면 JH-02는 200, 표지는 '끝' 판만)
 - 허용 `FQ-JH-02 N-UG-501 언급` N-UG-501(탁만수)의 이름이 대사에 — 장면 FQJH02_LEDGER, 죽었을 때 판 없음 — 장부 마지막 줄 '탁만수 · 코트 한 벌 · 180,000'은 2077년 외상 기록 — 탁만수가 죽어도 줄은 그대로(노복희가 JH02_DEAD로 덮는다)
+- 허용 `FQ-SB-01 C-049 언급` C-049(구만호)의 이름이 대사에 — 장면 FQSB01_DRAWER, 죽었을 때 판 없음 — 실장 감독 책상 서랍 장면의 WATCH 판('구만호가 앉아 있다') — AWAY == 0일 때만, AWAY는 구만호 사망이면 1(fq_sb.gd _where_tick) — 죽었으면 이 줄에 닿지 않는다
+- 허용 `FQ-SB-01 N-R01-026 언급` N-R01-026(오봉수)의 이름이 대사에 — 장면 FQSB01_TYPE, 죽었을 때 판 없음 — 출근부 옛 장부 줄(서류 글) — 빚 장부는 죽은 사람도 안 지운다(장부는 사람을 안 봐줘) · 감사 인사(FQSB01_THX*)는 그 인물 npc 장면이라 죽으면 안 열린다
+- 허용 `FQ-SB-01 N-R01-030 언급` N-R01-030(남무진)의 이름이 대사에 — 장면 FQSB01_TYPE, 죽었을 때 판 없음 — 위와 같음(출근부 줄)
+- 허용 `FQ-SB-01 N-R01-035 언급` N-R01-035(오재윤)의 이름이 대사에 — 장면 FQSB01_TYPE, 죽었을 때 판 없음 — 위와 같음(출근부 줄)
+- 허용 `FQ-SB-01 N-R01-039 언급` N-R01-039(남건희)의 이름이 대사에 — 장면 FQSB01_TYPE, 죽었을 때 판 없음 — 위와 같음(출근부 줄) · 조만석 GEON 줄은 dead("N-R01-039") == 0일 때만(1-12f)
+- 허용 `FQ-SB-01 N-R01-501 언급` N-R01-501(오영자)의 이름이 대사에 — 장면 FQSB01_TYPE, 죽었을 때 판 없음 — 위와 같음(출근부 줄)
+- 허용 `FQ-SB-02 N-R02-041` N-R02-041(?)를 말함 FQSB02_ESCAPE, 말함 FQSB02_HAND, 말함 FQSB02_PATROL, 말함 FQSB02_POCKET_FAIL, 말함 FQSB02_REPORT, 말함 FQSB02_REST, 말함 FQSB02_TELL, 말함 FQSB02_TOLL, 말함 FQSB02_YARD — 죽음 조건 없음 — 운송 장면은 모두 진행기가 연다(@npc -) — 갈고리가 죽었거나 SQ-S09 고척 노선이면 FQ_SB02_LEAD 1 → 같은 장면의 _L 판(FQ-SB-02L.txt, 인솔 반장 N-SB-L1)을 연다 · 길에서 쓰러지면 조원이 대리(fq_sb.gd _check_fallen · sc())
 - 허용 `GT N-UG-041 언급` N-UG-041(위수안)의 이름이 대사에 — 장면 GT_LEDGER, 죽었을 때 판 없음 — 번영회 장부 맨 뒤 '2077. 10. 23. 이 상가에서 밤을 난 사람' 명단의 이름 — 종이 기록, 위수안이 죽어도 이름은 남는다
 - 허용 `GT N-UG-501 언급` N-UG-501(탁만수)의 이름이 대사에 — 장면 GT_LEDGER, 죽었을 때 판 없음 — 위와 같은 2077 명단의 '구두 수선 탁만수' — 죽어도 명단은 그대로(공고판은 GT_BOARD MOURN 판)
 - 허용 `JUNGGYE N-GS-3` N-GS-3(?)를 말함 GS_PUNCH — 죽음 조건 없음 — 무명 정비 당번(N-GS-3) — 이름 없는 인물. 줄 생략 안전망
@@ -293,9 +311,10 @@
 ## X2 (1, 새 0)
 - 허용 `C-021 X-BC X-SB` C-021(독사): X-BC「MQ101_NIGHT == 2 and MQ101_RESULT == 0 and MQ101_FIGHT == 0」와 X-SB「SB_RAID == 0 and MQ101_STAGE >= 50」가 함께 참일 수 있다(예: MQ101_FIGHT=0, MQ101_NIGHT=2, MQ101_RESULT=0, MQ101_STAGE=50, SB_RAID=0) — X-BC는 MQ101_NIGHT 2(밤 — 단계 40), X-SB는 MQ101_STAGE ≥ 50(아침 뒤) — 진행 순서상 함께 오지 않는다(표는 변수 사이 관계를 모른다)
 
-## X3 (42, 새 0)
+## X3 (43, 새 0)
 - 허용 `DG-GR UQ71_CORE` DG-GR가 UQ-71 소유 변수 UQ71_CORE를 세운다 — 같은 사실인가(P1) — 대방 버스 노심의 행방은 UQ71_CORE 한 곳 — 구로 7703에 꽂아 다 태우면 6(UQ-71 머리 주석 · 버스 장면 · DB-01 그림이 6을 '빈 버스'로 읽는다). 소지(2)일 때만 꽂을 수 있다
 - 허용 `FQ-JH-01 FQ_JH02_SEEN` FQ-JH-01가 FQ-JH-02 소유 변수 FQ_JH02_SEEN를 세운다 — 같은 사실인가(P1) — JH-01 왕쥐 둥지 영수증이 JH-02 훅('이미 앎', P2) — SEEN은 '장부 줄을 봤다' 한 사실이고 세우는 곳 둘(둥지 · 상인회 책상)은 같은 값 1만 쓴다(maxi)
+- 허용 `FQ-SB-01 FQ_SB02_TOLD` FQ-SB-01가 FQ-SB-02 소유 변수 FQ_SB02_TOLD를 세운다 — 같은 사실인가(P1) — 같은 사실 한 곳(P1) — 구만호가 일당을 주며 '운송조 호위가 하나 모자라'고 알려 준 사실 · SB-02 출발 줄(FQSB02_YARD SENT 판)이 읽는다
 - 허용 `HP DG_STOP` HP가 던전 소유 변수 DG_STOP를 세운다 — 같은 사실인가(P1) — DG_STOP은 들것 의료반(세력 약호 DG) 정류지 — 던전 정리 변수(DG_ 접두)가 아니다. 정하는 곳은 HP 진행기 한 곳(hp.gd)
 - 허용 `JM_PEOPLE FQ_JH01_BUY` JM_PEOPLE가 FQ-JH-01 소유 변수 FQ_JH01_BUY를 세운다 — 같은 사실인가(P1) — 엄수연이 JH-01 동안 독낭을 파는 개수(최대 2) — 세우는 곳은 JM_PEOPLE 엄수연 장면 한 곳뿐(FQ-JH-01 원고 · 진행기는 읽지도 쓰지도 않음)
 - 허용 `JM_PEOPLE SQ_S08_SEEN_A` JM_PEOPLE가 SQ-S08 소유 변수 SQ_S08_SEEN_A를 세운다 — 같은 사실인가(P1) — 금하람 진료소의 D 판(S8FIGHT, 둘이 누운 침상)을 이미 봤다는 표지 — JM_GEUM 장면이 세우고 읽는다(P1)

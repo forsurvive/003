@@ -1,0 +1,61 @@
+{
+ "id": "FQSB02_TELL",
+ "title": "인솔조장 갈고리 — 앞에 방범대",
+ "loc": "L-R02-24",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "DETOUR": 2
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "기본",
+   "text": "왜. 앞에 뭐 있어?"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "노량진로 끝에 방범대 셋. 남쪽으로 돌자",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "DETOUR",
+     "id": "FQSB02_TELL:1:0"
+    },
+    {
+     "text": "아무것도",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQSB02_TELL:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "기본",
+   "text": "방범대? …대방 쪽 남쪽 큰길로 돈다. 시간 잡아먹겠네. 열 시는 안 기다려 준다."
+  },
+  {
+   "op": "cmd",
+   "name": "sb02",
+   "args": [
+    "detour"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-SB-02.txt"
+}

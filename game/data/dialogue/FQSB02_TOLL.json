@@ -1,0 +1,159 @@
+{
+ "id": "FQSB02_TOLL",
+ "title": "노들 남문 경비",
+ "loc": "L-HR-03",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "PAY": 3,
+  "HALF": 6,
+  "NOHALF": 9,
+  "HOOK": 11
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-ND-G1",
+   "emo": "기본",
+   "text": "조합 다리 발밑으로 사람 나르는 값. 오늘은 두 배 — 60."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "기본",
+   "text": "정가 서른인데. …호위, 네가 해결해."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "낸다",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 60
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PAY",
+     "id": "FQSB02_TOLL:1:0"
+    },
+    {
+     "text": "정가 30. 다리는 안 건넌다",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "보통"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "HALF",
+     "id": "FQSB02_TOLL:1:1",
+     "fail": "NOHALF"
+    },
+    {
+     "text": "갈고리에게 맡긴다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "HOOK",
+     "id": "FQSB02_TOLL:1:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "sb02",
+   "args": [
+    "toll",
+    "1"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-ND-G1",
+   "emo": "기본",
+   "text": "(캡을 센다) 섬에 들이는 건 아니야. 발밑만이야."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "sb02",
+   "args": [
+    "toll",
+    "2"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-ND-G1",
+   "emo": "기본",
+   "text": "…서른. 다음엔 두 배야."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-ND-G1",
+   "emo": "기본",
+   "text": "육십. 싫으면 돌아가."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "낸다",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 60
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PAY",
+     "id": "FQSB02_TOLL:2:0"
+    },
+    {
+     "text": "갈고리에게 맡긴다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "HOOK",
+     "id": "FQSB02_TOLL:2:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "sb02",
+   "args": [
+    "toll",
+    "3"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "기본",
+   "text": "(캡을 세서 넘긴다) 이건 네 일당에서 깐다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-SB-02.txt"
+}

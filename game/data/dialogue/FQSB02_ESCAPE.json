@@ -1,0 +1,39 @@
+{
+ "id": "FQSB02_ESCAPE",
+ "title": "고가 끝",
+ "loc": "L-R02-24",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "북쪽 램프를 내려서는 참에 줄 맨 뒤 하나가 난간을 넘는다. 목걸이 단 아이 — 열 몇 살. 상판 밑 그늘로 떨어진다."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "분노",
+   "text": "하나 빠졌다! 호위, 찾아 와. 우린 줄 지킨다. …서른 분. 그 뒤엔 내가 간다."
+  },
+  {
+   "op": "cmd",
+   "name": "sb02",
+   "args": [
+    "escape"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-SB-02.txt"
+}
