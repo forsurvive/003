@@ -6,7 +6,9 @@
  "cond": "CAPTURE_BY == 1",
  "labels": {
   "START": 0,
-  "OTHER": 7
+  "SAFE": 4,
+  "WAKE": 5,
+  "OTHER": 10
  },
  "ops": [
   {
@@ -20,6 +22,21 @@
    "who": "SYS",
    "emo": "기본",
    "text": "손목에는 수갑. 주머니가 가볍다. 누군가 캡을 세어 보고 일부를 가져갔다."
+  },
+  {
+   "op": "if",
+   "cond": "UQ08_SAFE == 1 and CAPTURE_AT >= UQ08_SAFE_AT + 1440",
+   "to": "SAFE"
+  },
+  {
+   "op": "goto",
+   "to": "WAKE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "목걸이 뒤판을 손끝으로 더듬는다. 땜 자국 하나가 걸린다 — 낯익은 자리다."
   },
   {
    "op": "if",

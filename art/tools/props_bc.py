@@ -1088,6 +1088,10 @@ from props_uq2 import PROPS_UQ2, STATES_UQ2                           # R02 비�
 for _k in PROPS_UQ2:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_UQ2)
+from props_hp4 import PROPS_HP4, STATES_HP4                           # 여의도 대학병원 2층 안과 외래 · 수술실(1-12h UQ-08): 수술대 · 현미경 · 세극등 · 시력표 · 렌즈장
+for _k in PROPS_HP4:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_HP4)
 from props_trap import PROPS_TRAP, STATES_TRAP, burnt_states       # 함정 · 환경 폭발(1-9c, SD-11 §9.2 · §9.3)
 for _k in PROPS_TRAP:
     assert _k not in PROPS, _k
@@ -1121,6 +1125,7 @@ STATES.update(STATES_JH)
 STATES.update(STATES_GT)
 STATES.update(STATES_UQ)
 STATES.update(STATES_UQ2)
+STATES.update(STATES_HP4)
 STATES.update(STATES_BS)
 STATES.update(STATES_S04)
 STATES.update(STATES_S03)

@@ -222,12 +222,26 @@
      "id": "SQS09_CAGE10:2:2"
     },
     {
+     "text": "(해제 열쇠 원형을 뒤판 홈에 꽂는다) 세 번째 선부터",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 25
+      }
+     ],
+     "cond": "has(\"M-164\") == 1 and SQ_S09_LEARN == 0 and SB_COLLAR == 0",
+     "fx": "",
+     "to": "UNCOL",
+     "id": "SQS09_CAGE10:2:3"
+    },
+    {
      "text": "나중에",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "SQS09_CAGE10:2:3"
+     "id": "SQS09_CAGE10:2:4"
     }
    ]
   },

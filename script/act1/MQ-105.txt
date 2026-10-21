@@ -343,6 +343,19 @@ SYS 규정 제1조는 틀렸다. 장부는 탄다.
 -> END
 * PLAIN
 SYS 드럼통 화로. 장작 대신 젖은 전표 묶음이 탄다. 매운 연기가 마당에 깔린다.
+? UQ08_WIRE == 1 and GAME_DAY <= UQ08_WIRE_DAY + 7 -> R_WIRE
+? UQ08_BOOM == 1 and GAME_DAY <= UQ08_BOOM_DAY + 7 -> R_BOOM
+? UQ08_SNAP_DAY > 0 and GAME_DAY <= UQ08_SNAP_DAY + 3 -> R_SNAP
+-> END
+# UQ-08(1-12h h2) 소문 출처: 불 쬐는 인부 둘(P7)
+* R_WIRE
+SYS 불을 쬐던 인부 둘이 수군댄다. "철사가 검수에 걸렸대. 견본 회로가 장부랑 달랐다고." "철사가? …어디로 데려갔는데." 대답이 없다.
+-> END
+* R_BOOM
+SYS 불을 쬐던 인부 둘이 수군댄다. "412번 들었어? 마당에서 목걸이가 또 터졌대." "철사 눈이 갔다더니."
+-> END
+* R_SNAP
+SYS 불을 쬐던 인부 둘이 수군댄다. "담 밖에서 목걸이가 그냥 열렸대. 딸깍." "그럼 담은 뭐 하러 쳐."
 -> END
 
 @scene MQ-105_JO  이장 조만석 — 장부  (L-R01-09)
@@ -544,6 +557,11 @@ SYS 바이스 옆에 공구가 다 있다. 내 목에 걸린 것과 같은 목�
 * OFF
 ! SB_COLLAR = 0
 SYS 세 번째 선을 먼저. 붉은 불이 꺼지고 목걸이가 두 쪽으로 떨어진다.
+? dead("N-R02-038") == 0 and SB_RAID == 0 and UQ08_WIRE == 0 and UQ08_VISE == 0 -> VISE
+-> END
+* VISE
+! UQ08_VISE = 1
+N-R02-038 [기본] (고글 너머로 본다) 내 바이스 쓰고 공짜야? …세 번째 선 맞아.
 -> END
 
 @scene H-03_CAGE  우리 문  (L-R02-19)

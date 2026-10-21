@@ -665,3 +665,230 @@ func test_uq10_reactions(t) -> void:
 	st.kill("N-R02-019")
 	st.vars.set_v("UQ10_HEARD", 1)
 	t.ok(_says(st, "UQ10_M1", "죽은 사람 저울 탓해 뭐 해"), "탁우빈이 죽은 뒤 국밥 장수(계획 §4.2-12)")
+
+
+# ---------------------------------------------------------------- UQ-08 철사의 돋보기(1-12h h2 — 계획 §3.3 · §4.2b · §8b)
+func test_uq08_ask_ticket_gate(t) -> void:
+	var a := _host("H-05", "from_H-02")
+	var st: StoryState = a[1]
+	t.ok(_says(st, "SQS09_WIRE", "고글 너머로 눈을 찡그린다"), "철사 장면 머리 — 늘 찡그림(H6)")
+	st.vars.set_v("AFF_SB", -60)
+	t.ok(not _has_opt(st, "SQS09_WIRE", "눈이 왜 그래요"), "SB 경계 밖이면 발동 없음")
+	st.vars.set_v("SB_PASS", 1)
+	t.ok(_has_opt(st, "SQS09_WIRE", "눈이 왜 그래요"), "변장(SB_PASS)이면 발동")
+	st.vars.set_v("SB_PASS", 0)
+	st.vars.set_v("AFF_SB", 0)
+	t.ok(_says(st, "UQ08_DESK", "세진 광학 납품 전표"), "작업대 끝 전표")
+	t.eq(_v(st, "UQ08_TICKET"), 1, "전표 읽음")
+	t.ok(_says(st, "SQS09_WIRE", "그 전표 봤구나", ["눈이 왜 그래요"]), "전표를 읽었으면 '그 전표 봤구나'(S7)")
+	t.eq(_v(st, "UQ08_MET"), 1, "사정을 들음")
+	t.eq(st.quests.stage("UQ-08"), 10, "단계 10")
+	t.ok(_says(st, "SQS09_WIRE", "나사 셋", ["렌즈 — 어디"]), "다시 물으면 길 · '비틀지 말고 풀어'")
+	t.ok(_says(st, "UQ08_BENCH", "두 번 지졌다"), "조립대 — 두 번 지진 땜(S15)")
+
+
+func test_uq08_scope_quiet_and_loud(t) -> void:
+	for loud in [false, true]:
+		var a := _host("HP-04", "from_HP01")
+		var h: InteriorHost = a[0]
+		var st: StoryState = a[1]
+		var c: UqR02 = a[2]
+		st.vars.set_v("UQ08_MET", 1)
+		st.quests.set_stage("UQ-08", 10)
+		st.vars.set_v("PC_SKP_REPAIR", 0 if loud else 40)
+		if loud:
+			t.ok(st.skill("REPAIR") >= 30 or not _has_opt(st, "UQ08_SCOPE", "고정 나사 셋"), "수리 30 미만이면 나사 풀기 잠김")
+		var foes := 0
+		for e in h.combat.enemies:
+			if is_instance_valid(e) and str(e.who) in ["N-HP-F6", "N-HP-F7"]:
+				foes += 1
+		t.eq(foes, 2, "2층 구울 둘")
+		t.ok(_says(st, "UQ08_SCOPE", "유리 하나가 깨진다" if loud else "조용하다", ["비틀어 뽑는다" if loud else "고정 나사 셋"], c), "렌즈 빼기(%s)" % ("비틀기" if loud else "나사"))
+		t.eq(_v(st, "UQ08_LENS"), 1, "렌즈 자리 = 주인공 손")
+		t.eq(st.count_of("M-432"), 1, "M-432")
+		t.eq(st.quests.stage("UQ-08"), 20, "단계 20")
+		var heard := 0
+		for e in h.combat.enemies:
+			if is_instance_valid(e) and e._heard > 0.0:
+				heard += 1
+		t.ok((heard > 0) == loud, "비틀어 뽑으면 구울이 소리를 듣는다(%d)" % heard)
+		t.ok(_says(st, "UQ08_SCOPE", "고리가 비었다"), "빈 고리")
+
+
+func test_uq08_lens_first(t) -> void:
+	var a := _host("H-05", "from_H-02")
+	var st: StoryState = a[1]
+	var c: UqR02 = a[2]
+	st.call_fn("give", ["M-432", 1])
+	st.vars.set_v("UQ08_LENS", 1)
+	t.ok(_says(st, "SQS09_WIRE", "그거 어디서 났어", ["나중에"]), "렌즈를 먼저 가져온 판(4.2b 36) — 사정 단계를 건너뜀")
+	t.eq(st.quests.stage("UQ-08"), 20, "바로 단계 20")
+	var sb := _v(st, "AFF_SB")
+	var xp := _v(st, "PC_XP")
+	t.ok(_says(st, "SQS09_WIRE", "해제 열쇠 원형", ["렌즈를 건넨다", "기다린다"], c), "① 그대로 줌")
+	t.eq(_v(st, "UQ08_RES"), 1, "결과 ①")
+	t.eq(_v(st, "UQ08_LENS"), 2, "렌즈는 철사 고글")
+	t.eq(st.count_of("M-432"), 0, "렌즈를 건넴")
+	t.eq(st.count_of("M-164"), 1, "해제 열쇠 원형")
+	t.eq(_v(st, "AFF_SB") - sb, 4, "SB +4")
+	t.eq(_v(st, "PC_XP") - xp, 80, "80 XP")
+	t.eq(_v(st, "UQ08_SAFE"), 0, "① — 회로 그대로")
+	t.ok(_says(st, "SQS09_WIRE", "세진 광학 렌즈가 끼워져"), "고글에 렌즈")
+	t.ok(_says(st, "UQ08_BENCH", "땜 자국이 곧고"), "조립대 땜이 곧다")
+	st.vars.set_v("SQ_S09_START", 1)
+	t.ok(_has_opt(st, "SQS09_WIRE", "[캡 100] 127번"), "해제 요금 반값")
+	t.ok(not _has_opt(st, "SQS09_WIRE", "[캡 200] 127번"), "200은 없음")
+	st.vars.set_v("SB_COLLAR", 1)
+	st.vars.set_v("AFF_SB", 20)
+	t.ok(_says(st, "SQS09_WIRE", "세 번째 선", ["내 목걸이"]), "내 목걸이 해제 서비스(우호 이상)")
+	t.eq(_v(st, "SB_COLLAR"), 0, "풀림")
+
+
+func test_uq08_tamper_and_inspection(t) -> void:
+	var a := _host("H-05", "from_H-02")
+	var h: InteriorHost = a[0]
+	var st: StoryState = a[1]
+	var c: UqR02 = a[2]
+	st.vars.set_v("UQ08_MET", 1)
+	st.vars.set_v("UQ08_LENS", 1)
+	st.call_fn("give", ["M-432", 1])
+	st.vars.set_v("PC_SKP_SCIENCE", 100)
+	var k0 := _v(st, "V_KARMA")
+	t.ok(_says(st, "SQS09_WIRE", "뚜껑 닫는 소리", ["렌즈를 건넨다", "원격 해제"], c), "② 등을 돌린 틈(S12)")
+	t.eq(_v(st, "UQ08_RES"), 2, "결과 ②")
+	t.eq(_v(st, "UQ08_SAFE"), 1, "원격 해제 = 무조건 열림")
+	t.ok(_v(st, "UQ08_SAFE_AT") > 0, "그 시각")
+	t.eq(_v(st, "V_KARMA") - k0, 50, "카르마 +50")
+	t.eq(_v(st, "UQ08_INSPECT"), 5 + 30, "첫 검수 30일 뒤")
+	st.vars.set_v("SQ_S09_START", 1)
+	t.ok(_has_opt(st, "SQS09_WIRE", "[캡 100] 127번"), "철사 눈엔 같은 건넴 — ②도 반값(P2)")
+	# 전날: 칠판 · 철사 · 조립대 견본
+	st.vars.set_v("GAME_DAY", 34)
+	t.ok(_says(st, "SQS09_BOARD", "내일 09:00"), "전날 칠판 '목걸이 검수 — 내일 09:00 · 실장'(S4)")
+	t.ok(_says(st, "SQS09_WIRE", "괜찮겠지"), "철사 '요즘 땜이 곧으니까 괜찮겠지'")
+	t.ok(_says(st, "UQ08_BENCH", "장부대로 터지는", ["되돌려 둔다"]), "견본 되돌리기")
+	t.eq(_v(st, "UQ08_REVERT"), 35, "그 회차 값")
+	st.vars.set_v("GAME_DAY", 35)
+	st.vars.set_v("GAME_HOUR", 9)
+	st.vars.set_v("UQ08_HEAT", 9)
+	c._inspect_tick()
+	t.eq(_v(st, "UQ08_CHECK_N"), 0, "작업실 안에 있으면 미룸(눈앞에서 사라지지 않게)")
+	h.enter("H-02", "from_H-05")
+	c._inspect_tick()
+	t.eq(_v(st, "UQ08_CHECK_N"), 1, "검수 1회")
+	t.eq(_v(st, "UQ08_WIRE"), 0, "되돌려 둔 회차는 통과(HEAT가 커도)")
+	t.eq(_v(st, "UQ08_INSPECT"), 65, "다음 검수 30일 뒤")
+	var sb := _v(st, "AFF_SB")
+	st.vars.set_v("GAME_DAY", 65)
+	c._inspect_tick()
+	t.eq(_v(st, "UQ08_WIRE"), 1, "HEAT 9 — 발각(10% + 90%)")
+	t.eq(_v(st, "AFF_SB") - sb, -8, "SB −8")
+	t.ok(_says(st, "SQS09_BOARD", "철사 — 결근"), "칠판 '결근'(S14)")
+	t.ok(_says(st, "UQ08_BENCH", "인두는 식었고"), "식은 조립대")
+	st.vars.set_v("SB_127", 0)
+	st.vars.set_v("PC_CAPS", 1000)
+	t.ok(_says(st, "SQS09_GU", "마스터 코드", ["127번", "[캡 4"]), "구만호 '마스터 코드로'(4.2b 39)")
+	t.ok(_says(st, "X-SB_FIRE", "검수에 걸렸대"), "화로 인부 소문(출처)")
+	c._inspect_tick()
+	t.eq(_v(st, "UQ08_CHECK_N"), 2, "실종 뒤 판정 멈춤")
+
+
+func test_uq08_safe_collars(t) -> void:
+	var a := _host("H-05", "from_H-02")
+	var st: StoryState = a[1]
+	st.vars.set_v("UQ08_SAFE", 1)
+	st.vars.set_v("UQ08_SAFE_AT", 100000)
+	st.vars.set_v("CAPTURE_BY", 1)
+	st.vars.set_v("CAPTURE_AT", 100000 + 1440)
+	t.ok(_says(st, "CAPTURE_SB", "낯익은 자리"), "생포 — 새 목걸이 '낯익은 땜 자국'(S5)")
+	st.vars.set_v("CAPTURE_AT", 100000 + 600)
+	t.ok(not _says(st, "CAPTURE_SB", "낯익은 자리"), "그 전에 감긴 목걸이는 아니다")
+	st.vars.set_v("FQ_SB02_REMOTE", 1)
+	st.vars.set_v("FQ_SB02_DAY", 100000 + 2000)
+	t.ok(_says(st, "FQSB02_TAESU", "두 쪽으로 벌어져", ["원격기로 목걸이를 끈다"]), "원격기 — 목걸이가 벌어짐(S2)")
+	var heat := _v(st, "UQ08_HEAT")
+	t.ok(_says(st, "FQSB02_PATROL", "…철사", ["원격기로 목걸이를 모두"]), "갈고리가 땜 자국을 본다")
+	t.eq(_v(st, "UQ08_HEAT") - heat, 1, "HEAT +1")
+	st.vars.set_v("FQ_SB02_DAY", 100000 + 100)
+	t.ok(_says(st, "FQSB02_TAESU", "불빛이 꺼진다", ["원격기로 목걸이를 끈다"]), "그 전 출발 줄은 꺼질 뿐")
+	# 해제 열쇠 원형 — 남의 목걸이 · 생포 공구 상자 [수리 25]
+	st.vars.set_v("FQ_SB02_REMOTE", 0)
+	st.call_fn("give", ["M-164", 1])
+	st.vars.set_v("PC_SKP_REPAIR", 0)
+	if st.skill("REPAIR") >= 25:
+		t.ok(_says(st, "FQSB02_TAESU", "세 번째 선이 들리고", ["해제 열쇠 원형"]), "오태수 목걸이 — 해제 열쇠 원형(S10)")
+	st.vars.set_v("PC_SKP_REPAIR", 30)
+	t.ok(_says(st, "FQSB02_TAESU", "세 번째 선이 들리고", ["해제 열쇠 원형"]), "오태수 목걸이 — 해제 열쇠 원형(S10)")
+	st.vars.set_v("SB_COLLAR", 1)
+	t.ok(_has_opt(st, "CAPTURE_COLLAR", "해제 열쇠 원형"), "생포 공구 상자 [수리 25](원문 '1단계 쉬움')")
+	t.ok(_says(st, "H-05_PRACTICE", "내 바이스 쓰고 공짜야", ["내 목걸이 뒤판"]), "바이스로 내 목걸이 — 철사 한마디(S13)")
+	t.eq(_v(st, "UQ08_VISE"), 1, "한 번")
+
+
+func test_uq08_wall_snap(t) -> void:
+	var a := _host("H-05", "from_H-02")
+	var h: InteriorHost = a[0]
+	var st: StoryState = a[1]
+	var p := Act1Paths.new()
+	p.setup(h)
+	h.enter("X-SB", "gate_in")
+	st.vars.set_v("UQ08_SAFE", 1)
+	st.vars.set_v("UQ08_SAFE_AT", 100000)
+	st.vars.set_v("CAPTURE_AT", 100000 + 1440)
+	st.vars.set_v("SB_COLLAR", 1)
+	var hp0: float = h.combat.pc.hp
+	for k in 14:
+		p._sb_collar(false)
+	t.eq(_v(st, "SB_COLLAR"), 0, "담 밖 기폭 신호 — 목걸이가 열림")
+	t.eq(h.combat.pc.hp, hp0, "피해 없음")
+	t.eq(_v(st, "UQ08_HEAT"), 1, "HEAT +1")
+	t.eq(_v(st, "UQ08_SNAP_DAY"), 5, "그날(인부 소문 출처)")
+	t.ok(_says(st, "X-SB_FIRE", "그냥 열렸대"), "화로 인부 '담 밖에서 목걸이가 그냥 열렸대'")
+	st.vars.set_v("UQ08_SAFE", 0)
+	st.vars.set_v("SB_COLLAR", 1)
+	for k in 14:
+		p._sb_collar(false)
+	t.ok(h.combat.pc.hp < hp0, "② 아니면 그대로 터진다")
+
+
+func test_uq08_refuse_boom_and_lost(t) -> void:
+	var a := _host("H-05", "from_H-02")
+	var st: StoryState = a[1]
+	var c: UqR02 = a[2]
+	st.vars.set_v("UQ08_MET", 1)
+	st.vars.set_v("UQ08_MET_DAY", 5)
+	st.vars.set_v("UQ08_LENS", 1)
+	st.call_fn("give", ["M-432", 1])
+	t.ok(_says(st, "SQS09_WIRE", "두 번 지지면 돼", ["안 준다"], c), "③ 안 줌")
+	t.eq(_v(st, "UQ08_RES"), 3, "결과 ③")
+	t.eq(st.quests.stage("UQ-08"), 100, "단계 100")
+	c._uq08_day(5 + 29)
+	t.eq(_v(st, "UQ08_BOOM"), 0, "29일째엔 아직")
+	c._uq08_day(5 + 30)
+	t.eq(_v(st, "UQ08_BOOM"), 1, "30일 뒤 오작동")
+	st.vars.set_v("GAME_DAY", 36)
+	t.ok(_says(st, "SQS09_BOARD", "412번 — 결번"), "칠판 결번(S6)")
+	t.ok(_says(st, "X-SB_FIRE", "목걸이가 또 터졌대"), "원문 바크 — 출처: 화로 인부")
+	t.ok(_says(st, "SQS09_WIRE", "내 땜이야", ["나중에"]), "철사 '내 땜이야'")
+	var xp := _v(st, "PC_XP")
+	t.ok(_says(st, "SQS09_WIRE", "해제 열쇠 원형", ["렌즈를 건넨다", "기다린다"], c), "③은 되돌릴 수 있다 — 렌즈를 들고 다시 오면 ①")
+	t.eq(_v(st, "UQ08_RES"), 1, "결과 ①로")
+	t.eq(_v(st, "PC_XP"), xp, "XP는 한 번")
+	# 렌즈를 잃음 → 마영식 랙
+	var b := _host("H-05", "from_H-02")
+	var st2: StoryState = b[1]
+	var c2: UqR02 = b[2]
+	st2.vars.set_v("UQ08_MET", 1)
+	st2.vars.set_v("UQ08_LENS", 1)
+	c2._uq08_day(6)
+	t.eq(_v(st2, "UQ08_LENS"), 3, "어디든 가진 수 0 → 잃음")
+	t.ok(_says(st2, "SQS09_WIRE", "마영식 랙으로", ["잃어버렸어요"]), "철사가 마영식 랙으로 보냄")
+	st2.vars.set_v("MQ103_STAGE", 40)
+	t.ok(_says(st2, "MQ-103_MA", "세진 광학 대물렌즈가 하나 흘러들어왔어"), "마영식 '흘러들어왔어'")
+	t.ok(_says(st2, "MQ-103_MA", "묻지 마", ["세진 광학 렌즈를 산다"]), "[캡 120] 되사기(S9)")
+	t.eq(_v(st2, "UQ08_LENS"), 1, "다시 주인공 손")
+	t.eq(st2.count_of("M-432"), 1, "M-432")
+	st2.quests.set_stage("UQ-08", 20)
+	st2.kill("N-R02-038")
+	c2._uq08_day(7)
+	t.eq(st2.quests.stage("UQ-08"), 90, "결말 전 철사 사망 — 소멸")

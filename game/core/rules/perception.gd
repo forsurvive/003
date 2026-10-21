@@ -10,7 +10,8 @@ const MOVE := {"still": 0.5, "sneak": 0.8, "move": 1.0, "sprint": 1.5, "fired": 
 ## 소리: [반경 t, 게이지 가산]
 const SOUND := {"sneak": [0.5, 10.0], "move": [2.0, 20.0], "sprint": [5.0, 35.0], "melee": [3.0, 40.0],
 	"suppressed": [2.0, 30.0], "pistol": [12.0, 60.0], "rifle": [16.0, 60.0], "heavy": [20.0, 80.0],
-	"impact": [3.0, 35.0], "explosion": [18.0, 100.0], "door": [3.0, 30.0]}
+	"impact": [3.0, 35.0], "explosion": [18.0, 100.0], "door": [3.0, 30.0],
+	"glass": [16.0, 60.0]}   # 유리 깨짐(조용한 실내 층을 가로지른다 — 1-12h UQ-08 수술 현미경)
 
 
 static func sight_range(per: float) -> float:

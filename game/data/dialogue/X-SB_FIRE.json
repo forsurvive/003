@@ -7,7 +7,10 @@
  "labels": {
   "START": 0,
   "BURN": 3,
-  "PLAIN": 9
+  "PLAIN": 9,
+  "R_WIRE": 14,
+  "R_BOOM": 16,
+  "R_SNAP": 18
  },
  "ops": [
   {
@@ -82,6 +85,51 @@
    "who": "SYS",
    "emo": "기본",
    "text": "드럼통 화로. 장작 대신 젖은 전표 묶음이 탄다. 매운 연기가 마당에 깔린다."
+  },
+  {
+   "op": "if",
+   "cond": "UQ08_WIRE == 1 and GAME_DAY <= UQ08_WIRE_DAY + 7",
+   "to": "R_WIRE"
+  },
+  {
+   "op": "if",
+   "cond": "UQ08_BOOM == 1 and GAME_DAY <= UQ08_BOOM_DAY + 7",
+   "to": "R_BOOM"
+  },
+  {
+   "op": "if",
+   "cond": "UQ08_SNAP_DAY > 0 and GAME_DAY <= UQ08_SNAP_DAY + 3",
+   "to": "R_SNAP"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "불을 쬐던 인부 둘이 수군댄다. \"철사가 검수에 걸렸대. 견본 회로가 장부랑 달랐다고.\" \"철사가? …어디로 데려갔는데.\" 대답이 없다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "불을 쬐던 인부 둘이 수군댄다. \"412번 들었어? 마당에서 목걸이가 또 터졌대.\" \"철사 눈이 갔다더니.\""
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "불을 쬐던 인부 둘이 수군댄다. \"담 밖에서 목걸이가 그냥 열렸대. 딸깍.\" \"그럼 담은 뭐 하러 쳐.\""
   },
   {
    "op": "goto",

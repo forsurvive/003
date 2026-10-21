@@ -40,7 +40,7 @@ PROG = {
     "systems/world/encounter_live.gd": "인카운터", "core/story/encounters.gd": "인카운터", "core/story/rumors.gd": "소문",
     "core/story/radio.gd": "라디오", "core/story/wanted.gd": "수배", "systems/world/interior_host.gd": "엔진",
     "systems/world/world_map.gd": "엔진", "core/story/quest_log.gd": "엔진", "core/story/deeds.gd": "전파",
-    "scenes/story/uq71.gd": "UQ-71", "scenes/story/uq04.gd": "UQ-04", "scenes/story/uq_r01.gd": "UQ-01|UQ-02|UQ-03|UQ-05", "scenes/story/uq_r02.gd": "UQ-07|UQ-10", "scenes/story/gr.gd": "DG-GR", "scenes/story/kt.gd": "DG-KT", "systems/world/dungeon.gd": "던전", "scenes/story/u02.gd": "U02",
+    "scenes/story/uq71.gd": "UQ-71", "scenes/story/uq04.gd": "UQ-04", "scenes/story/uq_r01.gd": "UQ-01|UQ-02|UQ-03|UQ-05", "scenes/story/uq_r02.gd": "UQ-07|UQ-08|UQ-10", "scenes/story/gr.gd": "DG-GR", "scenes/story/kt.gd": "DG-KT", "systems/world/dungeon.gd": "던전", "scenes/story/u02.gd": "U02",
     # 1-11 이후 진행기(1-12d 교차 점검 보강 — 빠져 있어 진행기의 생사 판정 · 변수 쓰기가 교차 표에 안 잡혔다). '|'는 한 진행기가 맡은 단위 여럿
     "scenes/story/side_s03.gd": "SQ-S03", "scenes/story/side_s05.gd": "SQ-S05", "scenes/story/side_s06.gd": "SQ-S06", "scenes/story/side_s08.gd": "SQ-S08",
     "scenes/story/side_s09.gd": "SQ-S09", "scenes/story/side_s10.gd": "SQ-S10", "scenes/story/side_s11.gd": "SQ-S11", "scenes/story/side_s12.gd": "SQ-S12",

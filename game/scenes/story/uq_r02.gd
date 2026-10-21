@@ -3,6 +3,8 @@
 ##     로봇 자리 한 값 UQ07_TOY(P3) — J-06 소품 · 글 · 공하경 바크 · 광장 아이 줄이 모두 이 값을 읽는다.
 ##   UQ-10 「저울추」 — 원고 script/act1/UQ-10.txt · 월드 스팟 L-R02-12(r02.spots) · 2층 반장 방 K-38 · SQ-S13 A13_ 장면에서 @cmd chain.
 ##     쇠판 한 값 UQ10_PLATE · 반장 한 값 UQ10_BOSS · 습격 한 값 UQ10_RAID(P1 · P3). 대방 분대 소멸은 UQ71_SQ 9(UQ-71 진행기).
+##   UQ-08 「철사의 돋보기」 — 원고 script/act1/UQ-08.txt(병원 2층 현미경 · 작업대 전표 · 조립대) · 철사 갈래는 SQ-S09.txt SQS09_WIRE 안.
+##     렌즈 자리 한 값 UQ08_LENS · 철사 자리 한 값 UQ08_WIRE(P3). ② 효과(UQ08_SAFE)는 읽는 자리 셋: act1_paths 담 밖 목걸이 · FQ-SB-02 원격기 · 생포 장면.
 ## 사실은 변수 한 곳(P1) — 변수 뜻은 원고 머리 주석. 시간 판정(로봇이 아이 손에 감)은 06:00 하루 판정에서만(P6).
 ## 비표시(SD-05 §2.6): 알림 없음 · 단계 로그(메모) · XP만.
 class_name UqR02
@@ -30,6 +32,14 @@ const HIDE_DAYS := 3                       ## 들킨 뒤 쇠판을 떼어 두는
 const NSEEN_P := 30                        ## 밤 저울 — 위층 창으로 볼 확률(날 씨앗)
 const PLATE_BACK := 3                      ## 떼어 간 쇠판 → 새 쇠판까지
 const SWAP_BACK := 2                       ## 옮겨 붙인 쇠판 → 원상까지
+# UQ-08: 검수 · 오작동 · 렌즈
+const WIRE := "N-R02-038"                  ## 철사
+const SCOPE_AT := Vector2i(5, 5)           ## HP-04 안과 수술 현미경(대물렌즈 M-432)
+const INSPECT_GAP := 30                    ## 실장 검수 간격(날) — 원문 '30일마다'
+const INSPECT_H := 9                       ## 검수 시각(칠판 '09:00')
+const CATCH_P := 10                        ## 발각 확률(원문 10%) — 남이 본 열린 목걸이(HEAT)마다 +HEAT_P
+const HEAT_P := 10
+const BOOM_DAYS := 30                      ## ③(또는 받고 둠) 뒤 오작동까지
 
 var host: InteriorHost
 var st: StoryState
@@ -98,6 +108,7 @@ func _process(dt: float) -> void:
 	_note_tick()
 	_market_tick()
 	_raid_clock()
+	_inspect_tick()
 
 
 # ---------------------------------------------------------------- UQ-07 견습생의 첫 납땜
@@ -280,6 +291,7 @@ func _on_day(d: int) -> void:
 	if changed:
 		host.refresh_npcs()
 	_uq10_day(d)
+	_uq08_day(d)
 
 
 func _roll(tag: String, pct: int) -> bool:
@@ -311,6 +323,25 @@ func _cmd(a: Array, done: Callable) -> void:
 		"ledger", "checked":
 			_sv("UQ10_LEDGER", 1 if str(a[0]) == "ledger" else v("UQ10_LEDGER"))
 			_checked()
+		"lens":                                                          # UQ-08 렌즈를 뺐다(1 비틀어 뽑음 — 유리 소리에 2층 구울이 다가온다)
+			if v("UQ08_MET") == 1 and st.quests.stage("UQ-08") < 20:
+				st.quests.set_stage("UQ-08", 20)
+			if _mid() == "HP-04":
+				host.map.set_prop_state(SCOPE_AT, "taken")                     # 빈 대물렌즈 고리(다시 들어오면 맵 cond가 같은 그림)
+			if a.size() > 1 and int(a[1]) == 1 and host.player != null:
+				for e in host.combat.enemies:
+					if is_instance_valid(e) and not e.cmb.dead:
+						e.hear("glass", host.player.loco.logical)
+				_log("렌즈를 비틀어 뽑음 — 유리 소리")
+		"safe":                                                          # UQ-08 ②: 이 시각 하루 뒤 감긴 목걸이부터 · 첫 검수는 30일 뒤
+			_sv("UQ08_SAFE_AT", Clock.abs_min(host.date_text))
+			_sv("UQ08_INSPECT", day() + INSPECT_GAP)
+			_sv("UQ08_CHECK_N", 0)
+			_log("공구함 견본을 바꿈 — 첫 검수 %d일" % v("UQ08_INSPECT"))
+		"xp8":
+			if v("UQ08_XP") == 0:
+				_sv("UQ08_XP", 1)
+				st.call_fn("xp", [80])
 		"xp":
 			if v("UQ10_XP") == 0:
 				_sv("UQ10_XP", 1)
@@ -515,3 +546,53 @@ func _uq10_day(d: int) -> void:
 		st.quests.set_stage("UQ-10", 90)
 	if host.map is WorldMap:
 		host.refresh_npcs()
+
+
+# ---------------------------------------------------------------- UQ-08 철사의 돋보기
+func _uq08_day(d: int) -> void:
+	var gone := st.is_dead(WIRE) or v("SB_RAID") != 0 or v("UQ08_WIRE") != 0
+	# 렌즈를 잃음(팔기 · 버리기 · 털림 — 어디든 가진 수 0) → 마영식 랙으로 흘러간다(P10 — 다시 살 수 있다)
+	if v("UQ08_LENS") == 1 and _owned_anywhere("M-432") == 0:
+		_sv("UQ08_LENS", 3)
+		_log("세진 렌즈를 잃음 — 마영식 랙으로")
+	# ③ 또는 받고 둠: 30일 뒤 마당에서 오작동(412번) — 철사가 아직 그 눈으로 감을 때만
+	if v("UQ08_BOOM") == 0 and v("UQ08_MET") == 1 and v("UQ08_RES") in [0, 3] and not gone:
+		var base := v("UQ08_DAY") if v("UQ08_RES") == 3 else v("UQ08_MET_DAY")
+		if d >= base + BOOM_DAYS:
+			_sv("UQ08_BOOM", 1)
+			_sv("UQ08_BOOM_DAY", d)
+			_log("본소 마당 목걸이 오작동(412번)")
+			if _mid() == "X-SB" or _mid().begins_with("H-0"):
+				host.hint("담 너머 마당에서 퍽 — 짧은 소리. 누가 소리를 지르고, 곧 조용해진다.", 5.0)
+	# 철사가 죽거나 본소 습격 — 결말 전이면 소멸(4.2b 38)
+	var s8: int = st.quests.stage("UQ-08")
+	if (st.is_dead(WIRE) or v("SB_RAID") != 0) and s8 > 0 and s8 < 100:
+		st.quests.set_stage("UQ-08", 90)
+
+
+## 실장 검수(②만): 그 날 09:00 — 작업실에 주인공이 있으면 나갈 때까지 미룬다(눈앞에서 사람이 사라지지 않게)
+func _inspect_tick() -> void:
+	var due := v("UQ08_INSPECT")
+	if v("UQ08_SAFE") != 1 or v("UQ08_WIRE") != 0 or due <= 0:
+		return
+	if day() < due or (day() == due and _hour() < INSPECT_H) or _mid() == "H-05":
+		return
+	if st.is_dead(WIRE) or v("SB_RAID") != 0:
+		_sv("UQ08_INSPECT", 0)                                           # 철사가 없으면 판정 멈춤(만든 목걸이는 남는다)
+		return
+	var n := v("UQ08_CHECK_N") + 1
+	_sv("UQ08_CHECK_N", n)
+	_sv("UQ08_INSPECT", due + INSPECT_GAP)
+	if v("UQ08_REVERT") == due:
+		_log("검수 %d회 — 견본을 되돌려 둠(통과)" % n)
+		return
+	var p := mini(100, CATCH_P + HEAT_P * v("UQ08_HEAT"))
+	if _roll("u8chk:%d" % n, p):
+		_sv("UQ08_WIRE", 1)
+		_sv("UQ08_WIRE_DAY", day())
+		st.call_fn("aff", ["SB", -8])
+		_log("검수 %d회 — 발각(%d%%) · 철사 실종" % [n, p])
+		if _mid() == "X-SB" or _mid().begins_with("H-0"):
+			host.refresh_npcs()
+	else:
+		_log("검수 %d회 — 통과(%d%%)" % [n, p])

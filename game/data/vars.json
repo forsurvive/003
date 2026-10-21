@@ -1215,6 +1215,21 @@
    "src": "quests",
    "type": "int"
   },
+  "UQ08_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "UQ08_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "UQ08_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
   "UQ10_RESULT": {
    "default": 0,
    "src": "quests",

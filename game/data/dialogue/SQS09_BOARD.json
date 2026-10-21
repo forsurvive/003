@@ -6,11 +6,76 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "DUE": 5,
-  "STRUCK": 7,
-  "FREED": 9
+  "U8_CHK1": 5,
+  "U8_CHK0": 7,
+  "U8_WGONE": 9,
+  "U8_BOOMED": 11,
+  "S09": 12,
+  "DUE": 17,
+  "STRUCK": 19,
+  "FREED": 21
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "UQ08_SAFE == 1 and UQ08_WIRE == 0 and GAME_DAY == UQ08_INSPECT - 1",
+   "to": "U8_CHK1"
+  },
+  {
+   "op": "if",
+   "cond": "UQ08_SAFE == 1 and UQ08_WIRE == 0 and GAME_DAY == UQ08_INSPECT and GAME_HOUR < 9",
+   "to": "U8_CHK0"
+  },
+  {
+   "op": "if",
+   "cond": "UQ08_WIRE == 1",
+   "to": "U8_WGONE"
+  },
+  {
+   "op": "if",
+   "cond": "UQ08_BOOM == 1 and GAME_DAY <= UQ08_BOOM_DAY + 7",
+   "to": "U8_BOOMED"
+  },
+  {
+   "op": "goto",
+   "to": "S09"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "칠판 위쪽에 새 종이 — '목걸이 검수 — 내일 09:00 · 실장'. 압정이 반듯하다."
+  },
+  {
+   "op": "goto",
+   "to": "S09"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "칠판 위쪽에 새 종이 — '목걸이 검수 — 오늘 09:00 · 실장'."
+  },
+  {
+   "op": "goto",
+   "to": "S09"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "칠판 구석 근무표 — '철사 — 결근'. 그 줄만 며칠째 그대로다. 아무도 지우지 않는다."
+  },
+  {
+   "op": "goto",
+   "to": "S09"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "칠판 맨 아래, 빨간 분필로 — '412번 — 결번(오작동)'."
+  },
   {
    "op": "if",
    "cond": "SQ_S09_SOL1 == 2 or SQ_S09_SOL1 == 4 or SQ_S09_SOL2 == 1",

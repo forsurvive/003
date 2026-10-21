@@ -587,6 +587,12 @@ func _sb_collar(inside: bool) -> void:
 	if _collar <= 0.0:
 		_collar = -1.0
 		st.vars.set_v("SB_COLLAR", 0)
+		if v("UQ08_SAFE") == 1 and v("CAPTURE_AT") >= v("UQ08_SAFE_AT") + 1440:   # UQ-08 ② 뒤 감긴 목걸이 — 담 밖 기폭 신호에 '원격 해제 = 무조건 열림'(계획 1-12h §8b S5)
+			st.vars.set_v("UQ08_HEAT", v("UQ08_HEAT") + 1)
+			st.vars.set_v("UQ08_SNAP_DAY", int(st.vars.get_v("GAME_DAY")))
+			host.hint("삑, 삑 — 딸깍. 목걸이가 두 쪽으로 벌어져 발치에 떨어진다. 뒤판 땜 자국이 낯익다.", 5.0)
+			_log("목걸이가 담 밖에서 열림(UQ-08 ②)")
+			return
 		host.combat.damage(host.combat.pc.max_hp * 0.6)
 		host.hint("목걸이가 터졌다. 귀가 먹먹하다.", 5.0)
 		_log("목걸이 폭발")

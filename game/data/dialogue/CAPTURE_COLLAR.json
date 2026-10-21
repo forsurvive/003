@@ -61,12 +61,26 @@
      "id": "CAPTURE_COLLAR:1:2"
     },
     {
+     "text": "(해제 열쇠 원형을 뒤판 홈에 꽂는다) 세 번째 선이 들린다.",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 25
+      }
+     ],
+     "cond": "has(\"M-164\") == 1 and SQ_S09_LEARN == 0 and SQ_S09_UNCOL == 0",
+     "fx": "",
+     "to": "OFF",
+     "id": "CAPTURE_COLLAR:1:3"
+    },
+    {
      "text": "(그대로 둔다)",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "CAPTURE_COLLAR:1:3"
+     "id": "CAPTURE_COLLAR:1:4"
     }
    ]
   },

@@ -681,6 +681,23 @@ func _ready() -> void:
 				["hours", 23], ["wait", 1.0], ["check", "UQ07_TOY == 2", "다음 06:00 — 아이 손(지금 09시 — 아이는 08~18시 광장)"],
 				["warp", "J-03", "from_J-06"], ["wait", 4.0], ["check", "UQ07_TOY == 2 and UQ07_NOTE == 0", "아이 손 — ①은 공하경이 고친 판이라 쪽지 없음(아이는 '하경 언니가'라고 믿음, A211)"],
 				["want", []], ["talk", "N-JM-K1"], ["wait", 1.5], ["shot", "uq07_kid_after"]]
+		"uq08":                                                         # 1-12h UQ-08 철사의 돋보기: 본소 작업실 철사 '눈이 왜 그래요?'(10) → 병원 1층 응급실 북벽 새 계단 →
+			st.vars.set_v("AFF_SB", 10)                                  #   2층 안과 수술실 현미경 렌즈 [수리 30](20) → 작업실 — 건네며 공구함 견본(② [과학 60], 100) → 검수 전날 칠판 · 철사
+			st.vars.set_v("GAME_DAY", 6)
+			st.vars.set_v("PC_SKP_REPAIR", 40)
+			st.vars.set_v("PC_SKP_SCIENCE", 100)
+			st.quests.set_stage("MQ-101", 100)
+			host.date_text = "2277. 10. 29.  10:00"
+			host.enter("H-05", "from_H-02")
+			plan = [["hp", 3000], ["wait", 1.0], ["calm"], ["want", ["눈이 왜 그래요"]], ["talk", "N-R02-038"], ["wait", 2.0], ["shot", "uq08_ask"],
+				["check", "UQ08_MET == 1 and UQ08_STAGE == 10", "철사 사정 — 세진 광학 렌즈(10)"],
+				["warp", "HP-01", "from_W"], ["wait", 1.5], ["calm"], ["go", 37, 1, "HP-01"], ["wait", 1.5], ["calm"], ["shot", "uq08_hp04"],
+				["want", ["고정 나사 셋"]], ["go", 6, 5, "HP-04"], ["use", 5, 5], ["wait", 2.0], ["shot", "uq08_scope"],
+				["check", "UQ08_LENS == 1 and UQ08_STAGE == 20 and has(\"M-432\")", "수술 현미경 렌즈 — 나사 풀기(20)"],
+				["warp", "H-05", "from_H-02"], ["wait", 1.5], ["calm"], ["want", ["렌즈를 건넨다", "원격 해제"]], ["talk", "N-R02-038"], ["wait", 2.0], ["shot", "uq08_give"],
+				["check", "UQ08_RES == 2 and UQ08_SAFE == 1 and UQ08_LENS == 2 and UQ08_STAGE == 100 and has(\"M-164\")", "② 건네며 공구함 견본(100) · 해제 열쇠 원형"],
+				["setv", "GAME_DAY", 35], ["want", []], ["talk", "N-R02-038"], ["wait", 2.0], ["shot", "uq08_inspect"],
+				["check", "UQ08_ISAID == 36", "검수 전날 — 철사 '요즘 땜이 곧으니까'"]]
 		"uq10":                                                         # 1-12h UQ-10 저울추: 역전 시장 수군댐(10) → 밤 저울 쇠판 떼기(20) → 국밥 장수 앞 공개(②, 100) →
 			st.vars.set_v("GAME_DAY", 6)                                 #   상인 회의(표 반장) → 2층 반장 방 → 전날 어귀 정찰 둘 → 습격 날 아침 실전(RE-012) 막음
 			st.vars.set_v("PC_SKP_REPAIR", 30)

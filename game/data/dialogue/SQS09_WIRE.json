@@ -3,11 +3,35 @@
  "title": "목걸이 기술자 철사",
  "loc": "L-R02-19",
  "npc": "N-R02-038",
- "cond": "V_ACT >= 1 and SB_RAID == 0",
+ "cond": "V_ACT >= 1 and SB_RAID == 0 and UQ08_WIRE == 0",
  "labels": {
   "START": 0,
-  "ASK": 3,
-  "PAY": 4
+  "GOGG": 4,
+  "HEAD": 5,
+  "HEAD2": 7,
+  "ASK": 8,
+  "PAY": 9,
+  "MINE": 12,
+  "U8_ASK": 16,
+  "U8_TICKET": 22,
+  "U8_ASK2": 23,
+  "U8_WHERE": 27,
+  "U8_LOST": 29,
+  "U8_LOST_D": 33,
+  "U8_SEEN": 35,
+  "U8_AGAIN": 39,
+  "U8_FIRST": 41,
+  "U8_MENU": 46,
+  "U8_GIVE": 47,
+  "U8_GIVE_L": 51,
+  "U8_TURN": 52,
+  "U8_R1": 54,
+  "U8_R2": 57,
+  "U8_THANKS": 61,
+  "U8_NO": 65,
+  "U8_BOOM": 69,
+  "U8_CHK": 72,
+  "U8_CHK_T": 76
  },
  "ops": [
   {
@@ -18,12 +42,39 @@
   },
   {
    "op": "if",
-   "cond": "SQ_S09_START > 0 and SB_127 <= 1 and SQ_S09_UNCOL == 0",
-   "to": "ASK"
+   "cond": "UQ08_LENS == 2",
+   "to": "GOGG"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "철사가 고글 너머로 눈을 찡그린다. 인두 끝이 땜 자리를 한 번 비껴간다."
   },
   {
    "op": "goto",
-   "to": "END"
+   "to": "HEAD"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "고글 한쪽 알에 세진 광학 렌즈가 끼워져 있다. 인두 끝이 곧다."
+  },
+  {
+   "op": "if",
+   "cond": "UQ08_BOOM == 1 and UQ08_BSAID == 0 and UQ08_LENS != 2",
+   "to": "U8_BOOM"
+  },
+  {
+   "op": "if",
+   "cond": "UQ08_SAFE == 1 and UQ08_ISAID != UQ08_INSPECT and (GAME_DAY == UQ08_INSPECT - 1 or (GAME_DAY == UQ08_INSPECT and GAME_HOUR < 9))",
+   "to": "U8_CHK"
+  },
+  {
+   "op": "if",
+   "cond": "UQ08_LENS == 1 and has(\"M-432\") == 1",
+   "to": "U8_SEEN"
   },
   {
    "op": "choice",
@@ -33,13 +84,76 @@
      "tags": [
       {
        "k": "caps",
-       "n": 200
+       "n": 100
       }
      ],
-     "cond": "",
+     "cond": "SQ_S09_START > 0 and SB_127 <= 1 and SQ_S09_UNCOL == 0 and (UQ08_RES == 1 or UQ08_RES == 2)",
      "fx": "",
      "to": "PAY",
      "id": "SQS09_WIRE:1:0"
+    },
+    {
+     "text": "127번 목걸이, 오늘 밤 풀어 둬",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 200
+      }
+     ],
+     "cond": "SQ_S09_START > 0 and SB_127 <= 1 and SQ_S09_UNCOL == 0 and UQ08_RES != 1 and UQ08_RES != 2",
+     "fx": "",
+     "to": "PAY",
+     "id": "SQS09_WIRE:1:1"
+    },
+    {
+     "text": "내 목걸이 좀 풀어 줘",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 100
+      }
+     ],
+     "cond": "SB_COLLAR == 1 and AFF_SB >= 20 and (UQ08_RES == 1 or UQ08_RES == 2)",
+     "fx": "",
+     "to": "MINE",
+     "id": "SQS09_WIRE:1:2"
+    },
+    {
+     "text": "내 목걸이 좀 풀어 줘",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 200
+      }
+     ],
+     "cond": "SB_COLLAR == 1 and AFF_SB >= 20 and UQ08_RES != 1 and UQ08_RES != 2",
+     "fx": "",
+     "to": "MINE",
+     "id": "SQS09_WIRE:1:3"
+    },
+    {
+     "text": "눈이 왜 그래요?",
+     "tags": [],
+     "cond": "UQ08_MET == 0 and (AFF_SB > -60 or SB_PASS >= 1)",
+     "fx": "",
+     "to": "U8_ASK",
+     "id": "SQS09_WIRE:1:4"
+    },
+    {
+     "text": "그 렌즈 — 어디 있다고 했죠?",
+     "tags": [],
+     "cond": "UQ08_MET == 1 and UQ08_LENS == 0",
+     "fx": "",
+     "to": "U8_WHERE",
+     "id": "SQS09_WIRE:1:5"
+    },
+    {
+     "text": "렌즈를… 잃어버렸어요",
+     "tags": [],
+     "cond": "UQ08_MET == 1 and UQ08_LENS == 3 and UQ08_LSAID == 0",
+     "fx": "",
+     "to": "U8_LOST",
+     "id": "SQS09_WIRE:1:6"
     },
     {
      "text": "됐다",
@@ -47,7 +161,7 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "SQS09_WIRE:1:1"
+     "id": "SQS09_WIRE:1:7"
     }
    ]
   },
@@ -67,6 +181,400 @@
   {
    "op": "goto",
    "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "SB_COLLAR = 0"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-038",
+   "emo": "기본",
+   "text": "(동전을 세지도 않는다) 고개 숙여. …세 번째 선."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "딸깍. 붉은 불이 꺼지고 목걸이가 두 쪽으로 떨어진다. 철사가 그걸 주워 '고장' 상자에 던진다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-038",
+   "emo": "피곤",
+   "text": "(고글을 이마로 올린다. 눈 흰자가 뿌옇다) 눈? …안 보여. 가까운 게 특히."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-038",
+   "emo": "기본",
+   "text": "기폭 땜 하나가 머리카락 굵기야. 비뚤면 목걸이가 아무 때나 터져. 내가 틀리면 남의 머리가 날아가. 그다음은 내 머리."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-038",
+   "emo": "기본",
+   "text": "(벽 그을음을 턱으로 가리킨다) 지난달 시험 중에 하나 터졌어. 시험대라 다행이었지."
+  },
+  {
+   "op": "if",
+   "cond": "UQ08_TICKET == 1",
+   "to": "U8_TICKET"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-038",
+   "emo": "기본",
+   "text": "돋보기가 있으면 돼. 아무거나 말고 — 세진 광학 정밀 렌즈. 2077년에 여의도 대학병원이 안과 수술 현미경에 그걸 썼어. 2층 수술실."
+  },
+  {
+   "op": "goto",
+   "to": "U8_ASK2"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-038",
+   "emo": "놀람",
+   "text": "…그 전표 봤구나. 내 작업대 뒤졌어? (한숨) 됐어. 거기 적힌 대로야. 여의도 대학병원 안과 2층, 수술 현미경 대물렌즈."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-038",
+   "emo": "기본",
+   "text": "거기 구울이 돈대. 나는 못 가 — 실장이 작업실 비우는 걸 질색해. 한 달에 한 번 검수도 해. 견본 하나 골라서 뒤판을 열어 보고, 회로 하나 다르면 나야."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-038",
+   "emo": "기본",
+   "text": "가져다주면 값은 할게. 나사 셋이야. 비틀지 말고 풀어."
+  },
+  {
+   "op": "do",
+   "fx": "UQ08_MET = 1; UQ08_MET_DAY = GAME_DAY; quest(\"UQ-08\", 10)"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-038",
+   "emo": "기본",
+   "text": "여의도 대학병원. 응급실 쪽 계단으로 2층, 안과 수술실. 수술 현미경 맨 아래 대물렌즈야. 나사 셋 — 비틀지 말고 풀어."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "UQ08_LSAID = 1"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"C-006\") == 1",
+   "to": "U8_LOST_D"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-038",
+   "emo": "피곤",
+   "text": "(한참 말이 없다) …세진 부품은 결국 다 지하시장 마영식 랙으로 흘러가. 목걸이 따 주는 그 양반. 거기 가 봐. 값은 부르는 대로겠지만."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-038",
+   "emo": "피곤",
+   "text": "(한참 말이 없다) …세진 부품 사 모으던 지하시장 그 양반도 죽었다며. 그럼 이제 고물상 손을 떠돌겠네. (고글을 다시 내린다) 두 번 지지면 돼."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "UQ08_MET == 0",
+   "to": "U8_FIRST"
+  },
+  {
+   "op": "if",
+   "cond": "UQ08_RES == 3",
+   "to": "U8_AGAIN"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-038",
+   "emo": "놀람",
+   "text": "(고글을 벗는다) …그거. 세진 광학. 진짜 가져왔네."
+  },
+  {
+   "op": "goto",
+   "to": "U8_MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-038",
+   "emo": "기본",
+   "text": "(렌즈를 보고 눈을 피한다) 아직 들고 다녀? …마음 바뀌었으면 말하고."
+  },
+  {
+   "op": "goto",
+   "to": "U8_MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-038",
+   "emo": "놀람",
+   "text": "(당신 손에 든 걸 본다) …그거 어디서 났어. 세진 광학 대물렌즈잖아. 수술 현미경 거."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "철사가 고글을 이마로 올린다. 눈 흰자가 뿌옇다."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-038",
+   "emo": "기본",
+   "text": "내 눈이 이래. 기폭 땜 하나가 머리카락 굵기인데. 내가 틀리면 남의 머리가 날아가. 그다음은 내 머리."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-038",
+   "emo": "기본",
+   "text": "실장이 한 달에 한 번 검수해. 견본 하나 골라서 뒤판을 열어 보고, 회로 하나 다르면 나야. …그 렌즈, 나 줄래?"
+  },
+  {
+   "op": "do",
+   "fx": "UQ08_MET = 1; UQ08_MET_DAY = GAME_DAY; quest(\"UQ-08\", 20)"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "렌즈를 건넨다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "M-432",
+       "n": 1
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "U8_GIVE",
+     "id": "SQS09_WIRE:2:0"
+    },
+    {
+     "text": "안 준다",
+     "tags": [],
+     "cond": "UQ08_RES == 0",
+     "fx": "",
+     "to": "U8_NO",
+     "id": "SQS09_WIRE:2:1"
+    },
+    {
+     "text": "나중에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS09_WIRE:2:2"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "UQ08_LENS = 2"
+  },
+  {
+   "op": "if",
+   "cond": "UQ08_LOUD == 1",
+   "to": "U8_GIVE_L"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-038",
+   "emo": "기본",
+   "text": "(렌즈를 받아 고글 한쪽 알 나사를 푼다) 잠깐 — 불빛에 대 볼게."
+  },
+  {
+   "op": "goto",
+   "to": "U8_TURN"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-038",
+   "emo": "놀람",
+   "text": "(렌즈 테두리를 손톱으로 쓸어 본다) 고리 자국… 비틀어 뽑았구나. 유리 소리 났겠네. (한참 들여다본다) 렌즈는 멀쩡해. 잠깐 — 불빛에 대 볼게."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "철사가 작업등 쪽으로 돌아선다. 등 뒤로 공구함 뚜껑이 열려 있다. 맨 위 칸에 새로 감을 기폭 회로 견본 — 해제 선이 둘이다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "(기다린다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "U8_R1",
+     "id": "SQS09_WIRE:3:0"
+    },
+    {
+     "text": "(견본의 해제 선을 '원격 해제 — 무조건 열림' 쪽으로 바꿔 문다)",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "과학",
+       "min": 60
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "U8_R2",
+     "id": "SQS09_WIRE:3:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "UQ08_RES = 1; UQ08_DAY = GAME_DAY; aff(\"SB\", 4); give(\"M-164\", 1); quest(\"UQ-08\", 100)"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "xp8"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "U8_THANKS"
+  },
+  {
+   "op": "do",
+   "fx": "UQ08_RES = 2; UQ08_DAY = GAME_DAY; UQ08_SAFE = 1; aff(\"SB\", 4); karma(50); give(\"M-164\", 1); quest(\"UQ-08\", 100)"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "safe"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "xp8"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "선 둘이 제자리를 바꾼다. 뚜껑 닫는 소리는 작업등 지지직 소리에 묻힌다."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-038",
+   "emo": "미소",
+   "text": "(돌아선다. 고글 너머 눈이 처음으로 똑바로 당신을 본다) …보여. 네 얼굴 점까지 보여. 그건 안 보이는 게 나았겠다."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-038",
+   "emo": "기본",
+   "text": "(서랍에서 손가락만 한 쇠붙이를 꺼낸다) 해제 열쇠 원형. 뒤판 홈에 꽂으면 세 번째 선이 들려. 내가 만든 거 아니라고 해."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-038",
+   "emo": "기본",
+   "text": "목걸이 풀 일 있으면 와. 반값. …이제 땜이 곧으니까 잠도 오겠다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-038",
+   "emo": "기본",
+   "text": "(손을 거둔다) …그래. 그 렌즈면 어디 가도 값 받을 거야. (고글을 다시 내린다) 나는 하던 대로 하지 뭐. 두 번 지지면 돼."
+  },
+  {
+   "op": "do",
+   "fx": "UQ08_RES = 3; UQ08_DAY = GAME_DAY; quest(\"UQ-08\", 100)"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "xp8"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "UQ08_BSAID = 1"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-038",
+   "emo": "슬픔",
+   "text": "(인두를 내려놓는다) 412번. 출근부 일꾼이었어. 담 밖에 나간 것도 아니야 — 마당에서. …내 땜이야."
+  },
+  {
+   "op": "goto",
+   "to": "HEAD2"
+  },
+  {
+   "op": "do",
+   "fx": "UQ08_ISAID = UQ08_INSPECT"
+  },
+  {
+   "op": "if",
+   "cond": "GAME_DAY == UQ08_INSPECT",
+   "to": "U8_CHK_T"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-038",
+   "emo": "기본",
+   "text": "내일 아홉 시에 실장 검수야. 견본 하나 골라서 뒤판 연대. …요즘 땜이 곧으니까 괜찮겠지."
+  },
+  {
+   "op": "goto",
+   "to": "HEAD2"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-038",
+   "emo": "기본",
+   "text": "오늘 아홉 시에 실장 검수. (견본을 만지작거린다) …요즘 땜이 곧으니까 괜찮겠지."
+  },
+  {
+   "op": "goto",
+   "to": "HEAD2"
   },
   {
    "op": "end"

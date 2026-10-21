@@ -5,6 +5,7 @@
   slit_lamp    세극등 현미경 진료대(2×1) — 턱받침 틀 · 쌍안 몸통 · 세극 조명 탑
   w_eye_chart  벽 시력표(1×0) — 한글 · 숫자 줄이 아래로 작아진다 · 맨 아래 빨강 / 초록 띠
   lens_case    렌즈 보관장(1×1) — 유리문 안 렌즈 쟁반 셋. 상태 taken(가운데 쟁반이 빔)
+  w_plank_eye  계단 위 판자 화살표(벽 2×0 — HP-01 응급실 북벽) — 못 박은 널빤지에 흰 페인트 '2층 안과' · 위로 꺾인 화살표
 props_bc.PROPS에 합쳐져 r01_props 아틀라스로 나간다."""
 import os
 import sys
@@ -13,6 +14,7 @@ from PIL import Image, ImageDraw
 
 sys.path.insert(0, os.path.dirname(__file__))
 import palette as P
+from struct_r01 import put_text
 
 C = lambda t: P.rgb(t) + (255,)
 INK = "P01"
@@ -157,6 +159,21 @@ def lens_case(state=""):
     return im
 
 
+def w_plank_eye():
+    """판자 화살표(56×18): 비뚜름히 못 박은 널빤지 · 결 · 못 둘 · 흰 페인트 글씨(흘러내린 방울) · 위로 꺾인 화살표."""
+    im = img(56, 18)
+    d = ImageDraw.Draw(im)
+    d.polygon([(1, 4), (54, 1), (55, 13), (2, 16)], fill=C(INK))
+    d.polygon([(2, 5), (53, 2), (54, 12), (3, 15)], fill=C("P19"))
+    d.line([(3, 6), (52, 3)], fill=C("P20")); d.line([(4, 13), (53, 10)], fill=C("P18"))   # 위 결(밝게) · 아래 결(어둡게)
+    for (x, y) in ((5, 9), (50, 6)):
+        d.point((x, y), fill=C("P05")); d.point((x, y - 1), fill=C("P07"))               # 못
+    put_text(im, "2층 안과", 9, 4, "P09", size=8)
+    d.line([(44, 11), (44, 5)], fill=C("P09")); d.line([(42, 7), (44, 5)], fill=C("P09")); d.line([(46, 7), (44, 5)], fill=C("P09"))
+    d.point((20, 14), fill=C("P09")); d.point((33, 13), fill=C("P08"))   # 흘러내린 페인트
+    return im
+
+
 def _r(fn, fw, fh, kind="floor", down=2, dx=0, dy=0):
     return {"fn": fn, "foot": (fw, fh), "kind": kind, "down": down, "dx": dx, "dy": dy}
 
@@ -167,6 +184,7 @@ PROPS_HP4 = {
     "slit_lamp": _r(slit_lamp, 2, 1),
     "w_eye_chart": _r(w_eye_chart, 1, 0, "wall", dx=3, dy=2),
     "lens_case": _r(lambda: lens_case(), 1, 1),
+    "w_plank_eye": _r(w_plank_eye, 2, 0, "wall", dx=2, dy=6),
 }
 STATES_HP4 = {
     "op_scope": {"taken": lambda: op_scope("taken")},

@@ -1,0 +1,50 @@
+# 여의도 대학병원 — 2층 안과 외래 · 수술실(SD-09a L-R02-09 · SD-05 UQ-08 '렌즈는 안과 수술실' · 계획 1-12h H3 · §8b S16, 단계 1-12h h2). 24×14.
+# HP-01 응급실 북벽 새 계단(37~38,1) → 2층 동쪽 계단참(아래위 층 자리 맞춤). 동쪽 외래(대기 의자 · 시력표 · 세극등 진료대) · 서쪽 수술실(수술대 · 수술 현미경 — 대물렌즈 M-432 · 렌즈 보관장).
+# 수술실 천장 한쪽이 무너져 빗물이 고였다. 몹은 HP 결(1-D8): 야생 구울 둘(옛 안과 외래 간호사 · 수술실 레지던트 — who로 생사 추적, 다시 와도 같은 자리).
+# 차임(Hp 진행기)은 이 층에 미치지 않는다 — 2층은 방송 스피커 선이 잘린 조용한 층. 렌즈를 비틀어 뽑으면 유리 소리에 둘이 다가온다(진행기 UqR02).
+map HP-04 여의도 대학병원 2층 안과
+set bk
+grid
+########################
+########################
+########################
+#ooooooooooo#tttttttttt#
+#ooooooooooo#tttttttttt#
+#ooooooooooo#tttttttttt#
+#ooooooooooo#tttttttttt#
+#ooooooooooootttttttttt#
+#ooooooooooootttttttttt#
+#ooooooooooo#tttttttttt#
+#ooooooooooo#tttttttttt#
+#ooooooooooo#tttttttttt#
+#ooooooooooo#tttttttttt#
+####################ss##
+end
+exit 20 13 HP-01 from_HP04
+exit 21 13 HP-01 from_HP04
+mark from_HP01 20 12 N
+# ---------------------------------------------------------------- 외래(동쪽)
+prop w_eye_chart 20 1
+text 20 3 "시력표. 맨 아래 줄은 아무도 못 읽었을 것이다 — 줄 위에 누가 손톱으로 '1.0'을 긁어 놓았다."
+prop slit_lamp 16 3
+text 16 3 "세극등 진료대. 턱받침에 이마 띠 자국이 남았다. 이 대물렌즈는 금이 갔다 — 쓸 수 없다." w=2
+prop wait_chairs 19 8
+prop wait_chairs 19 10
+text 19 9 "대기 의자. 접수 번호표 '외래 214'가 의자 틈에 끼어 있다. 2077. 10. 23. 오후 예약." w=2
+prop w_pa_hp 14 1
+text 14 3 "벽 스피커. 선이 잘려 늘어졌다. 이 층엔 차임이 울리지 않는다."
+text 13 7 "수술실 문턱. 바닥에 끌린 자국이 수술실 안쪽으로 이어진다. 끝에 수술용 확대경 끈 하나 — 머리띠째 끊어졌다." w=1
+# ---------------------------------------------------------------- 수술실(서쪽)
+prop op_table 7 6
+text 7 6 "안과 수술대. 머리 받침 고리가 조여진 채다. 시트가 반쯤 찢겨 흘러내렸다." w=2
+prop op_scope 5 5 cond="UQ08_LENS == 0"
+prop op_scope 5 5 state=taken cond="UQ08_LENS != 0"
+text 5 5 "안과 수술 현미경." scene=UQ08_SCOPE
+prop lens_case 2 3 state=taken
+text 2 3 "렌즈 보관장. 쟁반 셋 가운데 둘은 깨진 유리뿐. 남은 렌즈는 도수가 맞지 않는 안경알이다. 쟁반 이름표 — '세진 광학 · 수술 현미경 예비'(빈 칸)."
+prop rubble 3 10
+prop rubble 2 11
+text 3 10 "무너진 천장. 빗물이 고여 바닥 타일이 들떴다. 위층 병동 침상 다리가 내려다보인다." w=2
+# ---------------------------------------------------------------- 몹(1-D8 HP 결 — 옛 안과 사람들)
+enemy CR-200 18 6 who=N-HP-F6 route=18,6,4;15,10,3;20,4,3 cond="dead(\"N-HP-F6\") == 0"
+enemy CR-200 9 10 who=N-HP-F7 route=9,10,4;4,8,3;10,4,3 cond="dead(\"N-HP-F7\") == 0"

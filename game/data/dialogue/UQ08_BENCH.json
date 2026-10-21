@@ -1,0 +1,119 @@
+{
+ "id": "UQ08_BENCH",
+ "title": "목걸이 조립대",
+ "loc": "L-R02-19",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "STRAIGHT": 5,
+  "CHECK": 6,
+  "SAMPLE": 8,
+  "REVERT": 10,
+  "COLD": 13
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "목걸이 조립대. 고리 · 뇌관 통 · 표시등. 부품마다 일련번호를 새겼다. 장부 번호와 같다."
+  },
+  {
+   "op": "if",
+   "cond": "UQ08_WIRE == 1",
+   "to": "COLD"
+  },
+  {
+   "op": "if",
+   "cond": "UQ08_LENS == 2",
+   "to": "STRAIGHT"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "뒤판이 열린 목걸이 하나. 땜 자국 하나가 같은 자리를 두 번 지졌다. 납이 비뚤게 흘렀다."
+  },
+  {
+   "op": "goto",
+   "to": "CHECK"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "새로 감은 목걸이들. 땜 자국이 곧고 작다. 같은 사람 손이라고 믿기 어렵다."
+  },
+  {
+   "op": "if",
+   "cond": "UQ08_SAFE == 1 and UQ08_REVERT != UQ08_INSPECT and (GAME_DAY == UQ08_INSPECT - 1 or (GAME_DAY == UQ08_INSPECT and GAME_HOUR < 9))",
+   "to": "SAMPLE"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "조립대 끝에 '검수 견본' 꼬리표가 달린 목걸이 하나. 뒤판 안 — 그날 바꿔 물린 선 그대로다. 철사는 바이스 쪽에 등을 돌리고 있다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "견본 하나만 장부 회로로 되돌려 둔다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "과학",
+       "min": 60
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "REVERT",
+     "id": "UQ08_BENCH:1:0"
+    },
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ08_BENCH:1:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "UQ08_REVERT = UQ08_INSPECT"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "선 둘을 다시 바꿔 문다. 견본 하나만 장부대로 터지는 목걸이가 됐다. 상자 속 나머지는 그대로다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "조립대 위 공구가 놓인 그대로다. 인두는 식었고, 뒤판이 열린 목걸이 하나가 반쯤 감기다 말았다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-08.txt"
+}

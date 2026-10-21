@@ -21,16 +21,18 @@
   "SHOP": 44,
   "FIX": 46,
   "AFTER": 48,
-  "AFTER2": 52,
-  "FRIEND": 55,
-  "U7MA": 57,
-  "U7MA_OK": 58,
-  "U7MA_NG": 64,
-  "U7MA_SAID": 67,
-  "U7MA_GONE": 70,
-  "U7MA_HOT": 73,
-  "U7MA_SELF": 77,
-  "S04BATT": 80
+  "AFTER2": 53,
+  "FRIEND": 56,
+  "U8MA": 58,
+  "U8BUY": 61,
+  "U7MA": 64,
+  "U7MA_OK": 65,
+  "U7MA_NG": 71,
+  "U7MA_SAID": 74,
+  "U7MA_GONE": 77,
+  "U7MA_HOT": 80,
+  "U7MA_SELF": 84,
+  "S04BATT": 87
  },
  "ops": [
   {
@@ -411,6 +413,11 @@
   },
   {
    "op": "if",
+   "cond": "UQ08_LENS == 3 and UQ08_MA_SAID == 0",
+   "to": "U8MA"
+  },
+  {
+   "op": "if",
    "cond": "MQ103_CONF == 1",
    "to": "FRIEND"
   },
@@ -470,12 +477,25 @@
      "id": "MQ-103_MA:5:4"
     },
     {
+     "text": "세진 광학 렌즈를 산다",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 120
+      }
+     ],
+     "cond": "UQ08_LENS == 3",
+     "fx": "",
+     "to": "U8BUY",
+     "id": "MQ-103_MA:5:5"
+    },
+    {
      "text": "(돌아선다)",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "MQ-103_MA:5:5"
+     "id": "MQ-103_MA:5:6"
     }
    ]
   },
@@ -527,14 +547,55 @@
      "id": "MQ-103_MA:6:3"
     },
     {
+     "text": "세진 광학 렌즈를 산다",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 120
+      }
+     ],
+     "cond": "UQ08_LENS == 3",
+     "fx": "",
+     "to": "U8BUY",
+     "id": "MQ-103_MA:6:4"
+    },
+    {
      "text": "(돌아선다)",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "MQ-103_MA:6:4"
+     "id": "MQ-103_MA:6:5"
     }
    ]
+  },
+  {
+   "op": "do",
+   "fx": "UQ08_MA_SAID = 1"
+  },
+  {
+   "op": "line",
+   "who": "C-006",
+   "emo": "기본",
+   "text": "(랙 맨 위 칸을 턱으로 가리킨다) 세진 광학 대물렌즈가 하나 흘러들어왔어. 수술 현미경 거야. 고물상 손을 셋은 거쳤겠지. 쓸 데 있으면 120."
+  },
+  {
+   "op": "goto",
+   "to": "AFTER2"
+  },
+  {
+   "op": "do",
+   "fx": "give(\"M-432\", 1); UQ08_LENS = 1"
+  },
+  {
+   "op": "line",
+   "who": "C-006",
+   "emo": "기본",
+   "text": "(융에 싸서 내민다) 어디서 왔는지는 묻지 마. 나도 안 물었으니까."
+  },
+  {
+   "op": "goto",
+   "to": "END"
   },
   {
    "op": "choice",

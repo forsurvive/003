@@ -12,6 +12,7 @@ const QID := "UQ-126"
 const LOBBY := "HP-01"
 const WARD := "HP-02"
 const BASE := "HP-03"
+const EYE := "HP-04"                       ## 2층 안과 외래 · 수술실(1-12h UQ-08 — 차임 밖)
 const MARKET := "J-05"
 const BAN := "N-R02-031"
 const GEUM := "C-051"
@@ -233,8 +234,8 @@ func _process(dt: float) -> void:
 	if v("OVR") > 0 and _now() >= v("OVR_END"):
 		_sv("OVR", 0)                                                 # 덮어쓴 차임이 끝났다 — 시계로 돌아간다
 	var ph := phase()
-	if ph != _phase and _phase != 0:
-		_chime(ph)
+	if ph != _phase and _phase != 0 and mid != EYE:
+		_chime(ph)                                                    # 2층 안과(HP-04)는 스피커 선이 잘린 조용한 층 — 차임이 닿지 않는다
 	if mid == BASE or mid == LOBBY:
 		_formation(false)
 	_settle()
