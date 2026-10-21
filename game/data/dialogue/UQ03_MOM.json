@@ -6,23 +6,31 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "AGAIN": 10,
-  "SHORT": 13,
-  "DELIVER": 16,
-  "DELIVER_LATE": 19,
-  "DELIVER2": 21,
-  "BACK": 26,
-  "AFTER": 29,
-  "TOLD_PHOTO": 31,
-  "MISSING": 34,
-  "TELL": 36,
-  "TELL_DEAD": 40
+  "AGAIN": 11,
+  "SHORT": 14,
+  "DELIVER": 17,
+  "DELIVER_CAN": 20,
+  "DELIVER_LATE": 25,
+  "DELIVER2": 27,
+  "BACK": 32,
+  "AFTER": 35,
+  "TOLD_PHOTO": 37,
+  "MISSING": 40,
+  "TELL": 42,
+  "TELL_SOUP": 48,
+  "TELL_HELD": 51,
+  "TELL_DEAD": 54
  },
  "ops": [
   {
    "op": "if",
    "cond": "stage(\"UQ-03\") == 10 and has(\"M-003\", 10) == 1 and has(\"I-031\", 2) == 1",
    "to": "DELIVER"
+  },
+  {
+   "op": "if",
+   "cond": "stage(\"UQ-03\") == 10 and has(\"I-026\", 5) == 1 and has(\"I-031\", 2) == 1",
+   "to": "DELIVER_CAN"
   },
   {
    "op": "if",
@@ -114,6 +122,32 @@
   {
    "op": "goto",
    "to": "DELIVER2"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-507",
+   "emo": "놀람",
+   "text": "통조림? 도현이가? …배급표 대신이라고. (깡통을 하나 들어 본다) 등록증 있는 사람 손을 거치니 이게 되네. 로봇 가게는 나한텐 두 가지만 준다던데."
+  },
+  {
+   "op": "do",
+   "fx": "take(\"I-026\", 5); take(\"I-031\", 2); UQ03_CANS = 1; karma(25); UQ03_DELIVER_DAY = GAME_DAY; UQ03_PHOTO_GIVEN = 1; give(\"M-428\", 1); quest(\"UQ-03\", 20); quest(\"UQ-03\", 30)"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "엄옥순이 벽의 액자를 내려 사진을 빼낸다. 원정군 정복을 입은 앳된 얼굴."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-507",
+   "emo": "기본",
+   "text": "이거 도현이 줘. 자기 어릴 적 얼굴 잊었을 거야. 군대 가면 다 잊어."
+  },
+  {
+   "op": "goto",
+   "to": "END"
   },
   {
    "op": "line",
@@ -258,10 +292,48 @@
    "to": "TELL_DEAD"
   },
   {
+   "op": "if",
+   "cond": "UQ03_SOUP == 1",
+   "to": "TELL_SOUP"
+  },
+  {
+   "op": "if",
+   "cond": "UQ03_EOM == 5",
+   "to": "TELL_HELD"
+  },
+  {
    "op": "line",
    "who": "N-R01-507",
    "emo": "슬픔",
    "text": "…자리를 떴다고. (한참) 걔는 어릴 때부터 지루한 걸 못 참았어. 그래도 살아 있으면 됐지."
+  },
+  {
+   "op": "do",
+   "fx": "UQ03_TOLD_MOM = 1"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-507",
+   "emo": "슬픔",
+   "text": "노들섬으로 갔다고. 국 따뜻하게 먹으라고. (냄비 뚜껑을 연다) …국은 늘 따뜻해. 걔만 몰라."
+  },
+  {
+   "op": "do",
+   "fx": "UQ03_TOLD_MOM = 1"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-507",
+   "emo": "슬픔",
+   "text": "영창이라고. 사당 고개. (한참) …거기서도 밥은 주겠지. 걔는 밥만 먹으면 돼."
   },
   {
    "op": "do",

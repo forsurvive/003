@@ -637,6 +637,28 @@ func _ready() -> void:
 				["check", "FQ_JH03_CLOCK >= 40 and FQ_JH03_CLOCK <= 90", "최단 길(서류) 낮 시계 40~90분 — 예산 120분의 3분의 1~3분의 2"],
 				["check", "FQ_JH03_SKY >= 8 and FQ_JH03_BARK == 5", "첫 신호(쌓인 30분) · 경매장 칠판 바크"],
 				["check", "FQ_JH03_RIVER == 0 and FQ_JH03_NIGHT == 0", "서류 30분을 썼으니 강가 상 없음(75분 넘게 남겨야) · 경매장 판"]]
+		"uq05":                                                         # 1-12g UQ-05 누렁이: 고개(X-NS)에 처진 소 → 고삐(걷기 3.0) → 남부순환로 동쪽 → 사당 광장 말뚝(위강윤 · 낮)
+			st.vars.set_v("TR_YEON_MET", 1)
+			st.vars.set_v("GAME_DAY", 8)
+			st.quests.set_stage("MQ-101", 100)
+			var ns := WorldMap.origin_of("X-NS")
+			st.vars.set_v("UQ05_COW", 1)
+			st.vars.set_v("UQ05_LOST_DAY", 8)
+			st.vars.set_v("UQ05_ABSENT", 1)
+			st.vars.set_v("UQ05_CAUSE", 1)
+			st.vars.set_v("UQ05_CX", ns.x + 4)
+			st.vars.set_v("UQ05_CY", ns.y + 20)
+			host.date_text = "2277. 10. 26.  10:00"
+			host.enter("W", "", {}, Vector2(ns.x + 2, ns.y + 11) * 32.0 + Vector2(16, 16))
+			var sd := WorldMap.origin_of("X-SD")
+			plan = [["hp", 3000], ["wait", 2.0], ["noenc"], ["calm"], ["go", ns.x + 4, ns.y + 18], ["shot", "uq05_cow"],
+				["want", ["끊긴 고삐를 잡고 끈다"]], ["talk", "N-UQ5-COW"], ["wait", 1.5],
+				["check", "UQ05_COW == 2 and UQ05_SAW == 1", "고삐를 잡음(20)"],
+				["go", ns.x + 8, ns.y + 11], ["go", ns.x + 40, ns.y + 11], ["go", ns.x + 80, ns.y + 8], ["shot", "uq05_lead"],
+				["check", "UQ05_COW == 2", "멀어지지 않고 따라옴(걷기 3.0)"],
+				["go", sd.x + 4, sd.y + 12], ["go", sd.x + 17, sd.y + 12],
+				["until", "UQ05_COW == 3", 25.0, "사당 광장 말뚝 — 데려다줌", "uq05_home"],
+				["check", "UQ05_PEND == 1 and UQ05_ABSENT == 0 and UQ05_RES == 2", "위강윤이 맡음 — 사례는 연보경이 다음에"]]
 		"sb02", "sb02f":                                                # 1-12f FQ-SB-02(sb02f: 방범대와 싸우는 갈래): 04시 본소 마당 출발 줄(갈고리) → 서부간선 고가 상판 → 북 램프 끝 오태수 탈주(데려옴) →
 			st.vars.set_v("AFF_SB", 25)                                  #   신도림 쉬는 박자 → 노량진로 끝 방범대([화술 보통] 통과) → 철교 남단 노들 경비 60캡 → 인수원 인계(넷 · 10시 전 · M-129)
 			st.vars.set_v("PC_CAPS", 500)

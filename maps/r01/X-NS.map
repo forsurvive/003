@@ -91,3 +91,15 @@ prop sandbags 21 15
 prop bucket 17 17
 # UQ-05 누렁이(1-12g): 척후가 소를 끌고 간 판 — 꾸러미는 동쪽 버스 안에 남는다(재미 검수 §8.4)
 text 19 12 "버스 안쪽, 좌석 밑에 무언가 끈에 묶여 있다." scene=UQ05_BUS cond="UQ05_SPILL == 1"
+# UQ-05 흔적 사슬(재미 검수 '마커 없이 고개로'): 길가 → 비탈로 끊긴 고삐 · 굽 자국 — 소가 처진 자리(UQ05_SPOT) 쪽에만
+prop rope_snap 4 14 cond="UQ05_COW == 1 and UQ05_SPOT == 0"
+text 4 14 "길가에 끊긴 고삐 한 토막. 꼬리표 끈이 매달려 있다 — '한강 행상 조합'." cond="UQ05_COW == 1 and UQ05_SPOT == 0"
+text 4 17 "흙에 깊게 박힌 굽 자국 — 두 갈래로 갈라진 큰 굽. 남서쪽 비탈로." cond="UQ05_COW == 1 and UQ05_SPOT == 0"
+prop rope_snap 27 14 cond="UQ05_COW == 1 and UQ05_SPOT == 1"
+text 27 14 "길가에 끊긴 고삐 한 토막. 꼬리표 끈이 매달려 있다 — '한강 행상 조합'." cond="UQ05_COW == 1 and UQ05_SPOT == 1"
+text 28 17 "흙에 깊게 박힌 굽 자국 — 두 갈래로 갈라진 큰 굽. 남동쪽 덤불로." cond="UQ05_COW == 1 and UQ05_SPOT == 1"
+prop rope_snap 12 9 cond="UQ05_COW == 1 and UQ05_SPOT == 2"
+text 12 9 "버스 옆에 끊긴 고삐 한 토막. 꼬리표 끈이 매달려 있다 — '한강 행상 조합'. 버스 뒤 풀이 짓밟혔다." cond="UQ05_COW == 1 and UQ05_SPOT == 2"
+prop rope_snap 25 9 cond="UQ05_COW == 1 and UQ05_SPOT == 3"
+text 25 9 "길가에 끊긴 고삐 한 토막. 꼬리표 끈이 매달려 있다 — '한강 행상 조합'." cond="UQ05_COW == 1 and UQ05_SPOT == 3"
+text 26 6 "흙에 깊게 박힌 굽 자국 — 두 갈래로 갈라진 큰 굽. 동쪽 고갯마루로." cond="UQ05_COW == 1 and UQ05_SPOT == 3"

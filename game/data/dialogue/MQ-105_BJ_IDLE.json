@@ -15,16 +15,18 @@
   "UQ03_PHOTO": 26,
   "UQ03_PHOTO_LATE": 29,
   "UQ03_PHOTO2": 31,
-  "UQ03_BAG": 35,
-  "UQ03_DEMOTED": 39,
-  "JH03": 41,
-  "JH03_RADIO": 47,
-  "JH03_RADIO_W": 53,
-  "JH03_RADIO_NO": 55,
-  "JH03_SENT": 57,
-  "JH03_THANKS": 59,
-  "JH03_FLED": 61,
-  "JH03_SHOT": 63
+  "UQ03_CANS_SAY": 35,
+  "UQ03_BAG": 37,
+  "UQ03_BAG2": 42,
+  "UQ03_DEMOTED": 44,
+  "JH03": 46,
+  "JH03_RADIO": 52,
+  "JH03_RADIO_W": 58,
+  "JH03_RADIO_NO": 60,
+  "JH03_SENT": 62,
+  "JH03_THANKS": 64,
+  "JH03_FLED": 66,
+  "JH03_SHOT": 68
  },
  "ops": [
   {
@@ -215,8 +217,40 @@
    "fx": "take(\"M-428\", 1); UQ03_PASS = 1; UQ03_RES = 1; xp(70); quest(\"UQ-03\", 100)"
   },
   {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "배급표는 통조림으로 바꿔 드렸어요",
+     "tags": [],
+     "cond": "UQ03_CANS == 1",
+     "fx": "",
+     "to": "UQ03_CANS_SAY",
+     "id": "MQ-105_BJ_IDLE:2:0"
+    },
+    {
+     "text": "(고개를 끄덕인다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "MQ-105_BJ_IDLE:2:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "놀람",
+   "text": "바꿔다 드렸다고요. …그게 낫네요. 저는 그 생각을 못 했습니다. 배급표는 제 이름이 찍힌 종이라서."
+  },
+  {
    "op": "goto",
    "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "UQ03_COLD == 2",
+   "to": "UQ03_BAG2"
   },
   {
    "op": "line",
@@ -236,6 +270,16 @@
    "who": "N-R01-050",
    "emo": "기본",
    "text": "…지나가십시오."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "기본",
+   "text": "(눈을 피한다) …지나가십시오."
   },
   {
    "op": "goto",
@@ -287,7 +331,7 @@
      "cond": "(FQ_JH03_CHECK == 0 or FQ_JH03_CHECK == 1 or FQ_JH03_CHECK == 5 or FQ_JH03_CHECK == 7) and UQ03_RES != 3",
      "fx": "",
      "to": "JH03_RADIO",
-     "id": "MQ-105_BJ_IDLE:2:0"
+     "id": "MQ-105_BJ_IDLE:3:0"
     },
     {
      "text": "알겠습니다",
@@ -295,7 +339,7 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "MQ-105_BJ_IDLE:2:1"
+     "id": "MQ-105_BJ_IDLE:3:1"
     }
    ]
   },

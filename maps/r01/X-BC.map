@@ -130,7 +130,13 @@ text 33 37 "진흙 발자국. 개 발이다. 회색 진흙 — 계단 흙이 아
 trigger 32 34 w=7 h=4 scene=UQ02_HEAR cond="MQ101_STAGE >= 100 and GAME_HOUR >= 7 and GAME_HOUR < 9 and UQ02_HEARD == 0 and UQ02_END == 0 and dead(\"C-015\") == 0 and dead(\"N-R01-029\") == 0 and dead(\"N-R01-034\") == 0 and SQ_S04_HELD == 0 and SQ_S04_AWAY == 0 and MQ101_DOG != 1 and SQ_S01_DOG != 1 and FQ_JC01_DOG != 1 and FQ_JC01_DOG != 5"
 trigger 32 34 w=7 h=4 scene=UQ02_GIVE cond="UQ02_CARRY == 1"
 trigger 32 34 w=7 h=4 scene=UQ02_TAG cond="UQ02_END == 1 and UQ02_NAMED == 0 and GAME_DAY >= UQ02_END_DAY + 7 and dead(\"N-R01-034\") == 0 and SQ_S04_HELD == 0 and SQ_S04_AWAY == 0"
-npc N-R01-509 34 37 E sheet=cr_pup_loco cond="UQ02_END == 1" bark="(꼬리를 흔들며 백구 다리 사이로 파고든다)"
+# 마을 강아지 — 이름이 붙으면(UQ02_NAME) 남솔이 부르는 이름으로(재미 검수 '고른 결과가 세계에 남게')
+npc N-R01-509 34 37 E sheet=cr_pup_loco cond="UQ02_END == 1 and UQ02_NAMED == 0" bark="(꼬리를 흔들며 백구 다리 사이로 파고든다)"
+npc N-R01-509 34 37 E sheet=cr_pup_loco cond="UQ02_END == 1 and UQ02_NAMED == 1 and UQ02_NAME == \"흰둥이\"" bark="(귀 끝 하얀 강아지가 '흰둥아' 소리에 고개를 든다)"
+npc N-R01-509 34 37 E sheet=cr_pup_loco cond="UQ02_END == 1 and UQ02_NAMED == 1 and UQ02_NAME == \"번개\"" bark="(이름처럼 번개같이 달려왔다 번개같이 사라진다)"
+npc N-R01-509 34 37 E sheet=cr_pup_loco cond="UQ02_END == 1 and UQ02_NAMED == 1 and UQ02_NAME == \"계단이\"" bark="(계단 한 칸마다 멈춰서 냄새를 맡는다 — 계단이답다)"
+npc N-R01-509 34 37 E sheet=cr_pup_loco cond="UQ02_END == 1 and UQ02_NAMED == 1 and UQ02_NAME == \"솔이\"" bark="(남솔 신발 끈을 물고 늘어진다)"
+npc N-R01-509 34 37 E sheet=cr_pup_loco cond="UQ02_END == 1 and UQ02_NAMED == 1 and UQ02_NAME == \"동생\"" bark="(백구 꼬리를 따라 빙빙 돈다 — 과연 동생이다)"
 prop kennel 35 34
 text 35 34 "백구 집. 옆 기둥에 '백구 밥 당번표'가 붙어 있다." w=2
 prop stall 10 34
@@ -255,7 +261,9 @@ npc N-R01-026 11 33 S cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0"
 npc C-015 37 35 W sheet=cr_baekgu_loco cond="MQ101_DOG != 1 and SQ_S01_DOG != 1 and FQ_JC01_DOG != 1 and FQ_JC01_DOG != 5 and (HOME_BC != 1 or BAEKGU_NAP != 1) and UQ02_DOG_OUT == 0 and UQ02_BARK_UNTIL < GAME_DAY and not (UQ02_SEE_OFF_UNTIL >= GAME_DAY and GAME_HOUR >= 6 and GAME_HOUR < 20)"
 npc C-015 37 35 W sheet=cr_baekgu_loco cond="MQ101_DOG != 1 and SQ_S01_DOG != 1 and FQ_JC01_DOG != 1 and FQ_JC01_DOG != 5 and (HOME_BC != 1 or BAEKGU_NAP != 1) and UQ02_DOG_OUT == 0 and UQ02_BARK_UNTIL >= GAME_DAY" bark="왈! 왈! (당신을 보고 이를 드러낸다)"
 npc C-015 29 40 S sheet=cr_baekgu_loco cond="MQ101_DOG != 1 and SQ_S01_DOG != 1 and FQ_JC01_DOG != 1 and FQ_JC01_DOG != 5 and (HOME_BC != 1 or BAEKGU_NAP != 1) and UQ02_DOG_OUT == 0 and UQ02_BARK_UNTIL < GAME_DAY and UQ02_SEE_OFF_UNTIL >= GAME_DAY and GAME_HOUR >= 6 and GAME_HOUR < 20" bark="(아랫문 앞에 앉아 길 쪽을 본다. 당신이 지나가면 꼬리를 한 번 친다.)"
-npc N-R01-034 38 34 W cond="(MQ101_NIGHT == 0 or MQ101_RESULT != 0) and SQ_S04_HELD == 0 and SQ_S04_AWAY == 0" route=kennel:38,34,6;yard:33,36,4
+npc N-R01-034 38 34 W cond="(MQ101_NIGHT == 0 or MQ101_RESULT != 0) and SQ_S04_HELD == 0 and SQ_S04_AWAY == 0 and (UQ02_WITNESS == 0 or GAME_DAY >= UQ02_END_DAY + 7)" route=kennel:38,34,6;yard:33,36,4
+# UQ-02 ③을 남솔이 본 뒤 7일(UQ02_WITNESS): 개집 근처에 오지 않고 계단 위에서 등을 돌린다
+npc N-R01-034 42 30 S cond="UQ02_WITNESS == 1 and GAME_DAY < UQ02_END_DAY + 7 and dead(\"N-R01-034\") == 0 and SQ_S04_HELD == 0 and SQ_S04_AWAY == 0" bark="…저리 가."
 # SQ-S02(1-11b): 남건희 — 낮엔 계단 텃밭(22시 이후엔 윗문 쪽문 — 진행기가 세운다) · 고발 다음 날부터는 없다
 npc N-R01-039 20 27 S cond="V_ACT >= 1 and (SQ_S02_IN != 1 or GAME_DAY < SQ_S02_EXILE_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 22 and SQ_S02_FIGHT == 0" route=garden:20,27,6;alley:12,27,4
 npc N-R01-029 16 28 S cond="(MQ101_NIGHT == 0 or MQ101_RESULT != 0) and not (MQ101_STAGE >= 100 and GAME_HOUR >= 7 and GAME_HOUR < 9)" route=garden:16,28,6;alley:24,28,4

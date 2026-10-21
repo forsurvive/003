@@ -33,8 +33,10 @@ text 4 3 "콘크리트 차단벽. 스텐실 '계엄 구역 — 판독기 앞에�
 # 엄도현 자리 한 값(UQ03_EOM — UQ-03.txt 머리): 0 · 1 초소 · 2 이상 떠남 → 그 자리에 무명 분대장(N-BJ-C2, CR-403 그림)
 npc N-R01-050 5 4 S cond="UQ03_EOM < 2"
 npc N-BJ-C2 6 4 S sheet=en_cr403_loco cond="UQ03_EOM >= 2 or dead(\"N-R01-050\") == 1"
-npc CR-401 2 4 E sheet=en_cr401_loco bark="강 건너는 판독기 구역입니다. 등록증을 준비하십시오."
-npc CR-401 8 4 W sheet=en_cr401_loco bark="노량진 쪽 통행은 06시부터입니다."
+npc CR-401 2 4 E sheet=en_cr401_loco cond="UQ03_PASS == 0 or UQ03_EOM != 0" bark="강 건너는 판독기 구역입니다. 등록증을 준비하십시오."
+npc CR-401 2 4 E sheet=en_cr401_loco cond="UQ03_PASS == 1 and UQ03_EOM == 0 and dead(\"N-R01-050\") == 0" bark="(당신을 알아본다) 하사님 손님이시네. 지나가십시오."
+npc CR-401 8 4 W sheet=en_cr401_loco cond="UQ03_EOM != 0 or dead(\"N-R01-050\") == 1 or stage(\"UQ-03\") != 0" bark="노량진 쪽 통행은 06시부터입니다."
+npc CR-401 8 4 W sheet=en_cr401_loco cond="UQ03_EOM == 0 and dead(\"N-R01-050\") == 0 and stage(\"UQ-03\") == 0" bark="하사님은 교대 때나 사람 말을 하셔. 그 밖엔 판독기지."
 
 # 노량진 수산시장(L-R01-25, SD-09a B · 단계 1-7c): 경매장 지붕 아래 좌판 · 원자력 냉동고(가동, 각성회 대기등 하나) · 생선 함지 · 2077 시세 칠판.
 # 경매사 심도겸(N-R01-057) — 거래(VR25) · 냉동고 이야기(훅 H-R01-09 앞부분). 시장 뒤 터는 고정 매복 지점(SD-06 §12.3, 1-12 판도와 함께).
@@ -161,8 +163,12 @@ prop culvert 3 0
 text 3 0 "남부순환로 밑 빗물 배수구. 관 안은 깜깜하고 가는 물줄기가 개천으로 떨어진다." w=2
 prop pup_nest 1 1 cond="UQ02_END == 0 and UQ02_GONE_DAY == 0"
 prop pup_nest 1 1 state=empty cond="UQ02_END != 0 or UQ02_GONE_DAY != 0"
-text 1 1 "덤불 속 마른 풀 둥지. 밥알 · 뼈 조각." scene=UQ02_NEST cond="UQ02_END == 0 and UQ02_GONE_DAY == 0 and UQ02_CARRY == 0"
-npc N-R01-509 1 2 E sheet=cr_pup_loco cond="UQ02_END == 0 and UQ02_GONE_DAY == 0 and UQ02_CARRY == 0 and MQ101_STAGE >= 100"
+text 1 1 "덤불 속 마른 풀 둥지. 밥알 · 뼈 조각." scene=UQ02_NEST cond="UQ02_END == 0 and UQ02_GONE_DAY == 0 and UQ02_CARRY == 0 and dead(\"C-015\") == 0"
+text 1 1 "덤불 속 마른 풀 둥지. 새끼를 내려놓을 수 있다." scene=UQ02_PUTBACK cond="UQ02_CARRY == 1"
+text 1 1 "덤불 속 마른 풀 둥지. 작은 뼈와 털 뭉치뿐이다. 밥을 물어 오던 개가 끊긴 지 오래다." cond="dead(\"C-015\") == 1 and UQ02_END == 0 and UQ02_CARRY == 0"
+npc N-R01-509 1 2 E sheet=cr_pup_loco cond="UQ02_END == 0 and UQ02_GONE_DAY == 0 and UQ02_CARRY == 0 and MQ101_STAGE >= 100 and dead(\"C-015\") == 0"
 # 놓아주는 자리: 개천을 따라 남쪽, 관악산 쪽 숲 가장자리(새끼를 안고 들어서면 장면)
 spot @896,1418 4 3
+prop paw_prints 1 1
+text 1 1 "개천 둑을 따라 남쪽 숲으로 이어지는 작은 발자국들 — 들개 무리가 다니는 길목이다. 여기서부턴 산이 키운다." w=2
 trigger 0 0 w=4 h=3 scene=UQ02_FREE cond="UQ02_CARRY == 1"

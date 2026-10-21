@@ -6,28 +6,30 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "AGAIN": 9,
-  "ASK": 10,
-  "U5_REFUSE": 11,
-  "U5_PAY": 13,
-  "U5_PAY_NOWI": 17,
-  "U5_PAY3": 20,
-  "U5_TELL": 23,
-  "U5_TELL1": 28,
-  "U5_TELL2": 30,
-  "U5_TELL_END": 31,
-  "U5_PACK": 34,
-  "U5_PACK2": 39,
-  "S6ASK": 42,
-  "S6NOCOW": 46,
-  "S6CARGO": 48,
-  "S6CARGO_PAY": 51,
-  "S6CARGO_OK": 51,
-  "S6CARGO_NO": 54,
-  "SHOP": 56,
-  "FIX": 58,
-  "UQ01": 60,
-  "ROAD": 64
+  "AGAIN": 10,
+  "ASK": 11,
+  "U5_REFUSE": 12,
+  "U5_PAY": 14,
+  "U5_PAY_NOWI": 18,
+  "U5_PAY3": 21,
+  "U5_GONE": 24,
+  "U5_GONE1": 28,
+  "U5_TELL": 31,
+  "U5_TELL1": 36,
+  "U5_TELL2": 38,
+  "U5_TELL_END": 39,
+  "U5_PACK": 42,
+  "U5_PACK2": 47,
+  "S6ASK": 50,
+  "S6NOCOW": 54,
+  "S6CARGO": 56,
+  "S6CARGO_PAY": 59,
+  "S6CARGO_OK": 59,
+  "S6CARGO_NO": 62,
+  "SHOP": 64,
+  "FIX": 66,
+  "UQ01": 68,
+  "ROAD": 72
  },
  "ops": [
   {
@@ -49,6 +51,11 @@
    "op": "if",
    "cond": "(UQ05_COW == 1 or UQ05_COW == 2) and UQ05_HEARD == 0 and TR_YEON_MET >= 1",
    "to": "U5_TELL"
+  },
+  {
+   "op": "if",
+   "cond": "UQ05_COW == 5 and UQ05_GONE_SAID == 0 and TR_YEON_MET >= 1",
+   "to": "U5_GONE"
   },
   {
    "op": "if",
@@ -210,6 +217,39 @@
   {
    "op": "do",
    "fx": "UQ05_DISC = 1; UQ05_PEND = 2"
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "if",
+   "cond": "UQ05_SPILL >= 1",
+   "to": "U5_GONE1"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "슬픔",
+   "text": "누렁이는 이제 못 찾겠지. 고개에 들개가 늘었대. 호위들이 넘을 때마다 비탈을 보는데 — 없대."
+  },
+  {
+   "op": "do",
+   "fx": "UQ05_GONE_SAID = 1; UQ05_HEARD = 1"
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "분노",
+   "text": "호위가 고개 넘다 봤대 — 척후 버스 쪽에서 고기 굽는 연기. …누렁이 냄새였대. 짐이라도 남았으면 좋겠는데."
+  },
+  {
+   "op": "do",
+   "fx": "UQ05_GONE_SAID = 1; UQ05_HEARD = 1"
   },
   {
    "op": "goto",

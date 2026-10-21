@@ -43,6 +43,10 @@ box 5 6 conv w=2 owner=N-R01-038 name="진열대"
 box 9 6 conv w=2 owner=N-R01-038 name="통조림 진열대"
 text 13 7 "진열대. 빈 칸마다 값표만 남았다 — '1,500원'. 그 아래 연필로 '2캡'." w=2
 prop door_mat 8 9
-npc N-R01-038 3 3 S cond="dead(\"N-R01-038\") == 0"
+npc N-R01-038 3 3 S cond="dead(\"N-R01-038\") == 0 and UQ01_SOL == 0 and GAME_HOUR >= 6" bark="(카운터를 손가락으로 두드린다) 오늘도 안 열려."
+npc N-R01-038 3 3 S cond="dead(\"N-R01-038\") == 0 and UQ01_SOL == 0 and GAME_HOUR < 6" bark="새벽 세 시쯤엔 사이다 손님이 와. 그 시간엔 내가 졸지만."
+npc N-R01-038 3 3 S cond="dead(\"N-R01-038\") == 0 and UQ01_SOL != 0" bark="(등록기를 한 번 쳐 본다) 띵."
+# 석라희가 죽으면(계획 §4.1-6): 계산대 위 쪽지 — 봉천 사람이 써 붙였다
+text 3 4 "계산대 위 쪽지 한 장. '24시 — 닫힘.' 누군가 떨리는 글씨로 써 붙였다." cond="dead(\"N-R01-038\") == 1"
 # 밤손님(재미 검수 §8.1 '가게 봐 주기'): 진행기가 06:00에 정한 날(씨앗 50%) 03~04시 문 안쪽 — 석라희가 조는 동안만(봉천 무명 주민)
 npc N-BG-G1 9 8 N look=M1-S3-HR02-H1-T05-1-PF12-HD03-EY00 cond="UQ01_GUEST == GAME_DAY and GAME_HOUR >= 3 and GAME_HOUR < 4 and dead(\"N-R01-038\") == 0"

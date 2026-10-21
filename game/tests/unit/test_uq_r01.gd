@@ -315,3 +315,32 @@ func test_uq05_kill(t) -> void:
 	_play(st, c, "TR_EOM", ["고기 꾸러미를 판다"])
 	t.eq(_v(st, "PC_CAPS"), 280, "80캡")
 	t.ok(not _has_opt(st, "TR_EOM", "고기 꾸러미를 판다"), "한 번만")
+
+
+# ---------------------------------------------------------------- 재미 검수 반영(구현 뒤)
+func test_uq_fun_branches(t) -> void:
+	var a := _host()
+	var st: StoryState = a[1]
+	var c: UqR01 = a[2]
+	st.quests.set_stage("UQ-03", 10)
+	st.vars.set_v("UQ03_GOT_DAY", 5)
+	st.call_fn("give", ["I-026", 5])
+	st.call_fn("give", ["I-031", 2])
+	t.ok(_says(st, c, "UQ03_MOM", "통조림"), "배급표 대신 통조림으로 바꿔 와도 전함")
+	t.eq(st.quests.stage("UQ-03"), 30, "전함과 같은 결과(30)")
+	t.eq(_v(st, "UQ03_CANS"), 1, "통조림 판 기록")
+	st.book.meet("N-R01-050", "2277. 10. 27.")
+	t.ok(_says(st, c, "MQ-105_BJ_IDLE", "그 생각을 못 했습니다", ["통조림으로 바꿔"]), "사진을 건넬 때 말하면 엄도현이 안다")
+	st.vars.set_v("UQ03_RES", 3)
+	st.vars.set_v("UQ03_COLD", 2)
+	st.vars.set_v("UQ03_PASS", 0)
+	t.ok(_says(st, c, "MQ-105_BJ_IDLE", "눈을 피한다"), "'가방 열어'는 첫 회만")
+	st.vars.set_v("UQ03_EOM", 4)
+	st.vars.set_v("UQ03_SOUP", 1)
+	st.vars.set_v("UQ03_TOLD_MOM", 0)
+	t.ok(_says(st, c, "UQ03_MOM", "국은 늘 따뜻해", ["아는 대로"]), "국 전언을 엄옥순에게")
+	st.vars.set_v("TR_YEON_MET", 1)
+	st.vars.set_v("UQ05_COW", 5)
+	st.vars.set_v("UQ05_SPILL", 1)
+	t.ok(_says(st, c, "TR_YEON", "고기 굽는 연기"), "척후가 끌고 간 뒤 연보경 — 버스 쪽 연기(출처 호위)")
+	t.eq(_v(st, "UQ05_GONE_SAID"), 1, "한 번만")

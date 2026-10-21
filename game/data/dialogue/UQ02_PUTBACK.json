@@ -1,0 +1,37 @@
+{
+ "id": "UQ02_PUTBACK",
+ "title": "개천 배수구 뒤 — 둥지",
+ "loc": "L-R01-09",
+ "npc": "",
+ "cond": "UQ02_CARRY == 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "새끼를 둥지에 도로 내려놓는다. 마른 풀에 코를 박고 금세 몸을 만다."
+  },
+  {
+   "op": "do",
+   "fx": "UQ02_CARRY = 0"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "carry"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-02.txt"
+}

@@ -172,7 +172,6 @@
 "X3 TRAVEL UQ05_PACK": 위와 같음
 "X3 TRAVEL UQ05_PEND": 위와 같음
 "X3 TRAVEL UQ05_REWARD": 위와 같음
+"X3 TRAVEL UQ05_GONE_SAID": 위와 같음(사라진 누렁이 소식 한 번)
 "X3 쓰기만 UQ02_HEARD": X-BC 엿듣기 트리거 cond(UQ02_HEARD == 0)가 읽는다 — 맵 조건은 도구가 세지 않음
-"X3 쓰기만 UQ02_NAME": 이름표 장면 본문 '{UQ02_NAME}'이 읽는다(문자열 변수 끼워 넣기)
 "X3 쓰기만 UQ05_RES": 결과 기록(데려다줌 1 · 위강윤 2 · 허순자 3 · 아무도 4) — 시험과 2막 수송대 후일담(MQ-201 노들섬 남단 정류)이 읽을 값
-"X3 쓰기만 UQ05_SPILL": X-NS 버스 조사 글 cond(UQ05_SPILL == 1)가 읽는다 — 맵 조건

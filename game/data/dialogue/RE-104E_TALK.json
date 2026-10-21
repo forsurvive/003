@@ -7,11 +7,13 @@
  "labels": {
   "START": 0,
   "ASKMOM": 6,
-  "CHOICE": 8,
-  "ROUTE": 9,
-  "PAPERS": 13,
-  "TURN": 17,
-  "LEAVE": 22
+  "ASK_NO": 8,
+  "ASK_YES": 10,
+  "CHOICE": 12,
+  "ROUTE": 13,
+  "PAPERS": 17,
+  "TURN": 21,
+  "LEAVE": 26
  },
  "ops": [
   {
@@ -59,7 +61,7 @@
      "tags": [],
      "cond": "",
      "fx": "",
-     "to": "CHOICE",
+     "to": "ASK_NO",
      "id": "RE-104E_TALK:1:0"
     },
     {
@@ -67,10 +69,30 @@
      "tags": [],
      "cond": "UQ03_TOLD_MOM == 1",
      "fx": "",
-     "to": "CHOICE",
+     "to": "ASK_YES",
      "id": "RE-104E_TALK:1:1"
     }
    ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "피곤",
+   "text": "…다행입니다. 모르시는 동안은 제가 아직 다리목에 서 있는 거니까."
+  },
+  {
+   "op": "goto",
+   "to": "CHOICE"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "슬픔",
+   "text": "뭐라고 하셨습니까. …아니, 대충 압니다. '지루한 걸 못 참았지.' 맞죠."
+  },
+  {
+   "op": "goto",
+   "to": "CHOICE"
   },
   {
    "op": "choice",
@@ -186,7 +208,7 @@
   },
   {
    "op": "do",
-   "fx": "UQ03_EOM = 4"
+   "fx": "UQ03_EOM = 4; UQ03_SOUP = 1"
   },
   {
    "op": "cmd",

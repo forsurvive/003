@@ -35,6 +35,7 @@ const COW_LOSE_R := 14.0                   ## 주인공이 이보다 멀어지�
 const COW_GAP := 2.0                       ## 주인공 뒤 이 칸쯤에서 따라온다
 const DOG_X := [990, 1090]                 ## 남부순환로 동쪽(낙성대 → 사당) — 소 냄새에 들개 무리가 한 번 붙는다
 const SEEN_R := 25.0                       ## 사당 광장에서 이 안에서 잡으면 위강윤이 본다(낮)
+const MOO_R := 25.0                        ## 처진 누렁이 울음이 들리는 거리
 
 var host: InteriorHost
 var st: StoryState
@@ -52,6 +53,7 @@ var _cow_path := PackedVector2Array()
 var _cow_rp := 0.0
 var _cow_home := false
 var _last_v54 := -1
+var _moo_day := -1
 
 
 func setup(h: InteriorHost, is_log := false) -> void:
@@ -378,6 +380,12 @@ func _cow_tick() -> void:
 	var c := v("UQ05_COW")
 	if (c == 1 or c == 2 or c == 4 or c == 5) and now == 2 and v("UQ05_TOLD") == 0:
 		_sv("UQ05_TOLD", 1)                                          # 수송대가 사당에 닿은 뒤에야 위강윤이 안다(P7)
+	host.lead_walk = c == 2 and _cow != null and is_instance_valid(_cow) and not _cow_home
+	if c == 1 and _moo_day != day() and host.map is WorldMap and host.player != null:
+		var dm := Vector2(host.map.tile_of(host.player.loco.logical)).distance_to(Vector2(_cow_tile()))
+		if dm < MOO_R and dm > 6.0:
+			_moo_day = day()                                             # 흔적 사슬의 첫 고리(재미 검수 — 마커 없이 고개로): 하루 한 번
+			host.hint("(고개 쪽에서 두 목소리가 겹친 소 울음이 들린다.)", 4.0)
 	if c != 2:
 		return
 	if not (host.map is WorldMap) or _cow == null or not is_instance_valid(_cow):
@@ -478,6 +486,7 @@ func _cow_drop(msg: String) -> void:
 		_cow.queue_free()
 	_cow = null
 	_cow_home = false
+	host.lead_walk = false
 	_sv("UQ05_COW", 1)
 	if msg != "":
 		host.hint(msg, 4.0)
@@ -493,6 +502,7 @@ func _cow_spawn() -> void:
 	_cow_path = PackedVector2Array()
 	_cow_rp = 0.0
 	_cow_home = false
+	host.lead_walk = true
 
 
 ## 매 프레임: 주인공 뒤 COW_GAP칸으로 걷는다(걷기 속도 3.0 — 발 고정 걸음). 싸움 중엔 겁먹고 선다
@@ -502,7 +512,7 @@ func _cow_frame(dt: float) -> void:
 	if not is_instance_valid(_cow) or not (host.map is WorldMap):
 		_cow = null
 		return
-	if _cow_home or host.combat.alive_enemies() > 0:
+	if _cow_home or host.combat.in_combat():                             # 싸움 중(적이 교전 상태)엔 겁먹고 선다 — 그냥 서 있는 척후 캠프는 아님
 		_cow.move(Vector2.ZERO, dt)
 		return
 	var me := host.player.loco.logical
@@ -643,6 +653,7 @@ func _cmd(a: Array, done: Callable) -> void:
 				_cow.queue_free()
 			_cow = null
 			_cow_home = false
+			host.lead_walk = false
 			_sv("UQ05_COW", 3)
 			_sv("UQ05_ABSENT", 0)
 			if host.map != null:

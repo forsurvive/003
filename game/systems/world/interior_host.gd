@@ -542,6 +542,7 @@ var _wet_said := false
 var last_move := Vector2.ZERO                      ## 이번 프레임 주인공 이동 입력(1-D10 수레 밀기 판정)
 var interact_pre: Array[Callable] = []             ## 조사 키 — 다른 무엇보다 먼저 묻는 진행기 고리(참이면 그것으로 끝)
 var interact_post: Array[Callable] = []            ## 조사 키 — 앞에 아무것도 없을 때 묻는 진행기 고리
+var lead_walk := false                             ## 고삐를 쥐고 걷는다(1-12g UQ-05 누렁이 — 짐소 걷기 3.0에 맞춰 뛰기 · 달리기 없음, 진행기 UqR01이 정한다)
 var carry_mul := 1.0                               ## 들고 걷는 짐 배수(1-D7 금형 M-395 과적 0.6 — 진행기 Ks가 정한다). 침수 배수와 곱한다
 
 
@@ -618,7 +619,7 @@ func _physics_process(dt: float) -> void:
 			v = Input.get_vector("move_left", "move_right", "move_up", "move_down")
 		if combat.pc.held():                                             # 1-9a: 넘어짐·기절·마비·그물 — 서 있다
 			v = Vector2.ZERO
-		player.mode = "walk" if body == "toddler" or combat.crouch or combat.inject_t > 0.0 or combat.heavy_slow() else "run"
+		player.mode = "walk" if body == "toddler" or combat.crouch or combat.inject_t > 0.0 or combat.heavy_slow() or lead_walk else "run"
 		player.loco.custom = TODDLER_WALK if body == "toddler" else (CROUCH_WALK if combat.crouch else {})
 		_ap_input(v)                                                     # 1-9e3 질주 · 구르기(SD-11 §5.3)
 		if combat.sprinting:
@@ -676,7 +677,7 @@ func _physics_process(dt: float) -> void:
 ## 구르기는 어른 몸만(아이 · 아기 시트에 구르기 컷이 없다). 과적이면 AP ×2 · 거리 ×0.6(SD-11 §5.3)
 func _ap_input(v: Vector2) -> void:
 	var key := touch_sprint or (use_keyboard and Input.is_action_pressed("sprint")) or bool(combat.bot.get("sprint", false))
-	combat.sprint_want = key and v != Vector2.ZERO and body != "toddler" and not combat.crouch and not combat.pc.held() and not combat.heavy_slow()
+	combat.sprint_want = key and v != Vector2.ZERO and body != "toddler" and not combat.crouch and not combat.pc.held() and not combat.heavy_slow() and not lead_walk
 	var roll := roll_req or (use_keyboard and Input.is_action_just_pressed("dodge")) or bool(combat.bot.get("dodge", false))
 	roll_req = false
 	combat.bot.erase("dodge")
