@@ -1,0 +1,65 @@
+{
+ "id": "UQ02_FREE",
+ "title": "관악산 쪽 숲 가장자리",
+ "loc": "L-R01-09",
+ "npc": "",
+ "cond": "UQ02_CARRY == 1",
+ "labels": {
+  "START": 0,
+  "GO": 2
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "숲 가장자리 풀숲에 새끼를 내려놓는다. 새끼가 한참 냄새를 맡더니 — 숲 쪽으로 비틀비틀 걸어간다. 한 번 돌아본다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "놓아준다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "GO",
+     "id": "UQ02_FREE:1:0"
+    },
+    {
+     "text": "다시 안는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ02_FREE:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "갈색 털 뭉치가 덤불 사이로 사라진다. 멀리서 개 짖는 소리 하나. 백구다."
+  },
+  {
+   "op": "do",
+   "fx": "UQ02_CARRY = 0; UQ02_END = 2; karma(10); xp(50); quest(\"UQ-02\", 100)"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "free"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-02.txt"
+}

@@ -1,0 +1,52 @@
+{
+ "id": "UQ03_PHOTO",
+ "title": "벽 액자",
+ "loc": "L-R01-27",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "EMPTY": 5
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "UQ03_PHOTO_GIVEN == 1",
+   "to": "EMPTY"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "나무 액자 속 바랜 사진. 2077년 원정군 정복 · 각모를 쓴 앳된 얼굴. 액자 귀퉁이에 검은 리본."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "액자 뒤가 헐겁다. 사진 뒷면에 연필 — '302호'."
+  },
+  {
+   "op": "do",
+   "fx": "UQ03_BACK_READ = 1"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈 액자. 벽지에 사진 모양 자국만 남았다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-03.txt"
+}

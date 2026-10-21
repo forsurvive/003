@@ -19,23 +19,24 @@
   "FIGHT": 43,
   "WANTED": 45,
   "ALONE": 48,
-  "ALONE_W": 54,
-  "TALK_OK_A": 56,
-  "TALK_NO_A": 59,
-  "BACK_A": 60,
-  "SPOT": 62,
-  "SPOT_P": 65,
-  "SPOT_ASK": 67,
-  "RADIO": 68,
-  "AGAIN": 72,
-  "TALK_OK2": 74,
-  "TALK_NO2": 77,
-  "BACK_S": 78
+  "ALONE_PASS": 55,
+  "ALONE_W": 60,
+  "TALK_OK_A": 62,
+  "TALK_NO_A": 65,
+  "BACK_A": 66,
+  "SPOT": 68,
+  "SPOT_P": 71,
+  "SPOT_ASK": 73,
+  "RADIO": 74,
+  "AGAIN": 78,
+  "TALK_OK2": 80,
+  "TALK_NO2": 83,
+  "BACK_S": 84
  },
  "ops": [
   {
    "op": "if",
-   "cond": "FQ_JH03_CHECK == 10 and FQ_JH03_PARK == 1 and FQ_JH03_NEAR == 1 and dead(\"C-018\") == 0 and known_dead(\"N-R01-050\") == 0 and V_WANTED < 30",
+   "cond": "FQ_JH03_CHECK == 10 and FQ_JH03_PARK == 1 and FQ_JH03_NEAR == 1 and dead(\"C-018\") == 0 and (known_dead(\"N-R01-050\") == 0 and UQ03_EOM < 2) and V_WANTED < 30",
    "to": "RADIO"
   },
   {
@@ -152,7 +153,7 @@
     {
      "text": "엄도현 하사를 압니다 — 초소에 물어보세요",
      "tags": [],
-     "cond": "met(\"N-R01-050\") == 1 and known_dead(\"N-R01-050\") == 0 and AFF_BJ > -40",
+     "cond": "met(\"N-R01-050\") == 1 and (known_dead(\"N-R01-050\") == 0 and UQ03_EOM < 2) and AFF_BJ > -40 and UQ03_RES != 3",
      "fx": "",
      "to": "NAME",
      "id": "JH03_CHECK:1:4"
@@ -451,6 +452,11 @@
    "to": "ALONE_W"
   },
   {
+   "op": "if",
+   "cond": "UQ03_PASS == 1 and UQ03_EOM == 0 and dead(\"N-R01-050\") == 0",
+   "to": "ALONE_PASS"
+  },
+  {
    "op": "line",
    "who": "N-BJ-C1",
    "emo": "기본",
@@ -467,6 +473,37 @@
    "who": "N-BJ-C1",
    "emo": "기본",
    "text": "약이군. 가시오."
+  },
+  {
+   "op": "cmd",
+   "name": "jh03",
+   "args": [
+    "pass",
+    "9",
+    "0"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-C1",
+   "emo": "기본",
+   "text": "정지. 이동 검문 — (당신 얼굴을 보고 손을 내린다) 하사님 말씀 있었습니다. 가방은 안 엽니다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "판독기만 얼굴에 한 번 댄다. 바늘이 정상 칸에서 멈춘다."
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-C1",
+   "emo": "기본",
+   "text": "가시오."
   },
   {
    "op": "cmd",

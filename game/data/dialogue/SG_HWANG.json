@@ -30,8 +30,9 @@
   "NOKWON": 73,
   "AFTERKWON": 74,
   "PASS3": 75,
-  "WHAT": 77,
-  "PERM": 81
+  "UQ03REP": 77,
+  "WHAT": 83,
+  "PERM": 87
  },
  "ops": [
   {
@@ -238,12 +239,20 @@
      "id": "SG_HWANG:2:1"
     },
     {
+     "text": "다리목 엄도현 하사가 미등록자에게 배급을 빼돌립니다",
+     "tags": [],
+     "cond": "stage(\"UQ-03\") == 10 and has(\"M-003\", 10) == 1 and has(\"I-031\", 2) == 1 and UQ03_EOM == 0 and dead(\"N-R01-050\") == 0",
+     "fx": "",
+     "to": "UQ03REP",
+     "id": "SG_HWANG:2:2"
+    },
+    {
      "text": "탈영병 진해원 — 자수하면 어떻게 됩니까",
      "tags": [],
      "cond": "SQ_S06_MET >= 1 and SQ_S06_NOTE == 0 and SQ_S06_JIN <= 1 and SQ_S06_SOL == 0",
      "fx": "",
      "to": "S6NOTE",
-     "id": "SG_HWANG:2:2"
+     "id": "SG_HWANG:2:3"
     },
     {
      "text": "진해원 일병이 자수하러 왔습니다",
@@ -251,7 +260,7 @@
      "cond": "SQ_S06_PERSUADE == 1 and SQ_S06_JIN == 1 and SQ_S06_NEAR == 1",
      "fx": "",
      "to": "S6SURR",
-     "id": "SG_HWANG:2:3"
+     "id": "SG_HWANG:2:4"
     },
     {
      "text": "탈영병을 데려왔습니다",
@@ -259,7 +268,7 @@
      "cond": "SQ_S06_JIN == 1 and SQ_S06_PERSUADE == 0 and SQ_S06_NEAR == 1",
      "fx": "",
      "to": "S6HAND",
-     "id": "SG_HWANG:2:4"
+     "id": "SG_HWANG:2:5"
     },
     {
      "text": "탈영병이 어디 숨었는지 압니다",
@@ -267,7 +276,7 @@
      "cond": "SQ_S06_MET >= 1 and SQ_S06_JIN == 0 and SQ_S06_SOL == 0",
      "fx": "",
      "to": "S6TELL",
-     "id": "SG_HWANG:2:5"
+     "id": "SG_HWANG:2:6"
     },
     {
      "text": "삼성산 능선 아래 패거리가 상수 밸브를 막았습니다",
@@ -275,7 +284,7 @@
      "cond": "SQS02_STAGE >= 20 and SQ_S02_CAMP == 0 and SQ_S02_SOL == 0 and SQ_S02_BJ_AT == 0 and AFF_BJ > -60",
      "fx": "",
      "to": "S02",
-     "id": "SG_HWANG:2:6"
+     "id": "SG_HWANG:2:7"
     },
     {
      "text": "됐습니다",
@@ -283,7 +292,7 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "SG_HWANG:2:7"
+     "id": "SG_HWANG:2:8"
     }
    ]
   },
@@ -558,6 +567,39 @@
    "who": "N-R01-047",
    "emo": "기본",
    "text": "확인했습니다. 차단봉은 올라가 있습니다. 남태령 너머는 낙진 바람이 붑니다. 방독면 챙기십시오."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-047",
+   "emo": "기본",
+   "text": "…증거는요."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "배급표 열 장과 전투식량 둘을 내놓는다."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-047",
+   "emo": "기본",
+   "text": "보고 감사합니다. 규정대로 처리합니다. 제보자는 기록하지 않습니다 — 그것도 규정입니다."
+  },
+  {
+   "op": "do",
+   "fx": "take(\"M-003\", 10); take(\"I-031\", 2); aff(\"BJ\", 3); UQ03_RES = 2; xp(70); quest(\"UQ-03\", 100)"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "report"
+   ]
   },
   {
    "op": "goto",

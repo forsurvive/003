@@ -1,0 +1,117 @@
+{
+ "id": "UQ02_BAEK",
+ "title": "백구 — 개집 앞",
+ "loc": "L-R01-09",
+ "npc": "C-015",
+ "cond": "stage(\"UQ-02\") >= 10 and stage(\"UQ-02\") < 100 and UQ02_DOG_OUT == 0",
+ "labels": {
+  "START": 0,
+  "PAW": 3,
+  "PAW_NO": 7,
+  "PAT": 9,
+  "GROWL": 11
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "UQ02_BARK_UNTIL >= GAME_DAY",
+   "to": "GROWL"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "백구가 앞발에 턱을 얹고 엎드려 있다. 귀만 이쪽으로 돌린다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "발을 살핀다 — 밥을 남기는 게 아파서인지",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "의학",
+       "min": 25
+      }
+     ],
+     "cond": "UQ02_HOW != 3",
+     "fx": "",
+     "to": "PAW",
+     "id": "UQ02_BAEK:1:0",
+     "fail": "PAW_NO"
+    },
+    {
+     "text": "머리를 쓰다듬는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "PAT",
+     "id": "UQ02_BAEK:1:1"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ02_BAEK:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "앞발 · 뒷발 · 발바닥 사이. 다친 데도 가시도 없다. 이빨도 멀쩡하다 — 아파서 남기는 밥이 아니다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "발톱 사이에 마른 진흙. 계단마을 흙이 아니다. 물기 많은 회색 진흙 — 개천 바닥 흙이다."
+  },
+  {
+   "op": "do",
+   "fx": "UQ02_HOW = 3"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "백구가 발을 빼고 낮게 으르렁거린다. 발을 만지는 건 싫은 모양이다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "백구가 눈을 감는다. 목덜미 털에서 마을 냄새가 아닌 물비린내가 난다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "백구가 이를 드러내고 짖는다. 왈! 왈! — 다가오지 말라는 소리다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-02.txt"
+}

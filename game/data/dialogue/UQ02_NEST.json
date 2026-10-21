@@ -1,0 +1,167 @@
+{
+ "id": "UQ02_NEST",
+ "title": "개천 배수구 뒤 — 새끼 들개",
+ "loc": "L-R01-09",
+ "npc": "N-R01-509",
+ "cond": "UQ02_END == 0 and UQ02_GONE_DAY == 0",
+ "labels": {
+  "START": 0,
+  "FIRST": 3,
+  "CHOICE": 8,
+  "CARRY": 9,
+  "KILL_ASK": 14,
+  "KILL": 16
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "UQ02_SAW == 0",
+   "to": "FIRST"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "새끼가 덤불 속에서 귀를 세운다. 한쪽 귀 끝만 하얗다."
+  },
+  {
+   "op": "goto",
+   "to": "CHOICE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "덤불 속에 마른 풀을 깐 둥지. 갈색 털 뭉치가 꼼지락거린다 — 변이 들개 새끼다. 한쪽 귀 끝만 하얗다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "둥지 가장자리에 밥알 · 뼈 조각. 계단마을 밥그릇에서 보던 그 보리밥이다."
+  },
+  {
+   "op": "do",
+   "fx": "UQ02_SAW = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "saw"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "CHOICE"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "안아 든다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "CARRY",
+     "id": "UQ02_NEST:1:0"
+    },
+    {
+     "text": "죽인다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "KILL_ASK",
+     "id": "UQ02_NEST:1:1"
+    },
+    {
+     "text": "그냥 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ02_NEST:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "새끼가 버둥거리다 품에서 잠잠해진다. 따뜻하다. 무게는 거의 없다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "마을로 데려가 맡길 수도, 관악산 쪽 숲 가장자리에 놓아줄 수도 있다."
+  },
+  {
+   "op": "do",
+   "fx": "UQ02_CARRY = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "carry"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "새끼가 손 냄새를 맡으려 코를 내민다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "정말 죽인다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "KILL",
+     "id": "UQ02_NEST:2:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ02_NEST:2:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "짧은 소리 하나. 덤불이 조용해진다."
+  },
+  {
+   "op": "do",
+   "fx": "UQ02_END = 3; karma(-25); xp(50); quest(\"UQ-02\", 100)"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "kill"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-02.txt"
+}

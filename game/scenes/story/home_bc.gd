@@ -122,7 +122,7 @@ func _on_map(id: String) -> void:
 ## 하루 판정(06:00): 백구 낮잠 굴림. 판의 씨앗 + 날짜로 정해서 불러와도 같다
 func _on_day(day: int) -> void:
 	var nap := 0
-	if v("HOME_BC") == 1 and not st.is_dead("C-015"):
+	if v("HOME_BC") == 1 and not st.is_dead("C-015") and v("UQ02_END") != 1:   # UQ-02 새끼를 데려온 뒤엔 마을 강아지 곁에서 잔다(1-12g 계획 §8.2)
 		var rng := RandomNumberGenerator.new()
 		rng.seed = hash("baekgu|%d|%d" % [st.check_seed, day])
 		nap = 1 if rng.randf() < NAP_P else 0

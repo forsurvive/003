@@ -1,0 +1,80 @@
+{
+ "id": "K11_GUEST",
+ "title": "번개24 — 밤손님",
+ "loc": "L-R01-11",
+ "npc": "N-BG-G1",
+ "cond": "UQ01_GUEST == GAME_DAY and GAME_HOUR >= 3 and GAME_HOUR < 4",
+ "labels": {
+  "START": 0,
+  "SERVE": 3,
+  "DONE": 7
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "UQ01_SERVED == GAME_DAY",
+   "to": "DONE"
+  },
+  {
+   "op": "line",
+   "who": "N-BG-G1",
+   "emo": "기본",
+   "text": "(석라희를 한 번 보고, 당신을 본다) …사이다 하나요. 깡통에 넣으면 되죠?"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "진열대에서 사이다를 꺼내 준다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SERVE",
+     "id": "K11_GUEST:1:0"
+    },
+    {
+     "text": "\"주인이 자요. 아침에 와요\"",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "K11_GUEST:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "진열대에서 번개사이다 한 병을 꺼내 건넨다. 손님이 등록기 옆 깡통에 캡 셋을 넣는다. 짤랑."
+  },
+  {
+   "op": "line",
+   "who": "N-BG-G1",
+   "emo": "미소",
+   "text": "24시는 진짜 24시네. 고마워요."
+  },
+  {
+   "op": "do",
+   "fx": "UQ01_SERVED = GAME_DAY"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-BG-G1",
+   "emo": "미소",
+   "text": "(사이다를 흔들어 보인다) 고마워요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-01.txt"
+}

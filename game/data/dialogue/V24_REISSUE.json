@@ -1,0 +1,36 @@
+{
+ "id": "V24_REISSUE",
+ "title": "노량진 번개24 — 카드 재발급",
+ "loc": "L-R01-33",
+ "npc": "",
+ "cond": "V24_HOSTILE == 0 and stage(\"UQ-01\") == 20 and has(\"M-427\") == 0 and UQ01_RELAY == 0",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "창구 위 안내판 '분실 카드 재발급'. 로봇이 렌즈를 돌린다."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-508",
+   "emo": "기본",
+   "text": "봉천점 0417 카드 재발급. 삑."
+  },
+  {
+   "op": "do",
+   "fx": "give(\"M-427\", 1)"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-01.txt"
+}

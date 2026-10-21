@@ -13,7 +13,7 @@
 @scene JH03_CHECK  다리목 이동 검문  (L-R01-20)
 @npc   -
 @cond  V_ACT >= 1
-? FQ_JH03_CHECK == 10 and FQ_JH03_PARK == 1 and FQ_JH03_NEAR == 1 and dead("C-018") == 0 and known_dead("N-R01-050") == 0 and V_WANTED < 30 -> RADIO
+? FQ_JH03_CHECK == 10 and FQ_JH03_PARK == 1 and FQ_JH03_NEAR == 1 and dead("C-018") == 0 and (known_dead("N-R01-050") == 0 and UQ03_EOM < 2) and V_WANTED < 30 -> RADIO
 ? FQ_JH03_SPOT == 1 -> SPOT
 ? FQ_JH03_CHECK == 7 -> AGAIN
 ? FQ_JH03_PARK != 1 or FQ_JH03_NEAR == 0 or dead("C-018") == 1 -> ALONE
@@ -29,7 +29,7 @@ C-018 [기본] 빨리 끝나면 강이나 보고 가고.
 > 임시 등록증을 내민다 — "이 사람, 제가 보증합니다" -> PASS ?? has("M-120") == 1 and AFF_BJ >= 20
 > [화술 보통] 수산시장 들것 의료반 약입니다. 반장 소윤희 앞이에요 -> TALK_OK | TALK_NO ?? known_dead("C-067") == 0
 > [화술 보통] 여의도 병원 7병동 약입니다. 들것 반장 몫이었어요 -> TALK_OK | TALK_NO ?? known_dead("C-067") == 1
-> 엄도현 하사를 압니다 — 초소에 물어보세요 -> NAME ?? met("N-R01-050") == 1 and known_dead("N-R01-050") == 0 and AFF_BJ > -40
+> 엄도현 하사를 압니다 — 초소에 물어보세요 -> NAME ?? met("N-R01-050") == 1 and (known_dead("N-R01-050") == 0 and UQ03_EOM < 2) and AFF_BJ > -40 and UQ03_RES != 3
 > 그냥 줄을 선다 -> QUEUE_NO ?? has("M-062") == 0
 > 돌아가겠다고 한다 -> BACK
 > 싸운다 -> FIGHT
@@ -85,9 +85,17 @@ C-018 [분노] (이를 악문다) 너 때문에 걸리겠어.
 > 싸운다 -> FIGHT
 * ALONE
 ? V_WANTED >= 30 -> ALONE_W
+# UQ-03 사진을 건넴(1-12g): 그의 분대는 주인공 가방을 안 연다(판독기는 원래대로 — 가방만)
+? UQ03_PASS == 1 and UQ03_EOM == 0 and dead("N-R01-050") == 0 -> ALONE_PASS
 N-BJ-C1 [기본] 정지. 이동 검문이다. 상자 열어.
 SYS 조장이 상자 안을 한 번 들여다보고 판독기를 당신 얼굴에 댄다. 바늘이 정상 칸에서 멈춘다.
 N-BJ-C1 [기본] 약이군. 가시오.
+@cmd jh03 pass 9 0
+-> END
+* ALONE_PASS
+N-BJ-C1 [기본] 정지. 이동 검문 — (당신 얼굴을 보고 손을 내린다) 하사님 말씀 있었습니다. 가방은 안 엽니다.
+SYS 판독기만 얼굴에 한 번 댄다. 바늘이 정상 칸에서 멈춘다.
+N-BJ-C1 [기본] 가시오.
 @cmd jh03 pass 9 0
 -> END
 * ALONE_W

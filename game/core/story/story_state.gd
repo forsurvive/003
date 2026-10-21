@@ -58,7 +58,8 @@ const UNNAMED := [["N-TRADER", "떠돌이 고물상", ""], ["N-VG-S1", "고물�
 	["N-BJ-P1", "순찰 분대장", "BJ"], ["N-BJ-P2", "순찰 계엄병", "BJ"],   # 1-11j SQ-S11 여의도 낮 순찰
 	["N-BJ-C1", "다리목 검문조장", "BJ"], ["N-SB-R1", "새벽인력 모집원", "SB"], ["N-SB-L1", "인솔 반장", "SB"], ["N-SB-H1", "출장소 인수원", "SB"], ["N-JY-P1", "방범대 조장", ""], ["N-ND-G1", "노들 남문 경비", "JC_ND"],   # 1-12f FQ-SB-02   # 1-12e FQ-JH-03 노량진로 이동 검문 · 수산시장 모집원
 	["N-GS-1", "각성회 신도", "GS"], ["N-GS-2", "각성회 신도", "GS"], ["N-GS-3", "각성회 신도", "GS"],   # 1-8g 노량진 관제 중계소
-	["N-GS-5", "새 순례자", ""], ["N-GS-6", "새 순례자", ""], ["N-GS-R3", "3번 파수", ""], ["N-K24-P1", "원장 대행", ""]]   # 1-12b FQ-GS-01 · GS-02(순례자는 아직 등록 전 — 각성회 소속 아님)
+	["N-GS-5", "새 순례자", ""], ["N-GS-6", "새 순례자", ""], ["N-GS-R3", "3번 파수", ""], ["N-K24-P1", "원장 대행", ""],
+	["N-BG-G1", "밤손님", "BC"], ["N-BJ-C2", "다리목 분대장", "BJ"], ["N-DS-E1", "탈영병", ""], ["N-DS-E2", "탈영병", ""]]   # 1-12g UQ-01 · UQ-03 · RE-104   # 1-12b FQ-GS-01 · GS-02(순례자는 아직 등록 전 — 각성회 소속 아님)
 var enc := {}                           ## 인카운터 상태(1-3, Encounters): 안전 간격 · 오늘 추적대 수 · EP 사용 · 휴전
 var portrait_alias := {}                ## 인물 ID -> 초상화 키(맵에서 다른 시대 모습으로 선 인물: 2259년 아이 하도윤 등)
 
@@ -298,6 +299,19 @@ func _init() -> void:
 	for k in "KNOW OPEN OPEN_DAY LOCK DUE THAW THAW_DAY GONE LEFT COLD COLD_DAY BC BC_DAY SA SA_DAY JH JH_DAY LEAK FEUD FEUD_DAY RATK SHARD SHELF SOL REWARD LINK2 LINK3 FLED DATE SIGN PRICE BACK REFUND".split(" "):
 		vars.declare("UQ04_" + k, "int", 0)
 	vars.declare("DS_VALVE", "int", 0)
+	# R01 비표시 퀘스트 넷(1-12g, SD-05 §3.23~§3.26): 뜻은 script/act1/UQ-01 · 02 · 03 · 05.txt 머리 주석 — 진행기 UqR01
+	for k in "TALKS SOL CODE RELAY RELAYED LR13 FAILED HINT THEFT_DAY WITNESS SEEN SEEN_SAID BAN_DAY GUEST SERVED TIN_SAID TIN_BC".split(" "):
+		vars.declare("UQ01_" + k, "int", 0)
+	for k in "HOSTILE WEEK N1 N2 N3 N4 TICKETS SEEN".split(" "):
+		vars.declare("V24_" + k, "int", 0)
+	for k in "HEARD HOW END END_DAY BARK_UNTIL SEE_OFF_UNTIL DOG_OUT LEG SPOT ROUTE PAW_DAY CARRY SAW TOLD_EOM WITNESS FOLLOW GONE_DAY NAMED SOLNA_TOLD PUP_SPOT".split(" "):
+		vars.declare("UQ02_" + k, "int", 0)
+	vars.declare("UQ02_NAME", "str", "")
+	for k in "RES DAY GOT_DAY PASS EOM EOM_DAY MOM_MET DELIVER_DAY BACK_READ COLD RE104 LATE PHOTO_GIVEN REPORT_DAY TOLD_MOM".split(" "):
+		vars.declare("UQ03_" + k, "int", 0)
+	for k in "COW PACK LOST_DAY CAUSE SPOT KILL_SEEN REFUSE_DAY DISC NEWCOW_DAY HEARD LEAD DOGS PEND TOLD SAW REWARD SPILL".split(" "):
+		vars.declare("UQ05_" + k, "int", 0)
+	vars.declare("RE104_N", "int", 0)
 	# 1-D4 구로 차량기지(DG-GR): 뜻은 script/act1/GR.txt 머리 주석 — CORE 기관차 · PUSH 남은 밀기 · LV_* 레버 · A · B · C 입환 결과 · STAFF 역무원 · MUSTER 안 간 사람들
 	for k in "CORE PUSH BUS CORE_DAY LV_A LV_B LV_C A B C STAFF STAFF_DAY STAFF_K KEY LOST SIGKEY WHISTLE MUSTER MUSTER_K REEFER DRIFT RATS SB SB_DAY ROOF CHART TAG PARK CHEER ESC GUIDE TIP MUSTER_DAY".split(" "):
 		vars.declare("GR_" + k, "int", 0)

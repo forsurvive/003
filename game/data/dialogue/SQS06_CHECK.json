@@ -25,7 +25,7 @@
  "ops": [
   {
    "op": "if",
-   "cond": "known_dead(\"N-R01-050\") == 1",
+   "cond": "(known_dead(\"N-R01-050\") == 1 or UQ03_EOM >= 2)",
    "to": "NOUM"
   },
   {
@@ -56,12 +56,12 @@
   },
   {
    "op": "if",
-   "cond": "FQ_JH03_CHECK == 6 and known_dead(\"N-R01-050\") == 0",
+   "cond": "FQ_JH03_CHECK == 6 and (known_dead(\"N-R01-050\") == 0 and UQ03_EOM < 2)",
    "to": "JH03_SHOT"
   },
   {
    "op": "if",
-   "cond": "known_dead(\"N-R01-050\") == 1",
+   "cond": "(known_dead(\"N-R01-050\") == 1 or UQ03_EOM >= 2)",
    "to": "NOUM_ASK"
   },
   {
@@ -187,7 +187,7 @@
   },
   {
    "op": "if",
-   "cond": "known_dead(\"N-R01-050\") == 1",
+   "cond": "(known_dead(\"N-R01-050\") == 1 or UQ03_EOM >= 2)",
    "to": "UNIFORM_NOUM"
   },
   {

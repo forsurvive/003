@@ -22,14 +22,17 @@ text 4 3 "쉼터 벤치. 등받이에 새긴 낙서 '2076. 10. 우리 여기서 
 # 정합: 다리 건너 판독기 구역·통행 판정은 2막 횡단(MQ-201)과 함께 — 지금은 초소와 사람만 선다.
 spot L-R01-20 10 6
 prop guard_booth 6 1
-text 6 1 "계엄군 다리목 초소. 무전기와 판독기 대장, 탄띠." scene=MQ-105_BJ_IDLE
+text 6 1 "계엄군 다리목 초소. 무전기와 판독기 대장, 탄띠." scene=MQ-105_BJ_IDLE cond="UQ03_EOM < 2 and dead(\"N-R01-050\") == 0"
+text 6 1 "계엄군 다리목 초소. 무전기와 판독기 대장, 탄띠. 의자 등받이에 하사 계급장 자국." scene=UQ03_SUB cond="UQ03_EOM >= 2 or dead(\"N-R01-050\") == 1"
 prop sandbags 1 3
 prop sandbags 2 3
 prop sandbags 7 3
 prop sandbags 8 3
 prop jersey 4 3
 text 4 3 "콘크리트 차단벽. 스텐실 '계엄 구역 — 판독기 앞에서 정지'." 
-npc N-R01-050 5 4 S
+# 엄도현 자리 한 값(UQ03_EOM — UQ-03.txt 머리): 0 · 1 초소 · 2 이상 떠남 → 그 자리에 무명 분대장(N-BJ-C2, CR-403 그림)
+npc N-R01-050 5 4 S cond="UQ03_EOM < 2"
+npc N-BJ-C2 6 4 S sheet=en_cr403_loco cond="UQ03_EOM >= 2 or dead(\"N-R01-050\") == 1"
 npc CR-401 2 4 E sheet=en_cr401_loco bark="강 건너는 판독기 구역입니다. 등록증을 준비하십시오."
 npc CR-401 8 4 W sheet=en_cr401_loco bark="노량진 쪽 통행은 06시부터입니다."
 
@@ -150,3 +153,16 @@ prop crate_o 0 1
 prop bench_o 2 1
 box 0 1 trash name="물당번 쉼터 상자" cond="FQ_JC01_CUT > 0"
 text 2 1 "벽돌 위 판자 의자. 발밑에 담배꽁초가 수북하다. 판자에 압정으로 꽂은 종이." w=2 scene=FQJC01_SHELTER cond="FQ_JC01_CUT > 0"
+
+# UQ-02 백구의 밥그릇(1-12g, SD-05 §3.24 · 계획 G5): 남부순환로 밑 빗물 배수구(개천 머리) — 원문 '마을 아래 배수지 뒤'. 배수구 서쪽 덤불에 새끼 둥지.
+# 새끼(N-R01-509)는 데려가거나(UQ02_CARRY) 끝나면 없다. 백구 밤 나들이(진행기 UqR01)는 아랫문 → 길 건너 → 이 둥지 앞까지.
+spot @884,1385 6 3
+prop culvert 3 0
+text 3 0 "남부순환로 밑 빗물 배수구. 관 안은 깜깜하고 가는 물줄기가 개천으로 떨어진다." w=2
+prop pup_nest 1 1 cond="UQ02_END == 0 and UQ02_GONE_DAY == 0"
+prop pup_nest 1 1 state=empty cond="UQ02_END != 0 or UQ02_GONE_DAY != 0"
+text 1 1 "덤불 속 마른 풀 둥지. 밥알 · 뼈 조각." scene=UQ02_NEST cond="UQ02_END == 0 and UQ02_GONE_DAY == 0 and UQ02_CARRY == 0"
+npc N-R01-509 1 2 E sheet=cr_pup_loco cond="UQ02_END == 0 and UQ02_GONE_DAY == 0 and UQ02_CARRY == 0 and MQ101_STAGE >= 100"
+# 놓아주는 자리: 개천을 따라 남쪽, 관악산 쪽 숲 가장자리(새끼를 안고 들어서면 장면)
+spot @896,1418 4 3
+trigger 0 0 w=4 h=3 scene=UQ02_FREE cond="UQ02_CARRY == 1"

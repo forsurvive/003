@@ -1110,6 +1110,51 @@
    "src": "03a_main-story-part1.md:494",
    "type": "int"
   },
+  "UQ01_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "UQ01_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "UQ01_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "UQ02_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "UQ02_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "UQ02_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "UQ03_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "UQ03_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "UQ03_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
   "UQ04_RESULT": {
    "default": 0,
    "src": "quests",
@@ -1121,6 +1166,21 @@
    "type": "int"
   },
   "UQ04_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "UQ05_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "UQ05_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "UQ05_STAGE": {
    "default": 0,
    "src": "quests",
    "type": "int"

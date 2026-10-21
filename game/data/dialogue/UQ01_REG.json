@@ -1,0 +1,68 @@
+{
+ "id": "UQ01_REG",
+ "title": "진공관 금전등록기",
+ "loc": "L-R01-11",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "LIVE": 6,
+  "GUTTED": 8
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "UQ01_SOL == 3",
+   "to": "GUTTED"
+  },
+  {
+   "op": "if",
+   "cond": "UQ01_CODE == 1",
+   "to": "LIVE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "진공관 금전등록기. 유리창 속 관 넷이 차갑다. 붉은 등 아래 숫자 창에 '점포 코드를 입력하십시오'."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "옆에 손톱자국 같은 흠이 수십 줄 — 누가 오래 두드렸다."
+  },
+  {
+   "op": "do",
+   "fx": "quest(\"UQ-01\", 10)"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "진공관이 주황빛으로 숨 쉰다. 숫자 창 '0417 · 영업 중'. 서랍 칸에 오늘 장사한 캡 몇 닢."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "앞판이 뜯겨 매달렸다. 깨진 진공관 밑동. 빈 서랍."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-01.txt"
+}

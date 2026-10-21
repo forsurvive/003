@@ -1,0 +1,142 @@
+{
+ "id": "UQ03_SUB",
+ "title": "노량진 다리목 초소 — 분대장",
+ "loc": "L-R01-20",
+ "npc": "N-BJ-C2",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "WHERE": 3,
+  "WHERE_DEAD": 7,
+  "WHERE_HELD": 9,
+  "LEDGER": 11,
+  "GIVE": 13
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "has(\"M-211\") == 1",
+   "to": "LEDGER"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-C2",
+   "emo": "기본",
+   "text": "노량진 다리목 초소. 강 건너는 판독기 구역입니다. 등록증 없으면 돌아가십시오."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "엄 하사는요?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "WHERE",
+     "id": "UQ03_SUB:1:0"
+    },
+    {
+     "text": "알겠습니다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ03_SUB:1:1"
+    }
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R01-050\") == 1",
+   "to": "WHERE_DEAD"
+  },
+  {
+   "op": "if",
+   "cond": "UQ03_EOM == 5",
+   "to": "WHERE_HELD"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-C2",
+   "emo": "피곤",
+   "text": "엄 병장은 근무지 이탈. 수배 명단에 올랐습니다. …다른 용무 없으면 가십시오."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-C2",
+   "emo": "기본",
+   "text": "엄 하사는 없습니다. 묻지 마십시오. 분대가 아직 그 얘기를 못 합니다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-C2",
+   "emo": "기본",
+   "text": "영창입니다. 사당 고개. 그 이상은 말 못 합니다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-C2",
+   "emo": "기본",
+   "text": "하사 자리는 비었습니다. 용무가 있으면 제가 받습니다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "새벽인력 장부를 넘긴다. 비상정부가 산 사람들 명단이다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "GIVE",
+     "id": "UQ03_SUB:2:0"
+    },
+    {
+     "text": "지나가는 길이다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ03_SUB:2:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-C2",
+   "emo": "놀람",
+   "text": "…새벽인력 소장 장부. 상부에 올리겠습니다."
+  },
+  {
+   "op": "do",
+   "fx": "take(\"M-211\", 1); HO_LEDGER = 1; SB_BJ = 1; aff(\"BJ\", 10)"
+  },
+  {
+   "op": "cmd",
+   "name": "sb",
+   "args": [
+    "decide",
+    "1"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-03.txt"
+}

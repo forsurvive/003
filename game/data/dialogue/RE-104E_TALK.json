@@ -1,0 +1,207 @@
+{
+ "id": "RE-104E_TALK",
+ "title": "탈영병 무리 — 엄도현",
+ "loc": "",
+ "npc": "N-R01-050",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "ASKMOM": 6,
+  "CHOICE": 8,
+  "ROUTE": 9,
+  "PAPERS": 13,
+  "TURN": 17,
+  "LEAVE": 22
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "계급장을 뜯어 낸 군복 둘 셋. 맨 뒤 사내가 모자챙을 올린다 — 엄도현이다."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "피곤",
+   "text": "…당신이군요. 배급표를 맡긴 사람은 당신뿐이었습니다. 따지려는 건 아닙니다. 규정이 그런 거니까."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "기본",
+   "text": "노들섬으로 갑니다. 분류반이 사람 고르는 걸 오래 봤어요. 어차피 언젠가는 나왔을 겁니다."
+  },
+  {
+   "op": "do",
+   "fx": "UQ03_EOM = 3; RE104_N = RE104_N + 1"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R01-507\") == 0",
+   "to": "ASKMOM"
+  },
+  {
+   "op": "goto",
+   "to": "CHOICE"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "슬픔",
+   "text": "어머니는… 아십니까. 제가 이렇게 된 거."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "아직 모르세요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "CHOICE",
+     "id": "RE-104E_TALK:1:0"
+    },
+    {
+     "text": "말씀드렸어요",
+     "tags": [],
+     "cond": "UQ03_TOLD_MOM == 1",
+     "fx": "",
+     "to": "CHOICE",
+     "id": "RE-104E_TALK:1:1"
+    }
+   ]
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "강가 둔치 길로 가. 철교 밑 배가 있어",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "ROUTE",
+     "id": "RE-104E_TALK:2:0"
+    },
+    {
+     "text": "(위조 등록증을 건넨다)",
+     "tags": [],
+     "cond": "has(\"M-062\") == 1",
+     "fx": "",
+     "to": "PAPERS",
+     "id": "RE-104E_TALK:2:1"
+    },
+    {
+     "text": "검문소에 넘기겠다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TURN",
+     "id": "RE-104E_TALK:2:2"
+    },
+    {
+     "text": "갈 길 가",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "LEAVE",
+     "id": "RE-104E_TALK:2:3"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "미소",
+   "text": "…다리목에서 오래 서 있으니 길은 다 압니다. 그래도 고맙습니다."
+  },
+  {
+   "op": "do",
+   "fx": "karma(25); SQE_DESERTER = 1; UQ03_EOM = 4"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "놀람",
+   "text": "이건… (등록증을 본다) 이름 칸이 비었군요. 어머니 성을 쓰겠습니다."
+  },
+  {
+   "op": "do",
+   "fx": "take(\"M-062\", 1); karma(25); SQE_DESERTER = 1; UQ03_EOM = 4"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "피곤",
+   "text": "…두 번째군요. 괜찮습니다. 규정이니까."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "엄도현이 총을 내려놓는다. 해 질 녘 사당 고개 순찰조가 무리를 데려간다."
+  },
+  {
+   "op": "do",
+   "fx": "aff(\"BJ\", 3); karma(-25); UQ03_EOM = 5"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "기본",
+   "text": "그럼 서로 못 본 걸로. …어머니한테 가실 일 있으면, 국 따뜻하게 드시라고 해 주십시오."
+  },
+  {
+   "op": "do",
+   "fx": "UQ03_EOM = 4"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-03.txt"
+}

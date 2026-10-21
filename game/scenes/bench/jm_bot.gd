@@ -29,6 +29,7 @@ var side11: SideS11                                 ## 여의도 사이드 퀘�
 var uq71: Uq71                                     ## 비표시 퀘스트 UQ-71(1-D1 대방 지하차도)
 var u02: U02Paths                                  ## U02 남태령 지하(1-D2)
 var uq04: Uq04                                     ## UQ-04 7호 냉동 창고(1-D3)
+var uq_r01: UqR01                                  ## R01 비표시 퀘스트 넷(1-12g)
 var gr: Gr                                         ## 구로 차량기지(1-D4)
 var kt: Kt                                         ## 여의도 금탑(1-D5a)
 var ga: Ga
@@ -159,6 +160,9 @@ func _ready() -> void:
 	uq04 = Uq04.new()
 	add_child(uq04)
 	uq04.setup(host, true)
+	uq_r01 = UqR01.new()
+	add_child(uq_r01)
+	uq_r01.setup(host, true)
 	gr = Gr.new()
 	add_child(gr)
 	gr.setup(host, true)

@@ -119,7 +119,18 @@ prop sandbags 25 38
 prop stair_post 32 34
 prop board_bc 22 35
 text 22 35 "반상회 게시판." w=2 scene=X-BC_BOARD
+prop dog_bowl 36 35 cond="not (UQ02_PAW_DAY > 0 and UQ02_PAW_DAY >= GAME_DAY - 1 and UQ02_END == 0)"
+prop dog_bowl 36 35 state=half cond="UQ02_PAW_DAY > 0 and UQ02_PAW_DAY >= GAME_DAY - 1 and UQ02_END == 0"
 text 36 35 "개집 앞 밥그릇." scene=X-BC_BOWL
+# UQ-02(1-12g): 나들이 다음 날 07~12시 개집 → 아랫문 진흙 발자국(정오에 마름) — 엿듣기를 놓쳐도 따라갈 실마리(재미 검수 §8.2)
+prop paw_prints 33 37 cond="UQ02_PAW_DAY == GAME_DAY - 1 and GAME_HOUR >= 7 and GAME_HOUR < 12 and UQ02_END == 0"
+prop paw_prints 31 39 cond="UQ02_PAW_DAY == GAME_DAY - 1 and GAME_HOUR >= 7 and GAME_HOUR < 12 and UQ02_END == 0"
+text 33 37 "진흙 발자국. 개 발이다. 회색 진흙 — 계단 흙이 아니다. 아랫문 쪽으로 이어진다." w=2 cond="UQ02_PAW_DAY == GAME_DAY - 1 and GAME_HOUR >= 7 and GAME_HOUR < 12 and UQ02_END == 0"
+# UQ-02 장면 셋(트리거): 엿듣기(07~09 개집 앞) · 새끼를 안고 오면 맡기기 · 데려온 지 7일 이름표
+trigger 32 34 w=7 h=4 scene=UQ02_HEAR cond="MQ101_STAGE >= 100 and GAME_HOUR >= 7 and GAME_HOUR < 9 and UQ02_HEARD == 0 and UQ02_END == 0 and dead(\"C-015\") == 0 and dead(\"N-R01-029\") == 0 and dead(\"N-R01-034\") == 0 and SQ_S04_HELD == 0 and SQ_S04_AWAY == 0 and MQ101_DOG != 1 and SQ_S01_DOG != 1 and FQ_JC01_DOG != 1 and FQ_JC01_DOG != 5"
+trigger 32 34 w=7 h=4 scene=UQ02_GIVE cond="UQ02_CARRY == 1"
+trigger 32 34 w=7 h=4 scene=UQ02_TAG cond="UQ02_END == 1 and UQ02_NAMED == 0 and GAME_DAY >= UQ02_END_DAY + 7 and dead(\"N-R01-034\") == 0 and SQ_S04_HELD == 0 and SQ_S04_AWAY == 0"
+npc N-R01-509 34 37 E sheet=cr_pup_loco cond="UQ02_END == 1" bark="(꼬리를 흔들며 백구 다리 사이로 파고든다)"
 prop kennel 35 34
 text 35 34 "백구 집. 옆 기둥에 '백구 밥 당번표'가 붙어 있다." w=2
 prop stall 10 34
@@ -240,14 +251,20 @@ prop laundry_line 31 6
 text 25 11 "봉천 새마음빌라 1동. 옥상에 옥탑 이장실이 있다."
 npc N-R01-028 28 37 S cond="(MQ101_NIGHT == 0 or MQ101_RESULT != 0) and SQ_S02_FIGHT == 0"
 npc N-R01-026 11 33 S cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0"
-npc C-015 37 35 W sheet=cr_baekgu_loco cond="MQ101_DOG != 1 and SQ_S01_DOG != 1 and FQ_JC01_DOG != 1 and FQ_JC01_DOG != 5 and (HOME_BC != 1 or BAEKGU_NAP != 1)"
+# 백구 자리 한 값(P3): 동행(MQ-101 · S01 · JC-01) · 옥탑방 낮잠 · UQ-02 밤 나들이(UQ02_DOG_OUT — 진행기 UqR01) 가운데 하나. 1-12g: 짖음 7일 · 배웅 사흘 판은 같은 자리 다른 줄
+npc C-015 37 35 W sheet=cr_baekgu_loco cond="MQ101_DOG != 1 and SQ_S01_DOG != 1 and FQ_JC01_DOG != 1 and FQ_JC01_DOG != 5 and (HOME_BC != 1 or BAEKGU_NAP != 1) and UQ02_DOG_OUT == 0 and UQ02_BARK_UNTIL < GAME_DAY and not (UQ02_SEE_OFF_UNTIL >= GAME_DAY and GAME_HOUR >= 6 and GAME_HOUR < 20)"
+npc C-015 37 35 W sheet=cr_baekgu_loco cond="MQ101_DOG != 1 and SQ_S01_DOG != 1 and FQ_JC01_DOG != 1 and FQ_JC01_DOG != 5 and (HOME_BC != 1 or BAEKGU_NAP != 1) and UQ02_DOG_OUT == 0 and UQ02_BARK_UNTIL >= GAME_DAY" bark="왈! 왈! (당신을 보고 이를 드러낸다)"
+npc C-015 29 40 S sheet=cr_baekgu_loco cond="MQ101_DOG != 1 and SQ_S01_DOG != 1 and FQ_JC01_DOG != 1 and FQ_JC01_DOG != 5 and (HOME_BC != 1 or BAEKGU_NAP != 1) and UQ02_DOG_OUT == 0 and UQ02_BARK_UNTIL < GAME_DAY and UQ02_SEE_OFF_UNTIL >= GAME_DAY and GAME_HOUR >= 6 and GAME_HOUR < 20" bark="(아랫문 앞에 앉아 길 쪽을 본다. 당신이 지나가면 꼬리를 한 번 친다.)"
 npc N-R01-034 38 34 W cond="(MQ101_NIGHT == 0 or MQ101_RESULT != 0) and SQ_S04_HELD == 0 and SQ_S04_AWAY == 0" route=kennel:38,34,6;yard:33,36,4
 # SQ-S02(1-11b): 남건희 — 낮엔 계단 텃밭(22시 이후엔 윗문 쪽문 — 진행기가 세운다) · 고발 다음 날부터는 없다
 npc N-R01-039 20 27 S cond="V_ACT >= 1 and (SQ_S02_IN != 1 or GAME_DAY < SQ_S02_EXILE_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 22 and SQ_S02_FIGHT == 0" route=garden:20,27,6;alley:12,27,4
-npc N-R01-029 16 28 S cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0" route=garden:16,28,6;alley:24,28,4
+npc N-R01-029 16 28 S cond="(MQ101_NIGHT == 0 or MQ101_RESULT != 0) and not (MQ101_STAGE >= 100 and GAME_HOUR >= 7 and GAME_HOUR < 9)" route=garden:16,28,6;alley:24,28,4
+# 조담희 일과(1-12g UQ-02 — 원고 머리 한 줄, N14): 반상회 총무로 07~09시 개집 앞 밥 당번표를 본다(MQ-101 뒤)
+npc N-R01-029 34 36 E cond="MQ101_STAGE >= 100 and GAME_HOUR >= 7 and GAME_HOUR < 9"
 npc N-R01-030 46 35 W cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0"
 npc N-R01-031 39 21 S cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0" route=school:39,21,6;stair:33,22,3
-npc N-R01-033 52 37 W cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0"
+npc N-R01-033 52 37 W cond="(MQ101_NIGHT == 0 or MQ101_RESULT != 0) and not (UQ02_SAW == 1 and UQ02_END == 0)"
+npc N-R01-033 52 37 W cond="(MQ101_NIGHT == 0 or MQ101_RESULT != 0) and UQ02_SAW == 1 and UQ02_END == 0" bark="개천 둑에 작은 발자국. 들개 새끼야. 크면 들개지 — 마을에 두려면 백구가 가르쳐야 하고, 산에 두면 산이 가르치지."
 npc N-R01-035 30 29 S cond="(MQ101_NIGHT == 0 or MQ101_RESULT != 0) and SQ_S02_FIGHT == 0 and SQ_S04_FIGHT == 0"
 npc N-R01-036 46 12 S cond="(MQ101_NIGHT == 0 or MQ101_RESULT != 0) and SQ_S02_FIGHT == 0 and SQ_S04_FIGHT == 0" route=tower:46,12,8;top:40,14,4
 npc N-R01-501 10 28 E cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0" route=a:10,28,5;b:18,28,4

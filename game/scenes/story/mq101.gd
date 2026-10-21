@@ -303,6 +303,12 @@ func trade_mult(vid: String) -> Array:
 	if vid == "V05" and st.vars.has("SQ_S05_PYO") and v("SQ_S05_PYO") == 1:   # SQ-S05 보상(SD-04a §4.5): 표하경 상시 −15% — 서쪽 측실 선반
 		k = [k[0] * 0.85, k[1]]
 		greet = "서쪽 측실 선반 몫이야. 너한테는 싸게."
+	if (vid == "VR11" or vid == "VR11N") and st.vars.has("UQ01_SEEN") and v("UQ01_SEEN") == 1:   # UQ-01 ③ 들킨 뜯기(SD-05): 석라희 가격 +10% 상시
+		k = [k[0] * 1.10, k[1]]
+		greet = "밤엔 문을 안 닫는 거지, 아무나 들어오라는 게 아냐. 값은 그만큼 더 받아."
+	if vid == "V54" and st.vars.has("UQ05_DISC") and v("UQ05_DISC") == 1:   # UQ-05 ① 누렁이를 데려다줌(SD-05): 연보경 −10% 영구
+		k = [k[0] * 0.90, k[1]]
+		greet = "누렁이 데려다준 사람 값이야. 짐소가 너 보고 콧김 뿜는다."
 	var item_k := {}
 	if r == 5:                                                        # 마을을 팖: 다음 날 마을 물값 2배(SD-03a §8.1 표)
 		for w in WATER_IDS:

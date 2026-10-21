@@ -1,0 +1,460 @@
+{
+ "id": "K11_RAHEE",
+ "title": "봉천 번개24 — 석라희 '24시'",
+ "loc": "L-R01-11",
+ "npc": "N-R01-038",
+ "cond": "(GAME_HOUR < 2 or GAME_HOUR >= 5) and GAME_DAY >= UQ01_BAN_DAY",
+ "labels": {
+  "START": 0,
+  "FIRST": 7,
+  "RELAYED": 11,
+  "SEEN_NOW": 15,
+  "HQ": 19,
+  "TIN": 23,
+  "MENU": 26,
+  "SHOP": 27,
+  "SHOPN": 30,
+  "REG": 32,
+  "REG_DEAD": 38,
+  "CARD": 41,
+  "RCPT": 48,
+  "FIX": 53,
+  "FIX_NO": 60,
+  "TUBE": 63
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "UQ01_RELAY == 2 and UQ01_RELAYED == 0",
+   "to": "RELAYED"
+  },
+  {
+   "op": "if",
+   "cond": "UQ01_SOL == 3 and UQ01_SEEN == 1 and UQ01_SEEN_SAID == 0",
+   "to": "SEEN_NOW"
+  },
+  {
+   "op": "if",
+   "cond": "UQ01_SOL == 3 and UQ01_SEEN == 0 and UQ01_SEEN_SAID == 0",
+   "to": "HQ"
+  },
+  {
+   "op": "if",
+   "cond": "UQ01_SERVED > 0 and UQ01_SERVED == GAME_DAY - 1 and UQ01_TIN_SAID != GAME_DAY",
+   "to": "TIN"
+  },
+  {
+   "op": "if",
+   "cond": "UQ01_TALKS == 0",
+   "to": "FIRST"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-038",
+   "emo": "기본",
+   "text": "어서 와. 24시야. 문은 늘 열려 있어."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-038",
+   "emo": "기본",
+   "text": "어서 오세요, 번개24입니다. …손님 말투는 아직 입에 붙어 있네. 나는 석라희. 다들 '24시'라고 불러."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-038",
+   "emo": "기본",
+   "text": "24시는 문을 안 닫는다는 뜻이래. 그러니까 안 닫아. 뜻은 몰라도 규칙은 지키면 되잖아."
+  },
+  {
+   "op": "do",
+   "fx": "UQ01_TALKS = 1"
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-038",
+   "emo": "놀람",
+   "text": "아줌마가 가져왔어 — 네가 보냈다며? 카드 하나 꽂으니까 등록기가 '띵' 했어. 이백 년 만에."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-038",
+   "emo": "미소",
+   "text": "영수증도 하나 뱉었어. 읽어 봐. 무슨 말인지는 모르겠는데 뭔가 대단한 거 같아."
+  },
+  {
+   "op": "do",
+   "fx": "UQ01_RELAYED = 1; give(\"I-024\", 3)"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "영수증을 읽는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "RCPT",
+     "id": "K11_RAHEE:1:0"
+    },
+    {
+     "text": "됐어요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "MENU",
+     "id": "K11_RAHEE:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-038",
+   "emo": "분노",
+   "text": "등록기 앞판, 네가 뜯었지. 나사에 네 손자국 같은 기름이 묻었더라. 동네 사람들한테도 말했어."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-038",
+   "emo": "기본",
+   "text": "물건은 팔아. 장사는 장사니까. 값은 더 받을 거야."
+  },
+  {
+   "op": "do",
+   "fx": "UQ01_SEEN_SAID = 1"
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-038",
+   "emo": "피곤",
+   "text": "밤에 누가 등록기를 뜯어 갔어. 본사가 밤에 수금해 갔나 봐. 규칙에 그런 게 있을지도 몰라."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-038",
+   "emo": "기본",
+   "text": "…그래도 문은 안 닫아. 그건 내 규칙이니까."
+  },
+  {
+   "op": "do",
+   "fx": "UQ01_SEEN_SAID = 1"
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-038",
+   "emo": "미소",
+   "text": "어젯밤 깡통에 3캡이 늘었네. 사이다도 하나 비고. 누가 가게 봤어? …24시가 이런 거면 좋겠다."
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "tin"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "물건을 본다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SHOP",
+     "id": "K11_RAHEE:2:0"
+    },
+    {
+     "text": "저 등록기는 왜 안 열려요?",
+     "tags": [],
+     "cond": "UQ01_TALKS >= 1 and UQ01_SOL == 0",
+     "fx": "",
+     "to": "REG",
+     "id": "K11_RAHEE:2:1"
+    },
+    {
+     "text": "(카드를 꽂아 본다)",
+     "tags": [],
+     "cond": "has(\"M-427\") == 1 and UQ01_SOL == 0",
+     "fx": "",
+     "to": "CARD",
+     "id": "K11_RAHEE:2:2"
+    },
+    {
+     "text": "등록기 기판을 봐도 될까요",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 45
+      }
+     ],
+     "cond": "UQ01_SOL == 0 and stage(\"UQ-01\") >= 10 and has(\"M-014\") == 1",
+     "fx": "",
+     "to": "FIX",
+     "id": "K11_RAHEE:2:3",
+     "fail": "FIX_NO"
+    },
+    {
+     "text": "진공관은 어디서 구하죠?",
+     "tags": [],
+     "cond": "UQ01_SOL == 0 and stage(\"UQ-01\") >= 10 and has(\"M-014\") == 0",
+     "fx": "",
+     "to": "TUBE",
+     "id": "K11_RAHEE:2:4"
+    },
+    {
+     "text": "됐어요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "K11_RAHEE:2:5"
+    }
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "UQ01_CODE == 1",
+   "to": "SHOPN"
+  },
+  {
+   "op": "cmd",
+   "name": "trade",
+   "args": [
+    "VR11"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "trade",
+   "args": [
+    "VR11N"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-038",
+   "emo": "기본",
+   "text": "이름은 물려받았는데 열쇠는 못 물려받았어. 저거, 켜면 '점포 코드를 입력하십시오'만 해. 냉장 진열대도 같은 줄에 묶였고."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-038",
+   "emo": "기본",
+   "text": "연보경 아줌마가 그러는데 노량진에 아직 문 여는 번개24가 있대. 로봇이 지킨대. 본사랑 아직 말이 통한다나."
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R01-040\") == 1",
+   "to": "REG_DEAD"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-038",
+   "emo": "피곤",
+   "text": "십 년을 두드렸어. 오늘도 안 열려."
+  },
+  {
+   "op": "do",
+   "fx": "UQ01_TALKS = 2; quest(\"UQ-01\", 10)"
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-038",
+   "emo": "슬픔",
+   "text": "…아줌마도 이제 없네. 행상들이 하던 말이야. 노량진 번개24."
+  },
+  {
+   "op": "do",
+   "fx": "UQ01_TALKS = 2; quest(\"UQ-01\", 10)"
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "카드를 등록기 옆 홈에 밀어 넣는다. 진공관 넷이 차례로 주황빛을 문다. 숫자 창에 '0417'."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "띵 —"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-038",
+   "emo": "놀람",
+   "text": "…이게 이런 소리였구나. 띵."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "등록기가 영수증 한 장을 뱉는다. 냉장 진열대 형광등이 깜박이다 켜지고, 유리에 냉기가 서린다."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-038",
+   "emo": "미소",
+   "text": "첫 손님 할인이야. 이건 그냥 가져가. 삼각김밥 셋. 날짜는… 묻지 마."
+  },
+  {
+   "op": "do",
+   "fx": "take(\"M-427\", 1); UQ01_SOL = 1; UQ01_CODE = 1; give(\"I-024\", 3); karma(25); aff(\"BC\", 4); xp(60); quest(\"UQ-01\", 100)"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "영수증을 읽는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "RCPT",
+     "id": "K11_RAHEE:3:0"
+    },
+    {
+     "text": "됐어요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "K11_RAHEE:3:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "감열지 영수증. 글씨가 바랬지만 읽힌다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'[본사 공지] 10월 24일부터 전 점포 배급표 결제 의무화. 현금 결제 시 충성 등급 재산정. 점주 여러분의 협조에 감사드립니다. — 청솔식품'"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "맨 아래 시각 '2077. 10. 23. 23:12'. 그날 밤 마지막으로 찍으려던 영수증이다."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-038",
+   "emo": "기본",
+   "text": "무슨 말인지 알아? …몰라도 돼. 규칙은 지키면 되니까."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "앞판을 열고 기판을 뒤집는다. 죽은 진공관 하나, 녹슨 접점 둘. 접점을 긁어 내고 관을 갈아 끼운다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "숫자 창이 '점포 코드를 입력하십시오'를 지나쳐 '수동 모드'로 넘어간다. 띵 —"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-038",
+   "emo": "놀람",
+   "text": "…이게 이런 소리였구나."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-038",
+   "emo": "미소",
+   "text": "(빼낸 헌 진공관을 등록기 위에 올려 둔다) 이건 기념이야. 첫 손님 할인 — 삼각김밥 셋. 날짜는 묻지 마."
+  },
+  {
+   "op": "do",
+   "fx": "take(\"M-014\", 1); UQ01_SOL = 2; UQ01_CODE = 1; give(\"I-024\", 3); karma(25); aff(\"BC\", 4); xp(60); quest(\"UQ-01\", 100)"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "fixed"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "접점 하나를 긁다 기판 귀퉁이가 바스러진다. 이 손으로는 무리다. 진공관은 아직 손에 있다."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-038",
+   "emo": "피곤",
+   "text": "괜찮아. 십 년 동안 나도 그랬어."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-038",
+   "emo": "기본",
+   "text": "진공관은 서울대입구 상가 쪽 폐허에 굴러다닌대. 봉천 고물상 오봉수 아저씨도 가끔 받고."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-01.txt"
+}

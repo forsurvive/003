@@ -381,7 +381,52 @@ N-R01-050 [기본] …명단에 볼트 작업복 줄이 있던데. 그 줄은 �
 @cond  V_ACT >= 1
 ? FQ_JH03_CHECK == 6 -> JH03_SHOT
 ? FQ_JH03_BOX == 1 and FQ_JH03_PARK == 1 and FQ_JH03_NEAR == 1 and dead("C-018") == 0 -> JH03
+# UQ-03 다리목 하사의 배급표(1-12g, SD-05 §3.25 · 원고 UQ-03.txt 머리 주석): 사진 · 냉담 · 가방 · 강등 · 부탁(교대 06~08 · 18~20) · 어머니를 먼저 뵌 사람
+? stage("UQ-03") == 30 and has("M-428") == 1 -> UQ03_PHOTO
+? UQ03_RES == 3 -> UQ03_BAG
+? stage("UQ-03") == 10 and UQ03_COLD >= 1 -> UQ03_LATE
+? UQ03_EOM == 1 -> UQ03_DEMOTED
+? stage("UQ-03") == 0 and UQ03_MOM_MET == 1 and met("N-R01-050") == 1 and AFF_BJ > -60 and V_WANTED < 80 and FQ_JH03_CHECK != 6 -> UQ03_MOM
+? stage("UQ-03") == 0 and met("N-R01-050") == 1 and AFF_BJ > -60 and V_WANTED < 80 and FQ_JH03_CHECK != 6 and ((GAME_HOUR >= 6 and GAME_HOUR < 8) or (GAME_HOUR >= 18 and GAME_HOUR < 20)) -> UQ03_ASK
 N-R01-050 [기본] 노량진 다리목 초소입니다. 강 건너는 판독기 구역. 등록증 없으면 돌아가십시오.
+-> END
+* UQ03_ASK
+N-R01-050 [피곤] (철모를 벗어 머리를 턴다) 교대 시간입니다. …잠깐, 사적인 부탁 하나 해도 됩니까.
+-> UQ03_ASK2
+* UQ03_MOM
+N-R01-050 [놀람] 어머니를… 뵀습니까. 상도 빌라 반지하. (한참) 어떻게 사십니까. …아니, 말하지 마십시오. 대충 압니다.
+-> UQ03_ASK2
+* UQ03_ASK2
+N-R01-050 [기본] 상도 빌라촌, 302호 옆 반지하에 어머니가 계십니다. 엄옥순. 미등록입니다. 계엄병은 미등록자와 물자를 나누면 안 됩니다.
+N-R01-050 [기본] 제 몫 배급표 열 장하고 전투식량 둘. 전해 주시면 — 다음에 다리목을 지날 때 제 분대는 당신 가방을 안 엽니다.
+> 전해 드리죠 -> UQ03_TAKE
+> 다음에 -> END
+* UQ03_TAKE
+N-R01-050 [미소] (주머니에서 꺼내 손에 쥐여 준다) 빌라촌 골목엔 새벽인력 추적대가 숨어 있곤 합니다. 조심하십시오.
+! give("M-003", 10); give("I-031", 2); UQ03_GOT_DAY = GAME_DAY; quest("UQ-03", 10)
+-> END
+* UQ03_LATE
+N-R01-050 [기본] 어머니께는 가셨습니까. …아직이군요. 알겠습니다.
+-> END
+* UQ03_PHOTO
+SYS 엄옥순이 액자에서 빼 준 사진을 건넨다.
+? GAME_DAY > UQ03_GOT_DAY + 7 -> UQ03_PHOTO_LATE
+-> UQ03_PHOTO2
+* UQ03_PHOTO_LATE
+N-R01-050 [피곤] 늦었지만 왔군요.
+-> UQ03_PHOTO2
+* UQ03_PHOTO2
+N-R01-050 [놀람] …저 아닌데요. (한참 본다) 어머니 눈엔 이렇게 보이나 봅니다.
+N-R01-050 [미소] (사진을 가슴 주머니에 넣는다) 약속은 지킵니다. 제 분대는 당신 가방을 안 엽니다. 제가 여기 서 있는 동안은.
+! take("M-428", 1); UQ03_PASS = 1; UQ03_RES = 1; xp(70); quest("UQ-03", 100)
+-> END
+* UQ03_BAG
+N-R01-050 [기본] 가방 열어.
+@cmd uqr bag
+N-R01-050 [기본] …지나가십시오.
+-> END
+* UQ03_DEMOTED
+N-R01-050 [피곤] 병장입니다, 이제. 누가 위에 말했더군요. …누군지는 묻지 않겠습니다. 용무 없으면 가십시오.
 -> END
 # FQ-JH-03(1-12e): 이동 검문은 엄도현의 다리목 분대가 노량진로에 낸 검문조(조장 N-BJ-C1) — 초소는 다리 건너는 사람만 본다(P3, 출처 같음)
 #   구현 뒤 재미 검수(계획 §5.5): '분대에 무전 좀' → CHECK 10(분대를 만나면 무전 판 — FQ-JH-03.txt RADIO) · 분대와 싸운 뒤엔 차갑게(CHECK 6)
@@ -391,7 +436,7 @@ N-R01-050 [기본] (박춘삼을 한 번 보고 상자를 본다) 분대는 노�
 ? FQ_JH03_CHECK == 10 -> JH03_SENT
 ? FQ_JH03_FLED == GAME_DAY -> JH03_FLED
 N-R01-050 [기본] 상자가 의료반 거면 가십시오. 이 초소는 다리 건너는 사람만 봅니다. …판독기는 못 본 걸로 하겠습니다.
-> 분대에 무전 좀 넣어 주세요. 노량진로로 가야 해서요 -> JH03_RADIO ?? FQ_JH03_CHECK == 0 or FQ_JH03_CHECK == 1 or FQ_JH03_CHECK == 5 or FQ_JH03_CHECK == 7
+> 분대에 무전 좀 넣어 주세요. 노량진로로 가야 해서요 -> JH03_RADIO ?? (FQ_JH03_CHECK == 0 or FQ_JH03_CHECK == 1 or FQ_JH03_CHECK == 5 or FQ_JH03_CHECK == 7) and UQ03_RES != 3
 > 알겠습니다 -> END
 * JH03_RADIO
 ? V_WANTED >= 30 -> JH03_RADIO_W

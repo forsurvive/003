@@ -9,6 +9,8 @@
   rope_snap       끊긴 고삐와 흩어진 짐(1×1, 덧그림) — 해진 밧줄 끝 · 엎어진 짐 꾸러미 · 수송대 꼬리표
   w_soldier_photo 2077년 군복 소년 사진 액자(벽, 1칸) — 나무 액자 · 바랜 사진 속 원정군 제복 · 액자 귀퉁이 검은 리본
   v24_counter     노량진 번개24 로봇 창구(2×1) — 하늘청 계산대 · 배급표 투입구 · 청솔 상표 · '적립 종료' 딱지 · 영수증 걸이
+  dog_bowl        백구 밥그릇(덧그림) — 양은 그릇 · 상태 half(보리밥이 반쯤 남음)
+  paw_prints      진흙 발자국 줄(덧그림) — 개천 회색 진흙, 아랫문 쪽으로
 props_bc.PROPS에 합쳐져 r01_props 아틀라스로 나간다."""
 import os
 import random
@@ -239,6 +241,34 @@ def v24_counter():
     return im
 
 
+def dog_bowl(state=""):
+    """백구 밥그릇(18×12): 찌그러진 양은 그릇 · 보리밥. 기본 = 비었다(다 먹음) · half = 반쯤 남은 보리밥(UQ-02 '사흘째 밥을 남겨')."""
+    im = img(18, 12)
+    d = ImageDraw.Draw(im)
+    d.ellipse([1, 3, 16, 11], fill=C(INK))
+    d.ellipse([2, 4, 15, 10], fill=C("P06"))
+    d.ellipse([4, 5, 13, 8], fill=C("P04"))
+    d.arc([2, 4, 15, 10], 200, 330, fill=C("P08"))
+    d.point((14, 7), fill=C("P05"))                                             # 찌그러진 자국
+    if state == "half":
+        d.ellipse([5, 5, 12, 8], fill=C("P21"))
+        for (x, y) in ((6, 6), (8, 5), (10, 6), (9, 7)):
+            d.point((x, y), fill=C("P09"))
+    return im
+
+
+def paw_prints():
+    """진흙 발자국 줄(28×14, 덧그림): 회색 개천 진흙 — 네 발 두 쌍이 아랫문 쪽으로(오른쪽 위 → 왼쪽 아래)."""
+    im = img(28, 14)
+    d = ImageDraw.Draw(im)
+    for k, (x, y) in enumerate(((22, 2), (17, 5), (11, 7), (5, 10))):
+        dy = 1 if k % 2 else 0
+        d.ellipse([x, y + dy, x + 2, y + 2 + dy], fill=C("P05"))
+        for t in (-1, 1, 3):
+            d.point((x + t, y - 1 + dy), fill=C("P04"))
+    return im
+
+
 def _r(fn, fw, fh, kind="floor", down=2, dx=0, dy=0):
     return {"fn": fn, "foot": (fw, fh), "kind": kind, "down": down, "dx": dx, "dy": dy}
 
@@ -252,12 +282,15 @@ PROPS_UQ = {
     "rope_snap": _r(rope_snap, 0, 0, "deco"),
     "w_soldier_photo": _r(w_soldier_photo, 1, 0, "wall", dx=5, dy=4),
     "v24_counter": _r(v24_counter, 2, 1),
+    "dog_bowl": _r(dog_bowl, 0, 0, "deco"),
+    "paw_prints": _r(paw_prints, 0, 0, "deco"),
 }
 
 STATES_UQ = {
     "tube_register": {"fixed": lambda: tube_register("fixed"), "gutted": lambda: tube_register("gutted")},
     "cold_case": {"lit": lambda: cold_case("lit")},
     "pup_nest": {"empty": lambda: pup_nest("empty")},
+    "dog_bowl": {"half": lambda: dog_bowl("half")},
 }
 
 

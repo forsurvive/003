@@ -1,0 +1,26 @@
+{
+ "id": "K11_BANNED",
+ "title": "봉천 번개24 — 문 앞",
+ "loc": "L-R01-11",
+ "npc": "N-R01-038",
+ "cond": "GAME_DAY < UQ01_BAN_DAY",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-R01-038",
+   "emo": "분노",
+   "text": "일주일이라고 했지. 문은 열려 있어도 너한텐 닫혔어."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-01.txt"
+}

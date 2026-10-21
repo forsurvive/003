@@ -200,7 +200,7 @@ def main():
         return round((37.7080 - lat) * 5999.46)
     if (tx_of(126.9769), ty_of(37.5759)) != (1058, 793):
         errors.append("변환식 검산 실패(광화문)")
-    exp = {"peaks": 24, "landmarks": 24, "boundary": 24, "bridges": 25, "rivers": 11, "roads": 14, "crossings": 15, "places": 425}
+    exp = {"peaks": 24, "landmarks": 24, "boundary": 24, "bridges": 25, "rivers": 11, "roads": 14, "crossings": 15, "places": 426}   # 426 = 개요 표 425 + 1-12g 노량진 번개24(L-R01-33)
     for k, n in exp.items():
         if len(w[k]) != n:
             errors.append("%s %d개(기대 %d)" % (k, len(w[k]), n))

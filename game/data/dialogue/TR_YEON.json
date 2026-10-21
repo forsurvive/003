@@ -15,7 +15,8 @@
   "S6CARGO_NO": 17,
   "SHOP": 19,
   "FIX": 21,
-  "ROAD": 23
+  "UQ01": 23,
+  "ROAD": 27
  },
  "ops": [
   {
@@ -77,12 +78,20 @@
      "id": "TR_YEON:1:2"
     },
     {
+     "text": "봉천 번개24 석라희한테 이 카드 좀 전해 줄래요?",
+     "tags": [],
+     "cond": "has(\"M-427\") == 1 and UQ01_SOL == 0 and UQ01_RELAY == 0 and dead(\"N-R01-038\") == 0",
+     "fx": "",
+     "to": "UQ01",
+     "id": "TR_YEON:1:3"
+    },
+    {
      "text": "노들섬까지 검문 없이 가는 법 있어?",
      "tags": [],
      "cond": "SQ_S06_MET >= 1 and SQ_S06_JIN <= 1 and SQ_S06_ROUTE < 2",
      "fx": "",
      "to": "S6ASK",
-     "id": "TR_YEON:1:3"
+     "id": "TR_YEON:1:4"
     },
     {
      "text": "사람 하나 노들섬까지 태워 줄 수 있어?",
@@ -90,7 +99,7 @@
      "cond": "SQ_S06_JIN == 1 and SQ_S06_NEAR == 1 and CARAVAN_V54 == 2 and SQ_S06_CARAVAN == 0",
      "fx": "",
      "to": "S6CARGO",
-     "id": "TR_YEON:1:4"
+     "id": "TR_YEON:1:5"
     },
     {
      "text": "됐다",
@@ -98,7 +107,7 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "TR_YEON:1:5"
+     "id": "TR_YEON:1:6"
     }
    ]
   },
@@ -226,6 +235,29 @@
   {
    "op": "goto",
    "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "미소",
+   "text": "번개24 라희? 등록기 두드리던 그 애. 노량진 로봇 얘기를 내가 해 줬지. 진짜 받아 왔네."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "기본",
+   "text": "다음에 봉천 설 때 내가 꽂아 줄게. 짐 사이에 끼워 두면 안 잃어버려."
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "relay"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
   },
   {
    "op": "line",

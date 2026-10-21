@@ -1,0 +1,183 @@
+{
+ "id": "K11_DOZE",
+ "title": "봉천 번개24 — 꾸벅 조는 석라희",
+ "loc": "L-R01-11",
+ "npc": "N-R01-038",
+ "cond": "GAME_HOUR >= 2 and GAME_HOUR < 5 and GAME_DAY >= UQ01_BAN_DAY",
+ "labels": {
+  "START": 0,
+  "WAKE": 2,
+  "SHOPN": 6,
+  "GUT": 8,
+  "GUT_OK": 10,
+  "GUT_CAUGHT": 15
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "석라희가 카운터 의자에 앉은 채 꾸벅 존다. 손에 쥔 볼펜이 장부 위로 미끄러진다. 형광등은 켜져 있고 문은 열려 있다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "깨운다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "WAKE",
+     "id": "K11_DOZE:1:0"
+    },
+    {
+     "text": "등록기를 뜯는다",
+     "tags": [],
+     "cond": "UQ01_SOL == 0 and stage(\"UQ-01\") < 100",
+     "fx": "",
+     "to": "GUT",
+     "id": "K11_DOZE:1:1"
+    },
+    {
+     "text": "그냥 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "K11_DOZE:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-038",
+   "emo": "놀람",
+   "text": "어, 어서 오세… 안 잤어. 눈만 감았어. 24시는 문 안 닫는 거지, 눈 안 감는 게 아니야."
+  },
+  {
+   "op": "if",
+   "cond": "UQ01_CODE == 1",
+   "to": "SHOPN"
+  },
+  {
+   "op": "cmd",
+   "name": "trade",
+   "args": [
+    "VR11"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "trade",
+   "args": [
+    "VR11N"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "등록기 앞판 나사 넷. 석라희의 숨소리가 일정하다. 손을 뻗으면 그녀 팔꿈치에 닿을 거리."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "숨을 죽이고 나사를 푼다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "은신",
+       "min": 25
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "GUT_OK",
+     "id": "K11_DOZE:2:0",
+     "fail": "GUT_CAUGHT"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "K11_DOZE:2:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "앞판이 떨어진다. 진공관 둘이 깨지는 작은 소리 — 석라희가 고개를 한 번 끄덕이고 다시 잠든다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "서랍 안쪽 칸, 이백 년 묵은 만 원권 다발과 전시 배급표 여섯 장."
+  },
+  {
+   "op": "do",
+   "fx": "give(\"M-002\", 40); give(\"M-003\", 6); karma(-25); xp(60); UQ01_SOL = 3; quest(\"UQ-01\", 100)"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "gut"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "나사 하나가 바닥에 떨어져 굴러간다. 볼펜이 멈춘다."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-038",
+   "emo": "분노",
+   "text": "…밤엔 문을 안 닫는 거지, 아무나 들어오라는 게 아냐."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-038",
+   "emo": "슬픔",
+   "text": "그거 열려고 십 년을 두드렸어. 너는 나사 넷이면 되는구나. 나가. 일주일은 오지 마."
+  },
+  {
+   "op": "do",
+   "fx": "UQ01_SEEN = 1; aff(\"BC\", -6)"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "caught"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-01.txt"
+}

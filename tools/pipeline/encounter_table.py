@@ -78,6 +78,17 @@ RE = {
     "RE-046": {"name": "쓰러진 세력원", "cat": "event", "regions": "*", "no_regions": ["R05"], "time": "any", "weight": 4,
                "groups": [{"side": "a", "units": [["N-DOWNED", 1, 1]], "hostile": False}, {"side": "b", "units": [["CR-104", 2, 3]], "hostile": True}],
                "talk": "RE-046_TALK", "states": {"S6": 1}, "rescue": True},
+    # RE-104 탈영병 무리(SD-05 §5 L1452 · 1-12g UQ-03): MQ-106 이후(S1) A반 최대 3회 · 비적대 대화. 엄도현 판(RE-104E)은 UQ-03 ② 21일 뒤 한 번 —
+    # 그 판이 열려 있는 동안엔 일반 판을 고르지 않는다(다음 RE-104 판정에 엄도현이 섞인다, P5). 그림은 계급장 뗀 계엄병(CR-401 그림)
+    "RE-104": {"name": "탈영병 무리", "cat": "event", "regions": ["R01", "R02", "R11"], "prefer": ["강변", "산지", "구도심"], "ban": ["업무"],
+               "time": "any", "weight": 3,
+               "cond": "stage(\"MQ-106\") >= 100 and RE104_N < 3 and not (UQ03_EOM == 2 and GAME_DAY >= UQ03_REPORT_DAY + 21)",
+               "groups": [{"side": "a", "units": [["N-DS-E1", 1, 1], ["N-DS-E2", 1, 2]], "hostile": False}],
+               "talk": "RE-104_TALK", "states": {"S1": 3, "S4": 1}},
+    "RE-104E": {"name": "탈영병 무리(엄도현)", "cat": "event", "regions": ["R01", "R02", "R11"], "ban": ["업무"], "time": "any", "weight": 8,
+                "cond": "stage(\"MQ-106\") >= 100 and UQ03_EOM == 2 and GAME_DAY >= UQ03_REPORT_DAY + 21 and dead(\"N-R01-050\") == 0",
+                "groups": [{"side": "a", "units": [["N-R01-050", 1, 1], ["N-DS-E2", 1, 2]], "hostile": False}],
+                "talk": "RE-104E_TALK", "states": {"S1": 3, "S4": 1}},
     # ---- 순찰(호감 단계를 보여 주는 무대, SD-05 §5.5)
     "RE-061": {"name": "계엄군 분대", "cat": "patrol", "regions": ["R01", "R02", "R07", "R11"], "prefer": ["큰길", "업무"], "ban": ["산지"],
                "time": [6, 20], "weight": 6, "faction": "BJ",
@@ -111,7 +122,8 @@ CAT_W = {"경합": {"patrol": 30, "clash": 30, "creature": 10, "raider": 8, "tra
 REGION_STATE = {"R01": "경합", "R02": "경합"}
 STATES = ["S1", "S2", "S3", "S4", "S5", "S6", "S7"]
 # 비적대 사람(무명 NPC) 외형: 그림 시트 이름(종이 인형)
-FRIENDLY_SHEET = {"N-TRADER": "en_trader_loco", "N-REFUGEE": "en_refugee_loco", "N-DOWNED": "en_downed_loco"}
+FRIENDLY_SHEET = {"N-TRADER": "en_trader_loco", "N-REFUGEE": "en_refugee_loco", "N-DOWNED": "en_downed_loco",
+                  "N-DS-E1": "en_cr401_loco", "N-DS-E2": "en_cr401_loco", "N-R01-050": "en_cr401_loco"}
 
 
 def main():

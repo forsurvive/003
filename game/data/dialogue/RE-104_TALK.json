@@ -1,0 +1,159 @@
+{
+ "id": "RE-104_TALK",
+ "title": "탈영병 무리",
+ "loc": "",
+ "npc": "N-DS-E1",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "ROUTE": 4,
+  "PAPERS": 8,
+  "TURN": 12,
+  "LEAVE": 17
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "계급장을 뜯어 낸 군복 둘 셋. 총은 들었지만 겨누지 않는다. 하나가 손바닥을 펴 보인다."
+  },
+  {
+   "op": "line",
+   "who": "N-DS-E1",
+   "emo": "피곤",
+   "text": "쏘지 마십시오. 노들섬 가는 길입니다. 다리목 말고 — 거긴 판독기가 있어서."
+  },
+  {
+   "op": "do",
+   "fx": "RE104_N = RE104_N + 1"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "강가 둔치 길로 가. 철교 밑 배가 있어",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "ROUTE",
+     "id": "RE-104_TALK:1:0"
+    },
+    {
+     "text": "(위조 등록증을 건넨다)",
+     "tags": [],
+     "cond": "has(\"M-062\") == 1",
+     "fx": "",
+     "to": "PAPERS",
+     "id": "RE-104_TALK:1:1"
+    },
+    {
+     "text": "검문소에 넘기겠다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TURN",
+     "id": "RE-104_TALK:1:2"
+    },
+    {
+     "text": "갈 길 가",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "LEAVE",
+     "id": "RE-104_TALK:1:3"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-DS-E1",
+   "emo": "놀람",
+   "text": "…고맙습니다. 분류반이 사람 고르는 거, 저도 봤습니다. 그래서 나왔습니다."
+  },
+  {
+   "op": "do",
+   "fx": "karma(25); SQE_DESERTER = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-DS-E1",
+   "emo": "놀람",
+   "text": "이걸 왜 우리한테… (등록증을 품에 넣는다) 이름을 새로 하나 지어야겠습니다."
+  },
+  {
+   "op": "do",
+   "fx": "take(\"M-062\", 1); karma(25); SQE_DESERTER = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-DS-E2",
+   "emo": "분노",
+   "text": "…그래, 그게 규정이지."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "탈영병들이 총을 내려놓는다. 해 질 녘 사당 고개 순찰조가 그들을 데려간다."
+  },
+  {
+   "op": "do",
+   "fx": "aff(\"BJ\", 3); karma(-25)"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-DS-E1",
+   "emo": "기본",
+   "text": "그럼 서로 못 본 걸로."
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-03.txt"
+}
