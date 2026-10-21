@@ -21,8 +21,15 @@
   "SHOP": 44,
   "FIX": 46,
   "AFTER": 48,
-  "FRIEND": 51,
-  "S04BATT": 53
+  "AFTER2": 51,
+  "FRIEND": 54,
+  "U7MA": 56,
+  "U7MA_OK": 57,
+  "U7MA_NG": 63,
+  "U7MA_SAID": 66,
+  "U7MA_HOT": 69,
+  "U7MA_SELF": 73,
+  "S04BATT": 76
  },
  "ops": [
   {
@@ -81,6 +88,14 @@
      "fx": "",
      "to": "SHOP",
      "id": "MQ-103_MA:1:1"
+    },
+    {
+     "text": "공하경 일을 먼저 말한다",
+     "tags": [],
+     "cond": "UQ07_HEARD == 1 and UQ07_RES == 0 and UQ07_MA_NO == 0 and dead(\"N-R02-017\") == 0",
+     "fx": "",
+     "to": "U7MA",
+     "id": "MQ-103_MA:1:2"
     }
    ]
   },
@@ -383,6 +398,21 @@
   },
   {
    "op": "if",
+   "cond": "UQ07_MA_SAID == 0 and UQ07_TOY == 2 and UQ07_RES == 2",
+   "to": "U7MA_SAID"
+  },
+  {
+   "op": "if",
+   "cond": "UQ07_MA_SAID == 0 and UQ07_TOY == 2 and UQ07_RES == 1 and UQ07_STOLE == 1",
+   "to": "U7MA_HOT"
+  },
+  {
+   "op": "if",
+   "cond": "UQ07_MA_SAID == 0 and UQ07_TOY == 2 and UQ07_RES == 4",
+   "to": "U7MA_SELF"
+  },
+  {
+   "op": "if",
    "cond": "MQ103_CONF == 1",
    "to": "FRIEND"
   },
@@ -434,12 +464,20 @@
      "id": "MQ-103_MA:5:3"
     },
     {
+     "text": "공하경 일을 먼저 말한다",
+     "tags": [],
+     "cond": "UQ07_HEARD == 1 and UQ07_RES == 0 and UQ07_MA_NO == 0 and dead(\"N-R02-017\") == 0",
+     "fx": "",
+     "to": "U7MA",
+     "id": "MQ-103_MA:5:4"
+    },
+    {
      "text": "(돌아선다)",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "MQ-103_MA:5:4"
+     "id": "MQ-103_MA:5:5"
     }
    ]
   },
@@ -483,14 +521,136 @@
      "id": "MQ-103_MA:6:2"
     },
     {
+     "text": "공하경 일을 먼저 말한다",
+     "tags": [],
+     "cond": "UQ07_HEARD == 1 and UQ07_RES == 0 and UQ07_MA_NO == 0 and dead(\"N-R02-017\") == 0",
+     "fx": "",
+     "to": "U7MA",
+     "id": "MQ-103_MA:6:3"
+    },
+    {
      "text": "(돌아선다)",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "MQ-103_MA:6:3"
+     "id": "MQ-103_MA:6:4"
     }
    ]
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "\"하경이가 광장 애한테 장난감을 고쳐 주고 싶대요. 진공관 셋이요.\"",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "쉬움"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "U7MA_OK",
+     "id": "MQ-103_MA:7:0",
+     "fail": "U7MA_NG"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-006",
+   "emo": "미소",
+   "text": "(웃음을 참다 터뜨린다) 담요 밑에 그거? 진작 알았어. 짐칸 용접 자국이 내 솜씨보다 낫더라."
+  },
+  {
+   "op": "line",
+   "who": "C-006",
+   "emo": "기본",
+   "text": "(랙에서 성한 관 셋을 골라 뽑는다) 하경아. 장부엔 '시험용'이라고 적어 둬."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-017",
+   "emo": "놀람",
+   "text": "…선생님!"
+  },
+  {
+   "op": "line",
+   "who": "C-006",
+   "emo": "기본",
+   "text": "손이 빠른 애야. 나보다 빨라. 작은 정비는 이제 쟤가 봐 — 값은 덜 받고."
+  },
+  {
+   "op": "do",
+   "fx": "aff(\"JH\", 3); xp(50); UQ07_RES = 2; UQ07_TOY = 1; UQ07_DISC = 1; quest(\"UQ-07\", 100)"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-006",
+   "emo": "기본",
+   "text": "부품은 장부에 달려 있어. 하경이가 필요하면 하경이가 직접 말하라 해. 남 입 빌리지 말고."
+  },
+  {
+   "op": "do",
+   "fx": "UQ07_MA_NO = 1"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-006",
+   "emo": "미소",
+   "text": "광장 쪽에서 덜컹거리는 소리 들었어? 하경이 솜씨야. 손이 빠른 애야."
+  },
+  {
+   "op": "do",
+   "fx": "UQ07_MA_SAID = 1"
+  },
+  {
+   "op": "goto",
+   "to": "AFTER2"
+  },
+  {
+   "op": "line",
+   "who": "C-006",
+   "emo": "기본",
+   "text": "부품 상자에 관이 셋 비더라. (눈을 가늘게 뜨고 본다)"
+  },
+  {
+   "op": "line",
+   "who": "C-006",
+   "emo": "기본",
+   "text": "…광장 쪽에서 덜컹거리는 소리는 들었어. 손이 빠르긴 하지. 누구 손인지는 몰라도."
+  },
+  {
+   "op": "do",
+   "fx": "UQ07_MA_SAID = 1"
+  },
+  {
+   "op": "goto",
+   "to": "AFTER2"
+  },
+  {
+   "op": "line",
+   "who": "C-006",
+   "emo": "미소",
+   "text": "하경이가 직접 와서 말하더라. 그게 맞아. 남 입 빌리는 것보다."
+  },
+  {
+   "op": "do",
+   "fx": "UQ07_MA_SAID = 1"
+  },
+  {
+   "op": "goto",
+   "to": "AFTER2"
   },
   {
    "op": "line",

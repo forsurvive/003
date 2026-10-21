@@ -85,6 +85,8 @@ ENGINE_VARS |= {"UQ04_" + k for k in "KNOW OPEN OPEN_DAY LOCK DUE THAW THAW_DAY 
 ENGINE_VARS |= {"UQ01_" + k for k in "TALKS SOL CODE RELAY RELAYED LR13 FAILED HINT THEFT_DAY WITNESS SEEN SEEN_SAID BAN_DAY GUEST SERVED TIN_SAID TIN_BC".split()} | {"V24_" + k for k in "HOSTILE WEEK N1 N2 N3 N4 TICKETS SEEN".split()} \
     | {"UQ02_" + k for k in "HEARD HOW END END_DAY BARK_UNTIL SEE_OFF_UNTIL DOG_OUT LEG SPOT ROUTE PAW_DAY CARRY SAW TOLD_EOM WITNESS FOLLOW GONE_DAY NAMED SOLNA_TOLD PUP_SPOT NAME".split()} | {"UQ03_" + k for k in "RES DAY GOT_DAY PASS EOM EOM_DAY MOM_MET DELIVER_DAY BACK_READ COLD RE104 LATE PHOTO_GIVEN REPORT_DAY TOLD_MOM MOMSAID SOUP CANS KNOWGONE".split()} \
     | {"UQ05_" + k for k in "COW PACK LOST_DAY CAUSE SPOT KILL_SEEN REFUSE_DAY DISC NEWCOW_DAY HEARD LEAD DOGS PEND TOLD SAW REWARD SPILL ABSENT CX CY PACK_DAY AT RES MEAT GONE_SAID".split()} | {"RE104_N"}
+# R02 비표시 퀘스트(1-12h, SD-05 §3.4 · 진행기 UqR02): 뜻은 script/act1/UQ-07 · 10.txt 머리 주석
+ENGINE_VARS |= {"UQ07_" + k for k in "VISIT HEARD RES DISC TOY KDAY ME KID_SEEN STOLE MA_NO MA_SAID KSAID NOTE SELF LOST LOST_DAY LOST_SAID".split()}
 ENGINE_VARS |= {"GR_" + k for k in "CORE PUSH BUS CORE_DAY LV_A LV_B LV_C A B C STAFF STAFF_DAY STAFF_K KEY LOST SIGKEY WHISTLE MUSTER MUSTER_K REEFER DRIFT RATS SB SB_DAY ROOF CHART TAG PARK CHEER ESC GUIDE TIP MUSTER_DAY".split()}   # 1-D4 구로 차량기지
 ENGINE_VARS |= {"GA_" + k for k in "SEEN BOX BOX_DAY BOX_DONE CRATE_DAY FEUD DECOY DECOY_DAY COUNTED TOLD BOSS PICK PAID".split()} | {"PD_R01_6", "PC_HEAD"}   # 1-D6 가산 아울렛
 ENGINE_VARS |= {"UQ69_" + k for k in "PAPER DIE DEST DEST_DAY HEARD MET T1 T2 T3 ASKED HALF DONE_DAY REWARD TOLD".split()} \
@@ -116,7 +118,7 @@ UNNAMED = {"N-TRADER": "떠돌이 고물상", "N-VG-S1": "고물상", "N-VG-H1":
            "N-GT-M1": "고터 민병", "N-GT-M2": "고터 민병", "N-J03-R1": "운반조 짐꾼",
            "N-BJ-C1": "다리목 검문조장", "N-SB-R1": "새벽인력 모집원",
            "N-SB-L1": "인솔 반장", "N-SB-H1": "출장소 인수원", "N-JY-P1": "방범대 조장", "N-ND-G1": "노들 남문 경비",
-           "N-BG-G1": "밤손님", "N-BJ-C2": "다리목 분대장", "N-DS-E1": "탈영병", "N-DS-E2": "탈영병"}   # 1-12f FQ-SB-02 현장 운송   # 1-12e FQ-JH-03 이동 검문 · 모집원   # 1-12d FQ-JH-02 · 고터 지하상가   # 1-12b FQ-GS-01 · GS-02   # 1-8g 노량진 관제 중계소
+           "N-BG-G1": "밤손님", "N-BJ-C2": "다리목 분대장", "N-DS-E1": "탈영병", "N-DS-E2": "탈영병", "N-JM-K1": "광장 아이"}   # 1-12f FQ-SB-02 현장 운송   # 1-12e FQ-JH-03 이동 검문 · 모집원   # 1-12d FQ-JH-02 · 고터 지하상가   # 1-12b FQ-GS-01 · GS-02   # 1-8g 노량진 관제 중계소
 DECISION = ["어느 편에 서겠", "편에 서겠습니까", "제안을 수락", "받아들이겠습니까", "어느 쪽을 택하", "누구 편이"]
 OLD_NAMES = ["강태오", "천웨이", "국민방송"]
 PAGE = 160

@@ -312,6 +312,9 @@ func _init() -> void:
 	for k in "COW PACK LOST_DAY CAUSE SPOT KILL_SEEN REFUSE_DAY DISC NEWCOW_DAY HEARD LEAD DOGS PEND TOLD SAW REWARD SPILL ABSENT CX CY PACK_DAY AT RES MEAT GONE_SAID".split(" "):
 		vars.declare("UQ05_" + k, "int", 0)
 	vars.declare("RE104_N", "int", 0)
+	# R02 비표시 퀘스트(1-12h, SD-05 §3.4): 뜻은 script/act1/UQ-07 · 10.txt 머리 주석 — 진행기 UqR02
+	for k in "VISIT HEARD RES DISC TOY KDAY ME KID_SEEN STOLE MA_NO MA_SAID KSAID NOTE SELF LOST LOST_DAY LOST_SAID".split(" "):
+		vars.declare("UQ07_" + k, "int", 0)
 	# 1-D4 구로 차량기지(DG-GR): 뜻은 script/act1/GR.txt 머리 주석 — CORE 기관차 · PUSH 남은 밀기 · LV_* 레버 · A · B · C 입환 결과 · STAFF 역무원 · MUSTER 안 간 사람들
 	for k in "CORE PUSH BUS CORE_DAY LV_A LV_B LV_C A B C STAFF STAFF_DAY STAFF_K KEY LOST SIGKEY WHISTLE MUSTER MUSTER_K REEFER DRIFT RATS SB SB_DAY ROOF CHART TAG PARK CHEER ESC GUIDE TIP MUSTER_DAY".split(" "):
 		vars.declare("GR_" + k, "int", 0)

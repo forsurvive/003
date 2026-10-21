@@ -1428,6 +1428,8 @@ func fix_jobs(vid: String) -> Array:
 		rate *= 1.25                                                    # 마을을 판 손님: 값은 따로(원고 BC_NAM COLD)
 	if vid == "V09" and st.vars.has("MQ103_CONF") and int(st.vars.get_v("MQ103_CONF")) == 1:
 		rate *= 0.9                                                     # "정비는 1할 빼 줄게"(MQ-103 FRIEND)
+	if vid == "V09" and st.vars.has("UQ07_DISC") and int(st.vars.get_v("UQ07_DISC")) == 1 and not st.is_dead("N-R02-017"):
+		rate *= 0.8                                                     # UQ-07 ①②: 작은 정비는 공하경 몫(SD-05 '소형 수리 −20%')
 	var out: Array = []
 	var ks := st.items.keys()
 	ks.sort()

@@ -1,0 +1,154 @@
+{
+ "id": "UQ07_KID",
+ "title": "광장 아이",
+ "loc": "L-R02-11",
+ "npc": "N-JM-K1",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "PORTER": 7,
+  "HAS": 9,
+  "HAS_BELL": 13,
+  "HAS_ME": 15,
+  "GIVE": 17,
+  "GIVE2": 19
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "UQ07_TOY == 3 and has(\"M-431\") >= 1",
+   "to": "GIVE"
+  },
+  {
+   "op": "if",
+   "cond": "UQ07_TOY == 2",
+   "to": "HAS"
+  },
+  {
+   "op": "do",
+   "fx": "UQ07_KID_SEEN = 1"
+  },
+  {
+   "op": "line",
+   "who": "N-JM-K1",
+   "emo": "미소",
+   "text": "배송이요! (빈 깡통 상자를 끈으로 끌고 지나간다) 비켜 주세요, 짐 들었어요."
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R02-015\") == 0",
+   "to": "PORTER"
+  },
+  {
+   "op": "line",
+   "who": "N-JM-K1",
+   "emo": "기본",
+   "text": "상자 안요? 비었어요. 그래도 배송은 배송이에요. 끝까지 가는 거예요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-JM-K1",
+   "emo": "기본",
+   "text": "짐꾼 아저씨처럼요. 아저씨는 짐만 들면 주소를 중얼거려요. 영등포로 4가 31, 2층 맨 끝. 저도 외웠어요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "UQ07_ME == 1",
+   "to": "HAS_ME"
+  },
+  {
+   "op": "if",
+   "cond": "UQ07_RES == 3",
+   "to": "HAS_BELL"
+  },
+  {
+   "op": "line",
+   "who": "N-JM-K1",
+   "emo": "미소",
+   "text": "하경 언니가 고쳐 줬어요! 진짜 배송 로봇이에요. 등에 불도 들어와요. 주황색."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-JM-K1",
+   "emo": "미소",
+   "text": "하경 언니가 고쳐 줬어요! 불은 안 들어오는데 종이 울려요. 딸랑 하면 배송 출발이에요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-JM-K1",
+   "emo": "미소",
+   "text": "배송 1호 오늘도 일해요. 짐칸엔 병뚜껑. 요금은 안 받아요 — 고쳐 준 사람은."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-JM-K1",
+   "emo": "놀람",
+   "text": "…그거 하경 언니 담요 밑에 있던 거다!"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "태엽 배송 로봇을 건넨다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "GIVE2",
+     "id": "UQ07_KID:1:0"
+    },
+    {
+     "text": "(아직 주지 않는다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ07_KID:1:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "take(\"M-431\", 1); UQ07_TOY = 2; UQ07_ME = 1; UQ07_KDAY = GAME_DAY; xp(50); quest(\"UQ-07\", 100)"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "아이가 태엽을 감는다. 로봇이 덜컹 일어나 짐칸을 흔들며 분수 쪽으로 간다. 종이 딸랑 운다."
+  },
+  {
+   "op": "line",
+   "who": "N-JM-K1",
+   "emo": "미소",
+   "text": "배송 1호 출발! …비켜요, 진짜 배송이에요!"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-07.txt"
+}

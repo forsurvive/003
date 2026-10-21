@@ -30,6 +30,7 @@ var uq71: Uq71                                     ## 비표시 퀘스트 UQ-71(
 var u02: U02Paths                                  ## U02 남태령 지하(1-D2)
 var uq04: Uq04                                     ## UQ-04 7호 냉동 창고(1-D3)
 var uq_r01: UqR01                                  ## R01 비표시 퀘스트 넷(1-12g)
+var uq_r02: UqR02                                  ## R02 비표시 퀘스트(1-12h)
 var gr: Gr                                         ## 구로 차량기지(1-D4)
 var kt: Kt                                         ## 여의도 금탑(1-D5a)
 var ga: Ga
@@ -163,6 +164,9 @@ func _ready() -> void:
 	uq_r01 = UqR01.new()
 	add_child(uq_r01)
 	uq_r01.setup(host, true)
+	uq_r02 = UqR02.new()
+	add_child(uq_r02)
+	uq_r02.setup(host, true)
 	gr = Gr.new()
 	add_child(gr)
 	gr.setup(host, true)
@@ -659,6 +663,24 @@ func _ready() -> void:
 				["go", sd.x + 4, sd.y + 12], ["go", sd.x + 17, sd.y + 12],
 				["until", "UQ05_COW == 3", 25.0, "사당 광장 말뚝 — 데려다줌", "uq05_home"],
 				["check", "UQ05_PEND == 1 and UQ05_RES == 2 and (UQ05_ABSENT == 1 or CARAVAN_V54 == 2)", "위강윤이 맡음 — 다음 사당 정류까지 말뚝 · 사례는 연보경이 다음에"], ["shot", "uq05_post"]]
+		"uq07":                                                         # 1-12h UQ-07 견습생의 첫 납땜: 광장 아이 '배송이요'(먼저 봄) → 배전실 둘째 입장 · 공하경 3칸 →
+			st.vars.set_v("AFF_JH", 12)                                  #   혼잣말(10) → '그 애?' → 진공관 셋(①, 100) → 다음 06:00 아이 손 → 낮 광장 쪽지
+			st.vars.set_v("GAME_DAY", 6)
+			st.vars.set_v("UQ07_VISIT", 1)                               # 첫 방문(해독)은 끝났다
+			st.quests.set_stage("MQ-103", 40)
+			st.vars.set_v("K_CODE", 1)
+			st.call_fn("give", ["M-014", 3])
+			host.date_text = "2277. 10. 29.  10:00"
+			host.enter("J-03", "from_J-02")
+			plan = [["hp", 3000], ["wait", 1.0], ["want", []], ["talk", "N-JM-K1"], ["wait", 1.5], ["shot", "uq07_kid"],
+				["check", "UQ07_KID_SEEN == 1", "광장 아이를 먼저 봄 — '배송이요'"],
+				["warp", "J-06", "from_J-03"], ["wait", 1.5], ["check", "UQ07_VISIT == 2", "배전실 둘째 입장"],
+				["go", 8, 9, "J-06"], ["until", "UQ07_HEARD == 1", 10.0, "공하경 혼잣말 — 진공관 셋(10)", "uq07_hear"],
+				["want", ["광장에서 상자 끄는 그 애?", "진공관 셋을 건넨다"]], ["talk", "N-R02-017"], ["wait", 2.0], ["shot", "uq07_give"],
+				["check", "UQ07_RES == 1 and UQ07_TOY == 1 and UQ07_DISC == 1 and UQ07_STAGE == 100", "① 진공관 셋 — 오늘 밤 납땜(100) · 정비 ×0.8"],
+				["hours", 23], ["wait", 1.0], ["check", "UQ07_TOY == 2", "다음 06:00 — 아이 손(지금 09시 — 아이는 08~18시 광장)"],
+				["warp", "J-03", "from_J-06"], ["wait", 1.0], ["until", "UQ07_NOTE == 1", 10.0, "배송 1호가 쪽지를 끌고 옴", "uq07_note"],
+				["want", []], ["talk", "N-JM-K1"], ["wait", 1.5], ["shot", "uq07_kid_after"]]
 		"sb02", "sb02f":                                                # 1-12f FQ-SB-02(sb02f: 방범대와 싸우는 갈래): 04시 본소 마당 출발 줄(갈고리) → 서부간선 고가 상판 → 북 램프 끝 오태수 탈주(데려옴) →
 			st.vars.set_v("AFF_SB", 25)                                  #   신도림 쉬는 박자 → 노량진로 끝 방범대([화술 보통] 통과) → 철교 남단 노들 경비 60캡 → 인수원 인계(넷 · 10시 전 · M-129)
 			st.vars.set_v("PC_CAPS", 500)

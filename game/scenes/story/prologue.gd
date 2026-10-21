@@ -198,6 +198,7 @@ var uq71: Uq71                                          ## 비표시 퀘스트 U
 var u02: U02Paths                                       ## U02 남태령 지하(1-D2 — 터널 회로 UG-H01 · 밀통로 UG-H02 · 지하 초소)
 var uq04: Uq04                                          ## UQ-04 7호 냉동 창고(1-D3 — 독산 육가공 단지 DG-DS)
 var uq_r01: UqR01                                       ## R01 비표시 퀘스트 UQ-01 · 02 · 03 · 05(1-12g — 번개24 · 백구 · 엄도현 · 누렁이)
+var uq_r02: UqR02                                       ## R02 비표시 퀘스트 UQ-07 · 10(1-12h — 견습생의 첫 납땜 · 저울추)
 var gr: Gr                                              ## 구로 차량기지 던전 DG-GR(1-D4 — 입환 · 출발 진행)
 var kt: Kt                                              ## 여의도 금탑 던전 DG-KT(1-D5a — 로비 · 지하 수족관)
 var ks: Ks                                              ## 구로 공단 지식산업센터 · 문래 DG-KS(1-D7 — 라인 박자 · 출근 카드 · 11월 서류 · 금형)
@@ -338,6 +339,10 @@ func _paths() -> void:
 		uq_r01 = UqR01.new()
 		add_child(uq_r01)
 		uq_r01.setup(host, log_on)
+	if uq_r02 == null:
+		uq_r02 = UqR02.new()
+		add_child(uq_r02)
+		uq_r02.setup(host, log_on)
 	if gr == null:
 		gr = Gr.new()
 		add_child(gr)

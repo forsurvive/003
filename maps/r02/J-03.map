@@ -85,6 +85,12 @@ npc N-R02-014 15 15 E cond="(SQ_S11_ESCORT != 1 and SQ_S11_READ != 0) and SQ_S13
 text 15 15 "연락부 책상에 쪽지 — '볼트 투표. 이름 하나 적고 옴. 인지영'." cond="SQ_S13_V_I == 2 or SQ_S13_V_I == 3"
 text 15 15 "빈 벤치. 누가 놓고 갔는지, 유인물 한 장 위에 캡 하나가 눌러져 있다. '종전'." cond="dead(\"N-R02-014\")"
 prop bench_o 14 17
+# 1-12h UQ-07 광장 아이(N-JM-K1, 사람 · 여덟 살 · 지상 출신 — 밤엔 상가 숙소, 맡은 어른 공하경 · 외형 K라 공격 대상이 아니다). 낮에만 · 로봇을 받은 뒤엔 시간대마다 바크가 다르다
+#   뒤를 따라오는 깡통 상자 · 배송 1호는 진행기 UqR02가 띄우는 배우(cr_canbox_loco · cr_toybot_loco — 1칸 뒤, 공격 대상 아님)
+npc N-JM-K1 22 14 S look=K1-S2-HR01-H1-T01-1-PF00-HD00-EY00 route=분수:22,14,5;통로:19,22,4;서쪽:12,13,4 cond="GAME_HOUR >= 8 and GAME_HOUR < 18 and UQ07_TOY != 2" bark="배송이요! 비켜 주세요, 짐 들었어요. …빈 상자도 짐이에요."
+npc N-JM-K1 22 14 S look=K1-S2-HR01-H1-T01-1-PF00-HD00-EY00 route=분수:22,14,5;통로:19,22,4;서쪽:12,13,4 cond="GAME_HOUR >= 8 and GAME_HOUR < 18 and UQ07_TOY == 2 and GAME_HOUR < 11" bark="(로봇 태엽을 감는다) 배송 1호 출발! 짐칸엔 버섯 한 개!"
+npc N-JM-K1 22 14 S look=K1-S2-HR01-H1-T01-1-PF00-HD00-EY00 route=분수:22,14,5;통로:19,22,4;서쪽:12,13,4 cond="GAME_HOUR >= 8 and GAME_HOUR < 18 and UQ07_TOY == 2 and GAME_HOUR >= 11 and GAME_HOUR < 15" bark="(덜컹거리는 로봇을 뒤쫓는다) 거기 서! 배송 아직 안 끝났어!"
+npc N-JM-K1 22 14 S look=K1-S2-HR01-H1-T01-1-PF00-HD00-EY00 route=분수:22,14,5;통로:19,22,4;서쪽:12,13,4 cond="GAME_HOUR >= 8 and GAME_HOUR < 18 and UQ07_TOY == 2 and GAME_HOUR >= 15" bark="(로봇 짐칸에 병뚜껑을 싣는다) 분수까지 배송이요. 요금은 병뚜껑 하나."
 npc N-R02-012 23 11 S route=분수:23,11,6;게시판:9,4,5;벤치:21,16,6 cond="SQ_S12_SB == 0" bark="2077년 10월분 배급표 있어? 그 달 것만. 다른 달은 넘쳐."
 npc N-R02-012 16 15 W cond="SQ_S12_SB == 1" bark="앉아 있으니 장사가 안 되네. 괜찮아."
 # 분수 복사지 — 자리가 정해진 사람 수만큼(재미 검수: 하나만 정해져도 셋이 다 적히던 것을 고침)
