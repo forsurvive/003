@@ -6,18 +6,24 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "TAKEN": 5,
-  "PICK": 7,
-  "OPENED": 9,
-  "IN": 12,
-  "CLEAN": 14,
-  "BLOWN": 16
+  "TAKEN": 6,
+  "PICK": 8,
+  "OPENED": 10,
+  "IN": 13,
+  "CLEAN": 15,
+  "RECHAINED": 17,
+  "BLOWN": 19
  },
  "ops": [
   {
    "op": "if",
    "cond": "FQ_JH01_OPEN == 3",
    "to": "BLOWN"
+  },
+  {
+   "op": "if",
+   "cond": "FQJH01_STAGE == 200",
+   "to": "RECHAINED"
   },
   {
    "op": "if",
@@ -175,6 +181,16 @@
      "id": "FQJH01_SHUTTER:4:1"
     }
    ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "셔터에 새 쇠사슬. 자물쇠에 상인회 도장 — '출입 금지. 상인회'. 밑에서 긁는 소리는 여전하다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
   },
   {
    "op": "line",

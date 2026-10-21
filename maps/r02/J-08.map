@@ -80,5 +80,10 @@ box 4 12 trash name="B구역 고물 상자"
 prop scrap_pile 8 13
 prop remains 36 13
 box 36 13 corpse_scav name="쥐에 갉힌 유해"
-text 37 13 "유해 곁에 지하시장 출입패 반쪽. 이름 칸이 갉혔다."
+text 37 13 "유해 곁에 지하시장 출입패 반쪽. 이름 칸이 갉혔다. 2077년 그날 밤 B구역에 남았던 사람 — 광장 장부엔 'B구역 · 못 나옴' 한 줄로만 적혀 있다."
 prop work_lamp 10 8
+prop shop_shelf_goods 12 9
+text 12 9 "엎어진 진열장. 2077년 가격표가 그대로 붙어 있다 — 우산 9,900원." w=2
+prop scrap_pile2 6 11
+prop shop_shelf 28 11
+text 28 11 "통조림 선반. 아래 칸 상자는 쥐가 다 뚫었고, 위 칸 통조림은 그대로다 — 쥐는 깡통을 못 연다." w=2

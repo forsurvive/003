@@ -148,4 +148,4 @@ prop drum_fire 8 17
 prop guard_chair 9 18
 prop guard_chair 7 18
 text 8 17 "드럼통 불가에 의자 둘. 누가 앉았다 갔는지 의자가 아직 따뜻하…지는 않다. 구울은 체온이 낮다."
-npc CR-457 26 20 W sheet=en_cr457_loco route=광장:26,20,6;문앞:22,6,4;남쪽:22,25,5 bark="장사는 조용히. 총은 넣어 둬."
+npc CR-457 26 20 W sheet=en_cr457_loco route=광장:26,20,6;문앞:22,6,4;셔터:33,4,5;남쪽:22,25,5 bark="장사는 조용히. 총은 넣어 둬."

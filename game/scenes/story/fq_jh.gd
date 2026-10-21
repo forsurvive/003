@@ -19,6 +19,7 @@ const INNER := ["b", "c"]
 const GAP_X := 23                                                       ## 방화 셔터 칸(23, 9~11) — 이 x 동쪽이 안쪽
 const SHUT_CELLS := [Vector2i(23, 9), Vector2i(23, 10), Vector2i(23, 11)]
 const BIG := Vector2(36 * 32 + 16, 1 * 32 + 16)                        ## J-03 B구역 큰 셔터 가운데
+const SHOP_HOLE := Vector2i(43, 3)                                      ## B-16 셔터 구멍 앞(굴 C의 다른 입)
 const COOL := 7.0                                                       ## 물결 사이 쉼(초)
 const NEAR_PLATE := 3.0                                                 ## 철판을 대려면 이 칸 안에 쥐가 없어야 한다
 
@@ -111,6 +112,7 @@ func tick(dt := 0.5) -> void:
 		_tick_b(dt)
 	elif _zone() == "J-11" and not _leak.is_empty():
 		_leak = _leak.filter(func(e) -> bool: return is_instance_valid(e) and not e.cmb.dead)
+		_s1("LEAK_N", _leak.size())                                     # 잡은 만큼 줄어 남는다(다시 들어와도 넷으로 돌아가지 않음, P10)
 		if _leak.is_empty() and v1("LEAK") == 1:
 			_s1("LEAK", 2)
 			host.hint("버섯 선반 사이가 조용해졌다. 갉힌 선반에서 포자가 눈처럼 날린다.", 5.0)
@@ -137,11 +139,14 @@ func _tick_b(dt: float) -> void:
 	var kf := 0
 	var ki := 0
 	for e in _live["x"] + _live["a"] + _live["b"] + _live["c"]:
+		if str(e.get_meta("enemy_id", "")) == "CR-097":
+			continue                                                      # 왕쥐는 KOUT 한 곳에서 센다(떠도는 시궁쥐 수에 겹쳐 세지 않음)
 		if not _origin_open(e):
 			if _inner(e.loco.logical):
 				ki += 1
 			else:
 				kf += 1
+	_s1("KAWAY", 1 if _king_away() else 0)                               # 왕쥐가 둥지에서 4칸 넘게 나와 있나(둥지 좀도둑 — 재미 검수)
 	_s1("SF", kf)                                                         # 떠도는 쥐(닫힌 굴에서 나와 남은 것) — 다시 들어오면 그만큼 다시 선다
 	_s1("SI", ki)
 	_check_clear()
@@ -162,7 +167,10 @@ func _inner(p: Vector2) -> bool:
 
 func _on_day(_d: int) -> void:
 	if v1("DONE") > 0 and day() > v1("DONE") and v1("REOPEN") == 0:
-		_reopen()
+		if _zone() in ["J-03", "J-08"]:
+			_s1("REOPEN", 2)                                              # 보는 앞에서 셔터가 바뀌지 않게 — 다음에 들어올 때 연다
+		else:
+			_reopen()
 
 
 # ---------------------------------------------------------------- 맵
@@ -173,13 +181,15 @@ func _on_map(id: String) -> void:
 		_out[k] = false                                                   # 맵을 떠나면 열린 굴의 쥐는 굴로 돌아갔다(물결 그대로)
 		_cool[k] = 6.0                                                    # 들어선 사람을 알아채기까지(첫 물결 전 틈 — 굴 앞에 먼저 닿을 수 있다)
 	_leak = []
+	if v1("REOPEN") == 2 and not id in ["J-03", "J-08"]:
+		_reopen()
 	if id == "J-08":
 		_enter_b()
 	elif id == "J-11" and v1("LEAK") == 1:
 		_spawn_leak()
 	elif id == "J-03":
-		if v1("OPEN") >= 1:
-			host.map.set_prop_state(Vector2i(35, 1), "open")                # 사슬을 풀고 들어 올린 셔터(폭파면 찢긴 채 — 그림은 'open'과 같은 틈)
+		if v1("OPEN") == 3 or (v1("OPEN") >= 1 and st.quests.stage(Q1) != 200):
+			host.map.set_prop_state(Vector2i(35, 1), "open")                # 실패(200)면 상인회가 사슬을 다시 감았다 — 폭파만 찢긴 채                # 사슬을 풀고 들어 올린 셔터(폭파면 찢긴 채 — 그림은 'open'과 같은 틈)
 
 
 func _enter_b() -> void:
@@ -231,12 +241,16 @@ func _shutter_prop() -> Dictionary:
 
 # ---------------------------------------------------------------- 쥐
 func _wave(k: String) -> void:
-	var ids: Array = ["CR-095", "CR-095"]
-	if k == "b":
-		ids = ["CR-096", "CR-095"]
-	elif k == "c" and v1("KING") == 0 and v1("KOUT") == 0 and not _king_alive():
-		ids = ["CR-097", "CR-095", "CR-095"]                              # 왕쥐는 둥지가 내보내는 다음 물결에(떠났다 돌아와도 다시 — 굴로 돌아갔으니)
-	var c: Vector2i = HOLE_OUT[k]
+	var night := gv("GAME_HOUR") >= 20 or gv("GAME_HOUR") < 5
+	var n := clampi(2 + randi_range(-1, 1), 1, 3)                         # 물결마다 수 · 구성 · 나오는 칸이 다르다(정해진 무대처럼 보이지 않게, 재미 검수)
+	var ids: Array = []
+	for i in n:
+		ids.append("CR-096" if (k == "b" or night) and randf() < 0.45 else "CR-095")
+	if k == "c" and v1("KING") == 0 and v1("KOUT") == 0 and not _king_alive():
+		ids.push_front("CR-097")                                          # 왕쥐는 둥지가 내보내는 다음 물결에(떠났다 돌아와도 다시 — 굴로 돌아갔으니)
+	var c: Vector2i = HOLE_OUT[k] + Vector2i(randi_range(-1, 1), 0)
+	if k == "c" and randf() < 0.35 and str(ids[0]) != "CR-097":         # 왕쥐는 늘 둥지에서 나온다
+		c = SHOP_HOLE                                                     # 한 물결은 B-16 셔터 구멍으로 — 굴이 점포 뒤로 이어졌다
 	for i in ids.size():
 		_rat(str(ids[i]), c + Vector2i(i - ids.size() / 2, 0), k)
 	_out[k] = true
@@ -270,6 +284,14 @@ func _rats_near(c: Vector2i, r: float) -> bool:
 		for e in _live[k]:
 			if is_instance_valid(e) and not e.cmb.dead and e.loco.logical.distance_to(p) <= r * 32.0:
 				return true
+	return false
+
+
+func _king_away() -> bool:
+	for k in _live:
+		for e in _live[k]:
+			if is_instance_valid(e) and not e.cmb.dead and str(e.get_meta("enemy_id", "")) == "CR-097":
+				return e.loco.logical.distance_to(Vector2(43 * 32 + 32, 12 * 32)) > 4.0 * 32.0
 	return false
 
 
@@ -416,7 +438,10 @@ func _raise() -> void:
 
 func _spawn_leak() -> void:
 	var cells := [Vector2i(4, 8), Vector2i(8, 9), Vector2i(4, 12), Vector2i(8, 12)]
-	for c in cells:
+	if v1("LEAK_N") <= 0:
+		_s1("LEAK_N", cells.size())
+	for i in v1("LEAK_N"):
+		var c: Vector2i = cells[i % cells.size()]
 		var e := host.combat.spawn("CR-095", Vector2(c.x * 32 + 16, c.y * 32 + 16), host.map, st, {"lv": 1, "dir": "E"})
 		if e != null:
 			e.foes = ["player", "ally"]
@@ -512,8 +537,6 @@ func _reopen() -> void:
 		_s1("SHOP_M", 1)
 	if not st.is_dead("N-R02-012"):
 		_s1("SHOP_S", 1)
-	if _zone() in ["J-03", "J-08"]:
-		host.refresh_npcs()
 	_log("B구역 재개장(수리 %d · 사공 %d)" % [v1("SHOP_M"), v1("SHOP_S")])
 
 
@@ -521,6 +544,12 @@ func _nest() -> void:
 	if v1("NEST") == 1:
 		return
 	_s1("NEST", 1)
+	if _zone() == "J-08" and v1("KING") == 0:
+		for k in _live:
+			for e in _live[k]:
+				if is_instance_valid(e) and not e.cmb.dead and str(e.get_meta("enemy_id", "")) == "CR-097":
+					e.brain.gauge = 100.0                                   # 둥지 냄새가 흩어졌다 — 왕쥐가 곧장 돌아오며 무리를 부른다
+		host.hint("멀리서 날카로운 울음. 왕쥐가 둥지 쪽으로 돌아선다.", 4.0)
 	st.call_fn("caps", [12])
 	st.vars.set_v("FQ_JH02_SEEN", maxi(gv("FQ_JH02_SEEN"), 1))           # 2077 영수증 '복희 의류 · 코트 1 · 180,000 · 외상 — 탁'(JH-02 훅, P2)
 

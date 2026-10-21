@@ -16,16 +16,17 @@
   "CALL1": 26,
   "CALL2": 28,
   "MENU": 29,
-  "FACE": 30,
-  "MUN": 32,
-  "GIVE": 37,
-  "KEEP": 40,
-  "NOKEEP": 43,
-  "WATCH": 45,
-  "WATCH0": 47,
-  "WATCH1": 49,
-  "LOG": 53,
-  "SHOP": 57
+  "JH01_SAC": 30,
+  "FACE": 35,
+  "MUN": 37,
+  "GIVE": 42,
+  "KEEP": 45,
+  "NOKEEP": 48,
+  "WATCH": 50,
+  "WATCH0": 52,
+  "WATCH1": 54,
+  "LOG": 58,
+  "SHOP": 62
  },
  "ops": [
   {
@@ -211,14 +212,51 @@
      "id": "JM_EOM:1:3"
     },
     {
+     "text": "쥐 미끼로 쓸 말벌 독낭이 있나요",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 25
+      }
+     ],
+     "cond": "FQJH01_STAGE >= 10 and FQJH01_STAGE < 100 and FQ_JH01_BUY < 2",
+     "fx": "",
+     "to": "JH01_SAC",
+     "id": "JM_EOM:1:4"
+    },
+    {
      "text": "다음에",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "JM_EOM:1:4"
+     "id": "JM_EOM:1:5"
     }
    ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-006",
+   "emo": "기본",
+   "text": "쥐 잡는 데 쓰려고? 상처 소독용으로 모아 둔 건데… 굴 막는 일이면 하나 내줄게."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-006",
+   "emo": "기본",
+   "text": "흙 위에 놔. 굴쥐는 냄새 맡고 솟아오르거든. 큰 놈은 안 먹어 — 영리해서."
+  },
+  {
+   "op": "do",
+   "fx": "FQ_JH01_BUY = FQ_JH01_BUY + 1"
+  },
+  {
+   "op": "do",
+   "fx": "give(\"M-026\", 1)"
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
   },
   {
    "op": "if",

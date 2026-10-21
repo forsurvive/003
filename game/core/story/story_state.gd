@@ -260,7 +260,7 @@ func _init() -> void:
 		vars.declare("FQ_GS02_" + k, "int", 0)
 	# FQ-JH-01 B구역 셔터(1-12c, SD-04d §8.3 · 진행기 fq_jh.gd 머리 주석): HA~HC 굴 상태(0 열림 · 1 철판 · 2 독 미끼 · 3 조용 · 4 비움) · WA~WC 잡은 물결 · TA~TC 미끼 놓은 시각 ·
 	# MOTOR 구동부(0 빠짐 · 1 고침 · 2 내림 · 3 휨) · LEAK J-11로 샘(1 샘 · 2 잡음) · SF · SI 떠도는 쥐(앞 · 안) · KOUT 둥지를 막힌 왕쥐 · OPEN 사슬(1 열쇠 · 2 땀/들어옴 · 3 폭파)
-	for k in "OPEN HA HB HC WA WB WC TA TB TC MOTOR LEAK KING KOUT NEST SHOP_M SHOP_S MINSU DONE CLEAR WARN CRUSH SF SI REOPEN".split(" "):
+	for k in "OPEN HA HB HC WA WB WC TA TB TC MOTOR LEAK KING KOUT NEST SHOP_M SHOP_S MINSU DONE CLEAR WARN CRUSH SF SI REOPEN LEAK_N KAWAY BUY TIPS".split(" "):
 		vars.declare("FQ_JH01_" + k, "int", 0)
 	for k in "SEEN SHOP".split(" "):                                       # FQ-JH-02 외상 장부(1-12d): SEEN 장부 줄을 봄(둥지 영수증 · 책상 장부) · SHOP B-07 구두 수선
 		vars.declare("FQ_JH02_" + k, "int", 0)

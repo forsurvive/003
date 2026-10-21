@@ -8,11 +8,12 @@
   "START": 0,
   "JH01AD": 5,
   "JH01ON": 9,
-  "JH01DONE": 11,
-  "NEST": 12,
-  "CLEARED": 14,
-  "W": 15,
-  "POSTER": 17
+  "JH01PICK": 12,
+  "JH01DONE": 14,
+  "NEST": 15,
+  "CLEARED": 17,
+  "W": 18,
+  "POSTER": 20
  },
  "ops": [
   {
@@ -64,10 +65,25 @@
    "to": "NEST"
   },
   {
+   "op": "if",
+   "cond": "FQ_JH01_OPEN == 2 and FQ_JH01_TIPS == 0",
+   "to": "JH01PICK"
+  },
+  {
    "op": "line",
    "who": "SYS",
    "emo": "기본",
    "text": "'B구역 쥐' 쪽지 귀퉁이에 누가 줄을 그었다 — '맡은 사람 있음'."
+  },
+  {
+   "op": "goto",
+   "to": "NEST"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'B구역 쥐' 쪽지 밑에 급한 글씨. '누가 사슬을 땄다 — 상인회장 확인 바람.'"
   },
   {
    "op": "goto",

@@ -98,29 +98,34 @@ def burrow_a(state="open"):
 
 
 def burrow_b(state="open"):
-    """굴 B — 바닥 균열(64×40): 갈라진 타일 · 꺼진 구덩이 · 흙 밀어낸 자국(굴쥐가 판다)."""
+    """굴 B — 바닥 균열(64×40): 들뜬 바닥 타일 두 장이 비스듬히 솟고, 그 밑에서 밀려 나온 검붉은 흙 더미와 고랑(굴쥐가 판다).
+    굴 A(콘크리트 벽 밑 반달 구멍)와 한눈에 다르게 — 흙이 주인공이다."""
     rnd = random.Random(23)
     im = img(64, 40)
     d = ImageDraw.Draw(im)
-    for i in range(5):                                                     # 들뜬 바닥 타일 조각
-        x = 6 + i * 11
-        d.polygon([(x, 8 + i % 2 * 3), (x + 9, 7), (x + 10, 13), (x + 1, 14)], fill=C(rnd.choice(["P07", "P06"])))
-        d.line([(x, 8 + i % 2 * 3), (x + 9, 7)], fill=C("P08"))
-    cx, cy = 32, 24
-    d.ellipse([cx - 22, cy - 9, cx + 22, cy + 11], fill=C("P18"))            # 밀어낸 흙
-    for _ in range(14):
-        x = rnd.randint(cx - 20, cx + 20)
-        d.point((x, rnd.randint(cy - 8, cy + 10)), fill=C(rnd.choice(["P17", "P19"])))
-    d.ellipse([cx - 13, cy - 6, cx + 13, cy + 7], fill=C(INK))
+    cx, cy = 32, 23
+    d.ellipse([cx - 28, cy - 12, cx + 28, cy + 14], fill=C("P17"))         # 밀려 나온 흙(넓게)
+    d.ellipse([cx - 22, cy - 9, cx + 22, cy + 10], fill=C("P18"))
+    for _ in range(40):                                                    # 흙 알갱이 · 덩이
+        x = rnd.randint(cx - 26, cx + 26)
+        y = rnd.randint(cy - 10, cy + 12)
+        d.point((x, y), fill=C(rnd.choice(["P16", "P19", "P17", "P20"])))
+    for k in range(5):                                                     # 고랑(파낸 자국이 굴로 모인다)
+        a = math.radians(200 + k * 35)
+        d.line([cx + math.cos(a) * 24, cy + math.sin(a) * 11, cx + math.cos(a) * 9, cy + math.sin(a) * 4], fill=C("P16"))
+    d.polygon([(4, 10), (20, 4), (22, 11), (6, 17)], fill=C("P08")); d.line([(4, 10), (20, 4)], fill=C("P09"))   # 들뜬 타일 두 장
+    d.line([(6, 17), (22, 11)], fill=C("P05"))
+    d.polygon([(44, 6), (60, 10), (58, 16), (42, 12)], fill=C("P07")); d.line([(44, 6), (60, 10)], fill=C("P09"))
+    d.line([(42, 12), (58, 16)], fill=C("P05"))
     if state == "plated":
-        _plate(d, cx, cy, 16, 8, 5)
+        _plate(d, cx, cy, 15, 8, 5)
+        for _ in range(10):                                                # 철판 가장자리로 다시 밀려 나온 흙
+            d.point((rnd.randint(cx - 17, cx + 17), rnd.choice([cy - 9, cy + 9])), fill=C("P19"))
     else:
-        d.ellipse([cx - 10, cy - 4, cx + 10, cy + 5], fill=C("P01"))
-        for k in range(4):                                                 # 균열이 사방으로
-            a = math.radians(20 + k * 95)
-            d.line([cx + math.cos(a) * 12, cy + math.sin(a) * 6, cx + math.cos(a) * 24, cy + math.sin(a) * 12], fill=C(INK))
+        d.ellipse([cx - 9, cy - 5, cx + 9, cy + 6], fill=C(INK))
+        d.ellipse([cx - 6, cy - 3, cx + 6, cy + 4], fill=C("P01"))
         if state == "open":
-            d.point((cx + 2, cy - 1), fill=C("P53")); d.point((cx + 5, cy - 1), fill=C("P53"))
+            d.point((cx - 1, cy - 1), fill=C("P53")); d.point((cx + 2, cy - 1), fill=C("P53"))
         if state == "bait":
             _bait(d, cx - 18, cy + 8)
         if state == "dead":

@@ -8,34 +8,42 @@
   "START": 0,
   "MENU": 8,
   "JH01": 9,
-  "JH01_KEY": 14,
-  "JH01_DONE": 19,
-  "JH01_CRUSH": 22,
-  "JH01_LEAK": 25,
-  "JH01_PAY": 27,
-  "S8": 31,
-  "S8_BOTH": 35,
-  "S8_NO": 38,
-  "S8_PAY": 40,
-  "S8_ONE_B": 43,
-  "S8_ONE_A": 46,
-  "UQ71_CORE": 49,
-  "UQ71_SOLD": 52,
-  "ABOUT": 56,
-  "SHOP": 60,
-  "MA": 62,
-  "WHY": 65,
-  "JOB": 69,
-  "JOB_ALONE": 76,
-  "JOB_HINT": 79,
-  "FEE": 81,
-  "WAITING": 85,
-  "REWARD": 87,
-  "HAVEPASS": 91,
-  "REGULAR": 93,
-  "MA_DEAD": 95,
-  "MA_LOG": 98,
-  "MA_DEAD_KNEW": 105
+  "JH01_AGAIN": 16,
+  "JH01_FIX": 18,
+  "JH01_FIX_DEAD": 21,
+  "JH01_PICKED": 23,
+  "JH01_KEY": 27,
+  "JH01_DONE": 34,
+  "JH01_CRUSH": 37,
+  "JH01_LEAK": 40,
+  "JH01_PAY": 42,
+  "JH01_TWO": 47,
+  "JH01_ONE": 49,
+  "JH01_CASH": 50,
+  "JH01_CASH_PICK": 54,
+  "S8": 58,
+  "S8_BOTH": 62,
+  "S8_NO": 65,
+  "S8_PAY": 67,
+  "S8_ONE_B": 70,
+  "S8_ONE_A": 73,
+  "UQ71_CORE": 76,
+  "UQ71_SOLD": 79,
+  "ABOUT": 83,
+  "SHOP": 87,
+  "MA": 89,
+  "WHY": 92,
+  "JOB": 96,
+  "JOB_ALONE": 103,
+  "JOB_HINT": 106,
+  "FEE": 108,
+  "WAITING": 112,
+  "REWARD": 114,
+  "HAVEPASS": 118,
+  "REGULAR": 120,
+  "MA_DEAD": 122,
+  "MA_LOG": 125,
+  "MA_DEAD_KNEW": 132
  },
  "ops": [
   {
@@ -147,8 +155,22 @@
   },
   {
    "op": "if",
+   "cond": "FQ_JH01_OPEN == 2 and FQ_JH01_TIPS == 0",
+   "to": "JH01_PICKED"
+  },
+  {
+   "op": "if",
    "cond": "FQ_JH01_OPEN == 0",
    "to": "JH01_KEY"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH01_TIPS == 1",
+   "to": "JH01_AGAIN"
+  },
+  {
+   "op": "do",
+   "fx": "FQ_JH01_TIPS = 1"
   },
   {
    "op": "line",
@@ -157,14 +179,63 @@
    "text": "굴은 셋이래. 앞쪽 벽 밑에 하나, 안쪽 바닥에 하나, 제일 안 배수구가 큰 놈 집이고."
   },
   {
+   "op": "goto",
+   "to": "JH01_FIX"
+  },
+  {
    "op": "line",
    "who": "C-050",
    "emo": "기본",
-   "text": "구동부는 김 수리공이 알아. 셔터 앞 노점. 손대기 전에 그 사람한테 물어봐."
+   "text": "아직 긁는 소리가 나. 굴이 다 안 막혔어."
   },
   {
    "op": "goto",
    "to": "MENU"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R02-016\") == 1",
+   "to": "JH01_FIX_DEAD"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "구동부는 셔터 앞 수리 노점 사람이 알아. 손대기 전에 그 사람한테 물어봐."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "슬픔",
+   "text": "구동부 아는 사람이 하나 있었는데. …이제 손대려면 네 손으로 해야 돼. 굴부터 막고."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "do",
+   "fx": "FQ_JH01_TIPS = 1"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "사슬 딴 게 너였구먼. (장부에 줄 하나) 사슬 값은 나중에 보상에서 뺀다."
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "미소",
+   "text": "…그래도 들어가 본 사람이 낫지. 굴은 셋이래. 앞쪽 벽 밑, 안쪽 바닥, 제일 안 배수구."
+  },
+  {
+   "op": "goto",
+   "to": "JH01_FIX"
   },
   {
    "op": "line",
@@ -186,10 +257,19 @@
    ]
   },
   {
+   "op": "do",
+   "fx": "FQ_JH01_TIPS = 1"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R02-016\") == 1",
+   "to": "END"
+  },
+  {
    "op": "line",
    "who": "C-050",
    "emo": "기본",
-   "text": "구동부는 김 수리공한테 먼저 물어봐. 그 사람 말 안 듣고 셔터 내렸다가 냉장 창고까지 쥐 몰린 적 있어."
+   "text": "구동부는 셔터 앞 수리 노점 사람한테 먼저 물어봐. 그 사람 말 안 듣고 셔터 내렸다가 냉장 창고까지 쥐 몰린 적 있어."
   },
   {
    "op": "goto",
@@ -244,10 +324,51 @@
    "text": "셔터는 우리가 내리는 거야. 쥐가 내리게 할 순 없지."
   },
   {
+   "op": "if",
+   "cond": "dead(\"N-R02-016\") == 0 and dead(\"N-R02-012\") == 0",
+   "to": "JH01_TWO"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R02-016\") == 0 or dead(\"N-R02-012\") == 0",
+   "to": "JH01_ONE"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "슬픔",
+   "text": "가게 열 사람이 없네. B구역은 비워 둘게. 언젠간 누가 와서 열겠지."
+  },
+  {
+   "op": "goto",
+   "to": "JH01_CASH"
+  },
+  {
    "op": "line",
    "who": "C-050",
    "emo": "기본",
-   "text": "내일 아침부터 B구역 가게 두 칸이 다시 열어. 백 캡. 상인회 몫이야."
+   "text": "내일 아침부터 B구역 가게 두 칸이 다시 열어. 수리 노점은 안으로 들이고, 사공 수선은 셔터를 다 올리고."
+  },
+  {
+   "op": "goto",
+   "to": "JH01_CASH"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "내일 아침부터 B구역 가게 한 칸이 다시 열어. 한 칸은 주인이 없어서 비워 둬."
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH01_OPEN == 2",
+   "to": "JH01_CASH_PICK"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "백 캡. 상인회 몫이야."
   },
   {
    "op": "cmd",
@@ -255,6 +376,27 @@
    "args": [
     "done"
    ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "미소",
+   "text": "백 캡에서 사슬 값 열 캡 뺐어. 셈은 셈이지."
+  },
+  {
+   "op": "cmd",
+   "name": "jh01",
+   "args": [
+    "done"
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "caps(-10)"
   },
   {
    "op": "goto",

@@ -567,8 +567,8 @@ func _ready() -> void:
 				["check", "FQ_JH01_KING == 1 and FQ_JH02_SEEN == 1 and FQ_JH01_CLEAR == 1 and FQJH01_STAGE == 40", "왕쥐 · 영수증 · 조용(40)"],
 				["warp", "J-03", "from_J-08"], ["wait", 1.0], ["want", ["B구역 셔터 일"]], ["talk", "C-050"], ["wait", 2.0],
 				["check", "FQJH01_STAGE == 100", "노복희 보고(100)"],
-				["hours", 21], ["wait", 1.0],
-				["check", "FQ_JH01_SHOP_M == 1 and FQ_JH01_SHOP_S == 1", "다음 날 재개장"],
+				["hours", 21], ["wait", 1.0], ["warp", "J-04", "from_J-03"], ["wait", 1.0],
+				["check", "FQ_JH01_SHOP_M == 1 and FQ_JH01_SHOP_S == 1", "다음 날 재개장(광장을 떠났다 오면)"],
 				["warp", "J-03", "from_J-08"], ["wait", 1.5], ["go", 30, 4, "J-03"], ["wait", 1.0], ["shot", "jh01_sagong"],
 				["warp", "J-08", "from_J-03"], ["wait", 1.5], ["calm"], ["go", 8, 5, "J-08"], ["wait", 1.0], ["shot", "jh01_shops"]]
 		"db":                                                           # 1-D1 대방 지하차도 · UQ-71: 북쪽 입구로 들어가 분대 등 뒤에서 웅크려 엿듣기(사흘 기한) → 펌프실 운전기사 메모 →

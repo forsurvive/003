@@ -168,7 +168,9 @@ func test_jh01_plate_bait_king(t) -> void:
 	t.eq(_v(st, "FQ_JH01_SHOP_M"), 0, "가게는 내일부터")
 	st.vars.set_v("GAME_DAY", 6)
 	c._on_day(6)
-	t.eq([_v(st, "FQ_JH01_SHOP_M"), _v(st, "FQ_JH01_SHOP_S")], [1, 1], "다음 날 수리공 · 사공 수선 재개장")
+	t.eq([_v(st, "FQ_JH01_SHOP_M"), _v(st, "FQ_JH01_REOPEN")], [0, 2], "광장에 있으면 보는 앞에서 바꾸지 않는다(다음에 들어올 때)")
+	h.enter("J-04", "from_J-03")
+	t.eq([_v(st, "FQ_JH01_SHOP_M"), _v(st, "FQ_JH01_SHOP_S")], [1, 1], "광장을 떠나면 수리공 · 사공 수선 재개장")
 
 
 func test_jh01_trap_and_leak(t) -> void:
@@ -186,6 +188,11 @@ func test_jh01_trap_and_leak(t) -> void:
 	t.ok(_says(st, c, "JM_SEOL", "쥐!"), "설태호가 안다")
 	h.enter("J-11", "from_J-03")
 	t.eq(c._leak.size(), 4, "J-11 버섯 선반 사이 쥐 넷")
+	c._leak[0].cmb.take({"hp": 999.0}, c._leak[0].loco.logical)
+	c.tick(0.5)
+	h.enter("J-03", "from_J-11")
+	h.enter("J-11", "from_J-03")
+	t.eq(c._leak.size(), 3, "하나 잡고 나갔다 오면 셋(넷으로 돌아가지 않음)")
 	for e in c._leak:
 		e.cmb.take({"hp": 999.0}, e.loco.logical)
 	c.tick(0.5)
@@ -200,9 +207,13 @@ func test_jh01_trap_and_leak(t) -> void:
 	c._live["c"] = []
 	c._rat("CR-097", Vector2i(30, 10), "c")                                  # 둥지를 비운 왕쥐(안쪽 먼 곳)
 	c._out["c"] = true
+	c.tick(0.5)
+	t.eq(_v(st, "FQ_JH01_KAWAY"), 1, "왕쥐가 둥지를 비움")
+	t.ok(_says(st, c, "FQJH01_HOLE_C", "외상 — 탁", ["왕쥐가 비운 사이", "종이 뭉치를 편다"]), "둥지 좀도둑 — 영수증")
 	c._plate("c")
 	t.eq([_v(st, "FQ_JH01_HC"), _v(st, "FQ_JH01_KOUT")], [1, 1], "둥지를 비운 틈에 막음 — 왕쥐는 밖")
 	c.tick(0.5)
+	t.eq(_v(st, "FQ_JH01_SI"), 0, "왕쥐는 떠도는 시궁쥐 수에 겹쳐 세지 않는다")
 	t.eq(_v(st, "FQ_JH01_CLEAR"), 0, "안쪽에 왕쥐가 떠돌면 아직")
 	c._down()
 	t.eq(_v(st, "FQ_JH01_MOTOR"), 2, "셔터 내림")
@@ -226,6 +237,21 @@ func test_jh01_crush_blow_dead(t) -> void:
 	t.eq([_v(st, "FQ_JH01_MOTOR"), _v(st, "FQ_JH01_CRUSH")], [3, 1], "셔터 칸에 선 쥐를 깔았다 — 날이 휨")
 	t.ok(_says(st, c, "FQJH01_MOTOR", "기어가 맞물린다", ["휜 날을 펴고"]), "다시 고침")
 	t.eq(_v(st, "FQ_JH01_MOTOR"), 1, "고친 구동부")
+	# 사슬을 따고 들어감 — 노복희가 알고 값을 뺀다
+	var e2 := _host()
+	var h4: InteriorHost = e2[0]
+	var st4: StoryState = e2[1]
+	var c4: FqJh = e2[2]
+	_play(st4, c4, "MQ-103_BOARD")
+	c4._picked()
+	t.eq(_v(st4, "FQ_JH01_OPEN"), 2, "사슬을 땀")
+	h4.enter("J-03", "from_J-08")
+	t.ok(_says(st4, c4, "MQ-103_BOARD", "누가 사슬을 땄다"), "게시판: 상인회장 확인 바람")
+	t.ok(_says(st4, c4, "MQ-103_BOK", "사슬 딴 게 너였구먼", ["B구역 셔터 일"]), "노복희가 안다")
+	st4.vars.set_v("FQ_JH01_CLEAR", 1)
+	var caps4 := _v(st4, "PC_CAPS")
+	t.ok(_says(st4, c4, "MQ-103_BOK", "사슬 값 열 캡", ["B구역 셔터 일"]), "보상에서 사슬 값")
+	t.eq(_v(st4, "PC_CAPS") - caps4, 90, "100 − 10캡")
 	# 폭파
 	var b := _host()
 	var h2: InteriorHost = b[0]
@@ -246,3 +272,4 @@ func test_jh01_crush_blow_dead(t) -> void:
 	st3.vars.set_v("AFF_JH", -60)
 	c3.tick(0.5)
 	t.eq(st3.quests.stage("FQ-JH-01"), 200, "적대(−60)면 닫힘")
+	t.ok(_says(st3, c3, "FQJH01_SHUTTER", "새 쇠사슬"), "실패면 상인회가 사슬을 다시 감았다")
