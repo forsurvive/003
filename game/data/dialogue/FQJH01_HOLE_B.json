@@ -1,0 +1,137 @@
+{
+ "id": "FQJH01_HOLE_B",
+ "title": "바닥 균열",
+ "loc": "L-R02-11",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "PLATE": 5,
+  "BAIT": 7,
+  "PLATED": 9,
+  "BAITED": 11,
+  "QUIET": 13
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "FQ_JH01_HB == 1",
+   "to": "PLATED"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH01_HB == 2",
+   "to": "BAITED"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH01_HB >= 3",
+   "to": "QUIET"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "들뜬 타일 밑으로 흙이 밀려 나왔다. 흙이 부드럽다 — 무언가 솟아오를 자리. 철판을 대기엔 균열이 사방으로 갈라졌다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "흙 위에 말벌 독낭 미끼를 놓는다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "의학",
+       "min": 25
+      }
+     ],
+     "cond": "has(\"M-026\") >= 1",
+     "fx": "",
+     "to": "BAIT",
+     "id": "FQJH01_HOLE_B:1:0"
+    },
+    {
+     "text": "그래도 철판을 눌러 박는다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 25
+      }
+     ],
+     "cond": "has(\"M-010\") >= 1",
+     "fx": "",
+     "to": "PLATE",
+     "id": "FQJH01_HOLE_B:1:1"
+    },
+    {
+     "text": "그냥 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQJH01_HOLE_B:1:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "jh01",
+   "args": [
+    "plate",
+    "b"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "jh01",
+   "args": [
+    "bait",
+    "b"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "철판이 흙에 반쯤 묻혔다. 가장자리로 흙이 조금씩 밀려 나왔다가 멈춘다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "흙 위 미끼 접시. 접시 둘레 흙이 들썩인다 — 밑에서 무언가 냄새를 맡는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "흙이 가라앉았다. 굴쥐 한 마리가 반쯤 솟은 채 굳어 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-JH-01.txt"
+}

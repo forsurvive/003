@@ -58,19 +58,22 @@ mark from_J-05 33 3 S
 mark from_J-11 1 14 E
 mark from_J-09 19 28 N
 mark door_J-06 27 3 N
+mark from_J-08 36 3 S
 prop w_shutter 2 1
 prop w_board_jm 8 1
 prop w_sign_south 15 1
 prop w_shutter2 22 1
-prop w_shutter3 30 1
+prop w_shop_sagong 30 1 state=half cond="FQ_JH01_SHOP_S != 1"
+prop w_shop_sagong 30 1 state=open cond="FQ_JH01_SHOP_S == 1"
 prop w_shutter_big 35 1
 text 8 2 "상인회 게시판." w=2 scene=MQ-103_BOARD
-text 35 2 "B구역 셔터. 쇠사슬로 감았다. 셔터 밑으로 무언가 긁는 소리가 난다." w=3
+text 35 2 "B구역 셔터. 쇠사슬로 감았다. 셔터 밑으로 무언가 긁는 소리가 난다." w=3 scene=FQJH01_SHUTTER
 trigger 27 3 scene=MQ-103_DOOR cond="MQ103_DOOR == 0" once
 prop w_shutter_mem 24 1
 text 24 2 "닫힌 셔터 한 칸. 상호 띠가 없다." w=2 scene=SQS08_SHUTTER
-prop sign_repair 36 4
-text 36 5 "수리 노점 간판." scene=SQS08_SIGN
+prop sign_repair 36 4 cond="FQ_JH01_SHOP_M != 1"
+text 36 5 "수리 노점 간판." scene=SQS08_SIGN cond="FQ_JH01_SHOP_M != 1"
+text 36 5 "빈 노점 자리. 분필 화살표 — '수리는 B구역 B-06으로'." cond="FQ_JH01_SHOP_M == 1"
 mark quarrel 18 11 S
 prop wall_terminal 28 1
 term 28 2 TM-J06D
@@ -107,10 +110,11 @@ text 10 2 "게시판 옆에 상인회 장부 한 장. 노복희의 글씨 — '�
 text 10 2 "게시판 옆 상인회 장부. '회의 증언: 사공민영(강수아) · 엄수연(문도하)' — 그 줄에 두 줄이 그어졌다." cond="SQ_S12_J != 4 and SQ_S12_S == 4 and SQ_S12_E == 4 and SQ_S12_KNOWN == 1"
 text 10 2 "게시판 옆에 상인회 장부 한 장. 노복희의 글씨 — '회의 증언: 진재석(권이준) · 사공민영(강수아) · 엄수연(문도하). 앞줄은 비워 둔다.'" cond="SQ_S12_J == 4 and SQ_S12_S == 4 and SQ_S12_E == 4 and SQ_S12_KNOWN == 0 and dead(\"C-050\") == 0"
 text 10 2 "게시판 옆 상인회 장부. '회의 증언: 진재석(권이준) · 사공민영(강수아) · 엄수연(문도하)' — 그 줄에 두 줄이 그어졌다." cond="SQ_S12_J == 4 and SQ_S12_S == 4 and SQ_S12_E == 4 and SQ_S12_KNOWN == 1"
-text 30 2 "반쯤 내린 셔터 'B-04 사공 수선'. 분필로 — '광장에 있음.'" cond="dead(\"N-R02-012\") == 0"
+text 30 2 "반쯤 내린 셔터 'B-04 사공 수선'. 분필로 — '광장에 있음.' 셔터 안쪽 벽 너머로 B구역 긁는 소리." cond="dead(\"N-R02-012\") == 0 and FQ_JH01_SHOP_S != 1"
+text 30 2 "다 올린 셔터 'B-04 사공 수선'. 선반에 2077년 10월분 배급표가 한 장씩 집게에 걸렸다. 분필 '광장에 있음'은 그대로." cond="FQ_JH01_SHOP_S == 1"
 text 30 2 "반쯤 내린 셔터 'B-04 사공 수선'. 분필 '광장에 있음'이 지워져 간다." cond="dead(\"N-R02-012\") == 1"
 text 21 16 "빈 벤치 끝. 누가 앉던 자리인지 방석이 눌려 있다." scene=SQS12_LAY_S cond="dead(\"N-R02-012\") == 1"
-npc N-R02-016 34 4 S bark="수리할 거 있어? 김민수야. 명찰 봐."
+npc N-R02-016 34 4 S cond="FQ_JH01_SHOP_M != 1" bark="수리할 거 있어? 김민수야. 명찰 봐."
 prop chief_desk 3 24
 prop file_cabinet 1 23
 box 1 23 cabinet owner=C-050 name="상인회 서류함"

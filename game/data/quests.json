@@ -171,32 +171,32 @@
    "places": [
     "L-R01-23"
    ],
-   "places_src": "04d_faction-questlines.md:1044",
+   "places_src": "04d_faction-questlines.md:1045",
    "stages": {
     "10": {
      "done": "",
      "log": "정비고의 잠든 로봇 여섯 대가 정비를 기다린다.",
-     "src": "04d_faction-questlines.md:1046"
+     "src": "04d_faction-questlines.md:1047"
     },
     "100": {
      "done": "",
      "log": "오늘의 정비가 끝났다.",
-     "src": "04d_faction-questlines.md:1046"
+     "src": "04d_faction-questlines.md:1047"
     },
     "20": {
      "done": "",
      "log": "로봇마다 외장을 닦고 관절에 기름을 친다.",
-     "src": "04d_faction-questlines.md:1046"
+     "src": "04d_faction-questlines.md:1047"
     },
     "200": {
      "done": "",
      "log": "각성회가 정비고 문을 닫았다.",
-     "src": "04d_faction-questlines.md:1046"
+     "src": "04d_faction-questlines.md:1047"
     },
     "30": {
      "done": "",
      "log": "3번 로봇의 대기등이 다른 로봇보다 밝다.",
-     "src": "04d_faction-questlines.md:1046"
+     "src": "04d_faction-questlines.md:1047"
     }
    },
    "title": "정비 당번"
@@ -206,37 +206,37 @@
    "places": [
     "L-R01-24"
    ],
-   "places_src": "04d_faction-questlines.md:1065",
+   "places_src": "04d_faction-questlines.md:1068",
    "stages": {
     "10": {
      "done": "",
      "log": "각성회 등록 천공기의 바늘이 부러졌다.",
-     "src": "04d_faction-questlines.md:1067"
+     "src": "04d_faction-questlines.md:1070"
     },
     "100": {
      "done": "",
      "log": "중계소 천공기가 다시 돌아간다.",
-     "src": "04d_faction-questlines.md:1067"
+     "src": "04d_faction-questlines.md:1070"
     },
     "20": {
      "done": "",
      "log": "같은 기종이 학원가 전산 채점실에 있다.",
-     "src": "04d_faction-questlines.md:1067"
+     "src": "04d_faction-questlines.md:1070"
     },
     "200": {
      "done": "",
      "log": "류정이 죽었다. 천공기는 멈춘 채다.",
-     "src": "04d_faction-questlines.md:1067"
+     "src": "04d_faction-questlines.md:1070"
     },
     "30": {
      "done": "",
      "log": "채점기는 2077년 모의고사 답안을 찍다 멈췄다.",
-     "src": "04d_faction-questlines.md:1067"
+     "src": "04d_faction-questlines.md:1070"
     },
     "40": {
      "done": "",
      "log": "천공 바늘 묶음이 손에 있다.",
-     "src": "04d_faction-questlines.md:1067"
+     "src": "04d_faction-questlines.md:1070"
     }
    },
    "title": "천공기"
@@ -248,35 +248,75 @@
     "L-R01-09",
     "L-R01-10"
    ],
-   "places_src": "04d_faction-questlines.md:1182",
+   "places_src": "04d_faction-questlines.md:1186",
    "stages": {
     "10": {
      "done": "",
      "log": "계단마을 빗물 수로가 막혀 물탱크가 반이다.",
-     "src": "04d_faction-questlines.md:1184"
+     "src": "04d_faction-questlines.md:1188"
     },
     "100": {
      "done": "",
      "log": "계단마을 물길이 다시 흐른다.",
-     "src": "04d_faction-questlines.md:1184"
+     "src": "04d_faction-questlines.md:1188"
     },
     "20": {
      "done": "",
      "log": "백구가 수로를 따라 냄새를 맡는다.",
-     "src": "04d_faction-questlines.md:1184"
+     "src": "04d_faction-questlines.md:1188"
     },
     "30": {
      "done": "",
      "log": "계곡 암거 입구에 흙막이가 있다. 신림 쪽이다.",
-     "src": "04d_faction-questlines.md:1184"
+     "src": "04d_faction-questlines.md:1188"
     },
     "40": {
      "done": "",
      "log": "배수지 유입구 이음매가 샌다.",
-     "src": "04d_faction-questlines.md:1184"
+     "src": "04d_faction-questlines.md:1188"
     }
    },
    "title": "계단 물길"
+  },
+  "FQ-JH-01": {
+   "key": "FQJH01",
+   "places": [
+    "L-R02-11"
+   ],
+   "places_src": "04d_faction-questlines.md:925",
+   "stages": {
+    "10": {
+     "done": "",
+     "log": "B구역 셔터 너머로 쥐 떼가 드나든다.",
+     "src": "04d_faction-questlines.md:927"
+    },
+    "100": {
+     "done": "",
+     "log": "B구역이 다시 열렸다.",
+     "src": "04d_faction-questlines.md:927"
+    },
+    "20": {
+     "done": "",
+     "log": "B구역 안쪽에 쥐굴 입구가 세 곳 있다.",
+     "src": "04d_faction-questlines.md:927"
+    },
+    "200": {
+     "done": "",
+     "log": "상인회가 B구역 셔터를 다시 감았다.",
+     "src": "04d_faction-questlines.md:927"
+    },
+    "30": {
+     "done": "",
+     "log": "쥐굴 입구가 하나씩 막힌다.",
+     "src": "04d_faction-questlines.md:927"
+    },
+    "40": {
+     "done": "",
+     "log": "B구역이 조용하다. 노복희에게 알린다.",
+     "src": "04d_faction-questlines.md:927"
+    }
+   },
+   "title": "B구역 셔터"
   },
   "MQ-101": {
    "act": 1,

@@ -1,0 +1,211 @@
+{
+ "id": "FQJH01_SHUTTER",
+ "title": "B구역 셔터",
+ "loc": "L-R02-11",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TAKEN": 5,
+  "PICK": 7,
+  "OPENED": 9,
+  "IN": 12,
+  "CLEAN": 14,
+  "BLOWN": 16
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "FQ_JH01_OPEN == 3",
+   "to": "BLOWN"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH01_OPEN >= 1",
+   "to": "OPENED"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "B구역 셔터. 쇠사슬로 감았다. 셔터 밑으로 무언가 긁는 소리가 난다."
+  },
+  {
+   "op": "if",
+   "cond": "FQJH01_STAGE >= 10 and FQJH01_STAGE < 100 and dead(\"C-050\") == 0",
+   "to": "TAKEN"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "사슬 자물쇠를 딴다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "자물쇠 따기",
+       "min": 25
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PICK",
+     "id": "FQJH01_SHUTTER:1:0"
+    },
+    {
+     "text": "그냥 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQJH01_SHUTTER:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "사슬 열쇠는 상인회장 노복희가 갖고 있다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "기다릴 것 없이 자물쇠를 딴다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "자물쇠 따기",
+       "min": 25
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PICK",
+     "id": "FQJH01_SHUTTER:2:0"
+    },
+    {
+     "text": "그냥 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQJH01_SHUTTER:2:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "jh01",
+   "args": [
+    "pick"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "FQJH01_STAGE >= 100",
+   "to": "CLEAN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "사슬을 풀어 둔 셔터. 사람 하나 지나갈 만큼 들려 있다. 안에서 찍찍 소리."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "들어간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "IN",
+     "id": "FQJH01_SHUTTER:3:0"
+    },
+    {
+     "text": "그냥 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQJH01_SHUTTER:3:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "jh01",
+   "args": [
+    "enter"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "셔터가 다 올라가 있다. 셔터 테두리에 분필 — '셔터는 우리가 내린다'."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "들어간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "IN",
+     "id": "FQJH01_SHUTTER:4:0"
+    },
+    {
+     "text": "그냥 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQJH01_SHUTTER:4:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "찢겨 나간 셔터. 쇳조각 끝이 아직 검다. 아무도 이 앞을 쓸지 않는다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "들어간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "IN",
+     "id": "FQJH01_SHUTTER:5:0"
+    },
+    {
+     "text": "그냥 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQJH01_SHUTTER:5:1"
+    }
+   ]
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-JH-01.txt"
+}

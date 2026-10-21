@@ -1,0 +1,84 @@
+# 영등포 지하상가 J-08 B구역(무너진 구역, SD-09a L-R02-11 ③ L838 · SD-04d §8.3 FQ-JH-01 「B구역 셔터」, 단계 1-12c)
+# 50×16 · 남서 셔터 틈으로 중앙 광장(J-03 큰 셔터 35,1) · 점포 열두 칸 B-05~B-16(앞쪽 B-05~B-09 · 무너진 천장 밑 B-10 · B-11 · 안쪽 B-12~B-16).
+# B-01~B-04는 광장 쪽 앞면(J-03 30,1 'B-04 사공 수선') — B구역이 다시 열리면 그 셔터도 오른다. 재개장: 수리공(B-06) · 사공 수선(B-04) · JH-02 재회면 B-07 구두 수선.
+# 가운데 무너진 천장이 구역을 앞 · 안으로 가르고 틈(남북 3칸)에 2077 방화 셔터가 걸려 있다 — 구동부(20,8)로 내린다.
+# 쥐굴 셋: A 무너진 점포 벽 밑(앞쪽 17,4) · B 바닥 균열(안쪽 32,8) · C 깨진 배수구 = 왕쥐 둥지(안쪽 43,11). 상태는 진행기 FqJh(굴마다 변수 한 곳, P1).
+# 동쪽 끝 상인회 비상 배수 통로(46,1) — MQ-506 봉쇄 때 탈출로. 지금은 잠김.
+map J-08 B구역
+set jm
+grid
+##################################################
+##################################################
+##################################################
+#ttttttttttttttttttttt###uuuuuuuuuuuuuuuuuuuuuuuu#
+#ttttttttttttttttttttt###uuuuuuuuuuuuuuuuuuuuuuuu#
+#ttttttttttttttttttttt###uuuuuuuuuuuuuuuuuuuuuuuu#
+#ttttttttttttttttttttt###uuuuuuuuuuuuuuuuuuuuuuuu#
+#ttttttttttttttttttttt###uuuuuuuuuuuuuuuuuuuuuuuu#
+#ttttttttttttttttttttt###uuuuuuuuuuuuuuuuuuuuuuuu#
+#tttttttttttttttttttttuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+#tttttttttttttttttttttuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+#tttttttttttttttttttttuuuuuuuuuuuuuuuuuuuuuuuuuuu#
+#ttttttttttttttttttttt###uuuuuuuuuuuuuuuuuuuuuuuu#
+#ttttttttttttttttttttt###uuuuuuuuuuuuuuuuuuuuuuuu#
+#ttttttttttttttttttttt###uuuuuuuuuuuuuuuuuuuuuuuu#
+###tt#############################################
+end
+exit 3 15 J-03 from_J-08
+exit 4 15 J-03 from_J-08
+mark from_J-03 3 14 N
+mark gap_w 21 10 E
+mark gap_e 25 10 W
+mark hole_a 17 5 S
+mark hole_b 32 9 S
+mark hole_c 43 12 S
+mark motor 20 9 N
+prop w_shutter 2 1
+text 2 2 "B-05. 셔터에 분필 '2077. 10. 23 — 다들 광장으로'. 그 밑에 다른 글씨로 '나도'." w=2
+prop w_shop_bshop 6 1 state=open cond="FQ_JH01_SHOP_M == 1"
+prop w_shop_bshop 6 1 cond="FQ_JH01_SHOP_M != 1"
+text 6 2 "B-06. 상호 띠가 벗겨졌다. 셔터 밑에 땜납 방울이 굳어 있다 — 누가 여기서 인두를 썼다." w=2 cond="FQ_JH01_SHOP_M != 1"
+npc N-R02-016 6 3 S cond="FQ_JH01_SHOP_M == 1" bark="B-06. 셔터 안쪽이 넓어. 이제 비 오는 날도 장사해."
+prop w_shop_bshop 10 1 state=half cond="FQ_JH02_SHOP == 1"
+prop w_shutter2 10 1 cond="FQ_JH02_SHOP != 1"
+text 10 2 "B-07. 셔터가 안쪽으로 휘었다. 무언가 셔터를 밀고 나오려다 그만두었다." w=2 cond="FQ_JH02_SHOP != 1"
+prop w_shutter 14 1
+text 14 2 "B-08. '시계 · 도장'. 진열장 유리에 쥐 발자국이 별자리처럼 찍혔다." w=2
+prop w_shutter3 18 1
+text 18 2 "B-09. 반쯤 내린 셔터 밑 벽이 무너져 굴이 됐다." w=2
+prop jh_burrow_a 17 4
+text 17 4 "쥐굴 입구. 벽돌 부스러기에 이빨 자국. 안에서 찍찍 소리가 겹친다." w=2 scene=FQJH01_HOLE_A
+prop jh_motor 20 8
+text 20 8 "셔터 구동부. 방화 셔터를 감아 올린 체인 드럼." scene=FQJH01_MOTOR
+prop jh_fire_frame 23 9
+prop ceiling_slab 20 4
+prop ceiling_slab2 19 13
+prop rubble 20 6
+prop rubble2 26 4
+prop rubble 25 13
+text 22 6 "무너진 천장. 그 밑에 B-10 · B-11 셔터 끝이 삐죽 보인다. 셔터 하나에 '두부'." w=3 h=2
+prop w_shutter 26 1
+text 26 2 "B-12. '정육 — 23일 오후 휴무'. 휴무는 200년째다." w=2
+prop w_shutter2 30 1
+text 30 2 "B-13. 셔터 앞에 아이 신발 한 짝. 쥐가 끈만 다 먹었다." w=2
+prop jh_burrow_b 32 8
+text 32 8 "바닥 균열. 들뜬 타일 밑으로 흙이 밀려 나와 있다. 굴쥐가 판 길." w=2 scene=FQJH01_HOLE_B
+prop w_shutter3 34 1
+text 34 2 "B-14. 반쯤 열린 셔터 안은 쥐똥과 갉은 상자뿐." w=2
+prop crate_o 35 3
+box 35 3 trash name="B-14 갉은 상자"
+prop w_shutter 38 1
+text 38 2 "B-15. '수입 과자'. 셔터 틈으로 단내 — 200년 된 설탕은 쥐도 안 먹는다." w=2
+prop w_shutter2 42 1
+text 42 2 "B-16. 셔터에 쥐가 갉아 놓은 구멍. 구멍으로 들여다보면 2077년 달력." w=2
+prop jh_burrow_c 43 11
+text 43 11 "깨진 배수구. 지푸라기 · 종이 · 뼈로 지은 둥지. 큰 것이 숨 쉬는 소리." w=2 scene=FQJH01_HOLE_C
+prop w_drain_exit 46 1
+text 46 2 "배수 통로 쇠창살. 분필 '비상 — 상인회'. 자물쇠가 크다." w=2 scene=FQJH01_DRAIN
+prop crate_o 4 12
+box 4 12 trash name="B구역 고물 상자"
+prop scrap_pile 8 13
+prop remains 36 13
+box 36 13 corpse_scav name="쥐에 갉힌 유해"
+text 37 13 "유해 곁에 지하시장 출입패 반쪽. 이름 칸이 갉혔다."
+prop work_lamp 10 8

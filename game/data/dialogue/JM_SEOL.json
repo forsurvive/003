@@ -5,9 +5,27 @@
  "npc": "N-R02-011",
  "cond": "V_ACT >= 1",
  "labels": {
-  "START": 0
+  "START": 0,
+  "SCRATCH": 7,
+  "RATS": 10,
+  "AFTER_RATS": 12
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "FQ_JH01_LEAK == 1",
+   "to": "RATS"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH01_LEAK == 2",
+   "to": "AFTER_RATS"
+  },
+  {
+   "op": "if",
+   "cond": "FQJH01_STAGE >= 10 and FQJH01_STAGE < 100",
+   "to": "SCRATCH"
+  },
   {
    "op": "line",
    "who": "N-R02-011",
@@ -25,6 +43,42 @@
    "who": "N-R02-011",
    "emo": "슬픔",
    "text": "냉장 창고만 돌아가면 저장을 할 텐데. 전원이 죽은 지 오래야."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-011",
+   "emo": "기본",
+   "text": "요즘 벽 안에서 긁는 소리가 나. B구역 쪽이야. 선반 뒤 벽에 귀 대 봐."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-011",
+   "emo": "슬픔",
+   "text": "B구역 굴이 여기까지 뚫렸으면 큰일이지. 버섯은 쥐가 제일 좋아해."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-011",
+   "emo": "분노",
+   "text": "쥐! 선반 사이로 쏟아졌어! 누가 B구역 셔터를 내렸다던데 — 갈 데가 여기밖에 없잖아!"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-011",
+   "emo": "슬픔",
+   "text": "선반 반이 갉혔어. 포자는 남았으니까 다시 키우면 돼. …석 달."
   },
   {
    "op": "goto",

@@ -1,0 +1,235 @@
+{
+ "id": "FQJH01_MOTOR",
+ "title": "셔터 구동부",
+ "loc": "L-R02-11",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "FIX": 5,
+  "FIXED": 8,
+  "WARNED": 11,
+  "PULL": 13,
+  "DOWN": 15,
+  "RAISE": 17,
+  "BENT": 20
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "FQ_JH01_MOTOR == 1",
+   "to": "FIXED"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH01_MOTOR == 2",
+   "to": "DOWN"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH01_MOTOR == 3",
+   "to": "BENT"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "방화 셔터를 감아 올린 체인 드럼. 기어가 빠져 바닥에 굴렀고, 체인이 늘어졌다. 손잡이 크랭크는 부러졌다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "기어를 물리고 크랭크를 철사로 잇는다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "FIX",
+     "id": "FQJH01_MOTOR:1:0"
+    },
+    {
+     "text": "그냥 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQJH01_MOTOR:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "jh01",
+   "args": [
+    "fix"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "기어가 맞물린다. 노란 레버가 위에 걸린다. 녹색 등 하나."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH01_WARN == 1 and (FQ_JH01_HB == 0 or FQ_JH01_HB == 2 or FQ_JH01_HC == 0 or FQ_JH01_HC == 2)",
+   "to": "WARNED"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "노란 레버. 내리면 방화 셔터가 무너진 천장 틈을 막는다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "레버를 내린다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "PULL",
+     "id": "FQJH01_MOTOR:2:0"
+    },
+    {
+     "text": "그냥 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQJH01_MOTOR:2:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "노란 레버. 수리공 말이 떠오른다 — 굴 막기 전에 내리면 쥐가 굴로 튄다고."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "그래도 레버를 내린다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "PULL",
+     "id": "FQJH01_MOTOR:3:0"
+    },
+    {
+     "text": "그냥 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQJH01_MOTOR:3:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "jh01",
+   "args": [
+    "down"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "레버가 아래에 걸려 있다. 붉은 등. 셔터 너머가 조용하다 — 가끔 긁는 소리."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "레버를 올린다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "RAISE",
+     "id": "FQJH01_MOTOR:4:0"
+    },
+    {
+     "text": "그냥 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQJH01_MOTOR:4:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "jh01",
+   "args": [
+    "up"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "체인이 감긴다. 방화 셔터가 천장으로 올라간다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "셔터 날이 휘어 반쯤에서 멈췄다. 기어가 다시 튀어나와 굴렀다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "휜 날을 펴고 기어를 다시 물린다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "FIX",
+     "id": "FQJH01_MOTOR:5:0"
+    },
+    {
+     "text": "그냥 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQJH01_MOTOR:5:1"
+    }
+   ]
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-JH-01.txt"
+}

@@ -1068,6 +1068,10 @@ from props_jc import PROPS_JC, STATES_JC                              # 봉천 �
 for _k in PROPS_JC:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_JC)
+from props_jh import PROPS_JH, STATES_JH                              # 지하시장 B구역(1-12c FQ-JH-01): 쥐굴 셋(철판 · 독 미끼 · 조용) · 셔터 구동부 · 방화 셔터 · 다시 연 점포 · 비상 배수 통로
+for _k in PROPS_JH:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_JH)
 from props_gs2 import PROPS_GS2, STATES_GS2                            # 노량진 관제 중계소 정비고 · 학원 채점기(1-12b FQ-GS-01 · GS-02): 차양 · 잠든 살림-2 · 정비 파수 · 퓨즈함 · 등록용 천공기 · 원장실 옆문
 for _k in PROPS_GS2:
     assert _k not in PROPS, _k
@@ -1101,6 +1105,7 @@ STATES.update(STATES_U04)
 STATES.update(STATES_SV)
 STATES.update(STATES_JC)
 STATES.update(STATES_GS2)
+STATES.update(STATES_JH)
 STATES.update(STATES_BS)
 STATES.update(STATES_S04)
 STATES.update(STATES_S03)

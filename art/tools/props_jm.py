@@ -157,6 +157,25 @@ def w_cold_door():
     return im
 
 
+def w_shutter_big_open():
+    """B구역 큰 셔터 — 들어 올림(1-12c FQ-JH-01): 셔터가 위 상자로 반쯤 감겼고 풀린 사슬이 옆에 걸렸다. 아래로 B구역 바닥 · 어둠."""
+    im = img(96, 62)
+    d = ImageDraw.Draw(im)
+    d.rectangle([0, 0, 95, 61], fill=C("P03"))
+    d.rectangle([2, 4, 93, 61], fill=C("P01"))                          # 안쪽 어둠
+    for y in range(40, 61, 4):
+        d.line([4, y, 91, y], fill=C("P02"))                             # 안쪽 바닥 줄눈
+    for y in range(4, 26):
+        d.line([2, y, 93, y], fill=C(["P06", "P05", "P04"][(y - 4) % 3]))
+    d.rectangle([2, 0, 93, 3], fill=C("P05"))
+    d.line([2, 26, 93, 26], fill=C(INK))
+    put_text(im, "B구역", 34, 10, "P09", size=8)
+    for k in range(7):                                                  # 풀린 사슬이 기둥에 늘어졌다
+        d.ellipse([86, 28 + k * 4, 90, 32 + k * 4], outline=C("P13"))
+    d.rectangle([84, 56, 91, 61], fill=C("P48"))
+    return im
+
+
 def w_shutter_big():
     """B구역 큰 셔터(벽 3칸): 내려앉은 구역을 막은 셔터 + 쇠사슬 + '출입 금지' 붉은 칠."""
     im = img(96, 62)
@@ -488,4 +507,4 @@ PROPS_JM = {
     "subway_stairs_st": _r(lambda: subway_stairs("구청역"), 2, 1, down=2),
     "subway_stairs_mall": _r(lambda: subway_stairs("역사 지하"), 2, 1, down=2),
 }
-STATES_JM = {"sentry_down": {"lit": lambda: sentry_down(True)}}
+STATES_JM = {"sentry_down": {"lit": lambda: sentry_down(True)}, "w_shutter_big": {"open": w_shutter_big_open}}

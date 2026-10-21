@@ -6,23 +6,31 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "GUESS": 3,
-  "WRONG": 4,
-  "SHOW_GUESS": 6,
-  "SHOW": 8,
-  "B_OK": 11,
-  "B_NO": 14,
-  "B_OSUN": 16,
-  "NOTE": 20,
-  "AFTER": 22,
-  "FREEFIX": 28,
-  "AFTER_B": 30,
-  "AFTER_D": 32,
-  "LATE": 34,
-  "AFTER_ALONE": 38,
-  "AFTER_ONE": 40
+  "S08": 1,
+  "GUESS": 4,
+  "WRONG": 5,
+  "SHOW_GUESS": 7,
+  "SHOW": 9,
+  "B_OK": 12,
+  "B_NO": 15,
+  "B_OSUN": 17,
+  "NOTE": 21,
+  "AFTER": 23,
+  "FREEFIX": 29,
+  "AFTER_B": 31,
+  "AFTER_D": 33,
+  "LATE": 35,
+  "AFTER_ALONE": 39,
+  "AFTER_ONE": 41,
+  "JH01": 43,
+  "JH01_FIX": 47
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "FQJH01_STAGE >= 10 and FQJH01_STAGE < 100 and (FQ_JH01_MOTOR == 0 or FQ_JH01_MOTOR == 3)",
+   "to": "JH01"
+  },
   {
    "op": "if",
    "cond": "SQ_S08_SOL >= 1",
@@ -382,6 +390,82 @@
    "who": "N-R02-016",
    "emo": "슬픔",
    "text": "이제 김민수는 나 하나야. …좋을 줄 알았는데."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-016",
+   "emo": "기본",
+   "text": "B구역 일 맡았다며? 구동부 먼저 만지면 굴로 튀어. 굴은 냉장 창고까지 뚫렸을걸."
+  },
+  {
+   "op": "cmd",
+   "name": "jh01",
+   "args": [
+    "warn"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-016",
+   "emo": "기본",
+   "text": "굴부터 막고 셔터를 내려. 그럼 안쪽에 남은 놈들은 갇혀서 굶어."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "구동부를 맡긴다",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 40
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "JH01_FIX",
+     "id": "SQS08_B:7:0"
+    },
+    {
+     "text": "다른 얘기",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "S08",
+     "id": "SQS08_B:7:1"
+    },
+    {
+     "text": "됐다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS08_B:7:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-016",
+   "emo": "미소",
+   "text": "기어 하나 물리는 데 사십. 싸게 부른 거야. 셔터 앞 사람이 셔터 안 고치면 누가 고쳐."
+  },
+  {
+   "op": "cmd",
+   "name": "jh01",
+   "args": [
+    "minsu"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "수리공이 공구 상자를 들고 셔터 틈으로 들어갔다가 땀범벅으로 나온다. \"레버는 네가 내려. 내 손으로 쥐 가두긴 싫어.\""
   },
   {
    "op": "goto",

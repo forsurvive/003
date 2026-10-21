@@ -190,6 +190,7 @@ var side_s12: SideS12                                   ## 지하시장 사이�
 var side_s13: SideS13                                   ## 볼트 S-02 사이드 퀘스트(1-11l — SQ-S13 제752차 개표)
 var fq_jc01: FqJc01                                     ## 세력 퀘스트 FQ-JC-01 계단 물길(1-12a — 봉천 빗물 수로 · 7동 물당번 흙막이)
 var fq_gs: FqGs                                         ## 세력 퀘스트 FQ-GS-01 정비 당번 · FQ-GS-02 천공기(1-12b — 중계소 정비고 · 학원 채점기)
+var fq_jh: FqJh                                         ## 세력 퀘스트 FQ-JH-01 B구역 셔터(1-12c — 지하시장 B구역 쥐굴 · 구동부)
 var side_s11: SideS11                                   ## 여의도 사이드 퀘스트(1-11j — SQ-S11 토요일의 여의도)
 var uq71: Uq71                                          ## 비표시 퀘스트 UQ-71 원자력 버스(1-D1 — 대방 지하차도)
 var u02: U02Paths                                       ## U02 남태령 지하(1-D2 — 터널 회로 UG-H01 · 밀통로 UG-H02 · 지하 초소)
@@ -303,6 +304,11 @@ func _paths() -> void:
 		add_child(fq_gs)
 		fq_gs.setup(host, log_on)
 		fq_gs.want_save.connect(func(_w: String) -> void: request_auto("event"))   # 정비 · 천공기 끝(1-12b)
+	if fq_jh == null:
+		fq_jh = FqJh.new()
+		add_child(fq_jh)
+		fq_jh.setup(host, log_on)
+		fq_jh.want_save.connect(func(_w: String) -> void: request_auto("event"))   # 굴 막음 · 조용 · 끝(1-12c)
 	if uq71 == null:
 		uq71 = Uq71.new()
 		add_child(uq71)

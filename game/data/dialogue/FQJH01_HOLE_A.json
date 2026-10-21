@@ -1,0 +1,137 @@
+{
+ "id": "FQJH01_HOLE_A",
+ "title": "쥐굴 입구",
+ "loc": "L-R02-11",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "PLATE": 5,
+  "BAIT": 7,
+  "PLATED": 9,
+  "BAITED": 11,
+  "QUIET": 13
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "FQ_JH01_HA == 1",
+   "to": "PLATED"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH01_HA == 2",
+   "to": "BAITED"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH01_HA >= 3",
+   "to": "QUIET"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "무너진 콘크리트 벽 밑 구멍. 테두리가 반듯하게 깨졌다 — 철판 한 장이면 딱 맞겠다. 안에서 찍찍 소리가 겹친다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "고철을 펴 철판으로 대고 철사로 감는다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 25
+      }
+     ],
+     "cond": "has(\"M-010\") >= 1",
+     "fx": "",
+     "to": "PLATE",
+     "id": "FQJH01_HOLE_A:1:0"
+    },
+    {
+     "text": "말벌 독낭을 짓이겨 미끼를 놓는다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "의학",
+       "min": 25
+      }
+     ],
+     "cond": "has(\"M-026\") >= 1",
+     "fx": "",
+     "to": "BAIT",
+     "id": "FQJH01_HOLE_A:1:1"
+    },
+    {
+     "text": "그냥 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQJH01_HOLE_A:1:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "jh01",
+   "args": [
+    "plate",
+    "a"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "jh01",
+   "args": [
+    "bait",
+    "a"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "철판이 철사에 감겨 있다. 가끔 안에서 두드린다. 점점 드물어진다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "깡통 뚜껑 미끼 접시. 분필 해골 표. 아직은 아무것도 안 건드렸다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "굴 앞이 조용하다. 쥐똥만 남았다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-JH-01.txt"
+}

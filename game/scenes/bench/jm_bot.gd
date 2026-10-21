@@ -21,6 +21,7 @@ var side12: SideS12                                 ## 지하시장 사이드 �
 var side13: SideS13                                 ## 볼트 S-02 사이드 퀘스트(1-11l SQ-S13)
 var jc01: FqJc01                                    ## 세력 퀘스트 FQ-JC-01 계단 물길(1-12a)
 var fqgs: FqGs                                       ## 세력 퀘스트 FQ-GS-01 정비 당번 · FQ-GS-02 천공기(1-12b)
+var fqjh: FqJh                                       ## 세력 퀘스트 FQ-JH-01 B구역 셔터(1-12c)
 var side11: SideS11                                 ## 여의도 사이드 퀘스트(1-11j SQ-S11)
 var uq71: Uq71                                     ## 비표시 퀘스트 UQ-71(1-D1 대방 지하차도)
 var u02: U02Paths                                  ## U02 남태령 지하(1-D2)
@@ -134,6 +135,9 @@ func _ready() -> void:
 	fqgs = FqGs.new()
 	add_child(fqgs)
 	fqgs.setup(host, true)
+	fqjh = FqJh.new()
+	add_child(fqjh)
+	fqjh.setup(host, true)
 	uq71 = Uq71.new()
 	add_child(uq71)
 	uq71.setup(host, true)
@@ -536,6 +540,37 @@ func _ready() -> void:
 				["warp", "GS-02", "from_X"], ["wait", 1.0], ["want", ["천공 바늘 묶음을 건넨다", "됐습니다"]], ["talk", "C-014"], ["wait", 2.0],
 				["check", "FQGS02_STAGE == 100 and FQ_GS02_EARLY == 1", "류정 '…벌써요?' → 건넴(100)"],
 				["warp", "GS-01", "from_X"], ["wait", 1.5], ["shot", "gs02_punch"]]
+		"jh01":                                                         # 1-12c FQ-JH-01: 게시판(10) → 노복희 사슬 열쇠 → B구역(20) → 굴 A 철판(30) → 굴 B 흙 위 독 미끼 · 한 시간 →
+			st.vars.set_v("AFF_JH", 12)                                  #   왕쥐 둥지 비우기 · 영수증(JH-02 훅) → 조용(40) → 노복희 보고(100) → 다음 날 B-06 수리 · B-04 사공 수선 재개장
+			st.vars.set_v("PC_SKP_REPAIR", 60)
+			st.vars.set_v("PC_SKP_MEDICINE", 60)
+			st.vars.set_v("GAME_DAY", 6)
+			st.call_fn("give", ["M-010", 2])
+			st.call_fn("give", ["M-026", 1])
+			host.date_text = "2277. 10. 29.  10:00"
+			host.enter("J-03", "from_J-02")
+			plan = [["hp", 3000], ["wait", 1.0], ["want", []], ["go", 8, 3, "J-03"], ["use", 8, 2], ["wait", 1.5], ["shot", "jh01_board"],
+				["check", "FQJH01_STAGE == 10", "게시판 쪽지(10)"],
+				["want", ["B구역 셔터 일"]], ["talk", "C-050"], ["wait", 1.5],
+				["check", "FQ_JH01_OPEN == 1", "노복희 사슬 열쇠"],
+				["want", ["들어간다"]], ["go", 36, 3, "J-03"], ["use", 36, 2], ["wait", 2.0], ["shot", "jh01_enter"],
+				["check", "FQJH01_STAGE == 20", "B구역(20)"],
+				["want", ["고철을 펴"]], ["go", 17, 5, "J-08"], ["use", 17, 4], ["wait", 1.0], ["shot", "jh01_plate"],
+				["check", "FQ_JH01_HA == 1 and FQJH01_STAGE == 30", "굴 A 철판(30) — 첫 물결 전 틈"],
+				["want", ["흙 위에 말벌"]], ["go", 32, 9, "J-08"], ["use", 32, 8], ["wait", 1.0],
+				["check", "FQ_JH01_HB == 2", "굴 B 독 미끼"],
+				["hours", 1], ["wait", 1.5], ["shot", "jh01_poison"],
+				["check", "FQ_JH01_HB == 3", "한 시간 뒤 굴 B 조용"],
+				["fight"], ["wait", 2.0], ["fight"], ["wait", 2.0], ["fight"], ["wait", 2.0], ["fight"], ["wait", 2.0], ["fight"],
+				["until", "FQ_JH01_HC == 4", 30.0, "왕쥐 둥지 비움", "jh01_king"],
+				["want", ["종이 뭉치를 편다"]], ["go", 43, 12, "J-08"], ["use", 43, 11], ["wait", 2.0], ["shot", "jh01_nest"],
+				["check", "FQ_JH01_KING == 1 and FQ_JH02_SEEN == 1 and FQ_JH01_CLEAR == 1 and FQJH01_STAGE == 40", "왕쥐 · 영수증 · 조용(40)"],
+				["warp", "J-03", "from_J-08"], ["wait", 1.0], ["want", ["B구역 셔터 일"]], ["talk", "C-050"], ["wait", 2.0],
+				["check", "FQJH01_STAGE == 100", "노복희 보고(100)"],
+				["hours", 21], ["wait", 1.0],
+				["check", "FQ_JH01_SHOP_M == 1 and FQ_JH01_SHOP_S == 1", "다음 날 재개장"],
+				["warp", "J-03", "from_J-08"], ["wait", 1.5], ["go", 30, 4, "J-03"], ["wait", 1.0], ["shot", "jh01_sagong"],
+				["warp", "J-08", "from_J-03"], ["wait", 1.5], ["calm"], ["go", 8, 5, "J-08"], ["wait", 1.0], ["shot", "jh01_shops"]]
 		"db":                                                           # 1-D1 대방 지하차도 · UQ-71: 북쪽 입구로 들어가 분대 등 뒤에서 웅크려 엿듣기(사흘 기한) → 펌프실 운전기사 메모 →
 			st.vars.set_v("PC_SKP_SCIENCE", 60)                          #   허리 물 버스에서 정지 레버로 봉인(카르마 · 지대 꺼짐) → 남쪽 입구로 나와 문 앞에 선다
 			st.vars.set_v("GAME_DAY", 8)

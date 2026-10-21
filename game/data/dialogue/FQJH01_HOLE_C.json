@@ -1,0 +1,199 @@
+{
+ "id": "FQJH01_HOLE_C",
+ "title": "왕쥐 둥지",
+ "loc": "L-R02-11",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "PLATE": 5,
+  "BAIT": 7,
+  "PLATED": 9,
+  "BAITED": 12,
+  "QUIET": 14,
+  "NEST": 17,
+  "PAPER": 19
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "FQ_JH01_HC == 1",
+   "to": "PLATED"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH01_HC == 2",
+   "to": "BAITED"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH01_HC >= 3",
+   "to": "QUIET"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "깨진 배수구. 지푸라기 · 종이 · 뼈로 지은 둥지. 큰 것이 숨 쉬는 소리. 이건 막아서 될 일이 아니다 — 둥지 주인이 먼저다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "왕쥐가 둥지를 비운 틈에 덮개 반쪽과 철판으로 막는다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 25
+      }
+     ],
+     "cond": "has(\"M-010\") >= 1",
+     "fx": "",
+     "to": "PLATE",
+     "id": "FQJH01_HOLE_C:1:0"
+    },
+    {
+     "text": "둥지 앞에 말벌 독낭 미끼를 놓는다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "의학",
+       "min": 25
+      }
+     ],
+     "cond": "has(\"M-026\") >= 1",
+     "fx": "",
+     "to": "BAIT",
+     "id": "FQJH01_HOLE_C:1:1"
+    },
+    {
+     "text": "그냥 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQJH01_HOLE_C:1:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "jh01",
+   "args": [
+    "plate",
+    "c"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "jh01",
+   "args": [
+    "bait",
+    "c"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH01_KING == 1 and FQ_JH01_NEST == 0",
+   "to": "NEST"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "배수 덮개 반쪽을 걸쳐 철판으로 묶었다. 둥지 냄새가 덮개 틈으로 샌다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "둥지 앞 미끼 접시. 작은 발자국만 접시 둘레를 돈다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH01_NEST == 0 and FQ_JH01_KING == 1",
+   "to": "NEST"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "텅 빈 둥지. 지푸라기만 들썩인다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "둥지 바닥을 헤집는다. 쥐가 모아 둔 반짝이 — 병뚜껑, 캡, 단추. 그 밑에 젖었다 마른 종이 뭉치."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "종이 뭉치를 편다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "PAPER",
+     "id": "FQJH01_HOLE_C:2:0"
+    },
+    {
+     "text": "그냥 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "FQJH01_HOLE_C:2:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "jh01",
+   "args": [
+    "nest"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "2077년 상가 영수증 몇 장. 한 장만 글씨가 남았다 — '복희 의류 · 코트 1 · 180,000 · 외상 — 탁'."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "캡 열두 개를 챙긴다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-JH-01.txt"
+}

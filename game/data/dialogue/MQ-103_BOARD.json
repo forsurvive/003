@@ -6,9 +6,13 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "CLEARED": 3,
-  "W": 4,
-  "POSTER": 6
+  "JH01AD": 5,
+  "JH01ON": 9,
+  "JH01DONE": 11,
+  "NEST": 12,
+  "CLEARED": 14,
+  "W": 15,
+  "POSTER": 17
  },
  "ops": [
   {
@@ -16,6 +20,64 @@
    "who": "SYS",
    "emo": "기본",
    "text": "상인회 게시판. 셔터 순번표, '버섯 삽니다', '남쪽 통로 통행 금지 — 둥지'."
+  },
+  {
+   "op": "if",
+   "cond": "FQJH01_STAGE == 0 and AFF_JH >= -19 and FQ_JH01_OPEN != 3 and dead(\"C-050\") == 0",
+   "to": "JH01AD"
+  },
+  {
+   "op": "if",
+   "cond": "FQJH01_STAGE >= 10 and FQJH01_STAGE < 100",
+   "to": "JH01ON"
+  },
+  {
+   "op": "if",
+   "cond": "FQJH01_STAGE >= 100",
+   "to": "JH01DONE"
+  },
+  {
+   "op": "goto",
+   "to": "NEST"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "새 쪽지. 'B구역 쥐 — 셔터 열고 굴 막을 사람 구함. 사슬 열쇠는 상인회장에게. 노복희.'"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "그 밑에 다른 글씨. '굴은 셋. 구동부는 손대지 말 것.'"
+  },
+  {
+   "op": "cmd",
+   "name": "jh01",
+   "args": [
+    "board"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "NEST"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'B구역 쥐' 쪽지 귀퉁이에 누가 줄을 그었다 — '맡은 사람 있음'."
+  },
+  {
+   "op": "goto",
+   "to": "NEST"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'B구역 쥐' 쪽지 위에 큰 글씨. '셔터는 우리가 내린다.'"
   },
   {
    "op": "if",

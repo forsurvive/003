@@ -1,0 +1,32 @@
+{
+ "id": "FQJH01_DRAIN",
+ "title": "배수 통로 쇠창살",
+ "loc": "L-R02-11",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "둥근 배수관 입구에 쇠창살. 분필 '비상 — 상인회'. 자물쇠가 손바닥만 하다 — 상인회 열쇠 꾸러미에나 맞을 것."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "창살 너머 바닥이 말라 있다. 누가 가끔 지나다닌다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/FQ-JH-01.txt"
+}

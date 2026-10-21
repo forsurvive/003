@@ -7,29 +7,35 @@
  "labels": {
   "START": 0,
   "MENU": 8,
-  "S8": 9,
-  "S8_BOTH": 13,
-  "S8_NO": 16,
-  "S8_PAY": 18,
-  "S8_ONE_B": 21,
-  "S8_ONE_A": 24,
-  "UQ71_CORE": 27,
-  "UQ71_SOLD": 30,
-  "ABOUT": 34,
-  "SHOP": 38,
-  "MA": 40,
-  "WHY": 43,
-  "JOB": 47,
-  "JOB_ALONE": 54,
-  "JOB_HINT": 57,
-  "FEE": 59,
-  "WAITING": 63,
-  "REWARD": 65,
-  "HAVEPASS": 69,
-  "REGULAR": 71,
-  "MA_DEAD": 73,
-  "MA_LOG": 76,
-  "MA_DEAD_KNEW": 83
+  "JH01": 9,
+  "JH01_KEY": 14,
+  "JH01_DONE": 19,
+  "JH01_CRUSH": 22,
+  "JH01_LEAK": 25,
+  "JH01_PAY": 27,
+  "S8": 31,
+  "S8_BOTH": 35,
+  "S8_NO": 38,
+  "S8_PAY": 40,
+  "S8_ONE_B": 43,
+  "S8_ONE_A": 46,
+  "UQ71_CORE": 49,
+  "UQ71_SOLD": 52,
+  "ABOUT": 56,
+  "SHOP": 60,
+  "MA": 62,
+  "WHY": 65,
+  "JOB": 69,
+  "JOB_ALONE": 76,
+  "JOB_HINT": 79,
+  "FEE": 81,
+  "WAITING": 85,
+  "REWARD": 87,
+  "HAVEPASS": 91,
+  "REGULAR": 93,
+  "MA_DEAD": 95,
+  "MA_LOG": 98,
+  "MA_DEAD_KNEW": 105
  },
  "ops": [
   {
@@ -117,14 +123,142 @@
      "id": "MQ-103_BOK:1:4"
     },
     {
+     "text": "B구역 셔터 일 말인데요",
+     "tags": [],
+     "cond": "FQJH01_STAGE >= 10 and FQJH01_STAGE < 100",
+     "fx": "",
+     "to": "JH01",
+     "id": "MQ-103_BOK:1:5"
+    },
+    {
      "text": "(인사만 한다)",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "MQ-103_BOK:1:5"
+     "id": "MQ-103_BOK:1:6"
     }
    ]
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH01_CLEAR == 1",
+   "to": "JH01_DONE"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH01_OPEN == 0",
+   "to": "JH01_KEY"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "굴은 셋이래. 앞쪽 벽 밑에 하나, 안쪽 바닥에 하나, 제일 안 배수구가 큰 놈 집이고."
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "구동부는 김 수리공이 알아. 셔터 앞 노점. 손대기 전에 그 사람한테 물어봐."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "B구역은 그날 밤 천장이 내려앉았어. 셔터를 내린 건 우리가 아니야. 쥐가 내렸지."
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "사슬 열쇠. 열고 들어가면 굴이 셋이야. 굴만 막으면 쥐는 굶어."
+  },
+  {
+   "op": "cmd",
+   "name": "jh01",
+   "args": [
+    "key"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "구동부는 김 수리공한테 먼저 물어봐. 그 사람 말 안 듣고 셔터 내렸다가 냉장 창고까지 쥐 몰린 적 있어."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH01_CRUSH == 1",
+   "to": "JH01_CRUSH"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_JH01_LEAK >= 1",
+   "to": "JH01_LEAK"
+  },
+  {
+   "op": "goto",
+   "to": "JH01_PAY"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "놀람",
+   "text": "셔터 날이 휘었다며. 쥐 잡으라 했지 셔터 잡으라 했나."
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "미소",
+   "text": "…그래도 쥐는 잡혔네."
+  },
+  {
+   "op": "goto",
+   "to": "JH01_PAY"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "분노",
+   "text": "설 씨 선반 반이 갉혔어. 굴 막기 전에 셔터부터 내렸지?"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "잡았으니 됐어. 버섯은 다시 자라."
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "미소",
+   "text": "셔터는 우리가 내리는 거야. 쥐가 내리게 할 순 없지."
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "내일 아침부터 B구역 가게 두 칸이 다시 열어. 백 캡. 상인회 몫이야."
+  },
+  {
+   "op": "cmd",
+   "name": "jh01",
+   "args": [
+    "done"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
   },
   {
    "op": "if",

@@ -45,3 +45,6 @@ prop crate_o 24 15
 box 24 15 pantry name="재배장 식료품 상자"
 prop work_lamp 14 5
 prop work_lamp 14 14
+# FQ-JH-01(1-12c): B구역 굴이 벽 속으로 이어졌다 — 구동부 순서 예고 · 샌 뒤 갉힌 선반
+text 12 1 "선반 뒤 벽. 귀를 대면 안쪽에서 긁는 소리가 지나간다 — B구역 쪽으로." w=3 cond="FQJH01_STAGE >= 10 and FQ_JH01_LEAK == 0 and FQ_JH01_CLEAR == 0"
+text 12 1 "선반 뒤 벽에 주먹만 한 구멍. 쥐가 나온 자리를 설태호가 진흙으로 메웠다." w=3 cond="FQ_JH01_LEAK >= 1"
