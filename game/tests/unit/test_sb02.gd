@@ -692,3 +692,22 @@ func test_sb02_narrative_fixes(t) -> void:
 			n += 1
 			t.ok(not str(np.get("bark", "")).contains("줄 맞춰"), "배신 판 바크는 차갑게")
 	t.eq(n, 1, "K-20 갈고리는 한 명(배타 조건)")
+	st3.vars.set_v("FQ_SB02_PATROL", 3)
+	st3.vars.set_v("SQ_S09_ORDER", 0)
+	t.ok(_said(_play(st3, c3, "SQS09_GALGORI")).contains("방범대에 판 호위"), "그냥 넘긴 판: '기억해 둔다'는 말하지 않은 판이라 다른 줄")
+	st3.vars.set_v("FQ_SB02_RES", 1)
+	st3.vars.set_v("FQ_SB02_REMOTE", 0)
+	st3.vars.set_v("FQ_SB02_TOLL", 2)
+	t.ok(_said(_play(st3, c3, "SQS09_GALGORI")).contains("서른에 끝냈다며"), "좋은 기억도 남는다")
+	st3.vars.set_v("FQSB02_STAGE", 30)
+	n = 0
+	for np in mp["npcs"]:
+		if str(np["id"]) == "N-R02-041" and StoryExpr.test(str(np.get("cond", "")), st3):
+			n += 1
+	t.eq(n, 0, "운송 중엔 숙소에 없다(그날 동선 한 곳)")
+	# 장부가 사라진 세계: 넷은 출근부 빚(종이 두 장)
+	var r4 := _host()
+	var st4: StoryState = r4[1]
+	st4.vars.set_v("SB_DEBT", 1)
+	r4[2].tick2()
+	t.ok(_said(_play(st4, r4[2], "FQSB02_YARD", ["오늘은 아니다"])).contains("이 넷은 출근부 빚"), "장부를 태운 판의 출발 줄")

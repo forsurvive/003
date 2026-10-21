@@ -479,21 +479,34 @@ N-R02-036 [분노] 127번은 결번이야. 빨간 줄 그은 지 오래야. …�
 @npc   N-R02-041
 @cond  V_ACT >= 1
 ? SQ_S09_ORDER > 0 and SQ_S09_SOL2 == 0 -> HAND
-? SQ_S09_START > 0 and GAME_DAY >= SQ_S09_START + 4 and SB_127 <= 1 and dead("N-R02-039") == 0 -> CLOCK
 ? FQ_SB02_RES == 5 -> SB_GUN
-? FQ_SB02_RES == 3 or FQ_SB02_RES == 6 -> SB_SOLD
+? FQ_SB02_RES == 6 or (FQ_SB02_RES == 3 and FQ_SB02_PATROL == 4) -> SB_SOLD
+? FQ_SB02_RES == 3 -> SB_SOLD2
+? SQ_S09_START > 0 and GAME_DAY >= SQ_S09_START + 4 and SB_127 <= 1 and dead("N-R02-039") == 0 -> CLOCK
 ? FQ_SB02_REMOTE == 2 and FQ_SB02_SEEN == 2 -> SB_LOST
 ? FQ_SB02_REMOTE == 2 -> SB_LOST2
+? (FQ_SB02_RES == 1 or FQ_SB02_RES == 2) and has("M-129") -> SB_TAG
+? FQ_SB02_RES == 1 and FQ_SB02_TOLL == 2 -> SB_TOLL
 N-R02-041 [기본] 줄 맞춰. 낙오하면 장부에 이자 붙는다.
 -> END
 # FQ-SB-02 결과의 회수(1-12f 서사 대조 — D-296): 운송 끝의 '기억해 둔다' · 원격기 분실이 숙소에서도 이어진다.
 #   K-20에 갈고리가 서 있으면(SQ_S09_SOL2 != 2 · 산 사람) 운송을 이끈 것도 그다(LEAD 1 = 죽었거나 고척 노선 — 그땐 이 숙소에 없다).
 #   운송이 끝난 뒤 본소 마당엔 행렬이 서지 않으므로(진행기 RES 0일 때만) 운송 결과를 그가 말할 곳은 이 숙소 하나다.
+#   원한 갈래는 127번 시계(CLOCK)보다 먼저 — 총 겨눈 · 줄 판 호위에겐 트럭 날짜를 알려 주지 않는다. '기억해 둔다'는 그가 그 말을 한 판(끔 · 원격기 넘김)에서만.
 * SB_GUN
 N-R02-041 [분노] (등을 돌린 채) 내 줄에 총 겨눈 호위가 내 숙소엔 왜 와. 볼일 없으면 나가.
 -> END
 * SB_SOLD
-N-R02-041 [분노] 철교 남단. 목걸이 넷. …기억해 둔다고 했지. 아직 기억하고 있어.
+N-R02-041 [분노] (허리춤을 툭 친다) 원격기 단추 누른 손. …기억해 둔다고 했지. 아직 기억하고 있어.
+-> END
+* SB_SOLD2
+N-R02-041 [분노] 줄을 방범대에 판 호위가 내 숙소엔 왜 와. 볼일 없으면 나가.
+-> END
+* SB_TAG
+N-R02-041 [기본] (목에 건 번호표를 본다) 번호 찬 놈이 숙소까지 왜 와. …줄 맞춰. 낙오하면 장부에 이자 붙는다.
+-> END
+* SB_TOLL
+N-R02-041 [기본] 노들 경비가 너 얘기 하더라. 서른에 끝냈다며. …그 입은 쓸 데가 있겠어.
 -> END
 * SB_LOST
 N-R02-041 [기본] 원격기 값은 장부에 있어. '분실' — 네 이름 옆에. …모른다고 했지. 장부는 기억해.

@@ -3,16 +3,40 @@
  "title": "마을 청년 오재윤",
  "loc": "L-R01-09",
  "npc": "N-R01-035",
- "cond": "V_ACT >= 1 and FQ_SB01_DUE > 0 and GAME_DAY >= FQ_SB01_DUE and FQ_SB01_THX3 == 0 and (FQ_SB01_X3 == 1 or FQ_SB01_PD3 == 1) and FQ_SB01_RES != 3",
+ "cond": "V_ACT >= 1 and MQ101_STAGE >= 100 and (dead(\"C-049\") == 0 or dead(\"C-013\") == 0 or dead(\"C-021\") == 0) and FQ_SB01_DUE > 0 and GAME_DAY >= FQ_SB01_DUE and FQ_SB01_THX3 == 0 and (FQ_SB01_X3 == 1 or FQ_SB01_PD3 == 1) and FQ_SB01_RES != 3",
  "labels": {
-  "START": 0
+  "START": 0,
+  "GATE": 4
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "HO_LEDGER >= 80 and HO_LEDGER < 90",
+   "to": "GATE"
+  },
   {
    "op": "line",
    "who": "N-R01-035",
    "emo": "기본",
    "text": "위약금 받으러 올 때가 지났어. 올 줄 알고 며칠을 계단참에서 총 들고 기다렸는데. …안 와서 다행이지, 뭐."
+  },
+  {
+   "op": "cmd",
+   "name": "sb01",
+   "args": [
+    "thx",
+    "3"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-035",
+   "emo": "기본",
+   "text": "아랫문 밖에서 추심원이 명단을 읽는데 내 이름은 안 부르더라. 계단참에서 총 들고 기다렸는데. …김샜지, 뭐."
   },
   {
    "op": "cmd",

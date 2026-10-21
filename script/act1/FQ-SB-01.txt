@@ -124,7 +124,7 @@ C-049 [기본] 그리고 — 운송조 호위가 하나 모자라. 새벽 네 �
 @cmd sb01 convoy
 -> END
 * CONVOY_L
-C-049 [기본] 그리고 — 운송조 호위가 하나 모자라. 새벽 네 시에 마당으로 나와. 오늘 인솔은 반장이 끈다.
+C-049 [기본] 그리고 — 운송조 호위가 하나 모자라. 새벽 네 시에 마당으로 나와. 이번 인솔은 반장이 끈다.
 @cmd sb01 convoy
 -> END
 * CAUGHT
@@ -347,7 +347,7 @@ SYS '{FQ_SB01_DUE_M}. 3. 오영자 — 약품 대납 120. 가게 압류 검토.'
 SYS '{FQ_SB01_DUE_M}. 3. 오영자(사망 — 유족 승계) — 약품 대납 120. 추심조.'
 * Q6
 ? FQ_SB01_X6 + FQ_SB01_X7 + FQ_SB01_X8 + FQ_SB01_X9 + FQ_SB01_PD6 + FQ_SB01_PD7 + FQ_SB01_PD8 + FQ_SB01_PD9 >= 4 -> Q7
-SYS '{FQ_SB01_DUE_M}. 3. 번호 218 · 233 · 240 · 251 중 남은 줄 — 인력 대체 가능.'
+SYS '{FQ_SB01_DUE_M}. 3. 번호 줄(이름 없는 집) 남은 것 — 인력 대체 가능.'
 * Q7
 ? FQ_SB01_X1 + FQ_SB01_X2 + FQ_SB01_X3 + FQ_SB01_X4 + FQ_SB01_X5 + FQ_SB01_X6 + FQ_SB01_X7 + FQ_SB01_X8 + FQ_SB01_X9 + FQ_SB01_PD1 + FQ_SB01_PD2 + FQ_SB01_PD3 + FQ_SB01_PD4 + FQ_SB01_PD5 + FQ_SB01_PD6 + FQ_SB01_PD7 + FQ_SB01_PD8 + FQ_SB01_PD9 >= 9 -> EMPTY
 SYS 명단 맨 아래 칸 '출동 인원 — 남은 집마다 추심원 하나 · 번호 줄엔 인솔조원 하나'.
@@ -487,38 +487,64 @@ C-010 [기본] 남건희 줄도? …요즘 대장간에서 망치 잡더군. 그
 @cmd sb01 pass FQSB01_JO
 -> END
 
+# 서사 대조(계획 §6.5 · 재검수): 추심조를 보낼 사람(세 우두머리)이 모두 죽었으면 감사 줄 없음 · 장부가 정착지 손이면 모두 '문 밖 명단에 내 이름이 없었다'(GATE) · 쫓겨난 남건희는 없음.
 # ---------------------------------------------------------------- 추심 날(FQ_SB01_DUE — 3쪽 날짜) 뒤 첫 대화(1-12f 재미 검수 — 사흘 창 없앰): 뺀 · 완납 줄의 이름 있는 사람이 한 줄(출처: '추심조가 안 왔다', P7)
 @scene FQSB01_THX1  고물상 오봉수  (L-R01-09)
 @npc   N-R01-026
-@cond  V_ACT >= 1 and FQ_SB01_DUE > 0 and GAME_DAY >= FQ_SB01_DUE and FQ_SB01_THX1 == 0 and (FQ_SB01_X1 == 1 or FQ_SB01_PD1 == 1) and FQ_SB01_RES != 3
+@cond  V_ACT >= 1 and MQ101_STAGE >= 100 and (dead("C-049") == 0 or dead("C-013") == 0 or dead("C-021") == 0) and FQ_SB01_DUE > 0 and GAME_DAY >= FQ_SB01_DUE and FQ_SB01_THX1 == 0 and (FQ_SB01_X1 == 1 or FQ_SB01_PD1 == 1) and FQ_SB01_RES != 3
+? HO_LEDGER >= 80 and HO_LEDGER < 90 -> GATE
 N-R01-026 [기본] 이상하지. 올해는 고철 선금 받으러 아무도 안 왔어. 장부가 나를 잊었나? 잊어 주면 고맙지.
+@cmd sb01 thx 1
+-> END
+* GATE
+N-R01-026 [기본] 아랫문 밖에서 명단 읽는 소리가 나더라. 고철 선금 얘긴 없었어. 장부가 나를 잊었나? 잊어 주면 고맙지.
 @cmd sb01 thx 1
 -> END
 
 @scene FQSB01_THX2  대장장이 남무진  (L-R01-09)
 @npc   N-R01-030
-@cond  V_ACT >= 1 and FQ_SB01_DUE > 0 and GAME_DAY >= FQ_SB01_DUE and FQ_SB01_THX2 == 0 and (FQ_SB01_X2 == 1 or FQ_SB01_PD2 == 1) and FQ_SB01_RES != 3
+@cond  V_ACT >= 1 and MQ101_STAGE >= 100 and (dead("C-049") == 0 or dead("C-013") == 0 or dead("C-021") == 0) and FQ_SB01_DUE > 0 and GAME_DAY >= FQ_SB01_DUE and FQ_SB01_THX2 == 0 and (FQ_SB01_X2 == 1 or FQ_SB01_PD2 == 1) and FQ_SB01_RES != 3
+? HO_LEDGER >= 80 and HO_LEDGER < 90 -> GATE
 N-R01-030 [기본] (망치를 내려놓는다) 숯값 받으러 올 때가 지났는데 안 왔어. 쇠는 두드리면 펴지는데, 빚은 안 펴지거든. …누가 폈나.
+@cmd sb01 thx 2
+-> END
+* GATE
+N-R01-030 [기본] (망치를 내려놓는다) 문 밖에서 이름을 부르더군. 내 이름은 없었어. 쇠는 두드리면 펴지는데, 빚은 안 펴지거든. …누가 폈나.
 @cmd sb01 thx 2
 -> END
 
 @scene FQSB01_THX3  마을 청년 오재윤  (L-R01-09)
 @npc   N-R01-035
-@cond  V_ACT >= 1 and FQ_SB01_DUE > 0 and GAME_DAY >= FQ_SB01_DUE and FQ_SB01_THX3 == 0 and (FQ_SB01_X3 == 1 or FQ_SB01_PD3 == 1) and FQ_SB01_RES != 3
+@cond  V_ACT >= 1 and MQ101_STAGE >= 100 and (dead("C-049") == 0 or dead("C-013") == 0 or dead("C-021") == 0) and FQ_SB01_DUE > 0 and GAME_DAY >= FQ_SB01_DUE and FQ_SB01_THX3 == 0 and (FQ_SB01_X3 == 1 or FQ_SB01_PD3 == 1) and FQ_SB01_RES != 3
+? HO_LEDGER >= 80 and HO_LEDGER < 90 -> GATE
 N-R01-035 [기본] 위약금 받으러 올 때가 지났어. 올 줄 알고 며칠을 계단참에서 총 들고 기다렸는데. …안 와서 다행이지, 뭐.
+@cmd sb01 thx 3
+-> END
+* GATE
+N-R01-035 [기본] 아랫문 밖에서 추심원이 명단을 읽는데 내 이름은 안 부르더라. 계단참에서 총 들고 기다렸는데. …김샜지, 뭐.
 @cmd sb01 thx 3
 -> END
 
 @scene FQSB01_THX4  마을 청년 남건희  (L-R01-09)
 @npc   N-R01-039
-@cond  V_ACT >= 1 and FQ_SB01_DUE > 0 and GAME_DAY >= FQ_SB01_DUE and FQ_SB01_THX4 == 0 and (FQ_SB01_X4 == 1 or FQ_SB01_PD4 == 1) and FQ_SB01_RES != 3
+@cond  V_ACT >= 1 and MQ101_STAGE >= 100 and (dead("C-049") == 0 or dead("C-013") == 0 or dead("C-021") == 0) and FQ_SB01_DUE > 0 and GAME_DAY >= FQ_SB01_DUE and FQ_SB01_THX4 == 0 and (FQ_SB01_X4 == 1 or FQ_SB01_PD4 == 1) and FQ_SB01_RES != 3 and SQ_S02_IN != 1
+? HO_LEDGER >= 80 and HO_LEDGER < 90 -> GATE
 N-R01-039 [놀람] 일당 떼먹은 거, 안 받으러 왔어. 누가 대신 갚았대? …누가 시켰는데? 나 아무한테도 말 안 했어.
+@cmd sb01 thx 4
+-> END
+* GATE
+N-R01-039 [놀람] 문 밖에서 이름 부르는데 나는 없었어. 누가 대신 갚았대? …누가 시켰는데? 나 아무한테도 말 안 했어.
 @cmd sb01 thx 4
 -> END
 
 @scene FQSB01_THX5  미용실 오영자  (L-R01-09)
 @npc   N-R01-501
-@cond  V_ACT >= 1 and FQ_SB01_DUE > 0 and GAME_DAY >= FQ_SB01_DUE and FQ_SB01_THX5 == 0 and (FQ_SB01_X5 == 1 or FQ_SB01_PD5 == 1) and FQ_SB01_RES != 3
+@cond  V_ACT >= 1 and MQ101_STAGE >= 100 and (dead("C-049") == 0 or dead("C-013") == 0 or dead("C-021") == 0) and FQ_SB01_DUE > 0 and GAME_DAY >= FQ_SB01_DUE and FQ_SB01_THX5 == 0 and (FQ_SB01_X5 == 1 or FQ_SB01_PD5 == 1) and FQ_SB01_RES != 3
+? HO_LEDGER >= 80 and HO_LEDGER < 90 -> GATE
 N-R01-501 [기본] 올해는 우리 집을 건너뛰더라. 누가 그랬는지 몰라도. …머리 다듬을 일 있으면 와. 공짜로 해 줄게, 한 번은.
+@cmd sb01 thx 5
+-> END
+* GATE
+N-R01-501 [기본] 문 밖에서 명단을 읽는데 우리 집은 없더라. 누가 그랬는지 몰라도. …머리 다듬을 일 있으면 와. 공짜로 해 줄게, 한 번은.
 @cmd sb01 thx 5
 -> END

@@ -3,16 +3,40 @@
  "title": "대장장이 남무진",
  "loc": "L-R01-09",
  "npc": "N-R01-030",
- "cond": "V_ACT >= 1 and FQ_SB01_DUE > 0 and GAME_DAY >= FQ_SB01_DUE and FQ_SB01_THX2 == 0 and (FQ_SB01_X2 == 1 or FQ_SB01_PD2 == 1) and FQ_SB01_RES != 3",
+ "cond": "V_ACT >= 1 and MQ101_STAGE >= 100 and (dead(\"C-049\") == 0 or dead(\"C-013\") == 0 or dead(\"C-021\") == 0) and FQ_SB01_DUE > 0 and GAME_DAY >= FQ_SB01_DUE and FQ_SB01_THX2 == 0 and (FQ_SB01_X2 == 1 or FQ_SB01_PD2 == 1) and FQ_SB01_RES != 3",
  "labels": {
-  "START": 0
+  "START": 0,
+  "GATE": 4
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "HO_LEDGER >= 80 and HO_LEDGER < 90",
+   "to": "GATE"
+  },
   {
    "op": "line",
    "who": "N-R01-030",
    "emo": "기본",
    "text": "(망치를 내려놓는다) 숯값 받으러 올 때가 지났는데 안 왔어. 쇠는 두드리면 펴지는데, 빚은 안 펴지거든. …누가 폈나."
+  },
+  {
+   "op": "cmd",
+   "name": "sb01",
+   "args": [
+    "thx",
+    "2"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-030",
+   "emo": "기본",
+   "text": "(망치를 내려놓는다) 문 밖에서 이름을 부르더군. 내 이름은 없었어. 쇠는 두드리면 펴지는데, 빚은 안 펴지거든. …누가 폈나."
   },
   {
    "op": "cmd",

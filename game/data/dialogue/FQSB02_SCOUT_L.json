@@ -6,16 +6,33 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "PASS": 3,
-  "NOPASS": 6,
-  "SET": 8
+  "SC_LATE": 3,
+  "SC_TALK": 4,
+  "PASS": 6,
+  "NOPASS": 9,
+  "SET": 11
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "GAME_HOUR >= 7",
+   "to": "SC_LATE"
+  },
   {
    "op": "line",
    "who": "SYS",
    "emo": "기본",
    "text": "형광 조끼 셋. 밤 순찰을 마치고 노량진 쪽으로 들어가는 길인지 손전등이 아직 켜져 있다."
+  },
+  {
+   "op": "goto",
+   "to": "SC_TALK"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "형광 조끼 셋. 교대가 늦은 조인지 조끼 자락에 흙탕물이 말라붙어 있다."
   },
   {
    "op": "line",

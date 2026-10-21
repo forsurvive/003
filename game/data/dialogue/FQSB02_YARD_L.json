@@ -7,13 +7,15 @@
  "labels": {
   "START": 0,
   "SENT": 8,
-  "TERMS": 9,
-  "GO": 12,
-  "DONE": 16,
-  "NOJOB": 18,
-  "COLD": 20,
-  "GHOUL": 22,
-  "HOT": 24
+  "LEDGER": 9,
+  "NOBOOK": 11,
+  "TERMS": 12,
+  "GO": 15,
+  "DONE": 19,
+  "NOJOB": 21,
+  "COLD": 23,
+  "GHOUL": 25,
+  "HOT": 27
  },
  "ops": [
   {
@@ -54,13 +56,28 @@
   },
   {
    "op": "goto",
-   "to": "TERMS"
+   "to": "LEDGER"
   },
   {
    "op": "line",
    "who": "N-SB-L1",
    "emo": "기본",
    "text": "(목걸이 줄을 세며) 넷. …실장님이 보낸 호위가 너냐. 출근부 쓴 손이라더니."
+  },
+  {
+   "op": "if",
+   "cond": "(HO_LEDGER >= 80 and HO_LEDGER < 90) or HO_LEDGER == 99 or SB_DEBT == 1",
+   "to": "NOBOOK"
+  },
+  {
+   "op": "goto",
+   "to": "TERMS"
+  },
+  {
+   "op": "line",
+   "who": "N-SB-L1",
+   "emo": "기본",
+   "text": "소장님 장부는 없어졌어도 이 넷은 출근부 빚이야. 우리에서 나온 번호가 아니라 일당 떼먹고 줄 선 놈들. 종이는 두 장이거든."
   },
   {
    "op": "line",
@@ -132,7 +149,7 @@
    "op": "line",
    "who": "N-SB-L1",
    "emo": "기본",
-   "text": "장부에 이름 없는 놈은 호위 안 써. 실장님한테 가서 일부터 받아."
+   "text": "장부에 이름 없는 놈은 호위 안 써. 출근부실 가서 일부터 받아."
   },
   {
    "op": "goto",

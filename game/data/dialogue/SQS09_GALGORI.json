@@ -6,14 +6,17 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "SB_GUN": 8,
-  "SB_SOLD": 10,
-  "SB_LOST": 12,
-  "SB_LOST2": 14,
-  "CLOCK": 16,
-  "HAND": 18,
-  "HAND2": 20,
-  "HAND2_COLD": 24
+  "SB_GUN": 11,
+  "SB_SOLD": 13,
+  "SB_SOLD2": 15,
+  "SB_TAG": 17,
+  "SB_TOLL": 19,
+  "SB_LOST": 21,
+  "SB_LOST2": 23,
+  "CLOCK": 25,
+  "HAND": 27,
+  "HAND2": 29,
+  "HAND2_COLD": 33
  },
  "ops": [
   {
@@ -23,18 +26,23 @@
   },
   {
    "op": "if",
-   "cond": "SQ_S09_START > 0 and GAME_DAY >= SQ_S09_START + 4 and SB_127 <= 1 and dead(\"N-R02-039\") == 0",
-   "to": "CLOCK"
-  },
-  {
-   "op": "if",
    "cond": "FQ_SB02_RES == 5",
    "to": "SB_GUN"
   },
   {
    "op": "if",
-   "cond": "FQ_SB02_RES == 3 or FQ_SB02_RES == 6",
+   "cond": "FQ_SB02_RES == 6 or (FQ_SB02_RES == 3 and FQ_SB02_PATROL == 4)",
    "to": "SB_SOLD"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB02_RES == 3",
+   "to": "SB_SOLD2"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S09_START > 0 and GAME_DAY >= SQ_S09_START + 4 and SB_127 <= 1 and dead(\"N-R02-039\") == 0",
+   "to": "CLOCK"
   },
   {
    "op": "if",
@@ -45,6 +53,16 @@
    "op": "if",
    "cond": "FQ_SB02_REMOTE == 2",
    "to": "SB_LOST2"
+  },
+  {
+   "op": "if",
+   "cond": "(FQ_SB02_RES == 1 or FQ_SB02_RES == 2) and has(\"M-129\")",
+   "to": "SB_TAG"
+  },
+  {
+   "op": "if",
+   "cond": "FQ_SB02_RES == 1 and FQ_SB02_TOLL == 2",
+   "to": "SB_TOLL"
   },
   {
    "op": "line",
@@ -70,7 +88,37 @@
    "op": "line",
    "who": "N-R02-041",
    "emo": "분노",
-   "text": "철교 남단. 목걸이 넷. …기억해 둔다고 했지. 아직 기억하고 있어."
+   "text": "(허리춤을 툭 친다) 원격기 단추 누른 손. …기억해 둔다고 했지. 아직 기억하고 있어."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "분노",
+   "text": "줄을 방범대에 판 호위가 내 숙소엔 왜 와. 볼일 없으면 나가."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "기본",
+   "text": "(목에 건 번호표를 본다) 번호 찬 놈이 숙소까지 왜 와. …줄 맞춰. 낙오하면 장부에 이자 붙는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-041",
+   "emo": "기본",
+   "text": "노들 경비가 너 얘기 하더라. 서른에 끝냈다며. …그 입은 쓸 데가 있겠어."
   },
   {
    "op": "goto",

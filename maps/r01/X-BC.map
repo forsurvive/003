@@ -632,7 +632,7 @@ npc C-067 24 26 S cond="MEDIC_AT == 1 and MQ101_RESULT > 0" bark="다친 사람 
 npc N-R02-039 12 30 E cond="SB_127 == 6" bark="고향 맞더라. 봉천 계단 냄새."
 npc N-R02-050 13 30 W cond="SB_127 == 6"
 npc N-R02-040 15 30 W cond="SQ_S10_KIRA == 4 and SQ_S10_PLACE == 1" bark="계단 고치는 거 배워. 번호 말고 이름으로 불러 줘."
-npc N-R02-506 14 37 S cond="FQ_SB02_TWHERE == 3 and FQSB02_STAGE >= 100 and not (GAME_DAY == FQ_SB01_DUE and GAME_HOUR >= 8 and GAME_HOUR < 18)" bark="(빨래를 짜며 목걸이 자국을 옷깃으로 가린다) 어른들이 세 번째 선부터 끊어 줬어. 여긴 번호로 안 불러 — 태수야, 하고 불러."   # 추심 날 낮엔 집 안(추심원 눈을 피함 — 계획 §6.5 #62)
+npc N-R02-506 14 37 S cond="FQ_SB02_TWHERE == 3 and FQSB02_STAGE >= 100 and not (GAME_DAY == FQ_SB01_DUE and GAME_HOUR >= 8 and GAME_HOUR < 18)" bark="(빨래를 짜며 목걸이 자국을 옷깃으로 가린다) 엄마가 그날 밤 문을 열어 줬어. 목걸이는 어른들이 세 번째 선부터 끊어 줬고. 여긴 번호로 안 불러."   # 추심 날 낮엔 집 안(추심원 눈을 피함 — 계획 §6.5 #62)
 
 # 1-12f FQ-SB-01: 3쪽 날짜(FQ_SB01_DUE — 3쪽을 연 날의 다음 달 3일, A209) 08~18시, 출동 명단에 남은 줄의 집 앞에 추심원(독사 아님 — SB-03 일정과 겹침 없음, P3). MQ-101이 끝난 뒤만.
 #   서사 대조(계획 §6.5 #48~52): 보낼 사람(구만호 · 황두칠 · 독사)이 모두 죽었으면 없음 · 장부가 정착지 손(HO_LEDGER 8x — 조만석 '출입 금지')이면 아랫문 밖 하나만 ·

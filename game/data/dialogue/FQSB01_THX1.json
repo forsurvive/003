@@ -3,16 +3,40 @@
  "title": "고물상 오봉수",
  "loc": "L-R01-09",
  "npc": "N-R01-026",
- "cond": "V_ACT >= 1 and FQ_SB01_DUE > 0 and GAME_DAY >= FQ_SB01_DUE and FQ_SB01_THX1 == 0 and (FQ_SB01_X1 == 1 or FQ_SB01_PD1 == 1) and FQ_SB01_RES != 3",
+ "cond": "V_ACT >= 1 and MQ101_STAGE >= 100 and (dead(\"C-049\") == 0 or dead(\"C-013\") == 0 or dead(\"C-021\") == 0) and FQ_SB01_DUE > 0 and GAME_DAY >= FQ_SB01_DUE and FQ_SB01_THX1 == 0 and (FQ_SB01_X1 == 1 or FQ_SB01_PD1 == 1) and FQ_SB01_RES != 3",
  "labels": {
-  "START": 0
+  "START": 0,
+  "GATE": 4
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "HO_LEDGER >= 80 and HO_LEDGER < 90",
+   "to": "GATE"
+  },
   {
    "op": "line",
    "who": "N-R01-026",
    "emo": "기본",
    "text": "이상하지. 올해는 고철 선금 받으러 아무도 안 왔어. 장부가 나를 잊었나? 잊어 주면 고맙지."
+  },
+  {
+   "op": "cmd",
+   "name": "sb01",
+   "args": [
+    "thx",
+    "1"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-026",
+   "emo": "기본",
+   "text": "아랫문 밖에서 명단 읽는 소리가 나더라. 고철 선금 얘긴 없었어. 장부가 나를 잊었나? 잊어 주면 고맙지."
   },
   {
    "op": "cmd",

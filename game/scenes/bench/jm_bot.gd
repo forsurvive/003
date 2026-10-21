@@ -1209,20 +1209,22 @@ func _sb_plan() -> void:
 	if route == "sb_south":                                            # 쪽방 할매 → 잠 → 벽 사이 통로 → 창고동 우리에서 127번 → 아내 → LR-47 → 신도림 우산
 		st.vars.set_v("PC_CH", 8)
 		st.vars.set_v("PC_SKP_SPEECH", 80)
-		host.date_text = "2277. 10. 25.  21:30"
+		host.date_text = "2277. 10. 25.  18:00"                       # 8시간 자고 02시 — 우리 열기는 02~04시(1-11h SQ-S09 B, 그 밖엔 감시 의자 경비)
+		st.vars.set_v("PC_SKP_LOCKPICK", 30)
+		st.vars.set_v("PC_SKP_REPAIR", 60)
 		host.combat.pc.hp = host.combat.pc.max_hp * 0.5
 		host.enter("W", "L-R02-20")
 		plan = [["wait", 1.0], ["face", 6], ["shot", "k20_door"], ["use", _door("K-20").x, _door("K-20").y], ["wait", 2.0], ["shot", "k20"],
 			["go", 27, 12, "K-20"], ["go", 27, 7], ["want", ["벽장에서", "[화술 쉬움]"]], ["talk", "N-R02-042"], ["wait", 1.0], ["check", "GB_PASS == 1", "길금순이 벽장 통로를 알려 준다(화술 쉬움)"],
-			["want", ["눈을 붙이고"]], ["talk", "N-R02-042"], ["wait", 4.0], ["check", "GAME_HOUR == 5 or GAME_HOUR == 6", "은신처에서 잠(8시간)"],
+			["want", ["눈을 붙이고"]], ["talk", "N-R02-042"], ["wait", 4.0], ["check", "GAME_HOUR == 2 or GAME_HOUR == 3", "은신처에서 잠(8시간)"],
 			["check", "hp_full", "자고 나면 체력이 찬다"],
 			["go", 27, 3, "K-20"], ["go", 27, 1], ["go", 27, 0], ["wait", 1.5], ["shot", "k23"], ["go", 29, 4, "K-23"], ["go", 31, 4], ["wait", 1.5],
 			["check", "map:H-03", "벽 사이 통로 끝 = 창고동 우리 벽 판자 틈"], ["shot", "k23_h03"],
-			["go", 10, 9, "H-03"], ["want", ["[힘 7]"]], ["use", 10, 8], ["wait", 1.0], ["check", "SB_127 == 2", "127번을 우리에서 빼 옴"],
-			["go", 42, 15], ["go", 43, 15], ["wait", 1.5], ["go", 0, 3, "K-23"], ["wait", 1.5], ["go", 14, 14, "K-20"], ["go", 14, 15], ["wait", 1.5],
-			["warp", "W", "L-R02-22"], ["wait", 1.0], ["face", 6], ["use", _door("K-22").x, _door("K-22").y], ["wait", 2.0], ["shot", "k22"], ["fight"],
-			["want", ["채윤재"]], ["shoton", "더 깊은 데로", "k22_back"], ["talk", "N-R02-050"], ["wait", 1.0],
-			["check", "SB_127 == 4 and has(\"I-001\", 21)", "아내: 빼 온 남편 — 빚은 그대로(카르마 +50 · 스팀팩)"],
+			["go", 10, 9, "H-03"], ["want", ["자물쇠 따기"]], ["use", 10, 8], ["wait", 2.0], ["want", ["수리 50"]], ["use", 10, 8], ["wait", 2.0],
+			["check", "SB_127 == 2 and SB_RAID == 0", "127번을 우리에서 빼 옴(02~04시 · 문 → 목걸이, 1-11h 절차)"],
+			["warp", "K-20", "from_K-23"], ["wait", 1.0], ["want", ["같이 가자", "채윤재", "여기 남아"]], ["talk", "N-R02-039"],
+			["until", "map:K-22", 20.0, "같이 가자 — 구로 107동", "k22"], ["wait", 5.0], ["shot", "k22_reunion"],
+			["check", "SQ_S09_PLACE == 1 and SQS09_STAGE == 100", "아내: 빼 온 남편을 이름으로 — 구로 107동에 남음(1-11h 재회)"],
 			["go", 33, 8, "K-22"], ["use", 33, 7], ["wait", 2.0], ["check", "read:LR-47", "지하주차장 기둥의 LR-47"],
 			["warp", "W", "L-R02-24"], ["wait", 1.5], ["shot", "umbrella"], ["go", 665, 1200], ["face", 6], ["shoton", "순댓국", "commuter"], ["use", 665, 1199], ["wait", 2.0],
 			["check", "seen_commuter", "신도림 우산 바리케이드의 출근길 유해"]]
@@ -1772,6 +1774,8 @@ func _process(dt: float) -> void:
 				ok = StoryExpr.test(str(s[1]), st)
 			checks.append([ok, str(s[2])])
 			print("  [확인] %s %s" % ["○" if ok else "×", s[2]])
+			if not ok and OS.get_environment("BOT_DBG") != "":
+				print("    [디버그] 맵 %s · SB_127 %s · SB_RAID %s · 장면 %s · 시각 %s" % [host.map.id, str(st.vars.get_v("SB_127")), str(st.vars.get_v("SB_RAID")), str(host.ev.busy()), host.date_text])
 			_next()
 		"shot":
 			_shot(str(s[1]))

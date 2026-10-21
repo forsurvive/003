@@ -386,6 +386,18 @@ func test_sb01_narrative_fixes(t) -> void:
 	st3.vars.set_v("SB_COLLAR", 1)
 	t.ok(_said(_play(st3, r3[2], "FQSB01_GU")).contains("번호 찬 목"), "목걸이 찬 채면 일을 주지 않는다")
 	t.eq(st3.quests.stage("FQ-SB-01"), 0, "받지 않음")
+	# 감사 줄: 장부가 정착지 손이면 '문 밖 명단' · 보낼 사람이 없으면 열리지 않음
+	var st5 := StoryState.new()
+	st5.load_data()
+	st5.quests.set_stage("MQ-101", 100)
+	for k in [["V_ACT", 1], ["FQ_SB01_DUE", 40], ["GAME_DAY", 41], ["FQ_SB01_X5", 1], ["FQ_SB01_RES", 2], ["HO_LEDGER", 81]]:
+		st5.vars.set_v(k[0], k[1])
+	var thx: Dictionary = _scene("FQSB01_THX5")
+	t.ok(StoryExpr.test(str(thx["cond"]), st5), "감사 줄 열림")
+	t.ok(_said(_play(st5, c2, "FQSB01_THX5")).contains("문 밖에서 명단"), "출입 금지 판: 문 밖 명단")
+	for who in ["C-049", "C-013", "C-021"]:
+		st5.kill(who)
+	t.ok(not StoryExpr.test(str(thx["cond"]), st5), "보낼 사람이 없으면 '건너뛰더라'도 없다")
 
 
 ## 1-12f 서사 대조(#48~52): 추심 날 X-BC — 죽은 사람은 유족 바크 · 장부가 정착지 손이면 문 밖 하나 · 보낼 사람이 없으면 없음

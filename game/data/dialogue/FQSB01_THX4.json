@@ -3,16 +3,40 @@
  "title": "마을 청년 남건희",
  "loc": "L-R01-09",
  "npc": "N-R01-039",
- "cond": "V_ACT >= 1 and FQ_SB01_DUE > 0 and GAME_DAY >= FQ_SB01_DUE and FQ_SB01_THX4 == 0 and (FQ_SB01_X4 == 1 or FQ_SB01_PD4 == 1) and FQ_SB01_RES != 3",
+ "cond": "V_ACT >= 1 and MQ101_STAGE >= 100 and (dead(\"C-049\") == 0 or dead(\"C-013\") == 0 or dead(\"C-021\") == 0) and FQ_SB01_DUE > 0 and GAME_DAY >= FQ_SB01_DUE and FQ_SB01_THX4 == 0 and (FQ_SB01_X4 == 1 or FQ_SB01_PD4 == 1) and FQ_SB01_RES != 3 and SQ_S02_IN != 1",
  "labels": {
-  "START": 0
+  "START": 0,
+  "GATE": 4
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "HO_LEDGER >= 80 and HO_LEDGER < 90",
+   "to": "GATE"
+  },
   {
    "op": "line",
    "who": "N-R01-039",
    "emo": "놀람",
    "text": "일당 떼먹은 거, 안 받으러 왔어. 누가 대신 갚았대? …누가 시켰는데? 나 아무한테도 말 안 했어."
+  },
+  {
+   "op": "cmd",
+   "name": "sb01",
+   "args": [
+    "thx",
+    "4"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-039",
+   "emo": "놀람",
+   "text": "문 밖에서 이름 부르는데 나는 없었어. 누가 대신 갚았대? …누가 시켰는데? 나 아무한테도 말 안 했어."
   },
   {
    "op": "cmd",

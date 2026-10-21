@@ -3,16 +3,40 @@
  "title": "미용실 오영자",
  "loc": "L-R01-09",
  "npc": "N-R01-501",
- "cond": "V_ACT >= 1 and FQ_SB01_DUE > 0 and GAME_DAY >= FQ_SB01_DUE and FQ_SB01_THX5 == 0 and (FQ_SB01_X5 == 1 or FQ_SB01_PD5 == 1) and FQ_SB01_RES != 3",
+ "cond": "V_ACT >= 1 and MQ101_STAGE >= 100 and (dead(\"C-049\") == 0 or dead(\"C-013\") == 0 or dead(\"C-021\") == 0) and FQ_SB01_DUE > 0 and GAME_DAY >= FQ_SB01_DUE and FQ_SB01_THX5 == 0 and (FQ_SB01_X5 == 1 or FQ_SB01_PD5 == 1) and FQ_SB01_RES != 3",
  "labels": {
-  "START": 0
+  "START": 0,
+  "GATE": 4
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "HO_LEDGER >= 80 and HO_LEDGER < 90",
+   "to": "GATE"
+  },
   {
    "op": "line",
    "who": "N-R01-501",
    "emo": "기본",
    "text": "올해는 우리 집을 건너뛰더라. 누가 그랬는지 몰라도. …머리 다듬을 일 있으면 와. 공짜로 해 줄게, 한 번은."
+  },
+  {
+   "op": "cmd",
+   "name": "sb01",
+   "args": [
+    "thx",
+    "5"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-501",
+   "emo": "기본",
+   "text": "문 밖에서 명단을 읽는데 우리 집은 없더라. 누가 그랬는지 몰라도. …머리 다듬을 일 있으면 와. 공짜로 해 줄게, 한 번은."
   },
   {
    "op": "cmd",

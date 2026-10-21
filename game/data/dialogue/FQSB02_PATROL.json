@@ -6,14 +6,17 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "FIGHT": 6,
-  "TALK": 8,
-  "NOTALK": 11,
-  "HAND": 14,
-  "HAND_NR": 19,
-  "HAND_R": 22,
-  "WAVED": 26,
-  "READY": 29
+  "P_SEEN": 6,
+  "P_LATE": 8,
+  "P_TALK": 9,
+  "FIGHT": 13,
+  "TALK": 15,
+  "NOTALK": 18,
+  "HAND": 21,
+  "HAND_NR": 26,
+  "HAND_R": 29,
+  "WAVED": 33,
+  "READY": 36
  },
  "ops": [
   {
@@ -27,10 +30,46 @@
    "to": "READY"
   },
   {
+   "op": "if",
+   "cond": "FQ_SB02_SCOUT >= 1",
+   "to": "P_SEEN"
+  },
+  {
+   "op": "if",
+   "cond": "GAME_HOUR >= 7",
+   "to": "P_LATE"
+  },
+  {
    "op": "line",
    "who": "SYS",
    "emo": "기본",
-   "text": "노량진로 끝. 형광 조끼 셋이 길을 막는다 — 밤 순찰을 마치고 들어가는 길인지 손전등이 아직 켜져 있다. 멀리 다리목 초소에서 계엄병 하나가 쌍안경을 들었다 내린다."
+   "text": "노량진로 끝. 형광 조끼 셋이 길을 막는다 — 밤 순찰을 마치고 들어가는 길인지 손전등이 아직 켜져 있다."
+  },
+  {
+   "op": "goto",
+   "to": "P_TALK"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "노량진로 끝. 아까 그 형광 조끼 셋이다. 이번엔 길 한가운데 선다."
+  },
+  {
+   "op": "goto",
+   "to": "P_TALK"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "노량진로 끝. 형광 조끼 셋이 길을 막는다 — 교대가 늦은 조인지 조끼 자락에 흙탕물이 말라붙어 있다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "멀리 다리목 초소에서 계엄병 하나가 쌍안경을 들었다 내린다."
   },
   {
    "op": "line",
