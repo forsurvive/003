@@ -158,6 +158,8 @@ INSETS = [{"id": "X-S07", "mark": "from_vault", "at": (959, 1503)},          # �
 START = (959, 1503)                                                          # 도달성 검사 출발점 = 볼트 정문
 WALKK = (1, 5, 6, 7, 8, 9, 10, 12, 13)                                       # 걷는 땅 종류(13 = 다리 상판)
 STAIR_GAP = 28
+RAMP_EVERY = 12                                                          # 탐험 비탈 간격(칸) — 높이 1단 경계마다
+RAMP_NEAR = 6                                                            # 이미 계단 · 비탈이 이 안에 있으면 두지 않는다
 
 
 def log(*a):
@@ -851,6 +853,81 @@ def build():
             stair[y, x] = 1
             deco[y, x] = 0
             side += 1
+    # ④ 탐험 비탈(사용자 지시 2026-10-22 '벼랑 넘는 지점이 여럿 있어야 탐험이 답답하지 않다'): 높이 1단 차이 경계마다 RAMP_EVERY칸에 하나씩 건너는 칸.
+    #    남향 절벽(암벽 칸)은 돌계단으로, 벼랑 끝(북 · 동 · 서로 낮아지는 높은 칸)은 흙 비탈 덧층(tr:ramp1/2/4)으로 — 이미 계단 · 비탈이 RAMP_NEAR 안에 있으면 건너뛴다.
+    walk = solid == 0
+    L = level.astype(np.int32)
+    nramp = {"s": 0, "n": 0, "e": 0, "w": 0}
+    def near_stair(y, x):
+        y0, y1 = max(0, y - RAMP_NEAR), min(H, y + RAMP_NEAR + 1)
+        x0, x1 = max(0, x - RAMP_NEAR), min(W, x + RAMP_NEAR + 1)
+        return stair[y0:y1, x0:x1].any()
+    free_hi = walk & play & ~inmask & ~carve & (body == 0) & ~water & ~deck & (stair == 0)
+    cand_s = face & (solid == 1) & play & ~inmask & ~carve
+    cand_s[0] = cand_s[-1] = False
+    cand_s[1:-1] &= walk[:-2] & walk[2:] & (np.abs(L[:-2] - L[2:]) == 1)
+    cand_n = free_hi.copy(); cand_n[0] = False
+    cand_n[1:] &= walk[:-1] & (L[1:] - L[:-1] == 1) & (stair[:-1] == 0)
+    cand_e = free_hi.copy(); cand_e[:, -1] = False
+    cand_e[:, :-1] &= walk[:, 1:] & (L[:, :-1] - L[:, 1:] == 1) & (stair[:, 1:] == 0)
+    cand_w = free_hi.copy(); cand_w[:, 0] = False
+    cand_w[:, 1:] &= walk[:, :-1] & (L[:, 1:] - L[:, :-1] == 1) & (stair[:, :-1] == 0)
+    def runs_h(mask_):                                                       # 가로 줄(같은 y, 이어진 x)
+        yy, xx = np.nonzero(mask_)
+        out = {}
+        for y, x in zip(yy, xx):
+            out.setdefault(int(y), []).append(int(x))
+        for y, xs in out.items():
+            xs.sort()
+            run = [xs[0]]
+            for x in xs[1:]:
+                if x == run[-1] + 1:
+                    run.append(x)
+                else:
+                    yield [(x_, y) for x_ in run]
+                    run = [x]
+            yield [(x_, y) for x_ in run]
+    def runs_v(mask_):
+        yy, xx = np.nonzero(mask_)
+        out = {}
+        for y, x in zip(yy, xx):
+            out.setdefault(int(x), []).append(int(y))
+        for x, ys in out.items():
+            ys.sort()
+            run = [ys[0]]
+            for y in ys[1:]:
+                if y == run[-1] + 1:
+                    run.append(y)
+                else:
+                    yield [(x, y_) for y_ in run]
+                    run = [y]
+            yield [(x, y_) for y_ in run]
+    def pick(run):                                                           # 줄 가운데에서 시작해 RAMP_EVERY 간격으로
+        n = len(run)
+        if n < 3:
+            return []
+        mid = n // 2
+        idx = sorted(set([mid] + list(range(mid, n, RAMP_EVERY)) + list(range(mid, -1, -RAMP_EVERY))))
+        return [run[i] for i in idx]
+    for run in runs_h(cand_s):
+        for (x, y) in pick(run):
+            if near_stair(y, x):
+                continue
+            solid[y, x] = 0; cover[y, x] = 0; gflag[y, x] = 0; stair[y, x] = 1
+            body[y, x] = tid("tr:cstair"); nramp["s"] += 1
+    for run in runs_h(cand_n):
+        for (x, y) in pick(run):
+            if near_stair(y, x):
+                continue
+            stair[y, x] = 1; deco[y, x] = tid("tr:ramp1"); nramp["n"] += 1
+    for mask_, key_, tname in ((cand_e, "e", "tr:ramp2"), (cand_w, "w", "tr:ramp4")):
+        for run in runs_v(mask_):
+            for (x, y) in pick(run):
+                if near_stair(y, x):
+                    continue
+                stair[y, x] = 1; deco[y, x] = tid(tname); nramp[key_] += 1
+    log("탐험 비탈: 돌계단(남향 절벽) %d · 흙 비탈 북 %d · 동 %d · 서 %d (간격 %d · 근처 %d)" % (nramp["s"], nramp["n"], nramp["e"], nramp["w"], RAMP_EVERY, RAMP_NEAR))
+
     walk = solid == 0
     key = np.where(stair == 1, -1, level)
     lab = label(walk, key)

@@ -30,6 +30,7 @@ var uq71: Uq71                                     ## 비표시 퀘스트 UQ-71(
 var u02: U02Paths                                  ## U02 남태령 지하(1-D2)
 var uq04: Uq04                                     ## UQ-04 7호 냉동 창고(1-D3)
 var uq_r01: UqR01                                  ## R01 비표시 퀘스트 넷(1-12g)
+var rq: RqR01                                          ## 1-12j 반복 의뢰
 var uq_r02: UqR02                                  ## R02 비표시 퀘스트(1-12h)
 var gr: Gr                                         ## 구로 차량기지(1-D4)
 var kt: Kt                                         ## 여의도 금탑(1-D5a)
@@ -164,6 +165,9 @@ func _ready() -> void:
 	uq_r01 = UqR01.new()
 	add_child(uq_r01)
 	uq_r01.setup(host, true)
+	rq = RqR01.new()
+	add_child(rq)
+	rq.setup(host, true)
 	uq_r02 = UqR02.new()
 	add_child(uq_r02)
 	uq_r02.setup(host, true)
@@ -815,6 +819,42 @@ func _ready() -> void:
 				["check", "UQ67_CORE == 4 and UQ67_STAGE == 100", "남무진 ① — 봉천 발전기(100)"],
 				["hours", 24], ["wait", 1.0], ["warp", "X-BC", "from_X-S07"], ["wait", 1.5], ["calm"], ["go", 29, 36], ["wait", 1.0], ["shot", "uq67_lamps"],
 				["check", "GAME_DAY > UQ67_DAY", "다음 날 — 아랫마당 가로등"]]
+		"rq":                                                           # 1-12j 반복 의뢰: 고철(캡 · 계단) → 문제집 → 밤 경계(22:10 시작 · 사건 · 보고) → 지하시장 독샘 · 그때 물건
+			st.vars.set_v("AFF_JH", 12)
+			st.quests.set_stage("MQ-101", 100)
+			st.vars.set_v("MQ101_RESULT", 1)
+			st.vars.set_v("GAME_DAY", 6)
+			st.vars.set_v("RQ08_P1", 83)                                  #   이번 주 '그때 물건'은 미리 정해 둔다(라디오 · 타자기 · 밥솥)
+			st.vars.set_v("RQ08_P2", 85)
+			st.vars.set_v("RQ08_P3", 88)
+			st.vars.set_v("RQ08_PWK", 1)
+			st.call_fn("give", ["M-010", 6])
+			st.call_fn("give", ["M-058", 1])
+			st.call_fn("give", ["M-048", 2])
+			st.call_fn("give", ["M-026", 1])
+			st.call_fn("give", ["M-083", 1])
+			st.call_fn("give", ["M-085", 1])
+			st.call_fn("give", ["M-088", 1])
+			host.date_text = "2277. 10. 28.  10:00"
+			host.enter("X-BC", "from_X-S07")
+			plan = [["hp", 3000], ["wait", 1.5], ["noenc"], ["calm"],
+				["want", ["고철 다섯, 캡으로", "그만"]], ["talk", "N-R01-026"], ["wait", 1.5], ["shot", "rq_scrap"],
+				["check", "RQ19_T == 5 and PC_CAPS >= 50 and RQ19_WK == 5 and RQF_BC_T == 1", "RQ-19 고철 다섯 묶음 → 50캡(5회 · 단골 1)"],
+				["want", ["고철 하나, 계단 보수에", "그만"]], ["talk", "N-R01-026"], ["wait", 1.0],
+				["check", "RQ19_T == 6 and V_KARMA >= 10 and has(\"M-010\") == 0", "RQ-19 계단 몫 → 카르마 +10(6회 · 곡선 50%)"],
+				["want", ["문제집 한 권을 건넨다", "그만"]], ["talk", "N-R01-031"], ["wait", 1.5], ["shot", "rq_books"],
+				["check", "RQ15_T == 1 and RQ15_BOOKS == 1 and has(\"M-058\") == 0", "RQ-15 문제집 → 풍경 1"],
+				["settime", "2277. 10. 28.  22:10"], ["calm"], ["want", ["선다"]], ["talk", "N-R01-028"], ["wait", 1.5],
+				["check", "RQ30_ON == 1 and RQ30_PHASE == 0", "RQ-30 밤 경계 시작(전조)"],
+				["hours", 3], ["wait", 2.0], ["until", "RQ30_PHASE >= 1", 20.0, "사건 또는 조용한 밤"], ["shot", "rq_night"],
+				["rqnight"], ["wait", 1.0], ["fight"], ["until", "RQ30_PHASE == 2", 90.0, "세운 것이 다 쓰러짐 · 아침까지"],
+				["gomark", "X-BC:land1"], ["want", ["아침까지 선다"]], ["talk", "N-R01-028"], ["wait", 2.0],
+				["check", "RQ30_T == 1 and RQ30_ON == 0 and GAME_HOUR == 6", "RQ-30 보고 → 캡 · 숙박 · 06:00"],
+				["warp", "J-02", "from_J-03"], ["wait", 1.5], ["want", ["독샘 · 독낭 셋을 내놓는다", "다음에"]], ["talk", "N-R02-006"], ["wait", 1.5],
+				["check", "RQ06_T == 1 and has(\"I-007\") == 1 and has(\"M-048\") == 0", "RQ-06 독샘 셋 → 앰플(독샘부터 꺼냄)"],
+				["warp", "J-03", "from_J-02"], ["wait", 1.5], ["want", ["이번 주 '그때 물건'은 뭐예요", "다음에"]], ["talk", "N-R02-012"], ["wait", 1.5],
+				["want", ["이번 주 물건 셋을 내놓는다", "다음에"]], ["talk", "N-R02-012"], ["wait", 1.5], ["shot", "rq_shelf"],
+				["check", "RQ08_T == 1 and RQ08_HAVE == 1 and has(\"M-083\") == 0", "RQ-08 셋 → 가치 × 1.5"]]
 		"uq62":                                                         # 1-12i UQ-62 고시생의 마지막 시험: 고시촌 동쪽 초소(상담료 50 → 통행) → D동 3층 권성민(10 · 답안 카드) → 노량진 채점기 [과학 45](성적표 · 20) → 권성민(① 100) → 다음 06:00 떠남 · 관리사무소
 			st.vars.set_v("GAME_DAY", 6)
 			st.vars.set_v("PC_SKP_SCIENCE", 60)
@@ -1615,6 +1655,9 @@ func _process(dt: float) -> void:
 	match str(s[0]):
 		"u04go":                                                        # 1-D10 수레 뒤 칸으로(레일 방향 동쪽으로 밀 자리)
 			plan[i] = ["go", u04.cart_x() - 1, u04._row(), host.map.id]
+			return
+		"rqnight":                                                      # 1-12j RQ-30: 그날 밤 사건 방향의 봉천 표지로(아랫문 · 윗문 · 뒷산)
+			plan[i] = ["gomark", str(RqR01.NIGHT_MARK.get(int(st.vars.get_v("RQ30_DIR")), "X-BC:sbf2"))]
 			return
 		"hold":                                                         # 1-D10 한 방향으로 계속 걷는다(수레 밀기 — 막히면 서고, 수레가 비키면 간다)
 			host.input_fn = func() -> Vector2: return Vector2(float(s[1]), float(s[2]))

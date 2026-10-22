@@ -693,3 +693,11 @@ npc CR-436 12 28 W sheet=en_cr436_loco cond="FQ_SB01_DUE > 0 and GAME_DAY == FQ_
 npc CR-436 12 28 W sheet=en_cr436_loco cond="FQ_SB01_DUE > 0 and GAME_DAY == FQ_SB01_DUE and GAME_HOUR >= 8 and GAME_HOUR < 18 and MQ101_STAGE >= 100 and (dead(\"C-049\") == 0 or dead(\"C-013\") == 0 or dead(\"C-021\") == 0) and (HO_LEDGER < 80 or HO_LEDGER >= 90) and FQ_SB01_X5 == 0 and FQ_SB01_PD5 == 0 and dead(\"N-R01-501\") == 1" bark="약품 대납 120 — 유족 승계야. 가게 문은 누가 열어?"
 npc CR-437 30 31 N sheet=en_cr437_loco cond="FQ_SB01_DUE > 0 and GAME_DAY == FQ_SB01_DUE and GAME_HOUR >= 8 and GAME_HOUR < 18 and MQ101_STAGE >= 100 and (dead(\"C-049\") == 0 or dead(\"C-013\") == 0 or dead(\"C-021\") == 0) and (HO_LEDGER < 80 or HO_LEDGER >= 90) and FQ_SB01_X6 + FQ_SB01_PD6 + FQ_SB01_X7 + FQ_SB01_PD7 + FQ_SB01_X8 + FQ_SB01_PD8 + FQ_SB01_X9 + FQ_SB01_PD9 < 4" bark="(번호표 묶음을 넘긴다) 이름 없는 집도 번호는 있어. 장부에 남은 번호는 오늘 다 돈다."
 npc CR-436 30 41 N sheet=en_cr436_loco cond="FQ_SB01_DUE > 0 and GAME_DAY == FQ_SB01_DUE and GAME_HOUR >= 8 and GAME_HOUR < 18 and MQ101_STAGE >= 100 and (dead(\"C-049\") == 0 or dead(\"C-013\") == 0 or dead(\"C-021\") == 0) and HO_LEDGER >= 80 and HO_LEDGER < 90 and ((FQ_SB01_X1 == 0 and FQ_SB01_PD1 == 0) or (FQ_SB01_X2 == 0 and FQ_SB01_PD2 == 0) or (FQ_SB01_X3 == 0 and FQ_SB01_PD3 == 0) or (FQ_SB01_X4 == 0 and FQ_SB01_PD4 == 0) or (FQ_SB01_X5 == 0 and FQ_SB01_PD5 == 0) or (FQ_SB01_X6 == 0 and FQ_SB01_PD6 == 0) or (FQ_SB01_X7 == 0 and FQ_SB01_PD7 == 0) or (FQ_SB01_X8 == 0 and FQ_SB01_PD8 == 0) or (FQ_SB01_X9 == 0 and FQ_SB01_PD9 == 0))" bark="출입 금지? 장부가 그쪽 손에 있다고 빚까지 넘어간 줄 알아? …오늘은 문 밖에서 적어만 간다."
+# 1-12j 반복 의뢰 풍경(재미 검수 '납품물이 풍경이 된다' — 진행기 RqR01._scenery가 단골 단계마다 올린다): 계단 철판 · 고물상 '그 사람 몫' 선반 · 계단 학교 책 더미
+text 29 27 "312계단 판자 두 장이 철판으로 갈렸다. 고물상 장부에 적힌 쇠다." cond="RQ19_IRON >= 1 and RQ19_IRON < 3"
+text 29 27 "312계단 아래쪽 판자가 다 철판이다. 비가 와도 썩을 게 없다 — 고물상 장부에 적힌 쇠." cond="RQ19_IRON >= 3"
+prop steel_rack 12 36 cond="RQ19_IRON >= 2"
+text 12 36 "고물상 셔터 안쪽 선반. 분필로 '그 사람 몫'. 내가 들고 온 쇠가 여기 쌓인다." cond="RQ19_IRON >= 2"
+prop bookshelf_home 42 20 cond="RQ15_BOOKS >= 2"
+text 42 20 "계단 학교 책꽂이. 2077년 문제집이 책상 수만큼 꽂혀 있다 — 내가 가져온 것들." cond="RQ15_BOOKS >= 2"
+text 40 21 "책상 위 2077년 문제집 한 권. 답이 지워지고 다시 적혔다. 내가 가져온 책이다." cond="RQ15_BOOKS == 1"

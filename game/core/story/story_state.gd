@@ -144,6 +144,9 @@ func _init() -> void:
 	for k in ["HP_DAY0", "HP_LOST", "HP_BLUR", "HP_BLUR_DAY", "HP_WAY", "HP_TRUST", "HP_CUT", "HP_OVR", "HP_OVR_END", "HP_NIGHT", "HP_GEN", "HP_MASK", "HP_VISIT", "HP_VISIT_DAY", "HP_PUSH_DAY", "HP_BED", "HP_ASK1", "HP_ASK2", "HP_ASK3", "HP_OJ", "HP_MOVE_DAY", "HP_SKIP", "HP_MORGUE", "HP_PHASE", "HP_SAT", "HP_LETTER", "HP_MET", "HP_TOLD", "HP_DONE_DAY", "HP_VON", "HP_SEEN", "HP_VMASK", "HP_LTOLD",
 			"RQ47_N", "RQ47_WK", "RQ47_LAST", "DG_STOP"]:
 		vars.declare(k, "int", 0)
+	# 반복 퀘스트 공통 엔진(1-12j, SD-05 §4.1 · D-238): 뜻은 core/story/repeat.gd 머리 주석. RQ47_N · WK · LAST는 옛 변수(첫 호출 때 이식)
+	for k in Repeat.var_names():
+		vars.declare(k, "int", 0)
 	# 여의도 유리탑 3동 · 증권가 객장(1-D9, 1-D 계획 §15.7 · SD-05 UQ-06): 진행기 Yt만 쓴다 — 뜻은 script/act1/YT.txt 머리 주석
 	for k in ["YT_FORGE", "YT_FORGE_T", "YT_TEMP", "YT_LOCK", "YT_UNK", "YT_DEAD_DM", "YT_ESCORT", "YT_POWER", "YT_MOUND", "YT_SEEN", "YT_GATE1", "YT_CLERK_SEEN",
 			"YT_ROBOT_OK", "YT_ELEV", "YT_INC", "YT_INC_DAY", "YT_R", "YT_DOZE", "YT_DMTAKE", "YT_HBTAKE", "YT_OJTAKE", "YT_TAPE", "YT_SG", "YT_KBN", "YT_UPC", "YT_UP", "YT_NOCARD", "YT_CUP", "YT_CUPSEEN", "YT_TRAP", "YT_NO", "YT_HK2", "YT_HK3", "YT_SIDE", "YT_CTAPE", "YT_CDONE", "YT_BUMP_DAY", "UQ06_RADIO", "UQ06_RESULT", "UQ06_DAY", "UQ06_ASKED", "UQ06_MET", "UQ06_GONE", "UQ06_BACK", "UQ06_TOLD", "UQ06_HEARD"]:
@@ -494,6 +497,15 @@ func call_fn(name: String, args: Array) -> Variant:
 		"has":
 			var n := int(args[1]) if args.size() > 1 else 1
 			return 1 if count_of(str(args[0])) >= n else 0
+		"rq":                                                           # 반복 퀘스트 완료 한 번(1-12j, SD-05 §4.1): rq(id, fac, caps, xp, kind, opt) → Repeat.done
+			return Repeat.done(self, str(args[0]), str(args[1]), int(args[2]), int(args[3]),
+				str(args[4]) if args.size() > 4 else "supply", args[5] if args.size() > 5 and args[5] is Dictionary else {})
+		"rq_wait":                                                      # 다음 의뢰까지 남은 날: rq_wait(id, 주기)
+			return Repeat.wait_days(self, str(args[0]), int(args[1]))
+		"rq_left":                                                      # 이번 주 남은 횟수: rq_left(id, 주간 한도)
+			return Repeat.left_this_week(self, str(args[0]), int(args[1]))
+		"rq_stage":                                                     # 단골 단계 0 · 5 · 15 · 30: rq_stage(fac)
+			return Repeat.stage_of(self, str(args[0]))
 		"caps":
 			var nv := vars.add("PC_CAPS", int(args[0]), 0)
 			events.append({"kind": "caps", "delta": int(args[0]), "value": nv})

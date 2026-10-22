@@ -7,10 +7,24 @@
  "labels": {
   "START": 0,
   "FRIEND": 6,
-  "LURED": 8,
-  "SB": 10,
-  "GUEST": 12,
-  "TRADE": 13
+  "LURED": 9,
+  "SB": 12,
+  "GUEST": 14,
+  "HI15": 16,
+  "MENU": 18,
+  "TRADE": 19,
+  "RQ_CAPS": 21,
+  "RQ_SHORT": 29,
+  "RQ_KARMA": 31,
+  "RQ_K5": 35,
+  "RQ_CAPS5": 37,
+  "RQ_C4": 42,
+  "RQ_C6": 44,
+  "RQ_LEAN": 46,
+  "RQ_FULL": 48,
+  "RQ_FULL_D": 51,
+  "RQ_TALK": 53,
+  "RQ_TALK_D": 56
  },
  "ops": [
   {
@@ -41,7 +55,12 @@
   },
   {
    "op": "goto",
-   "to": "TRADE"
+   "to": "MENU"
+  },
+  {
+   "op": "if",
+   "cond": "rq_stage(\"BC\") >= 15",
+   "to": "HI15"
   },
   {
    "op": "line",
@@ -51,7 +70,12 @@
   },
   {
    "op": "goto",
-   "to": "TRADE"
+   "to": "MENU"
+  },
+  {
+   "op": "if",
+   "cond": "rq_stage(\"BC\") >= 15",
+   "to": "HI15"
   },
   {
    "op": "line",
@@ -61,7 +85,7 @@
   },
   {
    "op": "goto",
-   "to": "TRADE"
+   "to": "MENU"
   },
   {
    "op": "line",
@@ -71,13 +95,106 @@
   },
   {
    "op": "goto",
-   "to": "TRADE"
+   "to": "MENU"
   },
   {
    "op": "line",
    "who": "N-R01-026",
    "emo": "기본",
    "text": "손님, 강 건넜다던 그 볼트 애 얘기 들었어? 하하. 뭐 살래?"
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-026",
+   "emo": "미소",
+   "text": "고정 일꾼 왔다. 셔터 안쪽에 네 몫 자리 하나 비워 뒀어 — 들고 온 거 거기 부려."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "물건 좀 보자",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TRADE",
+     "id": "MQ-101_OH:1:0"
+    },
+    {
+     "text": "고철 하나, 캡으로",
+     "tags": [
+      {
+       "k": "item",
+       "id": "M-010",
+       "n": 1
+      }
+     ],
+     "cond": "MQ101_STAGE >= 100 and rq_left(\"RQ-19\", 30) > 0",
+     "fx": "",
+     "to": "RQ_CAPS",
+     "id": "MQ-101_OH:1:1"
+    },
+    {
+     "text": "고철 하나, 계단 보수에",
+     "tags": [
+      {
+       "k": "item",
+       "id": "M-010",
+       "n": 1
+      }
+     ],
+     "cond": "MQ101_STAGE >= 100 and rq_left(\"RQ-19\", 30) > 0",
+     "fx": "",
+     "to": "RQ_KARMA",
+     "id": "MQ-101_OH:1:2"
+    },
+    {
+     "text": "고철 다섯, 캡으로",
+     "tags": [
+      {
+       "k": "item",
+       "id": "M-010",
+       "n": 5
+      }
+     ],
+     "cond": "MQ101_STAGE >= 100 and rq_left(\"RQ-19\", 30) >= 5",
+     "fx": "",
+     "to": "RQ_CAPS5",
+     "id": "MQ-101_OH:1:3"
+    },
+    {
+     "text": "이번 주 고철은 어디까지 받아요",
+     "tags": [],
+     "cond": "MQ101_STAGE >= 100 and rq_left(\"RQ-19\", 30) == 0",
+     "fx": "",
+     "to": "RQ_FULL",
+     "id": "MQ-101_OH:1:4"
+    },
+    {
+     "text": "계단 보수 얘기",
+     "tags": [],
+     "cond": "MQ101_STAGE >= 100 and RQ19_T == 0",
+     "fx": "",
+     "to": "RQ_TALK",
+     "id": "MQ-101_OH:1:5"
+    },
+    {
+     "text": "그만",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "MQ-101_OH:1:6"
+    }
+   ]
   },
   {
    "op": "cmd",
@@ -89,6 +206,201 @@
   {
    "op": "goto",
    "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "rq",
+   "args": [
+    "19",
+    "caps"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "RQ_LEAN == 1",
+   "to": "RQ_LEAN"
+  },
+  {
+   "op": "if",
+   "cond": "RQ19_WK == 4",
+   "to": "RQ_C4"
+  },
+  {
+   "op": "if",
+   "cond": "RQ19_WK == 6",
+   "to": "RQ_C6"
+  },
+  {
+   "op": "if",
+   "cond": "RQ19_WK > 6",
+   "to": "RQ_SHORT"
+  },
+  {
+   "op": "if",
+   "cond": "RQ19_T == 5",
+   "to": "RQ_K5"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-026",
+   "emo": "기본",
+   "text": "열 개비. (캡을 센다) 다음 것도 가져와."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-026",
+   "emo": "기본",
+   "text": "(캡을 센다)"
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "cmd",
+   "name": "rq",
+   "args": [
+    "19",
+    "karma"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "RQ19_T == 5",
+   "to": "RQ_K5"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-026",
+   "emo": "기본",
+   "text": "계단 몫. (분필로 장부에 긋는다) 네 줄이 하나 늘었어."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-026",
+   "emo": "기본",
+   "text": "다섯이면 판자 한 장 값이야. 내일 312계단 가 봐 — 네 쇠가 발밑에 있을 거다."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "cmd",
+   "name": "rq",
+   "args": [
+    "19",
+    "caps",
+    "5"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "RQ_LEAN == 1",
+   "to": "RQ_LEAN"
+  },
+  {
+   "op": "if",
+   "cond": "RQ19_WK >= 6",
+   "to": "RQ_C6"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-026",
+   "emo": "기본",
+   "text": "다섯. (캡을 세고 또 센다) 쉰 개비. 셔터 안쪽에 쌓아 둬."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-026",
+   "emo": "기본",
+   "text": "이번 주 네 번째네. 값은 내가 정하는 게 아니라서 — 조금 덜 쳐. 계단에 대면 값이 안 깎여."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-026",
+   "emo": "피곤",
+   "text": "고철이 쌓여서 셔터가 안 닫혀. 반값이다. 그래도 받긴 받아."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-026",
+   "emo": "피곤",
+   "text": "요즘 들어오는 쇠가 너무 많아서 제값을 못 쳐. 반이야. 싫으면 계단에 대든가."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R01-031\") == 1",
+   "to": "RQ_FULL_D"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-026",
+   "emo": "기본",
+   "text": "서른이면 이번 주는 됐어. 오해인 선생이 문제집 찾던데 — 종이도 쇠만큼 귀해."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-026",
+   "emo": "기본",
+   "text": "서른이면 이번 주는 됐어. 다음 주에 와."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"C-010\") == 1",
+   "to": "RQ_TALK_D"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-026",
+   "emo": "기본",
+   "text": "312계단 판자는 비 오면 썩어. 이장이 쇠로 갈자고 한 지 삼 년. 쇠가 없었지, 뜻이 없었던 게 아니라. 고철 하나면 캡 열 — 아니면 계단 몫으로 적어 주고."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-026",
+   "emo": "슬픔",
+   "text": "이장이 갔으니 장부는 내가 적어. 계단은 누가 됐든 고쳐야지. 고철 하나면 캡 열 — 아니면 계단 몫."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
   },
   {
    "op": "end"

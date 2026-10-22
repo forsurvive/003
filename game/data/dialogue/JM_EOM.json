@@ -16,17 +16,24 @@
   "CALL1": 26,
   "CALL2": 28,
   "MENU": 29,
-  "JH01_SAC": 30,
-  "FACE": 35,
-  "MUN": 37,
-  "GIVE": 42,
-  "KEEP": 45,
-  "NOKEEP": 48,
-  "WATCH": 50,
-  "WATCH0": 52,
-  "WATCH1": 54,
-  "LOG": 58,
-  "SHOP": 62
+  "RQ06": 30,
+  "RQ06_FIRST": 36,
+  "RQ06_C4": 38,
+  "RQ06_LEAN": 40,
+  "RQ06_Q": 42,
+  "RQ06_WAIT": 44,
+  "RQ06_WAIT_D": 47,
+  "JH01_SAC": 49,
+  "FACE": 54,
+  "MUN": 56,
+  "GIVE": 61,
+  "KEEP": 64,
+  "NOKEEP": 67,
+  "WATCH": 69,
+  "WATCH0": 71,
+  "WATCH1": 73,
+  "LOG": 77,
+  "SHOP": 81
  },
  "ops": [
   {
@@ -225,14 +232,135 @@
      "id": "JM_EOM:1:4"
     },
     {
+     "text": "독샘 · 독낭 셋을 내놓는다(해독 앰플 조제)",
+     "tags": [],
+     "cond": "AFF_JH >= -19 and rq_wait(\"RQ-06\", 3) == 0 and rq_left(\"RQ-06\", 2) > 0 and (has(\"M-048\", 3) == 1 or has(\"M-026\", 3) == 1 or (has(\"M-048\", 1) == 1 and has(\"M-026\", 2) == 1) or (has(\"M-048\", 2) == 1 and has(\"M-026\", 1) == 1))",
+     "fx": "",
+     "to": "RQ06",
+     "id": "JM_EOM:1:5"
+    },
+    {
+     "text": "독샘은 어디다 쓰나요",
+     "tags": [],
+     "cond": "AFF_JH >= -19 and RQ06_T == 0",
+     "fx": "",
+     "to": "RQ06_Q",
+     "id": "JM_EOM:1:6"
+    },
+    {
+     "text": "독샘 더 받나요",
+     "tags": [],
+     "cond": "AFF_JH >= -19 and RQ06_T > 0 and (rq_wait(\"RQ-06\", 3) > 0 or rq_left(\"RQ-06\", 2) == 0)",
+     "fx": "",
+     "to": "RQ06_WAIT",
+     "id": "JM_EOM:1:7"
+    },
+    {
      "text": "다음에",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "JM_EOM:1:5"
+     "id": "JM_EOM:1:8"
     }
    ]
+  },
+  {
+   "op": "cmd",
+   "name": "rq",
+   "args": [
+    "06"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "RQ_LEAN == 1",
+   "to": "RQ06_LEAN"
+  },
+  {
+   "op": "if",
+   "cond": "RQ06_DAYN >= 2",
+   "to": "RQ06_C4"
+  },
+  {
+   "op": "if",
+   "cond": "RQ06_T == 1",
+   "to": "RQ06_FIRST"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-006",
+   "emo": "기본",
+   "text": "(독샘을 유리병에 짠다) 셋. 앰플 하나는 네 몫, 나머진 가게 몫. 사흘 뒤에 또."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-006",
+   "emo": "기본",
+   "text": "독으로 독을 눌러요. 지네 독샘 셋이면 앰플 넷 — 하나는 가져가. 물린 사람이 늘 지하에 있어."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-006",
+   "emo": "기본",
+   "text": "오늘 두 번째네요. 독은 받는데 — 인심은 하루에 한 번이에요. 앰플은 그대로."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-006",
+   "emo": "피곤",
+   "text": "요즘 들어오는 게 너무 많아서 제값을 못 쳐요. 반값. 앰플은 그대로."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-006",
+   "emo": "기본",
+   "text": "해독 앰플. 지네 독샘이나 말벌 독낭 셋이면 한 번 조제해요. 셋 들고 오면 50캡에 앰플 하나 얹어 줄게."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R02-012\") == 1",
+   "to": "RQ06_WAIT_D"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-006",
+   "emo": "기본",
+   "text": "지금 짜 둔 걸로 충분해요. 사흘 뒤에 — 그보다 옆 골목 사공 씨가 이번 주 셋 찾던데."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-006",
+   "emo": "기본",
+   "text": "지금 짜 둔 걸로 충분해요. 사흘 뒤에 와요."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
   },
   {
    "op": "line",

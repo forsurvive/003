@@ -878,15 +878,89 @@ def cliff_stair(var=0):
 
 
 def brink(mask):
-    """벼랑 끝(덧층): 높은 땅 칸의 낮은 쪽 테두리. mask 1 = 북, 2 = 동, 4 = 서. 투명 바탕."""
+    """벼랑 끝(덧층): 높은 땅 칸의 낮은 쪽 테두리. mask 1 = 북, 2 = 동, 4 = 서. 투명 바탕.
+    2026-10-22(사용자 질문 '검은 선'): 먹선 한 줄이 아니라 암벽 윗처마와 같은 결의 턱 — 울퉁불퉁한 먹선 · 마른 풀 · 흙 띠 · 돌 부스러기(3~5px).
+    빛은 왼쪽 위: 서쪽 턱은 밝은 흙, 동쪽 턱은 그늘진 흙. 32px 주기로 이어진다."""
+    rnd = random.Random(hsh(mask, 77, 5))
+    img = new()
+    px = img.load()
+    def lip(i, depth):                                                      # 가장자리에서 i(0 = 끝)번째 픽셀의 색(깊이 depth칸 턱)
+        if i == 0:
+            return INK
+        if i == 1:
+            return "P02" if depth >= 4 else "P04"
+        if i == 2:
+            return rnd.choice(["P04", "P05", "P05", "P17"])
+        if i == 3:
+            return rnd.choice(["P05", "P18", "P29", "P06"])
+        return rnd.choice(["P29", "P30", "P18", None, None])
+    if mask & 1:                                                            # 북쪽이 낮다: 위 가장자리에 턱(풀 처마가 아래로 늘어진다)
+        for x in range(T):
+            depth = 3 + ((x * 7 + 3) // 11 + rnd.randint(0, 1)) % 3
+            for i in range(depth + 1):
+                c = lip(i, depth)
+                if c:
+                    px[x, i] = C(c)
+            if rnd.random() < 0.3:
+                px[x, depth + 1] = C(rnd.choice(["P30", "P29"]))           # 풀 포기
+    if mask & 4:                                                            # 서쪽이 낮다: 왼쪽 가장자리(밝은 쪽)
+        for y in range(T):
+            depth = 2 + ((y * 5 + 1) // 9 + rnd.randint(0, 1)) % 3
+            for i in range(depth + 1):
+                c = lip(i, depth)
+                if c == "P04":
+                    c = "P06"
+                if c:
+                    px[i, y] = C(c)
+            if rnd.random() < 0.25:
+                px[depth + 1, y] = C(rnd.choice(["P07", "P18"]))           # 돌 부스러기
+    if mask & 2:                                                            # 동쪽이 낮다: 오른쪽 가장자리(그늘 쪽 — 한 겹 더 어둡다)
+        for y in range(T):
+            depth = 3 + ((y * 5 + 2) // 9 + rnd.randint(0, 1)) % 3
+            for i in range(depth + 1):
+                c = lip(i, depth)
+                if c in ("P05", "P06"):
+                    c = "P04"
+                if c:
+                    px[T - 1 - i, y] = C(c)
+            if rnd.random() < 0.25:
+                px[T - 2 - depth, y] = C(rnd.choice(["P03", "P17"]))
+    return img
+
+
+def ramp(mask):
+    """탐험 비탈(덧층, 2026-10-22 사용자 지시 '벼랑 넘는 지점이 여럿'): 벼랑 끝 한 칸에 낸 흙 비탈 — 디딤 턱 넷 · 양옆 먹선 · 아래 그늘.
+    mask 1 = 북쪽으로 내려감(위 가장자리), 2 = 동쪽(오른 가장자리), 4 = 서쪽(왼 가장자리). 벼랑 끝 타일을 대신 놓는다(걷는 칸 · stair)."""
     img = new()
     d = ImageDraw.Draw(img)
+    rnd = random.Random(hsh(mask, 91, 3))
     if mask & 1:
-        d.line([0, 0, T - 1, 0], fill=C(INK)); d.line([0, 1, T - 1, 1], fill=C("P05"))
-    if mask & 4:
-        d.line([0, 0, 0, T - 1], fill=C(INK)); d.line([1, 0, 1, T - 1], fill=C("P07"))
+        d.rectangle([7, 0, 24, 14], fill=C("P18"))                              # 흙 비탈(16px 폭)
+        for k, y in enumerate((0, 4, 8, 12)):
+            d.line([8, y, 23, y], fill=C("P20"))                                 # 디딤 턱 윗선(밝음)
+            d.line([8, y + 3, 23, y + 3], fill=C("P17"))                         # 챌면(어둠)
+        d.line([7, 0, 7, 14], fill=C(INK)); d.line([24, 0, 24, 14], fill=C(INK))
+        d.line([7, 15, 24, 15], fill=C("P17"))                                   # 아래 그늘
+        for _ in range(4):
+            d.point((rnd.randint(9, 22), rnd.randint(1, 13)), fill=C(rnd.choice(["P19", "P06", "P21"])))
     if mask & 2:
-        d.line([T - 1, 0, T - 1, T - 1], fill=C(INK)); d.line([T - 2, 0, T - 2, T - 1], fill=C("P04")); d.line([T - 3, 0, T - 3, T - 1], fill=C("P05"))
+        d.rectangle([17, 7, 31, 24], fill=C("P18"))
+        for x in (19, 23, 27, 31):
+            d.line([x, 8, x, 23], fill=C("P17"))                                 # 챌면(오른쪽 — 그늘 쪽)
+            d.line([x - 2, 8, x - 2, 23], fill=C("P20"))                         # 디딤 턱(왼쪽 — 빛)
+        d.line([17, 7, 31, 7], fill=C(INK)); d.line([17, 24, 31, 24], fill=C(INK))
+        d.line([16, 8, 16, 23], fill=C("P17"))
+        for _ in range(4):
+            d.point((rnd.randint(18, 30), rnd.randint(9, 22)), fill=C(rnd.choice(["P19", "P06", "P21"])))
+    if mask & 4:
+        d.rectangle([0, 7, 14, 24], fill=C("P18"))
+        for x in (0, 4, 8, 12):
+            d.line([x, 8, x, 23], fill=C("P20"))                                 # 디딤 턱(왼쪽 — 빛)
+            d.line([x + 2, 8, x + 2, 23], fill=C("P17"))                         # 챌면
+        d.line([0, 7, 14, 7], fill=C(INK)); d.line([0, 24, 14, 24], fill=C(INK))
+        d.line([15, 8, 15, 23], fill=C("P17"))
+        for _ in range(4):
+            d.point((rnd.randint(1, 13), rnd.randint(9, 22)), fill=C(rnd.choice(["P19", "P06", "P21"])))
     return img
 
 
@@ -1054,6 +1128,8 @@ def terrain_tiles():
     out["tr:cstair"] = cliff_stair()
     for m in range(1, 8):
         out[f"tr:brink{m}"] = brink(m)
+    for m in (1, 2, 4):
+        out[f"tr:ramp{m}"] = ramp(m)
     for v in range(2):
         out[f"tr:fort_face{v}"] = fort("face", v)
     out["tr:fort_top"] = fort("top")

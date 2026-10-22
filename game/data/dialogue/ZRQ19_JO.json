@@ -1,0 +1,287 @@
+{
+ "id": "ZRQ19_JO",
+ "title": "이장 조만석 — 고철",
+ "loc": "L-R01-09",
+ "npc": "C-010",
+ "cond": "V_ACT >= 1 and MQ101_STAGE >= 100",
+ "labels": {
+  "START": 0,
+  "HI5": 5,
+  "HI_D": 7,
+  "HI15": 9,
+  "MENU": 11,
+  "CAPS": 12,
+  "KARMA": 18,
+  "SHORT": 22,
+  "SHORT_K": 24,
+  "KARMA5": 26,
+  "C6": 29,
+  "LEAN": 31,
+  "FULL": 33,
+  "FULL_D": 36
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "rq_stage(\"BC\") >= 15",
+   "to": "HI15"
+  },
+  {
+   "op": "if",
+   "cond": "rq_stage(\"BC\") >= 5",
+   "to": "HI5"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R01-026\") == 1",
+   "to": "HI_D"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "고철 들고 왔으면 오봉수한테 가도 되고 나한테 줘도 돼. 캡은 고물상이 치고, 계단 몫은 내가 적어."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "다섯 개째. 계단 한 칸은 네 쇠야."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "고물상이 비었으니 고철은 내가 받아. 캡은 마을 금고에서, 계단 몫은 장부에."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "미소",
+   "text": "고정 일꾼. 반상회에서 네 얘기 나왔어 — 계단 쇠 댄 사람."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "고철 하나, 캡으로",
+     "tags": [
+      {
+       "k": "item",
+       "id": "M-010",
+       "n": 1
+      }
+     ],
+     "cond": "rq_left(\"RQ-19\", 30) > 0",
+     "fx": "",
+     "to": "CAPS",
+     "id": "ZRQ19_JO:1:0"
+    },
+    {
+     "text": "고철 하나, 계단 보수에",
+     "tags": [
+      {
+       "k": "item",
+       "id": "M-010",
+       "n": 1
+      }
+     ],
+     "cond": "rq_left(\"RQ-19\", 30) > 0",
+     "fx": "",
+     "to": "KARMA",
+     "id": "ZRQ19_JO:1:1"
+    },
+    {
+     "text": "고철 다섯, 계단 보수에",
+     "tags": [
+      {
+       "k": "item",
+       "id": "M-010",
+       "n": 5
+      }
+     ],
+     "cond": "rq_left(\"RQ-19\", 30) >= 5",
+     "fx": "",
+     "to": "KARMA5",
+     "id": "ZRQ19_JO:1:2"
+    },
+    {
+     "text": "이번 주 고철은 다 됐나요",
+     "tags": [],
+     "cond": "rq_left(\"RQ-19\", 30) == 0",
+     "fx": "",
+     "to": "FULL",
+     "id": "ZRQ19_JO:1:3"
+    },
+    {
+     "text": "그만",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "ZRQ19_JO:1:4"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "rq",
+   "args": [
+    "19",
+    "caps"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "RQ_LEAN == 1",
+   "to": "LEAN"
+  },
+  {
+   "op": "if",
+   "cond": "RQ19_WK == 6",
+   "to": "C6"
+  },
+  {
+   "op": "if",
+   "cond": "RQ19_WK > 6",
+   "to": "SHORT"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "열 개비. 고물상 셈이랑 같아."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "cmd",
+   "name": "rq",
+   "args": [
+    "19",
+    "karma"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "RQ19_WK > 6",
+   "to": "SHORT_K"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "계단 몫으로 적는다. 고맙다."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "(캡을 센다)"
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "(장부에 긋는다)"
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "cmd",
+   "name": "rq",
+   "args": [
+    "19",
+    "karma",
+    "5"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "다섯. (장부에 다섯 줄을 긋는다) 계단 한 칸 값이야."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "피곤",
+   "text": "이번 주 여섯 번째야. 마을 금고가 얕아서 반값이다 — 계단에 대면 그대로 적어."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "피곤",
+   "text": "반상회 금고가 이번 주 바닥이야. 반값밖에 못 줘. 계단 몫은 값이 없으니 그대로고."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R01-028\") == 1",
+   "to": "FULL_D"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "이번 주는 됐어. 남태하가 밤에 설 사람 찾던데 — 쇠보다 그게 급해."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "C-010",
+   "emo": "기본",
+   "text": "이번 주는 됐어. 다음 주에."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/RQ.txt"
+}

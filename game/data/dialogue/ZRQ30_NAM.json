@@ -1,0 +1,389 @@
+{
+ "id": "ZRQ30_NAM",
+ "title": "옥탑 감시조장 남태하 — 밤 경계",
+ "loc": "L-R01-09",
+ "npc": "N-R01-028",
+ "cond": "V_ACT >= 1 and MQ101_STAGE >= 100 and SQ_S02_FIGHT == 0",
+ "labels": {
+  "START": 0,
+  "WAITGO": 8,
+  "OFFER": 10,
+  "START2": 12,
+  "NIGHT": 13,
+  "D1": 17,
+  "D2": 19,
+  "ONGOING": 21,
+  "REPORT": 23,
+  "MORNING": 26,
+  "REPORT2": 28,
+  "R1": 37,
+  "R1_HILL": 39,
+  "R2": 41,
+  "R2_MANY": 43,
+  "R3_UP": 45,
+  "R_QUIET": 47,
+  "WAIT": 49,
+  "FULL": 51,
+  "FULL_D": 54,
+  "COLD": 56
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "RQ30_ON == 1 and RQ30_PHASE >= 2",
+   "to": "REPORT"
+  },
+  {
+   "op": "if",
+   "cond": "RQ30_ON == 1",
+   "to": "ONGOING"
+  },
+  {
+   "op": "if",
+   "cond": "AFF_JC_BC < -19",
+   "to": "COLD"
+  },
+  {
+   "op": "if",
+   "cond": "rq_wait(\"RQ-30\", 3) > 0",
+   "to": "WAIT"
+  },
+  {
+   "op": "if",
+   "cond": "rq_left(\"RQ-30\", 3) == 0",
+   "to": "FULL"
+  },
+  {
+   "op": "if",
+   "cond": "GAME_HOUR >= 22 or GAME_HOUR < 4",
+   "to": "OFFER"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "기본",
+   "text": "밤에 설 사람이 모자라. 열 시부터 네 시까지 외곽 한 바퀴 — 뭐가 오면 네가 먼저 맞는 거야. 캡은 그날 밤 값으로 치고, 잠은 우리 숙소."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "열 시까지 기다린다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "WAITGO",
+     "id": "ZRQ30_NAM:1:0"
+    },
+    {
+     "text": "밤에 다시 온다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "ZRQ30_NAM:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "rq",
+   "args": [
+    "30",
+    "wait"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "NIGHT"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "기본",
+   "text": "늦었네. 바로 서겠어? 열 시부터 네 시까지 — 뭐가 오면 네가 먼저 맞아."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "선다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "START2",
+     "id": "ZRQ30_NAM:2:0"
+    },
+    {
+     "text": "오늘은 아니다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "ZRQ30_NAM:2:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "rq",
+   "args": [
+    "30",
+    "start"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "RQ30_DIR == 1",
+   "to": "D1"
+  },
+  {
+   "op": "if",
+   "cond": "RQ30_DIR == 2",
+   "to": "D2"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "기본",
+   "text": "뒷산 쪽을 봐. 어제 저녁에 숲에서 불빛이 깜박였어. 사람인지 짐승 눈인지."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "기본",
+   "text": "아랫문 쪽을 봐. 초저녁부터 개들이 짖어 — 그쪽에 뭐가 있다는 거야."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "기본",
+   "text": "윗문 쪽을 봐. 낮에 윗길에서 발자국이 내려왔어. 올라간 건 없고."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "기본",
+   "text": "아직 밤이야. 자리로 돌아가."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "GAME_HOUR >= 4 or RQ30_PHASE == 3",
+   "to": "REPORT2"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "기본",
+   "text": "조용해졌지? 네 시까지는 서야 밤이야. 앉지 말고."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "아침까지 선다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "MORNING",
+     "id": "ZRQ30_NAM:3:0"
+    },
+    {
+     "text": "잠깐 다른 데 다녀온다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "ZRQ30_NAM:3:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "rq",
+   "args": [
+    "30",
+    "morning"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "남은 밤은 바람과 개 짖는 소리뿐이다. 동쪽 능선이 희끗해진다."
+  },
+  {
+   "op": "cmd",
+   "name": "rq",
+   "args": [
+    "30",
+    "done"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "RQ30_QUIET == 1",
+   "to": "R_QUIET"
+  },
+  {
+   "op": "if",
+   "cond": "RQ30_KIND == 1 and RQ30_DIR == 3",
+   "to": "R1_HILL"
+  },
+  {
+   "op": "if",
+   "cond": "RQ30_KIND == 1",
+   "to": "R1"
+  },
+  {
+   "op": "if",
+   "cond": "RQ30_KIND == 2 and RQ30_N >= 5",
+   "to": "R2_MANY"
+  },
+  {
+   "op": "if",
+   "cond": "RQ30_KIND == 2",
+   "to": "R2"
+  },
+  {
+   "op": "if",
+   "cond": "RQ30_DIR == 2",
+   "to": "R3_UP"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "기본",
+   "text": "너구리였어? 옴 오르면 사흘은 긁어. 캡이랑 숙소 — 수고했다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "기본",
+   "text": "패거리야. 남부순환 쪽 척후. 네가 안 섰으면 아랫집 두 채는 털렸어. 캡이랑 숙소 — 가서 자."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "기본",
+   "text": "뒷산으로 왔어? 거긴 늘 늦게 알아. 척후가 그쪽 길을 봤다는 거야 — 내일부터 거기 하나 더 세워. 캡이랑 숙소."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "기본",
+   "text": "들개 떼. 배수지 물 냄새 맡고 오는 거야. 캡이랑 숙소 — 가서 자."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "기본",
+   "text": "여섯이었어? 그 정도면 무리가 커진 거야. 우두머리가 생겼다는 뜻이지. 캡이랑 숙소 — 가서 자."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "기본",
+   "text": "윗문으로 너구리가? 윗길 쓰레기 더미 때문이야. 내일 치우라고 해야지. 캡이랑 숙소."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "기본",
+   "text": "아무것도 안 왔어? 그런 밤이 제일 좋은 밤이야. 캡은 그대로 — 가서 자."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "기본",
+   "text": "사흘은 다른 사람이 서. 네가 또 서면 우리 애들이 게을러져."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R01-026\") == 1",
+   "to": "FULL_D"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "기본",
+   "text": "이번 주는 네가 세 번 섰어. 그만하면 됐고 — 오봉수가 고철 받는다더라."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "기본",
+   "text": "이번 주는 네가 세 번 섰어. 그만하면 됐어. 다음 주에."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "분노",
+   "text": "너한테 우리 밤을 맡기라고? 가."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/RQ.txt"
+}

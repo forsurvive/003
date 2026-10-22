@@ -506,18 +506,17 @@ func supply() -> void:
 		return
 	st.call_fn("take", [RAD, 3])
 	st.call_fn("take", [BLOOD, 2])
-	var n := int(st.vars.get_v("RQ47_N")) + 1
+	if int(st.vars.get_v("RQ47_T")) == 0 and int(st.vars.get_v("RQ47_N")) > 0:   # 1-12j 공통 엔진 이식: 옛 저장의 누적 횟수를 옮긴다
+		st.vars.set_v("RQ47_T", int(st.vars.get_v("RQ47_N")))
+		st.vars.set_v("RQ47_XP", mini(RQ_XP_CAP, int(st.vars.get_v("RQ47_N")) * RQ_XP))
+	var r: Dictionary = st.call_fn("rq", ["RQ-47", "JH" if v("WAY") == 1 else "", RQ_CAPS, RQ_XP, "supply",
+		{"now": Clock.abs_min(host.date_text) if host.date_text != "" else 0, "region": "R02", "what": "병동 7층에 약을 댄다"}])
+	var n := int(r.get("n", 0))
 	st.vars.set_v("RQ47_N", n)
 	st.vars.set_v("RQ47_WK", wk)
 	st.vars.set_v("RQ47_LAST", day())
-	var mul := 1.0 if n <= 3 else (0.75 if n <= 5 else 0.5)
-	st.call_fn("caps", [roundi(RQ_CAPS * mul)])
-	if n * RQ_XP <= RQ_XP_CAP:
-		st.call_fn("xp", [roundi(RQ_XP * mul)])
 	if n <= 3:
 		st.call_fn("karma", [10])
-	if v("WAY") == 1:
-		st.call_fn("aff", ["JH", 2])
 	if n == 1 and v("TRUST") == 0 and v("CUT") != 2:
 		_sv("TRUST", 1)                                               # 첫 보급 — 약을 들고 온 사람이면 7층 회로를 맡긴다
 	_sv("SKIP", 0)

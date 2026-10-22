@@ -236,10 +236,11 @@ func test_hp_supply(t) -> void:
 	c.supply()
 	t.ok(_v(st, "RQ47_N") == 1, "주 한 번")
 	st.vars.set_v("RQ47_N", 3)
+	st.vars.set_v("RQ47_T", 3)                                           # 엔진 누적(1-12j) — 옛 RQ47_N과 나란히
 	st.vars.set_v("GAME_DAY", 17)
 	var c2 := _v(st, "PC_CAPS")
 	c.supply()
-	t.ok(_v(st, "PC_CAPS") == c2 + 38, "넷째부터 75%%(곡선)")
+	t.ok(_v(st, "PC_CAPS") == c2 + 50 and _v(st, "RQ47_N") == 4 and _v(st, "RQ47_T") == 4, "넷째도 100% — 회차 곡선은 SD-05 §4.1대로 '이번 주' 기준(주 1회라 안 꺾임, 1-12j 공통 엔진 · 옛 RQ47_N 이식)")
 	t.ok(_v(st, "HP_DAY0") == 17, "약이 들어오면 시계를 다시 잰다")
 
 
