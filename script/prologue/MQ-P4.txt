@@ -73,6 +73,8 @@ SYS 경고등이 돈다. 톱니 문 가장자리에서 200년 묵은 먼지가 �
 @cmd gate open 90
 @cmd flash white
 SYS 흰 빛. 문 너머에서 들어온 바람이 데크의 먼지를 한꺼번에 들어 올린다.
+! V_REGCARD = 2
+@cmd hint "핍-보이: 알 수 없는 신호를 수신했습니다." 5
 @cmd balloon C-002 !
 @cmd wait 8
 SYS 빛 속에서 사람 그림자가 걸어 들어온다. 상인이 아니다. 같은 걸음, 같은 철모.

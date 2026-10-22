@@ -1347,6 +1347,25 @@ func _ready() -> void:
 				["check", "SQH_BATT == 81", "대장간 남무진에게 — 옥탑 조명"],
 				["settime", "2277. 10. 28.  18:30"], ["wait", 1.5],
 				["check", "SQ_S04_OUT == 6 and SQS04_STAGE == 100", "잠든 뒤 여섯 시간: 남태하가 철망을 연다 — 종료"]]
+		"mapk":                                                         # 1-12k 지도 화면: 망원경 훑기(원경 S 둘 + 금탑) → 봉천 링 화면 → 교역로 쌍(사다리 앞 → 사당 30분) → 벙커 앞 '여기였나'(단서 2)
+			st.vars.set_v("V_ACT", 1)
+			st.vars.set_v("V_REGCARD", 2)
+			st.quests.set_stage("MQ-101", 50)
+			st.vars.set_v("MQ101_NIGHT", 3)
+			var m101 := Mq101.new()                                      # 망원경 `mq panorama`는 MQ-101 진행기의 명령(start 없이 명령만 잇는다)
+			add_child(m101)
+			m101.setup(host, true, false)
+			host.ev.handlers["mq"] = m101._mq_cmd
+			host.enter("W", "L-R01-03")
+			var tel := _spot_find("L-R01-03", "telescope")
+			plan = [["go", tel.x, tel.y + 1], ["shotin", "scope", 4.0], ["shotin", "scope_labels", 11.0], ["use", tel.x, tel.y], ["wait", 1.0], ["shot", "after_scope"],
+				["check", "LM_SEEN == 1049095 and PL_VIEW == 1", "망원경 → 원경 표식 S 둘(비트 0 · 1) + 금탑 · 레이더 돔 · 도곡 3탑(반경 안)"],
+				["warp", "W", "L-R01-09"], ["wait", 1.5], ["shot", "ring_bc"],
+				["check", "LM_SEEN >= 7", "봉천에서 금탑 · 레이더 돔 등록 비트"],
+				["set", "SQ_S05_SOL", 1], ["found", "L-R01-18"], ["warp", "W", "L-UG-02"], ["wait", 1.0], ["shot", "ladder"],
+				["travel", "L-R01-18"], ["wait", 4.0], ["check", "map:X-SD", "사다리 앞 → 사당 환승촌 지하 교역로"], ["shot", "sadang"],
+				["warp", "W", "L-R02-02"], ["wait", 2.0],
+				["check", "MQ102_MAPC == 2 and MQ102_C2 == 1 and MQ104_STAGE >= 10", "카드 숫자만 보고 벙커 앞에 서면 단서 2(여기였나)"]]
 		"place":                                                        # 1-5e 손 장소: 전망바위 → 연수원 본관(LR-19)·기숙사(LR-11) → 계곡 배수로(정비공) → 경찰서 무기고(자물쇠 50) → 공영방송(LR-01)
 			st.vars.set_v("PC_SKP_LOCKPICK", 50)
 			st.vars.set_v("PC_SKP_SMALL_GUNS", 40)
@@ -1878,6 +1897,23 @@ func _process(dt: float) -> void:
 			_next()
 		"warp":                                                         # 다음 장소로 바로(확인 봇: 걸어가는 길은 다른 봇이 본다)
 			host.enter(str(s[1]), str(s[2]) if s.size() > 2 else "from_W")
+			_next()
+		"shotin":                                                       # n초 뒤 한 장(연출 · 대화 중에도 — 봇 계획은 그동안 멈춰 있으니 타이머로)
+			var tag := str(s[1])
+			get_tree().create_timer(float(s[2])).timeout.connect(func() -> void: _shot(tag))
+			_next()
+		"travel":                                                       # 빠른 이동(1-12k): 지도에서 고른 것처럼 — 막히면 이유를 찍고 멈춘다
+			var why: Array = host.travel_check(str(s[1]))
+			if not why[0]:
+				_finish("빠른 이동 불가: " + str(why[1]))
+				return
+			host.fast_travel(str(s[1]))
+			_next()
+		"set":
+			st.vars.set_v(str(s[1]), s[2])
+			_next()
+		"found":
+			st.places.raise(str(s[1]), PlaceLog.FOUND)
 			_next()
 		"crouch":
 			host.combat.crouch = bool(s[1])

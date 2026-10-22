@@ -147,6 +147,9 @@ func _init() -> void:
 	# 반복 퀘스트 공통 엔진(1-12j, SD-05 §4.1 · D-238): 뜻은 core/story/repeat.gd 머리 주석. RQ47_N · WK · LAST는 옛 변수(첫 호출 때 이식)
 	for k in Repeat.var_names():
 		vars.declare(k, "int", 0)
+	vars.declare("LM_SEEN", "int", 0)                                       # 원경 표식 등록 비트(1-12k, core/story/landmarks.gd ROWS 차례 · SD-08 §12.2)
+	vars.declare("MQ102_MAPC", "int", 0)
+	vars.declare("MQ101_HA_MAPC", "int", 0)                                 # 하숙자가 '혼자 풀었다'를 알아봐 줌(한 번)                                    # 지도를 보고 한 단서 2 추론(1-12k D-046): 핍-보이 지도에서 카드 숫자 둘 = 청크 (20, 27)을 짚음 → Act1Paths가 단서 2를 세운다
 	# 여의도 유리탑 3동 · 증권가 객장(1-D9, 1-D 계획 §15.7 · SD-05 UQ-06): 진행기 Yt만 쓴다 — 뜻은 script/act1/YT.txt 머리 주석
 	for k in ["YT_FORGE", "YT_FORGE_T", "YT_TEMP", "YT_LOCK", "YT_UNK", "YT_DEAD_DM", "YT_ESCORT", "YT_POWER", "YT_MOUND", "YT_SEEN", "YT_GATE1", "YT_CLERK_SEEN",
 			"YT_ROBOT_OK", "YT_ELEV", "YT_INC", "YT_INC_DAY", "YT_R", "YT_DOZE", "YT_DMTAKE", "YT_HBTAKE", "YT_OJTAKE", "YT_TAPE", "YT_SG", "YT_KBN", "YT_UPC", "YT_UP", "YT_NOCARD", "YT_CUP", "YT_CUPSEEN", "YT_TRAP", "YT_NO", "YT_HK2", "YT_HK3", "YT_SIDE", "YT_CTAPE", "YT_CDONE", "YT_BUMP_DAY", "UQ06_RADIO", "UQ06_RESULT", "UQ06_DAY", "UQ06_ASKED", "UQ06_MET", "UQ06_GONE", "UQ06_BACK", "UQ06_TOLD", "UQ06_HEARD"]:
@@ -161,7 +164,7 @@ func _init() -> void:
 		vars.declare(k, "int", 0)
 	# 사당 환승촌(1-8f): 인물 첫 만남 · SA_MAKCHA_HEARD 서쪽 터널 '막차 손님' 들음(SQ-S05 '이미 앎') · SA_MAT_UNTIL 승강장 매트 빌린 끝 절대 분 ·
 	# SD_MAP_UG 노선도 봄 · SD_BOARD_SEEN 운행 칠판 봄 · SD_LR05 · SD_LR09 기록물 · U02_OPEN 4호선 남쪽 터널 철망 문(1-D2: 1 열림)
-	for k in ["SD_MET_HUH", "SD_MET_PYO", "SD_MET_WI", "SD_MET_SEONG", "SD_MET_BAN", "SD_MET_TAK", "SA_MAKCHA_HEARD", "SA_MAT_UNTIL", "SD_MAP_UG", "SD_BOARD_SEEN", "SD_LR05", "SD_LR09", "U02_OPEN"]:
+	for k in ["SD_MET_HUH", "SD_MET_PYO", "SD_MET_WI", "SD_MET_SEONG", "SD_MET_BAN", "SD_BAN_WEST", "SD_MET_TAK", "SA_MAKCHA_HEARD", "SA_MAT_UNTIL", "SD_MAP_UG", "SD_BOARD_SEEN", "SD_LR05", "SD_LR09", "U02_OPEN"]:
 		vars.declare(k, "int", 0)
 	# 사당 고개 검문소 · 노량진 관제 중계소(1-8g): 첫 만남 · SG_REFUSED 중립 '동행 요청' 거절(한 번 −10) · SG_ISSUED 임시 등록증 첫 발급 ·
 	# GS_MET_RJ 류정을 만남(MQ-207 '이미 앎') · GS_CARD_SEEN 천공 카드 벽의 내 번호 · GS_LR50 「도성 문답」

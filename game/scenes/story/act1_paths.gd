@@ -29,6 +29,7 @@ const CLUE_QUEST := {1: "MQ-103", 2: "MQ-104", 3: "MQ-105"}
 const CLUE_TEXT := {1: "영등포 지하에 200살 먹은 기술자가 있다 — 2077년엔 세진 하청",
 	2: "볼트 기록의 좌표가 여의도를 가리킨다", 3: "현상금을 건 자의 의뢰서는 새벽인력 장부에 붙어 있다"}
 const PATH_MAPS := {"MQ-103": ["J-"], "MQ-104": ["Y-"], "MQ-105": ["H-0"]}
+const BUNKER := Vector2i(806, 1091)                                     ## 여의도 지하 벙커 L-R02-02 — 카드 숫자 둘 = 청크 (20, 27)(1-12k D-046)
 # MQ-105 새벽인력 본소: 평시 인물 → 습격 때 적 종류(SD-14 · SD-09a ⑤). 독사는 MQ-101과 같은 CR-534, 황두칠은 보스 CR-513
 const SB_ROLE := {"N-R02-035": "CR-438", "CR-435": "CR-435", "CR-436": "CR-436", "CR-437": "CR-437", "CR-438": "CR-438",
 	"C-021": "CR-534", "N-R02-037": "CR-435", "N-R02-036": "CR-435", "C-049": "CR-438", "N-R02-038": "CR-437", "C-013": "CR-513"}
@@ -75,8 +76,21 @@ func _process(dt: float) -> void:
 	if st.quests.stage("MQ-101") >= 50 and st.quests.stage("MQ-102") == 0:
 		_open_hub()
 	var hub := st.quests.stage("MQ-102")
+	if hub >= 10 and v("V_REGCARD") < 3:                              # 등록 카드 단계(SD-03a §4.8 정본): 3 = MQ-102 발동 · 4 = K_CODE(내려가지 않는다)
+		st.vars.set_v("V_REGCARD", 3)
+	if v("K_CODE") >= 1 and v("V_REGCARD") < 4:
+		st.vars.set_v("V_REGCARD", 4)
+		host.hint("핍-보이: 관리자 코드가 해독되었습니다.", 5.0)
 	if hub >= 10 and hub < 100:                                       # 물건·기록으로 서는 단서(오버시어 단말 K_RALLY · 수배 쪽지의 본소 주소 · 인력 장부 조각)
 		if v("K_RALLY") >= 1 and v("MQ102_C2") == 0:
+			clue(2)
+	if v("V_ACT") >= 1 and v("V_REGCARD") >= 2 and v("MQ102_C2") == 0 and st.quests.stage("MQ-102") < 100:
+		if v("MQ102_MAPC") == 0 and host.map is WorldMap and host.player != null:   # 카드 숫자만 보고 발로 찾아옴(재미 검수 '해 보고 싶은 짓'): 벙커 둘레에 서면 '이미 앎' 판(P2)
+			var me: Vector2i = host.map.tile_of(host.player.loco.logical)
+			if Vector2(BUNKER.x - me.x, BUNKER.y - me.y).length() <= 12.0:
+				st.vars.set_v("MQ102_MAPC", 2)
+				host.hint("손목 카드의 숫자 둘 — 20 · 27. 여기였나.", 6.0)
+		if v("MQ102_MAPC") >= 1:                                        # 지도를 보고 한 추론(1-12k D-046): 카드 끝 숫자 둘 = 청크 (20, 27) — MQ-102 전이면 허브도 함께 연다
 			clue(2)
 		if (v("MQ101_BOARD") >= 1 or st.items.has("M-161")) and v("MQ102_C3") == 0:
 			clue(3)

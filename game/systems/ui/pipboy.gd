@@ -703,6 +703,21 @@ func _effects_page() -> void:
 		y += 18.0
 
 
+## 관리자 코드 줄(SD-12 §3.8 `####-####-##`): 깨진 글자 도트 4종을 시간으로 돌리고, 끝 두 자리만 숫자로 읽힌다 — 여의도 지하 벙커 청크 (20, 27)
+## (SD-03a §8.2 단서 2 '주인공이 지도를 직접 보고 추론' · 하숙자 "이 줄 끝의 숫자 둘… 좌표 같은데", 1-12k D-046)
+const CARD_CHUNK := Vector2i(20, 27)
+const CARD_GLYPHS := "▚▞▙▜"
+
+
+static func card_code(t: float) -> String:
+	var s := ""
+	for k in 8:
+		s += CARD_GLYPHS[(int(t * 3.0) + k * 7) % 4]
+		if k == 3:
+			s += "-"
+	return "%s-%d %d" % [s, CARD_CHUNK.x, CARD_CHUNK.y]
+
+
 ## 일반(SD-12 §3.5): 등록 카드(맨 위, §3.8 단계 0) · 카르마 칭호와 막대(숫자는 숨김, SD-10 §6.1) · 통계
 func _general_page(id: String) -> void:
 	match id:
@@ -719,7 +734,27 @@ func _general_page(id: String) -> void:
 				text(Vector2(268, y), kv[0], f10, 10, U[4])
 				text(Vector2(340, y), kv[1], f12, 12, U[5])
 				y += 18.0
-			text(Vector2(268, y + 6), "관리자 코드 칸 · 관제망 응답 칸 없음 (단계 %d)" % stage, f10, 10, U[3])
+			if stage < 2:
+				text(Vector2(268, y + 6), "관리자 코드 칸 · 관제망 응답 칸 없음 (단계 %d)" % stage, f10, 10, U[3])
+			else:                                                       # 단계 2~4(SD-12 §3.8 배치): 관리자 코드 · 관제망 응답 · 비고
+				hline(264, 588, y + 2, U[3])
+				y += 8.0
+				text(Vector2(268, y), "관리자 코드", f10, 10, U[4])
+				if stage >= 4:
+					text(Vector2(340, y), "수도 관제망 등록 관리자 / 인증 등급: 후보", f12, 12, U[6])
+				else:
+					text(Vector2(340, y), card_code(time), f12, 12, U[5])
+					text(Vector2(340, y + 13), "[판독 불가]", f10, 10, U[3])
+				y += 26.0
+				text(Vector2(268, y), "관제망 응답", f10, 10, U[4])
+				text(Vector2(340, y), "대기  ○", f12, 12, U[5])
+				y += 18.0
+				if stage == 3:
+					text(Vector2(268, y), "비고", f10, 10, U[4])
+					text(Vector2(340, y), "읽을 수 있는 사람이 필요하다", f12, 12, U[5])
+				elif stage >= 4:
+					text(Vector2(268, y), "비고", f10, 10, U[4])
+					text(Vector2(340, y), "[관리자 인증] — 관제망 단말 · 로봇(조회)", f12, 12, U[5])
 		"karma":
 			var k := int(info.get("karma", 0))
 			var band := "good" if k >= 250 else ("evil" if k <= -250 else "neutral")
@@ -1045,7 +1080,15 @@ func _map_key(e: InputEvent) -> bool:
 
 ## 빠른 이동(SD-12 §5.6): 커서 아래 장소가 갈 수 있으면 받는 쪽(진행기)에 넘기고 닫는다. 못 가면 이유를 그대로 둔다(정보 줄에 보인다)
 func _travel() -> void:
-	if map == null or map.sel == "" or not info.has("travel"):
+	if map == null:
+		return
+	if PipMap.infer_hit(st, map.cursor, map.zoom):                      # 지도를 보고 하는 단서 2 추론(1-12k D-046): 카드 끝 숫자 둘의 청크를 짚었다
+		st.vars.set_v("MQ102_MAPC", 1)
+		if info.has("hint"):
+			info["hint"].call("20 · 27 — 카드의 깨진 줄 끝, 그 숫자. 여의도.", 6.0)
+		close(true)
+		return
+	if map.sel == "" or not info.has("travel"):
 		return
 	var why: Array = info["travel"].call(map.sel)
 	if why[0]:

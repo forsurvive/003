@@ -821,6 +821,8 @@ func _check_exit() -> void:
 		var rc: String = map.region_at(t)
 		if rc != "":
 			st.places.regions[rc] = true
+		for nm in Landmarks.tick(st, t, Clock.is_night(date_text)):        # 원경 표식(1-12k, SD-08 §12.2): 반경 안에 처음 들어간 랜드마크
+			hint("원경 표식: %s — 방위 링에 방향이 보인다" % nm, 4.0)
 	if _up():
 		return
 	for g in map.triggers_at(t):                                      # 밟는 칸: 조건이 맞으면 장면을 연다
@@ -2140,13 +2142,16 @@ func _txt(p: Vector2, t: String, col: Color, align := HORIZONTAL_ALIGNMENT_LEFT)
 	banner.draw_string(font_s, Vector2(x, p.y + font_s.get_ascent(10)), t, HORIZONTAL_ALIGNMENT_LEFT, -1, 10, col)
 
 
+static var lm_icons: Texture2D                                           ## 원경 표식 실루엣 8×8 × 21(Landmarks.ROWS 차례)
+
+
 ## 방위 링(SD-12 §4.3): 지름 56, 위 '북', 가운데 = 주인공, 적 = 붉은 마름모(반경 10 + 인지력×2 타일), 동행 = 푸른 원
 func _ring(c: Vector2) -> void:
 	banner.draw_arc(c, 27.0, 0, TAU, 32, HU[0], 3.0)
 	var red: bool = enc_live != null and enc_live.flash_t > 0.0 and fmod(enc_live.flash_t, 0.4) < 0.2   # 추격자 예고: 테두리 붉게 점멸(SD-12 §9.7)
 	banner.draw_arc(c, 27.0, 0, TAU, 32, HUD_RED if red else HU[3], 2.0 if red else 1.0)
 	banner.draw_arc(c, 24.0, 0, TAU, 32, HU[2], 1.0)
-	_txt(c + Vector2(0, -33), "북", HU[5], HORIZONTAL_ALIGNMENT_CENTER)
+	_txt(c + Vector2(0, -37), "북", HU[5], HORIZONTAL_ALIGNMENT_CENTER)
 	banner.draw_rect(Rect2(c - Vector2(1, 1), Vector2(2, 2)), HU[6])
 	var rad := (10.0 + 2.0 * st.stat("PE")) * 32.0
 	for e in combat.enemies:
@@ -2177,6 +2182,12 @@ func _ring(c: Vector2) -> void:
 			banner.draw_colored_polygon(PackedVector2Array([q + Vector2(0, -2), q + Vector2(2, 0), q + Vector2(0, 2), q + Vector2(-2, 0)]), HU[7])
 	if map is WorldMap:                                                # 장소(SD-12 §4.3·§5.5): 40타일 안, 링 둘레에 방향만 — 발견 = 채움, 그 밖 = 빈 칸
 		var me := map.tile_of(player.loco.logical)
+		if lm_icons == null:
+			lm_icons = load("res://assets/ui/landmark_icons.png")
+		for lm in Landmarks.visible(st, me, Clock.is_night(date_text)):   # 원경 표식(SD-08 §12.1 ① · SD-12 §4.3): 링 테두리 밖 8×8 회색 실루엣, 방향만
+			var q: Vector2 = (c + (lm["dir"] as Vector2) * 29.0).round()
+			banner.draw_rect(Rect2(q - Vector2(5, 5), Vector2(10, 10)), HU[0])
+			banner.draw_texture_rect_region(lm_icons, Rect2(q - Vector2(4, 4), Vector2(8, 8)), Rect2(int(lm["i"]) * 8, 0, 8, 8), HU[4])
 		for lid in _ring_places(me):
 			var e: Dictionary = PlaceLog.db[lid]
 			var d := Vector2(int(e["tx"]) - me.x, int(e["ty"]) - me.y)
@@ -2503,7 +2514,7 @@ func status() -> Dictionary:
 		"rad_drug": st.rad_drug.duplicate(),
 		"dr": int(items_db.get(worn(), {}).get("dr", 0)) if st.items.has(worn()) else 0,
 		"tile": Vector2(map.tile_of(player.loco.logical)) if map is WorldMap and player != null else Vector2(-99, -99),
-		"world": map if map is WorldMap else null, "travel": travel_check, "radio": radio_ctx()}
+		"world": map if map is WorldMap else null, "travel": travel_check, "radio": radio_ctx(), "hint": hint}
 
 
 # ---------------------------------------------------------------- 빠른 이동(SD-12 §5.6)
@@ -2529,6 +2540,13 @@ func travel_check(lid: String) -> Array:
 		return [false, TRAVEL_MSG["F4"], 0]
 	if enc_live != null and enc_live.chasing():                       # 추적대가 다가오거나 싸우는 중(1-3)
 		return [false, TRAVEL_MSG["F8"], 0]
+	var me := map.tile_of(player.loco.logical)
+	var ok_now: bool = st.quests.stage("MQ-P4") >= 100 and e.get("arrive") != null and not busy and not box.active and not story_hold
+	if ok_now and PipMap.trade_link_open(st) and lid in PipMap.TRADE_LINK:   # 사당 ↔ 서울대입구 지하 교역로(1-12k D-048, SD-04a SQ-S05 L729): 한쪽 끝 24타일 안에서 반대쪽 끝으로 30분.
+		var other: String = PipMap.TRADE_LINK[1 - PipMap.TRADE_LINK.find(lid)]   #   지하길이라 '낮 지상 계약 동행'(travel_blocks)은 묻지 않는다(재미 검수 (b))
+		var oa: Array = PlaceLog.db[other]["arrive"]
+		if Vector2(int(oa[0]) - me.x, int(oa[1]) - me.y).length() <= PipMap.TRADE_NEAR:
+			return [true, "", 0.5]
 	if travel_block.is_valid():                                        # 진행기가 막는 이동(1-11f — 전투복 차림 탈영병과 큰길은 못 간다)
 		var tb := str(travel_block.call(lid))
 		if tb != "":
@@ -2541,7 +2559,7 @@ func travel_check(lid: String) -> Array:
 		return [false, TRAVEL_MSG["F8"], 0]
 	if st.quests.stage("MQ-P4") < 100 or e.get("arrive") == null or busy or box.active or str(e.get("region", "")) == "R05":
 		return [false, TRAVEL_MSG["F6"], 0]
-	var here := PlaceLog.bank_at(map.tile_of(player.loco.logical))
+	var here := PlaceLog.bank_at(me)
 	var there := str(e.get("bank", here))
 	if there != "" and there != here:                                    # 강 건너: 확보한 횡단로가 하나라도 있어야(2막 첫 횡단 전에는 없다)
 		if secured_crossings().is_empty():
@@ -2577,14 +2595,14 @@ func fast_travel(lid: String) -> void:
 	busy = true
 	player.move(Vector2.ZERO, 0.0)
 	ev.run("fade_out", ["black", "3"], func() -> void:
-		_arrive(lid, int(why[2]))
+		_arrive(lid, float(why[2]))
 		ev.run("fade_in", ["black", "3"], func() -> void:
 			busy = false
 			traveled.emit(lid)))
 
 
 ## 빠른 이동 도착(화면이 가려진 사이): 도착 칸에 세우고 둘레 청크를 붙이고 시각을 넘긴다
-func _arrive(lid: String, hours: int) -> void:
+func _arrive(lid: String, hours: float) -> void:
 	var e: Dictionary = PlaceLog.db[lid]
 	var at := Vector2(int(e["arrive"][0]) * 32 + 16, int(e["arrive"][1]) * 32 + 16)
 	map.load_now(at)
@@ -2604,7 +2622,7 @@ func _arrive(lid: String, hours: int) -> void:
 			(m["actor"] as Actor).position = (m["actor"] as Actor).loco.render
 	var mins := roundi(hours * 60 * travel_mul)
 	advance_minutes(mins)
-	_note("%s 도착 — %d시간이 지났다" % [str(e["name"]), roundi(mins / 60.0)])
+	_note("%s 도착 — %s이 지났다" % [str(e["name"]), PipMap.hours_text(mins / 60.0)])
 	enc_live.on_arrive.call_deferred()                                # 도착 지점 = 추적대 첫 출현 후보(SD-05 §6.2)
 
 

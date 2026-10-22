@@ -14,6 +14,9 @@ const COLS := "가나다라마바사아자차카타파하"
 const WORLD := Vector2(2120, 1720)
 const LOCAL_N := 60
 const LOCAL_PX := 3
+const TRADE_LINK := ["L-R01-18", "L-UG-02"]           ## 사당 환승촌 ↔ 서울대입구역 지하 교역로 쌍(1-12k D-048, SD-04a SQ-S05 L729)
+const TRADE_NEAR := 24.0                               ## 한쪽 끝 도착 칸에서 이만큼 안에 서 있으면 반대쪽 끝까지 30분
+const INFER_CHUNK := Vector2i(20, 27)                  ## 등록 카드 끝 숫자 둘 = 여의도 지하 벙커 청크(1-12k D-046, PipBoy.CARD_CHUNK와 같다)
 
 static var tex: Texture2D
 static var icons: Texture2D
@@ -48,6 +51,36 @@ static func _load() -> void:
 	for c in acc:
 		region_mid[c] = acc[c][0] / float(acc[c][1])
 	PlaceLog.load_db()
+
+
+## 교역로 쌍이 열렸나: SQ-S05 해법 A · B · C(SOL 1~3 — 가면 통과 4는 아니다) + 두 끝 모두 발견
+static func trade_link_open(st) -> bool:
+	if not st.vars.has("SQ_S05_SOL"):
+		return false
+	var sol := int(st.vars.get_v("SQ_S05_SOL"))
+	if sol < 1 or sol > 3:
+		return false
+	for lid in TRADE_LINK:
+		if st.places.get_state(lid) < PlaceLog.FOUND:
+			return false
+	return true
+
+
+## 걸리는 시간 글(1 → '1시간', 0.5 → '30분')
+static func hours_text(h: float) -> String:
+	if h < 1.0:
+		return "%d분" % roundi(h * 60.0)
+	return "%d시간" % roundi(h)
+
+
+## 지도를 보고 하는 단서 2 추론(SD-03a §8.2 '주인공이 지도를 직접 보고 추론', D-046): 1막 · 카드 단계 2 이상(숫자 둘이 보인다) · 아직 단서 2 전 ·
+## 권역 단계 이상에서 커서가 카드 숫자의 청크 (20, 27)에 있다. MQ-102가 아직 안 열렸어도 된다(clue가 허브를 연다 — 재미 검수 ①)
+static func infer_hit(st, cur: Vector2, z: int) -> bool:
+	if z < 1 or not st.vars.has("V_REGCARD") or int(st.vars.get_v("V_REGCARD")) < 2:
+		return false
+	if int(st.vars.get_v("V_ACT")) < 1 or int(st.vars.get_v("MQ102_C2")) >= 1 or st.quests.stage("MQ-102") >= 100:
+		return false
+	return Vector2i(int(cur.x) / 40, int(cur.y) / 40) == INFER_CHUNK
 
 
 func _init(pip) -> void:
@@ -155,9 +188,20 @@ func _markers(v: Control, U: Array) -> void:
 	var labels: Array = []                                                 # 이름표 겹침: 먼저 놓인 이름(발견 우선)과 겹치면 생략, 커서 아래 이름은 늘
 	var order: Array = PlaceLog.db.keys()
 	order.sort_custom(func(a, b): return places.get_state(a) > places.get_state(b))
+	var link := trade_link_open(pb.st)
+	if link:                                                               # 지하 교역로(1-12k D-048): 두 끝을 잇는 점선 + 이름(권역 단계 이상)
+		var a: Dictionary = PlaceLog.db[TRADE_LINK[0]]
+		var b: Dictionary = PlaceLog.db[TRADE_LINK[1]]
+		var pa := w2s(Vector2(int(a["tx"]) + 0.5, int(a["ty"]) + 0.5))
+		var pb2 := w2s(Vector2(int(b["tx"]) + 0.5, int(b["ty"]) + 0.5))
+		v.draw_dashed_line(pa, pb2, U[4], 1.0, 4.0)
+		if zoom >= 1:
+			var mid := (pa + pb2) / 2.0
+			if AREA.grow(-6).has_point(mid) and mid.y < AREA.end.y - 40:
+				pb.text(mid + Vector2(0, -12), "지하 교역로", pb.f10, 10, U[4], HORIZONTAL_ALIGNMENT_CENTER)
 	for lid in order:
 		var e: Dictionary = PlaceLog.db[lid]
-		if str(e["region"]) == "UG":
+		if str(e["region"]) == "UG" and not (link and lid in TRADE_LINK):   # 지하 장소는 지하 맵에서 — 교역로의 서울대입구역만 예외
 			continue
 		var s := places.get_state(lid)
 		if not places.on_map(lid):
@@ -230,10 +274,16 @@ func _info_box(v: Control, U: Array) -> void:
 		var s: int = pb.st.places.get_state(sel)
 		var why: Array = pb.info["travel"].call(sel) if pb.info.has("travel") else [false, "실내에서는 이동할 수 없습니다."]
 		var st_name: String = ["미상", "소문", "표시", "발견"][s]
-		var tv: String = ("빠른 이동 %d시간 [Enter]" % int(why[2])) if why[0] else str(why[1])
+		var tv: String = str(why[1])
+		if why[0]:
+			tv = ("지하 교역로 %s [Enter]" if float(why[2]) < 1.0 else "빠른 이동 %s [Enter]") % hours_text(float(why[2]))
 		line1 = "%s / %s / %s / %s" % [e["name"], region_names.get(str(e["region"]), str(e["region"])), st_name, tv]
 	pb.text(r.position + Vector2(6, 2), line1, pb.f12, 12, U[6] if sel != "" else U[3])
-	pb.text(r.position + Vector2(6, 16), line2, pb.f10, 10, U[4])
+	if infer_hit(pb.st, cursor, zoom):                                    # 카드 숫자의 청크(1-12k D-046): 좌표 줄이 깜박이며 '← 카드의 숫자 둘'(장소명 줄은 그대로 — 재미 검수 (a))
+		var on := fmod(pb.time, 0.9) < 0.6
+		pb.text(r.position + Vector2(6, 16), line2 + "   ← 카드의 숫자 둘 [Enter]", pb.f10, 10, U[7] if on else U[5])
+	else:
+		pb.text(r.position + Vector2(6, 16), line2, pb.f10, 10, U[4])
 
 
 # ---------------------------------------------------------------- 지역 지도
@@ -303,6 +353,9 @@ func click(p: Vector2) -> bool:
 	if not AREA.has_point(p):
 		return false
 	var before := sel
+	var same_chunk: bool = Vector2i(int(cursor.x) / 40, int(cursor.y) / 40) == Vector2i(int(s2w(p).x) / 40, int(s2w(p).y) / 40)
 	cursor = s2w(p)
 	pb.view.queue_redraw()
+	if before == "" and same_chunk and infer_hit(pb.st, cursor, zoom):     # 같은 청크를 두 번 짚음 = 추론(터치 · 마우스)
+		return true
 	return before != "" and before == sel and w2s(Vector2(int(PlaceLog.db[sel]["tx"]) + 0.5, int(PlaceLog.db[sel]["ty"]) + 0.5)).distance_to(p) < 8.0

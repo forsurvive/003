@@ -124,6 +124,40 @@ func test_world_places(t) -> void:
 	t.eq(q.count_found(), 2, "발견 수(마커 Y)")
 
 
+## 사당 ↔ 서울대입구 지하 교역로 쌍(1-12k D-048): 열림 조건 · 끝에서 30분 · 멀리선 1시간 · 도착 시각
+func test_world_trade_link(t) -> void:
+	var st := StoryState.new()
+	st.load_data()
+	var h := InteriorHost.new()
+	h.st = st
+	h._ready()
+	for q in ["MQ-P1", "MQ-P2", "MQ-P3", "MQ-P4"]:
+		st.quests.set_stage(q, 100)
+	st.vars.set_v("V_ACT", 1)
+	h.body = "adult"
+	h.date_text = "2277. 10. 25.  10:00"
+	h.enter("X-BC", "from_X-S07")
+	st.places.raise("L-R01-18", PlaceLog.FOUND)
+	st.places.raise("L-UG-02", PlaceLog.FOUND)
+	var r: Array = h.travel_check("L-UG-02")
+	t.ok(r[0] and float(r[2]) == 1.0, "교역로 전: 서울대입구역(도착 칸 있음)도 보통 1시간")
+	st.vars.set_v("SQ_S05_SOL", 2)
+	r = h.travel_check("L-UG-02")
+	t.ok(r[0] and float(r[2]) == 1.0, "봉천(사다리에서 51칸)에선 아직 1시간")
+	h._arrive("L-UG-02", 1.0)
+	t.eq(h.date_text, "2277. 10. 25.  11:00", "1시간")
+	r = h.travel_check("L-R01-18")
+	t.ok(r[0] and float(r[2]) == 0.5, "사다리 앞에서 사당까지 지하 교역로 30분")
+	h._arrive("L-R01-18", float(r[2]))
+	t.eq(h.date_text, "2277. 10. 25.  11:30", "30분이 지났다")
+	r = h.travel_check("L-UG-02")
+	t.ok(r[0] and float(r[2]) == 0.5, "사당 끝에서 돌아가는 길도 30분")
+	st.vars.set_v("SQ_S05_SOL", 4)
+	r = h.travel_check("L-UG-02")
+	t.ok(r[0] and float(r[2]) == 1.0, "가면 통과(4)면 보통 길")
+	h.queue_free()
+
+
 func test_world_fast_travel(t) -> void:
 	var st := StoryState.new()
 	st.load_data()

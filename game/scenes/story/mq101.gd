@@ -226,7 +226,13 @@ func _mq_cmd(a: Array, finish: Callable) -> void:
 	finish.call()
 
 
-## 전망 망원경: 첫 풍경의 먼 그림(키아트 원경)을 3초 보여 준다(SD-09a §3.3 '전망 상호작용 → 픽처 1장')
+## 전망 망원경(SD-09a §3.3 '전망 상호작용 → 픽처 1장' · SD-08 §12.3 첫 행 · 1-12k D-047): 첫 풍경의 먼 그림(키아트 원경) 위에 조준점을
+## 좌우로 훑는다(카메라 줌 아님 — SD-11 §2.6). 조준점이 금탑 · 송신탑 · 세진 타워 · 한강을 지나면 이름표가 켜진다. Enter로 닫고(1초 뒤), 14초면 저절로.
+## 닫는 순간 S등급 둘(남산 송신탑 · 세진전자 타워)이 방위 링 원경 표식으로 등록된다(SD-08 §12.2 '픽처를 본 순간' — 훑지 않았어도).
+## 두 번째부터는 이름표가 처음부터 켜져 있고 Enter로 바로 닫는다(재미 검수 ②).
+const VIEW_LABELS := [["여의도 금탑", 205, 100], ["남산 송신탑", 408, 42], ["세진전자 타워", 586, 30], ["한강", 300, 190]]
+
+
 func _panorama(finish: Callable) -> void:
 	var layer := CanvasLayer.new()
 	layer.layer = 9
@@ -241,9 +247,77 @@ func _panorama(finish: Callable) -> void:
 	var vs := host.get_viewport().get_visible_rect().size
 	sp.position = Vector2(floorf((vs.x - 640.0) / 2.0), floorf((vs.y - 330.0) / 2.0))
 	layer.add_child(sp)
-	get_tree().create_timer(3.5).timeout.connect(func() -> void:
+	var scope := Scope.new()
+	scope.origin = sp.position
+	scope.again = int(st.vars.get_v("PL_VIEW")) >= 1 if st.vars.has("PL_VIEW") else false
+	scope.labels = VIEW_LABELS
+	scope.font = load("res://assets/fonts/Galmuri9.ttf")
+	layer.add_child(scope)
+	scope.done = func() -> void:
+		var names: Array = Landmarks.vista(st)
 		layer.queue_free()
-		finish.call())
+		if not names.is_empty():
+			host.hint("원경 표식: %s — 방위 링에 늘 보인다" % " · ".join(names), 6.0)
+		finish.call()
+
+
+## 망원경 조준점(1-12k): 좌우 키 · 터치로 x를 옮긴다. 이름표는 조준점이 지날 때 켜진다
+class Scope extends Node2D:
+	var origin := Vector2.ZERO
+	var labels: Array = []
+	var lit: Array = []
+	var again := false
+	var font: Font
+	var x := 320.0
+	var t := 0.0
+	var done: Callable
+	var _ended := false
+
+	func _ready() -> void:
+		for k in labels.size():
+			lit.append(again)
+		if again:
+			x = 586.0
+
+	func _process(dt: float) -> void:
+		if _ended:
+			return
+		t += dt
+		var ax := Input.get_axis("ui_left", "ui_right")
+		if ax != 0.0:
+			x = clampf(x + ax * 260.0 * dt, 12.0, 628.0)
+		elif Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):                   # 터치(마우스로 흉내): 누른 자리로 조준점
+			x = clampf(get_viewport().get_mouse_position().x - origin.x, 12.0, 628.0)
+		elif not again and t > 1.5 and t < 9.0:                                 # 손을 안 대면 왼쪽부터 천천히 훑는다(이름표가 다 켜진다)
+			x = clampf(120.0 + (t - 1.5) * 68.0, 12.0, 628.0)
+		for k in labels.size():
+			if not lit[k] and absf(x - float(labels[k][1])) < 28.0:
+				lit[k] = true
+		queue_redraw()
+		if (t > (0.3 if again else 1.0) and Input.is_action_just_pressed("ui_accept")) or t > (4.0 if again else 14.0):
+			_ended = true
+			done.call()
+
+	func _draw() -> void:
+		var c := origin + Vector2(x, 150.0)
+		draw_arc(c, 15.0, 0, TAU, 28, Color(0, 0, 0, 0.8), 3.0)
+		draw_arc(c, 15.0, 0, TAU, 28, Color(0.96, 0.96, 0.9), 1.0)
+		for d in [Vector2(1, 0), Vector2(-1, 0), Vector2(0, 1), Vector2(0, -1)]:
+			draw_line(c + d * 9.0, c + d * 20.0, Color(0, 0, 0, 0.8), 3.0)
+			draw_line(c + d * 9.0, c + d * 20.0, Color(0.96, 0.96, 0.9), 1.0)
+		for k in labels.size():
+			if not lit[k]:
+				continue
+			var nm := str(labels[k][0])
+			var p := origin + Vector2(float(labels[k][1]), float(labels[k][2]))
+			var w := font.get_string_size(nm, HORIZONTAL_ALIGNMENT_LEFT, -1, 10).x
+			draw_line(p + Vector2(0, 12), p + Vector2(0, 18), Color(0.96, 0.96, 0.9), 1.0)
+			draw_rect(Rect2(p.x - w / 2.0 - 3, p.y - 2, w + 6, 13), Color(0, 0, 0, 0.75))
+			draw_string(font, Vector2(p.x - w / 2.0, p.y + 8), nm, HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color(0.96, 0.96, 0.9))
+		var tip := "◀ ▶ 훑어보기 · [Enter] 닫기" if not again else "[Enter] 닫기"
+		var tw := font.get_string_size(tip, HORIZONTAL_ALIGNMENT_LEFT, -1, 10).x
+		draw_rect(Rect2(origin.x + 320 - tw / 2.0 - 4, origin.y + 310, tw + 8, 14), Color(0, 0, 0, 0.7))
+		draw_string(font, Vector2(origin.x + 320 - tw / 2.0, origin.y + 321), tip, HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color(0.8, 0.8, 0.75))
 
 
 ## 하숙자 약국 치료(SD-15 §6.1 의사 40·70·100캡, 정합: 값마다 회복 35%·65%·전부)

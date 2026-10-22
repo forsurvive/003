@@ -6,7 +6,7 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "AGAIN": 11
+  "AGAIN": 12
  },
  "ops": [
   {
@@ -19,6 +19,13 @@
    "who": "SYS",
    "emo": "기본",
    "text": "녹슨 동전 망원경. 렌즈를 소매로 닦고 들여다본다."
+  },
+  {
+   "op": "cmd",
+   "name": "mq",
+   "args": [
+    "panorama"
+   ]
   },
   {
    "op": "line",
@@ -79,6 +86,13 @@
   {
    "op": "goto",
    "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "mq",
+   "args": [
+    "panorama"
+   ]
   },
   {
    "op": "line",
