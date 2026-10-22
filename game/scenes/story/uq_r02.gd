@@ -67,6 +67,7 @@ const TAKE_H := 10                          ## 기한 날 10시에 데려간다(
 const DUE_AFTER := 3                        ## 장터에 처음 든 날 뒤 사흘이 지난 첫 수요일이 기한
 const STALL_DAYS := 7                       ## 끌려간 뒤 이레 안에 안 풀리면 천 씨 노점이 떠난다(V9)
 const POCKET_R := 1.6                       ## 소매치기 · 쓰러진 이자 품 — 이 칸 안
+const KIOSK_AT := Vector2i(6, 6)           ## 장터 스팟 안 번호표 창구(sb_kiosk — open 상태 = 셔터 올림)
 
 var host: InteriorHost
 var st: StoryState
@@ -1053,6 +1054,9 @@ func _u70_tick() -> void:
 		if _u70_hour != _hour() and _idle():
 			if _u70_hour >= 0:
 				host.refresh_npcs()
+				if v("UQ70_JA") == 0:                                       # 창구 셔터도 그 자리에서(월드 소품 cond는 들어올 때만 본다 — 이월 D-329)
+					var open := wd(day()) in [WED, SAT] and _hour() >= 9 and _hour() < 17
+					host.map.set_prop_state(spot_o(DAERIM) + KIOSK_AT, "open" if open else "")
 			_u70_hour = _hour()
 	else:
 		_u70_hour = -1
