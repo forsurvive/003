@@ -2830,9 +2830,17 @@ func consume(id: String) -> bool:
 		if combat.heal_q.size() == 1:
 			combat.heal_rate = heal / float(it.get("heal_secs", 5.0))         # 부대찌개는 10초에 걸쳐(SD-13 §7.9.5)
 	var rad := int(it.get("rads", 0))
+	var taste := ""
+	if id == "I-059" and st.vars.has("UQ09_CLEAN"):                      # UQ-09 탁한 물(1-12h): 자료값 라드 +1이 '오염' — 맑아지면 0(원문 '라드 0 회복')
+		if int(st.vars.get_v("UQ09_CLEAN")) == 1:
+			rad = 0
+		else:
+			taste = "  끝맛이 쇠 같다. 핍보이가 틱."
+		if int(st.vars.get_v("UQ09_SMOKE")) > 0 and int(st.vars.get_v("GAME_DAY")) == int(st.vars.get_v("UQ09_SMOKE")) + 1 and int(st.vars.get_v("UQ09_PIPE")) == 0:
+			taste = "  물에서 굴뚝 맛이 난다."
 	if rad != 0:
 		st.vars.set_v("PC_RADS", maxi(0, int(st.vars.get_v("PC_RADS")) + rad))   # 말린 버섯 나물처럼 라드를 줄이는 음식(음수)
-	_note("%s — HP +%d%s" % [str(it.get("name", id)), int(heal), ("  방사능 +%d" % rad) if rad > 0 else (("  방사능 %d" % rad) if rad < 0 else "  방사능 없음")])
+	_note("%s — HP +%d%s%s" % [str(it.get("name", id)), int(heal), ("  방사능 +%d" % rad) if rad > 0 else (("  방사능 %d" % rad) if rad < 0 else "  방사능 없음"), taste])
 	if id in ["I-054", "I-055", "I-056", "I-057", "I-058", "I-059"]:
 		st.vars.set_v("MQ101_WATER", 1)                                   # MQ-101 '물': 마셔 봐야 안다
 	return true

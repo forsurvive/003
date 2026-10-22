@@ -2083,17 +2083,17 @@
     "10": {
      "done": "석라희와 두 번째 대화 또는 등록기 조사",
      "log": "번개24 금전등록기가 '점포 코드'를 물으며 잠겼다",
-     "src": "05_misc-quests-encounters.md:1097"
+     "src": "05_misc-quests-encounters.md:1108"
     },
     "100": {
      "done": "카드를 꽂음(직접 · 연보경 편) · 직접 수리 · 뜯음 가운데 하나",
      "log": "봉천 번개24 등록기의 일이 끝났다",
-     "src": "05_misc-quests-encounters.md:1099"
+     "src": "05_misc-quests-encounters.md:1110"
     },
     "20": {
      "done": "노량진 번개24 로봇 창구 '점포 이관 신청'(화술 30 · 세진 사원증 · 업무 일지의 점포 번호)",
      "log": "봉천점 점포 코드 카드를 받았다",
-     "src": "05_misc-quests-encounters.md:1098"
+     "src": "05_misc-quests-encounters.md:1109"
     }
    },
    "title": "24시"
@@ -2104,17 +2104,17 @@
     "10": {
      "done": "개집 앞 남솔 · 조담희 엿듣기(또는 새끼를 먼저 봄 — '이미 앎')",
      "log": "백구가 사흘째 밥을 남긴다",
-     "src": "05_misc-quests-encounters.md:1108"
+     "src": "05_misc-quests-encounters.md:1119"
     },
     "100": {
      "done": "데려옴 · 돌려보냄 · 죽임 가운데 하나",
      "log": "새끼 들개의 자리가 정해졌다",
-     "src": "05_misc-quests-encounters.md:1110"
+     "src": "05_misc-quests-encounters.md:1121"
     },
     "20": {
      "done": "밤 나들이를 따라감 · 남솔에게 들음 · 둥지를 찾음",
      "log": "백구는 밤마다 배수구 뒤 새끼에게 밥을 물어다 준다",
-     "src": "05_misc-quests-encounters.md:1109"
+     "src": "05_misc-quests-encounters.md:1120"
     }
    },
    "title": "백구의 밥그릇"
@@ -2125,22 +2125,22 @@
     "10": {
      "done": "다리목 초소 교대 시간(06~08 · 18~20) 부탁",
      "log": "엄도현 하사가 어머니께 배급표와 식량을 부탁했다",
-     "src": "05_misc-quests-encounters.md:1119"
+     "src": "05_misc-quests-encounters.md:1130"
     },
     "100": {
      "done": "사진을 건넴 · 검문소장에게 알림 · 30일 지남(갖기) 가운데 하나",
      "log": "배급표의 일이 끝났다",
-     "src": "05_misc-quests-encounters.md:1122"
+     "src": "05_misc-quests-encounters.md:1133"
     },
     "20": {
      "done": "상도 빌라촌 반지하",
      "log": "엄옥순에게 물건을 전했다",
-     "src": "05_misc-quests-encounters.md:1120"
+     "src": "05_misc-quests-encounters.md:1131"
     },
     "30": {
      "done": "전한 뒤",
      "log": "엄옥순이 '도현이 줘'라며 사진을 맡겼다",
-     "src": "05_misc-quests-encounters.md:1121"
+     "src": "05_misc-quests-encounters.md:1132"
     }
    },
    "title": "다리목 하사의 배급표"
@@ -2151,17 +2151,17 @@
     "10": {
      "done": "관리동 홀로테이프(일지)",
      "log": "독산 냉동 창고 7호가 아직 얼어 있다",
-     "src": "05_misc-quests-encounters.md:985"
+     "src": "05_misc-quests-encounters.md:996"
     },
     "100": {
      "done": "봉천 · 사당에 알림 · 함준호에게 팖 · 직접 나름 가운데 하나(처음 것)",
      "log": "7호 고기의 행방이 정해졌다",
-     "src": "05_misc-quests-encounters.md:987"
+     "src": "05_misc-quests-encounters.md:998"
     },
     "20": {
      "done": "번호 자물쇠(일지의 날짜) 또는 [과학 45]",
      "log": "7호 문이 열렸다",
-     "src": "05_misc-quests-encounters.md:986"
+     "src": "05_misc-quests-encounters.md:997"
     }
    },
    "title": "7호 냉동 창고"
@@ -2172,17 +2172,17 @@
     "10": {
      "done": "소를 봄 · 사당 정류장에서 연보경 · 위강윤에게 들음",
      "log": "고개길 수송대의 짐소 누렁이가 낙성대 고개에 처졌다",
-     "src": "05_misc-quests-encounters.md:1131"
+     "src": "05_misc-quests-encounters.md:1142"
     },
     "100": {
      "done": "데려다줌 · 짐만 돌려줌 · 잡음 · 사라짐 가운데 하나",
      "log": "누렁이의 일이 끝났다",
-     "src": "05_misc-quests-encounters.md:1133"
+     "src": "05_misc-quests-encounters.md:1144"
     },
     "20": {
      "done": "고삐(또는 먹이)로 끌기 시작",
      "log": "누렁이를 끌고 간다",
-     "src": "05_misc-quests-encounters.md:1132"
+     "src": "05_misc-quests-encounters.md:1143"
     }
    },
    "title": "누렁이"
@@ -2260,23 +2260,54 @@
    },
    "title": "철사의 돋보기"
   },
+  "UQ-09": {
+   "key": "UQ09",
+   "stages": {
+    "10": {
+     "done": "정수를 산 뒤 도민지 사정",
+     "log": "도민지 정수가 탁하다 — 외곽 배수구 저수조",
+     "src": "05_misc-quests-encounters.md:367"
+    },
+    "100": {
+     "done": "도민지에게 말함(물은 다음 06:00)",
+     "log": "도민지 정수가 맑아졌다",
+     "src": "05_misc-quests-encounters.md:370"
+    },
+    "20": {
+     "done": "J-10 입장(점검구 · 철창)",
+     "log": "외곽 배수구로 내려갔다",
+     "src": "05_misc-quests-encounters.md:368"
+    },
+    "30": {
+     "done": "어미 + 알집 셋(①) · 흡입관을 상인회 관으로(②)",
+     "log": "도민지에게 밑에서 한 일을 말한다",
+     "src": "05_misc-quests-encounters.md:369"
+    },
+    "90": {
+     "done": "결말 전 도민지 사망",
+     "log": "(소멸) 도민지가 없다",
+     "src": "05_misc-quests-encounters.md:371"
+    }
+   },
+   "title": "탁한 물"
+  },
   "UQ-10": {
    "key": "UQ10",
    "stages": {
     "10": {
      "done": "노점 둘의 수군댐",
      "log": "역전 시장 반장 저울이 가볍다",
-     "src": "05_misc-quests-encounters.md:376"
+     "src": "05_misc-quests-encounters.md:387"
     },
     "100": {
      "done": "상인들 앞 공개(②) · 담판(③) · 협박(④)",
      "log": "반장 저울의 일이 정해졌다",
-     "src": "05_misc-quests-encounters.md:378"
+     "src": "05_misc-quests-encounters.md:389"
     },
     "20": {
      "done": "낮 · 밤 저울 · 화약 저울 대조 · 2층 장부 가운데 하나",
      "log": "저울 받침 밑에 쇠판이 있다",
-     "src": "05_misc-quests-encounters.md:377"
+     "src": "05_misc-quests-encounters.md:388"
     }
    },
    "title": "저울추"
@@ -2284,22 +2315,22 @@
   "UQ-125": {
    "key": "UQ125",
    "places": [],
-   "places_src": "05_misc-quests-encounters.md:1026",
+   "places_src": "05_misc-quests-encounters.md:1037",
    "stages": {
     "10": {
      "done": "털린 내 은닉처를 열어 흔적을 본다",
      "log": "숨겨 둔 자리가 털렸다 — 흔적이 남아 있다",
-     "src": "05_misc-quests-encounters.md:1037"
+     "src": "05_misc-quests-encounters.md:1048"
     },
     "100": {
      "done": "되찾음 · 나눠 줌 · 맡김 · 되삼 · 놓침",
      "log": "털린 물건의 행방이 끝났다",
-     "src": "05_misc-quests-encounters.md:1039"
+     "src": "05_misc-quests-encounters.md:1050"
     },
     "30": {
      "done": "흔적이 가리킨 빈집 · 소굴 · 가게에 들어선다",
      "log": "털어 간 사람이 있는 곳에 닿았다",
-     "src": "05_misc-quests-encounters.md:1038"
+     "src": "05_misc-quests-encounters.md:1049"
     }
    },
    "title": "털린 은닉처"
@@ -2310,22 +2341,22 @@
     "L-R02-09",
     "L-R02-11"
    ],
-   "places_src": "05_misc-quests-encounters.md:1075",
+   "places_src": "05_misc-quests-encounters.md:1086",
    "stages": {
     "10": {
      "done": "반수빈 첫 대화",
      "log": "여의도 대학병원 7층에 구울 병동이 있다",
-     "src": "05_misc-quests-encounters.md:1085"
+     "src": "05_misc-quests-encounters.md:1096"
     },
     "100": {
      "done": "교역(①) · 들것 정류지(②) · 이주(③)",
      "log": "병동의 약길이 정해졌다",
-     "src": "05_misc-quests-encounters.md:1087"
+     "src": "05_misc-quests-encounters.md:1098"
     },
     "20": {
      "done": "반수빈에게 사정을 들음 · 처치실 빈 봉지",
      "log": "들것이 끊긴 뒤 병동 약이 바닥났다",
-     "src": "05_misc-quests-encounters.md:1086"
+     "src": "05_misc-quests-encounters.md:1097"
     }
    },
    "title": "병동 7층"
@@ -2335,37 +2366,37 @@
    "places": [
     "L-R02-05"
    ],
-   "places_src": "05_misc-quests-encounters.md:1005",
+   "places_src": "05_misc-quests-encounters.md:1016",
    "stages": {
     "10": {
      "done": "인터폰 부탁 또는 60층 첫 대면",
      "log": "어하은이 60층 망원경에 다시 불을 켜고 싶어 한다",
-     "src": "05_misc-quests-encounters.md:1015"
+     "src": "05_misc-quests-encounters.md:1026"
     },
     "100": {
      "done": "여왕 처리 + 망원경 점등(순서 무관)",
      "log": "금탑 꼭대기에 다시 불이 들어왔다",
-     "src": "05_misc-quests-encounters.md:1020"
+     "src": "05_misc-quests-encounters.md:1031"
     },
     "20": {
      "done": "여왕 처리(발전기 · 점등보다 먼저 해도 된다)",
      "log": "22층 여왕 개미가 금탑을 쥐고 있다",
-     "src": "05_misc-quests-encounters.md:1016"
+     "src": "05_misc-quests-encounters.md:1027"
     },
     "30": {
      "done": "옥상 발전기 [수리 50]",
      "log": "옥상 원자력 발전기가 죽었다",
-     "src": "05_misc-quests-encounters.md:1017"
+     "src": "05_misc-quests-encounters.md:1028"
     },
     "40": {
      "done": "60층 망원경 점등",
      "log": "망원경에 전기가 들어왔다",
-     "src": "05_misc-quests-encounters.md:1018"
+     "src": "05_misc-quests-encounters.md:1029"
     },
     "50": {
      "done": "22층 여왕 처리",
      "log": "불이 켜졌다 — 열을 따라 개미 줄이 위로 올라온다",
-     "src": "05_misc-quests-encounters.md:1019"
+     "src": "05_misc-quests-encounters.md:1030"
     }
    },
    "title": "금탑 전망대"
@@ -2376,32 +2407,32 @@
     "L-R02-14",
     "L-R02-21"
    ],
-   "places_src": "05_misc-quests-encounters.md:1054",
+   "places_src": "05_misc-quests-encounters.md:1065",
    "stages": {
     "10": {
      "done": "성태경 대화 또는 공장 프레스 조사",
      "log": "구로 공단 공장 프레스에 총열 금형이 물려 있다",
-     "src": "05_misc-quests-encounters.md:1064"
+     "src": "05_misc-quests-encounters.md:1075"
     },
     "100": {
      "done": "문래(①) · 새벽인력(②) · 공장 재가동(③)",
      "log": "금형의 자리가 정해졌다",
-     "src": "05_misc-quests-encounters.md:1068"
+     "src": "05_misc-quests-encounters.md:1079"
     },
     "20": {
      "done": "모준서 첫 대면",
      "log": "모준서는 11월 할당 서류가 와야 금형을 준다",
-     "src": "05_misc-quests-encounters.md:1065"
+     "src": "05_misc-quests-encounters.md:1076"
     },
     "30": {
      "done": "서류(위조 · 전보 · 설득) 또는 강탈",
      "log": "11월 목표가 정해졌다",
-     "src": "05_misc-quests-encounters.md:1066"
+     "src": "05_misc-quests-encounters.md:1077"
     },
     "40": {
      "done": "금형을 꺼냄(들고 있음 · 하역장)",
      "log": "금형이 공장 밖으로 나왔다",
-     "src": "05_misc-quests-encounters.md:1067"
+     "src": "05_misc-quests-encounters.md:1078"
     }
    },
    "title": "문래 금형"
@@ -2413,32 +2444,32 @@
     "L-R02-16",
     "L-R02-17"
    ],
-   "places_src": "05_misc-quests-encounters.md:963",
+   "places_src": "05_misc-quests-encounters.md:974",
    "stages": {
     "10": {
      "done": "엿듣기 또는 버스 조사",
      "log": "대방 지하차도 버스 노심이 샌다",
-     "src": "05_misc-quests-encounters.md:974"
+     "src": "05_misc-quests-encounters.md:985"
     },
     "100": {
      "done": "봉인 · 판매 · 신길 섬광 가운데 하나",
      "log": "노심의 일이 끝났다",
-     "src": "05_misc-quests-encounters.md:978"
+     "src": "05_misc-quests-encounters.md:989"
     },
     "20": {
      "done": "엿듣기(또는 분대 윈치를 보고 운전기사 메모를 읽음)",
      "log": "대방 분대가 사흘 안에 노심을 끌어내려 한다",
-     "src": "05_misc-quests-encounters.md:975"
+     "src": "05_misc-quests-encounters.md:986"
     },
     "30": {
      "done": "펌프실 유해의 설명서 여백",
      "log": "정지 레버는 운전석 밑 물속에 있다",
-     "src": "05_misc-quests-encounters.md:976"
+     "src": "05_misc-quests-encounters.md:987"
     },
     "40": {
      "done": "노심 꺼내기",
      "log": "버스 노심이 아직 당신 가방에 있다",
-     "src": "05_misc-quests-encounters.md:977"
+     "src": "05_misc-quests-encounters.md:988"
     }
    },
    "title": "원자력 버스"

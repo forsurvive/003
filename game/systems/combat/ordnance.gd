@@ -23,6 +23,7 @@ var rng := RandomNumberGenerator.new()
 var nades: Array = []                          ## {from, to, bounce, t, fly, fuse, w, team, skill, p, h, spin, landed}
 var mines: Array = []                          ## {p, w, team, skill, arm, alarm(-1 = 조용), chain, disarm}
 var zones: Array = []                          ## {p, r, t, kind, team, w, skill}
+var warns: Array = []                          ## 떨어질 자리 붉은 원 {p, r, t}(1-12h 배수구 어미 알 낙하 — 수류탄 경고와 같은 그림)
 var thrown_total := 0
 var placed_total := 0
 var disarmed_total := 0
@@ -118,7 +119,17 @@ static func _look(w: Dictionary) -> String:
 	return "nuka" if nm.contains("번개") else "frag"
 
 
+## 떨어질 자리 경고(붉은 원) — secs 동안
+func warn(p: Vector2, r_px: float, secs: float) -> void:
+	warns.append({"p": p, "r": r_px, "t": secs})
+	queue_redraw()
+
+
 func step(dt: float, combatants: Array) -> void:
+	for wn in warns.duplicate():
+		wn["t"] = float(wn["t"]) - dt
+		if float(wn["t"]) <= 0.0:
+			warns.erase(wn)
 	for n in nades.duplicate():
 		n["t"] = float(n["t"]) + dt
 		var k := clampf(float(n["t"]) / float(n["fly"]), 0.0, 1.0)
@@ -252,6 +263,8 @@ func _draw() -> void:
 	for z in zones:                                                   # 최루 · 연막 구름은 인물 위(방사능 지대는 RadField가 바닥에 그린다)
 		if z["kind"] != "fire" and z["kind"] != "rad":
 			_draw_zone(self, tex, z)
+	for wn in warns:
+		draw_arc(wn["p"], float(wn["r"]), 0, TAU, 32, Color("E04A35"), 1.0)
 	for n in nades:
 		if str(n["team"]) != "player" and float(n["fuse"]) > 0.0:   # 적 수류탄 경고: 떨어질 자리에 붉은 원(외부 반경)
 			draw_arc(n["to"], float(Arms.blast_r("grenade")[1]) * 32.0, 0, TAU, 32, Color("E04A35"), 1.0)

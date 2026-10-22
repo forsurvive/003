@@ -313,6 +313,13 @@ func trade_mult(vid: String) -> Array:
 		k = [k[0] * 0.90, k[1]]
 		greet = "누렁이 데려다준 사람 값이야. 짐소가 너 보고 콧김 뿜는다."
 	var item_k := {}
+	if vid == "VJ10" and st.vars.has("UQ09_CLEAN"):                     # UQ-09 탁한 물(1-12h): 오염 동안 정수 반값('…묻지 마') · 상인회 관으로 돌린 뒤 관 값 +2캡(12 → 14)
+		if v("UQ09_CLEAN") == 0:
+			item_k["I-059"] = 0.5
+			greet = "반값이라고 두 병 사 가진 마."
+		elif v("UQ09_PIPE") == 1:
+			item_k["I-059"] = 14.0 / 12.0
+			greet = "관세 포함 14캡. 상인회 관 값이야."
 	if r == 5:                                                        # 마을을 팖: 다음 날 마을 물값 2배(SD-03a §8.1 표)
 		for w in WATER_IDS:
 			item_k[w] = 2.0

@@ -5,9 +5,84 @@
  "npc": "N-R02-010",
  "cond": "V_ACT >= 1",
  "labels": {
-  "START": 0
+  "START": 0,
+  "PIPED": 12,
+  "CHEAP": 14,
+  "CHEAP2": 17,
+  "SHOP": 18,
+  "U9_HEAR": 20,
+  "U9_ASK": 26,
+  "U9_WHY": 27,
+  "U9_GO": 29,
+  "U9_GO2": 32,
+  "U9_OIL": 33,
+  "U9_LATER": 37,
+  "U9_WAIT": 40,
+  "U9_WAIT0": 43,
+  "U9_LIE": 46,
+  "U9_GIFT": 49,
+  "U9_LIED": 52,
+  "U9_LIED2": 56,
+  "U9_REPORT": 58,
+  "U9_REPORT2": 59,
+  "U9_REP_LATE": 65,
+  "U9_STRANGER": 67,
+  "U9_REP_FLOOD": 70,
+  "U9_DONE1": 71,
+  "U9_TOMORROW": 77,
+  "U9_UP": 79,
+  "U9_REP2": 83,
+  "U9_REP2B": 89,
+  "U9_SMOKE0": 93,
+  "U9_AGAIN": 95,
+  "U9_SMOKE": 98
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "UQ09_GIFT == 1 and UQ09_CLEAN == 1",
+   "to": "U9_GIFT"
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_LIE == 2 and UQ09_LSAID == 0",
+   "to": "U9_LIED"
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_READY > 0",
+   "to": "U9_REPORT"
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_REDIRTY == 1 and UQ09_RSAID == 0",
+   "to": "U9_AGAIN"
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_SMOKE > 0 and GAME_DAY == UQ09_SMOKE + 1 and UQ09_SMSAID == 0 and UQ09_PIPE == 0",
+   "to": "U9_SMOKE"
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_BOUGHT == 1 and UQ09_MET == 0 and AFF_JH >= -19",
+   "to": "U9_HEAR"
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_MET == 1 and UQ09_CLEAN == 0",
+   "to": "U9_WAIT"
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_CLEAN == 0",
+   "to": "CHEAP"
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_PIPE == 1",
+   "to": "PIPED"
+  },
   {
    "op": "line",
    "who": "N-R02-010",
@@ -21,6 +96,41 @@
    "text": "한강 물 마시고 오는 사람 보면 그냥 한 모금 줄 때도 있어. 넌 아니고."
   },
   {
+   "op": "goto",
+   "to": "SHOP"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-010",
+   "emo": "기본",
+   "text": "관세 포함이야. 상인회가 공짜로 물 길어다 줄 리 없지. …그래도 바늘은 누웠어."
+  },
+  {
+   "op": "goto",
+   "to": "SHOP"
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_MET == 1",
+   "to": "CHEAP2"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-010",
+   "emo": "기본",
+   "text": "반값 맞아. 구울 손님 값이야. 사람이면 끓여 마셔 — 그래도 바늘은 서."
+  },
+  {
+   "op": "goto",
+   "to": "SHOP"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-010",
+   "emo": "기본",
+   "text": "바늘 서 있는 동안은 반값이야."
+  },
+  {
    "op": "cmd",
    "name": "trade",
    "args": [
@@ -30,6 +140,496 @@
   {
    "op": "goto",
    "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-010",
+   "emo": "기본",
+   "text": "(병을 건네다 멈춘다) …너, 사람이지. 피부가 그렇네."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "도민지가 노점 밑에서 바늘 달린 낡은 계기를 꺼낸다. 라드계 바늘이 0에서 반 칸쯤 떠 있다."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-010",
+   "emo": "기본",
+   "text": "세 번 거르는데 바늘이 서. 구울 손님들은 오히려 달다더라. 너 같은 피부 좋은 손님이 문제지."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-010",
+   "emo": "기본",
+   "text": "끓이고, 거르고, 또 끓여. 200년이면 기술이 돼. 근데 들어오기 전부터 탁한 물은 내 기술 밖이야."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-010",
+   "emo": "기본",
+   "text": "흡입관이 외곽 배수구 저수조에서 물을 빨아. 얼마 전에 점검구 뚜껑을 여든 해 만에 처음 열어 봤어 — 사다리 밑까지만. 저수조 쪽에서 뭔가 딸깍거렸어. 알 까는 소리야."
+  },
+  {
+   "op": "goto",
+   "to": "U9_ASK"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "내가 내려가 볼게",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "U9_GO",
+     "id": "JM_DO:1:0"
+    },
+    {
+     "text": "상인회엔 안 알렸어?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "U9_WHY",
+     "id": "JM_DO:1:1"
+    },
+    {
+     "text": "(돌아선다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "U9_LATER",
+     "id": "JM_DO:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-010",
+   "emo": "피곤",
+   "text": "2194년 기억해. 당번 넷이 안 돌아온 해. 그 뒤로 아무도 안 내려가 — 상인회장은 그 얘기만 나오면 장부를 덮어. …그래서 반값에 파는 거야. 버리긴 아깝고, 제값 받긴 미안하고."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "내가 내려가 볼게",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "U9_GO",
+     "id": "JM_DO:2:0"
+    },
+    {
+     "text": "(돌아선다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "U9_LATER",
+     "id": "JM_DO:2:1"
+    }
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_HATCH == 2",
+   "to": "U9_GO2"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-010",
+   "emo": "미소",
+   "text": "진짜? (허리춤 열쇠를 푼다) 노점 옆 바닥 뚜껑이야. 사다리 하나."
+  },
+  {
+   "op": "goto",
+   "to": "U9_OIL"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-010",
+   "emo": "기본",
+   "text": "뚜껑이 벌써 열려 있더라. …너지? 됐어."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-010",
+   "emo": "기본",
+   "text": "알이면 태워. 내 등유 가져가 — 물 끓이는 거니까 아껴 쓰고. 세 병."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-010",
+   "emo": "기본",
+   "text": "저수조 흡입관을 상인회 공용 관으로 돌리는 수도 있대 — 마 기사가 그러더라, 공용 관은 진료소 몫이라 자긴 손대기 싫다고. 손재주 있으면 해 봐. …그럼 밑에 있는 건 그대로 있겠지만."
+  },
+  {
+   "op": "do",
+   "fx": "UQ09_MET = 1; UQ09_HATCH = 1; give(\"M-436\", 3); quest(\"UQ-09\", 10)"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "UQ09_MET = 1; quest(\"UQ-09\", 10)"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-010",
+   "emo": "기본",
+   "text": "그래. 반값일 때 사 둬. …농담이야."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_HATCH != 1",
+   "to": "U9_WAIT0"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-010",
+   "emo": "기본",
+   "text": "(바늘을 본다) 아직 서 있어. 밑엔 내려가 봤어?"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "처리했어",
+     "tags": [],
+     "cond": "UQ09_LIE == 0",
+     "fx": "",
+     "to": "U9_LIE",
+     "id": "JM_DO:3:0"
+    },
+    {
+     "text": "아직",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "CHEAP",
+     "id": "JM_DO:3:1"
+    }
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_HATCH == 2",
+   "to": "U9_GO"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-010",
+   "emo": "기본",
+   "text": "마음 바뀌었어? 점검구 열어 줄까."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "열어 줘",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "U9_GO",
+     "id": "JM_DO:4:0"
+    },
+    {
+     "text": "아직",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "CHEAP",
+     "id": "JM_DO:4:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "UQ09_LIE = 1; UQ09_LIE_DAY = GAME_DAY"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-010",
+   "emo": "미소",
+   "text": "진짜? 그럼 내일 아침 바늘 보면 알겠네. 고마워."
+  },
+  {
+   "op": "goto",
+   "to": "CHEAP"
+  },
+  {
+   "op": "do",
+   "fx": "UQ09_GIFT = 2; give(\"I-059\", 5)"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-010",
+   "emo": "미소",
+   "text": "맡아 둔 거. 다섯 병 — 오늘 아침 바늘 누운 물이야."
+  },
+  {
+   "op": "goto",
+   "to": "SHOP"
+  },
+  {
+   "op": "do",
+   "fx": "UQ09_LSAID = 1"
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_MOM != 0",
+   "to": "U9_LIED2"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-010",
+   "emo": "분노",
+   "text": "(바늘을 들이민다) 바늘이 그대로야. 너 안 내려갔지. …물 파는 사람한테 물 같은 말 하지 마."
+  },
+  {
+   "op": "goto",
+   "to": "CHEAP"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-010",
+   "emo": "피곤",
+   "text": "(바늘을 들이민다) 내려가긴 했나 본데, 바늘은 그대로야. 밑에 뭐가 아직 남았어."
+  },
+  {
+   "op": "goto",
+   "to": "CHEAP"
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_MET == 0",
+   "to": "U9_STRANGER"
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_READY == 2",
+   "to": "U9_REP2"
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_CLEAN == 1",
+   "to": "U9_REP_LATE"
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_MOM == 2",
+   "to": "U9_REP_FLOOD"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-010",
+   "emo": "놀람",
+   "text": "어미를 잡았다고? (네 손의 그을음을 본다) …알집도? 셋 다?"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-010",
+   "emo": "미소",
+   "text": "끓이고, 거르고, 또 끓여 왔는데 — 이번엔 네가 거른 거네."
+  },
+  {
+   "op": "goto",
+   "to": "U9_DONE1"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-010",
+   "emo": "미소",
+   "text": "(바늘을 흔들어 보인다) 며칠째 누웠더라. 저수조 쪽 딸깍도 그쳤고. …너였구나."
+  },
+  {
+   "op": "goto",
+   "to": "U9_DONE1"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-010",
+   "emo": "놀람",
+   "text": "(바늘과 네 얼굴을 번갈아 본다) …내 점검구 딴 게 너였구나. 밑에 뭐가 있었는데?"
+  },
+  {
+   "op": "do",
+   "fx": "UQ09_MET = 1"
+  },
+  {
+   "op": "goto",
+   "to": "U9_REPORT2"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-010",
+   "emo": "놀람",
+   "text": "밸브로 물을 채웠어? 저수조째? …거름망은 내가 다시 갈아야겠다. 그래도 바늘은 눕겠지."
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_RES == 2",
+   "to": "U9_UP"
+  },
+  {
+   "op": "do",
+   "fx": "UQ09_RES = 1; UQ09_READY = 0; UQ09_PIPE = 0; aff(\"JH\", 4); RQ22_OPEN = 1; quest(\"UQ-09\", 100)"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "u9reward"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_CLEAN == 0",
+   "to": "U9_TOMORROW"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-010",
+   "emo": "기본",
+   "text": "정수 다섯 병. 바늘 누운 물이야. …상인회에도 말해 둘게. 배수구 청소 일감 생기면 너 부르라고."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-010",
+   "emo": "기본",
+   "text": "물이 저수조를 한 바퀴 돌아야 해. 내일 아침 거 다섯 병 맡아 둘게. …상인회에도 말해 둘게. 배수구 청소 일감 생기면 너 부르라고."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "UQ09_RES = 1; UQ09_READY = 0; UQ09_PIPE = 0; UQ09_RSAID = 1; aff(\"JH\", 2); RQ22_OPEN = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "u9reward"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-010",
+   "emo": "미소",
+   "text": "관 돌린 걸로 끝난 줄 알았는데, 기어이 밑에 걸 치웠구나. …흡입관은 내가 저수조로 되물릴게 — 밸브 둘 바꾸는 건 봤으니까. 관 값도 이제 안 내도 되고."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_REDIRTY == 1",
+   "to": "U9_REP2B"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-010",
+   "emo": "기본",
+   "text": "흡입관을 상인회 관으로 돌렸다고? …그럼 관 값이 붙겠네. 상인회가 공짜로 물 길어다 줄 리 없으니까."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-010",
+   "emo": "피곤",
+   "text": "밑에 있는 건 그대로 있고. (어깨를 으쓱) 그래도 바늘은 눕겠지. 한동안은."
+  },
+  {
+   "op": "do",
+   "fx": "UQ09_RES = 2; UQ09_READY = 0; aff(\"JH\", 2); quest(\"UQ-09\", 100)"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "u9reward"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-010",
+   "emo": "피곤",
+   "text": "더 깊은 관으로 또 돌렸다고. …밑에 있는 건 이제 저 아래로 내려갔겠네. 우리 물에서 멀리."
+  },
+  {
+   "op": "do",
+   "fx": "UQ09_RES = 2; UQ09_READY = 0; UQ09_REDIRTY = 2"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "u9reward"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-010",
+   "emo": "분노",
+   "text": "누가 밑에서 뭘 태웠나 봐. 물에서 굴뚝 맛이 나. 오늘 하루는 못 팔아."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "UQ09_RSAID = 1"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-010",
+   "emo": "피곤",
+   "text": "(바늘을 들이민다) 또 서. 관을 돌렸는데도. 밑에 있는 게 새 관까지 따라왔나 봐. …다시 반값이야."
+  },
+  {
+   "op": "goto",
+   "to": "CHEAP"
+  },
+  {
+   "op": "do",
+   "fx": "UQ09_SMSAID = 1"
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_MET == 0",
+   "to": "U9_SMOKE0"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-010",
+   "emo": "분노",
+   "text": "…너 밑에서 뭘 태운 거야? 물에서 굴뚝 맛이 나. 오늘 하루는 못 팔아. (그래도 병을 내민다) 넌 사 가."
+  },
+  {
+   "op": "goto",
+   "to": "SHOP"
   },
   {
    "op": "end"

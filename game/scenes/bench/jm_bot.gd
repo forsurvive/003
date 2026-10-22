@@ -698,6 +698,28 @@ func _ready() -> void:
 				["check", "UQ08_RES == 2 and UQ08_SAFE == 1 and UQ08_LENS == 2 and UQ08_STAGE == 100 and has(\"M-164\")", "② 건네며 공구함 견본(100) · 해제 열쇠 원형"],
 				["setv", "GAME_DAY", 35], ["want", []], ["talk", "N-R02-038"], ["wait", 2.0], ["shot", "uq08_inspect"],
 				["check", "UQ08_ISAID == 36", "검수 전날 — 철사 '요즘 땜이 곧으니까'"]]
+		"uq09":                                                         # 1-12h UQ-09 탁한 물: 정수를 산 뒤 도민지 사정(10) → 노점 옆 점검구 → J-10 외곽 배수구(20) →
+			st.vars.set_v("AFF_JH", 10)                                  #   관리원 일지 · 밸브(물이 차오름 — 서쪽 높은 턱) → 천장 관 밑 알집 태움(30) → 당번 4조 · 철창 → 도민지 매듭(100) → 다음 아침 맑음
+			st.vars.set_v("GAME_DAY", 6)
+			st.vars.set_v("UQ09_BOUGHT", 1)                              # 거래 창 감지는 단위 시험 test_uq09_bought_and_water
+			st.quests.set_stage("MQ-103", 40)
+			host.date_text = "2277. 10. 29.  10:00"
+			host.enter("J-02", "from_J-01")
+			plan = [["hp", 3000], ["wait", 1.0], ["want", ["내가 내려가 볼게"]], ["talk", "N-R02-010"], ["wait", 2.0], ["shot", "uq09_minji"],
+				["check", "UQ09_MET == 1 and UQ09_HATCH == 1 and UQ09_STAGE == 10 and has(\"M-436\")", "도민지 사정 — 등유 셋 · 점검구(10)"],
+				["want", ["내려간다"]], ["go", 45, 4, "J-02"], ["use", 45, 3], ["wait", 2.0], ["shot", "uq09_down"],
+				["check", "UQ09_STAGE == 20", "외곽 배수구(20)"],
+				["go", 35, 15, "J-10"], ["use", 35, 16], ["wait", 1.5], ["check", "UQ09_CODE == 1", "관리원 일지 — 관리 번호"],
+				["want", ["하수 2-117"]], ["go", 17, 7, "J-10"], ["use", 17, 6], ["wait", 0.3], ["go", 4, 5, "J-10"], ["wait", 7.0], ["shot", "uq09_flood"],
+				["check", "UQ09_FLOOD == 1 and UQ09_MOM == 2 and UQ09_E1 == 2 and UQ09_E2 == 2 and UQ09_E3 == 0", "밸브 — 어미 · 바닥 알집 익사 · 천장 관 밑 알집은 남음"],
+				["want", ["등유를 붓고"]], ["go", 5, 5, "J-10"], ["use", 5, 4], ["wait", 1.5], ["shot", "uq09_burn"],
+				["check", "UQ09_E3 == 1 and UQ09_READY == 1 and UQ09_STAGE == 30", "천장 관 밑 알집 태움 — 말할 일(30)"],
+				["want", []], ["go", 4, 4, "J-10"], ["use", 4, 3], ["wait", 1.0], ["check", "UQ09_KEY == 1", "당번 4조 — 쪽지 · 열쇠"],
+				["want", ["당번 4조의 열쇠", "철창을 밀고"]], ["go", 2, 3, "J-10"], ["use", 2, 2], ["wait", 2.0], ["shot", "uq09_grate"],
+				["check", "UQ09_GRATE == 1", "철창 사슬을 풂 — J-09로"],
+				["warp", "J-02", "from_J-01"], ["wait", 1.0], ["want", []], ["talk", "N-R02-010"], ["wait", 2.0], ["shot", "uq09_report"],
+				["check", "UQ09_RES == 1 and UQ09_STAGE == 100 and RQ22_OPEN == 1", "도민지 매듭(①, 100)"],
+				["hours", 21], ["wait", 1.0], ["check", "UQ09_CLEAN == 1", "다음 아침 — 바늘이 눕는다"]]
 		"uq10":                                                         # 1-12h UQ-10 저울추: 역전 시장 수군댐(10) → 밤 저울 쇠판 떼기(20) → 국밥 장수 앞 공개(②, 100) →
 			st.vars.set_v("GAME_DAY", 6)                                 #   상인 회의(표 반장) → 2층 반장 방 → 전날 어귀 정찰 둘 → 습격 날 아침 실전(RE-012) 막음
 			st.vars.set_v("PC_SKP_REPAIR", 30)

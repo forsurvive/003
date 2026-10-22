@@ -1,0 +1,134 @@
+{
+ "id": "UQ09_EGG1",
+ "title": "알집 무더기 — 저수조 옆",
+ "loc": "L-R02-11",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "BURN": 5,
+  "BURNT": 9,
+  "WET": 11,
+  "TAKEN": 13
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "UQ09_E1 == 1",
+   "to": "BURNT"
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_E1 == 2",
+   "to": "WET"
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_E1 == 3",
+   "to": "TAKEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "끈적한 막 위 알집 다섯. 가까이 가자 하나가 딸깍 — 안에서 뭔가 꿈틀댄다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "등유를 붓고 불을 붙인다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "M-436",
+       "n": 1
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "BURN",
+     "id": "UQ09_EGG1:1:0"
+    },
+    {
+     "text": "화염병을 던진다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "W-057",
+       "n": 1
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "BURN",
+     "id": "UQ09_EGG1:1:1"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ09_EGG1:1:2"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "UQ09_E1 = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "불길이 막을 타고 번진다. 알집이 하나씩 터지며 쉭쉭 소리를 낸다."
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "burn",
+    "1"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "검게 탄 껍질. 아직 따뜻하다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "물에 잠겨 허옇게 불어 터진 알집."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈 막. 알집은 없다 — 어미가 데려갔다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-09.txt"
+}

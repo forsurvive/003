@@ -33,6 +33,7 @@ var holds := {}                               ## 종류(stun·root·down) -> 남
 var _immune := {}                             ## 종류 -> 면역 남은 초
 var _dot_acc := 0.0
 var robot := false                            ## 로봇(관제망 로봇 피해 +50% 무기)
+var fire_mul := 1.0                           ## 화상 배율(잔바퀴 떼 CR-001 '화염 ×2' — SD-14 §3.1)
 var big := false                              ## 대형(넉백·넉다운·그물 무효)
 var push := Vector2.ZERO                      ## 넉백 남은 거리(px) — 몸 주인이 걸음 규칙으로 옮긴다
 var limbs := {}                               ## 부위 체력(SD-11 §4.8, 1-9e): 부위 -> 남은 값(처음 맞을 때 최대 HP × 계수로 채운다)
@@ -92,6 +93,8 @@ func _limb_hit(part: String, amt: float) -> void:
 func add_dot(kind: String, dps: float, secs: float) -> void:
 	if dead or dps <= 0.0 or secs <= 0.0:
 		return
+	if kind == "burn":
+		dps *= fire_mul
 	var cur: Array = dots.get(kind, [0.0, 0.0])
 	dots[kind] = [maxf(float(cur[0]), dps), maxf(float(cur[1]), secs)]
 

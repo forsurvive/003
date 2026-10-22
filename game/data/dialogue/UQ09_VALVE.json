@@ -1,0 +1,124 @@
+{
+ "id": "UQ09_VALVE",
+ "title": "배수 밸브 단말",
+ "loc": "L-R02-11",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "CODE": 4,
+  "FLOOD": 5,
+  "DONE": 8
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "UQ09_FLOOD != 0",
+   "to": "DONE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "2077년 하수 관리 단말. 초록 글씨 — '배수 밸브 · 관리 번호 입력'. 밸브 손잡이가 저수조 쪽으로 이어진다."
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_CODE == 1",
+   "to": "CODE"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "우회 명령을 친다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "과학",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "FLOOD",
+     "id": "UQ09_VALVE:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ09_VALVE:1:1"
+    }
+   ]
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "'하수 2-117'을 입력한다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "FLOOD",
+     "id": "UQ09_VALVE:2:0"
+    },
+    {
+     "text": "우회 명령을 친다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "과학",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "FLOOD",
+     "id": "UQ09_VALVE:2:1"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ09_VALVE:2:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "밸브가 돈다. 저수조 쪽에서 물이 쏟아진다 — 높은 턱으로!"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "flood"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "밸브가 끝까지 열려 있다. 단말 화면 — '침수 완료'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-09.txt"
+}

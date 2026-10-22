@@ -34,7 +34,12 @@ prop w_sign_plaza 60 1
 prop duct_grille 40 1
 text 40 2 "환풍구 덮개. 손가락이 들어갈 만큼 틈이 벌어졌다. 안쪽에서 진공관 데워지는 냄새." scene=MQ-103_VENT
 prop drain_hatch 12 1
-text 12 2 "배수구 철창. 아래에서 물소리와, 무언가 큰 것이 숨 쉬는 소리. 철창은 안쪽에서 사슬로 감겼다." w=3
+text 12 2 "배수구 철창. 아래에서 물소리와, 무언가 큰 것이 숨 쉬는 소리. 철창은 안쪽에서 사슬로 감겼다. 사슬 끝에 녹슨 명찰 하나 — '상인회 당번'." w=3 scene=UQ09_GRATE cond="UQ09_MOM == 0"
+text 12 2 "배수구 철창. 아래에서 물소리만 난다. 사슬 끝에 녹슨 명찰 하나 — '상인회 당번'." w=3 scene=UQ09_GRATE cond="UQ09_MOM != 0"
+text 15 3 "철창 사이로 손바닥 둘만 한 바퀴 허물이 걸렸다. 밑에서 올라온 것이다." w=1 cond="UQ09_GRATE == 1 and UQ09_MOM == 0"
+enemy CR-002 13 4 cond="UQ09_GRATE == 1 and UQ09_MOM == 0 and MQ103_NEST == 1"
+enemy CR-002 16 5 cond="UQ09_GRATE == 1 and UQ09_MOM == 0 and MQ103_NEST == 1"
+mark from_J10 12 3 S
 prop work_lamp 58 5
 prop work_lamp 8 5
 prop ghoul_nest 22 4

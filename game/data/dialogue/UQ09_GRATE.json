@@ -1,0 +1,77 @@
+{
+ "id": "UQ09_GRATE",
+ "title": "배수구 철창",
+ "loc": "L-R02-11",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "DOWN": 4,
+  "GO": 6
+ },
+ "ops": [
+  {
+   "op": "do",
+   "fx": "UQ09_GSEEN = 1"
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_GRATE == 1",
+   "to": "DOWN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "사슬은 철창 안쪽에서 감겼다. 손을 넣어도 자물쇠에 닿지 않는다. 명찰 뒷면에 긁은 글씨 — '4조'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "풀린 사슬이 철창에 늘어져 있다. 사다리가 아래로."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "내려간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "GO",
+     "id": "UQ09_GRATE:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ09_GRATE:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "go",
+    "J-10",
+    "from_J09"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-09.txt"
+}

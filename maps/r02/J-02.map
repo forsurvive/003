@@ -103,7 +103,14 @@ npc N-R02-007 27 3 S bark="떡볶이 한 그릇. 맛은 2077년 그대로야. �
 prop stall_forge 34 3
 npc N-R02-008 33 3 S bark="종이 한 장이면 다른 사람이 돼. 값은 종이 값이 아니고."
 prop stall_water 43 3
-npc N-R02-010 42 3 S bark="정수 한 병 12캡. 지하수를 세 번 걸렀어."
+npc N-R02-010 42 3 S cond="UQ09_CLEAN == 0" bark="오늘 물 반값. 사람은 끓여 마셔."
+npc N-R02-010 42 3 S cond="UQ09_CLEAN == 1 and UQ09_PIPE == 0" bark="정수 한 병 12캡. 지하수를 세 번 걸렀어."
+npc N-R02-010 42 3 S cond="UQ09_CLEAN == 1 and UQ09_PIPE == 1" bark="14캡. 상인회 관 값이 붙었어. 그래도 바늘은 누웠어."
+text 30 3 "분식 값표 맨 아래 새 줄 — '바퀴알 떡볶이 — 한정'. 분필 글씨가 크다." w=1 cond="UQ09_EGG_SOLD == 1 and GAME_DAY > UQ09_EGG_DAY and GAME_DAY <= UQ09_EGG_DAY + 3"
+prop manhole 45 3 cond="UQ09_HATCH == 0"
+prop manhole 45 3 state=open cond="UQ09_HATCH != 0"
+text 45 3 "노점 옆 바닥 점검구. 철판 뚜껑에 '정수 흡입관 — 상인회'. 맹꽁이자물쇠." scene=UQ09_HATCH
+mark from_J10 45 4 N
 npc N-R02-015 48 4 S bark="…영등포로 4가 31… 2층… 아, 이 가게? 내 거야. 명찰에 그렇게 써 있잖아."
 prop work_lamp 15 8
 prop work_lamp 32 8

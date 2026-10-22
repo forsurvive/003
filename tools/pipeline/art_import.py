@@ -109,7 +109,8 @@ def quad_sheets():
                        ("ox", "cr_cr090_loco"), ("ox_pack", "cr_cr091_loco"), ("pup", "cr_pup_loco"),   # 들개 새끼 · 마을 강아지(1-12g UQ-02)
                        ("oenun", "cr_cr500_loco"), ("fierce", "cr_cr105_loco"), ("raccoon", "cr_cr136_loco"), ("ratking", "cr_cr097_loco"),
                        ("mole", "cr_cr096_loco"), ("eggroach", "cr_cr004_loco"), ("eggroach_bare", "cr_cr004b_loco"),
-                       ("toybot", "cr_toybot_loco"), ("canbox", "cr_canbox_loco"),   # 1-12h UQ-07 배송 1호 · 아이가 끄는 깡통 상자
+                       ("toybot", "cr_toybot_loco"), ("canbox", "cr_canbox_loco"), ("drainmother", "cr_cr501_loco"), ("roachswarm", "cr_cr001_loco"),   # 1-12h UQ-09 배수구 어미 · 잔바퀴 떼
+                         # 1-12h UQ-07 배송 1호 · 아이가 끄는 깡통 상자
                        ("ant_worker", "cr_cr080_loco"), ("ant_soldier", "cr_cr081_loco"), ("ant_queen", "cr_cr082_loco"), ("catfish", "cr_cr130_loco")):   # 1-D5 금탑: 왕개미 셋 · 메기 새끼   # 1-D3 독산: 굴쥐 · 알집바퀴(맨몸 판)   # 옴 너구리(1-T2 밤 몹)          # 외눈 · 사나운 들개(1-11a)          # 두머리소·짐소(1-8d)
         if kind == "mole":
             frames, meta = DS.mole_sheet()
@@ -117,6 +118,9 @@ def quad_sheets():
             frames, meta = KT.ant_sheet(kind[4:])
         elif kind == "catfish":
             frames, meta = KT.catfish_sheet()
+        elif kind in ("drainmother", "roachswarm"):
+            import creatures_uq2 as CU2
+            frames, meta = CU2.drain_mother_sheet() if kind == "drainmother" else CU2.roach_swarm_sheet()
         elif kind in ("toybot", "canbox"):
             import props_uq2 as U2
             frames, meta = U2.toybot_sheet() if kind == "toybot" else U2.canbox_sheet()

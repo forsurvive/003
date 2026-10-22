@@ -1,0 +1,142 @@
+{
+ "id": "UQ09_EGG3",
+ "title": "알집 무더기 — 천장 관 밑",
+ "loc": "L-R02-11",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "BURN": 4,
+  "LATE": 9,
+  "BURNT": 12,
+  "TAKEN": 14
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "UQ09_E3 == 1",
+   "to": "BURNT"
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_E3 == 3",
+   "to": "TAKEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "서쪽 높은 턱. 천장 관에서 늘어진 막 끝에 알집 다섯이 매달렸다. 물이 차도 여기까진 안 닿겠다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "등유를 붓고 불을 붙인다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "M-436",
+       "n": 1
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "BURN",
+     "id": "UQ09_EGG3:1:0"
+    },
+    {
+     "text": "화염병을 던진다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "W-057",
+       "n": 1
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "BURN",
+     "id": "UQ09_EGG3:1:1"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ09_EGG3:1:2"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "UQ09_E3 = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "막을 타고 불이 천장 관까지 오른다. 매달린 알집이 터지며 떨어진다."
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_CREW == 1",
+   "to": "LATE"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "burn",
+    "3"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "4조가 태우다 만 그을린 자국 위에서 — 여든 해 늦은 불."
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "burn",
+    "3"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "천장 관에 검게 탄 막 조각만 매달렸다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "천장 관에 빈 막만 늘어졌다. 알집은 없다 — 어미가 데려갔다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-09.txt"
+}

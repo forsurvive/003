@@ -1,0 +1,128 @@
+{
+ "id": "UQ09_CHAIN",
+ "title": "철창 사슬(안쪽)",
+ "loc": "L-R02-11",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "KEY": 4,
+  "OPEN": 5,
+  "UP": 7,
+  "GO": 8
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "UQ09_GRATE == 1",
+   "to": "UP"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "사다리 위 철창을 사슬이 세 겹 감았다. 자물쇠는 이쪽 — 안쪽에 달렸다."
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_KEY == 1",
+   "to": "KEY"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "녹슨 자물쇠를 돌린다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "자물쇠 따기",
+       "min": 25
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "OPEN",
+     "id": "UQ09_CHAIN:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ09_CHAIN:1:1"
+    }
+   ]
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "당번 4조의 열쇠로 연다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "OPEN",
+     "id": "UQ09_CHAIN:2:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ09_CHAIN:2:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "UQ09_GRATE = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "자물쇠가 떨어진다. 사슬이 철창 사이로 풀려 내려온다. 2194년 이후 처음으로."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "철창을 밀고 남쪽 연결 통로로 올라간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "GO",
+     "id": "UQ09_CHAIN:3:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ09_CHAIN:3:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "go",
+    "J-09",
+    "from_J10"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-09.txt"
+}

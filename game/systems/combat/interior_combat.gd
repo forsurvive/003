@@ -277,7 +277,7 @@ func set_stealth_live(on: bool) -> void:
 
 ## 적 무기(정합, 0-9): 보안요원 진압봉 W-041 · 권총 W-002, 계엄군은 생포 사격(W-002 판정을 빌린다), 파워 아머는 그 세 배 연사
 func _enemy_weapon(enemy_id: String, arm: String) -> Dictionary:
-	if enemy_id == "CR-002" or enemy_id in Enemy.DOGS:
+	if enemy_id in ["CR-002", "CR-001"] or enemy_id in Enemy.DOGS:
 		return {}
 	var w: Dictionary = weapons.get("W-041" if arm in ["baton", "claw"] else "W-002", {}).duplicate()
 	if arm == "claw":                                                   # 야생 구울(1-4): 맨손 내려치기 — 피해는 SD-14 표 '근접 n'
@@ -371,7 +371,8 @@ func _hatch(e: Enemy) -> void:
 	if map == null:
 		return
 	var mine := enemies.filter(func(o): return is_instance_valid(o) and not o.cmb.dead and int(o.get_meta("mother", 0)) == e.get_instance_id())
-	var n := mini(1 + (1 if _rng.randf() < 0.5 else 0), Enemy.HATCH_MAX - mine.size())
+	var born := 3 if str(e.row.get("id", "")) == "CR-501" else 1 + (1 if _rng.randf() < 0.5 else 0)   # 배수구 어미는 셋(SD-14 CR-501)
+	var n := mini(born, Enemy.HATCH_MAX - mine.size())
 	var back := Vector2(1.0 if e.sprite.flip_h else -1.0, 0.0)
 	for i in n:
 		var p := e.loco.logical + back * 22.0 + Vector2(_rng.randf_range(-6, 6), _rng.randf_range(-8, 8))
@@ -469,7 +470,7 @@ func spawn(enemy_id: String, pos: Vector2, map: InteriorMap, st: StoryState = nu
 		if e.cmb.last_by == "mate":                                     # 동행이 쓰러뜨림(1-10a): 주인공이 HP 30% 이상 깎았을 때만 XP(SD-11 §8.2)
 			by_pc = e.cmb.dmg_player >= e.cmb.max_hp * 0.3
 		_morale_death(e, by_pc, st)
-		if enemy_id == "CR-004":                                          # 알집바퀴 처치: 주변(12t) 큰바퀴 50% 도주(SD-14 CR-004)
+		if enemy_id in ["CR-004", "CR-501"]:                              # 알집바퀴 · 배수구 어미 처치: 주변(12t) 큰바퀴 50% 도주(SD-14 CR-004)
 			for o in enemies:
 				if is_instance_valid(o) and o != e and not o.cmb.dead and str(o.row.get("id", "")) == "CR-002" \
 						and o.loco.logical.distance_to(e.loco.logical) <= 12.0 * 32.0 and _rng.randf() < 0.5:

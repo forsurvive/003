@@ -1,0 +1,144 @@
+{
+ "id": "UQ09_TANK",
+ "title": "필터 저수조",
+ "loc": "L-R02-11",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "PIPE": 6,
+  "AGAIN": 9,
+  "PIPED": 11,
+  "QUIET": 13
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "콘크리트 저수조. 녹은 거름망이 물에 떠 있다. 정수 흡입관이 저수조 바닥에서 동쪽 사다리 쪽으로 올라간다."
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_PIPE == 1 and UQ09_REDIRTY == 1",
+   "to": "AGAIN"
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_PIPE == 1",
+   "to": "PIPED"
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_MOM == 1 or UQ09_MOM == 2 or UQ09_MOM == 3",
+   "to": "QUIET"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "흡입관 옆에 상인회 공용 관이 지나간다. 밸브 둘을 바꿔 물리면 노점 물을 공용 관 쪽에서 받을 수 있겠다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "흡입관을 상인회 공용 관으로 돌린다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PIPE",
+     "id": "UQ09_TANK:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ09_TANK:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "녹슨 밸브 둘을 바꿔 문다. 흡입관이 덜컥 떨리더니 공용 관 쪽에서 맑은 물이 들어온다. 저수조 쪽은 그대로 고인다."
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "pipe"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "공용 관 이음새에 끈적한 막이 감겼다 — 따라왔다. 그 밑으로 하수 본관이 지나간다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "흡입관을 하수 본관 아래 깊은 관으로 돌린다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PIPE",
+     "id": "UQ09_TANK:2:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ09_TANK:2:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "흡입관이 상인회 공용 관에 물려 있다. 저수조 물은 고인 채 썩는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "저수조 물이 조용하다. 딸깍거리던 소리가 없다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-09.txt"
+}

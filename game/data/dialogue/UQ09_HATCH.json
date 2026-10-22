@@ -1,0 +1,108 @@
+{
+ "id": "UQ09_HATCH",
+ "title": "흡입관 점검구",
+ "loc": "L-R02-11",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "PICK": 3,
+  "DOWN": 5,
+  "GO": 7
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "UQ09_HATCH != 0",
+   "to": "DOWN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "철판 뚜껑에 '정수 흡입관 — 상인회'. 맹꽁이자물쇠. 뚜껑 밑에서 물 흐르는 소리."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "(몸을 낮추고) 자물쇠를 딴다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "자물쇠 따기",
+       "min": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PICK",
+     "id": "UQ09_HATCH:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ09_HATCH:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "hatch_pick"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "뚜껑을 들어 올린다. 젖은 사다리가 어둠 속으로. 비린 물 냄새."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "내려간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "GO",
+     "id": "UQ09_HATCH:2:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ09_HATCH:2:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "go",
+    "J-10",
+    "from_J02"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-09.txt"
+}

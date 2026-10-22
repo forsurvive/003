@@ -933,3 +933,275 @@ func test_uq08_refuse_boom_and_lost(t) -> void:
 	st2.kill("N-R02-038")
 	c2._uq08_day(7)
 	t.eq(st2.quests.stage("UQ-08"), 90, "결말 전 철사 사망 — 소멸")
+
+
+# ---------------------------------------------------------------- UQ-09 탁한 물(1-12h h3 — 계획 §3.4b · §4.2c · §8c)
+func _mom_of(h: InteriorHost):
+	for e in h.combat.enemies:
+		if is_instance_valid(e) and str(e.who) == "N-JM-B1":
+			return e
+	return null
+
+
+func test_uq09_bought_and_water(t) -> void:
+	var a := _host("J-02", "from_J-01")
+	var h: InteriorHost = a[0]
+	var st: StoryState = a[1]
+	var c: UqR02 = a[2]
+	st.vars.set_v("AFF_JH", 10)
+	t.ok(_says(st, "JM_DO", "반값 맞아", ["물건"]), "오염 동안 반값(T1 — '…묻지 마'는 바크에만, 재미 검수 ①)")
+	st.call_fn("give", ["I-059", 1])                                     # 노점 상자 루팅(거래 창 아님)
+	c._trade_watch()
+	t.eq(_v(st, "UQ09_BOUGHT"), 0, "상자에서 얻은 정수는 '산 것'이 아니다")
+	var ts := TradeScreen.new()
+	ts.vid = "VJ10"
+	h.container = ts
+	c._trade_watch()
+	st.call_fn("give", ["I-059", 1])
+	c._trade_watch()
+	h.container = null
+	c._trade_watch()
+	ts.free()
+	t.eq(_v(st, "UQ09_BOUGHT"), 1, "VJ10 거래 창에서 정수가 늘면 '샀다'")
+	var rad := _v(st, "PC_RADS")
+	h.consume("I-059")
+	t.eq(_v(st, "PC_RADS") - rad, 1, "오염 — 라드 +1(자료값)")
+	t.ok(_says(st, "JM_DO", "구울 손님들은 오히려 달다더라", ["내가 내려가 볼게"]), "산 뒤 도민지 사정(T2)")
+	t.eq(_v(st, "UQ09_MET"), 1, "사정을 들음")
+	t.eq(_v(st, "UQ09_HATCH"), 1, "점검구를 열어 줌")
+	t.eq(st.count_of("M-436"), 3, "등유 세 병")
+	t.eq(st.quests.stage("UQ-09"), 10, "단계 10")
+	st.vars.set_v("UQ09_CLEAN", 1)
+	rad = _v(st, "PC_RADS")
+	h.consume("I-059")
+	t.eq(_v(st, "PC_RADS"), rad, "맑아지면 라드 0(원문 '라드 0 회복')")
+
+
+func test_uq09_hatch_pick(t) -> void:
+	var a := _host("J-02", "from_J-01")
+	var h: InteriorHost = a[0]
+	var st: StoryState = a[1]
+	var c: UqR02 = a[2]
+	var jh := _v(st, "AFF_JH")
+	h.combat.crouch = false
+	c._cmd(["hatch_pick"], func() -> void: pass)
+	t.eq(_v(st, "UQ09_HATCH"), 0, "서서 따면 도민지가 본다")
+	t.eq(_v(st, "AFF_JH") - jh, -1, "JH −1")
+	h.combat.crouch = true
+	c._cmd(["hatch_pick"], func() -> void: pass)
+	t.eq(_v(st, "UQ09_HATCH"), 2, "웅크려 따면 열림(사정 전에 먼저 내려가기 — 4.2c 46)")
+	h.combat.crouch = false
+	t.ok(_says(st, "UQ09_HATCH", "젖은 사다리"), "점검구 열림")
+
+
+func test_uq09_burn_kill_report(t) -> void:
+	var a := _host("J-10", "from_J02")
+	var h: InteriorHost = a[0]
+	var st: StoryState = a[1]
+	var c: UqR02 = a[2]
+	st.vars.set_v("UQ09_MET", 1)
+	st.quests.set_stage("UQ-09", 10)
+	c._on_map("J-10")
+	t.eq(st.quests.stage("UQ-09"), 20, "J-10 입장 — 단계 20")
+	var mom = _mom_of(h)
+	t.ok(mom != null and mom.asleep and not mom.visible, "천장 어미 — 보이지 않게 붙어 있다(잠복)")
+	t.ok(h.combat.enemies.any(func(e): return is_instance_valid(e) and str(e.row.get("id", "")) == "CR-001"), "잔바퀴 떼 하나 상시")
+	st.call_fn("give", ["M-436", 3])
+	t.ok(_says(st, "UQ09_EGG1", "쉭쉭", ["등유를 붓고"], c), "알집 1 태움")
+	t.eq(_v(st, "UQ09_E1"), 1, "E1 태움")
+	t.ok(mom._heard > 0.0, "불 소리를 어미가 듣는다(깬다)")
+	mom.cmb.hp = 0.0
+	mom.cmb.dead = true
+	c._mom_frame(0.1)
+	t.eq(_v(st, "UQ09_MOM"), 1, "어미 처치")
+	t.eq(st.count_of("M-437"), 1, "대형 바퀴 알집")
+	_play(st, "UQ09_EGG2", ["등유를 붓고"], c)
+	c._u9_ready()
+	t.eq(_v(st, "UQ09_READY"), 0, "알집 하나가 남으면 아직(반쯤 된 상태 없음)")
+	_play(st, "UQ09_EGG3", ["등유를 붓고"], c)
+	c._u9_ready()
+	t.eq(_v(st, "UQ09_READY"), 1, "어미 + 알집 셋 — 말할 일 ①")
+	t.eq(st.quests.stage("UQ-09"), 30, "단계 30")
+	var jh := _v(st, "AFF_JH")
+	var xp := _v(st, "PC_XP")
+	var w := st.count_of("I-059")
+	t.ok(_says(st, "JM_DO", "이번엔 네가 거른 거네", [], c), "도민지 매듭 ①")
+	t.eq(_v(st, "UQ09_RES"), 1, "결과 ①")
+	t.eq(_v(st, "AFF_JH") - jh, 4, "JH +4")
+	t.eq(_v(st, "PC_XP") - xp, 90, "90 XP")
+	t.eq(st.count_of("I-059") - w, 0, "다섯 병은 맡아 둠(물이 아직 탁하다 — 서사 대조 중4)")
+	t.eq(_v(st, "RQ22_OPEN"), 1, "RQ-22 표지")
+	t.eq(_v(st, "UQ09_CLEAN"), 0, "물은 아직 — 다음 06:00")
+	c._uq09_day(6)
+	t.eq(_v(st, "UQ09_CLEAN"), 1, "다음 아침 맑음")
+	t.ok(_says(st, "JM_DO", "맡아 둔 거", ["물건"]), "맡아 둔 다섯 병")
+	t.eq(st.count_of("I-059") - w, 5, "정수 5")
+	t.ok(_says(st, "MQ-103_BOK", "청소 일감", ["배수구 청소 일감"]), "노복희 RQ-22 줄")
+	t.ok(_says(st, "JM_BYEON", "바퀴알 떡볶이", ["대형 바퀴 알집"]), "분식 — 알집 사서 값표에 한 줄(T10)")
+	st.vars.set_v("GAME_DAY", _v(st, "GAME_DAY") + 1)
+	t.ok(_says(st, "JM_BYEON", "한정"), "다음 날 값표 '바퀴알 떡볶이 — 한정'")
+
+
+func test_uq09_ceiling_phases(t) -> void:
+	var a := _host("J-10", "from_J02")
+	var h: InteriorHost = a[0]
+	var st: StoryState = a[1]
+	var c: UqR02 = a[2]
+	var mom = _mom_of(h)
+	h.player.loco.logical = mom.loco.logical + Vector2(4 * 32, 0)
+	h.combat.crouch = true
+	c._mom_frame(6.0)
+	t.eq(c._drops, 0, "웅크리면 알을 떨구지 않는다(밑을 지나간다 — T6 몰래 길)")
+	h.combat.crouch = false
+	for k in 3:
+		c._mom_frame(0.0)
+		c._drop_t = 0.0
+		c._mom_frame(0.01)
+	t.eq(c._drops, 3, "서 있으면 붉은 원 · 알 낙하 셋")
+	t.ok(h.combat.ord.warns.size() > 0, "떨어질 자리 붉은 원")
+	var rb := h.combat.enemies.filter(func(e): return is_instance_valid(e) and str(e.row.get("id", "")) == "CR-002").size()
+	h.player.loco.logical += Vector2(0, 3 * 32)
+	c._mom_frame(2.0)
+	t.ok(h.combat.enemies.filter(func(e): return is_instance_valid(e) and str(e.row.get("id", "")) == "CR-002").size() > rb, "피한 알에서 큰바퀴가 깬다")
+	c._drop_t = 0.0
+	c._mom_frame(0.01)
+	t.ok(not mom.asleep, "알 셋 뒤 어미가 떨어진다(돌진 물기 페이즈)")
+	mom.cmb.hp = mom.cmb.max_hp * 0.25
+	var sw := h.combat.enemies.filter(func(e): return is_instance_valid(e) and str(e.row.get("id", "")) == "CR-001").size()
+	c._mom_frame(0.01)
+	t.eq(h.combat.enemies.filter(func(e): return is_instance_valid(e) and str(e.row.get("id", "")) == "CR-001").size() - sw, 3, "HP 30% 아래 — 배가 터져 잔바퀴 떼 셋")
+	var swarm = h.combat.enemies.filter(func(e): return is_instance_valid(e) and str(e.row.get("id", "")) == "CR-001")[0]
+	t.eq(swarm.cmb.fire_mul, 2.0, "잔바퀴 떼 화염 ×2")
+
+
+func test_uq09_flood(t) -> void:
+	var a := _host("J-10", "from_J02")
+	var h: InteriorHost = a[0]
+	var st: StoryState = a[1]
+	var c: UqR02 = a[2]
+	st.vars.set_v("UQ09_MET", 1)
+	st.vars.set_v("PC_SKP_SCIENCE", 0)
+	t.ok(st.skill("SCIENCE") >= 50 or not _has_opt(st, "UQ09_VALVE", "하수 2-117"), "관리 번호를 모르면 번호 선택지 없음")
+	t.ok(_says(st, "UQ09_LOG", "하수 2-117"), "관리원 일지 — 관리 번호")
+	t.ok(_says(st, "UQ09_VALVE", "높은 턱으로", ["하수 2-117"], c), "밸브 — 물이 쏟아진다(T4)")
+	h.player.loco.logical = Vector2(15 * 32 + 16, 13 * 32 + 16)               # 저수 바닥(낮은 칸)
+	var hp0: float = h.combat.pc.hp
+	c._mom_frame(8.0)
+	t.ok(h.combat.pc.hp < hp0, "높은 턱 밖이면 휩쓸림")
+	t.eq(_v(st, "UQ09_MOM"), 2, "어미 익사")
+	t.eq(_v(st, "UQ09_E1"), 2, "바닥 알집 잠김")
+	t.eq(_v(st, "UQ09_E2"), 2, "바닥 알집 잠김")
+	t.eq(_v(st, "UQ09_E3"), 0, "천장 관 밑 알집은 물 위 — 남음(불을 한 번은)")
+	t.eq(st.count_of("M-437"), 0, "익사 — 알집이 떠내려감")
+	t.ok(h.map.wet_at(Vector2i(15, 13)) == 2, "저수 바닥이 허리 물")
+	c._u9_ready()
+	t.eq(_v(st, "UQ09_READY"), 0, "아직 하나")
+	st.call_fn("give", ["M-436", 1])
+	_play(st, "UQ09_EGG3", ["등유를 붓고"], c)
+	c._u9_ready()
+	t.eq(_v(st, "UQ09_READY"), 1, "끝")
+	t.ok(_says(st, "JM_DO", "밸브로 물을 채웠어"), "도민지 — 밸브 판")
+	c._uq09_day(6)
+	t.eq(_v(st, "UQ09_FLOOD"), 2, "하룻밤에 물이 빠진다")
+
+
+func test_uq09_pipe_redirty(t) -> void:
+	var a := _host("J-10", "from_J02")
+	var st: StoryState = a[1]
+	var c: UqR02 = a[2]
+	st.vars.set_v("UQ09_MET", 1)
+	st.quests.set_stage("UQ-09", 20)
+	st.vars.set_v("PC_SKP_REPAIR", 60)
+	t.ok(_says(st, "UQ09_TANK", "맑은 물이 들어온다", ["상인회 공용 관"], c), "② 흡입관을 상인회 관으로")
+	t.eq(_v(st, "UQ09_READY"), 2, "말할 일 ②")
+	var jh := _v(st, "AFF_JH")
+	t.ok(_says(st, "JM_DO", "관 값이 붙겠네", [], c), "도민지 ②")
+	t.eq(_v(st, "AFF_JH") - jh, 2, "JH +2")
+	t.eq(_v(st, "UQ09_REDIRTY_DAY"), 5 + 14, "14일 뒤 재오염 날")
+	c._uq09_day(6)
+	t.eq(_v(st, "UQ09_CLEAN"), 1, "다음 아침 맑음")
+	t.ok(_says(st, "JM_DO", "맡아 둔 거", ["물건"]), "맡아 둔 다섯 병")
+	t.ok(_says(st, "JM_DO", "관세 포함이야", ["물건"]), "관세 포함 14캡(T7)")
+	c._uq09_day(19)
+	t.eq(_v(st, "UQ09_CLEAN"), 0, "14일 뒤 다시 탁해짐(재발동 1회)")
+	t.ok(_says(st, "JM_DO", "또 서", ["물건"]), "도민지 '또 서'")
+	t.ok(_says(st, "UQ09_TANK", "맑은 물이 들어온다", ["하수 본관 아래 깊은 관"], c), "두 번째 ② — 이음새에 막이 따라옴(중7)")
+	t.eq(_v(st, "UQ09_MOM"), 3, "어미는 더 깊이")
+	t.ok(_says(st, "JM_DO", "저 아래로 내려갔겠네", [], c), "두 번째 매듭")
+	t.eq(_v(st, "UQ09_REDIRTY"), 2, "재발동 끝")
+	t.ok(_says(st, "UQ09_CRACK", "아래로만"), "허물 길 끝 — 자국이 아래로만(T7 · 하1)")
+
+
+func test_uq09_lie_crew_and_dead(t) -> void:
+	var a := _host("J-02", "from_J-01")
+	var st: StoryState = a[1]
+	var c: UqR02 = a[2]
+	st.vars.set_v("UQ09_MET", 1)
+	st.vars.set_v("UQ09_HATCH", 1)
+	t.ok(_says(st, "JM_DO", "내일 아침 바늘 보면", ["처리했어", "물건"]), "'처리했어' 거짓말(T8)")
+	var jh := _v(st, "AFF_JH")
+	c._uq09_day(6)
+	t.eq(_v(st, "UQ09_LIE"), 2, "아침 바늘이 그대로 — 들킴")
+	t.eq(_v(st, "AFF_JH") - jh, -1, "JH −1")
+	t.ok(_says(st, "JM_DO", "너 안 내려갔지", ["물건"]), "도민지 '너 안 내려갔지'")
+	t.ok(_says(st, "UQ09_GRATE", "자물쇠에 닿지 않는다"), "바깥 철창 — 사슬은 안쪽")
+	t.ok(_says(st, "UQ09_CREW", "밖에서 열지 마시오"), "당번 4조 쪽지(T3)")
+	t.eq(_v(st, "UQ09_KEY"), 1, "사슬 열쇠")
+	t.ok(_says(st, "MQ-103_BOK", "점검구는 내가 위에서 잠갔소", ["외곽 배수구 말인데요"]), "노복희 — 아는 사람 판(P2 · 상1 인과)")
+	_play(st, "UQ09_CHAIN", ["당번 4조의 열쇠", "그만둔다"])
+	t.eq(_v(st, "UQ09_GRATE"), 1, "사슬을 풂 — J-09 지름길")
+	t.ok(_says(st, "UQ09_GRATE", "풀린 사슬"), "바깥 철창 열림")
+	st.vars.set_v("UQ09_SMOKE", 5)
+	st.vars.set_v("GAME_DAY", 6)
+	t.ok(_says(st, "JM_DO", "굴뚝 맛", ["물건"]), "물길 불 다음 날 '굴뚝 맛'(T9)")
+	st.quests.set_stage("UQ-09", 20)
+	st.kill("N-R02-010")
+	c._uq09_day(7)
+	t.eq(st.quests.stage("UQ-09"), 90, "결말 전 도민지 사망 — 소멸")
+
+
+func test_uq09_fun_review_fixes(t) -> void:
+	var a := _host("J-10", "from_J02")
+	var h: InteriorHost = a[0]
+	var st: StoryState = a[1]
+	var c: UqR02 = a[2]
+	st.vars.set_v("UQ09_HATCH", 2)                                       # 몰래 따고 먼저 내려옴
+	st.vars.set_v("PC_SKP_REPAIR", 60)
+	_play(st, "UQ09_TANK", ["상인회 공용 관"], c)
+	t.eq(_v(st, "UQ09_READY"), 2, "관 — 말할 일 ②")
+	st.call_fn("give", ["M-436", 3])
+	_play(st, "UQ09_WATER", ["물길에 등유"], c)
+	t.eq(_v(st, "UQ09_E2"), 1, "물길 불이 막을 타고 건너편 알집까지(T9)")
+	t.ok(h.combat.ord.zones.size() > 0, "물 위 불 띠")
+	_play(st, "UQ09_EGG1", ["등유를 붓고"], c)
+	t.ok(_says(st, "UQ09_CREW", "밖에서 열지 마시오"), "4조 쪽지")
+	t.ok(_says(st, "UQ09_EGG3", "여든 해 늦은 불", ["등유를 붓고"], c), "4조 탄 자국 위의 불")
+	var mom = _mom_of(h)
+	mom.cmb.hp = 0.0
+	mom.cmb.dead = true
+	c._mom_frame(0.1)
+	c._u9_ready()
+	t.eq(_v(st, "UQ09_READY"), 1, "관 뒤 어미를 잡으면 ①로 올라감(보고 전)")
+	t.ok(_says(st, "JM_DO", "내 점검구 딴 게 너였구나", [], c), "사정 전 먼저 내려간 사람 — '내 점검구 딴 게 너였구나'(4.2c 46)")
+	t.eq(_v(st, "UQ09_RES"), 1, "①")
+	t.eq(_v(st, "UQ09_PIPE"), 0, "① 매듭 — 흡입관은 저수조로 되물림(관 값 없음)")
+	# ② 보고 뒤 ①로 올라가면 관 값 끝
+	var b := _host("J-02", "from_J-01")
+	var st2: StoryState = b[1]
+	var c2: UqR02 = b[2]
+	st2.vars.set_v("UQ09_MET", 1)
+	st2.vars.set_v("UQ09_RES", 2)
+	st2.vars.set_v("UQ09_PIPE", 1)
+	st2.vars.set_v("UQ09_CLEAN", 1)
+	st2.vars.set_v("UQ09_READY", 1)
+	st2.vars.set_v("UQ09_MOM", 1)
+	t.ok(_says(st2, "JM_DO", "저수조로 되물릴게", [], c2), "② → ① 올라감")
+	t.eq(_v(st2, "UQ09_PIPE"), 0, "관 값 끝(대사와 값이 같은 사실 — P1)")
+	t.ok(_says(st2, "JM_DO", "세 번 걸렀어", ["물건"]), "12캡 판으로 돌아옴")
+	st2.vars.set_v("UQ09_MOM", 0)
+	st2.vars.set_v("UQ09_GRATE", 1)
+	st2.vars.set_v("MQ103_STAGE", 40)
+	var jh := _v(st2, "AFF_JH")
+	st2.vars.set_v("MQ103_NEST", 1)                                     # J-09 둥지를 비운 판에만 큰바퀴가 올라온다(중8)
+	t.ok(_says(st2, "MQ-103_BOK", "안에서 열 줄은 몰랐겠지"), "어미를 살려 둔 채 철창을 열면 노복희가 안다(출처: 운반조 — 중8)")
+	t.eq(_v(st2, "AFF_JH") - jh, -1, "JH −1(한 번)")

@@ -5,6 +5,8 @@
 ##     쇠판 한 값 UQ10_PLATE · 반장 한 값 UQ10_BOSS · 습격 한 값 UQ10_RAID(P1 · P3). 대방 분대 소멸은 UQ71_SQ 9(UQ-71 진행기).
 ##   UQ-08 「철사의 돋보기」 — 원고 script/act1/UQ-08.txt(병원 2층 현미경 · 작업대 전표 · 조립대) · 철사 갈래는 SQ-S09.txt SQS09_WIRE 안.
 ##     렌즈 자리 한 값 UQ08_LENS · 철사 자리 한 값 UQ08_WIRE(P3). ② 효과(UQ08_SAFE)는 읽는 자리 셋: act1_paths 담 밖 목걸이 · FQ-SB-02 원격기 · 생포 장면.
+##   UQ-09 「탁한 물」 — 원고 script/act1/UQ-09.txt(점검구 · 철창 · J-10 외곽 배수구) · 도민지 갈래는 JM_PEOPLE.txt JM_DO 안.
+##     물 한 값 UQ09_CLEAN(마시기 interior_host · 값 mq101 trade_mult · 바크가 읽음) · 어미 한 값 UQ09_MOM · 알집 E1~E3. 천장 어미 세 페이즈(알 낙하 · 돌진 물기 · 배 터짐)는 이 진행기.
 ## 사실은 변수 한 곳(P1) — 변수 뜻은 원고 머리 주석. 시간 판정(로봇이 아이 손에 감)은 06:00 하루 판정에서만(P6).
 ## 비표시(SD-05 §2.6): 알림 없음 · 단계 로그(메모) · XP만.
 class_name UqR02
@@ -42,6 +44,18 @@ const INSPECT_H := 9                       ## 검수 시각(칠판 '09:00')
 const CATCH_P := 10                        ## 발각 확률(원문 10%) — 남이 본 열린 목걸이(HEAT)마다 +HEAT_P
 const HEAT_P := 10
 const BOOM_DAYS := 30                      ## ③(또는 받고 둠) 뒤 오작동까지
+# UQ-09: 외곽 배수구
+const MINJI := "N-R02-010"                 ## 도민지
+const MOM_WHO := "N-JM-B1"                 ## 배수구 어미(who)
+const REDIRTY_DAYS := 14                   ## ② 뒤 재오염(원문)
+const REGROW_DAYS := 3                     ## 어미 없이 남은 알집에서 큰바퀴가 다시 붐
+const DROP_EVERY := 5.0                    ## 천장 알 낙하 간격(초)
+const DROP_WARN := 1.4                     ## 붉은 원 → 떨어짐
+const DROP_N := 3                          ## 알 셋을 떨어뜨린 뒤 어미가 내려온다
+const DROP_R := 9.0                        ## 이 칸 안에 서 있는 사람에게 알을 떨군다
+const FLOOD_S := 6.0                       ## 밸브 → 허리 물까지(초) — 높은 턱으로(단말은 저수 바닥 한가운데 — 동서 턱 어느 쪽도 가깝지 않다)
+const EGG_AT := [Vector2i(14, 5), Vector2i(21, 14), Vector2i(5, 4)]
+const HIGH := [Rect2i(1, 2, 7, 5), Rect2i(31, 2, 8, 8), Rect2i(31, 13, 8, 4)]   ## J-10 높은 턱(물이 안 닿는 자리)
 
 var host: InteriorHost
 var st: StoryState
@@ -57,6 +71,13 @@ var _note_walk := 0.0                      ## > 0: 배송 1호가 주인공에�
 var _raid_on := false                      ## 이 진행기가 세운 습격 인카운터가 진행 중
 var _market_o := Vector2i(-1, -1)
 var _plate_n := 0                          ## 용기 창이 열리기 전 새 쇠판(M-435) 수 — 2층 쇠판 상자 절도 판정
+var _water_n := -1                         ## VJ10 거래 창이 열리기 전 정수(I-059) 수(-1: 거래 창 밖)
+var _mom: Enemy = null                     ## 이 맵의 배수구 어미
+var _drop_t := 0.0
+var _drops := 0
+var _drop_pend: Array = []                 ## [[자리, 남은 초]]
+var _burst := false
+var _flood_t := -1.0                       ## > 0: 밸브를 연 뒤 물이 차오르는 중(남은 초)
 
 
 func setup(h: InteriorHost, is_log := false) -> void:
@@ -98,6 +119,7 @@ func _idle() -> bool:
 
 func _process(dt: float) -> void:
 	_bot_frame(dt)
+	_mom_frame(dt)
 	_t += dt
 	if _t < 1.0:
 		return
@@ -111,6 +133,8 @@ func _process(dt: float) -> void:
 	_market_tick()
 	_raid_clock()
 	_inspect_tick()
+	_trade_watch()
+	_u9_ready()
 
 
 # ---------------------------------------------------------------- UQ-07 견습생의 첫 납땜
@@ -232,6 +256,11 @@ func _on_map(id: String) -> void:
 		_sv("UQ07_VISIT", v("UQ07_VISIT") + 1)
 	if id == "J-03":
 		_note_pending = true
+	if id == "J-10":
+		_u9_stage(20)
+		_drops = 0
+		_drop_t = 0.0
+		_drop_pend.clear()
 
 
 ## 마영식 부품 상자(owner C-006)에서 진공관을 꺼내 갔다 — ①이 '훔친 판'(꼬리표 달린 관, 재미 검수 R3)
@@ -295,6 +324,7 @@ func _on_day(d: int) -> void:
 		host.refresh_npcs()
 	_uq10_day(d)
 	_uq08_day(d)
+	_uq09_day(d)
 
 
 func _roll(tag: String, pct: int) -> bool:
@@ -341,6 +371,61 @@ func _cmd(a: Array, done: Callable) -> void:
 			_sv("UQ08_INSPECT", day() + INSPECT_GAP)
 			_sv("UQ08_CHECK_N", 0)
 			_log("공구함 견본을 바꿈 — 첫 검수 %d일" % v("UQ08_INSPECT"))
+		"go":                                                            # UQ-09 점검구 · 철창 · 사다리(장면에서 맵을 넘는다)
+			host.enter(str(a[1]), str(a[2]))
+		"hatch_pick":                                                    # 점검구 몰래 따기: 웅크렸으면 · 도민지가 없으면 열림, 서서 따면 도민지가 본다
+			if host.combat.crouch or st.is_dead(MINJI):
+				_sv("UQ09_HATCH", 2)
+				host.hint("맹꽁이자물쇠가 딸깍 열린다. 뚜껑 밑으로 젖은 사다리.", 4.0)
+				_log("점검구를 몰래 땀")
+			else:
+				st.call_fn("aff", ["JH", -1])
+				host.hint("도민지: \"남의 물관에 손대지 마.\" (자물쇠를 손바닥으로 덮는다)", 4.0)
+		"burn":                                                          # 알집을 태움 — 불 소리에 천장 어미가 깬다
+			var k := int(a[1]) - 1
+			if _mid() == "J-10":
+				host.map.set_prop_state(EGG_AT[k], "burnt")
+				_noise(Vector2(EGG_AT[k]) * 32.0 + Vector2(16, 16), "pistol")
+			_log("알집 %d 태움" % (k + 1))
+		"oilfire":                                                       # 엉뚱한 짓(재미 검수 T9): 물길 위 불 띠 · 하루 굴뚝 맛
+			_sv("UQ09_SMOKE", day())
+			for x in range(4, 30, 3):
+				host.combat.ord.zones.append({"p": Vector2(x * 32 + 16, 10 * 32 + 16), "r": 1.6 * 32.0, "t": 6.0, "t0": 6.0, "kind": "fire", "team": "player", "w": {"dot": 6.0}})
+			_noise(Vector2(19 * 32 + 16, 10 * 32 + 16), "heavy")
+			if v("UQ09_E2") == 0:                                        # 물길까지 늘어진 막을 타고 건너편 알집까지 탄다(재미 검수 T9)
+				_sv("UQ09_E2", 1)
+				if _mid() == "J-10":
+					host.map.set_prop_state(EGG_AT[1], "burnt")
+			if _mom != null and is_instance_valid(_mom) and _mom.asleep:
+				_mom_drop("열기에 천장의 어미가 떨어진다 — 쿵!")
+			_log("물길에 등유 불")
+		"pipe":                                                          # ② 흡입관을 상인회 관으로(두 번째면 더 깊은 관 — 어미는 아래로)
+			_sv("UQ09_PIPE", 1)
+			if v("UQ09_READY") == 0:
+				_sv("UQ09_READY", 2)
+			_sv("UQ09_PEND", 1)
+			if v("UQ09_REDIRTY") == 1:
+				_sv("UQ09_MOM", 3)
+				for k in ["UQ09_E1", "UQ09_E2", "UQ09_E3"]:
+					if v(k) == 0:
+						_sv(k, 3)                                             # 어미가 더 깊이 내려가며 알집을 데려감(빈 막 — P10)
+			_u9_stage(30)
+			_log("흡입관을 상인회 관으로")
+		"flood":
+			_flood_t = FLOOD_S
+			host.hint("물이 쏟아진다 — 높은 턱으로! (동쪽 사다리 밑 · 서쪽 턱 · 대피 칸)", 3.0)
+		"u9reward":
+			if v("UQ09_REWARD") == 0:
+				_sv("UQ09_REWARD", 1)
+				st.call_fn("xp", [90])
+				if v("UQ09_CLEAN") == 1:
+					st.call_fn("give", ["I-059", 5])
+				else:
+					_sv("UQ09_GIFT", 1)                                      # 맑아진 다음 아침 거 다섯 병(도민지가 맡아 둠 — 서사 대조 중4)
+			if v("UQ09_MET") == 0:
+				_sv("UQ09_MET", 1)
+			if v("UQ09_RES") == 2 and v("UQ09_REDIRTY") == 0:
+				_sv("UQ09_REDIRTY_DAY", day() + REDIRTY_DAYS)
 		"xp8":
 			if v("UQ08_XP") == 0:
 				_sv("UQ08_XP", 1)
@@ -616,3 +701,175 @@ func _inspect_tick() -> void:
 		_sv("UQ08_WIRE", 1)
 		if _mid() == "X-SB" or _mid().begins_with("H-0"):
 			host.refresh_npcs()
+
+
+# ---------------------------------------------------------------- UQ-09 탁한 물
+## 정수를 샀다: VJ10 거래 창이 열린 동안 I-059가 늘었으면(노점 상자 루팅은 거래 창이 아니다)
+func _trade_watch() -> void:
+	var c = host.container
+	if c is TradeScreen and str(c.vid) == "VJ10":
+		if _water_n < 0:
+			_water_n = st.count_of("I-059")
+		elif st.count_of("I-059") > _water_n and v("UQ09_BOUGHT") == 0:
+			_sv("UQ09_BOUGHT", 1)
+			_log("도민지 정수를 삼")
+	elif c == null:
+		_water_n = -1
+
+
+func _u9_stage(n: int) -> void:
+	var s9: int = st.quests.stage("UQ-09")
+	if s9 < n and s9 < 100 and v("UQ09_MET") == 1:
+		st.quests.set_stage("UQ-09", n)
+
+
+## 일을 끝냈나(어미 처치/익사 + 알집 셋) — 도민지에게 말할 일 1 · 물은 다음 06:00
+func _u9_ready() -> void:
+	if v("UQ09_READY") == 1 or v("UQ09_RES") == 1:
+		return
+	if v("UQ09_MOM") in [1, 2] and v("UQ09_E1") != 0 and v("UQ09_E2") != 0 and v("UQ09_E3") != 0:   # ② 말할 일(관)이 남아 있어도 ①로 올라간다(재미 검수 ②)
+		_sv("UQ09_READY", 1)
+		_sv("UQ09_PEND", 1)
+		_u9_stage(30)
+		_log("배수구 정리 — 도민지에게 말할 일")
+
+
+func _noise(at: Vector2, kind: String) -> void:
+	for e in host.combat.enemies:
+		if is_instance_valid(e) and not e.cmb.dead:
+			e.hear(kind, at)
+
+
+func _in_high(t: Vector2i) -> bool:
+	for r in HIGH:
+		if r.has_point(t):
+			return true
+	return false
+
+
+## J-10 천장 어미: ① 천장에서 알 낙하(붉은 원) ② 내려와 돌진 물기 · 15초 부화 ③ HP 30% 배가 터져 잔바퀴 떼 셋 · 밸브 물
+func _mom_frame(dt: float) -> void:
+	if _mid() != "J-10" or host.player == null:
+		_mom = null
+		_flood_t = -1.0
+		return
+	if _flood_t > 0.0:
+		var was := _flood_t
+		_flood_t -= dt
+		if int(was) != int(_flood_t) and int(_flood_t) in [4, 1]:
+			host.hint("물이 %s까지 찬다!" % ("무릎" if int(_flood_t) == 4 else "허리"), 1.5)
+		if _flood_t <= 0.0:
+			_flood_t = -1.0
+			_flood_done()
+		return
+	if _mom == null or not is_instance_valid(_mom):
+		_mom = null
+		for e in host.combat.enemies:
+			if is_instance_valid(e) and str(e.who) == MOM_WHO:
+				_mom = e
+				_drops = 0
+				_burst = false
+		if _mom == null:
+			return
+	if _mom.cmb.dead:
+		if v("UQ09_MOM") == 0:
+			_sv("UQ09_MOM", 1)
+			_sv("UQ09_MOM_DAY", day())
+			st.call_fn("give", ["M-437", 1])
+			host.hint("어미 배 밑에서 손바닥 둘만 한 알집 하나를 떼어 냈다.", 4.0)
+			_log("배수구 어미 처치")
+		_mom = null
+		return
+	for pd in _drop_pend.duplicate():                                    # 떨어진 알: 서 있으면 맞고, 아니면 큰바퀴가 깬다
+		pd[1] = float(pd[1]) - dt
+		if float(pd[1]) <= 0.0:
+			_drop_pend.erase(pd)
+			var at: Vector2 = pd[0]
+			if host.player.loco.logical.distance_to(at) <= 0.9 * 32.0:
+				host.combat.damage(6.0)
+				host.hint("알이 머리 위에서 터진다!", 1.5)
+			else:
+				var r = host.combat.spawn("CR-002", at, host.map, null, {"morale": false})
+				r.set_meta("mother", _mom.get_instance_id())
+				r.hear("pistol", host.player.loco.logical)
+	if _mom.asleep:                                                     # ① 천장: 서 있는 사람에게 알을 떨군다(웅크리면 조용 — 밑을 지나간다)
+		var near: bool = host.player.loco.logical.distance_to(_mom.loco.logical) <= DROP_R * 32.0 and not host.combat.crouch
+		if not near:
+			return
+		_drop_t -= dt
+		if _drop_t > 0.0:
+			return
+		_drop_t = DROP_EVERY
+		if _drops >= DROP_N:
+			_mom_drop("천장에서 어미가 떨어진다 — 쿵!")
+			return
+		_drops += 1
+		var at2: Vector2 = host.player.loco.logical + Vector2(randf_range(-20, 20), randf_range(-12, 12))
+		host.combat.ord.warn(at2, 0.9 * 32.0, DROP_WARN)
+		_drop_pend.append([at2, DROP_WARN])
+		if _drops == 1:
+			host.hint("천장에서 뭔가 딸깍거린다 — 붉은 자리를 피해!", 2.5)
+		return
+	if not _burst and _mom.cmb.hp <= _mom.cmb.max_hp * 0.3:              # ③ 배 알집이 터진다
+		_burst = true
+		for k in 3:
+			var p := _mom.loco.logical + Vector2(cos(k * 2.1) * 28.0, sin(k * 2.1) * 18.0)
+			if host.map.is_solid(host.map.tile_of(p)):
+				p = _mom.loco.logical
+			host.combat.spawn("CR-001", p, host.map, null, {"morale": false})
+		host.hint("어미의 배 알집이 터진다 — 잔바퀴 떼!", 2.5)
+
+
+func _mom_drop(msg: String) -> void:
+	if _mom == null or not is_instance_valid(_mom):
+		return
+	_mom.wake()
+	_mom.hear("pistol", host.player.loco.logical)
+	host.hint(msg, 2.5)
+
+
+## 밸브 물이 다 찼다: 높은 턱 밖이면 휩쓸림 · 어미 · 바닥 알집 둘은 익사(천장 관 밑 알집은 남음) · 맵을 다시 들인다(허리 물)
+func _flood_done() -> void:
+	var t: Vector2i = host.map.tile_of(host.player.loco.logical)
+	if not _in_high(t):
+		host.combat.damage(host.combat.pc.max_hp * 0.4)
+		st.vars.set_v("PC_RADS", int(st.vars.get_v("PC_RADS")) + 15)
+		host.hint("물살에 휩쓸렸다. 비린 물을 들이켰다.", 4.0)
+	_sv("UQ09_FLOOD", 1)
+	if v("UQ09_MOM") == 0:
+		_sv("UQ09_MOM", 2)
+		_sv("UQ09_MOM_DAY", day())
+		st.kill(MOM_WHO)
+	for k in ["UQ09_E1", "UQ09_E2"]:
+		if v(k) == 0:
+			_sv(k, 2)
+	_log("배수 밸브 — 저수 바닥이 찼다")
+	host.enter("J-10", "", {}, host.player.loco.logical)
+
+
+func _uq09_day(d: int) -> void:
+	if v("UQ09_PEND") == 1:
+		_sv("UQ09_PEND", 0)
+		_sv("UQ09_CLEAN", 1)                                              # 물이 저수조를 한 바퀴 — 다음 아침 바늘이 눕는다(P6)
+		_log("정수가 맑아짐")
+	if v("UQ09_FLOOD") == 1:
+		_sv("UQ09_FLOOD", 2)                                              # 하룻밤에 물이 빠진다(밸브는 열린 채)
+	if v("UQ09_LIE") == 1 and d > v("UQ09_LIE_DAY"):                  # '처리했어' — 아침 바늘이 그대로면 들킨다
+		if v("UQ09_READY") == 0 and v("UQ09_CLEAN") == 0:
+			_sv("UQ09_LIE", 2)
+			st.call_fn("aff", ["JH", -1])
+		else:
+			_sv("UQ09_LIE", 0)
+	# ② 뒤 14일: 어미가 새 관까지 따라와 다시 탁해짐(재발동 1회)
+	if v("UQ09_RES") == 2 and v("UQ09_REDIRTY") == 0 and v("UQ09_REDIRTY_DAY") > 0 and d >= v("UQ09_REDIRTY_DAY") and v("UQ09_MOM") == 0:
+		_sv("UQ09_REDIRTY", 1)
+		_sv("UQ09_CLEAN", 0)
+		_log("정수 재오염(② 14일)")
+	# 어미 없이 남은 알집 — 사흘 뒤 큰바퀴가 다시 붐(반쯤 된 상태가 아니라 '아직 덜 끝남')
+	if v("UQ09_MOM") in [1, 2] and v("UQ09_REGROW") == 0 and d >= v("UQ09_MOM_DAY") + REGROW_DAYS \
+			and (v("UQ09_E1") == 0 or v("UQ09_E2") == 0 or v("UQ09_E3") == 0):
+		_sv("UQ09_REGROW", 1)
+	if st.is_dead(MINJI):
+		var s9: int = st.quests.stage("UQ-09")
+		if s9 > 0 and s9 < 100:
+			st.quests.set_stage("UQ-09", 90)

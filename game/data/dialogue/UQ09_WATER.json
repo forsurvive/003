@@ -1,0 +1,83 @@
+{
+ "id": "UQ09_WATER",
+ "title": "물길",
+ "loc": "L-R02-11",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "FIRE": 3,
+  "DEEP": 6
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "UQ09_FLOOD == 1",
+   "to": "DEEP"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "발목까지 오는 물길. 기름 같은 막이 무지개 빛으로 돈다. 물 밑에 바퀴 허물이 깔렸다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "물길에 등유를 붓고 불을 붙인다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "M-436",
+       "n": 1
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "FIRE",
+     "id": "UQ09_WATER:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ09_WATER:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "등유가 물 위로 번진다. 불을 대자 물길을 따라 불 띠가 달린다."
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "oilfire"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "허리까지 찬 물. 거품 사이로 허물이 떠다닌다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-09.txt"
+}

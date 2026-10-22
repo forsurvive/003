@@ -1230,6 +1230,21 @@
    "src": "quests",
    "type": "int"
   },
+  "UQ09_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "UQ09_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "UQ09_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
   "UQ10_RESULT": {
    "default": 0,
    "src": "quests",

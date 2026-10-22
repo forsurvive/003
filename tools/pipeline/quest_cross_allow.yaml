@@ -213,3 +213,25 @@
 "X3 MQ-102~105 UQ08_TAGSAID": act1_paths 본소 감시 — 렌즈 낀 철사의 '표찰은 좀 달고 다녀' 한 번 표시(서사 대조 중3)
 "X3 SQ-S09 UQ08_GSAID": 구만호 장면(SQS09_GU) 안 — 발각 뒤 'SB −8'의 출처 한 번(서사 대조 중4)
 "X3 SQ-S09 UQ08_PSAID": 철사 장면 안 — 검수 통과 뒤 한마디(회차 값, 재미 검수 ②)
+# ---- 1-12h h3 UQ-09 「탁한 물」(진행기 uq_r02.gd · 도민지 갈래는 JM_PEOPLE JM_DO 안)
+"X1 UQ-09 N-JM-K1": 위 UQ-07 · 08 · 10과 같음(진행기 파일 하나를 같이 쓴다 — 광장 아이는 공격 대상이 아니다)
+"X1 MQ-102~105 N-R02-010 언급": 노복희 U9RQ '도민지가 그러더군'은 RQ22_OPEN(도민지가 살아서 매듭을 들은 판)에서만 열리는 지난 말 — 그 뒤 도민지가 죽어도 들은 말은 참
+"X3 JM_PEOPLE UQ09_MET": UQ-09 갈래를 도민지 장면(JM_DO — 도민지의 유일한 장면, 이름순 첫 참 A106) 안에 둠 — 같은 사실 한 곳(P1)
+"X3 JM_PEOPLE UQ09_HATCH": 위와 같음(점검구를 열어 줌)
+"X3 JM_PEOPLE UQ09_LIE": 위와 같음('처리했어' 거짓말 — 재미 검수 T8)
+"X3 JM_PEOPLE UQ09_LIE_DAY": 위와 같음
+"X3 JM_PEOPLE UQ09_LSAID": 위와 같음
+"X3 JM_PEOPLE UQ09_READY": 위와 같음(매듭 — 말할 일을 0으로)
+"X3 JM_PEOPLE UQ09_REDIRTY": 위와 같음(두 번째 ② 뒤 끝)
+"X3 JM_PEOPLE UQ09_RES": 위와 같음
+"X3 JM_PEOPLE UQ09_RSAID": 위와 같음
+"X3 JM_PEOPLE UQ09_SMSAID": 위와 같음
+"X3 JM_PEOPLE UQ09_EGG_SOLD": 분식 변상민 장면(JM_BYEON) — 대형 바퀴 알집을 사서 값표에 한 줄(재미 검수 T10)
+"X3 MQ-102~105 UQ09_BSAID": 노복희 장면 안 2194 철창 사연 한 번(재미 검수 T3)
+"X3 JM_PEOPLE UQ09_EGG_DAY": 분식 변상민 장면(JM_BYEON) — 바퀴알 떡볶이 한정 기간(재미 검수 ①)
+"X3 JM_PEOPLE UQ09_EGG_ENDSAID": 위와 같음(한정 끝 한 번)
+"X3 JM_PEOPLE UQ09_PIPE": 도민지 장면 — ②에서 ①로 올라가면 흡입관을 저수조로 되물림(관 값 끝 — 재미 검수 ②)
+"X3 MQ-102~105 UQ09_GOPEN": 노복희 장면 — 어미가 살아 있는데 3조 철창을 연 판에 한 번(재미 검수 엉뚱한 짓)
+"X3 JM_PEOPLE UQ09_GIFT": 도민지 장면 — 맑아진 다음 아침 거 다섯 병을 맡아 둠(서사 대조 중4)
+"X3 MQ-102~105 UQ09_READY": 노복희 장면 U9DEAD — 도민지가 결말 전에 죽었는데 일을 끝낸 판이면 상인회장이 매듭을 받음(서사 대조 하10 · P11)
+"X3 MQ-102~105 UQ09_RES": 위와 같음

@@ -1,0 +1,134 @@
+{
+ "id": "UQ09_EGG2",
+ "title": "알집 무더기 — 물길 건너",
+ "loc": "L-R02-11",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "BURN": 5,
+  "BURNT": 9,
+  "WET": 11,
+  "TAKEN": 13
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "UQ09_E2 == 1",
+   "to": "BURNT"
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_E2 == 2",
+   "to": "WET"
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_E2 == 3",
+   "to": "TAKEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "물길 건너 바닥에 알집 다섯. 막이 물길까지 늘어졌다 — 이게 흡입관으로 흘러든다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "등유를 붓고 불을 붙인다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "M-436",
+       "n": 1
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "BURN",
+     "id": "UQ09_EGG2:1:0"
+    },
+    {
+     "text": "화염병을 던진다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "W-057",
+       "n": 1
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "BURN",
+     "id": "UQ09_EGG2:1:1"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ09_EGG2:1:2"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "UQ09_E2 = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "불길이 막을 타고 물길 쪽으로 기어간다. 알집이 하나씩 터진다."
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "burn",
+    "2"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "검게 탄 껍질. 물길 쪽 막도 타서 오그라들었다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "물에 잠겨 허옇게 불어 터진 알집."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈 막. 알집은 없다 — 어미가 데려갔다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-09.txt"
+}

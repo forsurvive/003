@@ -7,7 +7,8 @@
 class_name Enemy
 extends Actor
 
-const DOGS := ["CR-104", "CR-095", "CR-107", "CR-106", "CR-108", "CR-105", "CR-500", "CR-136", "CR-097", "CR-121", "CR-096", "CR-004", "CR-080", "CR-081", "CR-082", "CR-130"]
+const DOGS := ["CR-104", "CR-095", "CR-107", "CR-106", "CR-108", "CR-105", "CR-500", "CR-136", "CR-097", "CR-121", "CR-096", "CR-004", "CR-080", "CR-081", "CR-082", "CR-130", "CR-501"]
+const MOM_HATCH_S := 15.0                       ## 배수구 어미 부화 간격(SD-14 CR-501 '15초마다 큰바퀴 3')
 const GHOULS := ["CR-200", "CR-201", "CR-202", "CR-204", "CR-205", "CR-206", "CR-457", "CR-459", "CR-518"]   ## 방사능에 낫는 구울(SD-14 §7.2 '라드 100당 HP +1')
 const FERALS := ["CR-200", "CR-201", "CR-204", "CR-205", "CR-206"]            ## 빛나는 구울 폭발에 HP +30%를 받는 야생 구울
 const BURST_R := 4.0 * 32.0                       ## 빛나는 구울 방사능 폭발 반경(SD-14 CR-202 '반경 4타일')
@@ -150,7 +151,7 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 	arm = str(opts.get("arm", "baton" if row["id"] == "CR-473" else ("claw" if row["id"] in ["CR-200", "CR-201", "CR-202", "CR-204", "CR-206"] else "")))
 	who = str(opts.get("who", ""))
 	stance = str(opts.get("stance", ""))
-	var is_roach: bool = row["id"] == "CR-002"
+	var is_roach: bool = row["id"] in ["CR-002", "CR-001"]
 	var is_dog: bool = row["id"] in DOGS                                         # 네발 물기(들개 · 1-5 변이 시궁쥐 — 2타일에서 덤벼 문다, SD-14 §4)
 	_rng.seed = int(pos.x * 31 + pos.y * 17)
 	var sheet := "en_cr401_loco"
@@ -171,6 +172,10 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 			sheet = "cr_cr096_loco"                                  # 굴쥐(1-D3, SD-14 §4.1 — 흙빛 · 흰 발톱 · 땅속 전용 컷)
 		"CR-004":
 			sheet = "cr_cr004_loco"                                  # 알집바퀴(1-D3, SD-14 §3.1 — 배 끝 알집이 맥동)
+		"CR-501":
+			sheet = "cr_cr501_loco"                                  # 배수구 어미(1-12h UQ-09, SD-14 §10.2 — 등에 알집 무더기 · 긴 더듬이)
+		"CR-001":
+			sheet = "cr_cr001_loco"                                  # 잔바퀴 떼(1-12h UQ-09, SD-14 §3.1 — 64칸 안 작은 바퀴 무리 한 몸)
 		"CR-136":
 			sheet = "cr_cr136_loco"
 		"CR-080", "CR-081", "CR-082":
@@ -283,8 +288,9 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 	if stance == "hold":
 		brain.per = 7.0
 	if is_roach:
-		loco.custom = {"run": {"frames": 4, "px": 3.0, "diag": 3.0, "contact": [0, 2], "speed_t": float(row["speed"])},
-			"walk": {"frames": 4, "px": 3.0, "diag": 3.0, "contact": [0, 2], "speed_t": float(row["speed"]) * 0.5}}
+		var rpx := 2.0 if row["id"] == "CR-001" else 3.0                  # 잔바퀴 떼 시트는 컷당 2px(무리가 꿈틀 — 미끄러지지 않게)
+		loco.custom = {"run": {"frames": 4, "px": rpx, "diag": rpx, "contact": [0, 2], "speed_t": float(row["speed"])},
+			"walk": {"frames": 4, "px": rpx, "diag": rpx, "contact": [0, 2], "speed_t": float(row["speed"]) * 0.5}}
 	ui_font = load("res://assets/fonts/Galmuri9.ttf")
 	if str(opts.get("doze", "")) != "":
 		doze = str(opts["doze"])
@@ -302,7 +308,9 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 		set_pose("sleep" if curl else "lie")                        # 웅크려 자는 그림이 있는 개(외눈 · 백구 핏줄)는 그 그림으로
 	mole = row["id"] == "CR-096"
 	aqua = row["id"] == "CR-130"
-	nest = row["id"] == "CR-004"
+	nest = row["id"] in ["CR-004", "CR-501"]
+	if row["id"] == "CR-001":
+		cmb.fire_mul = 2.0                                          # 잔바퀴 떼: 화염 ×2(SD-14 §3.1)
 	if nest:
 		set_pose("pulse")
 	if mole and world is InteriorMap and world.soil_at(world.tile_of(pos)) and not asleep:
@@ -376,6 +384,8 @@ func think(dt: float, target: Combatant, nav, shots: Projectiles) -> void:   ## 
 		var hit: bool = cmb.last_hit_from != Vector2.ZERO
 		if asleep:                                                  # 잠(S4): 맞거나, 가까운 소리(0.5+)거나, 바로 옆까지 오면 깬다
 			var near := 2.5 if lurk else 1.5
+			if lurk and row["id"] == "CR-501" and target.posture == "crouch":
+				near = 0.0                                          # 천장 배수구 어미: 웅크려 불빛 없이 지나가면 밑으로 지나간다(소리 · 불 · 맞음엔 깬다 — 1-12h 재미 검수 T6)
 			if doze != "":                                          # 휴면: 서서 걸으면 2칸 · 웅크리면 1칸까지(서 있기만 하면 1.5칸)
 				near = (0.5 if target.sneak >= 50.0 else 1.0) if target.posture == "crouch" else (2.0 if target.movement != "still" else 1.5)
 			if hit or _heard >= 0.5 or (sees and dist_t <= near) or brain.gauge >= 50.0:
@@ -607,6 +617,12 @@ func _act(dt: float, target: Combatant, shots: Projectiles) -> void:
 
 func _swarm(dt: float, target: Combatant, to_t: Vector2) -> void:
 	_cool = maxf(0.0, _cool - dt)
+	if row["id"] == "CR-001":                                       # 잔바퀴 떼: 발밑을 덮으며 0.5초마다 1(SD-14 §3.1 '접촉 1/0.5초')
+		if _cool <= 0.0 and not target.dead and to_t.length() <= cmb.radius + target.radius + 6.0 and meets(target):
+			_cool = 0.5
+			target.last_by = cmb.team
+			target.take({"hp": 1.0}, loco.logical)
+		return
 	if _leap > 0.0:                                               # leap: airborne frames only, then bite
 		_leap -= dt
 		var blocked := func(a: Vector2, b: Vector2) -> Vector2: return world.move_circle(a, b, radius_px)
@@ -1001,11 +1017,12 @@ func _specials(dt: float, target: Combatant) -> void:
 		if _stir > 0.0:
 			_stir -= dt
 			_hatch_t += dt
-			if _hatch_t >= HATCH_S - 1.0 and not _click:
+			var hs := MOM_HATCH_S if row["id"] == "CR-501" else HATCH_S
+			if _hatch_t >= hs - 1.0 and not _click:
 				_click = true
 				_say("click", 1.0)
 				set_pose("crack")
-			if _hatch_t >= HATCH_S:
+			if _hatch_t >= hs:
 				_hatch_t = 0.0
 				_click = false
 				set_pose("pulse")

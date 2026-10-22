@@ -4,6 +4,7 @@
   scale_beam  시장 반장 추 저울(2×1) — 나무 받침 · 쇠 저울대 · 왼쪽 고철 접시(자릿세 고철) · 오른쪽 추 접시와 추 셋.
               기본 = 추 쪽 받침에 쇠판을 덧댐(접시 밑 검은 판 · 저울대가 고철 쪽으로 덜 기움) · 상태 fixed(쇠판 떼어 냄 · 새 눈금 딱지)
   stool_goggles  철사의 빈 의자(1×1, UQ-08) — 둥근 나무 의자 위에 고글 하나(가죽 끈 · 두 알 — 기본 = 맨 알 · 상태 lens = 한쪽 알에 세진 렌즈 푸른 빛)
+  egg_cluster  배수구 알집 무더기(1×1, UQ-09) — 끈적한 막 위 적갈색 알집 다섯 · 상태 burnt(검게 탄 껍질 · 불씨) · drowned(물에 잠겨 허옇게 불어 터짐)
   w_soot       벽 그을음(벽 1×0, UQ-08) — 부채꼴로 번진 검은 그을음 · 가운데 터진 자국 · 아래 분필 글씨 몇 줄
 props_bc.PROPS에 합쳐져 r01_props 아틀라스로 나간다."""
 import math
@@ -197,6 +198,33 @@ def stool_goggles(state=""):
     return im
 
 
+def egg_cluster(state=""):
+    """배수구 알집 무더기(30×26)."""
+    im = img(30, 26)
+    d = ImageDraw.Draw(im)
+    _shadow(d, 2, 28, 24)
+    d.ellipse([2, 15, 28, 24], fill=C("P17") if state != "drowned" else C("P35"))            # 끈적한 막 / 물
+    pods = [(8, 14), (15, 11), (22, 14), (11, 18), (19, 18)]
+    for k, (x, y) in enumerate(pods):
+        if state == "burnt":
+            d.ellipse([x - 4, y - 3, x + 4, y + 3], fill=C(INK))
+            d.arc([x - 4, y - 3, x + 4, y + 3], 200, 320, fill=C("P04"))
+            if k % 2 == 0:
+                d.point((x, y - 1), fill=C("P53")); d.point((x + 1, y), fill=C("P22"))         # 불씨
+        elif state == "drowned":
+            d.ellipse([x - 4, y - 2, x + 4, y + 3], fill=C("P07"))
+            d.line([x - 2, y, x + 2, y + 1], fill=C("P05"))                                     # 불어 터진 솔기
+        else:
+            d.ellipse([x - 4, y - 3, x + 4, y + 3], fill=C(INK))
+            d.ellipse([x - 3, y - 2, x + 3, y + 2], fill=C("P24"))
+            d.line([x - 2, y - 2, x + 2, y - 2], fill=C("P26"))                                  # 윗면 빛
+            for j in (-2, 0, 2):
+                d.point((x + j, y), fill=C("P22"))                                              # 알 칸 톱니
+    if state == "burnt":
+        d.line([6, 6, 8, 2], fill=C("P05")); d.line([20, 5, 21, 1], fill=C("P05"))             # 가는 연기
+    return im
+
+
 def w_soot():
     """벽 그을음(30×34): 부채꼴 검댕 · 가운데 갈라진 자국 · 분필 글씨 줄."""
     im = img(30, 34)
@@ -220,11 +248,13 @@ PROPS_UQ2 = {
     "scale_beam": _r(scale_beam, 2, 1),
     "stool_goggles": _r(stool_goggles, 1, 1, down=-2),
     "w_soot": _r(w_soot, 1, 0, "wall", dx=1, dy=2),
+    "egg_cluster": _r(egg_cluster, 1, 1, down=-2),
 }
 STATES_UQ2 = {
     "toy_robot": {"fixed": lambda: toy_robot("fixed")},
     "scale_beam": {"fixed": lambda: scale_beam("fixed"), "swap": lambda: scale_beam("swap")},
     "stool_goggles": {"lens": lambda: stool_goggles("lens")},
+    "egg_cluster": {"burnt": lambda: egg_cluster("burnt"), "drowned": lambda: egg_cluster("drowned")},
 }
 
 

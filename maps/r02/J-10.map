@@ -1,0 +1,83 @@
+# 영등포 지하상가 J-10 외곽 배수구(SD-09a L-R02-11 J-10 표 '40×20 · 배수구 어미 CR-501 · 배수 밸브 터미널' · SD-05 UQ-09, 단계 1-12h h3).
+# 동쪽 사다리 = J-02 정수 노점 뒤 흡입관 점검구 · 서쪽 높은 턱 사다리 = J-09 배수구 철창(2194 상인회 당번 4조가 바퀴를 가두려고 안에서 사슬을 감고 못 나왔다).
+# 낮은 바닥(저수 바닥 · 물길) · 높은 턱 둘(동 · 서) · 2077 관리원 대피 칸(동남 — 저수 바닥 쪽 문). 배수 밸브를 열면 낮은 바닥이 허리까지 찬다(flood — 진행기가 맵을 다시 들임).
+# 천장(물길 위)에 배수구 어미가 붙어 있다 — 웅크려 지나가면 깨지 않는다 · 서서 다가오거나 소리 · 불 · 맞으면 떨어진다(lurk). 알집 셋: 저수조 옆 · 물길 건너 · 서쪽 턱(천장 관 밑 — 물이 닿지 않는다).
+map J-10 외곽 배수구
+set jm
+grid
+#####################################ss#
+#####################################ss#
+#~~~~~~~uuuuuuuuuuuuuuuuuuuuuuu~~~~~~~~#
+#~~~~~~~uuuuuuuuuuuuuuuuuuuuuuu~~~~~~~~#
+#~~~~~~~uuuuuuuuuuuuuuuuuuuuuuu~~~~~~~~#
+#~~~~~~~uuuuuuuuuuuuuuuuuuuuuuu~~~~~~~~#
+#~~~~~~~uuuuuuuuuuuuuuuuuuuuuuu~~~~~~~~#
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu~~~~~~~~#
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu~~~~~~~~#
+#uuffffffffffffffffffffffffffff~~~~~~~~#
+#uuffffffffffffffffffffffffffff#########
+#uuffffffffffffffffffffffffffff#########
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu#########
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu#.......#
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu........#
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu#.......#
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu#.......#
+#uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu#########
+########################################
+########################################
+end
+exit 37 1 J-02 from_J10
+exit 38 1 J-02 from_J10
+mark from_J02 37 3 S
+mark from_J09 2 3 S
+flood 8 2 23 5 cond="UQ09_FLOOD == 1"
+flood 1 7 30 11 cond="UQ09_FLOOD == 1"
+# ---------------------------------------------------------------- 동쪽 높은 턱 · 사다리
+text 35 4 "바닥에 분필 화살표. '여기까지 — 민지'. 화살표 끝이 저수조 쪽을 가리킨다. 분필이 아직 덜 번졌다." w=1
+text 33 2 "철판 당번표가 벽에 볼트로 박혔다. '상인회 배수 청소 당번 2194 — 1조 · 2조 · 3조 · 4조'. 1조~3조 칸에 날짜 도장. 4조 칸은 비었다." w=1
+# ---------------------------------------------------------------- 필터 저수조 · 흡입관 · 배수 밸브
+prop reservoir 17 2
+text 19 3 "필터 저수조." w=3 scene=UQ09_TANK
+prop pipe_run 22 2
+prop ds_valve 17 6 cond="UQ09_FLOOD == 0"
+prop ds_valve 17 6 state=open cond="UQ09_FLOOD != 0"
+text 17 6 "배수 밸브 단말." scene=UQ09_VALVE
+# ---------------------------------------------------------------- 알집 셋
+prop egg_cluster 14 5 cond="UQ09_E1 == 0"
+prop egg_cluster 14 5 state=burnt cond="UQ09_E1 == 1"
+prop egg_cluster 14 5 state=drowned cond="UQ09_E1 >= 2"
+text 14 5 "알집 무더기." scene=UQ09_EGG1
+prop egg_cluster 21 14 cond="UQ09_E2 == 0"
+prop egg_cluster 21 14 state=burnt cond="UQ09_E2 == 1"
+prop egg_cluster 21 14 state=drowned cond="UQ09_E2 >= 2"
+text 21 14 "알집 무더기." scene=UQ09_EGG2
+prop egg_cluster 5 4 cond="UQ09_E3 == 0"
+prop egg_cluster 5 4 state=burnt cond="UQ09_E3 == 1"
+prop egg_cluster 5 4 state=drowned cond="UQ09_E3 == 3"
+text 5 4 "알집 무더기." scene=UQ09_EGG3
+# ---------------------------------------------------------------- 물길 · 허물 길
+text 26 10 "물길. 기름 같은 막이 무지개 빛으로 돈다. 물 밑에 바퀴 허물이 깔렸다." w=1 scene=UQ09_WATER
+text 10 13 "바퀴 허물이 한 줄로 이어진다. 크다 — 손바닥 둘만 하다. 줄은 서쪽 벽 아래 틈으로 사라진다." w=1
+text 1 16 "벽 아래 틈. 허물이 여기서 끝난다. 틈 안쪽에서 바람이 올라온다." w=1 scene=UQ09_CRACK
+# ---------------------------------------------------------------- 서쪽 높은 턱 — 2194 당번 4조
+prop w_ladder 2 0
+text 2 2 "사다리 위 배수구 철창. 안쪽에서 사슬로 감겼다." scene=UQ09_CHAIN
+prop remains 4 3
+text 4 3 "유해 셋이 서로 기대 앉았다. 상인회 완장." scene=UQ09_CREW
+prop drum 6 2
+text 6 2 "그을린 등유 통. 바닥에 검게 탄 자국이 둥글게 번졌다 — 여기서 뭔가를 태우려 했다." w=1
+# ---------------------------------------------------------------- 2077 관리원 대피 칸
+prop cot 37 14
+prop hm_shelf 33 13
+box 33 13 stash name="물 안 닿는 선반"
+text 34 14 "선반 다리에 페인트 눈금 — 2077년 침수 높이. 선반 맨 위는 눈금보다 한 뼘 높다. 여기 둔 것은 젖지 않는다." w=1
+prop note_ground 35 16
+text 35 16 "관리원 근무 일지." scene=UQ09_LOG
+# ---------------------------------------------------------------- 적: 천장 어미 · 잔바퀴 떼 · 큰바퀴(어미가 살아 있을 때 — 익사면 함께)
+enemy CR-501 19 10 who=N-JM-B1 lurk=1 boss=1 cond="dead(\"N-JM-B1\") == 0 and UQ09_MOM == 0"
+enemy CR-001 16 7 cond="UQ09_MOM == 0 and UQ09_FLOOD == 0"
+enemy CR-002 25 13 cond="UQ09_MOM == 0 and UQ09_FLOOD == 0"
+enemy CR-002 9 14 cond="UQ09_MOM == 0 and UQ09_FLOOD == 0"
+enemy CR-002 15 6 cond="UQ09_REGROW == 1 and UQ09_E1 == 0"
+enemy CR-002 22 13 cond="UQ09_REGROW == 1 and UQ09_E2 == 0"
+enemy CR-002 6 5 cond="UQ09_REGROW == 1 and UQ09_E3 == 0"

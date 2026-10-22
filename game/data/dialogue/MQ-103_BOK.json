@@ -7,71 +7,79 @@
  "labels": {
   "START": 0,
   "MENU": 8,
-  "JH01": 12,
-  "JH01_AGAIN": 19,
-  "JH01_FIX": 21,
-  "JH01_FIX_DEAD": 24,
-  "JH01_PICKED": 26,
-  "JH01_KEY": 30,
-  "JH01_DONE": 37,
-  "JH01_CRUSH": 40,
-  "JH01_LEAK": 43,
-  "JH01_PAY": 45,
-  "JH01_TWO": 50,
-  "JH01_ONE": 52,
-  "JH01_CASH": 53,
-  "JH01_CASH_PICK": 57,
-  "JH03_ALONE": 61,
-  "JH03_TOLD": 65,
-  "JH03_TOLD_GONE": 72,
-  "JH03_TOLD_Q": 74,
-  "JH03_TOLD_N": 76,
-  "JH03_TOLD_BAN": 78,
-  "JH03_SOLD": 80,
-  "COLD": 84,
-  "JH02_CAUGHT": 86,
-  "JH02_CAUGHT_P": 91,
-  "JH02_REPAY": 94,
-  "JH02_DENY": 97,
-  "JH02": 100,
-  "JH02_ASK": 102,
-  "JH02_LATER": 106,
-  "JH02_MORE": 109,
-  "JH02_S08": 114,
-  "JH02_SOMIN": 118,
-  "JH02_MENU": 120,
-  "JH02_PAY": 123,
-  "JH02_PAY60": 127,
-  "JH02_BILLS": 131,
-  "JH02_SUB": 135,
-  "JH02_COAT": 138,
-  "JH02_LIE": 142,
-  "JH02_DEAD": 147,
-  "JH02_DONE": 150,
-  "S8": 153,
-  "S8_BOTH": 157,
-  "S8_NO": 160,
-  "S8_PAY": 162,
-  "S8_ONE_B": 165,
-  "S8_ONE_A": 168,
-  "UQ71_CORE": 171,
-  "UQ71_SOLD": 174,
-  "UQ71_SOLD2": 179,
-  "ABOUT": 181,
-  "SHOP": 185,
-  "MA": 187,
-  "WHY": 190,
-  "JOB": 194,
-  "JOB_ALONE": 201,
-  "JOB_HINT": 204,
-  "FEE": 206,
-  "WAITING": 210,
-  "REWARD": 212,
-  "HAVEPASS": 216,
-  "REGULAR": 218,
-  "MA_DEAD": 220,
-  "MA_LOG": 223,
-  "MA_DEAD_KNEW": 230
+  "U9B": 14,
+  "U9B_SAW": 18,
+  "U9B_OPEN": 20,
+  "U9B_OPEN0": 25,
+  "U9B_REST": 27,
+  "U9P": 30,
+  "U9DEAD": 32,
+  "U9RQ": 36,
+  "JH01": 38,
+  "JH01_AGAIN": 45,
+  "JH01_FIX": 47,
+  "JH01_FIX_DEAD": 50,
+  "JH01_PICKED": 52,
+  "JH01_KEY": 56,
+  "JH01_DONE": 63,
+  "JH01_CRUSH": 66,
+  "JH01_LEAK": 69,
+  "JH01_PAY": 71,
+  "JH01_TWO": 76,
+  "JH01_ONE": 78,
+  "JH01_CASH": 79,
+  "JH01_CASH_PICK": 83,
+  "JH03_ALONE": 87,
+  "JH03_TOLD": 91,
+  "JH03_TOLD_GONE": 98,
+  "JH03_TOLD_Q": 100,
+  "JH03_TOLD_N": 102,
+  "JH03_TOLD_BAN": 104,
+  "JH03_SOLD": 106,
+  "COLD": 110,
+  "JH02_CAUGHT": 112,
+  "JH02_CAUGHT_P": 117,
+  "JH02_REPAY": 120,
+  "JH02_DENY": 123,
+  "JH02": 126,
+  "JH02_ASK": 128,
+  "JH02_LATER": 132,
+  "JH02_MORE": 135,
+  "JH02_S08": 140,
+  "JH02_SOMIN": 144,
+  "JH02_MENU": 146,
+  "JH02_PAY": 149,
+  "JH02_PAY60": 153,
+  "JH02_BILLS": 157,
+  "JH02_SUB": 161,
+  "JH02_COAT": 164,
+  "JH02_LIE": 168,
+  "JH02_DEAD": 173,
+  "JH02_DONE": 176,
+  "S8": 179,
+  "S8_BOTH": 183,
+  "S8_NO": 186,
+  "S8_PAY": 188,
+  "S8_ONE_B": 191,
+  "S8_ONE_A": 194,
+  "UQ71_CORE": 197,
+  "UQ71_SOLD": 200,
+  "UQ71_SOLD2": 205,
+  "ABOUT": 207,
+  "SHOP": 211,
+  "MA": 213,
+  "WHY": 216,
+  "JOB": 220,
+  "JOB_ALONE": 227,
+  "JOB_HINT": 230,
+  "FEE": 232,
+  "WAITING": 236,
+  "REWARD": 238,
+  "HAVEPASS": 242,
+  "REGULAR": 244,
+  "MA_DEAD": 246,
+  "MA_LOG": 249,
+  "MA_DEAD_KNEW": 256
  },
  "ops": [
   {
@@ -114,6 +122,16 @@
    "who": "C-050",
    "emo": "기본",
    "text": "볼트 양반이구먼. 상인회장 노복희요. 장사하러 왔소, 구경 왔소?"
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_GRATE == 1 and UQ09_MOM == 0 and UQ09_GOPEN == 0 and MQ103_NEST == 1",
+   "to": "U9B_OPEN"
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_GRATE == 1 and UQ09_MOM != 0 and UQ09_GOPEN == 0",
+   "to": "U9B_REST"
   },
   {
    "op": "if",
@@ -220,14 +238,163 @@
      "id": "MQ-103_BOK:1:9"
     },
     {
+     "text": "외곽 배수구 말인데요",
+     "tags": [],
+     "cond": "(UQ09_MET == 1 or UQ09_CREW == 1 or UQ09_GSEEN == 1) and UQ09_BSAID == 0",
+     "fx": "",
+     "to": "U9B",
+     "id": "MQ-103_BOK:1:10"
+    },
+    {
+     "text": "정수 노점 관 값 말인데요",
+     "tags": [],
+     "cond": "UQ09_PIPE == 1",
+     "fx": "",
+     "to": "U9P",
+     "id": "MQ-103_BOK:1:11"
+    },
+    {
+     "text": "도민지 일 — 외곽 배수구는 치웠어요",
+     "tags": [],
+     "cond": "dead(\"N-R02-010\") == 1 and UQ09_READY == 1 and UQ09_RES == 0",
+     "fx": "",
+     "to": "U9DEAD",
+     "id": "MQ-103_BOK:1:12"
+    },
+    {
+     "text": "배수구 청소 일감 말인데요",
+     "tags": [],
+     "cond": "RQ22_OPEN == 1",
+     "fx": "",
+     "to": "U9RQ",
+     "id": "MQ-103_BOK:1:13"
+    },
+    {
      "text": "(인사만 한다)",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "MQ-103_BOK:1:10"
+     "id": "MQ-103_BOK:1:14"
     }
    ]
+  },
+  {
+   "op": "do",
+   "fx": "UQ09_BSAID = 1"
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_CREW == 1",
+   "to": "U9B_SAW"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "피곤",
+   "text": "외곽 배수구는 2194년에 닫았소. 바퀴가 상가로 넘어오던 해 — 당번 4조가 등유 들고 내려가서 안 올라왔지. 그 뒤로 아무도 안 열었소."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "슬픔",
+   "text": "(장부를 덮는다) …봤구먼. 4조. 놈들이 사다리로 올라오려 해서 — 점검구는 내가 위에서 잠갔소. 저들은 서쪽 철창을 안에서 감았고. 밖에서 열지 말라고 해서, 정말로 안 열었지. 여든 해 넘게. 점검구 열쇠는 흡입관 맡은 정수 노점에 줬소."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "do",
+   "fx": "UQ09_GOPEN = 1"
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_MET == 0 and UQ09_CREW == 0",
+   "to": "U9B_OPEN0"
+  },
+  {
+   "op": "do",
+   "fx": "aff(\"JH\", -1)"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "분노",
+   "text": "운반조가 그러더군. 남쪽 통로에 큰바퀴가 올라왔다고 — 배수구 철창 사슬이 풀렸다고. …4조가 안에서 잠근 걸 네가 열었구먼. 밖에서 열지 말라 했지, 안에서 열 줄은 몰랐겠지."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "피곤",
+   "text": "운반조가 그러더군. 남쪽 통로에 큰바퀴가 올라왔다고. 배수구 철창 사슬이 풀렸대. …누가 열었는지 몰라도 — 안에서 연 거야."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "do",
+   "fx": "UQ09_GOPEN = 1"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "슬픔",
+   "text": "배수구 철창이 열렸다며. 밑이 조용하다니… 4조도 이제 쉬겠구먼."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "정수 노점 관 값은 내가 받소. 공용 관은 진료소 몫이라 공짜로 내줄 수가 없어. 두 캡 — 장부에 적혀 있지."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "do",
+   "fx": "UQ09_RES = 1; UQ09_READY = 0; RQ22_OPEN = 1; quest(\"UQ-09\", 100)"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "u9reward"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "슬픔",
+   "text": "…민지가 그렇게 기다리던 걸. 바늘은 내가 볼게. 배수구 청소 일감 생기면 부르리다."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "도민지가 그러더군. 밑에 걸 치웠다고. 바퀴는 또 꼬여 — 청소 일감 생기면 부르리다. 상인회 일당으로."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
   },
   {
    "op": "if",

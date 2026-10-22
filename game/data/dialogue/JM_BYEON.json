@@ -5,9 +5,24 @@
  "npc": "N-R02-007",
  "cond": "V_ACT >= 1",
  "labels": {
-  "START": 0
+  "START": 0,
+  "EGGMENU": 5,
+  "EGGEND": 7,
+  "MENU": 9,
+  "EGG": 10,
+  "SHOP": 12
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "UQ09_EGG_SOLD == 1 and GAME_DAY > UQ09_EGG_DAY and GAME_DAY <= UQ09_EGG_DAY + 3",
+   "to": "EGGMENU"
+  },
+  {
+   "op": "if",
+   "cond": "UQ09_EGG_SOLD == 1 and GAME_DAY > UQ09_EGG_DAY + 3 and UQ09_EGG_ENDSAID == 0",
+   "to": "EGGEND"
+  },
   {
    "op": "line",
    "who": "N-R02-007",
@@ -19,6 +34,67 @@
    "who": "N-R02-007",
    "emo": "기본",
    "text": "떡은 버섯 가루로 쪘어. 국물은… 묻지 마."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-007",
+   "emo": "미소",
+   "text": "(값표를 턱으로 가리킨다) '바퀴알 떡볶이 — 한정'. 네가 가져온 거야. 손님들이 줄 섰어. 묻는 사람은 없고."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "do",
+   "fx": "UQ09_EGG_ENDSAID = 1"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-007",
+   "emo": "기본",
+   "text": "바퀴알 떡볶이? 한정 끝났어. 또 있으면 가져와 — 손님들이 아직 물어."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "(대형 바퀴 알집을 내민다) 이거 재료 돼요?",
+     "tags": [
+      {
+       "k": "item",
+       "id": "M-437",
+       "n": 1
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "EGG",
+     "id": "JM_BYEON:1:0"
+    },
+    {
+     "text": "물건을 본다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SHOP",
+     "id": "JM_BYEON:1:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "UQ09_EGG_SOLD = 1; UQ09_EGG_DAY = GAME_DAY; caps(40)"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-007",
+   "emo": "놀람",
+   "text": "(주머니를 눌러 본다) 꿈틀대네. …알이면 알이지. 사십 캡. 내일 값표에 한 줄 붙는다 — '바퀴알 떡볶이, 한정'."
   },
   {
    "op": "cmd",
