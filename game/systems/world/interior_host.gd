@@ -64,6 +64,8 @@ var date_text := "":                             ## 핍-보이 위 줄 날짜(�
 		date_text = v
 		if st != null and st.vars.has("GAME_HOUR") and v != "":
 			st.vars.set_v("GAME_HOUR", Clock.hour(v))
+			if st.vars.has("GAME_WDAY"):
+				st.vars.set_v("GAME_WDAY", Clock.weekday(v))            # 요일(0 월 ~ 6 일) — 맵 조건식(1-12h UQ-70 수 · 토 수금)
 var cam_lead := Vector2.ZERO                     ## 카메라 리드(조준 쪽으로 끌린 만큼)
 var text_seen := {}                              ## 여러 번 조사하는 글: 키 -> 읽은 횟수
 var _talking: Dictionary = {}

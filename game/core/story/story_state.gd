@@ -113,6 +113,7 @@ func _init() -> void:
 	# KEY 허리춤 열쇠 · FREED 풀어 준 '인력' 수 · READ 장부를 읽음 · DEAL 이름을 산 거래 · BURNT 황두칠이 장부를 태움 · DEBT 112명 빚 탕감 ·
 	# BJ 계엄군 초소에 넘김 · TALK 소장 면담(1 만남 · 2 열쇠를 빼앗긴 뒤 마당으로 내려감) · BOUGHT 88번을 삼 · DEPO 보증금을 냄
 	# SB_127 훅 「127번」(1 아내가 부탁함 · 2 우리에서 빼 옴 · 3 값을 치르고 삼 · 4 집에 돌아감) · GB_PASS 길금순이 벽장 통로를 알려 줌
+	vars.declare("GAME_WDAY", "int", 0)                                      # 요일(0 월 ~ 6 일 — date_text에서, 1-12h)
 	for k in ["GAME_HOUR", "SB_RAID", "SB_PASS", "SB_DOGS", "SB_SAFE", "SB_KEY", "SB_FREED", "SB_READ", "SB_DEAL", "SB_BURNT",
 			"SB_DEBT", "SB_BJ", "SB_TALK", "SB_BOUGHT", "SB_DEPO", "SB_127", "GB_PASS"]:
 		vars.declare(k, "int", 0)
