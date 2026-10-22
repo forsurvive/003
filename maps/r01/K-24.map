@@ -53,6 +53,8 @@ text 2 12 "자습석 단말. 화면마다 같은 글이 타 들어가 있다 —
 box 16 12 desk w=2 name="자습석 서랍"
 prop plant_pot 19 3
 npc N-R01-056 9 4 S
+# 1-12i UQ-65: 교탁 위 문항집 — 손재석이 죽었으면 그냥 집고, 살아 있으면 웅크려 몰래(재미 검수 X3 — 판정 · 해설 보너스는 수업 몫)
+text 8 4 "교탁 위 문항집." scene=K24_BOOK65 cond="UQ65_BOOK == 0"
 # 원장실 — 강의실 쪽 옆문(1-12b: 잠김 [자물쇠 따기 25] · 원장 대행이 보고 있으면 막는다 · 화술 · 자습 한 시간)
 prop k24_side_door 21 12 cond="FQ_GS02_DOOR == 0"
 prop k24_side_door_open 21 12 cond="FQ_GS02_DOOR != 0"

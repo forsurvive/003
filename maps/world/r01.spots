@@ -82,7 +82,9 @@ text 2 0 "콘크리트 둑에 분필 화살표 — '의료반 우회로 · 낮�
 # 묘지기 길덕수(N-R01-052) — 인수 대장(훅 H-R01-06 앞부분). 밤에는 변이 멧돼지(1-11 인카운터와 함께).
 spot L-R01-22 10 6
 prop memorial_base 4 0
-text 4 1 "빈 기념탑 받침. 탑이 서 있던 자리에 녹슨 볼트 네 개. 앞면 동판은 뜯겨 나갔다." w=2
+text 4 1 "빈 기념탑 받침. 탑이 서 있던 자리에 녹슨 볼트 네 개. 앞면 동판은 뜯겨 나갔다." w=2 cond="UQ64_MEM == 0"
+text 4 1 "기념탑 받침 볼트마다 국방색 꼬리표. 탑은 없어도 이름이 바람에 돈다." w=2 cond="UQ64_MEM == 1"
+text 4 1 "빈 기념탑 받침." w=2 scene=UQ64_MEM cond="UQ64_TAGS == 1 or UQ64_MEM == 1"
 prop gravestone 0 0
 prop gravestone2 1 0
 prop gravestone 0 2
@@ -93,9 +95,18 @@ prop gravestone 8 2
 prop gravestone2 9 2
 text 0 0 "이름 없는 비석. 글자가 있던 자리를 손가락으로 쓸어 본다. 아무것도 걸리지 않는다."
 prop morgue_shelf 2 4
-text 2 4 "안치소 선반. 국방색 상자마다 흰 꼬리표 '인수자 미정'. 상자 위 마른 꽃은 모두 오늘 것이다." w=2
+text 2 4 "안치소 선반. 국방색 상자마다 흰 꼬리표 '인수자 미정'. 상자 위 마른 꽃은 모두 오늘 것이다." w=2 cond="UQ64_NEWS == 0 and dead(\"N-R01-052\") == 0"
+text 2 4 "안치소 선반. 이름을 찾은 상자마다 새 쪽지 — '찾음'. 마른 꽃 사이에 노랗고 흰 생화가 섞였다." w=2 cond="UQ64_NEWS == 1 and UQ64_MEM == 0 and UQ64_LOST == 0"
+text 2 4 "안치소 선반. 꼬리표 뗀 자리마다 끈 매듭만 남았다. 꽃은 그대로 오늘 것이다." w=2 cond="UQ64_NEWS == 1 and UQ64_LOST == 1"
+text 2 4 "안치소 선반. 꼬리표 뗀 자리마다 끈 매듭만 남았다. 꽃이 말라 간다." w=2 cond="UQ64_NEWS == 1 and UQ64_MEM == 1"
+text 2 4 "안치소 선반." w=2 scene=UQ64_SHELF cond="dead(\"N-R01-052\") == 1 and UQ64_TAGS == 0"
 prop morgue_shelf 6 4
 npc N-R01-052 5 5 N
+# 1-12i UQ-64 매듭 뒤 근무지(원문 '정착지가 묘역 한 줄을 돌본다' — 다음 06:00부터 낮): 봉천 자경 · 사당 경비 교대
+npc N-GV-1 1 5 E look=M1-S4-HR02-H1-T05-1-PF12-HD05-EY00 cond="(UQ64_POST == 1 or UQ64_POST == 3) and GAME_HOUR >= 7 and GAME_HOUR < 19" bark="봉천 자경. 이 줄은 반상회가 본다. 꽃은 당번이 갈고."
+npc N-GV-2 8 5 W look=F1-S3-HR04-H2-T05-1-PF12-HD00-EY00 cond="(UQ64_POST == 2 or UQ64_POST == 3) and GAME_HOUR >= 7 and GAME_HOUR < 19 and dead(\"N-R01-041\") == 0" bark="환승촌에서 왔어요. 역장님이 이 줄 시계도 맞춰 두래요."
+npc N-GV-2 8 5 W look=F1-S3-HR04-H2-T05-1-PF12-HD00-EY00 cond="(UQ64_POST == 2 or UQ64_POST == 3) and GAME_HOUR >= 7 and GAME_HOUR < 19 and dead(\"N-R01-041\") == 1" bark="환승촌 위원회가 보냈어요. 역무실 시계는 이제 위원회가 감아요."
+npc N-BC-H1 3 5 N look=E2-S3-HR08-H4-T03-2-PF00-HD00-EY00 cond="UQ64_D412 == 1 and UQ64_NEWS == 1 and GAME_WDAY == 6 and GAME_HOUR >= 7 and GAME_HOUR < 10" bark="(지팡이를 선반에 기대 놓고 꽃을 간다) 다리가 허락하는 날은 와."
 
 # 상도 언덕 빌라촌(L-R01-27, SD-09a C · 단계 1-7c): 봉천 윗문 → 노량진 능선 길. 앞면이 무너져 거실이 길가로 쏟아진 빌라(LR-06 국가 유공 통지서) ·
 # 반상회비 미납 명단 · 판자 다리('옛날에 옥상길 연습하던 곳'). 새벽인력 추적대 매복 무대(1-12와 함께).

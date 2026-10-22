@@ -42,4 +42,5 @@ prop bench 11 9
 text 11 9 "위원회 긴 의자. 회의 때 여섯이 앉는다. 다섯 번째 자리 방석만 새것이다." w=2
 prop wall_clock 3 1
 text 3 2 "벽시계. 이 시계만 간다. 허순자가 태엽을 감는다."
+text 3 2 "벽시계." scene=UQ64_CLOCK cond="UQ64_TAGS == 1 or UQ64_D413 == 1"
 prop work_lamp 8 10

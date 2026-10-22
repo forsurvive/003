@@ -1,0 +1,128 @@
+{
+ "id": "K24_BOOK65",
+ "title": "교탁 위 문항집",
+ "loc": "L-R01-24",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TAKE": 3,
+  "ALIVE": 6,
+  "STEAL": 9,
+  "SEEN": 12
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "교탁 위, 분필 가루를 뒤집어쓴 문항집 한 권. 여백마다 붉은 필기. 9번 아래 빈칸 — '10번 없음. 아홉 문항. 200년째 셈.'"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R01-056\") == 0",
+   "to": "ALIVE"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "문항집을 챙긴다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TAKE",
+     "id": "K24_BOOK65:1:0"
+    },
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "K24_BOOK65:1:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "UQ65_BOOK = 1; give(\"M-439\", 1)"
+  },
+  {
+   "op": "cmd",
+   "name": "note",
+   "args": [
+    "UQ65-BOOK"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q65sneak"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "UQ65_STOLE == 9",
+   "to": "SEEN"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "몰래 문항집을 챙긴다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "STEAL",
+     "id": "K24_BOOK65:2:0"
+    },
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "K24_BOOK65:2:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "UQ65_STOLE = 1; UQ65_BOOK = 1; give(\"M-439\", 1)"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "손재석이 칠판 쪽을 보는 사이, 문항집이 소매 속으로 들어온다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "UQ65_STOLE = 0"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-056",
+   "emo": "기본",
+   "text": "(분필을 든 채 돌아본다) 교재는 수업 끝나고 줘요. 앉아요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-65.txt"
+}

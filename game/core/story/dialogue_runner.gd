@@ -115,6 +115,10 @@ func choose(i: int) -> Dictionary:
 	var to := str(o["to"])
 	for t in o.get("tags", []):
 		match str(t["k"]):
+			"stat":
+				if st.stat(str(t["name"])) < int(t["min"]) and _hint_ok(str(t["name"])):
+					st.vars.set_v("UQ65_BONUS", 0)                         # 문항 해설을 썼다(한 번)
+					_log("[문항 해설 — 지능 판정 보너스를 씀]")
 			"caps":
 				st.call_fn("caps", [-int(t["n"])])
 			"item":
@@ -148,6 +152,11 @@ func _jump(label: String) -> bool:
 	return false
 
 
+## 지능 판정 보너스 1회(SD-05 UQ-65 '공통: 지능 판정 보너스 1회') — 손재석 문항집을 끝내면 남는다
+func _hint_ok(stat_name: String) -> bool:
+	return st.stat_code(stat_name) == "IN" and st.vars.has("UQ65_BONUS") and int(st.vars.get_v("UQ65_BONUS")) == 1
+
+
 func _visible(opts: Array) -> Array:
 	var out := []
 	for o in opts:
@@ -166,10 +175,14 @@ func _visible(opts: Array) -> Array:
 					tag_txt.append("[화술 %d%%]" % Speech.percent(st.speech_chance(str(g.get("npc", "")), str(t["diff"]))))
 				"stat":
 					kind = "stat"
-					tag_txt.append("[%s %d]" % [t["name"], int(t["min"])])
-					if st.stat(str(t["name"])) < int(t["min"]):
-						hidden = not show_locked
-						enabled = false
+					var have := st.stat(str(t["name"]))
+					if have < int(t["min"]) and have + 1 >= int(t["min"]) and _hint_ok(str(t["name"])):
+						tag_txt.append("[%s %d · 문항 해설]" % [t["name"], int(t["min"])])   # UQ-65 '지능 판정 보너스 1회' — 1 모자란 판정 하나가 열린다(고르면 씀)
+					else:
+						tag_txt.append("[%s %d]" % [t["name"], int(t["min"])])
+						if have < int(t["min"]):
+							hidden = not show_locked
+							enabled = false
 				"skill":
 					kind = "stat"
 					tag_txt.append("[%s %d]" % [t["name"], int(t["min"])])

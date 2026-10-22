@@ -313,6 +313,8 @@ func _up(qid: String, n: int) -> void:
 
 
 func _on_day(d: int) -> void:
+	_uq65_day(d)
+	_uq64_day(d)
 	if v("UQ01_SOL") == 3 and v("UQ01_SEEN") == 0 and v("UQ01_THEFT_DAY") > 0 and d >= v("UQ01_THEFT_DAY") and v("UQ01_WITNESS") == 0:
 		_sv("UQ01_WITNESS", 1)                                       # 판정은 한 번 — 씨앗 = 뜯은 날(불러오기로 다시 굴리지 못함)
 		if _roll("seen:%d" % v("UQ01_THEFT_DAY"), SEEN_P):
@@ -693,4 +695,110 @@ func _cmd(a: Array, done: Callable) -> void:
 			_sv("V24_TICKETS", _tickets())
 		"v24":
 			_v24_buy(str(a[1]), int(a[2]), int(a[3]))
+		"q65":                                                           # UQ-65 단계(비표시 — 수업을 시작하면 10)
+			if st.quests.stage("UQ-65") < int(a[1]):
+				st.quests.set_stage("UQ-65", int(a[1]))
+		"q65book":                                                       # 수업 끝: 문항집 M-439(몰래 집었으면 이미 손에) · 원문 80 XP의 나머지 30 · 지능 판정 보너스 1회
+			if v("UQ65_BOOK") == 0:
+				_sv("UQ65_BOOK", 1)
+				st.call_fn("give", ["M-439", 1])
+			if v("UQ65_XP") == 0:
+				_sv("UQ65_XP", 1)
+				_sv("UQ65_BONUS", 1)
+				_sv("UQ65_LESSON_DAY", day())                                # '다음 시간엔 4번부터' — 같이 푸는 수업은 다음 날부터
+				_sv("UQ65_LTODAY", 2)
+				st.call_fn("xp", [30])
+				st.quests.set_stage("UQ-65", 100)
+				host.hint("문항집 여백의 붉은 필기를 읽었다 — 다음 [지능] 판정 하나는 1 모자라도 '문항 해설'로 열린다", 6.0)
+				_log("UQ-65 수업 끝 · 문항집")
+		"q64tags":                                                       # UQ-64 길덕수가 꼬리표 다섯을 맡김(죽었으면 선반에서 직접)
+			if v("UQ64_TAGS") == 0:
+				_sv("UQ64_TAGS", 1)
+				st.call_fn("give", ["M-440", 5])
+				if st.quests.stage("UQ-64") < 10:
+					st.quests.set_stage("UQ-64", 10)
+		"q64hint":
+			_sv("UQ64_HINT", 1)
+		"q64":                                                           # 대문에서 건넴 — 호감(한 번씩) · 매듭 판정
+			_uq64_check()
+		"q64mem":                                                        # 남은 꼬리표를 기념탑 받침 볼트에(다른 매듭)
+			var left := st.count_of("M-440")
+			if left > 0:
+				st.call_fn("take", ["M-440", left])
+			_sv("UQ64_MEM", 1)
+			_uq64_finish()
+		"q65sneak":                                                      # 교탁 문항집 몰래 집기: 웅크리지 않으면 손재석이 돌아본다(9 = 방금 들킴)
+			if not host.combat.crouch:
+				_sv("UQ65_STOLE", 9)
+		"q65lesson":                                                     # '다음 시간엔 4번부터' — 하루 두 문항까지(4~9 · LTODAY 그날 푼 수)
+			if v("UQ65_LESSON_DAY") == day():
+				_sv("UQ65_LTODAY", v("UQ65_LTODAY") + 1)
+			else:
+				_sv("UQ65_LTODAY", 1)
+			_sv("UQ65_LESSON", maxi(v("UQ65_LESSON"), 3) + 1)
+			_sv("UQ65_LESSON_DAY", day())
 	done.call()
+
+
+
+# ---------------------------------------------------------------- UQ-65 일타 강사의 문항집(1-12i — SD-05 §3.29)
+## 문항집이 어디에도 없으면(팖 · 버림) 류정 갈래가 닫히고 손재석이 '돌고 도는 교재' 한 줄
+func _uq65_day(_d: int) -> void:
+	if v("UQ65_BOOK") == 1 and v("UQ65_TO") == 0 and _owned("M-439") == 0:
+		_sv("UQ65_TO", 3)
+		_log("UQ-65 문항집을 잃음(팖 · 버림)")
+	var s65: int = st.quests.stage("UQ-65")
+	if st.is_dead("N-R01-056") and s65 > 0 and s65 < 100:              # 수업 도중 손재석이 죽음 — 문항집을 몰래 집었어도 수업은 못 끝난다
+		st.quests.set_stage("UQ-65", 90)
+
+
+## 가방 + 주인공 보관함(상점 칸 제외) — 팔거나 버리면 0
+func _owned(id: String) -> int:
+	var n := st.count_of(id)
+	for k in st.boxes:
+		if not str(k).begins_with("shop:"):
+			n += int(st.boxes[k].get("items", {}).get(id, 0))
+	return n
+
+
+# ---------------------------------------------------------------- UQ-64 귀환 유해 대장(1-12i — SD-05 §3.28)
+## 대문에서 건넨 뒤: 봉천 셋 가운데 둘 이상이면 BC +4 · 사당이면 SA +4(한 번씩) · 네 집 다 · 손에 꼬리표가 없으면 매듭
+func _uq64_check() -> void:
+	var bc_n := v("UQ64_D412") + v("UQ64_D414") + v("UQ64_D416")
+	if bc_n + v("UQ64_D413") >= 1 and st.quests.stage("UQ-64") < 20:
+		st.quests.set_stage("UQ-64", 20)
+	if bc_n >= 2 and v("UQ64_BC") == 0:
+		_sv("UQ64_BC", 1)
+		st.call_fn("aff", ["BC", 4])
+	if v("UQ64_D413") == 1 and v("UQ64_SA") == 0:
+		_sv("UQ64_SA", 1)
+		st.call_fn("aff", ["SA", 4])
+	var given := bc_n + v("UQ64_D413")
+	if v("UQ64_TAGS") == 0 or v("UQ64_DONE_DAY") > 0:
+		return
+	if given >= 4 or (_owned("M-440") == 0 and given + v("UQ64_T415") >= 1):
+		_uq64_finish()
+	elif _owned("M-440") == 0:     # 하나도 건네지 않고 다 팔거나 버림 — 이름을 잃음(XP 없음)
+		_sv("UQ64_LOST", 1)
+		_sv("UQ64_XP", 1)
+		_uq64_finish()
+
+
+## 매듭(마지막 대문 또는 받침 볼트) — 100 · 70 XP 한 번. 소식과 근무지는 다음 06:00(교대 자경이 묘지에 — P7)
+func _uq64_finish() -> void:
+	if v("UQ64_DONE_DAY") > 0:
+		return
+	_sv("UQ64_DONE_DAY", day())
+	if v("UQ64_XP") == 0:
+		_sv("UQ64_XP", 1)
+		st.call_fn("xp", [70])
+	st.quests.set_stage("UQ-64", 100)
+	_log("UQ-64 매듭(MEM %d)" % v("UQ64_MEM"))
+
+
+func _uq64_day(d: int) -> void:
+	_uq64_check()
+	if v("UQ64_DONE_DAY") > 0 and v("UQ64_NEWS") == 0 and d > v("UQ64_DONE_DAY"):
+		_sv("UQ64_NEWS", 1)
+		_sv("UQ64_POST", v("UQ64_BC") + 2 * v("UQ64_SA"))
+		_log("UQ-64 소식 · 근무지 %d" % v("UQ64_POST"))

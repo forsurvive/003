@@ -1,0 +1,73 @@
+{
+ "id": "UQ64_SHELF",
+ "title": "안치소 선반 — 꼬리표",
+ "loc": "L-R01-22",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TAKE": 3
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "국방색 상자마다 흰 꼬리표 '인수자 미정'. 꽃은 말라 간다 — 오늘 것이 아니다."
+  },
+  {
+   "op": "if",
+   "cond": "UQ64_TAGS == 1",
+   "to": "END"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "412~416번 상자의 꼬리표를 직접 뗀다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TAKE",
+     "id": "UQ64_SHELF:1:0"
+    },
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ64_SHELF:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "상자는 그대로 두고, 이름만 뗀다. 다섯 장."
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q64tags"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "note",
+   "args": [
+    "UQ64-TAGS"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-64.txt"
+}

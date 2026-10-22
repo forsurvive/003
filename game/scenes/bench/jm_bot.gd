@@ -270,7 +270,7 @@ func _ready() -> void:
 			plan = [["go", d24.x, d24.y + 1], ["shot", "k24_door"], ["use", d24.x, d24.y], ["wait", 2.0], ["shot", "k24"],
 				["go", 9, 7, "K-24"], ["want", ["무슨 수업", "풀어 보자", "가장 가까운 지하", "판독기 앞에 정지", "신고한다", "10번은?", "볼트 시험엔 10번"]],
 				["shoton", "점수 없는 답", "son_q10"], ["talk", "N-R01-056"], ["wait", 1.0],
-				["check", "PN_Q10 == 1 and PN_SON == 2 and has(\"M-090\") and K_Q10 == 0", "손재석: 문항집에 10번이 없다(보조 단서만, K_Q10은 그대로)"],
+				["check", "PN_Q10 == 1 and PN_SON == 2 and has(\"M-439\") and K_Q10 == 0", "손재석: 문항집(M-439 — 1-12i)에 10번이 없다(보조 단서만, K_Q10은 그대로)"],
 				["warp", "K-26"], ["wait", 1.5], ["shot", "k26"], ["fight"],
 				["go", 23, 8, "K-26"], ["want", ["!붕대를 갈아", "됐다"]], ["shoton", "관리 후보", "nurse"], ["talk", "N-R01-058"], ["wait", 1.0],
 				["check", "PN_NURSE == 1 and PN_HEAL_DAY == GAME_DAY", "간호 7호: 등록 판독 · 오늘 붕대"],
@@ -741,6 +741,42 @@ func _ready() -> void:
 				["hours", 25], ["wait", 1.0], ["until", "UQ10_RAID == 5", 10.0, "습격 날 아침 — 대방 분대 실전", "uq10_raid"], ["wait", 6.0], ["shot", "uq10_raiders"],
 				["fight"], ["wait", 2.0], ["fight"], ["wait", 2.0], ["fight"], ["wait", 2.0], ["fight"],
 				["until", "UQ10_RAID == 1", 40.0, "습격을 막음", "uq10_held"]]
+		"uq64":                                                         # 1-12i UQ-64 귀환 유해 대장: 묘지 길덕수 꼬리표(10) → 봉천 대문 셋(20 · BC +4) → 사당 역무실 벽시계(마지막 대문 — 100) →
+			st.vars.set_v("GAME_DAY", 6)                                 #   다음 06:00 소식 · 근무지 · 길덕수 에필로그
+			st.quests.set_stage("MQ-101", 100)
+			st.vars.set_v("MQ101_STAGE", 100)
+			st.vars.set_v("MQ101_RESULT", 1)
+			st.vars.set_v("PN_LEDGER", 1)                                # 인수 대장은 1-7c 판에서 이미 봄(봇 선택지는 앞에서부터 맞춰져 되풀이된다)
+			st.vars.set_v("PN_GIL", 1)
+			host.date_text = "2277. 10. 29.  10:00"
+			var gm := _spot_o("L-R01-22")                               # 묘지 스팟(10×6 — 길덕수 5,5 · 선반 2,4)
+			var bx := 892 - 60 / 2                                       # 봉천 X-BC는 월드에 끼운 손 맵(world_chunks 중심 892,1362 · 60×46) — 맵 칸 + 원점
+			var by := 1362 - 46 / 2
+			host.enter("W", "", {}, Vector2(gm.x + 5, gm.y + 7) * 32.0 + Vector2(16, 16))
+			plan = [["hp", 3000], ["wait", 2.0], ["noenc"], ["calm"], ["want", ["꼬리표를 가족에게", "됐다"]], ["talk", "N-R01-052"], ["wait", 3.0], ["shot", "uq64_tags"],
+				["check", "UQ64_TAGS == 1 and UQ64_STAGE == 10 and has(\"M-440\")", "길덕수가 꼬리표 다섯을 맡김(10)"],
+				["warp", "X-BC", "from_X-S07"], ["wait", 1.5], ["calm"],
+				["want", ["412번"]], ["go", bx + 13, by + 20], ["use", bx + 13, by + 19], ["wait", 2.0], ["shot", "uq64_d412"],
+				["want", ["414번"]], ["go", bx + 41, by + 27], ["use", bx + 41, by + 26], ["wait", 2.0],
+				["want", ["416번"]], ["go", bx + 29, by + 28], ["go", bx + 29, by + 35], ["go", bx + 9, by + 33], ["use", bx + 10, by + 33], ["wait", 2.0], ["shot", "uq64_d416"],
+				["check", "UQ64_D412 == 1 and UQ64_D414 == 1 and UQ64_D416 == 1 and UQ64_BC == 1 and UQ64_STAGE == 20", "봉천 대문 셋(20 · BC +4)"],
+				["warp", "D-03", "from_D-02"], ["wait", 1.5], ["calm"], ["want", ["413번"]], ["go", 3, 3], ["use", 3, 2], ["wait", 3.0], ["shot", "uq64_sadang"],
+				["check", "UQ64_D413 == 1 and UQ64_SA == 1 and UQ64_STAGE == 100", "사당 역무실 벽시계 태엽 열쇠 끈 — 마지막 대문에서 매듭(100)"],
+				["hours", 24], ["wait", 1.0], ["check", "UQ64_NEWS == 1 and UQ64_POST == 3", "다음 06:00 소식 · 근무지 둘"],
+				["warp", "W", "L-R01-22"], ["wait", 2.0], ["calm"], ["go", gm.x + 5, gm.y + 7], ["shot", "uq64_post"], ["want", ["됐다"]], ["talk", "N-R01-052"], ["wait", 2.0],
+				["check", "UQ64_GSAID == 1", "길덕수 — 꽃 색이 바뀌었잖아"]]
+		"uq65":                                                         # 1-12i UQ-65 일타 강사의 문항집: 손재석 수업(판정 셋 · 문항집 — 100) → 다음 날 4 · 5번 → 중계소 카드 벽
+			st.vars.set_v("GAME_DAY", 6)
+			st.vars.set_v("PC_IN", 7)
+			st.quests.set_stage("MQ-101", 100)
+			host.date_text = "2277. 10. 29.  10:00"
+			host.enter("K-24", "from_W")
+			plan = [["hp", 3000], ["wait", 1.5], ["calm"], ["want", ["무슨 수업", "풀어 보자", "지상을 버리라는", "등록증을 기다리죠", "출제 의도", "고맙다"]], ["talk", "N-R01-056"], ["wait", 3.0], ["shot", "uq65_lesson"],
+				["check", "UQ65_READ == 3 and UQ65_STAGE == 100 and UQ65_BONUS == 1 and has(\"M-439\")", "판정 셋 · 문항집 · 해설 보너스(100)"],
+				["hours", 24], ["wait", 1.0], ["want", ["줄을 지킨다", "한 문제 더", "집으로 들여보낸다"]], ["talk", "N-R01-056"], ["wait", 3.0], ["shot", "uq65_lesson2"],
+				["check", "UQ65_LESSON == 5 and UQ65_LTODAY == 2 and UQ65_REBEL == 1", "다음 날 — 4번 · 한 문제 더 5번(하루 두 문항 · 오답 끝말)"],
+				["warp", "GS-02", "from_X"], ["wait", 1.5], ["calm"], ["want", ["핀에 꽂는다"]], ["go", 15, 4], ["use", 15, 2], ["wait", 2.5], ["shot", "uq65_wall"],
+				["check", "UQ65_TO == 1 and UQ65_WALL == 1 and not has(\"M-439\")", "중계소 카드 벽에 꽂음(GS +3)"]]
 		"uq70":                                                         # 1-12h UQ-70 대림 시장의 이자: 장터 첫 방문(기한 — 2277. 10. 29.은 월요일 → 다음다음 수요일 15일) →
 			st.vars.set_v("GAME_DAY", 6)                                 #   손지담 사정 · 상인회 도장(20) → 장터 사무실 · 도장 뒤칸(K-39) → 화요일 밤 숨은 수호 → 수 10시 끌려감(30) →
 			st.vars.set_v("PC_SKP_LOCKPICK", 40)                         #   새벽 3시 교대 본소 H-03 사슬 기둥 풀기 → K-20 베개 맡 수첩(웅크려) → 구만호 → 다음 아침 이자 실종(②, 100) · 장터 자경 초소

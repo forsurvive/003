@@ -46,6 +46,7 @@ prop w_gs_punch_wall 2 1
 prop w_gs_punch_wall 6 1
 prop w_gs_punch_wall 14 1
 text 7 2 "천공 카드 벽." w=3 scene=GS_CARDS
+text 14 2 "카드 벽 끝 — 빈 핀 몇 개." w=3 scene=UQ65_WALL
 prop floor_hatch 4 12
 text 4 12 "바닥 해치. 기계실로 내려간다. 정비 당번장의 자물쇠 — '첫 당번의 자리. 출입은 대기 6203에게.'"
 prop bench 15 11

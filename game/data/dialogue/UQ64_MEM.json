@@ -1,0 +1,82 @@
+{
+ "id": "UQ64_MEM",
+ "title": "빈 기념탑 받침",
+ "loc": "L-R01-22",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "HANG": 4,
+  "HUNG": 7
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "UQ64_MEM == 1",
+   "to": "HUNG"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈 기념탑 받침. 탑이 서 있던 자리에 녹슨 볼트 네 개."
+  },
+  {
+   "op": "if",
+   "cond": "has(\"M-440\") == 0",
+   "to": "END"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "남은 꼬리표를 볼트에 건다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "HANG",
+     "id": "UQ64_MEM:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ64_MEM:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "국방색 끈을 볼트에 감는다. 볼트가 모자라면 남는 장은 받침 위에 돌로 눌러 둔다. 바람이 불자 이름들이 같이 돈다."
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q64mem"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "기념탑 받침 볼트에 꼬리표. 탑은 없어도 이름이 바람에 돈다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-64.txt"
+}
