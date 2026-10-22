@@ -1,0 +1,201 @@
+{
+ "id": "ZRQ43_DAM",
+ "title": "반상회 총무 조담희 — 배급 줄",
+ "loc": "L-R01-09",
+ "npc": "N-R01-029",
+ "cond": "V_ACT >= 1 and MQ101_STAGE >= 100",
+ "labels": {
+  "START": 0,
+  "HI5": 4,
+  "MENU": 6,
+  "FOOD_WAIT": 7,
+  "FOOD_WAIT_K": 10,
+  "FOOD": 12,
+  "FOOD_NO": 17,
+  "FOOD_LEAN": 19,
+  "TALK": 21,
+  "TALK_D": 24,
+  "COLD": 26
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "AFF_JC_BC < -19",
+   "to": "COLD"
+  },
+  {
+   "op": "if",
+   "cond": "RQ43_T >= 5",
+   "to": "HI5"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-029",
+   "emo": "기본",
+   "text": "사당 고개에 '임시 등록하면 배급' 줄이 섰대요. 우리 사람 몇이 거기 섰고요. 줄 대신 — 어시장이나 환승촌 버섯이든 먹을 걸 팔십 캡어치 대 주면 배급소에서 나눠요."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-029",
+   "emo": "미소",
+   "text": "또 왔네요. 고개 줄이 요새 짧아요 — 당신 먹을 것 때문이란 말이 반상회에서 나왔어요."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "먹을 것을 내놓는다(가치 80어치)",
+     "tags": [],
+     "cond": "rq_wait(\"RQ-43\", 3) == 0 and rq_left(\"RQ-43\", 2) > 0",
+     "fx": "",
+     "to": "FOOD",
+     "id": "ZRQ43_DAM:1:0"
+    },
+    {
+     "text": "먹을 것은 더 안 받나요",
+     "tags": [],
+     "cond": "rq_wait(\"RQ-43\", 3) > 0 or rq_left(\"RQ-43\", 2) == 0",
+     "fx": "",
+     "to": "FOOD_WAIT",
+     "id": "ZRQ43_DAM:1:1"
+    },
+    {
+     "text": "줄 얘기를 더 듣는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TALK",
+     "id": "ZRQ43_DAM:1:2"
+    },
+    {
+     "text": "다음에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "ZRQ43_DAM:1:3"
+    }
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "RQ43_ESC_DAY >= GAME_DAY - 2 and RQ43_ESC_DAY > 0",
+   "to": "FOOD_WAIT_K"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-029",
+   "emo": "기본",
+   "text": "사흘에 두 번이 한도예요. 배급소 솥이 그만큼이라."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-029",
+   "emo": "기본",
+   "text": "고개 줄을 당신이 올려 줬다던데요. …그 줄이 이 줄이에요. 사흘은 솥이 비어도 못 받아요."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "cmd",
+   "name": "rq",
+   "args": [
+    "43",
+    "food"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "RQ43_HAVE == 0",
+   "to": "FOOD_NO"
+  },
+  {
+   "op": "if",
+   "cond": "RQ_LEAN == 1",
+   "to": "FOOD_LEAN"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-029",
+   "emo": "미소",
+   "text": "(저울에 올린다) 팔십 어치. 오늘 저녁 배급은 줄 안 서도 돼요. 캡 서른은 반상회 몫에서."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-029",
+   "emo": "기본",
+   "text": "팔십 어치는 돼야 한 끼가 돼요. 통조림 · 버섯 · 물 — 뭐든 좋아요."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-029",
+   "emo": "피곤",
+   "text": "반상회 몫이 이번 주 바닥이라 캡은 반이에요. 먹을 건 그대로 고맙고요."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R01-048\") == 1",
+   "to": "TALK_D"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-029",
+   "emo": "기본",
+   "text": "분류관 권은서가 줄 세워요. 등록하면 배급. 등록하면 — 그 줄이 계엄 줄이 되는 거예요. 우리가 먹이면 안 서도 되고."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-029",
+   "emo": "기본",
+   "text": "고개 줄은 분류관이 죽고 흐지부지래요. 그래도 배급소는 비어요. 먹을 것 대 주면 나눠요."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-029",
+   "emo": "분노",
+   "text": "당신 먹을 건 안 받아요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/RQ.txt"
+}

@@ -101,9 +101,9 @@ ENGINE_VARS |= {"HP_" + k for k in "DAY0 LOST BLUR BLUR_DAY WAY TRUST CUT OVR OV
     | {"RQ47_" + k for k in "N WK LAST".split()} | {"DG_STOP"}   # 1-D8 여의도 대학병원 · UQ-126 · RQ-47(원고 script/act1/HP.txt 머리 주석)
 # 반복 퀘스트 공통 엔진(1-12j, SD-05 §4.1 · D-238 — core/story/repeat.gd var_names와 같게): 전역 · RQ별 · 세력별
 ENGINE_VARS |= {"RQ_WK", "RQ_WKCAPS", "RQ_LEAN"} \
-    | {"RQ%s_%s" % (n, k) for n in ("19", "15", "06", "08", "30", "47") for k in "T WK WKNO XP DAY DAYN LAST".split()} \
+    | {"RQ%s_%s" % (n, k) for n in ("19", "15", "06", "08", "30", "47", "22", "03", "43", "46") for k in "T WK WKNO XP DAY DAYN LAST".split()} \
     | {"RQF_%s_%s" % (f, k) for f in ("BC", "SA", "JH", "JC", "BJ", "GS", "YH") for k in "T ADAY ASUM".split()} \
-    | {"RQ08_P1", "RQ08_P2", "RQ08_P3", "RQ08_PWK", "RQ08_HAVE", "RQ30_ON", "RQ30_DAY", "RQ30_KIND", "RQ30_DIR", "RQ30_AT", "RQ30_PHASE", "RQ30_N", "RQ30_KILLS", "RQ30_QUIET", "RQ19_IRON", "RQ15_BOOKS"}
+    | {"RQ08_P1", "RQ08_P2", "RQ08_P3", "RQ08_PWK", "RQ08_HAVE", "RQ30_ON", "RQ30_DAY", "RQ30_KIND", "RQ30_DIR", "RQ30_AT", "RQ30_PHASE", "RQ30_N", "RQ30_KILLS", "RQ30_QUIET", "RQ19_IRON", "RQ15_BOOKS", "RQ22_ON", "RQ22_SET", "RQ22_K", "RQ03B_ST", "RQ03B_T", "RQ03B_DAY", "RQ03S_ST", "RQ03S_T", "RQ03S_DAY", "RQ43_HAVE", "RQ43_ESC", "RQ43_ESC_DAY", "RQ43_AMB", "RQ46_ON", "RQ46_IN", "RQ46_NEAR", "RQ46_LEDGER", "RQ46_LSAID"}
 ENGINE_VARS |= {"YT_" + k for k in "FORGE FORGE_T TEMP LOCK UNK DEAD_DM ESCORT POWER MOUND SEEN GATE1 CLERK_SEEN ROBOT_OK ELEV INC INC_DAY R DOZE DMTAKE HBTAKE OJTAKE TAPE SG KBN UPC UP NOCARD CUP CUPSEEN TRAP NO HK2 HK3 SIDE CTAPE CDONE BUMP_DAY".split()} \
     | {"UQ06_" + k for k in "RESULT DAY ASKED MET GONE BACK TOLD HEARD RADIO".split()} \
     | {"U04_" + k for k in "CART_MAP CART_X CART_LOAD CLOTH JOB JOB_DMG RUN RUN_DAY KNOW ENG WOO RUSH HATCH LIST LIST_DAY GHOUL SK QK SCATTER CLEAR CARR_DAY YIELD TAP SEEN DIG HEARD RIDE CART_NEAR JOB_DAY BACK WEAR RAM GNO TAPJH LOUD CDIR".split()}   # 1-D10 U04 여의도 지하(진행기 U04 · 원고 U04.txt 머리 주석)   # 1-D9 유리탑 3동 · 증권가 객장 · UQ-06(원고 script/act1/YT.txt 머리 주석)

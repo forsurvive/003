@@ -5,9 +5,20 @@
  "npc": "",
  "cond": "V_ACT >= 1",
  "labels": {
-  "START": 0
+  "START": 0,
+  "PLAIN": 1,
+  "RQ03": 6,
+  "RQ03_1": 12,
+  "RQ03_2": 14,
+  "RQ03_EV": 16,
+  "RQ03_DONE": 18
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "MQ101_STAGE >= 100 and dead(\"N-R01-044\") == 0",
+   "to": "RQ03"
+  },
   {
    "op": "line",
    "who": "SYS",
@@ -35,6 +46,79 @@
   {
    "op": "goto",
    "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "rq",
+   "args": [
+    "03",
+    "post",
+    "S"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "RQ03S_ST == 1 and RQ03S_T == 1",
+   "to": "RQ03_1"
+  },
+  {
+   "op": "if",
+   "cond": "RQ03S_ST == 1 and RQ03S_T == 2",
+   "to": "RQ03_2"
+  },
+  {
+   "op": "if",
+   "cond": "RQ03S_ST == 2",
+   "to": "RQ03_EV"
+  },
+  {
+   "op": "if",
+   "cond": "RQ03S_ST == 3",
+   "to": "RQ03_DONE"
+  },
+  {
+   "op": "goto",
+   "to": "PLAIN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "현상금 공고 — '서쪽 터널 왕쥐. 앞니 150캡. 경비대장 성지후.' 아래 '터널 출입 금지'는 이 공고에 한해 지움."
+  },
+  {
+   "op": "goto",
+   "to": "PLAIN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "현상금 공고 — '남태령 굴쥐 우두머리. 꼬리 100캡. 경비대장 성지후.' 아래 작은 글씨 '초소 눈에 띄지 말 것'."
+  },
+  {
+   "op": "goto",
+   "to": "PLAIN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "공고 위에 분필 동그라미. 증거는 성지후에게."
+  },
+  {
+   "op": "goto",
+   "to": "PLAIN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "공고 자리에 '해결' 한 줄. 다음 공고는 이레 뒤."
+  },
+  {
+   "op": "goto",
+   "to": "PLAIN"
   },
   {
    "op": "end"

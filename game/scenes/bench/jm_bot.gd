@@ -855,6 +855,44 @@ func _ready() -> void:
 				["warp", "J-03", "from_J-02"], ["wait", 1.5], ["want", ["이번 주 '그때 물건'은 뭐예요", "다음에"]], ["talk", "N-R02-012"], ["wait", 1.5],
 				["want", ["이번 주 물건 셋을 내놓는다", "다음에"]], ["talk", "N-R02-012"], ["wait", 1.5], ["shot", "rq_shelf"],
 				["check", "RQ08_T == 1 and RQ08_HAVE == 1 and has(\"M-083\") == 0", "RQ-08 셋 → 가치 × 1.5"]]
+		"rqb":                                                          # 1-12j-b: 봉천 게시판 공고 → 조담희 식량 → 낙성대 척후조장(현상금) → 남태하 보상 → 지하시장 배수구 청소 → 위동현 배급 증명 의뢰
+			st.vars.set_v("AFF_JH", 12)
+			st.vars.set_v("AFF_BJ", 25)
+			st.vars.set_v("GAME_DAY", 6)
+			st.quests.set_stage("MQ-101", 100)
+			st.vars.set_v("MQ101_RESULT", 1)
+			st.vars.set_v("RQ22_OPEN", 1)
+			st.vars.set_v("PC_SKP_SMALL", 80)
+			st.vars.set_v("UQ02_HEARD", 1)                               #   조담희 첫 대화의 UQ-02 개집 장면을 건너뛴다
+			st.quests.set_stage("SQ-S01", 100)                            #   바위굴 들개 무리는 남쪽 능선으로 옮긴 뒤(현상금 ②가 붙는 조건)
+			st.vars.set_v("SQ_S01_LEFT", 1)
+			st.quests.set_stage("UQ-09", 100)                             #   외곽 배수구는 UQ-09 ①로 끝난 상태(어미 죽음 · 알집 태움) — 둥지만 남는다
+			st.vars.set_v("UQ09_RES", 1)
+			st.vars.set_v("UQ09_MOM", 1)
+			st.kill("N-JM-B1")
+			for k in ["UQ09_E1", "UQ09_E2", "UQ09_E3"]:
+				st.vars.set_v(k, 1)
+			st.call_fn("give", ["10mm 탄", 200])
+			st.call_fn("give", ["I-031", 4])
+			st.call_fn("give", ["I-026", 2])
+			host.date_text = "2277. 10. 28.  10:00"
+			host.enter("X-BC", "from_X-S07")
+			plan = [["hp", 3000], ["wait", 1.5], ["noenc"], ["calm"],
+				["go", 884, 1375], ["use", 884, 1374], ["wait", 1.5], ["shot", "rqb_board"],
+				["check", "RQ03B_ST == 1 and RQ03B_T == 2", "봉천 게시판 — 공고(SQ-S01 뒤 · SQ-S02 전 → 들개 우두머리)"],
+				["want", ["먹을 것을 내놓는다", "다음에"]], ["talk", "N-R01-029"], ["wait", 1.5],
+				["check", "RQ43_T == 1 and RQ43_HAVE == 1 and V_KARMA >= 10", "RQ-43 봉천 — 식량 80어치"],
+				["warp", "X-BW", "arrive"], ["wait", 2.0], ["hp", 3000], ["until", "RQ03B_ST == 1", 3.0, "바위굴 둘레"], ["shot", "rqb_bw"],
+				["fight"], ["until", "RQ03B_ST == 2 and has(\"M-326\") == 1", 120.0, "들개 우두머리 쓰러짐 → 귀표"],
+				["warp", "X-BC", "from_X-S07"], ["wait", 1.5], ["calm"], ["want", ["귀표를 내민다", "오늘은 아니다", "밤에 다시 온다"]], ["talk", "N-R01-028"], ["wait", 1.5],
+				["check", "RQ03B_ST == 3 and RQ03_T == 1 and PC_CAPS >= 100", "남태하 — 현상금 100"],
+				["warp", "J-03", "from_J-02"], ["wait", 1.5], ["want", ["배수구 청소 일감 말인데요", "내려가겠습니다", "(인사만 한다)"]], ["talk", "C-050"], ["wait", 1.5],
+				["check", "RQ22_ON == 1", "노복희 — 배수구 의뢰"],
+				["warp", "J-10", "from_J02"], ["wait", 2.0], ["hp", 3000], ["shot", "rqb_drain"], ["fight"], ["until", "RQ22_ON == 2", 120.0, "둥지 다 쓰러짐"],
+				["warp", "J-03", "from_J-02"], ["wait", 1.5], ["want", ["배수구, 치웠습니다", "(인사만 한다)"]], ["talk", "C-050"], ["wait", 1.5],
+				["check", "RQ22_T == 1 and has(\"I-059\", 3) == 1", "노복희 보고 — 60캡 · 정수 셋"],
+				["warp", "K-15", "from_W"], ["wait", 1.5], ["want", ["바깥 줄 사람들", "데려오겠습니다", "기다리겠습니다"]], ["talk", "N-R02-023"], ["wait", 1.5],
+				["check", "RQ46_ON == 1", "위동현 — 배급 증명 의뢰"]]
 		"uq62":                                                         # 1-12i UQ-62 고시생의 마지막 시험: 고시촌 동쪽 초소(상담료 50 → 통행) → D동 3층 권성민(10 · 답안 카드) → 노량진 채점기 [과학 45](성적표 · 20) → 권성민(① 100) → 다음 06:00 떠남 · 관리사무소
 			st.vars.set_v("GAME_DAY", 6)
 			st.vars.set_v("PC_SKP_SCIENCE", 60)

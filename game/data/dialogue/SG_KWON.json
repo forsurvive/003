@@ -15,12 +15,20 @@
   "HOSTILE": 24,
   "COLD": 26,
   "WARM": 29,
-  "ISSUE": 33,
-  "LOST": 37,
-  "CARD": 39,
-  "SHOP": 40,
-  "SHOP2": 43,
-  "GRADE": 45
+  "RQ43": 33,
+  "RQ43_HI5": 36,
+  "RQ43_GO": 38,
+  "RQ43_DONE": 41,
+  "RQ43_LEAN": 45,
+  "RQ43_WAIT": 47,
+  "RQ43_WAIT_B": 50,
+  "RQ46_HAND": 52,
+  "ISSUE": 55,
+  "LOST": 59,
+  "CARD": 61,
+  "SHOP": 62,
+  "SHOP2": 65,
+  "GRADE": 67
  },
  "ops": [
   {
@@ -261,14 +269,199 @@
      "id": "SG_KWON:3:1"
     },
     {
+     "text": "배급 줄 일 — 고개 아래 사람들",
+     "tags": [],
+     "cond": "MQ101_STAGE >= 100 and RQ43_ESC == 0 and rq_wait(\"RQ-43\", 3) == 0 and rq_left(\"RQ-43\", 2) > 0",
+     "fx": "",
+     "to": "RQ43",
+     "id": "SG_KWON:3:2"
+    },
+    {
+     "text": "배급 줄 일은 또 없습니까",
+     "tags": [],
+     "cond": "MQ101_STAGE >= 100 and RQ43_ESC == 0 and (rq_wait(\"RQ-43\", 3) > 0 or rq_left(\"RQ-43\", 2) == 0)",
+     "fx": "",
+     "to": "RQ43_WAIT",
+     "id": "SG_KWON:3:3"
+    },
+    {
+     "text": "셋을 데려왔습니다",
+     "tags": [],
+     "cond": "RQ43_ESC == 2",
+     "fx": "",
+     "to": "RQ43_DONE",
+     "id": "SG_KWON:3:4"
+    },
+    {
+     "text": "충성 등급 장부를 구청에서 넘겼습니다",
+     "tags": [],
+     "cond": "RQ46_LEDGER == 3 and RQ46_LSAID == 0",
+     "fx": "",
+     "to": "RQ46_HAND",
+     "id": "SG_KWON:3:5"
+    },
+    {
      "text": "됐습니다",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "SG_KWON:3:2"
+     "id": "SG_KWON:3:6"
     }
    ]
+  },
+  {
+   "op": "if",
+   "cond": "RQ43_T >= 5",
+   "to": "RQ43_HI5"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-048",
+   "emo": "기본",
+   "text": "아래 광장에 셋이 줄 서러 올라오겠다는데 고개를 못 넘습니다. 들개가 길을 막는다고. 데려오시면 등록 — 수고비는 전투식량 하나에 서른."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "데려오겠습니다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "RQ43_GO",
+     "id": "SG_KWON:4:0"
+    },
+    {
+     "text": "다음에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SG_KWON:4:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-048",
+   "emo": "미소",
+   "text": "줄이 길어졌습니다. 당신 덕입니다. 오늘도 셋 — 광장에 있습니다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "데려오겠습니다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "RQ43_GO",
+     "id": "SG_KWON:5:0"
+    },
+    {
+     "text": "다음에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SG_KWON:5:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "rq",
+   "args": [
+    "43",
+    "escort"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-048",
+   "emo": "기본",
+   "text": "광장 노란 선 앞에 있을 겁니다. 앞서 걸으세요 — 뒤따라옵니다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "rq",
+   "args": [
+    "43",
+    "escdone"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "RQ_LEAN == 1",
+   "to": "RQ43_LEAN"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-048",
+   "emo": "기본",
+   "text": "셋 다 줄에 섰군요. (번호표 셋을 뽑는다) 전투식량과 서른. 협조에 감사드립니다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-048",
+   "emo": "기본",
+   "text": "수고비는 이번 주 예산이 반밖에 안 남아 열다섯입니다. 전투식량은 그대로."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "RQ43_HAVE == 1 and RQ43_ESC_DAY < GAME_DAY - 2",
+   "to": "RQ43_WAIT_B"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-048",
+   "emo": "기본",
+   "text": "사흘에 두 번까지입니다. 줄이 그만큼밖에 안 받습니다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-048",
+   "emo": "기본",
+   "text": "사흘 전 봉천에 먹을 걸 댔다면서요. …그 줄이 이 줄입니다. 봉천 솥이 차면 고개 줄은 빕니다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "rq",
+   "args": [
+    "46",
+    "handed"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-048",
+   "emo": "미소",
+   "text": "구청 장부가 올라왔습니다. 2077년 등급 원본 — 이제 검문소 줄이 그 장부대로 섭니다. 협조에 감사드립니다. 낮은 등급은… 줄이 길어지겠지요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
   },
   {
    "op": "line",
@@ -309,7 +502,7 @@
      "cond": "",
      "fx": "",
      "to": "SHOP",
-     "id": "SG_KWON:4:0"
+     "id": "SG_KWON:6:0"
     },
     {
      "text": "충성 등급이 뭐죠?",
@@ -317,7 +510,7 @@
      "cond": "",
      "fx": "",
      "to": "GRADE",
-     "id": "SG_KWON:4:1"
+     "id": "SG_KWON:6:1"
     },
     {
      "text": "됐습니다",
@@ -325,7 +518,7 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "SG_KWON:4:2"
+     "id": "SG_KWON:6:2"
     }
    ]
   },

@@ -8,25 +8,33 @@
   "START": 0,
   "STRANGER": 7,
   "MENU": 9,
-  "WAITLINE": 10,
-  "TALK_OK": 12,
-  "TALK_NO": 15,
-  "CARD": 17,
-  "NAMES": 20,
-  "PROXY": 23,
-  "SERVED": 27,
-  "SERVED_LINE": 30,
-  "CALLED_IN": 32,
-  "LINE_OK": 36,
-  "CALLED_NONE": 38,
-  "STOLEN": 40,
-  "SHUT": 42,
-  "RECORD": 44,
-  "GRADES": 51,
-  "SELF": 57,
-  "NOBODY": 59,
-  "LAY": 62,
-  "EMPTY_DONE": 65
+  "RQ46": 10,
+  "RQ46_GO": 12,
+  "RQ46_CERT": 15,
+  "RQ46_CERT_NG": 19,
+  "RQ46_LEDGER": 21,
+  "RQ46_L1": 23,
+  "RQ46_L2": 26,
+  "RQ46_L3": 29,
+  "WAITLINE": 32,
+  "TALK_OK": 34,
+  "TALK_NO": 37,
+  "CARD": 39,
+  "NAMES": 42,
+  "PROXY": 45,
+  "SERVED": 49,
+  "SERVED_LINE": 52,
+  "CALLED_IN": 54,
+  "LINE_OK": 58,
+  "CALLED_NONE": 60,
+  "STOLEN": 62,
+  "SHUT": 64,
+  "RECORD": 66,
+  "GRADES": 73,
+  "SELF": 79,
+  "NOBODY": 81,
+  "LAY": 84,
+  "EMPTY_DONE": 87
  },
  "ops": [
   {
@@ -117,14 +125,216 @@
      "id": "SQS08_DESK:1:3"
     },
     {
+     "text": "바깥 줄 사람들 — 증빙이 없다던데",
+     "tags": [],
+     "cond": "MQ101_STAGE >= 100 and RQ46_ON == 0 and rq_wait(\"RQ-46\", 7) == 0 and rq_left(\"RQ-46\", 2) > 0",
+     "fx": "",
+     "to": "RQ46",
+     "id": "SQS08_DESK:1:4"
+    },
+    {
+     "text": "셋을 데려왔습니다",
+     "tags": [],
+     "cond": "RQ46_ON == 1 and RQ46_IN >= 3",
+     "fx": "",
+     "to": "RQ46_CERT",
+     "id": "SQS08_DESK:1:5"
+    },
+    {
+     "text": "충성 등급 장부 말인데요",
+     "tags": [],
+     "cond": "RQ46_T >= 1 and RQ46_LEDGER == 0 and SQ_S08_LEDGER >= 1",
+     "fx": "",
+     "to": "RQ46_LEDGER",
+     "id": "SQS08_DESK:1:6"
+    },
+    {
      "text": "기다리겠습니다",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "WAITLINE",
-     "id": "SQS08_DESK:1:4"
+     "id": "SQS08_DESK:1:7"
     }
    ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-023",
+   "emo": "기본",
+   "text": "번호표는 주민 기록이 있어야 뽑힙니다. 바깥 셋은 기록이 없고요. …데려오시면 2077년식 '배급 증명'으로 대신 끊어 드립니다. 검문소가 신분 증빙으로 받습니다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "데려오겠습니다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "RQ46_GO",
+     "id": "SQS08_DESK:2:0"
+    },
+    {
+     "text": "다음에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "MENU",
+     "id": "SQS08_DESK:2:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "rq",
+   "args": [
+    "46",
+    "start"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-023",
+   "emo": "기본",
+   "text": "구청 앞 계단입니다. 가까이 가면 따라올 겁니다 — 창구까지요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "rq",
+   "args": [
+    "46",
+    "cert"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "RQ46_LEDGER == 2",
+   "to": "RQ46_CERT_NG"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-023",
+   "emo": "기본",
+   "text": "(도장을 세 번 찍는다) 배급 증명. 등급 칸은 기록대로 — 검문소에서 통합니다. 다음 분."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-023",
+   "emo": "기본",
+   "text": "(도장을 세 번 찍는다) 배급 증명. 등급 칸은 '없음'. 장부가 없으니 그게 맞습니다. 다음 분."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-023",
+   "emo": "기본",
+   "text": "지하 접수실 장부 말이군요. 2077년 충성 등급 원본. …저는 창구 사람입니다. 원본은 당신 손이 닿은 겁니다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "RQ46_L1",
+     "id": "SQS08_DESK:3:0"
+    },
+    {
+     "text": "태운다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "RQ46_L2",
+     "id": "SQS08_DESK:3:1"
+    },
+    {
+     "text": "사당 고개 검문소에 넘긴다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "RQ46_L3",
+     "id": "SQS08_DESK:3:2"
+    },
+    {
+     "text": "생각해 보겠습니다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "MENU",
+     "id": "SQS08_DESK:3:3"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "rq",
+   "args": [
+    "46",
+    "ledger",
+    "1"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-023",
+   "emo": "기본",
+   "text": "그럼 증명 등급 칸은 기록대로 갑니다. 그게 제 일이고요."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "cmd",
+   "name": "rq",
+   "args": [
+    "46",
+    "ledger",
+    "2"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-023",
+   "emo": "기본",
+   "text": "…불 냄새가 올라오는군요. 이제부터 증명 등급 칸은 '없음'입니다. 검문소가 싫어하겠지만, 사람은 통합니다."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "cmd",
+   "name": "rq",
+   "args": [
+    "46",
+    "ledger",
+    "3"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-023",
+   "emo": "기본",
+   "text": "분류관이 좋아하겠습니다. 이제 증명 등급 칸이 검문소 장부와 맞춰집니다 — 등급 낮은 사람은 통과가 어려워질 거고요."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
   },
   {
    "op": "line",
@@ -274,7 +484,7 @@
      "cond": "",
      "fx": "",
      "to": "LINE_OK",
-     "id": "SQS08_DESK:2:0"
+     "id": "SQS08_DESK:4:0"
     },
     {
      "text": "주소로 찾아 주세요 — 영등포로 4가 31 · 전자상가 '봉'",
@@ -282,7 +492,7 @@
      "cond": "SQ_S08_TOOL == 1 or SQ_S08_ADDR == 1",
      "fx": "",
      "to": "NAMES",
-     "id": "SQS08_DESK:2:1"
+     "id": "SQS08_DESK:4:1"
     }
    ]
   },
@@ -433,7 +643,7 @@
      "cond": "SQ_S08_PROXY == 1",
      "fx": "",
      "to": "LAY",
-     "id": "SQS08_DESK:3:0"
+     "id": "SQS08_DESK:5:0"
     },
     {
      "text": "물러선다",
@@ -441,7 +651,7 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "SQS08_DESK:3:1"
+     "id": "SQS08_DESK:5:1"
     }
    ]
   },

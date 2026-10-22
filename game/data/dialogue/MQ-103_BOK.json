@@ -15,71 +15,78 @@
   "U9P": 30,
   "U9DEAD": 32,
   "U9RQ": 36,
-  "JH01": 38,
-  "JH01_AGAIN": 45,
-  "JH01_FIX": 47,
-  "JH01_FIX_DEAD": 50,
-  "JH01_PICKED": 52,
-  "JH01_KEY": 56,
-  "JH01_DONE": 63,
-  "JH01_CRUSH": 66,
-  "JH01_LEAK": 69,
-  "JH01_PAY": 71,
-  "JH01_TWO": 76,
-  "JH01_ONE": 78,
-  "JH01_CASH": 79,
-  "JH01_CASH_PICK": 83,
-  "JH03_ALONE": 87,
-  "JH03_TOLD": 91,
-  "JH03_TOLD_GONE": 98,
-  "JH03_TOLD_Q": 100,
-  "JH03_TOLD_N": 102,
-  "JH03_TOLD_BAN": 104,
-  "JH03_SOLD": 106,
-  "COLD": 110,
-  "JH02_CAUGHT": 112,
-  "JH02_CAUGHT_P": 117,
-  "JH02_REPAY": 120,
-  "JH02_DENY": 123,
-  "JH02": 126,
-  "JH02_ASK": 128,
-  "JH02_LATER": 132,
-  "JH02_MORE": 135,
-  "JH02_S08": 140,
-  "JH02_SOMIN": 144,
-  "JH02_MENU": 146,
-  "JH02_PAY": 149,
-  "JH02_PAY60": 153,
-  "JH02_BILLS": 157,
-  "JH02_SUB": 161,
-  "JH02_COAT": 164,
-  "JH02_LIE": 168,
-  "JH02_DEAD": 173,
-  "JH02_DONE": 176,
-  "S8": 179,
-  "S8_BOTH": 183,
-  "S8_NO": 186,
-  "S8_PAY": 188,
-  "S8_ONE_B": 191,
-  "S8_ONE_A": 194,
-  "UQ71_CORE": 197,
-  "UQ71_SOLD": 200,
-  "UQ71_SOLD2": 205,
-  "ABOUT": 207,
-  "SHOP": 211,
-  "MA": 213,
-  "WHY": 216,
-  "JOB": 220,
-  "JOB_ALONE": 227,
-  "JOB_HINT": 230,
-  "FEE": 232,
-  "WAITING": 236,
-  "REWARD": 238,
-  "HAVEPASS": 242,
-  "REGULAR": 244,
-  "MA_DEAD": 246,
-  "MA_LOG": 249,
-  "MA_DEAD_KNEW": 256
+  "U9RQ_GO": 39,
+  "U9RQ_GO2": 43,
+  "U9RQ_WAIT": 45,
+  "U9RQ_ON": 47,
+  "U9RQ_DONE": 49,
+  "U9RQ_D1": 54,
+  "U9RQ_LEAN": 56,
+  "JH01": 58,
+  "JH01_AGAIN": 65,
+  "JH01_FIX": 67,
+  "JH01_FIX_DEAD": 70,
+  "JH01_PICKED": 72,
+  "JH01_KEY": 76,
+  "JH01_DONE": 83,
+  "JH01_CRUSH": 86,
+  "JH01_LEAK": 89,
+  "JH01_PAY": 91,
+  "JH01_TWO": 96,
+  "JH01_ONE": 98,
+  "JH01_CASH": 99,
+  "JH01_CASH_PICK": 103,
+  "JH03_ALONE": 107,
+  "JH03_TOLD": 111,
+  "JH03_TOLD_GONE": 118,
+  "JH03_TOLD_Q": 120,
+  "JH03_TOLD_N": 122,
+  "JH03_TOLD_BAN": 124,
+  "JH03_SOLD": 126,
+  "COLD": 130,
+  "JH02_CAUGHT": 132,
+  "JH02_CAUGHT_P": 137,
+  "JH02_REPAY": 140,
+  "JH02_DENY": 143,
+  "JH02": 146,
+  "JH02_ASK": 148,
+  "JH02_LATER": 152,
+  "JH02_MORE": 155,
+  "JH02_S08": 160,
+  "JH02_SOMIN": 164,
+  "JH02_MENU": 166,
+  "JH02_PAY": 169,
+  "JH02_PAY60": 173,
+  "JH02_BILLS": 177,
+  "JH02_SUB": 181,
+  "JH02_COAT": 184,
+  "JH02_LIE": 188,
+  "JH02_DEAD": 193,
+  "JH02_DONE": 196,
+  "S8": 199,
+  "S8_BOTH": 203,
+  "S8_NO": 206,
+  "S8_PAY": 208,
+  "S8_ONE_B": 211,
+  "S8_ONE_A": 214,
+  "UQ71_CORE": 217,
+  "UQ71_SOLD": 220,
+  "UQ71_SOLD2": 225,
+  "ABOUT": 227,
+  "SHOP": 231,
+  "MA": 233,
+  "WHY": 236,
+  "JOB": 240,
+  "JOB_ALONE": 247,
+  "JOB_HINT": 250,
+  "FEE": 252,
+  "WAITING": 256,
+  "REWARD": 258,
+  "HAVEPASS": 262,
+  "REGULAR": 264,
+  "MA_DEAD": 266,
+  "MA_LOG": 269,
+  "MA_DEAD_KNEW": 276
  },
  "ops": [
   {
@@ -264,10 +271,26 @@
     {
      "text": "배수구 청소 일감 말인데요",
      "tags": [],
-     "cond": "RQ22_OPEN == 1",
+     "cond": "RQ22_OPEN == 1 and RQ22_ON == 0",
      "fx": "",
      "to": "U9RQ",
      "id": "MQ-103_BOK:1:13"
+    },
+    {
+     "text": "배수구, 치웠습니다",
+     "tags": [],
+     "cond": "RQ22_ON == 2",
+     "fx": "",
+     "to": "U9RQ_DONE",
+     "id": "MQ-103_BOK:1:14"
+    },
+    {
+     "text": "배수구 일은 어디까지였죠",
+     "tags": [],
+     "cond": "RQ22_ON == 1",
+     "fx": "",
+     "to": "U9RQ_ON",
+     "id": "MQ-103_BOK:1:15"
     },
     {
      "text": "(인사만 한다)",
@@ -275,7 +298,7 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "MQ-103_BOK:1:14"
+     "id": "MQ-103_BOK:1:16"
     }
    ]
   },
@@ -387,10 +410,133 @@
    "to": "MENU"
   },
   {
+   "op": "if",
+   "cond": "rq_wait(\"RQ-22\", 7) > 0 or rq_left(\"RQ-22\", 1) == 0",
+   "to": "U9RQ_WAIT"
+  },
+  {
    "op": "line",
    "who": "C-050",
    "emo": "기본",
-   "text": "도민지가 그러더군. 밑에 걸 치웠다고. 바퀴는 또 꼬여 — 청소 일감 생기면 부르리다. 상인회 일당으로."
+   "text": "마침 잘 왔소. 청소 일감이 생겼어 — 밑에 또 알집이 꼬였어, 도민지 말로는 하나 둘. 점검구로 내려가서 치우고 오시오. 상인회 일당 60에 정수 세 병."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "내려가겠습니다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "U9RQ_GO",
+     "id": "MQ-103_BOK:2:0"
+    },
+    {
+     "text": "다음에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "MENU",
+     "id": "MQ-103_BOK:2:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "rq",
+   "args": [
+    "22",
+    "start"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "RQ22_K == 2",
+   "to": "U9RQ_GO2"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "하나래. 저수조 쪽. 불은 챙기고."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "둘이래. 물길 건너까지. 등유는 선반에 둔 거 써도 되고."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "이번 주는 치웠잖소. 바퀴도 이레는 걸려 — 이레 뒤에."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "점검구 밑. 알집 보이는 대로 — 조용해지면 올라오시오."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "cmd",
+   "name": "rq",
+   "args": [
+    "22",
+    "done"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "RQ_LEAN == 1",
+   "to": "U9RQ_LEAN"
+  },
+  {
+   "op": "if",
+   "cond": "RQ22_T == 1",
+   "to": "U9RQ_D1"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "(장부에 긋는다) 일당 60, 정수 셋. 이레 뒤에 또 꼬이면 또 부르리다."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "4조가 못 한 일을 당신이 하는군. (장부에 긋는다) 일당 60, 정수 셋. 상인회 장부에 당신 이름 줄이 생겼소."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "피곤",
+   "text": "이번 주 상인회 금고가 얕소. 반. 정수는 그대로."
   },
   {
    "op": "goto",
@@ -838,7 +984,7 @@
      "cond": "FQ_JH02_PAY == 36",
      "fx": "",
      "to": "JH02_REPAY",
-     "id": "MQ-103_BOK:2:0"
+     "id": "MQ-103_BOK:3:0"
     },
     {
      "text": "맡은 캡을 내놓는다",
@@ -851,7 +997,7 @@
      "cond": "FQ_JH02_PAY == 60",
      "fx": "",
      "to": "JH02_REPAY",
-     "id": "MQ-103_BOK:2:1"
+     "id": "MQ-103_BOK:3:1"
     },
     {
      "text": "모르는 일이에요",
@@ -859,7 +1005,7 @@
      "cond": "",
      "fx": "",
      "to": "JH02_DENY",
-     "id": "MQ-103_BOK:2:2"
+     "id": "MQ-103_BOK:3:2"
     }
    ]
   },
@@ -933,7 +1079,7 @@
      "cond": "",
      "fx": "",
      "to": "JH02_MORE",
-     "id": "MQ-103_BOK:3:0"
+     "id": "MQ-103_BOK:4:0"
     },
     {
      "text": "나중에",
@@ -941,7 +1087,7 @@
      "cond": "",
      "fx": "",
      "to": "JH02_LATER",
-     "id": "MQ-103_BOK:3:1"
+     "id": "MQ-103_BOK:4:1"
     }
    ]
   },
@@ -1047,7 +1193,7 @@
      "cond": "FQ_JH02_PAY == 36",
      "fx": "",
      "to": "JH02_PAY",
-     "id": "MQ-103_BOK:4:0"
+     "id": "MQ-103_BOK:5:0"
     },
     {
      "text": "탁만수가 보낸 외상값이에요",
@@ -1060,7 +1206,7 @@
      "cond": "FQ_JH02_PAY == 60",
      "fx": "",
      "to": "JH02_PAY",
-     "id": "MQ-103_BOK:4:1"
+     "id": "MQ-103_BOK:5:1"
     },
     {
      "text": "2077년 만 원짜리 열여덟 장으로 갚는다",
@@ -1074,7 +1220,7 @@
      "cond": "",
      "fx": "",
      "to": "JH02_BILLS",
-     "id": "MQ-103_BOK:4:2"
+     "id": "MQ-103_BOK:5:2"
     },
     {
      "text": "제가 대신 갚겠습니다",
@@ -1087,7 +1233,7 @@
      "cond": "",
      "fx": "",
      "to": "JH02_SUB",
-     "id": "MQ-103_BOK:4:3"
+     "id": "MQ-103_BOK:5:3"
     },
     {
      "text": "갚았대요. 장부에서 지워 달래요",
@@ -1095,7 +1241,7 @@
      "cond": "",
      "fx": "",
      "to": "JH02_LIE",
-     "id": "MQ-103_BOK:4:4"
+     "id": "MQ-103_BOK:5:4"
     },
     {
      "text": "아직이에요",
@@ -1103,7 +1249,7 @@
      "cond": "",
      "fx": "",
      "to": "MENU",
-     "id": "MQ-103_BOK:4:5"
+     "id": "MQ-103_BOK:5:5"
     }
    ]
   },
@@ -1310,7 +1456,7 @@
      "cond": "",
      "fx": "",
      "to": "S8_BOTH",
-     "id": "MQ-103_BOK:5:0",
+     "id": "MQ-103_BOK:6:0",
      "fail": "S8_NO"
     },
     {
@@ -1319,7 +1465,7 @@
      "cond": "",
      "fx": "",
      "to": "MENU",
-     "id": "MQ-103_BOK:5:1"
+     "id": "MQ-103_BOK:6:1"
     }
    ]
   },
@@ -1422,7 +1568,7 @@
      "cond": "",
      "fx": "",
      "to": "UQ71_SOLD",
-     "id": "MQ-103_BOK:6:0"
+     "id": "MQ-103_BOK:7:0"
     },
     {
      "text": "아직은",
@@ -1430,7 +1576,7 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "MQ-103_BOK:6:1"
+     "id": "MQ-103_BOK:7:1"
     }
    ]
   },
@@ -1524,7 +1670,7 @@
      "cond": "",
      "fx": "",
      "to": "JOB",
-     "id": "MQ-103_BOK:7:0"
+     "id": "MQ-103_BOK:8:0"
     },
     {
      "text": "면담료를 내겠다",
@@ -1537,7 +1683,7 @@
      "cond": "",
      "fx": "",
      "to": "FEE",
-     "id": "MQ-103_BOK:7:1"
+     "id": "MQ-103_BOK:8:1"
     },
     {
      "text": "그 사람을 꼭 만나야 하는 이유를 말한다",
@@ -1545,7 +1691,7 @@
      "cond": "",
      "fx": "",
      "to": "WHY",
-     "id": "MQ-103_BOK:7:2"
+     "id": "MQ-103_BOK:8:2"
     },
     {
      "text": "다시 생각해 보겠다",
@@ -1553,7 +1699,7 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "MQ-103_BOK:7:3"
+     "id": "MQ-103_BOK:8:3"
     }
    ]
   },
@@ -1745,7 +1891,7 @@
      "cond": "",
      "fx": "",
      "to": "MA_LOG",
-     "id": "MQ-103_BOK:8:0"
+     "id": "MQ-103_BOK:9:0"
     },
     {
      "text": "다음에 오겠다",
@@ -1753,7 +1899,7 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "MQ-103_BOK:8:1"
+     "id": "MQ-103_BOK:9:1"
     }
    ]
   },

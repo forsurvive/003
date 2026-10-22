@@ -12,10 +12,12 @@ const WEEK_CAP := 1200
 const XP_CAP := 500
 const DAY_AFF_CAP := 6
 const FACS := ["BC", "SA", "JH", "JC", "BJ", "GS", "YH"]          ## 1막에 쓰는 세력 열쇠(RQF_ 변수를 선언한 것)
-const IDS := ["RQ-19", "RQ-15", "RQ-06", "RQ-08", "RQ-30", "RQ-47"]  ## 변수를 선언한 RQ(새 RQ는 여기와 script_compile ENGINE_VARS에)
+const IDS := ["RQ-19", "RQ-15", "RQ-06", "RQ-08", "RQ-30", "RQ-47", "RQ-22", "RQ-03", "RQ-43", "RQ-46"]  ## 변수를 선언한 RQ(새 RQ는 여기와 script_compile ENGINE_VARS에)
 ## RQ별 전용 변수(진행기 몫 — 뜻은 scenes/story/rq_r01.gd 머리 주석)
 const EXTRA := ["RQ08_P1", "RQ08_P2", "RQ08_P3", "RQ08_PWK", "RQ08_HAVE", "RQ30_ON", "RQ30_DAY", "RQ30_KIND", "RQ30_DIR", "RQ30_AT", "RQ30_PHASE",
-	"RQ30_N", "RQ30_KILLS", "RQ30_QUIET", "RQ19_IRON", "RQ15_BOOKS"]
+	"RQ30_N", "RQ30_KILLS", "RQ30_QUIET", "RQ19_IRON", "RQ15_BOOKS",
+	"RQ22_ON", "RQ22_SET", "RQ22_K", "RQ03B_ST", "RQ03B_T", "RQ03B_DAY", "RQ03S_ST", "RQ03S_T", "RQ03S_DAY",
+	"RQ43_HAVE", "RQ43_ESC", "RQ43_ESC_DAY", "RQ43_AMB", "RQ46_ON", "RQ46_IN", "RQ46_NEAR", "RQ46_LEDGER", "RQ46_LSAID"]
 ## 단골 보너스(+3)의 연동(SD-06 §3.6 — 1회 상승 3 × 계수를 0 쪽으로 버림 → |계수| ≥ 0.34만 ±1). 행 = 오른 세력(정착지 개별은 JC 행), 열 = 영향받는 세력
 const LINK := {
 	"JC": {"SB": -1}, "JH": {}, "BJ": {"YH": -1, "JG": -1, "JC": -1}, "GS": {"JG": -1},

@@ -154,3 +154,42 @@ func test_world_fast_travel(t) -> void:
 	t.eq(PlaceLog.bank_at(Vector2i(892, 1362)), "S", "봉천은 남안")
 	t.eq(PlaceLog.bank_at(Vector2i(1058, 793)), "N", "광화문은 북안")
 	h.free()
+
+
+## 탐험 비탈(2026-10-22 사용자 지시 — 벼랑 넘는 지점이 여럿): 관악산 비탈 · 봉천 둘레 창에 높이 단을 잇는 계단 칸이 여럿 있고, 그 칸은 양쪽 단을 잇는다(level_link)
+func test_world_ramps(t) -> void:
+	var m := _world()
+	m.update_focus(Vector2(940 * 32, 1470 * 32))                          # 청크를 붙여야 높이 · 계단 층이 읽힌다(5×5 사전 로드)
+	for _i in 400:
+		if not m._attach_one():
+			OS.delay_msec(10)
+		if m.chunks.size() >= 25:
+			break
+	var n := 0
+	var ok := 0
+	for y in range(1380, 1560):
+		for x in range(860, 1020):
+			var c := Vector2i(x, y)
+			if not m.is_stair(c) or m.is_solid(c):
+				continue
+			for d in [Vector2i(0, -1), Vector2i(0, 1), Vector2i(1, 0), Vector2i(-1, 0)]:
+				var nb: Vector2i = c + d
+				if m.is_solid(nb) or m.is_stair(nb) or m.level_at(nb) == m.level_at(c):
+					continue
+				n += 1
+				if m.level_link(c, nb) and m.level_link(nb, c):
+					ok += 1
+				break
+	var ns := 0
+	var nd := 0
+	for y in range(1380, 1560):
+		for x in range(860, 1020):
+			var c := Vector2i(x, y)
+			if m.is_stair(c):
+				ns += 1
+			if not m.is_solid(c) and m.level_at(c) != m.level_at(c + Vector2i(0, 1)):
+				nd += 1
+	print("  [비탈 디버그] 창 안 계단 칸 %d · 남쪽 이웃과 단이 다른 걷는 칸 %d · 잇는 쌍 %d" % [ns, nd, n])
+	t.ok(n >= 20, "봉천 · 관악산 창(160×180)에 단을 잇는 계단 · 비탈 칸 %d ≥ 20" % n)
+	t.eq(ok, n, "비탈 칸은 양쪽 단을 모두 잇는다")
+	m.free()

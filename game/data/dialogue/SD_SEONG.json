@@ -8,9 +8,15 @@
   "START": 0,
   "AGAIN": 5,
   "ASK": 6,
-  "WEST": 7,
-  "WEST2": 13,
-  "POST": 15
+  "RQ03Q": 7,
+  "RQ03Q_1": 13,
+  "RQ03Q_2": 15,
+  "RQ03Q_DONE": 17,
+  "RQ03_OK": 19,
+  "RQ03_OK2": 23,
+  "WEST": 25,
+  "WEST2": 31,
+  "POST": 33
  },
  "ops": [
   {
@@ -65,14 +71,148 @@
      "id": "SD_SEONG:1:1"
     },
     {
+     "text": "현상금 공고 얘기",
+     "tags": [],
+     "cond": "MQ101_STAGE >= 100 and RQ03S_ST != 2",
+     "fx": "",
+     "to": "RQ03Q",
+     "id": "SD_SEONG:1:2"
+    },
+    {
+     "text": "왕쥐 앞니 — 현상금",
+     "tags": [
+      {
+       "k": "item",
+       "id": "M-152",
+       "n": 1
+      }
+     ],
+     "cond": "RQ03S_ST == 2 and RQ03S_T == 1",
+     "fx": "",
+     "to": "RQ03_OK",
+     "id": "SD_SEONG:1:3"
+    },
+    {
+     "text": "굴쥐 우두머리 꼬리 — 현상금",
+     "tags": [
+      {
+       "k": "item",
+       "id": "M-327",
+       "n": 1
+      }
+     ],
+     "cond": "RQ03S_ST == 2 and RQ03S_T == 2",
+     "fx": "",
+     "to": "RQ03_OK",
+     "id": "SD_SEONG:1:4"
+    },
+    {
      "text": "됐어요",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "SD_SEONG:1:2"
+     "id": "SD_SEONG:1:5"
     }
    ]
+  },
+  {
+   "op": "cmd",
+   "name": "rq",
+   "args": [
+    "03",
+    "post",
+    "S"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "RQ03S_ST == 1 and RQ03S_T == 1",
+   "to": "RQ03Q_1"
+  },
+  {
+   "op": "if",
+   "cond": "RQ03S_ST == 1 and RQ03S_T == 2",
+   "to": "RQ03Q_2"
+  },
+  {
+   "op": "if",
+   "cond": "RQ03S_ST == 3",
+   "to": "RQ03Q_DONE"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-044",
+   "emo": "기본",
+   "text": "지금은 공고 없어. 이레마다 하나 붙여 — 위원회 게시판 봐."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-044",
+   "emo": "기본",
+   "text": "서쪽 터널 왕쥐. 철망 너머 침목 쪽에 산다 — 앞니 가져오면 백오십. 터널은 경비 허락이야 — 네가 허락이다."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-044",
+   "emo": "기본",
+   "text": "남태령 굴쥐 우두머리. 초소 계단 둘레 굴에 있어. 꼬리 가져오면 백. 계엄군 초소 눈에 안 띄게."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-044",
+   "emo": "기본",
+   "text": "이번 공고는 네가 해결했어. 다음은 이레 뒤."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "cmd",
+   "name": "rq",
+   "args": [
+    "03",
+    "claim",
+    "S"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "RQ03S_T == 2",
+   "to": "RQ03_OK2"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-044",
+   "emo": "기본",
+   "text": "앞니. (손바닥에 올려 본다) 이 크기면 그놈이야. 백오십. 서쪽 철망 귀 대는 애들이 줄겠군."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-044",
+   "emo": "기본",
+   "text": "꼬리. 굴쥐는 우두머리 없으면 흩어져. 백. 초소 애들은 몰라도 돼."
+  },
+  {
+   "op": "goto",
+   "to": "END"
   },
   {
    "op": "if",

@@ -6,28 +6,44 @@
  "cond": "V_ACT >= 1 and MQ101_STAGE >= 100 and SQ_S02_FIGHT == 0",
  "labels": {
   "START": 0,
-  "WAITGO": 8,
-  "OFFER": 10,
-  "START2": 12,
-  "NIGHT": 13,
-  "D1": 17,
-  "D2": 19,
-  "ONGOING": 21,
-  "REPORT": 23,
-  "MORNING": 26,
-  "REPORT2": 28,
-  "R1": 37,
-  "R1_HILL": 39,
-  "R2": 41,
-  "R2_MANY": 43,
-  "R3_UP": 45,
-  "R_QUIET": 47,
-  "WAIT": 49,
-  "FULL": 51,
-  "FULL_D": 54,
-  "COLD": 56
+  "WAITGO": 10,
+  "OFFER": 12,
+  "START2": 14,
+  "NIGHT": 15,
+  "D1": 19,
+  "D2": 21,
+  "ONGOING": 23,
+  "REPORT": 25,
+  "MORNING": 28,
+  "REPORT2": 30,
+  "R1": 39,
+  "R1_HILL": 41,
+  "R2": 43,
+  "R2_MANY": 45,
+  "R3_UP": 47,
+  "R_QUIET": 49,
+  "WAIT": 51,
+  "FULL": 53,
+  "FULL_D": 56,
+  "COLD": 58,
+  "BOUNTY": 60,
+  "BOUNTY_DOG": 62,
+  "BOUNTY_OK": 63,
+  "BOUNTY_OK2": 68,
+  "BOUNTY_OK3": 70,
+  "BOUNTY_LOST": 72
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "RQ03B_ST == 2 and ((RQ03B_T == 2 and has(\"M-326\") == 1) or (RQ03B_T != 2 and has(\"M-325\") == 1))",
+   "to": "BOUNTY"
+  },
+  {
+   "op": "if",
+   "cond": "RQ03B_ST == 2 and RQ30_ON == 0",
+   "to": "BOUNTY_LOST"
+  },
   {
    "op": "if",
    "cond": "RQ30_ON == 1 and RQ30_PHASE >= 2",
@@ -376,6 +392,124 @@
    "who": "N-R01-028",
    "emo": "분노",
    "text": "너한테 우리 밤을 맡기라고? 가."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "RQ03B_T == 2",
+   "to": "BOUNTY_DOG"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "완장을 내민다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "M-325",
+       "n": 1
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "BOUNTY_OK",
+     "id": "ZRQ30_NAM:4:0"
+    },
+    {
+     "text": "아직",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "ZRQ30_NAM:4:1"
+    }
+   ]
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "귀표를 내민다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "M-326",
+       "n": 1
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "BOUNTY_OK",
+     "id": "ZRQ30_NAM:5:0"
+    },
+    {
+     "text": "아직",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "ZRQ30_NAM:5:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "rq",
+   "args": [
+    "03",
+    "claim",
+    "B"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "RQ03B_T == 2",
+   "to": "BOUNTY_OK2"
+  },
+  {
+   "op": "if",
+   "cond": "RQ03B_T == 3",
+   "to": "BOUNTY_OK3"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "기본",
+   "text": "척후조장 완장. (뒤집어 본다) 남부순환 쪽 글씨야. 이걸로 한 주는 아랫문이 조용하겠지. 캡 세어 가."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "기본",
+   "text": "귀표. 바위굴 그놈 맞네. 우두머리가 없으면 무리가 흩어져 — 산길 나다니기 좀 낫겠다. 캡."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "기본",
+   "text": "캠프 조장 완장. 상류 밸브 위에서? …거기까지 올라갔구나. 이백. 다음 공고는 이레 뒤에 붙인다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "기본",
+   "text": "쓰러뜨렸다는 말은 들었어. 증거는? …없으면 캡도 없어. 다음엔 받아 둘게 — 이레 뒤 공고는 그대로 붙인다."
   },
   {
    "op": "goto",
