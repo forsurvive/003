@@ -686,8 +686,9 @@ func _cmd(a: Array, done: Callable) -> void:
 		"bseen":
 			_sv("SQ_S05_BSEEN", 1)
 			_catch_up()
-		"guide":                                                           # 반로아 지하 안내(해결 뒤): 한 시간 걸어 서울대입구 사다리 앞
+		"guide":                                                           # 반로아 지하 안내(해결 뒤): 한 시간 걸어 서울대입구 사다리 앞 — 그 자리(서울대입구역)는 이제 아는 곳(지도 교역로 쌍의 끝, 1-12k)
 			host.advance_minutes(60)
+			st.places.raise("L-UG-02", PlaceLog.FOUND)
 			done.call()
 			host.go.call_deferred("U-03", "from_W")
 			return

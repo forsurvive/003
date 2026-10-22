@@ -271,6 +271,7 @@ class Scope extends Node2D:
 	var x := 320.0
 	var t := 0.0
 	var done: Callable
+	var odd_t := 0.0
 	var _ended := false
 
 	func _ready() -> void:
@@ -293,12 +294,20 @@ class Scope extends Node2D:
 		for k in labels.size():
 			if not lit[k] and absf(x - float(labels[k][1])) < 28.0:
 				lit[k] = true
+		if absf(x - 530.0) < 14.0:                                              # 하늘의 비행체(그림 속 '뭐지?' — 이름은 안 붙인다): 지나면 "…?"만 1초
+			odd_t = 1.0
+		odd_t = maxf(0.0, odd_t - dt)
 		queue_redraw()
 		if (t > (0.3 if again else 1.0) and Input.is_action_just_pressed("ui_accept")) or t > (4.0 if again else 14.0):
 			_ended = true
 			done.call()
 
 	func _draw() -> void:
+		if fmod(t, 1.0) < 0.5:                                                   # 세진전자 타워 꼭대기 관제망 경광(원고 '꼭대기에 무언가 깜박인다' — 키아트 keyart.py의 앰버 램프)
+			draw_rect(Rect2(origin + Vector2(585, 20), Vector2(2, 2)), Color(1.0, 0.72, 0.2))
+		if odd_t > 0.0:
+			draw_rect(Rect2(origin + Vector2(522, 42), Vector2(18, 13)), Color(0, 0, 0, 0.75))
+			draw_string(font, origin + Vector2(525, 52), "…?", HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color(0.96, 0.96, 0.9))
 		var c := origin + Vector2(x, 150.0)
 		draw_arc(c, 15.0, 0, TAU, 28, Color(0, 0, 0, 0.8), 3.0)
 		draw_arc(c, 15.0, 0, TAU, 28, Color(0.96, 0.96, 0.9), 1.0)

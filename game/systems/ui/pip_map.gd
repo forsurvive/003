@@ -20,6 +20,7 @@ const INFER_CHUNK := Vector2i(20, 27)                  ## 등록 카드 끝 숫�
 
 static var tex: Texture2D
 static var icons: Texture2D
+static var lm_icons: Texture2D                        ## 원경 표식 실루엣(Landmarks.ROWS 차례)
 static var regions: Dictionary = {}                   ## 청크 "x,y" -> 권역 코드
 static var region_names: Dictionary = {}
 static var region_mid: Dictionary = {}                ## 권역 코드 -> 가운데(월드 타일)
@@ -188,6 +189,19 @@ func _markers(v: Control, U: Array) -> void:
 	var labels: Array = []                                                 # 이름표 겹침: 먼저 놓인 이름(발견 우선)과 겹치면 생략, 커서 아래 이름은 늘
 	var order: Array = PlaceLog.db.keys()
 	order.sort_custom(func(a, b): return places.get_state(a) > places.get_state(b))
+	if zoom <= 1:                                                          # 등록된 랜드마크(1-12k 재미 검수 ①): 전도 · 권역 단계에 실루엣(권역 단계엔 이름도) — 링의 회색이 무엇인지 지도에서 맞춰진다
+		if lm_icons == null:
+			lm_icons = load("res://assets/ui/landmark_icons.png")
+		for i in Landmarks.ROWS.size():
+			if not Landmarks.seen(pb.st, i):
+				continue
+			var lp := w2s(Vector2(int(Landmarks.ROWS[i][2]) + 0.5, int(Landmarks.ROWS[i][3]) + 0.5))
+			if not AREA.grow(-6).has_point(lp) or lp.y > AREA.end.y - 34:
+				continue
+			v.draw_rect(Rect2(lp - Vector2(5, 5), Vector2(10, 10)), U[0])
+			v.draw_texture_rect_region(lm_icons, Rect2(lp - Vector2(4, 4), Vector2(8, 8)), Rect2(i * 8, 0, 8, 8), U[4])
+			if zoom == 1:
+				pb.text(lp + Vector2(0, 5), str(Landmarks.ROWS[i][1]), pb.f10, 10, U[4], HORIZONTAL_ALIGNMENT_CENTER)
 	var link := trade_link_open(pb.st)
 	if link:                                                               # 지하 교역로(1-12k D-048): 두 끝을 잇는 점선 + 이름(권역 단계 이상)
 		var a: Dictionary = PlaceLog.db[TRADE_LINK[0]]

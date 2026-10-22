@@ -91,7 +91,7 @@ func _process(dt: float) -> void:
 				st.vars.set_v("MQ102_MAPC", 2)
 				host.hint("손목 카드의 숫자 둘 — 20 · 27. 여기였나.", 6.0)
 		if v("MQ102_MAPC") >= 1:                                        # 지도를 보고 한 추론(1-12k D-046): 카드 끝 숫자 둘 = 청크 (20, 27) — MQ-102 전이면 허브도 함께 연다
-			clue(2)
+			clue(2, v("MQ102_MAPC") != 2)                               # 발로 찾아왔으면 '여기였나' 한 줄만(알림 겹침 없이)
 		if (v("MQ101_BOARD") >= 1 or st.items.has("M-161")) and v("MQ102_C3") == 0:
 			clue(3)
 	if v("K_CODE") >= 1 and st.quests.stage("MQ-102") > 0 and st.quests.stage("MQ-102") < 100:

@@ -10,6 +10,31 @@ func _ready() -> void:
 	host.body = "kid"
 	var args := OS.get_cmdline_user_args()
 	var p3 := args.size() > 1 and args[1] == "p3"
+	var k := args.size() > 1 and args[1] == "k"                         # 1-12k: 1막 봉천 · 등록 카드 단계 3(코드 줄 `20 27`) · 원경 표식 넷 · 월드 지도(랜드마크 실루엣)
+	if k:
+		CharDocs.write_name(host.st, "윤", "서진")
+		host.st.vars.set_v("P_REGNO", CharDocs.REGNO)
+		for q in ["MQ-P2", "MQ-P3", "MQ-P4"]:
+			host.st.quests.set_stage(q, 100)
+		host.st.vars.set_v("V_ACT", 1)
+		host.st.vars.set_v("V_REGCARD", 3)
+		host.st.quests.set_stage("MQ-102", 10)
+		host.st.vars.set_v("LM_SEEN", 1 + 2 + 4 + 512)
+		host.st.places.raise("L-R01-09", PlaceLog.FOUND)
+		host.body = "adult"
+		host.enter("X-BC", "from_X-S07")
+		host.date_text = "2277. 10. 25.  10:00"
+		var pk := host.open_pipboy()
+		pk.t_open = 1.0
+		if args.size() > 0:
+			var ak := args[0].split(",")
+			pk.open_at(int(ak[0]), int(ak[1]))
+			if ak.size() > 2:
+				pk.sel = int(ak[2])
+			if ak.size() > 3:                                           # 넷째 = 지도 확대 단계(0 전도 · 1 권역 · 2 구역 · 3 정밀)
+				pk.map = PipMap.new(pk)
+				pk.map.zoom = int(ak[3])
+		return
 	if p3:
 		CharDocs.write_name(host.st, "윤", "서진")
 		host.st.vars.set_v("P_REGNO", CharDocs.REGNO)

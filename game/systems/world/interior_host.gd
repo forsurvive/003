@@ -821,8 +821,10 @@ func _check_exit() -> void:
 		var rc: String = map.region_at(t)
 		if rc != "":
 			st.places.regions[rc] = true
-		for nm in Landmarks.tick(st, t, Clock.is_night(date_text)):        # 원경 표식(1-12k, SD-08 §12.2): 반경 안에 처음 들어간 랜드마크
-			hint("원경 표식: %s — 방위 링에 방향이 보인다" % nm, 4.0)
+		var had: bool = int(st.vars.get_v("LM_SEEN")) != 0
+		for nm in Landmarks.tick(st, t, Clock.is_night(date_text)):        # 원경 표식(1-12k, SD-08 §12.2): 반경 안에 처음 들어간 랜드마크 — 설명은 처음 한 번만
+			hint(("원경 표식: %s — 방위 링 밖 회색 실루엣이 방향이다" if not had else "멀리 %s이(가) 보인다") % nm, 4.0)
+			had = true
 	if _up():
 		return
 	for g in map.triggers_at(t):                                      # 밟는 칸: 조건이 맞으면 장면을 연다
@@ -2151,7 +2153,7 @@ func _ring(c: Vector2) -> void:
 	var red: bool = enc_live != null and enc_live.flash_t > 0.0 and fmod(enc_live.flash_t, 0.4) < 0.2   # 추격자 예고: 테두리 붉게 점멸(SD-12 §9.7)
 	banner.draw_arc(c, 27.0, 0, TAU, 32, HUD_RED if red else HU[3], 2.0 if red else 1.0)
 	banner.draw_arc(c, 24.0, 0, TAU, 32, HU[2], 1.0)
-	_txt(c + Vector2(0, -37), "북", HU[5], HORIZONTAL_ALIGNMENT_CENTER)
+	_txt(c + Vector2(0, -41), "북", HU[5], HORIZONTAL_ALIGNMENT_CENTER)
 	banner.draw_rect(Rect2(c - Vector2(1, 1), Vector2(2, 2)), HU[6])
 	var rad := (10.0 + 2.0 * st.stat("PE")) * 32.0
 	for e in combat.enemies:
@@ -2185,7 +2187,7 @@ func _ring(c: Vector2) -> void:
 		if lm_icons == null:
 			lm_icons = load("res://assets/ui/landmark_icons.png")
 		for lm in Landmarks.visible(st, me, Clock.is_night(date_text)):   # 원경 표식(SD-08 §12.1 ① · SD-12 §4.3): 링 테두리 밖 8×8 회색 실루엣, 방향만
-			var q: Vector2 = (c + (lm["dir"] as Vector2) * 29.0).round()
+			var q: Vector2 = (c + (lm["dir"] as Vector2) * 32.0).round()
 			banner.draw_rect(Rect2(q - Vector2(5, 5), Vector2(10, 10)), HU[0])
 			banner.draw_texture_rect_region(lm_icons, Rect2(q - Vector2(4, 4), Vector2(8, 8)), Rect2(int(lm["i"]) * 8, 0, 8, 8), HU[4])
 		for lid in _ring_places(me):
@@ -2622,7 +2624,10 @@ func _arrive(lid: String, hours: float) -> void:
 			(m["actor"] as Actor).position = (m["actor"] as Actor).loco.render
 	var mins := roundi(hours * 60 * travel_mul)
 	advance_minutes(mins)
-	_note("%s 도착 — %s이 지났다" % [str(e["name"]), PipMap.hours_text(mins / 60.0)])
+	if hours < 1.0 and lid in PipMap.TRADE_LINK:                       # 지하 교역로(1-12k): 반로아가 가르쳐 준 대로 걸었다
+		_note("레일 가운데로 걸었다. 낙성대에선 입을 다물었다 — %s 도착, %s" % [str(e["name"]), PipMap.hours_text(mins / 60.0)])
+	else:
+		_note("%s 도착 — %s이 지났다" % [str(e["name"]), PipMap.hours_text(mins / 60.0)])
 	enc_live.on_arrive.call_deferred()                                # 도착 지점 = 추적대 첫 출현 후보(SD-05 §6.2)
 
 
