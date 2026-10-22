@@ -124,3 +124,80 @@ text 1 7 "구석 노점 거적 위에 쪽지 — '투표하러 감. 탁우빈'."
 npc N-DB-S1 5 1 S sheet=en_cr420_loco cond="GAME_HOUR >= 6 and GAME_HOUR < 20 and (UQ10_RES == 2 and UQ10_RAID == 0 and UQ10_RAID_DAY > 0 and GAME_DAY == UQ10_RAID_DAY - 1) and UQ71_SQ != 9" bark="(시장 안 노점을 손가락으로 센다) …넷. 덤 끊긴 놈들."
 npc N-DB-S2 9 1 S sheet=en_cr420b_loco cond="GAME_HOUR >= 6 and GAME_HOUR < 20 and (UQ10_RES == 2 and UQ10_RAID == 0 and UQ10_RAID_DAY > 0 and GAME_DAY == UQ10_RAID_DAY - 1) and UQ71_SQ != 9" bark="(침을 뱉는다) 내일 아침에 보자고."
 text 12 6 "약 노점 판자가 쪼개졌다. 진열대가 텅 비었다 — 대방 분대가 휩쓸고 갔다." w=2 cond="UQ10_ROB_DAY > 0 and GAME_DAY - UQ10_ROB_DAY < 3"
+
+# 1-12h UQ-70 「대림 시장의 이자」 대림 장터(L-R02-18, SD-09a L1036~1041 · SD-21 F6 골목 시장 · 계획 §3.5 · §8d V1~V12): 시흥대로 · 도림로 · 가마산로 삼거리 곁.
+#   골목 폭 하나 둘 — 북쪽 노점 줄(국수 · 천 씨 잡화 · 상인회 칠판 · 옷 노점) · 남쪽 번호표 창구 · 막다른 끝 넷(번호표 통 · 들것 정류지 · 둘째 몫 연장 좌판 · 무명 노점 둘의 물물교환).
+#   '특정 집단을 묘사하지 않는다'(09a) — 간판 · 이름은 흔한 시장 결. 사실은 원고 UQ-70.txt 머리 주석(UQ70_ 변수 한 곳).
+#   장은 07~19시. 이자(N-R02-047)는 수 · 토(GAME_WDAY 2 · 5) 09~17 창구 · 17~19 골목을 지나간다(소매치기 — 진행기 조사 키). 손지담 밤은 K-39 장터 사무실.
+spot L-R02-18 16 11 off=1,-13
+prop sd_tent_o 0 0
+prop stall_food 0 3
+text 0 3 "국수 노점. 양은 솥에서 김이 오른다. 판자에 분필 '잔치국수 5캡 · 비빔 6캡'." w=2
+npc N-DR-3 1 2 S look=F2-S3-HR06-H2-T10-1-PF00-HD00-EY00 cond="GAME_HOUR >= 7 and GAME_HOUR < 19 and dead(\"N-DR-3\") == 0" bark="면은 어제 뽑았어. 국물은 오늘 거고."
+prop tarp_pile 3 1 cond="UQ70_STALL_GONE == 0"
+text 3 1 "거적 위에 지게 멜빵 하나 · 끌 · 망치 · 새끼줄 한 타래. 쪽지 '둘째 몫 — 팝니다'. 글씨가 한 번 지워졌다 다시 쓰였다." cond="UQ70_STALL_GONE == 0 and UQ70_RES == 0 and UQ70_SUHO != 1"
+text 3 1 "거적 위 연장이 그대로다. 쪽지 '둘째 몫 — 팝니다'에 가위표. 그 밑에 '안 팝니다'." cond="UQ70_STALL_GONE == 0 and UQ70_RES != 0"
+text 3 1 "거적 위 지게 멜빵만 덩그러니. 쪽지에 '둘째 — 본소'. 누가 그 밑에 '아직'이라고 덧썼다." cond="UQ70_STALL_GONE == 0 and UQ70_RES == 0 and UQ70_SUHO == 1"
+prop stall_parts 3 3 cond="UQ70_STALL_GONE == 0"
+text 3 3 "천 씨 잡화. 새끼줄 · 양동이 · 녹 벗긴 못 한 됫박 · 2077년 재고 건전지(죽은 것)." w=2 cond="UQ70_STALL_GONE == 0"
+text 3 3 "빈 노점 자리. 각목 다리 자국 넷과 분필 '천 — 정리'. 옆 노점이 벌써 판자를 넓혔다." w=2 cond="UQ70_STALL_GONE == 1"
+npc N-DR-1 4 2 S look=E1-S3-HR02-H4-T03-2-PF00-HD03-EY00 cond="GAME_HOUR >= 7 and GAME_HOUR < 19 and UQ70_STALL_GONE == 0 and UQ70_SUHO == 1" bark="(지게 끈만 만지작거린다) …본소 창고동 뒤에 사슬 기둥이 있대."
+npc N-DR-1 4 2 S look=E1-S3-HR02-H4-T03-2-PF00-HD03-EY00 cond="GAME_HOUR >= 7 and GAME_HOUR < 19 and UQ70_STALL_GONE == 0 and UQ70_RES != 0 and UQ70_SUHO != 1" bark="둘째가 지게를 다시 졌어. 등이 펴졌더라."
+npc N-DR-1 4 2 S look=E1-S3-HR02-H4-T03-2-PF00-HD03-EY00 cond="GAME_HOUR >= 7 and GAME_HOUR < 19 and UQ70_STALL_GONE == 0 and UQ70_RES == 0 and UQ70_SUHO != 1" bark="끈 하나 백 캡이 아니라 한 캡이야. …둘째가 메던 거지."
+prop stamp_pole 5 3 cond="UQ70_GUARD < 2 and (UQ70_RES == 0 or UQ70_RES == 3) and (UQ70_DUE == 0 or dead(\"N-DR-2\") == 1)"
+prop stamp_pole 5 3 state=red cond="UQ70_GUARD < 2 and UQ70_RES == 0 and UQ70_DUE > 0 and dead(\"N-DR-2\") == 0"
+prop stamp_pole 5 3 state=guard cond="UQ70_GUARD == 2 or UQ70_RES == 2 or UQ70_RES == 4"
+text 5 3 "도장 종이 기둥. '자릿세 납부 확인' 종이가 겹겹이 — 장마다 붉은 둥근 도장." cond="UQ70_GUARD < 2 and (UQ70_RES == 0 or UQ70_RES == 3) and UQ70_DUE == 0"
+text 5 3 "도장 종이 기둥. 붉은 네모 도장 종이를 누가 반으로 접어 놓았다. 그 위에 검은 끈 한 가닥." cond="UQ70_GUARD < 2 and UQ70_RES == 0 and UQ70_DUE > 0 and dead(\"N-DR-2\") == 1"
+text 5 3 "도장 종이 기둥. 눈높이에 새 종이 — 굵은 붉은 네모 도장 '인력 1 — 수 09'. 그 밑 작은 글씨 '천 둘째'." scene=UQ70_POLE cond="UQ70_GUARD < 2 and UQ70_RES == 0 and UQ70_DUE > 0 and UQ70_FLED == 0 and dead(\"N-DR-2\") == 0"
+text 5 3 "도장 종이 기둥. 붉은 도장 위에 또 붉은 도장 — '인력 1 — 도주 · 수 09'. 이번엔 '천 둘째' 옆에 사슬 그림 두 겹." scene=UQ70_POLE cond="UQ70_GUARD < 2 and UQ70_RES == 0 and UQ70_DUE > 0 and UQ70_FLED == 1 and dead(\"N-DR-2\") == 0"
+text 5 3 "도장 종이 기둥. 붉은 예고 도장 위를 청록 종이가 덮었다 — '지하시장 경호단 입회'. 테이프 네 귀퉁이." cond="UQ70_GUARD == 2"
+text 5 3 "도장 종이 기둥. 붉은 도장 종이를 뜯어낸 자리에 상인회 새 종이 — '자릿세는 상인회 함으로'." cond="UQ70_GUARD < 2 and (UQ70_RES == 2 or UQ70_RES == 4)"
+prop sd_tent_g 5 0
+prop evac_sign 7 0
+text 7 0 "골목 끝 표지판. 붉은 십자에 '들것 의료반 — 금요일 정류지'. 밑에 분필로 '요즘은 격주'." 
+prop sd_tent_y 8 0
+prop price_board 8 3
+text 8 3 "상인회 칠판." w=2 scene=UQ70_BOARD
+npc N-R02-046 10 3 W cond="GAME_HOUR >= 7 and GAME_HOUR < 19" bark="자릿세가 두 배야. 새벽인력은 장부로 때려."
+prop stall_clothes 11 3
+text 11 3 "옷 노점. 2077년 상표가 붙은 겨울 외투가 걸렸다. 값은 상표 말고 솜 두께로 매긴다." w=2
+npc N-DR-7 12 2 S look=F1-S4-HR09-H1-T10-1-PF00-HD00-EY00 cond="GAME_HOUR >= 7 and GAME_HOUR < 19" bark="솜 두께 봐. 상표는 덤이야."
+prop crate_o 14 0
+prop drum 15 2
+text 15 2 "지난 번호표가 쌓인 기름통. 표마다 이름 하나 — 몇 장은 이름에 빨간 줄이 그어졌다. 본소 출근부의 그 빨간 줄과 같은 펜이다." scene=UQ70_BIN
+# 남쪽 — 번호표 창구(이자 · 수 · 토) · 결과에 따라 경호단 천막(①) / 자경 초소(②④)
+prop gs_cloth_post 0 6
+prop sb_kiosk 6 6 cond="UQ70_JA == 0 and not ((GAME_WDAY == 2 or GAME_WDAY == 5) and GAME_HOUR >= 9 and GAME_HOUR < 17)"
+prop sb_kiosk 6 6 state=open cond="UQ70_JA == 0 and (GAME_WDAY == 2 or GAME_WDAY == 5) and GAME_HOUR >= 9 and GAME_HOUR < 17"
+text 6 6 "새벽인력 번호표 창구." w=2 scene=UQ70_KIOSK cond="UQ70_JA == 0"
+prop guard_booth 6 6 cond="UQ70_JA != 0"
+text 6 6 "자경 초소. 창구 철판을 뜯어 세웠다. 셔터 페인트 '수 · 토 09시 수금'이 옆으로 누운 채 벽이 됐다." w=2 cond="UQ70_JA != 0"
+npc N-R02-047 8 6 W cond="UQ70_JA == 0 and (GAME_WDAY == 2 or GAME_WDAY == 5) and GAME_HOUR >= 9 and GAME_HOUR < 17 and UQ70_GUARD == 2" bark="(경호 구울을 흘끔) 오늘은 장부만 볼게요. 장부만."
+npc N-R02-047 8 6 W cond="UQ70_JA == 0 and (GAME_WDAY == 2 or GAME_WDAY == 5) and GAME_HOUR >= 9 and GAME_HOUR < 17 and UQ70_GUARD < 2 and UQ70_RES == 3" bark="평소 자릿세만 받아요. 사람 줄은 지웠잖아요. 지운 줄은 비싸요."
+npc N-R02-047 8 6 W cond="UQ70_JA == 0 and (GAME_WDAY == 2 or GAME_WDAY == 5) and GAME_HOUR >= 9 and GAME_HOUR < 17 and UQ70_GUARD < 2 and UQ70_RES != 3" bark="이번 주 이자 나왔어요. 사람으로 내셔도 되고."
+npc N-R02-047 8 5 W route=a:1,5,6;b:14,4,4;c:9,8,5 cond="UQ70_JA == 0 and (GAME_WDAY == 2 or GAME_WDAY == 5) and GAME_HOUR >= 17 and GAME_HOUR < 19 and UQ70_BOOK == 0" bark="(수첩을 뒷주머니에 꽂고 휘파람) 퇴근길엔 장사 안 해요."
+npc N-R02-047 8 5 W route=a:1,5,6;b:14,4,4;c:9,8,5 cond="UQ70_JA == 0 and (GAME_WDAY == 2 or GAME_WDAY == 5) and GAME_HOUR >= 17 and GAME_HOUR < 19 and UQ70_BOOK != 0" bark="(빈 뒷주머니를 더듬으며 땅바닥을 훑는다) …어디 흘렸지."
+npc N-DR-4 6 5 S look=M1-S4-HR00-H1-T03-2-PF00-HD03-EY00 cond="GAME_HOUR >= 7 and GAME_HOUR < 12 and UQ70_JA == 0 and (GAME_WDAY == 0 or GAME_WDAY == 3)" bark="(번호표를 끊는다) 0412. 오늘은 고척 쪽이래."
+npc N-DR-4 6 5 S look=M1-S4-HR00-H1-T03-2-PF00-HD03-EY00 cond="GAME_HOUR >= 7 and GAME_HOUR < 12 and UQ70_JA == 0 and (GAME_WDAY == 1 or GAME_WDAY == 4)" bark="번호표 끊으면 일당. 안 끊으면 굶고. 산수 간단하지."
+npc N-DR-4 6 5 S look=M1-S4-HR00-H1-T03-2-PF00-HD03-EY00 cond="GAME_HOUR >= 7 and GAME_HOUR < 12 and UQ70_JA == 0 and (GAME_WDAY == 2 or GAME_WDAY == 5 or GAME_WDAY == 6)" bark="(빈 창구를 두드린다) 이자 씨 없으면 번호도 없어. 기계가 혼자 뱉긴 하는데."
+npc N-DR-4 6 5 S look=M1-S4-HR00-H1-T03-2-PF00-HD03-EY00 cond="GAME_HOUR >= 7 and GAME_HOUR < 12 and UQ70_JA != 0" bark="번호표 기계가 없어졌어. …일은 이제 상인회 칠판 보고 찾아."
+prop sd_tent_g 10 7 cond="UQ70_GUARD == 2"
+npc CR-457 9 6 E sheet=en_cr457_loco cond="UQ70_GUARD == 2" bark="지하시장 경호단. 계약서대로 서 있는 거야."
+npc CR-457 12 6 W sheet=en_cr457_loco cond="UQ70_GUARD == 2" bark="(꿈쩍 않는다) 창구 앞 두 걸음. 그게 계약이야."
+npc N-DR-2 7 7 N look=M1-S2-HR01-H1-T03-2-PF00-HD00-EY00 cond="GAME_HOUR >= 7 and GAME_HOUR < 19 and UQ70_SUHO == 0 and UQ70_RES == 2" bark="(초소 앞에 선다) 보초는 처음이야. 번호표 대신 이름 묻는 거래."
+npc N-DR-2 12 8 W look=M1-S2-HR01-H1-T03-2-PF00-HD00-EY00 cond="GAME_HOUR >= 7 and GAME_HOUR < 19 and UQ70_SUHO == 0 and UQ70_RES == 1" bark="(경호단 천막에 물통을 나른다) 심부름값 받아. 캡으로. 사람 말고."
+npc N-DR-2 2 5 E look=M1-S2-HR01-H1-T03-2-PF00-HD00-EY00 route=a:2,5,8;b:13,5,6;c:9,4,4 cond="GAME_HOUR >= 7 and GAME_HOUR < 19 and UQ70_SUHO == 0 and UQ70_RES != 1 and UQ70_RES != 2 and not (UQ70_RES == 0 and UQ70_DUE > 0 and GAME_DAY >= UQ70_DUE - 1)" bark="(지게를 고쳐 멘다) 목에 '임시'라고 써 놨더라고. 임시면 언젠가 떼겠지."
+npc N-DR-2 2 5 E look=M1-S2-HR01-H1-T03-2-PF00-HD00-EY00 route=a:2,5,8;b:13,5,6;c:9,4,4 cond="GAME_HOUR >= 7 and GAME_HOUR < 19 and UQ70_SUHO == 0 and UQ70_RES == 0 and UQ70_DUE > 0 and GAME_DAY >= UQ70_DUE - 1 and not (UQ70_PROMISE == 1 and GAME_DAY == UQ70_DUE and GAME_HOUR < 10)" bark="(지게 끈을 쥔 손이 하얗다) 내일이야. …아버지 앞에선 웃어."
+# 남동 막다른 끝 — 무명 노점 둘의 물물교환 · 남서 — 천막 그늘 국수 손님 자리
+prop stall_water 13 6
+text 13 6 "물 노점. 끓인 물을 페트병에 판다. 뚜껑마다 도장 — '끓임 3번'." w=2
+prop crate_o 14 8
+text 14 8 "상자 위에 건전지 세 알과 깐 마늘 한 줌. 저울도 없이 눈대중으로 오간다." 
+npc N-DR-5 13 8 E look=F1-S2-HR04-H3-T10-1-PF00-HD00-EY00 cond="GAME_HOUR >= 7 and GAME_HOUR < 19" bark="마늘 한 줌에 건전지 세 알. 죽은 거 섞였으면 마늘 도로 가져가."
+npc N-DR-6 15 8 W look=M2-S5-HR02-H2-T16-2-PF00-HD00-EY00 cond="GAME_HOUR >= 7 and GAME_HOUR < 19" bark="세 알 다 살아 있어. 혀에 대 봐. 찌릿하지?"
+prop sd_tent_b 0 8
+prop drum 3 9
+text 3 9 "국수 손님이 앉는 기름통. 뚜껑에 젓가락 자국이 빙 둘렀다."
+prop crate_o 4 9
+box 4 9 stash name="천막 기둥 밑 비닐 꾸러미(번호표 날 숨기는 자리)"

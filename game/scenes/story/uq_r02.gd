@@ -56,6 +56,17 @@ const DROP_R := 9.0                        ## 이 칸 안에 서 있는 사람�
 const FLOOD_S := 6.0                       ## 밸브 → 허리 물까지(초) — 높은 턱으로(단말은 저수 바닥 한가운데 — 동서 턱 어느 쪽도 가깝지 않다)
 const EGG_AT := [Vector2i(14, 5), Vector2i(21, 14), Vector2i(5, 4)]
 const HIGH := [Rect2i(1, 2, 7, 5), Rect2i(31, 2, 8, 8), Rect2i(31, 13, 8, 4)]   ## J-10 높은 턱(물이 안 닿는 자리)
+# UQ-70 대림 시장의 이자(계획 §3.5 · §8d · SD-05 §3.27)
+const JA := "N-R02-047"                     ## 수금원 이자
+const SUHO := "N-DR-2"                      ## 천 씨네 둘째 천수호
+const DAERIM := "L-R02-18"                  ## 대림 장터 스팟(r02.spots 16×11)
+const DAERIM_SZ := Vector2i(16, 11)
+const WED := 2                              ## 수요일(Clock.weekday 0 월) — 이자 창구 · 기한
+const SAT := 5
+const TAKE_H := 10                          ## 기한 날 10시에 데려간다(09시 창구가 열리고 한 시간 장부)
+const DUE_AFTER := 3                        ## 장터에 처음 든 날 뒤 사흘이 지난 첫 수요일이 기한
+const STALL_DAYS := 7                       ## 끌려간 뒤 이레 안에 안 풀리면 천 씨 노점이 떠난다(V9)
+const POCKET_R := 1.6                       ## 소매치기 · 쓰러진 이자 품 — 이 칸 안
 
 var host: InteriorHost
 var st: StoryState
@@ -78,6 +89,8 @@ var _drops := 0
 var _drop_pend: Array = []                 ## [[자리, 남은 초]]
 var _burst := false
 var _flood_t := -1.0                       ## > 0: 밸브를 연 뒤 물이 차오르는 중(남은 초)
+var _spot_o := {}                          ## 스팟 원점 캐시(lid → 월드 칸)
+var _u70_hour := -1                        ## 장터 안에서 본 마지막 시각(바뀌면 인물을 다시 세운다 — 창구 · 저녁 골목 · 밤)
 
 
 func setup(h: InteriorHost, is_log := false) -> void:
@@ -88,6 +101,7 @@ func setup(h: InteriorHost, is_log := false) -> void:
 	host.map_entered.connect(_on_map)
 	host.box_closed.connect(_on_box_closed)
 	host.ev.handlers["uqr2"] = _cmd
+	host.interact_pre.append(_u70_interact)
 	if host.enc_live != null:
 		host.enc_live.ended.connect(_on_enc_ended)
 
@@ -135,6 +149,7 @@ func _process(dt: float) -> void:
 	_inspect_tick()
 	_trade_watch()
 	_u9_ready()
+	_u70_tick()
 
 
 # ---------------------------------------------------------------- UQ-07 견습생의 첫 납땜
@@ -325,6 +340,7 @@ func _on_day(d: int) -> void:
 	_uq10_day(d)
 	_uq08_day(d)
 	_uq09_day(d)
+	_uq70_day(d)
 
 
 func _roll(tag: String, pct: int) -> bool:
@@ -446,6 +462,64 @@ func _cmd(a: Array, done: Callable) -> void:
 			_log("대납 %d주(%d일 목요일까지)" % [weeks, v("UQ10_PAY_UNTIL")])
 		"msaid":
 			_sv("UQ10_MSAID", v("UQ10_MISS"))
+		"stage":                                                         # UQ-70 단계(사정을 들은 뒤에만 — 비표시)
+			if v("UQ70_MET") == 1 and st.quests.stage("UQ-70") < int(a[1]):
+				st.quests.set_stage("UQ-70", int(a[1]))
+		"due_line":                                                      # 붉은 도장이 가리키는 날(남은 날 — 화면 한 줄)
+			if v("UQ70_DUE") > 0 and v("UQ70_RES") == 0 and v("UQ70_SUHO") == 0:
+				var left := v("UQ70_DUE") - day()
+				host.hint("붉은 도장 '인력 1 — 수 09' — %s 수요일 아침." % ("오늘" if left <= 0 else ("내일" if left == 1 else "%d일 뒤" % left)), 4.0)
+		"contract":                                                      # ① 구학수 을 칸 서명 — 다음 06:00 경호 구울 둘
+			_sv("UQ70_GUARD", 1)
+			_sv("UQ70_GDAY", day())
+			st.call_fn("aff", ["JH", 4])
+			_u70_stage(20)
+			_log("대림 경호 계약 — 내일 아침 상주")
+		"gu":                                                            # ② 수첩을 구만호에게(물건은 선택지 태그가 가져감) — 다음 06:00 이자 실종
+			_sv("UQ70_BOOK", 2)
+			_sv("UQ70_GU_DAY", day())
+			st.call_fn("karma", [25])
+			st.call_fn("aff", ["SB", 2])                                  # 실장의 장부를 정리해 줌(본소 쪽에서 본 일)
+			_log("이자의 수첩을 구만호에게")
+		"threat":                                                        # ② 으름장 — 이자가 창구를 걷어 본소로
+			_sv("UQ70_THREAT", 1)
+			_sv("UQ70_JA", 1)
+			_sv("UQ70_JA_DAY", day())
+			st.call_fn("karma", [25])
+			_u70_resolve(2)
+			_log("이자 으름장 — 쫓겨남")
+		"paid":                                                          # ③ 300캡(선택지 태그가 가져감) — 끌려간 뒤면 전표로 다음 아침 돌려보냄
+			_sv("UQ70_PAID", 1)
+			st.call_fn("karma", [25])
+			if v("UQ70_SUHO") == 1:
+				_sv("UQ70_SUHO", 2)
+				_sv("UQ70_FREE_DAY", day())
+			_u70_resolve(3)
+			_log("300캡 청산")
+		"pledge":                                                        # ④ 대납 — 장면이 끝나면 SB 생포 그대로(H-03)
+			_sv("UQ70_PLEDGE", 1)
+			_sv("UQ70_PLEDGE_DAY", day())
+			st.call_fn("karma", [25])
+			_u70_resolve(4)                                               # 생포는 장면이 끝나면 _u70_tick(PLEDGE 1 · CAPTURE_BY 0 — 저장/불러오기에도 남는 값)
+			_log("둘째 대신 대납 인력으로")
+		"book":                                                          # 수첩을 손에 넣음(소매치기 · 쓰러진 품 · 베개 맡)
+			if v("UQ70_BOOK") == 0:
+				_sv("UQ70_BOOK", 1)
+				st.call_fn("give", ["M-438", 1])
+				_u70_stage(20)
+				_log("이자의 수첩을 손에 넣음")
+		"sneak":
+			_sv("UQ70_SNEAK", 1 if host.combat.crouch else 0)
+		"suho_free":                                                     # 사슬을 풂 — 그날 밤 뒷문 통로로 · 다음 06:00 장터(노점이 떠났으면 아버지와 떠남)
+			_sv("UQ70_SUHO", 2)
+			_sv("UQ70_FREE_DAY", day())
+			if v("SB_RAID") == 0 and not (_hour() >= 2 and _hour() < 4):   # 감시 의자 경비(02~04시 교대에만 빈다 — SQ-S09 127번 문과 같은 규칙)
+				host.hint("감시 의자의 경비가 고개를 든다 — \"거기! 그 기둥!\"", 4.0)
+				st.call_fn("aff", ["SB", -8])
+				if host.ev.handlers.has("sb"):
+					host.ev.handlers["sb"].call(["raid"], func() -> void: pass)
+			host.refresh_npcs()
+			_log("천수호를 사슬에서 풂")
 		"refund":                                                        # 분대가 흩어지면 대납 끝 — 아직 안 온 목요일 몫(선불)을 돌려준다
 			_sv("UQ10_FREE", 1)
 			var left := 0
@@ -493,11 +567,19 @@ func _tak_upstairs() -> bool:
 ## 시장 스팟 원점(월드 칸) — 굽기가 정한 자리
 func market_o() -> Vector2i:
 	if _market_o.x < 0:
+		_market_o = spot_o(MARKET)
+	return _market_o
+
+
+## 스팟 원점(월드 칸, place_geo _spots) — 없으면 (-1, -1)
+func spot_o(lid: String) -> Vector2i:
+	if not _spot_o.has(lid):
+		_spot_o[lid] = Vector2i(-1, -1)
 		var g = JSON.parse_string(FileAccess.get_file_as_string("res://data/world/place_geo.json"))
 		for sp in (g.get("_spots", []) if g is Dictionary else []):
-			if str(sp.get("lid", "")) == MARKET:
-				_market_o = Vector2i(int(sp["at"][0]), int(sp["at"][1]))
-	return _market_o
+			if str(sp.get("lid", "")) == lid:
+				_spot_o[lid] = Vector2i(int(sp["at"][0]), int(sp["at"][1]))
+	return _spot_o[lid]
 
 
 func _in_market(margin := 2) -> bool:
@@ -873,3 +955,173 @@ func _uq09_day(d: int) -> void:
 		var s9: int = st.quests.stage("UQ-09")
 		if s9 > 0 and s9 < 100:
 			st.quests.set_stage("UQ-09", 90)
+
+
+# ---------------------------------------------------------------- UQ-70 대림 시장의 이자
+func _in_daerim(margin := 2) -> bool:
+	if not (host.map is WorldMap) or host.player == null:
+		return false
+	var o := spot_o(DAERIM)
+	if o.x < 0:
+		return false
+	var t: Vector2i = host.map.tile_of(host.player.loco.logical)
+	return t.x >= o.x - margin and t.y >= o.y - margin and t.x < o.x + DAERIM_SZ.x + margin and t.y < o.y + DAERIM_SZ.y + margin
+
+
+func _u70_stage(n: int) -> void:
+	if v("UQ70_MET") == 1 and st.quests.stage("UQ-70") < n:
+		st.quests.set_stage("UQ-70", n)
+
+
+## 첫 매듭(RES 한 값 — 겹치는 보상은 한 번) · ②는 판도 −3(한 번)
+func _u70_resolve(res: int) -> void:
+	if v("UQ70_RES") == 0:
+		_sv("UQ70_RES", res)
+		_sv("UQ70_RES_DAY", day())
+	if res == 2 and v("UQ70_PD") == 0:
+		_sv("UQ70_PD", 1)
+		_sv("PD_R02_SB", v("PD_R02_SB") - 3)
+	if v("UQ70_XP") == 0:
+		_sv("UQ70_XP", 1)
+		st.call_fn("xp", [100])
+	if st.quests.stage("UQ-70") < 100:
+		st.quests.set_stage("UQ-70", 100)
+
+
+## after 다음 날부터 첫 요일 w(GAME_DAY)
+func next_wd(after: int, w: int) -> int:
+	for k in range(1, 8):
+		if wd(after + k) == w:
+			return after + k
+	return after + 7
+
+
+func _u70_tick() -> void:
+	# 장터에 처음 든 날 — 기한이 생긴다(붉은 도장)
+	if v("UQ70_SEEN") == 0 and _in_daerim():
+		_sv("UQ70_SEEN", day())
+		_sv("UQ70_DUE", next_wd(day() + DUE_AFTER - 1, WED))
+		_log("대림 장터 첫 방문 — 기한 %d일(수)" % v("UQ70_DUE"))
+		host.refresh_npcs()
+	# 이자의 죽음(어디서든 — 사실은 st.dead 한 곳): ②로 셈 · 품의 수첩은 그 자리에
+	if v("UQ70_JA") in [0, 1] and st.is_dead(JA):
+		_sv("UQ70_JA", 2)
+		_sv("UQ70_JA_DAY", day())
+		_u70_resolve(2)
+		if v("UQ70_BOOK") == 0 and not _npc_here(JA).is_empty():
+			_sv("UQ70_BOOK", 1)
+			st.call_fn("give", ["M-438", 1])
+			host.hint("쓰러진 이자의 품에서 수첩이 삐져나와 있다. 챙긴다 — 표지 안쪽 '대림 — 따로'.", 5.0)
+		_log("이자 사망")
+	# 대납 생포: 장면이 끝나면 끌려가고(값 PLEDGE 1 · CAPTURE_BY 0 — 불러오기에도 다시 일어남), 빠져나가면(본소 밖) 탈주 · 사흘 인계면 인계
+	var pl := v("UQ70_PLEDGE")
+	if pl == 1 and v("CAPTURE_BY") == 0 and _idle():
+		host.capture("sb")
+	elif pl == 1 and v("CAPTURE_BY") == 1:
+		_sv("UQ70_PLEDGE", 5)
+	elif pl == 5 and v("CAPTURE_BY") != 1:
+		var handed := v("CAPTURE_BY") == 2 or day() - v("CAPTURE_DAY") >= 3
+		_sv("UQ70_PLEDGE", 3 if handed else 2)
+		_sv("UQ70_PLEDGE_DAY", day())
+		_log("대납 인력 %s" % ("인계" if handed else "탈주"))
+	# 기한: 수요일 10시 — 경호단이 섰으면 못 데려가고, 아니면 끌려간다(시간 도약으로 넘겨도 같은 결과 — P6)
+	var due := v("UQ70_DUE")
+	if due > 0 and v("UQ70_SUHO") == 0 and v("UQ70_RES") == 0 and v("UQ70_JA") == 0 and v("UQ70_PLEDGE") == 0 and not st.is_dead(SUHO):
+		if (day() > due or (day() == due and _hour() >= TAKE_H)) and _idle():   # 대화 · 장면 중엔 미룬다(A99 — 눈앞에서 사라지지 않게)
+			if v("UQ70_GUARD") >= 1:
+				_sv("UQ70_GUARD", 2)
+				_u70_resolve(1)
+				_log("기한 — 경호단 입회(못 데려감)")
+			else:
+				_sv("UQ70_SUHO", 1)
+				_sv("UQ70_SUHO_DAY", due)                                   # 기한 날로 적는다(시간 도약으로 넘겨도 노점이 떠나는 날이 밀리지 않게 — P6)
+				_u70_stage(30)
+				if _in_daerim(6):
+					host.hint("창구 쪽이 소란하다 — 이자 뒤로 지게꾼 하나가 끌려간다. 목에 '임시' 번호표.", 5.0)
+				_log("기한 — 천수호가 본소로")
+			host.refresh_npcs()
+	# 경호단을 본 이자(수 · 토 창구) — SB −3(원문 '알면')
+	if v("UQ70_GUARD") == 2 and v("UQ70_GSEEN") == 0 and v("UQ70_JA") == 0 and wd(day()) in [WED, SAT] and _hour() >= 9:
+		_sv("UQ70_GSEEN", 1)
+		st.call_fn("aff", ["SB", -3])
+		_log("이자가 경호단을 봄 — SB −3")
+	# 천수호의 죽음(결말 전) — 소멸
+	if v("UQ70_MET") == 1 and v("UQ70_RES") == 0 and st.is_dead(SUHO) and st.quests.stage("UQ-70") < 90:
+		st.quests.set_stage("UQ-70", 90)
+	# 장터 안에서 시각이 바뀌면 인물을 다시 세운다(창구 09~17 · 저녁 골목 17~19 · 장 07~19)
+	if _in_daerim(6):
+		if _u70_hour != _hour() and _idle():
+			if _u70_hour >= 0:
+				host.refresh_npcs()
+			_u70_hour = _hour()
+	else:
+		_u70_hour = -1
+
+
+func _uq70_day(d: int) -> void:
+	var changed := false
+	if v("UQ70_GUARD") == 1 and d > v("UQ70_GDAY"):                     # 계약 다음 아침 경호 구울 둘이 창구 앞 천막에
+		_sv("UQ70_GUARD", 2)
+		_u70_resolve(1)
+		changed = true
+		_log("경호단 상주")
+	if v("UQ70_GU_DAY") > 0 and v("UQ70_JA") == 0 and d > v("UQ70_GU_DAY"):   # 본소가 자기 수금원을 침 — 이자 장부에서 나온 사람은 돌려보냄
+		_sv("UQ70_JA", 3)
+		_sv("UQ70_JA_DAY", d)
+		_u70_resolve(2)
+		if v("UQ70_SUHO") == 1:
+			_sv("UQ70_SUHO", 2)
+			_sv("UQ70_FREE_DAY", d)                                     # 그날 본소 뒷문으로 — 다음 아침 장터
+		changed = true
+		_log("이자 실종(본소)")
+	if v("UQ70_PLEDGE") == 2 and v("UQ70_JA") == 0 and d > v("UQ70_PLEDGE_DAY"):   # '대납 인력 탈주' 책임
+		_sv("UQ70_JA", 3)
+		_sv("UQ70_JA_DAY", d)
+		_u70_resolve(2)
+		changed = true
+		_log("대납 탈주 책임 — 이자 실종")
+	if v("UQ70_SUHO") == 2 and d > v("UQ70_FREE_DAY"):
+		_sv("UQ70_SUHO", 5 if v("UQ70_STALL_GONE") == 1 else 0)
+		if v("UQ70_SUHO") == 0 and v("UQ70_RES") == 0 and v("UQ70_JA") == 0:
+			_sv("UQ70_FLED", 1)                                         # 결말 전에 빼내면 이자가 '도주 인력' 새 도장 — 다음 주 수요일(재미 검수 ①)
+			_sv("UQ70_BSAID", 0)                                        # 두 번째로 끌려가면 손지담이 다시 말한다(서사 대조 중10)
+			_sv("UQ70_DUE", next_wd(d + DUE_AFTER - 1, WED))
+			_sv("UQ70_PROMISE", 0)
+			_log("도주 인력 — 새 기한 %d일" % v("UQ70_DUE"))
+		changed = true
+	if v("UQ70_SUHO") == 1 and v("UQ70_RES") != 0 and d > v("UQ70_RES_DAY"):   # 매듭이 나면 사람 줄이 없어진다 — 다음 06:00 풀어 보냄(서사 대조 중5)
+		_sv("UQ70_SUHO", 5 if v("UQ70_STALL_GONE") == 1 else 0)
+		changed = true
+		_log("매듭 — 천수호를 풀어 보냄")
+	if v("UQ70_SUHO") == 1 and v("UQ70_STALL_GONE") == 0 and d >= v("UQ70_SUHO_DAY") + STALL_DAYS:
+		_sv("UQ70_STALL_GONE", 1)                                       # 반복 없음 — 세계가 변한다(V9)
+		changed = true
+		_log("천 씨 노점이 장터를 떠남")
+	if changed and host.map != null:
+		host.refresh_npcs()
+
+
+func _npc_here(id: String) -> Dictionary:
+	for n in host.npcs:
+		if str(n["id"]) == id and is_instance_valid(n["actor"]):
+			return n
+	return {}
+
+
+## 조사 키: 쓰러진 이자의 품 · 저녁 골목에서 웅크려 뒷주머니(소매치기)
+func _u70_interact() -> bool:
+	if host.player == null or v("UQ70_BOOK") != 0 or v("UQ70_JA") != 0 or not _idle():
+		return false
+	var n := _npc_here(JA)
+	if n.is_empty() or n.get("dead", false):
+		return false
+	var a: Actor = n["actor"]
+	if a.loco.logical.distance_to(host.player.loco.logical) > POCKET_R * 32.0:
+		return false
+	if float(n.get("down_t", 0.0)) > 0.0:
+		host.play_scene("UQ70_KO")
+		return true
+	if host.combat.crouch and host.map is WorldMap and _hour() >= 17 and _hour() < 19:
+		host.play_scene("UQ70_POCKET")
+		return true
+	return false

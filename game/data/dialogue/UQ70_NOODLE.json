@@ -1,0 +1,104 @@
+{
+ "id": "UQ70_NOODLE",
+ "title": "국수 노점",
+ "loc": "L-R02-18",
+ "npc": "N-DR-3",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TAKEN": 5,
+  "GUARD": 7,
+  "NOJA": 9,
+  "MENU": 10,
+  "SHOP": 11
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "UQ70_SUHO == 1",
+   "to": "TAKEN"
+  },
+  {
+   "op": "if",
+   "cond": "UQ70_RES == 1",
+   "to": "GUARD"
+  },
+  {
+   "op": "if",
+   "cond": "UQ70_JA != 0",
+   "to": "NOJA"
+  },
+  {
+   "op": "line",
+   "who": "N-DR-3",
+   "emo": "기본",
+   "text": "면은 어제 뽑았어. 국물은 오늘 거고. 잔치 다섯, 비빔 여섯."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-DR-3",
+   "emo": "슬픔",
+   "text": "수호 데려갈 때 이자가 우리 솥 앞을 지나갔어. 국수 한 그릇 공짜로 달래서 줬어. …줬어."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-DR-3",
+   "emo": "미소",
+   "text": "경호단 구울들은 국수를 안 먹어. 근데 국물 냄새는 좋대. 냄새값은 안 받아."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-DR-3",
+   "emo": "미소",
+   "text": "창구 날인데 조용해. 국물이 더 맛있어. 기분 탓이겠지."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "국수 한 그릇",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SHOP",
+     "id": "UQ70_NOODLE:1:0"
+    },
+    {
+     "text": "(돌아선다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ70_NOODLE:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "trade",
+   "args": [
+    "VR18F"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-70.txt"
+}

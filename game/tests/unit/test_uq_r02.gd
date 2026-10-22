@@ -1205,3 +1205,311 @@ func test_uq09_fun_review_fixes(t) -> void:
 	st2.vars.set_v("MQ103_NEST", 1)                                     # J-09 둥지를 비운 판에만 큰바퀴가 올라온다(중8)
 	t.ok(_says(st2, "MQ-103_BOK", "안에서 열 줄은 몰랐겠지"), "어미를 살려 둔 채 철창을 열면 노복희가 안다(출처: 운반조 — 중8)")
 	t.eq(_v(st2, "AFF_JH") - jh, -1, "JH −1(한 번)")
+
+
+# ---------------------------------------------------------------- UQ-70 대림 시장의 이자(SD-05 §3.27 · 계획 §3.5 · §8d)
+## 요일을 정한다(진행기 wd는 시계 글 요일 기준 — 오늘이 w가 되게 GAME_WDAY와 시계 글을 같이 맞춘다)
+func _u70_today(h: InteriorHost, st: StoryState, w: int, hour: int) -> void:
+	var base := "2277. 11. 01.  %02d:00" % hour
+	var k := posmod(w - Clock.weekday(base), 7)
+	h.date_text = "2277. 11. %02d.  %02d:00" % [1 + k, hour]
+	st.vars.set_v("GAME_HOUR", hour)
+
+
+func test_uq70_seen_due_and_take(t) -> void:
+	var a := _host()
+	var h: InteriorHost = a[0]
+	var st: StoryState = a[1]
+	var c: UqR02 = a[2]
+	var due := c.next_wd(5 + 3 - 1, 2)
+	t.eq(c.wd(due), 2, "기한은 수요일")
+	t.ok(due - 5 >= 3 and due - 5 <= 9, "처음 든 날 뒤 사흘이 지난 첫 수요일")
+	st.vars.set_v("UQ70_SEEN", 5)
+	st.vars.set_v("UQ70_DUE", 5)
+	st.vars.set_v("UQ70_MET", 1)
+	st.quests.set_stage("UQ-70", 10)
+	st.vars.set_v("GAME_HOUR", 9)
+	c._u70_tick()
+	t.eq(_v(st, "UQ70_SUHO"), 0, "09시 — 창구가 열리고 한 시간은 장부")
+	st.vars.set_v("GAME_HOUR", 10)
+	c._u70_tick()
+	t.eq(_v(st, "UQ70_SUHO"), 1, "10시 — 천수호가 본소로")
+	t.eq(st.quests.stage("UQ-70"), 30, "단계 30")
+	t.ok(_says(st, "UQ70_JIDAM", "인력 1, 받았습니다"), "손지담 — 끌려간 날 한 줄")
+	t.ok(_says(st, "UQ70_BIN", "인력 1 — 천수호"), "번호표 통 맨 위 새 표")
+	c._uq70_day(5 + 6)
+	t.eq(_v(st, "UQ70_STALL_GONE"), 0, "엿새째는 아직")
+	c._uq70_day(5 + 7)
+	t.eq(_v(st, "UQ70_STALL_GONE"), 1, "이레 안에 안 풀리면 천 씨 노점이 떠난다(반복 없음 — V9)")
+	st.vars.set_v("PC_SKP_LOCKPICK", 30)
+	t.ok(_has_opt(st, "UQ70_SUHO", "자물쇠 따기 25"), "사슬 기둥 — [자물쇠 따기 25]")
+	t.ok(_says(st, "UQ70_SUHO", "판자 틈 길", ["자물쇠 따기"], c), "풀어 줌")
+	t.eq(_v(st, "UQ70_SUHO"), 2, "풀려남")
+	c._uq70_day(5 + 9)
+	t.eq(_v(st, "UQ70_SUHO"), 5, "노점이 떠난 뒤라 아버지와 떠남")
+
+
+func test_uq70_jidam_and_guard(t) -> void:
+	var a := _host()
+	var h: InteriorHost = a[0]
+	var st: StoryState = a[1]
+	var c: UqR02 = a[2]
+	st.vars.set_v("UQ70_SEEN", 5)
+	st.vars.set_v("UQ70_DUE", 9)
+	t.ok(_says(st, "UQ70_JIDAM", "새벽인력은 장부로 때려", ["두 배요", "경호를 붙이면요"], c), "원문 대사 · 사정 · 경호")
+	t.eq(_v(st, "UQ70_MET"), 1, "사정을 들음")
+	t.eq(_v(st, "UQ70_SEAL"), 1, "상인회 도장")
+	t.eq(st.quests.stage("UQ-70"), 20, "단계 20")
+	st.vars.set_v("AFF_JH", 0)
+	t.ok(_has_opt(st, "JM_GU", "대림 상인회 도장"), "구학수 — 계약서 을 칸")
+	t.ok(_says(st, "JM_GU", "사냥이지", ["대림 상인회 도장"], c), "계약")
+	t.eq(_v(st, "UQ70_GUARD"), 1, "계약")
+	t.eq(_v(st, "AFF_JH"), 4, "JH +4")
+	t.ok(not _has_opt(st, "JM_GU", "대림 상인회 도장"), "한 번")
+	c._uq70_day(6)
+	t.eq(_v(st, "UQ70_GUARD"), 2, "다음 06:00 상주")
+	t.eq(_v(st, "UQ70_RES"), 1, "① 매듭")
+	t.eq(st.quests.stage("UQ-70"), 100, "완료")
+	var sb := _v(st, "AFF_SB")
+	_u70_today(h, st, 2, 10)
+	c._u70_tick()
+	t.eq(_v(st, "UQ70_GSEEN"), 1, "수요일 창구 — 이자가 경호단을 봄")
+	t.eq(_v(st, "AFF_SB"), sb - 3, "SB −3(알면)")
+	c._u70_tick()
+	t.eq(_v(st, "AFF_SB"), sb - 3, "한 번")
+	t.ok(_says(st, "UQ70_JIDAM", "이름만 바뀐 거 아니냐"), "손지담 — 경호비로 이름만(V8)")
+	t.ok(_says(st, "UQ70_JA", "장부만 볼게요"), "이자 — 경호단 앞")
+
+
+func test_uq70_guard_on_due_day(t) -> void:
+	var a := _host()
+	var st: StoryState = a[1]
+	var c: UqR02 = a[2]
+	st.vars.set_v("UQ70_SEEN", 1)
+	st.vars.set_v("UQ70_DUE", 5)
+	st.vars.set_v("UQ70_MET", 1)
+	st.vars.set_v("UQ70_GUARD", 1)
+	st.vars.set_v("UQ70_GDAY", 5)
+	st.vars.set_v("GAME_HOUR", 11)
+	c._u70_tick()
+	t.eq(_v(st, "UQ70_SUHO"), 0, "기한 날 아침 계약했으면 경호단이 바로 입회 — 못 데려감")
+	t.eq(_v(st, "UQ70_GUARD"), 2, "상주")
+	t.eq(_v(st, "UQ70_RES"), 1, "①")
+
+
+func test_uq70_book_to_gu(t) -> void:
+	var a := _host()
+	var st: StoryState = a[1]
+	var c: UqR02 = a[2]
+	st.vars.set_v("UQ70_MET", 1)
+	st.vars.set_v("UQ70_SUHO", 1)
+	st.vars.set_v("UQ70_SUHO_DAY", 4)
+	h_crouch(a[0], true)
+	t.ok(_says(st, "UQ70_PILLOW", "수첩 귀퉁이", [], c), "밤 베개 맡 — 웅크리면")
+	t.eq(_v(st, "UQ70_BOOK"), 1, "수첩을 손에")
+	t.eq(st.count_of("M-438"), 1, "M-438")
+	t.ok(_says(st, "UQ70_PILLOW", "볼펜 하나뿐"), "두 번은 없다")
+	t.ok(_says(st, "UQ70_JIDAM", "캡이 아니라 '인'", ["수첩을 보여 준다"]), "손지담 — 본소 실장 귀띔")
+	t.eq(_v(st, "UQ70_TOLD"), 1, "한 번")
+	var k0 := _v(st, "V_KARMA")
+	var pd := _v(st, "PD_R02_SB")
+	t.ok(_says(st, "SQS09_GU", "본소에 들어온 적이 없어요", ["이자의 수첩을 내민다"], c), "구만호 — 장부 밖 숫자")
+	t.eq(st.count_of("M-438"), 0, "수첩을 넘김")
+	t.eq(_v(st, "UQ70_BOOK"), 2, "구만호 손")
+	t.eq(_v(st, "V_KARMA"), k0 + 25, "카르마 +25")
+	c._uq70_day(6)
+	t.eq(_v(st, "UQ70_JA"), 3, "다음 06:00 이자 실종(본소가 자기 수금원을 침)")
+	t.eq(_v(st, "UQ70_RES"), 2, "②")
+	t.eq(_v(st, "PD_R02_SB"), pd - 3, "판도 SB −3")
+	t.eq(_v(st, "UQ70_SUHO"), 2, "이자 장부에서 나온 사람은 돌려보냄")
+	c._uq70_day(7)
+	t.eq(_v(st, "UQ70_SUHO"), 0, "장터로")
+	t.ok(_says(st, "UQ70_JIDAM", "이자는 이자가 먹었지"), "손지담 — 말장난(V11)")
+	t.ok(_says(st, "UQ70_SUHO", "보초는 처음") or _says(st, "UQ70_SUHO", "이름을 물어요"), "수호 — 자경 초소(V6)")
+
+
+func h_crouch(h: InteriorHost, on: bool) -> void:
+	h.combat.crouch = on
+
+
+func test_uq70_paid_and_threat(t) -> void:
+	var a := _host()
+	var h: InteriorHost = a[0]
+	var st: StoryState = a[1]
+	var c: UqR02 = a[2]
+	st.vars.set_v("UQ70_MET", 1)
+	st.vars.set_v("PC_CAPS", 400)
+	_u70_today(h, st, 2, 10)
+	t.ok(_says(st, "UQ70_JA", "사람으로 내셔도 되고"), "이자 원문 대사")
+	t.ok(_has_opt(st, "UQ70_JA", "본소 장부엔 없는 숫자죠"), "으름장 — 어려움(수첩 없고 장부도 그대로)")
+	st.vars.set_v("HO_LEDGER", 81)
+	t.ok(_has_opt(st, "UQ70_JA", "수첩까지 새면요"), "본소 장부가 넘어간 판이면 보통(H17)")
+	st.vars.set_v("HO_LEDGER", 0)
+	var k0 := _v(st, "V_KARMA")
+	t.ok(_says(st, "UQ70_JA", "다음 줄은 다음 사람 거고요", ["캡 300"], c), "③ 300캡")
+	t.eq(_v(st, "PC_CAPS"), 100, "300캡")
+	t.eq(_v(st, "UQ70_RES"), 3, "③")
+	t.eq(_v(st, "V_KARMA"), k0 + 25, "카르마 +25")
+	t.ok(not _has_opt(st, "UQ70_JA", "캡 300"), "한 번")
+	t.ok(_says(st, "UQ70_JIDAM", "너 같은 손님은 처음이야"), "손지담 — ③")
+	# ③ 뒤 으름장은 없지만(사람 줄이 없다) 판도는 따로 — 새 판에서 으름장
+	var b := _host()
+	var st2: StoryState = b[1]
+	var c2: UqR02 = b[2]
+	st2.vars.set_v("UQ70_MET", 1)
+	var pd := _v(st2, "PD_R02_SB")
+	c2._cmd(["threat"], func() -> void: pass)
+	t.eq(_v(st2, "UQ70_JA"), 1, "으름장 — 쫓겨남")
+	t.eq(_v(st2, "UQ70_RES"), 2, "②")
+	t.eq(_v(st2, "PD_R02_SB"), pd - 3, "판도 −3")
+	st2.kill("N-R02-047")
+	c2._u70_tick()
+	t.eq(_v(st2, "UQ70_JA"), 2, "쫓겨난 뒤 죽어도 자리 한 값")
+	t.eq(_v(st2, "PD_R02_SB"), pd - 3, "판도는 한 번")
+
+
+func test_uq70_paid_after_taken(t) -> void:
+	var a := _host()
+	var h: InteriorHost = a[0]
+	var st: StoryState = a[1]
+	var c: UqR02 = a[2]
+	st.vars.set_v("UQ70_MET", 1)
+	st.vars.set_v("UQ70_SUHO", 1)
+	st.vars.set_v("PC_CAPS", 300)
+	_u70_today(h, st, 5, 11)
+	t.ok(_says(st, "UQ70_JA", "이미 실어 갔는데요", ["천 씨네 둘째 줄"]), "토요일 — 끌려간 뒤")
+	t.ok(_says(st, "UQ70_JA", "반환", ["캡 300"], c), "캡으로 사람까지")
+	t.eq(_v(st, "UQ70_SUHO"), 2, "다음 아침 돌아옴")
+	c._uq70_day(6)
+	t.eq(_v(st, "UQ70_SUHO"), 0, "장터")
+
+
+func test_uq70_pledge(t) -> void:
+	var a := _host()
+	var h: InteriorHost = a[0]
+	var st: StoryState = a[1]
+	var c: UqR02 = a[2]
+	st.vars.set_v("UQ70_MET", 1)
+	_u70_today(h, st, 2, 9)
+	st.vars.set_v("V_WANTED", 40)
+	t.ok(_says(st, "UQ70_JA", "현상금 붙은 분이", ["둘째 대신 나를"]), "수배 중이면 거절(V12)")
+	t.eq(_v(st, "UQ70_PLEDGE"), 0, "그대로")
+	st.vars.set_v("V_WANTED", 0)
+	t.ok(_says(st, "UQ70_JA", "대납 인력 1, 받았습니다", ["둘째 대신 나를"], c), "대납")
+	t.eq(_v(st, "UQ70_PLEDGE"), 1, "끌려가는 중")
+	t.eq(_v(st, "UQ70_RES"), 4, "④")
+	st.vars.set_v("CAPTURE_BY", 1)
+	st.vars.set_v("CAPTURE_DAY", 5)
+	c._u70_tick()
+	t.eq(_v(st, "UQ70_PLEDGE"), 5, "잡혀 있음")
+	st.vars.set_v("UQ70_DUE", 5)
+	st.vars.set_v("GAME_HOUR", 12)
+	c._u70_tick()
+	t.eq(_v(st, "UQ70_SUHO"), 0, "대납했으니 수호는 안 끌려감")
+	st.vars.set_v("CAPTURE_BY", 0)
+	c._u70_tick()
+	t.eq(_v(st, "UQ70_PLEDGE"), 2, "탈주")
+	var pd := _v(st, "PD_R02_SB")
+	c._uq70_day(6)
+	t.eq(_v(st, "UQ70_JA"), 3, "'대납 인력 탈주' 책임 — 이자 실종")
+	t.eq(_v(st, "PD_R02_SB"), pd - 3, "판도 −3")
+	t.ok(_says(st, "UQ70_JIDAM", "본소에 불려 갔대"), "손지담 — 탈주 판")
+
+
+func test_uq70_dead_and_cheon(t) -> void:
+	var a := _host()
+	var st: StoryState = a[1]
+	var c: UqR02 = a[2]
+	st.kill("N-R02-046")
+	t.ok(_says(st, "UQ70_CHEON", "원금은 본소가 먹고"), "손지담이 죽었으면 천 씨가 직접(V11)")
+	t.eq(_v(st, "UQ70_MET"), 1, "발동")
+	st.kill("N-R02-047")
+	c._u70_tick()
+	t.eq(_v(st, "UQ70_JA"), 2, "이자 사망")
+	t.eq(_v(st, "UQ70_RES"), 2, "②로 셈")
+	t.eq(st.quests.stage("UQ-70"), 100, "완료")
+	t.eq(_v(st, "UQ70_XP"), 1, "XP 한 번")
+
+
+func test_uq70_hide_and_maps(t) -> void:
+	var a := _host("K-39", "from_W")
+	var h: InteriorHost = a[0]
+	var st: StoryState = a[1]
+	var c: UqR02 = a[2]
+	_u70_today(h, st, 1, 22)
+	st.vars.set_v("UQ70_DUE", 12)
+	h.refresh_npcs()
+	t.ok(_actor(h, "N-DR-2") == null, "기한이 다음 주면 이 화요일엔 숨지 않는다(재미 검수 ②)")
+	st.vars.set_v("UQ70_DUE", 6)
+	h.refresh_npcs()
+	t.ok(_actor(h, "N-DR-2") != null, "기한 전날 화요일 밤 — 수호가 도장 뒤칸에")
+	t.ok(_says(st, "UQ70_SUHO", "노란 띠까진", ["아침까지 여기 있어"]), "수호의 목소리(V4)")
+	t.eq(_v(st, "UQ70_HIDE_MET"), 1, "만남")
+	t.eq(_v(st, "UQ70_PROMISE"), 1, "'해 볼게' 약속")
+	t.ok(_actor(h, "N-R02-046") != null, "밤 — 손지담은 사무실")
+	_u70_today(h, st, 3, 22)
+	h.refresh_npcs()
+	t.ok(_actor(h, "N-DR-2") == null, "다른 밤엔 없다")
+	h.enter("H-03", "from_W")
+	t.ok(_actor(h, "N-DR-2") == null, "끌려가기 전엔 사슬 기둥 빔")
+	st.vars.set_v("UQ70_SUHO", 1)
+	h.refresh_npcs()
+	t.ok(_actor(h, "N-DR-2") != null, "끌려가면 사슬 기둥(30,17) 옆")
+	h.enter("K-20", "from_W")
+	_u70_today(h, st, 3, 23)
+	h.refresh_npcs()
+	t.ok(_actor(h, "N-R02-047") != null, "밤 — 이자는 인솔조 숙소 빈 쪽방")
+	st.vars.set_v("UQ70_JA", 1)
+	h.refresh_npcs()
+	t.ok(_actor(h, "N-R02-047") == null, "쫓겨나면 빈방")
+
+
+func test_uq70_rescue_then_fled(t) -> void:
+	var a := _host()
+	var st: StoryState = a[1]
+	var c: UqR02 = a[2]
+	st.vars.set_v("UQ70_MET", 1)
+	st.vars.set_v("UQ70_SEEN", 1)
+	st.vars.set_v("UQ70_DUE", 5)
+	st.vars.set_v("UQ70_PROMISE", 1)
+	st.vars.set_v("GAME_HOUR", 10)
+	c._u70_tick()
+	t.eq(_v(st, "UQ70_SUHO"), 1, "끌려감")
+	t.ok(_says(st, "UQ70_JIDAM", "열 시 오 분에"), "약속하고 못 막았으면 손지담이 받는다")
+	st.vars.set_v("PC_SKP_LOCKPICK", 30)
+	_play(st, "UQ70_SUHO", ["자물쇠 따기"], c)
+	t.eq(_v(st, "UQ70_CAGE_SEEN"), 1, "사슬 기둥의 말을 들음")
+	t.ok(_says(st, "UQ70_CHEON", "새 멜빵", ["수호의 말을 전한다"]), "천 씨에게 전함(재미 검수 ③)")
+	t.eq(_v(st, "UQ70_CHEON_TOLD"), 1, "한 번")
+	c._uq70_day(6)
+	t.eq(_v(st, "UQ70_SUHO"), 0, "장터로")
+	t.eq(_v(st, "UQ70_FLED"), 1, "결말 전에 빼냄 — '도주 인력'")
+	var due := _v(st, "UQ70_DUE")
+	t.ok(due > 6 and c.wd(due) == 2, "새 기한 — 다음 수요일")
+	st.vars.set_v("GAME_DAY", 6)
+	c._u70_tick()
+	t.eq(_v(st, "UQ70_SUHO"), 0, "풀자마자 다시 끌려가지 않는다(재미 검수 ①)")
+	t.eq(_v(st, "UQ70_PROMISE"), 0, "약속은 새 기한에서 다시")
+
+
+func test_uq70_real_scene_paths(t) -> void:
+	var a := _host()
+	var h: InteriorHost = a[0]
+	var st: StoryState = a[1]
+	var c: UqR02 = a[2]
+	st.vars.set_v("UQ70_MET", 1)
+	st.call_fn("give", ["M-438", 1])
+	st.vars.set_v("UQ70_BOOK", 1)
+	t.eq(str(h.scene_for("C-049").get("id", "")), "FQSB01_GU", "출근부 전엔 구만호 장면이 FQSB01_GU(이름순 첫 참)")
+	t.ok(_has_opt(st, "FQSB01_GU", "대림 수금원의 수첩"), "그 장면에서 수첩을 꺼내 SQS09_GU U70으로 넘김(서사 대조 상1)")
+	st.vars.set_v("UQ70_SUHO", 1)
+	t.ok(_says(st, "UQ70_JIDAM", "인력 1, 받았습니다", [], c), "끌려간 뒤 처음 만나도 '수요일에 데려가'가 아니라 끌려간 얘기(서사 대조 상3)")
+	t.eq(st.quests.stage("UQ-70"), 30, "단계 30")
+	st.vars.set_v("UQ70_SUHO", 0)
+	st.kill("N-DR-2")
+	c._u70_tick()
+	t.eq(st.quests.stage("UQ-70"), 90, "수호 사망 — 소멸")
+	t.ok(_says(st, "UQ70_JIDAM", "사람 줄이 사람보다 먼저"), "손지담 — 수호 사망 판(서사 대조 상4)")
+	t.ok(_says(st, "UQ70_CHEON", "검은 천"), "천 씨 — 검은 천")
+	_u70_today(h, st, 2, 10)
+	t.ok(not _has_opt(st, "UQ70_JA", "캡 300"), "죽은 사람 줄은 청산 · 대납 없음")

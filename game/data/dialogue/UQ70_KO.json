@@ -1,0 +1,61 @@
+{
+ "id": "UQ70_KO",
+ "title": "쓰러진 이자",
+ "loc": "L-R02-18",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TAKE": 2
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "이자가 엎어져 신음한다. 뒷주머니 수첩이 바닥에 떨어져 있다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "수첩을 줍는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TAKE",
+     "id": "UQ70_KO:1:0"
+    },
+    {
+     "text": "그냥 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ70_KO:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "book"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "수첩을 챙긴다. 표지 안쪽에 '대림 — 따로'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-70.txt"
+}

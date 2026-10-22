@@ -1,0 +1,70 @@
+{
+ "id": "UQ70_KIOSK",
+ "title": "번호표 창구",
+ "loc": "L-R02-18",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TICKET": 3,
+  "OPEN": 5
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "(GAME_WDAY == 2 or GAME_WDAY == 5) and GAME_HOUR >= 9 and GAME_HOUR < 17",
+   "to": "OPEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "셔터가 내려진 철판 창구. 흰 페인트 '수 · 토 09시 수금'. 옆구리 번호표 기계가 혀를 내밀고 있다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "번호표를 한 장 뽑는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TICKET",
+     "id": "UQ70_KIOSK:1:0"
+    },
+    {
+     "text": "(돌아선다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ70_KIOSK:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "드르륵. '0413'. 뒷면에 작은 글씨 — '새벽인력 일용 — 본소 마당 05시'. 장터 사람들은 이 종이를 일당이라고 부른다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "셔터가 올라가 있다. 백열등 밑 펼친 장부 — 맨 끝 줄만 붉은 펜이다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-70.txt"
+}

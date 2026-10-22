@@ -1,0 +1,218 @@
+{
+ "id": "UQ70_CHEON",
+ "title": "잡화 노점 천 씨",
+ "loc": "L-R02-18",
+ "npc": "N-DR-1",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "PLEAD": 6,
+  "MOURN": 11,
+  "GONE": 13,
+  "GONE_R": 18,
+  "AFTER": 20,
+  "MENU": 21,
+  "SHOP": 22,
+  "RELAY": 24,
+  "PUN": 29
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "dead(\"N-DR-2\") == 1",
+   "to": "MOURN"
+  },
+  {
+   "op": "if",
+   "cond": "UQ70_RES != 0 and UQ70_SUHO != 1",
+   "to": "AFTER"
+  },
+  {
+   "op": "if",
+   "cond": "UQ70_SUHO == 1",
+   "to": "GONE"
+  },
+  {
+   "op": "if",
+   "cond": "UQ70_MET == 0 and dead(\"N-R02-046\") == 1 and UQ70_JA == 0",
+   "to": "PLEAD"
+  },
+  {
+   "op": "line",
+   "who": "N-DR-1",
+   "emo": "피곤",
+   "text": "(새끼줄을 감는다) 끈 하나 한 캡. 둘째가 메던 거야."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-DR-1",
+   "emo": "슬픔",
+   "text": "(손님 손을 덥석 잡는다) 상인회장도 없고, 물어볼 데가 없어서 그래. 우리 둘째가 수요일에 '인력'으로 가."
+  },
+  {
+   "op": "line",
+   "who": "N-DR-1",
+   "emo": "피곤",
+   "text": "자릿세 밀린 게 이자가 붙어서 삼백. 이자한테 직접 갚아야 지워진대. 아니면… 이자 그놈 뒷주머니 수첩. 그게 약점이라고 회장이 그랬어."
+  },
+  {
+   "op": "line",
+   "who": "N-DR-1",
+   "emo": "기본",
+   "text": "원금은 본소가 먹고, 이자는 이자가 먹지. 우리는 사람으로 먹히고."
+  },
+  {
+   "op": "do",
+   "fx": "UQ70_MET = 1; quest(\"UQ-70\", 10)"
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-DR-1",
+   "emo": "슬픔",
+   "text": "(노점 판자에 검은 천 한 자락) …둘째 몫 연장은 이제 안 팔아. 누가 사 가도 그 녀석 손때가 묻었잖아."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "do",
+   "fx": "UQ70_MET = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "stage",
+    "30"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "UQ70_RES != 0",
+   "to": "GONE_R"
+  },
+  {
+   "op": "line",
+   "who": "N-DR-1",
+   "emo": "슬픔",
+   "text": "(지게 끈만 만지작거린다) 본소 창고동 뒤에 사슬 기둥이 있대. 열쇠는 본소 거고. …이레만 더 기다릴 거야."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-DR-1",
+   "emo": "피곤",
+   "text": "장부 줄은 지워졌대. 내일 아침엔 풀어 보낸다고. …오늘 밤만 넘기면 돼."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-DR-1",
+   "emo": "미소",
+   "text": "둘째가 지게를 다시 졌어. 등이 펴졌더라. 연장 좌판은 접었어. 안 팔아도 되니까."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "물건을 본다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SHOP",
+     "id": "UQ70_CHEON:1:0"
+    },
+    {
+     "text": "(수호의 말을 전한다) 오른쪽 지게 끈이 닳았대요",
+     "tags": [],
+     "cond": "UQ70_CAGE_SEEN == 1 and UQ70_CHEON_TOLD == 0",
+     "fx": "",
+     "to": "RELAY",
+     "id": "UQ70_CHEON:1:1"
+    },
+    {
+     "text": "원금이랑 이자요?",
+     "tags": [],
+     "cond": "dead(\"N-R02-046\") == 0",
+     "fx": "",
+     "to": "PUN",
+     "id": "UQ70_CHEON:1:2"
+    },
+    {
+     "text": "(돌아선다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ70_CHEON:1:3"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "trade",
+   "args": [
+    "VR18J"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "UQ70_CHEON_TOLD = 1"
+  },
+  {
+   "op": "line",
+   "who": "N-DR-1",
+   "emo": "슬픔",
+   "text": "(손을 멈춘다) …오른쪽. 그 녀석 오른쪽 어깨가 낮아. 어릴 때부터."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "천 씨가 좌판의 새끼줄을 끌어당겨 세 가닥으로 꼬기 시작한다. 손이 빠르다."
+  },
+  {
+   "op": "line",
+   "who": "N-DR-1",
+   "emo": "기본",
+   "text": "돌아오면 메게 해야지. 새 멜빵. 돈 안 받아. 이건 팔 물건이 아니야."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-DR-1",
+   "emo": "기본",
+   "text": "원금은 본소가 먹고, 이자는 이자가 먹지. 장터 농담이야. 웃는 사람은 없고."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-70.txt"
+}

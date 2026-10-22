@@ -40,7 +40,8 @@
   "CHOOSE": 91,
   "PAYOFF": 93,
   "RETYPE": 97,
-  "S09": 100
+  "S09": 100,
+  "U70": 102
  },
  "ops": [
   {
@@ -114,12 +115,20 @@
      "id": "FQSB01_GU:1:1"
     },
     {
+     "text": "(대림 수금원의 수첩을 꺼낸다)",
+     "tags": [],
+     "cond": "has(\"M-438\") == 1 and UQ70_JA == 0",
+     "fx": "",
+     "to": "U70",
+     "id": "FQSB01_GU:1:2"
+    },
+    {
      "text": "됐다",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "FQSB01_GU:1:2"
+     "id": "FQSB01_GU:1:3"
     }
    ]
   },
@@ -256,12 +265,20 @@
      "id": "FQSB01_GU:2:1"
     },
     {
+     "text": "(대림 수금원의 수첩을 꺼낸다)",
+     "tags": [],
+     "cond": "has(\"M-438\") == 1 and UQ70_JA == 0",
+     "fx": "",
+     "to": "U70",
+     "id": "FQSB01_GU:2:2"
+    },
+    {
      "text": "됐다",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "FQSB01_GU:2:2"
+     "id": "FQSB01_GU:2:3"
     }
    ]
   },
@@ -666,6 +683,19 @@
     "pass",
     "FQSB01_GU",
     "DEAL"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "sb01",
+   "args": [
+    "pass",
+    "FQSB01_GU",
+    "U70"
    ]
   },
   {

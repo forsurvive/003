@@ -6,6 +6,12 @@
   stool_goggles  철사의 빈 의자(1×1, UQ-08) — 둥근 나무 의자 위에 고글 하나(가죽 끈 · 두 알 — 기본 = 맨 알 · 상태 lens = 한쪽 알에 세진 렌즈 푸른 빛)
   egg_cluster  배수구 알집 무더기(1×1, UQ-09) — 끈적한 막 위 적갈색 알집 다섯 · 상태 burnt(검게 탄 껍질 · 불씨) · drowned(물에 잠겨 허옇게 불어 터짐)
   w_soot       벽 그을음(벽 1×0, UQ-08) — 부채꼴로 번진 검은 그을음 · 가운데 터진 자국 · 아래 분필 글씨 몇 줄
+  stamp_pole   대림 장터 도장 종이 기둥(1×1, UQ-70) — 낮은 콘크리트 기둥에 '자릿세 납부 확인' 종이가 겹겹이 · 장마다 붉은 둥근 도장.
+               상태 red(눈높이에 새 종이 — 굵은 붉은 네모 도장 '인력 1' · 붉은 테) · guard(청록 '경호단 입회' 도장 종이를 테이프로 덮어 붙임)
+  sb_kiosk     새벽인력 번호표 창구(2×1, UQ-70) — 철판 상자 · 처마 · 셔터(흰 페인트 '수 · 토 09시 수금' 두 줄) · 옆구리 번호표 뽑기 통(붉은 혀).
+               상태 open(셔터를 올림 — 안에 장부 · 백열등 · 도장 통)
+  w_belt_rack  폐 태권도장 띠 걸이(벽 2×0, UQ-70) — 나무 막대에 흰 · 노랑 · 초록 · 파랑 · 빨강 · 검정 띠가 늘어짐 · 검정 띠 하나는 빈 못(누가 매고 나감) · 위 액자 '태극'
+  heavy_bag    천장에 매단 샌드백(1×1, UQ-70) — 쇠사슬 · 터진 가죽을 박스 테이프로 감음 · 아래 흘린 모래
 props_bc.PROPS에 합쳐져 r01_props 아틀라스로 나간다."""
 import math
 import os
@@ -239,6 +245,130 @@ def w_soot():
     return im
 
 
+def _paper(d, x0, y0, x1, y1, col="P09", stamp=True):
+    """기둥에 붙인 종이 한 장(모서리 들뜸 · 접힌 결) + 붉은 둥근 도장."""
+    d.rectangle([x0, y0, x1, y1], fill=C(col))
+    d.line([x0, y1, x1, y1], fill=C("P06")); d.point((x1, y0), fill=C("P07"))
+    d.line([x0 + 2, y0 + 3, x1 - 3, y0 + 3], fill=C("P06"))
+    if stamp:
+        cx, cy = x1 - 3, y1 - 3
+        d.ellipse([cx - 2, cy - 2, cx + 2, cy + 2], outline=C("P53"))
+        d.point((cx, cy), fill=C("P53"))
+
+
+def stamp_pole(state=""):
+    """도장 종이 기둥(30×80): 굵은 콘크리트 기둥 — 위에서 아래까지 '자릿세 납부 확인' 종이가 덧붙고 해졌다(날짜순 · 도장 하나씩)."""
+    im = img(30, 80)
+    d = ImageDraw.Draw(im)
+    _shadow(d, 5, 26, 77)
+    d.rectangle([8, 4, 22, 77], fill=C(INK))
+    d.rectangle([9, 5, 21, 76], fill=C("P06"))
+    d.line([9, 5, 9, 76], fill=C("P07")); d.line([21, 5, 21, 76], fill=C("P05"))
+    d.rectangle([7, 2, 23, 5], fill=C("P05")); d.line([7, 2, 23, 2], fill=C("P07"))           # 기둥 머리
+    for k, (y0, col) in enumerate(((10, "P08"), (19, "P22"), (27, "P09"), (36, "P21"), (44, "P08"), (53, "P22"), (61, "P09"))):
+        x0 = 7 + (k % 3)                                                  # 겹겹이 덧붙인 종이(누렇게 바랜 것부터 새것까지)
+        _paper(d, x0, y0, x0 + 13 - (k % 2), y0 + 9, col, stamp=(k != 3))
+    d.line([9, 71, 21, 71], fill=C("P04")); d.line([11, 74, 19, 73], fill=C("P04"))            # 뜯겨 나간 자국(풀 자국)
+    if state == "red":                                                    # 붉은 예고 도장 '인력 1 — 수 09'
+        d.rectangle([5, 30, 25, 46], fill=C(INK))
+        d.rectangle([6, 31, 24, 45], fill=C("P09"))
+        d.rectangle([8, 33, 22, 41], outline=C("P53"))
+        d.rectangle([9, 34, 21, 40], outline=C("P54"))
+        d.line([12, 35, 12, 39], fill=C("P53")); d.line([15, 36, 19, 36], fill=C("P53")); d.line([17, 36, 17, 39], fill=C("P53"))
+        d.line([9, 43, 20, 43], fill=C("P53"))                               # 아래 작은 글씨 '수 09'
+    elif state == "guard":                                                # 경호단 입회 도장 — 붉은 종이 위를 청록 종이로 덮고 테이프 넷
+        d.rectangle([5, 30, 25, 46], fill=C(INK))
+        d.rectangle([6, 31, 24, 45], fill=C("P15"))
+        d.ellipse([10, 32, 20, 42], outline=C("P62"))
+        d.ellipse([12, 34, 18, 40], outline=C("P35"))
+        d.point((15, 37), fill=C("P62"))
+        for (x, y) in ((5, 30), (22, 30), (5, 43), (22, 43)):
+            d.rectangle([x, y, x + 3, y + 2], fill=C("P21"))
+    return im
+
+
+def sb_kiosk(state=""):
+    """새벽인력 번호표 창구(64×58): 철판 상자 · 처마 · 셔터 · 옆구리 번호표 뽑기 통. 셔터의 흰 페인트 두 줄 = '수 · 토 / 09시 수금'."""
+    im = img(64, 58)
+    d = ImageDraw.Draw(im)
+    _shadow(d, 3, 62, 55)
+    d.rectangle([4, 12, 56, 54], fill=C(INK))
+    d.rectangle([5, 13, 55, 53], fill=C("P12"))
+    d.line([5, 13, 5, 53], fill=C("P13")); d.line([55, 13, 55, 53], fill=C("P11"))
+    for (x, y) in ((8, 16), (52, 16), (8, 50), (52, 50)):
+        d.point((x, y), fill=C("P14"))                                        # 리벳
+    for (x, y0, n) in ((8, 17, 6), (52, 17, 9), (33, 45, 5), (19, 45, 7)):    # 녹물 자국
+        d.line([x, y0, x, y0 + n], fill=C("P25")); d.point((x, y0 + n + 1), fill=C("P24"))
+    d.polygon([(1, 12), (59, 12), (62, 6), (4, 6)], fill=C(INK))           # 처마(덧댄 함석)
+    d.polygon([(2, 11), (58, 11), (60, 7), (5, 7)], fill=C("P05"))
+    for x in range(8, 58, 6):
+        d.line([x, 7, x - 1, 11], fill=C("P04"))
+    d.rectangle([5, 42, 55, 44], fill=C("P52")); d.line([5, 42, 55, 42], fill=C("P53"))     # 아래 띠(새벽인력 붉은 칠 — 벗겨짐)
+    for x in (14, 30, 41):
+        d.rectangle([x, 42, x + 3, 44], fill=C("P12"))
+    d.rectangle([11, 18, 45, 39], fill=C(INK))                              # 창 틀
+    if state == "open":
+        d.rectangle([12, 19, 44, 22], fill=C("P05"))                        # 말아 올린 셔터
+        d.line([12, 22, 44, 22], fill=C("P04"))
+        d.rectangle([12, 23, 44, 38], fill=C("P02"))                        # 어두운 안
+        d.ellipse([26, 23, 31, 28], fill=C("P49")); d.point((28, 25), fill=C("P50"))   # 백열등
+        d.rectangle([14, 33, 30, 36], fill=C("P22")); d.line([22, 33, 22, 36], fill=C("P20"))   # 펼친 장부
+        d.line([15, 34, 20, 34], fill=C("P04")); d.line([24, 34, 29, 34], fill=C("P53"))      # 장부 맨 끝 붉은 줄
+        d.rectangle([35, 31, 40, 36], fill=C("P24")); d.rectangle([36, 30, 39, 31], fill=C("P53"))   # 도장 통
+        d.rectangle([11, 37, 45, 39], fill=C("P18")); d.line([11, 37, 45, 37], fill=C("P20"))  # 받침판
+    else:
+        d.rectangle([12, 19, 44, 38], fill=C("P06"))                        # 내린 셔터(골판)
+        for y in range(21, 38, 3):
+            d.line([12, y, 44, y], fill=C("P05"))
+        d.line([16, 25, 22, 25], fill=C("P09")); d.point((25, 25), fill=C("P09")); d.line([28, 25, 34, 25], fill=C("P09"))   # 페인트 '수 · 토'
+        d.line([16, 31, 24, 31], fill=C("P09")); d.line([27, 31, 40, 31], fill=C("P09"))     # '09시 수금'
+        d.point((41, 32), fill=C("P08")); d.point((41, 33), fill=C("P08"))                    # 흘러내린 페인트
+        d.rectangle([26, 36, 30, 38], fill=C("P04"))                                           # 셔터 자물쇠
+    d.rectangle([47, 22, 54, 36], fill=C(INK)); d.rectangle([48, 23, 53, 35], fill=C("P26"))   # 번호표 뽑기 통
+    d.rectangle([49, 26, 52, 28], fill=C("P02"))
+    d.polygon([(50, 28), (53, 28), (55, 34), (51, 33)], fill=C("P09"))     # 늘어진 번호표 혀
+    d.line([51, 30, 53, 31], fill=C("P53"))
+    return im
+
+
+def w_belt_rack():
+    """띠 걸이(60×34): 위 액자 · 나무 막대 · 띠 여섯 칸(마지막 못은 빔)."""
+    im = img(60, 34)
+    d = ImageDraw.Draw(im)
+    d.rectangle([16, 0, 43, 9], fill=C(INK)); d.rectangle([17, 1, 42, 8], fill=C("P09"))       # 액자 '태극'
+    d.ellipse([26, 2, 32, 8], fill=C("P53")); d.pieslice([26, 2, 32, 8], 0, 180, fill=C("P45"))
+    for x in (20, 36, 39):
+        d.line([x, 3, x, 6], fill=C(INK))
+    d.rectangle([2, 12, 57, 14], fill=C(INK)); d.line([3, 12, 56, 12], fill=C("P20"))         # 막대
+    cols = ["P09", "P49", "P55", "P45", "P53", "P02"]
+    for k, col in enumerate(cols):
+        x = 5 + k * 9
+        d.point((x + 2, 13), fill=C("P06"))                                                    # 못
+        if k == 5:
+            d.line([x + 2, 14, x + 2, 16], fill=C("P05"))                                      # 빈 못(검정 띠는 누가 매고 나갔다)
+            continue
+        d.rectangle([x, 14, x + 4, 31 - (k % 2) * 3], fill=C(INK))
+        d.rectangle([x + 1, 14, x + 3, 30 - (k % 2) * 3], fill=C(col))
+        d.line([x + 1, 22, x + 3, 22], fill=C(INK))                                           # 접힌 매듭
+    return im
+
+
+def heavy_bag():
+    """매단 샌드백(26×64): 쇠사슬 · 낡은 가죽 · 박스 테이프 감음 · 밑에 흘린 모래."""
+    im = img(26, 64)
+    d = ImageDraw.Draw(im)
+    d.ellipse([3, 58, 23, 63], fill=C("P21")); d.point((8, 60), fill=C("P20")); d.point((17, 61), fill=C("P20"))   # 흘린 모래
+    for y in range(0, 16, 3):
+        d.rectangle([12, y, 13, y + 1], fill=C("P05"))                                         # 쇠사슬
+    d.rounded_rectangle([5, 15, 20, 55], 4, fill=C(INK))
+    d.rounded_rectangle([6, 16, 19, 54], 4, fill=C("P53"))
+    d.line([7, 17, 7, 53], fill=C("P54")); d.line([18, 17, 18, 53], fill=C("P52"))
+    for y in (24, 40):
+        d.rectangle([6, y, 19, y + 4], fill=C("P21")); d.line([6, y, 19, y], fill=C("P22"))   # 박스 테이프
+    d.line([10, 46, 14, 50], fill=C("P51")); d.line([12, 45, 15, 49], fill=C("P21"))           # 터진 솔기 · 삐져나온 솜
+    return im
+
+
 def _r(fn, fw, fh, kind="floor", down=2, dx=0, dy=0):
     return {"fn": fn, "foot": (fw, fh), "kind": kind, "down": down, "dx": dx, "dy": dy}
 
@@ -249,12 +379,18 @@ PROPS_UQ2 = {
     "stool_goggles": _r(stool_goggles, 1, 1, down=-2),
     "w_soot": _r(w_soot, 1, 0, "wall", dx=1, dy=2),
     "egg_cluster": _r(egg_cluster, 1, 1, down=-2),
+    "stamp_pole": _r(stamp_pole, 1, 1, down=-3),
+    "sb_kiosk": _r(sb_kiosk, 2, 1),
+    "w_belt_rack": _r(w_belt_rack, 2, 0, "wall", dx=2, dy=2),
+    "heavy_bag": _r(heavy_bag, 1, 1, down=-4),
 }
 STATES_UQ2 = {
     "toy_robot": {"fixed": lambda: toy_robot("fixed")},
     "scale_beam": {"fixed": lambda: scale_beam("fixed"), "swap": lambda: scale_beam("swap")},
     "stool_goggles": {"lens": lambda: stool_goggles("lens")},
     "egg_cluster": {"burnt": lambda: egg_cluster("burnt"), "drowned": lambda: egg_cluster("drowned")},
+    "stamp_pole": {"red": lambda: stamp_pole("red"), "guard": lambda: stamp_pole("guard")},
+    "sb_kiosk": {"open": lambda: sb_kiosk("open")},
 }
 
 
@@ -262,7 +398,7 @@ if __name__ == "__main__":
     out = sys.argv[1] if len(sys.argv) > 1 else "/tmp/props_uq2.png"
     tiles = [(n, s) for n in PROPS_UQ2 for s in [""] + list(STATES_UQ2.get(n, {}))]
     W = 70 * len(tiles)
-    sheet = Image.new("RGBA", (W, 60), (60, 56, 52, 255))
+    sheet = Image.new("RGBA", (W, 90), (60, 56, 52, 255))
     for i, (n, s) in enumerate(tiles):
         p = PROPS_UQ2[n]["fn"](s) if s else PROPS_UQ2[n]["fn"]()
         sheet.alpha_composite(p, (i * 70 + 4, 6))

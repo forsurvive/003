@@ -741,6 +741,32 @@ func _ready() -> void:
 				["hours", 25], ["wait", 1.0], ["until", "UQ10_RAID == 5", 10.0, "습격 날 아침 — 대방 분대 실전", "uq10_raid"], ["wait", 6.0], ["shot", "uq10_raiders"],
 				["fight"], ["wait", 2.0], ["fight"], ["wait", 2.0], ["fight"], ["wait", 2.0], ["fight"],
 				["until", "UQ10_RAID == 1", 40.0, "습격을 막음", "uq10_held"]]
+		"uq70":                                                         # 1-12h UQ-70 대림 시장의 이자: 장터 첫 방문(기한 — 2277. 10. 29.은 월요일 → 다음다음 수요일 15일) →
+			st.vars.set_v("GAME_DAY", 6)                                 #   손지담 사정 · 상인회 도장(20) → 장터 사무실 · 도장 뒤칸(K-39) → 화요일 밤 숨은 수호 → 수 10시 끌려감(30) →
+			st.vars.set_v("PC_SKP_LOCKPICK", 40)                         #   새벽 3시 교대 본소 H-03 사슬 기둥 풀기 → K-20 베개 맡 수첩(웅크려) → 구만호 → 다음 아침 이자 실종(②, 100) · 장터 자경 초소
+			st.vars.set_v("PC_CAPS", 500)
+			st.quests.set_stage("MQ-101", 100)
+			host.date_text = "2277. 10. 29.  10:00"
+			var dm := _spot_o("L-R02-18")                               # 장터 스팟 원점(16×11 — 손지담 10,3 · 창구 6,6)
+			host.enter("W", "", {}, Vector2(dm.x + 9, dm.y + 10) * 32.0 + Vector2(16, 16))
+			plan = [["hp", 3000], ["wait", 2.0], ["noenc"], ["calm"], ["go", dm.x + 9, dm.y + 5],
+				["until", "UQ70_SEEN == 6 and UQ70_DUE == 15", 8.0, "장터 첫 방문 — 기한 다음다음 수요일", "uq70_market"],
+				["want", ["두 배요", "경호를 붙이면요", "돌아선다"]], ["talk", "N-R02-046"], ["wait", 3.0], ["shot", "uq70_jidam"],
+				["check", "UQ70_MET == 1 and UQ70_SEAL == 1 and UQ70_STAGE == 20", "손지담 사정 · 상인회 도장(20)"],
+				["warp", "K-39", "from_W"], ["wait", 1.5], ["calm"], ["shot", "uq70_office"],
+				["hours", 204], ["warp", "K-39", "from_W"], ["wait", 1.5], ["calm"], ["shot", "uq70_hide"],
+				["want", ["아침까지 여기 있어"]], ["talk", "N-DR-2"], ["wait", 2.0],
+				["check", "UQ70_HIDE_MET == 1 and GAME_WDAY == 1", "화요일 밤 — 도장 뒤칸의 수호(V4)"],
+				["hours", 12], ["wait", 1.5], ["check", "UQ70_SUHO == 1 and UQ70_STAGE == 30", "수요일 10시 — 본소로(30)"],
+				["hours", 17], ["warp", "H-03", "from_W"], ["wait", 1.5], ["calm"], ["shot", "uq70_chain"],
+				["want", ["자물쇠 따기"]], ["talk", "N-DR-2"], ["wait", 2.0], ["check", "UQ70_SUHO == 2 and SB_RAID == 0", "새벽 3시 교대 — 사슬 기둥에서 풂(경비 없음)"],
+				["warp", "K-20", "from_W"], ["wait", 1.5], ["calm"], ["crouch", true], ["go", 17, 3], ["wait", 1.0], ["shot", "uq70_pillow"],
+				["use", 16, 3], ["wait", 2.0], ["crouch", false],
+				["check", "UQ70_BOOK == 1 and has(\"M-438\")", "밤 베개 맡 — 이자의 수첩(웅크려)"],
+				["warp", "H-04", "from_H-02"], ["wait", 1.5], ["calm"], ["want", ["대림 수금원의 수첩", "이자의 수첩을 내민다"]], ["talk", "C-049"], ["wait", 3.0], ["shot", "uq70_gu"],
+				["check", "UQ70_BOOK == 2 and not has(\"M-438\")", "구만호 — 장부 밖 숫자"],
+				["hours", 28], ["wait", 1.0], ["check", "UQ70_JA == 3 and UQ70_RES == 2 and UQ70_STAGE == 100 and UQ70_SUHO == 0", "다음 아침 이자 실종(②, 100) · 수호 장터로"],
+				["warp", "W", "L-R02-18"], ["wait", 2.0], ["calm"], ["go", dm.x + 9, dm.y + 5], ["wait", 1.5], ["shot", "uq70_after"]]
 		"sb02", "sb02f":                                                # 1-12f FQ-SB-02(sb02f: 방범대와 싸우는 갈래): 04시 본소 마당 출발 줄(갈고리) → 서부간선 고가 상판 → 북 램프 끝 오태수 탈주(데려옴) →
 			st.vars.set_v("AFF_SB", 25)                                  #   신도림 쉬는 박자 → 노량진로 끝 방범대([화술 보통] 통과) → 철교 남단 노들 경비 60캡 → 인수원 인계(넷 · 10시 전 · M-129)
 			st.vars.set_v("PC_CAPS", 500)

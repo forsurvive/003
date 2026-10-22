@@ -1,0 +1,411 @@
+{
+ "id": "UQ70_JA",
+ "title": "수금원 이자",
+ "loc": "L-R02-18",
+ "npc": "N-R02-047",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "GUARDED": 5,
+  "WALK": 7,
+  "WALK_E": 10,
+  "WALK2": 11,
+  "SLEEP": 13,
+  "MENU": 15,
+  "SUHO": 16,
+  "SUHO_T": 19,
+  "PAY": 21,
+  "PAY_T": 27,
+  "T_OK": 31,
+  "T_NO": 36,
+  "PLEDGE": 39,
+  "P_COLLAR": 45,
+  "P_NO": 47
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "GAME_HOUR >= 20 or GAME_HOUR < 6",
+   "to": "SLEEP"
+  },
+  {
+   "op": "if",
+   "cond": "GAME_HOUR >= 17",
+   "to": "WALK"
+  },
+  {
+   "op": "if",
+   "cond": "UQ70_GUARD == 2",
+   "to": "GUARDED"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-047",
+   "emo": "미소",
+   "text": "이번 주 이자 나왔어요. 사람으로 내셔도 되고."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-047",
+   "emo": "기본",
+   "text": "(경호 구울 쪽을 흘끔) 경호단 입회래요. 계약서까지 붙였더라고요. 장부만 볼게요. 장부는 봐도 되잖아요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "UQ70_BOOK != 0",
+   "to": "WALK_E"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "이자가 뒷주머니 수첩을 손바닥으로 툭 친다. 휘파람."
+  },
+  {
+   "op": "goto",
+   "to": "WALK2"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "이자가 빈 뒷주머니를 두 번 더듬는다. 휘파람이 끊겼다 다시 이어진다."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-047",
+   "emo": "미소",
+   "text": "퇴근길엔 장사 안 해요. 창구는 수 · 토, 아홉 시."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "그 수첩, 본소 장부엔 없는 숫자죠?",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "어려움"
+      }
+     ],
+     "cond": "has(\"M-438\") == 0 and not (HO_LEDGER == 1 or (HO_LEDGER >= 80 and HO_LEDGER <= 89) or HO_LEDGER == 99) and UQ70_FAIL != GAME_DAY and UQ70_JA == 0",
+     "fx": "",
+     "to": "T_OK",
+     "id": "UQ70_JA:1:0",
+     "fail": "T_NO"
+    },
+    {
+     "text": "본소 장부가 넘어간 판에, 그 수첩까지 새면 어떻게 될까요",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "보통"
+      }
+     ],
+     "cond": "has(\"M-438\") == 0 and (HO_LEDGER == 1 or (HO_LEDGER >= 80 and HO_LEDGER <= 89) or HO_LEDGER == 99) and UQ70_FAIL != GAME_DAY and UQ70_JA == 0",
+     "fx": "",
+     "to": "T_OK",
+     "id": "UQ70_JA:1:1",
+     "fail": "T_NO"
+    },
+    {
+     "text": "(가던 길을 간다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ70_JA:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "이자가 등을 돌리고 잔다. 요 옆에 볼펜 하나."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "천 씨네 둘째 줄 말인데요",
+     "tags": [],
+     "cond": "UQ70_RES == 0 and UQ70_MET == 1 and dead(\"N-DR-2\") == 0",
+     "fx": "",
+     "to": "SUHO",
+     "id": "UQ70_JA:2:0"
+    },
+    {
+     "text": "천 씨네 줄을 캡으로 정리하죠",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 300
+      }
+     ],
+     "cond": "UQ70_RES == 0 and UQ70_MET == 1 and dead(\"N-DR-2\") == 0",
+     "fx": "",
+     "to": "PAY",
+     "id": "UQ70_JA:2:1"
+    },
+    {
+     "text": "그 뒷주머니 수첩, 본소 장부엔 없는 숫자죠?",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "어려움"
+      }
+     ],
+     "cond": "UQ70_RES == 0 and has(\"M-438\") == 0 and not (HO_LEDGER == 1 or (HO_LEDGER >= 80 and HO_LEDGER <= 89) or HO_LEDGER == 99) and UQ70_FAIL != GAME_DAY",
+     "fx": "",
+     "to": "T_OK",
+     "id": "UQ70_JA:2:2",
+     "fail": "T_NO"
+    },
+    {
+     "text": "본소 장부가 넘어간 판에 그 수첩까지 새면요?",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "보통"
+      }
+     ],
+     "cond": "UQ70_RES == 0 and has(\"M-438\") == 0 and (HO_LEDGER == 1 or (HO_LEDGER >= 80 and HO_LEDGER <= 89) or HO_LEDGER == 99) and UQ70_FAIL != GAME_DAY",
+     "fx": "",
+     "to": "T_OK",
+     "id": "UQ70_JA:2:3",
+     "fail": "T_NO"
+    },
+    {
+     "text": "(수첩을 흔든다) 이거 찾아요?",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "보통"
+      }
+     ],
+     "cond": "UQ70_RES == 0 and has(\"M-438\") == 1 and UQ70_FAIL != GAME_DAY",
+     "fx": "",
+     "to": "T_OK",
+     "id": "UQ70_JA:2:4",
+     "fail": "T_NO"
+    },
+    {
+     "text": "둘째 대신 나를 적어요",
+     "tags": [],
+     "cond": "UQ70_RES == 0 and UQ70_MET == 1 and UQ70_SUHO == 0 and dead(\"N-DR-2\") == 0",
+     "fx": "",
+     "to": "PLEDGE",
+     "id": "UQ70_JA:2:5"
+    },
+    {
+     "text": "됐어요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ70_JA:2:6"
+    }
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "UQ70_SUHO == 1",
+   "to": "SUHO_T"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-047",
+   "emo": "미소",
+   "text": "천 씨요? 삼백 밀렸어요. 이자 붙어서. 수요일 열 시까지 캡이면 캡, 아니면 사람. 장부는 공평해요."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-047",
+   "emo": "미소",
+   "text": "이미 실어 갔는데요. 창고동 기둥. 캡 주시면 사람도 내드려요. 전표 한 장이면 반장이 풀어요. 장부는 융통성 있어요."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "if",
+   "cond": "UQ70_SUHO == 1",
+   "to": "PAY_T"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-047",
+   "emo": "놀람",
+   "text": "(캡 자루를 손바닥에 달아 본다) …진짜 주시네. 손님은 장터 사람도 아니잖아요."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "이자가 창구 장부를 펴고 맨 끝 줄에 볼펜으로 두 줄을 긋는다. '천 — 정리'."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-047",
+   "emo": "미소",
+   "text": "지웠어요. 다음 줄은 다음 사람 거고요."
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "paid"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-047",
+   "emo": "미소",
+   "text": "(캡 자루를 달아 본다) 사람 값까지 쳐주시네. 전표 써 드릴게요. 내일 아침이면 장터에 걸어서 와요."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "이자가 전표에 '인력 1 — 반환'을 쓰고 도장을 찍는다."
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "paid"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "이자의 웃음이 입가에서 멈춘다. 손이 뒷주머니로 갔다가 내려온다."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-047",
+   "emo": "놀람",
+   "text": "…그거 누가 그래요. 회장이요? 천 씨요?"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-047",
+   "emo": "피곤",
+   "text": "(창구 장부를 탁 덮는다) 알았어요. 대림은 원래 제 장부도 아니었어요. 본소 들어가서 다른 데 받을게요. …실장한테는 아무 말 마요."
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "threat"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "UQ70_FAIL = GAME_DAY"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-047",
+   "emo": "미소",
+   "text": "(킬킬 웃는다) 수첩이요? 무슨 수첩. 장부는 여기 하나예요. 손님, 오늘 이자는 공짜로 해 드릴게요. 내일은 몰라요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "SB_COLLAR == 1",
+   "to": "P_COLLAR"
+  },
+  {
+   "op": "if",
+   "cond": "V_WANTED >= 30",
+   "to": "P_NO"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-047",
+   "emo": "놀람",
+   "text": "(위아래로 훑는다) 손님이요? …이빨 다 있어요? 팔 좀 봐요. 일당 칠, 소개비 삼."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-047",
+   "emo": "미소",
+   "text": "대납 인력 1, 받았습니다. (창구 밑 호루라기를 분다) 천 씨네 줄은 지울게요. 손님 줄은 새로 쓰고요."
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "pledge"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-047",
+   "emo": "미소",
+   "text": "(목의 붉은 불을 손가락으로 가리킨다) 벌써 번호 찬 분을 또 적으라고요? 한 사람이 두 줄이면 장부가 꼬여요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-047",
+   "emo": "미소",
+   "text": "현상금 붙은 분이 무슨 대납이에요. 본소가 손님을 장부에 따로 적어 놨어요. …사람 부를까요?"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-70.txt"
+}

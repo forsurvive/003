@@ -1,0 +1,67 @@
+{
+ "id": "UQ70_POCKET",
+ "title": "이자의 뒷주머니",
+ "loc": "L-R02-18",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TAKE": 2
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "휘파람을 부는 이자의 등. 뒷주머니에 손때 묻은 수첩이 반쯤 나와 있다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "수첩을 두 손가락으로 뽑는다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "은신",
+       "min": 40
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "TAKE",
+     "id": "UQ70_POCKET:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ70_POCKET:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "수첩이 소매 속으로 미끄러진다. 휘파람은 끊기지 않는다."
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "book"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-70.txt"
+}

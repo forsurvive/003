@@ -1,0 +1,39 @@
+{
+ "id": "UQ70_POLE",
+ "title": "도장 종이 기둥",
+ "loc": "L-R02-18",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'자릿세 납부 확인' 종이가 겹겹이 — 장마다 붉은 둥근 도장. 맨 위 새 종이엔 굵은 붉은 네모 도장."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "'인력 1 — 수 09'. 그 밑 작은 글씨 '천 둘째'. 누가 손톱으로 긁어 지우려다 만 자국."
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "due_line"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-70.txt"
+}

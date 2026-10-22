@@ -1,0 +1,409 @@
+{
+ "id": "UQ70_SUHO",
+ "title": "지게꾼 천수호",
+ "loc": "L-R02-18",
+ "npc": "N-DR-2",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "MET_D": 12,
+  "MET_O": 14,
+  "ASK": 15,
+  "BOOK": 16,
+  "WAIT": 19,
+  "HIDE": 21,
+  "HIDE_O": 28,
+  "HIDE_Q": 29,
+  "HIDE_F": 30,
+  "H_STAY": 32,
+  "POST": 35,
+  "ERRAND": 37,
+  "BACK": 39,
+  "BACK_H": 43,
+  "BACK_P": 45,
+  "CAGE": 47,
+  "FREE": 51
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "UQ70_SUHO == 1",
+   "to": "CAGE"
+  },
+  {
+   "op": "if",
+   "cond": "UQ70_RES == 0 and UQ70_PROMISE == 1 and GAME_DAY == UQ70_DUE and GAME_HOUR < 10",
+   "to": "WAIT"
+  },
+  {
+   "op": "if",
+   "cond": "UQ70_RES == 0 and ((GAME_WDAY == 1 and GAME_HOUR >= 20 and UQ70_DUE == GAME_DAY + 1) or (GAME_WDAY == 2 and GAME_HOUR < 6 and UQ70_DUE == GAME_DAY))",
+   "to": "HIDE"
+  },
+  {
+   "op": "if",
+   "cond": "UQ70_RES == 2",
+   "to": "POST"
+  },
+  {
+   "op": "if",
+   "cond": "UQ70_RES == 1",
+   "to": "ERRAND"
+  },
+  {
+   "op": "if",
+   "cond": "UQ70_RES != 0",
+   "to": "BACK"
+  },
+  {
+   "op": "line",
+   "who": "N-DR-2",
+   "emo": "기본",
+   "text": "(지게를 고쳐 멘다) 짐이요? 한 짐에 두 캡. 신도림 고가 밑까진 다섯."
+  },
+  {
+   "op": "if",
+   "cond": "UQ70_MET == 0",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-DR-1\") == 1",
+   "to": "MET_O"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R02-046\") == 1",
+   "to": "MET_D"
+  },
+  {
+   "op": "line",
+   "who": "N-DR-2",
+   "emo": "피곤",
+   "text": "…회장님한테 들었구나. 괜찮아요. 아버지 앞에선 웃어요."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-DR-2",
+   "emo": "피곤",
+   "text": "…아버지가 손님 붙잡고 매달렸죠. 괜찮아요. 아버지 앞에선 웃어요."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-DR-2",
+   "emo": "슬픔",
+   "text": "…아버지 노점에 검은 천 걸린 거 봤죠. 이제 웃어 보일 사람도 없어요. 그래도 수요일엔 가야 하나 봐요."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "이자 수첩 얘기 알아?",
+     "tags": [],
+     "cond": "UQ70_BOOK == 0 and UQ70_JA == 0",
+     "fx": "",
+     "to": "BOOK",
+     "id": "UQ70_SUHO:1:0"
+    },
+    {
+     "text": "(어깨를 두드리고 간다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ70_SUHO:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-DR-2",
+   "emo": "기본",
+   "text": "알죠. 그 사람 짐을 몇 번 져 날랐거든요. 창구 장부는 본소로 가고, 수첩은 안 가요. 수첩엔 이름 옆에 '인'이라고 써요."
+  },
+  {
+   "op": "line",
+   "who": "N-DR-2",
+   "emo": "기본",
+   "text": "수 · 토에 창구 닫으면 다섯 시 넘어서 골목을 한 바퀴 돌아요. 뒷주머니에 꽂고 휘파람 불면서. 밤엔 가리봉 숙소에서 자고요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-DR-2",
+   "emo": "피곤",
+   "text": "(샌드백 그늘에서 문 쪽만 본다) 아직 열 시 전이죠? …열 시 되면 가요. 약속은 약속이니까."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "UQ70_HIDE_MET = 1"
+  },
+  {
+   "op": "line",
+   "who": "N-DR-2",
+   "emo": "놀람",
+   "text": "…누구야. 이자 쪽 사람이야? (주먹을 쥐었다가 편다) 아니구나. 장터에서 봤어요."
+  },
+  {
+   "op": "line",
+   "who": "N-DR-2",
+   "emo": "슬픔",
+   "text": "여기 제가 다니던 도장이에요. 2077년 건 아니고 — 관장님 아들이 살아남아서 애들 몇 가르쳤대요. 저도 노란 띠까진 땄어요."
+  },
+  {
+   "op": "if",
+   "cond": "UQ70_FLED == 1",
+   "to": "HIDE_F"
+  },
+  {
+   "op": "line",
+   "who": "N-DR-2",
+   "emo": "피곤",
+   "text": "내일 아침이에요. 아버지 대신 가겠다고 할까, 그냥 도망칠까. 밤새 그것만 재고 있어요. 도망치면 아버지 노점이 대신 넘어가겠죠."
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-DR-1\") == 1",
+   "to": "HIDE_O"
+  },
+  {
+   "op": "goto",
+   "to": "HIDE_Q"
+  },
+  {
+   "op": "line",
+   "who": "N-DR-2",
+   "emo": "슬픔",
+   "text": "…아버지는 없는데. 넘어갈 노점도 없는데. 습관처럼 그 걱정부터 해요."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "아침까지 여기 있어. 내가 해 볼게",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "H_STAY",
+     "id": "UQ70_SUHO:2:0"
+    },
+    {
+     "text": "이자 수첩 얘기 알아?",
+     "tags": [],
+     "cond": "UQ70_BOOK == 0 and UQ70_JA == 0",
+     "fx": "",
+     "to": "BOOK",
+     "id": "UQ70_SUHO:2:1"
+    },
+    {
+     "text": "(말없이 나간다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ70_SUHO:2:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-DR-2",
+   "emo": "슬픔",
+   "text": "또 내일 아침이에요. 이번엔 '도주'라고 찍혔대요. 한 번 빠져나온 놈은 사슬이 두 겹이래요."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "아침까지 여기 있어. 내가 해 볼게",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "H_STAY",
+     "id": "UQ70_SUHO:3:0"
+    },
+    {
+     "text": "(말없이 나간다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ70_SUHO:3:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "UQ70_PROMISE = 1"
+  },
+  {
+   "op": "line",
+   "who": "N-DR-2",
+   "emo": "기본",
+   "text": "…해 본다는 사람은 처음이에요. 알았어요. 열 시까지만 여기 있을게요. 열 시 넘으면 제 발로 창구에 가요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-DR-2",
+   "emo": "미소",
+   "text": "(자경 초소 앞) 번호표 대신 이름을 물어요. 이름 대면 지나가요. 그게 다예요. 근데 그게 다른 거예요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-DR-2",
+   "emo": "미소",
+   "text": "경호단 심부름해요. 물 길어다 주면 캡으로 줘요. 사람 말고 캡으로."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "UQ70_RES == 4",
+   "to": "BACK_P"
+  },
+  {
+   "op": "if",
+   "cond": "UQ70_HIDE_MET == 1",
+   "to": "BACK_H"
+  },
+  {
+   "op": "line",
+   "who": "N-DR-2",
+   "emo": "미소",
+   "text": "(지게를 내려놓는다) 목에 '임시' 떼었어요. 아버지가 그거부터 떼라고 해서."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-DR-2",
+   "emo": "미소",
+   "text": "(지게를 내려놓는다) 도장에서 '해 보겠다'던 사람이죠. …진짜 해 봤네. 목에 '임시'는 떼었어요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-DR-2",
+   "emo": "슬픔",
+   "text": "저 대신 갔다면서요. 왜요? …고맙다는 말이 이렇게 무거운 말인 줄 몰랐어요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "UQ70_CAGE_SEEN = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "사슬 기둥에 손목이 감겼다. 목에 아직 '임시' 번호표. 경비는 마당 쪽 교대 줄에 나가 있다."
+  },
+  {
+   "op": "line",
+   "who": "N-DR-2",
+   "emo": "피곤",
+   "text": "(고개를 든다) …장터에서 봤던. 여긴 어떻게. 아버지한테 지게 끈 갈아 달라고 해 줘요. 오른쪽이 닳았거든요."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "사슬 자물쇠를 딴다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "자물쇠 따기",
+       "min": 25
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "FREE",
+     "id": "UQ70_SUHO:4:0"
+    },
+    {
+     "text": "사슬 고리를 기둥에서 비튼다",
+     "tags": [
+      {
+       "k": "stat",
+       "name": "힘",
+       "min": 7
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "FREE",
+     "id": "UQ70_SUHO:4:1"
+    },
+    {
+     "text": "조금만 기다려",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ70_SUHO:4:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "사슬이 바닥에 떨어진다. 수호가 손목을 문지르며 뒷문 통로 쪽을 본다."
+  },
+  {
+   "op": "line",
+   "who": "N-DR-2",
+   "emo": "기본",
+   "text": "판자 틈 길, 알아요. 짐 지고 몇 번 지나갔거든요. 아침엔 장터에 있을게요."
+  },
+  {
+   "op": "cmd",
+   "name": "uqr2",
+   "args": [
+    "suho_free"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-70.txt"
+}
