@@ -68,6 +68,9 @@ func setup(h: InteriorHost, is_log := false) -> void:
 	host.ev.handlers["uqr"] = _cmd
 	host.day_tick.connect(_on_day)
 	host.map_entered.connect(_on_map)
+	if host.combat != null:
+		host.combat.resident_down.connect(_on_resident_down)           # 1-12i UQ-62: 삽자루 · 권성민
+		host.combat.provoked.connect(_on_provoked)                     # 고시촌 통행 중 패거리를 치면 적대
 
 
 func v(k: String) -> int:
@@ -94,6 +97,7 @@ func _roll(tag: String, pct: int) -> bool:
 func _process(dt: float) -> void:
 	_dog_frame(dt)
 	_cow_frame(dt)
+	_kwon_frame(dt)
 	_t += dt
 	if _t < 1.0:
 		return
@@ -103,6 +107,7 @@ func _process(dt: float) -> void:
 	_outing_tick()
 	_dog_frame(0.0)
 	_cow_tick()
+	_gc_tick()
 
 
 # ---------------------------------------------------------------- UQ-01 24시
@@ -319,6 +324,7 @@ func _up(qid: String, n: int) -> void:
 
 
 func _on_day(d: int) -> void:
+	_uq62_day(d)
 	_uq67_day(d)
 	_uq63_day(d)
 	_uq66_day(d)
@@ -491,6 +497,11 @@ func _cow_entry() -> void:
 
 
 func _on_map(_id: String) -> void:
+	if not (host.map is WorldMap):
+		_gc_clear()                                                      # 고시촌 패거리는 월드에서만(실내로 들어가면 거둔다)
+		_kwon_clear()
+	elif v("UQ62_WALK") == 2 and v("UQ62_GONE") == day() and _spot_mark("X-GC:d_door") != Vector2.ZERO and _gc_near("X-GC:yard", GC_DESPAWN_R):
+		_kwon_walk()
 	if _id == "K-26" and v("UQ66_OPEN") == 1 and host.map != null and host.map.has_method("unlock_door"):
 		host.map.unlock_door(U66_DOOR.x, U66_DOOR.y)                # 연 철문은 열어 둔다(맵 원고는 잠긴 문 — 사실은 UQ66_OPEN)
 	if v("UQ05_COW") == 2 and _cow == null:
@@ -798,6 +809,73 @@ func _cmd(a: Array, done: Callable) -> void:
 			_sv("UQ67_WRENCH", 6)
 			st.call_fn("aff", ["BC", -2])
 			_u67_refresh()
+		"q62start":                                                      # UQ-62 단계 10 — 권성민을 만남(비표시)
+			_up("UQ-62", 10)
+		"q62card":                                                       # 답안 카드(M-446) — 처음 한 장 · 망치면 예비 한 장(CARD 2)
+			_sv("UQ62_CARD", 2 if v("UQ62_CARD") >= 1 else 1)
+			st.call_fn("give", ["M-446", 1])
+		"q62grade":                                                      # ① 채점기 [과학 45] — 성적표 M-448
+			_sv("UQ62_GRADED", 1)
+			if st.count_of("M-446") > 0:
+				st.call_fn("take", ["M-446", st.count_of("M-446")])
+			st.call_fn("give", ["M-448", 1])
+			_up("UQ-62", 20)
+		"q62gradebad":                                                   # 어림짐작 — 카드를 망침(예비까지 망치면 ① 닫힘)
+			if st.count_of("M-446") > 0:
+				st.call_fn("take", ["M-446", 1])
+			if v("UQ62_CARD") == 2:
+				_sv("UQ62_CARD", 3)
+		"q62paper":                                                      # ② 손재석이 출제를 약속한 날 — 다음 06:00 시험지
+			_sv("UQ62_PAPER", day())
+		"q62papergive":
+			st.call_fn("give", ["M-447", 1])
+			_up("UQ-62", 20)
+		"q62forge":                                                      # ③ 위조 — 1 자습석 [과학 60] · 2 염희정(캡은 꼬리표가) · 3 어설픈 판
+			var how := int(a[1]) if a.size() > 1 else 1
+			st.call_fn("give", ["M-450", 1])
+			_sv("UQ62_BAD", {1: 0, 2: 2, 3: 1}[how])
+			_up("UQ-62", 20)
+		"q62done":                                                       # 합격증을 권성민에게 — WAY · 매듭(100) · 카르마(①② +25 · ③ 0 · 어설픈 −10) · 90 XP 한 번 · 스탠드 끔
+			var w := int(a[1]) if a.size() > 1 else 1
+			_sv("UQ62_WAY", w)
+			_sv("UQ62_DONE", day())
+			for it in ["M-447", "M-448", "M-449", "M-450"]:
+				if st.count_of(it) > 0:
+					st.call_fn("take", [it, st.count_of(it)])
+			if w <= 2:
+				st.call_fn("karma", [25])
+			elif v("UQ62_BAD") == 1:
+				st.call_fn("karma", [-10])
+			if st.quests.stage("UQ-62") < 100:
+				st.quests.set_stage("UQ-62", 100)
+				if v("UQ62_XP") == 0:
+					_sv("UQ62_XP", 1)
+					st.call_fn("xp", [90])
+			_lamp_off()
+			_log("UQ-62 매듭(길 %d)" % w)
+		"q62tube":                                                       # 스탠드 진공관을 뺌 — M-014 · 스탠드 꺼짐(재미 검수 P6)
+			_sv("UQ62_TUBE", 1)
+			st.call_fn("give", ["M-014", 1])
+			_lamp_off()
+		"q62book":                                                       # 『발파 기능사 실기』 — 폭발물 +2
+			st.vars.set_v("PC_SKP_EXPLOSIVES", int(st.vars.get_v("PC_SKP_EXPLOSIVES")) + 2)
+			host.hint("폭발물 +2 — 장약량 표를 외웠다", 4.0)
+		"q62intro":                                                      # 함준호에게 소개 — 취직하면 JH +3
+			_sv("UQ62_INTRO", 1)
+		"q62pass":                                                       # 고시촌 통행(그날) — 1 상담료 · 2 화술 · 3 척후 지도 · 4 어제 상담 받은 사람
+			_sv("GC_PASS", day())
+			_sv("GC_SEEN", 1)
+			_gc_calm()
+			_log("고시촌 통행(%s)" % str(a[1] if a.size() > 1 else ""))
+		"q62own":                                                        # 진짜 분양 — A동 203호 열쇠(캡은 꼬리표가) · 통행 영구
+			_sv("GC_OWN", 1)
+			_sv("GC_PASS", day())
+			st.call_fn("give", ["M-451", 1])
+			_gc_calm()
+		"q62boss":                                                       # 삽자루 화술 — SQ-S02 C 해법(side_s02 'boss 1')
+			_sv("GC_BOSS", 1)
+			if host.ev.handlers.has("s02"):
+				host.ev.handlers["s02"].call(["boss", "1"], func() -> void: pass)
 		"q63start":                                                      # UQ-63 단계 10(비표시 — 깔끔이 · 명부 · 보존함) · 주인공 성이 명부 30 성씨 안인지(MINEOK)
 			_up("UQ-63", 10)
 			_sv("UQ63_MINEOK", 1 if str(st.vars.get_v("P_SURNAME")) in U63_SURNAMES else 0)
@@ -1230,3 +1308,211 @@ func _uq64_day(d: int) -> void:
 		_sv("UQ64_NEWS", 1)
 		_sv("UQ64_POST", v("UQ64_BC") + 2 * v("UQ64_SA"))
 		_log("UQ-64 소식 · 근무지 %d" % v("UQ64_POST"))
+
+
+# ---------------------------------------------------------------- UQ-62 고시생의 마지막 시험 · 신림 고시촌 블록 X-GC(1-12i i6 — SD-05 §3.16 · 계획 §8)
+const GC_SPAWN_R := 45.0                           ## 고시촌 마당(yard)에서 이 안이면 패거리를 세운다
+const GC_DESPAWN_R := 70.0
+const GC_GATE_R := 6.0                             ## 동쪽 초소 문지기가 외치는 거리(통행 전 · 하루 한 번)
+const GC_LAMP := Vector2i(16, 3)                   ## K-43 진공관 스탠드 칸
+var _gc: Array = []                                ## 세운 패거리(월드에서만)
+var _gc_on := false
+var _gc_gate_day := -1
+var _kwon: Actor = null                            ## 떠나는 아침의 권성민(연출 — 값은 06:00 판정)
+var _kwon_path := PackedVector2Array()
+var _kwon_leg := 0
+
+
+func _gc_passed() -> bool:
+	if st.is_dead("N-R01-059"):
+		return false                                                  # 부적을 죽인 놈 — 영구 적대(재미 검수 ②)
+	return v("GC_OWN") == 1 or v("GC_PASS") == day()
+
+
+func _gc_safe() -> bool:
+	return not host.box.active and not host.ev.busy() and not host.busy and not host.combat.in_combat()
+
+
+func _lamp_off() -> void:
+	if host.map != null and host.map.id == "K-43" and host.map.has_method("set_prop_state"):
+		host.map.set_prop_state(GC_LAMP, "off")
+
+
+func _uq62_day(d: int) -> void:
+	if v("UQ62_DONE") > 0 and v("UQ62_GONE") == 0 and d > v("UQ62_DONE") and not st.is_dead("N-R01-059"):
+		_sv("UQ62_GONE", d)                                           # 합격증을 받은 다음 06:00 고시촌을 떠난다
+		var ham := not st.is_dead("N-R02-009")
+		_sv("UQ62_JOB", 1 if (v("UQ62_INTRO") == 1 and ham) else 2)
+		_sv("UQ62_JOB_DAY", d)
+		if v("UQ62_INTRO") == 1 and ham:
+			st.call_fn("aff", ["JH", 3])
+		if host.map is WorldMap and host.map.id == "W" and _spot_mark("X-GC:d_door") != Vector2.ZERO and _gc_near("X-GC:yard", GC_DESPAWN_R):
+			_kwon_walk()                                              # 그 시각 블록에 있으면 떠나는 걸 본다(재미 검수 P3)
+		elif host.map != null and host.map.id in ["K-40", "K-41", "K-42", "K-43", "K-44"]:
+			_sv("UQ62_WALK", 2)                                       # 블록 실내(분양 원룸에서 잔 사람)면 그날 처음 나올 때 걷는다
+		if host.map != null:
+			host.refresh_npcs()
+		_log("UQ-62 권성민이 고시촌을 떠남(소개 %d)" % v("UQ62_INTRO"))
+	elif v("UQ62_JOB") == 2 and not st.is_dead("N-R02-009") and (d >= v("UQ62_JOB_DAY") + 3 or v("UQ62_INTRO") == 1):
+		_sv("UQ62_JOB", 1)                                            # 소개 없이 — 사흘 뒤 함준호가 알아서 들임(JH 없음) · 복도에 있을 때 소개하면 다음 날
+		if v("UQ62_INTRO") == 1:
+			st.call_fn("aff", ["JH", 3])
+		if host.map != null:
+			host.refresh_npcs()
+	if v("GC_HOT") > 0 and d > v("GC_HOT"):
+		_sv("GC_HOT", 0)                                              # 적대는 그날뿐(두목이 죽었으면 패거리가 반이고 문지기가 없다)
+	if v("UQ62_PAPER") > 0 and st.is_dead("N-R01-056") and v("UQ62_PGIVEN") == 0:
+		_sv("UQ62_PAPER", 0)                                          # 밤에 쓴다던 사람이 죽었다 — 시험지는 없다
+		host.hint("밤에 문제를 쓴다던 손재석은 이제 없다 — 시험지도 없다.", 5.0)
+
+
+func _spot_mark(mark: String) -> Vector2:
+	if host.map == null or not host.map.has_method("mark_pos"):
+		return Vector2.ZERO
+	return host.map.mark_pos(mark)
+
+
+func _gc_near(mark: String, r: float) -> bool:
+	var p := _spot_mark(mark)
+	return p != Vector2.ZERO and host.player.loco.logical.distance_to(p) <= r * 32.0
+
+
+func _gc_rng(tag: String) -> RandomNumberGenerator:
+	var r := RandomNumberGenerator.new()
+	r.seed = hash("gc:%s:%d" % [tag, Clock.abs_min(host.date_text) / 60])   # 같은 때 다시 오면 같은 자리 — 때가 바뀌면 다른 수 · 방향(SD-22)
+	return r
+
+
+func _gc_spot(mark: String, r: RandomNumberGenerator, rx := 2, ry := 1) -> Vector2:
+	var c0: Vector2i = host.map.tile_of(host.map.mark_pos(mark))
+	for _i in 20:
+		var c := c0 + Vector2i(r.randi_range(-rx, rx), r.randi_range(-ry, ry))
+		if not host.map.is_solid(c):
+			return Vector2(c.x * 32 + 16, c.y * 32 + 16)
+	return host.map.mark_pos(mark)
+
+
+## 패거리 세우기(SD-22): 낮엔 창고 앞 · 마당, 밤엔 드럼통 곁 — 두목이 죽은 뒤 7일은 반(내분)
+func _gc_spawn() -> void:
+	_gc_on = true
+	_gc.clear()
+	var r := _gc_rng("GC")
+	var night := _hour() >= 22 or _hour() < 6
+	var n := r.randi_range(8, 11)
+	if v("GC_BOSS") == 2 and day() < v("GC_FEUD_DAY") + 7:
+		n = n / 2
+	var marks := ["X-GC:yard", "X-GC:yard2", "X-GC:front", "X-GC:west", "X-GC:walk1", "X-GC:walk2"] if not night else ["X-GC:yard", "X-GC:yard2", "X-GC:yard", "X-GC:west"]
+	var kinds := ["CR-420", "CR-421", "CR-423"]
+	for i in n:
+		var m: String = marks[i % marks.size()]
+		_gc.append(host.combat.spawn(str(kinds[r.randi() % 3]), _gc_spot(m, r, 3, 2), host.map, st,
+			{"lv": r.randi_range(4, 8), "dir": ["N", "E", "W", "S"][r.randi() % 4]}))
+	for i in 2:
+		_gc.append(host.combat.spawn("CR-107", _gc_spot("X-GC:gate_e" if i == 0 else "X-GC:gate_s", r, 2, 2), host.map, st, {"lv": r.randi_range(4, 6)}))
+	if _gc_passed() and v("GC_HOT") == 0:
+		_gc_calm()
+	_log("고시촌 패거리 %d(%s)" % [_gc.size(), "통행" if _gc_passed() else "적대"])
+
+
+func _gc_calm() -> void:
+	for e in _gc:
+		if is_instance_valid(e) and not e.cmb.dead:
+			e.cmb.team = "calmgc"
+			e.foes.clear()
+
+
+func _gc_hostile() -> void:
+	for e in _gc:
+		if is_instance_valid(e) and not e.cmb.dead:
+			e.cmb.team = "enemygc"
+			e.foes = ["player", "ally"]
+			e.wake()
+			e.brain.gauge = 100.0
+
+
+func _gc_clear() -> void:
+	for e in _gc:
+		if is_instance_valid(e) and not e.cmb.dead:
+			host.combat.drop_enemy(e)
+	_gc.clear()
+	_gc_on = false
+
+
+func _gc_tick() -> void:
+	if not (host.map is WorldMap) or _spot_mark("X-GC:yard") == Vector2.ZERO:
+		return
+	var near := _gc_near("X-GC:yard", GC_SPAWN_R)
+	if near and not _gc_on:
+		_gc_spawn()
+	elif not _gc_near("X-GC:yard", GC_DESPAWN_R) and _gc_on and not host.combat.in_combat():
+		_gc_clear()
+	if not _gc_on:
+		return
+	# 동쪽 초소: 통행 전이면 문지기가 6칸 안에서 외친다(하루 한 번 · 낮 06~23 · 적대 아님 · 두목이 살아 있을 때)
+	if not _gc_passed() and v("GC_HOT") == 0 and v("GC_BOSS") != 2 and _hour() >= 6 and _hour() < 23 and _gc_gate_day != day() \
+			and _gc_safe() and _gc_near("X-GC:gate_e", GC_GATE_R) and not st.is_dead("N-GC-G1"):
+		_gc_gate_day = day()
+		host.play_scene("GC_GATE")
+
+
+func _on_provoked(team: String) -> void:
+	if team == "calmgc":
+		_sv("GC_HOT", day())                                          # 통행 중에 쳤다 — 그날 적대
+		_sv("GC_SHOT", day())                                         # 다음 날 문지기 '상담료 두 배'
+		_gc_hostile()
+		host.hint("패거리: '손님이 총을 들었다!' 상담은 끝났다.", 4.0)
+
+
+func _on_resident_down(id: String, killed: bool) -> void:
+	if id == "N-R01-060" and killed and v("GC_BOSS") != 2:
+		_sv("GC_BOSS", 2)                                             # 삽자루 처치 — 거점 공백 · 7일 내분(SQ-S02 C 처치)
+		_sv("GC_FEUD_DAY", day())
+		if host.ev.handlers.has("s02"):
+			host.ev.handlers["s02"].call(["boss", "2"], func() -> void: pass)
+		_log("삽자루 처치 — 내분")
+	elif id == "N-R01-059" and killed:
+		if st.quests.stage("UQ-62") > 0 and st.quests.stage("UQ-62") < 100:
+			st.quests.set_stage("UQ-62", 90)                          # 부적을 죽였다 — 패거리 적대 · 소멸
+		_sv("GC_HOT", day())
+		_gc_hostile()
+
+
+## 떠나는 아침: D동 문 → 동쪽 초소 → 길 밖(배우 — 값은 바뀌지 않는다 · 보는 것만)
+func _kwon_walk() -> void:
+	_kwon_clear()
+	_kwon = Actor.new()
+	_kwon.setup("st_look_m1_sg1_hr04_h1_t03_2_pf00_hd00_ey03_pr021", _spot_mark("X-GC:d_door"), host.map)
+	_kwon.mode = "walk"
+	host.map.add_actor(_kwon)
+	_kwon._show()
+	_kwon_leg = 0
+	_kwon_path = NpcRoutine.with_start(host.map, _kwon.loco.logical, _spot_mark("X-GC:gate_e"))
+	_sv("UQ62_WALK", 1)
+	host.hint("패거리: '…부적이 나간다.' 드럼통 앞이 조용하다.", 5.0)
+
+
+func _kwon_frame(dt: float) -> void:
+	if _kwon == null or dt <= 0.0:
+		return
+	if not is_instance_valid(_kwon) or not (host.map is WorldMap):
+		_kwon = null
+		return
+	if _kwon_path.is_empty():
+		_kwon_leg += 1
+		if _kwon_leg >= 2:
+			_kwon_clear()
+			return
+		_kwon_path = NpcRoutine.with_start(host.map, _kwon.loco.logical, _spot_mark("X-GC:walk2"))
+		if _kwon_path.is_empty():
+			_kwon_clear()
+			return
+	_kwon_path = NpcRoutine.walk_path(_kwon, _kwon_path, dt)
+
+
+func _kwon_clear() -> void:
+	if _kwon != null and is_instance_valid(_kwon):
+		if host.map is WorldMap:
+			host.map.remove_actor(_kwon)
+		_kwon.queue_free()
+	_kwon = null
+	_kwon_path = PackedVector2Array()

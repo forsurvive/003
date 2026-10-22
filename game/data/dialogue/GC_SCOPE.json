@@ -1,0 +1,48 @@
+{
+ "id": "GC_SCOPE",
+ "title": "옥상 망원경",
+ "loc": "L-R01-14",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "KNOWN": 4
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "렌즈를 대 본다. 봉천 계단마을 옥탑 — 망루에 사람 하나. 렌즈 옆 분필 '22 · 04'."
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S02_KNOW == 1 or SQS02_STAGE >= 60",
+   "to": "KNOWN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "봉천 감시조 교대 시간 같다. 누가 이걸 알려 줬을까."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "봉천 감시조 교대 시간. 남건희가 흘린 그 숫자다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-62.txt"
+}

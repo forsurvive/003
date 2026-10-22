@@ -1,0 +1,81 @@
+{
+ "id": "UQ62_BOOK",
+ "title": "수험서 더미",
+ "loc": "L-R01-14",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TAKE": 3,
+  "READ": 7
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "UQ62_BOOK == 1",
+   "to": "READ"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "『발파 기능사 실기』. 공무원 수험서 사이에 한 권. 장약량 표 · 도화선 길이 · '점화 뒤 뒤돌아보지 말 것'."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "읽는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TAKE",
+     "id": "UQ62_BOOK:1:0"
+    },
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ62_BOOK:1:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "UQ62_BOOK = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q62book"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "장약량 표를 외운다. 마지막 장 여백에 연필 — '시험 끝나면 광산. 광산이 없으면 — 폭탄은 어디서 나나.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "『발파 기능사 실기』. 다 읽은 책이다. 여백의 연필 글만 다시 본다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-62.txt"
+}

@@ -1,0 +1,54 @@
+# 신림 고시원 7동(삼성 고시원 — FQ-JC-01 계단 물길의 7동 물당번 · 장부 D-274 · 단계 1-12i UQ-62 고시촌 블록과 함께). 초안: Claude. 리드 검수 대기.
+# 24×12 · 복도 한 줄 — 호실 7-108 · 7-201 · 7-305(원문 호실 번호 그대로 — 층은 무너져 한 복도에 모여 산다) · 물통 줄(FQ_JC01_FLOW — 2 나눔이면 차고 · 1 메움이면 마름) ·
+#   물당번 셋(N-JC-W1 · W2 암거의 둘 + W3): 03~06시엔 암거(K-08)라 여기엔 없고 낮에 호실 · 복도. 결과 글은 FLOW 뒤에만.
+# 들어오는 길: X-GC 7동 현관(20,7 — from_W).
+map K-44 고시원 7동
+set bk
+grid
+########################
+########################
+########################
+#jjjj#jjjj#jjjj#jjjjjjj#
+#jjjj#jjjj#jjjj#jjjjjjj#
+#jjjjjjjjjjjjjjjjjjjjjj#
+#jjjjjjjjjjjjjjjjjjjjjj#
+#jjjjjjjjjjjjjjjjjjjjjj#
+#jjjjjjjjjjjjjjjjjjjjjj#
+#jjjjjjjjjjjjjjjjjjjjjj#
+####ss##################
+########################
+end
+exit 4 10 X-GC from_K-44
+exit 5 10 X-GC from_K-44
+mark from_W 4 8 N
+# ---- 호실 셋(북) — 7-108 · 7-201 · 7-305
+prop bunk 1 3
+text 1 3 "7-108호. 마대 한 장 · 삽 한 자루 · 장화. 흙막이를 쌓던 사람의 방." w=2
+prop bunk 6 3
+text 6 3 "7-201호. 침대 머리맡에 분필 근무표 '물당번 — 03~06'. 벽에 2077년 달력 대신 2277년 날짜를 연필로 센 줄." w=2
+prop bunk 11 3
+text 11 3 "7-305호. 책상 위 2077년 수험서 — 표지에 '물 당번표'를 덧씌워 썼다. 글 아는 사람의 방." w=2
+prop bk_desk 16 3
+text 16 3 "공용 책상. 물 분배 장부 — 호실마다 하루 한 통. '관악 계곡 암거 — 흙막이 번갈아' 2277년 글씨." cond="FQ_JC01_FLOW == 0"
+text 16 3 "공용 책상. 물 분배 장부 — 호실마다 하루 두 통. 맨 아래 '봉천 사람이 밸브를 같이 돌려 줌. 고맙다'." cond="FQ_JC01_FLOW == 2"
+text 16 3 "공용 책상. 물 분배 장부 — 마지막 줄에 빗금. '흙막이 메워짐. 봉천 사람.' 그 밑에 누가 욕을 쓰다 지웠다." cond="FQ_JC01_FLOW == 1"
+prop w_board_jm 19 1
+text 19 2 "복도 게시판. '물당번 근무표 — 108 · 201 · 305 돌아가며 03~06시 암거'. 압정 아래 2077년 '시험 연기 공지' 조각." w=2
+# ---- 복도: 물통 줄 · 살림
+prop bucket_row 2 8 cond="FQ_JC01_FLOW != 1"
+text 2 8 "복도 물통 줄. 호실 번호를 쓴 양동이 셋." w=3 cond="FQ_JC01_FLOW == 0"
+text 2 8 "복도 물통 줄. 호실 번호를 쓴 양동이 셋 — 다 찼다. 뚜껑에 '봉천 몫 아님'이라고 썼다가 지웠다." w=3 cond="FQ_JC01_FLOW == 2"
+prop bucket 2 8 cond="FQ_JC01_FLOW == 1"
+text 2 8 "마른 양동이 셋. 바닥에 흙 자국만. 벽에 분필 '봉천이 물을 끊었다'." w=3 cond="FQ_JC01_FLOW == 1"
+prop water_jug 6 8
+prop laundry_rack 9 8
+prop hm_stove 13 8
+text 13 8 "석유 곤로. 냄비에 2277년 국수. 셋이 나눠 먹는 양."
+prop crate_o 20 8
+box 20 8 stash name="7동 공용 상자(맡김 자리 — 물당번들이 안 건드린다)"
+prop plant_pot 22 8
+npc N-JC-W1 2 5 S look=M1-S2-HR03-H2-T03-1-PF00-HD05-EY00 cond="GAME_HOUR >= 6 and GAME_HOUR < 22" bark="7-201. (잠이 덜 깬 눈) …물당번은 새벽이에요. 지금은 쉬는 시간."
+npc N-JC-W2 7 5 S look=F1-S3-HR05-H1-T10-2-PF00-HD00-EY00 cond="GAME_HOUR >= 6 and GAME_HOUR < 22 and FQ_JC01_FLOW == 0" bark="7-108. 흙막이는 내가 쌓았어요. 봉천 물이라고 꼭 봉천 거예요?"
+npc N-JC-W2 7 5 S look=F1-S3-HR05-H1-T10-2-PF00-HD00-EY00 cond="GAME_HOUR >= 6 and GAME_HOUR < 22 and FQ_JC01_FLOW == 2" bark="7-108. 밸브 같이 돌린 사람 — 고마워요. 물통이 차요."
+npc N-JC-W2 7 5 S look=F1-S3-HR05-H1-T10-2-PF00-HD00-EY00 cond="GAME_HOUR >= 6 and GAME_HOUR < 22 and FQ_JC01_FLOW == 1" bark="(물통을 들여다본다) …메워졌대요. 봉천 사람이. 우린 또 밤에 올라가야죠."
+npc N-JC-W3 12 5 S look=M1-S3-HR06-H2-T03-2-PF00-HD00-EY03 cond="GAME_HOUR >= 6 and GAME_HOUR < 22" bark="7-305. 장부는 내가 써요. 글 아는 게 나뿐이라."

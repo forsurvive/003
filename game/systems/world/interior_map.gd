@@ -261,8 +261,16 @@ func load_map(map_id: String, st: StoryState = null) -> void:
 ## 조사 글 열쇠는 손 맵 좌표 그대로("X-BC:5,36") — 저장된 조사 기록이 월드에서도 이어진다.
 func _add_objects(map_id: String, d: Dictionary, st: StoryState, o: Vector2i) -> void:
 	var op := Vector2(o * T)
+	var gone := {}                                                           # 파밍 뒤 사라진 용기 자리(vanish — 기록 st.boxes[키].gone)
+	for b in d.get("boxes", []):
+		if bool(b.get("vanish", false)):
+			var k := Loot.key(map_id, b, st.year())
+			if st.boxes.has(k) and bool(st.boxes[k].get("gone", false)):
+				gone[Vector2i(int(b["x"]), int(b["y"]))] = true
 	for p in d["props"]:
 		if not _cond_ok(p.get("cond", ""), st):
+			continue
+		if gone.has(Vector2i(int(p["x"]), int(p["y"]))):
 			continue
 		for c in p.get("cells", []):
 			_put_solid(o.x + int(c[0]), o.y + int(c[1]), 1)                     # 조건부 소품의 발 칸
@@ -299,6 +307,8 @@ func _add_objects(map_id: String, d: Dictionary, st: StoryState, o: Vector2i) ->
 		plate.lift = 2 * T - 2
 		objects.add_child(plate)
 	for b in d.get("boxes", []):
+		if gone.has(Vector2i(int(b["x"]), int(b["y"]))):
+			continue
 		var bb: Dictionary = b.duplicate()
 		bb["x"] = int(b["x"]) + o.x
 		bb["y"] = int(b["y"]) + o.y

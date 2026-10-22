@@ -101,7 +101,10 @@ prop stall_food 28 3
 box 28 3 pantry w=2 owner=N-R02-007 name="분식 재료 상자"
 npc N-R02-007 27 3 S bark="떡볶이 한 그릇. 맛은 2077년 그대로야. 재료만 빼고."
 prop stall_forge 34 3
-npc N-R02-008 33 3 S bark="종이 한 장이면 다른 사람이 돼. 값은 종이 값이 아니고."
+npc N-R02-008 33 3 S cond="UQ62_BAD != 2 or UQ62_JOB != 1 or UQ62_WAY != 3" bark="종이 한 장이면 다른 사람이 돼. 값은 종이 값이 아니고."
+npc N-R02-008 33 3 S cond="UQ62_BAD == 2 and UQ62_JOB == 1 and UQ62_WAY == 3" bark="내 종이가 관리사무소 벽에 걸렸네. 철자는 맞아 — 내 종이니까."
+# 1-12i UQ-62: 소개 없이 합격한 권성민 — 복도에 서서 자리를 기다린다(JOB 2 · 사흘 뒤 관리사무소)
+npc N-R01-059 37 4 S look=M1-SG1-HR04-H1-T03-2-PF00-HD00-EY03-PR021 cond="UQ62_GONE >= 1 and UQ62_JOB == 2 and dead(\"N-R01-059\") == 0" bark="장부 정리 자리… 사흘 뒤래요. 사흘요? 금방이죠."
 prop stall_water 43 3
 npc N-R02-010 42 3 S cond="UQ09_CLEAN == 0" bark="오늘 물 반값. 사람은 끓여 마셔."
 npc N-R02-010 42 3 S cond="UQ09_CLEAN == 1 and UQ09_PIPE == 0" bark="정수 한 병 12캡. 지하수를 세 번 걸렀어."

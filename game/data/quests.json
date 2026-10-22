@@ -2361,6 +2361,32 @@
    },
    "title": "병동 7층"
   },
+  "UQ-62": {
+   "key": "UQ62",
+   "stages": {
+    "10": {
+     "done": "고시촌 D동 3층 권성민과 대화",
+     "log": "200년째 시험을 기다린다",
+     "src": "05_misc-quests-encounters.md:1225"
+    },
+    "100": {
+     "done": "권성민이 합격증을 받고 떠남(다음 06:00 지하시장 관리사무소 — 소개가 있으면 JH +3)",
+     "log": "첫 직장",
+     "src": "05_misc-quests-encounters.md:1227"
+    },
+    "20": {
+     "done": "성적표(채점기) · 시험지(손재석) · 합격증(위조) 가운데 하나를 손에",
+     "log": "시험지가 생겼다",
+     "src": "05_misc-quests-encounters.md:1226"
+    },
+    "90": {
+     "done": "권성민 사망",
+     "log": "(소멸) 시험은 끝나지 않았다",
+     "src": "05_misc-quests-encounters.md:1228"
+    }
+   },
+   "title": "고시생의 마지막 시험"
+  },
   "UQ-63": {
    "key": "UQ63",
    "stages": {

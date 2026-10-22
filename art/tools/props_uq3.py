@@ -25,6 +25,7 @@ import palette as P
 from props_bc_in import box3
 from props_r01n import freezer_unit, CREAM
 from props_site import _hull_shadow                                     # 윤곽 그림자(사용자 지적 2026-10-22 — 타원 금지)
+from struct_r01 import put_text
 
 C = lambda t: P.rgb(t) + (255,)
 INK = "P01"
@@ -224,63 +225,100 @@ OLIVE = ["P28", "P29", "P30", "P31"]
 
 
 def jet_wreck(state=""):
-    """전투기 잔해(136×96 — 4×3): 비스듬히 주저앉은 동체(올리브 회색) · 꺾인 주익 · 수직 꼬리 '공군' · 금 간 캐노피 · 시험 엔진 덮개.
-    core = 들창 열림 · 노심 초록 빛 · 물때 / sealed = 콘크리트 판 · 철사 · 분필 / empty = 빈 받침 / plain = 전시기 2호(엔진 덮개 없음 · 캐노피 열림)."""
+    """전투기 잔해(136×96 — 4×3): 기수 왼쪽 · 꼬리 오른쪽. 주익은 동체 가운데서 **뒤쪽(오른쪽)으로 젖혀진 후퇴익**(사용자 지적 2026-10-22 — 날개 방향) ·
+    접지 그림자는 동체 밑바닥 띠. 두 대는 파손 부위가 다르다(사용자 지적):
+      1호(기본 · core · sealed · empty) — 시험기: 왼(아래) 주익이 가운데서 꺾여 끝이 땅에 닿음 · 수직 꼬리가 뒤로 휨 · 캐노피에 금 · 동체 뒤 시험 엔진 덮개(노란 띠).
+      2호(plain) — 전시기: 오른(위) 주익이 뿌리째 뜯겨 왼쪽 땅에 따로 누움 · 기수 콘이 찌그러져 꺾임 · 캐노피 열린 채 틀만 · 꼬리 멀쩡 · 엔진 덮개 없음(심장이 없던 기체)."""
+    plain = state == "plain"
     im = img(136, 96)
     d = ImageDraw.Draw(im)
-    body = [(10, 60), (24, 44), (96, 38), (124, 46), (128, 58), (112, 70), (30, 74)]
-    _hull_shadow(im, body, 4, 6)
-    d.polygon([(44, 58), (10, 86), (18, 90), (60, 66)], fill=C(INK))            # 꺾인 왼 주익(아래)
-    d.polygon([(45, 59), (13, 85), (18, 88), (58, 66)], fill=C("P29"))
-    d.line([(20, 84), (50, 64)], fill=C("P31"))
-    d.polygon([(60, 44), (40, 14), (48, 12), (72, 42)], fill=C(INK))            # 오른 주익(위로 뻗음)
-    d.polygon([(61, 44), (42, 16), (47, 14), (71, 42)], fill=C("P30"))
-    d.polygon(body, fill=C(INK))                                                # 동체
-    d.polygon([(12, 60), (25, 46), (95, 40), (122, 48), (126, 58), (111, 68), (31, 72)], fill=C("P30"))
-    d.polygon([(25, 46), (95, 40), (122, 48), (96, 50), (30, 56)], fill=C("P31"))   # 윗면 빛
-    d.line([(31, 72), (111, 68)], fill=C("P28"))
-    for x in range(34, 110, 9):                                                  # 패널 이음
-        d.line([x, 50, x - 2, 70], fill=C("P29"))
-    d.polygon([(104, 44), (110, 14), (118, 14), (120, 46)], fill=C(INK))         # 수직 꼬리
-    d.polygon([(105, 44), (111, 16), (117, 16), (119, 45)], fill=C("P29"))
-    d.rectangle([111, 22, 116, 30], fill=C("P09")); d.point((113, 25), fill=C("P53")); d.point((114, 27), fill=C("P45"))   # 꼬리 휘장
-    d.ellipse([18, 46, 46, 64], fill=C(INK))                                     # 캐노피
-    if state == "plain":
+    body = [(8, 54), (22, 44), (96, 38), (124, 44), (130, 54), (118, 64), (30, 68)]
+    _hull_shadow(im, body, 4, 5)
+    # ---- 주익(후퇴익): 뿌리는 동체 가운데(x 48~70), 끝은 뒤쪽(오른쪽) 바깥으로
+    if plain:                                                                    # 2호: 오른 주익이 뜯겨 왼쪽 땅에 누움 · 뿌리만 남음
+        d.polygon([(10, 78), (30, 70), (62, 86), (58, 94), (12, 86)], fill=C(INK))   # 땅에 누운 날개
+        d.polygon([(12, 78), (30, 72), (60, 86), (57, 92), (14, 85)], fill=C("P29"))
+        d.line([(16, 80), (56, 90)], fill=C("P28")); d.polygon([(30, 70), (34, 70), (33, 74), (29, 74)], fill=C("P04"))   # 뜯긴 뿌리 단면
+        d.polygon([(50, 42), (66, 40), (70, 34), (54, 36)], fill=C(INK)); d.polygon([(51, 42), (65, 40), (68, 36), (55, 37)], fill=C("P04"))   # 동체 쪽 뿌리 단면(뜯김)
+    else:                                                                        # 1호: 오른(위) 주익 — 뒤로 젖혀져 멀쩡
+        d.polygon([(50, 42), (70, 40), (112, 8), (120, 12), (74, 46)], fill=C(INK))
+        d.polygon([(52, 42), (69, 41), (111, 10), (117, 13), (73, 45)], fill=C("P30"))
+        d.line([(60, 41), (108, 12)], fill=C("P31"))
+    # 왼(아래) 주익 — 1호는 가운데서 꺾임(끝이 땅에) · 2호는 멀쩡
+    if plain:
+        d.polygon([(52, 64), (72, 66), (116, 92), (108, 94), (64, 72)], fill=C(INK))
+        d.polygon([(54, 65), (71, 67), (114, 91), (109, 92), (65, 71)], fill=C("P29"))
+        d.line([(62, 68), (108, 90)], fill=C("P28"))
+    else:
+        d.polygon([(52, 64), (72, 66), (90, 76), (84, 80), (64, 72)], fill=C(INK))          # 뿌리 쪽(붙어 있음)
+        d.polygon([(54, 65), (71, 67), (88, 76), (84, 78), (65, 71)], fill=C("P29"))
+        d.polygon([(88, 78), (96, 74), (124, 92), (120, 95), (92, 84)], fill=C(INK))         # 꺾여 땅에 닿은 끝
+        d.polygon([(89, 79), (95, 76), (122, 92), (119, 94), (93, 84)], fill=C("P28"))
+        d.polygon([(86, 76), (92, 74), (94, 78), (88, 80)], fill=C("P04"))                   # 꺾인 자리(뼈대)
+        d.line([(88, 75), (92, 77)], fill=C("P12"))
+    # ---- 동체
+    d.polygon(body, fill=C(INK))
+    d.polygon([(10, 54), (23, 46), (95, 40), (122, 46), (128, 54), (117, 62), (31, 66)], fill=C("P30"))
+    d.polygon([(23, 46), (95, 40), (122, 46), (96, 48), (30, 52)], fill=C("P31"))             # 윗면 빛
+    d.line([(31, 66), (117, 62)], fill=C("P28"))
+    for x in range(34, 110, 9):                                                   # 패널 이음
+        d.line([x, 48, x - 2, 64], fill=C("P29"))
+    d.rectangle([40, 56, 46, 60], fill=C("P29")); d.point((43, 58), fill=C("P28"))         # 흡기구
+    # ---- 수직 꼬리: 1호는 뒤로 휨 · 2호는 멀쩡
+    if plain:
+        d.polygon([(104, 42), (110, 12), (118, 12), (120, 44)], fill=C(INK))
+        d.polygon([(105, 42), (111, 14), (117, 14), (119, 43)], fill=C("P29"))
+        d.rectangle([111, 20, 116, 28], fill=C("P09")); d.point((113, 23), fill=C("P53")); d.point((114, 25), fill=C("P45"))
+    else:
+        d.polygon([(104, 42), (116, 20), (126, 10), (130, 14), (122, 26), (120, 44)], fill=C(INK))
+        d.polygon([(105, 42), (116, 22), (125, 12), (128, 14), (121, 27), (119, 43)], fill=C("P29"))
+        d.line([(110, 30), (124, 16)], fill=C("P28"))
+        d.rectangle([110, 30, 115, 36], fill=C("P09")); d.point((112, 32), fill=C("P53")); d.point((113, 34), fill=C("P45"))
+    # ---- 캐노피 · 기수
+    d.ellipse([18, 46, 46, 64], fill=C(INK))
+    if plain:
         d.chord([20, 47, 44, 63], 180, 360, fill=C("P35")); d.rectangle([20, 55, 44, 58], fill=C("P02"))   # 열린 캐노피(틀만)
+        d.line([(22, 50), (42, 50)], fill=C("P37"))
+        d.polygon([(10, 54), (2, 50), (0, 60), (6, 66), (16, 64)], fill=C(INK))               # 찌그러져 꺾인 기수 콘
+        d.polygon([(11, 54), (4, 51), (2, 59), (7, 64), (15, 63)], fill=C("P04")); d.line([(5, 56), (12, 62)], fill=C("P02"))
     else:
         d.ellipse([20, 47, 44, 63], fill=C("P35")); d.ellipse([22, 48, 36, 58], fill=C("P36"))
         d.line([(24, 50), (34, 60)], fill=C("P37")); d.line([(30, 49), (40, 58)], fill=C("P02"))   # 금
-    d.polygon([(12, 60), (6, 64), (8, 70), (18, 68)], fill=C("P04"))             # 기수 콘(찌그러짐)
-    for (x, y) in ((40, 66), (70, 46), (92, 64), (56, 70)):                      # 녹 · 그을음
+        d.polygon([(10, 54), (4, 58), (6, 64), (16, 62)], fill=C("P04"))                     # 기수 콘(살짝 찌그러짐)
+    for (x, y) in ((40, 62), (70, 46), (92, 60), (56, 64)):                       # 녹 · 그을음
         d.ellipse([x, y, x + 5, y + 3], fill=C("P25" if x % 2 else "P02"))
-    if state != "plain":
-        d.rectangle([80, 52, 108, 68], fill=C(INK))                               # 시험 엔진 덮개
-        d.rectangle([81, 53, 107, 67], fill=C("P12"))
-        d.line([81, 53, 107, 53], fill=C("P14"))
-        d.rectangle([82, 60, 106, 62], fill=C("P49"))                             # 노란 방사능 띠
+    if plain:
+        for (x, y) in ((20, 70), (26, 66), (14, 72)):                             # 뜯긴 날개 주변 파편
+            d.rectangle([x, y, x + 3, y + 1], fill=C("P12"))
+    # ---- 시험 엔진 덮개(1호만)
+    if not plain:
+        d.rectangle([80, 50, 108, 64], fill=C(INK))
+        d.rectangle([81, 51, 107, 63], fill=C("P12"))
+        d.line([81, 51, 107, 51], fill=C("P14"))
+        d.rectangle([82, 58, 106, 60], fill=C("P49"))                              # 노란 방사능 띠
         for x in range(84, 106, 6):
-            d.point((x, 61), fill=C(INK))
-        _rad(d, 98, 54)
+            d.point((x, 59), fill=C(INK))
+        _rad(d, 98, 52)
         if state == "core":
-            d.rectangle([86, 56, 100, 66], fill=C(INK))                           # 열린 들창
-            d.rectangle([87, 57, 99, 65], fill=C("P02"))
-            d.rectangle([89, 58, 97, 64], fill=C("P55")); d.rectangle([91, 59, 95, 63], fill=C("P56")); d.point((93, 61), fill=C("P57"))   # 노심
-            d.polygon([(100, 56), (106, 54), (106, 66), (100, 66)], fill=C("P13"))   # 젖혀진 들창
-            for (x, y) in ((84, 72), (92, 76), (100, 74), (88, 80)):             # 바닥 초록 물때
+            d.rectangle([86, 54, 100, 63], fill=C(INK))                            # 열린 들창
+            d.rectangle([87, 55, 99, 62], fill=C("P02"))
+            d.rectangle([89, 56, 97, 61], fill=C("P55")); d.rectangle([91, 57, 95, 60], fill=C("P56")); d.point((93, 58), fill=C("P57"))   # 노심
+            d.polygon([(100, 54), (106, 52), (106, 63), (100, 63)], fill=C("P13"))   # 젖혀진 들창
+            for (x, y) in ((84, 70), (92, 74), (100, 72), (88, 78)):              # 바닥 초록 물때
                 d.ellipse([x, y, x + 6, y + 2], fill=C("P55"))
-            d.point((94, 70), fill=C("P57"))
+            d.point((94, 68), fill=C("P57"))
         elif state == "sealed":
-            d.rectangle([84, 55, 104, 67], fill=C(INK))                           # 콘크리트 판
-            d.rectangle([85, 56, 103, 66], fill=C("P07")); d.line([85, 56, 103, 56], fill=C("P08"))
-            d.line([86, 58, 102, 64], fill=C("P05")); d.line([86, 64, 102, 58], fill=C("P05"))   # 철사 묶음
-            d.line([89, 61, 93, 61], fill=C("P09")); d.line([95, 61, 99, 61], fill=C("P09"))     # 분필 '봉인'
+            d.rectangle([84, 53, 104, 64], fill=C(INK))                            # 콘크리트 판
+            d.rectangle([85, 54, 103, 63], fill=C("P07")); d.line([85, 54, 103, 54], fill=C("P08"))
+            d.line([86, 56, 102, 62], fill=C("P05")); d.line([86, 62, 102, 56], fill=C("P05"))   # 철사 묶음
+            d.line([89, 59, 93, 59], fill=C("P09")); d.line([95, 59, 99, 59], fill=C("P09"))     # 분필 '봉인'
         elif state == "empty":
-            d.rectangle([86, 56, 100, 66], fill=C(INK))
-            d.rectangle([87, 57, 99, 65], fill=C("P02"))
-            d.rectangle([90, 62, 96, 64], fill=C("P04"))                          # 빈 받침
-            d.polygon([(100, 56), (106, 54), (106, 66), (100, 66)], fill=C("P13"))
-            for (x, y) in ((86, 74), (96, 76)):
-                d.ellipse([x, y, x + 5, y + 2], fill=C("P30"))                    # 마른 물때
+            d.rectangle([86, 54, 100, 63], fill=C(INK))
+            d.rectangle([87, 55, 99, 62], fill=C("P02"))
+            d.rectangle([90, 60, 96, 62], fill=C("P04"))                           # 빈 받침
+            d.polygon([(100, 54), (106, 52), (106, 63), (100, 63)], fill=C("P13"))
+            for (x, y) in ((86, 72), (96, 74)):
+                d.ellipse([x, y, x + 5, y + 2], fill=C("P30"))                     # 마른 물때
     return im
 
 
@@ -298,6 +336,108 @@ def streetlamp_on():
     return im
 
 
+# ================================================================================================ 고시촌(UQ-62) — 권성민의 방 · 분양 사무실 · 관리사무소 벽
+def tube_lamp(state=""):
+    """진공관 스탠드(32×44 — 1×1): 무쇠 받침 · 굽은 대 · 양철 갓 아래 진공관 셋이 호박색으로 켜짐 · 받침 옆 비상 전지 상자와 선.
+    상태 off — 진공관이 잿빛 · 갓 안이 어둡고 빛 웅덩이 없음(권성민이 진공관을 빼 줬거나 200년 만에 껐다)."""
+    on = state != "off"
+    im = img(32, 44)
+    d = ImageDraw.Draw(im)
+    _shadow(d, 6, 27, 41)
+    d.rectangle([9, 36, 23, 40], fill=C("P05")); d.rectangle([10, 35, 22, 36], fill=C("P07"))      # 무쇠 받침
+    d.rectangle([24, 33, 30, 40], fill=C("P12")); d.rectangle([25, 34, 29, 36], fill=C("P11"))      # 비상 전지 상자
+    d.point((27, 38), fill=C("P30" if on else "P53"))
+    d.line([23, 38, 25, 38], fill=C(INK))
+    d.line([16, 35, 16, 16], fill=C("P08")); d.line([17, 35, 17, 16], fill=C("P06"))               # 대
+    d.line([16, 16, 12, 10], fill=C("P08")); d.line([17, 16, 13, 10], fill=C("P06"))
+    d.polygon([(2, 12), (24, 12), (20, 4), (6, 4)], fill=C("P14")); d.polygon([(2, 12), (24, 12), (20, 4), (6, 4)], outline=C(INK))   # 양철 갓
+    d.line([6, 4, 20, 4], fill=C("P15"))
+    for k, x in enumerate((7, 12, 17)):                                                                # 진공관 셋
+        d.rectangle([x, 13, x + 3, 21], fill=C("P59" if on else "P11"))
+        d.rectangle([x + 1, 14, x + 2, 16], fill=C("P60" if on else "P12"))
+        d.rectangle([x, 21, x + 3, 22], fill=C(INK))
+    if on:
+        for y in range(23, 36):
+            for x in range(3, 24):
+                if (x - 13) ** 2 / 3.0 + (y - 29) ** 2 / 1.2 < 30 and (x + y) % 2 == 0 and im.getpixel((x, y))[3] == 0:
+                    im.putpixel((x, y), C("P58"))
+    return im
+
+
+def ramen_tower():
+    """컵라면 그릇 탑(32×40 — 1×1): 흰 종이 그릇 아홉 개가 두 줄로 쌓임 · 붉은 띠 · 나무젓가락 하나 꽂힘 · 바닥 국물 자국."""
+    im = img(32, 40)
+    d = ImageDraw.Draw(im)
+    _shadow(d, 4, 29, 37)
+    d.ellipse([5, 33, 27, 38], fill=C("P20"))
+    for col, (x0, n) in enumerate(((4, 5), (16, 4))):
+        for k in range(n):
+            y = 34 - k * 6 - (0 if col == 0 else 3)
+            d.polygon([(x0, y), (x0 + 12, y), (x0 + 10, y - 7), (x0 + 2, y - 7)], fill=C("P09"))
+            d.polygon([(x0, y), (x0 + 12, y), (x0 + 10, y - 7), (x0 + 2, y - 7)], outline=C("P07"))
+            d.line([x0 + 2, y - 7, x0 + 10, y - 7], fill=C("P08"))
+            d.line([x0 + 1, y - 3, x0 + 11, y - 3], fill=C("P53"))
+            d.line([x0 + 1, y - 4, x0 + 11, y - 4], fill=C("P54"))
+    d.line([22, 6, 25, 0], fill=C("P21")); d.line([23, 6, 26, 0], fill=C("P20"))                     # 젓가락
+    return im
+
+
+def w_calendar_77():
+    """2077년 11월 달력(24×30, 벽): '11월' 머리 · 15일에 연필 동그라미 두 겹 '2차' · 다른 날짜엔 아무 표시도 없다(200년 동안 하루도 지우지 않았다)."""
+    im = img(24, 30)
+    d = ImageDraw.Draw(im)
+    d.rectangle([1, 2, 22, 29], fill=C("P21")); d.rectangle([1, 2, 22, 9], fill=C("P45"))
+    put_text(im, "11월", 4, 2, "P09", 8, "Galmuri7")
+    d.point((11, 0), fill=C("P05")); d.point((11, 1), fill=C("P05"))
+    for k in range(30):
+        x, y = 3 + (k % 7) * 3, 11 + (k // 7) * 4
+        d.point((x, y), fill=C("P04"))
+    cx, cy = 3 + 0 * 3, 11 + 2 * 4                                                                     # 15일(셋째 줄 첫 칸)
+    d.ellipse([cx - 2, cy - 2, cx + 3, cy + 3], outline=C("P02")); d.ellipse([cx - 3, cy - 3, cx + 4, cy + 4], outline=C("P04"))
+    put_text(im, "2차", 8, 18, "P02", 8, "Galmuri7")
+    return im
+
+
+def w_exam_cert(state="grade"):
+    """관리사무소 벽에 건 종이(24×30, 벽) — 권성민이 가져간 합격증. grade 채점기 출력 띠(구멍 줄 · 붉은 도장) · son 손재석 손글씨(연필 · 큰 '합격') ·
+    fake 볼트-텍 양식(파란 머리띠 · 톱니 표장 · 타자 글)."""
+    im = img(24, 30)
+    d = ImageDraw.Draw(im)
+    d.rectangle([1, 2, 22, 29], fill=C("P09")); d.line([1, 29, 22, 29], fill=C("P07"))
+    d.point((11, 0), fill=C("P05")); d.point((11, 1), fill=C("P05"))
+    if state == "grade":
+        d.rectangle([4, 4, 19, 27], fill=C("P21"))
+        for y in range(6, 27, 3):
+            for x in range(6, 18, 4):
+                if (x * 7 + y * 3) % 5 < 3:
+                    d.point((x, y), fill=C(INK))
+        d.ellipse([12, 20, 19, 27], outline=C("P53")); put_text(im, "1", 14, 20, "P53", 8, "Galmuri7")
+    elif state == "son":
+        for y in (7, 11, 15):
+            d.line([4, y, 18 - (y % 5), y], fill=C("P04"))
+        put_text(im, "합격", 4, 18, "P02", 8, "Galmuri7")
+        d.line([4, 27, 19, 27], fill=C("P04"))
+    else:
+        d.rectangle([1, 2, 22, 7], fill=C("P45")); put_text(im, "VT", 8, 2, "P09", 8, "Galmuri7")
+        d.ellipse([3, 20, 9, 26], outline=C("P45")); d.point((6, 23), fill=C("P45"))
+        for y in (10, 13, 16):
+            d.line([4, y, 19, y], fill=C("P05"))
+        put_text(im, "S-07", 10, 20, "P45", 8, "Galmuri7")
+    return im
+
+
+def w_sale_banner():
+    """2077년 분양 현수막(62×20, 벽 2칸): 바랜 노란 천 · 붉은 글 '남부순환 분양' · 끈 양 끝 · 한쪽이 처져 주름."""
+    im = img(62, 20)
+    d = ImageDraw.Draw(im)
+    d.polygon([(2, 3), (60, 2), (59, 17), (3, 18)], fill=C("P49")); d.polygon([(2, 3), (60, 2), (59, 17), (3, 18)], outline=C("P47"))
+    for x in range(8, 56, 11):
+        d.line([x, 4, x + 2, 16], fill=C("P48"))
+    put_text(im, "남부순환 분양", 6, 5, "P53", 8, "Galmuri7")
+    d.line([0, 0, 2, 3], fill=C(INK)); d.line([61, 0, 60, 2], fill=C(INK))
+    return im
+
+
 def _r(fn, fw, fh, kind="floor", down=2, dx=0, dy=0):
     return {"fn": fn, "foot": (fw, fh), "kind": kind, "down": down, "dx": dx, "dy": dy}
 
@@ -308,8 +448,15 @@ PROPS_UQ3 = {
     "nurse_dock": _r(nurse_dock, 1, 1, down=-2),
     "gs_spare": _r(gs_spare, 1, 1, down=-2),
     "jet_wreck": _r(jet_wreck, 4, 3, down=-4),
+    "tube_lamp": _r(tube_lamp, 1, 1, down=-2),
+    "ramen_tower": _r(ramen_tower, 1, 1),
+    "w_calendar_77": _r(w_calendar_77, 1, 0, "wall", dx=4, dy=14),
+    "w_exam_cert": _r(w_exam_cert, 1, 0, "wall", dx=4, dy=14),
+    "w_sale_banner": _r(w_sale_banner, 2, 0, "wall", dx=1, dy=6),
 }
 STATES_UQ3 = {
+    "tube_lamp": {"off": lambda: tube_lamp("off")},
+    "w_exam_cert": {"son": lambda: w_exam_cert("son"), "fake": lambda: w_exam_cert("fake")},
     "blood_fridge": {"on": lambda: blood_fridge("on")},
     "cell_box": {"empty": lambda: cell_box("empty")},
     "nurse_dock": {"stopped": lambda: nurse_dock("stopped")},

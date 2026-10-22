@@ -10,15 +10,18 @@
   "STUCK": 10,
   "TUBE": 11,
   "RUN": 15,
-  "M135": 17,
-  "NEEDLE": 21,
-  "NEVER": 25,
-  "RIP": 27,
-  "BUNDLE": 31,
-  "GONE": 34,
-  "STUCKCARD": 37,
-  "TAKE": 38,
-  "WRECK": 39
+  "U62CARD": 17,
+  "U62OK": 19,
+  "U62BAD": 23,
+  "M135": 26,
+  "NEEDLE": 30,
+  "NEVER": 34,
+  "RIP": 36,
+  "BUNDLE": 40,
+  "GONE": 43,
+  "STUCKCARD": 46,
+  "TAKE": 47,
+  "WRECK": 48
  },
  "ops": [
   {
@@ -194,12 +197,20 @@
      "id": "K-24_GRADER:2:1"
     },
     {
+     "text": "권성민의 답안 카드를 넣는다",
+     "tags": [],
+     "cond": "has(\"M-446\") >= 1 and UQ62_WAY == 0",
+     "fx": "",
+     "to": "U62CARD",
+     "id": "K-24_GRADER:2:2"
+    },
+    {
      "text": "머리판째 뜯어낸다",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "RIP",
-     "id": "K-24_GRADER:2:2"
+     "id": "K-24_GRADER:2:3"
     },
     {
      "text": "받이에 쌓인 답안 카드 묶음을 챙긴다",
@@ -207,7 +218,7 @@
      "cond": "FQ_GS02_BUNDLE == 0",
      "fx": "",
      "to": "BUNDLE",
-     "id": "K-24_GRADER:2:3"
+     "id": "K-24_GRADER:2:4"
     },
     {
      "text": "그만둔다",
@@ -215,9 +226,90 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "K-24_GRADER:2:4"
+     "id": "K-24_GRADER:2:5"
     }
    ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "카드를 넣는다. 딸깍딸깍. 출력 띠 — '수험 번호 없음 · 성명 없음. 판독 불능.' 카드가 도로 나온다. 2077년 카드엔 연필 이름이라도 있었다 — 이 카드는 번호도 이름도 없다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "수험 번호 칸을 천공 바늘로 손수 뚫어 넣는다 — 2077년 번호 체계대로",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "과학",
+       "min": 45
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "U62OK",
+     "id": "K-24_GRADER:3:0"
+    },
+    {
+     "text": "어림짐작으로 번호 칸을 뚫는다",
+     "tags": [],
+     "cond": "skill(\"과학\") < 45",
+     "fx": "",
+     "to": "U62BAD",
+     "id": "K-24_GRADER:3:1"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "RUN",
+     "id": "K-24_GRADER:3:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q62grade"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "열두 구멍. 카드가 끝까지 빨려 들어갔다가 받이로 떨어진다. 출력 띠 — '수험 번호 (수기) · 행정 적성 1등급'."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "2277년에 나온 2077년식 성적표. 띠를 뜯어 접는다."
+  },
+  {
+   "op": "goto",
+   "to": "RUN"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q62gradebad"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "구멍 셋을 엉뚱한 줄에 뚫었다. 카드가 반쯤 들어가다 찢긴다 — 출력 띠 '판독 불능 · 카드 손상'. 받이에 조각."
+  },
+  {
+   "op": "goto",
+   "to": "RUN"
   },
   {
    "op": "cmd",
@@ -343,7 +435,7 @@
      "cond": "FQ_GS02_BUNDLE == 0",
      "fx": "",
      "to": "BUNDLE",
-     "id": "K-24_GRADER:3:0"
+     "id": "K-24_GRADER:4:0"
     },
     {
      "text": "그만둔다",
@@ -351,7 +443,7 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "K-24_GRADER:3:1"
+     "id": "K-24_GRADER:4:1"
     }
    ]
   },

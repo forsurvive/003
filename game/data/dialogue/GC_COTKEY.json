@@ -1,0 +1,74 @@
+{
+ "id": "GC_COTKEY",
+ "title": "간이침대",
+ "loc": "L-R01-14",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TAKE": 3,
+  "TAKEN": 6
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "GC_KEY == 1",
+   "to": "TAKEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "간이침대. 패거리 야간 당번이 잔다. 베개 밑에 2077년 자물쇠 열쇠 — 꼬리표 '문구'. 창살 자물쇠 것은 아니다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "열쇠를 집는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TAKE",
+     "id": "GC_COTKEY:1:0"
+    },
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "GC_COTKEY:1:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "GC_KEY = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "열쇠를 집는다. 2077년 문구점 셔터 자물쇠 — 패거리가 창고 상자에 그대로 쓰고 있다. 문구점 앞 상자가 열린다. 보는 눈이 없을 때."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "간이침대. 베개 밑이 비었다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-62.txt"
+}

@@ -1,0 +1,64 @@
+# 신림 고시촌 D동 3층 '불 켜진 방'(SD-09a L-R01-14 실내 ④ · 단계 1-12i UQ-62 「고시생의 마지막 시험」). 초안: Claude. 리드 검수 대기.
+# 20×12 · 왼쪽 복도(원룸 문 셋 — 잠김 · 달력) · 오른쪽 권성민의 방(책상 · 진공관 스탠드 200년 · 컵라면 그릇 탑 · 수험서 탑 · 2077년 11월 달력 · 창가 공물) · 뒷계단(북쪽 — 뒷골목).
+# 권성민 N-R01-059(2077년 20대 구울 · 비적대 — 패거리의 '부적'). 스탠드는 UQ62_TUBE(진공관을 뺌) · GONE(떠남)이면 꺼짐. 떠난 뒤엔 방이 비고 책상 위에 쪽지.
+# 들어오는 길: X-GC D동 현관(40,7 — from_W) · 뒷골목 뒷계단(40,1 — from_back).
+map K-43 고시원 D동 3층
+set bk
+grid
+####################
+####################
+####################
+#jjjjjjjjj#wwwwwwww#
+#jjjjjjjjj#wwwwwwww#
+#jjjjjjjjjjwwwwwwww#
+#jjjjjjjjj#wwwwwwww#
+#jjjjjjjjj#wwwwwwww#
+#jjjjjjjjj#wwwwwwww#
+#jjjjjjjjj#ss#######
+####jj##############
+####jj##############
+end
+exit 4 11 X-GC from_K-43
+exit 5 11 X-GC from_K-43
+mark from_W 4 9 N
+exit 11 9 X-GC from_K-43b
+exit 12 9 X-GC from_K-43b
+mark from_back 12 8 S
+mark kwon 15 5 W
+mark walk_out 4 10 S
+# ---- 복도: 원룸 문 셋(잠김) · 달력 · 공물 자리
+prop w_calendar_77 2 1
+text 2 2 "301호 문. 달력 '2077. 11.' 15일에 동그라미. 문은 잠겼고 안에서 아무 소리도 안 난다."
+prop w_calendar_77 5 1
+text 5 2 "302호 문. 같은 달력 · 같은 동그라미. 문틈에 2077년 광고지 — '합격 기원 떡'."
+prop w_calendar_77 8 1
+text 8 2 "303호 문. 달력 밑에 분필 — 패거리 글씨 '부적 방 →'. 화살표가 복도 끝을 가리킨다."
+prop bookshelf_home 1 3
+text 1 3 "복도 책꽂이. 수험서가 꽂힌 채 굳었다 — 『행정법 총론 2077』 · 『헌법 기출 10개년』. 한 권만 자주 빼 본 자국." h=2
+prop plant_pot 1 8
+prop drum 8 8
+box 8 8 gift owner=N-R01-060 name="공물 드럼통(부적님께)"
+text 8 8 "복도 끝 드럼통. 패거리가 두고 간 공물 — 술병 · 담배 · 2277년 통조림 하나. '부적님께'라고 뚜껑에 썼다."
+text 13 8 "뒷계단 철문. 패거리가 공물을 두러 오르는 길. 잠기지 않았다 — 잠그면 부적이 삐진다고 믿는다."
+prop stairs_up 13 8
+# ---- 권성민의 방(동): 책상 · 스탠드 · 컵라면 탑 · 수험서 탑 · 창가 공물 · 침대
+prop bk_desk 14 3
+prop tube_lamp 16 3 cond="UQ62_TUBE == 0 and UQ62_DONE == 0"
+prop tube_lamp 16 3 state=off cond="UQ62_TUBE == 1 or UQ62_DONE >= 1"
+text 16 3 "진공관 스탠드." scene=UQ62_LAMP
+text 14 3 "책상. 답안 카드 더미 · 천공 바늘 · 연필 스무 자루. 모두 같은 길이로 깎였다." cond="UQ62_GONE == 0"
+text 14 3 "빈 책상. 쪽지 한 장 — '출근합니다. 불은 끄고 갑니다. 공물은 303호에 나눠 드세요. — 권성민'." cond="UQ62_GONE >= 1 and UQ62_TUBE == 0"
+text 14 3 "빈 책상. 쪽지 한 장 — '출근합니다. 불은 당신이 가져갔죠. 공물은 303호에 나눠 드세요. — 권성민'." cond="UQ62_GONE >= 1 and UQ62_TUBE == 1"
+prop ramen_tower 18 3
+text 18 3 "컵라면 그릇 탑. 세어 보면 200개쯤. 맨 아래 그릇은 2077년 것, 맨 위는 지난달 것 — 패거리가 가져다준다."
+prop w_calendar_77 13 1 cond="UQ62_DONE == 0 or UQ62_TUBE == 0"
+text 13 2 "벽 달력 '2077. 11.' 15일 '2차'. 날짜를 하나도 지우지 않았다 — 시험 날이 오기 전까진 지울 날이 없다." cond="UQ62_DONE == 0 or UQ62_TUBE == 0"
+text 13 2 "벽에 달력을 뗀 자국. 못만 남았다 — 그날이 왔다는 뜻이다." cond="UQ62_DONE >= 1 and UQ62_TUBE == 1"
+prop bookshelf_home 18 6
+text 18 6 "수험서 탑. 같은 책이 판본만 다르게 다섯 권. 책갈피 자리가 모두 같은 쪽 — '제3장 행정 처분'." h=2
+prop bunk 12 7
+text 12 7 "침대. 이불이 개켜진 채다 — 자지 않는다. 베개 밑에 2077년 2차 응시 신청 접수증 — 이름 '권성민', 수험 번호는 '추후 통지'." w=2
+prop w_window 16 1
+text 16 2 "창. 밤이면 블록에서 유일하게 켜진 창이다. 창턱에 패거리가 둔 공물 — 담배 한 갑 · 2277년 술병 · 종이학 하나." cond="UQ62_TUBE == 0 and UQ62_DONE == 0"
+text 16 2 "창. 이제 다른 창과 똑같이 어둡다. 창턱 공물은 그대로 — 담배 · 술병 · 종이학." cond="UQ62_TUBE == 1 or UQ62_DONE >= 1"
+npc N-R01-059 15 5 W look=M1-SG1-HR04-H1-T03-2-PF00-HD00-EY03-PR021 cond="UQ62_GONE == 0" bark="11월 시험이 연기됐대요. 조금만 더 하면 돼요."

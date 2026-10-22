@@ -80,19 +80,32 @@ def w_duty_2077(state=""):
 
 
 def rowboat():
-    """나룻배(64×32): 나무 판 배 · 테두리 · 가로 좌판 둘 · 노 둘 · 바닥 고인 물 · 이물 밧줄."""
-    im = img(64, 32)
+    """나룻배(72×40, 덧그림): 나무 판자 배 — 겹판 결 · 테두리 먹선 · 가로 좌판 둘 · 노 둘(노걸이) · 바닥에 고인 물과 물때 · 이물 밧줄 사리 · 고물 번호판 ·
+    들린 이물 밑 접지 그림자(타원 아님)."""
+    im = img(72, 40)
     d = ImageDraw.Draw(im)
-    hull = [(4, 12), (58, 10), (62, 16), (56, 25), (8, 26), (2, 18)]
+    hull = [(4, 14), (64, 10), (70, 18), (64, 30), (10, 33), (2, 22)]
+    sh = Image.new("RGBA", im.size, (0, 0, 0, 0)); ImageDraw.Draw(sh).polygon([(x + 2, y + 3) for x, y in hull], fill=C("P02")); im.alpha_composite(sh)
     d.polygon(hull, fill=C(INK))
-    d.polygon([(6, 13), (57, 11), (60, 16), (55, 23), (9, 24), (4, 18)], fill=C("P40"))
-    d.polygon([(10, 15), (54, 13), (56, 17), (52, 21), (12, 22), (8, 18)], fill=C("P39"))
-    for x in (22, 40):
-        d.rectangle([x, 13, x + 3, 22], fill=C("P38"))                                       # 좌판
-    d.ellipse([28, 17, 36, 21], fill=C("P36"))                                     # 고인 물
-    d.line([18, 8, 30, 28], fill=C(INK), width=2); d.line([18, 8, 29, 26], fill=C("P21"))    # 노
-    d.line([44, 6, 52, 29], fill=C(INK), width=2); d.line([44, 6, 51, 27], fill=C("P21"))
-    d.arc([56, 6, 64, 18], 200, 340, fill=C("P21"))                                           # 밧줄
+    d.polygon([(6, 15), (63, 11), (68, 18), (63, 29), (11, 32), (4, 22)], fill=C("P40"))
+    for k, y in enumerate((18, 23, 28)):                                      # 겹판 이음(바깥 판자)
+        d.line([(8, y + k), (62, y - 2 + k)], fill=C("P38"))
+    d.polygon([(11, 17), (60, 13), (64, 18), (60, 26), (13, 29), (9, 22)], fill=C("P39"))   # 안쪽 바닥
+    d.polygon([(13, 18), (58, 14), (62, 18), (58, 25), (15, 28), (11, 22)], fill=C("P38"))
+    for x in range(16, 58, 5):                                                # 바닥 널
+        d.line([x, 15, x - 1, 28], fill=C("P37"))
+    d.ellipse([30, 19, 44, 26], fill=C("P36")); d.ellipse([33, 21, 41, 24], fill=C("P35")); d.point((36, 22), fill=C("P37"))   # 고인 물 · 반사
+    for x in (24, 46):                                                        # 가로 좌판
+        d.rectangle([x, 14, x + 4, 28], fill=C(INK)); d.rectangle([x + 1, 15, x + 3, 27], fill=C("P41")); d.line([x + 1, 15, x + 3, 15], fill=C("P42"))
+    for x in (20, 52):                                                        # 노걸이
+        d.rectangle([x, 12, x + 2, 15], fill=C("P05"))
+    d.line([20, 6, 32, 36], fill=C(INK), width=3); d.line([21, 6, 32, 35], fill=C("P21")); d.polygon([(31, 34), (36, 38), (34, 40), (29, 36)], fill=C("P20"))   # 노 둘
+    d.line([52, 4, 60, 37], fill=C(INK), width=3); d.line([53, 4, 60, 36], fill=C("P21")); d.polygon([(59, 35), (64, 38), (62, 40), (57, 37)], fill=C("P20"))
+    d.ellipse([5, 17, 13, 23], fill=C("P21")); d.ellipse([7, 18, 11, 21], fill=C("P39")); d.arc([5, 17, 13, 23], 0, 360, fill=C("P18"))   # 이물 밧줄 사리
+    d.line([(9, 17), (2, 10)], fill=C("P21"))
+    d.rectangle([62, 20, 67, 25], fill=C("P09")); d.line([64, 21, 64, 24], fill=C(INK)); d.point((65, 22), fill=C(INK))   # 고물 번호판
+    for (x, y) in ((16, 27), (50, 26), (40, 16)):                             # 물때
+        d.point((x, y), fill=C("P30")); d.point((x + 1, y), fill=C("P31"))
     return im
 
 

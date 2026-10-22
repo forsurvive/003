@@ -1,0 +1,204 @@
+# 신림 고시촌 블록(SD-09a L-R01-14 A · SD-05 §3.16 UQ-62 「고시생의 마지막 시험」 · SD-04a SQ-S02 C 해법 · FQ-JC-01 7동 · 단계 1-12i i6): 남부순환 패거리 본거지.
+# 50×40 · 고시원 다섯 동(A동 원룸 미로 K-40 · 7동 물당번 K-44 · D동 3층 '불 켜진 방' K-43 — 뒷골목 뒷계단 · C동 지하 독서실 K-42 · B동 옥상 분양 사무실 K-41 — 사다리 · 판자 다리 → 물탱크 옥탑) ·
+#   1층 상가 = 패거리 창고(셔터 · 문 잠김) · 문지기 초소 둘(동 · 남 골목 입구 — 통행 규칙은 진행기 UqR01 GC_PASS) · 가운데 마당 드럼통 · 빨랫줄 · 공물 흔적(뒷골목 — 은신 길이 읽는 이야기).
+# 패거리 CR-420 · 421 · 423 ×8~12 · 경비견 CR-107 ×2는 진행기가 시간대마다 세운다(SD-22 — 낮엔 창고 앞 · 밤엔 드럼통). 맵 원고의 적은 남건희(SQ-S02 a 추방 7일 뒤)뿐.
+# 월드 자리: world_chunks INSETS center 818·1428(장소 표 좌표 849·1428은 간선 위라 블록만 서쪽 — 기준점은 그대로). 도착 arrive = 동쪽 초소 앞.
+map X-GC 신림 고시촌
+set r01
+grid
+TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+T::::::::::::::::::::::::::::::::::::::::::::::::T
+T.RRRRRRRRRRRR;;RRRRRRRRRR;;;;......RRRRRRRRRR..TT
+T.RRRRRRRRRRRR;;RRRRRRRRRR;;;;......RRRRRRRRRR..TT
+T.RRRRRRRRRRRR;;RRRRRRRRRR;;;;......RRRRRRRRRR..TT
+T.HHHHHHHHHHHH..HHHHHHHHHH..........HHHHHHHHHH..TT
+T.HHHHHHHHHHHH..HHHHHHHHHH..........HHHHHHHHHH..TT
+T.HHHHHDHHHHHH..HHHHDHHHHH..........HHHHDHHHHH..TT
+T.............::::::::::::::::................:::T
+T.............::::::::::::::::................:::T
+T.............::::::::::::::::..............;.:::T
+T.............::::::::::::::::...............;:::T
+T.............::::::::::::::::................:::T
+T.RRRRRRRRRR..............;...rrrrrrrrrrvvrrrrrr:T
+T.RRRRRRRRRR..;...............rrrrrrrrrrpprrrrrr:T
+T.RRRRRRRRRR...............;..rrrrrrrrrrvvrrrrrr:T
+T.HHHHHHHHHH..................HLHHHHHHHHvvHHHHHH:T
+T.HHHHHHHHHH..................HLHHHHHHHHvvHHHHHH:T
+T.HHHHDHHHHH..................HLHHDHHHHHvvHHHHHH:T
+T...........::::::::::::::::::................:::T
+Tccccccccccc::::::::::::::::::................::::
+Tccccccccccc::::::::::::::::::................::::
+Tccccccccccc::::::::::::::::::................::::
+Tccccccccccc::::::::::::::::::................:::T
+Tccccccccccc::::::::::::::::::................:::T
+Tccccccccccc::::::::::::::::::................:::T
+T............RRRRRRR:::RRRRRRRRRRRRRRRRRRRRRRR...T
+T............RRRRRRR:::RRRRRRRRRRRRRRRRRRRRRRR...T
+T............HHHHHHH:::HHHHHHHHHHHHHHHHHHHHHHH...T
+T............HHHHHHH:::HHHHHHHHHHHHHHHHHHHHHHH...T
+T..;.........HHHHHDH:::HHHHHHHDHHHHHHHHHHDHHHH...T
+T........;..........:::..........................T
+T............ccccccccccccccccccccccccccccccccccc.T
+T............ccccccccccccccccccccccccccccccccccc.T
+T............ccccccccccccccccccccccccccccccccccc.T
+T............ccccccccccccccccccccccccccccccccccc.T
+T............ccccccccccccccccccccccccccccccccccc.T
+T..;................:::.......................;..T
+T...................:::..........................T
+TTTTTTTTTTTTTTTTTTTT:::TTTTTTTTTTTTTTTTTTTTTTTTTTT
+end
+levels
+..................................................
+.000000000000000000000000000000000000000000000000.
+.0............00..........0000000000..........00..
+.0............00..........0000000000..........00..
+.0............00..........0000000000..........00..
+.0............00..........0000000000..........00..
+.0............00..........0000000000..........00..
+.0.....0......00....0.....0000000000....0.....00..
+.000000000000000000000000000000000000000000000000.
+.000000000000000000000000000000000000000000000000.
+.000000000000000000000000000000000000000000000000.
+.000000000000000000000000000000000000000000000000.
+.000000000000000000000000000000000000000000000000.
+.0..........0000000000000000003333333333..3333330.
+.0..........0000000000000000003333333333333333330.
+.0..........0000000000000000003333333333..3333330.
+.0..........000000000000000000.3................0.
+.0..........000000000000000000.2................0.
+.0....0.....000000000000000000.1..0.............0.
+.000000000000000000000000000000000000000000000000.
+.0000000000000000000000000000000000000000000000000
+.0000000000000000000000000000000000000000000000000
+.0000000000000000000000000000000000000000000000000
+.000000000000000000000000000000000000000000000000.
+.000000000000000000000000000000000000000000000000.
+.000000000000000000000000000000000000000000000000.
+.000000000000.......000.......................000.
+.000000000000.......000.......................000.
+.000000000000.......000.......................000.
+.000000000000.......000.......................000.
+.000000000000.....0.000.......0..........0....000.
+.000000000000000000000000000000000000000000000000.
+.000000000000000000000000000000000000000000000000.
+.000000000000000000000000000000000000000000000000.
+.000000000000000000000000000000000000000000000000.
+.000000000000000000000000000000000000000000000000.
+.000000000000000000000000000000000000000000000000.
+.000000000000000000000000000000000000000000000000.
+.000000000000000000000000000000000000000000000000.
+....................000...........................
+end
+mark arrive 47 21 W
+mark gate_e 46 21 W
+mark gate_s 21 34 N
+mark yard 22 22 S
+mark yard2 20 10 S
+mark front 30 34 N
+mark west 6 23 S
+mark back 40 1 S
+mark d_door 40 8 S
+mark b_roof 34 14 S
+mark walk1 44 8 S
+mark walk2 47 21 E
+# ---- 출입(실내)
+exit 7 7 K-40 from_W
+mark from_K-40 7 8 S
+mark from_K-40b 7 1 S
+exit 20 7 K-44 from_W
+mark from_K-44 20 8 S
+exit 40 7 K-43 from_W
+mark from_K-43 40 8 S
+exit 40 1 K-43 from_back
+mark from_K-43b 41 1 E
+exit 6 18 K-42 from_W
+mark from_K-42 6 19 S
+exit 34 14 K-41 from_roof
+mark from_K-41 34 15 S
+# ---- 건물 그림(struct — 옥상 · 정면 · 사다리 · 틈 · 판자 다리 · 고철 담)
+struct roof 2 2 12 3 seed=1 args='{"edges": "nw", "paint": "grey"}'
+struct facade 2 5 12 3 seed=2 args='{"style": "tile", "doors": [[5, "steel"]], "name": "신림 고시원 A동", "num": "A"}'
+struct roof 16 2 10 3 seed=3 args='{"edges": "n", "paint": "green"}'
+struct facade 16 5 10 3 seed=4 args='{"style": "brick", "doors": [[4, "steel"]], "name": "삼성 고시원", "num": "7"}'
+struct roof 36 2 10 3 seed=5 args='{"edges": "ne", "paint": "red"}'
+struct facade 36 5 10 3 seed=6 args='{"style": "plaster", "doors": [[4, "steel"]], "name": "관악 고시텔 D동", "num": "D"}'
+struct facade 36 5 10 3 seed=6 args='{"style": "plaster", "doors": [[4, "steel"]], "name": "관악 고시텔 D동", "num": "D", "lit": [[4, 2]]}' cond="(GAME_HOUR >= 19 or GAME_HOUR < 6) and UQ62_TUBE == 0 and UQ62_DONE == 0"
+struct roof 2 13 10 3 seed=7 args='{"edges": "nw", "paint": "grey"}'
+struct facade 2 16 10 3 seed=8 args='{"style": "concrete", "doors": [[4, "open"]], "name": "고시원 C동", "num": "C"}'
+struct roof 30 13 10 3 seed=9 args='{"edges": "n", "paint": "grey"}'
+struct facade 30 16 10 3 seed=10 args='{"style": "brick_dk", "doors": [[4, "steel"]], "name": "신림 고시원 B동", "num": "B"}'
+struct ladder 31 16 1 3 seed=11
+struct gap 40 13 2 6 seed=12
+struct bridge 40 14 2 1 seed=13
+struct roof 42 13 6 3 seed=14 args='{"edges": "ne", "paint": "grey"}'
+struct facade 42 16 6 3 seed=15 args='{"style": "mint", "doors": [], "num": "탑"}'
+struct roof 13 26 7 2 seed=16 args='{"edges": "nw", "paint": "grey"}'
+struct facade 13 28 7 3 seed=17 args='{"style": "tile", "doors": [[5, "shutter"]], "shop": [0, 3, "고시촌 문구"]}'
+struct roof 23 26 23 2 seed=18 args='{"edges": "ne", "paint": "grey"}'
+struct facade 23 28 23 3 seed=19 args='{"style": "tile", "doors": [[7, "shutter"], [18, "shutter"]], "shop": [1, 5, "컵밥 24시"]}'
+struct scrap 1 38 19 1 seed=20 args='{"banner": [4, 12, "분양 완료"]}'
+struct scrap 23 38 25 1 seed=21
+struct scrap 48 8 1 12 seed=22
+# ---- 초소 · 마당 · 살림(패거리 결 — 드럼통 · 빨랫줄 · 모래주머니 · 고철)
+prop guard_booth 45 19
+text 45 19 "초소. 2077년 경비 초소에 패거리가 판자를 덧댔다. 안에 '분양 상담 — 상담료 50'. 글씨 밑에 총알 자국."
+prop sandbags 45 23
+prop guard_booth 18 33
+text 18 33 "남쪽 초소. 판자에 '분양 끝 — 돌아가'. 그 밑에 작게 '상담은 동쪽'."
+prop sandbags 24 33
+prop drum_fire 22 22
+prop drum_fire 21 10
+prop drum 25 20
+prop laundry_line 16 9
+prop laundry_line 4 21
+prop scrap_pile 3 33
+prop scrap_pile2 9 35
+prop tarp_pile 44 24
+prop crate_o 15 31
+box 15 31 gang_goods owner=N-R01-060 lock=35 name="패거리 창고 — 문구점 앞 상자"
+prop crate_o 42 31
+box 42 31 gang_goods owner=N-R01-060 lock=35 name="패거리 창고 — 컵밥집 앞 상자"
+prop crate_o 44 31 cond="GC_KEY == 1"
+box 44 31 gang_goods owner=N-R01-060 name="컵밥집 앞 둘째 상자(독서실 열쇠 — 2077년 문구 자물쇠)" cond="GC_KEY == 1"
+prop bucket 8 23
+prop water_jug 9 23
+prop bench_o 26 23
+prop bedroll 23 24
+prop bedroll2 2 24
+prop utility_pole 28 19
+prop utility_pole 12 36
+prop tree_small 15 3
+prop tree_dead 28 4
+prop tree_ginkgo 44 11
+prop bush_g 27 13
+prop tuft 16 14
+prop tuft2 46 37
+prop planter_s 11 9
+prop water_tank_s 44 14
+prop antenna 46 14
+# ---- 읽는 글(SD-22 — 빈 곳 없이 · 은신 길이 읽는 이야기)
+text 18 30 "셔터 내린 문구점. 셔터에 분필 '패거리 창고 — 열면 손목'. 안쪽에서 깡통 구르는 소리."
+text 30 30 "컵밥집 문. 자물쇠 셋. 유리 너머 라면 상자 탑 — 2077년 것과 2277년 것이 섞여 있다."
+text 41 30 "셔터. 분양 광고지가 200년 겹쳐 붙었다. 맨 위 종이는 새것 — '남부순환 분양 사무실 ↑ B동 옥상'."
+text 7 8 "A동 현관. 문마다 달력 — 모두 2077년 11월에 멈췄다. 15일에 동그라미."
+text 20 8 "7동 현관. 문패 '삼성 고시원'. 옆에 분필 근무표 — '물당번 03~06 · 7-201 7-305 7-108'."
+text 40 8 "D동 현관. 3층 창 하나만 밤에도 켜져 있다. 문 앞에 술병 · 담배 — 누가 두고 간 공물." cond="UQ62_TUBE == 0 and UQ62_DONE == 0"
+text 40 8 "D동 현관. 3층 창이 어둡다 — 200년 켜져 있던 불. 문 앞 공물은 그대로다, 아직은." cond="UQ62_TUBE == 1 or UQ62_DONE >= 1"
+text 6 19 "C동 입구. 지하 독서실 계단. 벽에 패거리가 새긴 '여기가 우리 동네'. 그 아래 2077년 글씨 '조용히'."
+text 34 15 "B동 옥상 문. 2077년 분양 현수막이 문 위에 걸려 있다 — '남부순환 분양 사무실'. 바람에 '분양'만 펄럭인다."
+text 40 14 "판자 다리. 옥상과 물탱크 옥탑을 잇는다. 판자 세 장이 빠졌다 — 뛰면 된다."
+text 44 14 "물탱크 옥탑. 탱크는 비었다. 밑에 누가 자고 간 담요 · 망원경 자국."
+text 2 1 "뒷골목. 담벼락에 분필 화살표 '부적 방 ↑'. 바닥에 술병 하나 — 공물을 두러 다니는 길."
+text 20 1 "뒷골목. 꽁초가 한 줄로 떨어져 있다 — 누가 걸으며 피웠다. 화살표는 동쪽을 가리킨다."
+text 36 1 "뒷골목 끝. D동 뒷계단 철문. 패거리가 공물을 두러 오르는 길 — '부적 방 3층'. 문은 잠기지 않았다." w=3
+text 22 22 "드럼통 불. 패거리가 둘러앉는 자리. 재 속에 2077년 수험서 — 불쏘시개."
+text 21 10 "윗마당 드럼통. 밤엔 여기서 교대를 기다린다. 옆에 빈 술병 줄."
+text 23 24 "침낭 둘. 베개 자리에 '합격 기원' 부적 — 고시원에서 주운 것."
+text 4 21 "빨랫줄. 패거리 옷 사이에 2077년 교복 셔츠 하나 — 누구 것인지 아무도 모른다."
+text 3 33 "고철 더미. 고시원 문짝 · 책상 다리 · 2077년 독서실 칸막이."
+text 28 19 "전봇대. 분양 광고 — '남부순환 패거리 분양: 원룸 한 칸 200. 입주자는 안 쏜다.'"
+# ---- 남건희 졸개(SQ-S02 a 추방 7일 뒤 — D-093a)
+enemy CR-420 24 20 who=N-R01-039 cond="SQ_S02_IN == 1 and GAME_DAY >= SQ_S02_EXILE_DAY + 7 and dead(\"N-R01-039\") == 0 and GC_PASS != GAME_DAY and GC_OWN == 0" stance=hold dir=S
+# ---- 문지기(무명 — 진행기가 통행을 판정 · 말은 장면 GC_GATE)
+npc N-GC-G1 46 21 W look=M1-S4-HR02-H6-T04-2-PF04-HD06-EY00 cond="GC_HOT == 0 and GC_BOSS != 2 and (GAME_HOUR >= 6 and GAME_HOUR < 23) and dead(\"N-GC-G1\") == 0" bark="분양 받으러 왔어? 상담료 50."
+npc N-GC-G2 21 35 S look=M2-S4-HR01-H4-T04-2-PF00-HD08-EY00 cond="GC_HOT == 0 and GC_BOSS != 2 and (GAME_HOUR >= 6 and GAME_HOUR < 23) and dead(\"N-GC-G2\") == 0" bark="분양 끝. 상담은 동쪽 초소."

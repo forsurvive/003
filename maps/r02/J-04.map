@@ -45,3 +45,12 @@ box 2 10 desk name="분실물 상자"
 text 2 11 "분실물 상자 쪽지: '2077. 10. 24. 접수 — 경비 예비 명찰 2(김민수 — 경비실 서랍에서 없어짐), 우산 3, 아이 신발 한 짝.'"
 # 1-D9 UQ-06: 마감 종을 들은 경상현(N-R02-032)이 관리사무소 구석 책상에서 장부를 정리한다(①은 다음 날부터 · ③은 7일 뒤 객장으로 돌아간다)
 npc N-R02-032 15 9 W cond="(UQ06_GONE == 1 and dead(\"N-R02-032\") == 0) and SQ_S13_V_K != 2 and SQ_S13_V_K != 3" bark="장부가 맞아떨어져요. 숫자가 다 제자리에 있으면 사람이 숨을 쉬어요."
+# 1-12i UQ-62: 합격한 권성민의 첫 직장 — 소장 옆자리에서 장부를 옮겨 적는다(JOB 1) · 벽에 그가 건 합격증(WAY — 성적표 · 손재석 · 볼트-텍)
+npc N-R01-059 13 9 E look=M1-SG1-HR04-H1-T03-2-PF00-HD00-EY03-PR021 cond="UQ62_GONE >= 1 and UQ62_JOB == 1 and dead(\"N-R01-059\") == 0" bark="06시 정각. 장부 첫 줄부터. 숫자가 맞으면 — 합격이에요."
+prop w_exam_cert 13 1 cond="UQ62_JOB == 1 and UQ62_WAY == 1"
+prop w_exam_cert 13 1 state=son cond="UQ62_JOB == 1 and UQ62_WAY == 2"
+prop w_exam_cert 13 1 state=fake cond="UQ62_JOB == 1 and UQ62_WAY == 3"
+text 13 2 "벽에 건 성적표. '행정 적성 1등급 — 수험 번호 (수기)'. 2277년에 나온 2077년식 종이. 압정 네 개로 반듯하게." cond="UQ62_JOB == 1 and UQ62_WAY == 1"
+text 13 2 "벽에 건 합격증. 연필 글씨 — '다 2077년 정답. 지금 정답은 아니지만 — 합격. 노량진 일타 손재석.' 압정 네 개로 반듯하게." cond="UQ62_JOB == 1 and UQ62_WAY == 2"
+text 13 2 "벽에 건 합격증. '국가 행정고시 합격증 — 발급: 볼트-텍 S-07 관리국'. 소장이 발급 기관 밑에 연필로 작게 '?'." cond="UQ62_JOB == 1 and UQ62_WAY == 3 and UQ62_BAD != 1"
+text 13 2 "벽에 건 합격증. '국가 행정고시 합격증 — 발급: 볼트-택 S-07 관리국'. 택. 소장이 그 글자 밑에 연필로 작게 '?'." cond="UQ62_JOB == 1 and UQ62_WAY == 3 and UQ62_BAD == 1"

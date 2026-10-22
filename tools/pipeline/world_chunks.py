@@ -153,7 +153,8 @@ INSETS = [{"id": "X-S07", "mark": "from_vault", "at": (959, 1503)},          # �
           {"id": "X-RD", "center": (990, 1561), "lid": "L-R01-04", "arrive": "arrive"},
           {"id": "X-SH", "center": (715, 1545), "lid": "L-R01-30", "arrive": "arrive"},
           {"id": "X-GR", "center": (589, 1287), "lid": "L-R02-25", "arrive": "arrive", "urban": True},   # 구로 차량기지 구내(1-D4 던전 DG-GR): 안양천 동쪽 · 경인선 옆
-          {"id": "X-MR", "center": (672, 1158), "lid": "L-R02-14", "arrive": "arrive", "urban": True}]   # 문래 철공소 골목(1-D7 UQ-69): 도림천 서쪽 철공소 거리                 # 시흥 고개 초소(1-11f SQ-S06): 시흥동 남서 경계 고개                 # 관악 레이더 중계소(1-11c SQ-S04): 관악산 정상 화강암 능선
+          {"id": "X-MR", "center": (672, 1158), "lid": "L-R02-14", "arrive": "arrive", "urban": True},   # 문래 철공소 골목(1-D7 UQ-69): 도림천 서쪽 철공소 거리
+          {"id": "X-GC", "center": (818, 1428), "lid": "L-R01-14", "arrive": "arrive", "urban": True}]   # 신림 고시촌 블록(1-12i UQ-62): 장소 표 849·1428은 간선 위 — 블록은 간선 서쪽(기준점 그대로)                 # 시흥 고개 초소(1-11f SQ-S06): 시흥동 남서 경계 고개                 # 관악 레이더 중계소(1-11c SQ-S04): 관악산 정상 화강암 능선
 START = (959, 1503)                                                          # 도달성 검사 출발점 = 볼트 정문
 WALKK = (1, 5, 6, 7, 8, 9, 10, 12, 13)                                       # 걷는 땅 종류(13 = 다리 상판)
 STAIR_GAP = 28

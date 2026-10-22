@@ -815,6 +815,28 @@ func _ready() -> void:
 				["check", "UQ67_CORE == 4 and UQ67_STAGE == 100", "남무진 ① — 봉천 발전기(100)"],
 				["hours", 24], ["wait", 1.0], ["warp", "X-BC", "from_X-S07"], ["wait", 1.5], ["calm"], ["go", 29, 36], ["wait", 1.0], ["shot", "uq67_lamps"],
 				["check", "GAME_DAY > UQ67_DAY", "다음 날 — 아랫마당 가로등"]]
+		"uq62":                                                         # 1-12i UQ-62 고시생의 마지막 시험: 고시촌 동쪽 초소(상담료 50 → 통행) → D동 3층 권성민(10 · 답안 카드) → 노량진 채점기 [과학 45](성적표 · 20) → 권성민(① 100) → 다음 06:00 떠남 · 관리사무소
+			st.vars.set_v("GAME_DAY", 6)
+			st.vars.set_v("PC_SKP_SCIENCE", 60)
+			st.vars.set_v("GS02_GRADER", 1)
+			st.vars.set_v("FQ_GS02_DOOR", 1)                               # 원장실 옆문(채점기는 원장실)
+			st.quests.set_stage("MQ-101", 100)
+			st.vars.set_v("MQ101_RESULT", 1)
+			host.date_text = "2277. 10. 29.  10:00"
+			var go := Vector2i(793, 1408)                                 # X-GC 원점(center 818·1428 − 25·20) — 동쪽 초소 앞 arrive(47,21)
+			host.enter("W", "", {}, Vector2(go.x + 47, go.y + 21) * 32.0 + Vector2(16, 16))
+			plan = [["hp", 3000], ["wait", 2.5], ["noenc"], ["calm"], ["shot", "uq62_gate"], ["want", ["!상담료 여기", "돌아간다"]], ["talk", "N-GC-G1"], ["wait", 3.0],
+				["check", "GC_PASS == GAME_DAY and GC_SEEN == 1", "문지기 — 상담료 50 · 통행"],
+				["go", go.x + 40, go.y + 9], ["wait", 1.0], ["shot", "uq62_block"], ["go", go.x + 40, go.y + 7], ["wait", 2.5], ["calm"],
+				["want", ["!시험은 어떻게", "!답안 카드를 줘", "됐다"]], ["talk", "N-R01-059"], ["wait", 3.0], ["shot", "uq62_kwon"],
+				["check", "UQ62_MET == 1 and UQ62_STAGE == 10 and UQ62_CARD == 1 and has(\"M-446\")", "권성민 — 발동(10) · 답안 카드"],
+				["warp", "K-24", "from_W"], ["wait", 1.5], ["calm"], ["want", ["!권성민의 답안 카드", "!손수 뚫어", "그만둔다"]], ["go", 29, 4], ["use", 29, 3], ["wait", 2.5], ["shot", "uq62_grader"],
+				["check", "UQ62_GRADED == 1 and has(\"M-448\") and UQ62_STAGE == 20", "채점기 — [과학 45] 성적표(20)"],
+				["warp", "K-43", "from_W"], ["wait", 1.5], ["calm"], ["want", ["!성적표", "됐다"]], ["talk", "N-R01-059"], ["wait", 3.0], ["shot", "uq62_done"],
+				["check", "UQ62_WAY == 1 and UQ62_STAGE == 100 and UQ62_DONE == GAME_DAY", "권성민 — ① 성적표(100) · 스탠드 끔"],
+				["hours", 24], ["wait", 1.0], ["check", "UQ62_GONE > 0 and UQ62_JOB == 2", "다음 06:00 떠남(소개 없음 — 복도)"],
+				["warp", "J-02", "from_J-01"], ["wait", 1.5], ["calm"], ["go", 36, 4], ["wait", 1.0], ["shot", "uq62_hall"],
+				["check", "UQ62_JOB == 2", "지하시장 복도의 권성민"]]
 		"uq66":                                                         # 1-12i UQ-66 전지 하나, 냉장고 둘: 심도겸 냉동고 이야기(10 · 기한 +4) → 흑석 원무 단말 퇴원 서류 → 7호 퇴원(20 · 철문) →
 			st.vars.set_v("GAME_DAY", 6)                                 #   지하 혈액은행 예비 전지 → 냉장고(100 · 로비 글) → 다음 06:00 들것 협력 · 정류지 → 시장 꼬리표 → 기한 날 운반조 [힘 7](① — 둘 다 삶)
 			st.vars.set_v("PC_SKP_SCIENCE", 60)

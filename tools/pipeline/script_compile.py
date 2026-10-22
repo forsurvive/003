@@ -90,6 +90,8 @@ ENGINE_VARS |= {"UQ07_" + k for k in "VISIT HEARD RES DISC TOY KDAY ME KID_SEEN 
 ENGINE_VARS |= {"UQ66_" + k for k in "BATT FRIDGE CELL DUE HEARD PUSH WARD NURSE OPEN DG NOTICE SELF XP PULLED SAID TAG GSCELL FORMS DG_SAID HAN_SAID PULL_DAY NURSE_SAID CSAID BOTH HOW CAUGHT".split()}   # 1-12i UQ-66 전지 하나, 냉장고 둘 — 뜻은 script/act1/UQ-66.txt 머리
 ENGINE_VARS |= {"UQ63_" + k for k in "MET ROSTER MATCH LEFT MINE SELF BOX IN DONE XP LOST SAID RSAID SKEL MINEOK COLD_SAID".split()}   # 1-12i UQ-63 연수원의 졸업장 — 뜻은 script/act1/UQ-63.txt 머리
 ENGINE_VARS |= {"UQ67_" + k for k in "CORE DUE DAY WRENCH TOLD TAPE NOTE HALF LEAK CRACK MET XP LOST NSAID ASK SAID WSAID SSAID HALFPAY".split()}   # 1-12i UQ-67 보라매 마지막 비행 — 뜻은 script/act1/UQ-67.txt 머리
+ENGINE_VARS |= {"UQ62_" + k for k in "MET WAY CARD GRADED PAPER PEEK SHOWN DONE GONE INTRO JOB JOB_DAY TUBE BAD XP SON_SAID HAM_SAID YEOM_SAID WALK TSAID BOOK JSAID PGIVEN SON_ASK EXAMQ HAM_ASK".split()}   # 1-12i UQ-62 고시생의 마지막 시험 — 뜻은 script/act1/UQ-62.txt 머리
+ENGINE_VARS |= {"GC_" + k for k in "PASS SEEN OWN HOT BOSS FEUD_DAY SAID KEY SHOT GSAID BSAID".split()}                                                                   # 신림 고시촌 블록(X-GC) — 통행 · 분양 · 두목
 ENGINE_VARS |= {"GR_" + k for k in "CORE PUSH BUS CORE_DAY LV_A LV_B LV_C A B C STAFF STAFF_DAY STAFF_K KEY LOST SIGKEY WHISTLE MUSTER MUSTER_K REEFER DRIFT RATS SB SB_DAY ROOF CHART TAG PARK CHEER ESC GUIDE TIP MUSTER_DAY".split()}   # 1-D4 구로 차량기지
 ENGINE_VARS |= {"GA_" + k for k in "SEEN BOX BOX_DAY BOX_DONE CRATE_DAY FEUD DECOY DECOY_DAY COUNTED TOLD BOSS PICK PAID".split()} | {"PD_R01_6", "PC_HEAD"}   # 1-D6 가산 아울렛
 ENGINE_VARS |= {"UQ69_" + k for k in "PAPER DIE DEST DEST_DAY HEARD MET T1 T2 T3 ASKED HALF DONE_DAY REWARD TOLD".split()} \
@@ -110,7 +112,7 @@ UNNAMED = {"N-TRADER": "떠돌이 고물상", "N-VG-S1": "고물상", "N-VG-H1":
            "CR-091": "짐소", "N-UQ5-COW": "누렁이",                                                     # 1-8d 고개길 수송대
            "N-SA-G1": "승강장 경비", "N-SA-G2": "승강장 경비", "N-SA-G3": "승강장 경비", "N-SA-R1": "환승촌 주민", "N-SA-R2": "환승촌 주민",   # 1-8f 사당 환승촌
            "N-SA-R3": "환승촌 주민", "N-SA-R4": "버섯 일꾼", "N-SA-K1": "환승촌 아이",
-           "N-YT-1": "패거리 수금원", "N-YT-2": "패거리 척후", "N-BC-1": "봉천 감시조", "N-BC-2": "봉천 감시조", "N-BC-3": "봉천 감시조", "N-JC-W1": "7동 물당번", "N-JC-W2": "7동 물당번",   # 1-11b SQ-S02 · 1-12a FQ-JC-01
+           "N-YT-1": "패거리 수금원", "N-YT-2": "패거리 척후", "N-BC-1": "봉천 감시조", "N-BC-2": "봉천 감시조", "N-BC-3": "봉천 감시조", "N-JC-W1": "7동 물당번", "N-JC-W2": "7동 물당번", "N-GC-G1": "패거리 문지기", "N-GC-G2": "패거리 문지기", "N-JC-W3": "7동 물당번",   # 1-11b SQ-S02 · 1-12a FQ-JC-01 · 1-12i UQ-62
            "N-PS-1": "파수-3", "N-PS-2": "경비 파수-3", "N-BJ-S1": "수색조 분대장", "N-BJ-S2": "수색조 계엄병", "N-BJ-P1": "순찰 분대장", "N-BJ-P2": "순찰 계엄병",                                                   # 1-11c SQ-S04
            "N-DB-1": "대방 분대원", "N-DB-2": "대방 분대원",                      # 1-D1 UQ-71 대방 지하차도
            "N-DS-B1": "봉천 감시조", "N-DS-B2": "봉천 감시조", "N-DS-S1": "승강장 경비", "N-DS-S2": "승강장 경비",   # 1-D3 UQ-04 독산 7호 앞

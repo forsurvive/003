@@ -190,6 +190,17 @@ def window(img, x, y, w=18, h=16, kind="glass", rnd=None, frame="P08"):
         d.rectangle([gx0, gy0, gx1, gy1], fill=C("P02"))
         d.rectangle([gx0, gy0, gx0 + (w - 4) // 2, gy1], fill=C("P11"))    # 한 짝만 남은 유리
         d.line([x + w // 2, gy0, x + w // 2, gy1], fill=C(frame))
+    elif kind == "lit":                                                   # 불 켜진 창(진공관 스탠드 — 호박색 유리 · 책상 그림자 · 창턱 아래 빛 번짐)
+        d.rectangle([gx0, gy0, gx1, gy1], fill=C("P59"))
+        d.rectangle([gx0, gy0, gx1, gy0 + 2], fill=C("P60"))
+        d.rectangle([gx0 + 2, gy1 - 5, gx0 + 7, gy1], fill=C("P49"))        # 책상 · 사람 그림자
+        d.rectangle([gx0 + 4, gy1 - 9, gx0 + 6, gy1 - 5], fill=C("P49"))
+        d.line([x + w // 2, gy0, x + w // 2, gy1], fill=C(frame))
+        for k in range(4):
+            yy = y + h + 3 + k
+            for xx in range(x - 2 - k, x + w + 2 + k):
+                if (xx + yy) % 2 == 0 and 0 <= xx < img.width and 0 <= yy < img.height and img.getpixel((xx, yy))[3] == 0:
+                    img.putpixel((xx, yy), C("P58"))
     elif kind == "board":
         d.rectangle([gx0, gy0, gx1, gy1], fill=C("P02"))
         for k, yy in enumerate(range(gy0, gy1, 4)):
@@ -281,9 +292,11 @@ def gas_pipe(img, x, y0, y1, meter_y=None):
         d.point((x, meter_y + 3), fill=C("P49"))
 
 
-def facade(w, h, style="brick", seed=0, doors=(), shop=None, name=None, num=None, pipe=True, wear=1.0, windows=None):
+def facade(w, h, style="brick", seed=0, doors=(), shop=None, name=None, num=None, pipe=True, wear=1.0, windows=None, lit=()):
     """빌라 정면 w×h 타일(층 = 1타일, 맨 아래 = 1층). doors: 문 칸(열 번호) 목록 [(열, 종류)],
-    shop: (열0, 열1, '간판 글') 1층 가게(약국 등), name: 옥상 갓돌 아래 빌라 이름(작은 칠 글자), num: 동 번호판."""
+    shop: (열0, 열1, '간판 글') 1층 가게(약국 등), name: 옥상 갓돌 아래 빌라 이름(작은 칠 글자), num: 동 번호판.
+    lit: 불 켜진 창 [(열, 아래서부터 층)] — 1-12i UQ-62 '200년 켜 둔 방'(밤 cond 그림으로 겹쳐 굽는다)."""
+    lit = {tuple(p) for p in lit}
     rnd = random.Random(hsh(seed, w, h, 71))
     img = new(w, h)
     W, H = w * T, h * T
@@ -326,6 +339,8 @@ def facade(w, h, style="brick", seed=0, doors=(), shop=None, name=None, num=None
             k = rnd.choice(kinds)
             if floor_from_bottom == 0 and k in ("laundry",):
                 k = "glass"
+            if (col, floor_from_bottom) in lit:
+                k = "lit"
             wy = y + (9 if f == 0 else 6)
             window(img, x + 7, wy, 18, 14 if f == 0 else 16, k, rnd)
             if rnd.random() < 0.5 * wear:                                 # 창 아래 녹물

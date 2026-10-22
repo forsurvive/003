@@ -293,6 +293,77 @@ def compile_map(m, prop_meta, known_vars, known_fns, scenes=()):
                      extra=(floor_ids, wall_ids))
 
 
+# 맥락상 안에 물건이 있을 소품 → 기본 용기(사용자 지시 2026-10-22 — 맵의 객체 중 파밍 가능한 것은 모두 파밍, 아이템 풀은 맥락대로, 파밍 뒤 사라질 것은 사라짐).
+# 원고에 그 칸 용기가 있으면 원고가 우선. 장면이 달린 조사 글 칸 · 덧그림(발 0) 소품은 건너뛴다. 8칸 안에 주인 있는 용기가 있으면 그 주인(가게 안 물건은 절도).
+# 값: (loot.json 용기 종류, 이름, 사라짐). 아이템은 후하게 주지 않는다(용기 표 자체가 드문드문 · '보이는 빔' v3 — SD-13 §9).
+AUTO_BOX = {
+    "backpack": ("bag", "배낭", True), "luggage": ("bag", "여행 가방", True), "luggage2": ("bag", "여행 가방", True), "base_bag": ("bag", "군용 더플백", True),
+    "pallet_sacks": ("sacks", "쌓인 자루", True), "tarp_pile": ("trash", "방수포 밑 더미", True), "scrap_pile": ("trash", "고물 더미", True), "scrap_pile2": ("trash", "고물 더미", True),
+    "carcass_pile": ("carcass", "사체 더미", True), "umbrella_pile": ("trash", "우산 더미", False),
+    "remains": ("corpse_scav", "유해", False), "remains2": ("corpse_scav", "유해", False), "queue_skel": ("corpse_scav", "줄 선 채 굳은 유해", False),
+    "queue_skel2": ("corpse_scav", "줄 선 채 굳은 유해", False), "queue_skel3": ("corpse_scav", "줄 선 채 굳은 유해", False), "bench_skel_ks": ("corpse_scav", "벤치의 유해", False),
+    "car_wreck": ("car", "차량 잔해 트렁크", False), "car_wreck2": ("car", "차량 잔해 트렁크", False), "car_sunk": ("car", "잠긴 차 트렁크", False), "car_sunk2": ("car", "잠긴 차 트렁크", False),
+    "fridge": ("kitchen", "냉장고", False), "drink_fridge": ("conv", "음료 냉장고", False), "kitchen_sink": ("kitchen", "싱크대 아래", False), "gas_range": ("kitchen", "가스레인지 옆 칸", False),
+    "med_shelf": ("pharmacy", "약품 선반", False), "med_cabinet": ("pharmacy", "약품장", False), "pharm_counter": ("pharmacy", "약국 계산대", False),
+    "file_cabinet": ("cabinet", "서류함", False), "ledger_shelf": ("cabinet", "장부 선반", False),
+    "desk": ("desk", "책상 서랍", False), "office_desk": ("desk", "사무 책상 서랍", False), "bk_desk": ("desk", "책상 서랍", False), "chief_desk": ("desk", "책상 서랍", False),
+    "typewriter_desk": ("desk", "타자기 책상 서랍", False), "radio_desk": ("desk", "책상 서랍", False), "guard_desk": ("desk", "경비 책상 서랍", False), "clinic_desk": ("desk", "진료 책상 서랍", False),
+    "exam_desk": ("desk", "책상 서랍", False), "teacher_desk": ("desk", "교탁 서랍", False), "desk_metal": ("desk", "철제 책상 서랍", False), "terminal_desk": ("desk", "단말 책상 서랍", False),
+    "wardrobe": ("closet", "옷장", False), "dresser": ("closet", "서랍장", False), "bandaji": ("closet", "반닫이", False), "home_locker": ("closet", "사물함", False),
+    "locker_row2": ("locker", "사물함 줄", False), "locker_row3": ("locker", "사물함 줄", False), "gun_locker": ("armory", "총기 보관함", False), "gun_rack": ("armory", "총기 거치대", False),
+    "crate": ("crate", "상자", False), "crate_o": ("crate", "나무 상자", False), "crate_metal": ("crate", "철제 상자", False), "crate_army": ("crate", "군용 상자", False),
+    "safe": ("safe", "금고", False), "safe_big": ("safe", "큰 금고", False),
+    "cash_counter": ("till", "계산대 서랍", False), "tube_register": ("till", "진공관 금전 등록기", False), "snack_counter": ("snack", "매점 계산대", False),
+    "shop_shelf": ("conv", "진열대", False), "shop_shelf_can": ("conv", "통조림 진열대", False), "shop_shelf_goods": ("conv", "잡화 진열대", False), "hm_shelf": ("stall", "선반", False),
+    "steel_rack": ("crate", "철제 선반", False), "tool_chest": ("toolbox", "공구함", False), "workbench": ("toolbox", "작업대 서랍", False),
+    "bookshelf": ("academy", "책꽂이", False), "bookshelf_home": ("academy", "책꽂이", False), "waste_drum": ("trash", "쓰레기통", False), "lost_box": ("returns", "분실물 상자", False),
+}
+AUTO_LOCK = {"safe": 40, "safe_big": 50, "gun_locker": 30}
+
+
+def _auto_boxes(out, prop_meta, m):
+    """소품 이름이 AUTO_BOX에 있고 그 칸에 용기가 없으면 기본 용기를 더한다(원고 우선 · 장면 글 칸 · 덧그림 제외 · 가까운 주인 상속)."""
+    covered = set()
+    for b in out["boxes"]:
+        for j in range(int(b.get("h", 1))):
+            for i in range(int(b.get("w", 1))):
+                covered.add((int(b["x"]) + i, int(b["y"]) + j))
+    scene_cells = {(int(t["x"]) + i, int(t["y"]) + j) for t in out["texts"] if t.get("scene") for i in range(int(t.get("w", 1))) for j in range(int(t.get("h", 1)))}
+    owned = [b for b in out["boxes"] if b.get("owner") not in ("", "PC", "S7")]
+    prop_at = {(int(p["x"]), int(p["y"])): p["name"] for p in out["props"]}
+    for b in out["boxes"]:                                                # 원고 용기라도 사라지는 소품(배낭 · 자루 · 더미) 위면 다 꺼내면 사라진다
+        nm = prop_at.get((int(b["x"]), int(b["y"])))
+        if nm in AUTO_BOX and AUTO_BOX[nm][2] and not b.get("vanish"):
+            b["vanish"] = True
+    added = 0
+    for p in out["props"]:
+        name = p["name"]
+        if name not in AUTO_BOX:
+            continue
+        e = prop_meta.get(name, {})
+        if str(e.get("kind", "floor")) == "deco" and int(e.get("foot", [0, 0])[0]) == 0:
+            continue
+        cell = (int(p["x"]), int(p["y"]))
+        if cell in covered or cell in scene_cells:
+            continue
+        kind, label, vanish = AUTO_BOX[name]
+        owner = ""
+        best = 99
+        for b in owned:                                                   # 가까운 주인 있는 용기의 주인을 따른다(가게 · 집 안 물건)
+            dd = abs(int(b["x"]) - cell[0]) + abs(int(b["y"]) - cell[1])
+            if dd <= 8 and dd < best:
+                best, owner = dd, b["owner"]
+        bx = {"x": cell[0], "y": cell[1], "w": 1, "h": 1, "kind": kind, "owner": owner, "lock": AUTO_LOCK.get(name, 0), "name": label,
+              "cond": p.get("cond", ""), "auto": True}
+        if vanish:
+            bx["vanish"] = True
+        out["boxes"].append(bx)
+        covered.add(cell)
+        added += 1
+    if added:
+        out["auto_boxes"] = added
+
+
 def _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kind, solid, walk, ext=False, extra=()):
     """맵 명령(prop·door·exit·mark·npc·enemy·box·text·sign·trigger·struct) → out. 실내·바깥 공용."""
     loot_kinds = set(json.load(open(os.path.join(ROOT, "game", "data", "loot.json"), encoding="utf-8"))["tables"].keys()) | {"seized", "home"}   # seized: 계엄군 압수품 보관함(1-7, 진행기가 채운다) · home: 거처 보관함(1-8b, 빈 채로 시작 · 다시 차지 않음)
@@ -515,6 +586,8 @@ def _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kin
                     raise Err(f"모르는 용기 종류 '{bkind}'(loot.json: {sorted(loot_kinds)})")
                 e = {"x": x, "y": y, "w": int(opt.get("w", 1)), "h": int(opt.get("h", 1)), "kind": bkind,
                      "owner": opt.get("owner", ""), "lock": int(opt.get("lock", 0)), "name": opt.get("name", ""), "cond": opt.get("cond", "")}
+                if "vanish" in pos[3:] or opt.get("vanish"):                      # 다 꺼내면 소품째 사라진다(배낭 · 자루 · 더미 — 사용자 지시 2026-10-22)
+                    e["vanish"] = True
                 if e["cond"]:
                     check_cond(e["cond"], known_vars, known_fns)
                 if opt.get("claim"):                                 # 손 맵의 보관 자리(1-D10 신길 중계 사물함): claim=월드X,월드Y(털림 판정 자리) · th=위협도
@@ -590,6 +663,7 @@ def _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kin
             if os.environ.get("MAP_DEBUG") and not isinstance(e, Err):
                 import traceback; traceback.print_exc()
             m.err(ln, str(e) if isinstance(e, Err) else f"인자가 모자라거나 틀렸다: {' '.join(words)}")
+    _auto_boxes(out, prop_meta, m)
     if ext:
         _fi, _gf, _cv, level, grid = extra
 

@@ -1213,9 +1213,25 @@ func _open_container(b: Dictionary, c: Dictionary) -> void:
 			_swap_after(c, before)
 		if stash != null:
 			stash.on_close(b, c)
+		_vanish_check(b, c)                                                # 파밍 뒤 사라질 물건(배낭 · 자루 · 더미 — 사용자 지시 2026-10-22)
 		box_closed.emit(b, c)
 		_after_theft())
 	add_child(container)
+
+
+## 다 꺼낸 '사라지는' 용기(맵 원고 vanish — 배낭 · 여행 가방 · 자루 · 고물 더미 등): 소품과 용기를 그 자리에서 거두고 기록에 남긴다(다시 들어와도 없음)
+func _vanish_check(b: Dictionary, c: Dictionary) -> void:
+	if not bool(b.get("vanish", false)) or not (c.get("items", {}) as Dictionary).is_empty() or int(c.get("taken", 0)) == 0:
+		return
+	c["gone"] = true
+	var cell := Vector2i(int(b["x"]), int(b["y"]))
+	for p in map.props.duplicate():
+		if int(p["x"]) == cell.x and int(p["y"]) == cell.y and p.has("node") and map.has_method("remove_runtime_prop"):
+			map.remove_runtime_prop(p)
+	for k in map.boxes.keys():
+		if map.boxes[k] == b:
+			map.boxes.erase(k)
+	hint("%s — 비었다. 더 볼 것이 없다." % str(b.get("name", "")), 2.5)
 
 
 func _box_value(items: Dictionary) -> int:

@@ -1,0 +1,84 @@
+# 신림 고시촌 A동 원룸 미로(SD-09a L-R01-14 실내 ① '복도 원룸 24칸 미로, 은신 경로' · 단계 1-12i UQ-62). 초안: Claude. 리드 검수 대기.
+# 30×20 · 복도 둘(앞 · 뒤)과 꺾인 샛복도 — 원룸 칸 열 개(문마다 2077년 11월 달력) · 막다른 칸 둘 · 뒷문(북 — 뒷골목 from_K-40b: 은신 길) ·
+#   A-203 = 분양 원룸(삽자루 [캡 200] → M-451 · GC_OWN 1 — 맡김 상자 · 아니면 '분양 완료' 딱지 · 잠김) · 수험서 잡동사니 M-090 · 패거리가 쓰는 칸 둘(침낭 · 술병).
+# 들어오는 길: X-GC A동 현관(7,7 — from_W) · 뒷골목(7,1 — from_K-40b).
+map K-40 고시원 A동 원룸 미로
+set bk
+grid
+##############################
+##############################
+##############################
+#jjj#jjj#jjj#jjj#jjj#jjj#jjjj#
+#jjj#jjj#jjj#jjj#jjj#jjj#jjjj#
+#jjjjjjjjjjjjjjjjjjjjjjjjjjjj#
+#jjjjjjjjjjjjjjjjjjjjjjjjjjjj#
+####jjj######jjj######jjj#####
+####jjj######jjj######jjj#####
+####jjj######jjj######jjj#####
+#jjjjjjjjjjjjjjjjjjjjjjjjjjjj#
+#jjjjjjjjjjjjjjjjjjjjjjjjjjjj#
+#jjj#jjj#jjj#jjj#jjj#jjj#jjjj#
+#jjj#jjj#jjj#jjj#jjj#jjj#jjjj#
+#jjj#jjj#jjj#jjj#jjj#jjj#jjjj#
+#######ss#####################
+##############################
+##############################
+##############################
+##############################
+end
+exit 7 15 X-GC from_K-40
+exit 8 15 X-GC from_K-40
+mark from_W 7 14 N
+exit 13 3 X-GC from_K-40b
+mark from_back 13 5 S
+# ---- 앞 복도(남)와 원룸 칸 여섯(아랫줄) — 문마다 달력 · 패거리 칸 둘 · 분양 칸 A-203
+prop w_calendar_77 1 8
+text 1 11 "A-101. 달력 2077. 11. 15 동그라미. 안엔 수험서 · 컵라면 · 2077년 '합격 기원' 부적. 200년 동안 아무도 안 들어왔다."
+prop bunk 1 13
+prop w_calendar_77 8 8
+text 5 11 "A-102. 문에 패거리 딱지 '분양 완료 — 깡철이'. 안엔 침낭 · 술병 · 봉천에서 뺏어 온 물통. 그는 고가 아래 있어 안 온다."
+prop bedroll 6 13
+prop crate 5 13
+box 5 13 camp owner=N-R01-060 name="깡철이 몫 — 물통 자리"
+prop w_calendar_77 10 8
+text 9 11 "A-103. 2077년 수험생 방. 책상 위 『행정법 총론』에 밑줄 — 마지막 밑줄은 '처분의 효력은 송달된 때'. 그날 밤 송달된 건 없었다."
+prop bk_desk 9 13
+box 9 13 academy name="A-103 책상(수험서 잡동사니)"
+prop w_calendar_77 16 8
+text 13 11 "A-104. 패거리 야간 당번 칸. 침낭 · 담배 · 공물 상자 — '부적님께' 뚜껑. 드럼통 교대 뒤 여기서 잔다."
+prop bedroll 13 13
+prop w_calendar_77 18 8
+text 17 11 "A-105. 문이 안 열린다 — 안에서 책상으로 막았다. 2077년 10월 23일 밤, 누가 들어오지 못하게."
+prop w_calendar_77 25 8
+text 21 11 "A-106. 빈 방. 벽에 분필 — 2277년 날짜를 센 줄 마흔, 그리고 '나간다'. 창문이 열려 있다."
+prop w_calendar_77 26 8
+text 25 11 "A-107. 2077년 수험생 방. 옷걸이에 면접 정장 — 입어 본 적 없는 주름."
+prop wardrobe 26 13
+box 26 13 closet name="A-107 옷장"
+# ---- 샛복도 셋(7~9줄) — 막다른 곳마다 흔적
+text 5 8 "샛복도 벽. 패거리 낙서 '뒷문 → 부적 방'. 화살표는 북쪽 복도를 가리킨다."
+text 13 8 "샛복도. 바닥에 술병 하나 · 담뱃재. 공물 두러 가는 길이다."
+text 22 8 "샛복도. 벽에 2077년 소화기 자리 — 소화기는 없고 '화재 시 대피 경로 ↑' 표지만. 대피 경로 끝은 막혔다."
+# ---- 뒤 복도(북)와 원룸 칸 넷(윗줄) — A-203 분양 칸 · 막다른 칸
+prop w_calendar_77 1 1
+text 1 2 "A-201. 2077년 방. 책상에 '국가 대피 적성 검사 — 지하 3층 직행' 광고. 직행하지 못했다."
+prop bk_desk 1 3
+prop w_calendar_77 5 1
+text 5 2 "A-202. 패거리 창고 칸. 수험서를 뜯어 불쏘시개 더미로. 『헌법』만 안 뜯었다 — '두꺼워서 오래 탄다고 아껴 둠'."
+prop printout_pile 6 3
+prop w_calendar_77 9 1
+text 9 2 "A-203. 문에 '분양 완료' 딱지 — 입주자 칸이 비었다. 자물쇠가 새것이다. 분양 사무실에서 열쇠를 판다." cond="GC_OWN == 0"
+text 9 2 "A-203. 내 칸. 딱지 입주자 칸에 내 이름. 패거리는 이 문을 안 건드린다 — 계약이니까." cond="GC_OWN == 1"
+prop home_locker 9 3 cond="GC_OWN == 1"
+box 9 3 stash owner=PC name="A-203 사물함(분양 원룸 — 맡김 자리)" cond="GC_OWN == 1"
+prop crate 9 3 cond="GC_OWN == 0"
+text 9 3 "자물쇠 걸린 상자. 분양 완료 — 열쇠 없이는 못 연다." cond="GC_OWN == 0"
+prop w_calendar_77 17 1
+text 17 2 "A-204. 막다른 칸. 바닥에 2077년 수험표 수십 장 — 패거리가 '부적'으로 모았다가 버린 것."
+prop w_calendar_77 21 1
+text 21 2 "A-205. 2077년 방. 창가에 선인장 화분 — 200년 만에 말라 돌이 됐다."
+prop plant_pot 21 3
+prop w_calendar_77 25 1
+text 25 2 "A-206. 뒷문 옆 칸. 패거리 글씨 '뒷문은 부적 길 — 잠그지 마'."
+text 13 4 "뒷문. 북쪽 뒷골목으로 — 공물을 두러 다니는 패거리의 길. 자물쇠가 안쪽에서 풀려 있다."
+prop drum 17 3

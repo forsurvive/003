@@ -741,6 +741,19 @@ func _cmd(a: Array, done: Callable) -> void:
 			else:
 				st.vars.set_v("SQ_S02_OPEN", 1)
 			_valve_look = ""
+		"boss":                                                         # C 두목(1-12i 고시촌 X-GC — UqR01이 부른다): 1 화술(밸브 반환 · BC +6 · 카르마 +25) · 2 처치(거점 공백 · 내분)
+			var how := int(a[1]) if a.size() > 1 else 1
+			if v("SQ_S02_SOL") == 0:
+				_solved(3)
+				if how == 1:
+					st.call_fn("karma", [25])
+					_deed("SQS02_C", {"JC_BC": 6}, "남부순환 패거리 두목이 상류 밸브에서 손을 뗐다 — 봉천 배수지에 물이 돌아왔다")
+				else:
+					_deed("SQS02_C2", {"JC_BC": 6}, "남부순환 패거리 두목 삽자루가 죽었다 — 밸브 캠프가 빈다")
+			if how == 2:
+				st.vars.set_v("PD_BC", v("PD_BC") + 5)                         # 거점 '남부순환 패거리 은신처' 공백 → 정착지 경합(SD-04a C 처치)
+				st.vars.set_v("SQ_S02_CAMP", 1)                                # 내분 — 밸브 캠프는 빈다
+			_valve_look = ""
 		"pay":                                                          # E 물값: 사흘 흘려 준다(봉천 +2는 한 번)
 			st.vars.set_v("SQ_S02_OPEN", 2)
 			st.vars.set_v("SQ_S02_PAID", day() + 3)

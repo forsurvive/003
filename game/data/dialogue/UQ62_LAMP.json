@@ -1,0 +1,148 @@
+{
+ "id": "UQ62_LAMP",
+ "title": "진공관 스탠드",
+ "loc": "L-R01-14",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "SEEN_TUBE": 7,
+  "LAMP_Q": 8,
+  "TAKE": 10,
+  "OFF": 15,
+  "OFF_DONE": 17,
+  "GONE": 19
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "UQ62_GONE >= 1",
+   "to": "GONE"
+  },
+  {
+   "op": "if",
+   "cond": "UQ62_TUBE == 1",
+   "to": "OFF"
+  },
+  {
+   "op": "if",
+   "cond": "UQ62_DONE >= 1",
+   "to": "OFF_DONE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "진공관 스탠드. 진공관 셋이 호박색으로 데워져 있다 — 200년째. 받침 옆 비상 전지 상자가 간신히 버틴다."
+  },
+  {
+   "op": "if",
+   "cond": "FQ_GS02_SEEN == 1",
+   "to": "SEEN_TUBE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "진공관 규격이 낯익다 — 학원 단말 · 채점기에 들어가는 그 규격."
+  },
+  {
+   "op": "goto",
+   "to": "LAMP_Q"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "진공관 하나는 노량진 채점기의 나간 것과 같은 규격이다."
+  },
+  {
+   "op": "if",
+   "cond": "UQ62_MET == 0",
+   "to": "END"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "진공관 하나를 뺀다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TAKE",
+     "id": "UQ62_LAMP:1:0"
+    },
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ62_LAMP:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q62tube"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "뜨거운 유리를 소매로 감싸 뽑는다. 스탠드가 꺼진다. 방이 처음으로 어둡다."
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R01-059\") == 1",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-059",
+   "emo": "놀람",
+   "text": "…그걸로 채점기를 고친다고요? 그럼 불 없이 기다리죠. 200년 켜 뒀으니 눈 감고도 외워요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "꺼진 스탠드. 진공관 자리 하나가 비었다. 권성민은 어둠 속에서도 같은 자세로 앉아 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "꺼진 스탠드. 200년 만에 그가 껐다. 진공관은 식어 간다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "꺼진 스탠드. 비상 전지 상자는 그대로다 — 이제 먹일 불이 없다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-62.txt"
+}

@@ -1,0 +1,131 @@
+{
+ "id": "GC_GATE_S",
+ "title": "남쪽 초소 문지기",
+ "loc": "L-R01-14",
+ "npc": "N-GC-G2",
+ "cond": "V_ACT >= 1 and dead(\"N-GC-G2\") == 0",
+ "labels": {
+  "START": 0,
+  "SOUTH": 5,
+  "PAY": 8,
+  "KILLER": 11,
+  "PASSED": 13,
+  "OWNER": 15
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "GC_OWN == 1",
+   "to": "OWNER"
+  },
+  {
+   "op": "if",
+   "cond": "GC_PASS == GAME_DAY",
+   "to": "PASSED"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-GC-G1\") == 1",
+   "to": "SOUTH"
+  },
+  {
+   "op": "line",
+   "who": "N-GC-G2",
+   "emo": "기본",
+   "text": "분양 끝. 남쪽은 못 들어가. 상담은 동쪽 초소 — 거기서 50 내고."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R01-059\") == 1",
+   "to": "KILLER"
+  },
+  {
+   "op": "line",
+   "who": "N-GC-G2",
+   "emo": "기본",
+   "text": "동쪽이 비어서 내가 받아. 상담료 50."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "상담료 여기",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PAY",
+     "id": "GC_GATE_S:1:0"
+    },
+    {
+     "text": "돌아간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "GC_GATE_S:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q62pass",
+    "1"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-GC-G2",
+   "emo": "기본",
+   "text": "B동 옥상. 사다리. 창고는 건드리지 말고."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-GC-G2",
+   "emo": "분노",
+   "text": "부적을 죽인 놈. 돌아가."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-GC-G2",
+   "emo": "기본",
+   "text": "상담료 낸 사람. 지나가. 남쪽으로 나가는 건 괜찮아."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-GC-G2",
+   "emo": "기본",
+   "text": "입주자. 나가는 길은 여기가 가까워."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-62.txt"
+}

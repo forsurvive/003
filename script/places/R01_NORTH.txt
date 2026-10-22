@@ -131,12 +131,47 @@ N-R01-056 [기본] (교탁을 더듬는다) …교재 가져간 학생 있죠? �
 * DONE_GIVE
 @cmd uqr q65book
 -> END
+* U62ASK
+! UQ62_SON_SAID = 1
+N-R01-056 [기본] …고시촌 고시생? 행정고시반 원생 카드에 주소가 있었죠 — 신림 D동 3층. 우리 반은 아니었고. 하고 싶은 말이 있으면 수업 뒤에.
+-> AGAIN2
+* U62AGAIN
+! UQ62_PGIVEN = 2
+@cmd uqr q62papergive
+N-R01-056 [기본] 잃었어요? 사본은 있어요. 200년 가르쳤는데 사본이 없겠어요. (교탁 밑에서 한 장 더) 봉인은 새로 했어요.
+-> END
+* U62ASK2
+! UQ62_SON_ASK = 1
+N-R01-056 [기본] 출제라. 내 과목은 대피 적성이지만 — 문제는 문제죠. 행정법 문항 셋이면 됩니까.
+> 부탁한다. 그 사람은 200년 공부했어 -> U62YES
+> 다음에 -> AGAIN4
+* U62YES
+@cmd uqr q62paper
+N-R01-056 [미소] 하룻밤이요. 밤에 써요 — 200년 동안 문제를 안 냈더니 손이 근질거리네. 내일 아침에 와요.
+N-R01-056 [기본] 채점은 감독관이 해요. 당신이. 정답지는 봉인해 줄 테니 학생 앞에서 뜯어요. 그게 시험이에요.
+-> END
+* U62GIVE
+! UQ62_PGIVEN = 1
+@cmd uqr q62papergive
+N-R01-056 [미소] (교탁 밑에서 종이를 꺼낸다) 문항 셋. 뒷장은 정답지 — 풀로 봉인했어요. 학생 앞에서 뜯어요. 뒷면에 한 줄 써 뒀는데 — 그건 학생이 읽을 글이에요.
+N-R01-056 [기본] 배급표 위조범 신고 · 야간 통행 신청 · 등록 거부자 처분. 2077년 정답으로 채점해요. 그때 법이니까.
+-> END
 * AGAIN
 ? PN_SON == 1 -> WHAT
+? UQ62_PAPER > 0 and GAME_DAY > UQ62_PAPER and UQ62_WAY == 0 and has("M-447") == 0 and UQ62_PGIVEN == 0 -> U62GIVE
+? UQ62_PGIVEN == 1 and UQ62_WAY == 0 and has("M-447") == 0 -> U62AGAIN
+? UQ62_MET == 1 and UQ62_WAY == 0 and UQ62_PAPER == 0 and UQ62_SON_SAID == 0 -> U62ASK
 ? UQ65_BOOK == 0 and UQ65_XP == 0 -> OLDBOOK
 ? UQ65_TO == 1 and UQ65_WALL == 1 and GAME_DAY > UQ65_WALL_DAY and UQ65_RJ_SAID == 0 -> GIVEN
 ? UQ65_TO == 3 and UQ65_RJ_SAID == 0 -> SOLD
 * AGAIN2
+# 1-12i UQ-62 ②: 손재석 출제 — 하룻밤 뒤 시험지 + 봉인 정답지(M-447) · 채점은 권성민 책상에서(재미 검수 P2 — 왕복 하나)
+? UQ62_MET == 1 and UQ62_WAY == 0 and UQ62_PAPER == 0 and UQ62_SON_SAID == 1 -> AGAIN3
+-> AGAIN4
+* AGAIN3
+> 고시촌 고시생 출제 얘기, 다시 -> U62ASK2
+> 수업 -> AGAIN4
+* AGAIN4
 ? UQ65_TEN >= 1 -> TENDONE
 ? UQ65_LESSON >= 9 and UQ65_LESSON_DAY != GAME_DAY -> ASKTEN
 ? UQ65_LESSON_DAY == GAME_DAY and (UQ65_LTODAY >= 2 or UQ65_LESSON >= 9) -> TODAY

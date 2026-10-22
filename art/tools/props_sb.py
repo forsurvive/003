@@ -95,15 +95,20 @@ def straw_mat(seed=0):
 
 
 def bucket():
-    """물 양동이(1×1): 찌그러진 함석 + 손잡이 + 물그림자"""
-    im = img(20, 22)
+    """물 양동이(24×26 — 1×1): 찌그러진 함석 몸통 · 위아래 테 · 철사 손잡이 · 찰랑이는 물과 반사 · 녹물 줄 · 바닥 접지 그림자."""
+    im = img(24, 26)
     d = ImageDraw.Draw(im)
-    d.polygon([(3, 6), (16, 6), (14, 20), (5, 20)], fill=C("P13"))
-    d.line([3, 6, 5, 20], fill=C("P11")); d.line([16, 6, 14, 20], fill=C("P12"))
-    d.ellipse([3, 3, 16, 9], fill=C("P12")); d.ellipse([5, 4, 14, 8], fill=C("P35"))
-    d.point((7, 5), fill=C("P37"))
-    d.arc([3, -3, 16, 9], 180, 360, fill=C("P11"))
-    d.line([8, 12, 9, 16], fill=C("P14"))
+    d.ellipse([4, 20, 22, 25], fill=C("P02"))
+    d.polygon([(3, 7), (20, 7), (18, 23), (6, 23)], fill=C(INK))
+    d.polygon([(4, 8), (19, 8), (17, 22), (7, 22)], fill=C("P13"))
+    d.polygon([(4, 8), (9, 8), (8, 22), (7, 22)], fill=C("P14"))             # 왼쪽 빛
+    d.line([(16, 9), (15, 21)], fill=C("P11"))                               # 오른쪽 그늘
+    d.line([(10, 12), (12, 15), (11, 17)], fill=C("P12"))                    # 찌그러진 자국
+    d.rectangle([4, 9, 19, 10], fill=C("P12")); d.line([7, 20, 17, 20], fill=C("P12"))   # 위아래 테
+    d.ellipse([3, 4, 20, 10], fill=C(INK)); d.ellipse([4, 5, 19, 9], fill=C("P12"))
+    d.ellipse([6, 6, 17, 8], fill=C("P35")); d.point((8, 6), fill=C("P37")); d.point((14, 7), fill=C("P34"))   # 물 · 반사
+    d.arc([3, -2, 20, 10], 190, 350, fill=C("P11")); d.point((3, 5), fill=C("P10")); d.point((20, 5), fill=C("P10"))   # 철사 손잡이
+    d.line([(14, 11), (15, 16)], fill=C("P25"))                              # 녹물
     return im
 
 

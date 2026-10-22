@@ -1,0 +1,79 @@
+{
+ "id": "EXAMINE_M447",
+ "title": "손재석의 시험지",
+ "loc": "L-R01-24",
+ "npc": "",
+ "cond": "has(\"M-447\")",
+ "labels": {
+  "START": 0,
+  "PEEK": 4,
+  "PEEKED": 7
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "has(\"M-447\") == 0",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "손 글씨 문항 셋. '1. 배급표 위조범 신고 절차 2. 계엄 하 야간 통행 신청 3. 등록 거부자 처분'. 뒷장은 풀로 봉인 — '채점은 감독관이. 봉인은 학생 앞에서.'"
+  },
+  {
+   "op": "if",
+   "cond": "UQ62_PEEK == 1",
+   "to": "PEEKED"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "봉인을 미리 뜯어 본다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "PEEK",
+     "id": "EXAMINE_M447:1:0"
+    },
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "EXAMINE_M447:1:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "UQ62_PEEK = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "봉인을 뜯는다. 정답 셋 — 동사무소 · 검문소장 · 1차 계도. 뒷면 연필 글은 읽지 않기로 한다 — 학생 앞에서 읽을 글이다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "봉인은 뜯겼다. 감독관이 먼저 봤다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-62.txt"
+}

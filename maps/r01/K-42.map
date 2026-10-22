@@ -1,0 +1,56 @@
+# 신림 고시촌 C동 지하 독서실(SD-09a L-R01-14 실내 ③ · 단계 1-12i UQ-62). 초안: Claude. 리드 검수 대기.
+# 24×12 · 계단 아래 독서실 — 칸막이 책상 줄(2077년 수험생 자리 · 패거리 낙서 '여기가 우리 동네') · 수험서 더미(스킬북 『발파 기능사 실기』 — 글 · 폭발물 보너스) ·
+#   동쪽 '포로 우리'(2077년 독서실 총무실 창살에 패거리가 자물쇠 — 비어 있거나 글만 · 생포 체계와 안 잇는다) · 총무 책상(2077년 좌석표 · 미납 명단).
+# 들어오는 길: X-GC C동 입구(6,18 — from_W).
+map K-42 고시원 C동 지하 독서실
+set bk
+grid
+########################
+########################
+########################
+#tttttttttttttttt#,,,,,#
+#tttttttttttttttt#,,,,,#
+#tttttttttttttttt,,,,,,#
+#tttttttttttttttt,,,,,,#
+#tttttttttttttttt#,,,,,#
+#tttttttttttttttt#,,,,,#
+#tttttttttttttttt#######
+####ss##################
+########################
+end
+exit 4 10 X-GC from_K-42
+exit 5 10 X-GC from_K-42
+mark from_W 4 8 N
+# ---- 독서실: 칸막이 책상 줄 · 낙서 · 수험서 더미
+prop w_board_jm 2 1
+text 2 2 "좌석표. 2077년 11월 — 48칸 가운데 47칸에 이름. 빈 한 칸에 패거리가 '삽자루'라고 썼다." w=2
+prop study_carrel 2 3
+prop study_carrel 5 3
+prop study_carrel 8 3
+prop study_carrel 11 3
+prop study_carrel 14 3
+text 8 3 "칸막이 책상 줄. 칸막이마다 2077년 메모 — 'D-3' · '합격하면 떡' · '자지 마'. 그 위에 패거리가 새긴 '여기가 우리 동네'. 그 아래 누가 작게 '조용히'." w=4
+prop study_carrel 2 6
+prop study_carrel 5 6
+prop study_carrel 8 6
+prop study_carrel 11 6
+prop study_carrel 14 6
+text 5 6 "칸막이 안쪽 벽. 2077년 11월 15일 시험 시간표 — '1교시 09:00 행정법'. 그 밑에 꼽은 '바를 정' 셋. 셋째 날까지 세다 멈췄다." w=3
+prop bookshelf 1 8
+text 1 8 "수험서 더미. 맨 밑에 『발파 기능사 실기』 — 공무원 수험서 사이에 왜 있는지 모른다. 안쪽에 연필로 '시험 끝나면 광산'." scene=UQ62_BOOK
+prop bookshelf 4 8
+box 4 8 academy name="독서실 수험서 서가"
+prop printout_pile 15 8
+text 15 8 "복사물 더미. 2077년 기출 — 패거리가 불쏘시개로 뜯어 쓴다. 남은 건 답이 틀린 장만."
+prop oil_lamp 12 8
+text 12 8 "기름 등. 패거리가 밤에 켠다 — 지하라 낮에도 어둡다."
+# ---- 포로 우리(동 — 2077년 총무실 창살)
+prop cage_front 19 7
+text 19 7 "창살 문. 2077년 독서실 총무실 창에 패거리가 쇠창살과 자물쇠를 달았다. 안은 비었다 — 바닥에 밥그릇 · 2277년 긁은 날짜 '넷'. 누가 나흘 있었다." cond="GC_BOSS != 2"
+text 19 7 "창살 문. 자물쇠가 부서졌다 — 내분 뒤 누가 열었다. 안엔 밥그릇만." cond="GC_BOSS == 2"
+prop desk 19 3
+box 19 3 desk owner=N-R01-060 name="총무 책상"
+text 19 3 "총무 책상. 2077년 미납 명단 — '권성민 11월분 미납'. 밑에 패거리 글씨 '부적은 공짜'."
+prop cot 21 4
+text 21 4 "간이침대." scene=GC_COTKEY
+prop drum 22 8

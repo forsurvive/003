@@ -1,7 +1,10 @@
-원고 변환 v1: 장면 789, 대사 6176줄 | 오류 0, 경고 6
+원고 변환 v1: 장면 799, 대사 6292줄 | 오류 0, 경고 9
+경고 script/act1/FQ-GS-02.txt:90 선택지 45자(권장 40자 이내)
+경고 script/act1/FQ-GS-02.txt:210 선택지 41자(권장 40자 이내)
 경고 script/act1/JUNGGYE.txt:90 선택지 48자(권장 40자 이내)
 경고 script/act1/MQ-106.txt:29 선택지 41자(권장 40자 이내)
 경고 script/act1/MQ-106.txt:30 선택지 63자(권장 40자 이내)
 경고 script/act1/SQ-S06.txt:191 선택지 44자(권장 40자 이내)
 경고 script/act1/SQ-S06.txt:380 선택지 44자(권장 40자 이내)
+경고 script/act1/UQ-62.txt:147 선택지 51자(권장 40자 이내)
 경고 script/places/R01_NORTH.txt:95 선택지 42자(권장 40자 이내)

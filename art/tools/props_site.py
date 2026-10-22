@@ -24,18 +24,12 @@ def _shadow(d, x0, y0, x1, y1):
 
 
 def _hull_shadow(im, poly, dx, dy):
-    """땅에 얹힌 큰 물건의 그림자: 윤곽 다각형을 오른쪽 아래로 (dx, dy) 밀어 깔고 가장자리를 점무늬로 흩는다 — 몸체를 그 위에 덮으면 밑바닥을 따라가는 띠만 남는다."""
+    """땅에 얹힌 큰 물건의 접지 그림자(SD-16 §6 광원 북서 45°): 윤곽 다각형을 오른쪽 아래로 (dx, dy) 민 것과 (dx//2, dy//2) 민 것을 겹쳐 깔고
+    몸체를 그 위에 덮는다 — 밑바닥 오른쪽 · 아래 가장자리를 따라가는 짧은 띠만 남는다. 점무늬 없음(사용자 지적 2026-10-22 — 타원 · 흩어진 그림자 금지)."""
     sh = Image.new("RGBA", im.size, (0, 0, 0, 0))
-    ImageDraw.Draw(sh).polygon([(x + dx, y + dy) for x, y in poly], fill=C("P02"))
-    px = sh.load()
-    w, h = im.size
-    for y in range(h):
-        for x in range(w):
-            if px[x, y][3] == 0:
-                continue
-            edge = any(0 <= x + ex < w and 0 <= y + ey < h and px[x + ex, y + ey][3] == 0 for ex, ey in ((-2, 0), (2, 0), (0, -1), (0, 2)))
-            if edge and (x + y) % 2:
-                px[x, y] = (0, 0, 0, 0)
+    dd = ImageDraw.Draw(sh)
+    dd.polygon([(x + dx, y + dy) for x, y in poly], fill=C("P02"))
+    dd.polygon([(x + dx // 2, y + dy // 2) for x, y in poly], fill=C("P02"))
     im.alpha_composite(sh)
 
 
@@ -117,30 +111,49 @@ def container(seed=0):
 
 
 def boat_wreck(seed=0):
-    """떠밀려 온 낚싯배: 흰 선체 · 파란 띠 · 나무 갑판 · 부서진 선외기. 둔치에 비스듬히 얹혔다. 3×2 발."""
+    """떠밀려 온 한강 순찰 보트(108×72 — 3×2 발): 흰 선체에 파란 띠 · 판자 결 · 가로 좌판 둘 · 조타 칸 잔해 · 부서진 선외기 · 밧줄 사리 · 옆구리에 걸친 그물 ·
+    기대 놓은 노 · 선수 번호 '3' · 둔치에 비스듬히 얹혀 선미가 들림. 접지 그림자는 선체 밑바닥을 따라간다."""
     rnd = random.Random(seed + 60)
-    W_, H_ = 100, 64
+    W_, H_ = 108, 72
     im = img(W_, H_)
     d = ImageDraw.Draw(im)
-    hull = [(4, 30), (14, 52), (80, 54), (96, 38), (92, 24), (12, 22)]
-    _hull_shadow(im, hull, 3, 5)                                           # 선체 바닥을 따라가는 그림자(타원 아님 — 사용자 지적 2026-10-22)
-    d.polygon(hull, fill=C("P08"))
-    d.polygon([(8, 34), (16, 48), (80, 50), (92, 38), (90, 34), (10, 30)], fill=C("P07"))
-    d.line([(10, 36), (90, 38)], fill=C("P45")); d.line([(10, 37), (90, 39)], fill=C("P45"))
-    d.polygon([(14, 24), (88, 26), (86, 32), (16, 30)], fill=C("P19"))    # 갑판(나무)
-    for x in range(20, 86, 7):
-        d.line([x, 25, x - 1, 31], fill=C("P18"))
-    d.polygon([(92, 24), (98, 18), (98, 30)], fill=C("P05"))              # 선외기(뒤쪽)
-    d.rectangle([94, 30, 96, 42], fill=C("P04"))
-    d.polygon([(40, 24), (52, 24), (50, 10), (42, 12)], fill=C("P09"))    # 조타 칸 잔해
-    d.rectangle([43, 13, 49, 19], fill=C("P10"))
-    d.line([(46, 10), (60, 2)], fill=C("P06"))                            # 꺾인 안테나
-    _rust(im, rnd, (8, 30, 92, 52), 40, ("P06", "P05", "P25"))
-    put_text(im, "한강", 58, 38, "P44", 9, "Galmuri9")
-    for _ in range(12):                                                   # 이끼
-        x, y = rnd.randint(10, 80), rnd.randint(44, 52)
+    hull = [(3, 34), (10, 54), (26, 60), (86, 62), (102, 46), (100, 28), (84, 22), (14, 26)]
+    _hull_shadow(im, hull, 3, 4)
+    d.polygon(hull, fill=C(INK))                                              # 선체 먹선
+    d.polygon([(5, 35), (11, 52), (27, 58), (85, 60), (100, 46), (98, 30), (84, 24), (15, 28)], fill=C("P08"))
+    d.polygon([(7, 38), (12, 50), (28, 56), (84, 58), (97, 46), (96, 36), (12, 38)], fill=C("P07"))   # 옆면(그늘)
+    for y in (42, 47, 52):                                                    # 판자 이음(옆면)
+        d.line([(9, y), (94, y + 1)], fill=C("P06"))
+    d.line([(8, 40), (96, 41)], fill=C("P45")); d.line([(8, 41), (96, 42)], fill=C("P46")); d.line([(8, 42), (96, 43)], fill=C("P44"))   # 파란 띠
+    deck = [(16, 29), (84, 26), (94, 32), (92, 40), (20, 42), (10, 36)]
+    d.polygon(deck, fill=C(INK)); d.polygon([(17, 30), (83, 27), (92, 33), (90, 39), (21, 41), (12, 36)], fill=C("P19"))   # 갑판(나무)
+    for x in range(22, 88, 6):                                                # 갑판 판자 결
+        d.line([x, 29, x - 1, 40], fill=C("P18"))
+    d.rectangle([30, 28, 33, 41], fill=C("P20")); d.rectangle([62, 27, 65, 40], fill=C("P20"))   # 가로 좌판
+    d.line([30, 28, 33, 28], fill=C("P21")); d.line([62, 27, 65, 27], fill=C("P21"))
+    d.polygon([(42, 27), (56, 26), (54, 12), (44, 14)], fill=C(INK))         # 조타 칸 잔해(기울어진 틀)
+    d.polygon([(43, 26), (55, 25), (53, 13), (45, 15)], fill=C("P09"))
+    d.rectangle([46, 16, 52, 21], fill=C("P10")); d.line([(47, 17), (50, 20)], fill=C("P12"))   # 깨진 창
+    d.line([(49, 12), (60, 2)], fill=C("P06")); d.point((60, 2), fill=C("P53"))                # 꺾인 안테나
+    d.ellipse([22, 32, 30, 38], fill=C("P21")); d.ellipse([24, 33, 28, 36], fill=C("P19")); d.arc([22, 32, 30, 38], 0, 360, fill=C("P18"))   # 밧줄 사리
+    for k in range(0, 24, 4):                                                 # 옆구리에 걸친 그물(마름모 그물코)
+        for yy in range(44, 58, 4):
+            x = 66 + k + (2 if (yy // 4) % 2 else 0)
+            d.point((x, yy), fill=C("P30")); d.point((x + 1, yy + 1), fill=C("P31")); d.point((x - 1, yy + 1), fill=C("P31")); d.point((x, yy + 2), fill=C("P30"))
+    d.polygon([(98, 30), (106, 22), (108, 30), (102, 40)], fill=C(INK))       # 선외기(부서져 꺾임)
+    d.polygon([(99, 31), (105, 24), (106, 30), (101, 38)], fill=C("P05")); d.line([(102, 26), (104, 28)], fill=C("P07"))
+    d.rectangle([101, 40, 103, 50], fill=C("P04")); d.polygon([(99, 50), (106, 50), (104, 56), (101, 56)], fill=C("P03"))   # 프로펠러 축 · 날개(휨)
+    d.line([(6, 60), (36, 28)], fill=C(INK), width=3); d.line([(7, 59), (36, 29)], fill=C("P20"))   # 기대 놓은 노
+    d.polygon([(4, 60), (10, 64), (14, 60), (8, 56)], fill=C("P19"))
+    d.rectangle([12, 29, 15, 32], fill=C("P05"))                              # 선수 밧줄 고리
+    d.line([(13, 30), (4, 34)], fill=C("P21"))
+    _rust(im, rnd, (8, 36, 98, 58), 36, ("P06", "P05", "P25"))
+    for _ in range(14):                                                       # 물때 · 이끼(아랫줄)
+        x, y = rnd.randint(12, 90), rnd.randint(50, 58)
         if im.getpixel((x, y))[3]:
             im.putpixel((x, y), C("P30"))
+    put_text(im, "한강", 36, 44, "P44", 11, "Galmuri11")                       # 11px — 9px에선 '강' 받침이 뭉개져 '깅'으로 보였다(사용자 지적 2026-10-22)
+    put_text(im, "3", 18, 44, "P53", 11, "Galmuri11")
     return im
 
 
@@ -222,13 +235,21 @@ def chem_leak(seed=0):
 
 
 def bedroll(seed=0):
-    """펼쳐 둔 침낭(바닥 덧그림): 국방색 · 지퍼 줄 · 머리 쪽 접힌 베개."""
-    im = img(30, 18)
+    """펼쳐 둔 침낭(36×22, 바닥 덧그림): 국방색/회청색 누빔 — 누빔 줄 · 지퍼 · 머리 쪽 접힌 베개 · 발치 뭉친 자국 · 옆에 놓인 양철 컵."""
+    im = img(36, 22)
     d = ImageDraw.Draw(im)
-    d.rounded_rectangle([1, 3, 28, 15], 5, fill=C("P30") if seed % 2 == 0 else C("P12"))
-    d.rounded_rectangle([1, 3, 28, 7], 4, fill=C("P31") if seed % 2 == 0 else C("P13"))
-    d.line([8, 9, 26, 9], fill=C("P29") if seed % 2 == 0 else C("P11"))
-    d.rounded_rectangle([2, 4, 8, 14], 3, fill=C("P20"))
+    a, b, c = (("P30", "P31", "P29") if seed % 2 == 0 else ("P12", "P13", "P11"))
+    d.rounded_rectangle([1, 4, 31, 18], 5, fill=C(INK))
+    d.rounded_rectangle([2, 5, 30, 17], 5, fill=C(a))
+    d.rounded_rectangle([2, 5, 30, 9], 4, fill=C(b))                        # 위쪽 빛
+    for x in range(8, 28, 5):                                              # 누빔 줄
+        d.line([x, 6, x, 16], fill=C(c))
+    d.line([6, 11, 29, 11], fill=C(c)); d.line([7, 12, 28, 12], fill=C(INK))   # 지퍼
+    for x in range(8, 28, 3):
+        d.point((x, 12), fill=C("P09"))
+    d.rounded_rectangle([3, 6, 9, 16], 3, fill=C("P20")); d.line([4, 8, 8, 8], fill=C("P21"))   # 베개
+    d.ellipse([24, 8, 30, 15], fill=C(c))                                   # 발치 뭉친 자국
+    d.rectangle([32, 10, 35, 15], fill=C("P12")); d.line([32, 10, 35, 10], fill=C("P14")); d.point((33, 12), fill=C("P11"))   # 양철 컵
     return im
 
 
@@ -294,7 +315,7 @@ def heli_wreck(seed=0):
     W_, H_ = 136, 104
     im = img(W_, H_)
     d = ImageDraw.Draw(im)
-    _hull_shadow(im, [(6, 60), (12, 88), (76, 92), (132, 56), (128, 46), (84, 50), (40, 44)], 4, 6)   # 몸통 · 꼬리 윤곽을 따라가는 그림자(타원 아님)
+    _hull_shadow(im, [(8, 66), (14, 86), (76, 90), (84, 74), (130, 54), (132, 58), (80, 82), (70, 90), (14, 92), (6, 72)], 3, 4)   # 썰매 · 동체 밑 접지 띠 — 들린 꼬리 밑은 길게(타원 · 점무늬 아님)
     d.polygon([(70, 66), (128, 48), (132, 54), (74, 74)], fill=C("P29"))   # 꼬리 붐(꺾임)
     d.polygon([(118, 50), (130, 30), (134, 34), (128, 52)], fill=C("P30"))   # 꼬리 날개
     d.line([(74, 70), (128, 52)], fill=C("P28"))
@@ -374,7 +395,7 @@ PROPS_SITE = {
     "bus_wreck": _r(lambda: bus_wreck(0), 4, 2, down=-4),
     "container": _r(lambda: container(0), 3, 2, down=-2),
     "container2": _r(lambda: container(1), 3, 2, down=-2),
-    "boat_wreck": _r(lambda: boat_wreck(0), 3, 2, down=-2),
+    "boat_wreck": _r(lambda: boat_wreck(0), 3, 2, down=-2, dx=-6, dy=-4),
     "forklift": _r(lambda: forklift(0), 2, 2, down=-2),
     "greenhouse": _r(lambda: greenhouse(0), 3, 2, down=-2),
     "chem_leak": _r(lambda: chem_leak(0), 1, 1, down=-2),

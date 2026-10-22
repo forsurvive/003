@@ -1,0 +1,280 @@
+{
+ "id": "GC_GATE",
+ "title": "동쪽 초소 문지기",
+ "loc": "L-R01-14",
+ "npc": "N-GC-G1",
+ "cond": "V_ACT >= 1 and dead(\"N-GC-G1\") == 0",
+ "labels": {
+  "START": 0,
+  "GATE0": 2,
+  "KILLER": 8,
+  "GONE_SAID": 10,
+  "SHOT": 13,
+  "SEEN": 15,
+  "PASSED": 18,
+  "OWNER": 20,
+  "MENU": 22,
+  "PAY": 23,
+  "TALK": 26,
+  "TALK_NO": 29,
+  "PROOF": 31
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "dead(\"N-R01-059\") == 1",
+   "to": "KILLER"
+  },
+  {
+   "op": "if",
+   "cond": "UQ62_GONE >= 1 and GC_GSAID == 0",
+   "to": "GONE_SAID"
+  },
+  {
+   "op": "if",
+   "cond": "GC_OWN == 1",
+   "to": "OWNER"
+  },
+  {
+   "op": "if",
+   "cond": "GC_PASS == GAME_DAY",
+   "to": "PASSED"
+  },
+  {
+   "op": "if",
+   "cond": "GC_SHOT > 0 and GC_SHOT == GAME_DAY - 1",
+   "to": "SHOT"
+  },
+  {
+   "op": "if",
+   "cond": "GC_SEEN >= 1",
+   "to": "SEEN"
+  },
+  {
+   "op": "line",
+   "who": "N-GC-G1",
+   "emo": "기본",
+   "text": "거기 서. 분양 받으러 왔어? 상담료 50. 상담 안 받으면 분양 안 된 땅 밟는 거야."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-GC-G1",
+   "emo": "분노",
+   "text": "부적을 죽인 놈. 상담이고 분양이고 없어 — 두목이 네 얼굴을 외웠어."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "GC_GSAID = 1"
+  },
+  {
+   "op": "line",
+   "who": "N-GC-G1",
+   "emo": "기본",
+   "text": "부적이 나갔어. 합격했다나. 우리 망하나? …아직은 아니네. (초소 판자를 두드린다)"
+  },
+  {
+   "op": "goto",
+   "to": "GATE0"
+  },
+  {
+   "op": "line",
+   "who": "N-GC-G1",
+   "emo": "분노",
+   "text": "어제 총 쏜 손님. 상담료 두 배 — 100. 두목이 '손님은 손님'이래서 봐주는 거야."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "두 배 여기",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 100
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PAY",
+     "id": "GC_GATE:1:0"
+    },
+    {
+     "text": "돌아간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "GC_GATE:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-GC-G1",
+   "emo": "기본",
+   "text": "전에 상담 받은 사람이네. 계약 안 하고 또 왔어? …들어가. 두목이 '한 번 본 손님은 손님'이래."
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q62pass",
+    "4"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-GC-G1",
+   "emo": "기본",
+   "text": "오늘 상담료 냈잖아. 가. 창고는 건드리지 말고."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-GC-G1",
+   "emo": "미소",
+   "text": "입주자님. 오늘도 A동? 공물은 303호에."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "상담료 여기",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 50
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PAY",
+     "id": "GC_GATE:2:0"
+    },
+    {
+     "text": "삽자루가 부른다. 분양 얘기로",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "쉬움"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "TALK",
+     "id": "GC_GATE:2:1",
+     "fail": "TALK_NO"
+    },
+    {
+     "text": "이 지도, 너희 척후 거지. 두목한테 보여 줄 게 있다",
+     "tags": [
+      {
+       "k": "evidence",
+       "id": "M-301"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PROOF",
+     "id": "GC_GATE:2:2"
+    },
+    {
+     "text": "돌아간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "GC_GATE:2:3"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q62pass",
+    "1"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-GC-G1",
+   "emo": "기본",
+   "text": "영수증은 없어. 상담은 B동 옥상 — 사다리. 창고 건드리면 상담료고 뭐고 없어."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q62pass",
+    "2"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-GC-G1",
+   "emo": "놀람",
+   "text": "두목이? …부르는 건 처음이네. B동 옥상. 사다리로."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-GC-G1",
+   "emo": "분노",
+   "text": "두목은 아무도 안 불러. 분양은 끝났거든. 50 내든가 돌아가든가."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q62pass",
+    "3"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-GC-G1",
+   "emo": "놀람",
+   "text": "그거… 우리 척후 지도네. 사이렌이 들고 다니던 거. 들어가 — 두목이 보고 싶어 할 거야."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-62.txt"
+}

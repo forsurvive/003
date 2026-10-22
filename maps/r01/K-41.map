@@ -1,0 +1,54 @@
+# 신림 고시촌 B동 옥상 '분양 사무실'(SD-09a L-R01-14 실내 ② · SD-04a SQ-S02 C 해법 · 단계 1-12i UQ-62). 초안: Claude. 리드 검수 대기.
+# 24×14 · 옥탑방 하나 — 삽자루 N-R01-060(남부순환 패거리 두목 · 2077년 분양 현수막을 망토처럼) · 분양 계약서 더미 · 금고 · 망원경(봉천 쪽 창) · 침낭 · 술상.
+# 삽자루: C 해법 [화술 보통]('밸브는 분양된 땅이 아니다' · 척후 지도면 쉬움 → SQ_S02_SOL 3) · 진짜 분양 [캡 200](A동 원룸 열쇠 M-451 — GC_OWN) · 처치 → 거점 공백 · 내분(진행기 resident_down).
+# 들어오는 길: X-GC B동 옥상 문(34,14 — 사다리 · from_roof).
+map K-41 고시원 B동 옥상 분양 사무실
+set bk
+grid
+########################
+########################
+########################
+#cccccccccccccc#wwwwwww#
+#cccccccccccccc#wwwwwww#
+#ccccccccccccccwwwwwwww#
+#cccccccccccccc#wwwwwww#
+#cccccccccccccc#wwwwwww#
+#cccccccccccccc#wwwwwww#
+#cccccccccccccc#wwwwwww#
+##########ss############
+########################
+########################
+########################
+end
+exit 10 10 X-GC from_K-41
+exit 11 10 X-GC from_K-41
+mark from_roof 10 9 N
+mark boss 7 5 S
+# ---- 사무실(서): 현수막 · 계약서 더미 · 삽자루의 책상 · 금고 · 망원경 · 술상
+prop w_sale_banner 5 1
+text 5 2 "2077년 분양 현수막 '남부순환 분양'. 원래는 '남부순환 ○○아파트 분양'이었다 — 가운데를 잘라 망토로 썼다." w=2
+prop chief_desk 6 4
+text 6 4 "두목 책상. '분양 계약서' 더미 — 2077년 모델하우스 양식에 패거리가 볼펜으로 '원룸 한 칸 200 · 입주자는 안 쏨'. 서명 칸은 모두 비었다." w=2
+prop safe 1 3
+box 1 3 safe owner=N-R01-060 lock=55 name="삽자루의 금고"
+prop printout_pile 12 3
+text 12 3 "계약서 복사본 더미. 맨 위 한 장만 서명이 있다 — '입주자: 깡철이. 호수: 고가 아래'. 농담으로 쓴 건지 아닌지 모른다."
+prop telescope 12 8
+text 12 8 "망원경. 봉천 계단마을 옥탑 쪽으로 고정됐다. 렌즈 옆에 분필 '22 · 04' — 감시조 교대 시간." scene=GC_SCOPE
+prop low_table 4 8
+text 4 8 "술상. 2277년 술병 셋 · 2077년 과자 봉지 하나(안 뜯음 — '분양 사은품'이라고 썼다)."
+prop cushion_r 3 8
+prop cushion_b 6 8
+prop drum 10 6
+prop w_map 9 1
+text 9 2 "벽 지도. 남부순환로 — 봉천 · 배수지 · 밸브실 · 낙성대에 압정. 고시촌에 '본사'. 보라매엔 '고철꾼(놔둠)'." w=2
+# ---- 옥탑 안방(동): 침낭 · 옷걸이 · 창
+prop bedroll 17 4
+text 17 4 "두목의 침낭. 베개 밑에 2077년 분양 안내 책자 — 평면도에 '내 방'이라고 동그라미."
+prop wardrobe 20 3
+box 20 3 closet owner=N-R01-060 name="두목의 옷장"
+prop w_window 18 1
+text 18 2 "옥탑 창. 판자 다리와 물탱크 옥탑이 보인다. 창턱에 2077년 분양 사무실 명패 '분양 상담사 김○○' — 이름이 긁혔다."
+prop crate_o 21 8
+box 21 8 gang_goods owner=N-R01-060 lock=30 name="두목 몫 상자"
+npc N-R01-060 7 5 S look=M2-S5-HR01-H7-T04-2-PF04-HD08-EY00-PR015 bark="이 동네는 분양 끝났어. 내가 다 샀거든."

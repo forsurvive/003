@@ -10,12 +10,14 @@
   "SHOP": 6,
   "S6PAPER": 8,
   "TRADE": 11,
-  "S12ASK": 13,
-  "S12MENU": 17,
-  "S12AGAIN": 18,
-  "S12PICK": 19,
-  "S12SELL": 20,
-  "TRADE2": 22
+  "U62MENU": 14,
+  "U62BUY": 15,
+  "S12ASK": 19,
+  "S12MENU": 23,
+  "S12AGAIN": 24,
+  "S12PICK": 25,
+  "S12SELL": 26,
+  "TRADE2": 28
  },
  "ops": [
   {
@@ -83,8 +85,71 @@
    "to": "S12ASK"
   },
   {
+   "op": "if",
+   "cond": "UQ62_MET == 1 and UQ62_EXAMQ == 1 and UQ62_WAY == 0 and has(\"M-450\") == 0",
+   "to": "U62MENU"
+  },
+  {
    "op": "goto",
    "to": "TRADE2"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "물건 좀 보자",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TRADE2",
+     "id": "JM_YEOM:1:0"
+    },
+    {
+     "text": "합격증 한 장 — 볼트-텍 S-07 양식으로. 행정고시",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 120
+      }
+     ],
+     "cond": "PC_CAPS >= 120",
+     "fx": "",
+     "to": "U62BUY",
+     "id": "JM_YEOM:1:1"
+    },
+    {
+     "text": "됐다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "JM_YEOM:1:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q62forge",
+    "2"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-008",
+   "emo": "기본",
+   "text": "볼트-텍 양식? 그건 내가 제일 잘 찍어. 사진 칸이 없어서 쉽고. (타자기 소리) '국가 행정고시 합격증'. 행정고시가 뭔진 묻지 마."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-008",
+   "emo": "기본",
+   "text": "철자는 맞아. 내 종이엔 틀린 철자가 없어. 그게 값이야."
+  },
+  {
+   "op": "goto",
+   "to": "END"
   },
   {
    "op": "if",
@@ -114,7 +179,7 @@
      "cond": "",
      "fx": "",
      "to": "TRADE2",
-     "id": "JM_YEOM:1:0"
+     "id": "JM_YEOM:2:0"
     },
     {
      "text": "(신분증 묶음을 내민다)",
@@ -122,7 +187,7 @@
      "cond": "",
      "fx": "",
      "to": "S12AGAIN",
-     "id": "JM_YEOM:1:1"
+     "id": "JM_YEOM:2:1"
     }
    ]
   },
@@ -141,7 +206,7 @@
      "cond": "",
      "fx": "",
      "to": "S12SELL",
-     "id": "JM_YEOM:2:0"
+     "id": "JM_YEOM:3:0"
     },
     {
      "text": "이건 안 판다",
@@ -149,7 +214,7 @@
      "cond": "",
      "fx": "",
      "to": "TRADE2",
-     "id": "JM_YEOM:2:1"
+     "id": "JM_YEOM:3:1"
     }
    ]
   },
