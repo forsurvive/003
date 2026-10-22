@@ -3,22 +3,24 @@
  "title": "쪽방 할매 길금순 — 통로",
  "loc": "L-R02-20",
  "npc": "N-R02-042",
- "cond": "V_ACT >= 1 and SQ_S09_START > 0 and (SB_127 == 2 or SQ_S09_NOTICE > 0 or SQ_S09_CLOSED == 1 or (SQ_S09_SOL1 > 0 and SQ_S09_REQ == 0 and SQ_S09_SOL2 == 0) or (SQ_S09_PLACE > 0 and SQ_S09_PLACE != 9))",
+ "cond": "V_ACT >= 1 and (SQ_S09_START > 0 or SQ_S09_NOTICE > 0) and (SB_127 == 2 or SQ_S09_NOTICE > 0 or SQ_S09_CLOSED == 1 or (SQ_S09_SOL1 > 0 and SQ_S09_REQ == 0 and SQ_S09_SOL2 == 0) or (SQ_S09_PLACE > 0 and SQ_S09_PLACE != 9))",
  "labels": {
   "START": 0,
   "PASSED": 9,
   "REGULAR": 12,
   "HIDING": 14,
   "NOTICE": 16,
-  "NOTICE_OPTS": 17,
-  "DOWN": 18,
-  "ORDER": 20,
-  "LIST": 22,
-  "AFTER": 25,
-  "CLOSED": 27,
-  "MENU": 28,
-  "SOUP": 29,
-  "SLEEP": 32
+  "NOTICE_MQ": 19,
+  "NOTICE_OPTS": 21,
+  "DOWN": 22,
+  "ORDER": 24,
+  "LIST": 26,
+  "AFTER": 29,
+  "CLOSED": 31,
+  "CLOSED_N": 34,
+  "MENU": 35,
+  "SOUP": 36,
+  "SLEEP": 39
  },
  "ops": [
   {
@@ -106,10 +108,31 @@
    "to": "MENU"
   },
   {
+   "op": "if",
+   "cond": "SQ_S09_START == 0",
+   "to": "NOTICE_MQ"
+  },
+  {
    "op": "line",
    "who": "N-R02-042",
    "emo": "분노",
    "text": "갈고리가 벽장 냄새를 맡았어. 사흘이면 부수러 와. 길을 지하로 잇든, 갈고리 눈을 돌리든, 아예 막든."
+  },
+  {
+   "op": "goto",
+   "to": "NOTICE_OPTS"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-042",
+   "emo": "분노",
+   "text": "당신이지, 본소 우리 문 딴 사람. 다들 내 벽장으로 나갔어. 고마워. …근데 갈고리가 벽장 냄새를 맡았어."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-042",
+   "emo": "기본",
+   "text": "사흘이면 부수러 와. 길을 지하로 잇든, 갈고리 눈을 돌리든, 아예 막든. 다음 사람도 있으니까."
   },
   {
    "op": "choice",
@@ -196,10 +219,25 @@
    "to": "MENU"
   },
   {
+   "op": "if",
+   "cond": "SB_127 < 2 and SB_FREED > 0",
+   "to": "CLOSED_N"
+  },
+  {
    "op": "line",
    "who": "N-R02-042",
    "emo": "슬픔",
    "text": "마흔한 번째가 마지막이 됐네. …그래도 그 사람은 나갔잖아."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-042",
+   "emo": "슬픔",
+   "text": "벽장은 끝났어. …그래도 우리 칸 사람들은 이 길로 나갔잖아. 그걸로 됐어."
   },
   {
    "op": "choice",

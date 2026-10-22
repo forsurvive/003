@@ -1,0 +1,147 @@
+{
+ "id": "SQS04_WINDOW",
+ "title": "별채 창고 창",
+ "loc": "L-R01-32",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "PICK": 3,
+  "BEND": 6,
+  "OPEN": 9,
+  "IN": 11
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S04_WIN == 1",
+   "to": "OPEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "별채 아랫단 창고 창. 녹슨 창살 셋, 가운데 하나가 휘었다. 걸쇠에 매달린 건 관제망 휘장이 아니라 철물점 자물쇠다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "걸쇠 자물쇠를 딴다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "자물쇠 따기",
+       "min": 25
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PICK",
+     "id": "SQS04_WINDOW:1:0"
+    },
+    {
+     "text": "휜 창살을 마저 젖힌다",
+     "tags": [
+      {
+       "k": "stat",
+       "name": "힘",
+       "min": 6
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "BEND",
+     "id": "SQS04_WINDOW:1:1"
+    },
+    {
+     "text": "(그만둔다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS04_WINDOW:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "딸깍. 창살 틀이 안으로 젖혀진다. 자재 상자를 밟고 창턱을 넘는다."
+  },
+  {
+   "op": "cmd",
+   "name": "s04",
+   "args": [
+    "window",
+    "in"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "창살을 두 손으로 잡아당긴다."
+  },
+  {
+   "op": "cmd",
+   "name": "s04",
+   "args": [
+    "window",
+    "bend"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "열어 둔 창고 창. 창살 틀이 안으로 젖혀져 있다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "창턱을 넘는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "IN",
+     "id": "SQS04_WINDOW:2:0"
+    },
+    {
+     "text": "(그만둔다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS04_WINDOW:2:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s04",
+   "args": [
+    "window",
+    "in"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S04.txt"
+}

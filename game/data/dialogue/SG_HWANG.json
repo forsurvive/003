@@ -7,32 +7,33 @@
  "labels": {
   "START": 0,
   "TIER": 5,
-  "S6UNI": 10,
-  "S6SALUTE": 14,
-  "HOSTILE": 18,
-  "WARY": 21,
-  "FOUGHT": 24,
-  "NEUTRAL": 26,
-  "REFUSE": 29,
-  "FRIEND": 32,
-  "ASK": 33,
-  "S6NOTE": 34,
-  "S6NOTE_OK": 36,
-  "S6NOTE_NO": 40,
-  "S6SURR": 42,
-  "S6SURR_OK": 46,
-  "S6SURR_NO": 49,
-  "S6HAND": 53,
-  "S6TELL": 57,
-  "S02": 60,
-  "PASS": 66,
-  "PASS2": 69,
-  "NOKWON": 73,
-  "AFTERKWON": 74,
-  "PASS3": 75,
-  "UQ03REP": 77,
-  "WHAT": 83,
-  "PERM": 87
+  "S6UNI": 11,
+  "S6SALUTE": 15,
+  "HOSTILE": 19,
+  "WARY": 22,
+  "FOUGHT": 25,
+  "NEUTRAL": 27,
+  "REFUSE": 30,
+  "FRIEND": 33,
+  "KH": 35,
+  "ASK": 37,
+  "S6NOTE": 38,
+  "S6NOTE_OK": 40,
+  "S6NOTE_NO": 44,
+  "S6SURR": 46,
+  "S6SURR_OK": 50,
+  "S6SURR_NO": 53,
+  "S6HAND": 57,
+  "S6TELL": 61,
+  "S02": 64,
+  "PASS": 70,
+  "PASS2": 74,
+  "NOKWON": 78,
+  "AFTERKWON": 79,
+  "PASS3": 80,
+  "UQ03REP": 82,
+  "WHAT": 88,
+  "PERM": 92
  },
  "ops": [
   {
@@ -71,6 +72,11 @@
    "op": "if",
    "cond": "SQ_S06_SOL == 4 and SQ_S06_SALUTE == 0",
    "to": "S6SALUTE"
+  },
+  {
+   "op": "if",
+   "cond": "(MQ106_RESULT == 3 or MQ106_RESULT == 4) and AFF_BJ > -20 and AFF_BJ < 20",
+   "to": "KH"
   },
   {
    "op": "if",
@@ -218,6 +224,22 @@
    "who": "N-R01-047",
    "emo": "미소",
    "text": "관리자님, 협조에 감사드립니다. 등록증만 보여 주시면 차단봉을 올리겠습니다."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-047",
+   "emo": "기본",
+   "text": "관리자 후보님. 청계산 방침은 내려왔습니다 — 전원이 들어온 뒤에 모신다고."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-047",
+   "emo": "기본",
+   "text": "그 전까지 이 차단봉은 당신 앞에서 올라가 있습니다. 등록증 없이도요."
   },
   {
    "op": "choice",
@@ -521,6 +543,11 @@
    "op": "if",
    "cond": "AFF_BJ >= 20",
    "to": "PASS2"
+  },
+  {
+   "op": "if",
+   "cond": "(MQ106_RESULT == 3 or MQ106_RESULT == 4) and AFF_BJ > -20",
+   "to": "PASS3"
   },
   {
    "op": "line",

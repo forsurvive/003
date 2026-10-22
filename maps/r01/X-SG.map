@@ -59,14 +59,15 @@ levels
 end
 mark arrive 4 6 E
 mark south 13 22 N
-prop bj_boom 8 10 cond="AFF_BJ < 20 or not has(\"M-120\")"
-prop bj_boom_up 8 10 cond="AFF_BJ >= 20 and has(\"M-120\")"
-prop bj_boom 17 10 cond="AFF_BJ < 20 or not has(\"M-120\")"
-prop bj_boom_up 17 10 cond="AFF_BJ >= 20 and has(\"M-120\")"
+prop bj_boom 8 10 cond="(AFF_BJ < 20 or not has(\"M-120\")) and not ((MQ106_RESULT == 3 or MQ106_RESULT == 4) and AFF_BJ > -20)"
+prop bj_boom_up 8 10 cond="(AFF_BJ >= 20 and has(\"M-120\")) or ((MQ106_RESULT == 3 or MQ106_RESULT == 4) and AFF_BJ > -20)"
+prop bj_boom 17 10 cond="(AFF_BJ < 20 or not has(\"M-120\")) and not ((MQ106_RESULT == 3 or MQ106_RESULT == 4) and AFF_BJ > -20)"
+prop bj_boom_up 17 10 cond="(AFF_BJ >= 20 and has(\"M-120\")) or ((MQ106_RESULT == 3 or MQ106_RESULT == 4) and AFF_BJ > -20)"
 prop jersey 11 10
 prop jersey 13 10
 prop jersey 15 10
-text 9 10 "차단봉. 적백 팔이 내려와 있다. '정지 — 등록증 제시'." w=3
+text 9 10 "차단봉. 적백 팔이 내려와 있다. '정지 — 등록증 제시'." w=3 cond="not ((AFF_BJ >= 20 and has(\"M-120\")) or ((MQ106_RESULT == 3 or MQ106_RESULT == 4) and AFF_BJ > -20))"
+text 9 10 "차단봉. 적백 팔이 올라가 있다. 경비가 손짓으로 지나가라 한다." w=3 cond="(AFF_BJ >= 20 and has(\"M-120\")) or ((MQ106_RESULT == 3 or MQ106_RESULT == 4) and AFF_BJ > -20)"
 text 13 10 "저지 방벽. 콘크리트에 흰 글씨 '제7 검문대 — 미등록자 회차'." w=2
 prop sandbags 6 10
 prop sandbags 7 10
@@ -126,7 +127,8 @@ box 28 15 crate owner=N-R01-047 name="보급 상자"
 prop warn_board 7 21
 text 7 21 "표지. '남태령 너머 — 계엄 차단선. 사격 구역.' 고개 위에서 낙진 바람이 내려온다."
 npc N-R01-047 15 8 N cond="GAME_HOUR >= 6 and GAME_HOUR < 20" bark="멈추십시오. 등록증을 보이십시오."
-npc CR-401 9 8 N sheet=en_cr401_loco bark="회차하십시오. 이 길은 등록자만 지납니다."
+npc CR-401 9 8 N sheet=en_cr401_loco cond="not ((AFF_BJ >= 20 and has(\"M-120\")) or ((MQ106_RESULT == 3 or MQ106_RESULT == 4) and AFF_BJ > -20))" bark="회차하십시오. 이 길은 등록자만 지납니다."
+npc CR-401 9 8 N sheet=en_cr401_loco cond="(AFF_BJ >= 20 and has(\"M-120\")) or ((MQ106_RESULT == 3 or MQ106_RESULT == 4) and AFF_BJ > -20)" bark="(경례) 지나가십시오. 남태령은 낙진 바람입니다."
 npc CR-401 18 8 N sheet=en_cr401_loco bark="옆길로 새는 사람 다 봅니다. 감시탑에서."
 npc CR-401 22 5 W sheet=en_cr401_loco route=yard:22,5,8;tent:22,16,6 bark="공보방송 들었습니까? 자진 출석이 제일 빠릅니다."
 npc CR-401 26 15 W sheet=en_cr401_loco cond="UQ67_CORE != 2" bark="불 쬐는 거 아니면 지나가십시오."

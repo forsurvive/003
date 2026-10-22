@@ -147,6 +147,8 @@ func _init() -> void:
 	# 반복 퀘스트 공통 엔진(1-12j, SD-05 §4.1 · D-238): 뜻은 core/story/repeat.gd 머리 주석. RQ47_N · WK · LAST는 옛 변수(첫 호출 때 이식)
 	for k in Repeat.var_names():
 		vars.declare(k, "int", 0)
+	for k in ["SB_HEIR", "SB_HDC_DAY", "BJS_SG_DAY", "BJS_NR_DAY", "BJS_YD_DAY", "BJS_KIND", "BJS_RUN", "BJS_RCPTSAID", "SQ_S04_WIN", "BJS_SG_N", "BJS_NR_N", "BJS_YD_N", "BJS_SG_BACK", "BJS_NR_BACK", "BJS_YD_BACK", "BJS_SG_PEN", "BJS_NR_PEN", "BJS_YD_PEN", "BJS_N", "BJS_FIXED", "BJS_COOP"]:   # 1-12l: 새벽인력 승계(D-082) · 계엄군 초소 정지(D-081 · D-118, scenes/story/bj_stop.gd)
+		vars.declare(k, "int", 0)
 	vars.declare("LM_SEEN", "int", 0)                                       # 원경 표식 등록 비트(1-12k, core/story/landmarks.gd ROWS 차례 · SD-08 §12.2)
 	vars.declare("MQ102_MAPC", "int", 0)
 	vars.declare("MQ101_HA_MAPC", "int", 0)                                 # 하숙자가 '혼자 풀었다'를 알아봐 줌(한 번)                                    # 지도를 보고 한 단서 2 추론(1-12k D-046): 핍-보이 지도에서 카드 숫자 둘 = 청크 (20, 27)을 짚음 → Act1Paths가 단서 2를 세운다

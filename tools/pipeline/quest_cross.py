@@ -36,7 +36,7 @@ ALLOW = os.path.join(ROOT, "tools", "pipeline", "quest_cross_allow.yaml")
 PROG = {
     "scenes/story/side_r01.gd": "SQ-S01", "scenes/story/side_s02.gd": "SQ-S02", "scenes/story/side_s04.gd": "SQ-S04",
     "scenes/story/mq101.gd": "MQ-101", "scenes/story/mq106.gd": "MQ-106", "scenes/story/act1_paths.gd": "MQ-102~105",
-    "scenes/story/home_bc.gd": "HOME_BC", "scenes/story/rq_r01.gd": "RQ", "core/story/repeat.gd": "RQ", "scenes/story/caravans.gd": "상인 순회", "scenes/story/prologue.gd": "프롤로그",
+    "scenes/story/home_bc.gd": "HOME_BC", "scenes/story/rq_r01.gd": "RQ", "scenes/story/bj_stop.gd": "계엄군 초소", "core/story/repeat.gd": "RQ", "scenes/story/caravans.gd": "상인 순회", "scenes/story/prologue.gd": "프롤로그",
     "systems/world/encounter_live.gd": "인카운터", "core/story/encounters.gd": "인카운터", "core/story/rumors.gd": "소문",
     "core/story/radio.gd": "라디오", "core/story/wanted.gd": "수배", "systems/world/interior_host.gd": "엔진",
     "systems/world/world_map.gd": "엔진", "core/story/quest_log.gd": "엔진", "core/story/deeds.gd": "전파",

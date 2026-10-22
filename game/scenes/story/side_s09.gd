@@ -280,8 +280,10 @@ func _on_day(_d: int) -> void:
 	# 정착: 재회 다음 날 그곳에 선다
 	if v("SB_127") == 4 and v("SQ_S09_PLACE") in [2, 3]:
 		_sv("SB_127", 6 if v("SQ_S09_PLACE") == 2 else 7)
-	# 갈고리가 벽장을 눈치챈다(B · D 다음 날) — 먼저 죽었으면 눈치챌 사람이 없다
-	if (v("SQ_S09_SOL1") == 2 or v("SQ_S09_SOL1") == 4) and v("SQ_S09_NOTICE") == 0 and v("SQ_S09_SOL2") == 0:
+	# 갈고리가 벽장을 눈치챈다(B · D 다음 날) — 먼저 죽었으면 눈치챌 사람이 없다.
+	# 1-12l D-083: MQ-105에서 우리를 풀어 사람이 판자 틈 → 쪽방 벽장으로 빠져나갔어도(SB_FREED — 127번이 아니어도) 같은 위기(H-R02-08 '통로가 인솔조에 들킬 위기')
+	if (v("SQ_S09_SOL1") == 2 or v("SQ_S09_SOL1") == 4 or v("SB_FREED") > 0) and v("SQ_S09_NOTICE") == 0 and v("SQ_S09_SOL2") == 0 \
+			and v("SQ_S09_CLOSED") == 0:
 		if st.is_dead(HOOK):
 			_sol2(4)
 		else:

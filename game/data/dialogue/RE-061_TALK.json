@@ -6,15 +6,23 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "OPEN": 6,
-  "REFUSE": 10,
-  "WARY": 14,
-  "TALK_OK": 16,
-  "TALK_FAIL": 19,
-  "RUN": 22,
-  "HOSTILE": 24,
-  "PASS": 27,
-  "SALUTE": 30
+  "RCPT": 8,
+  "OPEN": 11,
+  "REFUSE": 15,
+  "WARY": 19,
+  "RCPT_W": 21,
+  "FUGITIVE": 24,
+  "FUGITIVE_M": 27,
+  "F_RCPT": 28,
+  "F_TALK": 31,
+  "F_FIXED": 34,
+  "KH": 38,
+  "TALK_OK": 41,
+  "TALK_FAIL": 44,
+  "RUN": 47,
+  "HOSTILE": 49,
+  "PASS": 52,
+  "SALUTE": 55
  },
  "ops": [
   {
@@ -31,6 +39,16 @@
    "op": "if",
    "cond": "AFF_BJ >= 20",
    "to": "PASS"
+  },
+  {
+   "op": "if",
+   "cond": "MQ106_RESULT == 1",
+   "to": "FUGITIVE"
+  },
+  {
+   "op": "if",
+   "cond": "(MQ106_RESULT == 3 or MQ106_RESULT == 4) and V_WANTED < 80 and AFF_BJ > -20",
+   "to": "KH"
   },
   {
    "op": "if",
@@ -55,14 +73,39 @@
      "id": "RE-061_TALK:1:0"
     },
     {
+     "text": "(선우진의 인수증을 내민다)",
+     "tags": [],
+     "cond": "SQ_S11_PASS == 1",
+     "fx": "",
+     "to": "RCPT",
+     "id": "RE-061_TALK:1:1"
+    },
+    {
      "text": "내 가방은 내 거다",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "REFUSE",
-     "id": "RE-061_TALK:1:1"
+     "id": "RE-061_TALK:1:2"
     }
    ]
+  },
+  {
+   "op": "line",
+   "who": "CR-403",
+   "emo": "기본",
+   "text": "여의도 초소 선우진 중위… '기록물 인수, 소지자 통행 협조.' 됐다, 가방은 안 연다."
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
   },
   {
    "op": "line",
@@ -133,14 +176,163 @@
      "fail": "TALK_FAIL"
     },
     {
+     "text": "(선우진의 인수증을 내민다)",
+     "tags": [],
+     "cond": "SQ_S11_PASS == 1",
+     "fx": "",
+     "to": "RCPT_W",
+     "id": "RE-061_TALK:2:1"
+    },
+    {
      "text": "(달아난다)",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "RUN",
-     "id": "RE-061_TALK:2:1"
+     "id": "RE-061_TALK:2:2"
     }
    ]
+  },
+  {
+   "op": "line",
+   "who": "CR-403",
+   "emo": "기본",
+   "text": "(인수증을 오래 본다) …협조자로 적혀 있군. 오늘 대조는 생략한다. 분대 이동."
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "BJS_FIXED == 1",
+   "to": "F_FIXED"
+  },
+  {
+   "op": "line",
+   "who": "CR-403",
+   "emo": "분노",
+   "text": "사진 그대로군. 도주 관리자. 고개 위에서 수색대를 쏜 사람."
+  },
+  {
+   "op": "line",
+   "who": "CR-403",
+   "emo": "기본",
+   "text": "손 머리 위로. 같이 가 줘야겠다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "총을 먼저 든 쪽은 수색대였소",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "어려움"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "F_TALK",
+     "id": "RE-061_TALK:3:0",
+     "fail": "TALK_FAIL"
+    },
+    {
+     "text": "(선우진의 인수증을 내민다)",
+     "tags": [],
+     "cond": "SQ_S11_PASS == 1 and BJS_RCPTSAID == 0",
+     "fx": "",
+     "to": "F_RCPT",
+     "id": "RE-061_TALK:3:1"
+    },
+    {
+     "text": "(달아난다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "RUN",
+     "id": "RE-061_TALK:3:2"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "BJS_RCPTSAID = 1"
+  },
+  {
+   "op": "line",
+   "who": "CR-403",
+   "emo": "기본",
+   "text": "기록물 인수증? 그건 가방 검사용이다. 우리가 찾는 건 가방이 아니라 너다."
+  },
+  {
+   "op": "goto",
+   "to": "FUGITIVE_M"
+  },
+  {
+   "op": "line",
+   "who": "CR-403",
+   "emo": "피곤",
+   "text": "…보고서엔 '교전'뿐이었지. 누가 먼저였는지는 없었다. 오늘은 못 본 걸로 한다. 분대 이동."
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "CR-403",
+   "emo": "기본",
+   "text": "도주 관리자… 아, 고개 검문소에서 경위가 정정됐다던데. '교전, 선후 불명.'"
+  },
+  {
+   "op": "line",
+   "who": "CR-403",
+   "emo": "피곤",
+   "text": "오늘은 대조만 하고 보낸다. 분대 이동."
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "CR-403",
+   "emo": "기본",
+   "text": "관리자 후보님이시군요. 대령님 방침 들었습니다. 지나가십시오."
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
   },
   {
    "op": "line",

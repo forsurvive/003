@@ -16,6 +16,8 @@ const START_R := 30.0                    ## 엿보기형 발동(외눈 목격) �
 const NEAR_R := 20.0                     ## 단계 20 '바위굴 반경 20타일'
 const STAND_R := 8.0                     ## 백구 대치가 시작되는 외눈과의 거리(칸)
 const STAND_S := 10.0
+const STAND_MIN := 6.0                    ## 대치가 적어도 이만큼은 선다(1-12l D-088 — 두 발로 지나가지 않게: 들개를 일찍 쫓아도 외눈과 백구는 마주 서 있다)
+const STAND_CAM := 2.5                    ## 처음 이만큼 카메라가 둘 사이를 잡는다
 const CHASE_FRAC := 0.7                  ## 피해 30% 이상 = HP 70% 이하
 const BAIT_MIN := 60                     ## 미끼를 놓고 무리가 옮기기까지(게임 분)
 const DOG_RETREAT := 0.2
@@ -33,6 +35,9 @@ var pack_on := false
 var band := ""                           ## 무리를 세운 시간대(nap · dusk · night · morn)
 var stand_t := -1.0                      ## 대치 남은 초(-1 = 아님)
 var _stand_done := false                 ## 이번에 세운 무리에서 대치를 한 번 했나
+var _stand_beat := 0                     ## 대치 박자(0 마주 섬 · 1 두 귀 · 2 카메라 놓음 · 3 무리가 다 물러섬)
+var _beat4 := false
+var _beat5 := false
 var _chased := {}
 var _perk_asked := false
 var _nap_asked := false
@@ -370,7 +375,7 @@ func _band_shift() -> void:
 
 
 ## 멀어지게 보낸다(from에서 반대쪽으로 걸어가 사라진다). to = 정해진 출구(바위굴이면 남쪽 숲길 · 북쪽 암굴)
-func _send_off(e: Enemy, from: Vector2, to := Vector2.INF) -> void:
+func _send_off(e, from: Vector2, to := Vector2.INF) -> void:          # e는 형 없이 — 대치를 기다리는 사이 쓰러져 지워진 들개가 올 수 있다(1-12l)
 	if not is_instance_valid(e) or e.cmb.dead:
 		return
 	e.wake()
@@ -447,6 +452,13 @@ func _stand_check() -> void:
 	for a in [one, m["actor"]]:
 		host.ev.balloons.append({"actor": a, "kind": "!", "t": 0.0})
 	host.ev.queue_redraw()
+	_stand_beat = 0
+	_beat4 = false
+	_beat5 = false
+	host.ev.cam_locked = true                                           # 둘 사이를 잡는다(SD-04a §4.1 연출 메모 — 컷 없이 맵 위에서)
+	var mid: Vector2 = (one.loco.logical + (m["actor"] as Actor).loco.logical) / 2.0 + Vector2(0, -16)
+	if host.is_inside_tree() and host.cam != null:
+		host.create_tween().tween_property(host.cam, "position", mid.round(), 0.6)
 	host.hint("외눈과 백구가 마주 섰다. 같은 흰 털, 같은 귀 — 그사이 들개를 쫓아낸다", 6.0)
 	_log("대치 시작")
 
@@ -463,6 +475,24 @@ func _face_spot(toward: Vector2) -> Vector2:
 
 func _stand_tick(dt: float) -> void:
 	stand_t -= dt
+	var gone := STAND_S - stand_t
+	var bw := _dog_mate()
+	if _stand_beat == 0 and gone >= 1.2 and is_instance_valid(one) and not bw.is_empty():
+		_stand_beat = 1                                                 # 두 귀가 동시에 선다
+		var mid: Vector2 = (one.loco.logical + (bw["actor"] as Actor).loco.logical) / 2.0
+		host.combat._pop("(두 귀가 동시에 선다)", mid + Vector2(0, -44), Color("F2E6C8"))
+	if _stand_beat == 1 and gone >= STAND_CAM:
+		_stand_beat = 2
+		host.ev.cam_locked = false                                      # 이제 주인공 몫 — 카메라는 다시 주인공을 따른다
+		if is_instance_valid(one):
+			host.combat._pop("으르르…", one.loco.logical + Vector2(0, -40), Color("D8C890"))
+	if _stand_beat in [2, 3] and gone >= 4.0 and not _beat4 and is_instance_valid(one) and not bw.is_empty():
+		_beat4 = true                                                   # 외눈이 한 발 물러서고 백구가 한 발 다가선다(1-12l 재미 검수)
+		host.combat._pop("(외눈이 한 발 물러선다)", one.loco.logical + Vector2(0, -44), Color("F2E6C8"))
+		host.ev.balloons.append({"actor": bw["actor"], "kind": "!", "t": 0.0})
+	if _beat4 and not _beat5 and gone >= 5.0 and is_instance_valid(one):
+		_beat5 = true
+		host.combat._pop("(외눈이 먼저 눈을 내린다)", one.loco.logical + Vector2(0, -44), Color("F2E6C8"))
 	for e in pack:
 		if not is_instance_valid(e) or e == one or _chased.has(e):
 			continue
@@ -473,13 +503,20 @@ func _stand_tick(dt: float) -> void:
 			_chased[e] = true
 			_send_off(e, host.player.loco.logical, host.map.mark_pos("X-BW:south_out"))   # 깨갱 — 숲으로 달아난다(처치 불필요)
 			host.ev.balloons.append({"actor": e, "kind": "!", "t": 0.0})
-	if _chased.size() >= 2:
+	var need := STAND_MIN - (1.5 if host.combat.holstered else 0.0)      # 총을 거두고 기다리면 조금 일찍 — 기다림이 '총을 거두는 선택'이 된다
+	if _chased.size() >= 2 and gone >= need:
 		stand_t = -1.0
 		_scatter()
 		return
+	if _chased.size() >= 2 and _stand_beat < 3:
+		_stand_beat = 3                                                 # 무리는 물러섰다 — 외눈은 아직 백구를 본다(대치가 끝까지 선다)
+		if host.ev.cam_locked:
+			host.ev.cam_locked = false
+		host.hint("들개들이 물러선다. 외눈은 아직 백구에게서 눈을 떼지 않는다 — 기다린다", 4.0)
 	var one_hit: bool = is_instance_valid(one) and (one.cmb.dead or one.cmb.hp < one.cmb.max_hp)
 	if stand_t <= 0.0 or one_hit or _dog_mate().is_empty():
 		stand_t = -1.0
+		host.ev.cam_locked = false
 		for e in pack:
 			_hostile(e)                                                 # 대치가 깨졌다: 무리가 덤빈다(해법 A로)
 		host.combat.mates.set_mode("C-015", "follow")
@@ -500,7 +537,19 @@ func _scatter() -> void:
 	var m := _dog_mate()
 	if not m.is_empty():
 		host.ev.balloons.append({"actor": m["actor"], "kind": "♪", "t": 0.0})
-	host.hint("무리가 흩어진다. 외눈이 인식표를 떨군 채 남쪽 능선으로 — 한 번 울부짖자 백구가 대답한다.", 7.0)
+	host.ev.cam_locked = false
+	host.hint("무리가 흩어진다. 외눈이 인식표를 떨군 채 남쪽 능선으로 간다.", 6.0)
+	var o := one
+	if not is_inside_tree():
+		_log("대치 성공 — 무리 흩어짐")
+		return
+	get_tree().create_timer(2.6).timeout.connect(func() -> void:          # 능선에서 한 번 울부짖고(외눈) — 백구가 대답한다(SD-04a §4.1 연출 메모)
+		if is_instance_valid(o) and not o.cmb.dead:
+			host.combat._pop("아우——", o.loco.logical + Vector2(0, -40), Color("F2E6C8")))
+	get_tree().create_timer(3.8).timeout.connect(func() -> void:
+		var bm := _dog_mate()
+		if not bm.is_empty() and is_instance_valid(bm["actor"]):
+			host.combat._pop("아우우…", (bm["actor"] as Actor).loco.logical + Vector2(0, -40), Color("F2E6C8")))
 	_log("대치 성공 — 무리 흩어짐")
 
 

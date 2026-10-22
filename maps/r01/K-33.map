@@ -1,23 +1,24 @@
 # 봉천 동 주민센터 민원실(SD-09a L-R01-32 실내 · SD-04a §4.4 SQ-S04 도성이 뒤척인다 · 단계 1-11c)
 # 26×14 · 왼쪽 민원 창구 셋(유리 칸막이) · 가운데 대기 의자 · 입구 곁 번호표 발급기(2077년 그대로 '대기 인원 412명') ·
 # 오른쪽 '대기 구역 B' 철망 우리(2077년 지침 부칙 '미등록 아동 보호 조치' — 파수가 남솔을 여기 둔다). 앞 마당의 파수는 월드 쪽(진행기).
+# 1-12l D-100: 동쪽 별채 창고(26~29열, SD-04a §4.4 해법 C '뒤 창고 창문') — 창고 창(SQS04_WINOUT)으로 월드 별채 창(SQS04_WINDOW)과 오간다 · 창고 문은 우리 앞 복도(25,11).
 map K-33 봉천 동 주민센터 민원실
 set bk
 grid
-##########################
-##########################
-##########################
-#tttttttttttttttttttttttt#
-#tttttttttttttttttttttttt#
-#tttttttttttttttttttttttt#
-#tttttttttttttttttttttttt#
-#tttttttttttttttttttttttt#
-#tttttttttttttttttttttttt#
-#tttttttttttttttttttttttt#
-#tttttttttttttttttttttttt#
-#tttttttttttttttttttttttt#
-#tttttttttttttttttttttttt#
-############tt############
+###############################
+###############################
+###############################
+#tttttttttttttttttttttttt#tttt#
+#tttttttttttttttttttttttt#tttt#
+#tttttttttttttttttttttttt#tttt#
+#tttttttttttttttttttttttt#tttt#
+#tttttttttttttttttttttttt#tttt#
+#tttttttttttttttttttttttt#tttt#
+#tttttttttttttttttttttttt#tttt#
+#tttttttttttttttttttttttt#tttt#
+#ttttttttttttttttttttttttttttt#
+#tttttttttttttttttttttttt#tttt#
+############tt#################
 end
 exit 12 13 W L-R01-32
 exit 13 13 W L-R01-32
@@ -64,3 +65,19 @@ prop folding_chair 22 5
 prop bucket 23 8
 prop tuft 14 11
 prop tuft2 3 12
+
+# ---------------------------------------------------------------- 1-12l D-100 동쪽 별채 창고(26~29열)
+mark from_back 27 4 S
+prop w_window 27 1
+text 27 3 "창고 창. 안쪽 걸쇠는 녹이 슬어 손으로 젖혀진다 — 밖은 별채 옆 골목." scene=SQS04_WINOUT
+prop steel_rack 26 5
+prop steel_rack 26 7
+prop file_cabinet 29 5
+prop crate_o 29 9
+prop crate 28 11
+prop bucket 26 10
+prop printout_pile 29 7
+box 26 5 civil name="창고 철제 선반"
+text 26 7 "철제 선반. 2077년 민원 서식 묶음 — '대피 등록 신청서'가 끈째 누렇다. 맨 아래 칸에 번호표 용지 두루마리." w=1
+text 29 9 "자재 상자. 비닐 덮개 아래 깨진 형광등 대롱과 녹슨 걸레받이." w=1
+text 25 11 "창고 문. 문짝은 떨어져 나가고 경첩만 남았다." w=1

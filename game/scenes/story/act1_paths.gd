@@ -56,6 +56,24 @@ func setup(h: InteriorHost, is_log := false) -> void:
 	host.map_entered.connect(_on_map)
 	host.combat.enemy_killed.connect(_on_killed)
 	host.combat.resident_hit.connect(_on_sb_hit)
+	host.day_tick.connect(_on_day)
+
+
+## 하루 판정: 황두칠 → 독사 소장 승계(1-12l D-082, SD-03a §6.3 · SD-04d §6 대체 제공자) — 죽은 날을 적고 사흘 뒤 칠판 · 소문에 선다.
+## SB_HEIR 1 독사 · 2 구만호(독사도 없음) · 9 잇는 사람 없음. 본소 재개장(2막 재방문 판)은 D-353.
+func _on_day(_d: int) -> void:
+	if st.is_dead("C-013") and v("SB_HDC_DAY") == 0:
+		st.vars.set_v("SB_HDC_DAY", maxi(1, v("GAME_DAY")))
+	if v("SB_HEIR") == 0 and v("SB_HDC_DAY") > 0 and v("GAME_DAY") >= v("SB_HDC_DAY") + 3:
+		var heir := 1 if not st.is_dead("C-021") else (2 if not st.is_dead("C-049") else 9)
+		st.vars.set_v("SB_HEIR", heir)
+		_log("새벽인력 승계 %d" % heir)
+	elif v("SB_HEIR") == 1 and st.is_dead("C-021"):                       # 승계한 독사가 죽었다 → 구만호 → 없음(사슬은 날마다 다시 본다)
+		st.vars.set_v("SB_HEIR", 2 if not st.is_dead("C-049") else 9)
+		_log("새벽인력 승계 다시 %d" % v("SB_HEIR"))
+	elif v("SB_HEIR") == 2 and st.is_dead("C-049"):
+		st.vars.set_v("SB_HEIR", 9)
+		_log("새벽인력 승계 다시 9")
 
 
 func v(k: String) -> int:

@@ -196,6 +196,7 @@ var fq_sb: FqSb                                         ## 세력 퀘스트 FQ-S
 var side_s11: SideS11                                   ## 여의도 사이드 퀘스트(1-11j — SQ-S11 토요일의 여의도)
 var uq71: Uq71                                          ## 비표시 퀘스트 UQ-71 원자력 버스(1-D1 — 대방 지하차도)
 var rq: RqR01                                           ## 반복 퀘스트 1막(1-12j — RQ-19 · 15 · 06 · 08 · 30, 공통 엔진 Repeat)
+var bjs: BjStop                                         ## 계엄군 초소 정지(1-12l — 도주 관리자 · 문서 검문 · 인수증)
 var u02: U02Paths                                       ## U02 남태령 지하(1-D2 — 터널 회로 UG-H01 · 밀통로 UG-H02 · 지하 초소)
 var uq04: Uq04                                          ## UQ-04 7호 냉동 창고(1-D3 — 독산 육가공 단지 DG-DS)
 var uq_r01: UqR01                                       ## R01 비표시 퀘스트 UQ-01 · 02 · 03 · 05(1-12g — 번개24 · 백구 · 엄도현 · 누렁이)
@@ -332,6 +333,10 @@ func _paths() -> void:
 		rq = RqR01.new()
 		add_child(rq)
 		rq.setup(host, log_on)
+	if bjs == null:
+		bjs = BjStop.new()
+		add_child(bjs)
+		bjs.setup(host, log_on)
 	if u02 == null:
 		u02 = U02Paths.new()
 		add_child(u02)

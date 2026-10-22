@@ -8,6 +8,13 @@ mark sentry 9 0 S                              # 파수 그림은 진행기 Side
 trigger 2 0 w=9 h=3 scene=MQ-102_SENTRY cond="V_ACT >= 1 and MQ102_ROBOT == 0 and SQ_S04_UP == 0" once
 text 9 0 "엎드린 경비 로봇." w=2 scene=MQ-102_SENTRY_AFTER
 
+# 봉천 동 주민센터 동쪽 별채(흰 벽돌) 창고 창(1-12l D-100 — SD-04a §4.4 해법 C '뒤 창고 창문'): 별채와 옆 건물 사이 골목 입구(정문 파수 길에서 등진 쪽 —
+#   골목을 따라 북쪽에서 다가오면 앞마당을 지나지 않는다. 재미 검수 ③). 창은 별채 벽 아랫단(왼쪽 한 칸), 조사는 골목 칸에서. [자물쇠 따기 25] → 민원실 창고(K-33 from_back)
+spot @915,1399 1 1
+prop annex_window -1 0 cond="SQ_S04_WIN == 0"
+prop annex_window -1 0 state=open cond="SQ_S04_WIN == 1"
+text 0 0 "별채 아랫단 창고 창. 녹슨 창살 셋, 걸쇠에 자물쇠 하나. 아래 자재 상자를 밟으면 손이 닿는다." scene=SQS04_WINDOW
+
 # 관악산 전망바위(L-R01-03, SD-09a B · 단계 1-5e): 데크 끝 동전 망원경 → 전망 장면(R01 전체 + 여의도 장소를 지도에 '표시').
 # 2077 안내판 '맑은 날에는 여의도 국회 돔과 남산 타워가 보입니다' — 돔은 무너졌고 탑은 그대로라 절반만 맞다.
 spot L-R01-03 7 4

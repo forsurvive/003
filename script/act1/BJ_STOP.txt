@@ -1,0 +1,291 @@
+# 계엄군 초소 정지 — 1-12l D-081 '도주 관리자' 검문 정지 · D-118 인수증(SD-03a §8.6 기울기 체감 · SD-06 §4.3.1 · 계획 _plans/1-12l_plan.md A)
+# 초안: Claude (SD-19 §9.3 단계 2). 리드 검수 대기.
+# 진행기: BjStop(scenes/story/bj_stop.gd) — 초소 앞 6칸에 들어오면 그 초소에서 하루 한 번 이 장면을 연다. 무엇으로 세웠나는 BJS_KIND 하나(P1):
+#   1 도주 관리자(MQ106_RESULT 1 — MQ-106에서 수색대와 싸움) · 3 적대 경고(AFF_BJ ≤ −60) · 4 여의도 초소 낮 문서 검문(MQ-104 뒤).
+# 사람: 초소 우두머리가 서 있으면 그가, 없으면 그 초소 계엄병(N-BJ-P2) · 다리목 분대장(N-BJ-C2)이 말한다(생사 · 자리 조건은 맵 배치와 같게).
+# 횟수(재미 검수 ①): BJS_N(그 초소에서 선 횟수) 2부터 짧게 · BJS_FIXED(화술 성공 '경위 정정')면 한 줄로 끝 · 같은 날 회차 뒤 되돌아오면 진행기가 장면 없이 불응으로 친다.
+# 인수증(SQ_S11_PASS — 선우진의 '기록물 인수 · 소지자 통행 협조')은 문서 검문(여의도 초소 · RE-061)에서만 통한다. 도주 관리자에겐 '사람 검문'이라 통하지 않는다(한 줄).
+# 옷: 공고문엔 얼굴 그림이 있다(옷은 바뀐다 — 옷을 단정하지 않는다). 계엄군 전투복(A-031, SQ-S06)을 입고 밤에 사당 고개를 지나면 계엄병은 경례한다(변장 — 낮의 황보서현은 속지 않는다).
+# 결과: @cmd bjs back <분>(회차 — 손을 들었으면 협조 기록) · pass(그날 통과) · fixed(경위 정정) · wait <분>(대조만) · run(정지 불응 — 초소 · 날마다 수배도 +5)
+
+# ================================================================ 사당 고개 검문소(X-SG) — 황보서현 소위
+@scene BJSTOP_SG  사당 고개 검문소 — 정지  (L-R01-19)
+@npc   -
+@cond  V_ACT >= 1
+? BJS_KIND == 3 -> HOSTILE
+? dead("N-R01-047") == 0 and GAME_HOUR >= 6 and GAME_HOUR < 20 -> HWANG
+? worn() == "A-031" -> DISGUISE
+? BJS_FIXED == 1 -> FIXED_P
+? BJS_N >= 2 -> AGAIN_P
+N-BJ-P2 [분노] 정지! 그 얼굴 — 공고문 사진이랑 똑같다. 도주 관리자다!
+N-BJ-P2 [기본] 손 보이는 데 둬. 대장님 안 계셔도 정지는 정지다.
+-> MENU
+* AGAIN_P
+N-BJ-P2 [피곤] 또 당신이야. 정지. 알지?
+-> MENU
+* FIXED_P
+N-BJ-P2 [기본] 정지 — 아, 경위 정정된 그 사람. 대조만 한다. 지나가.
+@cmd bjs pass
+-> END
+* DISGUISE
+SYS 차단봉 앞 계엄병이 군복을 보고 발을 모은다. 어둠 속이라 얼굴까지는 보지 않는다.
+N-BJ-P2 [기본] …수고하십니다. 야간 교대입니까.
+@cmd bjs pass
+-> END
+* HWANG
+? BJS_FIXED == 1 -> FIXED_H
+? BJS_N >= 2 -> AGAIN_H
+N-R01-047 [기본] 그 자리에서 정지. 도주 관리자 {P_FULL}.
+N-R01-047 [기본] 공고문 맨 윗줄이 당신입니다.
+N-R01-047 [기본] 고개 위에서 수색대를 쏜 사람 — 그날 이 검문소 분대가 들것을 들고 내려왔습니다.
+? worn() == "A-031" -> HWANG_UNI
+-> MENU
+* HWANG_UNI
+N-R01-047 [기본] (가슴께를 본다) 그 군복으로는 저를 못 지나갑니다. 실밥이 아직 새것이에요.
+-> MENU
+* AGAIN_H
+N-R01-047 [기본] 또 오셨군요. 정지입니다. 절차는 아시죠.
+-> MENU
+* FIXED_H
+N-R01-047 [기본] 정정된 경위서는 제가 썼습니다. 오늘은 대조만 하겠습니다. 지나가십시오 — 차단봉은 여전히 등록증입니다.
+@cmd bjs pass
+-> END
+* MENU
+> 손을 든다 -> HANDS
+> [화술 어려움] "총을 먼저 든 쪽은 수색대였소." -> TALK_OK | TALK_NO
+> 등을 돌려 걸어간다 -> RUN
+* HANDS
+SYS 계엄병이 핍-보이 띠를 판독기에 댄다. 무전기가 한참 지직거린다.
+? dead("N-R01-047") == 0 and GAME_HOUR >= 6 and GAME_HOUR < 20 -> HANDS_H
+N-BJ-P2 [기본] 대조 끝. 회차. 고개 아래로 내려가. 협조는 적어 둔다.
+@cmd bjs back 30
+-> END
+* HANDS_H
+N-R01-047 [기본] 대조 끝났습니다. 오늘은 회차입니다. 고개 아래로 내려가십시오.
+N-R01-047 [기본] 협조는 기록에 남깁니다. 그것도 기록이니까요.
+@cmd bjs back 30
+-> END
+* TALK_OK
+? dead("N-R01-047") == 0 and GAME_HOUR >= 6 and GAME_HOUR < 20 -> TALK_OK_H
+N-BJ-P2 [피곤] …보고서엔 '교전'이라고만 있었지. 누가 먼저였는지는 없었다. 됐다, 오늘은 그냥 가.
+@cmd bjs pass
+-> END
+# 황보서현은 경위서를 고친다 — 그 뒤 다른 초소 · RE-061 분대도 '정정된 경위'를 안다(같은 무전망)
+* TALK_OK_H
+N-R01-047 [기본] …보고서엔 '교전'이라고만 적혀 있었습니다. 누가 먼저였는지는 없었죠.
+N-R01-047 [기본] 경위서를 정정하겠습니다. '교전, 선후 불명.' 오늘은 정지 해제입니다.
+N-R01-047 [기본] 차단봉은 못 올립니다. 그건 등록증이 하는 일이에요.
+@cmd bjs fixed
+@cmd bjs pass
+-> END
+* TALK_NO
+? dead("N-R01-047") == 0 and GAME_HOUR >= 6 and GAME_HOUR < 20 -> TALK_NO_H
+N-BJ-P2 [분노] 말 길다. 회차!
+@cmd bjs back 0
+-> END
+* TALK_NO_H
+N-R01-047 [기본] 보고서는 보고서입니다. 회차하십시오.
+@cmd bjs back 0
+-> END
+* RUN
+SYS 등 뒤에서 무전기가 울린다. "정지 명령 불응 — 사당 고개, 기록!"
+@cmd bjs run
+-> END
+* HOSTILE
+? dead("N-R01-047") == 0 and GAME_HOUR >= 6 and GAME_HOUR < 20 -> HOSTILE_H
+N-BJ-P2 [분노] 적성 분자다! 한 걸음만 더 와 봐!
+@cmd bjs back 0
+-> END
+* HOSTILE_H
+N-R01-047 [분노] 적성 분자 {P_FULL}. 거기서 한 걸음 더 오면 분대가 쏩니다.
+N-R01-047 [분노] 물러서십시오. 지금이 마지막 경고입니다.
+@cmd bjs back 0
+-> END
+
+# ================================================================ 노량진 다리목 초소(L-R01-20) — 엄도현 하사(없으면 다리목 분대장)
+@scene BJSTOP_NR  노량진 다리목 초소 — 정지  (L-R01-20)
+@npc   -
+@cond  V_ACT >= 1
+? BJS_KIND == 3 -> HOSTILE
+? dead("N-R01-050") == 0 and UQ03_EOM < 2 -> EOM
+? BJS_FIXED == 1 -> FIXED_C
+? BJS_N >= 2 -> AGAIN_C
+N-BJ-C2 [분노] 정지! 도주 관리자 {P_FULL}. 다리목 공고판에 네 얼굴이 붙어 있다.
+-> MENU
+* AGAIN_C
+N-BJ-C2 [피곤] 또냐. 정지.
+-> MENU
+* FIXED_C
+N-BJ-C2 [기본] 정지 — 고개 검문소에서 경위 정정됐다더군. 지나가.
+@cmd bjs pass
+-> END
+* EOM
+? UQ03_PASS == 1 and UQ03_EOM == 0 -> EOM_DEAL
+? BJS_FIXED == 1 -> FIXED_E
+? BJS_N >= 2 -> AGAIN_E
+N-R01-050 [기본] 정지. …도주 관리자 {P_FULL}. 고개 위 일은 다리목에도 내려왔습니다.
+-> MENU
+* AGAIN_E
+N-R01-050 [피곤] 또 뵙네요. 정지입니다. …저도 이 말 그만하고 싶습니다.
+-> MENU
+* FIXED_E
+N-R01-050 [기본] 고개 검문소 황보 소위가 경위를 고쳤다더군요. '선후 불명.' 지나가십시오.
+@cmd bjs pass
+-> END
+# UQ-03 약속(분대는 가방을 안 연다)과 겹침: 약속은 가방 이야기 — 사람은 다르다. 다만 기록은 올리지 않는다(그의 방식)
+* EOM_DEAL
+N-R01-050 [기본] 정지. …도주 관리자. 고개 위 일은 다리목에도 내려왔습니다.
+N-R01-050 [피곤] 가방은 안 연다고 했죠. 그건 지킵니다. 사람은… 다릅니다.
+N-R01-050 [기본] 오늘은 그냥 돌아가 주십시오. 기록은 안 올리겠습니다. 제 분대가 당신을 못 본 겁니다.
+@cmd bjs back 0
+-> END
+* MENU
+> 손을 든다 -> HANDS
+> [화술 어려움] "총을 먼저 든 쪽은 수색대였소." -> TALK_OK | TALK_NO
+> 등을 돌려 걸어간다 -> RUN
+* HANDS
+SYS 판독기가 핍-보이 띠를 읽는다. '판독 불능.' 무전기가 한참 지직거린다.
+? dead("N-R01-050") == 0 and UQ03_EOM < 2 -> HANDS_E
+N-BJ-C2 [기본] 대조 끝. 다리목은 회차다. 강 건너는 판독기 구역이다.
+@cmd bjs back 30
+-> END
+* HANDS_E
+N-R01-050 [피곤] 대조 끝났습니다. 다리목은 회차입니다. 강 건너는 판독기 구역이에요. …몸조심하십시오.
+@cmd bjs back 30
+-> END
+* TALK_OK
+? dead("N-R01-050") == 0 and UQ03_EOM < 2 -> TALK_OK_E
+N-BJ-C2 [피곤] …그날 보고서엔 누가 먼저 쐈는지 없었지. 오늘은 넘어간다.
+@cmd bjs pass
+-> END
+* TALK_OK_E
+N-R01-050 [피곤] 고개 위 분대 놈들 성질은 압니다. …오늘은 정지 해제. 지나가십시오.
+@cmd bjs pass
+-> END
+* TALK_NO
+N-BJ-C2 [분노] 회차. 다음엔 대조실로 간다.
+@cmd bjs back 0
+-> END
+* RUN
+SYS 다리목 쪽에서 호루라기가 짧게 두 번. "불응자 — 기록!"
+@cmd bjs run
+-> END
+* HOSTILE
+SYS 다리목 모래주머니 너머로 총구 셋이 이쪽을 향한다.
+N-BJ-C2 [분노] 적성 분자. 다리목 밖으로 물러나. 셋 셀 동안.
+@cmd bjs back 0
+-> END
+
+# ================================================================ 여의도 환승센터 터 초소(L-R02-28) — 선우진 중위(없으면 초소 계엄병)
+@scene BJSTOP_YD  여의도 초소 — 정지  (L-R02-28)
+@npc   -
+@cond  V_ACT >= 1
+? BJS_KIND == 3 -> HOSTILE
+? BJS_KIND == 4 -> DOC
+? dead("C-034") == 0 and (MQ104_SEARCH == 0 or MQ104_SEARCH == 4) -> SUN
+? BJS_FIXED == 1 -> FIXED_P
+? BJS_N >= 2 -> AGAIN_P
+N-BJ-P2 [분노] 정지! 도주 관리자 — 손 머리 위로!
+-> MENU
+* AGAIN_P
+N-BJ-P2 [피곤] 또 당신이군. 정지.
+-> MENU
+* FIXED_P
+N-BJ-P2 [기본] 정지 — 경위 정정자. 대조만 한다. 통과.
+@cmd bjs pass
+-> END
+* SUN
+? BJS_FIXED == 1 -> FIXED_S
+? BJS_N >= 2 -> AGAIN_S
+C-034 [기본] 관리자 후보… 아니, 지금 서류엔 '도주 관리자'라고 적혀 있군요. 정지하십시오.
+C-034 [기본] 대령님이 그날 고개 위에서 '서류에 남는다'고 하셨죠. 남았습니다.
+-> MENU
+* AGAIN_S
+C-034 [기본] 또 오셨군요. 서류는 그대로입니다. 정지하십시오.
+-> MENU
+* FIXED_S
+C-034 [기본] 사당 고개에서 경위서가 정정됐더군요. '선후 불명.' 서류는 서류대로 — 오늘은 지나가십시오.
+@cmd bjs pass
+-> END
+* MENU
+> 손을 든다 -> HANDS
+> [화술 어려움] "총을 먼저 든 쪽은 수색대였소." -> TALK_OK | TALK_NO
+> (선우진의 인수증을 내민다) -> RCPT ?? SQ_S11_PASS == 1 and BJS_RCPTSAID == 0
+> 등을 돌려 걸어간다 -> RUN
+* RCPT
+! BJS_RCPTSAID = 1
+? dead("C-034") == 0 and (MQ104_SEARCH == 0 or MQ104_SEARCH == 4) -> RCPT_S
+N-BJ-P2 [기본] 기록물 인수증? 그건 가방 검사용이다. 지금 세운 건 가방이 아니라 너다.
+-> MENU
+* RCPT_S
+C-034 [기본] 제 서명이군요. 그건 기록물 인수증입니다.
+C-034 [기본] 오늘 당신을 세운 건 기록물이 아니라 고개 위의 일이고요.
+-> MENU
+* HANDS
+SYS 계엄병이 핍-보이 띠를 판독기에 댄다. 초소 무전기가 청계산 호출 부호를 두 번 부른다.
+N-BJ-P2 [기본] 대조 끝. 회차. 계엄 구역 밖으로. 협조는 적어 둔다.
+@cmd bjs back 30
+-> END
+* TALK_OK
+? dead("C-034") == 0 and (MQ104_SEARCH == 0 or MQ104_SEARCH == 4) -> TALK_OK_S
+N-BJ-P2 [피곤] …보고서엔 '교전'뿐이었지. 오늘은 넘어간다.
+@cmd bjs pass
+-> END
+* TALK_OK_S
+C-034 [기본] 그 말도 서류에 적겠습니다. 누가 먼저였는지는 그날 보고서에 없었으니까요. 오늘은 지나가십시오.
+@cmd bjs pass
+-> END
+* TALK_NO
+N-BJ-P2 [분노] 말 길다. 회차.
+@cmd bjs back 0
+-> END
+* RUN
+SYS 초소 확성기가 짧게 운다. "정지 명령 불응 — 여의도 초소!"
+@cmd bjs run
+-> END
+* HOSTILE
+N-BJ-P2 [분노] 적성 분자! 초소 앞 오십 미터 밖으로 — 지금!
+@cmd bjs back 0
+-> END
+# 낮 문서 검문(MQ-104 기울기 체감 — 말로 돌려보냈으면 이 검문이 없다 · 인수증이면 통과, D-118). 가방을 실제로 본다(재미 검수 ①)
+* DOC
+? BJS_N >= 2 -> DOC_AGAIN
+N-BJ-P2 [기본] 계엄 구역 검문. 가방 열어.
+-> DMENU
+* DOC_AGAIN
+N-BJ-P2 [피곤] 또 지나가는군. 가방.
+* DMENU
+> 가방을 연다 -> D_OPEN
+> (선우진의 인수증을 내민다) -> D_RCPT ?? SQ_S11_PASS == 1
+> 내 가방은 내 거다 -> D_REFUSE
+* D_OPEN
+SYS 계엄병이 가방을 뒤적인다.
+? has("M-306") == 1 -> D_DOC
+? has("A-031") == 1 and worn() != "A-031" -> D_UNI
+N-BJ-P2 [기본] …통과. 계엄 구역에선 무기 꺼내지 마.
+@cmd bjs wait 10
+-> END
+* D_UNI
+N-BJ-P2 [분노] (군복을 끄집어낸다) 이게 왜 네 가방에 있지? 이름표 자리는 비었고.
+N-BJ-P2 [기본] …압수는 안 한다. 내 일 늘리기 싫으니까. 대신 오늘은 회차.
+@cmd bjs back 10
+-> END
+# 국회 원본(SQ-S11 M-306)을 든 채 열었다 — S11 순찰 검문과 같은 결과(행방 1). 판정은 진행기 한 곳(s11 patrol give)
+* D_DOC
+N-BJ-P2 [기본] (누런 문서철을 꺼내 든다) 국회 문서. 정부 재산 회수 — 초소로 보낸다.
+@cmd s11 patrol give
+-> END
+* D_RCPT
+N-BJ-P2 [기본] 여의도 초소 — 기록물 인수, 소지자 통행 협조. …중위님 서명이군. 통과.
+? dead("C-034") == 0 and MQ104_SEARCH == 0 -> D_RCPT_S
+@cmd bjs pass
+-> END
+* D_RCPT_S
+C-034 [기본] (초소 안에서) 제 인수증입니다. 통과시켜.
+@cmd bjs pass
+-> END
+* D_REFUSE
+N-BJ-P2 [분노] 비협조 기록. 회차.
+! aff("BJ", -3)
+@cmd bjs back 0
+-> END

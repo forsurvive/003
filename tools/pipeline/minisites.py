@@ -6,7 +6,9 @@
 사슬(§5.3): 사연 쪽지의 30%가 다른 곳을 가리킨다 — ① 아직 표시 안 된 가까운 장소를 지도에 표시(fx reveal_near) ② 15~40칸 떨어진
 숨겨 둔 상자(방위·걸음 수를 글로 — 상자는 쪽지와 상관없이 늘 있다, SD-20 순서 무관).
 """
+import json
 import math
+import os
 import random
 
 DIR8 = ["동", "남동", "남", "남서", "서", "북서", "북", "북동"]
@@ -198,7 +200,23 @@ def place(api):
     stash_n = 0
     first = {}
 
+    # 정해진 행렬 길(FQ-SB-02 운송 — convoy_sb02.json, 지난 굽기의 경로) 둘레 5칸은 비운다: 소장소가 길을 막으면 행렬이 선다(1-12l — 고가 북 램프 끝에 비석 둘이 놓여 굽기가 멈춤)
+    lane = set()
+    cpath = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "game", "data", "world", "convoy_sb02.json")
+    if os.path.exists(cpath):
+        cj = json.load(open(cpath, encoding="utf-8"))
+        for seq in (cj.get("route", []), cj.get("detour", [])):
+            for a, b in zip(seq, seq[1:]):
+                n = max(abs(b[0] - a[0]), abs(b[1] - a[1]), 1)
+                for k in range(n + 1):
+                    px, py = round(a[0] + (b[0] - a[0]) * k / n), round(a[1] + (b[1] - a[1]) * k / n)
+                    for dy in range(-5, 6):
+                        for dx in range(-5, 6):
+                            lane.add((px + dx, py + dy))
+
     def far_enough(x, y, gap):
+        if (x, y) in lane:
+            return False
         for (sx, sy, sg) in placed_sites:
             if (sx - x) ** 2 + (sy - y) ** 2 < max(gap, sg) ** 2:
                 return False

@@ -149,7 +149,12 @@ func test_sq_s01_standoff(t) -> void:
 	t.ok(c.stand_t > 0.0, "한 마리로는 모자라다")
 	dogs[1].cmb.hp = dogs[1].cmb.max_hp * 0.69
 	c._stand_tick(0.5)
-	t.eq(int(st.vars.get_v("SQ_S01_SOL")), 2, "들개 둘을 30% 깎아 쫓았다 → 해법 B")
+	t.eq(int(st.vars.get_v("SQ_S01_SOL")), 0, "둘을 일찍 쫓아도 대치는 6초까지 선다(1-12l D-088)")
+	t.ok(c.stand_t > 0.0 and c._stand_beat == 3, "무리는 물러섰다 — 외눈은 아직 백구를 본다")
+	c._stand_tick(4.5)
+	t.ok(c._beat4 and c._beat5, "박자: 한 발 물러섬 · 먼저 눈을 내림")
+	c._stand_tick(0.6)
+	t.eq(int(st.vars.get_v("SQ_S01_SOL")), 2, "들개 둘을 30% 깎아 쫓았다 → 6초 뒤 해법 B")
 	t.eq(int(st.vars.get_v("SQ_S01_LEFT")), 1, "무리가 남쪽 능선으로")
 	t.eq(st.quests.stage("SQ-S01"), 31, "단계 31")
 	t.eq(int(st.vars.get_v("V_KARMA")), k0 + 50, "카르마 +50")

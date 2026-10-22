@@ -168,6 +168,9 @@ func _ready() -> void:
 	rq = RqR01.new()
 	add_child(rq)
 	rq.setup(host, true)
+	var bjs := BjStop.new()
+	add_child(bjs)
+	bjs.setup(host, true)
 	uq_r02 = UqR02.new()
 	add_child(uq_r02)
 	uq_r02.setup(host, true)
@@ -1347,6 +1350,42 @@ func _ready() -> void:
 				["check", "SQH_BATT == 81", "대장간 남무진에게 — 옥탑 조명"],
 				["settime", "2277. 10. 28.  18:30"], ["wait", 1.5],
 				["check", "SQ_S04_OUT == 6 and SQS04_STAGE == 100", "잠든 뒤 여섯 시간: 남태하가 철망을 연다 — 종료"]]
+		"bjs":                                                          # 1-12l D-081 · D-118: 사당 고개 도주 관리자 정지 → 손을 든다(회차) · 여의도 초소 문서 검문 → 인수증 · MQ-106 걸어 들어감 → 차단봉
+			for q in ["MQ-P1", "MQ-P2", "MQ-P3", "MQ-P4"]:
+				st.quests.set_stage(q, 100)
+			st.vars.set_v("V_ACT", 1)
+			st.quests.set_stage("MQ-101", 100)
+			st.vars.set_v("MQ101_NIGHT", 3)
+			st.quests.set_stage("MQ-104", 100)
+			st.vars.set_v("MQ106_RESULT", 1)
+			st.vars.set_v("AFF_BJ", -30)
+			st.vars.set_v("SQ_S11_PASS", 1)
+			st.vars.set_v("GAME_HOUR", 10)
+			host.date_text = "2277. 10. 27.  10:00"
+			host.enter("X-SG", "arrive")
+			plan = [["noenc"], ["want", ["손을 든다"]], ["go", 1113, 1458], ["wait", 2.0], ["shot", "sg_stop"],
+				["check", "BJS_SG_DAY == GAME_DAY", "사당 고개 — 도주 관리자 정지 · 손을 든다 · 회차(30분)"],
+				["set", "MQ106_RESULT", 2], ["warp", "W", "@804,1094"], ["wait", 1.0], ["want", ["인수증"]], ["go", 804, 1090], ["wait", 2.0], ["shot", "yd_doc"],
+				["check", "BJS_YD_DAY == GAME_DAY and BJS_KIND == 4", "여의도 초소 낮 문서 검문 → 선우진의 인수증으로 통과"],
+				["set", "MQ106_RESULT", 4], ["set", "AFF_BJ", -15], ["warp", "X-SG", "arrive"], ["wait", 1.0], ["shot", "sg_boom"],
+				["check", "BJS_SG_DAY == GAME_DAY", "걸어 들어감 + 중립 — 정지 없이(차단봉 오름은 화면으로)"]]
+		"s04w":                                                         # 1-12l D-100: 별채 창고 창 [자물쇠 25] → 창고 → 철망 → 남솔 → 창고 창으로 나감
+			for q in ["MQ-P1", "MQ-P2", "MQ-P3", "MQ-P4"]:
+				st.quests.set_stage(q, 100)
+			st.vars.set_v("V_ACT", 1)
+			st.quests.set_stage("MQ-101", 100)
+			st.vars.set_v("MQ101_NIGHT", 3)
+			st.quests.set_stage("SQ-S04", 20)
+			st.vars.set_v("SQ_S04_HELD", 1)
+			st.vars.set_v("SQ_S04_SLEEP", 1)
+			st.vars.set_v("PC_SKP_LOCKPICK", 50)
+			host.enter("W", "@916,1393")
+			plan = [["noenc"], ["wait", 1.0], ["go", 915, 1398], ["shot", "window_out"], ["want", ["[자물쇠 따기 25] 걸쇠"]], ["use", 915, 1399], ["wait", 2.0],
+				["check", "map:K-33", "별채 창고 창 → 민원실 창고(K-33)"], ["shot", "storeroom"],
+				["want", ["[자물쇠 따기 25] 휘장"]], ["go", 20, 12, "K-33"], ["use", 20, 11], ["wait", 2.0],
+				["check", "SQ_S04_HELD == 0", "철망을 따고 남솔을 빼냄"],
+				["want", ["창턱을 넘어"]], ["go", 27, 4, "K-33"], ["use", 27, 3], ["wait", 2.0],
+				["check", "SQ_S04_WIN == 1 and SQ_S04_HELD == 0", "창고 창으로 나감 — 별채 옆 골목"], ["shot", "window_back"]]
 		"mapk":                                                         # 1-12k 지도 화면: 망원경 훑기(원경 S 둘 + 금탑) → 봉천 링 화면 → 교역로 쌍(사다리 앞 → 사당 30분) → 벙커 앞 '여기였나'(단서 2)
 			st.vars.set_v("V_ACT", 1)
 			st.vars.set_v("V_REGCARD", 2)

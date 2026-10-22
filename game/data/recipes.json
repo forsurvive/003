@@ -1,6 +1,6 @@
 {
  "I-067": {
-  "_src": "13_items.md:1247",
+  "_src": "13_items.md:1249",
   "blueprint": "",
   "caps": 0,
   "cook": false,
@@ -32,7 +32,7 @@
   "value_out": 60
  },
  "I-077": {
-  "_src": "13_items.md:1270",
+  "_src": "13_items.md:1272",
   "blueprint": "",
   "caps": 0,
   "cook": true,
@@ -69,7 +69,7 @@
   }
  },
  "I-078": {
-  "_src": "13_items.md:1271",
+  "_src": "13_items.md:1273",
   "blueprint": "",
   "caps": 0,
   "cook": true,
@@ -106,7 +106,7 @@
   }
  },
  "I-079": {
-  "_src": "13_items.md:1272",
+  "_src": "13_items.md:1274",
   "blueprint": "",
   "caps": 0,
   "cook": true,
@@ -143,7 +143,7 @@
   }
  },
  "I-080": {
-  "_src": "13_items.md:1273",
+  "_src": "13_items.md:1275",
   "blueprint": "",
   "caps": 0,
   "cook": true,
@@ -193,7 +193,7 @@
   }
  },
  "I-081": {
-  "_src": "13_items.md:1274",
+  "_src": "13_items.md:1276",
   "blueprint": "",
   "caps": 0,
   "cook": true,
@@ -213,7 +213,7 @@
   "rad_rule": "flat"
  },
  "I-082": {
-  "_src": "13_items.md:1275",
+  "_src": "13_items.md:1277",
   "blueprint": "",
   "caps": 0,
   "cook": true,
@@ -239,7 +239,7 @@
   "rad_rule": "flat"
  },
  "I-083": {
-  "_src": "13_items.md:1276",
+  "_src": "13_items.md:1278",
   "blueprint": "",
   "caps": 0,
   "cook": true,
@@ -265,7 +265,7 @@
   "rad_rule": "flat"
  },
  "I-084": {
-  "_src": "13_items.md:1277",
+  "_src": "13_items.md:1279",
   "blueprint": "",
   "caps": 0,
   "cook": true,
@@ -285,7 +285,7 @@
   "rad_rule": "flat"
  },
  "M-074": {
-  "_src": "13_items.md:1250",
+  "_src": "13_items.md:1252",
   "blueprint": "",
   "caps": 0,
   "cook": false,
@@ -317,7 +317,7 @@
   "value_out": 150
  },
  "W-151": {
-  "_src": "13_items.md:1240",
+  "_src": "13_items.md:1242",
   "blueprint": "M-100",
   "caps": 10,
   "cook": false,
@@ -349,7 +349,7 @@
   "value_out": 75
  },
  "W-152": {
-  "_src": "13_items.md:1241",
+  "_src": "13_items.md:1243",
   "blueprint": "M-101",
   "caps": 0,
   "cook": false,
@@ -388,7 +388,7 @@
   "value_out": 50
  },
  "W-153": {
-  "_src": "13_items.md:1242",
+  "_src": "13_items.md:1244",
   "blueprint": "M-102",
   "caps": 0,
   "cook": false,
@@ -426,7 +426,7 @@
   "value_out": 220
  },
  "W-154": {
-  "_src": "13_items.md:1243",
+  "_src": "13_items.md:1245",
   "blueprint": "M-103",
   "caps": 0,
   "cook": false,
@@ -464,7 +464,7 @@
   "value_out": 200
  },
  "W-155": {
-  "_src": "13_items.md:1244",
+  "_src": "13_items.md:1246",
   "blueprint": "M-104",
   "caps": 0,
   "cook": false,
@@ -502,7 +502,7 @@
   "value_out": 200
  },
  "W-156": {
-  "_src": "13_items.md:1245",
+  "_src": "13_items.md:1247",
   "blueprint": "M-105",
   "caps": 0,
   "cook": false,
@@ -540,7 +540,7 @@
   "value_out": 500
  },
  "W-157": {
-  "_src": "13_items.md:1246",
+  "_src": "13_items.md:1248",
   "blueprint": "M-106",
   "caps": 0,
   "cook": false,
@@ -578,7 +578,7 @@
   "value_out": 150
  },
  "건설용 대못": {
-  "_src": "13_items.md:1248",
+  "_src": "13_items.md:1250",
   "blueprint": "",
   "caps": 0,
   "cook": false,
@@ -598,7 +598,7 @@
   "value_out": 20
  },
  "마취 다트": {
-  "_src": "13_items.md:1249",
+  "_src": "13_items.md:1251",
   "blueprint": "",
   "caps": 0,
   "cook": false,

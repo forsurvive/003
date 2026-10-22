@@ -6,17 +6,31 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "PAY": 4,
-  "TALK_OK": 7,
-  "TALK_FAIL": 10,
-  "FIGHT": 13,
-  "FRIEND": 16
+  "PAY": 6,
+  "TALK_OK": 9,
+  "TALK_FAIL": 12,
+  "FIGHT": 15,
+  "FRIEND": 18,
+  "HEIR_DOK": 21,
+  "PAY3": 24,
+  "HEIR_GU": 27,
+  "PAY_GU": 29
  },
  "ops": [
   {
    "op": "if",
    "cond": "AFF_SB >= 20",
    "to": "FRIEND"
+  },
+  {
+   "op": "if",
+   "cond": "SB_HEIR == 1 and dead(\"C-021\") == 0",
+   "to": "HEIR_DOK"
+  },
+  {
+   "op": "if",
+   "cond": "SB_HEIR == 2 and dead(\"C-049\") == 0",
+   "to": "HEIR_GU"
   },
   {
    "op": "line",
@@ -144,6 +158,125 @@
    "who": "CR-438",
    "emo": "미소",
    "text": "거래처 손님이네. 그냥 가."
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "CR-438",
+   "emo": "분노",
+   "text": "새벽인력 검문. …볼트 옷 그림이다. 소장님 방침 들었지 — 통행세 말고 몸으로."
+  },
+  {
+   "op": "line",
+   "who": "CR-438",
+   "emo": "기본",
+   "text": "독사 형님이 그러더라. 값은 올랐다고."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "세 배를 낸다",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 90
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PAY3",
+     "id": "RE-064_TALK:2:0"
+    },
+    {
+     "text": "독사한테 전해. 장부는 사람보다 오래 산다며",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "어려움"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "TALK_OK",
+     "id": "RE-064_TALK:2:1",
+     "fail": "FIGHT"
+    },
+    {
+     "text": "안 낸다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "FIGHT",
+     "id": "RE-064_TALK:2:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "CR-438",
+   "emo": "미소",
+   "text": "독사 형님 장부에 적어 둔다. 다음엔 더 올라."
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "CR-438",
+   "emo": "피곤",
+   "text": "새벽인력 검문. …실장님이 장부 정리 중이라 통행세는 반값이야. 15캡. 영수증도 써 줘."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "낸다",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 15
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PAY_GU",
+     "id": "RE-064_TALK:3:0"
+    },
+    {
+     "text": "안 낸다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "FIGHT",
+     "id": "RE-064_TALK:3:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "CR-438",
+   "emo": "기본",
+   "text": "영수증. '새벽인력 — 통행세 15 — 대행 구'. 잃어버리지 마. 실장님은 그걸 다 맞춰 봐."
   },
   {
    "op": "cmd",

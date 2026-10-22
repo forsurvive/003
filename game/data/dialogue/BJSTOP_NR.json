@@ -1,0 +1,350 @@
+{
+ "id": "BJSTOP_NR",
+ "title": "노량진 다리목 초소 — 정지",
+ "loc": "L-R01-20",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "AGAIN_C": 6,
+  "FIXED_C": 8,
+  "EOM": 11,
+  "AGAIN_E": 16,
+  "FIXED_E": 18,
+  "EOM_DEAL": 21,
+  "MENU": 26,
+  "HANDS": 27,
+  "HANDS_E": 32,
+  "TALK_OK": 35,
+  "TALK_OK_E": 39,
+  "TALK_NO": 42,
+  "RUN": 45,
+  "HOSTILE": 48
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "BJS_KIND == 3",
+   "to": "HOSTILE"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R01-050\") == 0 and UQ03_EOM < 2",
+   "to": "EOM"
+  },
+  {
+   "op": "if",
+   "cond": "BJS_FIXED == 1",
+   "to": "FIXED_C"
+  },
+  {
+   "op": "if",
+   "cond": "BJS_N >= 2",
+   "to": "AGAIN_C"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-C2",
+   "emo": "분노",
+   "text": "정지! 도주 관리자 \\V[P_FULL]. 다리목 공고판에 네 얼굴이 붙어 있다."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-C2",
+   "emo": "피곤",
+   "text": "또냐. 정지."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-C2",
+   "emo": "기본",
+   "text": "정지 — 고개 검문소에서 경위 정정됐다더군. 지나가."
+  },
+  {
+   "op": "cmd",
+   "name": "bjs",
+   "args": [
+    "pass"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "UQ03_PASS == 1 and UQ03_EOM == 0",
+   "to": "EOM_DEAL"
+  },
+  {
+   "op": "if",
+   "cond": "BJS_FIXED == 1",
+   "to": "FIXED_E"
+  },
+  {
+   "op": "if",
+   "cond": "BJS_N >= 2",
+   "to": "AGAIN_E"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "기본",
+   "text": "정지. …도주 관리자 \\V[P_FULL]. 고개 위 일은 다리목에도 내려왔습니다."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "피곤",
+   "text": "또 뵙네요. 정지입니다. …저도 이 말 그만하고 싶습니다."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "기본",
+   "text": "고개 검문소 황보 소위가 경위를 고쳤다더군요. '선후 불명.' 지나가십시오."
+  },
+  {
+   "op": "cmd",
+   "name": "bjs",
+   "args": [
+    "pass"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "기본",
+   "text": "정지. …도주 관리자. 고개 위 일은 다리목에도 내려왔습니다."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "피곤",
+   "text": "가방은 안 연다고 했죠. 그건 지킵니다. 사람은… 다릅니다."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "기본",
+   "text": "오늘은 그냥 돌아가 주십시오. 기록은 안 올리겠습니다. 제 분대가 당신을 못 본 겁니다."
+  },
+  {
+   "op": "cmd",
+   "name": "bjs",
+   "args": [
+    "back",
+    "0"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "손을 든다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "HANDS",
+     "id": "BJSTOP_NR:1:0"
+    },
+    {
+     "text": "\"총을 먼저 든 쪽은 수색대였소.\"",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "어려움"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "TALK_OK",
+     "id": "BJSTOP_NR:1:1",
+     "fail": "TALK_NO"
+    },
+    {
+     "text": "등을 돌려 걸어간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "RUN",
+     "id": "BJSTOP_NR:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "판독기가 핍-보이 띠를 읽는다. '판독 불능.' 무전기가 한참 지직거린다."
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R01-050\") == 0 and UQ03_EOM < 2",
+   "to": "HANDS_E"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-C2",
+   "emo": "기본",
+   "text": "대조 끝. 다리목은 회차다. 강 건너는 판독기 구역이다."
+  },
+  {
+   "op": "cmd",
+   "name": "bjs",
+   "args": [
+    "back",
+    "30"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "피곤",
+   "text": "대조 끝났습니다. 다리목은 회차입니다. 강 건너는 판독기 구역이에요. …몸조심하십시오."
+  },
+  {
+   "op": "cmd",
+   "name": "bjs",
+   "args": [
+    "back",
+    "30"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R01-050\") == 0 and UQ03_EOM < 2",
+   "to": "TALK_OK_E"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-C2",
+   "emo": "피곤",
+   "text": "…그날 보고서엔 누가 먼저 쐈는지 없었지. 오늘은 넘어간다."
+  },
+  {
+   "op": "cmd",
+   "name": "bjs",
+   "args": [
+    "pass"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-050",
+   "emo": "피곤",
+   "text": "고개 위 분대 놈들 성질은 압니다. …오늘은 정지 해제. 지나가십시오."
+  },
+  {
+   "op": "cmd",
+   "name": "bjs",
+   "args": [
+    "pass"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-C2",
+   "emo": "분노",
+   "text": "회차. 다음엔 대조실로 간다."
+  },
+  {
+   "op": "cmd",
+   "name": "bjs",
+   "args": [
+    "back",
+    "0"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "다리목 쪽에서 호루라기가 짧게 두 번. \"불응자 — 기록!\""
+  },
+  {
+   "op": "cmd",
+   "name": "bjs",
+   "args": [
+    "run"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "다리목 모래주머니 너머로 총구 셋이 이쪽을 향한다."
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-C2",
+   "emo": "분노",
+   "text": "적성 분자. 다리목 밖으로 물러나. 셋 셀 동안."
+  },
+  {
+   "op": "cmd",
+   "name": "bjs",
+   "args": [
+    "back",
+    "0"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/BJ_STOP.txt"
+}

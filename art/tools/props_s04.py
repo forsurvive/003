@@ -7,6 +7,7 @@
   chain_fence     철조망 울타리 한 칸(1×1, 가로) — 콘크리트 기둥 · 철망 · 윗줄 가시철사 · 상태 cut(잘려 벌어진 틈)
   w_civil_sign    민원실 벽 간판(벽 소품 2칸) — 2077년 '민원실' + 붙인 종이 '대기 구역 B · 미등록 아동 보호 조치'
   care_cloth      각성회 정비 의식 흔적(덧그림) — 흰 천 · 기름 깡통 · 대기등 심지(D 해법 뒤 주민센터 앞)
+  annex_window    주민센터 동쪽 별채 창고 창(덧그림, 1-12l D-100) — 녹슨 창살 셋 · 걸쇠 자물쇠 · 반쯤 뜯긴 판자 · 자재 상자 · 상태 open
 props_bc.PROPS에 합쳐져 r01_props 아틀라스로 나간다."""
 import math
 import os
@@ -195,6 +196,57 @@ def civil_post():
     return im
 
 
+def annex_window(state=""):
+    """주민센터 동쪽 별채(흰 벽돌) 창고 창(덧그림, 1-12l D-100 — SD-04a §4.4 해법 C '뒤 창고 창문'): 벽 아랫단 작은 창 · 녹슨 창살 셋(하나 휨) ·
+    걸쇠 자물쇠 · 비스듬히 반쯤 뜯긴 판자 · 아래 기대 놓은 자재 상자(밟고 오른다). 상태 open = 창살 틀이 안으로 젖혀지고 자물쇠가 걸쇠에 매달림."""
+    W, H = 32, 58
+    im = img(W, H)
+    d = ImageDraw.Draw(im)
+    wx0, wy0, wx1, wy1 = 6, 6, 26, 26                                         # 창 구멍(벽 위)
+    d.rectangle([wx0 - 2, wy0 - 2, wx1 + 2, wy1 + 2], fill=C(INK))
+    d.rectangle([wx0 - 1, wy0 - 1, wx1 + 1, wy1 + 1], fill=C("P06"))          # 콘크리트 창틀(벽돌보다 어둡다)
+    d.line([wx0 - 1, wy1 + 1, wx1 + 1, wy1 + 1], fill=C("P05"))
+    d.rectangle([wx0, wy0, wx1, wy1], fill=C("P02"))                          # 안쪽 어둠
+    for (x, y) in ((wx0 + 1, wy0 + 1), (wx0 + 2, wy0 + 1), (wx0 + 1, wy0 + 2)):
+        d.point((x, y), fill=C("P04"))                                        # 안쪽 먼지 빛
+    d.polygon([(wx0 + 1, wy1 - 1), (wx0 + 7, wy1 - 1), (wx0 + 2, wy1 - 8)], fill=C("P13"))   # 깨진 유리 조각
+    d.line([wx0 + 2, wy1 - 8, wx0 + 7, wy1 - 1], fill=C("P14"))
+    if state == "open":
+        d.polygon([(wx0, wy0), (wx1, wy0), (wx1 - 4, wy0 + 5), (wx0 + 4, wy0 + 5)], fill=C(INK))   # 안으로 젖힌 창살 틀
+        for x in (wx0 + 6, wx0 + 10, wx0 + 14):
+            d.line([x, wy0 + 1, x - 1, wy0 + 4], fill=C("P25"))
+        d.line([wx1, wy0 + 12, wx1, wy1 - 6], fill=C("P06"))                  # 걸쇠에 매달린 자물쇠(열림)
+        d.rectangle([wx1 - 2, wy1 - 6, wx1 + 3, wy1 - 1], fill=C(INK)); d.rectangle([wx1 - 1, wy1 - 5, wx1 + 2, wy1 - 2], fill=C("P48"))
+        d.point((wx1, wy1 - 4), fill=C("P49"))
+    else:
+        for i, x in enumerate((wx0 + 5, wx0 + 10, wx0 + 15)):
+            bend = 2 if i == 1 else 0                                         # 가운데 창살이 휘었다
+            d.line([x, wy0, x + bend, (wy0 + wy1) // 2, x, wy1], fill=C("P25"), width=2)
+            d.line([x, wy0, x + bend, (wy0 + wy1) // 2, x, wy1], fill=C("P26"))
+        d.line([wx0, wy0 + 9, wx1, wy0 + 9], fill=C(INK), width=2)           # 가로 띠
+        d.line([wx0, wy0 + 9, wx1, wy0 + 9], fill=C("P26"))
+        d.rectangle([wx1 - 3, wy0 + 11, wx1 + 2, wy0 + 16], fill=C(INK)); d.rectangle([wx1 - 2, wy0 + 12, wx1 + 1, wy0 + 15], fill=C("P48"))   # 걸쇠 자물쇠(놋쇠)
+        d.point((wx1 - 1, wy0 + 13), fill=C(INK))
+    d.polygon([(2, 20), (5, 17), (30, 9), (30, 13), (5, 21)], fill=C(INK))  # 반쯤 뜯긴 판자(왼쪽 못만 남음)
+    d.polygon([(3, 19), (5, 18), (29, 10), (29, 12), (5, 20)], fill=C("P19"))
+    d.line([5, 18, 29, 10], fill=C("P20"))
+    d.point((5, 19), fill=C("P07")); d.point((27, 11), fill=C("P17"))
+    for (x, y) in ((wx0 + 3, wy1 + 3), (wx0 + 4, wy1 + 4), (wx0 + 3, wy1 + 5), (wx1 - 4, wy1 + 3), (wx1 - 5, wy1 + 4),
+                   (wx0 + 10, wy1 + 3), (wx0 + 11, wy1 + 5)):              # 창 아래 번진 녹 얼룩(디더 — 줄이 다리처럼 보이지 않게)
+        d.point((x, y), fill=C("P24"))
+    cy0 = 38                                                                 # 기대 놓은 자재 상자
+    d.rectangle([5, cy0, 27, H - 3], fill=C(INK))
+    d.rectangle([6, cy0 + 1, 26, H - 4], fill=C("P19"))
+    d.line([6, cy0 + 1, 26, cy0 + 1], fill=C("P20"))
+    for y in (cy0 + 12,):
+        d.line([6, y, 26, y], fill=C("P17"))
+    for (x, y) in ((7, cy0 + 2), (25, cy0 + 2), (7, cy0 + 14), (25, cy0 + 14)):
+        d.point((x, y), fill=C("P05"))                                        # 못 머리
+    put_text(im, "자재", 9, cy0 + 2, "P21", 8, "Galmuri7")
+    _shadow(d, 4, 29, H - 2)
+    return im
+
+
 def care_cloth(seed=13):
     """각성회 정비 의식 흔적(덧그림): 접어 둔 흰 천 · 기름 깡통 · 꺼진 대기등 심지 둘."""
     im = img(32, 22)
@@ -221,6 +273,7 @@ PROPS_S04 = {
     "w_civil_sign": _r(w_civil_sign, 2, 0, "wall", dx=0, dy=4),
     "care_cloth": _r(care_cloth, 0, 0, "deco"),
     "civil_post": _r(civil_post, 3, 1, down=-2),
+    "annex_window": _r(annex_window, 0, 0, "deco"),                          # 1-12l D-100 별채 창고 창(덧그림 — 벽 아랫단, 아래 칸에서 조사)
 }
 
 STATES_S04 = {
@@ -228,6 +281,7 @@ STATES_S04 = {
     "fission_socket": {"empty": lambda: fission_socket("empty")},
     "brain4": {"off": lambda: brain4("off")},
     "chain_fence": {"cut": lambda: chain_fence("cut")},
+    "annex_window": {"open": lambda: annex_window("open")},
 }
 
 

@@ -328,7 +328,7 @@ N-R02-039 [슬픔] …이름으로 불러 줄 사람이 없네. (판자 아이 �
 # ---------------------------------------------------------------- 쪽방 할매(통로 일 — 해법 ②)
 @scene SQS09_GEUM  쪽방 할매 길금순 — 통로  (L-R02-20)
 @npc   N-R02-042
-@cond  V_ACT >= 1 and SQ_S09_START > 0 and (SB_127 == 2 or SQ_S09_NOTICE > 0 or SQ_S09_CLOSED == 1 or (SQ_S09_SOL1 > 0 and SQ_S09_REQ == 0 and SQ_S09_SOL2 == 0) or (SQ_S09_PLACE > 0 and SQ_S09_PLACE != 9))
+@cond  V_ACT >= 1 and (SQ_S09_START > 0 or SQ_S09_NOTICE > 0) and (SB_127 == 2 or SQ_S09_NOTICE > 0 or SQ_S09_CLOSED == 1 or (SQ_S09_SOL1 > 0 and SQ_S09_REQ == 0 and SQ_S09_SOL2 == 0) or (SQ_S09_PLACE > 0 and SQ_S09_PLACE != 9))
 ? SQ_S09_CLOSED == 1 -> CLOSED
 ? SQ_S09_SOL2 > 0 -> AFTER
 ? SQ_S09_NOTICE > 0 -> NOTICE
@@ -349,7 +349,13 @@ N-R02-042 [미소] 구로 그 집 사람들 소식 들었어. 이름으로 산�
 N-R02-042 [미소] 그 사람 내 칸에 있어. 이불 덮고. 목이 가볍다고 자꾸 만져.
 -> MENU
 * NOTICE
+? SQ_S09_START == 0 -> NOTICE_MQ
 N-R02-042 [분노] 갈고리가 벽장 냄새를 맡았어. 사흘이면 부수러 와. 길을 지하로 잇든, 갈고리 눈을 돌리든, 아예 막든.
+-> NOTICE_OPTS
+# 1-12l D-083: 본소 우리에서 풀려난 사람들이 이 벽장으로 지나간 뒤(MQ-105) — 할매는 누가 풀었는지 안다(지나간 사람들이 말했다)
+* NOTICE_MQ
+N-R02-042 [분노] 당신이지, 본소 우리 문 딴 사람. 다들 내 벽장으로 나갔어. 고마워. …근데 갈고리가 벽장 냄새를 맡았어.
+N-R02-042 [기본] 사흘이면 부수러 와. 길을 지하로 잇든, 갈고리 눈을 돌리든, 아예 막든. 다음 사람도 있으니까.
 * NOTICE_OPTS
 > 지하로 잇는다 — 벽 사이 무너진 데가 있던데 -> DOWN
 > 갈고리 눈을 돌린다 — 운송로를 바꾸면 -> ORDER
@@ -369,7 +375,12 @@ N-R02-042 [슬픔] (벽장 안 봉투를 꺼낸다) 마흔 명. 이름이랑 나
 N-R02-042 [미소] 길 일은 끝났어. 칸 비어 있어.
 -> MENU
 * CLOSED
+? SB_127 < 2 and SB_FREED > 0 -> CLOSED_N
 N-R02-042 [슬픔] 마흔한 번째가 마지막이 됐네. …그래도 그 사람은 나갔잖아.
+-> MENU
+# 1-12l D-083: 127번이 아니라 우리 다른 칸 사람들이 이 길로 나갔을 때
+* CLOSED_N
+N-R02-042 [슬픔] 벽장은 끝났어. …그래도 우리 칸 사람들은 이 길로 나갔잖아. 그걸로 됐어.
 * MENU
 > 국 한 그릇 얻어먹는다 -> SOUP ?? SQ_S09_PLACE > 0 and SQ_S09_PLACE != 9
 > 눈을 붙이고 간다 -> SLEEP

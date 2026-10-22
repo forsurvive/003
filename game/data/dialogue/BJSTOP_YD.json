@@ -1,0 +1,536 @@
+{
+ "id": "BJSTOP_YD",
+ "title": "여의도 초소 — 정지",
+ "loc": "L-R02-28",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "AGAIN_P": 7,
+  "FIXED_P": 9,
+  "SUN": 12,
+  "AGAIN_S": 17,
+  "FIXED_S": 19,
+  "MENU": 22,
+  "RCPT": 23,
+  "RCPT_S": 27,
+  "HANDS": 30,
+  "TALK_OK": 34,
+  "TALK_OK_S": 38,
+  "TALK_NO": 41,
+  "RUN": 44,
+  "HOSTILE": 47,
+  "DOC": 50,
+  "DOC_AGAIN": 53,
+  "DMENU": 54,
+  "D_OPEN": 55,
+  "D_UNI": 61,
+  "D_DOC": 65,
+  "D_RCPT": 68,
+  "D_RCPT_S": 72,
+  "D_REFUSE": 75
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "BJS_KIND == 3",
+   "to": "HOSTILE"
+  },
+  {
+   "op": "if",
+   "cond": "BJS_KIND == 4",
+   "to": "DOC"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"C-034\") == 0 and (MQ104_SEARCH == 0 or MQ104_SEARCH == 4)",
+   "to": "SUN"
+  },
+  {
+   "op": "if",
+   "cond": "BJS_FIXED == 1",
+   "to": "FIXED_P"
+  },
+  {
+   "op": "if",
+   "cond": "BJS_N >= 2",
+   "to": "AGAIN_P"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P2",
+   "emo": "분노",
+   "text": "정지! 도주 관리자 — 손 머리 위로!"
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P2",
+   "emo": "피곤",
+   "text": "또 당신이군. 정지."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P2",
+   "emo": "기본",
+   "text": "정지 — 경위 정정자. 대조만 한다. 통과."
+  },
+  {
+   "op": "cmd",
+   "name": "bjs",
+   "args": [
+    "pass"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "BJS_FIXED == 1",
+   "to": "FIXED_S"
+  },
+  {
+   "op": "if",
+   "cond": "BJS_N >= 2",
+   "to": "AGAIN_S"
+  },
+  {
+   "op": "line",
+   "who": "C-034",
+   "emo": "기본",
+   "text": "관리자 후보… 아니, 지금 서류엔 '도주 관리자'라고 적혀 있군요. 정지하십시오."
+  },
+  {
+   "op": "line",
+   "who": "C-034",
+   "emo": "기본",
+   "text": "대령님이 그날 고개 위에서 '서류에 남는다'고 하셨죠. 남았습니다."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "C-034",
+   "emo": "기본",
+   "text": "또 오셨군요. 서류는 그대로입니다. 정지하십시오."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "C-034",
+   "emo": "기본",
+   "text": "사당 고개에서 경위서가 정정됐더군요. '선후 불명.' 서류는 서류대로 — 오늘은 지나가십시오."
+  },
+  {
+   "op": "cmd",
+   "name": "bjs",
+   "args": [
+    "pass"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "손을 든다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "HANDS",
+     "id": "BJSTOP_YD:1:0"
+    },
+    {
+     "text": "\"총을 먼저 든 쪽은 수색대였소.\"",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "어려움"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "TALK_OK",
+     "id": "BJSTOP_YD:1:1",
+     "fail": "TALK_NO"
+    },
+    {
+     "text": "(선우진의 인수증을 내민다)",
+     "tags": [],
+     "cond": "SQ_S11_PASS == 1 and BJS_RCPTSAID == 0",
+     "fx": "",
+     "to": "RCPT",
+     "id": "BJSTOP_YD:1:2"
+    },
+    {
+     "text": "등을 돌려 걸어간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "RUN",
+     "id": "BJSTOP_YD:1:3"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "BJS_RCPTSAID = 1"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"C-034\") == 0 and (MQ104_SEARCH == 0 or MQ104_SEARCH == 4)",
+   "to": "RCPT_S"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P2",
+   "emo": "기본",
+   "text": "기록물 인수증? 그건 가방 검사용이다. 지금 세운 건 가방이 아니라 너다."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "C-034",
+   "emo": "기본",
+   "text": "제 서명이군요. 그건 기록물 인수증입니다."
+  },
+  {
+   "op": "line",
+   "who": "C-034",
+   "emo": "기본",
+   "text": "오늘 당신을 세운 건 기록물이 아니라 고개 위의 일이고요."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "계엄병이 핍-보이 띠를 판독기에 댄다. 초소 무전기가 청계산 호출 부호를 두 번 부른다."
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P2",
+   "emo": "기본",
+   "text": "대조 끝. 회차. 계엄 구역 밖으로. 협조는 적어 둔다."
+  },
+  {
+   "op": "cmd",
+   "name": "bjs",
+   "args": [
+    "back",
+    "30"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"C-034\") == 0 and (MQ104_SEARCH == 0 or MQ104_SEARCH == 4)",
+   "to": "TALK_OK_S"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P2",
+   "emo": "피곤",
+   "text": "…보고서엔 '교전'뿐이었지. 오늘은 넘어간다."
+  },
+  {
+   "op": "cmd",
+   "name": "bjs",
+   "args": [
+    "pass"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-034",
+   "emo": "기본",
+   "text": "그 말도 서류에 적겠습니다. 누가 먼저였는지는 그날 보고서에 없었으니까요. 오늘은 지나가십시오."
+  },
+  {
+   "op": "cmd",
+   "name": "bjs",
+   "args": [
+    "pass"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P2",
+   "emo": "분노",
+   "text": "말 길다. 회차."
+  },
+  {
+   "op": "cmd",
+   "name": "bjs",
+   "args": [
+    "back",
+    "0"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "초소 확성기가 짧게 운다. \"정지 명령 불응 — 여의도 초소!\""
+  },
+  {
+   "op": "cmd",
+   "name": "bjs",
+   "args": [
+    "run"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P2",
+   "emo": "분노",
+   "text": "적성 분자! 초소 앞 오십 미터 밖으로 — 지금!"
+  },
+  {
+   "op": "cmd",
+   "name": "bjs",
+   "args": [
+    "back",
+    "0"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "BJS_N >= 2",
+   "to": "DOC_AGAIN"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P2",
+   "emo": "기본",
+   "text": "계엄 구역 검문. 가방 열어."
+  },
+  {
+   "op": "goto",
+   "to": "DMENU"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P2",
+   "emo": "피곤",
+   "text": "또 지나가는군. 가방."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "가방을 연다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "D_OPEN",
+     "id": "BJSTOP_YD:2:0"
+    },
+    {
+     "text": "(선우진의 인수증을 내민다)",
+     "tags": [],
+     "cond": "SQ_S11_PASS == 1",
+     "fx": "",
+     "to": "D_RCPT",
+     "id": "BJSTOP_YD:2:1"
+    },
+    {
+     "text": "내 가방은 내 거다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "D_REFUSE",
+     "id": "BJSTOP_YD:2:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "계엄병이 가방을 뒤적인다."
+  },
+  {
+   "op": "if",
+   "cond": "has(\"M-306\") == 1",
+   "to": "D_DOC"
+  },
+  {
+   "op": "if",
+   "cond": "has(\"A-031\") == 1 and worn() != \"A-031\"",
+   "to": "D_UNI"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P2",
+   "emo": "기본",
+   "text": "…통과. 계엄 구역에선 무기 꺼내지 마."
+  },
+  {
+   "op": "cmd",
+   "name": "bjs",
+   "args": [
+    "wait",
+    "10"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P2",
+   "emo": "분노",
+   "text": "(군복을 끄집어낸다) 이게 왜 네 가방에 있지? 이름표 자리는 비었고."
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P2",
+   "emo": "기본",
+   "text": "…압수는 안 한다. 내 일 늘리기 싫으니까. 대신 오늘은 회차."
+  },
+  {
+   "op": "cmd",
+   "name": "bjs",
+   "args": [
+    "back",
+    "10"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P2",
+   "emo": "기본",
+   "text": "(누런 문서철을 꺼내 든다) 국회 문서. 정부 재산 회수 — 초소로 보낸다."
+  },
+  {
+   "op": "cmd",
+   "name": "s11",
+   "args": [
+    "patrol",
+    "give"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P2",
+   "emo": "기본",
+   "text": "여의도 초소 — 기록물 인수, 소지자 통행 협조. …중위님 서명이군. 통과."
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"C-034\") == 0 and MQ104_SEARCH == 0",
+   "to": "D_RCPT_S"
+  },
+  {
+   "op": "cmd",
+   "name": "bjs",
+   "args": [
+    "pass"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "C-034",
+   "emo": "기본",
+   "text": "(초소 안에서) 제 인수증입니다. 통과시켜."
+  },
+  {
+   "op": "cmd",
+   "name": "bjs",
+   "args": [
+    "pass"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P2",
+   "emo": "분노",
+   "text": "비협조 기록. 회차."
+  },
+  {
+   "op": "do",
+   "fx": "aff(\"BJ\", -3)"
+  },
+  {
+   "op": "cmd",
+   "name": "bjs",
+   "args": [
+    "back",
+    "0"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/BJ_STOP.txt"
+}

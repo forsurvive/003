@@ -1,0 +1,114 @@
+{
+ "id": "SQS04_WINOUT",
+ "title": "창고 창",
+ "loc": "L-R01-32",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "OUT": 3,
+  "SHUT": 5,
+  "PICKIN": 7
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "SQ_S04_WIN == 0",
+   "to": "SHUT"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "젖혀 둔 창고 창. 밖은 별채 옆 골목 — 정문 파수 길에서 등진 쪽이다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "창턱을 넘어 나간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "OUT",
+     "id": "SQS04_WINOUT:1:0"
+    },
+    {
+     "text": "(그만둔다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS04_WINOUT:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s04",
+   "args": [
+    "window",
+    "out"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "창고 창. 바깥 걸쇠에 자물쇠가 걸려 있다. 창살 사이로 손을 넣으면 닿을 것 같다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "창살 사이로 손을 넣어 바깥 자물쇠를 딴다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "자물쇠 따기",
+       "min": 25
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PICKIN",
+     "id": "SQS04_WINOUT:2:0"
+    },
+    {
+     "text": "(그만둔다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SQS04_WINOUT:2:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "s04",
+   "args": [
+    "window",
+    "open"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "딸깍. 창살 틀이 바깥으로 젖혀진다. 밖은 별채 옆 골목이다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/SQ-S04.txt"
+}

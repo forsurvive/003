@@ -1,0 +1,450 @@
+{
+ "id": "BJSTOP_SG",
+ "title": "사당 고개 검문소 — 정지",
+ "loc": "L-R01-19",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "AGAIN_P": 8,
+  "FIXED_P": 10,
+  "DISGUISE": 13,
+  "HWANG": 17,
+  "HWANG_UNI": 24,
+  "AGAIN_H": 26,
+  "FIXED_H": 28,
+  "MENU": 31,
+  "HANDS": 32,
+  "HANDS_H": 37,
+  "TALK_OK": 41,
+  "TALK_OK_H": 45,
+  "TALK_NO": 51,
+  "TALK_NO_H": 55,
+  "RUN": 58,
+  "HOSTILE": 61,
+  "HOSTILE_H": 65
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "BJS_KIND == 3",
+   "to": "HOSTILE"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R01-047\") == 0 and GAME_HOUR >= 6 and GAME_HOUR < 20",
+   "to": "HWANG"
+  },
+  {
+   "op": "if",
+   "cond": "worn() == \"A-031\"",
+   "to": "DISGUISE"
+  },
+  {
+   "op": "if",
+   "cond": "BJS_FIXED == 1",
+   "to": "FIXED_P"
+  },
+  {
+   "op": "if",
+   "cond": "BJS_N >= 2",
+   "to": "AGAIN_P"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P2",
+   "emo": "분노",
+   "text": "정지! 그 얼굴 — 공고문 사진이랑 똑같다. 도주 관리자다!"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P2",
+   "emo": "기본",
+   "text": "손 보이는 데 둬. 대장님 안 계셔도 정지는 정지다."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P2",
+   "emo": "피곤",
+   "text": "또 당신이야. 정지. 알지?"
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P2",
+   "emo": "기본",
+   "text": "정지 — 아, 경위 정정된 그 사람. 대조만 한다. 지나가."
+  },
+  {
+   "op": "cmd",
+   "name": "bjs",
+   "args": [
+    "pass"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "차단봉 앞 계엄병이 군복을 보고 발을 모은다. 어둠 속이라 얼굴까지는 보지 않는다."
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P2",
+   "emo": "기본",
+   "text": "…수고하십니다. 야간 교대입니까."
+  },
+  {
+   "op": "cmd",
+   "name": "bjs",
+   "args": [
+    "pass"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "BJS_FIXED == 1",
+   "to": "FIXED_H"
+  },
+  {
+   "op": "if",
+   "cond": "BJS_N >= 2",
+   "to": "AGAIN_H"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-047",
+   "emo": "기본",
+   "text": "그 자리에서 정지. 도주 관리자 \\V[P_FULL]."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-047",
+   "emo": "기본",
+   "text": "공고문 맨 윗줄이 당신입니다."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-047",
+   "emo": "기본",
+   "text": "고개 위에서 수색대를 쏜 사람 — 그날 이 검문소 분대가 들것을 들고 내려왔습니다."
+  },
+  {
+   "op": "if",
+   "cond": "worn() == \"A-031\"",
+   "to": "HWANG_UNI"
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-047",
+   "emo": "기본",
+   "text": "(가슴께를 본다) 그 군복으로는 저를 못 지나갑니다. 실밥이 아직 새것이에요."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-047",
+   "emo": "기본",
+   "text": "또 오셨군요. 정지입니다. 절차는 아시죠."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-047",
+   "emo": "기본",
+   "text": "정정된 경위서는 제가 썼습니다. 오늘은 대조만 하겠습니다. 지나가십시오 — 차단봉은 여전히 등록증입니다."
+  },
+  {
+   "op": "cmd",
+   "name": "bjs",
+   "args": [
+    "pass"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "손을 든다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "HANDS",
+     "id": "BJSTOP_SG:1:0"
+    },
+    {
+     "text": "\"총을 먼저 든 쪽은 수색대였소.\"",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "어려움"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "TALK_OK",
+     "id": "BJSTOP_SG:1:1",
+     "fail": "TALK_NO"
+    },
+    {
+     "text": "등을 돌려 걸어간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "RUN",
+     "id": "BJSTOP_SG:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "계엄병이 핍-보이 띠를 판독기에 댄다. 무전기가 한참 지직거린다."
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R01-047\") == 0 and GAME_HOUR >= 6 and GAME_HOUR < 20",
+   "to": "HANDS_H"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P2",
+   "emo": "기본",
+   "text": "대조 끝. 회차. 고개 아래로 내려가. 협조는 적어 둔다."
+  },
+  {
+   "op": "cmd",
+   "name": "bjs",
+   "args": [
+    "back",
+    "30"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-047",
+   "emo": "기본",
+   "text": "대조 끝났습니다. 오늘은 회차입니다. 고개 아래로 내려가십시오."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-047",
+   "emo": "기본",
+   "text": "협조는 기록에 남깁니다. 그것도 기록이니까요."
+  },
+  {
+   "op": "cmd",
+   "name": "bjs",
+   "args": [
+    "back",
+    "30"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R01-047\") == 0 and GAME_HOUR >= 6 and GAME_HOUR < 20",
+   "to": "TALK_OK_H"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P2",
+   "emo": "피곤",
+   "text": "…보고서엔 '교전'이라고만 있었지. 누가 먼저였는지는 없었다. 됐다, 오늘은 그냥 가."
+  },
+  {
+   "op": "cmd",
+   "name": "bjs",
+   "args": [
+    "pass"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-047",
+   "emo": "기본",
+   "text": "…보고서엔 '교전'이라고만 적혀 있었습니다. 누가 먼저였는지는 없었죠."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-047",
+   "emo": "기본",
+   "text": "경위서를 정정하겠습니다. '교전, 선후 불명.' 오늘은 정지 해제입니다."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-047",
+   "emo": "기본",
+   "text": "차단봉은 못 올립니다. 그건 등록증이 하는 일이에요."
+  },
+  {
+   "op": "cmd",
+   "name": "bjs",
+   "args": [
+    "fixed"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "bjs",
+   "args": [
+    "pass"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R01-047\") == 0 and GAME_HOUR >= 6 and GAME_HOUR < 20",
+   "to": "TALK_NO_H"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P2",
+   "emo": "분노",
+   "text": "말 길다. 회차!"
+  },
+  {
+   "op": "cmd",
+   "name": "bjs",
+   "args": [
+    "back",
+    "0"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-047",
+   "emo": "기본",
+   "text": "보고서는 보고서입니다. 회차하십시오."
+  },
+  {
+   "op": "cmd",
+   "name": "bjs",
+   "args": [
+    "back",
+    "0"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "등 뒤에서 무전기가 울린다. \"정지 명령 불응 — 사당 고개, 기록!\""
+  },
+  {
+   "op": "cmd",
+   "name": "bjs",
+   "args": [
+    "run"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R01-047\") == 0 and GAME_HOUR >= 6 and GAME_HOUR < 20",
+   "to": "HOSTILE_H"
+  },
+  {
+   "op": "line",
+   "who": "N-BJ-P2",
+   "emo": "분노",
+   "text": "적성 분자다! 한 걸음만 더 와 봐!"
+  },
+  {
+   "op": "cmd",
+   "name": "bjs",
+   "args": [
+    "back",
+    "0"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-047",
+   "emo": "분노",
+   "text": "적성 분자 \\V[P_FULL]. 거기서 한 걸음 더 오면 분대가 쏩니다."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-047",
+   "emo": "분노",
+   "text": "물러서십시오. 지금이 마지막 경고입니다."
+  },
+  {
+   "op": "cmd",
+   "name": "bjs",
+   "args": [
+    "back",
+    "0"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/BJ_STOP.txt"
+}

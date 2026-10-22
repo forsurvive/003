@@ -38,7 +38,7 @@ FLAVORS = ["거짓말", "위협"]
 PARTICLES = ["은", "는", "이", "가", "을", "를", "과", "와", "으로", "로", "이나", "나", "이랑", "랑", "아", "야", "이다", "다", "이에요",
              "예요", "이었", "였", "이라", "라", "이든", "든"]
 FNS = {"karma", "aff", "quest", "stage", "result", "give", "take", "has", "caps", "xp", "wanted", "stat", "skill", "year", "worn", "blade", "dead", "known_dead", "met", "killer_known", "confess", "victim", "rq", "rq_wait", "rq_left", "rq_stage"}
-CMDS = {"rq", "wait", "fade_in", "fade_out", "balloon", "move", "face", "shake", "year_card", "title_card", "sfx", "bgm", "cam", "show",
+CMDS = {"rq", "bjs", "wait", "fade_in", "fade_out", "balloon", "move", "face", "shake", "year_card", "title_card", "sfx", "bgm", "cam", "show",
         "hide", "pose", "doc", "flash", "lamp", "unlit", "note", "reveal",
         "pipboy", "equip", "hurt", "buddy", "range", "hint", "hud",          # 0-7: 핍-보이·무기·연출 피해·일시 동행·사격장 단계·안내 띠
         "refresh",                                                           # 0-8: 맵 인물을 지금 조건대로 다시 세운다
@@ -58,7 +58,7 @@ ENGINE_VARS = {"PC_ST", "PC_PE", "PC_EN", "PC_CH", "PC_IN", "PC_AG", "PC_LK", "P
                "MQ104_FIRE", "MQ104_DESK", "MQ104_IDS", "MQ104_SEEN", "MQ104_ROLL", "MQ104_LOG", "MQ104_FILES", "MQ104_RIFLE",
                "MQ104_AUTH", "MQ104_VENT", "MQ104_LAST", "MQ104_SEARCH", "MQ104_DOYUN", "MQ104_GUARDS", "MQ104_DAY",
                "PL_LETTER", "PL_VIEW", "PL_TECH", "PN_SON", "PN_Q10", "PN_NURSE", "PN_HEAL_DAY", "PN_SIM", "PN_GIL", "PN_LEDGER", "PN_NAM", "PN_NAM_TIP",
-               "MQ102_C1", "MQ102_C2", "MQ102_C3", "MQ102_MAPC", "MQ101_HA_MAPC", "LM_SEEN", "MQ102_ROBOT", "MQ103_GATE", "MQ103_JOB", "MQ103_HIRE", "MQ103_SNEAK",
+               "MQ102_C1", "MQ102_C2", "MQ102_C3", "MQ102_MAPC", "MQ101_HA_MAPC", "LM_SEEN", "SB_HEIR", "SB_HDC_DAY", "BJS_SG_DAY", "BJS_NR_DAY", "BJS_YD_DAY", "BJS_KIND", "BJS_RUN", "BJS_RCPTSAID", "SQ_S04_WIN", "BJS_SG_N", "BJS_NR_N", "BJS_YD_N", "BJS_SG_BACK", "BJS_NR_BACK", "BJS_YD_BACK", "BJS_SG_PEN", "BJS_NR_PEN", "BJS_YD_PEN", "BJS_N", "BJS_FIXED", "BJS_COOP", "MQ102_ROBOT", "MQ103_GATE", "MQ103_JOB", "MQ103_HIRE", "MQ103_SNEAK",
                "MQ103_DOOR", "MQ103_CONF", "MQ103_LOG", "MQ103_AMBUSH", "MQ103_NEST", "MQ103_FOUNT", "JM_REG", "JM_GU_MET",
                "GAME_HOUR", "GAME_WDAY", "SB_RAID", "SB_PASS", "SB_DOGS", "SB_SAFE", "SB_KEY", "SB_FREED", "SB_READ", "SB_DEAL",
                "SB_BURNT", "SB_DEBT", "SB_BJ", "SB_TALK", "SB_BOUGHT", "SB_DEPO", "SB_127", "GB_PASS",

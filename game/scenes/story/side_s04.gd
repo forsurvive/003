@@ -29,6 +29,7 @@ const RITUAL_MIN := 120
 const VILLAGE_MIN := 6 * 60              ## 파수가 잠든 뒤 마을이 철망을 여는 데 걸리는 시간
 const CARRY_MIN := 4 * 60                ## 노량진까지 안고 갔다 돌아오는 시간(약 420타일 왕복)
 const POSTS := ["guard", "gate", "road"] ## 비트 1 · 2 · 4
+const WINDOW := Vector2i(915, 1399)       ## 1-12l D-100 별채 창고 창 앞 골목 칸(maps/world/r01.spots @915,1399 — 실내 창고에서 나오면 여기)
 const BJ_REG := 4                        ## V_REGCARD 4 = K_CODE(관리자 후보)
 
 var host: InteriorHost
@@ -500,6 +501,22 @@ func _halt_step(dt: float) -> void:
 			return
 
 
+## 창살을 힘으로 젖힐 때(1-12l D-100): 깨어 있는 파수가 8칸 안이면 쇳소리를 듣고 정지 명령을 시작한다 — 들었으면 true(창 안으로 못 들어간다)
+func _bend_heard() -> bool:
+	if not posts_on or not _awake() or not _world():
+		return false
+	for i in 3:
+		var e: Enemy = bots[i]
+		if is_instance_valid(e) and not e.cmb.dead and host.player.loco.logical.distance_to(e.loco.logical) <= 8.0 * 32.0:
+			e.loco.facing = _face_to(e)
+			if halt[i] < 0.0:
+				halt[i] = 0.0
+				warned[i] = false
+				_halt_said(i)
+			return true
+	return false
+
+
 func _face_to(e: Enemy) -> int:
 	return Locomotion.dir_of(host.player.loco.logical - e.loco.logical)
 
@@ -847,7 +864,11 @@ func _on_map(id: String) -> void:
 		if _awake():
 			chase_t = CHASE_SECS                                               # '보호 대상 이탈' — 30초 추격
 			st.vars.set_v("SQ_S04_HOT", 1)
-			host.hint("파수-3: '보호 대상 이탈. 보호 대상 이탈.' 파수들이 정문으로 몰려든다!", 5.0)
+			if Vector2(_ptile()).distance_to(Vector2(WINDOW)) <= 3.0:          # 별채 창으로 나왔다: 파수들은 정문으로 몰린다 — 몇 칸 앞서 출발(1-12l 재미 검수 ③)
+				chase_t = CHASE_SECS - 10.0
+				host.hint("파수-3: '보호 대상 이탈.' 파수들이 정문으로 몰려든다 — 당신은 골목 쪽이다!", 5.0)
+			else:
+				host.hint("파수-3: '보호 대상 이탈. 보호 대상 이탈.' 파수들이 정문으로 몰려든다!", 5.0)
 
 
 func _chase_end() -> void:
@@ -882,6 +903,21 @@ func _cmd(a: Array, done: Callable) -> void:
 			_pause_all()
 		"back":
 			pass
+		"window":                                                       # 1-12l D-100 별채 창고 창(SD-04a §4.4 해법 C '뒤 창고 창문'): in · bend(쇳소리) · out · open(안에서)
+			var how := str(a[1]) if a.size() > 1 else "in"
+			if how == "out":
+				done.call()
+				host.go.call_deferred("W", "@%d,%d" % [WINDOW.x, WINDOW.y])
+				return
+			st.vars.set_v("SQ_S04_WIN", 1)
+			if how == "open":
+				pass
+			elif how == "bend" and _bend_heard():
+				host.hint("끼이익 — 쇳소리에 파수-3이 이쪽으로 돈다.", 3.0)
+			else:
+				done.call()
+				host.go.call_deferred("K-33", "from_back")
+				return
 		"cage":                                                         # C 은신 구출: 철망을 땄다 — 바깥에 나가면 '보호 대상 이탈'
 			if host.map != null and _zone() == "K-33":
 				host.map.set_prop_state(Vector2i(20, 10), "open")
