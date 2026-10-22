@@ -2361,6 +2361,32 @@
    },
    "title": "병동 7층"
   },
+  "UQ-63": {
+   "key": "UQ63",
+   "stages": {
+    "10": {
+     "done": "깔끔이 · 명부 · 보존함 가운데 하나",
+     "log": "제33기 졸업식 — 200년째 준비 중",
+     "src": "05_misc-quests-encounters.md:1201"
+    },
+    "100": {
+     "done": "다음 06:00 행정과가 열어 가문별로 나눔",
+     "log": "200년 늦은 졸업식",
+     "src": "05_misc-quests-encounters.md:1203"
+    },
+    "20": {
+     "done": "서류 투입구에 M-443",
+     "log": "졸업장을 볼트 정문 투입구에 넣었다",
+     "src": "05_misc-quests-encounters.md:1202"
+    },
+    "90": {
+     "done": "보존함을 연 뒤 묶음이 어디에도 없음(보관함 포함)",
+     "log": "(소멸) 졸업장 묶음을 잃었다",
+     "src": "05_misc-quests-encounters.md:1204"
+    }
+   },
+   "title": "연수원의 졸업장"
+  },
   "UQ-64": {
    "key": "UQ64",
    "stages": {

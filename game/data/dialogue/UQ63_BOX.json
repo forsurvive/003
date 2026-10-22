@@ -1,0 +1,294 @@
+{
+ "id": "UQ63_BOX",
+ "title": "보존함",
+ "loc": "L-R01-07",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "OPEN": 4,
+  "MATCH1": 7,
+  "MATCH2": 10,
+  "TAKE_PLAIN": 14,
+  "TAKE": 17,
+  "LEFT": 19,
+  "MINE": 22,
+  "EMPTY": 25,
+  "SELF_Q": 28,
+  "SELF": 30
+ },
+ "ops": [
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q63start"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "UQ63_BOX == 1",
+   "to": "EMPTY"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "보존 서고 안쪽, 철제 보존함. 봉인지 '졸업식(11/2) 당일 교무과 개봉'. 봉인지는 삭아서 손대면 바스러진다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "봉인을 뜯고 연다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "OPEN",
+     "id": "UQ63_BOX:1:0"
+    },
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ63_BOX:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "졸업장 312장. 행정안전부 직인. 맨 위 한 장 — '재건 행정 요원 과정 수료'. 이름 칸은 모두 다르고 날짜 칸은 모두 같다. 2077. 11. 2."
+  },
+  {
+   "op": "if",
+   "cond": "UQ63_ROSTER == 0",
+   "to": "TAKE_PLAIN"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "명부 순서대로 가문별로 묶는다",
+     "tags": [
+      {
+       "k": "stat",
+       "name": "지능",
+       "min": 5
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "MATCH1",
+     "id": "UQ63_BOX:2:0"
+    },
+    {
+     "text": "명부를 한 장씩 대조해 가문별로 묶는다 (30분)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "MATCH2",
+     "id": "UQ63_BOX:2:1"
+    },
+    {
+     "text": "묶지 않고 그냥 챙긴다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TAKE_PLAIN",
+     "id": "UQ63_BOX:2:2"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "UQ63_MATCH = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "명부의 성씨 순서가 곧 졸업장 순서다. 서른 묶음. ✕ 한 장이 맨 끝에 남는다."
+  },
+  {
+   "op": "goto",
+   "to": "TAKE"
+  },
+  {
+   "op": "do",
+   "fx": "UQ63_MATCH = 2"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q63wait"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "한 장, 한 줄. 한 장, 한 줄. 서른 묶음이 됐을 때 창밖이 조금 기울어 있다. ✕ 한 장이 맨 끝에 남는다."
+  },
+  {
+   "op": "goto",
+   "to": "TAKE"
+  },
+  {
+   "op": "do",
+   "fx": "UQ63_BOX = 1; give(\"M-443\", 1)"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "312장을 끈으로 묶어 챙긴다. 무겁다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "UQ63_BOX = 1; give(\"M-443\", 1)"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "✕ 한 장은 따로 뺀다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "LEFT",
+     "id": "UQ63_BOX:3:0"
+    },
+    {
+     "text": "내 성씨 것 한 장은 따로 뺀다",
+     "tags": [],
+     "cond": "UQ63_MINE == 0 and UQ63_MINEOK == 1",
+     "fx": "",
+     "to": "MINE",
+     "id": "UQ63_BOX:3:1"
+    },
+    {
+     "text": "그대로 다 챙긴다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ63_BOX:3:2"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "UQ63_LEFT = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "✕ 한 장. 입주 미확정. 이 이름의 졸업장은 볼트 안에 받을 사람이 없다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "내 성씨 것 한 장도 따로 뺀다",
+     "tags": [],
+     "cond": "UQ63_MINE == 0 and UQ63_MINEOK == 1",
+     "fx": "",
+     "to": "MINE",
+     "id": "UQ63_BOX:4:0"
+    },
+    {
+     "text": "됐다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ63_BOX:4:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "UQ63_MINE = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "당신 성씨의 졸업장 한 장을 뺀다. 2077년의 누군가 — 당신 집안의 연수생. 이름은 처음 본다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈 보존함. 삭은 봉인지 조각."
+  },
+  {
+   "op": "if",
+   "cond": "UQ63_SELF == 0 and has(\"M-443\") == 1",
+   "to": "SELF_Q"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "함 바닥에 빈 졸업장 양식 한 장. 이름 칸이 비었다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "내 등록 번호를 적어 묶음에 끼운다",
+     "tags": [],
+     "cond": "has(\"M-443\") == 1",
+     "fx": "",
+     "to": "SELF",
+     "id": "UQ63_BOX:5:0"
+    },
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ63_BOX:5:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "UQ63_SELF = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "\\V[P_REGNO]. 2258년생의 제33기 수료. 직인은 없다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-63.txt"
+}

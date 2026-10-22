@@ -2,6 +2,7 @@
 ##   UQ-01 「24시」 — 원고 script/act1/UQ-01.txt · 맵 K-11 봉천 번개24 · K-37 노량진 번개24(V24 로봇 창구).
 ##   UQ-02 「백구의 밥그릇」 — 원고 UQ-02.txt · X-BC 개집 · 월드 스팟 개천 배수구 둥지(@884,1385) · 숲 가장자리(@896,1418).
 ##     백구 자리 한 값(P3): 밤 나들이 동안 UQ02_DOG_OUT 1 — X-BC · B-01 백구 줄이 모두 이 값을 읽는다. 보이는 나들이(주인공이 가까울 때)는 배우를 세워 걷게 한다.
+##   UQ-63 「연수원의 졸업장」(1-12i i4 — 원고 UQ-63.txt · 맵 K-01 · 새 K-03 · X-S07 투입구 · 인터컴 SQS03_INTERCOM) ·
 ##   UQ-64 · 65(1-12i i1 · i2) · UQ-66 「전지 하나, 냉장고 둘」(1-12i i3 — 원고 UQ-66.txt · 맵 K-26 · K-26B · GS-02 · 월드 스팟 L-R01-25).
 ## 사실은 변수 한 곳(P1) — 변수 뜻은 원고 머리 주석. 시간 판정(목격 · 손님 · 재고 주)은 06:00 하루 판정에서만(P6).
 ## 비표시(SD-05 §2.6): 알림 없음 · 단계 로그(메모) · XP만.
@@ -317,6 +318,7 @@ func _up(qid: String, n: int) -> void:
 
 
 func _on_day(d: int) -> void:
+	_uq63_day(d)
 	_uq66_day(d)
 	_uq65_day(d)
 	_uq64_day(d)
@@ -734,6 +736,20 @@ func _cmd(a: Array, done: Callable) -> void:
 				st.call_fn("take", ["M-440", left])
 			_sv("UQ64_MEM", 1)
 			_uq64_finish()
+		"q63start":                                                      # UQ-63 단계 10(비표시 — 깔끔이 · 명부 · 보존함) · 주인공 성이 명부 30 성씨 안인지(MINEOK)
+			_up("UQ-63", 10)
+			_sv("UQ63_MINEOK", 1 if str(st.vars.get_v("P_SURNAME")) in U63_SURNAMES else 0)
+		"q63wait":                                                       # 명부를 한 장씩 대조 — 30분(시계가 간다)
+			host.advance_minutes(30)
+		"q63put":                                                        # 투입구에 넣음 — 다음 06:00 행정과가 열어 나눈다(20)
+			_sv("UQ63_IN", day())
+			_up("UQ-63", 20)
+		"q63said":
+			pass
+		"q63ledger":                                                     # 잃은 뒤 수료 대장 — 호명만(DONE 3 · 보상 반)
+			_sv("UQ63_IN", day())
+			_sv("UQ63_LOST", 2)
+			_up("UQ-63", 20)
 		"q66start":                                                      # UQ-66 단계 10(비표시 — 철문 · 원무 단말 · 혈액은행 · 시장 전지 이야기)
 			_up("UQ-66", 10)
 		"q66heard":                                                      # 시장 전지 이야기를 들음(심도겸 · 한가람) — 기한은 들은 날 + 4(재미 검수 W4)
@@ -850,6 +866,28 @@ func _cmd(a: Array, done: Callable) -> void:
 			_sv("UQ65_LESSON_DAY", day())
 	done.call()
 
+
+
+# ---------------------------------------------------------------- UQ-63 연수원의 졸업장(1-12i i4 — SD-05 §3.31)
+const U63_SURNAMES := ["윤", "하", "김", "이", "박", "최", "정", "강", "조", "장", "임", "한", "오", "서", "신", "권", "황", "안", "송", "전", "홍", "유", "고", "문", "도", "차", "방", "나", "남", "백"]   ## S-07 성씨 30(SD-18 §P1 v1.1)
+## 다음 06:00: 투입한 묶음을 행정과가 열어 가문별로 나눔(DONE 1 맞춤 · 2 그냥 — 카르마 +25 · 80 XP 한 번 · 100) / 묶음을 잃으면 90(보관함 포함 셈 — A244)
+func _uq63_day(d: int) -> void:
+	if v("UQ63_IN") > 0 and v("UQ63_DONE") == 0 and d > v("UQ63_IN"):
+		var ledger := v("UQ63_LOST") == 2
+		_sv("UQ63_DONE", 3 if ledger else (1 if v("UQ63_MATCH") > 0 else 2))
+		if v("UQ63_XP") == 0:
+			_sv("UQ63_XP", 1)
+			st.call_fn("karma", [10 if ledger else 25])
+			st.call_fn("xp", [40 if ledger else 80])
+		st.quests.set_stage("UQ-63", 100)
+		_log("UQ-63 졸업장 나눔(DONE %d · LEFT %d · MINE %d)" % [v("UQ63_DONE"), v("UQ63_LEFT"), v("UQ63_MINE")])
+		if host.map != null and host.map.id == "K-01":
+			host.refresh_npcs()
+	elif v("UQ63_BOX") == 1 and v("UQ63_IN") == 0 and v("UQ63_LOST") == 0 and _owned("M-443") == 0:
+		_sv("UQ63_LOST", 1)
+		if st.quests.stage("UQ-63") < 90:
+			st.quests.set_stage("UQ-63", 90)
+		_log("UQ-63 졸업장 묶음을 잃음")
 
 
 # ---------------------------------------------------------------- UQ-66 전지 하나, 냉장고 둘(1-12i i3 — SD-05 §3.30)

@@ -64,6 +64,16 @@ prop desk 25 9
 box 25 9 academy w=2 name="연수생 책상"
 text 21 9 "책상 위 필기 노트. '관리자는 등록 계보와 생체 인증. 대체 불가.' 그 옆에 '그럼 우리는?'" w=2
 prop desk 21 12
+# 1-12i UQ-63 「연수원의 졸업장」: 깔끔이(살림-2 — 졸업 리본) 대강의실 의자 정리 · 매듭 다음 날 의자가 벽가에 겹치고 리본은 교탁에
+npc N-R01-065 23 8 S sheet=rb_clean_loco route=cl_a:22,5,4;cl_b:27,11,4
+prop folding_chair 23 5 cond="not (UQ63_DONE >= 1 and GAME_DAY > UQ63_IN and dead(\"N-R01-065\") == 0)"
+prop folding_chair 27 7 cond="not (UQ63_DONE >= 1 and GAME_DAY > UQ63_IN and dead(\"N-R01-065\") == 0)"
+prop folding_chair 23 13 cond="not (UQ63_DONE >= 1 and GAME_DAY > UQ63_IN and dead(\"N-R01-065\") == 0)"
+text 23 5 "접이 의자. 등받이에 분필 번호 '311'. 옆 의자는 '312'. 그 옆은 또 '311' — 바람이 하나를 밀 때마다 다시 센다." cond="not (UQ63_DONE >= 1 and GAME_DAY > UQ63_IN and dead(\"N-R01-065\") == 0)"
+prop folding_chair 28 3 cond="UQ63_DONE >= 1 and GAME_DAY > UQ63_IN and dead(\"N-R01-065\") == 0"
+prop folding_chair 28 4 cond="UQ63_DONE >= 1 and GAME_DAY > UQ63_IN and dead(\"N-R01-065\") == 0"
+text 28 3 "벽가에 겹쳐 쌓은 접이 의자. 등받이 번호가 1부터 312까지 순서대로다." h=2 cond="UQ63_DONE >= 1 and GAME_DAY > UQ63_IN and dead(\"N-R01-065\") == 0"
+text 24 4 "교탁. 남색 졸업 리본이 반듯하게 접혀 놓였다. 금색 글씨 '제33기'." cond="UQ63_DONE >= 1 and GAME_DAY > UQ63_IN and dead(\"N-R01-065\") == 0"
 enemy CR-095 26 12
 enemy CR-095 23 11
 enemy CR-002 4 8

@@ -777,6 +777,27 @@ func _ready() -> void:
 				["check", "UQ65_LESSON == 5 and UQ65_LTODAY == 2 and UQ65_REBEL == 1", "다음 날 — 4번 · 한 문제 더 5번(하루 두 문항 · 오답 끝말)"],
 				["warp", "GS-02", "from_X"], ["wait", 1.5], ["calm"], ["want", ["핀에 꽂는다"]], ["go", 15, 4], ["use", 15, 2], ["wait", 2.5], ["shot", "uq65_wall"],
 				["check", "UQ65_TO == 1 and UQ65_WALL == 1 and not has(\"M-439\")", "중계소 카드 벽에 꽂음(GS +3)"]]
+		"uq63":                                                         # 1-12i UQ-63 연수원의 졸업장: 본관 깔끔이(10) → 서고 명부 · 보존함(맞춤 · ✕ 한 장) → 기숙사 해골 → 정문 인터컴(세 번째) → 투입구(20) → 다음 06:00(100) → 결과 · 깔끔이 청소
+			st.vars.set_v("GAME_DAY", 6)
+			st.vars.set_v("PC_IN", 5)
+			st.quests.set_stage("MQ-101", 100)
+			host.date_text = "2277. 10. 29.  10:00"
+			host.enter("K-01", "from_W")                                 # 볼트 정문 X-S07은 월드에 끼운 손 맵(world_chunks INSETS — from_vault 19,37 = 959,1503 → 원점 940,1466): 인터컴 959,1505 · 투입구 962,1505
+			plan = [["hp", 3000], ["wait", 1.5], ["calm"], ["want", ["!졸업장은 어디", "됐다"]], ["talk", "N-R01-065"], ["wait", 3.0], ["shot", "uq63_clean"],
+				["check", "UQ63_MET == 1 and UQ63_STAGE == 10", "깔끔이 — 졸업식 준비 200년째(10)"],
+				["warp", "K-03", "from_W"], ["wait", 1.5], ["calm"], ["shot", "uq63_library"],
+				["want", ["명부를 읽는다"]], ["go", 20, 8, "K-03"], ["use", 21, 8], ["wait", 2.0],
+				["want", ["봉인을 뜯고", "명부 순서대로", "✕ 한 장은", "됐다"]], ["go", 26, 5, "K-03"], ["use", 26, 4], ["wait", 3.0], ["shot", "uq63_box"],
+				["check", "UQ63_ROSTER == 1 and UQ63_MATCH == 1 and UQ63_LEFT == 1 and has(\"M-443\")", "명부 · 보존함 — 맞춤 · ✕ 한 장"],
+				["warp", "K-02", "from_K-01"], ["wait", 1.5], ["calm"], ["want", ["✕ 졸업장 한 장"]], ["go", 36, 7, "K-02"], ["use", 37, 6], ["wait", 2.5], ["shot", "uq63_skel"],
+				["check", "UQ63_LEFT == 2", "해골 손에 한 장"],
+				["warp", "W", "L-R01-01"], ["wait", 1.5], ["calm"], ["setv", "SQ_S03_CALLS", 2], ["want", ["누른다", "!졸업장 312장", "끊는다"]], ["go", 959, 1504], ["use", 959, 1505], ["wait", 3.0], ["shot", "uq63_intercom"],
+				["want", ["밀어 넣는다"]], ["go", 962, 1504], ["use", 962, 1505], ["wait", 2.5], ["shot", "uq63_slot"],
+				["check", "UQ63_IN == 6 and UQ63_STAGE == 20 and not has(\"M-443\")", "투입구(20)"],
+				["hours", 24], ["wait", 1.0], ["check", "UQ63_DONE == 1 and UQ63_STAGE == 100", "다음 06:00 — 200년 늦은 졸업식(100)"],
+				["want", ["누른다", "끊는다"]], ["go", 959, 1504], ["use", 959, 1505], ["wait", 3.0], ["check", "UQ63_SAID == 1", "방금례 결과 — 서른 가문 · 311장"],
+				["warp", "K-01", "from_W"], ["wait", 1.5], ["calm"], ["shot", "uq63_after"], ["want", ["됐다"]], ["talk", "N-R01-065"], ["wait", 2.0],
+				["check", "UQ63_RSAID == 1", "깔끔이 — 의자를 치우고 청소"]]
 		"uq66":                                                         # 1-12i UQ-66 전지 하나, 냉장고 둘: 심도겸 냉동고 이야기(10 · 기한 +4) → 흑석 원무 단말 퇴원 서류 → 7호 퇴원(20 · 철문) →
 			st.vars.set_v("GAME_DAY", 6)                                 #   지하 혈액은행 예비 전지 → 냉장고(100 · 로비 글) → 다음 06:00 들것 협력 · 정류지 → 시장 꼬리표 → 기한 날 운반조 [힘 7](① — 둘 다 삶)
 			st.vars.set_v("PC_SKP_SCIENCE", 60)

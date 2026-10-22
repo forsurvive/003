@@ -990,6 +990,16 @@
    "아픔": "N-R01-064_hurt.png",
    "피곤": "N-R01-064_tired.png"
   },
+  "N-R01-065": {
+   "기본": "RB_clean_idle.png",
+   "놀람": "RB_clean_surprise.png",
+   "말함": "RB_clean_talk.png",
+   "미소": "RB_clean_smile.png",
+   "분노": "RB_clean_angry.png",
+   "슬픔": "RB_clean_sad.png",
+   "아픔": "RB_clean_hurt.png",
+   "피곤": "RB_clean_tired.png"
+  },
   "N-R01-501": {
    "기본": "N-R01-501_idle.png",
    "놀람": "N-R01-501_surprise.png",
@@ -1709,6 +1719,16 @@
    "슬픔": "RB_ballot2_sad.png",
    "아픔": "RB_ballot2_hurt.png",
    "피곤": "RB_ballot2_tired.png"
+  },
+  "rb_clean_loco": {
+   "기본": "RB_clean_idle.png",
+   "놀람": "RB_clean_surprise.png",
+   "말함": "RB_clean_talk.png",
+   "미소": "RB_clean_smile.png",
+   "분노": "RB_clean_angry.png",
+   "슬픔": "RB_clean_sad.png",
+   "아픔": "RB_clean_hurt.png",
+   "피곤": "RB_clean_tired.png"
   },
   "rb_clerk24_loco": {
    "기본": "RB_clerk24_idle.png",

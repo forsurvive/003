@@ -1,0 +1,74 @@
+{
+ "id": "UQ63_LEDGER",
+ "title": "수료 대장",
+ "loc": "L-R01-07",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TAKE_Q": 3,
+  "TAKE": 5
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "수료 대장. 312줄 모두 '수료'. 맨 아래 교무과장 도장이 찍힐 칸만 비었다."
+  },
+  {
+   "op": "if",
+   "cond": "UQ63_LOST == 1 and UQ63_IN == 0 and has(\"M-444\") == 0",
+   "to": "TAKE_Q"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "졸업장은 없어졌지만 이름은 여기 다 있다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "수료 대장을 챙긴다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TAKE",
+     "id": "UQ63_LEDGER:1:0"
+    },
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ63_LEDGER:1:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "give(\"M-444\", 1)"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "대장을 끈으로 묶어 챙긴다. 졸업장보다 가볍다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-63.txt"
+}

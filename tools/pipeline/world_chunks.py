@@ -38,6 +38,7 @@ DOORS = [{"lid": "L-R02-11", "near": (720, 1147), "to": "J-01", "mark": "from_W"
          {"lid": "L-R02-10", "near": (826, 1134), "to": "Y-05", "mark": "from_W", "name": "윤중제 배수구", "prop": "drain_outlet", "hint": "쇠창살이 뜯긴 틈으로 기어 들어가면 배수로다."},
          # 1-5e 손 장소: 건물 1층 문(kind facade — gen_interiors가 가장 가까운 1층 문에 붙인다) · 계곡 배수구
          {"lid": "L-R01-06", "near": (938, 1488), "to": "K-01", "mark": "from_W", "name": "관악 행정 연수원 본관", "kind": "facade"},
+         {"lid": "L-R01-07", "near": (930, 1473), "to": "K-03", "mark": "from_W", "name": "연수원 중앙 서고", "kind": "facade"},   # 1-12i UQ-63
          {"lid": "L-R02-29", "near": (700, 1105), "to": "K-29", "mark": "from_W", "name": "영등포 경찰서", "kind": "facade"},
          {"lid": "L-R02-06", "near": (777, 1101), "to": "K-06", "mark": "from_W", "name": "여의도 공영방송", "kind": "facade"},
          {"lid": "L-R02-20", "near": (637, 1362), "to": "K-20", "mark": "from_W", "name": "가리봉 쪽방 — 인솔조 숙소", "kind": "facade"},     # 1-6 R02 남쪽

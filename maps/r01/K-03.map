@@ -1,0 +1,74 @@
+# 관악 행정 연수원 중앙 서고(SD-09a L-R01-07 '캠퍼스 중앙도서관 자리의 연수원 서고 · 2077 행정 전산 자료실 · 지하 서고 반쯤' · 단계 1-12i UQ-63).
+# 30×16 · 서쪽 열람실(무너진 서가 미로 · 어린이 열람 코너 — 스킬북 BK-09-R01-02는 글만(D-028) · 대출 기록 단말) · 동쪽 보존 서고(습기 · 진공관 목록 단말 · 보존함 · 2076 연수생 명부).
+# 정합: 원문 실내 2장(열람실 / 지하 보존 서고)을 한 장으로 — 보존 서고는 동쪽 칸(계단 두 단 아래). 잔바퀴 떼 CR-001 · 굴쥐 CR-096.
+# 들어오는 길: 월드 외벽 문 L-R01-07(930,1473 — world_chunks DOORS facade).
+map K-03 연수원 중앙 서고
+set bk
+grid
+##############################
+##############################
+##############################
+#tttttttttttttttttt#,,,,,,,,,#
+#tttttttttttttttttt#,,,,,,,,,#
+#tttttttttttttttttt#,,,,,,,,,#
+#tttttttttttttttttt#,,,,,,,,,#
+#tttttttttttttttttt#,,,,,,,,,#
+#ttttttttttttttttttt,,,,,,,,,#
+#tttttttttttttttttt#,,,,,,,,,#
+#tttttttttttttttttt#,,,,,,,,,#
+#tttttttttttttttttt#,,,,,,,,,#
+#tttttttttttttttttt#,,,,,,,,,#
+#tttttttttttttttttt#,,,,,,,,,#
+#tttttttttttttttttt###########
+#######tt#####################
+end
+exit 7 15 W L-R01-07
+exit 8 15 W L-R01-07
+mark from_W 7 13 N
+# ---- 열람실(서) — 무너진 서가 미로
+prop w_board_jm 2 1
+text 2 2 "열람실 안내판. '행정 전산 자료실 — 연수생은 대출 3권까지'. 아래 분필로 '명부는 보존 서고'." w=2
+prop bookshelf 1 3
+prop bookshelf 1 6
+prop bookshelf 1 9
+prop bookshelf 4 4
+prop bookshelf 4 7
+prop bookshelf 4 10
+prop bookshelf 7 3
+prop bookshelf 7 6
+prop bookshelf 10 5
+prop bookshelf 10 8
+prop bookshelf 10 11
+prop bookshelf 13 3
+prop bookshelf 13 9
+prop rubble 6 9
+prop rubble2 12 6
+prop rubble 15 11
+box 7 3 academy name="서가 — 행정 교재"
+text 4 4 "『관제망 운영 실무 2』가 한 칸 통째로 빠졌다. 먼지 위에 책 자국 네 개."
+text 13 3 "어린이 열람 코너. 낮은 서가에 『어린이 원자력 과학 대백과』 — 표지에 웃는 원자. 연수생 자녀용. 한 권이 펼쳐진 채 굳었다." w=2
+box 13 9 letters name="반납함"
+prop terminal_desk 16 3
+text 16 3 "대출 기록 단말. 마지막 줄 '대출: 한유정 / 『진공관 회로 입문』 / 반납 예정 2077-10-30'. 미반납." w=2
+prop wait_chairs 16 7
+prop desk 15 12
+box 15 12 desk name="사서 책상"
+text 16 12 "사서 책상 메모. '10/23 — 33기 졸업장 보존함 봉인 완료. 개봉은 11/2 교무과.' 그 아래 '이사 짐에 명부 넣을 것' — 넣지 못했다."
+enemy CR-001 9 4
+enemy CR-001 11 10
+enemy CR-096 6 12 route=6,12,4;2,12,4
+# ---- 보존 서고(동) — 습기 · 진공관 목록 단말 · 보존함 · 명부
+prop stairs_up 18 8
+prop wall_terminal 22 1
+text 22 2 "진공관 목록 단말. 녹색 글자 '보존 서고 온습도 — 습 91%'. 200년째 같은 숫자. 아래 '자료 목록: 명부 · 졸업장 · 수료 대장'." w=2
+prop steel_rack 21 4
+prop steel_rack 21 8
+text 21 4 "보존 서가. 비닐에 싼 서류철이 줄줄이. 습기에 눌어붙어 떼어지지 않는다 — 한 권만 빼고." h=2
+text 21 8 "2076년 연수생 명부." scene=UQ63_ROSTER
+prop safe 26 4
+text 26 4 "보존함." scene=UQ63_BOX
+prop file_cabinet 27 10
+text 27 10 "수료 대장." scene=UQ63_LEDGER
+prop crate_o 22 12
+text 22 12 "'이관' 상자. 비어 있다. 옆면에 '졸업식 뒤 교무과 이관 — 명부 · 대장'. 졸업식이 없었으니 옮긴 적도 없다."
+prop rubble 24 11

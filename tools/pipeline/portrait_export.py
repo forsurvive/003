@@ -78,7 +78,8 @@ def main():
     for sid, kind, stem in (("N-R02-028", "ballot", "RB_ballot2"), ("rb_ballot2_loco", "ballot", "RB_ballot2"),
                             ("N-R02-029", "count", "RB_count4"), ("rb_count4_loco", "count", "RB_count4"),
                             ("N-K24-P1", "proxy", "RB_proxy"), ("rb_proxy_loco", "proxy", "RB_proxy"),   # 학원 원장 대행(1-12b FQ-GS-02)
-                            ("N-R01-508", "clerk", "RB_clerk24"), ("rb_clerk24_loco", "clerk", "RB_clerk24")):   # 노량진 번개24 점원(1-12g UQ-01 · V24)
+                            ("N-R01-508", "clerk", "RB_clerk24"), ("rb_clerk24_loco", "clerk", "RB_clerk24"),   # 노량진 번개24 점원(1-12g UQ-01 · V24)
+                            ("N-R01-065", "clean", "RB_clean"), ("rb_clean_loco", "clean", "RB_clean")):   # 연수원 깔끔이(1-12i UQ-63)
         index[sid] = {}
         for emo in EMOS:
             name = f"{stem}_{K.PORTRAIT_EXPR[emo]}.png"

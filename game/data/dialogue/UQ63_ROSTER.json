@@ -1,0 +1,245 @@
+{
+ "id": "UQ63_ROSTER",
+ "title": "2076년 연수생 명부",
+ "loc": "L-R01-07",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "READ": 3,
+  "AGAIN": 9,
+  "LATE": 12,
+  "LATE1": 13,
+  "LATE2": 16,
+  "LATE_X": 19,
+  "LATE_L": 20,
+  "LATE_M": 23
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "서가 끝, 비닐에 싼 두꺼운 명부. '2076학년도 제33기 연수생 명부 — 행정안전부'. 312줄. 맨 끝 칸 '입주 확정'."
+  },
+  {
+   "op": "if",
+   "cond": "UQ63_ROSTER == 1",
+   "to": "AGAIN"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "명부를 읽는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "READ",
+     "id": "UQ63_ROSTER:1:0"
+    },
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ63_ROSTER:1:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "UQ63_ROSTER = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q63start"
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "note",
+   "args": [
+    "UQ63-ROSTER"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "312줄 가운데 '입주 확정 ○'이 311. 성씨 서른 개가 되풀이된다 — 윤, 하, 김, 이, 박… 볼트 사람들의 성이다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "단 한 줄 '✕'. 기숙사 A동 끝 호실 번호가 적혀 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "명부. 311 ○, 1 ✕. ✕ 줄 옆에 붉은 도장 '서류 반려 — 보호자 미동의'."
+  },
+  {
+   "op": "if",
+   "cond": "UQ63_BOX == 1 and UQ63_MATCH == 0 and UQ63_IN == 0 and has(\"M-443\") == 1",
+   "to": "LATE"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "묶음을 명부 순서대로 다시 묶는다",
+     "tags": [
+      {
+       "k": "stat",
+       "name": "지능",
+       "min": 5
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "LATE1",
+     "id": "UQ63_ROSTER:2:0"
+    },
+    {
+     "text": "한 장씩 대조해 다시 묶는다 (30분)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "LATE2",
+     "id": "UQ63_ROSTER:2:1"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ63_ROSTER:2:2"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "UQ63_MATCH = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "명부의 성씨 순서대로 서른 묶음. ✕ 한 장이 맨 끝에 남는다."
+  },
+  {
+   "op": "goto",
+   "to": "LATE_X"
+  },
+  {
+   "op": "do",
+   "fx": "UQ63_MATCH = 2"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q63wait"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "한 장, 한 줄. 서른 묶음이 됐을 때 창밖이 조금 기울어 있다. ✕ 한 장이 맨 끝에 남는다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "✕ 한 장은 따로 뺀다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "LATE_L",
+     "id": "UQ63_ROSTER:3:0"
+    },
+    {
+     "text": "내 성씨 것 한 장은 따로 뺀다",
+     "tags": [],
+     "cond": "UQ63_MINE == 0 and UQ63_MINEOK == 1",
+     "fx": "",
+     "to": "LATE_M",
+     "id": "UQ63_ROSTER:3:1"
+    },
+    {
+     "text": "그대로 다 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ63_ROSTER:3:2"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "UQ63_LEFT = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "✕ 한 장. 입주 미확정. 이 이름의 졸업장은 볼트 안에 받을 사람이 없다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "내 성씨 것 한 장도 따로 뺀다",
+     "tags": [],
+     "cond": "UQ63_MINE == 0 and UQ63_MINEOK == 1",
+     "fx": "",
+     "to": "LATE_M",
+     "id": "UQ63_ROSTER:4:0"
+    },
+    {
+     "text": "됐다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ63_ROSTER:4:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "UQ63_MINE = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "당신 성씨의 졸업장 한 장을 뺀다. 2077년의 누군가 — 당신 집안의 연수생. 이름은 처음 본다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-63.txt"
+}

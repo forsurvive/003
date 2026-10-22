@@ -151,7 +151,8 @@ def slope():
     m.struct("deck_edge", 15, 35, 10, 1)
     m.fill(12, 40, 27, 41, "P")
     m.struct("portal", 12, 40, 16, 2)
-    m.text(19, 39, "방폭문은 다시 굳게 닫혔다. 인터컴에는 잡음뿐이다.", w=2)
+    m.text(19, 39, "방폭문은 다시 굳게 닫혔다. 문설주에 인터컴.", w=2, scene="SQS03_INTERCOM")   # 1-11d SQ-S03 손 수정과 같게(장면이 있어야 한다)
+    m.text(22, 39, "문설주 옆 서류 투입구.", scene="UQ63_SLOT")                                      # 1-12i UQ-63
     m.c("mark start 19 31 N")
     m.c("mark from_vault 19 37 N")
     m.p("exit_terminal", 22, 31)
