@@ -12,6 +12,8 @@
 @scene FQSB01_GU  실장 구만호 — 출근부  (L-R02-19)
 @npc   C-049
 @cond  V_ACT >= 1 and SB_RAID == 0 and AFF_SB > -60 and FQSB01_STAGE < 100
+? UQ08_WIRE == 1 and UQ08_GSAID == 0 and FQ_SB01_WHERE != 2 -> U8G
+* TOP
 ? FQ_SB01_WHERE == 2 and GAME_HOUR >= 6 -> YARD
 ? FQSB01_STAGE == 0 -> OFFER
 ? FQ_SB01_TYPED >= 3 -> SUBMIT
@@ -157,6 +159,11 @@ C-049 [기본] 빈 줄은 빨간펜이 채워. 일당은 없어.
 * S09
 @cmd sb01 pass FQSB01_GU DEAL
 -> END
+# 1-12h UQ-08(이월 D-330): 철사 실종의 출처 한 줄 — SQS09_GU U8G와 같은 사실, 출근부 장면이 먼저 잡혀도 들리게(A240). 이 장면은 반말(출근부 일꾼에게).
+* U8G
+! UQ08_GSAID = 1
+C-049 [기본] (장부를 넘기다 멈춘다) 철사가 그러더라. 렌즈 갖다준 놈이 그날 공구함 앞에 서 있었다고. …누군지는 장부에 적어 뒀어.
+-> TOP
 * U70
 @cmd sb01 pass FQSB01_GU U70
 -> END

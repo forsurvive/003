@@ -1,6 +1,6 @@
 # 퀘스트 교차 정합 표 (자동 — tools/pipeline/quest_cross.py)
 
-> SD-20 §10. 경고 216 · 허용 216 · **새 경고 0**. 허용은 `tools/pipeline/quest_cross_allow.yaml`에 이유와 함께.
+> SD-20 §10. 경고 217 · 허용 217 · **새 경고 0**. 허용은 `tools/pipeline/quest_cross_allow.yaml`에 이유와 함께.
 
 ## 단위별 발자국
 | 단위 | 인물(세움·말함) | 이름 언급 | 쓰는 변수 | 손 맵 무대 | 막 상한 | 시한 |
@@ -14,7 +14,7 @@
 | FQ-JH-01 | C-050 FQ-JH-01 FQ-JH-02 N-R02-012 N-R02-016 N-UG-501 | C-050 N-R02-006 N-R02-048 N-R03-018 N-R06-047 N-R08-060 N-R09-044 N-R10-035 | 1 | J-08 J-09 |  |  |
 | FQ-JH-02 | C-050 FQ-JH-01 FQ-JH-02 N-R02-012 N-R02-016 N-UG-501 | C-027 C-050 N-R06-048 N-R10-013 N-UG-501 | 1 |  |  |  |
 | FQ-JH-03 | C-018 C-050 FQ-JH-03 M-062 M-426 N-BJ-C1 N-SB-R1 | C-018 C-067 | 0 |  |  |  |
-| FQ-SB-01 | C-010 C-013 C-021 C-049 FQ-SB-01 FQ-SB-02 N-R01-026 N-R01-030 N-R01-035 N-R01-039 N-R01-501 N-R02-036 N-R02-041 N-R02-50 | C-049 N-R01-026 N-R01-030 N-R01-035 N-R01-039 N-R01-501 N-R05-034 | 14 |  |  | ○ |
+| FQ-SB-01 | C-010 C-013 C-021 C-049 FQ-SB-01 FQ-SB-02 N-R01-026 N-R01-030 N-R01-035 N-R01-039 N-R01-501 N-R02-036 N-R02-041 N-R02-50 | C-049 N-R01-026 N-R01-030 N-R01-035 N-R01-039 N-R01-501 N-R05-034 | 15 |  |  | ○ |
 | FQ-SB-02 | C-013 C-021 C-049 FQ-SB-01 FQ-SB-02 N-JY-P1 N-ND-G1 N-R02-041 N-R02-506 N-SB-H1 | C-065 N-R06-048 N-R06-049 | 2 |  |  | ○ |
 | FQ-SB-02L | N-JY-P1 N-ND-G1 N-R02-506 N-SB-H1 N-SB-L1 | C-065 N-R06-048 N-R06-049 | 1 |  |  |  |
 | GA | A-001 A-012 A-074 GA-01 GA-02 M-196 N-GA-B1 |  | 1 |  |  |  |
@@ -358,10 +358,11 @@
 ## X2 (1, 새 0)
 - 허용 `C-021 X-BC X-SB` C-021(독사): X-BC「MQ101_NIGHT == 2 and MQ101_RESULT == 0 and MQ101_FIGHT == 0」와 X-SB「SB_RAID == 0 and MQ101_STAGE >= 50」가 함께 참일 수 있다(예: MQ101_FIGHT=0, MQ101_NIGHT=2, MQ101_RESULT=0, MQ101_STAGE=50, SB_RAID=0) — X-BC는 MQ101_NIGHT 2(밤 — 단계 40), X-SB는 MQ101_STAGE ≥ 50(아침 뒤) — 진행 순서상 함께 오지 않는다(표는 변수 사이 관계를 모른다)
 
-## X3 (103, 새 0)
+## X3 (104, 새 0)
 - 허용 `DG-GR UQ71_CORE` DG-GR가 UQ-71 소유 변수 UQ71_CORE를 세운다 — 같은 사실인가(P1) — 대방 버스 노심의 행방은 UQ71_CORE 한 곳 — 구로 7703에 꽂아 다 태우면 6(UQ-71 머리 주석 · 버스 장면 · DB-01 그림이 6을 '빈 버스'로 읽는다). 소지(2)일 때만 꽂을 수 있다
 - 허용 `FQ-JH-01 FQ_JH02_SEEN` FQ-JH-01가 FQ-JH-02 소유 변수 FQ_JH02_SEEN를 세운다 — 같은 사실인가(P1) — JH-01 왕쥐 둥지 영수증이 JH-02 훅('이미 앎', P2) — SEEN은 '장부 줄을 봤다' 한 사실이고 세우는 곳 둘(둥지 · 상인회 책상)은 같은 값 1만 쓴다(maxi)
 - 허용 `FQ-SB-01 FQ_SB02_TOLD` FQ-SB-01가 FQ-SB-02 소유 변수 FQ_SB02_TOLD를 세운다 — 같은 사실인가(P1) — 같은 사실 한 곳(P1) — 구만호가 일당을 주며 '운송조 호위가 하나 모자라'고 알려 준 사실 · SB-02 출발 줄(FQSB02_YARD SENT 판)이 읽는다
+- 허용 `FQ-SB-01 UQ08_GSAID` FQ-SB-01가 UQ-08 소유 변수 UQ08_GSAID를 세운다 — 같은 사실인가(P1) — 출근부 장면(FQSB01_GU)이 구만호의 이름순 첫 참이라 SQS09_GU U8G와 같은 한 줄을 여기서도 한 번(A240 · 이월 D-330)
 - 허용 `FQ-SB-02 UQ08_HEAT` FQ-SB-02가 UQ-08 소유 변수 UQ08_HEAT를 세운다 — 같은 사실인가(P1) — 갈고리 앞 원격기 해제에 목걸이가 벌어짐(HAND_RS) — 남이 본 열린 목걸이 +1(§8b S2 · S3)
 - 허용 `FQ-SB-02L UQ08_HEAT` FQ-SB-02L가 UQ-08 소유 변수 UQ08_HEAT를 세운다 — 같은 사실인가(P1) — 위와 같음(인솔 반장 판 — script_variants가 만든 FQ-SB-02L)
 - 허용 `HP DG_STOP` HP가 던전 소유 변수 DG_STOP를 세운다 — 같은 사실인가(P1) — DG_STOP은 들것 의료반(세력 약호 DG) 정류지 — 던전 정리 변수(DG_ 접두)가 아니다. 정하는 곳은 HP 진행기 한 곳(hp.gd)

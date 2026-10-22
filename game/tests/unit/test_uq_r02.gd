@@ -1513,3 +1513,14 @@ func test_uq70_real_scene_paths(t) -> void:
 	t.ok(_says(st, "UQ70_CHEON", "검은 천"), "천 씨 — 검은 천")
 	_u70_today(h, st, 2, 10)
 	t.ok(not _has_opt(st, "UQ70_JA", "캡 300"), "죽은 사람 줄은 청산 · 대납 없음")
+
+
+func test_uq08_wire_line_via_attendance(t) -> void:
+	var a := _host()
+	var h: InteriorHost = a[0]
+	var st: StoryState = a[1]
+	st.vars.set_v("UQ08_WIRE", 1)
+	t.eq(str(h.scene_for("C-049").get("id", "")), "FQSB01_GU", "출근부 전엔 출근부 장면이 먼저")
+	t.ok(_says(st, "FQSB01_GU", "렌즈 갖다준 놈이"), "철사 실종의 출처 한 줄이 출근부 장면에서도(이월 D-330 · A240)")
+	t.eq(_v(st, "UQ08_GSAID"), 1, "한 번")
+	t.ok(not _says(st, "FQSB01_GU", "렌즈 갖다준"), "두 번은 없다")
