@@ -2,6 +2,7 @@
 ##   UQ-01 「24시」 — 원고 script/act1/UQ-01.txt · 맵 K-11 봉천 번개24 · K-37 노량진 번개24(V24 로봇 창구).
 ##   UQ-02 「백구의 밥그릇」 — 원고 UQ-02.txt · X-BC 개집 · 월드 스팟 개천 배수구 둥지(@884,1385) · 숲 가장자리(@896,1418).
 ##     백구 자리 한 값(P3): 밤 나들이 동안 UQ02_DOG_OUT 1 — X-BC · B-01 백구 줄이 모두 이 값을 읽는다. 보이는 나들이(주인공이 가까울 때)는 배우를 세워 걷게 한다.
+##   UQ-67 「보라매 마지막 비행」(1-12i i5 — 원고 UQ-67.txt · 월드 스팟 L-R01-17 · 봉천 X-BC 가로등 · 아랫문 밖 렌치 · 새벽인력 매점) ·
 ##   UQ-63 「연수원의 졸업장」(1-12i i4 — 원고 UQ-63.txt · 맵 K-01 · 새 K-03 · X-S07 투입구 · 인터컴 SQS03_INTERCOM) ·
 ##   UQ-64 · 65(1-12i i1 · i2) · UQ-66 「전지 하나, 냉장고 둘」(1-12i i3 — 원고 UQ-66.txt · 맵 K-26 · K-26B · GS-02 · 월드 스팟 L-R01-25).
 ## 사실은 변수 한 곳(P1) — 변수 뜻은 원고 머리 주석. 시간 판정(목격 · 손님 · 재고 주)은 06:00 하루 판정에서만(P6).
@@ -318,6 +319,7 @@ func _up(qid: String, n: int) -> void:
 
 
 func _on_day(d: int) -> void:
+	_uq67_day(d)
 	_uq63_day(d)
 	_uq66_day(d)
 	_uq65_day(d)
@@ -736,6 +738,66 @@ func _cmd(a: Array, done: Callable) -> void:
 				st.call_fn("take", ["M-440", left])
 			_sv("UQ64_MEM", 1)
 			_uq64_finish()
+		"q67start":                                                      # UQ-67 단계 10 — 렌치를 만난 날 + 3이 렌치의 날(만나기 전 · TOLD · 렌치 사망이면 없음 — '사흘'을 렌치가 말한다)
+			_up("UQ-67", 10)
+			if v("UQ67_DUE") == 0 and v("UQ67_MET") == 1 and v("UQ67_TOLD") == 0 and v("UQ67_CORE") == 0 and not st.is_dead("N-R01-063"):
+				_sv("UQ67_DUE", day() + U67_DAYS)
+		"q67told", "q67move":                                            # 머리카락 얘기 · 난로가 식음(봉인 · 혼자 꺼냄) — 렌치가 잠자리를 옮기고 기한이 사라진다
+			_sv("UQ67_DUE", 0)
+			if v("UQ67_WRENCH") == 0:
+				_sv("UQ67_WRENCH", 2)
+			_u67_refresh()
+		"q67fail":                                                       # 꺼내다 실패 — 숨 한 번 20라드 · 고리 r6
+			_u67_rad(20)
+			_u67_zone()
+		"q67take":                                                       # 꺼냄 — 지님(CORE 2) · 20라드 · 고리 꺼짐
+			_sv("UQ67_CORE", 2)
+			_sv("UQ67_DAY", day())
+			_sv("UQ67_DUE", 0)
+			st.call_fn("give", ["M-445", 1])
+			_u67_rad(20)
+			_up("UQ-67", 20)
+			_u67_zone()
+			_u67_jet()
+		"q67pick":                                                       # 쓰러진 렌치 품에서 거둠
+			_sv("UQ67_CORE", 2)
+			_sv("UQ67_DAY", day())
+			st.call_fn("give", ["M-445", 1])
+			_u67_rad(10)
+			_up("UQ-67", 20)
+		"q67seal":                                                       # ② 봉인 — 카르마 +25 · 고리 꺼짐 · 매듭
+			_sv("UQ67_CORE", 1)
+			_sv("UQ67_DAY", day())
+			_sv("UQ67_DUE", 0)
+			st.call_fn("karma", [25])
+			_u67_zone()
+			_u67_jet()
+			_u67_finish("봉인")
+		"q67sell":                                                       # ③ 새벽인력 매점 — 300캡 · SB +3 · HALF면 렌치가 다음 06:00 아랫문 밖에서 반 몫을 묻는다
+			_sv("UQ67_CORE", 3)
+			_sv("UQ67_DAY", day())
+			st.call_fn("caps", [300])
+			st.call_fn("aff", ["SB", 3])
+			_u67_finish("새벽인력에 팖")
+		"q67power":                                                      # ① 봉천 발전기 — 다음 06:00 가로등 · BC +5 · 판도 +2
+			_sv("UQ67_CORE", 4)
+			_sv("UQ67_DAY", day())
+			st.call_fn("aff", ["BC", 5])
+			_sv("PD_R01", v("PD_R01") + 2)
+			_u67_finish("봉천 발전기")
+		"q67half":                                                       # 남무진이 렌치 몫 150캡을 쳐 줌 — 렌치는 다음 06:00 봉천으로 받으러 떠난다(그날은 활주로 공원에서 '내일 간다')
+			_sv("UQ67_HALFPAY", day())
+		"q67sulk":                                                       # 같이 꺼낸 몫을 묻음 — 렌치가 삐져 떠남
+			_sv("UQ67_WRENCH", 5)
+			_u67_refresh()
+		"q67pay":                                                        # 아랫문 밖 — 반 몫 150캡([캡 150] 꼬리표가 뺀다 · 카르마 +10)
+			st.call_fn("karma", [10])
+			_sv("UQ67_WRENCH", 1)
+			_u67_refresh()
+		"q67cheat":                                                      # 떼먹음 — BC −2 · 소문
+			_sv("UQ67_WRENCH", 6)
+			st.call_fn("aff", ["BC", -2])
+			_u67_refresh()
 		"q63start":                                                      # UQ-63 단계 10(비표시 — 깔끔이 · 명부 · 보존함) · 주인공 성이 명부 30 성씨 안인지(MINEOK)
 			_up("UQ-63", 10)
 			_sv("UQ63_MINEOK", 1 if str(st.vars.get_v("P_SURNAME")) in U63_SURNAMES else 0)
@@ -866,6 +928,74 @@ func _cmd(a: Array, done: Callable) -> void:
 			_sv("UQ65_LESSON_DAY", day())
 	done.call()
 
+
+
+# ---------------------------------------------------------------- UQ-67 보라매 마지막 비행(1-12i i5 — SD-05 §3.32)
+const U67_DAYS := 3                                ## 발동 뒤 사흘 — 렌치가 직접 꺼내 봉천으로
+const U67_CARRY_RAD := 10                          ## 노심을 지닌 채 06:00마다
+const U67_JET := Vector2i(1, 1)                    ## 보라매 스팟 안 시험기 칸
+
+
+func _u67_rad(n: int) -> void:
+	st.vars.set_v("PC_RADS", Radiation.rads(st) + n)
+	host.hint("배낭이 따뜻하다 — 선량계 바늘이 뜬다(+%d 라드)" % n, 4.0)
+
+
+## 조건부 Rad 고리(rad_zones COND_ZONES — UQ67_CORE · LEAK)를 지금 맵에 다시 건다
+func _u67_zone() -> void:
+	if host.map is WorldMap and host.combat != null and host.combat.rad != null:
+		host.combat.rad.setup(host.map, st)
+
+
+func _u67_jet() -> void:
+	if host.map is WorldMap:
+		var o := spot_o("L-R01-17")
+		if o.x >= 0:
+			var c := v("UQ67_CORE")
+			host.map.set_prop_state(o + U67_JET, "sealed" if c == 1 else ("empty" if c >= 2 else ("core" if v("UQ67_LEAK") == 1 else "")))
+
+
+func _u67_refresh() -> void:
+	if host.map != null and not host.box.active and not host.ev.busy():
+		host.refresh_npcs()
+
+
+func _u67_finish(how: String) -> void:
+	_sv("UQ67_DUE", 0)
+	if st.quests.stage("UQ-67") < 100:
+		st.quests.set_stage("UQ-67", 100)
+		if v("UQ67_XP") == 0:
+			_sv("UQ67_XP", 1)
+			st.call_fn("xp", [90])
+		_log("UQ-67 매듭(%s · 렌치 %d)" % [how, v("UQ67_WRENCH")])
+
+
+func _uq67_day(d: int) -> void:
+	if v("UQ67_WRENCH") == 0 and st.is_dead("N-R01-063"):
+		_sv("UQ67_DUE", 0)
+	var due := v("UQ67_DUE")
+	if due > 0 and v("UQ67_CORE") == 0 and v("UQ67_WRENCH") == 0 and d >= due and not st.is_dead("N-R01-063"):
+		_sv("UQ67_CORE", 5)                                           # 렌치가 직접 꺼내 봉천으로 — 아랫문 밖에 쓰러진 채(노심은 그 옆)
+		_sv("UQ67_WRENCH", 3)
+		_sv("UQ67_DAY", d)
+		_sv("UQ67_DUE", 0)
+		st.kill("N-R01-063")
+		_up("UQ-67", 10)
+		_log("UQ-67 렌치가 노심을 안고 봉천 아랫문 밖에 쓰러짐")
+	elif v("UQ67_WRENCH") == 3 and d > v("UQ67_DAY") and not st.is_dead("N-R01-030"):
+		_sv("UQ67_WRENCH", 4)                                         # 다음 날 남무진이 묻어 줌(남무진이 죽었으면 그대로 · 노심은 거뒀으면 없고 아니면 그 자리)
+	if v("UQ67_HALFPAY") > 0 and v("UQ67_WRENCH") == 0 and d > v("UQ67_HALFPAY"):
+		_sv("UQ67_WRENCH", 1)                                         # 남무진이 쳐 준 반 몫을 받으러 봉천으로 — 그 길로 떠남
+	if v("UQ67_CORE") == 2:
+		if _owned("M-445") == 0:
+			_sv("UQ67_LOST", 1)                                       # 팔거나 버림(값 0 — 거래창엔 안 뜸 · 보관함 포함 셈 A244)
+			if st.quests.stage("UQ-67") < 90:
+				st.quests.set_stage("UQ-67", 90)
+			_log("UQ-67 노심을 잃음")
+		elif st.count_of("M-445") > 0:
+			_u67_rad(U67_CARRY_RAD)                                   # 배낭에 있을 때만 — 보관함에 넣어 두면 식는다(§7c ③)
+	if v("UQ67_CORE") == 3 and v("UQ67_HALF") == 1 and v("UQ67_ASK") == 0 and v("UQ67_WRENCH") == 0 and d > v("UQ67_DAY") and not st.is_dead("N-R01-063"):
+		_sv("UQ67_ASK", d)                                            # 같이 꺼낸 몫 — 렌치가 봉천 아랫문 밖에서 기다린다
 
 
 # ---------------------------------------------------------------- UQ-63 연수원의 졸업장(1-12i i4 — SD-05 §3.31)

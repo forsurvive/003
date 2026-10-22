@@ -798,6 +798,23 @@ func _ready() -> void:
 				["want", ["누른다", "끊는다"]], ["go", 959, 1504], ["use", 959, 1505], ["wait", 3.0], ["check", "UQ63_SAID == 1", "방금례 결과 — 서른 가문 · 311장"],
 				["warp", "K-01", "from_W"], ["wait", 1.5], ["calm"], ["shot", "uq63_after"], ["want", ["됐다"]], ["talk", "N-R01-065"], ["wait", 2.0],
 				["check", "UQ63_RSAID == 1", "깔끔이 — 의자를 치우고 청소"]]
+		"uq67":                                                         # 1-12i UQ-67 보라매 마지막 비행: 렌치(10) → 테이프 → 들창 꺼냄(20 · 라드) → 봉천 남무진 ①(100) → 다음 06:00 아랫마당 가로등
+			st.vars.set_v("GAME_DAY", 6)
+			st.vars.set_v("PC_SKP_REPAIR", 60)
+			st.quests.set_stage("MQ-101", 100)
+			st.vars.set_v("MQ101_RESULT", 1)
+			host.date_text = "2277. 10. 29.  10:00"
+			var bo := _spot_o("L-R01-17")                               # 보라매 스팟(14×9 — 렌치 5,4 · 들창 4,3 · 조종석 1,2)
+			host.enter("W", "", {}, Vector2(bo.x + 7, bo.y + 7) * 32.0 + Vector2(16, 16))
+			plan = [["hp", 3000], ["wait", 2.0], ["noenc"], ["calm"], ["shot", "uq67_runway"], ["want", ["!저 전투기는", "됐다"]], ["talk", "N-R01-063"], ["wait", 3.0], ["shot", "uq67_wrench"],
+				["check", "UQ67_MET == 1 and UQ67_STAGE == 10 and UQ67_DUE == 9", "렌치 — 난로(10) · 렌치의 날"],
+				["want", ["테이프를 튼다"]], ["go", bo.x + 1, bo.y + 3], ["use", bo.x + 1, bo.y + 2], ["wait", 2.0],
+				["want", ["걸쇠를 풀고"]], ["go", bo.x + 4, bo.y + 4], ["use", bo.x + 4, bo.y + 3], ["wait", 2.5], ["shot", "uq67_hatch"],
+				["check", "UQ67_CORE == 2 and UQ67_STAGE == 20 and has(\"M-445\") and PC_RADS >= 20", "들창 — 노심을 꺼냄(20 · 20라드)"],
+				["warp", "X-BC", "from_X-S07"], ["wait", 1.5], ["calm"], ["want", ["활주로 공원 전투기 노심", "마을에 쓰세요", "돌아선다"]], ["talk", "N-R01-030"], ["wait", 3.0], ["shot", "uq67_nam"],
+				["check", "UQ67_CORE == 4 and UQ67_STAGE == 100", "남무진 ① — 봉천 발전기(100)"],
+				["hours", 24], ["wait", 1.0], ["warp", "X-BC", "from_X-S07"], ["wait", 1.5], ["calm"], ["go", 29, 36], ["wait", 1.0], ["shot", "uq67_lamps"],
+				["check", "GAME_DAY > UQ67_DAY", "다음 날 — 아랫마당 가로등"]]
 		"uq66":                                                         # 1-12i UQ-66 전지 하나, 냉장고 둘: 심도겸 냉동고 이야기(10 · 기한 +4) → 흑석 원무 단말 퇴원 서류 → 7호 퇴원(20 · 철문) →
 			st.vars.set_v("GAME_DAY", 6)                                 #   지하 혈액은행 예비 전지 → 냉장고(100 · 로비 글) → 다음 06:00 들것 협력 · 정류지 → 시장 꼬리표 → 기한 날 운반조 [힘 7](① — 둘 다 삶)
 			st.vars.set_v("PC_SKP_SCIENCE", 60)

@@ -2455,6 +2455,32 @@
    },
    "title": "전지 하나, 냉장고 둘"
   },
+  "UQ-67": {
+   "key": "UQ67",
+   "stages": {
+    "10": {
+     "done": "렌치와 말하거나 시험기 엔진 들창을 봄",
+     "log": "전투기 심장이 샌다",
+     "src": "05_misc-quests-encounters.md:1213"
+    },
+    "100": {
+     "done": "봉인(②) · 봉천 발전기(①) · 새벽인력 매점(③)",
+     "log": "마지막 비행",
+     "src": "05_misc-quests-encounters.md:1215"
+    },
+    "20": {
+     "done": "노심 M-445를 지님(또는 렌치가 안고 쓰러진 자리에서 주움)",
+     "log": "노심을 꺼냈다",
+     "src": "05_misc-quests-encounters.md:1214"
+    },
+    "90": {
+     "done": "꺼낸 노심이 어디에도 없음(보관함 포함)",
+     "log": "(소멸) 노심을 잃었다",
+     "src": "05_misc-quests-encounters.md:1216"
+    }
+   },
+   "title": "보라매 마지막 비행"
+  },
   "UQ-68": {
    "key": "UQ68",
    "places": [

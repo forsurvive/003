@@ -1,0 +1,535 @@
+{
+ "id": "BM_WRENCH",
+ "title": "고철꾼 렌치",
+ "loc": "L-R01-17",
+ "npc": "N-R01-063",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "AGAIN0": 8,
+  "FIRST": 13,
+  "AGAIN": 17,
+  "LEAK_SAY": 26,
+  "MOVED": 28,
+  "SEALED_SAID": 33,
+  "SOLO": 37,
+  "HALF_PAID": 42,
+  "HALF_LOST": 44,
+  "HALF_WAIT": 46,
+  "MENU": 48,
+  "JET": 49,
+  "JET_GONE": 53,
+  "HAIR": 55,
+  "TELL": 57,
+  "TELL_T": 63,
+  "TELL_N": 65,
+  "TELL_X": 66,
+  "TELL_X2": 69,
+  "LEVER": 71,
+  "LEVER_OK": 73,
+  "SOS": 79
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "UQ67_MET == 1",
+   "to": "AGAIN"
+  },
+  {
+   "op": "if",
+   "cond": "UQ67_MET == 2",
+   "to": "AGAIN0"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "전투기 엔진 덮개에 등을 기대고 앉은 사내. 고철 수레에 비행기 부품이 수북하다. 모자 밑으로 머리카락이 듬성하다."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-063",
+   "emo": "미소",
+   "text": "손님? 고철 사러 왔으면 잘 왔어. 비행기 쇠는 가벼워. 렌치야. 이름이 아니라 직업."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-063",
+   "emo": "기본",
+   "text": "(덮개를 손바닥으로 두드린다) 이 엔진 하나면 봉천 전체에 불이 들어와. 아마도. 따뜻하거든. 밤에 여기 기대 자면 난로야."
+  },
+  {
+   "op": "do",
+   "fx": "UQ67_MET = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q67start"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "FIRST"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-063",
+   "emo": "기본",
+   "text": "아까 들창 만지던 손님. 렌치야. 이름이 아니라 직업. 저 엔진은 내 난로고."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-063",
+   "emo": "미소",
+   "text": "손대도 돼 — 봉천 땜장이가 쇠를 사거든. 노심이면 큰 쇠지. 들창이 안 열려서 그렇지, 손이 자꾸 떨려서."
+  },
+  {
+   "op": "do",
+   "fx": "UQ67_MET = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q67start"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "FIRST"
+  },
+  {
+   "op": "if",
+   "cond": "UQ67_CORE != 0",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-063",
+   "emo": "기본",
+   "text": "사흘만 봐. 손 안 떨리는 날 잡아서 내가 열 거야. 그때까진 난로로 쓰고."
+  },
+  {
+   "op": "if",
+   "cond": "UQ67_LEAK == 1",
+   "to": "LEAK_SAY"
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "if",
+   "cond": "UQ67_WRENCH == 2 and UQ67_WSAID == 0",
+   "to": "MOVED"
+  },
+  {
+   "op": "if",
+   "cond": "UQ67_CORE == 1 and UQ67_SAID == 0",
+   "to": "SEALED_SAID"
+  },
+  {
+   "op": "if",
+   "cond": "UQ67_HALFPAY > 0",
+   "to": "HALF_PAID"
+  },
+  {
+   "op": "if",
+   "cond": "UQ67_CORE == 2 and UQ67_HALF == 1 and UQ67_LOST == 1",
+   "to": "HALF_LOST"
+  },
+  {
+   "op": "if",
+   "cond": "UQ67_CORE == 2 and UQ67_HALF == 1",
+   "to": "HALF_WAIT"
+  },
+  {
+   "op": "if",
+   "cond": "UQ67_CORE >= 2 and UQ67_HALF == 0 and UQ67_SSAID == 0",
+   "to": "SOLO"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-063",
+   "emo": "기본",
+   "text": "또 왔네. 고철은 저쪽 수레. 난로는 여기."
+  },
+  {
+   "op": "if",
+   "cond": "UQ67_LEAK == 1 and UQ67_CORE == 0",
+   "to": "LEAK_SAY"
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-063",
+   "emo": "미소",
+   "text": "거 봐, 손 떨리지? 나도 그래. 들창은 내 쇠지레로 비트는 거야."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "do",
+   "fx": "UQ67_WSAID = 1"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-063",
+   "emo": "피곤",
+   "text": "(침낭을 전시기 2호 날개 밑으로 옮겨 놓았다) …옮겼어. 저 쇠가 따뜻한 게 그 뜻이었다니. 머리카락은 다시 안 나겠지?"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-063",
+   "emo": "기본",
+   "text": "고마워. 수레에서 아무거나 하나 가져가. 비행기 쇠는 가벼워."
+  },
+  {
+   "op": "do",
+   "fx": "give(\"M-010\", 2)"
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "do",
+   "fx": "UQ67_SAID = 1"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-063",
+   "emo": "분노",
+   "text": "내 난로를 묻어? …그래, 네 쇠 아니지. 내 쇠도 아니고. (침낭을 끌고 전시기 2호 쪽으로 간다) 저건 그냥 쇠야. 안 따뜻해."
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q67move"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "do",
+   "fx": "UQ67_SSAID = 1"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-063",
+   "emo": "놀람",
+   "text": "(덮개에 손바닥을 댄다) …식었네. 네가 열었어? 손이 안 떨리는구나."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-063",
+   "emo": "기본",
+   "text": "됐어. 내 손 안 댔으니 내 몫도 없지. 봉천 땜장이한테 가져가 — 쇠는 쇠니까. (침낭을 끌고 전시기 2호 쪽으로 간다) 난로는 끝났고."
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q67move"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-063",
+   "emo": "미소",
+   "text": "남씨가 내 몫 150캡을 쳐 준대? 내일 아침에 봉천 간다. 걷는 게 힘들어도 캡은 캡이지. 모자 사야겠다."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-063",
+   "emo": "분노",
+   "text": "노심은? …없어? 잃어버렸다고? 내 손바닥 봐 — 이게 꺼낸 손이야. (손을 내리고) …됐어. 쇠는 또 있겠지."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-063",
+   "emo": "기본",
+   "text": "반은 내 몫이야. 봉천 가서 받자. 남씨가 사면 반, 다른 데 팔아도 반. 나는 여기서 기다릴게 — 걷는 게 힘들어서."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "저 전투기는?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "JET",
+     "id": "BM_WRENCH:1:0"
+    },
+    {
+     "text": "머리카락이 왜 그렇게 빠져?",
+     "tags": [],
+     "cond": "UQ67_TOLD == 0",
+     "fx": "",
+     "to": "HAIR",
+     "id": "BM_WRENCH:1:1"
+    },
+    {
+     "text": "노심 때문이야. 저 쇠가 널 태우고 있어",
+     "tags": [],
+     "cond": "UQ67_TOLD == 0 and (UQ67_TAPE == 1 or UQ67_NOTE == 1)",
+     "fx": "",
+     "to": "TELL",
+     "id": "BM_WRENCH:1:2"
+    },
+    {
+     "text": "손 떨림 · 탈모 · 잇몸 — 방사능 중독이야. 난로에서 떨어져",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "의학",
+       "min": 25
+      }
+     ],
+     "cond": "UQ67_TOLD == 0 and UQ67_TAPE == 0 and UQ67_NOTE == 0",
+     "fx": "",
+     "to": "TELL",
+     "id": "BM_WRENCH:1:3"
+    },
+    {
+     "text": "쇠지레 좀 빌려줘",
+     "tags": [],
+     "cond": "UQ67_CORE == 0 and UQ67_HALF == 0 and UQ67_TOLD == 0",
+     "fx": "",
+     "to": "LEVER",
+     "id": "BM_WRENCH:1:4"
+    },
+    {
+     "text": "활주로 글씨는 뭐야?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SOS",
+     "id": "BM_WRENCH:1:5"
+    },
+    {
+     "text": "됐다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "BM_WRENCH:1:6"
+    }
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "UQ67_CORE != 0",
+   "to": "JET_GONE"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-063",
+   "emo": "기본",
+   "text": "2076년 전시기. 둘 중에 이쪽만 심장이 있어. 저쪽(전시기 2호)은 그냥 쇠야. 안 따뜻해."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-063",
+   "emo": "미소",
+   "text": "봉천 땜장이가 쇠를 산대 — 고철 팔러 가 봤거든. 노심이면 값이 꽤 나갈 텐데, 들창이 안 열려. 손이 자꾸 떨려서."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-063",
+   "emo": "기본",
+   "text": "이제 심장 없는 쇠 둘이야. 그래도 고철은 고철이지. 리벳 하나에 캡 하나."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-063",
+   "emo": "기본",
+   "text": "모자 때문이야. 아니면 물. 활주로 공원 물은 쇠 맛이 나. …엄마 쪽이 원래 머리숱이 없었대."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "do",
+   "fx": "UQ67_TOLD = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q67told"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "UQ67_TAPE == 1",
+   "to": "TELL_T"
+  },
+  {
+   "op": "if",
+   "cond": "UQ67_NOTE == 1",
+   "to": "TELL_N"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-063",
+   "emo": "놀람",
+   "text": "…의사야? (모자를 벗어 본다) 방사능. 그 말은 교과서에서 봤어. 쇠가 사람을 태운다는 거지."
+  },
+  {
+   "op": "goto",
+   "to": "TELL_X"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-063",
+   "emo": "놀람",
+   "text": "조종사가 그랬어? 72시간 안에 회수…. 200년이면 좀 늦었네. (모자를 벗어 본다)"
+  },
+  {
+   "op": "goto",
+   "to": "TELL_X"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-063",
+   "emo": "놀람",
+   "text": "그 쪽지 — 그거 내 옆에서 자던 녀석이 썼어. 어느 날 안 보이더라고. …그게 그 뜻이었어?"
+  },
+  {
+   "op": "if",
+   "cond": "UQ67_CORE != 0",
+   "to": "TELL_X2"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-063",
+   "emo": "피곤",
+   "text": "오늘 밤부터 저쪽 날개 밑에서 잘게. 안 따뜻해도. …노심은 네가 알아서 해. 나는 손 못 대겠다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-063",
+   "emo": "피곤",
+   "text": "…그래서 그렇게 따뜻했구나. 식은 게 다행이네. (모자를 다시 쓴다) 머리카락은 다시 안 나겠지?"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-063",
+   "emo": "미소",
+   "text": "빌려주는 게 아니라 같이 하는 거야. 반은 내 몫. 봉천 가서 받아."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "좋아, 같이 꺼내자",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "LEVER_OK",
+     "id": "BM_WRENCH:2:0"
+    },
+    {
+     "text": "됐어",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "MENU",
+     "id": "BM_WRENCH:2:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "UQ67_HALF = 1"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-063",
+   "emo": "기본",
+   "text": "(쇠지레를 들창 틈에 꽂는다) 셋에 비틀어. 하나, 둘 —"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "들창이 젖혀진다. 초록 빛. 렌치가 장갑도 없이 노심을 꺼내 당신 배낭에 밀어 넣는다. 손바닥이 빨갛다."
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q67take"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-063",
+   "emo": "미소",
+   "text": "반은 내 몫이야. 봉천 가서 받자. 나는 여기서 기다릴게 — 걷는 게 힘들어서."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-063",
+   "emo": "미소",
+   "text": "SOS. 패거리가 그렸어. 내가 반쯤 지웠지 — 구조대가 오면 고철값 깎을까 봐. 하하. 안 왔지만."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-67.txt"
+}

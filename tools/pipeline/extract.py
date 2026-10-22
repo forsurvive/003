@@ -173,6 +173,9 @@ def main():
         fh.write(f"공식 대조 통과: {len(rep.checks)}칸\n정합 목록(문서에 없는 필드, 기본값 사용):\n")
         fh.write("".join(f"  - {g}\n" for g in rep.gaps))
     print(open(os.path.join(OUT, "_report.txt"), encoding="utf-8").read())
+    # 고유 무기(1-12a D-027)는 weapons.json에 덧붙는 것이라 표 추출이 지운다 — 혼자 돌려도 빠지지 않게 바로 뒤에 다시 붙인다(1-12i i5에서 빠진 적 있음)
+    import unique_weapons
+    unique_weapons.main()
     return 0
 
 

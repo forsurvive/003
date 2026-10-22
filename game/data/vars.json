@@ -1350,6 +1350,21 @@
    "src": "quests",
    "type": "int"
   },
+  "UQ67_RESULT": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "UQ67_SKIP": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
+  "UQ67_STAGE": {
+   "default": 0,
+   "src": "quests",
+   "type": "int"
+  },
   "UQ68_RESULT": {
    "default": 0,
    "src": "quests",

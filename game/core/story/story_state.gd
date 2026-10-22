@@ -335,6 +335,8 @@ func _init() -> void:
 		vars.declare("UQ66_" + k, "int", 0)
 	for k in "MET ROSTER MATCH LEFT MINE SELF BOX IN DONE XP LOST SAID RSAID SKEL MINEOK COLD_SAID".split(" "):   # 1-12i UQ-63 — 뜻은 script/act1/UQ-63.txt 머리
 		vars.declare("UQ63_" + k, "int", 0)
+	for k in "CORE DUE DAY WRENCH TOLD TAPE NOTE HALF LEAK CRACK MET XP LOST NSAID ASK SAID WSAID SSAID HALFPAY".split(" "):   # 1-12i UQ-67 — 뜻은 script/act1/UQ-67.txt 머리
+		vars.declare("UQ67_" + k, "int", 0)
 	for k in "SEEN DUE MET JA RES XP GUARD GSEEN SEAL BOOK GU_DAY SUHO SUHO_DAY FREE_DAY STALL_GONE PLEDGE PLEDGE_DAY HIDE_MET SNEAK THREAT PAID TOLD BSAID PD JA_DAY KIOSK_SAID GDAY WSAID FAIL FLED PROMISE CAGE_SEEN CHEON_TOLD RES_DAY".split(" "):
 		vars.declare("UQ70_" + k, "int", 0)
 	# 1-D4 구로 차량기지(DG-GR): 뜻은 script/act1/GR.txt 머리 주석 — CORE 기관차 · PUSH 남은 밀기 · LV_* 레버 · A · B · C 입환 결과 · STAFF 역무원 · MUSTER 안 간 사람들

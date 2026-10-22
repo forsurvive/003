@@ -1,0 +1,440 @@
+{
+ "id": "UQ67_HATCH",
+ "title": "시험 엔진 덮개",
+ "loc": "L-R01-17",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "WRENCH_IN": 8,
+  "LEAKED": 12,
+  "BAR": 14,
+  "BAR_NO": 17,
+  "FAIL": 19,
+  "TAKE": 23,
+  "SEAL_Q": 26,
+  "SEAL_F": 29,
+  "SEAL_NO": 30,
+  "SEAL": 33,
+  "SEALED": 36,
+  "EMPTY": 38
+ },
+ "ops": [
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q67start"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "UQ67_CORE == 1",
+   "to": "SEALED"
+  },
+  {
+   "op": "if",
+   "cond": "UQ67_CORE != 0",
+   "to": "EMPTY"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "동체 뒤 시험 엔진 덮개. 노란 띠에 '방사능 — 회수조 외 개방 금지'. 들창 틈으로 희미한 초록."
+  },
+  {
+   "op": "if",
+   "cond": "UQ67_LEAK == 1",
+   "to": "LEAKED"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "선량계 바늘이 조금 뜬다. 덮개가 따뜻하다."
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R01-063\") == 0 and UQ67_MET == 0",
+   "to": "WRENCH_IN"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "들창 걸쇠를 풀고 노심을 꺼낸다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 35
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "TAKE",
+     "id": "UQ67_HATCH:1:0"
+    },
+    {
+     "text": "수레의 쇠지레로 걸쇠를 비튼다",
+     "tags": [
+      {
+       "k": "stat",
+       "name": "힘",
+       "min": 6
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "BAR",
+     "id": "UQ67_HATCH:1:1"
+    },
+    {
+     "text": "맨손으로 걸쇠를 비튼다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "FAIL",
+     "id": "UQ67_HATCH:1:2"
+    },
+    {
+     "text": "들창 위에 콘크리트 판을 덮어 봉인한다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SEAL_Q",
+     "id": "UQ67_HATCH:1:3"
+    },
+    {
+     "text": "물러선다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ67_HATCH:1:4"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-063",
+   "emo": "기본",
+   "text": "(뒤에서) 어이, 그거 내 난로야. 손대려면 말은 하고."
+  },
+  {
+   "op": "do",
+   "fx": "UQ67_MET = 2"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q67start"
+   ]
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "들창 걸쇠를 풀고 노심을 꺼낸다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 35
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "TAKE",
+     "id": "UQ67_HATCH:2:0"
+    },
+    {
+     "text": "수레의 쇠지레로 걸쇠를 비튼다",
+     "tags": [
+      {
+       "k": "stat",
+       "name": "힘",
+       "min": 6
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "BAR",
+     "id": "UQ67_HATCH:2:1"
+    },
+    {
+     "text": "맨손으로 걸쇠를 비튼다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "FAIL",
+     "id": "UQ67_HATCH:2:2"
+    },
+    {
+     "text": "들창 위에 콘크리트 판을 덮어 봉인한다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SEAL_Q",
+     "id": "UQ67_HATCH:2:3"
+    },
+    {
+     "text": "물러선다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ67_HATCH:2:4"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "들창이 반쯤 열린 채 걸렸다. 초록 빛이 바닥까지 번지고 선량계가 운다. 걸쇠는 비틀려 손으로는 안 된다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "수레의 쇠지레로 걸쇠를 비튼다",
+     "tags": [
+      {
+       "k": "stat",
+       "name": "힘",
+       "min": 6
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "BAR",
+     "id": "UQ67_HATCH:3:0"
+    },
+    {
+     "text": "들창 위에 콘크리트 판을 덮어 봉인한다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SEAL_Q",
+     "id": "UQ67_HATCH:3:1"
+    },
+    {
+     "text": "물러선다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ67_HATCH:3:2"
+    }
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"N-R01-063\") == 0 and UQ67_WRENCH == 0 and UQ67_ASK == 0",
+   "to": "BAR_NO"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "수레 맨 위 쇠지레를 들창 틈에 꽂고 온몸으로 비튼다. 걸쇠가 튕겨 나간다."
+  },
+  {
+   "op": "goto",
+   "to": "TAKE"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-063",
+   "emo": "기본",
+   "text": "(뒤에서) 어이, 그건 내 쇠지레야. 쓰고 싶으면 같이 하는 거야 — 반은 내 몫."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "UQ67_LEAK = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q67fail"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "걸쇠가 반만 돌아가고 들창이 비틀린 채 걸린다. 틈으로 초록 숨이 얼굴에 닿는다 — 입안이 쇠 맛이다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q67take"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "들창이 젖혀진다. 초록 빛. 장갑 위로도 열이 느껴지는 원통을 꺼내 배낭에 넣는다. 배낭이 따뜻하다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "활주로 가장자리에 깨진 콘크리트 판이 있다. 들창 위에 얹고 철사로 묶으면 — 노심은 안에서 식어 간다."
+  },
+  {
+   "op": "if",
+   "cond": "UQ67_CRACK == 1",
+   "to": "SEAL_F"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "판을 얹고 철사로 묶어 봉인한다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 40
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "SEAL",
+     "id": "UQ67_HATCH:4:0"
+    },
+    {
+     "text": "판을 통째로 들어 올려 덮는다",
+     "tags": [
+      {
+       "k": "stat",
+       "name": "힘",
+       "min": 7
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "SEAL",
+     "id": "UQ67_HATCH:4:1"
+    },
+    {
+     "text": "판을 끌어와 대충 얹는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SEAL_NO",
+     "id": "UQ67_HATCH:4:2"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ67_HATCH:4:3"
+    }
+   ]
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "남은 판을 통째로 들어 올려 덮는다",
+     "tags": [
+      {
+       "k": "stat",
+       "name": "힘",
+       "min": 7
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "SEAL",
+     "id": "UQ67_HATCH:5:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ67_HATCH:5:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "UQ67_CRACK = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "판을 끌어오다 모서리가 깨진다. 철사로는 안 된다 — 남은 반쪽을 통째로 들어 올리는 수밖에."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q67seal"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "콘크리트 판이 들창을 덮는다. 초록 빛이 사라진다. 선량계 바늘이 천천히 내려간다. 분필로 판 위에 '봉인'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "들창 위 콘크리트 판. 철사 · 분필 '봉인'. 덮개는 이제 차갑다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "들창이 열린 채 비어 있다. 받침에 초록 물때만 남았다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-67.txt"
+}

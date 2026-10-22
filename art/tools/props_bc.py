@@ -1130,7 +1130,7 @@ STATES.update(STATES_GT)
 STATES.update(STATES_UQ)
 STATES.update(STATES_UQ2)
 for _k in STATES_UQ3:
-    assert _k not in STATES or _k == "freezer_unit", _k
+    assert _k not in STATES or _k in ("freezer_unit", "streetlamp"), _k
 STATES.update(STATES_UQ3)
 STATES.update(STATES_HP4)
 STATES.update(STATES_BS)

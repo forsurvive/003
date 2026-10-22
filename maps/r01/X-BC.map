@@ -114,6 +114,13 @@ struct scrap 4 39 52 2 seed=1 args='{"gate": [23, 27], "banner": [33, 36, "봉�
 prop gate_l 27 40
 prop gate_r 31 40
 text 29 39 "봉천 계단마을 아랫문. 고철 장벽에 분양 현수막을 덧댄 철판 문이다."
+# 1-12i UQ-67: 노심 발전기 — 아랫마당 죽은 가로등 둘이 켜진다(남무진 — 다음 06:00) · 렌치의 반 몫 · 쓰러진 렌치는 아랫문 밖(r01.spots)
+prop streetlamp 25 35 cond="not (UQ67_CORE == 4 and GAME_DAY > UQ67_DAY)"
+prop streetlamp 33 35 cond="not (UQ67_CORE == 4 and GAME_DAY > UQ67_DAY)"
+prop streetlamp 25 35 state=on cond="UQ67_CORE == 4 and GAME_DAY > UQ67_DAY"
+prop streetlamp 33 35 state=on cond="UQ67_CORE == 4 and GAME_DAY > UQ67_DAY"
+text 25 35 "죽은 가로등. 2077년 원자력 가로등 — 전구가 깨진 채 200년." cond="not (UQ67_CORE == 4 and GAME_DAY > UQ67_DAY)"
+text 25 35 "가로등이 켜져 있다. 기둥 밑에 남무진의 분필 — '전투기 심장. 만지지 말 것'." cond="UQ67_CORE == 4 and GAME_DAY > UQ67_DAY"
 prop guard_booth 33 38
 prop sandbags 25 38
 prop stair_post 32 34

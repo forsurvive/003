@@ -1,0 +1,108 @@
+{
+ "id": "UQ67_WAIT",
+ "title": "아랫문 밖의 렌치",
+ "loc": "L-R01-09",
+ "npc": "N-R01-063",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "PAY": 3,
+  "CHEAT": 6,
+  "CHEATED": 9
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "UQ67_WRENCH == 6",
+   "to": "CHEATED"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-063",
+   "emo": "피곤",
+   "text": "(아랫문 기둥에 기대 있다) 왔네. 봉천까지 왔는데 땜장이는 노심 구경도 못 했대. 그럼 어디 팔았어? …어디든. 내 반 몫은?"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "여기 네 몫",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 150
+      }
+     ],
+     "cond": "PC_CAPS >= 150",
+     "fx": "",
+     "to": "PAY",
+     "id": "UQ67_WAIT:1:0"
+    },
+    {
+     "text": "반 몫은 무슨. 네가 꺼냈어?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "CHEAT",
+     "id": "UQ67_WAIT:1:1"
+    },
+    {
+     "text": "나중에",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ67_WAIT:1:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q67pay"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-063",
+   "emo": "미소",
+   "text": "하하. 봉천 쇠는 안 샀어도 캡은 캡이지. 이걸로 모자 사야겠다. 머리숱 가릴 거."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q67cheat"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-063",
+   "emo": "분노",
+   "text": "…내 손바닥 봐. 이게 꺼낸 손이야. 봉천 사람들한테 다 말할 거야. 노심 들고 튄 놈이라고."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-063",
+   "emo": "분노",
+   "text": "말 걸지 마. 노심 들고 튄 놈이랑은."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-67.txt"
+}

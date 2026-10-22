@@ -82,6 +82,42 @@ npc N-HS-P1 1 2 N sheet=en_cr200_loco cond="UQ66_WARD == 1" bark="(햇볕 쪽으
 npc N-HS-P2 3 2 N sheet=en_cr200_loco cond="UQ66_WARD == 1" bark="(소매에 매인 '퇴원' 꼬리표를 만지작거린다)"
 npc N-HS-P3 4 3 W sheet=en_cr200_loco cond="UQ66_WARD == 1" bark="(병원 쪽을 본다)"
 
+# 보라매 활주로 공원(L-R01-17, SD-09a B · 단계 1-12i UQ-67 「보라매 마지막 비행」): 2077 '전시 항공 기념 광장' — 전투기 잔해 둘(원자력 시험기 1호 · 전시기 2호) ·
+#   활주로 'SOS'(반쯤 지움) · 안내판 · 렌치 N-R01-063(고철꾼 — 침낭 · 수레 · 기한 뒤 봉천으로) · 왕개미 일개미 둘 · 길 쪽지(road_notes에서 옮김) · 맡김 상자(보관 자리 지침). 노심 그림은 UQ67_CORE · LEAK 한 값.
+spot L-R01-17 14 9
+prop jet_wreck 1 1 cond="UQ67_CORE == 0 and UQ67_LEAK == 0"
+prop jet_wreck 1 1 state=core cond="UQ67_CORE == 0 and UQ67_LEAK == 1"
+prop jet_wreck 1 1 state=sealed cond="UQ67_CORE == 1"
+prop jet_wreck 1 1 state=empty cond="UQ67_CORE >= 2"
+text 4 3 "시험 엔진 덮개." scene=UQ67_HATCH
+text 1 2 "조종석." scene=UQ67_TAPE
+prop jet_wreck 8 5 state=plain
+text 9 6 "전시기 2호. 엔진 덮개가 없다 — 애초에 심장이 없던 기체. 캐노피가 열린 채다." w=2
+prop info_board 7 1
+text 7 1 "전시 안내판." scene=UQ67_SIGN
+text 6 8 "활주로 콘크리트에 거대한 분필 'SOS'. S 하나가 반쯤 지워졌다." w=3
+prop bedroll 6 4 cond="UQ67_WRENCH == 0"
+prop bedroll 11 8 cond="UQ67_WRENCH == 2"
+text 6 4 "엔진 덮개에 붙여 편 침낭. 베개 자리에 머리카락이 수북하다." cond="UQ67_WRENCH == 0"
+text 11 8 "전시기 2호 날개 밑으로 옮긴 침낭. 베개 자리에 모자." cond="UQ67_WRENCH == 2"
+text 6 5 "돌 밑 쪽지." scene=UQ67_NOTE cond="UQ67_NOTE == 0"
+prop hm_cart 12 2
+text 12 2 "고철 수레. 비행기 리벳 · 알루미늄 판 · 계기판 바늘. 맨 위에 쇠지레." 
+prop crate_o 13 7
+box 13 7 stash name="활주로 공원 맡김 상자(고철꾼이 쓰던 — 비어 있음)"
+text 7 5 "굴러온 모자 하나. 안쪽에 머리카락이 엉겨 있다. 렌치 것보다 작다."
+npc N-R01-063 5 4 S look=M1-S4-HR03-H3-T12-2-PF00-HD02-EY06-PR004 cond="UQ67_WRENCH == 0 and UQ67_ASK == 0" bark="따뜻하지? 밤엔 더 따뜻해."
+npc N-R01-063 10 8 N look=M1-S4-HR03-H3-T12-2-PF00-HD02-EY06-PR004 cond="UQ67_WRENCH == 2" bark="(모자를 고쳐 쓴다) 안 따뜻한 쇠 밑이 이렇게 추운 줄 몰랐어."
+enemy CR-080 0 7
+enemy CR-080 13 0
+
+# 봉천 아랫문 밖 비탈(1-12i UQ-67): 기한을 넘기면 렌치가 노심을 안고 봉천까지 — 다음 06:00 여기 쓰러진 채(WRENCH 3 · 노심 CORE 5) · 남무진이 살아 있으면 묻어 줌(4 — 노심은 그 옆) · HALF 뒤 ③이면 '내 반 몫은?'(렌치가 서 있음 — 활주로 공원엔 없음 ASK)
+spot @891,1385 4 3
+prop remains 1 1 cond="UQ67_WRENCH == 3"
+text 1 1 "쓰러진 고철꾼." scene=UQ67_FALLEN cond="UQ67_WRENCH == 3 or UQ67_WRENCH == 4"
+prop rubble 1 1 cond="UQ67_WRENCH == 4"
+npc N-R01-063 2 1 S look=M1-S4-HR03-H3-T12-2-PF00-HD02-EY06-PR004 cond="UQ67_ASK > 0 and (UQ67_WRENCH == 0 or UQ67_WRENCH == 6) and UQ67_CORE == 3" bark="(아랫문 기둥에 기대 손바닥을 들여다본다) 반 몫…."
+
 # 시장 뒤 터(SD-06 §12.3 고정 매복 지점 '노량진 수산시장 터' — 1-12e FQ-JH-03 밤 대기). 낮엔 빈 터, 밤엔 소윤희가 손전등을 낮춰 기다린다.
 # 낮에 30분 넘게 남기고 건넸으면 박춘삼이 해 질 녘까지 강가 쪽 턱에 앉아 있다(남은 시간은 그의 몫, FQ_JH03_RIVER — 북쪽 출구 자리와 배타: PARK 2인 날).
 spot @893,1151 6 4

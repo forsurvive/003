@@ -1,0 +1,127 @@
+{
+ "id": "UQ67_FALLEN",
+ "title": "쓰러진 고철꾼",
+ "loc": "L-R01-09",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TAKE": 5,
+  "TAKEN": 8,
+  "BURIED": 10
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "UQ67_WRENCH == 4",
+   "to": "BURIED"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "아랫문 밖 비탈에 쓰러진 사내. 모자가 굴러가 있다. 품에 안은 원통에서 초록 빛. 손바닥이 검붉다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "렌치다. 숨이 없다. 봉천까지 걸어왔다 — 노심을 안고."
+  },
+  {
+   "op": "if",
+   "cond": "UQ67_CORE != 5",
+   "to": "TAKEN"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "노심을 거둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TAKE",
+     "id": "UQ67_FALLEN:1:0"
+    },
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ67_FALLEN:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q67pick"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "원통을 품에서 빼낸다. 아직 따뜻하다. 렌치의 손이 그 자리에 오그라진 채 남는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "품은 비었다. 노심은 당신이 거뒀다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "아랫문 밖 비탈에 낮은 돌무덤. 돌 위에 쇠지레 하나 — 렌치의 것. 분필로 '고철꾼. 따뜻했대'."
+  },
+  {
+   "op": "if",
+   "cond": "UQ67_CORE != 5",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "돌무덤 옆에 원통 하나. 남무진은 집게로도 안 만졌다 — 초록 빛이 돌을 비춘다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "노심을 거둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "TAKE",
+     "id": "UQ67_FALLEN:2:0"
+    },
+    {
+     "text": "그대로 둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ67_FALLEN:2:1"
+    }
+   ]
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-67.txt"
+}

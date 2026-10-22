@@ -8,6 +8,10 @@
                 상태 stopped(크림색 구체가 받침에 얹혀 꺼져 있음 · 손으로 칠한 '7' · 렌즈 검음 · 점등 붉음)
   gs_spare      대기등 예비 전원 받침(1×1) — 진공관 랙 옆 낮은 철 받침 · 굵은 전선 두 가닥 · 손글씨 카드 '예비 전원 자리'.
                 상태 on(받침에 핵분열 전지가 앉음 · 초록 띠가 켜짐 · 전선 끝 단자 물림)
+  jet_wreck     보라매 활주로 전투기 잔해(4×3, UQ-67) — 2076년 '전시 항공 기념 광장' 전시기. 올리브 회색 동체가 비스듬히 주저앉음 · 꺾인 주익 · 수직 꼬리날개 '공군' ·
+                캐노피(금 간 유리) · 동체 뒤 시험 엔진 덮개(노란 방사능 띠). 상태 core(덮개 들창이 열려 안쪽 노심이 초록으로 빛남 · 바닥에 초록 물때) ·
+                sealed(들창 위에 콘크리트 판 · 철사 묶음 · 분필 '봉인') · empty(들창 열린 채 빈 받침 · 물때만) · plain(전시기 2호 — 엔진 덮개 없음 · 캐노피 열림)
+  streetlamp 상태 on을 더한다(그림 본체는 props_bc.streetlamp): 전구가 살아나 호박색으로 빛남 · 기둥 아래 빛 웅덩이(UQ-67 ① 봉천 아랫마당)
   freezer_unit 상태 두 개를 더한다(그림 본체는 props_r01n.freezer_unit):
                 tagged(손잡이에 각성회 붉은 천 꼬리표 '수거' — 운반조가 다녀감) · off(멎음 — 서리 · 김 없음, 대기등 램프 떼어 감, 옆 전지 들창 열림)
 props_bc.PROPS에 합쳐져 r01_props 아틀라스로 나간다."""
@@ -20,6 +24,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 import palette as P
 from props_bc_in import box3
 from props_r01n import freezer_unit, CREAM
+from props_site import _hull_shadow                                     # 윤곽 그림자(사용자 지적 2026-10-22 — 타원 금지)
 
 C = lambda t: P.rgb(t) + (255,)
 INK = "P01"
@@ -214,6 +219,85 @@ def freezer_off():
     return im
 
 
+# ================================================================================================ 보라매 전투기 잔해
+OLIVE = ["P28", "P29", "P30", "P31"]
+
+
+def jet_wreck(state=""):
+    """전투기 잔해(136×96 — 4×3): 비스듬히 주저앉은 동체(올리브 회색) · 꺾인 주익 · 수직 꼬리 '공군' · 금 간 캐노피 · 시험 엔진 덮개.
+    core = 들창 열림 · 노심 초록 빛 · 물때 / sealed = 콘크리트 판 · 철사 · 분필 / empty = 빈 받침 / plain = 전시기 2호(엔진 덮개 없음 · 캐노피 열림)."""
+    im = img(136, 96)
+    d = ImageDraw.Draw(im)
+    body = [(10, 60), (24, 44), (96, 38), (124, 46), (128, 58), (112, 70), (30, 74)]
+    _hull_shadow(im, body, 4, 6)
+    d.polygon([(44, 58), (10, 86), (18, 90), (60, 66)], fill=C(INK))            # 꺾인 왼 주익(아래)
+    d.polygon([(45, 59), (13, 85), (18, 88), (58, 66)], fill=C("P29"))
+    d.line([(20, 84), (50, 64)], fill=C("P31"))
+    d.polygon([(60, 44), (40, 14), (48, 12), (72, 42)], fill=C(INK))            # 오른 주익(위로 뻗음)
+    d.polygon([(61, 44), (42, 16), (47, 14), (71, 42)], fill=C("P30"))
+    d.polygon(body, fill=C(INK))                                                # 동체
+    d.polygon([(12, 60), (25, 46), (95, 40), (122, 48), (126, 58), (111, 68), (31, 72)], fill=C("P30"))
+    d.polygon([(25, 46), (95, 40), (122, 48), (96, 50), (30, 56)], fill=C("P31"))   # 윗면 빛
+    d.line([(31, 72), (111, 68)], fill=C("P28"))
+    for x in range(34, 110, 9):                                                  # 패널 이음
+        d.line([x, 50, x - 2, 70], fill=C("P29"))
+    d.polygon([(104, 44), (110, 14), (118, 14), (120, 46)], fill=C(INK))         # 수직 꼬리
+    d.polygon([(105, 44), (111, 16), (117, 16), (119, 45)], fill=C("P29"))
+    d.rectangle([111, 22, 116, 30], fill=C("P09")); d.point((113, 25), fill=C("P53")); d.point((114, 27), fill=C("P45"))   # 꼬리 휘장
+    d.ellipse([18, 46, 46, 64], fill=C(INK))                                     # 캐노피
+    if state == "plain":
+        d.chord([20, 47, 44, 63], 180, 360, fill=C("P35")); d.rectangle([20, 55, 44, 58], fill=C("P02"))   # 열린 캐노피(틀만)
+    else:
+        d.ellipse([20, 47, 44, 63], fill=C("P35")); d.ellipse([22, 48, 36, 58], fill=C("P36"))
+        d.line([(24, 50), (34, 60)], fill=C("P37")); d.line([(30, 49), (40, 58)], fill=C("P02"))   # 금
+    d.polygon([(12, 60), (6, 64), (8, 70), (18, 68)], fill=C("P04"))             # 기수 콘(찌그러짐)
+    for (x, y) in ((40, 66), (70, 46), (92, 64), (56, 70)):                      # 녹 · 그을음
+        d.ellipse([x, y, x + 5, y + 3], fill=C("P25" if x % 2 else "P02"))
+    if state != "plain":
+        d.rectangle([80, 52, 108, 68], fill=C(INK))                               # 시험 엔진 덮개
+        d.rectangle([81, 53, 107, 67], fill=C("P12"))
+        d.line([81, 53, 107, 53], fill=C("P14"))
+        d.rectangle([82, 60, 106, 62], fill=C("P49"))                             # 노란 방사능 띠
+        for x in range(84, 106, 6):
+            d.point((x, 61), fill=C(INK))
+        _rad(d, 98, 54)
+        if state == "core":
+            d.rectangle([86, 56, 100, 66], fill=C(INK))                           # 열린 들창
+            d.rectangle([87, 57, 99, 65], fill=C("P02"))
+            d.rectangle([89, 58, 97, 64], fill=C("P55")); d.rectangle([91, 59, 95, 63], fill=C("P56")); d.point((93, 61), fill=C("P57"))   # 노심
+            d.polygon([(100, 56), (106, 54), (106, 66), (100, 66)], fill=C("P13"))   # 젖혀진 들창
+            for (x, y) in ((84, 72), (92, 76), (100, 74), (88, 80)):             # 바닥 초록 물때
+                d.ellipse([x, y, x + 6, y + 2], fill=C("P55"))
+            d.point((94, 70), fill=C("P57"))
+        elif state == "sealed":
+            d.rectangle([84, 55, 104, 67], fill=C(INK))                           # 콘크리트 판
+            d.rectangle([85, 56, 103, 66], fill=C("P07")); d.line([85, 56, 103, 56], fill=C("P08"))
+            d.line([86, 58, 102, 64], fill=C("P05")); d.line([86, 64, 102, 58], fill=C("P05"))   # 철사 묶음
+            d.line([89, 61, 93, 61], fill=C("P09")); d.line([95, 61, 99, 61], fill=C("P09"))     # 분필 '봉인'
+        elif state == "empty":
+            d.rectangle([86, 56, 100, 66], fill=C(INK))
+            d.rectangle([87, 57, 99, 65], fill=C("P02"))
+            d.rectangle([90, 62, 96, 64], fill=C("P04"))                          # 빈 받침
+            d.polygon([(100, 56), (106, 54), (106, 66), (100, 66)], fill=C("P13"))
+            for (x, y) in ((86, 74), (96, 76)):
+                d.ellipse([x, y, x + 5, y + 2], fill=C("P30"))                    # 마른 물때
+    return im
+
+
+def streetlamp_on():
+    """살아난 가로등: 전구 호박색 · 유리 밝음 · 기둥 아래 빛 웅덩이(점무늬)."""
+    from props_bc import streetlamp as _streetlamp_base                     # 늦은 가져오기(props_bc가 이 묶음을 가져온다 — 순환 방지)
+    im = _streetlamp_base()
+    d = ImageDraw.Draw(im)
+    d.rectangle([20, 2, 29, 8], fill=C("P59")); d.rectangle([22, 3, 27, 7], fill=C("P60")); d.point((24, 4), fill=C("P50"))
+    d.rectangle([22, 8, 27, 10], fill=C("P49"))
+    for y in range(92, 100):
+        for x in range(2, 28):
+            if (x - 15) ** 2 / 2.2 + (y - 96) ** 2 < 36 and (x + y) % 2 == 0 and im.getpixel((x, y))[3] == 0:
+                im.putpixel((x, y), C("P58"))
+    return im
+
+
 def _r(fn, fw, fh, kind="floor", down=2, dx=0, dy=0):
     return {"fn": fn, "foot": (fw, fh), "kind": kind, "down": down, "dx": dx, "dy": dy}
 
@@ -223,6 +307,7 @@ PROPS_UQ3 = {
     "cell_box": _r(cell_box, 1, 1),
     "nurse_dock": _r(nurse_dock, 1, 1, down=-2),
     "gs_spare": _r(gs_spare, 1, 1, down=-2),
+    "jet_wreck": _r(jet_wreck, 4, 3, down=-4),
 }
 STATES_UQ3 = {
     "blood_fridge": {"on": lambda: blood_fridge("on")},
@@ -230,6 +315,8 @@ STATES_UQ3 = {
     "nurse_dock": {"stopped": lambda: nurse_dock("stopped")},
     "gs_spare": {"on": lambda: gs_spare("on")},
     "freezer_unit": {"tagged": freezer_tagged, "off": freezer_off},
+    "jet_wreck": {"core": lambda: jet_wreck("core"), "sealed": lambda: jet_wreck("sealed"), "empty": lambda: jet_wreck("empty"), "plain": lambda: jet_wreck("plain")},
+    "streetlamp": {"on": streetlamp_on},
 }
 
 

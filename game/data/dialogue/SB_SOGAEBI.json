@@ -1,0 +1,99 @@
+{
+ "id": "SB_SOGAEBI",
+ "title": "새벽인력 매점 소개비",
+ "loc": "L-R02-19",
+ "npc": "N-R02-037",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "SHOP": 2,
+  "CORE": 4
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-R02-037",
+   "emo": "기본",
+   "text": "손님 값이야. 직원 값은 장부에 이름 올리고."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "물건을 본다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SHOP",
+     "id": "SB_SOGAEBI:1:0"
+    },
+    {
+     "text": "뜨거운 쇠를 팔러 왔다 — 전투기 노심",
+     "tags": [
+      {
+       "k": "item",
+       "id": "M-445",
+       "n": 1
+      }
+     ],
+     "cond": "UQ67_CORE == 2 and AFF_SB > -60 and SB_RAID == 0",
+     "fx": "",
+     "to": "CORE",
+     "id": "SB_SOGAEBI:1:1"
+    },
+    {
+     "text": "됐다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "SB_SOGAEBI:1:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "trade",
+   "args": [
+    "VSB"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-037",
+   "emo": "놀람",
+   "text": "(배낭 쪽으로 몸을 뺀다) …뜨거운 쇠? 본소가 좋아하지. 본소 뒤 발전기가 석 달째 죽어 있거든 — 뜨거운 쇠면 돌린대."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-037",
+   "emo": "기본",
+   "text": "300. 더는 못 줘 — 이거 들고 있던 사람 손 보면 알잖아. 뒷문 밖에 두고 가. 내가 안 만져."
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q67sell"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "캡 주머니가 계산대 위로 밀려온다. 소개비는 노심을 집게로 집어 뒷문 쪽으로 밀어 둔다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-67.txt"
+}
