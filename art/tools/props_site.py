@@ -152,7 +152,7 @@ def boat_wreck(seed=0):
         x, y = rnd.randint(12, 90), rnd.randint(50, 58)
         if im.getpixel((x, y))[3]:
             im.putpixel((x, y), C("P30"))
-    put_text(im, "한강", 36, 44, "P44", 11, "Galmuri11")                       # 11px — 9px에선 '강' 받침이 뭉개져 '깅'으로 보였다(사용자 지적 2026-10-22)
+    put_text(im, "한강", 34, 43, "P44", 14, "Galmuri14")                       # 14px — 9px에선 '강'이 '깅', 11px에선 '한'이 '힌'으로 보였다(사용자 지적 2026-10-22 · 글꼴 비교 견본으로 확인)
     put_text(im, "3", 18, 44, "P53", 11, "Galmuri11")
     return im
 
@@ -327,7 +327,7 @@ def heli_wreck(seed=0):
     d.line([(14, 58), (22, 54)], fill=C("P37"))                           # 유리 반사
     d.polygon([(22, 62), (30, 58), (26, 68)], fill=C("P01"))               # 깨진 자리
     d.line([8, 78, 84, 78], fill=C("P29"))
-    d.rectangle([50, 54, 60, 74], fill=C("P01"))                          # 열린 문
+    d.rectangle([40, 54, 50, 74], fill=C("P01"))                          # 열린 문(글씨 앞쪽 — '경'과 겹치지 않게, 사용자 지적 2026-10-22)
     d.rectangle([40, 30, 56, 38], fill=C("P04"))                          # 회전날개 축
     d.line([(48, 30), (6, 12)], fill=C("P03")); d.line([(48, 31), (6, 13)], fill=C("P05"))   # 휜 날개
     d.line([(48, 30), (96, 22)], fill=C("P03")); d.line([(48, 31), (100, 26)], fill=C("P05"))
@@ -337,7 +337,7 @@ def heli_wreck(seed=0):
         x, y = rnd.randint(20, 80), rnd.randint(40, 86)
         d.ellipse([x, y, x + rnd.randint(4, 9), y + rnd.randint(3, 6)], fill=C("P02"))
     _rust(im, rnd, (10, 40, 84, 88), 40, ("P28", "P29", "P24"))
-    put_text(im, "경찰", 60, 59, "P09", 9, "Galmuri9")   # 받침이 뭉개지지 않게 9px 글꼴 · 녹 · 그을음 뒤에(사용자 지적 2026-10-22)
+    put_text(im, "경찰", 56, 58, "P09", 9, "Galmuri9")   # 받침이 뭉개지지 않게 9px 글꼴 · 녹 · 그을음 뒤에 · 문 오른쪽(사용자 지적 2026-10-22)
     return im
 
 

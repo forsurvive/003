@@ -678,7 +678,7 @@ def build():
 
     # 거리 소품(R01 소품, SD-16 §6.6 '소품' 층): 막는 소품은 발 칸 + 둘레 1칸이 모두 같은 높이의 걷는 칸일 때만(좁은 길을 막지 않는다)
     pm = json.load(open(os.path.join(ROOT, "game", "assets", "props", "r01_props.json"), encoding="utf-8"))["props"]
-    free = (solid == 0) & (stair == 0) & ~inmask & ~carve & play & (body == 0) & ~EV["noprop"]
+    free = (solid == 0) & (stair == 0) & ~inmask & ~carve & play & (body == 0) & ~EV["noprop"] & (kind != 4)   # 얕은 개천(걷는 물)엔 소품을 두지 않는다(2026-10-22 견본에서 발견)
     near_in = np.zeros((H, W), bool)
     for ins in insets:
         ox, oy, iw, ih = ins["rect"]
@@ -1044,7 +1044,7 @@ def place_pois(src, solid, cover, gflag, stair, level, kind, use, reach, inmask,
     for ins in insets:
         ox, oy, iw, ih = ins["rect"]
         near_in[max(0, oy - 8):oy + ih + 8, max(0, ox - 8):ox + iw + 8] = True
-    pfree = (solid == 0) & (stair == 0) & ~inmask & ~carve & play & (body == 0) & reach & ~near_in
+    pfree = (solid == 0) & (stair == 0) & ~inmask & ~carve & play & (body == 0) & reach & ~near_in & (kind != 4)   # 얕은 개천 위엔 발견물 · 소장소 없음
     for d in DOORS:                                                          # 지하로 내려가는 문 자리 둘레는 비워 둔다
         nx, ny = d["near"]
         pfree[max(0, ny - 6):ny + 7, max(0, nx - 6):nx + 7] = False

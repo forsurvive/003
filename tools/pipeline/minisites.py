@@ -211,16 +211,21 @@ def place(api):
         tpl = T[tid]
         got = {"props": 0, "box": 0, "story": 0}
         story_at = None
-        for (name, dx, dy, opt) in tpl["parts"]:
+        for pi, (name, dx, dy, opt) in enumerate(tpl["parts"]):
             if "opt" in opt and rng.random() >= opt["opt"]:
                 continue
             ok = None
-            for (jx, jy) in ((0, 0), (1, 0), (0, 1), (-1, 0), (0, -1), (1, 1)):
+            jit = ((0, 0), (1, 0), (0, 1), (-1, 0), (0, -1), (1, 1))
+            if pi == 0:                                                       # 중심 소품(헬기 · 보트 · 비닐하우스 …)은 더 넓게 찾고, 그래도 안 들어가면 자리 자체를 버린다
+                jit = jit + ((-1, -1), (2, 0), (0, 2), (-2, 0), (0, -2), (2, 1), (1, 2), (-2, 1), (-1, 2))
+            for (jx, jy) in jit:
                 x, y = x0 + dx + jx, y0 + dy + jy
                 if 0 <= x < W and 0 <= y < H and put(name, x, y):
                     ok = (x, y)
                     break
             if ok is None:
+                if pi == 0:                                                   # 유해 · 상자만 남고 헬기가 없는 자리를 만들지 않는다(사용자 지적 2026-10-22 헬기 견본에서 발견)
+                    return None
                 continue
             got["props"] += 1
             if "box" in opt:

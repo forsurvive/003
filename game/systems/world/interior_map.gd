@@ -263,7 +263,7 @@ func _add_objects(map_id: String, d: Dictionary, st: StoryState, o: Vector2i) ->
 	var op := Vector2(o * T)
 	var gone := {}                                                           # 파밍 뒤 사라진 용기 자리(vanish — 기록 st.boxes[키].gone)
 	for b in d.get("boxes", []):
-		if bool(b.get("vanish", false)):
+		if st != null and bool(b.get("vanish", false)):                     # 이야기 상태 없이 여는 맵(월드 시험 · 벤치)은 사라진 자리 없음
 			var k := Loot.key(map_id, b, st.year())
 			if st.boxes.has(k) and bool(st.boxes[k].get("gone", false)):
 				gone[Vector2i(int(b["x"]), int(b["y"]))] = true
