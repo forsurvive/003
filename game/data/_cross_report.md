@@ -1,6 +1,6 @@
 # 퀘스트 교차 정합 표 (자동 — tools/pipeline/quest_cross.py)
 
-> SD-20 §10. 경고 229 · 허용 229 · **새 경고 0**. 허용은 `tools/pipeline/quest_cross_allow.yaml`에 이유와 함께.
+> SD-20 §10. 경고 233 · 허용 233 · **새 경고 0**. 허용은 `tools/pipeline/quest_cross_allow.yaml`에 이유와 함께.
 
 ## 단위별 발자국
 | 단위 | 인물(세움·말함) | 이름 언급 | 쓰는 변수 | 손 맵 무대 | 막 상한 | 시한 |
@@ -48,28 +48,29 @@
 | SQ-S11 | A-084 C-034 M-305 M-306 M-323 N-BJ-P1 N-BJ-P2 N-PS-2 N-R02-014 N-R02-026 N-R02-027 | C-008 C-034 C-065 N-R02-014 N-R02-027 N-R09-039 N-R09-044 | 20 |  |  |  |
 | SQ-S12 | M-210 M-415 N-R02-005 N-R02-006 N-R02-012 | C-050 | 7 |  |  |  |
 | SQ-S13 | C-050 N-R02-014 N-R02-019 N-R02-020 N-R02-028 N-R02-029 N-R02-030 N-R02-032 N-R02-051 | C-027 C-050 N-R02-014 N-R02-019 N-R02-020 N-R02-028 N-R02-029 N-R02-030 N-R02-03 | 13 |  |  |  |
-| TRAVEL | C-018 C-067 N-R01-033 N-R01-040 | C-015 C-066 N-R01-043 N-R01-064 N-R06-049 N-R07-041 N-R08-012 | 12 |  |  |  |
+| TRAVEL | C-018 C-067 N-R01-033 N-R01-040 | C-015 C-066 N-R01-043 N-R01-064 N-R06-049 N-R07-041 N-R08-012 | 13 |  |  |  |
 | U02 | N-R01-047 N-UG-001 N-UG-006 N-UG-007 | N-R01-045 N-R01-047 N-R02-048 N-R03-503 N-R05-033 N-R06-047 N-R06-048 N-R06-052  | 11 |  |  |  |
 | U04 | M-410 N-UG-008 N-UG-009 N-UG-010 N-UG-011 N-UG-012 | N-R05-033 N-R06-052 N-R08-060 N-UG-009 N-UG-010 N-UG-012 | 4 |  |  |  |
-| UQ-01 | C-015 N-BG-G1 N-R01-034 N-R01-038 N-R01-040 N-R01-043 N-R01-050 N-R01-056 N-R01-062 N-R01-507 N-R01-508 | N-R01-026 N-R01-038 N-R01-040 N-R08-031 N-R08-060 | 11 |  |  |  |
-| UQ-02 | C-015 N-R01-029 N-R01-034 N-R01-038 N-R01-040 N-R01-043 N-R01-050 N-R01-056 N-R01-062 N-R01-507 N-R01-508 N-R01-509 | C-015 N-R01-034 | 8 |  |  |  |
-| UQ-03 | C-015 N-BJ-C2 N-DS-E1 N-DS-E2 N-R01-034 N-R01-038 N-R01-040 N-R01-043 N-R01-050 N-R01-056 N-R01-062 N-R01-507 N-R01-508 | N-R01-050 | 13 |  |  |  |
+| UQ-01 | C-015 C-067 N-BG-G1 N-R01-034 N-R01-038 N-R01-040 N-R01-043 N-R01-050 N-R01-056 N-R01-057 N-R01-058 N-R01-062 N-R01-507  | N-R01-026 N-R01-038 N-R01-040 N-R08-031 N-R08-060 | 11 |  |  |  |
+| UQ-02 | C-015 C-067 N-R01-029 N-R01-034 N-R01-038 N-R01-040 N-R01-043 N-R01-050 N-R01-056 N-R01-057 N-R01-058 N-R01-062 N-R01-50 | C-015 N-R01-034 | 8 |  |  |  |
+| UQ-03 | C-015 C-067 N-BJ-C2 N-DS-E1 N-DS-E2 N-R01-034 N-R01-038 N-R01-040 N-R01-043 N-R01-050 N-R01-056 N-R01-057 N-R01-058 N-R0 | N-R01-050 | 13 |  |  |  |
 | UQ-04 | C-010 DS-01 DS-02 N-DS-B1 N-DS-B2 N-DS-S1 N-DS-S2 UQ-04 | N-HR-031 N-R06-047 | 2 |  |  |  |
-| UQ-05 | C-015 N-R01-034 N-R01-038 N-R01-040 N-R01-041 N-R01-043 N-R01-050 N-R01-056 N-R01-062 N-R01-507 N-R01-508 N-UQ5-COW | N-HR-043 N-R01-040 N-R01-043 N-R08-012 | 8 |  |  |  |
+| UQ-05 | C-015 C-067 N-R01-034 N-R01-038 N-R01-040 N-R01-041 N-R01-043 N-R01-050 N-R01-056 N-R01-057 N-R01-058 N-R01-062 N-R01-50 | N-HR-043 N-R01-040 N-R01-043 N-R08-012 | 8 |  |  |  |
 | UQ-07 | C-006 C-049 L-R02-12 L-R02-18 N-DR-2 N-JM-B1 N-JM-K1 N-R02-010 N-R02-017 N-R02-019 N-R02-020 N-R02-038 N-R02-047 N-YM-1 | N-R03-018 N-R07-041 | 7 | J-10 |  |  |
 | UQ-08 | C-006 C-049 L-R02-12 L-R02-18 N-DR-2 N-JM-B1 N-JM-K1 N-R02-010 N-R02-017 N-R02-019 N-R02-020 N-R02-038 N-R02-047 N-YM-1 | N-R08-031 | 5 |  |  |  |
 | UQ-09 | C-006 C-049 L-R02-12 L-R02-18 N-DR-2 N-JM-B1 N-JM-K1 N-R02-010 N-R02-017 N-R02-019 N-R02-020 N-R02-038 N-R02-047 N-YM-1 | N-R02-047 N-R06-047 N-R08-060 | 9 |  |  |  |
 | UQ-10 | C-006 C-049 L-R02-12 L-R02-18 N-DR-2 N-JM-B1 N-JM-K1 N-R02-010 N-R02-017 N-R02-019 N-R02-020 N-R02-038 N-R02-047 N-YM-1  | N-R02-019 N-R02-045 N-R02-048 N-R03-024 N-R06-048 N-R09-044 | 14 |  |  |  |
 | UQ-125 | C-057 M-195 N-R01-046 N-UQ-C1 N-UQ-K1 UQ-125 |  | 0 |  |  |  |
-| UQ-64 | C-015 N-BC-H1 N-BC-H2 N-BC-H3 N-R01-026 N-R01-029 N-R01-034 N-R01-038 N-R01-040 N-R01-041 N-R01-043 N-R01-050 N-R01-056  | N-R01-029 N-R05-031 N-R06-048 N-R08-060 | 5 |  |  |  |
-| UQ-65 | C-015 N-R01-034 N-R01-038 N-R01-040 N-R01-043 N-R01-050 N-R01-056 N-R01-062 N-R01-507 N-R01-508 | N-R01-056 | 2 |  |  |  |
+| UQ-64 | C-015 C-067 N-BC-H1 N-BC-H2 N-BC-H3 N-R01-026 N-R01-029 N-R01-034 N-R01-038 N-R01-040 N-R01-041 N-R01-043 N-R01-050 N-R0 | N-R01-029 N-R05-031 N-R06-048 N-R08-060 | 5 |  |  |  |
+| UQ-65 | C-015 C-067 N-R01-034 N-R01-038 N-R01-040 N-R01-043 N-R01-050 N-R01-056 N-R01-057 N-R01-058 N-R01-062 N-R01-507 N-R01-50 | N-R01-056 | 2 |  |  |  |
+| UQ-66 | C-015 C-067 N-GS-C1 N-R01-034 N-R01-038 N-R01-040 N-R01-043 N-R01-050 N-R01-055 N-R01-056 N-R01-057 N-R01-058 N-R01-062  | C-014 N-R01-057 N-R01-058 N-R05-034 N-R06-056 N-R08-060 | 8 |  |  |  |
 | UQ-70 | C-006 C-049 L-R02-12 L-R02-18 N-DR-1 N-DR-2 N-DR-3 N-JM-B1 N-JM-K1 N-R02-010 N-R02-017 N-R02-019 N-R02-020 N-R02-038 N-R | C-027 C-052 N-R02-046 N-R02-047 N-R06-047 N-R06-048 N-R08-060 | 10 |  |  |  |
 | UQ-71 | DB-01 N-DB-1 N-R02-048 UQ-71 | N-HR-013 N-R06-056 | 0 |  |  |  |
 | YT | M-404 M-405 N-R02-032 N-YTB-1 N-YTB-2 SG-01 UQ-06 YT-01 YT-02 YT-03 | N-R03-018 N-R05-034 N-R09-044 | 5 |  |  |  |
 | 상인 순회 | C-067 |  | 2 |  |  |  |
 | 수배 |  |  | 5 |  |  |  |
 | 엔진 | N-R02-017 |  | 19 |  |  |  |
-| 장소:R01_NORTH | C-018 N-R01-052 N-R01-056 N-R01-057 N-R01-058 | C-027 N-R01-056 N-R01-064 N-R03-024 N-R06-056 N-R07-041 N-R07-042 N-R10-013 | 16 |  |  |  |
+| 장소:R01_NORTH | C-018 N-R01-052 N-R01-056 N-R01-057 N-R01-058 | C-027 N-R01-056 N-R01-064 N-R03-024 N-R06-056 N-R07-041 N-R07-042 N-R10-013 | 19 |  |  |  |
 | 장소:R01_R02 | N-R01-030 | C-009 C-028 N-R10-007 | 6 |  |  |  |
 | 장소:R02_SOUTH | N-R02-042 | N-R06-048 | 1 |  |  |  |
 | 장소:RE_WORLD | CR-403 CR-420 CR-438 N-DOWNED N-REFUGEE N-TRADER | N-R08-060 | 3 |  |  |  |
@@ -87,8 +88,8 @@
 - C-009 한유리: MQ-102~105, MQ-106, 장소:R01_R02
 - C-010 조만석: FQ-JC-01, FQ-SB-01, HOME_BC, MQ-101, MQ-102~105, SQ-S02, SQ-S09, UQ-04
 - C-013 황두칠: FQ-SB-01, FQ-SB-02, KS, MQ-102~105
-- C-014 류정: FQ-GS-01, FQ-GS-02, JUNGGYE
-- C-015 백구: FQ-JC-01, HOME_BC, MQ-101, MQ-P4, SQ-S01, SQ-S04, TRAVEL, UQ-01, UQ-02, UQ-03, UQ-05, UQ-64, UQ-65
+- C-014 류정: FQ-GS-01, FQ-GS-02, JUNGGYE, UQ-66
+- C-015 백구: FQ-JC-01, HOME_BC, MQ-101, MQ-P4, SQ-S01, SQ-S04, TRAVEL, UQ-01, UQ-02, UQ-03, UQ-05, UQ-64, UQ-65, UQ-66
 - C-018 박춘삼: FQ-JH-03, MQ-102~105, SQ-S09, TRAVEL, 장소:R01_NORTH
 - C-019 파수-3: FQ-GS-01, SADANG
 - C-021 독사: FQ-SB-01, FQ-SB-02, MQ-101, MQ-102~105
@@ -105,7 +106,7 @@
 - C-053 은솔: JUNGGYE, SQ-S04
 - C-057 하숙자: FQ-JC-01, HOME_BC, MQ-101, UQ-125
 - C-065 오순례: FQ-SB-02, FQ-SB-02L, SQ-S08, SQ-S11
-- C-067 소윤희: FQ-JH-03, HP, MQ-102~105, TRAVEL, 상인 순회
+- C-067 소윤희: FQ-JH-03, HP, MQ-102~105, TRAVEL, UQ-01, UQ-02, UQ-03, UQ-05, UQ-64, UQ-65, UQ-66, 상인 순회
 - FQ-GS-01 : FQ-GS-01, FQ-GS-02
 - FQ-GS-02 : FQ-GS-01, FQ-GS-02
 - FQ-JH-01 : FQ-JH-01, FQ-JH-02
@@ -134,27 +135,28 @@
 - N-R01-030 남무진: FQ-SB-01, MQ-101, 장소:R01_R02
 - N-R01-032 조수안: MQ-101, SQ-S02, SQ-S03
 - N-R01-033 엄태경: MQ-101, TRAVEL
-- N-R01-034 남솔: MQ-101, SQ-S01, SQ-S04, UQ-01, UQ-02, UQ-03, UQ-05, UQ-64, UQ-65
+- N-R01-034 남솔: MQ-101, SQ-S01, SQ-S04, UQ-01, UQ-02, UQ-03, UQ-05, UQ-64, UQ-65, UQ-66
 - N-R01-035 오재윤: FQ-SB-01, SQ-S02, SQ-S04
 - N-R01-036 조하진: MQ-101, SQ-S02, SQ-S04
-- N-R01-038 석라희: UQ-01, UQ-02, UQ-03, UQ-05, UQ-64, UQ-65
+- N-R01-038 석라희: UQ-01, UQ-02, UQ-03, UQ-05, UQ-64, UQ-65, UQ-66
 - N-R01-039 남건희: FQ-SB-01, MQ-101, SQ-S02
-- N-R01-040 연보경: SADANG, SQ-S06, TRAVEL, UQ-01, UQ-02, UQ-03, UQ-05, UQ-64, UQ-65
+- N-R01-040 연보경: SADANG, SQ-S06, TRAVEL, UQ-01, UQ-02, UQ-03, UQ-05, UQ-64, UQ-65, UQ-66
 - N-R01-041 허순자: SADANG, SQ-S05, UQ-05, UQ-64
-- N-R01-043 위강윤: SADANG, TRAVEL, UQ-01, UQ-02, UQ-03, UQ-05, UQ-64, UQ-65
+- N-R01-043 위강윤: SADANG, TRAVEL, UQ-01, UQ-02, UQ-03, UQ-05, UQ-64, UQ-65, UQ-66
 - N-R01-044 성지후: SADANG, SQ-S05
 - N-R01-045 반로아: SADANG, U02
 - N-R01-046 탁순복: SADANG, UQ-125
 - N-R01-047 황보서현: SAGOGAE, SQ-S06, U02
-- N-R01-050 엄도현: MQ-102~105, SQ-S06, UQ-01, UQ-02, UQ-03, UQ-05, UQ-64, UQ-65
-- N-R01-055 한가람: FQ-GS-01, JUNGGYE, SQ-S04
-- N-R01-056 손재석: JUNGGYE, UQ-01, UQ-02, UQ-03, UQ-05, UQ-64, UQ-65, 장소:R01_NORTH
-- N-R01-057 심도겸: SQ-S06, 장소:R01_NORTH
-- N-R01-062 사이렌: SQ-S02, UQ-01, UQ-02, UQ-03, UQ-05, UQ-64, UQ-65
+- N-R01-050 엄도현: MQ-102~105, SQ-S06, UQ-01, UQ-02, UQ-03, UQ-05, UQ-64, UQ-65, UQ-66
+- N-R01-055 한가람: FQ-GS-01, JUNGGYE, SQ-S04, UQ-66
+- N-R01-056 손재석: JUNGGYE, UQ-01, UQ-02, UQ-03, UQ-05, UQ-64, UQ-65, UQ-66, 장소:R01_NORTH
+- N-R01-057 심도겸: SQ-S06, UQ-01, UQ-02, UQ-03, UQ-05, UQ-64, UQ-65, UQ-66, 장소:R01_NORTH
+- N-R01-058 간호 7호: UQ-01, UQ-02, UQ-03, UQ-05, UQ-64, UQ-65, UQ-66, 장소:R01_NORTH
+- N-R01-062 사이렌: SQ-S02, UQ-01, UQ-02, UQ-03, UQ-05, UQ-64, UQ-65, UQ-66
 - N-R01-064 진해원: SAGOGAE, SQ-S06, TRAVEL, 장소:R01_NORTH
 - N-R01-503 오상구: FQ-GS-01, FQ-GS-02, JUNGGYE
-- N-R01-507 엄옥순: MQ-102~105, UQ-01, UQ-02, UQ-03, UQ-05, UQ-64, UQ-65
-- N-R01-508 번개 점원(노량진): UQ-01, UQ-02, UQ-03, UQ-05, UQ-64, UQ-65
+- N-R01-507 엄옥순: MQ-102~105, UQ-01, UQ-02, UQ-03, UQ-05, UQ-64, UQ-65, UQ-66
+- N-R01-508 번개 점원(노량진): UQ-01, UQ-02, UQ-03, UQ-05, UQ-64, UQ-65, UQ-66
 - N-R02-005 진재석: JM_PEOPLE, SQ-S12
 - N-R02-006 엄수연: FQ-JH-01, JM_PEOPLE, SQ-S12
 - N-R02-008 염희정: JM_PEOPLE, SADANG
@@ -186,19 +188,19 @@
 - N-R03-503 펜치: FQ-GS-01, U02
 - N-R05-031 문고리: FQ-GS-02, HOME_BC, UQ-64
 - N-R05-033 빗장: MQ-102~105, SQ-S05, U02, U04
-- N-R05-034 걸쇠: FQ-SB-01, SQ-S04, SQ-S13, YT
+- N-R05-034 걸쇠: FQ-SB-01, SQ-S04, SQ-S13, UQ-66, YT
 - N-R06-046 벽돌: FQ-JC-01, KS
 - N-R06-047 철판: FQ-JH-01, KT, MQ-102~105, SQ-S02, SQ-S09, SQ-S10, U02, UQ-04, UQ-09, UQ-70
 - N-R06-048 기둥: FQ-GS-01, FQ-JH-02, FQ-SB-02, FQ-SB-02L, KT, SADANG, SQ-S03, SQ-S04, SQ-S05, U02, UQ-10, UQ-64, UQ-70, 장소:R02_SOUTH
 - N-R06-049 난간: FQ-SB-02, FQ-SB-02L, HP, KT, SQ-S06, TRAVEL
 - N-R06-052 레일: SADANG, SQ-S05, U02, U04
-- N-R06-056 집게: CAPTURE, UQ-71, 장소:R01_NORTH
+- N-R06-056 집게: CAPTURE, UQ-66, UQ-71, 장소:R01_NORTH
 - N-R07-041 선생님: HP, JM_PEOPLE, MQ-102~105, TRAVEL, UQ-07, 장소:R01_NORTH
 - N-R07-042 시험지: JUNGGYE, MQ-P3, 장소:R01_NORTH
 - N-R07-044 경광: GR, SQ-S05
 - N-R08-012 강윤: SADANG, SQ-S13, TRAVEL, UQ-05
 - N-R08-031 나사: CAPTURE, FQ-GS-02, MQ-102~105, MQ-106, MQ-P4, SQ-S09, SQ-S13, U02, UQ-01, UQ-08
-- N-R08-060 열쇠: FQ-GS-02, FQ-JH-01, GR, HOME_BC, HP, JM_PEOPLE, KS, KT, MQ-102~105, MQ-106, MQ-P3, MQ-P4, SQ-S08, SQ-S09, SQ-S10, SQ-S13, U04, UQ-01, UQ-09, UQ-64, UQ-70, 장소:RE_WORLD
+- N-R08-060 열쇠: FQ-GS-02, FQ-JH-01, GR, HOME_BC, HP, JM_PEOPLE, KS, KT, MQ-102~105, MQ-106, MQ-P3, MQ-P4, SQ-S08, SQ-S09, SQ-S10, SQ-S13, U04, UQ-01, UQ-09, UQ-64, UQ-66, UQ-70, 장소:RE_WORLD
 - N-R09-039 철모: GR, MQ-102~105, MQ-P4, SQ-S11
 - N-R09-044 발자국: FQ-JC-01, FQ-JH-01, MQ-106, SQ-S01, SQ-S05, SQ-S11, UQ-10, YT
 - N-R10-013 경보: FQ-JH-02, GR, GT, 장소:R01_NORTH
@@ -363,7 +365,7 @@
 ## X2 (1, 새 0)
 - 허용 `C-021 X-BC X-SB` C-021(독사): X-BC「MQ101_NIGHT == 2 and MQ101_RESULT == 0 and MQ101_FIGHT == 0」와 X-SB「SB_RAID == 0 and MQ101_STAGE >= 50」가 함께 참일 수 있다(예: MQ101_FIGHT=0, MQ101_NIGHT=2, MQ101_RESULT=0, MQ101_STAGE=50, SB_RAID=0) — X-BC는 MQ101_NIGHT 2(밤 — 단계 40), X-SB는 MQ101_STAGE ≥ 50(아침 뒤) — 진행 순서상 함께 오지 않는다(표는 변수 사이 관계를 모른다)
 
-## X3 (114, 새 0)
+## X3 (118, 새 0)
 - 허용 `DG-GR UQ71_CORE` DG-GR가 UQ-71 소유 변수 UQ71_CORE를 세운다 — 같은 사실인가(P1) — 대방 버스 노심의 행방은 UQ71_CORE 한 곳 — 구로 7703에 꽂아 다 태우면 6(UQ-71 머리 주석 · 버스 장면 · DB-01 그림이 6을 '빈 버스'로 읽는다). 소지(2)일 때만 꽂을 수 있다
 - 허용 `FQ-JH-01 FQ_JH02_SEEN` FQ-JH-01가 FQ-JH-02 소유 변수 FQ_JH02_SEEN를 세운다 — 같은 사실인가(P1) — JH-01 왕쥐 둥지 영수증이 JH-02 훅('이미 앎', P2) — SEEN은 '장부 줄을 봤다' 한 사실이고 세우는 곳 둘(둥지 · 상인회 책상)은 같은 값 1만 쓴다(maxi)
 - 허용 `FQ-SB-01 FQ_SB02_TOLD` FQ-SB-01가 FQ-SB-02 소유 변수 FQ_SB02_TOLD를 세운다 — 같은 사실인가(P1) — 같은 사실 한 곳(P1) — 구만호가 일당을 주며 '운송조 호위가 하나 모자라'고 알려 준 사실 · SB-02 출발 줄(FQSB02_YARD SENT 판)이 읽는다
@@ -456,6 +458,7 @@
 - 허용 `TRAVEL UQ05_PACK` TRAVEL가 UQ-05 소유 변수 UQ05_PACK를 세운다 — 같은 사실인가(P1) — 위와 같음
 - 허용 `TRAVEL UQ05_PEND` TRAVEL가 UQ-05 소유 변수 UQ05_PEND를 세운다 — 같은 사실인가(P1) — 위와 같음
 - 허용 `TRAVEL UQ05_REWARD` TRAVEL가 UQ-05 소유 변수 UQ05_REWARD를 세운다 — 같은 사실인가(P1) — 위와 같음
+- 허용 `TRAVEL UQ66_DG_SAID` TRAVEL가 UQ-66 소유 변수 UQ66_DG_SAID를 세운다 — 같은 사실인가(P1) — 소윤희 장면(TR_SO — 늘 참) 안 흑석 글 한 줄 한 번(UQ-66 사실 DG와 같은 값을 읽기만 · 말했다 표시)
 - 허용 `YT UQ06_ASKED` YT가 UQ-06 소유 변수 UQ06_ASKED를 세운다 — 같은 사실인가(P1) — YT 원고(script/act1/YT.txt)가 곧 UQ-06 「마지막 시세」 원고다(1-D9 — 유리탑 던전과 객장이 한 단위). 객장 경상현이 마감 뒤 '남 서기는요?'의 대답을 적는 한 곳(P1)
 - 허용 `장소:R01_NORTH FQ_GS02_TUTOR` 장소:R01_NORTH가 FQ-GS-02 소유 변수 FQ_GS02_TUTOR를 세운다 — 같은 사실인가(P1) — 학원가 장소 장면이 GS-02 '과외 선생이 천공기를 안다' 귀띔(P7 출처)을 세운다 — 세우는 곳은 그 장면 한 곳, GS-02는 읽기만
 - 허용 `장소:R01_NORTH FQ_JH03_GOSSIP` 장소:R01_NORTH가 FQ-JH-03 소유 변수 FQ_JH03_GOSSIP를 세운다 — 같은 사실인가(P1) — 심도겸이 '대낮에 경매장 한복판으로' 소문을 한 번 말했다는 그 장면만의 표지(1-12e) — FQ-JH-03 결과(SOL · NIGHT)를 읽어 정하고 다른 단위는 읽지 않는다. 사실(배달)은 FQ_JH03_SOL 한 곳
@@ -466,6 +469,9 @@
 - 허용 `장소:R01_NORTH UQ65_REBEL` 장소:R01_NORTH가 UQ-65 소유 변수 UQ65_REBEL를 세운다 — 같은 사실인가(P1) — 위와 같음(오답 갈래)
 - 허용 `장소:R01_NORTH UQ65_RJ_SAID` 장소:R01_NORTH가 UQ-65 소유 변수 UQ65_RJ_SAID를 세운다 — 같은 사실인가(P1) — 위와 같음(손재석이 벽 소식 · 판 문항집을 한 번 말함)
 - 허용 `장소:R01_NORTH UQ65_TEN` 장소:R01_NORTH가 UQ-65 소유 변수 UQ65_TEN를 세운다 — 같은 사실인가(P1) — 위와 같음(10번 칸)
+- 허용 `장소:R01_NORTH UQ66_CSAID` 장소:R01_NORTH가 UQ-66 소유 변수 UQ66_CSAID를 세운다 — 같은 사실인가(P1) — 심도겸 장면(L25_SIM — 늘 참) 안 '들킴 · 도로 꽂음' 한 줄 표시(9 들킴 · 3 도로 꽂음 → 0) — 진행기가 세우고 장면이 지운다
+- 허용 `장소:R01_NORTH UQ66_SAID` 장소:R01_NORTH가 UQ-66 소유 변수 UQ66_SAID를 세운다 — 같은 사실인가(P1) — 심도겸 장면(L25_SIM — 늘 참) 안 ① 할인 약속 한 줄 한 번(A106)
+- 허용 `장소:R01_NORTH UQ66_SELF` 장소:R01_NORTH가 UQ-66 소유 변수 UQ66_SELF를 세운다 — 같은 사실인가(P1) — 간호 7호 장면(K-26_NURSE — 늘 참) 안 '내 퇴원 서류'(엉뚱한 짓 W6) — 단말이 세운 값을 받음 표시로
 - 허용 `장소:R01_R02 SQ_S03_TAGSEEN` 장소:R01_R02가 SQ-S03 소유 변수 SQ_S03_TAGSEEN를 세운다 — 같은 사실인가(P1) — K-08 정비공 유해(K-08_TECH)에서 인식표 '정영수 · 2189'를 본 사실 — 장소 장면이 그 자리에서 세우는 게 맞고, 읽는 곳은 S03 인터컴 NAME 판 하나(P1 · P2 '이미 앎')
 - 허용 `쓰기만 FQ_GS01_WARN` FQ_GS01_WARN(FQ-GS-01 소유)는 세우기만 하고 아무도 읽지 않는다 — 반응 없음(P12)? — 정비 당번 '3번은 전원부터' 귀띔을 들었다는 기록 — 3번 순서 대가는 귀띔과 상관없이 같다(정보 깃발, 2막 원장 대행 반응 후보)
 - 허용 `쓰기만 MQ101_ROOF` MQ101_ROOF(MQ-101 소유)는 세우기만 하고 아무도 읽지 않는다 — 반응 없음(P12)? — 옥상길을 들었다는 기록(해법 2의 길은 늘 열려 있다) — 봇 · 저장 확인용

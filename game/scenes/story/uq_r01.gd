@@ -2,6 +2,7 @@
 ##   UQ-01 「24시」 — 원고 script/act1/UQ-01.txt · 맵 K-11 봉천 번개24 · K-37 노량진 번개24(V24 로봇 창구).
 ##   UQ-02 「백구의 밥그릇」 — 원고 UQ-02.txt · X-BC 개집 · 월드 스팟 개천 배수구 둥지(@884,1385) · 숲 가장자리(@896,1418).
 ##     백구 자리 한 값(P3): 밤 나들이 동안 UQ02_DOG_OUT 1 — X-BC · B-01 백구 줄이 모두 이 값을 읽는다. 보이는 나들이(주인공이 가까울 때)는 배우를 세워 걷게 한다.
+##   UQ-64 · 65(1-12i i1 · i2) · UQ-66 「전지 하나, 냉장고 둘」(1-12i i3 — 원고 UQ-66.txt · 맵 K-26 · K-26B · GS-02 · 월드 스팟 L-R01-25).
 ## 사실은 변수 한 곳(P1) — 변수 뜻은 원고 머리 주석. 시간 판정(목격 · 손님 · 재고 주)은 06:00 하루 판정에서만(P6).
 ## 비표시(SD-05 §2.6): 알림 없음 · 단계 로그(메모) · XP만.
 class_name UqR01
@@ -54,6 +55,8 @@ var _cow_rp := 0.0
 var _cow_home := false
 var _last_v54 := -1
 var _moo_day := -1
+var _u66_key := ""                         ## 수산시장 운반조 · 꼬리표 그림 상태(바뀌면 인물 · 소품을 다시 세운다)
+var _spot_o := {}
 
 
 func setup(h: InteriorHost, is_log := false) -> void:
@@ -94,6 +97,7 @@ func _process(dt: float) -> void:
 		return
 	_t = 0.0
 	_relay_tick()
+	_uq66_tick()
 	_outing_tick()
 	_dog_frame(0.0)
 	_cow_tick()
@@ -313,6 +317,7 @@ func _up(qid: String, n: int) -> void:
 
 
 func _on_day(d: int) -> void:
+	_uq66_day(d)
 	_uq65_day(d)
 	_uq64_day(d)
 	if v("UQ01_SOL") == 3 and v("UQ01_SEEN") == 0 and v("UQ01_THEFT_DAY") > 0 and d >= v("UQ01_THEFT_DAY") and v("UQ01_WITNESS") == 0:
@@ -482,6 +487,8 @@ func _cow_entry() -> void:
 
 
 func _on_map(_id: String) -> void:
+	if _id == "K-26" and v("UQ66_OPEN") == 1 and host.map != null and host.map.has_method("unlock_door"):
+		host.map.unlock_door(U66_DOOR.x, U66_DOOR.y)                # 연 철문은 열어 둔다(맵 원고는 잠긴 문 — 사실은 UQ66_OPEN)
 	if v("UQ05_COW") == 2 and _cow == null:
 		_cow_drop("")                                                # 불러오기 · 실내 · 생포 · 빠른 이동: 그 자리에 놓음(P10)
 	if host.map is WorldMap and v("UQ05_COW") >= 1:
@@ -727,6 +734,110 @@ func _cmd(a: Array, done: Callable) -> void:
 				st.call_fn("take", ["M-440", left])
 			_sv("UQ64_MEM", 1)
 			_uq64_finish()
+		"q66start":                                                      # UQ-66 단계 10(비표시 — 철문 · 원무 단말 · 혈액은행 · 시장 전지 이야기)
+			_up("UQ-66", 10)
+		"q66heard":                                                      # 시장 전지 이야기를 들음(심도겸 · 한가람) — 기한은 들은 날 + 4(재미 검수 W4)
+			_up("UQ-66", 10)
+			if v("UQ66_HEARD") == 0:
+				_sv("UQ66_HEARD", day())
+			if v("UQ66_DUE") == 0 and v("UQ66_BATT") == 0 and v("UQ66_PULLED") == 0 and v("SQH_BATT") != 7:
+				_sv("UQ66_DUE", day() + U66_DAYS)
+				_log("UQ-66 운반조 기한 %d일" % v("UQ66_DUE"))
+		"q66watch":                                                      # 냉동고 들창: 심도겸이 살아 있고 웅크리지 않으면 본다(9 = 방금 들킴) · 한 번 들킨 뒤로는 밤(21~05)에 웅크려야
+			var night := _hour() >= 21 or _hour() < 5
+			if not st.is_dead("N-R01-057") and (not host.combat.crouch or (v("UQ66_CAUGHT") == 1 and not night)):
+				_sv("UQ66_CSAID", 9)
+		"q66pull":
+			_up("UQ-66", 10)
+			_sv("UQ66_PULL_DAY", day())
+			_u66_freezer()
+			_uq66_check()
+		"q66back":                                                       # 도로 꽂음 — 시장 전지는 다시 냉동고(BATT 0)
+			if v("UQ66_BATT") == 4:
+				_sv("UQ66_BATT", 0)
+			if not st.is_dead("N-R01-057"):
+				_sv("UQ66_CSAID", 3)                                      # 심도겸 '누가 뺐다 넣었어?'(한 번)
+			_u66_freezer()
+			_uq66_check()
+		"q66keep":                                                       # ① 지킴: 한가람 [화술 보통] · 운반조 [화술 어려움] · [힘 7](GS −5)
+			if v("UQ66_BATT") == 0 and v("UQ66_PULLED") == 0:
+				_sv("UQ66_BATT", 1)
+				_sv("UQ66_HOW", {"talk": 1, "scare": 2, "han": 3}.get(str(a[1]), 1))   # 심도겸 대사 · 할인이 이 값을 읽는다
+				if str(a[1]) == "scare":
+					st.call_fn("aff", ["GS", -5])
+				_log("UQ-66 ① 시장 전지를 지킴(%s)" % str(a[1]))
+			_u66_freezer()
+			_uq66_check()
+			_u66_refresh()
+		"q66help":                                                       # ② 운반조와 같이 뺌 — 심도겸이 봤다(CSAID 2)
+			_sv("UQ66_PULLED", 1)
+			_sv("UQ66_BATT", 2)
+			_sv("UQ66_GSCELL", 1)
+			_sv("UQ66_CSAID", 2)
+			_sv("UQ66_PULL_DAY", day())
+			st.call_fn("aff", ["GS", 4])
+			_u66_freezer()
+			_uq66_check()
+			_u66_refresh()
+		"q66gs":                                                         # 대기등 예비 전원 받침: 441 ③ 예비 전지(GS +3 · 카르마 +10 — 시장이 산다) · 442 ② 시장 전지(GS +4)
+			if str(a[1]) == "441":
+				_sv("UQ66_GSCELL", 2)
+				st.call_fn("aff", ["GS", 3])
+				if v("UQ66_BATT") == 0 and v("UQ66_PULLED") == 0:
+					_sv("UQ66_BATT", 3)
+					st.call_fn("karma", [10])
+			else:
+				_sv("UQ66_GSCELL", 1)
+				_sv("UQ66_BATT", 2)
+				st.call_fn("aff", ["GS", 4])
+			_up("UQ-66", 10)
+			_u66_freezer()
+			_uq66_check()
+			if host.map != null and host.map.id == "GS-02":
+				host.map.set_prop_state(U66_SPARE, "on")
+		"q66open":                                                       # 지하 철문(승인 · 퇴원 · 정지 · 정리 · 따기 — 어느 쪽이든 한 값)
+			_sv("UQ66_OPEN", 1)
+			_up("UQ-66", 20)
+			if host.map != null and host.map.id == "K-26":
+				host.map.unlock_door(U66_DOOR.x, U66_DOOR.y)
+		"q66discharge":                                                  # a) 퇴원 — 병동 다섯이 뒤뜰 벤치로(병동 적은 맵 cond로도 사라진다)
+			_sv("UQ66_WARD", 1)
+			st.call_fn("karma", [10])
+			_u66_clear_ward()
+			_sv("UQ66_OPEN", 1)
+			_up("UQ-66", 20)
+			if host.map != null and host.map.id == "K-26":
+				host.map.unlock_door(U66_DOOR.x, U66_DOOR.y)
+		"q66stop":                                                       # b) 정지 — 충전대에 앉아 꺼짐(다시 깨울 수 있다)
+			_sv("UQ66_NURSE", 2)
+			if host.map != null:
+				host.refresh_npcs()
+				if host.map.id == "K-26":
+					host.map.set_prop_state(U66_DOCK, "stopped")
+		"q66wake":
+			_sv("UQ66_NURSE", 0)
+			if host.map != null:
+				host.refresh_npcs()
+				if host.map.id == "K-26":
+					host.map.set_prop_state(U66_DOCK, "")
+		"q66fridge":                                                     # 혈액은행 냉장고가 돎(1 예비 · 2 관악 · 3 시장 전지 — 시장이 멎음) · 7호가 로비에 글(다음 06:00 들것이 읽음)
+			if v("UQ66_FRIDGE") == 3:
+				_sv("UQ66_BATT", 7)
+			if _nurse_ok():
+				_sv("UQ66_NOTICE", 1)
+			if host.map != null and host.map.id == "K-26B":
+				host.map.set_prop_state(U66_FRIDGE_AT, "on")
+			_up("UQ-66", 20)
+			_uq66_check()
+		"q66notice":                                                     # 재워 둔 사이 냉장고가 돌았다 — 깨어난 7호가 로비에 글
+			if v("UQ66_FRIDGE") != 0 and _nurse_ok():
+				_sv("UQ66_NOTICE", 1)
+		"q66dg":                                                         # 소윤희에게 직접(7호가 없거나 글 전) — DG 협력 · 정류지(7호가 살아 돌 때 · DG_STOP 0)
+			_sv("UQ66_DG", 1)
+			_sv("UQ66_DG_SAID", 1)
+			if v("DG_STOP") == 0 and _nurse_ok():
+				_sv("DG_STOP", 2)
+			_uq66_check()
 		"q65sneak":                                                      # 교탁 문항집 몰래 집기: 웅크리지 않으면 손재석이 돌아본다(9 = 방금 들킴)
 			if not host.combat.crouch:
 				_sv("UQ65_STOLE", 9)
@@ -739,6 +850,155 @@ func _cmd(a: Array, done: Callable) -> void:
 			_sv("UQ65_LESSON_DAY", day())
 	done.call()
 
+
+
+# ---------------------------------------------------------------- UQ-66 전지 하나, 냉장고 둘(1-12i i3 — SD-05 §3.30)
+const U66_DAYS := 4                                ## 시장 전지 이야기를 들은 날 + 4 · 10~14시 운반조(재미 검수 W4)
+const U66_TAKE_H := 14                             ## 이 시각까지 매듭이 없으면 심도겸이 내준다(GS 세력권)
+const U66_DOOR := Vector2i(29, 1)                  ## K-26 병동 북동 철문
+const U66_DOCK := Vector2i(31, 3)                  ## K-26 충전대
+const U66_FRIDGE_AT := Vector2i(2, 3)              ## K-26B 혈액 냉장고
+const U66_SPARE := Vector2i(13, 6)                 ## GS-02 대기등 예비 전원 받침
+const U66_FREEZER := Vector2i(8, 1)                ## 수산시장 스팟 안 냉동고 칸
+const U66_WARD := [Vector2i(19, 5), Vector2i(25, 5), Vector2i(22, 11), Vector2i(28, 11), Vector2i(17, 12)]   ## 병동 구울 다섯(맵 칸 = 쓰러뜨림 키)
+
+
+func _nurse_ok() -> bool:
+	return v("UQ66_NURSE") == 0 and not st.is_dead("N-R01-058")
+
+
+func spot_o(lid: String) -> Vector2i:
+	if not _spot_o.has(lid):
+		_spot_o[lid] = Vector2i(-1, -1)
+		var g = JSON.parse_string(FileAccess.get_file_as_string("res://data/world/place_geo.json"))
+		for sp in (g.get("_spots", []) if g is Dictionary else []):
+			if str(sp.get("lid", "")) == lid:
+				_spot_o[lid] = Vector2i(int(sp["at"][0]), int(sp["at"][1]))
+	return _spot_o[lid]
+
+
+## 냉동고 그림(월드 스팟 — 소품 cond는 들어올 때만 읽으므로 지금 그 자리에 있으면 바로 바꾼다)
+func _u66_freezer() -> void:
+	if v("UQ66_BATT") != 0 or v("UQ66_PULLED") == 1:
+		_sv("UQ66_TAG", 0)
+	if host.map is WorldMap:
+		var o := spot_o("L-R01-25")
+		if o.x >= 0:
+			host.map.set_prop_state(o + U66_FREEZER, "off" if v("UQ66_PULLED") == 1 else ("tagged" if v("UQ66_TAG") == 1 else ""))
+
+
+func _u66_refresh() -> void:
+	if host.map != null and not host.box.active and not host.ev.busy():
+		host.refresh_npcs()
+
+
+## 병동 구울 다섯을 지금 맵에서 치운다(퇴원 — 7호가 뒤뜰로 모심)
+func _u66_clear_ward() -> void:
+	if host.map == null or host.map.id != "K-26":
+		return
+	for e in host.combat.enemies.duplicate():
+		if is_instance_valid(e) and str(e.row.get("id", "")) == "CR-200":
+			host.combat.enemies.erase(e)
+			e.queue_free()
+
+
+## 운반조가 가져감(기한 날 14시 · 넘긴 날 · 각성회 적대면 기한 날 06:00) — 시장 냉동고 멎음 · 대기등 예비 전원
+func _u66_take() -> void:
+	_sv("UQ66_BATT", 5)
+	_sv("UQ66_PULLED", 1)
+	_sv("UQ66_GSCELL", 1)
+	_sv("UQ66_PULL_DAY", day())
+	_log("UQ-66 운반조가 시장 전지를 가져감")
+	_u66_freezer()
+	_uq66_check()
+	_u66_refresh()
+
+
+func _uq66_tick() -> void:
+	if v("UQ66_NURSE") == 0 and st.is_dead("N-R01-058"):
+		_sv("UQ66_NURSE", 3)                                          # 부서짐 — 정류지 없음(충전대는 빈 채)
+	var due := v("UQ66_DUE")
+	if due > 0 and v("UQ66_BATT") == 0 and v("UQ66_PULLED") == 0:
+		if st.is_dead("N-GS-C1") or st.is_dead("N-GS-C2"):
+			_sv("UQ66_BATT", 1)                                       # 운반조를 죽임 — 시장 전지는 남는다(살해는 엔진 규칙 · 할인 없음)
+			_sv("UQ66_HOW", 4)
+			st.call_fn("aff", ["GS", -15])
+			_log("UQ-66 운반조 살해 — ①(GS −15)")
+			_uq66_check()
+		elif v("UQ66_HEARD") > 0 and v("SQH_BATT") == 7:
+			_sv("UQ66_BATT", 6)                                       # 관악 전지가 대기등 받침에 — 그 자리에서 행방이 정해진다(운반조를 부르지 않음)
+			_uq66_check()
+			_u66_refresh()
+		elif day() > due or (day() == due and _hour() >= U66_TAKE_H):
+			_u66_take()
+	if v("UQ66_BATT") == 0 and v("UQ66_PULLED") == 0 and v("UQ66_GSCELL") == 2:
+		_sv("UQ66_BATT", 3)                                           # 예비 전지가 받침에 있는데 시장 전지를 뺐다 도로 꽂음 — 시장 몫은 그대로
+		_uq66_check()
+	if host.map != null and host.map.id == "K-26" and v("UQ66_WARD") == 0 and _ward_cleared():
+		_sv("UQ66_WARD", 3)                                           # c) 병동 정리 — 다시 서지 않는다(맵 cond)
+		_log("UQ-66 병동 정리")
+	var key := "%d:%d:%d:%d:%d" % [v("UQ66_BATT"), v("UQ66_PULLED"), v("UQ66_GSCELL"), 1 if (due > 0 and day() == due and _hour() >= 10 and _hour() < U66_TAKE_H) else 0, 1 if (due > 0 and day() == due - 1 and _hour() >= 8 and _hour() < 18) else 0]
+	if key != _u66_key:
+		var first := _u66_key == ""
+		_u66_key = key
+		if not first and host.map is WorldMap:
+			_u66_refresh()
+
+
+func _hour() -> int:
+	return int(st.vars.get_v("GAME_HOUR"))
+
+
+## 병동 구울 다섯이 모두 쓰러진 채(쓰러뜨림 키가 다섯 다 있고, 지금 맵에 산 CR-200이 없다)
+func _ward_cleared() -> bool:
+	for c in U66_WARD:
+		if not st.boxes.has("kill:K-26:%d,%d" % [c.x, c.y]):
+			return false
+	for e in host.combat.enemies:
+		if is_instance_valid(e) and not e.cmb.dead and str(e.row.get("id", "")) == "CR-200":
+			return false
+	return true
+
+
+func _uq66_day(d: int) -> void:
+	var due := v("UQ66_DUE")
+	if v("UQ66_HEARD") > 0 and v("UQ66_BATT") == 0 and v("UQ66_PULLED") == 0:
+		if v("SQH_BATT") == 7:
+			_sv("UQ66_BATT", 6)                                       # 관악 전지가 대기등 예비 전원으로(SQ-S04 — 그쪽이 GS를 올림, A111)
+			_log("UQ-66 관악 전지로 대신")
+		elif d > v("UQ66_HEARD"):
+			_sv("UQ66_TAG", 1)                                        # 들은 다음 날부터 붉은 천 꼬리표(운반조가 다녀간 흔적, P7)
+	if due > 0 and v("UQ66_BATT") == 0 and v("UQ66_PULLED") == 0 and (d > due or (d == due and v("AFF_GS") <= -60)):
+		_u66_take()                                                   # 시간 도약 · 생포 · 적대 판(주인공을 피해 06:00 전에)
+	if v("UQ66_NOTICE") == 1 and v("UQ66_DG") == 0 and not st.is_dead("C-067") and Caravans.medic_at(d, v("DG_STOP"), v("FQ_JH03_SOL") == 1) != 0:
+		_sv("UQ66_DG", 1)                                             # 7호의 로비 글을 들것 대원이 읽음(들것이 강 이쪽을 도는 날 — 출처 = 붙은 글)
+		if v("DG_STOP") == 0 and _nurse_ok():
+			_sv("DG_STOP", 2)
+		_log("UQ-66 들것 협력 · 정류지 %d" % v("DG_STOP"))
+	_uq66_check()
+
+
+## 행방 판정 · 둘 다 삶(카르마 한 번) · 매듭(100 · 120 XP 한 번) / 90(운반조가 가져감 · 잃음 — 혈액은행이 아직 꺼져 있으면)
+func _uq66_check() -> void:
+	if st.quests.stage("UQ-66") == 0 and v("UQ66_BATT") == 0 and v("UQ66_FRIDGE") == 0:
+		return
+	if v("UQ66_PULLED") == 1 and v("UQ66_BATT") == 0 and v("UQ66_GSCELL") != 1 and v("UQ66_FRIDGE") != 3 and _owned("M-442") == 0:
+		_sv("UQ66_BATT", 4)                                           # 뺀 시장 전지를 팔거나 버림(보관함 포함 셈 — A244)
+		_log("UQ-66 시장 전지를 잃음")
+	var b := v("UQ66_BATT")
+	if v("UQ66_BOTH") == 0 and v("UQ66_FRIDGE") > 0 and b in [1, 3, 6]:
+		_sv("UQ66_BOTH", 1)
+		st.call_fn("karma", [25])                                     # 시장 냉동고와 혈액은행 냉장고가 둘 다 돈다(원문 ③ 카르마 +25)
+		_log("UQ-66 둘 다 삶")
+	var s66: int = st.quests.stage("UQ-66")
+	if s66 < 100 and (b in [1, 2, 3, 6, 7] or v("UQ66_FRIDGE") > 0):
+		st.quests.set_stage("UQ-66", 100)
+		if v("UQ66_XP") == 0:
+			_sv("UQ66_XP", 1)
+			st.call_fn("xp", [120])
+		_log("UQ-66 매듭(BATT %d · FRIDGE %d)" % [b, v("UQ66_FRIDGE")])
+	elif s66 < 90 and b in [4, 5]:
+		st.quests.set_stage("UQ-66", 90)
 
 
 # ---------------------------------------------------------------- UQ-65 일타 강사의 문항집(1-12i — SD-05 §3.29)

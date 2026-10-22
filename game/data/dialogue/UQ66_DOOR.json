@@ -1,0 +1,155 @@
+{
+ "id": "UQ66_DOOR",
+ "title": "지하 철문",
+ "loc": "L-R01-26",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "PICK": 7,
+  "FREE7": 11,
+  "FREE7_W3": 14,
+  "NOBODY": 17
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "철문. 카드 판독기에 붉은 등. 스텐실 '지하 — 혈액은행 · 약제부. 관계자 외 출입 금지'."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "아래 붙은 종이 — '감염 관리: 병동에 입원 환자가 있는 동안 지하 출입 통제. 승인 — 간호 7호'."
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q66start"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "UQ66_NURSE != 0 or dead(\"N-R01-058\") == 1",
+   "to": "NOBODY"
+  },
+  {
+   "op": "if",
+   "cond": "UQ66_WARD == 3",
+   "to": "FREE7_W3"
+  },
+  {
+   "op": "if",
+   "cond": "UQ66_WARD != 0",
+   "to": "FREE7"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "판독기 덮개를 따고 선을 붙인다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "자물쇠 따기",
+       "min": 75
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PICK",
+     "id": "UQ66_DOOR:1:0"
+    },
+    {
+     "text": "물러선다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ66_DOOR:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q66open"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "판독기 등이 녹색으로 바뀐다. 철문이 무겁게 밀린다."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-058",
+   "emo": "놀람",
+   "text": "(병동 저편에서 확성기가 돈다) 관리 후보님, 거기는…. (잠시 멈춘다) …관계자로 기록해 둘게요. 지하는 추워요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-058",
+   "emo": "기본",
+   "text": "(병동 저편에서) 병동에 입원 환자가 없으니 지하 통제는 해제예요. 지하는 추워요, 관리 후보님."
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q66open"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-058",
+   "emo": "기본",
+   "text": "(병동 저편에서) 입원 환자가 없으니 통제는 해제예요. …지하는 추워요, 환자분."
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q66open"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "판독기 등이 꺼져 있다. 작은 화면 '승인자 응답 없음 — 비상 개방'."
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q66open"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-66.txt"
+}

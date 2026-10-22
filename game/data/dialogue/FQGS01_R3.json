@@ -6,20 +6,21 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "BATT": 8,
-  "CARD": 9,
-  "DIMMED": 13,
-  "OFF": 15,
-  "MENU": 16,
-  "POWER": 17,
-  "OIL": 20,
-  "OILC": 22,
-  "FUSE": 24,
-  "DONE": 26,
-  "DONEDIM": 29,
-  "WRECK": 31,
-  "LOOK": 33,
-  "COLD": 35
+  "BATT66": 9,
+  "BATT": 11,
+  "CARD": 12,
+  "DIMMED": 16,
+  "OFF": 18,
+  "MENU": 19,
+  "POWER": 20,
+  "OIL": 23,
+  "OILC": 25,
+  "FUSE": 27,
+  "DONE": 29,
+  "DONEDIM": 32,
+  "WRECK": 34,
+  "LOOK": 36,
+  "COLD": 38
  },
  "ops": [
   {
@@ -59,6 +60,21 @@
    "op": "if",
    "cond": "SQH_BATT == 7",
    "to": "BATT"
+  },
+  {
+   "op": "if",
+   "cond": "UQ66_GSCELL != 0",
+   "to": "BATT66"
+  },
+  {
+   "op": "goto",
+   "to": "CARD"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "대기등 옆 받침에서 늘어진 예비 전원 선이 3번 등판까지 와 있다. 받침에 앉은 전지에 서리 자국 — 산 아래에서 온 것이다."
   },
   {
    "op": "goto",

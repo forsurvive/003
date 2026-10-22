@@ -26,26 +26,27 @@
   "W1": 62,
   "W1_DEAD": 67,
   "W2": 69,
-  "W2_DEAD": 74,
-  "W3": 76,
-  "W3_OK": 79,
-  "W3_FAIL": 84,
-  "WAY_1": 86,
-  "WAY_2": 88,
-  "CIRCUIT": 90,
-  "CIRCUIT_CUT": 97,
-  "CIRCUIT_ON": 100,
-  "CIRCUIT_REJOIN": 102,
-  "CIRCUIT_SNEAK": 105,
-  "CIRCUIT_QUIET": 109,
-  "CIRCUIT_NO": 111,
-  "LTAG": 113,
-  "DOC": 117,
-  "SHOP": 119,
-  "BYE": 121,
-  "BYE_VISIT": 125,
-  "BYE_FAKE": 127,
-  "MARKET": 130
+  "W2_HS": 75,
+  "W2_DEAD": 77,
+  "W3": 79,
+  "W3_OK": 82,
+  "W3_FAIL": 87,
+  "WAY_1": 89,
+  "WAY_2": 91,
+  "CIRCUIT": 93,
+  "CIRCUIT_CUT": 100,
+  "CIRCUIT_ON": 103,
+  "CIRCUIT_REJOIN": 105,
+  "CIRCUIT_SNEAK": 108,
+  "CIRCUIT_QUIET": 112,
+  "CIRCUIT_NO": 114,
+  "LTAG": 116,
+  "DOC": 120,
+  "SHOP": 122,
+  "BYE": 124,
+  "BYE_VISIT": 128,
+  "BYE_FAKE": 130,
+  "MARKET": 133
  },
  "ops": [
   {
@@ -563,6 +564,11 @@
    "to": "W2_DEAD"
   },
   {
+   "op": "if",
+   "cond": "DG_STOP == 2",
+   "to": "W2_HS"
+  },
+  {
    "op": "line",
    "who": "N-R02-031",
    "emo": "기본",
@@ -577,6 +583,16 @@
   {
    "op": "do",
    "fx": "HP_LETTER = HP_LETTER"
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-031",
+   "emo": "슬픔",
+   "text": "소윤희 반장이 넷째 날을 흑석 병원으로 정했대요. 혈액은행이 다시 돈다고. …잘했어요. 거기도 사람이 있으니까. 여기까진 이제 못 와요."
   },
   {
    "op": "goto",

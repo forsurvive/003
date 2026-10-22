@@ -1,0 +1,214 @@
+{
+ "id": "UQ66_DOCK",
+ "title": "간호 로봇 충전대",
+ "loc": "L-R01-26",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "STOP": 4,
+  "STOP_E": 7,
+  "STOP_GO": 8,
+  "STOPPED": 11,
+  "WAKE": 13,
+  "WAKE_E": 18,
+  "WAKE_D": 20,
+  "WAKE_F": 21,
+  "BROKEN": 25
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "dead(\"N-R01-058\") == 1",
+   "to": "BROKEN"
+  },
+  {
+   "op": "if",
+   "cond": "UQ66_NURSE == 2",
+   "to": "STOPPED"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "충전대. 받침 고리 위 초록 등. 옆 패널 '살핌-1 정비 모드 — 시설과 전용'."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "정비 모드 코드를 넣어 7호를 받침으로 부른다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "과학",
+       "min": 40
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "STOP",
+     "id": "UQ66_DOCK:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ66_DOCK:1:1"
+    }
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "UQ66_WARD != 0",
+   "to": "STOP_E"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-058",
+   "emo": "놀람",
+   "text": "(병상 사이에서 멈춘다) 정비 모드 호출…. 관리 후보님, 환자분들 아침 체온을 아직…"
+  },
+  {
+   "op": "goto",
+   "to": "STOP_GO"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-058",
+   "emo": "놀람",
+   "text": "(빈 병상 사이에서 멈춘다) 정비 모드 호출…. 오늘 회진은 금방 끝났는데요."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "구체가 떠 와서 받침에 내려앉는다. 렌즈가 한 번 깜박이고 꺼진다. 점등이 붉게 바뀐다."
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q66stop"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "7호가 받침에 앉아 꺼져 있다. 손으로 칠한 '7'. 병상 사이로 아무도 돌지 않는다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "정비 모드를 푼다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "과학",
+       "min": 40
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "WAKE",
+     "id": "UQ66_DOCK:2:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ66_DOCK:2:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q66wake"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "UQ66_WARD == 3",
+   "to": "WAKE_E"
+  },
+  {
+   "op": "if",
+   "cond": "UQ66_WARD == 1",
+   "to": "WAKE_D"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-058",
+   "emo": "기본",
+   "text": "…정비 끝. 몇 시예요? 환자분들 체온…. (렌즈가 병동을 훑는다) 관리 후보님, 정비가 오래 걸렸나요?"
+  },
+  {
+   "op": "goto",
+   "to": "WAKE_F"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-058",
+   "emo": "기본",
+   "text": "…정비 끝. (렌즈가 빈 병상을 하나씩 훑는다) …정비가 오래 걸렸나요."
+  },
+  {
+   "op": "goto",
+   "to": "WAKE_F"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-058",
+   "emo": "기본",
+   "text": "…정비 끝. 뒤뜰 분들 체온 잴 시간이 지났네요. 정비가 오래 걸렸나요?"
+  },
+  {
+   "op": "if",
+   "cond": "UQ66_FRIDGE == 0 or UQ66_NOTICE == 1",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-058",
+   "emo": "놀람",
+   "text": "(렌즈가 계단 쪽을 오래 본다) …지하가 4도예요. 제가 꺼져 있는 동안요. 승인은 지금 적을게요. 로비 문에도요."
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q66notice"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈 충전대. 받침 고리 위 초록 등이 아무도 없는 자리를 밝힌다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-66.txt"
+}

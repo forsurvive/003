@@ -1,0 +1,132 @@
+{
+ "id": "UQ66_DESK",
+ "title": "원무과 단말",
+ "loc": "L-R01-26",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "FORMS": 3,
+  "SELF": 7,
+  "DONE": 10,
+  "DONE3": 13
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "원무과 단말. 녹색 글자 '입퇴원 관리 — 퇴원 서류 출력은 담당의 서명 필요'."
+  },
+  {
+   "op": "if",
+   "cond": "UQ66_WARD != 0",
+   "to": "DONE"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "서명 칸을 '전시 특례'로 우회해 병동 다섯의 퇴원 서류를 뽑는다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "과학",
+       "min": 50
+      }
+     ],
+     "cond": "UQ66_FORMS == 0",
+     "fx": "",
+     "to": "FORMS",
+     "id": "UQ66_DESK:1:0"
+    },
+    {
+     "text": "내 등록 번호로 퇴원 서류를 한 장 뽑는다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "과학",
+       "min": 50
+      }
+     ],
+     "cond": "UQ66_SELF == 0",
+     "fx": "",
+     "to": "SELF",
+     "id": "UQ66_DESK:1:1"
+    },
+    {
+     "text": "끈다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ66_DESK:1:2"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "UQ66_FORMS = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "프린터가 덜컹거리며 다섯 장을 뱉는다. 환자 이름 칸은 비었다 — 병상 번호만. '퇴원 사유: 상급 병원 연락 없음 — 귀가'."
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q66start"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "UQ66_SELF = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "한 장이 나온다. 환자 이름 칸에 당신의 등록 번호. '퇴원 사유: 방문객 — 자가 퇴원'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "퇴원 대장 화면. 다섯 줄 모두 '퇴원'. 아래 깜박이는 줄 '재입원 예약: 없음'."
+  },
+  {
+   "op": "if",
+   "cond": "UQ66_WARD == 3",
+   "to": "DONE3"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "…아니다. 다섯 줄 모두 '사망 — 진단서 미발급'. 담당의 칸이 비어 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-66.txt"
+}

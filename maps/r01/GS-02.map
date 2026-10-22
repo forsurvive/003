@@ -29,6 +29,10 @@ mark from_GS-03 20 3 S
 prop stairs_up 20 2
 prop gs_standby_lamp 11 6
 text 11 6 "대기등." scene=GS_LAMP
+# 1-12i UQ-66: 대기등 예비 전원 받침 — 빈 받침(카드 '예비 전원 자리') · 전지가 앉으면 초록 띠(UQ66_GSCELL · 관악 전지 SQH_BATT 7도 같은 자리)
+prop gs_spare 13 6 cond="UQ66_GSCELL == 0 and SQH_BATT != 7"
+prop gs_spare 13 6 state=on cond="UQ66_GSCELL != 0 or SQH_BATT == 7"
+text 13 6 "대기등 예비 전원 받침." scene=UQ66_RACK
 prop gs_kneel 10 8
 prop gs_kneel 12 8
 prop gs_kneel 11 9

@@ -41,8 +41,19 @@ npc CR-401 8 4 W sheet=en_cr401_loco cond="UQ03_EOM == 0 and dead(\"N-R01-050\")
 # 노량진 수산시장(L-R01-25, SD-09a B · 단계 1-7c): 경매장 지붕 아래 좌판 · 원자력 냉동고(가동, 각성회 대기등 하나) · 생선 함지 · 2077 시세 칠판.
 # 경매사 심도겸(N-R01-057) — 거래(VR25) · 냉동고 이야기(훅 H-R01-09 앞부분). 시장 뒤 터는 고정 매복 지점(SD-06 §12.3, 1-12 판도와 함께).
 spot L-R01-25 11 7
-prop freezer_unit 8 1
-text 8 2 "원자력 냉동고. 문틈으로 하얀 김. 손잡이 옆에 녹색 등 하나가 흔들린다 — 언덕 위 각성회가 달아 놓은 대기등." w=2
+# 1-12i UQ-66 「전지 하나, 냉장고 둘」(SD-05 §3.30): 냉동고 그림 셋(가동 · 붉은 천 꼬리표 '수거' · 멎음) — 전지가 빠졌는지는 UQ66_PULLED 한 값(P1).
+#   기한 날(UQ66_DUE) 10~14시 각성회 운반조 둘 + 손수레 · 기한 전날 순례조가 지붕 밑에서 손수레 바퀴를 고친다(예고 — 출처).
+prop freezer_unit 8 1 cond="UQ66_PULLED == 0 and UQ66_TAG == 0"
+prop freezer_unit 8 1 state=tagged cond="UQ66_PULLED == 0 and UQ66_TAG == 1"
+prop freezer_unit 8 1 state=off cond="UQ66_PULLED == 1"
+text 8 2 "원자력 냉동고." w=2 scene=UQ66_FREEZER
+prop hm_cart 9 3 cond="UQ66_DUE > 0 and GAME_DAY >= UQ66_DUE - 1 and GAME_DAY <= UQ66_DUE and UQ66_BATT == 0 and UQ66_GSCELL == 0 and SQH_BATT != 7"
+npc N-GS-C1 8 3 N look=M1-S3-HR03-H2-T05-1-PF00-HD00-EY00 cond="UQ66_DUE > 0 and GAME_DAY == UQ66_DUE and GAME_HOUR >= 10 and GAME_HOUR < 14 and UQ66_BATT == 0 and UQ66_PULLED == 0 and UQ66_GSCELL == 0 and SQH_BATT != 7 and AFF_GS > -60"
+npc N-GS-C2 10 4 N look=F1-S2-HR05-H3-T05-1-PF00-HD00-EY00 cond="UQ66_DUE > 0 and GAME_DAY == UQ66_DUE and GAME_HOUR >= 10 and GAME_HOUR < 14 and UQ66_BATT == 0 and UQ66_PULLED == 0 and UQ66_GSCELL == 0 and SQH_BATT != 7 and AFF_GS > -60 and dead(\"N-R01-055\") == 0" bark="(손수레 손잡이를 쥔 채) 당번장님 명이에요. 대기등이 먼저래요."
+npc N-GS-C2 10 4 N look=F1-S2-HR05-H3-T05-1-PF00-HD00-EY00 cond="UQ66_DUE > 0 and GAME_DAY == UQ66_DUE and GAME_HOUR >= 10 and GAME_HOUR < 14 and UQ66_BATT == 0 and UQ66_PULLED == 0 and UQ66_GSCELL == 0 and SQH_BATT != 7 and AFF_GS > -60 and dead(\"N-R01-055\") == 1" bark="(손수레 손잡이를 쥔 채) 대기등만은 지키자고 했어요."
+# 뺀 시장 전지가 받침에 오지 않은 채 기한 날 — 빈 손수레로 와서 '누가 먼저 가져갔대'(계획 §5.3-8)
+npc N-GS-C1 8 3 N look=M1-S3-HR03-H2-T05-1-PF00-HD00-EY00 cond="UQ66_DUE > 0 and GAME_DAY == UQ66_DUE and GAME_HOUR >= 10 and GAME_HOUR < 14 and UQ66_PULLED == 1 and UQ66_GSCELL == 0 and (UQ66_BATT == 0 or UQ66_BATT == 4 or UQ66_BATT == 7) and AFF_GS > -60"
+npc N-GS-C1 9 5 E look=M1-S3-HR03-H2-T05-1-PF00-HD00-EY00 cond="UQ66_DUE > 0 and GAME_DAY == UQ66_DUE - 1 and GAME_HOUR >= 8 and GAME_HOUR < 18 and UQ66_BATT == 0 and UQ66_PULLED == 0 and UQ66_GSCELL == 0 and SQH_BATT != 7 and AFF_GS > -60" bark="(손수레 바퀴에 기름을 친다) 내일 열 시. 무거운 걸 실어야 해서요."
 prop price_board 1 1
 text 1 1 "경매장 칠판. 위 칸 '광어 kg 38,000원'(2077), 아래 칸 분필로 '가물치 1마리 6캡'." 
 prop stall_food 3 1
@@ -61,6 +72,15 @@ prop cot 0 5 cond="MEDIC_AT == 4"
 npc C-067 1 6 N cond="MEDIC_AT == 4 and GAME_HOUR >= 6 and GAME_HOUR < 18" bark="검문소 코앞이라 오래 못 있어요. 지하시장 상자, 아직이에요?"
 npc N-R02-051 3 6 W cond="MEDIC_AT == 4 and GAME_HOUR >= 6 and GAME_HOUR < 18 and SQ_S13_V_W != 2 and SQ_S13_V_W != 3" bark="반장님, 분대가 또 노량진로에 섰대요."
 text 0 5 "접이 들것. 손잡이에 붉은 천 — 들것 의료반 표식. 들것 밑에 빈 약 상자 둘." cond="MEDIC_AT == 4"
+
+# 흑석 병원 뒤뜰 벤치(1-12i UQ-66 — 퇴원 서류로 병동을 비우면 간호 7호가 '댁을 몰라서' 다섯을 여기 모신다, UQ66_WARD 1). 병원 동쪽 흙마당.
+spot @989,1207 5 4
+prop bench 1 1 cond="UQ66_WARD == 1"
+prop bench 3 1 cond="UQ66_WARD == 1"
+text 0 0 "말뚝에 집게팔 글씨 판자 — '퇴원 환자 쉼터 · 체온은 매일 아침 · 간호 7'." cond="UQ66_WARD == 1"
+npc N-HS-P1 1 2 N sheet=en_cr200_loco cond="UQ66_WARD == 1" bark="(햇볕 쪽으로 고개를 든 채 움직이지 않는다)"
+npc N-HS-P2 3 2 N sheet=en_cr200_loco cond="UQ66_WARD == 1" bark="(소매에 매인 '퇴원' 꼬리표를 만지작거린다)"
+npc N-HS-P3 4 3 W sheet=en_cr200_loco cond="UQ66_WARD == 1" bark="(병원 쪽을 본다)"
 
 # 시장 뒤 터(SD-06 §12.3 고정 매복 지점 '노량진 수산시장 터' — 1-12e FQ-JH-03 밤 대기). 낮엔 빈 터, 밤엔 소윤희가 손전등을 낮춰 기다린다.
 # 낮에 30분 넘게 남기고 건넸으면 박춘삼이 해 질 녘까지 강가 쪽 턱에 앉아 있다(남은 시간은 그의 몫, FQ_JH03_RIVER — 북쪽 출구 자리와 배타: PARK 2인 날).

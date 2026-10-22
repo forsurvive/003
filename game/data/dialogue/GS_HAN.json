@@ -9,17 +9,24 @@
   "HOSTILE": 7,
   "AGAIN": 9,
   "ASK": 10,
-  "FUSE": 11,
-  "TAG": 15,
-  "REPORT": 18,
-  "HEAD": 21,
-  "S04": 24,
-  "S04B": 29,
-  "SHOP": 33,
-  "PRICEY": 36,
-  "BOT": 39,
-  "NOSOL": 42,
-  "AFTERSOL": 43
+  "U66": 11,
+  "U66_KEEP": 15,
+  "U66_NO": 18,
+  "U66_FULL": 20,
+  "U66_ANY": 22,
+  "U66_441": 24,
+  "U66_442": 27,
+  "FUSE": 30,
+  "TAG": 34,
+  "REPORT": 37,
+  "HEAD": 40,
+  "S04": 43,
+  "S04B": 48,
+  "SHOP": 52,
+  "PRICEY": 55,
+  "BOT": 58,
+  "NOSOL": 61,
+  "AFTERSOL": 62
  },
  "ops": [
   {
@@ -111,10 +118,62 @@
        "n": 1
       }
      ],
-     "cond": "SQ_S04_BATT == 1 and SQH_BATT == -1",
+     "cond": "SQ_S04_BATT == 1 and SQH_BATT == -1 and UQ66_GSCELL == 0",
      "fx": "",
      "to": "S04B",
      "id": "GS_HAN:1:3"
+    },
+    {
+     "text": "수산시장 냉동고 전지를 가져간다면서요",
+     "tags": [],
+     "cond": "UQ66_HEARD > 0 and UQ66_BATT == 0 and UQ66_PULLED == 0 and SQH_BATT != 7 and UQ66_GSCELL == 0 and AFF_GS >= -59",
+     "fx": "",
+     "to": "U66",
+     "id": "GS_HAN:1:4"
+    },
+    {
+     "text": "대기등에 예비 전원은 있습니까?",
+     "tags": [],
+     "cond": "UQ66_HEARD == 0 and UQ66_BATT == 0 and UQ66_PULLED == 0 and SQH_BATT != 7 and UQ66_GSCELL == 0 and AFF_GS >= -59",
+     "fx": "",
+     "to": "U66",
+     "id": "GS_HAN:1:5"
+    },
+    {
+     "text": "대기등 예비 전원은 어떻게 됐습니까?",
+     "tags": [],
+     "cond": "(SQH_BATT == 7 or UQ66_GSCELL != 0) and UQ66_HEARD > 0",
+     "fx": "",
+     "to": "U66_FULL",
+     "id": "GS_HAN:1:6"
+    },
+    {
+     "text": "흑석 병원 B계통 예비 전지를 건넨다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "M-441",
+       "n": 1
+      }
+     ],
+     "cond": "UQ66_GSCELL == 0 and SQH_BATT != 7 and AFF_GS >= -59",
+     "fx": "",
+     "to": "U66_441",
+     "id": "GS_HAN:1:7"
+    },
+    {
+     "text": "수산시장 냉동고 전지를 건넨다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "M-442",
+       "n": 1
+      }
+     ],
+     "cond": "UQ66_GSCELL == 0 and SQH_BATT != 7 and AFF_GS >= -59",
+     "fx": "",
+     "to": "U66_442",
+     "id": "GS_HAN:1:8"
     },
     {
      "text": "3번 등판에서 빠진 퓨즈를 보여 준다",
@@ -128,7 +187,7 @@
      "cond": "AFF_GS >= -19",
      "fx": "",
      "to": "FUSE",
-     "id": "GS_HAN:1:4"
+     "id": "GS_HAN:1:9"
     },
     {
      "text": "파수 식별 태그를 넘긴다(20캡)",
@@ -142,7 +201,7 @@
      "cond": "AFF_GS >= -19 and FQ_GS01_TAG == 1",
      "fx": "",
      "to": "TAG",
-     "id": "GS_HAN:1:5"
+     "id": "GS_HAN:1:10"
     },
     {
      "text": "정비고 여섯 대를 다 닦았습니다. 오상구 당번이… 없어서요",
@@ -150,7 +209,7 @@
      "cond": "known_dead(\"N-R01-503\") == 1 and FQGS01_STAGE >= 10 and FQGS01_STAGE < 100 and FQ_GS01_R1 >= 1 and FQ_GS01_R2 >= 1 and FQ_GS01_R3 >= 1 and FQ_GS01_R4 >= 1 and FQ_GS01_R5 >= 2 and FQ_GS01_R6 >= 3",
      "fx": "",
      "to": "REPORT",
-     "id": "GS_HAN:1:6"
+     "id": "GS_HAN:1:11"
     },
     {
      "text": "채점기 천공 머리에서 바늘만 뽑아 주세요",
@@ -164,7 +223,7 @@
      "cond": "known_dead(\"N-R01-503\") == 1 and FQGS02_STAGE >= 10 and FQGS02_STAGE < 100",
      "fx": "",
      "to": "HEAD",
-     "id": "GS_HAN:1:7"
+     "id": "GS_HAN:1:12"
     },
     {
      "text": "됐습니다",
@@ -172,9 +231,148 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "GS_HAN:1:8"
+     "id": "GS_HAN:1:13"
     }
    ]
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q66heard"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-055",
+   "emo": "기본",
+   "text": "대기등 예비 전원요. 대기등 원자 전지가 200년째예요. 언제 꺼질지 몰라요. 예비가 없어요. 대기등이 꺼지면 대기도 끝이에요."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-055",
+   "emo": "기본",
+   "text": "시장 냉동고 전지가 제일 가까워요. 운반조가 날 잡아 손수레 끌고 가요. 열 시에."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "그 냉동고로 시장 사람 백 명이 먹어요. 대기하는 사람도 먹어야 대기하죠",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "보통"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "U66_KEEP",
+     "id": "GS_HAN:2:0",
+     "fail": "U66_NO"
+    },
+    {
+     "text": "다른 전지를 구해 오면요?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "U66_ANY",
+     "id": "GS_HAN:2:1"
+    },
+    {
+     "text": "그렇군요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "ASK",
+     "id": "GS_HAN:2:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-055",
+   "emo": "슬픔",
+   "text": "…정비는 기도가 아니에요. 대기하는 분들의 몸을 돌보는 거죠. 생선도 몸이에요. (당번표에서 한 줄을 지운다) 운반조는 안 보낼게요."
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q66keep",
+    "han"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-055",
+   "emo": "기본",
+   "text": "시장은 소금이 있잖아요. 대기등은 소금으로 안 켜져요. …다른 전지가 있으면 몰라도."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-055",
+   "emo": "기본",
+   "text": "예비 전원은 받침에 앉았어요. 시장 냉동고 건 이제 필요 없어요. 운반조는 손수레 집어넣었어요."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-055",
+   "emo": "기본",
+   "text": "핵분열 전지면 다 맞아요. 받침은 대기등 옆에 있어요. 어디서 났는지는 안 물을게요. 그게 정비 당번 규칙이에요."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q66gs",
+    "441"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-055",
+   "emo": "놀람",
+   "text": "병원 거네요. '냉장 B계통'. …예비 전원 받침에 앉힐게요. 시장 냉동고 건 안 가져와도 되겠어요."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q66gs",
+    "442"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-055",
+   "emo": "기본",
+   "text": "(서리를 손끝으로 훔친다) 시장 냉동고 거네요. 운반조 수고를 덜었어요. 심 경매사한텐 내가 말 안 해요."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
   },
   {
    "op": "line",

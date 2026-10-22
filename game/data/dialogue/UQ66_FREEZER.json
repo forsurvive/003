@@ -1,0 +1,204 @@
+{
+ "id": "UQ66_FREEZER",
+ "title": "원자력 냉동고",
+ "loc": "L-R01-25",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "PANEL": 3,
+  "TAG": 4,
+  "LID": 6,
+  "PULL": 10,
+  "SEEN": 14,
+  "OFF": 17,
+  "BACK": 19
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "UQ66_PULLED == 1",
+   "to": "OFF"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "원자력 냉동고. 문틈으로 하얀 김. 손잡이 옆 녹색 등 하나 — 언덕 위 각성회가 달아 놓은 대기등."
+  },
+  {
+   "op": "if",
+   "cond": "UQ66_TAG == 1",
+   "to": "TAG"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "옆구리 전지 들창을 연다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "LID",
+     "id": "UQ66_FREEZER:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ66_FREEZER:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "손잡이에 붉은 천 꼬리표. 흰 글씨 두 줄 — '대기등 예비 전원 · 수거 예정' '정비 당번'."
+  },
+  {
+   "op": "goto",
+   "to": "PANEL"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q66watch"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "UQ66_CSAID == 9",
+   "to": "SEEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "들창 안, 굵은 원통 하나가 서리 낀 받침에 물려 있다. 노란 띠에 '냉동 A계통'."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "단자를 풀고 전지를 뺀다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "수리",
+       "min": 40
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PULL",
+     "id": "UQ66_FREEZER:2:0"
+    },
+    {
+     "text": "들창을 닫는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ66_FREEZER:2:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "UQ66_PULLED = 1; give(\"M-442\", 1)"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q66pull"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "김이 멎는다. 냉동고 안쪽에서 압축기가 길게 한 번 울고 조용해진다. 손잡이 옆 대기등이 깜박이다 꺼진다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "UQ66_CSAID = 0; UQ66_CAUGHT = 1"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-057",
+   "emo": "분노",
+   "text": "(종을 내려놓는다) 어이. 내 냉동고에서 손 떼. 그게 이 시장 심장이야. 얼굴 기억했어."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "냉동고가 조용하다. 문 아래 물이 고였다. 옆구리 전지 들창이 열린 채 비어 있다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "냉동고 전지를 도로 꽂는다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "M-442",
+       "n": 1
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "BACK",
+     "id": "UQ66_FREEZER:3:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "UQ66_FREEZER:3:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "UQ66_PULLED = 0"
+  },
+  {
+   "op": "cmd",
+   "name": "uqr",
+   "args": [
+    "q66back"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "단자가 물린다. 한참 뒤 문틈으로 다시 김이 샌다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/UQ-66.txt"
+}

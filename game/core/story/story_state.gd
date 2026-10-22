@@ -63,7 +63,7 @@ const UNNAMED := [["N-TRADER", "떠돌이 고물상", ""], ["N-VG-S1", "고물�
 	["N-JM-K1", "광장 아이", "JH"], ["N-YM-1", "국밥 장수", ""], ["N-YM-2", "부품 장수", ""],   # 1-12h UQ-07 · UQ-10(재미 검수: 게임 쪽 목록에 빠져 이름표에 ID가 나오던 것)
 	["N-DB-S1", "대방 정찰", "", "evil"], ["N-DB-S2", "대방 정찰", "", "evil"],
 	["N-DR-1", "천 씨", "MS"], ["N-DR-2", "천수호", "MS"], ["N-DR-3", "국수 노점", "MS"], ["N-DR-4", "일용직", ""], ["N-DR-5", "마늘 장수", ""], ["N-DR-6", "건전지 장수", ""], ["N-DR-7", "옷 노점", ""],
-	["N-BC-H1", "조씨 할매", "BC"], ["N-BC-H2", "남씨네 어머니", "BC"], ["N-BC-H3", "오씨네 딸", "BC"], ["N-GV-1", "봉천 자경", "BC"], ["N-GV-2", "사당 경비", "SA"]]   # 1-12h UQ-70 대림 장터   # 1-12i UQ-64 귀환 유해 대장   # 1-12h UQ-10 역전 시장 어귀(UQ-71 지하차도 분대원 N-DB-1 · 2와 다른 사람 — P3)   # 1-12g UQ-01 · UQ-03 · RE-104   # 1-12b FQ-GS-01 · GS-02(순례자는 아직 등록 전 — 각성회 소속 아님)
+	["N-BC-H1", "조씨 할매", "BC"], ["N-BC-H2", "남씨네 어머니", "BC"], ["N-BC-H3", "오씨네 딸", "BC"], ["N-GV-1", "봉천 자경", "BC"], ["N-GV-2", "사당 경비", "SA"], ["N-GS-C1", "각성회 운반조", "GS"], ["N-GS-C2", "각성회 운반조", "GS"], ["N-HS-P1", "퇴원 환자", ""], ["N-HS-P2", "퇴원 환자", ""], ["N-HS-P3", "퇴원 환자", ""]]   # 1-12h UQ-70 대림 장터   # 1-12i UQ-64 귀환 유해 대장   # 1-12h UQ-10 역전 시장 어귀(UQ-71 지하차도 분대원 N-DB-1 · 2와 다른 사람 — P3)   # 1-12g UQ-01 · UQ-03 · RE-104   # 1-12b FQ-GS-01 · GS-02(순례자는 아직 등록 전 — 각성회 소속 아님)
 var enc := {}                           ## 인카운터 상태(1-3, Encounters): 안전 간격 · 오늘 추적대 수 · EP 사용 · 휴전
 var portrait_alias := {}                ## 인물 ID -> 초상화 키(맵에서 다른 시대 모습으로 선 인물: 2259년 아이 하도윤 등)
 
@@ -331,6 +331,8 @@ func _init() -> void:
 		vars.declare("UQ65_" + k, "int", 0)
 	for k in "TAGS BC SA T415 DONE_DAY POST XP GSAID D412 D413 D414 D416 MEM NEWS HINT T415_DAY D414_DAY LOST".split(" "):
 		vars.declare("UQ64_" + k, "int", 0)
+	for k in "BATT FRIDGE CELL DUE HEARD PUSH WARD NURSE OPEN DG NOTICE SELF XP PULLED SAID TAG GSCELL FORMS DG_SAID HAN_SAID PULL_DAY NURSE_SAID CSAID BOTH HOW CAUGHT".split(" "):   # 1-12i UQ-66 — 뜻은 script/act1/UQ-66.txt 머리
+		vars.declare("UQ66_" + k, "int", 0)
 	for k in "SEEN DUE MET JA RES XP GUARD GSEEN SEAL BOOK GU_DAY SUHO SUHO_DAY FREE_DAY STALL_GONE PLEDGE PLEDGE_DAY HIDE_MET SNEAK THREAT PAID TOLD BSAID PD JA_DAY KIOSK_SAID GDAY WSAID FAIL FLED PROMISE CAGE_SEEN CHEON_TOLD RES_DAY".split(" "):
 		vars.declare("UQ70_" + k, "int", 0)
 	# 1-D4 구로 차량기지(DG-GR): 뜻은 script/act1/GR.txt 머리 주석 — CORE 기관차 · PUSH 남은 밀기 · LV_* 레버 · A · B · C 입환 결과 · STAFF 역무원 · MUSTER 안 간 사람들

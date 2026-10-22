@@ -1088,6 +1088,10 @@ from props_uq2 import PROPS_UQ2, STATES_UQ2                           # R02 비�
 for _k in PROPS_UQ2:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_UQ2)
+from props_uq3 import PROPS_UQ3, STATES_UQ3                           # R01 비표시 퀘스트(1-12i UQ-66): 혈액은행 냉장고 · 전지함 · 간호 로봇 충전대 · 대기등 예비 전원 받침 · 냉동고 상태
+for _k in PROPS_UQ3:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_UQ3)
 from props_hp4 import PROPS_HP4, STATES_HP4                           # 여의도 대학병원 2층 안과 외래 · 수술실(1-12h UQ-08): 수술대 · 현미경 · 세극등 · 시력표 · 렌즈장
 for _k in PROPS_HP4:
     assert _k not in PROPS, _k
@@ -1125,6 +1129,9 @@ STATES.update(STATES_JH)
 STATES.update(STATES_GT)
 STATES.update(STATES_UQ)
 STATES.update(STATES_UQ2)
+for _k in STATES_UQ3:
+    assert _k not in STATES or _k == "freezer_unit", _k
+STATES.update(STATES_UQ3)
 STATES.update(STATES_HP4)
 STATES.update(STATES_BS)
 STATES.update(STATES_S04)

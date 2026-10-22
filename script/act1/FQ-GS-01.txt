@@ -298,6 +298,10 @@ SYS 다가가자 3번의 머리가 덜컥, 한 칸 이쪽으로 돈다. 눈은 �
 ? FQGS01_STAGE == 0 or FQGS01_STAGE >= 100 -> LOOK
 @cmd gs01 seen
 ? SQH_BATT == 7 -> BATT
+? UQ66_GSCELL != 0 -> BATT66
+-> CARD
+* BATT66
+SYS 대기등 옆 받침에서 늘어진 예비 전원 선이 3번 등판까지 와 있다. 받침에 앉은 전지에 서리 자국 — 산 아래에서 온 것이다.
 -> CARD
 * BATT
 SYS 대기등 함에서 늘어진 예비 전원 선이 3번 등판까지 와 있다. 산꼭대기 돔에서 뽑아 온 그 전지다.

@@ -777,6 +777,32 @@ func _ready() -> void:
 				["check", "UQ65_LESSON == 5 and UQ65_LTODAY == 2 and UQ65_REBEL == 1", "다음 날 — 4번 · 한 문제 더 5번(하루 두 문항 · 오답 끝말)"],
 				["warp", "GS-02", "from_X"], ["wait", 1.5], ["calm"], ["want", ["핀에 꽂는다"]], ["go", 15, 4], ["use", 15, 2], ["wait", 2.5], ["shot", "uq65_wall"],
 				["check", "UQ65_TO == 1 and UQ65_WALL == 1 and not has(\"M-439\")", "중계소 카드 벽에 꽂음(GS +3)"]]
+		"uq66":                                                         # 1-12i UQ-66 전지 하나, 냉장고 둘: 심도겸 냉동고 이야기(10 · 기한 +4) → 흑석 원무 단말 퇴원 서류 → 7호 퇴원(20 · 철문) →
+			st.vars.set_v("GAME_DAY", 6)                                 #   지하 혈액은행 예비 전지 → 냉장고(100 · 로비 글) → 다음 06:00 들것 협력 · 정류지 → 시장 꼬리표 → 기한 날 운반조 [힘 7](① — 둘 다 삶)
+			st.vars.set_v("PC_SKP_SCIENCE", 60)
+			st.vars.set_v("PC_ST", 7)
+			st.vars.set_v("PN_NURSE", 1)
+			st.vars.set_v("PN_SIM", 1)
+			st.quests.set_stage("MQ-101", 100)
+			host.date_text = "2277. 10. 29.  10:00"
+			var fm := _spot_o("L-R01-25")                               # 수산시장 스팟(11×7 — 심도겸 6,5 · 냉동고 8,1 · 운반조 8,3)
+			host.enter("W", "", {}, Vector2(fm.x + 5, fm.y + 6) * 32.0 + Vector2(16, 16))
+			plan = [["hp", 3000], ["wait", 2.0], ["noenc"], ["calm"], ["want", ["!저 냉동고는", "됐다"]], ["talk", "N-R01-057"], ["wait", 3.0], ["shot", "uq66_market"],
+				["check", "UQ66_DUE == 10 and UQ66_HEARD == 6", "심도겸 — 운반조 기한(들은 날 + 4)"],
+				["warp", "K-26", "from_W"], ["wait", 1.5], ["calm"], ["want", ["병동 다섯의 퇴원 서류"]], ["go", 6, 4, "K-26"], ["use", 6, 3], ["wait", 2.0], ["shot", "uq66_desk"],
+				["check", "UQ66_FORMS == 1 and UQ66_STAGE == 10", "원무 단말 — 퇴원 서류(10)"],
+				["want", ["퇴원 서류 다섯 장"]], ["talk", "N-R01-058"], ["wait", 3.0], ["shot", "uq66_discharge"],
+				["check", "UQ66_WARD == 1 and UQ66_OPEN == 1 and UQ66_STAGE == 20", "7호 퇴원 — 병동이 빔 · 철문 열림(20)"],
+				["go", 29, 3, "K-26"], ["go", 29, 0, "K-26"], ["wait", 2.0], ["calm"], ["shot", "uq66_bank"],
+				["want", ["예비 전지를 꺼낸다"]], ["go", 5, 4, "K-26B"], ["use", 5, 3], ["wait", 2.0],
+				["want", ["B계통 예비 전지"]], ["go", 3, 4, "K-26B"], ["use", 2, 3], ["wait", 4.0], ["shot", "uq66_fridge"],
+				["check", "UQ66_FRIDGE == 1 and UQ66_NOTICE == 1 and UQ66_STAGE == 100", "혈액은행 냉장고가 돎 · 로비 글(100)"],
+				["hours", 24], ["wait", 1.0], ["check", "UQ66_DG == 1 and DG_STOP == 2 and UQ66_TAG == 1", "다음 06:00 들것 협력 · 흑석 정류지 · 시장 꼬리표"],
+				["warp", "W", "L-R01-25"], ["wait", 2.0], ["calm"], ["shot", "uq66_tag"],
+				["hours", 72], ["wait", 1.0], ["check", "GAME_DAY == 10 and GAME_HOUR == 10 and UQ66_BATT == 0 and UQ66_PULLED == 0 and UQ66_GSCELL == 0 and UQ66_DUE == 10", "기한 날 10시 — 아직 아무것도 정해지지 않음"],
+				["warp", "W", "L-R01-25"], ["wait", 2.0], ["calm"], ["shot", "uq66_carriers"],
+				["want", ["손수레 놓고"]], ["talk", "N-GS-C1"], ["wait", 2.5],
+				["check", "UQ66_BATT == 1 and UQ66_BOTH == 1", "운반조 [힘 7] — ① 시장 전지를 지킴 · 시장과 혈액은행 둘 다"]]
 		"uq70":                                                         # 1-12h UQ-70 대림 시장의 이자: 장터 첫 방문(기한 — 2277. 10. 29.은 월요일 → 다음다음 수요일 15일) →
 			st.vars.set_v("GAME_DAY", 6)                                 #   손지담 사정 · 상인회 도장(20) → 장터 사무실 · 도장 뒤칸(K-39) → 화요일 밤 숨은 수호 → 수 10시 끌려감(30) →
 			st.vars.set_v("PC_SKP_LOCKPICK", 40)                         #   새벽 3시 교대 본소 H-03 사슬 기둥 풀기 → K-20 베개 맡 수첩(웅크려) → 구만호 → 다음 아침 이자 실종(②, 100) · 장터 자경 초소

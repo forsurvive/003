@@ -1,13 +1,14 @@
 # 흑석 대학병원 1층(SD-09a L-R01-26 · 단계 1-7c · 훅 H-R01-13 앞부분) — 2077 전시 지정 병원. 실명 병원명은 쓰지 않는다.
 # 46×15 · 왼쪽 응급실·접수 로비 · 가운데 병동(야생 구울 '환자' — 간호 7호가 돌본다, 병상마다 이름표와 '대기 구역' 판독 스티커,
 # 화이트보드 '병상 가동률 312%') · 오른쪽 약제부(의약 파밍, 약장 자물쇠 25·50).
-# 정합: 원문 실내 3장(응급실·로비 / 병동 5층 / 지하 혈액은행·약제부)을 한 장으로. 혈액은행 냉장고(H-R01-13 본편)는 1-11 사이드와 함께.
+# 정합: 원문 실내 3장(응급실·로비 / 병동 5층 / 지하 혈액은행·약제부)을 1층 한 장 + 지하 K-26B로. 혈액은행(H-R01-13 본편)은 1-12i UQ-66 —
+#   병동 북동 철문(29,1 — 간호 7호 승인 · 열쇠 자물쇠 없음, 따기는 문 앞 장면 UQ66_DOOR 안) · 원무 단말(퇴원 서류) · 충전대(정지) · 병동 구울은 퇴원 · 정리(UQ66_WARD)면 사라진다.
 map K-26 흑석 대학병원
 set bk
 grid
-##############################################
-##############################################
-##############################################
+#############################o################
+#############################o################
+#############################o################
 #ttttttttttttttt#ooooooooooooooo#,,,,,,,,,,,,#
 #ttttttttttttttt#ooooooooooooooo#,,,,,,,,,,,,#
 #ttttttttttttttt#oooooooooooooooo,,,,,,,,,,,,#
@@ -24,6 +25,10 @@ end
 exit 7 14 W L-R01-26
 exit 8 14 W L-R01-26
 mark from_W 7 13 N
+door 29 1 locked kind=steel "지하 혈액은행"
+exit 29 0 K-26B from_K-26
+mark from_K-26B 29 3 S
+text 29 2 "철문." scene=UQ66_DOOR
 # 응급실 · 접수
 prop gov_counter 3 3
 text 3 3 "접수대. 번호표 기계가 '312'에서 멈췄다. 옆에 붙은 안내 '판독 결과에 따라 진료 순서가 정해집니다'." w=2
@@ -35,9 +40,18 @@ text 13 4 "응급 침상. 시트에 '전시 지정 병원 — 1·2등급 우선'
 prop cot 2 9
 box 2 9 aid name="응급 처치 상자"
 prop rubble 11 12
+# 1-12i UQ-66: 원무과 단말(퇴원 서류) · 로비 문 옆 글(혈액은행 재개) · 순회 의료반 넷째 날(DG_STOP 2 — MEDIC_AT 6)
+prop terminal_desk 6 3
+text 6 3 "원무과 단말." scene=UQ66_DESK
+text 9 14 "로비 문 옆에 집게팔 글씨의 종이 — '혈액은행 재개. 들것 의료반 환영. 냉장고 4도. — 간호 7호'." cond="UQ66_NOTICE == 1"
+prop cot 12 9 cond="MEDIC_AT == 6"
+npc C-067 11 8 E cond="MEDIC_AT == 6 and UQ66_NURSE == 0" bark="7호가 팩을 세어 줘요. 우리보다 꼼꼼해요."
+npc C-067 11 8 E cond="MEDIC_AT == 6 and UQ66_NURSE != 0" bark="팩은 우리가 세요. 7호 자리가 비었어요."
 # 병동
 prop w_whiteboard 22 1
-text 22 2 "병동 화이트보드. '병상 가동률 312%'. 아래 근무표에는 한 이름만 남았다 — '간호 7호, 24시간'." w=2
+text 22 2 "병동 화이트보드. '병상 가동률 312%'. 아래 근무표에는 한 이름만 남았다 — '간호 7호, 24시간'." w=2 cond="UQ66_WARD == 0"
+text 22 2 "병동 화이트보드. '병상 가동률 0%' — 312를 지우고 집게팔로 다시 쓴 숫자. 근무표 '간호 7호, 24시간'은 그대로." w=2 cond="UQ66_WARD == 3"
+text 22 2 "병동 화이트보드. '병상 가동률 0% — 전원 퇴원(뒤뜰 벤치)'. 옆에 웃는 얼굴 하나." w=2 cond="UQ66_WARD == 1"
 prop hosp_bed 18 3
 prop hosp_bed 21 3
 prop hosp_bed 24 3
@@ -46,16 +60,21 @@ prop hosp_bed 18 9
 prop hosp_bed 21 9
 prop hosp_bed 24 9
 prop hosp_bed 27 9
-text 18 3 "병상 이름표는 비었다. 머리맡 스티커만 붉다 — '판독 결과: 대기 구역'." h=2
+text 18 3 "병상 이름표는 비었다. 머리맡 스티커만 붉다 — '판독 결과: 대기 구역'." h=2 cond="UQ66_WARD == 0"
+text 18 3 "모포가 반듯하게 개어져 있다. 머리맡 스티커 위에 '퇴원'." h=2 cond="UQ66_WARD == 1"
+text 18 3 "시트에 검은 얼룩. 모포는 새것으로 바뀌어 있다." h=2 cond="UQ66_WARD == 3"
 text 27 9 "모포가 사람 모양으로 꺼져 있다. 이름표에 연필 글씨 '7호가 매일 바꿈'." h=2
 prop iv_pole 30 4
 prop iv_pole 30 10
-npc N-R01-058 23 7 S sheet=rb_nurse7_loco route=ward_a:20,7,5;ward_b:28,7,5
-enemy CR-200 19 5 stance=hold dir=S
-enemy CR-200 25 5 stance=hold dir=S
-enemy CR-200 22 11 stance=hold dir=N
-enemy CR-200 28 11 stance=hold dir=N
-enemy CR-200 17 12 route=17,12,4;17,6,4
+npc N-R01-058 23 7 S sheet=rb_nurse7_loco route=ward_a:20,7,5;ward_b:28,7,5 cond="UQ66_NURSE == 0"
+prop nurse_dock 31 3 cond="UQ66_NURSE != 2"
+prop nurse_dock 31 3 state=stopped cond="UQ66_NURSE == 2"
+text 31 3 "간호 로봇 충전대." scene=UQ66_DOCK
+enemy CR-200 19 5 stance=hold cond="UQ66_WARD == 0" dir=S
+enemy CR-200 25 5 stance=hold cond="UQ66_WARD == 0" dir=S
+enemy CR-200 22 11 stance=hold cond="UQ66_WARD == 0" dir=N
+enemy CR-200 28 11 stance=hold cond="UQ66_WARD == 0" dir=N
+enemy CR-200 17 12 route=17,12,4;17,6,4 cond="UQ66_WARD == 0"
 # 약제부
 prop pharm_counter 34 3
 text 34 3 "약제부 창구. '처방전 없이는 조제하지 않습니다 — 판독 등급 확인 후'." w=2

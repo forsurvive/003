@@ -23,6 +23,22 @@ def _shadow(d, x0, y0, x1, y1):
     d.ellipse([x0, y0, x1, y1], fill=C("P02"))
 
 
+def _hull_shadow(im, poly, dx, dy):
+    """땅에 얹힌 큰 물건의 그림자: 윤곽 다각형을 오른쪽 아래로 (dx, dy) 밀어 깔고 가장자리를 점무늬로 흩는다 — 몸체를 그 위에 덮으면 밑바닥을 따라가는 띠만 남는다."""
+    sh = Image.new("RGBA", im.size, (0, 0, 0, 0))
+    ImageDraw.Draw(sh).polygon([(x + dx, y + dy) for x, y in poly], fill=C("P02"))
+    px = sh.load()
+    w, h = im.size
+    for y in range(h):
+        for x in range(w):
+            if px[x, y][3] == 0:
+                continue
+            edge = any(0 <= x + ex < w and 0 <= y + ey < h and px[x + ex, y + ey][3] == 0 for ex, ey in ((-2, 0), (2, 0), (0, -1), (0, 2)))
+            if edge and (x + y) % 2:
+                px[x, y] = (0, 0, 0, 0)
+    im.alpha_composite(sh)
+
+
 def _rust(im, rnd, box, n, cols=("P24", "P25", "P26")):
     x0, y0, x1, y1 = box
     for _ in range(n):
@@ -66,8 +82,8 @@ def bus_wreck(seed=0):
     d.line([34, 61, 98, 61], fill=C("P02"))                               # 축
     d.rectangle([66, 36, 76, 56], fill=C("P02"))                          # 뜯겨 나간 문 자리
     d.line([66, 36, 66, 56], fill=C("P20"))
-    put_text(im, "한결", 92, 34, "P09", 8, "Galmuri7")
     _rust(im, rnd, (6, 14, 126, 56), 90)
+    put_text(im, "한결", 92, 34, "P09", 8, "Galmuri7")
     return im
 
 
@@ -94,9 +110,9 @@ def container(seed=0):
     d.rectangle([84, 20, 93, 63], fill=C(body[1]))
     d.line([88, 22, 88, 61], fill=C("P06")); d.line([91, 22, 91, 61], fill=C("P06"))
     d.rectangle([78, 52, 82, 60], fill=C("P18"))                          # 안에 보이는 나무 상자 모서리
+    _rust(im, rnd, (4, 16, 75, 64), 120)
     put_text(im, "SEJIN", 14, 26, "P09", 8, "Galmuri9")
     put_text(im, "물류", 14, 38, "P08", 8, "Galmuri7")
-    _rust(im, rnd, (4, 16, 75, 64), 120)
     return im
 
 
@@ -106,8 +122,8 @@ def boat_wreck(seed=0):
     W_, H_ = 100, 64
     im = img(W_, H_)
     d = ImageDraw.Draw(im)
-    _shadow(d, 4, 46, 96, 62)
     hull = [(4, 30), (14, 52), (80, 54), (96, 38), (92, 24), (12, 22)]
+    _hull_shadow(im, hull, 3, 5)                                           # 선체 바닥을 따라가는 그림자(타원 아님 — 사용자 지적 2026-10-22)
     d.polygon(hull, fill=C("P08"))
     d.polygon([(8, 34), (16, 48), (80, 50), (92, 38), (90, 34), (10, 30)], fill=C("P07"))
     d.line([(10, 36), (90, 38)], fill=C("P45")); d.line([(10, 37), (90, 39)], fill=C("P45"))
@@ -119,8 +135,8 @@ def boat_wreck(seed=0):
     d.polygon([(40, 24), (52, 24), (50, 10), (42, 12)], fill=C("P09"))    # 조타 칸 잔해
     d.rectangle([43, 13, 49, 19], fill=C("P10"))
     d.line([(46, 10), (60, 2)], fill=C("P06"))                            # 꺾인 안테나
-    put_text(im, "한강", 58, 39, "P44", 8, "Galmuri7")
     _rust(im, rnd, (8, 30, 92, 52), 40, ("P06", "P05", "P25"))
+    put_text(im, "한강", 58, 38, "P44", 9, "Galmuri9")
     for _ in range(12):                                                   # 이끼
         x, y = rnd.randint(10, 80), rnd.randint(44, 52)
         if im.getpixel((x, y))[3]:
@@ -267,8 +283,8 @@ def kiosk_ruin(seed=0):
     for x in range(8, 60, 10):
         d.polygon([(x, 21), (x + 5, 21), (x + 4, 9 - (x // 20)), (x, 8 - (x // 20))], fill=C("P09"))
     d.rectangle([18, 12, 46, 20], fill=C("P01"))
-    put_text(im, "매점", 23, 12, "P49", 8, "Galmuri7")
     _rust(im, rnd, (4, 22, 62, 58), 30, ("P06", "P07", "P25"))
+    put_text(im, "매점", 23, 12, "P49", 8, "Galmuri7")
     return im
 
 
@@ -278,7 +294,7 @@ def heli_wreck(seed=0):
     W_, H_ = 136, 104
     im = img(W_, H_)
     d = ImageDraw.Draw(im)
-    _shadow(d, 6, 78, 130, 102)
+    _hull_shadow(im, [(6, 60), (12, 88), (76, 92), (132, 56), (128, 46), (84, 50), (40, 44)], 4, 6)   # 몸통 · 꼬리 윤곽을 따라가는 그림자(타원 아님)
     d.polygon([(70, 66), (128, 48), (132, 54), (74, 74)], fill=C("P29"))   # 꼬리 붐(꺾임)
     d.polygon([(118, 50), (130, 30), (134, 34), (128, 52)], fill=C("P30"))   # 꼬리 날개
     d.line([(74, 70), (128, 52)], fill=C("P28"))
@@ -291,7 +307,6 @@ def heli_wreck(seed=0):
     d.polygon([(22, 62), (30, 58), (26, 68)], fill=C("P01"))               # 깨진 자리
     d.line([8, 78, 84, 78], fill=C("P29"))
     d.rectangle([50, 54, 60, 74], fill=C("P01"))                          # 열린 문
-    put_text(im, "경찰", 60, 60, "P09", 8, "Galmuri7")
     d.rectangle([40, 30, 56, 38], fill=C("P04"))                          # 회전날개 축
     d.line([(48, 30), (6, 12)], fill=C("P03")); d.line([(48, 31), (6, 13)], fill=C("P05"))   # 휜 날개
     d.line([(48, 30), (96, 22)], fill=C("P03")); d.line([(48, 31), (100, 26)], fill=C("P05"))
@@ -301,6 +316,7 @@ def heli_wreck(seed=0):
         x, y = rnd.randint(20, 80), rnd.randint(40, 86)
         d.ellipse([x, y, x + rnd.randint(4, 9), y + rnd.randint(3, 6)], fill=C("P02"))
     _rust(im, rnd, (10, 40, 84, 88), 40, ("P28", "P29", "P24"))
+    put_text(im, "경찰", 60, 59, "P09", 9, "Galmuri9")   # 받침이 뭉개지지 않게 9px 글꼴 · 녹 · 그을음 뒤에(사용자 지적 2026-10-22)
     return im
 
 

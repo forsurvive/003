@@ -79,6 +79,11 @@ func _value(id: String) -> int:
 func price(id: String, buying: bool) -> int:
 	if buying and st != null and int(st.vars.get_v("UQ69_DIE")) == 2 and str(db.get(Gear.base(id), {}).get("cat", "")) == "weapon":
 		return maxi(1, roundi(_price(id, buying) * 0.95))               # UQ-69 ①: 문래가 총열을 뽑는다 — 무기 값 −5%(SD-05 §3.21)
+	if buying and st != null and vid == "VR25":                         # UQ-66: 수산시장 — 냉동고가 멎으면 소금에 절여 +25% · ① 지켜 준 사람은 −10%(SD-05 §3.30)
+		if int(st.vars.get_v("UQ66_PULLED")) == 1:
+			return maxi(1, roundi(_price(id, buying) * 1.25))
+		if int(st.vars.get_v("UQ66_BATT")) == 1 and int(st.vars.get_v("UQ66_HOW")) != 4:
+			return maxi(1, roundi(_price(id, buying) * 0.9))
 	return _price(id, buying)
 
 
