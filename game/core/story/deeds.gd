@@ -4,7 +4,9 @@
 ##   경로(§6.3): 직접 목격 = 즉시(호출하는 쪽이 seen_by로) · 정보원 = 비상정부 6시간(봉천 · 노들섬 · 세이프빌 · 양재 온실촌의 공개도 1 이상) ·
 ##   소문 = 같은 구역 12시간, 인접 구역마다 +12시간, 3구역까지, 공개도 2 이상(R05 발생은 +24시간) ·
 ##   남산 방송 = 다음 정시 뉴스(6시간 주기), 공개도 3 전부 + 공개도 2 한 건 · 공보방송 = 비상정부가 관련된 공개도 2 이상, 다음 정시.
-##   행상 · 지하시장 정보상 · 용산 기지 방송 경로는 해당 세력 · 방송국이 들어올 때(정합).
+##   행상 = 수송로 4개 위 정착지에서 난 일이 같은 수송로 정착지 · 행상 조합에 24시간(공개도 1 이상) ·
+##   지하시장 정보상 = 정기 구매 세력(비상정부 · 새벽인력 · 연합단)에 공개도 1 사건의 30%를 48시간 · 용산 기지 방송 = 연합단 관련 사건을 다음 낭독(12시간 주기)에
+##   연합단 · 이태원 · 남산 방송으로(1-12q). 연동 계수(§3.6)는 오른 세력의 도움 기록(LINK)이 열 세력에 닿을 때 적용(`link`).
 ##   퍼지지 않은 기록은 7일 뒤 사라진다. 도착하면 '들은 소식' 한 줄(핍-보이 세력 기록의 '최근 사건' — 수치 없음)과 기록별 후속(hook)을 남긴다.
 class_name Deeds
 extends RefCounted
@@ -27,6 +29,27 @@ const HOME := {
 	"JC_ND": "HR", "JC_TK": "R03", "JC_BC": "R01", "JC_SY": "R04", "JC_TS": "R08", "JC_SV": "R07", "JC_SA": "R01",
 	"JC_MW": "R04", "JC_IT": "R06", "JC_YJ": "R11", "JC_AC": "R08", "JC_CD": "R09",
 }
+## 행상 조합 수송로(SD-06 §10.17): 정착지 코드
+const TRADE_ROUTES := [["ND", "IT", "TS"], ["ND", "SY", "TK"], ["BC", "SA", "ND"], ["TS", "SV", "YJ"]]
+const BROKER_BUYERS := ["BJ", "SB", "YH"]           ## 지하시장 정보상 정기 구매 세력(§6.3)
+const YONGSAN := ["YH", "JC_IT", "NS"]             ## 용산 기지 방송이 닿는 곳
+const YONGSAN_SLOT := 720                          ## 낭독 주기(12시간)
+## 연동 계수(§3.6): 오른 세력 → {영향받는 세력: 계수}. 열 JC는 모든 가맹 정착지(아래 덮어쓰기 먼저)
+const LINK := {
+	"BJ": {"YH": -0.5, "WP": -0.2, "SB": 0.1, "JG": -0.5, "JH": -0.3, "JC": -0.4},
+	"YH": {"BJ": -0.5, "WP": -0.6, "SB": -0.4, "JG": -0.4, "GS": -0.2, "JC": 0.1, "NJ": -0.2},
+	"WP": {"BJ": -0.2, "YH": -0.6, "JG": -0.3, "GS": -0.3},
+	"SB": {"YH": -0.3, "JH": -0.3, "JC": -0.6, "NJ": 0.1, "KD": -0.2},
+	"JG": {"BJ": -0.5, "YH": -0.4, "WP": -0.2, "GS": -0.4, "JC": -0.1},
+	"JH": {"BJ": -0.3, "SB": -0.3},
+	"GS": {"YH": -0.3, "WP": -0.3, "JG": -0.4},
+	"JC": {"BJ": -0.3, "YH": 0.1, "SB": -0.4, "JG": -0.1, "NJ": -0.3},
+	"NJ": {"YH": -0.2, "JC": -0.4},
+	"KD": {"YH": -0.1, "JC": -0.1},
+}
+## 정착지 개별 덮어쓰기(§3.6 아래 표): [오른 쪽, 영향받는 정착지 코드(JC_ 없이), 계수]
+const LINK_SETTLE := [["JH", "SV", -0.3], ["JC_SV", "BC", -0.2], ["JC_SV", "TK", -0.2], ["JC_SV", "IT", -0.2], ["JC_ND", "SY", -0.1],
+	["NJ", "TK", -0.6], ["BJ", "YJ", 0.0], ["YH", "IT", 0.3], ["JG", "CD", -0.3]]
 const FAC_NAME := {"BJ": "비상정부", "YH": "연합단", "WP": "원칙파", "SB": "새벽인력", "JG": "잔존병", "JH": "지하시장", "GS": "각성회",
 	"JC": "정착지 연합", "KD": "큰돌 무리", "NJ": "난지 고철단", "NS": "남산 방송", "HS": "행상 조합",
 	"JC_ND": "노들섬", "JC_TK": "탱크마을", "JC_BC": "봉천", "JC_SY": "선유도", "JC_TS": "뚝섬 장터", "JC_SV": "세이프빌",
@@ -42,6 +65,12 @@ var mourn := {}                                    ## 대상 → 죽음을 안 �
 var known_killer := {}                             ## 인물 ID → true: 주인공이 죽인 것을 그 대상이 안다
 var victims := {}                                  ## 인물 ID → true: 주인공이 죽인 사람(아무도 몰라도 — 자백 판정용, 1-X)
 var last := 0                                      ## 마지막으로 처리한 게임 분
+var seen := {}                                     ## 권역 → 주인공이 사람 눈에 띈 분들(최근 여섯 — 시체 조사 +20% — §6.4, 1-12q)
+var said := {}                                     ## 주민이 이미 꺼낸 들은 소식(기록 ID:세력 → true) — 한 번만
+var hushed: Array = []                             ## 입막음한 기록: {"what", "until", "to"(세력 이름들), "told"} — 정보상이 '거기까진 안 갔어'로 알려 준다
+var leaks: Array = []                              ## 매수한 기록이 샐 날: {"at", "what", "region", "place", "fx", "tag", "about"}
+var link_hold := 0                                 ## 0보다 크면 aff가 연동 기록을 남기지 않는다(전파 도착 · RQ · 거래 · 기부)
+var link_src := 0                                  ## 원고 효과(StoryExpr.run)를 도는 중 — 자동 연동은 원고의 호감 상승에만(진행기 코드는 손으로 연동, 1-12q)
 
 
 static func dist(a: String, b: String) -> int:
@@ -84,6 +113,11 @@ func tick(st: StoryState, now: int) -> void:
 	bodies = bodies.filter(func(b): return int(b["find"]) > now)
 	for b in found:
 		Crimes.find_body(st, b, int(b["find"]))
+	var due := leaks.filter(func(l): return int(l["at"]) <= now)          # 매수한 일이 샜다(§6.5 '7일 뒤 20%')
+	leaks = leaks.filter(func(l): return int(l["at"]) > now)
+	for l in due:
+		record(st, "범죄", str(l["region"]), 1, l["fx"], int(l["at"]), {"tag": str(l["tag"]), "place": str(l["place"]),
+			"what": "%s — 입막음한 얘기가 샜다" % str(l["what"]), "about": l.get("about", [])})
 	var evs: Array = []                                                # [도착 분, 기록, 세력, 경로]
 	for d in list:
 		for f in (d["fx"] as Dictionary).keys():
@@ -113,6 +147,15 @@ func arrival(d: Dictionary, f: String) -> Array:
 		best = _min(best, [at + 6 * 60, "정보원"])
 	if bool(d["news"]):                                                # 남산 · 공보 정시 방송(이미 방송된 기록)
 		best = _min(best, [int(d["news_at"]), str(d["news_by"])])
+	var pl := str(d["place"])
+	if pub >= 1 and pl != "":                                          # 행상(24시간): 같은 수송로 정착지 · 행상 조합
+		for r in TRADE_ROUTES:
+			if pl in r and (f == "HS" or (f.begins_with("JC_") and f.substr(3) in r and f.substr(3) != pl)):   # 행상은 소식을 다른 정착지로 나른다
+				best = _min(best, [at + 24 * 60, "행상"])
+	if pub == 1 and f in BROKER_BUYERS and absi(hash(str(d["id"]) + ":broker")) % 10 < 3:   # 지하시장 정보상(48시간 · 30% — 기록 ID로 굴림)
+		best = _min(best, [at + 48 * 60, "정보상"])
+	if f in YONGSAN and ("YH" in d["about"] or (d["fx"] as Dictionary).has("YH")):        # 용산 기지 방송(다음 낭독)
+		best = _min(best, [(at / YONGSAN_SLOT + 1) * YONGSAN_SLOT, "용산 기지 방송"])
 	return best
 
 
@@ -157,11 +200,16 @@ func _arrive(st: StoryState, d: Dictionary, f: String, when: int, route: String)
 		return
 	d["known"][f] = when
 	var dv := int(d["fx"].get(f, 0))
+	link_hold += 1                                                     # 도착한 효과는 다시 연동하지 않는다(연쇄 금지)
 	if dv != 0 and str(d["attr"]) == "player":
 		st.call_fn("aff", [f, dv])
 	elif dv != 0 and str(d["attr"]) == "unknown":                      # 귀속 불명(보도 자제 · 변장): 연동 절반(§6.5)
 		st.call_fn("aff", [f, int(dv / 2)])
-	heard.push_front({"fac": f, "what": str(d["what"]), "at": when, "route": route, "tag": str(d["tag"])})
+	link_hold -= 1
+	var what := str(d["what"])
+	if str(d["attr"]).begins_with("other:"):                           # 정보 세탁: 다른 세력 짓으로 들린다(효과 없음)
+		what = "%s — %s 짓이라더라" % [what, str(FAC_NAME.get(str(d["attr"]).substr(6), "누군가"))]
+	heard.push_front({"fac": f, "what": what, "at": when, "route": route, "tag": str(d["tag"]), "id": str(d["id"]), "about": d.get("about", []).duplicate()})
 	while heard.size() > 30:
 		heard.pop_back()
 	_hook(st, d, f)
@@ -182,6 +230,144 @@ func _hook(st: StoryState, d: Dictionary, f: String) -> void:
 		"MQ106_WALK":
 			if f == "JC_BC" and st.vars.has("BC_DOUBT_DAY"):
 				st.vars.set_v("BC_DOUBT_DAY", int(st.vars.get_v("GAME_DAY")) + 1)
+
+
+## 연동 계수(§3.6): 세력 fac이 dv(≥ 3) 올랐다 — 영향받는 세력별 변화(0 쪽으로 버림, 0은 뺀다). 정착지는 JC 행 + 개별 덮어쓰기
+static func link_fx(st, fac: String, dv: int) -> Dictionary:
+	var out := {}
+	if dv < 3:
+		return out
+	var row := "JC" if fac.begins_with("JC_") else fac
+	var cols: Dictionary = (LINK.get(row, {}) as Dictionary).duplicate()
+	var per := {}                                                      # 정착지별 계수(JC 열을 펼친 뒤 덮어쓰기)
+	if cols.has("JC"):
+		for k in HOME:
+			if str(k).begins_with("JC_") and str(k) != fac:
+				per[str(k)] = float(cols["JC"])
+		cols.erase("JC")
+	for o in LINK_SETTLE:
+		if str(o[0]) == fac or str(o[0]) == row and not str(o[0]).begins_with("JC_"):
+			per["JC_" + str(o[1])] = float(o[2])
+	for k in per:
+		cols[k] = per[k]
+	for c in cols:
+		if str(c) == fac or not st.vars.has("AFF_" + str(c)):
+			continue
+		var v := int(float(dv) * float(cols[c]))                       # int()는 0 쪽으로 버린다
+		if v != 0:
+			out[str(c)] = v
+	return out
+
+
+## 오른 세력의 도움을 행적으로(연동은 소문이 닿을 때) — StoryState aff가 부른다
+func link(st, fac: String, dv: int, now: int) -> void:
+	if link_hold > 0 or link_src <= 0 or now <= 0:
+		return
+	var fx := link_fx(st, fac, dv)
+	if fx.is_empty():
+		return
+	record(st, "도움", str(HOME.get(fac, "R01")), 2, fx, now, {"tag": "LINK", "what": "%s 일을 거들었다는 얘기" % str(FAC_NAME.get(fac, fac)), "about": [fac]})
+
+
+## 아직 다 닿지 않은 기록의 남은 도착: [{"d", "f", "at", "route"}] — 가까운 순(정보상 '누가 나를 아는가')
+func pending(now: int) -> Array:
+	var out: Array = []
+	for d in list:
+		if str(d["attr"]) != "player":
+			continue
+		for f in (d["fx"] as Dictionary).keys():
+			if (d["known"] as Dictionary).has(f):
+				continue
+			var a := arrival(d, str(f))
+			if a.size() == 2:
+				out.append({"d": d, "f": str(f), "at": int(a[0]), "route": str(a[1])})
+	out.sort_custom(func(x, y): return int(x["at"]) < int(y["at"]))
+	return out
+
+
+## 매수 · 세탁 대상: 주인공 귀속 · 아직 닿지 않은 곳이 남은 · 손대지 않은 기록(매수는 공개도 1만, 세탁은 1~2)
+func coverable(kind: String) -> Array:
+	var out: Array = []
+	for d in list:
+		if str(d["attr"]) != "player" or bool(d.get("covered", false)) or str(d["tag"]) == "LINK":
+			continue
+		var pub := int(d["pub"])
+		if (kind == "hush" and pub != 1) or (kind == "launder" and (pub < 1 or pub > 2)):
+			continue
+		var left := false
+		for f in d["fx"]:
+			left = left or not (d["known"] as Dictionary).has(f)
+		if left:
+			out.append(d)
+	return out
+
+
+## 목격자 매수(§6.5 · SD-15 §5.3): 남은 도착을 끊는다. 기록 ID로 20% — 7일 뒤 샌다
+func hush(d: Dictionary, now: int) -> bool:
+	var cut := {}
+	for f in (d["fx"] as Dictionary).keys():
+		if not (d["known"] as Dictionary).has(f):
+			cut[f] = int(d["fx"][f])
+			(d["fx"] as Dictionary).erase(f)
+	d["covered"] = true
+	var until := 0
+	var names: Array = []
+	for f in cut:
+		var a := arrival(d.merged({"fx": cut}), str(f))
+		until = maxi(until, int(a[0]) if a.size() == 2 else now)
+		names.append(str(FAC_NAME.get(str(f), f)))
+	hushed.append({"what": str(d["what"]), "until": until, "to": names, "told": false})
+	var leak := absi(hash(str(d["id"]) + ":leak")) % 100 < 20
+	if leak and not cut.is_empty():
+		leaks.append({"at": now + EXPIRE, "what": str(d["what"]), "region": str(d["region"]), "place": str(d["place"]), "fx": cut,
+			"tag": str(d["tag"]), "about": d.get("about", [])})
+	return leak
+
+
+## 정보 세탁(§6.5): 남은 도착의 귀속을 다른 세력으로(효과 없이 '○○ 짓이라더라'). 돌려줌 = 발각(15% — 기록 ID 굴림)
+func launder(d: Dictionary, to_fac: String) -> bool:
+	d["attr"] = "other:" + to_fac
+	d["covered"] = true
+	return absi(hash(str(d["id"]) + ":launder")) % 100 < 15
+
+
+## 사람 눈에 띄었다(대화 · 거래 — 호스트가 부른다)
+func saw(region: String, now: int) -> void:
+	var a: Array = seen.get(region, [])
+	a.append(now)
+	if a.size() > 6:
+		a.pop_front()
+	seen[region] = a
+
+
+## 시체 조사 보정(§6.4): 그 권역에서 at 앞뒤 1시간 안에 사람 눈에 띄었나
+func seen_near(region: String, at: int) -> bool:
+	for x in seen.get(region, []):
+		if absi(int(x) - at) <= 60:
+			return true
+	return false
+
+
+const ROUTE_SAY := {"소문": "소문이 돌더라.", "행상": "행상이 그러더라.", "남산 방송": "방송에서 들었어.", "공보방송": "공보방송에 나오더라.",
+	"정보원": "위에서 그러더라.", "정보상": "지하시장 쪽에서 흘러나왔대.", "용산 기지 방송": "용산 방송에서 들었어.", "목격": "본 사람이 있어."}
+
+
+## 주민 한 마디(재미 검수 ① — P7 출처): 그 정착지 · 세력에 닿은 연동 소식 · 샌 입막음을 다음 대화에서 한 번. 사흘 지난 소식은 꺼내지 않는다
+func gossip(fac: String, now: int) -> String:
+	for h in heard:
+		if str(h["fac"]) != fac or now - int(h["at"]) > 3 * 1440:
+			continue
+		var k := "%s:%s" % [str(h.get("id", "")), fac]
+		if said.has(k):
+			continue
+		var tag := str(h["tag"])
+		if tag == "LINK" and not (h.get("about", []) as Array).is_empty():
+			said[k] = true
+			return "%s 일 거들었다며? %s" % [str(FAC_NAME.get(str(h["about"][0]), "남의")), str(ROUTE_SAY.get(str(h["route"]), "소문이 돌더라."))]
+		if str(h["what"]).ends_with("입막음한 얘기가 샜다"):
+			said[k] = true
+			return "다 덮은 줄 알았지? 그 얘기, 여기까지 다 돌았어."
+	return ""
 
 
 func _done(d: Dictionary, now: int) -> bool:
@@ -212,7 +398,9 @@ func knows(f: String, tag: String) -> bool:
 
 func to_dict() -> Dictionary:
 	return {"list": list.duplicate(true), "heard": heard.duplicate(true), "seq": seq, "last": last, "kills": kills.duplicate(),
-		"grudge": grudge.duplicate(), "bodies": bodies.duplicate(true), "mourn": mourn.duplicate(), "known_killer": known_killer.keys(), "victims": victims.keys()}
+		"grudge": grudge.duplicate(), "bodies": bodies.duplicate(true), "mourn": mourn.duplicate(), "known_killer": known_killer.keys(), "victims": victims.keys(),
+		"seen": seen.duplicate(true), "leaks": leaks.duplicate(true),
+		"said": said.keys(), "hushed": hushed.duplicate(true)}
 
 
 func from_dict(dd: Dictionary) -> void:
@@ -259,3 +447,20 @@ func from_dict(dd: Dictionary) -> void:
 	victims = {}
 	for k in dd.get("victims", []):
 		victims[str(k)] = true
+	seen = {}
+	for k in dd.get("seen", {}):
+		var v = dd["seen"][k]
+		seen[str(k)] = (v as Array).map(func(x): return int(x)) if v is Array else [int(v)]
+	said = {}
+	for k in dd.get("said", []):
+		said[str(k)] = true
+	hushed = []
+	for hh in dd.get("hushed", []):
+		var hd: Dictionary = (hh as Dictionary).duplicate(true)
+		hd["until"] = int(hd.get("until", 0))
+		hushed.append(hd)
+	leaks = []
+	for l in dd.get("leaks", []):
+		var lk: Dictionary = (l as Dictionary).duplicate(true)
+		lk["at"] = int(lk.get("at", 0))
+		leaks.append(lk)

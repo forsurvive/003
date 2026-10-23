@@ -116,7 +116,9 @@ static func done(st, id: String, fac: String, caps: int, xp: int, kind := "suppl
 					out["regular"] = s
 		aff = _daily(st, fac, d, aff)
 		if aff > 0:
+			st.deeds.link_hold += 1                                       # RQ는 단골 보너스 기록이 자기 연동을 실어 나른다(두 번 걸지 않는다)
 			st.call_fn("aff", [fac, aff])
+			st.deeds.link_hold -= 1
 		out["aff"] = aff
 	if kind == "act" and n % 10 == 0 and opt.has("zone") and st.vars.has(str(opt["zone"])):   # 행동형 10회째 그 구역 사건 보정 +2(SD-06 §5.3 — 7일 감쇠는 판도 틱)
 		st.vars.add(str(opt["zone"]), 2)

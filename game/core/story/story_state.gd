@@ -171,7 +171,7 @@ func _init() -> void:
 	# 거처(1-8b, SD-15 §7): HOME_BC 봉천 옥탑방(0 없음 · 1 내 방 · 2 압류) · HOME_BC_OK 조건이 찬 날(그다음 날부터 조만석이 열쇠를 준다) ·
 	# WELL_RESTED 숙면이 끝나는 절대 분(0 = 없음, SD-11 §11.5 경험치 +10% 12시간) · HOME_BC_NOTE 문 앞 알림(§7.7: 1 '출입 자제' 쪽지 · 2 읽음 · 3 압류 딱지 · 4 읽음 · 5 재개방) ·
 	# BAEKGU_NAP 오늘 백구가 옥탑방 문 앞에서 자는 날(하루 판정마다 굴림)
-	for k in ["HOME_BC", "HOME_BC_OK", "WELL_RESTED", "HOME_BC_NOTE", "BAEKGU_NAP", "INFO_RUMOR_R01", "INFO_RUMOR_R02", "CARAVAN_V54", "MEDIC_AT", "TR_YEON_MET", "TR_SO_MET", "TR_EOM_MET"]:   # 정보상 장소 소문 산 수(1-8d)
+	for k in ["HOME_BC", "HOME_BC_OK", "WELL_RESTED", "HOME_BC_NOTE", "BAEKGU_NAP", "INFO_RUMOR_R01", "INFO_RUMOR_R02", "INFO_TURF_DAY", "CARAVAN_V54", "MEDIC_AT", "TR_YEON_MET", "TR_SO_MET", "TR_EOM_MET"]:   # 정보상 장소 소문 산 수(1-8d)
 		vars.declare(k, "int", 0)
 	# 사당 환승촌(1-8f): 인물 첫 만남 · SA_MAKCHA_HEARD 서쪽 터널 '막차 손님' 들음(SQ-S05 '이미 앎') · SA_MAT_UNTIL 승강장 매트 빌린 끝 절대 분 ·
 	# SD_MAP_UG 노선도 봄 · SD_BOARD_SEEN 운행 칠판 봄 · SD_LR05 · SD_LR09 기록물 · U02_OPEN 4호선 남쪽 터널 철망 문(1-D2: 1 열림)
@@ -478,6 +478,8 @@ func call_fn(name: String, args: Array) -> Variant:
 				return -AFF_RANGE
 			var nv := vars.add(key, int(args[1]), -AFF_RANGE, AFF_RANGE)
 			events.append({"kind": "aff", "key": key, "delta": int(args[1]), "value": nv})
+			if int(args[1]) >= 3:                                         # 연동 계수(SD-06 §3.6, 1-12q): 퀘스트 · 인도 · 공개된 도움 — 다른 세력엔 소문이 닿을 때
+				deeds.link(self, key.substr(4), int(args[1]), deeds.last)
 			if key == "AFF_BJ" and vars.has("V_WANTED"):
 				Wanted.refresh(self)                                           # 비상정부 호감이 움직이면 수배 하한을 다시 건다(철회 · 4막 이후 하한)
 				Wanted.bj_crossed(self, was, nv)                               # §6.5 등급 3·4 진입 '순간'
@@ -522,6 +524,8 @@ func call_fn(name: String, args: Array) -> Variant:
 			return Repeat.wait_days(self, str(args[0]), int(args[1]))
 		"rq_left":                                                      # 이번 주 남은 횟수: rq_left(id, 주간 한도)
 			return Repeat.left_this_week(self, str(args[0]), int(args[1]))
+		"talk_n":                                                       # 퍼지는 중인 내 얘기 수(1-12q — 정보상 구문철의 공짜 맛보기)
+			return deeds.pending(deeds.last).size()
 		"rq_stage":                                                     # 단골 단계 0 · 5 · 15 · 30: rq_stage(fac)
 			return Repeat.stage_of(self, str(args[0]))
 		"caps":

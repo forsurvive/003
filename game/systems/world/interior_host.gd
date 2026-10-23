@@ -1700,7 +1700,9 @@ func _crime_kill(id: String, at: Vector2) -> void:
 			seen = true
 			break
 	var tgt := Crimes.target(st, id)
-	Crimes.on_kill(st, id, seen, map_region(map.tile_of(at)), Clock.abs_min(date_text), tgt.substr(3) if tgt.begins_with("JC_") else "")
+	var w: Dictionary = combat.weapon() if combat.armed() else {}
+	var rare := str(w.get("sound", "")) == "suppressed" or Arms.proj(w) in ["laser", "plasma", "tesla"]   # 주인공만 쓰는 무기 계열(§6.4 +20%)
+	Crimes.on_kill(st, id, seen, map_region(map.tile_of(at)), Clock.abs_min(date_text), tgt.substr(3) if tgt.begins_with("JC_") else "", rare)
 	if seen and tgt.begins_with("JC_"):
 		settlement_alarm(tgt, "동물" if Crimes.animal(st, id) else "살인", st.npc_name(id))
 
@@ -1864,6 +1866,8 @@ func sync_residents() -> void:
 
 
 func talk(n: Dictionary) -> void:
+	if map != null and player != null:                                  # 사람 눈에 띄었다(시체 조사 +20% — SD-06 §6.4, 1-12q)
+		st.deeds.saw(map_region(map.tile_of(player.loco.logical)), Clock.abs_min(date_text))
 	if n["routine"] != null:
 		n["routine"].talk_to(player.loco.logical)
 	else:
@@ -1879,7 +1883,8 @@ func talk(n: Dictionary) -> void:
 		var own := str(n["bark"])                                     # 소문(1-4f): 이 사람이 들은 주인공 이야기 — 없으면 제 혼잣말
 		var rumor := "" if str(n["id"]).begins_with("CR-") else \
 			Rumors.pick(st, map_region(map.tile_of(n["actor"].loco.logical)), str(n["id"]) + str(n.get("idx", 0)), own != "")   # 경비·병사(CR-)는 근무 중 — 주민 소문을 옮기지 않는다
-		var bark: String = rumor if rumor != "" else (own if own != "" else "……")
+		var gos := st.deeds.gossip(Crimes.target(st, str(n["id"])), Clock.abs_min(date_text)) if not str(n["id"]).begins_with("CR-") and Crimes.target(st, str(n["id"])) != "" else ""
+		var bark: String = gos if gos != "" else (rumor if rumor != "" else (own if own != "" else "……"))   # 연동 소식 · 샌 입막음은 출처를 붙여 한 번(1-12q)
 		g = {"id": "bark_" + n["id"], "labels": {"START": 0}, "ops": [{"op": "line", "who": n["id"], "emo": "기본", "text": bark}, {"op": "end"}]}
 		_barking = true
 	talked.emit(n["id"], g.get("id", ""))
@@ -2420,6 +2425,27 @@ func _handlers() -> void:
 		st.places.raise(lid, PlaceLog.MARKED)
 		st.vars.set_v("INFO_RUMOR_" + rg, int(st.vars.get_v("INFO_RUMOR_" + rg)) + 1)
 		hint("지도에 표시: %s" % str(PlaceLog.db.get(lid, {}).get("name", lid)), 4.0)
+		done.call()
+	ev.handlers["info_turf"] = func(_a: Array, done: Callable) -> void:   # 판도 소식(1-12q): R01 · R02 구역을 지금 판으로 '들음'
+		for z in Turf.zones():
+			st.turf.hear(st, z)
+		st.vars.set_v("INFO_TURF_DAY", int(st.vars.get_v("GAME_DAY")))
+		done.call()
+	ev.handlers["info_hush"] = func(a: Array, done: Callable) -> void:   # 입막음(목격자 매수 — 값은 선택지 [캡] 태그가 받았다)
+		for d in st.deeds.list:
+			if str(d["id"]) == str(a[1]):
+				st.deeds.hush(d, Clock.abs_min(date_text))
+		done.call()
+	ev.handlers["info_launder"] = func(a: Array, done: Callable) -> void:   # 정보 세탁: 카르마 −10 · 15% 발각(지하시장 −10 · 누명 쓴 쪽 −10)
+		for d in st.deeds.list:
+			if str(d["id"]) == str(a[1]):
+				var caught := st.deeds.launder(d, str(a[2]))
+				st.call_fn("karma", [-10])
+				if caught:
+					st.call_fn("aff", ["JH", -10])
+					if st._aff_key(str(a[2])) != "":
+						st.call_fn("aff", [str(a[2]), -10])
+					hint("세탁한 얘기가 들통났다 — 지하시장도, 누명을 쓴 쪽도 안다.", 6.0)
 		done.call()
 	ev.handlers["rent"] = func(a: Array, done: Callable) -> void:      # 숙박(1-8f, SD-15 §5.5): rent 변수 시간 — 값은 선택지 [캡] 태그가 받았다. 지금부터 N시간 '소유 침대'
 		st.vars.set_v(str(a[0]), Clock.abs_min(date_text) + int(a[1]) * 60)
@@ -3394,8 +3420,21 @@ func info_menu(vid: String, region: String = "") -> void:
 	var ops: Array = []
 	var labels := {"START": 0}
 	var opts: Array = []
+	if region.begins_with("@"):                                         # 구문철의 공개도 상품(1-12q — SD-15 §5.3 · SD-06 §6.5)
+		_broker_menu(vid, npc, region, ops, labels)
+		ops.append({"op": "end"})
+		box.open(st, {"id": "INFO_" + vid, "title": str(m.get("name", vid)), "npc": npc, "labels": labels, "ops": ops}, "START")
+		return
 	if region == "":
-		ops.append({"op": "line", "who": npc, "emo": "기본", "text": "어디 얘기가 궁금해? 한 군데 50캡. 권역마다 다섯 군데까지만 판다. 내 밑천이라서."})
+		var broker := vid.begins_with("V12")
+		var now := Clock.abs_min(date_text)
+		for hh in st.deeds.hushed:                                       # 입막음이 먹혔는지(재미 검수 ② 다): 도착 시각이 지났으면 한 줄
+			if not bool(hh["told"]) and int(hh["until"]) <= now and broker:
+				hh["told"] = true
+				ops.append({"op": "line", "who": npc, "emo": "기본", "text": "그 얘기, %s까진 안 갔어. 내가 막았지." % "·".join(hh["to"])})
+				break
+		ops.append({"op": "line", "who": npc, "emo": "기본", "text": "뭘 사려고? 장소 얘기는 한 군데 50캡, 권역마다 다섯 군데까지만 판다. 그 밖에 귀동냥도 있고." if broker
+			else "어디 얘기가 궁금해? 한 군데 50캡. 권역마다 다섯 군데까지만 판다. 내 밑천이라서."})
 		var i := 0
 		for rg in INFO_REGIONS:
 			var left := RUMOR_CAP - int(st.vars.get_v("INFO_RUMOR_" + rg))
@@ -3403,8 +3442,27 @@ func info_menu(vid: String, region: String = "") -> void:
 			opts.append({"text": "장소 소문 — %s (남은 %d곳)" % [INFO_REGIONS[rg], maxi(left, 0) if have else 0], "tags": [],
 				"cond": "INFO_RUMOR_%s < %d" % [rg, RUMOR_CAP] if have else "1 == 0", "fx": "", "to": "R%d" % i, "id": "INFO:%s:%s" % [vid, rg]})
 			i += 1
+		if broker:
+			opts.append({"text": "판도 소식 — 요즘 누가 어디를 쥐었나", "tags": [{"k": "caps", "n": 30}], "cond": "INFO_TURF_DAY != GAME_DAY", "fx": "", "to": "TURF", "id": "INFO:%s:turf" % vid})
+			var pend := st.deeds.pending(now)
+			opts.append({"text": "누가 나를 아는가 — 내 얘기가 어디까지 갔나", "tags": [{"k": "caps", "n": 50}] if not pend.is_empty() else [], "cond": "", "fx": "", "to": "WHO", "id": "INFO:%s:who" % vid})
+			opts.append({"text": "입막음 — 아직 덜 퍼진 얘기 하나", "tags": [], "cond": "", "fx": "", "to": "HUSH", "id": "INFO:%s:hush" % vid})
+			opts.append({"text": "정보 세탁 — 남의 짓으로 돌리기", "tags": [], "cond": "", "fx": "", "to": "LAUNDER", "id": "INFO:%s:launder" % vid})
 		opts.append({"text": "됐다", "tags": [], "cond": "", "fx": "", "to": "END", "id": "INFO:%s:end" % vid})
 		ops.append({"op": "choice", "opts": opts})
+		if broker:
+			labels["TURF"] = ops.size()
+			ops.append({"op": "line", "who": npc, "emo": "기본", "text": _broker_turf_line()})
+			ops.append({"op": "cmd", "name": "info_turf", "args": [vid]})
+			ops.append({"op": "goto", "to": "END"})
+			labels["WHO"] = ops.size()
+			for ln in _broker_who_lines(now):
+				ops.append({"op": "line", "who": npc, "emo": "기본", "text": ln})
+			ops.append({"op": "goto", "to": "END"})
+			for kv in [["HUSH", "@hush"], ["LAUNDER", "@launder"]]:
+				labels[kv[0]] = ops.size()
+				ops.append({"op": "cmd", "name": "info", "args": [vid, kv[1]]})
+				ops.append({"op": "goto", "to": "END"})
 		i = 0
 		for rg in INFO_REGIONS:
 			labels["R%d" % i] = ops.size()
@@ -3427,6 +3485,115 @@ func info_menu(vid: String, region: String = "") -> void:
 			ops.append({"op": "goto", "to": "END"})
 	ops.append({"op": "end"})
 	box.open(st, {"id": "INFO_" + vid, "title": str(m.get("name", vid)), "npc": npc, "labels": labels, "ops": ops}, "START")
+
+
+# ---------------------------------------------------------------- 정보상 구문철의 공개도 상품(1-12q — SD-15 §5.3 · SD-06 §6.5)
+const HUSH_PRICE := 200
+const LAUNDER_PRICE := 500
+## 세탁해 덮어씌울 만한 쪽(1막 R01 · R02에 이미 있는 손): 세력 코드 · 구문철이 대는 까닭
+const LAUNDER_TO := [["SB", "새벽인력 인솔조 — 요즘 그쪽 동네를 자주 돈다"], ["BJ", "계엄군 순찰 — 거기 검문이 서는 날이었어"], ["NJ", "떠돌이 고철 패거리 — 아무도 뒤를 안 캔다"]]
+
+
+## 판도 소식(30캡 · 하루 한 번): R01 · R02 구역을 지금 판으로 듣고, 바뀐 곳 하나를 말로 짚는다
+func _broker_turf_line() -> String:
+	var line := "다 그대로야. 네 지도가 맞아."
+	for z in Turf.zones():
+		var k: Dictionary = st.turf.known_of(z)
+		var s2: Dictionary = st.turf.state_of(st, z)
+		if not k.is_empty() and str(k["a"]) != str(s2["a"]):
+			var who := Turf.fac_name(str(s2["a"])) if str(s2["a"]) != "" else ""
+			line = ("%s 쪽은 이제 %s 손에 있어. 지도 고쳐 적어." % [Turf.zone_name(z), who]) if who != "" else ("%s 쪽은 지금 주인이 없어. 서로 눈치만 봐." % Turf.zone_name(z))
+			break
+	return line
+
+
+## 누가 나를 아는가(50캡): 퍼지는 중인 얘기 — 어느 쪽에 몇 시간 뒤(가까운 넷)
+func _broker_who_lines(now: int) -> Array:
+	var pend := st.deeds.pending(now)
+	if pend.is_empty():
+		return ["요즘 네 얘기는 조용해. 돈 아껴."]
+	var out: Array = ["들어 봐. 네 얘기가 이렇게 돌고 있어."]
+	var seen_k := {}
+	for p in pend:
+		var key := "%s:%s" % [str(p["d"]["id"]), str(p["f"])]
+		if seen_k.has(key):
+			continue
+		seen_k[key] = true
+		var h := maxi(1, int(ceil(float(int(p["at"]) - now) / 60.0)))
+		out.append("'%s' — %s 귀에 %s. %s" % [str(p["d"]["what"]), str(Deeds.FAC_NAME.get(str(p["f"]), p["f"])),
+			("반나절 안" if h <= 12 else ("하루 안" if h <= 24 else "이틀 안")), {"행상": "행상 편에.", "정보상": "…우리 쪽 장사로.", "소문": "소문으로.", "남산 방송": "방송으로.",
+			"공보방송": "공보방송으로.", "정보원": "정보원 입으로.", "용산 기지 방송": "용산 방송으로."}.get(str(p["route"]), "")])
+		if out.size() >= 5:
+			break
+	return out
+
+
+## 입막음 · 세탁 하위 메뉴(@hush · @launder · @launder:기록ID)
+func _broker_menu(vid: String, npc: String, region: String, ops: Array, labels: Dictionary) -> void:
+	var opts: Array = []
+	if region == "@hush" or region == "@launder":
+		var kind := region.substr(1)
+		var list := st.deeds.coverable(kind)
+		if list.is_empty():
+			ops.append({"op": "line", "who": npc, "emo": "기본", "text": "막을 얘기가 없어. 아직 아무도 네 얘기를 안 해." if kind == "hush" else "돌릴 얘기가 없어. 다 퍼졌거나, 아직 아무도 몰라."})
+			return
+		ops.append({"op": "line", "who": npc, "emo": "기본", "text": ("어느 얘기? 목격자 입은 내가 막아 줄게. %d캡. 대신 열에 둘은 결국 새." % HUSH_PRICE) if kind == "hush"
+			else ("어느 얘기? 남의 짓으로 흘려 줄게. %d캡. 들키면 우리도 곤란해." % LAUNDER_PRICE)})
+		for i in list.size():
+			var d: Dictionary = list[i]
+			if kind == "hush":
+				opts.append({"text": _fit_line(str(d["what"])), "tags": [{"k": "caps", "n": HUSH_PRICE}], "cond": "", "fx": "", "to": "H%d" % i, "id": "INFOH:%s:%s" % [vid, str(d["id"])]})
+			else:
+				opts.append({"text": _fit_line(str(d["what"])), "tags": [], "cond": "", "fx": "", "to": "L%d" % i, "id": "INFOL:%s:%s" % [vid, str(d["id"])]})
+		opts.append({"text": "됐다", "tags": [], "cond": "", "fx": "", "to": "END", "id": "INFOH:%s:end" % vid})
+		ops.append({"op": "choice", "opts": opts})
+		for i in list.size():
+			var d2: Dictionary = list[i]
+			labels[("H%d" if kind == "hush" else "L%d") % i] = ops.size()
+			if kind == "hush":
+				ops.append({"op": "line", "who": npc, "emo": "기본", "text": "내가 팔 걸 네가 사 가는 셈이네. …알았어, 거기서 끊을게."})
+				ops.append({"op": "cmd", "name": "info_hush", "args": [vid, str(d2["id"])]})
+			else:
+				ops.append({"op": "cmd", "name": "info", "args": [vid, "@launder:" + str(d2["id"])]})
+			ops.append({"op": "goto", "to": "END"})
+		return
+	if region.begins_with("@launder:"):
+		var did := region.substr(9)
+		var d3: Dictionary = {}
+		for d in st.deeds.list:
+			if str(d["id"]) == did:
+				d3 = d
+		if d3.is_empty():
+			return
+		var victims: Array = (d3["fx"] as Dictionary).keys()
+		ops.append({"op": "line", "who": npc, "emo": "기본", "text": "누구한테 덮어씌울까? 그럴듯해야 먹혀."})
+		var j := 0
+		for o in LAUNDER_TO:
+			if str(o[0]) in victims:
+				continue
+			opts.append({"text": str(o[1]), "tags": [{"k": "caps", "n": LAUNDER_PRICE}], "cond": "", "fx": "", "to": "F%d" % j, "id": "INFOF:%s:%s:%s" % [vid, did, str(o[0])]})
+			j += 1
+		var vname := str(Deeds.FAC_NAME.get(str(victims[0]), "")) if not victims.is_empty() else ""
+		if vname != "":
+			opts.append({"text": "%s 쪽 짓으로" % vname, "tags": [], "cond": "", "fx": "", "to": "SELF", "id": "INFOF:%s:%s:self" % [vid, did]})
+		opts.append({"text": "됐다", "tags": [], "cond": "", "fx": "", "to": "END", "id": "INFOF:%s:end" % vid})
+		ops.append({"op": "choice", "opts": opts})
+		j = 0
+		for o in LAUNDER_TO:
+			if str(o[0]) in victims:
+				continue
+			labels["F%d" % j] = ops.size()
+			ops.append({"op": "line", "who": npc, "emo": "기본", "text": "알았어. 그쪽 짓이라고 흘려 둘게. 계단참에서 시작하면 사흘이면 돌아."})
+			ops.append({"op": "cmd", "name": "info_launder", "args": [vid, did, str(o[0])]})
+			ops.append({"op": "goto", "to": "END"})
+			j += 1
+		labels["SELF"] = ops.size()
+		ops.append({"op": "line", "who": npc, "emo": "기본", "text": "%s 일을 %s한테 덮어씌워? 아무도 안 믿어. 돈 넣어 둬." % [vname, vname]})
+		ops.append({"op": "goto", "to": "END"})
+
+
+func _fit_line(t: String) -> String:
+	return t if t.length() <= 30 else t.substr(0, 29) + "…"
 
 
 # ---------------------------------------------------------------- 의사(1-8d, SD-15 §5.1)

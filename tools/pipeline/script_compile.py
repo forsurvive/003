@@ -37,7 +37,7 @@ SKILLS = ["물물교환", "중화기", "에너지 무기", "폭발물", "자물�
 FLAVORS = ["거짓말", "위협"]
 PARTICLES = ["은", "는", "이", "가", "을", "를", "과", "와", "으로", "로", "이나", "나", "이랑", "랑", "아", "야", "이다", "다", "이에요",
              "예요", "이었", "였", "이라", "라", "이든", "든"]
-FNS = {"karma", "aff", "quest", "stage", "result", "give", "take", "has", "caps", "xp", "wanted", "stat", "skill", "year", "worn", "blade", "dead", "known_dead", "met", "killer_known", "confess", "victim", "rq", "rq_wait", "rq_left", "rq_stage"}
+FNS = {"karma", "aff", "quest", "stage", "result", "give", "take", "has", "caps", "xp", "wanted", "stat", "skill", "year", "worn", "blade", "dead", "known_dead", "met", "killer_known", "confess", "victim", "rq", "rq_wait", "rq_left", "rq_stage", "talk_n"}
 CMDS = {"rq", "bjs", "wait", "fade_in", "fade_out", "balloon", "move", "face", "shake", "year_card", "title_card", "sfx", "bgm", "cam", "show",
         "hide", "pose", "doc", "flash", "lamp", "unlit", "note", "reveal",
         "pipboy", "equip", "hurt", "buddy", "range", "hint", "hud",          # 0-7: 핍-보이·무기·연출 피해·일시 동행·사격장 단계·안내 띠
@@ -63,7 +63,7 @@ ENGINE_VARS = {"PC_ST", "PC_PE", "PC_EN", "PC_CH", "PC_IN", "PC_AG", "PC_LK", "P
                "GAME_HOUR", "GAME_WDAY", "SB_RAID", "SB_PASS", "SB_DOGS", "SB_SAFE", "SB_KEY", "SB_FREED", "SB_READ", "SB_DEAL",
                "SB_BURNT", "SB_DEBT", "SB_BJ", "SB_TALK", "SB_BOUGHT", "SB_DEPO", "SB_127", "GB_PASS",
                "MQ106_CUSTODY", "MQ106_TALKED", "MQ106_SEIZED", "MQ106_AT", "MQ106_QLINE", "MQ106_QWHY", "MQ106_QGRID", "MQ106_QDEAD", "MQ106_QSIGN", "NAMGUNG_MET", "WANTED_PRE",
-               "PD_R01_BJ", "WANTED_HOLD", "RE036_MET", "RE036_NEWS", "RE042_N", "VG_TALK", "VG_NEWS", "UQ125_WHO", "UQ125_HERE", "UQ125_KID", "UQ125_GUARD", "UQ125_FENCE", "UQ125_R", "HOME_BC", "HOME_BC_OK", "WELL_RESTED", "HOME_BC_NOTE", "BAEKGU_NAP", "INFO_RUMOR_R01", "INFO_RUMOR_R02", "CARAVAN_V54", "MEDIC_AT", "TR_YEON_MET", "TR_SO_MET", "TR_EOM_MET",
+               "PD_R01_BJ", "WANTED_HOLD", "RE036_MET", "RE036_NEWS", "RE042_N", "VG_TALK", "VG_NEWS", "UQ125_WHO", "UQ125_HERE", "UQ125_KID", "UQ125_GUARD", "UQ125_FENCE", "UQ125_R", "HOME_BC", "HOME_BC_OK", "WELL_RESTED", "HOME_BC_NOTE", "BAEKGU_NAP", "INFO_RUMOR_R01", "INFO_RUMOR_R02", "INFO_TURF_DAY", "CARAVAN_V54", "MEDIC_AT", "TR_YEON_MET", "TR_SO_MET", "TR_EOM_MET",
                "SD_MET_HUH", "SD_MET_PYO", "SD_MET_WI", "SD_MET_SEONG", "SD_MET_BAN", "SD_BAN_WEST", "SD_MET_TAK", "SA_MAKCHA_HEARD", "SA_MAT_UNTIL", "SD_MAP_UG", "SD_BOARD_SEEN", "SD_LR05", "SD_LR09", "U02_OPEN",
                "SG_MET_HWANG", "SG_MET_KWON", "SG_REFUSED", "SG_ISSUED", "GS_MET_RJ", "GS_MET_HAN", "GS_MET_EUNSOL", "GS_MET_MA", "GS_MET_HA", "GS_CARD_SEEN", "GS_LR50", "BC_DOUBT_DAY",
                "SQ_S01_SOL", "SQ_S01_LEFT", "SQ_S01_LEFT_DAY", "SQ_S01_DROP", "SQ_S01_DROP_AT", "SQ_S01_TAG_DAY", "SQ_S01_DOG", "SQ_S01_FEED", "SQ_S01_COLL", "SQ_S01_BAIT",

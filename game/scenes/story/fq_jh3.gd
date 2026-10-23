@@ -362,7 +362,7 @@ func _deliver(to_ban: bool) -> void:
 		what = "지하시장 구울이 대낮에 경매장 한복판으로 들것 의료반에 약을 날랐다" if with else "대낮에 누가 지하시장 약 상자를 들고 경매장 들것 의료반을 찾아왔다"
 	elif night == 1:
 		what = "지하시장 약이 밤에 수산시장 뒤 터에서 들것 의료반에 닿았다"
-	st.deeds.record(st, "faction", "R01", 2 if day_run else 1, {"BJ": link, "SB": link, "SV": link}, now(),
+	st.deeds.record(st, "faction", "R01", 2 if day_run else 1, {"BJ": link, "SB": link, "JC_SV": link}, now(),
 		{"tag": "FQJH03_DONE", "place": "NJ", "what": what, "seen_by": ["JH"], "about": []})
 	st.quests.set_stage(Q, 100)
 	if with:

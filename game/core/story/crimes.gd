@@ -2,7 +2,7 @@
 ## 사용자 지시(2026-10-16): 플레이어는 주요 NPC를 죽이는 돌발 행동을 한다 — 세계가 그럴듯하게, 그러나 '알게 된 뒤에' 반응한다.
 ##   목격된 살해: 이름 있는 인물 −35(원한) · 무명 세력원 −20(원한) — 목격 즉시(직접 목격 경로).
 ##   지도자 · 정착지 대표 살해, 같은 거점 주민 5명 이상(학살): 값 −100 고정 · 영구 적대(회복 불가).
-##   목격 없는 살해: 시체는 1~24시간 안에 발견된다(그 정착지가 죽음을 안다). 범인 지목은 30% — 되면 '비목격 살해 발각'(무명 −12, 이름 있는 인물 −35).
+##   목격 없는 살해: 시체는 1~24시간 안에 발견된다(그 정착지가 죽음을 안다). 범인 지목은 30%(+ 1시간 안 목격 20% · 에너지 · 소음 무기 20%) — 되면 '비목격 살해 발각'(무명 −12, 이름 있는 인물 −35).
 ## 정착지 안에서 목격된 살인 · 정착지 적대(≤ −60)는 호스트가 자경단을 깨운다(SettlementAlarm). 아이는 공격 대상이 아니라 죽일 수 없다(SD-11 §580).
 class_name Crimes
 extends RefCounted
@@ -47,7 +47,8 @@ static func named(st: StoryState, id: String) -> bool:
 
 
 ## 주민을 죽였다(호스트가 부른다). witnessed = 다른 주민이 보았다. 돌려주는 값: {"tgt", "leader", "perm", "witnessed"}
-static func on_kill(st: StoryState, id: String, witnessed: bool, region: String, now: int, place := "") -> Dictionary:
+## rare = 주인공만 쓰는 무기 계열(에너지 · 소음 무기)로 죽였다 — 시체 조사 +20%(§6.4, 1-12q). 그 권역에서 1시간 안에 눈에 띄었으면 +20%(Deeds.seen)
+static func on_kill(st: StoryState, id: String, witnessed: bool, region: String, now: int, place := "", rare := false) -> Dictionary:
 	var tgt := target(st, id)
 	var out := {"tgt": tgt, "leader": false, "perm": false, "witnessed": witnessed}
 	if tgt == "":
@@ -74,8 +75,29 @@ static func on_kill(st: StoryState, id: String, witnessed: bool, region: String,
 		var rng := RandomNumberGenerator.new()
 		rng.seed = seed
 		dd.bodies.append({"id": id, "tgt": tgt, "at": now, "find": now + rng.randi_range(FIND_MIN, FIND_MAX),
-			"solve": rng.randf() < SOLVE, "perm": perm, "named": named(st, id) and not beast, "region": region, "place": place})
+			"roll": rng.randf(), "rare": rare, "perm": perm, "named": named(st, id) and not beast, "region": region, "place": place})
 	return out
+
+
+## 범인 지목 확률(§6.4): 30% + 그 권역 1시간 안 목격 20% + 주인공만 쓰는 무기 20%
+static func solve_chance(st: StoryState, region: String, at: int, rare: bool) -> float:
+	return SOLVE + (0.2 if st.deeds.seen_near(region, at) else 0.0) + (0.2 if rare else 0.0)
+
+
+## 지목 판정(시체를 찾은 때 — 살해 때 굴린 수 그대로, 문턱은 그 앞뒤 1시간 목격까지 보고 정한다). 돌려줌 = [지목됐나, 지목 이유 한 마디]
+static func solved(st: StoryState, b: Dictionary) -> Array:
+	if b.has("solve"):                                                 # 옛 저장(살해 때 정해 둔 값)
+		return [bool(b["solve"]), ""]
+	var at := int(b["at"])
+	var region := str(b["region"])
+	var roll := float(b.get("roll", 1.0))
+	if roll >= solve_chance(st, region, at, bool(b.get("rare", false))):
+		return [false, ""]
+	if roll >= SOLVE and st.deeds.seen_near(region, at):
+		return [true, "그날 이 근처에서 볼트 작업복을 봤다는 사람이 있다"]
+	if roll >= SOLVE:
+		return [true, "상처가 흔한 총 자국이 아니다 — 그런 걸 들고 다니는 사람은 드물다"]
+	return [true, ""]
 
 
 ## 시체 발견(Deeds.tick이 시각 순서대로 부른다): 정착지가 죽음을 알고, 지목되면 '비목격 살해 발각'
@@ -84,13 +106,15 @@ static func find_body(st: StoryState, b: Dictionary, when: int) -> void:
 	var tgt := str(b["tgt"])
 	var who := st.npc_name(str(b["id"]))
 	dd.mourn[tgt] = when                                               # 죽음은 알려진다(범인과 상관없이 — 장례 · 수군거림)
-	if not bool(b["solve"]):
+	var sv := solved(st, b)
+	if not bool(sv[0]):
 		dd.heard.push_front({"fac": tgt, "what": "%s의 시체가 발견됐다(범인 모름)" % who, "at": when, "route": "시체", "tag": "CRIME_BODY"})
 		return
 	var perm := bool(b["perm"])
 	var dv := -35 if bool(b["named"]) else -12
 	dd.record(st, "범죄", str(b["region"]), 1, {tgt: 0 if perm else dv}, when,
-		{"tag": "CRIME_PERM" if perm else "CRIME", "place": str(b["place"]), "what": "%s 살해 발각" % who, "seen_by": [tgt], "about": [str(b["id"])]})
+		{"tag": "CRIME_PERM" if perm else "CRIME", "place": str(b["place"]), "what": ("%s 살해 발각" % who) + ((" — " + str(sv[1])) if str(sv[1]) != "" else ""),
+		"seen_by": [tgt], "about": [str(b["id"])]})
 	if not perm:
 		dd.grudge[tgt] = maxi(1, int(dd.grudge.get(tgt, 0)))
 

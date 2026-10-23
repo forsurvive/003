@@ -248,8 +248,13 @@ static func run(src: String, ctx: Object) -> String:
 	var p := parse(src)
 	if not p["ok"]:
 		return "효과 구문 오류: %s — %s" % [src, p["err"]]
+	var story := ctx is StoryState
+	if story:
+		ctx.deeds.link_src += 1                                          # 원고 효과의 호감 상승만 연동(SD-06 §3.6 — 진행기 코드는 제 손으로 연동한다, 1-12q)
 	for s in p["ast"].slice(1):
 		_eval(s, ctx)
+	if story:
+		ctx.deeds.link_src -= 1
 	return ""
 
 
