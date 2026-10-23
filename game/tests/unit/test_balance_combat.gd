@@ -97,3 +97,33 @@ func test_balance_windup_dash(t) -> void:
 	b.end_dash()
 	t.eq([b.cmb.dr, b.dash_to], [dr0, Vector2.INF], "멈추면 그대로")
 	m.free()
+
+
+func test_balance_dog_no_overlap(t) -> void:
+	# 1-13 rq 봇 시간 초과: 토큰 없는 들개가 '반쯤 달려들기'로 주인공 몸에 겹치면(거리 0) 방향이 0이 되어 굳고, 탄은 옆으로 비낀 총구에서 나가 빗나갔다
+	var h = ARMS.new()
+	var st: StoryState = h._state()
+	var r: Array = h._setup(st)
+	var m: InteriorMap = r[0]
+	var c: InteriorCombat = r[1]
+	var dogs: Array = []
+	for i in 4:
+		dogs.append(_spawn(c, m, st, "CR-104", c.pc.pos() + Vector2(48, 0).rotated(PI / 2.0 * i), {"lv": 2}))
+	c.tick(1.0 / 60.0, true, st)
+	var free_dogs := dogs.filter(func(e): return not e.has_mtoken)
+	t.eq(free_dogs.size(), 2, "토큰 없는 개 둘")
+	var worst := 999.0
+	for f in 90:
+		for e in free_dogs:                                            # 반쯤 달려들기를 계속 건다(물지 않고 다가오는 몸짓)
+			e._circ_v = -0.9
+			e._circ_t = 2.5
+		c.tick(1.0 / 60.0, true, st)
+		for e in free_dogs:
+			worst = minf(worst, e.loco.logical.distance_to(c.pc.pos()) - e.cmb.radius - c.pc.radius)
+	t.ok(worst > 4.0, "토큰 없는 개는 몸에 겹치지 않는다(가장 가까울 때 %.1f px)" % worst)
+	var z := free_dogs[0] as Enemy
+	z.loco.logical = c.pc.pos()                                        # 이미 겹친 개는 빠져나온다(방향 0에 굳지 않는다)
+	for f in 30:
+		c.tick(1.0 / 60.0, true, st)
+	t.ok(z.loco.logical.distance_to(c.pc.pos()) > 4.0, "겹친 개가 빠져나온다")
+	m.free()

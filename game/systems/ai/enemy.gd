@@ -605,7 +605,11 @@ func _act(dt: float, target: Combatant, shots: Projectiles) -> void:
 			if _rng.randf() < 0.25:
 				_circ_v = -0.9
 		var inward := 0.4 if to_t.length() < 1.8 * 32.0 else 0.0
-		if _circ_v < 0.0 and _circ_t > 1.0:
+		var near := cmb.radius + target.radius + 14.0                  # 토큰 없는 개는 이보다 안으로 들지 않는다(몸에 겹치면 방향이 0이 되어 그 자리에 굳는다 — 1-13 rq 봇)
+		if to_t.length() < near:
+			var away := -to_t if to_t.length() > 0.5 else Vector2.RIGHT.rotated(float(get_instance_id() % 8) * PI / 4.0)
+			input = away.normalized()
+		elif _circ_v < 0.0 and _circ_t > 1.0:
 			input = to_t.normalized() * 0.9                            # 반쯤 달려든다(물지는 않는다 — 토큰이 없다)
 		else:
 			input = to_t.normalized().orthogonal() * _circ * absf(_circ_v) - to_t.normalized() * inward   # 토큰이 없으면 둘레를 돈다(발 고정 걸음 그대로)

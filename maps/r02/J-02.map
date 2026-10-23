@@ -53,7 +53,7 @@ prop w_shutter2 51 1
 prop w_shutter3 54 1
 prop w_shutter 57 1
 prop w_sign_exit 60 1
-prop w_shutter2 63 1
+prop w_shop_clothes 63 1
 prop w_shutter 66 1
 prop w_shutter3 69 1
 prop w_shutter2 72 1
@@ -135,3 +135,8 @@ text 36 12 "드럼통 불. 누가 꼬치를 굽다 말았다."
 # 1-11h SQ-S09: 지하시장에 자리 잡은 채윤재 · 채해인
 npc N-R02-039 60 4 S cond="SB_127 == 7" bark="셔터 올리는 소리에 깨. 그게 좋아."
 npc N-R02-050 61 4 S cond="SB_127 == 7"
+# 1-13a2 감경희(N-R02-507, 2077년 20대 구울, SD-04c §8.2 · 07b) 수선집 — 테이프 이야기(SQ-N14 계열)는 그 막에서, 여기서는 평소 모습만
+prop stall_clothes 62 3
+prop mann_ga 65 3
+text 63 2 "'경희 수선'. 바늘꽂이에 바늘이 빼곡하다. 재봉틀 옆에 실로 꿰매 붙인 종이 한 장 — '2077. 10. 23. 대피 순번 0418'." w=2
+npc N-R02-507 63 4 S bark="단추 하나도 버리지 마요. 다 기울 수 있어요."

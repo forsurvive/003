@@ -119,6 +119,8 @@ def place_content(npc_ok):
 
 def act1_npc(nid, v):
     pl = str(v.get("place", ""))
+    if "기록 인물" in str(v.get("look", "")):                                # 07b 외형 칸 '기록 인물: 사진 · 회상 초상만'(계보 시조 등) — 세상에 서 있지 않다
+        return False
     if pl.startswith(("L-R01", "L-R02", "R01", "R02")) or nid.startswith(("N-R01", "N-R02")):
         return True
     return nid.startswith("C-") and any(str(q).startswith(("MQ-10", "SQ-S", "FQ-", "UQ-0", "UQ-6", "UQ-7")) for q in v.get("quests", []))

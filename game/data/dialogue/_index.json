@@ -444,7 +444,9 @@
   "NT_SHAFT",
   "NT_VENT",
   "Q01_HATCH",
+  "R01-16_RIDER",
   "R02-24_COMMUTER",
+  "R02-27_PASS",
   "RE-036_TALK",
   "RE-042_NOTE",
   "RE-044_TALK",
@@ -808,10 +810,16 @@
   "YT_TRAP18",
   "YT_VENT",
   "YT_VENT18",
+  "ZBJ_HA",
+  "ZBJ_SHIN",
   "ZJC01_JO",
+  "ZJH_GH",
   "ZRQ15_OH",
   "ZRQ19_JO",
   "ZRQ30_NAM",
-  "ZRQ43_DAM"
+  "ZRQ43_DAM",
+  "ZSA_EOM",
+  "ZSB_JOO",
+  "ZSB_SEONBUL"
  ]
 }

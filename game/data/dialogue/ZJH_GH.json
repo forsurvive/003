@@ -1,0 +1,133 @@
+{
+ "id": "ZJH_GH",
+ "title": "지하시장 '경희 수선' 감경희",
+ "loc": "L-R02-11",
+ "npc": "N-R02-507",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "FIX": 3,
+  "SHOP": 5,
+  "WHEN": 7,
+  "COLD": 10
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "AFF_JH <= -60",
+   "to": "COLD"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-507",
+   "emo": "미소",
+   "text": "어서 와요. 찢어진 건 다 가져와요. 사람만 빼고."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "옷을 맡긴다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "FIX",
+     "id": "ZJH_GH:1:0"
+    },
+    {
+     "text": "물건을 본다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SHOP",
+     "id": "ZJH_GH:1:1"
+    },
+    {
+     "text": "언제부터 여기서 바느질을 하셨어요?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "WHEN",
+     "id": "ZJH_GH:1:2"
+    },
+    {
+     "text": "됐어요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "ZJH_GH:1:3"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "fix",
+   "args": [
+    "VJ_GH"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "trade",
+   "args": [
+    "VJ_GH"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R02-507",
+   "emo": "기본",
+   "text": "그날 밤부터요. 순번표 받고 줄 섰다가, 줄이 안 줄어서 여기 눌러앉았어요."
+  },
+  {
+   "op": "line",
+   "who": "N-R02-507",
+   "emo": "미소",
+   "text": "그때 바늘을 쥐었는데 아직도 쥐고 있네요. 손이 기억하는 게 그것뿐이라."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "옷을 맡긴다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "FIX",
+     "id": "ZJH_GH:2:0"
+    },
+    {
+     "text": "됐어요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "ZJH_GH:2:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R02-507",
+   "emo": "기본",
+   "text": "상인회랑 틀어졌다면서요. 실이야 팔아도 바느질은 못 해 드려요. 미안해요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/ACT1_PEOPLE.txt"
+}

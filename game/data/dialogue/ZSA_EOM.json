@@ -1,0 +1,97 @@
+{
+ "id": "ZSA_EOM",
+ "title": "사당 버섯 측실 엄기철",
+ "loc": "L-R01-18",
+ "npc": "N-R01-505",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "SHOP": 2,
+  "DEBT": 4
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-R01-505",
+   "emo": "기본",
+   "text": "느타리 사 갈래요? 깎아 달라곤 마요. 갚을 데가 있어서."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "느타리를 산다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SHOP",
+     "id": "ZSA_EOM:1:0"
+    },
+    {
+     "text": "갚을 데가 어딘데요?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "DEBT",
+     "id": "ZSA_EOM:1:1"
+    },
+    {
+     "text": "됐어요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "ZSA_EOM:1:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "trade",
+   "args": [
+    "VSA_EOM"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-505",
+   "emo": "슬픔",
+   "text": "…그건 묻지 마요. 버섯만 잘 자라면 돼요."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "사내가 선반 기둥에 붙은 젖은 종이를 손바닥으로 가린다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "느타리를 산다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SHOP",
+     "id": "ZSA_EOM:2:0"
+    },
+    {
+     "text": "됐어요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "ZSA_EOM:2:1"
+    }
+   ]
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/ACT1_PEOPLE.txt"
+}

@@ -1,0 +1,112 @@
+{
+ "id": "ZBJ_SHIN",
+ "title": "동작대교 남단 검문소장 신승원",
+ "loc": "L-R01-21",
+ "npc": "N-R01-051",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "NORTH": 3,
+  "SCOPE": 6,
+  "COLD": 8
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "AFF_BJ <= -60",
+   "to": "COLD"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-051",
+   "emo": "기본",
+   "text": "동작대교 남단 검문소. 통행증 없으면 다리는 못 넘는다. 북쪽도 마찬가지고."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "북쪽 초소는 누구죠?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "NORTH",
+     "id": "ZBJ_SHIN:1:0"
+    },
+    {
+     "text": "망원경은 왜 저쪽만 봅니까?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SCOPE",
+     "id": "ZBJ_SHIN:1:1"
+    },
+    {
+     "text": "됐습니다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "ZBJ_SHIN:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-051",
+   "emo": "기본",
+   "text": "연합단 애들. 저쪽 놈들도 우리처럼 지루할 거다. 담배는 같은 걸 피우더군."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "거더 위 담뱃갑 더미를 턱으로 가리킨다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "망원경은 왜 저쪽만 봅니까?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SCOPE",
+     "id": "ZBJ_SHIN:2:0"
+    },
+    {
+     "text": "됐습니다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "ZBJ_SHIN:2:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-051",
+   "emo": "기본",
+   "text": "저쪽도 이쪽을 본다. 서로 보고 있으면 아무도 안 쏴. 이 다리 규칙은 그거 하나다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-051",
+   "emo": "분노",
+   "text": "검문 대상이다. 손 보이는 데 두고 돌아가."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/ACT1_PEOPLE.txt"
+}

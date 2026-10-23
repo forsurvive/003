@@ -275,3 +275,28 @@ prop w_shutter_dock 0 -1 cond="GA_BOX != 6"
 prop w_shutter_dock 0 -1 state=holes cond="GA_BOX == 6"
 text 0 -1 "하역장 셔터. 분필 화살표 — '인력 →'." w=2 scene=GA_DOCKDOOR
 mark ga_dock 0 0 S
+
+# 1-13a2 마감 배치(SD-09a L-R01-21 — 신승원 상사 · 보병 둘 · 망원경 · 서로 던진 담배갑 · 이촌 폭심 Rad-2 경고판): 동작대교 남단 계엄군 검문소(1막 이후).
+spot L-R01-21 12 6
+prop jersey 0 1
+prop jersey 3 1
+prop sandbags 7 1
+prop sandbags 8 1
+prop guard_booth 10 0
+text 10 0 "검문소 막사. 근무 일지 맨 위 — '북측 초소 이상 없음. 담배 연기 두 줄.'"
+prop telescope 6 3
+text 6 3 "고정 망원경. 대물렌즈가 강 건너 북쪽을 향한 채 철사로 묶여 있다."
+prop rad_sign 1 4
+text 1 4 "거더 보행로 입구 경고판. '이촌 폭심 — Rad-2 구역. 통행 금지.'"
+text 3 4 "거더 위에 담뱃갑이 수북하다. 이쪽 끝에도, 강 쪽 끝에도." w=2
+npc N-R01-051 8 3 N cond="V_ACT >= 1"
+npc CR-401 2 2 S sheet=en_cr401_loco cond="V_ACT >= 1" bark="다리 건너는 사람 없습니다. 통행증이 있어도요."
+npc CR-401 5 2 S sheet=en_cr401_loco cond="V_ACT >= 1" bark="망원경 만지지 마십시오. 상사님 겁니다."
+
+# 1-13a2 마감 배치(SD-09a L-R01-16 — 도림천 수로 · 2077년 자전거 수십 대가 한강 쪽으로 쓰러짐 · 옴 너구리). 월드의 도림천은 물이 흐르는 수로라 자리는 수로를 건너는 다리 어귀 길(구현 정합 09a). 자전거 더미 소품 bike_pile(props_act1).
+spot L-R01-16 8 4
+prop bike_pile 1 1
+text 1 1 "다리 어귀 길바닥에 쓰러진 자전거 더미. 바퀴살이 녹슬어 한 덩어리가 됐다. 손잡이가 모두 한강 쪽을 향해 있다." w=3
+prop remains 6 2
+text 6 2 "자전거 옆에 엎드린 유해. 등에 멘 가방끈을 아직 쥐고 있다. 가방 안에 2077년 통학 정기권." scene=R01-16_RIDER
+enemy CR-136 4 3 cond="GAME_HOUR >= 20 or GAME_HOUR < 5"

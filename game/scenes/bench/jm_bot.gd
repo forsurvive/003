@@ -838,6 +838,7 @@ func _ready() -> void:
 			st.call_fn("give", ["M-083", 1])
 			st.call_fn("give", ["M-085", 1])
 			st.call_fn("give", ["M-088", 1])
+			st.call_fn("give", ["10mm 탄", 60])                                  #   근접 토큰(밸런스 첫 전수) 뒤 들개가 둘레를 돌아 덜 맞는다 — 밤 싸움 탄 넉넉히
 			host.date_text = "2277. 10. 28.  10:00"
 			host.enter("X-BC", "from_X-S07")
 			plan = [["hp", 3000], ["wait", 1.5], ["noenc"], ["calm"],

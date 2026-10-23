@@ -1101,6 +1101,10 @@ from props_uq3 import PROPS_UQ3, STATES_UQ3                           # R01 비�
 for _k in PROPS_UQ3:
     assert _k not in PROPS, _k
 PROPS.update(PROPS_UQ3)
+from props_act1 import PROPS_ACT1, STATES_ACT1                         # 1막 마감 배치(1-13a2): 도림천 수로 자전거 더미
+for _k in PROPS_ACT1:
+    assert _k not in PROPS, _k
+PROPS.update(PROPS_ACT1)
 from props_hp4 import PROPS_HP4, STATES_HP4                           # 여의도 대학병원 2층 안과 외래 · 수술실(1-12h UQ-08): 수술대 · 현미경 · 세극등 · 시력표 · 렌즈장
 for _k in PROPS_HP4:
     assert _k not in PROPS, _k
@@ -1141,6 +1145,7 @@ STATES.update(STATES_UQ2)
 for _k in STATES_UQ3:
     assert _k not in STATES or _k in ("freezer_unit", "streetlamp"), _k
 STATES.update(STATES_UQ3)
+STATES.update(STATES_ACT1)
 STATES.update(STATES_HP4)
 STATES.update(STATES_BS)
 STATES.update(STATES_S04)

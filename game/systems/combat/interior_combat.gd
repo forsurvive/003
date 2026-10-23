@@ -1214,6 +1214,8 @@ func _player(dt: float, player: Actor, st: StoryState) -> void:
 	if player.doll != null:
 		muzzle = player.position + player.doll.position + player.doll.muzzle_local(gdir)
 	var line := aim - muzzle
+	if _aim_real and line.length() <= 24.0:
+		muzzle = player.loco.logical + Vector2(0, -14)                 # 총구 코앞 표적: 가슴에서 쏜다(옆으로 비낀 총구에서 가슴 방향으로 쏘면 바짝 붙은 적 옆을 평행하게 지나간다)
 	var ang := CombatRules.shot_angle(rad_to_deg((line if _aim_real and line.length() > 24.0 else to).angle()), sp, shots.rng)
 	var n := shots.fire_weapon(muzzle, ang, "player", w, sk, {"flash": "" if player.doll != null else "auto", "fl": player.floor_id,
 		"sneak_ok": true, "target": aim, "per": 5})

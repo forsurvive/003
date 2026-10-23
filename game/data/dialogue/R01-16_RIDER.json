@@ -1,0 +1,32 @@
+{
+ "id": "R01-16_RIDER",
+ "title": "자전거 옆 유해",
+ "loc": "L-R01-16",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "엎드린 유해 옆, 자전거 바구니에 젖었다 마른 종이 한 장 — '엄마, 학교 앞에서 기다려. 다리 건너면 바로 집이야.'"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "자전거는 모두 같은 쪽으로 쓰러졌다. 다리 쪽, 한강 쪽으로."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/ACT1_PEOPLE.txt"
+}

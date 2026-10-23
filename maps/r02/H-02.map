@@ -86,6 +86,7 @@ prop shop_shelf 26 12
 prop shop_shelf 33 12
 prop cash_counter 29 15
 npc N-R02-037 30 14 S cond="SB_RAID == 0 and (GAME_HOUR < 4 or GAME_HOUR >= 6)" bark="손님 값이야. 직원 값은 장부에 이름 올리고."
+npc N-R02-502 33 14 N cond="SB_RAID == 0 and GAME_HOUR >= 8 and GAME_HOUR < 20"   # 1-13a2 매점 반장 주현태(SD-15 V15 · 07b) — 계산대는 소개비, 값표 · 장부는 반장(구현 정합 09a)
 text 29 15 "매점 계산대. 값표 맨 위 '그물총 — 품절'. 맨 아래 '일당 전표 받음 — 한 장에 3캡'." w=2
 prop crate_army 36 17
 prop pallet_sacks 37 17
