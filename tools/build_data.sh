@@ -35,6 +35,7 @@ python3 tools/pipeline/world_chunks.py                  # 월드 굽기 → worl
 python3 tools/pipeline/convoy_route.py                  # FQ-SB-02 운송 행렬 경로 굽기(1-12f — 구운 월드 뒤에)
 python3 tools/pipeline/expr_cases.py
 python3 tools/pipeline/balance_check.py                 # 밸런스(SD-25 · 사용자 지시 2026-10-23): 새 실패는 조율사(balance-auditor)가 보고 고치거나 허용 목록에 이유
+python3 tools/pipeline/act1_audit.py                   # 1막 마감 배치 대조(1-13a — SD-19 §5 단계 1 완료 기준): 장소 · 인물 · 외형 · 인카운터 · 도달성
 python3 tools/pipeline/ko_lint.py                      # 번역투 후보(SD-24 · 사용자 지시 2026-10-23): 판정은 다듬이 — 새 후보는 고치거나 허용 목록에 이유
 python3 tools/pipeline/portrait_export.py
 python3 tools/pipeline/story_sprites.py

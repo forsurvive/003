@@ -1,0 +1,1178 @@
+[
+ {
+  "area": "장소",
+  "item": "L-R01-01 볼트 S-07",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R01-02 S-07 비상 탈출구",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R01-03 관악산 전망바위",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R01-04 관악 레이더 중계소",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R01-05 관악산 들개 바위굴",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R01-06 관악 행정 연수원",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R01-07 연수원 중앙 서고",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R01-08 관악 계곡 배수로",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R01-09 봉천 계단마을",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R01-10 봉천 배수지",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R01-11 봉천 번개24",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R01-12 낙성대 고개 캠프",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R01-13 서울대입구 상가 거리",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R01-14 신림 고시촌",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R01-15 신림 사거리 고가",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R01-16 도림천 고가 수로",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R01-17 보라매 활주로 공원",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R01-18 사당 환승촌",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R01-19 사당 고개 검문소",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R01-20 노량진 다리목 검문소",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R01-21 동작대교 남단 검문소",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R01-22 동작 국립묘지",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R01-23 노량진 관제 중계소",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R01-24 노량진 학원가",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R01-25 노량진 수산시장",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R01-26 흑석 대학병원",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R01-27 상도 언덕 빌라촌",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R01-28 가산 아울렛 거리",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R01-29 독산 육가공 단지",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R01-30 시흥 고개 초소",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R01-31 삼성산 능선 캠프",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R01-32 봉천 동 주민센터",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R01-33 노량진 번개24",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R02-01 무너진 국회",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R02-02 여의도 지하 벙커",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R02-03 여의도 광장 착륙장",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R02-04 볼트 S-02",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R02-05 여의도 금탑",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R02-06 여의도 공영방송",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R02-07 여의도 증권가",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R02-08 여의도 유리탑 3동",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R02-09 여의도 대학병원",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R02-10 샛강 습지",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R02-11 지하시장",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R02-12 영등포 역전 시장",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R02-13 영등포 역사 쇼핑몰",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R02-14 문래 철공소 골목",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R02-15 영등포 구청 배급소",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R02-16 신길 언덕 빌라",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R02-17 대방 지하차도",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R02-18 대림 시장",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R02-19 새벽인력 본소",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R02-20 가리봉 쪽방 골목",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R02-21 구로 공단 지식산업센터",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R02-22 구로 공단 노동자 아파트",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R02-23 고척 돔 인력 경매장",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R02-24 신도림 환승 고가",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R02-25 구로 차량기지",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R02-26 개봉 빌라 미로",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R02-27 온수 경계 둑",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R02-28 여의도 환승센터 터",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "L-R02-29 영등포 경찰서 폐허",
+  "status": "통과",
+  "note": "",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소",
+  "item": "R01 · R02 장소 수(CSV)",
+  "status": "통과",
+  "note": "62곳 — SD-19 §5 '63곳'(볼트 S-07 L-R01-01은 통계 제외 표식)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "인물",
+  "item": "C-008 송미래",
+  "status": "주의",
+  "note": "맵에도 진행기에도 자리가 없다(장소 R06-08)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "인물",
+  "item": "C-009 한유리",
+  "status": "주의",
+  "note": "맵에도 진행기에도 자리가 없다(장소 R07-01)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "인물",
+  "item": "C-028 한유정",
+  "status": "주의",
+  "note": "맵에도 진행기에도 자리가 없다(장소 R01-06)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "인물",
+  "item": "C-029 하준기",
+  "status": "주의",
+  "note": "맵에도 진행기에도 자리가 없다(장소 R01-01)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "인물",
+  "item": "C-030 장문석",
+  "status": "주의",
+  "note": "맵에도 진행기에도 자리가 없다(장소 R01-01)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "인물",
+  "item": "C-072 깡철이",
+  "status": "주의",
+  "note": "맵에도 진행기에도 자리가 없다(장소 R01-15)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "인물",
+  "item": "N-R01-012 문이준",
+  "status": "주의",
+  "note": "놓였지만 대화 장면도 바크도 없다(V-00,V-01)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "인물",
+  "item": "N-R01-036 조하진",
+  "status": "주의",
+  "note": "놓였지만 대화 장면도 바크도 없다(X-BC)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "인물",
+  "item": "N-R01-051 신승원",
+  "status": "주의",
+  "note": "맵에도 진행기에도 자리가 없다(장소 R01-21)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "인물",
+  "item": "N-R01-504 대기 0502",
+  "status": "주의",
+  "note": "맵에도 진행기에도 자리가 없다(장소 R01-23)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "인물",
+  "item": "N-R01-505 엄기철",
+  "status": "주의",
+  "note": "맵에도 진행기에도 자리가 없다(장소 R01-18)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "인물",
+  "item": "N-R01-506 엄유나",
+  "status": "주의",
+  "note": "맵에도 진행기에도 자리가 없다(장소 R01-18)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "인물",
+  "item": "N-R02-025 하서현",
+  "status": "주의",
+  "note": "맵에도 진행기에도 자리가 없다(장소 R02-03)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "인물",
+  "item": "N-R02-045 선불",
+  "status": "주의",
+  "note": "맵에도 진행기에도 자리가 없다(장소 R02-28)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "인물",
+  "item": "N-R02-502 주현태",
+  "status": "주의",
+  "note": "맵에도 진행기에도 자리가 없다(장소 R02-19)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "인물",
+  "item": "N-R02-503 배정순",
+  "status": "주의",
+  "note": "맵에도 진행기에도 자리가 없다(장소 R02-11)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "인물",
+  "item": "N-R02-505 오태환",
+  "status": "주의",
+  "note": "맵에도 진행기에도 자리가 없다(장소 R02-24)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "인물",
+  "item": "N-R02-507 감경희",
+  "status": "주의",
+  "note": "맵에도 진행기에도 자리가 없다(장소 R02-11)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "인물",
+  "item": "1막 이름 있는 인물 수",
+  "status": "통과",
+  "note": "147명 · 말 걸 거리 있음 129 — SD-19 §5 'NPC 138명(단계 0 포함)'",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "외형",
+  "item": "한 맵 안 같은 외형(이름 있는 인물)",
+  "status": "통과",
+  "note": "0건",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R01-01 볼트 S-07",
+  "status": "통과",
+  "note": "장면 43 · 손 맵 X-S07 · 손 자리 1 · 손 실내 -",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R01-02 S-07 비상 탈출구",
+  "status": "통과",
+  "note": "장면 4 · 손 맵 X-S07,X-BW · 손 자리 0 · 손 실내 E-01",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R01-03 관악산 전망바위",
+  "status": "통과",
+  "note": "장면 6 · 손 맵 X-S07 · 손 자리 1 · 손 실내 -",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R01-04 관악 레이더 중계소",
+  "status": "통과",
+  "note": "장면 3 · 손 맵 X-RD · 손 자리 0 · 손 실내 -",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R01-05 관악산 들개 바위굴",
+  "status": "통과",
+  "note": "장면 5 · 손 맵 X-BW,X-SS · 손 자리 0 · 손 실내 -",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R01-06 관악 행정 연수원",
+  "status": "통과",
+  "note": "장면 3 · 손 맵 X-S07 · 손 자리 0 · 손 실내 K-01",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R01-07 연수원 중앙 서고",
+  "status": "통과",
+  "note": "장면 3 · 손 맵 X-S07 · 손 자리 0 · 손 실내 K-03",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R01-08 관악 계곡 배수로",
+  "status": "통과",
+  "note": "장면 12 · 손 맵 - · 손 자리 1 · 손 실내 K-08",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R01-09 봉천 계단마을",
+  "status": "통과",
+  "note": "장면 76 · 손 맵 X-BC · 손 자리 2 · 손 실내 -",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R01-10 봉천 배수지",
+  "status": "통과",
+  "note": "장면 10 · 손 맵 X-BC,X-BS · 손 자리 3 · 손 실내 -",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R01-11 봉천 번개24",
+  "status": "통과",
+  "note": "장면 9 · 손 맵 X-BC · 손 자리 0 · 손 실내 K-11",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R01-12 낙성대 고개 캠프",
+  "status": "통과",
+  "note": "장면 5 · 손 맵 X-NS · 손 자리 0 · 손 실내 -",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R01-13 서울대입구 상가 거리",
+  "status": "통과",
+  "note": "장면 0 · 손 맵 X-BC,X-BS · 손 자리 0 · 손 실내 -",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R01-14 신림 고시촌",
+  "status": "통과",
+  "note": "장면 8 · 손 맵 X-GC · 손 자리 1 · 손 실내 -",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R01-15 신림 사거리 고가",
+  "status": "통과",
+  "note": "장면 0 · 손 맵 X-BC · 손 자리 0 · 손 실내 -",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R01-16 도림천 고가 수로",
+  "status": "주의",
+  "note": "장면 0 · 손 맵 - · 손 자리 0 · 손 실내 - · 손으로 만든 내용이 없다(생성 지형 · 실내만)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R01-17 보라매 활주로 공원",
+  "status": "통과",
+  "note": "장면 5 · 손 맵 - · 손 자리 1 · 손 실내 -",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R01-18 사당 환승촌",
+  "status": "통과",
+  "note": "장면 21 · 손 맵 X-SD · 손 자리 0 · 손 실내 -",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R01-19 사당 고개 검문소",
+  "status": "통과",
+  "note": "장면 9 · 손 맵 X-SG · 손 자리 1 · 손 실내 -",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R01-20 노량진 다리목 검문소",
+  "status": "통과",
+  "note": "장면 7 · 손 맵 - · 손 자리 2 · 손 실내 -",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R01-21 동작대교 남단 검문소",
+  "status": "주의",
+  "note": "장면 0 · 손 맵 - · 손 자리 0 · 손 실내 - · 자리 없는 인물 N-R01-051",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R01-22 동작 국립묘지",
+  "status": "통과",
+  "note": "장면 3 · 손 맵 - · 손 자리 1 · 손 실내 -",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R01-23 노량진 관제 중계소",
+  "status": "통과",
+  "note": "장면 23 · 손 맵 X-GS · 손 자리 1 · 손 실내 -",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R01-24 노량진 학원가",
+  "status": "통과",
+  "note": "장면 13 · 손 맵 X-GS · 손 자리 2 · 손 실내 K-24",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R01-25 노량진 수산시장",
+  "status": "통과",
+  "note": "장면 7 · 손 맵 X-GS · 손 자리 3 · 손 실내 -",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R01-26 흑석 대학병원",
+  "status": "통과",
+  "note": "장면 7 · 손 맵 - · 손 자리 2 · 손 실내 K-26",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R01-27 상도 언덕 빌라촌",
+  "status": "통과",
+  "note": "장면 3 · 손 맵 - · 손 자리 1 · 손 실내 K-27",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R01-28 가산 아울렛 거리",
+  "status": "통과",
+  "note": "장면 7 · 손 맵 X-SB · 손 자리 2 · 손 실내 GA-01",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R01-29 독산 육가공 단지",
+  "status": "통과",
+  "note": "장면 14 · 손 맵 - · 손 자리 0 · 손 실내 DS-01,DS-02",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R01-30 시흥 고개 초소",
+  "status": "통과",
+  "note": "장면 5 · 손 맵 X-SH · 손 자리 0 · 손 실내 -",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R01-31 삼성산 능선 캠프",
+  "status": "통과",
+  "note": "장면 3 · 손 맵 X-BW,X-SS · 손 자리 0 · 손 실내 -",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R01-32 봉천 동 주민센터",
+  "status": "통과",
+  "note": "장면 10 · 손 맵 X-BC,X-BS · 손 자리 1 · 손 실내 K-33",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R01-33 노량진 번개24",
+  "status": "통과",
+  "note": "장면 3 · 손 맵 X-GS · 손 자리 2 · 손 실내 K-37",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R02-01 무너진 국회",
+  "status": "통과",
+  "note": "장면 10 · 손 맵 - · 손 자리 2 · 손 실내 KH-01",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R02-02 여의도 지하 벙커",
+  "status": "통과",
+  "note": "장면 17 · 손 맵 - · 손 자리 2 · 손 실내 Y-00",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R02-03 여의도 광장 착륙장",
+  "status": "주의",
+  "note": "장면 1 · 손 맵 - · 손 자리 2 · 손 실내 - · 자리 없는 인물 N-R02-025",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R02-04 볼트 S-02",
+  "status": "통과",
+  "note": "장면 42 · 손 맵 - · 손 자리 2 · 손 실내 SV-01",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R02-05 여의도 금탑",
+  "status": "통과",
+  "note": "장면 46 · 손 맵 - · 손 자리 2 · 손 실내 KT-01,KT-02,KT-08",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R02-06 여의도 공영방송",
+  "status": "통과",
+  "note": "장면 3 · 손 맵 - · 손 자리 2 · 손 실내 K-06",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R02-07 여의도 증권가",
+  "status": "통과",
+  "note": "장면 2 · 손 맵 - · 손 자리 1 · 손 실내 SG-01",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R02-08 여의도 유리탑 3동",
+  "status": "통과",
+  "note": "장면 27 · 손 맵 - · 손 자리 2 · 손 실내 YT-01",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R02-09 여의도 대학병원",
+  "status": "통과",
+  "note": "장면 14 · 손 맵 - · 손 자리 3 · 손 실내 HP-01",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R02-10 샛강 습지",
+  "status": "통과",
+  "note": "장면 0 · 손 맵 - · 손 자리 0 · 손 실내 Y-05",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R02-11 지하시장",
+  "status": "통과",
+  "note": "장면 62 · 손 맵 X-MR · 손 자리 0 · 손 실내 J-01",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R02-12 영등포 역전 시장",
+  "status": "통과",
+  "note": "장면 7 · 손 맵 X-MR · 손 자리 1 · 손 실내 K-38",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R02-13 영등포 역사 쇼핑몰",
+  "status": "통과",
+  "note": "장면 0 · 손 맵 - · 손 자리 0 · 손 실내 J-02",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R02-14 문래 철공소 골목",
+  "status": "통과",
+  "note": "장면 6 · 손 맵 X-MR · 손 자리 0 · 손 실내 -",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R02-15 영등포 구청 배급소",
+  "status": "통과",
+  "note": "장면 6 · 손 맵 - · 손 자리 0 · 손 실내 K-15",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R02-16 신길 언덕 빌라",
+  "status": "주의",
+  "note": "장면 0 · 손 맵 - · 손 자리 0 · 손 실내 - · 손으로 만든 내용이 없다(생성 지형 · 실내만)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R02-17 대방 지하차도",
+  "status": "통과",
+  "note": "장면 4 · 손 맵 - · 손 자리 0 · 손 실내 DB-01",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R02-18 대림 시장",
+  "status": "통과",
+  "note": "장면 12 · 손 맵 X-SB · 손 자리 1 · 손 실내 K-39",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R02-19 새벽인력 본소",
+  "status": "통과",
+  "note": "장면 39 · 손 맵 X-SB,X-GR · 손 자리 0 · 손 실내 -",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R02-20 가리봉 쪽방 골목",
+  "status": "통과",
+  "note": "장면 8 · 손 맵 X-SB · 손 자리 2 · 손 실내 K-20",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R02-21 구로 공단 지식산업센터",
+  "status": "통과",
+  "note": "장면 12 · 손 맵 X-SB · 손 자리 0 · 손 실내 KS-01",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R02-22 구로 공단 노동자 아파트",
+  "status": "통과",
+  "note": "장면 3 · 손 맵 X-SB · 손 자리 2 · 손 실내 K-22",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R02-23 고척 돔 인력 경매장",
+  "status": "통과",
+  "note": "장면 18 · 손 맵 X-GR · 손 자리 0 · 손 실내 GD-01",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R02-24 신도림 환승 고가",
+  "status": "통과",
+  "note": "장면 15 · 손 맵 X-MR · 손 자리 1 · 손 실내 -",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R02-25 구로 차량기지",
+  "status": "통과",
+  "note": "장면 26 · 손 맵 X-SB,X-GR · 손 자리 0 · 손 실내 -",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R02-26 개봉 빌라 미로",
+  "status": "주의",
+  "note": "장면 0 · 손 맵 - · 손 자리 0 · 손 실내 - · 손으로 만든 내용이 없다(생성 지형 · 실내만)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R02-27 온수 경계 둑",
+  "status": "주의",
+  "note": "장면 0 · 손 맵 - · 손 자리 0 · 손 실내 - · 손으로 만든 내용이 없다(생성 지형 · 실내만)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R02-28 여의도 환승센터 터",
+  "status": "주의",
+  "note": "장면 5 · 손 맵 - · 손 자리 2 · 손 실내 - · 자리 없는 인물 N-R02-045",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "장소 내용",
+  "item": "L-R02-29 영등포 경찰서 폐허",
+  "status": "통과",
+  "note": "장면 3 · 손 맵 - · 손 자리 1 · 손 실내 K-29",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "인카운터",
+  "item": "R01 · R02 RE 종류",
+  "status": "실패",
+  "note": "22종 / 기본 표 30종(SD-19 §5 · D-130)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "area": "도달성",
+  "item": "걸어서 못 닿는 청크",
+  "status": "통과",
+  "note": "0 · 봉한 도심 16 · 물 청크 1",
+  "allowed": false,
+  "reason": ""
+ }
+]
