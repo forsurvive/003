@@ -315,8 +315,8 @@ static func _ok(pb) -> void:
 			var notes := d.confirm()
 			if notes.is_empty():
 				return
-			pb.action.emit("levelup", str(d.lv))
-			pb.say(" · ".join(notes.slice(0, 2)))
+			pb.action.emit("levelup", "\n".join(notes))               # 줄마다 화면 알림(문턱 · 퍽 · 생활기록부 — 잘리지 않게)
+			pb.say(str(notes.filter(func(x): return str(x).begins_with("퍽:"))[0]) if notes.any(func(x): return str(x).begins_with("퍽:")) else str(notes[0]))
 			pb.st.lv_draft = null
 			if Perks.pending(pb.st) > 0:                               # 여러 레벨: 레벨 차례대로 이어서(§4.2)
 				pb.st.lv_draft = LevelDraft.begin(pb.st)

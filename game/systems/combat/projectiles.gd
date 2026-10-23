@@ -8,6 +8,8 @@ extends Node2D
 const MAX := 128
 const BUCKET := 128.0
 var world
+var perk_note := Callable()              ## (글, 자리): 퍽이 일한 순간 머리 위 꼬리표(전투가 준다 — 1-12p 구현 뒤 재미 검수 ②)
+var ento_said := false                   ## 이 맵에서 엔토몰로지스트 꼬리표를 띄웠나(맵마다 한 번)
 var pc_st                                ## 주인공 이야기 상태(1-12p 퍽 — 블러디 메스 · 엔토몰로지스트 · 피네스 · 베터 크리티컬스). 없으면 퍽 없음
 var rng := RandomNumberGenerator.new()
 var shots: Array = []                    ## {p, v, ang, life, team, weapon, skill, origin}
@@ -451,6 +453,9 @@ func _apply(c: Combatant, s: Dictionary, at: Vector2) -> void:
 	r["nonlethal"] = w.get("sound", "") == "suppressed" or w.get("kind", "ranged") != "ranged" or s.get("proj", "") == "net"   # 공기총·근접·그물 = 비살상(기절, 0-9)
 	if c.robot:
 		r["hp"] = float(r["hp"]) * float(w.get("robot_mult", 1.0))
+	if pk and not ento_said and Perks.rank(pc_st, "PK-013") > 0 and Perks.insect(target_id(c)) and perk_note.is_valid():
+		ento_said = true
+		perk_note.call("엔토몰로지스트", c.pos() + Vector2(0, -40))
 	c.last_by = str(s["team"])
 	c.take(r, s["origin"])
 	Projectiles.after_hit(c, w, s.get("proj", "bullet"), s["origin"].distance_to(at) / 32.0, rng, (at - s["origin"]).normalized())

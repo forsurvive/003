@@ -115,9 +115,17 @@ func tried_lock(skill_key: String, req: int) -> String:
 	var tr: Array = (st.boxes.get("tried", {}) as Dictionary).get(skill_key, [])
 	for i in range(tr.size() - 1, -1, -1):
 		var e: Dictionary = tr[i]
-		if int(e.get("req", 999)) <= req and int(e.get("req", 999)) > int(start.get(skill_key, 0)):
+		if int(e.get("req", 999)) <= req and int(e.get("req", 999)) > int(start.get(skill_key, 0)) and still_shut(str(e.get("key", ""))):
 			return str(e.get("where", ""))
 	return ""
+
+
+## 그 자리가 아직 닫혀 있나(문 open · 용기 unlocked · 단말 unlocked — 이미 연 자리는 다시 말하지 않는다)
+func still_shut(key: String) -> bool:
+	if key == "":
+		return true
+	var b: Dictionary = st.boxes.get(key, {})
+	return not (bool(b.get("open", false)) or bool(b.get("unlocked", false)))
 
 
 func pick_ok(id: String) -> bool:

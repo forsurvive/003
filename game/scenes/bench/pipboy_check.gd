@@ -58,6 +58,7 @@ func _ready() -> void:
 		host.st.vars.set_v("PC_LV_DONE", 2)
 		host.st.vars.set_v("PK_006", 1)
 		host.st.vars.set_v("PK_003", 1)
+		host.st.vars.set_v("PC_SKP_LOCKPICK", 5)
 		host.st.boxes["tried"] = {"LOCKPICK": [{"req": 50, "where": "봉천 계단마을의 그 철문", "day": 1}]}
 	if k:
 		CharDocs.write_name(host.st, "윤", "서진")
@@ -87,8 +88,8 @@ func _ready() -> void:
 			elif lvm and ak.size() > 2:
 				LevelTab.start(pk)
 				var d: LevelDraft = host.st.lv_draft
-				for i in 9:
-					d.inc("LOCKPICK", 1)
+				for i in 15:
+					d.inc("LOCKPICK", 1)                               # 자물쇠 문턱(50)을 넘겨 문턱 한 마디가 찍히게
 				pk.sel = 4
 				if int(ak[2]) >= 1:
 					d.spread_tags()

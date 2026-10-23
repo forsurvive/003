@@ -224,6 +224,8 @@ func on_map(map: InteriorMap, player: Actor, st: StoryState) -> void:
 	targets.clear()
 	shots.shots.clear()
 	shots.world = map
+	shots.ento_said = false
+	shots.perk_note = func(t: String, at: Vector2) -> void: _pop(t, at, Color("E8C23A"))
 	ord.nades.clear()
 	ord.mines.clear()
 	ord.zones.clear()
@@ -1865,11 +1867,11 @@ func _draw() -> void:
 		var r := 6.0 + 16.0 * k
 		for i in 28:
 			var t := TAU * i / 28.0
-			draw_rect(Rect2((base + Vector2(cos(t) * r, sin(t) * r * 0.4)).round(), Vector2(1, 1)), Color(0.91, 0.76, 0.23, fade))
+			draw_rect(Rect2((base + Vector2(cos(t) * r, sin(t) * r * 0.4)).round(), Vector2(2, 1)), Color(0.91, 0.76, 0.23, fade))
 		for i in 6:
 			var ph := fmod(k * 1.6 + i / 6.0, 1.0)
 			var sp := base + Vector2((i - 2.5) * 4.0 + sin(i * 1.7 + k * 6.0) * 1.5, -4.0 - 44.0 * ph)
-			draw_rect(Rect2(sp.round(), Vector2(1, 2 if i % 2 == 0 else 1)), Color(1.0, 0.86, 0.42, fade * (1.0 - ph * 0.5)))
+			draw_rect(Rect2(sp.round(), Vector2(2, 3 if i % 2 == 0 else 2)), Color(1.0, 0.86, 0.42, fade * (1.0 - ph * 0.5)))
 		if lv_fx > 1.2:
 			lv_fx = -1.0
 	for s in _swings:

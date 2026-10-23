@@ -525,7 +525,10 @@ func _spawn_npc(i: int, n: Dictionary) -> void:
 
 ## 장소 표시(일시 정지·저장 칸): 볼트 실내 = 볼트 S-07 · 맵 이름, 월드 = 권역 · 구역 이름(1-1)
 ## 손대지 못한 자물쇠 · 단말을 기억해 둔다(1-12p 레벨업 문턱 한 마디 — 직접 만져 본 자리만, 최근 여섯)
-func _tried(skill: String, lv: int, what: String) -> void:
+##   key = 그 문(door:…) · 용기(Loot.key) · 단말(term:ID) — 나중에 열면 레벨업 때 다시 말하지 않는다(LevelDraft.still_shut). 볼트 시대 자리는 적지 않는다(다시 못 간다)
+func _tried(skill: String, lv: int, what: String, key := "") -> void:
+	if map == null or map.id.begins_with("V-") or st.quests.cur_act() < 1:
+		return
 	var req := int(Lockpick.REQ[Lockpick.grade_of(lv)]) if skill == "LOCKPICK" else lv
 	var tr: Dictionary = st.boxes.get("tried", {})
 	var arr: Array = tr.get(skill, [])
@@ -533,7 +536,7 @@ func _tried(skill: String, lv: int, what: String) -> void:
 	for e in arr:
 		if str(e["where"]) == where:
 			return
-	arr.append({"req": req, "where": where, "day": int(st.vars.get_v("GAME_DAY"))})
+	arr.append({"req": req, "where": where, "day": int(st.vars.get_v("GAME_DAY")), "key": key})
 	if arr.size() > 6:
 		arr.pop_front()
 	tr[skill] = arr
@@ -975,7 +978,7 @@ func interact() -> bool:
 				say_text("자물쇠 안이 부러져 있다. 열쇠가 있어야 연다.")
 			elif not Lockpick.can_try(lv, st.skill("LOCKPICK")):
 				_prompt_shake = _hud_t + 0.8
-				_tried("LOCKPICK", lv, "문")
+				_tried("LOCKPICK", lv, "문", dkey)
 			else:
 				open_lock(lv, "door", func() -> void:
 					st.boxes[dkey] = {"open": true}
@@ -1058,7 +1061,7 @@ func _enter_go(gd: Dictionary) -> void:
 			say_text("자물쇠 안이 부러졌다. 이 문은 이제 열리지 않는다.")
 		elif not Lockpick.can_try(lv, st.skill("LOCKPICK")):
 			_prompt_shake = _hud_t + 0.8
-			_tried("LOCKPICK", lv, "문")
+			_tried("LOCKPICK", lv, "문", key)
 		else:
 			open_lock(lv, "door", func() -> void:
 				st.boxes[key] = {"open": true}
@@ -1207,7 +1210,7 @@ func open_box(b: Dictionary) -> void:
 		var lv := int(b.get("lock", 0))
 		if not Lockpick.can_try(lv, st.skill("LOCKPICK")):
 			_prompt_shake = _hud_t + 0.8                                 # 시도할 수 없다 — 문구만 흔들린다(SD-12 §8.1)
-			_tried("LOCKPICK", lv, str(b.get("name", "")) if str(b.get("name", "")) != "" else "자물쇠")
+			_tried("LOCKPICK", lv, str(b.get("name", "")) if str(b.get("name", "")) != "" else "자물쇠", Loot.key(map.id, b, st.year()))
 			return
 		open_lock(lv, "dial" if str(b.get("kind", "")) == "safe" else ("pad" if str(b.get("kind", "")) in ["locker", "school_locker", "cabinet"] else "door"),
 			func() -> void:
@@ -1356,7 +1359,7 @@ func open_terminal(t: Dictionary) -> void:
 	if need and (s["locked"] or st.skill("SCIENCE") < lv):
 		_prompt_shake = _hud_t + 0.8                                     # 시도할 수 없다 — 메시지 상자 없이 문구만 흔들린다
 		if not s["locked"]:
-			_tried("SCIENCE", lv, "단말")
+			_tried("SCIENCE", lv, "단말", "term:" + id)
 		return
 	terminal = TerminalScreen.new().setup(st, id, d, need)
 	terminal.hacked.connect(func(xp: int) -> void:
@@ -1527,17 +1530,21 @@ func open_trade(vid: String, done: Callable, k := [1.0, 1.0], greet := "", item_
 		done.call(0)
 		return null
 	k = [float(k[0]) * float(m.get("rate", 1.0)), k[1]]                # 상인 요율(손님 값 1.2배 등, SD-15 §3.1 K)
-	var reg := Perks.regular_k(st, int(sh.get("total", 0)))             # 단골(PK-026, 1-12p): 그 상인과 누적 500캡마다 −5% · +5%, 세 번까지
+	var reg := Perks.regular_k(st, int(sh.get("reg", sh.get("total", 0))))   # 단골(PK-026, 1-12p): 그 상인과 누적 500캡마다 −5% · +5%, 세 번까지(되사고 되판 왕복은 셈하지 않는다)
 	if int(reg[2]) > 0:
 		k = [float(k[0]) * float(reg[0]), float(k[1]) * float(reg[1])]
 		if not sh.has("mine") and want == "":
-			greet = "어, 단골 왔네. " + (greet if greet != "" else str(m.get("greet", "")))
+			greet = str(m.get("regular", "어, 단골 왔네.")) + " " + (greet if greet != "" else str(m.get("greet", "")))
 	var t := TradeScreen.new().setup_trade(st, vid, m, sh, items_db, carry_max(), st.skill("BARTER"), f, k,
 		greet if greet != "" else str(m.get("greet", "")))
 	t.item_k = item_k
+	if Perks.rank(st, "PK-026") > 0:                                     # 거래 창 머리: 단골 단계 · 다음까지(퍽이 일하는 게 보이게)
+		var rv := int(sh.get("reg", sh.get("total", 0)))
+		t.regular_line = "단골 %d/3" % int(reg[2]) + (" — 다음까지 %d캡" % (500 * (int(reg[2]) + 1) - rv) if int(reg[2]) < 3 else "")
 	container = t
 	t.closed.connect(func(_ok: bool) -> void:
 		container = null
+		sh["reg"] = int(sh.get("reg", sh.get("total", 0))) + t.regular_add
 		sh["total"] = int(sh.get("total", 0)) + t.total
 		if stash != null:
 			stash.after_trade(vid)
@@ -1936,9 +1943,10 @@ func _draw_hud() -> void:
 		_draw_hud_touch(vs, c, low, ap)
 		return
 	_bar(Vector2(70, 330 + b), 140.0, c.hp / maxf(1.0, c.max_hp), "HP", HUD_RED if low else HU[5])
+	_lv_glow(vs, Vector2(70, 330 + b), 140.0, c)
 	var pend := Perks.pending(st)
 	if pend > 0:                                                             # 미배분 레벨업(§4.2 'HUD 구석 아이콘')
-		_txt(Vector2(70, 314 + b), "▲ 레벨업%s" % ((" ×%d" % pend) if pend > 1 else ""), Color("E8C23A") if fmod(_hud_t, 1.6) < 1.2 else HU[5])
+		_txt(Vector2(70, 314 + b), "▲ 레벨업%s" % ((" ×%d" % pend) if pend > 1 else ""), _pend_col())
 	_bar(Vector2(430 + r, 330 + b), 140.0, ap, "AP", HU[5])
 	_ap_ticks(Vector2(430 + r, 330 + b), 140.0)
 	if combat.armed() and combat.weapon()["kind"] == "ranged":
@@ -2115,9 +2123,10 @@ func _draw_hud_touch(vs: Vector2, c: Combatant, low: bool, ap: float) -> void:
 	_txt(Vector2(8, 16), "AP", HU[5])
 	_bar(Vector2(28, 20), 140.0, ap, "", HU[5])
 	_ap_ticks(Vector2(28, 20), 140.0)
+	_lv_glow(vs, Vector2(28, 8), 140.0, c)
 	var pend := Perks.pending(st)
 	if pend > 0:                                                             # 미배분 레벨업 — 누르면 핍-보이 능력치 > 퍽(TouchHud)
-		_txt(Vector2(176, 10), "▲ 레벨업%s" % ((" ×%d" % pend) if pend > 1 else ""), Color("E8C23A") if fmod(_hud_t, 1.6) < 1.2 else HU[5])
+		_txt(Vector2(176, 10), "▲ 레벨업%s" % ((" ×%d" % pend) if pend > 1 else ""), _pend_col())
 	var det := combat.detect_state()
 	if det != "" and not (det == "위험" and fmod(_hud_t, 0.3) < 0.15):
 		_txt(Vector2(320 + r / 2.0, 48), "[%s]" % det, HU[5] if det == "숨음" else HUD_RED, HORIZONTAL_ALIGNMENT_CENTER)
@@ -2136,6 +2145,29 @@ func _draw_hud_touch(vs: Vector2, c: Combatant, low: bool, ap: float) -> void:
 		_txt(Vector2(320 + r / 2.0 + _shake_x(), 250 + vs.y - 360.0), bp, HUD_RED if bp.ends_with("[소유]") else HU[6], HORIZONTAL_ALIGNMENT_CENTER)
 	_draw_mates(Vector2(8, 152))
 	_draw_radio(vs, true)
+
+
+## 레벨업 금빛: 화면 가장자리 0.25초 번짐 · HP 바 끝의 늘어난 몫(+10)이 0.8초 깜빡(보상이 눈에 보이게 — 구현 뒤 재미 검수 ③)
+func _lv_glow(vs: Vector2, at: Vector2, w: float, c: Combatant) -> void:
+	if _lv_t < 0.0:
+		return
+	_lv_t += get_process_delta_time()
+	var gold := Color("E8C23A")
+	if _lv_t < 0.25:
+		var a := 0.55 * (1.0 - _lv_t / 0.25)
+		for rr in [Rect2(0, 0, vs.x, 3), Rect2(0, vs.y - 3, vs.x, 3), Rect2(0, 0, 3, vs.y), Rect2(vs.x - 3, 0, 3, vs.y)]:
+			banner.draw_rect(rr, Color(gold, a))
+	if _lv_t < 0.8 and fmod(_lv_t, 0.2) < 0.13:
+		var mx := maxf(1.0, c.max_hp)
+		var seg := maxf(2.0, roundf(w * 10.0 / mx))
+		banner.draw_rect(Rect2(at.x + w - seg, at.y, seg, 4), gold)
+	if _lv_t > 0.8:
+		_lv_t = -1.0
+
+
+func _pend_col() -> Color:
+	_pend_t += get_process_delta_time()
+	return Color("E8C23A") if _pend_t > 10.0 or fmod(_hud_t, 1.6) < 1.2 else HU[5]
 
 
 func _shake_x() -> float:
@@ -2950,7 +2982,8 @@ func consume(id: String) -> bool:
 		rad = roundi(rad * float(eat[1]))
 	if rad != 0:
 		st.vars.set_v("PC_RADS", maxi(0, int(st.vars.get_v("PC_RADS")) + rad))   # 말린 버섯 나물처럼 라드를 줄이는 음식(음수)
-	_note("%s — HP +%d%s%s" % [str(it.get("name", id)), int(heal), ("  방사능 +%d" % rad) if rad > 0 else (("  방사능 %d" % rad) if rad < 0 else "  방사능 없음"), taste])
+	var why := Perks.eat_tags(st, id, heal > 0.0, int(it.get("rads", 0)) > 0)   # 퍽이 숫자를 바꾼 줄엔 퍽 이름(구현 뒤 재미 검수 ②)
+	_note("%s — HP +%d%s%s%s" % [str(it.get("name", id)), int(heal), ("  방사능 +%d" % rad) if rad > 0 else (("  방사능 %d" % rad) if rad < 0 else "  방사능 없음"), why, taste])
 	if id in ["I-054", "I-055", "I-056", "I-057", "I-058", "I-059"]:
 		st.vars.set_v("MQ101_WATER", 1)                                   # MQ-101 '물': 마셔 봐야 안다
 	return true
@@ -3007,10 +3040,16 @@ func _absorb_tick(mins: float) -> void:
 			Radiation.remove(st, n)
 
 
-## 레벨업 순간(SD-10 §4.2): 알림 · 빛(효과음은 소리 단계 D-156) · 처음 한 번은 어디서 나누는지 안내. 게임은 멈추지 않는다
+## 레벨업 순간(SD-10 §4.2): 알림 · 빛 · HP 바가 늘어난 만큼 금빛으로 자람 · 가장자리 금빛(효과음은 소리 단계 D-156) · 처음 한 번은 어디서 나누는지 안내. 게임은 멈추지 않는다
+var _lv_t := -1.0                                                      ## 레벨업 뒤 지난 초(HUD 금빛 — 바 0.8초 · 가장자리 0.25초)
+var _pend_t := 0.0                                                     ## 미배분 ▲가 깜빡인 초(처음 10초만 깜빡이고 그 뒤엔 멈춰 있다 — 잔소리 금지)
+
+
 func _level_up(v: int) -> void:
 	_note("레벨 업 — Lv %d" % v)
 	combat.level_fx()
+	_lv_t = 0.0
+	_pend_t = 0.0
 	if not st.boxes.has("lv_hinted"):
 		st.boxes["lv_hinted"] = {"day": int(st.vars.get_v("GAME_DAY"))}
 		hint("레벨이 올랐다 — 핍-보이 능력치 > 퍽에서 스킬을 나누고 퍽을 고른다(" + ("왼쪽 위 ▲를 눌러도 된다" if touch_layout else "Tab") + ").", 7.0)
@@ -3047,8 +3086,11 @@ func open_pipboy() -> PipBoy:
 
 func _pip_action(kind: String, id: String) -> void:
 	match kind:
-		"levelup":                                                      # 레벨업 확정(1-12p): 최대 HP · AP(라이프 기버 · 액션 보이) · 위 줄 수치
+		"levelup":                                                      # 레벨업 확정(1-12p): 최대 HP · AP(라이프 기버 · 액션 보이) · 위 줄 수치 · 안내 줄마다 알림(잘리지 않게)
 			combat.refresh_pc(st)
+			for ln in id.split("\n"):
+				if ln != "":
+					_note(ln)
 			if pipboy != null:
 				pipboy.info = status()
 		"equip":

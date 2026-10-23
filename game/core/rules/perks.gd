@@ -242,6 +242,19 @@ static func eat_mult(st, id: String) -> Array:
 	return [hp, rad]
 
 
+## 먹기 알림 꼬리표: 숫자를 바꾼 퍽 이름 — '(손맛)' · '(레드 벨리)'
+static func eat_tags(st, id: String, healed: bool, irradiated: bool) -> String:
+	load_db()
+	var base := id.get_slice("+", 0)
+	var out := ""
+	var water := base in ["I-054", "I-055", "I-056", "I-057", "I-058", "I-059"] or id.contains("+I-054") or id.contains("+I-055")
+	if rank(st, "PK-009") > 0 and ((healed and _food.has(base)) or (irradiated and (_cooked.has(id) or id.contains("+")))):
+		out += "(손맛)"
+	if rank(st, "PK-024") > 0 and irradiated and water:
+		out += "(레드 벨리)"
+	return out
+
+
 ## 단골(PK-026): 같은 상인과 누적 거래액 500캡마다 한 단계(최대 3) — [구매 배수, 판매 배수, 단계]
 static func regular_k(st, total: int) -> Array:
 	if rank(st, "PK-026") <= 0:

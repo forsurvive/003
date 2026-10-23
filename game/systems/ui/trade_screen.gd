@@ -18,7 +18,12 @@ var barter := 0                                   ## 주인공 물물교환 스�
 var f := [1.0, 1.0]                               ## 호감도 단계 배수 [구매, 판매]
 var k := [1.0, 1.0]                               ## 개인 보정 [구매, 판매]
 var greet := ""
-var total := 0                                    ## 이번에 오간 캡(단골 누적·MQ101_TRADE)
+var total := 0                                    ## 이번에 오간 캡(MQ101_TRADE)
+var regular_add := 0                              ## 단골(PK-026) 누적에 넣을 캡 — 이 창에서 방금 판 것을 되사거나 산 것을 되파는 왕복은 빼다(구현 뒤 재미 검수 '냄비 열 번')
+var regular_line := ""                            ## 창 머리 '단골 n/3 — 다음까지 m캡'
+var _bought := {}
+var _sold := {}
+var _wash := 0
 var item_k := {}                                  ## 품목별 사는 값 배수(퀘스트 결과: MQ-101 '마을을 판다' → 물값 2배)
 var cart := [{}, {}]                              ## 담은 물건: [0] 내가 파는 것 {ID: 수} · [1] 내가 사는 것 {ID: 수}
 var _armed := false                               ## 거래 확정 단추를 한 번 눌렀다(한 번 더 누르면 확정)
@@ -223,6 +228,7 @@ func deal(id: String, buying: bool, skip_caps := false) -> bool:
 		state["caps"] = int(state.get("caps", 0)) + p
 		st.items[id] = int(st.items.get(id, 0)) + 1
 		total += p
+		_regular(id, p, true)
 		traded.emit(id, 1, p, true)
 		return true
 	var s := price(id, false)
@@ -242,8 +248,21 @@ func deal(id: String, buying: bool, skip_caps := false) -> bool:
 	state["caps"] = int(state.get("caps", 0)) - s
 	st.vars.set_v("PC_CAPS", _caps() + s)
 	total += s
+	_regular(id, s, false)
 	traded.emit(id, 1, s, false)
 	return true
+
+
+func _regular(id: String, caps: int, buying: bool) -> void:
+	var back: Dictionary = _sold if buying else _bought                # 이 창에서 반대 방향으로 오간 물건 = 왕복
+	var mine: Dictionary = _bought if buying else _sold
+	mine[id] = int(mine.get(id, 0)) + 1
+	if int(back.get(id, 0)) > 0:
+		_wash += 1
+		if _wash == 3:                                                  # 세 번째 왕복에 한마디(한 번만)
+			greet = "그 %s, 벌써 세 번째야. 단골은 발로 되는 거지." % str(db.get(Gear.base(id), {}).get("name", "물건"))
+		return
+	regular_add += caps
 
 
 func _sel_id() -> String:
@@ -290,6 +309,8 @@ func _draw_doc() -> void:
 	var warn: Color = DocScreen.C["P54"]
 	text(Vector2(44, 22), "소지품", f12b, 12, U[6])
 	text(Vector2(596, 22), title, f12b, 12, U[6], HORIZONTAL_ALIGNMENT_RIGHT)
+	if regular_line != "":                                              # 단골(PK-026) 단계 — 상인 이름 아래 오른쪽
+		text(Vector2(596, 38), regular_line, f10, 10, U[4], HORIZONTAL_ALIGNMENT_RIGHT)
 	if greet != "":
 		text(Vector2(320, 30), "“" + greet + "”", f10, 10, U[4], HORIZONTAL_ALIGNMENT_CENTER)
 	v.draw_line(Vector2(36, 50), Vector2(604, 50), U[3])

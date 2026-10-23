@@ -217,3 +217,32 @@ func test_perks_threshold_line(t) -> void:
 	else:
 		t.ok(true, "포인트가 모자라 문턱을 못 넘는 몸(건너뜀)")
 	h.free()
+
+
+func test_perks_review_fixes(t) -> void:
+	var r := _host()
+	var h: InteriorHost = r[0]
+	var st: StoryState = r[1]
+	# 이미 연 자리는 문턱 한 마디에서 다시 말하지 않는다
+	h._tried("LOCKPICK", 50, "문", "door:TEST:1,1")
+	st.call_fn("xp", [250])
+	var d := LevelDraft.begin(st)
+	t.ok(d.tried_lock("LOCKPICK", 50) != "", "못 연 문 기억")
+	st.boxes["door:TEST:1,1"] = {"open": true}
+	t.eq(d.tried_lock("LOCKPICK", 50), "", "열었으면 다시 말하지 않는다")
+	# 먹기 꼬리표
+	st.vars.set_v("PK_024", 1)
+	t.eq(Perks.eat_tags(st, "I-054", false, true), "(레드 벨리)", "한강 물 — (레드 벨리)")
+	t.eq(Perks.eat_tags(st, "I-001", true, false), "", "퍽과 상관없는 것엔 꼬리표 없음")
+	# 단골 왕복 매매는 셈하지 않는다
+	var tr := TradeScreen.new()
+	tr.db = h.items_db
+	tr._regular("W-013", 100, true)
+	tr._regular("W-013", 60, false)
+	tr._regular("W-013", 100, true)
+	t.eq(tr.regular_add, 100, "산 것을 되팔고 되사는 왕복은 단골 누적에 넣지 않는다")
+	tr._regular("W-013", 60, false)
+	tr._regular("W-013", 100, true)
+	t.ok(tr.greet.contains("세 번째"), "세 번째 왕복에 상인 한마디")
+	tr.free()
+	h.free()
