@@ -37,6 +37,13 @@ var skill := 45.0
 var per := 5.0
 var react := 0.3                              ## 반응 지연(계엄군 0.3초, §7.4)
 var has_token := false
+var dash_to := Vector2.INF                       ## 진행기가 시킨 달려가기(황두칠이 금고로 — 밸런스 재미 검수): 쏘지 않고 길을 따라 뛴다 · 경직 없음 · DR +25
+var _dash_cd := 0.0
+var _dash_dr := 0.0
+var _wind := 0.0                                 ## 물기 예비 동작 남은 초(0이면 아직 시작 안 함)
+var _circ := 1.0                                 ## 둘레 도는 방향(±1)과 빠르기 — 1.5~3초마다 다시 굴림
+var _circ_v := 0.8
+var _circ_t := 0.0
 var has_mtoken := true                           ## 근접 토큰(전투 고리가 1.5초마다 나눔 — 없으면 2~3칸 밖에서 맴돈다)
 var _burst := 0                                   ## 이번 연사에서 쏜 발 수
 var _t_per := 0.0
@@ -109,7 +116,7 @@ var _burst_on := 0.0                          ## 연사 무기 점사 남은 초
 var _burst_rest := 0.0                        ## 점사 뒤 쉬는 초(0.5~1.0)
 const SAY := {"howl": ["아우우우—!", "우워어어—!"], "rat_call": ["찌이익—!", "끼익! 끼익!"], "flee": ["살려 줘!", "튀어!", "이건 못 해먹겠다!"], "surrender": ["쏘지 마! 항복이야!", "그만, 그만! 손 들었어!"],
 	"drug": ["크흐… 이거면 돼…", "으아아!"], "nade": ["수류탄!", "받아라!"], "back": ["다시 간다!", "덤벼 봐!"], "alarm": ["저기다!", "여기야!"],
-	"click": ["딸깍.", "딸깍—", "따각."]}
+	"click": ["딸깍.", "딸깍—", "따각."], "growl": ["으르렁…", "그르르…", "크르릉…"]}
 var _rng := RandomNumberGenerator.new()
 # 1-D3 미끼 · 굴쥐 · 알집바퀴
 var bait_at := Callable()                     ## (p, r) -> Dictionary: 가장 가까운 미끼 냄새 지대(Ordnance.bait_near — 전투 모듈이 준다)
@@ -268,7 +275,7 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 	cmb.track_limbs = true
 	cmb.crippled_part.connect(_on_cripple)
 	cmb.hit.connect(func() -> void:
-		if cmb.crippled.has("torso") and not cmb.dead and _rng.randf() < 0.5:
+		if cmb.crippled.has("torso") and not cmb.dead and dash_to == Vector2.INF and _rng.randf() < 0.5:
 			cmb.hold("flinch", 0.25))                                  # 몸통 손상: 맞을 때마다 50% 0.25초 경직
 	cmb.hp = float(row["hp"])
 	cmb.dr = float(row["dr"])
@@ -431,6 +438,10 @@ func think(dt: float, target: Combatant, nav, shots: Projectiles) -> void:   ## 
 	if released:
 		_leave(dt, target, nav)
 		return
+	if dash_to != Vector2.INF:
+		_dash(dt, nav)
+		queue_redraw()
+		return
 	if mole and _mole_step(dt, target, nav):
 		queue_redraw()
 		return
@@ -464,6 +475,9 @@ var smoke_at := Callable()                    ## 지대 묻기(Ordnance.in_zone)
 
 
 func _held_step(dt: float) -> void:
+	if _wind > 0.0:
+		_wind = 0.0
+		modulate = Color(1, 1, 1)
 	loco.step(Vector2.ZERO, dt)
 	if cmb.held_by("down") and not _held_pose:
 		_held_pose = true
@@ -583,11 +597,25 @@ func _act(dt: float, target: Combatant, shots: Projectiles) -> void:
 	if style == "melee" and goal == "engage" and to_t.length() < float(weapon.get("range_eff", 1.0)) * 32.0 + target.radius:
 		input = Vector2.ZERO                                       # 닿는 거리면 서서 휘두른다
 	if (style == "dog" or style == "melee") and goal == "engage" and not has_mtoken and to_t.length() < 2.5 * 32.0 and not fixed:
-		input = to_t.normalized().orthogonal() * (1.0 if get_instance_id() % 2 == 0 else -1.0) * 0.8 - to_t.normalized() * (0.4 if to_t.length() < 1.8 * 32.0 else 0.0)   # 토큰이 없으면 둘레를 돈다(겨루는 틈 — 발 고정 걸음 그대로)
+		_circ_t -= dt
+		if _circ_t <= 0.0:                                             # 방향 · 빠르기를 다시 굴린다(재미 검수 F6 — 같은 무리도 매번 다르게) · 가끔 반쯤 달려들다 물러난다
+			_circ_t = _rng.randf_range(1.5, 3.0)
+			_circ = -_circ if _rng.randf() < 0.5 else _circ
+			_circ_v = _rng.randf_range(0.55, 0.95)
+			if _rng.randf() < 0.25:
+				_circ_v = -0.9
+		var inward := 0.4 if to_t.length() < 1.8 * 32.0 else 0.0
+		if _circ_v < 0.0 and _circ_t > 1.0:
+			input = to_t.normalized() * 0.9                            # 반쯤 달려든다(물지는 않는다 — 토큰이 없다)
+		else:
+			input = to_t.normalized().orthogonal() * _circ * absf(_circ_v) - to_t.normalized() * inward   # 토큰이 없으면 둘레를 돈다(발 고정 걸음 그대로)
 	elif style == "dog" and goal == "engage":
 		if to_t.length() < cmb.radius + target.radius + 6.0:
 			input = Vector2.ZERO
 			_bite(dt, target, to_t)
+		elif _wind > 0.0:                                              # 노리던 표적이 빠져나갔다 — 예비 동작을 푼다
+			_wind = 0.0
+			modulate = Color(1, 1, 1)
 		elif to_t.length() > 3.0 * 32.0 and input != Vector2.ZERO:     # 지그재그로 달려든다(포위)
 			input = input.normalized() + input.normalized().orthogonal() * sin(_clock * 5.0 + float(get_instance_id() % 7)) * 0.7
 		_cool = maxf(0.0, _cool - dt)
@@ -660,12 +688,27 @@ func _swarm(dt: float, target: Combatant, to_t: Vector2) -> void:
 
 
 ## 들개 물기: 닿으면 반응 지연 뒤 물고 1.1초 쉰다(SD-14 §4.2 '물기 n')
-func _bite(_dt: float, target: Combatant, to_t: Vector2) -> void:
+func _bite(dt: float, target: Combatant, to_t: Vector2) -> void:
 	if _cool > 0.0 or target.dead or not meets(target) or not has_mtoken:
+		if _wind > 0.0:
+			_wind = 0.0
+			modulate = Color(1, 1, 1)
 		return
 	loco.facing = Locomotion.snap8(to_t, 0.0)
+	var wind_full := 0.3 + maxf(0.0, bite - 15.0) * 0.02             # 물기 앞 예비 동작(재미 검수: 첫 물기도 보이게 — 센 물기일수록 길다, 메기 36 0.72초)
+	if _wind <= 0.0:
+		_wind = wind_full
+		if bite >= 15.0:
+			_say("growl", wind_full + 0.3)
+		modulate = Color(1.0, 0.82, 0.78)                              # 웅크려 노린다 — 몸빛이 붉어진다
+		return
+	_wind -= dt
+	if _wind > 0.0:
+		return
+	_wind = 0.0
+	modulate = Color(1, 1, 1)
 	_show()
-	_cool = 1.1 + maxf(0.0, bite - 15.0) * 0.05                      # 센 물기일수록 예비 동작이 길다(SD-11 §10.3 '강 근접 — 예비 동작 길이', 밸런스 첫 전수: 굴쥐 18 1.25초 · 메기 36 2.15초)
+	_cool = maxf(0.3, 1.1 + maxf(0.0, bite - 15.0) * 0.05 - wind_full)   # 한 주기는 그대로(1.1 + (물기 − 15) × 0.05초 — SD-11 §10.3 '강 근접 · 예비 동작 길이')
 	target.last_by = cmb.team
 	var dr_k := 1.0 - minf(target.dr, CombatRules.DR_CAP) / 100.0           # 물기도 몸 전체 DR을 거친다(SD-11 §4.6 — 밸런스 검사 B4, 2026-10-23)
 	target.take({"hp": bite * (1.25 if frenzied else 1.0) * (1.2 if buff_t > 0.0 else 1.0) * dr_k}, loco.logical)   # 울부짖기 +20%
@@ -761,6 +804,9 @@ signal woke
 
 
 func _die_step(dt: float) -> void:
+	if _wind > 0.0:
+		_wind = 0.0
+		modulate = Color(1, 1, 1)
 	_dead_t += dt
 	if style == "swarm" or style == "dog":
 		var f := mini(int(_dead_t * 10.0), sprite.sprite_frames.get_frame_count("death_E") - 1)
@@ -957,6 +1003,46 @@ var _leave_t := 0.0
 var _leave_cd := 0.0                          ## 떠나는 길 다시 찾기까지(0.5초 — 막힌 쪽을 매 프레임 찾지 않게)
 
 
+## 진행기용 달려가기: 닿으면 'dash_done' 표지. 몸으로 길을 막으면 선다(미끄러지지 않는다) · 다리를 다치면 느려진다(_on_cripple 그대로)
+func start_dash(to: Vector2) -> void:
+	if dash_to == Vector2.INF:
+		_dash_dr = 25.0
+		cmb.dr += _dash_dr
+	dash_to = to
+	_path = PackedVector2Array()
+	_dash_cd = 0.0
+	if has_meta("dash_done"):
+		remove_meta("dash_done")
+
+
+func end_dash() -> void:
+	if dash_to != Vector2.INF:
+		cmb.dr -= _dash_dr
+		_dash_dr = 0.0
+	dash_to = Vector2.INF
+	_path = PackedVector2Array()
+
+
+func _dash(dt: float, nav) -> void:
+	mode = "run"
+	_dash_cd -= dt
+	if loco.logical.distance_to(dash_to) < 20.0:
+		set_meta("dash_done", true)
+		loco.step(Vector2.ZERO, dt)
+		_show()
+		return
+	if (_path.is_empty() or _path_i >= _path.size()) and _dash_cd <= 0.0:
+		_dash_cd = 0.5
+		_repath(nav, dash_to)
+	var input := dash_to - loco.logical
+	if _path_i < _path.size():
+		var wp: Vector2 = _path[_path_i]
+		if loco.logical.distance_to(wp) < 6.0:
+			_path_i += 1
+		input = wp - loco.logical
+	move(steer(input), dt)
+
+
 func _leave(dt: float, _target: Combatant, nav) -> void:
 	_leave_t += dt
 	_leave_cd -= dt
@@ -1141,9 +1227,9 @@ func _bait_step(dt: float, target: Combatant, nav) -> bool:
 		_end_eat()
 		return false
 	var fighting := brain.state in [AIBrain.S.COMBAT, AIBrain.S.FRENZY]
-	if fighting and not target.dead and loco.logical.distance_to(target.pos()) <= BAIT_FIGHT_R:
+	if fighting and not target.dead and loco.logical.distance_to(target.pos()) <= BAIT_FIGHT_R and (has_mtoken or not eating and _bait.is_empty() and bait_at.call(loco.logical, BAIT_R).is_empty()):
 		_end_eat()
-		return false
+		return false                                                   # 근접 토큰이 없는 짐승은 10칸 안 미끼에 끌린다(재미 검수 F12 — 미끼로 무리를 떼어 낸다)
 	if _bait.is_empty() or float(_bait.get("t", 0.0)) <= 0.0:
 		_bait = bait_at.call(loco.logical, BAIT_R)
 		_path = PackedVector2Array()

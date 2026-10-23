@@ -428,7 +428,7 @@ func _hand_arm(enemy_id: String, _pos: Vector2, team: String, map: InteriorMap) 
 	var k := "%s:%s" % [str(map.data.get("id", "")), team]
 	var n := int(_hand_auto.get(k, 0))
 	_hand_auto[k] = n + 1
-	var wid: String = HAND_ARMS[enemy_id][0] if n % 3 == 0 else HAND_ARMS[enemy_id][1]
+	var wid: String = HAND_ARMS[enemy_id][0] if n % 3 == absi(k.hash()) % 3 else HAND_ARMS[enemy_id][1]   # 맵 · 편마다 누가 연사를 쥘지 다르게(재미 검수 — 늘 첫 사람이 아니게)
 	return weapons.get(wid, weapons.get("W-002", {})).duplicate()
 
 
@@ -978,7 +978,7 @@ func tick(dt: float, free: bool, st: StoryState) -> void:
 			var tm: String = cands[i].cmb.team
 			per_team[tm] = int(per_team.get(tm, 0)) + 1
 			cands[i].has_token = int(per_team[tm]) <= 3
-		var mel := enemies.filter(func(e): return is_instance_valid(e) and e.style != "shooter" and not e.cmb.dead)   # 근접 토큰(SD-11 L907~915): 무리는 둘 · 떼 성향은 넷만 문다(밸런스 첫 전수 — 조율사 1번)
+		var mel := enemies.filter(func(e): return is_instance_valid(e) and e.style != "shooter" and not e.cmb.dead and not e.eating)   # 미끼를 먹는 짐승은 토큰을 받지 않는다   # 근접 토큰(SD-11 L907~915): 무리는 둘 · 떼 성향은 넷만 문다(밸런스 첫 전수 — 조율사 1번)
 		mel.sort_custom(func(a, b): return a.loco.logical.distance_to(_target_for(a).pos()) < b.loco.logical.distance_to(_target_for(b).pos()))
 		var per_m := {}
 		for e in mel:

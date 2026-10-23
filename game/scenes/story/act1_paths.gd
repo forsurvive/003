@@ -37,10 +37,12 @@ const SB_RAID_N := 10                                ## 정면 습격 조직원 
 const SB_CAGES := {4: 1, 10: 1, 22: 2, 28: 1, 34: 1} ## H-03 우리 문 x → 갇힌 사람 수(주인공 칸 16 빼고 합 6)
 const SB_YARD := Rect2i(11, 11, 37, 25)              ## X-SB 담 안(마당 + 뒷마당, 손 맵 좌표)
 const SB_WALLS := Rect2i(10, 3, 39, 35)              ## X-SB 본소 울타리 안(건물 · 옥상 · 마당 — 이 밖이 '본소 밖')
-const SB_BURN_SECS := 8.0
+const SB_BURN_SECS := 12.0                                             ## 금고로 뛰어가 장부를 꺼내 태우기까지 쓸 수 있는 시간(그 안에 닿아 SB_BURN_AT초 머물면 탄다)
+const SB_BURN_AT := 1.5
 var _sb: Array = []                                  ## 지금 맵에서 싸우는 새벽인력
 var _hdc: Enemy = null
 var _hdc_burn := -1.0
+var _hdc_at := 0.0
 var _sb_warn := -1.0
 var _collar := -1.0
 var _sb_zone := ""
@@ -558,18 +560,38 @@ func _sb_tick() -> void:
 		if _sb.is_empty() and host.map != null:
 			st.boxes["sbclear:" + host.map.id] = {"open": true}
 	if is_instance_valid(_hdc) and not _hdc.cmb.dead:
-		if _hdc_burn < 0.0 and _hdc.cmb.hp <= _hdc.cmb.max_hp * 0.3 and v("SB_SAFE") == 0 and v("SB_READ") == 0:
-			_hdc_burn = SB_BURN_SECS
-			host.hint("황두칠이 금고로 달려간다 — 장부를 난로에 처넣으려 한다!", 4.0)
+		if _hdc_burn < 0.0 and _hdc.cmb.hp <= _hdc.cmb.max_hp * 0.3 and v("SB_SAFE") == 0 and v("SB_READ") == 0 and host.map != null and host.map.id == "H-04":
+			_hdc_burn = SB_BURN_SECS                                       # 실제로 금고까지 뛰어간다(재미 검수 — 숨은 타이머가 아니라 막을 수 있는 국면: 길을 몸으로 막기 · 다리 쏘기 · 먼저 금고 털기)
+			_hdc_at = 0.0
+			_hdc.start_dash(_hdc_spot())
+			_hdc.say_text = "장부만은 못 넘겨!"
+			_hdc.say_t = 2.0
+			host.hint("황두칠이 금고로 뛴다 — 장부를 난로에 처넣으려 한다! 길을 막거나 다리를 쏴라.", 4.0)
 		elif _hdc_burn > 0.0:
 			_hdc_burn -= 0.5
-			if _hdc_burn <= 0.0:
+			if _hdc.has_meta("dash_done"):
+				_hdc_at += 0.5
+			if _hdc_burn <= 0.0 and _hdc_at < SB_BURN_AT:                 # 제때 못 닿았다 — 다시 싸운다(장부는 금고에 그대로)
+				_hdc.end_dash()
+				host.hint("황두칠이 금고에 닿지 못했다. 장부는 아직 금고 안에 있다.", 4.0)
+			elif _hdc_at >= SB_BURN_AT:
+				_hdc_burn = 0.0
+				_hdc.end_dash()
 				st.vars.set_v("SB_BURNT", 1)
 				st.vars.set_v("SB_SAFE", 1)
 				st.vars.set_v("HO_LEDGER", 99)
 				host.map.set_prop_state(Vector2i(36, 11), "open")
 				host.hint("난로 속에서 장부가 타오른다. 의뢰서 봉투만 황두칠의 외투 안에 남았다.", 5.0)
 				_log("황두칠이 장부를 태움")
+
+
+## 황두칠이 뛰어갈 금고 앞 칸(H-04 금고 36,11 둘레의 빈 칸)
+func _hdc_spot() -> Vector2:
+	for d in [Vector2i(0, 1), Vector2i(-1, 0), Vector2i(1, 0), Vector2i(-1, 1), Vector2i(1, 1), Vector2i(0, -1)]:
+		var t: Vector2i = Vector2i(36, 11) + d
+		if not host.map.is_solid(t):
+			return Vector2(t.x * 32 + 16, t.y * 32 + 16)
+	return Vector2(36 * 32 + 16, 12 * 32 + 16)
 
 
 ## 표찰 없이 담 안에 선 사람: 6칸 안 · 서 있음(웅크리면 못 봄) → 경고 한 번, 3초 뒤에도 보이면 습격

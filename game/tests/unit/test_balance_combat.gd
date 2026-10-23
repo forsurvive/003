@@ -72,3 +72,28 @@ func test_balance_melee_tokens(t) -> void:
 	t.eq(dogs.filter(func(e): return e.has_mtoken).size(), 2, "들개 무리는 둘만 문다")
 	t.eq(rats.filter(func(e): return e.has_mtoken).size(), 4, "시궁쥐 떼는 넷까지")
 	m.free()
+
+
+func test_balance_windup_dash(t) -> void:
+	var h = ARMS.new()
+	var st: StoryState = h._state()
+	var r: Array = h._setup(st)
+	var m: InteriorMap = r[0]
+	var c: InteriorCombat = r[1]
+	var o: Vector2i = r[3]
+	var k := _spawn(c, m, st, "CR-096", h._at(o, 3, 3), {"lv": 5})
+	var hp0 := c.pc.hp
+	var to := c.pc.pos() - k.loco.logical
+	k._bite(0.1, c.pc, to)
+	t.ok(k._wind > 0.0 and c.pc.hp == hp0, "첫 물기 전 예비 동작(바로 물지 않는다)")
+	t.eq(k.say_text in ["으르렁…", "그르르…", "크르릉…"], true, "센 물기(18)는 으르렁 예고")
+	for i in 10:
+		k._bite(0.1, c.pc, to)
+	t.ok(c.pc.hp < hp0 and k._wind == 0.0, "예비 동작 뒤에 문다")
+	var b := _spawn(c, m, st, "CR-513", h._at(o, 6, 3), {"lv": 10})
+	var dr0 := b.cmb.dr
+	b.start_dash(h._at(o, 10, 3))
+	t.eq(b.cmb.dr, dr0 + 25.0, "금고로 뛰는 동안 DR +25")
+	b.end_dash()
+	t.eq([b.cmb.dr, b.dash_to], [dr0, Vector2.INF], "멈추면 그대로")
+	m.free()

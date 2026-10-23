@@ -234,8 +234,8 @@ func _init() -> void:
 		vars.declare("SQ_S08_" + k, "int", 0)
 	# SQ-S09 127번(1-11h, SD-04a §5.2 · SideS09): 채윤재의 자리는 SB_127 하나(0 · 1 우리 · 2 길금순 칸 · 3 정문 앞 · 4 구로 집 · 5 7일째 줄 · 6 봉천 · 7 지하시장 · 8 팔림).
 	# START 발동 날 · DUE_M/DUE_D 트럭 날짜 · WIFE · TOOK(1 받음 · 2 사양) · DEBT · SOL1(1 몸값 · 2 우리 열기 · 3 장부 · 4 습격) · SOL2(1 지하로 · 2 운송로 · 3 막음 · 4 갈고리 · 9 부서짐) ·
-	# NOTICE 갈고리가 눈치챈 날 · REQ 길금순 부탁 · ORDER 지시서 · LIST · LISTGIVEN · WALL · PLACE(1 구로 · 2 봉천 · 3 지하시장 · 9 혼자) · UNCOL · DOOR · LEARN · CRACK · GATE · OUT · HAGGLE · REWARD · CLOSED · DAY · CHECK · SPENT88 아내 돈으로 88번 · SAID88 · WAITED 혼자 와서 판자 앞에서 기다림
-	for k in "START DUE_M DUE_D WIFE TOOK DEBT SOL1 SOL2 NOTICE REQ ORDER LIST LISTGIVEN WALL PLACE UNCOL DOOR LEARN CRACK GATE OUT HAGGLE REWARD CLOSED DAY CHECK SPENT88 SAID88 WAITED".split(" "):
+	# NOTICE 갈고리가 눈치챈 날 · REQ 길금순 부탁 · ORDER 지시서 · LIST · LISTGIVEN · WALL · PLACE(1 구로 · 2 봉천 · 3 지하시장 · 9 혼자) · UNCOL · DOOR · LEARN · CRACK · GATE · OUT · HAGGLE · REWARD · KEPT 몸값을 챙김(밸런스 재미 검수 — 마무리가 다르다) · CLOSED · DAY · CHECK · SPENT88 아내 돈으로 88번 · SAID88 · WAITED 혼자 와서 판자 앞에서 기다림
+	for k in "START DUE_M DUE_D WIFE TOOK DEBT SOL1 SOL2 NOTICE REQ ORDER LIST LISTGIVEN WALL PLACE UNCOL DOOR LEARN CRACK GATE OUT HAGGLE REWARD CLOSED DAY CHECK SPENT88 SAID88 WAITED KEPT".split(" "):
 		vars.declare("SQ_S09_" + k, "int", 0)
 	vars.declare("SQR_S09", "int", 0)
 	vars.declare("SQS_S09", "int", 0)
