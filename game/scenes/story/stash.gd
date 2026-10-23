@@ -26,7 +26,7 @@ const GUARDS := [["C-057", "AFF_JC_BC", "하숙자"], ["N-R01-046", "AFF_JC_SA",
 const GONE_LINE := {"kid": "빈집 쪽 골목이 조용하다. 사탕 껍질도, 맨발 자국도 이제 없다 — 그 아이는 다른 데로 갔다.",
 	"crew": "소굴 쪽에서 들은 말: '그 자루? 진작 넘겼지.' 내 물건은 이제 누구 손에 있는지 모른다.",
 	"fence": "그 가게 진열이 바뀌었다. 긁힌 자국 난 물건은 하나도 없다 — 팔렸다.",
-	"gone": "털린 자리는 그대로다. 찾을 길은 끝났다."}
+	"gone": "털린 자리는 그대로다. 찾을 길이 끊겼다."}
 const CREW_T := "calm_uq125"                ## 낮의 털이꾼 소굴 · 잠복 털이꾼: 먼저 치거나 자루에 손대기 전엔 말이 통한다
 const TRADE_V := {"scrap": "VG_SCRAP", "herb": "VG_HERB", "parts": "VG_PARTS", "cloth": "VG_CLOTH", "food": "VG_FOOD", "drift": "VG_DRIFT"}
 
@@ -131,7 +131,7 @@ func can_claim(map_id: String, b: Dictionary, c: Dictionary) -> String:
 	if not (c.get("items", {}) as Dictionary).is_empty():
 		return "먼저 비워야 한다"
 	if (data()["spots"] as Dictionary).size() >= MAX_SPOTS:
-		return "이미 자리가 많다 — 하나를 놓아라"                        # §6 #6
+		return "이미 자리가 많다 — 하나는 내놓아야 한다"                      # §6 #6
 	return ""
 
 
@@ -168,7 +168,7 @@ func risk(b: Dictionary, c: Dictionary) -> float:
 func risk_text(map_id: String, b: Dictionary, c: Dictionary) -> String:
 	var nm := str(b.get("name", "용기"))
 	var lv := int(b.get("lock", 0))
-	var a := ("잠기지 않는 " if lv <= 0 else ("허술한 자물쇠의 " if lv <= 25 else ("단단히 잠기는 " if lv <= 50 else "잠긴 "))) + nm + "."
+	var a := ("잠기지 않는 " if lv <= 0 else ("자물쇠가 허술한 " if lv <= 25 else ("잠긴 " if lv <= 50 else "단단히 잠긴 "))) + nm + "."
 	var th := int(b.get("th", 2))
 	var w: String = "길가라 누구나 지나간다." if map_id == "W" else str(({1: "사람이 자주 드나드는 동네다.", 2: "가끔 사람이 지나간다.", 3: "여긴 짐승만 다닌다."} as Dictionary).get(th, ""))
 	return "%s %s%s" % [a, w, " 방울 줄을 매 두었다." if bool(c.get("bell", false)) else ""]
@@ -258,7 +258,7 @@ func _act(what: String, b: Dictionary, c: Dictionary, scr: ContainerScreen) -> v
 			d["spots"].erase(k)
 			scr.stash_mode = "claim" if can_claim(host.map.id, b, c) == "" else ""
 			scr.bell_ok = false
-			host.hint("자리를 놓았다. 남은 물건은 그대로다 — 이제 임자가 없다.", 4.0)
+			host.hint("자리를 내놓았다. 남은 물건은 그대로다 — 이제 임자가 없다.", 4.0)
 		"bell":
 			if st.items.has(BELL) and not bool(c.get("bell", false)):
 				st.call_fn("take", [BELL, 1])
@@ -278,7 +278,7 @@ func spots() -> Dictionary:
 # ---------------------------------------------------------------- 수첩 기억(1-12o D-225 — StashBook이 읽는다)
 ## 끝 갈래(UQ-125 R) → 지난 일 한 마디
 const END_NOTE := {1: "아이에게서 되찾음", 2: "아이에게서 되찾음 — 먹을 것은 두고", 3: "아이를 맡기고 되찾음", 6: "아이가 두고 달아남",
-	7: "털이꾼 소굴에서 되찾음", 8: "털이꾼과 말로 풀어 되찾음", 10: "털이꾼에게 수고비 주고 되찾음", 4: "장사꾼 진열에서 되삼", 5: "장사꾼에게서 돌려받음", 9: "끝내 못 찾았다"}
+	7: "털이꾼 소굴에서 되찾음", 8: "털이꾼과 말로 풀어 되찾음", 10: "털이꾼에게 수고비 주고 되찾음", 4: "장사꾼 진열에서 되사 옴", 5: "장사꾼에게서 돌려받음", 9: "끝내 못 찾았다"}
 
 
 func _fav_name() -> String:
@@ -320,7 +320,7 @@ func _known(k: String, c: Dictionary) -> void:
 		s["known"] = {"day": day(), "at": Clock.abs_min(host.date_text), "text": str(c["trace"]), "b": int(c["trace_b"]), "lost": lost, "left": left}
 		_note(k, "털림 — " + first)
 	else:
-		_note(k, "방울이 막음 — " + first)
+		_note(k, "방울 덕에 무사 — " + first)
 
 
 func _refilled(c: Dictionary, left: Dictionary) -> bool:

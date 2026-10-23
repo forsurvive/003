@@ -49,7 +49,7 @@ static func status(st, s: Dictionary, now := "") -> String:
 	if not kn.is_empty():
 		return "되찾음" if _bundle_state(st, int(kn.get("b", 0))) == "back" else "털림"
 	var seen: Dictionary = s.get("seen", {})
-	return "방울" if bool(seen.get("bell", false)) else md(st, int(seen.get("day", s.get("since", 0))), int(seen.get("at", 0)), now)   # 방울도 닫은 순간의 기억 · 날짜는 상세에   # 방울도 닫은 순간의 기억(방울이 막은 날 열기 전에 새지 않게)
+	return "방울 매 둠" if bool(seen.get("bell", false)) else md(st, int(seen.get("day", s.get("since", 0))), int(seen.get("at", 0)), now)   # 방울도 닫은 순간의 기억 · 날짜는 상세에   # 방울도 닫은 순간의 기억(방울이 막은 날 열기 전에 새지 않게)
 
 
 static func safe_status(st, s: Dictionary, now := "") -> String:
@@ -105,7 +105,7 @@ static func worry(st, s: Dictionary) -> String:
 	else:
 		why = "가끔 생각난다."
 	if n >= 7 and p * n > 0.08:
-		why = "너무 오래 비워 뒀다. " + why
+		why = "너무 오래 내버려 뒀다. " + why
 	return when + " " + why
 
 
@@ -121,7 +121,7 @@ static func long_where(st, s: Dictionary) -> String:
 	var near := _near(st, w)
 	var cell := PipMap.grid_name(Vector2(w)) + " 구역"
 	if str(near[0]) == "":
-		return cell + " — 둘레에 아는 곳이 없다"
+		return cell + " — 근처에 아는 곳이 없다"
 	var dd := float(near[1])
 	if dd < 8.0:
 		return "%s 바로 옆 · %s" % [near[0], cell]
@@ -156,7 +156,7 @@ static func memory_lines(items: Dictionary, db: Dictionary, n := 7) -> Array:
 		var nm := str(db.get(Gear.base(str(id)), {}).get("name", id))
 		out.append(nm + (" ×%d" % int(items[id]) if int(items[id]) > 1 else ""))
 	if ids.size() > n:
-		out.append("그 밖 %d가지" % (ids.size() - n))
+		out.append("그 밖에 %d가지" % (ids.size() - n))
 	if int(items.get("M-001", 0)) > 0:
 		out.append("캡 %d" % int(items["M-001"]))
 	return out

@@ -145,7 +145,7 @@ func _draw_doc() -> void:
 	var bx := 40.0
 	var btns := [["move", "E 옮기기"], ["all", "Q 모두 가져가기"], ["close", "Tab 닫기"]]
 	if stash_mode != "":
-		btns.append(["mine", "C 내 자리로 삼기" if stash_mode == "claim" else "C 자리 놓기"])
+		btns.append(["mine", "C 내 자리로 삼기" if stash_mode == "claim" else "C 자리 내놓기"])
 	if bell_ok:
 		btns.append(["bell", "B 방울 줄 매기"])
 	for b in btns:

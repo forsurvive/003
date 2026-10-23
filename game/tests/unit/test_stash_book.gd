@@ -102,15 +102,15 @@ func test_stash_book_bell(t) -> void:
 	c["items"] = {"W-013": 1}
 	c["bell"] = true
 	s.on_close(b, c)
-	t.eq(StashBook.status(st, sp, h.date_text), "방울", "방울을 맨 자리")
+	t.eq(StashBook.status(st, sp, h.date_text), "방울 매 둠", "방울을 맨 자리")
 	c["bell"] = false                                                    # 방울이 털이를 막은 날(하루 판정이 방울 줄을 끊는다)
 	c["trace"] = "방울 줄이 끊겨 바닥에 늘어져 있다. 누가 손을 대다 방울 소리에 달아났다 — 물건은 그대로다."
 	c["trace_seen"] = false
-	t.eq(StashBook.status(st, sp, h.date_text), "방울", "열기 전 수첩은 여전히 '방울'(새지 않는다)")
+	t.eq(StashBook.status(st, sp, h.date_text), "방울 매 둠", "열기 전 수첩은 여전히 '방울 매 둠'(새지 않는다)")
 	var scr := _open(h, s, b, c)
 	scr.free()
 	t.ok(StashBook.status(st, sp, h.date_text) != "털림", "방울이 막은 것은 털림이 아니다")
-	t.ok((sp["log"] as Array).any(func(e): return str(e["text"]).begins_with("방울이 막음")), "지난 일 — 방울이 막음")
+	t.ok((sp["log"] as Array).any(func(e): return str(e["text"]).begins_with("방울 덕에 무사")), "지난 일 — 방울 덕에 무사")
 	h.free()
 
 

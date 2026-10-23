@@ -942,7 +942,8 @@ func _stash_page(id: String) -> void:
 	var rows2: Array = []
 	if safe:
 		rows2.append(["어디", str(StashBook.SAFE.get(str(s["map"]), {}).get("where", ""))])
-		rows2.append(["지킴", "털리지 않는다 · " + StashBook.safe_status(st, s, now)])
+		var ss := StashBook.safe_status(st, s, now)                       # '안전'은 목록 칸 말 — 상세에선 되풀이하지 않는다(사용자 지적 2026-10-23)
+		rows2.append(["보관", "맡겨 둔 자리라 털리지 않는다" + ("" if ss == "안전" else " · " + (ss.trim_prefix("~") + "까지" if ss.begins_with("~") else ss))])
 	else:
 		rows2.append(["어디", StashBook.long_where(st, s)])
 		rows2.append(["숨겨 둔 날", StashBook.md(st, int(s.get("since", 0)), int(s.get("since_at", 0)), now)])
@@ -980,7 +981,7 @@ func _stash_page(id: String) -> void:
 		y += 8.0
 		var parts: Array = []
 		for e in lg.slice(maxi(0, lg.size() - 3)):                      # 최근 셋 · 마디마다 짧게(탭 줄에 닿지 않게)
-			parts.append("%s %s" % [StashBook.md(st, 0, int(e["at"])), _fit(str(e["text"]).replace("삼음", "숨겨 둠").replace("방울 맴", "방울 매 둠"), 150.0)])   # 옛 저장의 '삼음'도 새 말로(사용자 지적 2026-10-23)
+			parts.append("%s %s" % [StashBook.md(st, 0, int(e["at"])), _fit(str(e["text"]).replace("삼음", "숨겨 둠").replace("방울이 막음", "방울 덕에 무사").replace("방울 맴", "방울 매 둠").replace("진열에서 되삼", "진열에서 되사 옴"), 150.0)])   # 옛 저장의 '삼음'도 새 말로(사용자 지적 2026-10-23)
 		if y < 268.0:
 			_para(Vector2(264, y), " · ".join(parts), U[4])
 
