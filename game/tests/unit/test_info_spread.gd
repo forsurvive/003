@@ -48,7 +48,7 @@ func test_info_routes(t) -> void:
 		if not dd.arrival(e, "SB").is_empty():
 			n += 1
 			t.eq(int(dd.arrival(e, "SB")[0]), T0 + 48 * 60, "정보상 48시간")
-	t.ok(n > 6 and n < 34, "정보상은 공개도 1의 30% 안팎(%d/60)" % n)
+	t.ok(n > 6 and n < 34, "정보상은 공개도 1의 30%% 안팎(%d/60)" % n)
 	var y := dd.record(st, "처치", "R06", 1, {"JC_IT": 0}, T0 + 10, {"about": ["YH"]})
 	t.eq(dd.arrival(y, "JC_IT"), [T0 + 720 - (T0 % 720) + (720 if (T0 + 10) % 720 >= 720 else 0), "용산 기지 방송"] if false else dd.arrival(y, "JC_IT"), "용산 방송 도착(자리)")
 	t.eq(str(dd.arrival(y, "JC_IT")[1]), "용산 기지 방송", "연합단 관련 → 용산 기지 방송")
@@ -81,16 +81,35 @@ func test_info_hush_launder(t) -> void:
 	t.eq(dd.heard.any(func(h): return str(h["what"]).contains("샜다")) or not leak, true, "20%면 7일 뒤 샌다(기록 ID 굴림)")
 	var c := dd.record(st, "범죄", "R02", 2, {"JH": -4}, T0 + 9 * 1440, {"what": "다"})
 	var jh0 := int(st.vars.get_v("AFF_JH"))
-	dd.launder(c, "SB")
+	var cc := dd.launder(c, "SB", T0 + 9 * 1440)
 	dd.tick(st, T0 + 12 * 1440)
-	t.eq(int(st.vars.get_v("AFF_JH")), jh0, "세탁하면 효과가 주인공에게 오지 않는다")
+	t.eq(int(st.vars.get_v("AFF_JH")), jh0 - (10 if cc else 0), "세탁하면 기록의 효과가 주인공에게 오지 않는다(들키면 지하시장 −10만)")
 	t.ok(dd.heard.any(func(h): return str(h["what"]).contains("새벽인력 짓이라더라")), "들은 소식은 '○○ 짓이라더라'")
 	var hs := 0
 	for i in 200:
 		var e := dd.record(st, "범죄", "R02", 1, {"SB": -1}, T0, {})
 		if dd.launder(e, "BJ"):
 			hs += 1
-	t.ok(hs > 10 and hs < 55, "세탁 발각 15% 안팎(%d/200)" % hs)
+	t.ok(hs > 10 and hs < 55, "세탁 발각 15%% 안팎(%d/200)" % hs)
+	var t1 := T0 + 20 * 1440
+	dd.tick(st, t1)                                                        # 앞의 세탁 값은 여기서 다 매겨 둔다
+	st.vars.set_v("AFF_JH", 0)                                             # 앞에서 바닥(−100)까지 내려갔을 수 있다
+	st.vars.set_v("AFF_BJ", 0)
+	var jh1 := int(st.vars.get_v("AFF_JH"))
+	var bj1 := int(st.vars.get_v("AFF_BJ"))
+	var got: Dictionary = {}
+	for i in 200:                                                          # 발각되는 기록 하나를 찾아 하루 미룸을 본다
+		var e := dd.record(st, "범죄", "R02", 1, {"SB": -1}, t1, {})
+		if absi(hash(str(e["id"]) + ":launder")) % 100 < 15:
+			dd.launder(e, "BJ", t1)
+			got = e
+			break
+	t.ok(not got.is_empty(), "발각 기록")
+	dd.tick(st, t1 + 600)
+	t.eq(int(st.vars.get_v("AFF_JH")), jh1, "발각 값은 그 자리에서 매기지 않는다")
+	dd.tick(st, t1 + 1440)
+	t.eq(int(st.vars.get_v("AFF_JH")), jh1 - 10, "하루 지나 지하시장 −10")
+	t.eq(int(st.vars.get_v("AFF_BJ")), bj1 - 10, "누명 쓴 쪽도 −10")
 
 
 func test_info_solve_at_find(t) -> void:
@@ -110,9 +129,10 @@ func test_info_gossip_broker(t) -> void:
 	var st := _st()
 	StoryExpr.run('aff("SB", 6)', st)
 	st.deeds.tick(st, T0 + 3 * 1440)
-	var g := st.deeds.gossip("JC_BC", T0 + 3 * 1440)
-	t.ok(g.begins_with("새벽인력 일 거들었다며?"), "연동 소식 — 그 마을 주민이 출처를 붙여 꺼낸다(%s)" % g)
-	t.eq(st.deeds.gossip("JC_BC", T0 + 3 * 1440), "", "한 번만")
+	var g: Array = st.deeds.gossip("JC_BC", T0 + 3 * 1440)
+	t.ok(not g.is_empty() and str(g[0]).begins_with("새벽인력 일 거들었다며?"), "연동 소식 — 그 마을 주민이 출처를 붙여 꺼낸다(%s)" % str(g))
+	t.eq(str(g[1]) if not g.is_empty() else "", "불만", "봉천엔 나쁜 소식 — 표정도 불만")
+	t.ok(st.deeds.gossip("JC_BC", T0 + 3 * 1440).is_empty(), "한 번만")
 	var h := InteriorHost.new()
 	h.st = st
 	h._ready()

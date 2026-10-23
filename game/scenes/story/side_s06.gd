@@ -651,7 +651,7 @@ func _solo_roll() -> void:
 		_up(50)
 		_up(100)
 		_sv("SQ_S06_REWARD", 4)                                            # 군번줄은 남문에서 건넨다
-		_deed("SQS06_SOLO", {"ND": 0}, "탈영병 진해원이 혼자 노들섬 남문에 닿았다")
+		_deed("SQS06_SOLO", {"JC_ND": 0}, "탈영병 진해원이 혼자 노들섬 남문에 닿았다")
 		_log("혼자 닿음")
 	else:
 		_sv("SQ_S06_HOW", 1)
@@ -683,7 +683,7 @@ func _arrive(sol: int, watched := true) -> void:
 	host.refresh_npcs()
 	var what := {1: "고개길 수송대 짐칸에 탄 탈영병이 다리목을 넘었다", 2: "위조 등록증을 쥔 탈영병이 다리목 판독기를 통과했다",
 		3: "밤 물길로 탈영병 하나가 노들섬 갈대밭에 내렸다", 9: "탈영병 하나가 다리목을 넘어 노들섬 남문에 닿았다"}
-	_deed("SQS06_ARRIVE", {"ND": 0}, str(what.get(sol, "")))
+	_deed("SQS06_ARRIVE", {"JC_ND": 0}, str(what.get(sol, "")))
 	_log("노들섬 도착(해법 %d)" % sol)
 
 

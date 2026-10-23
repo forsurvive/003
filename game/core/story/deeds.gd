@@ -67,6 +67,7 @@ var victims := {}                                  ## 인물 ID → true: 주인
 var last := 0                                      ## 마지막으로 처리한 게임 분
 var seen := {}                                     ## 권역 → 주인공이 사람 눈에 띈 분들(최근 여섯 — 시체 조사 +20% — §6.4, 1-12q)
 var said := {}                                     ## 주민이 이미 꺼낸 들은 소식(기록 ID:세력 → true) — 한 번만
+var laundered: Array = []                          ## 세탁한 기록: {"what", "to", "caught", "at", "told", "paid"} — 발각 값은 하루 뒤 tick에서(paid), 구문철은 그 뒤 첫 만남에 말한다(told)
 var hushed: Array = []                             ## 입막음한 기록: {"what", "until", "to"(세력 이름들), "told"} — 정보상이 '거기까진 안 갔어'로 알려 준다
 var leaks: Array = []                              ## 매수한 기록이 샐 날: {"at", "what", "region", "place", "fx", "tag", "about"}
 var link_hold := 0                                 ## 0보다 크면 aff가 연동 기록을 남기지 않는다(전파 도착 · RQ · 거래 · 기부)
@@ -118,6 +119,12 @@ func tick(st: StoryState, now: int) -> void:
 	for l in due:
 		record(st, "범죄", str(l["region"]), 1, l["fx"], int(l["at"]), {"tag": str(l["tag"]), "place": str(l["place"]),
 			"what": "%s — 입막음한 얘기가 샜다" % str(l["what"]), "about": l.get("about", [])})
+	for lw in laundered:                                               # 세탁 발각(§6.5 15%): 하루 뒤에 값을 매긴다 — 구문철은 다음 만남에 말한다
+		if bool(lw["caught"]) and not bool(lw.get("paid", false)) and now - int(lw["at"]) >= 1440:
+			lw["paid"] = true
+			st.call_fn("aff", ["JH", -10])
+			if st._aff_key(str(lw["to"])) != "":
+				st.call_fn("aff", [str(lw["to"]), -10])
 	var evs: Array = []                                                # [도착 분, 기록, 세력, 경로]
 	for d in list:
 		for f in (d["fx"] as Dictionary).keys():
@@ -200,6 +207,7 @@ func _arrive(st: StoryState, d: Dictionary, f: String, when: int, route: String)
 		return
 	d["known"][f] = when
 	var dv := int(d["fx"].get(f, 0))
+	_link_dv[str(d["id"]) + ":" + f] = dv
 	link_hold += 1                                                     # 도착한 효과는 다시 연동하지 않는다(연쇄 금지)
 	if dv != 0 and str(d["attr"]) == "player":
 		st.call_fn("aff", [f, dv])
@@ -217,6 +225,8 @@ func _arrive(st: StoryState, d: Dictionary, f: String, when: int, route: String)
 
 ## 기록별 후속(SD-20 이월): 걸어 들어감(MQ-106 결과 4) 소문이 봉천에 닿으면 봉천 사람들이 하루 동안 수군거린다(N8 세계 반응)
 func _hook(st: StoryState, d: Dictionary, f: String) -> void:
+	if str(d["attr"]) != "player":                                    # 세탁 · 귀속 불명 기록은 '네 얘기'로 후속하지 않는다(1-12q 구현 뒤 재미 검수 ③)
+		return
 	if str(d["tag"]).begins_with("CRIME") and str(d["tag"]) != "CRIME_BODY":
 		for a in d.get("about", []):
 			known_killer[st.canon(str(a))] = true
@@ -278,6 +288,8 @@ func pending(now: int) -> Array:
 		for f in (d["fx"] as Dictionary).keys():
 			if (d["known"] as Dictionary).has(f):
 				continue
+			if int(d["fx"][f]) == 0 and not str(d["tag"]).begins_with("CRIME") and str(d["tag"]) != "MQ106_WALK":
+				continue                                               # 닿아도 달라지는 게 없는 '알게 되는 것만'은 읽어 주지 않는다
 			var a := arrival(d, str(f))
 			if a.size() == 2:
 				out.append({"d": d, "f": str(f), "at": int(a[0]), "route": str(a[1])})
@@ -289,17 +301,44 @@ func pending(now: int) -> Array:
 func coverable(kind: String) -> Array:
 	var out: Array = []
 	for d in list:
-		if str(d["attr"]) != "player" or bool(d.get("covered", false)) or str(d["tag"]) == "LINK":
+		if str(d["attr"]) != "player" or bool(d.get("covered", false)):
 			continue
 		var pub := int(d["pub"])
 		if (kind == "hush" and pub != 1) or (kind == "launder" and (pub < 1 or pub > 2)):
 			continue
-		var left := false
-		for f in d["fx"]:
-			left = left or not (d["known"] as Dictionary).has(f)
-		if left:
+		if kind == "launder" and not bad_news(d):
+			continue                                                   # 좋은 일을 남 짓으로 돌리면 제 손해 — 나쁜 소식만
+		if will_matter(d):
 			out.append(d)
 	return out
+
+
+## 아직 어딘가에 닿을 것이 남았고, 닿으면 무언가 달라지는 기록인가(값 · 후속) — '누가 나를 아는가' · 입막음 · 세탁이 같은 기준(재미 검수 ①)
+func will_matter(d: Dictionary) -> bool:
+	for f in (d["fx"] as Dictionary).keys():
+		if (d["known"] as Dictionary).has(f) or arrival(d, str(f)).is_empty():
+			continue
+		if int(d["fx"][f]) != 0 or str(d["tag"]).begins_with("CRIME") or str(d["tag"]) == "MQ106_WALK":
+			return true
+	return false
+
+
+func bad_news(d: Dictionary) -> bool:
+	for f in d["fx"]:
+		if int(d["fx"][f]) < 0:
+			return true
+	return str(d["tag"]).begins_with("CRIME")
+
+
+## 이 기록에 구문철이 할 수 있는 일(누가 나를 아는가 줄 끝): "hush" · "launder" · ""
+func cover_kind(d: Dictionary) -> String:
+	if str(d["attr"]) != "player" or bool(d.get("covered", false)) or not will_matter(d):
+		return ""
+	if int(d["pub"]) == 1:
+		return "hush"
+	if int(d["pub"]) == 2 and bad_news(d):
+		return "launder"
+	return ""
 
 
 ## 목격자 매수(§6.5 · SD-15 §5.3): 남은 도착을 끊는다. 기록 ID로 20% — 7일 뒤 샌다
@@ -325,10 +364,12 @@ func hush(d: Dictionary, now: int) -> bool:
 
 
 ## 정보 세탁(§6.5): 남은 도착의 귀속을 다른 세력으로(효과 없이 '○○ 짓이라더라'). 돌려줌 = 발각(15% — 기록 ID 굴림)
-func launder(d: Dictionary, to_fac: String) -> bool:
+func launder(d: Dictionary, to_fac: String, now := 0) -> bool:
 	d["attr"] = "other:" + to_fac
 	d["covered"] = true
-	return absi(hash(str(d["id"]) + ":launder")) % 100 < 15
+	var caught := absi(hash(str(d["id"]) + ":launder")) % 100 < 15
+	laundered.append({"what": str(d["what"]), "to": to_fac, "caught": caught, "at": now, "told": false})   # 들통은 하루 뒤 구문철 입으로(재미 검수 ③)
+	return caught
 
 
 ## 사람 눈에 띄었다(대화 · 거래 — 호스트가 부른다)
@@ -353,7 +394,8 @@ const ROUTE_SAY := {"소문": "소문이 돌더라.", "행상": "행상이 그�
 
 
 ## 주민 한 마디(재미 검수 ① — P7 출처): 그 정착지 · 세력에 닿은 연동 소식 · 샌 입막음을 다음 대화에서 한 번. 사흘 지난 소식은 꺼내지 않는다
-func gossip(fac: String, now: int) -> String:
+## 돌려줌 = [대사, 표정] — 이 마을에 나쁜 소식이면 [불만], 좋은 소식이면 [미소]
+func gossip(fac: String, now: int) -> Array:
 	for h in heard:
 		if str(h["fac"]) != fac or now - int(h["at"]) > 3 * 1440:
 			continue
@@ -361,13 +403,32 @@ func gossip(fac: String, now: int) -> String:
 		if said.has(k):
 			continue
 		var tag := str(h["tag"])
+		var dv := _fx_of(str(h.get("id", "")), fac)
+		var src := str(ROUTE_SAY.get(str(h["route"]), "소문이 돌더라."))
 		if tag == "LINK" and not (h.get("about", []) as Array).is_empty():
 			said[k] = true
-			return "%s 일 거들었다며? %s" % [str(FAC_NAME.get(str(h["about"][0]), "남의")), str(ROUTE_SAY.get(str(h["route"]), "소문이 돌더라."))]
+			var who := str(FAC_NAME.get(str(h["about"][0]), "남의"))
+			if dv < 0:
+				return ["%s 일 거들었다며? %s …그래서 요즘 다들 너 보는 눈이 좀 달라졌어." % [who, src], "불만"]
+			return ["%s 일 거들었다며? %s 잘했어." % [who, src], "미소"]
 		if str(h["what"]).ends_with("입막음한 얘기가 샜다"):
 			said[k] = true
-			return "다 덮은 줄 알았지? 그 얘기, 여기까지 다 돌았어."
-	return ""
+			return ["다 덮은 줄 알았지? 그 얘기, 여기까지 다 돌았어.", "불만"]
+		if str(h["what"]).ends_with("짓이라더라"):                       # 세탁한 소식 — 주민이 내 면전에서 그 거짓말을 되풀이한다
+			said[k] = true
+			return ["그 얘기 들었어? %s. %s" % [str(h["what"]), src], "기본"]
+	return []
+
+
+## 그 기록이 그 세력에 준 값(들은 소식에서 기록을 찾는다 — 이미 내린 기록은 0)
+func _fx_of(did: String, fac: String) -> int:
+	for d in list:
+		if str(d["id"]) == did:
+			return int((d["fx"] as Dictionary).get(fac, 0))
+	return int(_link_dv.get(did + ":" + fac, 0))
+
+
+var _link_dv := {}                                 ## 내린 기록의 값 기억(소식 줄 표정용 — 저장 안 함, 없으면 기본 표정)
 
 
 func _done(d: Dictionary, now: int) -> bool:
@@ -400,7 +461,7 @@ func to_dict() -> Dictionary:
 	return {"list": list.duplicate(true), "heard": heard.duplicate(true), "seq": seq, "last": last, "kills": kills.duplicate(),
 		"grudge": grudge.duplicate(), "bodies": bodies.duplicate(true), "mourn": mourn.duplicate(), "known_killer": known_killer.keys(), "victims": victims.keys(),
 		"seen": seen.duplicate(true), "leaks": leaks.duplicate(true),
-		"said": said.keys(), "hushed": hushed.duplicate(true)}
+		"said": said.keys(), "hushed": hushed.duplicate(true), "laundered": laundered.duplicate(true)}
 
 
 func from_dict(dd: Dictionary) -> void:
@@ -454,6 +515,11 @@ func from_dict(dd: Dictionary) -> void:
 	said = {}
 	for k in dd.get("said", []):
 		said[str(k)] = true
+	laundered = []
+	for lw in dd.get("laundered", []):
+		var ld: Dictionary = (lw as Dictionary).duplicate(true)
+		ld["at"] = int(ld.get("at", 0))
+		laundered.append(ld)
 	hushed = []
 	for hh in dd.get("hushed", []):
 		var hd: Dictionary = (hh as Dictionary).duplicate(true)

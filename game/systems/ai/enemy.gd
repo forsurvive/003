@@ -654,7 +654,8 @@ func _bite(_dt: float, target: Combatant, to_t: Vector2) -> void:
 	_show()
 	_cool = 1.1
 	target.last_by = cmb.team
-	target.take({"hp": bite * (1.25 if frenzied else 1.0) * (1.2 if buff_t > 0.0 else 1.0)}, loco.logical)   # 울부짖기 +20%
+	var dr_k := 1.0 - minf(target.dr, CombatRules.DR_CAP) / 100.0           # 물기도 몸 전체 DR을 거친다(SD-11 §4.6 — 밸런스 검사 B4, 2026-10-23)
+	target.take({"hp": bite * (1.25 if frenzied else 1.0) * (1.2 if buff_t > 0.0 else 1.0) * dr_k}, loco.logical)   # 울부짖기 +20%
 
 
 func _shoot(dt: float, target: Combatant, shots: Projectiles) -> void:
@@ -1204,7 +1205,7 @@ func _mole_step(dt: float, target: Combatant, nav) -> bool:
 					loco.facing = Locomotion.snap8(to, 0.0)
 					_cool = 1.1
 					target.last_by = cmb.team
-					target.take({"hp": bite * (1.25 if frenzied else 1.0)}, loco.logical)   # 발밑에서 솟으며 문다
+					target.take({"hp": bite * (1.25 if frenzied else 1.0) * (1.0 - minf(target.dr, CombatRules.DR_CAP) / 100.0)}, loco.logical)   # 발밑에서 솟으며 문다(DR을 거친다)
 			return true
 		"emerge":
 			_bur_t += dt
