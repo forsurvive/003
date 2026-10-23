@@ -46,6 +46,7 @@ PROG = {
     "scenes/story/side_s09.gd": "SQ-S09", "scenes/story/side_s10.gd": "SQ-S10", "scenes/story/side_s11.gd": "SQ-S11", "scenes/story/side_s12.gd": "SQ-S12",
     "scenes/story/side_s13.gd": "SQ-S13", "scenes/story/fq_jc01.gd": "FQ-JC-01", "scenes/story/fq_gs.gd": "FQ-GS-01|FQ-GS-02", "scenes/story/fq_jh.gd": "FQ-JH-01|FQ-JH-02", "scenes/story/fq_jh3.gd": "FQ-JH-03", "scenes/story/fq_sb.gd": "FQ-SB-01|FQ-SB-02",
     "scenes/story/ga.gd": "GA", "scenes/story/hp.gd": "HP", "scenes/story/ks.gd": "KS", "scenes/story/yt.gd": "YT", "scenes/story/u04.gd": "U04", "scenes/story/stash.gd": "UQ-125",
+    "scenes/story/kc_boss.gd": "KC",                                   # 1-13a3 깡철이 보스전(원고 KC.txt)
 }
 # 막 3개짜리 경로 묶음(MQ-102~105)은 한 진행기 — 변수 소유는 아래 접두로 나눈다
 NPC_RE = re.compile(r'"((?:C-\d{3}|N-[A-Z0-9]{2,4}-\d{3}|CR-\d{3}))"')

@@ -7,17 +7,21 @@
  "labels": {
   "START": 0,
   "GATE0": 2,
-  "KILLER": 8,
-  "GONE_SAID": 10,
-  "SHOT": 13,
-  "SEEN": 15,
-  "PASSED": 18,
-  "OWNER": 20,
-  "MENU": 22,
-  "PAY": 23,
-  "TALK": 26,
-  "TALK_NO": 29,
-  "PROOF": 31
+  "KILLER": 11,
+  "GONE_SAID": 13,
+  "SHOT": 16,
+  "HELMHEAD": 18,
+  "HELMDEAD": 21,
+  "BALD": 23,
+  "KC4": 25,
+  "SEEN": 28,
+  "PASSED": 31,
+  "OWNER": 33,
+  "MENU": 35,
+  "PAY": 36,
+  "TALK": 39,
+  "TALK_NO": 42,
+  "PROOF": 44
  },
  "ops": [
   {
@@ -44,6 +48,21 @@
    "op": "if",
    "cond": "GC_SHOT > 0 and GC_SHOT == GAME_DAY - 1",
    "to": "SHOT"
+  },
+  {
+   "op": "if",
+   "cond": "PC_HEAD == \"A-102\"",
+   "to": "HELMHEAD"
+  },
+  {
+   "op": "if",
+   "cond": "KC_BALD > 0 and GAME_DAY - KC_BALD < 3",
+   "to": "BALD"
+  },
+  {
+   "op": "if",
+   "cond": "KC_STATE == 4 and KC_GCSAID == 0",
+   "to": "KC4"
   },
   {
    "op": "if",
@@ -117,6 +136,99 @@
    ]
   },
   {
+   "op": "if",
+   "cond": "KC_STATE == 4",
+   "to": "HELMDEAD"
+  },
+  {
+   "op": "line",
+   "who": "N-GC-G1",
+   "emo": "놀람",
+   "text": "…그거 부두목 거잖아. 그걸 쓰고 여길 와? 상담료 세 배 — 150."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "세 배 여기",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 150
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PAY",
+     "id": "GC_GATE:2:0"
+    },
+    {
+     "text": "돌아간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "GC_GATE:2:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-GC-G1",
+   "emo": "분노",
+   "text": "부두목 헬멧을 쓰고 왔네. 상담이고 분양이고 없어. 두목이 네 얼굴을 외웠어."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-GC-G1",
+   "emo": "분노",
+   "text": "부두목 망신 준 놈이구나. 맨머리로 들어왔더라. 사흘은 상담료 두 배 — 100."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "두 배 여기",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 100
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PAY",
+     "id": "GC_GATE:3:0"
+    },
+    {
+     "text": "돌아간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "GC_GATE:3:1"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "KC_GCSAID = 1"
+  },
+  {
+   "op": "line",
+   "who": "N-GC-G1",
+   "emo": "기본",
+   "text": "고가 밑 부두목이 쓰러졌다며. 졸개들이 여기로 기어들어 왔어. …상담료는 그대로 50이야. 장사는 장사니까."
+  },
+  {
+   "op": "goto",
+   "to": "GATE0"
+  },
+  {
    "op": "line",
    "who": "N-GC-G1",
    "emo": "기본",
@@ -168,7 +280,7 @@
      "cond": "",
      "fx": "",
      "to": "PAY",
-     "id": "GC_GATE:2:0"
+     "id": "GC_GATE:4:0"
     },
     {
      "text": "삽자루가 부른다. 분양 얘기로",
@@ -182,7 +294,7 @@
      "cond": "",
      "fx": "",
      "to": "TALK",
-     "id": "GC_GATE:2:1",
+     "id": "GC_GATE:4:1",
      "fail": "TALK_NO"
     },
     {
@@ -196,7 +308,7 @@
      "cond": "",
      "fx": "",
      "to": "PROOF",
-     "id": "GC_GATE:2:2"
+     "id": "GC_GATE:4:2"
     },
     {
      "text": "돌아간다",
@@ -204,7 +316,7 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "GC_GATE:2:3"
+     "id": "GC_GATE:4:3"
     }
    ]
   },

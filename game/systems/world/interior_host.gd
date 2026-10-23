@@ -2960,9 +2960,11 @@ func repair_self(id: String) -> Dictionary:
 func pc_dr() -> float:
 	var id := worn()
 	var perk := Perks.dr_bonus(st)                                      # 터프니스(PK-025) DR +10(1-12p)
+	var head := str(st.vars.get_v("PC_HEAD"))                          # 머리 장비 DR도 더한다(SD-13 §5.2 'DR 합산' — 1-13a3 깡철이의 헬멧이 빈 보상이던 것)
+	var hd := float(items_db.get(Gear.base(head), {}).get("dr", 0)) if head != "" and int(st.items.get(head, 0)) > 0 else 0.0
 	if int(st.items.get(id, 0)) <= 0:
-		return perk
-	return minf(85.0, float(items_db.get(id, {}).get("dr", 0)) + perk)
+		return minf(85.0, hd + perk)
+	return minf(85.0, float(items_db.get(id, {}).get("dr", 0)) + hd + perk)
 
 
 ## 먹고 마시기(SD-13 §7.2): 음식·음료 HP는 5초에 걸쳐, 라드는 즉시. 라드어웨이 −50 × (1 + 의학/50)

@@ -83,8 +83,16 @@ def eps(places):
             hm = re.search(r"(\d\d)~(\d\d)시", rule)
             if hm:
                 e["hours"] = [int(hm.group(1)), int(hm.group(2))]
+            e.update(EP_FIX.get(eid, {}))
             out.append(e)
     return out
+
+
+## 구현 정합 덧붙임(정본 표에 없는 조건 — 이유와 함께)
+EP_FIX = {
+    "EP-R01-03": {"cond": "KC_STATE != 0", "p": 0.2, "p_night": 0.3,          # 1-13a3: 깡철이가 마당을 쥔 동안엔 그 패거리가 곧 매복(진행기 kc_boss) — 겹쳐 뜨지 않는다.
+                  "fix": "깡철이 결말 뒤에만 · 확률 절반(SD-05 RE-002 '두목 처리 뒤 ×0.5')"},  # 결말 뒤엔 흩어진 졸개가 가끔 돌아온다
+}
 
 
 def main():

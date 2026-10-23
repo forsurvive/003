@@ -1,0 +1,117 @@
+{
+ "id": "KC_GIVE",
+ "title": "항복한 깡철이",
+ "loc": "L-R01-15",
+ "npc": "",
+ "cond": "V_ACT >= 1 and KC_STATE == 0",
+ "labels": {
+  "START": 0,
+  "REL": 2,
+  "HELM": 6,
+  "SHOOT": 10
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-R01-061",
+   "emo": "아픔",
+   "text": "됐어, 됐다고. 봉천 계단 밑엔 다시 안 간다. …쏠 거면 빨리 쏴."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "놓아준다. 다시 보면 그땐 끝이다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "REL",
+     "id": "KC_GIVE:1:0"
+    },
+    {
+     "text": "헬멧은 두고 가",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "HELM",
+     "id": "KC_GIVE:1:1"
+    },
+    {
+     "text": "쏜다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SHOOT",
+     "id": "KC_GIVE:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-061",
+   "emo": "피곤",
+   "text": "…빚진 걸로 해 두지."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "깡철이가 다리를 끌며 남부순환로 쪽으로 간다. 고가 밑에는 꺼져 가는 드럼불과 빈 의자만 남는다."
+  },
+  {
+   "op": "cmd",
+   "name": "kc",
+   "args": [
+    "release"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-061",
+   "emo": "분노",
+   "text": "이건 내 머리… 알았어, 알았다고."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "깡철이가 전선으로 이어 붙인 턱끈을 풀어 헬멧을 바닥에 내려놓는다. 맨머리가 고가 그늘에서 하얗게 드러난다."
+  },
+  {
+   "op": "cmd",
+   "name": "kc",
+   "args": [
+    "helm"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "총성 한 발이 고가 밑을 울린다."
+  },
+  {
+   "op": "cmd",
+   "name": "kc",
+   "args": [
+    "shoot"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KC.txt"
+}

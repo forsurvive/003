@@ -1,0 +1,124 @@
+{
+ "id": "KC_STAKE",
+ "title": "사슬 말뚝",
+ "loc": "L-R01-15",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "OK": 4,
+  "NO": 7,
+  "NODOG": 11,
+  "EMPTY": 13
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "KC_STATE != 0 or KC_LOOSE == 1",
+   "to": "EMPTY"
+  },
+  {
+   "op": "if",
+   "cond": "KC_DOGS >= 3",
+   "to": "NODOG"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "아스팔트를 뚫고 박은 쇠말뚝. 개 사슬이 고리 하나에 모두 걸려 있다. 손으로 들어 올리면 빠질 것 같다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "깡철이가 등을 돌린 틈에 고리를 뺀다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "은신",
+       "min": 30
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "OK",
+     "id": "KC_STAKE:1:0",
+     "fail": "NO"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "KC_STAKE:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "고리가 소리 없이 빠진다. 개들이 사슬을 끌고 흩어져 고가 기둥 사이로 사라진다."
+  },
+  {
+   "op": "cmd",
+   "name": "kc",
+   "args": [
+    "loose"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "사슬이 아스팔트를 긁는다. 깡철이가 돌아본다."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-061",
+   "emo": "분노",
+   "text": "내 개한테 손대? 풀어!"
+  },
+  {
+   "op": "cmd",
+   "name": "kc",
+   "args": [
+    "caught"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "쇠말뚝에 빈 사슬만 걸려 있다. 끝이 아스팔트 위에 늘어져 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈 쇠말뚝. 고리에 끊긴 사슬 한 토막이 걸려 있다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KC.txt"
+}

@@ -186,7 +186,8 @@ func _init() -> void:
 	# FEED 남솔의 밥 당번 · COLL 목줄 더미 조사 횟수 · BAIT 미끼를 놓은 절대 분 · BETRAY 백구를 공격함 · CLEAR_DAY 소탕한 날(3일 뒤 시궁쥐 · 크리처 인카운터 −30%) ·
 	# KILLS 쓰러뜨린 무리 수 · KILL_DAY 그날(72시간 뒤 다시 채움) · EOM 엄태경에게 소탕을 알림 · BC 봉천이 아직 모르는 해법 호감(돌아오면 반영 — 공개도 1, SD-06 §6) · NAP 지금 외눈이 둥지에서 잔다(진행기)
 	# PK_045 애니멀 프렌드 랭크(퍽 창은 1-12 — 지금은 변수만)
-	for k in ["SQ_S01_SOL", "SQ_S01_LEFT", "SQ_S01_LEFT_DAY", "SQ_S01_DROP", "SQ_S01_DROP_AT", "SQ_S01_TAG_DAY", "SQ_S01_DOG", "SQ_S01_FEED", "SQ_S01_COLL", "SQ_S01_BAIT",
+	# KC_* 깡철이 보스전(1-13a3 — kc_boss.gd 머리 주석): STATE 결말 · TALK 말로 물러남 · DAY 결말 날 · DOGS 죽은 개 · LOOSE 고리 뺌 · TOLL 통행세 날 · BOUNTY 현상금 · HELM 고물상 진열 · BALD 맨머리 소문 날 · STRIP 헬멧 벗겨 감
+	for k in ["KC_STATE", "KC_TALK", "KC_DAY", "KC_DOGS", "KC_LOOSE", "KC_TOLL", "KC_BOUNTY", "KC_HELM", "KC_BALD", "KC_STRIP", "KC_FOUGHT", "KC_HPF", "KC_GCSAID", "SQ_S01_SOL", "SQ_S01_LEFT", "SQ_S01_LEFT_DAY", "SQ_S01_DROP", "SQ_S01_DROP_AT", "SQ_S01_TAG_DAY", "SQ_S01_DOG", "SQ_S01_FEED", "SQ_S01_COLL", "SQ_S01_BAIT",
 			"SQ_S01_BETRAY", "SQ_S01_CLEAR_DAY", "SQ_S01_KILLS", "SQ_S01_KILL_DAY", "SQ_S01_EOM", "SQ_S01_BC", "SQ_S01_NAP", "SQ_S01_BOWL", "PK_045"]:
 		vars.declare(k, "int", 0)
 	vars.declare("SQH_TAG", "int", -1)

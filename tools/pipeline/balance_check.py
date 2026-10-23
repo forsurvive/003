@@ -27,7 +27,10 @@ TIER_FIX = {"CR-082": ("전설", "원작 압축 HP 750 · 군락 여왕(SD-14 §
 BOSS_REF = {"CR-513": 12}                                               # 레벨 비례 스토리 보스: XP 기준 레벨(SD-14 §10.2 '65(Lv12 기준)')
 ## 위협 1~2 권역 필드 보스: 몸만이 아니라 교전 전체(호위 무리 · 부화 · 도주 문턱)로 잰다 — 목표 35~60초(SD-11 §10.3 — 사용자 결정 2026-10-23)
 BOSS_FIGHT = {"CR-500": {"adds": [("CR-104", 4), ("CR-105", 3)], "flee": 0.3, "why": "무리 6~8 · HP 30% 도주(SD-14 §10.2 외눈)"},
-              "CR-501": {"adds": [("CR-002", 6), ("CR-001", 3)], "flee": 0.0, "why": "15초마다 큰바퀴 셋 부화 · 페이즈 3 잔바퀴 떼 셋(SD-14 배수구 어미)"}}
+              "CR-501": {"adds": [("CR-002", 6), ("CR-001", 3)], "flee": 0.0, "why": "15초마다 큰바퀴 셋 부화 · 페이즈 3 잔바퀴 떼 셋(SD-14 배수구 어미)"},
+              "CR-512": {"adds": [("CR-105", 3), ("CR-424", 2), ("CR-423", 1)], "flee": 0.4, "phase_s": 8.0, "cover": (0.3, 0.6),
+                         "why": "경비견 셋 · 졸개 셋 · HP 40% 항복 · 국면 고정 8초(사슬 풀기 2 + 램프 오르기 6) · 70~40% 구간 명중 ×0.6(SD-14 깡철이 · 조율사 1-13a3)"}}
+## 필드 보스 교전 셈(조율사 1-13a3 도구 고침): 호위는 저마다 제 DR로 · phase_s 국면 고정 초(사격 없는 시간) · cover (몸 HP 비율, 명중 배수) 구간
 ENGAGE_K = 1.5                                                          # 교전 전체: 움직임 · 재장전 · 다시 겨눔(조율사 추정 '지속 30초 → 움직임까지 40~50초')
 PART_AVG = (12 * 2.0 + 88 * 1.0) / 100.0                               # 사람 부위 가중(머리 12 × 2 · 나머지 × 1 — combat_rules PART_MULT · HUMANOID_WEIGHTS)
 CRIT_AVG = 1.05                                                         # 행운 5 × 무기 배수 1 → 치명 5%(치명 피해 ≈ 기본 피해)
@@ -50,6 +53,16 @@ def _enemy_arms():
 
 
 ENEMY_ARMS = _enemy_arms()
+
+
+def _boss_arms():
+    """게임의 BOSS_ARMS(이름 있는 보스 [주무기, 근접] — interior_combat.gd)"""
+    src = open(os.path.join(ROOT, "game", "systems", "combat", "interior_combat.gd"), encoding="utf-8").read()
+    line = src[src.index("const BOSS_ARMS := {"):].split("\n", 1)[0]
+    return {m.group(1): re.findall(r'"(W-\d+)"', m.group(2)) for m in re.finditer(r'"(CR-\d+)": \[(.*?)\]', line)}
+
+
+BOSS_ARMS = _boss_arms()
 SWARMY = {"CR-095", "CR-200", "CR-201", "CR-204", "CR-205", "CR-206", "CR-001", "CR-002"}   # enemy.gd SWARMY
 
 
@@ -177,8 +190,16 @@ def check_combat(weapons, enemies):
         ttk = hp / dps if dps > 0 else 999
         if tier == "필드 보스":
             bf = BOSS_FIGHT[eid]
-            pool = hp * (1 - bf["flee"]) + sum(float(enemies[a]["hp"]) * n for a, n in bf["adds"] if a in enemies)
-            eng = pool / dps * ENGAGE_K
+            cov_f, cov_k = bf.get("cover", (0.0, 1.0))
+            body = hp * (1 - bf["flee"] - cov_f) / dps + hp * cov_f / (dps * cov_k)
+            adds = 0.0
+            for a, n in bf["adds"]:
+                if a not in enemies:
+                    continue
+                adr = float(enemies[a].get("dr") or 0)
+                adps = w_dps(weapons[best], 50.0, "new", adr) * HIT_PC * PART_AVG * CRIT_AVG
+                adds += float(enemies[a]["hp"]) * n / adps if adps > 0 else 0.0
+            eng = (body + adds) * ENGAGE_K + float(bf.get("phase_s", 0.0))
             add("B3", "적 처치 시간", "%s %s(필드 보스 · Lv%d — 교전 전체: 몸 %d × %.1f + 호위 · 부화)" % (eid, e["name"], lv, hp, 1 - bf["flee"]), round(eng, 1), "35~60초",
                 judge(eng, 35, 60), "SD-11 §10.3 필드 보스(사용자 결정 2026-10-23)", "표준 무기 %s · %s" % (best, bf["why"]))
         else:
@@ -210,7 +231,7 @@ def check_combat(weapons, enemies):
             how = "맨손 %g" % claw
             melee_tok = 4 if eid in SWARMY else 2
         else:
-            arms = ENEMY_ARMS.get(eid) or HAND_ARMS.get(eid) or (["W-008"] if eid == "CR-305" else ["W-002"])
+            arms = BOSS_ARMS.get(eid, [])[:1] or ENEMY_ARMS.get(eid) or HAND_ARMS.get(eid) or (["W-008"] if eid == "CR-305" else ["W-002"])
             wid = max(arms, key=lambda a: w_dps(weapons.get(a, {}), EN_SKILL, "worn", pdr))
             w = weapons.get(wid, {})
             if not w:

@@ -119,9 +119,6 @@ N-VG-H1 [기본] 가져가. 내가 쳐 준 값은 그 사람 약값이었다 치
 ! UQ125_FENCE = 0
 @cmd stash fence_free
 -> MENU
-* MINE_NO
-N-VG-H1 [기본] …
--> MENU
 * BYE
 N-VG-H1 [기본] 아프지 마. 아프면 오고.
 -> END

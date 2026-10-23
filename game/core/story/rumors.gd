@@ -25,7 +25,7 @@ static func pick(st: StoryState, region: String, who: String, own_bark := false)
 		var c := str(r["cond"])
 		if c != "" and not StoryExpr.test(c, st):
 			continue
-		(hit if c != "" else plain).append(r)
+		(hit if c != "" and not bool(r.get("usual", false)) else plain).append(r)      # usual: 조건이 있어도 평소 소문(그 상태가 '보통'인 소문 — 1-13a3)
 	var day := int(st.vars.get_v("GAME_DAY")) if st.vars.has("GAME_DAY") else 0
 	var h := absi(hash(who + ":" + str(day)))
 	var row: Dictionary = {}

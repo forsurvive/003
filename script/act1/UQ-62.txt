@@ -23,6 +23,9 @@
 ? GC_OWN == 1 -> OWNER
 ? GC_PASS == GAME_DAY -> PASSED
 ? GC_SHOT > 0 and GC_SHOT == GAME_DAY - 1 -> SHOT
+? PC_HEAD == "A-102" -> HELMHEAD
+? KC_BALD > 0 and GAME_DAY - KC_BALD < 3 -> BALD
+? KC_STATE == 4 and KC_GCSAID == 0 -> KC4
 ? GC_SEEN >= 1 -> SEEN
 N-GC-G1 [기본] 거기 서. 분양 받으러 왔어? 상담료 50. 상담 안 받으면 분양 안 된 땅 밟는 거야.
 -> MENU
@@ -37,6 +40,22 @@ N-GC-G1 [기본] 부적이 나갔어. 합격했다나. 우리 망하나? …아�
 N-GC-G1 [분노] 어제 총 쏜 손님. 상담료 두 배 — 100. 두목이 '손님은 손님'이래서 봐주는 거야.
 > [캡 100] 두 배 여기 -> PAY
 > 돌아간다 -> END
+* HELMHEAD
+? KC_STATE == 4 -> HELMDEAD
+N-GC-G1 [놀람] …그거 부두목 거잖아. 그걸 쓰고 여길 와? 상담료 세 배 — 150.
+> [캡 150] 세 배 여기 -> PAY
+> 돌아간다 -> END
+* HELMDEAD
+N-GC-G1 [분노] 부두목 헬멧을 쓰고 왔네. 상담이고 분양이고 없어. 두목이 네 얼굴을 외웠어.
+-> END
+* BALD
+N-GC-G1 [분노] 부두목 망신 준 놈이구나. 맨머리로 들어왔더라. 사흘은 상담료 두 배 — 100.
+> [캡 100] 두 배 여기 -> PAY
+> 돌아간다 -> END
+* KC4
+! KC_GCSAID = 1
+N-GC-G1 [기본] 고가 밑 부두목이 쓰러졌다며. 졸개들이 여기로 기어들어 왔어. …상담료는 그대로 50이야. 장사는 장사니까.
+-> GATE0
 * SEEN
 N-GC-G1 [기본] 전에 상담 받은 사람이네. 계약 안 하고 또 왔어? …들어가. 두목이 '한 번 본 손님은 손님'이래.
 @cmd uqr q62pass 4

@@ -17,8 +17,7 @@
   "N4": 25,
   "MINE": 27,
   "MINE_OK": 29,
-  "MINE_NO": 33,
-  "BYE": 35
+  "BYE": 33
  },
  "ops": [
   {
@@ -236,16 +235,6 @@
    "args": [
     "fence_free"
    ]
-  },
-  {
-   "op": "goto",
-   "to": "MENU"
-  },
-  {
-   "op": "line",
-   "who": "N-VG-H1",
-   "emo": "기본",
-   "text": "…"
   },
   {
    "op": "goto",

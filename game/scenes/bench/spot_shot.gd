@@ -20,9 +20,13 @@ func _ready() -> void:
 	for q in ["MQ-P1", "MQ-P2", "MQ-P3", "MQ-P4"]:
 		st.quests.set_stage(q, 100)
 	st.vars.set_v("V_ACT", 1)
+	st.vars.set_v("GAME_DAY", 3)                                          # 1막(MQ-101부터 1일)
 	st.events.clear()
 	host.body = "adult"
 	host.story_hold = true
+	var kc := KcBoss.new()                                               # 깡철이 마당(1-13a3)은 진행기가 사람 · 개를 세운다
+	add_child(kc)
+	kc.setup(host)
 	_next()
 
 
@@ -41,7 +45,7 @@ func _next() -> void:
 
 func _process(dt: float) -> void:
 	t += dt
-	if i < spots.size() and t > 2.0:
+	if i < spots.size() and t > 3.0:
 		var a: PackedStringArray = str(spots[i]).split(",")
 		var img := get_viewport().get_texture().get_image()
 		var p := out.path_join("spot_%s_%s.png" % [a[0], a[1]])

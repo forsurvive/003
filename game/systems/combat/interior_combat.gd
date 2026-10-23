@@ -409,6 +409,7 @@ const ENEMY_ARMS := {
 	"CR-421": [["W-014", 0.4], ["W-025", 0.3], ["W-017", 0.3]],         # 사냥총 / 산탄총 / 자동소총
 	"CR-422": [["W-018", 0.4], ["W-029", 0.3], ["W-015", 0.3]],         # 자동소총 / 전투 산탄총 / 기관단총
 	"CR-423": [["W-047", 0.35], ["W-040", 0.35], ["W-046", 0.3]],       # 야구방망이 / 쇠파이프 / 각목(+ 파편 수류탄)
+	"CR-424": [["W-049", 0.6], ["W-040", 0.4]],                         # 약탈자(근접, 1-13a3): 소방 도끼 / 공사장 쇠파이프(망치 · 칼은 무기 표에 없다)
 	"CR-401": [["W-018", 0.75], ["W-023", 0.25]],                       # 돌격소총 / 레이저 소총
 	"CR-456": [["W-017", 0.6], ["W-028", 0.4]],                         # 자동소총 / 산탄총
 	"CR-457": [["W-029", 1.0]],                                         # 전투 산탄총(+ 소방 도끼)
@@ -418,6 +419,7 @@ const ENEMY_ARMS := {
 const HAND_ARMS := {"CR-436": ["W-015", "W-028"], "CR-437": ["W-017", "W-004"], "CR-438": ["W-017", "W-017"], "CR-452": ["W-017", "W-008"], "CR-534": ["W-015", "W-004"]}
 var _hand_auto := {}                                                   ## "맵:편" -> 지금까지 세운 손 맵 사람 수(셋째마다 연사 하나)
 const ENEMY_ALT := {"CR-457": "W-049"}                                  ## 붙으면 바꿔 드는 근접 무기
+const BOSS_ARMS := {"CR-512": ["W-014", "W-040"]}                      ## 이름 있는 보스의 [주무기, 붙으면 드는 근접](1-13a3 깡철이 — 사냥용 소총 · 렌치는 쇠파이프 판정, 밸런스 조율사)
 const ENEMY_NADES := {"CR-423": ["W-060", 1], "CR-401": ["W-058", 1]}   ## 수류탄(계엄 '기절탄'은 자료가 없어 최루탄으로 — 정합)
 var _team_nade := {}                                                  ## 편 -> 마지막 수류탄 시각(분대 재사용 4초)
 var _clock := 0.0
@@ -456,12 +458,18 @@ func spawn(enemy_id: String, pos: Vector2, map: InteriorMap, st: StoryState = nu
 		w = _pick_arm(enemy_id, pos)
 	elif HAND_ARMS.has(enemy_id) and not opts.has("arm") and int(opts.get("lv", enemy_rows[enemy_id].get("level", 1))) >= 6:
 		w = _hand_arm(enemy_id, pos, str(opts.get("team", "enemy")), map)
+	if BOSS_ARMS.has(enemy_id) and not opts.has("arm"):
+		w = weapons.get(str(BOSS_ARMS[enemy_id][0]), w).duplicate()
 	if str(w.get("kind", "")) == "melee" and arm == "":
 		o2 = opts.duplicate()
 		o2["arm"] = "melee"
 	e.setup_enemy(enemy_rows[enemy_id], w, pos, map, o2)
 	if generic and ENEMY_ALT.has(enemy_id):
 		e.alt_weapon = weapons.get(ENEMY_ALT[enemy_id], {}).duplicate()
+	if BOSS_ARMS.has(enemy_id):
+		e.alt_weapon = weapons.get(str(BOSS_ARMS[enemy_id][1]), {}).duplicate()
+		if enemy_id == "CR-512":
+			e.alt_weapon["name"] = "렌치"
 	if generic and ENEMY_NADES.has(enemy_id) and weapons.has(str(ENEMY_NADES[enemy_id][0])):
 		e.nade_w = weapons[str(ENEMY_NADES[enemy_id][0])]
 		e.nades = int(ENEMY_NADES[enemy_id][1])

@@ -300,3 +300,25 @@ text 1 1 "다리 어귀 길바닥에 쓰러진 자전거 더미. 바퀴살이 �
 prop remains 6 2
 text 6 2 "자전거 옆에 엎드린 유해. 등에 멘 가방끈을 아직 쥐고 있다. 가방 안에 2077년 통학 정기권." scene=R01-16_RIDER
 enemy CR-136 4 3 cond="GAME_HOUR >= 20 or GAME_HOUR < 5"
+
+# 1-13a3 깡철이의 마당(SD-09a L-R01-15 — 신림 사거리 고가 아래 그늘 · 원자 충전소 폐허 · 교각 화살표 · LR-49). 장소 열쇠 L-R01-15의 도착 칸은 고가 상판 위라
+# 마당은 상판 남쪽 아래 땅(@820,1349). 사람 · 개 · 졸개는 진행기 kc_boss.gd가 세운다(지부장 자리 838,1351 · 말뚝 834,1352 · 드럼불 823,1352 · 사수 자리 동쪽 램프 853,1345).
+spot @820,1349 28 5
+prop drum_fire 3 3 cond="KC_STATE == 0"
+prop drum 3 3 cond="KC_STATE != 0"
+text 3 3 "드럼통 화덕. 고철 석쇠에 탄 쥐 뼈가 붙어 있다." cond="KC_STATE == 0"
+text 3 3 "식은 드럼통 화덕. 재 위에 빈 깡통 몇 개." cond="KC_STATE != 0"
+prop bedroll 1 2
+prop bedroll2 5 4
+prop atom_charger 10 1
+prop atom_charger 12 1
+text 10 1 "원자 충전기. 노심 창이 깨져 속이 검다. 기둥 옆 녹슨 수칙판 「불씨 안전 수칙」 — '충전 중 흡연 금지. 노심이 노래하면 대피.'" w=3
+prop chain_post 14 3
+text 14 3 "쇠말뚝." scene=KC_STAKE
+prop dog_bowl 15 4
+prop folding_chair 18 1
+text 18 1 "고철 의자. 등받이에 붉은 페인트로 '지부장'." cond="KC_STATE == 0"
+text 18 1 "주인 없는 고철 의자. 등받이의 '지부장' 위에 누가 침을 뱉어 놓았다." cond="KC_STATE != 0"
+prop crate_o 20 2
+text 20 2 "팔토시와 팔꿈치 보호대 더미. 끈마다 이름이 적혀 있다. 통행세 장부를 대신하는 셈이다." w=2
+text 24 1 "교각에 흰 페인트 화살표 — '봉천 → 여의도'. 같은 화살표가 다음 교각에도, 그다음 교각에도 있다." w=2

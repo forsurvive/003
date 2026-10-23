@@ -513,6 +513,19 @@
   "weapon_main": "야구방망이 / 골프채 / 쇠파이프 / 각목 + 파편 수류탄",
   "xp": 3
  },
+ "CR-424": {
+  "_src": "14_creatures-enemies.md:1141",
+  "dr": 8,
+  "hp": 60,
+  "id": "CR-424",
+  "level": 4,
+  "name": "약탈자(근접)",
+  "part_weights": "PW-H",
+  "radius": 0.3,
+  "rank": "2",
+  "weapon_main": "소방 도끼 / 공사장 망치 / 칼 + 수류탄",
+  "xp": 10
+ },
  "CR-435": {
   "_src": "14_creatures-enemies.md:1165",
   "dr": 5,
@@ -650,7 +663,7 @@
   "xp": 10
  },
  "CR-500": {
-  "_src": "14_creatures-enemies.md:1304",
+  "_src": "14_creatures-enemies.md:1306",
   "attack": "물기 18",
   "dr": 0,
   "hp": 260,
@@ -664,7 +677,7 @@
   "xp": 50
  },
  "CR-501": {
-  "_src": "14_creatures-enemies.md:1305",
+  "_src": "14_creatures-enemies.md:1307",
   "attack": "물기 10",
   "dr": 10,
   "hp": 300,
@@ -677,8 +690,22 @@
   "speed": 1.6,
   "xp": 50
  },
+ "CR-512": {
+  "_src": "14_creatures-enemies.md:1318",
+  "attack": "사냥총 25 · 렌치 9",
+  "dr": 10,
+  "hp": 180,
+  "id": "CR-512",
+  "level": 6,
+  "name": "깡철이",
+  "part_weights": "PW-H",
+  "pattern": "경비견 셋을 사슬에서 푼다 → HP 70%에서 고가 램프 윗단으로 올라 사냥총 → HP 40%에서 항복(§10.3)",
+  "radius": 0.3,
+  "speed": 3.0,
+  "xp": 40
+ },
  "CR-513": {
-  "_src": "14_creatures-enemies.md:1317",
+  "_src": "14_creatures-enemies.md:1319",
   "dr": 18,
   "hp": 60,
   "id": "CR-513",
@@ -689,7 +716,7 @@
   "xp": 65
  },
  "CR-534": {
-  "_src": "14_creatures-enemies.md:1488",
+  "_src": "14_creatures-enemies.md:1491",
   "dr": 12,
   "hp": 140,
   "id": "CR-534",

@@ -55,6 +55,7 @@ RE = {
     # ---- 적대 약탈자(남부순환 패거리, SD-14 F-04-C)
     "RE-002": {"name": "고가 아래 패거리", "cat": "raider", "regions": ["R01", "R02"], "prefer": ["고가", "큰길"], "ban": ["산지"],
                "time": "any", "night_w": 1.5, "weight": 8,
+               "cond": "KC_TOLL == 0 or KC_TOLL != GAME_DAY",                           # 1-13a3: 깡철이에게 통행세를 낸 날은 고가 아래 패거리가 건드리지 않는다
                "groups": [{"side": "a", "units": [["CR-420", 1, 2], ["CR-423", 1, 2], ["CR-421", 0, 1]], "hostile": True}],
                "states": {"S2": 4, "S4": 2, "S1": 2, "S3": 1}, "sign": "whistle", "mix": [["CR-104", 2, 3, 0.3]]},
     "RE-012": {"name": "대방 분대", "cat": "raider", "regions": ["R02"], "prefer": ["시장", "공단", "큰길"], "time": "any", "weight": 6,

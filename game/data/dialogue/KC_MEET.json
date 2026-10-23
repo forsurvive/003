@@ -1,0 +1,523 @@
+{
+ "id": "KC_MEET",
+ "title": "고가 아래 깡철이",
+ "loc": "L-R01-15",
+ "npc": "",
+ "cond": "V_ACT >= 1 and KC_STATE == 0",
+ "labels": {
+  "START": 0,
+  "GRUDGE": 5,
+  "GRUDGE2": 8,
+  "LOOK": 9,
+  "FEWDOGS": 14,
+  "ONEDOG": 17,
+  "NODOGS": 19,
+  "LOOSE": 21,
+  "PERKCHK": 24,
+  "WAG": 26,
+  "ASK": 27,
+  "AGAIN": 28,
+  "PERK": 31,
+  "ARM": 35,
+  "PAY": 37,
+  "PAID": 40,
+  "ONE": 42,
+  "TALK_OK": 45,
+  "TALK_OK2": 48,
+  "TALK_GO": 49,
+  "TALK_NO": 52,
+  "FIGHT": 55,
+  "LEAVE": 58
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "KC_TOLL > 0 and KC_TOLL == GAME_DAY",
+   "to": "PAID"
+  },
+  {
+   "op": "if",
+   "cond": "KC_FOUGHT > 0 and KC_FOUGHT == GAME_DAY",
+   "to": "AGAIN"
+  },
+  {
+   "op": "if",
+   "cond": "KC_FOUGHT > 0",
+   "to": "GRUDGE"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-061",
+   "emo": "기본",
+   "text": "거기 서. 고가 밑은 내 거다. 통행세는 팔 하나."
+  },
+  {
+   "op": "goto",
+   "to": "LOOK"
+  },
+  {
+   "op": "if",
+   "cond": "KC_FOUGHT != GAME_DAY - 1",
+   "to": "GRUDGE2"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-061",
+   "emo": "분노",
+   "text": "어제 그놈이네. 오늘 통행세는 두 배다. 예순."
+  },
+  {
+   "op": "goto",
+   "to": "LOOK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-061",
+   "emo": "분노",
+   "text": "지난번 그놈이네. 너한텐 통행세가 두 배다. 예순."
+  },
+  {
+   "op": "if",
+   "cond": "KC_LOOSE == 1",
+   "to": "LOOSE"
+  },
+  {
+   "op": "if",
+   "cond": "KC_DOGS >= 3",
+   "to": "NODOGS"
+  },
+  {
+   "op": "if",
+   "cond": "KC_DOGS >= 1",
+   "to": "FEWDOGS"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "의자 옆에 팔토시와 팔꿈치 보호대가 무더기로 쌓여 있다. 쇠말뚝에 사슬로 묶인 개들이 일제히 고개를 든다."
+  },
+  {
+   "op": "goto",
+   "to": "PERKCHK"
+  },
+  {
+   "op": "if",
+   "cond": "KC_DOGS >= 2",
+   "to": "ONEDOG"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "의자 옆에 팔토시와 팔꿈치 보호대가 무더기로 쌓여 있다. 쇠말뚝의 사슬 하나가 빈 채 늘어져 있고, 남은 개 둘이 고개를 든다."
+  },
+  {
+   "op": "goto",
+   "to": "PERKCHK"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "의자 옆에 팔토시와 팔꿈치 보호대가 무더기로 쌓여 있다. 쇠말뚝에 빈 사슬 둘이 늘어져 있고, 남은 개 한 마리가 고개를 든다."
+  },
+  {
+   "op": "goto",
+   "to": "PERKCHK"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "의자 옆에 팔토시와 팔꿈치 보호대가 무더기로 쌓여 있다. 쇠말뚝에는 빈 사슬만 늘어져 있다."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "빈 말뚝 옆에서 깡철이가 휘파람을 분다. 개는 오지 않는다."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-061",
+   "emo": "피곤",
+   "text": "…개들이 다 도망갔어. 오늘은 반값만 받는다."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "if",
+   "cond": "PK_045 >= 1",
+   "to": "WAG"
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "사슬에 묶인 개들이 당신을 보더니 꼬리를 친다. 깡철이가 눈살을 찌푸린다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "팔을 내민다",
+     "tags": [],
+     "cond": "KC_FOUGHT == 0 and KC_LOOSE == 0",
+     "fx": "",
+     "to": "ARM",
+     "id": "KC_MEET:1:0"
+    },
+    {
+     "text": "캡으로 낸다",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 30
+      }
+     ],
+     "cond": "KC_FOUGHT == 0 and KC_LOOSE == 0",
+     "fx": "",
+     "to": "PAY",
+     "id": "KC_MEET:1:1"
+    },
+    {
+     "text": "두 배로 낸다",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 60
+      }
+     ],
+     "cond": "KC_FOUGHT > 0",
+     "fx": "",
+     "to": "PAY",
+     "id": "KC_MEET:1:2"
+    },
+    {
+     "text": "반값으로 낸다",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 15
+      }
+     ],
+     "cond": "KC_FOUGHT == 0 and KC_LOOSE == 1",
+     "fx": "",
+     "to": "PAY",
+     "id": "KC_MEET:1:3"
+    },
+    {
+     "text": "개들은 네 편이 아니던데",
+     "tags": [],
+     "cond": "PK_045 >= 1 and KC_LOOSE == 0 and KC_DOGS < 3",
+     "fx": "",
+     "to": "PERK",
+     "id": "KC_MEET:1:4"
+    },
+    {
+     "text": "외눈 목에 걸려 있던 인식표를 보여 준다",
+     "tags": [
+      {
+       "k": "evidence",
+       "id": "M-158"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "ONE",
+     "id": "KC_MEET:1:5"
+    },
+    {
+     "text": "봉천 계단 밑에서 손 떼. 다음엔 말로 안 끝난다",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "어려움"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "TALK_OK",
+     "id": "KC_MEET:1:6",
+     "fail": "TALK_NO"
+    },
+    {
+     "text": "싸운다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "FIGHT",
+     "id": "KC_MEET:1:7"
+    },
+    {
+     "text": "그냥 간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "LEAVE",
+     "id": "KC_MEET:1:8"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-061",
+   "emo": "분노",
+   "text": "또 왔냐. 풀어!"
+  },
+  {
+   "op": "cmd",
+   "name": "kc",
+   "args": [
+    "fight"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "개들이 사슬을 끌고 깡철이에게서 물러나 당신 발치에 엎드린다."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-061",
+   "emo": "분노",
+   "text": "…이 배신자들."
+  },
+  {
+   "op": "cmd",
+   "name": "kc",
+   "args": [
+    "perk"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-061",
+   "emo": "미소",
+   "text": "그 팔 말고. 팔에 찬 거, 토시. …없어? 그럼 캡으로 서른."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "낸다",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 30
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "PAY",
+     "id": "KC_MEET:2:0"
+    },
+    {
+     "text": "싸운다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "FIGHT",
+     "id": "KC_MEET:2:1"
+    },
+    {
+     "text": "그냥 간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "LEAVE",
+     "id": "KC_MEET:2:2"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "kc",
+   "args": [
+    "toll"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-061",
+   "emo": "기본",
+   "text": "장부에 적어 둔다. 오늘은 고가 밑이 조용할 거다. 내일은 몰라."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-061",
+   "emo": "기본",
+   "text": "오늘 치는 냈잖아. 지나가."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-061",
+   "emo": "놀람",
+   "text": "…외눈 잡은 놈이야? 그 개는 우리도 못 건드렸는데."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "깡철이가 한 발 물러선다. 의자 옆 렌치로 가던 손이 멈춘다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "봉천 계단 밑에서 손 떼. 그럼 외눈 꼴은 안 난다",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "보통"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "TALK_OK",
+     "id": "KC_MEET:3:0",
+     "fail": "TALK_NO"
+    },
+    {
+     "text": "싸운다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "FIGHT",
+     "id": "KC_MEET:3:1"
+    },
+    {
+     "text": "그냥 간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "LEAVE",
+     "id": "KC_MEET:3:2"
+    }
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "GC_BOSS == 2 or dead(\"N-R01-060\") == 1",
+   "to": "TALK_OK2"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-061",
+   "emo": "분노",
+   "text": "…알았어. 봉천 계단 밑엔 안 간다. 삽자루 형님한텐 내가 알아서 말해."
+  },
+  {
+   "op": "goto",
+   "to": "TALK_GO"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-061",
+   "emo": "피곤",
+   "text": "…두목 자리도 비었는데 나 혼자 계단 밑을 지킬 이유가 없지. 알았어, 안 간다."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "깡철이가 의자를 걷어차고 남부순환로 쪽으로 걸어간다. 졸개들이 투덜거리며 뒤따르고, 개들은 사슬을 끌며 그 뒤를 쫓는다."
+  },
+  {
+   "op": "cmd",
+   "name": "kc",
+   "args": [
+    "talk"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-061",
+   "emo": "분노",
+   "text": "말이 길다. 풀어!"
+  },
+  {
+   "op": "cmd",
+   "name": "kc",
+   "args": [
+    "fight"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-061",
+   "emo": "분노",
+   "text": "그래, 그게 빠르지. 풀어!"
+  },
+  {
+   "op": "cmd",
+   "name": "kc",
+   "args": [
+    "fight"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "kc",
+   "args": [
+    "refuse"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-061",
+   "emo": "기본",
+   "text": "돌아가는 건 공짜다. 대신 내 의자 근처에서 얼쩡거리지 마."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KC.txt"
+}

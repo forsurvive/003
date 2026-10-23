@@ -1,0 +1,95 @@
+{
+ "id": "KC_BOUNTY",
+ "title": "남태하 — 깡철이 현상금",
+ "loc": "L-R01-09",
+ "npc": "N-R01-028",
+ "cond": "V_ACT >= 1 and KC_STATE >= 2 and KC_BOUNTY == 0",
+ "labels": {
+  "START": 0,
+  "HELM": 6,
+  "PAY300": 8,
+  "GONE": 11
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "KC_STATE == 2",
+   "to": "GONE"
+  },
+  {
+   "op": "if",
+   "cond": "has(\"A-102\")",
+   "to": "HELM"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "기본",
+   "text": "고가 밑 패거리가 흩어졌다는 소리는 들었어. 네가 그랬다고? …헬멧이 없으니 손 떼게 한 몫만 줄게."
+  },
+  {
+   "op": "do",
+   "fx": "caps(150); xp(50); KC_BOUNTY = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "남태하가 망루 밑 깡통에서 캡 150을 세어 건넨다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "놀람",
+   "text": "그 헬멧… 깡철이 거잖아. 고가 밑 그놈."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "기본",
+   "text": "게시판 수배는 내가 붙인 거야. 약속한 대로 줄게."
+  },
+  {
+   "op": "do",
+   "fx": "caps(300); xp(50); KC_BOUNTY = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "남태하가 망루 밑 깡통에서 캡 300을 세어 건넨다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "기본",
+   "text": "깡철이를 고가 밑에서 쫓아 보냈다고? 헬멧은 못 가져왔어도 — 다시 안 오면 됐지."
+  },
+  {
+   "op": "do",
+   "fx": "caps(150); xp(50); KC_BOUNTY = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "남태하가 망루 밑 깡통에서 캡 150을 세어 건넨다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/KC.txt"
+}

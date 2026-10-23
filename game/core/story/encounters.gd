@@ -201,6 +201,8 @@ func _ep_check(t: Vector2i, now: int, night: bool) -> Dictionary:
 			continue
 		if bool(ep.get("night_only", false)) and not night:
 			continue
+		if str(ep.get("cond", "")) != "" and not StoryExpr.test(str(ep["cond"]), st):
+			continue                                                    # 정본 밖 조건(EP_FIX — 1-13a3 깡철이 마당)
 		var p: float = float(ep.get("p_night", ep["p"])) if night else float(ep["p"])
 		var roll := rng.randf()
 		trace.append({"src": "ep:" + id, "t": t, "threat": threat_at(t), "p": p, "roll": roll, "re": ""})
