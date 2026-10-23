@@ -47,7 +47,7 @@ func test_vb_scenes(t) -> void:
 			lines.append(str(op["text"]))
 	t.ok(lines.any(func(s): return s.contains("명령서를 읽는 사람")), "육지환 핵심 대사(§8.6)")
 	t.ok(lines.any(func(s): return s.contains("강요는 서류에 없습니다")), "남궁혁 핵심 대사(§8.6)")
-	t.ok(lines.any(func(s): return s.contains("3년 전까지 1순위는 당신 어머니")), "계보(K_LINEAGE — SD-03b MQ-402 면담과 같은 말)")
+	t.ok(lines.any(func(s): return s.contains("3년 전까지 1순위는 어머님")), "계보(K_LINEAGE — SD-03b MQ-402 면담과 같은 말)")
 
 
 func test_vb_cg05(t) -> void:

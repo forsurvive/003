@@ -33,6 +33,7 @@ python3 tools/pipeline/rad_zones.py                    # 방사능 구역(1-9d):
 python3 tools/pipeline/world_chunks.py                  # 월드 굽기 → world.bin(손 맵·타일셋 뒤에)
 python3 tools/pipeline/convoy_route.py                  # FQ-SB-02 운송 행렬 경로 굽기(1-12f — 구운 월드 뒤에)
 python3 tools/pipeline/expr_cases.py
+python3 tools/pipeline/ko_lint.py                      # 번역투 후보(SD-24 · 사용자 지시 2026-10-23): 판정은 다듬이 — 새 후보는 고치거나 허용 목록에 이유
 python3 tools/pipeline/portrait_export.py
 python3 tools/pipeline/story_sprites.py
 python3 tools/pipeline/quest_cross.py                   # 퀘스트 교차 정합 표(1-X, SD-20 §10) — 새 경고는 단위 시험이 막는다

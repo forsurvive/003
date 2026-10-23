@@ -581,7 +581,7 @@ def v09():
     for y in (11, 12, 13, 19, 20, 21):
         m.p("sandbag", 31, y)
     m.c("mark p2_range 29 16 E"); m.c("mark range_line 30 16 E"); m.c("mark sneak_1 30 12 E"); m.c("mark sneak_2 30 20 E")
-    m.c('npc C-022 29 14 S look=M2-S4-HR02-H1-T02-1-PF11-HD03-EY00 cond="year() == 2268" bark="보안부는 명령대로 쏜다. 명령 없이는 안 쏜다. 그게 다야."')
+    m.c('npc C-022 29 14 S look=M2-S4-HR02-H1-T02-1-PF11-HD03-EY00 cond="year() == 2268" bark="보안부는 명령대로 쏜다. 명령 없이는 안 쏜다. 그뿐이다."')
     m.c('npc C-002 29 24 N look=K1-S3-HR08-H2-T01-1-PF11-HD00-EY00 cond="year() == 2268 and MQP2_STAGE >= 50" bark="다 맞혔어? 나 기다리는 중."')
     m.c('trigger 27 15 w=2 h=4 scene=MQ-P2_S05 cond="MQP2_STAGE == 40" once')
     m.c('npc N-R01-018 21 15 S route=무기고앞:22,15,10;복도:3,16,5 cond="year() == 2277 and MQP4_STAGE < 30" bark="무기고는 부장님 열쇠로만 열려."')

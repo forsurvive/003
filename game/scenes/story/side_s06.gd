@@ -557,7 +557,7 @@ func _stand_down() -> void:
 	var men := _alive(chasers) + (_alive(squad["men"]) if not squad.is_empty() else [])
 	if men.is_empty():
 		return
-	host.hint("조합 경비들이 총을 든다. 쫓던 계엄병들이 다리 가운데서 멈춰 선다 — 여기서부터는 그들 땅이 아니다.", 6.0)
+	host.hint("조합 경비들이 총을 든다. 쫓던 계엄병들이 다리 가운데서 멈춰 선다 — 여기서부터는 계엄군 땅이 아니다.", 6.0)
 	_leave(men)
 	chasers.clear()
 	squad = {}
@@ -771,7 +771,7 @@ func _on_map(_id: String) -> void:
 		else:                                                              # 계엄군에 생포됐다: 탈영병도 함께 잡혔다
 			_sv("SQ_S06_HOW", 3)
 			_taken(8, "주인공과 함께 생포")
-			host.hint("호송 차량 뒤칸에서 진해원이 다른 차로 옮겨진다. 눈이 마주쳤지만, 그는 고개를 젓는다.", 6.0)
+			host.hint("호송 차량 뒤칸에서 진해원이 다른 차로 옮겨진다. 눈이 마주쳤지만, 진해원은 고개를 젓는다.", 6.0)
 		return
 	match _zone():
 		"Q-30":

@@ -39,7 +39,7 @@ text 10 3 "판자로 막은 현관 안쪽. '빈집'이라 쓴 판자 뒤에 살�
 prop dresser 11 4
 box 11 4 apartment name="빈집 서랍장"
 prop yo_bed 17 4
-text 17 4 "이불 위에 빨간 번호표 '89'. 주인은 데려가졌다." w=2
+text 17 4 "이불 위에 빨간 번호표 '89'. 주인은 끌려갔다." w=2
 box 21 3 apartment name="빈집 쌀통"
 prop crate_o 21 3
 # 복도

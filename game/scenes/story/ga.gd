@@ -304,7 +304,7 @@ func _reveal(alive: bool, hit := false) -> void:
 		_runner = _lookout
 		_run_t = RUN_S
 		host.combat._pop("줄에 하나 늘었다!", _lookout.loco.logical + Vector2(0, -30), Color("E8C860"))
-		host.hint("마네킹 하나가 고개를 돌린다 — 방독면 너머로 눈이 있다. 사람이다! 그는 덤비지 않고 에스컬레이터 쪽으로 뛴다.", 4.0)
+		host.hint("마네킹 하나가 고개를 돌린다 — 방독면 너머로 눈이 있다. 사람이다! 놈은 덤비지 않고 에스컬레이터 쪽으로 뛴다.", 4.0)
 		if _boss != null and is_instance_valid(_boss) and not _boss.cmb.dead and _boss.brain.state == AIBrain.S.IDLE:
 			_boss._route_i = 1                                                # 책상에서 일어나 첫 줄부터
 			_boss._route_wait = 0.0
@@ -416,7 +416,7 @@ func _suit() -> void:
 				_sv("SIDE", 0)
 				_sv("UNMASK", day())
 				host.combat._pop("…우리 쪽 사람이 3,000짜리였어?" + (" 벗어 던졌다며!" if v("SUITSOLD") == 1 else ""), e.loco.logical + Vector2(0, -30), Color("E05040"))
-				host.hint("셈꾼 옆에서 고개를 끄덕이던 사람이 파란 작업복을 입고 왔다 — 패거리가 굳는다. 그리고 소리친다. '생포만!'", 4.0)
+				host.hint("셈꾼 옆에서 고개를 끄덕이던 사람이 파란 작업복을 입고 왔다 — 패거리가 굳는다. 그러더니 소리친다. '생포만!'", 4.0)
 				_log("패거리 편 — 볼트 작업복으로 정체가 드러남")
 			else:
 				host.combat._pop("S-07 작업복! 생포만 — 3,000이다!", e.loco.logical + Vector2(0, -30), Color("E05040"))
@@ -728,7 +728,7 @@ func decoy() -> void:
 	if host.map != null and _mid() == HALL:
 		host.map.set_prop_state(WINDOW_AT, _window_state())
 		if worn() == VAULT:
-			host.hint("유리에 비친 내 작업복과 마네킹의 작업복이 똑같다. 둘 중 어느 쪽인지 — 그들은 가까운 쪽을 볼 것이다.", 4.0)
+			host.hint("유리에 비친 내 작업복과 마네킹의 작업복이 똑같다. 둘 중 어느 쪽인지 — 놈들은 가까운 쪽을 볼 것이다.", 4.0)
 		else:
 			_lure_t = LURE_S
 			host.hint("위층에서 누가 외친다. '진열창! 작업복이다!' 발소리가 정문 쪽으로 몰린다.", 4.0)

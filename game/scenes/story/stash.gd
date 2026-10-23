@@ -238,7 +238,7 @@ func _act(what: String, b: Dictionary, c: Dictionary, scr: ContainerScreen) -> v
 			d["spots"].erase(k)
 			scr.stash_mode = "claim" if can_claim(host.map.id, b, c) == "" else ""
 			scr.bell_ok = false
-			host.hint("자리를 놓았다. 남은 물건은 그대로다 — 이제 누구의 것도 아니다.", 4.0)
+			host.hint("자리를 놓았다. 남은 물건은 그대로다 — 이제 임자가 없다.", 4.0)
 		"bell":
 			if st.items.has(BELL) and not bool(c.get("bell", false)):
 				st.call_fn("take", [BELL, 1])

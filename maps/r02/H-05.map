@@ -25,7 +25,7 @@ prop collar_bench 3 4
 prop collar_bench 8 4
 text 3 4 "목걸이 조립대. 고리 · 뇌관 통 · 표시등. 부품마다 일련번호를 새겼다. 장부 번호와 같다." w=2 scene=UQ08_BENCH
 text 8 4 "고장 난 목걸이 하나가 바이스에 물려 있다. 해제 연습용이다." w=2 scene=H-05_PRACTICE
-npc N-R02-038 9 6 N cond="SB_RAID == 0 and UQ08_WIRE == 0 and UQ08_LENS != 2" bark="목걸이는 거짓말을 안 해. 사람이 하지."
+npc N-R02-038 9 6 N cond="SB_RAID == 0 and UQ08_WIRE == 0 and UQ08_LENS != 2" bark="목걸이는 속이지 않아. 사람이 속이지."
 npc N-R02-038 9 6 N cond="SB_RAID == 0 and UQ08_WIRE == 0 and UQ08_LENS == 2" bark="(고글 렌즈를 소매로 닦는다) 너 눈썹에 흉 있는 거 알았어?"
 prop stool_goggles 9 6 state=lens cond="UQ08_WIRE == 1 and UQ08_LENS == 2"
 prop stool_goggles 9 6 cond="UQ08_WIRE == 1 and UQ08_LENS != 2"

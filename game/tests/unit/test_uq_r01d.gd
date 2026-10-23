@@ -131,7 +131,7 @@ func test_uq63_match_left_mine_done(t) -> void:
 	t.eq([_v(st, "UQ63_DONE"), st.quests.stage("UQ-63"), _v(st, "V_KARMA") - kr], [1, 100, 25], "다음 06:00 — 맞춤 판 · 카르마 +25 · 100")
 	st.vars.set_v("GAME_DAY", 6)
 	var r := _play(st, c, "SQS03_INTERCOM", ["누른다", "끊는다"])
-	t.ok(str(r[0]).contains("서른 가문") and str(r[0]).contains("311장") and str(r[0]).contains("당신 성씨"), "인터컴 결과 — 서른 가문 · 311장 · 내 성씨")
+	t.ok(str(r[0]).contains("서른 가문") and str(r[0]).contains("311장") and str(r[0]).contains("그쪽 성씨"), "인터컴 결과 — 서른 가문 · 311장 · 내 성씨")
 	t.eq(_v(st, "UQ63_SAID"), 1, "한 번")
 	t.ok(not _says(st, c, "SQS03_INTERCOM", "서른 가문", ["누른다", "끊는다"]), "다시는 안 함")
 	t.ok(_says(st, c, "K-01_CLEAN", "졸업생 본인님", ["됐다"]), "깔끔이 — 본인님(내 성씨 판)")

@@ -143,7 +143,7 @@ func test_uq65_rebel_and_lessons(t) -> void:
 	var st: StoryState = a[1]
 	var c: UqR01 = a[2]
 	st.vars.set_v("PC_IN", 3)
-	t.ok(_says(st, c, "K-24_SON", "당신 얼굴도 기억할게요", ["무슨 수업", "풀어 보자", "집으로 간다", "뛴다", "돕는다", "고맙다"]), "오답 셋 — 반항형 끝말(지능 낮은 사람 몫)")
+	t.ok(_says(st, c, "K-24_SON", "학생 얼굴도 기억할게요", ["무슨 수업", "풀어 보자", "집으로 간다", "뛴다", "돕는다", "고맙다"]), "오답 셋 — 반항형 끝말(지능 낮은 사람 몫)")
 	t.eq(_v(st, "UQ65_REBEL"), 3, "오답 셈")
 	t.ok(_says(st, c, "K-24_SON", "오늘 수업은 끝났어요"), "'다음 시간엔 4번부터' — 같은 날은 없다")
 	st.vars.set_v("GAME_DAY", 6)

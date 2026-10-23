@@ -509,7 +509,7 @@ func _check_tick() -> void:
 				_s("CHECK", 1)
 				_up(30)
 				if park_dist() <= NEAR:
-					host.hint("박춘삼: \"저기 판독기 들고 섰다. 다리목 분대야. …샛강 쪽으로 돌면 한 청크 더고.\"", 6.0)
+					host.hint("박춘삼: \"저기 판독기 들고 섰다. 다리목 분대야. …샛강 쪽으로 돌면 좀 더 걸리고.\"", 6.0)
 				else:
 					host.hint("노량진로 한가운데 계엄군 셋 — 판독기를 든 조장이 길을 막고 섰다.", 5.0)
 			var sneak: bool = v("CHECK") == 5 or host.combat.crouch
@@ -944,7 +944,7 @@ func _cmd(a: Array, done: Callable) -> void:
 			if a.size() > 1 and v("END") == 0:
 				_s("END", int(a[1]))
 			_part()
-			host.hint("박춘삼이 계약서를 품에 넣고 돌아선다. 그의 걸음은 지하로 가는 길을 안다.", 5.0)
+			host.hint("박춘삼이 계약서를 품에 넣고 돌아선다. 지하로 가는 길은 발이 안다.", 5.0)
 		"told":
 			_s("TOLD", 1)
 	done.call()

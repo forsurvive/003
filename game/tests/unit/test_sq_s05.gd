@@ -423,7 +423,7 @@ func test_sq_s05_ju_quits(t) -> void:
 	var c: SideS05 = r[2]
 	st.quests.set_stage("SQ-S05", 20)
 	st.call_fn("caps", [60])
-	t.eq(_play(st, c, "MQ-102_JU", ["사당 서쪽", "하루 장사 값"]), [], "[캡 50] 부탁")
+	t.eq(_play(st, c, "MQ-102_JU", ["사당 서쪽", "하루 벌이"]), [], "[캡 50] 부탁")
 	t.eq(_v(st, "SQ_S05_JU"), 2, "동행")
 	st.vars.set_v("GAME_DAY", 6)
 	c._on_day(6)

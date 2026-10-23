@@ -153,7 +153,7 @@ func _cmd(a: Array, done: Callable) -> void:
 			_dig()
 		"smear":
 			host.combat.colony.smear()
-			host.hint("몸에 여왕 페로몬 냄새(3시간) — 냄새 줄 위에서는 일개미가 같은 무리로 본다. 물에 닿으면 씻긴다.", 4.0)
+			host.hint("몸에 여왕 페로몬 냄새(3시간) — 냄새 줄 위에서는 일개미가 같은 무리인 줄 안다. 물에 닿으면 씻긴다.", 4.0)
 		"hose":
 			_hose(str(a[1]) if a.size() > 1 else "here")
 		"ext":

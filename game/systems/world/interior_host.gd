@@ -2900,7 +2900,7 @@ func consume(id: String) -> bool:
 		if int(st.vars.get_v("UQ09_CLEAN")) == 1:
 			rad = 0
 		else:
-			taste = "  끝맛이 쇠 같다. 핍보이가 틱."
+			taste = "  끝맛이 쇠 같다. 핍-보이가 틱."
 		if int(st.vars.get_v("UQ09_SMOKE")) > 0 and int(st.vars.get_v("GAME_DAY")) == int(st.vars.get_v("UQ09_SMOKE")) + 1 and int(st.vars.get_v("UQ09_PIPE")) == 0:
 			taste = "  물에서 굴뚝 맛이 난다."
 	if rad != 0:
@@ -3362,7 +3362,7 @@ func doctor_menu(vid: String) -> void:
 	elif int(pr["heal"]) == 0 and str(pr["tier"]) == "" and int(st.vars.get_v("PC_RADS")) <= 0:
 		say = "멀쩡한데 왜 왔어요? 다치면 와요."
 	elif bool(pr["free"]):
-		say = "당신 얘기는 들었어요. 돈은 넣어 둬요."
+		say = "그쪽 얘기는 들었어요. 돈은 넣어 둬요."
 	ops.append({"op": "line", "who": npc, "emo": "기본", "text": say})
 	if not bool(pr["refuse"]) and str(pr["tier"]) != "":
 		opts.append({"text": "치료 — %s" % str(pr["tier"]), "tags": [{"k": "caps", "n": int(pr["heal"])}] if int(pr["heal"]) > 0 else [], "cond": "", "fx": "",

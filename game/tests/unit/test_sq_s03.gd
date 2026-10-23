@@ -290,7 +290,7 @@ func test_sq_s03_sol_c_dry(t) -> void:
 	t.ok(_says(st, c, "SQS02_SUAN", "2주면 마른대"), "조수안: C 보고")
 	t.eq(_play(st, c, "SQS02_SUAN"), [], "조수안에게 보고")
 	t.eq([st.quests.stage("SQ-S03"), _v(st, "AFF_JC_BC")], [100, 8], "100 · 봉천 +8")
-	t.ok(_says(st, c, "SQS03_INTERCOM", "또 당신이네요", ["누른다"]), "인터컴은 다음부터 바로 받는다")
+	t.ok(_says(st, c, "SQS03_INTERCOM", "또 그쪽이네요", ["누른다"]), "인터컴은 다음부터 바로 받는다")
 
 
 func test_sq_s03_a_then_c(t) -> void:
@@ -421,7 +421,7 @@ func test_sq_s03_fun_fixes(t) -> void:
 	var h: InteriorHost = r[0]
 	var st: StoryState = r[1]
 	var c: SideS03 = r[2]
-	t.ok(_says(st, c, "SQS03_COLONY", "물이 오는 데를 막든가"), "맨손으로 와도 해법 셋의 실마리가 보인다")
+	t.ok(_says(st, c, "SQS03_COLONY", "물이 들어오는 데를 막든가"), "맨손으로 와도 해법 셋의 실마리가 보인다")
 	t.ok(_says(st, c, "SQS03_BOX", "세제 2 · 희석제 1"), "배합은 분무기를 처음 집을 때 보인다")
 	st.kill("N-R01-032")
 	t.eq(_play(st, c, "SQS03_WALL"), [], "벽")

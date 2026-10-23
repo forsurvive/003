@@ -578,7 +578,7 @@ func test_uq10_pyo_and_ledger(t) -> void:
 	st.call_fn("give", ["M-010", 1])
 	t.ok(_says(st, "UQ10_P", "내가 단다", ["달아 봐 주세요"], c), "표강윤 화약 저울 대조(판정 없음)")
 	t.eq(_v(st, "UQ10_CHECKED"), 2, "표강윤도 앎")
-	t.eq(st.count_of("M-010"), 0, "고철은 값으로 쳐 둔다")
+	t.eq(st.count_of("M-010"), 0, "고철은 저울삯으로 받아 둔다")
 	t.ok(_has_opt(st, "UQ10_M1", "표강윤 씨 화약 저울로", ["쇠판이 덧대져"]), "공개 증거 — 표강윤")
 	st.vars.set_v("GAME_HOUR", 22)
 	t.ok(_says(st, "UQ10_LEDGER", "내려놔"), "밤엔 탁우빈이 깨어 본다")
