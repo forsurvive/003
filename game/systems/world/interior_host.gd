@@ -2535,6 +2535,7 @@ func status() -> Dictionary:
 		"rad_drug": st.rad_drug.duplicate(),
 		"dr": int(items_db.get(worn(), {}).get("dr", 0)) if st.items.has(worn()) else 0,
 		"tile": Vector2(map.tile_of(player.loco.logical)) if map is WorldMap and player != null else Vector2(-99, -99),
+		"map_id": map.id if map != null else "",
 		"world": map if map is WorldMap else null, "travel": travel_check, "radio": radio_ctx(), "hint": hint}
 
 

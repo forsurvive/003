@@ -10,7 +10,7 @@ func _ready() -> void:
 	host.body = "kid"
 	var args := OS.get_cmdline_user_args()
 	var p3 := args.size() > 1 and args[1] == "p3"
-	var k := args.size() > 1 and args[1] in ["k", "m"]                  # 1-12k: 1막 봉천 · 등록 카드 단계 3(코드 줄 `20 27`) · 원경 표식 넷 · 월드 지도(랜드마크 실루엣)
+	var k := args.size() > 1 and args[1] in ["k", "m", "s"]                  # 1-12k: 1막 봉천 · 등록 카드 단계 3(코드 줄 `20 27`) · 원경 표식 넷 · 월드 지도(랜드마크 실루엣)
 	var m := args.size() > 1 and args[1] == "m"                         # 1-12m: 판도가 몇 군데 기운 1막(가산 새벽 · 신림 공백 · 영등포 지하시장 지배 · 국회 BJ) + 세력 기록
 	if m:
 		var st := host.st
@@ -33,6 +33,24 @@ func _ready() -> void:
 		for h in [["JC_BC", "삼성산 상류 밸브를 되찾아 봉천 배수지에 물이 돌아왔다", 0], ["JC_BC", "남부순환 패거리 두목 삽자루가 죽었다 — 밸브 캠프가 빈다", 1500],
 				["JH", "영등포 지하 둥지를 비웠다", 2900], ["SB", "가산 아울렛 작업복 상자를 인솔조에 넘겼다", 3100], ["BJ", "사당 고개 검문소에서 회차 지시를 받았다", 3300]]:
 			st.deeds.heard.push_front({"fac": h[0], "what": h[1], "at": base + int(h[2]), "route": "목격", "tag": ""})
+	if args.size() > 1 and args[1] == "s":                             # 1-12o: 숨겨 둔 자리 셋(그대로 · 방울 · 털린 줄 앎) + 맡긴 자리(옥탑방)
+		var at0 := Clock.abs_min("2277. 10. 23.  18:00")
+		host.st.vars.set_v("GAME_DAY", 3)
+		host.st.boxes["stash"] = {"n": 1, "qb": 1, "seen": {}, "bundles": [{"id": 1, "key": "c", "state": "held", "who": "crew", "dest": "G-1-1", "day": 3, "items": {}}],
+			"spots": {
+				"a": {"name": "서류함", "room": "세탁소 뒷방", "wx": 884, "wy": 1352, "since": 1, "since_at": at0, "th": 1, "lock": 0, "kind": "cabinet",
+					"seen": {"day": 1, "at": at0, "items": {"W-013": 1, "I-001": 2, "M-001": 140}, "risk": "잠기지 않는 서류함. 사람이 자주 드나드는 동네다.", "p": 0.03},
+					"log": [{"at": at0, "text": "삼음"}]},
+				"b": {"name": "금고", "room": "빈 살림집", "wx": 905, "wy": 1340, "since": 1, "since_at": at0, "th": 2, "lock": 50, "kind": "safe",
+					"seen": {"day": 2, "at": at0 + 1440, "items": {"A-012": 1, "I-030": 3}, "bell": true, "risk": "단단히 잠기는 금고. 가끔 사람이 지나간다. 방울 줄을 매 두었다.", "p": 0.004},
+					"log": [{"at": at0, "text": "삼음"}, {"at": at0 + 1440, "text": "방울 맴"}]},
+				"c": {"name": "설비 상자", "room": "길가", "wx": 870, "wy": 1371, "since": 1, "since_at": at0, "th": 2, "lock": 0, "kind": "crate",
+					"seen": {"day": 3, "at": at0 + 2880, "items": {"I-022": 2}, "risk": "잠기지 않는 설비 상자. 길가라 누구나 지나간다.", "p": 0.018},
+					"known": {"day": 3, "at": at0 + 2880, "b": 1, "lost": {"W-013": 1, "I-001": 1}, "left": {"I-022": 2}, "text": "안이 털렸다. 자물쇠 둘레에 쇠지레 자국, 문설주에 분필 'X 털었음'. 군화 자국 셋이 북동쪽으로 골목 몇 개 건너."},
+					"log": [{"at": at0, "text": "삼음"}, {"at": at0 + 2880, "text": "털림 — 자물쇠 둘레에 쇠지레 자국, 문설주에 분필 'X 털었음'"}]}},
+			"safe": {"B-01|h": {"map": "B-01", "name": "철제 사물함", "seen": {"day": 2, "at": at0 + 1440, "items": {"W-002": 1, "10mm 탄": 24}}}}}
+		for lid in ["L-R01-09"]:
+			host.st.places.raise(lid, PlaceLog.FOUND)
 	if k:
 		CharDocs.write_name(host.st, "윤", "서진")
 		host.st.vars.set_v("P_REGNO", CharDocs.REGNO)

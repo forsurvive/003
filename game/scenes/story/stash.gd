@@ -126,6 +126,8 @@ func can_claim(map_id: String, b: Dictionary, c: Dictionary) -> String:
 		return "여기는 내 자리로 삼을 수 없다"                          # 손 맵 · 볼트 시대(§6 #17 · #18)
 	if not (str(b.get("kind", "")) in CLAIM_KINDS) or str(b.get("owner", "")) != "":
 		return "남의 자리다"                                             # 주인 있는 용기 · 바꿈 상자(§9.4 #28 · #35)
+	if (_hide.get("den", []) as Array).any(func(r): return str(r[0]) == map_id):
+		return "털이꾼 굴이다 — 여기 숨겼다간 제 발로 갖다 바치는 꼴이다"   # 털이꾼 소굴(1-12o 재미 검수 — 식구가 쓰러진 뒤에도 굴을 아는 놈은 있다 · 값 치른 굴 예외는 D-367)
 	if not (c.get("items", {}) as Dictionary).is_empty():
 		return "먼저 비워야 한다"
 	if (data()["spots"] as Dictionary).size() >= MAX_SPOTS:
@@ -181,18 +183,33 @@ func on_open(b: Dictionary, c: Dictionary, scr: ContainerScreen) -> void:
 	elif can_claim(mid, b, c) == "":
 		scr.stash_mode = "claim"
 		scr.stash_line = risk_text(mid, b, c)
+	elif str(b.get("kind", "")) in CLAIM_KINDS and str(b.get("owner", "")) == "" and (mid == "W" or mid.begins_with("G-")) and st.year() >= 2277:
+		scr.stash_line = can_claim(mid, b, c)                            # 삼을 수 있는 종류인데 막혔다 — 까닭을 한 줄(1-12o 구현 뒤 재미 검수 — 이유 없이 막힌 문 금지)
 	scr.stash_act.connect(func(what: String) -> void: _act(what, b, c, scr))
 	if int(c.get("sack", 0)) > 0:
 		_crew_turn()                                                    # 깨어 있는 털이꾼 앞에서 자루를 연다 — 말은 끝났다
 	if c.has("trace") and not bool(c.get("trace_seen", false)):        # 털린 흔적(§3.2): 열어서 처음 본다 — 퀘스트가 붙은 묶음이면 UQ-125 10
 		c["trace_seen"] = true
 		host.hint(str(c["trace"]), 8.0)
+		_known(Loot.key(mid, b, st.year()), c)
 		var bn := bundle(int(c.get("trace_b", 0)))
 		if not bn.is_empty() and bool(bn.get("quest", false)):
 			_open_quest(bn)
 
 
 func on_close(b: Dictionary, c: Dictionary) -> void:
+	if host.map != null:
+		var k := Loot.key(host.map.id, b, st.year())
+		if is_mine(c) and spots().has(k):
+			_remember(k, b, c)                                              # 수첩의 기억은 닫은 순간의 내용(1-12o — 열어 보기 전엔 바뀌지 않는다)
+			var kn: Dictionary = spots()[k].get("known", {})
+			if not kn.is_empty() and _refilled(c, kn.get("left", {})):      # 털린 뒤 다시 채워 닫았다 — 털림은 지난 일로 내리고 상태는 날짜로
+				spots()[k]["past"] = kn
+				spots()[k].erase("known")
+		elif st.year() >= 2277 and StashBook.SAFE.has(host.map.id) and (str(b.get("owner", "")) == "PC" or str(b.get("kind", "")) == "mr_locker"):
+			if not data().has("safe"):
+				data()["safe"] = {}
+			data()["safe"][k] = {"map": host.map.id, "name": str(b.get("name", "사물함")), "seen": _snap(c)}
 	var bid := int(c.get("sack", 0))                                   # 털이꾼 소굴의 내 물건 자루: 비우면 끝(§5 털이꾼)
 	if bid <= 0 or not (c["items"] as Dictionary).is_empty():
 		return
@@ -225,11 +242,14 @@ func _act(what: String, b: Dictionary, c: Dictionary, scr: ContainerScreen) -> v
 				return
 			c["mine"] = str(b.get("name", "용기"))
 			var wp := _wpos(host.map.id, b)
-			d["spots"][k] = {"map": host.map.id, "x": int(b["x"]), "y": int(b["y"]), "name": str(b.get("name", "")), "since": day(),
+			d["spots"][k] = {"map": host.map.id, "x": int(b["x"]), "y": int(b["y"]), "name": str(b.get("name", "")), "since": day(), "since_at": Clock.abs_min(host.date_text),
 				"lock": int(b.get("lock", 0)), "th": int(b.get("th", 2)), "kind": str(b.get("kind", "")), "wx": wp.x, "wy": wp.y,
 				"region": host.map_region(Vector2i(int(b["x"]), int(b["y"]))), "rest": 0}
 			scr.stash_mode = "release"
 			scr.bell_ok = st.items.has(BELL)
+			d["spots"][k]["room"] = str(host.map.data.get("name", "")) if host.map.id != "W" else "길가"
+			_remember(k, b, c)
+			_note(k, "삼음")
 			host.hint("내 자리로 삼았다. 핍-보이 수첩에 적어 둔다 — " + risk_text(host.map.id, b, c), 5.0)
 			_log("삼기 %s (%d곳)" % [k, (d["spots"] as Dictionary).size()])
 		"release":
@@ -245,6 +265,7 @@ func _act(what: String, b: Dictionary, c: Dictionary, scr: ContainerScreen) -> v
 				c["bell"] = true
 				scr.bell_ok = false
 				scr.stash_line = risk_text(host.map.id, b, c)
+				_note(k, "방울 맴")
 				host.hint("용기 앞에 방울 줄을 맸다. 손을 대면 울린다.", 4.0)
 	if scr.view != null:
 		scr.view.queue_redraw()
@@ -252,6 +273,72 @@ func _act(what: String, b: Dictionary, c: Dictionary, scr: ContainerScreen) -> v
 
 func spots() -> Dictionary:
 	return data()["spots"]
+
+
+# ---------------------------------------------------------------- 수첩 기억(1-12o D-225 — StashBook이 읽는다)
+## 끝 갈래(UQ-125 R) → 지난 일 한 마디
+const END_NOTE := {1: "아이에게서 되찾음", 2: "아이에게서 되찾음 — 먹을 것은 두고", 3: "아이를 맡기고 되찾음", 6: "아이가 두고 달아남",
+	7: "털이꾼 소굴에서 되찾음", 8: "털이꾼과 말로 풀어 되찾음", 10: "털이꾼에게 수고비 주고 되찾음", 4: "장사꾼 진열에서 되삼", 5: "장사꾼에게서 돌려받음", 9: "끝내 못 찾았다"}
+
+
+func _fav_name() -> String:
+	var f := str(data().get("kid_fav", ""))
+	return str(host.items_db.get(Gear.base(f), {}).get("name", "")) if f != "" else ""
+
+
+func _snap(c: Dictionary) -> Dictionary:
+	return {"day": day(), "at": Clock.abs_min(host.date_text), "items": (c.get("items", {}) as Dictionary).duplicate()}
+
+
+## 닫은 순간을 얼린다: 내용 · 방울 · 위험 문장 · 하루 확률(마음에 걸림의 근거 — 털림 여부는 들어가지 않는다)
+func _remember(k: String, b: Dictionary, c: Dictionary) -> void:
+	var s: Dictionary = spots().get(k, {})
+	if s.is_empty():
+		return
+	var sn := _snap(c)
+	sn["bell"] = bool(c.get("bell", false))
+	sn["risk"] = risk_text(host.map.id, b, c)
+	sn["p"] = risk(b, c)
+	s["seen"] = sn
+
+
+## 흔적을 봤다(열어서 · 지켜봐서): 털림이면 known, 방울이 막은 것이면 지난 일만
+func _known(k: String, c: Dictionary) -> void:
+	var s: Dictionary = spots().get(k, {})
+	if s.is_empty():
+		return
+	var sents := str(c.get("trace", "")).split(". ")
+	var first := str(sents[1] if sents.size() > 1 and str(sents[0]).begins_with("안이") else sents[0]).split(" — ")[0].trim_suffix(".")   # 단서 마디(쇠지레 · 쪽지 · 사탕 껍질 · 비에 씻김) — 흔적 글 그대로
+	if int(c.get("trace_b", 0)) > 0:
+		var left := (c.get("items", {}) as Dictionary).duplicate()
+		var lost := {}
+		var before: Dictionary = s.get("seen", {}).get("items", {})
+		for id in before:
+			var n := int(before[id]) - int(left.get(id, 0))
+			if n > 0:
+				lost[id] = n                                                # 잃은 것 = 마지막으로 본 것 − 열어서 본 것(본 것만 — P2)
+		s["known"] = {"day": day(), "at": Clock.abs_min(host.date_text), "text": str(c["trace"]), "b": int(c["trace_b"]), "lost": lost, "left": left}
+		_note(k, "털림 — " + first)
+	else:
+		_note(k, "방울이 막음 — " + first)
+
+
+func _refilled(c: Dictionary, left: Dictionary) -> bool:
+	for id in (c.get("items", {}) as Dictionary):
+		if int(c["items"][id]) > int(left.get(id, 0)):
+			return true
+	return false
+
+
+func _note(k: String, text: String) -> void:
+	var s: Dictionary = spots().get(k, {})
+	if s.is_empty():
+		return
+	if not s.has("log"):
+		s["log"] = []
+	(s["log"] as Array).append({"at": Clock.abs_min(host.date_text), "text": text})
+	while (s["log"] as Array).size() > 12:
+		(s["log"] as Array).pop_front()
 
 
 func bundle(id: int) -> Dictionary:
@@ -276,6 +363,8 @@ func _on_day(_d: int) -> void:
 		var s: Dictionary = d["spots"][k]
 		var c: Dictionary = st.boxes.get(k, {})
 		if c.is_empty() or not is_mine(c):
+			if c.is_empty():
+				host.hint("수첩에 적은 %s — 그 자리가 없어졌다." % str(s.get("name", "자리")), 4.0)
 			d["spots"].erase(k)                                         # 용기가 사라졌거나 놓았다(§6 #24 — 물건은 그 상태 그대로)
 			continue
 		if today < int(s["since"]) + GRACE or today < int(s.get("rest", 0)):
@@ -362,6 +451,7 @@ func _theft(k: String, s: Dictionary, c: Dictionary, today: int, rng: RandomNumb
 	if watched and str(dest[0]) == "crew":                              # 지켜봤다(재미 검수 덤): 흔적 대신 내가 본 것 — 단계 10이 바로 열린다
 		c["trace"] = "내가 본 것 — 쇠지레를 든 둘이 내 자리를 털어 자루를 메고 %s으로, %s." % [dest[3], dest[2]]
 		c["trace_seen"] = true
+		_known(k, c)
 		if bool(bn["quest"]):
 			_open_quest(bn)
 	s["rest"] = today + 7
@@ -792,6 +882,8 @@ func _kid_leave(state: int) -> void:
 
 
 func _done(bn: Dictionary, r: int) -> void:
+	if not bn.is_empty() and (spots().get(str(bn.get("key", "")), {}).has("known") or spots().get(str(bn.get("key", "")), {}).has("past")):   # 털린 줄 아는 자리만(모르는 털림이 수첩으로 새지 않게 — P2)
+		_note(str(bn.get("key", "")), str(END_NOTE.get(r, "되찾음")) + (" — %s%s 들고 갔다" % [_fav_name(), Josa.pick("를", _fav_name())] if r == 3 and _fav_name() != "" else ""))
 	if bn.is_empty() or not bool(bn.get("quest", false)) or st.quests.stage(QID) >= 100:
 		return
 	_sv("R", r)

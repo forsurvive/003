@@ -32,6 +32,7 @@ var cursor := Vector2(959, 1503)
 var sel := ""                                         ## 커서 아래 장소
 var hold := 0.0
 var temp := ""                                        ## 임시 표식(인물 수첩 '지도에서 보기', SD-12 §3.11) — 장소 ID
+var temp_at := Vector2(-1, -1)                       ## 임시 표식(숨겨 둔 자리 '지도에서 보기', 1-12o) — 월드 칸
 var layer := false                                    ## 판도 레이어(1-12m, SD-12 §5.8) — [G]로 켜고 끈다
 var focus := ""                                       ## 세력 기록 '판도 지도'로 열었을 때 강조할 세력(그 세력 구역 · 거점만 진하게)
 var opened_at := -1.0                                 ## 레이어를 켠 시각(바뀐 구역 경계 3번 점멸)
@@ -268,11 +269,34 @@ func _markers(v: Control, U: Array) -> void:
 		if AREA.has_point(tp) and fmod(pb.time, 0.8) < 0.55:
 			v.draw_arc(tp, 10.0, 0, TAU, 24, U[7], 1.0)
 			v.draw_arc(tp, 13.0, 0, TAU, 24, U[5], 1.0)
+	if temp_at.x >= 0:                                                    # 임시 표식(칸): 숨겨 둔 자리 '지도에서 보기'
+		var tp2 := w2s(temp_at)
+		if AREA.has_point(tp2) and fmod(pb.time, 0.8) < 0.55:
+			v.draw_arc(tp2, 10.0, 0, TAU, 24, U[7], 1.0)
+			v.draw_arc(tp2, 13.0, 0, TAU, 24, U[5], 1.0)
+	if zoom >= 1:                                                         # 숨겨 둔 자리(1-12o D-225 · 1-L §3.1 '내가 아는 자리 — 지도에만, 마커 아님')
+		for sp in StashBook.points(pb.st):
+			var q := w2s(Vector2(sp["at"]) + Vector2(0.5, 0.5))
+			if AREA.grow(-6).has_point(q) and q.y <= AREA.end.y - 34:
+				stash_mark(v, q, sp, U)
+				if zoom >= 2 and q.distance_to(cp) < 10.0:
+					pb.text(q + Vector2(0, 5), str(sp["name"]), pb.f10, 10, U[5], HORIZONTAL_ALIGNMENT_CENTER)
 	for m in pb.st.quests.marks(places):                                   # 퀘스트 마커(SD-12 §3.12): 장소 위 ▼ + 번호(①~⑧), 추적 = 밝게 · 고정 = 흐리게
 		var e: Dictionary = PlaceLog.db[m["lid"]]
 		var p := w2s(Vector2(int(e["tx"]) + 0.5, int(e["ty"]) + 0.5))
 		if AREA.grow(-6).has_point(p) and p.y <= AREA.end.y - 34:
 			quest_mark(v, p + Vector2(0, -10), m, U)
+
+
+## 숨겨 둔 자리 상자(6×6): 뚜껑 줄 · 맡긴 자리는 두꺼운 테 · 털린 줄 아는 자리는 사선(단색 화면이라 무늬로)
+func stash_mark(v: Control, q: Vector2, sp: Dictionary, U: Array) -> void:
+	var r := Rect2(q - Vector2(3, 3), Vector2(6, 6))
+	v.draw_rect(r.grow(1), U[0])
+	v.draw_rect(r, U[2])
+	v.draw_rect(r, U[6], false, 2.0 if bool(sp["safe"]) else 1.0)
+	v.draw_line(r.position + Vector2(0, 2), r.position + Vector2(6, 2), U[6])
+	if bool(sp["robbed"]):
+		v.draw_line(r.position - Vector2(1, 1), r.end + Vector2(1, 1), U[7], 1.0)
 
 
 ## ▼ 하나(꼭짓점이 장소를 가리킨다) + 번호
@@ -551,6 +575,11 @@ func draw_local() -> void:
 		var ly0 := int(e["ty"]) - me.y + h
 		if lx0 >= 0 and ly0 >= 4 and lx0 < LOCAL_N and ly0 < LOCAL_N:
 			quest_mark(v, o + Vector2(lx0, ly0) * LOCAL_PX + Vector2(1, 0), m, U)
+	for sp in StashBook.points(pb.st):                                    # 숨겨 둔 자리(둘레 안에 든 것만)
+		var sx := int(sp["at"].x) - me.x + h
+		var sy := int(sp["at"].y) - me.y + h
+		if sx >= 0 and sy >= 0 and sx < LOCAL_N and sy < LOCAL_N:
+			stash_mark(v, o + Vector2(sx, sy) * LOCAL_PX + Vector2(1, 1), sp, U)
 	var c := o + Vector2(h, h) * LOCAL_PX + Vector2(1, 1)
 	v.draw_colored_polygon(PackedVector2Array([c + Vector2(0, -4), c + Vector2(3, 3), c + Vector2(-3, 3)]), U[7])
 	v.draw_rect(Rect2(o - Vector2(1, 1), Vector2(LOCAL_N, LOCAL_N) * LOCAL_PX + Vector2(2, 2)), U[3], false)

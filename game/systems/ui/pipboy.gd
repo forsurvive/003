@@ -262,9 +262,18 @@ func _record_rows() -> Array:
 			docs.append({"text": str(db[id]["name"]), "id": id})
 	var book: NpcBook = st.book
 	var people := book.list(book_filter, _region(), book_q, _active_quests())
-	if not docs.is_empty() and not book.entries.is_empty():
+	var hid := StashBook.rows(st, str(info.get("date", "")), StashBook.here(info.get("tile", Vector2(-1, -1)), str(info.get("map_id", ""))), db)   # 숨겨 둔 자리(1-12o D-225) — 실내에서도 가까운 순
+	if not docs.is_empty() and (not book.entries.is_empty() or not hid.is_empty()):
 		out.append({"text": "— 문서", "id": "", "dim": true})
 	out.append_array(docs)
+	if not hid.is_empty():
+		out.append({"text": "— 숨겨 둔 자리 %d/%d" % [StashBook.count(st), StashBook.MAX], "id": "", "dim": true})
+		var safe_head := false
+		for r in hid:
+			if bool(r["safe"]) and not safe_head:
+				safe_head = true
+				out.append({"text": "— 맡긴 자리", "id": "", "dim": true})
+			out.append({"text": _fit(str(r["text"]), 178.0 - tw(str(r["right"]), f12b, 12)), "id": r["id"], "right": str(r["right"]), "dim": false})
 	if not book.entries.is_empty() or book_q != "":
 		var head := "— 인물 수첩 %d" % people.size()
 		if book_filter > 0:
@@ -499,7 +508,10 @@ func _enter_label() -> String:
 				return "—"
 			return "끄기" if st.radio.on and st.radio.tuned == rid else "켜기"
 		[2, 3]:
-			return "지도에서 보기" if _npc_lid(str(rows[sel]["id"])) != "" else "—"
+			var rid2 := str(rows[sel]["id"])
+			if rid2.begins_with("stash:") or rid2.begins_with("safe:"):
+				return "지도에서 보기" if StashBook.at_of(st, rid2).x >= 0 else "—"
+			return "지도에서 보기" if _npc_lid(rid2) != "" else "—"
 		[2, 5]:
 			return "판도 지도"
 	return "—"
@@ -599,6 +611,8 @@ func _detail() -> void:
 			_general_page(id)
 		[2, 3] when id.begins_with("npc:"):
 			_npc_page(id.substr(4))
+		[2, 3] when id.begins_with("stash:") or id.begins_with("safe:"):
+			_stash_page(id)
 		[1, _], [2, 3]:
 			if id == "":
 				return
@@ -898,6 +912,62 @@ func _npc_page(c: String) -> void:
 	if str(e.get("memo", "")) != "":
 		hline(264, 588, y + 4, U[2])
 		_para(Vector2(264, y + 10), "- " + str(e["memo"]), U[6])
+
+
+## 숨겨 둔 자리 한 곳(1-12o D-225 · 1-L §3.1): 내 메모 · 어디 · 위험 · 마지막으로 본 날 · 그때 든 것 · 마음에 걸림 · 지난 일 — 기억만(열어 보기 전엔 털림을 모른다)
+func _stash_page(id: String) -> void:
+	var d := StashBook.data(st)
+	var safe := id.begins_with("safe:")
+	var s: Dictionary = (d.get("safe", {}) if safe else d.get("spots", {})).get(id.substr(5 if safe else 6), {})
+	if s.is_empty():
+		return
+	var now := str(info.get("date", ""))
+	text(Vector2(264, 78), _fit(StashBook.memo(s, db, true) if not safe else str(s.get("name", "사물함")), 324.0), f12b, 12, U[6])
+	var y := 98.0
+	var rows2: Array = []
+	if safe:
+		rows2.append(["어디", str(StashBook.SAFE.get(str(s["map"]), {}).get("where", ""))])
+		rows2.append(["지킴", "털리지 않는다 · " + StashBook.safe_status(st, s, now)])
+	else:
+		rows2.append(["어디", StashBook.long_where(st, s)])
+		rows2.append(["삼은 날", StashBook.md(st, int(s.get("since", 0)), int(s.get("since_at", 0)), now)])
+	var seen: Dictionary = s.get("seen", {})
+	rows2.append(["마지막으로 본 날", StashBook.md(st, int(seen.get("day", s.get("since", 0))), int(seen.get("at", 0)), now)])
+	for kv in rows2:
+		text(Vector2(264, y), kv[0], f10, 10, U[4])
+		y = _para(Vector2(370, y), str(kv[1]), U[5], 218.0) + 1.0
+	if not safe and str(seen.get("risk", "")) != "":
+		y = _para(Vector2(264, y + 2), str(seen["risk"]), U[5]) + 2.0
+	hline(264, 588, y + 3, U[2])
+	text(Vector2(264, y + 8), "그때 든 것", f10, 10, U[4])
+	y += 22.0
+	var mem := StashBook.memory_lines(seen.get("items", {}), db)
+	if mem.is_empty():
+		text(Vector2(272, y), "비어 있었다.", f10, 10, U[5])
+		y += 13.0
+	for ln in mem:
+		text(Vector2(272, y), "· " + str(ln), f10, 10, U[5])
+		y += 13.0
+	if safe:
+		return
+	var kn: Dictionary = s.get("known", {})
+	y += 4.0
+	if not kn.is_empty() and StashBook.status(st, s, now) == "털림":
+		var lost := StashBook.memory_lines(kn.get("lost", {}), db, 4)
+		if not lost.is_empty():
+			y = _para(Vector2(264, y), "잃은 것 — " + " · ".join(lost), U[6]) + 2.0
+		y = _para(Vector2(264, y), "털린 흔적 — " + str(kn.get("text", "")), U[5]) + 2.0
+	else:
+		y = _para(Vector2(264, y), StashBook.worry(st, s), U[6]) + 2.0
+	var lg: Array = s.get("log", [])
+	if lg.size() > 0:
+		hline(264, 588, y + 3, U[2])
+		y += 8.0
+		var parts: Array = []
+		for e in lg.slice(maxi(0, lg.size() - 3)):                      # 최근 셋 · 마디마다 짧게(탭 줄에 닿지 않게)
+			parts.append("%s %s" % [StashBook.md(st, 0, int(e["at"])), _fit(str(e["text"]), 150.0)])
+		if y < 268.0:
+			_para(Vector2(264, y), " · ".join(parts), U[4])
 
 
 ## 얼굴: 초상화(A·B 등급, 기본 표정)가 있으면 그것, 없으면 맵 스프라이트 정면 첫 칸
@@ -1212,6 +1282,17 @@ func _enter() -> void:
 		[2, 2]:
 			if id != "":
 				st.quests.track(id)                                      # 추적(SD-12 §3.12) — 같은 줄을 다시 고르면 끈다
+		[2, 3] when id.begins_with("stash:") or id.begins_with("safe:"):
+			var at := StashBook.at_of(st, id)
+			if at.x >= 0:                                                # 지도에서 보기(숨겨 둔 자리 — 칸에 깜박이는 겹원)
+				open_at(2, 1)
+				if map == null:
+					map = PipMap.new(self)
+				map.cursor = Vector2(at) + Vector2(0.5, 0.5)
+				map.center = map.cursor
+				map.zoom = 2
+				map.temp = ""
+				map.temp_at = Vector2(at) + Vector2(0.5, 0.5)
 		[2, 3]:
 			var lid := _npc_lid(id)
 			if lid != "":                                                # 지도에서 보기: 그 장소에 임시 표식을 찍고 월드 지도로
@@ -1223,3 +1304,4 @@ func _enter() -> void:
 				map.center = map.cursor
 				map.zoom = 2
 				map.temp = lid
+				map.temp_at = Vector2(-1, -1)
