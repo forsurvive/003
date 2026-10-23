@@ -84,6 +84,10 @@ func price(id: String, buying: bool) -> int:
 			return maxi(1, roundi(_price(id, buying) * 1.25))
 		if int(st.vars.get_v("UQ66_BATT")) == 1 and int(st.vars.get_v("UQ66_HOW")) != 4:
 			return maxi(1, roundi(_price(id, buying) * 0.9))
+	if buying and st != null and str(mdef.get("settle", "")) == "MS":   # 판도(1-12m, SD-06 §5.6): 지배 세력이 나를 반기면 무소속 상인 −5% · 꺼리면 +10%
+		var k := st.turf.price_k(st, st.turf.here)
+		if k != 1.0:
+			return maxi(1, roundi(_price(id, buying) * k))
 	return _price(id, buying)
 
 

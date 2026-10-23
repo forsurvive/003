@@ -1405,6 +1405,20 @@ func _ready() -> void:
 				["travel", "L-R01-18"], ["wait", 4.0], ["check", "map:X-SD", "사다리 앞 → 사당 환승촌 지하 교역로"], ["shot", "sadang"],
 				["warp", "W", "L-R02-02"], ["wait", 2.0],
 				["check", "MQ102_MAPC == 2 and MQ102_C2 == 1 and MQ104_STAGE >= 10", "카드 숫자만 보고 벙커 앞에 서면 단서 2(여기였나)"]]
+		"turf":                                                         # 1-12m 판도: 신림을 본다 → 두목 처치(은신처 공백) · 사흘 뒤 다시 들어서면 '깃발이 바뀌어' + 아는 판 고침 → 장부를 정착지에 · 황두칠 사망 → 가리봉
+			st.vars.set_v("V_ACT", 1)
+			st.vars.set_v("GAME_DAY", 1)
+			host.enter("W", "L-R01-14")
+			plan = [["wait", 1.5], ["check", "turf:PD-R01-3:2", "신림 · 도림천을 밟자 아는 판 = 약탈자 우세"],
+				["set", "SQ_S02_CAMP", 1], ["set", "GAME_DAY", 3], ["warp", "W", "L-R01-09"], ["wait", 1.0],
+				["check", "turf:PD-R01-3:2", "가 보기 전엔 옛 판(아는 만큼만)"],
+				["warp", "W", "L-R01-14"], ["wait", 1.0], ["shot", "turf_hint"],
+				["check", "turf:PD-R01-3:0", "다시 들어서면 공백으로 고쳐 적음"], ["check", "turfhint:깃발이 바뀌어", "알던 판과 다르면 알림"],
+				["check", "PDS_R01_3 == 0", "이야기 변수(방송 · 소문 조건)"],
+				["set", "HO_LEDGER", 81], ["warp", "W", "L-R02-19"], ["wait", 1.0],
+				["check", "PDS_R02_4 == 2 and PDS_R02_5 == 0", "장부를 봉천에: 구로 지배 → 우세 · 고척 공백(D-133)"],
+				["check", "turf:PD-R02-4:2", "가리봉 아는 판"],
+				["found", "L-R02-19"], ["check", "fbook:SB", "새벽인력 본소를 발견하면 세력 기록 등록"]]
 		"place":                                                        # 1-5e 손 장소: 전망바위 → 연수원 본관(LR-19)·기숙사(LR-11) → 계곡 배수로(정비공) → 경찰서 무기고(자물쇠 50) → 공영방송(LR-01)
 			st.vars.set_v("PC_SKP_LOCKPICK", 50)
 			st.vars.set_v("PC_SKP_SMALL_GUNS", 40)
@@ -1717,7 +1731,14 @@ func _yd_plan() -> void:
 				["wait", 1.5], ["check", "V_DOYUN == 2 and STAT_LOCKS == 1", "호송 칸 자물쇠를 땄다(V_DOYUN 2)"]]
 
 
+var _hint_log: Array = []                            ## 지나간 알림 글(1-12m turfhint 확인)
+
+
 func _process(dt: float) -> void:
+	if host != null:
+		for h in host.hints:
+			if not _hint_log.has(str(h[0])):
+				_hint_log.append(str(h[0]))
 	t += dt
 	step_t += dt
 	if t > 400.0:
@@ -2177,6 +2198,17 @@ func _process(dt: float) -> void:
 				ok = is_equal_approx(host.carry_mul, Ks.CARRY_MUL)
 			elif str(s[1]) == "ga_lure":
 				ok = ga._lure_t > 0.0
+			elif str(s[1]).begins_with("turf:"):                        # turf:구역:상태 — 주인공이 아는 판(1-12m)
+				var tp := str(s[1]).split(":")
+				var kt: Dictionary = st.turf.known_of(tp[1])
+				ok = not kt.is_empty() and int(kt["s"]) == int(tp[2])
+				if not ok:
+					print("    [판도] 맵 %s · 칸 %s · 선 구역 %s · 아는 판 %s" % [host.map.id, str(host.map.tile_of(host.player.loco.logical)), st.turf.here, str(kt)])
+			elif str(s[1]).begins_with("turfhint:"):
+				ok = _hint_log.any(func(h): return str(h).contains(str(s[1]).substr(9)))
+			elif str(s[1]).begins_with("fbook:"):
+				st.fbook.refresh(st, host.date_text)
+				ok = st.fbook.registered(str(s[1]).substr(6))
 			elif str(s[1]) == "seen_guard":
 				ok = seen.has("guard_bark")
 			elif str(s[1]) == "seen_rumor":

@@ -31,6 +31,28 @@ static func abs_min(s: String) -> int:
 	return days * 1440 + int(t[3]) * 60 + int(t[4])
 
 
+## 절대 분 → 'MM. DD.'(abs_min의 거꾸로 — 세력 기록 날짜, 1-12m). 0 이하면 빈 글
+static func md(a: int) -> String:
+	if a <= 0:
+		return ""
+	var days := a / 1440
+	var y := 2277
+	while true:
+		var n := 365 + (1 if y % 4 == 0 else 0)
+		if days < n:
+			break
+		days -= n
+		y += 1
+	var m := 0
+	while m < 12:
+		var dm: int = DAYS[m] + (1 if m == 1 and y % 4 == 0 else 0)
+		if days < dm:
+			break
+		days -= dm
+		m += 1
+	return "%02d. %02d." % [m + 1, days + 1]
+
+
 ## 요일(0 월 ~ 6 일): 2277. 1. 1.이 월요일(1-12h UQ-10 — 대방 덤 수거는 목요일). 못 읽으면 0(월)
 static func weekday(s: String) -> int:
 	return (abs_min(s) / 1440) % 7

@@ -1,5 +1,5 @@
 """소문 원고(script/world/rumors.txt, 1-4f) → game/data/rumors.json.
-머리 줄 '@ 권역 | 조건', 다음 줄 = 한 줄 소문. 조건 식은 이야기 식 문법·변수 이름을 검사한다(map_compile.check_cond)."""
+머리 줄 '@ 권역 | 조건 [| 판도 PD-Rxx-n]', 다음 줄 = 한 줄 소문(셋째 칸 = 들으면 그 판도 구역의 아는 판이 고쳐진다, 1-12m). 조건 식은 이야기 식 문법·변수 이름을 검사한다(map_compile.check_cond)."""
 import os, sys, json
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import map_compile as MC
@@ -22,8 +22,13 @@ def main():
         if not s or s.startswith("#"):
             continue
         if s.startswith("@"):
-            parts = [p.strip() for p in s[1:].split("|", 1)]
+            parts = [p.strip() for p in s[1:].split("|", 2)]
             where, cond = parts[0], (parts[1] if len(parts) > 1 else "")
+            turf = ""
+            if len(parts) > 2:                                                                      # 셋째 칸 '판도 PD-Rxx-n'(1-12m)
+                if not parts[2].startswith("판도 PD-R"):
+                    errs.append(f"{i}: 셋째 칸은 '판도 PD-Rxx-n'")
+                turf = parts[2][3:].strip()
             if where not in REGIONS:
                 errs.append(f"{i}: 모르는 권역 '{where}'")
             if cond:
@@ -31,11 +36,11 @@ def main():
                     MC.check_cond(cond, known_vars, known_fns)
                 except Exception as e:
                     errs.append(f"{i}: 조건 오류 {e}")
-            head = (where, cond)
+            head = (where, cond, turf)
         elif head is None:
             errs.append(f"{i}: 머리 줄(@ 권역 | 조건) 없이 나온 소문")
         else:
-            out.append({"where": head[0], "cond": head[1], "text": s})
+            out.append({"where": head[0], "cond": head[1], "text": s} | ({"turf": head[2]} if head[2] else {}))
             head = None
     for e in errs:
         print("오류 rumors.txt:" + e)

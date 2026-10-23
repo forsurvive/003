@@ -70,10 +70,10 @@ prop cot 3 15
 text 4 16 "매표소 뒤 직원 쉼터. 어하은의 이름표가 걸린 사물함." scene=KT_REST6
 prop home_locker 6 13
 box 6 13 locker name="안내원 사물함"
-# ---------------------------------------------------------------- BJ 관측소(1막 뒤 · 국회 폐허를 BJ가 쥐었을 때)
-enemy CR-401 28 9 dir=N cond="V_ACT >= 2 and PD_R02_KH == 1"
-prop radio_desk 26 12 cond="V_ACT >= 2 and PD_R02_KH == 1"
-text 26 13 "계엄군 관측소 무전대. 관리자 인증 단말이 연결돼 있다." w=2 cond="V_ACT >= 2 and PD_R02_KH == 1"
+# ---------------------------------------------------------------- BJ 관측소(1막 뒤 · 여의도 판도 BJ 우세 이상 — SD-09a L957, 1-12m D-219: 판도 상태 변수 한 곳)
+enemy CR-401 28 9 dir=N cond="V_ACT >= 2 and PDO_R02_1 == \"BJ\" and PDS_R02_1 >= 2"
+prop radio_desk 26 12 cond="V_ACT >= 2 and PDO_R02_1 == \"BJ\" and PDS_R02_1 >= 2"
+text 26 13 "계엄군 관측소 무전대. 관리자 인증 단말이 연결돼 있다." w=2 cond="V_ACT >= 2 and PDO_R02_1 == \"BJ\" and PDS_R02_1 >= 2"
 # ---------------------------------------------------------------- 불을 먼저 켰다(여왕 전) — 개미가 올라와 어하은은 매표소 뒤로
 scent 37,17;30,10;22,10 cond="KT_HEAT == 1 and KT_QUEEN == 0"
 enemy CR-080 30 10 cond="KT_HEAT == 1 and KT_QUEEN == 0"

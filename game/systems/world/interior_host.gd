@@ -404,6 +404,8 @@ func enter(map_id: String, mark: String = "", look: Dictionary = {}, at: Vector2
 		_zone = map.id
 	player._show()
 	_last_tile = map.tile_of(player.loco.logical)
+	if map is WorldMap:
+		_turf_see(_last_tile)                                             # 판도(1-12m): 들어선 칸의 구역(빠른 이동 · 문 나섬 — 걷기 전에도)
 	_spawn_npcs()
 	_lay_spills(map_id)
 	alarmed.clear()
@@ -810,6 +812,16 @@ func _same_floor(a) -> bool:
 	return map == null or not map.has_deck or map.floors_meet(a.loco.logical, a.floor_id, player.loco.logical, player.floor_id)
 
 
+var _fb_chunk := Vector2i(-99, -99)                                    ## 세력 기록을 마지막으로 살핀 청크(1-12m)
+
+
+## 판도(1-12m): 선 구역을 지금 판으로 적는다 — 알던 판과 다르면 한 줄(재미 검수 ③)
+func _turf_see(t: Vector2i) -> void:
+	var tmsg: String = st.turf.see(st, t)
+	if tmsg != "":
+		hint(tmsg, 4.5)
+
+
 func _check_exit() -> void:
 	var t := map.tile_of(player.loco.logical)
 	if t == _last_tile:
@@ -821,6 +833,10 @@ func _check_exit() -> void:
 		var rc: String = map.region_at(t)
 		if rc != "":
 			st.places.regions[rc] = true
+		_turf_see(t)
+		if Vector2i(t.x / 40, t.y / 40) != _fb_chunk:
+			_fb_chunk = Vector2i(t.x / 40, t.y / 40)
+			st.fbook.refresh(st, date_text)
 		var had: bool = int(st.vars.get_v("LM_SEEN")) != 0
 		for nm in Landmarks.tick(st, t, Clock.is_night(date_text)):        # 원경 표식(1-12k, SD-08 §12.2): 반경 안에 처음 들어간 랜드마크 — 설명은 처음 한 번만
 			hint(("원경 표식: %s — 방위 링 밖 회색 실루엣이 방향이다" if not had else "멀리 %s이(가) 보인다") % nm, 4.0)
@@ -1104,6 +1120,8 @@ func _on_enemy_down(e: Enemy) -> void:
 			dd.record(st, "범죄", map_region(map.tile_of(e.loco.logical)), 2, {tg: 0}, Clock.abs_min(date_text),
 				{"tag": "CRIME_PERM", "what": "학살", "seen_by": [tg]})
 	var eid := str(e.get_meta("enemy_id", ""))
+	if map is WorldMap:
+		st.turf.note_kill(st, map.tile_of(e.loco.logical), str(StoryState.ENEMY_FACTION.get(eid, "")))   # 판도(1-12m): 구역 안 세력원 처치 = 그 세력 −1(하루 3)
 	if not Loot.drops.has(eid) or eid in ["CR-002", "CR-104"]:
 		return
 	var c := map.tile_of(e.loco.logical)
@@ -2501,6 +2519,7 @@ func _load_items() -> void:
 
 ## 핍-보이·HUD 위 줄 수치. 레벨(SD-10 §4.2): 다음 레벨까지 50 + 150 × 레벨, 누적 (L−1)(50 + 75L)
 func status() -> Dictionary:
+	st.fbook.refresh(st, date_text)                                       # 세력 탭(1-12m)이 읽기 전에 등록 · 단계 · 닿은 소식을 옮긴다
 	var d := InteriorCombat.derived(st)
 	var xp := int(st.vars.get_v("PC_XP"))
 	var lv := level()
@@ -2616,6 +2635,7 @@ func _arrive(lid: String, hours: float) -> void:
 	map.id = map.zone_of(map.tile_of(at))
 	_last_tile = map.tile_of(at)
 	st.places.mark_seen(_last_tile)
+	_turf_see(_last_tile)
 	cam.position = at.round()
 	cam.reset_smoothing()
 	for m in combat.mates.list:                                         # 따라오던 동행은 함께 도착한다(뒤 한 칸)
@@ -2675,6 +2695,9 @@ func advance_minutes(m: int) -> void:
 ## 하루 판정(06:00): 수배도 하한 다시 걸기 · 생포 사흘 넘김(SD-03a §6.7 — 계엄군 인계는 청계산 맵과 함께, 정합)
 func _daily() -> void:
 	Wanted.refresh(st)
+	for n in st.turf.day(st, int(st.vars.get_v("GAME_DAY"))):           # 판도 하루(1-12m): 감쇠 · 틱 · 가맹 — 세력 기록 한 줄
+		st.fbook.add_line(str(n[0]), FactionBook._md(date_text), str(n[1]))
+	st.fbook.refresh(st, date_text)
 	day_tick.emit(int(st.vars.get_v("GAME_DAY")))
 	if int(st.vars.get_v("CAPTURE_BY")) == 1 and map != null and map.id == "H-03" \
 			and Clock.abs_min(date_text) - int(st.vars.get_v("CAPTURE_AT")) >= 3 * 1440:

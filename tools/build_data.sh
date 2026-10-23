@@ -26,6 +26,7 @@ python3 tools/pipeline/merchant_export.py
 python3 tools/pipeline/map_compile.py
 python3 tools/pipeline/dungeon_compile.py                 # 던전 표(1-D0): script/world/dungeons.txt → dungeons.json(맵 뒤에)
 python3 tools/pipeline/rumor_compile.py                  # 소문(1-4f): script/world/rumors.txt → rumors.json
+python3 tools/pipeline/turf_export.py                    # 판도(1-12m): SD-08 §15.2 격자 · 거점 · turf.txt · factions.txt → turf.json(시작 상태 검사)
 python3 tools/pipeline/struct_bake.py
 python3 tools/pipeline/world_extract.py                 # 월드(1-1): SD-08 표 → source.json
 python3 tools/pipeline/rad_zones.py                    # 방사능 구역(1-9d): source.json → rad.json(굽기가 고리 안에 웅덩이·드럼·표지판)

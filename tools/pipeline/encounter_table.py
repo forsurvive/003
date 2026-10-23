@@ -117,7 +117,11 @@ RE["RE-087"] = {"name": "생포 추적대(새벽인력)", "cat": "tracker", "reg
                 "capture": "SB", "states": {"S1": 1}}
 
 # 범주 가중(SD-05 §6.3 판도 표 · SD-06 §5.9 시작 판도): R01 경합 · R02 지상 경합 → 경합 표. 판도 구현 전 고정
-CAT_W = {"경합": {"patrol": 30, "clash": 30, "creature": 10, "raider": 8, "trader": 7, "event": 10},
+# SD-05 §6.3 판도 상태별 범주 가중(1-12m: 구역 상태는 core/story/turf.gd가 판정 칸마다 준다). patrol = 지배 세력 순찰(dom) + 경쟁 세력 순찰(comp).
+# '판도 연동'(5.8) 범주는 RE가 들어올 때(정합 — 지금은 표에서 뺀다)
+CAT_W = {"지배": {"patrol": 45, "dom": 40, "comp": 5, "clash": 5, "creature": 15, "raider": 5, "trader": 15, "event": 12},
+         "우세": {"patrol": 40, "dom": 30, "comp": 10, "clash": 10, "creature": 15, "raider": 7, "trader": 13, "event": 12},
+         "경합": {"patrol": 30, "dom": 15, "comp": 15, "clash": 30, "creature": 10, "raider": 8, "trader": 7, "event": 10},
          "공백": {"creature": 45, "raider": 25, "trader": 5, "event": 15}}
 REGION_STATE = {"R01": "경합", "R02": "경합"}
 STATES = ["S1", "S2", "S3", "S4", "S5", "S6", "S7"]

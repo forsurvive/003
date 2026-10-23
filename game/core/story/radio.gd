@@ -241,6 +241,8 @@ func _begin(sid: String, c: Dictionary, st: StoryState, ctx: Dictionary) -> void
 			recent.pop_front()
 	if queue.has(id):
 		queue[id]["n"] = int(queue[id]["n"]) + 1
+	if on and tuned == sid and id.begins_with("N-PD-"):
+		st.turf.hear_block(st, id)                                     # 판도 소식을 맞춰 들었다(1-12m): 그 구역 아는 판을 고친다(SD-06 §5.7)
 	var row := {"st": sid, "id": id, "kind": kind, "date": str(ctx.get("date", "")),
 		"lines": (sg["lines"] as Array).map(func(l): return [str(l["who"]), str(l["text"])])}
 	air_log.push_front(row)

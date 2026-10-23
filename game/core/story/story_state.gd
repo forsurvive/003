@@ -40,6 +40,8 @@ var places := PlaceLog.new()             ## 장소 발견 상태(1-2, SD-12 §5.
 var deeds := Deeds.new()                ## 행적 기록 · 정보 전파(1-10c, SD-06 §6): 세력은 알게 된 뒤에 반응한다
 var radio := Radio.new()                ## 라디오(1-10b, SD-12 §10): 켜기 · 맞춘 방송국 · 편성 위치 · 소식 대기열 · 방송 기록
 var book := NpcBook.new()               ## 인물 수첩(1-2, SD-12 §3.11)
+var turf := Turf.new()                  ## 서울의 판도(1-12m, SD-06 §5 · SD-08 §15): 구역 영향력 · 사건 보정 장부 · 주인공이 아는 판
+var fbook := FactionBook.new()          ## 세력 기록(1-12m, SD-12 §3.10): 등록 · 관계 단계 · 최근 일
 const ENEMY_FACTION := {"CR-401": "BJ", "CR-405": "BJ", "CR-435": "SB", "CR-436": "SB", "CR-437": "SB", "CR-438": "SB", "CR-534": "SB",
 	"CR-456": "JH", "CR-457": "JH", "CR-403": "BJ", "CR-420": "YT", "CR-421": "YT", "CR-423": "YT"}
 const UNNAMED := [["N-TRADER", "떠돌이 고물상", ""], ["N-VG-S1", "고물상", ""], ["N-VG-H1", "약초꾼", ""], ["N-VG-P1", "부품 장수", ""],
@@ -149,6 +151,12 @@ func _init() -> void:
 		vars.declare(k, "int", 0)
 	for k in ["SB_HEIR", "SB_HDC_DAY", "BJS_SG_DAY", "BJS_NR_DAY", "BJS_YD_DAY", "BJS_KIND", "BJS_RUN", "BJS_RCPTSAID", "SQ_S04_WIN", "BJS_SG_N", "BJS_NR_N", "BJS_YD_N", "BJS_SG_BACK", "BJS_NR_BACK", "BJS_YD_BACK", "BJS_SG_PEN", "BJS_NR_PEN", "BJS_YD_PEN", "BJS_N", "BJS_FIXED", "BJS_COOP"]:   # 1-12l: 새벽인력 승계(D-082) · 계엄군 초소 정지(D-081 · D-118, scenes/story/bj_stop.gd)
 		vars.declare(k, "int", 0)
+	# 1-12m 판도(core/story/turf.gd): PDS_ 상태 0 공백 · 1 경합 · 2 우세 · 3 지배 / PDO_ 1위 세력 약호. 기본값 = 시작 판(SD-08 §15.2 — 첫 계산 전에도 방송 조건이 맞게)
+	for kv in [["R01_1", 0, ""], ["R01_2", 2, "JC"], ["R01_3", 2, "YT"], ["R01_4", 2, "BJ"], ["R01_5", 2, "GS"], ["R01_6", 1, "YT"],
+			["R02_1", 1, "BJ"], ["R02_2", 2, "JH"], ["R02_3", 1, "YT"], ["R02_4", 3, "SB"], ["R02_5", 2, "SB"]]:
+		vars.declare("PDS_" + kv[0], "int", kv[1])
+		vars.declare("PDO_" + kv[0], "str", kv[2])
+	vars.declare("SA_JOIN", "int", 0)                                       # 사당 환승촌 정착지 연합 가맹(1-12m D-136, SD-06 §3.2.2)
 	vars.declare("LM_SEEN", "int", 0)                                       # 원경 표식 등록 비트(1-12k, core/story/landmarks.gd ROWS 차례 · SD-08 §12.2)
 	vars.declare("MQ102_MAPC", "int", 0)
 	vars.declare("MQ101_HA_MAPC", "int", 0)                                 # 하숙자가 '혼자 풀었다'를 알아봐 줌(한 번)                                    # 지도를 보고 한 단서 2 추론(1-12k D-046): 핍-보이 지도에서 카드 숫자 둘 = 청크 (20, 27)을 짚음 → Act1Paths가 단서 2를 세운다

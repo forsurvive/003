@@ -3,7 +3,7 @@
 ##   아이템: 무기 · 의복 · 구호품 · 잡화 · 탄약 (결정 = 장착/해제·사용, 1~8 = 단축키 지정)
 ##   데이터: 지역 지도 · 월드 지도(빠른 이동, 1-2 — systems/ui/pip_map.gd) · 퀘스트 · 기록
 ##   데이터 > 라디오(1-10b, SD-12 §10.6): 방송국 목록(범위 밖 `(수신 불가)`) · 상세(로고 48×48 · 코너 · 진행자 · 신호) · 지난 소식 20 · 방송 기록
-##   아직 뺀 하위 탭(정합): 세력(1-10c 판도와 함께)
+##   데이터 > 세력(1-12m, SD-12 §3.10 · SD-16 §9.6 — systems/ui/faction_tab.gd): 만난 세력 · 휘장 상태 그림 · 관계 한 줄 · 대우 · 들리는 말 · 최근 일 · [Enter] 판도 지도
 ## 조작(SD-12 §3.2·§13.8): Tab·Esc 닫기, Q·E 주 탭, ←→ 하위 탭, ↑↓ 목록, Enter 사용, F1·F2·F3 주 탭 바로, J 퀘스트.
 ## 마우스·터치(마우스 흉내): 탭·하위 탭·줄을 누르고(고른 줄을 다시 누르면 사용), 아래 줄 [닫기]·오른쪽 위 전원 단추를 누르면 닫힌다.
 ## 열 때(§3.2): 기기가 아래에서 0.2초 올라오고 화면이 0.15초 켜진다(가로 주사선이 위아래로 벌어짐). 열어 둔 동안 시간이 멈춘다.
@@ -14,7 +14,7 @@ signal action(kind: String, id: String)              ## "equip"·"unequip"·"use
 
 const U := DocScreen.GREEN
 const TABS := ["능력치", "아이템", "데이터"]
-const SUBS := [["상태", "S.P.E.C.I.A.L.", "스킬", "퍽", "일반"], ["무기", "의복", "구호품", "잡화", "탄약"], ["지역 지도", "월드 지도", "퀘스트", "기록", "라디오"]]
+const SUBS := [["상태", "S.P.E.C.I.A.L.", "스킬", "퍽", "일반"], ["무기", "의복", "구호품", "잡화", "탄약"], ["지역 지도", "월드 지도", "퀘스트", "기록", "라디오", "세력"]]
 const CATS := ["weapon", "apparel", "aid", "misc", "ammo"]
 const STAT_ORDER := ["ST", "PE", "EN", "CH", "IN", "AG", "LK"]
 const OPEN_S := 0.2
@@ -165,6 +165,8 @@ func _rows() -> Array:
 			out = _record_rows()
 		[2, 4]:
 			out = _radio_rows()
+		[2, 5]:
+			out = FactionTab.rows(self)
 	return out
 
 
@@ -374,10 +376,13 @@ func _draw_doc() -> void:
 		else:
 			map.draw_world()
 		fig.visible = false
-		var mh := "[Tab] 닫기   [Q·E] 탭   [Shift+←→] 하위 탭" + ("   [방향키] 커서   [Z·X] 확대   [Enter] 빠른 이동" if sub[2] == 1 else "")
+		var mh := "[Tab] 닫기   [Q·E] 탭   [Shift+←→] 하위 탭" + ("   [방향키] 커서   [Z·X] 확대   [Enter] 빠른 이동   [G] 판도" if sub[2] == 1 else "")
 		item("close", Rect2(44, 314, 50, 14))
 		item("power", Rect2(614, 180, 20, 40))
 		text(Vector2(48, 316), mh, f10, 10, U[4])
+		var gat := mh.find("[G] 판도")
+		if gat >= 0:                                                     # 터치: 안내 줄 '[G] 판도'를 누르면 레이어를 켜고 끈다
+			item("turf", Rect2(48 + tw(mh.substr(0, gat), f10, 10) - 2, 314, tw("[G] 판도", f10, 10) + 4, 14))
 		return
 	# 목록(12px 행 15행)
 	for i in rows.size():
@@ -391,7 +396,14 @@ func _draw_doc() -> void:
 		if i == sel:
 			view.draw_rect(rr, U[6])
 			col = U[0]
-		text(Vector2(52, y), row["text"], f12, 12, col)
+		var ix := 52.0
+		if int(row.get("icon", -1)) >= 0:                                 # 세력 휘장 16×16(SD-16 §9.6 목록)
+			FactionTab._load()
+			ix = 70.0 + (8.0 if row.get("sub", false) else 0.0)
+			view.draw_texture_rect_region(FactionTab.emb16, Rect2(ix - 18, y - 2, 16, 16), Rect2(int(row["icon"]) * 16, 0, 16, 16), col)
+			text(Vector2(ix, y), str(row["text"]).strip_edges(), f12, 12, col)
+		else:
+			text(Vector2(52, y), row["text"], f12, 12, col)
 		if row.get("right", "") != "":
 			text(Vector2(242, y), row["right"], f12, 12, col, HORIZONTAL_ALIGNMENT_RIGHT)
 	view.draw_line(Vector2(250.5, 70), Vector2(250.5, 290), U[2])
@@ -488,6 +500,8 @@ func _enter_label() -> String:
 			return "끄기" if st.radio.on and st.radio.tuned == rid else "켜기"
 		[2, 3]:
 			return "지도에서 보기" if _npc_lid(str(rows[sel]["id"])) != "" else "—"
+		[2, 5]:
+			return "판도 지도"
 	return "—"
 
 
@@ -548,6 +562,8 @@ func _detail() -> void:
 	match [tab, sub[tab]]:
 		[2, 4]:
 			_radio_page(id)
+		[2, 5]:
+			FactionTab.page(self, id)
 		[0, 0]:
 			if id == "body":
 				_body_page()
@@ -1072,6 +1088,9 @@ func _map_key(e: InputEvent) -> bool:
 	if k in [KEY_X, KEY_EQUAL, KEY_PLUS]:
 		map.zoom_by(1)
 		return true
+	if k == KEY_G and sub[2] == 1:                                       # 판도 레이어(1-12m)
+		map.toggle_layer()
+		return true
 	if e.is_action_pressed("ui_accept"):
 		_travel()
 		return true
@@ -1123,6 +1142,8 @@ func _press(id: String) -> void:
 		DisplayServer.window_set_ime_active(true)
 		if DisplayServer.has_feature(DisplayServer.FEATURE_VIRTUAL_KEYBOARD):
 			DisplayServer.virtual_keyboard_show("")                      # 모바일: 화면 자판(글자는 키 이벤트로 들어온다)
+	elif id == "turf" and map != null:
+		map.toggle_layer()
 	elif id in ["close", "power"]:
 		close(true)
 
@@ -1172,6 +1193,22 @@ func _enter() -> void:
 					st.radio.on = false
 				else:
 					st.radio.tune(id)
+		[2, 5]:                                                          # 판도 지도(SD-12 §5.8 세력 기록 연동): 레이어를 켜고 그 세력 구역 · 거점을 강조
+			open_at(2, 1)
+			if map == null:
+				map = PipMap.new(self)
+			map.layer = true
+			map.opened_at = -1.0
+			map.focus = Turf.group(st, id.substr(3) if id.begins_with("JC_") else id)
+			map.zoom = 1
+			map.cursor = Vector2(800, 1300)                               # 그 세력이 1위인 아는 구역(없으면 R01 · R02 가운데)
+			for z in Turf.zones():
+				var kz: Dictionary = st.turf.known_of(z)
+				if not kz.is_empty() and str(kz["a"]) == map.focus:
+					var sd: Array = Turf.data["zones"][z]["seed"]
+					map.cursor = Vector2(int(sd[0]) * 40 + 20, int(sd[1]) * 40 + 20)
+					break
+			map.center = map.cursor
 		[2, 2]:
 			if id != "":
 				st.quests.track(id)                                      # 추적(SD-12 §3.12) — 같은 줄을 다시 고르면 끈다

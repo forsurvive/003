@@ -10,7 +10,29 @@ func _ready() -> void:
 	host.body = "kid"
 	var args := OS.get_cmdline_user_args()
 	var p3 := args.size() > 1 and args[1] == "p3"
-	var k := args.size() > 1 and args[1] == "k"                         # 1-12k: 1막 봉천 · 등록 카드 단계 3(코드 줄 `20 27`) · 원경 표식 넷 · 월드 지도(랜드마크 실루엣)
+	var k := args.size() > 1 and args[1] in ["k", "m"]                  # 1-12k: 1막 봉천 · 등록 카드 단계 3(코드 줄 `20 27`) · 원경 표식 넷 · 월드 지도(랜드마크 실루엣)
+	var m := args.size() > 1 and args[1] == "m"                         # 1-12m: 판도가 몇 군데 기운 1막(가산 새벽 · 신림 공백 · 영등포 지하시장 지배 · 국회 BJ) + 세력 기록
+	if m:
+		var st := host.st
+		st.vars.set_v("PD_R01_6", 10)
+		st.vars.set_v("SQ_S02_CAMP", 1)
+		st.quests.set_stage("MQ-103", 100)
+		st.vars.set_v("PD_R02_KH", 1)
+		st.vars.set_v("AFF_JH", 24)
+		st.vars.set_v("AFF_JC_BC", 18)
+		st.vars.set_v("AFF_BJ", -22)
+		st.vars.set_v("GAME_DAY", 1)
+		st.turf.day(st, 1)
+		for tl in [Vector2i(849, 1428), Vector2i(892, 1362), Vector2i(959, 1503), Vector2i(1081, 1389), Vector2i(882, 1182), Vector2i(720, 1149), Vector2i(789, 1098)]:
+			st.turf.see(st, tl)
+		st.vars.set_v("GAME_DAY", 3)
+		st.turf.see(st, Vector2i(660, 1460))
+		for lid in ["L-R01-09", "L-R01-18", "L-R01-19", "L-R01-23", "L-R02-11", "L-R02-19"]:
+			st.places.raise(lid, PlaceLog.FOUND)
+		var base := Clock.abs_min("2277. 10. 24.  09:00")
+		for h in [["JC_BC", "삼성산 상류 밸브를 되찾아 봉천 배수지에 물이 돌아왔다", 0], ["JC_BC", "남부순환 패거리 두목 삽자루가 죽었다 — 밸브 캠프가 빈다", 1500],
+				["JH", "영등포 지하 둥지를 비웠다", 2900], ["SB", "가산 아울렛 작업복 상자를 인솔조에 넘겼다", 3100], ["BJ", "사당 고개 검문소에서 회차 지시를 받았다", 3300]]:
+			st.deeds.heard.push_front({"fac": h[0], "what": h[1], "at": base + int(h[2]), "route": "목격", "tag": ""})
 	if k:
 		CharDocs.write_name(host.st, "윤", "서진")
 		host.st.vars.set_v("P_REGNO", CharDocs.REGNO)
@@ -34,6 +56,11 @@ func _ready() -> void:
 			if ak.size() > 3:                                           # 넷째 = 지도 확대 단계(0 전도 · 1 권역 · 2 구역 · 3 정밀)
 				pk.map = PipMap.new(pk)
 				pk.map.zoom = int(ak[3])
+			if ak.size() > 4:                                           # 다섯째 = 판도 레이어(L) · 강조 세력(L:JH)
+				pk.map.layer = true
+				pk.map.focus = ak[4].substr(2) if ak[4].length() > 2 else ""
+				pk.map.cursor = Vector2(800, 1330)
+				pk.map.center = pk.map.cursor
 		return
 	if p3:
 		CharDocs.write_name(host.st, "윤", "서진")

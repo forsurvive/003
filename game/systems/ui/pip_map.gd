@@ -32,6 +32,11 @@ var cursor := Vector2(959, 1503)
 var sel := ""                                         ## 커서 아래 장소
 var hold := 0.0
 var temp := ""                                        ## 임시 표식(인물 수첩 '지도에서 보기', SD-12 §3.11) — 장소 ID
+var layer := false                                    ## 판도 레이어(1-12m, SD-12 §5.8) — [G]로 켜고 끈다
+var focus := ""                                       ## 세력 기록 '판도 지도'로 열었을 때 강조할 세력(그 세력 구역 · 거점만 진하게)
+var opened_at := -1.0                                 ## 레이어를 켠 시각(바뀐 구역 경계 3번 점멸)
+static var pats := {}                                 ## 판도 무늬 8×8(흰 점 + 알파, SD-16 §9.3.1)
+static var emb16: Texture2D
 
 
 static func _load() -> void:
@@ -121,6 +126,8 @@ func draw_world() -> void:
 	var src := Rect2(center - half, half * 2.0).intersection(Rect2(Vector2.ZERO, WORLD))
 	if src.has_area():
 		v.draw_texture_rect_region(tex, Rect2(w2s(src.position), src.size * sc), src, U[5])
+	if layer:
+		_turf_layer(v, U)
 	if zoom == 3:                                                         # 정밀: 청크 격자
 		var x := floorf(src.position.x / 40.0) * 40.0
 		while x <= src.end.x:
@@ -139,7 +146,11 @@ func draw_world() -> void:
 			if AREA.has_point(p):
 				pb.text(p - Vector2(0, 6), str(region_names.get(c, c)), pb.f10, 10, U[6] if seen.has(c) else U[3], HORIZONTAL_ALIGNMENT_CENTER)
 	_grid_labels(v, U)
+	if layer:
+		_turf_nodes(v, U)
 	_markers(v, U)
+	if layer:
+		_turf_legend(v, U)                                                # 범례는 표식 위에(가려지지 않게)
 	var me: Vector2 = pb.info.get("tile", Vector2(-99, -99))              # 주인공 화살표
 	var mp := w2s(me + Vector2(0.5, 0.5))
 	if AREA.grow(-2).has_point(mp):
@@ -283,6 +294,9 @@ func _info_box(v: Control, U: Array) -> void:
 	var line2 := "%s · %s 구역 · 청크 (%d, %d) · 타일 (%d, %d)   [%s]" % [code if code != "" else "—", grid_name(cursor), t.x / 40, t.y / 40,
 		t.x % 40, t.y % 40, ZOOM_NAMES[zoom]]
 	var line1 := "—"
+	if layer:
+		_turf_info(r, U, line2)
+		return
 	if sel != "":
 		var e: Dictionary = PlaceLog.db[sel]
 		var s: int = pb.st.places.get_state(sel)
@@ -298,6 +312,215 @@ func _info_box(v: Control, U: Array) -> void:
 		pb.text(r.position + Vector2(6, 16), line2 + "   ← 카드의 숫자 둘 [Enter]", pb.f10, 10, U[7] if on else U[5])
 	else:
 		pb.text(r.position + Vector2(6, 16), line2, pb.f10, 10, U[4])
+
+
+# ---------------------------------------------------------------- 판도 레이어(1-12m, SD-12 §5.8 · SD-16 §9.3.1 · SD-06 §5.7)
+## 무늬 8×8: 흰 칸 = 세력 무늬 · 회색 칸(알파 0.5) = 50% 체커 바탕. 상태 판은 'fill'(체커만) · 'band0/1'(경합 사선 띠) · 'stipple'(공백) · 'hatch'(모름)
+static func _pat(name: String) -> Texture2D:
+	if pats.has(name):
+		return pats[name]
+	var img := Image.create(8, 8, false, Image.FORMAT_RGBA8)
+	for y in 8:
+		for x in 8:
+			var on := false
+			var half := (x + y) % 2 == 0
+			match name:
+				"hline": on = y % 4 == 0
+				"vline": on = x % 4 == 0
+				"slash": on = (x + y) % 4 == 0
+				"bslash": on = (x - y + 8) % 4 == 0
+				"dot": on = x % 4 == 1 and y % 4 == 1
+				"ring": on = (x % 4 in [0, 2] and y % 4 == 1) or (y % 4 in [0, 2] and x % 4 == 1)
+				"checker": on = ((x / 2) + (y / 2)) % 2 == 0
+				"cross": on = x % 4 == 1 or y % 4 == 1
+				"plus": on = (x % 8 == 3 and y % 8 in [2, 3, 4]) or (y % 8 == 3 and x % 8 in [2, 3, 4])
+				"zigzag": on = (y % 4) == [0, 1, 2, 1][x % 4]
+				"bigdot": on = x % 8 in [2, 3] and y % 8 in [2, 3]
+				"sparse": on = x % 8 == 2 and y % 8 == 5 or x % 8 == 6 and y % 8 == 1
+				"band0": on = ((x + y) / 4) % 2 == 0
+				"band1": on = ((x + y) / 4) % 2 == 1
+				"stipple": on = (x % 4 == 0 and y % 4 == 0) or (x % 4 == 2 and y % 4 == 2)
+				"hatch": on = (x - y + 8) % 4 == 0
+			var a := 0.0
+			if name in ["band0", "band1"]:
+				a = 0.9 if on and half else (0.0)
+			elif name in ["stipple", "hatch"]:
+				a = 1.0 if on else 0.0
+			elif name == "fill":
+				a = 0.5 if half else 0.0
+			else:
+				a = 1.0 if on else 0.0
+			img.set_pixel(x, y, Color(1, 1, 1, a))
+	pats[name] = ImageTexture.create_from_image(img)
+	return pats[name]
+
+
+static func fac_color(f: String) -> Color:
+	Turf.load_data()
+	return Color(str(Turf.data.get("show", {}).get(f, ["", "#808080"])[1]))
+
+
+static func fac_pat(f: String) -> String:
+	return str(Turf.data.get("show", {}).get(f, ["", "", "none"])[2])
+
+
+func _chunk_rect(cx: int, cy: int) -> Rect2:
+	var a := w2s(Vector2(cx * 40, cy * 40))
+	var b := w2s(Vector2(cx * 40 + 40, cy * 40 + 40))
+	return Rect2(a, b - a).intersection(AREA)
+
+
+## 구역 칠: 주인공이 아는 판으로(모르면 회색 빗금 '알 수 없음')
+func _turf_layer(v: Control, U: Array) -> void:
+	Turf.load_data()
+	var tf: Turf = pb.st.turf
+	if opened_at < 0.0:
+		opened_at = pb.time
+	var flash_on: bool = pb.time - opened_at < 1.8 and fmod(pb.time - opened_at, 0.6) < 0.3
+	var cz: Dictionary = Turf.data.get("chunk_zone", {})
+	for key in cz:
+		var xy := str(key).split(",")
+		var cx := int(xy[0])
+		var cy := int(xy[1])
+		var r := _chunk_rect(cx, cy)
+		if not r.has_area():
+			continue
+		var z := str(cz[key])
+		var k := tf.known_of(z)
+		var dim := 1.0
+		if focus != "" and not k.is_empty() and str(k["a"]) != focus and str(k["b"]) != focus:
+			dim = 0.35
+		if k.is_empty():
+			v.draw_texture_rect(_pat("hatch"), r, true, Color(U[3], 0.9))
+		else:
+			var s := int(k["s"])
+			var ca := fac_color(str(k["a"]))
+			match s:
+				3:
+					v.draw_texture_rect(_pat("fill"), r, true, Color(ca, 0.85 * dim))
+					v.draw_texture_rect(_pat(fac_pat(str(k["a"]))), r, true, Color(ca.lightened(0.25), 0.95 * dim))
+				2:
+					v.draw_texture_rect(_pat("fill"), r, true, Color(ca, 0.45 * dim))
+					v.draw_texture_rect(_pat(fac_pat(str(k["a"]))), r, true, Color(ca, 0.7 * dim))
+				1:
+					v.draw_texture_rect(_pat("band0"), r, true, Color(ca, 0.75 * dim))
+					v.draw_texture_rect(_pat("band1"), r, true, Color(fac_color(str(k["b"])), 0.75 * dim))
+				_:
+					v.draw_texture_rect(_pat("stipple"), r, true, Color(U[4], 0.8 * dim))
+		var lit: bool = not k.is_empty() and bool(k.get("flash", false)) and flash_on
+		for d in [[1, 0], [0, 1], [-1, 0], [0, -1]]:                         # 구역 경계(바뀐 구역은 열 때 3번 점멸, SD-16 §9.3.1)
+			if str(cz.get("%d,%d" % [cx + d[0], cy + d[1]], "")) == z:
+				continue
+			var x0 := cx * 40 + (40 if d[0] == 1 else 0)
+			var y0 := cy * 40 + (40 if d[1] == 1 else 0)
+			var p0 := w2s(Vector2(x0, y0))
+			var p1 := w2s(Vector2(x0 + (40 if d[0] == 0 else 0), y0 + (40 if d[1] == 0 else 0)))
+			var edge := Rect2(p0, Vector2(maxf(1.0, p1.x - p0.x), maxf(1.0, p1.y - p0.y))).intersection(AREA)
+			if edge.has_area():
+				v.draw_rect(edge, U[7] if lit else U[4])
+	if pb.time - opened_at >= 1.8:
+		for z in tf.known:
+			tf.known[z]["flash"] = false
+	if zoom <= 1:                                                            # 구역 이름(아는 구역만)
+		for z in Turf.zones():
+			if tf.known_of(z).is_empty():
+				continue
+			var sd: Array = Turf.data["zones"][z]["seed"]
+			var p := w2s(Vector2(int(sd[0]) * 40 + 20, int(sd[1]) * 40 + 20))
+			if AREA.grow(-20).has_point(p) and p.y < AREA.end.y - 32 and p.y > AREA.position.y + 30:
+				var nm: String = str(Turf.data["zones"][z]["name"])
+				var w: float = pb.tw(nm, pb.f10, 10)
+				v.draw_rect(Rect2(p.x - w / 2.0 - 2, p.y - 6, w + 4, 12), Color(U[0], 0.7))
+				pb.text(p - Vector2(0, 6), nm, pb.f10, 10, U[6], HORIZONTAL_ALIGNMENT_CENTER)
+
+
+## 거점 휘장(아는 거점만): 다툼 중(그 구역이 경합이고 주인이 다투는 두 세력 가운데 하나)이면 둘을 엇갈려, 사흘 안에 바뀐 거점은 ↻ + 날짜
+func _turf_nodes(v: Control, U: Array) -> void:
+	if emb16 == null:
+		emb16 = load("res://assets/ui/faction_emblems16.png")
+	var tf: Turf = pb.st.turf
+	var day := int(pb.st.vars.get_v("GAME_DAY"))
+	for nid in Turf.data.get("nodes", {}):
+		var kn: Dictionary = tf.known_n.get(nid, {})
+		if kn.is_empty():
+			continue
+		var n: Dictionary = Turf.data["nodes"][nid]
+		var p := w2s(Vector2(int(n["tx"]) + 0.5, int(n["ty"]) + 0.5))
+		if not AREA.grow(-10).has_point(p) or p.y > AREA.end.y - 32 or p.y < AREA.position.y + 40:
+			continue
+		var o := Turf.group(pb.st, str(kn["o"]))
+		var kz := tf.known_of(str(n["zone"]))
+		if zoom == 0:                                                         # 전도: 휘장 대신 세력 색 점(겹침 방지)
+			v.draw_rect(Rect2(p - Vector2(2, 2), Vector2(5, 5)), U[0])
+			v.draw_rect(Rect2(p - Vector2(1, 1), Vector2(3, 3)), fac_color(o) if o != "" else U[3])
+			continue
+		var q := p + Vector2(-8, -26)
+		if o == "" :
+			v.draw_rect(Rect2(q + Vector2(4, 6), Vector2(8, 6)), U[3], false)    # 빈 거점: 빈 깃대 자리
+		else:
+			if not kz.is_empty() and int(kz["s"]) == 1 and o in [str(kz["a"]), str(kz["b"])]:
+				var other := str(kz["b"]) if o == str(kz["a"]) else str(kz["a"])
+				_emb(v, other, q + Vector2(5, 3), U, 0.8)
+			_emb(v, o, q, U, 1.0)
+		if day - int(kn.get("chg", -99)) <= Turf.RECENT:
+			pb.text(q + Vector2(17, 0), "↻", pb.f10, 10, U[7])
+
+
+func _emb(v: Control, f: String, q: Vector2, U: Array, a: float) -> void:
+	var i := FactionTab.EMBLEM.find(f)
+	if i < 0:
+		return
+	v.draw_rect(Rect2(q - Vector2(1, 1), Vector2(18, 18)), Color(U[0], 0.9 * a))
+	v.draw_texture_rect_region(emb16, Rect2(q, Vector2(16, 16)), Rect2(i * 16, 0, 16, 16), Color(fac_color(f).lightened(0.2), a))
+
+
+## 범례 한 줄: 접촉한 세력만(세력 기록에 오른 세력 + 약탈자) · 모르는 영역
+func _turf_legend(v: Control, U: Array) -> void:
+	var x := AREA.position.x + 16
+	var y := AREA.position.y + 14                                           # 지도 위쪽(판도 틀은 남쪽 권역 — 가리지 않게)
+	v.draw_rect(Rect2(AREA.position.x, y - 2, AREA.size.x, 13), Color(U[0], 0.8))
+	var fs: Array = []
+	for f in ["BJ", "SB", "JH", "GS", "JC", "SA", "YT"]:
+		if f == "YT" or pb.st.fbook.registered(f) or (f == "SA" and pb.st.fbook.registered("JC_SA")):
+			fs.append(f)
+	for f in fs:
+		var r := Rect2(x, y + 1, 9, 8)
+		v.draw_texture_rect(_pat("fill"), r, true, fac_color(f))
+		v.draw_texture_rect(_pat(fac_pat(f)), r, true, fac_color(f).lightened(0.25))
+		var nm := Turf.fac_name(f)
+		pb.text(Vector2(x + 12, y - 1), nm, pb.f10, 10, U[6] if focus == "" or focus == f else U[3])
+		x += 16 + pb.tw(nm, pb.f10, 10)
+		if x > AREA.end.x - 70:
+			break
+	v.draw_texture_rect(_pat("hatch"), Rect2(x, y + 1, 9, 8), true, U[3])
+	pb.text(Vector2(x + 12, y - 1), "알 수 없음", pb.f10, 10, U[4])
+
+
+func _turf_info(r: Rect2, U: Array, coord: String) -> void:
+	var tf: Turf = pb.st.turf
+	var z := Turf.zone_at(Vector2i(cursor))
+	if z == "":
+		pb.text(r.position + Vector2(6, 2), "판도: R01 관악 · R02 여의도·영등포만 그린다(다른 권역은 아직 소식이 없다).", pb.f12, 12, U[3])
+		pb.text(r.position + Vector2(6, 16), coord + "   [G] 판도 끄기", pb.f10, 10, U[4])
+		return
+	var head := "%s — %s" % [Turf.zone_name(z), tf.line_of(pb.st, z)]
+	pb.text(r.position + Vector2(6, 2), pb._fit(head, AREA.size.x - 12), pb.f12, 12, U[6] if not tf.known_of(z).is_empty() else U[3])
+	var tail: Array = []
+	for s in [tf.use_of(pb.st, z), tf.age_of(pb.st, z)]:
+		if s != "":
+			tail.append(s)
+	var day := int(pb.st.vars.get_v("GAME_DAY"))
+	var k := tf.known_of(z)
+	if not k.is_empty() and day - int(k.get("chg", -99)) <= Turf.RECENT:
+		tail.append("↻ 최근에 바뀌었다")
+	pb.text(r.position + Vector2(6, 16), " · ".join(tail) + ("   " if not tail.is_empty() else "") + "[G] 판도 끄기", pb.f10, 10, U[5] if not tail.is_empty() else U[4])
+
+
+func toggle_layer() -> void:
+	layer = not layer
+	opened_at = -1.0
+	if not layer:
+		focus = ""
 
 
 # ---------------------------------------------------------------- 지역 지도

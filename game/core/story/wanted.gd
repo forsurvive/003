@@ -1,7 +1,7 @@
 ## 수배도(단계 1-3, SD-12 §9.7 변수·등급·표시 · SD-03a §6.5 진입 시점·막별 하한·메인 증감 · SD-15 §5.7 현상금·해소 비용).
 ## 변수 `V_WANTED` 0~100 → 등급 0 미등재 · 1 소문(1~29) · 2 수배 공고(30~59) · 3 지명 수배(60~79) · 4 총력 수배(80~100).
 ## 하한: 1막 등급 1 이상(값 1) · 2~3막 2(30) · 4막은 비상 ≤ −20이면 3(60) · 5~7막은 비상 ≤ −20이면 4(80). 비상정부 신뢰(+50) 이상이면
-## 공고 철회 = 0 고정(하한 무시). 하루 상한: 계엄군 사살(목격) +2 하루 +10 · 관리자 인증 +3 하루 +9(비상 신뢰 이상이면 0).
+## 공고 철회 = 0 고정(하한 무시). 하루 상한: 계엄군 사살(목격) +2 하루 +10 · 관리자 인증 +3 하루 +9(비상 신뢰 이상이면 0 · 금탑 관측소가 서 있으면 한 번 +6, 1-12m D-219).
 ## 등급이 바뀌면 이야기 상태 알림(kind "wanted")을 남긴다 — HUD가 `수배 등급이 올라갔습니다: 수배 공고`.
 class_name Wanted
 extends RefCounted
@@ -82,11 +82,18 @@ static func add(st: StoryState, delta: int, reason := "") -> int:
 	if DAY_CAP.has(reason):
 		if reason == "auth" and withdrawn(st):
 			return value(st)
+		if reason == "auth" and tracked(st):
+			delta += int(DAY_CAP["auth"][0])                             # 금탑 60층 관측소가 서 있으면 인증 위치 추적 — 한 단 더(SD-09a L957, 1-12m D-219)
 		var key := "WANTED_KILL_SUM" if reason == "kill" else "WANTED_AUTH_SUM"
 		var used := int(st.vars.get_v(key))
 		delta = clampi(delta, 0, maxi(0, int(DAY_CAP[reason][1]) - used))
 		st.vars.set_v(key, used + delta)
 	return set_value(st, value(st) + delta)
+
+
+## 금탑 60층 계엄군 관측소(KT-06 무전대 · 관리자 인증 단말)가 서 있나: 1막 뒤 · 여의도 판도 BJ 우세 이상(지도 KT-06 조건과 같은 사실)
+static func tracked(st: StoryState) -> bool:
+	return int(st.vars.get_v("V_ACT")) >= 2 and str(st.vars.get_v("PDO_R02_1")) == "BJ" and int(st.vars.get_v("PDS_R02_1")) >= 2
 
 
 static func set_value(st: StoryState, v: int) -> int:

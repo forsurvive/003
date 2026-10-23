@@ -351,6 +351,8 @@ func _draw_hud() -> void:
 			label = "회복 %d" % int(host.st.items.get(InteriorCombat.STIMPAK, 0))
 		elif id == "weapon":
 			label = str(host.items_db.get(host.combat.weapon_id, {}).get("name", "맨손")) if host.combat.weapon_id != "" else "맨손"
+		elif id == "pip" and host.st.fbook.any_unread():
+			v.draw_circle(rr.position + Vector2(rr.size.x - 5, 5), 2.5, HOT)    # 세력 기록 새 줄(SD-12 §3.10 ② — 핍-보이 아이콘의 작은 점)
 		_label(rr, label)
 
 

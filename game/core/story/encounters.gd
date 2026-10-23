@@ -329,11 +329,39 @@ func _base(region: String, night: bool) -> String:
 	return _pick(region, night, Vector2i(-1, -1))
 
 
-## 판정 위치의 범주 가중 표(판도 — SD-05 §6.3 · SD-06 §5.9 시작 판도: 표에 없는 권역은 공백)
-func _cat_table(region: String) -> Dictionary:
+## 판정 위치의 범주 가중 표(판도 — SD-05 §6.3). 판도 구역 안(R01 · R02, 1-12m)은 그 구역의 지금 상태(core/story/turf.gd),
+## 밖은 권역 시작 판(표에 없는 권역은 공백). 지배 · 우세 세력이 약탈자면 '지배 세력 순찰' 몫을 적대 약탈자로 옮긴다(§6.3 아래 줄)
+func _cat_table(region: String, t := Vector2i(-1, -1)) -> Dictionary:
 	var cw: Dictionary = data.get("cat_w", CAT_W_DEFAULT)
 	var state := str(data.get("region_state", {}).get(region, "공백"))
-	return cw.get(state, cw.get("공백", {}))
+	var es: Dictionary = st.turf.enc_state(st, t) if t.x >= 0 else {}
+	if not es.is_empty():
+		state = str(es["state"])
+	var tb: Dictionary = (cw.get(state, cw.get("공백", {})) as Dictionary).duplicate()
+	tb["_a"] = str(es.get("a", ""))
+	tb["_b"] = str(es.get("b", ""))
+	if tb["_a"] == "YT" and tb.has("dom"):
+		tb["raider"] = float(tb.get("raider", 0)) + float(tb["dom"])
+		tb["patrol"] = float(tb.get("comp", 0))
+		tb["dom"] = 0
+	if state == "경합" and not es.is_empty() and bool(es.get("here", false)):
+		tb["clash"] = float(tb.get("clash", 0)) * 2.0                       # 주인공이 있는 경합 구역: 판도 틱 대신 세력 교전 ×2(SD-06 §5.4 · SD-05 §6.3)
+	return tb
+
+
+## 판도 순찰 몫 나누기(SD-05 §6.3): 지배 세력 순찰 · 경쟁 세력 순찰 · 그 밖(경쟁 몫의 절반)
+static func _patrol_share(d: Dictionary, cw: Dictionary) -> float:
+	var dom := float(cw.get("dom", 0))
+	var comp := float(cw.get("comp", 0))
+	if dom + comp <= 0.0 or str(d.get("cat", "")) != "patrol":
+		return 1.0
+	var f := str(d.get("faction", ""))
+	var a := Turf.group_static(f)
+	if a == str(cw.get("_a", "")):
+		return 2.0 * dom / (dom + comp)
+	if a == str(cw.get("_b", "")):
+		return 2.0 * comp / (dom + comp)
+	return comp / (dom + comp)
 
 
 ## RE가 이 자리·시각에 나올 수 있나(권역 · 시간 · 위협 · 조건)
@@ -370,7 +398,7 @@ static func _time_ok(d: Dictionary, night: bool, hour: int) -> bool:
 ## 후보 하나를 가중으로 고른다(§3.6 · §3.7 · §4.2 · §3.5). 없으면 ""
 func _pick(region: String, night: bool, t: Vector2i) -> String:
 	var tab := table()
-	var cw := _cat_table(region)
+	var cw := _cat_table(region, t)
 	var cat_sum := {}
 	for id in tab:
 		var c := str(tab[id].get("cat", ""))
@@ -387,7 +415,7 @@ func _pick(region: String, night: bool, t: Vector2i) -> String:
 		if not _allowed(d, region, night, th):
 			continue
 		var w: float = float(cw.get(c, 0)) * float(d["weight"]) / float(cat_sum[c])
-		w *= fit_mult(d) * cat_mult(d, region, t, night) * _repeat_mult(str(id), c, t)
+		w *= fit_mult(d) * cat_mult(d, region, t, night) * _repeat_mult(str(id), c, t) * _patrol_share(d, cw)
 		if night:
 			w *= float(d.get("night_w", 1.0))
 		if w > 0.0:
