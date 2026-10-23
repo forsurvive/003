@@ -394,6 +394,11 @@ C-001 [기본] 오버시어 비상 개방 단말. 이 열쇠로만 돌아가.
 @cmd move C-001 2,3
 @cmd face C-001 N
 SYS 엄마가 목에 건 열쇠를 꽂고 돌린다.
+? PK_002 >= 1 -> EYE
+@cmd escape gate
+-> END
+* EYE
+C-001 [슬픔] 기록 읽는 눈은 나 닮았지. 바깥에 나가서도 그 눈으로 잘 보고 다녀.
 @cmd escape gate
 -> END
 

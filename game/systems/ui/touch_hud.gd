@@ -206,6 +206,12 @@ func _input(e: InputEvent) -> void:
 	var p := _local(e.position)
 	if e is InputEventScreenTouch:
 		if e.pressed:
+			if Rect2(170, 0, 96, 30).has_point(p) and host.pipboy_ok and Perks.pending(host.st) > 0:   # ▲ 레벨업 표지(1-12p): 바로 능력치 > 퍽
+				host.open_pipboy()
+				if host.pipboy != null:
+					host.pipboy.open_at(0, 3)
+				get_viewport().set_input_as_handled()
+				return
 			var rr := Rect2(476 + off_r - 2, 102, 96, 36)                  # 라디오 표시(판정 36, SD-12 §17.2)
 			if rr.has_point(p) and host.radio_shown():
 				radio_t = 0.0
@@ -351,6 +357,8 @@ func _draw_hud() -> void:
 			label = "회복 %d" % int(host.st.items.get(InteriorCombat.STIMPAK, 0))
 		elif id == "weapon":
 			label = str(host.items_db.get(host.combat.weapon_id, {}).get("name", "맨손")) if host.combat.weapon_id != "" else "맨손"
+		elif id == "pip" and Perks.pending(host.st) > 0:
+			v.draw_circle(rr.position + Vector2(rr.size.x - 5, 5), 2.5, Color("E8C23A"))   # 미배분 레벨업(1-12p)
 		elif id == "pip" and host.st.fbook.any_unread():
 			v.draw_circle(rr.position + Vector2(rr.size.x - 5, 5), 2.5, HOT)    # 세력 기록 새 줄(SD-12 §3.10 ② — 핍-보이 아이콘의 작은 점)
 		_label(rr, label)

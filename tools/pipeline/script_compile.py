@@ -76,6 +76,7 @@ ENGINE_VARS = {"PC_ST", "PC_PE", "PC_EN", "PC_CH", "PC_IN", "PC_AG", "PC_LK", "P
     | {"GS_OPEN", "GS_TRUTH", "GS_ROBOT", "GS02_GRADER"} | {"SQH_BATT", "LR15_READ", "PD_R01_GS", "M303_BONUS", "PK_017"}   # 1-11c SQ-S04   # 1-11b SQ-S02   # 1-11a SQ-S01                                                        # 1-6 MQ-105             # 1-3 생포 · 1-4 해킹 통계
 # UQ-71 원자력 버스(1-D1, SD-05 UQ-71 · 훅 H-R02-11 · DB-01): 노심의 행방은 UQ71_CORE 하나(0 버스 · 1 제자리 봉인 · 2 주인공 소지 · 3 팔림 · 4 분대가 가져감 · 5 신길에서 터짐)
 ENGINE_VARS |= {p + z for p in ("PDS_", "PDO_") for z in ("R01_1", "R01_2", "R01_3", "R01_4", "R01_5", "R01_6", "R02_1", "R02_2", "R02_3", "R02_4", "R02_5")}   # 1-12m 판도
+ENGINE_VARS |= {"PK_%03d" % i for i in range(1, 120)} | {"PC_LV_DONE"}   # 1-12p 퍽 랭크 · 배분을 마친 레벨
 ENGINE_VARS |= {"UQ71_" + k for k in "CORE SQ HEARD DAY DUE SOL REWARD TALK SEEN SQP N QUICK SQ_DAY".split()}
 # U02 남태령 지하(1-D2, SD-09f U02 · L-UG-05 · 훅 UG-H01 · UG-H02 · 1-D 계획 §8): 사실 한 곳 — 원고 script/act1/U02.txt 머리 주석
 ENGINE_VARS |= {"U02_" + k for k in ("GUIDE INTRO LIGHT LIGHT_DAY ASK HAL HAL_DAY HFEE PATH TRACE USED FOUND SOL SHIFT SIDE FEE FN FW FS FR FD "

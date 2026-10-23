@@ -9,6 +9,7 @@ const SPRINT_PER_SEC := 10.0
 const DODGE := 20.0
 var max_ap := 75.0
 var ap := 75.0
+var sprint_mult := 1.0                    ## 질주 소모 배수(배달 기사 PK-028 0.7)
 var regen_mult := 1.0                     ## 몸통 부위 손상 0.7, 막기 유지 0.5, 너브스 오브 스틸 (8+2)/8
 var _since := 99.0
 
@@ -37,7 +38,7 @@ func spend(cost: float) -> bool:
 ## 매 틱. sprint=true면 초당 10 소모하고 회복하지 않는다. 반환: 질주를 계속할 수 있는가(AP 0이면 자동 종료).
 func tick(dt: float, sprint: bool) -> bool:
 	if sprint and ap > 0.0:
-		ap = maxf(0.0, ap - SPRINT_PER_SEC * dt)
+		ap = maxf(0.0, ap - SPRINT_PER_SEC * sprint_mult * dt)
 		_since = 0.0
 		return ap > 0.0
 	_since += dt

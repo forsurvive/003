@@ -10,7 +10,7 @@ func _ready() -> void:
 	host.body = "kid"
 	var args := OS.get_cmdline_user_args()
 	var p3 := args.size() > 1 and args[1] == "p3"
-	var k := args.size() > 1 and args[1] in ["k", "m", "s"]                  # 1-12k: 1막 봉천 · 등록 카드 단계 3(코드 줄 `20 27`) · 원경 표식 넷 · 월드 지도(랜드마크 실루엣)
+	var k := args.size() > 1 and args[1] in ["k", "m", "s", "lv"]                  # 1-12k: 1막 봉천 · 등록 카드 단계 3(코드 줄 `20 27`) · 원경 표식 넷 · 월드 지도(랜드마크 실루엣)
 	var m := args.size() > 1 and args[1] == "m"                         # 1-12m: 판도가 몇 군데 기운 1막(가산 새벽 · 신림 공백 · 영등포 지하시장 지배 · 국회 BJ) + 세력 기록
 	if m:
 		var st := host.st
@@ -51,6 +51,14 @@ func _ready() -> void:
 			"safe": {"B-01|h": {"map": "B-01", "name": "철제 사물함", "seen": {"day": 2, "at": at0 + 1440, "items": {"W-002": 1, "10mm 탄": 24}}}}}
 		for lid in ["L-R01-09"]:
 			host.st.places.raise(lid, PlaceLog.FOUND)
+	var lvm := args.size() > 1 and args[1] == "lv"                      # 1-12p: 레벨업 화면 — 셋째 인자 = 단계(0 스킬 · 1 퍽 · 3 확인), Lv5(미배분 3) · 퍽 둘
+	if lvm:
+		CharDocs.write_tags(host.st, ["LOCKPICK", "SPEECH", "SMALL_GUNS"])
+		host.st.vars.set_v("PC_XP", 1750)
+		host.st.vars.set_v("PC_LV_DONE", 2)
+		host.st.vars.set_v("PK_006", 1)
+		host.st.vars.set_v("PK_003", 1)
+		host.st.boxes["tried"] = {"LOCKPICK": [{"req": 50, "where": "봉천 계단마을의 그 철문", "day": 1}]}
 	if k:
 		CharDocs.write_name(host.st, "윤", "서진")
 		host.st.vars.set_v("P_REGNO", CharDocs.REGNO)
@@ -74,7 +82,22 @@ func _ready() -> void:
 			if ak.size() > 3:                                           # 넷째 = 지도 확대 단계(0 전도 · 1 권역 · 2 구역 · 3 정밀)
 				pk.map = PipMap.new(pk)
 				pk.map.zoom = int(ak[3])
-			if ak.size() > 4:                                           # 다섯째 = 판도 레이어(L) · 강조 세력(L:JH)
+			if lvm and ak.size() > 2 and int(ak[2]) < 0:               # 목록(퍽 칸 · 가진 퍽)만
+				pk.sel = 0
+			elif lvm and ak.size() > 2:
+				LevelTab.start(pk)
+				var d: LevelDraft = host.st.lv_draft
+				for i in 9:
+					d.inc("LOCKPICK", 1)
+				pk.sel = 4
+				if int(ak[2]) >= 1:
+					d.spread_tags()
+					d.step = 1
+					pk.sel = 1
+				if int(ak[2]) >= 3:
+					d.perk = "PK-007"
+					d.step = 3
+			if ak.size() > 4 and not lvm:                               # 다섯째 = 판도 레이어(L) · 강조 세력(L:JH)
 				pk.map.layer = true
 				pk.map.focus = ak[4].substr(2) if ak[4].length() > 2 else ""
 				pk.map.cursor = Vector2(800, 1330)

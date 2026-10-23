@@ -127,6 +127,7 @@ static func resolve(hit: Dictionary) -> Dictionary:
 	var w: Dictionary = hit["weapon"]
 	var dam := base_damage(w, hit.get("skill", 0.0), hit.get("attacker", {}), hit.get("power", false),
 		hit.get("dist", 0.0), hit.get("arm_crippled", false))
+	dam += hit.get("add", 0.0)                                         # 아이언 피스트(PK-014) 비무장 +5/랭크(1-12p)
 	dam *= hit.get("perk_mult", 1.0)
 	if hit.get("crit", false) or hit.get("sneak", false):
 		dam += w.get("crit_dmg", 0.0) * (1.5 if hit.get("better_crits", false) else 1.0)

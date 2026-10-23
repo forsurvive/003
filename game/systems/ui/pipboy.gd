@@ -38,6 +38,7 @@ var map: PipMap                                      ## 지도 화면(데이터 
 var book_filter := 0                                 ## 인물 수첩 거르기(NpcBook.FILTERS)
 var book_q := ""                                     ## 인물 수첩 이름 찾기(초성 가능)
 var searching := false                               ## 찾기 글자를 받는 중('/'로 시작, Enter·Esc로 끝)
+var lv_on := false                                   ## 능력치 > 퍽: 레벨업 화면(1-12p — systems/ui/level_tab.gd)
 var face: TextureRect                                ## 인물 수첩 얼굴(48×48 — 그림은 노드로 얹는다, DocScreen 머리글)
 static var svc_icons: Texture2D
 
@@ -132,8 +133,8 @@ func _rows() -> Array:
 		[0, 2]:
 			for k in StoryState.SKILL_ORDER:
 				out.append({"text": StoryState.SKILLS[k][0] + (" [태그]" if st.tagged(k) else ""), "id": k, "right": str(st.skill(k))})
-		[0, 3]:                                                         # 특별 퍽 관리 후보 1순위(PK-103, SD-10): 결과 통지서를 받으면 자동
-			out = [{"text": "관리 후보 1순위", "id": "PK-103", "right": "특별"}] if int(st.vars.get_v("V_REGCARD")) >= 1 else []
+		[0, 3]:                                                         # 퍽(1-12p): 미배분 레벨업 줄 · 가진 퍽(특별 퍽 관리 후보 1순위 PK-103 포함)
+			out = LevelTab.perk_rows(self)
 		[0, 4]:
 			out = [{"text": "등록 카드", "id": "card"}, {"text": "카르마", "id": "karma"}]
 			if st.quests.cur_act() >= 1:                                  # 수배(SD-12 §9.7, 1-3): 볼트를 나온 뒤
@@ -370,11 +371,12 @@ func _draw_doc() -> void:
 		var sx := 48.0 + i * w
 		var r := Rect2(sx + 2, 296, w - 5, 16)
 		item("sub%d" % i, r)
+		var lab: String = subs[i] + (" ▲" if tab == 0 and i == 3 and Perks.pending(st) > 0 else "")   # 미배분 레벨업(1-12p)
 		if i == sub[tab]:
 			box(r, U[6], false)
-			text(Vector2(sx + w / 2.0, 298), subs[i], f12, 12, U[6], HORIZONTAL_ALIGNMENT_CENTER)
+			text(Vector2(sx + w / 2.0, 298), lab, f12, 12, U[6], HORIZONTAL_ALIGNMENT_CENTER)
 		else:
-			text(Vector2(sx + w / 2.0, 298), subs[i], f12, 12, U[3], HORIZONTAL_ALIGNMENT_CENTER)
+			text(Vector2(sx + w / 2.0, 298), lab, f12, 12, U[3], HORIZONTAL_ALIGNMENT_CENTER)
 	hline(48, 591, 313, U[2])
 	if _map_mode():                                                      # 지역·월드 지도(1-2): 목록·상세 대신 지도 한 장
 		if map == null:
@@ -393,6 +395,20 @@ func _draw_doc() -> void:
 		if gat >= 0:                                                     # 터치: 안내 줄 '[G] 판도'를 누르면 레이어를 켜고 끈다
 			item("turf", Rect2(48 + tw(mh.substr(0, gat), f10, 10) - 2, 314, tw("[G] 판도", f10, 10) + 4, 14))
 		return
+	if lv_on and tab == 0 and sub[0] == 3:                               # 레벨업 화면(1-12p): 목록 · 상세 대신
+		fig.visible = false
+		face.visible = false
+		LevelTab.draw(self)
+		if lv_on:
+			var lh := LevelTab.hint(self)
+			if toast_t > 0.0:
+				view.draw_rect(Rect2(258, 250, 334, 16), U[0])
+				text(Vector2(262, 252), _fit(toast, 326.0), f10, 10, U[6])
+			item("close", Rect2(44, 314, 50, 14))
+			item("power", Rect2(614, 180, 20, 40))
+			text(Vector2(48, 316), lh, f10, 10, U[4])
+			return
+		rows = _rows()
 	# 목록(12px 행 15행)
 	for i in rows.size():
 		var y := 74.0 + i * 15.0
@@ -485,6 +501,8 @@ func _enter_label() -> String:
 	match [tab, sub[tab]]:
 		[0, 0]:
 			return "스팀팩 사용"
+		[0, 3]:
+			return "레벨업 시작" if rows[sel]["id"] == "lvup" else "—"
 		[1, 0]:
 			return "해제" if rows[sel]["id"] == info.get("equipped", "") else "장착"
 		[1, 1]:
@@ -567,7 +585,7 @@ func _radio_page(id: String) -> void:
 
 func _detail() -> void:
 	if rows.is_empty():
-		text(Vector2(264, 78), "아직 없다." if [tab, sub[tab]] != [0, 3] else "레벨이 오르면 퍽을 고른다.", f12, 12, U[3])
+		text(Vector2(264, 78), "아직 없다." if [tab, sub[tab]] != [0, 3] else "레벨이 오르면 퍽을 하나씩 고른다.", f12, 12, U[3])
 		return
 	var row: Dictionary = rows[sel]
 	var id: String = row["id"]
@@ -603,10 +621,7 @@ func _detail() -> void:
 			var y := _para(Vector2(264, 114), str(tx.get("desc", "")), U[5])
 			_para(Vector2(264, y + 4), "쓰임: " + str(tx.get("uses", "")), U[4])
 		[0, 3]:
-			text(Vector2(264, 78), "관리 후보 1순위", f12b, 12, U[6])
-			text(Vector2(264, 96), "특별 퍽 · 적성 평가 결과 통지서(2274)", f10, 10, U[4])
-			var y := _para(Vector2(264, 114), "결과 통지서 맨 아래 칸에 처음부터 인쇄되어 있던 순위. 누가 무엇을 답해도 같다고 한다.", U[5])
-			_para(Vector2(264, y + 4), "뜻을 알 수 없는 순위.", U[6])
+			LevelTab.perk_page(self, id)
 		[0, 4]:
 			_general_page(id)
 		[2, 3] when id.begins_with("npc:"):
@@ -1060,6 +1075,11 @@ func _unhandled_input(e: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		view.queue_redraw()
 		return
+	if lv_on and tab == 0 and sub[0] == 3 and not (k in [KEY_TAB, KEY_ESCAPE, KEY_Q, KEY_E, KEY_F1, KEY_F2, KEY_F3, KEY_J]) \
+			and not (e is InputEventMouseButton) and LevelTab.key(self, e):   # 레벨업 화면(1-12p): ↑↓ ←→ Enter T Backspace
+		get_viewport().set_input_as_handled()
+		view.queue_redraw()
+		return
 	if k in [KEY_TAB, KEY_ESCAPE]:
 		close(true)
 	elif k == KEY_Q:
@@ -1190,6 +1210,8 @@ func _press(id: String) -> void:
 		if map != null and map.click(_local(get_viewport().get_mouse_position())):
 			_travel()
 		return
+	if lv_on and LevelTab.press(self, id):                              # 레벨업 화면 단추 · 줄(1-12p)
+		return
 	if id.begins_with("tab"):
 		_tab(int(id.substr(3)))
 	elif id.begins_with("sub"):
@@ -1243,6 +1265,9 @@ func _enter() -> void:
 		return
 	var id: String = rows[sel]["id"]
 	match [tab, sub[tab]]:
+		[0, 3]:
+			if id == "lvup":
+				LevelTab.start(self)                                       # 레벨업 화면(1-12p)
 		[0, 0]:
 			action.emit("use", str(info.get("stimpak_id", "")))
 		[1, 0]:

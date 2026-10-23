@@ -8,6 +8,7 @@ extends Node2D
 const MAX := 128
 const BUCKET := 128.0
 var world
+var pc_st                                ## 주인공 이야기 상태(1-12p 퍽 — 블러디 메스 · 엔토몰로지스트 · 피네스 · 베터 크리티컬스). 없으면 퍽 없음
 var rng := RandomNumberGenerator.new()
 var shots: Array = []                    ## {p, v, ang, life, team, weapon, skill, origin}
 var flashes: Array = []                  ## 총구 효과 {at, ang, set, age, born}
@@ -212,7 +213,8 @@ func explode(at: Vector2, w: Dictionary, skill: float, team: String, fl: int = 0
 			continue
 		if cover == 1:
 			ratio *= 0.5
-		var r := CombatRules.resolve({"weapon": bw, "skill": skill, "part": "torso", "dr": c.dr, "explosive": true})
+		var r := CombatRules.resolve({"weapon": bw, "skill": skill, "part": "torso", "dr": c.dr, "explosive": true,
+			"perk_mult": Perks.dmg_mult(pc_st, target_id(c)) if team == "player" and pc_st != null else 1.0})
 		r["hp"] = float(r["hp"]) * ratio * (float(w.get("robot_mult", 1.0)) if c.robot else 1.0)
 		if bk == "emp":                                               # 펄스(§9.2): 로봇 +200 · 정지, 사람은 거의 안 다친다
 			if c.robot:
@@ -428,16 +430,24 @@ func _blocked(a: Vector2, b: Vector2, s: Dictionary) -> Vector2:
 	return Vector2(-1, -1)
 
 
+## 맞은 쪽 적 ID(엔토몰로지스트 대상 — 적 노드의 enemy_id 메타). 표적 · 주민은 ""
+static func target_id(c: Combatant) -> String:
+	var a = c.actor
+	return str(a.get_meta("enemy_id", "")) if a is Node and a.has_meta("enemy_id") else ""
+
+
 func _apply(c: Combatant, s: Dictionary, at: Vector2) -> void:
 	var w: Dictionary = s["weapon"]
 	var focused: bool = s.get("focused", false)
-	var crit: bool = rng.randf() * 100.0 < CombatRules.crit_chance(5, float(w.get("crit_mult", 1.0)), "new", 0.0, focused) and not bool(w.get("no_crit", false))
+	var pk: bool = str(s["team"]) == "player" and pc_st != null
+	var crit: bool = rng.randf() * 100.0 < CombatRules.crit_chance(5, float(w.get("crit_mult", 1.0)), "new", Perks.crit_add(pc_st) if pk else 0.0, focused) and not bool(w.get("no_crit", false))
 	var part := CombatRules.pick_part(CombatRules.part_weights(c.weights, {"focused": focused, "per": s.get("per", 5)}) if focused
 		else c.weights, rng)
 	var sneak: bool = s.get("sneak_ok", false) and c.unaware.is_valid() and c.unaware.call()
 	c.last_sneak = sneak
 	var r := CombatRules.resolve({"weapon": w, "skill": s["skill"], "dist": s["origin"].distance_to(at) / 32.0,
-		"crit": crit or sneak, "part": part, "dr": c.dr, "sneak": sneak})
+		"crit": crit or sneak, "part": part, "dr": c.dr, "sneak": sneak,
+		"perk_mult": Perks.dmg_mult(pc_st, target_id(c)) if pk else 1.0, "better_crits": pk and Perks.better_crits(pc_st)})
 	r["nonlethal"] = w.get("sound", "") == "suppressed" or w.get("kind", "ranged") != "ranged" or s.get("proj", "") == "net"   # 공기총·근접·그물 = 비살상(기절, 0-9)
 	if c.robot:
 		r["hp"] = float(r["hp"]) * float(w.get("robot_mult", 1.0))

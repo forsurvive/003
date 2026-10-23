@@ -67,6 +67,7 @@ var nav: InteriorNav
 var r_long := false                               ## 재장전 키를 0.6초 넘게 눌렀다(라디오 켜기 · 끄기 — 놓아도 재장전하지 않는다)
 var bot := {}                                     ## 봇 입력: {"aim", "fire", "crouch", "reload", "stim"}
 var popups: Array = []                            ## [글, 위치, 남은 초, 색]
+var lv_fx := -1.0                                 ## 레벨업 빛(1-12p): 지난 초(1.2초 — 발밑 고리 · 오르는 불티, 걸음은 그대로 덧그림만)
 var stats := {"shots": 0, "hits": 0, "sneak": 0, "spotted": 0, "stims": 0, "downs": 0, "hurt": 0.0}
 var font: Font
 var sneak_skill := 0.0
@@ -181,7 +182,20 @@ static func derived(st: StoryState) -> Dictionary:
 	var sp: Dictionary = _special
 	var en := str(clampi(st.stat_base("EN"), 1, 10))                   # 일시적 지구력 감소(방사능)는 최대 HP를 깎지 않는다(SD-11 §11.2)
 	var ag := str(clampi(st.stat("AG"), 1, 10))
-	return {"hp_max": float(sp[en]["hp_lv1"]), "ap_max": float(sp[ag]["ap_max"])}
+	var lv := Perks.level(st)                                           # 레벨업 최대 HP +10(SD-10 §4.2) · 라이프 기버 +30 · 액션 보이 AP +25(1-12p)
+	return {"hp_max": float(sp[en]["hp_lv1"]) + (lv - 1) * 10.0 + Perks.hp_bonus(st), "ap_max": float(sp[ag]["ap_max"]) + Perks.ap_bonus(st)}
+
+
+## 레벨업 · 퍽으로 최대 HP · AP가 바뀌었다: 늘어난 만큼 지금 HP도 늘린다(§4.2 '현재 HP도 +10'), 줄면 넘친 만큼만 깎는다
+func refresh_pc(st: StoryState) -> void:
+	if st == null:
+		return
+	var mx: float = derived(st)["hp_max"]
+	if mx != pc.max_hp and pc.max_hp > 0.0:
+		pc.hp = minf(mx, pc.hp + maxf(0.0, mx - pc.max_hp))
+		pc.max_hp = mx
+	ap.max_ap = APPool.max_for(st.stat("AG"), Perks.ap_bonus(st))
+	ap.ap = minf(ap.ap, ap.max_ap)
 
 
 const RESPAWN_DAYS := 3                           ## 셀 단위 리스폰 72게임시간(SD-14 §11.3) — 게임 날짜(06:00 하루 판정)로 센다
@@ -203,6 +217,8 @@ func on_map(map: InteriorMap, player: Actor, st: StoryState) -> void:
 		if is_instance_valid(e):
 			e.queue_free()
 	enemies.clear()
+	_calm_alias.clear()
+	_beast_n = 0
 	residents.clear()
 	allies.clear()
 	targets.clear()
@@ -259,7 +275,7 @@ func on_map(map: InteriorMap, player: Actor, st: StoryState) -> void:
 	_rebuild_list()
 	colony.setup(map, self, st)
 	if st != null:
-		ap.max_ap = APPool.max_for(st.stat("AG"))
+		ap.max_ap = APPool.max_for(st.stat("AG"), Perks.ap_bonus(st))
 		ap.ap = minf(ap.ap, ap.max_ap)
 	_doll()
 
@@ -450,6 +466,12 @@ func spawn(enemy_id: String, pos: Vector2, map: InteriorMap, st: StoryState = nu
 	e.cmb.big = enemy_id == "CR-405"                                    # 파워 아머: 넘어짐 · 그물 · 넉백 면역(SD-11 §9.4)
 	e.set_meta("enemy_id", enemy_id)
 	e.set_meta("row", opts)
+	for f in e.foes.duplicate():                                       # 애니멀 프렌드로 이름이 바뀐 무리(calm…)도 그대로 노린다
+		if _calm_alias.has(f) and not _calm_alias[f] in e.foes:
+			e.foes.append(_calm_alias[f])
+	if st != null and Perks.animal(enemy_id) and Perks.rank(st, "PK-045") >= 1 and "player" in e.foes and str(e.cmb.team).begins_with("enemy"):
+		_befriend(e)                                                   # 애니멀 프렌드(PK-045, D-142): 먼저 덤비지 않는다 — 맞으면 그 무리만 싸운다(_provoked)
+	e.set_meta("home", pos)
 	e.cmb.unaware = func() -> bool: return not e.brain.state in [AIBrain.S.COMBAT, AIBrain.S.FRENZY, AIBrain.S.FLEE] and e.brain.gauge < 100.0
 	e.morale = bool(opts.get("morale", str(map.data.get("id", "")).begins_with("G-")))   # 1-9e: 길 위 조우 · 생성 건물만(진행기 적은 끝까지)
 	e.leader_near = func() -> bool:                                   # 살아 있는 우리 분대장 12t 안(자신감 +1, SD-11 §7.6)
@@ -644,7 +666,7 @@ func _allies(dt: float) -> void:
 func _target_for(e: Enemy) -> Combatant:
 	var plain: bool = e.foes.size() == 2 and "player" in e.foes and "ally" in e.foes
 	var mb: Array = mates.bodies()
-	if plain and allies.is_empty() and mb.is_empty():
+	if plain and allies.is_empty() and mb.is_empty() and _beast_n == 0:
 		return pc
 	var cand: Array = []
 	if "player" in e.foes:
@@ -654,7 +676,7 @@ func _target_for(e: Enemy) -> Combatant:
 			if not (a["cmb"] as Combatant).dead:
 				cand.append(a["cmb"])
 		cand.append_array(mb)                                           # 쓰러진 동행은 표적에서 빠진다(§8.2 기절)
-	if not plain:
+	if not plain or _beast_n > 0:                                       # 내 편 짐승(팀 ally)도 '아군'으로 노린다
 		for o in enemies:
 			if is_instance_valid(o) and o != e and not o.cmb.dead and o.cmb.team in e.foes:
 				cand.append(o.cmb)
@@ -670,6 +692,67 @@ func _target_for(e: Enemy) -> Combatant:
 			best = c
 	e.focus = best if best != null else cand[0]
 	return e.focus
+
+
+var _calm_alias := {}                              ## 애니멀 프렌드: 원래 편 이름 → calm 편 이름(다른 무리가 계속 노리게)
+var _beast_n := 0                                  ## 지금 내 편으로 싸우는 짐승 수(애니멀 프렌드 2랭크)
+var _beast_t := 0.0
+
+
+func _befriend(e: Enemy) -> void:
+	var old: String = e.cmb.team
+	var nt := "calm" + old.trim_prefix("enemy")
+	if old == "enemy":                                                 # 맵 기본 편: 무리(같은 계열 · 12칸 안 자리)마다 따로 — 하나를 때리면 그 무리만 덤빈다
+		var p: Vector2 = e.loco.logical
+		nt = "calm_%s_%d_%d" % [Perks.family(str(e.get_meta("enemy_id", ""))), int(p.x / 384.0), int(p.y / 384.0)]
+	e.cmb.team = nt
+	e.foes.erase("player")
+	e.foes.erase("ally")
+	e.set_meta("beast", true)
+	if old == "enemy":
+		return
+	_calm_alias[old] = nt
+	for o in enemies:
+		if is_instance_valid(o) and o != e and old in o.foes and not nt in o.foes:
+			o.foes.append(nt)
+
+
+## 애니멀 프렌드 2랭크(PK-045): 둘레 10칸 안에서 주인공과 싸우는 사람 · 기계가 있으면 짐승이 내 편으로(동물끼리는 싸우지 않는다).
+##   제 자리(나타난 곳)에서 16칸을 넘어가면 멈춰 서서 짖기만 한다 — 끌고 다닐 수 없다(동료 시스템 없음).
+##   정착지 경비 · 주민은 적 목록(enemies)이 아니라서 짐승이 덤비지 않는다
+func _beast_tick(dt: float, st: StoryState) -> void:
+	if st == null or Perks.rank(st, "PK-045") < 2:
+		_beast_n = 0
+		return
+	_beast_t -= dt
+	if _beast_t > 0.0:
+		return
+	_beast_t = 0.5
+	var hostile: Array = []
+	for o in enemies:
+		if is_instance_valid(o) and not o.cmb.dead and "player" in o.foes and not o.has_meta("beast") and str(o.cmb.team).begins_with("enemy") \
+				and o.brain.state == AIBrain.S.COMBAT:
+			hostile.append(o)
+	_beast_n = 0
+	for b in enemies:
+		if not is_instance_valid(b) or b.cmb.dead or not b.has_meta("beast") or "player" in b.foes:
+			continue
+		var home: Vector2 = b.get_meta("home", b.loco.logical)
+		var teams: Array = []
+		var leash: bool = b.loco.logical.distance_to(home) > 16.0 * 32.0
+		for o in hostile:
+			if o.loco.logical.distance_to(b.loco.logical) <= 10.0 * 32.0 and not o.cmb.team in teams:
+				teams.append(o.cmb.team)
+		if teams.is_empty() or leash:
+			if b.cmb.team == "ally" and not b.foes.is_empty():
+				b.foes = []
+				if leash and Perks.animal(str(b.get_meta("enemy_id", ""))) and str(b.get_meta("enemy_id", "")) >= "CR-104" and str(b.get_meta("enemy_id", "")) <= "CR-106":
+					_pop("컹! 컹!", b.loco.logical + Vector2(0, -30), Color("E9E4D8"))
+			continue
+		b.cmb.team = "ally"
+		b.foes = teams
+		b.wake()
+		_beast_n += 1
 
 
 ## 노릴 편이 없는 적에게 주는 허수아비(죽어 있어 보지도 쏘지도 않는다)
@@ -842,6 +925,8 @@ func auto_hotkey(id: String) -> void:
 # ---------------------------------------------------------------- 매 프레임(진행기가 부른다)
 func tick(dt: float, free: bool, st: StoryState) -> void:
 	_st_ref = st
+	shots.pc_st = st
+	_beast_tick(dt, st)
 	var player: Actor = pc.actor
 	if player == null:
 		return
@@ -942,7 +1027,7 @@ func _radiation(dt: float, st: StoryState) -> void:
 			message.emit("%s — %s" % [Radiation.NAMES[s], " · ".join(parts)])
 			rad_shake = 1.0
 		rad_stage = s
-		ap.max_ap = APPool.max_for(st.stat("AG"))
+		ap.max_ap = APPool.max_for(st.stat("AG"), Perks.ap_bonus(st))
 		ap.ap = minf(ap.ap, ap.max_ap)
 	if r >= 1000:                                                       # 치사(SD-11 §11.2)
 		message.emit("방사능 1,000 라드 — 몸이 버티지 못한다.")
@@ -1162,7 +1247,8 @@ func _cough(dt: float, player: Actor) -> void:
 			message.emit("콜록 — 최루 가스")
 		cough_t = 4.0
 	cough_t = maxf(0.0, cough_t - dt)
-	ap.regen_mult = 0.5 if cough_t > 0.0 else 1.0
+	ap.regen_mult = (0.5 if cough_t > 0.0 else 1.0) * (Perks.ap_regen_mult(_st_ref) if _st_ref != null else 1.0)   # 너브스 오브 스틸(PK-098) 8 → 10
+	ap.sprint_mult = Perks.sprint_mult(_st_ref) if _st_ref != null else 1.0   # 배달 기사(PK-028): 질주 AP ×0.7
 	if _st_ref != null:
 		if cough_t > 0.0:
 			_st_ref.stat_tmp["PE"] = -2
@@ -1175,10 +1261,11 @@ func try_roll(player: Actor, dir: Vector2, heavy := false) -> bool:
 	if player.rolling() or player.roll_cool > 0.0 or pc.held() or pc.big:
 		return false
 	var hurt := heavy or pc.has_meta("leg_hurt")
-	if not ap.spend(APPool.DODGE * (2.0 if hurt else 1.0)):
+	var soft := heavy and not pc.has_meta("leg_hurt") and _st_ref != null and Perks.overload_soft(_st_ref)   # 배달 기사(PK-028): 과적 감속 절반
+	if not ap.spend(APPool.DODGE * ((1.5 if soft else 2.0) if hurt else 1.0)):
 		message.emit("숨참 — AP 부족")
 		return false
-	player.roll_mul = 0.6 if hurt else 1.0
+	player.roll_mul = (0.8 if soft else 0.6) if hurt else 1.0
 	reload_t = 0.0
 	focus_t = -1.0
 	player.loco.speed_mul = 1.0
@@ -1413,8 +1500,8 @@ func _melee(player: Actor, w: Dictionary, to: Vector2, st: StoryState, power: bo
 	var n := 0
 	var hits: Array = []
 	for e in enemies:
-		if not is_instance_valid(e) or e.cmb.dead or not e.meets(pc):
-			continue                                                     # 다른 층(고가 위·아래)은 닿지 않는다
+		if not is_instance_valid(e) or e.cmb.dead or not e.meets(pc) or e.cmb.team == "ally":
+			continue                                                     # 다른 층(고가 위·아래)은 닿지 않는다 · 내 편 짐승(애니멀 프렌드 2랭크)은 휘둘러도 비켜 간다
 		hits.append([e.cmb, e.loco.logical, e])
 	for rr in residents:                                               # 주민도 맞는다
 		if not rr["cmb"].dead and is_instance_valid(rr["actor"]):
@@ -1431,7 +1518,9 @@ func _melee(player: Actor, w: Dictionary, to: Vector2, st: StoryState, power: bo
 		var sneak: bool = e != null and c.unaware.is_valid() and c.unaware.call()
 		var part := CombatRules.pick_part(CombatRules.part_weights(c.weights, {"melee": true, "attacker_crouch": crouch}), shots.rng)
 		var r := CombatRules.resolve({"weapon": w, "skill": sk, "power": power, "part": part, "dr": c.dr, "sneak": sneak, "crit": sneak,
-			"attacker": {"str": st.stat("ST") if st != null else 5, "unarmed": sk}})
+			"attacker": {"str": st.stat("ST") if st != null else 5, "unarmed": sk},
+			"add": Perks.unarmed_add(st) if st != null and fam == "unarmed" else 0.0,
+			"perk_mult": Perks.dmg_mult(st, Projectiles.target_id(c)) if st != null else 1.0, "better_crits": st != null and Perks.better_crits(st)})
 		r["hp"] = float(r["hp"]) * tick_mult * (float(w.get("robot_mult", 1.0)) if c.robot else 1.0)
 		r["nonlethal"] = calm or str(w.get("id", "")) == "W-066"
 		c.last_by = "player"
@@ -1522,7 +1611,7 @@ func use_stimpak(st: StoryState, quick: bool = false) -> bool:
 		message.emit("다친 데가 없다.")
 		return false
 	st.call_fn("take", [STIMPAK, 1])
-	var amount := 30.0 * (1.0 + float(st.skill("MEDICINE")) / 50.0)
+	var amount := 30.0 * (1.0 + float(st.skill("MEDICINE")) / 50.0) * Perks.stim_mult(st)   # 패스트 메타볼리즘(PK-058) +20%
 	heal_q.append(amount)
 	if heal_q.size() == 1:
 		heal_rate = amount / STIM_QUEUE_S
@@ -1685,6 +1774,13 @@ func _pop(text: String, at: Vector2, col: Color) -> void:
 	popups.append([text, at, 1.0, col])
 
 
+## 레벨업 순간(SD-10 §4.2 — 게임은 멈추지 않는다): 머리 위 '레벨 업!' · 빛
+func level_fx() -> void:
+	lv_fx = 0.0
+	if pc.actor != null:
+		popups.append(["레벨 업!", pc.pos() + Vector2(0, -48), 1.6, Color("E8C23A")])
+
+
 var _swings: Array = []
 
 
@@ -1761,6 +1857,21 @@ func _draw() -> void:
 			var p := from.lerp(to, k) - Vector2(0, 4.0 * 22.0 * k * (1.0 - k))
 			draw_rect(Rect2(p.round() - Vector2(1, 1), Vector2(2, 2)), Color("E8C23A") if i % 2 == 0 else Color("0B0A0D"))
 		draw_arc(to, float(Arms.blast_r("grenade")[1]) * 32.0, 0, TAU, 28, Color("E8C23A"), 1.0)
+	if lv_fx >= 0.0 and pc.actor != null:                               # 레벨업 빛: 땅에 번지는 납작한 고리 + 몸을 타고 오르는 불티 여섯
+		lv_fx += get_process_delta_time()
+		var k := lv_fx / 1.2
+		var base := pc.pos().round()
+		var fade := clampf(1.0 - k, 0.0, 1.0)
+		var r := 6.0 + 16.0 * k
+		for i in 28:
+			var t := TAU * i / 28.0
+			draw_rect(Rect2((base + Vector2(cos(t) * r, sin(t) * r * 0.4)).round(), Vector2(1, 1)), Color(0.91, 0.76, 0.23, fade))
+		for i in 6:
+			var ph := fmod(k * 1.6 + i / 6.0, 1.0)
+			var sp := base + Vector2((i - 2.5) * 4.0 + sin(i * 1.7 + k * 6.0) * 1.5, -4.0 - 44.0 * ph)
+			draw_rect(Rect2(sp.round(), Vector2(1, 2 if i % 2 == 0 else 1)), Color(1.0, 0.86, 0.42, fade * (1.0 - ph * 0.5)))
+		if lv_fx > 1.2:
+			lv_fx = -1.0
 	for s in _swings:
 		var a: Vector2 = (s[0] as Vector2).round()
 		draw_arc(a, 7.0, -0.8, 0.8, 6, Color("E9E4D8"), 1.0)

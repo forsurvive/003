@@ -54,6 +54,7 @@ static func resist(st: StoryState, items_db: Dictionary = {}) -> float:
 		r += apparel_res(items_db.get(Gear.base(str(st.vars.get_v("PC_TORSO"))), {}))
 	if float(st.rad_drug.get("t", 0.0)) > 0.0:
 		r += float(st.rad_drug.get("pct", 0.0))
+	r += Perks.rad_res_bonus(st)                                          # 라드 레지스턴스(PK-033) +25%(1-12p)
 	return clampf(r, 0.0, RES_CAP) / 100.0
 
 

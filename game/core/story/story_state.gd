@@ -34,6 +34,7 @@ var stolen := {}                        ## 장물(SD-12 §9.2): 아이템 ID -> 
 var dead := {}                          ## 죽은 인물 ID -> true(0-9): 뒤 시대 맵에서 서지 않는다
 var hazards := {}                       ## 함정 · 환경 폭발(1-9c): "맵:x,y" -> "done"(터짐·발동) | "off"(해체) | "seen"(발견) | "open"(열린 차폐 용기, 1-9d)
 var rad_acc := 0.0                      ## 방사능(1-9d): PC_RADS에 아직 못 넣은 소수(틱당 최소 0.1)
+var lv_draft = null                     ## 레벨업 한 판(LevelDraft, 1-12p): 앱이 켜져 있는 동안만 — 저장하지 않는다(P10)
 var stat_tmp := {}                      ## 잠깐 능력치 보정(1-9e4 최루 기침 PE −2 등): 코드 -> 값. 저장하지 않는다(벗어나면 곧 풀린다)
 var rad_drug := {}                      ## 라드-X 류(1-9d): {"pct": 저항 %, "t": 남은 초, "id"}
 var places := PlaceLog.new()             ## 장소 발견 상태(1-2, SD-12 §5.5)
@@ -371,6 +372,10 @@ func _init() -> void:
 		for sfx in ["", "_DAY", "_ROLL"]:
 			vars.declare(str(Dungeon.db[did]["var"]) + sfx, "int", 0)
 	vars.declare("PD_R02_GD", "int", 0)                                  # 판도 PD-R02-5 새벽(고척 · 개봉 — 습격 −15 · 방송 −5, SD-04a §5.3)                                  # 판도 PD-R02-4 새벽(영등포 남부 — 우리 열기 −3 · 습격 −10 · 지하로 −5, SD-04a §5.2)
+	for i in range(1, 120):                                              # 퍽 랭크(1-12p, SD-10 §5): PK_001~PK_119 — 일반 · 특별 · 비기 같은 칸(P1)
+		if not vars.has("PK_%03d" % i):
+			vars.declare("PK_%03d" % i, "int", 0)
+	vars.declare("PC_LV_DONE", "int", 1)                                 # 배분을 마친 레벨(1-12p): 레벨 − 이 값 = 미배분 레벨업
 	for kv in [["SQH_BATT", -1], ["LR15_READ", 0], ["PD_R01_GS", 0], ["M303_BONUS", 0], ["PK_017", 0]]:   # 전지 인도처(HO) · LR-15 · 판도 PD-R01-2 각성회 · 편지 화술 +10(첫 1회) · 퍽 눈치(퍽 창은 1-12)
 		vars.declare(kv[0], "int", kv[1])
 	for kv in [["CAPTURE_DAY", -1], ["CAPTURE_AT", 0], ["SB_COLLAR", 0], ["SB_CUFF", 0], ["CAPTURE_BY", 0]]:
@@ -527,8 +532,18 @@ func call_fn(name: String, args: Array) -> Variant:
 			var dx := int(args[0])
 			if dx > 0 and int(vars.get_v("WELL_RESTED")) > 0:
 				dx = roundi(dx * 1.1)                                     # 숙면(SD-11 §11.5): 경험치 +10% — 끝나는 시각은 호스트가 지운다
+			if dx > 0:
+				dx = roundi(dx * Perks.xp_mult(self))                     # 스위프트 러너(PK-006): +10%/랭크
+			var lv0 := Perks.level(self)
+			var cap := Perks.xp_at(Perks.CAP_LV)
+			var cur := int(vars.get_v("PC_XP"))
+			if dx > 0 and cur + dx > cap:
+				dx = maxi(0, cap - cur)                                   # 상한(Lv35)에 닿으면 XP가 더 쌓이지 않는다(§4.1)
 			var nv := vars.add("PC_XP", dx, 0)
-			events.append({"kind": "xp", "delta": dx, "value": nv})
+			if dx != 0:
+				events.append({"kind": "xp", "delta": dx, "value": nv})
+			if Perks.level(self) > lv0:                                   # 레벨업(§4.2): 최대 HP +10은 호스트가 바로(전투 중에도) — 배분은 핍-보이에서
+				events.append({"kind": "level", "value": Perks.level(self), "from": lv0})
 			return nv
 		"wanted":                                                       # 수배도(1-3): 하한·하루 상한·등급 알림은 Wanted가
 			return Wanted.add(self, int(args[0]), str(args[1]) if args.size() > 1 else "")
@@ -623,7 +638,7 @@ func stat_code(name: String) -> String:
 	return ""
 
 
-## 지금 능력치: 방사능 단계가 지구력 · 민첩성 · 힘을 깎는다(SD-11 §11.2, 1-9d). 최소 1
+## 지금 능력치: 방사능 단계가 지구력 · 민첩성 · 힘을 깎는다(SD-11 §11.2, 1-9d). 1~10(감소는 내부값에서 빼고 표시는 자른다 — SD-10 §2.1)
 func stat(name: String) -> int:
 	var c := stat_code(name)
 	if c == "":
@@ -633,11 +648,17 @@ func stat(name: String) -> int:
 		v = maxi(1, v - Radiation.penalty(int(vars.get_v("PC_RADS")), c))
 	if stat_tmp.has(c):                                               # 잠깐 보정(최루 기침 인지력 −2 등) — 저장하지 않는다
 		v = maxi(1, v + int(stat_tmp[c]))
-	return v
+	return clampi(v, 1, 10)
 
 
-## 바탕 능력치(방사능 감소 전): 최대 HP · 방사능 저항 · 능력치 창 '기본'
+## 바탕 능력치(방사능 감소 전 · 영구값 표시 1~10): 최대 HP · 방사능 저항 · 능력치 창 '기본' · 퍽 요구
 func stat_base(name: String) -> int:
+	var c := stat_code(name)
+	return clampi(int(vars.get_v("PC_" + c)), 1, 10) if c != "" else 0
+
+
+## 내부값(10을 넘어도 그대로 — 인텐스 트레이닝 · 흔들인형이 쌓는다, SD-10 §2.1)
+func stat_raw(name: String) -> int:
 	var c := stat_code(name)
 	return int(vars.get_v("PC_" + c)) if c != "" else 0
 
@@ -663,7 +684,16 @@ func skill(name: String) -> int:
 	var k := skill_key(name)
 	if k == "":
 		return 0
-	var v := Speech.base_skill(stat(SKILLS[k][1]), stat("LK")) + (15 if tagged(k) else 0) + int(vars.get_v("PC_SKP_" + k))
+	var v := Speech.base_skill(stat(SKILLS[k][1]), stat("LK")) + (15 if tagged(k) else 0) + int(vars.get_v("PC_SKP_" + k)) + Perks.skill_bonus(self, k)
+	return mini(v, 100)
+
+
+## 영구 스킬값(퍽 요구 판정 — SD-10 §5.1): 영구 능력치로 셈(방사능 · 기침 같은 일시 감소는 빼지 않는다)
+func skill_perm(name: String) -> int:
+	var k := skill_key(name)
+	if k == "":
+		return 0
+	var v := Speech.base_skill(stat_base(SKILLS[k][1]), stat_base("LK")) + (15 if tagged(k) else 0) + int(vars.get_v("PC_SKP_" + k)) + Perks.skill_bonus(self, k)
 	return mini(v, 100)
 
 
@@ -709,6 +739,7 @@ func dump() -> Dictionary:
 
 
 func restore(d: Dictionary) -> void:
+	lv_draft = null                                                     # 레벨업 한 판은 저장하지 않는다(불러오면 미배분부터 — P10)
 	vars.restore(d.get("vars", {}))
 	items = {}
 	for k in d.get("items", {}):
