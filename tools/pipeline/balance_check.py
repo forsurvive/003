@@ -16,7 +16,7 @@ ALLOW = os.path.join(os.path.dirname(__file__), "balance_allow.yaml")
 COND_R = {"new": 1.0, "good": 0.87, "worn": 0.79, "poor": 0.70}       # combat_rules.gd COND_DMG_RANGED
 COND_M = {"new": 1.0, "good": 0.82, "worn": 0.69, "poor": 0.57}
 TTK = {"약": (1, 2), "중": (3, 6), "강": (7, 15), "전설": (20, 35), "유일": (45, 120)}   # SD-11 §10.3 · SD-14 §2.4
-## 그 레벨대 표준 무기(SD-11 §10.3 '해당 레벨대 표준 무기' — 정의가 없어 조율사 제안을 따름: 그 레벨대에 흔히 쥐는 반자동 대표 · 정본 제안 1).
+## 그 레벨대 표준 무기(SD-11 §10.3 '해당 레벨대 표준 무기' — 사용자 결정 2026-10-23: 그 레벨대에 흔히 쥐는 반자동 대표).
 ## 연사 무기는 빨리 죽이는 대신 탄을 쓰는 맞바꿈(SD-11 §10.1-3)이라 '중 2초 이상'으로 따로 본다(명중 0.6 — 반동 +0.5°/발).
 ## Lv7~12의 돌격소총(W-018)은 전리품 풀 3(Lv13~)이라 1막 표준이 아니다
 STD_WEAPON = [(6, ["W-002"]), (12, ["W-004"]), (20, ["W-008", "W-022"]), (99, ["W-023", "W-024"])]
@@ -25,7 +25,7 @@ HIT_AUTO = 0.6
 TIER_FIX = {"CR-082": ("전설", "원작 압축 HP 750 · 군락 여왕(SD-14 §2.4 압축 규칙) — 조율사"),
             "CR-405": ("강", "파워 아머 병종(SD-11 §10.3 예 '파워 아머 분대장' = 강)")}
 BOSS_REF = {"CR-513": 12}                                               # 레벨 비례 스토리 보스: XP 기준 레벨(SD-14 §10.2 '65(Lv12 기준)')
-## 위협 1~2 권역 필드 보스: 몸만이 아니라 교전 전체(호위 무리 · 부화 · 도주 문턱)로 잰다 — 목표 35~60초는 정본 제안 2(사용자 결정 대기)
+## 위협 1~2 권역 필드 보스: 몸만이 아니라 교전 전체(호위 무리 · 부화 · 도주 문턱)로 잰다 — 목표 35~60초(SD-11 §10.3 — 사용자 결정 2026-10-23)
 BOSS_FIGHT = {"CR-500": {"adds": [("CR-104", 4), ("CR-105", 3)], "flee": 0.3, "why": "무리 6~8 · HP 30% 도주(SD-14 §10.2 외눈)"},
               "CR-501": {"adds": [("CR-002", 6), ("CR-001", 3)], "flee": 0.0, "why": "15초마다 큰바퀴 셋 부화 · 페이즈 3 잔바퀴 떼 셋(SD-14 배수구 어미)"}}
 ENGAGE_K = 1.5                                                          # 교전 전체: 움직임 · 재장전 · 다시 겨눔(조율사 추정 '지속 30초 → 움직임까지 40~50초')
@@ -179,8 +179,8 @@ def check_combat(weapons, enemies):
             bf = BOSS_FIGHT[eid]
             pool = hp * (1 - bf["flee"]) + sum(float(enemies[a]["hp"]) * n for a, n in bf["adds"] if a in enemies)
             eng = pool / dps * ENGAGE_K
-            add("B3", "적 처치 시간", "%s %s(필드 보스 · Lv%d — 교전 전체: 몸 %d × %.1f + 호위 · 부화)" % (eid, e["name"], lv, hp, 1 - bf["flee"]), round(eng, 1), "35~60초(정본 제안 2)",
-                judge(eng, 35, 60), "SD-11 §10.3 · SD-14 §10.2", "표준 무기 %s · %s" % (best, bf["why"]))
+            add("B3", "적 처치 시간", "%s %s(필드 보스 · Lv%d — 교전 전체: 몸 %d × %.1f + 호위 · 부화)" % (eid, e["name"], lv, hp, 1 - bf["flee"]), round(eng, 1), "35~60초",
+                judge(eng, 35, 60), "SD-11 §10.3 필드 보스(사용자 결정 2026-10-23)", "표준 무기 %s · %s" % (best, bf["why"]))
         else:
             lo, hi = TTK[tier]
             add("B3", "적 처치 시간", "%s %s(%s · Lv%d · HP %d · DR %d)" % (eid, e["name"], tier, lv, hp, dr), round(ttk, 1), "%d~%d초" % (lo, hi),
@@ -346,7 +346,7 @@ def code_rewards(out):
 ## 보상이 아니라 '흐름'인 캡(판매 · 환불 · 맡긴 돈) — 보상 합에서 빼고, 보상 상한 검사에서도 뺀다(원고를 읽고 확인한 것만)
 FLOWS = {"MQ-105": "보증금 환불(앞서 낸 500)", "SQ-S09": "아내가 맡긴 몸값(장부 빚 400을 갚을 돈)", "KS": "UQ-69 금형 판 값(물건 값)",
          "ga": "여분 볼트 작업복 판 값(한 번)", "UQ-67": "노심을 새벽인력 매점에 판 값(보상 대신 고르는 갈래)",
-         "FQ-JH-03": "약 상자를 판 값 300(배달 보상 150과 갈래 — 보상은 150)", "UQ-71": "노심 판 값(보상 대신 고르는 갈래)", "UQ-69": "금형 판 값(물건 값 — KS와 같은 흐름)"}
+         "FQ-JH-03": "약 상자를 판 값 300(배달 보상 150과 갈래 — 보상은 150)", "UQ-71": "노심 판 값(보상 대신 고르는 갈래)", "UQ-69": "금형을 새벽인력에 판 400 — SD-15 §9.1 구간 Ⅰ 300 상한의 정본 예외(사용자 결정 2026-10-23)"}
 
 
 def canon_xp():
@@ -436,7 +436,7 @@ def check_rewards(places):
     # B1 성장 — 프롤로그 끝 Lv3, 1막 끝 Lv7('필수 + 사이드 · 탐험 절반'). 메인 · 프롤로그는 단계마다 쌓이는 보상이라 합, 1막 갈래(103 · 104 · 105)는 하나만
     seq = lambda d: sum(d["xp_all"])
     pro = sum(seq(d) for q, d in rw.items() if cat_of(q) == "프롤로그")
-    add("B1", "성장 곡선", "프롤로그 끝 레벨(메인 XP %d)" % pro, xp_level(pro), "3", judge(xp_level(pro), 3, 3), "SD-10 §4.4 예산표")
+    add("B1", "성장 곡선", "프롤로그 끝 레벨(메인 XP %d)" % pro, xp_level(pro), "2", judge(xp_level(pro), 2, 2), "SD-10 §4.4 예산표(사용자 결정 2026-10-23 — 원래 3)")
     paths = [seq(rw[q]) for q in ("MQ-103", "MQ-104", "MQ-105") if q in rw]
     main1 = sum(seq(d) for q, d in rw.items() if cat_of(q) == "메인" and q not in ("MQ-103", "MQ-104", "MQ-105")) + (max(paths) if paths else 0)
     other = sum(d["xp"] for q, d in rw.items() if cat_of(q) in ("사이드", "세력", "비표시", "기타") and d["act"] <= 1)
@@ -444,10 +444,10 @@ def check_rewards(places):
                if p.get("region") in ("R01", "R02") and p.get("marker", True) and not p.get("hidden", False))
     tot = pro + main1 + 0.5 * other + 0.5 * disc
     add("B1", "성장 곡선", "1막 끝 레벨(프롤로그 %d + 1막 메인 %d + 사이드류 절반 %d + 발견 절반 %d)" % (pro, main1, other // 2, disc // 2),
-        xp_level(int(tot)), "7", judge(xp_level(int(tot)), 6.5, 7.5) if True else "", "SD-10 §4.4 예산표")
+        xp_level(int(tot)), "8", judge(xp_level(int(tot)), 7.5, 8.5), "SD-10 §4.4 예산표(사용자 결정 2026-10-23 — 원래 7)")
     full = pro + main1 + other + disc
-    add("B1", "성장 곡선", "1막을 다 한 사람(XP %d — 처치 XP 뺌)" % full, xp_level(full), "8~10(넘치지 않게 — 2막 위협도 2와 맞물림)",
-        judge(xp_level(full), 8, 10), "SD-10 §4.4 · SD-11 §10.4")
+    add("B1", "성장 곡선", "1막을 다 한 사람(XP %d — 처치 XP 뺌)" % full, xp_level(full), "12 이하(넘치지 않게 — 사용자 결정 2026-10-23)",
+        judge(xp_level(full), 8, 12), "SD-10 §4.4 · SD-11 §10.4")
     main_caps = sum(d["caps"] for q, d in rw.items() if d["act"] <= 1 and q not in FLOWS and cat_of(q) in ("메인", "프롤로그"))
     side_caps = sum(d["caps"] for q, d in rw.items() if d["act"] <= 1 and q not in FLOWS and cat_of(q) not in ("메인", "프롤로그"))
     caps1 = main_caps + side_caps // 2
