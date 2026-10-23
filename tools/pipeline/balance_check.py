@@ -481,24 +481,25 @@ def check_rewards(places):
     return rw
 
 
-# 1-13c: 봇이 실제로 걸어 모은 경제 곡선(tools/pipeline/econ_curve.py → game/data/_econ_curve.json). 구간 Ⅰ(Lv1~6) 보유 150~500 ±20% ·
-# 누적 수입 1,500~2,500을 Lv6에 닿는 속도로 — 레벨 L에서 누적은 (L − 1) / 5 × 1,500~2,500 근처(±20%, 앞쪽 레벨은 표본이 작아 '주의'까지만)
-def econ_curve():
+# 1-13c: 봇이 실제로 걸어 모은 경제 곡선(tools/pipeline/econ_curve.py → game/data/_econ_curve.json). 봇은 '필수 경로만' 간다(루팅 · 사이드 · 판매가
+# 거의 없다) — SD-15 §9.1 수입 구성에서 퀘스트 몫은 30%라, 레벨 L의 누적 기대(Lv6에 1,500~2,500으로 가는 속도)에 0.3을 곱한 값을 아랫선으로 본다.
+# 보유 캡은 '살 수 있어야 하는 것'의 첫걸음 — 스팀팩 하나 값(물물교환 30) 이상이면 통과, 구간 Ⅰ 평균 보유 상한 500 ±20% 위면 넘침
+def econ_curve(stim=35):
     path = os.path.join(ROOT, "game", "data", "_econ_curve.json")
     if not os.path.exists(path):
         add("B6", "경제 흐름", "봇 경제 곡선(기록 없음 — econ_curve.py를 돌리면 생긴다)", "-", "기록", "주의", "SD-15 §9.1")
         return
     d = json.load(open(path, encoding="utf-8"))
     for r in d.get("rows", []):
-        tag = "%s 해법 %d(%s 봇)" % (r["at"], r["sol"], d.get("when", ""))
+        tag = "%s 해법 %d 필수 경로 봇(%s)" % (r["at"], r["sol"], d.get("when", ""))
         caps = int(r["caps"])
-        add("B6", "경제 흐름", "%s 보유 캡" % tag, caps, "120~600(구간 Ⅰ 평균 보유 150~500 ±20%)",
-            "통과" if 120 <= caps <= 600 else ("주의" if 60 <= caps <= 800 else "실패"), "SD-15 §9.1")
+        add("B6", "경제 흐름", "%s 보유 캡" % tag, caps, "%d~600(스팀팩 하나 값 이상 · 구간 Ⅰ 보유 상한 500 +20%%)" % stim,
+            "통과" if stim <= caps <= 600 else "주의", "SD-15 §9.1 · §9.1 '살 수 있어야 하는 것'")
         lv = max(1, int(r["lv"]))
-        lo, hi = max(0.0, (lv - 1) / 5.0 * 1500 * 0.8), max(300.0, (lv - 1) / 5.0 * 2500 * 1.2)
+        lo, hi = (lv - 1) / 5.0 * 1500 * 0.8 * 0.3, max(300.0, (lv - 1) / 5.0 * 2500 * 1.2)
         earned = int(r["earned"])
         add("B6", "경제 흐름", "%s 누적 수입(Lv%d · %d일째)" % (tag, lv, int(r["day"])), earned,
-            "%d~%d(Lv6에 1,500~2,500으로 가는 속도 ±20%%)" % (lo, hi), "통과" if lo <= earned <= hi else "주의", "SD-15 §9.1")
+            "%d~%d(Lv6에 1,500~2,500으로 가는 속도 — 아랫선은 퀘스트 몫 30%%)" % (lo, hi), "통과" if lo <= earned <= hi else "주의", "SD-15 §9.1 수입 구성")
 
 
 # ---------------------------------------------------------------- 경제 · 소모 · 상점
