@@ -249,7 +249,7 @@ func _act(what: String, b: Dictionary, c: Dictionary, scr: ContainerScreen) -> v
 			scr.bell_ok = st.items.has(BELL)
 			d["spots"][k]["room"] = str(host.map.data.get("name", "")) if host.map.id != "W" else "길가"
 			_remember(k, b, c)
-			_note(k, "삼음")
+			_note(k, "숨겨 둠")
 			host.hint("내 자리로 삼았다. 핍-보이 수첩에 적어 둔다 — " + risk_text(host.map.id, b, c), 5.0)
 			_log("삼기 %s (%d곳)" % [k, (d["spots"] as Dictionary).size()])
 		"release":
@@ -265,7 +265,7 @@ func _act(what: String, b: Dictionary, c: Dictionary, scr: ContainerScreen) -> v
 				c["bell"] = true
 				scr.bell_ok = false
 				scr.stash_line = risk_text(host.map.id, b, c)
-				_note(k, "방울 맴")
+				_note(k, "방울 매 둠")
 				host.hint("용기 앞에 방울 줄을 맸다. 손을 대면 울린다.", 4.0)
 	if scr.view != null:
 		scr.view.queue_redraw()

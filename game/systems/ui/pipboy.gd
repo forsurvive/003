@@ -945,7 +945,7 @@ func _stash_page(id: String) -> void:
 		rows2.append(["지킴", "털리지 않는다 · " + StashBook.safe_status(st, s, now)])
 	else:
 		rows2.append(["어디", StashBook.long_where(st, s)])
-		rows2.append(["삼은 날", StashBook.md(st, int(s.get("since", 0)), int(s.get("since_at", 0)), now)])
+		rows2.append(["숨겨 둔 날", StashBook.md(st, int(s.get("since", 0)), int(s.get("since_at", 0)), now)])
 	var seen: Dictionary = s.get("seen", {})
 	rows2.append(["마지막으로 본 날", StashBook.md(st, int(seen.get("day", s.get("since", 0))), int(seen.get("at", 0)), now)])
 	for kv in rows2:
@@ -980,7 +980,7 @@ func _stash_page(id: String) -> void:
 		y += 8.0
 		var parts: Array = []
 		for e in lg.slice(maxi(0, lg.size() - 3)):                      # 최근 셋 · 마디마다 짧게(탭 줄에 닿지 않게)
-			parts.append("%s %s" % [StashBook.md(st, 0, int(e["at"])), _fit(str(e["text"]), 150.0)])
+			parts.append("%s %s" % [StashBook.md(st, 0, int(e["at"])), _fit(str(e["text"]).replace("삼음", "숨겨 둠").replace("방울 맴", "방울 매 둠"), 150.0)])   # 옛 저장의 '삼음'도 새 말로(사용자 지적 2026-10-23)
 		if y < 268.0:
 			_para(Vector2(264, y), " · ".join(parts), U[4])
 

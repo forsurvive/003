@@ -56,7 +56,7 @@ func test_stash_book_memory(t) -> void:
 	var sp: Dictionary = s.spots()[k]
 	t.ok(str(sp.get("room", "")) != "" and sp.has("seen"), "삼은 실내 이름 · 기억")
 	t.ok(StashBook.memo(sp, h.items_db).ends_with("비어 있었다"), "삼고 아무것도 안 넣음 — '비어 있었다'")
-	t.ok(str(sp["log"][0]["text"]) == "삼음", "지난 일 — 삼음")
+	t.ok(str(sp["log"][0]["text"]) == "숨겨 둠", "지난 일 — 숨겨 둠")
 	c["items"] = {"W-013": 1, "M-001": 120, "I-030": 2}
 	s.on_close(b, c)
 	var mem := StashBook.memory_lines(sp["seen"]["items"], h.items_db)
