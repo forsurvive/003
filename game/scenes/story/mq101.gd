@@ -1044,6 +1044,7 @@ func _bot(dt: float) -> void:
 				sol, v("MQ101_RESULT"), v("V_KARMA"), v("AFF_JC_BC"), v("AFF_SB"), v("PD_BC"), v("PD_R01"), v("MQ101_DEAD"),
 				v("V_WANTED"), v("MQ101_DOG"), v("PC_CAPS"), v("PC_XP"), st.quests.stage("MQ-102")])
 			print("해법 증거: 게시판=%s | 사는 값=%d | 첫마디=%s" % [BOARD_STATE.get(v("MQ101_RESULT"), "?"), _ev_price, _ev_greet.replace("\n", " ")])
+			print("ECON|MQ-101|해법 %d|캡 %d|누적 %d|XP %d|Lv %d|날 %d" % [sol, v("PC_CAPS"), v("CAPS_EARNED"), v("PC_XP"), Perks.level(st), v("GAME_DAY")])   # 1-13c 경제 곡선 기록 줄(tools/pipeline/econ_curve.py가 모은다)
 			get_tree().create_timer(0.6).timeout.connect(get_tree().quit)
 
 

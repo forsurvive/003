@@ -9568,8 +9568,116 @@
  },
  {
   "check": "①",
+  "scene": "RE-033_TALK",
+  "where": "LENT",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-033_TALK",
+  "where": "LENT_GONE",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-033_TALK",
+  "where": "NOCOW",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-033_TALK",
+  "where": "AFTER_ROB",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-033_TALK",
+  "where": "PEND",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-033_TALK",
+  "where": "SCOUT_GO",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
   "scene": "RE-036_TALK",
   "where": "AGAIN",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-039_TALK",
+  "where": "TRACK",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-039_TALK",
+  "where": "ROAST",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-039_TALK",
+  "where": "PUP",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-041_SURV",
+  "where": "HEAL",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-041_TAPE",
+  "where": "T2",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-041_TAPE",
+  "where": "T3",
   "status": "참고",
   "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
   "allowed": false,
@@ -9615,6 +9723,123 @@
   "check": "①",
   "scene": "RE-046_TALK",
   "where": "HEAL",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-053_LEASH",
+  "where": "TAG_SA",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-053_LEASH",
+  "where": "BUY_SA",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-053_LEASH",
+  "where": "FREE_SA",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-053_LEASH",
+  "where": "LOST_SA",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-053_TALK",
+  "where": "TAG_SA",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-053_TALK",
+  "where": "STIM",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-053_TALK",
+  "where": "GLASS",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-053_TALK",
+  "where": "GLASS_NO",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-053_TALK",
+  "where": "MEAT",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-053_TALK",
+  "where": "SENT_SA",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-053_TALK",
+  "where": "NO_SA",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-055_DUSK",
+  "where": "TODAY",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-055_TALK",
+  "where": "TODAY",
   "status": "참고",
   "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
   "allowed": false,
@@ -9732,6 +9957,33 @@
   "check": "①",
   "scene": "RE-064_TALK",
   "where": "PAY_GU",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-069_TALK",
+  "where": "COLD2",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-069_TALK",
+  "where": "COLD_ROBOT",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-069_TALK",
+  "where": "FRIEND2",
   "status": "참고",
   "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
   "allowed": false,
@@ -14817,6 +15069,33 @@
   "check": "①",
   "scene": "TR_YEON",
   "where": "AGAIN",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "TR_YEON",
+  "where": "RE33_ROBBED",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "TR_YEON",
+  "where": "RE33_AFTER",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "TR_YEON",
+  "where": "RE33_THANKS",
   "status": "참고",
   "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
   "allowed": false,

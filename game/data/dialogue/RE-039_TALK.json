@@ -1,0 +1,210 @@
+{
+ "id": "RE-039_TALK",
+ "title": "산 사냥꾼",
+ "loc": "",
+ "npc": "N-R01-033",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TRACK": 5,
+  "ROAST": 7,
+  "OPEN": 10,
+  "PUP": 12,
+  "ASK": 13,
+  "SHOP": 14,
+  "LAIR": 16,
+  "LAIR_KNOWN": 22,
+  "HOME": 24,
+  "BYE": 26
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "RE_V == 3",
+   "to": "ROAST"
+  },
+  {
+   "op": "if",
+   "cond": "RE_V == 2",
+   "to": "TRACK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-033",
+   "emo": "놀람",
+   "text": "쉿, 거기 밟지 마. 발밑에 덫 놨어."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "낙엽 밑으로 녹슨 쇠 이빨이 반쯤 보인다."
+  },
+  {
+   "op": "goto",
+   "to": "OPEN"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-033",
+   "emo": "피곤",
+   "text": "핏자국을 쫓았는데 바위에서 끊겼어. 다친 멧돼지는 더 사나워. 이 근처 어슬렁대지 마."
+  },
+  {
+   "op": "goto",
+   "to": "OPEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "바위 그늘에 작은 불이 피어 있다. 꼬챙이에 꿴 고기에서 기름이 지글거린다."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-033",
+   "emo": "미소",
+   "text": "배고프면 한 점 사. 산에서 구운 건 마을 것보다 맛있어. 연기가 맛이야."
+  },
+  {
+   "op": "goto",
+   "to": "OPEN"
+  },
+  {
+   "op": "if",
+   "cond": "UQ02_SAW == 1 and UQ02_END == 0",
+   "to": "PUP"
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-033",
+   "emo": "기본",
+   "text": "개천 둑 그 발자국 말이야. 산에서도 봤어. 어미 없는 새끼야."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "물건을 본다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SHOP",
+     "id": "RE-039_TALK:1:0"
+    },
+    {
+     "text": "이 근처에 짐승 굴 있어?",
+     "tags": [],
+     "cond": "RE039_LAIR != GAME_DAY",
+     "fx": "",
+     "to": "LAIR",
+     "id": "RE-039_TALK:1:1"
+    },
+    {
+     "text": "마을엔 언제 가?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "HOME",
+     "id": "RE-039_TALK:1:2"
+    },
+    {
+     "text": "잘 가",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "BYE",
+     "id": "RE-039_TALK:1:3"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "trade",
+   "args": [
+    "V04"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-033",
+   "emo": "기본",
+   "text": "아는 데만 알려 줄게. 모르는 굴에 사람 보내는 건 사냥꾼이 할 짓이 아니야."
+  },
+  {
+   "op": "do",
+   "fx": "RE039_LAIR = GAME_DAY"
+  },
+  {
+   "op": "cmd",
+   "name": "reveal",
+   "args": [
+    "lair"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "REVEAL_OK == 0",
+   "to": "LAIR_KNOWN"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-033",
+   "emo": "기본",
+   "text": "거기 굴 주인은 사나워. 혼자서는 가지 마."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-033",
+   "emo": "미소",
+   "text": "내가 아는 굴은 너도 다 아네. 그럼 됐어."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-033",
+   "emo": "기본",
+   "text": "해 기울면 내려가. 오두막 문에 쪽지 붙여 놨어. 고기 맡길 거면 저녁에 와."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-033",
+   "emo": "기본",
+   "text": "산에선 바람 등지고 다녀. 냄새가 먼저 가."
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/encounters/RE_WORLD.txt"
+}

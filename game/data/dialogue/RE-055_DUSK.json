@@ -1,0 +1,191 @@
+{
+ "id": "RE-055_DUSK",
+ "title": "각성회 귀가 탁발",
+ "loc": "",
+ "npc": "CR-460",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "ASK": 5,
+  "GIVE10": 6,
+  "GIVE30": 9,
+  "BUTTON": 12,
+  "TODAY": 15,
+  "NO": 17,
+  "COLD": 19,
+  "BYE": 21
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "V_KARMA <= -250",
+   "to": "COLD"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "해가 기운다. 신참이 탁발 그릇을 흔들자 안에서 단추 두 개가 달그락거린다."
+  },
+  {
+   "op": "line",
+   "who": "N-GS-N1",
+   "emo": "피곤",
+   "text": "오늘은 단추가 캡보다 많아요, 선배님."
+  },
+  {
+   "op": "line",
+   "who": "CR-460",
+   "emo": "기본",
+   "text": "단추도 등은 켠다. …손님, 들어가는 길에 한 닢 보태시겠습니까?"
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "한 닢 보탠다",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 10
+      }
+     ],
+     "cond": "GIFT_DAY != GAME_DAY",
+     "fx": "",
+     "to": "GIVE10",
+     "id": "RE-055_DUSK:1:0"
+    },
+    {
+     "text": "세 닢 보탠다",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 30
+      }
+     ],
+     "cond": "GIFT_DAY != GAME_DAY",
+     "fx": "",
+     "to": "GIVE30",
+     "id": "RE-055_DUSK:1:1"
+    },
+    {
+     "text": "단추는 어디서 났어?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "BUTTON",
+     "id": "RE-055_DUSK:1:2"
+    },
+    {
+     "text": "오늘은 이미 냈어",
+     "tags": [],
+     "cond": "GIFT_DAY == GAME_DAY",
+     "fx": "",
+     "to": "TODAY",
+     "id": "RE-055_DUSK:1:3"
+    },
+    {
+     "text": "됐어",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "NO",
+     "id": "RE-055_DUSK:1:4"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-GS-N1",
+   "emo": "미소",
+   "text": "캡이다! 오늘 처음이에요."
+  },
+  {
+   "op": "do",
+   "fx": "karma(1); aff(\"GS\", 1, \"day\"); GIFT_DAY = GAME_DAY"
+  },
+  {
+   "op": "goto",
+   "to": "BYE"
+  },
+  {
+   "op": "line",
+   "who": "CR-460",
+   "emo": "미소",
+   "text": "이걸로 내일 아침 계단참까지 밝겠습니다."
+  },
+  {
+   "op": "do",
+   "fx": "karma(3); aff(\"GS\", 1, \"day\"); GIFT_DAY = GAME_DAY"
+  },
+  {
+   "op": "goto",
+   "to": "BYE"
+  },
+  {
+   "op": "line",
+   "who": "N-GS-N1",
+   "emo": "기본",
+   "text": "아이들이 넣어요. 가진 게 그것뿐이라고. 선배님은 그것도 받으래요."
+  },
+  {
+   "op": "line",
+   "who": "CR-460",
+   "emo": "기본",
+   "text": "받은 건 다 등이 된다. 단추든 캡이든."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "CR-460",
+   "emo": "미소",
+   "text": "그럼 오늘 몫은 이미 켜졌습니다. 어두워지기 전에 들어가십시오."
+  },
+  {
+   "op": "goto",
+   "to": "BYE"
+  },
+  {
+   "op": "line",
+   "who": "CR-460",
+   "emo": "기본",
+   "text": "어두워지기 전에 들어가십시오."
+  },
+  {
+   "op": "goto",
+   "to": "BYE"
+  },
+  {
+   "op": "line",
+   "who": "CR-460",
+   "emo": "피곤",
+   "text": "…지나가십시오. 오늘 그릇은 다 찼습니다."
+  },
+  {
+   "op": "goto",
+   "to": "BYE"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/encounters/RE_WORLD.txt"
+}

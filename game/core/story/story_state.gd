@@ -124,7 +124,7 @@ func _init() -> void:
 		vars.declare(k, "int", 0)
 	# MQ-106 첫 번째 추적자(단계 1-7, Mq106): CUSTODY 귀빈실(1 걸어 들어감 · 2 생포 · 3 새벽인력 인계) · TALKED 남궁혁 면담 ·
 	# SEIZED 압수품 보관함에 물건이 있다 · AT 귀빈실에 든 시각(분) · Q* 면담에서 물은 것 · PD_R01_BJ 판도 사건 보정(R01 비상정부 쪽, SD-06 §5)
-	for k in ["MQ106_CUSTODY", "MQ106_TALKED", "MQ106_SEIZED", "MQ106_AT", "MQ106_QLINE", "MQ106_QWHY", "MQ106_QGRID", "MQ106_QDEAD", "MQ106_QSIGN", "NAMGUNG_MET", "PD_R01_BJ"]:
+	for k in ["CAPS_EARNED", "MQ106_HIDE_T", "MQ106_CUSTODY", "MQ106_TALKED", "MQ106_SEIZED", "MQ106_AT", "MQ106_QLINE", "MQ106_QWHY", "MQ106_QGRID", "MQ106_QDEAD", "MQ106_QSIGN", "NAMGUNG_MET", "PD_R01_BJ"]:
 		vars.declare(k, "int", 0)
 	# 길 위 인카운터(1-E, SD-22): RE036_MET 떠돌이 고물상을 만난 적 · RE036_NEWS 길 소식 차례 · RE042_N 유해 쪽지 차례(같은 글이 연달아 나오지 않게)
 	for k in ["RE036_MET", "RE036_NEWS", "RE042_N", "VG_TALK", "VG_NEWS"]:   # 1-L 일반 장사꾼 인사 · 동네 이야기 차례
@@ -172,6 +172,12 @@ func _init() -> void:
 	# WELL_RESTED 숙면이 끝나는 절대 분(0 = 없음, SD-11 §11.5 경험치 +10% 12시간) · HOME_BC_NOTE 문 앞 알림(§7.7: 1 '출입 자제' 쪽지 · 2 읽음 · 3 압류 딱지 · 4 읽음 · 5 재개방) ·
 	# BAEKGU_NAP 오늘 백구가 옥탑방 문 앞에서 자는 날(하루 판정마다 굴림)
 	for k in ["HOME_BC", "HOME_BC_OK", "WELL_RESTED", "HOME_BC_NOTE", "BAEKGU_NAP", "INFO_RUMOR_R01", "INFO_RUMOR_R02", "INFO_TURF_DAY", "CARAVAN_V54", "MEDIC_AT", "TR_YEON_MET", "TR_SO_MET", "TR_EOM_MET"]:   # 정보상 장소 소문 산 수(1-8d)
+		vars.declare(k, "int", 0)
+	# 기본 RE 30종(1-13e): RE_V · RE_VM 지금 RE의 판(진행기가 세울 때) · RE033_ROB 이날 전까지 연보경이 거래 거부(길에서 털림) · RE033_HELP 척후를 맡아 준 날 ·
+	# HUNT_OUT 엄태경이 산에 간 날(16시까지 오두막 빔) · RE039_LAIR 굴을 물은 날 · REVEAL_OK 방금 표시 성공 · RE041_N 끝난 신호 차례 ·
+	# RE053_BC · RE053_SA 길 잃은 개(0 아직 · 1 돌려보냄 · 2 고마움 받음 · 3 제 발로 · 4 떠돌이가 끌고 감) · GIFT_DAY 기부한 날(헌금 · 정착지 기부 공용 — SD-10 하루 +30) · GS_PIPCHAT 신참이 핍-보이를 봄
+	for k in ["RE_V", "RE_VM", "RE033_ROB", "RE033_HELP", "RE033_HELP_SAID", "RE033_NEWS", "HUNT_OUT", "RE039_LAIR", "REVEAL_OK", "RE041_N",
+			"RE053_BC", "RE053_SA", "GIFT_DAY", "GS_PIPCHAT", "RE033_ROB_SAID", "RE053_BUY", "GS_GUESTSAID"]:
 		vars.declare(k, "int", 0)
 	# 사당 환승촌(1-8f): 인물 첫 만남 · SA_MAKCHA_HEARD 서쪽 터널 '막차 손님' 들음(SQ-S05 '이미 앎') · SA_MAT_UNTIL 승강장 매트 빌린 끝 절대 분 ·
 	# SD_MAP_UG 노선도 봄 · SD_BOARD_SEEN 운행 칠판 봄 · SD_LR05 · SD_LR09 기록물 · U02_OPEN 4호선 남쪽 터널 철망 문(1-D2: 1 열림)

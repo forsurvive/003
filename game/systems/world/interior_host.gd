@@ -2371,20 +2371,22 @@ func _ring_places(me: Vector2i) -> Array:
 
 
 ## 쪽지·지도 조각(1-E RE-042 · 1-W 소장소): 아직 표시 안 된 가장 가까운 장소 하나를 지도에 '표시'(60타일 안, 6타일 밖)
-func reveal_near(from: Vector2i) -> bool:
+func reveal_near(from: Vector2i, kind := "", reach := 60.0, msg := "쪽지가 가리킨 곳이 지도에 표시되었다") -> bool:
 	PlaceLog.load_db()
 	var pick := ""
-	var bd := 60.0
+	var bd := reach
 	for lid in PlaceLog.db:
 		var e: Dictionary = PlaceLog.db[lid]
 		if bool(e.get("hidden", false)) or not bool(e.get("marker", true)) or st.places.get_state(str(lid)) >= PlaceLog.MARKED:
+			continue
+		if kind != "" and str(e.get("type", "")) != kind:
 			continue
 		var dd := Vector2(int(e["tx"]) - from.x, int(e["ty"]) - from.y).length()
 		if dd < bd and dd > 6.0:
 			bd = dd
 			pick = str(lid)
 	if pick != "" and st.places.raise(pick, PlaceLog.MARKED):
-		hint("쪽지가 가리킨 곳이 지도에 표시되었다", 5.0)
+		hint(msg, 5.0)
 		return true
 	return false
 
@@ -2562,6 +2564,11 @@ func _handlers() -> void:
 		var n := 0
 		if a.size() == 1 and str(a[0]) == "near":                     # 쪽지·지도 조각(1-E RE-042): 아직 표시 안 된 가장 가까운 장소 하나(60타일 안)
 			reveal_near(map.tile_of(player.loco.logical))
+			done.call()
+			return
+		if a.size() == 1 and str(a[0]) == "lair":                     # 사냥꾼이 아는 굴(1-13e RE-039): 가장 가까운 아직 표시 안 된 크리처 둥지(160타일 안). 결과는 REVEAL_OK
+			var ok := reveal_near(map.tile_of(player.loco.logical), "크리처 둥지", 160.0, "사냥꾼이 짚어 준 굴이 지도에 표시되었다")
+			st.vars.set_v("REVEAL_OK", 1 if ok else 0)
 			done.call()
 			return
 		for tok in a:

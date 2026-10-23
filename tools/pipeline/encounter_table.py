@@ -112,6 +112,95 @@ RE = {
                           {"side": "b", "units": [["CR-200", 2, 4]], "hostile": True}],
                "states": {"S5": 1}, "sign": "gunfire"},
 }
+# ---- 1-13e 기본 표 30종(D-130, 계획 _plans/1-13_closing_plan.md §5): SD-05 §5 R01 · R02 행 가운데 그림 · 자료가 있는 7종.
+# 재미 검수(계획 때): 모두 판(variants) 2~3개 — 같은 RE도 상황 · 인원 · 소품이 매번 다르게. 결과는 세상에 남는다(장소 표시 · 정착지 개 · 오두막 쪽지 · 소문)
+RE.update({
+    # 국회 왕개미(SD-05 L1447 · 정본 CR-603은 계통 자료 CR-080 · 081로): 무너진 국회(L-R02-01) 3청크 안. 붉은 카펫 실밥 흔적이 먼저.
+    # 판: ① 짐 나르는 줄(병정 없음 — 먼저 물지 않는다, 지나갈 수 있다) ② 사냥한 들개를 끄는 무리 ③ 병정이 지키는 길(매복). 끝나면 국회가 지도에
+    "RE-006": {"name": "국회 왕개미", "cat": "creature", "regions": ["R02"], "near": ["L-R02-01", 758, 1057, 3], "prefer": ["업무", "강변"],
+               "time": "any", "weight": 6, "sign": "fiber", "reveal": "L-R02-01",
+               "reveal_msg": "붉은 실밥은 무너진 국회 쪽으로 이어진다. 지도에 표시되었다",
+               "groups": [{"side": "a", "units": [["CR-080", 2, 4], ["CR-081", 0, 1]], "hostile": True}], "states": {"S3": 2, "S1": 1},
+               "variants": [{"w": 3, "groups": [{"side": "a", "units": [["CR-080", 2, 4]], "hostile": False}], "states": {"S1": 1}},
+                            {"w": 4, "groups": [{"side": "a", "units": [["CR-080", 2, 4], ["CR-081", 0, 1]], "hostile": True}], "states": {"S3": 1},
+                             "s3_box": ["끌려가던 들개 사체", "carcass", "carcass_pile"]},
+                            {"w": 3, "groups": [{"side": "a", "units": [["CR-081", 1, 1], ["CR-080", 2, 3]], "hostile": True}], "states": {"S2": 1}}],
+               "note": "SD-05 RE-006 · CR-603 판본 자료 없음 → 왕개미 일개미 · 병정(CR-080 · 081, 1-D5 금탑 그림). 1막 병정 최대 1(밸런스 조율 — 정본 '일개미 4 + 병정 2'는 2막 표)"},
+    # 지하상가 쥐(SD-05 L1449 · CR-605 판본은 시궁쥐 CR-095로): 영등포시장역(L-UG-06) 4청크 안 · 왕쥐는 주인공 Lv5부터. RQ-22 배수구 청소 중이면 절반.
+    # 판: ① 뜯긴 쌀자루에 몰림(S3) ② 무언가에 쫓겨 몰려나옴(왕쥐가 이끈다, S6) ③ 배수 통로 그늘에 잠복(S2)
+    "RE-008": {"name": "지하상가 쥐", "cat": "creature", "regions": ["R02"], "near": ["L-UG-06", 715, 1112, 4], "prefer": ["시장", "지하철", "구도심"],
+               "time": "any", "night_w": 1.5, "weight": 5, "sign": "squeak", "mult_if": [["RQ22_ON == 1", 0.5]],
+               "groups": [{"side": "a", "units": [["CR-095", 3, 5]], "hostile": True}], "states": {"S3": 2, "S1": 1},
+               "variants": [{"w": 4, "states": {"S3": 1}, "s3_box": ["쥐가 뜯은 쌀자루", "sacks", "pallet_sacks"]},
+                            {"w": 2, "states": {"S6": 1}, "groups": [{"side": "a", "units": [["CR-095", 2, 2]], "leader": ["CR-097", 1.0, 5], "hostile": True}],
+                             "reveal": "L-UG-06", "reveal_msg": "쥐가 몰려나온 쪽은 영등포시장역 입구다. 안쪽에서 무언가 무너지는 소리가 났다. 지도에 표시되었다"},
+                            {"w": 2, "states": {"S2": 1}}],
+               "note": "SD-05 RE-008 · 1막 편성 시궁쥐 3~5 또는 2~3 + 왕쥐(Lv5+ — 밸런스 조율: 떼 4 + 무리 토큰이 겹쳐 4~6 + 왕쥐는 HP를 넘는다) · '어두운 곳 탐지 −30%'는 빛 체계와 함께(D-391)"},
+    # 남부 고개길 수송대(SD-05 L1479 · SD-15 §4.3 V54): 연보경이 정류장 사이 길 위(CARAVAN_V54 = 0)일 때만 — 정류장과 같은 사람 · 같은 재고(P3).
+    # 짐소는 UQ-05 상태를 읽는다(0 누렁이 · 1 없음 — 호위가 짐을 짐 · 2 위강윤에게 빌린 소). 판: ① 걸으며 ② 쉬며 짐소 물 먹임 ③ 척후가 따라붙음
+    "RE-033": {"name": "남부 고개길 수송대", "cat": "trader", "regions": ["R01"], "prefer": ["큰길", "고가", "언덕"], "ban": ["업무"],
+               "time": [7, 18], "weight": 4, "sign": "hoof",
+               "cond": "CARAVAN_V54 == 0 and V_ACT >= 1 and dead(\"N-R01-040\") == 0 and RE033_ROB <= GAME_DAY and UQ05_REFUSE_DAY <= GAME_DAY",
+               "groups": [{"side": "a", "units": [["N-R01-040", 1, 1], ["N-OX", 1, 1]], "hostile": False},
+                          {"side": "a", "units": [["CR-472", 2, 2]], "hostile": False}],
+               "talk": "RE-033_TALK", "states": {"S1": 2, "S4": 1},
+               "variants": [{"w": 4, "cond": "UQ05_ABSENT != 1", "states": {"S1": 1}, "on_start": "RE_V = 1"},
+                            {"w": 3, "cond": "UQ05_ABSENT != 1", "states": {"S4": 1}, "on_start": "RE_V = 2"},
+                            {"w": 4, "cond": "UQ05_ABSENT == 1", "on_start": "RE_V = 3", "groups": [{"side": "a", "units": [["N-R01-040", 1, 1]], "hostile": False},
+                                                                         {"side": "a", "units": [["CR-472", 2, 2]], "hostile": False}], "states": {"S1": 1, "S4": 1}},
+                            {"w": 2, "states": {"S1": 1}, "on_start": "RE_V = 4",
+                             "groups": [{"side": "a", "units": [["N-R01-040", 1, 1], ["N-OX", 1, 1]], "hostile": False},
+                                        {"side": "a", "units": [["CR-472", 2, 2]], "hostile": False},
+                                        {"side": "b", "units": [["CR-420", 1, 1], ["CR-423", 1, 1]], "hostile": True}]}]},
+    # 산 사냥꾼(SD-05 L1485 · V04): 관악산 사냥꾼 엄태경(정본의 '곰배'는 SD-07b 엄태경). RE가 서면 그날 16시까지 봉천 오두막이 빈다(HUNT_OUT, P3).
+    # 판: ① 덫을 놓는 중 ② 피 흔적을 쫓다 놓침 ③ 고기 굽는 중(S4 — 구운 고기를 판다). 근처 크리처 굴 하나를 아는 만큼 알려 준다
+    "RE-039": {"name": "산 사냥꾼", "cat": "trader", "regions": ["R01"], "prefer": ["산지", "언덕"], "ban": ["업무", "시장"], "time": [7, 16], "weight": 3,
+               "cond": "V_ACT >= 1 and dead(\"N-R01-033\") == 0 and HUNT_OUT != GAME_DAY and (MQ101_NIGHT == 0 or MQ101_RESULT != 0)",
+               "on_start": "HUNT_OUT = GAME_DAY",
+               "groups": [{"side": "a", "units": [["N-R01-033", 1, 1]], "hostile": False}], "talk": "RE-039_TALK", "states": {"S1": 1},
+               "variants": [{"w": 1, "states": {"S1": 1}, "on_start": "HUNT_OUT = GAME_DAY; RE_V = 1"},
+                            {"w": 1, "states": {"S1": 1}, "on_start": "HUNT_OUT = GAME_DAY; RE_V = 2"},
+                            {"w": 1, "states": {"S4": 1}, "on_start": "HUNT_OUT = GAME_DAY; RE_V = 3"}]},
+    # 조난 신호(SD-05 L1492 · ST-14): 핍-보이에 목소리가 먼저 잡힌다 — 가 보기 전엔 셋 중 무엇인지 모른다(라디오 켜짐 ×2 · PK-041 ×1.5 · 밤 ×1.3).
+    # 판(4:4:2): ① 다친 생존자 + 둘러싼 무리(낮 들개 · 밤 시궁쥐) ② 무전기가 녹음을 되풀이하는 유해(위치 힌트) ③ 미끼 — 매복한 패거리(인지 6이면 미리 안다)
+    "RE-041": {"name": "조난 신호", "cat": "event", "regions": "*", "no_regions": ["R05"], "time": "any", "night_w": 1.3, "weight": 5, "threat_min": 2,
+               "sign": "radio", "radio": 2.0,
+               "groups": [], "states": {"S7": 1}, "talk": "RE-041_TAPE",
+               "variants": [{"w": 4, "luck": True, "cond": "GAME_HOUR >= 5 and GAME_HOUR < 20", "rescue": True, "talk": "RE-041_SURV", "states": {"S6": 1},
+                             "groups": [{"side": "a", "units": [["N-SURV", 1, 1]], "hostile": False},
+                                        {"side": "b", "units": [["CR-104", 2, 3]], "hostile": True}]},
+                            {"w": 4, "luck": True, "cond": "GAME_HOUR >= 20 or GAME_HOUR < 5", "rescue": True, "talk": "RE-041_SURV", "states": {"S6": 1},
+                             "groups": [{"side": "a", "units": [["N-SURV", 1, 1]], "hostile": False},
+                                        {"side": "b", "units": [["CR-095", 3, 4]], "hostile": True}]},
+                            {"w": 4, "luck": True, "w_if": ["RE041_N >= 1", 0.5], "groups": [], "talk": "RE-041_TAPE", "states": {"S7": 1}},
+                            {"w": 2, "talk": "", "states": {"S2": 1}, "pe_hint": [6, "목소리가 같은 말만 또박또박 되풀이한다. 숨소리가 없다 — 미끼다."],
+                             "groups": [{"side": "a", "units": [["CR-420", 1, 2], ["CR-423", 1, 1]], "leader": ["CR-421", 0.5, 5], "hostile": True}]}]},
+    # 진돗개 한 마리(SD-05 L1504 · CR-108 판본): 목줄 쇠 이름표 — 봉천 감시조 '먹순이' · 사당 승강장 '돌쇠'(정착지마다 한 번, RE053_BC · RE053_SA).
+    # 판: ① 길 잃고 다가옴 ② 다리를 절뚝임(스팀팩 · 붕대) ③ 떠돌이가 목줄을 쥐고 "이 개 살래?". 돌려보내면 그 정착지에 개가 서고 주인이 고마워한다
+    "RE-053": {"name": "진돗개 한 마리", "cat": "event", "regions": ["R01"], "prefer": ["구도심", "아파트", "언덕"], "ban": ["업무"],
+               "time": [6, 19], "weight": 2, "threat_max": 3, "cond": "V_ACT >= 1 and (RE053_BC == 0 or RE053_SA == 0)",
+               "groups": [{"side": "a", "units": [["N-JINDO", 1, 1]], "hostile": False}], "talk": "RE-053_TALK", "states": {"S1": 1},
+               "variants": [{"w": 4, "cond": "RE053_BC == 0", "on_start": "RE_V = 1; RE_VM = 0"}, {"w": 4, "cond": "RE053_SA == 0", "on_start": "RE_V = 2; RE_VM = 0"},
+                            {"w": 2, "cond": "RE053_BC == 0", "on_start": "RE_V = 1; RE_VM = 1"}, {"w": 2, "cond": "RE053_SA == 0", "on_start": "RE_V = 2; RE_VM = 1"},
+                            {"w": 2, "cond": "RE053_BC == 0", "talk": "RE-053_LEASH", "on_start": "RE_V = 1; RE_VM = 2",
+                             "groups": [{"side": "a", "units": [["N-STRAY", 1, 1], ["N-JINDO", 1, 1]], "hostile": False}]},
+                            {"w": 2, "cond": "RE053_SA == 0", "talk": "RE-053_LEASH", "on_start": "RE_V = 2; RE_VM = 2",
+                             "groups": [{"side": "a", "units": [["N-STRAY", 1, 1], ["N-JINDO", 1, 1]], "hostile": False}]}],
+               "rescue": True},
+    # 각성회 탁발(SD-05 L1506 · SD-10 헌금 10캡당 카르마 +1 · 하루 +30): 무장한 고참 신도 CR-460 + 맨손 신참(N-GS-N1). 각성회 경계 이상.
+    # 판: ① 낮 탁발 ② 해 질 녘 귀가 탁발(17~20시) — 신참이 엉뚱한 걸 묻는다
+    "RE-055": {"name": "각성회 탁발", "cat": "event", "regions": ["R01", "R02"], "prefer": ["큰길", "시장", "구도심"], "time": [8, 20], "weight": 3,
+               "cond": "V_ACT >= 1 and AFF_GS > -60", "sign": "bell",
+               "groups": [{"side": "a", "units": [["CR-460", 1, 1], ["N-GS-N1", 1, 1]], "hostile": False}], "talk": "RE-055_TALK", "states": {"S1": 1},
+               "variants": [{"w": 3, "cond": "GAME_HOUR < 17"}, {"w": 3, "cond": "GAME_HOUR >= 17", "talk": "RE-055_DUSK"}]},
+    # 각성회 순례조(SD-05 L1526 · 순찰 — 호감도 체감): 신도 CR-460 2 + 맨손 신참. 우호면 '운영자님'이라 부르며 길을 비키고, 그 밑이면 기도를 멈추고 지켜본다.
+    # 판: ① 중계소로 가는 순례(경문을 외며) ② 잠든 경비 로봇 먼지를 털고 돌아오는 길(걸레 · 기름통)
+    "RE-069": {"name": "각성회 순례조", "cat": "patrol", "faction": "GS", "regions": ["R01"], "prefer": ["큰길", "구도심", "언덕"], "time": [8, 18],
+               "weight": 4, "cond": "V_ACT >= 1 and AFF_GS > -60", "sign": "bell",
+               "groups": [{"side": "a", "units": [["CR-460", 2, 2], ["N-GS-N1", 1, 1]], "hostile": False}], "talk": "RE-069_TALK", "states": {"S1": 1},
+               "variants": [{"w": 1, "on_start": "RE_V = 1"}, {"w": 1, "on_start": "RE_V = 2"}]},
+})
+
 # 추적대(기존 엔진 RE-087)도 표에 둔다(범주 tracker — 기본 표에서 고르지 않고 끼워 넣기로만)
 RE["RE-087"] = {"name": "생포 추적대(새벽인력)", "cat": "tracker", "regions": "*", "no_regions": ["R05"], "time": "any", "weight": 0,
                 "groups": [{"side": "a", "units": [["CR-436", 1, 1], ["CR-437", 2, 3]], "hostile": False}], "talk": "RE-087_TALK",
@@ -128,7 +217,11 @@ REGION_STATE = {"R01": "경합", "R02": "경합"}
 STATES = ["S1", "S2", "S3", "S4", "S5", "S6", "S7"]
 # 비적대 사람(무명 NPC) 외형: 그림 시트 이름(종이 인형)
 FRIENDLY_SHEET = {"N-TRADER": "en_trader_loco", "N-REFUGEE": "en_refugee_loco", "N-DOWNED": "en_downed_loco",
-                  "N-DS-E1": "en_cr401_loco", "N-DS-E2": "en_cr401_loco", "N-R01-050": "en_cr401_loco"}
+                  "N-DS-E1": "en_cr401_loco", "N-DS-E2": "en_cr401_loco", "N-R01-050": "en_cr401_loco",
+                  # 1-13e: 길 위 수송대 연보경 · 짐소 · 호위 민병, 산 사냥꾼 엄태경, 조난 생존자, 길 잃은 황구 · 개 파는 떠돌이, 각성회 고참 · 신참
+                  "N-R01-040": "st_n_r01_040", "N-OX": "cr_cr091_loco", "CR-472": "en_cr472_loco", "N-R01-033": "st_n_r01_033",
+                  "N-SURV": "en_downed_loco", "N-JINDO": "cr_hwanggu_loco", "N-STRAY": "en_refugee_b_loco",
+                  "CR-460": "en_cr460_loco", "N-GS-N1": "en_cr460b_loco"}
 
 
 def main():

@@ -28,7 +28,9 @@ const CAP_TRACKER := 5
 const SIGN_TEXT := {"howl": "%s에서 개 짖는 소리가 들린다", "skitter": "%s에서 무언가 사각거리며 기어 다니는 소리가 난다",
 	"groan": "%s에서 낮은 신음 소리가 들린다", "whistle": "%s에서 짧은 호루라기 소리가 울린다", "voices": "%s에서 사람 말소리가 들린다",
 	"gunfire": "%s 멀리서 총성이 울린다", "smoke": "%s 하늘로 연기 기둥이 올라간다",
-	"squeak": "%s에서 찍찍거리는 소리가 몰려다닌다", "rustle": "%s 쓰레기 더미에서 부스럭거리는 소리가 난다"}
+	"squeak": "%s에서 찍찍거리는 소리가 몰려다닌다", "rustle": "%s 쓰레기 더미에서 부스럭거리는 소리가 난다",
+	"fiber": "%s으로 붉은 카펫 실밥이 길게 이어져 있다", "radio": "핍-보이에 잡음 섞인 목소리가 잡힌다. %s에서 오는 신호다",
+	"bell": "%s에서 작은 종소리가 일정하게 울린다", "hoof": "%s에서 짐소 워낭 소리와 바퀴 삐걱대는 소리가 난다"}
 const DIR8 := ["동쪽", "남동쪽", "남쪽", "남서쪽", "서쪽", "북서쪽", "북쪽", "북동쪽"]
 ## 비적대로 걸어오는 사람 외형(전투 개체가 되면 Enemy가 고른다)
 const SHEETS := {"CR-436": "en_cr436_loco", "CR-437": "en_cr437_loco", "CR-401": "en_cr401_loco", "CR-403": "en_cr403_loco",
@@ -80,7 +82,7 @@ func _ok() -> bool:
 ## 판정 맥락(SD-22 §3.6 · §4.2): 청크 태그 · 길 위계 · 움직임 · 총성 · 시각 · 레벨
 func _ctx(t: Vector2i) -> void:
 	var c := {"tags": Loot.tags_at(t.x, t.y), "hour": _hour(), "level": host.level(),
-		"move": "sneak" if host.combat.crouch else "walk", "shot": host.combat.since_shot}
+		"move": "sneak" if host.combat.crouch else "walk", "shot": host.combat.since_shot, "radio": host.st.radio.on}
 	if host.map.has_method("road_rank"):
 		c["road"] = host.map.road_rank(t)
 	rules.ctx = c
@@ -171,14 +173,14 @@ func _ok_tile(t: Vector2i, lv: int) -> bool:
 
 func start(req: Dictionary) -> bool:
 	var re := str(req["re"])
-	var d := Encounters.re_def(re)
+	var d := rules.with_variant(re)                                      # 판(1-13e): 조난 신호 셋 중 하나 · 길 잃은 개 어느 동네 개
 	if d.is_empty():
 		return false
 	var night := Clock.is_night(host.date_text)
 	var state := str(req.get("state", ""))
-	if state == "":
-		state = rules.pick_state(re, night)
-	var gs := rules.groups(re, host.level(), state)
+	if state == "" or not (d.get("states", {}) as Dictionary).has(state):
+		state = rules.pick_state(re, night, d)
+	var gs := rules.groups(re, host.level(), state, d)
 	var cat := str(d.get("cat", ""))
 	var n := 0
 	for g in gs:
@@ -197,6 +199,8 @@ func start(req: Dictionary) -> bool:
 		return false
 	cur = {"re": re, "def": d, "cat": cat, "state": state, "phase": "sign", "t": 0.0, "src": str(req.get("src", "")), "center": center,
 		"groups": gs, "actors": [], "foes": [], "props": [], "talked": false, "sign_t": 0.0, "half": false, "site": req.has("at")}
+	if str(d.get("on_start", "")) != "":
+		StoryExpr.run(str(d["on_start"]), host.st)                       # 세워지는 순간 한 번(1-13e RE-039 — 사냥꾼이 그날 봉천 자리를 비운다, P3)
 	var sign := str(d.get("sign", ""))
 	if state == "S4":
 		sign = "smoke"
@@ -422,9 +426,16 @@ func _spawn() -> void:
 				e.brain.state = AIBrain.S.COMBAT                          # 이미 싸우는 중(S5)
 				e.brain.gauge = 100.0
 			cur["foes"].append(e)
+	if d.has("pe_hint") and host.st.stat("PE") >= int(d["pe_hint"][0]):
+		host.hint(str(d["pe_hint"][1]), 5.0)                             # 미끼 신호(1-13e RE-041 ③): 인지력이 높으면 매복이 먼저 드러난다
+		flash_t = 2.4
 	match state:
-		"S3":                                                            # 먹이·약탈 중: 가운데 유해(다 끝나면 뒤진다)
-			_corpse_box(_snap_walk(c, c), "", "누군가의 유해")
+		"S3":                                                            # 먹이·약탈 중: 가운데 유해(다 끝나면 뒤진다) — 판이 정하면 다른 짐(개미가 끌던 들개 사체 · 쥐가 뜯은 쌀자루)
+			if d.has("s3_box"):
+				var sb: Array = d["s3_box"]
+				_corpse_box(_snap_walk(c, c), "", str(sb[0]), str(sb[1]), str(sb[2]))
+			else:
+				_corpse_box(_snap_walk(c, c), "", "누군가의 유해")
 		"S4" when not bool(cur.get("site", false)) and _efl == 0:             # 상판 위(층 1)에는 불 드럼·자루를 두지 않는다                      # 야영: 불 드럼 + 자루(소장소 자리면 이미 놓여 있다)
 			var fire := _free_near(c)
 			if fire.x >= 0:
@@ -483,7 +494,7 @@ func _add_person(id: String, at: Vector2, state: String) -> void:
 	a.mode = "walk"
 	a.set_meta("cr", id)
 	host.map.add_actor(a)
-	if id == "N-DOWNED":
+	if id in ["N-DOWNED", "N-SURV"]:
 		a.set_pose("lie")
 		a.set_meta("wait", true)
 	elif state in ["S4", "S7"]:
@@ -497,7 +508,7 @@ func _add_person(id: String, at: Vector2, state: String) -> void:
 
 
 ## 유해 용기(S3·S5·S7·RE-042): 적 ID가 있으면 그 적의 소지품, 없으면 떠돌이 유해(청소부 용기 표)
-func _corpse_box(t: Vector2i, eid: String, name: String) -> Dictionary:
+func _corpse_box(t: Vector2i, eid: String, name: String, kind := "corpse_scav", prop := "") -> Dictionary:
 	if t.x < 0 or host.map.boxes.has(t) or (_efl == 0 and host.map.is_solid(t)):
 		return {}
 	var key := "re:%s:%d,%d@%d:%d" % [str(cur.get("re", "")), t.x, t.y, int(host.st.vars.get_v("GAME_DAY")), Time.get_ticks_msec()]
@@ -507,8 +518,8 @@ func _corpse_box(t: Vector2i, eid: String, name: String) -> Dictionary:
 	elif eid != "":
 		return {}                                                        # 드롭이 없는 크리처(바퀴·들개)는 유해를 두지 않는다
 	else:
-		b.merge({"kind": "corpse_scav", "name": name})
-		var rp: Dictionary = host.map.add_runtime_prop("remains" if _rng.randf() < 0.5 else "remains2", t)   # 쓰러진 사람 그림(유해 용기)
+		b.merge({"kind": kind, "name": name})
+		var rp: Dictionary = host.map.add_runtime_prop(prop if prop != "" else ("remains" if _rng.randf() < 0.5 else "remains2"), t)   # 쓰러진 사람 그림(유해 용기)
 		if _efl >= 1 and not rp.is_empty():
 			rp["node"].z_index = 3                                           # 상판 위 유해는 상판 위에 그린다
 			for cc in rp.get("cells", []):
@@ -857,6 +868,9 @@ func _despawn_actors() -> void:
 
 func _end(how: String) -> void:
 	var re := str(cur.get("re", ""))
+	var rv := str((cur.get("def", {}) as Dictionary).get("reveal", ""))
+	if rv != "" and how != "avoided" and host.st.places.raise(rv, PlaceLog.MARKED):   # 흔적이 이어진 곳(1-13e RE-006 — 붉은 실밥이 끌려간 무너진 국회)
+		host.hint(str((cur.get("def", {}) as Dictionary).get("reveal_msg", "흔적이 이어진 곳이 지도에 표시되었다")), 5.0)
 	var half := bool(cur.get("half", false))
 	cur = {}
 	rules.finished(half)

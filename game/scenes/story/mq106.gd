@@ -60,10 +60,20 @@ func setup(h: InteriorHost, is_log := false) -> void:
 
 
 ## 불러온 판(저장을 다 펼친 뒤): 귀빈실 구간이면 그대로. 사건 한가운데(단계 10)면 다음 안전한 순간에 무전부터 다시(_process가 본다)
+## 숨어 있던 중 저장(A27 · D-180, 1-13g): MQ106_HIDE_T = 숨은 시간(초 × 10) + 1 — 0이면 숨는 중 아님. 실내에서 불러오면 그 시간부터 이어 세고,
+## 바깥에서 불러오면(숨은 곳을 나와 저장) 그 시각에 나온 것으로 본다
 func _check_resume() -> void:
+	if not is_instance_valid(host):
+		return
 	_was_inside = host.map != null and not (host.map is WorldMap)
 	if v("MQ106_CUSTODY") > 0:
 		state = "custody"
+	elif v("MQ106_HIDE_T") > 0:
+		state = "hiding"
+		_inside_t = float(v("MQ106_HIDE_T") - 1) / 10.0
+		_log("숨음 이어 셈(%.0f초)" % _inside_t)
+		if not _was_inside:
+			_came_out()
 
 
 ## 출두 확인 사흘이 끝났다: 정식 공고(등급 2) — 걸어 들어가기 전 값이 더 높았으면 그 값으로(출두 확인이 수배를 깎아 주지는 않는다, SD-20 P8)
@@ -144,6 +154,7 @@ func _on_map(id: String) -> void:
 ## 사건이 끊겼다(생포·끌려감): 분대·기체는 그 맵과 함께 사라졌다. 단계 10은 그대로 — 다음 안전한 순간에 무전부터 다시
 func _interrupt(why: String) -> void:
 	host.locked = false
+	st.vars.set_v("MQ106_HIDE_T", 0)
 	_fake.clear()
 	_men.clear()
 	_foes.clear()
@@ -183,6 +194,9 @@ func _process(dt: float) -> void:
 		return
 	if state == "hiding":
 		_inside_t += dt
+		var hv := int(_inside_t * 10.0) + 1
+		if hv - v("MQ106_HIDE_T") >= 10:
+			st.vars.set_v("MQ106_HIDE_T", hv)                             # 1초마다 저장 변수로(A27 — 숨은 채 저장해도 시간이 이어진다)
 		return
 	if state == "radio":
 		if host.box.active or host.ev.busy() or host.busy:
@@ -543,6 +557,7 @@ func _poll_off(id: String, t: float, then: Callable) -> void:
 func _went_inside() -> void:
 	state = "hiding"
 	_inside_t = 0.0
+	st.vars.set_v("MQ106_HIDE_T", 1)
 	_fake.clear()
 	_men.clear()
 	_foes.clear()
@@ -554,6 +569,7 @@ func _went_inside() -> void:
 
 
 func _came_out() -> void:
+	st.vars.set_v("MQ106_HIDE_T", 0)
 	if _inside_t >= HIDE_SECS:
 		state = "leave"
 		st.vars.set_v("MQ106_RESULT", 2)

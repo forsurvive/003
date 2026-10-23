@@ -1,0 +1,298 @@
+{
+ "id": "RE-053_TALK",
+ "title": "진돗개 한 마리",
+ "loc": "",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "LOOKALIKE": 3,
+  "TAGS": 4,
+  "TAG_SA": 7,
+  "LIMP": 8,
+  "HURT": 10,
+  "ASK": 11,
+  "HOME": 12,
+  "STIM": 15,
+  "GLASS": 18,
+  "GLASS_NO": 21,
+  "MEAT": 24,
+  "SENT": 27,
+  "SENT_SA": 31,
+  "NO": 34,
+  "NO_SA": 39
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "dead(\"C-015\") == 0 and MQ101_STAGE >= 100",
+   "to": "LOOKALIKE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "누런 진돗개 한 마리가 꼬리를 낮추고 다가온다. 한쪽 귀가 접혔다."
+  },
+  {
+   "op": "goto",
+   "to": "TAGS"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "진돗개 한 마리가 꼬리를 낮추고 다가온다. 백구인가 싶었는데 털이 누렇고 한쪽 귀가 접혔다."
+  },
+  {
+   "op": "if",
+   "cond": "RE_V == 2",
+   "to": "TAG_SA"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "파란 천 목줄에 쇠 이름표. \"봉천 감시조 먹순이. 데려오면 옥탑으로.\""
+  },
+  {
+   "op": "goto",
+   "to": "LIMP"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "파란 천 목줄에 쇠 이름표. \"사당 승강장 돌쇠. 보면 4번 출구로.\""
+  },
+  {
+   "op": "if",
+   "cond": "RE_VM == 1",
+   "to": "HURT"
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "왼쪽 앞다리를 디디지 못한다. 발바닥에 유리 조각이 박혔다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "집에 가. 저쪽이야",
+     "tags": [],
+     "cond": "RE_VM == 0",
+     "fx": "",
+     "to": "HOME",
+     "id": "RE-053_TALK:1:0"
+    },
+    {
+     "text": "스팀팩을 발에 놓아 준다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "I-001",
+       "n": 1
+      }
+     ],
+     "cond": "RE_VM == 1",
+     "fx": "",
+     "to": "STIM",
+     "id": "RE-053_TALK:1:1"
+    },
+    {
+     "text": "유리 조각을 빼 준다",
+     "tags": [
+      {
+       "k": "skill",
+       "name": "의학",
+       "min": 20
+      }
+     ],
+     "cond": "RE_VM == 1",
+     "fx": "",
+     "to": "GLASS",
+     "id": "RE-053_TALK:1:2",
+     "fail": "GLASS_NO"
+    },
+    {
+     "text": "쥐고기를 던져 준다",
+     "tags": [
+      {
+       "k": "item",
+       "id": "I-037",
+       "n": 1
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "MEAT",
+     "id": "RE-053_TALK:1:3"
+    },
+    {
+     "text": "(지나간다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "NO",
+     "id": "RE-053_TALK:1:4"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "개가 이름표를 한 번 흔들고는 그쪽으로 달려간다. 몇 걸음 가다 뒤를 돌아본다."
+  },
+  {
+   "op": "do",
+   "fx": "karma(10)"
+  },
+  {
+   "op": "goto",
+   "to": "SENT"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "개가 낑 하더니 발을 내려 디딘다. 손등을 한 번 핥고 집 쪽으로 달려간다."
+  },
+  {
+   "op": "do",
+   "fx": "karma(15)"
+  },
+  {
+   "op": "goto",
+   "to": "SENT"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "유리 조각이 빠져나온다. 개가 발을 핥더니 절뚝이며 집 쪽으로 걸어간다."
+  },
+  {
+   "op": "do",
+   "fx": "karma(15)"
+  },
+  {
+   "op": "goto",
+   "to": "SENT"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "손을 대자 개가 이를 드러낸다. 조금 떨어져서 절뚝이며 집 쪽으로 간다."
+  },
+  {
+   "op": "do",
+   "fx": "karma(5)"
+  },
+  {
+   "op": "goto",
+   "to": "SENT"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "개가 고기를 받아 물고 꼬리를 친다. 다 먹고 나서야 집 쪽으로 걸음을 옮긴다."
+  },
+  {
+   "op": "do",
+   "fx": "karma(10)"
+  },
+  {
+   "op": "goto",
+   "to": "SENT"
+  },
+  {
+   "op": "if",
+   "cond": "RE_V == 2",
+   "to": "SENT_SA"
+  },
+  {
+   "op": "do",
+   "fx": "RE053_BC = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "RE053_SA = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "개가 잠시 따라오다 멈춘다. 냄새를 맡더니 제 갈 길로 간다."
+  },
+  {
+   "op": "if",
+   "cond": "RE_V == 2",
+   "to": "NO_SA"
+  },
+  {
+   "op": "do",
+   "fx": "RE053_BC = 3"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "RE053_SA = 3"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/encounters/RE_WORLD.txt"
+}

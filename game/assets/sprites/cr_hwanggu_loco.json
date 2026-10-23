@@ -1,0 +1,38 @@
+{
+ "foot": [
+  20,
+  29
+ ],
+ "frame": [
+  44,
+  32
+ ],
+ "mirror": {
+  "W": "E"
+ },
+ "motions": {
+  "death": {
+   "count": 3,
+   "start": 5
+  },
+  "idle": {
+   "count": 1,
+   "start": 0
+  },
+  "sleep": {
+   "count": 2,
+   "start": 8
+  },
+  "walk": {
+   "count": 4,
+   "drive": "distance",
+   "px_per_frame": 4,
+   "start": 1
+  }
+ },
+ "name": "cr_hwanggu_loco",
+ "rows": [
+  "E"
+ ],
+ "style": "isaac"
+}

@@ -1,0 +1,96 @@
+{
+ "id": "BC_DOG",
+ "title": "옥탑 감시조장 — 돌아온 먹순이",
+ "loc": "L-R01-09",
+ "npc": "N-R01-028",
+ "cond": "V_ACT >= 1 and RE053_BC == 1",
+ "labels": {
+  "START": 0,
+  "BOUGHT": 2,
+  "SAID": 5,
+  "NOT": 8
+ },
+ "ops": [
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "놀람",
+   "text": "먹순이가 혼자 아랫문으로 들어왔어. 한동안 안 보이더니."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "길에서 만났어. 이름표 보고 집에 가라고 했지",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SAID",
+     "id": "BC_DOG:1:0"
+    },
+    {
+     "text": "떠돌이가 끌고 다니길래 캡 주고 샀어",
+     "tags": [],
+     "cond": "RE053_BUY == 1 or RE053_BUY == 3",
+     "fx": "",
+     "to": "BOUGHT",
+     "id": "BC_DOG:1:1"
+    },
+    {
+     "text": "다행이네",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "NOT",
+     "id": "BC_DOG:1:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "분노",
+   "text": "그놈이 우리 개를 팔고 다녀? …얼굴 기억나면 감시조에 말해. 캡은 내가 줄게. 개값을 네가 낼 일은 아니지."
+  },
+  {
+   "op": "do",
+   "fx": "caps(20); aff(\"JC_BC\", 2, \"day\"); RE053_BC = 2"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "미소",
+   "text": "네가 보냈구나. 감시조 개가 길을 잃으면 체면이 말이 아니거든. 고맙다. 감시조 애들한테도 말해 둘게."
+  },
+  {
+   "op": "do",
+   "fx": "aff(\"JC_BC\", 2, \"day\"); RE053_BC = 2"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "기본",
+   "text": "그러게. 개가 사람보다 길을 잘 찾아."
+  },
+  {
+   "op": "do",
+   "fx": "RE053_BC = 2"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/encounters/RE_WORLD.txt"
+}

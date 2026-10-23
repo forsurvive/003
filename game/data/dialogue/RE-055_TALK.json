@@ -1,0 +1,245 @@
+{
+ "id": "RE-055_TALK",
+ "title": "각성회 탁발",
+ "loc": "",
+ "npc": "CR-460",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "GUEST": 7,
+  "PIP": 11,
+  "ASK": 13,
+  "GIVE10": 14,
+  "GIVE30": 17,
+  "WAIT": 21,
+  "TODAY": 23,
+  "NO": 25,
+  "COLD": 27,
+  "BYE": 31
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "V_KARMA <= -250",
+   "to": "COLD"
+  },
+  {
+   "op": "line",
+   "who": "CR-460",
+   "emo": "기본",
+   "text": "대기등 기름값을 보태 주십시오. 한 닢이면 등 하나가 하룻밤을 버팁니다."
+  },
+  {
+   "op": "line",
+   "who": "N-GS-N1",
+   "emo": "놀람",
+   "text": "선배님, 대기등은 기름 안 쓰잖아요. 전지로…"
+  },
+  {
+   "op": "line",
+   "who": "CR-460",
+   "emo": "피곤",
+   "text": "옛날부터 그렇게 말하는 거다. 기름값."
+  },
+  {
+   "op": "if",
+   "cond": "stage(\"FQ-GS-01\") > 0 and stage(\"FQ-GS-01\") < 100 and GS_GUESTSAID == 0",
+   "to": "GUEST"
+  },
+  {
+   "op": "if",
+   "cond": "GS_PIPCHAT == 0",
+   "to": "PIP"
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-GS-N1",
+   "emo": "놀람",
+   "text": "선배님, 정비 당번 맡았다는 바깥 손님이 혹시 이분…"
+  },
+  {
+   "op": "line",
+   "who": "CR-460",
+   "emo": "기본",
+   "text": "말 줄여라. …당번 일, 잘 부탁드립니다."
+  },
+  {
+   "op": "do",
+   "fx": "GS_GUESTSAID = 1"
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-GS-N1",
+   "emo": "놀람",
+   "text": "저기, 팔에 찬 그거… 대기등이랑 같은 빛이네요."
+  },
+  {
+   "op": "do",
+   "fx": "GS_PIPCHAT = 1"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "한 닢 보탠다",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 10
+      }
+     ],
+     "cond": "GIFT_DAY != GAME_DAY",
+     "fx": "",
+     "to": "GIVE10",
+     "id": "RE-055_TALK:1:0"
+    },
+    {
+     "text": "세 닢 보탠다",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 30
+      }
+     ],
+     "cond": "GIFT_DAY != GAME_DAY",
+     "fx": "",
+     "to": "GIVE30",
+     "id": "RE-055_TALK:1:1"
+    },
+    {
+     "text": "각성회는 뭘 기다리는데?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "WAIT",
+     "id": "RE-055_TALK:1:2"
+    },
+    {
+     "text": "오늘은 이미 냈어",
+     "tags": [],
+     "cond": "GIFT_DAY == GAME_DAY",
+     "fx": "",
+     "to": "TODAY",
+     "id": "RE-055_TALK:1:3"
+    },
+    {
+     "text": "미안, 가진 게 없어",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "NO",
+     "id": "RE-055_TALK:1:4"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "CR-460",
+   "emo": "미소",
+   "text": "등 하나가 오늘 밤 꺼지지 않겠습니다. 운영자께서 보실 겁니다."
+  },
+  {
+   "op": "do",
+   "fx": "karma(1); aff(\"GS\", 1, \"day\"); GIFT_DAY = GAME_DAY"
+  },
+  {
+   "op": "goto",
+   "to": "BYE"
+  },
+  {
+   "op": "line",
+   "who": "CR-460",
+   "emo": "미소",
+   "text": "세 닢이나요. 중계소 계단참 등까지 켜겠습니다."
+  },
+  {
+   "op": "line",
+   "who": "N-GS-N1",
+   "emo": "미소",
+   "text": "이름 적어 둘까요? 아, 이름은 안 적는 거였지."
+  },
+  {
+   "op": "do",
+   "fx": "karma(3); aff(\"GS\", 1, \"day\"); GIFT_DAY = GAME_DAY"
+  },
+  {
+   "op": "goto",
+   "to": "BYE"
+  },
+  {
+   "op": "line",
+   "who": "CR-460",
+   "emo": "기본",
+   "text": "도시가 다시 깨어나는 날을. 노량진 중계소에 오시면 대기등이 왜 켜져 있는지 들려 드리지요."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "CR-460",
+   "emo": "미소",
+   "text": "그럼 오늘 몫은 이미 켜졌습니다. 조심해서 가십시오."
+  },
+  {
+   "op": "goto",
+   "to": "BYE"
+  },
+  {
+   "op": "line",
+   "who": "CR-460",
+   "emo": "기본",
+   "text": "괜찮습니다. 지나가는 걸음도 등 하나만큼은 됩니다."
+  },
+  {
+   "op": "goto",
+   "to": "BYE"
+  },
+  {
+   "op": "line",
+   "who": "CR-460",
+   "emo": "피곤",
+   "text": "…헌금은 됐습니다. 지나가십시오."
+  },
+  {
+   "op": "line",
+   "who": "N-GS-N1",
+   "emo": "놀람",
+   "text": "선배님, 저 사람…"
+  },
+  {
+   "op": "line",
+   "who": "CR-460",
+   "emo": "분노",
+   "text": "눈 마주치지 마라."
+  },
+  {
+   "op": "goto",
+   "to": "BYE"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/encounters/RE_WORLD.txt"
+}

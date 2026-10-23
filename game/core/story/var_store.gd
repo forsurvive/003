@@ -6,6 +6,7 @@ extends RefCounted
 var decls := {}                 ## 이름 -> {"type": "int"|"str", "default": Variant}
 var values := {}                ## 기본값과 다른 값만
 var errors: Array[String] = []  ## 실행 중 오류(미선언 키 등) — 디버그 콘솔·시험이 읽는다
+var _restoring := false         ## 불러오는 중에는 누적 수입을 세지 않는다
 
 
 func declare(name: String, type: String = "int", default: Variant = null) -> void:
@@ -46,6 +47,10 @@ func set_v(name: String, v: Variant) -> bool:
 		v = int(v)
 	else:
 		v = str(v)
+	if name == "PC_CAPS" and not _restoring and decls.has("CAPS_EARNED"):
+		var was := int(values.get(name, d["default"]))
+		if int(v) > was:                                               # 누적 수입(1-13c 경제 곡선, SD-15 §9.1): 퀘스트 · 루팅 · 거래 어느 길로든 캡이 늘면
+			values["CAPS_EARNED"] = int(values.get("CAPS_EARNED", 0)) + int(v) - was
 	if v == d["default"]:
 		values.erase(name)
 	else:
@@ -71,11 +76,13 @@ func dump() -> Dictionary:
 
 func restore(d: Dictionary) -> void:
 	values.clear()
+	_restoring = true
 	for k in d:
 		if decls.has(k):
 			set_v(k, d[k])
 		else:
 			_err("저장 파일의 미선언 변수 무시: " + str(k))
+	_restoring = false
 
 
 func _err(msg: String) -> void:

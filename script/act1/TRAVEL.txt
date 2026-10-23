@@ -8,6 +8,9 @@
 @npc   N-R01-040
 @cond  V_ACT >= 1
 # UQ-05 누렁이(1-12g, 원고 UQ-05.txt 머리): 거래 거부 · 맡겨 둔 사례 · 잃은 소식(까닭은 그날 세계에서 — UQ05_CAUSE)
+? RE033_ROB > GAME_DAY -> RE33_ROBBED
+? RE033_ROB > 0 and RE033_ROB <= GAME_DAY and RE033_ROB_SAID == 0 -> RE33_AFTER
+? RE033_HELP > 0 and RE033_HELP_SAID == 0 -> RE33_THANKS
 ? UQ05_REFUSE_DAY > GAME_DAY -> U5_REFUSE
 ? UQ05_PEND == 1 -> U5_PAY
 ? UQ05_PEND == 3 -> U5_PAY3
@@ -31,6 +34,17 @@ N-R01-040 [미소] 또 봤네. 이번엔 사당에서 방독면 정화통을 좀
 > 사람 하나 노들섬까지 태워 줄 수 있어? -> S6NOCOW ?? SQ_S06_JIN == 1 and SQ_S06_NEAR == 1 and CARAVAN_V54 == 2 and SQ_S06_CARAVAN == 0 and UQ05_ABSENT == 1
 > 누렁이 짐 꾸러미를 돌려준다 -> U5_PACK ?? has("M-429") == 1
 > 됐다 -> END
+* RE33_ROBBED
+N-R01-040 [분노] 너하곤 장사 안 해. 고개에서 그 짓을 해 놓고 여기서 물건을 보겠다고?
+-> END
+* RE33_AFTER
+N-R01-040 [피곤] 얼굴은 기억해. 오늘은 장사만 해. 딴생각하면 호위가 먼저 쏜다.
+! RE033_ROB_SAID = 1
+-> ASK
+* RE33_THANKS
+N-R01-040 [미소] 고개에서 척후 맡아 준 거, 호위들이 아직도 얘기해. 약속했지? 한잔.
+! give("I-060", 1); RE033_HELP_SAID = 1
+-> ASK
 * U5_REFUSE
 N-R01-040 [슬픔] 오늘은 장사 안 해. 누렁이 생각나서. …사당 앞이었다며. 위강윤이 봤대.
 -> END

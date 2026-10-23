@@ -624,8 +624,22 @@
   "weapon_main": "전투 산탄총 + 소방 도끼",
   "xp": 30
  },
+ "CR-460": {
+  "_src": "14_creatures-enemies.md:1236",
+  "dr": 5,
+  "hp": 55,
+  "id": "CR-460",
+  "level": 4,
+  "name": "각성회 신도",
+  "part_weights": "PW-H",
+  "radius": 0.3,
+  "rank": "1",
+  "special": "흰 작업복에 진공관 목걸이. 용서 가능(대기파만)",
+  "weapon_main": "충격 렌치(근접 10 + 기절 10%) / 권총",
+  "xp": 10
+ },
  "CR-466": {
-  "_src": "14_creatures-enemies.md:1248",
+  "_src": "14_creatures-enemies.md:1250",
   "dr": 8,
   "hp": 70,
   "id": "CR-466",
@@ -637,7 +651,7 @@
   "xp": 15
  },
  "CR-472": {
-  "_src": "14_creatures-enemies.md:1254",
+  "_src": "14_creatures-enemies.md:1256",
   "dr": 2,
   "hp": 40,
   "id": "CR-472",
@@ -649,7 +663,7 @@
   "xp": 8
  },
  "CR-473": {
-  "_src": "14_creatures-enemies.md:1262",
+  "_src": "14_creatures-enemies.md:1264",
   "dr": 4,
   "hp": 36,
   "id": "CR-473",
@@ -663,7 +677,7 @@
   "xp": 10
  },
  "CR-500": {
-  "_src": "14_creatures-enemies.md:1306",
+  "_src": "14_creatures-enemies.md:1308",
   "attack": "물기 18",
   "dr": 0,
   "hp": 260,
@@ -677,7 +691,7 @@
   "xp": 50
  },
  "CR-501": {
-  "_src": "14_creatures-enemies.md:1307",
+  "_src": "14_creatures-enemies.md:1309",
   "attack": "물기 10",
   "dr": 10,
   "hp": 300,
@@ -691,7 +705,7 @@
   "xp": 50
  },
  "CR-512": {
-  "_src": "14_creatures-enemies.md:1318",
+  "_src": "14_creatures-enemies.md:1320",
   "attack": "사냥총 25 · 렌치 9",
   "dr": 10,
   "hp": 180,
@@ -705,7 +719,7 @@
   "xp": 40
  },
  "CR-513": {
-  "_src": "14_creatures-enemies.md:1319",
+  "_src": "14_creatures-enemies.md:1321",
   "dr": 18,
   "hp": 60,
   "id": "CR-513",
@@ -716,7 +730,7 @@
   "xp": 65
  },
  "CR-534": {
-  "_src": "14_creatures-enemies.md:1491",
+  "_src": "14_creatures-enemies.md:1493",
   "dr": 12,
   "hp": 140,
   "id": "CR-534",

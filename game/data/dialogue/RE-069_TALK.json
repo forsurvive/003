@@ -1,0 +1,202 @@
+{
+ "id": "RE-069_TALK",
+ "title": "각성회 순례조",
+ "loc": "",
+ "npc": "CR-460",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "COLD2": 5,
+  "COLD_ROBOT": 7,
+  "FRIEND": 10,
+  "FRIEND2": 15,
+  "ASK": 18,
+  "WHERE": 19,
+  "ROBOT": 21,
+  "BYE": 24
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "AFF_GS >= 20",
+   "to": "FRIEND"
+  },
+  {
+   "op": "if",
+   "cond": "RE_V == 2",
+   "to": "COLD2"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "경문을 외던 소리가 뚝 그친다. 작업복 셋이 걸음을 멈추고 당신을 지켜본다."
+  },
+  {
+   "op": "line",
+   "who": "CR-460",
+   "emo": "기본",
+   "text": "…지나가십시오. 순례 중입니다."
+  },
+  {
+   "op": "goto",
+   "to": "BYE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "신참은 기름통을, 고참은 걸레 뭉치를 들었다. 셋 다 말없이 당신을 지켜본다."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "로봇은 왜 닦아?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "COLD_ROBOT",
+     "id": "RE-069_TALK:1:0"
+    },
+    {
+     "text": "(지나간다)",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "BYE",
+     "id": "RE-069_TALK:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-GS-N1",
+   "emo": "기본",
+   "text": "깨어났을 때 먼지투성이면…"
+  },
+  {
+   "op": "line",
+   "who": "CR-460",
+   "emo": "분노",
+   "text": "눈 마주치지 마라. 가자."
+  },
+  {
+   "op": "goto",
+   "to": "BYE"
+  },
+  {
+   "op": "if",
+   "cond": "RE_V == 2",
+   "to": "FRIEND2"
+  },
+  {
+   "op": "line",
+   "who": "CR-460",
+   "emo": "놀람",
+   "text": "운영자님이시다. 길을 비켜 드려라."
+  },
+  {
+   "op": "line",
+   "who": "N-GS-N1",
+   "emo": "놀람",
+   "text": "(속삭이며) 진짜요? 저분이요?"
+  },
+  {
+   "op": "line",
+   "who": "CR-460",
+   "emo": "미소",
+   "text": "노량진 중계소까지 갑니다. 대기등에 기름, 아니, 전지를 갈러요."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "신참이 기름통을, 고참이 걸레 뭉치를 들었다. 작업복 무릎이 시커멓다."
+  },
+  {
+   "op": "line",
+   "who": "CR-460",
+   "emo": "미소",
+   "text": "운영자님. 잠든 파수 셋 먼지를 털고 오는 길입니다. 다들 곱게 자고 있어요."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "어디까지 가?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "WHERE",
+     "id": "RE-069_TALK:2:0"
+    },
+    {
+     "text": "로봇은 왜 닦아?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "ROBOT",
+     "id": "RE-069_TALK:2:1"
+    },
+    {
+     "text": "수고해",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "BYE",
+     "id": "RE-069_TALK:2:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "CR-460",
+   "emo": "기본",
+   "text": "중계소 계단참까지요. 해 지기 전에 등을 다 켜야 합니다."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-GS-N1",
+   "emo": "기본",
+   "text": "깨어났을 때 먼지투성이면 창피하잖아요."
+  },
+  {
+   "op": "line",
+   "who": "CR-460",
+   "emo": "피곤",
+   "text": "…틀린 말은 아니다."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/encounters/RE_WORLD.txt"
+}

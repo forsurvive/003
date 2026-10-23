@@ -222,6 +222,10 @@ QUAD = {
                 skin=["P39", "P40", "P41"], eye="P54", tail="up", ears=True, mange=True),
     "jindo": dict(w=44, h=32, foot=(20, 29), px=4, body=(19, 18, 10, 6.5), head=(32, 12, 7.5, 6.5), leg=5, fur=["P06", "P07", "P08", "P09"],
                   skin=["P39", "P40", "P41"], eye="P01", tail="curl", ears=True, mange=False),
+    # 황구(1-13e RE-053 길 잃은 정착지 진돗개 CR-108 판본): 백구와 같은 진돗개 몸에 누런 털 · 크림빛 주둥이 · 파란 천 목줄과 쇠 이름표
+    # (백구 · 외눈과 한눈에 갈리게 — 흰 개가 아니고, 목줄이 새것이다)
+    "hwanggu": dict(w=44, h=32, foot=(20, 29), px=4, body=(19, 18, 10, 6.5), head=(32, 12, 7.5, 6.5), leg=5, fur=["P25", "P26", "P27", "P21"],
+                    skin=["P39", "P40", "P41"], eye="P01", tail="curl", ears=True, mange=False, nametag=True),
     # 경비견 CR-107(SD-14 §6, 새벽인력·약탈자 사육견): 검정·황갈 셰퍼드형, 선 귀, 검은 조끼 + 주황 띠(새벽인력 PF-05)
     "guard": dict(w=44, h=32, foot=(20, 29), px=4, body=(19, 18, 10, 6.5), head=(32, 13, 7.5, 6.5), leg=5, fur=["P01", "P02", "P03", "P18"],
                   skin=["P39", "P40", "P41"], eye="P49", tail="up", ears=True, mange=False, vest=True),
@@ -300,7 +304,7 @@ def quad(kind, frame=0, pose="walk"):
     _ellipse(body, hxc, hyc - bob, hrx, hry, fur)
     bd = ImageDraw.Draw(body)
     hyb = round(hyc - bob)
-    if kind in ("jindo", "oenun"):                                         # 진돗개(백구 · 외눈): 쫑긋 선 세모 귀 + 짧은 주둥이 + 검은 코·눈
+    if kind in ("jindo", "oenun", "hwanggu"):                              # 진돗개(백구 · 외눈 · 황구): 쫑긋 선 세모 귀 + 짧은 주둥이 + 검은 코·눈
         ex = round(hxc - hrx * 0.25)
         bd.polygon([(ex - 3, hyb - 4), (ex, hyb - 11), (ex + 3, hyb - 4)], fill=fur[2])
         bd.polygon([(ex - 1, hyb - 5), (ex, hyb - 9), (ex + 1, hyb - 5)], fill=ramp(q["skin"])[1])
@@ -400,6 +404,13 @@ def quad(kind, frame=0, pose="walk"):
         for k, (sx3, sy3) in enumerate(((bx - 4, by - 3), (bx + 1, by - 1), (bx + 5, by - 4))):
             bd.line([sx3, sy3 - bob, sx3 + 2, sy3 + 2 - bob], fill=ramp(q["skin"])[1])
             bd.point((sx3 + 1, sy3 + 2 - bob), fill=fur[0])
+    if q.get("nametag"):                                                   # 황구: 새 파란 천 목줄 + 쇠 이름표(반짝)
+        nx0 = round(hxc - hrx + 1)
+        bd.line([nx0, hyb + 3, nx0 + 2, hyb + 7], fill=C("P12"), width=2)
+        bd.point((nx0 + 1, hyb + 4), fill=C("P14"))
+        bd.point((nx0 + 2, hyb + 8), fill=C("P08"))
+        bd.point((nx0 + 3, hyb + 8), fill=C("P09"))
+        bd.point((nx0 + 2, hyb + 9), fill=C("P07"))
     if q.get("tag"):                                                       # 외눈: 낡은 목줄 + 2077년 인식표 · 때 얼룩
         nx0 = round(hxc - hrx + 1)
         bd.line([nx0, hyb + 3, nx0 + 2, hyb + 7], fill=C("P18"), width=2)
@@ -515,6 +526,9 @@ def quad_sleep(kind, breath=0):
     bd.polygon([(ex - 3, fy - 8), (ex - 4 + breath, fy - 14 - breath), (ex + 1, fy - 9)], fill=fur[2])
     bd.polygon([(ex - 2, fy - 9), (ex - 3 + breath, fy - 12 - breath), (ex, fy - 9)], fill=ramp(q["skin"])[1])
     bd.line([31, fy - 6, 33, fy - 6], fill=C("P01"))                       # 감은 눈(한 줄)
+    if q.get("nametag"):                                                   # 황구: 파란 목줄 · 이름표(턱 밑)
+        bd.line([26, fy - 3, 28, fy - 1], fill=C("P12"), width=2)
+        bd.point((29, fy), fill=C("P08")); bd.point((30, fy), fill=C("P09"))
     if q.get("tag"):                                                       # 외눈: 흉터 · 목줄과 인식표(턱 밑에 깔려 반짝)
         bd.line([30, fy - 9, 34, fy - 4], fill=C("P39"))
         bd.line([26, fy - 3, 28, fy - 1], fill=C("P18"), width=2)
@@ -653,7 +667,7 @@ def quad_sheet(kind):
     meta = {"frame": [q["w"], q["h"]], "foot": list(q["foot"]), "rows": ["E"], "mirror": {"W": "E"}, "style": "isaac",
             "motions": {"idle": {"start": 0, "count": 1}, "walk": {"start": 1, "count": 4, "px_per_frame": q["px"], "drive": "distance"},
                         "death": {"start": 5, "count": 3}}}
-    if kind in ("jindo", "oenun"):                                         # 백구 낮잠(1-8b) · 외눈 난간 낮잠(1-11a): 숨쉬기 2컷
+    if kind in ("jindo", "oenun", "hwanggu"):                              # 백구 낮잠(1-8b) · 외눈 난간 낮잠(1-11a): 숨쉬기 2컷
         meta["motions"]["sleep"] = {"start": len(frames), "count": 2}
         frames += [quad_sleep(kind, 0), quad_sleep(kind, 1)]
     return frames, meta

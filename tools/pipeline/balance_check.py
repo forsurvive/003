@@ -477,7 +477,28 @@ def check_rewards(places):
         "통과" if caps1 <= 1125 else ("주의" if caps1 <= 1400 else "실패"), "SD-15 §9.1 수입 구성")
     add("B6", "경제 흐름", "1막 퀘스트를 다 했을 때 퀘스트 캡(%d)" % (main_caps + side_caps), main_caps + side_caps, "2,500 이하(구간 Ⅰ 누적 상한 — 다 해도 넘치지 않게)",
         "통과" if main_caps + side_caps <= 2500 else "주의", "SD-15 §9.1")
+    econ_curve()
     return rw
+
+
+# 1-13c: 봇이 실제로 걸어 모은 경제 곡선(tools/pipeline/econ_curve.py → game/data/_econ_curve.json). 구간 Ⅰ(Lv1~6) 보유 150~500 ±20% ·
+# 누적 수입 1,500~2,500을 Lv6에 닿는 속도로 — 레벨 L에서 누적은 (L − 1) / 5 × 1,500~2,500 근처(±20%, 앞쪽 레벨은 표본이 작아 '주의'까지만)
+def econ_curve():
+    path = os.path.join(ROOT, "game", "data", "_econ_curve.json")
+    if not os.path.exists(path):
+        add("B6", "경제 흐름", "봇 경제 곡선(기록 없음 — econ_curve.py를 돌리면 생긴다)", "-", "기록", "주의", "SD-15 §9.1")
+        return
+    d = json.load(open(path, encoding="utf-8"))
+    for r in d.get("rows", []):
+        tag = "%s 해법 %d(%s 봇)" % (r["at"], r["sol"], d.get("when", ""))
+        caps = int(r["caps"])
+        add("B6", "경제 흐름", "%s 보유 캡" % tag, caps, "120~600(구간 Ⅰ 평균 보유 150~500 ±20%)",
+            "통과" if 120 <= caps <= 600 else ("주의" if 60 <= caps <= 800 else "실패"), "SD-15 §9.1")
+        lv = max(1, int(r["lv"]))
+        lo, hi = max(0.0, (lv - 1) / 5.0 * 1500 * 0.8), max(300.0, (lv - 1) / 5.0 * 2500 * 1.2)
+        earned = int(r["earned"])
+        add("B6", "경제 흐름", "%s 누적 수입(Lv%d · %d일째)" % (tag, lv, int(r["day"])), earned,
+            "%d~%d(Lv6에 1,500~2,500으로 가는 속도 ±20%%)" % (lo, hi), "통과" if lo <= earned <= hi else "주의", "SD-15 §9.1")
 
 
 # ---------------------------------------------------------------- 경제 · 소모 · 상점

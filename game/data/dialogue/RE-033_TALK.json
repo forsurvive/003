@@ -1,0 +1,387 @@
+{
+ "id": "RE-033_TALK",
+ "title": "길 위의 고개길 수송대",
+ "loc": "",
+ "npc": "N-R01-040",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "LENT": 7,
+  "LENT_GONE": 9,
+  "REST": 11,
+  "NOCOW": 14,
+  "SCOUT": 17,
+  "OPEN": 20,
+  "AFTER_ROB": 24,
+  "PEND": 27,
+  "FIRST": 29,
+  "ASK": 31,
+  "SHOP": 32,
+  "ROAD": 34,
+  "R1": 40,
+  "R2": 42,
+  "SCOUT_GO": 44,
+  "ROB_OK": 48,
+  "ROB_NO": 53,
+  "BYE": 57
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "RE_V == 4",
+   "to": "SCOUT"
+  },
+  {
+   "op": "if",
+   "cond": "RE_V == 3",
+   "to": "NOCOW"
+  },
+  {
+   "op": "if",
+   "cond": "RE_V == 2",
+   "to": "REST"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "기본",
+   "text": "걸으면서 얘기해. 여기서 서면 해 지기 전에 못 넘어."
+  },
+  {
+   "op": "if",
+   "cond": "UQ05_ABSENT == 2 and dead(\"N-R01-043\") == 0",
+   "to": "LENT"
+  },
+  {
+   "op": "if",
+   "cond": "UQ05_ABSENT == 2",
+   "to": "LENT_GONE"
+  },
+  {
+   "op": "goto",
+   "to": "OPEN"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "피곤",
+   "text": "위강윤네 소야. 남의 소라 고삐 잡는 손에 땀이 다 나."
+  },
+  {
+   "op": "goto",
+   "to": "OPEN"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "슬픔",
+   "text": "빌린 소야. 빌려준 사람이 없으니 돌려줄 데도 없어."
+  },
+  {
+   "op": "goto",
+   "to": "OPEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "짐소가 길가 웅덩이에 두 머리를 처박고 물을 먹는다. 호위 둘은 짐을 풀지 않은 채 쪼그려 앉아 있다."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "미소",
+   "text": "마침 잘 왔어. 얘가 물 먹는 동안은 어차피 못 가."
+  },
+  {
+   "op": "goto",
+   "to": "OPEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "짐소가 없다. 호위 둘이 등짐을 하나씩 더 지고 비틀비틀 걷는다."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "피곤",
+   "text": "소 없이 넘으니까 하루 길이 이틀이야. 그래도 장사는 해야지."
+  },
+  {
+   "op": "goto",
+   "to": "OPEN"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "놀람",
+   "text": "뒤돌아보지 마. 아까부터 둘이 따라와. 고가 밑 패거리 척후야."
+  },
+  {
+   "op": "line",
+   "who": "CR-472",
+   "emo": "분노",
+   "text": "짐 내려놓고 서는 순간 덤벼요. 그냥 걸어요."
+  },
+  {
+   "op": "goto",
+   "to": "OPEN"
+  },
+  {
+   "op": "if",
+   "cond": "RE033_ROB > 0 and RE033_ROB <= GAME_DAY and RE033_ROB_SAID == 0",
+   "to": "AFTER_ROB"
+  },
+  {
+   "op": "if",
+   "cond": "UQ05_PEND == 1 or UQ05_PEND == 3 or UQ05_PEND == 4",
+   "to": "PEND"
+  },
+  {
+   "op": "if",
+   "cond": "TR_YEON_MET == 0",
+   "to": "FIRST"
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "피곤",
+   "text": "얼굴은 기억해. 오늘은 장사만 해. 딴생각하면 호위가 먼저 쏜다."
+  },
+  {
+   "op": "do",
+   "fx": "RE033_ROB_SAID = 1"
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "미소",
+   "text": "누렁이 일은 들었어. 길바닥에서 말고, 정류장에서 제대로 갚을게."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "기본",
+   "text": "고개길 수송대 연보경이야. 봉천, 사당, 노들섬 남단을 돌아. 정류장에선 반나절씩 머물고."
+  },
+  {
+   "op": "do",
+   "fx": "TR_YEON_MET = 1"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "물건을 본다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SHOP",
+     "id": "RE-033_TALK:1:0"
+    },
+    {
+     "text": "고개길은 어때?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "ROAD",
+     "id": "RE-033_TALK:1:1"
+    },
+    {
+     "text": "따라오는 놈들은 내가 맡을게",
+     "tags": [],
+     "cond": "RE_V == 4",
+     "fx": "",
+     "to": "SCOUT_GO",
+     "id": "RE-033_TALK:1:2"
+    },
+    {
+     "text": "짐 내려놔. 전부 다",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "보통"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "ROB_OK",
+     "id": "RE-033_TALK:1:3",
+     "fail": "ROB_NO"
+    },
+    {
+     "text": "잘 가",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "BYE",
+     "id": "RE-033_TALK:1:4"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "trade",
+   "args": [
+    "V54"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "do",
+   "fx": "RE033_NEWS = RE033_NEWS + 1"
+  },
+  {
+   "op": "if",
+   "cond": "RE033_NEWS == 1",
+   "to": "R1"
+  },
+  {
+   "op": "if",
+   "cond": "RE033_NEWS == 2",
+   "to": "R2"
+  },
+  {
+   "op": "do",
+   "fx": "RE033_NEWS = 0"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "기본",
+   "text": "사당 고개 검문은 아침이 길어. 해 뜨고 한 시간은 줄만 서."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "기본",
+   "text": "낙성대 고개 비탈에 들개가 늘었어. 호위가 넘을 때마다 돌을 던져 쫓아."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "피곤",
+   "text": "노들섬 남단은 물값이 또 올랐대. 내가 직접 본 건 아니고, 거기서 넘어온 짐꾼 말이야."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "놀람",
+   "text": "진짜? …그럼 우린 계속 걸을게. 다음 정류장에서 보면 내가 한잔 살게."
+  },
+  {
+   "op": "do",
+   "fx": "RE033_HELP = GAME_DAY"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "fight"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "호위 둘이 서로 눈치를 본다. 연보경이 이를 악물고 짐 꾸러미 하나와 캡 주머니를 길바닥에 내던진다."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "분노",
+   "text": "가져가. 대신 얼굴은 똑똑히 봐 뒀어. 다음 정류장에서 장사할 생각은 하지도 마."
+  },
+  {
+   "op": "do",
+   "fx": "caps(40); give(\"I-066\", 1); karma(-50); RE033_ROB = GAME_DAY + 30"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "CR-472",
+   "emo": "분노",
+   "text": "웃기고 있네. 쏴!"
+  },
+  {
+   "op": "do",
+   "fx": "karma(-25); RE033_ROB = GAME_DAY + 30"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "fight"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "미소",
+   "text": "정류장에서 봐. 해진 옷 있으면 그때 가져와."
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/encounters/RE_WORLD.txt"
+}

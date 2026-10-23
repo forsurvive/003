@@ -95,6 +95,8 @@ text 4 18 "역 매점 터. 2077년 가격표가 남았다. '뉴카-콜라 1,500�
 prop work_lamp 6 6
 prop work_lamp 33 6
 prop work_lamp 26 16
+# 1-13e RE-053: 길에서 돌려보낸 승강장 개 돌쇠(낮엔 경비대장 곁)
+npc N-SA-DOG 23 14 W sheet=cr_hwanggu_loco cond="RE053_SA >= 1 and RE053_SA <= 3 and GAME_HOUR >= 6 and GAME_HOUR < 20" bark="(누런 진돗개가 경비대장 곁에 앉아 개찰구 쪽을 본다. 목줄 이름표에 '돌쇠'.)"
 npc N-R01-044 22 13 N cond="GAME_HOUR >= 6 and GAME_HOUR < 20" bark="환승객 여러분, 무기는 개찰구 앞에서 내려놓으십시오. …역장님 말투야. 나도 그렇게 말해."
 npc N-R01-043 12 13 S cond="(GAME_HOUR < 6 or GAME_HOUR >= 20)" bark="밤엔 내가 초소야. 낮엔 광장에서 짐소 빌려주고."
 npc N-SA-G2 27 13 N look=M1-S4-HR01-H1-T06-2-PF12-HD03-EY00-PR041 bark="날개 밀 땐 어깨로. 손 끼면 아파."

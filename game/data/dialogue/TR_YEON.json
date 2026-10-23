@@ -6,36 +6,54 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "AGAIN": 11,
-  "ASK": 12,
-  "U5_REFUSE": 13,
-  "U5_PAY": 15,
-  "U5_PAY_NOWI": 19,
-  "U5_PAY3": 22,
-  "U5_GONE": 25,
-  "U5_GONE1": 29,
-  "U5_TELL": 32,
-  "U5_TELL1": 37,
-  "U5_TELL2": 39,
-  "U5_TELL_END": 40,
-  "U5_PACK": 43,
-  "U5_PACK_COLD": 49,
-  "U5_PACK2": 52,
-  "S6ASK": 55,
-  "S6NOCOW": 59,
-  "S6CARGO": 61,
-  "S6CARGO_NOUM": 65,
-  "S6CARGO_ASK": 66,
-  "S6CARGO_PAY": 67,
-  "S6CARGO_OK": 67,
-  "S6CARGO_NO": 70,
-  "SHOP": 72,
-  "FIX": 74,
-  "UQ01": 76,
-  "UQ01_NOW": 81,
-  "ROAD": 84
+  "AGAIN": 14,
+  "ASK": 15,
+  "RE33_ROBBED": 16,
+  "RE33_AFTER": 18,
+  "RE33_THANKS": 21,
+  "U5_REFUSE": 24,
+  "U5_PAY": 26,
+  "U5_PAY_NOWI": 30,
+  "U5_PAY3": 33,
+  "U5_GONE": 36,
+  "U5_GONE1": 40,
+  "U5_TELL": 43,
+  "U5_TELL1": 48,
+  "U5_TELL2": 50,
+  "U5_TELL_END": 51,
+  "U5_PACK": 54,
+  "U5_PACK_COLD": 60,
+  "U5_PACK2": 63,
+  "S6ASK": 66,
+  "S6NOCOW": 70,
+  "S6CARGO": 72,
+  "S6CARGO_NOUM": 76,
+  "S6CARGO_ASK": 77,
+  "S6CARGO_PAY": 78,
+  "S6CARGO_OK": 78,
+  "S6CARGO_NO": 81,
+  "SHOP": 83,
+  "FIX": 85,
+  "UQ01": 87,
+  "UQ01_NOW": 92,
+  "ROAD": 95
  },
  "ops": [
+  {
+   "op": "if",
+   "cond": "RE033_ROB > GAME_DAY",
+   "to": "RE33_ROBBED"
+  },
+  {
+   "op": "if",
+   "cond": "RE033_ROB > 0 and RE033_ROB <= GAME_DAY and RE033_ROB_SAID == 0",
+   "to": "RE33_AFTER"
+  },
+  {
+   "op": "if",
+   "cond": "RE033_HELP > 0 and RE033_HELP_SAID == 0",
+   "to": "RE33_THANKS"
+  },
   {
    "op": "if",
    "cond": "UQ05_REFUSE_DAY > GAME_DAY",
@@ -173,6 +191,44 @@
      "id": "TR_YEON:1:8"
     }
    ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "분노",
+   "text": "너하곤 장사 안 해. 고개에서 그 짓을 해 놓고 여기서 물건을 보겠다고?"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "피곤",
+   "text": "얼굴은 기억해. 오늘은 장사만 해. 딴생각하면 호위가 먼저 쏜다."
+  },
+  {
+   "op": "do",
+   "fx": "RE033_ROB_SAID = 1"
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-040",
+   "emo": "미소",
+   "text": "고개에서 척후 맡아 준 거, 호위들이 아직도 얘기해. 약속했지? 한잔."
+  },
+  {
+   "op": "do",
+   "fx": "give(\"I-060\", 1); RE033_HELP_SAID = 1"
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
   },
   {
    "op": "line",

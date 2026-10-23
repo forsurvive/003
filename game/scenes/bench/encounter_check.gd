@@ -88,6 +88,7 @@ func _ready() -> void:
 						done_ = true
 		print("상판 위에 섬: ", host.map.tile_of(host.player.loco.logical), " 층 ", host.player.floor_id)
 	host.enc_live._ctx(host.map.tile_of(host.player.loco.logical))
+	req["force"] = true                                                  # 신림 고가 아래는 깡철이 마당(1-13a3) — 활성 상한을 넘어도 확인할 RE는 세운다
 	var ok := host.enc_live.start(req)
 	if not ok and mode == "re":
 		print("세움 실패 진단: 산 적 ", host.combat.alive_enemies(), " 위협 ", Encounters.threat_at(host.map.tile_of(host.player.loco.logical)),

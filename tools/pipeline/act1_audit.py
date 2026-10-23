@@ -188,11 +188,19 @@ def npcs():
     add("외형", "한 맵 안 같은 외형(이름 있는 인물)", "통과" if dup == 0 else "실패", "%d건" % dup)
 
 
+# 표 밖에서 원고 · 진행기가 맡은 RE(1-13e): 장면이 있으면 센다
+STORY_RE = {"RE-045": "UQ04_FEUD"}                     # 창고 다툼 — UQ-04 진행기 uq04.gd가 06:00 판정으로 세운다
+
+
 def encounters():
     e = load(os.path.join(DATA, "world", "encounters.json"))
     re_ = e.get("re", {})
-    r12 = [k for k, v in re_.items() if set(v.get("regions", [])) & {"R01", "R02", "*"} or not v.get("regions")]
-    add("인카운터", "R01 · R02 RE 종류", "통과" if len(r12) >= 30 else "실패", "%d종 / 기본 표 30종(SD-19 §5 · D-130)" % len(r12))
+    r12 = [k for k, v in re_.items() if (set(v.get("regions", [])) & {"R01", "R02", "*"} or not v.get("regions"))
+           and re.fullmatch(r"RE-(\d{3}|X\d{2})", k)]           # RE-104E 같은 판(같은 RE의 다른 인물)은 따로 세지 않는다
+    scenes = set(load(os.path.join(DATA, "dialogue", "_index.json")).get("scenes", []))
+    story = [k for k, sc in STORY_RE.items() if sc in scenes and k not in r12]
+    add("인카운터", "R01 · R02 RE 종류", "통과" if len(r12) + len(story) >= 30 else "실패",
+        "%d종(표 %d + 원고 %s) / 기본 표 30종(SD-19 §5 · D-130)" % (len(r12) + len(story), len(r12), ", ".join(story) or "없음"))
 
 
 def reach():

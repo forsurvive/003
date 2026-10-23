@@ -40,7 +40,8 @@ def main():
                "N-BJ-P1": sheet_look["en_cr403_loco"], "N-BJ-P2": sheet_look["en_cr401_loco"],
                "N-BJ-C1": sheet_look["en_cr403_loco"], "N-SB-R1": sheet_look["en_cr435_loco"],
                "N-SB-L1": sheet_look["en_cr438_loco"], "N-SB-H1": sheet_look["en_cr435_loco"], "N-JY-P1": sheet_look["en_cr452_loco"],
-               "N-ND-G1": sheet_look["en_downed_loco"],
+               "N-ND-G1": sheet_look["en_downed_loco"], "N-SURV": sheet_look["en_downed_loco"], "N-STRAY": sheet_look["en_refugee_b_loco"],
+               "N-GS-N1": sheet_look["en_cr460b_loco"],                                                # 1-13e 조난 생존자 · 개 파는 떠돌이 · 각성회 신참
                "N-GA-T1": sheet_look["en_cr423_loco"], "N-BJ-C2": sheet_look["en_cr403_loco"], "N-DS-E1": sheet_look["en_cr401_loco"], "N-DS-E2": sheet_look["en_cr401_loco"]}   # 1-12n 가산 셈꾼(2층 거래 자리 CR-423) · 1-12g UQ-03 대리 분대장 · RE-104 탈영병   # 1-12f FQ-SB-02 인솔 반장 · 출장소 인수원 · 방범대 조장 · 노들 남문 경비   # 1-12e FQ-JH-03 다리목 분대장 · 새벽인력 모집원
     for sid in sorted(speakers) + sorted(looks):
         look = looks.get(sid) or npcs.get(sid, {}).get("look", "") or en_look.get(sid, "")

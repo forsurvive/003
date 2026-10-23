@@ -157,6 +157,8 @@ prop anvil 47 35
 prop hangyeol_bench 49 34
 prop drum_fire 42 37
 prop hunter_shack 51 35
+# 1-13e RE-039: 산에서 사냥꾼을 만난 날은 16시까지 오두막이 비고 문에 쪽지(P3 — 한 사람은 한 곳)
+text 52 37 "오두막 문에 꽂힌 쪽지. '산에 감. 해 기울면 내려옴. 고기 맡길 사람은 저녁에. — 엄태경'" cond="HUNT_OUT == GAME_DAY and GAME_HOUR < 16"
 text 52 36 "사냥꾼 오두막. 함석 지붕 처마에 멧돼지 다리가 매달려 있다. 연기 냄새와 소금 냄새." w=3
 prop hide_rack 55 35
 text 55 35 "가죽 말림 틀. 들개 가죽 두 장이 나무 틀에 팽팽하게 매여 있다."
@@ -262,6 +264,8 @@ prop water_tank_s 33 8
 prop antenna 23 7
 prop laundry_line 31 6
 text 25 11 "봉천 새마음빌라 1동. 옥상에 옥탑 이장실이 있다."
+# 1-13e RE-053: 길에서 돌려보낸 감시조 개 먹순이(1 돌려보냄 · 2 고마움 받음 · 3 제 발로 — 4는 떠돌이가 끌고 가 없음)
+npc N-BC-DOG 30 38 W sheet=cr_hwanggu_loco cond="RE053_BC >= 1 and RE053_BC <= 3" bark="(누런 진돗개가 아랫문 볕에 엎드려 있다. 파란 목줄 이름표에 '먹순이'.)"
 npc N-R01-028 28 37 S cond="(MQ101_NIGHT == 0 or MQ101_RESULT != 0) and SQ_S02_FIGHT == 0 and not (UQ64_D414 == 1 and GAME_DAY > UQ64_D414_DAY)"
 npc N-R01-028 28 37 S cond="(MQ101_NIGHT == 0 or MQ101_RESULT != 0) and SQ_S02_FIGHT == 0 and UQ64_D414 == 1 and GAME_DAY > UQ64_D414_DAY" bark="(아랫문 기둥에 국방색 끈 한 가닥) …어머니가 그러더라. 우리 집이 원래 기다리는 집이었대."
 # 1-12i UQ-64 「귀환 유해 대장」: 꼬리표 주소의 대문 셋(3동 조씨 할매 · 312계단 위 4동 남씨네 · 오씨네 고물 옛 문패) · 게시판 옆 반상회 명부
@@ -286,8 +290,8 @@ npc N-R01-029 34 36 E cond="MQ101_STAGE >= 100 and GAME_HOUR >= 7 and GAME_HOUR 
 npc N-R01-029 34 36 E cond="MQ101_STAGE >= 100 and GAME_HOUR >= 7 and GAME_HOUR < 9 and UQ02_GONE_DAY > 0" bark="백구 요새 밥 다 먹더라. 남기던 게 끝났어."
 npc N-R01-030 46 35 W cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0"
 npc N-R01-031 39 21 S cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0" route=school:39,21,6;stair:33,22,3
-npc N-R01-033 52 37 W cond="(MQ101_NIGHT == 0 or MQ101_RESULT != 0) and not (UQ02_SAW == 1 and UQ02_END == 0)"
-npc N-R01-033 52 37 W cond="(MQ101_NIGHT == 0 or MQ101_RESULT != 0) and UQ02_SAW == 1 and UQ02_END == 0" bark="개천 둑에 작은 발자국. 들개 새끼야. 크면 들개지 — 마을에 두려면 백구가 가르쳐야 하고, 산에 두면 산이 가르치지."
+npc N-R01-033 52 37 W cond="(MQ101_NIGHT == 0 or MQ101_RESULT != 0) and not (UQ02_SAW == 1 and UQ02_END == 0) and not (HUNT_OUT == GAME_DAY and GAME_HOUR < 16)"
+npc N-R01-033 52 37 W cond="(MQ101_NIGHT == 0 or MQ101_RESULT != 0) and UQ02_SAW == 1 and UQ02_END == 0 and not (HUNT_OUT == GAME_DAY and GAME_HOUR < 16)" bark="개천 둑에 작은 발자국. 들개 새끼야. 크면 들개지 — 마을에 두려면 백구가 가르쳐야 하고, 산에 두면 산이 가르치지."
 npc N-R01-035 30 29 S cond="(MQ101_NIGHT == 0 or MQ101_RESULT != 0) and SQ_S02_FIGHT == 0 and SQ_S04_FIGHT == 0"
 npc N-R01-036 46 12 S cond="(MQ101_NIGHT == 0 or MQ101_RESULT != 0) and SQ_S02_FIGHT == 0 and SQ_S04_FIGHT == 0" route=tower:46,12,8;top:40,14,4 bark="망루 교대는 두 시간. 계단 위는 내 자리야."
 npc N-R01-501 10 28 E cond="MQ101_NIGHT == 0 or MQ101_RESULT != 0" route=a:10,28,5;b:18,28,4

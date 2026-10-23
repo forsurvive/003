@@ -62,7 +62,7 @@ ENGINE_VARS = {"PC_ST", "PC_PE", "PC_EN", "PC_CH", "PC_IN", "PC_AG", "PC_LK", "P
                "MQ103_DOOR", "MQ103_CONF", "MQ103_LOG", "MQ103_AMBUSH", "MQ103_NEST", "MQ103_FOUNT", "JM_REG", "JM_GU_MET",
                "GAME_HOUR", "GAME_WDAY", "SB_RAID", "SB_PASS", "SB_DOGS", "SB_SAFE", "SB_KEY", "SB_FREED", "SB_READ", "SB_DEAL",
                "SB_BURNT", "SB_DEBT", "SB_BJ", "SB_TALK", "SB_BOUGHT", "SB_DEPO", "SB_127", "GB_PASS",
-               "MQ106_CUSTODY", "MQ106_TALKED", "MQ106_SEIZED", "MQ106_AT", "MQ106_QLINE", "MQ106_QWHY", "MQ106_QGRID", "MQ106_QDEAD", "MQ106_QSIGN", "NAMGUNG_MET", "WANTED_PRE",
+               "CAPS_EARNED", "MQ106_HIDE_T", "MQ106_CUSTODY", "MQ106_TALKED", "MQ106_SEIZED", "MQ106_AT", "MQ106_QLINE", "MQ106_QWHY", "MQ106_QGRID", "MQ106_QDEAD", "MQ106_QSIGN", "NAMGUNG_MET", "WANTED_PRE",
                "PD_R01_BJ", "WANTED_HOLD", "RE036_MET", "RE036_NEWS", "RE042_N", "VG_TALK", "VG_NEWS", "UQ125_WHO", "UQ125_HERE", "UQ125_KID", "UQ125_GUARD", "UQ125_FENCE", "UQ125_R", "HOME_BC", "HOME_BC_OK", "WELL_RESTED", "HOME_BC_NOTE", "BAEKGU_NAP", "INFO_RUMOR_R01", "INFO_RUMOR_R02", "INFO_TURF_DAY", "CARAVAN_V54", "MEDIC_AT", "TR_YEON_MET", "TR_SO_MET", "TR_EOM_MET",
                "SD_MET_HUH", "SD_MET_PYO", "SD_MET_WI", "SD_MET_SEONG", "SD_MET_BAN", "SD_BAN_WEST", "SD_MET_TAK", "SA_MAKCHA_HEARD", "SA_MAT_UNTIL", "SD_MAP_UG", "SD_BOARD_SEEN", "SD_LR05", "SD_LR09", "U02_OPEN",
                "SG_MET_HWANG", "SG_MET_KWON", "SG_KWON_REG", "SG_REFUSED", "SG_ISSUED", "GS_MET_RJ", "GS_MET_HAN", "GS_MET_EUNSOL", "GS_MET_MA", "GS_MET_HA", "GS_CARD_SEEN", "GS_LR50", "BC_DOUBT_DAY",
@@ -82,6 +82,8 @@ ENGINE_VARS |= {"UQ71_" + k for k in "CORE SQ HEARD DAY DUE SOL REWARD TALK SEEN
 ENGINE_VARS |= {"U02_" + k for k in ("GUIDE INTRO LIGHT LIGHT_DAY ASK HAL HAL_DAY HFEE PATH TRACE USED FOUND SOL SHIFT SIDE FEE FN FW FS FR FD "
                                      "HAGGLED PASSED RADIO GAP_DAY PATROL_DAY VENT MET_EOM MET_HAL MET_AJAE BACKDOOR PHOTO PHOTO_TRY FORGE_TRY RING1 LASTFEE PATROL RULES").split()}
 # UQ-04 7호 냉동 창고(1-D3, SD-05 UQ-04 · 1-D 계획 §9 · §9.6): 사실 한 곳 — 원고 script/act1/UQ-04.txt 머리 주석 · DS_VALVE 가공장 배수 밸브
+ENGINE_VARS |= {"RE_V", "RE_VM", "RE033_ROB", "RE033_HELP", "RE033_HELP_SAID", "RE033_NEWS", "HUNT_OUT", "RE039_LAIR", "REVEAL_OK", "RE041_N",
+                "RE053_BC", "RE053_SA", "GIFT_DAY", "GS_PIPCHAT", "RE033_ROB_SAID", "RE053_BUY", "GS_GUESTSAID"}   # 1-13e 기본 RE 30종(판 표지 · 길 위 수송대 · 산 사냥꾼 · 조난 신호 · 길 잃은 개 · 각성회 탁발)
 ENGINE_VARS |= {"UQ04_" + k for k in "KNOW OPEN OPEN_DAY LOCK DUE THAW THAW_DAY GONE LEFT COLD COLD_DAY BC BC_DAY SA SA_DAY JH JH_DAY LEAK FEUD FEUD_DAY RATK SHARD SHELF SOL REWARD LINK2 LINK3 FLED DATE SIGN PRICE BACK REFUND".split()} | {"DS_VALVE"}
 # R01 비표시 퀘스트 넷(1-12g, SD-05 §3.23~§3.26 · 진행기 UqR01): 뜻은 script/act1/UQ-01 · 02 · 03 · 05.txt 머리 주석
 ENGINE_VARS |= {"UQ01_" + k for k in "TALKS SOL CODE RELAY RELAYED LR13 FAILED HINT THEFT_DAY WITNESS SEEN SEEN_SAID BAN_DAY GUEST SERVED TIN_SAID TIN_BC".split()} | {"V24_" + k for k in "HOSTILE WEEK N1 N2 N3 N4 TICKETS SEEN".split()} \
@@ -113,7 +115,8 @@ ENGINE_VARS |= {"KT_" + k for k in "POWER POWER_DAY NOTE CALL RING RING2 MEM HOO
 # 던전 정리 변수(1-D0, script/world/dungeons.txt): DG_<접미> 0 손 안 댐 · 1 정리 · 2 다시 들어섬 / _DAY 정리 · 재입주 날 / _ROLL 재입주를 굴린 날
 ENGINE_VARS |= {f"DG_{m}{s}" for m in re.findall(r"^@\s+([A-Z0-9]+)\s", open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "script", "world", "dungeons.txt"), encoding="utf-8").read(), re.M)
                 for s in ("", "_DAY", "_ROLL")}
-UNNAMED = {"N-TRADER": "떠돌이 고물상", "N-VG-S1": "고물상", "N-VG-H1": "약초꾼", "N-VG-P1": "부품 장수", "N-VG-C1": "옷 장수",
+UNNAMED = {"N-OX": "짐소", "N-SURV": "다친 생존자", "N-JINDO": "진돗개", "N-STRAY": "떠돌이", "N-GS-N1": "각성회 신참", "N-BC-DOG": "먹순이", "N-SA-DOG": "돌쇠",   # 1-13e 기본 RE
+           "N-TRADER": "떠돌이 고물상", "N-VG-S1": "고물상", "N-VG-H1": "약초꾼", "N-VG-P1": "부품 장수", "N-VG-C1": "옷 장수",
            "N-VG-F1": "국밥 장수", "N-VG-D1": "떠돌이 장사꾼", "N-UQ-K1": "아이", "N-UQ-C1": "털이꾼", "N-GA-B1": "패거리 두목", "N-GA-S1": "인솔조", "N-GA-S2": "인솔조", "N-GA-T1": "패거리 셈꾼", "N-SB-W1": "오늘의 인력", "N-SB-W2": "오늘의 인력", "N-SB-W3": "오늘의 인력", "N-MR-W1": "문래 철공", "N-MR-W2": "문래 철공", "N-HP-F1": "원무과 직원", "N-HP-F2": "조리원", "N-HP-F3": "야간 경비", "N-HP-F4": "방사선사", "N-HP-F5": "간호조무사", "N-HP-F6": "안과 외래 간호사", "N-HP-F7": "안과 레지던트", "N-JM-B1": "배수구 어미", "N-HP-L1": "탁정오", "N-HP-L2": "길순례", "N-HP-L3": "오재민", "N-HP-P1": "변미숙", "N-HP-P2": "남궁호", "N-HP-P3": "기도윤", "N-HP-P4": "차미영", "N-YTB-1": "남기범", "N-YTB-2": "김밥집 주인",                    # 1-L 일반 장사꾼
            "N-REFUGEE": "피난민", "N-DOWNED": "쓰러진 민병", "N-HS-E1": "수송대 호위", "N-HS-E2": "수송대 호위",
            "CR-091": "짐소", "N-UQ5-COW": "누렁이",                                                     # 1-8d 고개길 수송대

@@ -26,6 +26,9 @@ const CALM_MAX := 0.15
 const RECENT_N := 6                               ## 반복 피하기: 최근 6건
 const RECAT_MIN := 12 * 60                        ## 같은 청크 12게임시간 안에는 다른 범주
 const STATES := ["S1", "S2", "S3", "S4", "S5", "S6", "S7"]
+## 같은 RE 쿨다운(SD-05 §6.6, 1-13e 밸런스 조율): 같은 판도 구역에서 2게임일(상인 3일 · 세력 교전 1일) 안에는 다시 나오지 않는다. 표의 cool(시간)이 있으면 그것
+const COOL_H := {"trader": 72, "clash": 24}
+const COOL_DEFAULT_H := 48
 ## 표가 없을 때(시험 자료·옛 자료)의 기본 RE — 표("re")가 있으면 표가 이긴다
 const RES := {
 	"RE-087": {"name": "생포 추적대(새벽인력)", "cat": "tracker", "regions": "*", "no_regions": ["R05"], "time": "any", "weight": 0,
@@ -204,6 +207,10 @@ func _ep_check(t: Vector2i, now: int, night: bool) -> Dictionary:
 		if str(ep.get("cond", "")) != "" and not StoryExpr.test(str(ep["cond"]), st):
 			continue                                                    # 정본 밖 조건(EP_FIX — 1-13a3 깡철이 마당)
 		var p: float = float(ep.get("p_night", ep["p"])) if night else float(ep["p"])
+		for r0 in res:
+			for mi in re_def(str(r0)).get("mult_if", []):                 # 그 RE의 조건 배수도 EP에(RQ-22 중 영등포시장역 쥐 절반)
+				if StoryExpr.test(str(mi[0]), st):
+					p *= float(mi[1])
 		var roll := rng.randf()
 		trace.append({"src": "ep:" + id, "t": t, "threat": threat_at(t), "p": p, "roll": roll, "re": ""})
 		e["ep"][id] = -1 if bool(ep["once"]) else now
@@ -397,27 +404,82 @@ static func _time_ok(d: Dictionary, night: bool, hour: int) -> bool:
 	return true
 
 
+## 장소 반경(1-13e): near = [장소 ID, x, y, 청크] — 판정 칸이 그 장소에서 이 청크 안일 때만 후보(국회 왕개미 · 영등포 지하상가 쥐)
+static func near_ok(d: Dictionary, t: Vector2i) -> bool:
+	if not d.has("near"):
+		return true
+	if t.x < 0:
+		return false
+	var n: Array = d["near"]
+	var r := int(n[3]) * CHUNK
+	return absi(t.x - int(n[1])) <= r and absi(t.y - int(n[2])) <= r
+
+
+## 판 고르기(1-13e, SD-22 '같은 RE도 매번 다르게'): variants = [{w, cond, …덮어쓸 칸}] — 조건이 맞는 판 하나를 가중으로 골라
+## 정의에 덮어 쓴 사본(어느 판인지 "variant"에 번호). 판이 없으면 정의 그대로
+func with_variant(re: String) -> Dictionary:
+	var d := re_def(re)
+	var vs: Array = d.get("variants", [])
+	if vs.is_empty():
+		return d
+	var ok: Array = []
+	var total := 0.0
+	for i in vs.size():
+		var v: Dictionary = vs[i]
+		if str(v.get("cond", "")) != "" and not StoryExpr.test(str(v["cond"]), st):
+			continue
+		ok.append(i)
+		total += _vw(v)
+	if ok.is_empty():
+		return d
+	var r := rng.randf() * total
+	var pick: int = ok[-1]
+	for i in ok:
+		r -= _vw(vs[i])
+		if r <= 0.0:
+			pick = i
+			break
+	var out := d.duplicate()
+	for k in vs[pick]:
+		if k not in ["w", "cond"]:
+			out[k] = vs[pick][k]
+	out["variant"] = pick
+	return out
+
+
+## 판 가중: 행운 판(luck — 조난 신호의 생존자 · 유해)은 ×(0.5 + 행운 × 0.1)(SD-05 §5 '행운' 표기 · SD-10)
+func _vw(v: Dictionary) -> float:
+	var w := float(v.get("w", 1)) * ((0.5 + st.stat("LK") * 0.1) if bool(v.get("luck", false)) else 1.0)
+	if v.has("w_if") and StoryExpr.test(str(v["w_if"][0]), st):
+		w *= float(v["w_if"][1])                                        # 조건 가중(녹음 유해 판 — 한 번 들은 뒤엔 절반: 따라가도 빈손이 잦지 않게)
+	return w
+
+
 ## 후보 하나를 가중으로 고른다(§3.6 · §3.7 · §4.2 · §3.5). 없으면 ""
 func _pick(region: String, night: bool, t: Vector2i) -> String:
 	var tab := table()
 	var cw := _cat_table(region, t)
-	var cat_sum := {}
-	for id in tab:
-		var c := str(tab[id].get("cat", ""))
-		cat_sum[c] = float(cat_sum.get(c, 0.0)) + float(tab[id].get("weight", 0))
 	var th := threat_at(t) if t.x >= 0 else 0
-	var ids: Array = []
-	var ws: Array = []
-	var total := 0.0
+	# 범주 몫의 분모는 이 판정에서 설 수 있는 후보의 기본 가중 합(1-13e 밸런스 조율 — 다른 권역 · 밤 전용 · 꺼진 RE가 범주 몫을 깎지 않게)
+	var ok: Array = []
+	var cat_sum := {}
 	for id in tab:
 		var d: Dictionary = tab[id]
 		var c := str(d.get("cat", ""))
-		if c == "tracker" or float(d.get("weight", 0)) <= 0.0 or float(cat_sum.get(c, 0.0)) <= 0.0:
+		if c == "tracker" or float(d.get("weight", 0)) <= 0.0:
 			continue
-		if not _allowed(d, region, night, th):
+		if not _allowed(d, region, night, th) or not near_ok(d, t) or cooling(str(id), t):
 			continue
+		ok.append(id)
+		cat_sum[c] = float(cat_sum.get(c, 0.0)) + float(d["weight"])
+	var ids: Array = []
+	var ws: Array = []
+	var total := 0.0
+	for id in ok:
+		var d: Dictionary = tab[id]
+		var c := str(d.get("cat", ""))
 		var w: float = float(cw.get(c, 0)) * float(d["weight"]) / float(cat_sum[c])
-		w *= fit_mult(d) * cat_mult(d, region, t, night) * _repeat_mult(str(id), c, t) * _patrol_share(d, cw)
+		w *= fit_mult(d) * cat_mult(d, region, t, night) * pick_mult(d, t) * _repeat_mult(str(id), c, t) * _patrol_share(d, cw)
 		if night:
 			w *= float(d.get("night_w", 1.0))
 		if w > 0.0:
@@ -519,6 +581,27 @@ func cat_mult(d: Dictionary, region: String, _t: Vector2i, night: bool) -> float
 		m *= 1.2
 	elif karma <= -750 and c == "trader":
 		m *= 0.7
+	for mi in d.get("mult_if", []):                                      # 조건 배수(1-13e — RQ-22 배수구 청소 중이면 지하상가 쥐 절반 등)
+		if StoryExpr.test(str(mi[0]), st):
+			m *= float(mi[1])
+	return m
+
+
+## 고르기에만 거는 배수(SD-05 §6.3 표 선택 보정 — 굴림 확률에는 넣지 않는다, 1-13e 밸런스 조율 뒤 확인):
+## 위협도(위1~2 상인 ×1.5 · 사건 ×1.3 / 위4~5 상인 ×0.5 · 적대 크리처 ×1.3) · 신호 RE(RE-041 라디오 켜짐 ×2 · 아마추어 무선사 PK-041 ×1.5)
+func pick_mult(d: Dictionary, t: Vector2i) -> float:
+	var c := str(d.get("cat", ""))
+	var m := 1.0
+	var th := threat_at(t) if t.x >= 0 else 0
+	if th in [1, 2]:
+		m *= 1.5 if c == "trader" else (1.3 if c == "event" else 1.0)
+	elif th >= 4:
+		m *= 0.5 if c == "trader" else (1.3 if c == "creature" else 1.0)
+	if d.has("radio"):
+		if bool(ctx.get("radio", false)):
+			m *= float(d["radio"])
+		if Perks.rank(st, "PK-041") > 0:
+			m *= 1.5
 	return m
 
 
@@ -538,8 +621,8 @@ func _repeat_mult(id: String, c: String, t: Vector2i) -> float:
 
 
 ## 상황 고르기(§3.1): RE의 states 가중 × 밤 S4·S2 ×1.5 / 낮 S1·S5 ×1.3 × 최근 같은 상황 ×0.5. 세 번 놓친 무리는 야영(S4)
-func pick_state(re: String, night: bool) -> String:
-	var d := re_def(re)
+func pick_state(re: String, night: bool, def := {}) -> String:
+	var d := def if not def.is_empty() else re_def(re)
 	var sts: Dictionary = d.get("states", {"S1": 1})
 	var pack: Dictionary = enc().get("packs", {}).get(re, {})
 	if int(pack.get("lost", 0)) >= 3 and sts.has("S4"):
@@ -569,8 +652,25 @@ func pick_state(re: String, night: bool) -> String:
 	return str(keys[-1]) if not keys.is_empty() else "S1"
 
 
+## 쿨다운 중인가(SD-05 §6.6): 같은 판도 구역(밖이면 권역 칸 '*')에서 그 RE가 나온 뒤 정한 시간이 안 지났다
+func cooling(re: String, t: Vector2i) -> bool:
+	var cl: Dictionary = enc().get("cool", {})
+	var k := "%s@%s" % [re, Turf.zone_at(t) if t.x >= 0 else "*"]
+	return cl.has(k) and now_min < int(cl[k])
+
+
 func _remember_pick(re: String, state: String, t: Vector2i) -> void:
 	var e := enc()
+	var d := re_def(re)
+	var cat := str(d.get("cat", ""))
+	if cat != "tracker":
+		var cl: Dictionary = e.get("cool", {})
+		for k in cl.keys():
+			if now_min >= int(cl[k]):
+				cl.erase(k)                                              # 지난 쿨다운은 버린다(저장 크기)
+		var hours := int(d.get("cool", COOL_H.get(cat, COOL_DEFAULT_H)))
+		cl["%s@%s" % [re, Turf.zone_at(t) if t.x >= 0 else "*"]] = now_min + hours * 60
+		e["cool"] = cl
 	var recent: Array = e.get("recent", [])
 	recent.append([re, state])
 	while recent.size() > RECENT_N:
@@ -591,8 +691,8 @@ func _remember_pick(re: String, state: String, t: Vector2i) -> void:
 # ---------------------------------------------------------------- 편성
 ## 편성(§3.2, 레벨 구간 1~7 · 8~14 · 15~21 · 22+, SD-14 §9.13 — 구간마다 +1, 최대에서 멈춤).
 ## [{"side", "hostile", "ids": [CR…], "hurt": [0이면 성함, 아니면 HP 비율]}]. 놓친 무리가 남아 있으면 그 무리가 다시 나온다(§3.5)
-func groups(re: String, level: int, state: String = "S1") -> Array:
-	var d := re_def(re)
+func groups(re: String, level: int, state: String = "S1", def := {}) -> Array:
+	var d := def if not def.is_empty() else re_def(re)
 	var band := 0 if level <= 7 else (1 if level <= 14 else (2 if level <= 21 else 3))
 	var pack: Dictionary = enc().get("packs", {}).get(re, {})
 	var out: Array = []
@@ -606,7 +706,7 @@ func groups(re: String, level: int, state: String = "S1") -> Array:
 				n = mini(rng.randi_range(int(u[1]), int(u[2])) + band, int(u[2]))
 			for i in n:
 				ids.append(str(u[0]))
-		if g.has("leader") and rng.randf() < float(g["leader"][1]):
+		if g.has("leader") and level >= (int(g["leader"][2]) if (g["leader"] as Array).size() > 2 else 0) and rng.randf() < float(g["leader"][1]):   # 세 번째 칸 = 주인공 레벨 문턱(왕쥐 Lv5+)
 			ids.push_front(str(g["leader"][0]))
 		if str(g.get("side", "a")) == "a":
 			for m in d.get("mix", []):

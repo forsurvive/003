@@ -94,12 +94,21 @@ EP_FIX = {
                   "fix": "깡철이 결말 뒤에만 · 확률 절반(SD-05 RE-002 '두목 처리 뒤 ×0.5')"},  # 결말 뒤엔 흩어진 졸개가 가끔 돌아온다
 }
 
+## 구현 정합 새 EP(정본 EP 표 밖 — 1-13e 밸런스 조율): 국회 왕개미 · 지하상가 쥐는 자리 RE인데 그 청크가 정착지 반경(지하시장)에 걸려
+## 일반 판정이 거의 없다 → 정문 · 역 입구에 반복 EP(72게임시간). SD-05 RE-008 '역 진입 판정 1회'와 같은 결
+EP_EXTRA = [
+    {"id": "EP-X-R02-01", "where": "무너진 국회 정문(L-R02-01)", "kind": "자리(반복)", "pos": [758, 1059], "once": False, "repeat": True,
+     "re": ["RE-006"], "rule": "들어설 때 35%", "p": 0.35, "src": "1-13e 구현 정합"},
+    {"id": "EP-X-UG-06", "where": "영등포시장역 입구(L-UG-06)", "kind": "자리(반복)", "pos": [716, 1113], "once": False, "repeat": True,
+     "re": ["RE-008"], "rule": "들어설 때 30% · 밤 45%", "p": 0.3, "p_night": 0.45, "src": "1-13e 구현 정합"},
+]
+
 
 def main():
     places = json.load(open(os.path.join(ROOT, "game", "data", "world", "places.json"), encoding="utf-8"))
     grid = threat_grid()
     ch = chance_table()
-    ep = eps(places)
+    ep = eps(places) + EP_EXTRA
     sett = sorted([[lid, p["tx"], p["ty"]] for lid, p in places.items() if p["type"] == "정착지" and p["region"] not in ("UG",)])
     json.dump({"threat": grid, "chance": ch, "ep": ep, "settlements": sett}, open(OUT, "w", encoding="utf-8"),
               ensure_ascii=False, separators=(",", ":"))
