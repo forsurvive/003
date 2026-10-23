@@ -16,8 +16,19 @@ ALLOW = os.path.join(os.path.dirname(__file__), "balance_allow.yaml")
 COND_R = {"new": 1.0, "good": 0.87, "worn": 0.79, "poor": 0.70}       # combat_rules.gd COND_DMG_RANGED
 COND_M = {"new": 1.0, "good": 0.82, "worn": 0.69, "poor": 0.57}
 TTK = {"약": (1, 2), "중": (3, 6), "강": (7, 15), "전설": (20, 35), "유일": (45, 120)}   # SD-11 §10.3 · SD-14 §2.4
-## 그 레벨대 표준 무기(SD-11 §10.3 '해당 레벨대 표준 무기' — SD-13 등장 레벨 · 값으로 고른 대표). 가장 센 하나로 잰다(플레이어는 좋은 걸 든다)
-STD_WEAPON = [(6, ["W-002", "W-013", "W-001"]), (12, ["W-017", "W-018", "W-014"]), (20, ["W-023", "W-022", "W-020"]), (99, ["W-024", "W-019"])]   # 산탄총은 붙어 쏠 때만 세서 표준에서 뺀다
+## 그 레벨대 표준 무기(SD-11 §10.3 '해당 레벨대 표준 무기' — 정의가 없어 조율사 제안을 따름: 그 레벨대에 흔히 쥐는 반자동 대표 · 정본 제안 1).
+## 연사 무기는 빨리 죽이는 대신 탄을 쓰는 맞바꿈(SD-11 §10.1-3)이라 '중 2초 이상'으로 따로 본다(명중 0.6 — 반동 +0.5°/발).
+## Lv7~12의 돌격소총(W-018)은 전리품 풀 3(Lv13~)이라 1막 표준이 아니다
+STD_WEAPON = [(6, ["W-002"]), (12, ["W-004"]), (20, ["W-008", "W-022"]), (99, ["W-023", "W-024"])]
+AUTO_WEAPON = [(12, "W-017"), (20, "W-018"), (99, "W-019")]
+HIT_AUTO = 0.6
+TIER_FIX = {"CR-082": ("전설", "원작 압축 HP 750 · 군락 여왕(SD-14 §2.4 압축 규칙) — 조율사"),
+            "CR-405": ("강", "파워 아머 병종(SD-11 §10.3 예 '파워 아머 분대장' = 강)")}
+BOSS_REF = {"CR-513": 12}                                               # 레벨 비례 스토리 보스: XP 기준 레벨(SD-14 §10.2 '65(Lv12 기준)')
+## 위협 1~2 권역 필드 보스: 몸만이 아니라 교전 전체(호위 무리 · 부화 · 도주 문턱)로 잰다 — 목표 35~60초는 정본 제안 2(사용자 결정 대기)
+BOSS_FIGHT = {"CR-500": {"adds": [("CR-104", 4), ("CR-105", 3)], "flee": 0.3, "why": "무리 6~8 · HP 30% 도주(SD-14 §10.2 외눈)"},
+              "CR-501": {"adds": [("CR-002", 6), ("CR-001", 3)], "flee": 0.0, "why": "15초마다 큰바퀴 셋 부화 · 페이즈 3 잔바퀴 떼 셋(SD-14 배수구 어미)"}}
+ENGAGE_K = 1.5                                                          # 교전 전체: 움직임 · 재장전 · 다시 겨눔(조율사 추정 '지속 30초 → 움직임까지 40~50초')
 PART_AVG = (12 * 2.0 + 88 * 1.0) / 100.0                               # 사람 부위 가중(머리 12 × 2 · 나머지 × 1 — combat_rules PART_MULT · HUMANOID_WEIGHTS)
 CRIT_AVG = 1.05                                                         # 행운 5 × 무기 배수 1 → 치명 5%(치명 피해 ≈ 기본 피해)
 ## 그 레벨대 표준 방어구 DR(SD-13 몸통 표에서 그 구간에 흔히 구하는 것 — 1막 작업복 4 · 2~3막 약탈자 아머 18 · 3~5막 강화 가죽 28 · 그 뒤 전투 아머 32)
@@ -27,9 +38,38 @@ HIT_EN = 0.55                                                           # 적 �
 EN_SKILL = 45.0                                                         # Enemy.skill 기본(systems/ai/enemy.gd)
 BITE_CD = 1.1                                                           # Enemy._bite 주기
 CLAW_RATE = 0.8                                                         # 구울 맨손(_enemy_weapon)
-ENEMY_ARMS = {"CR-420": ["W-005", "W-001"], "CR-421": ["W-014", "W-025", "W-017"], "CR-422": ["W-018", "W-029", "W-015"],
-              "CR-423": ["W-047", "W-040", "W-046"], "CR-401": ["W-018", "W-023"], "CR-456": ["W-017", "W-028"], "CR-457": ["W-029"]}
-CLAW = {"CR-200", "CR-201", "CR-202", "CR-204"}
+def _enemy_arms():
+    """게임의 ENEMY_ARMS(systems/combat/interior_combat.gd)를 그대로 읽는다 — 사본을 두지 않는다"""
+    src = open(os.path.join(ROOT, "game", "systems", "combat", "interior_combat.gd"), encoding="utf-8").read()
+    body = src[src.index("const ENEMY_ARMS := {"):]
+    body = body[:body.index("\n}")]
+    out = {}
+    for m in re.finditer(r'"(CR-\d+)": \[(.*?)\],\s*(?:#|\n)', body):
+        out[m.group(1)] = re.findall(r'"(W-\d+)"', m.group(2))
+    return out
+
+
+ENEMY_ARMS = _enemy_arms()
+SWARMY = {"CR-095", "CR-200", "CR-201", "CR-204", "CR-205", "CR-206", "CR-001", "CR-002"}   # enemy.gd SWARMY
+
+
+def _hand_arms():
+    src = open(os.path.join(ROOT, "game", "systems", "combat", "interior_combat.gd"), encoding="utf-8").read()
+    m = re.search(r"const HAND_ARMS := \{(.*?)\}\n", src)
+    return {k: re.findall(r'"(W-\d+)"', v) for k, v in re.findall(r'"(CR-\d+)": \[([^\]]*)\]', m.group(1))} if m else {}
+
+
+HAND_ARMS = _hand_arms()
+
+
+def _boss_hp():
+    src = open(os.path.join(ROOT, "game", "systems", "ai", "enemy.gd"), encoding="utf-8").read()
+    m = re.search(r"const BOSS_HP := \{(.*?)\}", src)
+    return {k: (int(a), int(b)) for k, a, b in re.findall(r'"(CR-\d+)": \[(\d+), (\d+)\]', m.group(1))} if m else {}
+
+
+BOSS_HP = _boss_hp()
+CLAW = {"CR-200", "CR-201", "CR-202", "CR-204", "CR-205", "CR-206"}
 BITERS = {"CR-104", "CR-095", "CR-107", "CR-106", "CR-108", "CR-105", "CR-500", "CR-136", "CR-097", "CR-121", "CR-096", "CR-004", "CR-080",
           "CR-081", "CR-082", "CR-130", "CR-501", "CR-001", "CR-002"}
 
@@ -102,6 +142,10 @@ def band(table, lv):
 
 def tier_of(e):
     t = str(e.get("tier") or "")
+    if e["id"] in TIER_FIX:
+        return TIER_FIX[e["id"]][0]
+    if e["id"] in BOSS_FIGHT:
+        return "필드 보스"
     if e["id"].startswith("CR-5"):
         return "강" if e.get("weapon_main") or not e.get("attack") else "유일"   # 이름 있는 사람 우두머리는 '강', 유일 크리처만 '유일'(SD-11 예: 거인 변종 · 방어 체계)
     for k in ("전설", "강", "중", "약"):
@@ -113,7 +157,7 @@ def tier_of(e):
         rk = int(r)
         if rk <= 1:
             return "약" if lv <= 4 else "중"
-        return "중" if rk == 2 else "강"
+        return "중" if rk <= 3 else "강"                                 # 정본 예(SD-11 §10.3): 탈론 랭크 3 = 중
     return ""
 
 
@@ -125,19 +169,38 @@ def check_combat(weapons, enemies):
         lv = int(e.get("level") or 1)
         hp = float(e["hp"])
         dr = float(e.get("dr") or 0)
+        if eid in BOSS_REF and eid in BOSS_HP:                          # enemy.gd BOSS_HP — HP = 기본 + Lv × 계수
+            lv = BOSS_REF[eid]
+            hp = BOSS_HP[eid][0] + lv * BOSS_HP[eid][1]
         best = max(band(STD_WEAPON, lv), key=lambda wid: w_dps(weapons.get(wid, {}), 50.0, "new", dr))
         dps = w_dps(weapons[best], 50.0, "new", dr) * HIT_PC * PART_AVG * CRIT_AVG
         ttk = hp / dps if dps > 0 else 999
-        lo, hi = TTK[tier]
-        add("B3", "적 처치 시간", "%s %s(%s · Lv%d · HP %d · DR %d)" % (eid, e["name"], tier, lv, hp, dr), round(ttk, 1), "%d~%d초" % (lo, hi),
-            judge(ttk, lo, hi), "SD-11 §10.3 · SD-14 §2.4", "표준 무기 %s %s" % (best, weapons[best]["name"]))
+        if tier == "필드 보스":
+            bf = BOSS_FIGHT[eid]
+            pool = hp * (1 - bf["flee"]) + sum(float(enemies[a]["hp"]) * n for a, n in bf["adds"] if a in enemies)
+            eng = pool / dps * ENGAGE_K
+            add("B3", "적 처치 시간", "%s %s(필드 보스 · Lv%d — 교전 전체: 몸 %d × %.1f + 호위 · 부화)" % (eid, e["name"], lv, hp, 1 - bf["flee"]), round(eng, 1), "35~60초(정본 제안 2)",
+                judge(eng, 35, 60), "SD-11 §10.3 · SD-14 §10.2", "표준 무기 %s · %s" % (best, bf["why"]))
+        else:
+            lo, hi = TTK[tier]
+            add("B3", "적 처치 시간", "%s %s(%s · Lv%d · HP %d · DR %d)" % (eid, e["name"], tier, lv, hp, dr), round(ttk, 1), "%d~%d초" % (lo, hi),
+                judge(ttk, lo, hi), "SD-11 §10.3 · SD-14 §2.4", "표준 무기 %s %s" % (best, weapons[best]["name"]) + (" · " + TIER_FIX[eid][1] if eid in TIER_FIX else ""))
+        if tier == "중" and lv >= 7:
+            aw = weapons.get(band(AUTO_WEAPON, lv), {})
+            if aw:
+                at = hp / (w_dps(aw, 50.0, "new", dr) * HIT_AUTO * PART_AVG * CRIT_AVG)
+                add("B3", "적 처치 시간(연사)", "%s %s(중 · Lv%d)" % (eid, e["name"], lv), round(at, 1), "2초 이상",
+                    "통과" if at >= 2 else ("주의" if at >= 1.5 else "실패"), "SD-11 §10.1-3 (탄과 맞바꿈)", "%s %s · 명중 0.6" % (aw["id"] if "id" in aw else band(AUTO_WEAPON, lv), aw["name"]))
         # 생존(B4) · 한 방(B5): 적이 주인공(같은 레벨 · 그 구간 방어구)에게
         php = 200.0 + (lv - 1) * 10.0
         pdr = float(band(STD_DR, lv))
+        melee_tok = 3                                                   # 사수 토큰 3(SD-11 §7.4)
         if eid in BITERS or str(e.get("attack", "")).startswith("물기"):
-            bite = float(str(e.get("attack", "물기 8")).split(" ")[1].split("/")[0].split("+")[0]) if str(e.get("attack", "")).startswith("물기") else 8.0
+            ma = re.match(r"^\S+ (\d+)", str(e.get("attack", "")))           # 게임과 같은 읽기(enemy.gd: '물기 18' · '집게 14'의 둘째 낱말)
+            bite = float(ma.group(1)) if ma else 8.0
+            melee_tok = 4 if eid in SWARMY else 2                         # 근접 토큰(무리 2 · 떼 4 — interior_combat 1.5초마다)
             raw = bite * max(0.0, 1 - pdr / 100.0)                      # 물기도 DR을 거친다(enemy.gd _bite — 2026-10-23 고침)
-            edps = raw / BITE_CD
+            edps = raw / (BITE_CD + max(0.0, bite - 15.0) * 0.05)        # enemy.gd _bite: 센 물기일수록 예비 동작이 길다
             hit1 = raw
             how = "물기 %g/%.1f초" % (bite, BITE_CD)
         elif eid in CLAW:
@@ -145,8 +208,9 @@ def check_combat(weapons, enemies):
             hit1 = claw * (100 + EN_SKILL) / 200.0 * max(0.0, 1 - pdr / 100.0)
             edps = hit1 * CLAW_RATE
             how = "맨손 %g" % claw
+            melee_tok = 4 if eid in SWARMY else 2
         else:
-            arms = ENEMY_ARMS.get(eid, ["W-002"])
+            arms = ENEMY_ARMS.get(eid) or HAND_ARMS.get(eid) or (["W-008"] if eid == "CR-305" else ["W-002"])
             wid = max(arms, key=lambda a: w_dps(weapons.get(a, {}), EN_SKILL, "worn", pdr))
             w = weapons.get(wid, {})
             if not w:
@@ -161,12 +225,18 @@ def check_combat(weapons, enemies):
             edps = w_hit(w, EN_SKILL, "worn", pdr) * eff * HIT_EN * PART_AVG
             how = "%s %s(실효 %.1f발/초)" % (wid, w["name"], eff)
             hit1 = w_hit(w, EN_SKILL, "worn", pdr)
+            if eid in HAND_ARMS and len(HAND_ARMS[eid]) == 2 and eid not in ENEMY_ARMS:   # 손 맵: 셋에 연사 하나 · 둘은 반자동(interior_combat _hand_arm)
+                w2 = weapons.get(HAND_ARMS[eid][1], {})
+                r2 = float(w2.get("rate", 1.0))
+                eff2 = 3.0 / (3.0 / (0.6 * r2) + 1.3) if w2.get("kind", "ranged") == "ranged" else r2
+                edps = (edps + 2 * w_hit(w2, EN_SKILL, "worn", pdr) * eff2 * HIT_EN * PART_AVG) / 3.0
+                how += " 하나 + %s 둘" % w2.get("name", "")
         surv = php / edps if edps > 0 else 999
         if tier == "약":
             add("B4", "주인공 생존", "%s %s 1명 ↔ Lv%d HP %d DR %d" % (eid, e["name"], lv, php, pdr), round(surv, 1), "25초 이상",
                 "통과" if surv >= 25 else ("주의" if surv >= 25 * 0.75 else "실패"), "SD-11 §10.3", how)
         if tier == "중":
-            s3 = surv / 3.0
+            s3 = surv / min(3, melee_tok)
             add("B4", "주인공 생존", "%s %s 3명 ↔ Lv%d HP %d DR %d" % (eid, e["name"], lv, php, pdr), round(s3, 1), "8~15초",
                 judge(s3, 8, 15), "SD-11 §10.3", how)
         if lv <= 9:
@@ -378,9 +448,14 @@ def check_rewards(places):
     full = pro + main1 + other + disc
     add("B1", "성장 곡선", "1막을 다 한 사람(XP %d — 처치 XP 뺌)" % full, xp_level(full), "8~10(넘치지 않게 — 2막 위협도 2와 맞물림)",
         judge(xp_level(full), 8, 10), "SD-10 §4.4 · SD-11 §10.4")
-    caps1 = sum(d["caps"] for q, d in rw.items() if d["act"] <= 1 and q not in FLOWS)
-    add("B6", "경제 흐름", "프롤로그 ~ 1막 퀘스트 캡 보상 합(퀘스트마다 큰 갈래 하나 · 판매 · 환불 흐름 뺌)", caps1, "450~1,100(구간 Ⅰ 누적 1,500~2,500의 30~45%)",
-        judge(caps1, 450, 1100), "SD-15 §9.1 수입 구성")
+    main_caps = sum(d["caps"] for q, d in rw.items() if d["act"] <= 1 and q not in FLOWS and cat_of(q) in ("메인", "프롤로그"))
+    side_caps = sum(d["caps"] for q, d in rw.items() if d["act"] <= 1 and q not in FLOWS and cat_of(q) not in ("메인", "프롤로그"))
+    caps1 = main_caps + side_caps // 2
+    add("B6", "경제 흐름", "프롤로그 ~ 1막 퀘스트 캡 보상(메인 %d + 사이드류 절반 %d — 막 끝 목표 레벨과 같은 '절반' 기준 · 판매 · 환불 흐름 뺌)" % (main_caps, side_caps // 2),
+        caps1, "1,125 이하(구간 Ⅰ 누적 상한 2,500의 45% — 퀘스트 몫 30%(§9.1 구간 Ⅲ 구성)에 초반 루팅이 적은 만큼 여유)",
+        "통과" if caps1 <= 1125 else ("주의" if caps1 <= 1400 else "실패"), "SD-15 §9.1 수입 구성")
+    add("B6", "경제 흐름", "1막 퀘스트를 다 했을 때 퀘스트 캡(%d)" % (main_caps + side_caps), main_caps + side_caps, "2,500 이하(구간 Ⅰ 누적 상한 — 다 해도 넘치지 않게)",
+        "통과" if main_caps + side_caps <= 2500 else "주의", "SD-15 §9.1")
     return rw
 
 

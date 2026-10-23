@@ -219,6 +219,7 @@ func on_map(map: InteriorMap, player: Actor, st: StoryState) -> void:
 	enemies.clear()
 	_calm_alias.clear()
 	_beast_n = 0
+	_hand_auto.clear()
 	residents.clear()
 	allies.clear()
 	targets.clear()
@@ -298,11 +299,11 @@ func _enemy_weapon(enemy_id: String, arm: String) -> Dictionary:
 	if enemy_id in ["CR-002", "CR-001"] or enemy_id in Enemy.DOGS:
 		return {}
 	var w: Dictionary = weapons.get("W-041" if arm in ["baton", "claw"] else "W-002", {}).duplicate()
-	if arm == "claw":                                                   # 야생 구울(1-4): 맨손 내려치기 — 피해는 SD-14 표 '근접 n'
+	if arm == "claw" or (arm == "baton" and enemy_id == "CR-205"):      # 야생 구울(1-4) · 역무원 구울 경광봉: 맨손 내려치기 — 피해는 SD-14 표 '근접 n'
 		var row: Dictionary = enemy_rows.get(enemy_id, {})
 		w["dmg"] = float(str(row.get("attack", "근접 5")).get_slice(" ", 1))
 		w["crit_dmg"] = w["dmg"]
-		w["name"] = "맨손"
+		w["name"] = "경광봉" if enemy_id == "CR-205" else "맨손"           # 역무원 구울은 경광봉 12 · 침수 구울은 근접 18(SD-14 표 — 전엔 권총을 쐈다)
 		w["rate"] = 0.8                                             # 한 번 내려치고 숨 고르기(떼로 붙으면 초당 30 안팎 — 1.4면 3초 만에 쓰러졌다)
 	if enemy_id == "CR-405":
 		w["rate"] = float(w.get("rate", 2.0)) * 3.0
@@ -412,10 +413,23 @@ const ENEMY_ARMS := {
 	"CR-456": [["W-017", 0.6], ["W-028", 0.4]],                         # 자동소총 / 산탄총
 	"CR-457": [["W-029", 1.0]],                                         # 전투 산탄총(+ 소방 도끼)
 }
+## 손 맵 · 진행기 · 길 위 조우가 세운 사람 적(밸런스 첫 전수 — 조율사 5번, SD-14 주무기): Lv6 이상만 · 한 편 연사 무기는 셋에 한 정까지 —
+## [연사 무기, 반자동 대신](반장은 둘 다 연사 — 조율사). Lv5 이하(MQ-101 독사 · 추적조)와 계엄군 CR-401 · 402('생포 사격' 설계)는 그대로 10mm 권총
+const HAND_ARMS := {"CR-436": ["W-015", "W-028"], "CR-437": ["W-017", "W-004"], "CR-438": ["W-017", "W-017"], "CR-452": ["W-017", "W-008"], "CR-534": ["W-015", "W-004"]}
+var _hand_auto := {}                                                   ## "맵:편" -> 지금까지 세운 손 맵 사람 수(셋째마다 연사 하나)
 const ENEMY_ALT := {"CR-457": "W-049"}                                  ## 붙으면 바꿔 드는 근접 무기
 const ENEMY_NADES := {"CR-423": ["W-060", 1], "CR-401": ["W-058", 1]}   ## 수류탄(계엄 '기절탄'은 자료가 없어 최루탄으로 — 정합)
 var _team_nade := {}                                                  ## 편 -> 마지막 수류탄 시각(분대 재사용 4초)
 var _clock := 0.0
+
+
+## 손 맵 사람 적 무기: 그 맵 · 편에서 세운 순서로 첫째 · 넷째 · 일곱째…만 연사(셋에 하나), 나머지는 반자동(같은 순서면 같은 무기)
+func _hand_arm(enemy_id: String, _pos: Vector2, team: String, map: InteriorMap) -> Dictionary:
+	var k := "%s:%s" % [str(map.data.get("id", "")), team]
+	var n := int(_hand_auto.get(k, 0))
+	_hand_auto[k] = n + 1
+	var wid: String = HAND_ARMS[enemy_id][0] if n % 3 == 0 else HAND_ARMS[enemy_id][1]
+	return weapons.get(wid, weapons.get("W-002", {})).duplicate()
 
 
 ## 무기 고르기: 개체 자리로 시드한 굴림(같은 자리 같은 무기 — 다시 열어도 같다)
@@ -434,15 +448,17 @@ func _pick_arm(enemy_id: String, pos: Vector2) -> Dictionary:
 
 func spawn(enemy_id: String, pos: Vector2, map: InteriorMap, st: StoryState = null, opts: Dictionary = {}) -> Enemy:
 	var e := Enemy.new()
-	var arm := str(opts.get("arm", "baton" if enemy_id == "CR-473" else ("claw" if enemy_id in ["CR-200", "CR-201", "CR-202", "CR-204"] else "")))
+	var arm := str(opts.get("arm", "baton" if enemy_id == "CR-473" else ("claw" if enemy_id in ["CR-200", "CR-201", "CR-202", "CR-204", "CR-205", "CR-206"] else "")))
 	var generic := bool(opts.get("morale", str(map.data.get("id", "")).begins_with("G-")))   # 길 위 조우 · 생성 건물(1-9e)
 	var w := _enemy_weapon(enemy_id, arm)
 	var o2 := opts
 	if generic and ENEMY_ARMS.has(enemy_id) and not opts.has("arm"):
 		w = _pick_arm(enemy_id, pos)
-		if str(w.get("kind", "")) == "melee":
-			o2 = opts.duplicate()
-			o2["arm"] = "melee"
+	elif HAND_ARMS.has(enemy_id) and not opts.has("arm") and int(opts.get("lv", enemy_rows[enemy_id].get("level", 1))) >= 6:
+		w = _hand_arm(enemy_id, pos, str(opts.get("team", "enemy")), map)
+	if str(w.get("kind", "")) == "melee" and arm == "":
+		o2 = opts.duplicate()
+		o2["arm"] = "melee"
 	e.setup_enemy(enemy_rows[enemy_id], w, pos, map, o2)
 	if generic and ENEMY_ALT.has(enemy_id):
 		e.alt_weapon = weapons.get(ENEMY_ALT[enemy_id], {}).duplicate()
@@ -962,6 +978,14 @@ func tick(dt: float, free: bool, st: StoryState) -> void:
 			var tm: String = cands[i].cmb.team
 			per_team[tm] = int(per_team.get(tm, 0)) + 1
 			cands[i].has_token = int(per_team[tm]) <= 3
+		var mel := enemies.filter(func(e): return is_instance_valid(e) and e.style != "shooter" and not e.cmb.dead)   # 근접 토큰(SD-11 L907~915): 무리는 둘 · 떼 성향은 넷만 문다(밸런스 첫 전수 — 조율사 1번)
+		mel.sort_custom(func(a, b): return a.loco.logical.distance_to(_target_for(a).pos()) < b.loco.logical.distance_to(_target_for(b).pos()))
+		var per_m := {}
+		for e in mel:
+			var swarmy: bool = e.style == "swarm" or str(e.row.get("id", "")) in Enemy.SWARMY
+			var mk := "%s:%s" % [e.cmb.team, "s" if swarmy else "p"]
+			per_m[mk] = int(per_m.get(mk, 0)) + 1
+			e.has_mtoken = int(per_m[mk]) <= (4 if swarmy else 2)
 	for e in enemies:
 		if is_instance_valid(e):
 			var was: bool = e.cmb.flash > 0

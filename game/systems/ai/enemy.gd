@@ -10,6 +10,8 @@ extends Actor
 const DOGS := ["CR-104", "CR-095", "CR-107", "CR-106", "CR-108", "CR-105", "CR-500", "CR-136", "CR-097", "CR-121", "CR-096", "CR-004", "CR-080", "CR-081", "CR-082", "CR-130", "CR-501"]
 const MOM_HATCH_S := 15.0                       ## 배수구 어미 부화 간격(SD-14 CR-501 '15초마다 큰바퀴 3')
 const GHOULS := ["CR-200", "CR-201", "CR-202", "CR-204", "CR-205", "CR-206", "CR-457", "CR-459", "CR-518"]   ## 방사능에 낫는 구울(SD-14 §7.2 '라드 100당 HP +1')
+const BOSS_HP := {"CR-513": [60, 10], "CR-514": [80, 8], "CR-515": [100, 10], "CR-516": [70, 8], "CR-523": [60, 8], "CR-525": [90, 10]}   ## 레벨 비례 스토리 보스 HP = 기본 + Lv × 계수(SD-14 §10.2)
+const SWARMY := ["CR-095", "CR-200", "CR-201", "CR-204", "CR-205", "CR-206", "CR-001", "CR-002"]   ## 떼 성향(근접 토큰 넷 — SD-11 · 시궁쥐 · 바퀴 · 야생 구울)
 const FERALS := ["CR-200", "CR-201", "CR-204", "CR-205", "CR-206"]            ## 빛나는 구울 폭발에 HP +30%를 받는 야생 구울
 const BURST_R := 4.0 * 32.0                       ## 빛나는 구울 방사능 폭발 반경(SD-14 CR-202 '반경 4타일')
 const BURST_CD := 8.0                             ## 폭발 간격(SD-11 §7 구울 원형 표 '8초마다')
@@ -35,6 +37,7 @@ var skill := 45.0
 var per := 5.0
 var react := 0.3                              ## 반응 지연(계엄군 0.3초, §7.4)
 var has_token := false
+var has_mtoken := true                           ## 근접 토큰(전투 고리가 1.5초마다 나눔 — 없으면 2~3칸 밖에서 맴돈다)
 var _burst := 0                                   ## 이번 연사에서 쏜 발 수
 var _t_per := 0.0
 var _t_tac := 0.0
@@ -148,7 +151,7 @@ static var prof := {"per": 0, "tac": 0, "act": 0, "n_per": 0, "n_tac": 0, "n_pat
 func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w, opts: Dictionary = {}) -> void:
 	row = enemy_row
 	weapon = weapon_row
-	arm = str(opts.get("arm", "baton" if row["id"] == "CR-473" else ("claw" if row["id"] in ["CR-200", "CR-201", "CR-202", "CR-204", "CR-206"] else "")))
+	arm = str(opts.get("arm", "baton" if row["id"] == "CR-473" else ("claw" if row["id"] in ["CR-200", "CR-201", "CR-202", "CR-204", "CR-205", "CR-206"] else "")))
 	who = str(opts.get("who", ""))
 	stance = str(opts.get("stance", ""))
 	var is_roach: bool = row["id"] in ["CR-002", "CR-001"]
@@ -270,10 +273,18 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 	cmb.hp = float(row["hp"])
 	cmb.dr = float(row["dr"])
 	level = int(row.get("level", 1))
-	if opts.has("lv") and int(opts["lv"]) < level:                   # 장소 위협도 상한(SD-08 §9: 봉천 위협 1 = Lv1~4, SD-14 §12 스케일링)
+	if opts.has("lv") and BOSS_HP.has(str(row["id"])):               # 스토리 보스(SD-14 §10.1 · §10.2): 플레이어 레벨 비례 — HP = 기본 + Lv × 계수(밸런스 첫 전수 — 전엔 표의 기본 HP 그대로)
+		var bl := int(opts["lv"])
+		cmb.hp = float(BOSS_HP[str(row["id"])][0]) + bl * float(BOSS_HP[str(row["id"])][1])
+		level = bl
+	elif opts.has("lv") and int(opts["lv"]) < level:                 # 장소 위협도 상한(SD-08 §9: 봉천 위협 1 = Lv1~4, SD-14 §12 스케일링)
 		var lv := int(opts["lv"])
 		cmb.hp = (20.0 + lv * 8.0) if not (is_roach or is_dog) else roundf(cmb.hp * lv / level)   # 인간 HP ≈ 20 + Lv×8(SD-14 §3.4)
+		if str(row["id"]).begins_with("CR-5") and not (is_roach or is_dog):
+			cmb.hp = minf(float(row["hp"]), roundf((20.0 + lv * 8.0) * 1.6))   # 이름 있는 사람은 단역보다 단단하게(밸런스 첫 전수 — MQ-101 독사 52 → 85)
 		cmb.dr = roundf(cmb.dr * lv / level)
+		if is_dog:
+			bite = roundf(bite * lv / level)                            # 낮춘 짐승은 물기도 같은 비율로(밸런스 첫 전수 — 금탑 메기 새끼 36 → 18)
 		level = lv
 	cmb.max_hp = cmb.hp
 	if float(opts.get("hurt", 0.0)) > 0.0:                          # 다친 개체(S5~S7, SD-22 §3.2): HP 30~60%로 시작
@@ -571,7 +582,9 @@ func _act(dt: float, target: Combatant, shots: Projectiles) -> void:
 			input = Vector2.ZERO
 	if style == "melee" and goal == "engage" and to_t.length() < float(weapon.get("range_eff", 1.0)) * 32.0 + target.radius:
 		input = Vector2.ZERO                                       # 닿는 거리면 서서 휘두른다
-	if style == "dog" and goal == "engage":
+	if (style == "dog" or style == "melee") and goal == "engage" and not has_mtoken and to_t.length() < 2.5 * 32.0 and not fixed:
+		input = to_t.normalized().orthogonal() * (1.0 if get_instance_id() % 2 == 0 else -1.0) * 0.8 - to_t.normalized() * (0.4 if to_t.length() < 1.8 * 32.0 else 0.0)   # 토큰이 없으면 둘레를 돈다(겨루는 틈 — 발 고정 걸음 그대로)
+	elif style == "dog" and goal == "engage":
 		if to_t.length() < cmb.radius + target.radius + 6.0:
 			input = Vector2.ZERO
 			_bite(dt, target, to_t)
@@ -648,11 +661,11 @@ func _swarm(dt: float, target: Combatant, to_t: Vector2) -> void:
 
 ## 들개 물기: 닿으면 반응 지연 뒤 물고 1.1초 쉰다(SD-14 §4.2 '물기 n')
 func _bite(_dt: float, target: Combatant, to_t: Vector2) -> void:
-	if _cool > 0.0 or target.dead or not meets(target):
+	if _cool > 0.0 or target.dead or not meets(target) or not has_mtoken:
 		return
 	loco.facing = Locomotion.snap8(to_t, 0.0)
 	_show()
-	_cool = 1.1
+	_cool = 1.1 + maxf(0.0, bite - 15.0) * 0.05                      # 센 물기일수록 예비 동작이 길다(SD-11 §10.3 '강 근접 — 예비 동작 길이', 밸런스 첫 전수: 굴쥐 18 1.25초 · 메기 36 2.15초)
 	target.last_by = cmb.team
 	var dr_k := 1.0 - minf(target.dr, CombatRules.DR_CAP) / 100.0           # 물기도 몸 전체 DR을 거친다(SD-11 §4.6 — 밸런스 검사 B4, 2026-10-23)
 	target.take({"hp": bite * (1.25 if frenzied else 1.0) * (1.2 if buff_t > 0.0 else 1.0) * dr_k}, loco.logical)   # 울부짖기 +20%
@@ -710,7 +723,7 @@ func _swing(dt: float, target: Combatant) -> void:
 	if _switch_t > 0.0:
 		return
 	var to_t := target.pos() - loco.logical
-	if _cool > 0.0 or target.dead or not meets(target) or to_t.length() > float(weapon.get("range_eff", 1.0)) * 32.0 + target.radius + cmb.radius:
+	if _cool > 0.0 or target.dead or not meets(target) or not has_mtoken or to_t.length() > float(weapon.get("range_eff", 1.0)) * 32.0 + target.radius + cmb.radius:
 		return
 	loco.facing = Locomotion.snap8(to_t, 0.0)
 	_show()
