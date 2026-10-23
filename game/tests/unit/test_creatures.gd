@@ -143,7 +143,10 @@ func test_cr_howl(t) -> void:
 	t.near(near.loco.speed_mul, 1.15, 0.001, "속도 +15%")
 	var hp0 := c.pc.hp
 	near._cool = 0.0
-	near._bite(DT, c.pc, a.loco.logical - near.loco.logical)
+	for i in 60:                                                        # 물기 앞 예비 동작(밸런스 재미 검수)을 지나 한 번 문다
+		near._bite(DT, c.pc, a.loco.logical - near.loco.logical)
+		if c.pc.hp < hp0:
+			break
 	t.near(hp0 - c.pc.hp, near.bite * 1.2, 0.6, "물기 +20%%(%.1f)" % (hp0 - c.pc.hp))
 	near.buff_t = 0.01
 	c.tick(DT, true, st)
