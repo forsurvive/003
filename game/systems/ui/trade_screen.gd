@@ -260,7 +260,7 @@ func _regular(id: String, caps: int, buying: bool) -> void:
 	if int(back.get(id, 0)) > 0:
 		_wash += 1
 		if _wash == 3:                                                  # 세 번째 왕복에 한마디(한 번만)
-			greet = "그 %s, 벌써 세 번째야. 단골은 발로 되는 거지." % str(db.get(Gear.base(id), {}).get("name", "물건"))
+			greet = "그 %s, 벌써 세 번째야. 단골은 발길이 쌓여야 되는 거지." % str(db.get(Gear.base(id), {}).get("name", "물건"))
 		return
 	regular_add += caps
 
