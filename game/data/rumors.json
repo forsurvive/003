@@ -721,6 +721,36 @@
 "text": "가산 두목이 마네킹을 세다가 하나가 숨을 쉬더래. 그 뒤로는 줄마다 두 번씩 센다나. 독산 짐꾼한테 들었어."
 },
 {
+"where": "R01",
+"cond": "GA_BOX == 6 and GAME_DAY > GA_BOX_DAY",
+"text": "가산 하역장에서 인솔조가 털렸대. 셔터에 구멍이 줄줄이 났고. 셈꾼 옆에 인부 하나가 있었다던데 — 본소 줄에서 다 그 얘기야."
+},
+{
+"where": "R01",
+"cond": "GA_SIDE == 1 and GAME_DAY > GA_SIDE_DAY",
+"text": "가산 셈꾼이 인솔조 몫을 떼먹었대. 쪽지가 나왔다나. 인솔조가 셔터 열쇠까지 인부 하나한테 줬다던데 — 열쇠는 무슨, 자기들 오는 날 올려 주는 거겠지. 본소 줄 사람 말이야."
+},
+{
+"where": "R01",
+"cond": "GA_NOTE == 2 and GA_SIDE != 1 and DG_GA == 0",
+"text": "가산 셈꾼이 쪽지 빼 간 인부를 찾는대. 카키 작업복 입은 놈은 아울렛 근처에 얼씬도 하지 말래. 독산 짐꾼 말이야."
+},
+{
+"where": "R01",
+"cond": "GA_HUNT_DAY > 0 and GAME_DAY >= GA_HUNT_DAY and GAME_DAY < GA_HUNT_DAY + 3 and DG_GA == 0",
+"text": "가산 패거리 둘이 봉천 쪽 골목을 뒤진대. 파란 작업복 주인을 찾는다나. 벗어 던진 옷이 나왔대 — 시흥 고개 초소에서 들었어."
+},
+{
+"where": "R01",
+"cond": "GA_SUITSOLD == 1 and GA_HUNT_DAY > 0 and GAME_DAY >= GA_HUNT_DAY + 3",
+"text": "봉천까지 갔던 가산 패거리 둘이 빈손으로 돌아왔대. 셈꾼이 삼백을 날렸다고 두목한테 장부로 맞았다나. 독산 짐꾼이 그러더라."
+},
+{
+"where": "R01",
+"cond": "GA_UNMASK > 0 and GAME_DAY > GA_UNMASK",
+"text": "가산 셈꾼이 3,000짜리랑 한 상에 앉았었대. 우리 쪽 사람인 줄 알았는데 파란 작업복을 입고 나타났다나 — 독산 짐꾼들이 배를 잡더라."
+},
+{
 "where": "R02",
 "cond": "UQ69_DIE == 2 and GAME_DAY > UQ69_DONE_DAY",
 "text": "문래 성씨 선반이 밤새 돈대. 총열을 새로 뽑는다나. 총 값이 내려간다는 말이 벌써 돌아."

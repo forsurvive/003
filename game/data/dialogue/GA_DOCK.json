@@ -1,0 +1,167 @@
+{
+ "id": "GA_DOCK",
+ "title": "인솔조",
+ "loc": "L-R01-28",
+ "npc": "N-GA-S1",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "ASK0": 9,
+  "ASK1": 11,
+  "AGAIN": 14,
+  "AGAINNO": 17,
+  "NOTE": 20,
+  "OURS": 25
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "GA_SIDE == 1",
+   "to": "OURS"
+  },
+  {
+   "op": "if",
+   "cond": "has(\"M-453\") == 1 and GA_SIDE == 0",
+   "to": "NOTE"
+  },
+  {
+   "op": "if",
+   "cond": "GA_DOCKASK == 1",
+   "to": "AGAIN"
+  },
+  {
+   "op": "line",
+   "who": "N-GA-S1",
+   "emo": "기본",
+   "text": "(인부 머릿수를 세다 말고) …너. 오늘 번호 44. 위층 놈들이 물으면 그거 대."
+  },
+  {
+   "op": "cmd",
+   "name": "ga",
+   "args": [
+    "dayno"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-GA-S1",
+   "emo": "기본",
+   "text": "그리고 — 위층 다녀올 수 있지?"
+  },
+  {
+   "op": "if",
+   "cond": "GA_BOX == 0",
+   "to": "ASK0"
+  },
+  {
+   "op": "line",
+   "who": "N-GA-S1",
+   "emo": "기본",
+   "text": "지난번 상자, 벌수가 이상했어. 셈꾼 놈이 우리 몫을 떼는 것 같아."
+  },
+  {
+   "op": "goto",
+   "to": "ASK1"
+  },
+  {
+   "op": "line",
+   "who": "N-GA-S1",
+   "emo": "기본",
+   "text": "셈꾼 놈이 벌수를 속이는 것 같아. 꼬리표엔 다섯인데 상자가 무거워."
+  },
+  {
+   "op": "goto",
+   "to": "ASK1"
+  },
+  {
+   "op": "line",
+   "who": "N-GA-S1",
+   "emo": "기본",
+   "text": "2층 거래 자리에 쪽지가 있을 거야. 한 장만 가져와. 셈을 맞춰 주지."
+  },
+  {
+   "op": "do",
+   "fx": "GA_DOCKASK = 1"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "GA_DAYNO != GAME_DAY",
+   "to": "AGAINNO"
+  },
+  {
+   "op": "line",
+   "who": "N-GA-S1",
+   "emo": "기본",
+   "text": "쪽지. 2층 거래 자리. 셈꾼이 두목 장부 받아 적을 때가 빈다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-GA-S1",
+   "emo": "기본",
+   "text": "오늘 번호 44. 쪽지는 2층 거래 자리 — 셈꾼이 두목 장부 받아 적을 때가 빈다."
+  },
+  {
+   "op": "cmd",
+   "name": "ga",
+   "args": [
+    "dayno"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "쪽지를 내민다. 인솔조가 펴 들고 입술로 읽는다."
+  },
+  {
+   "op": "line",
+   "who": "N-GA-S1",
+   "emo": "분노",
+   "text": "'작업복 6 — 인솔조엔 5로'. 이 새끼들, 벌당 5캡에 한 벌씩."
+  },
+  {
+   "op": "line",
+   "who": "N-GA-S1",
+   "emo": "기본",
+   "text": "수고했어. 십오. 우리 오는 날엔 셔터 두드려 — 올려 줄게."
+  },
+  {
+   "op": "cmd",
+   "name": "ga",
+   "args": [
+    "side",
+    "1"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-GA-S1",
+   "emo": "기본",
+   "text": "또 왔네. 우리 있는 동안은 셔터 올려 줄게. 위층 놈들 눈엔 띄지 마."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/GA.txt"
+}

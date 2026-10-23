@@ -746,7 +746,7 @@ def _commands(m, prop_meta, known_vars, known_fns, scenes, out, W, H, floor, kin
 def compile_spots(prop_meta, known_vars, known_fns, scenes):
     """월드 발견 자리(1-4, maps/world/*.spots): 월드 위 작은 구역에 소품·조사 글·장면·용기·인물을 둔다(잠든 파수·길 위 유해·쪽지).
     spot L-ID w h [off=dx,dy] [cond=] — 장소 칸(+off) 둘레에서 w×h가 모두 걸어서 닿는 가장 가까운 자리(world_chunks가 고른다)
-    spot @x,y w h — 월드 타일을 바로 찍는다(장소 없는 길가). 다음 spot까지의 명령은 그 구역 왼쪽 위 기준 좌표(맵 명령과 같은 문법).
+    spot @x,y w h [wall=1] — 월드 타일을 바로 찍는다(장소 없는 길가 · wall=1이면 바로 위 줄이 건물 앞면이라 굽기가 위 둘레를 비우지 않는다). 다음 spot까지의 명령은 그 구역 왼쪽 위 기준 좌표(맵 명령과 같은 문법).
     월드 땅은 굽기 전에는 모르니 구역 전체를 바닥으로 놓고 검사하고, 소품 발 칸은 실행 중 막힘(cells)으로 더한다."""
     out_all, errors = [], []
     places = json.load(open(os.path.join(ROOT, "game", "data", "world", "places.json"), encoding="utf-8"))
@@ -783,6 +783,8 @@ def compile_spots(prop_meta, known_vars, known_fns, scenes):
             if opt.get("cond"):
                 check_cond(opt["cond"], known_vars, known_fns)
                 spec["cond"] = opt["cond"]
+            if opt.get("wall") == "1":                                # 벽 덧그림 자리(1-12n 가산 바깥 진열창): 바로 위 줄이 건물 앞면 — 굽기가 위 둘레를 비우지 않는다
+                spec["wall"] = True
             sub = MapSrc.__new__(MapSrc)
             sub.path, sub.errors, sub.cmds, sub.id, sub.name, sub.set = path, [], cmds, "W", "", "r01"
             out = {"id": "W", "name": "", "set": "r01", "size": [W, H], "props": [], "doors": [], "exits": [], "marks": {},

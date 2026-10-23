@@ -2699,6 +2699,7 @@ func _daily() -> void:
 		st.fbook.add_line(str(n[0]), FactionBook._md(date_text), str(n[1]))
 	st.fbook.refresh(st, date_text)
 	day_tick.emit(int(st.vars.get_v("GAME_DAY")))
+	st.turf.sync(st)                                                      # 하루 판정이 판도 원천을 바꿨으면(가산 상자 등) 상태 변수를 바로(1-12n — 맵 조건이 읽는다)
 	if int(st.vars.get_v("CAPTURE_BY")) == 1 and map != null and map.id == "H-03" \
 			and Clock.abs_min(date_text) - int(st.vars.get_v("CAPTURE_AT")) >= 3 * 1440:
 		hint("사흘이 지났다. 반장이 계엄군에 넘길 날짜를 장부에 적는다.", 6.0)

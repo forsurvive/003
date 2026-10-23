@@ -1,0 +1,119 @@
+{
+ "id": "GA_DOCKDOOR",
+ "title": "하역장 셔터",
+ "loc": "L-R01-28",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "VOICE": 5,
+  "OPEN": 7,
+  "IN": 9,
+  "SHUT": 11,
+  "HOLES": 13
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "GA_BOX == 6",
+   "to": "HOLES"
+  },
+  {
+   "op": "if",
+   "cond": "((PDO_R01_6 == \"SB\" and PDS_R01_6 >= 2) or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead(\"C-013\") == 1 and dead(\"C-049\") == 1) and not (dead(\"N-GA-S1\") == 1 and dead(\"N-GA-S2\") == 1) and (worn() == \"A-012\" or GA_SIDE == 1)",
+   "to": "OPEN"
+  },
+  {
+   "op": "if",
+   "cond": "((PDO_R01_6 == \"SB\" and PDS_R01_6 >= 2) or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead(\"C-013\") == 1 and dead(\"C-049\") == 1) and not (dead(\"N-GA-S1\") == 1 and dead(\"N-GA-S2\") == 1)",
+   "to": "VOICE"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "하역장 셔터. 안에서 걸쇠가 걸렸다. 분필 화살표 — '인력 →'."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "셔터 너머에서 담배 냄새와 말소리. 두드리자 '인력이면 옷부터 갖춰 입고 와' — 셔터는 그대로다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "셔터를 두드린다. 안에서 걸쇠가 풀리고 셔터가 무릎 높이까지 올라간다. '인부? 늦었어. 들어와.'"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "셔터 밑으로 들어간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "IN",
+     "id": "GA_DOCKDOOR:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "GA_DOCKDOOR:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "ga",
+   "args": [
+    "dock"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "하역장 셔터. 걸쇠 위에 새 자물쇠가 달렸다. 안쪽에서 누가 셔터를 걷어찬다 — '패거리 끄나풀은 저리 가.'"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "하역장 셔터에 총알구멍이 줄지어 났다. 셔터를 타고 흐른 자국 위로 붉은 스프레이 — '인부 사절'."
+  },
+  {
+   "op": "if",
+   "cond": "GA_SIDE == 2",
+   "to": "SHUT"
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/GA.txt"
+}

@@ -1108,6 +1108,29 @@ func _ready() -> void:
 				["go", 29, 16, "GA-02"], ["want", ["넘긴다"]], ["use", 29, 15],
 				["until", "GA_BOX == 1", 15.0, "작업복 상자 — 하역장 수거 칸으로 끌어다 둔다", "ga_crate"],
 				["check", "GA_BOX == 1 and GA_BOX_DAY == 12 and GA_DECOY == 1 and GA_SEEN == 1", "상자 넘김 · 미끼 · 망꾼(사실 한 곳)"]]
+		"ga_lab":                                                       # 1-12n 가산 인부 변장: 현장 작업복 · 번호표 → '번호?' → 셈꾼 거래 대화 → 쪽지(은신) → 인솔조(새벽 편) → 바깥 진열창 · 셔터
+			st.vars.set_v("GAME_DAY", 12)
+			st.vars.set_v("V_ACT", 1)
+			st.vars.set_v("GAME_HOUR", 10)
+			st.vars.set_v("PDO_R01_6", "SB")                              # 새벽 우세(인솔조가 오는 날 — 변장 감지 0)
+			st.vars.set_v("PDS_R01_6", 2)
+			st.vars.set_v("PC_SKP_" + st.skill_key("은신"), 60)
+			st.call_fn("give", ["A-012", 1])
+			st.call_fn("give", ["M-129", 1])
+			st.vars.set_v("PC_TORSO", "A-012")
+			host.date_text = "2277. 10. 30.  10:00"
+			host.enter("GA-01", "from_sign")
+			host.combat.holstered = true
+			plan = [["hp", 3000], ["noenc"], ["wait", 1.0], ["shot", "galab_in"],
+				["go", 36, 5, "GA-01"], ["go", 30, 7, "GA-01"], ["wait", 0.6], ["check", "ga_asked", "'번호?' — 번호표로 넘어감(인부)"], ["shot", "galab_ask"],
+				["go", 13, 7, "GA-01"], ["want", ["단가 칠판", "그만 간다"]], ["use", 12, 7], ["wait", 2.0], ["shot", "galab_trade"],
+				["wait", 3.0], ["check", "ga_asked", "단가 칠판 — 거래 대화를 마쳤다(들키지 않음)"],
+				["go", 11, 7, "GA-01"], ["want", ["견본을 고르는 척", "쪽지를 집는다"]], ["use", 11, 6],
+				["until", "GA_NOTE == 1", 10.0, "거래 쪽지를 소매에", "galab_note"], ["check", "ga_asked", "들키지 않음"],
+				["warp", "GA-02", "from_GA01"], ["wait", 1.0], ["go", 32, 15, "GA-02"], ["use", 33, 15],
+				["until", "GA_SIDE == 1", 10.0, "인솔조에게 쪽지 — 새벽 편", "galab_side"],
+				["warp", "W", "ga_dock"], ["wait", 2.5], ["shot", "galab_out"],
+				["check", "GA_SIDE == 1 and GA_NOTE == 1 and has(\"M-453\") == 0", "편 · 쪽지(사실 한 곳)"]]
 		"ks":                                                           # 1-D7 지식산업센터: 출근 카드 → 공장층(라인이 작업자를 노리지 않는다) → 모준서 → 타자기 '이관' → 금형 → 데크 크레인 → 문래 성태경 → 하역장 분필 → 다음 06:00 리어카
 			st.vars.set_v("GAME_DAY", 12)
 			st.vars.set_v("V_ACT", 1)
@@ -2196,6 +2219,8 @@ func _process(dt: float) -> void:
 				ok = u04._riding
 			elif str(s[1]) == "ks_carry":
 				ok = is_equal_approx(host.carry_mul, Ks.CARRY_MUL)
+			elif str(s[1]) == "ga_asked":
+				ok = ga._asked and not ga._blown
 			elif str(s[1]) == "ga_lure":
 				ok = ga._lure_t > 0.0
 			elif str(s[1]).begins_with("turf:"):                        # turf:구역:상태 — 주인공이 아는 판(1-12m)

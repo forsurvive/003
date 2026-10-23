@@ -458,8 +458,10 @@ def city(r, src, seed=4120, anchors=(), reserve=()):
     bid = np.zeros((H, W), np.int32)
     blds = []
     arter = r.get("cls", np.zeros((H, W), np.uint8)) > 0
-    for (rx, ry, rw, rh) in reserve:                                      # 고정 발견 자리 둘레 1칸까지 비운다
-        occ[max(0, ry - 1):ry + rh + 1, max(0, rx - 1):rx + rw + 1] = True
+    for rv in reserve:                                                    # 고정 발견 자리 둘레 1칸까지 비운다(벽 덧그림 자리는 위 둘레를 남긴다 — 그 줄이 건물 앞면)
+        rx, ry, rw, rh = rv[:4]
+        top = ry if len(rv) > 4 and rv[4] else ry - 1
+        occ[max(0, top):ry + rh + 1, max(0, rx - 1):rx + rw + 1] = True
     fronts = np.zeros((H, W), bool)
     occ_base = occ.copy()
     for ax, ay, st in anchors:                                            # 고정 건물 먼저(간선·물·성곽·단 위는 피해 가장 가까운 자리)

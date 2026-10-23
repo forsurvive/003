@@ -3,7 +3,7 @@
 #   GA_SEEN 망꾼을 봤다 · GA_BOX 작업복 상자(1 넘김 · 2 태움 · 3 바꿔치기 · 4 인솔조가 그냥 가져감 · 5 빈 상자) · GA_BOX_DAY 고른 날 · GA_BOX_DONE 판도 반영 ·
 #   GA_CRATE_DAY 상자를 처음 본 날 · GA_PICK 인솔조 수거 날(처음 본 날 + 3) · GA_PAID 넘김 봉투 · GA_FEUD 인솔조와 패거리가 틀어짐 ·
 #   GA_DECOY 진열창 미끼(0 없음 · 1 세움 · 2 다음 날 패거리가 2층으로 끌고 감 · 3 거기서 작업복을 되찾음) · GA_DECOY_DAY · GA_COUNTED 재고 세기에 걸린 수 ·
-#   PD_R01_6 판도 PD-R01-6 사건 보정(+ 새벽인력 · − 약탈자) · DG_GA 정리(두목 N-GA-B1 — 던전 표).
+#   PD_R01_6 판도 PD-R01-6 사건 보정 원천(+ 새벽인력 · − 약탈자) · 풍경은 판도 상태 변수 PDO_R01_6 · PDS_R01_6(1-12n — 감쇠 · 틱 · 처치까지 한 값) · DG_GA 정리(두목 N-GA-B1 — 던전 표).
 # 동사: 눈을 속인다 — 방독면(A-074)을 쓰고 마네킹 줄 칸에 멈춰 서면 사람 눈엔 마네킹(쥐는 냄새로 안다). 볼트 작업복 차림이면 패거리가 사로잡으려 든다.
 # 예상 밖 행동 목록(지침 2026-10-17): 계획 §12.7 1~22. 이 원고에 걸린 것만 다시 적는다:
 #   · 상자를 안 건드리고 떠난다 → 처음 본 날부터 사흘째(GA_PICK) 낮에 인솔조가 하역장에 와 있고, 다음 06:00에 실어 간 것으로 친다(GA_BOX 4 — 반쯤 된 상태 없음, P10). 새벽인력이 기울었으면 그대로.
@@ -20,11 +20,22 @@
 ? GA_DECOY >= 2 -> TAKEN
 ? DG_GA >= 1 -> FALLEN
 SYS 진열창 유리 안쪽, 방독면을 쓴 마네킹 셋이 정문을 보고 섰다. 가운데 마네킹 목에 가격표 — '방호 우비 2+1 · 오늘만'.
-? PD_R01_6 >= 10 -> TAG
-? PD_R01_6 <= -10 -> TARGET
+? PDO_R01_6 == "SB" and PDS_R01_6 >= 2 -> TAG
+? PDO_R01_6 == "YT" and PDS_R01_6 >= 2 -> TARGET
 -> MENU
 * TAG
+? GA_TAG == 1 -> TAGGONE
 SYS 셋 다 목에 번호표를 걸었다. 41 · 42 · 43. 누가 마네킹에게 인력 번호를 매겨 놓았다.
+-> TAGMENU
+* TAGGONE
+SYS 41 · ○ · 43. 가운데 마네킹 목엔 철사 고리만 남았다.
+-> MENU
+* TAGMENU
+> 가운데 마네킹 목에서 번호표를 뗀다 -> TAGTAKE
+> 그냥 둔다 -> MENU
+* TAGTAKE
+SYS 철사 고리를 비틀어 42번 표를 뗀다. 마분지가 눅눅하다. 인력 번호 — 누가 물으면 내밀 것.
+@cmd ga tag
 -> MENU
 * TARGET
 SYS 셋 다 가슴에 붉은 과녁이 그려졌다. 총알구멍 몇 개. 누가 여기서 사격 연습을 했다.
@@ -60,16 +71,16 @@ SYS 작업복을 도로 벗겨 개킨다. 마네킹은 다시 방독면만 쓴 �
 @scene GA_CRATE  작업복 상자 꼬리표  (L-R01-28)
 @npc   -
 @cond  V_ACT >= 1
-SYS 못 박은 나무 상자. 꼬리표에 굵은 매직 — '새벽인력 인솔조 — 사흘째 아침 수거'. 틈으로 카키색 현장 작업복이 개켜진 것이 보인다.
+SYS 못 박은 나무 상자. 꼬리표에 굵은 매직 — '새벽인력 인솔조 — 사흘째 아침 수거 · 5벌'. 틈으로 카키색 현장 작업복이 개켜진 것이 보인다.
 SYS 패거리가 마네킹과 행거에서 벗겨 모은 것이다. 벌당 5캡에 새벽인력 '인력'들이 입을 옷.
-? (PD_R01_6 >= 10 or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead("C-013") == 1 and dead("C-049") == 1) -> WATCHED
+? ((PDO_R01_6 == "SB" and PDS_R01_6 >= 2) or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead("C-013") == 1 and dead("C-049") == 1) and not (dead("N-GA-S1") == 1 and dead("N-GA-S2") == 1) -> WATCHED
 -> MENU
 * WATCHED
 SYS 하역장 셔터 앞에서 인솔조 둘이 담배를 나눠 피우며 이쪽을 본다. 보는 눈이 있다.
 -> MENU
 * MENU
 > 하역장 수거 칸으로 끌어다 둔다(넘긴다) -> GIVE
-> 기름을 끼얹고 불을 붙인다 -> BURN ?? not ((PD_R01_6 >= 10 or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead("C-013") == 1 and dead("C-049") == 1))
+> 기름을 끼얹고 불을 붙인다 -> BURN ?? not (((PDO_R01_6 == "SB" and PDS_R01_6 >= 2) or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead("C-013") == 1 and dead("C-049") == 1) and not (dead("N-GA-S1") == 1 and dead("N-GA-S2") == 1))
 > 그냥 둔다 -> LEAVE
 * GIVE
 SYS 상자를 끌어 하역장 셔터 앞 분필 동그라미 안에 놓는다. 인솔조가 오면 그대로 실어 갈 것이다.
@@ -81,4 +92,174 @@ SYS 기름통을 기울여 상자 위에 붓는다. 성냥 한 개비. 개킨 �
 -> END
 * LEAVE
 SYS 상자를 그대로 둔다. 반쯤 뽑힌 못이 손가락 한 마디만큼 튀어나와 있다.
+-> END
+
+# ================================================================ 1-12n 인부 변장 · 패거리 거래 대화 · 하역장 뒷문 · 편 들기(D-231 — 계획 _plans/1-12n_gasan_plan.md §8)
+# 변수: GA_SIDE 편(0 · 1 새벽인력 — 쪽지를 인솔조에게 · 2 패거리 — 수거 날을 일러 줌) · GA_NOTE 거래 쪽지(1 쥠 · 2 셈꾼이 앎) · GA_EYE 셈꾼이 거래 자리를 본다(진행기가 0.1초마다) ·
+#   GA_TAG 진열창 번호표 · GA_SUITSOLD 볼트 작업복 판매 · GA_HUNT_DAY 봉천 수색 시작 날 · GA_DOCKASK 인솔조 부탁을 들음 ·
+#   GA_DAYNO 인솔조가 '오늘 번호 44'를 불러 준 날(그날만 번호표) · GA_FRISK 셈꾼 소매 검사한 날 · GA_UNMASK 패거리 편이 볼트 작업복으로 드러난 날 · GA_BOX 6 패거리가 가로챔.
+# 예상 밖 행동: 계획 §6 28~41(셈꾼 · 인솔조 · 두목 생사, 편 배타, 쪽지 버림 · 판매, 새벽인력 무너짐, 저장).
+# 셈꾼 = 2층 거래 자리 패거리(무명 — 이름표 N-GA-T1). 말 거는 길은 진행기 갈고리(변장 중 · 패거리 편)뿐이다 — 싸움 중엔 말이 없다.
+@scene GA_TRADE  패거리 셈꾼  (L-R01-28)
+@npc   N-GA-T1
+@cond  V_ACT >= 1
+? GA_FRISK != GAME_DAY -> FRISK
+-> OPEN
+* OPEN
+? GA_SIDE == 2 -> FRIEND
+N-GA-T1 [기본] (장부 쪽지를 접어 무릎에 깔고) 인부? 줄은 지하야. 여긴 거래 자리.
+? GA_HUNT_DAY > 0 and GAME_DAY >= GA_HUNT_DAY and GAME_DAY < GA_HUNT_DAY + 3 -> HUNT
+-> MENU
+* FRISK
+N-GA-T1 [기본] (손을 내밀며) 거래 자리에 앉으려면 소매부터. 다들 그래.
+@cmd ga frisk
+? has("M-453") == 1 -> CAUGHT
+SYS 셈꾼이 양 소매를 툭툭 털어 본다. 먼지뿐이다.
+N-GA-T1 [기본] 됐어. 앉아.
+-> OPEN
+* CAUGHT
+SYS 셈꾼의 손가락이 소매 안의 쪽지에 닿는다. 그의 얼굴이 굳는다.
+N-GA-T1 [분노] …이거 내 글씨잖아.
+@cmd ga note_seen
+-> END
+* FRIEND
+N-GA-T1 [미소] 어, 우리 쪽 사람. 앉아. 오늘은 뭘 들고 왔어?
+-> MENU
+* HUNT
+N-GA-T1 [기본] 둘은 봉천 갔어. 파란 옷 주인 찾으러. 사흘이면 오겠지.
+-> MENU
+* MENU
+> 옷을 팔러 왔다 -> SELL
+> 단가 칠판을 묻는다 -> BOARD
+> [화술 보통] 볼트 놈이 벗어 던진 작업복이 있다 -> SUIT_OK | SUIT_NO ?? GA_SUITSOLD == 0 and (has("A-001", 2) == 1 or (has("A-001") == 1 and worn() != "A-001"))
+> 인솔조가 언제 오는지 알려 주지 -> TIP ?? GA_SIDE == 0 and GA_NOTE == 0 and GA_BOX == 0 and GA_CRATE_DAY > 0 and GAME_DAY <= GA_CRATE_DAY + 3 and not (dead("C-013") == 1 and dead("C-049") == 1)
+> 그만 간다 -> END
+* SELL
+N-GA-T1 [기본] 옷 벌 5. 방독면은 사고, 우비는 팔고. 흥정은 없어.
+@cmd trade VGA
+-> END
+* BOARD
+N-GA-T1 [기본] 고철 kg 2, 옷 벌 5. 사람은 인솔조가 값을 매기고.
+N-GA-T1 [미소] 저 붉은 거? S-07 작업복 3,000. 생포만. 볼트에서 나온 놈 하나가 관악을 쏘다닌대.
+N-GA-T1 [기본] 봤으면 말해. 한몫 떼 줄게.
+-> MENU
+* SUIT_OK
+SYS 가방에서 파란 작업복을 꺼내 펼친다. 등에 S-07. 셈꾼의 눈이 커진다.
+N-GA-T1 [놀람] …진짜네. 벗어 던졌다고? 그럼 근처야. 맨몸으로 멀리 못 가.
+N-GA-T1 [기본] 삼백. 나머진 잡으면. 둘을 봉천 쪽으로 보내지.
+@cmd ga suitsell
+-> END
+* SUIT_NO
+N-GA-T1 [기본] (작업복을 뒤집어 본다) 이거 진짜야? 시장에 이런 거 많아. 넣어 둬.
+-> MENU
+* TIP
+N-GA-T1 [기본] …인솔조? 꼬리표엔 사흘째 아침이라던데. 몇이 와?
+N-GA-T1 [미소] 둘이라. 하역장 셔터로. 좋아 — 상자째 우리가 받지. 인솔조 몫은 없는 걸로.
+N-GA-T1 [기본] 사십. 그리고 너는 이제 우리 쪽 사람이야. 아래층 애들한테도 그렇게 말해 둘게.
+@cmd ga side 2
+-> END
+
+# 거래 자리 쪽지(2층 11,6 — 맵 글 scene=GA_NOTE): 셈꾼이 두목 장부를 받아 적는 동안(재고 세기 첫 줄 이후)엔 비어 있다 · 그 밖엔 [은신 40]
+@scene GA_NOTE  거래 자리  (L-R01-28)
+@npc   -
+@cond  V_ACT >= 1
+? GA_NOTE >= 1 or has("M-453") == 1 -> TAKEN
+SYS 거래 자리. 작업복 견본이 개켜 있고, 그 밑에 셈꾼의 장부 쪽지가 반쯤 끼워져 있다. '작업복 6 —'까지 보인다.
+? GA_EYE == 1 -> EYE
+> 쪽지를 집는다 -> TAKE
+> 그만둔다 -> END
+* EYE
+SYS 셈꾼이 바로 옆에서 장부를 넘긴다. 손을 뻗으면 그의 눈길이 닿는다.
+> [은신 40] 견본을 고르는 척하며 쪽지를 빼낸다 -> TAKE
+> 그냥 집는다 -> SEEN
+> 그만둔다 -> END
+* TAKE
+SYS 쪽지가 소매 안으로 들어온다. '작업복 6 — 인솔조엔 5로 · 벌당 5 · 한 벌은 우리 몫'.
+@cmd ga note
+-> END
+* SEEN
+@cmd ga note_seen
+-> END
+* TAKEN
+SYS 거래 자리. 쪽지가 있던 자리에 견본만 개켜 있다.
+-> END
+
+# 인솔조(하역장 N-GA-S1): 작업복 차림이거나 새벽 편일 때 진행기 갈고리가 연다(패거리 편이면 바크만)
+@scene GA_DOCK  인솔조  (L-R01-28)
+@npc   N-GA-S1
+@cond  V_ACT >= 1
+? GA_SIDE == 1 -> OURS
+? has("M-453") == 1 and GA_SIDE == 0 -> NOTE
+? GA_DOCKASK == 1 -> AGAIN
+N-GA-S1 [기본] (인부 머릿수를 세다 말고) …너. 오늘 번호 44. 위층 놈들이 물으면 그거 대.
+@cmd ga dayno
+N-GA-S1 [기본] 그리고 — 위층 다녀올 수 있지?
+? GA_BOX == 0 -> ASK0
+N-GA-S1 [기본] 지난번 상자, 벌수가 이상했어. 셈꾼 놈이 우리 몫을 떼는 것 같아.
+-> ASK1
+* ASK0
+N-GA-S1 [기본] 셈꾼 놈이 벌수를 속이는 것 같아. 꼬리표엔 다섯인데 상자가 무거워.
+-> ASK1
+* ASK1
+N-GA-S1 [기본] 2층 거래 자리에 쪽지가 있을 거야. 한 장만 가져와. 셈을 맞춰 주지.
+! GA_DOCKASK = 1
+-> END
+* AGAIN
+? GA_DAYNO != GAME_DAY -> AGAINNO
+N-GA-S1 [기본] 쪽지. 2층 거래 자리. 셈꾼이 두목 장부 받아 적을 때가 빈다.
+-> END
+* AGAINNO
+N-GA-S1 [기본] 오늘 번호 44. 쪽지는 2층 거래 자리 — 셈꾼이 두목 장부 받아 적을 때가 빈다.
+@cmd ga dayno
+-> END
+* NOTE
+SYS 쪽지를 내민다. 인솔조가 펴 들고 입술로 읽는다.
+N-GA-S1 [분노] '작업복 6 — 인솔조엔 5로'. 이 새끼들, 벌당 5캡에 한 벌씩.
+N-GA-S1 [기본] 수고했어. 십오. 우리 오는 날엔 셔터 두드려 — 올려 줄게.
+@cmd ga side 1
+-> END
+* OURS
+N-GA-S1 [기본] 또 왔네. 우리 있는 동안은 셔터 올려 줄게. 위층 놈들 눈엔 띄지 마.
+-> END
+
+# 하역장 셔터(월드 — 아울렛 A관 외벽 동쪽 스팟 · 1-12n 뒷문): 인솔조가 와 있을 때 작업복 차림이거나 새벽 편이면 올려 준다. 패거리 편이면 닫힌다
+@scene GA_DOCKDOOR  하역장 셔터  (L-R01-28)
+@npc   -
+@cond  V_ACT >= 1
+? GA_BOX == 6 -> HOLES
+? ((PDO_R01_6 == "SB" and PDS_R01_6 >= 2) or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead("C-013") == 1 and dead("C-049") == 1) and not (dead("N-GA-S1") == 1 and dead("N-GA-S2") == 1) and (worn() == "A-012" or GA_SIDE == 1) -> OPEN
+? ((PDO_R01_6 == "SB" and PDS_R01_6 >= 2) or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead("C-013") == 1 and dead("C-049") == 1) and not (dead("N-GA-S1") == 1 and dead("N-GA-S2") == 1) -> VOICE
+SYS 하역장 셔터. 안에서 걸쇠가 걸렸다. 분필 화살표 — '인력 →'.
+-> END
+* VOICE
+SYS 셔터 너머에서 담배 냄새와 말소리. 두드리자 '인력이면 옷부터 갖춰 입고 와' — 셔터는 그대로다.
+-> END
+* OPEN
+SYS 셔터를 두드린다. 안에서 걸쇠가 풀리고 셔터가 무릎 높이까지 올라간다. '인부? 늦었어. 들어와.'
+> 셔터 밑으로 들어간다 -> IN
+> 그만둔다 -> END
+* IN
+@cmd ga dock
+-> END
+* SHUT
+SYS 하역장 셔터. 걸쇠 위에 새 자물쇠가 달렸다. 안쪽에서 누가 셔터를 걷어찬다 — '패거리 끄나풀은 저리 가.'
+-> END
+* HOLES
+SYS 하역장 셔터에 총알구멍이 줄지어 났다. 셔터를 타고 흐른 자국 위로 붉은 스프레이 — '인부 사절'.
+? GA_SIDE == 2 -> SHUT
+-> END
+
+# 하역장 셔터 안쪽(GA-02 — 맵 글 scene=GA_DOCKIN): 셔터 밑으로 나간다(올려 줄 사람이 있을 때)
+@scene GA_DOCKIN  하역장 셔터  (L-R01-28)
+@npc   -
+@cond  V_ACT >= 1
+? ((PDO_R01_6 == "SB" and PDS_R01_6 >= 2) or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead("C-013") == 1 and dead("C-049") == 1) and not (dead("N-GA-S1") == 1 and dead("N-GA-S2") == 1) and GA_BOX != 6 -> OUT
+SYS 하역장 셔터. 아래가 반 뼘 들렸다. 혼자서는 올라가지 않는다.
+-> END
+* OUT
+SYS 인솔조가 셔터 손잡이를 잡아 준다. '나가려고? 위층 놈들한테 우리 얘긴 말고.'
+> 셔터 밑으로 나간다 -> GO
+> 그만둔다 -> END
+* GO
+@cmd ga undock
 -> END

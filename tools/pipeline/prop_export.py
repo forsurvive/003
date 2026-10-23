@@ -116,7 +116,7 @@ def export_r01():
         if r["kind"] == "wall":                                    # 벽 소품(봉천 실내): 벽면 윗칸 왼쪽 위 + dx·dy
             off = [r["dx"] - 1, r["dy"] - 1]
         elif fw == 0:
-            off = [16 - w // 2, T - h + 1]
+            off = [16 - w // 2 + r.get("nudge", 0), T - h + 1]               # 덧그림: 칸 가운데 아래 기준(짝수 칸 폭 벽 덧그림은 nudge 16으로 칸 경계에 맞춘다 — 1-12n 셔터)
         e = {"rect": [x0, y0, w, h], "foot": [fw, fh], "kind": r["kind"], "off": off, "atlas": "r01"}
         for st in B.STATES.get(n, {}):
             e.setdefault("states", {})[st] = list(pos[f"{n}#{st}"])

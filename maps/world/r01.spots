@@ -246,3 +246,32 @@ spot @896,1418 4 3
 prop paw_prints 1 1
 text 1 1 "개천 둑을 따라 남쪽 숲으로 이어지는 작은 발자국들 — 들개 무리가 다니는 길목이다. 여기서부턴 산이 키운다." w=2
 trigger 0 0 w=4 h=3 scene=UQ02_FREE cond="UQ02_CARRY == 1"
+
+# 가산 아울렛 A관 앞면(L-R01-28, 1-12n): 정문(651,1380 — 셔터 그림 651~652) 오른쪽 654~656 — 바깥 진열 유리(D-233 · 안 진열창과 같은 상태 조건, 지나가다 판도가 읽힌다) ·
+#   하역장 셔터(뒷문 — 인솔조가 올려 줄 때 GA-02 from_dock, 장면 GA_DOCKDOOR) · ga_dock = 셔터 밑으로 나온 자리. 앞면은 y 1379~1380(건물 650~660), 서는 칸은 1381. 하역장 셔터는 658~659. wall=1 = 굽기가 앞면 줄을 비우지 않는다.
+spot @654,1381 3 1 wall=1
+prop w_window_ga_out 1 -1 cond="DG_GA == 0 and GA_DECOY == 0 and (PDS_R01_6 < 2 or (PDO_R01_6 != \"SB\" and PDO_R01_6 != \"YT\"))"
+prop w_window_ga_out 1 -1 state=tag cond="DG_GA == 0 and GA_DECOY == 0 and (PDO_R01_6 == \"SB\" and PDS_R01_6 >= 2)"
+prop w_window_ga_out 1 -1 state=target cond="DG_GA == 0 and GA_DECOY == 0 and (PDO_R01_6 == \"YT\" and PDS_R01_6 >= 2)"
+prop w_window_ga_out 1 -1 state=fallen cond="DG_GA >= 1 and GA_DECOY == 0"
+prop w_window_ga_out 1 -1 state=taken cond="DG_GA == 0 and GA_DECOY >= 2 and (PDS_R01_6 < 2 or (PDO_R01_6 != \"SB\" and PDO_R01_6 != \"YT\"))"
+prop w_window_ga_out 1 -1 state=taken_tag cond="DG_GA == 0 and GA_DECOY >= 2 and (PDO_R01_6 == \"SB\" and PDS_R01_6 >= 2)"
+prop w_window_ga_out 1 -1 state=taken_target cond="DG_GA == 0 and GA_DECOY >= 2 and (PDO_R01_6 == \"YT\" and PDS_R01_6 >= 2)"
+prop w_window_ga_out 1 -1 state=taken_fallen cond="DG_GA >= 1 and GA_DECOY >= 2"
+prop w_window_ga_out 1 -1 state=decoy cond="DG_GA == 0 and GA_DECOY == 1 and (PDS_R01_6 < 2 or (PDO_R01_6 != \"SB\" and PDO_R01_6 != \"YT\"))"
+prop w_window_ga_out 1 -1 state=decoy_tag cond="DG_GA == 0 and GA_DECOY == 1 and (PDO_R01_6 == \"SB\" and PDS_R01_6 >= 2)"
+prop w_window_ga_out 1 -1 state=decoy_target cond="DG_GA == 0 and GA_DECOY == 1 and (PDO_R01_6 == \"YT\" and PDS_R01_6 >= 2)"
+prop w_window_ga_out 1 -1 state=decoy_fallen cond="DG_GA >= 1 and GA_DECOY == 1"
+text 0 -1 "바깥 진열 유리. 방독면을 쓴 마네킹 셋이 길을 본다 — '특가 · 방호 우비 2+1'." w=3 cond="DG_GA == 0 and GA_DECOY == 0 and not (PDO_R01_6 == \"SB\" and PDS_R01_6 >= 2) and not (PDO_R01_6 == \"YT\" and PDS_R01_6 >= 2)"
+text 0 -1 "바깥 진열 유리. 마네킹 목마다 번호표 — 41 · 42 · 43. 누가 마네킹에게 인력 번호를 매겼다." w=3 cond="DG_GA == 0 and GA_DECOY == 0 and (PDO_R01_6 == \"SB\" and PDS_R01_6 >= 2) and GA_TAG == 0"
+text 0 -1 "바깥 진열 유리. 마네킹 목에 번호표 — 41 · ○ · 43. 가운데 목엔 철사 고리만 남았다." w=3 cond="DG_GA == 0 and GA_DECOY == 0 and (PDO_R01_6 == \"SB\" and PDS_R01_6 >= 2) and GA_TAG == 1"
+text 0 -1 "바깥 진열 유리. 마네킹 가슴마다 붉은 과녁, 유리에 총알구멍. 패거리가 여기서 사격 연습을 했다." w=3 cond="DG_GA == 0 and GA_DECOY == 0 and (PDO_R01_6 == \"YT\" and PDS_R01_6 >= 2)"
+text 0 -1 "바깥 진열 유리. 마네킹이 모두 쓰러져 있다. 안이 조용하다." w=3 cond="DG_GA >= 1"
+text 0 -1 "바깥 진열 유리. 가운데 마네킹이 파란 작업복을 입고 섰다 — 멀리서 보면 사람 같다. 등에 S-07." w=3 cond="DG_GA == 0 and GA_DECOY == 1"
+text 0 -1 "바깥 진열 유리. 가운데 자리가 비었다. 받침대만 남았다." w=3 cond="DG_GA == 0 and GA_DECOY >= 2"
+# 하역장 셔터(1-12n 뒷문): 앞면 동쪽 끝 두 칸 — 지하 하역장으로 곧장(1층 패거리 줄을 거치지 않는다)
+spot @658,1381 2 1 wall=1
+prop w_shutter_dock 0 -1 cond="GA_BOX != 6"
+prop w_shutter_dock 0 -1 state=holes cond="GA_BOX == 6"
+text 0 -1 "하역장 셔터. 분필 화살표 — '인력 →'." w=2 scene=GA_DOCKDOOR
+mark ga_dock 0 0 S

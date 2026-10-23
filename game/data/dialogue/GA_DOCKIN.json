@@ -1,0 +1,71 @@
+{
+ "id": "GA_DOCKIN",
+ "title": "하역장 셔터",
+ "loc": "L-R01-28",
+ "npc": "",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "OUT": 3,
+  "GO": 5
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "((PDO_R01_6 == \"SB\" and PDS_R01_6 >= 2) or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead(\"C-013\") == 1 and dead(\"C-049\") == 1) and not (dead(\"N-GA-S1\") == 1 and dead(\"N-GA-S2\") == 1) and GA_BOX != 6",
+   "to": "OUT"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "하역장 셔터. 아래가 반 뼘 들렸다. 혼자서는 올라가지 않는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "인솔조가 셔터 손잡이를 잡아 준다. '나가려고? 위층 놈들한테 우리 얘긴 말고.'"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "셔터 밑으로 나간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "GO",
+     "id": "GA_DOCKIN:1:0"
+    },
+    {
+     "text": "그만둔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "GA_DOCKIN:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "ga",
+   "args": [
+    "undock"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/GA.txt"
+}

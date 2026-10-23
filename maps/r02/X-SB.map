@@ -204,6 +204,23 @@ npc CR-437 33 30 N sheet=en_cr437_loco cond="SB_RAID == 0" route=truck:33,30,6;y
 npc CR-435 17 26 E sheet=en_cr435_loco cond="SB_RAID == 0" bark="일자리 찾아? 새벽 네 시에 와. 일당은 전표로 준다."
 npc C-021 26 17 E cond="SB_RAID == 0 and MQ101_STAGE >= 50" bark="장부에 적힌 건 다 빚이야. 너도 적혀 있고."
 npc N-R02-037 15 13 S cond="SB_RAID == 0 and GAME_HOUR >= 4 and GAME_HOUR < 6" bark="자, 7번! 등 튼튼, 이빨 성함. 오늘 시작가 40캡!"
+# 1-12n D-232 오늘의 인력(무명 셋 — 경매 시간 04~06시): 가산 작업복 상자 결과가 옷으로 보인다(다음 06:00 반영 뒤 — GA_BOX_DONE) · 출처 = 그 옷을 입은 사람(P7)
+#   결과 전 평상복 T03 · 넘김/그냥 가져감 카키 작업복 T12 · 바꿔치기 노란 우비 T10 · 태움/빈 상자/가로챔 넝마 T16
+npc N-SB-W1 14 16 N look=M1-S3-HR02-H1-T03-1-PF00-HD00-EY00 cond="SB_RAID == 0 and GAME_HOUR >= 4 and GAME_HOUR < 6 and (GA_BOX == 0 or GA_BOX_DONE == 0)" bark="(입던 옷 그대로 줄에 섰다) 옷은 준다더니."
+npc N-SB-W2 15 16 N look=M2-S4-HR01-H2-T03-2-PF00-HD03-EY00 cond="SB_RAID == 0 and GAME_HOUR >= 4 and GAME_HOUR < 6 and (GA_BOX == 0 or GA_BOX_DONE == 0)" bark="오늘은 어디로 가는 줄인지 아무도 몰라."
+npc N-SB-W3 16 16 N look=F1-S2-HR05-H1-T03-1-PF00-HD00-EY00 cond="SB_RAID == 0 and GAME_HOUR >= 4 and GAME_HOUR < 6 and (GA_BOX == 0 or GA_BOX_DONE == 0)" bark="번호 부르면 대답만 크게 해."
+npc N-SB-W1 14 16 N look=M1-S3-HR02-H1-T12-1-PF00-HD00-EY00 cond="SB_RAID == 0 and GAME_HOUR >= 4 and GAME_HOUR < 6 and GA_BOX_DONE == 1 and (GA_BOX == 1 or GA_BOX == 4)" bark="카키 작업복 새거네. 가산 거래래."
+npc N-SB-W2 15 16 N look=M2-S4-HR01-H2-T12-2-PF00-HD03-EY00 cond="SB_RAID == 0 and GAME_HOUR >= 4 and GAME_HOUR < 6 and GA_BOX_DONE == 1 and (GA_BOX == 1 or GA_BOX == 4) and GA_SIDE != 1" bark="치수가 맞아. 누가 고른 건지."
+npc N-SB-W2 15 16 N look=M2-S4-HR01-H2-T12-2-PF00-HD03-EY00 cond="SB_RAID == 0 and GAME_HOUR >= 4 and GAME_HOUR < 6 and GA_BOX_DONE == 1 and (GA_BOX == 1 or GA_BOX == 4) and GA_SIDE == 1" bark="가산 셈꾼이 우리 몫을 떼먹던 게 들통났대. 누가 쪽지를 들고 왔다나."
+npc N-SB-W3 16 16 N look=F1-S2-HR05-H1-T12-1-PF00-HD00-EY00 cond="SB_RAID == 0 and GAME_HOUR >= 4 and GAME_HOUR < 6 and GA_BOX_DONE == 1 and (GA_BOX == 1 or GA_BOX == 4)" bark="옷이 좋으면 값이 올라. 그게 무서워."
+npc N-SB-W1 14 16 N look=M1-S3-HR02-H1-T10-1-PF00-HD00-EY00 cond="SB_RAID == 0 and GAME_HOUR >= 4 and GAME_HOUR < 6 and GA_BOX_DONE == 1 and GA_BOX == 3" bark="(노란 우비 소매를 걷는다) 우비? 비는 막지. 일은 못 하고."
+npc N-SB-W2 15 16 N look=M2-S4-HR01-H2-T10-2-PF00-HD03-EY00 cond="SB_RAID == 0 and GAME_HOUR >= 4 and GAME_HOUR < 6 and GA_BOX_DONE == 1 and GA_BOX == 3" bark="작업복 대신 이거래. 셈이 틀렸다나."
+npc N-SB-W3 16 16 N look=F1-S2-HR05-H1-T10-1-PF00-HD00-EY00 cond="SB_RAID == 0 and GAME_HOUR >= 4 and GAME_HOUR < 6 and GA_BOX_DONE == 1 and GA_BOX == 3" bark="노란 거 입혀 놓으니 멀리서도 보이겠지. 도망 못 가게."
+npc N-SB-W1 14 16 N look=M1-S3-HR02-H1-T16-1-PF00-HD00-EY00 cond="SB_RAID == 0 and GAME_HOUR >= 4 and GAME_HOUR < 6 and GA_BOX_DONE == 1 and GA_BOX == 2" bark="맨몸으로 나가래. 옷 상자가 탔대."
+npc N-SB-W1 14 16 N look=M1-S3-HR02-H1-T16-1-PF00-HD00-EY00 cond="SB_RAID == 0 and GAME_HOUR >= 4 and GAME_HOUR < 6 and GA_BOX_DONE == 1 and GA_BOX == 5" bark="옷 상자가 비어서 왔대. 패거리 짓이라나."
+npc N-SB-W1 14 16 N look=M1-S3-HR02-H1-T16-1-PF00-HD00-EY00 cond="SB_RAID == 0 and GAME_HOUR >= 4 and GAME_HOUR < 6 and GA_BOX_DONE == 1 and GA_BOX == 6" bark="가산 하역장이 털렸대. 누가 날을 일러 줬다나."
+npc N-SB-W2 15 16 N look=M2-S4-HR01-H2-T16-2-PF00-HD03-EY00 cond="SB_RAID == 0 and GAME_HOUR >= 4 and GAME_HOUR < 6 and GA_BOX_DONE == 1 and (GA_BOX == 2 or GA_BOX == 5 or GA_BOX == 6)" bark="(누더기 깃을 여민다) 가산 쪽에서 무슨 일이 났대."
+npc N-SB-W3 16 16 N look=F1-S2-HR05-H1-T16-1-PF00-HD00-EY00 cond="SB_RAID == 0 and GAME_HOUR >= 4 and GAME_HOUR < 6 and GA_BOX_DONE == 1 and (GA_BOX == 2 or GA_BOX == 5 or GA_BOX == 6)" bark="옷이 없으면 일당도 깎인대."
 npc C-013 18 13 S cond="SB_RAID == 0 and D_HDC == 0 and ((GAME_HOUR >= 4 and GAME_HOUR < 6) or SB_TALK == 2)" bark="값은 장부가 정해. 난 도장만 찍지."
 # 1-12f FQ-SB-01: 실장 구만호의 일과(원고 FQ-SB-01.txt 머리 — 04~06시 인력시장 번호 부르기는 마당, 그 밖엔 2층 실장실 · 출근부 일 동안은 1층 출근부실 감독 책상)
 npc C-049 21 13 S cond="SB_RAID == 0 and FQ_SB01_WHERE == 2" bark="(장부를 펼쳐 든다) 7번부터 불러. 6번까진 어제 거야."

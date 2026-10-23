@@ -339,6 +339,12 @@ MERCHANTS = {
         "want": ["M-094", "M-095", "M-093", "I-087", "M-021"],
         "greet": "입던 옷도 받아. 피 묻은 건 빨아 와.",
     },
+    "VGA": {                                                                    # 1-12n 가산 패거리 셈꾼(N-GA-T1) 장물상 — 인부 행세 · 패거리 편일 때만 말이 통한다(진행기 ga.gd)
+        "name": "패거리 장물", "npc": "N-GA-T1", "settle": "YT", "grade": "E", "renew": 3, "rate": 1.0, "pick": 4, "inst": True,
+        "buys": ["apparel"], "likes": ["cloth"], "like_k": [1.0, 0.6],
+        "stock": [["A-074", 2], ["M-196", 1], ["M-010", 4], ["A-010", 1], ["A-016", 1]],
+        "greet": "옷 벌 5. 흥정은 없어.",
+    },
     "VG_FOOD": {
         "name": "국밥 장수", "npc": "N-VG-F1", "settle": "MS", "grade": "E", "renew": 3, "rate": 1.0, "pick": 6, "inst": True,
         "buys": ["*"], "likes": ["food"], "like_k": [1.2, 0.8],

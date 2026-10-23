@@ -19,6 +19,9 @@
     rat_nest_ga     왕쥐 둥지(2×1): 찢은 옷감 · 솜 · 뜯긴 마네킹 팔 하나 · 뼈
     mann_pile_ga    마네킹 무더기(2×1): 팔다리 · 머리가 엉킨 더미 · 방독면 하나가 굴러 나옴
     ledger_ga       재고 장부(덧그림 — 두목 책상 위 · 발 없음): 펼친 장부 · '마네킹 312' 동그라미
+    w_window_ga_out 바깥 진열 유리(덧그림 96×64, 1-12n D-233): 철틀 유리 · 어둠 속 마네킹 셋(안 진열창과 같은 상태) · 반사 사선
+    w_shutter_dock  하역장 셔터(덧그림 64×64, 1-12n 뒷문): 골함석 롤 셔터 · '인력 →' / 상태 open · holes(총알구멍 · '인부 사절')
+    cart_ga         하역장 손수레(1×1) / 상태 blood(뒤집힘 · 핏자국)
 props_bc.PROPS에 합쳐져 r01_props 아틀라스로 나간다(prop_export.export_r01). 위에서 빛(위 밝게 · 아래 어둡게), 반투명 없음."""
 import os
 import random
@@ -157,6 +160,99 @@ def window_ga(state=""):
         d.line([x, y, x + rnd.randint(-5, 5), y + rnd.randint(3, 8)], fill=C("P14"))
     if decoy:
         put_text(im, "S-07", 38, 57, "P49", 8, "Galmuri7")
+    return im
+
+
+# ================================================================================================ 바깥(월드 외벽 — 1-12n D-233 · D-231)
+def w_window_ga_out(state=""):
+    """A관 정문 옆 바깥 진열 유리(덧그림 96×64 — 외벽 아랫단, 지나가며 본다): 골함석 벽에 뚫은 철틀 유리 · 안쪽 어둠 · 마네킹 셋(안 진열창과 같은 상태) ·
+    유리 반사 사선 · 위 붉은 특가 띠. 반투명 없이 — 유리는 반사 줄과 틀로만."""
+    im = img(96, 64)
+    d = ImageDraw.Draw(im)
+    d.rectangle([0, 0, 95, 63], fill=C(INK))
+    d.rectangle([2, 8, 93, 61], fill=C("P02"))                                # 안쪽 어둠(매장)
+    for x in range(4, 92, 6):                                                # 안쪽 행거 그림자(어둠 속 줄)
+        d.line([x, 12, x, 16], fill=C("P03"))
+    d.line([2, 11, 93, 11], fill=C("P03"))
+    decoy = state.startswith("decoy")
+    taken = state.startswith("taken")
+    base = state.split("_", 1)[1] if (decoy or taken) and "_" in state else ("" if (decoy or taken) else state)
+    for i, (body, torso, no) in enumerate((("M1", "T03", 41), ("F1", "T12", 42), ("M1", "T11", 43))):
+        cx = 16 + i * 32
+        if taken and i == 1:
+            _stand(d, cx, 58)
+            continue
+        suit = decoy and i == 1
+        m = mann(body, torso, "" if suit else base, suit=suit, no=no)
+        im.alpha_composite(m.crop((0, 0, 40, 55)), (cx - 20, 6))
+    d = ImageDraw.Draw(im)
+    d.rectangle([0, 0, 95, 7], fill=C(INK)); d.rectangle([1, 1, 94, 6], fill=C("P53"))   # 특가 띠
+    put_text(im, "특가 · 방호 우비 2+1", 16, 0, "P09", 8, "Galmuri7")
+    for x in (0, 1, 31, 32, 63, 64, 94, 95):                                 # 철틀(세 칸)
+        d.line([x, 8, x, 63], fill=C(STEEL[1] if x % 2 == 0 else STEEL[3]))
+    d.line([0, 62, 95, 62], fill=C(STEEL[3])); d.line([0, 63, 95, 63], fill=C(STEEL[1]))
+    for x0 in (6, 40, 72):                                                   # 유리 반사(사선 두 줄 — 칸마다)
+        d.line([x0, 52, x0 + 14, 18], fill=C("P08")); d.line([x0 + 4, 52, x0 + 18, 18], fill=C("P06"))
+    rnd = random.Random(11)
+    for _ in range(4):                                                       # 금 간 유리
+        x, y = rnd.randint(8, 88), rnd.randint(14, 50)
+        d.line([x, y, x + rnd.randint(-6, 6), y + rnd.randint(4, 9)], fill=C("P14"))
+    return im
+
+
+def w_shutter_dock(state=""):
+    """하역장 셔터(벽 소품 64×64 — A관 앞면 정문 오른쪽 두 칸, 1-12n 뒷문): 골함석 롤 셔터 · 아래 반 뼘 들림 · 분필 화살표 '인력 →' ·
+    상태 open(말려 올라감 — 안쪽 어둠 · 컨베이어 끝) · holes(총알구멍 · 핏자국 줄 · 스프레이 '인부 사절' — 패거리가 친 다음 날)."""
+    im = img(64, 64)
+    d = ImageDraw.Draw(im)
+    d.rectangle([0, 0, 63, 63], fill=C(INK))
+    d.rectangle([2, 2, 61, 5], fill=C(STEEL[2])); d.line([2, 2, 61, 2], fill=C(STEEL[4]))   # 셔터 통(위)
+    if state == "open":
+        d.rectangle([4, 6, 59, 61], fill=C("P02"))
+        d.rectangle([4, 6, 59, 12], fill=C(STEEL[1]))                          # 말려 올라간 셔터 끝
+        for y in (8, 10):
+            d.line([4, y, 59, y], fill=C(STEEL[3]))
+        d.rectangle([14, 44, 49, 50], fill=C("P03")); d.line([14, 44, 49, 44], fill=C("P05"))   # 안쪽 컨베이어 끝
+        for x in range(16, 48, 6):
+            d.ellipse([x, 49, x + 3, 52], fill=C(INK))
+    else:
+        for y in range(6, 58, 3):                                             # 골함석 판
+            d.line([4, y, 59, y], fill=C(STEEL[3] if (y // 3) % 2 else STEEL[2]))
+            d.line([4, y + 1, 59, y + 1], fill=C(STEEL[1]))
+        d.rectangle([4, 58, 59, 61], fill=C("P02"))                           # 아래 반 뼘 들림
+        for x in (10, 30, 48):
+            d.point((x, 59), fill=C("P04"))
+        for (x, y, c) in ((8, 14, "P24"), (40, 30, "P24"), (22, 47, "P25"), (51, 19, "P24")):   # 녹
+            d.line([x, y, x + 3, y + 4], fill=C(c))
+        put_text(im, "인력 →", 18, 22, "P09", 8, "Galmuri7")
+        if state == "holes":
+            for (x, y) in ((14, 20), (19, 27), (33, 18), (41, 33), (47, 24), (25, 38)):
+                d.point((x, y), fill=C(INK)); d.point((x + 1, y), fill=C("P09"))
+            d.line([28, 40, 27, 57], fill=C("P52")); d.line([29, 42, 29, 56], fill=C("P51"))   # 셔터를 타고 흐른 자국
+            put_text(im, "인부 사절", 14, 44, "P54", 8, "Galmuri7")
+    for x in (0, 1, 62, 63):
+        d.line([x, 0, x, 63], fill=C(STEEL[1]))
+    return im
+
+
+def cart_ga(state=""):
+    """하역장 손수레(1×1): 철판 바닥 · 손잡이 · 바퀴 둘 / 상태 blood(뒤집혀 핏자국 — 패거리가 하역장을 친 다음 날)."""
+    im = img(40, 48)
+    d = ImageDraw.Draw(im)
+    _shadow(d, 4, 36, 46)
+    if state == "blood":
+        d.polygon([(4, 30), (30, 22), (36, 34), (10, 42)], fill=C(INK))
+        d.polygon([(6, 31), (29, 24), (34, 33), (11, 40)], fill=C(STEEL[2]))
+        d.ellipse([28, 36, 36, 44], fill=C(INK)); d.ellipse([30, 38, 34, 42], fill=C(STEEL[1]))
+        for (x, y) in ((14, 33), (18, 35), (22, 31), (9, 44), (16, 45)):
+            d.point((x, y), fill=C("P52"))
+        d.line([6, 44, 20, 46], fill=C("P51"))
+        return im
+    d.rectangle([6, 22, 34, 38], fill=C(INK)); d.rectangle([7, 23, 33, 37], fill=C(STEEL[2]))
+    d.line([7, 23, 33, 23], fill=C(STEEL[4]))
+    d.line([33, 22, 38, 8], fill=C(INK), width=2); d.line([33, 22, 38, 8], fill=C(STEEL[3]))
+    for x in (9, 27):
+        d.ellipse([x, 36, x + 7, 43], fill=C(INK)); d.ellipse([x + 2, 38, x + 5, 41], fill=C(STEEL[1]))
     return im
 
 
@@ -414,11 +510,17 @@ PROPS_GA = {
     "mann_pile_ga": _r(mann_pile_ga, 2, 1, down=-2),
     "ledger_ga": _r(ledger_ga, 0, 0, "deco"),
     "mann_tied": _r(mann_tied, 1, 1, down=-2),
+    "w_window_ga_out": _r(w_window_ga_out, 0, 0, "deco"),                     # 1-12n D-233 바깥 진열 유리(외벽 아랫단 덧그림 — 월드 스팟)
+    "w_shutter_dock": dict(_r(w_shutter_dock, 0, 0, "deco"), nudge=16),                       # 1-12n 하역장 셔터(뒷문 — 월드 스팟)
+    "cart_ga": _r(cart_ga, 1, 1, down=-2),
 }
 STATES_GA = {
     "mann_ga": {s: (lambda s=s: mann("M1", "T03", s, no=17)) for s in _MSTATES},
     "mann_ga2": {s: (lambda s=s: mann("F1", "T12", s, no=29)) for s in _MSTATES},
     "window_ga": {s: (lambda s=s: window_ga(s)) for s in _WSTATES},
+    "w_window_ga_out": {s: (lambda s=s: w_window_ga_out(s)) for s in _WSTATES},
+    "w_shutter_dock": {"open": lambda: w_shutter_dock("open"), "holes": lambda: w_shutter_dock("holes")},
+    "cart_ga": {"blood": lambda: cart_ga("blood")},
     "crate_suit_ga": {s: (lambda s=s: crate_suit_ga(s)) for s in ("burnt", "swapped", "empty")},
     "w_board_ga": {"crossed": lambda: w_board_ga("crossed")},
     "mann_tied": {"bare": lambda: mann_tied("bare")},

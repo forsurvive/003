@@ -1,0 +1,293 @@
+{
+ "id": "GA_TRADE",
+ "title": "패거리 셈꾼",
+ "loc": "L-R01-28",
+ "npc": "N-GA-T1",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "OPEN": 2,
+  "FRISK": 6,
+  "CAUGHT": 12,
+  "FRIEND": 16,
+  "HUNT": 18,
+  "MENU": 20,
+  "SELL": 21,
+  "BOARD": 24,
+  "SUIT_OK": 28,
+  "SUIT_NO": 33,
+  "TIP": 35
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "GA_FRISK != GAME_DAY",
+   "to": "FRISK"
+  },
+  {
+   "op": "goto",
+   "to": "OPEN"
+  },
+  {
+   "op": "if",
+   "cond": "GA_SIDE == 2",
+   "to": "FRIEND"
+  },
+  {
+   "op": "line",
+   "who": "N-GA-T1",
+   "emo": "기본",
+   "text": "(장부 쪽지를 접어 무릎에 깔고) 인부? 줄은 지하야. 여긴 거래 자리."
+  },
+  {
+   "op": "if",
+   "cond": "GA_HUNT_DAY > 0 and GAME_DAY >= GA_HUNT_DAY and GAME_DAY < GA_HUNT_DAY + 3",
+   "to": "HUNT"
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-GA-T1",
+   "emo": "기본",
+   "text": "(손을 내밀며) 거래 자리에 앉으려면 소매부터. 다들 그래."
+  },
+  {
+   "op": "cmd",
+   "name": "ga",
+   "args": [
+    "frisk"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "has(\"M-453\") == 1",
+   "to": "CAUGHT"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "셈꾼이 양 소매를 툭툭 털어 본다. 먼지뿐이다."
+  },
+  {
+   "op": "line",
+   "who": "N-GA-T1",
+   "emo": "기본",
+   "text": "됐어. 앉아."
+  },
+  {
+   "op": "goto",
+   "to": "OPEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "셈꾼의 손가락이 소매 안의 쪽지에 닿는다. 그의 얼굴이 굳는다."
+  },
+  {
+   "op": "line",
+   "who": "N-GA-T1",
+   "emo": "분노",
+   "text": "…이거 내 글씨잖아."
+  },
+  {
+   "op": "cmd",
+   "name": "ga",
+   "args": [
+    "note_seen"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-GA-T1",
+   "emo": "미소",
+   "text": "어, 우리 쪽 사람. 앉아. 오늘은 뭘 들고 왔어?"
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-GA-T1",
+   "emo": "기본",
+   "text": "둘은 봉천 갔어. 파란 옷 주인 찾으러. 사흘이면 오겠지."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "옷을 팔러 왔다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "SELL",
+     "id": "GA_TRADE:1:0"
+    },
+    {
+     "text": "단가 칠판을 묻는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "BOARD",
+     "id": "GA_TRADE:1:1"
+    },
+    {
+     "text": "볼트 놈이 벗어 던진 작업복이 있다",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "보통"
+      }
+     ],
+     "cond": "GA_SUITSOLD == 0 and (has(\"A-001\", 2) == 1 or (has(\"A-001\") == 1 and worn() != \"A-001\"))",
+     "fx": "",
+     "to": "SUIT_OK",
+     "id": "GA_TRADE:1:2",
+     "fail": "SUIT_NO"
+    },
+    {
+     "text": "인솔조가 언제 오는지 알려 주지",
+     "tags": [],
+     "cond": "GA_SIDE == 0 and GA_NOTE == 0 and GA_BOX == 0 and GA_CRATE_DAY > 0 and GAME_DAY <= GA_CRATE_DAY + 3 and not (dead(\"C-013\") == 1 and dead(\"C-049\") == 1)",
+     "fx": "",
+     "to": "TIP",
+     "id": "GA_TRADE:1:3"
+    },
+    {
+     "text": "그만 간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "GA_TRADE:1:4"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-GA-T1",
+   "emo": "기본",
+   "text": "옷 벌 5. 방독면은 사고, 우비는 팔고. 흥정은 없어."
+  },
+  {
+   "op": "cmd",
+   "name": "trade",
+   "args": [
+    "VGA"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-GA-T1",
+   "emo": "기본",
+   "text": "고철 kg 2, 옷 벌 5. 사람은 인솔조가 값을 매기고."
+  },
+  {
+   "op": "line",
+   "who": "N-GA-T1",
+   "emo": "미소",
+   "text": "저 붉은 거? S-07 작업복 3,000. 생포만. 볼트에서 나온 놈 하나가 관악을 쏘다닌대."
+  },
+  {
+   "op": "line",
+   "who": "N-GA-T1",
+   "emo": "기본",
+   "text": "봤으면 말해. 한몫 떼 줄게."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "가방에서 파란 작업복을 꺼내 펼친다. 등에 S-07. 셈꾼의 눈이 커진다."
+  },
+  {
+   "op": "line",
+   "who": "N-GA-T1",
+   "emo": "놀람",
+   "text": "…진짜네. 벗어 던졌다고? 그럼 근처야. 맨몸으로 멀리 못 가."
+  },
+  {
+   "op": "line",
+   "who": "N-GA-T1",
+   "emo": "기본",
+   "text": "삼백. 나머진 잡으면. 둘을 봉천 쪽으로 보내지."
+  },
+  {
+   "op": "cmd",
+   "name": "ga",
+   "args": [
+    "suitsell"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-GA-T1",
+   "emo": "기본",
+   "text": "(작업복을 뒤집어 본다) 이거 진짜야? 시장에 이런 거 많아. 넣어 둬."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-GA-T1",
+   "emo": "기본",
+   "text": "…인솔조? 꼬리표엔 사흘째 아침이라던데. 몇이 와?"
+  },
+  {
+   "op": "line",
+   "who": "N-GA-T1",
+   "emo": "미소",
+   "text": "둘이라. 하역장 셔터로. 좋아 — 상자째 우리가 받지. 인솔조 몫은 없는 걸로."
+  },
+  {
+   "op": "line",
+   "who": "N-GA-T1",
+   "emo": "기본",
+   "text": "사십. 그리고 너는 이제 우리 쪽 사람이야. 아래층 애들한테도 그렇게 말해 둘게."
+  },
+  {
+   "op": "cmd",
+   "name": "ga",
+   "args": [
+    "side",
+    "2"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/act1/GA.txt"
+}

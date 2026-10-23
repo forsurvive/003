@@ -292,7 +292,7 @@ func test_ga_crate(t) -> void:
 	var st: StoryState = r[1]
 	var c: Ga = r[2]
 	t.eq(_v(st, "GA_CRATE_DAY"), 10, "상자를 처음 본 날")
-	t.eq(_suits(_crate(h)), 5, "현장 작업복 다섯 벌")
+	t.eq(_suits(_crate(h)), 6, "현장 작업복 여섯 벌(꼬리표는 5벌 — 1-12n)")
 	t.eq(_play(st, c, "GA_CRATE", ["불을"]), [], "작업복 상자 원고")
 	t.ok(_v(st, "GA_BOX") == 2 and _v(st, "GA_BOX_DAY") == 10, "태웠다(고른 날)")
 	t.ok(h.combat.ord.zones.any(func(z): return str(z["kind"]) == "fire"), "그 자리 불 지대")

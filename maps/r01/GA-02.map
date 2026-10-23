@@ -1,6 +1,7 @@
 # 가산 아울렛 — 지하 물류 창고(SD-09a L-R01-28 · 1-D 계획 §12.6, 단계 1-D6). 40×24 · 어둠(비상등만).
 # 분류 컨베이어(멈춤) · 경찰 납품 상자(A-028 · 잠김 50 · 송장 '여의도 지구대') · 반품 더미 · 왕쥐 둥지 · 작업복 상자(잃는 선택 — 장면 GA_CRATE) · 기름통 · 하역장 셔터.
-# 인솔조 둘(무명 · 대화 없음 · 바크만): 수거 날(GA_PICK — 상자를 처음 본 날부터 사흘째) 낮이나 새벽인력 우세(PD_R01_6 ≥ 10) 낮에 하역장 셔터 앞. 바크는 상자 결과(GA_BOX)마다 다르다.
+# 인솔조 둘(무명 · 바크 — 작업복 차림이면 N-GA-S1이 부탁 GA_DOCK, 1-12n): 수거 날(GA_PICK — 상자를 처음 본 날부터 사흘째) 낮이나 새벽인력 우세(판도 상태 변수) 낮에 하역장 셔터 앞. 바크는 상자 결과(GA_BOX)마다 다르다.
+# 1-12n 뒷문: 하역장 셔터 안쪽 = 장면 GA_DOCKIN(인솔조가 올려 줄 때만 밖으로) · 바깥 셔터 = 월드 스팟(GA_DOCKDOOR) → from_dock. 패거리가 가로챈 다음 날(GA_BOX 6) 뒤집힌 손수레 · 핏자국.
 map GA-02 가산 아울렛 지하 물류 창고
 set sb
 dark cond="GAME_DAY >= 0"
@@ -60,7 +61,12 @@ text 29 15 "꼬리표. '새벽인력 인솔조 — 사흘째 아침 수거'. 못
 prop drum 26 16
 text 26 17 "기름통. 반쯤 찼다. 냄새가 독하다." w=1
 prop w_shutter_big 33 1
-text 34 3 "하역장 셔터. 아래가 반 뼘 들렸다. 밖에서 손수레 바퀴 자국이 들어와 있다." w=2
+text 34 3 "하역장 셔터. 아래가 반 뼘 들렸다. 밖에서 손수레 바퀴 자국이 들어와 있다." w=2 scene=GA_DOCKIN
+mark from_dock 34 4 S
+prop cart_ga 31 4 cond="GA_BOX != 6"
+prop cart_ga 31 4 state=blood cond="GA_BOX == 6"
+text 31 5 "하역장 손수레. 바퀴에 분필 가루." w=1 cond="GA_BOX != 6"
+text 31 5 "뒤집힌 손수레. 바닥에 끈적한 자국이 셔터 쪽으로 끌려갔다. 탄피 몇 개." w=1 cond="GA_BOX == 6"
 prop pallet_sacks 36 17
 prop pallet_sacks 15 19
 prop crate_o 19 19
@@ -70,18 +76,19 @@ text 17 19 "손수레 바퀴 자국이 하역장에서 여기까지 왔다가 �
 prop crate_o 37 12
 box 37 12 crate name="하역장 상자"
 # ---------------------------------------------------------------- 인솔조(새벽인력 우세 · 낮) — 바크만
-npc N-GA-S1 33 15 W look=M2-S4-HR01-H1-T05-1-PF12-HD05-EY00 cond="(PD_R01_6 >= 10 or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead(\"C-013\") == 1 and dead(\"C-049\") == 1) and GA_BOX == 0" bark="오늘 실을 상자. 벌수 맞나 세어 봐."
-npc N-GA-S2 34 16 W look=M1-S3-HR02-H1-T05-1-PF12-HD02-EY00 cond="(PD_R01_6 >= 10 or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead(\"C-013\") == 1 and dead(\"C-049\") == 1) and GA_BOX == 0" bark="인력들 입힐 거야. 맞는 치수로."
-npc N-GA-S1 33 15 W look=M2-S4-HR01-H1-T05-1-PF12-HD05-EY00 cond="(PD_R01_6 >= 10 or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead(\"C-013\") == 1 and dead(\"C-049\") == 1) and GA_BOX == 1" bark="동그라미 안에 딱 있네. 누군지 몰라도 손이 빠르군."
-npc N-GA-S2 34 16 W look=M1-S3-HR02-H1-T05-1-PF12-HD02-EY00 cond="(PD_R01_6 >= 10 or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead(\"C-013\") == 1 and dead(\"C-049\") == 1) and GA_BOX == 1" bark="벌당 5캡 봉투는 저기 두고 간다. 주인이 찾아가겠지."
-npc N-GA-S1 33 15 W look=M2-S4-HR01-H1-T05-1-PF12-HD05-EY00 cond="(PD_R01_6 >= 10 or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead(\"C-013\") == 1 and dead(\"C-049\") == 1) and GA_BOX == 2" bark="…다 탔잖아. 패거리 놈들, 불장난을 해?"
-npc N-GA-S2 34 16 W look=M1-S3-HR02-H1-T05-1-PF12-HD02-EY00 cond="(PD_R01_6 >= 10 or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead(\"C-013\") == 1 and dead(\"C-049\") == 1) and GA_BOX == 2" bark="재 냄새. 인력들 맨몸으로 내보내게 생겼다."
-npc N-GA-S1 33 15 W look=M2-S4-HR01-H1-T05-1-PF12-HD05-EY00 cond="(PD_R01_6 >= 10 or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead(\"C-013\") == 1 and dead(\"C-049\") == 1) and GA_BOX == 3" bark="…우비? 이게 작업복이야? 패거리 놈들, 셈을 해 보자 이거지."
-npc N-GA-S2 34 16 W look=M1-S3-HR02-H1-T05-1-PF12-HD02-EY00 cond="(PD_R01_6 >= 10 or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead(\"C-013\") == 1 and dead(\"C-049\") == 1) and GA_BOX == 3" bark="노란 거라도 입혀. 비는 막겠지."
-npc N-GA-S1 33 15 W look=M2-S4-HR01-H1-T05-1-PF12-HD05-EY00 cond="(PD_R01_6 >= 10 or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead(\"C-013\") == 1 and dead(\"C-049\") == 1) and GA_BOX == 4" bark="목요일 건 실었다. 다음 건 언제냐."
-npc N-GA-S2 34 16 W look=M1-S3-HR02-H1-T05-1-PF12-HD02-EY00 cond="(PD_R01_6 >= 10 or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead(\"C-013\") == 1 and dead(\"C-049\") == 1) and GA_BOX == 4" bark="패거리한테 벌당 5캡. 싸게 먹혔어."
-npc N-GA-S1 33 15 W look=M2-S4-HR01-H1-T05-1-PF12-HD05-EY00 cond="(PD_R01_6 >= 10 or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead(\"C-013\") == 1 and dead(\"C-049\") == 1) and GA_BOX == 5" bark="빈 상자? 벌수가 하나도 없어. 패거리가 우릴 갖고 놀아."
-npc N-GA-S2 34 16 W look=M1-S3-HR02-H1-T05-1-PF12-HD02-EY00 cond="(PD_R01_6 >= 10 or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead(\"C-013\") == 1 and dead(\"C-049\") == 1) and GA_BOX == 5" bark="못 자국 봐. 안에서 빼 간 거야."
+npc N-GA-S1 33 15 W look=M2-S4-HR01-H1-T05-1-PF12-HD05-EY00 cond="((PDO_R01_6 == \"SB\" and PDS_R01_6 >= 2) or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead(\"C-013\") == 1 and dead(\"C-049\") == 1) and GA_BOX == 0 and GA_SIDE != 2" bark="오늘 실을 상자. 벌수 맞나 세어 봐."
+npc N-GA-S1 33 15 W look=M2-S4-HR01-H1-T05-1-PF12-HD05-EY00 cond="((PDO_R01_6 == \"SB\" and PDS_R01_6 >= 2) or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead(\"C-013\") == 1 and dead(\"C-049\") == 1) and GA_BOX == 0 and GA_SIDE == 2" bark="오늘 뭔가 이상해. 위층이 너무 조용해."
+npc N-GA-S2 34 16 W look=M1-S3-HR02-H1-T05-1-PF12-HD02-EY00 cond="((PDO_R01_6 == \"SB\" and PDS_R01_6 >= 2) or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead(\"C-013\") == 1 and dead(\"C-049\") == 1) and GA_BOX == 0" bark="인력들 입힐 거야. 맞는 치수로."
+npc N-GA-S1 33 15 W look=M2-S4-HR01-H1-T05-1-PF12-HD05-EY00 cond="((PDO_R01_6 == \"SB\" and PDS_R01_6 >= 2) or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead(\"C-013\") == 1 and dead(\"C-049\") == 1) and GA_BOX == 1" bark="동그라미 안에 딱 있네. 누군지 몰라도 손이 빠르군."
+npc N-GA-S2 34 16 W look=M1-S3-HR02-H1-T05-1-PF12-HD02-EY00 cond="((PDO_R01_6 == \"SB\" and PDS_R01_6 >= 2) or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead(\"C-013\") == 1 and dead(\"C-049\") == 1) and GA_BOX == 1" bark="벌당 5캡 봉투는 저기 두고 간다. 주인이 찾아가겠지."
+npc N-GA-S1 33 15 W look=M2-S4-HR01-H1-T05-1-PF12-HD05-EY00 cond="((PDO_R01_6 == \"SB\" and PDS_R01_6 >= 2) or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead(\"C-013\") == 1 and dead(\"C-049\") == 1) and GA_BOX == 2" bark="…다 탔잖아. 패거리 놈들, 불장난을 해?"
+npc N-GA-S2 34 16 W look=M1-S3-HR02-H1-T05-1-PF12-HD02-EY00 cond="((PDO_R01_6 == \"SB\" and PDS_R01_6 >= 2) or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead(\"C-013\") == 1 and dead(\"C-049\") == 1) and GA_BOX == 2" bark="재 냄새. 인력들 맨몸으로 내보내게 생겼다."
+npc N-GA-S1 33 15 W look=M2-S4-HR01-H1-T05-1-PF12-HD05-EY00 cond="((PDO_R01_6 == \"SB\" and PDS_R01_6 >= 2) or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead(\"C-013\") == 1 and dead(\"C-049\") == 1) and GA_BOX == 3" bark="…우비? 이게 작업복이야? 패거리 놈들, 셈을 해 보자 이거지."
+npc N-GA-S2 34 16 W look=M1-S3-HR02-H1-T05-1-PF12-HD02-EY00 cond="((PDO_R01_6 == \"SB\" and PDS_R01_6 >= 2) or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead(\"C-013\") == 1 and dead(\"C-049\") == 1) and GA_BOX == 3" bark="노란 거라도 입혀. 비는 막겠지."
+npc N-GA-S1 33 15 W look=M2-S4-HR01-H1-T05-1-PF12-HD05-EY00 cond="((PDO_R01_6 == \"SB\" and PDS_R01_6 >= 2) or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead(\"C-013\") == 1 and dead(\"C-049\") == 1) and GA_BOX == 4" bark="목요일 건 실었다. 다음 건 언제냐."
+npc N-GA-S2 34 16 W look=M1-S3-HR02-H1-T05-1-PF12-HD02-EY00 cond="((PDO_R01_6 == \"SB\" and PDS_R01_6 >= 2) or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead(\"C-013\") == 1 and dead(\"C-049\") == 1) and GA_BOX == 4" bark="패거리한테 벌당 5캡. 싸게 먹혔어."
+npc N-GA-S1 33 15 W look=M2-S4-HR01-H1-T05-1-PF12-HD05-EY00 cond="((PDO_R01_6 == \"SB\" and PDS_R01_6 >= 2) or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead(\"C-013\") == 1 and dead(\"C-049\") == 1) and GA_BOX == 5" bark="빈 상자? 벌수가 하나도 없어. 패거리가 우릴 갖고 놀아."
+npc N-GA-S2 34 16 W look=M1-S3-HR02-H1-T05-1-PF12-HD02-EY00 cond="((PDO_R01_6 == \"SB\" and PDS_R01_6 >= 2) or GA_PICK == GAME_DAY) and GAME_HOUR >= 6 and GAME_HOUR < 18 and not (dead(\"C-013\") == 1 and dead(\"C-049\") == 1) and GA_BOX == 5" bark="못 자국 봐. 안에서 빼 간 거야."
 # ---------------------------------------------------------------- 적: 쥐(사람이 아니라 냄새로 안다 — 마네킹 위장이 안 통한다) · 상자 지키는 약탈자
 enemy CR-097 6 15
 enemy CR-095 9 17

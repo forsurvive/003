@@ -45,7 +45,7 @@ var fbook := FactionBook.new()          ## 세력 기록(1-12m, SD-12 §3.10): �
 const ENEMY_FACTION := {"CR-401": "BJ", "CR-405": "BJ", "CR-435": "SB", "CR-436": "SB", "CR-437": "SB", "CR-438": "SB", "CR-534": "SB",
 	"CR-456": "JH", "CR-457": "JH", "CR-403": "BJ", "CR-420": "YT", "CR-421": "YT", "CR-423": "YT"}
 const UNNAMED := [["N-TRADER", "떠돌이 고물상", ""], ["N-VG-S1", "고물상", ""], ["N-VG-H1", "약초꾼", ""], ["N-VG-P1", "부품 장수", ""],
-	["N-VG-C1", "옷 장수", ""], ["N-VG-F1", "국밥 장수", ""], ["N-VG-D1", "떠돌이 장사꾼", ""], ["N-UQ-K1", "아이", ""], ["N-UQ-C1", "털이꾼", ""], ["N-GA-B1", "패거리 두목", ""], ["N-GA-S1", "인솔조", "SB"], ["N-GA-S2", "인솔조", "SB"], ["N-UQ5-COW", "누렁이", ""], ["N-REFUGEE", "피난민", ""], ["N-DOWNED", "쓰러진 민병", "JC_BC"],
+	["N-VG-C1", "옷 장수", ""], ["N-VG-F1", "국밥 장수", ""], ["N-VG-D1", "떠돌이 장사꾼", ""], ["N-UQ-K1", "아이", ""], ["N-UQ-C1", "털이꾼", ""], ["N-GA-B1", "패거리 두목", ""], ["N-GA-S1", "인솔조", "SB"], ["N-GA-S2", "인솔조", "SB"], ["N-GA-T1", "패거리 셈꾼", ""], ["N-SB-W1", "오늘의 인력", ""], ["N-SB-W2", "오늘의 인력", ""], ["N-SB-W3", "오늘의 인력", ""], ["N-UQ5-COW", "누렁이", ""], ["N-REFUGEE", "피난민", ""], ["N-DOWNED", "쓰러진 민병", "JC_BC"],
 	["N-HS-E1", "수송대 호위", "HS"], ["N-HS-E2", "수송대 호위", "HS"], ["CR-091", "짐소", ""],   # 1-8d 고개길 수송대
 	["N-SA-G1", "승강장 경비", "JC_SA"], ["N-SA-G2", "승강장 경비", "JC_SA"], ["N-SA-G3", "승강장 경비", "JC_SA"], ["N-SA-R1", "환승촌 주민", "JC_SA"],   # 1-8f 사당 환승촌
 	["N-SA-R2", "환승촌 주민", "JC_SA"], ["N-SA-R3", "환승촌 주민", "JC_SA"], ["N-SA-R4", "버섯 일꾼", "JC_SA"],
@@ -134,7 +134,7 @@ func _init() -> void:
 	# 가산 아울렛(1-D6, 1-D 계획 §12.6): 진행기 Ga만 쓴다 — SEEN 망꾼 · BOX 작업복 상자(1 넘김 · 2 태움 · 3 바꿔치기 · 4 인솔조가 가져감 · 5 빈 상자) ·
 	# BOX_DAY 고른 날 · BOX_DONE 판도에 반영됨 · CRATE_DAY 상자를 처음 본 날 · FEUD 인솔조와 패거리가 틀어짐 · DECOY 진열창 미끼 · COUNTED 재고 세기에 걸림 ·
 	# TOLD 놓친 소문 표지 · BOSS 두목 처리(던전 정리 식) · PICK 인솔조 수거 날 · PAID 넘김 봉투 받음 · PD_R01_6 판도 PD-R01-6 사건 보정(+ 새벽인력 · − 약탈자, SD-08 §13) · PC_HEAD 쓴 머리 장비(아이템 ID — A-074 방독면)
-	for k in ["GA_SEEN", "GA_BOX", "GA_BOX_DAY", "GA_BOX_DONE", "GA_CRATE_DAY", "GA_FEUD", "GA_DECOY", "GA_DECOY_DAY", "GA_COUNTED", "GA_TOLD", "GA_BOSS", "GA_PICK", "GA_PAID", "PD_R01_6"]:
+	for k in ["GA_SEEN", "GA_BOX", "GA_BOX_DAY", "GA_BOX_DONE", "GA_CRATE_DAY", "GA_FEUD", "GA_DECOY", "GA_DECOY_DAY", "GA_COUNTED", "GA_TOLD", "GA_BOSS", "GA_PICK", "GA_PAID", "PD_R01_6"] + Array("SIDE SIDE_DAY NOTE NOTE_DAY EYE TAG SUITSOLD HUNT_DAY DOCKASK DAYNO FRISK UNMASK".split(" ")).map(func(k): return "GA_" + k):   # 1-12n 인부 변장 · 편(SIDE 1 새벽 · 2 패거리) · 쪽지(NOTE 1 쥠 · 2 셈꾼이 앎) · 셈꾼 눈(EYE) · 진열창 번호표(TAG) · 볼트 작업복 판매 · 봉천 수색 날 · 인솔조 부탁
 		vars.declare(k, "int", 0)
 	vars.declare("PC_HEAD", "str", "")
 	# 구로 공단 지식산업센터 · 문래(1-D7, 1-D 계획 §13.5 · SD-05 §3.21 UQ-69): 진행기 Ks만 쓴다 — 뜻은 script/act1/KS.txt 머리 주석

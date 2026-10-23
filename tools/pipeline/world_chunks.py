@@ -322,7 +322,7 @@ def build():
     src = json.load(open(WB.SRC, encoding="utf-8"))
     r = WB.bake(src)
     sp0 = os.path.join(OUT, "spots_src.json")                               # 좌표 고정 발견 자리('@x,y')는 건물이 덮지 않게 비워 둔다
-    fixed = [(int(sp["tile"][0]), int(sp["tile"][1]), int(sp["w"]), int(sp["h"])) for sp in
+    fixed = [(int(sp["tile"][0]), int(sp["tile"][1]), int(sp["w"]), int(sp["h"]), bool(sp.get("wall"))) for sp in
              (json.load(open(sp0, encoding="utf-8"))["spots"] if os.path.exists(sp0) else []) if "lid" not in sp]
     WB.city(r, src, anchors=[(d["near"][0], d["near"][1], ANCHOR_STYLE.get(d["to"], "gov")) for d in DOORS if d.get("kind") == "facade"],
             reserve=fixed)

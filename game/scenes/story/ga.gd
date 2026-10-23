@@ -12,6 +12,12 @@
 ##   인솔조가 하역장에 와 있다(보는 눈) · 그다음 06:00에 실어 간 것으로 친다 · 넘겼으면 다음에 들를 때 봉투 25캡(GA_PAID).
 ## 진열창 미끼: 다음 06:00에 패거리가 가운데 마네킹을 2층 칠판 옆에 묶어 둔다(GA_DECOY 2 · 칠판 '3,000'에 줄) — 거기서 작업복을 되찾는다(3).
 ## 잃는 선택: 작업복 상자(GA_BOX 하나 — P1) · 판도 반영은 다음 06:00에 한 번(P6) · 소문은 하루 늦게(P7). 세기 · 미끼 · 놓침은 맵을 떠나면 휘발(A119).
+## 1-12n 인부 변장(D-231, 계획 _plans/1-12n_gasan_plan.md §8 확정안 — '말로 버티는 변장'): 현장 작업복(A-012)을 입으면 패거리가 '실어 갈 인부'로 본다 —
+##   인솔조가 오는 날(새벽 우세 · 수거 날, 06~18시) 감지 0 · 그 밖엔 0.5. 3칸 안에 든 패거리가 한 번 '번호?' — 번호표(M-129 · 진열창 M-452)가 없으면 들킴.
+##   번호표를 보인 뒤 뛰기 · 무기 · 쏘기(그 전엔 변장이 꺼질 뿐) · 두목 책상(한 번 경고 뒤 4초) · 셈꾼 쪽지를 보는 앞에서 집기 → 들킴. 셈꾼(N-GA-T1)에게 말 걸기 = 거래 대화 GA_TRADE(장물상 VGA ·
+##   볼트 작업복 300캡 · 패거리 편 들기 GA_SIDE 2), 인솔조(N-GA-S1)에게 = GA_DOCK(쪽지 부탁 → 새벽인력 편 GA_SIDE 1). 편은 한 값 — 든 쪽 길만 남는다.
+##   패거리 편: 변장 없이도 감지 0(두목 책상 · 거래 물건은 그대로) · 수거 날 가로챔(GA_BOX 6) 뒤 뒷문 닫힘. 새벽 편: 다음 06:00 쪽지가 빈 것을 알면 변장 무효 · 뒷문은 인솔조가 있을 때.
+##   재미 검수 반영(계획 §9): 인솔조가 그날 번호 44(GA_DAYNO) · '쪽지 빼 간 인부!' · 패거리 편이 볼트 작업복으로 드러남(GA_UNMASK) · 인솔조 둘 다 쓰러지면 보는 눈 없음.
 class_name Ga
 extends Node
 
@@ -44,7 +50,17 @@ const AISLES := [20, 23, 26, 29]               ## 줄 통로(줄 y + 1) — 두�
 const COUNT_ROUTE := [[26, 6, 12.0], [8, 20, 1.0], [30, 20, 1.0], [30, 23, 0.5], [8, 23, 1.0], [8, 26, 0.5], [30, 26, 1.0], [30, 29, 0.5], [8, 29, 1.0]]
 const TIE_AT := Vector2i(13, 3)                ## 미끼 다음 날 묶인 마네킹(2층 칠판 옆)
 const BOARD_AT := Vector2i(10, 1)
-const PD_DELTA := {1: 10, 2: -10, 3: -5, 4: 5, 5: -5}   ## GA_BOX → 판도 PD-R01-6 사건 보정(+ 새벽인력 · − 약탈자)
+const PD_DELTA := {1: 10, 2: -10, 3: -5, 4: 5, 5: -5, 6: -10}   ## GA_BOX → 판도 PD-R01-6 사건 보정(+ 새벽인력 · − 약탈자) · 6 패거리가 가로챔(1-12n)
+const TAGS := ["M-129", "M-452"]               ## 번호표: 일용직 번호표 목걸이 · 진열창 마네킹 번호표(1-12n)
+const NOTE := "M-453"                          ## 패거리 거래 쪽지
+const TRADER := "N-GA-T1"                      ## 셈꾼(2층 거래 자리 — 이름표)
+const DOCKER := "N-GA-S1"                      ## 인솔조(하역장)
+const CREW := ["N-GA-S1", "N-GA-S2"]           ## 인솔조 둘 — 둘 다 쓰러지면 하역장에 오는 사람이 없다(재미 검수 d)
+const GOODS := Vector2i(9, 6)                  ## 2층 패거리 거래 물건(2칸) — 보는 앞에서 열면 들킨다(계획 §1)
+const ASK_R := 3.0                             ## '번호?'를 묻는 거리(칸)
+const DESK := Vector2i(26, 6)                  ## 두목 책상(재고 장부)
+const DESK_R := 3.0
+const NOTE_AT := Vector2i(11, 6)               ## 거래 자리(쪽지)
 
 var host: InteriorHost
 var st: StoryState
@@ -69,6 +85,10 @@ var _runner: Enemy = null                      ## 2층으로 뛰는 망꾼
 var _run_t := 0.0
 var _nap := false                              ## 망꾼 빈자리에서 한 바퀴 넘어갔다('졸지 마')
 var _said_x := -99                             ## 두목이 마지막으로 중얼거린 칸
+var _asked := false                            ## 이 맵에서 '번호?'를 물었다(1-12n)
+var _blown := false                            ## 이 맵에서 인부 행세가 들켰다
+var _desk_t := -1.0                            ## 두목 책상 경고 뒤 흐른 초(−1 = 경고 전)
+var _thief_said := false                       ## 이 맵에서 '쪽지 빼 간 인부!'를 외쳤다
 
 
 func setup(h: InteriorHost, is_log := false) -> void:
@@ -80,6 +100,7 @@ func setup(h: InteriorHost, is_log := false) -> void:
 	host.day_tick.connect(_on_day)
 	host.box_closed.connect(_on_box)
 	host.combat.enemy_down.connect(_on_down)
+	host.interact_pre.append(_pre)
 
 
 func v(k: String) -> int:
@@ -120,11 +141,15 @@ func worn() -> String:
 	return str(st.call_fn("worn", []))
 
 
-## 인솔조가 지금 하역장에 있나(판도 새벽인력 우세 · 낮 06~18 — 맵 npc 조건과 같은 식)
+## 인솔조가 지금 하역장에 있나(판도 새벽인력 우세 · 낮 06~18 — 맵 npc 조건과 같은 식 · 1-12n부터 판도 상태 변수 · 인솔조 둘 다 쓰러지면 없음)
 func watched() -> bool:
 	var h := int(st.vars.get_v("GAME_HOUR"))
-	var here := int(st.vars.get_v("PD_R01_6")) >= 10 or v("PICK") == int(st.vars.get_v("GAME_DAY"))
-	return _mid() == STORE and here and h >= 6 and h < 18 and sb_alive()
+	var here := up("SB") or v("PICK") == int(st.vars.get_v("GAME_DAY"))
+	return _mid() == STORE and here and h >= 6 and h < 18 and sb_alive() and crew_alive()
+
+
+func crew_alive() -> bool:
+	return not CREW.all(func(c): return st.is_dead(c))
 
 
 # ---------------------------------------------------------------- 맵에 들어섰다: 망꾼 · 두목 · 상자 첫날
@@ -144,6 +169,10 @@ func _on_map(id: String) -> void:
 	_run_t = 0.0
 	_nap = false
 	_said_x = -99
+	_asked = false
+	_blown = false
+	_desk_t = -1.0
+	_thief_said = false
 	_torso = str(st.vars.get_v("PC_TORSO"))
 	if not id.begins_with("GA-"):
 		return
@@ -179,6 +208,11 @@ func _on_map(id: String) -> void:
 				host.map._put_cover(cc.x, cc.y, 0)
 			if not _mann.is_empty():
 				_mann["cells"] = []
+	if v("SIDE") == 2 and v("BOX") in [1, 2, 3, 4, 5] and v("BOX_DONE") == 1:       # 패거리 편이었는데 상자는 다른 길로 갔다(§6-34)
+		for e in host.combat.enemies:
+			if _gang(e) and e != _lookout and str(e.who) != BOSS:
+				host.combat._pop("상자는? …누가 먼저 손댔어.", e.loco.logical + Vector2(0, -30), Color("C8C0A8"))
+				break
 	_log("A관 — 두목 %s · 망꾼 %s" % ["있음" if _boss != null else "없음", "숨음" if _lookout != null else "-"])
 
 
@@ -201,6 +235,7 @@ func _process(dt: float) -> void:
 	var posing := posing_at(pt)
 	if _run_t > 0.0:
 		_run_t -= 0.1
+	var ds := disguise()
 	for e in host.combat.enemies:
 		if not _gang(e) or e == _lookout:
 			continue
@@ -208,12 +243,15 @@ func _process(dt: float) -> void:
 			e.det_mul = 0.0
 		elif e.brain.state == AIBrain.S.COMBAT:
 			e.det_mul = 1.0
-		elif posing == 2:
+		elif posing == 2 or ds == 2:
 			e.det_mul = 0.0
-		elif posing == 1:
+		elif posing == 1 or ds == 1:
 			e.det_mul = 0.5
 		else:
 			e.det_mul = 1.0
+	_sv("EYE", 1 if trader_watching() else 0)                               # 셈꾼 눈(변장과 상관없이 늘 — 재미 검수 a)
+	_labor(pt, ds, posing)
+	_thief(pt)
 	_watch_lookout(pt)
 	_count(pt, posing)
 	_suit()
@@ -374,8 +412,15 @@ func _suit() -> void:
 		if vault and not _shouted and e.brain.state in [AIBrain.S.SUSPICIOUS, AIBrain.S.SEARCH, AIBrain.S.COMBAT] \
 				and e.loco.logical.distance_to(host.player.loco.logical) <= 10.0 * 32.0:
 			_shouted = true
-			host.combat._pop("S-07 작업복! 생포만 — 3,000이다!", e.loco.logical + Vector2(0, -30), Color("E05040"))
-			host.hint("패거리가 파란 작업복을 알아봤다 — 쏘지 말고 잡으라고 소리친다.", 3.5)
+			if v("SIDE") == 2:                                                 # 우리 쪽 사람이 3,000짜리였다 — 편이 풀린다(한 값 · 재미 검수 '해 보고 싶은 짓')
+				_sv("SIDE", 0)
+				_sv("UNMASK", day())
+				host.combat._pop("…우리 쪽 사람이 3,000짜리였어?" + (" 벗어 던졌다며!" if v("SUITSOLD") == 1 else ""), e.loco.logical + Vector2(0, -30), Color("E05040"))
+				host.hint("셈꾼 옆에서 고개를 끄덕이던 사람이 파란 작업복을 입고 왔다 — 패거리가 굳는다. 그리고 소리친다. '생포만!'", 4.0)
+				_log("패거리 편 — 볼트 작업복으로 정체가 드러남")
+			else:
+				host.combat._pop("S-07 작업복! 생포만 — 3,000이다!", e.loco.logical + Vector2(0, -30), Color("E05040"))
+				host.hint("패거리가 파란 작업복을 알아봤다 — 쏘지 말고 잡으라고 소리친다.", 3.5)
 
 
 # ---------------------------------------------------------------- 탈의실: 그들이 찾는 건 작업복이다
@@ -414,9 +459,198 @@ func _lure(dt: float) -> void:
 			e.brain._go(AIBrain.S.SEARCH)
 
 
+# ---------------------------------------------------------------- 인부 변장(1-12n D-231): 말로 버티는 변장
+## 패거리가 인부를 기다리는 날인가: 새벽 우세 · 수거 날(상자를 처음 본 날 + 3) · 낮 06~18 · 새벽인력이 서 있다
+func expected() -> bool:
+	var h := int(st.vars.get_v("GAME_HOUR"))
+	var pick := v("CRATE_DAY") + PICKUP_DAYS if v("CRATE_DAY") > 0 else -1
+	return (up("SB") or v("PICK") == day() or pick == day()) and h >= 6 and h < 18 and sb_alive()
+
+
+## 패거리 눈: 2 = 감지 0(인솔조 오는 날의 인부 · 패거리 편) · 1 = 0.5(인부인데 오늘은 올 날이 아니다) · 0 = 그대로
+func disguise() -> int:
+	if int(st.vars.get_v("DG_GA")) >= 1 or worn() == VAULT:
+		return 0
+	if v("SIDE") == 2:
+		return 2                                                              # 패거리 편: '우리 쪽 사람'(옷과 상관없이)
+	if v("NOTE") >= 2 or _blown or worn() != SUIT:                         # 쪽지가 빈 것을 안 뒤(다음 06:00)부터 — 새벽 편을 든 그날은 아직 모른다(재미 검수 ③)
+		return 0
+	if host.combat.armed() or host.combat.since_shot < 1.0 or host.combat.pc.movement == "sprint":
+		return 0                                                              # 총을 든 · 뛰는 사람은 인부로 보이지 않는다(받아들여진 뒤라면 _labor가 들킴으로)
+	return 2 if expected() else 1
+
+
+func has_tag() -> bool:
+	if v("DAYNO") == day():                                                   # 인솔조가 불러 준 오늘 번호(재미 검수 ① — 그날만)
+		return true
+	for t in TAGS:
+		if int(st.items.get(t, 0)) > 0:
+			return true
+	return false
+
+
+## 인부 행세: 받아들여지기 전(번호표를 보이기 전)엔 총 · 뛰기가 변장을 꺼 둘 뿐이다 — '번호?'를 넘긴 뒤 같은 맵에서 그러면 들킨다
+func _labor(pt: Vector2i, ds: int, posing: int) -> void:
+	if v("SIDE") == 2:
+		_desk(pt, "우리 쪽이어도 책상은 두목 거야. …너 뭐 찾아?")                 # 우리 쪽 사람도 두목 책상엔 못 간다(재미 검수 ②)
+		return
+	if _asked and not _blown and worn() == SUIT:
+		if host.combat.armed() or host.combat.since_shot < 1.0:
+			_blow("인부가 왜 총을 들어?")
+			return
+		if host.combat.pc.movement == "sprint":
+			_blow("인부가 왜 뛰어?")
+			return
+	if ds == 0 or posing == 2:
+		return                                                                # 마네킹 행세 중엔 묻지 않는다(그들 눈엔 마네킹)
+	var near: Enemy = null
+	var nd := 1e9
+	for e in host.combat.enemies:
+		if not _gang(e) or e == _lookout or e.brain.state == AIBrain.S.COMBAT:
+			continue
+		var d := Vector2(host.map.tile_of(e.loco.logical)).distance_to(Vector2(pt))
+		if d < nd:
+			nd = d
+			near = e
+	if not _asked and near != null and nd <= ASK_R:
+		_asked = true
+		host.combat._pop("번호?" if ds == 2 else "번호? …인솔조는 사흘째에 와. 넌 왜 벌써 왔어?", near.loco.logical + Vector2(0, -30), Color("C8C0A8"))
+		if has_tag():
+			if v("DAYNO") == day():
+				host.hint("인솔조가 불러 준 번호를 댄다. '…44번. 오늘 실을 놈이네. 됐어, 줄은 지하야.'", 3.5)
+			elif int(st.items.get("M-129", 0)) > 0:
+				host.hint("번호표를 내민다. '…0414번. 됐어. 줄은 지하야. 번호는 셈꾼한테 다시 대고.'", 3.5)
+			else:
+				host.hint("번호표를 내민다. '42? …진열창 마네킹 번호 아냐?' '마네킹도 일하는데.' '…됐어. 줄은 지하야.'", 4.0)
+			_log("'번호?' — 번호표로 넘어감")
+		else:
+			_blow("번호? …번호표도 없이?")
+			return
+	_desk(pt, "꺼지랬지. …너 인부 맞아?")
+
+
+## 두목 책상: 재고 세는 두목은 다가오는 사람을 쫓아낸다 — 한 번 경고, 3칸 안에서 4초 버티면 들킴
+func _desk(pt: Vector2i, msg: String) -> void:
+	if _mid() != HALL or _boss == null or not is_instance_valid(_boss) or _boss.cmb.dead or _blown:
+		return
+	var at_desk := Vector2(host.map.tile_of(_boss.loco.logical)).distance_to(Vector2(DESK)) <= 2.0
+	var me_near := Vector2(pt).distance_to(Vector2(DESK)) <= DESK_R
+	if at_desk and me_near:
+		if _desk_t < 0.0:
+			_desk_t = 0.0
+			host.combat._pop("세는 중이야. 꺼져.", _boss.loco.logical + Vector2(0, -30), Color("C8C0A8"))
+		else:
+			_desk_t += 0.1
+			if _desk_t >= 4.0:
+				_blow(msg)
+	elif _desk_t >= 0.0 and not me_near:
+		_desk_t = 0.05                                                       # 물러났다 — 다시 들어오면 바로 센다
+
+
+## 쪽지 빼 간 인부(재미 검수 ③): 셈꾼이 쪽지가 빈 것을 안 뒤 카키 작업복으로 오면 — 처음 의심하거나 싸움이 붙을 때 한 번 외친다
+func _thief(pt: Vector2i) -> void:
+	if _thief_said or v("NOTE") < 2 or worn() != SUIT or int(st.vars.get_v("DG_GA")) >= 1:
+		return
+	for e in host.combat.enemies:
+		if not _gang(e) or e == _lookout:
+			continue
+		if e.brain.state in [AIBrain.S.SUSPICIOUS, AIBrain.S.SEARCH, AIBrain.S.COMBAT] and Vector2(host.map.tile_of(e.loco.logical)).distance_to(Vector2(pt)) <= 10.0:
+			_thief_said = true
+			host.combat._pop("카키 작업복 — 쪽지 빼 간 인부다!", e.loco.logical + Vector2(0, -30), Color("E05040"))
+			_log("'쪽지 빼 간 인부!'")
+			return
+
+
+## 셈꾼이 거래 자리를 보고 있나: 살아 있고 거래 자리 4칸 안이고, 두목이 재고를 세는 중(첫 줄 이후)이 아니다 — 세는 동안엔 셈꾼이 두목 장부를 받아 적는다
+func trader_watching() -> bool:
+	if _mid() != HALL:
+		return false
+	var tr: Enemy = _who(TRADER)
+	if tr == null:
+		return false
+	if Vector2(host.map.tile_of(tr.loco.logical)).distance_to(Vector2(NOTE_AT)) > 4.0:
+		return false
+	return not (_boss != null and is_instance_valid(_boss) and not _boss.cmb.dead and int(_boss._route_i) >= 1)
+
+
+func _who(id: String) -> Enemy:
+	for e in host.combat.enemies:
+		if _gang(e) and str(e.who) == id:
+			return e
+	return null
+
+
+## 들켰다: 가까운 패거리가 외치고 싸움이 붙는다(인부를 사로잡을 까닭은 없다 — 볼트 작업복이 아니면 생포 표지 없음)
+func _blow(msg: String) -> void:
+	if _blown:
+		return
+	_blown = true
+	var shout: Enemy = null
+	for e in host.combat.enemies:
+		if not _gang(e) or e == _lookout:
+			continue
+		if e.loco.logical.distance_to(host.player.loco.logical) <= 10.0 * 32.0:
+			if shout == null:
+				shout = e
+			e.det_mul = 1.0
+			e.brain.gauge = AIBrain.DETECT_AT
+			e.brain.last_seen = host.player.loco.logical
+			e.brain._go(AIBrain.S.COMBAT)
+	if shout != null:
+		host.combat._pop(msg, shout.loco.logical + Vector2(0, -30), Color("E05040"))
+	host.hint("인부 행세가 들켰다.", 2.5)
+	_log("인부 변장 들킴: " + msg)
+
+
+## 상호작용 갈고리: 변장 중 셈꾼 = 거래 대화 · 다른 패거리 = '셈꾼한테 가' · 인솔조 = 부탁
+func _pre() -> bool:
+	if not _mid().begins_with("GA-") or host.box.active:
+		return false
+	var f: Vector2 = Locomotion.VEC[host.player.loco.facing].normalized()
+	if _mid() == STORE:
+		for n in host.npcs:
+			if not str(n.get("id", "")) in CREW or not is_instance_valid(n["actor"]):
+				continue
+			var dv: Vector2 = n["actor"].loco.logical - host.player.loco.logical
+			if dv.length() < 46.0 and dv.normalized().dot(f) > 0.5 and (worn() == SUIT or v("SIDE") == 1):   # 패거리 편은 가로챔 날까지 아무도 모른다
+				host.play_scene("GA_DOCK")
+				return true
+		return false
+	var front := host.map.tile_of(host.player.loco.logical) + Vector2i(roundi(f.x), roundi(f.y))
+	if _mid() == HALL and front.y == GOODS.y and front.x >= GOODS.x and front.x <= GOODS.x + 1 and (disguise() > 0 or v("SIDE") == 2):
+		var eyes := trader_watching() or host.combat.enemies.any(func(e): return _gang(e) and e != _lookout and e.brain.state != AIBrain.S.COMBAT \
+			and Vector2(host.map.tile_of(e.loco.logical)).distance_to(Vector2(front)) <= 4.0)
+		if eyes:                                                             # 보는 앞에서 패거리 물건을 연다(계획 §1 · 재미 검수 ②)
+			var was2 := v("SIDE") == 2
+			if was2:
+				_sv("SIDE", 0)
+			_blow("우리 쪽이어도 그건 두목 거야!" if was2 else "인부가 왜 거래 물건을 뒤져?")
+			return true
+	if disguise() == 0:
+		return false
+	for e in host.combat.enemies:
+		if not _gang(e) or e == _lookout or e.brain.state == AIBrain.S.COMBAT:
+			continue
+		var dv2: Vector2 = e.loco.logical - host.player.loco.logical
+		if dv2.length() >= 46.0 or dv2.normalized().dot(f) <= 0.5:
+			continue
+		if str(e.who) == TRADER:
+			host.play_scene("GA_TRADE")
+		elif str(e.who) == BOSS:
+			host.combat._pop("세는 중이야. 꺼져.", e.loco.logical + Vector2(0, -30), Color("C8C0A8"))
+		else:
+			host.combat._pop("셈꾼한테 가. 거래 자리." if v("SIDE") != 2 else "어, 왔어? 셈꾼은 거래 자리.", e.loco.logical + Vector2(0, -30), Color("C8C0A8"))
+		return true
+	return false
+
+
+## 판도 PD-R01-6에서 그 세력이 우세 이상인가(1-12n — 판도 상태 변수 한 곳, P1)
+func up(f: String) -> bool:
+	return str(st.vars.get_v("PDO_R01_6")) == f and int(st.vars.get_v("PDS_R01_6")) >= 2
+
+
 func _window_state() -> String:
-	var pd := int(st.vars.get_v("PD_R01_6"))
-	var base := "fallen" if int(st.vars.get_v("DG_GA")) >= 1 else ("tag" if pd >= 10 else ("target" if pd <= -10 else ""))
+	var base := "fallen" if int(st.vars.get_v("DG_GA")) >= 1 else ("tag" if up("SB") else ("target" if up("YT") else ""))
 	if v("DECOY") == 1:
 		return "decoy" if base == "" else "decoy_" + base
 	if v("DECOY") >= 2:
@@ -433,7 +667,51 @@ func _cmd(a: Array, done: Callable) -> void:
 			undecoy()
 		"box":
 			box(int(a[1]))
+		"tag":                                                              # 진열창 마네킹 목에서 번호표 한 장(1-12n)
+			if v("TAG") == 0:
+				_sv("TAG", 1)
+				st.call_fn("give", ["M-452", 1])
+		"note":                                                             # 거래 쪽지를 집었다(본 눈이 없으면)
+			if int(st.items.get(NOTE, 0)) == 0 and v("NOTE") == 0:
+				st.call_fn("give", [NOTE, 1])
+				_sv("NOTE", 1)
+				_sv("NOTE_DAY", day())
+		"dayno":                                                            # 인솔조가 오늘 번호를 불러 줬다(그날만)
+			_sv("DAYNO", day())
+		"frisk":                                                            # 그날 첫 거래 — 소매 검사(쪽지가 없으면 그냥 넘어감)
+			_sv("FRISK", day())
+		"note_seen":                                                        # 셈꾼 앞에서 집으려다 · 소매 검사에 들킴(우리 쪽 사람이었어도 끝)
+			if v("SIDE") == 2:
+				_sv("SIDE", 0)
+			_blow("어이 — 쪽지에서 손 떼!")
+		"suitsell":                                                         # 여분 볼트 작업복을 300캡에(한 번)
+			if v("SUITSOLD") == 0 and (int(st.call_fn("has", [VAULT, 2])) == 1 or (int(st.call_fn("has", [VAULT])) == 1 and worn() != VAULT)):
+				st.call_fn("take", [VAULT, 1])
+				st.call_fn("caps", [300])
+				_sv("SUITSOLD", 1)
+				_sv("HUNT_DAY", day() + 1)                                     # 다음 날부터 사흘 둘이 봉천 쪽을 뒤진다(소문 · 2층 빈자리)
+		"side":                                                             # 편: 1 새벽인력(쪽지를 인솔조에게) · 2 패거리(수거 날을 일러 줌)
+			side(int(a[1]))
+		"dock":                                                             # 하역장 뒷문으로 들어간다
+			host.go(STORE, "from_dock")
+		"undock":                                                           # 셔터 밑으로 나간다
+			host.go("W", "ga_dock")
 	done.call()
+
+
+## 편 들기(한 값 — P1): 1 새벽인력(쪽지를 넘김 — 15캡 · 새벽 +3 목격 · 판도 +5) · 2 패거리(수거 날을 일러 줌 — 40캡, 새벽은 수거 날에 안다)
+func side(n: int) -> void:
+	if v("SIDE") != 0 or not n in [1, 2]:
+		return
+	_sv("SIDE", n)
+	_sv("SIDE_DAY", day())
+	st.call_fn("caps", [15 if n == 1 else 40])
+	if n == 1:
+		st.call_fn("take", [NOTE, 1])
+		st.vars.set_v("PD_R01_6", int(st.vars.get_v("PD_R01_6")) + 5)
+		st.deeds.record(st, "side", "R01", 1, {"SB": 3}, Clock.abs_min(host.date_text),
+			{"tag": "GA_SIDE1", "place": "GA", "what": "가산 패거리 셈꾼의 거래 쪽지를 인솔조에게 넘겼다", "seen_by": ["SB"]})
+	_log("편 들기 %s" % ("새벽인력" if n == 1 else "패거리"))
 
 
 ## 진열창 가운데 마네킹에 볼트 작업복을 입힌다(한 번) — 입고 있지 않은 한 벌을 가져간다
@@ -531,9 +809,20 @@ func _on_day(d: int) -> void:
 		_sv("PICK", d)                                                       # 수거 날: 낮 동안 인솔조가 하역장 셔터 앞에(맵 npc 조건 · watched)
 		_log("수거 날 — 인솔조가 하역장에")
 	elif v("BOX") == 0 and v("PICK") > 0 and d > v("PICK") and sb_alive():
-		_sv("BOX", 4)
+		if v("SIDE") == 2 and int(st.vars.get_v("DG_GA")) == 0:              # 패거리 편(1-12n): 수거 날 낮 하역장을 쳐서 상자를 가로챘다 — 살아남은 인솔조가 '셈꾼 옆 인부'를 봤다
+			_sv("BOX", 6)
+			st.deeds.record(st, "side", "R01", 1, {"SB": -5}, Clock.abs_min(host.date_text),
+				{"tag": "GA_SIDE2", "place": "GA", "what": "가산 하역장에서 인솔조가 패거리에게 털렸다 — 셈꾼 옆에 있던 인부가 수거 날을 일러 줬다", "seen_by": ["SB"]})
+			_log("패거리가 하역장을 쳐서 상자를 가로챔")
+		else:
+			_sv("BOX", 4)
+			_log("인솔조가 상자를 그냥 가져감")
 		_sv("BOX_DAY", d - 1)                                                # 수거 날 저녁에 실어 갔다 — 반영은 지금(반쯤 된 상태 없음, P10)
-		_log("인솔조가 상자를 그냥 가져감")
+	if v("NOTE") == 1 and d > v("NOTE_DAY"):
+		_sv("NOTE", 2)                                                       # 셈꾼이 빈 쪽지 자리를 안다 — '쪽지 빼 간 인부'(새벽 편이 아니어도)
+		if v("SIDE") == 2:
+			_sv("SIDE", 0)                                                   # 우리 쪽인 줄 알았던 사람이 쪽지를 빼 갔다
+		_log("셈꾼이 쪽지가 빈 것을 앎")
 	if v("DECOY") == 1 and int(st.vars.get_v("DG_GA")) == 0 and d > v("DECOY_DAY"):
 		_sv("DECOY", 2)                                                      # 밤사이 패거리가 3,000캡짜리를 '생포'해 2층으로 끌고 갔다
 		_log("미끼 마네킹을 패거리가 끌고 감")
