@@ -118,3 +118,46 @@ func test_rq_refugee_ledger(t) -> void:
 	st2.vars.set_v("RQ46_IN", 3)
 	_cmd(r2, ["46", "cert"])
 	t.eq(int(st2.vars.get_v("AFF_BJ")) - bj2, 6, "그 뒤 증명마다 BJ +1")
+
+
+## 1-12r(장부 D-343 · D-344 · D-346 · 재미 검수 ② · ③): 놓친 척후가 돌아오는 밤 · 혼자 온 척후 · 봉천에 맡김 · 배수구 유품 한 번씩
+func test_rq_r_leak_bc_relic(t) -> void:
+	var a := _host()
+	var st: StoryState = a[1]
+	var r: RqR01 = a[2]
+	st.vars.set_v("RQ30_LEAK", 1)
+	st.vars.set_v("RQ30_LDIR", 2)
+	st.vars.set_v("RQ30_LDAY", 6)
+	_cmd(r, ["30", "start"])
+	t.eq([int(st.vars.get_v("RQ30_KIND")), int(st.vars.get_v("RQ30_DIR")), int(st.vars.get_v("RQ30_QUIET")), int(st.vars.get_v("RQ30_LEAK"))], [1, 2, 0, 2],
+		"놓친 척후의 밤: 패거리 · 같은 방향 · 조용한 밤 없음 · 돌아온 밤 표지")
+	t.eq(int(st.vars.get_v("RQ30_N")), RqR01.NIGHT_N[1][1] + 1, "하나 더 데리고 온다")
+	var n0 := int(st.vars.get_v("RQ30_T"))
+	st.vars.set_v("RQ30_PHASE", 2)
+	_cmd(r, ["30", "done"])
+	t.eq(int(st.vars.get_v("RQ30_T")), n0, "돌아온 밤은 주간 횟수 밖")
+	t.eq(int(st.vars.get_v("RQ30_LEAK")), 0, "넘긴 밤 — 끝")
+	st.vars.set_v("RQ30_LEAK", 1)
+	st.vars.set_v("RQ30_LDAY", 6)
+	st.vars.set_v("GAME_DAY", 10)
+	r._on_day(10)
+	t.eq([int(st.vars.get_v("RQ30_LEAK")), int(st.vars.get_v("RQ30_RAID"))], [0, 1], "사흘 안 아무도 안 서면 척후가 혼자 온다")
+	st.vars.set_v("RQ43_ESC", 3)
+	var bag := st.items.duplicate()
+	_cmd(r, ["43", "bc0"])
+	t.eq([int(st.vars.get_v("RQ43_ESC")), st.items], [4, bag], "먹을 것 없이 맡기면 가방은 그대로")
+	host_map_j10(a[0])
+	var rels: Array = []
+	for i in 4:
+		st.vars.set_v("RQ22_VAR", 3)
+		st.vars.set_v("RQ22_ON", 1)
+		r._nests = [null]
+		r._nest_tick()
+		rels.append(int(st.vars.get_v("RQ22_REL")))
+	t.eq(rels, [1, 2, 3, 0], "깡통 · 장화 · 당번표 · 그다음엔 없음(%s)" % str(rels))
+	t.eq([int(st.vars.get_v("RQ22_CAN")), int(st.vars.get_v("RQ22_REL"))], [3, 0], "4조 유품은 셋까지 한 번씩 — 넷째 주엔 없음")
+
+
+func host_map_j10(h) -> void:
+	if h.map == null or h.map.id != "J-10":
+		h.enter("J-10", "")

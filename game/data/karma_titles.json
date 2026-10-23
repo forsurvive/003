@@ -1,244 +1,244 @@
 {
  "1": {
-  "_src": "10_character-system.md:960",
+  "_src": "10_character-system.md:961",
   "evil": "볼트 문제아",
   "good": "볼트 선도부",
   "level": 1,
   "neutral": "볼트 거주자"
  },
  "10": {
-  "_src": "10_character-system.md:969",
+  "_src": "10_character-system.md:970",
   "evil": "적성 분자",
   "good": "모범 시민",
   "level": 10,
   "neutral": "미등록 시민"
  },
  "11": {
-  "_src": "10_character-system.md:970",
+  "_src": "10_character-system.md:971",
   "evil": "수도의 암흑가 두목",
   "good": "수도의 수호자",
   "level": 11,
   "neutral": "수도의 중재자"
  },
  "12": {
-  "_src": "10_character-system.md:971",
+  "_src": "10_character-system.md:972",
   "evil": "서울의 독버섯",
   "good": "서울의 방패",
   "level": 12,
   "neutral": "서울의 문지기"
  },
  "13": {
-  "_src": "10_character-system.md:972",
+  "_src": "10_character-system.md:973",
   "evil": "볼트의 괴담",
   "good": "볼트의 전설",
   "level": 13,
   "neutral": "볼트의 후예"
  },
  "14": {
-  "_src": "10_character-system.md:973",
+  "_src": "10_character-system.md:974",
   "evil": "전쟁의 전령",
   "good": "평화의 대사",
   "level": 14,
   "neutral": "생존의 정점"
  },
  "15": {
-  "_src": "10_character-system.md:974",
+  "_src": "10_character-system.md:975",
   "evil": "도시의 공포",
   "good": "도시의 전설",
   "level": 15,
   "neutral": "도시의 소문"
  },
  "16": {
-  "_src": "10_character-system.md:975",
+  "_src": "10_character-system.md:976",
   "evil": "수도 황무지의 악당",
   "good": "수도 황무지의 영웅",
   "level": 16,
   "neutral": "수도 황무지의 길잡이"
  },
  "17": {
-  "_src": "10_character-system.md:976",
+  "_src": "10_character-system.md:977",
   "evil": "흉악범",
   "good": "귀감",
   "level": 17,
   "neutral": "목격자"
  },
  "18": {
-  "_src": "10_character-system.md:977",
+  "_src": "10_character-system.md:978",
   "evil": "한강의 파괴자",
   "good": "한강의 구원자",
   "level": 18,
   "neutral": "한강의 감시자"
  },
  "19": {
-  "_src": "10_character-system.md:978",
+  "_src": "10_character-system.md:979",
   "evil": "악의 화신",
   "good": "등불",
   "level": 19,
   "neutral": "초인"
  },
  "2": {
-  "_src": "10_character-system.md:961",
+  "_src": "10_character-system.md:962",
   "evil": "볼트 탈주범",
   "good": "볼트 반장",
   "level": 2,
   "neutral": "볼트 이탈자"
  },
  "20": {
-  "_src": "10_character-system.md:979",
+  "_src": "10_character-system.md:980",
   "evil": "서울의 재앙",
   "good": "서울의 마지막 희망",
   "level": 20,
   "neutral": "서울의 표준형 인간"
  },
  "21": {
-  "_src": "10_character-system.md:980",
+  "_src": "10_character-system.md:981",
   "evil": "파멸의 설계자",
   "good": "신뢰의 회복자",
   "level": 21,
   "neutral": "직업 군인"
  },
  "22": {
-  "_src": "10_character-system.md:981",
+  "_src": "10_character-system.md:982",
   "evil": "슬픔을 부르는 자",
   "good": "무사(無私)의 본보기",
   "level": 22,
   "neutral": "모리배"
  },
  "23": {
-  "_src": "10_character-system.md:982",
+  "_src": "10_character-system.md:983",
   "evil": "사기꾼",
   "good": "길라잡이",
   "level": 23,
   "neutral": "자기중심주의자"
  },
  "24": {
-  "_src": "10_character-system.md:983",
+  "_src": "10_character-system.md:984",
   "evil": "불화의 씨앗",
   "good": "민중의 벗",
   "level": 24,
   "neutral": "외톨이"
  },
  "25": {
-  "_src": "10_character-system.md:984",
+  "_src": "10_character-system.md:985",
   "evil": "악몽 그 자체",
   "good": "정의의 투사",
   "level": 25,
   "neutral": "고용된 영웅"
  },
  "26": {
-  "_src": "10_character-system.md:985",
+  "_src": "10_character-system.md:986",
   "evil": "혼돈의 대리인",
   "good": "질서의 상징",
   "level": 26,
   "neutral": "무관심의 본보기"
  },
  "27": {
-  "_src": "10_character-system.md:986",
+  "_src": "10_character-system.md:987",
   "evil": "파멸의 도구",
   "good": "평온의 전령",
   "level": 27,
   "neutral": "교양인"
  },
  "28": {
-  "_src": "10_character-system.md:987",
+  "_src": "10_character-system.md:988",
   "evil": "목숨을 거두는 자",
   "good": "빛을 가져오는 자",
   "level": 28,
   "neutral": "수전노"
  },
  "29": {
-  "_src": "10_character-system.md:988",
+  "_src": "10_character-system.md:989",
   "evil": "피의 상속자",
   "good": "사람 중의 사람",
   "level": 29,
   "neutral": "회색 이방인"
  },
  "3": {
-  "_src": "10_character-system.md:962",
+  "_src": "10_character-system.md:963",
   "evil": "산비탈 좀도둑",
   "good": "산비탈 파수꾼",
   "level": 3,
   "neutral": "산비탈 나그네"
  },
  "30": {
-  "_src": "10_character-system.md:989",
+  "_src": "10_character-system.md:990",
   "evil": "폭군",
   "good": "시대의 양심",
   "level": 30,
   "neutral": "필멸자"
  },
  "31": {
-  "_src": "10_character-system.md:990",
+  "_src": "10_character-system.md:991",
   "evil": "공포의 이름",
   "good": "이웃의 이웃",
   "level": 31,
   "neutral": "떠도는 셈꾼"
  },
  "32": {
-  "_src": "10_character-system.md:991",
+  "_src": "10_character-system.md:992",
   "evil": "잿더미의 주인",
   "good": "재건의 기둥",
   "level": 32,
   "neutral": "저울질하는 자"
  },
  "33": {
-  "_src": "10_character-system.md:992",
+  "_src": "10_character-system.md:993",
   "evil": "계엄의 얼굴",
   "good": "새 주민등록의 첫 장",
   "level": 33,
   "neutral": "아무도 아닌 자"
  },
  "34": {
-  "_src": "10_character-system.md:993",
+  "_src": "10_character-system.md:994",
   "evil": "명령 그 자체",
   "good": "도시가 기억할 이름",
   "level": 34,
   "neutral": "끝까지 혼자인 자"
  },
  "35": {
-  "_src": "10_character-system.md:994",
+  "_src": "10_character-system.md:995",
   "evil": "끝나지 않는 전쟁",
   "good": "전쟁을 끝낸 자",
   "level": 35,
   "neutral": "명령 없는 자"
  },
  "4": {
-  "_src": "10_character-system.md:963",
+  "_src": "10_character-system.md:964",
   "evil": "골목 털이범",
   "good": "골목 지킴이",
   "level": 4,
   "neutral": "골목 떠돌이"
  },
  "5": {
-  "_src": "10_character-system.md:964",
+  "_src": "10_character-system.md:965",
   "evil": "마을의 골칫거리",
   "good": "마을의 은인",
   "level": 5,
   "neutral": "마을의 손님"
  },
  "6": {
-  "_src": "10_character-system.md:965",
+  "_src": "10_character-system.md:966",
   "evil": "장터 날강도",
   "good": "계단마을 수호자",
   "level": 6,
   "neutral": "장터 단골손님"
  },
  "7": {
-  "_src": "10_character-system.md:966",
+  "_src": "10_character-system.md:967",
   "evil": "한강의 해적",
   "good": "한강의 순찰자",
   "level": 7,
   "neutral": "한강의 뜨내기"
  },
  "8": {
-  "_src": "10_character-system.md:967",
+  "_src": "10_character-system.md:968",
   "evil": "노략꾼",
   "good": "보호자",
   "level": 8,
   "neutral": "청부인"
  },
  "9": {
-  "_src": "10_character-system.md:968",
+  "_src": "10_character-system.md:969",
   "evil": "도시의 침략자",
   "good": "도시의 의인",
   "level": 9,

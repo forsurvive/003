@@ -152,7 +152,7 @@ SYS 정착지 민병 조끼. 허벅지에 물린 자국이 깊다.
 > (그냥 둔다) -> NO
 * HEAL
 N-DOWNED [피곤] …살았다. 봉천 감시조야. 마을에 가면 네 얘기 할게.
-! karma(25); aff("JC_BC", 2)
+! karma(25); aff("JC_BC", 2, "day")
 @cmd re leave
 -> END
 * ROB

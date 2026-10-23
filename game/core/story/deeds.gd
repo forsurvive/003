@@ -70,6 +70,7 @@ var said := {}                                     ## 주민이 이미 꺼낸 �
 var laundered: Array = []                          ## 세탁한 기록: {"what", "to", "caught", "at", "told", "paid"} — 발각 값은 하루 뒤 tick에서(paid), 구문철은 그 뒤 첫 만남에 말한다(told)
 var hushed: Array = []                             ## 입막음한 기록: {"what", "until", "to"(세력 이름들), "told"} — 정보상이 '거기까진 안 갔어'로 알려 준다
 var leaks: Array = []                              ## 매수한 기록이 샐 날: {"at", "what", "region", "place", "fx", "tag", "about"}
+const DAILY_KINDS := ["처치", "거래", "기부", "대화", "rq_regular"]   ## 닿을 때 일일 상승 상한을 받는 행적 종류('도움'은 연동 LINK라 밖)
 var link_hold := 0                                 ## 0보다 크면 aff가 연동 기록을 남기지 않는다(전파 도착 · RQ · 거래 · 기부)
 var link_src := 0                                  ## 원고 효과(StoryExpr.run)를 도는 중 — 자동 연동은 원고의 호감 상승에만(진행기 코드는 손으로 연동, 1-12q)
 
@@ -210,7 +211,10 @@ func _arrive(st: StoryState, d: Dictionary, f: String, when: int, route: String)
 	_link_dv[str(d["id"]) + ":" + f] = dv
 	link_hold += 1                                                     # 도착한 효과는 다시 연동하지 않는다(연쇄 금지)
 	if dv != 0 and str(d["attr"]) == "player":
-		st.call_fn("aff", [f, dv])
+		if dv > 0 and str(d["kind"]) in DAILY_KINDS:
+			st.call_fn("aff", [f, dv, "day"])                              # 처치 · 도움 소식은 일일 상승 상한 안(SD-06 §3.5 · D-340) — 퀘스트 결과 · 인도 · 연동은 밖
+		else:
+			st.call_fn("aff", [f, dv])
 	elif dv != 0 and str(d["attr"]) == "unknown":                      # 귀속 불명(보도 자제 · 변장): 연동 절반(§6.5)
 		st.call_fn("aff", [f, int(dv / 2)])
 	link_hold -= 1

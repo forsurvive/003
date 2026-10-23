@@ -1,7 +1,7 @@
 ## 반복 퀘스트(RQ) 공통 엔진(단계 1-12j, SD-05 §4.1 · SD-06 §3.4 · D-238). 사실은 변수 한 곳(P1):
 ##   전역 RQ_WK(주 번호) · RQ_WKCAPS(이번 주 RQ 캡 합) · RQ_LEAN(연성 상한 넘김 — 의뢰처 대사)
 ##   RQ별 <RQnn_>T 누적 · WK 이번 주 회차 · WKNO 그 주 번호 · XP 누적 XP · DAY 마지막 날 · DAYN 그날 횟수 · LAST 마지막 완료 날
-##   세력별 RQF_<fac>_T 누적(단골 보너스 · 단계) · RQF_<fac>_ADAY/ASUM(그날 RQ로 오른 호감 합 — 일일 상승 상한 +6은 RQ 몫만, D-340)
+##   세력별 RQF_<fac>_T 누적(단골 보너스 · 단계) · 일일 상승 상한 +6은 StoryState.aff_day 한 장부(RQ · 대화 · 거래 · 처치 소식 — D-340, RQF_ADAY · ASUM은 옛 저장 호환으로만 남음)
 ## 규칙: 회차 곡선 1~3 100% · 4~5 75% · 6~ 50%(캡 · XP만, fixed 제외) / 주간 캡 연성 상한 1,200 넘으면 ×0.5 + lean /
 ##   XP 누적 RQ별 500 / 회당 호감 +2(같은 날 두 번째 ×0.5 · 세 번째 0) / 같은 세력 누적 5회마다 +3 + 공개도 2 행적(연동은 전파가 맡는다) /
 ##   단골 단계 5 · 15 · 30(돌려줌 regular — 호칭 · 선물 · 고유 보상은 진행기 · 원고) / 행동형 누적 10회마다 opt.zone 판도 +2.
@@ -14,10 +14,10 @@ const DAY_AFF_CAP := 6
 const FACS := ["BC", "SA", "JH", "JC", "BJ", "GS", "YH"]          ## 1막에 쓰는 세력 열쇠(RQF_ 변수를 선언한 것)
 const IDS := ["RQ-19", "RQ-15", "RQ-06", "RQ-08", "RQ-30", "RQ-47", "RQ-22", "RQ-03", "RQ-43", "RQ-46"]  ## 변수를 선언한 RQ(새 RQ는 여기와 script_compile ENGINE_VARS에)
 ## RQ별 전용 변수(진행기 몫 — 뜻은 scenes/story/rq_r01.gd 머리 주석)
-const EXTRA := ["RQ08_P1", "RQ08_P2", "RQ08_P3", "RQ08_PWK", "RQ08_HAVE", "RQ30_ON", "RQ30_DAY", "RQ30_KIND", "RQ30_DIR", "RQ30_AT", "RQ30_PHASE",
+const EXTRA := ["RQ08_P1", "RQ08_P2", "RQ08_P3", "RQ08_PWK", "RQ08_HAVE", "RQ30_ON", "RQ30_LEAK", "RQ30_LDIR", "RQ30_LDAY", "RQ30_RAID", "RQ30_MID", "RQ30_DAY", "RQ30_KIND", "RQ30_DIR", "RQ30_AT", "RQ30_PHASE",
 	"RQ30_N", "RQ30_KILLS", "RQ30_QUIET", "RQ19_IRON", "RQ15_BOOKS",
-	"RQ22_ON", "RQ22_SET", "RQ22_K", "RQ03B_ST", "RQ03B_T", "RQ03B_DAY", "RQ03S_ST", "RQ03S_T", "RQ03S_DAY",
-	"RQ43_HAVE", "RQ43_ESC", "RQ43_ESC_DAY", "RQ43_AMB", "RQ46_ON", "RQ46_IN", "RQ46_NEAR", "RQ46_LEDGER", "RQ46_LSAID"]
+	"RQ22_ON", "RQ22_SET", "RQ22_K", "RQ22_VAR", "RQ22_WHY", "RQ22_CAN", "RQ22_REL", "RQ03B_ST", "RQ03B_T", "RQ03B_DAY", "RQ03S_ST", "RQ03S_T", "RQ03S_DAY",
+	"RQ43_HAVE", "RQ43_LOST", "RQ43_KN", "RQ43_ESC", "RQ43_ESC_DAY", "RQ43_AMB", "RQ46_ON", "RQ46_IN", "RQ46_NEAR", "RQ46_LEDGER", "RQ46_LSAID"]
 ## 단골 보너스(+3)의 연동(SD-06 §3.6 — 1회 상승 3 × 계수를 0 쪽으로 버림 → |계수| ≥ 0.34만 ±1). 행 = 오른 세력(정착지 개별은 JC 행), 열 = 영향받는 세력
 const LINK := {
 	"JC": {"SB": -1}, "JH": {}, "BJ": {"YH": -1, "JG": -1, "JC": -1}, "GS": {"JG": -1},
@@ -117,7 +117,7 @@ static func done(st, id: String, fac: String, caps: int, xp: int, kind := "suppl
 		aff = _daily(st, fac, d, aff)
 		if aff > 0:
 			st.deeds.link_hold += 1                                       # RQ는 단골 보너스 기록이 자기 연동을 실어 나른다(두 번 걸지 않는다)
-			st.call_fn("aff", [fac, aff])
+			st.call_fn("aff", [fac, aff, "day"])
 			st.deeds.link_hold -= 1
 		out["aff"] = aff
 	if kind == "act" and n % 10 == 0 and opt.has("zone") and st.vars.has(str(opt["zone"])):   # 행동형 10회째 그 구역 사건 보정 +2(SD-06 §5.3 — 7일 감쇠는 판도 틱)
@@ -126,19 +126,9 @@ static func done(st, id: String, fac: String, caps: int, xp: int, kind := "suppl
 	return out
 
 
-## 그날 RQ로 오른 호감 합을 +6까지만(SD-06 §3.5 일일 상승 상한 — 다른 원천은 D-340)
-static func _daily(st, fac: String, d: int, aff: int) -> int:
-	var kd := "RQF_%s_ADAY" % fac
-	var ks := "RQF_%s_ASUM" % fac
-	if not st.vars.has(kd):
-		return aff
-	if int(st.vars.get_v(kd)) != d:
-		st.vars.set_v(kd, d)
-		st.vars.set_v(ks, 0)
-	var room := DAY_AFF_CAP - int(st.vars.get_v(ks))
-	var give := clampi(aff, 0, maxi(0, room))
-	st.vars.set_v(ks, int(st.vars.get_v(ks)) + give)
-	return give
+## 그날 오른 호감 합을 +6까지만(SD-06 §3.5 일일 상승 상한 — RQ · 대화 · 거래 · 도움이 한 장부를 쓴다: StoryState.aff_room · D-340)
+static func _daily(st, fac: String, _d: int, aff: int) -> int:
+	return clampi(aff, 0, st.aff_room(fac))
 
 
 ## 행적 fx 열쇠: 정착지 개별("BC")은 "JC_BC"

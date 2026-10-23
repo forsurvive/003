@@ -19,6 +19,14 @@ const NIGHT_N := {1: [3, 4], 2: [4, 6], 3: [2, 3]}
 const NIGHT_CAPS := {1: 70, 2: 55, 3: 40}
 const JUNK_POOL := [80, 81, 82, 83, 84, 85, 86, 88, 89, 90, 92, 93, 94, 95, 96, 97, 99]   ## 2077 생활 잡화(빈 병 · 바구니 · 명찰은 뺀다)
 const NIGHT_MARK := {1: "X-BC:sbf2", 2: "X-BC:upgate", 3: "X-BC:tanks"}   ## 사건이 솟는 자리(재미 검수: 전조 방향이 동선이 되게 — 아랫문 · 윗문 · 뒷산)
+## 자경대원 한마디(D-343 — 회차마다 다르게): 전조 뒤(사건 전 반쯤) · 사건 뒤. %s = 방향
+const NIGHT_MID := ["옆 초소 자경대원이 낮게 말한다. \"%s 쪽, 아까부터 개가 안 짖어. 그게 더 싫어.\"", "자경대원이 등불 심지를 줄인다. \"%s 쪽은 내가 볼 테니 너는 귀만 세우고 있어.\"",
+	"자경대원이 하품을 참으며 말한다. \"%s 쪽에서 뭐가 오면 소리부터 질러. 쏘는 건 그다음이야.\""]
+const NIGHT_AFTER := ["자경대원이 등불을 들고 뛰어온다. \"%s 쪽 다 셌어. 나머진 우리가 볼게.\"", "자경대원이 쓰러진 것들을 발로 뒤집어 본다. \"%s 쪽이었구나. 내일 담부터 손봐야겠다.\"",
+	"자경대원이 숨을 몰아쉰다. \"%s 쪽에서 소리 나길래 늦을 줄 알았어. …고마워.\""]
+## 아무 일 없는 밤에도 흔적 한 줄(D-343 — 방향별)
+const NIGHT_TRACE := {1: "아랫문 밖 진흙에 발자국이 있다. 오다가 되돌아간 자국이다.", 2: "윗길 쓰레기 더미가 밤새 한 번 무너졌다. 뭔가 뒤지다 갔다.",
+	3: "뒷산 쪽 모닥불 자리가 아직 따뜻하다. 누군가 마을을 내려다보다 갔다."}
 const NIGHT_SEE := 12                                                   ## 그 자리 12칸 안에 서 있으면 '먼저 본다'(힌트 · 적이 아직 나를 못 봄)
 const NEST_SPOTS := [Vector2i(14, 5), Vector2i(21, 14), Vector2i(5, 4)] ## J-10 알집 자리 셋(UQ-09와 같은 자리)
 const NEST_SETS := {1: [0, 1], 2: [1, 2], 3: [2, 0]}
@@ -164,10 +172,13 @@ func _cmd(a: Array, done: Callable) -> void:
 					_sv("RQ22_ON", 1)
 					_sv("RQ22_SET", 1 + (wk * 7 + 2) % 3)                     # 첫 주는 저수조 · 물길 건너(사다리 없는 자리부터)
 					_sv("RQ22_K", 1 + wk % 2)
+					_sv("RQ22_VAR", (wk * 3 + 1) % 4)                        # 주마다 작은 변주(D-346): 0 평소 · 1 물이 찬 주 · 2 등유 선반 빈 주 · 3 4조 유품(긁은 등유 깡통)
 					_log("RQ-22 받음 — 자리 %d · 둥지 %d" % [v("RQ22_SET"), v("RQ22_K")])
 				"done":
 					var r: Dictionary = st.call_fn("rq", ["RQ-22", "JH", 60, 25, "act", _opt({"region": "R02", "what": "지하상가 배수구를 치운다"})])
 					st.call_fn("give", ["I-059", 3])
+					if v("RQ22_WHY") == 0:
+						_sv("RQ22_WHY", 1)                                     # 다음 의뢰 때 '왜 또 꼬이나' 한 줄
 					_sv("RQ22_ON", 0)
 					_nests.clear()
 					_log("RQ-22 %d회 캡 %d" % [int(r.get("n", 0)), int(r.get("caps", 0))])
@@ -194,9 +205,21 @@ func _cmd(a: Array, done: Callable) -> void:
 					_sv("RQ43_ESC", 1)
 					_sv("RQ43_ESC_DAY", day())
 					_sv("RQ43_AMB", 0)
+					_sv("RQ43_LOST", 0)
 					_esc_clear()
+				"bc0":                                                   # D-344: 먹을 것 없이 맡김(가방은 건드리지 않는다 — 재미 검수 ①)
+					_sv("RQ43_HAVE", 0)
+					_sv("RQ43_ESC", 4)
+				"bc":                                                    # D-344: 봉천에서 받음 — 식량 80어치가 있으면 반상회 솥에(BC +2 · 카르마 +10)
+					if _take_food(FOOD_WORTH):
+						st.call_fn("aff", ["BC", 2, "day"])
+						st.call_fn("karma", [10])
+						_sv("RQ43_HAVE", 1)
+					else:
+						_sv("RQ43_HAVE", 0)
+					_sv("RQ43_ESC", 4)
 				"escdone":
-					var r: Dictionary = st.call_fn("rq", ["RQ-43", "BJ", 30, 0, "act", _opt({"aff": 2, "zone": "PD_R01_BJ", "what": "검문소 배급 줄을 호위한다"})])
+					var r: Dictionary = st.call_fn("rq", ["RQ-43", "BJ", 30 * (3 - v("RQ43_LOST")) / 3, 0, "act", _opt({"aff": 2, "zone": "PD_R01_BJ", "what": "검문소 배급 줄을 호위한다"})])   # 수고비는 줄에 선 수만큼(D-347)
 					st.call_fn("give", ["I-031", 1])
 					_sv("RQ43_ESC", 0)
 					_esc_clear()
@@ -263,14 +286,24 @@ func _night_start() -> void:
 	r.seed = hash("rq30:%d" % day())                                  # 같은 밤은 같은 사건(저장 · 불러오기에 흔들리지 않는다)
 	var roll := r.randi_range(1, 100)
 	var kind := 1 if roll <= 50 else (2 if roll <= 80 else 3)
+	var dir := r.randi_range(1, 3)
+	var quiet := 1 if r.randi_range(1, 100) <= 20 else 0
+	var n := r.randi_range(NIGHT_N[kind][0], NIGHT_N[kind][1])
+	if v("RQ30_LEAK") == 1:                                               # 놓친 척후가 돌아온다(D-343): 같은 방향 · 패거리 · 하나 더 — 조용한 밤은 없다
+		kind = 1
+		dir = v("RQ30_LDIR") if v("RQ30_LDIR") > 0 else dir
+		quiet = 0
+		n = NIGHT_N[1][1] + 1
+		_sv("RQ30_LEAK", 2)                                               # 2 = 돌아온 밤(남태하 대사 · 끝나면 0)
 	_sv("RQ30_ON", 1)
 	_sv("RQ30_DAY", day() if _hour() >= 12 else day() - 1)
 	_sv("RQ30_KIND", kind)
-	_sv("RQ30_DIR", r.randi_range(1, 3))
-	_sv("RQ30_QUIET", 1 if r.randi_range(1, 100) <= 20 else 0)
+	_sv("RQ30_DIR", dir)
+	_sv("RQ30_QUIET", quiet)
 	_sv("RQ30_AT", now() + r.randi_range(40, 150))
+	_sv("RQ30_MID", 0)
 	_sv("RQ30_PHASE", 0)
-	_sv("RQ30_N", r.randi_range(NIGHT_N[kind][0], NIGHT_N[kind][1]))
+	_sv("RQ30_N", n)
 	_sv("RQ30_KILLS", 0)
 	_mobs.clear()
 	_log("야간 경계 시작: 위협 %d 방향 %d 조용 %d 사건 %d분 뒤" % [kind, v("RQ30_DIR"), v("RQ30_QUIET"), v("RQ30_AT") - now()])
@@ -344,28 +377,63 @@ func _process(dt: float) -> void:
 func _night_tick() -> void:
 	if v("RQ30_ON") != 1 or v("RQ30_PHASE") >= 2:
 		return
+	var where: String = ["아랫문", "윗문", "뒷산"][clampi(v("RQ30_DIR"), 1, 3) - 1]
+	var pick := absi(hash("rq30m:%d" % day()))
 	if v("RQ30_PHASE") == 0:
+		if v("RQ30_MID") == 0 and _in_bc() and now() >= v("RQ30_AT") - 30 and now() < v("RQ30_AT"):   # 전조 뒤 · 사건 반 시간 전 한마디
+			_sv("RQ30_MID", 1)
+			host.hint(NIGHT_MID[pick % NIGHT_MID.size()] % where, 5.0)
 		if now() >= v("RQ30_AT") and _in_bc():
 			if v("RQ30_QUIET") == 1:
 				_sv("RQ30_PHASE", 2)
 				host.hint("…아무것도 안 온다. 바람뿐이다. 아침까지 선다.", 5.0)
+				_sv("RQ30_MID", 3)                                         # 아침 보고 때 흔적 한 줄
 			else:
 				_spawn_night()
 		return
 	if v("RQ30_PHASE") == 1:                                            # 사건 중: 세운 것이 다 쓰러지면 끝
 		var left := 0
-		for e in _mobs:
-			if is_instance_valid(e) and not e.cmb.dead:
-				left += 1
+		var c0 := _night_cell()
+		for e in _mobs.duplicate():
+			if not is_instance_valid(e) or e.cmb.dead or e.has_meta("surrendered") or e.released:
+				continue                                                   # 쓰러졌거나 손을 들었거나 놓아줬다 — 끝난 것으로
+			if e.has_meta("rq30_run") and (e.has_meta("gone") or host.map.tile_of(e.loco.logical).distance_to(c0) > 16.0):
+				_mobs.erase(e)                                             # 척후 하나가 어둠 속으로 빠졌다 — 다음 밤에 돌아온다(D-343)
+				e.queue_free()
+				_sv("RQ30_LEAK", 1)
+				_sv("RQ30_LDIR", v("RQ30_DIR"))
+				_sv("RQ30_LDAY", day())
+				continue
+			if v("RQ30_KIND") == 1 and v("RQ30_LEAK") != 1 and not e.has_meta("rq30_run") and e.cmb.hp <= e.cmb.max_hp * 0.3 and _mobs.size() > 1:
+				e.set_meta("rq30_run", true)                               # 패거리 척후 하나는 HP 30% 아래에서 온 길로 달아난다 — 쫓아가 잡으면 끝
+				e.morale = true
+				e.flee_now(host.player.loco.logical, 30.0)
+				host.hint("하나가 %s 쪽으로 달아난다. 놓치면 다시 올 거다." % where, 4.0)
+			left += 1
 		_sv("RQ30_KILLS", v("RQ30_N") - left)
-		if left == 0 and not _mobs.is_empty():
+		if left == 0 and (not _mobs.is_empty() or v("RQ30_LEAK") == 1):
 			_sv("RQ30_PHASE", 2)
-			host.hint("조용해졌다. 아침까지 지켜 선다 — 남태하에게.", 5.0)
+			if v("RQ30_LEAK") == 1:
+				host.hint("하나는 놓쳤다. 아침까지 지켜 선다 — 남태하에게.", 5.0)
+			else:
+				host.hint("조용해졌다. 아침까지 지켜 선다 — 남태하에게.", 5.0)
+				host.hint(NIGHT_AFTER[pick % NIGHT_AFTER.size()] % where, 5.0)
 
 
 func _night_done() -> void:
 	var caps: int = int(NIGHT_CAPS[v("RQ30_KIND")]) if v("RQ30_QUIET") == 0 else 40
-	var r: Dictionary = st.call_fn("rq", ["RQ-30", "BC", caps, XP_NIGHT, "act", _opt({"zone": "PD_BC", "what": "봉천 밤 경계를 선다"})])
+	var r: Dictionary = {}
+	if v("RQ30_LEAK") == 2:                                               # 돌아온 척후의 밤은 주간 횟수 밖(재미 검수 ② — 약속한 밤)
+		st.call_fn("caps", [caps])
+		st.call_fn("xp", [XP_NIGHT])
+		st.call_fn("aff", ["BC", 2, "day"])
+		r = {"caps": caps, "xp": XP_NIGHT}
+	else:
+		r = st.call_fn("rq", ["RQ-30", "BC", caps, XP_NIGHT, "act", _opt({"zone": "PD_BC", "what": "봉천 밤 경계를 선다"})])
+	if v("RQ30_MID") == 3:
+		host.hint(NIGHT_TRACE.get(v("RQ30_DIR"), NIGHT_TRACE[1]), 5.0)   # 아무 일 없던 밤의 흔적 한 줄(D-343)
+	if v("RQ30_LEAK") == 2:
+		_sv("RQ30_LEAK", 0)                                                # 돌아온 척후의 밤을 넘겼다
 	_sv("RQ30_ON", 0)
 	_sv("RQ30_PHASE", 0)
 	_mobs.clear()
@@ -379,6 +447,9 @@ func _night_done() -> void:
 
 func _on_day(_d: int) -> void:
 	_scenery(true)                                                      # 계단 철판은 밤새 갈린다
+	if v("RQ30_LEAK") == 1 and v("RQ30_ON") == 0 and day() > v("RQ30_LDAY") + 3:   # 사흘 안 아무도 안 섰다 — 척후가 패거리를 끌고 왔다(벌이 아니라 이야기 · 다친 사람 없음)
+		_sv("RQ30_LEAK", 0)
+		_sv("RQ30_RAID", 1)
 	if v("RQ43_ESC") == 1 and v("RQ43_ESC_DAY") < day():                 # 호위를 두고 하루가 지남 — 흐지부지(주민은 제 발로 돌아간다)
 		_sv("RQ43_ESC", 0)
 		_esc_clear()
@@ -408,6 +479,10 @@ func _on_map(id: String) -> void:
 	_ref_clear()
 	if id == "J-10" and v("RQ22_ON") == 1:
 		_spawn_nests()
+		if v("RQ22_VAR") == 1:
+			host.hint("배수구 바닥에 물이 정강이까지 찼다. 걸음마다 소리가 크게 울린다.", 5.0)
+		elif v("RQ22_VAR") == 2:
+			host.hint("점검구 옆 등유 선반이 비었다. 불은 가져온 것뿐이다.", 5.0)
 
 
 # ---------------------------------------------------------------- 풍경(단골 단계마다 한 칸 — 맵 소품 cond가 읽는다)
@@ -446,6 +521,16 @@ func _nest_tick() -> void:
 	_sv("RQ22_ON", 2)
 	_nests.clear()
 	host.hint("배수구가 조용하다. 노복희에게 보고.", 4.0)
+	if v("RQ22_VAR") == 3:                                               # 4조 유품(재미 검수 ③ — 같은 발견을 되풀이하지 않는다): 깡통 → 장화 한 짝 → 당번표 조각 → 다음부턴 없음
+		var relic := v("RQ22_CAN")
+		if relic < 3:
+			_sv("RQ22_CAN", relic + 1)
+			_sv("RQ22_REL", relic + 1)
+			host.hint(["알집 자리 밑에서 찌그러진 등유 깡통이 나왔다. 옆구리에 못으로 긁은 글씨 — '교대 언제 오나. 4조'.",
+				"알집 자리 밑에서 장화 한 짝이 나왔다. 안쪽에 매직으로 '4조'.",
+				"알집 자리 밑에서 젖은 당번표 조각이 나왔다. 2194년 4조 칸에 이름 셋."][relic], 5.0)
+		else:
+			_sv("RQ22_REL", 0)
 
 
 func _free_near(c0: Vector2i, r: RandomNumberGenerator, rx: int, ry: int) -> Vector2:
@@ -584,8 +669,19 @@ func _clear_actors(arr: Array) -> void:
 
 
 func _esc_clear() -> void:
+	if host != null and host.combat != null and "allies" in host.combat:
+		host.combat.allies = host.combat.allies.filter(func(x): return not str(x["id"]).begins_with("rq43_"))
 	_clear_actors(_esc)
 	_esc_path = []
+
+
+func _esc_dead(i: int) -> bool:
+	if host == null or host.combat == null or not ("allies" in host.combat):
+		return false
+	for x in host.combat.allies:
+		if str(x["id"]) == "rq43_%d" % i:
+			return (x["cmb"] as Combatant).dead
+	return false
 
 
 func _ref_clear() -> void:
@@ -603,19 +699,36 @@ func _escort_tick(dt: float) -> void:
 		var r := RandomNumberGenerator.new()
 		r.seed = hash("rq43:%d" % day())
 		for i in 3:
-			_esc.append(_actor(LOOKS[i], _free_near(ESC_FROM + Vector2i(i - 1, 1), r, 1, 1)))
+			var a := _actor(LOOKS[i], _free_near(ESC_FROM + Vector2i(i - 1, 1), r, 1, 1))
+			_esc.append(a)
 			_esc_path.append(PackedVector2Array())
+			if host.combat != null and host.combat.has_method("add_ally"):   # 매복이 노리는 사람(D-347 — 실패도 이야기): 맞으면 쓰러진다 · 쏘지는 않는다
+				var c: Combatant = host.combat.add_ally("rq43_%d" % i, a, 40.0, "")
+				c.died.connect(func() -> void: _sv("RQ43_LOST", v("RQ43_LOST") + 1))
 		host.hint("광장의 셋이 짐을 챙긴다. 고개 위 검문소까지 — 앞서 걸어야 따라온다.", 5.0)
 		return
-	var lead: Actor = _esc[0]
-	if not is_instance_valid(lead):
+	var lead: Actor = null
+	for i in _esc.size():
+		if is_instance_valid(_esc[i]) and not _esc_dead(i):
+			lead = _esc[i]
+			break
+	if lead == null:                                                     # 셋 다 쓰러졌다 — 줄에 설 사람이 없다(권은서가 다음에 안다)
+		_sv("RQ43_ESC", 5)
 		_esc_clear()
+		host.hint("셋 다 고개를 넘지 못했다.", 5.0)
 		return
 	var lt: Vector2i = host.map.tile_of(lead.loco.logical)
+	var left := 3 - v("RQ43_LOST")
 	if (lt - ESC_TO).length() <= 6:                                      # 닿음
 		_sv("RQ43_ESC", 2)
 		_esc_clear()
-		host.hint("셋이 검문소 줄 끝에 선다. 권은서에게.", 4.0)
+		host.hint(("셋이 검문소 줄 끝에 선다. 권은서에게." if left >= 3 else "%s 검문소 줄 끝에 선다. 권은서에게." % ("둘이" if left == 2 else "하나만")), 4.0)
+		return
+	var bc: Vector2 = host.map.mark_pos("X-BC:sbf2") if host.map.has_method("mark_pos") else Vector2.ZERO
+	if bc != Vector2.ZERO and lt.distance_to(host.map.tile_of(bc)) <= 20.0:   # 엉뚱한 짓(D-344): 고개 대신 봉천 아랫문으로 데려왔다
+		_sv("RQ43_ESC", 3)
+		_esc_clear()
+		host.hint("셋이 봉천 아랫문 앞에서 멈춘다. 계단 위를 올려다본다 — 조담희에게.", 5.0)
 		return
 	if v("RQ43_AMB") == 0 and lt.y < ESC_FROM.y + (ESC_TO.y - ESC_FROM.y) / 2 + 4 and lt.y > ESC_FROM.y + 6:   # 고개 중턱 매복
 		_sv("RQ43_AMB", 1)
@@ -628,13 +741,13 @@ func _escort_tick(dt: float) -> void:
 	var pp: Vector2 = host.player.loco.logical
 	for i in _esc.size():
 		var a: Actor = _esc[i]
-		if not is_instance_valid(a):
+		if not is_instance_valid(a) or _esc_dead(i):
 			continue
-		if a.loco.logical.distance_to(pp) > FOLLOW_R * 32.0:              # 주인공이 멀면 선다
+		var dd := a.loco.logical.distance_to(pp)
+		if dd > FOLLOW_R * 32.0 or dd <= 2 * 32.0:                        # 주인공이 멀면 선다 · 곁이면 선다(재미 검수 ① — 셋은 주인공을 따라 걷는다: 고개든 봉천이든)
 			continue
-		if (_esc_path[i] as PackedVector2Array).is_empty():
-			var goal := Vector2(ESC_TO.x * 32 + 16 + (i - 1) * 32, ESC_TO.y * 32 + 16)
-			_esc_path[i] = NpcRoutine.with_start(host.map, a.loco.logical, goal)
+		if (_esc_path[i] as PackedVector2Array).is_empty() or Engine.get_process_frames() % 30 == i:
+			_esc_path[i] = NpcRoutine.with_start(host.map, a.loco.logical, pp + Vector2((i - 1) * 24, 28))
 		if not (_esc_path[i] as PackedVector2Array).is_empty():
 			_esc_path[i] = NpcRoutine.walk_path(a, _esc_path[i], dt)
 

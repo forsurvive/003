@@ -6,22 +6,31 @@
  "cond": "V_ACT >= 1 and MQ101_STAGE >= 100",
  "labels": {
   "START": 0,
-  "HI5": 4,
-  "MENU": 6,
-  "FOOD_WAIT": 7,
-  "FOOD_WAIT_K": 10,
-  "FOOD": 12,
-  "FOOD_NO": 17,
-  "FOOD_LEAN": 19,
-  "TALK": 21,
-  "TALK_D": 24,
-  "COLD": 26
+  "ESC3": 5,
+  "ESC3_FOOD": 7,
+  "ESC3_SHORT": 12,
+  "ESC3_NO": 14,
+  "HI5": 17,
+  "MENU": 19,
+  "FOOD_WAIT": 20,
+  "FOOD_WAIT_K": 23,
+  "FOOD": 25,
+  "FOOD_NO": 30,
+  "FOOD_LEAN": 32,
+  "TALK": 34,
+  "TALK_D": 37,
+  "COLD": 39
  },
  "ops": [
   {
    "op": "if",
    "cond": "AFF_JC_BC < -19",
    "to": "COLD"
+  },
+  {
+   "op": "if",
+   "cond": "RQ43_ESC == 3",
+   "to": "ESC3"
   },
   {
    "op": "if",
@@ -37,6 +46,90 @@
   {
    "op": "goto",
    "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-029",
+   "emo": "놀람",
+   "text": "사당 광장 사람들이잖아요. 고개 줄에 서러 가던. …여기로 데려왔어요?"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "(먹을 것 80어치를 내놓는다) 이 셋도 한솥밥 먹게 해 주세요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "ESC3_FOOD",
+     "id": "ZRQ43_DAM:1:0"
+    },
+    {
+     "text": "먹을 건 없어요. 그래도 받아 줄 수 있나요",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "ESC3_NO",
+     "id": "ZRQ43_DAM:1:1"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "rq",
+   "args": [
+    "43",
+    "bc"
+   ]
+  },
+  {
+   "op": "if",
+   "cond": "RQ43_HAVE == 0",
+   "to": "ESC3_SHORT"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-029",
+   "emo": "미소",
+   "text": "(저울에 올린다) 팔십 어치. 셋 몫으로 넉넉해요. 줄 대신 솥이에요 — 반상회가 받을게요."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "셋이 번호표 대신 조담희가 내민 숟가락을 받는다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-029",
+   "emo": "기본",
+   "text": "달아 보니 모자라요. 그래도 오늘 밤은 재워 줄게요. 내일부턴 그쪽 사람들 손에 달렸고요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "rq",
+   "args": [
+    "43",
+    "bc0"
+   ]
+  },
+  {
+   "op": "line",
+   "who": "N-R01-029",
+   "emo": "기본",
+   "text": "솥이 빠듯해요. …그래도 오늘 밤은 재워 줄게요. 내일부턴 일손으로 갚으라고 할 거예요."
+  },
+  {
+   "op": "goto",
+   "to": "END"
   },
   {
    "op": "line",
@@ -57,7 +150,7 @@
      "cond": "rq_wait(\"RQ-43\", 3) == 0 and rq_left(\"RQ-43\", 2) > 0",
      "fx": "",
      "to": "FOOD",
-     "id": "ZRQ43_DAM:1:0"
+     "id": "ZRQ43_DAM:2:0"
     },
     {
      "text": "먹을 것은 더 안 받나요",
@@ -65,7 +158,7 @@
      "cond": "rq_wait(\"RQ-43\", 3) > 0 or rq_left(\"RQ-43\", 2) == 0",
      "fx": "",
      "to": "FOOD_WAIT",
-     "id": "ZRQ43_DAM:1:1"
+     "id": "ZRQ43_DAM:2:1"
     },
     {
      "text": "줄 얘기를 더 듣는다",
@@ -73,7 +166,7 @@
      "cond": "",
      "fx": "",
      "to": "TALK",
-     "id": "ZRQ43_DAM:1:2"
+     "id": "ZRQ43_DAM:2:2"
     },
     {
      "text": "다음에",
@@ -81,7 +174,7 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "ZRQ43_DAM:1:3"
+     "id": "ZRQ43_DAM:2:3"
     }
    ]
   },

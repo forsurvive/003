@@ -15,22 +15,24 @@
   "WARY": 30,
   "NEUTRAL": 32,
   "ASK": 35,
-  "GIVE": 36,
-  "GIVE2": 40,
-  "GIVE3": 41,
-  "HEADQ": 43,
-  "HEADQ2": 46,
-  "HEADQ3": 49,
-  "CARDS": 52,
-  "STUDENT": 55,
-  "OWNER": 59,
-  "FIRST": 63,
-  "M135": 66,
-  "WHY": 70,
-  "LAMP": 73,
-  "WHAT": 76,
-  "SPLIT_GONE": 80,
-  "SPLIT": 82
+  "KWONQ": 36,
+  "KWONQ1": 42,
+  "GIVE": 45,
+  "GIVE2": 49,
+  "GIVE3": 50,
+  "HEADQ": 52,
+  "HEADQ2": 55,
+  "HEADQ3": 58,
+  "CARDS": 61,
+  "STUDENT": 64,
+  "OWNER": 68,
+  "FIRST": 72,
+  "M135": 75,
+  "WHY": 79,
+  "LAMP": 82,
+  "WHAT": 85,
+  "SPLIT_GONE": 89,
+  "SPLIT": 91
  },
  "ops": [
   {
@@ -290,14 +292,69 @@
      "id": "GS_RJ:1:6"
     },
     {
+     "text": "그날 모의고사를 본 사람이 고시촌에 살아 있습니다",
+     "tags": [],
+     "cond": "FQ_GS02_NAME >= 1 and UQ62_MET == 1 and (has(\"M-423\") >= 1 or UQ62_SHOWN == 1) and FQ_GS02_KWON == 0 and dead(\"N-R01-059\") == 0",
+     "fx": "",
+     "to": "KWONQ",
+     "id": "GS_RJ:1:7"
+    },
+    {
      "text": "됐습니다",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "GS_RJ:1:7"
+     "id": "GS_RJ:1:8"
     }
    ]
+  },
+  {
+   "op": "do",
+   "fx": "FQ_GS02_KWON = 1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "채점기에 걸려 있던 카드 이야기를 한다. 뒷면의 이름 '권성민' — 고시촌 D동 3층에서 아직 시험을 기다린다."
+  },
+  {
+   "op": "if",
+   "cond": "FQ_GS02_NAME == 1",
+   "to": "KWONQ1"
+  },
+  {
+   "op": "line",
+   "who": "C-014",
+   "emo": "놀람",
+   "text": "…그날 시험장에 있던 사람이요? 우리가 '학생들'이라고 적어 둔 그 줄에 앉았던. 이백 년을 기다린 사람이 우리 말고도 있었네요."
+  },
+  {
+   "op": "line",
+   "who": "C-014",
+   "emo": "기본",
+   "text": "그분 몫은 우리가 대신 기다리지 않을게요. 그분한테는 그분 시험이 있으니까요."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "C-014",
+   "emo": "놀람",
+   "text": "…그날 시험장에 있던 사람이요? 우리가 '첫 등록자들'이라고 부른 그 줄에. 우리보다 먼저 기다린 사람이네요."
+  },
+  {
+   "op": "line",
+   "who": "C-014",
+   "emo": "기본",
+   "text": "그분 몫은 우리가 대신 기다리지 않을게요. 기다리는 게 같아도 무엇을 기다릴지는 그분이 정해요."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
   },
   {
    "op": "cmd",

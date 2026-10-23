@@ -16,77 +16,83 @@
   "U9DEAD": 32,
   "U9RQ": 36,
   "U9RQ_GO": 39,
-  "U9RQ_GO2": 43,
-  "U9RQ_WAIT": 45,
-  "U9RQ_ON": 47,
-  "U9RQ_DONE": 49,
-  "U9RQ_D1": 54,
-  "U9RQ_LEAN": 56,
-  "JH01": 58,
-  "JH01_AGAIN": 65,
-  "JH01_FIX": 67,
-  "JH01_FIX_DEAD": 70,
-  "JH01_PICKED": 72,
-  "JH01_KEY": 76,
-  "JH01_DONE": 83,
-  "JH01_CRUSH": 86,
-  "JH01_LEAK": 89,
-  "JH01_PAY": 91,
-  "JH01_TWO": 96,
-  "JH01_ONE": 98,
-  "JH01_CASH": 99,
-  "JH01_CASH_PICK": 103,
-  "JH03_ALONE": 107,
-  "JH03_TOLD": 111,
-  "JH03_TOLD_GONE": 118,
-  "JH03_TOLD_Q": 120,
-  "JH03_TOLD_N": 122,
-  "JH03_TOLD_BAN": 124,
-  "JH03_SOLD": 126,
-  "COLD": 130,
-  "JH02_CAUGHT": 132,
-  "JH02_CAUGHT_P": 137,
-  "JH02_REPAY": 140,
-  "JH02_DENY": 143,
-  "JH02": 146,
-  "JH02_ASK": 148,
-  "JH02_LATER": 152,
-  "JH02_MORE": 155,
-  "JH02_S08": 160,
-  "JH02_SOMIN": 164,
-  "JH02_MENU": 166,
-  "JH02_PAY": 169,
-  "JH02_PAY60": 173,
-  "JH02_BILLS": 177,
-  "JH02_SUB": 181,
-  "JH02_COAT": 184,
-  "JH02_LIE": 188,
-  "JH02_DEAD": 193,
-  "JH02_DONE": 196,
-  "S8": 199,
-  "S8_BOTH": 203,
-  "S8_NO": 206,
-  "S8_PAY": 208,
-  "S8_ONE_B": 211,
-  "S8_ONE_A": 214,
-  "UQ71_CORE": 217,
-  "UQ71_SOLD": 220,
-  "UQ71_SOLD2": 225,
-  "ABOUT": 227,
-  "SHOP": 231,
-  "MA": 233,
-  "WHY": 236,
-  "JOB": 240,
-  "JOB_ALONE": 247,
-  "JOB_HINT": 250,
-  "FEE": 252,
-  "WAITING": 256,
-  "REWARD": 258,
-  "HAVEPASS": 262,
-  "REGULAR": 264,
-  "MA_DEAD": 266,
-  "MA_LOG": 269,
-  "MA_DEAD_KNEW": 276
+  "U9RQ_WHY": 45,
+  "U9RQ_DRY": 51,
+  "U9RQ_GO2": 53,
+  "U9RQ_WAIT": 55,
+  "U9RQ_ON": 57,
+  "U9RQ_DONE": 59,
+  "U9RQ_D4": 68,
+  "U9RQ_D5": 70,
+  "U9RQ_D6": 72,
+  "U9RQ_DW": 74,
+  "U9RQ_D1": 76,
+  "U9RQ_LEAN": 78,
+  "JH01": 80,
+  "JH01_AGAIN": 87,
+  "JH01_FIX": 89,
+  "JH01_FIX_DEAD": 92,
+  "JH01_PICKED": 94,
+  "JH01_KEY": 98,
+  "JH01_DONE": 105,
+  "JH01_CRUSH": 108,
+  "JH01_LEAK": 111,
+  "JH01_PAY": 113,
+  "JH01_TWO": 118,
+  "JH01_ONE": 120,
+  "JH01_CASH": 121,
+  "JH01_CASH_PICK": 125,
+  "JH03_ALONE": 129,
+  "JH03_TOLD": 133,
+  "JH03_TOLD_GONE": 140,
+  "JH03_TOLD_Q": 142,
+  "JH03_TOLD_N": 144,
+  "JH03_TOLD_BAN": 146,
+  "JH03_SOLD": 148,
+  "COLD": 152,
+  "JH02_CAUGHT": 154,
+  "JH02_CAUGHT_P": 159,
+  "JH02_REPAY": 162,
+  "JH02_DENY": 165,
+  "JH02": 168,
+  "JH02_ASK": 170,
+  "JH02_LATER": 174,
+  "JH02_MORE": 177,
+  "JH02_S08": 182,
+  "JH02_SOMIN": 186,
+  "JH02_MENU": 188,
+  "JH02_PAY": 191,
+  "JH02_PAY60": 195,
+  "JH02_BILLS": 199,
+  "JH02_SUB": 203,
+  "JH02_COAT": 206,
+  "JH02_LIE": 210,
+  "JH02_DEAD": 215,
+  "JH02_DONE": 218,
+  "S8": 221,
+  "S8_BOTH": 225,
+  "S8_NO": 228,
+  "S8_PAY": 230,
+  "S8_ONE_B": 233,
+  "S8_ONE_A": 236,
+  "UQ71_CORE": 239,
+  "UQ71_SOLD": 242,
+  "UQ71_SOLD2": 247,
+  "ABOUT": 249,
+  "SHOP": 253,
+  "MA": 255,
+  "WHY": 258,
+  "JOB": 262,
+  "JOB_ALONE": 269,
+  "JOB_HINT": 272,
+  "FEE": 274,
+  "WAITING": 278,
+  "REWARD": 280,
+  "HAVEPASS": 284,
+  "REGULAR": 286,
+  "MA_DEAD": 288,
+  "MA_LOG": 291,
+  "MA_DEAD_KNEW": 298
  },
  "ops": [
   {
@@ -451,6 +457,16 @@
   },
   {
    "op": "if",
+   "cond": "RQ22_WHY == 1",
+   "to": "U9RQ_WHY"
+  },
+  {
+   "op": "if",
+   "cond": "RQ22_VAR == 2",
+   "to": "U9RQ_DRY"
+  },
+  {
+   "op": "if",
    "cond": "RQ22_K == 2",
    "to": "U9RQ_GO2"
   },
@@ -459,6 +475,46 @@
    "who": "C-050",
    "emo": "기본",
    "text": "하나래. 저수조 쪽. 불은 챙기고."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "do",
+   "fx": "RQ22_WHY = 2"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "피곤",
+   "text": "어미는 죽었는데 이레마다 왜 또 꼬이느냐고? 잔바퀴가 알을 낳소. 어미 하나 없앴다고 끝나는 놈들이 아니야. …그래서 일감이 끊이질 않지."
+  },
+  {
+   "op": "if",
+   "cond": "RQ22_VAR == 2",
+   "to": "U9RQ_DRY"
+  },
+  {
+   "op": "if",
+   "cond": "RQ22_K == 2",
+   "to": "U9RQ_GO2"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "이번엔 하나래. 저수조 쪽."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "등유는 지난주에 다 썼소. 불은 각자 챙기시오. 선반은 비었어."
   },
   {
    "op": "goto",
@@ -513,10 +569,70 @@
    "to": "U9RQ_D1"
   },
   {
+   "op": "if",
+   "cond": "RQ22_REL == 1",
+   "to": "U9RQ_D4"
+  },
+  {
+   "op": "if",
+   "cond": "RQ22_REL == 2",
+   "to": "U9RQ_D5"
+  },
+  {
+   "op": "if",
+   "cond": "RQ22_REL == 3",
+   "to": "U9RQ_D6"
+  },
+  {
+   "op": "if",
+   "cond": "RQ22_VAR == 1",
+   "to": "U9RQ_DW"
+  },
+  {
    "op": "line",
    "who": "C-050",
    "emo": "기본",
    "text": "(장부에 긋는다) 일당 60, 정수 셋. 이레 뒤에 또 꼬이면 또 부르리다."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "슬픔",
+   "text": "(깡통을 받아 글씨를 쓸어 본다) …이건 상인회 장부 상자에 넣어 두리다. 4조 이름 옆에. (장부에 긋는다) 일당 60, 정수 셋."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "(장화를 받아 든다) 4조 거요. 한 짝이라도 장부 상자에 같이 넣어 두리다. (장부에 긋는다) 일당 60, 정수 셋."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "슬픔",
+   "text": "(젖은 종이를 펴 본다) 당번표군. 이름 셋. …이름은 내가 따로 적어 두리다. (장부에 긋는다) 일당 60, 정수 셋."
+  },
+  {
+   "op": "goto",
+   "to": "MENU"
+  },
+  {
+   "op": "line",
+   "who": "C-050",
+   "emo": "기본",
+   "text": "물이 찼었지? 저수 바닥이 또 새는 거요. 장화는 상인회 몫으로 달아 두리다. (장부에 긋는다) 일당 60, 정수 셋."
   },
   {
    "op": "goto",

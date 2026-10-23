@@ -179,7 +179,7 @@ func _init() -> void:
 		vars.declare(k, "int", 0)
 	# 사당 고개 검문소 · 노량진 관제 중계소(1-8g): 첫 만남 · SG_REFUSED 중립 '동행 요청' 거절(한 번 −10) · SG_ISSUED 임시 등록증 첫 발급 ·
 	# GS_MET_RJ 류정을 만남(MQ-207 '이미 앎') · GS_CARD_SEEN 천공 카드 벽의 내 번호 · GS_LR50 「도성 문답」
-	for k in ["SG_MET_HWANG", "SG_MET_KWON", "SG_REFUSED", "SG_ISSUED", "GS_MET_RJ", "GS_MET_HAN", "GS_MET_EUNSOL", "GS_MET_MA", "GS_MET_HA", "GS_CARD_SEEN", "GS_LR50"]:
+	for k in ["SG_MET_HWANG", "SG_MET_KWON", "SG_KWON_REG", "SG_REFUSED", "SG_ISSUED", "GS_MET_RJ", "GS_MET_HAN", "GS_MET_EUNSOL", "GS_MET_MA", "GS_MET_HA", "GS_CARD_SEEN", "GS_LR50"]:
 		vars.declare(k, "int", 0)
 	# SQ-S01 외눈의 인식표(1-11a, SD-04a §4.1 · SideR01): SOL 해법(1 소탕 · 2 백구 대치 · 3 애니멀 프렌드 · 4 낮잠 · 5 미끼) · LEFT 무리가 남쪽 능선으로 떠남 ·
 	# LEFT_DAY 떠난 날 · DROP 인식표가 뼈 마당 바닥에 떨어져 있음 · TAG_DAY 인식표를 처음 쥔 날(7일 소지 자동 종료) · DOG 백구 동행(1 함께 · 2 다쳐 돌아감 · 3 일을 마치고 개집으로) ·
@@ -280,7 +280,7 @@ func _init() -> void:
 	# GS_ROBOT MQ-505 개통파가 깨울 로봇 증감(−1 = 3번) · GS_OPEN 개통파의 힘(−2~+3) · GS_TRUTH 등록 카드 · 대기의 진실(0~3) · GS02_GRADER 학원 채점기 한 대(0 걸림 · 1 돎 · 2 바늘 뽑힘 · 3 뜯김 — UQ-62가 읽는다)
 	for k in "FLYER ROSTER R1 R2 R3 R4 R5 R6 CARDS TAG FUSE FUSE_DAY DIM POWER WAKE WAKE_DAY CLUMSY PAPER DONE SEEN WARN HURT".split(" "):
 		vars.declare("FQ_GS01_" + k, "int", 0)
-	for k in "OFFER DOOR SAT CALL BANNER CAL CODE SAFE SCORED M135 BUNDLE NAME TRUTH HEAD DONE EARLY TUTOR SEEN".split(" "):
+	for k in "OFFER DOOR SAT CALL BANNER CAL CODE SAFE SCORED M135 BUNDLE NAME TRUTH HEAD DONE EARLY TUTOR SEEN KWON".split(" "):
 		vars.declare("FQ_GS02_" + k, "int", 0)
 	# FQ-JH-01 B구역 셔터(1-12c, SD-04d §8.3 · 진행기 fq_jh.gd 머리 주석): HA~HC 굴 상태(0 열림 · 1 철판 · 2 독 미끼 · 3 조용 · 4 비움) · WA~WC 잡은 물결 · TA~TC 미끼 놓은 시각 ·
 	# MOTOR 구동부(0 빠짐 · 1 고침 · 2 내림 · 3 휨) · LEAK J-11로 샘(1 샘 · 2 잡음) · SF · SI 떠도는 쥐(앞 · 안) · KOUT 둥지를 막힌 왕쥐 · OPEN 사슬(1 열쇠 · 2 땀/들어옴 · 3 폭파)
@@ -411,6 +411,8 @@ func load_data(dir: String = "res://data/") -> void:
 # ---------------------------------------------------------------- 식 언어 컨텍스트
 ## 생사 변수(SD-03a §4 '인물 생사' — 정본 ID). 사실은 `dead` 한 곳(SD-20 P1): 변수는 dead에서 계산하고, 변수에 1을 쓰면 dead에 적는다.
 ## (예전엔 진행기가 D_HDC를 따로 세우고 맵에서 쏴 죽이면 dead만 서서 두 사실이 갈렸다 · 독사를 D_DS(다니엘 서)에 적던 것 — 1-X에서 고침)
+const AFF_DAY_CAP := 6                            ## 일일 상승 상한(SD-06 §3.5 — 세력당)
+var aff_day := {}                                  ## 호감 키 → [게임 날, 그날 '일일' 원천으로 오른 합] (D-340 — 저장)
 const DEAD_VARS := {"D_JMS": "C-010", "D_BIH": "C-011", "D_MKJ": "C-012", "D_HDC": "C-013", "D_MYS": "C-006", "D_SMR": "C-008",
 	"D_DS": "C-005", "D_MXM": "C-007", "D_RJ": "C-014", "D_JL": "C-017", "D_BG": "C-015"}
 
@@ -476,6 +478,15 @@ func call_fn(name: String, args: Array) -> Variant:
 			if int(deeds.grudge.get(key.substr(4), 0)) >= 2:             # 영구 적대(1-X, SD-06 §3.8): −100 고정, 어떤 원천으로도 오르지 않는다
 				vars.set_v(key, -AFF_RANGE)
 				return -AFF_RANGE
+			var dv0 := int(args[1])
+			if args.size() > 2 and str(args[2]) == "day" and dv0 > 0:          # 일일 상승 상한(SD-06 §3.5 · D-340): 대화 · 거래 · 기부 · 처치 · 도움 · 반복 의뢰 — 퀘스트 완료 · 인도는 '…, "day"'를 붙이지 않는다
+				dv0 = mini(dv0, aff_room(str(args[0])))
+				if dv0 <= 0:
+					return was
+				var dd := int(vars.get_v("GAME_DAY")) if vars.has("GAME_DAY") else 0
+				var e: Array = aff_day.get(key, [dd, 0])
+				aff_day[key] = [dd, (int(e[1]) if int(e[0]) == dd else 0) + dv0]
+				args = [args[0], dv0]
 			var nv := vars.add(key, int(args[1]), -AFF_RANGE, AFF_RANGE)
 			events.append({"kind": "aff", "key": key, "delta": int(args[1]), "value": nv})
 			if int(args[1]) >= 3:                                         # 연동 계수(SD-06 §3.6, 1-12q): 퀘스트 · 인도 · 공개된 도움 — 다른 세력엔 소문이 닿을 때
@@ -625,6 +636,14 @@ func year() -> int:
 	return 2258
 
 
+## 오늘 이 세력에 '일일 상한' 원천으로 더 올릴 수 있는 몫(SD-06 §3.5 세력당 +6 — 게임 날 기준)
+func aff_room(code: String) -> int:
+	var key := _aff_key(code)
+	var dd := int(vars.get_v("GAME_DAY")) if vars.has("GAME_DAY") else 0
+	var e: Array = aff_day.get(key, [dd, 0])
+	return AFF_DAY_CAP if int(e[0]) != dd else maxi(0, AFF_DAY_CAP - int(e[1]))
+
+
 func _aff_key(code: String) -> String:
 	for k in ["AFF_" + code, "AFF_JC_" + code]:
 		if vars.has(k):
@@ -739,12 +758,15 @@ func dump() -> Dictionary:
 		it[k] = items[k]
 	var fc := failed_checks.keys()
 	fc.sort()
-	return {"vars": vars.dump(), "items": it, "failed": fc, "seed": check_seed}
+	return {"vars": vars.dump(), "items": it, "failed": fc, "seed": check_seed, "aff_day": aff_day.duplicate(true)}
 
 
 func restore(d: Dictionary) -> void:
 	lv_draft = null                                                     # 레벨업 한 판은 저장하지 않는다(불러오면 미배분부터 — P10)
 	vars.restore(d.get("vars", {}))
+	aff_day = {}
+	for k in d.get("aff_day", {}):
+		aff_day[str(k)] = [int(d["aff_day"][k][0]), int(d["aff_day"][k][1])]
 	items = {}
 	for k in d.get("items", {}):
 		items[k] = int(d["items"][k])

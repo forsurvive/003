@@ -66,7 +66,7 @@
   },
   {
    "op": "do",
-   "fx": "karma(25); aff(\"JC_BC\", 2)"
+   "fx": "karma(25); aff(\"JC_BC\", 2, \"day\")"
   },
   {
    "op": "cmd",

@@ -6,32 +6,36 @@
  "cond": "V_ACT >= 1 and MQ101_STAGE >= 100 and SQ_S02_FIGHT == 0",
  "labels": {
   "START": 0,
-  "WAITGO": 10,
-  "OFFER": 12,
-  "START2": 14,
-  "NIGHT": 15,
-  "D1": 19,
-  "D2": 21,
-  "ONGOING": 23,
-  "REPORT": 25,
-  "MORNING": 28,
-  "REPORT2": 30,
-  "R1": 39,
-  "R1_HILL": 41,
-  "R2": 43,
-  "R2_MANY": 45,
-  "R3_UP": 47,
-  "R_QUIET": 49,
-  "WAIT": 51,
-  "FULL": 53,
-  "FULL_D": 56,
-  "COLD": 58,
-  "BOUNTY": 60,
-  "BOUNTY_DOG": 62,
-  "BOUNTY_OK": 63,
-  "BOUNTY_OK2": 68,
-  "BOUNTY_OK3": 70,
-  "BOUNTY_LOST": 72
+  "WAITGO": 12,
+  "OFFER": 14,
+  "START2": 16,
+  "NIGHT": 17,
+  "D_LEAK": 22,
+  "D1": 24,
+  "D2": 26,
+  "LEAKGO": 28,
+  "RAIDED": 30,
+  "ONGOING": 34,
+  "REPORT": 36,
+  "MORNING": 39,
+  "REPORT2": 41,
+  "R1": 51,
+  "R1_HILL": 53,
+  "R2": 55,
+  "R2_MANY": 57,
+  "R3_UP": 59,
+  "R_LEAK": 61,
+  "R_QUIET": 63,
+  "WAIT": 65,
+  "FULL": 67,
+  "FULL_D": 70,
+  "COLD": 72,
+  "BOUNTY": 74,
+  "BOUNTY_DOG": 76,
+  "BOUNTY_OK": 77,
+  "BOUNTY_OK2": 82,
+  "BOUNTY_OK3": 84,
+  "BOUNTY_LOST": 86
  },
  "ops": [
   {
@@ -58,6 +62,16 @@
    "op": "if",
    "cond": "AFF_JC_BC < -19",
    "to": "COLD"
+  },
+  {
+   "op": "if",
+   "cond": "RQ30_RAID == 1",
+   "to": "RAIDED"
+  },
+  {
+   "op": "if",
+   "cond": "RQ30_LEAK == 1 and RQ30_ON == 0",
+   "to": "LEAKGO"
   },
   {
    "op": "if",
@@ -150,6 +164,11 @@
   },
   {
    "op": "if",
+   "cond": "RQ30_LEAK == 2",
+   "to": "D_LEAK"
+  },
+  {
+   "op": "if",
    "cond": "RQ30_DIR == 1",
    "to": "D1"
   },
@@ -171,6 +190,16 @@
   {
    "op": "line",
    "who": "N-R01-028",
+   "emo": "분노",
+   "text": "어젯밤 놓친 놈 있지. 그놈이 우리 담 높이를 알고 갔어. 오늘은 같은 길로, 하나 더 데리고 온다."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
    "emo": "기본",
    "text": "아랫문 쪽을 봐. 초저녁부터 개들이 짖어 — 그쪽에 뭐가 있다는 거야."
   },
@@ -183,6 +212,61 @@
    "who": "N-R01-028",
    "emo": "기본",
    "text": "윗문 쪽을 봐. 낮에 윗길에서 발자국이 내려왔어. 올라간 건 없고."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "기본",
+   "text": "놓친 그놈, 오늘 밤에 온다. 담 높이를 알고 갔으니까. 같이 서."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "열 시까지 기다린다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "WAITGO",
+     "id": "ZRQ30_NAM:3:0"
+    },
+    {
+     "text": "선다",
+     "tags": [],
+     "cond": "GAME_HOUR >= 22 or GAME_HOUR < 4",
+     "fx": "",
+     "to": "START2",
+     "id": "ZRQ30_NAM:3:1"
+    },
+    {
+     "text": "밤에 다시 온다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "END",
+     "id": "ZRQ30_NAM:3:2"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "RQ30_RAID = 2"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "피곤",
+   "text": "네가 없던 밤에 왔어. 그 척후가 패거리를 끌고. 아랫집 한 채가 털렸어. …다친 사람은 없어. 쌀자루 두 개랑 냄비 하나."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "기본",
+   "text": "담은 다시 올렸어. 다음에 놓치면 쫓아가."
   },
   {
    "op": "goto",
@@ -218,7 +302,7 @@
      "cond": "",
      "fx": "",
      "to": "MORNING",
-     "id": "ZRQ30_NAM:3:0"
+     "id": "ZRQ30_NAM:4:0"
     },
     {
      "text": "잠깐 다른 데 다녀온다",
@@ -226,7 +310,7 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "ZRQ30_NAM:3:1"
+     "id": "ZRQ30_NAM:4:1"
     }
    ]
   },
@@ -256,6 +340,11 @@
    "op": "if",
    "cond": "RQ30_QUIET == 1",
    "to": "R_QUIET"
+  },
+  {
+   "op": "if",
+   "cond": "RQ30_LEAK == 1",
+   "to": "R_LEAK"
   },
   {
    "op": "if",
@@ -346,6 +435,16 @@
    "op": "line",
    "who": "N-R01-028",
    "emo": "기본",
+   "text": "하나가 빠져나갔다고? …그럼 오늘 밤으로 안 끝나. 캡이랑 숙소. 내일 밤에도 와."
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-028",
+   "emo": "기본",
    "text": "아무것도 안 왔어? 그런 밤이 제일 좋은 밤이야. 캡은 그대로 — 가서 자."
   },
   {
@@ -417,7 +516,7 @@
      "cond": "",
      "fx": "",
      "to": "BOUNTY_OK",
-     "id": "ZRQ30_NAM:4:0"
+     "id": "ZRQ30_NAM:5:0"
     },
     {
      "text": "아직",
@@ -425,7 +524,7 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "ZRQ30_NAM:4:1"
+     "id": "ZRQ30_NAM:5:1"
     }
    ]
   },
@@ -444,7 +543,7 @@
      "cond": "",
      "fx": "",
      "to": "BOUNTY_OK",
-     "id": "ZRQ30_NAM:5:0"
+     "id": "ZRQ30_NAM:6:0"
     },
     {
      "text": "아직",
@@ -452,7 +551,7 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "ZRQ30_NAM:5:1"
+     "id": "ZRQ30_NAM:6:1"
     }
    ]
   },

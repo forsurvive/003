@@ -59,10 +59,21 @@ func test_repeat_aff_same_day_and_daily_cap(t) -> void:
 	t.eq([int(r1["aff"]), int(r2["aff"]), int(r3["aff"])], [2, 1, 0], "같은 날 +2 · +1 · 0(SD-06 §3.4)")
 	t.eq(int(st.vars.get_v("AFF_JC_BC")) - a0, 3, "정착지 개별 호감도에 더함(AFF_JC_BC)")
 	st.vars.set_v("GAME_DAY", 4)
-	st.vars.set_v("RQF_BC_ASUM", 5)
-	st.vars.set_v("RQF_BC_ADAY", 4)
+	st.aff_day["AFF_JC_BC"] = [4, 5]
 	var r4 := _rq(st, "RQ-19", "BC", 10, 5, "supply", {"aff": 2})
-	t.eq(int(r4["aff"]), 1, "그날 RQ 호감 합 +6까지만(5 → 1만 더)")
+	t.eq(int(r4["aff"]), 1, "그날 호감 합 +6까지만(5 → 1만 더)")
+	var b0 := int(st.vars.get_v("AFF_JC_BC"))
+	st.call_fn("aff", ["BC", 3, "day"])
+	t.eq(int(st.vars.get_v("AFF_JC_BC")), b0, "RQ로 다 찬 날엔 길 위 도움도 더 오르지 않는다(한 장부 — D-340)")
+	st.call_fn("aff", ["BC", 3])
+	t.eq(int(st.vars.get_v("AFF_JC_BC")), b0 + 3, "퀘스트 완료 · 인도는 상한 밖")
+	st.vars.set_v("GAME_DAY", 5)
+	st.call_fn("aff", ["BC", 9, "day"])
+	t.eq(int(st.vars.get_v("AFF_JC_BC")), b0 + 9, "다음 날은 다시 +6까지")
+	var sv := st.dump()
+	var st2 := _st()
+	st2.restore(sv)
+	t.eq(st2.aff_room("BC"), 0, "그날 몫은 저장 · 불러오기를 건너간다(불러와서 다시 올리기 막음)")
 
 
 func test_repeat_regular_bonus_and_stages(t) -> void:
