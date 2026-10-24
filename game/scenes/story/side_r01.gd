@@ -608,7 +608,7 @@ func _stand_tick(dt: float) -> void:
 			_hostile(e)                                                 # 대치가 깨졌다: 무리가 덤빈다(해법 A로)
 		host.combat.mates.set_mode("C-015", "follow")
 		host.hint("외눈이 이빨을 드러낸다. 대치가 깨졌다!", 4.0)
-		_log("대치 실패")
+		_log("대치 실패(%s)" % ("시간" if stand_t <= 0.0 and not one_hit else ("외눈이 맞음 — %s" % (one.cmb.last_by if is_instance_valid(one) else "-") if one_hit else "백구 없음")))
 
 
 func _scatter() -> void:

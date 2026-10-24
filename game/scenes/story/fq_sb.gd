@@ -501,7 +501,7 @@ func tick2() -> void:
 	if _check_fallen():
 		return
 	if bool(cv.get("fight", false)):
-		if v2("PATROL") == 1 and _patrol.filter(func(e): return _ok(e)).is_empty():
+		if v2("PATROL") == 1 and _patrol.filter(func(e): return not _patrol_out(e)).is_empty():
 			_patrol_won()
 		return
 	_lag_tick()
@@ -909,12 +909,32 @@ func _patrol_fight(team_sb: String, sb_foes: Array, jy_foes: Array) -> void:
 			(e as Enemy).led = false
 			(e as Enemy).cmb.team = team_sb
 			(e as Enemy).foes = sb_foes
+			_to_fight(e)
 	for e in _patrol:
 		if _ok(e):
 			(e as Enemy).led = false
 			(e as Enemy).cmb.team = "jy_sb02"
 			(e as Enemy).foes = jy_foes
+			_to_fight(e)
 	host.combat._rebuild_list()
+
+
+## 방범대원이 싸움에서 빠졌나: 쓰러짐 · 기절(HP 0) · 달아남 · 항복 · 놓아줌 · 싸움을 놓고 멀리(20칸) 쉼 — 남은 사람만 이 싸움의 상대(1-13 sb02f 회귀: 달아난 한 명 · 기절한 한 명이 '살아 있음'으로 남아 행렬이 영영 섰다)
+func _patrol_out(e) -> bool:
+	if not _ok(e):
+		return true
+	var en: Enemy = e
+	if en.cmb.hp <= 0.0 or en.brain.fleeing() or en.released or en.brain.state == AIBrain.S.SURRENDER:
+		return true
+	return en.brain.state != AIBrain.S.COMBAT and en.loco.logical.distance_to(host.player.loco.logical) > 20.0 * 32.0
+
+
+## 싸움이 정해진 순간 두 편이 곧장 교전에 든다(노량진로 끝 방범대는 25칸 넘게 떨어져 서 있어 서로 못 보고 쉬는 채 서 있었다 — 1-13 sb02f 회귀)
+func _to_fight(e) -> void:
+	var en: Enemy = e
+	en.brain.gauge = 100.0
+	en.brain.state = AIBrain.S.COMBAT
+	en.brain.home = en.loco.logical
 
 
 ## 오태수 자리(계획 §6.5 — P1): 운송이 끝날 때 한 번. 1 출장소(섬으로) · 2 본소 대기(늦음) · 3 봉천 아랫마당 · 4 방범대가 데려감 · 5 행방 모름.

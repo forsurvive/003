@@ -1806,11 +1806,16 @@ func _process(dt: float) -> void:
 			return
 		"hold":                                                         # 1-D10 한 방향으로 계속 걷는다(수레 밀기 — 막히면 서고, 수레가 비키면 간다)
 			host.input_fn = func() -> Vector2: return Vector2(float(s[1]), float(s[2]))
+			var blk: Array = host.combat.enemies.filter(func(e): return is_instance_valid(e) and not e.cmb.dead and e.cmb.team == "enemy" \
+				and absi(host.map.tile_of(e.loco.logical).y - host.map.tile_of(host.player.loco.logical).y) <= 1 and e.loco.logical.distance_to(host.player.loco.logical) < 10.0 * 32.0)
+			host.combat.bot = {} if blk.is_empty() else {"aim": blk[0].loco.logical + Vector2(0, -6), "fire": true, "aimed": true,
+				"reload": host.combat.mags.get(host.combat.weapon_id, 1) == 0}   # 수레 길(같은 줄)을 막은 적은 쏜다 — 수레 뒤에 갇힌 쥐가 앞 칸을 막던 것(1-13 u04 회귀)
 			var okh := StoryExpr.test(str(s[3]), st)
 			if okh or step_t > float(s[4]):
 				host.input_fn = func() -> Vector2: return Vector2.ZERO
 				checks.append([okh, str(s[5])])
 				print("  [확인] %s %s (%.1f초 · 수레 %s %d)" % ["○" if okh else "×", s[5], step_t, u04.cart_map(), u04.cart_x()])
+				host.combat.bot = {}
 				_next()
 		"grgo", "gruse":                                               # 구로 구내(월드 손 맵 X-GR) 좌표 → 월드 좌표(1-D4)
 			var o := gr.origin()
@@ -1926,7 +1931,8 @@ func _process(dt: float) -> void:
 			var tm: TerminalScreen = host.terminal
 			if tm == null:
 				if step_t > 3.0:
-					print("  [봇] 단말이 안 열렸다")
+					print("  [봇] 단말이 안 열렸다 · 맵 %s 칸 %s 바라봄 %d · 대화 %s · 용기 %s · 조사 글 %s" % [host.map.id, str(host.map.tile_of(host.player.loco.logical)), host.player.loco.facing,
+						host.box.active, host.container != null, str(host.hints.back() if not host.hints.is_empty() else "")])
 					_next()
 				return
 			if tm.mode == "hack" and tm.hack.state == "play" and tm.shown > 9999:
@@ -2102,6 +2108,19 @@ func _process(dt: float) -> void:
 				print("  [봇] 행렬 %.0f초 · %s · 경유점 %d · 선두 %s 상태 %s · 나 %s · hold=%s lag=%s · 단계 %d" % [step_t, host.date_text, int(st.vars.get_v("FQ_SB02_LEG")),
 					str(host.map.tile_of(ldd.loco.logical)) if ldd else "-", str(ldd.brain.state) if ldd else "-", host.cur_map + str(host.map.tile_of(host.player.loco.logical)),
 					str(fqsb.cv.get("hold", "")), str(fqsb.cv.get("lag", "")), int(st.quests.stage("FQ-SB-02"))])
+				if bool(fqsb.cv.get("fight", false)):                         # 싸움 중: 방범대 몸 상태(1-13 회귀 — 싸움이 끝나지 않던 것 살핌)
+					print("    싸움 — 인솔조 %s" % str(([fqsb.cv.get("lead")] + fqsb.cv.get("men", [])).map(func(e): return "-" if e == null or not is_instance_valid(e) else "%s hp%d/%d 무기 %s Lv%d 상태 %d" % [e.get_meta("enemy_id", ""), int(e.cmb.hp), int(e.cmb.max_hp), str(e.weapon.get("id", "")), int(e.level), int(e.brain.state)])))
+					print("    싸움 — 방범대 %s" % str(fqsb._patrol.map(func(e): return "-" if not is_instance_valid(e) else "%s hp%d/%d 무기 %s Lv%d 상태 %d 거리 %.0f칸" % [e.get_meta("enemy_id", ""), int(e.cmb.hp), int(e.cmb.max_hp), str(e.weapon.get("id", "")), int(e.level), int(e.brain.state), e.loco.logical.distance_to(host.player.loco.logical) / 32.0])))
+			if bool(fqsb.cv.get("fight", false)) and int(st.vars.get_v("FQ_SB02_PATROL")) == 1:   # '싸운다'를 고른 사람은 같이 싸운다(봇이 줄만 따라가며 서 있으면 싸움이 끝나지 않는다 — 1-13 회귀)
+				var foes: Array = fqsb._patrol.filter(func(e): return not fqsb._patrol_out(e))
+				if not foes.is_empty():
+					var me2: Vector2 = host.player.loco.logical
+					foes.sort_custom(func(a, b): return a.loco.logical.distance_to(me2) < b.loco.logical.distance_to(me2))
+					var f0: Enemy = foes[0]
+					host.input_fn = _walk.bind(f0.loco.logical) if f0.loco.logical.distance_to(me2) > 6.0 * 32.0 else func() -> Vector2: return Vector2.ZERO
+					host.combat.bot = {"aim": f0.loco.logical + Vector2(0, -12), "fire": true, "aimed": true, "reload": host.combat.mags.get(host.combat.weapon_id, 1) == 0}
+					return
+				host.combat.bot = {}
 			if not fqsb.cv.is_empty() and fqsb.lead() != null:
 				var tr: Array = fqsb.cv["trail"]
 				var n_f: int = fqsb.cv["men"].size() + fqsb.cv["folk"].size() + 1     # 줄 맨 뒤 사람 한 칸 뒤
@@ -2115,7 +2134,12 @@ func _process(dt: float) -> void:
 				_next()
 				return
 			dogs.sort_custom(func(a, b): return a.loco.logical.distance_to(host.player.loco.logical) < b.loco.logical.distance_to(host.player.loco.logical))
-			host.combat.bot = {"aim": dogs[0].loco.logical + Vector2(0, -8), "fire": true, "aimed": true,
+			var me: Vector2 = host.player.loco.logical                           # 탄 줄이 외눈 몸 곁(1칸)을 지나는 개는 쏘지 않는다 — 사람도 외눈을 비껴 쏜다(외눈이 맞으면 대치가 깨진다, 1-13 회귀 고침)
+			var clear := dogs.filter(func(e): return not is_instance_valid(side.one) or Geometry2D.get_closest_point_to_segment(side.one.loco.logical, me, e.loco.logical).distance_to(side.one.loco.logical) > 32.0 + side.one.cmb.radius)
+			if clear.is_empty():
+				host.combat.bot = {}
+				return
+			host.combat.bot = {"aim": clear[0].loco.logical + Vector2(0, -8), "fire": true, "aimed": true,
 				"reload": host.combat.mags.get(host.combat.weapon_id, 1) == 0}
 		"gotag":
 			var dc := side._drop_cell()

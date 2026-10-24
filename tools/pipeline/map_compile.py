@@ -329,6 +329,10 @@ def _auto_boxes(out, prop_meta, m):
             for i in range(int(b.get("w", 1))):
                 covered.add((int(b["x"]) + i, int(b["y"]) + j))
     scene_cells = {(int(t["x"]) + i, int(t["y"]) + j) for t in out["texts"] if t.get("scene") for i in range(int(t.get("w", 1))) for j in range(int(t.get("h", 1)))}
+    for t in out.get("terms", []):                                       # 단말 칸도 건너뛴다(SD-12 §7.1 조사 우선 단말 > 용기 — 책상 서랍이 단말을 가려 쓸 수 없던 것, 1-13 s12 봇)
+        for i in range(int(t.get("w", 1))):
+            for j in range(int(t.get("h", 1))):
+                scene_cells.add((int(t["x"]) + i, int(t["y"]) + j))
     owned = [b for b in out["boxes"] if b.get("owner") not in ("", "PC", "S7")]
     prop_at = {(int(p["x"]), int(p["y"])): p["name"] for p in out["props"]}
     for b in out["boxes"]:                                                # 원고 용기라도 사라지는 소품(배낭 · 자루 · 더미) 위면 다 꺼내면 사라진다
