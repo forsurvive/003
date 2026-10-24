@@ -234,11 +234,20 @@ func _live_step(me: Vector2) -> void:
 			n_chg, n_stag, int(round(taken / maxf(1.0, host.combat.pc.max_hp) * 100.0))])
 		get_tree().create_timer(0.3).timeout.connect(get_tree().quit)
 		return
-	if awake.is_empty():                                                 # 아직 아무도 안 깸 — 어미 밑으로 걸어 들어간다(쏘지 않는다)
+	if awake.is_empty() or (is_instance_valid(boss) and boss.asleep and awake.size() == 0):   # 아직 아무도 안 깸 — 어미 쪽으로 걸어 들어가되 DROP_R − 1칸에서 선다(① 알 낙하를 끝까지 본다 — 조율사 도구 고침 1)
 		host.combat.bot = {}
 		var goal: Vector2 = boss.loco.logical if is_instance_valid(boss) else alive[0].loco.logical
-		host.input_fn = _walk_to(me, goal)
+		if me.distance_to(goal) > (UqR02.DROP_R - 1.0) * 32.0:
+			host.input_fn = _walk_to(me, goal)
+		else:
+			host.input_fn = func() -> Vector2: return Vector2.ZERO
 		return
+	if is_instance_valid(boss) and boss.asleep:                          # 천장 어미는 아직 겨누지 않는다(깬 큰바퀴 · 떼만)
+		awake = awake.filter(func(e): return e != boss)
+		if awake.is_empty():
+			host.combat.bot = {}
+			host.input_fn = func() -> Vector2: return Vector2.ZERO
+			return
 	awake.sort_custom(func(a, b): return a.loco.logical.distance_to(me) < b.loco.logical.distance_to(me))
 	var tgt: Enemy = awake[0]
 	var d := tgt.loco.logical.distance_to(me)

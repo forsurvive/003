@@ -697,7 +697,7 @@ func _act(dt: float, target: Combatant, shots: Projectiles) -> void:
 		if _back_t > 0.0:                                              # 물고 빠지기(SD-14 §4.2 '한 번에 1~2마리씩만 물러 들어온다' — 1-13h): 문 뒤 1.5~2칸 물러섰다 다시 든다
 			_back_t -= dt
 			input = (-to_t).normalized() if to_t.length() > 0.5 else Vector2.RIGHT
-		elif to_t.length() < cmb.radius + target.radius + maxf(6.0, cmb.radius * 0.5):   # 큰 몸(배수구 어미 0.6t)은 몸끼리 닿아 서는 거리가 6px 여유보다 멀다 — 몸 반의 반지름까지(1-13k: 붙어 서서 물지 못하던 것)
+		elif to_t.length() < cmb.radius + target.radius + maxf(6.0, cmb.radius * 0.5) + (4.0 if _wind > 0.0 and cmb.radius >= 16.0 else 0.0):   # 큰 몸(배수구 어미 0.6t)은 몸끼리 닿아 서는 거리가 6px 여유보다 멀다 — 몸 반의 반지름까지(1-13k). 예비 동작 중엔 +4px(멈출 때 걸음 컷만큼 되돌아가 문턱을 오가며 예비 동작이 풀리던 것 — 조율사 구현 뒤 1)
 			input = Vector2.ZERO
 			_bite(dt, target, to_t)
 		elif _wind > 0.0:                                              # 노리던 표적이 빠져나갔다 — 예비 동작을 푼다
@@ -1175,6 +1175,10 @@ func _charge_step(dt: float, target: Combatant) -> bool:
 	var dir8 := Vector2(Locomotion.VEC[f]).normalized()
 	if absf(rad_to_deg(dir8.angle_to(to_t))) > CHG_ALIGN:
 		return false                                                   # 줄이 표적을 비껴간다 — 쫓으며 자리를 맞춘다(웅크리지 않음)
+	for k in range(1, 5):                                              # 앞 2칸이 트여야 출발(벽 모서리에 걸려 출발하자마자 박는 '거저 비틀거림' 막기 — 조율사 구현 뒤 2)
+		if world.circle_hits(loco.logical + dir8 * 16.0 * k, radius_px):
+			_chg_cd = 1.0
+			return false
 	loco.facing = f
 	_chg_dir = dir8
 	_chg_wind = CHG_WIND

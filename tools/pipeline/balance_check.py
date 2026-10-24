@@ -224,6 +224,18 @@ def check_combat(weapons, enemies):
             eng = (body + adds) * ENGAGE_K + _phase_s(bf.get("phase_s", 0.0))
             add("B3", "적 처치 시간", "%s %s(필드 보스 · Lv%d — 교전 전체: 몸 %d × %.1f + 호위 · 부화)" % (eid, e["name"], lv, hp, 1 - bf["flee"]), round(eng, 1), "35~60초",
                 judge(eng, 35, 60), "SD-11 §10.3 필드 보스(사용자 결정 2026-10-23)", "표준 무기 %s · %s" % (best, bf["why"]))
+            if eid == "CR-501":                                         # B4 받은 피해(조율사 1-13k 구현 뒤 4): 제자리 위쪽 끝 — 어미 물기(토큰 늘 · 물고 빠지기) × 깬 뒤 몸 시간 + 큰바퀴 · 떼 + 알 낙하
+                php5 = 200.0 + (lv - 1) * 10.0                            # Lv5 주인공 HP(지구력 5 · 레벨업 +10 — 벤치 240)
+                pdr5 = float(band(STD_DR, lv))
+                mb = 10.0 * (1 - pdr5 / 100.0) / (BITE_CD * BITE_BACK)
+                t_awake = body * ENGAGE_K
+                roach = 3.0 * (1 - pdr5 / 100.0) / BITE_CD * 2.0 * (adds * 0.5)  # 큰바퀴(물기 3) 둘이 호위를 쓰러뜨리는 시간의 절반 동안 붙음
+                swarm = 1.9 * 2.0 * 6.0                                     # 잔바퀴 떼 둘 · 하나당 1.9/초 · 접촉 약 6초(배 터진 뒤)
+                eggs = 6.0 * _uq09_const("DROP_N")
+                taken = mb * t_awake + roach + swarm + eggs
+                add("B4", "주인공 생존", "CR-501 배수구 어미 교전 받은 피해(제자리 셈 · Lv%d HP %d)" % (lv, php5), round(taken / php5 * 100), "150% 이하(스팀팩 셋 안)",
+                    "통과" if taken / php5 <= 1.5 else ("주의" if taken / php5 <= 1.9 else "실패"), "SD-25 B4(필드 보스 · 1-13h)",
+                    "물기 %.1f/초 × 깬 뒤 %.0f초 + 큰바퀴 %.0f + 떼 %.0f + 알 %.0f — 벤치 J-10 실측과 25%%p 넘게 벌어지면 AI 버그 신호(조율사)" % (mb, t_awake, roach, swarm, eggs))
         else:
             lo, hi = TTK[tier]
             add("B3", "적 처치 시간", "%s %s(%s · Lv%d · HP %d · DR %d)" % (eid, e["name"], tier, lv, hp, dr), round(ttk, 1), "%d~%d초" % (lo, hi),
@@ -246,10 +258,10 @@ def check_combat(weapons, enemies):
             cyc = (BITE_CD + max(0.0, bite - 15.0) * 0.05) * (1.0 if eid in NO_BACK else BITE_BACK)   # enemy.gd _bite: 센 물기일수록 예비 동작이 길다 · 물고 빠지기 ×1.5
             edps = raw / cyc
             hit1 = raw
+            how = "물기 %g/%.1f초" % (bite, cyc)
             if eid == "CR-501":                                         # 바닥 돌진(1-13k): 닿으면 물기 × CHG_MUL 한 번 — 한 방은 그 값
                 hit1 = raw * _enemy_const("CHG_MUL")
-                how = "돌진 물기 × %g" % _enemy_const("CHG_MUL")
-            how = "물기 %g/%.1f초" % (bite, cyc)
+                how += " · 돌진 물기 × %g" % _enemy_const("CHG_MUL")
         elif eid in CLAW:
             claw = float(str(e.get("attack", "근접 5")).split(" ")[1]) if " " in str(e.get("attack", "")) else 5.0
             hit1 = claw * (100 + EN_SKILL) / 200.0 * max(0.0, 1 - pdr / 100.0)
