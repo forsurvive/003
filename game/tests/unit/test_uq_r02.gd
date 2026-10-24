@@ -1105,6 +1105,30 @@ func test_uq09_flood(t) -> void:
 	t.eq(_v(st, "UQ09_FLOOD"), 2, "하룻밤에 물이 빠진다")
 
 
+func test_uq09_flood_mom_crawls(t) -> void:
+	# 1-13k(재미 검수 ①): 물이 차는 6초 동안 깬 어미는 표적을 버리고 낮은 바닥 알집 쪽으로 · 다 찼을 때 마른 높은 턱에 있으면 산다(천장 관으로)
+	var a := _host("J-10", "from_J02")
+	var h: InteriorHost = a[0]
+	var st: StoryState = a[1]
+	var c: UqR02 = a[2]
+	var mom = _mom_of(h)
+	mom.wake()
+	c._mom_frame(0.01)
+	c._flood_t = UqR02.FLOOD_S
+	c._mom_frame(0.01)
+	var eggs := [Vector2(UqR02.EGG_AT[0]) * 32.0 + Vector2(16, 16), Vector2(UqR02.EGG_AT[1]) * 32.0 + Vector2(16, 16)]
+	t.ok(mom.dash_to in eggs, "깬 어미가 바닥 알집 쪽으로 기어 내려간다")
+	t.ok(c._crawl_said, "안내 한 줄")
+	mom.end_dash()
+	mom.loco.place(Vector2(34 * 32 + 16, 4 * 32 + 16))                     # 동쪽 높은 턱(물이 안 닿는 자리)
+	h.player.loco.logical = Vector2(35 * 32 + 16, 6 * 32 + 16)
+	c._flood_t = 0.005
+	c._mom_frame(0.01)
+	t.eq(_v(st, "UQ09_MOM"), 0, "마른 턱에 남은 어미는 익사하지 않는다")
+	t.ok(not st.is_dead("N-JM-B1"), "생사도 그대로")
+	t.eq(_v(st, "UQ09_FLOOD"), 1, "물은 찼다")
+
+
 func test_uq09_pipe_redirty(t) -> void:
 	var a := _host("J-10", "from_J02")
 	var st: StoryState = a[1]

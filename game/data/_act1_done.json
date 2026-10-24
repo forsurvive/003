@@ -1,0 +1,496 @@
+{
+ "when": "2026-10-24 14:57",
+ "verdict": {
+  "1": true,
+  "2": true,
+  "4": true
+ },
+ "rows": [
+  {
+   "route": "job",
+   "ok": true,
+   "pass": "11/11",
+   "errors": 0,
+   "why": "",
+   "secs": 152,
+   "econ": {
+    "caps": -100,
+    "earned": 0,
+    "spent": 100,
+    "xp": 410,
+    "day": 0
+   },
+   "tail": "",
+   "crit": "1",
+   "n": 1
+  },
+  {
+   "route": "vent",
+   "ok": true,
+   "pass": "4/4",
+   "errors": 0,
+   "why": "",
+   "secs": 34,
+   "econ": {
+    "caps": 0,
+    "earned": 0,
+    "spent": 0,
+    "xp": 350,
+    "day": 0
+   },
+   "tail": "",
+   "crit": "1",
+   "n": 1
+  },
+  {
+   "route": "hack",
+   "ok": true,
+   "pass": "3/3",
+   "errors": 0,
+   "why": "",
+   "secs": 29,
+   "econ": {
+    "caps": 0,
+    "earned": 0,
+    "spent": 0,
+    "xp": 340,
+    "day": 0
+   },
+   "tail": "",
+   "crit": "1",
+   "n": 1
+  },
+  {
+   "route": "fee",
+   "ok": true,
+   "pass": "3/3",
+   "errors": 0,
+   "why": "",
+   "secs": 45,
+   "econ": {
+    "caps": -300,
+    "earned": 0,
+    "spent": 300,
+    "xp": 300,
+    "day": 0
+   },
+   "tail": "",
+   "crit": "1",
+   "n": 1
+  },
+  {
+   "route": "yd_talk",
+   "ok": true,
+   "pass": "9/9",
+   "errors": 0,
+   "why": "",
+   "secs": 101,
+   "econ": {
+    "caps": 0,
+    "earned": 0,
+    "spent": 0,
+    "xp": 310,
+    "day": 0
+   },
+   "tail": "",
+   "crit": "1",
+   "n": 1
+  },
+  {
+   "route": "yd_fight",
+   "ok": true,
+   "pass": "9/9",
+   "errors": 0,
+   "why": "",
+   "secs": 107,
+   "econ": {
+    "caps": 0,
+    "earned": 0,
+    "spent": 0,
+    "xp": 430,
+    "day": 0
+   },
+   "tail": "",
+   "crit": "1",
+   "n": 1
+  },
+  {
+   "route": "yd_vent",
+   "ok": true,
+   "pass": "8/8",
+   "errors": 0,
+   "why": "",
+   "secs": 95,
+   "econ": {
+    "caps": 0,
+    "earned": 0,
+    "spent": 0,
+    "xp": 395,
+    "day": 0
+   },
+   "tail": "",
+   "crit": "1",
+   "n": 1
+  },
+  {
+   "route": "sb_buy",
+   "ok": true,
+   "pass": "6/6",
+   "errors": 0,
+   "why": "",
+   "secs": 69,
+   "econ": {
+    "caps": -300,
+    "earned": 500,
+    "spent": 800,
+    "xp": 300,
+    "day": 0
+   },
+   "tail": "",
+   "crit": "1",
+   "n": 1
+  },
+  {
+   "route": "sb_deal",
+   "ok": true,
+   "pass": "3/3",
+   "errors": 0,
+   "why": "",
+   "secs": 38,
+   "econ": {
+    "caps": -1000,
+    "earned": 0,
+    "spent": 1000,
+    "xp": 300,
+    "day": 0
+   },
+   "tail": "",
+   "crit": "1",
+   "n": 1
+  },
+  {
+   "route": "sb_raid",
+   "ok": true,
+   "pass": "2/2",
+   "errors": 0,
+   "why": "",
+   "secs": 175,
+   "econ": {
+    "caps": 0,
+    "earned": 0,
+    "spent": 0,
+    "xp": 635,
+    "day": 0
+   },
+   "tail": "",
+   "crit": "1",
+   "n": 1
+  },
+  {
+   "route": "sb_roof",
+   "ok": true,
+   "pass": "4/4",
+   "errors": 0,
+   "why": "",
+   "secs": 141,
+   "econ": {
+    "caps": 0,
+    "earned": 0,
+    "spent": 0,
+    "xp": 340,
+    "day": 0
+   },
+   "tail": "",
+   "crit": "1",
+   "n": 1
+  },
+  {
+   "route": "sb_jo",
+   "ok": true,
+   "pass": "3/3",
+   "errors": 0,
+   "why": "",
+   "secs": 10,
+   "econ": {
+    "caps": 0,
+    "earned": 0,
+    "spent": 0,
+    "xp": 0,
+    "day": 0
+   },
+   "tail": "",
+   "crit": "1",
+   "n": 1
+  },
+  {
+   "route": "sb_south",
+   "ok": true,
+   "pass": "9/9",
+   "errors": 0,
+   "why": "",
+   "secs": 68,
+   "econ": {
+    "caps": 0,
+    "earned": 0,
+    "spent": 0,
+    "xp": 460,
+    "day": 1
+   },
+   "tail": "",
+   "crit": "1",
+   "n": 1
+  },
+  {
+   "route": "vb_talk",
+   "ok": true,
+   "pass": "8/8",
+   "errors": 0,
+   "why": "",
+   "secs": 58,
+   "econ": {
+    "caps": 0,
+    "earned": 0,
+    "spent": 0,
+    "xp": 320,
+    "day": 0
+   },
+   "tail": "",
+   "crit": "1",
+   "n": 1
+  },
+  {
+   "route": "vb_walk",
+   "ok": true,
+   "pass": "12/12",
+   "errors": 0,
+   "why": "",
+   "secs": 102,
+   "econ": {
+    "caps": 0,
+    "earned": 0,
+    "spent": 0,
+    "xp": 300,
+    "day": 3
+   },
+   "tail": "",
+   "crit": "1",
+   "n": 1
+  },
+  {
+   "route": "vb_fight",
+   "ok": true,
+   "pass": "8/8",
+   "errors": 0,
+   "why": "",
+   "secs": 89,
+   "econ": {
+    "caps": 0,
+    "earned": 0,
+    "spent": 0,
+    "xp": 475,
+    "day": 0
+   },
+   "tail": "",
+   "crit": "1",
+   "n": 1
+  },
+  {
+   "route": "vb_hide",
+   "ok": true,
+   "pass": "6/6",
+   "errors": 0,
+   "why": "",
+   "secs": 117,
+   "econ": {
+    "caps": 0,
+    "earned": 0,
+    "spent": 0,
+    "xp": 300,
+    "day": 0
+   },
+   "tail": "",
+   "crit": "1",
+   "n": 1
+  },
+  {
+   "route": "vb_cargo",
+   "ok": true,
+   "pass": "7/7",
+   "errors": 0,
+   "why": "",
+   "secs": 125,
+   "econ": {
+    "caps": 0,
+    "earned": 0,
+    "spent": 0,
+    "xp": 350,
+    "day": 0
+   },
+   "tail": "",
+   "crit": "1",
+   "n": 1
+  },
+  {
+   "route": "vb_capture",
+   "ok": true,
+   "pass": "11/11",
+   "errors": 0,
+   "why": "",
+   "secs": 82,
+   "econ": {
+    "caps": -180,
+    "earned": 0,
+    "spent": 180,
+    "xp": 300,
+    "day": 3
+   },
+   "tail": "",
+   "crit": "1",
+   "n": 1
+  },
+  {
+   "route": "sb_capture",
+   "ok": true,
+   "pass": "5/5",
+   "errors": 0,
+   "why": "",
+   "secs": 47,
+   "econ": {
+    "caps": -240,
+    "earned": 0,
+    "spent": 240,
+    "xp": 550,
+    "day": 1
+   },
+   "tail": "",
+   "crit": "2",
+   "n": 1
+  },
+  {
+   "route": "sb_capture",
+   "ok": true,
+   "pass": "5/5",
+   "errors": 0,
+   "why": "",
+   "secs": 46,
+   "econ": {
+    "caps": -240,
+    "earned": 0,
+    "spent": 240,
+    "xp": 550,
+    "day": 1
+   },
+   "tail": "",
+   "crit": "2",
+   "n": 2
+  },
+  {
+   "route": "sb_capture",
+   "ok": true,
+   "pass": "5/5",
+   "errors": 0,
+   "why": "",
+   "secs": 46,
+   "econ": {
+    "caps": -240,
+    "earned": 0,
+    "spent": 240,
+    "xp": 550,
+    "day": 1
+   },
+   "tail": "",
+   "crit": "2",
+   "n": 3
+  },
+  {
+   "route": "vb_capture",
+   "ok": true,
+   "pass": "11/11",
+   "errors": 0,
+   "why": "",
+   "secs": 82,
+   "econ": {
+    "caps": -180,
+    "earned": 0,
+    "spent": 180,
+    "xp": 300,
+    "day": 3
+   },
+   "tail": "",
+   "crit": "2",
+   "n": 1
+  },
+  {
+   "route": "vb_capture",
+   "ok": true,
+   "pass": "11/11",
+   "errors": 0,
+   "why": "",
+   "secs": 82,
+   "econ": {
+    "caps": -180,
+    "earned": 0,
+    "spent": 180,
+    "xp": 300,
+    "day": 3
+   },
+   "tail": "",
+   "crit": "2",
+   "n": 2
+  },
+  {
+   "route": "vb_capture",
+   "ok": true,
+   "pass": "11/11",
+   "errors": 0,
+   "why": "",
+   "secs": 82,
+   "econ": {
+    "caps": -180,
+    "earned": 0,
+    "spent": 180,
+    "xp": 300,
+    "day": 3
+   },
+   "tail": "",
+   "crit": "2",
+   "n": 3
+  },
+  {
+   "route": "rq",
+   "ok": true,
+   "pass": "9/9",
+   "errors": 0,
+   "why": "",
+   "secs": 77,
+   "econ": {
+    "caps": 237,
+    "earned": 237,
+    "spent": 0,
+    "xp": 127,
+    "day": 1
+   },
+   "tail": "",
+   "crit": "4",
+   "n": 1
+  },
+  {
+   "route": "rqb",
+   "ok": true,
+   "pass": "9/9",
+   "errors": 0,
+   "why": "",
+   "secs": 100,
+   "econ": {
+    "caps": 190,
+    "earned": 190,
+    "spent": 0,
+    "xp": 144,
+    "day": 0
+   },
+   "tail": "",
+   "crit": "4",
+   "n": 1
+  }
+ ]
+}

@@ -89,6 +89,9 @@ var _drop_t := 0.0
 var _drops := 0
 var _drop_pend: Array = []                 ## [[자리, 남은 초]]
 var _burst := false
+var _chg_said := false                     ## 첫 돌진 안내(1-13k — 한 번)
+var _stag_said := false                    ## 첫 벽 박음 안내
+var _crawl_said := false                   ## 밸브 물이 차는 동안 어미가 알집 쪽으로(한 번)
 var _flood_t := -1.0                       ## > 0: 밸브를 연 뒤 물이 차오르는 중(남은 초)
 var _spot_o := {}                          ## 스팟 원점 캐시(lid → 월드 칸)
 var _u70_hour := -1                        ## 장터 안에서 본 마지막 시각(바뀌면 인물을 다시 세운다 — 창구 · 저녁 골목 · 밤)
@@ -837,6 +840,7 @@ func _mom_frame(dt: float) -> void:
 		_flood_t = -1.0
 		return
 	if _flood_t > 0.0:
+		_mom_crawl()
 		var was := _flood_t
 		_flood_t -= dt
 		if int(was) != int(_flood_t) and int(_flood_t) in [4, 1]:
@@ -877,7 +881,7 @@ func _mom_frame(dt: float) -> void:
 				r.hear("pistol", host.player.loco.logical)
 	if _mom.asleep:                                                     # ① 천장: 서 있는 사람에게 알을 떨군다(웅크리면 조용 — 밑을 지나간다)
 		var near: bool = host.player.loco.logical.distance_to(_mom.loco.logical) <= DROP_R * 32.0 and not host.combat.crouch
-		if not near:
+		if not near and not _mom.alerted:
 			return
 		_drop_t -= dt
 		if _drop_t > 0.0:
@@ -888,13 +892,24 @@ func _mom_frame(dt: float) -> void:
 			return
 		_drops += 1
 		var at2: Vector2 = host.player.loco.logical + Vector2(randf_range(-20, 20), randf_range(-12, 12))
+		if not near:                                                    # 소리에 알아챘지만 사람이 멀다 — 알은 제 밑 물길에 떨어져 큰바퀴가 깬다(1-13k)
+			at2 = _mom.loco.logical + Vector2(randf_range(-40, 40), randf_range(-20, 20))
+			if host.map.is_solid(host.map.tile_of(at2)):
+				at2 = _mom.loco.logical
 		host.combat.ord.warn(at2, 0.9 * 32.0, DROP_WARN)
 		_drop_pend.append([at2, DROP_WARN])
 		if _drops == 1:
 			host.hint("천장에서 뭔가 딸깍거린다 — 붉은 자리를 피해!", 2.5)
 		return
+	if _mom.charges > 0 and not _chg_said:                             # ② 첫 돌진: 한 번만 가르쳐 준다(재미 검수 1-13k ③)
+		_chg_said = true
+		host.hint("어미가 몸을 낮춘다 — 붉은 줄 밖으로 비켜!", 2.0)
+	if _mom.staggers > 0 and not _stag_said:
+		_stag_said = true
+		host.hint("어미가 벽에 머리를 박고 비틀거린다!", 2.0)
 	if not _burst and _mom.cmb.hp <= _mom.cmb.max_hp * 0.3:              # ③ 배 알집이 터진다
 		_burst = true
+		_mom.chg_rest = 4.0                                             # 터진 뒤 4초는 돌진하지 않는다(예비 동작 둘이 겹치지 않게 — 조율사)
 		for k in 3:
 			var p := _mom.loco.logical + Vector2(cos(k * 2.1) * 28.0, sin(k * 2.1) * 18.0)
 			if host.map.is_solid(host.map.tile_of(p)):
@@ -911,7 +926,29 @@ func _mom_drop(msg: String) -> void:
 	host.hint(msg, 2.5)
 
 
+## 물이 차는 6초: 깬 어미는 표적을 버리고 낮은 바닥 알집(E1 · E2) 쪽으로 기어 내려간다 — 알집을 지키러 가서 같이 잠긴다(재미 검수 1-13k ①).
+## 천장에 붙은 어미는 그대로(천장 밑 물길 위라 차오르는 물에 잠긴다).
+func _mom_crawl() -> void:
+	if _mom == null or not is_instance_valid(_mom) or _mom.cmb.dead or _mom.asleep or _mom.dash_to != Vector2.INF:
+		return
+	var best := Vector2.INF
+	for k in 2:
+		if v("UQ09_E%d" % (k + 1)) != 0:
+			continue
+		var p := Vector2(EGG_AT[k]) * 32.0 + Vector2(16, 16)
+		if best == Vector2.INF or _mom.loco.logical.distance_to(p) < _mom.loco.logical.distance_to(best):
+			best = p
+	if best == Vector2.INF:                                              # 바닥 알집이 이미 없다 — 가장 가까운 물길로
+		best = Vector2(19, 10) * 32.0 + Vector2(16, 16)
+	_mom._chg_end(99.0)
+	_mom.start_dash(best)
+	if not _crawl_said:
+		_crawl_said = true
+		host.hint("어미가 물에 잠기는 알집 쪽으로 기어 내려간다.", 2.5)
+
+
 ## 밸브 물이 다 찼다: 높은 턱 밖이면 휩쓸림 · 어미 · 바닥 알집 둘은 익사(천장 관 밑 알집은 남음) · 맵을 다시 들인다(허리 물)
+## 어미가 물이 닿지 않는 높은 턱에 남았으면 살아남아 천장 관으로 도로 올라간다(맵이 다시 서면 천장 판 — 1-13k)
 func _flood_done() -> void:
 	var t: Vector2i = host.map.tile_of(host.player.loco.logical)
 	if not _in_high(t):
@@ -919,10 +956,13 @@ func _flood_done() -> void:
 		st.vars.set_v("PC_RADS", int(st.vars.get_v("PC_RADS")) + 15)
 		host.hint("물살에 휩쓸렸다. 비린 물을 들이켰다.", 4.0)
 	_sv("UQ09_FLOOD", 1)
-	if v("UQ09_MOM") == 0:
+	var mom_dry := _mom != null and is_instance_valid(_mom) and not _mom.cmb.dead and not _mom.asleep and _in_high(host.map.tile_of(_mom.loco.logical))
+	if v("UQ09_MOM") == 0 and not mom_dry:
 		_sv("UQ09_MOM", 2)
 		_sv("UQ09_MOM_DAY", day())
 		st.kill(MOM_WHO)
+	elif mom_dry:
+		host.hint("어미가 마른 턱에서 천장 관으로 기어올라 간다.", 3.0)
 	for k in ["UQ09_E1", "UQ09_E2"]:
 		if v(k) == 0:
 			_sv(k, 2)

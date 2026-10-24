@@ -508,6 +508,9 @@ func spawn(enemy_id: String, pos: Vector2, map: InteriorMap, st: StoryState = nu
 	e.call_cb = _rat_call
 	e.bait_at = ord.bait_near                                          # 1-D3 미끼(W-068) · 알집바퀴 부화
 	e.hatch_cb = _hatch
+	e.charge_cb = func(from: Vector2, dir: Vector2, len_px: float, secs: float) -> void:   # 돌진 직선 경고(1-13k): 붉은 원 넷을 줄로
+		for k in range(1, 5):
+			ord.warn(from + dir * len_px * float(k) / 4.0, 0.45 * 32.0, secs)
 	e.mine_list = func() -> Array: return ord.mines
 	e.cmb.robot = enemy_id.begins_with("CR-3")                          # SD-14 CR-3xx = 로봇(관제망 · 드론 · 포탑)
 	e.cmb.big = enemy_id == "CR-405"                                    # 파워 아머: 넘어짐 · 그물 · 넉백 면역(SD-11 §9.4)
@@ -1025,6 +1028,9 @@ func tick(dt: float, free: bool, st: StoryState) -> void:
 			if e.one_phase == 0 and str(e.row.get("id", "")) == "CR-500" and e.brain.state == AIBrain.S.COMBAT:
 				watch[e.cmb.team] = true
 		for e in mel:
+			if str(e.row.get("id", "")) == "CR-501" and not e.asleep:          # 배수구 어미(필드 보스): 토큰을 늘 쥔다 — 부화한 큰바퀴가 가까이 있어도 맴돌지 않는다(1-13k)
+				e.has_mtoken = true
+				continue
 			var swarmy: bool = e.style == "swarm" or str(e.row.get("id", "")) in Enemy.SWARMY
 			var mk := "%s:%s" % [e.cmb.team, "s" if swarmy else "p"]
 			per_m[mk] = int(per_m.get(mk, 0)) + 1

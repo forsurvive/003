@@ -262,3 +262,65 @@ func test_balance_one_watch_tokens(t) -> void:
 	t.eq(one.one_phase, 1, "맞으면 ②")
 	t.eq(dogs.filter(func(d): return d.has_mtoken).size(), 2, "② 뒤 토큰 둘")
 	m.free()
+
+
+func test_balance_mom_chase_and_charge(t) -> void:
+	# 1-13k 배수구 어미 ② 바닥 돌진(SD-14 CR-501 · J-10 실전 벤치): 깬 어미는 둥지에 묶이지 않고 쫓아와 문다 · 붉은 직선 경고 뒤 7칸/초 돌진 · 벽에 박으면 비틀거림.
+	# 알집바퀴(CR-004)는 둥지 규칙 그대로(2.5칸 밖 표적에게 움직이지 않는다)
+	var h = ARMS.new()
+	var st: StoryState = h._state()
+	var r: Array = h._setup(st)
+	var m: InteriorMap = r[0]
+	var c: InteriorCombat = r[1]
+	var o: Vector2i = r[3]
+	var nest := _spawn(c, m, st, "CR-004", h._at(o, 7, 1), {"lv": 3})
+	var n0 := nest.loco.logical
+	var mom := _spawn(c, m, st, "CR-501", h._at(o, 12, 5), {"lv": 5})
+	t.ok(mom.leash and nest.leash, "처음엔 둘 다 둥지에 묶임(어미는 천장에 붙어 있는 동안)")
+	mom.asleep = true                                                  # J-10에선 천장에 잠복(lurk)한 채 선다 — 여기선 깨는 순간만 본다
+	mom.wake()
+	mom._chg_cd = 99.0                                                 # 먼저 쫓기만 본다
+	t.ok(not mom.leash and nest.leash, "깬 어미만 풀린다")
+	var d0 := mom.loco.logical.distance_to(c.pc.pos())
+	var hp0 := c.pc.hp
+	for f in 600:
+		c.tick(1.0 / 60.0, true, st)
+		if c.pc.hp < hp0:
+			break
+	t.ok(mom.loco.logical.distance_to(c.pc.pos()) < d0 - 96.0, "깬 어미가 쫓아온다(%.0f → %.0f px)" % [d0, mom.loco.logical.distance_to(c.pc.pos())])
+	t.ok(c.pc.hp < hp0, "붙으면 문다(큰 몸도 몸끼리 닿는 거리에서 — 1-13k)")
+	t.ok(nest.loco.logical.distance_to(n0) < 20.0, "알집바퀴는 둥지 자리 그대로")
+	# 돌진: 5칸 거리 · 시야 — 경고(붉은 원 줄)와 방향 고정 → 달려 닿으면 물기 × 2
+	mom.loco.place(c.pc.pos() + Vector2(5 * 32, 0))
+	mom._chg_cd = 0.0
+	mom._cool = 0.0
+	var w0: int = c.ord.warns.size()
+	c.pc.hp = c.pc.max_hp
+	mom._charge_step(1.0 / 60.0, c.pc)
+	t.eq(mom.charges, 1, "돌진 시작")
+	t.ok(c.ord.warns.size() >= w0 + 4, "붉은 직선 경고(원 넷)")
+	t.ok(mom._chg_dir.dot(Vector2.LEFT) > 0.9, "방향은 표적 쪽으로 고정")
+	var hp1 := c.pc.hp
+	for f in 120:
+		mom._charge_step(1.0 / 60.0, c.pc)
+		if c.pc.hp < hp1:
+			break
+	var dr_k := 1.0 - minf(c.pc.dr, CombatRules.DR_CAP) / 100.0
+	t.ok(absf((hp1 - c.pc.hp) - mom.bite * Enemy.CHG_MUL * dr_k) < 0.6, "닿으면 물기 × 2 한 번(%.1f)" % (hp1 - c.pc.hp))
+	t.ok(mom._chg_cd >= 7.0 and mom._chg_cd <= 8.0, "맞힌 뒤 다음 돌진 7~8초")
+	# 벽: 돌진 줄 앞이 막히면 1.5초 비틀거림 · 다음 돌진은 길게
+	var p := mom.loco.logical
+	var wall := Vector2.INF
+	for k in 40:
+		var q := p + Vector2(-k * 16, 0)
+		if m.circle_hits(q, mom.radius_px):
+			wall = q
+			break
+	t.ok(wall != Vector2.INF, "왼쪽 벽 찾음")
+	mom.loco.place(wall + Vector2(6.0, 0))                               # 한 걸음(8px) 앞이 벽
+	mom._chg_dir = Vector2.LEFT
+	mom._chg_left = 7.0 * 32.0
+	mom._chg_hit = true
+	mom._charge_step(1.0 / 60.0, c.pc)
+	t.eq([mom.staggers, mom._stag > 1.4, mom._chg_cd >= 8.5], [1, true, true], "벽에 박아 1.5초 비틀거림 · 다음 돌진 8.5초 이상")
+	m.free()

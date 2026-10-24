@@ -28,6 +28,13 @@ const MOLE_HEAVE_S := 1.0                       ## 흙 들썩임(예비 동작) 
 const MOLE_UNDER_SPD := 4.0 / 3.0               ## 땅속 4.0t/초 ÷ 땅 위 3.0t/초
 const HATCH_S := 10.0                           ## 알집바퀴 부화 간격(SD-14 CR-004 '10초마다')
 const HATCH_MAX := 6                            ## 동시 최대
+const CHG_WIND := 0.8                           ## 배수구 어미 돌진(1-13k · SD-14 CR-501 ② · 조율사): 붉은 직선 경고 — 방향은 경고가 시작될 때 고정
+const CHG_SPEED := 7.0                          ## 돌진 칸/초(주인공 질주 6.5보다 빠르다 — 곧장 달아나기가 아니라 옆으로 비키기 · 구르기)
+const CHG_LEN := 7.0                            ## 최대 칸(빗나가면 표적 자리를 지나쳐 달린다 — 벽에 박을 기회)
+const CHG_NEAR := 3.0                           ## 표적이 이 칸 ~ CHG_LEN 사이 · 시야가 트였을 때만
+const CHG_MUL := 2.0                            ## 닿으면 물기 × 2(한 돌진에 한 번)
+const CHG_STAG := 1.5                           ## 벽 · 단단한 소품에 박으면 비틀거림
+const CHG_FIRST := 3.0                          ## 내려온 뒤 첫 돌진까지
 const STIR_S := 15.0                            ## 소리 · 맞음 · 서서 다가오는 사람에 들썩인 뒤 부화를 이어 가는 초
 
 var brain: AIBrain
@@ -119,7 +126,8 @@ var _burst_on := 0.0                          ## 연사 무기 점사 남은 초
 var _burst_rest := 0.0                        ## 점사 뒤 쉬는 초(0.5~1.0)
 const SAY := {"howl": ["아우우우—!", "우워어어—!"], "rat_call": ["찌이익—!", "끼익! 끼익!"], "flee": ["살려 줘!", "튀어!", "이건 못 해먹겠다!"], "surrender": ["쏘지 마! 항복이야!", "그만, 그만! 손 들었어!"],
 	"drug": ["크흐… 이거면 돼…", "으아아!"], "nade": ["수류탄!", "받아라!"], "back": ["다시 간다!", "덤벼 봐!"], "alarm": ["저기다!", "여기야!"],
-	"click": ["딸깍.", "딸깍—", "따각."], "growl": ["으르렁…", "그르르…", "크르릉…"]}
+	"click": ["딸깍.", "딸깍—", "따각."], "growl": ["으르렁…", "그르르…", "크르릉…"],
+	"hiss": ["쉬이익—", "치치칙…", "사각사각…"], "thud": ["쿵!", "콰직!"]}
 var _rng := RandomNumberGenerator.new()
 # 1-D3 미끼 · 굴쥐 · 알집바퀴
 var bait_at := Callable()                     ## (p, r) -> Dictionary: 가장 가까운 미끼 냄새 지대(Ordnance.bait_near — 전투 모듈이 준다)
@@ -134,6 +142,18 @@ var _soil_route: Array = []                   ## 땅속 길(흙 칸 가운데 �
 var _route_t := 0.0
 var _bur_goal := Vector2.INF
 var nest := false                             ## 알집바퀴 CR-004: 둥지(처음 자리)에서 거의 움직이지 않는다
+var leash := false                            ## 둥지 자리 묶임(알집바퀴는 늘 · 배수구 어미는 천장에 붙어 있는 동안만 — 깨면 쫓아온다, 1-13k). 부화 · 들썩임은 nest가 맡는다
+var charge_cb := Callable()                   ## (from, dir, len_px, secs): 돌진 직선 경고(전투 모듈 — 붉은 원 줄)
+var alerted := false                          ## 천장 어미가 소리 · 들킴으로 알아챘다(아직 천장 — 진행기가 ① 알 낙하를 시작)
+var charges := 0                              ## 돌진을 시작한 횟수(진행기 첫 안내)
+var staggers := 0                             ## 벽에 박아 비틀거린 횟수(진행기 첫 안내)
+var chg_rest := 0.0                           ## 진행기가 거는 돌진 쉼(배가 터진 뒤 4초 — 예비 동작 둘이 겹치지 않게)
+var _chg_cd := -1.0                           ## 다음 돌진까지(-1: 아직 깨지 않음 · 돌진하지 않는 적)
+var _chg_wind := 0.0
+var _chg_dir := Vector2.ZERO
+var _chg_left := 0.0                          ## 남은 돌진 거리(px)
+var _chg_hit := false
+var _stag := 0.0
 var bare := false                             ## 알집이 떠내려갔다(배수 밸브) — 부화 끝
 var hatch_cb := Callable()                    ## (e): 큰바퀴 1~2 부화(전투 모듈 — 동시 최대 6)
 var _stir := 0.0
@@ -345,6 +365,7 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 	mole = row["id"] == "CR-096"
 	aqua = row["id"] == "CR-130"
 	nest = row["id"] in ["CR-004", "CR-501"]
+	leash = nest
 	if row["id"] == "CR-001":
 		cmb.fire_mul = 2.0                                          # 잔바퀴 떼: 화염 ×2(SD-14 §3.1)
 	if nest:
@@ -368,6 +389,9 @@ func wake() -> void:
 	if not asleep:
 		return
 	asleep = false
+	if str(row.get("id", "")) == "CR-501":                            # 배수구 어미: 바닥에 내려오면 둥지에 묶이지 않는다(SD-14 ② 바닥 돌진 · 1-13k)
+		leash = false
+		_chg_cd = CHG_FIRST
 	if lurk:
 		lurk = false
 		visible = true                                              # 물보라와 함께 일어선다
@@ -424,7 +448,11 @@ func think(dt: float, target: Combatant, nav, shots: Projectiles) -> void:   ## 
 				near = 0.0                                          # 천장 배수구 어미: 웅크려 불빛 없이 지나가면 밑으로 지나간다(소리 · 불 · 맞음엔 깬다 — 1-12h 재미 검수 T6)
 			if doze != "":                                          # 휴면: 서서 걸으면 2칸 · 웅크리면 1칸까지(서 있기만 하면 1.5칸)
 				near = (0.5 if target.sneak >= 50.0 else 1.0) if target.posture == "crouch" else (2.0 if target.movement != "still" else 1.5)
-			if hit or _heard >= 0.5 or (sees and dist_t <= near) or brain.gauge >= 50.0:
+			var loud := _heard >= 0.5 or brain.gauge >= 50.0
+			if loud and lurk and row["id"] == "CR-501" and not hit:      # 천장 어미: 소리 · 들킴엔 곧장 떨어지지 않고 ① 알 낙하부터(진행기 — 1-13k: 총소리로 ①이 늘 건너뛰어지던 것)
+				alerted = true
+				loud = false
+			if hit or loud or (sees and dist_t <= near):
 				wake()
 			else:
 				sees = false
@@ -464,6 +492,9 @@ func think(dt: float, target: Combatant, nav, shots: Projectiles) -> void:   ## 
 		return
 	if dash_to != Vector2.INF:
 		_dash(dt, nav)
+		queue_redraw()
+		return
+	if _chg_cd >= 0.0 and _charge_step(dt, target):
 		queue_redraw()
 		return
 	if mole and _mole_step(dt, target, nav):
@@ -525,7 +556,7 @@ func _tactics(target: Combatant, nav) -> void:
 	if goal == "surrender":
 		_path = PackedVector2Array()
 		return
-	if nest:                                                       # 알집바퀴: 둥지 2.5칸 안으로 들어온 표적만 문다 · 아니면 제자리로
+	if leash:                                                      # 알집바퀴(· 천장 어미): 둥지 2.5칸 안으로 들어온 표적만 문다 · 아니면 제자리로
 		_path = PackedVector2Array()
 		if goal == "engage" and target.pos().distance_to(brain.home) <= 2.5 * 32.0:
 			_repath(nav, target.pos())
@@ -664,7 +695,7 @@ func _act(dt: float, target: Combatant, shots: Projectiles) -> void:
 		if _back_t > 0.0:                                              # 물고 빠지기(SD-14 §4.2 '한 번에 1~2마리씩만 물러 들어온다' — 1-13h): 문 뒤 1.5~2칸 물러섰다 다시 든다
 			_back_t -= dt
 			input = (-to_t).normalized() if to_t.length() > 0.5 else Vector2.RIGHT
-		elif to_t.length() < cmb.radius + target.radius + 6.0:
+		elif to_t.length() < cmb.radius + target.radius + maxf(6.0, cmb.radius * 0.5):   # 큰 몸(배수구 어미 0.6t)은 몸끼리 닿아 서는 거리가 6px 여유보다 멀다 — 몸 반의 반지름까지(1-13k: 붙어 서서 물지 못하던 것)
 			input = Vector2.ZERO
 			_bite(dt, target, to_t)
 		elif _wind > 0.0:                                              # 노리던 표적이 빠져나갔다 — 예비 동작을 푼다
@@ -763,7 +794,7 @@ func _bite(dt: float, target: Combatant, to_t: Vector2) -> void:
 	modulate = Color(1, 1, 1)
 	_show()
 	_cool = maxf(0.3, 1.1 + maxf(0.0, bite - 15.0) * 0.05 - wind_full)   # 한 주기는 그대로(1.1 + (물기 − 15) × 0.05초 — SD-11 §10.3 '강 근접 · 예비 동작 길이')
-	if not nest and not fixed and not aqua:
+	if not leash and not fixed and not aqua:                          # 깬 배수구 어미도 물고 빠진다(구현 정합 1-12h '들개 덤벼 물기' — 1-13k 조율사: 한 주기 1.65초)
 		_cool += (1.1 + maxf(0.0, bite - 15.0) * 0.05) * (BITE_BACK - 1.0)   # 물고 빠지는 동안 한 주기가 ×1.5(밸런스 조율 1-13h — 물러선 틈에 쏠 수 있다)
 		_back_t = BACK_S
 	target.last_by = cmb.team
@@ -1079,6 +1110,81 @@ var _leave_t := 0.0
 
 
 var _leave_cd := 0.0                          ## 떠나는 길 다시 찾기까지(0.5초 — 막힌 쪽을 매 프레임 찾지 않게)
+
+
+## 배수구 어미 ② 바닥 돌진(1-13k · SD-14 CR-501 · 계통 예비 동작 '직선'): 0.8초 웅크려 붉어짐 + 붉은 직선 경고 → 그 줄로 7칸/초 최대 7칸.
+## 닿으면 물기 × 2 한 번 · 벽 · 단단한 소품에 박으면 1.5초 비틀거림(쏠 틈). 다음 돌진은 행동 따라 — 빗나감 6~7초 · 맞힘 7~8초 · 벽 8.5~9.5초(메트로놈이 되지 않게).
+## 부화 '딸깍' 동안 · 진행기 쉼(배 터진 뒤) · 시야가 끊기면 시작하지 않는다. 걸음은 8방향 · 발 고정(Locomotion) 그대로 — 빠르기 배수만 바꾼다.
+func _charge_step(dt: float, target: Combatant) -> bool:
+	if asleep or leash or cmb.dead or brain.fleeing() or cmb.held():
+		return false
+	if _stag > 0.0:
+		_stag -= dt
+		loco.step(Vector2.ZERO, dt)
+		_show()
+		if _stag <= 0.0:
+			modulate = Color(1, 1, 1)
+		return true
+	if _chg_left > 0.0:
+		if world.circle_hits(loco.logical + _chg_dir * 8.0, radius_px):
+			_stag = CHG_STAG
+			staggers += 1
+			modulate = Color(0.75, 0.75, 0.8)
+			_say("thud", 1.0)
+			_chg_end(_rng.randf_range(8.5, 9.5))
+			loco.step(Vector2.ZERO, dt)
+			return true
+		var before := loco.logical
+		var mul0 := loco.speed_mul
+		loco.speed_mul = CHG_SPEED / maxf(0.1, float(row.get("speed", 1.6)))
+		mode = "run"
+		move(_chg_dir, dt)
+		loco.speed_mul = mul0
+		_chg_left -= loco.logical.distance_to(before)
+		if not _chg_hit and not target.dead and meets(target) and loco.logical.distance_to(target.pos()) < cmb.radius + target.radius + 8.0:
+			_chg_hit = true
+			target.last_by = cmb.team
+			var dr_k := 1.0 - minf(target.dr, CombatRules.DR_CAP) / 100.0
+			target.take({"hp": bite * CHG_MUL * dr_k}, loco.logical)
+			_chg_end(_rng.randf_range(7.0, 8.0))
+			return true
+		if _chg_left <= 0.0:
+			_chg_end(_rng.randf_range(6.0, 7.0))
+		return true
+	if _chg_wind > 0.0:
+		_chg_wind -= dt
+		loco.step(Vector2.ZERO, dt)
+		_show()
+		if _chg_wind <= 0.0:
+			modulate = Color(1, 1, 1)
+			_chg_left = CHG_LEN * 32.0
+			_chg_hit = false
+		return true
+	_chg_cd = maxf(0.0, _chg_cd - dt)
+	chg_rest = maxf(0.0, chg_rest - dt)
+	if _chg_cd > 0.0 or chg_rest > 0.0 or _click or target.dead:
+		return false
+	var to_t := target.pos() - loco.logical
+	var d := to_t.length() / 32.0
+	if d < CHG_NEAR or d > CHG_LEN or sight_of(target) <= 0.0 or not meets(target):
+		return false
+	var f := Locomotion.snap8(to_t, 0.0)
+	loco.facing = f
+	_chg_dir = Vector2(Locomotion.VEC[f]).normalized()
+	_chg_wind = CHG_WIND
+	_wind = 0.0
+	charges += 1
+	modulate = Color(1.0, 0.6, 0.55)                                    # 웅크려 붉어진다
+	_say("hiss", CHG_WIND + 0.2)                                        # 바퀴 어미 — 으르렁이 아니라 쉬익(마디가 비벼지는 소리)
+	if charge_cb.is_valid():
+		charge_cb.call(loco.logical, _chg_dir, CHG_LEN * 32.0, CHG_WIND)
+	loco.step(Vector2.ZERO, dt)
+	return true
+
+
+func _chg_end(cd: float) -> void:
+	_chg_left = 0.0
+	_chg_cd = cd
 
 
 ## 진행기용 달려가기: 닿으면 'dash_done' 표지. 몸으로 길을 막으면 선다(미끄러지지 않는다) · 다리를 다치면 느려진다(_on_cripple 그대로)
@@ -1546,6 +1652,7 @@ func wash() -> void:
 		sprite.sprite_frames = load("res://assets/sprites/cr_cr004b_loco.tres")
 	set_pose("stand")
 	nest = false
+	leash = false
 	brain.flee(12.0)
 	_path = PackedVector2Array()
 

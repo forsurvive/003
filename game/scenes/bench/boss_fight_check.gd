@@ -158,7 +158,8 @@ func _process(dt: float) -> void:
 	t += dt
 	hp_min = minf(hp_min, host.combat.pc.hp)
 	if OS.get_environment("BF_LOG") != "" and is_instance_valid(boss) and int(t * 2.0) != int((t - dt) * 2.0):
-		print("  보스 hp%d 상태 %d 국면 %d 칸 %s 팀 %s" % [int(boss.cmb.hp), int(boss.brain.state), boss.one_phase, str(host.map.tile_of(boss.loco.logical)), boss.cmb.team])
+		print("  보스 hp%d 상태 %d 국면 %d 칸 %s 팀 %s · 목표 %s 성향 %s 토큰 %s 쉼 %.1f 묶임 %s 걸음 %s 거리 %.0fpx" % [int(boss.cmb.hp), int(boss.brain.state), boss.one_phase, str(host.map.tile_of(boss.loco.logical)), boss.cmb.team,
+			str(boss._intent.get("goal", "")), boss.style, boss.has_mtoken, boss._cool, boss.leash, boss.loco.motion, boss.loco.logical.distance_to(host.player.loco.logical)])
 	if is_instance_valid(boss) and boss.cmb.dead:
 		boss_dead = true                                              # 쓰러진 몸은 곧 치워진다 — 그 전에 적어 둔다
 	var me: Vector2 = host.player.loco.logical
@@ -207,6 +208,13 @@ func _process(dt: float) -> void:
 ## 봇은 서서 걸어 들어간다(웅크리지 않는 보통 사람 — 알 낙하가 일어난다). 깬 적이 없으면 어미 밑으로 길을 따라 걷고, 있으면 가까운 것부터 쏜다.
 ## 교전 시간 = 첫 알 낙하부터 마지막 적이 쓰러질 때까지(필드 보스 '교전 전체' — SD-25 §6).
 func _live_step(me: Vector2) -> void:
+	if is_instance_valid(boss):
+		n_chg = boss.charges
+		n_stag = boss.staggers
+	var hp_now: float = host.combat.pc.hp
+	if hp_prev >= 0.0 and hp_now < hp_prev:
+		taken += hp_prev - hp_now
+	hp_prev = hp_now
 	if t_drop < 0.0 and uq != null and uq._drops > 0:
 		t_drop = t
 	if t_wake < 0.0 and is_instance_valid(boss) and not boss.asleep:
@@ -222,7 +230,8 @@ func _live_step(me: Vector2) -> void:
 		done = true
 		var how := "시간 초과" if t > LIMIT else ("주인공 쓰러짐" if host.combat.pc.dead else ("맵이 %s로 바뀜" % host.map.id if host.map.id != map_id0 else ("처치" if boss_dead else "어미 없음")))
 		var t0 := t_drop if t_drop >= 0.0 else (t_wake if t_wake >= 0.0 else 0.0)
-		print("BOSSFIGHT|%s@J-10|%.1f|%d|%d|%s|최저 %d/%d|국면%s|낙하부터 %.1f초" % [boss_id, t - t0, int(host.combat.pc.hp), stims0 - int(host.st.items.get("I-001", 0)), how, int(hp_min), int(host.combat.pc.max_hp), phases, t - t0])
+		print("BOSSFIGHT|%s@J-10|%.1f|%d|%d|%s|최저 %d/%d|국면%s|낙하부터 %.1f초|돌진 %d · 벽 %d|받은 피해 %d%%" % [boss_id, t - t0, int(host.combat.pc.hp), stims0 - int(host.st.items.get("I-001", 0)), how, int(hp_min), int(host.combat.pc.max_hp), phases, t - t0,
+			n_chg, n_stag, int(round(taken / maxf(1.0, host.combat.pc.max_hp) * 100.0))])
 		get_tree().create_timer(0.3).timeout.connect(get_tree().quit)
 		return
 	if awake.is_empty():                                                 # 아직 아무도 안 깸 — 어미 밑으로 걸어 들어간다(쏘지 않는다)
@@ -236,7 +245,7 @@ func _live_step(me: Vector2) -> void:
 	if OS.get_environment("BF_LOG") != "" and int(t * 2.0) != int((t - dt_last) * 2.0):
 		print("  %.1f초 깬 %d/%d · 가까운 %s %.1f칸 hp%d · 나 hp%d 칸 %s" % [t, awake.size(), alive.size(), str(tgt.get_meta("enemy_id", "")), d / 32.0, int(tgt.cmb.hp), int(host.combat.pc.hp), str(host.map.tile_of(me))])
 	if OS.get_environment("BF_STAND") != "":
-		host.input_fn = func() -> Vector2: return Vector2.ZERO
+		host.input_fn = _walk_to(me, tgt.loco.logical) if d > 7.0 * 32.0 else func() -> Vector2: return Vector2.ZERO   # 제자리 판도 사거리까지는 걸어 들어간다
 	elif d < 3.0 * 32.0:
 		var back := (me - tgt.loco.logical).normalized()
 		if host.map.is_solid(host.map.tile_of(me + back * 40.0)):
@@ -251,6 +260,10 @@ func _live_step(me: Vector2) -> void:
 
 
 var dt_last := 0.0
+var n_chg := 0
+var n_stag := 0
+var taken := 0.0                             ## 받은 피해 합(스팀팩으로 찬 몫은 빼지 않는다 — SD-25 B4 '받은 피해')
+var hp_prev := -1.0
 
 
 var _wpath := PackedVector2Array()

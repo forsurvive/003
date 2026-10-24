@@ -28,7 +28,8 @@ TIER_FIX = {"CR-082": ("전설", "원작 압축 HP 750 · 군락 여왕(SD-14 §
 BOSS_REF = {"CR-513": 12}                                               # 레벨 비례 스토리 보스: XP 기준 레벨(SD-14 §10.2 '65(Lv12 기준)')
 ## 위협 1~2 권역 필드 보스: 몸만이 아니라 교전 전체(호위 무리 · 부화 · 도주 문턱)로 잰다 — 목표 35~60초(SD-11 §10.3 — 사용자 결정 2026-10-23)
 BOSS_FIGHT = {"CR-500": {"adds": [("CR-104", 4), ("CR-105", 3)], "flee": 0.3, "why": "무리 6~8 · HP 30% 도주(SD-14 §10.2 외눈)"},
-              "CR-501": {"adds": [("CR-002", 6), ("CR-001", 3)], "flee": 0.0, "why": "15초마다 큰바퀴 셋 부화 · 페이즈 3 잔바퀴 떼 셋(SD-14 배수구 어미)"},
+              "CR-501": {"adds": [("CR-002", 11), ("CR-001", 4)], "flee": 0.0, "phase_s": "uq09_ceiling",
+                         "why": "큰바퀴 11(맵 2 · 알 3 · 부화 2회 6) · 잔바퀴 떼 4(상시 1 · 배 터짐 3) · ① 천장 알 낙하 셋(SD-14 배수구 어미 · 조율사 1-13k)"},
               "CR-512": {"adds": [("CR-105", 3), ("CR-424", 2), ("CR-423", 1)], "flee": 0.4, "phase_s": 8.0, "cover": (0.3, 0.6),
                          "why": "경비견 셋 · 졸개 셋 · HP 40% 항복 · 국면 고정 8초(사슬 풀기 2 + 램프 오르기 6) · 70~40% 구간 명중 ×0.6(SD-14 깡철이 · 조율사 1-13a3)"}}
 ## 필드 보스 교전 셈(조율사 1-13a3 도구 고침): 호위는 저마다 제 DR로 · phase_s 국면 고정 초(사격 없는 시간) · cover (몸 HP 비율, 명중 배수) 구간
@@ -43,8 +44,25 @@ HIT_EN = 0.55                                                           # 적 �
 EN_SKILL = 45.0                                                         # Enemy.skill 기본(systems/ai/enemy.gd)
 BITE_CD = 1.1                                                           # Enemy._bite 주기
 BITE_BACK = 1.5                                                         # 물고 빠지기(enemy.gd BITE_BACK, 1-13h — SD-14 §4.2): 둥지 · 물속 짐승은 1.0
-NO_BACK = {"CR-004", "CR-501", "CR-130"}
+NO_BACK = {"CR-004", "CR-130"}                                          # 깬 배수구 어미는 물고 빠진다(1-13k — enemy.gd leash)
 CLAW_RATE = 0.8                                                         # 구울 맨손(_enemy_weapon)
+def _uq09_const(name):
+    """UQ-09 진행기 상수를 그대로 읽는다(사본을 두지 않는다 — 1-13k 조율사)"""
+    src = open(os.path.join(ROOT, "game", "scenes", "story", "uq_r02.gd"), encoding="utf-8").read()
+    return float(re.search(r"const %s := ([0-9.]+)" % name, src).group(1))
+
+
+def _enemy_const(name):
+    src = open(os.path.join(ROOT, "game", "systems", "ai", "enemy.gd"), encoding="utf-8").read()
+    return float(re.search(r"const %s := ([0-9.]+)" % name, src).group(1))
+
+
+def _phase_s(v):
+    if v == "uq09_ceiling":                                             # 천장 ①: 알 셋 × 간격(소리에 알아채도 ①부터 — 맞히면 건너뜀)
+        return _uq09_const("DROP_N") * _uq09_const("DROP_EVERY")
+    return float(v)
+
+
 def _enemy_arms():
     """게임의 ENEMY_ARMS(systems/combat/interior_combat.gd)를 그대로 읽는다 — 사본을 두지 않는다"""
     src = open(os.path.join(ROOT, "game", "systems", "combat", "interior_combat.gd"), encoding="utf-8").read()
@@ -203,7 +221,7 @@ def check_combat(weapons, enemies):
                 adr = float(enemies[a].get("dr") or 0)
                 adps = w_dps(weapons[best], 50.0, "new", adr) * HIT_PC * PART_AVG * CRIT_AVG
                 adds += float(enemies[a]["hp"]) * n / adps if adps > 0 else 0.0
-            eng = (body + adds) * ENGAGE_K + float(bf.get("phase_s", 0.0))
+            eng = (body + adds) * ENGAGE_K + _phase_s(bf.get("phase_s", 0.0))
             add("B3", "적 처치 시간", "%s %s(필드 보스 · Lv%d — 교전 전체: 몸 %d × %.1f + 호위 · 부화)" % (eid, e["name"], lv, hp, 1 - bf["flee"]), round(eng, 1), "35~60초",
                 judge(eng, 35, 60), "SD-11 §10.3 필드 보스(사용자 결정 2026-10-23)", "표준 무기 %s · %s" % (best, bf["why"]))
         else:
@@ -228,6 +246,9 @@ def check_combat(weapons, enemies):
             cyc = (BITE_CD + max(0.0, bite - 15.0) * 0.05) * (1.0 if eid in NO_BACK else BITE_BACK)   # enemy.gd _bite: 센 물기일수록 예비 동작이 길다 · 물고 빠지기 ×1.5
             edps = raw / cyc
             hit1 = raw
+            if eid == "CR-501":                                         # 바닥 돌진(1-13k): 닿으면 물기 × CHG_MUL 한 번 — 한 방은 그 값
+                hit1 = raw * _enemy_const("CHG_MUL")
+                how = "돌진 물기 × %g" % _enemy_const("CHG_MUL")
             how = "물기 %g/%.1f초" % (bite, cyc)
         elif eid in CLAW:
             claw = float(str(e.get("attack", "근접 5")).split(" ")[1]) if " " in str(e.get("attack", "")) else 5.0
