@@ -10037,7 +10037,34 @@
  {
   "check": "①",
   "scene": "RE-X08_TALK",
+  "where": "LAIR_HEARD",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-X08_TALK",
   "where": "LAIR",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-X08_TALK",
+  "where": "LAIR_MARK",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-X08_TALK",
+  "where": "LAIR_NONE",
   "status": "참고",
   "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
   "allowed": false,
@@ -10099,6 +10126,24 @@
  },
  {
   "check": "①",
+  "scene": "RE-X08_TALK",
+  "where": "WARY",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-X08_TALK",
+  "where": "WARY_WHERE",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
   "scene": "RE-X09_TALK",
   "where": "TS1",
   "status": "참고",
@@ -10128,6 +10173,24 @@
   "check": "①",
   "scene": "RE-X09_TALK",
   "where": "FRIEND2",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-X09_TALK",
+  "where": "FRISK_AGAIN",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-X09_TALK",
+  "where": "BRIBE2",
   "status": "참고",
   "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
   "allowed": false,

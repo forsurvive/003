@@ -12,6 +12,25 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 MAPS = os.path.join(ROOT, "game", "data", "maps")
 L = json.load(open(os.path.join(ROOT, "game", "data", "loot.json"), encoding="utf-8"))
 V3 = L["v3"]
+VAL = {}                                    # 물건 값(경제 곡선 v2 — D-399): 아이템 표 전부의 value
+for fn in os.listdir(os.path.join(ROOT, "game", "data")):
+    if fn.startswith("items_") and fn.endswith(".json"):
+        d = json.load(open(os.path.join(ROOT, "game", "data", fn), encoding="utf-8"))
+        for iid, it in (d.items() if isinstance(d, dict) else [(x.get("id"), x) for x in d]):
+            if isinstance(it, dict) and it.get("value") is not None:
+                VAL[iid] = float(it.get("value") or 0)
+
+
+def value_of(iid):
+    """한 개 값 — 풀(@weapon 등)은 1막 등급(1 · 2)의 평균, 탄 · 이름 행은 0(작다)"""
+    if iid in VAL:
+        return VAL[iid]
+    if iid.startswith("@"):
+        pool = L["pools"].get(iid[1:].split(":")[0], {})
+        ids = [x for k in ("1", "2") for x in pool.get(k, [])]
+        vs = [VAL[x] for x in ids if x in VAL]
+        return sum(vs) / len(vs) if vs else 0.0
+    return 0.0
 
 
 def empty_p(b):
@@ -51,6 +70,7 @@ def roll(b, rnd):
     vs = V3["vis"]
     pv = pe * vs.get(b.get("pl", "home"), vs["*"])
     if u < pe:
+        roll.value = 0.0
         return 0, 0, True, u < pv
     rows = []
     for r in L["tables"].get(table_of(b), {}).get("rows", []):
@@ -71,6 +91,7 @@ def roll(b, rnd):
     rnd.shuffle(got)
     got = got[:nmax]
     caps = sum(n for (i, n) in got if i == "M-001")
+    roll.value = sum(value_of(i) * n for (i, n) in got if i != "M-001")
     items = sum(1 for (i, n) in got if i != "M-001" and not i.startswith("@ammo")) + sum(1 for (i, n) in got if i.startswith("@ammo"))
     return items, caps, not got, False
 
@@ -99,6 +120,7 @@ def main():
                 i, c, e, v = roll(b, rnd)
                 it += i
                 cp += c
+                s["value"] += roll.value
                 s["vis"] += 1 if v else 0
                 s["closed"] += 0 if v else 1
                 s["hit"] += 0 if e else 1
@@ -114,6 +136,9 @@ def main():
               f"{s['vis'] / max(1, s['boxes'] * reps):8.0%} {s['hit'] / max(1, s['closed']):8.0%} {s['enemy'] / s['maps']:5.0%}")
         tot.update(s)
     n = tot["maps"] * reps
+    print(f"실내 한 곳 물건 값(판매 전 · 경제 곡선 v2 D-399): 전체 평균 {tot['value'] / n:.1f}캡 · 집 {S['home']['value'] / max(1, S['home']['maps'] * reps):.1f}")
+    json.dump({"per_interior_caps": tot["caps"] / n, "per_interior_value": tot["value"] / n, "dry": tot["dry"] / n},
+              open(os.path.join(ROOT, "game", "data", "_loot_audit.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print(f"{'전체':10s} {tot['maps']:5d} {tot['boxes'] / tot['maps']:5.1f} {tot['items'] / n:5.1f} {tot['caps'] / n:5.1f} {tot['dry'] / n:7.0%} "
           f"{tot['vis'] / max(1, tot['boxes'] * reps):8.0%} {tot['hit'] / max(1, tot['closed']):8.0%} {tot['enemy'] / tot['maps']:5.0%}")
 

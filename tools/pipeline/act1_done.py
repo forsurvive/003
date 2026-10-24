@@ -28,6 +28,7 @@ CRIT = {
     "4": ("반복 의뢰 10편 각 3회 연속", ["rq", "rqb"], 1),
 }
 LINE = re.compile(r"봇 (?P<r>[a-z_0-9]+): (?P<ok>[○×]) (?P<a>\d+)/(?P<b>\d+)")
+SEG = re.compile(r"ECONSEG\|[a-z_0-9]+\|[○×]\|캡 (?P<caps>-?\d+)\|번 캡 (?P<earned>\d+)\|쓴 캡 (?P<spent>\d+)\|XP (?P<xp>-?\d+)\|날 (?P<day>-?\d+)")
 
 
 def run(route, timeout):
@@ -43,9 +44,14 @@ def run(route, timeout):
     for m in LINE.finditer(out):
         pass
     errs = out.count("SCRIPT ERROR")
+    sm = None
+    for sm in SEG.finditer(out):                                        # 경제 곡선 v2(D-399) 조각 — econ_curve.py --segs가 읽는다
+        pass
+    seg = {k: int(sm.group(k)) for k in SEG.groupindex} if sm else None
     ok = m is not None and m["ok"] == "○" and errs == 0 and why == ""
     return {"route": route, "ok": ok, "pass": "%s/%s" % (m["a"], m["b"]) if m else "-", "errors": errs,
-            "why": why or ("요약 줄 없음" if m is None else ("" if ok else "확인 실패")), "secs": round(time.time() - t0)}
+            "why": why or ("요약 줄 없음" if m is None else ("" if ok else "확인 실패")), "secs": round(time.time() - t0), "econ": seg,
+            "tail": "" if ok else "\n".join(out.splitlines()[-25:])}
 
 
 def main():

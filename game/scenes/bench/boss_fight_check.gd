@@ -24,6 +24,10 @@ var boss_dead := false
 var map_id0 := ""
 var phases := ""                            ## 외눈 국면이 바뀐 시각(①→② · ③)
 var rng := RandomNumberGenerator.new()
+var live := false                           ## J-10 실전 판(어미는 맵이 세운 것 · 진행기 UqR02가 국면을 몬다)
+var uq: UqR02 = null
+var t_wake := -1.0                          ## 어미가 천장에서 내려온 시각(실전 판 — 교전 시간은 첫 알 낙하부터 센다)
+var t_drop := -1.0                          ## 첫 알 낙하 시각
 
 
 func _ready() -> void:
@@ -50,6 +54,12 @@ func _ready() -> void:
 	host.date_text = "2277. 10. 27.  13:00"
 	var mid := a[2] if a.size() > 2 else "J-02"                           # 싸울 맵(기본 지하시장 넓은 마당 — 트인 14×14칸을 찾는다)
 	var mark := a[3] if a.size() > 3 else "from_J-01"
+	if boss_id == "CR-501" and mid == "J-10":                             # 실전 판(D-380): 맵에 사는 천장 어미를 그대로 — 알 낙하 · 내려옴 · 배 터짐은 UQ-09 진행기가 몬다
+		live = true
+		mark = a[3] if a.size() > 3 else "from_J02"
+		uq = UqR02.new()
+		add_child(uq)
+		uq.setup(host, false)
 	if mid == "W":
 		PlaceLog.load_db()
 		var arr: Array = PlaceLog.db["L-R01-05"]["arrive"]
@@ -65,6 +75,17 @@ func _ready() -> void:
 func _spawn() -> void:
 	var lv: int = SETUP[boss_id]["lv"]
 	map_id0 = host.map.id
+	if live:
+		for e in host.combat.enemies:
+			if is_instance_valid(e) and str(e.who) == UqR02.MOM_WHO:
+				boss = e
+		if boss == null:
+			print("  J-10에 어미가 없음")
+			done = true
+			get_tree().quit()
+			return
+		print("  실전 판 J-10 · 어미 칸 %s · 주인공 칸 %s · 맵 적 %d" % [str(host.map.tile_of(boss.loco.logical)), str(host.map.tile_of(host.player.loco.logical)), host.combat.enemies.size()])
+		return
 	field = _open_field(host.map.tile_of(host.player.loco.logical), 12)   # 다 트인 14×14칸(담 · 난간 · 높이 단 없음 — 필드 보스 마당과 같은 조건)
 	print("  싸움터 %s(맵 %s)" % [str(field), host.map.id])
 	host.player.loco.place(Vector2(field + Vector2i(6, 10)) * 32.0 + Vector2(16, 16))
@@ -141,6 +162,10 @@ func _process(dt: float) -> void:
 	if is_instance_valid(boss) and boss.cmb.dead:
 		boss_dead = true                                              # 쓰러진 몸은 곧 치워진다 — 그 전에 적어 둔다
 	var me: Vector2 = host.player.loco.logical
+	if live:
+		dt_last = dt
+		_live_step(me)
+		return
 	var alive := mine.filter(func(e): return is_instance_valid(e) and not e.cmb.dead and e.cmb.team == "enemy" and e.loco.logical.distance_to(me) < 30.0 * 32.0)
 	var boss_out := not is_instance_valid(boss) or boss.cmb.dead or boss.loco.logical.distance_to(me) > 30.0 * 32.0
 	if (alive.is_empty() and boss_out) or t > LIMIT or host.combat.pc.dead:
@@ -176,3 +201,64 @@ func _process(dt: float) -> void:
 		host.input_fn = func() -> Vector2: return Vector2.ZERO
 	host.combat.bot = {"aim": tgt.loco.logical + Vector2(0, -10), "fire": true, "aimed": true,
 		"reload": host.combat.mags.get(host.combat.weapon_id, 1) == 0, "stim": host.combat.pc.hp < host.combat.pc.max_hp * 0.4 and not host.combat.healing()}
+
+
+## J-10 실전 판: 맵의 적 모두(천장 어미 · 잔바퀴 떼 · 큰바퀴 · 낙하 알 · 부화 · 배 터짐)를 교전으로 센다.
+## 봇은 서서 걸어 들어간다(웅크리지 않는 보통 사람 — 알 낙하가 일어난다). 깬 적이 없으면 어미 밑으로 길을 따라 걷고, 있으면 가까운 것부터 쏜다.
+## 교전 시간 = 첫 알 낙하부터 마지막 적이 쓰러질 때까지(필드 보스 '교전 전체' — SD-25 §6).
+func _live_step(me: Vector2) -> void:
+	if t_drop < 0.0 and uq != null and uq._drops > 0:
+		t_drop = t
+	if t_wake < 0.0 and is_instance_valid(boss) and not boss.asleep:
+		t_wake = t
+		phases += "|깸@%.1f" % t
+	if uq != null and uq._burst and not phases.contains("터짐"):
+		phases += "|터짐@%.1f" % t
+	if is_instance_valid(boss) and boss.cmb.dead:
+		boss_dead = true
+	var alive: Array = host.combat.enemies.filter(func(e): return is_instance_valid(e) and not e.cmb.dead and e.cmb.team == "enemy" and e.loco.logical.distance_to(me) < 40.0 * 32.0)
+	var awake: Array = alive.filter(func(e): return not e.asleep)
+	if alive.is_empty() or t > LIMIT or host.combat.pc.dead or host.map.id != map_id0:
+		done = true
+		var how := "시간 초과" if t > LIMIT else ("주인공 쓰러짐" if host.combat.pc.dead else ("맵이 %s로 바뀜" % host.map.id if host.map.id != map_id0 else ("처치" if boss_dead else "어미 없음")))
+		var t0 := t_drop if t_drop >= 0.0 else (t_wake if t_wake >= 0.0 else 0.0)
+		print("BOSSFIGHT|%s@J-10|%.1f|%d|%d|%s|최저 %d/%d|국면%s|낙하부터 %.1f초" % [boss_id, t - t0, int(host.combat.pc.hp), stims0 - int(host.st.items.get("I-001", 0)), how, int(hp_min), int(host.combat.pc.max_hp), phases, t - t0])
+		get_tree().create_timer(0.3).timeout.connect(get_tree().quit)
+		return
+	if awake.is_empty():                                                 # 아직 아무도 안 깸 — 어미 밑으로 걸어 들어간다(쏘지 않는다)
+		host.combat.bot = {}
+		var goal: Vector2 = boss.loco.logical if is_instance_valid(boss) else alive[0].loco.logical
+		host.input_fn = _walk_to(me, goal)
+		return
+	awake.sort_custom(func(a, b): return a.loco.logical.distance_to(me) < b.loco.logical.distance_to(me))
+	var tgt: Enemy = awake[0]
+	var d := tgt.loco.logical.distance_to(me)
+	if OS.get_environment("BF_LOG") != "" and int(t * 2.0) != int((t - dt_last) * 2.0):
+		print("  %.1f초 깬 %d/%d · 가까운 %s %.1f칸 hp%d · 나 hp%d 칸 %s" % [t, awake.size(), alive.size(), str(tgt.get_meta("enemy_id", "")), d / 32.0, int(tgt.cmb.hp), int(host.combat.pc.hp), str(host.map.tile_of(me))])
+	if OS.get_environment("BF_STAND") != "":
+		host.input_fn = func() -> Vector2: return Vector2.ZERO
+	elif d < 3.0 * 32.0:
+		var back := (me - tgt.loco.logical).normalized()
+		if host.map.is_solid(host.map.tile_of(me + back * 40.0)):
+			back = back.orthogonal() if not host.map.is_solid(host.map.tile_of(me + back.orthogonal() * 40.0)) else -back.orthogonal()
+		host.input_fn = func() -> Vector2: return back
+	elif d > 7.0 * 32.0:
+		host.input_fn = _walk_to(me, tgt.loco.logical)
+	else:
+		host.input_fn = func() -> Vector2: return Vector2.ZERO
+	host.combat.bot = {"aim": tgt.loco.logical + Vector2(0, -10), "fire": true, "aimed": true,
+		"reload": host.combat.mags.get(host.combat.weapon_id, 1) == 0, "stim": host.combat.pc.hp < host.combat.pc.max_hp * 0.4 and not host.combat.healing()}
+
+
+var dt_last := 0.0
+
+
+func _walk_to(me: Vector2, goal: Vector2) -> Callable:
+	var p: PackedVector2Array = host.map.path(me, goal)
+	var nxt := goal
+	for q in p:
+		if q.distance_to(me) > 12.0:
+			nxt = q
+			break
+	var dir := (nxt - me).normalized()
+	return func() -> Vector2: return dir
