@@ -1,0 +1,545 @@
+{
+ "rows": {
+  "job": {
+   "caps": -100,
+   "earned": 0,
+   "spent": 100,
+   "xp": 410,
+   "day": 0,
+   "route": "job",
+   "ok": true
+  },
+  "vent": {
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 350,
+   "day": 0,
+   "route": "vent",
+   "ok": true
+  },
+  "hack": {
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 340,
+   "day": 0,
+   "route": "hack",
+   "ok": true
+  },
+  "fee": {
+   "caps": -300,
+   "earned": 0,
+   "spent": 300,
+   "xp": 300,
+   "day": 0,
+   "route": "fee",
+   "ok": true
+  },
+  "yd_talk": {
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 310,
+   "day": 0,
+   "route": "yd_talk",
+   "ok": true
+  },
+  "yd_fight": {
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 430,
+   "day": 0,
+   "route": "yd_fight",
+   "ok": true
+  },
+  "yd_vent": {
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 395,
+   "day": 0,
+   "route": "yd_vent",
+   "ok": true
+  },
+  "sb_buy": {
+   "caps": -300,
+   "earned": 500,
+   "spent": 800,
+   "xp": 300,
+   "day": 0,
+   "route": "sb_buy",
+   "ok": true
+  },
+  "sb_deal": {
+   "caps": -1000,
+   "earned": 0,
+   "spent": 1000,
+   "xp": 300,
+   "day": 0,
+   "route": "sb_deal",
+   "ok": true
+  },
+  "sb_raid": {
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 635,
+   "day": 0,
+   "route": "sb_raid",
+   "ok": true
+  },
+  "sb_roof": {
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 340,
+   "day": 0,
+   "route": "sb_roof",
+   "ok": true
+  },
+  "sb_jo": {
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 0,
+   "day": 0,
+   "route": "sb_jo",
+   "ok": true
+  },
+  "sb_south": {
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 460,
+   "day": 1,
+   "route": "sb_south",
+   "ok": true
+  },
+  "vb_talk": {
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 320,
+   "day": 0,
+   "route": "vb_talk",
+   "ok": true
+  },
+  "vb_walk": {
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 300,
+   "day": 3,
+   "route": "vb_walk",
+   "ok": true
+  },
+  "vb_fight": {
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 475,
+   "day": 0,
+   "route": "vb_fight",
+   "ok": true
+  },
+  "vb_hide": {
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 300,
+   "day": 0,
+   "route": "vb_hide",
+   "ok": true
+  },
+  "vb_cargo": {
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 350,
+   "day": 0,
+   "route": "vb_cargo",
+   "ok": true
+  },
+  "vb_capture": {
+   "caps": -180,
+   "earned": 0,
+   "spent": 180,
+   "xp": 300,
+   "day": 3,
+   "route": "vb_capture",
+   "ok": true
+  },
+  "sb_capture": {
+   "caps": -240,
+   "earned": 0,
+   "spent": 240,
+   "xp": 550,
+   "day": 1,
+   "route": "sb_capture",
+   "ok": true
+  },
+  "rq": {
+   "caps": 237,
+   "earned": 237,
+   "spent": 0,
+   "xp": 127,
+   "day": 1,
+   "route": "rq",
+   "ok": true
+  },
+  "rqb": {
+   "caps": 190,
+   "earned": 190,
+   "spent": 0,
+   "xp": 144,
+   "day": 0,
+   "route": "rqb",
+   "ok": true
+  },
+  "hub": {
+   "route": "hub",
+   "ok": true,
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 0,
+   "day": 0
+  },
+  "bw": {
+   "route": "bw",
+   "ok": false,
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 55,
+   "day": 0
+  },
+  "bs": {
+   "route": "bs",
+   "ok": true,
+   "caps": 70,
+   "earned": 100,
+   "spent": 30,
+   "xp": 0,
+   "day": 0
+  },
+  "s3": {
+   "route": "s3",
+   "ok": true,
+   "caps": 100,
+   "earned": 100,
+   "spent": 0,
+   "xp": 382,
+   "day": 0
+  },
+  "s5": {
+   "route": "s5",
+   "ok": true,
+   "caps": 100,
+   "earned": 100,
+   "spent": 0,
+   "xp": 300,
+   "day": 0
+  },
+  "s6": {
+   "route": "s6",
+   "ok": true,
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 410,
+   "day": 0
+  },
+  "s8": {
+   "route": "s8",
+   "ok": true,
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 260,
+   "day": 0
+  },
+  "s9": {
+   "route": "s9",
+   "ok": true,
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 450,
+   "day": 0
+  },
+  "s10": {
+   "route": "s10",
+   "ok": true,
+   "caps": -650,
+   "earned": 0,
+   "spent": 650,
+   "xp": 550,
+   "day": 2
+  },
+  "s11": {
+   "route": "s11",
+   "ok": true,
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 385,
+   "day": 0
+  },
+  "s12": {
+   "route": "s12",
+   "ok": false,
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 300,
+   "day": 0
+  },
+  "s13": {
+   "route": "s13",
+   "ok": true,
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 460,
+   "day": 0
+  },
+  "jc01": {
+   "route": "jc01",
+   "ok": true,
+   "caps": 50,
+   "earned": 50,
+   "spent": 0,
+   "xp": 330,
+   "day": 0
+  },
+  "gs01": {
+   "route": "gs01",
+   "ok": true,
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 260,
+   "day": 0
+  },
+  "gs02": {
+   "route": "gs02",
+   "ok": true,
+   "caps": 50,
+   "earned": 50,
+   "spent": 0,
+   "xp": 250,
+   "day": 0
+  },
+  "jh01": {
+   "route": "jh01",
+   "ok": true,
+   "caps": 112,
+   "earned": 112,
+   "spent": 0,
+   "xp": 325,
+   "day": 1
+  },
+  "jh02": {
+   "route": "jh02",
+   "ok": true,
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 260,
+   "day": 1
+  },
+  "jh03": {
+   "route": "jh03",
+   "ok": true,
+   "caps": 150,
+   "earned": 150,
+   "spent": 0,
+   "xp": 405,
+   "day": 0
+  },
+  "sb02f": {
+   "route": "sb02f",
+   "ok": false,
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 45,
+   "day": 0
+  },
+  "uq05": {
+   "route": "uq05",
+   "ok": true,
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 70,
+   "day": 0
+  },
+  "uq07": {
+   "route": "uq07",
+   "ok": true,
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 50,
+   "day": 1
+  },
+  "uq08": {
+   "route": "uq08",
+   "ok": true,
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 80,
+   "day": 29
+  },
+  "uq09": {
+   "route": "uq09",
+   "ok": true,
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 90,
+   "day": 1
+  },
+  "uq10": {
+   "route": "uq10",
+   "ok": false,
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 99,
+   "day": 3
+  },
+  "uq62": {
+   "route": "uq62",
+   "ok": true,
+   "caps": -50,
+   "earned": 0,
+   "spent": 50,
+   "xp": 90,
+   "day": 1
+  },
+  "uq63": {
+   "route": "uq63",
+   "ok": true,
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 80,
+   "day": 1
+  },
+  "uq64": {
+   "route": "uq64",
+   "ok": true,
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 105,
+   "day": 1
+  },
+  "uq65": {
+   "route": "uq65",
+   "ok": true,
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 105,
+   "day": 1
+  },
+  "uq66": {
+   "route": "uq66",
+   "ok": true,
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 120,
+   "day": 4
+  },
+  "uq67": {
+   "route": "uq67",
+   "ok": true,
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 100,
+   "day": 1
+  },
+  "uq70": {
+   "route": "uq70",
+   "ok": true,
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 100,
+   "day": 11
+  },
+  "db": {
+   "route": "db",
+   "ok": true,
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 100,
+   "day": 0
+  },
+  "ds": {
+   "route": "ds",
+   "ok": true,
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 80,
+   "day": 0
+  },
+  "kt": {
+   "route": "kt",
+   "ok": true,
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 0,
+   "day": 0
+  },
+  "ks": {
+   "route": "ks",
+   "ok": false,
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 0,
+   "day": 0
+  },
+  "hosp": {
+   "route": "hosp",
+   "ok": true,
+   "caps": 50,
+   "earned": 50,
+   "spent": 0,
+   "xp": 155,
+   "day": 0
+  },
+  "yt": {
+   "route": "yt",
+   "ok": true,
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 100,
+   "day": 0
+  },
+  "u04": {
+   "route": "u04",
+   "ok": false,
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 0,
+   "day": 0
+  }
+ },
+ "when": "2026-10-24 15:45"
+}

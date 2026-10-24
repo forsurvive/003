@@ -44,8 +44,12 @@ def run(sol, timeout):
 
 SEGS = os.path.join(ROOT, "game", "data", "_econ_segs.json")
 SEG = re.compile(r"ECONSEG\|(?P<route>[a-z_0-9]+)\|(?P<ok>[○×])\|캡 (?P<caps>-?\d+)\|번 캡 (?P<earned>\d+)\|쓴 캡 (?P<spent>\d+)\|XP (?P<xp>-?\d+)\|날 (?P<day>-?\d+)")
-# 메인 행로(경로마다 하나 — 가장 흔한 길): 허브 → 경로 → MQ-106 말로
-MAIN = {"MQ-102": "hub", "MQ-103": "job", "MQ-104": "yd_talk", "MQ-105": "sb_buy", "MQ-106": "vb_talk"}
+# 메인 행로: 허브 → 경로(돈 드는 길 · 돈 안 드는 길 — 둘 다 그린다) → MQ-106 말로
+MAIN = {"MQ-102": "hub", "MQ-106": "vb_talk"}
+PATHS = {"MQ-103 일 맡기(출입세 · 박춘삼 100캡)": ("MQ-103", "job"), "MQ-103 환풍구(무료)": ("MQ-103", "vent"),
+         "MQ-104 말로(무료)": ("MQ-104", "yd_talk"),
+         "MQ-105 장부 사기(1,000캡 흥정 — 실제 300 적자)": ("MQ-105", "sb_buy"), "MQ-105 옥상 길(무료)": ("MQ-105", "sb_roof")}
+PRO_XP = 475            # '첫 풍경' 시작점(--from=view)은 MQ-P1~P4 XP를 건너뛴다 — 프롤로그부터 전체 봇 MQ-101 끝 920 − 첫 풍경 봇 445(1-13j 실측)
 # 사이드류(퀘스트마다 갈래 하나): 보통 플레이어는 이 가운데 절반을 한다(SD-25 '메인 + 사이드 · 탐험 절반')
 SIDE = {"SQ-S01": "bw", "SQ-S02": "bs", "SQ-S03": "s3", "SQ-S05": "s5", "SQ-S06": "s6", "SQ-S08": "s8", "SQ-S09": "s9", "SQ-S10": "s10",
         "SQ-S11": "s11", "SQ-S12": "s12", "SQ-S13": "s13", "FQ-JC-01": "jc01", "FQ-GS-01": "gs01", "FQ-GS-02": "gs02", "FQ-JH-01": "jh01",
@@ -82,7 +86,7 @@ def measure(jobs, timeout):
         for r in json.load(open(done, encoding="utf-8")).get("rows", []):
             if r.get("econ") and r.get("ok"):
                 old[r["route"]] = dict(r["econ"], route=r["route"], ok=True)
-    todo = [rt for rt in list(MAIN.values()) + list(SIDE.values()) if not old.get(rt, {}).get("ok")]
+    todo = [rt for rt in list(MAIN.values()) + [v[1] for v in PATHS.values()] + list(SIDE.values()) if not old.get(rt, {}).get("ok")]
     with ThreadPoolExecutor(max_workers=jobs) as ex:
         for r in ex.map(lambda rt: run_seg(rt, timeout), todo):
             old[r["route"]] = r
@@ -100,35 +104,40 @@ def compose():
     side_miss = [q for q, rt in SIDE.items() if not segs.get(rt, {}).get("ok")]
     half = lambda k: sum(int(segs[SIDE[q]][k]) for q in side_ok) / 2.0
     out = []
-    for path in ("MQ-103", "MQ-104", "MQ-105"):
-        for r0 in v1:
-            caps, earned, xp = float(r0["caps"]), float(r0["earned"]), float(r0["xp"])
-            pts = [{"at": "MQ-101", "caps": caps, "earned": earned, "xp": xp}]
-            ok = True
-            for q in ("MQ-102", path, "MQ-106"):
-                sg = segs.get(MAIN[q], {})
-                if not sg.get("ok"):
-                    ok = False
-                    break
-                caps += sg["caps"]
-                earned += sg["earned"]
-                xp += sg["xp"]
-                pts.append({"at": q, "caps": caps, "earned": earned, "xp": xp})
-            if not ok:
-                continue
-            # 1막 끝: 사이드류 절반 + 길가 실내(퀘스트 밖)
-            caps_end = caps + half("caps") + INTERIORS * per_int
-            earned_end = earned + half("earned") + INTERIORS * per_int
-            xp_end = xp + half("xp")
-            pts.append({"at": "1막 끝(사이드류 절반 + 길가 실내 %d곳)" % INTERIORS, "caps": caps_end, "earned": earned_end, "xp": xp_end})
-            out.append({"path": path, "sol": r0["sol"], "points": [dict(p, caps=round(p["caps"]), earned=round(p["earned"]), xp=round(p["xp"])) for p in pts]})
+    # 길가 실내(퀘스트 밖) 루팅은 행로를 따라 나눠 든다: 허브까지 8곳 · 경로 12곳 · MQ-106까지 4곳 · 1막 남은 사이드 동안 16곳(계획 §1 — 하루 약 5곳)
+    share = {"MQ-102": 8, "path": 12, "MQ-106": 4, "end": INTERIORS - 24}
+    r0 = [r for r in v1 if r["sol"] == 1][0]                             # 계단 방어(가장 흔한 해법)
+    for name, (q, rt) in PATHS.items():
+        sg_path = segs.get(rt, {})
+        if not sg_path.get("ok"):
+            continue
+        caps, earned, xp = float(r0["caps"]), float(r0["earned"]), float(r0["xp"]) + PRO_XP
+        pts = [{"at": "MQ-101 끝", "caps": caps, "earned": earned, "xp": xp}]
+        low = caps
+        for key, sg in (("MQ-102", segs.get(MAIN["MQ-102"], {})), ("path", sg_path), ("MQ-106", segs.get(MAIN["MQ-106"], {}))):
+            if not sg.get("ok"):
+                break
+            loot = share[key] * per_int
+            caps += loot
+            earned += loot
+            low = min(low, caps - sg["spent"])                              # 그 길에서 돈을 내는 순간의 잔고(길가 루팅을 먼저 했다고 봄)
+            caps += sg["caps"]
+            earned += sg["earned"]
+            xp += sg["xp"]
+            pts.append({"at": q if key == "path" else key, "caps": caps, "earned": earned, "xp": xp})
+        loot = share["end"] * per_int
+        caps_end = caps + half("caps") + loot
+        earned_end = earned + half("earned") + loot
+        xp_end = xp + half("xp")
+        pts.append({"at": "1막 끝(사이드류 절반 + 길가 실내 %d곳)" % INTERIORS, "caps": caps_end, "earned": earned_end, "xp": xp_end})
+        out.append({"path": name, "sol": r0["sol"], "low": round(low), "points": [dict(p, caps=round(p["caps"]), earned=round(p["earned"]), xp=round(p["xp"])) for p in pts]})
     v2 = {"when": time.strftime("%Y-%m-%d %H:%M"), "per_interior": round(per_int, 1), "interiors": INTERIORS,
           "side_used": side_ok, "side_missing": side_miss, "curves": out,
           "quest_share": round((half("earned")) / max(1.0, half("earned") + INTERIORS * per_int), 2)}
     base["v2"] = v2
     json.dump(base, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     for c in out:
-        print("경제 곡선 v2 %s(MQ-101 해법 %d): " % (c["path"], c["sol"]) + " → ".join("%s 캡 %d · 누적 %d · XP %d" % (p["at"], p["caps"], p["earned"], p["xp"]) for p in c["points"]))
+        print("경제 곡선 v2 %s: 돈 낼 때 가장 낮은 잔고 %d · " % (c["path"], c["low"]) + " → ".join("%s 캡 %d · 누적 %d · XP %d" % (p["at"], p["caps"], p["earned"], p["xp"]) for p in c["points"]))
     print("사이드류 조각 %d · 없음 %d(%s) · 실내 한 곳 %.1f캡" % (len(side_ok), len(side_miss), " ".join(side_miss), per_int))
 
 
