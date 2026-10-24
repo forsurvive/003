@@ -127,6 +127,40 @@ func test_sq_s01_kill(t) -> void:
 	h.free()
 
 
+func test_sq_s01_fled(t) -> void:
+	# 1-13h 외눈 ③: 숲으로 달아나 14칸 넘게 벌어지면 그날은 굴에 없고, 다음 날부터 이틀은 HP 60%로 돌아온다 · 엄태경에게 알림
+	var r := _host("2277. 10. 27.  07:30", "X-BW", "arrive")
+	var h: InteriorHost = r[0]
+	var st: StoryState = r[1]
+	var c: SideR01 = r[2]
+	c.tick()
+	t.ok(is_instance_valid(c.one), "아침 마당에 외눈")
+	c.one.one_phase = 2
+	c.one.brain.flee(40.0)
+	c.one.loco.place(h.player.loco.logical + Vector2(15 * 32, 0))
+	c.tick()
+	t.eq(int(st.vars.get_v("SQ_S01_FLED_DAY")), 4, "달아난 날이 남는다")
+	t.ok(c.one == null, "외눈을 거둔다")
+	t.eq(int(st.vars.get_v("SQ_S01_SOL")), 0, "해법이 서지 않는다(살아 있다 — 인식표는 목에 그대로)")
+	t.ok(not st.is_dead("CR-500"), "죽은 것이 아니다")
+	c._clear_pack()
+	c.tick()
+	t.ok(c.one == null and _dogs(c) > 0, "같은 날 다시 오면 무리만(외눈 없음)")
+	st.vars.set_v("GAME_DAY", 5)
+	c._clear_pack()
+	c.tick()
+	t.ok(is_instance_valid(c.one), "다음 날 굴로 돌아온다")
+	t.ok(absf(c.one.cmb.hp - c.one.cmb.max_hp * 0.6) < 0.5, "상처가 덜 아물어 HP 60%")
+	st.vars.set_v("GAME_DAY", 7)
+	c._clear_pack()
+	c.tick()
+	t.ok(absf(c.one.cmb.hp - c.one.cmb.max_hp) < 0.5, "사흘째부터 다 나았다")
+	h.enter("X-BC", "from_X-S07")
+	t.eq(_play(st, c, "TR_EOM", ["달아났어", "됐다"]), [], "엄태경: 다친 짐승은 제 굴로 돌아온다")
+	t.eq(int(st.vars.get_v("SQ_S01_FLED_SAID")), 1, "알린 것은 한 번")
+	h.free()
+
+
 func test_sq_s01_standoff(t) -> void:
 	var r := _host("2277. 10. 27.  17:20", "X-BW", "arrive")
 	var h: InteriorHost = r[0]

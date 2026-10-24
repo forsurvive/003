@@ -39,6 +39,7 @@ var fire_mul := 1.0                           ## 화상 배율(잔바퀴 떼 CR-
 var big := false                              ## 대형(넉백·넉다운·그물 무효)
 var push := Vector2.ZERO                      ## 넉백 남은 거리(px) — 몸 주인이 걸음 규칙으로 옮긴다
 var limbs := {}                               ## 부위 체력(SD-11 §4.8, 1-9e): 부위 -> 남은 값(처음 맞을 때 최대 HP × 계수로 채운다)
+var limb_mult := {}                           ## 부위 체력 배수(외눈 다리 1.5 — 1-13h: 아무 데나 쏴도 70% 깎을 즈음이면 늘 다리가 나가 ③ 도주가 사라지던 것)
 var crippled := {}                            ## 부위 손상: 부위 -> true(다리 · 팔 · 머리 · 몸통 · 더듬이)
 var track_limbs := false                      ## 부위 체력을 셀지(적만 — 주인공 부위 손상은 SD-11 §11.4 단계에서)
 signal crippled_part(part: String)
@@ -83,7 +84,7 @@ func _limb_hit(part: String, amt: float) -> void:
 	if not key in ["head", "torso", "arm", "leg", "antenna"] or crippled.has(key):
 		return
 	if not limbs.has(key):
-		limbs[key] = CombatRules.limb_hp(max_hp, key)
+		limbs[key] = CombatRules.limb_hp(max_hp, key) * float(limb_mult.get(key, 1.0))
 	limbs[key] = float(limbs[key]) - amt
 	if float(limbs[key]) <= 0.0:
 		crippled[key] = true

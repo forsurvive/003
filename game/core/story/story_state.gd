@@ -194,7 +194,7 @@ func _init() -> void:
 	# PK_045 애니멀 프렌드 랭크(퍽 창은 1-12 — 지금은 변수만)
 	# KC_* 깡철이 보스전(1-13a3 — kc_boss.gd 머리 주석): STATE 결말 · TALK 말로 물러남 · DAY 결말 날 · DOGS 죽은 개 · LOOSE 고리 뺌 · TOLL 통행세 날 · BOUNTY 현상금 · HELM 고물상 진열 · BALD 맨머리 소문 날 · STRIP 헬멧 벗겨 감
 	for k in ["KC_STATE", "KC_TALK", "KC_DAY", "KC_DOGS", "KC_LOOSE", "KC_TOLL", "KC_BOUNTY", "KC_HELM", "KC_BALD", "KC_STRIP", "KC_FOUGHT", "KC_HPF", "KC_GCSAID", "SQ_S01_SOL", "SQ_S01_LEFT", "SQ_S01_LEFT_DAY", "SQ_S01_DROP", "SQ_S01_DROP_AT", "SQ_S01_TAG_DAY", "SQ_S01_DOG", "SQ_S01_FEED", "SQ_S01_COLL", "SQ_S01_BAIT",
-			"SQ_S01_BETRAY", "SQ_S01_CLEAR_DAY", "SQ_S01_KILLS", "SQ_S01_KILL_DAY", "SQ_S01_EOM", "SQ_S01_BC", "SQ_S01_NAP", "SQ_S01_BOWL", "PK_045"]:
+			"SQ_S01_BETRAY", "SQ_S01_CLEAR_DAY", "SQ_S01_KILLS", "SQ_S01_KILL_DAY", "SQ_S01_FLED_DAY", "SQ_S01_FLED_SAID", "SQ_S01_EOM", "SQ_S01_BC", "SQ_S01_NAP", "SQ_S01_BOWL", "PK_045"]:
 		vars.declare(k, "int", 0)
 	vars.declare("SQH_TAG", "int", -1)
 	# SQ-S02 물 반 컵의 값(1-11b, SD-04a §4.2 · SideS02): ARM MQ-101 끝난 날 · POSTED 급수 제한 쪽지(DAY0 밸브가 잠긴 첫날) · LEVEL 수위계 칸 · OPEN 밸브(1 열림 · 2 물값 사흘, PAID 끝 날) ·

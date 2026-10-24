@@ -11,17 +11,20 @@
   "SHOP": 7,
   "UQ02_PUP": 9,
   "UQ05_MEAT": 12,
-  "ONE": 16,
-  "ONE_TALK": 21,
-  "ONE2": 25,
-  "BAIT": 27,
-  "BAIT_NODOG": 32,
-  "TAG": 34,
-  "GIVE_EOM": 38,
-  "LEFT": 43,
-  "KILLED": 47,
-  "MT": 51,
-  "MT_RIDGE": 55
+  "FLED": 16,
+  "FLED_OLD": 20,
+  "FLED_LEG": 21,
+  "ONE": 24,
+  "ONE_TALK": 29,
+  "ONE2": 33,
+  "BAIT": 35,
+  "BAIT_NODOG": 40,
+  "TAG": 42,
+  "GIVE_EOM": 46,
+  "LEFT": 51,
+  "KILLED": 55,
+  "MT": 59,
+  "MT_RIDGE": 63
  },
  "ops": [
   {
@@ -107,12 +110,20 @@
      "id": "TR_EOM:1:5"
     },
     {
+     "text": "외눈이 숲으로 달아났어",
+     "tags": [],
+     "cond": "SQ_S01_FLED_DAY > 0 and SQ_S01_SOL == 0 and dead(\"CR-500\") == 0 and SQ_S01_FLED_SAID == 0 and SQS01_STAGE < 100",
+     "fx": "",
+     "to": "FLED",
+     "id": "TR_EOM:1:6"
+    },
+    {
      "text": "개천 배수구에서 새끼 들개를 봤어요",
      "tags": [],
      "cond": "stage(\"UQ-02\") == 20 and UQ02_END == 0",
      "fx": "",
      "to": "UQ02_PUP",
-     "id": "TR_EOM:1:6"
+     "id": "TR_EOM:1:7"
     },
     {
      "text": "고기 꾸러미를 판다(두 머리 소)",
@@ -120,7 +131,7 @@
      "cond": "has(\"M-430\") == 1 and UQ05_MEAT == 0",
      "fx": "",
      "to": "UQ05_MEAT",
-     "id": "TR_EOM:1:7"
+     "id": "TR_EOM:1:8"
     },
     {
      "text": "됐다",
@@ -128,7 +139,7 @@
      "cond": "",
      "fx": "",
      "to": "END",
-     "id": "TR_EOM:1:8"
+     "id": "TR_EOM:1:9"
     }
    ]
   },
@@ -174,6 +185,47 @@
   {
    "op": "do",
    "fx": "take(\"M-430\", 1); caps(80); UQ05_MEAT = 1"
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-033",
+   "emo": "기본",
+   "text": "숲으로? …다친 짐승은 멀리 안 가. 피가 멎으면 제 굴로 돌아와."
+  },
+  {
+   "op": "if",
+   "cond": "GAME_DAY > SQ_S01_FLED_DAY + 2",
+   "to": "FLED_OLD"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-033",
+   "emo": "피곤",
+   "text": "이틀은 절뚝일 거야. 끝을 보려면 그때 가고, 아니면 그냥 둬. 산이 알아서 하겠지."
+  },
+  {
+   "op": "goto",
+   "to": "FLED_LEG"
+  },
+  {
+   "op": "line",
+   "who": "N-R01-033",
+   "emo": "피곤",
+   "text": "그게 언제 적 얘기야. 벌써 아물어서 마당을 돌고 있겠지."
+  },
+  {
+   "op": "line",
+   "who": "N-R01-033",
+   "emo": "기본",
+   "text": "하나만 알아 둬. 뒷다리가 성하면 또 뛴다. 놓치기 싫으면 다리부터 맞혀."
+  },
+  {
+   "op": "do",
+   "fx": "SQ_S01_FLED_SAID = 1"
   },
   {
    "op": "goto",

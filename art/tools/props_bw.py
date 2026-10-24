@@ -5,6 +5,8 @@
   gym_rail     별관 2층 관람석 난간(1×1, 막힘) — 녹슨 쇠 난간 + 아래로 무너진 체육관 바닥의 그늘
   gym_hoop     별관 1층 벽 농구 골대(벽 소품) — 기운 백보드 · 찢긴 그물
   gym_crack    무너진 마루 틈(바닥 덧그림) — 갈라진 원목 마루 사이로 보이는 어둠(소음 잔해 칸 표시를 겸한다)
+  blood_drops  핏방울 자국(바닥 덧그림, 1-13h) — 달아난 외눈이 남긴 검붉은 방울이 한쪽으로 늘어진다(흙에 스며 가장자리가 갈색)
+  blood_lick   핥은 핏자국(바닥 덧그림, 1-13h) — 바위 밑에 고인 피를 혀로 핥아 낸 자국 · 흰 털 몇 가닥(외눈이 여기서 상처를 핥았다)
 props_bc.PROPS에 합쳐져 r01_props 아틀라스로 나간다(prop_export.export_r01)."""
 import os, sys, random, math
 from PIL import Image, ImageDraw
@@ -135,6 +137,38 @@ def gym_crack(seed=8):
     return im
 
 
+def blood_drops(seed=9):
+    """핏방울 자국(덧그림): 크기가 다른 검붉은 방울 다섯이 비스듬히 늘어선다. 큰 방울은 흙에 스며 가장자리가 녹갈색, 가운데만 젖은 빛."""
+    rnd = random.Random(seed)
+    im = img(28, 14)
+    d = ImageDraw.Draw(im)
+    pts = [(3, 10, 2), (9, 8, 1), (14, 7, 2), (20, 5, 1), (25, 3, 1)]
+    for (x, y, r) in pts:
+        x += rnd.randint(-1, 1)
+        d.ellipse([x - r - 1, y - r, x + r + 1, y + r], fill=C("P23"))       # 스민 가장자리(녹갈)
+        d.ellipse([x - r, y - r + 1, x + r, y + r - 1] if r > 1 else [x - 1, y, x + 1, y], fill=C("P51"))
+        if r > 1:
+            d.point((x - 1, y - 1), fill=C("P52"))                           # 젖은 빛 한 점
+    d.point((17, 6), fill=C("P51")); d.point((6, 9), fill=C("P51"))           # 튄 점
+    return im
+
+
+def blood_lick(seed=10):
+    """핥은 핏자국(덧그림): 바위 그늘에 고였던 피가 혀 자국 모양으로 닦여 줄무늬만 남고, 흰 털 몇 가닥이 붙어 있다."""
+    rnd = random.Random(seed)
+    im = img(26, 16)
+    d = ImageDraw.Draw(im)
+    d.ellipse([1, 6, 25, 15], fill=C("P02"))                                # 바위 밑 그늘
+    d.ellipse([4, 7, 22, 14], fill=C("P23"))                                # 스민 자국
+    for k, x in enumerate(range(6, 21, 3)):                                 # 혀로 핥은 줄(닦인 결)
+        d.line([(x, 8 + (k % 2)), (x + 2, 13)], fill=C("P51"))
+    d.ellipse([9, 9, 13, 12], fill=C("P52"))                                # 덜 마른 가운데
+    for _ in range(4):                                                      # 흰 털 가닥
+        x, y = rnd.randint(5, 20), rnd.randint(7, 13)
+        d.line([(x, y), (x + rnd.choice((-2, 2)), y - 1)], fill=C("P08"))
+    return im
+
+
 def _r(fn, fw, fh, kind="floor", down=2, dx=0, dy=0):
     return {"fn": fn, "foot": (fw, fh), "kind": kind, "down": down, "dx": dx, "dy": dy}
 
@@ -146,4 +180,6 @@ PROPS_BW = {
     "gym_rail": _r(gym_rail, 1, 1, down=-8),
     "gym_hoop": _r(gym_hoop, 1, 0, "wall", dx=-6, dy=2),
     "gym_crack": _r(gym_crack, 0, 0, "deco"),
+    "blood_drops": _r(blood_drops, 0, 0, "deco"),
+    "blood_lick": _r(blood_lick, 0, 0, "deco"),
 }

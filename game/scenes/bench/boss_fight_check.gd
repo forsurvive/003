@@ -1,7 +1,8 @@
 ## 필드 보스 교전 시간 실측(1-13 D-380, SD-11 §10.3 기준 35~60초 · SD-25 B3): 관악산 비탈(월드) 빈 땅에 보스와 호위를 세우고,
 ## 그 레벨의 표준 무기(10mm 권총 W-002 — SD-25 표준 무기)를 든 주인공을 싸움 봇으로 돌린다. 보스가 쓰러지거나 달아나고 호위가 다 정리되면
 ## 'BOSSFIGHT|보스|초|주인공 HP|스팀팩|끝' 한 줄. 사람 손이 아니라 '늘 맞히려 드는 봇'이라 실제보다 조금 빠르다(추세 기록).
-## 실행: godot --headless --path game res://scenes/bench/boss_fight_check.tscn -- CR-500 [씨앗]
+## 실행: godot --headless --path game res://scenes/bench/boss_fight_check.tscn -- CR-500 [씨앗] [맵|W] [표지]
+##   BF_STAND=1 제자리에서 쏜다(뒷걸음 없음 — 받는 피해의 위쪽 끝) · BF_PLV=n 주인공 레벨 · BF_LOG=1 반초마다 읽기만(적을 건드리지 않는다)
 extends Node
 
 const SETUP := {
@@ -17,12 +18,19 @@ var started := false
 var stims0 := 5
 var done := false
 var hp_min := 99999.0
+var field := Vector2i.ZERO                  ## 싸움터 왼쪽 위 칸(12×12) — 주인공은 이 안에서만 물러선다
+var mine: Array = []                         ## 벤치가 세운 적만 센다(월드에 따로 사는 쥐 · 들개가 끼어도 싸움 끝을 흐리지 않게)
+var boss_dead := false
+var map_id0 := ""
+var phases := ""                            ## 외눈 국면이 바뀐 시각(①→② · ③)
+var rng := RandomNumberGenerator.new()
 
 
 func _ready() -> void:
 	var a := OS.get_cmdline_user_args()
 	boss_id = a[0] if a.size() > 0 else "CR-500"
 	seed(int(a[1]) if a.size() > 1 else 7)
+	rng.seed = int(a[1]) if a.size() > 1 else 7
 	host = InteriorHost.new()
 	add_child(host)
 	var st := host.st
@@ -31,7 +39,8 @@ func _ready() -> void:
 	st.vars.set_v("V_ACT", 1)
 	st.vars.set_v("GAME_DAY", 4)
 	var lv: int = SETUP[boss_id]["lv"]
-	st.vars.set_v("PC_XP", Perks.xp_at(lv) + 10)
+	var plv := int(OS.get_environment("BF_PLV")) if OS.get_environment("BF_PLV") != "" else lv   # 주인공 레벨만 따로(보스는 그대로)
+	st.vars.set_v("PC_XP", Perks.xp_at(plv) + 10)
 	st.call_fn("give", ["W-002"])
 	st.call_fn("give", ["10mm 탄", 400])
 	st.call_fn("give", ["I-001", stims0])
@@ -55,25 +64,29 @@ func _ready() -> void:
 
 func _spawn() -> void:
 	var lv: int = SETUP[boss_id]["lv"]
-	var field := _open_field(host.map.tile_of(host.player.loco.logical), 12)   # 다 트인 14×14칸(담 · 난간 · 높이 단 없음 — 필드 보스 마당과 같은 조건)
+	map_id0 = host.map.id
+	field = _open_field(host.map.tile_of(host.player.loco.logical), 12)   # 다 트인 14×14칸(담 · 난간 · 높이 단 없음 — 필드 보스 마당과 같은 조건)
 	print("  싸움터 %s(맵 %s)" % [str(field), host.map.id])
 	host.player.loco.place(Vector2(field + Vector2i(6, 10)) * 32.0 + Vector2(16, 16))
 	host.player.position = host.player.loco.render
-	var at := Vector2(field + Vector2i(6, 1)) * 32.0 + Vector2(16, 16)
+	var at := Vector2(field + Vector2i(rng.randi_range(3, 9), 1)) * 32.0 + Vector2(16, 16)   # 씨앗마다 보스 자리 · 호위 자리가 다르다
 	boss = host.combat.spawn(boss_id, at, host.map, host.st, {"lv": lv})
 	boss.brain.gauge = 100.0
 	boss.brain.state = AIBrain.S.COMBAT
-	boss.set_meta("dbg", true)
+	mine.append(boss)
+	if OS.get_environment("BF_LOG") != "":
+		boss.tree_exiting.connect(func() -> void: print("  보스가 나무에서 빠짐 t=%.1f" % t); print_stack())
 	boss.brain.home = host.player.loco.logical                          # 세운 자리에 묶이지 않게(집 반경 밖으로 쫓아오지 않는다)
 	print("  길 시험: %d점 · 보스 층 %d · 주인공 층 %d" % [host.combat.nav.path(boss.loco.logical, host.player.loco.logical, boss.floor_id, host.player.floor_id).size(), boss.floor_id, host.player.floor_id])
 	var k := 0
 	for ad in SETUP[boss_id]["adds"]:
 		for i in int(ad[1]):
 			k += 1
-			var e := host.combat.spawn(str(ad[0]), _free(at + Vector2((k % 4 - 1.5) * 40.0, (k / 4) * 40.0)), host.map, host.st, {"lv": lv})
+			var e := host.combat.spawn(str(ad[0]), _free(at + Vector2((k % 4 - 1.5) * 40.0 + rng.randf_range(-12, 12), (k / 4) * 40.0 + rng.randf_range(0, 24))), host.map, host.st, {"lv": lv})
 			e.brain.gauge = 100.0
 			e.brain.state = AIBrain.S.COMBAT
 			e.brain.home = host.player.loco.logical
+			mine.append(e)
 
 
 func _open_field(c0: Vector2i, n: int) -> Vector2i:
@@ -123,13 +136,19 @@ func _process(dt: float) -> void:
 		return
 	t += dt
 	hp_min = minf(hp_min, host.combat.pc.hp)
+	if OS.get_environment("BF_LOG") != "" and is_instance_valid(boss) and int(t * 2.0) != int((t - dt) * 2.0):
+		print("  보스 hp%d 상태 %d 국면 %d 칸 %s 팀 %s" % [int(boss.cmb.hp), int(boss.brain.state), boss.one_phase, str(host.map.tile_of(boss.loco.logical)), boss.cmb.team])
+	if is_instance_valid(boss) and boss.cmb.dead:
+		boss_dead = true                                              # 쓰러진 몸은 곧 치워진다 — 그 전에 적어 둔다
 	var me: Vector2 = host.player.loco.logical
-	var alive := host.combat.enemies.filter(func(e): return is_instance_valid(e) and not e.cmb.dead and e.cmb.team == "enemy" and e.loco.logical.distance_to(me) < 30.0 * 32.0)
+	var alive := mine.filter(func(e): return is_instance_valid(e) and not e.cmb.dead and e.cmb.team == "enemy" and e.loco.logical.distance_to(me) < 30.0 * 32.0)
 	var boss_out := not is_instance_valid(boss) or boss.cmb.dead or boss.loco.logical.distance_to(me) > 30.0 * 32.0
 	if (alive.is_empty() and boss_out) or t > LIMIT or host.combat.pc.dead:
 		done = true
-		var how := "시간 초과" if t > LIMIT else ("주인공 쓰러짐" if host.combat.pc.dead else ("처치" if not is_instance_valid(boss) or boss.cmb.dead else "달아남"))
-		print("BOSSFIGHT|%s|%.1f|%d|%d|%s|최저 %d/%d" % [boss_id, t, int(host.combat.pc.hp), stims0 - int(host.st.items.get("I-001", 0)), how, int(hp_min), int(host.combat.pc.max_hp)])
+		var how := "시간 초과" if t > LIMIT else ("주인공 쓰러짐" if host.combat.pc.dead else ("처치" if boss_dead else ("사라짐" if not is_instance_valid(boss) else "달아남")))
+		if host.map.id != map_id0:
+			how += "(맵이 %s로 바뀜)" % host.map.id
+		print("BOSSFIGHT|%s|%.1f|%d|%d|%s|최저 %d/%d|국면%s" % [boss_id, t, int(host.combat.pc.hp), stims0 - int(host.st.items.get("I-001", 0)), how, int(hp_min), int(host.combat.pc.max_hp), phases])
 		get_tree().create_timer(0.3).timeout.connect(get_tree().quit)
 		return
 	if alive.is_empty():
@@ -138,25 +157,22 @@ func _process(dt: float) -> void:
 	alive.sort_custom(func(a, b): return a.loco.logical.distance_to(me) < b.loco.logical.distance_to(me))
 	var tgt: Enemy = alive[0]
 	var d := tgt.loco.logical.distance_to(me)
-	if OS.get_environment("BF_LOG") != "" and int(t * 2.0) != int((t - dt) * 2.0) and (t < 1.0 or absf(t - 6.0) < 0.3):
-		for e in alive:
-			var tg = host.combat._target_for(e)
-			e._tactics(tg, host.combat.nav)
-			var p0: Vector2 = e.loco.logical
-			for k2 in 10:
-				e.move(e.steer(Vector2(0, 1)), 1.0 / 60.0)
-			print("    손으로 걷기 10프레임: %.1fpx · 속도 %s · fixed %s" % [e.loco.logical.distance_to(p0), str(e.row.get("speed")), e.fixed])
-			print("    손으로 전술 → 길 %d · 의도 %s · 스타일 %s · 둥지 %s · 이끔 %s" % [e._path.size(), str(e._intent), e.style, e.nest, e.led])
-			print("    표적 %s 칸 %s 층 %d · 길 %d" % [tg.team, str(host.map.tile_of(tg.pos())), tg.fl(), host.combat.nav.path(e.loco.logical, tg.pos(), e.floor_id, tg.fl()).size()])
-			print("  적 %s 목표 %s 토큰 %s 근접토큰 %s 길 %d 자세 %s 잠 %s 묶임 %s 위치 %s 집 %s" % [str(e.get_meta("enemy_id", "")), str(e._intent.get("goal", "")), e.has_token, e.has_mtoken, e._path.size(), e.stance, e.asleep, e.cmb.held(), str(host.map.tile_of(e.loco.logical)), str(host.map.tile_of(e.brain.home))])
 	if OS.get_environment("BF_LOG") != "" and int(t * 2.0) != int((t - dt) * 2.0):
 		print("  %.1f초 남은 %d · 가까운 %s %.1f칸 hp%d 상태 %d · 나 hp%d · 적 칸 %s 나 칸 %s 층 %d/%d" % [t, alive.size(), str(tgt.get_meta("enemy_id", "")), d / 32.0, int(tgt.cmb.hp), int(tgt.brain.state), int(host.combat.pc.hp), str(host.map.tile_of(tgt.loco.logical)), str(host.map.tile_of(me)), tgt.floor_id, host.player.floor_id])
-	# 물러나며 쏜다(가까우면 뒷걸음, 멀면 다가감) — 사람처럼 거리를 벌리려 든다
-	if d < 3.0 * 32.0:
-		host.input_fn = func() -> Vector2: return (me - tgt.loco.logical).normalized()
+	if is_instance_valid(boss) and not boss.cmb.dead and phases.count("|") < int(boss.one_phase):
+		phases += "|%d@%.1f%s" % [boss.one_phase, t, "(다리)" if boss.cmb.crippled.has("leg") else ""]
+	# 물러나며 쏜다(가까우면 뒷걸음, 멀면 다가감) — 사람처럼 거리를 벌리려 든다. 싸움터 밖으로는 물러서지 않는다(가장자리면 옆걸음)
+	if OS.get_environment("BF_STAND") != "":
+		host.input_fn = func() -> Vector2: return Vector2.ZERO           # 제자리에서 쏘는 사람(뒷걸음 없이 — 받는 피해의 위쪽 끝)
+	elif d < 3.0 * 32.0:
+		var back := (me - tgt.loco.logical).normalized()
+		var nxt: Vector2i = host.map.tile_of(me + back * 40.0) - field
+		if nxt.x < 0 or nxt.y < 0 or nxt.x >= 12 or nxt.y >= 12:
+			back = back.orthogonal() if (Vector2(field) * 32.0 + Vector2(192, 192) - me).dot(back.orthogonal()) > 0.0 else -back.orthogonal()
+		host.input_fn = func() -> Vector2: return back
 	elif d > 7.0 * 32.0:
 		host.input_fn = func() -> Vector2: return (tgt.loco.logical - me).normalized()
 	else:
 		host.input_fn = func() -> Vector2: return Vector2.ZERO
 	host.combat.bot = {"aim": tgt.loco.logical + Vector2(0, -10), "fire": true, "aimed": true,
-		"reload": host.combat.mags.get(host.combat.weapon_id, 1) == 0, "stim": host.combat.pc.hp < host.combat.pc.max_hp * 0.4}
+		"reload": host.combat.mags.get(host.combat.weapon_id, 1) == 0, "stim": host.combat.pc.hp < host.combat.pc.max_hp * 0.4 and not host.combat.healing()}

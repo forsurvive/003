@@ -21,6 +21,8 @@ const RAT_CALL_CD := 20.0                       ## 왕쥐 찍찍 울음(SD-14 CR
 # 1-D3 독산(SD-14 CR-096 · CR-004 · SD-13 W-068 미끼)
 const BAIT_R := 10.0 * 32.0                     ## 미끼 냄새를 맡는 거리(교전 전 · 수색 · 놓침)
 const BAIT_FIGHT_R := 6.0 * 32.0                ## 교전 중이어도 표적이 이보다 멀면 미끼로 간다
+const BITE_BACK := 1.5                           ## 물고 빠지기: 물기 한 주기 배수(SD-14 §4.2 · 1-13h 조율 — ×1.8이면 사나운 들개 1:1이 너무 길다)
+const BACK_S := 0.4                              ## 문 뒤 물러서는 초(들개 4.5칸/초 × 0.4 ≈ 1.8칸)
 const MOLE_UP_S := 4.0                          ## 굴쥐가 땅 위에서 싸우는 초(그 뒤 흙이면 다시 판다)
 const MOLE_HEAVE_S := 1.0                       ## 흙 들썩임(예비 동작) — SD-14 CR-096 '1.0초'
 const MOLE_UNDER_SPD := 4.0 / 3.0               ## 땅속 4.0t/초 ÷ 땅 위 3.0t/초
@@ -49,6 +51,7 @@ var _burst := 0                                   ## 이번 연사에서 쏜 발
 var _t_per := 0.0
 var _t_tac := 0.0
 var _cool := 0.0
+var _back_t := 0.0                             ## 물고 빠지기: 물러서는 남은 초
 var _close_t := 0.0
 var _leap := 0.0
 var _path := PackedVector2Array()
@@ -144,6 +147,13 @@ var _burst_cd := 3.0
 var _ring_t := -1.0                           ## 폭발 고리 그리기(0~0.5초)
 var howl_cb := Callable()                     ## (e): 무리에 울부짖기
 var _howl_cd := 0.0
+## 외눈 국면(SD-14 §10.3, 1-13h): 0 무리를 보내고 지켜봄 · 1 울부짖고 돌진 · 2 HP 30%에서 숲으로(다리를 다치면 끝까지 싸운다)
+var one_phase := 0
+var _pack_n0 := 0                             ## 지켜보는 동안 본 같은 편 들개 수의 최대
+var slow_mul := 1.0                           ## 진행기가 거는 걸음 배수(상처 입고 돌아온 외눈 0.85)
+var _growl_t := 1.0                           ## 지켜보는 동안 4~6초마다 낮게 으르렁댄다(재미 검수 1-13h — 소리 없이 서 있으면 못 보고 지나친다)
+var pack_cb := Callable()                     ## (e) -> int: 16칸 안 같은 편 산 들개 수(자기 빼고)
+var scatter_cb := Callable()                  ## (e): 우두머리가 달아난다 — 무리 절반이 흩어진다
 var call_cb: Callable                            ## 왕쥐 호출(InteriorCombat._rat_call)
 var buff_t := 0.0                             ## 울부짖기를 받은 남은 초(속도 +15% · 물기 +20%)
 var mine_list := Callable()                   ## () -> Array: 깔린 지뢰(들개 함정 회피)
@@ -273,6 +283,8 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 	traits = EnemyTraits.of(str(row["id"]))
 	react = float(traits.get("react", react))
 	cmb.track_limbs = true
+	if row["id"] == "CR-500":
+		cmb.limb_mult = {"leg": 1.5}                                  # 다리 부위 체력 45% — 다리를 노려 맞혀야(웅크린 근접 · 운) ③ 도주를 막는다
 	cmb.crippled_part.connect(_on_cripple)
 	cmb.hit.connect(func() -> void:
 		if cmb.crippled.has("torso") and not cmb.dead and dash_to == Vector2.INF and _rng.randf() < 0.5:
@@ -426,6 +438,7 @@ func think(dt: float, target: Combatant, nav, shots: Projectiles) -> void:   ## 
 			loco.speed_mul = 0.5 if cmb.crippled.has("leg") else 1.0
 			_rally = cmb.hp / maxf(1.0, cmb.max_hp)
 			_say("back")
+		_one_flee(target)
 		_morale(target)
 	var t1 := Time.get_ticks_usec() if profiling else 0
 	say_t = maxf(0.0, say_t - dt)
@@ -512,6 +525,9 @@ func _tactics(target: Combatant, nav) -> void:
 		elif loco.logical.distance_to(brain.home) > 16.0:
 			_repath(nav, brain.home)
 		return
+	if goal == "engage" and one_phase == 0 and str(row.get("id", "")) == "CR-500" and _one_watch(target):
+		_path = PackedVector2Array()                               # 외눈 ①: 무리를 먼저 보내고 자리에서 지켜본다
+		return
 	if goal == "engage":
 		var d := loco.logical.distance_to(target.pos()) / 32.0
 		var los: bool = sight_of(target) > 0.0 and meets(target)
@@ -561,6 +577,24 @@ func _tactics(target: Combatant, nav) -> void:
 			_wander_t = 3.0 + _rng.randf() * 3.0
 			var p := brain.home + Vector2(_rng.randf_range(-4, 4), _rng.randf_range(-4, 4)) * 32.0
 			_repath(nav, p)
+
+
+## 외눈 ① 지켜보기: 무리가 절반 이하로 줄거나 · 제 몸을 맞거나 · 표적이 3칸 안에 들면 ②(울부짖고 돌진). 아직 지켜보면 true
+func _one_watch(target: Combatant) -> bool:
+	var n := int(pack_cb.call(self)) if pack_cb.is_valid() else 0
+	_pack_n0 = maxi(_pack_n0, n)
+	var to_t := target.pos() - loco.logical
+	if to_t.length() > 4.0:
+		loco.facing = Locomotion.snap8(to_t, 0.0)
+	if n * 2 > _pack_n0 and cmb.hp >= cmb.max_hp and to_t.length() > 3.0 * 32.0:
+		_growl_t -= 0.5
+		if _growl_t <= 0.0:
+			_growl_t = _rng.randf_range(4.0, 6.0)
+			_say("growl", 1.2)
+		return true
+	one_phase = 1
+	_howl_cd = 0.0                                                 # 내려오며 바로 울부짖는다(무리 물기 +20%)
+	return false
 
 
 func _repath(nav, to: Vector2, goal_fl: int = -1) -> void:
@@ -618,7 +652,10 @@ func _act(dt: float, target: Combatant, shots: Projectiles) -> void:
 		else:
 			input = to_t.normalized().orthogonal() * _circ * absf(_circ_v) - to_t.normalized() * inward   # 토큰이 없으면 둘레를 돈다(발 고정 걸음 그대로)
 	elif style == "dog" and goal == "engage":
-		if to_t.length() < cmb.radius + target.radius + 6.0:
+		if _back_t > 0.0:                                              # 물고 빠지기(SD-14 §4.2 '한 번에 1~2마리씩만 물러 들어온다' — 1-13h): 문 뒤 1.5~2칸 물러섰다 다시 든다
+			_back_t -= dt
+			input = (-to_t).normalized() if to_t.length() > 0.5 else Vector2.RIGHT
+		elif to_t.length() < cmb.radius + target.radius + 6.0:
 			input = Vector2.ZERO
 			_bite(dt, target, to_t)
 		elif _wind > 0.0:                                              # 노리던 표적이 빠져나갔다 — 예비 동작을 푼다
@@ -717,6 +754,9 @@ func _bite(dt: float, target: Combatant, to_t: Vector2) -> void:
 	modulate = Color(1, 1, 1)
 	_show()
 	_cool = maxf(0.3, 1.1 + maxf(0.0, bite - 15.0) * 0.05 - wind_full)   # 한 주기는 그대로(1.1 + (물기 − 15) × 0.05초 — SD-11 §10.3 '강 근접 · 예비 동작 길이')
+	if not nest and not fixed and not aqua:
+		_cool += (1.1 + maxf(0.0, bite - 15.0) * 0.05) * (BITE_BACK - 1.0)   # 물고 빠지는 동안 한 주기가 ×1.5(밸런스 조율 1-13h — 물러선 틈에 쏠 수 있다)
+		_back_t = BACK_S
 	target.last_by = cmb.team
 	var dr_k := 1.0 - minf(target.dr, CombatRules.DR_CAP) / 100.0           # 물기도 몸 전체 DR을 거친다(SD-11 §4.6 — 밸런스 검사 B4, 2026-10-23)
 	target.take({"hp": bite * (1.25 if frenzied else 1.0) * (1.2 if buff_t > 0.0 else 1.0) * dr_k}, loco.logical)   # 울부짖기 +20%
@@ -948,8 +988,9 @@ func _morale(target: Combatant) -> void:
 		flee_now(target.pos())
 
 
-func flee_now(from: Vector2, secs: float = -1.0) -> void:
-	if not can_break() or brain.fleeing():
+## force: 진행기가 세운 적이라도 정본이 정한 도주(외눈 ③ · 우두머리를 잃은 외눈 무리 — SD-14 §10.3)
+func flee_now(from: Vector2, secs: float = -1.0, force := false) -> void:
+	if (not force and not can_break()) or brain.fleeing() or cmb.dead or released:
 		return
 	brain.last_seen = from
 	brain.flee(secs if secs > 0.0 else _rng.randf_range(10.0, 20.0))
@@ -958,6 +999,19 @@ func flee_now(from: Vector2, secs: float = -1.0) -> void:
 	_say("flee")
 	if cmb.crippled.has("leg"):
 		_cornered()
+
+
+## 외눈 ③(SD-14 §10.3): ② 뒤 HP 30% 이하면 숲으로 달아난다 — 사기 판정과 따로(진행기 적이라도 정본 국면). 다리를 다쳤으면 궁지(끝까지 버틴다)
+func _one_flee(target: Combatant) -> void:
+	if one_phase != 1 or cmb.hp > cmb.max_hp * 0.3 or cmb.dead or str(row.get("id", "")) != "CR-500" or not brain.state in [AIBrain.S.COMBAT, AIBrain.S.LOST]:
+		return
+	one_phase = 2
+	if cmb.crippled.has("leg"):
+		conf_mod += 4
+		return
+	flee_now(target.pos(), 40.0, true)
+	if scatter_cb.is_valid():
+		scatter_cb.call(self)
 
 
 ## 같은 편이 쓰러진 걸 봤다(전투 모듈이 12t 안 같은 편에게): 분대장이면 자신감 −1 뒤 다시 판정 · 신중(1) 이하는 바로 도주
@@ -1115,7 +1169,7 @@ func _specials(dt: float, target: Combatant) -> void:
 			_burst_cd = BURST_CD
 			_ring_t = 0.0
 			burst_cb.call(self, false)
-	if id in ["CR-106", "CR-500"] and fighting and howl_cb.is_valid():   # 들개 우두머리(외눈 포함): 교전에 들면 바로, 그 뒤 30초마다
+	if id in ["CR-106", "CR-500"] and fighting and howl_cb.is_valid() and not (id == "CR-500" and one_phase == 0):   # 들개 우두머리: 교전에 들면 바로(외눈은 ②에 들 때), 그 뒤 30초마다
 		_howl_cd -= dt
 		if _howl_cd <= 0.0:
 			_howl_cd = HOWL_CD
@@ -1151,7 +1205,7 @@ func _specials(dt: float, target: Combatant) -> void:
 ## 이동 배수 한 곳: 다리 손상(−50%, 도주 중 −70%) × 울부짖기(+15%)
 func _apply_speed() -> void:
 	var base := (0.3 if brain.state == AIBrain.S.FLEE else 0.5) if cmb.crippled.has("leg") else 1.0
-	loco.speed_mul = base * (1.15 if buff_t > 0.0 else 1.0) * (MOLE_UNDER_SPD if burrow == "under" else 1.0)
+	loco.speed_mul = base * (1.15 if buff_t > 0.0 else 1.0) * (MOLE_UNDER_SPD if burrow == "under" else 1.0) * slow_mul
 
 
 ## 들개 함정 회피(SD-14 §4.2 '지뢰·덫 타일을 50% 확률로 돌아간다'): 앞 2.5t 안, 가는 줄에서 1.75t 안의 남의 지뢰를 옆으로 비켜 간다.

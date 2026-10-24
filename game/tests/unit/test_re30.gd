@@ -115,3 +115,65 @@ func test_re30_mult_cool_threat(t) -> void:
 			var regs = Encounters.re_def(id).get("regions", "*")
 			t.ok(typeof(regs) != TYPE_ARRAY or "R01" in regs, "%s는 R01에 설 수 있다" % id)
 	t.ok(not seen.has("RE-006") and not seen.has("RE-008"), "봉천 쪽 판정엔 국회 · 지하상가 RE가 없다")
+
+
+func test_re30_category_mix(t) -> void:
+	# D-394 '범주 비율'(SD-05 §6.3 표 ±25%): 판도 구역마다 실제 고르기(_pick)의 범주 몫이 표 × 위협도 보정과 맞는다.
+	# 기대 몫 = 표 가중 × (위협 1~2 상인 1.5 · 사건 1.3 / 위협 4~5 상인 0.5 · 크리처 1.3)을, 그 자리에 설 후보가 있는 범주끼리 나눈 값.
+	# 상인회 · 새벽인력 · 정착지 연합이 지배하는 구역은 그 세력 순찰 RE가 아직 없어 순찰이 적다(D-404 — 내용 몫)
+	var st := _st()
+	var en := Encounters.new(st, 21)
+	en.ctx = {"hour": 12, "level": 3, "tags": []}
+	en.now_min = 90000
+	var seen := {}
+	var checked := 0
+	for y in range(1060, 1600, 36):
+		for x in range(600, 1120, 36):
+			var c := Vector2i(x, y)
+			var es: Dictionary = st.turf.enc_state(st, c)
+			if es.is_empty():
+				continue
+			var zone := str(es["zone"])
+			if seen.has(zone):
+				continue
+			seen[zone] = true
+			var region := zone.get_slice("-", 1)
+			var cw := en._cat_table(region, c)
+			var th := Encounters.threat_at(c)
+			var got := {}
+			var n := 0
+			for i in 1500:
+				var id := en._pick(region, false, c)
+				if id == "":
+					continue
+				var cat := str(Encounters.re_def(id).get("cat", ""))
+				got[cat] = int(got.get(cat, 0)) + 1
+				n += 1
+			if n < 500:
+				continue
+			var pw := 0.0                                                       # 순찰 몫 = 서 있는 순찰 RE의 세력 몫(지배 · 경쟁 세력의 순찰 RE가 없으면 그만큼 다른 범주로 — 1-13e 범주 분모 규칙)
+			var pn := 0.0
+			for id in Encounters.table():
+				var d: Dictionary = Encounters.table()[id]
+				if str(d.get("cat", "")) == "patrol" and en._allowed(d, region, false, th) and Encounters.near_ok(d, c):
+					pw += float(d["weight"]) * Encounters._patrol_share(d, cw)
+					pn += float(d["weight"])
+			var exp := {}
+			var tot := 0.0
+			for cat in got:
+				var m := 1.0
+				if th in [1, 2]:
+					m = 1.5 if cat == "trader" else (1.3 if cat == "event" else 1.0)
+				elif th >= 4:
+					m = 0.5 if cat == "trader" else (1.3 if cat == "creature" else 1.0)
+				exp[cat] = float(cw.get(cat, 0)) * m * ((pw / pn) if cat == "patrol" and pn > 0.0 else 1.0)
+				tot += float(exp[cat])
+			var bad: Array = []
+			for cat in got:
+				var want := float(exp[cat]) / tot
+				var share := float(got[cat]) / n
+				if want >= 0.05 and absf(share - want) > want * 0.25 + 0.02:       # ±25%(작은 몫은 표본 흔들림 2점을 더 봐 준다)
+					bad.append("%s %.0f%%(표 %.0f%%)" % [cat, share * 100.0, want * 100.0])
+			t.ok(bad.is_empty(), "%s(%s · 위협 %d) 범주 몫이 표 ±25%% 안: %s" % [zone, str(es["state"]), th, ", ".join(bad) if not bad.is_empty() else "맞음"])
+			checked += 1
+	t.ok(checked >= 4, "판도 구역 %d곳을 견줬다" % checked)

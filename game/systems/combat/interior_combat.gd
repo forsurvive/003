@@ -364,6 +364,22 @@ func _howl(e: Enemy) -> void:
 				o.hear("pistol", e.loco.logical)
 	stats["howls"] = int(stats.get("howls", 0)) + 1
 
+## 외눈 ①(SD-14 §10.3): 16칸 안 같은 편 산 들개 수(자기 빼고)
+func _pack_n(e: Enemy) -> int:
+	var n := 0
+	for o in enemies:
+		if is_instance_valid(o) and o != e and not o.cmb.dead and o.style == "dog" and o.cmb.team == e.cmb.team \
+				and o.loco.logical.distance_to(e.loco.logical) <= 16.0 * 32.0:
+			n += 1
+	return n
+
+## 외눈 ③: 우두머리가 숲으로 달아나면 남은 무리 절반(가까운 쪽부터, 올림)이 20~30초 흩어진다(SD-14 pack_lead '무리 50% 도주' · 1-13h 조율)
+func _pack_scatter(e: Enemy) -> void:
+	var kin := enemies.filter(func(o): return is_instance_valid(o) and o != e and not o.cmb.dead and o.style == "dog" and o.cmb.team == e.cmb.team and o.loco.logical.distance_to(e.loco.logical) <= 20.0 * 32.0)
+	kin.sort_custom(func(a, b): return a.loco.logical.distance_to(e.loco.logical) < b.loco.logical.distance_to(e.loco.logical))
+	for i in (kin.size() + 1) / 2:
+		kin[i].flee_now(pc.pos(), _rng.randf_range(20.0, 30.0), true)
+
 ## 왕쥐 찍찍 울음(SD-14 CR-097, 1-11d): 12t 안 같은 편 시궁쥐 가운데 아직 싸우지 않는 둘을 깨워 부른다. 새 쥐를 만들지 않는다(재미 검수 —
 ## 수가 정해져 있어 밖에서 먼저 잡아 두는 꼼수가 산다). 부를 쥐가 없으면 '대답이 없다' — 왕쥐는 물러난다(SD-14 §4.1 무리 절반 이상 잃으면 후퇴)
 func _rat_call(e: Enemy) -> void:
@@ -486,6 +502,8 @@ func spawn(enemy_id: String, pos: Vector2, map: InteriorMap, st: StoryState = nu
 	e.rad_at = rad.dose_at                                              # 1-9e4: 구울 방사능 회복 · 빛나는 구울 폭발 · 울부짖기 · 들개 지뢰 회피
 	e.burst_cb = _glow_burst
 	e.howl_cb = _howl
+	e.pack_cb = _pack_n
+	e.scatter_cb = _pack_scatter
 	e.call_cb = _rat_call
 	e.bait_at = ord.bait_near                                          # 1-D3 미끼(W-068) · 알집바퀴 부화
 	e.hatch_cb = _hatch
@@ -572,6 +590,16 @@ func _morale_death(e: Enemy, by_pc: bool, st: StoryState) -> void:
 		_pop("항복한 자를 쐈다", at + Vector2(0, -28), Color("E04A35"))
 	var lead := bool(e.traits.get("leader", false))
 	var rout := bool(e.traits.get("pack_lead", false)) and _rng.randf() < 0.5
+	if str(e.row.get("id", "")) == "CR-500":                            # 외눈이 쓰러지면 남은 무리 절반이 흩어진다(③ 도주와 같은 규칙 — 진행기 무리라도, 1-13h)
+		_pack_scatter(e)
+		rout = false
+	if str(e.row.get("id", "")) == "CR-095":                            # 시궁쥐(SD-14 §4.1): 무리 절반을 잃으면 남은 쥐가 물러난다(1-13h 조율)
+		var kin := enemies.filter(func(o): return is_instance_valid(o) and o.cmb.team == e.cmb.team and str(o.row.get("id", "")) == "CR-095" and o.loco.logical.distance_to(at) <= 12.0 * 32.0)
+		var fallen := kin.filter(func(o): return o.cmb.dead).size()
+		if kin.size() >= 2 and fallen * 2 >= kin.size():
+			for o in kin:
+				if not o.cmb.dead:
+					o.flee_now(pc.pos(), _rng.randf_range(15.0, 25.0))
 	for o in enemies:
 		if not is_instance_valid(o) or o == e or o.cmb.dead or o.cmb.team != e.cmb.team:
 			continue

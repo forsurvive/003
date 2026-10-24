@@ -1,6 +1,7 @@
 ## 관악(R01) 사이드 퀘스트 진행기(단계 1-11). 지금은 SQ-S01 「외눈의 인식표」(SD-04a §4.1). 원고: script/act1/SQ-S01.txt · TRAVEL.txt TR_EOM(엄태경).
 ## 바위굴(X-BW, 월드 손 맵 L-R01-05) 반경 40칸에 들어오면 시간대 무리를 세우고 60칸 밖이면 거둔다. 사실은 변수 한 곳(SD-20 P1):
-##   SQ_S01_SOL 해법 · LEFT 무리 이동 · DROP 바닥의 인식표 · DOG 백구 동행 · BAIT 미끼 시각 · KILLS 쓰러뜨린 무리 · BC 봉천이 아직 모르는 호감.
+##   SQ_S01_SOL 해법 · LEFT 무리 이동 · DROP 바닥의 인식표 · DOG 백구 동행 · BAIT 미끼 시각 · KILLS 쓰러뜨린 무리 · BC 봉천이 아직 모르는 호감 ·
+##   FLED_DAY 외눈이 숲으로 달아난 날(그날은 굴에 없다 · 이틀은 HP 60%로 돌아온다 — SD-14 §10.3 ③, 1-13h).
 ## 외눈의 하루(S3): 낮 10~16 별관 2층 관람석(K-31)에서 잔다(무리는 마당에서 쉰다) · 17~19 해 질 녘 뼈 마당 · 20~05 밤 무리 +2, 더 잘 본다 · 06~09 마당.
 ## 해법: A 소탕(외눈이 쓰러지면 — 인식표는 드롭) · B 백구 대치(해 질 녘 백구 동행으로 외눈 앞 8칸 — 10초 동안 들개 둘을 30% 깎아 쫓으면 흩어진다) ·
 ##   C 애니멀 프렌드(PK_045 — 무리가 먼저 치지 않고, 외눈 곁에서 원고) · D 낮잠(K-31 잠든 외눈 곁 원고 — 소음 칸을 밟거나 깨우면 A로) ·
@@ -45,6 +46,11 @@ var tag_prop := {}
 var rats: Array = []
 var leaving: Array = []                  ## 떠나는 중인 개(거둘 때 함께 치운다)
 var _hit_hooked: Combatant = null
+var blood: Array = []                    ## 달아나는 외눈이 남긴 핏방울(런타임 덧그림 — 거둘 때 함께 치운다)
+var _blood_at := Vector2.INF             ## 마지막 핏방울 자리
+var lick := {}                           ## 핏자국이 끊긴 자리(다가가면 안내 — 재미 검수 1-13h)
+var _lick_c := Vector2i.ZERO
+var _scar_said := false
 
 
 func setup(h: InteriorHost, is_log := false) -> void:
@@ -245,6 +251,8 @@ func _den_tick() -> void:
 	if not pack_on:
 		_bait_tick(false)
 		return
+	_one_fled_check()
+	_scar_tick()
 	_band_shift()
 	_tag_tick()
 	_bait_tick(true)
@@ -255,6 +263,72 @@ func _den_tick() -> void:
 
 func _one_alive() -> bool:
 	return v("SQ_S01_SOL") == 0 and v("SQ_S01_LEFT") == 0 and not st.is_dead("CR-500")
+
+
+## 외눈이 굴에 있나: 오늘 숲으로 달아났으면(③) 하루 동안 돌아오지 않는다 — 무리만 남는다
+func _one_home() -> bool:
+	return _one_alive() and v("SQ_S01_FLED_DAY") != day()
+
+
+## 달아났던 외눈은 이틀 동안 상처가 덜 아문 채(HP 60%) 돌아온다 — 제자리 곁에 마른 핏자국 · 처음 마주치면 낮게 으르렁댄다(눈에 보이는 상처)
+func _scar(e: Enemy) -> void:
+	if v("SQ_S01_FLED_DAY") > 0 and day() <= v("SQ_S01_FLED_DAY") + 2:
+		e.cmb.hp = e.cmb.max_hp * 0.6
+		e.set_meta("scarred", true)
+		e.slow_mul = 0.85                                                # 걸음이 조금 무겁다(상처)
+		_scar_said = false
+		var bp := host.map.add_runtime_prop("blood_drops", host.map.tile_of(e.loco.logical) + Vector2i(1, 1))
+		if not bp.is_empty():
+			blood.append(bp)
+
+
+func _scar_tick() -> void:
+	if _scar_said or not is_instance_valid(one) or one.cmb.dead or not one.has_meta("scarred") or one.asleep:
+		return
+	if one.loco.logical.distance_to(host.player.loco.logical) <= 10.0 * 32.0:
+		_scar_said = true
+		one._say("growl", 2.0)
+		host.hint("외눈 옆구리에 덜 아문 상처가 벌겋다. 걸음이 조금 무겁다.", 5.0)
+
+
+## 외눈 ③: 숲으로 달아나 시야에서 벗어났다(주인공과 14칸) — 거두고 하루를 비운다. 무리 절반은 전투 모듈이 이미 흩었다
+func _one_fled_check() -> void:
+	_lick_tick()
+	if not is_instance_valid(one) or one.cmb.dead or one.one_phase != 2 or not one.brain.fleeing():
+		return
+	var p: Vector2 = one.loco.logical
+	if blood.size() < 8 and (_blood_at == Vector2.INF or p.distance_to(_blood_at) >= 3.0 * 32.0):   # 달아나는 길에 3칸마다 핏방울(따라갈 거리)
+		_blood_at = p
+		var bp := host.map.add_runtime_prop("blood_drops", host.map.tile_of(p))
+		if not bp.is_empty():
+			blood.append(bp)
+	if p.distance_to(host.player.loco.logical) < 14.0 * 32.0:
+		return
+	st.vars.set_v("SQ_S01_FLED_DAY", day())
+	_lick_c = host.map.tile_of(p)
+	lick = host.map.add_runtime_prop("blood_lick", _lick_c)                # 핏자국이 끊긴 자리 — 다가가 보면 안다(안내를 미리 띄우지 않는다)
+	pack.erase(one)
+	host.combat.drop_enemy(one)
+	one = null
+	_log("외눈 도주(%d일)" % day())
+
+
+## 맵을 새로 열었다: 지난 맵의 덧그림은 맵과 함께 사라졌다
+func _forget_marks() -> void:
+	blood.clear()
+	lick = {}
+	_blood_at = Vector2.INF
+
+
+## 핏자국이 끊긴 자리에 다가가면(1.5칸): 핥은 자국 — 오늘은 굴에 돌아오지 않겠다
+func _lick_tick() -> void:
+	if lick.is_empty() or host.box.active:
+		return
+	var c := Vector2(_lick_c.x * 32 + 16, _lick_c.y * 32 + 16)
+	if host.player.loco.logical.distance_to(c) <= 1.5 * 32.0:
+		host.hint("핏자국이 바위 밑에서 끊긴다. 고인 피를 핥아 낸 자국과 흰 털 몇 가닥. 외눈은 오늘 굴로 돌아오지 않겠다.", 6.0)
+		host.map.remove_runtime_prop(lick)
+		lick = {}
 
 
 func _rng() -> RandomNumberGenerator:
@@ -314,7 +388,7 @@ func _spawn_pack() -> void:
 		if calm:
 			_calm(e, "calmbw")
 		pack.append(e)
-	if band != "nap":
+	if band != "nap" and _one_home():
 		_spawn_one(host.map.mark_pos("X-BW:one_yard"))
 	_log("무리 %d + 외눈 %s(%s, %d시)" % [n, "있음" if one != null else "별관", band, hour()])
 
@@ -322,6 +396,7 @@ func _spawn_pack() -> void:
 func _spawn_one(at: Vector2) -> void:
 	one = host.combat.spawn("CR-500", at, host.map, st, {"lv": 6, "dir": "S", "stance": "hold"})   # 우두머리는 마당 한가운데 자리를 지킨다
 	one.det_mul = 1.3 if band == "night" else 1.0
+	_scar(one)
 	if v("PK_045") >= 1 or (band == "dusk" and v("SQ_S01_DOG") == 1):
 		_calm(one, "calmbw")
 	pack.append(one)
@@ -353,6 +428,13 @@ func _clear_pack() -> void:
 	if not tag_prop.is_empty():
 		host.map.remove_runtime_prop(tag_prop)
 		tag_prop = {}
+	for bp in blood:
+		host.map.remove_runtime_prop(bp)
+	blood.clear()
+	_blood_at = Vector2.INF
+	if not lick.is_empty():
+		host.map.remove_runtime_prop(lick)
+		lick = {}
 	_log("무리 거둠")
 
 
@@ -361,7 +443,7 @@ func _band_shift() -> void:
 	var b := band_of(hour())
 	if b == band or not _one_alive():
 		return
-	if band == "nap" and one == null and not host.combat.in_combat():
+	if band == "nap" and one == null and not host.combat.in_combat() and _one_home():
 		band = b
 		_spawn_one(host.map.mark_pos("X-BW:north_in"))
 		_log("외눈이 마당으로 내려옴(%d시)" % hour())
@@ -412,7 +494,7 @@ func _on_killed(_eid: String, _alive: int) -> void:
 				st.vars.set_v("SQ_S01_KILL_DAY", day())
 
 
-## 해법 A: 외눈이 쓰러졌다 — 인식표는 몸에서(드롭 M-158). 남은 개는 끝까지 싸운다(진행기가 세운 적)
+## 해법 A: 외눈이 쓰러졌다 — 인식표는 몸에서(드롭 M-158). 남은 무리 절반은 흩어지고(전투 모듈 _pack_scatter) 나머지는 끝까지 싸운다
 func _one_down() -> void:
 	st.kill("CR-500")
 	st.vars.set_v("SQ_S01_NAP", 0)
@@ -619,9 +701,11 @@ func _on_map(id: String) -> void:
 		leaving.clear()
 		one = null
 		tag_prop = {}
-		if band_of(hour()) == "nap" and _one_alive() and stage() < 100:
+		_forget_marks()
+		if band_of(hour()) == "nap" and _one_home() and stage() < 100:
 			one = host.combat.spawn("CR-500", host.map.mark_pos("nap"), host.map, st, {"lv": 6, "dir": "W", "sleep": true})
 			one.det_mul = 0.15                                           # 잠(SD-22 S4)
+			_scar(one)
 			pack = [one]
 			st.vars.set_v("SQ_S01_NAP", 1)
 			if stage() < 20:
@@ -634,6 +718,7 @@ func _on_map(id: String) -> void:
 		leaving.clear()
 		one = null
 		tag_prop = {}
+		_forget_marks()
 		stand_t = -1.0
 	if id == "X-BC" and v("SQ_S01_BC") != 0:
 		st.call_fn("aff", ["JC_BC", v("SQ_S01_BC")])                       # 봉천이 이제 안다(공개도 1 — 마을 안 소문)

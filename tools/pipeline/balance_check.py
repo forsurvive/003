@@ -6,6 +6,7 @@ import glob
 import json
 import os
 import re
+import zlib
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 DATA = os.path.join(ROOT, "game", "data")
@@ -41,6 +42,8 @@ HIT_PC = 0.8                                                            # 주인
 HIT_EN = 0.55                                                           # 적 명중(SD-11 §10.3 검증 예)
 EN_SKILL = 45.0                                                         # Enemy.skill 기본(systems/ai/enemy.gd)
 BITE_CD = 1.1                                                           # Enemy._bite 주기
+BITE_BACK = 1.5                                                         # 물고 빠지기(enemy.gd BITE_BACK, 1-13h — SD-14 §4.2): 둥지 · 물속 짐승은 1.0
+NO_BACK = {"CR-004", "CR-501", "CR-130"}
 CLAW_RATE = 0.8                                                         # 구울 맨손(_enemy_weapon)
 def _enemy_arms():
     """게임의 ENEMY_ARMS(systems/combat/interior_combat.gd)를 그대로 읽는다 — 사본을 두지 않는다"""
@@ -222,9 +225,10 @@ def check_combat(weapons, enemies):
             bite = float(ma.group(1)) if ma else 8.0
             melee_tok = 4 if eid in SWARMY else 2                         # 근접 토큰(무리 2 · 떼 4 — interior_combat 1.5초마다)
             raw = bite * max(0.0, 1 - pdr / 100.0)                      # 물기도 DR을 거친다(enemy.gd _bite — 2026-10-23 고침)
-            edps = raw / (BITE_CD + max(0.0, bite - 15.0) * 0.05)        # enemy.gd _bite: 센 물기일수록 예비 동작이 길다
+            cyc = (BITE_CD + max(0.0, bite - 15.0) * 0.05) * (1.0 if eid in NO_BACK else BITE_BACK)   # enemy.gd _bite: 센 물기일수록 예비 동작이 길다 · 물고 빠지기 ×1.5
+            edps = raw / cyc
             hit1 = raw
-            how = "물기 %g/%.1f초" % (bite, BITE_CD)
+            how = "물기 %g/%.1f초" % (bite, cyc)
         elif eid in CLAW:
             claw = float(str(e.get("attack", "근접 5")).split(" ")[1]) if " " in str(e.get("attack", "")) else 5.0
             hit1 = claw * (100 + EN_SKILL) / 200.0 * max(0.0, 1 - pdr / 100.0)
@@ -265,6 +269,162 @@ def check_combat(weapons, enemies):
             frac = hit1 / 200.0
             add("B5", "한 방 위험", "%s %s 한 번 공격 ↔ Lv1 HP 200" % (eid, e["name"]), round(frac * 100), "35% 이하",
                 "통과" if frac <= 0.35 else ("주의" if frac <= 0.44 else "실패"), "SD-25 B5(스트레스)", how)
+
+
+# ---------------------------------------------------------------- B4 받은 피해: 길 위 짐승 RE 편성 · 필드 보스 외눈(1-13h D-394)
+## 몬테카를로(0.05초 걸음 · 씨앗 고정 300판): 근접 토큰(무리 2 · 떼 4) · 물기 주기(× 물고 빠지기) · 우두머리 울부짖기(30초에 20초 +20%) ·
+## 우두머리를 잃으면 50% 무리 도주 · 시궁쥐 절반을 잃으면 물러남 · 외눈 국면(① 무리 절반까지 지켜봄 ③ HP 30% 도주 + 무리 절반 흩어짐).
+## 주인공 화력 = 표준 무기 dps × RE_K(보스 벤치 보정 — 재장전 · 뒷걸음 · 표적 바꿈). 받은 피해 ÷ 주인공 HP(평균 · 나쁜 10%).
+## 목표(SD-25 B4 — 조율사 권장, 사용자 위임 2026-10-23): 보통 RE 평균 60% · 나쁜 10% 100% 이하 / 필드 보스 평균 150%(스팀팩 셋 안) · 회복 없이 20초 이상
+RE_K = 0.63
+RE_LV = (3, 4, 5, 6)                                                    # 1막 주인공 레벨대
+RE_AP = 1.0                                                             # 무리가 닿기 전 쏘는 초(트인 길 8칸 안팎)
+PACK_LEAD = {"CR-106", "CR-500"}
+SCALE_BEAST = BITERS | {"CR-001", "CR-002"}
+
+
+def _unit(enemies, cid, lv):
+    r = enemies[cid]
+    base = int(r.get("level") or 1)
+    hp, dr = float(r["hp"]), float(r.get("dr") or 0)
+    m = re.match(r"^\S+ (\d+)", str(r.get("attack", "")))
+    bite = float(m.group(1)) if m else 8.0
+    if lv < base and cid in SCALE_BEAST:                                 # enemy.gd: 낮춘 짐승은 HP · 물기 · DR을 같은 비율로
+        hp, bite, dr = round(hp * lv / base), round(bite * lv / base), round(dr * lv / base)
+    return {"id": cid, "hp": hp, "hp0": hp, "dr": dr, "bite": bite, "sw": cid in SWARMY, "cd": 0.3}
+
+
+def _fight(us, lv, weapons, rng, one=False):
+    import math
+    php = 200.0 + (lv - 1) * 10.0
+    pdr = float(band(STD_DR, lv))
+    best = max(band(STD_WEAPON, lv), key=lambda wid: w_dps(weapons.get(wid, {}), 50.0, "new", 0.0))
+    t, taken, surv, dt = 0.0, 0.0, None, 0.05
+    held = [u for u in us if u["id"] == "CR-500"] if one else []
+    us = [u for u in us if u not in held]
+    n0 = len(us)
+    lead = any(u["id"] in PACK_LEAD for u in us + held)
+    rats0 = sum(1 for u in us if u["id"] == "CR-095")
+    rats_dead = 0
+    tgt = None
+    while (us or held) and t < 300:
+        if held and len(us) * 2 <= n0:                                     # 외눈 ②: 무리가 절반 이하 — 울부짖고 돌진
+            us = held + us
+            held = []
+        if not us:
+            break
+        pk = [u for u in us if not u["sw"]][:2]
+        sw = [u for u in us if u["sw"]][:4]
+        biters = pk + sw if t >= RE_AP else []
+        buff = 1.2 if lead and (t % 30.0) < 20.0 and any(u["id"] in PACK_LEAD for u in us) else 1.0
+        for u in biters:
+            u["cd"] -= dt
+            if u["cd"] <= 0:
+                d = u["bite"] * max(0.0, 1 - pdr / 100.0) * buff
+                taken += d
+                if taken >= php and surv is None:
+                    surv = t
+                u["cd"] += (BITE_CD + max(0.0, u["bite"] - 15.0) * 0.05) * (1.0 if u["id"] in NO_BACK else BITE_BACK)
+        if tgt not in us:
+            tgt = rng.choice(biters or us)
+        tgt["hp"] -= w_dps(weapons[best], 50.0, "new", tgt["dr"]) * HIT_PC * PART_AVG * CRIT_AVG * RE_K * dt
+        fled_one = one and tgt["id"] == "CR-500" and tgt["hp"] <= tgt["hp0"] * 0.3
+        if tgt["hp"] <= 0 or fled_one:
+            us.remove(tgt)
+            if tgt["id"] == "CR-095":
+                rats_dead += 1
+                if rats0 >= 2 and rats_dead * 2 >= rats0:                  # interior_combat: 시궁쥐 절반을 잃으면 물러난다
+                    us = [u for u in us if u["id"] != "CR-095"]
+            if tgt["id"] in PACK_LEAD:
+                dogs = [u for u in us if u["id"] in BITERS]
+                if tgt["id"] == "CR-500":                                   # 외눈(쓰러짐 · ③ 도주): 남은 무리 절반(올림)이 흩어진다
+                    for u in dogs[: (len(dogs) + 1) // 2]:
+                        us.remove(u)
+                elif rng.random() < 0.5:                                    # 우두머리를 잃은 무리 50%: 흩어진다
+                    us = [u for u in us if u not in dogs]
+            tgt = None
+        t += dt
+    return taken / php, (surv if surv is not None else 999.0)
+
+
+def _groups_of(d):
+    outs = []
+    vs = d.get("variants") or [{}]
+    for i, v in enumerate(vs):
+        gs = v.get("groups", d.get("groups", []))
+        hostile = [g for g in gs if g.get("hostile", True)]
+        if hostile:
+            outs.append(("판 %d" % (i + 1) if len(vs) > 1 else "", hostile))
+    return outs
+
+
+def check_re_taken(weapons, enemies):
+    import random
+    path = os.path.join(DATA, "world", "encounters.json")
+    if not os.path.exists(path):
+        return
+    tab = json.load(open(path, encoding="utf-8")).get("re", {})
+    seen = set()
+    for rid, d in sorted(tab.items()):
+        regs = d.get("regions", "*")
+        if d.get("cat") != "creature" or (isinstance(regs, list) and not ({"R01", "R02"} & set(regs))):
+            continue
+        for tag, gs in _groups_of(d):
+            ids = [u[0] for g in gs for u in g.get("units", [])] + [g["leader"][0] for g in gs if g.get("leader")]
+            if not ids or any(i not in enemies for i in ids) or not all(i in SCALE_BEAST for i in ids):
+                continue
+            key = json.dumps(gs, sort_keys=True)
+            if key in seen:
+                continue
+            seen.add(key)
+            worst = None
+            for lv in RE_LV:
+                rng = random.Random(zlib.crc32(("%s|%s|%d" % (rid, tag, lv)).encode()))   # 실행마다 같은 수(파이썬 hash는 실행마다 바뀐다)
+                res = []
+                for _ in range(300):
+                    us = []
+                    for g in gs:
+                        for cid, lo, hi in g.get("units", []):
+                            us += [_unit(enemies, cid, lv) for _ in range(rng.randint(int(lo), int(hi)))]
+                        ld = g.get("leader")
+                        if ld and rng.random() < float(ld[1]) and lv >= (int(ld[2]) if len(ld) > 2 else 0):
+                            us.append(_unit(enemies, ld[0], lv))
+                    if us:
+                        res.append(_fight(us, lv, weapons, rng))
+                if not res:
+                    continue
+                tk = sorted(r[0] * 100 for r in res)
+                avg, p90 = sum(tk) / len(tk), tk[int(len(tk) * 0.9)]
+                if worst is None or avg > worst[1]:
+                    worst = (lv, avg, p90)
+            if worst is None:
+                continue
+            lv, avg, p90 = worst
+            st = "통과" if avg <= 60 and p90 <= 100 else ("주의" if avg <= 75 and p90 <= 125 else "실패")
+            add("B4", "주인공 생존", "%s %s%s 받은 피해" % (rid, d.get("name", ""), (" " + tag) if tag else ""),
+                "Lv%d %.0f%% / %.0f%%" % (lv, avg, p90), "평균 60% · 나쁜 10% 100% 이하", st, "SD-25 B4(1-13h D-394)",
+                "제자리에서 쏘는 사람의 위쪽 끝(가장 나쁜 레벨) · 몬테카를로 300판 · 토큰 2/4 · 물고 빠지기 · 우두머리 도주 · 쥐 후퇴 · 화력 ×%.2f" % RE_K)
+    # 필드 보스 외눈: 진행기 편성(side_r01 _spawn_pack — 들개 4 + 사나운 2~3, 밤 +2) · 외눈 Lv6
+    if "CR-500" in enemies:
+        for night in (False, True):
+            worst = None
+            for lv in (4, 5, 6, 7):
+                rng = random.Random(500 + lv + (100 if night else 0))
+                res = []
+                for _ in range(300):
+                    us = [_unit(enemies, "CR-104", lv) for _ in range(4 + (2 if night else 0))] + [_unit(enemies, "CR-105", lv) for _ in range(rng.randint(2, 3))]
+                    us.append(_unit(enemies, "CR-500", 6))
+                    res.append(_fight(us, lv, weapons, rng, one=True))
+                tk = sorted(r[0] * 100 for r in res)
+                sv = sorted(r[1] for r in res)
+                avg, p10 = sum(tk) / len(tk), sv[int(len(sv) * 0.1)]
+                if worst is None or avg > worst[1]:
+                    worst = (lv, avg, p10)
+            lv, avg, p10 = worst
+            st = "통과" if avg <= 150 and p10 >= 20 else ("주의" if avg <= 190 and p10 >= 15 else "실패")
+            add("B4", "주인공 생존", "CR-500 외눈 무리%s 받은 피해" % (" 밤" if night else ""),
+                "Lv%d %.0f%% · 무회복 %s" % (lv, avg, "끝까지" if p10 >= 999 else "%.0f초" % p10), "평균 150% 이하 · 회복 없이 20초 이상", st,
+                "SD-25 B4 필드 보스(1-13h D-394)", "제자리 사격 위쪽 끝 · 국면 ① 무리 절반까지 지켜봄 · ③ HP 30% 도주 + 무리 절반 흩어짐 · 벤치 boss_fight_check(BF_STAND)와 맞음")
 
 
 # ---------------------------------------------------------------- 퀘스트 보상(원고 · 진행기)
@@ -612,6 +772,7 @@ def main():
     loot = load("loot.json")
     places = load(os.path.join("world", "places.json"))
     check_combat(weapons, enemies)
+    check_re_taken(weapons, enemies)
     check_rewards(places)
     check_economy(db, weapons, loot, enemies)
     check_misc(db, weapons)

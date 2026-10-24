@@ -39,7 +39,7 @@ RE = {
                "note": "SD-05 RE-001의 전역 판본(들개 CR-104는 SD-14 전역 크리처) — 구현 정합 1-E"},
     "RE-X05": {"name": "밤 사냥 들개", "cat": "creature", "regions": ["R01"], "prefer": ["산지", "언덕", "황무지"], "ban": ["업무"],
                "time": "night", "weight": 7,
-               "groups": [{"side": "a", "units": [["CR-104", 4, 6], ["CR-105", 0, 1]], "leader": ["CR-106", 0.6], "hostile": True}],
+               "groups": [{"side": "a", "units": [["CR-104", 4, 6], ["CR-105", 0, 1]], "leader": ["CR-106", 0.6, 5], "hostile": True}],   # 우두머리는 Lv5부터(1-13h 조율)
                "states": {"S1": 3, "S3": 2, "S2": 2}, "sign": "howl", "wounded": 0.1,
                "note": "SD-14 §11.2 R01 야간 교체 '들개 무리 +2' · §4.2 우두머리 — 낮 들개(RE-001 · X01)의 밤 판본"},
     "RE-X06": {"name": "시궁쥐 무리", "cat": "creature", "regions": ["R01", "R02"], "prefer": ["구도심", "시장", "공단", "지하철"],

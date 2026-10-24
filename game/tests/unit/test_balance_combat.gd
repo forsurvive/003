@@ -144,3 +144,85 @@ func test_balance_far_dog_closes(t) -> void:
 	var d1 := dog.loco.logical.distance_to(c.pc.pos())
 	t.ok(d1 < d0 - 64.0, "11칸 밖 교전 들개가 3초에 두 칸 넘게 다가온다(%.0f → %.0f px)" % [d0, d1])
 	m.free()
+
+
+func test_balance_one_phases(t) -> void:
+	# 1-13h 외눈 국면(SD-14 §10.3): ① 무리를 먼저 보내고 지켜본다 ② 무리가 절반 이하면 울부짖고 돌진 ③ HP 30%에서 숲으로(다리를 다치면 버틴다) · 무리 절반이 흩어진다
+	var h = ARMS.new()
+	var st: StoryState = h._state()
+	var r: Array = h._setup(st)
+	var m: InteriorMap = r[0]
+	var c: InteriorCombat = r[1]
+	var o: Vector2i = r[3]
+	var one := c.spawn("CR-500", Vector2((o.x + 12) * 32 + 16, (o.y + 3) * 32 + 16), m, st, {"lv": 6})
+	one.brain.state = AIBrain.S.COMBAT
+	one.brain.gauge = 100.0
+	var dogs: Array = []
+	for i in 4:
+		var dg := c.spawn("CR-104", Vector2((o.x + 12) * 32 + 16, (o.y + 1 + i) * 32 + 16) + Vector2(0, 8), m, st, {"lv": 2})   # 사기 판정 그대로(흩어질 수 있게)
+		dg.brain.state = AIBrain.S.COMBAT
+		dg.brain.gauge = 100.0
+		dogs.append(dg)
+	for d in dogs:
+		d.cmb.invuln = true                                            # 주인공을 물어도 되지만 이 시험 동안은 무리 수가 그대로
+	c.pc.invuln = true
+	var p0 := one.loco.logical
+	for f in 120:
+		c.tick(1.0 / 60.0, true, st)
+	t.eq(one.one_phase, 0, "무리가 다 살아 있으면 ① 지켜봄")
+	t.ok(one.loco.logical.distance_to(p0) < 12.0, "지켜보는 동안 자리를 지킨다(%.0fpx)" % one.loco.logical.distance_to(p0))
+	t.eq(int(c.stats.get("howls", 0)), 0, "① 동안은 울부짖지 않는다")
+	for d in dogs.slice(0, 2):
+		d.cmb.invuln = false
+		d.cmb.hp = 0.0
+		d.cmb.dead = true
+	for f in 60:
+		c.tick(1.0 / 60.0, true, st)
+	t.eq(one.one_phase, 1, "무리가 절반이 되면 ②")
+	t.ok(int(c.stats.get("howls", 0)) >= 1, "②에 들며 울부짖는다")
+	t.ok(dogs[2].buff_t > 0.0, "울부짖기를 받은 들개(물기 +20%)")
+	for f in 60:
+		c.tick(1.0 / 60.0, true, st)
+	t.ok(one.loco.logical.distance_to(c.pc.pos()) < p0.distance_to(c.pc.pos()) - 32.0, "② 돌진(주인공 쪽으로 다가온다)")
+	one.cmb.hp = one.cmb.max_hp * 0.25
+	for f in 60:
+		c.tick(1.0 / 60.0, true, st)
+	t.eq(one.one_phase, 2, "HP 30% 이하 = ③")
+	t.ok(one.brain.fleeing(), "다리가 멀쩡하면 숲으로 달아난다")
+	var fled := dogs.slice(2).filter(func(d): return d.brain.fleeing()).size()
+	t.eq(fled, 1, "남은 무리 둘 가운데 절반(하나)이 흩어진다")
+	# 다리를 다친 외눈: 달아나지 못하고 버틴다
+	var one2 := c.spawn("CR-500", Vector2((o.x + 10) * 32 + 16, (o.y + 5) * 32 + 16), m, st, {"lv": 6})
+	one2.brain.state = AIBrain.S.COMBAT
+	one2.brain.gauge = 100.0
+	one2.one_phase = 1
+	one2.cmb.crippled["leg"] = true
+	one2.cmb.hp = one2.cmb.max_hp * 0.25
+	for f in 60:
+		c.tick(1.0 / 60.0, true, st)
+	t.ok(one2.one_phase == 2 and not one2.brain.fleeing(), "다리를 다치면 달아나지 못한다(끝까지 싸운다)")
+	m.free()
+
+
+func test_balance_one_hit_wakes(t) -> void:
+	# ①이라도 외눈이 먼저 맞으면 바로 ② — 우두머리를 먼저 노리는 길이 산다
+	var h = ARMS.new()
+	var st: StoryState = h._state()
+	var r: Array = h._setup(st)
+	var m: InteriorMap = r[0]
+	var c: InteriorCombat = r[1]
+	var o: Vector2i = r[3]
+	var one := c.spawn("CR-500", Vector2((o.x + 12) * 32 + 16, (o.y + 3) * 32 + 16), m, st, {"lv": 6})
+	one.brain.state = AIBrain.S.COMBAT
+	one.brain.gauge = 100.0
+	for i in 4:
+		_spawn(c, m, st, "CR-104", Vector2((o.x + 12) * 32 + 16, (o.y + 1 + i) * 32 + 16) + Vector2(0, 8), {"lv": 2}).cmb.invuln = true
+	c.pc.invuln = true
+	for f in 60:
+		c.tick(1.0 / 60.0, true, st)
+	t.eq(one.one_phase, 0, "맞기 전 ①")
+	one.cmb.take({"hp": 10.0}, c.pc.pos())
+	for f in 60:
+		c.tick(1.0 / 60.0, true, st)
+	t.eq(one.one_phase, 1, "외눈이 맞으면 ②(울부짖고 내려온다)")
+	m.free()
