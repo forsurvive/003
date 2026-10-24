@@ -253,12 +253,19 @@ func _live_step(me: Vector2) -> void:
 var dt_last := 0.0
 
 
+var _wpath := PackedVector2Array()
+var _wgoal := Vector2.INF
+var _wt := -1.0
+
+
+## 높은 턱 · 사다리 · 층을 넘는 길(지하시장 봇 _walk와 같은 NpcRoutine) — 0.5초마다 다시 찾는다
 func _walk_to(me: Vector2, goal: Vector2) -> Callable:
-	var p: PackedVector2Array = host.map.path(me, goal)
-	var nxt := goal
-	for q in p:
-		if q.distance_to(me) > 12.0:
-			nxt = q
-			break
-	var dir := (nxt - me).normalized()
+	var p := host.player.loco.render
+	if _wpath.is_empty() or goal.distance_to(_wgoal) > 48.0 or t - _wt > 0.5:
+		_wpath = NpcRoutine.with_start(host.map, p, goal, host.player.floor_id)
+		_wgoal = goal
+		_wt = t
+	while _wpath.size() > 0 and (NpcRoutine.arrived(p, _wpath[0]) or (_wpath.size() > 1 and p.distance_to(_wpath[1]) <= _wpath[0].distance_to(_wpath[1]) + 2.0)):
+		_wpath.remove_at(0)
+	var dir := (goal - p).normalized() if _wpath.is_empty() else NpcRoutine.step_dir(p, _wpath[0])
 	return func() -> Vector2: return dir
