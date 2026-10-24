@@ -794,10 +794,10 @@ func _p4_escape_done() -> void:
 		_first_view()
 	elif phase == "P4S7" and st.quests.stage("MQ-P4") >= 100:
 		phase = "end"
-		print("MQ-P4 완료: 탈출 %d · 카르마 %d · 비상정부 %d · 하도윤 %d · 붙잡힘 %d · 보안요원 사살 %d · 계엄병 사망 %d · K_RALLY %d · 막 %d · XP %d" % [
+		print("MQ-P4 완료: 탈출 %d · 카르마 %d · 비상정부 %d · 하도윤 %d · 붙잡힘 %d · 보안요원 사살 %d · 계엄병 사망 %d · K_RALLY %d · 막 %d · XP %d · 플레이 %.0f초" % [
 			int(st.vars.get_v("V_ESCAPE")), int(st.vars.get_v("V_KARMA")), int(st.vars.get_v("AFF_BJ")), int(st.vars.get_v("V_DOYUN")),
 			int(st.vars.get_v("MQP4_CAUGHT")), int(st.vars.get_v("MQP4_SEC_KO")), int(st.vars.get_v("MQP4_BJ_KO")),
-			int(st.vars.get_v("K_RALLY")), int(st.vars.get_v("V_ACT")), int(st.vars.get_v("PC_XP"))])
+			int(st.vars.get_v("K_RALLY")), int(st.vars.get_v("V_ACT")), int(st.vars.get_v("PC_XP")), host.play_t])
 		_shot("end")
 		if auto and not chain:
 			get_tree().create_timer(0.5).timeout.connect(get_tree().quit)

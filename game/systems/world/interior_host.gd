@@ -77,6 +77,7 @@ var zone_walk := false                                           ## map_entered�
 var _from := ""
 const TIME_SCALE := 30.0                                          ## 실시간 1초 = 게임 30초(SD-11 §1, SD-12 확정)
 var _clock_acc := 0.0
+var play_t := 0.0                                ## 이 판(실행)에서 흐른 실제 플레이 초 — 봇 측정용(1-13j D-384 Lv3 시점), 저장하지 않는다
 var enc_live: EncounterLive                                       ## 인카운터 진행(1-3)
 var story_hold := false                                           ## 이야기 사건 중(MQ-106 버티버드 등): 무작위 인카운터를 세우지 않는다(1-7)
 var capture_hooks := {}                                           ## 잡은 쪽 → 진행기 함수(1-7: "BJ" 계엄군 생포 · "BJ_HANDOVER" 새벽인력 인계 → 청계산 귀빈실)
@@ -592,6 +593,7 @@ func _wet_tick() -> void:
 
 
 func _physics_process(dt: float) -> void:
+	play_t += dt
 	if map == null:
 		return
 	if map is WorldMap and map.id != _zone:                          # 걸어서 다른 구역(손 맵)에 들어섰다: 맵에 들어선 것과 같이 알린다
@@ -3088,6 +3090,8 @@ var _pend_t := 0.0                                                     ## 미배
 
 
 func _level_up(v: int) -> void:
+	if OS.get_environment("ECON_LOG") != "":                            # 경제 곡선 v2 · Lv3 시점(D-384): 봇이 레벨이 오른 순간을 찍는다(사람 플레이엔 안 찍힘)
+		print("LVUP|%d|XP %d|날 %d|%02d시|플레이 %.0f초" % [v, int(st.vars.get_v("PC_XP")), int(st.vars.get_v("GAME_DAY")), int(st.vars.get_v("GAME_HOUR")), play_t])
 	_note("레벨 업 — Lv %d" % v)
 	combat.level_fx()
 	_lv_t = 0.0
