@@ -2577,8 +2577,9 @@ func _handlers() -> void:
 			reveal_near(map.tile_of(player.loco.logical))
 			done.call()
 			return
-		if a.size() == 1 and str(a[0]) == "lair":                     # 사냥꾼이 아는 굴(1-13e RE-039): 가장 가까운 아직 표시 안 된 크리처 둥지(160타일 안). 결과는 REVEAL_OK
-			var ok := reveal_near(map.tile_of(player.loco.logical), "크리처 둥지", 160.0, "사냥꾼이 짚어 준 굴이 지도에 표시되었다")
+		if a.size() >= 1 and str(a[0]) == "lair":                     # 사냥꾼이 아는 굴(1-13e RE-039): 가장 가까운 아직 표시 안 된 크리처 둥지(160타일 안). 결과는 REVEAL_OK · 둘째 칸 = 누가 짚었나(1-13i 감시조)
+			var who_msg := {"watch": "감시조가 가리킨 발자국 쪽 굴이 지도에 표시되었다"}
+			var ok := reveal_near(map.tile_of(player.loco.logical), "크리처 둥지", 160.0, str(who_msg.get(str(a[1]) if a.size() > 1 else "", "사냥꾼이 짚어 준 굴이 지도에 표시되었다")))
 			st.vars.set_v("REVEAL_OK", 1 if ok else 0)
 			done.call()
 			return

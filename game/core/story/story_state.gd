@@ -176,7 +176,7 @@ func _init() -> void:
 	# 기본 RE 30종(1-13e): RE_V · RE_VM 지금 RE의 판(진행기가 세울 때) · RE033_ROB 이날 전까지 연보경이 거래 거부(길에서 털림) · RE033_HELP 척후를 맡아 준 날 ·
 	# HUNT_OUT 엄태경이 산에 간 날(16시까지 오두막 빔) · RE039_LAIR 굴을 물은 날 · REVEAL_OK 방금 표시 성공 · RE041_N 끝난 신호 차례 ·
 	# RE053_BC · RE053_SA 길 잃은 개(0 아직 · 1 돌려보냄 · 2 고마움 받음 · 3 제 발로 · 4 떠돌이가 끌고 감) · GIFT_DAY 기부한 날(헌금 · 정착지 기부 공용 — SD-10 하루 +30) · GS_PIPCHAT 신참이 핍-보이를 봄
-	for k in ["RE_V", "RE_VM", "RE_TS", "RE_SAW", "RE_X08_N", "RE_X08_SAW", "RE_X09_N", "RE_X09_HIDE", "RE033_ROB", "RE033_HELP", "RE033_HELP_SAID", "RE033_NEWS", "HUNT_OUT", "RE039_LAIR", "REVEAL_OK", "RE041_N",
+	for k in ["RE_V", "RE_VM", "RE_TS", "RE_SAW", "RE_X08_N", "RE_X08_SAW", "RE_X09_N", "RE_X09_HIDE", "RE_HEARD", "RE_X09_BRIBE", "RE033_ROB", "RE033_HELP", "RE033_HELP_SAID", "RE033_NEWS", "HUNT_OUT", "RE039_LAIR", "REVEAL_OK", "RE041_N",
 			"RE053_BC", "RE053_SA", "GIFT_DAY", "GS_PIPCHAT", "RE033_ROB_SAID", "RE053_BUY", "GS_GUESTSAID"]:
 		vars.declare(k, "int", 0)
 	# 사당 환승촌(1-8f): 인물 첫 만남 · SA_MAKCHA_HEARD 서쪽 터널 '막차 손님' 들음(SQ-S05 '이미 앎') · SA_MAT_UNTIL 승강장 매트 빌린 끝 절대 분 ·
@@ -470,6 +470,21 @@ func set_var(name: String, v: Variant) -> bool:
 	return vars.set_v(name, v)
 
 
+## 경호단이 거둔 장물(1-13i): '주인한테 돌려준다'더니 세월상회(V14) 진열대에 반값으로 오른다 — 되살 수 있다(UQ-125 '내 물건' 진열과 같은 자리)
+func _to_fence(id: String, n: int) -> void:
+	var key := "shop:V14"
+	var sh: Dictionary = boxes.get(key, {})
+	var mine: Dictionary = sh.get("mine", {})
+	mine[id] = int(mine.get(id, 0)) + n
+	sh["mine"] = mine
+	if sh.has("items"):
+		sh["items"][id] = int(sh["items"].get(id, 0)) + n                # 지금 진열에도 바로
+	else:
+		sh["day"] = -9999                                                # 아직 연 적 없는 가게: 처음 열 때 진열을 새로 짜며 '내 물건'을 얹는다
+		sh["caps"] = 0
+	boxes[key] = sh
+
+
 func call_fn(name: String, args: Array) -> Variant:
 	match name:
 		"karma":
@@ -547,6 +562,7 @@ func call_fn(name: String, args: Array) -> Variant:
 				if m > 0:
 					call_fn("take", [str(k), m])
 					dn += m
+					_to_fence(str(k), m)
 				stolen.erase(k)
 			return dn
 		"rq":                                                           # 반복 퀘스트 완료 한 번(1-12j, SD-05 §4.1): rq(id, fac, caps, xp, kind, opt) → Repeat.done

@@ -823,6 +823,7 @@ CR-460 [피곤] …틀린 말은 아니다.
 @npc   CR-466
 @cond  V_ACT >= 1
 ? AFF_JC_BC <= -60 -> CHASE
+? AFF_JC_BC <= -20 -> WARY
 ? RE_TS == 2 -> TS2
 ? RE_TS == 1 -> TS1
 SYS 둘 다 총을 쥔 채 담벼락에 새 분필 화살표를 긋고 있다. 이 길은 아직 누구 것인지 정해지지 않았다.
@@ -853,12 +854,21 @@ CR-466 [미소] 또 보네. 이 길 자주 다니나 봐.
 -> ASK
 * TRACK
 CR-466 [기본] 개천 둑에 들개 발자국이 새로 났어. 셋인가 넷. 쫓아갈 사람이 없어서 보고만 있어.
+> 개천 쪽으로 갔다며? -> LAIR_HEARD ?? RE_HEARD == 1
 > 굴이 어딘지 알아? -> LAIR
 > 조심해 -> ASK
-* LAIR
-CR-466 [기본] 정확힌 몰라. 발자국은 저쪽으로 갔어. 가서 보면 찾겠지.
-@cmd reveal lair
+* LAIR_HEARD
+CR-466 [놀람] 들었어? …맞아, 개천 둑 따라 내려갔어. 둑 끝에서 산 쪽으로 꺾였고.
 ! aff("JC_BC", 1)
+-> LAIR_MARK
+* LAIR
+CR-466 [기본] 정확힌 몰라. 발자국이 저쪽으로 갔어. 따라가 보면 나오겠지.
+* LAIR_MARK
+@cmd reveal lair watch
+? REVEAL_OK == 0 -> LAIR_NONE
+-> ASK
+* LAIR_NONE
+CR-466 [피곤] …둑에서 발자국이 끊겼어. 물을 건넌 모양이야.
 -> ASK
 * ONE
 ? dead("CR-500") == 1 and SQ_S01_BC == 0 -> ONE_DEAD
@@ -872,11 +882,11 @@ CR-466 [기본] 바위굴이 조용해졌어. 밤에 울음이 안 들려. …�
 CR-466 [미소] 무리가 남쪽 능선으로 넘어갔다며? 피 안 보고. 조장님이 그 얘기 하면서 웃더라.
 -> ASK
 * ASK
-> 오다가 들개를 봤어 -> SAW ?? RE_SAW == 1 and RE_X08_SAW != GAME_DAY
+> 길에서 짐승 무리를 만났어 -> SAW ?? RE_SAW == 1 and RE_X08_SAW != GAME_DAY
 > 요즘 별일 없어? -> NEWS
 > 수고해 -> BYE
 * SAW
-CR-466 [놀람] 어디서? …알려 줘서 고마워. 망루에 올려 둘게. 길 도는 사람이 하나 더 늘었네.
+CR-466 [놀람] 어디서? 무슨 짐승? …알려 줘서 고마워. 망루에 올려 둘게. 길 도는 사람이 하나 더 늘었네.
 ! RE_X08_SAW = GAME_DAY; aff("JC_BC", 1)
 -> ASK
 * NEWS
@@ -892,6 +902,14 @@ CR-466 [기본] 고가 밑 드럼불이 꺼졌대. 졸개들이 고시촌으로 
 -> ASK
 * BYE
 CR-466 [기본] 해 지기 전에 들어가. 아랫문은 해 넘어가면 닫아.
+@cmd re leave
+-> END
+* WARY
+CR-466 [분노] 이름 대. 어디 가는데? …봉천 쪽으론 조장님 허락 받고 와.
+> 지나가는 길이야 -> BYE
+> 조장님은 어디 있어? -> WARY_WHERE
+* WARY_WHERE
+CR-466 [기본] 망루. 아랫문으로 와. 총은 문 앞에 두고.
 @cmd re leave
 -> END
 * CHASE
@@ -965,9 +983,15 @@ CR-457 [기본] 깨끗하네요. 가세요.
 -> END
 * FRISK_HIT
 SYS 장갑이 멈춘다. 가방에서 물건 하나를 손끝으로 집어 들고 냄새를 맡는다.
+? RE_X09_BRIBE > 0 -> FRISK_AGAIN
 CR-457 [분노] 이거, 누구 건지 아시죠? 장물 들고 상인회 구역 돌아다니시면 곤란해요.
+-> FRISK_MENU
+* FRISK_AGAIN
+CR-457 [피곤] 또 그거예요? 지난번 그 손님이네. 경호비는 한 번이에요. 이번엔 두 배.
+* FRISK_MENU
 > 내놓는다 -> GIVE_UP
-> [캡 30] 이걸로 모른 척해 줘 -> BRIBE
+> [캡 30] 이걸로 모른 척해 줘 -> BRIBE ?? RE_X09_BRIBE == 0
+> [캡 60] 이번에도 모른 척해 줘 -> BRIBE2 ?? RE_X09_BRIBE > 0
 > [화술 보통] 길에서 주운 거야 -> FRISK_OK | FRISK_NO
 > 달아난다 -> RUN
 * GIVE_UP
@@ -977,6 +1001,12 @@ CR-457 [기본] 주인한테는 저희가 돌려줘요. 이번엔 장부에 안 
 -> END
 * BRIBE
 CR-457 [미소] 경호비로 받아 두죠. 다음엔 아래로 들고 내려오지 마세요.
+! RE_X09_BRIBE = GAME_DAY
+@cmd re leave
+-> END
+* BRIBE2
+CR-457 [기본] …받아 두죠. 그래도 장부엔 적어요. 세 번은 없어요.
+! aff("JH", -3); RE_X09_BRIBE = GAME_DAY
 @cmd re leave
 -> END
 * FRISK_OK
@@ -989,12 +1019,14 @@ CR-457 [분노] 길에서 주운 물건엔 이 냄새가 안 나요. 내놓으�
 @cmd re leave
 -> END
 * RUN
+CR-457 [분노] 잡아! 장부에 적기 전에!
 ! aff("JH", -5)
 @cmd re run
 -> END
 * HUNT
 CR-457 [기본] 손님, 출입 금지 하나가 이 근처에 숨었어요. 외상값 떼고 달아난 놈. 못 보셨어요?
 > 못 봤어 -> HUNT_NO
+> 폐차 뒤를 보자 -> HUNT_FIND ?? RE_HEARD == 1
 > [인지력 6] 같이 찾아 줄게 -> HUNT_FIND
 > [화술 보통] 아까 저쪽 골목으로 뛰어가던데 -> HUNT_LIE | HUNT_LIE_NO
 * HUNT_NO
@@ -1008,7 +1040,9 @@ CR-457 [미소] 눈 좋으시네. 수색비예요. 상인회가 기억할 거예
 @cmd re leave
 -> END
 * HUNT_LIE
-SYS 경호 구울 둘이 골목 쪽으로 뛰어간다. 등 뒤 폐차 문짝 아래에서 누군가 숨을 몰아쉬고, 반대쪽 담을 넘어 사라진다.
+SYS 경호 구울 둘이 골목 쪽으로 뛰어간다. 등 뒤 폐차 문짝 아래에서 누군가 숨을 몰아쉬고, 반대쪽 담을 넘기 전에 구겨진 쪽지를 떨어뜨린다.
+SYS '외상값 대신이오. 역사 쇼핑몰 지하 완구 매장을 뒤져 보시오. 쓸 만한 책이 하나 있소.'
+@cmd reveal L-R02-13
 ! karma(5); RE_X09_HIDE = 1
 @cmd re leave
 -> END

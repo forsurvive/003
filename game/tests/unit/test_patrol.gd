@@ -82,7 +82,7 @@ func test_patrol_watch_scene(t) -> void:
 	st.vars.set_v("RE_TS", 0)
 	st.vars.set_v("RE_SAW", 1)
 	var aff0 := int(st.vars.get_v("AFF_JC_BC"))
-	r = _play(st, "RE-X08_TALK", ["들개를 봤어", "수고해"])
+	r = _play(st, "RE-X08_TALK", ["짐승 무리를 만났어", "수고해"])
 	t.ok(_has(r, "새 분필 화살표"), "경합 구역 = 새 표식을 긋는다")
 	t.ok(int(st.vars.get_v("AFF_JC_BC")) > aff0, "본 것을 알려 주면 봉천 호감")
 	t.eq(int(st.vars.get_v("RE_X08_SAW")), 4, "그날 한 번")
@@ -122,6 +122,7 @@ func test_patrol_guard_scene(t) -> void:
 	r = _play(st, "RE-X09_TALK", ["내놓는다"])
 	t.ok(_has(r, "누구 건지 아시죠"), "장물을 짚는다")
 	t.eq(st.count_of("I-001"), 1, "장물만 내놓는다(내 것은 남는다)")
+	t.eq(int((st.boxes.get("shop:V14", {}).get("mine", {}) as Dictionary).get("I-001", 0)), 1, "'돌려준다'던 장물이 세월상회 진열대에(되살 수 있다)")
 	t.eq(int(st.call_fn("stolen_n", [])), 0, "장물 기록이 비었다")
 	r = _play(st, "RE-X09_TALK")
 	t.ok(not _has(r, "주머니부터"), "중립 손님이 장물이 없으면 몸수색 없음")
@@ -129,12 +130,32 @@ func test_patrol_guard_scene(t) -> void:
 	r = _play(st, "RE-X09_TALK")
 	t.ok(_has(r, "주머니부터") and _has(r, "깨끗하네요"), "경계 단계 = 늘 몸수색 · 장물이 없으면 보낸다")
 	st.vars.set_v("AFF_JH", 0)
+	# 뇌물: 한 번은 30캡 · 같은 장물로 또 걸리면 '또 그거예요?' 60캡
+	st.vars.set_v("RE_V", 2)
+	st.call_fn("give", ["I-001", 1])
+	st.stolen["I-001"] = 1
+	st.vars.set_v("PC_CAPS", 200)
+	r = _play(st, "RE-X09_TALK", ["모른 척해 줘"])
+	t.eq(int(st.vars.get_v("PC_CAPS")), 170, "첫 뇌물 30캡")
+	t.eq(int(st.vars.get_v("RE_X09_BRIBE")), 4, "뇌물 준 날이 남는다")
+	r = _play(st, "RE-X09_TALK", ["이번에도"])
+	t.ok(_has(r, "또 그거예요"), "다시 걸리면 알아본다")
+	t.eq(int(st.vars.get_v("PC_CAPS")), 110, "두 번째는 60캡")
+	st.stolen.clear()
 	# 출입 금지 손님 수색(판 3)
 	st.vars.set_v("RE_V", 3)
 	var caps0 := int(st.vars.get_v("PC_CAPS"))
 	r = _play(st, "RE-X09_TALK", ["못 봤어"])
 	t.eq(r["cmd"], "leave", "못 봤다 = 지나간다")
+	st.vars.set_v("RE_HEARD", 0)
+	r = _play(st, "RE-X09_TALK", ["폐차 뒤를 보자"])
+	t.ok(r["err"].contains("선택지 없음"), "엿듣지 않았으면 '폐차 뒤' 선택지가 없다")
+	st.vars.set_v("RE_HEARD", 1)
+	var c1 := int(st.vars.get_v("PC_CAPS"))
+	r = _play(st, "RE-X09_TALK", ["폐차 뒤를 보자"])
+	t.eq(int(st.vars.get_v("PC_CAPS")), c1 + 15, "엿들은 사람은 능력치 없이 찾아 준다(수색비 15)")
 	# 적대 = 추심
+	caps0 = int(st.vars.get_v("PC_CAPS"))
 	st.vars.set_v("AFF_JH", -70)
 	r = _play(st, "RE-X09_TALK", ["덤벼 봐"])
 	t.eq(r["cmd"], "fight", "적대에 맞서면 싸움")
@@ -167,11 +188,41 @@ func test_patrol_live_chatter(t) -> void:
 	h.player.loco.place(lead.loco.logical + Vector2(7 * 32, 0))
 	h.player.position = h.player.loco.render
 	var bubbles := 0
-	for i in 24:
+	for i in 80:
 		h.enc_live.tick(0.25)
 		for a in actors:
 			if is_instance_valid(a):
 				bubbles += a.get_children().filter(func(c): return c is ChatBubble).size()
 	t.ok(bubbles > 0, "7칸 밖에서 둘이 떠드는 말풍선이 뜬다")
 	t.ok(not bool(h.enc_live.cur.get("talked", true)), "멀리 있으면 말을 걸지 않는다")
+	t.eq(int(h.st.vars.get_v("RE_HEARD")), 1, "끝까지 엿들었다(RE_HEARD)")
+	t.eq(int(h.enc_live.cur.get("chat_i", 0)), (h.enc_live.cur["def"]["chatter"] as Array).size(), "한 바퀴 돌고 멈춘다(되풀이하지 않는다)")
+	h.free()
+
+
+func test_patrol_guard_leash(t) -> void:
+	# 경호단 '달아난다' = 싸움(사용자 결정 2026-10-24) — 그러나 자리에서 16칸 넘게 벌어지면 싸움을 그만두고 돌아간다
+	var h := InteriorHost.new()
+	h._ready()
+	h.body = "adult"
+	h.date_text = "2277. 10. 25.  14:00"
+	for q in ["MQ-P1", "MQ-P2", "MQ-P3", "MQ-P4", "MQ-101"]:
+		h.st.quests.set_stage(q, 100)
+	h.st.vars.set_v("V_ACT", 1)
+	h.enter("W", "@722,1124")
+	t.ok(h.enc_live.start({"re": "RE-X09", "force": true}), "경호단을 세운다")
+	for i in 40:
+		h.enc_live.tick(0.25)
+		if str(h.enc_live.cur.get("phase", "")) == "live":
+			break
+	h.ev.handlers["re"].call(["run"], func() -> void: pass)
+	var foes: Array = h.enc_live.cur.get("foes", [])
+	t.eq(foes.filter(func(e): return is_instance_valid(e) and "player" in e.foes).size(), 2, "달아나면 경호 구울 둘이 덤빈다")
+	var c: Vector2 = Vector2(h.enc_live.cur["center"]) * 32.0
+	h.player.loco.place(c + Vector2(18 * 32, 0))
+	h.player.position = h.player.loco.render
+	h.enc_live.tick(0.25)
+	t.ok(h.enc_live.cur.is_empty(), "16칸 넘게 벌어지면 인카운터가 끝난다")
+	t.ok(foes.all(func(e): return not is_instance_valid(e) or not ("player" in e.foes)), "경호단은 싸움을 그만두고 돌아간다")
+	t.ok(foes.any(func(e): return is_instance_valid(e) and str(e.say_text).contains("상인회 구역")), "'여기서부턴 상인회 구역 밖' 한마디")
 	h.free()

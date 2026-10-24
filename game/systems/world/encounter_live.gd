@@ -212,6 +212,7 @@ func start(req: Dictionary) -> bool:
 		if str(r[0]) != re and str(Encounters.re_def(str(r[0])).get("cat", "")) == "creature":
 			saw = 1
 	host.st.vars.set_v("RE_SAW", saw)
+	host.st.vars.set_v("RE_HEARD", 0)
 	if str(d.get("on_start", "")) != "":
 		StoryExpr.run(str(d["on_start"]), host.st)                       # 세워지는 순간 한 번(1-13e RE-039 — 사냥꾼이 그날 봉천 자리를 비운다, P3)
 	var sign := str(d.get("sign", ""))
@@ -603,17 +604,20 @@ func _live(dt: float) -> void:
 	_fight_check()
 
 
-## 서서 떠든다(1-13i 순찰 — 엿보는 장면): 기다리는 무리가 12칸 안의 주인공에게 들리게 자기들끼리 말한다(판 def "chatter" [[사람 차례, 말], …] — 3.2초마다 한 줄, 끝나면 처음부터)
+## 서서 떠든다(1-13i 순찰 — 엿보는 장면): 기다리는 무리가 12칸 안의 주인공에게 들리게 자기들끼리 말한다(판 def "chatter" [[사람 차례, 말], …] — 3.2초마다 한 줄).
+## 한 바퀴만 — 마지막 줄은 주인공을 알아채는 말. 끝까지 들었으면 RE_HEARD 1(장면에 엿들은 사람만 고르는 선택지가 열린다 — 1-13i 재미 검수)
 func _chatter(dt: float, dl: float) -> void:
 	var lines: Array = cur["def"].get("chatter", [])
-	if lines.is_empty() or dl > 12.0 * 32.0:
+	if lines.is_empty() or dl > 12.0 * 32.0 or int(cur.get("chat_i", 0)) >= lines.size():
 		return
 	cur["chat_t"] = float(cur.get("chat_t", 0.6)) - dt
 	if float(cur["chat_t"]) > 0.0:
 		return
 	cur["chat_t"] = 3.2
-	var i := int(cur.get("chat_i", 0)) % lines.size()
+	var i := int(cur.get("chat_i", 0))
 	cur["chat_i"] = i + 1
+	if i + 1 >= lines.size():
+		host.st.vars.set_v("RE_HEARD", 1)
 	var who: int = clampi(int(lines[i][0]), 0, cur["actors"].size() - 1)
 	var a = cur["actors"][who]
 	if is_instance_valid(a):
@@ -829,6 +833,17 @@ func _fight_check() -> void:
 	if hostile.is_empty():
 		return
 	var me: Vector2 = host.player.loco.logical
+	if cur["def"].has("leash") and me.distance_to(Vector2(cur["center"]) * 32.0) > float(cur["def"]["leash"]) * 32.0:
+		for e in hostile:                                                # 목줄(1-13i 경호단 — 사용자 결정 2026-10-24): 제 구역 밖까지는 쫓지 않는다 — 싸움을 그만두고 자리로
+			e.cmb.team = "calm"
+			e.foes = []
+			e.brain.state = AIBrain.S.RETURN
+			e.say_text = str(cur["def"].get("leash_say", "여기까지."))
+			e.say_t = 2.5
+			_walk_off(e)
+		host.combat._rebuild_list()
+		_end("left")
+		return
 	for e in hostile:
 		if e.loco.logical.distance_to(me) <= LOST_T * 32.0 or host.map.line_of_sight(e.loco.logical, me):
 			return

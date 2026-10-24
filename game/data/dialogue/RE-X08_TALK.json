@@ -6,33 +6,43 @@
  "cond": "V_ACT >= 1",
  "labels": {
   "START": 0,
-  "TS1": 5,
-  "TS2": 7,
-  "OPEN": 9,
-  "HELLO_F": 14,
-  "AGAIN": 17,
-  "VAR": 20,
-  "TRACK": 23,
-  "LAIR": 25,
-  "ONE": 29,
-  "ONE_DEAD": 33,
-  "ONE_LEFT": 35,
-  "ASK": 37,
-  "SAW": 38,
-  "NEWS": 41,
-  "NEWS_KC": 45,
-  "NEWS_KC4": 47,
-  "BYE": 49,
-  "CHASE": 52,
-  "CHASE_GO": 54,
-  "CHASE_OK": 56,
-  "CHASE_FIGHT": 59
+  "TS1": 6,
+  "TS2": 8,
+  "OPEN": 10,
+  "HELLO_F": 15,
+  "AGAIN": 18,
+  "VAR": 21,
+  "TRACK": 24,
+  "LAIR_HEARD": 26,
+  "LAIR": 29,
+  "LAIR_MARK": 30,
+  "LAIR_NONE": 33,
+  "ONE": 35,
+  "ONE_DEAD": 39,
+  "ONE_LEFT": 41,
+  "ASK": 43,
+  "SAW": 44,
+  "NEWS": 47,
+  "NEWS_KC": 51,
+  "NEWS_KC4": 53,
+  "BYE": 55,
+  "WARY": 58,
+  "WARY_WHERE": 60,
+  "CHASE": 63,
+  "CHASE_GO": 65,
+  "CHASE_OK": 67,
+  "CHASE_FIGHT": 70
  },
  "ops": [
   {
    "op": "if",
    "cond": "AFF_JC_BC <= -60",
    "to": "CHASE"
+  },
+  {
+   "op": "if",
+   "cond": "AFF_JC_BC <= -20",
+   "to": "WARY"
   },
   {
    "op": "if",
@@ -150,12 +160,20 @@
    "op": "choice",
    "opts": [
     {
+     "text": "개천 쪽으로 갔다며?",
+     "tags": [],
+     "cond": "RE_HEARD == 1",
+     "fx": "",
+     "to": "LAIR_HEARD",
+     "id": "RE-X08_TALK:1:0"
+    },
+    {
      "text": "굴이 어딘지 알아?",
      "tags": [],
      "cond": "",
      "fx": "",
      "to": "LAIR",
-     "id": "RE-X08_TALK:1:0"
+     "id": "RE-X08_TALK:1:1"
     },
     {
      "text": "조심해",
@@ -163,26 +181,52 @@
      "cond": "",
      "fx": "",
      "to": "ASK",
-     "id": "RE-X08_TALK:1:1"
+     "id": "RE-X08_TALK:1:2"
     }
    ]
   },
   {
    "op": "line",
    "who": "CR-466",
+   "emo": "놀람",
+   "text": "들었어? …맞아, 개천 둑 따라 내려갔어. 둑 끝에서 산 쪽으로 꺾였고."
+  },
+  {
+   "op": "do",
+   "fx": "aff(\"JC_BC\", 1)"
+  },
+  {
+   "op": "goto",
+   "to": "LAIR_MARK"
+  },
+  {
+   "op": "line",
+   "who": "CR-466",
    "emo": "기본",
-   "text": "정확힌 몰라. 발자국은 저쪽으로 갔어. 가서 보면 찾겠지."
+   "text": "정확힌 몰라. 발자국이 저쪽으로 갔어. 따라가 보면 나오겠지."
   },
   {
    "op": "cmd",
    "name": "reveal",
    "args": [
-    "lair"
+    "lair",
+    "watch"
    ]
   },
   {
-   "op": "do",
-   "fx": "aff(\"JC_BC\", 1)"
+   "op": "if",
+   "cond": "REVEAL_OK == 0",
+   "to": "LAIR_NONE"
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "CR-466",
+   "emo": "피곤",
+   "text": "…둑에서 발자국이 끊겼어. 물을 건넌 모양이야."
   },
   {
    "op": "goto",
@@ -232,7 +276,7 @@
    "op": "choice",
    "opts": [
     {
-     "text": "오다가 들개를 봤어",
+     "text": "길에서 짐승 무리를 만났어",
      "tags": [],
      "cond": "RE_SAW == 1 and RE_X08_SAW != GAME_DAY",
      "fx": "",
@@ -261,7 +305,7 @@
    "op": "line",
    "who": "CR-466",
    "emo": "놀람",
-   "text": "어디서? …알려 줘서 고마워. 망루에 올려 둘게. 길 도는 사람이 하나 더 늘었네."
+   "text": "어디서? 무슨 짐승? …알려 줘서 고마워. 망루에 올려 둘게. 길 도는 사람이 하나 더 늘었네."
   },
   {
    "op": "do",
@@ -332,6 +376,50 @@
    "op": "line",
    "who": "CR-466",
    "emo": "분노",
+   "text": "이름 대. 어디 가는데? …봉천 쪽으론 조장님 허락 받고 와."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "지나가는 길이야",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "BYE",
+     "id": "RE-X08_TALK:3:0"
+    },
+    {
+     "text": "조장님은 어디 있어?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "WARY_WHERE",
+     "id": "RE-X08_TALK:3:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "CR-466",
+   "emo": "기본",
+   "text": "망루. 아랫문으로 와. 총은 문 앞에 두고."
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "CR-466",
+   "emo": "분노",
    "text": "봉천에선 네 얼굴 다 알아. 이 길에서 꺼져. 총 들기 전에."
   },
   {
@@ -343,7 +431,7 @@
      "cond": "",
      "fx": "",
      "to": "CHASE_GO",
-     "id": "RE-X08_TALK:3:0"
+     "id": "RE-X08_TALK:4:0"
     },
     {
      "text": "할 말이 있어서 왔어",
@@ -357,7 +445,7 @@
      "cond": "",
      "fx": "",
      "to": "CHASE_OK",
-     "id": "RE-X08_TALK:3:1",
+     "id": "RE-X08_TALK:4:1",
      "fail": "CHASE_FIGHT"
     }
    ]
