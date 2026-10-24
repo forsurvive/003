@@ -508,9 +508,10 @@ func spawn(enemy_id: String, pos: Vector2, map: InteriorMap, st: StoryState = nu
 	e.call_cb = _rat_call
 	e.bait_at = ord.bait_near                                          # 1-D3 미끼(W-068) · 알집바퀴 부화
 	e.hatch_cb = _hatch
-	e.charge_cb = func(from: Vector2, dir: Vector2, len_px: float, secs: float) -> void:   # 돌진 직선 경고(1-13k): 붉은 원 넷을 줄로
-		for k in range(1, 5):
-			ord.warn(from + dir * len_px * float(k) / 4.0, 0.45 * 32.0, secs)
+	e.charge_cb = func(from: Vector2, dir: Vector2, len_px: float, secs: float, reach: float) -> void:   # 돌진 직선 경고(1-13k): 발밑부터 끝까지 닿는 폭 그대로의 붉은 띠(경고 = 판정 — 재미 검수)
+		var n := int(ceil(len_px / (reach * 0.8)))
+		for k in range(0, n + 1):
+			ord.warn(from + dir * minf(len_px, float(k) * reach * 0.8), reach, secs)
 	e.mine_list = func() -> Array: return ord.mines
 	e.cmb.robot = enemy_id.begins_with("CR-3")                          # SD-14 CR-3xx = 로봇(관제망 · 드론 · 포탑)
 	e.cmb.big = enemy_id == "CR-405"                                    # 파워 아머: 넘어짐 · 그물 · 넉백 면역(SD-11 §9.4)

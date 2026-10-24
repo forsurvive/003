@@ -92,6 +92,12 @@ var _burst := false
 var _chg_said := false                     ## 첫 돌진 안내(1-13k — 한 번)
 var _stag_said := false                    ## 첫 벽 박음 안내
 var _crawl_said := false                   ## 밸브 물이 차는 동안 어미가 알집 쪽으로(한 번)
+var _stag_seen := 0                        ## 어미가 박은 횟수(새로 박을 때마다 무엇에 박았나 한 줄)
+var _far_t := 0.0                          ## 표적이 돌진 거리 밖(7칸 넘게)이나 대피 칸 안에 있는 초 — 길면 부화가 빨라진다
+var _drum_t := -1.0                        ## > 0: 어미가 등유 통을 찌그러뜨렸다 — 불붙기까지(초)
+const RES_RECT := Rect2i(16, 1, 7, 4)       ## 필터 저수조(prop reservoir 17,2 — 3칸 둘레)
+const DRUM_AT := Vector2i(6, 2)            ## 그을린 등유 통(hazards drum)
+const SHELTER := Rect2i(31, 13, 8, 4)      ## 2077 관리원 대피 칸(문 31,14 — 어미 몸이 문보다 넓다)
 var _flood_t := -1.0                       ## > 0: 밸브를 연 뒤 물이 차오르는 중(남은 초)
 var _spot_o := {}                          ## 스팟 원점 캐시(lid → 월드 칸)
 var _u70_hour := -1                        ## 장터 안에서 본 마지막 시각(바뀌면 인물을 다시 세운다 — 창구 · 저녁 골목 · 밤)
@@ -904,9 +910,36 @@ func _mom_frame(dt: float) -> void:
 	if _mom.charges > 0 and not _chg_said:                             # ② 첫 돌진: 한 번만 가르쳐 준다(재미 검수 1-13k ③)
 		_chg_said = true
 		host.hint("어미가 몸을 낮춘다 — 붉은 줄 밖으로 비켜!", 2.0)
-	if _mom.staggers > 0 and not _stag_said:
-		_stag_said = true
-		host.hint("어미가 벽에 머리를 박고 비틀거린다!", 2.0)
+	if _mom.staggers > _stag_seen:                                     # 박을 때마다: 무엇에 박았나(저수조 · 통 · 벽) — 첫 번과 새 물건만 한 줄
+		_stag_seen = _mom.staggers
+		var tt: Vector2i = host.map.tile_of(_mom.stag_at)
+		var what := "저수조에" if RES_RECT.has_point(tt) else ("등유 통에" if tt.distance_to(DRUM_AT) <= 1.5 else "벽에")
+		if not _stag_said or what != "벽에":
+			_stag_said = true
+			host.hint("어미가 %s 머리를 박고 비틀거린다!" % what, 2.0)
+		if what == "등유 통에" and _drum_t < 0.0:
+			var it: Dictionary = host.combat.hazards._hit_item(DRUM_AT)
+			if not it.is_empty():
+				_drum_t = 1.2
+				host.hint("통이 찌그러지며 기름 냄새가 확 퍼진다 — 곧 불붙는다!", 1.5)
+	if _drum_t > 0.0:
+		_drum_t -= dt
+		if _drum_t <= 0.0:
+			var it2: Dictionary = host.combat.hazards._hit_item(DRUM_AT)
+			if not it2.is_empty():
+				host.combat.hazards._damage(it2, 999.0, "env")
+	var me: Vector2 = host.player.loco.logical                         # 대피 칸 안(어미 몸이 문을 못 지난다) · 돌진 거리 밖에서 버티면 돌진 대신 부화가 빨라진다(재미 검수 1-13k ③)
+	var hide: bool = SHELTER.has_point(host.map.tile_of(me))
+	if hide or me.distance_to(_mom.loco.logical) > Enemy.CHG_LEN * 32.0:
+		_far_t += dt
+	else:
+		_far_t = 0.0
+	if hide:
+		_mom.chg_rest = maxf(_mom.chg_rest, 0.5)                          # 문틀에 박기 자판기가 되지 않게
+	if _far_t > 10.0 and _mom._stir > 0.0:
+		_mom._hatch_t += dt                                               # 부화 시계를 두 배로(15초 → 7.5초) — 큰바퀴가 문 안 · 먼 곳까지 쫓아간다
+		if _far_t - dt <= 10.0:
+			host.hint("어미 배가 크게 들썩인다 — 알이 더 빨리 깬다.", 2.0)
 	if not _burst and _mom.cmb.hp <= _mom.cmb.max_hp * 0.3:              # ③ 배 알집이 터진다
 		_burst = true
 		_mom.chg_rest = 4.0                                             # 터진 뒤 4초는 돌진하지 않는다(예비 동작 둘이 겹치지 않게 — 조율사)
@@ -941,7 +974,7 @@ func _mom_crawl() -> void:
 	if best == Vector2.INF:                                              # 바닥 알집이 이미 없다 — 가장 가까운 물길로
 		best = Vector2(19, 10) * 32.0 + Vector2(16, 16)
 	_mom._chg_end(99.0)
-	_mom.start_dash(best)
+	_mom.start_dash(best, false)
 	if not _crawl_said:
 		_crawl_said = true
 		host.hint("어미가 물에 잠기는 알집 쪽으로 기어 내려간다.", 2.5)

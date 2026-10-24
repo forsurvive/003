@@ -34,6 +34,7 @@ const CHG_LEN := 7.0                            ## 최대 칸(빗나가면 표�
 const CHG_NEAR := 3.0                           ## 표적이 이 칸 ~ CHG_LEN 사이 · 시야가 트였을 때만
 const CHG_MUL := 2.0                            ## 닿으면 물기 × 2(한 돌진에 한 번)
 const CHG_STAG := 1.5                           ## 벽 · 단단한 소품에 박으면 비틀거림
+const CHG_ALIGN := 10.0                        ## 표적이 8방향 줄에서 이 각도(도) 안일 때만 웅크린다(걸음은 8방향 — 줄과 실제 자리가 어긋나 '가만히 있어도 빗나감'이 없게, 재미 검수 1-13k)
 const CHG_FIRST := 3.0                          ## 내려온 뒤 첫 돌진까지
 const STIR_S := 15.0                            ## 소리 · 맞음 · 서서 다가오는 사람에 들썩인 뒤 부화를 이어 가는 초
 
@@ -154,6 +155,7 @@ var _chg_dir := Vector2.ZERO
 var _chg_left := 0.0                          ## 남은 돌진 거리(px)
 var _chg_hit := false
 var _stag := 0.0
+var stag_at := Vector2.INF                    ## 마지막으로 박은 자리(진행기가 무엇에 박았나 — 저수조 · 통 · 벽 — 를 가른다)
 var bare := false                             ## 알집이 떠내려갔다(배수 밸브) — 부화 끝
 var hatch_cb := Callable()                    ## (e): 큰바퀴 1~2 부화(전투 모듈 — 동시 최대 6)
 var _stir := 0.0
@@ -1127,6 +1129,7 @@ func _charge_step(dt: float, target: Combatant) -> bool:
 		return true
 	if _chg_left > 0.0:
 		if world.circle_hits(loco.logical + _chg_dir * 8.0, radius_px):
+			stag_at = loco.logical + _chg_dir * (radius_px + 8.0)
 			_stag = CHG_STAG
 			staggers += 1
 			modulate = Color(0.75, 0.75, 0.8)
@@ -1141,7 +1144,7 @@ func _charge_step(dt: float, target: Combatant) -> bool:
 		move(_chg_dir, dt)
 		loco.speed_mul = mul0
 		_chg_left -= loco.logical.distance_to(before)
-		if not _chg_hit and not target.dead and meets(target) and loco.logical.distance_to(target.pos()) < cmb.radius + target.radius + 8.0:
+		if not _chg_hit and not target.dead and meets(target) and loco.logical.distance_to(target.pos()) < chg_reach(target):
 			_chg_hit = true
 			target.last_by = cmb.team
 			var dr_k := 1.0 - minf(target.dr, CombatRules.DR_CAP) / 100.0
@@ -1169,17 +1172,25 @@ func _charge_step(dt: float, target: Combatant) -> bool:
 	if d < CHG_NEAR or d > CHG_LEN or sight_of(target) <= 0.0 or not meets(target):
 		return false
 	var f := Locomotion.snap8(to_t, 0.0)
+	var dir8 := Vector2(Locomotion.VEC[f]).normalized()
+	if absf(rad_to_deg(dir8.angle_to(to_t))) > CHG_ALIGN:
+		return false                                                   # 줄이 표적을 비껴간다 — 쫓으며 자리를 맞춘다(웅크리지 않음)
 	loco.facing = f
-	_chg_dir = Vector2(Locomotion.VEC[f]).normalized()
+	_chg_dir = dir8
 	_chg_wind = CHG_WIND
 	_wind = 0.0
 	charges += 1
 	modulate = Color(1.0, 0.6, 0.55)                                    # 웅크려 붉어진다
 	_say("hiss", CHG_WIND + 0.2)                                        # 바퀴 어미 — 으르렁이 아니라 쉬익(마디가 비벼지는 소리)
 	if charge_cb.is_valid():
-		charge_cb.call(loco.logical, _chg_dir, CHG_LEN * 32.0, CHG_WIND)
+		charge_cb.call(loco.logical, _chg_dir, CHG_LEN * 32.0, CHG_WIND, chg_reach(target))
 	loco.step(Vector2.ZERO, dt)
 	return true
+
+
+## 돌진이 닿는 폭(몸 반지름 + 표적 반지름 + 4px) — 경고 띠도 이 폭으로 그린다(경고 = 판정)
+func chg_reach(target: Combatant) -> float:
+	return cmb.radius + target.radius + 4.0
 
 
 func _chg_end(cd: float) -> void:
@@ -1188,8 +1199,8 @@ func _chg_end(cd: float) -> void:
 
 
 ## 진행기용 달려가기: 닿으면 'dash_done' 표지. 몸으로 길을 막으면 선다(미끄러지지 않는다) · 다리를 다치면 느려진다(_on_cripple 그대로)
-func start_dash(to: Vector2) -> void:
-	if dash_to == Vector2.INF:
+func start_dash(to: Vector2, armored := true) -> void:
+	if dash_to == Vector2.INF and armored:                             # 황두칠이 금고로 뛸 땐 DR +25 · 어미가 물에 잠기는 알집으로 기어갈 땐 없음(1-13k — 잠기기 전에 잡는 경주)
 		_dash_dr = 25.0
 		cmb.dr += _dash_dr
 	dash_to = to

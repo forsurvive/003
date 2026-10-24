@@ -39,6 +39,9 @@ text 33 2 "철판 당번표가 벽에 볼트로 박혔다. '상인회 배수 청
 prop reservoir 17 2
 text 19 3 "필터 저수조." w=3 scene=UQ09_TANK
 prop pipe_run 22 2
+# 돌진 흔적(1-13k 재미 검수 ② — 지형이 '박게 하는 자리'를 말한다): 저수조 옆면 · 남쪽 벽
+text 20 5 "저수조 옆면, 무릎 높이에 움푹 팬 자국이 여럿. 갈색 껍질 조각이 박혀 있다." w=1
+text 12 16 "벽 아래가 움푹움푹 패었다. 껍질 조각이 박혔다 — 큰 것이 여러 번 들이받았다." w=1
 prop ds_valve 17 6 cond="UQ09_FLOOD == 0"
 prop ds_valve 17 6 state=open cond="UQ09_FLOOD != 0"
 text 17 6 "배수 밸브 단말." scene=UQ09_VALVE
