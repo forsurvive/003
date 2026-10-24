@@ -37,7 +37,7 @@ SKILLS = ["물물교환", "중화기", "에너지 무기", "폭발물", "자물�
 FLAVORS = ["거짓말", "위협"]
 PARTICLES = ["은", "는", "이", "가", "을", "를", "과", "와", "으로", "로", "이나", "나", "이랑", "랑", "아", "야", "이다", "다", "이에요",
              "예요", "이었", "였", "이라", "라", "이든", "든"]
-FNS = {"karma", "aff", "quest", "stage", "result", "give", "take", "has", "caps", "xp", "wanted", "stat", "skill", "year", "worn", "blade", "dead", "known_dead", "met", "killer_known", "confess", "victim", "rq", "rq_wait", "rq_left", "rq_stage", "talk_n"}
+FNS = {"karma", "aff", "quest", "stage", "result", "give", "take", "has", "caps", "xp", "wanted", "stat", "skill", "year", "worn", "blade", "dead", "known_dead", "met", "killer_known", "confess", "victim", "rq", "rq_wait", "rq_left", "rq_stage", "talk_n", "stolen_n", "drop_stolen"}
 CMDS = {"rq", "bjs", "wait", "fade_in", "fade_out", "balloon", "move", "face", "shake", "year_card", "title_card", "sfx", "bgm", "cam", "show",
         "hide", "pose", "doc", "flash", "lamp", "unlit", "note", "reveal",
         "pipboy", "equip", "hurt", "buddy", "range", "hint", "hud",          # 0-7: 핍-보이·무기·연출 피해·일시 동행·사격장 단계·안내 띠
@@ -82,7 +82,7 @@ ENGINE_VARS |= {"UQ71_" + k for k in "CORE SQ HEARD DAY DUE SOL REWARD TALK SEEN
 ENGINE_VARS |= {"U02_" + k for k in ("GUIDE INTRO LIGHT LIGHT_DAY ASK HAL HAL_DAY HFEE PATH TRACE USED FOUND SOL SHIFT SIDE FEE FN FW FS FR FD "
                                      "HAGGLED PASSED RADIO GAP_DAY PATROL_DAY VENT MET_EOM MET_HAL MET_AJAE BACKDOOR PHOTO PHOTO_TRY FORGE_TRY RING1 LASTFEE PATROL RULES").split()}
 # UQ-04 7호 냉동 창고(1-D3, SD-05 UQ-04 · 1-D 계획 §9 · §9.6): 사실 한 곳 — 원고 script/act1/UQ-04.txt 머리 주석 · DS_VALVE 가공장 배수 밸브
-ENGINE_VARS |= {"RE_V", "RE_VM", "RE033_ROB", "RE033_HELP", "RE033_HELP_SAID", "RE033_NEWS", "HUNT_OUT", "RE039_LAIR", "REVEAL_OK", "RE041_N",
+ENGINE_VARS |= {"RE_V", "RE_VM", "RE_TS", "RE_SAW", "RE_X08_N", "RE_X08_SAW", "RE_X09_N", "RE_X09_HIDE", "RE033_ROB", "RE033_HELP", "RE033_HELP_SAID", "RE033_NEWS", "HUNT_OUT", "RE039_LAIR", "REVEAL_OK", "RE041_N",
                 "RE053_BC", "RE053_SA", "GIFT_DAY", "GS_PIPCHAT", "RE033_ROB_SAID", "RE053_BUY", "GS_GUESTSAID"}   # 1-13e 기본 RE 30종(판 표지 · 길 위 수송대 · 산 사냥꾼 · 조난 신호 · 길 잃은 개 · 각성회 탁발)
 ENGINE_VARS |= {"UQ04_" + k for k in "KNOW OPEN OPEN_DAY LOCK DUE THAW THAW_DAY GONE LEFT COLD COLD_DAY BC BC_DAY SA SA_DAY JH JH_DAY LEAK FEUD FEUD_DAY RATK SHARD SHELF SOL REWARD LINK2 LINK3 FLED DATE SIGN PRICE BACK REFUND".split()} | {"DS_VALVE"}
 # R01 비표시 퀘스트 넷(1-12g, SD-05 §3.23~§3.26 · 진행기 UqR01): 뜻은 script/act1/UQ-01 · 02 · 03 · 05.txt 머리 주석

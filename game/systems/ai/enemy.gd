@@ -212,7 +212,7 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 			sheet = "cr_cr107_loco"                                  # 경비견(1-6, 새벽인력 조끼)
 		"CR-405":
 			sheet = "en_cr405_loco"
-		"CR-436", "CR-437", "CR-200", "CR-201", "CR-456", "CR-457", "CR-402", "CR-403", "CR-435", "CR-438", "CR-460", "CR-472":   # 1-13e 각성회 신도 · 정착지 민병   # 1-4: 야생·떠돌이 구울(맨손), 지하시장 경비·계약 경호 구울
+		"CR-436", "CR-437", "CR-200", "CR-201", "CR-456", "CR-457", "CR-402", "CR-403", "CR-435", "CR-438", "CR-460", "CR-472", "CR-466":   # 1-13e 각성회 신도 · 정착지 민병 · 1-13i 봉천 감시조   # 1-4: 야생·떠돌이 구울(맨손), 지하시장 경비·계약 경호 구울
 			sheet = "en_%s_loco" % str(row["id"]).to_lower().replace("-", "")
 		"CR-513":
 			sheet = "en_c013_loco"                                  # 황두칠(SD-14 CR-513, 외형 SD-07b C-013)

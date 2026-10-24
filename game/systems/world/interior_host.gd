@@ -1134,6 +1134,10 @@ func map_region(t: Vector2i) -> String:
 
 
 ## 쓰러진 적 자리에 유해(소지품 용기)를 둔다(SD-13 §9.3 세력·적 장비표). 바퀴·들개처럼 드롭이 없거나 고기만 주는 크리처는 두지 않는다
+const RE_PATROL_AFF := {"CR-466": "JC_BC", "CR-457": "JH"}           ## 길 위 정기 순찰원(1-13i RE-X08 · X09) → 호감 키
+var _re_grudge := {}                                                  ## 이번 판에 이미 깎았나(RE ID + 날)
+
+
 func _on_enemy_down(e: Enemy) -> void:
 	if e.has_meta("militia") and e.who != "":                           # 총을 든 자경단원(먼저 쏜 쪽은 그들이다 — 카르마는 없다, 학살 수에는 든다)
 		st.kill(e.who)
@@ -1146,6 +1150,10 @@ func _on_enemy_down(e: Enemy) -> void:
 	var eid := str(e.get_meta("enemy_id", ""))
 	if map is WorldMap:
 		st.turf.note_kill(st, map.tile_of(e.loco.logical), str(StoryState.ENEMY_FACTION.get(eid, "")))   # 판도(1-12m): 구역 안 세력원 처치 = 그 세력 −1(하루 3)
+	var ak := str(RE_PATROL_AFF.get(eid, ""))
+	if ak != "" and e.has_meta("re") and not _re_grudge.has(str(e.get_meta("re")) + date_text.left(13)):   # 길 위 정기 순찰을 쓰러뜨림(1-13i): 남은 순찰원이 본다 — 세력원 살해 목격 −20 한 판에 한 번(SD-06 §3.4)
+		_re_grudge[str(e.get_meta("re")) + date_text.left(13)] = true
+		st.call_fn("aff", [ak, -20])
 	if not Loot.drops.has(eid) or eid in ["CR-002", "CR-104"]:
 		return
 	var c := map.tile_of(e.loco.logical)

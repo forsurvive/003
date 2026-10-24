@@ -1,0 +1,415 @@
+{
+ "id": "RE-X08_TALK",
+ "title": "봉천 감시조",
+ "loc": "",
+ "npc": "CR-466",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TS1": 5,
+  "TS2": 7,
+  "OPEN": 9,
+  "HELLO_F": 14,
+  "AGAIN": 17,
+  "VAR": 20,
+  "TRACK": 23,
+  "LAIR": 25,
+  "ONE": 29,
+  "ONE_DEAD": 33,
+  "ONE_LEFT": 35,
+  "ASK": 37,
+  "SAW": 38,
+  "NEWS": 41,
+  "NEWS_KC": 45,
+  "NEWS_KC4": 47,
+  "BYE": 49,
+  "CHASE": 52,
+  "CHASE_GO": 54,
+  "CHASE_OK": 56,
+  "CHASE_FIGHT": 59
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "AFF_JC_BC <= -60",
+   "to": "CHASE"
+  },
+  {
+   "op": "if",
+   "cond": "RE_TS == 2",
+   "to": "TS2"
+  },
+  {
+   "op": "if",
+   "cond": "RE_TS == 1",
+   "to": "TS1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "둘 다 총을 쥔 채 담벼락에 새 분필 화살표를 긋고 있다. 이 길은 아직 누구 것인지 정해지지 않았다."
+  },
+  {
+   "op": "goto",
+   "to": "OPEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "감시조 둘이 담에 기대 서 있다. 담의 분필 화살표가 바랬다. 봉천이 이 길을 지킨 지 꽤 됐다."
+  },
+  {
+   "op": "goto",
+   "to": "OPEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "하나는 돌계단에 앉아 쉬고, 하나만 길을 본다. 이 동네에서 봉천 감시조를 건드리는 사람은 없다."
+  },
+  {
+   "op": "goto",
+   "to": "OPEN"
+  },
+  {
+   "op": "if",
+   "cond": "RE_X08_N >= 1",
+   "to": "AGAIN"
+  },
+  {
+   "op": "if",
+   "cond": "AFF_JC_BC >= 20",
+   "to": "HELLO_F"
+  },
+  {
+   "op": "line",
+   "who": "CR-466",
+   "emo": "기본",
+   "text": "볼트에서 나온 사람이지? 이 길은 우리가 돈다. 별일 없으면 지나가."
+  },
+  {
+   "op": "do",
+   "fx": "RE_X08_N = RE_X08_N + 1"
+  },
+  {
+   "op": "goto",
+   "to": "VAR"
+  },
+  {
+   "op": "line",
+   "who": "CR-466",
+   "emo": "미소",
+   "text": "우리 동네 볼트 학생이네. 조장님이 너 얘기 하더라."
+  },
+  {
+   "op": "do",
+   "fx": "RE_X08_N = RE_X08_N + 1"
+  },
+  {
+   "op": "goto",
+   "to": "VAR"
+  },
+  {
+   "op": "line",
+   "who": "CR-466",
+   "emo": "미소",
+   "text": "또 보네. 이 길 자주 다니나 봐."
+  },
+  {
+   "op": "do",
+   "fx": "RE_X08_N = RE_X08_N + 1"
+  },
+  {
+   "op": "goto",
+   "to": "VAR"
+  },
+  {
+   "op": "if",
+   "cond": "RE_V == 3",
+   "to": "ONE"
+  },
+  {
+   "op": "if",
+   "cond": "RE_V == 2",
+   "to": "TRACK"
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "CR-466",
+   "emo": "기본",
+   "text": "개천 둑에 들개 발자국이 새로 났어. 셋인가 넷. 쫓아갈 사람이 없어서 보고만 있어."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "굴이 어딘지 알아?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "LAIR",
+     "id": "RE-X08_TALK:1:0"
+    },
+    {
+     "text": "조심해",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "ASK",
+     "id": "RE-X08_TALK:1:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "CR-466",
+   "emo": "기본",
+   "text": "정확힌 몰라. 발자국은 저쪽으로 갔어. 가서 보면 찾겠지."
+  },
+  {
+   "op": "cmd",
+   "name": "reveal",
+   "args": [
+    "lair"
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "aff(\"JC_BC\", 1)"
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "if",
+   "cond": "dead(\"CR-500\") == 1 and SQ_S01_BC == 0",
+   "to": "ONE_DEAD"
+  },
+  {
+   "op": "if",
+   "cond": "SQ_S01_LEFT == 1 and SQ_S01_BC == 0",
+   "to": "ONE_LEFT"
+  },
+  {
+   "op": "line",
+   "who": "CR-466",
+   "emo": "피곤",
+   "text": "망루에 있으면 바위굴 쪽 울음이 밤마다 커져. 조장님이 산 쪽은 밤에 건너지 말래."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "CR-466",
+   "emo": "기본",
+   "text": "바위굴이 조용해졌어. 밤에 울음이 안 들려. …네가 했다며. 이 길이 편해졌어."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "CR-466",
+   "emo": "미소",
+   "text": "무리가 남쪽 능선으로 넘어갔다며? 피 안 보고. 조장님이 그 얘기 하면서 웃더라."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "오다가 들개를 봤어",
+     "tags": [],
+     "cond": "RE_SAW == 1 and RE_X08_SAW != GAME_DAY",
+     "fx": "",
+     "to": "SAW",
+     "id": "RE-X08_TALK:2:0"
+    },
+    {
+     "text": "요즘 별일 없어?",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "NEWS",
+     "id": "RE-X08_TALK:2:1"
+    },
+    {
+     "text": "수고해",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "BYE",
+     "id": "RE-X08_TALK:2:2"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "CR-466",
+   "emo": "놀람",
+   "text": "어디서? …알려 줘서 고마워. 망루에 올려 둘게. 길 도는 사람이 하나 더 늘었네."
+  },
+  {
+   "op": "do",
+   "fx": "RE_X08_SAW = GAME_DAY; aff(\"JC_BC\", 1)"
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "if",
+   "cond": "KC_STATE == 4",
+   "to": "NEWS_KC4"
+  },
+  {
+   "op": "if",
+   "cond": "KC_STATE >= 2",
+   "to": "NEWS_KC"
+  },
+  {
+   "op": "line",
+   "who": "CR-466",
+   "emo": "기본",
+   "text": "남부순환로 고가 밑은 밤에 가지 마. 깡철이네가 불 피워."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "CR-466",
+   "emo": "기본",
+   "text": "깡철이가 계단 밑에 안 내려온 지 좀 됐어. 덕분에 아랫문 교대가 편해."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "CR-466",
+   "emo": "기본",
+   "text": "고가 밑 드럼불이 꺼졌대. 졸개들이 고시촌으로 흩어졌다니까 그쪽은 좀 지켜봐야겠어."
+  },
+  {
+   "op": "goto",
+   "to": "ASK"
+  },
+  {
+   "op": "line",
+   "who": "CR-466",
+   "emo": "기본",
+   "text": "해 지기 전에 들어가. 아랫문은 해 넘어가면 닫아."
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "CR-466",
+   "emo": "분노",
+   "text": "봉천에선 네 얼굴 다 알아. 이 길에서 꺼져. 총 들기 전에."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "CHASE_GO",
+     "id": "RE-X08_TALK:3:0"
+    },
+    {
+     "text": "할 말이 있어서 왔어",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "어려움"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "CHASE_OK",
+     "id": "RE-X08_TALK:3:1",
+     "fail": "CHASE_FIGHT"
+    }
+   ]
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "CR-466",
+   "emo": "피곤",
+   "text": "…조장님 앞에서 해. 우리한테 말고. 오늘은 그냥 넘어간다."
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "CR-466",
+   "emo": "분노",
+   "text": "말 많은 놈이 제일 먼저 쏜다더라. 총 들어!"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "fight"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/encounters/RE_WORLD.txt"
+}

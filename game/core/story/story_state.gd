@@ -44,7 +44,7 @@ var book := NpcBook.new()               ## 인물 수첩(1-2, SD-12 §3.11)
 var turf := Turf.new()                  ## 서울의 판도(1-12m, SD-06 §5 · SD-08 §15): 구역 영향력 · 사건 보정 장부 · 주인공이 아는 판
 var fbook := FactionBook.new()          ## 세력 기록(1-12m, SD-12 §3.10): 등록 · 관계 단계 · 최근 일
 const ENEMY_FACTION := {"CR-401": "BJ", "CR-405": "BJ", "CR-435": "SB", "CR-436": "SB", "CR-437": "SB", "CR-438": "SB", "CR-534": "SB",
-	"CR-456": "JH", "CR-457": "JH", "CR-403": "BJ", "CR-420": "YT", "CR-421": "YT", "CR-423": "YT"}
+	"CR-456": "JH", "CR-457": "JH", "CR-466": "JC", "CR-403": "BJ", "CR-420": "YT", "CR-421": "YT", "CR-423": "YT"}
 const UNNAMED := [["N-TRADER", "떠돌이 고물상", ""], ["N-VG-S1", "고물상", ""], ["N-VG-H1", "약초꾼", ""], ["N-VG-P1", "부품 장수", ""],
 	["N-VG-C1", "옷 장수", ""], ["N-VG-F1", "국밥 장수", ""], ["N-VG-D1", "떠돌이 장사꾼", ""], ["N-UQ-K1", "아이", ""], ["N-UQ-C1", "털이꾼", ""], ["N-GA-B1", "패거리 두목", ""], ["N-GA-S1", "인솔조", "SB"], ["N-GA-S2", "인솔조", "SB"], ["N-GA-T1", "패거리 셈꾼", ""], ["N-SB-W1", "오늘의 인력", ""], ["N-SB-W2", "오늘의 인력", ""], ["N-SB-W3", "오늘의 인력", ""], ["N-UQ5-COW", "누렁이", ""], ["N-REFUGEE", "피난민", ""], ["N-DOWNED", "쓰러진 민병", "JC_BC"],
 	["N-HS-E1", "수송대 호위", "HS"], ["N-HS-E2", "수송대 호위", "HS"], ["CR-091", "짐소", ""],   # 1-8d 고개길 수송대
@@ -176,7 +176,7 @@ func _init() -> void:
 	# 기본 RE 30종(1-13e): RE_V · RE_VM 지금 RE의 판(진행기가 세울 때) · RE033_ROB 이날 전까지 연보경이 거래 거부(길에서 털림) · RE033_HELP 척후를 맡아 준 날 ·
 	# HUNT_OUT 엄태경이 산에 간 날(16시까지 오두막 빔) · RE039_LAIR 굴을 물은 날 · REVEAL_OK 방금 표시 성공 · RE041_N 끝난 신호 차례 ·
 	# RE053_BC · RE053_SA 길 잃은 개(0 아직 · 1 돌려보냄 · 2 고마움 받음 · 3 제 발로 · 4 떠돌이가 끌고 감) · GIFT_DAY 기부한 날(헌금 · 정착지 기부 공용 — SD-10 하루 +30) · GS_PIPCHAT 신참이 핍-보이를 봄
-	for k in ["RE_V", "RE_VM", "RE033_ROB", "RE033_HELP", "RE033_HELP_SAID", "RE033_NEWS", "HUNT_OUT", "RE039_LAIR", "REVEAL_OK", "RE041_N",
+	for k in ["RE_V", "RE_VM", "RE_TS", "RE_SAW", "RE_X08_N", "RE_X08_SAW", "RE_X09_N", "RE_X09_HIDE", "RE033_ROB", "RE033_HELP", "RE033_HELP_SAID", "RE033_NEWS", "HUNT_OUT", "RE039_LAIR", "REVEAL_OK", "RE041_N",
 			"RE053_BC", "RE053_SA", "GIFT_DAY", "GS_PIPCHAT", "RE033_ROB_SAID", "RE053_BUY", "GS_GUESTSAID"]:
 		vars.declare(k, "int", 0)
 	# 사당 환승촌(1-8f): 인물 첫 만남 · SA_MAKCHA_HEARD 서쪽 터널 '막차 손님' 들음(SQ-S05 '이미 앎') · SA_MAT_UNTIL 승강장 매트 빌린 끝 절대 분 ·
@@ -535,6 +535,20 @@ func call_fn(name: String, args: Array) -> Variant:
 		"has":
 			var n := int(args[1]) if args.size() > 1 else 1
 			return 1 if count_of(str(args[0])) >= n else 0
+		"stolen_n":                                                     # 지금 지닌 장물 수(SD-12 §9.2 — 1-13i 경호단 몸수색)
+			var sn := 0
+			for k in stolen:
+				sn += mini(int(stolen[k]), count_of(str(k)))
+			return sn
+		"drop_stolen":                                                  # 장물을 다 내놓는다(몸수색에 걸려 버림 — 1-13i): 내놓은 수
+			var dn := 0
+			for k in stolen.keys():
+				var m := mini(int(stolen[k]), count_of(str(k)))
+				if m > 0:
+					call_fn("take", [str(k), m])
+					dn += m
+				stolen.erase(k)
+			return dn
 		"rq":                                                           # 반복 퀘스트 완료 한 번(1-12j, SD-05 §4.1): rq(id, fac, caps, xp, kind, opt) → Repeat.done
 			return Repeat.done(self, str(args[0]), str(args[1]), int(args[2]), int(args[3]),
 				str(args[4]) if args.size() > 4 else "supply", args[5] if args.size() > 5 and args[5] is Dictionary else {})

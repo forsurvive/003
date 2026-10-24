@@ -203,6 +203,15 @@ func start(req: Dictionary) -> bool:
 		return false
 	cur = {"re": re, "def": d, "cat": cat, "state": state, "phase": "sign", "t": 0.0, "src": str(req.get("src", "")), "center": center,
 		"groups": gs, "actors": [], "foes": [], "props": [], "talked": false, "sign_t": 0.0, "half": false, "site": req.has("at")}
+	if d.has("faction"):                                                # 순찰(1-13i): 이 구역 판도에서 그 세력 몫 — RE_TS 0 경합 · 남의 땅 / 1 우세 / 2 지배(장면 첫 줄 · 자세가 갈린다)
+		var es: Dictionary = host.st.turf.enc_state(host.st, center)
+		var mine: bool = not es.is_empty() and str(es.get("a", "")) == Turf.group_static(str(d["faction"]))
+		host.st.vars.set_v("RE_TS", int({"지배": 2, "우세": 1}.get(str(es.get("state", "")), 0)) if mine else 0)
+	var saw := 0                                                        # 최근 길 위에서 짐승을 만났나(RE_SAW 1 — '오다가 들개 봤소?'에 답할 거리, 1-13i)
+	for r in rules.enc().get("recent", []):
+		if str(r[0]) != re and str(Encounters.re_def(str(r[0])).get("cat", "")) == "creature":
+			saw = 1
+	host.st.vars.set_v("RE_SAW", saw)
 	if str(d.get("on_start", "")) != "":
 		StoryExpr.run(str(d["on_start"]), host.st)                       # 세워지는 순간 한 번(1-13e RE-039 — 사냥꾼이 그날 봉천 자리를 비운다, P3)
 	var sign := str(d.get("sign", ""))
@@ -594,6 +603,23 @@ func _live(dt: float) -> void:
 	_fight_check()
 
 
+## 서서 떠든다(1-13i 순찰 — 엿보는 장면): 기다리는 무리가 12칸 안의 주인공에게 들리게 자기들끼리 말한다(판 def "chatter" [[사람 차례, 말], …] — 3.2초마다 한 줄, 끝나면 처음부터)
+func _chatter(dt: float, dl: float) -> void:
+	var lines: Array = cur["def"].get("chatter", [])
+	if lines.is_empty() or dl > 12.0 * 32.0:
+		return
+	cur["chat_t"] = float(cur.get("chat_t", 0.6)) - dt
+	if float(cur["chat_t"]) > 0.0:
+		return
+	cur["chat_t"] = 3.2
+	var i := int(cur.get("chat_i", 0)) % lines.size()
+	cur["chat_i"] = i + 1
+	var who: int = clampi(int(lines[i][0]), 0, cur["actors"].size() - 1)
+	var a = cur["actors"][who]
+	if is_instance_valid(a):
+		ChatBubble.pop(a, str(lines[i][1]), 3.0)
+
+
 ## 다가온다(칸 길찾기, 0.5초마다 한 명씩 다시). 4타일 안이면 멈춰 서서 말을 건다. 기다리는 사람(누운 민병·야영 상인)은 주인공이 와야 한다
 func _approach(dt: float) -> void:
 	var me: Vector2 = host.player.loco.logical
@@ -631,6 +657,7 @@ func _approach(dt: float) -> void:
 			_end("lost")
 		return
 	if waiting:
+		_chatter(dt, dl)
 		return
 	_path_t -= dt
 	for i in cur["actors"].size():

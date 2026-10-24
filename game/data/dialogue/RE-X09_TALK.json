@@ -1,0 +1,587 @@
+{
+ "id": "RE-X09_TALK",
+ "title": "계약 경호단",
+ "loc": "",
+ "npc": "CR-457",
+ "cond": "V_ACT >= 1",
+ "labels": {
+  "START": 0,
+  "TS1": 5,
+  "TS2": 7,
+  "OPEN": 9,
+  "FRIEND": 18,
+  "FRIEND2": 23,
+  "TRUST": 27,
+  "FRISK": 32,
+  "FRISK_HIT": 39,
+  "GIVE_UP": 42,
+  "BRIBE": 46,
+  "FRISK_OK": 49,
+  "FRISK_NO": 52,
+  "RUN": 56,
+  "HUNT": 59,
+  "HUNT_NO": 61,
+  "HUNT_FIND": 64,
+  "HUNT_LIE": 69,
+  "HUNT_LIE_NO": 73,
+  "DEBT": 77,
+  "DEBT_GO": 80,
+  "DEBT_FIGHT": 83
+ },
+ "ops": [
+  {
+   "op": "if",
+   "cond": "AFF_JH <= -60",
+   "to": "DEBT"
+  },
+  {
+   "op": "if",
+   "cond": "RE_TS == 2",
+   "to": "TS2"
+  },
+  {
+   "op": "if",
+   "cond": "RE_TS == 1",
+   "to": "TS1"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "경호 구울 둘이 고철 갑옷 어깨를 맞대고 섰다. 담벼락에 붙은 '상인회 경호 구역' 스티커가 아직 빳빳하다."
+  },
+  {
+   "op": "goto",
+   "to": "OPEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "경호 구울 둘이 출입구 계단 난간에 기대 있다. 담벼락의 '상인회 경호 구역' 스티커가 햇볕에 바랬다."
+  },
+  {
+   "op": "goto",
+   "to": "OPEN"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "하나는 계단에 앉아 계약서를 세고, 하나만 거리를 본다. 이 길에서 상인회 스티커를 떼는 사람은 없다."
+  },
+  {
+   "op": "goto",
+   "to": "OPEN"
+  },
+  {
+   "op": "if",
+   "cond": "AFF_JH <= -20",
+   "to": "FRISK"
+  },
+  {
+   "op": "if",
+   "cond": "RE_V == 2 and stolen_n() > 0",
+   "to": "FRISK"
+  },
+  {
+   "op": "if",
+   "cond": "RE_V == 3",
+   "to": "HUNT"
+  },
+  {
+   "op": "if",
+   "cond": "AFF_JH >= 50",
+   "to": "TRUST"
+  },
+  {
+   "op": "if",
+   "cond": "AFF_JH >= 20",
+   "to": "FRIEND"
+  },
+  {
+   "op": "line",
+   "who": "CR-457",
+   "emo": "기본",
+   "text": "어서 오세요, 손님. 장은 아래에서 서요. 위에선 구경만 하시고."
+  },
+  {
+   "op": "do",
+   "fx": "RE_X09_N = RE_X09_N + 1"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "if",
+   "cond": "RE_X09_N >= 1",
+   "to": "FRIEND2"
+  },
+  {
+   "op": "line",
+   "who": "CR-457",
+   "emo": "미소",
+   "text": "단골 오셨네! 위쪽 소식 하나 드릴까요? 여의도 검문이 요즘 짐을 다 뒤져요. 장물은 아래에 두고 다니세요."
+  },
+  {
+   "op": "do",
+   "fx": "RE_X09_N = RE_X09_N + 1"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "CR-457",
+   "emo": "미소",
+   "text": "또 뵙네요, 단골. 오늘은 별일 없어요. 경호 계약서는 아래 상인회에서 파세요."
+  },
+  {
+   "op": "do",
+   "fx": "RE_X09_N = RE_X09_N + 1"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "CR-457",
+   "emo": "미소",
+   "text": "회원님. 출구까지 모셔다 드릴게요. 위쪽 길은 저희가 미리 살펴 뒀어요."
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "경호 구울 하나가 반걸음 앞서 걷다가, 출구 계단 앞에서 고철 장갑으로 인사한다."
+  },
+  {
+   "op": "do",
+   "fx": "RE_X09_N = RE_X09_N + 1"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "CR-457",
+   "emo": "기본",
+   "text": "피부 좋은 손님, 주머니부터 봅시다. 상인회 규칙이에요."
+  },
+  {
+   "op": "if",
+   "cond": "stolen_n() > 0",
+   "to": "FRISK_HIT"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "고철 장갑이 가방을 툭툭 두드리고 물러난다."
+  },
+  {
+   "op": "line",
+   "who": "CR-457",
+   "emo": "기본",
+   "text": "깨끗하네요. 가세요."
+  },
+  {
+   "op": "do",
+   "fx": "RE_X09_N = RE_X09_N + 1"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "장갑이 멈춘다. 가방에서 물건 하나를 손끝으로 집어 들고 냄새를 맡는다."
+  },
+  {
+   "op": "line",
+   "who": "CR-457",
+   "emo": "분노",
+   "text": "이거, 누구 건지 아시죠? 장물 들고 상인회 구역 돌아다니시면 곤란해요."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "내놓는다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "GIVE_UP",
+     "id": "RE-X09_TALK:1:0"
+    },
+    {
+     "text": "이걸로 모른 척해 줘",
+     "tags": [
+      {
+       "k": "caps",
+       "n": 30
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "BRIBE",
+     "id": "RE-X09_TALK:1:1"
+    },
+    {
+     "text": "길에서 주운 거야",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "보통"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "FRISK_OK",
+     "id": "RE-X09_TALK:1:2",
+     "fail": "FRISK_NO"
+    },
+    {
+     "text": "달아난다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "RUN",
+     "id": "RE-X09_TALK:1:3"
+    }
+   ]
+  },
+  {
+   "op": "do",
+   "fx": "drop_stolen()"
+  },
+  {
+   "op": "line",
+   "who": "CR-457",
+   "emo": "기본",
+   "text": "주인한테는 저희가 돌려줘요. 이번엔 장부에 안 적을게요."
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "CR-457",
+   "emo": "미소",
+   "text": "경호비로 받아 두죠. 다음엔 아래로 들고 내려오지 마세요."
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "CR-457",
+   "emo": "피곤",
+   "text": "…길에서 주운 걸 다 장물이라고 하면 상가가 텅 비겠네. 가세요."
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "CR-457",
+   "emo": "분노",
+   "text": "길에서 주운 물건엔 이 냄새가 안 나요. 내놓으세요. 아니면 장부에 적습니다."
+  },
+  {
+   "op": "do",
+   "fx": "drop_stolen(); aff(\"JH\", -3)"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "do",
+   "fx": "aff(\"JH\", -5)"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "run"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "CR-457",
+   "emo": "기본",
+   "text": "손님, 출입 금지 하나가 이 근처에 숨었어요. 외상값 떼고 달아난 놈. 못 보셨어요?"
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "못 봤어",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "HUNT_NO",
+     "id": "RE-X09_TALK:2:0"
+    },
+    {
+     "text": "같이 찾아 줄게",
+     "tags": [
+      {
+       "k": "stat",
+       "name": "인지력",
+       "min": 6
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "HUNT_FIND",
+     "id": "RE-X09_TALK:2:1"
+    },
+    {
+     "text": "아까 저쪽 골목으로 뛰어가던데",
+     "tags": [
+      {
+       "k": "speech",
+       "skill": "화술",
+       "diff": "보통"
+      }
+     ],
+     "cond": "",
+     "fx": "",
+     "to": "HUNT_LIE",
+     "id": "RE-X09_TALK:2:2",
+     "fail": "HUNT_LIE_NO"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "CR-457",
+   "emo": "기본",
+   "text": "그래요. 보시면 아래에 말해 주세요. 수색비 드려요."
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "폐차 문짝 아래로 신발 끝이 보인다. 가리키자 경호 구울 둘이 말없이 그쪽으로 걸어간다."
+  },
+  {
+   "op": "line",
+   "who": "CR-457",
+   "emo": "미소",
+   "text": "눈 좋으시네. 수색비예요. 상인회가 기억할 거예요."
+  },
+  {
+   "op": "do",
+   "fx": "caps(15); aff(\"JH\", 2); RE_X09_HIDE = 2"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "경호 구울 둘이 골목 쪽으로 뛰어간다. 등 뒤 폐차 문짝 아래에서 누군가 숨을 몰아쉬고, 반대쪽 담을 넘어 사라진다."
+  },
+  {
+   "op": "do",
+   "fx": "karma(5); RE_X09_HIDE = 1"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "CR-457",
+   "emo": "분노",
+   "text": "거짓말에서 사람 냄새가 나요. 그 골목은 막혀 있어요. 이번 일은 회장님께 올라갑니다."
+  },
+  {
+   "op": "do",
+   "fx": "aff(\"JH\", -3)"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "line",
+   "who": "SYS",
+   "emo": "기본",
+   "text": "경호 구울 둘이 길을 막아선다. 한 손엔 상인회 장부, 한 손엔 쇠막대."
+  },
+  {
+   "op": "line",
+   "who": "CR-457",
+   "emo": "분노",
+   "text": "출입 금지 손님이다! 지하시장에선 그 얼굴 다 알아요. 여기 위도 우리 구역이에요."
+  },
+  {
+   "op": "choice",
+   "opts": [
+    {
+     "text": "간다, 간다",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "DEBT_GO",
+     "id": "RE-X09_TALK:3:0"
+    },
+    {
+     "text": "덤벼 봐",
+     "tags": [],
+     "cond": "",
+     "fx": "",
+     "to": "DEBT_FIGHT",
+     "id": "RE-X09_TALK:3:1"
+    }
+   ]
+  },
+  {
+   "op": "line",
+   "who": "CR-457",
+   "emo": "분노",
+   "text": "상인회 구역 밖으로. 다음에 보면 장부대로 받습니다."
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "leave"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "cmd",
+   "name": "re",
+   "args": [
+    "fight"
+   ]
+  },
+  {
+   "op": "goto",
+   "to": "END"
+  },
+  {
+   "op": "end"
+  }
+ ],
+ "src": "script/encounters/RE_WORLD.txt"
+}
