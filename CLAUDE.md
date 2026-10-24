@@ -51,6 +51,7 @@ Fallout 3를 2277년 서울로 옮긴 한국어 비상업 팬게임.
 - 게임은 **자유롭고 재미있어야** 한다. 새 요소마다 **오픈월드 플레이어 페르소나**(SD-23 `docs/seoul-fallout/23_fun-review.md`, 에이전트 `.claude/agents/openworld-player.md`)로 '이거 정말 재미있나'를 검수하고, 지적은 STAGE 기록에 남겨 반영한다.
 
 ## 작업 습관
+- 새 세션 이어받기 문서 `docs/seoul-fallout/_plans/SESSION_HANDOFF.md`(새 세션은 이 파일부터 읽는다): 단계를 열거나 닫을 때 · 필수 문서 · 도구 · 명령 · 검수 절차가 바뀔 때 · 다음 작업 후보가 바뀔 때 **같은 커밋에서 함께 고친다**(사용자 지시 2026-10-24).
 - 브랜치 `claude/clever-mayer-yddxqv`. PR은 요청이 있을 때만. 커밋 전 `__pycache__` 삭제. 커밋 메시지에 모델 ID를 넣지 않는다.
 - 시험: `cd game && timeout 900 godot --headless -s res://tests/run_tests.gd` (`TEST_ONLY=부분이름`).
 - 봇: `godot --headless --path game res://scenes/story/prologue.tscn -- --auto --from=p2|p3|p4|p4e|view|gate|box --log`.
