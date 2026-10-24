@@ -10000,6 +10000,186 @@
  },
  {
   "check": "①",
+  "scene": "RE-X08_TALK",
+  "where": "TS1",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-X08_TALK",
+  "where": "TS2",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-X08_TALK",
+  "where": "AGAIN",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-X08_TALK",
+  "where": "TRACK",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-X08_TALK",
+  "where": "LAIR",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-X08_TALK",
+  "where": "ONE",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-X08_TALK",
+  "where": "ONE_DEAD",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-X08_TALK",
+  "where": "ONE_LEFT",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-X08_TALK",
+  "where": "SAW",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-X08_TALK",
+  "where": "NEWS_KC",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-X08_TALK",
+  "where": "NEWS_KC4",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-X09_TALK",
+  "where": "TS1",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-X09_TALK",
+  "where": "TS2",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-X09_TALK",
+  "where": "FRIEND",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-X09_TALK",
+  "where": "FRIEND2",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-X09_TALK",
+  "where": "HUNT",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-X09_TALK",
+  "where": "HUNT_NO",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-X09_TALK",
+  "where": "HUNT_FIND",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-X09_TALK",
+  "where": "HUNT_LIE",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
+  "scene": "RE-X09_TALK",
+  "where": "HUNT_LIE_NO",
+  "status": "참고",
+  "note": "어느 프로필에서도 닿지 않음(진행기 · 함수 · 앞 퀘스트가 정하는 값일 수 있다 — 사람이 볼 때 참고)",
+  "allowed": false,
+  "reason": ""
+ },
+ {
+  "check": "①",
   "scene": "SD_BAN",
   "where": "AGAIN",
   "status": "참고",
