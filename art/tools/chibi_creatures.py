@@ -233,6 +233,10 @@ QUAD = {
     # 뜯긴 귀 끝, 낡은 가죽 목줄과 2077년 인식표(금속 반짝임)
     "oenun": dict(w=44, h=32, foot=(20, 29), px=4, body=(19, 17, 11, 7), head=(32, 11, 8, 7), leg=5, fur=["P05", "P06", "P08", "P09"],
                   skin=["P39", "P40", "P41"], eye="P01", tail="curl", ears=True, mange=False, scar=True, tag=True),
+    # 들개 우두머리 CR-106(SD-14 §4.2 '목에 2077년 반려견 인식표가 남은 큰 개체' · 1-13h 조율 — 무리 속에서 한눈에 갈려야 먼저 노린다):
+    # 변이 들개 몸에 한 치수 큰 체구 · 희끗한 잿빛 털 · 늘어진 귀 · 긴 주둥이 · 낡은 가죽 목줄과 인식표(반짝)
+    "packlead": dict(w=44, h=32, foot=(20, 29), px=4, body=(19, 16, 12, 7.5), head=(32, 11, 8.5, 7), leg=5, fur=["P02", "P23", "P04", "P19"],
+                     skin=["P39", "P40", "P41"], eye="P54", tail="up", ears=True, mange=False, tag=True, tag_big=True, scars=True),
     # 사나운 들개 CR-105(SD-14 §4.7): 변이 들개보다 크고 어두운 털, 붉은 눈, 몸의 물린 흉터
     "fierce": dict(w=44, h=32, foot=(20, 29), px=4, body=(19, 17, 11, 7), head=(32, 12, 8, 6.5), leg=5, fur=["P10", "P11", "P12", "P13"],
                    skin=["P39", "P40", "P41"], eye="P54", tail="up", ears=True, mange=False, scars=True),
@@ -335,7 +339,7 @@ def quad(kind, frame=0, pose="walk"):
         bd.point((sx + 3, hyb + 1), fill=C("P01"))
         bd.rectangle([round(hxc), hyb - 3, round(hxc) + 1, hyb - 2], fill=C(q["eye"]))
         bd.point((round(hxc), hyb - 3), fill=C("P09"))
-    elif kind in ("dog", "fierce"):
+    elif kind in ("dog", "fierce", "packlead"):
         ex = round(hxc - hrx * 0.45)                                       # 늘어진 귀
         bd.polygon([(ex - 2, hyb - 5), (ex + 3, hyb - 6), (ex - 3, hyb + 1)], fill=fur[0])
         sx = round(hxc + hrx - 2)                                          # 긴 주둥이 + 검은 코 + 이빨
@@ -416,6 +420,9 @@ def quad(kind, frame=0, pose="walk"):
         bd.line([nx0, hyb + 3, nx0 + 2, hyb + 7], fill=C("P18"), width=2)
         bd.point((nx0 + 2, hyb + 8), fill=C("P07"))                         # 인식표(쇠)
         bd.point((nx0 + 3, hyb + 8), fill=C("P49"))                         # 반짝임(놋쇠 테)
+        if q.get("tag_big"):                                                # 우두머리: 목 아래로 늘어진 큰 쇠 인식표 — 무리 속에서 반짝여 먼저 눈에 든다
+            bd.rectangle([nx0 + 1, hyb + 8, nx0 + 3, hyb + 10], fill=C("P07"))
+            bd.point((nx0 + 2, hyb + 9), fill=C("P09")); bd.point((nx0 + 3, hyb + 8), fill=C("P50"))
         for gx, gy in ((bx - 5, by + 2), (bx + 3, by + 4), (bx - 1, by - 4)):
             bd.point((gx, gy - bob), fill=fur[1])
     img.alpha_composite(body)

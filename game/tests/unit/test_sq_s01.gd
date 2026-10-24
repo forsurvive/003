@@ -93,6 +93,7 @@ func test_sq_s01_kill(t) -> void:
 	var c: SideR01 = r[2]
 	var k0 := int(st.vars.get_v("V_KARMA"))
 	var bc0 := int(st.vars.get_v("AFF_JC_BC"))
+	t.eq(str(h.scene_for("N-R01-033").get("id", "")), "TR_EOM", "오두막 엄태경 = TR_EOM(같은 화자의 산 사냥꾼 RE-039 장면이 먼저 열리지 않는다 — 1-13h)")
 	c.tick()
 	var loot: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/loot.json"))
 	t.ok(str(loot["drops"]["CR-500"]).contains("M-158"), "외눈 드롭: 인식표 M-158")

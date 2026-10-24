@@ -12,6 +12,7 @@ extends Node2D
 
 signal target_down(kind: String, sneak: bool, left: int)
 signal enemy_killed(id: String, left: int)
+signal enemy_left(id: String)                ## 흩어진 짐승이 멀어져 빠졌다(인카운터가 '놓친 무리'로 기억 — 1-13h)
 signal player_down
 signal message(text: String)
 signal hurt(amount: float)
@@ -378,7 +379,7 @@ func _pack_scatter(e: Enemy) -> void:
 	var kin := enemies.filter(func(o): return is_instance_valid(o) and o != e and not o.cmb.dead and o.style == "dog" and o.cmb.team == e.cmb.team and o.loco.logical.distance_to(e.loco.logical) <= 20.0 * 32.0)
 	kin.sort_custom(func(a, b): return a.loco.logical.distance_to(e.loco.logical) < b.loco.logical.distance_to(e.loco.logical))
 	for i in (kin.size() + 1) / 2:
-		kin[i].flee_now(pc.pos(), _rng.randf_range(20.0, 30.0), true)
+		kin[i].rout(pc.pos(), _rng.randf_range(20.0, 30.0), true)
 
 ## 왕쥐 찍찍 울음(SD-14 CR-097, 1-11d): 12t 안 같은 편 시궁쥐 가운데 아직 싸우지 않는 둘을 깨워 부른다. 새 쥐를 만들지 않는다(재미 검수 —
 ## 수가 정해져 있어 밖에서 먼저 잡아 두는 꼼수가 산다). 부를 쥐가 없으면 '대답이 없다' — 왕쥐는 물러난다(SD-14 §4.1 무리 절반 이상 잃으면 후퇴)
@@ -599,13 +600,13 @@ func _morale_death(e: Enemy, by_pc: bool, st: StoryState) -> void:
 		if kin.size() >= 2 and fallen * 2 >= kin.size():
 			for o in kin:
 				if not o.cmb.dead:
-					o.flee_now(pc.pos(), _rng.randf_range(15.0, 25.0))
+					o.rout(pc.pos(), _rng.randf_range(15.0, 25.0), true)
 	for o in enemies:
 		if not is_instance_valid(o) or o == e or o.cmb.dead or o.cmb.team != e.cmb.team:
 			continue
 		var d: float = o.loco.logical.distance_to(at)
 		if rout and d <= 20.0 * 32.0 and o.style == "dog":                  # 우두머리를 잃은 무리: 20~30초 흩어진다
-			o.flee_now(pc.pos(), _rng.randf_range(20.0, 30.0))
+			o.rout(pc.pos(), _rng.randf_range(20.0, 30.0))
 		elif d <= 12.0 * 32.0:
 			o.witness_death(at, lead)
 
@@ -1019,11 +1020,15 @@ func tick(dt: float, free: bool, st: StoryState) -> void:
 		var mel := enemies.filter(func(e): return is_instance_valid(e) and e.style != "shooter" and not e.cmb.dead and not e.eating)   # 미끼를 먹는 짐승은 토큰을 받지 않는다   # 근접 토큰(SD-11 L907~915): 무리는 둘 · 떼 성향은 넷만 문다(밸런스 첫 전수 — 조율사 1번)
 		mel.sort_custom(func(a, b): return a.loco.logical.distance_to(_target_for(a).pos()) < b.loco.logical.distance_to(_target_for(b).pos()))
 		var per_m := {}
+		var watch := {}                                                     # 외눈이 ①(지켜봄)인 편: 무리가 하나씩 떠보며 문다 — 울부짖은 뒤(②) 둘(1-13h 조율)
+		for e in mel:
+			if e.one_phase == 0 and str(e.row.get("id", "")) == "CR-500" and e.brain.state == AIBrain.S.COMBAT:
+				watch[e.cmb.team] = true
 		for e in mel:
 			var swarmy: bool = e.style == "swarm" or str(e.row.get("id", "")) in Enemy.SWARMY
 			var mk := "%s:%s" % [e.cmb.team, "s" if swarmy else "p"]
 			per_m[mk] = int(per_m.get(mk, 0)) + 1
-			e.has_mtoken = int(per_m[mk]) <= (4 if swarmy else 2)
+			e.has_mtoken = int(per_m[mk]) <= (4 if swarmy else (1 if watch.has(e.cmb.team) else 2))
 	for e in enemies:
 		if is_instance_valid(e):
 			var was: bool = e.cmb.flash > 0
@@ -1052,6 +1057,8 @@ func tick(dt: float, free: bool, st: StoryState) -> void:
 		hurt.emit(hp0 - pc.hp)
 	for e in enemies.duplicate():                                       # 놓아준 적이 멀어지면 전장에서 뺀다(1-9e)
 		if is_instance_valid(e) and e.has_meta("gone"):
+			if e.routed:
+				enemy_left.emit(str(e.get_meta("enemy_id", "")))
 			drop_enemy(e)
 	for p in popups:
 		p[2] -= dt

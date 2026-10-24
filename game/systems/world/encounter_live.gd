@@ -58,6 +58,10 @@ var off := false                                  ## 새 인카운터를 굴리�
 func setup(h, seed_v := 0) -> EncounterLive:
 	host = h
 	rules = Encounters.new(h.st, seed_v)
+	if h.combat != null:
+		h.combat.enemy_left.connect(func(id: String) -> void:
+			if not cur.is_empty():
+				cur["routed"] = (cur.get("routed", []) as Array) + [id])
 	_rng.seed = seed_v if seed_v != 0 else Time.get_ticks_usec() + 77
 	return self
 
@@ -792,7 +796,7 @@ func _fight_check() -> void:
 		if foes.is_empty() or any_fought or (float(cur["t"]) > 4.0 and _all_far(foes, 18.0)):
 			for e in foes:                                               # 비적대 생존자(교전의 계엄 분대 등)는 걸어 떠난다
 				_walk_off(e)
-			rules.remember_pack(str(cur["re"]), [])
+			rules.remember_pack(str(cur["re"]), cur.get("routed", []) if str(cur["cat"]) == "creature" else [])   # 흩어져 달아난 짐승은 '놓친 무리'로(SD-22 §3.5)
 			_end("cleared" if any_fought else "left")
 		return
 	if hostile.is_empty():

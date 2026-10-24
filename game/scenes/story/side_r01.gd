@@ -51,6 +51,7 @@ var _blood_at := Vector2.INF             ## 마지막 핏방울 자리
 var lick := {}                           ## 핏자국이 끊긴 자리(다가가면 안내 — 재미 검수 1-13h)
 var _lick_c := Vector2i.ZERO
 var _scar_said := false
+var _night_warned := false               ## 밤 무리(+2)를 세운 뒤 굴 30칸 안에서 한 번 — 울부짖음이 겹겹이(1-13h 조율: 밤은 일부러 더 위험한 판 — 먼저 알린다)
 
 
 func setup(h: InteriorHost, is_log := false) -> void:
@@ -253,6 +254,9 @@ func _den_tick() -> void:
 		return
 	_one_fled_check()
 	_scar_tick()
+	if not _night_warned and band == "night" and d <= START_R and not pack.is_empty() and not host.combat.in_combat():
+		_night_warned = true
+		host.hint("바위굴 쪽에서 여러 마리가 한꺼번에 울부짖는다. 밤에는 낮보다 수가 많다.", 5.0)
 	_band_shift()
 	_tag_tick()
 	_bait_tick(true)
@@ -349,6 +353,7 @@ func _yard_spot(r: RandomNumberGenerator) -> Vector2:
 
 func _spawn_pack() -> void:
 	pack_on = true
+	_night_warned = false
 	_stand_done = false
 	_perk_asked = false
 	pack.clear()

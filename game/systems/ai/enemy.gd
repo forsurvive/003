@@ -150,6 +150,8 @@ var _howl_cd := 0.0
 ## 외눈 국면(SD-14 §10.3, 1-13h): 0 무리를 보내고 지켜봄 · 1 울부짖고 돌진 · 2 HP 30%에서 숲으로(다리를 다치면 끝까지 싸운다)
 var one_phase := 0
 var _pack_n0 := 0                             ## 지켜보는 동안 본 같은 편 들개 수의 최대
+var _watch_hp := -1.0                         ## 지켜보기 시작할 때의 HP(상처 입고 돌아온 외눈도 ①부터 — 1-13h 조율)
+var routed := false                           ## 흩어짐(우두머리를 잃은 무리 · 외눈 ③ · 쥐 후퇴 — 1-13h 조율): 도주가 끝나도 돌아오지 않고, 멀어져 시야가 끊기면 빠진다
 var slow_mul := 1.0                           ## 진행기가 거는 걸음 배수(상처 입고 돌아온 외눈 0.85)
 var _growl_t := 1.0                           ## 지켜보는 동안 4~6초마다 낮게 으르렁댄다(재미 검수 1-13h — 소리 없이 서 있으면 못 보고 지나친다)
 var pack_cb := Callable()                     ## (e) -> int: 16칸 안 같은 편 산 들개 수(자기 빼고)
@@ -231,7 +233,7 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 		"CR-326":
 			sheet = "rb_cr326_loco"                                  # 성형-4(1-D7 지식산업센터 — 궤도 받침 · 관절 팔 · 렌즈, 작업 2컷)
 		"CR-106":
-			sheet = "cr_cr104_loco"                                  # 들개 우두머리(그림은 들개, 1-E2에서 따로)
+			sheet = "cr_cr106_loco"                                  # 들개 우두머리(1-13h — 한 치수 큰 몸 · 얼룩 잿빛 털 · 등 갈기 · 목 아래 쇠 인식표: 무리 속에서 먼저 노릴 수 있게)
 		"CR-108":
 			sheet = "cr_baekgu_loco"                                 # 진돗개(백구 그림을 빌린다)
 		"CR-202":
@@ -434,6 +436,11 @@ func think(dt: float, target: Combatant, nav, shots: Projectiles) -> void:   ## 
 		_intent = brain.tick(step, {"sees": sees and (fov or dist_t <= 3.0), "rate": rate * (0.6 if cmb.crippled.has("head") else 1.0), "target": target.pos(),
 			"hit": hit, "sound": _heard, "sound_at": _heard_at, "at_home": loco.logical.distance_to(brain.home) < 24.0})
 		_heard = 0.0
+		if routed and not cmb.dead:                                    # 흩어진 짐승은 돌아오지 않는다 — 14칸 넘게 벌어지고 시야가 끊기면 전장에서 빠진다
+			if brain.state != AIBrain.S.FLEE:
+				brain.flee(20.0)
+			if loco.logical.distance_to(target.pos()) > 14.0 * 32.0 and not sees:
+				set_meta("gone", true)
 		if was == AIBrain.S.FLEE and brain.state == AIBrain.S.COMBAT:      # 용기를 되찾았다
 			loco.speed_mul = 0.5 if cmb.crippled.has("leg") else 1.0
 			_rally = cmb.hp / maxf(1.0, cmb.max_hp)
@@ -583,10 +590,12 @@ func _tactics(target: Combatant, nav) -> void:
 func _one_watch(target: Combatant) -> bool:
 	var n := int(pack_cb.call(self)) if pack_cb.is_valid() else 0
 	_pack_n0 = maxi(_pack_n0, n)
+	if _watch_hp < 0.0:
+		_watch_hp = cmb.hp
 	var to_t := target.pos() - loco.logical
 	if to_t.length() > 4.0:
 		loco.facing = Locomotion.snap8(to_t, 0.0)
-	if n * 2 > _pack_n0 and cmb.hp >= cmb.max_hp and to_t.length() > 3.0 * 32.0:
+	if n * 2 > _pack_n0 and cmb.hp >= _watch_hp and to_t.length() > 3.0 * 32.0:
 		_growl_t -= 0.5
 		if _growl_t <= 0.0:
 			_growl_t = _rng.randf_range(4.0, 6.0)
@@ -999,6 +1008,13 @@ func flee_now(from: Vector2, secs: float = -1.0, force := false) -> void:
 	_say("flee")
 	if cmb.crippled.has("leg"):
 		_cornered()
+
+
+## 흩어지게 한다(끝나는 도주): 무리 우두머리를 잃음 · 외눈 ③ · 쥐 절반을 잃음
+func rout(from: Vector2, secs: float, force := false) -> void:
+	flee_now(from, secs, force)
+	if brain.fleeing():
+		routed = true
 
 
 ## 외눈 ③(SD-14 §10.3): ② 뒤 HP 30% 이하면 숲으로 달아난다 — 사기 판정과 따로(진행기 적이라도 정본 국면). 다리를 다쳤으면 궁지(끝까지 버틴다)

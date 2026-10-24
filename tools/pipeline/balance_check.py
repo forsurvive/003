@@ -275,9 +275,10 @@ def check_combat(weapons, enemies):
 ## 몬테카를로(0.05초 걸음 · 씨앗 고정 300판): 근접 토큰(무리 2 · 떼 4) · 물기 주기(× 물고 빠지기) · 우두머리 울부짖기(30초에 20초 +20%) ·
 ## 우두머리를 잃으면 50% 무리 도주 · 시궁쥐 절반을 잃으면 물러남 · 외눈 국면(① 무리 절반까지 지켜봄 ③ HP 30% 도주 + 무리 절반 흩어짐).
 ## 주인공 화력 = 표준 무기 dps × RE_K(보스 벤치 보정 — 재장전 · 뒷걸음 · 표적 바꿈). 받은 피해 ÷ 주인공 HP(평균 · 나쁜 10%).
-## 목표(SD-25 B4 — 조율사 권장, 사용자 위임 2026-10-23): 보통 RE 평균 60% · 나쁜 10% 100% 이하 / 필드 보스 평균 150%(스팀팩 셋 안) · 회복 없이 20초 이상
+## 목표(SD-25 B4 — 조율사 권장, 사용자 위임 2026-10-23 · 1-13h): 보통 RE 평균 60% · 나쁜 10% 100% 이하 / 필드 보스 평균 150%(스팀팩 셋 안) ·
+## 회복 없이 버티는 시간 — 이 셈(제자리 위쪽 끝)은 12초 이상, 실제 AI 뒷걸음 벤치(boss_fight_check)는 20초 이상
 RE_K = 0.63
-RE_LV = (3, 4, 5, 6)                                                    # 1막 주인공 레벨대
+RE_LV = (3, 4, 5, 6, 7, 8, 9)                                           # 1막 주인공 레벨대(1막 끝 Lv8 · 다 하면 더 — Lv8부터 편성 +1, encounters.gd groups)
 RE_AP = 1.0                                                             # 무리가 닿기 전 쏘는 초(트인 길 8칸 안팎)
 PACK_LEAD = {"CR-106", "CR-500"}
 SCALE_BEAST = BITERS | {"CR-001", "CR-002"}
@@ -289,21 +290,28 @@ def _unit(enemies, cid, lv):
     hp, dr = float(r["hp"]), float(r.get("dr") or 0)
     m = re.match(r"^\S+ (\d+)", str(r.get("attack", "")))
     bite = float(m.group(1)) if m else 8.0
-    if lv < base and cid in SCALE_BEAST:                                 # enemy.gd: 낮춘 짐승은 HP · 물기 · DR을 같은 비율로
-        hp, bite, dr = round(hp * lv / base), round(bite * lv / base), round(dr * lv / base)
-    return {"id": cid, "hp": hp, "hp0": hp, "dr": dr, "bite": bite, "sw": cid in SWARMY, "cd": 0.3}
+    claw = cid in CLAW
+    if lv < base:
+        if cid in SCALE_BEAST:                                           # enemy.gd: 낮춘 짐승은 HP · 물기 · DR을 같은 비율로
+            hp, bite, dr = round(hp * lv / base), round(bite * lv / base), round(dr * lv / base)
+        else:                                                            # 사람 · 구울: HP 20 + Lv × 8(SD-14 §3.4) · DR 비례
+            hp, dr = 20.0 + lv * 8.0, round(dr * lv / base)
+    if claw:                                                             # 구울 맨손(_enemy_weapon): 스킬 · 0.8회/초 · 물고 빠지기 없음
+        bite = bite * (100 + EN_SKILL) / 200.0
+    return {"id": cid, "hp": hp, "hp0": hp, "dr": dr, "bite": bite, "sw": cid in SWARMY, "cd": 0.3, "claw": claw}
 
 
-def _fight(us, lv, weapons, rng, one=False):
-    import math
+def _fight(us, lv, weapons, rng, one=False, one_first=False):
     php = 200.0 + (lv - 1) * 10.0
     pdr = float(band(STD_DR, lv))
     best = max(band(STD_WEAPON, lv), key=lambda wid: w_dps(weapons.get(wid, {}), 50.0, "new", 0.0))
     t, taken, surv, dt = 0.0, 0.0, None, 0.05
-    held = [u for u in us if u["id"] == "CR-500"] if one else []
+    rng.shuffle(us)                                                     # 게임: kinds.shuffle() · 거리순 토큰 — 우두머리 · 사나운 개가 늘 늦게 물지 않게
+    held = [u for u in us if u["id"] == "CR-500"] if one and not one_first else []
     us = [u for u in us if u not in held]
     n0 = len(us)
     lead = any(u["id"] in PACK_LEAD for u in us + held)
+    howl0 = None if held else 0.0                                         # 울부짖기 시계: 우두머리가 싸움에 든 때부터(외눈은 ②부터)
     rats0 = sum(1 for u in us if u["id"] == "CR-095")
     rats_dead = 0
     tgt = None
@@ -311,12 +319,13 @@ def _fight(us, lv, weapons, rng, one=False):
         if held and len(us) * 2 <= n0:                                     # 외눈 ②: 무리가 절반 이하 — 울부짖고 돌진
             us = held + us
             held = []
+            howl0 = t
         if not us:
             break
-        pk = [u for u in us if not u["sw"]][:2]
+        pk = [u for u in us if not u["sw"]][:1 if held else 2]          # 외눈 ① 동안 무리 토큰 하나(interior_combat 1-13h)
         sw = [u for u in us if u["sw"]][:4]
         biters = pk + sw if t >= RE_AP else []
-        buff = 1.2 if lead and (t % 30.0) < 20.0 and any(u["id"] in PACK_LEAD for u in us) else 1.0
+        buff = 1.2 if lead and howl0 is not None and ((t - howl0) % 30.0) < 20.0 and any(u["id"] in PACK_LEAD for u in us) else 1.0
         for u in biters:
             u["cd"] -= dt
             if u["cd"] <= 0:
@@ -324,9 +333,10 @@ def _fight(us, lv, weapons, rng, one=False):
                 taken += d
                 if taken >= php and surv is None:
                     surv = t
-                u["cd"] += (BITE_CD + max(0.0, u["bite"] - 15.0) * 0.05) * (1.0 if u["id"] in NO_BACK else BITE_BACK)
+                u["cd"] += (1.0 / CLAW_RATE) if u["claw"] else (BITE_CD + max(0.0, u["bite"] - 15.0) * 0.05) * (1.0 if u["id"] in NO_BACK else BITE_BACK)
         if tgt not in us:
-            tgt = rng.choice(biters or us)
+            fst = [u for u in us if u["id"] == "CR-500"] if one_first else []
+            tgt = fst[0] if fst else rng.choice(biters or us)
         tgt["hp"] -= w_dps(weapons[best], 50.0, "new", tgt["dr"]) * HIT_PC * PART_AVG * CRIT_AVG * RE_K * dt
         fled_one = one and tgt["id"] == "CR-500" and tgt["hp"] <= tgt["hp0"] * 0.3
         if tgt["hp"] <= 0 or fled_one:
@@ -371,7 +381,7 @@ def check_re_taken(weapons, enemies):
             continue
         for tag, gs in _groups_of(d):
             ids = [u[0] for g in gs for u in g.get("units", [])] + [g["leader"][0] for g in gs if g.get("leader")]
-            if not ids or any(i not in enemies for i in ids) or not all(i in SCALE_BEAST for i in ids):
+            if not ids or any(i not in enemies for i in ids) or not all(i in SCALE_BEAST or i in CLAW for i in ids):
                 continue
             key = json.dumps(gs, sort_keys=True)
             if key in seen:
@@ -385,7 +395,7 @@ def check_re_taken(weapons, enemies):
                     us = []
                     for g in gs:
                         for cid, lo, hi in g.get("units", []):
-                            us += [_unit(enemies, cid, lv) for _ in range(rng.randint(int(lo), int(hi)))]
+                            us += [_unit(enemies, cid, lv) for _ in range(min(rng.randint(int(lo), int(hi)) + (1 if lv >= 8 else 0), int(hi)))]
                         ld = g.get("leader")
                         if ld and rng.random() < float(ld[1]) and lv >= (int(ld[2]) if len(ld) > 2 else 0):
                             us.append(_unit(enemies, ld[0], lv))
@@ -410,20 +420,21 @@ def check_re_taken(weapons, enemies):
             worst = None
             for lv in (4, 5, 6, 7):
                 rng = random.Random(500 + lv + (100 if night else 0))
-                res = []
+                res, res2 = [], []
                 for _ in range(300):
                     us = [_unit(enemies, "CR-104", lv) for _ in range(4 + (2 if night else 0))] + [_unit(enemies, "CR-105", lv) for _ in range(rng.randint(2, 3))]
                     us.append(_unit(enemies, "CR-500", 6))
-                    res.append(_fight(us, lv, weapons, rng, one=True))
+                    res.append(_fight([dict(u) for u in us], lv, weapons, rng, one=True))
+                    res2.append(_fight([dict(u) for u in us], lv, weapons, rng, one=True, one_first=True))   # 외눈을 먼저 쏘는 판(①을 건너뛴다)
                 tk = sorted(r[0] * 100 for r in res)
-                sv = sorted(r[1] for r in res)
+                sv = sorted(min(a[1], b[1]) for a, b in zip(res, res2))      # 무회복은 두 판 가운데 나쁜 쪽
                 avg, p10 = sum(tk) / len(tk), sv[int(len(sv) * 0.1)]
                 if worst is None or avg > worst[1]:
                     worst = (lv, avg, p10)
             lv, avg, p10 = worst
-            st = "통과" if avg <= 150 and p10 >= 20 else ("주의" if avg <= 190 and p10 >= 15 else "실패")
+            st = "통과" if avg <= 150 and p10 >= 12 else ("주의" if avg <= 190 and p10 >= 9 else "실패")   # 무회복: 제자리 위쪽 끝 12초 · 뒷걸음 벤치 20초(SD-25 §2 — 조율사 정본 제안, 사용자 위임 1-13h)
             add("B4", "주인공 생존", "CR-500 외눈 무리%s 받은 피해" % (" 밤" if night else ""),
-                "Lv%d %.0f%% · 무회복 %s" % (lv, avg, "끝까지" if p10 >= 999 else "%.0f초" % p10), "평균 150% 이하 · 회복 없이 20초 이상", st,
+                "Lv%d %.0f%% · 무회복 %s" % (lv, avg, "끝까지" if p10 >= 999 else "%.0f초" % p10), "평균 150% 이하 · 회복 없이 12초 이상(제자리 · 외눈 먼저 쏨 포함)", st,
                 "SD-25 B4 필드 보스(1-13h D-394)", "제자리 사격 위쪽 끝 · 국면 ① 무리 절반까지 지켜봄 · ③ HP 30% 도주 + 무리 절반 흩어짐 · 벤치 boss_fight_check(BF_STAND)와 맞음")
 
 

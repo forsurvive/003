@@ -191,6 +191,12 @@ func test_balance_one_phases(t) -> void:
 	t.ok(one.brain.fleeing(), "다리가 멀쩡하면 숲으로 달아난다")
 	var fled := dogs.slice(2).filter(func(d): return d.brain.fleeing()).size()
 	t.eq(fled, 1, "남은 무리 둘 가운데 절반(하나)이 흩어진다")
+	var gone: Enemy = dogs.slice(2).filter(func(d): return d.brain.fleeing())[0]
+	t.ok(gone.routed, "흩어진 개 = 끝나는 도주")
+	gone.brain._t_state = 999.0                                         # 도주 시간이 다 지나도
+	for f in 40:
+		c.tick(1.0 / 60.0, true, st)
+	t.ok(not is_instance_valid(gone) or gone.brain.fleeing() or gone.has_meta("gone"), "흩어진 개는 다시 덤비지 않는다(멀어지면 빠진다)")
 	# 다리를 다친 외눈: 달아나지 못하고 버틴다
 	var one2 := c.spawn("CR-500", Vector2((o.x + 10) * 32 + 16, (o.y + 5) * 32 + 16), m, st, {"lv": 6})
 	one2.brain.state = AIBrain.S.COMBAT
@@ -225,4 +231,34 @@ func test_balance_one_hit_wakes(t) -> void:
 	for f in 60:
 		c.tick(1.0 / 60.0, true, st)
 	t.eq(one.one_phase, 1, "외눈이 맞으면 ②(울부짖고 내려온다)")
+	m.free()
+
+
+func test_balance_one_watch_tokens(t) -> void:
+	# 1-13h 조율: 외눈 ① 동안 무리 근접 토큰 하나(하나씩 떠본다) · 상처 입고 돌아온 외눈(HP 60%)도 ①부터
+	var h = ARMS.new()
+	var st: StoryState = h._state()
+	var r: Array = h._setup(st)
+	var m: InteriorMap = r[0]
+	var c: InteriorCombat = r[1]
+	var o: Vector2i = r[3]
+	var one := c.spawn("CR-500", Vector2((o.x + 13) * 32 + 16, (o.y + 3) * 32 + 16), m, st, {"lv": 6})
+	one.brain.state = AIBrain.S.COMBAT
+	one.brain.gauge = 100.0
+	one.cmb.hp = one.cmb.max_hp * 0.6
+	var dogs: Array = []
+	for i in 4:
+		var dg := _spawn(c, m, st, "CR-104", Vector2((o.x + 2) * 32 + 16, (o.y + 1 + i) * 32 + 16), {"lv": 2})
+		dg.cmb.invuln = true
+		dogs.append(dg)
+	c.pc.invuln = true
+	for f in 120:
+		c.tick(1.0 / 60.0, true, st)
+	t.eq(one.one_phase, 0, "상처 입은 외눈도 무리가 다 살아 있으면 ①")
+	t.eq(dogs.filter(func(d): return d.has_mtoken).size(), 1, "① 동안 무리 근접 토큰 하나")
+	one.cmb.take({"hp": 5.0}, c.pc.pos())
+	for f in 120:
+		c.tick(1.0 / 60.0, true, st)
+	t.eq(one.one_phase, 1, "맞으면 ②")
+	t.eq(dogs.filter(func(d): return d.has_mtoken).size(), 2, "② 뒤 토큰 둘")
 	m.free()

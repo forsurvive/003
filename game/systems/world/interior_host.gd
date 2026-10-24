@@ -300,6 +300,9 @@ func _index_scenes() -> void:
 			if not scenes_by_npc.has(who):
 				scenes_by_npc[who] = []
 			scenes_by_npc[who].append(g)
+	for who in scenes_by_npc:                                           # 길 위 인카운터 장면(RE-…)은 인카운터가 직접 연다 — 같은 인물의 맵 · 퀘스트 장면이 먼저(1-13h: 오두막 엄태경이 산 사냥꾼 RE-039 장면으로 열리던 것)
+		var a: Array = scenes_by_npc[who]
+		scenes_by_npc[who] = a.filter(func(g): return not str(g.get("id", "")).begins_with("RE-")) + a.filter(func(g): return str(g.get("id", "")).begins_with("RE-"))
 
 
 ## 맵을 연다. mark: 주인공이 설 표지(없으면 첫 표지)
