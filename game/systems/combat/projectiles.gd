@@ -443,12 +443,15 @@ func _apply(c: Combatant, s: Dictionary, at: Vector2) -> void:
 	var focused: bool = s.get("focused", false)
 	var pk: bool = str(s["team"]) == "player" and pc_st != null
 	var crit: bool = rng.randf() * 100.0 < CombatRules.crit_chance(5, float(w.get("crit_mult", 1.0)), "new", Perks.crit_add(pc_st) if pk else 0.0, focused) and not bool(w.get("no_crit", false))
-	var part := CombatRules.pick_part(CombatRules.part_weights(c.weights, {"focused": focused, "per": s.get("per", 5)}) if focused
-		else c.weights, rng)
+	var wts: Dictionary = c.weights
+	if not c.back_part.is_empty() and c.actor != null and "loco" in c.actor and CombatRules.from_behind(c.actor.loco.logical, c.actor.loco.facing, s["origin"]):
+		wts = CombatRules.back_weights(wts, c.back_part)                 # 뒤쪽 90° — 갑각 배
+	var part := CombatRules.pick_part(CombatRules.part_weights(wts, {"focused": focused, "per": s.get("per", 5)}) if focused
+		else wts, rng)
 	var sneak: bool = s.get("sneak_ok", false) and c.unaware.is_valid() and c.unaware.call()
 	c.last_sneak = sneak
 	var r := CombatRules.resolve({"weapon": w, "skill": s["skill"], "dist": s["origin"].distance_to(at) / 32.0,
-		"crit": crit or sneak, "part": part, "dr": c.dr, "sneak": sneak,
+		"crit": crit or sneak, "part": part, "dr": c.dr, "sneak": sneak, "part_mult": c.part_mult.get(part, CombatRules.PART_MULT.get(part, 1.0)),
 		"perk_mult": Perks.dmg_mult(pc_st, target_id(c)) if pk else 1.0, "better_crits": pk and Perks.better_crits(pc_st)})
 	r["nonlethal"] = w.get("sound", "") == "suppressed" or w.get("kind", "ranged") != "ranged" or s.get("proj", "") == "net"   # 공기총·근접·그물 = 비살상(기절, 0-9)
 	if c.robot:

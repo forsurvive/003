@@ -285,8 +285,19 @@
   "value": 15,
   "weight": 0.5
  },
- "I-085": {
+ "I-069": {
   "_src": "13_items.md:884",
+  "cat": "aid",
+  "desc": "HP +10 · 라드 +4",
+  "heal": 10,
+  "id": "I-069",
+  "name": "들개 고기",
+  "rads": 4,
+  "value": 3,
+  "weight": 0.5
+ },
+ "I-085": {
+  "_src": "13_items.md:885",
   "cat": "aid",
   "desc": "HP +20 · 라드 +5",
   "heal": 20,
@@ -297,7 +308,7 @@
   "weight": 0.5
  },
  "I-086": {
-  "_src": "13_items.md:885",
+  "_src": "13_items.md:886",
   "cat": "aid",
   "desc": "HP +10 · 라드 +5",
   "heal": 10,
@@ -308,7 +319,7 @@
   "weight": 0.5
  },
  "I-088": {
-  "_src": "13_items.md:886",
+  "_src": "13_items.md:887",
   "cat": "aid",
   "desc": "HP +8 · 라드 +0",
   "heal": 8,
@@ -319,7 +330,7 @@
   "weight": 0.2
  },
  "I-089": {
-  "_src": "13_items.md:887",
+  "_src": "13_items.md:888",
   "cat": "aid",
   "desc": "HP +25 · 라드 +2",
   "heal": 25,
@@ -330,7 +341,7 @@
   "weight": 0.5
  },
  "I-090": {
-  "_src": "13_items.md:888",
+  "_src": "13_items.md:889",
   "cat": "aid",
   "desc": "HP +20 · 라드 +0",
   "heal": 20,
@@ -341,7 +352,7 @@
   "weight": 0.5
  },
  "I-096": {
-  "_src": "13_items.md:889",
+  "_src": "13_items.md:890",
   "cat": "aid",
   "desc": "HP +10 · 라드 +0",
   "heal": 10,
@@ -352,7 +363,7 @@
   "weight": 0.3
  },
  "I-097": {
-  "_src": "13_items.md:890",
+  "_src": "13_items.md:891",
   "cat": "aid",
   "desc": "HP +20 · 라드 +0",
   "heal": 20,

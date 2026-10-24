@@ -217,7 +217,7 @@
   "id": "CR-121",
   "level": 4,
   "name": "변이 미국가재",
-  "part_weights": "PW-C",
+  "part_weights": "PW-D",
   "pattern": "둔치 흙 굴에서 나온다. 2~3마리",
   "radius": 0.28,
   "speed": 2.5,

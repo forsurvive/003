@@ -33,6 +33,7 @@ BOSS_FIGHT = {"CR-500": {"adds": [("CR-104", 4), ("CR-105", 3)], "flee": 0.3, "w
 ## 필드 보스 교전 셈(조율사 1-13a3 도구 고침): 호위는 저마다 제 DR로 · phase_s 국면 고정 초(사격 없는 시간) · cover (몸 HP 비율, 명중 배수) 구간
 ENGAGE_K = 1.5                                                          # 교전 전체: 움직임 · 재장전 · 다시 겨눔(조율사 추정 '지속 30초 → 움직임까지 40~50초')
 PART_AVG = (12 * 2.0 + 88 * 1.0) / 100.0                               # 사람 부위 가중(머리 12 × 2 · 나머지 × 1 — combat_rules PART_MULT · HUMANOID_WEIGHTS)
+PART_PW = {"PW-D": (10 * 2.0 + 70 * 0.5 + 20 * 1.0) / 100.0}             # 갑각(가재 · 참게): 정면 얼굴 10 ×2 · 껍질 70 ×0.5 · 집게 · 다리 20 ×1 = 0.75(뒤에서면 0.95 — 1-13 D-380)
 CRIT_AVG = 1.05                                                         # 행운 5 × 무기 배수 1 → 치명 5%(치명 피해 ≈ 기본 피해)
 ## 그 레벨대 표준 방어구 DR(SD-13 몸통 표에서 그 구간에 흔히 구하는 것 — 1막 작업복 4 · 2~3막 약탈자 아머 18 · 3~5막 강화 가죽 28 · 그 뒤 전투 아머 32)
 STD_DR = [(6, 4), (12, 18), (20, 28), (99, 32)]
@@ -186,7 +187,7 @@ def check_combat(weapons, enemies):
             lv = BOSS_REF[eid]
             hp = BOSS_HP[eid][0] + lv * BOSS_HP[eid][1]
         best = max(band(STD_WEAPON, lv), key=lambda wid: w_dps(weapons.get(wid, {}), 50.0, "new", dr))
-        dps = w_dps(weapons[best], 50.0, "new", dr) * HIT_PC * PART_AVG * CRIT_AVG
+        dps = w_dps(weapons[best], 50.0, "new", dr) * HIT_PC * PART_PW.get(e.get("part_weights"), PART_AVG) * CRIT_AVG
         ttk = hp / dps if dps > 0 else 999
         if tier == "필드 보스":
             bf = BOSS_FIGHT[eid]

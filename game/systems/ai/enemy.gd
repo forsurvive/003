@@ -301,6 +301,10 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 	cmb.weights = {"head": 15, "torso": 55, "leg": 30} if is_roach else ({"head": 20, "torso": 50, "leg": 30} if is_dog else CombatRules.HUMANOID_WEIGHTS)
 	if str(row.get("part_weights", "")) == "PW-B":                    # 왕개미(PW-B, SD-11 §4.8 표 곤충): 머리 15 · 몸통 60 · 다리 15 · 더듬이 10(부위 손상 → 광란)
 		cmb.weights = {"head": 15, "torso": 60, "leg": 15, "antenna": 10}
+	elif str(row.get("part_weights", "")) == "PW-D":                  # 갑각(PW-D, SD-14 §2.4 — 가재 · 참게 · 거북): 얼굴 10 ×2 · 껍질 70 ×0.5 · 집게 10 · 다리 10,
+		cmb.weights = {"head": 10, "torso": 70, "arm": 10, "leg": 10}  # 뒤쪽 명중은 껍질 70 가운데 40이 배(×1.0) — 돌아 들어가 쏘는 보람(1-13 D-380)
+		cmb.part_mult = {"head": 2.0, "torso": 0.5, "belly": 1.0}
+		cmb.back_part = ["torso", "belly", 40]
 	per = 3.0 if is_roach else (4.0 if is_dog else 5.0)
 	brain = AIBrain.new(pos, per, "insect" if is_roach else "human")
 	if stance == "hold":
@@ -1236,10 +1240,10 @@ func _bait_step(dt: float, target: Combatant, nav) -> bool:
 		return false                                                   # 근접 토큰이 없는 짐승은 10칸 안 미끼에 끌린다(재미 검수 F12 — 미끼로 무리를 떼어 낸다)
 	if _bait.is_empty() or float(_bait.get("t", 0.0)) <= 0.0:
 		_bait = bait_at.call(loco.logical, BAIT_R)
-		_path = PackedVector2Array()
 		if _bait.is_empty():
 			_end_eat()
-			return false
+			return false                                               # 미끼가 없으면 길을 그대로 둔다(1-13 D-380 — 전엔 여기서 길을 비워 6칸 밖 교전 짐승이 제자리에 굳었다)
+		_path = PackedVector2Array()
 	var bp: Vector2 = _bait["p"]
 	var to := bp - loco.logical
 	if to.length() > 14.0:

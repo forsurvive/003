@@ -127,3 +127,20 @@ func test_balance_dog_no_overlap(t) -> void:
 		c.tick(1.0 / 60.0, true, st)
 	t.ok(z.loco.logical.distance_to(c.pc.pos()) > 4.0, "겹친 개가 빠져나온다")
 	m.free()
+
+
+func test_balance_far_dog_closes(t) -> void:
+	# 1-13 D-380: 미끼가 없는데도 6칸(BAIT_FIGHT_R) 밖 교전 짐승의 길을 매 프레임 비워 제자리에 굳던 것 — 이제 다가와야 한다
+	var h = ARMS.new()
+	var st: StoryState = h._state()
+	var r: Array = h._setup(st)
+	var m: InteriorMap = r[0]
+	var c: InteriorCombat = r[1]
+	var o: Vector2i = r[3]
+	var dog := _spawn(c, m, st, "CR-104", Vector2((o.x + 11) * 32 + 16, (o.y + 3) * 32 + 16), {"lv": 2})   # 트인 14×7칸 한쪽 끝 — 주인공에서 11칸
+	var d0 := dog.loco.logical.distance_to(c.pc.pos())
+	for f in 180:
+		c.tick(1.0 / 60.0, true, st)
+	var d1 := dog.loco.logical.distance_to(c.pc.pos())
+	t.ok(d1 < d0 - 64.0, "11칸 밖 교전 들개가 3초에 두 칸 넘게 다가온다(%.0f → %.0f px)" % [d0, d1])
+	m.free()

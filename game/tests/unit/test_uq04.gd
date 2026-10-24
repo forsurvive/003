@@ -92,6 +92,7 @@ func _place(h: InteriorHost, c: Vector2i) -> void:
 func _think(h: InteriorHost, e: Enemy, secs: float, watch := Callable()) -> void:
 	var t := 0.0
 	while t < secs:
+		h.combat.nav.new_frame()                                        # 실제 전투 틱처럼 프레임마다 길찾기 예산(8회)을 되돌린다
 		e.think(0.05, h.combat.pc, h.combat.nav, h.combat.shots)
 		h.combat.ord.step(0.05, [])
 		if watch.is_valid():
@@ -145,10 +146,12 @@ func test_uq04_mole(t) -> void:
 	t.ok(m.burrow == "" and not m.cmb.invuln, "표적이 흙에서 멀면 땅 위로 쫓는다(들락날락하지 않는다) %s" % str(tr.slice(0, 12)))
 	_place(h, Vector2i(30, 19))                                         # 다시 6호 흙 위로
 	var dug := [false]
-	_think(h, m, 8.0, func() -> void:
+	_think(h, m, 14.0, func() -> void:                                 # 복도 끝(10,11)까지 쫓아간 굴쥐가 흙(약 20칸)으로 돌아와 판다 — 1-13 D-380 짐승 길 고침 뒤(전엔 6칸 밖에서 굳어 흙 곁에 남았다)
+		m.brain.state = AIBrain.S.COMBAT                                 # 순간이동한 표적을 계속 안다(놓치면 그 자리를 뒤진다 — 그건 따로)
+		m.brain.last_seen = h.player.loco.logical
 		if m.burrow == "under" or m.burrow == "dig":
 			dug[0] = true)
-	t.ok(dug[0], "표적이 흙 위면 땅 위 4초 뒤 다시 판다")
+	t.ok(dug[0], "표적이 흙 위면 땅 위 4초 뒤 다시 판다(굴쥐 %s 흙 %s · 표적 %s)" % [str(h.map.tile_of(m.loco.logical)), str(h.map.soil_at(h.map.tile_of(m.loco.logical))), str(h.map.tile_of(h.player.loco.logical))])
 	st.vars.set_v("UQ04_COLD", 1)
 	h.enter("DS-02", "from_W")
 	var m2 := _find(h, "CR-096", Vector2i(28, 18))

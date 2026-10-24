@@ -106,6 +106,23 @@ static func part_weights(base: Dictionary, ctx: Dictionary = {}) -> Dictionary:
 	return w
 
 
+## 맞은 쪽이 대상의 뒤쪽 90°인가(쏜 자리 → 대상 방향이 대상이 보는 방향과 같은 쪽)
+static func from_behind(target_pos: Vector2, facing: int, src: Vector2) -> bool:
+	var into := (target_pos - src).normalized()
+	return into.dot(Vector2(Locomotion.VEC[facing]).normalized()) > 0.7071
+
+
+## 갑각(PW-D) 같은 뒤쪽 특수 부위: 뒤에서 맞으면 back_part [옮길 부위, 새 부위, 몫]만큼 가중을 옮긴다
+static func back_weights(w: Dictionary, back: Array) -> Dictionary:
+	if back.size() < 3 or not w.has(back[0]):
+		return w
+	var o := w.duplicate()
+	var n := minf(float(back[2]), float(o[back[0]]))
+	o[back[0]] = float(o[back[0]]) - n
+	o[back[1]] = float(o.get(back[1], 0.0)) + n
+	return o
+
+
 static func pick_part(weights: Dictionary, rng: RandomNumberGenerator) -> String:
 	var keys := weights.keys()
 	keys.sort()                                              # deterministic order for a given seed

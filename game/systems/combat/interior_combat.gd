@@ -1554,8 +1554,12 @@ func _melee(player: Actor, w: Dictionary, to: Vector2, st: StoryState, power: bo
 		n += 1
 		var e = h[2]
 		var sneak: bool = e != null and c.unaware.is_valid() and c.unaware.call()
-		var part := CombatRules.pick_part(CombatRules.part_weights(c.weights, {"melee": true, "attacker_crouch": crouch}), shots.rng)
+		var wts: Dictionary = c.weights
+		if not c.back_part.is_empty() and c.actor != null and "loco" in c.actor and CombatRules.from_behind(c.actor.loco.logical, c.actor.loco.facing, pc.actor.loco.logical):
+			wts = CombatRules.back_weights(wts, c.back_part)             # 뒤쪽 90° — 갑각 배(근접)
+		var part := CombatRules.pick_part(CombatRules.part_weights(wts, {"melee": true, "attacker_crouch": crouch}), shots.rng)
 		var r := CombatRules.resolve({"weapon": w, "skill": sk, "power": power, "part": part, "dr": c.dr, "sneak": sneak, "crit": sneak,
+			"part_mult": c.part_mult.get(part, CombatRules.PART_MULT.get(part, 1.0)),
 			"attacker": {"str": st.stat("ST") if st != null else 5, "unarmed": sk},
 			"add": Perks.unarmed_add(st) if st != null and fam == "unarmed" else 0.0,
 			"perk_mult": Perks.dmg_mult(st, Projectiles.target_id(c)) if st != null else 1.0, "better_crits": st != null and Perks.better_crits(st)})
