@@ -179,6 +179,7 @@ var mq106: Mq106                                   ## MQ-106 첫 번째 추적�
 var home: HomeBc                                   ## 봉천 옥탑방 거처(1-8b)
 var side_r01: SideR01                              ## 관악 사이드 퀘스트(1-11 — SQ-S01 외눈의 인식표)
 var kc_boss: KcBoss                                ## 신림 고가 아래 깡철이 보스전(1-13a3)
+var wander_tin: WanderTin                          ## 관악 비탈 바위 틈 깡통(1-13j2 — 비운 뒤 · 남긴 뒤 주인이 다녀감)
 var side_s02: SideS02                              ## 관악 사이드 퀘스트(1-11b — SQ-S02 물 반 컵의 값)
 var side_s03: SideS03                              ## 관악 사이드 퀘스트(1-11d — SQ-S03 곰팡이의 근원)
 var side_s04: SideS04                              ## 관악 사이드 퀘스트(1-11c — SQ-S04 도성이 뒤척인다)
@@ -259,6 +260,10 @@ func _paths() -> void:
 		kc_boss = KcBoss.new()
 		add_child(kc_boss)
 		kc_boss.setup(host, log_on)
+	if wander_tin == null:                                         # 관악 비탈 바위 틈 깡통(1-13j2)
+		wander_tin = WanderTin.new()
+		add_child(wander_tin)
+		wander_tin.setup(host, log_on)
 	if side_s02 == null:
 		side_s02 = SideS02.new()
 		add_child(side_s02)

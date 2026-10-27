@@ -15,12 +15,16 @@ prop annex_window -1 0 cond="SQ_S04_WIN == 0"
 prop annex_window -1 0 state=open cond="SQ_S04_WIN == 1"
 text 0 0 "별채 아랫단 창고 창. 녹슨 창살 셋, 걸쇠에 자물쇠 하나. 아래 자재 상자를 밟으면 손이 닿는다." scene=SQS04_WINDOW
 
-# 관악 비탈 숲 틈 위(1-13j 경제 조율 — 조율사 보고 1 '첫 시간의 캡'): 떠돌이가 바위 발치에 돌을 쌓아 숨겨 둔 비상금 깡통 — 캡 20~25 한 번(아이템 없음).
-#   볼트 앞마당(손 맵)을 지나 숲 틈을 빠져나오면 봉천 가는 흙길 북쪽 세 칸. 주인이 누구인지 · 왜 안 돌아왔는지는 말하지 않는다(사실을 늘리지 않음 — SD-20 P2).
-spot @949,1459 2 1
-prop boulder_s 0 0
+# 관악 비탈 숲 틈 위(1-13j 경제 조율 — 조율사 보고 1 '첫 시간의 캡' · 1-13j2 재미 검수 반영, 계획 `docs/seoul-fallout/_plans/1-13j2_wander_tin_plan.md`):
+#   떠돌이가 돌을 쌓아 틈을 막고 숨겨 둔 비상금 깡통 — 캡 20~25 한 번(아이템 없음). 볼트 앞마당(손 맵)을 지나 숲 틈을 빠져나오면 봉천 가는 흙길 북쪽 세 칸.
+#   돌탑(wander_cairn — 산의 둥근 바위와 다른 납작한 층 · 깡통 뚜껑 반짝임) · 흙길에서 이어지는 군화 발자국. 글은 진행기 WanderTin이 용기를 열기 전에 띄운다(WT_STATE).
+#   주인이 누구인지 · 왜 안 돌아왔는지는 말하지 않는다(사실을 늘리지 않음 — SD-20 P2).
+spot @949,1459 2 2
+prop wander_cairn 0 0 cond="WT_STATE == 0"
+prop wander_cairn 0 0 state=scattered cond="WT_STATE == 1 or WT_STATE == 2"
+prop wander_cairn 0 0 state=restacked cond="WT_STATE >= 3"
+prop boot_prints 0 1
 box 0 0 wander_tin name="바위 틈 탄약 깡통"
-text 1 0 "바위 발치에 돌 몇 개를 쌓아 틈을 막아 두었다. 틈 안에 녹슨 탄약 깡통. 뚜껑에 칼끝으로 긁은 글씨 — '비 그치면 가지러 옴.'"
 
 # 관악산 전망바위(L-R01-03, SD-09a B · 단계 1-5e): 데크 끝 동전 망원경 → 전망 장면(R01 전체 + 여의도 장소를 지도에 '표시').
 # 2077 안내판 '맑은 날에는 여의도 국회 돔과 남산 타워가 보입니다' — 돔은 무너졌고 탑은 그대로라 절반만 맞다.

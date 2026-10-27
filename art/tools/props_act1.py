@@ -6,6 +6,11 @@
              그 위 붉은 스프레이 '동의함' 덧칠 · 오른쪽 아래 귀퉁이만 덧칠이 덜 돼 볼펜 글씨 한 줄(읽는 건 조사 글) · 왼쪽 끈이 풀려 처짐 · 찢긴 구멍.
   atom_charger 원자 충전소 충전기(1×1, SD-09a L-R01-15 · LR-49) — 2050년대 캡슐형: 크림색 둥근 몸통 · 청록 띠 · 위 둥근 노심 창(꺼져 검은 유리에 금) ·
              바늘이 0에 붙은 계기 · 감긴 충전 호스 · 몸통 아래 녹물 · 앞판 원자 표장. 상태 glow(노심 창이 희미한 초록 — 아직 남은 열).
+  wander_cairn 관악 비탈 떠돌이의 돌탑(1×1, 1-13j2 — 재미 검수 '아무 바위와 똑같아 운으로만 찾는다'): 납작한 돌 셋을 쌓은 작은 탑, 맨 아래 두 돌 틈에
+             녹슨 탄약 깡통(올리브 칠이 벗겨진 쇠 · 손잡이 고리) — 뚜껑 테두리 한 점이 빛을 받아 반짝인다(광원 북서). 둘레 산에 무작위로 깔린 둥근 바위와
+             한눈에 다르게: 결이 납작하고 층층이 · 사람 손이 쌓은 기울기. 상태 scattered(돌 셋이 쓰러져 흩어지고 뚜껑 열린 깡통이 옆으로 누움 — 비운 뒤) ·
+             restacked(다시 쌓임 — 깡통은 틈 안 · 반짝임 없음, 주인이 다녀간 뒤).
+  boot_prints 흙에 찍힌 군화 발자국 두 쌍(덧그림 28×14, 1-13j2) — 아래(흙길)에서 위(돌탑)로. 굽 자리가 깊고 앞창 줄무늬가 남았다.
 props_bc.PROPS에 합쳐져 r01_props 아틀라스로 나간다."""
 import math
 import os
@@ -165,6 +170,88 @@ def atom_charger(state=""):
     return im
 
 
+def _flat_stone(d, x0, y0, w, h, ramp, rnd):
+    """납작한 돌 한 장(옆에서 본 층): 먹선 · 윗면 밝음(광원 북서) · 옆면 어둠 · 결 한 줄 · 지의류 한두 점."""
+    d.rounded_rectangle([x0 - 1, y0 - 1, x0 + w, y0 + h], radius=2, fill=C(INK))
+    d.rounded_rectangle([x0, y0, x0 + w - 1, y0 + h - 1], radius=2, fill=C(ramp[1]))
+    d.line([x0 + 1, y0, x0 + w - 3, y0], fill=C(ramp[3]))              # 윗면 가장자리 빛
+    d.line([x0 + 1, y0 + 1, x0 + w - 4, y0 + 1], fill=C(ramp[2]))
+    d.line([x0 + 1, y0 + h - 1, x0 + w - 2, y0 + h - 1], fill=C(ramp[0]))   # 아랫면 그늘
+    d.point((x0 + w - 1, y0 + h // 2), fill=C(ramp[0]))
+    gx = x0 + rnd.randint(2, max(2, w - 4))                              # 결
+    d.line([gx, y0 + 1, gx + 2, y0 + h - 2], fill=C(ramp[0]))
+    for _ in range(rnd.randint(1, 2)):                                   # 지의류
+        d.point((x0 + rnd.randint(1, w - 2), y0 + rnd.randint(1, max(1, h - 2))), fill=C(rnd.choice(["P31", "P32"])))
+
+
+def _tin(d, x0, y0, lying=False, glint=True):
+    """녹슨 탄약 깡통(8×6): 올리브 칠(벗겨진 쇠 · 녹) · 뚜껑 띠 · 손잡이 고리 · 빛 받는 뚜껑 모서리(흰 점 + 노란 점 — 멀리서도 보이는 반짝임)."""
+    if lying:                                                            # 옆으로 누운 빈 깡통 — 입(어두운 안)이 보는 쪽을 향한다
+        d.rectangle([x0 - 1, y0 - 1, x0 + 8, y0 + 5], fill=C(INK))
+        d.rectangle([x0, y0, x0 + 7, y0 + 4], fill=C("P30"))
+        d.line([x0 + 1, y0, x0 + 7, y0], fill=C("P31"))
+        d.rectangle([x0 + 5, y0, x0 + 7, y0 + 4], fill=C("P05"))         # 열린 입 테(쇠)
+        d.rectangle([x0 + 6, y0 + 1, x0 + 7, y0 + 3], fill=C("P01"))     # 빈 속
+        d.point((x0 + 2, y0 + 3), fill=C("P25"))
+        d.point((x0 + 3, y0 + 2), fill=C("P26"))
+        return
+    d.rectangle([x0 - 1, y0 - 1, x0 + 8, y0 + 6], fill=C(INK))
+    d.rectangle([x0, y0, x0 + 7, y0 + 5], fill=C("P30"))                 # 몸통(올리브)
+    d.line([x0, y0, x0 + 7, y0], fill=C("P06"))                           # 뚜껑 띠(쇠)
+    d.line([x0, y0 + 1, x0 + 7, y0 + 1], fill=C("P04"))
+    d.line([x0 + 7, y0 + 2, x0 + 7, y0 + 5], fill=C("P29"))               # 오른쪽 그늘
+    for (x, y) in ((x0 + 2, y0 + 3), (x0 + 5, y0 + 4), (x0 + 6, y0 + 2), (x0 + 3, y0 + 5)):
+        d.point((x, y), fill=C(("P25", "P26", "P24")[(x + y) % 3]))      # 녹 · 벗겨진 칠
+    d.line([x0 + 2, y0 - 2, x0 + 5, y0 - 2], fill=C("P05"))               # 손잡이 고리
+    d.point((x0 + 2, y0 - 1), fill=C("P04")); d.point((x0 + 5, y0 - 1), fill=C("P04"))
+    if glint:
+        d.point((x0, y0), fill=C("P09"))                                  # 뚜껑 모서리 반짝임(북서 빛)
+        d.point((x0 + 1, y0), fill=C("P50"))
+        d.point((x0, y0 - 1), fill=C("P08"))
+
+
+def wander_cairn(state=""):
+    """떠돌이의 돌탑(30×30, 발 1×1). 기본 = 쌓임 + 깡통 반짝임 · scattered = 흩어짐 + 빈 깡통 누움 · restacked = 다시 쌓임(깡통은 틈 안, 반짝임 없음)."""
+    im = img(30, 30)
+    d = ImageDraw.Draw(im)
+    rnd = random.Random(1359)
+    STONE = ["P04", "P05", "P06", "P07"]
+    WARM = ["P17", "P18", "P19", "P20"]
+    for x in range(3, 28):                                               # 그림자(선 그림자 — 타원 금지)
+        if x % 2 == 0:
+            d.point((x, 28), fill=C("P02"))
+    if state == "scattered":
+        _flat_stone(d, 1, 22, 10, 4, STONE, rnd)                          # 쓰러진 돌 셋 — 서로 떨어져 바닥에
+        _flat_stone(d, 19, 23, 9, 4, WARM, rnd)
+        _flat_stone(d, 6, 15, 8, 4, STONE, rnd)
+        _tin(d, 15, 16, lying=True)
+        return im
+    _flat_stone(d, 3, 20, 22, 7, STONE, rnd)                              # 아래 넓은 돌
+    if state != "restacked":
+        _tin(d, 21, 14)                                                   # 아래 · 가운데 돌 사이 틈에서 오른쪽으로 비죽 나온 깡통(뚜껑 모서리 반짝임이 보인다)
+    _flat_stone(d, 6, 14, 14, 6, WARM, rnd)                               # 가운데(조금 왼쪽으로 기움 — 손으로 쌓은 결)
+    _flat_stone(d, 9, 9, 9, 5, STONE, rnd)                                # 꼭대기
+    d.rectangle([12, 6, 14, 8], fill=C(INK))                              # 꼭대기 작은 돌 하나
+    d.rectangle([12, 7, 13, 8], fill=C("P06"))
+    d.point((12, 7), fill=C("P08"))
+    if state == "restacked":
+        d.rectangle([20, 17, 23, 19], fill=C("P01"))                      # 틈(깡통은 안쪽으로 밀어 넣었다)
+    return im
+
+
+def boot_prints():
+    """흙 위 군화 발자국 두 쌍(28×14, 덧그림): 아래 왼쪽(흙길) → 위 오른쪽(돌탑). 앞창(넓고 줄무늬) · 틈 · 굽(깊다)."""
+    im = img(28, 14)
+    d = ImageDraw.Draw(im)
+    for k, (x, y) in enumerate(((2, 8), (8, 6), (14, 5), (20, 2))):
+        x += 2 if k % 2 else 0
+        d.rectangle([x, y, x + 2, y + 2], fill=C("P18"))                  # 앞창
+        d.point((x + 1, y + 1), fill=C("P17"))                            # 줄무늬
+        d.point((x, y + 2), fill=C("P17"))
+        d.rectangle([x, y + 4, x + 2, y + 5], fill=C("P17"))              # 굽(깊다)
+    return im
+
+
 def _r(fn, fw, fh, kind="floor", down=2, dx=0, dy=0):
     return {"fn": fn, "foot": (fw, fh), "kind": kind, "down": down, "dx": dx, "dy": dy}
 
@@ -173,13 +260,17 @@ PROPS_ACT1 = {
     "bike_pile": _r(bike_pile, 3, 1, down=0),
     "fence_banner": _r(fence_banner, 2, 1),
     "atom_charger": _r(atom_charger, 1, 1, down=-2),
+    "wander_cairn": _r(wander_cairn, 1, 1, down=1),                     # 1-13j2 관악 비탈 떠돌이 돌탑(깡통 wander_tin)
+    "boot_prints": _r(boot_prints, 0, 0, "deco"),
 }
-STATES_ACT1 = {"atom_charger": {"glow": lambda: atom_charger("glow")}}
+STATES_ACT1 = {"atom_charger": {"glow": lambda: atom_charger("glow")},
+               "wander_cairn": {"scattered": lambda: wander_cairn("scattered"), "restacked": lambda: wander_cairn("restacked")}}
 
 
 if __name__ == "__main__":
     out = sys.argv[1] if len(sys.argv) > 1 else "/tmp/props_act1.png"
-    ps = [bike_pile(), fence_banner(), atom_charger(), atom_charger("glow")]
+    ps = [bike_pile(), fence_banner(), atom_charger(), atom_charger("glow"), wander_cairn(), wander_cairn("scattered"), wander_cairn("restacked"),
+          boot_prints()]
     sheet = Image.new("RGBA", (sum(p.width + 16 for p in ps), 60), (130, 112, 84, 255))
     x = 8
     for p in ps:

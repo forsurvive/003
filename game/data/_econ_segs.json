@@ -1,203 +1,5 @@
 {
  "rows": {
-  "job": {
-   "caps": -100,
-   "earned": 0,
-   "spent": 100,
-   "xp": 410,
-   "day": 0,
-   "route": "job",
-   "ok": true
-  },
-  "vent": {
-   "caps": 0,
-   "earned": 0,
-   "spent": 0,
-   "xp": 350,
-   "day": 0,
-   "route": "vent",
-   "ok": true
-  },
-  "hack": {
-   "caps": 0,
-   "earned": 0,
-   "spent": 0,
-   "xp": 340,
-   "day": 0,
-   "route": "hack",
-   "ok": true
-  },
-  "fee": {
-   "caps": -300,
-   "earned": 0,
-   "spent": 300,
-   "xp": 300,
-   "day": 0,
-   "route": "fee",
-   "ok": true
-  },
-  "yd_talk": {
-   "caps": 0,
-   "earned": 0,
-   "spent": 0,
-   "xp": 310,
-   "day": 0,
-   "route": "yd_talk",
-   "ok": true
-  },
-  "yd_fight": {
-   "caps": 0,
-   "earned": 0,
-   "spent": 0,
-   "xp": 430,
-   "day": 0,
-   "route": "yd_fight",
-   "ok": true
-  },
-  "yd_vent": {
-   "caps": 0,
-   "earned": 0,
-   "spent": 0,
-   "xp": 395,
-   "day": 0,
-   "route": "yd_vent",
-   "ok": true
-  },
-  "sb_buy": {
-   "caps": -300,
-   "earned": 500,
-   "spent": 800,
-   "xp": 300,
-   "day": 0,
-   "route": "sb_buy",
-   "ok": true
-  },
-  "sb_deal": {
-   "caps": -1000,
-   "earned": 0,
-   "spent": 1000,
-   "xp": 300,
-   "day": 0,
-   "route": "sb_deal",
-   "ok": true
-  },
-  "sb_raid": {
-   "caps": 0,
-   "earned": 0,
-   "spent": 0,
-   "xp": 635,
-   "day": 0,
-   "route": "sb_raid",
-   "ok": true
-  },
-  "sb_roof": {
-   "caps": 0,
-   "earned": 0,
-   "spent": 0,
-   "xp": 340,
-   "day": 0,
-   "route": "sb_roof",
-   "ok": true
-  },
-  "sb_jo": {
-   "caps": 0,
-   "earned": 0,
-   "spent": 0,
-   "xp": 0,
-   "day": 0,
-   "route": "sb_jo",
-   "ok": true
-  },
-  "sb_south": {
-   "caps": 0,
-   "earned": 0,
-   "spent": 0,
-   "xp": 460,
-   "day": 1,
-   "route": "sb_south",
-   "ok": true
-  },
-  "vb_talk": {
-   "caps": 0,
-   "earned": 0,
-   "spent": 0,
-   "xp": 320,
-   "day": 0,
-   "route": "vb_talk",
-   "ok": true
-  },
-  "vb_walk": {
-   "caps": 0,
-   "earned": 0,
-   "spent": 0,
-   "xp": 300,
-   "day": 3,
-   "route": "vb_walk",
-   "ok": true
-  },
-  "vb_fight": {
-   "caps": 0,
-   "earned": 0,
-   "spent": 0,
-   "xp": 475,
-   "day": 0,
-   "route": "vb_fight",
-   "ok": true
-  },
-  "vb_hide": {
-   "caps": 0,
-   "earned": 0,
-   "spent": 0,
-   "xp": 300,
-   "day": 0,
-   "route": "vb_hide",
-   "ok": true
-  },
-  "vb_cargo": {
-   "caps": 0,
-   "earned": 0,
-   "spent": 0,
-   "xp": 350,
-   "day": 0,
-   "route": "vb_cargo",
-   "ok": true
-  },
-  "vb_capture": {
-   "caps": -180,
-   "earned": 0,
-   "spent": 180,
-   "xp": 300,
-   "day": 3,
-   "route": "vb_capture",
-   "ok": true
-  },
-  "sb_capture": {
-   "caps": -240,
-   "earned": 0,
-   "spent": 240,
-   "xp": 550,
-   "day": 1,
-   "route": "sb_capture",
-   "ok": true
-  },
-  "rq": {
-   "caps": 237,
-   "earned": 237,
-   "spent": 0,
-   "xp": 127,
-   "day": 1,
-   "route": "rq",
-   "ok": true
-  },
-  "rqb": {
-   "caps": 190,
-   "earned": 190,
-   "spent": 0,
-   "xp": 144,
-   "day": 0,
-   "route": "rqb",
-   "ok": true
-  },
   "hub": {
    "route": "hub",
    "ok": true,
@@ -205,16 +7,88 @@
    "earned": 0,
    "spent": 0,
    "xp": 0,
-   "day": 0
+   "day": 0,
+   "kills": {}
   },
-  "bw": {
-   "route": "bw",
-   "ok": false,
+  "vb_talk": {
+   "route": "vb_talk",
+   "ok": true,
    "caps": 0,
    "earned": 0,
    "spent": 0,
-   "xp": 55,
-   "day": 0
+   "xp": 320,
+   "day": 0,
+   "kills": {}
+  },
+  "job": {
+   "route": "job",
+   "ok": true,
+   "caps": -100,
+   "earned": 0,
+   "spent": 100,
+   "xp": 410,
+   "day": 0,
+   "kills": {
+    "CR-200": 5,
+    "CR-201": 1,
+    "CR-437": 2,
+    "CR-436": 1
+   }
+  },
+  "vent": {
+   "route": "vent",
+   "ok": true,
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 350,
+   "day": 0,
+   "kills": {
+    "CR-200": 5,
+    "CR-201": 1
+   }
+  },
+  "yd_talk": {
+   "route": "yd_talk",
+   "ok": true,
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 310,
+   "day": 0,
+   "kills": {}
+  },
+  "sb_buy": {
+   "route": "sb_buy",
+   "ok": true,
+   "caps": -300,
+   "earned": 500,
+   "spent": 800,
+   "xp": 300,
+   "day": 0,
+   "kills": {}
+  },
+  "sb_roof": {
+   "route": "sb_roof",
+   "ok": true,
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 340,
+   "day": 0,
+   "kills": {}
+  },
+  "bw": {
+   "route": "bw",
+   "ok": true,
+   "caps": 0,
+   "earned": 0,
+   "spent": 0,
+   "xp": 315,
+   "day": 0,
+   "kills": {
+    "CR-104": 1
+   }
   },
   "bs": {
    "route": "bs",
@@ -223,7 +97,8 @@
    "earned": 100,
    "spent": 30,
    "xp": 0,
-   "day": 0
+   "day": 0,
+   "kills": {}
   },
   "s3": {
    "route": "s3",
@@ -231,8 +106,13 @@
    "caps": 100,
    "earned": 100,
    "spent": 0,
-   "xp": 382,
-   "day": 0
+   "xp": 377,
+   "day": 0,
+   "kills": {
+    "CR-095": 10,
+    "CR-097": 1,
+    "CR-002": 2
+   }
   },
   "s5": {
    "route": "s5",
@@ -241,7 +121,8 @@
    "earned": 100,
    "spent": 0,
    "xp": 300,
-   "day": 0
+   "day": 0,
+   "kills": {}
   },
   "s6": {
    "route": "s6",
@@ -250,7 +131,8 @@
    "earned": 0,
    "spent": 0,
    "xp": 410,
-   "day": 0
+   "day": 0,
+   "kills": {}
   },
   "s8": {
    "route": "s8",
@@ -259,7 +141,8 @@
    "earned": 0,
    "spent": 0,
    "xp": 260,
-   "day": 0
+   "day": 0,
+   "kills": {}
   },
   "s9": {
    "route": "s9",
@@ -268,7 +151,8 @@
    "earned": 0,
    "spent": 0,
    "xp": 450,
-   "day": 0
+   "day": 0,
+   "kills": {}
   },
   "s10": {
    "route": "s10",
@@ -277,7 +161,8 @@
    "earned": 0,
    "spent": 650,
    "xp": 550,
-   "day": 2
+   "day": 2,
+   "kills": {}
   },
   "s11": {
    "route": "s11",
@@ -286,16 +171,18 @@
    "earned": 0,
    "spent": 0,
    "xp": 385,
-   "day": 0
+   "day": 0,
+   "kills": {}
   },
   "s12": {
    "route": "s12",
-   "ok": false,
+   "ok": true,
    "caps": 0,
    "earned": 0,
    "spent": 0,
-   "xp": 300,
-   "day": 0
+   "xp": 330,
+   "day": 0,
+   "kills": {}
   },
   "s13": {
    "route": "s13",
@@ -304,7 +191,8 @@
    "earned": 0,
    "spent": 0,
    "xp": 460,
-   "day": 0
+   "day": 0,
+   "kills": {}
   },
   "jc01": {
    "route": "jc01",
@@ -312,8 +200,11 @@
    "caps": 50,
    "earned": 50,
    "spent": 0,
-   "xp": 330,
-   "day": 0
+   "xp": 320,
+   "day": 0,
+   "kills": {
+    "CR-095": 10
+   }
   },
   "gs01": {
    "route": "gs01",
@@ -322,7 +213,10 @@
    "earned": 0,
    "spent": 0,
    "xp": 260,
-   "day": 0
+   "day": 0,
+   "kills": {
+    "CR-095": 2
+   }
   },
   "gs02": {
    "route": "gs02",
@@ -331,7 +225,8 @@
    "earned": 50,
    "spent": 0,
    "xp": 250,
-   "day": 0
+   "day": 0,
+   "kills": {}
   },
   "jh01": {
    "route": "jh01",
@@ -339,8 +234,13 @@
    "caps": 112,
    "earned": 112,
    "spent": 0,
-   "xp": 325,
-   "day": 1
+   "xp": 335,
+   "day": 1,
+   "kills": {
+    "CR-095": 9,
+    "CR-096": 1,
+    "CR-097": 1
+   }
   },
   "jh02": {
    "route": "jh02",
@@ -349,7 +249,8 @@
    "earned": 0,
    "spent": 0,
    "xp": 260,
-   "day": 1
+   "day": 1,
+   "kills": {}
   },
   "jh03": {
    "route": "jh03",
@@ -358,16 +259,20 @@
    "earned": 150,
    "spent": 0,
    "xp": 405,
-   "day": 0
+   "day": 0,
+   "kills": {}
   },
   "sb02f": {
    "route": "sb02f",
-   "ok": false,
-   "caps": 0,
-   "earned": 0,
-   "spent": 0,
-   "xp": 45,
-   "day": 0
+   "ok": true,
+   "caps": 90,
+   "earned": 150,
+   "spent": 60,
+   "xp": 385,
+   "day": 0,
+   "kills": {
+    "CR-452": 3
+   }
   },
   "uq05": {
    "route": "uq05",
@@ -376,7 +281,8 @@
    "earned": 0,
    "spent": 0,
    "xp": 70,
-   "day": 0
+   "day": 0,
+   "kills": {}
   },
   "uq07": {
    "route": "uq07",
@@ -385,7 +291,8 @@
    "earned": 0,
    "spent": 0,
    "xp": 50,
-   "day": 1
+   "day": 1,
+   "kills": {}
   },
   "uq08": {
    "route": "uq08",
@@ -394,7 +301,8 @@
    "earned": 0,
    "spent": 0,
    "xp": 80,
-   "day": 29
+   "day": 29,
+   "kills": {}
   },
   "uq09": {
    "route": "uq09",
@@ -403,16 +311,22 @@
    "earned": 0,
    "spent": 0,
    "xp": 90,
-   "day": 1
+   "day": 1,
+   "kills": {}
   },
   "uq10": {
    "route": "uq10",
-   "ok": false,
+   "ok": true,
    "caps": 0,
    "earned": 0,
    "spent": 0,
-   "xp": 99,
-   "day": 3
+   "xp": 89,
+   "day": 3,
+   "kills": {
+    "CR-423": 1,
+    "CR-421": 1,
+    "CR-420": 2
+   }
   },
   "uq62": {
    "route": "uq62",
@@ -421,7 +335,8 @@
    "earned": 0,
    "spent": 50,
    "xp": 90,
-   "day": 1
+   "day": 1,
+   "kills": {}
   },
   "uq63": {
    "route": "uq63",
@@ -430,7 +345,8 @@
    "earned": 0,
    "spent": 0,
    "xp": 80,
-   "day": 1
+   "day": 1,
+   "kills": {}
   },
   "uq64": {
    "route": "uq64",
@@ -439,7 +355,8 @@
    "earned": 0,
    "spent": 0,
    "xp": 105,
-   "day": 1
+   "day": 1,
+   "kills": {}
   },
   "uq65": {
    "route": "uq65",
@@ -448,7 +365,8 @@
    "earned": 0,
    "spent": 0,
    "xp": 105,
-   "day": 1
+   "day": 1,
+   "kills": {}
   },
   "uq66": {
    "route": "uq66",
@@ -457,7 +375,8 @@
    "earned": 0,
    "spent": 0,
    "xp": 120,
-   "day": 4
+   "day": 4,
+   "kills": {}
   },
   "uq67": {
    "route": "uq67",
@@ -466,7 +385,8 @@
    "earned": 0,
    "spent": 0,
    "xp": 100,
-   "day": 1
+   "day": 1,
+   "kills": {}
   },
   "uq70": {
    "route": "uq70",
@@ -475,7 +395,8 @@
    "earned": 0,
    "spent": 0,
    "xp": 100,
-   "day": 11
+   "day": 11,
+   "kills": {}
   },
   "db": {
    "route": "db",
@@ -484,7 +405,8 @@
    "earned": 0,
    "spent": 0,
    "xp": 100,
-   "day": 0
+   "day": 0,
+   "kills": {}
   },
   "ds": {
    "route": "ds",
@@ -493,7 +415,8 @@
    "earned": 0,
    "spent": 0,
    "xp": 80,
-   "day": 0
+   "day": 0,
+   "kills": {}
   },
   "kt": {
    "route": "kt",
@@ -502,7 +425,8 @@
    "earned": 0,
    "spent": 0,
    "xp": 0,
-   "day": 0
+   "day": 0,
+   "kills": {}
   },
   "ks": {
    "route": "ks",
@@ -511,7 +435,8 @@
    "earned": 0,
    "spent": 0,
    "xp": 0,
-   "day": 0
+   "day": 0,
+   "kills": {}
   },
   "hosp": {
    "route": "hosp",
@@ -520,7 +445,8 @@
    "earned": 50,
    "spent": 0,
    "xp": 155,
-   "day": 0
+   "day": 0,
+   "kills": {}
   },
   "yt": {
    "route": "yt",
@@ -529,17 +455,35 @@
    "earned": 0,
    "spent": 0,
    "xp": 100,
-   "day": 0
+   "day": 0,
+   "kills": {}
   },
   "u04": {
    "route": "u04",
    "ok": false,
-   "caps": 0,
-   "earned": 0,
+   "caps": 15,
+   "earned": 15,
    "spent": 0,
-   "xp": 0,
-   "day": 0
+   "xp": 67,
+   "day": 0,
+   "kills": {
+    "CR-095": 2,
+    "CR-204": 6
+   }
+  },
+  "rq": {
+   "route": "rq",
+   "ok": true,
+   "caps": 237,
+   "earned": 237,
+   "spent": 0,
+   "xp": 127,
+   "day": 1,
+   "kills": {
+    "CR-104": 3,
+    "CR-105": 1
+   }
   }
  },
- "when": "2026-10-24 15:45"
+ "when": "2026-10-27 12:57"
 }
