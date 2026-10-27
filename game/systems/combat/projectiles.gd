@@ -164,7 +164,7 @@ func _home(s: Dictionary, dt: float) -> void:
 	var best: Combatant = null
 	var bd := 12.0 * 32.0
 	for c in combatants:
-		if c.dead or c.team == team or (team == "player" and c.team == "ally") or not (c.robot or c.big):
+		if c.dead or c.team == team or (team == "player" and is_ally(c.team)) or not (c.robot or c.big):
 			continue
 		var to: Vector2 = c.pos() - (s["p"] as Vector2)
 		if to.length() > bd or absf(v.angle_to(to)) > deg_to_rad(60.0):
@@ -208,7 +208,7 @@ func explode(at: Vector2, w: Dictionary, skill: float, team: String, fl: int = 0
 		if d > outer:
 			continue
 		var ratio := 1.0 if d <= inner else lerpf(1.0, 0.25, (d - inner) / maxf(1.0, outer - inner))
-		if team == "player" and c.team == "ally":
+		if team == "player" and is_ally(c.team):
 			ratio *= 0.5                                                # 오사(SD-11 §8.4): 주인공 폭발·화염·지뢰는 아군에게 ×0.5
 		var cover := _blast_cover(at, ctr)
 		if cover >= 2:
@@ -359,7 +359,7 @@ func _segment_hit(a: Vector2, b: Vector2, s: Dictionary):
 		for kx in range(kmin.x, kmax.x + 1):
 			for c in _buckets.get(Vector2i(kx, ky), []):
 				if c.team == s["team"] or (c.team == "resident" and s["team"] != "player") \
-						or (c.team == "ally" and s["team"] == "player") or (s["team"] == "ally" and c.team in ["player", "resident"]) \
+						or (is_ally(c.team) and s["team"] == "player") or (is_ally(str(s["team"])) and c.team in ["player", "resident"]) \
 						or c.team == "gone" \
 						or (str(s["team"]).begins_with("calm") and c.team in ["player", "resident", "ally"]):   # 적의 탄은 주민을 비켜 간다 · 주인공 탄은 아군을 지나간다(SD-11 §8.4 오사 없음) · 달아난 적 · 비적대 무리(1-E)의 탄은 주인공 편을 비켜 간다
 					continue
@@ -572,3 +572,9 @@ func _draw_add() -> void:
 				continue
 			var r := CombatFx.region(f["set"], f["ang"], k)
 			_add.draw_texture_rect_region(tex, Rect2(CombatFx.top_left(f["set"], f["at"]), r.size), r)
+
+
+## 주인공 편(동행 'ally' · 진행기가 따로 이름 붙인 'ally_…' — FQ-SB-02 운송조 ally_sb02): 주인공 탄은 지나가고 폭발은 ×0.5(SD-11 §8.4 오사 없음 — D-410)
+static func is_ally(team: String) -> bool:
+	return team == "ally" or team.begins_with("ally_")
+

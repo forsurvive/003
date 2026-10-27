@@ -43,7 +43,7 @@ HIT_PC = 0.8                                                            # 주인
 HIT_EN = 0.55                                                           # 적 명중(SD-11 §10.3 검증 예)
 EN_SKILL = 45.0                                                         # Enemy.skill 기본(systems/ai/enemy.gd)
 BITE_CD = 1.1                                                           # Enemy._bite 주기
-BITE_BACK = 1.5                                                         # 물고 빠지기(enemy.gd BITE_BACK, 1-13h — SD-14 §4.2): 둥지 · 물속 짐승은 1.0
+BITE_BACK = 1.5                                                         # 물고 빠지기(enemy.gd BITE_BACK, 1-13h — SD-14 §4.2): 둥지 · 물속 짐승은 1.0 · 실측 +3~12%는 §7.4 토큰 돌림 몫(D-402 — 셈은 그대로)
 NO_BACK = {"CR-004", "CR-130"}                                          # 깬 배수구 어미는 물고 빠진다(1-13k — enemy.gd leash)
 CLAW_RATE = 0.8                                                         # 구울 맨손(_enemy_weapon)
 def _uq09_const(name):

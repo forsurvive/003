@@ -161,7 +161,7 @@ func step(dt: float, combatants: Array) -> void:
 			continue
 		if float(m["alarm"]) < 0.0:
 			for c in combatants:
-				if c.dead or c.team == m["team"] or c.team in ["gone", "target", "resident"] or (m["team"] == "player" and c.team == "ally"):
+				if c.dead or c.team == m["team"] or c.team in ["gone", "target", "resident"] or (m["team"] == "player" and Projectiles.is_ally(c.team)):
 					continue
 				if c.pos().distance_to(m["p"]) <= MINE_SENSE + c.radius:
 					var ex := float(m["skill"])

@@ -1580,7 +1580,7 @@ func _melee(player: Actor, w: Dictionary, to: Vector2, st: StoryState, power: bo
 	var n := 0
 	var hits: Array = []
 	for e in enemies:
-		if not is_instance_valid(e) or e.cmb.dead or not e.meets(pc) or e.cmb.team == "ally":
+		if not is_instance_valid(e) or e.cmb.dead or not e.meets(pc) or Projectiles.is_ally(e.cmb.team):
 			continue                                                     # 다른 층(고가 위·아래)은 닿지 않는다 · 내 편 짐승(애니멀 프렌드 2랭크)은 휘둘러도 비켜 간다
 		hits.append([e.cmb, e.loco.logical, e])
 	for rr in residents:                                               # 주민도 맞는다

@@ -433,7 +433,7 @@ func _cast_step(e: Enemy, a: Dictionary, dt: float) -> void:
 		return
 	var to := tg.pos() - e.loco.logical
 	var d := to.length() / 32.0
-	var reach := (e.radius_px + tg.radius + 6.0) / 32.0
+	var reach := (e.radius_px + tg.radius + 6.0) / 32.0            # enemy.gd 물기 문턱(큰 몸 반지름 · 1-13k)보다 좁은 옛 식 — 여왕 침은 약 1.69칸 밖에서만 쏴 큰턱(1.36칸)과 겹치지 않는다(D-409 — 지금은 해가 없다)
 	if id == SOLDIER and d <= SPRAY_R and d > reach + 0.2 and map.line_of_sight(e.loco.logical, tg.pos()):
 		a["cd"] = SPRAY_CD
 		_cast(e, a, "spray", to)

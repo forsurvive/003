@@ -448,6 +448,38 @@ func test_sb02_scatter(t) -> void:
 	t.ok(c.cv["folk"].is_empty(), "인력은 흩어졌다")
 
 
+
+## 호위 실패(D-419 · 계획 §6.7): 싸움을 골랐는데 인솔조가 주인공 편 그대로 다 쓰러짐 → RES 7(단계 200 · SB −5 · 행적 LOST — 돌아섬 행적 없음)
+##   방범대가 서 있으면 줄을 데려간다(오태수 자리 4) · 방범대도 다 쓰러졌으면 흩어진다(5)
+func test_sb02_lost(t) -> void:
+	for both_down in [false, true]:
+		var r := _host()
+		var st: StoryState = r[1]
+		var c: FqSb = r[2]
+		_go(st, c)
+		c._s2("TAESU", 2)
+		c._s2("REST", 1)
+		c._s2("LEG", int(c._meta["patrol"]) - 1)
+		c._events()
+		_play(st, c, "FQSB02_PATROL", ["싸운다"])
+		t.eq(_v(st, "FQ_SB02_PATROL"), 1, "싸움")
+		var sb0 := _v(st, "AFF_SB")
+		if both_down:
+			for e in c._patrol:
+				(e as Enemy).cmb.dead = true
+		for e in [c.cv.get("lead")] + c.cv.get("men", []):
+			if e != null and is_instance_valid(e):
+				(e as Enemy).cmb.dead = true
+		for i in 4:
+			if c._check_fallen():
+				break
+		t.eq(_v(st, "FQ_SB02_RES"), 7, "호위 실패 RES 7(%s)" % ("모두 쓰러짐" if both_down else "방범대가 이김"))
+		t.eq(st.quests.stage("FQ-SB-02"), 200, "단계 200")
+		t.eq(_v(st, "AFF_SB") - sb0, -5, "SB −5(돌아섬 −10이 아니다)")
+		t.ok(_has_deed(st, "FQSB02_LOST") and not _has_deed(st, "FQSB02_SCATTER"), "행적은 '지키지 못했다' — '총을 겨눴다'가 아니다")
+		t.eq(_v(st, "FQ_SB02_TWHERE"), 5 if both_down else 4, "오태수 자리: 방범대가 데려감 4 · 흩어짐 5")
+		t.ok(c.cv["folk"].is_empty(), "줄은 그 자리를 떠났다")
+
 ## 길 위 무리에 조장이 쓰러지면 생사 장부(P3) · 조원이 대리 반장으로 이어 끈다
 func test_sb02_lead_falls(t) -> void:
 	var r := _host()

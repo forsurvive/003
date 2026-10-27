@@ -752,6 +752,9 @@ func _check_fallen() -> bool:
 		if e != null and is_instance_valid(e) and (e as Enemy).cmb.dead and (e as Enemy).who != "" and not st.is_dead((e as Enemy).who):
 			st.kill((e as Enemy).who)
 	if bool(cv.get("fight", false)):
+		if v2("PATROL") == 1 and lead() == null and cv.get("men", []).filter(func(e): return _ok(e)).is_empty():
+			_lost2()                                                      # 방범대가 서 있는 채 인솔조가 다 쓰러짐 — 싸움이 영영 끝나지 않던 반쯤 된 상태(P10 · D-419)
+			return true
 		return false
 	var turned := false
 	for e in sb:
@@ -770,7 +773,7 @@ func _check_fallen() -> bool:
 	if lead() == null:
 		var alive: Array = cv.get("men", []).filter(func(e): return _ok(e))
 		if alive.is_empty():
-			_scatter2()
+			_lost2()                                                      # 돌아서지 않은 채 인솔조가 다 쓰러짐 = 호위 실패(D-419 — RES 5 '돌아섬'과 가른다)
 			cv["fight"] = true
 			return true
 		cv["lead"] = alive[0]
@@ -811,6 +814,26 @@ func _scatter2() -> void:
 	cv["folk"] = []
 	want_save.emit("sb02")
 	_log("흩어짐")
+
+
+## 호위 실패(D-419 · 계획 §6.7): 인솔조가 주인공 편 그대로 다 쓰러졌다 — 방범대가 서 있으면 줄을 데려가고(오태수 자리 4), 아니면 그 자리에서 흩어진다(5)
+func _lost2() -> void:
+	if not walking():
+		return
+	var taken := _patrol.any(func(e): return not _patrol_out(e))
+	_s2("RES", 7)
+	_set_twhere(4 if taken else 5)
+	st.call_fn("aff", ["SB", -5])
+	st.deeds.record(st, "faction", "R02", 1, {}, now(), {"tag": "FQSB02_LOST", "place": "SB", "what": "새벽인력 운송조가 노량진로 끝에서 자율방범대에 무너졌다 — 호위는 줄을 지키지 못했다", "seen_by": ["SB"], "about": []})
+	st.quests.set_stage(Q2, 200)
+	host.hint("방범대가 목걸이 절단기를 꺼낸다. 선이 하나씩 끊긴다 — 줄은 형광 조끼를 따라 노량진 쪽으로 걸어간다." if taken else "목걸이 불빛만 깜박인다. 줄에 선 사람들이 서로를 본다 — 그리고 흩어진다.", 4.5)
+	for a in cv.get("folk", []):
+		_fade(a)
+	cv["folk"] = []
+	if taken:
+		_leave_patrol()
+	want_save.emit("sb02")
+	_log("호위 실패 — %s" % ("방범대가 데려감" if taken else "흩어짐"))
 
 
 # ---------------------------------------------------------------- 사건
@@ -939,7 +962,7 @@ func _to_fight(e) -> void:
 
 ## 오태수 자리(계획 §6.5 — P1): 운송이 끝날 때 한 번. 1 출장소(섬으로) · 2 본소 대기(늦음) · 3 봉천 아랫마당 · 4 방범대가 데려감 · 5 행방 모름.
 ## 형 재회(D-291) · 봉천 배치는 이 값만 읽는다. 죽었으면 생사 장부가 먼저(P3).
-func _set_twhere() -> void:
+func _set_twhere(lost_w := 5) -> void:
 	if v2("TWHERE") != 0:
 		return
 	var t := v2("TAESU")
@@ -956,6 +979,8 @@ func _set_twhere() -> void:
 				w = 4
 			5, 6:
 				w = 5
+			7:
+				w = lost_w                                                # 호위 실패: 방범대가 데려감 4 · 흩어짐 5(D-419)
 	_s2("TWHERE", w)
 
 
