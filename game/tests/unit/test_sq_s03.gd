@@ -478,7 +478,7 @@ func test_sq_s03_migrate_save(t) -> void:
 	var c2 := SideS03.new()
 	c2.setup(h)
 	t.eq([_v(st, "SQ_S03_TAGSEEN"), st.count_of("M-302")], [1, 1], "옛 저장: 유해를 봤으면 측정지 물건을 맞춘다")
-	c2.setup(h)
+	c2._migrate()                                                  # 다시 불러온 것처럼 맞추기만 한 번 더(신호는 한 번만 잇는다)
 	t.eq(st.count_of("M-302"), 1, "두 번 주지 않는다")
 	st.vars.set_v("SQ_S03_SOL", 3)
 	st.vars.set_v("SQ_S03_DRY_DAY", 9)
