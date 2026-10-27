@@ -1198,7 +1198,7 @@ func _ready() -> void:
 				["go", 2, 18, "U4-01"], ["want", ["싣는다"]], ["use", 3, 18], ["wait", 0.5], ["check", "U04_CART_LOAD == 6", "진공관을 수레에"], ["shot", "u04_cart"],
 				["hold", 1, 0, "U04_CART_X >= 41", 60.0, "걸어 들어가 민다 — 승강장 끝까지"],
 				["go", 42, 17, "U4-01"], ["go", 43, 17, "U4-01"], ["until", "map:U4-02", 10.0, "터널 A로"],
-				["check", "U04_CART_MAP == 2 and U04_CART_X == 3", "수레가 따라 넘어왔다"], ["clear", ["CR-095"]],
+				["check", "U04_CART_MAP == 2 and U04_CART_X == 3", "수레가 따라 넘어왔다"], ["clear", ["CR-095", "CR-002"], 120.0],   # 터널 A 전체 — 수레 줄을 막은 쥐를 신길 앞에서 쏘면 잠든 줄이 깬다(D-411)
 				["hold", 1, 0, "U04_CART_X >= 92", 120.0, "터널 A — 신길 앞을 천 감고"], ["check", "u04_quiet", "신길 줄이 깨지 않았다(천)"], ["shot", "u04_singil"],
 				["clear", ["CR-095"]], ["u04go"], ["want", ["올라탄다"]], ["use", 0, 0, "cart"], ["wait", 0.5], ["check", "u04_riding", "내리막 — 올라탔다"],
 				["until", "map:U4-03", 30.0, "탄 채로 여의도역"], ["until", "u04_stopped", 30.0, "브레이크 없이 — 공병 모래주머니에 쿵"], ["check", "U04_RAM == 1", "들이받음 하나(초소가 화낸다)"], ["clear", ["CR-200"]], ["shot", "u04_yd"],
@@ -2014,9 +2014,10 @@ func _process(dt: float) -> void:
 		"crouch":
 			host.combat.crouch = bool(s[1])
 			_next()
-		"clear":                                                        # 둘레 30칸의 그 짐승들을 걷어 낸다(월드 소장소에 사는 들개 등 — 다른 것을 보는 봇이 개 떼에 막히지 않게)
+		"clear":                                                        # 둘레 30칸(셋째 인자 = 칸)의 그 짐승들을 걷어 낸다(월드 소장소에 사는 들개 등 — 다른 것을 보는 봇이 개 떼에 막히지 않게)
+			var reach: float = float(s[2]) if s.size() > 2 else 30.0
 			for e in host.combat.enemies.duplicate():
-				if is_instance_valid(e) and not e.cmb.dead and str(e.row.get("id", "")) in s[1] and e.loco.logical.distance_to(host.player.loco.logical) < 30.0 * 32.0:
+				if is_instance_valid(e) and not e.cmb.dead and str(e.row.get("id", "")) in s[1] and e.loco.logical.distance_to(host.player.loco.logical) < reach * 32.0:
 					host.combat.enemies.erase(e)
 					e.queue_free()
 			host.combat._rebuild_list()

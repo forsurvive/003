@@ -77,6 +77,34 @@ def _enemy_arms():
 ENEMY_ARMS = _enemy_arms()
 
 
+def _enemy_arms_p():
+    """ENEMY_ARMS의 확률까지 — 게임은 자리마다 무기를 굴린다(_pick_arm, SD-11 §7.4 구현 정합 1-9e2). 몬테카를로만 쓴다(위쪽 끝 줄은 max)"""
+    src = open(os.path.join(ROOT, "game", "systems", "combat", "interior_combat.gd"), encoding="utf-8").read()
+    body = src[src.index("const ENEMY_ARMS := {"):]
+    body = body[:body.index("\n}")]
+    return {m.group(1): [(w, float(p)) for w, p in re.findall(r'\["(W-\d+)", ([\d.]+)\]', m.group(2))]
+            for m in re.finditer(r'"(CR-\d+)": \[(.*?)\],\s*(?:#|\n)', body)}
+
+
+ENEMY_ARMS_P = _enemy_arms_p()
+
+
+def _traits():
+    """게임의 사기 성향(systems/ai/enemy_traits.gd) — 자신감별 도주 HP(FLEE_HP) · 적별 conf · drug · AI 기본 conf. 사본을 두지 않는다"""
+    src = open(os.path.join(ROOT, "game", "systems", "ai", "enemy_traits.gd"), encoding="utf-8").read()
+    flee = [float(x) for x in re.search(r"const FLEE_HP := \[([^\]]*)\]", src).group(1).split(",")]
+    ai = {k: int(c) for k, c in re.findall(r'"(AI-\d+)": \{"conf": (\d+)', src)}
+    rows = {}
+    for cid, body in re.findall(r'"(CR-\d+)": \{([^}]*)\}', src):
+        a = re.search(r'"ai": "(AI-\d+)"', body)
+        c = re.search(r'"conf": (\d+)', body)
+        rows[cid] = {"conf": int(c.group(1)) if c else ai.get(a.group(1) if a else "", 2), "drug": '"drug": true' in body}
+    return flee, rows
+
+
+FLEE_HP, TRAITS = _traits()
+
+
 def _boss_arms():
     """게임의 BOSS_ARMS(이름 있는 보스 [주무기, 근접] — interior_combat.gd)"""
     src = open(os.path.join(ROOT, "game", "systems", "combat", "interior_combat.gd"), encoding="utf-8").read()
@@ -196,6 +224,34 @@ def tier_of(e):
     return ""
 
 
+def _ranged_dps(eid, weapons, pdr, wid=None):
+    """사람 적 하나가 주인공(DR pdr)에게 내는 실효 초당 피해 · 한 발 · 설명 — 주무기(BOSS_ARMS · ENEMY_ARMS · HAND_ARMS) 가운데 센 것,
+    연사는 점사/쉼 · 반자동은 세 발 뒤 다시 겨눔(enemy.gd _shoot). 무기 자료가 없으면 None"""
+    arms = BOSS_ARMS.get(eid, [])[:1] or ENEMY_ARMS.get(eid) or HAND_ARMS.get(eid) or (["W-008"] if eid == "CR-305" else ["W-002"])
+    rolled = wid is not None                                              # 몬테카를로가 굴린 무기(그 한 정만)
+    wid = wid or max(arms, key=lambda a: w_dps(weapons.get(a, {}), EN_SKILL, "worn", pdr))
+    w = weapons.get(wid, {})
+    if not w:
+        return None
+    r = float(w.get("rate", 1.0))
+    if r >= 5.0 and wid != "W-002":                                       # 연사: 0.6~1.2초 점사 · 0.5~1.0초 쉼(enemy.gd _shoot)
+        eff = r * 0.9 / 1.65
+    elif w.get("kind", "ranged") == "ranged":                              # 반자동: 최대의 60%로 세 발, 그 뒤 1~1.6초 다시 겨눔
+        eff = 3.0 / (3.0 / (0.6 * r) + 1.3)
+    else:
+        eff = r
+    edps = w_hit(w, EN_SKILL, "worn", pdr) * eff * HIT_EN * PART_AVG
+    how = "%s %s(실효 %.1f발/초)" % (wid, w["name"], eff)
+    hit1 = w_hit(w, EN_SKILL, "worn", pdr)
+    if eid in HAND_ARMS and len(HAND_ARMS[eid]) == 2 and eid not in ENEMY_ARMS and not rolled:   # 손 맵: 셋에 연사 하나 · 둘은 반자동(interior_combat _hand_arm)
+        w2 = weapons.get(HAND_ARMS[eid][1], {})
+        r2 = float(w2.get("rate", 1.0))
+        eff2 = 3.0 / (3.0 / (0.6 * r2) + 1.3) if w2.get("kind", "ranged") == "ranged" else r2
+        edps = (edps + 2 * w_hit(w2, EN_SKILL, "worn", pdr) * eff2 * HIT_EN * PART_AVG) / 3.0
+        how += " 하나 + %s 둘" % w2.get("name", "")
+    return edps, hit1, how
+
+
 def check_combat(weapons, enemies):
     for eid, e in sorted(enemies.items()):
         tier = tier_of(e)
@@ -269,27 +325,10 @@ def check_combat(weapons, enemies):
             how = "맨손 %g" % claw
             melee_tok = 4 if eid in SWARMY else 2
         else:
-            arms = BOSS_ARMS.get(eid, [])[:1] or ENEMY_ARMS.get(eid) or HAND_ARMS.get(eid) or (["W-008"] if eid == "CR-305" else ["W-002"])
-            wid = max(arms, key=lambda a: w_dps(weapons.get(a, {}), EN_SKILL, "worn", pdr))
-            w = weapons.get(wid, {})
-            if not w:
+            got = _ranged_dps(eid, weapons, pdr)
+            if got is None:
                 continue
-            r = float(w.get("rate", 1.0))
-            if r >= 5.0 and wid != "W-002":                             # 연사: 0.6~1.2초 점사 · 0.5~1.0초 쉼(enemy.gd _shoot)
-                eff = r * 0.9 / 1.65
-            elif w.get("kind", "ranged") == "ranged":                      # 반자동: 최대의 60%로 세 발, 그 뒤 1~1.6초 다시 겨눔
-                eff = 3.0 / (3.0 / (0.6 * r) + 1.3)
-            else:
-                eff = r
-            edps = w_hit(w, EN_SKILL, "worn", pdr) * eff * HIT_EN * PART_AVG
-            how = "%s %s(실효 %.1f발/초)" % (wid, w["name"], eff)
-            hit1 = w_hit(w, EN_SKILL, "worn", pdr)
-            if eid in HAND_ARMS and len(HAND_ARMS[eid]) == 2 and eid not in ENEMY_ARMS:   # 손 맵: 셋에 연사 하나 · 둘은 반자동(interior_combat _hand_arm)
-                w2 = weapons.get(HAND_ARMS[eid][1], {})
-                r2 = float(w2.get("rate", 1.0))
-                eff2 = 3.0 / (3.0 / (0.6 * r2) + 1.3) if w2.get("kind", "ranged") == "ranged" else r2
-                edps = (edps + 2 * w_hit(w2, EN_SKILL, "worn", pdr) * eff2 * HIT_EN * PART_AVG) / 3.0
-                how += " 하나 + %s 둘" % w2.get("name", "")
+            edps, hit1, how = got
         surv = php / edps if edps > 0 else 999
         if tier == "약":
             add("B4", "주인공 생존", "%s %s 1명 ↔ Lv%d HP %d DR %d" % (eid, e["name"], lv, php, pdr), round(surv, 1), "25초 이상",
@@ -469,6 +508,146 @@ def check_re_taken(weapons, enemies):
             add("B4", "주인공 생존", "CR-500 외눈 무리%s 받은 피해" % (" 밤" if night else ""),
                 "Lv%d %.0f%% · 무회복 %s" % (lv, avg, "끝까지" if p10 >= 999 else "%.0f초" % p10), "평균 150% 이하 · 회복 없이 12초 이상(제자리 · 외눈 먼저 쏨 포함)", st,
                 "SD-25 B4 필드 보스(1-13h D-394)", "제자리 사격 위쪽 끝 · 국면 ① 무리 절반까지 지켜봄 · ③ HP 30% 도주 + 무리 절반 흩어짐 · 벤치 boss_fight_check(BF_STAND)와 맞음")
+
+
+## 사람 RE 받은 피해(D-394 남은 몫 — 1-13h 조율사 '사수 토큰 3 · 엄폐로 따로'): R01 · R02 적대 사람 무리(약탈자 · 추심 · 세력 교전 · 순찰)를 판마다.
+## 총 든 적은 사수 토큰 3(SD-11 §7.4 — 동시에 셋까지 쏜다) · 실효 초당 피해는 _ranged_dps(무기 · 점사 · 다시 겨눔 · 명중) · 섞인 개는 근접 토큰 2 · 물기 주기.
+## 엄폐: 사람은 엄폐에서 쏜다(SD-11 §7.3) — 주인공 탄이 엄폐에 막히는 몫 RE_COVER(깡철이 셈과 같은 40%를 사수가 엄폐에 든 시간 절반으로).
+## 주인공은 제자리에서 쏜다(위쪽 끝 — 짐승 줄과 같은 기준: 평균 60% · 나쁜 10% 100% 이하).
+## 세력 교전(clash — 두 편 다 적대): 이미 서로 싸우는 중에 끼어든다(S5, encounter_live — 적마다 foes에 주인공과 상대편) — 두 편이 다 살아 있는 동안
+## 적 하나의 주의는 주인공 CLASH_ATT · 나머지는 상대편(그 화력만큼 상대편을 깎는다).
+RE_COVER = 0.2
+MEL_CONTACT = 0.5                                                       # 사람 근접 접촉 몫(SD-11 §10.3 검증 예 '근접 1(납 파이프급, 접촉 50%)' — 조율사 D-394)
+CLASH_ATT = 0.5
+PEOPLE_CATS = {"raider", "tracker", "clash", "dom", "patrol", "comp"}
+
+
+def check_re_people(weapons, enemies):
+    import random
+    path = os.path.join(DATA, "world", "encounters.json")
+    if not os.path.exists(path):
+        return
+    tab = json.load(open(path, encoding="utf-8")).get("re", {})
+    seen = set()
+    for rid, d in sorted(tab.items()):
+        regs = d.get("regions", "*")
+        if d.get("cat") not in PEOPLE_CATS or (isinstance(regs, list) and not ({"R01", "R02"} & set(regs))):
+            continue
+        for tag, gs in _groups_of(d):
+            ids = [u[0] for g in gs for u in g.get("units", [])]
+            if not ids or any(i not in enemies for i in ids) or all(i in SCALE_BEAST or i in CLAW for i in ids):
+                continue
+            key = json.dumps([gs, d.get("mix", [])], sort_keys=True)
+            if key in seen:
+                continue
+            seen.add(key)
+            worst = None
+            for lv in RE_LV:
+                php = 200.0 + (lv - 1) * 10.0
+                pdr = float(band(STD_DR, lv))
+                best = max(band(STD_WEAPON, lv), key=lambda wid: w_dps(weapons.get(wid, {}), 50.0, "new", 0.0))
+                rng = random.Random(zlib.crc32(("P|%s|%s|%d" % (rid, tag, lv)).encode()))
+                res = []
+                for _ in range(300):
+                    us = []
+                    for g in gs:
+                        for cid, lo, hi in g.get("units", []):
+                            for _k in range(min(rng.randint(int(lo), int(hi)) + (1 if lv >= 8 else 0), int(hi))):
+                                u = _unit(enemies, cid, lv)
+                                if not (cid in SCALE_BEAST or cid in CLAW):
+                                    opts = ENEMY_ARMS_P.get(cid)
+                                    wid = None
+                                    if opts:                                       # 자리마다 굴린 무기(interior_combat _pick_arm)
+                                        x, acc, wid = rng.random(), 0.0, opts[-1][0]
+                                        for w0, p0 in opts:
+                                            acc += p0
+                                            if x <= acc:
+                                                wid = w0
+                                                break
+                                    w = weapons.get(wid, {}) if wid else {}
+                                    if w.get("kind") == "melee":                   # 근접: 근접 토큰 · 다가와야 · 명중 굴림 없음 · 접촉 50%(SD-11 §3.4 · §10.3 검증 예)
+                                        u["mel"] = w_hit(w, EN_SKILL, "worn", pdr) * float(w.get("rate", 1.0)) * MEL_CONTACT
+                                    else:
+                                        got = _ranged_dps(cid, weapons, pdr, wid)
+                                        u["gun"] = got[0] if got else 0.0
+                                tr = TRAITS.get(cid, {"conf": 4, "drug": False})
+                                u.update({"conf": tr["conf"], "drug": tr["drug"], "drug_done": False, "frenzy": False, "away": 0.0, "rally": 1.15})
+                                u["side"] = str(g.get("side", "a"))
+                                us.append(u)
+                    for m in d.get("mix", []):
+                        if rng.random() < float(m[3]):
+                            for _k in range(rng.randint(int(m[1]), int(m[2]))):
+                                u = _unit(enemies, m[0], lv)
+                                u.update({"conf": 4, "drug": False, "drug_done": False, "frenzy": False, "away": 0.0, "rally": 1.15})
+                                us.append(u)
+                    if not us:
+                        continue
+                    rng.shuffle(us)                                                # 게임 토큰은 거리순 — 자료 순서대로 앞사람이 늘 받지 않게
+                    t, taken, dt = 0.0, 0.0, 0.05
+                    tgt = None
+                    clash = d.get("cat") == "clash" and len(gs) > 1
+                    while us and t < 300:
+                        here = [u for u in us if u["away"] <= t]                  # 달아난 사람은 쏘지도 맞지도 않는다(10~20초 뒤 돌아옴)
+                        both = clash and len({u.get("side", "a") for u in here}) > 1
+                        att = CLASH_ATT if both else 1.0
+                        guns = [u for u in here if "gun" in u][:3]
+                        bites = [u for u in here if "gun" not in u][:2] if t >= RE_AP else []
+                        taken += sum(u["gun"] * (1.25 if u["frenzy"] else 1.0) for u in guns) * att * dt
+                        for u in bites:
+                            if "mel" in u:
+                                taken += u["mel"] * (1.25 if u["frenzy"] else 1.0) * att * dt
+                                continue
+                            u["cd"] -= dt
+                            if u["cd"] <= 0:
+                                taken += u["bite"] * max(0.0, 1 - pdr / 100.0) * att
+                                u["cd"] += (BITE_CD + max(0.0, u["bite"] - 15.0) * 0.05) * BITE_BACK
+                        if both:                                                   # 두 편이 서로 깎는다(주의의 나머지 몫)
+                            for side in ("a", "b"):
+                                mine = [u for u in here if u.get("side", "a") == side]
+                                other = [u for u in here if u.get("side", "a") != side and u["hp"] > 0]
+                                if mine and other:
+                                    hit = sum(u.get("gun", u.get("mel", u["bite"] / BITE_CD)) for u in mine) * (1.0 - att) * dt
+                                    other[0]["hp"] -= hit * max(0.0, 1 - other[0]["dr"] / 100.0)
+                        us = [u for u in us if u["hp"] > 0]                       # 같은 수치의 다른 유닛과 헷갈리지 않게 정체로 거른다
+                        if not us:
+                            break
+                        here = [u for u in us if u["away"] <= t]
+                        if not here:
+                            t += dt
+                            continue
+                        if tgt is None or not any(tgt is v for v in here):
+                            near = [u for u in bites if any(u is v for v in here)] or [u for u in guns if any(u is v for v in here)] or here
+                            tgt = rng.choice(near)
+                        k = (1.0 - RE_COVER) if "gun" in tgt else 1.0
+                        tgt["hp"] -= w_dps(weapons[best], 50.0, "new", tgt["dr"]) * HIT_PC * PART_AVG * CRIT_AVG * RE_K * k * dt
+                        if tgt["hp"] <= 0:
+                            us = [u for u in us if u is not tgt]
+                            tgt = None
+                        else:                                                      # 사기(enemy.gd _morale): HP 50%에서 약물 한 번(30% 광란 — 도주 안 함) · 자신감별 문턱에서 10~20초 도주
+                            ratio = tgt["hp"] / max(1.0, tgt["hp0"])
+                            if tgt["drug"] and not tgt["drug_done"] and ratio <= 0.5:
+                                tgt["drug_done"] = True
+                                tgt["frenzy"] = rng.random() < 0.3
+                            if not tgt["frenzy"] and tgt["conf"] < 4 and ratio <= FLEE_HP[tgt["conf"]] and ratio <= tgt["rally"] - 0.15:
+                                tgt["away"] = t + rng.uniform(10.0, 20.0)
+                                tgt["rally"] = ratio
+                                tgt = None
+                        t += dt
+                    res.append(taken / php * 100)
+                if not res:
+                    continue
+                tk = sorted(res)
+                avg, p90 = sum(tk) / len(tk), tk[int(len(tk) * 0.9)]
+                if worst is None or avg > worst[1]:
+                    worst = (lv, avg, p90)
+            if worst is None:
+                continue
+            lv, avg, p90 = worst
+            st = "통과" if avg <= 60 and p90 <= 100 else ("주의" if avg <= 75 and p90 <= 125 else "실패")
+            add("B4", "주인공 생존", "%s %s%s 받은 피해(사람)" % (rid, d.get("name", ""), (" " + tag) if tag else ""),
+                "Lv%d %.0f%% / %.0f%%" % (lv, avg, p90), "평균 60% · 나쁜 10% 100% 이하", st, "SD-25 B4(D-394 사람 RE)",
+                "제자리에서 쏘는 사람의 위쪽 끝(가장 나쁜 레벨) · 300판 · 무기 굴림 · 사수 토큰 3 · 근접(개 · 사람 접촉 %d%%) 2 · 엄폐 %d%% · 사기 도주 · 약물 광란 · 화력 ×%.2f%s" % (MEL_CONTACT * 100, RE_COVER * 100, RE_K,
+                    " · 교전: 두 편이 다 살아 있는 동안 주의 %d%%" % (CLASH_ATT * 100) if d.get("cat") == "clash" else ""))
 
 
 # ---------------------------------------------------------------- 퀘스트 보상(원고 · 진행기)
@@ -852,6 +1031,7 @@ def main():
     places = load(os.path.join("world", "places.json"))
     check_combat(weapons, enemies)
     check_re_taken(weapons, enemies)
+    check_re_people(weapons, enemies)
     check_rewards(places)
     check_economy(db, weapons, loot, enemies)
     check_misc(db, weapons)
