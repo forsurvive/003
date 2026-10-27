@@ -2,7 +2,7 @@
 ## 배경은 첫 풍경 무대(볼트 S-07 문 앞 콘크리트 턱 → 관악산 비탈 → 2277년 서울)를 문 앞에서 1px씩 올려 서울에서 멈추고,
 ## 로고('서울 폴아웃')와 볼트 문 명판을 얹는다(SD-16 §9.4 메인 메뉴 = 잉크·중성 램프 + 볼트 황 강조).
 ## 이어하기 = 중단 저장(모바일) → 가장 최근 저장(§17.6). 불러오기는 일시 정지 메뉴의 칸 목록을 그대로 쓴다.
-## 조작: 위·아래 + E·Enter, 마우스·터치는 줄을 눌러 고르고 다시 눌러 결정.
+## 조작: 위·아래 + E·Enter, 마우스·터치는 줄을 한 번 누르면 바로 결정(마우스를 올리면 그 줄이 밝아진다).
 extends Node
 
 const STAGE_H := 540.0
@@ -136,7 +136,8 @@ func _choose() -> void:
 ## 게임으로: path가 있으면 그 저장을 불러온다(빈 글 = 새 게임)
 func _start(path: String) -> void:
 	SaveSlots.pending = path
-	get_tree().change_scene_to_file("res://scenes/story/prologue.tscn")
+	# 입력 처리가 끝난 뒤 바꾼다 — 곧바로 바꾸면 이 노드가 트리에서 빠져 get_viewport()가 null(배포판은 그 자리에서 죽었다)
+	get_tree().change_scene_to_file.call_deferred("res://scenes/story/prologue.tscn")
 
 
 func _unhandled_input(e: InputEvent) -> void:
@@ -154,12 +155,25 @@ func _unhandled_input(e: InputEvent) -> void:
 	elif e is InputEventKey and e.pressed and not e.echo and e.keycode in [KEY_E, KEY_ENTER, KEY_KP_ENTER, KEY_SPACE]:
 		_choose()
 	elif e is InputEventMouseButton and e.pressed and e.button_index == MOUSE_BUTTON_LEFT:
-		for i in _items.size():
-			if (_items[i] as Rect2).has_point(e.position):
-				if i == sel:
-					_choose()
-				else:
-					sel = i
+		var hit := _row_at(e.position)
+		if hit < 0:
+			return
+		sel = hit
+		get_viewport().set_input_as_handled()
+		_choose()
+		return
+	elif e is InputEventMouseMotion:
+		var hit := _row_at(e.position)
+		if hit >= 0:
+			sel = hit
+		return
 	else:
 		return
 	get_viewport().set_input_as_handled()
+
+
+func _row_at(p: Vector2) -> int:
+	for i in _items.size():
+		if (_items[i] as Rect2).has_point(p):
+			return i
+	return -1

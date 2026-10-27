@@ -1624,12 +1624,12 @@ func open_pause() -> void:
 func load_from(path: String) -> void:
 	get_tree().paused = false
 	SaveSlots.pending = path
-	get_tree().change_scene_to_file("res://scenes/story/prologue.tscn")
+	get_tree().change_scene_to_file.call_deferred("res://scenes/story/prologue.tscn")   # 메뉴 콜백이 끝난 뒤(곧바로 바꾸면 배포판이 죽는다)
 
 
 func to_title() -> void:
 	get_tree().paused = false
-	get_tree().change_scene_to_file("res://scenes/title/title.tscn")
+	get_tree().change_scene_to_file.call_deferred("res://scenes/title/title.tscn")   # 메뉴 콜백이 끝난 뒤(곧바로 바꾸면 배포판이 죽는다)
 
 
 func _unhandled_input(e: InputEvent) -> void:

@@ -4,8 +4,12 @@
 ##   데이터: 지역 지도 · 월드 지도(빠른 이동, 1-2 — systems/ui/pip_map.gd) · 퀘스트 · 기록
 ##   데이터 > 라디오(1-10b, SD-12 §10.6): 방송국 목록(범위 밖 `(수신 불가)`) · 상세(로고 48×48 · 코너 · 진행자 · 신호) · 지난 소식 20 · 방송 기록
 ##   데이터 > 세력(1-12m, SD-12 §3.10 · SD-16 §9.6 — systems/ui/faction_tab.gd): 만난 세력 · 휘장 상태 그림 · 관계 한 줄 · 대우 · 들리는 말 · 최근 일 · [Enter] 판도 지도
-## 조작(SD-12 §3.2·§13.8): Tab·Esc 닫기, Q·E 주 탭, ←→ 하위 탭, ↑↓ 목록, Enter 사용, F1·F2·F3 주 탭 바로, J 퀘스트.
-## 마우스·터치(마우스 흉내): 탭·하위 탭·줄을 누르고(고른 줄을 다시 누르면 사용), 아래 줄 [닫기]·오른쪽 위 전원 단추를 누르면 닫힌다.
+## 조작(사용자 지시 2026-10-27 '최대한 단순하게, PC · 모바일 모두 편하게'): 화면 16장(주 탭 3 × 하위 탭)을 한 줄로 잇는다.
+##   키보드: Q·E 또는 ←→(A·D) 화면 넘기기(끝에서 다음 주 탭으로) · ↑↓(W·S) 고르기 · Enter·Space 결정 · F 그 화면의 부가 동작
+##   (수리 · 고정 · 거르기 · 판도) · Tab·Esc 닫기. 지도에서는 방향키가 커서, Z·X·휠이 확대. (F1~F3 · J는 바로 가기로 남김)
+##   패드: LB·RB 화면 · 십자 고르기 · A 결정 · X 부가 동작 · B 닫기.
+##   마우스·터치: 아래 단추 줄(◀ ▶ · 결정 · 부가 동작 · 닫기)을 누른다. 화면을 옆으로 밀면 넘어가고, 지도는 끌어서 옮긴다.
+##   줄은 마우스를 올리면 골라지고 누르면 결정, 터치는 한 번 눌러 고르고(상세가 뜬다) 한 번 더 누르거나 결정 단추로 결정.
 ## 열 때(§3.2): 기기가 아래에서 0.2초 올라오고 화면이 0.15초 켜진다(가로 주사선이 위아래로 벌어짐). 열어 둔 동안 시간이 멈춘다.
 class_name PipBoy
 extends DocScreen
@@ -41,6 +45,10 @@ var searching := false                               ## 찾기 글자를 받는 
 var lv_on := false                                   ## 능력치 > 퍽: 레벨업 화면(1-12p — systems/ui/level_tab.gd)
 var face: TextureRect                                ## 인물 수첩 얼굴(48×48 — 그림은 노드로 얹는다, DocScreen 머리글)
 static var svc_icons: Texture2D
+var _down := Vector2(-1, -1)                         ## 누른 자리(밀기 · 지도 끌기 판정, 논리 좌표). 안 누르면 (-1,-1)
+var _down_i := -1                                    ## 누른 칸(뗄 때 같은 칸이면 결정)
+var _dragged := false
+const PAGE_SWIPE := 40.0                             ## 이만큼 옆으로 밀면 화면 넘기기
 
 
 func setup(state: StoryState, items_db: Dictionary, status: Dictionary) -> PipBoy:
@@ -387,13 +395,8 @@ func _draw_doc() -> void:
 		else:
 			map.draw_world()
 		fig.visible = false
-		var mh := "[Tab] 닫기   [Q·E] 탭   [Shift+←→] 하위 탭" + ("   [방향키] 커서   [Z·X] 확대   [Enter] 빠른 이동   [G] 판도" if sub[2] == 1 else "")
-		item("close", Rect2(44, 314, 50, 14))
 		item("power", Rect2(614, 180, 20, 40))
-		text(Vector2(48, 316), mh, f10, 10, U[4])
-		var gat := mh.find("[G] 판도")
-		if gat >= 0:                                                     # 터치: 안내 줄 '[G] 판도'를 누르면 레이어를 켜고 끈다
-			item("turf", Rect2(48 + tw(mh.substr(0, gat), f10, 10) - 2, 314, tw("[G] 판도", f10, 10) + 4, 14))
+		_bar()
 		return
 	if lv_on and tab == 0 and sub[0] == 3:                               # 레벨업 화면(1-12p): 목록 · 상세 대신
 		fig.visible = false
@@ -435,29 +438,90 @@ func _draw_doc() -> void:
 	fig.visible = false
 	face.visible = false
 	_detail()
-	var hint := "[Tab] 닫기   [Q·E] 탭   [←→] 하위 탭   [↑↓] 선택   [Enter] " + _enter_label()
-	if tab == 1 and sub[1] in [0, 2]:
-		hint += "   [1~8] 단축키"
-	if tab == 1 and sub[1] in [0, 1] and not rows.is_empty() and Gear.cond(str(rows[sel]["id"])) > 0:
-		hint += "   [R] 수리"
-	if tab == 2 and sub[2] == 2:
-		hint = "[Tab] 닫기   [Q·E] 탭   [←→] 하위 탭   [↑↓] 선택   [Enter] %s   [F] 고정" % _enter_label()
-	if tab == 2 and sub[2] == 3 and not st.book.entries.is_empty():
-		hint = "[Tab] 닫기   [←→] 하위 탭   [↑↓] 선택   [Enter] %s   [S] 거르기   [/] 찾기" % _enter_label()
-		if searching:
-			hint = "이름 찾기: 글자·초성(ㅂㅇㅎ)을 치세요   [Backspace] 지우기   [Enter·Esc] 끝"
-	if first:
-		hint = "핍-보이: [Q·E] 능력치·아이템·데이터   [←→] 하위 탭   [Tab] 닫기"
 	if toast_t > 0.0:
 		view.draw_rect(Rect2(258, 274, 334, 16), U[0])
 		text(Vector2(262, 276), toast, f10, 10, U[6])
-	item("close", Rect2(44, 314, 50, 14))
 	item("power", Rect2(614, 180, 20, 40))
-	text(Vector2(48, 316), hint, f10, 10, U[4] if not first or fmod(time, 1.0) < 0.6 else U[6])
-	for kv in [["[F] 고정", "pin"], ["[S] 거르기", "filter"], ["[/] 찾기", "find"], ["[R] 수리", "repair"]]:   # 터치: 안내 줄의 이 글자를 누르면 그 키와 같다
-		var at := hint.find(kv[0])
-		if at >= 0 and not first:
-			item(kv[1], Rect2(48 + tw(hint.substr(0, at), f10, 10) - 2, 314, tw(kv[0], f10, 10) + 4, 14))
+	_bar()
+
+
+## 아래 단추 줄: ◀ ▶(화면) · 결정 · 부가 동작 · (찾기 · 확대) · 닫기. 키보드가 있으면 단추에 키를 같이 적는다.
+## 단추는 누르는 자리 = 그리는 자리(터치 손가락 폭을 생각해 높이 14 · 글 10px — 논리 640×360, 폰에선 2~3배로 커진다)
+func _bar() -> void:
+	if searching:
+		text(Vector2(48, 316), "이름 찾기: 글자·초성(ㅂㅇㅎ)을 치세요   [Backspace] 지우기   [Enter·Esc] 끝", f10, 10, U[6])
+		return
+	var kb := not OS.has_feature("mobile")
+	var x := 44.0
+	x = _btn(x, "prev", "◀ Q" if kb else "◀ 이전", false)
+	x = _btn(x, "next", "E ▶" if kb else "다음 ▶", false)
+	x += 6.0
+	var act := _act_label()
+	if act != "":
+		x = _btn(x, "act", act + (" [Enter]" if kb else ""), true)
+	var alt := _alt_label()
+	if alt != "":
+		x = _btn(x, "alt", alt + (" [F]" if kb else ""), false)
+	if tab == 2 and sub[2] == 3 and not st.book.entries.is_empty():
+		x = _btn(x, "find", "찾기" + (" [/]" if kb else ""), false)
+	if _map_mode() and sub[2] == 1:
+		x = _btn(x, "zoom-", "－" + (" Z" if kb else ""), false)
+		x = _btn(x, "zoom+", "＋" + (" X" if kb else ""), false)
+	if kb and tab == 1 and sub[1] in [0, 2] and not rows.is_empty():
+		text(Vector2(x + 2, 316), "[1~8] 단축키", f10, 10, U[3])
+	var cl := "닫기" + (" [Tab]" if kb else "")
+	_btn(596.0 - tw(cl, f10, 10) - 10.0, "close", cl, false)
+	if first:                                                            # 처음 받았을 때 한 번: 넘기는 법
+		var fh := "Q·E 또는 ←→로 화면을 넘긴다 — 옆으로 밀어도 된다" if kb else "화면을 옆으로 밀거나 ◀ ▶를 눌러 넘긴다"
+		view.draw_rect(Rect2(258, 274, 334, 16), U[0])
+		text(Vector2(262, 276), fh, f10, 10, U[6] if fmod(time, 1.0) < 0.6 else U[4])
+
+
+func _btn(x: float, id: String, label: String, primary: bool) -> float:
+	var r := Rect2(x, 314, tw(label, f10, 10) + 10.0, 14)
+	item(id, r)
+	if primary:
+		view.draw_rect(r, U[5])
+		text(Vector2(r.position.x + 5, 316), label, f10, 10, U[0])
+	else:
+		box(r, U[4], false)
+		text(Vector2(r.position.x + 5, 316), label, f10, 10, U[5])
+	return r.end.x + 4.0
+
+
+## 결정 단추 글(없으면 "") — 목록은 _enter_label, 월드 지도는 빠른 이동
+func _act_label() -> String:
+	if _map_mode():
+		return "빠른 이동" if sub[2] == 1 and map != null and map.sel != "" else ""
+	if lv_on and tab == 0 and sub[0] == 3:
+		return ""
+	var l := _enter_label()
+	return "" if l == "—" else l
+
+
+## 부가 동작(F · 패드 X): 무기 · 의복 = 수리 · 퀘스트 = 고정 · 인물 수첩 = 거르기 · 월드 지도 = 판도
+func _alt_label() -> String:
+	if _map_mode():
+		return "판도" if sub[2] == 1 else ""
+	if tab == 1 and sub[1] in [0, 1] and not rows.is_empty() and Gear.cond(str(rows[sel]["id"])) > 0:
+		return "수리"
+	if tab == 2 and sub[2] == 2 and not rows.is_empty() and str(rows[sel]["id"]) != "":
+		return "고정"
+	if tab == 2 and sub[2] == 3 and not st.book.entries.is_empty():
+		return "거르기"
+	return ""
+
+
+func _alt() -> void:
+	match _alt_label():
+		"수리":
+			_press("repair")
+		"고정":
+			_press("pin")
+		"거르기":
+			_press("filter")
+		"판도":
+			_press("turf")
 
 
 func _map_mode() -> bool:
@@ -1081,59 +1145,53 @@ func _unhandled_input(e: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		view.queue_redraw()
 		return
-	if k in [KEY_TAB, KEY_ESCAPE]:
+	var jb: int = e.button_index if e is InputEventJoypadButton and e.pressed else -1
+	if k in [KEY_TAB, KEY_ESCAPE] or jb == JOY_BUTTON_B:
 		close(true)
-	elif k == KEY_Q:
-		_tab(tab - 1)
-	elif k == KEY_E:
-		_tab(tab + 1)
+	elif k == KEY_Q or jb == JOY_BUTTON_LEFT_SHOULDER:
+		_page(-1)
+	elif k == KEY_E or jb == JOY_BUTTON_RIGHT_SHOULDER:
+		_page(1)
 	elif k in [KEY_F1, KEY_F2, KEY_F3]:
 		_tab(k - KEY_F1)
 	elif k == KEY_J:
 		open_at(2, 2)
-	elif k == KEY_R and tab == 1 and sub[1] in [0, 1] and not rows.is_empty():   # 스스로 고치기(SD-13 §8.3): 부품 · 수리 키트 · 군용 정비 키트
-		action.emit("repair", str(rows[sel]["id"]))
-	elif k == KEY_S and tab == 2 and sub[2] == 3:                      # 인물 수첩 거르기 바꾸기
-		book_filter = (book_filter + 1) % NpcBook.FILTERS.size()
-		sel = 0
+	elif k == KEY_F or jb == JOY_BUTTON_X:                                # 부가 동작 하나(수리 · 고정 · 거르기 · 판도)
+		_alt()
 	elif (k == KEY_SLASH or (e is InputEventKey and e.pressed and e.unicode == 47)) and tab == 2 and sub[2] == 3:
-		searching = true
-		DisplayServer.window_set_ime_active(true)                        # 한글 조합 입력(초성 포함)
-	elif k == KEY_F and tab == 2 and sub[2] == 2:                      # 고정(SD-12 §3.12, 2개까지)
-		if not rows.is_empty() and str(rows[sel]["id"]) != "":
-			st.quests.pin(str(rows[sel]["id"]))
-	elif _map_mode() and e is InputEventKey and e.pressed and e.shift_pressed and e.keycode in [KEY_LEFT, KEY_RIGHT]:
-		_sub(-1 if e.keycode == KEY_LEFT else 1)
-	elif _map_mode() and sub[2] == 1 and _map_key(e):
+		_press("find")
+	elif _map_mode() and sub[2] == 1 and _map_key(e):                 # 월드 지도: 방향키 · WASD 커서 · Z·X 확대 · Enter 빠른 이동
 		pass
 	elif k >= KEY_1 and k <= KEY_8:
 		if tab == 1 and sub[1] in [0, 2] and not rows.is_empty():
 			action.emit("hotkey:%d" % (k - KEY_0), rows[sel]["id"])
-	elif e.is_action_pressed("ui_left", true):
-		_sub(-1)
-	elif e.is_action_pressed("ui_right", true):
-		_sub(1)
-	elif e.is_action_pressed("ui_up", true):
+	elif e.is_action_pressed("ui_left", true) or (k == KEY_A and not _lv_screen()):
+		_page(-1)
+	elif e.is_action_pressed("ui_right", true) or (k == KEY_D and not _lv_screen()):
+		_page(1)
+	elif e.is_action_pressed("ui_up", true) or _wasd(e, KEY_W):
 		_step(-1)
-	elif e.is_action_pressed("ui_down", true):
+	elif e.is_action_pressed("ui_down", true) or _wasd(e, KEY_S):
 		_step(1)
 	elif e.is_action_pressed("ui_accept"):
 		_enter()
-	elif e is InputEventMouseButton and e.pressed and e.button_index == MOUSE_BUTTON_LEFT:
-		var i := _item_at(_local(e.position))
-		if i >= 0:
-			_press(items[i]["id"])
+	elif e is InputEventMouseButton and e.button_index == MOUSE_BUTTON_LEFT:
+		_pointer_button(e)
+	elif e is InputEventMouseMotion:
+		_pointer_motion(e)
+		handled = e.button_mask & MOUSE_BUTTON_MASK_LEFT != 0
 	elif e is InputEventMouseButton and e.pressed and e.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]:
 		if _map_mode() and map != null:
 			map.zoom_by(1 if e.button_index == MOUSE_BUTTON_WHEEL_UP else -1)
 		else:
-			sel = clampi(sel + (1 if e.button_index == MOUSE_BUTTON_WHEEL_DOWN else -1), 0, maxi(0, rows.size() - 1))
+			_step(1 if e.button_index == MOUSE_BUTTON_WHEEL_DOWN else -1)
 	else:
 		handled = false
 	if handled:
 		if e is InputEventKey or e is InputEventMouseButton:
 			first = false
-		get_viewport().set_input_as_handled()
+		if is_inside_tree():                                             # 장면이 바뀌는 중(빠른 이동 · 닫기)이면 viewport가 없다
+			get_viewport().set_input_as_handled()
 		view.queue_redraw()
 
 
@@ -1161,13 +1219,13 @@ func _map_key(e: InputEvent) -> bool:
 	if map == null:
 		return false
 	var d := Vector2.ZERO
-	if e.is_action_pressed("ui_left", true):
+	if e.is_action_pressed("ui_left", true) or _wasd(e, KEY_A):
 		d = Vector2.LEFT
-	elif e.is_action_pressed("ui_right", true):
+	elif e.is_action_pressed("ui_right", true) or _wasd(e, KEY_D):
 		d = Vector2.RIGHT
-	elif e.is_action_pressed("ui_up", true):
+	elif e.is_action_pressed("ui_up", true) or _wasd(e, KEY_W):
 		d = Vector2.UP
-	elif e.is_action_pressed("ui_down", true):
+	elif e.is_action_pressed("ui_down", true) or _wasd(e, KEY_S):
 		d = Vector2.DOWN
 	if d != Vector2.ZERO:
 		map.move_cursor(d, 0.06 if e.is_echo() else 0.0)
@@ -1237,12 +1295,99 @@ func _press(id: String) -> void:
 			DisplayServer.virtual_keyboard_show("")                      # 모바일: 화면 자판(글자는 키 이벤트로 들어온다)
 	elif id == "turf" and map != null:
 		map.toggle_layer()
+	elif id == "prev":
+		_page(-1)
+	elif id == "next":
+		_page(1)
+	elif id == "act":
+		if _map_mode():
+			_travel()
+		else:
+			_enter()
+	elif id == "alt":
+		_alt()
+	elif id in ["zoom-", "zoom+"] and map != null:
+		map.zoom_by(-1 if id == "zoom-" else 1)
 	elif id in ["close", "power"]:
 		close(true)
 
 
+## WASD(누르고 있으면 되풀이 — 방향키와 같게)
+static func _wasd(e: InputEvent, key: Key) -> bool:
+	return e is InputEventKey and e.pressed and e.physical_keycode == key
+
+
+## 화면 넘기기: 하위 탭을 한 칸씩, 끝에 닿으면 다음(앞) 주 탭의 처음(끝) 화면으로
+func _page(d: int) -> void:
+	var n: int = sub[tab] + d
+	if n >= SUBS[tab].size():
+		tab = posmod(tab + 1, TABS.size())
+		n = 0
+	elif n < 0:
+		tab = posmod(tab - 1, TABS.size())
+		n = SUBS[tab].size() - 1
+	sub[tab] = n
+	sel = 0
+	_step(0)
+
+
+func _lv_screen() -> bool:
+	return lv_on and tab == 0 and sub[0] == 3
+
+
+## 마우스 · 터치(마우스 흉내) 누름 / 뗌: 누를 때 자리를 기억하고, 뗄 때 판정한다 —
+## 옆으로 많이 밀었으면 화면 넘기기(지도 · 레벨업 화면 밖), 지도에서 끌었으면 아무것도, 아니면 누른 칸과 같은 칸이면 결정
+func _pointer_button(e: InputEventMouseButton) -> void:
+	_pointer_at(e.pressed, _local(e.position))
+
+
+func _pointer_at(pressed: bool, p: Vector2) -> void:
+	if pressed:
+		_down = p
+		_down_i = _item_at(p)
+		_dragged = false
+		return
+	if _down.x < 0.0:
+		return
+	var dv := p - _down
+	var i := _item_at(p)
+	var start_i := _down_i
+	_down = Vector2(-1, -1)
+	if absf(dv.x) >= PAGE_SWIPE and absf(dv.x) > absf(dv.y) * 1.5 and not _map_mode() and not _lv_screen():
+		_page(-1 if dv.x > 0.0 else 1)
+		return
+	if _dragged and _map_mode():
+		return
+	if i >= 0 and i == start_i:
+		_press(items[i]["id"])
+
+
+## 마우스 움직임: 누른 채 지도 위면 지도를 끈다 · 안 누르고 목록 줄 위면 그 줄을 고른다(상세가 따라 바뀐다)
+func _pointer_motion(e: InputEventMouseMotion) -> void:
+	var p := _local(e.position)
+	if e.button_mask & MOUSE_BUTTON_MASK_LEFT != 0:
+		if _down.x >= 0.0 and p.distance_to(_down) > 6.0:
+			_dragged = true
+		if _dragged and _map_mode() and map != null and PipMap.AREA.has_point(_down):
+			var rel := e.relative * (_local(Vector2(1, 0)) - _local(Vector2.ZERO)).x
+			map.center -= rel / map._sc()
+		return
+	if searching or _lv_screen():
+		return
+	var i := _item_at(p)
+	if i >= 0 and str(items[i]["id"]).begins_with("row"):
+		var r := int(str(items[i]["id"]).substr(3))
+		if r < rows.size() and str(rows[r]["id"]) != "":
+			sel = r
+
+
 ## 목록 한 칸 옮기기: 묶음 이름 줄(id "")은 건너뛴다
 func _step(d: int) -> void:
+	if d == 0:                                                           # 지금 줄이 묶음 이름이면 아래 첫 줄로
+		rows = _rows()
+		if sel < rows.size() and str(rows[sel]["id"]) == "":
+			_step(1)
+		return
 	var i := sel + d
 	while i >= 0 and i < rows.size() and str(rows[i]["id"]) == "":
 		i += d
