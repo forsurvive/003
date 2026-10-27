@@ -111,3 +111,34 @@ func test_wander_tin_left_then_thanks(t) -> void:
 	var meta: Dictionary = h.map.prop_meta["wander_cairn"]
 	t.eq(cairn_rect.position, Vector2(meta["states"]["restacked"][0], meta["states"]["restacked"][1]), "돌탑 그림이 다시 쌓인 판으로 바뀌었다")
 	h.free()
+
+
+func test_wander_tin_prank(t) -> void:
+	# D-413 ②: 캡을 다 꺼내고 위험물(수류탄 · 지뢰)만 넣고 가면 '장난이 심하네.'(5) — 연막탄 · 미끼가 섞이거나 다른 물건이 있으면 '고맙다.'(3)
+	var a := _host()
+	var h: InteriorHost = a[0]
+	var st: StoryState = a[1]
+	var w: WanderTin = a[2]
+	var b := w._tin()
+	var c := h.box_contents(b)
+	c["items"].erase("M-001")
+	c["items"]["W-060"] = 1
+	c["items"]["W-063"] = 1
+	c["taken"] = 1
+	w._on_box(b, c)
+	t.eq(w.state(), 2, "위험물만 넣어도 우선 남김(2)")
+	t.ok(w._all_harm(c["items"]), "파편 수류탄 · 파편 지뢰 = 위험물")
+	t.ok(not w._all_harm({"W-059": 1}), "연막탄은 위험물이 아니다")
+	t.ok(not w._all_harm({"W-060": 1, "M-047": 1}), "다른 물건이 섞이면 장난이 아니다")
+	t.ok(not w._all_harm({}), "빈 깡통은 장난이 아니다")
+	_far(h)
+	st.vars.set_v("GAME_DAY", 4)
+	w._owner_back()
+	t.eq(w.state(), 5, "이틀 뒤 멀리 — '장난이 심하네.'(5)")
+	t.eq(c["items"].size(), 0, "주인이 치웠다")
+	t.eq(WanderTin.PROP_STATE[5], "restacked", "돌탑은 다시 쌓인 그림")
+	h.player.loco.logical = (Vector2(WanderTin.TILE) + Vector2(0.5, 1.5)) * 32.0
+	h.player.loco.facing = 6
+	t.ok(w._pre(), "돌탑을 누르면 새 글")
+	t.ok(str(st.boxes.get("wt_seen", {}).get("t", "")).contains("장난이 심하네"), "뚜껑 새 줄 — 장난이 심하네")
+	h.free()

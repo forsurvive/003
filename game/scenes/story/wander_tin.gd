@@ -1,10 +1,10 @@
 ## 1-13j2 관악 비탈 '바위 틈 탄약 깡통'(계획 docs/seoul-fallout/_plans/1-13j2_wander_tin_plan.md — 재미 검수 반영, 사용자 지시 2026-10-27).
 ## 월드 손 자리 @949,1459(maps/world/r01.spots): 돌탑 wander_cairn · 군화 발자국 · 용기 wander_tin(캡 20~25 한 번).
 ## 사실은 변수 한 곳(SD-20 P1): WT_STATE 0 그대로 · 1 비움 · 2 무언가 남김(캡 반 · 내 물건) · 3 주인이 다녀감 '고맙다.'(남긴 것을 가져감) ·
-##   4 주인이 다녀감 '누가 가져갔냐.' · WT_DAY 처음 손댄 날. 주인이 누구인지는 말하지 않는다(P2 — 새 인물 · 새 사실 없음).
+##   4 주인이 다녀감 '누가 가져갔냐.' · 5 주인이 다녀감 '장난이 심하네.'(위험물만 남김 — D-413 ②) · WT_DAY 처음 손댄 날. 주인이 누구인지는 말하지 않는다(P2 — 새 인물 · 새 사실 없음).
 ## ① 글은 용기와 같은 자리에서: 돌탑을 누르면 그 상태의 글을 한 번 먼저 띄우고, 글이 끝나면 용기 창을 연다(같은 상태 글은 한 번만 — WT 본 상태는 st.boxes).
 ## ② 용기를 닫을 때: 손댔으면(꺼냄 · 넣음) 0 → 1 · 2, 주인이 오기 전엔 닫을 때마다 내용으로 다시 정한다.
-## ③ 하루 넘김 · 맵 들어섬: GAME_DAY ≥ WT_DAY + 2이고 주인공이 돌탑에서 30칸 밖(또는 실내)이면 2 → 3(깡통을 비운다) · 1 → 4. 그 뒤로는 그대로(P10).
+## ③ 하루 넘김 · 맵 들어섬: GAME_DAY ≥ WT_DAY + 2이고 주인공이 돌탑에서 30칸 밖(또는 실내)이면 2 → 3(깡통을 비운다 · 위험물만이면 5) · 1 → 4. 그 뒤로는 그대로(P10).
 class_name WanderTin
 extends Node
 
@@ -17,8 +17,10 @@ const LINES := {
 	2: "쌓아 둔 돌이 흩어져 있다. 틈 안에 녹슨 깡통.",
 	3: "흩어졌던 돌이 다시 쌓여 있다. 깡통 안은 비었다. 뚜껑 글씨 밑에 새로 긁은 한 줄 — '고맙다.'",
 	4: "흩어졌던 돌이 다시 쌓여 있다. 뚜껑 글씨 밑에 새로 긁은 한 줄 — '누가 가져갔냐.'",
+	5: "흩어졌던 돌이 다시 쌓여 있다. 깡통 안은 비었다. 뚜껑 글씨 밑에 새로 긁은 한 줄 — '장난이 심하네.'",
 }
-const PROP_STATE := {0: "", 1: "scattered", 2: "scattered", 3: "restacked", 4: "restacked"}
+const PROP_STATE := {0: "", 1: "scattered", 2: "scattered", 3: "restacked", 4: "restacked", 5: "restacked"}
+const NOT_HARM := ["W-059", "W-068"]                ## 투척이어도 위험물이 아닌 것(연막탄 · 썩은 고기 미끼)
 
 var host: InteriorHost
 var st: StoryState
@@ -96,13 +98,28 @@ func _owner_back() -> void:
 		return
 	if _on_world() and host.player != null and Vector2(host.map.tile_of(host.player.loco.logical)).distance_to(Vector2(TILE)) <= AWAY:
 		return
+	var ns := 4
 	if s == 2:
+		ns = 3
 		var k := Loot.key("W", {"x": TILE.x, "y": TILE.y}, st.year())
 		if st.boxes.has(k):
+			if _all_harm(st.boxes[k].get("items", {})):
+				ns = 5                                                      # 캡 없이 수류탄 · 지뢰만 — 주인이 치우며 한 줄(D-413 ②)
 			st.boxes[k]["items"] = {}                                   # 남긴 것을 가져갔다(받은 것 — 되찾는 길 없음)
-	st.vars.set_v("WT_STATE", 3 if s == 2 else 4)
+	st.vars.set_v("WT_STATE", ns)
 	_log("주인이 다녀감 — 상태 %d" % state())
 	_prop()
+
+
+## 남긴 것이 모두 위험물(투척 · 설치 무기 — 연막 · 미끼 빼고)인가. 빈 깡통은 아니다
+func _all_harm(items: Dictionary) -> bool:
+	if items.is_empty() or host.combat == null:
+		return false
+	for id in items:
+		var w: Dictionary = host.combat.weapons.get(str(id), {})
+		if not str(w.get("kind", "")) in ["thrown", "mine"] or str(id) in NOT_HARM:
+			return false
+	return true
 
 
 func _prop() -> void:
