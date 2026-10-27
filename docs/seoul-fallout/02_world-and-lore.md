@@ -1,6 +1,6 @@
 # SD-02. 세계관·연표
 
-> **서울 폴아웃 상세 기획서 세트** | 문서 ID: SD-02 | 버전: v1.2 | 작성일: 2026-10-12
+> **폴아웃 : 서울 상세 기획서 세트** | 문서 ID: SD-02 | 버전: v1.2 | 작성일: 2026-10-12
 > **범위**: 정사 고정값과 서울판 결정값 대조, 1945~2077 한국사 연표(2052~2077 연 단위, 2077-10-23 시각 단위), 2077년 대한민국의 체제·사회·기술, 가상 재벌 4곳, 수도 관제망의 기술·역사·규칙, 서울 볼트 S-01~S-12, 생물 시료·중국군 침투조·세력의 기원 연대, 전후 200년 연표(2078~2277)와 2277년 정세, 환경 스토리텔링 기록물 목록, 주제와 미스터리
 > **관련 문서**: [SC-00 컨셉](00_concept.md), [SD-03a 메인 스토리 1부](03a_main-story-part1.md), [SD-03b 메인 스토리 2부](03b_main-story-part2.md), [SD-04a~d 사이드·세력 퀘스트](04d_faction-questlines.md), [SD-06 세력](06_factions.md), [SD-07a 주요 인물](07a_characters-major.md), [SD-08 월드·권역](08_world-regions.md), [SD-09a~f 장소 카탈로그](09f_locations-underground-river.md), [SD-12 탐험·UI](12_exploration-ui.md), [SD-13 아이템](13_items.md), [SD-14 크리처·적](14_creatures-enemies.md), [SD-16 아트 디렉션](16_art-direction.md), [SD-18 용어·명명](18_naming-terms.md)
 > **근거 자료**: [SR-01 공식 설정](research/SR-01_fallout-canon.md), [SR-02 서울 지리](research/SR-02_seoul-geography.md), [SR-03 인프라·군사](research/SR-03_seoul-infrastructure.md), [SR-04 생물](research/SR-04_korean-fauna.md), [SR-05 국가·사회](research/SR-05_korea-state-society.md), 원작 [RD-02 세계관·설정·연표](../reverse-design/02_world-and-lore.md), [RD-26 용어집](../reverse-design/26_glossary.md), [RD-27 이식 메모](../reverse-design/27_adaptation-notes.md)
@@ -10,7 +10,7 @@
 ## 1. 개요
 
 ### 1.1 목적
-- 서울 폴아웃의 **설정 원본**이다. 다른 SD 문서는 연도·수치·명칭을 이 문서에서 가져간다. 퀘스트·인물·장소의 세부는 각 문서가 정하고, 이 문서는 그 바탕이 되는 '무엇이 언제 왜 그렇게 됐나'를 고정한다.
+- 폴아웃 : 서울의 **설정 원본**이다. 다른 SD 문서는 연도·수치·명칭을 이 문서에서 가져간다. 퀘스트·인물·장소의 세부는 각 문서가 정하고, 이 문서는 그 바탕이 되는 '무엇이 언제 왜 그렇게 됐나'를 고정한다.
 - 바이블 [SC-00](00_concept.md) §3·§5.2·§6·§11과 모순이 없게 쓴다. 바이블에 없는 것을 새로 정한 곳은 본문에 **[SD-02 결정]**으로 표시하고 미결 사항·최종 보고에 올린다.
 
 ### 1.2 요약

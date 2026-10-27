@@ -1,6 +1,6 @@
 # SD-10. 캐릭터 시스템
 
-> **서울 폴아웃 상세 기획서 세트** | 문서 ID: SD-10 | 버전: v1.2 | 작성일: 2026-10-12
+> **폴아웃 : 서울 상세 기획서 세트** | 문서 ID: SD-10 | 버전: v1.2 | 작성일: 2026-10-12
 > **범위**: S.P.E.C.I.A.L.(정의·효과·실시간 전투와 심리스 월드 기준 파생 수치 공식·생활기록부 배분 규칙), 스킬 13종(계승 결정·효과 공식·태그·스킬 체크 기준), 레벨과 경험치(상한 35 권장·XP 표·레벨업 지급 규칙·XP 원천과 예산), 퍽 전체 목록(PK-001~PK-119: 원작 계승·변형·삭제 검토, 서울판 신규 퍽 31종(세력 호감도 연동 7종 포함), 특별·퀘스트 퍽 9종, 세력 비기 8종), 카르마(범위·구간·서울판 칭호 105종·변화 행동·영향), 화술·물물교환의 세력 호감도 판정 쓰임, 영구 상승 수집품(입주 기념 흔들인형 20종, 스킬북 13종), 캐릭터 생성 UI 흐름(MQ-P1~P4)과 외형 커스터마이즈 범위 / **다루지 않음**: HP·방사능·중독·부위 손상·수면·과적 등 상태와 생존(SD-11), 피해 공식 전체·적 AI·집중 사격 연출(SD-11), 자물쇠·해킹 미니게임 규칙과 핍-보이 화면 구성(SD-12), 아이템 수치(SD-13), 세력 호감도 수치(SD-06), 수집품의 배치 좌표(SD-09)
 > **관련 문서**: [SC-00 컨셉](00_concept.md), [SD-03a 메인 스토리 1부](03a_main-story-part1.md), [SD-03b 메인 스토리 2부](03b_main-story-part2.md), [SD-04a~d 사이드·세력 퀘스트](04d_faction-questlines.md), [SD-05 비표시·반복·인카운터](05_misc-quests-encounters.md), [SD-06 세력](06_factions.md), [SD-07a 주요 인물](07a_characters-major.md), [SD-08 월드·권역](08_world-regions.md), [SD-09a~f 장소 카탈로그](09a_locations-r01-r02.md), [SD-11 전투 시스템](11_combat-system.md), [SD-12 탐험·UI](12_exploration-ui.md), [SD-13 아이템](13_items.md), [SD-15 경제](15_economy.md), [SD-16 아트 디렉션](16_art-direction.md), [SD-18 용어·명명](18_naming-terms.md), 원작 [RD-14 캐릭터 시스템](../reverse-design/14_character-system.md), [RD-16 전투 시스템](../reverse-design/16_combat-system.md), [RD-23 수집 요소](../reverse-design/23_collectibles-achievements.md), [RD-27 이식 시사점](../reverse-design/27_adaptation-notes.md)
 

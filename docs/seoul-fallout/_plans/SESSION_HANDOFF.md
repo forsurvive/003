@@ -1,4 +1,4 @@
-# 새 세션 이어받기 — 서울 폴아웃(SESSION_HANDOFF)
+# 새 세션 이어받기 — 폴아웃 : 서울(SESSION_HANDOFF)
 
 새 세션 첫 메시지: **"docs/seoul-fallout/_plans/SESSION_HANDOFF.md 읽고 따라 해"**.
 
@@ -9,7 +9,7 @@
 
 ---
 
-서울 폴아웃(Fallout 3를 2277년 서울로 옮긴 한국어 팬게임) 개발을 이어서 한다. 브랜치는 `claude/clever-mayer-yddxqv`다.
+폴아웃 : 서울(Fallout 3를 2277년 서울로 옮긴 한국어 팬게임) 개발을 이어서 한다. 브랜치는 `claude/clever-mayer-yddxqv`다.
 작업에 들어가기 전에 아래 문서를 순서대로 읽고 숙지한다. 다 읽으면 **'숙지 보고'를 먼저 하고, 사용자 확인을 받은 뒤** 작업을 시작한다.
 
 ## 1단계 — 지침(반드시 전부)
@@ -45,7 +45,7 @@
 - 보스 벤치: `scenes/bench/boss_fight_check.tscn`(`BF_STAND` · `BF_PLV` · `BF_LOG`)
 - 1막 완료 기준 묶음 실행기: `python3 tools/pipeline/act1_done.py` → `game/data/_act1_done.md`(①②④ 통과 2026-10-24)
 - 경제 곡선: `python3 tools/pipeline/econ_curve.py --segs` / `--compose`(v2 보통 플레이어 합성 → `_econ_curve.json`)
-- 플레이용 윈도우 시험판: `bash tools/package_windows.sh`(묶은 뒤 배포판을 가상 화면에서 켜 새 게임까지 눌러 본다 — 편집기에선 안 죽는 오류가 배포판에선 죽는다) → `export/SeoulFallout_win64.zip`(내보내기 템플릿은 스크립트가 받는다 · export/는 저장소에 올리지 않는다)
+- 플레이용 윈도우 시험판: `bash tools/package_windows.sh`(묶은 뒤 배포판을 가상 화면에서 켜 새 게임까지 눌러 본다 — 편집기에선 안 죽는 오류가 배포판에선 죽는다) → `export/FalloutSeoul_win64.zip`(내보내기 템플릿은 스크립트가 받는다 · export/는 저장소에 올리지 않는다)
 - 적 그림: `python3 art/tools/pack.py` → `python3 tools/pipeline/art_import.py` → Godot 가져오기
 
 ## 숙지 보고 — 이렇게 정리해 먼저 보여 준다

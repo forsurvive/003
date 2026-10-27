@@ -1691,3 +1691,8 @@ R01 관악 · R02 여의도·영등포를 메인·사이드·세력·비표시·
 - **시험** `test_pipboy_controls`(화면 넘기기 감김 · Q/E/D 키 · F = 고정 · 결정 단추 글 · 밀기 = 다음 화면이고 결정 아님) + 핍-보이 쓰는 시험 6파일 — 41 · 확인 402 · 실패 0. 벤치 `pipboy_check`로 퀘스트 · 월드 지도 화면 촬영.
 - **말 다듬기**: 새 단추 글 · 처음 안내 다듬이 — 번역투 0, '화면을'이 겹친 PC 안내 한 곳 줄임. `ko_lint` 새 0.
 - **장부**: D-412(시험 실행기가 SCRIPT ERROR를 실패로 세지 않음).
+
+### 2026-10-27 제목 변경 — '서울 폴아웃' → '폴아웃 : 서울' (사용자 지시 2026-10-27 '전면 수정')
+- 게임 이름(`project.godot` config/name) · 제목 화면 로고(`art/tools/title_logo.py` → `title_logo.png` 다시 그림, 폭 248 → 278px) · 기획서 머리줄 전부 · SD-01 제목 표 · U-02(정식 제목 확정) · 용어 표 · 요약 · 에이전트 설명 셋 · `CLAUDE.md` 머리 · 팔레트 시트 · 시험판 안내문. 시험판 묶음 이름 `FalloutSeoul.exe` · `FalloutSeoul_win64.zip`.
+- 저장 폴더: 제목을 따라 바뀌면 이전 저장을 못 찾고 ':'는 윈도우 폴더 이름에 못 쓴다 → `custom_user_dir_name="Fallout Seoul"`(윈도우 `%APPDATA%\Fallout Seoul`) · 처음 켤 때 새 폴더가 비었으면 옛 폴더(`Godot · godot/app_userdata/서울 폴아웃/saves`)의 저장을 한 번 복사(`SaveSlots.migrate_old` — 지우지 않음). 시험 `test_migrate_old_title_dir`.
+- 그대로 둔 것(안쪽 이름): 저장소 경로 `docs/seoul-fallout/` · 내보내기 중간 파일 `seoul_fallout_t` · 옛 이름을 적은 이력 줄(STAGE_0 · '전 가제').

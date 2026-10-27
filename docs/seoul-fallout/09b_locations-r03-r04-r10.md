@@ -1,6 +1,6 @@
 # SD-09b. 장소 카탈로그: R03 마포·상암, R04 서강·선유도, R10 서부 평야
 
-> **서울 폴아웃 상세 기획서 세트** | 문서 ID: SD-09b | 버전: v1.2 | 작성일: 2026-10-12
+> **폴아웃 : 서울 상세 기획서 세트** | 문서 ID: SD-09b | 버전: v1.2 | 작성일: 2026-10-12
 > **범위**: SD-08 §11.4(R03 27곳)·§11.5(R04 20곳)·§11.11(R10 27곳) 장소 시드 전부와 추가 시드 6곳(L-R03-28, L-R10-28~32)의 장소 상세, 권역별 이름 있는 NPC(R03 55명, R04 40명, R10 37명), 권역별 사이드 퀘스트 훅(R03 18, R04 14, R10 16), 랜덤 인카운터 지점·이동 경로 / 다루지 않는 것: 양화 나루(L-R04-03)·밤섬(L-R04-19)의 상세 설계(정본 SD-09f §11.2·§11.3, ID만 이 문서), 퀘스트 본문(→ SD-04b), 지하철역·하저 터널·신월 빗물터널 본관·다리·나루 일부의 상세(→ SD-09f), 적·아이템 수치(→ SD-13·SD-14), 가격(→ SD-15)
 > **관련 문서**: [SC-00 컨셉](00_concept.md), [SD-02 세계관](02_world-and-lore.md), [SD-03a 메인 스토리 1부](03a_main-story-part1.md), [SD-03b 메인 스토리 2부](03b_main-story-part2.md), [SD-04b 사이드 퀘스트(서부·한강)](04b_side-quests-west-river.md), [SD-04d 세력 퀘스트](04d_faction-questlines.md), [SD-05 비표시·반복·인카운터](05_misc-quests-encounters.md), [SD-06 세력](06_factions.md), [SD-07b NPC 디렉터리](07b_npc-directory.md), [SD-08 월드·권역](08_world-regions.md), [SD-09f 지하·한강](09f_locations-underground-river.md), [SD-10 캐릭터](10_character-system.md), [SD-11 전투](11_combat-system.md), [SD-12 탐험·UI](12_exploration-ui.md), [SD-13 아이템](13_items.md), [SD-14 크리처·적](14_creatures-enemies.md), [SD-15 경제](15_economy.md), [SD-16 아트](16_art-direction.md), [SD-17 사운드](17_sound.md), [SD-18 명명](18_naming-terms.md), 원작 [RD-13 장소](../reverse-design/13_location-catalog.md), [RD-27 이식 메모](../reverse-design/27_adaptation-notes.md), 조사 [SR-02 서울 지리](research/SR-02_seoul-geography.md), [SR-03 인프라](research/SR-03_seoul-infrastructure.md)
 

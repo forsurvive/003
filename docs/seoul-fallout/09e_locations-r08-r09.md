@@ -1,6 +1,6 @@
 # SD-09e. 장소 카탈로그: R08 동부, R09 북부 산악
 
-> **서울 폴아웃 상세 기획서 세트** | 문서 ID: SD-09e | 버전: v1.2 | 작성일: 2026-10-12
+> **폴아웃 : 서울 상세 기획서 세트** | 문서 ID: SD-09e | 버전: v1.2 | 작성일: 2026-10-12
 > **범위**: R08 동부(성동·광진·동대문·중랑·강동, 중구 동부)와 R09 북부 산악(은평·강북·도봉·노원·성북, 종로 북부)의 장소 전부. SD-08 §11.9(33곳)·§11.10(33곳) 시드에 L-ID를 매기고, 추가 시드 3곳(L-R08-34, L-R09-34·35)을 더해 69곳을 정한다. 장소별 2077→2277 상태, 외부 배치·실내 구성, NPC·적·보스, 루팅·수집품·기록물, 메인·세력 퀘스트 연계, 사이드 퀘스트 훅, 판도 반응, 이름 있는 NPC 표(R08 63명, R09 49명), 권역 사이드 퀘스트 훅 목록, 랜덤 인카운터 지점.
 > **관련 문서**: [SC-00 컨셉](00_concept.md), [SD-02 세계관](02_world-and-lore.md), [SD-03a 메인 스토리 1부](03a_main-story-part1.md), [SD-03b 메인 스토리 2부](03b_main-story-part2.md), [SD-04c 사이드 퀘스트(북부·동부·도심)](04c_side-quests-north-east-center.md), [SD-04d 세력 퀘스트](04d_faction-questlines.md), [SD-05 기타 퀘스트·인카운터](05_misc-quests-encounters.md), [SD-06 세력](06_factions.md), [SD-07a 주요 인물](07a_characters-major.md), [SD-07b NPC 디렉터리](07b_npc-directory.md), [SD-08 월드·권역](08_world-regions.md), [SD-09f 지하·한강](09f_locations-underground-river.md), [SD-10 캐릭터 시스템](10_character-system.md), [SD-12 탐험·UI](12_exploration-ui.md), [SD-13 아이템](13_items.md), [SD-14 크리처·적](14_creatures-enemies.md), [SD-16 아트](16_art-direction.md), [SD-17 사운드](17_sound.md), [SD-18 명명](18_naming-terms.md)
 

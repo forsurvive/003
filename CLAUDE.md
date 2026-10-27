@@ -1,4 +1,4 @@
-# Seoul Fallout — 작업 지침 (세션마다 먼저 읽는다)
+# Fallout: Seoul(폴아웃 : 서울) — 작업 지침 (세션마다 먼저 읽는다)
 
 Fallout 3를 2277년 서울로 옮긴 한국어 비상업 팬게임.
 - 기획서 세트: `docs/seoul-fallout/` (SD-00~SD-22, 조사 SR-01~05).

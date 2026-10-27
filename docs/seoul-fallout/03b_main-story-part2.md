@@ -1,6 +1,6 @@
 # SD-03b. 메인 스토리·메인 퀘스트 2부
 
-> **서울 폴아웃 상세 기획서 세트** | 문서 ID: SD-03b | 버전: v1.2 | 작성일: 2026-10-12
+> **폴아웃 : 서울 상세 기획서 세트** | 문서 ID: SD-03b | 버전: v1.2 | 작성일: 2026-10-12
 > **범위**: 퀘스트 상세 **4막(MQ-401~403)·5막(MQ-501~508)·6막(MQ-601~605)·7막(MQ-701~702)·에필로그(MQ-E1)**, 콘솔 앞 행동과 곁에 선 세력의 반응(장면 단위), 엔딩 E1~E5의 조건(호감도 수치)·장면·최종 전투·'종전' 방송 문안, 결말 슬라이드 ES-01~ES-32 전체 문안, 엔딩별 에필로그 월드 상태와 후일담, 메인 퀘스트 전체 볼륨 추정과 버티컬 슬라이스 범위, 원작 대응, 제작 메모. **다루지 않는 것**: 전체 구조·자유도 규칙·변수표·호감도 연동·순서 파괴·대체 경로·프롤로그~3막(→ [SD-03a](03a_main-story-part1.md)), 호감도·판도 시스템 본체(SD-06), 콘솔 오브젝트 UI 규격(SD-12 §7.9), 결말 음악(SD-17)
 > **관련 문서**: [SC-00 컨셉](00_concept.md), [SD-02 세계관·연표](02_world-and-lore.md), [SD-03a 메인 스토리 1부](03a_main-story-part1.md), [SD-04a~d 사이드·세력 퀘스트](04d_faction-questlines.md), [SD-05 비표시·반복·인카운터](05_misc-quests-encounters.md), [SD-06 세력](06_factions.md), [SD-07a 주요 인물](07a_characters-major.md), [SD-08 월드·권역](08_world-regions.md), [SD-09c 도심·용산](09c_locations-r05-r06.md), [SD-11 전투](11_combat-system.md), [SD-12 탐험·UI](12_exploration-ui.md), [SD-14 크리처·적](14_creatures-enemies.md), [SD-16 아트](16_art-direction.md), [SD-17 사운드](17_sound.md), 원작 [RD-04](../reverse-design/04_main-story-part2-endings.md)·[RD-08c](../reverse-design/08c_dlc-broken-steel.md)·[RD-27](../reverse-design/27_adaptation-notes.md)
 

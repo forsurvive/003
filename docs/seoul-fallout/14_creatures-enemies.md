@@ -1,6 +1,6 @@
 # SD-14. 크리처·적 도감
 
-> **서울 폴아웃 상세 기획서 세트** | 문서 ID: SD-14 | 버전: v1.2 | 작성일: 2026-10-12
+> **폴아웃 : 서울 상세 기획서 세트** | 문서 ID: SD-14 | 버전: v1.2 | 작성일: 2026-10-12
 > **범위**: 서울 수도 황무지에서 플레이어가 싸우거나 마주치는 모든 적·크리처의 정본 데이터베이스. 설계 원칙(실제 생물 근거, 변이 원인, 실시간 전투 행동), 크리처(CR-001~), 미군 생물병기, 변종, 구울, 로봇·포탑(관제망 각성 단계 포함), 인간 적 세력 템플릿, 보스·유일 개체, 레벨 스케일링·스폰 규칙, 적 AI 행동 유형 분류표, 원작 대응표, 제작 메모(엔진: 범용 2D). **다루지 않는 것**: 피해·명중·탐지 공식과 상태 머신의 엔진 규칙(SD-11), 랜덤 인카운터 목록과 암살대 출현 규칙의 정본(SD-05), 세력의 역사·관계·호감도 수치(SD-06), 이름 있는 인물의 프로필(SD-07a·07b), 장소 상세와 좌표(SD-09a~f), 아이템 수치(SD-13)
 > **관련 문서**: [SC-00 컨셉](00_concept.md), [SD-02 세계관·연표](02_world-and-lore.md), [SD-03a 메인 스토리 1](03a_main-story-part1.md), [SD-03b 메인 스토리 2](03b_main-story-part2.md), [SD-04a~d 사이드·세력 퀘스트](04a_side-quests-south.md), [SD-05 비표시·반복 퀘스트, 랜덤 인카운터](05_misc-quests-encounters.md), [SD-06 세력](06_factions.md), [SD-07a 주요 인물](07a_characters-major.md), [SD-07b NPC 디렉터리](07b_npc-directory.md), [SD-08 월드·권역](08_world-regions.md), [SD-09a~f 장소 카탈로그](09a_locations-r01-r02.md), [SD-10 캐릭터 시스템](10_character-system.md), [SD-11 전투 시스템](11_combat-system.md), [SD-13 아이템](13_items.md), [SD-16 아트 디렉션](16_art-direction.md), [SR-04 한국 실제 생물](research/SR-04_korean-fauna.md), [RD-24 원작 크리처·적 도감](../reverse-design/24_bestiary.md), [RD-16 원작 전투 시스템](../reverse-design/16_combat-system.md), [RD-27 쯔꾸르 이식 시사점](../reverse-design/27_adaptation-notes.md)
 

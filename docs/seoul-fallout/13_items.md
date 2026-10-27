@@ -1,6 +1,6 @@
 # SD-13. 아이템
 
-> **서울 폴아웃 상세 기획서 세트** | 문서 ID: SD-13 | 버전: v1.2 | 작성일: 2026-10-12
+> **폴아웃 : 서울 상세 기획서 세트** | 문서 ID: SD-13 | 버전: v1.2 | 작성일: 2026-10-12
 > **범위**: 플레이어가 얻고 쓰는 아이템 전체의 설계 원칙과 카탈로그. 무기(W-), 탄약, 방어구·의복(A-), 소모품(I-), 잡화·제작 재료·퀘스트 아이템(M-), 제작 시스템(작업대·설계도·레시피), 아이템 상태(내구도) 5단계와 수리, 루팅 테이블 원칙, 페이퍼돌 레이어 분류와 그래픽 제작량. **다루지 않는 것**: 스킬북·보블헤드 대응 수집품([SD-10](10_character-system.md)), 피해·명중·치명타·중독·방사능 공식의 세부([SD-11](11_combat-system.md)), 상인 재고·매입 배율·수리 서비스 가격([SD-15](15_economy.md)), 크리처 개체별 드롭 수치([SD-14](14_creatures-enemies.md)), 도트 규격·프레임 수의 확정([SD-16](16_art-direction.md))
 > **관련 문서**: [SC-00 컨셉](00_concept.md), [SD-03a 메인 스토리 1](03a_main-story-part1.md), [SD-03b 메인 스토리 2](03b_main-story-part2.md), [SD-04a~d 사이드·세력 퀘스트](04d_faction-questlines.md), [SD-05 비표시·반복·인카운터](05_misc-quests-encounters.md), [SD-06 세력](06_factions.md), [SD-07a 주요 인물](07a_characters-major.md), [SD-08 월드·권역](08_world-regions.md), [SD-09a~f 장소 카탈로그](09a_locations-r01-r02.md), [SD-10 캐릭터 시스템](10_character-system.md), [SD-11 전투 시스템](11_combat-system.md), [SD-12 탐험·UI](12_exploration-ui.md), [SD-14 크리처·적](14_creatures-enemies.md), [SD-15 경제](15_economy.md), [SD-16 아트 디렉션](16_art-direction.md), [SD-18 용어·명명](18_naming-terms.md)
 > **원작 근거**: [RD-19 무기·탄약](../reverse-design/19_weapons-ammo.md), [RD-20 방어구·의복](../reverse-design/20_armor-apparel.md), [RD-21 소모품·잡화·제작](../reverse-design/21_consumables-misc-crafting.md), [RD-27 쯔꾸르 이식 시사점](../reverse-design/27_adaptation-notes.md) §7.2·§9.3·§14.2, [RD-26 용어집](../reverse-design/26_glossary.md)

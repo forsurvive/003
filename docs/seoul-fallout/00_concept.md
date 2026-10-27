@@ -1,6 +1,6 @@
-# SC-00. 서울 폴아웃 컨셉 기획서
+# SC-00. 폴아웃 : 서울 컨셉 기획서
 
-> **서울 폴아웃 기획서 세트** | 문서 ID: SC-00 | 버전: v1.1 (확정, 엔진·플랫폼·범위 결정 K9~K11 반영) | 작성일: 2026-10-12
+> **폴아웃 : 서울 기획서 세트** | 문서 ID: SC-00 | 버전: v1.1 (확정, 엔진·플랫폼·범위 결정 K9~K11 반영) | 작성일: 2026-10-12
 > **범위**: 실제 서울을 배경으로 하는 폴아웃 3 게임의 컨셉. 세계관 위치(2077년 한국), 무대 구성, 메인 스토리 구조, 세력, 크리처, 톤, 고정 명칭, 상세 기획서 세트 구성.
 > **근거 자료**: 원작 역기획서 [RD-00~27](../reverse-design/00_README.md), 조사 자료 [SR-01 공식 설정](research/SR-01_fallout-canon.md), [SR-02 서울 지리](research/SR-02_seoul-geography.md), [SR-03 인프라·군사](research/SR-03_seoul-infrastructure.md), [SR-04 생물](research/SR-04_korean-fauna.md), [SR-05 국가·사회](research/SR-05_korea-state-society.md)
 

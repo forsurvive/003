@@ -112,3 +112,21 @@ func test_host_restore(t) -> void:
 	GameSnapshot.apply_host(h, old)
 	t.ok(h.player.loco.logical.distance_to(spot) < 1.0 and h.map.id == "X-BC", "옛 저장 좌표를 월드로 옮긴다")
 	h.free()
+
+
+## 제목 변경(사용자 지시 2026-10-27): 옛 제목 폴더의 저장은 새 폴더가 비었을 때만 한 번 복사해 온다
+func test_migrate_old_title_dir(t) -> void:
+	_clean()
+	var old := ProjectSettings.globalize_path("user://test_old_title/")
+	DirAccess.make_dir_recursive_absolute(old)
+	for f in DirAccess.get_files_at(old):
+		DirAccess.remove_absolute(old.path_join(f))
+	SaveSlots.dir = old
+	t.eq(SaveSlots.write("quick", 0, {"name": "옛 저장"}, {"x": 1}), OK, "옛 폴더에 빠른 저장 하나")
+	SaveSlots.dir = TMP
+	t.eq(SaveSlots.migrate_old(old), 1, "새 폴더가 비었으면 옛 저장 하나를 옮겨 온다")
+	t.eq(str(SaveSlots.list()[0]["slot"]["name"]), "옛 저장", "옮긴 저장이 목록에 보인다")
+	t.eq(SaveSlots.migrate_old(old), 0, "새 폴더에 저장이 있으면 다시 옮기지 않는다")
+	t.ok(FileAccess.file_exists(old.path_join("quick.sav")), "옛 저장은 지우지 않는다")
+	t.eq(SaveSlots.migrate_old("user://없는_폴더/"), 0, "옛 폴더가 없으면 아무것도 안 한다")
+	SaveSlots.dir = SaveSlots.DIR

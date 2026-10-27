@@ -3,7 +3,9 @@ config_version=5
 
 [application]
 
-config/name="서울 폴아웃"
+config/name="폴아웃 : 서울"
+config/use_custom_user_dir=true
+config/custom_user_dir_name="Fallout Seoul"
 config/description="단계 T 기술 시험판 (SD-19 §5.2)"
 run/main_scene="res://scenes/title/title.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")

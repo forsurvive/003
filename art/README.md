@@ -1,4 +1,4 @@
-# 서울 폴아웃 아트 작업 폴더
+# 폴아웃 : 서울 아트 작업 폴더
 
 그래픽은 모두 Claude가 만든다. 규격 정본은 [SD-16 아트 디렉션](../docs/seoul-fallout/16_art-direction.md)이다.
 

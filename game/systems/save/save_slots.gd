@@ -29,6 +29,27 @@ static func ensure_dir() -> void:
 	DirAccess.make_dir_recursive_absolute(dir)
 
 
+## 제목을 '폴아웃 : 서울'로 바꾸며(사용자 지시 2026-10-27) 저장 폴더도 'Fallout Seoul'로 정했다(':'는 윈도우 폴더 이름에 못 쓴다).
+## 새 폴더에 저장이 하나도 없고 옛 제목 폴더(Godot · godot/app_userdata/서울 폴아웃/saves)에 있으면 한 번 옮겨 온다(지우지 않고 복사). 옮긴 수를 돌려준다
+const OLD_DIRS := ["Godot/app_userdata/서울 폴아웃/saves", "godot/app_userdata/서울 폴아웃/saves"]   # 윈도우 · 맥 / 리눅스
+
+
+static func migrate_old(old_dir: String = "") -> int:
+	if old_dir == "":
+		for d in OLD_DIRS:
+			if DirAccess.dir_exists_absolute(OS.get_data_dir().path_join(d)):
+				old_dir = OS.get_data_dir().path_join(d)
+				break
+	if old_dir == "" or not DirAccess.dir_exists_absolute(old_dir) or not list().is_empty():
+		return 0
+	ensure_dir()
+	var n := 0
+	for f in DirAccess.get_files_at(old_dir):
+		if f.ends_with(".sav") and DirAccess.copy_absolute(old_dir.path_join(f), dir + f) == OK:
+			n += 1
+	return n
+
+
 ## 모든 칸의 정보(빈 칸은 빠진다). 반환: [{"kind", "idx", "path", "slot", "ok", "error"}] — 최근 순
 static func list() -> Array:
 	var out := []

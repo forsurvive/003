@@ -1,6 +1,6 @@
 # SD-09a. 장소 카탈로그: R01 관악, R02 여의도·영등포
 
-> **서울 폴아웃 상세 기획서 세트** | 문서 ID: SD-09a | 버전: v1.2 | 작성일: 2026-10-12
+> **폴아웃 : 서울 상세 기획서 세트** | 문서 ID: SD-09a | 버전: v1.2 | 작성일: 2026-10-12
 > **범위**: SD-08 §11.2(R01 관악 31곳)·§11.3(R02 여의도·영등포 27곳) 장소 시드 전부와 이 문서가 표 끝에 더한 3곳(R01 1, R02 2)의 장소 상세. 권역 개요 표, 장소별 2077→2277 상태·외부 배치·실내 구성·NPC·적·루팅·기록물·연계·판도 반응·환경 스토리텔링, 권역별 이름 있는 NPC 표(R01 70명, R02 55명), 사이드 퀘스트 훅(R01 16, R02 15), 랜덤 인카운터 지점·이동 경로 메모. 프롤로그·1막·4막 무대인 볼트 S-07, 봉천 계단마을, 사당 환승촌, 여의도 지하 벙커, 영등포 지하상가(지하시장), 새벽인력 본소를 S등급으로 가장 자세히 쓴다.
 > **다루지 않음**: 사이드 퀘스트 본문(SD-04a), 세력 퀘스트 본문(SD-04d), 랜덤 인카운터 ID와 표(SD-05), 주요 인물 프로필(SD-07a), 지하철역 승강장층·하저 터널(SD-09f의 L-UG), 한강 다리·나루(SD-09f의 L-HR).
 > **관련 문서**: [SC-00 컨셉](00_concept.md), [SD-02 세계관](02_world-and-lore.md), [SD-03a 메인 1부](03a_main-story-part1.md), [SD-03b 메인 2부](03b_main-story-part2.md), [SD-04a 남부 사이드](04a_side-quests-south.md), [SD-04d 세력 퀘스트](04d_faction-questlines.md), [SD-05 비표시·인카운터](05_misc-quests-encounters.md), [SD-06 세력](06_factions.md), [SD-07a 주요 인물](07a_characters-major.md), [SD-07b NPC 디렉터리](07b_npc-directory.md), [SD-08 월드·권역](08_world-regions.md), [SD-09f 지하·한강](09f_locations-underground-river.md), [SD-10 캐릭터](10_character-system.md), [SD-12 탐험·UI](12_exploration-ui.md), [SD-13 아이템](13_items.md), [SD-14 크리처·적](14_creatures-enemies.md), [SD-16 아트](16_art-direction.md), [SD-17 사운드](17_sound.md), [SD-18 명명](18_naming-terms.md)

@@ -1,6 +1,6 @@
 # SD-07a. 주요 인물
 
-> **서울 폴아웃 상세 기획서 세트** | 문서 ID: SD-07a | 버전: v1.2 | 작성일: 2026-10-12
+> **폴아웃 : 서울 상세 기획서 세트** | 문서 ID: SD-07a | 버전: v1.2 | 작성일: 2026-10-12
 > **범위**: 주요 인물(C-001~C-075)의 선정 기준과 ID 체계, 전체 인물 표, 인물 관계도(메인 축·세력 지도부·볼트 S-07), 인물별 프로필(나이·성별·종, 소속·직함, 장소, 외형과 외형 코드, 성격·말투·대사 예시, 배경 2077→2277, 목표와 두려움, 메인 퀘스트 역할, 호감도·판도에 따른 태도 변화, 생사 조건과 대체 경로, 결말 슬라이드 연계, 전투 수치 참조, 서비스), 볼트 S-07 핵심 인물과 관리 계보·오버시어 계보, 메인 퀘스트별 등장 인물, 이름·설정 충돌 검사와 정본 제안 / 다루지 않는 것: 일반 NPC(N-권역-번호, SD-07b·SD-09a~f), 퀘스트 진행·분기 상세(SD-03a·03b·04a~d), 세력 수치(SD-06), 전투 수치 본문(SD-14), 초상화 도트 규격(SD-16), 블립 음색(SD-17)
 > **관련 문서**: [SC-00 컨셉 v0.4](00_concept.md), [SD-02 세계관·연표](02_world-and-lore.md), [SD-03a 메인 스토리 1부](03a_main-story-part1.md), [SD-03b 메인 스토리 2부](03b_main-story-part2.md), [SD-04a 사이드(남부)](04a_side-quests-south.md), [SD-04b 사이드(서부·한강)](04b_side-quests-west-river.md), [SD-04c 사이드(북부·동부·도심)](04c_side-quests-north-east-center.md), [SD-04d 세력 퀘스트 라인](04d_faction-questlines.md), [SD-06 세력](06_factions.md), [SD-07b NPC 디렉터리](07b_npc-directory.md), [SD-09a~f 장소 카탈로그](09a_locations-r01-r02.md), [SD-10 캐릭터 시스템](10_character-system.md), [SD-12 탐험·UI](12_exploration-ui.md), [SD-13 아이템](13_items.md), [SD-14 크리처·적](14_creatures-enemies.md), [SD-15 경제](15_economy.md), [SD-16 아트 디렉션](16_art-direction.md), [SD-17 사운드](17_sound.md), [SD-18 용어·명명](18_naming-terms.md), 원작 [RD-10 주요 인물·동료](../reverse-design/10_characters-major-companions.md), [RD-11 NPC 디렉터리](../reverse-design/11_npc-directory.md), [RD-27 이식 시사점](../reverse-design/27_adaptation-notes.md)
 

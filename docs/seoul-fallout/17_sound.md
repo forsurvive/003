@@ -1,6 +1,6 @@
 # SD-17. 사운드
 
-> **서울 폴아웃 상세 기획서 세트** | 문서 ID: SD-17 | 버전: v1.2 | 작성일: 2026-10-12
+> **폴아웃 : 서울 상세 기획서 세트** | 문서 ID: SD-17 | 버전: v1.2 | 작성일: 2026-10-12
 > **범위**: 사운드 방향(오리지널 음악 원칙), BGM 큐 목록(볼트·권역 R01~R11·정착지·던전·전투·메인 스토리·엔딩 E1~E5·타이틀), 라디오(방송국·음악 채널 없는 텍스트 방송 구현·징글·멘트·플레이어 반응 뉴스. 수록곡은 제작 안 함), 모바일 오디오, 효과음 목록과 우선순위, 음성 없는 대화의 청각 피드백, 믹싱·공간감·심리스 BGM 전환 규칙, 제작 방식·일정·파일 규격 / 다루지 않는 것: 라디오 UI 화면 구성과 조작(→ SD-12), 퀘스트 진행 조건 자체(→ SD-03a·03b, SD-04a~d), 호감도·판도 수치(→ SD-06·SD-08), 무기·크리처 수치와 ID(→ SD-13·SD-14), 카르마 수치와 칭호(→ SD-10)
 > **관련 문서**: [SC-00 컨셉](00_concept.md)(v1.1), [SD-01 게임 개요](01_game-overview.md), [SD-03a 메인 스토리 1부](03a_main-story-part1.md), [SD-03b 메인 스토리 2부](03b_main-story-part2.md), [SD-04a](04a_side-quests-south.md)·[SD-04b](04b_side-quests-west-river.md)·[SD-04c](04c_side-quests-north-east-center.md) 사이드 퀘스트, [SD-04d 세력 퀘스트 라인](04d_faction-questlines.md), [SD-05 비표시·반복·인카운터](05_misc-quests-encounters.md), [SD-06 세력](06_factions.md), [SD-07a 주요 인물](07a_characters-major.md), [SD-07b NPC 디렉터리](07b_npc-directory.md), [SD-08 월드·권역](08_world-regions.md), [SD-09a~f 장소 카탈로그](09a_locations-r01-r02.md), [SD-10 캐릭터 시스템](10_character-system.md), [SD-11 전투 시스템](11_combat-system.md), [SD-12 탐험·UI](12_exploration-ui.md), [SD-13 아이템](13_items.md), [SD-14 크리처·적](14_creatures-enemies.md), [SD-16 아트 디렉션](16_art-direction.md), [SD-18 용어·명명](18_naming-terms.md), 원작 [RD-25 아트·오디오·연출](../reverse-design/25_art-audio-presentation.md), [RD-27 쯔꾸르 이식 시사점](../reverse-design/27_adaptation-notes.md), [RD-17 탐험·상호작용](../reverse-design/17_exploration-interaction.md), 조사 [SR-03 인프라·군사](research/SR-03_seoul-infrastructure.md), [SR-05 국가·사회](research/SR-05_korea-state-society.md)
 
@@ -9,7 +9,7 @@
 ## 1. 개요
 
 ### 1.1 목적
-- 서울 폴아웃의 "들리는 것" 전체를 정의한다. 작곡가·사운드 디자이너(외부 협업자 또는 도구 사용자)가 이 문서만 보고 큐(cue) 하나하나를 만들 수 있는 사양서 수준으로 쓴다.
+- 폴아웃 : 서울의 "들리는 것" 전체를 정의한다. 작곡가·사운드 디자이너(외부 협업자 또는 도구 사용자)가 이 문서만 보고 큐(cue) 하나하나를 만들 수 있는 사양서 수준으로 쓴다.
 - 원작 폴아웃 3의 소리 구조(앰비언트 탐험 음악 + 전환형 전투 음악 + 라디오)를 계승하고, 내용물은 모두 새로 만든다.
 
 ### 1.2 요약

@@ -1,6 +1,6 @@
 # SD-08. 월드·권역
 
-> **서울 폴아웃 상세 기획서 세트** | 문서 ID: SD-08 | 버전: v1.2 | 작성일: 2026-10-12
+> **폴아웃 : 서울 상세 기획서 세트** | 문서 ID: SD-08 | 버전: v1.2 | 작성일: 2026-10-12
 > **범위**: 외부 심리스 월드의 축척과 **월드 좌표계**(위경도 → 타일 변환식, 청크 격자와 ID, 32px 환산), 권역 R01~R11·지하 UG·한강 HR의 청크 경계 확정, 기준점 좌표표(산·랜드마크·성문·다리 양끝·지하철역·경계점), 지형·인프라 레이어(하천·산지·간선도로·철도·성곽·방사능 구역)의 청크 경로, 권역별 상세(지형·분위기·위협도·세력·랜드마크 시야·팔레트·방사능), 한강 횡단로 목록 확정과 수영·배·섬 규칙, 도심 밀폐 구역(R05) 봉쇄와 구획, 지하철망, **장소 시드 425곳**(SD-09a~f의 기준 목록), 랜드마크 시야와 길잡이, 월드 밀도 기준, 7막 메인 동선과 위협도 유도, **서울의 판도 공간 단위**와 판도 변화가 월드에 남기는 배치 규칙, 이동 체계(빠른 이동 연동·길 찾기·날씨·문 전환·수직 구조)
 > **다루지 않는 것**: 장소별 상세와 L-ID(→ SD-09a~f), 판도 수치 규칙(→ SD-06), 빠른 이동·지도 화면 UI(→ SD-12), 도트 규격·팔레트 값(→ SD-16), 적 수치(→ SD-14), 통행세·운임 확정값(→ SD-15), 퀘스트 진행(→ SD-03a·03b·04a~d)
 > **관련 문서**: [SC-00 컨셉](00_concept.md), [SD-02 세계관·연표](02_world-and-lore.md), [SD-03a 메인 스토리 1](03a_main-story-part1.md), [SD-03b 메인 스토리 2](03b_main-story-part2.md), [SD-04a~d 사이드·세력 퀘스트](04a_side-quests-south.md), [SD-05 비표시·반복·인카운터](05_misc-quests-encounters.md), [SD-06 세력](06_factions.md), [SD-09a~f 장소 카탈로그](09a_locations-r01-r02.md), [SD-11 전투·상태](11_combat-system.md), [SD-12 탐험·UI](12_exploration-ui.md), [SD-14 크리처·적](14_creatures-enemies.md), [SD-15 경제](15_economy.md), [SD-16 아트 디렉션](16_art-direction.md), [SD-18 용어](18_naming-terms.md), [SR-02 서울 지리](research/SR-02_seoul-geography.md), [SR-03 인프라](research/SR-03_seoul-infrastructure.md), [RD-12 월드 구조](../reverse-design/12_world-structure-settlements.md), [RD-27 이식 메모](../reverse-design/27_adaptation-notes.md)

@@ -1,6 +1,6 @@
 # SD-18. 용어·명명 규칙
 
-> **서울 폴아웃 상세 기획서 세트** | 문서 ID: SD-18 | 버전: v1.2 | 작성일: 2026-10-12
+> **폴아웃 : 서울 상세 기획서 세트** | 문서 ID: SD-18 | 버전: v1.2 | 작성일: 2026-10-12
 > **범위**: 실명·가상화 표기 원칙, 인명·지명·기업·제품·세력 직함·아이템·퍽·퀘스트의 명명 규칙, 게임 내 텍스트 문체(시스템·퀘스트 로그·터미널·방송·세력별 말투), 한국어 조사·숫자·외래어 처리, 데이터 키용 로마자 규칙, 통합 용어집, 민감 표현 가이드
 > **관련 문서**: [SC-00 컨셉 v0.4](00_concept.md), [SD-02 세계관·연표](02_world-and-lore.md), [SD-03a 메인 스토리 1](03a_main-story-part1.md), [SD-03b 메인 스토리 2](03b_main-story-part2.md), [SD-06 세력](06_factions.md), [SD-07a 주요 인물](07a_characters-major.md), [SD-07b NPC 디렉터리](07b_npc-directory.md), [SD-08 월드·권역](08_world-regions.md), [SD-09a~f 장소 카탈로그](09a_locations-r01-r02.md), [SD-10 캐릭터 시스템](10_character-system.md), [SD-12 탐험·UI](12_exploration-ui.md), [SD-13 아이템](13_items.md), [SD-14 크리처·적](14_creatures-enemies.md), [SD-16 아트 디렉션](16_art-direction.md), [SD-17 사운드](17_sound.md), [RD-26 용어집](../reverse-design/26_glossary.md), [RD-27 이식 메모](../reverse-design/27_adaptation-notes.md), [SR-02 서울 지리](research/SR-02_seoul-geography.md), [SR-05 국가·사회](research/SR-05_korea-state-society.md)
 

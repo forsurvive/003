@@ -1,6 +1,6 @@
 # SD-07b. NPC 디렉터리
 
-> **서울 폴아웃 상세 기획서 세트** | 문서 ID: SD-07b | 버전: v1.2 | 작성일: 2026-10-12
+> **폴아웃 : 서울 상세 기획서 세트** | 문서 ID: SD-07b | 버전: v1.2 | 작성일: 2026-10-12
 > **범위**: 세트 전체의 이름 있는 NPC 정본 목록. 장소 카탈로그(SD-09a~f)의 권역별 NPC 표, 주요 인물(SD-07a C-001~C-075), 상인·서비스 NPC(SD-15), 세력 인물(SD-06), 보스 인물(SD-14), 메인 스토리 인물(SD-03a·03b), 세력 퀘스트 라인(SD-04d)과 사이드 퀘스트·기타 퀘스트(SD-04a·04b·04c·05, 작성된 범위)의 신규 인물을 하나로 묶는다. 외형 코드 통일안, 서비스 NPC 색인, 중복·충돌 검사와 정정 목록, 이름 통계를 담는다.
 > **관련 문서**: [SC-00 컨셉](00_concept.md), [SD-02 세계관](02_world-and-lore.md), [SD-03a](03a_main-story-part1.md)·[SD-03b](03b_main-story-part2.md) 메인 스토리, [SD-04a](04a_side-quests-south.md)·[SD-04b](04b_side-quests-west-river.md)·[SD-04c](04c_side-quests-north-east-center.md) 사이드 퀘스트, [SD-04d 세력 퀘스트](04d_faction-questlines.md), [SD-05 기타 퀘스트](05_misc-quests-encounters.md), [SD-06 세력](06_factions.md), [SD-07a 주요 인물](07a_characters-major.md), [SD-09a](09a_locations-r01-r02.md)·[09b](09b_locations-r03-r04-r10.md)·[09c](09c_locations-r05-r06.md)·[09d](09d_locations-r07-r11.md)·[09e](09e_locations-r08-r09.md)·[09f](09f_locations-underground-river.md) 장소 카탈로그, [SD-14 크리처·적](14_creatures-enemies.md), [SD-15 경제](15_economy.md), [SD-16 아트 디렉션](16_art-direction.md), [SD-18 명명 규칙](18_naming-terms.md)
 
