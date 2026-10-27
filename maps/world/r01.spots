@@ -19,11 +19,14 @@ text 0 0 "별채 아랫단 창고 창. 녹슨 창살 셋, 걸쇠에 자물쇠 �
 #   떠돌이가 돌을 쌓아 틈을 막고 숨겨 둔 비상금 깡통 — 캡 20~25 한 번(아이템 없음). 볼트 앞마당(손 맵)을 지나 숲 틈을 빠져나오면 봉천 가는 흙길 북쪽 세 칸.
 #   돌탑(wander_cairn — 산의 둥근 바위와 다른 납작한 층 · 깡통 뚜껑 반짝임) · 흙길에서 이어지는 군화 발자국. 글은 진행기 WanderTin이 용기를 열기 전에 띄운다(WT_STATE).
 #   주인이 누구인지 · 왜 안 돌아왔는지는 말하지 않는다(사실을 늘리지 않음 — SD-20 P2).
-spot @949,1459 2 2
+spot @949,1459 4 4
 prop wander_cairn 0 0 cond="WT_STATE == 0"
 prop wander_cairn 0 0 state=scattered cond="WT_STATE == 1 or WT_STATE == 2"
 prop wander_cairn 0 0 state=restacked cond="WT_STATE >= 3"
-prop boot_prints 0 1
+prop boot_prints 0 1                                # 숲 틈 흙길(남동)에서 돌탑으로 꺾여 드는 발자국 세 장(재미 검수 2차 ①)
+prop boot_prints 1 2
+prop boot_prints 2 3
+prop boot_prints_out 1 0 cond="WT_STATE >= 3"       # 주인이 다녀간 뒤 북쪽으로 나간 새 발자국(재미 검수 2차 ② — 진행기가 실행 중에도 세운다)
 box 0 0 wander_tin name="바위 틈 탄약 깡통"
 
 # 관악산 전망바위(L-R01-03, SD-09a B · 단계 1-5e): 데크 끝 동전 망원경 → 전망 장면(R01 전체 + 여의도 장소를 지도에 '표시').

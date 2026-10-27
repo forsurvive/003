@@ -10,7 +10,8 @@
              녹슨 탄약 깡통(올리브 칠이 벗겨진 쇠 · 손잡이 고리) — 뚜껑 테두리 한 점이 빛을 받아 반짝인다(광원 북서). 둘레 산에 무작위로 깔린 둥근 바위와
              한눈에 다르게: 결이 납작하고 층층이 · 사람 손이 쌓은 기울기. 상태 scattered(돌 셋이 쓰러져 흩어지고 뚜껑 열린 깡통이 옆으로 누움 — 비운 뒤) ·
              restacked(다시 쌓임 — 깡통은 틈 안 · 반짝임 없음, 주인이 다녀간 뒤).
-  boot_prints 흙에 찍힌 군화 발자국 두 쌍(덧그림 28×14, 1-13j2) — 아래(흙길)에서 위(돌탑)로. 굽 자리가 깊고 앞창 줄무늬가 남았다.
+  boot_prints 흙에 찍힌 군화 발자국 두 쌍(덧그림 30×20, 1-13j2) — 숲 틈 흙길에서 돌탑으로 꺾여 든다(손 자리에 두세 장). 굽 자리가 깊고 앞창 줄무늬 ·
+             길 위 회색에서도 읽히게 진한 흙색. boot_prints_out — 주인이 다녀간 뒤 돌탑에서 북쪽으로 곧게 나간 새 발자국(더 진하다).
 props_bc.PROPS에 합쳐져 r01_props 아틀라스로 나간다."""
 import math
 import os
@@ -239,16 +240,30 @@ def wander_cairn(state=""):
     return im
 
 
+def _boot(d, x, y, fresh=False):
+    """군화 발자국 하나(4×7, 위가 앞): 앞창(넓고 줄무늬) · 틈 · 굽(깊다). 길 위 회색에서도 읽히게 진한 흙색"""
+    sole, deep = ("P17", "P01") if fresh else ("P18", "P17")
+    d.rectangle([x, y, x + 3, y + 3], fill=C(sole))                         # 앞창
+    d.point((x + 1, y + 1), fill=C(deep))                                  # 줄무늬
+    d.point((x + 2, y + 2), fill=C(deep))
+    d.rectangle([x, y + 5, x + 3, y + 6], fill=C(deep))                    # 굽(깊다)
+
+
 def boot_prints():
-    """흙 위 군화 발자국 두 쌍(28×14, 덧그림): 아래 왼쪽(흙길) → 위 오른쪽(돌탑). 앞창(넓고 줄무늬) · 틈 · 굽(깊다)."""
-    im = img(28, 14)
+    """흙 위 군화 발자국 두 쌍(30×20, 덧그림): 아래 오른쪽(숲 틈 흙길) → 위 왼쪽(돌탑). 손 자리에 두세 장을 이어 깐다."""
+    im = img(30, 20)
     d = ImageDraw.Draw(im)
-    for k, (x, y) in enumerate(((2, 8), (8, 6), (14, 5), (20, 2))):
-        x += 2 if k % 2 else 0
-        d.rectangle([x, y, x + 2, y + 2], fill=C("P18"))                  # 앞창
-        d.point((x + 1, y + 1), fill=C("P17"))                            # 줄무늬
-        d.point((x, y + 2), fill=C("P17"))
-        d.rectangle([x, y + 4, x + 2, y + 5], fill=C("P17"))              # 굽(깊다)
+    for k, (x, y) in enumerate(((22, 11), (16, 9), (9, 4), (3, 1))):
+        _boot(d, x + (2 if k % 2 else 0), y)
+    return im
+
+
+def boot_prints_out():
+    """주인이 다녀간 뒤의 새 발자국(30×20, 덧그림): 돌탑에서 위(북쪽 능선)로 곧게 나간다 — 먼저 난 발자국보다 진하다(새것)."""
+    im = img(30, 20)
+    d = ImageDraw.Draw(im)
+    for k, (x, y) in enumerate(((10, 12), (16, 8), (10, 4), (16, 0))):
+        _boot(d, x, y, fresh=True)
     return im
 
 
@@ -262,6 +277,7 @@ PROPS_ACT1 = {
     "atom_charger": _r(atom_charger, 1, 1, down=-2),
     "wander_cairn": _r(wander_cairn, 1, 1, down=1),                     # 1-13j2 관악 비탈 떠돌이 돌탑(깡통 wander_tin)
     "boot_prints": _r(boot_prints, 0, 0, "deco"),
+    "boot_prints_out": _r(boot_prints_out, 0, 0, "deco"),               # 주인이 다녀간 뒤(WT_STATE ≥ 3) 돌탑에서 나간 새 발자국
 }
 STATES_ACT1 = {"atom_charger": {"glow": lambda: atom_charger("glow")},
                "wander_cairn": {"scattered": lambda: wander_cairn("scattered"), "restacked": lambda: wander_cairn("restacked")}}
@@ -270,7 +286,7 @@ STATES_ACT1 = {"atom_charger": {"glow": lambda: atom_charger("glow")},
 if __name__ == "__main__":
     out = sys.argv[1] if len(sys.argv) > 1 else "/tmp/props_act1.png"
     ps = [bike_pile(), fence_banner(), atom_charger(), atom_charger("glow"), wander_cairn(), wander_cairn("scattered"), wander_cairn("restacked"),
-          boot_prints()]
+          boot_prints(), boot_prints_out()]
     sheet = Image.new("RGBA", (sum(p.width + 16 for p in ps), 60), (130, 112, 84, 255))
     x = 8
     for p in ps:

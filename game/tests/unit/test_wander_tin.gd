@@ -100,4 +100,14 @@ func test_wander_tin_left_then_thanks(t) -> void:
 	t.eq(w.state(), 3, "이틀 뒤 멀리 — '고맙다'(3)")
 	t.eq(c["items"].size(), 0, "남긴 것은 주인이 가져갔다")
 	t.eq(WanderTin.PROP_STATE[3], "restacked", "돌탑은 다시 쌓인 그림")
+	var out := false
+	var cairn_rect := Rect2()
+	for p in h.map.props:
+		if str(p["name"]) == "boot_prints_out" and int(p["x"]) == WanderTin.TILE.x + 1:
+			out = true
+		if str(p["name"]) == "wander_cairn" and p.has("node"):
+			cairn_rect = (p["node"].texture as AtlasTexture).region
+	t.ok(out, "주인이 다녀간 뒤 북쪽으로 나간 새 발자국이 바로 선다(맵을 다시 열지 않아도)")
+	var meta: Dictionary = h.map.prop_meta["wander_cairn"]
+	t.eq(cairn_rect.position, Vector2(meta["states"]["restacked"][0], meta["states"]["restacked"][1]), "돌탑 그림이 다시 쌓인 판으로 바뀌었다")
 	h.free()

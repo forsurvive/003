@@ -106,5 +106,12 @@ func _owner_back() -> void:
 
 
 func _prop() -> void:
-	if _on_world():
-		host.map.set_prop_state(TILE, PROP_STATE[state()])
+	if not _on_world():
+		return
+	host.map.set_prop_state(TILE, PROP_STATE[state()])
+	if state() >= 3:                                                   # 주인이 다녀간 뒤 북쪽으로 나간 새 발자국(맵을 다시 열면 손 자리 조건 줄이 세운다)
+		var out := TILE + Vector2i(1, 0)
+		for p in host.map.props:
+			if str(p["name"]) == "boot_prints_out" and int(p["x"]) == out.x and int(p["y"]) == out.y:
+				return
+		host.map.add_runtime_prop("boot_prints_out", out)
