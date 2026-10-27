@@ -324,3 +324,51 @@ func test_balance_mom_chase_and_charge(t) -> void:
 	mom._charge_step(1.0 / 60.0, c.pc)
 	t.eq([mom.staggers, mom._stag > 1.4, mom._chg_cd >= 8.5], [1, true, true], "벽에 박아 1.5초 비틀거림 · 다음 돌진 8.5초 이상")
 	m.free()
+
+
+func _bite_rate(id: String, n: int, secs: float) -> Array:
+	# 주인공은 제자리(피해는 매 프레임 채움) — 무리가 실제 AI로 문 수 · 토큰 없이 문 수 · 초당 물기(첫 물기부터)
+	var h = ARMS.new()
+	var st: StoryState = h._state()
+	var r: Array = h._setup(st)
+	var m: InteriorMap = r[0]
+	var c: InteriorCombat = r[1]
+	var o: Vector2i = r[3]
+	var es: Array = []
+	for i in n:
+		es.append(_spawn(c, m, st, id, h._at(o, 3 + i % 4, 1 + i / 4 * 4), {"lv": 2}))
+	var prev := {}
+	var bites := 0
+	var free_bites := 0
+	var first := -1.0
+	for f in int(secs * 60.0):
+		c.pc.hp = c.pc.max_hp
+		c.tick(1.0 / 60.0, true, st)
+		for e in es:
+			var k: int = e.get_instance_id()
+			var pv: Array = prev.get(k, [0.0, 0.0])
+			var hit: bool = (e._cool > pv[0] + 0.2) if e.style != "swarm" else (e._leap > 0.0 and pv[1] <= 0.0)
+			if hit:
+				bites += 1
+				free_bites += 0 if e.has_mtoken else 1
+				if first < 0.0:
+					first = f / 60.0
+			prev[k] = [e._cool, e._leap]
+	m.free()
+	return [bites, free_bites, bites / maxf(1.0, secs - first)]
+
+
+func test_balance_token_bite_rate(t) -> void:
+	# D-402: 작은 들개가 예비 동작 문턱(멈출 때 걸음 컷만큼 되돌아감)을 오가며 물지 못하던 것 · 큰바퀴 도약이 토큰을 안 따르던 것 ·
+	# 물고 빠진 개의 토큰이 쉬는 개로 넘어가도 토큰 자리당 물기가 한 주기 ×1.5 리듬에 가깝다(조율사 1-13h d)
+	var want := 2.0 / (1.1 * Enemy.BITE_BACK)                         # 물기 15 이하(들개 Lv2) — 한 주기 1.1초 × 1.5
+	var keep: Array = []
+	for sh in [0, 1, 3, 6]:                                              # 지그재그 · 맴돌기 위상은 개체 번호를 따른다 — 번호를 밀어 가며(앞 시험에 따라 굳던 자리가 달랐다)
+		for i in sh:
+			keep.append(RefCounted.new())
+		var dogs := _bite_rate("CR-104", 4, 20.0)
+		t.ok(dogs[2] >= want * 0.8 and dogs[2] <= want * 1.2, "들개 넷 = 토큰 둘 × 한 주기 1.65초 리듬(번호 +%d: 초당 %.2f · 설계 %.2f)" % [sh, dogs[2], want])
+		t.eq(dogs[1], 0, "토큰 없는 개는 물지 않는다")
+	var roach := _bite_rate("CR-002", 6, 30.0)
+	t.eq(roach[1], 0, "큰바퀴 여섯 — 토큰 없는 둘은 도약하지 않는다(떼 넷)")
+	t.ok(roach[0] > 0, "토큰 쥔 바퀴는 도약해 문다(%d번)" % roach[0])

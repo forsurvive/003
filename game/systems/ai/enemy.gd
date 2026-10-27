@@ -697,12 +697,14 @@ func _act(dt: float, target: Combatant, shots: Projectiles) -> void:
 		if _back_t > 0.0:                                              # 물고 빠지기(SD-14 §4.2 '한 번에 1~2마리씩만 물러 들어온다' — 1-13h): 문 뒤 1.5~2칸 물러섰다 다시 든다
 			_back_t -= dt
 			input = (-to_t).normalized() if to_t.length() > 0.5 else Vector2.RIGHT
-		elif to_t.length() < cmb.radius + target.radius + maxf(6.0, cmb.radius * 0.5) + (4.0 if _wind > 0.0 and cmb.radius >= 16.0 else 0.0):   # 큰 몸(배수구 어미 0.6t)은 몸끼리 닿아 서는 거리가 6px 여유보다 멀다 — 몸 반의 반지름까지(1-13k). 예비 동작 중엔 +4px(멈출 때 걸음 컷만큼 되돌아가 문턱을 오가며 예비 동작이 풀리던 것 — 조율사 구현 뒤 1)
+		elif to_t.length() < cmb.radius + target.radius + maxf(6.0, cmb.radius * 0.5) + (4.0 if _wind > 0.0 else 0.0):   # 큰 몸(배수구 어미 0.6t)은 몸끼리 닿아 서는 거리가 6px 여유보다 멀다 — 몸 반의 반지름까지(1-13k). 예비 동작 중엔 +4px(멈출 때 걸음 컷만큼 되돌아가 문턱을 오가며 예비 동작이 풀리던 것 — 조율사 구현 뒤 1 · 작은 들개도 같다, D-402)
 			input = Vector2.ZERO
 			_bite(dt, target, to_t)
 		elif _wind > 0.0:                                              # 노리던 표적이 빠져나갔다 — 예비 동작을 푼다
 			_wind = 0.0
 			modulate = Color(1, 1, 1)
+		elif to_t.length() < 1.5 * 32.0 and meets(target):            # 길은 주인공이 선 칸을 비켜 옆 칸 가운데서 끝난다 — 문턱 바로 밖(24px)에 굳지 않게 마지막 반 칸은 곧장 다가선다(D-402)
+			input = to_t.normalized()
 		elif to_t.length() > 3.0 * 32.0 and input != Vector2.ZERO:     # 지그재그로 달려든다(포위)
 			input = input.normalized() + input.normalized().orthogonal() * sin(_clock * 5.0 + float(get_instance_id() % 7)) * 0.7
 		_cool = maxf(0.0, _cool - dt)
@@ -766,7 +768,7 @@ func _swarm(dt: float, target: Combatant, to_t: Vector2) -> void:
 		return
 	if to_t.length() <= 3.0 * 32.0:
 		_close_t += dt
-		if _close_t >= 2.0 and _cool <= 0.0:
+		if _close_t >= 2.0 and _cool <= 0.0 and has_mtoken:          # 도약 물기도 근접 토큰을 따른다(떼 넷 — D-402)
 			_leap = 0.25
 			_close_t = 0.0
 			_cool = 1.2
