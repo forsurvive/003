@@ -707,6 +707,9 @@ def econ_curve(stim=35):
             add("B6", "경제 흐름", "%s 보유 캡(봇 %d + 볼트 → 봉천 길가 용기 셈)" % (tag, caps), int(f["caps"]),
                 "%d~600(스팀팩 하나 값 이상 · 구간 Ⅰ 보유 상한 500 +20%%)" % stim, "통과" if stim <= int(f["caps"]) <= 600 else "주의",
                 "SD-15 §9.1 · §9.1 '살 수 있어야 하는 것'")
+            if "nofind" in f:                                             # 조율사 구현 뒤 다: 돌탑 깡통을 못 찾은 사람(메모 — 이미 스팀팩 하나를 샀다)
+                add("B6", "경제 흐름", "%s 보유 캡 — 관악 비탈 깡통을 못 찾은 사람(메모)" % tag, int(f["nofind"]), "메모(스팀팩은 이미 하나 샀다 — 주의 아님)",
+                    "통과", "SD-15 §9.1", "깡통을 찾은 사람 %d · 손 자리 용기 여는 몫 0.85" % int(f["caps"]))
         else:
             add("B6", "경제 흐름", "%s 보유 캡" % tag, caps, "%d~600(스팀팩 하나 값 이상 · 구간 Ⅰ 보유 상한 500 +20%%)" % stim,
                 "통과" if stim <= caps <= 600 else "주의", "SD-15 §9.1 · §9.1 '살 수 있어야 하는 것'")
@@ -787,7 +790,7 @@ def check_economy(db, weapons, loot, enemies):
             iid, p, a, b = r[0], float(r[1]), int(r[2]), int(r[3])
             avg = p * (a + b) / 2.0
             if iid == "M-001":
-                gain += avg
+                gain += avg * (1 + 0.03 * 5)                               # 적 소지 캡 레벨 계수(SD-15 §9.2 — 1막 가운데 Lv5, Loot.drop lv와 같은 식)
             elif iid == "10mm 탄":
                 back += avg
             elif iid in db:

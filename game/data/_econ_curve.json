@@ -43,7 +43,7 @@
  ],
  "when": "2026-10-27 12:35",
  "v2": {
-  "when": "2026-10-27 12:57",
+  "when": "2026-10-27 13:17",
   "per_interior": 9.0,
   "interiors": 40,
   "side_used": [
@@ -381,32 +381,36 @@
   "first": [
    {
     "sol": 1,
-    "caps": 39,
-    "earned": 76,
-    "bot_caps": 15
+    "caps": 45,
+    "earned": 82,
+    "bot_caps": 15,
+    "nofind": 26
    },
    {
     "sol": 2,
-    "caps": 39,
-    "earned": 76,
-    "bot_caps": 15
+    "caps": 45,
+    "earned": 82,
+    "bot_caps": 15,
+    "nofind": 26
    },
    {
     "sol": 3,
-    "caps": 39,
-    "earned": 76,
-    "bot_caps": 15
+    "caps": 45,
+    "earned": 82,
+    "bot_caps": 15,
+    "nofind": 26
    },
    {
     "sol": 4,
-    "caps": 43,
-    "earned": 76,
-    "bot_caps": 19
+    "caps": 49,
+    "earned": 82,
+    "bot_caps": 19,
+    "nofind": 30
    }
   ],
-  "basket": 540,
+  "basket": 505,
   "road": {
-   "MQ-101": 24,
+   "MQ-101": 30,
    "MQ-102": 83,
    "MQ-104": 21,
    "MQ-105": 71,
@@ -414,43 +418,45 @@
    "MQ-106": 0,
    "end": 140
   },
-  "explore_re": 6,
+  "explore_re": 22,
+  "exit_re": 14,
+  "retrace_re": 3,
   "curves": [
    {
     "path": "MQ-103 일 맡기(출입세 · 박춘삼 100캡)",
     "sol": 1,
-    "low": 39,
-    "avg": 246,
-    "est_pct": 19,
+    "low": 45,
+    "avg": 145,
+    "est_pct": 20,
     "points": [
      {
       "at": "MQ-101 끝",
-      "caps": 39,
-      "earned": 76,
+      "caps": 45,
+      "earned": 82,
       "xp": 920
      },
      {
       "at": "MQ-102",
-      "caps": 195,
-      "earned": 232,
+      "caps": 99,
+      "earned": 237,
       "xp": 920
      },
      {
       "at": "MQ-103",
-      "caps": 254,
-      "earned": 391,
+      "caps": 35,
+      "earned": 397,
       "xp": 1330
      },
      {
       "at": "MQ-106",
-      "caps": 290,
-      "earned": 427,
+      "caps": 35,
+      "earned": 433,
       "xp": 1650
      },
      {
       "at": "1막 끝(사이드류 절반 + 길가 실내 40곳)",
-      "caps": 453,
-      "earned": 1525,
+      "caps": 510,
+      "earned": 1547,
       "xp": 5496
      }
     ]
@@ -458,38 +464,38 @@
    {
     "path": "MQ-103 환풍구(무료)",
     "sol": 1,
-    "low": 39,
-    "avg": 286,
-    "est_pct": 17,
+    "low": 45,
+    "avg": 171,
+    "est_pct": 18,
     "points": [
      {
       "at": "MQ-101 끝",
-      "caps": 39,
-      "earned": 76,
+      "caps": 45,
+      "earned": 82,
       "xp": 920
      },
      {
       "at": "MQ-102",
-      "caps": 195,
-      "earned": 232,
+      "caps": 99,
+      "earned": 237,
       "xp": 920
      },
      {
       "at": "MQ-103",
-      "caps": 320,
-      "earned": 357,
+      "caps": 73,
+      "earned": 363,
       "xp": 1270
      },
      {
       "at": "MQ-106",
-      "caps": 356,
-      "earned": 393,
+      "caps": 59,
+      "earned": 399,
       "xp": 1590
      },
      {
       "at": "1막 끝(사이드류 절반 + 길가 실내 40곳)",
-      "caps": 519,
-      "earned": 1491,
+      "caps": 576,
+      "earned": 1513,
       "xp": 5436
      }
     ]
@@ -497,38 +503,38 @@
    {
     "path": "MQ-104 말로(무료)",
     "sol": 1,
-    "low": 39,
-    "avg": 289,
-    "est_pct": 17,
+    "low": 45,
+    "avg": 173,
+    "est_pct": 18,
     "points": [
      {
       "at": "MQ-101 끝",
-      "caps": 39,
-      "earned": 76,
+      "caps": 45,
+      "earned": 82,
       "xp": 920
      },
      {
       "at": "MQ-102",
-      "caps": 195,
-      "earned": 232,
+      "caps": 99,
+      "earned": 237,
       "xp": 920
      },
      {
       "at": "MQ-104",
-      "caps": 324,
-      "earned": 361,
+      "caps": 78,
+      "earned": 367,
       "xp": 1230
      },
      {
       "at": "MQ-106",
-      "caps": 361,
-      "earned": 398,
+      "caps": 63,
+      "earned": 403,
       "xp": 1550
      },
      {
       "at": "1막 끝(사이드류 절반 + 길가 실내 40곳)",
-      "caps": 524,
-      "earned": 1496,
+      "caps": 580,
+      "earned": 1517,
       "xp": 5396
      }
     ]
@@ -536,38 +542,38 @@
    {
     "path": "MQ-105 구매자 위장(보증금 500 · 88번 300 — 고르는 지출)",
     "sol": 1,
-    "low": -426,
-    "avg": 138,
-    "est_pct": 20,
+    "low": -522,
+    "avg": 93,
+    "est_pct": 21,
     "points": [
      {
       "at": "MQ-101 끝",
-      "caps": 39,
-      "earned": 76,
+      "caps": 45,
+      "earned": 82,
       "xp": 920
      },
      {
       "at": "MQ-102",
-      "caps": 195,
-      "earned": 232,
+      "caps": 99,
+      "earned": 237,
       "xp": 920
      },
      {
       "at": "MQ-105",
-      "caps": 74,
-      "earned": 411,
+      "caps": -22,
+      "earned": 416,
       "xp": 1220
      },
      {
       "at": "MQ-106",
-      "caps": 110,
-      "earned": 447,
+      "caps": 14,
+      "earned": 452,
       "xp": 1540
      },
      {
       "at": "1막 끝(사이드류 절반 + 길가 실내 40곳)",
-      "caps": 273,
-      "earned": 1545,
+      "caps": 329,
+      "earned": 1566,
       "xp": 5386
      }
     ]
@@ -575,38 +581,38 @@
    {
     "path": "MQ-105 옥상 길(무료)",
     "sol": 1,
-    "low": 39,
-    "avg": 318,
-    "est_pct": 20,
+    "low": 45,
+    "avg": 203,
+    "est_pct": 21,
     "points": [
      {
       "at": "MQ-101 끝",
-      "caps": 39,
-      "earned": 76,
+      "caps": 45,
+      "earned": 82,
       "xp": 920
      },
      {
       "at": "MQ-102",
-      "caps": 195,
-      "earned": 232,
+      "caps": 99,
+      "earned": 237,
       "xp": 920
      },
      {
       "at": "MQ-105",
-      "caps": 374,
-      "earned": 411,
+      "caps": 127,
+      "earned": 416,
       "xp": 1260
      },
      {
       "at": "MQ-106",
-      "caps": 410,
-      "earned": 447,
+      "caps": 112,
+      "earned": 452,
       "xp": 1580
      },
      {
       "at": "1막 끝(사이드류 절반 + 길가 실내 40곳)",
-      "caps": 573,
-      "earned": 1545,
+      "caps": 629,
+      "earned": 1566,
       "xp": 5426
      }
     ]

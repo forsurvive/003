@@ -63,6 +63,9 @@ OPEN_BOX = 0.6          # 라: 길 15칸 안 월드 용기를 지나가며 여�
 OPEN_CORPSE = 0.9       # 마: 쓰러뜨린 적 유해를 여는 몫
 FIGHT = 0.7             # 마: 마주친 적대 무리와 실제로 싸우는 몫(피하기 · 말 · 달아남 뺌) — 길 위 RE · 생성 실내 적
 EXPLORE_TILES = 30      # 마: 길가 실내 한 곳을 들르려 주요 길에서 벗어나 걷는 칸(RE 판정이 그만큼 더 선다)
+OPEN_HAND = 0.85        # 다(조율사 구현 뒤): 손 자리 용기(돌탑 · 발자국 단서 — 관악 비탈 깡통)를 여는 몫
+RETRACE = {"봉천 → 영등포 지하시장": 2}   # 가(조율사 구현 뒤): 같은 길을 되짚는 걸음(허브 봉천 ↔ 지하시장 — 용기는 이미 열었으니 RE만)
+# 나(조율사 구현 뒤): 탄은 장바구니에 없다 — '안 판 절반'(SELL_SHARE 0.5)이 탄 · 소모품을 쓰는 몫이라는 가정(1막 10mm 순소모 약 250~300캡어치가 그 안에 든다)
 # 라 · 마: 1막 길 구간(loot_audit road)이 행로의 어느 지점 몫인가 — 노량진 · 수산시장 길은 사이드(절반)
 ROAD_AT = {"MQ-101": ["볼트 → 봉천"], "MQ-102": ["봉천 → 영등포 지하시장"], "MQ-104": ["지하시장 → 여의도 벙커"],
            "MQ-105": ["지하시장 → 새벽인력 본소"], "MQ-103": [], "MQ-106": [],
@@ -136,6 +139,7 @@ def compose():
         for leg in ROAD_AT.get(key, []):
             r = rd.get(leg, {})
             t += OPEN_BOX * (r.get("caps", 0) + r.get("value", 0) * sell)
+            t += OPEN_HAND * (r.get("hand_caps", 0) + r.get("hand_value", 0) * sell)
             t += FIGHT * OPEN_CORPSE * (r.get("re_caps", 0) + r.get("re_value", 0) * sell)
         return t
     # 다: 사이드 조각이 보상 지급 전에 끝난다(다음 방문 · 다음 날 보상) — 퀘스트마다 max(조각 번 캡 − 흐름, 보상표 캡(흐름 뺌))
@@ -158,13 +162,23 @@ def compose():
     half = lambda k: sum(float(d[k]) for d in side.values()) / 2.0
     db = bc.items_db()                                                   # 소모 지출: SD-15 §9.1 '이 구간에 살 수 있어야 하는 것'(스팀팩 5 · 위조 등록증 · 정화수 10, 물물교환 30)을 1막 동안 산다고 본다
     basket = 5 * bc.price_of(db["I-001"]["value"], True, 30) + bc.price_of(db["M-062"]["value"], True, 30) + 10 * bc.price_of(db["I-057"]["value"], True, 30)
+    basket -= bc.price_of(db["I-001"]["value"], True, 30)                # 봇 MQ-101이 이미 고물상에서 산 스팀팩 하나(겹침 — 조율사 구현 뒤 나)
     explore = INTERIORS * EXPLORE_TILES * re_rate * re_one * FIGHT * OPEN_CORPSE   # 마: 실내를 들르러 벗어난 걸음에서 서는 RE
+    # 가(조율사 구현 뒤): 실내에서 나올 때 판정(on_exit_interior — 경계 세 번째 제한 없이 위협도 확률) — 실내 40곳 × 정착지 밖 몫 × p/(1+2p)
+    ok_share = sum(r.get("re_ok", 0) * r["tiles"] for r in rd.values()) / max(1, sum(r["tiles"] for r in rd.values()))
+    p_ok = sum(r.get("re_p", 0) * r["tiles"] for r in rd.values()) / max(1, sum(r["tiles"] for r in rd.values()))
+    exit_re = INTERIORS * ok_share * (p_ok / (1.0 + 2.0 * p_ok)) * re_one * FIGHT * OPEN_CORPSE
+    retrace = sum(n * (rd.get(leg, {}).get("re_caps", 0) + rd.get(leg, {}).get("re_value", 0) * sell) for leg, n in RETRACE.items()) * FIGHT * OPEN_CORPSE
+    explore += exit_re + retrace
     out = []
     # 길가 실내(퀘스트 밖) 루팅은 행로를 따라 나눠 든다: 허브까지 8곳 · 경로 12곳 · MQ-106까지 4곳 · 1막 남은 사이드 동안 16곳(계획 §1 — 하루 약 5곳)
     share = {"MQ-102": 8, "path": 12, "MQ-106": 4, "end": INTERIORS - 24}
     first = []
     for r in sorted(v1, key=lambda r: r["sol"]):                          # MQ-101 끝(해법마다): 봇 실측 + 볼트 → 봉천 길가 용기 셈
-        first.append({"sol": r["sol"], "caps": round(r["caps"] + road_at("MQ-101")), "earned": round(r["earned"] + road_at("MQ-101")), "bot_caps": r["caps"]})
+        ra0 = road_at("MQ-101")
+        hand = OPEN_HAND * sum(rd.get(leg, {}).get("hand_caps", 0) + rd.get(leg, {}).get("hand_value", 0) * sell for leg in ROAD_AT["MQ-101"])
+        first.append({"sol": r["sol"], "caps": round(r["caps"] + ra0), "earned": round(r["earned"] + ra0), "bot_caps": r["caps"],
+                      "nofind": round(r["caps"] + (ra0 - hand) / OPEN_BOX * OPEN_BOX)})   # 다: 깡통을 못 찾은 사람(메모)
     r0 = [r for r in v1 if r["sol"] == 1][0]                             # 계단 방어(가장 흔한 해법)
     for name, (q, rt) in PATHS.items():
         sg_path = segs.get(rt, {})
@@ -175,6 +189,7 @@ def compose():
         est = ra                                                            # 셈 몫(조율사 보고 라 · 마 — 측정이 아닌 길가 용기 · 전리품 · 탐험 걸음 RE)
         pts = [{"at": "MQ-101 끝", "caps": caps, "earned": earned, "xp": xp}]
         low = caps
+        owe = 0.0                                                           # 아직 못 산 장바구니(살 수 있을 때 산다 — 스팀팩 하나 값은 남긴다)
         for key, sg in (("MQ-102", segs.get(MAIN["MQ-102"], {})), ("path", sg_path), ("MQ-106", segs.get(MAIN["MQ-106"], {}))):
             if not sg.get("ok"):
                 break
@@ -187,11 +202,15 @@ def compose():
             est += road_at(at) + share[key] * gen_e + kc + kv
             low = min(low, caps - sg["spent"])                              # 그 길에서 돈을 내는 순간의 잔고(길가 루팅을 먼저 했다고 봄)
             caps += sg["caps"] + kc + kv
+            owe += basket * share[key] / INTERIORS                          # 나: 장바구니는 시간 비율로(하루 실내 약 5곳 — 들른 실내 수 몫), 그 구간 수입 뒤에 산다
+            buy = min(owe, max(0.0, caps - 35.0))
+            caps -= buy
+            owe -= buy
             earned += sg["earned"] - fl + kc + kv
             xp += sg["xp"]
             pts.append({"at": at, "caps": caps, "earned": earned, "xp": xp})
         add = share["end"] * per_int + road_at("end") / 2.0 + explore
-        caps_end = caps + half("caps") + add - basket
+        caps_end = caps + half("caps") + add - (owe + basket * share["end"] / INTERIORS)
         earned_end = earned + half("earned") + add
         est += road_at("end") / 2.0 + share["end"] * gen_e + explore + half("kill")
         xp_end = xp + half("xp")
@@ -202,7 +221,7 @@ def compose():
     quest_end = sum(float(sg.get("earned", 0)) for sg in (segs.get(MAIN["MQ-102"], {}), segs.get(MAIN["MQ-106"], {}))) + half("earned")
     v2 = {"when": time.strftime("%Y-%m-%d %H:%M"), "per_interior": round(per_int, 1), "interiors": INTERIORS,
           "side_used": side_ok, "side_missing": side_miss, "side": {q: {k: round(v) if isinstance(v, float) else v for k, v in d.items()} for q, d in side.items()},
-          "first": first, "basket": round(basket), "road": {k: round(road_at(k)) for k in ROAD_AT}, "explore_re": round(explore), "curves": out,
+          "first": first, "basket": round(basket), "road": {k: round(road_at(k)) for k in ROAD_AT}, "explore_re": round(explore), "exit_re": round(exit_re), "retrace_re": round(retrace), "curves": out,
           "assume": {"OPEN_BOX": OPEN_BOX, "OPEN_CORPSE": OPEN_CORPSE, "FIGHT": FIGHT, "EXPLORE_TILES": EXPLORE_TILES, "SELL": round(sell, 3)}}
     base["v2"] = v2
     json.dump(base, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)

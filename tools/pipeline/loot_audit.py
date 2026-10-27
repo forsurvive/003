@@ -201,12 +201,15 @@ def road(reps=200):
             if any((bx["x"] - x) ** 2 + (bx["y"] - y) ** 2 <= ROAD_R * ROAD_R for x, y in path[::2]):
                 near.append(bx)
                 seen.add(i)
-        caps = val = 0.0
+        caps = val = hcaps = hval = 0.0
         for bx in near:
             if bx["kind"] not in V3["kinds"]:                            # 옛 굴림(Loot.roll — 빈 상자율 · 캡 배수 없음): 줄마다 확률 × 가운데값
                 for r in L["tables"][bx["kind"]].get("rows", []):
                     n = float(r[1]) * (float(r[2]) + float(r[3])) / 2.0
-                    if r[0] == "M-001":
+                    if bx.get("hand"):                                   # 손 자리 용기(돌탑 · 발자국 같은 단서가 있다) — 여는 몫을 따로
+                        hcaps += n if r[0] == "M-001" else 0.0
+                        hval += 0.0 if r[0] == "M-001" else n * value_of(r[0])
+                    elif r[0] == "M-001":
                         caps += n
                     else:
                         val += n * value_of(r[0])
@@ -221,6 +224,15 @@ def road(reps=200):
         n_re = 0.0
         last = None
         steps = 0
+        ok_tiles = 0
+        p_sum = 0.0
+        for x, y in path:                                                # 실내에서 나올 때 판정(on_exit_interior)용: 정착지 밖 · 위협 > 0 칸 몫과 그 칸의 확률
+            k = (x // 40, y // 40)
+            row = enc["threat"][k[1]] if k[1] < len(enc["threat"]) else ""
+            ch = row[k[0]] if k[0] < len(row) else "."
+            if ch.isdigit() and int(ch) > 0 and not any(abs(sx // 40 - k[0]) <= 2 and abs(sy // 40 - k[1]) <= 2 for sx, sy in sett):
+                ok_tiles += 1
+                p_sum += min(0.6, float(enc["chance"][ch][1]) + 0.06)
         for x, y in path:
             k = (x // 40, y // 40)
             if k == last:
@@ -240,9 +252,10 @@ def road(reps=200):
                 n_re += pe / (1.0 + 2.0 * pe)
         region = places.get(b, {}).get("region", "R01")
         rc, rv = re_expect(enc, region)
-        out[name] = {"boxes": len(near), "caps": round(caps, 1), "value": round(val, 1), "re_n": round(n_re, 2),
+        out[name] = {"boxes": len(near), "caps": round(caps, 1), "value": round(val, 1), "hand_caps": round(hcaps, 1), "hand_value": round(hval, 1),
+                     "re_ok": round(ok_tiles / max(1, len(path)), 3), "re_p": round(p_sum / max(1, ok_tiles), 3), "re_n": round(n_re, 2),
                      "re_caps": round(n_re * rc, 1), "re_value": round(n_re * rv, 1), "tiles": len(path)}
-        print(f"  길 {name}: {len(path)}칸 · 15칸 안 용기 {len(near)} · 캡 {caps:.0f} · 물건 값 {val:.0f} · RE {n_re:.2f}번 · RE 전리품 캡 {n_re * rc:.0f} · 값 {n_re * rv:.0f}")
+        print(f"  길 {name}: {len(path)}칸 · 15칸 안 용기 {len(near)}(손 자리 캡 {hcaps:.0f}) · 캡 {caps:.0f} · 물건 값 {val:.0f} · RE {n_re:.2f}번 · RE 전리품 캡 {n_re * rc:.0f} · 값 {n_re * rv:.0f}")
     return out
 
 
