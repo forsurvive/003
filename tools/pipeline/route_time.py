@@ -59,7 +59,8 @@ def load(box):
     return solid, level, stair, deck
 
 
-def route(grid, a, b, use_deck):
+def route(grid, a, b, use_deck, want_path=False):
+    """가장 짧은 길의 길이(칸). want_path면 (길이, [(x, y) …] 출발 → 도착 칸 목록 — 상자 좌표 기준)"""
     solid, level, stair, deck = grid
     H, W = solid.shape
 
@@ -102,6 +103,7 @@ def route(grid, a, b, use_deck):
 
     start = (a[0], a[1], 0)
     dist = {start: 0.0}
+    came = {}
     pq = [(0.0, start)]
     up = 0
     while pq:
@@ -109,7 +111,13 @@ def route(grid, a, b, use_deck):
         if c > dist.get(s, 1e18):
             continue
         if (s[0], s[1]) == (b[0], b[1]):
-            return c
+            if not want_path:
+                return c
+            path = [(s[0], s[1])]
+            while s in came:
+                s = came[s]
+                path.append((s[0], s[1]))
+            return c, path[::-1]
         h = (s[0], s[1])
         for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, 1), (1, -1), (-1, -1)):
             t = (h[0] + dx, h[1] + dy)
@@ -122,8 +130,9 @@ def route(grid, a, b, use_deck):
             nc = c + (1.414 if dx and dy else 1.0)
             if nc < dist.get(ns, 1e18):
                 dist[ns] = nc
+                came[ns] = s
                 heapq.heappush(pq, (nc, ns))
-    return None
+    return (None, []) if want_path else None
 
 
 def main():

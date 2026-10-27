@@ -686,25 +686,57 @@ def check_rewards(places):
     return rw
 
 
-# 1-13c: 봇이 실제로 걸어 모은 경제 곡선(tools/pipeline/econ_curve.py → game/data/_econ_curve.json). 봇은 '필수 경로만' 간다(루팅 · 사이드 · 판매가
+# 1-13c: 봇이 실제로 걸어 모은 경제 곡선(tools/pipeline/econ_curve.py → game/data/_econ_curve.json). v1은 '필수 경로만' 걷는 봇(루팅 · 사이드 · 판매가
 # 거의 없다) — SD-15 §9.1 수입 구성에서 퀘스트 몫은 30%라, 레벨 L의 누적 기대(Lv6에 1,500~2,500으로 가는 속도)에 0.3을 곱한 값을 아랫선으로 본다.
-# 보유 캡은 '살 수 있어야 하는 것'의 첫걸음 — 스팀팩 하나 값(물물교환 30) 이상이면 통과, 구간 Ⅰ 평균 보유 상한 500 ±20% 위면 넘침
+# 1-13j v2(보통 플레이어 합성 — D-399): 완료 기준 ⑨ '1막 수입 곡선이 SD-15 목표 ±20%'를 **막 기준**으로 판정한다(사용자 결정 2026-10-27 —
+# 1막 끝 = 구간 Ⅰ 끝, 1,500~2,500 ±20% = 1,200~3,000. 1막 끝 Lv8 결정은 콘텐츠 밀도 때문이지 경제를 바꾸려던 것이 아니다).
+# 보유 캡은 '살 수 있어야 하는 것'의 첫걸음 — 스팀팩 하나 값(물물교환 30) 이상이면 통과, 구간 Ⅰ 평균 보유 상한 500 +20% 위면 넘침
 def econ_curve(stim=35):
     path = os.path.join(ROOT, "game", "data", "_econ_curve.json")
     if not os.path.exists(path):
         add("B6", "경제 흐름", "봇 경제 곡선(기록 없음 — econ_curve.py를 돌리면 생긴다)", "-", "기록", "주의", "SD-15 §9.1")
         return
     d = json.load(open(path, encoding="utf-8"))
+    v2 = d.get("v2", {})
+    first = {int(f["sol"]): f for f in v2.get("first", [])}
     for r in d.get("rows", []):
         tag = "%s 해법 %d 필수 경로 봇(%s)" % (r["at"], r["sol"], d.get("when", ""))
         caps = int(r["caps"])
-        add("B6", "경제 흐름", "%s 보유 캡" % tag, caps, "%d~600(스팀팩 하나 값 이상 · 구간 Ⅰ 보유 상한 500 +20%%)" % stim,
-            "통과" if stim <= caps <= 600 else "주의", "SD-15 §9.1 · §9.1 '살 수 있어야 하는 것'")
+        f = first.get(int(r["sol"]))
+        if f:                                                             # v2: 봇 실측 + 볼트 → 봉천 길가 용기 셈(관악 비탈 깡통 포함 — 봇은 용기를 열지 않는다)
+            add("B6", "경제 흐름", "%s 보유 캡(봇 %d + 볼트 → 봉천 길가 용기 셈)" % (tag, caps), int(f["caps"]),
+                "%d~600(스팀팩 하나 값 이상 · 구간 Ⅰ 보유 상한 500 +20%%)" % stim, "통과" if stim <= int(f["caps"]) <= 600 else "주의",
+                "SD-15 §9.1 · §9.1 '살 수 있어야 하는 것'")
+        else:
+            add("B6", "경제 흐름", "%s 보유 캡" % tag, caps, "%d~600(스팀팩 하나 값 이상 · 구간 Ⅰ 보유 상한 500 +20%%)" % stim,
+                "통과" if stim <= caps <= 600 else "주의", "SD-15 §9.1 · §9.1 '살 수 있어야 하는 것'")
         lv = max(1, int(r["lv"]))
         lo, hi = (lv - 1) / 5.0 * 1500 * 0.8 * 0.3, max(300.0, (lv - 1) / 5.0 * 2500 * 1.2)
-        earned = int(r["earned"])
-        add("B6", "경제 흐름", "%s 누적 수입(Lv%d · %d일째)" % (tag, lv, int(r["day"])), earned,
+        earned = int(f["earned"]) if f else int(r["earned"])
+        add("B6", "경제 흐름", "%s 누적 수입(Lv%d · %d일째%s)" % (tag, lv, int(r["day"]), " · 봇 %d + 길가 용기 셈" % int(r["earned"]) if f else ""), earned,
             "%d~%d(Lv6에 1,500~2,500으로 가는 속도 — 아랫선은 퀘스트 몫 30%%)" % (lo, hi), "통과" if lo <= earned <= hi else "주의", "SD-15 §9.1 수입 구성")
+    for c in v2.get("curves", []):
+        pts = c["points"]
+        end = pts[-1]
+        tag = "v2 보통 플레이어 · %s" % c["path"]
+        est = int(c.get("est_pct", 0))
+        st_ = judge(int(end["earned"]), 1200, 3000)
+        if st_ == "통과" and est > 40:
+            st_ = "주의"
+        add("B6", "경제 흐름", "1막 끝 누적 수입(%s · 셈 몫 %d%%)" % (tag, est), int(end["earned"]),
+            "1,200~3,000(구간 Ⅰ 1,500~2,500 ±20% — 완료 기준 ⑨ 막 기준, 사용자 결정 2026-10-27 · 셈 몫 40% 넘으면 주의)", st_, "SD-15 §9.1 · SD-19 §5")
+        avg = int(c.get("avg", 0))
+        choose = "고르는 지출" in c["path"]
+        add("B6", "경제 흐름", "1막 평균 보유(%s — 지점 %d곳)" % (tag, len(pts)), avg, "150~500(구간 Ⅰ 평균 보유)",
+            "통과" if choose and avg >= stim else judge(avg, 150, 500), "SD-15 §9.1", "고르는 지출 길 — 800을 낸 뒤라 평균이 낮다" if choose else "")
+        for p_ in pts:
+            v = int(p_["caps"])
+            ok = stim <= v <= 600
+            add("B6", "경제 흐름", "%s 보유(%s)" % (p_["at"], tag), v, "%d~600" % stim,
+                "통과" if ok or (choose and v >= 0) else "주의", "SD-15 §9.1", "고르는 지출 길 — 돈을 모은 사람의 선택(화술 · 옥상 · 습격 길이 늘 열려 있다)" if choose else "")
+        if int(c.get("low", 0)) < stim:
+            add("B6", "경제 흐름", "돈 낼 때 가장 낮은 잔고(%s)" % tag, int(c["low"]), "%d 이상" % stim, "통과" if choose else "주의", "SD-15 §9.1",
+                "고르는 지출 — 800을 한꺼번에 쥐어야 하는 길(실패가 아니라 선택)" if choose else "")
 
 
 # ---------------------------------------------------------------- 경제 · 소모 · 상점

@@ -229,10 +229,14 @@ static func _restock(st: StoryState, k: String, map_id: String, b: Dictionary, t
 			bx["items"] = roll(str(b["kind"]), seed_of(st, k, gen + 1), t, cond, ctx_for(st, map_id, b, region))
 
 
-## 쓰러진 적의 소지품(§9.3): 적 ID 표 + 씨앗(맵·자리·날)
-static func drop(enemy_id: String, seed_key: String, t: int = 1, cond_kind: String = "enemy") -> Dictionary:
+## 쓰러진 적의 소지품(§9.3): 적 ID 표 + 씨앗(맵·자리·날). lv = 주인공 레벨 — 소지 캡은 × (1 + 0.03 × 레벨)(SD-15 §9.2, Lv35 약 ×2).
+## lv 0 = 계수 없음(시험 · 볼트 시대)
+static func drop(enemy_id: String, seed_key: String, t: int = 1, cond_kind: String = "enemy", lv: int = 0) -> Dictionary:
 	_load()
-	return roll_rows(drops.get(enemy_id, []), seed_key, t, cond_kind)
+	var out := roll_rows(drops.get(enemy_id, []), seed_key, t, cond_kind)
+	if lv > 0 and out.has("M-001"):
+		out["M-001"] = roundi(float(out["M-001"]) * (1.0 + 0.03 * lv))
+	return out
 
 
 # ---------------------------------------------------------------- 파밍 v3(1-L 계획 §2 · §9.1)

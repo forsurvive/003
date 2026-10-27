@@ -996,7 +996,9 @@ func _bot(dt: float) -> void:
 			host._pip_action("equip", str(job[1]))
 			_next()
 		"caps":
+			var e0 := v("CAPS_EARNED")
 			st.vars.set_v("PC_CAPS", maxi(v("PC_CAPS"), int(job[1])))
+			st.vars.set_v("CAPS_EARNED", e0)                              # 봇이 스스로 채운 돈은 수입이 아니다(경제 곡선 — 조율사 보고 가)
 			_next()
 		"board":
 			host.player.loco.facing = 6

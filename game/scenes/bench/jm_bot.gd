@@ -32,6 +32,7 @@ var uq04: Uq04                                     ## UQ-04 7호 냉동 창고(1
 var uq_r01: UqR01                                  ## R01 비표시 퀘스트 넷(1-12g)
 var rq: RqR01                                          ## 1-12j 반복 의뢰
 var econ0 := {}                                ## 경제 곡선 v2: 갈래 시작 캡 · 누적 수입 · XP · 날(첫 프레임)
+var econ_kills := {}                           ## 경제 곡선 v2(조율사 보고 마): 이 갈래에서 쓰러뜨린 적 ID → 수(봇은 유해를 열지 않는다 — 전리품은 셈)
 var uq_r02: UqR02                                  ## R02 비표시 퀘스트(1-12h)
 var gr: Gr                                         ## 구로 차량기지(1-D4)
 var kt: Kt                                         ## 여의도 금탑(1-D5a)
@@ -1767,6 +1768,7 @@ func _process(dt: float) -> void:
 	if econ0.is_empty():                                                 # 1-13 경제 곡선 v2(D-399): 갈래 시작 값(설정이 끝난 첫 프레임 — 시작 캡 설정은 수입이 아니다)
 		econ0 = {"caps": int(st.vars.get_v("PC_CAPS")), "earned": int(st.vars.get_v("CAPS_EARNED")) if st.vars.has("CAPS_EARNED") else 0,
 			"xp": int(st.vars.get_v("PC_XP")), "day": int(st.vars.get_v("GAME_DAY"))}
+		host.combat.enemy_killed.connect(func(id: String, _left: int) -> void: econ_kills[id] = int(econ_kills.get(id, 0)) + 1)
 	t += dt
 	step_t += dt
 	if t > 400.0:
@@ -2426,8 +2428,11 @@ func _finish(why: String) -> void:
 		int(st.vars.get_v("PC_XP")), int(st.vars.get_v("AFF_JH")) if st.vars.has("AFF_JH") else 0, st.quests.stage("MQ-105")])
 	if not econ0.is_empty():                                             # 경제 곡선 v2 조각 줄(tools/pipeline/econ_curve.py --segs가 모은다): 이 갈래가 번 캡 · XP · 날
 		var earned1 := int(st.vars.get_v("CAPS_EARNED")) if st.vars.has("CAPS_EARNED") else 0
-		print("ECONSEG|%s|%s|캡 %d|번 캡 %d|쓴 캡 %d|XP %d|날 %d" % [route, "○" if ok == checks.size() and why == "" else "×",
+		var kl := PackedStringArray()
+		for k in econ_kills:
+			kl.append("%s:%d" % [k, econ_kills[k]])
+		print("ECONSEG|%s|%s|캡 %d|번 캡 %d|쓴 캡 %d|XP %d|날 %d|처치 %s" % [route, "○" if ok == checks.size() and why == "" else "×",
 			int(st.vars.get_v("PC_CAPS")) - int(econ0["caps"]), earned1 - int(econ0["earned"]),
 			maxi(0, (earned1 - int(econ0["earned"])) - (int(st.vars.get_v("PC_CAPS")) - int(econ0["caps"]))),
-			int(st.vars.get_v("PC_XP")) - int(econ0["xp"]), int(st.vars.get_v("GAME_DAY")) - int(econ0["day"])])
+			int(st.vars.get_v("PC_XP")) - int(econ0["xp"]), int(st.vars.get_v("GAME_DAY")) - int(econ0["day"]), ",".join(kl)])
 	get_tree().create_timer(0.3).timeout.connect(get_tree().quit)

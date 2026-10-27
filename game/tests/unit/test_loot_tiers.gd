@@ -30,6 +30,18 @@ func test_loot_tiers(t) -> void:
 		if not Loot.drop("CR-436", "W:%d,1@2277" % i, 1).is_empty():
 			any = true
 	t.ok(any, "추심원(CR-436)은 소지품을 남긴다(§9.3)")
+	var lv_ok := false
+	for i in 40:                                                         # SD-15 §9.2 적 소지 캡 × (1 + 0.03 × 레벨) — 같은 씨앗이면 물건은 같고 캡만 는다
+		var a := Loot.drop("CR-436", "W:%d,2@2277" % i, 1)
+		if int(a.get("M-001", 0)) >= 10:
+			var b := Loot.drop("CR-436", "W:%d,2@2277" % i, 1, "enemy", 10)
+			t.eq(int(b["M-001"]), roundi(float(a["M-001"]) * 1.3), "Lv10 = 소지 캡 ×1.3")
+			b.erase("M-001")
+			a.erase("M-001")
+			t.eq(b, a, "레벨 계수는 캡만 바꾼다")
+			lv_ok = true
+			break
+	t.ok(lv_ok, "캡 10 넘게 든 추심원 표본이 있다")
 	for k in ["civil", "bag", "car", "trash", "corpse_scav", "crate"]:
 		var n := 0
 		for i in 30:

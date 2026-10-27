@@ -43,8 +43,8 @@
  ],
  "when": "2026-10-23 14:05",
  "v2": {
-  "when": "2026-10-24 15:55",
-  "per_interior": 8.2,
+  "when": "2026-10-27 12:17",
+  "per_interior": 9.0,
   "interiors": 40,
   "side_used": [
    "SQ-S02",
@@ -88,40 +88,345 @@
    "UQ-69",
    "U04"
   ],
+  "side": {
+   "SQ-S02": {
+    "caps": 70,
+    "earned": 100,
+    "xp": 0,
+    "kill": 0,
+    "fill": 0,
+    "src": "조각"
+   },
+   "SQ-S03": {
+    "caps": 100,
+    "earned": 100,
+    "xp": 382,
+    "kill": 0,
+    "fill": 0,
+    "src": "조각"
+   },
+   "SQ-S05": {
+    "caps": 100,
+    "earned": 100,
+    "xp": 300,
+    "kill": 0,
+    "fill": 0,
+    "src": "조각"
+   },
+   "SQ-S06": {
+    "caps": 150,
+    "earned": 150,
+    "xp": 410,
+    "kill": 0,
+    "fill": 150,
+    "src": "조각 + 보상표"
+   },
+   "SQ-S08": {
+    "caps": 100,
+    "earned": 100,
+    "xp": 260,
+    "kill": 0,
+    "fill": 100,
+    "src": "조각 + 보상표"
+   },
+   "SQ-S09": {
+    "caps": 0,
+    "earned": 0,
+    "xp": 450,
+    "kill": 0,
+    "fill": 0,
+    "src": "조각"
+   },
+   "SQ-S10": {
+    "caps": -650,
+    "earned": 0,
+    "xp": 550,
+    "kill": 0,
+    "fill": 0,
+    "src": "조각"
+   },
+   "SQ-S11": {
+    "caps": 0,
+    "earned": 0,
+    "xp": 385,
+    "kill": 0,
+    "fill": 0,
+    "src": "조각"
+   },
+   "SQ-S13": {
+    "caps": 0,
+    "earned": 0,
+    "xp": 460,
+    "kill": 0,
+    "fill": 0,
+    "src": "조각"
+   },
+   "FQ-JC-01": {
+    "caps": 50,
+    "earned": 50,
+    "xp": 330,
+    "kill": 0,
+    "fill": 0,
+    "src": "조각"
+   },
+   "FQ-GS-01": {
+    "caps": 0,
+    "earned": 0,
+    "xp": 260,
+    "kill": 0,
+    "fill": 0,
+    "src": "조각"
+   },
+   "FQ-GS-02": {
+    "caps": 50,
+    "earned": 50,
+    "xp": 250,
+    "kill": 0,
+    "fill": 0,
+    "src": "조각"
+   },
+   "FQ-JH-01": {
+    "caps": 112,
+    "earned": 112,
+    "xp": 325,
+    "kill": 0,
+    "fill": 0,
+    "src": "조각"
+   },
+   "FQ-JH-02": {
+    "caps": 0,
+    "earned": 0,
+    "xp": 260,
+    "kill": 0,
+    "fill": 0,
+    "src": "조각"
+   },
+   "FQ-JH-03": {
+    "caps": 150,
+    "earned": 150,
+    "xp": 405,
+    "kill": 0,
+    "fill": 0,
+    "src": "조각"
+   },
+   "UQ-05": {
+    "caps": 80,
+    "earned": 80,
+    "xp": 70,
+    "kill": 0,
+    "fill": 80,
+    "src": "조각 + 보상표"
+   },
+   "UQ-07": {
+    "caps": 0,
+    "earned": 0,
+    "xp": 50,
+    "kill": 0,
+    "fill": 0,
+    "src": "조각"
+   },
+   "UQ-08": {
+    "caps": 0,
+    "earned": 0,
+    "xp": 80,
+    "kill": 0,
+    "fill": 0,
+    "src": "조각"
+   },
+   "UQ-09": {
+    "caps": 40,
+    "earned": 40,
+    "xp": 90,
+    "kill": 0,
+    "fill": 40,
+    "src": "조각 + 보상표"
+   },
+   "UQ-10": {
+    "caps": 150,
+    "earned": 150,
+    "xp": 0,
+    "kill": 0,
+    "fill": 150,
+    "src": "보상표(조각 실패)"
+   },
+   "UQ-62": {
+    "caps": -50,
+    "earned": 0,
+    "xp": 90,
+    "kill": 0,
+    "fill": 0,
+    "src": "조각"
+   },
+   "UQ-63": {
+    "caps": 0,
+    "earned": 0,
+    "xp": 80,
+    "kill": 0,
+    "fill": 0,
+    "src": "조각"
+   },
+   "UQ-64": {
+    "caps": 0,
+    "earned": 0,
+    "xp": 105,
+    "kill": 0,
+    "fill": 0,
+    "src": "조각"
+   },
+   "UQ-65": {
+    "caps": 0,
+    "earned": 0,
+    "xp": 105,
+    "kill": 0,
+    "fill": 0,
+    "src": "조각"
+   },
+   "UQ-66": {
+    "caps": 0,
+    "earned": 0,
+    "xp": 120,
+    "kill": 0,
+    "fill": 0,
+    "src": "조각"
+   },
+   "UQ-67": {
+    "caps": 0,
+    "earned": 0,
+    "xp": 100,
+    "kill": 0,
+    "fill": 0,
+    "src": "조각"
+   },
+   "UQ-70": {
+    "caps": 0,
+    "earned": 0,
+    "xp": 100,
+    "kill": 0,
+    "fill": 0,
+    "src": "조각"
+   },
+   "UQ-71": {
+    "caps": 0,
+    "earned": 0,
+    "xp": 100,
+    "kill": 0,
+    "fill": 0,
+    "src": "조각"
+   },
+   "UQ-04": {
+    "caps": 15,
+    "earned": 15,
+    "xp": 80,
+    "kill": 0,
+    "fill": 15,
+    "src": "조각 + 보상표"
+   },
+   "UQ-68": {
+    "caps": 0,
+    "earned": 0,
+    "xp": 0,
+    "kill": 0,
+    "fill": 0,
+    "src": "조각"
+   },
+   "UQ-126": {
+    "caps": 50,
+    "earned": 50,
+    "xp": 155,
+    "kill": 0,
+    "fill": 0,
+    "src": "조각"
+   },
+   "UQ-06": {
+    "caps": 80,
+    "earned": 80,
+    "xp": 100,
+    "kill": 0,
+    "fill": 80,
+    "src": "조각 + 보상표"
+   },
+   "RQ(한 주)": {
+    "caps": 237,
+    "earned": 237,
+    "xp": 127,
+    "kill": 0,
+    "fill": 0,
+    "src": "조각"
+   }
+  },
+  "first": [
+   {
+    "sol": 1,
+    "caps": 39,
+    "earned": 76,
+    "bot_caps": 15
+   },
+   {
+    "sol": 2,
+    "caps": 39,
+    "earned": 76,
+    "bot_caps": 15
+   },
+   {
+    "sol": 3,
+    "caps": 39,
+    "earned": 76,
+    "bot_caps": 15
+   },
+   {
+    "sol": 4,
+    "caps": 43,
+    "earned": 321,
+    "bot_caps": 19
+   }
+  ],
+  "basket": 540,
+  "road": {
+   "MQ-101": 24,
+   "MQ-102": 83,
+   "MQ-104": 21,
+   "MQ-105": 71,
+   "MQ-103": 0,
+   "MQ-106": 0,
+   "end": 140
+  },
+  "explore_re": 6,
   "curves": [
    {
     "path": "MQ-103 일 맡기(출입세 · 박춘삼 100캡)",
     "sol": 1,
-    "low": 15,
+    "low": 39,
+    "avg": 203,
+    "est_pct": 16,
     "points": [
      {
       "at": "MQ-101 끝",
-      "caps": 15,
-      "earned": 52,
+      "caps": 39,
+      "earned": 76,
       "xp": 920
      },
      {
       "at": "MQ-102",
-      "caps": 81,
-      "earned": 118,
+      "caps": 195,
+      "earned": 232,
       "xp": 920
      },
      {
       "at": "MQ-103",
-      "caps": 79,
-      "earned": 216,
+      "caps": 203,
+      "earned": 340,
       "xp": 1330
      },
      {
       "at": "MQ-106",
-      "caps": 112,
-      "earned": 249,
+      "caps": 239,
+      "earned": 376,
       "xp": 1650
      },
      {
       "at": "1막 끝(사이드류 절반 + 길가 실내 40곳)",
-      "caps": 353,
-      "earned": 855,
+      "caps": 336,
+      "earned": 1378,
       "xp": 4940
      }
     ]
@@ -129,36 +434,38 @@
    {
     "path": "MQ-103 환풍구(무료)",
     "sol": 1,
-    "low": 15,
+    "low": 39,
+    "avg": 263,
+    "est_pct": 16,
     "points": [
      {
       "at": "MQ-101 끝",
-      "caps": 15,
-      "earned": 52,
+      "caps": 39,
+      "earned": 76,
       "xp": 920
      },
      {
       "at": "MQ-102",
-      "caps": 81,
-      "earned": 118,
+      "caps": 195,
+      "earned": 232,
       "xp": 920
      },
      {
       "at": "MQ-103",
-      "caps": 179,
-      "earned": 216,
+      "caps": 303,
+      "earned": 340,
       "xp": 1270
      },
      {
       "at": "MQ-106",
-      "caps": 212,
-      "earned": 249,
+      "caps": 339,
+      "earned": 376,
       "xp": 1590
      },
      {
       "at": "1막 끝(사이드류 절반 + 길가 실내 40곳)",
-      "caps": 453,
-      "earned": 855,
+      "caps": 436,
+      "earned": 1378,
       "xp": 4880
      }
     ]
@@ -166,73 +473,77 @@
    {
     "path": "MQ-104 말로(무료)",
     "sol": 1,
-    "low": 15,
+    "low": 39,
+    "avg": 275,
+    "est_pct": 17,
     "points": [
      {
       "at": "MQ-101 끝",
-      "caps": 15,
-      "earned": 52,
+      "caps": 39,
+      "earned": 76,
       "xp": 920
      },
      {
       "at": "MQ-102",
-      "caps": 81,
-      "earned": 118,
+      "caps": 195,
+      "earned": 232,
       "xp": 920
      },
      {
       "at": "MQ-104",
-      "caps": 179,
-      "earned": 216,
+      "caps": 324,
+      "earned": 361,
       "xp": 1230
      },
      {
       "at": "MQ-106",
-      "caps": 212,
-      "earned": 249,
+      "caps": 361,
+      "earned": 398,
       "xp": 1550
      },
      {
       "at": "1막 끝(사이드류 절반 + 길가 실내 40곳)",
-      "caps": 453,
-      "earned": 855,
+      "caps": 458,
+      "earned": 1400,
       "xp": 4840
      }
     ]
    },
    {
-    "path": "MQ-105 장부 사기(1,000캡 흥정 — 실제 300 적자)",
+    "path": "MQ-105 구매자 위장(보증금 500 · 88번 300 — 고르는 지출)",
     "sol": 1,
-    "low": -621,
+    "low": -426,
+    "avg": 125,
+    "est_pct": 20,
     "points": [
      {
       "at": "MQ-101 끝",
-      "caps": 15,
-      "earned": 52,
+      "caps": 39,
+      "earned": 76,
       "xp": 920
      },
      {
       "at": "MQ-102",
-      "caps": 81,
-      "earned": 118,
+      "caps": 195,
+      "earned": 232,
       "xp": 920
      },
      {
       "at": "MQ-105",
-      "caps": -121,
-      "earned": 716,
+      "caps": 74,
+      "earned": 411,
       "xp": 1220
      },
      {
       "at": "MQ-106",
-      "caps": -88,
-      "earned": 749,
+      "caps": 110,
+      "earned": 447,
       "xp": 1540
      },
      {
       "at": "1막 끝(사이드류 절반 + 길가 실내 40곳)",
-      "caps": 153,
-      "earned": 1355,
+      "caps": 207,
+      "earned": 1449,
       "xp": 4830
      }
     ]
@@ -240,41 +551,49 @@
    {
     "path": "MQ-105 옥상 길(무료)",
     "sol": 1,
-    "low": 15,
+    "low": 39,
+    "avg": 305,
+    "est_pct": 20,
     "points": [
      {
       "at": "MQ-101 끝",
-      "caps": 15,
-      "earned": 52,
+      "caps": 39,
+      "earned": 76,
       "xp": 920
      },
      {
       "at": "MQ-102",
-      "caps": 81,
-      "earned": 118,
+      "caps": 195,
+      "earned": 232,
       "xp": 920
      },
      {
       "at": "MQ-105",
-      "caps": 179,
-      "earned": 216,
+      "caps": 374,
+      "earned": 411,
       "xp": 1260
      },
      {
       "at": "MQ-106",
-      "caps": 212,
-      "earned": 249,
+      "caps": 410,
+      "earned": 447,
       "xp": 1580
      },
      {
       "at": "1막 끝(사이드류 절반 + 길가 실내 40곳)",
-      "caps": 453,
-      "earned": 855,
+      "caps": 507,
+      "earned": 1449,
       "xp": 4870
      }
     ]
    }
   ],
-  "quest_share": 0.59
+  "assume": {
+   "OPEN_BOX": 0.6,
+   "OPEN_CORPSE": 0.9,
+   "FIGHT": 0.7,
+   "EXPLORE_TILES": 30,
+   "SELL": 0.292
+  }
  }
 }

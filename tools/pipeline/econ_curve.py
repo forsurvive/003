@@ -43,12 +43,12 @@ def run(sol, timeout):
 
 
 SEGS = os.path.join(ROOT, "game", "data", "_econ_segs.json")
-SEG = re.compile(r"ECONSEG\|(?P<route>[a-z_0-9]+)\|(?P<ok>[○×])\|캡 (?P<caps>-?\d+)\|번 캡 (?P<earned>\d+)\|쓴 캡 (?P<spent>\d+)\|XP (?P<xp>-?\d+)\|날 (?P<day>-?\d+)")
+SEG = re.compile(r"ECONSEG\|(?P<route>[a-z_0-9]+)\|(?P<ok>[○×])\|캡 (?P<caps>-?\d+)\|번 캡 (?P<earned>\d+)\|쓴 캡 (?P<spent>\d+)\|XP (?P<xp>-?\d+)\|날 (?P<day>-?\d+)(?:\|처치 (?P<kills>[A-Z0-9:,-]*))?")
 # 메인 행로: 허브 → 경로(돈 드는 길 · 돈 안 드는 길 — 둘 다 그린다) → MQ-106 말로
 MAIN = {"MQ-102": "hub", "MQ-106": "vb_talk"}
 PATHS = {"MQ-103 일 맡기(출입세 · 박춘삼 100캡)": ("MQ-103", "job"), "MQ-103 환풍구(무료)": ("MQ-103", "vent"),
          "MQ-104 말로(무료)": ("MQ-104", "yd_talk"),
-         "MQ-105 장부 사기(1,000캡 흥정 — 실제 300 적자)": ("MQ-105", "sb_buy"), "MQ-105 옥상 길(무료)": ("MQ-105", "sb_roof")}
+         "MQ-105 구매자 위장(보증금 500 · 88번 300 — 고르는 지출)": ("MQ-105", "sb_buy"), "MQ-105 옥상 길(무료)": ("MQ-105", "sb_roof")}
 PRO_XP = 475            # '첫 풍경' 시작점(--from=view)은 MQ-P1~P4 XP를 건너뛴다 — 프롤로그부터 전체 봇 MQ-101 끝 920 − 첫 풍경 봇 445(1-13j 실측)
 # 사이드류(퀘스트마다 갈래 하나): 보통 플레이어는 이 가운데 절반을 한다(SD-25 '메인 + 사이드 · 탐험 절반')
 SIDE = {"SQ-S01": "bw", "SQ-S02": "bs", "SQ-S03": "s3", "SQ-S05": "s5", "SQ-S06": "s6", "SQ-S08": "s8", "SQ-S09": "s9", "SQ-S10": "s10",
@@ -56,7 +56,17 @@ SIDE = {"SQ-S01": "bw", "SQ-S02": "bs", "SQ-S03": "s3", "SQ-S05": "s5", "SQ-S06"
         "FQ-JH-02": "jh02", "FQ-JH-03": "jh03", "FQ-SB-02": "sb02f", "UQ-05": "uq05", "UQ-07": "uq07", "UQ-08": "uq08", "UQ-09": "uq09",
         "UQ-10": "uq10", "UQ-62": "uq62", "UQ-63": "uq63", "UQ-64": "uq64", "UQ-65": "uq65", "UQ-66": "uq66", "UQ-67": "uq67", "UQ-70": "uq70",
         "UQ-71": "db", "UQ-04": "ds", "UQ-68": "kt", "UQ-69": "ks", "UQ-126": "hosp", "UQ-06": "yt", "U04": "u04", "RQ(한 주)": "rq"}
-INTERIORS = 40          # 보통 플레이어가 1막 동안 퀘스트 밖에서 여는 길가 실내(하루 약 5곳 × 8일 — 계획 §1 가정)
+INTERIORS = 40          # 보통 플레이어가 1막 동안 퀘스트 밖에서 여는 길가 실내(하루 약 5곳 × 8일 — 계획 §1 '하루 6곳'을 이 값으로 맞춤)
+# 1-13j 조율사 보고(_plans/1-13j_econ_v2_auditor_report.md) 도구 고침 — 아래는 봇이 재지 못하는 몫의 '셈'(측정 아님)
+SEG_FLOWS = {"sb_buy": 500, "sb_deal": 500}   # 나: 보증금 환불(앞서 낸 돈이 돌아온 것 — 수입 아님, balance_check.FLOWS MQ-105와 같은 뜻)
+OPEN_BOX = 0.6          # 라: 길 15칸 안 월드 용기를 지나가며 여는 몫
+OPEN_CORPSE = 0.9       # 마: 쓰러뜨린 적 유해를 여는 몫
+FIGHT = 0.7             # 마: 마주친 적대 무리와 실제로 싸우는 몫(피하기 · 말 · 달아남 뺌) — 길 위 RE · 생성 실내 적
+EXPLORE_TILES = 30      # 마: 길가 실내 한 곳을 들르려 주요 길에서 벗어나 걷는 칸(RE 판정이 그만큼 더 선다)
+# 라 · 마: 1막 길 구간(loot_audit road)이 행로의 어느 지점 몫인가 — 노량진 · 수산시장 길은 사이드(절반)
+ROAD_AT = {"MQ-101": ["볼트 → 봉천"], "MQ-102": ["봉천 → 영등포 지하시장"], "MQ-104": ["지하시장 → 여의도 벙커"],
+           "MQ-105": ["지하시장 → 새벽인력 본소"], "MQ-103": [], "MQ-106": [],
+           "end": ["봉천 → 노량진(24)", "봉천 → 노량진(25)", "지하시장 → 수산시장(FQ-JH-03 지상 배달)"]}
 SELL_SHARE = 0.5        # 주운 물건 가운데 파는 몫(나머지는 쓴다)
 SELL_RATE = 0.585       # 물물교환 30 판매가 배율(0.45 + 0.45 × 0.3 — SD-15 §4)
 
@@ -72,17 +82,18 @@ def run_seg(route, timeout):
         pass
     if m is None:
         return {"route": route, "ok": False}
-    r = {k: (m.group(k) if k in ("route", "ok") else int(m.group(k))) for k in SEG.groupindex}
+    r = {k: (m.group(k) if k in ("route", "ok", "kills") else int(m.group(k))) for k in SEG.groupindex}
     r["ok"] = r["ok"] == "○"
+    r["kills"] = {kv.split(":")[0]: int(kv.split(":")[1]) for kv in (r.get("kills") or "").split(",") if ":" in kv}
     return r
 
 
-def measure(jobs, timeout):
+def measure(jobs, timeout, fresh=False):
     from concurrent.futures import ThreadPoolExecutor
-    old = json.load(open(SEGS, encoding="utf-8")).get("rows", {}) if os.path.exists(SEGS) else {}
+    old = json.load(open(SEGS, encoding="utf-8")).get("rows", {}) if os.path.exists(SEGS) and not fresh else {}
     # act1_done.py가 이미 잰 메인 갈래 조각은 다시 돌리지 않는다
     done = os.path.join(ROOT, "game", "data", "_act1_done.json")
-    if os.path.exists(done):
+    if os.path.exists(done) and not fresh:
         for r in json.load(open(done, encoding="utf-8")).get("rows", []):
             if r.get("econ") and r.get("ok"):
                 old[r["route"]] = dict(r["econ"], route=r["route"], ok=True)
@@ -94,51 +105,113 @@ def measure(jobs, timeout):
     json.dump({"rows": old, "when": time.strftime("%Y-%m-%d %H:%M")}, open(SEGS, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 
 
+def _seg_kill_loot(sg):
+    """마: 그 조각에서 봇이 쓰러뜨린 적의 유해 기대(봇은 유해를 열지 않는다) — (캡, 판 값)"""
+    import loot_audit as la
+    c = v = 0.0
+    for eid, n in (sg.get("kills") or {}).items():
+        a, b = la.drop_value(eid)
+        c += n * a
+        v += n * b
+    return c * OPEN_CORPSE, v * OPEN_CORPSE * SELL_SHARE * SELL_RATE
+
+
 def compose():
+    import sys
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import balance_check as bc
     segs = json.load(open(SEGS, encoding="utf-8"))["rows"]
     base = json.load(open(OUT, encoding="utf-8"))
     v1 = [r for r in base.get("rows", []) if r.get("at") == "MQ-101"]
     loot = json.load(open(os.path.join(ROOT, "game", "data", "_loot_audit.json"), encoding="utf-8"))
-    per_int = loot["per_interior_caps"] + loot["per_interior_value"] * SELL_SHARE * SELL_RATE
+    sell = SELL_SHARE * SELL_RATE
+    gen_e = FIGHT * OPEN_CORPSE * (loot.get("gen_enemy_caps", 0.0) + loot.get("gen_enemy_value", 0.0) * sell)
+    per_int = loot["per_interior_caps"] + loot["per_interior_value"] * sell + gen_e
+    rd = loot.get("road", {})
+    re_rate = sum(r["re_n"] for r in rd.values()) / max(1, sum(r["tiles"] for r in rd.values()))
+    re_one = (sum(r["re_caps"] for r in rd.values()) + sum(r["re_value"] for r in rd.values()) * sell) / max(0.01, sum(r["re_n"] for r in rd.values()))
+    def road_at(key):
+        """라 · 마: 그 지점 몫 길의 용기(여는 몫) + RE 적 전리품(싸우는 몫 · 유해 여는 몫)"""
+        t = 0.0
+        for leg in ROAD_AT.get(key, []):
+            r = rd.get(leg, {})
+            t += OPEN_BOX * (r.get("caps", 0) + r.get("value", 0) * sell)
+            t += FIGHT * OPEN_CORPSE * (r.get("re_caps", 0) + r.get("re_value", 0) * sell)
+        return t
+    # 다: 사이드 조각이 보상 지급 전에 끝난다(다음 방문 · 다음 날 보상) — 퀘스트마다 max(조각 번 캡 − 흐름, 보상표 캡(흐름 뺌))
+    rw = bc.code_rewards(bc.script_rewards())
+    def reward_caps(q):
+        return 0 if q in bc.FLOWS else int(rw.get(q, {}).get("caps", 0))
+    side = {}
+    for q, rt in SIDE.items():
+        sg = segs.get(rt, {})
+        kc, kv = _seg_kill_loot(sg) if sg.get("ok") else (0.0, 0.0)
+        if sg.get("ok"):
+            got = int(sg["earned"]) - SEG_FLOWS.get(rt, 0)
+            fill = max(got, reward_caps(q)) if q != "RQ(한 주)" else got
+            side[q] = {"caps": int(sg["caps"]) + (fill - got) - SEG_FLOWS.get(rt, 0) + kc + kv, "earned": fill + kc + kv, "xp": int(sg["xp"]),
+                       "kill": kc + kv, "fill": fill - got, "src": "조각" + (" + 보상표" if fill > got else "")}
+        elif reward_caps(q) > 0:
+            side[q] = {"caps": reward_caps(q), "earned": reward_caps(q), "xp": 0, "kill": 0.0, "fill": reward_caps(q), "src": "보상표(조각 실패)"}
     side_ok = [q for q, rt in SIDE.items() if segs.get(rt, {}).get("ok")]
     side_miss = [q for q, rt in SIDE.items() if not segs.get(rt, {}).get("ok")]
-    half = lambda k: sum(int(segs[SIDE[q]][k]) for q in side_ok) / 2.0
+    half = lambda k: sum(float(d[k]) for d in side.values()) / 2.0
+    db = bc.items_db()                                                   # 소모 지출: SD-15 §9.1 '이 구간에 살 수 있어야 하는 것'(스팀팩 5 · 위조 등록증 · 정화수 10, 물물교환 30)을 1막 동안 산다고 본다
+    basket = 5 * bc.price_of(db["I-001"]["value"], True, 30) + bc.price_of(db["M-062"]["value"], True, 30) + 10 * bc.price_of(db["I-057"]["value"], True, 30)
+    explore = INTERIORS * EXPLORE_TILES * re_rate * re_one * FIGHT * OPEN_CORPSE   # 마: 실내를 들르러 벗어난 걸음에서 서는 RE
     out = []
     # 길가 실내(퀘스트 밖) 루팅은 행로를 따라 나눠 든다: 허브까지 8곳 · 경로 12곳 · MQ-106까지 4곳 · 1막 남은 사이드 동안 16곳(계획 §1 — 하루 약 5곳)
     share = {"MQ-102": 8, "path": 12, "MQ-106": 4, "end": INTERIORS - 24}
+    first = []
+    for r in sorted(v1, key=lambda r: r["sol"]):                          # MQ-101 끝(해법마다): 봇 실측 + 볼트 → 봉천 길가 용기 셈
+        first.append({"sol": r["sol"], "caps": round(r["caps"] + road_at("MQ-101")), "earned": round(r["earned"] + road_at("MQ-101")), "bot_caps": r["caps"]})
     r0 = [r for r in v1 if r["sol"] == 1][0]                             # 계단 방어(가장 흔한 해법)
     for name, (q, rt) in PATHS.items():
         sg_path = segs.get(rt, {})
         if not sg_path.get("ok"):
             continue
-        caps, earned, xp = float(r0["caps"]), float(r0["earned"]), float(r0["xp"]) + PRO_XP
+        ra = road_at("MQ-101")
+        caps, earned, xp = float(r0["caps"]) + ra, float(r0["earned"]) + ra, float(r0["xp"]) + PRO_XP
+        est = ra                                                            # 셈 몫(조율사 보고 라 · 마 — 측정이 아닌 길가 용기 · 전리품 · 탐험 걸음 RE)
         pts = [{"at": "MQ-101 끝", "caps": caps, "earned": earned, "xp": xp}]
         low = caps
         for key, sg in (("MQ-102", segs.get(MAIN["MQ-102"], {})), ("path", sg_path), ("MQ-106", segs.get(MAIN["MQ-106"], {}))):
             if not sg.get("ok"):
                 break
-            loot = share[key] * per_int
-            caps += loot
-            earned += loot
+            at = q if key == "path" else key
+            add = share[key] * per_int + road_at(at)
+            kc, kv = _seg_kill_loot(sg)
+            fl = SEG_FLOWS.get(sg.get("route", ""), 0)
+            caps += add
+            earned += add
+            est += road_at(at) + share[key] * gen_e + kc + kv
             low = min(low, caps - sg["spent"])                              # 그 길에서 돈을 내는 순간의 잔고(길가 루팅을 먼저 했다고 봄)
-            caps += sg["caps"]
-            earned += sg["earned"]
+            caps += sg["caps"] + kc + kv
+            earned += sg["earned"] - fl + kc + kv
             xp += sg["xp"]
-            pts.append({"at": q if key == "path" else key, "caps": caps, "earned": earned, "xp": xp})
-        loot = share["end"] * per_int
-        caps_end = caps + half("caps") + loot
-        earned_end = earned + half("earned") + loot
+            pts.append({"at": at, "caps": caps, "earned": earned, "xp": xp})
+        add = share["end"] * per_int + road_at("end") / 2.0 + explore
+        caps_end = caps + half("caps") + add - basket
+        earned_end = earned + half("earned") + add
+        est += road_at("end") / 2.0 + share["end"] * gen_e + explore + half("kill")
         xp_end = xp + half("xp")
         pts.append({"at": "1막 끝(사이드류 절반 + 길가 실내 %d곳)" % INTERIORS, "caps": caps_end, "earned": earned_end, "xp": xp_end})
-        out.append({"path": name, "sol": r0["sol"], "low": round(low), "points": [dict(p, caps=round(p["caps"]), earned=round(p["earned"]), xp=round(p["xp"])) for p in pts]})
+        avg = sum(p["caps"] for p in pts) / len(pts)
+        out.append({"path": name, "sol": r0["sol"], "low": round(low), "avg": round(avg), "est_pct": round(100.0 * est / max(1.0, earned_end)),
+                    "points": [dict(p, caps=round(p["caps"]), earned=round(p["earned"]), xp=round(p["xp"])) for p in pts]})
+    quest_end = sum(float(sg.get("earned", 0)) for sg in (segs.get(MAIN["MQ-102"], {}), segs.get(MAIN["MQ-106"], {}))) + half("earned")
     v2 = {"when": time.strftime("%Y-%m-%d %H:%M"), "per_interior": round(per_int, 1), "interiors": INTERIORS,
-          "side_used": side_ok, "side_missing": side_miss, "curves": out,
-          "quest_share": round((half("earned")) / max(1.0, half("earned") + INTERIORS * per_int), 2)}
+          "side_used": side_ok, "side_missing": side_miss, "side": {q: {k: round(v) if isinstance(v, float) else v for k, v in d.items()} for q, d in side.items()},
+          "first": first, "basket": round(basket), "road": {k: round(road_at(k)) for k in ROAD_AT}, "explore_re": round(explore), "curves": out,
+          "assume": {"OPEN_BOX": OPEN_BOX, "OPEN_CORPSE": OPEN_CORPSE, "FIGHT": FIGHT, "EXPLORE_TILES": EXPLORE_TILES, "SELL": round(sell, 3)}}
     base["v2"] = v2
     json.dump(base, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    for f in first:
+        print("MQ-101 끝 해법 %d: 봇 보유 %d → 볼트 → 봉천 길가 용기 셈 더해 %d" % (f["sol"], f["bot_caps"], f["caps"]))
     for c in out:
-        print("경제 곡선 v2 %s: 돈 낼 때 가장 낮은 잔고 %d · " % (c["path"], c["low"]) + " → ".join("%s 캡 %d · 누적 %d · XP %d" % (p["at"], p["caps"], p["earned"], p["xp"]) for p in c["points"]))
-    print("사이드류 조각 %d · 없음 %d(%s) · 실내 한 곳 %.1f캡" % (len(side_ok), len(side_miss), " ".join(side_miss), per_int))
+        print("경제 곡선 v2 %s: 가장 낮은 잔고 %d · 평균 보유 %d · 셈 몫 %d%% · " % (c["path"], c["low"], c["avg"], c["est_pct"])
+              + " → ".join("%s 캡 %d · 누적 %d · XP %d" % (p["at"], p["caps"], p["earned"], p["xp"]) for p in c["points"]))
+    print("사이드류 조각 %d · 없음 %d(%s) · 실내 한 곳 %.1f캡(적 전리품 %.1f 포함) · 탐험 걸음 RE %.0f · 장바구니 지출 %d" % (len(side_ok), len(side_miss), " ".join(side_miss), per_int, gen_e, explore, basket))
 
 
 def main():
@@ -148,9 +221,10 @@ def main():
     ap.add_argument("--segs", action="store_true")
     ap.add_argument("--compose", action="store_true")
     ap.add_argument("--jobs", type=int, default=2)
+    ap.add_argument("--fresh", action="store_true", help="--segs: 이미 잰 조각도 다시(처치 수를 새로 받을 때)")
     a = ap.parse_args()
     if a.segs:
-        measure(a.jobs, min(a.timeout, 600))
+        measure(a.jobs, min(a.timeout, 600), a.fresh)
         compose()
         return
     if a.compose:

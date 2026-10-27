@@ -1,5 +1,73 @@
 {
  "per_interior_caps": 0.692631823101902,
  "per_interior_value": 25.723298354320768,
- "dry": 0.18865006958404207
+ "dry": 0.18865006958404207,
+ "gen_enemy_caps": 0.85,
+ "gen_enemy_value": 1.54,
+ "road": {
+  "볼트 → 봉천": {
+   "boxes": 7,
+   "caps": 24.5,
+   "value": 55.7,
+   "re_n": 0.0,
+   "re_caps": 0.0,
+   "re_value": 0.0,
+   "tiles": 155
+  },
+  "봉천 → 노량진(24)": {
+   "boxes": 23,
+   "caps": 30.0,
+   "value": 381.3,
+   "re_n": 0.16,
+   "re_caps": 1.5,
+   "re_value": 1.7,
+   "tiles": 270
+  },
+  "봉천 → 노량진(25)": {
+   "boxes": 10,
+   "caps": 7.8,
+   "value": 95.0,
+   "re_n": 0.0,
+   "re_caps": 0.0,
+   "re_value": 0.0,
+   "tiles": 264
+  },
+  "봉천 → 영등포 지하시장": {
+   "boxes": 30,
+   "caps": 20.9,
+   "value": 393.3,
+   "re_n": 0.16,
+   "re_caps": 1.5,
+   "re_value": 1.7,
+   "tiles": 305
+  },
+  "지하시장 → 여의도 벙커": {
+   "boxes": 10,
+   "caps": 7.0,
+   "value": 98.4,
+   "re_n": 0.0,
+   "re_caps": 0.0,
+   "re_value": 0.0,
+   "tiles": 96
+  },
+  "지하시장 → 새벽인력 본소": {
+   "boxes": 22,
+   "caps": 24.8,
+   "value": 300.2,
+   "re_n": 0.39,
+   "re_caps": 3.6,
+   "re_value": 4.0,
+   "tiles": 225
+  },
+  "지하시장 → 수산시장(FQ-JH-03 지상 배달)": {
+   "boxes": 14,
+   "caps": 5.4,
+   "value": 158.3,
+   "re_n": 0.19,
+   "re_caps": 1.7,
+   "re_value": 1.9,
+   "tiles": 177
+  }
+ },
+ "lv": 5
 }

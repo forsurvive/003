@@ -1122,7 +1122,7 @@ func box_contents(b: Dictionary) -> Dictionary:
 		var k := str(b["key"])
 		if not st.boxes.has(k):
 			st.boxes[k] = {"items": Loot.drop(str(b["eid"]), k, Loot.tier_of(st, map_region(Vector2i(int(b["x"]), int(b["y"])))),
-				"enemy" if st.year() >= 2277 else ""),
+				"enemy" if st.year() >= 2277 else "", Loot.level_of(int(st.vars.get_v("PC_XP"))) if st.year() >= 2277 else 0),
 				"opened": 0, "taken": 0}
 		return st.boxes[k]
 	return Loot.contents(st, map.id, b, map_region(Vector2i(int(b["x"]), int(b["y"]))))
