@@ -428,6 +428,7 @@ func think(dt: float, target: Combatant, nav, shots: Projectiles) -> void:   ## 
 	if _held_pose:
 		_held_pose = false
 		set_pose("stand")
+	reload_tick(dt)                                                    # 재장전은 경직 · 넘어짐 동안만 멈춘다 — 달아나는 · 찾는 동안에도 채운다(조율사 1-13l 구현 뒤)
 	_hist.append([_clock, target.pos()])
 	while _hist.size() > 2 and _clock - float(_hist[0][0]) > react + 0.1:
 		_hist.pop_front()
@@ -717,6 +718,8 @@ func _act(dt: float, target: Combatant, shots: Projectiles) -> void:
 		_cool = maxf(0.0, _cool - dt)
 	if goal == "flee":
 		aim_dir = -1
+	if style != "dog" and _wind > 0.0 and (goal != "engage" or style != "melee"):
+		_clear_wind()                                                  # 치켜든 채 달아남 · 목표 바뀜 · 총으로 바꿈 — 붉은 몸빛 · 묵은 방향이 남지 않게(조율사 1-13l 구현 뒤)
 	if style == "dog" and input.length() > 0.2 and mine_list.is_valid():
 		input = _mine_dodge(input)
 	if fixed:
@@ -796,7 +799,7 @@ func _bite(dt: float, target: Combatant, to_t: Vector2) -> void:
 		_wind = wind_full
 		if bite >= 15.0:
 			_say("growl", wind_full + 0.3)
-		modulate = Color(1.0, 0.6, 0.55)                               # 웅크려 노린다 — 몸빛이 붉어진다(돌진과 같은 세기 — 재미 검수 1-13l ②)
+		modulate = Color(1.0, 0.72, 0.66)                              # 웅크려 노린다 — 몸빛이 붉어진다(무리는 늘 깜박이니 돌진 · 사람 휘두름보다 한 단 옅게 — 조율사 1-13l 구현 뒤)
 		return
 	_wind -= dt
 	if _wind > 0.0:
@@ -823,10 +826,7 @@ func _shoot(dt: float, target: Combatant, shots: Projectiles) -> void:
 		_mag = int(weapon.get("mag", 0))
 		_reload_t = 0.0
 	if not inf and _reload_t > 0.0:
-		_reload_t -= dt
-		if _reload_t <= 0.0:
-			_mag = int(weapon.get("mag", 0))
-		return
+		return                                                         # 재장전 중(초는 think가 줄인다)
 	if not inf and not has_token and _mag < int(weapon.get("mag", 0)) / 2:   # 토큰이 없으면 탄창 절반 아래일 때 미리 채운다(SD-11 §7.4)
 		_start_reload(shots, 0.0)
 		return
@@ -890,9 +890,10 @@ func _start_reload(shots: Projectiles, after: float) -> void:
 	_reload_full = _reload_t
 	_cool = maxf(_cool, _reload_t)
 	var f := Engine.get_physics_frames()
-	var first := not _reload_said.has(cmb.team)
-	if first or (f - int(_reload_said[cmb.team]) >= 240 and shots.rng.randf() < 0.4):
-		_reload_said[cmb.team] = f                                     # 편의 첫 재장전은 꼭 외친다(처음 한 번에 '이게 그 신호'를 배운다)
+	var key := "%d:%s" % [world.get_instance_id() if world != null else 0, cmb.team]   # 맵을 새로 열면 다시 '첫 재장전'(싸움마다 한 번 배운다)
+	var first := not _reload_said.has(key)
+	if first or (f - int(_reload_said[key]) >= 240 and shots.rng.randf() < 0.4):
+		_reload_said[key] = f                                     # 편의 첫 재장전은 꼭 외친다(처음 한 번에 '이게 그 신호'를 배운다)
 		_say("reload", 1.0)
 
 
@@ -944,6 +945,19 @@ func _swing(dt: float, target: Combatant) -> void:
 	r["hp"] = float(r["hp"]) * _melee_mul * (1.25 if frenzied else 1.0)   # 팔 손상 −30% · 광란 +25%
 	target.last_by = cmb.team
 	target.take(r, loco.logical)
+
+
+func reload_tick(dt: float) -> void:
+	if _reload_t > 0.0:
+		_reload_t -= dt
+		if _reload_t <= 0.0 and str(weapon.get("id", "")) == _mag_w:
+			_mag = int(weapon.get("mag", 0))
+
+
+func _clear_wind() -> void:
+	_wind = 0.0
+	_swing_dir = Vector2.ZERO
+	modulate = Color(1, 1, 1)
 
 
 ## 근접 예비 동작 초(D-417 · SD-11 §3.4): 양손 0.3(무거운 양손 — 1회/초 0.7 이하 — 0.35) · 한손 · 맨손 · 진압봉 0.2(원문에 한손 수치가 없다 — 양손보다 짧게)
@@ -1489,6 +1503,7 @@ func _arms_tactics(target: Combatant, d: float, los: bool) -> void:
 			style = "shooter"
 			on_alt = false
 			_switch_t = 0.6
+			_clear_wind()
 	_nade_cd = maxf(0.0, _nade_cd - 0.5)
 	var covered := not los or (target.posture == "crouch" and _cover_by(target.pos()))
 	_hide_t = _hide_t + 0.5 if covered else 0.0

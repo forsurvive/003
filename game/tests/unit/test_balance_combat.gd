@@ -422,6 +422,7 @@ func test_enemy_reload(t) -> void:
 	for f in int(12.0 * 60.0):
 		var n0 := e.shots_fired
 		c.pc.hp = c.pc.max_hp
+		e.reload_tick(1.0 / 60.0)                                         # think가 하는 몫(재장전 초)
 		e._shoot(1.0 / 60.0, c.pc, c.shots)
 		if e.shots_fired > n0:
 			fired.append(f / 60.0)
@@ -465,4 +466,13 @@ func test_enemy_swing_windup(t) -> void:
 	t.eq(c.pc.hp, hp0, "읽고 비키면 헛스윙")
 	e.weapon = c.weapons["W-040"].duplicate()
 	t.eq(e._swing_wind(), 0.2, "쇠파이프(한손) 0.2초")
+	e._cool = 0.0
+	me.loco.place(e.loco.logical + Vector2(-30, 0))
+	e._swing(1.0 / 60.0, c.pc)
+	t.ok(e._wind > 0.0, "다시 치켜듦")
+	e.alt_weapon = e.weapon
+	e._main_weapon = c.weapons["W-002"].duplicate()
+	e.on_alt = true
+	e._arms_tactics(c.pc, 3.0, true)                                     # 표적이 2.6칸 넘게 빠져 총으로 바꿈(조율사 1-13l 구현 뒤 — 예비 동작이 남던 것)
+	t.ok(e._wind == 0.0 and e.modulate == Color(1, 1, 1) and e._swing_dir == Vector2.ZERO, "총으로 바꾸면 예비 동작 · 붉은 몸빛이 풀린다")
 	m.free()
