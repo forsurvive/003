@@ -128,11 +128,13 @@ var _burst_rest := 0.0                        ## 점사 뒤 쉬는 초(0.5~1.0)
 var _mag := 0                                 ## 탄창에 남은 발(D-416 — 무기 id에 묶어 늦게 채운다: 무기를 바꾸면 그 무기의 탄창)
 var _mag_w := ""
 var _reload_t := 0.0                          ## 재장전 남은 초(그동안 쏘지 않는다 — 경직 · 넘어짐 동안은 _shoot이 안 돌아 멈춘다)
-static var _reload_said := {}                 ## 편 -> 마지막 '딸깍' 프레임(편마다 4초 쉼 — 매번 외치면 정해진 것처럼 보인다)
+var _reload_full := 0.0                       ## 이번 재장전 전체 초(머리 위 탄창 칸이 차오르는 그림 — 재미 검수 1-13l ①)
+static var _reload_said := {}                 ## 편 -> 마지막 '장전!' 프레임(편의 첫 재장전은 꼭 · 그 뒤 4초 쉼 · 40% — 매번 외치면 정해진 것처럼 보인다)
+var _whiff_t := 0.0                           ## 헛스윙 그림 남은 초(흐린 끊긴 호 · 휘청 — 재미 검수 1-13l ③)
 var _swing_dir := Vector2.ZERO                ## 근접 예비 동작을 시작할 때 고정한 방향(D-417 — 읽고 비키면 헛스윙)
 const SAY := {"howl": ["아우우우—!", "우워어어—!"], "rat_call": ["찌이익—!", "끼익! 끼익!"], "flee": ["살려 줘!", "튀어!", "이건 못 해먹겠다!"], "surrender": ["쏘지 마! 항복이야!", "그만, 그만! 손 들었어!"],
 	"drug": ["크흐… 이거면 돼…", "으아아!"], "nade": ["수류탄!", "받아라!"], "back": ["다시 간다!", "덤벼 봐!"], "alarm": ["저기다!", "여기야!"],
-	"click": ["딸깍.", "딸깍—", "따각."], "growl": ["으르렁…", "그르르…", "크르릉…"],
+	"click": ["딸깍.", "딸깍—", "따각."], "growl": ["으르렁…", "그르르…", "크르릉…"], "reload": ["장전!", "철컥—", "탄창 갈아!"], "whiff": ["쳇!", "에잇!"],
 	"hiss": ["쉬이익—", "치치칙…", "사각사각…"], "thud": ["쿵!", "콰직!"]}
 var _rng := RandomNumberGenerator.new()
 # 1-D3 미끼 · 굴쥐 · 알집바퀴
@@ -794,7 +796,7 @@ func _bite(dt: float, target: Combatant, to_t: Vector2) -> void:
 		_wind = wind_full
 		if bite >= 15.0:
 			_say("growl", wind_full + 0.3)
-		modulate = Color(1.0, 0.82, 0.78)                              # 웅크려 노린다 — 몸빛이 붉어진다
+		modulate = Color(1.0, 0.6, 0.55)                               # 웅크려 노린다 — 몸빛이 붉어진다(돌진과 같은 세기 — 재미 검수 1-13l ②)
 		return
 	_wind -= dt
 	if _wind > 0.0:
@@ -885,11 +887,13 @@ func _inf_ammo() -> bool:
 func _start_reload(shots: Projectiles, after: float) -> void:
 	var r := float(weapon.get("reload_s", 2.0)) * (1.2 - 0.004 * skill) * (1.3 if cmb.crippled.has("arm") else 1.0)
 	_reload_t = after + r
+	_reload_full = _reload_t
 	_cool = maxf(_cool, _reload_t)
 	var f := Engine.get_physics_frames()
-	if f - int(_reload_said.get(cmb.team, -9999)) >= 240 and shots.rng.randf() < 0.4:
-		_reload_said[cmb.team] = f
-		_say("click", 1.0)
+	var first := not _reload_said.has(cmb.team)
+	if first or (f - int(_reload_said[cmb.team]) >= 240 and shots.rng.randf() < 0.4):
+		_reload_said[cmb.team] = f                                     # 편의 첫 재장전은 꼭 외친다(처음 한 번에 '이게 그 신호'를 배운다)
+		_say("reload", 1.0)
 
 
 ## 진압봉(보안요원): 닿는 거리에서 반응 지연 뒤 휘두른다. 주인공에게는 HP 피해만(붙잡힘 판정은 진행기)
@@ -900,6 +904,7 @@ func _swing(dt: float, target: Combatant) -> void:
 	_cool = maxf(0.0, _cool - dt)
 	_switch_t = maxf(0.0, _switch_t - dt)
 	swing_t = maxf(0.0, swing_t - dt)
+	_whiff_t = maxf(0.0, _whiff_t - dt)
 	if _switch_t > 0.0:
 		return
 	var to_t := target.pos() - loco.logical
@@ -916,7 +921,11 @@ func _swing(dt: float, target: Combatant) -> void:
 		swing_t = 0.2
 		var half := deg_to_rad(70.0 if bool(weapon.get("two_handed", false)) else 45.0)   # 호: 한손 90° · 양손 140°(SD-11 §3.4 — 주인공 규칙과 같게)
 		if target.dead or not meets(target) or to_t.length() > reach or (to_t.length() > target.radius + cmb.radius and absf(_swing_dir.angle_to(to_t)) > half):
-			return                                                     # 헛스윙 — 읽고 비킨 사람이 이득
+			_whiff_t = 0.35                                            # 헛스윙 — 읽고 비킨 사람이 이득: 흐린 끊긴 호 · 0.3초 휘청(반격할 틈이 보이게)
+			_cool += 0.3
+			if _rng.randf() < 0.3:
+				_say("whiff", 0.8)
+			return
 	elif _cool > 0.0 or target.dead or not meets(target) or not has_mtoken or to_t.length() > reach:
 		return
 	elif wind_full > 0.0:
@@ -924,7 +933,7 @@ func _swing(dt: float, target: Combatant) -> void:
 		_show()
 		_swing_dir = to_t.normalized()
 		_wind = wind_full
-		modulate = Color(1.0, 0.82, 0.78)                              # 들개처럼 붉어진다(치켜든다)
+		modulate = Color(1.0, 0.6, 0.55)                               # 들개처럼 붉어진다(치켜든다 — 같은 말 같은 세기)
 		return
 	else:
 		loco.facing = Locomotion.snap8(to_t, 0.0)
@@ -1024,10 +1033,22 @@ func _draw() -> void:
 			if i % 2 == 0:
 				var a0 := i * TAU / 24.0 + _ring_t * 2.0
 				draw_arc(Vector2(0, -8), rr - 3.0, a0, a0 + TAU / 48.0, 3, Color(0.83, 1.0, 0.416, fade), 1.0)
-	if swing_t > 0.0:                                              # 진압봉 휘두름: 앞쪽 호 한 획
+	if swing_t > 0.0:                                              # 진압봉 휘두름: 앞쪽 호 한 획(헛스윙은 흐린 끊긴 호)
 		var f: Vector2 = Locomotion.VEC[loco.facing].normalized()
-		draw_arc(Vector2(0, -12) + f * 8.0, 10.0, f.angle() - 0.9, f.angle() + 0.9, 6, Color("E9E4D8"), 2.0)
+		if _whiff_t > 0.0:
+			for i in 3:
+				var a0 := f.angle() - 0.9 + i * 0.66
+				draw_arc(Vector2(0, -12) + f * 8.0, 10.0, a0, a0 + 0.3, 3, Color(0.56, 0.6, 0.66, 0.8), 1.0)
+		else:
+			draw_arc(Vector2(0, -12) + f * 8.0, 10.0, f.angle() - 0.9, f.angle() + 0.9, 6, Color("E9E4D8"), 2.0)
+	elif _wind > 0.0 and style == "melee" and _swing_dir != Vector2.ZERO:   # 치켜듦: 무기를 등 뒤로 젖힌 짧은 획(첫 프레임부터 모양으로 — 재미 검수 1-13l ②)
+		var b := -_swing_dir
+		draw_line(Vector2(0, -14), Vector2(0, -14) + b * 9.0 + Vector2(0, -5), Color("E9E4D8"), 2.0)
 	var top := -float(meta["foot"][1]) + (14.0 if style != "swarm" and style != "dog" else 6.0)
+	if _reload_t > 0.0 and _reload_full > 0.0:                      # 재장전 내내 머리 위 탄창 칸이 차오른다(재미 검수 1-13l ① — 점사 쉼과 가른다)
+		var k := clampf(1.0 - _reload_t / _reload_full, 0.0, 1.0)
+		draw_rect(Rect2(Vector2(-5, top - 7), Vector2(10, 3)), Color("1a181d"))
+		draw_rect(Rect2(Vector2(-4, top - 6), Vector2(8.0 * k, 1)), Color("e8c23a"))
 	if say_t > 0.0 and say_text != "":                             # 말풍선(§7.2 도주 '살려 줘!' · 항복 · 약물)
 		var tw := ui_font.get_string_size(say_text, HORIZONTAL_ALIGNMENT_LEFT, -1, 9).x
 		var bp := Vector2(-tw / 2.0 - 3.0, top - 22.0)
