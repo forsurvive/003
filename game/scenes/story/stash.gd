@@ -449,7 +449,7 @@ func _theft(k: String, s: Dictionary, c: Dictionary, today: int, rng: RandomNumb
 	c["trace_seen"] = false
 	c["trace_b"] = bn["id"]
 	if watched and str(dest[0]) == "crew":                              # 지켜봤다(재미 검수 덤): 흔적 대신 내가 본 것 — 단계 10이 바로 열린다
-		c["trace"] = "내가 본 것 — 쇠지레를 든 둘이 내 자리를 털어 자루를 메고 %s으로, %s." % [dest[3], dest[2]]
+		c["trace"] = "내가 본 것 — 몽둥이를 든 둘이 내 자리를 털어 자루를 메고 %s으로, %s." % [dest[3], dest[2]]
 		c["trace_seen"] = true
 		_known(k, c)
 		if bool(bn["quest"]):
@@ -712,7 +712,7 @@ func _ambush(k: String, s: Dictionary, c: Dictionary, rng: RandomNumberGenerator
 		if e != null:
 			e.set_meta("uq125", -1)
 			crew.append(e)
-	host.hint("새벽, 문이 삐걱인다 — 쇠지레를 든 둘이 들어온다. 이쪽은 못 봤다. 지켜볼까, 나설까.", 7.0)
+	host.hint("새벽, 문이 삐걱인다 — 몽둥이를 든 둘이 들어온다. 이쪽은 못 봤다. 지켜볼까, 나설까.", 7.0)
 	_log("잠복: 털이꾼 %s" % k)
 	var today := day()
 	var mid := str(s["map"])

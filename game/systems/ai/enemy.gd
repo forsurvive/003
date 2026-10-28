@@ -251,6 +251,8 @@ func setup_enemy(enemy_row: Dictionary, weapon_row: Dictionary, pos: Vector2, w,
 			sheet = "en_cr473_%s_loco" % arm
 		"CR-420", "CR-421", "CR-423":                               # 1-E 남부순환 패거리(SD-14 F-04-C): 두 외형 중 하나
 			sheet = "en_%s%s_loco" % [str(row["id"]).to_lower().replace("-", ""), "b" if _rng.randf() < 0.5 else ""]
+		"CR-424":                                                    # 약탈자(근접) 2랭크 — 따로 그린 외형 전까지 같은 근접 약탈자 두 외형(계엄병 그림으로 서던 것, D-420 조율사)
+			sheet = "en_cr423%s_loco" % ("b" if _rng.randf() < 0.5 else "")
 		"CR-204", "CR-205":
 			sheet = "en_%s_loco" % str(row["id"]).to_lower().replace("-", "")   # 대피민 · 역무원 구울(1-11e SQ-S05 — 2077 차림 · 제복)
 		"CR-306":
