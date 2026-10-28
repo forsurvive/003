@@ -440,6 +440,7 @@ const HAND_ARMS := {"CR-436": ["W-015", "W-028"], "CR-437": ["W-017", "W-004"], 
 var _hand_auto := {}                                                   ## "맵:편" -> 지금까지 세운 손 맵 사람 수(셋째마다 연사 하나)
 const ENEMY_ALT := {"CR-457": "W-049"}                                  ## 붙으면 바꿔 드는 근접 무기
 const BOSS_ARMS := {"CR-512": ["W-014", "W-040"]}                      ## 이름 있는 보스의 [주무기, 붙으면 드는 근접](1-13a3 깡철이 — 사냥용 소총 · 렌치는 쇠파이프 판정, 밸런스 조율사)
+const MELEE_RAIDERS := ["CR-423", "CR-424"]                           ## 근접이 정체인 약탈자(SD-14 — 방망이 · 쇠파이프 · 각목 / 소방 도끼): 진행기가 세운 적도 ENEMY_ARMS를 굴린다(수류탄은 길 위 조우만)
 const ENEMY_NADES := {"CR-423": ["W-060", 1], "CR-401": ["W-058", 1]}   ## 수류탄(계엄 '기절탄'은 자료가 없어 최루탄으로 — 정합)
 var _team_nade := {}                                                  ## 편 -> 마지막 수류탄 시각(분대 재사용 4초)
 var _clock := 0.0
@@ -474,8 +475,8 @@ func spawn(enemy_id: String, pos: Vector2, map: InteriorMap, st: StoryState = nu
 	var generic := bool(opts.get("morale", str(map.data.get("id", "")).begins_with("G-")))   # 길 위 조우 · 생성 건물(1-9e)
 	var w := _enemy_weapon(enemy_id, arm)
 	var o2 := opts
-	if generic and ENEMY_ARMS.has(enemy_id) and not opts.has("arm"):
-		w = _pick_arm(enemy_id, pos)
+	if (generic or enemy_id in MELEE_RAIDERS) and ENEMY_ARMS.has(enemy_id) and not opts.has("arm"):
+		w = _pick_arm(enemy_id, pos)                                      # 근접 약탈자는 진행기가 세워도 근접 무기(SD-14 표 — 권총을 쏘던 것, D-420)
 	elif HAND_ARMS.has(enemy_id) and not opts.has("arm") and int(opts.get("lv", enemy_rows[enemy_id].get("level", 1))) >= 6:
 		w = _hand_arm(enemy_id, pos, str(opts.get("team", "enemy")), map)
 	if BOSS_ARMS.has(enemy_id) and not opts.has("arm"):

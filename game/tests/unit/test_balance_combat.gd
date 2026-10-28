@@ -476,3 +476,21 @@ func test_enemy_swing_windup(t) -> void:
 	e._arms_tactics(c.pc, 3.0, true)                                     # 표적이 2.6칸 넘게 빠져 총으로 바꿈(조율사 1-13l 구현 뒤 — 예비 동작이 남던 것)
 	t.ok(e._wind == 0.0 and e.modulate == Color(1, 1, 1) and e._swing_dir == Vector2.ZERO, "총으로 바꾸면 예비 동작 · 붉은 몸빛이 풀린다")
 	m.free()
+
+
+func test_melee_raider_arms(t) -> void:
+	# D-420: 근접 약탈자(CR-423 · 424)는 진행기가 월드에 세워도(morale 없이) 근접 무기 — 권총을 쏘던 것(SD-14 표). 총잡이는 진행기가 다듬은 권총 그대로
+	var h = ARMS.new()
+	var st: StoryState = h._state()
+	var r: Array = h._setup(st)
+	var m: InteriorMap = r[0]
+	var c: InteriorCombat = r[1]
+	var o: Vector2i = r[3]
+	for i in 4:
+		var e := c.spawn("CR-424", h._at(o, 2 + i, 1), m, st, {"lv": 4})
+		t.ok(str(e.weapon.get("kind", "")) == "melee" and e.style == "melee", "진행기 CR-424 근접(%s)" % str(e.weapon.get("name", "")))
+	var b := c.spawn("CR-423", h._at(o, 7, 1), m, st, {"lv": 4})
+	t.ok(str(b.weapon.get("kind", "")) == "melee" and b.nades == 0, "진행기 CR-423 근접 · 수류탄은 길 위 조우만")
+	var g := c.spawn("CR-420", h._at(o, 8, 1), m, st, {"lv": 4})
+	t.eq(str(g.weapon.get("id", "")), "W-002", "진행기 총잡이는 다듬어 둔 권총 그대로")
+	m.free()
