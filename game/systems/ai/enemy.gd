@@ -125,6 +125,11 @@ var _nade_cd := 0.0                           ## 개체 재사용(8초)
 var _hide_t := 0.0                            ## 표적이 엄폐 뒤에서 버틴 초(3초 넘으면 수류탄)
 var _burst_on := 0.0                          ## 연사 무기 점사 남은 초(0.6~1.2)
 var _burst_rest := 0.0                        ## 점사 뒤 쉬는 초(0.5~1.0)
+var _mag := 0                                 ## 탄창에 남은 발(D-416 — 무기 id에 묶어 늦게 채운다: 무기를 바꾸면 그 무기의 탄창)
+var _mag_w := ""
+var _reload_t := 0.0                          ## 재장전 남은 초(그동안 쏘지 않는다 — 경직 · 넘어짐 동안은 _shoot이 안 돌아 멈춘다)
+static var _reload_said := {}                 ## 편 -> 마지막 '딸깍' 프레임(편마다 4초 쉼 — 매번 외치면 정해진 것처럼 보인다)
+var _swing_dir := Vector2.ZERO                ## 근접 예비 동작을 시작할 때 고정한 방향(D-417 — 읽고 비키면 헛스윙)
 const SAY := {"howl": ["아우우우—!", "우워어어—!"], "rat_call": ["찌이익—!", "끼익! 끼익!"], "flee": ["살려 줘!", "튀어!", "이건 못 해먹겠다!"], "surrender": ["쏘지 마! 항복이야!", "그만, 그만! 손 들었어!"],
 	"drug": ["크흐… 이거면 돼…", "으아아!"], "nade": ["수류탄!", "받아라!"], "back": ["다시 간다!", "덤벼 봐!"], "alarm": ["저기다!", "여기야!"],
 	"click": ["딸깍.", "딸깍—", "따각."], "growl": ["으르렁…", "그르르…", "크르릉…"],
@@ -810,6 +815,19 @@ func _shoot(dt: float, target: Combatant, shots: Projectiles) -> void:
 	_cool = maxf(0.0, _cool - dt)
 	_switch_t = maxf(0.0, _switch_t - dt)
 	var auto := float(weapon.get("rate", 1.0)) >= 5.0 and str(weapon.get("id", "")) != "W-002"   # 연사 무기(1-9e2) — W-002 호환 장비는 예전 리듬
+	var inf := _inf_ammo()
+	if not inf and str(weapon.get("id", "")) != _mag_w:
+		_mag_w = str(weapon.get("id", ""))
+		_mag = int(weapon.get("mag", 0))
+		_reload_t = 0.0
+	if not inf and _reload_t > 0.0:
+		_reload_t -= dt
+		if _reload_t <= 0.0:
+			_mag = int(weapon.get("mag", 0))
+		return
+	if not inf and not has_token and _mag < int(weapon.get("mag", 0)) / 2:   # 토큰이 없으면 탄창 절반 아래일 때 미리 채운다(SD-11 §7.4)
+		_start_reload(shots, 0.0)
+		return
 	if auto:
 		if _burst_rest > 0.0:
 			_burst_rest -= dt
@@ -835,16 +853,43 @@ func _shoot(dt: float, target: Combatant, shots: Projectiles) -> void:
 	if shots.fire_weapon(loco.logical + Vector2(0, -14) + Vector2.RIGHT.rotated(deg_to_rad(aim)) * 10.0, ang, cmb.team, wf, skill,
 			{"speed": 640.0, "fl": floor_id, "target": seen}) > 0:      # 1-9a: 무기 계열대로(산탄·화염·곡사…), 실탄은 20t/초로 읽히게
 		shots_fired += 1
+		if not inf:
+			_mag -= 1
 		if auto:                                                     # 연사: 최대 연사로 0.6~1.2초 점사 → 0.5~1.0초 쉼(§7.4)
 			_cool = 1.0 / float(weapon["rate"])
+			if not inf and _mag <= 0:                                # 탄창이 비면 그 순간의 쉼을 재장전이 대신한다(조율사 1-13l — 쌓지 않는다)
+				_burst_on = 0.0
+				_burst_rest = 0.0
+				_start_reload(shots, _cool)
+				return
 			if _burst_on <= 0.0:
 				_burst_on = shots.rng.randf_range(0.6, 1.2)
 			return
 		_cool = 1.0 / (float(weapon["rate"]) * 0.6)                  # semi-auto: 60% of max rate
+		if not inf and _mag <= 0:                                    # 다시 겨눔 쉼 대신 재장전(주인공과 같은 순서 — 그 발의 쿨 뒤)
+			_burst = 0
+			_start_reload(shots, _cool)
+			return
 		_burst += 1
 		if _burst >= 3:                                               # 세 발 쏘면 다시 겨눈다(조준 지연 + 1~1.6초) — 쉬지 않고 쏘면 Lv1 주인공이 6초에 쓰러진다
 			_burst = 0
 			_cool += 1.0 + shots.rng.randf() * 0.6
+
+
+## 탄이 끝없는 적(SD-11 §7.4 '사실상 무한'을 이야기 박자로 지키는 몫 — 1-13l): 감시포 · 로봇 · 파워 아머('못 이기는 적') · 보안요원 위협 사격 · 탄창 없는 무기
+func _inf_ammo() -> bool:
+	return fixed or cmb.robot or str(row.get("id", "")) in ["CR-405", "CR-473"] or int(weapon.get("mag", 0)) <= 0
+
+
+## 재장전(D-416): reload_s × (1.2 − 0.004 × 스킬)(SD-11 §3.5) · 팔 손상 ×1.3 — after초(그 발의 쿨) 뒤부터 센다. 편마다 4초에 한 번 40%로 '딸깍'
+func _start_reload(shots: Projectiles, after: float) -> void:
+	var r := float(weapon.get("reload_s", 2.0)) * (1.2 - 0.004 * skill) * (1.3 if cmb.crippled.has("arm") else 1.0)
+	_reload_t = after + r
+	_cool = maxf(_cool, _reload_t)
+	var f := Engine.get_physics_frames()
+	if f - int(_reload_said.get(cmb.team, -9999)) >= 240 and shots.rng.randf() < 0.4:
+		_reload_said[cmb.team] = f
+		_say("click", 1.0)
 
 
 ## 진압봉(보안요원): 닿는 거리에서 반응 지연 뒤 휘두른다. 주인공에게는 HP 피해만(붙잡힘 판정은 진행기)
@@ -858,16 +903,45 @@ func _swing(dt: float, target: Combatant) -> void:
 	if _switch_t > 0.0:
 		return
 	var to_t := target.pos() - loco.logical
-	if _cool > 0.0 or target.dead or not meets(target) or not has_mtoken or to_t.length() > float(weapon.get("range_eff", 1.0)) * 32.0 + target.radius + cmb.radius:
+	var reach := float(weapon.get("range_eff", 1.0)) * 32.0 + target.radius + cmb.radius
+	var cyc := 1.0 / maxf(0.1, float(weapon.get("rate", 1.0)))
+	var wind_full := _swing_wind()
+	if _wind > 0.0:                                                    # 예비 동작(D-417): 방향을 고정한 채 기다렸다 내려친다 — 경직 · 넘어짐 · 부위 손상이 끊는다
+		_wind -= dt
+		if _wind > 0.0:
+			return
+		_wind = 0.0
+		modulate = Color(1, 1, 1)
+		_cool = maxf(0.1, cyc - wind_full)
+		swing_t = 0.2
+		var half := deg_to_rad(70.0 if bool(weapon.get("two_handed", false)) else 45.0)   # 호: 한손 90° · 양손 140°(SD-11 §3.4 — 주인공 규칙과 같게)
+		if target.dead or not meets(target) or to_t.length() > reach or (to_t.length() > target.radius + cmb.radius and absf(_swing_dir.angle_to(to_t)) > half):
+			return                                                     # 헛스윙 — 읽고 비킨 사람이 이득
+	elif _cool > 0.0 or target.dead or not meets(target) or not has_mtoken or to_t.length() > reach:
 		return
-	loco.facing = Locomotion.snap8(to_t, 0.0)
-	_show()
-	_cool = 1.0 / maxf(0.1, float(weapon.get("rate", 1.0)))
-	swing_t = 0.2
+	elif wind_full > 0.0:
+		loco.facing = Locomotion.snap8(to_t, 0.0)
+		_show()
+		_swing_dir = to_t.normalized()
+		_wind = wind_full
+		modulate = Color(1.0, 0.82, 0.78)                              # 들개처럼 붉어진다(치켜든다)
+		return
+	else:
+		loco.facing = Locomotion.snap8(to_t, 0.0)
+		_show()
+		_cool = cyc
+		swing_t = 0.2
 	var r := CombatRules.resolve({"weapon": weapon, "skill": skill, "attacker": {"str": 5}, "part": "torso", "dr": target.dr})
 	r["hp"] = float(r["hp"]) * _melee_mul * (1.25 if frenzied else 1.0)   # 팔 손상 −30% · 광란 +25%
 	target.last_by = cmb.team
 	target.take(r, loco.logical)
+
+
+## 근접 예비 동작 초(D-417 · SD-11 §3.4): 양손 0.3(무거운 양손 — 1회/초 0.7 이하 — 0.35) · 한손 · 맨손 · 진압봉 0.2(원문에 한손 수치가 없다 — 양손보다 짧게)
+func _swing_wind() -> float:
+	if bool(weapon.get("two_handed", false)):
+		return 0.35 if float(weapon.get("rate", 1.0)) <= 0.7 else 0.3
+	return 0.2
 
 
 ## 기절: 누운 채 KO_SECS초 → 일어나 마지막으로 본 자리를 수색한다(경보)

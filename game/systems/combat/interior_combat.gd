@@ -322,6 +322,7 @@ func _enemy_weapon(enemy_id: String, arm: String) -> Dictionary:
 		w = weapons.get("W-002", w).duplicate()
 	if enemy_id in ["CR-436", "CR-534"]:                               # 기관단총(0-10 정합: 무기 표에 아직 없어 W-002 판정 + 연사 1.5배)
 		w["rate"] = float(w.get("rate", 2.0)) * 1.5
+		w["mag"] = int(float(w.get("mag", 12)) * 1.5)                   # 탄창도 같은 배수(12 → 18 — 재장전 빈도를 이야기와 맞춘다, 1-13l)
 	return w
 
 

@@ -404,3 +404,65 @@ func test_balance_nade_dodge(t) -> void:
 	var moved := _nade_taken(true)
 	t.ok(stay >= 60.0, "제자리면 크게 맞는다(%.0f)" % stay)
 	t.ok(moved <= stay * 0.3, "0.3초 늦게 걸어서 비켜도 거의 안 맞는다(%.0f)" % moved)
+
+
+func test_enemy_reload(t) -> void:
+	# D-416(계획 1-13l · 조율사): 탄창이 비면 다시 겨눔 쉼 대신 재장전 — reload_s × (1.2 − 0.004 × 스킬). 파이프 산탄총(탄창 1)은 한 발마다 틈이 난다 ·
+	# 파워 아머 · 감시포 · 보안요원 위협 사격은 끝없이
+	var h = ARMS.new()
+	var st: StoryState = h._state()
+	var r: Array = h._setup(st)
+	var m: InteriorMap = r[0]
+	var c: InteriorCombat = r[1]
+	var o: Vector2i = r[3]
+	var e := _spawn(c, m, st, "CR-421", h._at(o, 6, 3), {"lv": 4})
+	e.weapon = c.weapons["W-025"].duplicate()
+	e.has_token = true
+	var fired := []
+	for f in int(12.0 * 60.0):
+		var n0 := e.shots_fired
+		c.pc.hp = c.pc.max_hp
+		e._shoot(1.0 / 60.0, c.pc, c.shots)
+		if e.shots_fired > n0:
+			fired.append(f / 60.0)
+	t.ok(fired.size() >= 2, "파이프 산탄총이 쏜다(%d발)" % fired.size())
+	var gap: float = fired[1] - fired[0] if fired.size() >= 2 else 0.0
+	var want := 1.0 / (0.6 * 0.6) + 3.0 * (1.2 - 0.004 * e.skill)
+	t.ok(absf(gap - want) < 0.2, "한 발 뒤 쿨 + 재장전(%.2f초 · 설계 %.2f)" % [gap, want])
+	var p := _spawn(c, m, st, "CR-405", h._at(o, 8, 3), {"lv": 4})
+	t.ok(p._inf_ammo(), "파워 아머는 끝없이(못 이기는 적)")
+	var g := _spawn(c, m, st, "CR-421", h._at(o, 9, 3), {"lv": 4})
+	g.weapon = c.weapons["W-002"].duplicate()
+	t.ok(not g._inf_ammo(), "약탈자 권총은 탄창을 쓴다")
+	m.free()
+
+
+func test_enemy_swing_windup(t) -> void:
+	# D-417: 사람 근접은 예비 동작(한손 0.2 · 양손 0.3초) 뒤 내려친다 — 방향을 고정해 그 사이 호 밖으로 비키면 헛스윙
+	var h = ARMS.new()
+	var st: StoryState = h._state()
+	var r: Array = h._setup(st)
+	var m: InteriorMap = r[0]
+	var c: InteriorCombat = r[1]
+	var o: Vector2i = r[3]
+	var e := _spawn(c, m, st, "CR-424", c.pc.pos() + Vector2(30, 0), {"lv": 4, "arm": "melee"})
+	e.weapon = c.weapons["W-049"].duplicate()
+	e.has_mtoken = true
+	t.eq(e._swing_wind(), 0.3, "소방 도끼(양손) 0.3초")
+	var hp0 := c.pc.hp
+	e._swing(1.0 / 60.0, c.pc)
+	t.ok(e._wind > 0.0 and c.pc.hp == hp0, "바로 치지 않는다 — 치켜든다")
+	for f in 20:
+		e._swing(1.0 / 60.0, c.pc)
+	t.ok(c.pc.hp < hp0, "0.3초 뒤 내려친다")
+	c.pc.hp = hp0
+	e._cool = 0.0
+	e._swing(1.0 / 60.0, c.pc)
+	var me: Actor = c.pc.actor
+	me.loco.place(e.loco.logical + Vector2(0, 40))                       # 치켜든 사이 옆으로 비킴(호 140° 밖 · 닿는 거리 안)
+	for f in 20:
+		e._swing(1.0 / 60.0, c.pc)
+	t.eq(c.pc.hp, hp0, "읽고 비키면 헛스윙")
+	e.weapon = c.weapons["W-040"].duplicate()
+	t.eq(e._swing_wind(), 0.2, "쇠파이프(한손) 0.2초")
+	m.free()

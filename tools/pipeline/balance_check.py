@@ -2,6 +2,7 @@
 정본 목표(SD-10 · 11 · 13 · 14 · 15 · 05)를 자료 · 원고 · 코드에서 계산으로 대 본다. 판정은 후보 — 조율은 `balance-auditor` 에이전트와 사람이 한다.
 결과: game/data/_balance_report.md(사람용) · _balance_report.json. 허용 목록: tools/pipeline/balance_allow.yaml('ID|대상': 이유).
 판정: 목표 안 = 통과 · 목표에서 25% 안 벗어남 = 주의 · 그 밖 = 실패. 새 실패(허용 목록 밖) 수를 마지막 줄에 찍는다."""
+import math
 import glob
 import json
 import os
@@ -224,6 +225,25 @@ def tier_of(e):
     return ""
 
 
+INF_AMMO = {"CR-473", "CR-405", "CR-305", "CR-306", "CR-313", "CR-320", "CR-326"}   # enemy.gd _inf_ammo: 위협 사격 · 파워 아머 · 로봇 · 감시포
+
+
+def _eff_rate(eid, w, wid):
+    """실효 발/초(enemy.gd _shoot): 연사 0.6~1.2초 점사 · 0.5~1.0초 쉼 / 반자동 최대의 60%로 세 발 뒤 1~1.6초 다시 겨눔 ·
+    탄창이 비면 그 쉼을 재장전이 대신한다(D-416 · 조율사 1-13l — R = reload_s × (1.2 − 0.004 × 스킬))"""
+    r = float(w.get("rate", 1.0))
+    M = int(w.get("mag") or 0)
+    R = float(w.get("reload_s") or 2.0) * (1.2 - 0.004 * EN_SKILL)
+    auto = r >= 5.0 and wid != "W-002"
+    if w.get("kind", "ranged") != "ranged":
+        return r
+    if M <= 0 or eid in INF_AMMO:
+        return r * 0.9 / 1.65 if auto else 3.0 / (3.0 / (0.6 * r) + 1.3)
+    if auto:
+        return M / (M / r + max(0.0, M / (0.9 * r) - 1) * 0.75 + R)
+    return M / (M / (0.6 * r) + (math.ceil(M / 3.0) - 1) * 1.3 + R)
+
+
 def _ranged_dps(eid, weapons, pdr, wid=None):
     """사람 적 하나가 주인공(DR pdr)에게 내는 실효 초당 피해 · 한 발 · 설명 — 주무기(BOSS_ARMS · ENEMY_ARMS · HAND_ARMS) 가운데 센 것,
     연사는 점사/쉼 · 반자동은 세 발 뒤 다시 겨눔(enemy.gd _shoot). 무기 자료가 없으면 None"""
@@ -234,19 +254,13 @@ def _ranged_dps(eid, weapons, pdr, wid=None):
     if not w:
         return None
     r = float(w.get("rate", 1.0))
-    if r >= 5.0 and wid != "W-002":                                       # 연사: 0.6~1.2초 점사 · 0.5~1.0초 쉼(enemy.gd _shoot)
-        eff = r * 0.9 / 1.65
-    elif w.get("kind", "ranged") == "ranged":                              # 반자동: 최대의 60%로 세 발, 그 뒤 1~1.6초 다시 겨눔
-        eff = 3.0 / (3.0 / (0.6 * r) + 1.3)
-    else:
-        eff = r
+    eff = _eff_rate(eid, w, wid)
     edps = w_hit(w, EN_SKILL, "worn", pdr) * eff * HIT_EN * PART_AVG
     how = "%s %s(실효 %.1f발/초)" % (wid, w["name"], eff)
     hit1 = w_hit(w, EN_SKILL, "worn", pdr)
     if eid in HAND_ARMS and len(HAND_ARMS[eid]) == 2 and eid not in ENEMY_ARMS and not rolled:   # 손 맵: 셋에 연사 하나 · 둘은 반자동(interior_combat _hand_arm)
         w2 = weapons.get(HAND_ARMS[eid][1], {})
-        r2 = float(w2.get("rate", 1.0))
-        eff2 = 3.0 / (3.0 / (0.6 * r2) + 1.3) if w2.get("kind", "ranged") == "ranged" else r2
+        eff2 = _eff_rate(eid, w2, HAND_ARMS[eid][1])
         edps = (edps + 2 * w_hit(w2, EN_SKILL, "worn", pdr) * eff2 * HIT_EN * PART_AVG) / 3.0
         how += " 하나 + %s 둘" % w2.get("name", "")
     return edps, hit1, how
@@ -538,6 +552,7 @@ def check_re_taken(weapons, enemies):
 ## 적 하나의 주의는 주인공 CLASH_ATT · 나머지는 상대편(그 화력만큼 상대편을 깎는다).
 RE_COVER = 0.2
 MEL_CONTACT = 0.5                                                       # 사람 근접 접촉 몫(SD-11 §10.3 검증 예 '근접 1(납 파이프급, 접촉 50%)' — 조율사 D-394)
+## 사람 근접 예비 동작(enemy.gd _swing — D-417, 한손 0.2 · 양손 0.3초)은 주기 안이라 제자리 셈엔 몫 없음 — 피하기 몫은 벤치(뒷걸음 봇)에서 본다(조율사 1-13l)
 CLASH_ATT = 0.5
 PEOPLE_CATS = {"raider", "tracker", "clash", "dom", "patrol", "comp"}
 
