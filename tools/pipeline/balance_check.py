@@ -341,6 +341,25 @@ def check_combat(weapons, enemies):
             frac = hit1 / 200.0
             add("B5", "한 방 위험", "%s %s 한 번 공격 ↔ Lv1 HP 200" % (eid, e["name"]), round(frac * 100), "35% 이하",
                 "통과" if frac <= 0.35 else ("주의" if frac <= 0.44 else "실패"), "SD-25 B5(스트레스)", how)
+    _check_nades(enemies)
+
+
+def _check_nades(enemies):
+    """B5 적 투척 한 발(D-415): ENEMY_NADES(interior_combat.gd 원문)의 폭발물 — 안쪽 반경은 다 받고 폭발은 DR 절반(SD-11 §9.2) ↔ Lv1 HP 200 · 작업복 DR"""
+    src = open(os.path.join(ROOT, "game", "systems", "combat", "interior_combat.gd"), encoding="utf-8").read()
+    line = src[src.index("const ENEMY_NADES := {"):].split("\n", 1)[0]
+    th = json.load(open(os.path.join(DATA, "throwables.json"), encoding="utf-8"))
+    pdr = float(band(STD_DR, 1))
+    for eid, wid, n in re.findall(r'"(CR-\d+)": \["(W-\d+)", (\d+)\]', line):
+        w = th.get(wid, {})
+        blast = float(w.get("blast") or 0)
+        if blast <= 0 or eid not in enemies:
+            continue
+        hit = (blast + float(w.get("dmg") or 0)) * max(0.0, 1 - pdr * 0.5 / 100.0)
+        frac = hit / 200.0
+        add("B5", "한 방 위험", "%s %s 투척 한 발(%s) ↔ Lv1 HP 200" % (eid, enemies[eid]["name"], w.get("name", wid)), round(frac * 100), "35% 이하",
+            "통과" if frac <= 0.35 else ("주의" if frac <= 0.44 else "실패"), "SD-25 B5(스트레스) · D-415",
+            "폭발 %g · DR %d의 절반 · 한 사람 %s발 · 분대 재사용 4초 · 퓨즈 %.1f초" % (blast, pdr, n, float(w.get("fuse") or 0)))
 
 
 # ---------------------------------------------------------------- B4 받은 피해: 길 위 짐승 RE 편성 · 필드 보스 외눈(1-13h D-394)
@@ -429,13 +448,14 @@ def _fight(us, lv, weapons, rng, one=False, one_first=False):
     return taken / php, (surv if surv is not None else 999.0)
 
 
-def _groups_of(d):
+def _groups_of(d, calm=False):
+    """판마다 적대 편(calm=True면 비적대 편도 — 교전 판에서 주인공 대신 다른 편을 쏘는 몫, D-418)"""
     outs = []
     vs = d.get("variants") or [{}]
     for i, v in enumerate(vs):
         gs = v.get("groups", d.get("groups", []))
-        hostile = [g for g in gs if g.get("hostile", True)]
-        if hostile:
+        hostile = [g for g in gs if g.get("hostile", True) or (calm and d.get("cat") == "clash")]
+        if any(g.get("hostile", True) for g in hostile):
             outs.append(("판 %d" % (i + 1) if len(vs) > 1 else "", hostile))
     return outs
 
@@ -522,6 +542,16 @@ CLASH_ATT = 0.5
 PEOPLE_CATS = {"raider", "tracker", "clash", "dom", "patrol", "comp"}
 
 
+def _witness(dead, us, t, rng):
+    """같은 편이 쓰러진 걸 봤다(enemy.gd witness_death): 신중(자신감 1) 이하는 바로 10~20초 도주 — 광란 · 이미 달아난 사람은 그대로(D-418)"""
+    for x in dead:
+        for u in us:
+            if u is not x and u.get("side", "a") == x.get("side", "a") and u["hp"] > 0 and u.get("conf", 4) <= 1 \
+                    and not u.get("frenzy") and u.get("away", 0.0) <= t:
+                u["away"] = t + rng.uniform(10.0, 20.0)
+                u["rally"] = u["hp"] / max(1.0, u["hp0"])
+
+
 def check_re_people(weapons, enemies):
     import random
     path = os.path.join(DATA, "world", "encounters.json")
@@ -533,7 +563,7 @@ def check_re_people(weapons, enemies):
         regs = d.get("regions", "*")
         if d.get("cat") not in PEOPLE_CATS or (isinstance(regs, list) and not ({"R01", "R02"} & set(regs))):
             continue
-        for tag, gs in _groups_of(d):
+        for tag, gs in _groups_of(d, calm=True):
             ids = [u[0] for g in gs for u in g.get("units", [])]
             if not ids or any(i not in enemies for i in ids) or all(i in SCALE_BEAST or i in CLAW for i in ids):
                 continue
@@ -573,6 +603,7 @@ def check_re_people(weapons, enemies):
                                 tr = TRAITS.get(cid, {"conf": 4, "drug": False})
                                 u.update({"conf": tr["conf"], "drug": tr["drug"], "drug_done": False, "frenzy": False, "away": 0.0, "rally": 1.15})
                                 u["side"] = str(g.get("side", "a"))
+                                u["calm"] = not g.get("hostile", True)             # 비적대 편: 주인공을 쏘지 않고 주인공도 쏘지 않는다 — 다른 편과만 싸운다
                                 us.append(u)
                     for m in d.get("mix", []):
                         if rng.random() < float(m[3]):
@@ -590,8 +621,8 @@ def check_re_people(weapons, enemies):
                         here = [u for u in us if u["away"] <= t]                  # 달아난 사람은 쏘지도 맞지도 않는다(10~20초 뒤 돌아옴)
                         both = clash and len({u.get("side", "a") for u in here}) > 1
                         att = CLASH_ATT if both else 1.0
-                        guns = [u for u in here if "gun" in u][:3]
-                        bites = [u for u in here if "gun" not in u][:2] if t >= RE_AP else []
+                        guns = [u for u in here if "gun" in u and not u.get("calm")][:3]
+                        bites = [u for u in here if "gun" not in u and not u.get("calm")][:2] if t >= RE_AP else []
                         taken += sum(u["gun"] * (1.25 if u["frenzy"] else 1.0) for u in guns) * att * dt
                         for u in bites:
                             if "mel" in u:
@@ -608,10 +639,11 @@ def check_re_people(weapons, enemies):
                                 if mine and other:
                                     hit = sum(u.get("gun", u.get("mel", u["bite"] / BITE_CD)) for u in mine) * (1.0 - att) * dt
                                     other[0]["hp"] -= hit * max(0.0, 1 - other[0]["dr"] / 100.0)
+                        _witness([u for u in us if u["hp"] <= 0], us, t, rng)
                         us = [u for u in us if u["hp"] > 0]                       # 같은 수치의 다른 유닛과 헷갈리지 않게 정체로 거른다
-                        if not us:
+                        if not us or all(u.get("calm") for u in us):
                             break
-                        here = [u for u in us if u["away"] <= t]
+                        here = [u for u in us if u["away"] <= t and not u.get("calm")]
                         if not here:
                             t += dt
                             continue
@@ -621,6 +653,7 @@ def check_re_people(weapons, enemies):
                         k = (1.0 - RE_COVER) if "gun" in tgt else 1.0
                         tgt["hp"] -= w_dps(weapons[best], 50.0, "new", tgt["dr"]) * HIT_PC * PART_AVG * CRIT_AVG * RE_K * k * dt
                         if tgt["hp"] <= 0:
+                            _witness([tgt], us, t, rng)
                             us = [u for u in us if u is not tgt]
                             tgt = None
                         else:                                                      # 사기(enemy.gd _morale): HP 50%에서 약물 한 번(30% 광란 — 도주 안 함) · 자신감별 문턱에서 10~20초 도주

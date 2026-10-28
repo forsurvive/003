@@ -372,3 +372,35 @@ func test_balance_token_bite_rate(t) -> void:
 	var roach := _bite_rate("CR-002", 6, 30.0)
 	t.eq(roach[1], 0, "큰바퀴 여섯 — 토큰 없는 둘은 도약하지 않는다(떼 넷)")
 	t.ok(roach[0] > 0, "토큰 쥔 바퀴는 도약해 문다(%d번)" % roach[0])
+
+
+func _nade_taken(dodge: bool) -> float:
+	var h = ARMS.new()
+	var st: StoryState = h._state()
+	var r: Array = h._setup(st)
+	var m: InteriorMap = r[0]
+	var c: InteriorCombat = r[1]
+	var o: Vector2i = r[3]
+	var e := c.spawn("CR-423", h._at(o, 6, 3), m, st, {"lv": 2, "morale": true})   # 길 위 조우 적(수류탄을 쥔다)
+	e.brain.state = AIBrain.S.IDLE
+	var hp0 := c.pc.hp
+	var at := c.pc.pos()
+	e.throw_cb.call(e.loco.logical, at)
+	for f in int(4.0 * 60.0):
+		if dodge and f >= 18:                                            # 0.3초 늦게 알아채고 걸음(초당 3칸)으로 옆으로 비킨다
+			var me: Actor = c.pc.actor
+			var p: Vector2 = me.loco.logical + Vector2(0, -3.0 * 32.0 / 60.0)
+			if p.y > (o.y + 0.5) * 32.0:
+				me.loco.place(p)
+		c.tick(1.0 / 60.0, true, st)
+	var lost := hp0 - c.pc.hp
+	m.free()
+	return lost
+
+
+func test_balance_nade_dodge(t) -> void:
+	# D-415: 약탈자(근접) 파편 수류탄(폭발 100 · 안쪽 0.8칸 다 받음)은 '피할 수 있는 한 방' — 붉은 원 · 퓨즈 2.5초 · 걸어서 비키면 거의 안 맞는다
+	var stay := _nade_taken(false)
+	var moved := _nade_taken(true)
+	t.ok(stay >= 60.0, "제자리면 크게 맞는다(%.0f)" % stay)
+	t.ok(moved <= stay * 0.3, "0.3초 늦게 걸어서 비켜도 거의 안 맞는다(%.0f)" % moved)
